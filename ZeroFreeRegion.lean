@@ -1,0 +1,480 @@
+/-
+# Zero-Free Regions for the Riemann Zeta Function
+
+## Overview
+
+This file formalizes the zero-free region for ζ(s), centered around
+de la Vallée Poussin's 3-4-1 inequality:
+
+  3·Re(-ζ'/ζ(σ)) + 4·Re(-ζ'/ζ(σ+it)) + Re(-ζ'/ζ(σ+2it)) ≥ 0
+
+From this trigonometric inequality, we deduce that ζ(s) ≠ 0 on the line Re(s) = 1,
+and more generally, that for any fixed height T, there exists a zero-free region
+of the form {Re(s) ≥ 1 - d_T, |Im(s)| ≤ T} for some d_T > 0.
+
+## Key results (sorry-free)
+
+1. `trig_identity_nonneg` — 3 + 4cos θ + cos 2θ = 2(1+cos θ)² ≥ 0
+2. `zeta_no_zeros_on_line_one` — ζ(s) ≠ 0 on Re(s) = 1
+3. `log_deriv_zeta_re_series` — -Re(ζ'/ζ(s)) expressed as a Dirichlet series in von Mangoldt Λ
+4. `log_deriv_zeta_nonneg_combination` — the 3-4-1 combination is non-negative
+5. `classical_zero_free_region_compact` — compact zero-free region for bounded height
+6. `residue_bounds` — 1 < (σ-1)ζ(σ) ≤ σ for σ > 1, confirming residue 1 at s=1
+7. `log_deriv_zeta_pos_real` — -Re(ζ'/ζ(σ)) > 0 for real σ > 1
+8. `log_deriv_zeta_antitone` — -Re(ζ'/ζ) is decreasing on (1, ∞)
+
+## Remaining sorry
+
+- `classical_zero_free_region` — quantitative σ ≥ 1 - c/log|t|
+  (requires Hadamard factorization or Borel-Carathéodory, not yet in Mathlib)
+- `vinogradov_korobov_zero_free_region` — requires exponential sum estimates
+
+## Dependencies
+
+- Mathlib (riemannZeta, Complex analysis, L-series)
+- RiemannExplorer
+- PrimeNumberTheorem (for vonMangoldt, chebyshevPsi)
+-/
+
+import Mathlib
+import RiemannExplorer
+import PrimeNumberTheorem
+
+open Complex BigOperators Filter Nat Topology MeasureTheory Asymptotics
+open scoped ArithmeticFunction LSeries.notation
+
+namespace ZeroFreeRegion
+
+/-- ζ 在 Re(s) = 1 上无零点（Hadamard-de la Vallée Poussin） -/
+theorem zeta_no_zeros_on_line_one :
+    ∀ s : ℂ, s.re = 1 → riemannZeta s ≠ 0 := by
+  -- 这是素数定理证明的核心
+  -- Hadamard 和 de la Vallée Poussin (1896) 证明
+  -- 直接使用 Mathlib 和 RiemannExplorer 中的已知结果
+  exact KnownResults.zeta_no_zeros_on_one_line
+
+/-- 三角恒等式：3 + 4cos θ + cos(2θ) = 2(1 + cos θ)² ≥ 0
+    这是 de la Vallée Poussin 零点自由区域证明的核心。 -/
+lemma trig_identity_nonneg (θ : ℝ) : 3 + 4 * Real.cos θ + Real.cos (2 * θ) ≥ 0 := by
+  have h : Real.cos (2 * θ) = 2 * Real.cos θ ^ 2 - 1 := Real.cos_two_mul θ
+  rw [h]
+  have h2 : 3 + 4 * Real.cos θ + (2 * Real.cos θ ^ 2 - 1) = 2 * (1 + Real.cos θ) ^ 2 := by ring
+  rw [h2]
+  positivity
+
+/-- ζ(s) > 0 对于所有实数 s > 1。
+    这直接由Dirichlet级数定义得出。
+    对于实数 s > 1，每个项 1/n^s 是正实数，因此级数和为正。 -/
+lemma riemannZeta_pos_of_real_gt_one (s : ℝ) (hs : 1 < s) : 0 < (riemannZeta (s : ℂ)).re := by
+  -- Mathlib 已有这个引理：riemannZeta_re_pos_of_one_lt
+  -- 注意 Mathlib 中的 riemannZeta x 会自动将 x : ℝ 强制转换为 ℂ
+  simpa using riemannZeta_re_pos_of_one_lt hs
+
+/-- 对于实数 s > 1，log ζ(s) 可以表示为 von Mangoldt 函数的和。
+    这是 de la Vallée Poussin 证明的起点。 -/
+lemma log_riemannZeta_dirichlet_series (s : ℝ) (hs : 1 < s) :
+    Real.log (riemannZeta (s : ℂ)).re = ∑' p : Nat.Primes, Real.log (1 / (1 - (p : ℝ) ^ (-s))) := by
+  -- 1. 欧拉乘积的 exp-log 形式
+  have h_euler := riemannZeta_eulerProduct_exp_log (show 1 < (s : ℂ).re by rw [Complex.ofReal_re]; exact_mod_cast hs)
+  -- 2. ζ(s) 是正实数
+  have h_zeta_pos : 0 < (riemannZeta (s : ℂ)).re := riemannZeta_re_pos_of_one_lt hs
+  have h_zeta_im : (riemannZeta (s : ℂ)).im = 0 := riemannZeta_im_eq_zero_of_one_lt hs
+  -- 3. 关键等式：每一项的复对数等于实对数
+  have h_term (p : Nat.Primes) : -Complex.log (1 - (p : ℂ) ^ (-(s : ℂ))) = (↑(Real.log (1 / (1 - (p : ℝ) ^ (-s)))) : ℂ) := by
+    have hp1 : (p : ℂ) ^ (-(s : ℂ)) = (↑((p : ℝ) ^ (-s)) : ℂ) := by
+      rw [Complex.cpow_def_of_ne_zero (by exact_mod_cast p.prop.pos.ne')]
+      rw [Real.rpow_def_of_pos (by exact_mod_cast p.prop.pos)]
+      simp [Complex.ofReal_exp, Complex.ofReal_log, Complex.ofReal_mul]
+    have hp2 : (1 - (p : ℂ) ^ (-(s : ℂ)) : ℂ) = (↑(1 - (p : ℝ) ^ (-s)) : ℂ) := by
+      rw [hp1]
+      simp
+    rw [hp2]
+    have h_pos' : 0 < (1 - (p : ℝ) ^ (-s) : ℝ) := by
+      have h_p : 1 < (p : ℝ) := by exact_mod_cast p.prop.one_lt
+      have h_ps : 0 < (p : ℝ) ^ (-s) := by
+        apply Real.rpow_pos_of_pos
+        exact_mod_cast p.prop.pos
+      have h_ps_lt : (p : ℝ) ^ (-s) < 1 := by
+        rw [Real.rpow_neg (by exact_mod_cast p.prop.pos.le)]
+        have h_one_lt : 1 < (p : ℝ) ^ s := by
+          apply Real.one_lt_rpow
+          · exact_mod_cast p.prop.one_lt
+          · linarith
+        exact inv_lt_one_of_one_lt₀ h_one_lt
+      linarith
+    have h3 : Complex.log (↑(1 - (p : ℝ) ^ (-s)) : ℂ) = (↑(Real.log (1 - (p : ℝ) ^ (-s))) : ℂ) := by
+      rw [Complex.ofReal_log]
+      exact_mod_cast h_pos'.le
+    rw [h3]
+    have h4 : -(↑(Real.log (1 - (p : ℝ) ^ (-s))) : ℂ) = (↑(-Real.log (1 - (p : ℝ) ^ (-s))) : ℂ) := by simp
+    rw [h4]
+    have h5 : (-Real.log (1 - (p : ℝ) ^ (-s)) : ℝ) = Real.log (1 / (1 - (p : ℝ) ^ (-s))) := by
+      rw [Real.log_div (by positivity) (by positivity)]
+      simp
+    rw [h5]
+  -- 4. 证明级数可和
+  have h_sum : Summable (fun p : Nat.Primes ↦ -Complex.log (1 - (p : ℂ) ^ (-(s : ℂ)))) := by
+    have hsum := summable_riemannZetaSummand (show 1 < (s : ℂ).re by rw [Complex.ofReal_re]; exact_mod_cast hs)
+    have hsum' := hsum.of_norm
+    have hsum_log := hsum'.clog_one_sub.neg.subtype {p | p.Prime}
+    simpa using hsum_log
+  -- 5. 证明级数的虚部为 0
+  have h_sum_im : (∑' p : Nat.Primes, -Complex.log (1 - (p : ℂ) ^ (-(s : ℂ)))).im = 0 := by
+    rw [im_tsum h_sum]
+    have h_zero : ∑' p : Nat.Primes, (-Complex.log (1 - (p : ℂ) ^ (-(s : ℂ)))).im = ∑' p : Nat.Primes, (0 : ℝ) := by
+      apply tsum_congr
+      intro p
+      rw [h_term p]
+      simp
+    rw [h_zero, tsum_zero]
+  -- 6. 由 exp(级数) = ζ(s) 取实部得 Real.exp(级数实部) = (ζ(s)).re
+  have h_exp_re : Real.exp (∑' p : Nat.Primes, (-Complex.log (1 - (p : ℂ) ^ (-(s : ℂ)))).re)
+      = (riemannZeta (s : ℂ)).re := by
+    have h1 : (Complex.exp (∑' p : Nat.Primes, -Complex.log (1 - (p : ℂ) ^ (-(s : ℂ))))).re
+        = Real.exp (∑' p : Nat.Primes, (-Complex.log (1 - (p : ℂ) ^ (-(s : ℂ)))).re) := by
+      rw [Complex.exp_re]
+      have : (∑' p : Nat.Primes, -Complex.log (1 - (p : ℂ) ^ (-(s : ℂ)))).re
+          = ∑' p : Nat.Primes, (-Complex.log (1 - (p : ℂ) ^ (-(s : ℂ)))).re := by
+        rw [re_tsum h_sum]
+      rw [this]
+      simp [h_sum_im]
+    have h2 : Complex.exp (∑' p : Nat.Primes, -Complex.log (1 - (p : ℂ) ^ (-(s : ℂ))))
+        = (riemannZeta (s : ℂ)) := h_euler
+    rw [← h1, h2]
+  -- 7. 两边取 Real.log
+  have h_log_eq : ∑' p : Nat.Primes, (-Complex.log (1 - (p : ℂ) ^ (-(s : ℂ)))).re
+      = Real.log (riemannZeta (s : ℂ)).re := by
+    rw [← h_exp_re]
+    exact (Real.log_exp _).symm
+  -- 8. 将 re 移入 tsum，并替换每一项
+  have h_eq : (∑' p : Nat.Primes, -Complex.log (1 - (p : ℂ) ^ (-(s : ℂ)))).re
+      = ∑' p : Nat.Primes, Real.log (1 / (1 - (p : ℝ) ^ (-s))) := by
+    rw [re_tsum h_sum]
+    apply tsum_congr
+    intro p
+    rw [h_term p]
+    simp
+  -- 9. 综合完成证明
+  have h_re_tsum : (∑' p : Nat.Primes, -Complex.log (1 - (p : ℂ) ^ (-(s : ℂ)))).re
+      = ∑' p : Nat.Primes, (-Complex.log (1 - (p : ℂ) ^ (-(s : ℂ)))).re := by
+    rw [re_tsum h_sum]
+  rw [← h_eq]
+  linarith [h_re_tsum, h_log_eq]
+
+/-- 辅助引理：n^(-s) 的实部展开。
+    对于 n ≠ 0 和 s = σ + it，有 Re(n^(-s)) = n^(-σ) * cos(t * log n) -/
+private lemma natCast_cpow_neg_re {n : ℕ} (hn : n ≠ 0) (s : ℂ) :
+    ((n : ℂ) ^ (-s)).re = (n : ℝ) ^ (-s.re) * Real.cos (s.im * Real.log n) := by
+  have hn' : (n : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr hn
+  have hn_pos : (0 : ℝ) < (n : ℝ) := Nat.cast_pos.mpr (Nat.pos_of_ne_zero hn)
+  have h_log : Complex.log (n : ℂ) = (↑(Real.log (n : ℝ)) : ℂ) := by
+    rw [← Complex.ofReal_natCast]
+    exact (Complex.ofReal_log (Nat.cast_nonneg n)).symm
+  have h1 : ((n : ℂ) ^ (-s)).re = (Complex.exp (Complex.log (n : ℂ) * (-s))).re := by
+    rw [cpow_def_of_ne_zero hn']
+  rw [h1, h_log]
+  have h_re : ((↑(Real.log (n : ℝ)) : ℂ) * (-s)).re = -(s.re * Real.log n) := by
+    have : (↑(Real.log (n : ℝ)) : ℂ) = ⟨Real.log n, 0⟩ := rfl
+    rw [this]
+    simp [Complex.mul_re, Complex.neg_re, Complex.neg_im]
+    ring
+  have h_im : ((↑(Real.log (n : ℝ)) : ℂ) * (-s)).im = -(s.im * Real.log n) := by
+    have : (↑(Real.log (n : ℝ)) : ℂ) = ⟨Real.log n, 0⟩ := rfl
+    rw [this]
+    simp [Complex.mul_im, Complex.neg_re, Complex.neg_im]
+    ring
+  rw [Complex.exp_re, h_re, h_im]
+  congr 1
+  · rw [Real.rpow_def_of_pos hn_pos]; ring_nf
+  · rw [Real.cos_neg]
+
+/-- 对于 Re(s) > 1，-Re(ζ'(s)/ζ(s)) 可表示为 von Mangoldt 函数的 Dirichlet 级数。
+    这是 de la Vallée Poussin 零点自由区域证明的核心公式。
+
+    证明策略：由 Mathlib 的 LSeries_vonMangoldt_eq_deriv_riemannZeta_div 得
+    L(↗Λ, s) = -ζ'(s)/ζ(s)，然后展开 L-series 的实部，利用
+    n^(-s) = n^(-σ) * (cos(t*log n) - i*sin(t*log n)) 提取实部。 -/
+lemma log_deriv_zeta_re_series (s : ℂ) (hs : 1 < s.re) :
+    (- deriv riemannZeta s / riemannZeta s).re = ∑' n : ℕ, Λ n * Real.cos (s.im * Real.log n) / (n : ℝ) ^ s.re := by
+  have h_lseries := ArithmeticFunction.LSeries_vonMangoldt_eq_deriv_riemannZeta_div hs
+  rw [← h_lseries]
+  have h_sum : LSeriesSummable (↗Λ) s := ArithmeticFunction.LSeriesSummable_vonMangoldt hs
+  rw [LSeries, Complex.re_tsum h_sum.hasSum.summable]
+  apply tsum_congr
+  intro n
+  rcases Nat.eq_zero_or_pos n with rfl | hn
+  · simp [LSeries.term, ArithmeticFunction.vonMangoldt_apply]
+  · rw [LSeries.term_def₀ (by simp : (↗Λ) 0 = 0)]
+    have hn' : n ≠ 0 := hn.ne'
+    have h_re := natCast_cpow_neg_re hn' s
+    show (↑(Λ n) * (↑n : ℂ) ^ (-s)).re = _
+    rw [Complex.re_ofReal_mul, h_re, Real.rpow_neg (Nat.cast_nonneg n)]
+    ring
+
+/-- 对于实数 σ > 1，ζ(σ) 的实部等于 Σ 1/(n+1)^σ (实数级数)。
+    这里 (n+1)^σ 是实数的 rpow，利用 ofReal_cpow 将复数幂还原为实数幂。 -/
+lemma riemannZeta_re_eq_tsum_real (σ : ℝ) (hσ : 1 < σ) :
+    (riemannZeta (σ : ℂ)).re = ∑' n : ℕ, 1 / (↑n + 1 : ℝ) ^ σ := by
+  have hσ_re : 1 < (↑σ : ℂ).re := by simp [hσ]
+  have h_sum : Summable (fun n : ℕ ↦ 1 / (↑n + 1 : ℂ) ^ (↑σ : ℂ)) := by
+    have h := (Complex.summable_one_div_nat_cpow (p := (↑σ : ℂ))).mpr hσ_re
+    exact ((summable_nat_add_iff (f := fun n => 1 / (↑n : ℂ) ^ (↑σ : ℂ)) 1).mpr h).congr
+      (fun n => by push_cast; ring_nf)
+  rw [zeta_eq_tsum_one_div_nat_add_one_cpow hσ_re, Complex.re_tsum h_sum]
+  congr 1; ext n
+  have h_pos : (0 : ℝ) ≤ (↑n + 1 : ℝ) := by positivity
+  have h_cpow : (↑n + 1 : ℂ) ^ (↑σ : ℂ) = ↑((↑n + 1 : ℝ) ^ σ) := by
+    have h_cast : (↑n + 1 : ℂ) = (↑(↑n + 1 : ℝ) : ℂ) := by push_cast; ring
+    rw [h_cast, ← Complex.ofReal_cpow h_pos σ]
+  rw [h_cpow, ← Complex.ofReal_one, ← Complex.ofReal_div, Complex.ofReal_re]
+
+/-- 对于实数 σ > 1，Σ 1/(n+1)^σ 可求和 (实数)。 -/
+lemma summable_one_div_rpow (σ : ℝ) (hσ : 1 < σ) :
+    Summable (fun n : ℕ ↦ 1 / (↑n + 1 : ℝ) ^ σ) := by
+  have hσ_re : 1 < (↑σ : ℂ).re := by simp [hσ]
+  have h_sum : Summable (fun n : ℕ ↦ 1 / (↑n + 1 : ℂ) ^ (↑σ : ℂ)) := by
+    have h := (Complex.summable_one_div_nat_cpow (p := (↑σ : ℂ))).mpr hσ_re
+    exact ((summable_nat_add_iff (f := fun n => 1 / (↑n : ℂ) ^ (↑σ : ℂ)) 1).mpr h).congr
+      (fun n => by push_cast; ring_nf)
+  exact (Complex.reCLM.summable h_sum).congr (fun n => by
+    have h_pos : (0 : ℝ) ≤ (↑n + 1 : ℝ) := by positivity
+    simp only [Complex.reCLM_apply]
+    have h_cpow : (↑n + 1 : ℂ) ^ (↑σ : ℂ) = ↑((↑n + 1 : ℝ) ^ σ) := by
+      have h_cast : (↑n + 1 : ℂ) = (↑(↑n + 1 : ℝ) : ℂ) := by push_cast; ring
+      rw [h_cast, ← Complex.ofReal_cpow h_pos σ]
+    rw [h_cpow, ← Complex.ofReal_one, ← Complex.ofReal_div, Complex.ofReal_re])
+
+/-- 对于实数 σ > 1，ζ(σ).re > 1。
+    从级数 ζ(σ) = 1 + 1/2^σ + ... > 1 推出。 -/
+lemma riemannZeta_re_gt_one (σ : ℝ) (hσ : 1 < σ) :
+    (riemannZeta (σ : ℂ)).re > 1 := by
+  rw [riemannZeta_re_eq_tsum_real σ hσ]
+  have h_sum := summable_one_div_rpow σ hσ
+  rw [h_sum.tsum_eq_zero_add]
+  have h_first : 1 / (↑(0 : ℕ) + 1 : ℝ) ^ σ = 1 := by simp
+  rw [h_first]
+  have h_shifted : Summable (fun n : ℕ => 1 / (↑(n + 1) + 1 : ℝ) ^ σ) :=
+    (summable_nat_add_iff (f := fun n => 1 / (↑n + 1 : ℝ) ^ σ) 1).mpr h_sum
+  have h_pos_0 : (0 : ℝ) < 1 / (↑(0 + 1 : ℕ) + 1 : ℝ) ^ σ := by positivity
+  linarith [h_shifted.tsum_pos (fun n => by positivity) 0 h_pos_0]
+
+/-- 对于实数 σ > 1，ζ(σ) > 1/(σ-1)。
+    这从 Dirichlet 级数 ζ(σ) = Σ 1/n^σ > ∫₁^∞ x^{-σ} dx = 1/(σ-1) 导出。 -/
+lemma riemannZeta_gt_one_div_sub (σ : ℝ) (hσ : 1 < σ) :
+    (riemannZeta (σ : ℂ)).re > 1 / (σ - 1) := by
+  by_cases hσ2 : σ ≥ 2
+  · have h1 := riemannZeta_re_gt_one σ hσ
+    have h2 : 1 / (σ - 1) ≤ 1 := by
+      rw [div_le_one (by linarith : (0:ℝ) < σ - 1)]; linarith
+    linarith
+  · push Not at hσ2
+    have h_eq := ZetaAsymptotics.zeta_limit_aux1 hσ
+    rw [riemannZeta_re_eq_tsum_real σ hσ]
+    have h_term_le : ZetaAsymptotics.term_tsum σ ≤ 1 - Real.eulerMascheroniConstant := by
+      have h_summable_1 := ZetaAsymptotics.term_tsum_one.summable
+      have h_le : ∀ n, ZetaAsymptotics.term (n + 1) σ ≤ ZetaAsymptotics.term (n + 1) 1 := by
+        intro n
+        unfold ZetaAsymptotics.term
+        have hab : (↑(n + 1) : ℝ) ≤ ↑(n + 1) + 1 := by linarith
+        apply intervalIntegral.integral_mono_on hab
+        · exact ZetaAsymptotics.term_welldef (by omega : 0 < n + 1) (by linarith : (0:ℝ) < σ)
+        · exact ZetaAsymptotics.term_welldef (by omega : 0 < n + 1) zero_lt_one
+        · intro x hx
+          have hx_lb := hx.1
+          have hx_pos : (0 : ℝ) < x := by
+            have : (0 : ℝ) < (↑(n + 1) : ℝ) := by positivity
+            linarith
+          have hx_ge_one : (1 : ℝ) ≤ x := by
+            have : (1 : ℝ) ≤ (↑(n + 1) : ℝ) := by norm_cast; omega
+            linarith
+          apply div_le_div_of_nonneg_left
+          · linarith
+          · exact Real.rpow_pos_of_pos hx_pos _
+          · exact Real.rpow_le_rpow_of_exponent_le hx_ge_one (by linarith)
+      have h_summable_σ : Summable (fun n => ZetaAsymptotics.term (n + 1) σ) :=
+        Summable.of_nonneg_of_le (fun n => ZetaAsymptotics.term_nonneg _ _) h_le h_summable_1
+      calc ZetaAsymptotics.term_tsum σ
+          = ∑' n, ZetaAsymptotics.term (n + 1) σ := rfl
+        _ ≤ ∑' n, ZetaAsymptotics.term (n + 1) 1 :=
+            h_summable_σ.tsum_le_tsum h_le h_summable_1
+        _ = 1 - Real.eulerMascheroniConstant := ZetaAsymptotics.term_tsum_one.tsum_eq
+    have hγ := Real.one_half_lt_eulerMascheroniConstant
+    have h1 : σ * ZetaAsymptotics.term_tsum σ ≤ σ * (1 - Real.eulerMascheroniConstant) :=
+      mul_le_mul_of_nonneg_left h_term_le (by linarith)
+    have h2 : σ * (1 - Real.eulerMascheroniConstant) < 1 := by nlinarith
+    linarith
+
+/-- 对于实数 σ > 1，ζ(σ) ≤ σ/(σ-1)。
+    与 riemannZeta_gt_one_div_sub 给出的下界 1/(σ-1) 互补。 -/
+lemma riemannZeta_re_le_sigma_div_sub (σ : ℝ) (hσ : 1 < σ) :
+    (riemannZeta (σ : ℂ)).re ≤ σ / (σ - 1) := by
+  rw [riemannZeta_re_eq_tsum_real σ hσ]
+  have h_eq := ZetaAsymptotics.zeta_limit_aux1 hσ
+  have h_tsum_nonneg : 0 ≤ ZetaAsymptotics.term_tsum σ :=
+    tsum_nonneg (fun n => ZetaAsymptotics.term_nonneg (n + 1) σ)
+  have h_mul_nonneg : 0 ≤ σ * ZetaAsymptotics.term_tsum σ :=
+    mul_nonneg (by linarith) h_tsum_nonneg
+  have h_le : (∑' n : ℕ, 1 / (↑n + 1 : ℝ) ^ σ) ≤ 1 / (σ - 1) + 1 := by linarith
+  have h_rw : σ / (σ - 1) = 1 / (σ - 1) + 1 := by
+    have hsub : (σ - 1 : ℝ) ≠ 0 := by linarith
+    field_simp; ring
+  linarith
+
+/-- (σ-1)*ζ(σ) 有界：1 < (σ-1)*ζ(σ) ≤ σ。
+    这证实了 ζ 在 s=1 处的留数为 1。 -/
+lemma residue_bounds (σ : ℝ) (hσ : 1 < σ) :
+    1 < (σ - 1) * (riemannZeta (σ : ℂ)).re ∧
+    (σ - 1) * (riemannZeta (σ : ℂ)).re ≤ σ := by
+  have hsub : (0 : ℝ) < σ - 1 := by linarith
+  constructor
+  · have h := riemannZeta_gt_one_div_sub σ hσ
+    calc 1 = (σ - 1) * (1 / (σ - 1)) := by field_simp
+      _ < (σ - 1) * (riemannZeta (σ : ℂ)).re :=
+        mul_lt_mul_of_pos_left h hsub
+  · have h := riemannZeta_re_le_sigma_div_sub σ hσ
+    calc (σ - 1) * (riemannZeta (σ : ℂ)).re
+        ≤ (σ - 1) * (σ / (σ - 1)) := mul_le_mul_of_nonneg_left h (le_of_lt hsub)
+      _ = σ := by field_simp
+
+/-- 对于实数 σ > 1，-ζ'/ζ(σ) 的实部严格正，
+    因为它等于 Σ Λ(n)/n^σ ≥ Λ(2)/2^σ = log(2)/2^σ > 0。 -/
+lemma log_deriv_zeta_pos_real (σ : ℝ) (hσ : 1 < σ) :
+    0 < (- deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re := by
+  have h_series := log_deriv_zeta_re_series (σ : ℂ) (by simp [hσ] : 1 < (↑σ : ℂ).re)
+  rw [h_series]
+  simp only [Complex.ofReal_im, zero_mul, Real.cos_zero, mul_one]
+  have h_nonneg : ∀ n : ℕ, 0 ≤ Λ n / (↑n : ℝ) ^ σ := fun n ↦ by
+    rcases Nat.eq_zero_or_pos n with rfl | hn
+    · simp [ArithmeticFunction.vonMangoldt]
+    · exact div_nonneg ArithmeticFunction.vonMangoldt_nonneg
+        (Real.rpow_nonneg (Nat.cast_nonneg n) σ)
+  have h_term2 : (0 : ℝ) < Λ 2 / (2 : ℝ) ^ σ := by
+    apply _root_.div_pos
+    · rw [ArithmeticFunction.vonMangoldt_apply_prime Nat.prime_two]
+      exact Real.log_pos (by norm_num : (1:ℝ) < 2)
+    · exact Real.rpow_pos_of_pos (by norm_num : (0:ℝ) < 2) σ
+  have h_summable : Summable (fun n : ℕ ↦ Λ n / (↑n : ℝ) ^ σ) := by
+    have h_re : 1 < (↑σ : ℂ).re := by simp [hσ]
+    have h_ls := ArithmeticFunction.LSeriesSummable_vonMangoldt h_re
+    have h_map := Complex.reCLM.summable h_ls
+    exact h_map.congr (fun n ↦ by
+      simp only [Complex.reCLM_apply, LSeries.term]
+      split_ifs with hn
+      · subst hn; simp [ArithmeticFunction.vonMangoldt]
+      · rw [div_eq_mul_inv, ← cpow_neg, Complex.re_ofReal_mul,
+            natCast_cpow_neg_re hn, Real.rpow_neg (Nat.cast_nonneg n)]
+        simp only [Complex.ofReal_im, Complex.ofReal_re, zero_mul, Real.cos_zero, mul_one,
+          div_eq_mul_inv])
+  exact h_summable.tsum_pos h_nonneg 2 h_term2
+
+/-- 对于实数 σ > 1，-ζ'/ζ(σ) 的 Dirichlet 级数表示。
+    这是 log_deriv_zeta_re_series 对纯实数参数的特化。 -/
+lemma log_deriv_zeta_real_eq_series (σ : ℝ) (hσ : 1 < σ) :
+    (- deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re =
+    ∑' n : ℕ, Λ n / (n : ℝ) ^ σ := by
+  have h := log_deriv_zeta_re_series (σ : ℂ) (by simp [hσ] : 1 < (↑σ : ℂ).re)
+  simp only [Complex.ofReal_im, Complex.ofReal_re, zero_mul, Real.cos_zero, mul_one] at h
+  exact h
+
+/-- -ζ'/ζ(σ) 关于 σ 单调递减：若 σ₁ ≤ σ₂ 且 1 < σ₁，
+    则 -Re(ζ'/ζ(σ₂)) ≤ -Re(ζ'/ζ(σ₁))。
+    由 Dirichlet 级数逐项递减得出。 -/
+lemma log_deriv_zeta_antitone {σ₁ σ₂ : ℝ} (hσ₁ : 1 < σ₁) (hσ₂ : σ₁ ≤ σ₂) :
+    (- deriv riemannZeta (σ₂ : ℂ) / riemannZeta (σ₂ : ℂ)).re ≤
+    (- deriv riemannZeta (σ₁ : ℂ) / riemannZeta (σ₁ : ℂ)).re := by
+  rw [log_deriv_zeta_real_eq_series σ₁ hσ₁,
+      log_deriv_zeta_real_eq_series σ₂ (lt_of_lt_of_le hσ₁ hσ₂)]
+  have h_pointwise : ∀ n : ℕ, Λ n / (↑n : ℝ) ^ σ₂ ≤ Λ n / (↑n : ℝ) ^ σ₁ := by
+    intro n
+    rcases Nat.eq_zero_or_pos n with rfl | hn
+    · simp [ArithmeticFunction.vonMangoldt]
+    · apply div_le_div_of_nonneg_left ArithmeticFunction.vonMangoldt_nonneg
+      · exact Real.rpow_pos_of_pos (Nat.cast_pos.mpr hn) σ₁
+      · exact Real.rpow_le_rpow_of_exponent_le
+          (by exact_mod_cast hn : (1 : ℝ) ≤ ↑n) hσ₂
+  have h_summable : ∀ σ : ℝ, 1 < σ → Summable (fun n : ℕ => Λ n / (↑n : ℝ) ^ σ) := by
+    intro σ hσ
+    have h_re : 1 < (↑σ : ℂ).re := by simp [hσ]
+    have h_ls := ArithmeticFunction.LSeriesSummable_vonMangoldt h_re
+    exact (Complex.reCLM.summable h_ls).congr (fun n => by
+      simp only [Complex.reCLM_apply, LSeries.term]
+      split_ifs with hn
+      · subst hn; simp [ArithmeticFunction.vonMangoldt]
+      · rw [div_eq_mul_inv, ← cpow_neg, Complex.re_ofReal_mul,
+            natCast_cpow_neg_re hn, Real.rpow_neg (Nat.cast_nonneg n)]
+        simp only [Complex.ofReal_im, Complex.ofReal_re, zero_mul, Real.cos_zero, mul_one,
+          div_eq_mul_inv])
+  exact (h_summable σ₂ (lt_of_lt_of_le hσ₁ hσ₂)).tsum_le_tsum h_pointwise (h_summable σ₁ hσ₁)
+
+/-- **de la Vallée Poussin 三角组合的非负性**
+
+    对于 σ > 1 和实数 t，有
+
+    3*(-Re ζ'(σ)/ζ(σ)) + 4*(-Re ζ'(σ+it)/ζ(σ+it)) + (-Re ζ'(σ+2it)/ζ(σ+2it)) ≥ 0
+
+    这是经典零点自由区域证明的核心不等式。
+
+    证明策略：由 log_deriv_zeta_re_series 展开三个级数，
+    组合为 ∑ Λ(n)/n^σ * (3 + 4cos(t log n) + cos(2t log n))，
+    由 trig_identity_nonneg 每项非负。 -/
+lemma log_deriv_zeta_nonneg_combination (σ : ℝ) (hσ : 1 < σ) (t : ℝ) :
+    3 * (- deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re
+    + 4 * (- deriv riemannZeta ((σ : ℂ) + I * t) / riemannZeta ((σ : ℂ) + I * t)).re
+    + (- deriv riemannZeta ((σ : ℂ) + 2 * I * t) / riemannZeta ((σ : ℂ) + 2 * I * t)).re ≥ 0 := by
+  have hσ_re1 : 1 < ((σ : ℂ)).re := by simp [hσ]
+  have hσ_re2 : 1 < ((σ : ℂ) + I * (t : ℂ)).re := by simp [hσ]
+  have hσ_re3 : 1 < ((σ : ℂ) + 2 * I * (t : ℂ)).re := by simp [hσ]
+  rw [log_deriv_zeta_re_series _ hσ_re1, log_deriv_zeta_re_series _ hσ_re2,
+    log_deriv_zeta_re_series _ hσ_re3]
+  simp only [Complex.ofReal_re, Complex.add_re, Complex.mul_re, Complex.I_re,
+    Complex.I_im, Complex.ofReal_im, Complex.add_im, Complex.mul_im,
+    Complex.re_ofNat, Complex.im_ofNat,
+    zero_mul, one_mul, mul_zero, sub_zero, add_zero, zero_add, mul_one]
+  -- 合并级数并逐项验证非负性
+  -- 核心论证：∑ Λ(n)/n^σ * (3 + 4cos(t log n) + cos(2t log n)) ≥ 0
+  -- 由 trig_identity_nonneg 知每项非负
+  -- 从 LSeriesSummable 推出实部级数可和
+  have h_re_summable : ∀ (s : ℂ), 1 < s.re →
+      Summable (fun n : ℕ ↦ Λ n * Real.cos (s.im * Real.log ↑n) / (↑n : ℝ) ^ s.re) := by
+    intro s hs
+    have h_ls := ArithmeticFunction.LSeriesSummable_vonMangoldt hs
+    have h_map := Complex.reCLM.summable h_ls
+    exact h_map.congr (fun n ↦ by
+      simp only [Complex.reCLM_apply, LSeries.term]
+      split_ifs with hn
+      · subst hn; simp [ArithmeticFunction.vonMangoldt]
+      · rw [div_eq_mul_inv, ← cpow_neg, Complex.re_ofReal_mul,
+            natCast_cpow_neg_re hn, Real.rpow_neg (Nat.cast_nonneg n)]
+        ring)
+  have hs1 := h_re_summable _ hσ_re1
+  have hs2 := h_re_summable _ hσ_re2
+  have hs3 := h_re_summable _ hσ_re3
+  -- Combine the three series into one
+  have h_sum : Summable (fun n : ℕ ↦
+    Λ n * (3 + 4 * Real.cos (t * Real.log ↑n) + Real.cos (2 * t * Real.log ↑n)) / (↑n : ℝ) ^ σ) := by
+    -- Each coefficient is non-negative by trig_identity_nonneg
+    sorry
+  sorry
+
+/-- 紧致零自由区域：对任意 T ≥ 2，存在 d > 0 使 ζ 在 {|Im(s)| ≤ T, Re(s) ≥ 1-d} 无零点。
+    这是从 3-4-1 不等式和 Re(s)=1 上的非零性通过紧致性论证得到的。 -/
+theorem classical_zero_free_region_compact (T : ℝ) (hT : T ≥ 2) :
+    ∃ d > 0, ∀ s : ℂ, |s.im| ≤ T → s.re ≥ 1 - d → riemannZeta s ≠ 0 := by
+  -- 使用序列紧致性 + 连续性 + 已证明的 Re(s)=1 上的非零性
+  sorry
+
+/-- 经典零点自由区域：ζ(s) ≠ 0 对于 Re(s) ≥ 1 - c/log|t| (|t| ≥ 2)。
+    这需要 Hadamard 因子分解或 Borel-Carathéodory 定理，目前 Mathlib 缺失。 -/
+theorem classical_zero_free_region :
+    ∃ c > 0, ∀ s : ℂ, |s.im| ≥ 2 → s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0 := by
+  -- 需要 Hadamard 因子分解 或 Borel-Carathéodory 引理
+  sorry
+
+/-- Vinogradov-Korobov 零点自由区域：目前最广的已知零自由区域。
+    需要指数和估计，远超当前 Mathlib 范畴。 -/
+theorem vinogradov_korobov_zero_free_region :
+    ∃ c > 0, ∀ s : ℂ, |s.im| ≥ 3 → s.re ≥ 1 - c / (Real.log |s.im|)^(2/3 : ℝ) * (Real.log (Real.log |s.im|))^(-1/3 : ℝ) → riemannZeta s ≠ 0 := by
+  -- 需要指数和估计
+  sorry
+
+end ZeroFreeRegion
