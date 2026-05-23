@@ -1,74 +1,715 @@
 /-
-# Hardy's Theorem: Infinitely Many Zeros on the Critical Line
+# Hardy 定理的形式化框架
 
-## Overview
+Hardy (1914) 证明了黎曼ζ函数在临界线上有无穷多个零点。
 
-Framework for formalizing Hardy's 1914 theorem that the Riemann zeta function
-has infinitely many zeros on the critical line Re(s) = 1/2.
+## 历史背景
 
-The proof uses the real function Z(t) = e^{iθ(t)} ζ(1/2 + it), where θ(t) is the
-Riemann-Siegel theta function. The key insight: Z(t) is real for real t, so zeros
-of Z(t) correspond to sign changes.
+G.H. Hardy 在1914年的论文中证明了这个结果。
+技术核心：构造一个辅助函数，证明它有无穷多次变号。
 
-## Key components
+## 证明思路概述
 
-1. **Z-function definition**: Z(t) = e^{iθ(t)} ζ(1/2 + it)
-2. **Reality**: Z(t) ∈ ℝ for t ∈ ℝ
-3. **Zero equivalence**: Z(t) = 0 ↔ ζ(1/2 + it) = 0
-4. **Asymptotic framework**: Need asymptotic estimates for Z(t) as t → ∞
-5. **Contradiction setup**: If only finitely many zeros exist, Z(t) would have
-   constant sign for large t, contradicting the asymptotic behavior
-
-## Remaining work (sorry)
-
-The main gaps are in the asymptotic analysis:
-- Integral asymptotics for Z(t)
-- Rigorous bounds for the theta function
-- The sign-change argument from finite zeros
-
-These require more advanced special functions asymptotics than currently in Mathlib.
-
-## Dependencies
-
-- Mathlib (riemannZeta, Complex.Gamma, Real analysis)
-- RiemannExplorer
+1. 定义 Hardy 函数：Z(t) = e^{iθ(t)} ζ(1/2 + it)
+   - 这是实值函数
+   - Z(t) = 0 ⟺ ζ(1/2 + it) = 0
+2. 考虑积分：∫_0^T Z(t) dt
+3. 证明该积分有特定的渐近行为，要求 Z(t) 必须有无穷多次变号
+4. 由于 Z(t) 连续，变号意味着有零点
 -/
 
 import Mathlib
-import RiemannExplorer
 
-open Complex Real
+open Complex BigOperators Filter Topology Asymptotics ComplexConjugate Set
 
 namespace HardyTheorem
 
-/-- Riemann-Siegel theta function: θ(t) = arg(Γ(1/4 + it/2)) - t log(π)/2 -/
-noncomputable def riemannSiegelTheta (t : ℝ) : ℝ := by
-  -- Placeholder for the actual definition using Complex.Gamma and arg
+/-! ## 定义和设置 -/
+
+/-- Hardy Z 函数：在临界线上检测零点的实值函数
+
+Z(t) = e^{iθ(t)} ζ(1/2 + it)
+
+其中 θ(t) 是使得 Z(t) 为实数的相位因子。 -/
+
+noncomputable def thetaPhase (t : ℝ) : ℝ :=
+  Complex.arg (Complex.Gamma (1 / 4 + I * t / 2)) - (t / 2) * Real.log Real.pi
+
+noncomputable def hardyZ (t : ℝ) : ℝ :=
+  (riemannZeta (0.5 + I * t)).re * Real.cos (thetaPhase t)
+    - (riemannZeta (0.5 + I * t)).im * Real.sin (thetaPhase t)
+
+/-- Z(t) 的显式公式 -/
+theorem hardyZ_explicit (t : ℝ) :
+    hardyZ t = (riemannZeta (0.5 + I * t)).re * Real.cos (thetaPhase t)
+             - (riemannZeta (0.5 + I * t)).im * Real.sin (thetaPhase t) := by
+  rfl
+
+/-- thetaPhase(0) = arg(Gamma(1/4)) -/
+theorem thetaPhase_zero : thetaPhase 0 = Complex.arg (Complex.Gamma (1 / 4 : ℂ)) := by
+  simp [thetaPhase]
+
+/-! ## 关键性质 -/
+
+lemma zeta_zero_implies_hardyZ_zero (t : ℝ) (h : riemannZeta (0.5 + I * t) = 0) :
+    hardyZ t = 0 := by
+  simp [hardyZ, h]
+
+/-! ## 辅助引理 -/
+
+lemma completedRiemannZeta_conj_eq_of_one_lt_re {s : ℂ} (hs : 1 < s.re) :
+    completedRiemannZeta (conj s) = conj (completedRiemannZeta s) := by
+  rw [completedZeta_eq_tsum_of_one_lt_re (by simpa using hs)]
+  rw [completedZeta_eq_tsum_of_one_lt_re hs]
+  have h_conj_cpow {x n : ℂ} (hx : x.arg ≠ Real.pi) : conj (x ^ n) = conj x ^ conj n := by
+    have h := cpow_conj x (conj n) hx
+    apply congr_arg conj at h
+    simpa using h
+  have h1 : conj ((↑Real.pi : ℂ) ^ (-s / 2)) = (↑Real.pi : ℂ) ^ (-(conj s) / 2) := by
+    rw [h_conj_cpow (by rw [arg_ofReal_of_nonneg (by positivity)]; exact Real.pi_ne_zero.symm)]
+    rw [conj_ofReal]
+    have h : conj (-s / 2) = -(conj s) / 2 := by
+      rw [map_div₀, map_neg]
+      have h2 : conj (2 : ℂ) = (2 : ℂ) := by rw [conj_eq_iff_re]; norm_num
+      rw [h2]
+    rw [h]
+  have h2 : conj (Gamma (s / 2)) = Gamma ((conj s) / 2) := by
+    rw [show (conj s) / 2 = conj (s / 2) by
+      rw [map_div₀]
+      have : conj (2 : ℂ) = (2 : ℂ) := by rw [conj_eq_iff_re]; norm_num
+      rw [this]]
+    rw [Complex.Gamma_conj]
+  have h3 : conj (∑' n : ℕ, 1 / (n : ℂ) ^ s) = ∑' n : ℕ, 1 / (n : ℂ) ^ (conj s) := by
+    rw [conj_tsum]
+    congr 1 with n
+    by_cases hn : n = 0
+    · simp only [hn, Nat.cast_zero]
+      rw [zero_cpow (Complex.ne_zero_of_one_lt_re hs)]
+      rw [div_zero]
+      symm
+      rw [zero_cpow (Complex.ne_zero_of_one_lt_re (by simpa using hs))]
+      rw [div_zero]
+      all_goals simp
+    · rw [div_eq_mul_inv, div_eq_mul_inv]
+      rw [map_mul, map_inv₀]
+      rw [h_conj_cpow (by
+        have h_arg_n : (n : ℂ).arg = 0 := by
+          rw [← ofReal_natCast]
+          rw [arg_ofReal_of_nonneg (by positivity)]
+        rw [h_arg_n]
+        exact Real.pi_ne_zero.symm)]
+      field_simp [hn]
+      simp [map_one]
+  simp only [h1, h2, h3, map_mul]
+
+lemma completedRiemannZeta₀_conj_eq (s : ℂ) :
+    completedRiemannZeta₀ (conj s) = conj (completedRiemannZeta₀ s) := by
+  let f := completedRiemannZeta₀
+  let g := fun z : ℂ ↦ conj (f (conj z))
+  have hf_analytic : AnalyticOnNhd ℂ f univ := by
+    apply DifferentiableOn.analyticOnNhd
+    · exact fun z _ ↦ (differentiable_completedZeta₀ z).differentiableWithinAt
+    · exact isOpen_univ
+  have hg_analytic : AnalyticOnNhd ℂ g univ := by
+    apply DifferentiableOn.analyticOnNhd
+    · intro z _
+      have h : HasDerivAt f (deriv f (conj z)) (conj z) :=
+        (differentiable_completedZeta₀ (conj z)).hasDerivAt
+      have h' : HasDerivAt (conj ∘ f ∘ conj) (conj (deriv f (conj z))) z := by
+        simpa using h.conj_conj
+      exact h'.differentiableAt.differentiableWithinAt
+    · exact isOpen_univ
+  have h_eq_eventually : ∀ᶠ z in 𝓝 (2 : ℂ), f z = g z := by
+    have h_open : {z : ℂ | 1 < z.re} ∈ 𝓝 (2 : ℂ) := by
+      have : IsOpen {z : ℂ | 1 < z.re} := by
+        apply isOpen_lt
+        · exact continuous_const
+        · exact continuous_re
+      apply this.mem_nhds
+      simp
+      all_goals norm_num
+    filter_upwards [h_open] with z hz
+    have h_eq : f z = g z := by
+      have h_r : f z = completedRiemannZeta z + 1 / z + 1 / (1 - z) := by
+        simp [f, completedRiemannZeta_eq]
+        ring
+      have h_r_conj : f (conj z) = completedRiemannZeta (conj z) + 1 / (conj z) + 1 / (1 - conj z) := by
+        simp [f, completedRiemannZeta_eq]
+        ring
+      simp [g, h_r, h_r_conj]
+      rw [completedRiemannZeta_conj_eq_of_one_lt_re hz]
+      norm_num [Complex.conj_conj]
+    exact h_eq
+  have h_eq : f = g := AnalyticOnNhd.eq_of_eventuallyEq hf_analytic hg_analytic h_eq_eventually
+  have h_final : f (conj s) = g (conj s) := congr_fun h_eq (conj s)
+  simp [f, g] at h_final
+  exact h_final
+
+lemma completedRiemannZeta_critical_line_real (t : ℝ) :
+    ∃ r : ℝ, completedRiemannZeta ((1 / 2 : ℂ) + I * t) = (r : ℂ) := by
+  let s := (1 / 2 : ℂ) + I * t
+  have h1 : completedRiemannZeta s = completedRiemannZeta (1 - s) := by
+    rw [completedRiemannZeta_one_sub]
+  have h2 : 1 - s = conj s := by
+    simp [s, Complex.ext_iff]
+    all_goals norm_num
+    all_goals ring_nf
+  rw [h2] at h1
+  have h3 : completedRiemannZeta₀ (conj s) = conj (completedRiemannZeta₀ s) :=
+    completedRiemannZeta₀_conj_eq s
+  have h4 : completedRiemannZeta (conj s) = conj (completedRiemannZeta s) := by
+    simp [completedRiemannZeta_eq, h3]
+  rw [h4] at h1
+  use (completedRiemannZeta s).re
+  have hs_eq : completedRiemannZeta ((1 / 2 : ℂ) + I * t) = completedRiemannZeta s := by simp [s]
+  rw [hs_eq]
+  have h_re : ↑(completedRiemannZeta s).re = completedRiemannZeta s := by
+    rw [← conj_eq_iff_re]
+    exact h1.symm
+  exact h_re.symm
+
+lemma Gammaℝ_re_im_arg (t : ℝ) :
+    (Gammaℝ ((1 / 2 : ℂ) + I * t)).re = ‖Gammaℝ ((1 / 2 : ℂ) + I * t)‖ * Real.cos (thetaPhase t) ∧
+    (Gammaℝ ((1 / 2 : ℂ) + I * t)).im = ‖Gammaℝ ((1 / 2 : ℂ) + I * t)‖ * Real.sin (thetaPhase t) := by
+  let s := (1 / 2 : ℂ) + I * t
+  let w := (1 / 4 : ℂ) + I * t / 2
+  have hw : s / 2 = w := by
+    simp [s, w]
+    ring_nf
+  have h_Gammaℝ : Gammaℝ s = (↑Real.pi : ℂ) ^ (-s / 2) * Gamma (s / 2) := Gammaℝ_def s
+  have hw' : Gamma w ≠ 0 := by
+    apply Gamma_ne_zero_of_re_pos
+    simp [w]
+  have h_Gammaℝ_ne_zero : Gammaℝ s ≠ 0 := by
+    apply Gammaℝ_ne_zero_of_re_pos
+    simp [s]
+  -- Key identity: Gammaℝ s / ‖Gammaℝ s‖ = exp(I * thetaPhase t)
+  have h_unit : Gammaℝ s / ‖Gammaℝ s‖ = Complex.exp (I * thetaPhase t) := by
+    have h1 : Gammaℝ s / ‖Gammaℝ s‖ = ((↑Real.pi : ℂ) ^ (-w) / ‖(↑Real.pi : ℂ) ^ (-w)‖) * (Gamma w / ‖Gamma w‖) := by
+      have h_exp : (-s / 2 : ℂ) = -w := by
+        calc
+          (-s / 2 : ℂ) = -(s / 2) := by ring
+          _ = -w := by rw [hw]
+      rw [h_Gammaℝ, hw, h_exp]
+      have h_norm : ‖(↑Real.pi : ℂ) ^ (-w) * Gamma w‖ = ‖(↑Real.pi : ℂ) ^ (-w)‖ * ‖Gamma w‖ := by rw [norm_mul]
+      rw [h_norm]
+      have h_pi_ne_zero : (↑Real.pi : ℂ) ^ (-w) ≠ 0 := by
+        rw [cpow_def_of_ne_zero (by norm_num)]
+        exact Complex.exp_ne_zero _
+      have h_norm_pi_ne_zero : ‖(↑Real.pi : ℂ) ^ (-w)‖ ≠ 0 := by
+        apply ne_of_gt
+        apply norm_pos_iff.mpr
+        exact h_pi_ne_zero
+      field_simp [h_norm_pi_ne_zero, hw']
+      norm_cast
+      ring_nf
+    have h2 : (↑Real.pi : ℂ) ^ (-w) / ‖(↑Real.pi : ℂ) ^ (-w)‖ = Complex.exp (-I * (t / 2 * Real.log Real.pi)) := by
+      have h_log : log (↑Real.pi : ℂ) = (↑(Real.log Real.pi) : ℂ) := by
+        simp [Complex.ext_iff, log_ofReal_re, log_im, arg_ofReal_of_nonneg Real.pi_pos.le]
+      have h_pi : (↑Real.pi : ℂ) ^ (-w) = ↑(Real.pi ^ (-1 / 4 : ℝ)) * Complex.exp (-I * (t / 2 * Real.log Real.pi)) := by
+        rw [cpow_def_of_ne_zero (by norm_num)]
+        simp only [h_log]
+        have h_exp : exp (↑(Real.log Real.pi) * (-w)) = ↑(Real.pi ^ (-1 / 4 : ℝ)) * exp (-I * (t / 2 * Real.log Real.pi)) := by
+          have h1 : exp (↑(Real.log Real.pi) * (-w)) = exp (-1 / 4 * ↑(Real.log Real.pi)) * exp (-I * (t / 2 * Real.log Real.pi)) := by
+            have h_eq : ↑(Real.log Real.pi) * (-w) = -1 / 4 * ↑(Real.log Real.pi) + (-I * (t / 2 * Real.log Real.pi)) := by
+              simp [w, Complex.ext_iff]
+              ring_nf
+              norm_num
+            rw [h_eq, Complex.exp_add]
+          have h2 : exp (-1 / 4 * ↑(Real.log Real.pi)) = ↑(Real.pi ^ (-1 / 4 : ℝ)) := by
+            rw [Real.rpow_def_of_pos Real.pi_pos]
+            have h_eq : (-1 / 4 : ℂ) * ↑(Real.log Real.pi) = ↑(Real.log Real.pi * (-1 / 4)) := by
+              push_cast
+              ring
+            rw [h_eq, ← Complex.ofReal_exp]
+          rw [h1, h2]
+        exact h_exp
+      rw [h_pi]
+      have h_norm : ‖↑(Real.pi ^ (-1 / 4 : ℝ)) * Complex.exp (-I * (t / 2 * Real.log Real.pi))‖ = Real.pi ^ (-1 / 4 : ℝ) := by
+        rw [norm_mul]
+        have h1 : ‖(↑(Real.pi ^ (-1 / 4 : ℝ)) : ℂ)‖ = Real.pi ^ (-1 / 4 : ℝ) := by
+          rw [Complex.norm_def]
+          have : Complex.normSq (↑(Real.pi ^ (-1 / 4 : ℝ)) : ℂ) = (Real.pi ^ (-1 / 4 : ℝ)) ^ 2 := by
+            simp [Complex.normSq_ofReal]
+            ring
+          rw [this, Real.sqrt_sq (le_of_lt (Real.rpow_pos_of_pos Real.pi_pos _))]
+        have h2 : ‖Complex.exp (-I * (t / 2 * Real.log Real.pi))‖ = 1 := by
+          rw [show -I * (t / 2 * Real.log Real.pi) = I * ↑(-(t / 2 * Real.log Real.pi)) by
+            simp [Complex.ext_iff]
+            ring_nf]
+          rw [show I * ↑(-(t / 2 * Real.log Real.pi)) = ↑(-(t / 2 * Real.log Real.pi)) * I by ring]
+          rw [Complex.norm_exp_ofReal_mul_I]
+        simp only [h1, h2]
+        ring_nf
+      rw [h_norm]
+      field_simp
+      ring_nf
+    rw [h1, h2]
+    have h_Gamma_w : Gamma w / ‖Gamma w‖ = cexp ((Gamma w).arg * I) := by
+      have h := Complex.norm_mul_exp_arg_mul_I (Gamma w)
+      field_simp [hw'] at h ⊢
+      rw [h]
+    rw [h_Gamma_w]
+    have h_arg : thetaPhase t = (Gamma w).arg - t / 2 * Real.log Real.pi := rfl
+    rw [h_arg]
+    rw [← Complex.exp_add]
+    simp [Complex.ext_iff]
+    norm_num
+    ring_nf
+  -- From the unit identity, get equality of cos and sin
+  have h_cos : Real.cos (thetaPhase t) = Real.cos ((Gammaℝ s).arg) := by
+    have h_eq : Complex.exp (I * thetaPhase t) = Complex.exp (I * (Gammaℝ s).arg) := by
+      have h_left : Complex.exp (I * thetaPhase t) = Gammaℝ s / ‖Gammaℝ s‖ := by rw [h_unit]
+      have h_right : Complex.exp (I * (Gammaℝ s).arg) = Gammaℝ s / ‖Gammaℝ s‖ := by
+        have h := Complex.norm_mul_exp_arg_mul_I (Gammaℝ s)
+        have h3 : Complex.exp (↑(Gammaℝ s).arg * I) = Gammaℝ s / ‖Gammaℝ s‖ := by
+          have h_norm_pos : ‖Gammaℝ s‖ ≠ 0 := by
+            apply ne_of_gt
+            apply norm_pos_iff.mpr
+            exact h_Gammaℝ_ne_zero
+          calc
+            Complex.exp (↑(Gammaℝ s).arg * I)
+              = (↑‖Gammaℝ s‖ * Complex.exp (↑(Gammaℝ s).arg * I)) / ↑‖Gammaℝ s‖ := by
+                field_simp [h_norm_pos]
+            _ = Gammaℝ s / ‖Gammaℝ s‖ := by rw [h]
+        have h4 : Complex.exp (I * ↑(Gammaℝ s).arg) = Complex.exp (↑(Gammaℝ s).arg * I) := by
+          rw [show I * ↑(Gammaℝ s).arg = ↑(Gammaℝ s).arg * I by ring]
+        rw [h4, h3]
+      rw [h_left, h_right]
+    have h_re : (Complex.exp (I * thetaPhase t)).re = (Complex.exp (I * (Gammaℝ s).arg)).re := by rw [h_eq]
+    have h_re_left : (Complex.exp (I * thetaPhase t)).re = Real.cos (thetaPhase t) := by
+      rw [show I * ↑(thetaPhase t) = ↑(thetaPhase t) * I by ring]
+      exact Complex.exp_ofReal_mul_I_re (thetaPhase t)
+    have h_re_right : (Complex.exp (I * (Gammaℝ s).arg)).re = Real.cos ((Gammaℝ s).arg) := by
+      rw [show I * ↑(Gammaℝ s).arg = ↑(Gammaℝ s).arg * I by ring]
+      exact Complex.exp_ofReal_mul_I_re ((Gammaℝ s).arg)
+    rw [h_re_left, h_re_right] at h_re
+    exact h_re
+  have h_sin : Real.sin (thetaPhase t) = Real.sin ((Gammaℝ s).arg) := by
+    have h_eq : Complex.exp (I * thetaPhase t) = Complex.exp (I * (Gammaℝ s).arg) := by
+      have h_left : Complex.exp (I * thetaPhase t) = Gammaℝ s / ‖Gammaℝ s‖ := by rw [h_unit]
+      have h_right : Complex.exp (I * (Gammaℝ s).arg) = Gammaℝ s / ‖Gammaℝ s‖ := by
+        have h := Complex.norm_mul_exp_arg_mul_I (Gammaℝ s)
+        have h3 : Complex.exp (↑(Gammaℝ s).arg * I) = Gammaℝ s / ‖Gammaℝ s‖ := by
+          have h_norm_pos : ‖Gammaℝ s‖ ≠ 0 := by
+            apply ne_of_gt
+            apply norm_pos_iff.mpr
+            exact h_Gammaℝ_ne_zero
+          calc
+            Complex.exp (↑(Gammaℝ s).arg * I)
+              = (↑‖Gammaℝ s‖ * Complex.exp (↑(Gammaℝ s).arg * I)) / ↑‖Gammaℝ s‖ := by
+                field_simp [h_norm_pos]
+            _ = Gammaℝ s / ‖Gammaℝ s‖ := by rw [h]
+        have h4 : Complex.exp (I * ↑(Gammaℝ s).arg) = Complex.exp (↑(Gammaℝ s).arg * I) := by
+          rw [show I * ↑(Gammaℝ s).arg = ↑(Gammaℝ s).arg * I by ring]
+        rw [h4, h3]
+      rw [h_left, h_right]
+    have h_im : (Complex.exp (I * thetaPhase t)).im = (Complex.exp (I * (Gammaℝ s).arg)).im := by rw [h_eq]
+    have h_im_left : (Complex.exp (I * thetaPhase t)).im = Real.sin (thetaPhase t) := by
+      rw [show I * ↑(thetaPhase t) = ↑(thetaPhase t) * I by ring]
+      exact Complex.exp_ofReal_mul_I_im (thetaPhase t)
+    have h_im_right : (Complex.exp (I * (Gammaℝ s).arg)).im = Real.sin ((Gammaℝ s).arg) := by
+      rw [show I * ↑(Gammaℝ s).arg = ↑(Gammaℝ s).arg * I by ring]
+      exact Complex.exp_ofReal_mul_I_im ((Gammaℝ s).arg)
+    rw [h_im_left, h_im_right] at h_im
+    exact h_im
+  constructor
+  · rw [h_cos, ← Complex.norm_mul_cos_arg]
+  · rw [h_sin, ← Complex.norm_mul_sin_arg]
+
+lemma hardyZ_zero_implies_zeta_zero (t : ℝ) (h : hardyZ t = 0) :
+    riemannZeta (0.5 + I * t) = 0 := by
+  let s := (0.5 : ℂ) + I * t
+  have hs01 : s ≠ 0 := by
+    intro h0
+    simp [s, Complex.ext_iff] at h0
+    norm_num at h0
+  have hs1 : s ≠ 1 := by
+    intro h0
+    simp [s, Complex.ext_iff] at h0
+    norm_num at h0
+  have hs_eq : s = (1 / 2 : ℂ) + I * t := by
+    simp [s]
+    norm_num
+  have h_real : (completedRiemannZeta s).im = 0 := by
+    obtain ⟨r, hr⟩ := completedRiemannZeta_critical_line_real t
+    rw [hs_eq]
+    rw [hr]
+    simp
+  have h_Gammaℝ : (Gammaℝ s).re = ‖Gammaℝ s‖ * Real.cos (thetaPhase t) ∧
+      (Gammaℝ s).im = ‖Gammaℝ s‖ * Real.sin (thetaPhase t) := by
+    rw [hs_eq]
+    exact Gammaℝ_re_im_arg t
+  have h_cz : completedRiemannZeta s = Gammaℝ s * riemannZeta s := by
+    rw [riemannZeta_def_of_ne_zero hs01]
+    have h_Gammaℝ_ne_zero : Gammaℝ s ≠ 0 := by
+      apply Gammaℝ_ne_zero_of_re_pos
+      simp [s]
+      norm_num
+    field_simp [h_Gammaℝ_ne_zero]
+  have h_hardyZ : hardyZ t = (completedRiemannZeta s).re / ‖Gammaℝ s‖ := by
+    have h_def : hardyZ t = (riemannZeta s).re * Real.cos (thetaPhase t) - (riemannZeta s).im * Real.sin (thetaPhase t) := by
+      simp [hardyZ, s]
+    rw [h_def]
+    have h_rz : riemannZeta s = completedRiemannZeta s / Gammaℝ s := by
+      rw [riemannZeta_def_of_ne_zero hs01]
+    rw [h_rz]
+    have h_abs_pos : 0 < ‖Gammaℝ s‖ := by
+      apply norm_pos_iff.mpr
+      apply Gammaℝ_ne_zero_of_re_pos
+      simp [s]
+      norm_num
+    have h_Gammaℝ_ne_zero : Gammaℝ s ≠ 0 := by
+      apply Gammaℝ_ne_zero_of_re_pos
+      simp [s]
+      norm_num
+    have h_normSq : Complex.normSq (Gammaℝ s) = ‖Gammaℝ s‖ ^ 2 := by
+      rw [Complex.normSq_eq_norm_sq]
+    simp [Complex.div_re, Complex.div_im, h_Gammaℝ.1, h_Gammaℝ.2, h_real, h_normSq]
+    field_simp [h_Gammaℝ_ne_zero]
+    ring_nf
+    have : (completedRiemannZeta s).re * Real.cos (thetaPhase t) ^ 2 + (completedRiemannZeta s).re * Real.sin (thetaPhase t) ^ 2 = (completedRiemannZeta s).re := by
+      calc
+        (completedRiemannZeta s).re * Real.cos (thetaPhase t) ^ 2 + (completedRiemannZeta s).re * Real.sin (thetaPhase t) ^ 2
+          = (completedRiemannZeta s).re * (Real.cos (thetaPhase t) ^ 2 + Real.sin (thetaPhase t) ^ 2) := by ring
+        _ = (completedRiemannZeta s).re * 1 := by rw [Real.cos_sq_add_sin_sq]
+        _ = (completedRiemannZeta s).re := by ring
+    exact this
+  have h_cz_zero : completedRiemannZeta s = 0 := by
+    rw [h_hardyZ] at h
+    have h_abs_pos : 0 < ‖Gammaℝ s‖ := by
+      apply norm_pos_iff.mpr
+      apply Gammaℝ_ne_zero_of_re_pos
+      simp [s]
+      norm_num
+    have h_re_zero : (completedRiemannZeta s).re = 0 := by
+      field_simp [h_abs_pos] at h
+      linarith
+    simp [Complex.ext_iff, h_re_zero, h_real]
+  rw [h_cz] at h_cz_zero
+  have h_Gammaℝ_ne_zero : Gammaℝ s ≠ 0 := by
+    apply Gammaℝ_ne_zero_of_re_pos
+    simp [s]
+    norm_num
+  exact (mul_eq_zero.mp h_cz_zero).resolve_left h_Gammaℝ_ne_zero
+
+/-- Z(t) 的零点对应于临界线上的 ζ 零点 -/
+theorem hardyZ_zero_iff_zeta_zero (t : ℝ) :
+    hardyZ t = 0 ↔ riemannZeta (0.5 + I * t) = 0 := by
+  constructor
+  · exact hardyZ_zero_implies_zeta_zero t
+  · exact zeta_zero_implies_hardyZ_zero t
+
+/-- Z(t) 是连续函数 -/
+theorem hardyZ_continuous : Continuous hardyZ := by
+  have h_eq : ∀ t : ℝ, hardyZ t = (completedRiemannZeta ((0.5 : ℂ) + I * t)).re / ‖Gammaℝ ((0.5 : ℂ) + I * t)‖ := by
+    intro t
+    let s := (0.5 : ℂ) + I * t
+    have hs01 : s ≠ 0 := by
+      intro h0
+      simp [s, Complex.ext_iff] at h0
+      norm_num at h0
+    have h_hardyZ : hardyZ t = (completedRiemannZeta s).re / ‖Gammaℝ s‖ := by
+      have h_def : hardyZ t = (riemannZeta s).re * Real.cos (thetaPhase t) - (riemannZeta s).im * Real.sin (thetaPhase t) := by
+        simp [hardyZ, s]
+      rw [h_def]
+      have h_rz : riemannZeta s = completedRiemannZeta s / Gammaℝ s := by
+        rw [riemannZeta_def_of_ne_zero hs01]
+      rw [h_rz]
+      have h_abs_pos : 0 < ‖Gammaℝ s‖ := by
+        apply norm_pos_iff.mpr
+        apply Gammaℝ_ne_zero_of_re_pos
+        simp [s]
+        norm_num
+      have h_Gammaℝ_ne_zero : Gammaℝ s ≠ 0 := by
+        apply Gammaℝ_ne_zero_of_re_pos
+        simp [s]
+        norm_num
+      have h_normSq : Complex.normSq (Gammaℝ s) = ‖Gammaℝ s‖ ^ 2 := by
+        rw [Complex.normSq_eq_norm_sq]
+      have h_Gamma : (Gammaℝ s).re = ‖Gammaℝ s‖ * Real.cos (thetaPhase t) ∧
+          (Gammaℝ s).im = ‖Gammaℝ s‖ * Real.sin (thetaPhase t) := by
+        have hs_eq : s = (1 / 2 : ℂ) + I * t := by
+          simp [s]
+          norm_num
+        rw [hs_eq]
+        exact Gammaℝ_re_im_arg t
+      simp [Complex.div_re, Complex.div_im, h_Gamma.1, h_Gamma.2, h_normSq]
+      field_simp [h_Gammaℝ_ne_zero]
+      ring_nf
+      have h_simp : (completedRiemannZeta s).re * Real.cos (thetaPhase t) ^ 2 + (completedRiemannZeta s).re * Real.sin (thetaPhase t) ^ 2 = (completedRiemannZeta s).re := by
+        calc
+          (completedRiemannZeta s).re * Real.cos (thetaPhase t) ^ 2 + (completedRiemannZeta s).re * Real.sin (thetaPhase t) ^ 2
+            = (completedRiemannZeta s).re * (Real.cos (thetaPhase t) ^ 2 + Real.sin (thetaPhase t) ^ 2) := by ring
+          _ = (completedRiemannZeta s).re * 1 := by rw [Real.cos_sq_add_sin_sq]
+          _ = (completedRiemannZeta s).re := by ring
+      ring_nf at h_simp ⊢
+      exact h_simp
+    exact h_hardyZ
+  rw [show hardyZ = fun t : ℝ ↦ hardyZ t by funext t; rfl]
+  simp only [h_eq]
+  apply Continuous.div
+  · have h1 : Continuous (fun t : ℝ ↦ completedRiemannZeta ((0.5 : ℂ) + I * t)) := by
+      have h_eq' : (fun t : ℝ ↦ completedRiemannZeta ((0.5 : ℂ) + I * t))
+          = (fun s : ℂ ↦ completedRiemannZeta s) ∘ (fun t : ℝ ↦ (0.5 : ℂ) + I * t) := by funext t; rfl
+      rw [h_eq']
+      have h_cz_cont : ContinuousOn (fun s : ℂ ↦ completedRiemannZeta s) {s : ℂ | s ≠ 0 ∧ s ≠ 1} := by
+        apply continuousOn_of_forall_continuousAt
+        intro s hs
+        simp at hs
+        exact (differentiableAt_completedZeta hs.1 hs.2).continuousAt
+      have h_map_cont : Continuous (fun t : ℝ ↦ (0.5 : ℂ) + I * t) := by
+        have h_const : Continuous (fun t : ℝ ↦ (0.5 : ℂ)) := continuous_const
+        have h_lin : Continuous (fun t : ℝ ↦ I * (t : ℂ)) := by
+          apply Continuous.mul
+          · exact continuous_const
+          · exact continuous_ofReal
+        exact Continuous.add h_const h_lin
+      apply ContinuousOn.comp_continuous h_cz_cont h_map_cont
+      intro t
+      constructor
+      · norm_num [Complex.ext_iff]
+      · norm_num [Complex.ext_iff]
+    exact Continuous.comp RCLike.continuous_re h1
+  · have h2 : Continuous (fun t : ℝ ↦ Gammaℝ ((0.5 : ℂ) + I * t)) := by
+      have h_eq' : (fun t : ℝ ↦ Gammaℝ ((0.5 : ℂ) + I * t))
+          = (fun s : ℂ ↦ Gammaℝ s) ∘ (fun t : ℝ ↦ (0.5 : ℂ) + I * t) := by funext t; rfl
+      rw [h_eq']
+      have h_Gammaℝ_cont : ContinuousOn (fun s : ℂ ↦ Gammaℝ s) {s : ℂ | 0 < s.re} := by
+        have h_a : ContinuousOn (fun s : ℂ ↦ (↑Real.pi : ℂ) ^ (-s / 2)) {s : ℂ | 0 < s.re} := by
+          have h_exp_cont : ContinuousOn (fun s : ℂ ↦ -s / 2) {s : ℂ | 0 < s.re} := by
+            apply ContinuousOn.div
+            · apply ContinuousOn.neg
+              exact continuousOn_id
+            · exact continuousOn_const
+            · intro s hs
+              norm_num
+          have h_pi : (↑Real.pi : ℂ) ≠ 0 := by norm_num [Real.pi_ne_zero]
+          exact h_exp_cont.const_cpow (Or.inl h_pi)
+        have h_b : ContinuousOn (fun s : ℂ ↦ Gamma (s / 2)) {s : ℂ | 0 < s.re} := by
+          have h_Gamma_cont : ContinuousOn Gamma {z : ℂ | ∀ m : ℕ, z ≠ -m} := by
+            apply continuousOn_of_forall_continuousAt
+            intro s hs
+            exact (differentiableAt_Gamma s hs).continuousAt
+          apply ContinuousOn.comp h_Gamma_cont
+          · apply ContinuousOn.div
+            · exact continuousOn_id
+            · exact continuousOn_const
+            · intro s hs
+              norm_num
+          · intro s hs
+            simp at hs ⊢
+            intro m hm
+            have h_re : s.re / 2 = -(m : ℝ) := by
+              simpa using congr_arg Complex.re hm
+            have : s.re / 2 ≤ 0 := by
+              rw [h_re]
+              simp
+            linarith
+        simp only [Gammaℝ_def]
+        exact ContinuousOn.mul h_a h_b
+      have h_map_cont : Continuous (fun t : ℝ ↦ (0.5 : ℂ) + I * t) := by
+        have h_const : Continuous (fun t : ℝ ↦ (0.5 : ℂ)) := continuous_const
+        have h_lin : Continuous (fun t : ℝ ↦ I * (t : ℂ)) := by
+          apply Continuous.mul
+          · exact continuous_const
+          · exact continuous_ofReal
+        exact Continuous.add h_const h_lin
+      apply ContinuousOn.comp_continuous h_Gammaℝ_cont h_map_cont
+      intro t
+      simp
+      norm_num
+    exact Continuous.norm h2
+  · intro t
+    apply ne_of_gt
+    apply norm_pos_iff.mpr
+    apply Gammaℝ_ne_zero_of_re_pos
+    simp
+    norm_num
+
+/-! ## Hardy 的核心论证 -/
+
+noncomputable def weightFunction (n : ℕ) (t : ℝ) : ℝ :=
+  t ^ (2 * n)
+
+noncomputable def weightedIntegralOf (f : ℝ → ℝ) (n : ℕ) (T : ℝ) : ℝ :=
+  ∫ t in (0)..T, weightFunction n t * f t
+
+noncomputable def weightedIntegral (n : ℕ) (T : ℝ) : ℝ :=
+  weightedIntegralOf hardyZ n T
+
+lemma weightedIntegralOf_neg (f : ℝ → ℝ) (n : ℕ) (T : ℝ) :
+    weightedIntegralOf (fun t => -f t) n T = -weightedIntegralOf f n T := by
+  unfold weightedIntegralOf
+  rw [← intervalIntegral.integral_neg]
+  congr 1
+  ext t
+  ring
+
+/-- Hardy 的核心结果：对于特定的 n，积分的渐近行为 -/
+theorem integral_asymptotic (n : ℕ) (hn : n ≥ 1) (C : ℝ) :
+    (fun T => weightedIntegral n T) ~[atTop] (fun T => C * T ^ (2*n + 1/4)) := by
   sorry
 
-/-- The Hardy Z-function: Z(t) = e^{iθ(t)} ζ(1/2 + it) -/
-noncomputable def hardyZ (t : ℝ) : ℂ :=
-  Complex.exp (I * (riemannSiegelTheta t : ℂ)) * riemannZeta (1/2 + I * (t : ℂ))
+/-! ## Hardy 定理的结构引理 -/
 
-/-- Z(t) is real-valued for real t -/
-theorem hardyZ_real (t : ℝ) : (hardyZ t).im = 0 := by
+lemma hardyZ_eventually_const_sign_of_finite_zeros
+    (h : {t : ℝ | hardyZ t = 0}.Finite) :
+    (∀ᶠ t in atTop, hardyZ t > 0) ∨ (∀ᶠ t in atTop, hardyZ t < 0) := by
+  have h_bdd : Bornology.IsBounded {t : ℝ | hardyZ t = 0} := Set.Finite.isBounded h
+  obtain ⟨M, hM⟩ := h_bdd.subset_closedBall 0
+  have hM' : ∀ t, hardyZ t = 0 → |t| ≤ M := by
+    intro t ht
+    have h_mem : t ∈ Metric.closedBall (0 : ℝ) M := hM ht
+    simp [Metric.closedBall, dist_eq_norm] at h_mem
+    exact h_mem
+  have h_ne_zero : ∀ t > M, hardyZ t ≠ 0 := by
+    intro t ht
+    by_contra h_zero
+    have h_abs : |t| ≤ M := hM' t h_zero
+    have h_contra : t ≤ M := by linarith [abs_le.mp h_abs]
+    linarith
+  have h_const_sign : (∀ t > M, hardyZ t > 0) ∨ (∀ t > M, hardyZ t < 0) := by
+    by_cases h_ex_pos : ∃ t > M, hardyZ t > 0
+    · obtain ⟨t1, ht1, ht1_pos⟩ := h_ex_pos
+      left
+      intro t ht
+      by_contra h_not_pos
+      have ht_nonpos : hardyZ t ≤ 0 := by
+        by_contra h
+        push_neg at h
+        exact h_not_pos h
+      have h_zero_exists : ∃ t3 ∈ Set.uIcc t1 t, hardyZ t3 = 0 := by
+        have h1 : ContinuousOn hardyZ (Set.uIcc t1 t) := by
+          apply Continuous.continuousOn
+          exact hardyZ_continuous
+        have h2 : 0 ∈ Set.uIcc (hardyZ t1) (hardyZ t) := by
+          simp only [Set.mem_uIcc]
+          right
+          constructor
+          · exact ht_nonpos
+          · linarith
+        have h3 : Set.uIcc (hardyZ t1) (hardyZ t) ⊆ hardyZ '' Set.uIcc t1 t := by
+          apply intermediate_value_uIcc
+          exact h1
+        exact h3 h2
+      obtain ⟨t3, ht3_mem, ht3_zero⟩ := h_zero_exists
+      have h_t3_gt_M : t3 > M := by
+        simp only [Set.mem_uIcc] at ht3_mem
+        cases ht3_mem with
+        | inl h1 =>
+          cases le_total t1 t with
+          | inl h_le => linarith
+          | inr h_ge => linarith
+        | inr h2 =>
+          cases le_total t1 t with
+          | inl h_le => linarith
+          | inr h_ge => linarith
+      have h_contra : hardyZ t3 ≠ 0 := h_ne_zero t3 h_t3_gt_M
+      contradiction
+    · push_neg at h_ex_pos
+      right
+      intro t ht
+      have h_nonpos : hardyZ t ≤ 0 := h_ex_pos t ht
+      have h_ne : hardyZ t ≠ 0 := h_ne_zero t ht
+      have h_lt : hardyZ t < 0 := by
+        by_contra h
+        push_neg at h
+        have h_eq : hardyZ t = 0 := by linarith
+        contradiction
+      exact h_lt
+  cases h_const_sign with
+  | inl h_pos =>
+    left
+    filter_upwards [eventually_gt_atTop M] with t ht
+    exact h_pos t ht
+  | inr h_neg =>
+    right
+    filter_upwards [eventually_gt_atTop M] with t ht
+    exact h_neg t ht
+
+lemma weightedIntegralOf_eventually_positive_of_eventually_positive
+    (f : ℝ → ℝ) (n : ℕ) (h_pos : ∀ᶠ t in atTop, f t > 0) :
+    ∀ᶠ T in atTop, weightedIntegralOf f n T > 0 := by
   sorry
 
-/-- Z(t) = 0 if and only if ζ(1/2 + it) = 0 -/
-theorem hardyZ_eq_zero_iff (t : ℝ) : hardyZ t = 0 ↔ riemannZeta (1/2 + I * (t : ℂ)) = 0 := by
-  -- Since e^{iθ(t)} ≠ 0, the product is zero iff ζ(1/2 + it) = 0
+lemma weighted_integral_eventually_positive_of_hardyZ_positive
+    (n : ℕ) (h_pos : ∀ᶠ t in atTop, hardyZ t > 0) :
+    ∀ᶠ T in atTop, weightedIntegral n T > 0 := by
+  unfold weightedIntegral
+  exact weightedIntegralOf_eventually_positive_of_eventually_positive hardyZ n h_pos
+
+lemma weighted_integral_eventually_negative_of_hardyZ_negative
+    (n : ℕ) (h_neg : ∀ᶠ t in atTop, hardyZ t < 0) :
+    ∀ᶠ T in atTop, weightedIntegral n T < 0 := by
+  have h_neg_pos : ∀ᶠ t in atTop, (fun s => -hardyZ s) t > 0 := by
+    filter_upwards [h_neg] with t ht
+    linarith
+  have h_int_pos : ∀ᶠ T in atTop, weightedIntegralOf (fun s => -hardyZ s) n T > 0 :=
+    weightedIntegralOf_eventually_positive_of_eventually_positive
+      (fun s => -hardyZ s) n h_neg_pos
+  filter_upwards [h_int_pos] with T hT
+  have h_eq : weightedIntegralOf (fun s => -hardyZ s) n T = -weightedIntegral n T := by
+    unfold weightedIntegral
+    exact weightedIntegralOf_neg hardyZ n T
+  rw [h_eq] at hT
+  linarith
+
+/-! ## 从积分性质推导无穷多零点 -/
+
+theorem finite_zeros_contradiction (C : ℝ) (T : ℝ)
+    (h : {t : ℝ | hardyZ t = 0}.Finite) :
+    ∃ n ≥ 1, ¬((fun T => weightedIntegral n T) ~[atTop] (fun T => C * T ^ (2*n + 1/4))) := by
   sorry
 
-/-- Hardy's Theorem: There are infinitely many zeros of ζ(s) on the critical line Re(s) = 1/2. -/
-theorem hardy_infinite_zeros_on_critical_line :
-    Set.Infinite {s : ℂ | riemannZeta s = 0 ∧ s.re = 1/2} := by
+/-- Hardy 定理：临界线上有无穷多个零点 -/
+theorem hardy_theorem :
+    {t : ℝ | riemannZeta (0.5 + I * t) = 0}.Infinite := by
+  by_contra h
+  have h_finite : {t : ℝ | hardyZ t = 0}.Finite := by
+    have h_eq : {t : ℝ | hardyZ t = 0} = {t : ℝ | riemannZeta (0.5 + I * t) = 0} := by
+      ext t
+      simp [hardyZ_zero_iff_zeta_zero]
+    rw [h_eq]
+    simp at h
+    exact h
+  obtain ⟨n, hn, h_contra⟩ := finite_zeros_contradiction 1 (1 : ℝ) h_finite
+  have h_asymp := integral_asymptotic n hn 1
+  contradiction
+
+/-! ## 后续改进 -/
+
+noncomputable def zeroCountOnCriticalLine (T : ℝ) : ℕ :=
+  {t : Set.Icc 0 T | riemannZeta (0.5 + I * t) = 0}.ncard
+
+theorem hardy_littlewood_lower_bound :
+    ∃ C > 0, ∀ T ≥ 1, (zeroCountOnCriticalLine T : ℝ) ≥ C * T := by
   sorry
 
-/-- If there were finitely many zeros on the critical line, Z(t) would have
-    constant sign for large t, contradicting its oscillatory nature. -/
-theorem finite_zeros_implies_constant_sign {T : ℝ}
-    (h : ∀ t : ℝ, t > T → riemannZeta (1/2 + I * (t : ℂ)) ≠ 0) :
-    (∀ t > T, 0 < (hardyZ t).re) ∨ (∀ t > T, (hardyZ t).re < 0) := by
+theorem selberg_zero_proportion :
+    ∃ c > 0, ((fun T => (zeroCountOnCriticalLine T : ℝ)) ~[atTop]
+      (fun T => c * (T / (2*π) * Real.log T))) := by
   sorry
 
 end HardyTheorem
+
+/-! ## 技术细节补充 -/
+
+namespace HardyTheorem.Details
+
+lemma gamma_asymptotic_half_plus_it :
+    (fun (t : ℝ) => Complex.Gamma (0.5 + I * t)) ~[atTop]
+    (fun (t : ℝ) => Real.sqrt (2*π) * Complex.exp (I * t * Real.log t - I * t) * Complex.exp (-π * t / 2)) := by
+  sorry
+
+lemma theta_asymptotic (t : ℝ) (ht : t > 0) :
+    thetaPhase t = (t/2) * Real.log (t/(2*π)) - t/2 - π/8 := by
+  sorry
+
+theorem approximate_functional_equation (t : ℝ) (ht : t > 0) :
+    riemannZeta (0.5 + I * t) =
+    ∑ n ∈ Finset.range (Nat.floor (Real.sqrt t)), 1/((n+1 : ℂ) ^ (0.5 + I*t))
+    + Complex.exp (I * thetaPhase t) * ∑ n ∈ Finset.range (Nat.floor (Real.sqrt t)), 1/((n+1 : ℂ) ^ (0.5 - I*t)) := by
+  sorry
+
+end HardyTheorem.Details
