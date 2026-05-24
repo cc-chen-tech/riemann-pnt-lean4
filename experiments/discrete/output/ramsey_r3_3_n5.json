@@ -1,0 +1,30 @@
+{
+  "vertices": 5,
+  "edges": [
+    [
+      0,
+      3
+    ],
+    [
+      0,
+      4
+    ],
+    [
+      1,
+      2
+    ],
+    [
+      1,
+      4
+    ],
+    [
+      2,
+      3
+    ]
+  ],
+  "clique_size": 3,
+  "independent_size": 3,
+  "has_clique": false,
+  "has_independent_set": false,
+  "is_counterexample": true
+}
