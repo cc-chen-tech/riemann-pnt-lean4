@@ -1,0 +1,13 @@
+n,zero_pairs,truncated_lambda_n,delta_from_previous_cutoff,empirical_note
+1,1,0.00499898883372,,These values are empirical/truncated finite zero-sum approximations and are not a proof of the Riemann Hypothesis.
+1,2,0.00726053097864,0.00226154214492,These values are empirical/truncated finite zero-sum approximations and are not a proof of the Riemann Hypothesis.
+1,5,0.0108601927203,0.00359966174161,These values are empirical/truncated finite zero-sum approximations and are not a proof of the Riemann Hypothesis.
+1,10,0.0135351995442,0.00267500682398,These values are empirical/truncated finite zero-sum approximations and are not a proof of the Riemann Hypothesis.
+2,1,0.0199709654455,,These values are empirical/truncated finite zero-sum approximations and are not a proof of the Riemann Hypothesis.
+2,2,0.0290120194523,0.00904105400679,These values are empirical/truncated finite zero-sum approximations and are not a proof of the Riemann Hypothesis.
+2,5,0.0434060969906,0.0143940775382,These values are empirical/truncated finite zero-sum approximations and are not a proof of the Riemann Hypothesis.
+2,10,0.0541046319604,0.0106985349699,These values are empirical/truncated finite zero-sum approximations and are not a proof of the Riemann Hypothesis.
+3,1,0.0448410850915,,These values are empirical/truncated finite zero-sum approximations and are not a proof of the Riemann Hypothesis.
+3,2,0.0651642885254,0.0203232034338,These values are empirical/truncated finite zero-sum approximations and are not a proof of the Riemann Hypothesis.
+3,5,0.0975338337537,0.0323695452283,These values are empirical/truncated finite zero-sum approximations and are not a proof of the Riemann Hypothesis.
+3,10,0.121599942079,0.0240661083255,These values are empirical/truncated finite zero-sum approximations and are not a proof of the Riemann Hypothesis.
