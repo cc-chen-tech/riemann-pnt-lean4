@@ -10,6 +10,13 @@ is empirical/truncated and should only be used as numerical evidence.
 - paired nontrivial zeros used: 20
 - n range: 1..10
 
+## Fixture Provenance
+
+- local repository fixture; First positive ordinates retained from the earlier embedded script fixture; rounded decimal data for empirical truncation tests only.
+
+These provenance notes identify the finite input data only.
+They do not certify the Li criterion or prove RH.
+
 | n | truncated lambda_n | sign |
 |---:|---:|:---|
 | 1 | 0.0135351995442 | positive |

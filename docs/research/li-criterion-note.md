@@ -144,12 +144,30 @@ First version:
 - Report: sign, magnitude, and sensitivity to truncation.
 - Caveat: results are empirical and do not imply RH.
 
+Current expanded route:
+
+- `experiments/rh/zeros_fixture.csv` stores the finite input ordinates outside
+  the Python module with per-row source and note fields.
+- `experiments/rh/li_coefficients.py` still uses only the Python standard
+  library.
+- The CLI writes a Markdown report plus two CSV exports:
+  `experiments/rh/output/li_coefficients.csv` and
+  `experiments/rh/output/li_truncation_sensitivity.csv`.
+- The report and CSVs explicitly mark the values as empirical, truncated, and
+  not proof of RH.
+
+The dedicated computational follow-up plan is
+`docs/research/li-criterion-computational-plan.md`.
+
 Test targets:
 
 - Parsing zero fixtures.
 - Symmetric-pair contribution is real up to tolerance.
 - Early coefficients are positive for the fixture.
 - Increasing the zero cutoff changes values in a visible but bounded way.
+- CSV exports preserve headers and empirical caveats.
+- CLI behavior loads an external fixture and regenerates all configured
+  outputs.
 
 ## Acceptance Criteria For A First Implementation
 
@@ -188,14 +206,25 @@ These should not be implemented with `sorry` in the main branch. If used for
 planning, they should live in a clearly marked scratch file or design document
 until the required infrastructure is present.
 
+Next formalization targets:
+
+1. Audit and name the canonical xi function before defining Li coefficients.
+2. Decide whether the first Lean definition uses iterated derivatives, formal
+   power series coefficients, or an abstract placeholder API.
+3. Isolate real-valuedness and positivity as separate statements.
+4. Keep zero-sum truncation results out of proof statements unless accompanied
+   by explicit convergence and symmetric-limit hypotheses.
+5. Avoid adding any new Lean `sorry` while this route is still experimental.
+
 ## Recommendation
 
 Do the next step in this order:
 
-1. Add a tiny `experiments/rh/li_coefficients.py` prototype with tests.
-2. Generate an empirical Markdown report for early coefficients.
+1. Keep the fixture metadata auditable and replace the current local fixture
+   with a citable high-precision source before publication.
+2. Compare the zero-sum approximation against an xi-derivative or
+   generating-function computation for small `n`.
 3. Write a `XiFunction.lean` implementation plan only after active `sorry`
    cleanup settles.
 4. Postpone Lean implementation of Li criterion until `xiFunction` has a
    stable API.
-
