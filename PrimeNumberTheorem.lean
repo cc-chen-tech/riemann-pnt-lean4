@@ -1234,6 +1234,21 @@ theorem hardy_theorem_target_of_hardy_littlewood_lower_bound
   HardyTheorem.hardy_theorem_target_of_abs_unbounded
     (hardy_zeros_abs_unbounded_of_hardy_littlewood_lower_bound h)
 
+/-- Selberg's positive-proportion target is stronger than Hardy's
+unbounded-height target. -/
+theorem hardy_zeros_abs_unbounded_of_selberg_zero_proportion
+    (h : HardyTheorem.selberg_zero_proportion_target) :
+    HardyTheorem.hardy_zeros_abs_unbounded_target :=
+  hardy_zeros_abs_unbounded_of_hardy_littlewood_lower_bound
+    (HardyTheorem.hardy_littlewood_lower_bound_target_of_selberg_zero_proportion h)
+
+/-- Selberg's positive-proportion target implies Hardy's infinite-zero target. -/
+theorem hardy_theorem_target_of_selberg_zero_proportion
+    (h : HardyTheorem.selberg_zero_proportion_target) :
+    HardyTheorem.hardy_theorem_target :=
+  HardyTheorem.hardy_theorem_target_of_abs_unbounded
+    (hardy_zeros_abs_unbounded_of_selberg_zero_proportion h)
+
 /-- RH 等价于所有非平凡零点满足 Re = 1/2 -/
 theorem rh_iff_nontrivial_zeros_on_line :
     RiemannHypothesis ↔
