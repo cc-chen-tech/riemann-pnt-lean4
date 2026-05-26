@@ -1249,6 +1249,24 @@ theorem hardy_theorem_target_of_selberg_zero_proportion
   HardyTheorem.hardy_theorem_target_of_abs_unbounded
     (hardy_zeros_abs_unbounded_of_selberg_zero_proportion h)
 
+theorem hardy_theorem_target_of_conrey_40_percent_target
+    (h : KnownResults.conrey_40_percent_zeros_on_critical_line_target) :
+    HardyTheorem.hardy_theorem_target :=
+  hardy_theorem_target_of_selberg_zero_proportion
+    (KnownResults.conrey_40_percent_zeros_on_critical_line_target_iff_selberg.mp h)
+
+theorem infinitely_many_zeros_on_critical_line_of_selberg_zero_proportion
+    (h : HardyTheorem.selberg_zero_proportion_target) :
+    {s : ℂ | s.re = 1 / 2 ∧ riemannZeta s = 0}.Infinite :=
+  KnownResults.infinitely_many_zeros_on_critical_line
+    (hardy_theorem_target_of_selberg_zero_proportion h)
+
+theorem infinitely_many_zeros_on_critical_line_of_conrey_40_percent_target
+    (h : KnownResults.conrey_40_percent_zeros_on_critical_line_target) :
+    {s : ℂ | s.re = 1 / 2 ∧ riemannZeta s = 0}.Infinite :=
+  KnownResults.infinitely_many_zeros_on_critical_line
+    (hardy_theorem_target_of_conrey_40_percent_target h)
+
 /-- RH 等价于所有非平凡零点满足 Re = 1/2 -/
 theorem rh_iff_nontrivial_zeros_on_line :
     RiemannHypothesis ↔
