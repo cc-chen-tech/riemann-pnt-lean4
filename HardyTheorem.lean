@@ -799,6 +799,12 @@ lemma hardy_theorem_target_of_two_signed_moments_and_tail_dominance
 def hardy_zeros_unbounded_target : Prop :=
     ∀ T : ℝ, ∃ t : ℝ, T ≤ t ∧ riemannZeta (0.5 + I * t) = 0
 
+/-- Symmetric unbounded-height form: critical-line zeros have arbitrarily large
+absolute height.  This is often the most convenient interface when one has a
+finite-zero theorem in bounded vertical strips. -/
+def hardy_zeros_abs_unbounded_target : Prop :=
+    ∀ T : ℝ, ∃ t : ℝ, T ≤ |t| ∧ riemannZeta (0.5 + I * t) = 0
+
 /-- The unbounded-height Hardy target implies the older infinite-set target. -/
 lemma hardy_theorem_target_of_unbounded
     (h : hardy_zeros_unbounded_target) : hardy_theorem_target := by
@@ -811,6 +817,19 @@ lemma hardy_theorem_target_of_unbounded
   have ht_abs : |t| ≤ M := by
     simpa [Metric.closedBall, dist_eq_norm] using htmem
   have ht_le_M : t ≤ M := (abs_le.mp ht_abs).2
+  linarith
+
+/-- The absolute-height unbounded target also implies the infinite-set target. -/
+lemma hardy_theorem_target_of_abs_unbounded
+    (h : hardy_zeros_abs_unbounded_target) : hardy_theorem_target := by
+  intro hfinite
+  have hbounded : Bornology.IsBounded {t : ℝ | riemannZeta (0.5 + I * t) = 0} :=
+    Set.Finite.isBounded hfinite
+  obtain ⟨M, hM⟩ := hbounded.subset_closedBall 0
+  obtain ⟨t, htM, htzero⟩ := h (M + 1)
+  have htmem : t ∈ Metric.closedBall (0 : ℝ) M := hM htzero
+  have ht_abs : |t| ≤ M := by
+    simpa [Metric.closedBall, dist_eq_norm] using htmem
   linarith
 
 /-! ## 后续改进 -/

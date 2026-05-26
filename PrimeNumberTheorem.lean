@@ -64,6 +64,7 @@ This file is currently about 1,000 lines. Earlier notes describing a
 -/
 
 import Mathlib
+import HardyTheorem
 import RiemannExplorer
 
 open Complex BigOperators Filter Nat Topology MeasureTheory Asymptotics
@@ -1112,6 +1113,44 @@ theorem finite_nontrivial_zeros_bounded_height (T : ℝ) :
     obtain ⟨_z, hz_zero, hz_prod_ne⟩ := (hfreqZ.and_eventually hmul_ne).exists
     exact hz_prod_ne (by rw [hz_zero, mul_zero])
   · exact riemannZeta_not_frequently_zero_nhdsNE_of_ne_one hx1 hfreqZ
+
+/-- Hardy's infinite critical-line zero target implies that the corresponding
+real heights are unbounded in absolute value.
+
+The nontrivial input is `finite_nontrivial_zeros_bounded_height`: infinitely
+many real critical-line zeros cannot all lie in a bounded vertical strip. -/
+theorem hardy_zeros_abs_unbounded_of_hardy_theorem_target
+    (h : HardyTheorem.hardy_theorem_target) :
+    HardyTheorem.hardy_zeros_abs_unbounded_target := by
+  by_contra hnot
+  rw [HardyTheorem.hardy_zeros_abs_unbounded_target] at hnot
+  push Not at hnot
+  rcases hnot with ⟨T, hT⟩
+  let linePoint : ℝ → ℂ := fun t => (0.5 : ℂ) + I * t
+  let realZeros : Set ℝ := {t : ℝ | riemannZeta (linePoint t) = 0}
+  have hreal_inf : realZeros.Infinite := by
+    simpa [HardyTheorem.hardy_theorem_target, realZeros, linePoint] using h
+  have hcomplex_fin :
+      (linePoint '' realZeros).Finite := by
+    refine (finite_nontrivial_zeros_bounded_height T).subset ?_
+    intro s hs
+    rcases hs with ⟨t, ht, rfl⟩
+    have ht_bound_lt : |t| < T := by
+      by_contra hle
+      exact hT t (le_of_not_gt hle) ht
+    refine ⟨?_, le_of_lt ?_⟩
+    · refine ⟨ht, ?_, ?_⟩
+      · norm_num [linePoint]
+      · norm_num [linePoint]
+    · have him : (linePoint t).im = t := by norm_num [linePoint]
+      simpa [him] using ht_bound_lt
+  have hinj : Set.InjOn linePoint realZeros := by
+    intro t₁ _ t₂ _ h_eq
+    have him := congr_arg Complex.im h_eq
+    simp [linePoint] at him
+    exact him
+  have hreal_fin : realZeros.Finite := Set.Finite.of_finite_image hcomplex_fin hinj
+  exact hreal_inf hreal_fin
 
 /-- RH 等价于所有非平凡零点满足 Re = 1/2 -/
 theorem rh_iff_nontrivial_zeros_on_line :
