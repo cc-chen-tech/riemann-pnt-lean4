@@ -16,6 +16,7 @@
 -/
 
 import Mathlib
+import HardyTheorem
 
 -- 打开常用命名空间
 open Complex BigOperators Filter Classical Real
@@ -136,35 +137,34 @@ theorem zeta_no_zeros_on_zero_line :
       simp at h_fe
       contradiction
 
-/-- 定理：临界线上有无穷多个零点（Hardy, 1914） -/
-theorem infinitely_many_zeros_on_critical_line :
+/-- Hardy's real-parameter target transfers to infinitely many complex zeros
+on the critical line. -/
+theorem infinitely_many_zeros_on_critical_line
+    (h : HardyTheorem.hardy_theorem_target) :
     {s : ℂ | s.re = 1 / 2 ∧ riemannZeta s = 0}.Infinite := by
-  rw [← Set.infinite_coe_iff]
-  have h : Infinite ↑{s : ℂ | s.re = 1 / 2 ∧ riemannZeta s = 0}
-      ↔ Infinite ↑{t : ℝ | riemannZeta ((1 / 2 : ℂ) + I * t) = 0} := by
-    apply Equiv.infinite_iff
-    refine {
-      toFun := fun ⟨s, hs⟩ ↦ ⟨s.im, by
-        have h_eq : s = (1 / 2 : ℂ) + I * s.im := by
-          simp [Complex.ext_iff, hs.1]
-        simp only [Set.mem_setOf_eq]
-        rw [← h_eq]
-        exact hs.2⟩,
-      invFun := fun ⟨t, ht⟩ ↦ ⟨(1 / 2 : ℂ) + I * t, by
-        constructor
-        · simp
-        · exact ht⟩,
-      left_inv := fun ⟨s, hs⟩ ↦ by
-        simp [Complex.ext_iff]
-        rw [hs.1]
-        norm_num,
-      right_inv := fun ⟨t, ht⟩ ↦ by
-        simp
-    }
-  rw [h]
-  rw [Set.infinite_coe_iff]
-  -- This relies on HardyTheorem.hardy_theorem from the companion file
-  sorry
+  let linePoint : ℝ → ℂ := fun t => (0.5 : ℂ) + I * t
+  let realZeros : Set ℝ := {t : ℝ | riemannZeta (linePoint t) = 0}
+  have hreal : realZeros.Infinite := by
+    simpa [HardyTheorem.hardy_theorem_target, realZeros, linePoint] using h
+  by_contra hcomplex_not
+  have hcomplex : {s : ℂ | s.re = 1 / 2 ∧ riemannZeta s = 0}.Finite :=
+    Set.not_infinite.mp hcomplex_not
+  have himage_sub :
+      linePoint '' realZeros ⊆ {s : ℂ | s.re = 1 / 2 ∧ riemannZeta s = 0} := by
+    intro s hs
+    rcases hs with ⟨t, ht, rfl⟩
+    constructor
+    · simp [linePoint]
+      norm_num
+    · simpa [realZeros] using ht
+  have himage_fin : (linePoint '' realZeros).Finite := hcomplex.subset himage_sub
+  have hinj : Set.InjOn linePoint realZeros := by
+    intro t₁ _ t₂ _ h_eq
+    have him := congr_arg Complex.im h_eq
+    simp [linePoint] at him
+    exact him
+  have hreal_fin : realZeros.Finite := Set.Finite.of_finite_image himage_fin hinj
+  exact hreal hreal_fin
 
 /-- 定理：至少 40% 的零点在临界线上（Conrey, 1989） -/
 theorem at_least_40_percent_zeros_on_critical_line :

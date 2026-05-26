@@ -6,6 +6,14 @@ package «riemann-pnt» where
 
 @[default_target]
 lean_lib RiemannPNT where
+  roots := #[
+    `RiemannPNT,
+    `RiemannExplorer,
+    `GammaResidue,
+    `HardyTheorem,
+    `EulerAndLfunctions,
+    `PrimeNumberTheorem,
+    `ZeroFreeRegion
+  ]
 
-require mathlib from git
-  "https://github.com/leanprover-community/mathlib4.git"
+require mathlib from "./vendor/mathlib"

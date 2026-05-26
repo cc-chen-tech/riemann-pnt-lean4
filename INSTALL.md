@@ -17,6 +17,12 @@ lean --version
 lake --version
 ```
 
+This repository is pinned by `lean-toolchain` to:
+
+```text
+leanprover/lean4:v4.29.1
+```
+
 ### 2. Clone and Build
 
 ```bash
@@ -25,8 +31,20 @@ cd riemann-pnt-lean4
 lake build
 ```
 
-The first build will download and compile Mathlib, which can take 30-60 minutes
-depending on your machine.
+Current local development uses a path dependency:
+
+```lean
+require mathlib from "./vendor/mathlib"
+```
+
+The `vendor/mathlib` directory is intentionally ignored by git because it is
+large. To reproduce this exact local setup, place Mathlib 4.29.1 at
+`vendor/mathlib` before running `lake build`.
+
+For a public release, `lakefile.lean` should be switched back to a pinned git
+dependency on Mathlib 4.29.1 and `lake-manifest.json` regenerated. The local
+path dependency is a build-stability workaround, not a release-ready dependency
+configuration.
 
 ### 3. Explore in VS Code
 
@@ -37,7 +55,7 @@ with inline goal displays.
 ## System Requirements
 
 - 8+ GB RAM recommended (Mathlib is large)
-- 10+ GB free disk space
+- 10+ GB free disk space, more if keeping a local `vendor/mathlib` checkout
 - macOS, Linux, or Windows (via WSL2)
 
 ## Troubleshooting

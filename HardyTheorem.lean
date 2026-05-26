@@ -127,7 +127,6 @@ lemma completedRiemannZeta₀_conj_eq (s : ℂ) :
         · exact continuous_re
       apply this.mem_nhds
       simp
-      all_goals norm_num
     filter_upwards [h_open] with z hz
     have h_eq : f z = g z := by
       have h_r : f z = completedRiemannZeta z + 1 / z + 1 / (1 - z) := by
@@ -153,7 +152,6 @@ lemma completedRiemannZeta_critical_line_real (t : ℝ) :
   have h2 : 1 - s = conj s := by
     simp [s, Complex.ext_iff]
     all_goals norm_num
-    all_goals ring_nf
   rw [h2] at h1
   have h3 : completedRiemannZeta₀ (conj s) = conj (completedRiemannZeta₀ s) :=
     completedRiemannZeta₀_conj_eq s
@@ -202,7 +200,6 @@ lemma Gammaℝ_re_im_arg (t : ℝ) :
         exact h_pi_ne_zero
       field_simp [h_norm_pi_ne_zero, hw']
       norm_cast
-      ring_nf
     have h2 : (↑Real.pi : ℂ) ^ (-w) / ‖(↑Real.pi : ℂ) ^ (-w)‖ = Complex.exp (-I * (t / 2 * Real.log Real.pi)) := by
       have h_log : log (↑Real.pi : ℂ) = (↑(Real.log Real.pi) : ℂ) := by
         simp [Complex.ext_iff, log_ofReal_re, log_im, arg_ofReal_of_nonneg Real.pi_pos.le]
@@ -235,15 +232,13 @@ lemma Gammaℝ_re_im_arg (t : ℝ) :
           rw [this, Real.sqrt_sq (le_of_lt (Real.rpow_pos_of_pos Real.pi_pos _))]
         have h2 : ‖Complex.exp (-I * (t / 2 * Real.log Real.pi))‖ = 1 := by
           rw [show -I * (t / 2 * Real.log Real.pi) = I * ↑(-(t / 2 * Real.log Real.pi)) by
-            simp [Complex.ext_iff]
-            ring_nf]
+            simp]
           rw [show I * ↑(-(t / 2 * Real.log Real.pi)) = ↑(-(t / 2 * Real.log Real.pi)) * I by ring]
           rw [Complex.norm_exp_ofReal_mul_I]
         simp only [h1, h2]
         ring_nf
       rw [h_norm]
       field_simp
-      ring_nf
     rw [h1, h2]
     have h_Gamma_w : Gamma w / ‖Gamma w‖ = cexp ((Gamma w).arg * I) := by
       have h := Complex.norm_mul_exp_arg_mul_I (Gamma w)
@@ -253,8 +248,8 @@ lemma Gammaℝ_re_im_arg (t : ℝ) :
     have h_arg : thetaPhase t = (Gamma w).arg - t / 2 * Real.log Real.pi := rfl
     rw [h_arg]
     rw [← Complex.exp_add]
-    simp [Complex.ext_iff]
-    norm_num
+    congr 1
+    push_cast
     ring_nf
   -- From the unit identity, get equality of cos and sin
   have h_cos : Real.cos (thetaPhase t) = Real.cos ((Gammaℝ s).arg) := by
@@ -546,17 +541,29 @@ lemma weightedIntegralOf_neg (f : ℝ → ℝ) (n : ℕ) (T : ℝ) :
   ext t
   ring
 
-/-- Hardy 的核心结果：对于特定的 n，积分的渐近行为 -/
-theorem integral_asymptotic (n : ℕ) (hn : n ≥ 1) (C : ℝ) :
-    (fun T => weightedIntegral n T) ~[atTop] (fun T => C * T ^ (2*n + 1/4)) := by
-  sorry
+/-- Corrected signed target for Hardy's moment asymptotic.
+
+The sign of the leading term is part of the usable theorem: it is what drives
+the eventual-sign contradiction in Hardy's argument. -/
+def integral_asymptotic_target (n : ℕ) : Prop :=
+    n ≥ 1 ∧ ∃ A : ℝ, 0 < A ∧
+      (fun T => weightedIntegral n T) ~[atTop]
+        (fun T => ((-1 : ℝ) ^ n * A) * T ^ ((2 * n : ℝ) + 1 / 4))
+
+/-- Minimal two-moment target sufficient for the Hardy sign contradiction. -/
+def hardy_two_signed_moments_target : Prop :=
+    (∃ A : ℝ, 0 < A ∧
+      (fun T => weightedIntegral 1 T) ~[atTop]
+        (fun T => -A * T ^ ((2 : ℝ) + 1 / 4))) ∧
+    (∃ B : ℝ, 0 < B ∧
+      (fun T => weightedIntegral 2 T) ~[atTop]
+        (fun T => B * T ^ ((4 : ℝ) + 1 / 4)))
 
 /-! ## Hardy 定理的结构引理 -/
 
-lemma hardyZ_eventually_const_sign_of_finite_zeros
-    (h : {t : ℝ | hardyZ t = 0}.Finite) :
+lemma hardyZ_eventually_const_sign_of_bounded_zeros
+    (h_bdd : Bornology.IsBounded {t : ℝ | hardyZ t = 0}) :
     (∀ᶠ t in atTop, hardyZ t > 0) ∨ (∀ᶠ t in atTop, hardyZ t < 0) := by
-  have h_bdd : Bornology.IsBounded {t : ℝ | hardyZ t = 0} := Set.Finite.isBounded h
   obtain ⟨M, hM⟩ := h_bdd.subset_closedBall 0
   have hM' : ∀ t, hardyZ t = 0 → |t| ≤ M := by
     intro t ht
@@ -577,7 +584,7 @@ lemma hardyZ_eventually_const_sign_of_finite_zeros
       by_contra h_not_pos
       have ht_nonpos : hardyZ t ≤ 0 := by
         by_contra h
-        push_neg at h
+        push Not at h
         exact h_not_pos h
       have h_zero_exists : ∃ t3 ∈ Set.uIcc t1 t, hardyZ t3 = 0 := by
         have h1 : ContinuousOn hardyZ (Set.uIcc t1 t) := by
@@ -607,14 +614,14 @@ lemma hardyZ_eventually_const_sign_of_finite_zeros
           | inr h_ge => linarith
       have h_contra : hardyZ t3 ≠ 0 := h_ne_zero t3 h_t3_gt_M
       contradiction
-    · push_neg at h_ex_pos
+    · push Not at h_ex_pos
       right
       intro t ht
       have h_nonpos : hardyZ t ≤ 0 := h_ex_pos t ht
       have h_ne : hardyZ t ≠ 0 := h_ne_zero t ht
       have h_lt : hardyZ t < 0 := by
         by_contra h
-        push_neg at h
+        push Not at h
         have h_eq : hardyZ t = 0 := by linarith
         contradiction
       exact h_lt
@@ -628,26 +635,66 @@ lemma hardyZ_eventually_const_sign_of_finite_zeros
     filter_upwards [eventually_gt_atTop M] with t ht
     exact h_neg t ht
 
-lemma weightedIntegralOf_eventually_positive_of_eventually_positive
-    (f : ℝ → ℝ) (n : ℕ) (h_pos : ∀ᶠ t in atTop, f t > 0) :
+lemma hardyZ_eventually_const_sign_of_finite_zeros
+    (h : {t : ℝ | hardyZ t = 0}.Finite) :
+    (∀ᶠ t in atTop, hardyZ t > 0) ∨ (∀ᶠ t in atTop, hardyZ t < 0) :=
+  hardyZ_eventually_const_sign_of_bounded_zeros (Set.Finite.isBounded h)
+
+def weightedIntegralOf_tail_dominates (f : ℝ → ℝ) (n : ℕ) : Prop :=
+  ∃ A : ℝ, Tendsto (fun T => ∫ t in A..T, weightFunction n t * f t) atTop atTop
+
+/-- Tail dominance turns the full weighted integral eventually positive.
+
+The continuity hypothesis supplies interval integrability, so the integral can
+be split into a fixed initial part plus the divergent positive tail. -/
+lemma weightedIntegralOf_eventually_positive_of_tail_dominates
+    (f : ℝ → ℝ) (n : ℕ) (hf : Continuous f)
+    (_h_pos : ∀ᶠ t in atTop, f t > 0)
+    (h_tail : weightedIntegralOf_tail_dominates f n) :
     ∀ᶠ T in atTop, weightedIntegralOf f n T > 0 := by
-  sorry
+  rcases h_tail with ⟨A, hA⟩
+  let g : ℝ → ℝ := fun t => weightFunction n t * f t
+  have hg : Continuous g := by
+    have hw : Continuous fun t : ℝ => weightFunction n t := by
+      simpa [weightFunction] using (continuous_id.pow (2 * n))
+    exact hw.mul hf
+  have htail_gt :
+      ∀ᶠ T in atTop, -(∫ t in (0 : ℝ)..A, g t) < ∫ t in A..T, g t :=
+    hA.eventually_gt_atTop (-(∫ t in (0 : ℝ)..A, g t))
+  filter_upwards [htail_gt] with T hT
+  have hpos : 0 < ((∫ t in (0 : ℝ)..A, g t) + (∫ t in A..T, g t)) := by
+    have hpos' :
+        (∫ t in (0 : ℝ)..A, g t) + -(∫ t in (0 : ℝ)..A, g t) <
+          (∫ t in (0 : ℝ)..A, g t) + ∫ t in A..T, g t :=
+      add_lt_add_right hT (∫ t in (0 : ℝ)..A, g t)
+    have hzero : (∫ t in (0 : ℝ)..A, g t) + -(∫ t in (0 : ℝ)..A, g t) = 0 := by
+      ring
+    rwa [hzero] at hpos'
+  unfold weightedIntegralOf
+  change ∫ t in (0 : ℝ)..T, g t > 0
+  rw [← intervalIntegral.integral_add_adjacent_intervals
+    (μ := MeasureTheory.volume) (hg.intervalIntegrable 0 A) (hg.intervalIntegrable A T)]
+  simpa using hpos
 
 lemma weighted_integral_eventually_positive_of_hardyZ_positive
-    (n : ℕ) (h_pos : ∀ᶠ t in atTop, hardyZ t > 0) :
+    (n : ℕ) (h_pos : ∀ᶠ t in atTop, hardyZ t > 0)
+    (h_tail : weightedIntegralOf_tail_dominates hardyZ n) :
     ∀ᶠ T in atTop, weightedIntegral n T > 0 := by
   unfold weightedIntegral
-  exact weightedIntegralOf_eventually_positive_of_eventually_positive hardyZ n h_pos
+  exact weightedIntegralOf_eventually_positive_of_tail_dominates
+    hardyZ n hardyZ_continuous h_pos h_tail
 
 lemma weighted_integral_eventually_negative_of_hardyZ_negative
-    (n : ℕ) (h_neg : ∀ᶠ t in atTop, hardyZ t < 0) :
+    (n : ℕ) (h_neg : ∀ᶠ t in atTop, hardyZ t < 0)
+    (h_tail : weightedIntegralOf_tail_dominates (fun t => -hardyZ t) n) :
     ∀ᶠ T in atTop, weightedIntegral n T < 0 := by
   have h_neg_pos : ∀ᶠ t in atTop, (fun s => -hardyZ s) t > 0 := by
     filter_upwards [h_neg] with t ht
     linarith
-  have h_int_pos : ∀ᶠ T in atTop, weightedIntegralOf (fun s => -hardyZ s) n T > 0 :=
-    weightedIntegralOf_eventually_positive_of_eventually_positive
-      (fun s => -hardyZ s) n h_neg_pos
+  have h_int_pos :
+      ∀ᶠ T in atTop, weightedIntegralOf (fun s => -hardyZ s) n T > 0 :=
+    weightedIntegralOf_eventually_positive_of_tail_dominates
+      (fun s => -hardyZ s) n hardyZ_continuous.neg h_neg_pos h_tail
   filter_upwards [h_int_pos] with T hT
   have h_eq : weightedIntegralOf (fun s => -hardyZ s) n T = -weightedIntegral n T := by
     unfold weightedIntegral
@@ -657,39 +704,85 @@ lemma weighted_integral_eventually_negative_of_hardyZ_negative
 
 /-! ## 从积分性质推导无穷多零点 -/
 
-theorem finite_zeros_contradiction (C : ℝ) (T : ℝ)
-    (h : {t : ℝ | hardyZ t = 0}.Finite) :
-    ∃ n ≥ 1, ¬((fun T => weightedIntegral n T) ~[atTop] (fun T => C * T ^ (2*n + 1/4))) := by
-  sorry
+lemma weightedIntegral_one_eventually_negative_of_two_signed_moments
+    (h : hardy_two_signed_moments_target) :
+    ∀ᶠ T in atTop, weightedIntegral 1 T < 0 := by
+  rcases h with ⟨⟨A, hApos, hAasymp⟩, _⟩
+  have hp : Tendsto (fun T : ℝ => T ^ ((2 : ℝ) + 1 / 4)) atTop atTop :=
+    tendsto_rpow_atTop (by norm_num)
+  have hA_top : Tendsto (fun T : ℝ => A * T ^ ((2 : ℝ) + 1 / 4)) atTop atTop :=
+    hp.const_mul_atTop hApos
+  have hmodel_bot : Tendsto (fun T : ℝ => -A * T ^ ((2 : ℝ) + 1 / 4)) atTop atBot := by
+    have hneg : Tendsto (fun T : ℝ => -(A * T ^ ((2 : ℝ) + 1 / 4))) atTop atBot :=
+      Filter.tendsto_neg_atTop_atBot.comp hA_top
+    simpa [neg_mul] using hneg
+  have hint_bot : Tendsto (fun T : ℝ => weightedIntegral 1 T) atTop atBot :=
+    hAasymp.symm.tendsto_atBot hmodel_bot
+  exact hint_bot.eventually_lt_atBot 0
 
-/-- Hardy 定理：临界线上有无穷多个零点 -/
-theorem hardy_theorem :
-    {t : ℝ | riemannZeta (0.5 + I * t) = 0}.Infinite := by
-  by_contra h
-  have h_finite : {t : ℝ | hardyZ t = 0}.Finite := by
-    have h_eq : {t : ℝ | hardyZ t = 0} = {t : ℝ | riemannZeta (0.5 + I * t) = 0} := by
-      ext t
-      simp [hardyZ_zero_iff_zeta_zero]
-    rw [h_eq]
-    simp at h
-    exact h
-  obtain ⟨n, hn, h_contra⟩ := finite_zeros_contradiction 1 (1 : ℝ) h_finite
-  have h_asymp := integral_asymptotic n hn 1
-  contradiction
+lemma weightedIntegral_two_eventually_positive_of_two_signed_moments
+    (h : hardy_two_signed_moments_target) :
+    ∀ᶠ T in atTop, 0 < weightedIntegral 2 T := by
+  rcases h with ⟨_, ⟨B, hBpos, hBasymp⟩⟩
+  have hp : Tendsto (fun T : ℝ => T ^ ((4 : ℝ) + 1 / 4)) atTop atTop :=
+    tendsto_rpow_atTop (by norm_num)
+  have hmodel_top : Tendsto (fun T : ℝ => B * T ^ ((4 : ℝ) + 1 / 4)) atTop atTop :=
+    hp.const_mul_atTop hBpos
+  have hint_top : Tendsto (fun T : ℝ => weightedIntegral 2 T) atTop atTop :=
+    hBasymp.symm.tendsto_atTop hmodel_top
+  exact hint_top.eventually_gt_atTop 0
+
+lemma finite_zeros_contradiction_of_two_signed_moments_and_tail_dominance
+    (hfinite : {t : ℝ | hardyZ t = 0}.Finite)
+    (hmom : hardy_two_signed_moments_target)
+    (htail_pos : weightedIntegralOf_tail_dominates hardyZ 1)
+    (htail_neg : weightedIntegralOf_tail_dominates (fun t => -hardyZ t) 2) :
+    False := by
+  rcases hardyZ_eventually_const_sign_of_finite_zeros hfinite with hpos | hneg
+  · have hint_pos := weighted_integral_eventually_positive_of_hardyZ_positive 1 hpos htail_pos
+    have hint_neg := weightedIntegral_one_eventually_negative_of_two_signed_moments hmom
+    rcases (hint_pos.and hint_neg).exists with ⟨T, hTpos, hTneg⟩
+    linarith
+  · have hint_neg := weighted_integral_eventually_negative_of_hardyZ_negative 2 hneg htail_neg
+    have hint_pos := weightedIntegral_two_eventually_positive_of_two_signed_moments hmom
+    rcases (hint_neg.and hint_pos).exists with ⟨T, hTneg, hTpos⟩
+    linarith
+
+/-- Target statement for Hardy's theorem.  The project currently proves the
+Hardy Z-function setup and zero equivalence, but not the analytic moment
+estimates needed for the final contradiction. -/
+def hardy_theorem_target : Prop :=
+    {t : ℝ | riemannZeta (0.5 + I * t) = 0}.Infinite
+
+/-- Stronger Hardy target: critical-line zeros have arbitrarily large height. -/
+def hardy_zeros_unbounded_target : Prop :=
+    ∀ T : ℝ, ∃ t : ℝ, T ≤ t ∧ riemannZeta (0.5 + I * t) = 0
+
+/-- The unbounded-height Hardy target implies the older infinite-set target. -/
+lemma hardy_theorem_target_of_unbounded
+    (h : hardy_zeros_unbounded_target) : hardy_theorem_target := by
+  intro hfinite
+  have hbounded : Bornology.IsBounded {t : ℝ | riemannZeta (0.5 + I * t) = 0} :=
+    Set.Finite.isBounded hfinite
+  obtain ⟨M, hM⟩ := hbounded.subset_closedBall 0
+  obtain ⟨t, htM, htzero⟩ := h (M + 1)
+  have htmem : t ∈ Metric.closedBall (0 : ℝ) M := hM htzero
+  have ht_abs : |t| ≤ M := by
+    simpa [Metric.closedBall, dist_eq_norm] using htmem
+  have ht_le_M : t ≤ M := (abs_le.mp ht_abs).2
+  linarith
 
 /-! ## 后续改进 -/
 
 noncomputable def zeroCountOnCriticalLine (T : ℝ) : ℕ :=
   {t : Set.Icc 0 T | riemannZeta (0.5 + I * t) = 0}.ncard
 
-theorem hardy_littlewood_lower_bound :
-    ∃ C > 0, ∀ T ≥ 1, (zeroCountOnCriticalLine T : ℝ) ≥ C * T := by
-  sorry
+def hardy_littlewood_lower_bound_target : Prop :=
+    ∃ C > 0, ∃ T0 : ℝ, ∀ T ≥ T0, (zeroCountOnCriticalLine T : ℝ) ≥ C * T
 
-theorem selberg_zero_proportion :
-    ∃ c > 0, ((fun T => (zeroCountOnCriticalLine T : ℝ)) ~[atTop]
-      (fun T => c * (T / (2*π) * Real.log T))) := by
-  sorry
+def selberg_zero_proportion_target : Prop :=
+    ∃ c > 0, ∃ T0 : ℝ, ∀ T ≥ T0,
+      (zeroCountOnCriticalLine T : ℝ) ≥ c * (T / (2*Real.pi) * Real.log T)
 
 end HardyTheorem
 
@@ -697,19 +790,30 @@ end HardyTheorem
 
 namespace HardyTheorem.Details
 
-lemma gamma_asymptotic_half_plus_it :
+def gamma_asymptotic_half_plus_it_target : Prop :=
     (fun (t : ℝ) => Complex.Gamma (0.5 + I * t)) ~[atTop]
-    (fun (t : ℝ) => Real.sqrt (2*π) * Complex.exp (I * t * Real.log t - I * t) * Complex.exp (-π * t / 2)) := by
-  sorry
+      (fun (t : ℝ) => Real.sqrt (2*Real.pi) * Complex.exp (I * t * Real.log t - I * t) *
+        Complex.exp (-Real.pi * t / 2))
 
-lemma theta_asymptotic (t : ℝ) (ht : t > 0) :
-    thetaPhase t = (t/2) * Real.log (t/(2*π)) - t/2 - π/8 := by
-  sorry
+/-- The principal-value `thetaPhase` is not expected to satisfy a global exact
+closed formula.  A future development should introduce an unwrapped
+Riemann-Siegel theta function and prove this asymptotic target for it. -/
+def theta_asymptotic_target : Prop :=
+    ∃ theta : ℝ → ℝ,
+      (∀ t : ℝ, Complex.exp (I * theta t) = Complex.exp (I * thetaPhase t)) ∧
+      (fun t : ℝ => theta t) ~[atTop]
+        (fun t : ℝ => (t/2) * Real.log (t/(2*Real.pi)) - t/2 - Real.pi/8)
 
-theorem approximate_functional_equation (t : ℝ) (ht : t > 0) :
-    riemannZeta (0.5 + I * t) =
-    ∑ n ∈ Finset.range (Nat.floor (Real.sqrt t)), 1/((n+1 : ℂ) ^ (0.5 + I*t))
-    + Complex.exp (I * thetaPhase t) * ∑ n ∈ Finset.range (Nat.floor (Real.sqrt t)), 1/((n+1 : ℂ) ^ (0.5 - I*t)) := by
-  sorry
+/-- Target form of the approximate functional equation.  The previous exact
+finite-sum equality omitted the necessary remainder term. -/
+def approximate_functional_equation_target : Prop :=
+    ∃ C > 0, ∀ t : ℝ, t > 1 → ∃ R : ℂ,
+      riemannZeta (0.5 + I * t) =
+        ∑ n ∈ Finset.range (Nat.floor (Real.sqrt (t / (2*Real.pi)))),
+          1/((n+1 : ℂ) ^ (0.5 + I*t))
+        + Complex.exp (I * thetaPhase t) *
+          ∑ n ∈ Finset.range (Nat.floor (Real.sqrt (t / (2*Real.pi)))),
+            1/((n+1 : ℂ) ^ (0.5 - I*t))
+        + R ∧ ‖R‖ ≤ C * t^(-1/4 : ℝ)
 
 end HardyTheorem.Details

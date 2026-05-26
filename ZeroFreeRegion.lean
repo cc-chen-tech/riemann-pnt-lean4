@@ -8,22 +8,25 @@ de la Vallée Poussin's 3-4-1 inequality:
 
   3·Re(-ζ'/ζ(σ)) + 4·Re(-ζ'/ζ(σ+it)) + Re(-ζ'/ζ(σ+2it)) ≥ 0
 
-From this trigonometric inequality, we deduce that ζ(s) ≠ 0 on the line Re(s) = 1,
-and more generally, that for any fixed height T, there exists a zero-free region
-of the form {Re(s) ≥ 1 - d_T, |Im(s)| ≤ T} for some d_T > 0.
+This file records verified supporting lemmas and target theorems for the
+classical zero-free-region argument. The trigonometric identity and the full
+logarithmic-derivative 3-4-1 combination are proved, as is the compact
+zero-free strip for each bounded height. The zero-free-region theorems that
+need deeper analytic input are recorded as `Prop` target statements in this
+checkout.
 
-## Key results (sorry-free)
+## Verified and partial results
 
 1. `trig_identity_nonneg` — 3 + 4cos θ + cos 2θ = 2(1+cos θ)² ≥ 0
 2. `zeta_no_zeros_on_line_one` — ζ(s) ≠ 0 on Re(s) = 1
 3. `log_deriv_zeta_re_series` — -Re(ζ'/ζ(s)) expressed as a Dirichlet series in von Mangoldt Λ
-4. `log_deriv_zeta_nonneg_combination` — the 3-4-1 combination is non-negative
+4. `log_deriv_zeta_nonneg_combination` — full 3-4-1 combination
 5. `classical_zero_free_region_compact` — compact zero-free region for bounded height
 6. `residue_bounds` — 1 < (σ-1)ζ(σ) ≤ σ for σ > 1, confirming residue 1 at s=1
 7. `log_deriv_zeta_pos_real` — -Re(ζ'/ζ(σ)) > 0 for real σ > 1
 8. `log_deriv_zeta_antitone` — -Re(ζ'/ζ) is decreasing on (1, ∞)
 
-## Remaining sorry
+## Unproved target statements
 
 - `classical_zero_free_region` — quantitative σ ≥ 1 - c/log|t|
   (requires Hadamard factorization or Borel-Carathéodory, not yet in Mathlib)
@@ -176,12 +179,12 @@ private lemma natCast_cpow_neg_re {n : ℕ} (hn : n ≠ 0) (s : ℂ) :
   have h_re : ((↑(Real.log (n : ℝ)) : ℂ) * (-s)).re = -(s.re * Real.log n) := by
     have : (↑(Real.log (n : ℝ)) : ℂ) = ⟨Real.log n, 0⟩ := rfl
     rw [this]
-    simp [Complex.mul_re, Complex.neg_re, Complex.neg_im]
+    simp [Complex.mul_re, Complex.neg_re]
     ring
   have h_im : ((↑(Real.log (n : ℝ)) : ℂ) * (-s)).im = -(s.im * Real.log n) := by
     have : (↑(Real.log (n : ℝ)) : ℂ) = ⟨Real.log n, 0⟩ := rfl
     rw [this]
-    simp [Complex.mul_im, Complex.neg_re, Complex.neg_im]
+    simp [Complex.mul_im, Complex.neg_im]
     ring
   rw [Complex.exp_re, h_re, h_im]
   congr 1
@@ -203,7 +206,7 @@ lemma log_deriv_zeta_re_series (s : ℂ) (hs : 1 < s.re) :
   apply tsum_congr
   intro n
   rcases Nat.eq_zero_or_pos n with rfl | hn
-  · simp [LSeries.term, ArithmeticFunction.vonMangoldt_apply]
+  · simp [LSeries.term]
   · rw [LSeries.term_def₀ (by simp : (↗Λ) 0 = 0)]
     have hn' : n ≠ 0 := hn.ne'
     have h_re := natCast_cpow_neg_re hn' s
@@ -360,7 +363,7 @@ lemma log_deriv_zeta_pos_real (σ : ℝ) (hσ : 1 < σ) :
     exact h_map.congr (fun n ↦ by
       simp only [Complex.reCLM_apply, LSeries.term]
       split_ifs with hn
-      · subst hn; simp [ArithmeticFunction.vonMangoldt]
+      · subst hn; simp
       · rw [div_eq_mul_inv, ← cpow_neg, Complex.re_ofReal_mul,
             natCast_cpow_neg_re hn, Real.rpow_neg (Nat.cast_nonneg n)]
         simp only [Complex.ofReal_im, Complex.ofReal_re, zero_mul, Real.cos_zero, mul_one,
@@ -449,32 +452,177 @@ lemma log_deriv_zeta_nonneg_combination (σ : ℝ) (hσ : 1 < σ) (t : ℝ) :
   have hs1 := h_re_summable _ hσ_re1
   have hs2 := h_re_summable _ hσ_re2
   have hs3 := h_re_summable _ hσ_re3
+  have h1c : Summable (fun n : ℕ ↦ Λ n * Real.cos 0 / (↑n : ℝ) ^ σ) := by
+    simpa using hs1
+  have h1' : Summable (fun n : ℕ ↦ Λ n / (↑n : ℝ) ^ σ) := by
+    simpa using hs1
+  have h2' : Summable (fun n : ℕ ↦ Λ n * Real.cos (t * Real.log ↑n) / (↑n : ℝ) ^ σ) := by
+    simpa using hs2
+  have h3' : Summable (fun n : ℕ ↦ Λ n * Real.cos (2 * t * Real.log ↑n) / (↑n : ℝ) ^ σ) := by
+    simpa [mul_assoc] using hs3
   -- Combine the three series into one
   have h_sum : Summable (fun n : ℕ ↦
     Λ n * (3 + 4 * Real.cos (t * Real.log ↑n) + Real.cos (2 * t * Real.log ↑n)) / (↑n : ℝ) ^ σ) := by
-    -- Each coefficient is non-negative by trig_identity_nonneg
-    sorry
-  sorry
+    refine ((h1'.mul_left 3).add ((h2'.mul_left 4).add h3')).congr ?_
+    intro n
+    ring
+  have h_lhs :
+      3 * (∑' n : ℕ, Λ n * Real.cos 0 / (↑n : ℝ) ^ σ)
+        + 4 * (∑' n : ℕ, Λ n * Real.cos (t * Real.log ↑n) / (↑n : ℝ) ^ σ)
+        + (∑' n : ℕ, Λ n * Real.cos (2 * t * Real.log ↑n) / (↑n : ℝ) ^ σ)
+      =
+      ∑' n : ℕ, Λ n * (3 + 4 * Real.cos (t * Real.log ↑n)
+        + Real.cos (2 * t * Real.log ↑n)) / (↑n : ℝ) ^ σ := by
+    have hsum0 := h1c.mul_left 3
+    have hsum1 := h2'.mul_left 4
+    have hsum2 := h3'
+    rw [← tsum_mul_left, ← tsum_mul_left, ← hsum0.tsum_add hsum1,
+      ← (hsum0.add hsum1).tsum_add hsum2]
+    apply tsum_congr
+    intro n
+    simp [Real.cos_zero]
+    ring
+  rw [h_lhs]
+  exact tsum_nonneg (fun n ↦ by
+    rcases Nat.eq_zero_or_pos n with rfl | hn
+    · simp [ArithmeticFunction.vonMangoldt]
+    · have hΛ : 0 ≤ Λ n := ArithmeticFunction.vonMangoldt_nonneg
+      have hden : 0 ≤ (n : ℝ) ^ σ :=
+        (Real.rpow_pos_of_pos (Nat.cast_pos.mpr hn) σ).le
+      have htrig : 0 ≤ 3 + 4 * Real.cos (t * Real.log (n : ℝ))
+          + Real.cos (2 * t * Real.log (n : ℝ)) := by
+        simpa [mul_assoc] using trig_identity_nonneg (t * Real.log (n : ℝ))
+      exact div_nonneg (mul_nonneg hΛ htrig) hden)
 
-/-- 紧致零自由区域：对任意 T ≥ 2，存在 d > 0 使 ζ 在 {|Im(s)| ≤ T, Re(s) ≥ 1-d} 无零点。
-    这是从 3-4-1 不等式和 Re(s)=1 上的非零性通过紧致性论证得到的。 -/
-theorem classical_zero_free_region_compact (T : ℝ) (hT : T ≥ 2) :
+/-- Algebraic lower-bound corollary of the 3-4-1 inequality. -/
+lemma log_deriv_zeta_lower_bound (σ : ℝ) (hσ : 1 < σ) (t : ℝ) :
+    (- deriv riemannZeta ((σ : ℂ) + I * t) / riemannZeta ((σ : ℂ) + I * t)).re ≥
+      -(3 / 4 : ℝ) * (- deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re
+      - (1 / 4 : ℝ) *
+        (- deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+          riemannZeta ((σ : ℂ) + 2 * I * t)).re := by
+  have h := log_deriv_zeta_nonneg_combination σ hσ t
+  linarith
+
+/-- ζ is nonzero in a full neighborhood of `1`.
+
+Although `riemannZeta` has a junk value at `1` in Mathlib, the residue statement
+gives nonvanishing on a punctured neighborhood, and `riemannZeta_one_ne_zero`
+handles the point itself. -/
+private lemma eventually_riemannZeta_ne_zero_nhds_one :
+    ∀ᶠ s : ℂ in 𝓝 (1 : ℂ), riemannZeta s ≠ 0 := by
+  have hpunct : ∀ᶠ s : ℂ in 𝓝[≠] (1 : ℂ), (s - 1) * riemannZeta s ≠ 0 := by
+    have hopen : IsOpen ({z : ℂ | z ≠ 0}) := isOpen_compl_singleton
+    exact riemannZeta_residue_one.eventually (hopen.mem_nhds one_ne_zero)
+  rw [eventually_nhdsWithin_iff] at hpunct
+  filter_upwards [hpunct] with s hs
+  by_cases hs1 : s = 1
+  · simp [hs1, riemannZeta_one_ne_zero]
+  · exact fun hz ↦ hs hs1 (by simp [hz])
+
+/-- The nonvanishing locus of ζ is open. -/
+private lemma isOpen_setOf_riemannZeta_ne_zero : IsOpen {s : ℂ | riemannZeta s ≠ 0} := by
+  rw [isOpen_iff_mem_nhds]
+  intro s hs
+  by_cases hs1 : s = 1
+  · simpa [hs1] using eventually_riemannZeta_ne_zero_nhds_one
+  · exact (differentiableAt_riemannZeta hs1).continuousAt.preimage_mem_nhds
+      (isOpen_compl_singleton.mem_nhds hs)
+
+/-- Compact zero-free region next to the line `Re(s) = 1`.
+
+For fixed height `T`, compactness of the vertical segment
+`{s | s.re = 1 ∧ |s.im| ≤ T}` and openness of the nonvanishing locus give a
+uniform closed thickening inside the nonvanishing locus. Points with `re ≥ 1`
+are handled directly by `riemannZeta_ne_zero_of_one_le_re`; points with
+`1 - d ≤ re < 1` lie in that thickening by vertical projection. -/
+theorem classical_zero_free_region_compact (T : ℝ) (_hT : T ≥ 2) :
     ∃ d > 0, ∀ s : ℂ, |s.im| ≤ T → s.re ≥ 1 - d → riemannZeta s ≠ 0 := by
-  -- 使用序列紧致性 + 连续性 + 已证明的 Re(s)=1 上的非零性
-  sorry
+  let verticalSegment : Set ℂ := ({1} : Set ℝ) ×ℂ Set.Icc (-T) T
+  have hK : IsCompact verticalSegment := by
+    simpa [verticalSegment] using
+      (isCompact_singleton.reProdIm (isCompact_Icc : IsCompact (Set.Icc (-T) T)))
+  have hKsub : verticalSegment ⊆ {s : ℂ | riemannZeta s ≠ 0} := by
+    intro z hz
+    change z ∈ ({1} : Set ℝ) ×ℂ Set.Icc (-T) T at hz
+    rw [mem_reProdIm] at hz
+    have hzre : z.re = 1 := by simpa using hz.1
+    exact riemannZeta_ne_zero_of_one_le_re (by linarith)
+  obtain ⟨d, hdpos, hdsub⟩ :=
+    hK.exists_cthickening_subset_open isOpen_setOf_riemannZeta_ne_zero hKsub
+  refine ⟨d, hdpos, ?_⟩
+  intro s him hsre
+  by_cases hge : 1 ≤ s.re
+  · exact riemannZeta_ne_zero_of_one_le_re hge
+  · have hlt : s.re < 1 := lt_of_not_ge hge
+    let k : ℂ := ⟨1, s.im⟩
+    have hk : k ∈ verticalSegment := by
+      change k ∈ ({1} : Set ℝ) ×ℂ Set.Icc (-T) T
+      rw [mem_reProdIm]
+      constructor
+      · simp [k]
+      · simpa [k] using (abs_le.mp him)
+    have hdist : dist s k ≤ d := by
+      have hdist' : dist s k ≤ |s.re - 1| := by
+        calc
+          dist s k = ‖s - k‖ := dist_eq_norm s k
+          _ ≤ |(s - k).re| + |(s - k).im| := norm_le_abs_re_add_abs_im _
+          _ = |s.re - 1| := by simp [k]
+      have habs : |s.re - 1| ≤ d := by
+        rw [abs_of_nonpos (by linarith)]
+        linarith
+      exact hdist'.trans habs
+    exact hdsub (Metric.mem_cthickening_of_dist_le s k d verticalSegment hk hdist)
 
 /-- 经典零点自由区域：ζ(s) ≠ 0 对于 Re(s) ≥ 1 - c/log|t| (|t| ≥ 2)。
     这需要 Hadamard 因子分解或 Borel-Carathéodory 定理，目前 Mathlib 缺失。 -/
-theorem classical_zero_free_region :
-    ∃ c > 0, ∀ s : ℂ, |s.im| ≥ 2 → s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0 := by
-  -- 需要 Hadamard 因子分解 或 Borel-Carathéodory 引理
-  sorry
+def classical_zero_free_region : Prop :=
+    ∃ c > 0, ∀ s : ℂ, |s.im| ≥ 2 → s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0
+
+/-- `log |t|` is positive throughout the classical zero-free-region range. -/
+lemma log_abs_pos_of_two_le {t : ℝ} (ht : 2 ≤ |t|) : 0 < Real.log |t| :=
+  Real.log_pos (lt_of_lt_of_le (by norm_num : (1 : ℝ) < 2) ht)
+
+/-- Patch a high-height quantitative zero-free region with the compact
+zero-free strip at bounded height.
+
+This is the final elementary assembly step in the classical zero-free-region
+argument.  The deep input is isolated in `hhigh`; the proof here only combines
+that input with `classical_zero_free_region_compact`. -/
+lemma compact_patch_classical_zero_free_region
+    (T0 : ℝ) (hT0 : 2 ≤ T0)
+    (hhigh :
+      ∃ c > 0, ∀ s : ℂ, T0 ≤ |s.im| →
+        s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0) :
+    classical_zero_free_region := by
+  rcases hhigh with ⟨chigh, hchigh_pos, hhigh_region⟩
+  rcases classical_zero_free_region_compact T0 hT0 with ⟨d, hd_pos, hcompact⟩
+  let c := min chigh (d * Real.log 2)
+  have hlog2_pos : 0 < Real.log (2 : ℝ) := Real.log_pos (by norm_num)
+  have hc_pos : 0 < c := lt_min hchigh_pos (mul_pos hd_pos hlog2_pos)
+  refine ⟨c, hc_pos, ?_⟩
+  intro s hs2 hsre
+  by_cases hlarge : T0 ≤ |s.im|
+  · refine hhigh_region s hlarge ?_
+    have hlog_pos : 0 < Real.log |s.im| := log_abs_pos_of_two_le hs2
+    have hc_le : c ≤ chigh := min_le_left chigh (d * Real.log 2)
+    have hdiv : c / Real.log |s.im| ≤ chigh / Real.log |s.im| :=
+      div_le_div_of_nonneg_right hc_le hlog_pos.le
+    linarith
+  · refine hcompact s (le_of_not_ge hlarge) ?_
+    have hlog_pos : 0 < Real.log |s.im| := log_abs_pos_of_two_le hs2
+    have hlog_mono : Real.log (2 : ℝ) ≤ Real.log |s.im| :=
+      Real.log_le_log (by norm_num) hs2
+    have hc_le : c ≤ d * Real.log 2 := min_le_right chigh (d * Real.log 2)
+    have hc_le_dlog : c ≤ d * Real.log |s.im| :=
+      le_trans hc_le (mul_le_mul_of_nonneg_left hlog_mono hd_pos.le)
+    have hfrac : c / Real.log |s.im| ≤ d := by
+      exact (div_le_iff₀ hlog_pos).mpr hc_le_dlog
+    linarith
 
 /-- Vinogradov-Korobov 零点自由区域：目前最广的已知零自由区域。
     需要指数和估计，远超当前 Mathlib 范畴。 -/
-theorem vinogradov_korobov_zero_free_region :
-    ∃ c > 0, ∀ s : ℂ, |s.im| ≥ 3 → s.re ≥ 1 - c / (Real.log |s.im|)^(2/3 : ℝ) * (Real.log (Real.log |s.im|))^(-1/3 : ℝ) → riemannZeta s ≠ 0 := by
-  -- 需要指数和估计
-  sorry
+def vinogradov_korobov_zero_free_region : Prop :=
+    ∃ c > 0, ∀ s : ℂ, |s.im| ≥ 3 → s.re ≥ 1 - c / (Real.log |s.im|)^(2/3 : ℝ) * (Real.log (Real.log |s.im|))^(-1/3 : ℝ) → riemannZeta s ≠ 0
 
 end ZeroFreeRegion

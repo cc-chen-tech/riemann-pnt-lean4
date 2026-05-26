@@ -3,21 +3,22 @@
 
 ## Overview
 
-This file contains a comprehensive Lean 4 formalization of analytic number theory
-infrastructure toward the Prime Number Theorem, built on top of Mathlib.
+This file contains Lean 4 infrastructure toward analytic number theory statements
+around the Prime Number Theorem, built on top of Mathlib.
 
-## Key sorry-free results (original mathematical content)
+## Verified and partial results
 
-1. **3-4-1 Inequality** (de la Vallée Poussin's trick):
+1. **3-4-1 setup** (de la Vallée Poussin's trick):
    - `ZeroFreeRegion.trig_identity_nonneg`: 3 + 4cos θ + cos 2θ ≥ 0
    - `ZeroFreeRegion.log_deriv_zeta_nonneg_combination`:
-     The non-negativity of 3(-ζ'/ζ(σ)) + 4(-ζ'/ζ(σ+it)) + (-ζ'/ζ(σ+2it))
+     Verified non-negativity of
+     3(-ζ'/ζ(σ)) + 4(-ζ'/ζ(σ+it)) + (-ζ'/ζ(σ+2it))
    - `ZeroFreeRegion.log_deriv_zeta_lower_bound`
 
-2. **Zero-free regions** (sorry-free):
+2. **Zero-free regions**:
    - `ZeroFreeRegion.zeta_no_zeros_on_line_one`: ζ(s) ≠ 0 on Re(s) = 1
    - `ZeroFreeRegion.classical_zero_free_region_compact`:
-     For any T ≥ 2, ∃ d > 0 such that ζ has no zeros in {|Im(s)| ≤ T, Re(s) ≥ 1-d}
+     Verified compact zero-free region for each bounded height
    - `riemannZeta_ne_zero_of_re_le_zero`: No zeros for Re(s) ≤ 0
      (except trivial zeros), proved via functional equation
 
@@ -31,7 +32,7 @@ infrastructure toward the Prime Number Theorem, built on top of Mathlib.
    - `ZeroFreeRegion.log_deriv_zeta_re_series`: -Re(ζ'/ζ(s)) as Dirichlet series
    - `EulerProduct.vonMangoldt_lseries_eq_neg_log_deriv`: L(Λ,s) = -ζ'/ζ(s)
 
-5. **Dirichlet L-functions** (sorry-free):
+5. **Dirichlet L-functions**:
    - `DirichletNonvanishing.three_four_one_inequality`
    - `DirichletNonvanishing.lfunction_ne_zero_re_eq_one`
 
@@ -40,17 +41,16 @@ infrastructure toward the Prime Number Theorem, built on top of Mathlib.
    - `ZetaTwo.zeta_two`: ζ(2) = π²/6
    - `ZetaFuncEq.zeta_one_sub`: Functional equation
 
-## Remaining sorry declarations (4 total)
+## Remaining unproved target statements in this file
 
-- `explicit_formula_truncated` — requires Perron's formula (contour integration)
 - `explicit_formula_von_mangoldt` — requires Perron's formula
-- `classical_zero_free_region` — quantitative σ ≥ 1 - c/log|t|
-    (needs Hadamard factorization or growth bounds not in Mathlib)
-- `vinogradov_korobov_zero_free_region` — needs exponential sum theory
+- `rh_iff_optimal_error` — standard RH equivalence with prime-counting error terms
+- `finite_nontrivial_zeros_bounded_height` — local finiteness of nontrivial zeros
 
 ## Infrastructure gap analysis
 
-These sorry's cannot be removed with current Mathlib (as of 2026-05). Missing:
+Some target theorems require Mathlib infrastructure that is not yet available
+or not yet connected in this project. Missing or unfinished components include:
 - Hadamard factorization theorem for entire functions of finite order
 - Jensen's formula / Argument principle / Residue theorem
 - Borel-Carathéodory theorem
@@ -59,10 +59,8 @@ These sorry's cannot be removed with current Mathlib (as of 2026-05). Missing:
 
 ## File structure
 
-- Lines 1–1000: Core definitions, von Mangoldt, trivial zeros, 3-4-1 inequality
-- Lines 1000–1600: Zero-free regions, log derivative series, pole behavior
-- Lines 1600–4000: Euler products, L-functions, Dirichlet non-vanishing
-- Lines 4000–21000: Infrastructure library (Mathlib API wrappers, ~2500 theorems)
+This file is currently about 1,000 lines. Earlier notes describing a
+21,000-line infrastructure library do not match this checkout.
 -/
 
 import Mathlib
@@ -103,6 +101,15 @@ noncomputable def vonMangoldt (n : ℕ) : ℝ :=
 /-- 形式 3：ψ(x) ~ x，其中 ψ は Chebyshev 関数 -/
 noncomputable def chebyshevPsi (x : ℝ) : ℝ :=
   ∑ n ∈ Finset.Ico 1 (Nat.floor x + 1), vonMangoldt n
+
+/-- Jump size of the right-continuous Chebyshev ψ at a real point. -/
+noncomputable def jumpVonMangoldt (x : ℝ) : ℝ := by
+  classical
+  exact if h : ∃ n : ℕ, x = (n : ℝ) then vonMangoldt (Classical.choose h) else 0
+
+/-- Midpoint convention for Chebyshev ψ used by exact explicit formulae. -/
+noncomputable def chebyshevPsi0 (x : ℝ) : ℝ :=
+  chebyshevPsi x - jumpVonMangoldt x / 2
 
 def PNTForm3 : Prop :=
   Tendsto (fun x ↦ chebyshevPsi x / x) atTop (𝓝 1)
@@ -409,13 +416,14 @@ lemma logIntegral_asymptotic :
                   exact this
               have h8 : ∫ t in (Real.sqrt x)..x, 1 / (Real.log t)^2 ≤ ∫ t in (Real.sqrt x)..x, 4 / (Real.log x)^2 := by
                 apply intervalIntegral.integral_mono_on
-                · simp
+                · have hx_nonneg : 0 ≤ x := by linarith
+                  nlinarith [Real.sq_sqrt hx_nonneg, Real.sqrt_nonneg x]
                 · exact h7
                 · exact intervalIntegrable_const
                 · exact h6
               have h9 : ∫ (t : ℝ) in (Real.sqrt x)..x, 4 / (Real.log x)^2 = (x - Real.sqrt x) * (4 / (Real.log x)^2) := by
-                simp [intervalIntegral.integral_const]
-                all_goals ring
+                rw [intervalIntegral.integral_const]
+                simp [smul_eq_mul, div_eq_mul_inv, mul_comm, mul_assoc]
               have h10 : (x - Real.sqrt x) * (4 / (Real.log x)^2) ≤ 4 * x / (Real.log x)^2 := by
                 have hpos : 0 < (Real.log x)^2 := by
                   have : Real.log x > 0 := Real.log_pos (by linarith)
@@ -472,7 +480,6 @@ lemma logIntegral_asymptotic :
                 exact ht3
               exact this
         · gcongr
-          all_goals nlinarith [h1]
     have h_squeeze1 : ∀ᶠ x in atTop, 0 ≤ (∫ t in (2)..x, 1 / (Real.log t)^2) * (Real.log x / x) := by
       filter_upwards [eventually_ge_atTop 4] with x hx
       exact (h_bound x hx).left
@@ -490,7 +497,6 @@ lemma logIntegral_asymptotic :
           by_cases hlog : Real.log x = 0
           · simp [hlog]
           field_simp [hx, hlog]
-          <;> ring
         rw [this]
         have h2 : Tendsto (fun x : ℝ ↦ Real.log x) atTop atTop := Real.tendsto_log_atTop
         have h3 : Tendsto (fun x : ℝ ↦ 4 / x) atTop (𝓝 0) := by
@@ -506,13 +512,13 @@ lemma logIntegral_asymptotic :
             = (fun x : ℝ ↦ (1 / (Real.log 2)^2) * (Real.log x / Real.sqrt x)) := by
           ext x
           by_cases hx0 : x ≤ 0
-          · simp [hx0, Real.sqrt_eq_zero'.mpr hx0]
+          · simp [Real.sqrt_eq_zero'.mpr hx0]
           have hx : x ≠ 0 := by linarith
           have hsq : Real.sqrt x ≠ 0 := by exact Real.sqrt_ne_zero'.2 (by linarith)
           field_simp [hx, hsq]
           ring_nf
-          <;> rw [Real.sq_sqrt (show (0 : ℝ) ≤ x by linarith)]
-          <;> ring
+          rw [Real.sq_sqrt (show (0 : ℝ) ≤ x by linarith)]
+          ring
         rw [this]
         have h3 : Tendsto (fun x : ℝ ↦ Real.log x / Real.sqrt x) atTop (𝓝 0) := by
           have h4 : Tendsto (fun x : ℝ ↦ Real.log x / x ^ (1 / 2 : ℝ)) atTop (𝓝 0) :=
@@ -539,7 +545,6 @@ lemma logIntegral_asymptotic :
     filter_upwards [eventually_ge_atTop 2] with x hx
     have h_main' := h_main x hx
     simp [h_main']
-    all_goals ring_nf
   have h_const : Tendsto (fun x : ℝ ↦ (1 : ℝ)) atTop (𝓝 1) := tendsto_const_nhds
   have h_err1 : Tendsto (fun x : ℝ ↦ (2 / Real.log 2) * (Real.log x / x)) atTop (𝓝 0) := by
     have h := h_log_div_x.const_mul (2 / Real.log 2)
@@ -630,13 +635,13 @@ theorem pnt_forms_equivalent :
           have : (fun x : ℝ ↦ 2 * Real.sqrt x * Real.log x / x) = (fun x : ℝ ↦ 2 * (Real.log x / Real.sqrt x)) := by
             ext x
             by_cases hx0 : x ≤ 0
-            · simp [hx0, Real.sqrt_eq_zero'.mpr hx0]
+            · simp [Real.sqrt_eq_zero'.mpr hx0]
             have hx : x ≠ 0 := by linarith
             have hsq : Real.sqrt x ≠ 0 := by exact (Real.sqrt_pos.2 (by linarith)).ne'
             field_simp [hx, hsq]
             ring_nf
-            <;> rw [Real.sq_sqrt (show (0 : ℝ) ≤ x by linarith)]
-            <;> ring
+            rw [Real.sq_sqrt (show (0 : ℝ) ≤ x by linarith)]
+            ring
           rw [this]
           have h4 : Tendsto (fun x : ℝ ↦ Real.log x / Real.sqrt x) atTop (𝓝 0) := by
             have h5 : Tendsto (fun x : ℝ ↦ Real.log x / x ^ (1 / 2 : ℝ)) atTop (𝓝 0) :=
@@ -727,7 +732,7 @@ theorem pnt_forms_equivalent :
               filter_upwards [eventually_ge_atTop 2] with x hx
               have hlog : Real.log x > 0 := Real.log_pos (by linarith)
               field_simp
-              <;> ring
+              ring
             exact Tendsto.congr' h_eq3 h_sum
           exact Tendsto.congr' (by filter_upwards [h_eq] with x hx; rw [hx.symm]) h_target
         · intro h
@@ -752,7 +757,7 @@ theorem pnt_forms_equivalent :
               filter_upwards [eventually_ge_atTop 2] with x hx
               have hlog : Real.log x > 0 := Real.log_pos (by linarith)
               field_simp
-              <;> ring
+              ring
             have h_eq3' : (fun x : ℝ ↦ (Nat.primeCounting ⌊x⌋₊ : ℝ) / (x / Real.log x) - ((Nat.primeCounting ⌊x⌋₊ : ℝ) - Chebyshev.theta x / Real.log x) / (x / Real.log x)) =ᶠ[atTop] (fun x : ℝ ↦ Chebyshev.theta x / x) := by
               filter_upwards [h_eq3] with x hx
               rw [hx.symm]
@@ -767,16 +772,105 @@ theorem pnt_forms_equivalent :
 
 /-! ## 与黎曼猜想的联系 -/
 
-/-- 黎曼猜想的最优误差项形式 -/
+/-- RH-scale Chebyshev-ψ error target. -/
+def RH_PsiErrorBound : Prop :=
+  (fun x : ℝ => chebyshevPsi x - x)
+    =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2)
+
+/-- RH-scale Chebyshev-θ error target. -/
+def RH_ThetaErrorBound : Prop :=
+  (fun x : ℝ => Chebyshev.theta x - x)
+    =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2)
+
+/-- The standard bound `ψ(x)-θ(x)=O(sqrt x log x)` is small enough for the
+RH-scale `sqrt x log^2 x` error term. -/
+lemma psi_sub_theta_isBigO_rh_scale :
+    (fun x : ℝ => chebyshevPsi x - Chebyshev.theta x)
+      =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2) := by
+  refine Asymptotics.IsBigO.of_bound 2 ?_
+  filter_upwards [eventually_ge_atTop (Real.exp 1)] with x hx
+  have hxpos : 0 < x := lt_of_lt_of_le (Real.exp_pos 1) hx
+  have hx1 : 1 ≤ x := by
+    have h_exp_one : (1 : ℝ) ≤ Real.exp 1 := by
+      rw [Real.one_le_exp_iff]
+      norm_num
+    exact le_trans h_exp_one hx
+  have hlog1 : 1 ≤ Real.log x := (Real.le_log_iff_exp_le hxpos).mpr hx
+  have hlog_nonneg : 0 ≤ Real.log x := by linarith
+  have hlog_le_sq : Real.log x ≤ (Real.log x)^2 := by nlinarith
+  have hmain := Chebyshev.abs_psi_sub_theta_le_sqrt_mul_log (x := x) hx1
+  have hmain' : |chebyshevPsi x - Chebyshev.theta x| ≤ 2 * Real.sqrt x * Real.log x := by
+    simpa [chebyshevPsi_eq_mathlib] using hmain
+  have hg_nonneg : 0 ≤ Real.sqrt x * (Real.log x)^2 :=
+    mul_nonneg (Real.sqrt_nonneg x) (sq_nonneg _)
+  have hscale : 2 * Real.sqrt x * Real.log x ≤
+      2 * (Real.sqrt x * (Real.log x)^2) := by
+    nlinarith [Real.sqrt_nonneg x, hlog_le_sq]
+  rw [Real.norm_eq_abs, Real.norm_eq_abs, abs_of_nonneg hg_nonneg]
+  exact le_trans hmain' hscale
+
+/-- RH-scale `ψ` error implies the corresponding `θ` error. -/
+lemma RH_ThetaErrorBound_of_RH_PsiErrorBound
+    (hψ : RH_PsiErrorBound) : RH_ThetaErrorBound := by
+  have hdiff := psi_sub_theta_isBigO_rh_scale
+  have hsub := hψ.sub hdiff
+  have h_eq :
+      (fun x : ℝ => (chebyshevPsi x - x) - (chebyshevPsi x - Chebyshev.theta x))
+        = (fun x : ℝ => Chebyshev.theta x - x) := by
+    funext x
+    ring
+  simpa [RH_PsiErrorBound, RH_ThetaErrorBound, h_eq] using hsub
+
+/-- RH-scale `θ` error implies the corresponding `ψ` error. -/
+lemma RH_PsiErrorBound_of_RH_ThetaErrorBound
+    (hθ : RH_ThetaErrorBound) : RH_PsiErrorBound := by
+  have hdiff := psi_sub_theta_isBigO_rh_scale
+  have hadd := hθ.add hdiff
+  have h_eq :
+      (fun x : ℝ => (Chebyshev.theta x - x) + (chebyshevPsi x - Chebyshev.theta x))
+        = (fun x : ℝ => chebyshevPsi x - x) := by
+    funext x
+    ring
+  simpa [RH_PsiErrorBound, RH_ThetaErrorBound, h_eq] using hadd
+
+lemma RH_PsiErrorBound_iff_RH_ThetaErrorBound :
+    RH_PsiErrorBound ↔ RH_ThetaErrorBound :=
+  ⟨RH_ThetaErrorBound_of_RH_PsiErrorBound,
+    RH_PsiErrorBound_of_RH_ThetaErrorBound⟩
+
+/-- RH-scale prime-counting error target in composable asymptotic form. -/
+def RH_PrimeCountingLiErrorBound : Prop :=
+  (fun x : ℝ => (primeCounting x : ℝ) - logIntegral x)
+    =O[atTop] (fun x : ℝ => Real.sqrt x * Real.log x)
+
+/-- Pointwise version of the RH-scale prime-counting error target.
+
+The `=O[atTop]` form above is the target used for future formal composition;
+this pointwise form is kept for the classical textbook statement. -/
 def RH_ErrorBound : Prop :=
   ∃ C > 0, ∀ x ≥ 2,
     |(primeCounting x : ℝ) - logIntegral x| ≤ C * Real.sqrt x * Real.log x
 
-/-- 定理：RH ⟺ 最优误差界 -/
-theorem rh_iff_optimal_error :
-    RiemannHypothesis.Statement ↔ RH_ErrorBound := by
-  -- 这是黎曼猜想的标准等价形式之一
-  sorry
+/-- The pointwise textbook error target implies the composable `=O[atTop]`
+form used by the rest of the formalization. -/
+lemma RH_PrimeCountingLiErrorBound_of_pointwise
+    (h : RH_ErrorBound) : RH_PrimeCountingLiErrorBound := by
+  rcases h with ⟨C, _hCpos, hC⟩
+  exact Asymptotics.IsBigO.of_bound C (by
+    filter_upwards [eventually_ge_atTop (2 : ℝ)] with x hx
+    have hlog_nonneg : 0 ≤ Real.log x := Real.log_nonneg (by linarith : (1 : ℝ) ≤ x)
+    simpa [RH_PrimeCountingLiErrorBound, Real.norm_eq_abs,
+      abs_of_nonneg (Real.sqrt_nonneg x), abs_of_nonneg hlog_nonneg, mul_assoc]
+      using hC x hx)
+
+/-- Target statement: RH iff the RH-scale prime-counting error bound.
+
+This is a standard deep equivalence, but the current project does not provide
+the analytic machinery needed to prove it.  Keeping it as a `Prop` records the
+target without claiming a proof.
+-/
+def rh_iff_optimal_error : Prop :=
+  RiemannHypothesis.Statement ↔ RH_PrimeCountingLiErrorBound
 
 /-! ## 零点对称性 -/
 
@@ -785,8 +879,7 @@ theorem rh_iff_optimal_error :
 theorem nontrivial_zero_symmetric {ρ : ℂ} (hρ : riemannZeta ρ = 0)
     (hre : 0 < ρ.re) (hre' : ρ.re < 1) : riemannZeta (1 - ρ) = 0 := by
   have hρ_nat : ∀ n : ℕ, ρ ≠ -(n : ℂ) := by
-    intro n
-    intro h
+    intro n h
     have : ρ.re = (-(n : ℂ)).re := congr_arg Complex.re h
     simp at this
     linarith
@@ -841,17 +934,16 @@ theorem riemannZeta_ne_zero_of_re_le_zero {s : ℂ} (hs : s.re ≤ 0)
       by_cases hk_le : k ≤ 0
       · have hre : s.re = -2 * (k : ℝ) := by
           have := congr_arg Complex.re hs_eq
-          simp [Complex.mul_re, Complex.intCast_re, Complex.intCast_im, Complex.ofReal_re,
-            Complex.ofReal_im] at this
+          simp [Complex.mul_re, Complex.intCast_re, Complex.intCast_im] at this
           linarith
         have hk0 : k = 0 := by
           have hk_ge : (0 : ℤ) ≤ k := by
-            by_contra h; push_neg at h
+            by_contra h; push Not at h
             have : (k : ℝ) < 0 := by exact_mod_cast h
             linarith
           omega
         exact hs0 (by rw [hs_eq, hk0]; simp)
-      · push_neg at hk_le
+      · push Not at hk_le
         have hk1 : (0 : ℤ) ≤ k - 1 := by omega
         set n := (k - 1).toNat
         have hn : (↑n : ℤ) = k - 1 := Int.toNat_of_nonneg hk1
@@ -864,35 +956,70 @@ theorem riemannZeta_ne_zero_of_re_le_zero {s : ℂ} (hs : s.re ≤ 0)
 
 /-- 非平凡零点严格在临界带 0 < Re(s) < 1 内 -/
 theorem nontrivial_zero_in_critical_strip {s : ℂ}
-    (hζ : riemannZeta s = 0) (hnt : ¬∃ n : ℕ, s = -2 * ((n : ℂ) + 1)) (hs1 : s ≠ 1) :
+    (hζ : riemannZeta s = 0) (hnt : ¬∃ n : ℕ, s = -2 * ((n : ℂ) + 1)) (_hs1 : s ≠ 1) :
     0 < s.re ∧ s.re < 1 := by
   constructor
   · by_contra h
-    push_neg at h
+    push Not at h
     exact riemannZeta_ne_zero_of_re_le_zero (by linarith : s.re ≤ 0)
       (by intro n hn; exact hnt ⟨n, hn⟩) hζ
   · by_contra h
-    push_neg at h
+    push Not at h
     exact riemannZeta_ne_zero_of_one_le_re h hζ
 
-/-- 任意有界高度内仅有有限多个非平凡零点 -/
+/-- ζ 的零点不能在 `1` 以外的点聚集。 -/
+lemma riemannZeta_not_frequently_zero_nhdsNE_of_ne_one {x : ℂ} (hx : x ≠ 1) :
+    ¬ ∃ᶠ z in 𝓝[≠] x, riemannZeta z = 0 := by
+  intro hfreq
+  have hdiff : DifferentiableOn ℂ riemannZeta ({(1 : ℂ)}ᶜ : Set ℂ) := by
+    intro z hz
+    exact (differentiableAt_riemannZeta (by simpa using hz)).differentiableWithinAt
+  have han : AnalyticOnNhd ℂ riemannZeta ({(1 : ℂ)}ᶜ : Set ℂ) :=
+    hdiff.analyticOnNhd isOpen_compl_singleton
+  have hpre : IsPreconnected ({(1 : ℂ)}ᶜ : Set ℂ) := by
+    exact (isConnected_compl_singleton_of_one_lt_rank (E := ℂ)
+      (by rw [Complex.rank_real_complex]; norm_num) (1 : ℂ)).isPreconnected
+  have hxmem : x ∈ ({(1 : ℂ)}ᶜ : Set ℂ) := by
+    simpa using hx
+  have heq := han.eqOn_zero_of_preconnected_of_frequently_eq_zero hpre hxmem hfreq
+  have h2zero : riemannZeta (2 : ℂ) = 0 := by
+    have h2mem : (2 : ℂ) ∈ ({(1 : ℂ)}ᶜ : Set ℂ) := by norm_num
+    simpa using heq h2mem
+  exact riemannZeta_ne_zero_of_one_lt_re (s := (2 : ℂ)) (by norm_num) h2zero
+
+/-- 任意有界高度内仅有有限多个非平凡零点。 -/
 theorem finite_nontrivial_zeros_bounded_height (T : ℝ) :
     Set.Finite {s : ℂ | RiemannHypothesis.IsNontrivialZero s ∧ |s.im| ≤ T} := by
-  apply Set.Finite.subset (IsCompact.inter_riemannZetaZeros_finite
-    (isCompact_closedBall (0 : ℂ) (|T| + 1)))
-  intro s ⟨⟨hζ, hre, hre'⟩, him⟩
-  refine ⟨?_, mem_riemannZetaZeros.mpr hζ⟩
-  rw [Metric.mem_closedBall, Complex.dist_eq, sub_zero]
-  rw [Complex.norm_eq_sqrt_sq_add_sq]
-  calc √(s.re ^ 2 + s.im ^ 2)
-      ≤ √(1 + T ^ 2) := by
-        apply Real.sqrt_le_sqrt
-        have him' := abs_le.mp him
-        nlinarith [sq_abs s.im, sq_abs T]
-    _ ≤ |T| + 1 := by
-        rw [show |T| + 1 = √((|T| + 1) ^ 2) from
-          (Real.sqrt_sq (by positivity)).symm]
-        exact Real.sqrt_le_sqrt (by nlinarith [sq_abs T, abs_nonneg T])
+  classical
+  let S : Set ℂ := {s : ℂ | RiemannHypothesis.IsNontrivialZero s ∧ |s.im| ≤ T}
+  let K : Set ℂ := Set.Icc (0 : ℝ) 1 ×ℂ Set.Icc (-|T|) |T|
+  have hK_compact : IsCompact K := by
+    refine (Metric.isCompact_iff_isClosed_bounded (s := K)).mpr ⟨?_, ?_⟩
+    · exact IsClosed.reProdIm isClosed_Icc isClosed_Icc
+    · exact Bornology.IsBounded.reProdIm (Metric.isBounded_Icc (0 : ℝ) 1)
+        (Metric.isBounded_Icc (-|T|) |T|)
+  have hS_sub_K : S ⊆ K := by
+    intro z hz
+    rcases hz with ⟨hznt, him⟩
+    rcases hznt with ⟨_hζ, hre0, hre1⟩
+    rw [Complex.mem_reProdIm]
+    constructor
+    · exact ⟨le_of_lt hre0, le_of_lt hre1⟩
+    · have him_abs : |z.im| ≤ |T| := le_trans him (le_abs_self T)
+      exact abs_le.mp him_abs
+  by_contra hfin
+  have hS_inf : S.Infinite := Set.not_finite.mp hfin
+  obtain ⟨x, _hxK, hxacc⟩ := hS_inf.exists_accPt_of_subset_isCompact hK_compact hS_sub_K
+  have hfreqS : ∃ᶠ z in 𝓝[≠] x, z ∈ S := accPt_iff_frequently_nhdsNE.mp hxacc
+  have hfreqZ : ∃ᶠ z in 𝓝[≠] x, riemannZeta z = 0 := by
+    exact hfreqS.mono fun _z hz => hz.1.1
+  by_cases hx1 : x = 1
+  · subst x
+    have hmul_ne : ∀ᶠ z in 𝓝[≠] (1 : ℂ), (z - 1) * riemannZeta z ≠ 0 :=
+      riemannZeta_residue_one.eventually_ne one_ne_zero
+    obtain ⟨_z, hz_zero, hz_prod_ne⟩ := (hfreqZ.and_eventually hmul_ne).exists
+    exact hz_prod_ne (by rw [hz_zero, mul_zero])
+  · exact riemannZeta_not_frequently_zero_nhdsNE_of_ne_one hx1 hfreqZ
 
 /-- RH 等价于所有非平凡零点满足 Re = 1/2 -/
 theorem rh_iff_nontrivial_zeros_on_line :
@@ -902,8 +1029,8 @@ theorem rh_iff_nontrivial_zeros_on_line :
   · intro hRH s ⟨hζ, hre, hre'⟩
     exact hRH s hζ
       (by intro ⟨n, hn⟩; have := congr_arg Complex.re hn
-          simp [Complex.mul_re, Complex.natCast_re, Complex.ofReal_re, Complex.add_re,
-            Complex.one_re, Complex.neg_re, Complex.ofReal_im, Complex.natCast_im] at this
+          simp [Complex.mul_re, Complex.natCast_re, Complex.add_re,
+            Complex.one_re, Complex.neg_re, Complex.natCast_im] at this
           linarith)
       (by intro h; have := congr_arg Complex.re h; simp at this; linarith)
   · intro h s hζ hnt hs1
@@ -941,22 +1068,57 @@ theorem rh_zero_symmetric_self_consistent {ρ : ℂ}
 
 /-! ## 显式公式 -/
 
-/-- von Mangoldt 显式公式
+/-- Finset of nontrivial zeros up to height `T`.
 
-ψ(x) = x - ∑_ρ x^ρ/ρ - ζ'(0)/ζ(0) - 1/2 log(1-x^{-2})
+This uses the already-proved local finiteness theorem.  A future exact
+explicit formula should replace the unweighted sum below by a multiplicity-
+weighted sum once the relevant meromorphic-order API is connected. -/
+noncomputable def nontrivialZerosFinset (T : ℝ) : Finset ℂ :=
+  (finite_nontrivial_zeros_bounded_height T).toFinset
 
-其中求和遍历所有非平凡零点 ρ。
--/
+/-- Height-truncated nontrivial-zero contribution. -/
+noncomputable def finiteNontrivialZeroSum (x T : ℝ) : ℂ :=
+  ∑ ρ ∈ nontrivialZerosFinset T, (x : ℂ) ^ ρ / ρ
 
-theorem explicit_formula_von_mangoldt (x : ℝ) (hx : x ≥ 2) :
-    chebyshevPsi x = x
-    - ∑' ρ : {s : ℂ // RiemannHypothesis.IsNontrivialZero s},
-        (x : ℂ) ^ (ρ : ℂ) / (ρ : ℂ)
-    - (deriv riemannZeta 0) / riemannZeta 0
-    - (1 / 2) * Real.log (1 - x^(-2 : ℝ)) := by
-  -- 这是黎曼显式公式的标准形式
-  -- 素数分布与 ζ 零点直接联系
-  sorry
+lemma mem_nontrivialZerosFinset {ρ : ℂ} {T : ℝ} :
+    ρ ∈ nontrivialZerosFinset T ↔
+      RiemannHypothesis.IsNontrivialZero ρ ∧ |ρ.im| ≤ T := by
+  unfold nontrivialZerosFinset
+  exact Set.Finite.mem_toFinset (finite_nontrivial_zeros_bounded_height T)
+
+lemma nontrivial_zero_mem_nontrivialZerosFinset {ρ : ℂ} {T : ℝ}
+    (hρ : RiemannHypothesis.IsNontrivialZero ρ) (hT : |ρ.im| ≤ T) :
+    ρ ∈ nontrivialZerosFinset T :=
+  mem_nontrivialZerosFinset.mpr ⟨hρ, hT⟩
+
+lemma nontrivialZerosFinset_mono {T U : ℝ} (hTU : T ≤ U) {ρ : ℂ}
+    (hρ : ρ ∈ nontrivialZerosFinset T) :
+    ρ ∈ nontrivialZerosFinset U := by
+  rcases mem_nontrivialZerosFinset.mp hρ with ⟨hzero, hheight⟩
+  exact mem_nontrivialZerosFinset.mpr ⟨hzero, le_trans hheight hTU⟩
+
+lemma not_mem_nontrivialZerosFinset_of_height_lt {ρ : ℂ} {T : ℝ}
+    (hT : T < |ρ.im|) :
+    ρ ∉ nontrivialZerosFinset T := by
+  intro hρ
+  exact not_le_of_gt hT (mem_nontrivialZerosFinset.mp hρ).2
+
+/-- Corrected target shape for the von Mangoldt explicit formula.
+
+The old unordered `tsum` over all zeros is not a safe formal statement.  This
+target uses the midpoint function `ψ₀` and a height-truncated symmetric limit.
+It is still a target statement, not a proved theorem; completing it requires
+Perron's formula, contour shifting, residue calculus, zero multiplicities, and
+edge estimates. -/
+def explicit_formula_von_mangoldt (x : ℝ) (_hx : x ≥ 2) : Prop :=
+  Tendsto
+    (fun T : ℝ =>
+      (x : ℂ)
+        - finiteNontrivialZeroSum x T
+        - deriv riemannZeta 0 / riemannZeta 0
+        - (1 / 2 : ℂ) * (Real.log (1 - x^(-2 : ℝ)) : ℂ))
+    atTop
+    (𝓝 (chebyshevPsi0 x : ℂ))
 
 /-- 零点对素数分布的贡献
 
