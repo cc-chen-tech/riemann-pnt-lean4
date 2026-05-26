@@ -944,6 +944,26 @@ target without claiming a proof.
 def rh_iff_optimal_error : Prop :=
   RiemannHypothesis.Statement ↔ RH_PrimeCountingLiErrorBound
 
+/-- Packaging lemma for the RH/error equivalence target.
+
+The hard work remains the two implications supplied as hypotheses; this lemma
+keeps later developments from reopening the definition of the target. -/
+lemma rh_iff_optimal_error_of_implications
+    (h_forward : RiemannHypothesis.Statement → RH_PrimeCountingLiErrorBound)
+    (h_reverse : RH_PrimeCountingLiErrorBound → RiemannHypothesis.Statement) :
+    rh_iff_optimal_error :=
+  ⟨h_forward, h_reverse⟩
+
+lemma RH_PrimeCountingLiErrorBound_of_rh_iff_optimal_error
+    (h : rh_iff_optimal_error) :
+    RiemannHypothesis.Statement → RH_PrimeCountingLiErrorBound :=
+  h.mp
+
+lemma RiemannHypothesis_of_rh_iff_optimal_error
+    (h : rh_iff_optimal_error) :
+    RH_PrimeCountingLiErrorBound → RiemannHypothesis.Statement :=
+  h.mpr
+
 /-! ## 零点对称性 -/
 
 /-- 非平凡零点在 s ↦ 1-s 下对称：若 ζ(ρ) = 0 且 0 < Re(ρ) < 1，则 ζ(1-ρ) = 0。
@@ -1247,6 +1267,12 @@ lemma explicitFormulaApprox_congr_zero_sum {x T U : ℝ}
     (h : finiteNontrivialZeroSum x T = finiteNontrivialZeroSum x U) :
     explicitFormulaApprox x T = explicitFormulaApprox x U := by
   simp [explicitFormulaApprox, h]
+
+lemma explicitFormulaApprox_congr_height {x T U : ℝ}
+    (h : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ →
+      (|ρ.im| ≤ T ↔ |ρ.im| ≤ U)) :
+    explicitFormulaApprox x T = explicitFormulaApprox x U :=
+  explicitFormulaApprox_congr_zero_sum (finiteNontrivialZeroSum_congr_height h)
 
 lemma explicitFormulaApprox_eq_of_neg (x : ℝ) {T : ℝ} (hT : T < 0) :
     explicitFormulaApprox x T =

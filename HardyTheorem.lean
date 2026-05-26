@@ -657,6 +657,12 @@ lemma hardyZ_eventually_const_sign_of_finite_zeros
 def weightedIntegralOf_tail_dominates (f : ℝ → ℝ) (n : ℕ) : Prop :=
   ∃ A : ℝ, Tendsto (fun T => ∫ t in A..T, weightFunction n t * f t) atTop atTop
 
+lemma weightedIntegralOf_tail_dominates_of_tendsto_atTop
+    {f : ℝ → ℝ} {n : ℕ}
+    (h : Tendsto (fun T => weightedIntegralOf f n T) atTop atTop) :
+    weightedIntegralOf_tail_dominates f n :=
+  ⟨0, by simpa [weightedIntegralOf] using h⟩
+
 /-- Tail dominance turns the full weighted integral eventually positive.
 
 The continuity hypothesis supplies interval integrability, so the integral can
@@ -818,6 +824,39 @@ def hardy_littlewood_lower_bound_target : Prop :=
 def selberg_zero_proportion_target : Prop :=
     ∃ c > 0, ∃ T0 : ℝ, ∀ T ≥ T0,
       (zeroCountOnCriticalLine T : ℝ) ≥ c * (T / (2*Real.pi) * Real.log T)
+
+/-- Selberg's positive-proportion target implies the weaker
+Hardy--Littlewood linear lower-bound target. -/
+lemma hardy_littlewood_lower_bound_target_of_selberg_zero_proportion
+    (h : selberg_zero_proportion_target) :
+    hardy_littlewood_lower_bound_target := by
+  rcases h with ⟨c, hc_pos, T0, hT0⟩
+  refine ⟨c / (2 * Real.pi), ?_, max T0 (Real.exp 1), ?_⟩
+  · exact div_pos hc_pos (mul_pos (by norm_num) Real.pi_pos)
+  · intro T hT
+    have hT0' : T0 ≤ T := le_trans (le_max_left T0 (Real.exp 1)) hT
+    have hexp_le : Real.exp 1 ≤ T := le_trans (le_max_right T0 (Real.exp 1)) hT
+    have hsel := hT0 T hT0'
+    have hlog_ge : 1 ≤ Real.log T := by
+      have hlog_mono : Real.log (Real.exp 1) ≤ Real.log T :=
+        Real.log_le_log (Real.exp_pos 1) hexp_le
+      simpa using hlog_mono
+    have hden_pos : 0 < 2 * Real.pi := mul_pos (by norm_num) Real.pi_pos
+    have hT_pos : 0 < T := lt_of_lt_of_le (Real.exp_pos 1) hexp_le
+    have hbase_nonneg : 0 ≤ c * (T / (2 * Real.pi)) :=
+      mul_nonneg hc_pos.le (div_nonneg hT_pos.le hden_pos.le)
+    have hmul :
+        c * (T / (2 * Real.pi)) * 1 ≤
+          c * (T / (2 * Real.pi)) * Real.log T :=
+      mul_le_mul_of_nonneg_left hlog_ge hbase_nonneg
+    have htarget :
+        (c / (2 * Real.pi)) * T ≤
+          c * (T / (2 * Real.pi) * Real.log T) := by
+      calc
+        (c / (2 * Real.pi)) * T = c * (T / (2 * Real.pi)) * 1 := by ring
+        _ ≤ c * (T / (2 * Real.pi)) * Real.log T := hmul
+        _ = c * (T / (2 * Real.pi) * Real.log T) := by ring
+    exact le_trans htarget hsel
 
 end HardyTheorem
 
