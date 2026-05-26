@@ -557,7 +557,21 @@ def hardy_two_signed_moments_target : Prop :=
         (fun T => -A * T ^ ((2 : ℝ) + 1 / 4))) ∧
     (∃ B : ℝ, 0 < B ∧
       (fun T => weightedIntegral 2 T) ~[atTop]
-        (fun T => B * T ^ ((4 : ℝ) + 1 / 4)))
+        (fun T => B * T ^ ((2 * 2 : ℝ) + 1 / 4)))
+
+lemma integral_asymptotic_one_of_two_signed_moments
+    (h : hardy_two_signed_moments_target) :
+    integral_asymptotic_target 1 := by
+  rcases h.1 with ⟨A, hApos, hA⟩
+  refine ⟨by norm_num, A, hApos, ?_⟩
+  simpa using hA
+
+lemma integral_asymptotic_two_of_two_signed_moments
+    (h : hardy_two_signed_moments_target) :
+    integral_asymptotic_target 2 := by
+  rcases h.2 with ⟨B, hBpos, hB⟩
+  refine ⟨by norm_num, B, hBpos, ?_⟩
+  simpa using hB
 
 /-! ## Hardy 定理的结构引理 -/
 
@@ -724,9 +738,9 @@ lemma weightedIntegral_two_eventually_positive_of_two_signed_moments
     (h : hardy_two_signed_moments_target) :
     ∀ᶠ T in atTop, 0 < weightedIntegral 2 T := by
   rcases h with ⟨_, ⟨B, hBpos, hBasymp⟩⟩
-  have hp : Tendsto (fun T : ℝ => T ^ ((4 : ℝ) + 1 / 4)) atTop atTop :=
+  have hp : Tendsto (fun T : ℝ => T ^ ((2 * 2 : ℝ) + 1 / 4)) atTop atTop :=
     tendsto_rpow_atTop (by norm_num)
-  have hmodel_top : Tendsto (fun T : ℝ => B * T ^ ((4 : ℝ) + 1 / 4)) atTop atTop :=
+  have hmodel_top : Tendsto (fun T : ℝ => B * T ^ ((2 * 2 : ℝ) + 1 / 4)) atTop atTop :=
     hp.const_mul_atTop hBpos
   have hint_top : Tendsto (fun T : ℝ => weightedIntegral 2 T) atTop atTop :=
     hBasymp.symm.tendsto_atTop hmodel_top
@@ -753,6 +767,27 @@ Hardy Z-function setup and zero equivalence, but not the analytic moment
 estimates needed for the final contradiction. -/
 def hardy_theorem_target : Prop :=
     {t : ℝ | riemannZeta (0.5 + I * t) = 0}.Infinite
+
+/-- Conditional Hardy theorem from the exact analytic inputs used in the
+classical sign-change argument.
+
+This is a proved bridge: the remaining unproved content is isolated in the
+moment and tail-dominance hypotheses, not hidden inside the theorem. -/
+lemma hardy_theorem_target_of_two_signed_moments_and_tail_dominance
+    (hmom : hardy_two_signed_moments_target)
+    (htail_pos : weightedIntegralOf_tail_dominates hardyZ 1)
+    (htail_neg : weightedIntegralOf_tail_dominates (fun t => -hardyZ t) 2) :
+    hardy_theorem_target := by
+  intro hfinite
+  have hsets :
+      {t : ℝ | hardyZ t = 0} =
+        {t : ℝ | riemannZeta (0.5 + I * t) = 0} := by
+    ext t
+    exact hardyZ_zero_iff_zeta_zero t
+  have hhardy_finite : {t : ℝ | hardyZ t = 0}.Finite := by
+    simpa [hsets] using hfinite
+  exact finite_zeros_contradiction_of_two_signed_moments_and_tail_dominance
+    hhardy_finite hmom htail_pos htail_neg
 
 /-- Stronger Hardy target: critical-line zeros have arbitrarily large height. -/
 def hardy_zeros_unbounded_target : Prop :=

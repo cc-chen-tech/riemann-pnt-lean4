@@ -36,12 +36,10 @@ checkout.
 
 - Mathlib (riemannZeta, Complex analysis, L-series)
 - RiemannExplorer
-- PrimeNumberTheorem (for vonMangoldt, chebyshevPsi)
 -/
 
 import Mathlib
 import RiemannExplorer
-import PrimeNumberTheorem
 
 open Complex BigOperators Filter Nat Topology MeasureTheory Asymptotics
 open scoped ArithmeticFunction LSeries.notation
@@ -620,9 +618,84 @@ lemma compact_patch_classical_zero_free_region
       exact (div_le_iff₀ hlog_pos).mpr hc_le_dlog
     linarith
 
+/-- General compact patching lemma for any high-height zero-free width.
+
+If a deep argument proves zero-freeness above a height `T0` with some width
+`width |Im s|`, and a classical `c / log |Im s|` width is eventually dominated
+by that width, then the compact strip fills the bounded-height gap and yields
+the classical target statement. -/
+lemma compact_patch_classical_zero_free_region_of_width
+    (T0 : ℝ) (hT0 : 2 ≤ T0) (width : ℝ → ℝ)
+    (hregion : ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥ 1 - width |s.im| → riemannZeta s ≠ 0)
+    (hwidth : ∃ c > 0, ∀ t : ℝ, T0 ≤ |t| →
+      c / Real.log |t| ≤ width |t|) :
+    classical_zero_free_region := by
+  rcases hwidth with ⟨cwidth, hcwidth_pos, hwidth_bound⟩
+  rcases classical_zero_free_region_compact T0 hT0 with ⟨d, hd_pos, hcompact⟩
+  let c := min cwidth (d * Real.log 2)
+  have hlog2_pos : 0 < Real.log (2 : ℝ) := Real.log_pos (by norm_num)
+  have hc_pos : 0 < c := lt_min hcwidth_pos (mul_pos hd_pos hlog2_pos)
+  refine ⟨c, hc_pos, ?_⟩
+  intro s hs2 hsre
+  by_cases hlarge : T0 ≤ |s.im|
+  · refine hregion s hlarge ?_
+    have hlog_pos : 0 < Real.log |s.im| := log_abs_pos_of_two_le hs2
+    have hc_le : c ≤ cwidth := min_le_left cwidth (d * Real.log 2)
+    have hdiv : c / Real.log |s.im| ≤ cwidth / Real.log |s.im| :=
+      div_le_div_of_nonneg_right hc_le hlog_pos.le
+    have hwidth' : cwidth / Real.log |s.im| ≤ width |s.im| :=
+      hwidth_bound s.im hlarge
+    linarith
+  · refine hcompact s (le_of_not_ge hlarge) ?_
+    have hlog_pos : 0 < Real.log |s.im| := log_abs_pos_of_two_le hs2
+    have hlog_mono : Real.log (2 : ℝ) ≤ Real.log |s.im| :=
+      Real.log_le_log (by norm_num) hs2
+    have hc_le : c ≤ d * Real.log 2 := min_le_right cwidth (d * Real.log 2)
+    have hc_le_dlog : c ≤ d * Real.log |s.im| :=
+      le_trans hc_le (mul_le_mul_of_nonneg_left hlog_mono hd_pos.le)
+    have hfrac : c / Real.log |s.im| ≤ d := by
+      exact (div_le_iff₀ hlog_pos).mpr hc_le_dlog
+    linarith
+
+/-- A high-height `c / log |t|` zero-free theorem is the special case of the
+general width patch with `width t = c / log t`. -/
+lemma compact_patch_classical_zero_free_region_via_width
+    (T0 : ℝ) (hT0 : 2 ≤ T0)
+    (hhigh :
+      ∃ c > 0, ∀ s : ℂ, T0 ≤ |s.im| →
+        s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0) :
+    classical_zero_free_region := by
+  rcases hhigh with ⟨chigh, hchigh_pos, hhigh_region⟩
+  exact compact_patch_classical_zero_free_region_of_width T0 hT0
+    (fun t : ℝ => chigh / Real.log t)
+    hhigh_region
+    ⟨chigh, hchigh_pos, by intro t _; rfl⟩
+
 /-- Vinogradov-Korobov 零点自由区域：目前最广的已知零自由区域。
     需要指数和估计，远超当前 Mathlib 范畴。 -/
 def vinogradov_korobov_zero_free_region : Prop :=
     ∃ c > 0, ∀ s : ℂ, |s.im| ≥ 3 → s.re ≥ 1 - c / (Real.log |s.im|)^(2/3 : ℝ) * (Real.log (Real.log |s.im|))^(-1/3 : ℝ) → riemannZeta s ≠ 0
+
+/-- Conditional bridge from the Vinogradov-Korobov target to the classical
+zero-free region.
+
+The analytic content remains in `hvk`; the remaining hypothesis `hcompare` is
+only the real-variable width comparison saying that, above height `3`, some
+`c' / log |t|` strip is contained in the Vinogradov-Korobov strip. -/
+lemma classical_zero_free_region_of_vinogradov_korobov_with_comparison
+    (hvk : vinogradov_korobov_zero_free_region)
+    (hcompare : ∀ c > 0, ∃ c' > 0, ∀ t : ℝ, 3 ≤ |t| →
+      c' / Real.log |t| ≤
+        c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ)) :
+    classical_zero_free_region := by
+  rcases hvk with ⟨cvk, hcvk_pos, hvk_region⟩
+  exact compact_patch_classical_zero_free_region_of_width 3 (by norm_num)
+    (fun t : ℝ =>
+      cvk / (Real.log t) ^ (2 / 3 : ℝ) *
+        (Real.log (Real.log t)) ^ (-1 / 3 : ℝ))
+    (fun s hsheight hsre => hvk_region s hsheight hsre)
+    (hcompare cvk hcvk_pos)
 
 end ZeroFreeRegion

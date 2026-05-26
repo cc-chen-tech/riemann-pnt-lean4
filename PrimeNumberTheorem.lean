@@ -838,6 +838,62 @@ lemma RH_PsiErrorBound_iff_RH_ThetaErrorBound :
   ⟨RH_ThetaErrorBound_of_RH_PsiErrorBound,
     RH_PsiErrorBound_of_RH_ThetaErrorBound⟩
 
+/-- An eventual absolute-value estimate is enough to close the `ψ` Big-O target. -/
+lemma RH_PsiErrorBound_of_eventual_abs_bound {C : ℝ}
+    (h : ∀ᶠ x in atTop,
+      |chebyshevPsi x - x| ≤ C * (Real.sqrt x * (Real.log x)^2)) :
+    RH_PsiErrorBound := by
+  rw [RH_PsiErrorBound]
+  refine Asymptotics.IsBigO.of_bound C ?_
+  filter_upwards [h, eventually_ge_atTop (1 : ℝ)] with x hx hx1
+  have hlog_nonneg : 0 ≤ Real.log x := Real.log_nonneg hx1
+  have hscale_nonneg : 0 ≤ Real.sqrt x * (Real.log x)^2 :=
+    mul_nonneg (Real.sqrt_nonneg x) (sq_nonneg _)
+  have hsqrt_abs : |Real.sqrt x| = Real.sqrt x :=
+    abs_of_nonneg (Real.sqrt_nonneg x)
+  have hlog_sq_abs : |(Real.log x)^2| = (Real.log x)^2 :=
+    abs_of_nonneg (sq_nonneg _)
+  simpa [Real.norm_eq_abs, abs_mul, hsqrt_abs, hlog_sq_abs,
+    abs_of_nonneg hscale_nonneg, mul_assoc] using hx
+
+/-- Pointwise textbook-style bounds imply the composable `ψ` Big-O target. -/
+lemma RH_PsiErrorBound_of_pointwise {C : ℝ}
+    (_hCpos : 0 < C)
+    (h : ∀ x ≥ 2,
+      |chebyshevPsi x - x| ≤ C * (Real.sqrt x * (Real.log x)^2)) :
+    RH_PsiErrorBound :=
+  RH_PsiErrorBound_of_eventual_abs_bound (by
+    filter_upwards [eventually_ge_atTop (2 : ℝ)] with x hx
+    exact h x hx)
+
+/-- An eventual absolute-value estimate is enough to close the `θ` Big-O target. -/
+lemma RH_ThetaErrorBound_of_eventual_abs_bound {C : ℝ}
+    (h : ∀ᶠ x in atTop,
+      |Chebyshev.theta x - x| ≤ C * (Real.sqrt x * (Real.log x)^2)) :
+    RH_ThetaErrorBound := by
+  rw [RH_ThetaErrorBound]
+  refine Asymptotics.IsBigO.of_bound C ?_
+  filter_upwards [h, eventually_ge_atTop (1 : ℝ)] with x hx hx1
+  have hlog_nonneg : 0 ≤ Real.log x := Real.log_nonneg hx1
+  have hscale_nonneg : 0 ≤ Real.sqrt x * (Real.log x)^2 :=
+    mul_nonneg (Real.sqrt_nonneg x) (sq_nonneg _)
+  have hsqrt_abs : |Real.sqrt x| = Real.sqrt x :=
+    abs_of_nonneg (Real.sqrt_nonneg x)
+  have hlog_sq_abs : |(Real.log x)^2| = (Real.log x)^2 :=
+    abs_of_nonneg (sq_nonneg _)
+  simpa [Real.norm_eq_abs, abs_mul, hsqrt_abs, hlog_sq_abs,
+    abs_of_nonneg hscale_nonneg, mul_assoc] using hx
+
+/-- Pointwise textbook-style bounds imply the composable `θ` Big-O target. -/
+lemma RH_ThetaErrorBound_of_pointwise {C : ℝ}
+    (_hCpos : 0 < C)
+    (h : ∀ x ≥ 2,
+      |Chebyshev.theta x - x| ≤ C * (Real.sqrt x * (Real.log x)^2)) :
+    RH_ThetaErrorBound :=
+  RH_ThetaErrorBound_of_eventual_abs_bound (by
+    filter_upwards [eventually_ge_atTop (2 : ℝ)] with x hx
+    exact h x hx)
+
 /-- RH-scale prime-counting error target in composable asymptotic form. -/
 def RH_PrimeCountingLiErrorBound : Prop :=
   (fun x : ℝ => (primeCounting x : ℝ) - logIntegral x)
@@ -851,17 +907,33 @@ def RH_ErrorBound : Prop :=
   ∃ C > 0, ∀ x ≥ 2,
     |(primeCounting x : ℝ) - logIntegral x| ≤ C * Real.sqrt x * Real.log x
 
+/-- An eventual absolute-value estimate is enough to close the prime-counting
+`Li` Big-O target. -/
+lemma RH_PrimeCountingLiErrorBound_of_eventual_abs_bound {C : ℝ}
+    (h : ∀ᶠ x in atTop,
+      |(primeCounting x : ℝ) - logIntegral x| ≤ C * (Real.sqrt x * Real.log x)) :
+    RH_PrimeCountingLiErrorBound := by
+  rw [RH_PrimeCountingLiErrorBound]
+  refine Asymptotics.IsBigO.of_bound C ?_
+  filter_upwards [h, eventually_ge_atTop (1 : ℝ)] with x hx hx1
+  have hlog_nonneg : 0 ≤ Real.log x := Real.log_nonneg hx1
+  have hscale_nonneg : 0 ≤ Real.sqrt x * Real.log x :=
+    mul_nonneg (Real.sqrt_nonneg x) hlog_nonneg
+  have hsqrt_abs : |Real.sqrt x| = Real.sqrt x :=
+    abs_of_nonneg (Real.sqrt_nonneg x)
+  have hlog_abs : |Real.log x| = Real.log x :=
+    abs_of_nonneg hlog_nonneg
+  simpa [Real.norm_eq_abs, abs_mul, hsqrt_abs, hlog_abs,
+    abs_of_nonneg hscale_nonneg, mul_assoc] using hx
+
 /-- The pointwise textbook error target implies the composable `=O[atTop]`
 form used by the rest of the formalization. -/
 lemma RH_PrimeCountingLiErrorBound_of_pointwise
     (h : RH_ErrorBound) : RH_PrimeCountingLiErrorBound := by
   rcases h with ⟨C, _hCpos, hC⟩
-  exact Asymptotics.IsBigO.of_bound C (by
+  exact RH_PrimeCountingLiErrorBound_of_eventual_abs_bound (by
     filter_upwards [eventually_ge_atTop (2 : ℝ)] with x hx
-    have hlog_nonneg : 0 ≤ Real.log x := Real.log_nonneg (by linarith : (1 : ℝ) ≤ x)
-    simpa [RH_PrimeCountingLiErrorBound, Real.norm_eq_abs,
-      abs_of_nonneg (Real.sqrt_nonneg x), abs_of_nonneg hlog_nonneg, mul_assoc]
-      using hC x hx)
+    simpa [mul_assoc] using hC x hx)
 
 /-- Target statement: RH iff the RH-scale prime-counting error bound.
 
@@ -1103,6 +1175,86 @@ lemma not_mem_nontrivialZerosFinset_of_height_lt {ρ : ℂ} {T : ℝ}
   intro hρ
   exact not_le_of_gt hT (mem_nontrivialZerosFinset.mp hρ).2
 
+lemma nontrivial_zero_ne_zero {ρ : ℂ}
+    (hρ : RiemannHypothesis.IsNontrivialZero ρ) : ρ ≠ 0 := by
+  intro h0
+  have hre : ρ.re = 0 := by simpa using congr_arg Complex.re h0
+  linarith [hρ.2.1]
+
+lemma ne_zero_of_mem_nontrivialZerosFinset {ρ : ℂ} {T : ℝ}
+    (hρ : ρ ∈ nontrivialZerosFinset T) : ρ ≠ 0 :=
+  nontrivial_zero_ne_zero (mem_nontrivialZerosFinset.mp hρ).1
+
+lemma nontrivialZerosFinset_eq_empty_of_neg {T : ℝ} (hT : T < 0) :
+    nontrivialZerosFinset T = ∅ := by
+  ext ρ
+  constructor
+  · intro hρ
+    have hheight := (mem_nontrivialZerosFinset.mp hρ).2
+    have hnonneg : 0 ≤ |ρ.im| := abs_nonneg _
+    exfalso
+    linarith
+  · simp
+
+lemma finiteNontrivialZeroSum_eq_zero_of_neg (x : ℝ) {T : ℝ} (hT : T < 0) :
+    finiteNontrivialZeroSum x T = 0 := by
+  simp [finiteNontrivialZeroSum, nontrivialZerosFinset_eq_empty_of_neg hT]
+
+lemma one_sub_mem_nontrivialZerosFinset {ρ : ℂ} {T : ℝ}
+    (hρ : ρ ∈ nontrivialZerosFinset T) :
+    1 - ρ ∈ nontrivialZerosFinset T := by
+  rcases mem_nontrivialZerosFinset.mp hρ with ⟨hzero, hheight⟩
+  refine mem_nontrivialZerosFinset.mpr ⟨nontrivial_zero_symmetric' hzero, ?_⟩
+  simpa [Complex.sub_im] using hheight
+
+lemma one_sub_mem_nontrivialZerosFinset_iff {ρ : ℂ} {T : ℝ} :
+    1 - ρ ∈ nontrivialZerosFinset T ↔ ρ ∈ nontrivialZerosFinset T := by
+  constructor
+  · intro hρ
+    have h := one_sub_mem_nontrivialZerosFinset hρ
+    convert h using 1
+    ring
+  · exact one_sub_mem_nontrivialZerosFinset
+
+lemma nontrivialZerosFinset_ext_of_height_iff {T U : ℝ}
+    (h : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ →
+      (|ρ.im| ≤ T ↔ |ρ.im| ≤ U)) :
+    nontrivialZerosFinset T = nontrivialZerosFinset U := by
+  ext ρ
+  constructor
+  · intro hρ
+    rcases mem_nontrivialZerosFinset.mp hρ with ⟨hzero, hheight⟩
+    exact mem_nontrivialZerosFinset.mpr ⟨hzero, (h ρ hzero).mp hheight⟩
+  · intro hρ
+    rcases mem_nontrivialZerosFinset.mp hρ with ⟨hzero, hheight⟩
+    exact mem_nontrivialZerosFinset.mpr ⟨hzero, (h ρ hzero).mpr hheight⟩
+
+lemma finiteNontrivialZeroSum_congr_height {x T U : ℝ}
+    (h : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ →
+      (|ρ.im| ≤ T ↔ |ρ.im| ≤ U)) :
+    finiteNontrivialZeroSum x T = finiteNontrivialZeroSum x U := by
+  simp [finiteNontrivialZeroSum, nontrivialZerosFinset_ext_of_height_iff h]
+
+/-- The height-truncated right-hand side appearing in the explicit formula
+target, factored out so later contour arguments can rewrite it directly. -/
+noncomputable def explicitFormulaApprox (x T : ℝ) : ℂ :=
+  (x : ℂ)
+    - finiteNontrivialZeroSum x T
+    - deriv riemannZeta 0 / riemannZeta 0
+    - (1 / 2 : ℂ) * (Real.log (1 - x^(-2 : ℝ)) : ℂ)
+
+lemma explicitFormulaApprox_congr_zero_sum {x T U : ℝ}
+    (h : finiteNontrivialZeroSum x T = finiteNontrivialZeroSum x U) :
+    explicitFormulaApprox x T = explicitFormulaApprox x U := by
+  simp [explicitFormulaApprox, h]
+
+lemma explicitFormulaApprox_eq_of_neg (x : ℝ) {T : ℝ} (hT : T < 0) :
+    explicitFormulaApprox x T =
+      (x : ℂ)
+        - deriv riemannZeta 0 / riemannZeta 0
+        - (1 / 2 : ℂ) * (Real.log (1 - x^(-2 : ℝ)) : ℂ) := by
+  simp [explicitFormulaApprox, finiteNontrivialZeroSum_eq_zero_of_neg x hT]
+
 /-- Corrected target shape for the von Mangoldt explicit formula.
 
 The old unordered `tsum` over all zeros is not a safe formal statement.  This
@@ -1112,13 +1264,22 @@ Perron's formula, contour shifting, residue calculus, zero multiplicities, and
 edge estimates. -/
 def explicit_formula_von_mangoldt (x : ℝ) (_hx : x ≥ 2) : Prop :=
   Tendsto
-    (fun T : ℝ =>
-      (x : ℂ)
-        - finiteNontrivialZeroSum x T
-        - deriv riemannZeta 0 / riemannZeta 0
-        - (1 / 2 : ℂ) * (Real.log (1 - x^(-2 : ℝ)) : ℂ))
+    (fun T : ℝ => explicitFormulaApprox x T)
     atTop
     (𝓝 (chebyshevPsi0 x : ℂ))
+
+lemma explicit_formula_von_mangoldt_iff {x : ℝ} {hx : x ≥ 2} :
+    explicit_formula_von_mangoldt x hx ↔
+      Tendsto (fun T : ℝ => explicitFormulaApprox x T) atTop
+        (𝓝 (chebyshevPsi0 x : ℂ)) := by
+  rfl
+
+lemma explicit_formula_von_mangoldt_of_eventually_eq {x : ℝ} {hx : x ≥ 2}
+    {F : ℝ → ℂ}
+    (hF : F =ᶠ[atTop] fun T : ℝ => explicitFormulaApprox x T)
+    (h : Tendsto F atTop (𝓝 (chebyshevPsi0 x : ℂ))) :
+    explicit_formula_von_mangoldt x hx := by
+  exact Tendsto.congr' hF h
 
 /-- 零点对素数分布的贡献
 
