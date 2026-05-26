@@ -724,9 +724,9 @@ lemma weighted_integral_eventually_negative_of_hardyZ_negative
 
 /-! ## 从积分性质推导无穷多零点 -/
 
-lemma weightedIntegral_one_eventually_negative_of_two_signed_moments
+lemma weightedIntegral_one_tendsto_atBot_of_two_signed_moments
     (h : hardy_two_signed_moments_target) :
-    ∀ᶠ T in atTop, weightedIntegral 1 T < 0 := by
+    Tendsto (fun T : ℝ => weightedIntegral 1 T) atTop atBot := by
   rcases h with ⟨⟨A, hApos, hAasymp⟩, _⟩
   have hp : Tendsto (fun T : ℝ => T ^ ((2 : ℝ) + 1 / 4)) atTop atTop :=
     tendsto_rpow_atTop (by norm_num)
@@ -736,21 +736,49 @@ lemma weightedIntegral_one_eventually_negative_of_two_signed_moments
     have hneg : Tendsto (fun T : ℝ => -(A * T ^ ((2 : ℝ) + 1 / 4))) atTop atBot :=
       Filter.tendsto_neg_atTop_atBot.comp hA_top
     simpa [neg_mul] using hneg
-  have hint_bot : Tendsto (fun T : ℝ => weightedIntegral 1 T) atTop atBot :=
-    hAasymp.symm.tendsto_atBot hmodel_bot
-  exact hint_bot.eventually_lt_atBot 0
+  exact hAasymp.symm.tendsto_atBot hmodel_bot
 
-lemma weightedIntegral_two_eventually_positive_of_two_signed_moments
+lemma weightedIntegral_one_eventually_negative_of_two_signed_moments
     (h : hardy_two_signed_moments_target) :
-    ∀ᶠ T in atTop, 0 < weightedIntegral 2 T := by
+    ∀ᶠ T in atTop, weightedIntegral 1 T < 0 :=
+  (weightedIntegral_one_tendsto_atBot_of_two_signed_moments h).eventually_lt_atBot 0
+
+lemma weightedIntegral_two_tendsto_atTop_of_two_signed_moments
+    (h : hardy_two_signed_moments_target) :
+    Tendsto (fun T : ℝ => weightedIntegral 2 T) atTop atTop := by
   rcases h with ⟨_, ⟨B, hBpos, hBasymp⟩⟩
   have hp : Tendsto (fun T : ℝ => T ^ ((2 * 2 : ℝ) + 1 / 4)) atTop atTop :=
     tendsto_rpow_atTop (by norm_num)
   have hmodel_top : Tendsto (fun T : ℝ => B * T ^ ((2 * 2 : ℝ) + 1 / 4)) atTop atTop :=
     hp.const_mul_atTop hBpos
-  have hint_top : Tendsto (fun T : ℝ => weightedIntegral 2 T) atTop atTop :=
-    hBasymp.symm.tendsto_atTop hmodel_top
-  exact hint_top.eventually_gt_atTop 0
+  exact hBasymp.symm.tendsto_atTop hmodel_top
+
+lemma weightedIntegral_two_eventually_positive_of_two_signed_moments
+    (h : hardy_two_signed_moments_target) :
+    ∀ᶠ T in atTop, 0 < weightedIntegral 2 T :=
+  (weightedIntegral_two_tendsto_atTop_of_two_signed_moments h).eventually_gt_atTop 0
+
+lemma weightedIntegralOf_neg_hardyZ_one_tail_dominates_of_two_signed_moments
+    (h : hardy_two_signed_moments_target) :
+    weightedIntegralOf_tail_dominates (fun t => -hardyZ t) 1 := by
+  refine weightedIntegralOf_tail_dominates_of_tendsto_atTop ?_
+  have hbot := weightedIntegral_one_tendsto_atBot_of_two_signed_moments h
+  have hneg :
+      Tendsto (fun T : ℝ => -weightedIntegral 1 T) atTop atTop :=
+    Filter.tendsto_neg_atBot_atTop.comp hbot
+  have h_eq :
+      (fun T : ℝ => weightedIntegralOf (fun t => -hardyZ t) 1 T)
+        = fun T : ℝ => -weightedIntegral 1 T := by
+    funext T
+    unfold weightedIntegral
+    exact weightedIntegralOf_neg hardyZ 1 T
+  exact hneg.congr' (Filter.EventuallyEq.of_eq h_eq.symm)
+
+lemma weightedIntegralOf_hardyZ_two_tail_dominates_of_two_signed_moments
+    (h : hardy_two_signed_moments_target) :
+    weightedIntegralOf_tail_dominates hardyZ 2 := by
+  refine weightedIntegralOf_tail_dominates_of_tendsto_atTop ?_
+  simpa [weightedIntegral] using weightedIntegral_two_tendsto_atTop_of_two_signed_moments h
 
 lemma finite_zeros_contradiction_of_two_signed_moments_and_tail_dominance
     (hfinite : {t : ℝ | hardyZ t = 0}.Finite)
