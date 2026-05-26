@@ -698,4 +698,65 @@ lemma classical_zero_free_region_of_vinogradov_korobov_with_comparison
     (fun s hsheight hsre => hvk_region s hsheight hsre)
     (hcompare cvk hcvk_pos)
 
+/-- Above height `3`, the Vinogradov-Korobov width dominates a classical
+`c / log |t|` width.  The proof is purely real-variable: for
+`x = log |t| > 1`, `log x ≤ x`, so the negative exponent `-1/3` reverses
+the inequality. -/
+lemma vinogradov_korobov_width_comparison :
+    ∀ c > 0, ∃ c' > 0, ∀ t : ℝ, 3 ≤ |t| →
+      c' / Real.log |t| ≤
+        c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) := by
+  intro c hc
+  refine ⟨c, hc, ?_⟩
+  intro t ht
+  set x : ℝ := Real.log |t| with hx_def
+  have ht_pos : 0 < |t| := by linarith
+  have hexp_lt_three : Real.exp 1 < (3 : ℝ) := by
+    calc
+      Real.exp 1 < 2.7182818286 := Real.exp_one_lt_d9
+      _ < (3 : ℝ) := by norm_num
+  have hx_gt_one : 1 < x := by
+    rw [hx_def]
+    exact (Real.lt_log_iff_exp_lt ht_pos).mpr (lt_of_lt_of_le hexp_lt_three ht)
+  have hx_pos : 0 < x := lt_trans (by norm_num) hx_gt_one
+  have hlogx_pos : 0 < Real.log x := Real.log_pos hx_gt_one
+  have hlogx_le_x : Real.log x ≤ x := Real.log_le_self hx_pos.le
+  have hpow :
+      x ^ (-1 / 3 : ℝ) ≤ (Real.log x) ^ (-1 / 3 : ℝ) := by
+    exact Real.rpow_le_rpow_of_nonpos hlogx_pos hlogx_le_x (by norm_num)
+  have hx_split :
+      x ^ (-1 : ℝ) = x ^ (-(2 / 3 : ℝ)) * x ^ (-1 / 3 : ℝ) := by
+    rw [← Real.rpow_add hx_pos]
+    norm_num
+  have hbase :
+      x ^ (-1 : ℝ) ≤ x ^ (-(2 / 3 : ℝ)) * (Real.log x) ^ (-1 / 3 : ℝ) := by
+    rw [hx_split]
+    exact mul_le_mul_of_nonneg_left hpow
+      (Real.rpow_nonneg hx_pos.le (-(2 / 3 : ℝ)))
+  have hc_nonneg : 0 ≤ c := hc.le
+  have hscaled :
+      c * x ^ (-1 : ℝ) ≤
+        c * (x ^ (-(2 / 3 : ℝ)) * (Real.log x) ^ (-1 / 3 : ℝ)) :=
+    mul_le_mul_of_nonneg_left hbase hc_nonneg
+  calc
+    c / Real.log |t| = c * x ^ (-1 : ℝ) := by
+      rw [hx_def, div_eq_mul_inv, Real.rpow_neg hx_pos.le, Real.rpow_one]
+    _ ≤ c * (x ^ (-(2 / 3 : ℝ)) * (Real.log x) ^ (-1 / 3 : ℝ)) := hscaled
+    _ = c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) := by
+      rw [hx_def, div_eq_mul_inv, Real.rpow_neg hx_pos.le]
+      ring
+
+/-- The Vinogradov-Korobov target implies the classical zero-free-region target.
+
+This bridge contains no analytic proof of the Vinogradov-Korobov theorem; it
+only discharges the real-variable width comparison needed to reuse the compact
+patching lemma. -/
+lemma classical_zero_free_region_of_vinogradov_korobov
+    (hvk : vinogradov_korobov_zero_free_region) :
+    classical_zero_free_region :=
+  classical_zero_free_region_of_vinogradov_korobov_with_comparison
+    hvk vinogradov_korobov_width_comparison
+
 end ZeroFreeRegion
