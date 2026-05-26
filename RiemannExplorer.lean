@@ -191,6 +191,11 @@ theorem conrey_40_percent_zeros_on_critical_line_target_of_selberg
     conrey_40_percent_zeros_on_critical_line_target :=
   h
 
+theorem conrey_40_percent_zeros_on_critical_line_target_iff_selberg :
+    conrey_40_percent_zeros_on_critical_line_target ↔
+      HardyTheorem.selberg_zero_proportion_target :=
+  Iff.rfl
+
 end KnownResults
 
 /-! ## 证明尝试框架 -/
