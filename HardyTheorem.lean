@@ -884,6 +884,29 @@ lemma hardy_littlewood_lower_bound_target_of_selberg_zero_proportion
         _ = c * (T / (2 * Real.pi) * Real.log T) := by ring
     exact le_trans htarget hsel
 
+/-- A Hardy--Littlewood lower-bound target is already enough to extract at
+least one critical-line zero. -/
+lemma exists_zero_on_critical_line_of_hardy_littlewood_lower_bound
+    (h : hardy_littlewood_lower_bound_target) :
+    ∃ t : ℝ, riemannZeta (0.5 + I * t) = 0 := by
+  rcases h with ⟨C, hC_pos, T0, hbound⟩
+  let T : ℝ := max T0 1
+  have hT0 : T0 ≤ T := le_max_left T0 1
+  have hT_pos : 0 < T := lt_of_lt_of_le zero_lt_one (le_max_right T0 1)
+  have hcount := hbound T hT0
+  have hCT_pos : 0 < C * T := mul_pos hC_pos hT_pos
+  have hncard_real : 0 < (zeroCountOnCriticalLine T : ℝ) :=
+    lt_of_lt_of_le hCT_pos hcount
+  have hncard_nat : 0 < zeroCountOnCriticalLine T := by
+    exact_mod_cast hncard_real
+  let S : Set (Set.Icc (0 : ℝ) T) :=
+    {t : Set.Icc (0 : ℝ) T | riemannZeta (0.5 + I * (t : ℝ)) = 0}
+  have hSpos : 0 < S.ncard := by
+    simpa [zeroCountOnCriticalLine, S] using hncard_nat
+  have hSfin : S.Finite := Set.finite_of_ncard_pos hSpos
+  rcases (Set.ncard_pos hSfin).mp hSpos with ⟨t, htzero⟩
+  exact ⟨(t : ℝ), htzero⟩
+
 end HardyTheorem
 
 /-! ## 技术细节补充 -/
