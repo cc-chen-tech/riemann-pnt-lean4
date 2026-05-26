@@ -146,6 +146,10 @@ theorem gamma_residue_at_neg_natural (n : ℕ) :
 
 /-! ## 辅助引理 -/
 
+lemma gamma_residue_value_ne_zero (n : ℕ) :
+    ((-1 : ℂ) ^ n / (n.factorial : ℂ)) ≠ 0 := by
+  exact div_ne_zero (pow_ne_zero n (by norm_num)) (Nat.cast_ne_zero.mpr (Nat.factorial_ne_zero n))
+
 /-- Gamma(1) = 1 -/
 lemma gamma_one : Complex.Gamma 1 = 1 := Complex.Gamma_one
 
