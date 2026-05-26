@@ -1307,6 +1307,11 @@ lemma explicit_formula_von_mangoldt_of_eventually_eq {x : ℝ} {hx : x ≥ 2}
     explicit_formula_von_mangoldt x hx := by
   exact Tendsto.congr' hF h
 
+lemma explicit_formula_von_mangoldt_of_eventually_exact {x : ℝ} {hx : x ≥ 2}
+    (h : ∀ᶠ T in atTop, explicitFormulaApprox x T = (chebyshevPsi0 x : ℂ)) :
+    explicit_formula_von_mangoldt x hx := by
+  exact tendsto_nhds_of_eventually_eq h
+
 /-- 零点对素数分布的贡献
 
 每个零点 ρ = β + iγ 贡献振荡项 x^ρ/ρ = x^β e^{iγ log x} / ρ
