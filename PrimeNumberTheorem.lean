@@ -1357,6 +1357,25 @@ lemma explicit_formula_von_mangoldt_of_eventually_exact {x : ℝ} {hx : x ≥ 2}
     explicit_formula_von_mangoldt x hx := by
   exact tendsto_nhds_of_eventually_eq h
 
+lemma explicit_formula_von_mangoldt_of_error_tendsto_zero {x : ℝ} {hx : x ≥ 2}
+    (h : Tendsto (fun T : ℝ =>
+      explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)) atTop (𝓝 0)) :
+    explicit_formula_von_mangoldt x hx := by
+  have hconst : Tendsto (fun _T : ℝ => (chebyshevPsi0 x : ℂ)) atTop
+      (𝓝 (chebyshevPsi0 x : ℂ)) :=
+    tendsto_const_nhds
+  have hsum := h.add hconst
+  have h_eq :
+      (fun T : ℝ => explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)
+          + (chebyshevPsi0 x : ℂ))
+        = fun T : ℝ => explicitFormulaApprox x T := by
+    funext T
+    abel
+  have hlim :
+      (0 : ℂ) + (chebyshevPsi0 x : ℂ) = (chebyshevPsi0 x : ℂ) := by
+    simp
+  exact hsum.congr' (Filter.EventuallyEq.of_eq h_eq) |>.mono_right (by simp [hlim])
+
 /-- 零点对素数分布的贡献
 
 每个零点 ρ = β + iγ 贡献振荡项 x^ρ/ρ = x^β e^{iγ log x} / ρ
