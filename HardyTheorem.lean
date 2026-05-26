@@ -907,6 +907,12 @@ lemma exists_zero_on_critical_line_of_hardy_littlewood_lower_bound
   rcases (Set.ncard_pos hSfin).mp hSpos with ⟨t, htzero⟩
   exact ⟨(t : ℝ), htzero⟩
 
+lemma exists_zero_on_critical_line_of_selberg_zero_proportion
+    (h : selberg_zero_proportion_target) :
+    ∃ t : ℝ, riemannZeta (0.5 + I * t) = 0 :=
+  exists_zero_on_critical_line_of_hardy_littlewood_lower_bound
+    (hardy_littlewood_lower_bound_target_of_selberg_zero_proportion h)
+
 end HardyTheorem
 
 /-! ## 技术细节补充 -/
