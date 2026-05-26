@@ -166,6 +166,18 @@ theorem infinitely_many_zeros_on_critical_line
   have hreal_fin : realZeros.Finite := Set.Finite.of_finite_image himage_fin hinj
   exact hreal hreal_fin
 
+/-- The concrete conditional Hardy inputs also transfer to infinitely many
+complex zeros on the critical line. -/
+theorem infinitely_many_zeros_on_critical_line_of_two_signed_moments
+    (hmom : HardyTheorem.hardy_two_signed_moments_target)
+    (htail_pos : HardyTheorem.weightedIntegralOf_tail_dominates HardyTheorem.hardyZ 1)
+    (htail_neg :
+      HardyTheorem.weightedIntegralOf_tail_dominates (fun t => -HardyTheorem.hardyZ t) 2) :
+    {s : ℂ | s.re = 1 / 2 ∧ riemannZeta s = 0}.Infinite :=
+  infinitely_many_zeros_on_critical_line
+    (HardyTheorem.hardy_theorem_target_of_two_signed_moments_and_tail_dominance
+      hmom htail_pos htail_neg)
+
 /-- 定理：至少 40% 的零点在临界线上（Conrey, 1989） -/
 theorem at_least_40_percent_zeros_on_critical_line :
     True := by
