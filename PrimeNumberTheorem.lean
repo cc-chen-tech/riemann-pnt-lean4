@@ -1152,6 +1152,12 @@ theorem hardy_zeros_abs_unbounded_of_hardy_theorem_target
   have hreal_fin : realZeros.Finite := Set.Finite.of_finite_image hcomplex_fin hinj
   exact hreal_inf hreal_fin
 
+theorem hardy_theorem_target_iff_abs_unbounded :
+    HardyTheorem.hardy_theorem_target ↔
+      HardyTheorem.hardy_zeros_abs_unbounded_target :=
+  ⟨hardy_zeros_abs_unbounded_of_hardy_theorem_target,
+    HardyTheorem.hardy_theorem_target_of_abs_unbounded⟩
+
 /-- RH 等价于所有非平凡零点满足 Re = 1/2 -/
 theorem rh_iff_nontrivial_zeros_on_line :
     RiemannHypothesis ↔

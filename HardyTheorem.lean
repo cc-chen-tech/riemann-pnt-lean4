@@ -805,6 +805,13 @@ finite-zero theorem in bounded vertical strips. -/
 def hardy_zeros_abs_unbounded_target : Prop :=
     ∀ T : ℝ, ∃ t : ℝ, T ≤ |t| ∧ riemannZeta (0.5 + I * t) = 0
 
+lemma hardy_zeros_abs_unbounded_of_unbounded
+    (h : hardy_zeros_unbounded_target) : hardy_zeros_abs_unbounded_target := by
+  intro T
+  rcases h T with ⟨t, hTt, htzero⟩
+  refine ⟨t, ?_, htzero⟩
+  exact le_trans hTt (le_abs_self t)
+
 /-- The unbounded-height Hardy target implies the older infinite-set target. -/
 lemma hardy_theorem_target_of_unbounded
     (h : hardy_zeros_unbounded_target) : hardy_theorem_target := by
