@@ -6,3 +6,4 @@ __pycache__/
 *.pyc
 *.olean
 *.trace
+experiments/rh/output/*.csv
