@@ -178,10 +178,18 @@ theorem infinitely_many_zeros_on_critical_line_of_two_signed_moments
     (HardyTheorem.hardy_theorem_target_of_two_signed_moments_and_tail_dominance
       hmom htail_pos htail_neg)
 
-/-- 定理：至少 40% 的零点在临界线上（Conrey, 1989） -/
-theorem at_least_40_percent_zeros_on_critical_line :
-    True := by
-  trivial
+/-- Target statement for Conrey's theorem that a positive proportion of zeros
+lie on the critical line.  This project does not currently formalize the
+zero-counting machinery needed to state the exact 40% theorem. -/
+def conrey_40_percent_zeros_on_critical_line_target : Prop :=
+    ∃ c > (0 : ℝ), ∃ T0 : ℝ, ∀ T ≥ T0,
+      (HardyTheorem.zeroCountOnCriticalLine T : ℝ) ≥
+        c * (T / (2 * Real.pi) * Real.log T)
+
+theorem conrey_40_percent_zeros_on_critical_line_target_of_selberg
+    (h : HardyTheorem.selberg_zero_proportion_target) :
+    conrey_40_percent_zeros_on_critical_line_target :=
+  h
 
 end KnownResults
 
