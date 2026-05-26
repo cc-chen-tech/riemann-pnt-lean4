@@ -1158,6 +1158,82 @@ theorem hardy_theorem_target_iff_abs_unbounded :
   ⟨hardy_zeros_abs_unbounded_of_hardy_theorem_target,
     HardyTheorem.hardy_theorem_target_of_abs_unbounded⟩
 
+/-- The Hardy--Littlewood linear lower bound for the number of critical-line
+zeros up to height `T` forces those zeros to have unbounded absolute height.
+
+The proof is purely set-theoretic once the lower bound and local finiteness of
+nontrivial zeros are available: if every critical-line zero had `|t| < B`, then
+`zeroCountOnCriticalLine T` would inject into the finite set of nontrivial zeros
+with `|Im s| ≤ B`, while the assumed lower bound makes the count exceed that
+fixed finite cardinal for sufficiently large `T`. -/
+theorem hardy_zeros_abs_unbounded_of_hardy_littlewood_lower_bound
+    (h : HardyTheorem.hardy_littlewood_lower_bound_target) :
+    HardyTheorem.hardy_zeros_abs_unbounded_target := by
+  classical
+  by_contra hnot
+  rw [HardyTheorem.hardy_zeros_abs_unbounded_target] at hnot
+  push Not at hnot
+  rcases hnot with ⟨B, hB⟩
+  rcases h with ⟨C, hC_pos, T0, hbound⟩
+  let linePoint : ℝ → ℂ := fun t => (0.5 : ℂ) + I * t
+  let boundedZeros : Set ℂ :=
+    {s : ℂ | RiemannHypothesis.IsNontrivialZero s ∧ |s.im| ≤ B}
+  let N : ℕ := boundedZeros.ncard
+  let T : ℝ := max T0 (max 0 (((N : ℝ) + 1) / C))
+  have hT0 : T0 ≤ T := le_max_left T0 (max 0 (((N : ℝ) + 1) / C))
+  have hT_large : ((N : ℝ) + 1) / C ≤ T := by
+    exact le_trans (le_max_right 0 (((N : ℝ) + 1) / C))
+      (le_max_right T0 (max 0 (((N : ℝ) + 1) / C)))
+  have hN_lt_CT : (N : ℝ) < C * T := by
+    have hmul : C * (((N : ℝ) + 1) / C) ≤ C * T :=
+      mul_le_mul_of_nonneg_left hT_large hC_pos.le
+    have hC_ne : C ≠ 0 := ne_of_gt hC_pos
+    have hC_mul : C * (((N : ℝ) + 1) / C) = (N : ℝ) + 1 := by
+      field_simp [hC_ne]
+    have hN1_le : (N : ℝ) + 1 ≤ C * T := by
+      rw [← hC_mul]
+      exact hmul
+    linarith
+  have hfinite_bounded : boundedZeros.Finite := by
+    simpa [boundedZeros] using finite_nontrivial_zeros_bounded_height B
+  let countedZeros : Set (Set.Icc (0 : ℝ) T) :=
+    {t : Set.Icc (0 : ℝ) T | riemannZeta (linePoint (t : ℝ)) = 0}
+  have hcount_le_N_nat : HardyTheorem.zeroCountOnCriticalLine T ≤ N := by
+    have hle :=
+      Set.ncard_le_ncard_of_injOn
+        (fun t : Set.Icc (0 : ℝ) T => linePoint (t : ℝ))
+        (s := countedZeros) (t := boundedZeros) ?_ ?_ hfinite_bounded
+    · simpa [HardyTheorem.zeroCountOnCriticalLine, countedZeros, linePoint,
+        boundedZeros, N] using hle
+    · intro t ht
+      have htzero : riemannZeta (linePoint (t : ℝ)) = 0 := ht
+      have ht_abs_le : |(t : ℝ)| ≤ B := by
+        by_contra hle
+        exact hB (t : ℝ) (le_of_lt (lt_of_not_ge hle)) htzero
+      refine ⟨?_, ?_⟩
+      · refine ⟨htzero, ?_, ?_⟩
+        · norm_num [linePoint]
+        · norm_num [linePoint]
+      · have him : (linePoint (t : ℝ)).im = (t : ℝ) := by
+          norm_num [linePoint]
+        simpa [him] using ht_abs_le
+    · intro t₁ _ t₂ _ heq
+      apply Subtype.ext
+      have him := congr_arg Complex.im heq
+      simpa [linePoint] using him
+  have hcount_le_N : (HardyTheorem.zeroCountOnCriticalLine T : ℝ) ≤ N := by
+    exact_mod_cast hcount_le_N_nat
+  have hcount_lower := hbound T hT0
+  linarith
+
+/-- The Hardy--Littlewood lower-bound target implies Hardy's infinite-zero
+target via the unbounded-height bridge. -/
+theorem hardy_theorem_target_of_hardy_littlewood_lower_bound
+    (h : HardyTheorem.hardy_littlewood_lower_bound_target) :
+    HardyTheorem.hardy_theorem_target :=
+  HardyTheorem.hardy_theorem_target_of_abs_unbounded
+    (hardy_zeros_abs_unbounded_of_hardy_littlewood_lower_bound h)
+
 /-- RH 等价于所有非平凡零点满足 Re = 1/2 -/
 theorem rh_iff_nontrivial_zeros_on_line :
     RiemannHypothesis ↔

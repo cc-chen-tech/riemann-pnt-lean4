@@ -196,6 +196,12 @@ theorem conrey_40_percent_zeros_on_critical_line_target_iff_selberg :
       HardyTheorem.selberg_zero_proportion_target :=
   Iff.rfl
 
+theorem exists_zero_on_critical_line_of_conrey_target
+    (h : conrey_40_percent_zeros_on_critical_line_target) :
+    ∃ t : ℝ, riemannZeta (0.5 + I * t) = 0 :=
+  HardyTheorem.exists_zero_on_critical_line_of_selberg_zero_proportion
+    ((conrey_40_percent_zeros_on_critical_line_target_iff_selberg).mp h)
+
 end KnownResults
 
 /-! ## 证明尝试框架 -/
