@@ -1,0 +1,162 @@
+{
+  "timestamp": "2026-06-02",
+  "status": "not-yet-complete",
+  "completed_without_sorry": true,
+  "remaining_prop_targets": {
+    "ZeroFreeRegion": [
+      {
+        "name": "classical_zero_free_region",
+        "shape": "∃ c > 0, ∀ s : ℂ, |s.im| ≥ 2 → s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0",
+        "depends_on": [
+          "classical_zero_free_region_compact",
+          "meromorphic/log-derivative growth bounds"
+        ]
+      },
+      {
+        "name": "vinogradov_korobov_zero_free_region",
+        "shape": "∃ c > 0, ∀ s : ℂ, |s.im| ≥ 3 → s.re ≥ 1 - c / (Real.log |s.im|)^(2/3 : ℝ) * (Real.log (Real.log |s.im|))^(-1/3 : ℝ) → riemannZeta s ≠ 0",
+        "depends_on": [
+          "exponential sum bounds"
+        ]
+      }
+    ],
+    "HardyTheorem": [
+      {
+        "name": "integral_asymptotic_target",
+        "shape": "∀ n ≥ 1, ∃ A > 0, (fun T => weightedIntegral n T) ~[atTop] (fun T => ((-1 : ℝ)^n * A) * T ^ ((2 * n : ℝ) + 1 / 4))",
+        "depends_on": [
+          "hardy_two_signed_moments_target"
+        ]
+      },
+      {
+        "name": "hardy_two_signed_moments_target",
+        "shape": "A_1 > 0 and A_2 > 0 asymptotic constants for n=1 and n=2 signed weighted moments",
+        "depends_on": [
+          "gamma asymptotic",
+          "theta asymptotic",
+          "approximate functional equation"
+        ]
+      },
+      {
+        "name": "weightedIntegralOf_tail_dominates",
+        "shape": "∃ A, Tendsto (fun T => ∫ t in A..T, weightFunction n t * f t) atTop atTop",
+        "depends_on": [
+          "tail-integral divergence control for the critical integrands"
+        ]
+      },
+      {
+        "name": "hardy_theorem_target",
+        "shape": "{t : ℝ | riemannZeta (1/2 + I * t) = 0}.Infinite",
+        "depends_on": [
+          "hardy_two_signed_moments_target",
+          "weightedIntegralOf_tail_dominates"
+        ]
+      },
+      {
+        "name": "hardy_zeros_unbounded_target",
+        "shape": "∀ T : ℝ, ∃ t : ℝ, T ≤ t ∧ riemannZeta (1/2 + I * t) = 0",
+        "depends_on": [
+          "hardy_theorem_target"
+        ]
+      },
+      {
+        "name": "hardy_zeros_abs_unbounded_target",
+        "shape": "∀ T : ℝ, ∃ t : ℝ, T ≤ |t| ∧ riemannZeta (1/2 + I * t) = 0",
+        "depends_on": [
+          "hardy_zeros_unbounded_target"
+        ]
+      },
+      {
+        "name": "hardy_littlewood_lower_bound_target",
+        "shape": "∃ C > 0, ∃ T0 : ℝ, ∀ T ≥ T0, (zeroCountOnCriticalLine T : ℝ) ≥ C * T",
+        "depends_on": [
+          "second-moment/zero density inputs"
+        ]
+      },
+      {
+        "name": "selberg_zero_proportion_target",
+        "shape": "∃ c > 0, ∃ T0 : ℝ, ∀ T ≥ T0, (zeroCountOnCriticalLine T : ℝ) ≥ c * (T / (2*π) * Real.log T)",
+        "depends_on": [
+          "Selberg/Landau–Littlewood pair correlation machinery"
+        ]
+      },
+      {
+        "name": "gamma_asymptotic_half_plus_it_target",
+        "shape": "(Gamma(1/2 + I t)) has classical Stirling-type asymptotic on the critical line",
+        "depends_on": [
+          "Gamma asymptotics in vertical strips"
+        ]
+      },
+      {
+        "name": "theta_asymptotic_target",
+        "shape": "exists unwrapped θ(t) with θ(t) ~ t/2*log(t/(2π)) - t/2 - π/8",
+        "depends_on": [
+          "branch control",
+          "argument asymptotics"
+        ]
+      },
+      {
+        "name": "approximate_functional_equation_target",
+        "shape": "Dirichlet-type two-piece approximation for ζ(1/2+it) with power saving remainder",
+        "depends_on": [
+          "Riemann–Siegel/AFE machinery"
+        ]
+      }
+    ],
+    "PrimeNumberTheorem": [
+      {
+        "name": "rh_iff_optimal_error",
+        "shape": "RiemannHypothesis ↔ RH_PrimeCountingLiErrorBound",
+        "depends_on": [
+          "explicit_formula_von_mangoldt",
+          "zero counting bounds",
+          "partial summation"
+        ]
+      },
+      {
+        "name": "explicit_formula_von_mangoldt",
+        "shape": "Tendsto (explicitFormulaApprox x T) atTop (𝓝 (chebyshevPsi0 x : ℂ))",
+        "depends_on": [
+          "Perron formula",
+          "contour shifting",
+          "residue calculus"
+        ]
+      }
+    ],
+    "RiemannExplorer": [
+      {
+        "name": "conrey_40_percent_zeros_on_critical_line_target",
+        "shape": "∃ c>0, ∃ T0, ∀T≥T0, zeroCountOnCriticalLine T ≥ c * T / (2π) * log T",
+        "depends_on": [
+          "Selberg/Conrey positive proportion input"
+        ]
+      }
+    ]
+  },
+  "chain_summary": [
+    {
+      "name": "Quantitative zero-free region",
+      "target": "ZeroFreeRegion.classical_zero_free_region",
+      "status": "not proved in Lean",
+      "next_step": "supply high-height zero-free/derivative estimates and keep compact patching lemmas already formalized"
+    },
+    {
+      "name": "Explicit formula",
+      "target": "PrimeNumberTheorem.explicit_formula_von_mangoldt",
+      "status": "not proved in Lean",
+      "next_step": "finish Perron-to-residue finite-height chain, then pass from contour sum to truncated/ψ0 limit"
+    },
+    {
+      "name": "RH error equivalence",
+      "target": "PrimeNumberTheorem.rh_iff_optimal_error",
+      "status": "not proved in Lean",
+      "next_step": "bridge explicit formula through RH-scale psi/theta error and convert to prime-counting Li error"
+    },
+    {
+      "name": "Hardy theorem",
+      "target": "HardyTheorem.hardy_theorem_target",
+      "status": "not proved in Lean",
+      "next_step": "prove Hardy signed moment asymptotics and tail-dominance then derive unbounded zeros"
+    }
+  ]
+}
