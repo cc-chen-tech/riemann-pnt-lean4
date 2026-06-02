@@ -168,5 +168,43 @@
       "next_step": "prove Hardy signed moment asymptotics and tail-dominance then derive unbounded zeros"
     }
   ],
+  "chain_inventory": {
+    "Explicit formula": [
+      "explicit_formula_von_mangoldt"
+    ],
+    "Foundation": [
+      "IsNontrivialZero",
+      "IsTrivialZero"
+    ],
+    "Hardy theorem": [
+      "integral_asymptotic_target",
+      "hardy_two_signed_moments_target",
+      "weightedIntegralOf_tail_dominates",
+      "hardy_theorem_target",
+      "hardy_zeros_unbounded_target",
+      "hardy_zeros_abs_unbounded_target",
+      "hardy_littlewood_lower_bound_target",
+      "selberg_zero_proportion_target",
+      "gamma_asymptotic_half_plus_it_target",
+      "theta_asymptotic_target",
+      "approximate_functional_equation_target",
+      "conrey_40_percent_zeros_on_critical_line_target"
+    ],
+    "Quantitative zero-free region": [
+      "classical_zero_free_region",
+      "vinogradov_korobov_zero_free_region"
+    ],
+    "RH error equivalence": [
+      "PNTForm1",
+      "PNTForm2",
+      "PNTForm3",
+      "RH_PsiErrorBound",
+      "RH_ThetaErrorBound",
+      "RH_PrimeCountingLiErrorBound",
+      "RH_ErrorBound",
+      "rh_iff_optimal_error",
+      "Statement"
+    ]
+  },
   "all_prop_defs_count": 26
 }

@@ -47,6 +47,42 @@ CHAIN_SUMMARY = [
 ]
 
 
+# Target-specific chain assignments for machine-readable dashboards.
+TARGET_CHAIN_MAP = {
+    "classical_zero_free_region": "Quantitative zero-free region",
+    "vinogradov_korobov_zero_free_region": "Quantitative zero-free region",
+    "PNTForm1": "RH error equivalence",
+    "PNTForm2": "RH error equivalence",
+    "PNTForm3": "RH error equivalence",
+    "RH_PsiErrorBound": "RH error equivalence",
+    "RH_ThetaErrorBound": "RH error equivalence",
+    "RH_PrimeCountingLiErrorBound": "RH error equivalence",
+    "RH_ErrorBound": "RH error equivalence",
+    "rh_iff_optimal_error": "RH error equivalence",
+    "explicit_formula_von_mangoldt": "Explicit formula",
+    "integral_asymptotic_target": "Hardy theorem",
+    "hardy_two_signed_moments_target": "Hardy theorem",
+    "weightedIntegralOf_tail_dominates": "Hardy theorem",
+    "hardy_theorem_target": "Hardy theorem",
+    "hardy_zeros_unbounded_target": "Hardy theorem",
+    "hardy_zeros_abs_unbounded_target": "Hardy theorem",
+    "hardy_littlewood_lower_bound_target": "Hardy theorem",
+    "selberg_zero_proportion_target": "Hardy theorem",
+    "gamma_asymptotic_half_plus_it_target": "Hardy theorem",
+    "theta_asymptotic_target": "Hardy theorem",
+    "approximate_functional_equation_target": "Hardy theorem",
+    "IsNontrivialZero": "Foundation",
+    "IsTrivialZero": "Foundation",
+    "Statement": "RH error equivalence",
+    "conrey_40_percent_zeros_on_critical_line_target": "Hardy theorem",
+}
+
+
+def _chain_of(target: str) -> str:
+    """Assign a chain name to a target for dashboarding."""
+    return TARGET_CHAIN_MAP.get(target, "Uncategorized")
+
+
 def scan_targets() -> dict[str, list[dict[str, object]]]:
     """Return remaining target declarations grouped by source file basename."""
     remaining: dict[str, list[dict[str, object]]] = {}
@@ -94,6 +130,15 @@ def build_status(remaining: dict[str, list[dict[str, object]]]) -> dict[str, obj
         "completed_without_sorry": True,
         "remaining_prop_targets": grouped,
         "chain_summary": CHAIN_SUMMARY,
+        "chain_inventory": {
+            chain: [
+                item["name"]
+                for file_targets in grouped.values()
+                for item in file_targets
+                if _chain_of(item["name"]) == chain
+            ]
+            for chain in sorted(set(_chain_of(item["name"]) for file_targets in grouped.values() for item in file_targets))
+        },
         "all_prop_defs_count": all_count,
     }
 

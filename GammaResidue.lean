@@ -166,10 +166,10 @@ theorem IsSimplePoleOfGamma (n : ℕ) :
   have hg_event_diff : ∀ᶠ z in nhdsWithin c ({c}ᶜ), DifferentiableAt ℂ g z := by
     refine hga_event_ana.mono ?_
     intro z hz
-    have hdz0 : DifferentiableAt ℂ (fun _ : ℂ => (n : ℂ)) z := by
-      simpa using (differentiableAt_const : DifferentiableAt ℂ (fun _ : ℂ => (n : ℂ)) z)
     have hdz : DifferentiableAt ℂ (fun t : ℂ ↦ t + (n : ℂ)) z := by
-      simpa using (differentiableAt_id.add hdz0)
+      simpa using
+        (differentiableAt_id.add
+          (differentiableAt_const : DifferentiableAt ℂ (fun _ : ℂ => (n : ℂ))))
     have hgz : DifferentiableAt ℂ (fun t : ℂ ↦ (t + (n : ℂ)) * Complex.Gamma t) z := by
       simpa using (hdz.mul hz.differentiableAt)
     simpa [g, mul_comm, mul_left_comm, mul_assoc] using hgz
@@ -190,7 +190,11 @@ theorem IsSimplePoleOfGamma (n : ℕ) :
   have h_analytic : AnalyticAt ℂ (Function.update g c R) c :=
     Complex.analyticAt_of_differentiable_on_punctured_nhds_of_continuousAt hg_update_event hcont
   refine ⟨Function.update g c R, h_analytic, ?_, ?_⟩
-  · simpa [Function.update, c, R] using (gamma_residue_value_ne_zero n)
+  ·
+    have hpow : ((-1 : ℂ) ^ n) ≠ 0 := by
+      exact pow_ne_zero n (by norm_num : (-1 : ℂ) ≠ 0)
+    have hfac : (n.factorial : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr (Nat.factorial_ne_zero n)
+    simpa [Function.update, c, R] using (div_ne_zero hpow hfac)
   · intro s hs
     have hs' : s ≠ c := by
       exact fun hsc =>
@@ -200,7 +204,7 @@ theorem IsSimplePoleOfGamma (n : ℕ) :
       field_simp [hs]
     calc
       Complex.Gamma s = ((s + (n : ℂ)) * Complex.Gamma s) / (s + (n : ℂ)) := hrewrite
-      _ = Function.update g c R s / (s + n) := by
+      _ = Function.update g c R s / (s + (n : ℂ)) := by
         rw [Function.update_of_ne hs']
 
 end GammaResidue
