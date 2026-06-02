@@ -31,6 +31,37 @@ parallel:
 | RH error equivalence | `rh_iff_optimal_error` is a `def ... : Prop` target | Stage the result through `=O[atTop]` predicates for `psi`, `theta`, and `primeCounting - logIntegral` | Add explicit `IsBigO` target predicates and quantitative partial-summation milestones |
 | Hardy theorem | `hardy_theorem_target` and related moment/asymptotic targets are `def ... : Prop` targets | Use an unbounded-height zero target as the main theorem; use signed moment targets, not merely nonzero constants | Prove bounded-zero eventual-sign control and generic asymptotic sign lemmas |
 
+## Target-to-Chain Mapping
+
+| File | Target | Chain | Why it is still open |
+| --- | --- | --- | --- |
+| `ZeroFreeRegion.lean` | `classical_zero_free_region` | Quantitative zero-free region | Requires analytic growth and derivative estimates beyond compactness |
+| `ZeroFreeRegion.lean` | `vinogradov_korobov_zero_free_region` | Quantitative zero-free region | Requires Vinogradov–Korobov exponential-sum technology |
+| `PrimeNumberTheorem.lean` | `PNTForm1` | RH error equivalence | Formal statement of one classical asymptotic shape, kept as an interface |
+| `PrimeNumberTheorem.lean` | `PNTForm2` | RH error equivalence | Equivalent to `PNTForm1` once one form is proved; no additional chain input yet |
+| `PrimeNumberTheorem.lean` | `PNTForm3` | RH error equivalence | Equivalent to `PNTForm1`/`PNTForm2`; included as a target interface |
+| `PrimeNumberTheorem.lean` | `RH_PsiErrorBound` | RH error equivalence | Needs explicit-formula error control under RH |
+| `PrimeNumberTheorem.lean` | `RH_ThetaErrorBound` | RH error equivalence | Needs the same Hardy–Littlewood style input as `RH_PsiErrorBound` |
+| `PrimeNumberTheorem.lean` | `RH_PrimeCountingLiErrorBound` | RH error equivalence | Partial-summation bridge from Chebyshev bounds to prime counting |
+| `PrimeNumberTheorem.lean` | `RH_ErrorBound` | RH error equivalence | Textbook pointwise reformulation of `RH_PrimeCountingLiErrorBound` |
+| `PrimeNumberTheorem.lean` | `rh_iff_optimal_error` | RH error equivalence | Final RH ↔ prime-counting error equivalence statement |
+| `PrimeNumberTheorem.lean` | `explicit_formula_von_mangoldt` | Explicit formula | Main missing explicit-formula pipeline target |
+| `HardyTheorem.lean` | `integral_asymptotic_target` | Hardy theorem | Signed-moment asymptotic input |
+| `HardyTheorem.lean` | `hardy_two_signed_moments_target` | Hardy theorem | Asymptotics for the first two weighted moments |
+| `HardyTheorem.lean` | `weightedIntegralOf_tail_dominates` | Hardy theorem | Tail-dominance hypothesis for weighted integrals |
+| `HardyTheorem.lean` | `hardy_theorem_target` | Hardy theorem | Combined target of Hardy theorem output |
+| `HardyTheorem.lean` | `hardy_zeros_unbounded_target` | Hardy theorem | Harder zero distribution output in an unbounded-height form |
+| `HardyTheorem.lean` | `hardy_zeros_abs_unbounded_target` | Hardy theorem | Equivalent form requiring symmetry/absolute-value zero extraction |
+| `HardyTheorem.lean` | `hardy_littlewood_lower_bound_target` | Hardy theorem | Quantitative lower bound on critical-line zeros needed for positive density |
+| `HardyTheorem.lean` | `selberg_zero_proportion_target` | Hardy theorem | Proportional form of Hardy-type lower bounds |
+| `HardyTheorem.lean` | `gamma_asymptotic_half_plus_it_target` | Hardy theorem | Gamma asymptotic used in approximate functional equation setup |
+| `HardyTheorem.lean` | `theta_asymptotic_target` | Hardy theorem | Riemann–Siegel theta asymptotic setup |
+| `HardyTheorem.lean` | `approximate_functional_equation_target` | Hardy theorem | Residual error form of the AFE used by Hardy integrals |
+| `RiemannExplorer.lean` | `IsNontrivialZero` | Foundation | Local zero predicate; kept as project notation, not proof status |
+| `RiemannExplorer.lean` | `IsTrivialZero` | Foundation | Local predicate for trivial zeros |
+| `RiemannExplorer.lean` | `Statement` | RH error equivalence / Hardy theorem | Project-level RH statement for interface compatibility |
+| `RiemannExplorer.lean` | `conrey_40_percent_zeros_on_critical_line_target` | Hardy theorem | Proportionality target for zero density on the critical line |
+
 ## Verified Starting Points
 
 The following proved declarations are the main entry points for future work:

@@ -179,6 +179,11 @@ are not exported as theorems and should not be cited as proved.
 - `explicit_formula_von_mangoldt`
   target: a von Mangoldt explicit formula in midpoint/truncated-limit form,
   using `chebyshevPsi0` and `finiteNontrivialZeroSum`.
+- `PNTForm1`, `PNTForm2`, `PNTForm3`
+  local PNT-format targets:
+  `pi(x) ~ x / log x`, `pi(x) ~ Li(x)`, and `psi(x) ~ x`. These are
+  intentionally target placeholders because the bridge to a full analytic proof
+  runs through explicit-formula machinery.
 
 ### `HardyTheorem.lean`
 
