@@ -1,0 +1,109 @@
+#!/usr/bin/env python3
+"""Regenerate docs/current-target-status.json from current Lean `def ... : Prop` targets."""
+
+from __future__ import annotations
+
+from pathlib import Path
+from datetime import datetime
+import json
+import re
+
+ROOT = Path(__file__).resolve().parents[1]
+STATUS_PATH = ROOT / "docs" / "current-target-status.json"
+
+# Match declarations like:
+#   def foo : Prop :=
+#   def foo (x : α) : Prop :=
+PROP_DEF_RE = re.compile(
+    r"^def\s+([A-Za-z_][A-Za-z0-9_]*)\s*(?:\(.*\))?\s*:\s*Prop\s*:=(.*)$"
+)
+
+# Manual chain map used by the remaining-work dashboard.
+CHAIN_SUMMARY = [
+    {
+        "name": "Quantitative zero-free region",
+        "target": "classical_zero_free_region",
+        "status": "not proved in Lean",
+        "next_step": "supply high-height zero-free/derivative estimates and keep compact patching lemmas already formalized",
+    },
+    {
+        "name": "Explicit formula",
+        "target": "explicit_formula_von_mangoldt",
+        "status": "not proved in Lean",
+        "next_step": "finish Perron-to-residue finite-height chain, then pass from contour sum to truncated/ψ0 limit",
+    },
+    {
+        "name": "RH error equivalence",
+        "target": "rh_iff_optimal_error",
+        "status": "not proved in Lean",
+        "next_step": "bridge explicit formula through RH-scale psi/theta error and convert to prime-counting Li error",
+    },
+    {
+        "name": "Hardy theorem",
+        "target": "hardy_theorem_target",
+        "status": "not proved in Lean",
+        "next_step": "prove Hardy signed moment asymptotics and tail-dominance then derive unbounded zeros",
+    },
+]
+
+
+def scan_targets() -> dict[str, list[dict[str, object]]]:
+    """Return remaining target declarations grouped by source file basename."""
+    remaining: dict[str, list[dict[str, object]]] = {}
+
+    for path in sorted(ROOT.glob("*.lean")):
+        file_targets: list[dict[str, object]] = []
+        for i, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
+            m = PROP_DEF_RE.match(line.strip())
+            if not m:
+                continue
+            name, rest = m.group(1), m.group(2).strip()
+            file_targets.append(
+                {
+                    "name": name,
+                    "line": i,
+                    "shape": rest if rest else "<unknown>",
+                    "source": line.strip(),
+                }
+            )
+        if file_targets:
+            remaining[path.name] = file_targets
+
+    return remaining
+
+
+def build_status(remaining: dict[str, list[dict[str, object]]]) -> dict[str, object]:
+    all_count = sum(len(v) for v in remaining.values())
+
+    # Keep the file keys short and namespace-like for readability.
+    grouped: dict[str, list[dict[str, object]]] = {}
+    for file, entries in remaining.items():
+        file_key = file.removesuffix(".lean")
+        grouped[file_key] = [
+            {
+                "name": item["name"],
+                "shape": item["shape"],
+                "depends_on": [],
+            }
+            for item in entries
+        ]
+
+    return {
+        "timestamp": datetime.now().strftime("%Y-%m-%d"),
+        "status": "not-yet-complete",
+        "completed_without_sorry": True,
+        "remaining_prop_targets": grouped,
+        "chain_summary": CHAIN_SUMMARY,
+        "all_prop_defs_count": all_count,
+    }
+
+
+def main() -> None:
+    status = build_status(scan_targets())
+    STATUS_PATH.write_text(json.dumps(status, ensure_ascii=False, indent=2) + "\n")
+    print(f"wrote {STATUS_PATH.relative_to(ROOT)}")
+    print(f"TOTAL: {status['all_prop_defs_count']}")
+
+
+if __name__ == "__main__":
+    main()
