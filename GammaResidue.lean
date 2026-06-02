@@ -169,7 +169,7 @@ theorem IsSimplePoleOfGamma (n : ℕ) :
     have hdz : DifferentiableAt ℂ (fun t : ℂ ↦ t + (n : ℂ)) z := by
       simpa using
         (differentiableAt_id.add
-          (differentiableAt_const : DifferentiableAt ℂ (fun _ : ℂ => (n : ℂ))))
+          (differentiableAt_const : DifferentiableAt ℂ (fun _ : ℂ => (n : ℂ)) (x := z)))
     have hgz : DifferentiableAt ℂ (fun t : ℂ ↦ (t + (n : ℂ)) * Complex.Gamma t) z := by
       simpa using (hdz.mul hz.differentiableAt)
     simpa [g, mul_comm, mul_left_comm, mul_assoc] using hgz
