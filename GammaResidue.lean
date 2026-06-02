@@ -37,11 +37,6 @@ namespace GammaResidue
 
 /-! ## Gamma函数的极点性质 -/
 
-/-- Gamma函数在负整数处有简单极点 -/
-def IsSimplePoleOfGamma (n : ℕ) : Prop :=
-  ∃ f : ℂ → ℂ, AnalyticAt ℂ f (-n : ℂ) ∧ f (-n : ℂ) ≠ 0 ∧
-    ∀ s : ℂ, (s + (n : ℂ)) ≠ 0 → Gamma s = f s / (s + n)
-
 /-- Gamma函数在 s = 0 处有简单极点，留数为 1 -/
 theorem gamma_residue_at_zero :
     Tendsto (fun s : ℂ ↦ s * Complex.Gamma s) (𝓝[≠] 0) (𝓝 1) := by
@@ -157,6 +152,56 @@ lemma gamma_one : Complex.Gamma 1 = 1 := Complex.Gamma_one
 lemma gamma_recurrence (s : ℂ) (hs : s ≠ 0) :
     Complex.Gamma (s + 1) = s * Complex.Gamma s := by
   rw [Complex.Gamma_add_one s hs]
+
+/-- Gamma函数在负整数处有简单极点 -/
+theorem IsSimplePoleOfGamma (n : ℕ) :
+    ∃ f : ℂ → ℂ, AnalyticAt ℂ f (-n : ℂ) ∧ f (-n : ℂ) ≠ 0 ∧
+      ∀ s : ℂ, (s + (n : ℂ)) ≠ 0 → Complex.Gamma s = f s / (s + n) := by
+  let c : ℂ := (-n : ℂ)
+  let R : ℂ := (-1 : ℂ) ^ n / (n.factorial : ℂ)
+  let g : ℂ → ℂ := fun s ↦ (s + n) * Complex.Gamma s
+  have hga_event_ana : ∀ᶠ z in nhdsWithin c ({c}ᶜ), AnalyticAt ℂ Complex.Gamma z := by
+    simpa [c, Set.compl_eq_univ_diff] using
+      (MeromorphicOn.Gamma (s := (Set.univ : Set ℂ)).eventually_analyticAt (by simp))
+  have hg_event_diff : ∀ᶠ z in nhdsWithin c ({c}ᶜ), DifferentiableAt ℂ g z := by
+    refine hga_event_ana.mono ?_
+    intro z hz
+    have hdz0 : DifferentiableAt ℂ (fun _ : ℂ => (n : ℂ)) z := by
+      simpa using (differentiableAt_const : DifferentiableAt ℂ (fun _ : ℂ => (n : ℂ)) z)
+    have hdz : DifferentiableAt ℂ (fun t : ℂ ↦ t + (n : ℂ)) z := by
+      simpa using (differentiableAt_id.add hdz0)
+    have hgz : DifferentiableAt ℂ (fun t : ℂ ↦ (t + (n : ℂ)) * Complex.Gamma t) z := by
+      simpa using (hdz.mul hz.differentiableAt)
+    simpa [g, mul_comm, mul_left_comm, mul_assoc] using hgz
+  have hne : ∀ᶠ z in nhdsWithin c ({c}ᶜ), z ≠ c := by
+    simpa [Filter.Eventually, Set.mem_setOf_eq] using
+      (self_mem_nhdsWithin : ({c}ᶜ : Set ℂ) ∈ nhdsWithin c ({c}ᶜ))
+  have hg_update_event : ∀ᶠ z in nhdsWithin c ({c}ᶜ), DifferentiableAt ℂ (Function.update g c R) z := by
+    refine (hg_event_diff.and hne).mono ?_
+    intro z hz
+    rcases hz with ⟨hgd, hzc⟩
+    have hEq : (Function.update g c R) =ᶠ[𝓝 z] g := by
+      filter_upwards [isOpen_ne.mem_nhds hzc] with x hx
+      exact Function.update_of_ne hx R g
+    exact hgd.congr_of_eventuallyEq hEq
+  have hlim : Tendsto g (𝓝[≠] c) (𝓝 R) := by
+    simpa [g, c] using (gamma_residue_at_neg_natural n)
+  have hcont : ContinuousAt (Function.update g c R) c := (continuousAt_update_same.2 hlim)
+  have h_analytic : AnalyticAt ℂ (Function.update g c R) c :=
+    Complex.analyticAt_of_differentiable_on_punctured_nhds_of_continuousAt hg_update_event hcont
+  refine ⟨Function.update g c R, h_analytic, ?_, ?_⟩
+  · simpa [Function.update, c, R] using (gamma_residue_value_ne_zero n)
+  · intro s hs
+    have hs' : s ≠ c := by
+      exact fun hsc =>
+        hs (by
+          simp [c, hsc] )
+    have hrewrite : Complex.Gamma s = ((s + (n : ℂ)) * Complex.Gamma s) / (s + (n : ℂ)) := by
+      field_simp [hs]
+    calc
+      Complex.Gamma s = ((s + (n : ℂ)) * Complex.Gamma s) / (s + (n : ℂ)) := hrewrite
+      _ = Function.update g c R s / (s + n) := by
+        rw [Function.update_of_ne hs']
 
 end GammaResidue
 

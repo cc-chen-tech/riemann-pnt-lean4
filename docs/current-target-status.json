@@ -3,13 +3,6 @@
   "status": "not-yet-complete",
   "completed_without_sorry": true,
   "remaining_prop_targets": {
-    "GammaResidue": [
-      {
-        "name": "IsSimplePoleOfGamma",
-        "shape": "<unknown>",
-        "depends_on": []
-      }
-    ],
     "HardyTheorem": [
       {
         "name": "integral_asymptotic_target",
@@ -175,5 +168,5 @@
       "next_step": "prove Hardy signed moment asymptotics and tail-dominance then derive unbounded zeros"
     }
   ],
-  "all_prop_defs_count": 27
+  "all_prop_defs_count": 26
 }
