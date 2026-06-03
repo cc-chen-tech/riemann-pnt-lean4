@@ -19,13 +19,13 @@ strong mathematical claim about the repository.
 ./scripts/verify-baseline.sh
 
 lake build
-rg -n '^\s*sorry\b' *.lean
-rg -n 'All theorems|proved without \\texttt\{sorry\}|21\\{,\\}000|21000|syntactic \\texttt\{sorry\} occurrences' README.md paper.tex *.lean
+python3 scripts/list-prop-targets.py
+rg -n '\\b(sorry|admit|axiom)\\b' *.lean
 ```
 
-The second command should return no Lean source `sorry`. This does not mean the
-PNT or RH has been proved: several deep results are recorded only as `Prop`
-target statements.
+The commands should return a stable 23-item target inventory and no placeholders
+(`sorry`/`admit`/`axiom`) in Lean sources. This does not mean the PNT or RH has
+been proved: several deep results are recorded only as `def ... : Prop` targets.
 
 ## Unproved Target Statements
 
