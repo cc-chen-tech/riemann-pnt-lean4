@@ -573,6 +573,25 @@ lemma integral_asymptotic_two_of_two_signed_moments
   refine ⟨by norm_num, B, hBpos, ?_⟩
   simpa using hB
 
+lemma hardy_two_signed_moments_of_integral_asymptotic_one_two
+    (h1 : integral_asymptotic_target 1)
+    (h2 : integral_asymptotic_target 2) :
+    hardy_two_signed_moments_target := by
+  rcases h1 with ⟨_, A, hApos, hA⟩
+  rcases h2 with ⟨_, B, hBpos, hB⟩
+  constructor
+  · refine ⟨A, hApos, ?_⟩
+    simpa using hA
+  · refine ⟨B, hBpos, ?_⟩
+    simpa using hB
+
+lemma hardy_two_signed_moments_target_iff_integral_asymptotic_one_two :
+    hardy_two_signed_moments_target ↔
+      integral_asymptotic_target 1 ∧ integral_asymptotic_target 2 :=
+  ⟨fun h => ⟨integral_asymptotic_one_of_two_signed_moments h,
+      integral_asymptotic_two_of_two_signed_moments h⟩,
+    fun h => hardy_two_signed_moments_of_integral_asymptotic_one_two h.1 h.2⟩
+
 /-! ## Hardy 定理的结构引理 -/
 
 lemma hardyZ_eventually_const_sign_of_bounded_zeros

@@ -98,6 +98,7 @@ The following proved declarations are the main entry points for future work:
 - `HardyTheorem.hardyZ_zero_iff_zeta_zero`
 - `HardyTheorem.hardyZ_continuous`
 - `HardyTheorem.critical_line_zeta_zero_neg_height`
+- `HardyTheorem.hardy_two_signed_moments_target_iff_integral_asymptotic_one_two`
 - `HardyTheorem.hardy_theorem_target_of_two_signed_moments`
 - `HardyTheorem.hardy_theorem_target_iff_abs_unbounded_of_bounded_strips`
 - `HardyTheorem.hardy_zeros_unbounded_iff_abs_unbounded_of_neg_symm`

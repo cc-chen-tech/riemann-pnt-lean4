@@ -150,6 +150,7 @@ For the chain accounting:
 - `HardyTheorem.hardyZ_zero_iff_zeta_zero`
 - `HardyTheorem.hardyZ_eventually_const_sign_of_finite_zeros`
 - `HardyTheorem.weightedIntegralOf_neg`
+- `HardyTheorem.hardy_two_signed_moments_target_iff_integral_asymptotic_one_two`
 - `HardyTheorem.hardy_theorem_target_of_two_signed_moments`
 - `HardyTheorem.hardy_theorem_target_of_two_signed_moments_and_tail_dominance`
 - `HardyTheorem.hardyZ_continuous`
