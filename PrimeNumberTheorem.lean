@@ -45,15 +45,14 @@ around the Prime Number Theorem, built on top of Mathlib.
 
 - `explicit_formula_von_mangoldt` — requires Perron's formula
 - `rh_iff_optimal_error` — standard RH equivalence with prime-counting error terms
-- `finite_nontrivial_zeros_bounded_height` — local finiteness of nontrivial zeros
 
 ## Infrastructure gap analysis
 
-Some target theorems require Mathlib infrastructure that is not yet available
-or not yet connected in this project. Missing or unfinished components include:
+Some target theorems require analytic infrastructure that is not yet connected
+in this project. Missing or unfinished components include:
 - Hadamard factorization theorem for entire functions of finite order
-- Jensen's formula / Argument principle / Residue theorem
-- Borel-Carathéodory theorem
+- argument-principle / residue-theorem contour applications
+- Borel-Carathéodory/Jensen-style estimates specialized to `ζ'/ζ`
 - Growth bounds for ζ in the critical strip
 - Partial fraction expansion of ζ'/ζ in terms of zeros
 

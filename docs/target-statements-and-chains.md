@@ -38,6 +38,9 @@ For the chain accounting:
 - `ZeroFreeRegion.log_deriv_zeta_pos_real`
 - `ZeroFreeRegion.log_deriv_zeta_antitone`
 - `ZeroFreeRegion.compact_patch_classical_zero_free_region_at_three`
+- `ZeroFreeRegion.classical_zero_free_region_high_height`
+- `ZeroFreeRegion.classical_zero_free_region_iff_high_height`
+- `ZeroFreeRegion.classical_zero_free_region_iff_high_height_at_three`
 - `ZeroFreeRegion.vinogradov_korobov_high_height_classical_zero_free_region`
 - `ZeroFreeRegion.classical_zero_free_region_of_vinogradov_korobov`
 

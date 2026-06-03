@@ -76,6 +76,9 @@ The following proved declarations are the main entry points for future work:
 - `ZeroFreeRegion.residue_bounds`
 - `ZeroFreeRegion.classical_zero_free_region_compact`
 - `ZeroFreeRegion.compact_patch_classical_zero_free_region_at_three`
+- `ZeroFreeRegion.classical_zero_free_region_high_height`
+- `ZeroFreeRegion.classical_zero_free_region_iff_high_height`
+- `ZeroFreeRegion.classical_zero_free_region_iff_high_height_at_three`
 - `ZeroFreeRegion.vinogradov_korobov_high_height_classical_zero_free_region`
 - `ZeroFreeRegion.classical_zero_free_region_of_vinogradov_korobov`
 - `PrimeNumberTheorem.finite_nontrivial_zeros_bounded_height`
