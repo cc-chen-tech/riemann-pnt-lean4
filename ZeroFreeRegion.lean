@@ -681,6 +681,41 @@ lemma compact_patch_classical_zero_free_region_at_three
     classical_zero_free_region :=
   compact_patch_classical_zero_free_region 3 (by norm_num) hhigh
 
+/-- Any classical zero-free region immediately restricts to an arbitrary
+high-height range.  This is the easy direction paired with
+`compact_patch_classical_zero_free_region`. -/
+lemma classical_zero_free_region_high_height
+    (T0 : ℝ) (hT0 : 2 ≤ T0)
+    (hclassical : classical_zero_free_region) :
+    ∃ c > 0, ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0 := by
+  rcases hclassical with ⟨c, hc_pos, hregion⟩
+  refine ⟨c, hc_pos, ?_⟩
+  intro s hsT hsre
+  exact hregion s (hT0.trans hsT) hsre
+
+/-- The classical zero-free-region target is equivalent to proving the same
+`c / log |t|` width only above any fixed height `T0 ≥ 2`.
+
+The forward direction is restriction to high height; the reverse direction is
+the compact patch next to `Re(s) = 1`. -/
+lemma classical_zero_free_region_iff_high_height
+    (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    classical_zero_free_region ↔
+      ∃ c > 0, ∀ s : ℂ, T0 ≤ |s.im| →
+        s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0 := by
+  constructor
+  · exact classical_zero_free_region_high_height T0 hT0
+  · exact compact_patch_classical_zero_free_region T0 hT0
+
+/-- Height `3` specialization of the high-height interface, matching the
+Vinogradov-Korobov target's cutoff. -/
+lemma classical_zero_free_region_iff_high_height_at_three :
+    classical_zero_free_region ↔
+      ∃ c > 0, ∀ s : ℂ, 3 ≤ |s.im| →
+        s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0 :=
+  classical_zero_free_region_iff_high_height 3 (by norm_num)
+
 /-- Vinogradov-Korobov 零点自由区域：目前最广的已知零自由区域。
     需要指数和估计，远超当前 Mathlib 范畴。 -/
 def vinogradov_korobov_zero_free_region : Prop :=
