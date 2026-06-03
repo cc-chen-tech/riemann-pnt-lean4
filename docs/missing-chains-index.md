@@ -57,9 +57,6 @@ parallel:
 | `HardyTheorem.lean` | `gamma_asymptotic_half_plus_it_target` | Hardy theorem | Gamma asymptotic used in approximate functional equation setup |
 | `HardyTheorem.lean` | `theta_asymptotic_target` | Hardy theorem | Riemann–Siegel theta asymptotic setup |
 | `HardyTheorem.lean` | `approximate_functional_equation_target` | Hardy theorem | Residual error form of the AFE used by Hardy integrals |
-| `RiemannExplorer.lean` | `IsNontrivialZero` | Foundation | Local zero predicate; kept as project notation, not proof status |
-| `RiemannExplorer.lean` | `IsTrivialZero` | Foundation | Local predicate for trivial zeros |
-| `RiemannExplorer.lean` | `Statement` | RH error equivalence / Hardy theorem | Project-level RH statement for interface compatibility |
 | `RiemannExplorer.lean` | `conrey_40_percent_zeros_on_critical_line_target` | Hardy theorem | Proportionality target for zero density on the critical line |
 
 ## Verified Starting Points
