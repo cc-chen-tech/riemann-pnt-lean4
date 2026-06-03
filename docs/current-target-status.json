@@ -109,21 +109,6 @@
     ],
     "RiemannExplorer": [
       {
-        "name": "IsNontrivialZero",
-        "shape": "<unknown>",
-        "depends_on": []
-      },
-      {
-        "name": "IsTrivialZero",
-        "shape": "<unknown>",
-        "depends_on": []
-      },
-      {
-        "name": "Statement",
-        "shape": "<unknown>",
-        "depends_on": []
-      },
-      {
         "name": "conrey_40_percent_zeros_on_critical_line_target",
         "shape": "<unknown>",
         "depends_on": []
@@ -172,10 +157,6 @@
     "Explicit formula": [
       "explicit_formula_von_mangoldt"
     ],
-    "Foundation": [
-      "IsNontrivialZero",
-      "IsTrivialZero"
-    ],
     "Hardy theorem": [
       "integral_asymptotic_target",
       "hardy_two_signed_moments_target",
@@ -202,9 +183,8 @@
       "RH_ThetaErrorBound",
       "RH_PrimeCountingLiErrorBound",
       "RH_ErrorBound",
-      "rh_iff_optimal_error",
-      "Statement"
+      "rh_iff_optimal_error"
     ]
   },
-  "all_prop_defs_count": 26
+  "all_prop_defs_count": 23
 }

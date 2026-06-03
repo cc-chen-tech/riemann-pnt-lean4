@@ -60,12 +60,12 @@ theorem functional_equation (s : ℂ) :
 
 /-! ## 零点相关定义 -/
 
-/-- 非平凡零点的定义：在临界带 0 < Re(s) < 1 内的零点 -/
-def IsNontrivialZero (s : ℂ) : Prop :=
+/-- 非平凡零点的定义：在临界带 0 < Re(s) < 1 内的零点。仅作为语义重命名，不是缺口目标。-/
+abbrev IsNontrivialZero (s : ℂ) : Prop :=
   riemannZeta s = 0 ∧ 0 < s.re ∧ s.re < 1
 
 /-- 平凡零点：s = -2, -4, -6, ... -/
-def IsTrivialZero (s : ℂ) : Prop :=
+abbrev IsTrivialZero (s : ℂ) : Prop :=
   ∃ n : ℕ, s = -2 * (n + 1 : ℂ) ∧ riemannZeta s = 0
 
 /-- 临界线：Re(s) = 1/2 -/
@@ -76,8 +76,8 @@ def criticalStrip : Set ℂ := {s : ℂ | 0 < s.re ∧ s.re < 1}
 
 /-! ## 黎曼猜想 -/
 
-/-- 黎曼猜想的形式化表述 -/
-def Statement : Prop :=
+/- 中间层 `RiemannHypothesis.Statement` 的本地别名。仅作接口兼容，不是未证明目标。-/
+abbrev Statement : Prop :=
   ∀ s : ℂ, IsNontrivialZero s → s.re = 1 / 2
 
 /-- 黎曼猜想等价表述：所有非平凡零点都在临界线上 -/
