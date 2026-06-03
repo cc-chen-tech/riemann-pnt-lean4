@@ -13,9 +13,13 @@
 
 `scripts/scan-worktrees-targets.py` 报告结果如下：
 
-- 4 个 worktree 的目标声明并非与主分支一致；差异主要在命名与目标覆盖范围上。
-- 这些分支有额外的 `def` 目标（例如 `IsSimplePoleOfGamma`, `IsTrivialZero`, `Statement` 等），
-  同时缺失主分支的 23 个核心目标之一部分（例如 `classical_zero_free_region`, `vinogradov_korobov_zero_free_region`, 各类 RH/Hardy 目标等）。
+- 4 个 worktree 的目标声明并非与主分支完全一致；差异主要在命名与目标覆盖范围上。
+- 这些分支确实声明了若干目标名与主分支一致（例如 `classical_zero_free_region`,
+  `vinogradov_korobov_zero_free_region`, `explicit_formula_von_mangoldt`, `rh_iff_optimal_error`），
+  但经核验这些位置仍有 `sorry` 记录，尚未构成可直接 cherry-pick 的闭合证明。
+- 另外这些分支有额外 `def` 目标（例如 `IsSimplePoleOfGamma`, `IsTrivialZero`, `Statement` 等），
+  同时缺失主分支的 23 个核心目标之一部分（例如 `hardy_two_signed_moments_target`,
+  `RH_PsiErrorBound`, `RH_ThetaErrorBound`, `selberg_zero_proportion_target` 等）。
 
 因此当前不建议直接合并；需先在分支内按主分支目标命名与链路对齐后再评估可复用内容。
 
