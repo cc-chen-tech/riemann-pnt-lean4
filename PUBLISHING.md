@@ -16,6 +16,8 @@ Run these checks before tagging a release, submitting a paper, or making a
 strong mathematical claim about the repository.
 
 ```bash
+./scripts/verify-baseline.sh
+
 lake build
 rg -n '^\s*sorry\b' *.lean
 rg -n 'All theorems|proved without \\texttt\{sorry\}|21\\{,\\}000|21000|syntactic \\texttt\{sorry\} occurrences' README.md paper.tex *.lean
