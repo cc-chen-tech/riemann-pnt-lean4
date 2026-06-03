@@ -15,7 +15,7 @@ STATUS_PATH = ROOT / "docs" / "current-target-status.json"
 #   def foo : Prop :=
 #   def foo (x : α) : Prop :=
 PROP_DEF_RE = re.compile(
-    r"^def\s+([A-Za-z_][A-Za-z0-9_]*)\s*(?:\(.*\))?\s*:\s*Prop\s*:=(.*)$"
+    r"^def\s+([A-Za-z_][A-Za-z0-9_]*)\s*(?:\(.*\))?\s*:\s*Prop\s*:="
 )
 
 # Manual chain map used by the remaining-work dashboard.
@@ -80,33 +80,38 @@ def _chain_of(target: str) -> str:
     return TARGET_CHAIN_MAP.get(target, "Uncategorized")
 
 
-def scan_targets() -> dict[str, list[dict[str, object]]]:
+def scan_targets() -> dict[str, list[str]]:
     """Return remaining target declarations grouped by source file basename."""
-    remaining: dict[str, list[dict[str, object]]] = {}
+    remaining: dict[str, list[str]] = {}
 
     for path in sorted(ROOT.glob("*.lean")):
-        file_targets: list[dict[str, object]] = []
+        file_targets: list[str] = []
         for i, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
             m = PROP_DEF_RE.match(line.strip())
             if not m:
                 continue
-            name, rest = m.group(1), m.group(2).strip()
-            file_targets.append(
-                {
-                    "name": name,
-                    "line": i,
-                    "shape": rest if rest else "<unknown>",
-                    "source": line.strip(),
-                }
-            )
+            file_targets.append(m.group(1))
         if file_targets:
             remaining[path.name] = file_targets
 
     return remaining
 
 
-def build_status(remaining: dict[str, list[dict[str, object]]]) -> dict[str, object]:
+def load_previous_shapes() -> dict[str, str]:
+    """Load existing target shapes so we do not overwrite handcrafted metadata."""
+    if not STATUS_PATH.exists():
+        return {}
+    data = json.loads(STATUS_PATH.read_text(encoding="utf-8"))
+    out: dict[str, str] = {}
+    for entries in data.get("remaining_prop_targets", {}).values():
+        for item in entries:
+            out[item["name"]] = item.get("shape", "<unknown>")
+    return out
+
+
+def build_status(remaining: dict[str, list[str]]) -> dict[str, object]:
     all_count = sum(len(v) for v in remaining.values())
+    previous_shapes = load_previous_shapes()
 
     # Keep the file keys short and namespace-like for readability.
     grouped: dict[str, list[dict[str, object]]] = {}
@@ -114,8 +119,8 @@ def build_status(remaining: dict[str, list[dict[str, object]]]) -> dict[str, obj
         file_key = file.removesuffix(".lean")
         grouped[file_key] = [
             {
-                "name": item["name"],
-                "shape": item["shape"],
+                "name": item,
+                "shape": previous_shapes.get(item, "<unknown>"),
                 "depends_on": [],
             }
             for item in entries
