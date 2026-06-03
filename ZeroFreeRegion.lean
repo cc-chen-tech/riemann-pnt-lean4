@@ -672,6 +672,15 @@ lemma compact_patch_classical_zero_free_region_via_width
     hhigh_region
     ⟨chigh, hchigh_pos, by intro t _; rfl⟩
 
+/-- Specialize the compact patch to the height cutoff used by the
+Vinogradov-Korobov target. -/
+lemma compact_patch_classical_zero_free_region_at_three
+    (hhigh :
+      ∃ c > 0, ∀ s : ℂ, 3 ≤ |s.im| →
+        s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0) :
+    classical_zero_free_region :=
+  compact_patch_classical_zero_free_region 3 (by norm_num) hhigh
+
 /-- Vinogradov-Korobov 零点自由区域：目前最广的已知零自由区域。
     需要指数和估计，远超当前 Mathlib 范畴。 -/
 def vinogradov_korobov_zero_free_region : Prop :=
@@ -748,15 +757,32 @@ lemma vinogradov_korobov_width_comparison :
       rw [hx_def, div_eq_mul_inv, Real.rpow_neg hx_pos.le]
       ring
 
+/-- The Vinogradov-Korobov target supplies a high-height classical-width
+zero-free region above height `3`.
+
+This isolates the real-variable comparison from the compact patching step. -/
+lemma vinogradov_korobov_high_height_classical_zero_free_region
+    (hvk : vinogradov_korobov_zero_free_region) :
+    ∃ c > 0, ∀ s : ℂ, 3 ≤ |s.im| →
+      s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0 := by
+  rcases hvk with ⟨cvk, hcvk_pos, hvk_region⟩
+  rcases vinogradov_korobov_width_comparison cvk hcvk_pos with
+    ⟨cclassical, hcclassical_pos, hwidth⟩
+  refine ⟨cclassical, hcclassical_pos, ?_⟩
+  intro s hsheight hsre
+  refine hvk_region s hsheight ?_
+  have hwidth' := hwidth s.im hsheight
+  linarith
+
 /-- The Vinogradov-Korobov target implies the classical zero-free-region target.
 
 This bridge contains no analytic proof of the Vinogradov-Korobov theorem; it
-only discharges the real-variable width comparison needed to reuse the compact
-patching lemma. -/
+only discharges the real-variable width comparison and then reuses the compact
+patching lemma at height `3`. -/
 lemma classical_zero_free_region_of_vinogradov_korobov
     (hvk : vinogradov_korobov_zero_free_region) :
     classical_zero_free_region :=
-  classical_zero_free_region_of_vinogradov_korobov_with_comparison
-    hvk vinogradov_korobov_width_comparison
+  compact_patch_classical_zero_free_region_at_three
+    (vinogradov_korobov_high_height_classical_zero_free_region hvk)
 
 end ZeroFreeRegion
