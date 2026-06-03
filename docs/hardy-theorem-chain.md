@@ -258,6 +258,15 @@ The shortest credible chain to `hardy_zeros_unbounded_target` is now:
        hardy_two_signed_moments_target → hardy_theorem_target
    ```
 
+   The current compatibility target also has a direct checked bridge:
+
+   ```lean
+   lemma hardy_theorem_target_of_integral_asymptotic_one_two :
+       integral_asymptotic_target 1 →
+       integral_asymptotic_target 2 →
+       hardy_theorem_target
+   ```
+
 3. Prove two signed moments.
    It is enough to establish one negative moment and one positive moment:
    `weightedIntegral 1` has negative leading term and `weightedIntegral 2`

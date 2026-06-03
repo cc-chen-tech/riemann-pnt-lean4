@@ -174,6 +174,13 @@ theorem infinitely_many_zeros_on_critical_line_of_two_signed_moments
   infinitely_many_zeros_on_critical_line
     (HardyTheorem.hardy_theorem_target_of_two_signed_moments hmom)
 
+theorem infinitely_many_zeros_on_critical_line_of_integral_asymptotic_one_two
+    (h1 : HardyTheorem.integral_asymptotic_target 1)
+    (h2 : HardyTheorem.integral_asymptotic_target 2) :
+    {s : ℂ | s.re = 1 / 2 ∧ riemannZeta s = 0}.Infinite :=
+  infinitely_many_zeros_on_critical_line
+    (HardyTheorem.hardy_theorem_target_of_integral_asymptotic_one_two h1 h2)
+
 /-- Target statement for Conrey's theorem that a positive proportion of zeros
 lie on the critical line.  This project does not currently formalize the
 zero-counting machinery needed to state the exact 40% theorem. -/

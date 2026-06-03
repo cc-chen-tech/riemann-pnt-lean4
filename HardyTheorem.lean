@@ -913,6 +913,13 @@ lemma hardy_theorem_target_of_two_signed_moments
     simpa [hsets] using hfinite
   exact finite_zeros_contradiction_of_two_signed_moments hhardy_finite hmom
 
+lemma hardy_theorem_target_of_integral_asymptotic_one_two
+    (h1 : integral_asymptotic_target 1)
+    (h2 : integral_asymptotic_target 2) :
+    hardy_theorem_target :=
+  hardy_theorem_target_of_two_signed_moments
+    (hardy_two_signed_moments_of_integral_asymptotic_one_two h1 h2)
+
 /-- Conditional Hardy theorem from the exact analytic inputs used in the
 classical sign-change argument.
 
