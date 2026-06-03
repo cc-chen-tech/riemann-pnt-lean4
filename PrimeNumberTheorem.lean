@@ -979,6 +979,58 @@ lemma RH_PrimeCountingLiErrorBound_of_RH_ErrorBound
     (h : RH_ErrorBound) : RH_PrimeCountingLiErrorBound :=
   RH_PrimeCountingLiErrorBound_of_pointwise h
 
+/-- Reverse bridge from the composable `=O[atTop]` target to the textbook
+pointwise RH-scale error target, assuming the missing finite-interval bound.
+
+The finite-interval hypothesis is the exact extra data needed here: the Big-O
+hypothesis supplies a positive constant after some threshold, while this
+hypothesis supplies a positive constant on the bounded interval before that
+threshold. -/
+lemma RH_ErrorBound_of_RH_PrimeCountingLiErrorBound_of_finite_intervals
+    (h : RH_PrimeCountingLiErrorBound)
+    (hfinite : ∀ X ≥ 2, ∃ C > 0, ∀ x, 2 ≤ x → x ≤ X →
+      |(primeCounting x : ℝ) - logIntegral x| ≤
+        C * (Real.sqrt x * Real.log x)) :
+    RH_ErrorBound := by
+  rw [RH_PrimeCountingLiErrorBound] at h
+  rcases h.exists_pos with ⟨Ctail, hCtail_pos, htailO⟩
+  rcases eventually_atTop.mp htailO.bound with ⟨T, htail⟩
+  let X : ℝ := max 2 T
+  rcases hfinite X (le_max_left 2 T) with ⟨Cinit, hCinit_pos, hinit⟩
+  let C : ℝ := max Cinit Ctail
+  refine ⟨C, lt_of_lt_of_le hCinit_pos (le_max_left Cinit Ctail), ?_⟩
+  intro x hx2
+  have hx1 : 1 ≤ x := by linarith
+  have hlog_nonneg : 0 ≤ Real.log x := Real.log_nonneg hx1
+  have hscale_nonneg : 0 ≤ Real.sqrt x * Real.log x :=
+    mul_nonneg (Real.sqrt_nonneg x) hlog_nonneg
+  by_cases hxX : x ≤ X
+  · have hx_init := hinit x hx2 hxX
+    have hCinit_le_C : Cinit ≤ C := le_max_left Cinit Ctail
+    have hscale :
+        Cinit * (Real.sqrt x * Real.log x) ≤
+          C * (Real.sqrt x * Real.log x) :=
+      mul_le_mul_of_nonneg_right hCinit_le_C hscale_nonneg
+    exact le_trans hx_init (by simpa [C, mul_assoc] using hscale)
+  · have hX_lt : X < x := lt_of_not_ge hxX
+    have hT_le_x : T ≤ x := le_trans (le_max_right 2 T) hX_lt.le
+    have hx_tail := htail x hT_le_x
+    have hsqrt_abs : |Real.sqrt x| = Real.sqrt x :=
+      abs_of_nonneg (Real.sqrt_nonneg x)
+    have hlog_abs : |Real.log x| = Real.log x :=
+      abs_of_nonneg hlog_nonneg
+    have htail_abs :
+        |(primeCounting x : ℝ) - logIntegral x| ≤
+          Ctail * (Real.sqrt x * Real.log x) := by
+      simpa [Real.norm_eq_abs, abs_mul, hsqrt_abs, hlog_abs,
+        abs_of_nonneg hscale_nonneg, mul_assoc] using hx_tail
+    have hCtail_le_C : Ctail ≤ C := le_max_right Cinit Ctail
+    have hscale :
+        Ctail * (Real.sqrt x * Real.log x) ≤
+          C * (Real.sqrt x * Real.log x) :=
+      mul_le_mul_of_nonneg_right hCtail_le_C hscale_nonneg
+    exact le_trans htail_abs (by simpa [C, mul_assoc] using hscale)
+
 /-- Target statement: RH iff the RH-scale prime-counting error bound.
 
 This is a standard deep equivalence, but the current project does not provide

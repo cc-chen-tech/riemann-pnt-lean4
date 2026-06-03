@@ -891,6 +891,27 @@ lemma hardy_theorem_target_iff_abs_unbounded_of_bounded_strips
   ⟨hardy_zeros_abs_unbounded_of_hardy_theorem_target_of_bounded_strips hstrip,
     hardy_theorem_target_of_abs_unbounded⟩
 
+lemma critical_line_zeta_zero_neg_height (t : ℝ)
+    (h : riemannZeta (0.5 + I * t) = 0) :
+    riemannZeta (0.5 + I * (-t)) = 0 := by
+  let s : ℂ := 0.5 + I * t
+  have hnat : ∀ n : ℕ, s ≠ -(n : ℂ) := by
+    intro n hs
+    have hre : s.re = (-(n : ℂ)).re := congr_arg Complex.re hs
+    norm_num [s] at hre
+    have hn_nonneg : (0 : ℝ) ≤ (n : ℝ) := Nat.cast_nonneg n
+    nlinarith
+  have hone : s ≠ 1 := by
+    intro hs
+    have hre : s.re = (1 : ℂ).re := congr_arg Complex.re hs
+    norm_num [s] at hre
+  have hsymm : riemannZeta (1 - s) = 0 := by
+    rw [riemannZeta_one_sub hnat hone, h, mul_zero]
+  have hs_neg : 1 - s = (0.5 : ℂ) + I * (-t) := by
+    simp [s, Complex.ext_iff]
+    all_goals norm_num
+  simpa [hs_neg] using hsymm
+
 lemma hardy_zeros_unbounded_of_abs_unbounded_of_neg_symm
     (hsymm : ∀ t : ℝ, riemannZeta (0.5 + I * t) = 0 →
       riemannZeta (0.5 + I * (-t)) = 0)
@@ -911,6 +932,11 @@ lemma hardy_zeros_unbounded_iff_abs_unbounded_of_neg_symm
     hardy_zeros_unbounded_target ↔ hardy_zeros_abs_unbounded_target :=
   ⟨hardy_zeros_abs_unbounded_of_unbounded,
     hardy_zeros_unbounded_of_abs_unbounded_of_neg_symm hsymm⟩
+
+lemma hardy_zeros_unbounded_iff_abs_unbounded :
+    hardy_zeros_unbounded_target ↔ hardy_zeros_abs_unbounded_target :=
+  hardy_zeros_unbounded_iff_abs_unbounded_of_neg_symm
+    critical_line_zeta_zero_neg_height
 
 /-! ## 后续改进 -/
 
