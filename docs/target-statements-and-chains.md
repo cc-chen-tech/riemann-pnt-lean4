@@ -106,6 +106,7 @@ For the chain accounting:
 - `PrimeNumberTheorem.chebyshevPsi_eq_mathlib`
 - `PrimeNumberTheorem.RH_PsiErrorBound_iff_RH_ThetaErrorBound`
 - `PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_RH_ErrorBound`
+- `PrimeNumberTheorem.RH_ErrorBound_of_RH_PrimeCountingLiErrorBound_of_finite_intervals`
 
 ### Missing mathlib/analytic infrastructure
 
@@ -143,8 +144,10 @@ For the chain accounting:
 - `HardyTheorem.weightedIntegralOf_neg`
 - `HardyTheorem.hardy_theorem_target_of_two_signed_moments_and_tail_dominance`
 - `HardyTheorem.hardyZ_continuous`
+- `HardyTheorem.critical_line_zeta_zero_neg_height`
 - `HardyTheorem.hardy_theorem_target_iff_abs_unbounded_of_bounded_strips`
 - `HardyTheorem.hardy_zeros_unbounded_iff_abs_unbounded_of_neg_symm`
+- `HardyTheorem.hardy_zeros_unbounded_iff_abs_unbounded`
 - `HardyTheorem.hardy_theorem_target_of_hardy_littlewood_lower_bound`
 - `HardyTheorem.hardy_theorem_target_of_selberg_zero_proportion`
 
