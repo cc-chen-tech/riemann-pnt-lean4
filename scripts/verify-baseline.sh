@@ -21,4 +21,9 @@ python3 scripts/check-targets-consistent.py
 printf '%s\n' "[verify-baseline] checking chain-gap bookkeeping"
 python3 scripts/check-chain-gaps.py
 
+printf '%s\n' "[verify-baseline] scanning worktrees for target-set mismatches (informational)"
+if ! python3 scripts/scan-worktrees-targets.py; then
+  echo "[verify-baseline] warning: worktree target sets differ; inspect output before merging"
+fi
+
 printf '%s\n' "[verify-baseline] target inventory and build are consistent"
