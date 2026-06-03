@@ -125,6 +125,10 @@ See [`docs/formal-theorem-inventory.md`](docs/formal-theorem-inventory.md)
 for a reviewer-oriented inventory separating proved declarations from target
 statements.
 
+See [`docs/target-statements-and-chains.md`](docs/target-statements-and-chains.md)
+for a compact checklist of all `def ... : Prop` targets and the four missing
+analytic chains they belong to.
+
 See [`docs/implementation-standards.md`](docs/implementation-standards.md)
 for the standard that prevents target statements from being reported as proved
 theorems.
