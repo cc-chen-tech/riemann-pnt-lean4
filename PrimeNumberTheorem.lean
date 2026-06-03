@@ -1258,6 +1258,20 @@ theorem hardy_theorem_target_iff_abs_unbounded :
   ⟨hardy_zeros_abs_unbounded_of_hardy_theorem_target,
     HardyTheorem.hardy_theorem_target_of_abs_unbounded⟩
 
+/-- Hardy's infinite-zero target also forces arbitrarily large positive
+critical-line zero heights. -/
+theorem hardy_zeros_unbounded_of_hardy_theorem_target
+    (h : HardyTheorem.hardy_theorem_target) :
+    HardyTheorem.hardy_zeros_unbounded_target :=
+  HardyTheorem.hardy_zeros_unbounded_iff_abs_unbounded.mpr
+    (hardy_zeros_abs_unbounded_of_hardy_theorem_target h)
+
+theorem hardy_theorem_target_iff_unbounded :
+    HardyTheorem.hardy_theorem_target ↔
+      HardyTheorem.hardy_zeros_unbounded_target :=
+  ⟨hardy_zeros_unbounded_of_hardy_theorem_target,
+    HardyTheorem.hardy_theorem_target_of_unbounded⟩
+
 /-- The Hardy--Littlewood linear lower bound for the number of critical-line
 zeros up to height `T` forces those zeros to have unbounded absolute height.
 

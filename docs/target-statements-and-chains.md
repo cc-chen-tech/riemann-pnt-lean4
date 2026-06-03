@@ -148,6 +148,7 @@ For the chain accounting:
 - `HardyTheorem.hardy_theorem_target_iff_abs_unbounded_of_bounded_strips`
 - `HardyTheorem.hardy_zeros_unbounded_iff_abs_unbounded_of_neg_symm`
 - `HardyTheorem.hardy_zeros_unbounded_iff_abs_unbounded`
+- `PrimeNumberTheorem.hardy_theorem_target_iff_unbounded`
 - `HardyTheorem.hardy_theorem_target_of_hardy_littlewood_lower_bound`
 - `HardyTheorem.hardy_theorem_target_of_selberg_zero_proportion`
 
