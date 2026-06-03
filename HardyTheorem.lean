@@ -867,6 +867,51 @@ lemma hardy_theorem_target_of_abs_unbounded
     simpa [Metric.closedBall, dist_eq_norm] using htmem
   linarith
 
+lemma hardy_zeros_abs_unbounded_of_hardy_theorem_target_of_bounded_strips
+    (hstrip : ∀ B : ℝ,
+      {t : ℝ | |t| ≤ B ∧ riemannZeta (0.5 + I * t) = 0}.Finite)
+    (h : hardy_theorem_target) : hardy_zeros_abs_unbounded_target := by
+  by_contra hnot
+  rw [hardy_zeros_abs_unbounded_target] at hnot
+  push Not at hnot
+  rcases hnot with ⟨B, hB⟩
+  have hfinite : {t : ℝ | riemannZeta (0.5 + I * t) = 0}.Finite := by
+    refine (hstrip B).subset ?_
+    intro t ht
+    have ht_abs_lt : |t| < B := by
+      by_contra hle
+      exact hB t (le_of_not_gt hle) ht
+    exact ⟨le_of_lt ht_abs_lt, ht⟩
+  exact h hfinite
+
+lemma hardy_theorem_target_iff_abs_unbounded_of_bounded_strips
+    (hstrip : ∀ B : ℝ,
+      {t : ℝ | |t| ≤ B ∧ riemannZeta (0.5 + I * t) = 0}.Finite) :
+    hardy_theorem_target ↔ hardy_zeros_abs_unbounded_target :=
+  ⟨hardy_zeros_abs_unbounded_of_hardy_theorem_target_of_bounded_strips hstrip,
+    hardy_theorem_target_of_abs_unbounded⟩
+
+lemma hardy_zeros_unbounded_of_abs_unbounded_of_neg_symm
+    (hsymm : ∀ t : ℝ, riemannZeta (0.5 + I * t) = 0 →
+      riemannZeta (0.5 + I * (-t)) = 0)
+    (h : hardy_zeros_abs_unbounded_target) : hardy_zeros_unbounded_target := by
+  intro T
+  rcases h T with ⟨t, ht_abs, ht_zero⟩
+  by_cases ht_nonneg : 0 ≤ t
+  · refine ⟨t, ?_, ht_zero⟩
+    simpa [abs_of_nonneg ht_nonneg] using ht_abs
+  · refine ⟨-t, ?_, ?_⟩
+    · have ht_nonpos : t ≤ 0 := le_of_lt (lt_of_not_ge ht_nonneg)
+      simpa [abs_of_nonpos ht_nonpos] using ht_abs
+    · simpa using hsymm t ht_zero
+
+lemma hardy_zeros_unbounded_iff_abs_unbounded_of_neg_symm
+    (hsymm : ∀ t : ℝ, riemannZeta (0.5 + I * t) = 0 →
+      riemannZeta (0.5 + I * (-t)) = 0) :
+    hardy_zeros_unbounded_target ↔ hardy_zeros_abs_unbounded_target :=
+  ⟨hardy_zeros_abs_unbounded_of_unbounded,
+    hardy_zeros_unbounded_of_abs_unbounded_of_neg_symm hsymm⟩
+
 /-! ## 后续改进 -/
 
 noncomputable def zeroCountOnCriticalLine (T : ℝ) : ℕ :=
@@ -939,6 +984,52 @@ lemma exists_zero_on_critical_line_of_selberg_zero_proportion
     (h : selberg_zero_proportion_target) :
     ∃ t : ℝ, riemannZeta (0.5 + I * t) = 0 :=
   exists_zero_on_critical_line_of_hardy_littlewood_lower_bound
+    (hardy_littlewood_lower_bound_target_of_selberg_zero_proportion h)
+
+lemma hardy_theorem_target_of_hardy_littlewood_lower_bound
+    (h : hardy_littlewood_lower_bound_target) :
+    hardy_theorem_target := by
+  classical
+  intro hfinite
+  rcases h with ⟨C, hC_pos, T0, hbound⟩
+  let allZeros : Set ℝ := {t : ℝ | riemannZeta (0.5 + I * t) = 0}
+  let N : ℕ := allZeros.ncard
+  let T : ℝ := max T0 (max 1 (((N : ℝ) + 1) / C))
+  have hT0 : T0 ≤ T := le_max_left T0 (max 1 (((N : ℝ) + 1) / C))
+  have hT_large : ((N : ℝ) + 1) / C ≤ T := by
+    exact le_trans (le_max_right 1 (((N : ℝ) + 1) / C))
+      (le_max_right T0 (max 1 (((N : ℝ) + 1) / C)))
+  have hN_lt_CT : (N : ℝ) < C * T := by
+    have hmul : C * (((N : ℝ) + 1) / C) ≤ C * T :=
+      mul_le_mul_of_nonneg_left hT_large hC_pos.le
+    have hC_ne : C ≠ 0 := ne_of_gt hC_pos
+    have hC_mul : C * (((N : ℝ) + 1) / C) = (N : ℝ) + 1 := by
+      field_simp [hC_ne]
+    have hN1_le : (N : ℝ) + 1 ≤ C * T := by
+      rw [← hC_mul]
+      exact hmul
+    linarith
+  let countedZeros : Set (Set.Icc (0 : ℝ) T) :=
+    {t : Set.Icc (0 : ℝ) T | riemannZeta (0.5 + I * (t : ℝ)) = 0}
+  have hcount_le_N_nat : zeroCountOnCriticalLine T ≤ N := by
+    have hle :=
+      Set.ncard_le_ncard_of_injOn
+        (fun t : Set.Icc (0 : ℝ) T => (t : ℝ))
+        (s := countedZeros) (t := allZeros) ?_ ?_ hfinite
+    · simpa [zeroCountOnCriticalLine, countedZeros, allZeros, N] using hle
+    · intro t ht
+      exact ht
+    · intro t₁ _ t₂ _ heq
+      exact Subtype.ext heq
+  have hcount_le_N : (zeroCountOnCriticalLine T : ℝ) ≤ N := by
+    exact_mod_cast hcount_le_N_nat
+  have hcount_lower := hbound T hT0
+  linarith
+
+lemma hardy_theorem_target_of_selberg_zero_proportion
+    (h : selberg_zero_proportion_target) :
+    hardy_theorem_target :=
+  hardy_theorem_target_of_hardy_littlewood_lower_bound
     (hardy_littlewood_lower_bound_target_of_selberg_zero_proportion h)
 
 end HardyTheorem

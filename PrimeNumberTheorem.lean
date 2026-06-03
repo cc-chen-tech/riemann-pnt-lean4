@@ -771,6 +771,38 @@ theorem pnt_forms_equivalent :
 
   exact ⟨h12, h23⟩
 
+/-- Standalone form of the already-proved equivalence between the
+prime-counting and logarithmic-integral PNT targets. -/
+lemma PNTForm1_iff_PNTForm2 : PNTForm1 ↔ PNTForm2 :=
+  pnt_forms_equivalent.1
+
+/-- Standalone form of the already-proved equivalence between the
+logarithmic-integral and Chebyshev-ψ PNT targets. -/
+lemma PNTForm2_iff_PNTForm3 : PNTForm2 ↔ PNTForm3 :=
+  pnt_forms_equivalent.2
+
+lemma PNTForm2_of_PNTForm1 (h : PNTForm1) : PNTForm2 :=
+  PNTForm1_iff_PNTForm2.mp h
+
+lemma PNTForm1_of_PNTForm2 (h : PNTForm2) : PNTForm1 :=
+  PNTForm1_iff_PNTForm2.mpr h
+
+lemma PNTForm3_of_PNTForm2 (h : PNTForm2) : PNTForm3 :=
+  PNTForm2_iff_PNTForm3.mp h
+
+lemma PNTForm2_of_PNTForm3 (h : PNTForm3) : PNTForm2 :=
+  PNTForm2_iff_PNTForm3.mpr h
+
+/-- Transitive packaging of the three equivalent PNT formulations. -/
+lemma PNTForm1_iff_PNTForm3 : PNTForm1 ↔ PNTForm3 :=
+  Iff.trans PNTForm1_iff_PNTForm2 PNTForm2_iff_PNTForm3
+
+lemma PNTForm3_of_PNTForm1 (h : PNTForm1) : PNTForm3 :=
+  PNTForm1_iff_PNTForm3.mp h
+
+lemma PNTForm1_of_PNTForm3 (h : PNTForm3) : PNTForm1 :=
+  PNTForm1_iff_PNTForm3.mpr h
+
 /-! ## 与黎曼猜想的联系 -/
 
 /-- RH-scale Chebyshev-ψ error target. -/
@@ -838,6 +870,11 @@ lemma RH_PsiErrorBound_iff_RH_ThetaErrorBound :
     RH_PsiErrorBound ↔ RH_ThetaErrorBound :=
   ⟨RH_ThetaErrorBound_of_RH_PsiErrorBound,
     RH_PsiErrorBound_of_RH_ThetaErrorBound⟩
+
+/-- Symmetric orientation of the ψ/θ RH-scale error equivalence. -/
+lemma RH_ThetaErrorBound_iff_RH_PsiErrorBound :
+    RH_ThetaErrorBound ↔ RH_PsiErrorBound :=
+  RH_PsiErrorBound_iff_RH_ThetaErrorBound.symm
 
 /-- An eventual absolute-value estimate is enough to close the `ψ` Big-O target. -/
 lemma RH_PsiErrorBound_of_eventual_abs_bound {C : ℝ}
@@ -936,6 +973,12 @@ lemma RH_PrimeCountingLiErrorBound_of_pointwise
     filter_upwards [eventually_ge_atTop (2 : ℝ)] with x hx
     simpa [mul_assoc] using hC x hx)
 
+/-- Named bridge from the textbook pointwise RH-scale error statement to the
+composable prime-counting `=O[atTop]` target. -/
+lemma RH_PrimeCountingLiErrorBound_of_RH_ErrorBound
+    (h : RH_ErrorBound) : RH_PrimeCountingLiErrorBound :=
+  RH_PrimeCountingLiErrorBound_of_pointwise h
+
 /-- Target statement: RH iff the RH-scale prime-counting error bound.
 
 This is a standard deep equivalence, but the current project does not provide
@@ -944,6 +987,11 @@ target without claiming a proof.
 -/
 def rh_iff_optimal_error : Prop :=
   RiemannHypothesis.Statement ↔ RH_PrimeCountingLiErrorBound
+
+lemma rh_iff_optimal_error_iff :
+    rh_iff_optimal_error ↔
+      (RiemannHypothesis.Statement ↔ RH_PrimeCountingLiErrorBound) := by
+  rfl
 
 /-- Packaging lemma for the RH/error equivalence target.
 
@@ -1484,6 +1532,47 @@ lemma explicit_formula_von_mangoldt_of_error_tendsto_zero {x : ℝ} {hx : x ≥ 
       (0 : ℂ) + (chebyshevPsi0 x : ℂ) = (chebyshevPsi0 x : ℂ) := by
     simp
   exact hsum.congr' (Filter.EventuallyEq.of_eq h_eq) |>.mono_right (by simp [hlim])
+
+lemma explicit_formula_von_mangoldt_error_tendsto_zero {x : ℝ} {hx : x ≥ 2}
+    (h : explicit_formula_von_mangoldt x hx) :
+    Tendsto (fun T : ℝ =>
+      explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)) atTop (𝓝 0) := by
+  have hconst : Tendsto (fun _T : ℝ => (chebyshevPsi0 x : ℂ)) atTop
+      (𝓝 (chebyshevPsi0 x : ℂ)) :=
+    tendsto_const_nhds
+  simpa [explicit_formula_von_mangoldt] using h.sub hconst
+
+lemma explicit_formula_von_mangoldt_iff_error_tendsto_zero
+    {x : ℝ} {hx : x ≥ 2} :
+    explicit_formula_von_mangoldt x hx ↔
+      Tendsto (fun T : ℝ =>
+        explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)) atTop (𝓝 0) :=
+  ⟨explicit_formula_von_mangoldt_error_tendsto_zero,
+    explicit_formula_von_mangoldt_of_error_tendsto_zero⟩
+
+lemma explicit_formula_von_mangoldt_of_error_isLittleO_one
+    {x : ℝ} {hx : x ≥ 2}
+    (h : (fun T : ℝ => explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ))
+        =o[atTop] (fun _T : ℝ => (1 : ℂ))) :
+    explicit_formula_von_mangoldt x hx :=
+  explicit_formula_von_mangoldt_of_error_tendsto_zero
+    ((isLittleO_one_iff ℂ).mp h)
+
+lemma explicit_formula_von_mangoldt_error_isLittleO_one
+    {x : ℝ} {hx : x ≥ 2}
+    (h : explicit_formula_von_mangoldt x hx) :
+    (fun T : ℝ => explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ))
+        =o[atTop] (fun _T : ℝ => (1 : ℂ)) :=
+  (isLittleO_one_iff ℂ).mpr
+    (explicit_formula_von_mangoldt_error_tendsto_zero h)
+
+lemma explicit_formula_von_mangoldt_iff_error_isLittleO_one
+    {x : ℝ} {hx : x ≥ 2} :
+    explicit_formula_von_mangoldt x hx ↔
+      (fun T : ℝ => explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ))
+        =o[atTop] (fun _T : ℝ => (1 : ℂ)) :=
+  ⟨explicit_formula_von_mangoldt_error_isLittleO_one,
+    explicit_formula_von_mangoldt_of_error_isLittleO_one⟩
 
 /-- 零点对素数分布的贡献
 
