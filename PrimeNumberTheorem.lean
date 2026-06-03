@@ -1169,6 +1169,11 @@ lemma RH_ErrorBound_of_RH_PrimeCountingLiErrorBound
   RH_ErrorBound_of_RH_PrimeCountingLiErrorBound_of_finite_intervals h
     primeCounting_logIntegral_finite_interval_bound
 
+lemma RH_ErrorBound_iff_RH_PrimeCountingLiErrorBound :
+    RH_ErrorBound ↔ RH_PrimeCountingLiErrorBound :=
+  ⟨RH_PrimeCountingLiErrorBound_of_RH_ErrorBound,
+    RH_ErrorBound_of_RH_PrimeCountingLiErrorBound⟩
+
 /-- Target statement: RH iff the RH-scale prime-counting error bound.
 
 This is a standard deep equivalence, but the current project does not provide
@@ -1182,6 +1187,23 @@ lemma rh_iff_optimal_error_iff :
     rh_iff_optimal_error ↔
       (RiemannHypothesis.Statement ↔ RH_PrimeCountingLiErrorBound) := by
   rfl
+
+lemma rh_iff_pointwise_error_iff :
+    rh_iff_optimal_error ↔
+      (RiemannHypothesis.Statement ↔ RH_ErrorBound) := by
+  constructor
+  · intro h
+    constructor
+    · intro hRH
+      exact RH_ErrorBound_of_RH_PrimeCountingLiErrorBound (h.mp hRH)
+    · intro herror
+      exact h.mpr (RH_PrimeCountingLiErrorBound_of_RH_ErrorBound herror)
+  · intro h
+    constructor
+    · intro hRH
+      exact RH_PrimeCountingLiErrorBound_of_RH_ErrorBound (h.mp hRH)
+    · intro herror
+      exact h.mpr (RH_ErrorBound_of_RH_PrimeCountingLiErrorBound herror)
 
 /-- Packaging lemma for the RH/error equivalence target.
 

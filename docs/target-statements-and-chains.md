@@ -108,6 +108,8 @@ For the chain accounting:
 - `PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_RH_ErrorBound`
 - `PrimeNumberTheorem.RH_ErrorBound_of_RH_PrimeCountingLiErrorBound_of_finite_intervals`
 - `PrimeNumberTheorem.RH_ErrorBound_of_RH_PrimeCountingLiErrorBound`
+- `PrimeNumberTheorem.RH_ErrorBound_iff_RH_PrimeCountingLiErrorBound`
+- `PrimeNumberTheorem.rh_iff_pointwise_error_iff`
 - `PrimeNumberTheorem.primeCounting_logIntegral_finite_interval_bound`
 
 ### Missing mathlib/analytic infrastructure
