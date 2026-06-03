@@ -1500,6 +1500,15 @@ theorem hardy_zeros_abs_unbounded_of_hardy_littlewood_lower_bound
   have hcount_lower := hbound T hT0
   linarith
 
+/-- The Hardy--Littlewood lower-bound target also gives arbitrarily large
+positive critical-line zero heights, using the functional-equation symmetry
+formalized in `HardyTheorem`. -/
+theorem hardy_zeros_unbounded_of_hardy_littlewood_lower_bound
+    (h : HardyTheorem.hardy_littlewood_lower_bound_target) :
+    HardyTheorem.hardy_zeros_unbounded_target :=
+  HardyTheorem.hardy_zeros_unbounded_iff_abs_unbounded.mpr
+    (hardy_zeros_abs_unbounded_of_hardy_littlewood_lower_bound h)
+
 /-- The Hardy--Littlewood lower-bound target implies Hardy's infinite-zero
 target via the unbounded-height bridge. -/
 theorem hardy_theorem_target_of_hardy_littlewood_lower_bound
@@ -1516,6 +1525,14 @@ theorem hardy_zeros_abs_unbounded_of_selberg_zero_proportion
   hardy_zeros_abs_unbounded_of_hardy_littlewood_lower_bound
     (HardyTheorem.hardy_littlewood_lower_bound_target_of_selberg_zero_proportion h)
 
+/-- Selberg's positive-proportion target gives arbitrarily large positive
+critical-line zero heights. -/
+theorem hardy_zeros_unbounded_of_selberg_zero_proportion
+    (h : HardyTheorem.selberg_zero_proportion_target) :
+    HardyTheorem.hardy_zeros_unbounded_target :=
+  hardy_zeros_unbounded_of_hardy_littlewood_lower_bound
+    (HardyTheorem.hardy_littlewood_lower_bound_target_of_selberg_zero_proportion h)
+
 /-- Selberg's positive-proportion target implies Hardy's infinite-zero target. -/
 theorem hardy_theorem_target_of_selberg_zero_proportion
     (h : HardyTheorem.selberg_zero_proportion_target) :
@@ -1527,6 +1544,18 @@ theorem hardy_theorem_target_of_conrey_40_percent_target
     (h : KnownResults.conrey_40_percent_zeros_on_critical_line_target) :
     HardyTheorem.hardy_theorem_target :=
   hardy_theorem_target_of_selberg_zero_proportion
+    (KnownResults.conrey_40_percent_zeros_on_critical_line_target_iff_selberg.mp h)
+
+theorem hardy_zeros_abs_unbounded_of_conrey_40_percent_target
+    (h : KnownResults.conrey_40_percent_zeros_on_critical_line_target) :
+    HardyTheorem.hardy_zeros_abs_unbounded_target :=
+  hardy_zeros_abs_unbounded_of_selberg_zero_proportion
+    (KnownResults.conrey_40_percent_zeros_on_critical_line_target_iff_selberg.mp h)
+
+theorem hardy_zeros_unbounded_of_conrey_40_percent_target
+    (h : KnownResults.conrey_40_percent_zeros_on_critical_line_target) :
+    HardyTheorem.hardy_zeros_unbounded_target :=
+  hardy_zeros_unbounded_of_selberg_zero_proportion
     (KnownResults.conrey_40_percent_zeros_on_critical_line_target_iff_selberg.mp h)
 
 theorem infinitely_many_zeros_on_critical_line_of_selberg_zero_proportion
