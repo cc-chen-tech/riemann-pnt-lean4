@@ -114,9 +114,9 @@ Total: **23**.
 - `HardyTheorem.hardy_zeros_abs_unbounded_target`
 - `HardyTheorem.hardy_littlewood_lower_bound_target`
 - `HardyTheorem.selberg_zero_proportion_target`
-- `HardyTheorem.Details.gamma_asymptotic_half_plus_it_target`
-- `HardyTheorem.Details.theta_asymptotic_target`
-- `HardyTheorem.Details.approximate_functional_equation_target`
+- `HardyTheorem.gamma_asymptotic_half_plus_it_target`
+- `HardyTheorem.theta_asymptotic_target`
+- `HardyTheorem.approximate_functional_equation_target`
 
 ### Current verified anchor theorems
 
