@@ -71,9 +71,6 @@ TARGET_CHAIN_MAP = {
     "gamma_asymptotic_half_plus_it_target": "Hardy theorem",
     "theta_asymptotic_target": "Hardy theorem",
     "approximate_functional_equation_target": "Hardy theorem",
-    "IsNontrivialZero": "Foundation",
-    "IsTrivialZero": "Foundation",
-    "Statement": "RH error equivalence",
     "conrey_40_percent_zeros_on_critical_line_target": "Hardy theorem",
 }
 
