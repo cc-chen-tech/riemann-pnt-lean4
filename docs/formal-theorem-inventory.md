@@ -164,6 +164,13 @@ metadata, not proof results.
 The following declarations are intentionally `def ... : Prop` targets.  They
 are not exported as theorems and should not be cited as proved.
 
+As of `2026-06-03`, there are **23** target declarations:
+
+- `HardyTheorem` namespace: **11**  
+- `PrimeNumberTheorem` namespace: **9**  
+- `ZeroFreeRegion` namespace: **2**  
+- `RiemannExplorer` namespace: **1**  
+
 ### `ZeroFreeRegion.lean`
 
 - `classical_zero_free_region`
@@ -192,6 +199,7 @@ are not exported as theorems and should not be cited as proved.
 - `weightedIntegralOf_tail_dominates`
 - `hardy_theorem_target`
 - `hardy_zeros_unbounded_target`
+- `hardy_zeros_abs_unbounded_target`
 - `hardy_littlewood_lower_bound_target`
 - `selberg_zero_proportion_target`
 - `gamma_asymptotic_half_plus_it_target`
@@ -204,6 +212,19 @@ positivity of its integral from `0` to `T`; an additional tail-dominance
 hypothesis is needed.  The weighted-integral positivity/negativity bridge and
 the finite-zero contradiction under signed-moment and tail-dominance hypotheses
 are now proved lemmas, not target statements.
+
+### `RiemannExplorer.lean`
+
+- `conrey_40_percent_zeros_on_critical_line_target`
+  target: a positive-proportion statement on critical-line zeros, expressed as
+  a target alias for `HardyTheorem.selberg_zero_proportion_target`.
+
+Current status in `HardyTheorem.lean` target list:
+
+- `hardy_zeros_abs_unbounded_target` is a monotone reformulation of
+  `hardy_zeros_unbounded_target`.
+- `hardy_littlewood_lower_bound_target` is available as a derived output if
+  `selberg_zero_proportion_target` is available.
 
 Detailed dependency maps for the four unfinished analytic chains are collected
 under `docs/missing-chains-index.md`.

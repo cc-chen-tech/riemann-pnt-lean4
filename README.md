@@ -21,6 +21,13 @@ Current code status:
 
 Total: 0 syntactic `sorry` occurrences in Lean source files.
 
+Unresolved target declarations (currently not promoted to theorems): **23**.
+
+ - `HardyTheorem` namespace: 11
+ - `PrimeNumberTheorem` namespace: 9
+ - `ZeroFreeRegion` namespace: 2
+ - `RiemannExplorer` namespace: 1
+
 ## File Overview
 
 | File | Description | Status |
