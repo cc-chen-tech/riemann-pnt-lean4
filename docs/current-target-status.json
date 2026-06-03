@@ -6,123 +6,123 @@
     "HardyTheorem": [
       {
         "name": "integral_asymptotic_target",
-        "shape": "<unknown>",
+        "shape": "n ≥ 1 ∧ ∃ A>0, weightedIntegral n ~[atTop] (fun T => ((-1)^n*A) * T ^ ((2*n)+1/4))",
         "depends_on": []
       },
       {
         "name": "hardy_two_signed_moments_target",
-        "shape": "<unknown>",
+        "shape": "(∃A>0, weightedIntegral 1 ~ (-A*...)) ∧ (∃B>0, weightedIntegral 2 ~ (B*...))",
         "depends_on": []
       },
       {
         "name": "weightedIntegralOf_tail_dominates",
-        "shape": "<unknown>",
+        "shape": "∃A, Tendsto (fun T => ∫ t in A..T, weightFunction n t * f t) atTop atTop",
         "depends_on": []
       },
       {
         "name": "hardy_theorem_target",
-        "shape": "<unknown>",
+        "shape": "{t | riemannZeta (1/2 + I*t)=0}.Infinite",
         "depends_on": []
       },
       {
         "name": "hardy_zeros_unbounded_target",
-        "shape": "<unknown>",
+        "shape": "∀T, ∃t, T ≤ t ∧ riemannZeta (1/2 + I*t)=0",
         "depends_on": []
       },
       {
         "name": "hardy_zeros_abs_unbounded_target",
-        "shape": "<unknown>",
+        "shape": "∀T, ∃t, T ≤ |t| ∧ riemannZeta (1/2 + I*t)=0",
         "depends_on": []
       },
       {
         "name": "hardy_littlewood_lower_bound_target",
-        "shape": "<unknown>",
+        "shape": "∃C>0, ∃T0, ∀T≥T0, (zeroCountOnCriticalLine T:ℝ) ≥ C*T",
         "depends_on": []
       },
       {
         "name": "selberg_zero_proportion_target",
-        "shape": "<unknown>",
+        "shape": "∃c>0,∃T0,∀T≥T0, (zeroCountOnCriticalLine T:ℝ) ≥ c*(T/(2π)*log T)",
         "depends_on": []
       },
       {
         "name": "gamma_asymptotic_half_plus_it_target",
-        "shape": "<unknown>",
+        "shape": "(fun t => Gamma(1/2 + I*t)) ~ (sqrt(2π) * exp(I*t*log t - I*t) * exp(-π*t/2))",
         "depends_on": []
       },
       {
         "name": "theta_asymptotic_target",
-        "shape": "<unknown>",
+        "shape": "∃θ, exp(I*θ t)=exp(I*thetaPhase t) ∧ (fun t => θ t) ~ (t/2*log(t/(2π))-t/2-π/8)",
         "depends_on": []
       },
       {
         "name": "approximate_functional_equation_target",
-        "shape": "<unknown>",
+        "shape": "∃C>0, ∀t>1, ∃R, zeta(1/2+It)=finite sums + R ∧ ‖R‖ ≤ C*t^(-1/4)",
         "depends_on": []
       }
     ],
     "PrimeNumberTheorem": [
       {
         "name": "PNTForm1",
-        "shape": "<unknown>",
+        "shape": "Tendsto (fun x => (primeCounting x:ℝ)*log x / x) atTop (𝓝 1)",
         "depends_on": []
       },
       {
         "name": "PNTForm2",
-        "shape": "<unknown>",
+        "shape": "Tendsto (fun x => (primeCounting x:ℝ)/logIntegral x) atTop (𝓝 1)",
         "depends_on": []
       },
       {
         "name": "PNTForm3",
-        "shape": "<unknown>",
+        "shape": "Tendsto (fun x => chebyshevPsi x / x) atTop (𝓝 1)",
         "depends_on": []
       },
       {
         "name": "RH_PsiErrorBound",
-        "shape": "<unknown>",
+        "shape": "(fun x => chebyshevPsi x - x) =O[atTop] (fun x => sqrt x * (log x)^2)",
         "depends_on": []
       },
       {
         "name": "RH_ThetaErrorBound",
-        "shape": "<unknown>",
+        "shape": "(fun x => Chebyshev.theta x - x) =O[atTop] (fun x => sqrt x * (log x)^2)",
         "depends_on": []
       },
       {
         "name": "RH_PrimeCountingLiErrorBound",
-        "shape": "<unknown>",
+        "shape": "(fun x => (primeCounting x:ℝ)-logIntegral x) =O[atTop] (fun x => sqrt x * log x)",
         "depends_on": []
       },
       {
         "name": "RH_ErrorBound",
-        "shape": "<unknown>",
+        "shape": "∃C>0, ∀x≥2, |(primeCounting x:ℝ)-logIntegral x| ≤ C*sqrt x*log x",
         "depends_on": []
       },
       {
         "name": "rh_iff_optimal_error",
-        "shape": "<unknown>",
+        "shape": "RiemannHypothesis.Statement ↔ RH_PrimeCountingLiErrorBound",
         "depends_on": []
       },
       {
         "name": "explicit_formula_von_mangoldt",
-        "shape": "<unknown>",
+        "shape": "Tendsto (T ↦ explicitFormulaApprox x T) atTop (𝓝 (chebyshevPsi0 x))",
         "depends_on": []
       }
     ],
     "RiemannExplorer": [
       {
         "name": "conrey_40_percent_zeros_on_critical_line_target",
-        "shape": "<unknown>",
+        "shape": "∃c>0, ∃T0, ∀T≥T0, zeroCountOnCriticalLine T ≥ c*(T/(2π)*log T)",
         "depends_on": []
       }
     ],
     "ZeroFreeRegion": [
       {
         "name": "classical_zero_free_region",
-        "shape": "<unknown>",
+        "shape": "∃c>0, ∀s, |s.im|≥2 → s.re ≥ 1 - c/log|s.im| → riemannZeta s ≠ 0",
         "depends_on": []
       },
       {
         "name": "vinogradov_korobov_zero_free_region",
-        "shape": "<unknown>",
+        "shape": "∃c>0, ∀s, |s.im|≥3 → s.re ≥ 1 - c/(log|s.im|)^(2/3)* (log(log|s.im|))^(-1/3) → riemannZeta s ≠ 0",
         "depends_on": []
       }
     ]
