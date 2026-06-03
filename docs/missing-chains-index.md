@@ -104,7 +104,11 @@ The following proved declarations are the main entry points for future work:
 - `HardyTheorem.hardy_theorem_target_iff_abs_unbounded_of_bounded_strips`
 - `HardyTheorem.hardy_zeros_unbounded_iff_abs_unbounded_of_neg_symm`
 - `HardyTheorem.hardy_zeros_unbounded_iff_abs_unbounded`
+- `HardyTheorem.hardy_zeros_abs_unbounded_of_integral_asymptotic_one_two_of_bounded_strips`
+- `HardyTheorem.hardy_zeros_unbounded_of_integral_asymptotic_one_two_of_bounded_strips`
 - `PrimeNumberTheorem.hardy_theorem_target_iff_unbounded`
+- `PrimeNumberTheorem.hardy_zeros_abs_unbounded_of_integral_asymptotic_one_two`
+- `PrimeNumberTheorem.hardy_zeros_unbounded_of_integral_asymptotic_one_two`
 - `HardyTheorem.hardy_theorem_target_of_hardy_littlewood_lower_bound`
 - `HardyTheorem.hardy_theorem_target_of_selberg_zero_proportion`
 - `PrimeNumberTheorem.hardy_zeros_unbounded_of_hardy_littlewood_lower_bound`

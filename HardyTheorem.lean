@@ -1008,6 +1008,15 @@ lemma hardy_theorem_target_iff_abs_unbounded_of_bounded_strips
   ⟨hardy_zeros_abs_unbounded_of_hardy_theorem_target_of_bounded_strips hstrip,
     hardy_theorem_target_of_abs_unbounded⟩
 
+lemma hardy_zeros_abs_unbounded_of_integral_asymptotic_one_two_of_bounded_strips
+    (hstrip : ∀ B : ℝ,
+      {t : ℝ | |t| ≤ B ∧ riemannZeta (0.5 + I * t) = 0}.Finite)
+    (h1 : integral_asymptotic_target 1)
+    (h2 : integral_asymptotic_target 2) :
+    hardy_zeros_abs_unbounded_target :=
+  (hardy_theorem_target_iff_abs_unbounded_of_bounded_strips hstrip).mp
+    (hardy_theorem_target_of_integral_asymptotic_one_two h1 h2)
+
 lemma critical_line_zeta_zero_neg_height (t : ℝ)
     (h : riemannZeta (0.5 + I * t) = 0) :
     riemannZeta (0.5 + I * (-t)) = 0 := by
@@ -1054,6 +1063,16 @@ lemma hardy_zeros_unbounded_iff_abs_unbounded :
     hardy_zeros_unbounded_target ↔ hardy_zeros_abs_unbounded_target :=
   hardy_zeros_unbounded_iff_abs_unbounded_of_neg_symm
     critical_line_zeta_zero_neg_height
+
+lemma hardy_zeros_unbounded_of_integral_asymptotic_one_two_of_bounded_strips
+    (hstrip : ∀ B : ℝ,
+      {t : ℝ | |t| ≤ B ∧ riemannZeta (0.5 + I * t) = 0}.Finite)
+    (h1 : integral_asymptotic_target 1)
+    (h2 : integral_asymptotic_target 2) :
+    hardy_zeros_unbounded_target :=
+  hardy_zeros_unbounded_iff_abs_unbounded.mpr
+    (hardy_zeros_abs_unbounded_of_integral_asymptotic_one_two_of_bounded_strips
+      hstrip h1 h2)
 
 /-! ## 后续改进 -/
 

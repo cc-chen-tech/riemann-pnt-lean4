@@ -93,6 +93,8 @@ Supporting declarations include:
 - `logIntegral_nonneg`
 - `logIntegral_pos`
 - `riemannZeta_not_frequently_zero_nhdsNE_of_ne_one`
+- `hardy_zeros_abs_unbounded_of_integral_asymptotic_one_two`
+- `hardy_zeros_unbounded_of_integral_asymptotic_one_two`
 
 ### `HardyTheorem.lean`
 
@@ -107,10 +109,19 @@ Core verified declarations:
 - `hardyZ_continuous`
 - `hardyZ_eventually_const_sign_of_finite_zeros`
 - `weightedIntegralOf_neg`
+- `hardy_two_signed_moments_target_iff_integral_asymptotic_one_two`
+- `hardy_theorem_target_of_two_signed_moments`
+- `hardy_theorem_target_of_integral_asymptotic_one_two`
+- `hardy_theorem_target_iff_abs_unbounded_of_bounded_strips`
+- `hardy_zeros_abs_unbounded_of_integral_asymptotic_one_two_of_bounded_strips`
+- `hardy_zeros_unbounded_of_integral_asymptotic_one_two_of_bounded_strips`
+- `hardy_zeros_unbounded_iff_abs_unbounded`
 
 These prove the local Hardy-Z setup and the equivalence between zeros of
-`hardyZ` and zeros of `zeta` on the critical line.  They do not prove Hardy's
-theorem; the moment estimates needed for Hardy's theorem remain targets.
+`hardyZ` and zeros of `zeta` on the critical line, plus conditional bridges
+from the signed-moment targets to Hardy's infinite and unbounded-height zero
+interfaces.  They do not prove Hardy's theorem unconditionally; the moment
+estimates needed for Hardy's theorem remain targets.
 
 ### `GammaResidue.lean`
 
