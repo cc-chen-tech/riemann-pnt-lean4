@@ -85,6 +85,8 @@ The following proved declarations are the main entry points for future work:
 - `PrimeNumberTheorem.RH_PsiErrorBound_iff_RH_ThetaErrorBound`
 - `PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_RH_ErrorBound`
 - `PrimeNumberTheorem.RH_ErrorBound_of_RH_PrimeCountingLiErrorBound_of_finite_intervals`
+- `PrimeNumberTheorem.RH_ErrorBound_of_RH_PrimeCountingLiErrorBound`
+- `PrimeNumberTheorem.primeCounting_logIntegral_finite_interval_bound`
 - `PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_error_tendsto_zero`
 - `HardyTheorem.hardyZ_zero_iff_zeta_zero`
 - `HardyTheorem.hardyZ_continuous`

@@ -979,6 +979,136 @@ lemma RH_PrimeCountingLiErrorBound_of_RH_ErrorBound
     (h : RH_ErrorBound) : RH_PrimeCountingLiErrorBound :=
   RH_PrimeCountingLiErrorBound_of_pointwise h
 
+/-- On a bounded interval, the elementary count of primes is bounded by the
+number of integers up to the right endpoint. -/
+lemma primeCounting_le_floor_add_one {x X : ℝ} (hxX : x ≤ X) :
+    primeCounting x ≤ ⌊X⌋₊ + 1 := by
+  rw [primeCounting]
+  have hncard :
+      {p : ℕ | p.Prime ∧ (p : ℝ) ≤ x}.ncard ≤
+        (Finset.range (⌊X⌋₊ + 1) : Set ℕ).ncard := by
+    refine Set.ncard_le_ncard ?_
+    intro p hp
+    simp only [Set.mem_setOf_eq] at hp
+    simp only [Finset.mem_coe, Finset.mem_range]
+    have hpX : (p : ℝ) ≤ X := le_trans hp.2 hxX
+    have hpfloor : p ≤ ⌊X⌋₊ := Nat.le_floor hpX
+    omega
+  simpa [Set.ncard_coe_finset] using hncard
+
+/-- A crude upper bound for `Li(x)` on a bounded interval. -/
+lemma logIntegral_le_interval_bound {x X : ℝ} (hx2 : 2 ≤ x) (hxX : x ≤ X) :
+    logIntegral x ≤ (X - 2) / Real.log 2 := by
+  have hlog2_pos : 0 < Real.log 2 := Real.log_pos (by norm_num)
+  have h_integrand :
+      ∀ t ∈ Set.Icc (2 : ℝ) x, 1 / Real.log t ≤ 1 / Real.log 2 := by
+    intro t ht
+    have ht2 : 2 ≤ t := ht.1
+    have hlog_le : Real.log 2 ≤ Real.log t :=
+      Real.log_le_log (by norm_num) ht2
+    exact one_div_le_one_div_of_le hlog2_pos hlog_le
+  have h_integrable : IntervalIntegrable (fun t : ℝ => 1 / Real.log t) volume 2 x := by
+    refine ContinuousOn.intervalIntegrable fun t ht ↦ ContinuousAt.continuousWithinAt ?_
+    have ht1 : 1 < t := by
+      rw [Set.mem_uIcc] at ht
+      cases ht with
+      | inl h => linarith
+      | inr h => linarith
+    have hlog_ne : Real.log t ≠ 0 := by
+      exact Real.log_ne_zero_of_pos_of_ne_one (by linarith) (by linarith)
+    exact ContinuousAt.div continuousAt_const
+      (Real.continuousAt_log (by linarith)) hlog_ne
+  have h_li_le_const :
+      logIntegral x ≤ ∫ t in (2)..x, 1 / Real.log 2 := by
+    rw [logIntegral]
+    exact intervalIntegral.integral_mono_on hx2 h_integrable
+      intervalIntegrable_const h_integrand
+  have h_const :
+      ∫ t in (2)..x, 1 / Real.log 2 = (x - 2) / Real.log 2 := by
+    rw [intervalIntegral.integral_const]
+    simp [smul_eq_mul]
+    ring
+  have h_linear : (x - 2) / Real.log 2 ≤ (X - 2) / Real.log 2 := by
+    exact div_le_div_of_nonneg_right (by linarith) hlog2_pos.le
+  linarith
+
+/-- The RH-scale denominator has a positive lower bound on `[2, ∞)`. -/
+lemma sqrt_mul_log_lower_bound {x : ℝ} (hx2 : 2 ≤ x) :
+    Real.sqrt 2 * Real.log 2 ≤ Real.sqrt x * Real.log x := by
+  have hsqrt_le : Real.sqrt 2 ≤ Real.sqrt x :=
+    Real.sqrt_le_sqrt hx2
+  have hlog_le : Real.log 2 ≤ Real.log x :=
+    Real.log_le_log (by norm_num) hx2
+  exact mul_le_mul hsqrt_le hlog_le (Real.log_nonneg (by norm_num)) (Real.sqrt_nonneg x)
+
+/-- The finite-interval control needed to turn an eventual RH-scale `Li` error
+bound into a pointwise bound.  This deliberately uses only crude estimates:
+`π(x)` is bounded by the number of integers up to `X`, `Li(x)` by integrating
+the constant `1 / log 2`, and `sqrt x * log x` is bounded below on `x ≥ 2`. -/
+lemma primeCounting_logIntegral_finite_interval_bound :
+    ∀ X ≥ 2, ∃ C > 0, ∀ x, 2 ≤ x → x ≤ X →
+      |(primeCounting x : ℝ) - logIntegral x| ≤
+        C * (Real.sqrt x * Real.log x) := by
+  intro X hX2
+  let B : ℝ := (⌊X⌋₊ + 1 : ℕ) + (X - 2) / Real.log 2
+  let D : ℝ := Real.sqrt 2 * Real.log 2
+  refine ⟨(B + 1) / D, ?_, ?_⟩
+  · have hlog2_pos : 0 < Real.log 2 := Real.log_pos (by norm_num)
+    have hD_pos : 0 < D := by
+      exact mul_pos (Real.sqrt_pos.2 (by norm_num)) hlog2_pos
+    have hB_pos : 0 < B + 1 := by
+      have hfloor_nonneg : 0 ≤ ((⌊X⌋₊ + 1 : ℕ) : ℝ) := by positivity
+      have hli_bound_nonneg : 0 ≤ (X - 2) / Real.log 2 := by
+        exact div_nonneg (by linarith) hlog2_pos.le
+      dsimp [B]
+      linarith
+    exact div_pos hB_pos hD_pos
+  · intro x hx2 hxX
+    have hlog2_pos : 0 < Real.log 2 := Real.log_pos (by norm_num)
+    have hD_pos : 0 < D := by
+      exact mul_pos (Real.sqrt_pos.2 (by norm_num)) hlog2_pos
+    have hD_ne : D ≠ 0 := ne_of_gt hD_pos
+    have hpi_le_nat : primeCounting x ≤ ⌊X⌋₊ + 1 :=
+      primeCounting_le_floor_add_one hxX
+    have hpi_le : (primeCounting x : ℝ) ≤ ((⌊X⌋₊ + 1 : ℕ) : ℝ) := by
+      exact_mod_cast hpi_le_nat
+    have hli_nonneg : 0 ≤ logIntegral x := logIntegral_nonneg hx2
+    have hli_le : logIntegral x ≤ (X - 2) / Real.log 2 :=
+      logIntegral_le_interval_bound hx2 hxX
+    have hdiff_le_B :
+        |(primeCounting x : ℝ) - logIntegral x| ≤ B := by
+      rw [abs_sub_le_iff]
+      constructor
+      · dsimp [B]
+        linarith
+      · dsimp [B]
+        linarith
+    have hB_le_B1 : B ≤ B + 1 := by linarith
+    have hdiff_le_B1 :
+        |(primeCounting x : ℝ) - logIntegral x| ≤ B + 1 :=
+      le_trans hdiff_le_B hB_le_B1
+    have hB1_nonneg : 0 ≤ B + 1 := by
+      have hfloor_nonneg : 0 ≤ ((⌊X⌋₊ + 1 : ℕ) : ℝ) := by positivity
+      have hli_bound_nonneg : 0 ≤ (X - 2) / Real.log 2 := by
+        exact div_nonneg (by linarith) hlog2_pos.le
+      dsimp [B]
+      linarith
+    have hD_le_scale :
+        D ≤ Real.sqrt x * Real.log x := by
+      simpa [D] using sqrt_mul_log_lower_bound hx2
+    have hcoef_nonneg : 0 ≤ (B + 1) / D :=
+      div_nonneg hB1_nonneg hD_pos.le
+    have hscale :
+        B + 1 ≤ ((B + 1) / D) * (Real.sqrt x * Real.log x) := by
+      have hmul :
+          ((B + 1) / D) * D ≤
+            ((B + 1) / D) * (Real.sqrt x * Real.log x) :=
+        mul_le_mul_of_nonneg_left hD_le_scale hcoef_nonneg
+      have hmul_eq : ((B + 1) / D) * D = B + 1 := by
+        field_simp [hD_ne]
+      linarith
+    exact le_trans hdiff_le_B1 (by simpa [B, D] using hscale)
+
 /-- Reverse bridge from the composable `=O[atTop]` target to the textbook
 pointwise RH-scale error target, assuming the missing finite-interval bound.
 
@@ -1030,6 +1160,14 @@ lemma RH_ErrorBound_of_RH_PrimeCountingLiErrorBound_of_finite_intervals
           C * (Real.sqrt x * Real.log x) :=
       mul_le_mul_of_nonneg_right hCtail_le_C hscale_nonneg
     exact le_trans htail_abs (by simpa [C, mul_assoc] using hscale)
+
+/-- Reverse bridge from the composable `=O[atTop]` target to the textbook
+pointwise RH-scale error target.  The finite initial interval is discharged by
+`primeCounting_logIntegral_finite_interval_bound`. -/
+lemma RH_ErrorBound_of_RH_PrimeCountingLiErrorBound
+    (h : RH_PrimeCountingLiErrorBound) : RH_ErrorBound :=
+  RH_ErrorBound_of_RH_PrimeCountingLiErrorBound_of_finite_intervals h
+    primeCounting_logIntegral_finite_interval_bound
 
 /-- Target statement: RH iff the RH-scale prime-counting error bound.
 
