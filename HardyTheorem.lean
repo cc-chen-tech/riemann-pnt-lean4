@@ -1058,6 +1058,38 @@ lemma hardy_theorem_target_of_selberg_zero_proportion
   hardy_theorem_target_of_hardy_littlewood_lower_bound
     (hardy_littlewood_lower_bound_target_of_selberg_zero_proportion h)
 
+lemma hardy_zeros_abs_unbounded_of_hardy_littlewood_lower_bound_of_bounded_strips
+    (hstrip : ∀ B : ℝ,
+      {t : ℝ | |t| ≤ B ∧ riemannZeta (0.5 + I * t) = 0}.Finite)
+    (h : hardy_littlewood_lower_bound_target) :
+    hardy_zeros_abs_unbounded_target :=
+  (hardy_theorem_target_iff_abs_unbounded_of_bounded_strips hstrip).mp
+    (hardy_theorem_target_of_hardy_littlewood_lower_bound h)
+
+lemma hardy_zeros_unbounded_of_hardy_littlewood_lower_bound_of_bounded_strips
+    (hstrip : ∀ B : ℝ,
+      {t : ℝ | |t| ≤ B ∧ riemannZeta (0.5 + I * t) = 0}.Finite)
+    (h : hardy_littlewood_lower_bound_target) :
+    hardy_zeros_unbounded_target :=
+  hardy_zeros_unbounded_iff_abs_unbounded.mpr
+    (hardy_zeros_abs_unbounded_of_hardy_littlewood_lower_bound_of_bounded_strips hstrip h)
+
+lemma hardy_zeros_abs_unbounded_of_selberg_zero_proportion_of_bounded_strips
+    (hstrip : ∀ B : ℝ,
+      {t : ℝ | |t| ≤ B ∧ riemannZeta (0.5 + I * t) = 0}.Finite)
+    (h : selberg_zero_proportion_target) :
+    hardy_zeros_abs_unbounded_target :=
+  (hardy_theorem_target_iff_abs_unbounded_of_bounded_strips hstrip).mp
+    (hardy_theorem_target_of_selberg_zero_proportion h)
+
+lemma hardy_zeros_unbounded_of_selberg_zero_proportion_of_bounded_strips
+    (hstrip : ∀ B : ℝ,
+      {t : ℝ | |t| ≤ B ∧ riemannZeta (0.5 + I * t) = 0}.Finite)
+    (h : selberg_zero_proportion_target) :
+    hardy_zeros_unbounded_target :=
+  hardy_zeros_unbounded_iff_abs_unbounded.mpr
+    (hardy_zeros_abs_unbounded_of_selberg_zero_proportion_of_bounded_strips hstrip h)
+
 end HardyTheorem
 
 /-! ## 技术细节补充 -/

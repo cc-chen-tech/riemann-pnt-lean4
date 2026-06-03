@@ -156,6 +156,13 @@ For the chain accounting:
 - `PrimeNumberTheorem.hardy_theorem_target_iff_unbounded`
 - `HardyTheorem.hardy_theorem_target_of_hardy_littlewood_lower_bound`
 - `HardyTheorem.hardy_theorem_target_of_selberg_zero_proportion`
+- `HardyTheorem.hardy_zeros_abs_unbounded_of_hardy_littlewood_lower_bound_of_bounded_strips`
+- `HardyTheorem.hardy_zeros_unbounded_of_hardy_littlewood_lower_bound_of_bounded_strips`
+- `HardyTheorem.hardy_zeros_abs_unbounded_of_selberg_zero_proportion_of_bounded_strips`
+- `HardyTheorem.hardy_zeros_unbounded_of_selberg_zero_proportion_of_bounded_strips`
+- `RiemannExplorer.hardy_theorem_target_of_conrey_target`
+- `RiemannExplorer.infinitely_many_zeros_on_critical_line_of_selberg_zero_proportion`
+- `RiemannExplorer.infinitely_many_zeros_on_critical_line_of_conrey_target`
 
 ### Missing mathlib/analytic infrastructure
 

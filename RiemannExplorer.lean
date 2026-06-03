@@ -196,6 +196,35 @@ theorem conrey_40_percent_zeros_on_critical_line_target_iff_selberg :
       HardyTheorem.selberg_zero_proportion_target :=
   Iff.rfl
 
+theorem selberg_zero_proportion_target_of_conrey_target
+    (h : conrey_40_percent_zeros_on_critical_line_target) :
+    HardyTheorem.selberg_zero_proportion_target :=
+  (conrey_40_percent_zeros_on_critical_line_target_iff_selberg).mp h
+
+theorem hardy_littlewood_lower_bound_target_of_conrey_target
+    (h : conrey_40_percent_zeros_on_critical_line_target) :
+    HardyTheorem.hardy_littlewood_lower_bound_target :=
+  HardyTheorem.hardy_littlewood_lower_bound_target_of_selberg_zero_proportion
+    (selberg_zero_proportion_target_of_conrey_target h)
+
+theorem hardy_theorem_target_of_conrey_target
+    (h : conrey_40_percent_zeros_on_critical_line_target) :
+    HardyTheorem.hardy_theorem_target :=
+  HardyTheorem.hardy_theorem_target_of_selberg_zero_proportion
+    (selberg_zero_proportion_target_of_conrey_target h)
+
+theorem infinitely_many_zeros_on_critical_line_of_selberg_zero_proportion
+    (h : HardyTheorem.selberg_zero_proportion_target) :
+    {s : ℂ | s.re = 1 / 2 ∧ riemannZeta s = 0}.Infinite :=
+  infinitely_many_zeros_on_critical_line
+    (HardyTheorem.hardy_theorem_target_of_selberg_zero_proportion h)
+
+theorem infinitely_many_zeros_on_critical_line_of_conrey_target
+    (h : conrey_40_percent_zeros_on_critical_line_target) :
+    {s : ℂ | s.re = 1 / 2 ∧ riemannZeta s = 0}.Infinite :=
+  infinitely_many_zeros_on_critical_line
+    (hardy_theorem_target_of_conrey_target h)
+
 theorem exists_zero_on_critical_line_of_conrey_target
     (h : conrey_40_percent_zeros_on_critical_line_target) :
     ∃ t : ℝ, riemannZeta (0.5 + I * t) = 0 :=
