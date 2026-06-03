@@ -167,9 +167,9 @@ theorem IsSimplePoleOfGamma (n : ℕ) :
     refine hga_event_ana.mono ?_
     intro z hz
     have hdz : DifferentiableAt ℂ (fun t : ℂ ↦ t + (n : ℂ)) z := by
-      simpa using
-        (differentiableAt_id.add
-          (differentiableAt_const : DifferentiableAt ℂ (fun _ : ℂ => (n : ℂ)) (x := z)))
+      have hconst : DifferentiableAt ℂ (fun _ : ℂ ↦ (n : ℂ)) z := by
+        simp
+      exact differentiableAt_id.add hconst
     have hgz : DifferentiableAt ℂ (fun t : ℂ ↦ (t + (n : ℂ)) * Complex.Gamma t) z := by
       simpa using (hdz.mul hz.differentiableAt)
     simpa [g, mul_comm, mul_left_comm, mul_assoc] using hgz
