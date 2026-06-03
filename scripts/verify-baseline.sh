@@ -18,4 +18,7 @@ fi
 printf '%s\n' "[verify-baseline] checking target inventory consistency"
 python3 scripts/check-targets-consistent.py
 
+printf '%s\n' "[verify-baseline] checking chain-gap bookkeeping"
+python3 scripts/check-chain-gaps.py
+
 printf '%s\n' "[verify-baseline] target inventory and build are consistent"
