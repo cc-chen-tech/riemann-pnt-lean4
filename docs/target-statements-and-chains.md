@@ -15,6 +15,13 @@ All entries are intentionally **not** exported as theorems.  They are explicit
 
 Total: **23**.
 
+For the chain accounting:
+
+- Quantitative zero-free region chain: 2
+- Explicit formula chain: 1
+- RH/prime-counting error chain: 8
+- Hardy theorem chain: 12 (11 in `HardyTheorem`, 1 in `RiemannExplorer`)
+
 ## Chain 1: Quantitative zero-free region
 
 ### Target declarations
@@ -117,6 +124,7 @@ Total: **23**.
 - `HardyTheorem.gamma_asymptotic_half_plus_it_target`
 - `HardyTheorem.theta_asymptotic_target`
 - `HardyTheorem.approximate_functional_equation_target`
+- `RiemannExplorer.conrey_40_percent_zeros_on_critical_line_target`
 
 ### Current verified anchor theorems
 
