@@ -722,6 +722,68 @@ lemma weighted_integral_eventually_negative_of_hardyZ_negative
   rw [h_eq] at hT
   linarith
 
+lemma weightedIntegral_eventually_bddBelow_of_hardyZ_positive
+    (n : ℕ) (h_pos : ∀ᶠ t in atTop, hardyZ t > 0) :
+    ∃ C : ℝ, ∀ᶠ T in atTop, C ≤ weightedIntegral n T := by
+  rcases Filter.eventually_atTop.1 h_pos with ⟨A, hA⟩
+  let g : ℝ → ℝ := fun t => weightFunction n t * hardyZ t
+  refine ⟨∫ t in (0 : ℝ)..A, g t, ?_⟩
+  have hg : Continuous g := by
+    have hw : Continuous fun t : ℝ => weightFunction n t := by
+      simpa [weightFunction] using (continuous_id.pow (2 * n))
+    exact hw.mul hardyZ_continuous
+  filter_upwards [eventually_ge_atTop A] with T hT
+  have htail_nonneg : 0 ≤ ∫ t in A..T, g t := by
+    refine intervalIntegral.integral_nonneg hT ?_
+    intro u hu
+    have hAu : A ≤ u := hu.1
+    have hz_nonneg : 0 ≤ hardyZ u := le_of_lt (hA u hAu)
+    have hw_nonneg : 0 ≤ weightFunction n u := by
+      simpa [weightFunction] using (even_two_mul n).pow_nonneg u
+    exact mul_nonneg hw_nonneg hz_nonneg
+  have hsum :
+      (∫ t in (0 : ℝ)..A, g t) + ∫ t in A..T, g t =
+        ∫ t in (0 : ℝ)..T, g t :=
+    intervalIntegral.integral_add_adjacent_intervals
+      (hg.intervalIntegrable 0 A) (hg.intervalIntegrable A T)
+  have hle : (∫ t in (0 : ℝ)..A, g t) ≤ ∫ t in (0 : ℝ)..T, g t := by
+    rw [← hsum]
+    linarith
+  simpa [weightedIntegral, weightedIntegralOf, g] using hle
+
+lemma weightedIntegral_eventually_bddAbove_of_hardyZ_negative
+    (n : ℕ) (h_neg : ∀ᶠ t in atTop, hardyZ t < 0) :
+    ∃ C : ℝ, ∀ᶠ T in atTop, weightedIntegral n T ≤ C := by
+  rcases Filter.eventually_atTop.1 h_neg with ⟨A, hA⟩
+  let g : ℝ → ℝ := fun t => weightFunction n t * hardyZ t
+  refine ⟨∫ t in (0 : ℝ)..A, g t, ?_⟩
+  have hg : Continuous g := by
+    have hw : Continuous fun t : ℝ => weightFunction n t := by
+      simpa [weightFunction] using (continuous_id.pow (2 * n))
+    exact hw.mul hardyZ_continuous
+  filter_upwards [eventually_ge_atTop A] with T hT
+  have htail_nonpos : ∫ t in A..T, g t ≤ 0 := by
+    have htail_nonneg_neg : 0 ≤ ∫ u in A..T, -(g u) := by
+      refine intervalIntegral.integral_nonneg hT ?_
+      intro u hu
+      have hAu : A ≤ u := hu.1
+      have hz_nonpos : hardyZ u ≤ 0 := le_of_lt (hA u hAu)
+      have hw_nonneg : 0 ≤ weightFunction n u := by
+        simpa [weightFunction] using (even_two_mul n).pow_nonneg u
+      have hg_nonpos : g u ≤ 0 := mul_nonpos_of_nonneg_of_nonpos hw_nonneg hz_nonpos
+      simpa using neg_nonneg.mpr hg_nonpos
+    rw [intervalIntegral.integral_neg] at htail_nonneg_neg
+    linarith
+  have hsum :
+      (∫ t in (0 : ℝ)..A, g t) + ∫ t in A..T, g t =
+        ∫ t in (0 : ℝ)..T, g t :=
+    intervalIntegral.integral_add_adjacent_intervals
+      (hg.intervalIntegrable 0 A) (hg.intervalIntegrable A T)
+  have hle : ∫ t in (0 : ℝ)..T, g t ≤ ∫ t in (0 : ℝ)..A, g t := by
+    rw [← hsum]
+    linarith
+  simpa [weightedIntegral, weightedIntegralOf, g] using hle
+
 /-! ## 从积分性质推导无穷多零点 -/
 
 lemma weightedIntegral_one_tendsto_atBot_of_two_signed_moments
@@ -780,21 +842,31 @@ lemma weightedIntegralOf_hardyZ_two_tail_dominates_of_two_signed_moments
   refine weightedIntegralOf_tail_dominates_of_tendsto_atTop ?_
   simpa [weightedIntegral] using weightedIntegral_two_tendsto_atTop_of_two_signed_moments h
 
+lemma finite_zeros_contradiction_of_two_signed_moments
+    (hfinite : {t : ℝ | hardyZ t = 0}.Finite)
+    (hmom : hardy_two_signed_moments_target) :
+    False := by
+  rcases hardyZ_eventually_const_sign_of_finite_zeros hfinite with hpos | hneg
+  · rcases weightedIntegral_eventually_bddBelow_of_hardyZ_positive 1 hpos with ⟨C, hC⟩
+    have hint_neg :
+        ∀ᶠ T in atTop, weightedIntegral 1 T < C - 1 :=
+      (weightedIntegral_one_tendsto_atBot_of_two_signed_moments hmom).eventually_lt_atBot (C - 1)
+    rcases (hC.and hint_neg).exists with ⟨T, hT_ge, hT_lt⟩
+    linarith
+  · rcases weightedIntegral_eventually_bddAbove_of_hardyZ_negative 2 hneg with ⟨C, hC⟩
+    have hint_pos :
+        ∀ᶠ T in atTop, C + 1 < weightedIntegral 2 T :=
+      (weightedIntegral_two_tendsto_atTop_of_two_signed_moments hmom).eventually_gt_atTop (C + 1)
+    rcases (hC.and hint_pos).exists with ⟨T, hT_le, hT_gt⟩
+    linarith
+
 lemma finite_zeros_contradiction_of_two_signed_moments_and_tail_dominance
     (hfinite : {t : ℝ | hardyZ t = 0}.Finite)
     (hmom : hardy_two_signed_moments_target)
-    (htail_pos : weightedIntegralOf_tail_dominates hardyZ 1)
-    (htail_neg : weightedIntegralOf_tail_dominates (fun t => -hardyZ t) 2) :
+    (_htail_pos : weightedIntegralOf_tail_dominates hardyZ 1)
+    (_htail_neg : weightedIntegralOf_tail_dominates (fun t => -hardyZ t) 2) :
     False := by
-  rcases hardyZ_eventually_const_sign_of_finite_zeros hfinite with hpos | hneg
-  · have hint_pos := weighted_integral_eventually_positive_of_hardyZ_positive 1 hpos htail_pos
-    have hint_neg := weightedIntegral_one_eventually_negative_of_two_signed_moments hmom
-    rcases (hint_pos.and hint_neg).exists with ⟨T, hTpos, hTneg⟩
-    linarith
-  · have hint_neg := weighted_integral_eventually_negative_of_hardyZ_negative 2 hneg htail_neg
-    have hint_pos := weightedIntegral_two_eventually_positive_of_two_signed_moments hmom
-    rcases (hint_neg.and hint_pos).exists with ⟨T, hTneg, hTpos⟩
-    linarith
+  exact finite_zeros_contradiction_of_two_signed_moments hfinite hmom
 
 /-- Target statement for Hardy's theorem.  The project currently proves the
 Hardy Z-function setup and zero equivalence, but not the analytic moment
@@ -802,15 +874,15 @@ estimates needed for the final contradiction. -/
 def hardy_theorem_target : Prop :=
     {t : ℝ | riemannZeta (0.5 + I * t) = 0}.Infinite
 
-/-- Conditional Hardy theorem from the exact analytic inputs used in the
-classical sign-change argument.
+/-- Conditional Hardy theorem from the two signed moment asymptotics alone.
 
-This is a proved bridge: the remaining unproved content is isolated in the
-moment and tail-dominance hypotheses, not hidden inside the theorem. -/
-lemma hardy_theorem_target_of_two_signed_moments_and_tail_dominance
-    (hmom : hardy_two_signed_moments_target)
-    (htail_pos : weightedIntegralOf_tail_dominates hardyZ 1)
-    (htail_neg : weightedIntegralOf_tail_dominates (fun t => -hardyZ t) 2) :
+If there were only finitely many critical-line zeros, the continuous Hardy
+function would eventually have a constant sign.  A positive tail makes the
+first weighted integral eventually bounded below, contradicting its tendency to
+`atBot`; a negative tail makes the second weighted integral eventually bounded
+above, contradicting its tendency to `atTop`. -/
+lemma hardy_theorem_target_of_two_signed_moments
+    (hmom : hardy_two_signed_moments_target) :
     hardy_theorem_target := by
   intro hfinite
   have hsets :
@@ -820,8 +892,27 @@ lemma hardy_theorem_target_of_two_signed_moments_and_tail_dominance
     exact hardyZ_zero_iff_zeta_zero t
   have hhardy_finite : {t : ℝ | hardyZ t = 0}.Finite := by
     simpa [hsets] using hfinite
-  exact finite_zeros_contradiction_of_two_signed_moments_and_tail_dominance
-    hhardy_finite hmom htail_pos htail_neg
+  exact finite_zeros_contradiction_of_two_signed_moments hhardy_finite hmom
+
+/-- Conditional Hardy theorem from the exact analytic inputs used in the
+classical sign-change argument.
+
+This is a proved bridge: the remaining unproved content is isolated in the
+moment and tail-dominance hypotheses, not hidden inside the theorem. -/
+lemma hardy_theorem_target_of_two_signed_moments_and_tail_dominance
+    (hmom : hardy_two_signed_moments_target)
+    (_htail_pos : weightedIntegralOf_tail_dominates hardyZ 1)
+    (_htail_neg : weightedIntegralOf_tail_dominates (fun t => -hardyZ t) 2) :
+    hardy_theorem_target := by
+  intro hfinite
+  have hsets :
+      {t : ℝ | hardyZ t = 0} =
+        {t : ℝ | riemannZeta (0.5 + I * t) = 0} := by
+    ext t
+    exact hardyZ_zero_iff_zeta_zero t
+  have hhardy_finite : {t : ℝ | hardyZ t = 0}.Finite := by
+    simpa [hsets] using hfinite
+  exact finite_zeros_contradiction_of_two_signed_moments hhardy_finite hmom
 
 /-- Stronger Hardy target: critical-line zeros have arbitrarily large height. -/
 def hardy_zeros_unbounded_target : Prop :=
