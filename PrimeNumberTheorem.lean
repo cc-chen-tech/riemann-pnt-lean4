@@ -1800,6 +1800,76 @@ lemma explicit_formula_von_mangoldt_iff_error_isLittleO_one
   ⟨explicit_formula_von_mangoldt_error_isLittleO_one,
     explicit_formula_von_mangoldt_of_error_isLittleO_one⟩
 
+lemma explicit_formula_von_mangoldt_re_tendsto
+    {x : ℝ} {hx : x ≥ 2}
+    (h : explicit_formula_von_mangoldt x hx) :
+    Tendsto (fun T : ℝ => (explicitFormulaApprox x T).re) atTop
+      (𝓝 (chebyshevPsi0 x)) := by
+  simpa [explicit_formula_von_mangoldt] using
+    (Complex.continuous_re.tendsto (chebyshevPsi0 x : ℂ)).comp h
+
+lemma explicit_formula_von_mangoldt_im_tendsto_zero
+    {x : ℝ} {hx : x ≥ 2}
+    (h : explicit_formula_von_mangoldt x hx) :
+    Tendsto (fun T : ℝ => (explicitFormulaApprox x T).im) atTop (𝓝 0) := by
+  simpa [explicit_formula_von_mangoldt] using
+    (Complex.continuous_im.tendsto (chebyshevPsi0 x : ℂ)).comp h
+
+lemma explicit_formula_von_mangoldt_re_error_tendsto_zero
+    {x : ℝ} {hx : x ≥ 2}
+    (h : explicit_formula_von_mangoldt x hx) :
+    Tendsto (fun T : ℝ => (explicitFormulaApprox x T).re - chebyshevPsi0 x)
+      atTop (𝓝 0) := by
+  simpa using
+    (Complex.continuous_re.tendsto (0 : ℂ)).comp
+      (explicit_formula_von_mangoldt_error_tendsto_zero h)
+
+lemma explicit_formula_von_mangoldt_im_error_tendsto_zero
+    {x : ℝ} {hx : x ≥ 2}
+    (h : explicit_formula_von_mangoldt x hx) :
+    Tendsto (fun T : ℝ => (explicitFormulaApprox x T).im) atTop (𝓝 0) :=
+  explicit_formula_von_mangoldt_im_tendsto_zero h
+
+lemma explicit_formula_von_mangoldt_of_re_im_tendsto
+    {x : ℝ} {hx : x ≥ 2}
+    (hre : Tendsto (fun T : ℝ => (explicitFormulaApprox x T).re) atTop
+      (𝓝 (chebyshevPsi0 x)))
+    (him : Tendsto (fun T : ℝ => (explicitFormulaApprox x T).im) atTop
+      (𝓝 0)) :
+    explicit_formula_von_mangoldt x hx := by
+  have hreC :
+      Tendsto (fun T : ℝ => ((explicitFormulaApprox x T).re : ℂ)) atTop
+        (𝓝 (chebyshevPsi0 x : ℂ)) := by
+    simpa using (Complex.ofRealCLM.continuous.tendsto (chebyshevPsi0 x)).comp hre
+  have himC :
+      Tendsto (fun T : ℝ => ((explicitFormulaApprox x T).im : ℂ)) atTop
+        (𝓝 (0 : ℂ)) := by
+    simpa using (Complex.ofRealCLM.continuous.tendsto (0 : ℝ)).comp him
+  have hI :
+      Tendsto (fun T : ℝ => ((explicitFormulaApprox x T).im : ℂ) * I) atTop
+        (𝓝 ((0 : ℂ) * I)) :=
+    himC.mul tendsto_const_nhds
+  have hsum := hreC.add hI
+  have h_eq :
+      (fun T : ℝ =>
+          ((explicitFormulaApprox x T).re : ℂ) +
+            ((explicitFormulaApprox x T).im : ℂ) * I)
+        = fun T : ℝ => explicitFormulaApprox x T := by
+    funext T
+    exact Complex.re_add_im (explicitFormulaApprox x T)
+  simpa [explicit_formula_von_mangoldt] using
+    hsum.congr' (Filter.EventuallyEq.of_eq h_eq)
+
+lemma explicit_formula_von_mangoldt_iff_re_im_tendsto
+    {x : ℝ} {hx : x ≥ 2} :
+    explicit_formula_von_mangoldt x hx ↔
+      Tendsto (fun T : ℝ => (explicitFormulaApprox x T).re) atTop
+        (𝓝 (chebyshevPsi0 x)) ∧
+      Tendsto (fun T : ℝ => (explicitFormulaApprox x T).im) atTop (𝓝 0) :=
+  ⟨fun h => ⟨explicit_formula_von_mangoldt_re_tendsto h,
+      explicit_formula_von_mangoldt_im_tendsto_zero h⟩,
+    fun h => explicit_formula_von_mangoldt_of_re_im_tendsto h.1 h.2⟩
+
 /-- 零点对素数分布的贡献
 
 每个零点 ρ = β + iγ 贡献振荡项 x^ρ/ρ = x^β e^{iγ log x} / ρ

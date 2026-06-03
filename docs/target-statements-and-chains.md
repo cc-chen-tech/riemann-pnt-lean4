@@ -67,6 +67,7 @@ For the chain accounting:
 - `PrimeNumberTheorem.vonMangoldt_eq_mathlib`
 - `PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_error_tendsto_zero`
 - `PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_error_isLittleO_one`
+- `PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_re_im_tendsto`
 
 ### Missing mathlib/analytic infrastructure
 

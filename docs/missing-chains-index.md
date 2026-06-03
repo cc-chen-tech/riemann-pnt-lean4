@@ -90,6 +90,8 @@ The following proved declarations are the main entry points for future work:
 - `PrimeNumberTheorem.rh_iff_pointwise_error_iff`
 - `PrimeNumberTheorem.primeCounting_logIntegral_finite_interval_bound`
 - `PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_error_tendsto_zero`
+- `PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_error_isLittleO_one`
+- `PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_re_im_tendsto`
 - `HardyTheorem.hardyZ_zero_iff_zeta_zero`
 - `HardyTheorem.hardyZ_continuous`
 - `HardyTheorem.critical_line_zeta_zero_neg_height`
