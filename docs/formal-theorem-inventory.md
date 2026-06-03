@@ -93,6 +93,8 @@ Supporting declarations include:
 - `logIntegral_nonneg`
 - `logIntegral_pos`
 - `riemannZeta_not_frequently_zero_nhdsNE_of_ne_one`
+- `hardy_zeros_abs_unbounded_of_two_signed_moments`
+- `hardy_zeros_unbounded_of_two_signed_moments`
 - `hardy_zeros_abs_unbounded_of_integral_asymptotic_one_two`
 - `hardy_zeros_unbounded_of_integral_asymptotic_one_two`
 
@@ -113,6 +115,8 @@ Core verified declarations:
 - `hardy_theorem_target_of_two_signed_moments`
 - `hardy_theorem_target_of_integral_asymptotic_one_two`
 - `hardy_theorem_target_iff_abs_unbounded_of_bounded_strips`
+- `hardy_zeros_abs_unbounded_of_two_signed_moments_of_bounded_strips`
+- `hardy_zeros_unbounded_of_two_signed_moments_of_bounded_strips`
 - `hardy_zeros_abs_unbounded_of_integral_asymptotic_one_two_of_bounded_strips`
 - `hardy_zeros_unbounded_of_integral_asymptotic_one_two_of_bounded_strips`
 - `hardy_zeros_unbounded_iff_abs_unbounded`

@@ -268,9 +268,20 @@ The shortest credible chain to `hardy_zeros_unbounded_target` is now:
    ```
 
    With bounded-strip finiteness for critical-line zeros, the same two
-   asymptotic targets now also yield both unbounded-height interfaces:
+   signed-moment target, and therefore the same two asymptotic targets, now
+   also yield both unbounded-height interfaces:
 
    ```lean
+   lemma hardy_zeros_abs_unbounded_of_two_signed_moments_of_bounded_strips :
+       (∀ B, {t | |t| ≤ B ∧ riemannZeta (0.5 + I * t) = 0}.Finite) →
+       hardy_two_signed_moments_target →
+       hardy_zeros_abs_unbounded_target
+
+   lemma hardy_zeros_unbounded_of_two_signed_moments_of_bounded_strips :
+       (∀ B, {t | |t| ≤ B ∧ riemannZeta (0.5 + I * t) = 0}.Finite) →
+       hardy_two_signed_moments_target →
+       hardy_zeros_unbounded_target
+
    lemma hardy_zeros_abs_unbounded_of_integral_asymptotic_one_two_of_bounded_strips :
        (∀ B, {t | |t| ≤ B ∧ riemannZeta (0.5 + I * t) = 0}.Finite) →
        integral_asymptotic_target 1 →
