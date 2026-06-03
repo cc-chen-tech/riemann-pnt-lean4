@@ -75,10 +75,22 @@ The following proved declarations are the main entry points for future work:
 - `ZeroFreeRegion.log_deriv_zeta_nonneg_combination`
 - `ZeroFreeRegion.residue_bounds`
 - `ZeroFreeRegion.classical_zero_free_region_compact`
+- `ZeroFreeRegion.compact_patch_classical_zero_free_region_at_three`
+- `ZeroFreeRegion.vinogradov_korobov_high_height_classical_zero_free_region`
+- `ZeroFreeRegion.classical_zero_free_region_of_vinogradov_korobov`
 - `PrimeNumberTheorem.finite_nontrivial_zeros_bounded_height`
 - `PrimeNumberTheorem.pnt_forms_equivalent`
+- `PrimeNumberTheorem.PNTForm1_iff_PNTForm2`
+- `PrimeNumberTheorem.PNTForm2_iff_PNTForm3`
+- `PrimeNumberTheorem.RH_PsiErrorBound_iff_RH_ThetaErrorBound`
+- `PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_RH_ErrorBound`
+- `PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_error_tendsto_zero`
 - `HardyTheorem.hardyZ_zero_iff_zeta_zero`
 - `HardyTheorem.hardyZ_continuous`
+- `HardyTheorem.hardy_theorem_target_iff_abs_unbounded_of_bounded_strips`
+- `HardyTheorem.hardy_zeros_unbounded_iff_abs_unbounded_of_neg_symm`
+- `HardyTheorem.hardy_theorem_target_of_hardy_littlewood_lower_bound`
+- `HardyTheorem.hardy_theorem_target_of_selberg_zero_proportion`
 
 ## Non-Goals
 

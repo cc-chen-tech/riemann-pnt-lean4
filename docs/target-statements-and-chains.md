@@ -37,6 +37,9 @@ For the chain accounting:
 - `ZeroFreeRegion.classical_zero_free_region_compact`
 - `ZeroFreeRegion.log_deriv_zeta_pos_real`
 - `ZeroFreeRegion.log_deriv_zeta_antitone`
+- `ZeroFreeRegion.compact_patch_classical_zero_free_region_at_three`
+- `ZeroFreeRegion.vinogradov_korobov_high_height_classical_zero_free_region`
+- `ZeroFreeRegion.classical_zero_free_region_of_vinogradov_korobov`
 
 ### Missing mathlib/analytic infrastructure
 
@@ -62,6 +65,8 @@ For the chain accounting:
 - `PrimeNumberTheorem.zero_contribution`
 - `PrimeNumberTheorem.chebyshevPsi_eq_mathlib`
 - `PrimeNumberTheorem.vonMangoldt_eq_mathlib`
+- `PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_error_tendsto_zero`
+- `PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_error_isLittleO_one`
 
 ### Missing mathlib/analytic infrastructure
 
@@ -93,9 +98,14 @@ For the chain accounting:
 ### Current verified anchor theorems
 
 - `PrimeNumberTheorem.pnt_forms_equivalent`
+- `PrimeNumberTheorem.PNTForm1_iff_PNTForm2`
+- `PrimeNumberTheorem.PNTForm2_iff_PNTForm3`
+- `PrimeNumberTheorem.PNTForm1_iff_PNTForm3`
 - `PrimeNumberTheorem.chebyshevPsi_eq_mathlib`
 - `PrimeNumberTheorem.primeCounting_eq_mathlib`
 - `PrimeNumberTheorem.chebyshevPsi_eq_mathlib`
+- `PrimeNumberTheorem.RH_PsiErrorBound_iff_RH_ThetaErrorBound`
+- `PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_RH_ErrorBound`
 
 ### Missing mathlib/analytic infrastructure
 
@@ -133,6 +143,10 @@ For the chain accounting:
 - `HardyTheorem.weightedIntegralOf_neg`
 - `HardyTheorem.hardy_theorem_target_of_two_signed_moments_and_tail_dominance`
 - `HardyTheorem.hardyZ_continuous`
+- `HardyTheorem.hardy_theorem_target_iff_abs_unbounded_of_bounded_strips`
+- `HardyTheorem.hardy_zeros_unbounded_iff_abs_unbounded_of_neg_symm`
+- `HardyTheorem.hardy_theorem_target_of_hardy_littlewood_lower_bound`
+- `HardyTheorem.hardy_theorem_target_of_selberg_zero_proportion`
 
 ### Missing mathlib/analytic infrastructure
 
