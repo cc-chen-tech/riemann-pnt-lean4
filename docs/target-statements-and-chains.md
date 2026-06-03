@@ -174,10 +174,9 @@ For the chain accounting:
 ### Missing mathlib/analytic infrastructure
 
 1. corrected asymptotic signed moment formulas with sign-normalized leading terms;
-2. rigorous tail-dominance lemmas for weighted integrals;
-3. Riemann–Siegel/AFE and `Γ`-factor asymptotics consistent with the chosen phase;
-4. unbounded-height conclusion extracted from sign oscillation argument (infinite set
-   alone is not a mathematically sufficient final target).
+2. Riemann–Siegel/AFE and `Γ`-factor asymptotics consistent with the chosen phase;
+3. unbounded-height conclusion extracted from the signed-moment target using
+   bounded-height zero finiteness.
 
 ---
 

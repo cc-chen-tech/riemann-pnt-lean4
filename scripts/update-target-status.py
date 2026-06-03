@@ -42,7 +42,7 @@ CHAIN_SUMMARY = [
         "name": "Hardy theorem",
         "target": "hardy_theorem_target",
         "status": "not proved in Lean",
-        "next_step": "prove Hardy signed moment asymptotics and tail-dominance then derive unbounded zeros",
+        "next_step": "prove Hardy signed moment asymptotics; the main signed-moment bridge no longer needs tail-dominance",
     },
 ]
 

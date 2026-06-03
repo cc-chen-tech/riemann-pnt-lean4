@@ -169,14 +169,10 @@ theorem infinitely_many_zeros_on_critical_line
 /-- The concrete conditional Hardy inputs also transfer to infinitely many
 complex zeros on the critical line. -/
 theorem infinitely_many_zeros_on_critical_line_of_two_signed_moments
-    (hmom : HardyTheorem.hardy_two_signed_moments_target)
-    (htail_pos : HardyTheorem.weightedIntegralOf_tail_dominates HardyTheorem.hardyZ 1)
-    (htail_neg :
-      HardyTheorem.weightedIntegralOf_tail_dominates (fun t => -HardyTheorem.hardyZ t) 2) :
+    (hmom : HardyTheorem.hardy_two_signed_moments_target) :
     {s : ℂ | s.re = 1 / 2 ∧ riemannZeta s = 0}.Infinite :=
   infinitely_many_zeros_on_critical_line
-    (HardyTheorem.hardy_theorem_target_of_two_signed_moments_and_tail_dominance
-      hmom htail_pos htail_neg)
+    (HardyTheorem.hardy_theorem_target_of_two_signed_moments hmom)
 
 /-- Target statement for Conrey's theorem that a positive proportion of zeros
 lie on the critical line.  This project does not currently formalize the

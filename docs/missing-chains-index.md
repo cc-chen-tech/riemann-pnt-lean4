@@ -56,7 +56,7 @@ parallel:
 | `PrimeNumberTheorem.lean` | `explicit_formula_von_mangoldt` | Explicit formula | Main missing explicit-formula pipeline target |
 | `HardyTheorem.lean` | `integral_asymptotic_target` | Hardy theorem | Signed-moment asymptotic input |
 | `HardyTheorem.lean` | `hardy_two_signed_moments_target` | Hardy theorem | Asymptotics for the first two weighted moments |
-| `HardyTheorem.lean` | `weightedIntegralOf_tail_dominates` | Hardy theorem | Tail-dominance hypothesis for weighted integrals |
+| `HardyTheorem.lean` | `weightedIntegralOf_tail_dominates` | Hardy theorem | Auxiliary tail-divergence predicate; no longer required by the main signed-moment bridge |
 | `HardyTheorem.lean` | `hardy_theorem_target` | Hardy theorem | Combined target of Hardy theorem output |
 | `HardyTheorem.lean` | `hardy_zeros_unbounded_target` | Hardy theorem | Harder zero distribution output in an unbounded-height form |
 | `HardyTheorem.lean` | `hardy_zeros_abs_unbounded_target` | Hardy theorem | Equivalent form requiring symmetry/absolute-value zero extraction |

@@ -235,40 +235,35 @@ the unwrapped `theta`, not the principal-branch `thetaPhase`.
 
 ## Minimal Dependency Chain
 
-The shortest credible chain to `hardy_zeros_unbounded_target` is:
+The shortest credible chain to `hardy_zeros_unbounded_target` is now:
 
-1. Strengthen the zero-set endpoint.
-   Prove the stronger Hardy-Z target
-   `∀ T, ∃ t ≥ T, hardyZ t = 0`, then transfer it to zeta with
-   `hardyZ_zero_iff_zeta_zero`.
-
-2. Replace finite-zero sign control by bounded-zero sign control.
-   The analytic proof wants contradiction from "no zeros after some height",
-   not merely "only finitely many zeros".  A generic lemma can show:
+1. Use finite-zero sign control.
+   This is formalized as:
 
    ```lean
-   lemma hardyZ_eventually_const_sign_of_bounded_zeros
-       (h : Bornology.IsBounded {t : ℝ | hardyZ t = 0}) :
+   lemma hardyZ_eventually_const_sign_of_finite_zeros
+       (h : {t : ℝ | hardyZ t = 0}.Finite) :
        (∀ᶠ t in atTop, hardyZ t > 0) ∨
        (∀ᶠ t in atTop, hardyZ t < 0)
    ```
 
-3. Prove the generic integral sign lemma.
-   From eventual positivity plus tail divergence, get eventual positivity of
-   `weightedIntegralOf`; use `weightedIntegralOf_neg` for eventual negativity.
+2. Use the signed-moment asymptotics directly.
+   If `hardyZ` is eventually positive, the `n = 1` weighted integral is
+   eventually bounded below, contradicting its `atBot` limit.  If `hardyZ`
+   is eventually negative, the `n = 2` weighted integral is eventually bounded
+   above, contradicting its `atTop` limit.  This bridge is now formalized as:
 
-4. Prove two signed moments.
+   ```lean
+   lemma hardy_theorem_target_of_two_signed_moments :
+       hardy_two_signed_moments_target → hardy_theorem_target
+   ```
+
+3. Prove two signed moments.
    It is enough to establish one negative moment and one positive moment:
    `weightedIntegral 1` has negative leading term and `weightedIntegral 2`
    has positive leading term.  This avoids parameterized constants at first.
 
-5. Derive the contradiction.
-   If `hardyZ` is eventually positive, the `n = 1` integral is eventually
-   positive by step 3, but eventually negative by step 4.  If `hardyZ` is
-   eventually negative, the `n = 2` integral is eventually negative by step 3
-   applied to `-hardyZ`, but eventually positive by step 4.
-
-6. Convert to zeta zeros.
+4. Convert to zeta zeros.
    Use the pointwise equivalence to transfer unbounded Hardy-Z zeros to
    unbounded critical-line zeta zeros, then derive the existing
    `hardy_theorem_target` as a corollary.
@@ -282,7 +277,8 @@ The shortest credible chain to `hardy_zeros_unbounded_target` is:
 - Add generic asymptotic-sign lemmas:
   if `f ~[atTop] g`, `g` is eventually positive, then `f` is eventually
   positive; likewise for negative.
-- Add the generic weighted-integral positivity lemma from tail dominance.
+- Add the bounded-below / bounded-above weighted-integral lemmas used by
+  `hardy_theorem_target_of_two_signed_moments`.
 
 These should not require special-function asymptotics or approximate
 functional equations.
