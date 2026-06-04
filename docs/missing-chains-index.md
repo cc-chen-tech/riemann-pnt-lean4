@@ -84,7 +84,10 @@ The following proved declarations are the main entry points for future work:
 - `PrimeNumberTheorem.finite_nontrivial_zeros_bounded_height`
 - `PrimeNumberTheorem.pnt_forms_equivalent`
 - `PrimeNumberTheorem.PNTForm1_iff_PNTForm2`
+- `PrimeNumberTheorem.PNTForm2_iff_PNTForm1`
 - `PrimeNumberTheorem.PNTForm2_iff_PNTForm3`
+- `PrimeNumberTheorem.PNTForm3_iff_PNTForm2`
+- `PrimeNumberTheorem.PNTForm3_iff_PNTForm1`
 - `PrimeNumberTheorem.RH_PsiErrorBound_iff_RH_ThetaErrorBound`
 - `PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_RH_ErrorBound`
 - `PrimeNumberTheorem.RH_ErrorBound_of_RH_PrimeCountingLiErrorBound_of_finite_intervals`

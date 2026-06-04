@@ -105,8 +105,11 @@ For the chain accounting:
 
 - `PrimeNumberTheorem.pnt_forms_equivalent`
 - `PrimeNumberTheorem.PNTForm1_iff_PNTForm2`
+- `PrimeNumberTheorem.PNTForm2_iff_PNTForm1`
 - `PrimeNumberTheorem.PNTForm2_iff_PNTForm3`
+- `PrimeNumberTheorem.PNTForm3_iff_PNTForm2`
 - `PrimeNumberTheorem.PNTForm1_iff_PNTForm3`
+- `PrimeNumberTheorem.PNTForm3_iff_PNTForm1`
 - `PrimeNumberTheorem.chebyshevPsi_eq_mathlib`
 - `PrimeNumberTheorem.primeCounting_eq_mathlib`
 - `PrimeNumberTheorem.chebyshevPsi_eq_mathlib`

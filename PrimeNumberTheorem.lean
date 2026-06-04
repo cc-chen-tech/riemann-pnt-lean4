@@ -775,10 +775,16 @@ prime-counting and logarithmic-integral PNT targets. -/
 lemma PNTForm1_iff_PNTForm2 : PNTForm1 ↔ PNTForm2 :=
   pnt_forms_equivalent.1
 
+lemma PNTForm2_iff_PNTForm1 : PNTForm2 ↔ PNTForm1 :=
+  PNTForm1_iff_PNTForm2.symm
+
 /-- Standalone form of the already-proved equivalence between the
 logarithmic-integral and Chebyshev-ψ PNT targets. -/
 lemma PNTForm2_iff_PNTForm3 : PNTForm2 ↔ PNTForm3 :=
   pnt_forms_equivalent.2
+
+lemma PNTForm3_iff_PNTForm2 : PNTForm3 ↔ PNTForm2 :=
+  PNTForm2_iff_PNTForm3.symm
 
 lemma PNTForm2_of_PNTForm1 (h : PNTForm1) : PNTForm2 :=
   PNTForm1_iff_PNTForm2.mp h
@@ -795,6 +801,9 @@ lemma PNTForm2_of_PNTForm3 (h : PNTForm3) : PNTForm2 :=
 /-- Transitive packaging of the three equivalent PNT formulations. -/
 lemma PNTForm1_iff_PNTForm3 : PNTForm1 ↔ PNTForm3 :=
   Iff.trans PNTForm1_iff_PNTForm2 PNTForm2_iff_PNTForm3
+
+lemma PNTForm3_iff_PNTForm1 : PNTForm3 ↔ PNTForm1 :=
+  PNTForm1_iff_PNTForm3.symm
 
 lemma PNTForm3_of_PNTForm1 (h : PNTForm1) : PNTForm3 :=
   PNTForm1_iff_PNTForm3.mp h

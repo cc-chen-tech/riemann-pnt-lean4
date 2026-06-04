@@ -83,6 +83,9 @@ Core verified declarations:
   records the compatibility of RH with zero symmetry.
 - `zero_contribution`
   rewrites the oscillatory contribution of a zero.
+- `PNTForm2_iff_PNTForm1`, `PNTForm3_iff_PNTForm2`, and
+  `PNTForm3_iff_PNTForm1`
+  package reverse orientations of the already-proved PNT-form equivalences.
 
 Supporting declarations include:
 
