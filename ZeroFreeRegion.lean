@@ -29,7 +29,8 @@ checkout.
 ## Unproved target statements
 
 - `classical_zero_free_region` — quantitative σ ≥ 1 - c/log|t|
-  (requires Hadamard factorization or Borel-Carathéodory, not yet in Mathlib)
+  (requires zeta-specific growth/log-derivative estimates built from tools
+  such as Hadamard factorization or Borel-Carathéodory)
 - `vinogradov_korobov_zero_free_region` — requires exponential sum estimates
 
 ## Dependencies
@@ -573,7 +574,8 @@ theorem classical_zero_free_region_compact (T : ℝ) (_hT : T ≥ 2) :
     exact hdsub (Metric.mem_cthickening_of_dist_le s k d verticalSegment hk hdist)
 
 /-- 经典零点自由区域：ζ(s) ≠ 0 对于 Re(s) ≥ 1 - c/log|t| (|t| ≥ 2)。
-    这需要 Hadamard 因子分解或 Borel-Carathéodory 定理，目前 Mathlib 缺失。 -/
+    这还需要把 Hadamard 因子分解或 Borel-Carathéodory 等复分析工具
+    专门应用到 ζ 的增长估计和对数导数估计上。 -/
 def classical_zero_free_region : Prop :=
     ∃ c > 0, ∀ s : ℂ, |s.im| ≥ 2 → s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0
 
