@@ -1292,12 +1292,19 @@ lemma PNTForm1_of_RH_PrimeCountingLiErrorBound
     (h : RH_PrimeCountingLiErrorBound) : PNTForm1 :=
   PNTForm1_of_PNTForm2 (PNTForm2_of_RH_PrimeCountingLiErrorBound h)
 
+lemma PNTForm3_of_RH_PrimeCountingLiErrorBound
+    (h : RH_PrimeCountingLiErrorBound) : PNTForm3 :=
+  PNTForm3_of_PNTForm2 (PNTForm2_of_RH_PrimeCountingLiErrorBound h)
+
 lemma PNTForm2_of_RH_ErrorBound (h : RH_ErrorBound) : PNTForm2 :=
   PNTForm2_of_RH_PrimeCountingLiErrorBound
     (RH_PrimeCountingLiErrorBound_of_RH_ErrorBound h)
 
 lemma PNTForm1_of_RH_ErrorBound (h : RH_ErrorBound) : PNTForm1 :=
   PNTForm1_of_PNTForm2 (PNTForm2_of_RH_ErrorBound h)
+
+lemma PNTForm3_of_RH_ErrorBound (h : RH_ErrorBound) : PNTForm3 :=
+  PNTForm3_of_PNTForm2 (PNTForm2_of_RH_ErrorBound h)
 /-- Target statement: RH iff the RH-scale prime-counting error bound.
 
 This is a standard deep equivalence, but the current project does not provide
@@ -1363,6 +1370,24 @@ lemma RH_ErrorBound_of_rh_iff_optimal_error
     RiemannHypothesis.Statement → RH_ErrorBound := by
   intro hRH
   exact RH_ErrorBound_of_RH_PrimeCountingLiErrorBound (h.mp hRH)
+
+lemma PNTForm2_of_rh_iff_optimal_error
+    (h : rh_iff_optimal_error) :
+    RiemannHypothesis.Statement → PNTForm2 := by
+  intro hRH
+  exact PNTForm2_of_RH_PrimeCountingLiErrorBound (h.mp hRH)
+
+lemma PNTForm1_of_rh_iff_optimal_error
+    (h : rh_iff_optimal_error) :
+    RiemannHypothesis.Statement → PNTForm1 := by
+  intro hRH
+  exact PNTForm1_of_RH_PrimeCountingLiErrorBound (h.mp hRH)
+
+lemma PNTForm3_of_rh_iff_optimal_error
+    (h : rh_iff_optimal_error) :
+    RiemannHypothesis.Statement → PNTForm3 := by
+  intro hRH
+  exact PNTForm3_of_RH_PrimeCountingLiErrorBound (h.mp hRH)
 
 lemma RiemannHypothesis_of_rh_iff_pointwise_error
     (h : rh_iff_optimal_error) :
