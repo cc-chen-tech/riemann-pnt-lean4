@@ -2063,6 +2063,11 @@ lemma nontrivialZerosFinset_ext_of_height_iff {T U : ℝ}
     rcases mem_nontrivialZerosFinset.mp hρ with ⟨hzero, hheight⟩
     exact mem_nontrivialZerosFinset.mpr ⟨hzero, (h ρ hzero).mpr hheight⟩
 
+lemma finiteNontrivialZeroSum_congr_finset {x T U : ℝ}
+    (h : nontrivialZerosFinset T = nontrivialZerosFinset U) :
+    finiteNontrivialZeroSum x T = finiteNontrivialZeroSum x U := by
+  simp [finiteNontrivialZeroSum, h]
+
 lemma finiteNontrivialZeroSum_congr_height {x T U : ℝ}
     (h : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ →
       (|ρ.im| ≤ T ↔ |ρ.im| ≤ U)) :
@@ -2184,6 +2189,30 @@ lemma explicit_formula_von_mangoldt_iff_reverse_error_tendsto_zero
           explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)) atTop (𝓝 0) := by
       simpa [sub_eq_add_neg, add_comm] using hneg
     exact explicit_formula_von_mangoldt_of_error_tendsto_zero hz
+
+lemma explicit_formula_von_mangoldt_reverse_error_isLittleO_one
+    {x : ℝ} {hx : x ≥ 2}
+    (h : explicit_formula_von_mangoldt x hx) :
+    (fun T : ℝ => (chebyshevPsi0 x : ℂ) - explicitFormulaApprox x T)
+        =o[atTop] (fun _T : ℝ => (1 : ℂ)) :=
+  (isLittleO_one_iff ℂ).mpr
+    ((explicit_formula_von_mangoldt_iff_reverse_error_tendsto_zero).mp h)
+
+lemma explicit_formula_von_mangoldt_of_reverse_error_isLittleO_one
+    {x : ℝ} {hx : x ≥ 2}
+    (h : (fun T : ℝ => (chebyshevPsi0 x : ℂ) - explicitFormulaApprox x T)
+        =o[atTop] (fun _T : ℝ => (1 : ℂ))) :
+    explicit_formula_von_mangoldt x hx :=
+  (explicit_formula_von_mangoldt_iff_reverse_error_tendsto_zero).mpr
+    ((isLittleO_one_iff ℂ).mp h)
+
+lemma explicit_formula_von_mangoldt_iff_reverse_error_isLittleO_one
+    {x : ℝ} {hx : x ≥ 2} :
+    explicit_formula_von_mangoldt x hx ↔
+      (fun T : ℝ => (chebyshevPsi0 x : ℂ) - explicitFormulaApprox x T)
+        =o[atTop] (fun _T : ℝ => (1 : ℂ)) :=
+  ⟨explicit_formula_von_mangoldt_reverse_error_isLittleO_one,
+    explicit_formula_von_mangoldt_of_reverse_error_isLittleO_one⟩
 
 lemma explicit_formula_von_mangoldt_of_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2}

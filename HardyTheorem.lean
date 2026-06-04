@@ -1009,11 +1009,18 @@ lemma hardy_theorem_target_of_abs_unbounded
     simpa [Metric.closedBall, dist_eq_norm] using htmem
   linarith
 
+lemma exists_nonnegative_zero_on_critical_line_of_unbounded
+    (h : hardy_zeros_unbounded_target) :
+    ∃ t : ℝ, 0 ≤ t ∧ riemannZeta (0.5 + I * t) = 0 := by
+  rcases h 0 with ⟨t, ht_nonneg, htzero⟩
+  exact ⟨t, ht_nonneg, htzero⟩
+
 lemma exists_zero_on_critical_line_of_unbounded
     (h : hardy_zeros_unbounded_target) :
-    ∃ t : ℝ, riemannZeta (0.5 + I * t) = 0 :=
-  exists_zero_on_critical_line_of_hardy_theorem_target
-    (hardy_theorem_target_of_unbounded h)
+    ∃ t : ℝ, riemannZeta (0.5 + I * t) = 0 := by
+  rcases exists_nonnegative_zero_on_critical_line_of_unbounded h with
+    ⟨t, _ht_nonneg, htzero⟩
+  exact ⟨t, htzero⟩
 
 lemma exists_zero_on_critical_line_of_abs_unbounded
     (h : hardy_zeros_abs_unbounded_target) :
@@ -1222,6 +1229,12 @@ lemma exists_zero_on_critical_line_of_selberg_zero_proportion
     (h : selberg_zero_proportion_target) :
     ∃ t : ℝ, riemannZeta (0.5 + I * t) = 0 :=
   exists_zero_on_critical_line_of_hardy_littlewood_lower_bound
+    (hardy_littlewood_lower_bound_target_of_selberg_zero_proportion h)
+
+lemma exists_nonnegative_zero_on_critical_line_of_selberg_zero_proportion
+    (h : selberg_zero_proportion_target) :
+    ∃ t : ℝ, 0 ≤ t ∧ riemannZeta (0.5 + I * t) = 0 :=
+  exists_nonnegative_zero_on_critical_line_of_hardy_littlewood_lower_bound
     (hardy_littlewood_lower_bound_target_of_selberg_zero_proportion h)
 
 lemma hardy_theorem_target_of_hardy_littlewood_lower_bound
