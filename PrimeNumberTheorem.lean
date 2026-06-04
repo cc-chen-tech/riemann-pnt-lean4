@@ -1465,6 +1465,17 @@ theorem hardy_theorem_target_iff_unbounded :
   ⟨hardy_zeros_unbounded_of_hardy_theorem_target,
     HardyTheorem.hardy_theorem_target_of_unbounded⟩
 
+theorem hardy_theorem_target_of_two_signed_moments
+    (hmom : HardyTheorem.hardy_two_signed_moments_target) :
+    HardyTheorem.hardy_theorem_target :=
+  HardyTheorem.hardy_theorem_target_of_two_signed_moments hmom
+
+theorem hardy_theorem_target_of_integral_asymptotic_one_two
+    (h1 : HardyTheorem.integral_asymptotic_target 1)
+    (h2 : HardyTheorem.integral_asymptotic_target 2) :
+    HardyTheorem.hardy_theorem_target :=
+  HardyTheorem.hardy_theorem_target_of_integral_asymptotic_one_two h1 h2
+
 /-- The first two Hardy signed moments force arbitrarily large absolute-height
 critical-line zeros at the PrimeNumberTheorem layer. -/
 theorem hardy_zeros_abs_unbounded_of_two_signed_moments

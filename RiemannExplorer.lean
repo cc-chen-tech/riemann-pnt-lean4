@@ -216,6 +216,17 @@ theorem hardy_theorem_target_of_conrey_target
   HardyTheorem.hardy_theorem_target_of_selberg_zero_proportion
     (selberg_zero_proportion_target_of_conrey_target h)
 
+theorem hardy_theorem_target_of_two_signed_moments
+    (hmom : HardyTheorem.hardy_two_signed_moments_target) :
+    HardyTheorem.hardy_theorem_target :=
+  HardyTheorem.hardy_theorem_target_of_two_signed_moments hmom
+
+theorem hardy_theorem_target_of_integral_asymptotic_one_two
+    (h1 : HardyTheorem.integral_asymptotic_target 1)
+    (h2 : HardyTheorem.integral_asymptotic_target 2) :
+    HardyTheorem.hardy_theorem_target :=
+  HardyTheorem.hardy_theorem_target_of_integral_asymptotic_one_two h1 h2
+
 theorem infinitely_many_zeros_on_critical_line_of_selberg_zero_proportion
     (h : HardyTheorem.selberg_zero_proportion_target) :
     {s : ℂ | s.re = 1 / 2 ∧ riemannZeta s = 0}.Infinite :=

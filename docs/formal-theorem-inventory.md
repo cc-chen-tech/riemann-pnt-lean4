@@ -106,6 +106,8 @@ Supporting declarations include:
 - `hardy_zeros_unbounded_of_two_signed_moments`
 - `hardy_zeros_abs_unbounded_of_integral_asymptotic_one_two`
 - `hardy_zeros_unbounded_of_integral_asymptotic_one_two`
+- `hardy_theorem_target_of_two_signed_moments`
+- `hardy_theorem_target_of_integral_asymptotic_one_two`
 - `infinitely_many_zeros_on_critical_line_of_two_signed_moments`
 - `infinitely_many_zeros_on_critical_line_of_integral_asymptotic_one_two`
 - `infinitely_many_zeros_on_critical_line_of_hardy_littlewood_lower_bound`
@@ -191,6 +193,8 @@ This file provides project-level definitions and wrappers:
 - `KnownResults.zeta_no_zeros_on_one_line`
 - `KnownResults.zeta_no_zeros_on_zero_line`
 - `KnownResults.infinitely_many_zeros_on_critical_line_of_hardy_littlewood_lower_bound`
+- `KnownResults.hardy_theorem_target_of_two_signed_moments`
+- `KnownResults.hardy_theorem_target_of_integral_asymptotic_one_two`
 - `KnownResults.exists_zero_on_critical_line_of_two_signed_moments`
 - `KnownResults.exists_zero_on_critical_line_of_integral_asymptotic_one_two`
 - `KnownResults.exists_zero_on_critical_line_of_hardy_littlewood_lower_bound`
