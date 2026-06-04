@@ -583,6 +583,17 @@ def classical_zero_free_region : Prop :=
 lemma log_abs_pos_of_two_le {t : ℝ} (ht : 2 ≤ |t|) : 0 < Real.log |t| :=
   Real.log_pos (lt_of_lt_of_le (by norm_num : (1 : ℝ) < 2) ht)
 
+lemma classical_zero_free_region_on_one_line
+    (hclassical : classical_zero_free_region) :
+    ∀ s : ℂ, 2 ≤ |s.im| → s.re = 1 → riemannZeta s ≠ 0 := by
+  rcases hclassical with ⟨c, hc_pos, hregion⟩
+  intro s hs2 hsre
+  refine hregion s hs2 ?_
+  have hlog_pos : 0 < Real.log |s.im| := log_abs_pos_of_two_le hs2
+  have hwidth_pos : 0 < c / Real.log |s.im| := div_pos hc_pos hlog_pos
+  rw [hsre]
+  linarith
+
 /-- Patch a high-height quantitative zero-free region with the compact
 zero-free strip at bounded height.
 
@@ -718,10 +729,29 @@ lemma classical_zero_free_region_iff_high_height_at_three :
         s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0 :=
   classical_zero_free_region_iff_high_height 3 (by norm_num)
 
+lemma classical_zero_free_region_high_height_at_three
+    (hclassical : classical_zero_free_region) :
+    ∃ c > 0, ∀ s : ℂ, 3 ≤ |s.im| →
+      s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0 :=
+  classical_zero_free_region_high_height 3 (by norm_num) hclassical
+
 /-- Vinogradov-Korobov 零点自由区域：目前最广的已知零自由区域。
     需要指数和估计，远超当前 Mathlib 范畴。 -/
 def vinogradov_korobov_zero_free_region : Prop :=
     ∃ c > 0, ∀ s : ℂ, |s.im| ≥ 3 → s.re ≥ 1 - c / (Real.log |s.im|)^(2/3 : ℝ) * (Real.log (Real.log |s.im|))^(-1/3 : ℝ) → riemannZeta s ≠ 0
+
+lemma vinogradov_korobov_zero_free_region_high_height
+    (T0 : ℝ) (hT0 : 3 ≤ T0)
+    (hvk : vinogradov_korobov_zero_free_region) :
+    ∃ c > 0, ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥
+        1 - c / (Real.log |s.im|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |s.im|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta s ≠ 0 := by
+  rcases hvk with ⟨c, hc_pos, hregion⟩
+  refine ⟨c, hc_pos, ?_⟩
+  intro s hsT hsre
+  exact hregion s (hT0.trans hsT) hsre
 
 /-- Conditional bridge from the Vinogradov-Korobov target to the classical
 zero-free region.
