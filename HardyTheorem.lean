@@ -1116,6 +1116,13 @@ lemma hardy_theorem_target_iff_unbounded_of_bounded_strips
   Iff.trans (hardy_theorem_target_iff_abs_unbounded_of_bounded_strips hstrip)
     hardy_zeros_unbounded_iff_abs_unbounded.symm
 
+lemma hardy_zeros_unbounded_of_hardy_theorem_target_of_bounded_strips
+    (hstrip : ∀ B : ℝ,
+      {t : ℝ | |t| ≤ B ∧ riemannZeta (0.5 + I * t) = 0}.Finite)
+    (h : hardy_theorem_target) :
+    hardy_zeros_unbounded_target :=
+  (hardy_theorem_target_iff_unbounded_of_bounded_strips hstrip).mp h
+
 lemma hardy_zeros_unbounded_of_two_signed_moments_of_bounded_strips
     (hstrip : ∀ B : ℝ,
       {t : ℝ | |t| ≤ B ∧ riemannZeta (0.5 + I * t) = 0}.Finite)
@@ -1180,10 +1187,10 @@ lemma hardy_littlewood_lower_bound_target_of_selberg_zero_proportion
     exact le_trans htarget hsel
 
 /-- A Hardy--Littlewood lower-bound target is already enough to extract at
-least one critical-line zero. -/
-lemma exists_zero_on_critical_line_of_hardy_littlewood_lower_bound
+least one critical-line zero at nonnegative height. -/
+lemma exists_nonnegative_zero_on_critical_line_of_hardy_littlewood_lower_bound
     (h : hardy_littlewood_lower_bound_target) :
-    ∃ t : ℝ, riemannZeta (0.5 + I * t) = 0 := by
+    ∃ t : ℝ, 0 ≤ t ∧ riemannZeta (0.5 + I * t) = 0 := by
   rcases h with ⟨C, hC_pos, T0, hbound⟩
   let T : ℝ := max T0 1
   have hT0 : T0 ≤ T := le_max_left T0 1
@@ -1200,7 +1207,16 @@ lemma exists_zero_on_critical_line_of_hardy_littlewood_lower_bound
     simpa [zeroCountOnCriticalLine, S] using hncard_nat
   have hSfin : S.Finite := Set.finite_of_ncard_pos hSpos
   rcases (Set.ncard_pos hSfin).mp hSpos with ⟨t, htzero⟩
-  exact ⟨(t : ℝ), htzero⟩
+  exact ⟨(t : ℝ), t.property.1, htzero⟩
+
+/-- A Hardy--Littlewood lower-bound target is already enough to extract at
+least one critical-line zero. -/
+lemma exists_zero_on_critical_line_of_hardy_littlewood_lower_bound
+    (h : hardy_littlewood_lower_bound_target) :
+    ∃ t : ℝ, riemannZeta (0.5 + I * t) = 0 := by
+  rcases exists_nonnegative_zero_on_critical_line_of_hardy_littlewood_lower_bound h with
+    ⟨t, _ht_nonneg, htzero⟩
+  exact ⟨t, htzero⟩
 
 lemma exists_zero_on_critical_line_of_selberg_zero_proportion
     (h : selberg_zero_proportion_target) :

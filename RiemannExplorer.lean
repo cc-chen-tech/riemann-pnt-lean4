@@ -166,6 +166,22 @@ theorem infinitely_many_zeros_on_critical_line
   have hreal_fin : realZeros.Finite := Set.Finite.of_finite_image himage_fin hinj
   exact hreal hreal_fin
 
+theorem infinitely_many_nontrivial_zeros_on_critical_line
+    (h : HardyTheorem.hardy_theorem_target) :
+    {s : ℂ | RiemannHypothesis.IsNontrivialZero s ∧
+      s ∈ RiemannHypothesis.criticalLine}.Infinite := by
+  have hcrit := infinitely_many_zeros_on_critical_line h
+  have hsubset :
+      {s : ℂ | s.re = 1 / 2 ∧ riemannZeta s = 0} ⊆
+        {s : ℂ | RiemannHypothesis.IsNontrivialZero s ∧
+          s ∈ RiemannHypothesis.criticalLine} := by
+    intro s hs
+    rcases hs with ⟨hre, hz⟩
+    constructor
+    · exact ⟨hz, by linarith, by linarith⟩
+    · simpa [RiemannHypothesis.criticalLine] using hre
+  exact hcrit.mono hsubset
+
 /-- The concrete conditional Hardy inputs also transfer to infinitely many
 complex zeros on the critical line. -/
 theorem infinitely_many_zeros_on_critical_line_of_two_signed_moments
@@ -215,6 +231,14 @@ theorem hardy_theorem_target_of_conrey_target
     HardyTheorem.hardy_theorem_target :=
   HardyTheorem.hardy_theorem_target_of_selberg_zero_proportion
     (selberg_zero_proportion_target_of_conrey_target h)
+
+theorem hardy_zeros_unbounded_of_conrey_target_of_bounded_strips
+    (hstrip : ∀ B : ℝ,
+      {t : ℝ | |t| ≤ B ∧ riemannZeta (0.5 + I * t) = 0}.Finite)
+    (h : conrey_40_percent_zeros_on_critical_line_target) :
+    HardyTheorem.hardy_zeros_unbounded_target :=
+  HardyTheorem.hardy_zeros_unbounded_of_hardy_theorem_target_of_bounded_strips
+    hstrip (hardy_theorem_target_of_conrey_target h)
 
 theorem hardy_theorem_target_of_two_signed_moments
     (hmom : HardyTheorem.hardy_two_signed_moments_target) :
@@ -271,6 +295,13 @@ theorem exists_zero_on_critical_line_of_conrey_target
     ∃ t : ℝ, riemannZeta (0.5 + I * t) = 0 :=
   HardyTheorem.exists_zero_on_critical_line_of_selberg_zero_proportion
     ((conrey_40_percent_zeros_on_critical_line_target_iff_selberg).mp h)
+
+theorem exists_complex_zero_on_critical_line_of_unbounded
+    (h : HardyTheorem.hardy_zeros_unbounded_target) :
+    ∃ s : ℂ, s.re = 1 / 2 ∧ riemannZeta s = 0 := by
+  rcases h 0 with ⟨t, _ht, hzero⟩
+  refine ⟨(0.5 : ℂ) + I * t, ?_, hzero⟩
+  norm_num
 
 end KnownResults
 
