@@ -1156,6 +1156,68 @@ lemma hardy_zeros_unbounded_of_integral_asymptotic_one_two_of_bounded_strips
 noncomputable def zeroCountOnCriticalLine (T : ℝ) : ℕ :=
   {t : Set.Icc 0 T | riemannZeta (0.5 + I * t) = 0}.ncard
 
+lemma exists_zero_of_zeroCountOnCriticalLine_pos {T : ℝ}
+    (h : 0 < zeroCountOnCriticalLine T) :
+    ∃ t : ℝ, 0 ≤ t ∧ t ≤ T ∧ riemannZeta (0.5 + I * t) = 0 := by
+  classical
+  let S : Set (Set.Icc (0 : ℝ) T) :=
+    {t : Set.Icc (0 : ℝ) T | riemannZeta (0.5 + I * (t : ℝ)) = 0}
+  have hS : 0 < S.ncard := by
+    simpa [zeroCountOnCriticalLine, S] using h
+  by_contra hnone
+  push Not at hnone
+  have hempty : S = ∅ := by
+    ext t
+    constructor
+    · intro ht
+      exact (hnone (t : ℝ) t.property.1 t.property.2) ht
+    · simp
+  simp [hempty] at hS
+
+lemma zeroCountOnCriticalLine_pos_of_exists_of_finite {T : ℝ}
+    (hfinite :
+      {t : Set.Icc (0 : ℝ) T | riemannZeta (0.5 + I * (t : ℝ)) = 0}.Finite)
+    (h : ∃ t : ℝ, 0 ≤ t ∧ t ≤ T ∧ riemannZeta (0.5 + I * t) = 0) :
+    0 < zeroCountOnCriticalLine T := by
+  classical
+  rcases h with ⟨t, ht0, htT, htzero⟩
+  let S : Set (Set.Icc (0 : ℝ) T) :=
+    {t : Set.Icc (0 : ℝ) T | riemannZeta (0.5 + I * (t : ℝ)) = 0}
+  have hmem : (⟨t, ht0, htT⟩ : Set.Icc (0 : ℝ) T) ∈ S := by
+    simpa [S] using htzero
+  have hpos : 0 < S.ncard := (Set.ncard_pos hfinite).mpr ⟨_, hmem⟩
+  simpa [zeroCountOnCriticalLine, S] using hpos
+
+lemma zeroCountOnCriticalLine_mono_of_finite {T U : ℝ}
+    (hTU : T ≤ U)
+    (hfiniteU :
+      {t : Set.Icc (0 : ℝ) U | riemannZeta (0.5 + I * (t : ℝ)) = 0}.Finite) :
+    zeroCountOnCriticalLine T ≤ zeroCountOnCriticalLine U := by
+  classical
+  let ST : Set (Set.Icc (0 : ℝ) T) :=
+    {t : Set.Icc (0 : ℝ) T | riemannZeta (0.5 + I * (t : ℝ)) = 0}
+  let SU : Set (Set.Icc (0 : ℝ) U) :=
+    {t : Set.Icc (0 : ℝ) U | riemannZeta (0.5 + I * (t : ℝ)) = 0}
+  let lift : Set.Icc (0 : ℝ) T → Set.Icc (0 : ℝ) U :=
+    fun t => ⟨(t : ℝ), t.property.1, le_trans t.property.2 hTU⟩
+  have hle := Set.ncard_le_ncard_of_injOn
+    (s := ST) (t := SU) lift ?_ ?_ (by simpa [SU] using hfiniteU)
+  · simpa [zeroCountOnCriticalLine, ST, SU] using hle
+  · intro t ht
+    simpa [SU, lift] using ht
+  · intro t₁ _ht₁ t₂ _ht₂ heq
+    exact Subtype.ext
+      (congr_arg (fun z : Set.Icc (0 : ℝ) U => (z : ℝ)) heq)
+
+lemma zeroCountOnCriticalLine_pos_of_linear_lower_bound {C T : ℝ}
+    (hC : 0 < C) (hT : 0 < T)
+    (hbound : C * T ≤ (zeroCountOnCriticalLine T : ℝ)) :
+    0 < zeroCountOnCriticalLine T := by
+  have hCT_pos : 0 < C * T := mul_pos hC hT
+  have hncard_real : 0 < (zeroCountOnCriticalLine T : ℝ) :=
+    lt_of_lt_of_le hCT_pos hbound
+  exact_mod_cast hncard_real
+
 def hardy_littlewood_lower_bound_target : Prop :=
     ∃ C > 0, ∃ T0 : ℝ, ∀ T ≥ T0, (zeroCountOnCriticalLine T : ℝ) ≥ C * T
 
@@ -1206,18 +1268,11 @@ lemma exists_nonnegative_zero_on_critical_line_of_hardy_littlewood_lower_bound
   have hT0 : T0 ≤ T := le_max_left T0 1
   have hT_pos : 0 < T := lt_of_lt_of_le zero_lt_one (le_max_right T0 1)
   have hcount := hbound T hT0
-  have hCT_pos : 0 < C * T := mul_pos hC_pos hT_pos
-  have hncard_real : 0 < (zeroCountOnCriticalLine T : ℝ) :=
-    lt_of_lt_of_le hCT_pos hcount
-  have hncard_nat : 0 < zeroCountOnCriticalLine T := by
-    exact_mod_cast hncard_real
-  let S : Set (Set.Icc (0 : ℝ) T) :=
-    {t : Set.Icc (0 : ℝ) T | riemannZeta (0.5 + I * (t : ℝ)) = 0}
-  have hSpos : 0 < S.ncard := by
-    simpa [zeroCountOnCriticalLine, S] using hncard_nat
-  have hSfin : S.Finite := Set.finite_of_ncard_pos hSpos
-  rcases (Set.ncard_pos hSfin).mp hSpos with ⟨t, htzero⟩
-  exact ⟨(t : ℝ), t.property.1, htzero⟩
+  have hncard_pos : 0 < zeroCountOnCriticalLine T :=
+    zeroCountOnCriticalLine_pos_of_linear_lower_bound hC_pos hT_pos hcount
+  rcases exists_zero_of_zeroCountOnCriticalLine_pos hncard_pos with
+    ⟨t, ht_nonneg, _htT, htzero⟩
+  exact ⟨t, ht_nonneg, htzero⟩
 
 /-- A Hardy--Littlewood lower-bound target is already enough to extract at
 least one critical-line zero. -/

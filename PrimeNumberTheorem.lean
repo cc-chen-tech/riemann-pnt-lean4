@@ -2136,6 +2136,25 @@ lemma finiteNontrivialZeroSum_congr_height {x T U : ℝ}
     finiteNontrivialZeroSum x T = finiteNontrivialZeroSum x U := by
   simp [finiteNontrivialZeroSum, nontrivialZerosFinset_ext_of_height_iff h]
 
+lemma nontrivialZerosFinset_eq_of_global_height_bound {B T : ℝ}
+    (hBT : B ≤ T)
+    (hbound : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → |ρ.im| ≤ B) :
+    nontrivialZerosFinset T = nontrivialZerosFinset B := by
+  refine nontrivialZerosFinset_ext_of_height_iff ?_
+  intro ρ hρ
+  constructor
+  · intro _hT
+    exact hbound ρ hρ
+  · intro hB
+    exact le_trans hB hBT
+
+lemma finiteNontrivialZeroSum_eq_of_global_height_bound {x B T : ℝ}
+    (hBT : B ≤ T)
+    (hbound : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → |ρ.im| ≤ B) :
+    finiteNontrivialZeroSum x T = finiteNontrivialZeroSum x B :=
+  finiteNontrivialZeroSum_congr_finset
+    (nontrivialZerosFinset_eq_of_global_height_bound hBT hbound)
+
 lemma finiteNontrivialZeroSum_eq_add_new_zeros {x T U : ℝ} (hTU : T ≤ U) :
     finiteNontrivialZeroSum x U =
       finiteNontrivialZeroSum x T +
@@ -2187,6 +2206,30 @@ lemma explicitFormulaApprox_sub_explicitFormulaApprox
     explicitFormulaApprox x T - explicitFormulaApprox x U =
       finiteNontrivialZeroSum x U - finiteNontrivialZeroSum x T := by
   simp [explicitFormulaApprox]
+
+lemma explicitFormulaApprox_eq_sub_new_zeros {x T U : ℝ} (hTU : T ≤ U) :
+    explicitFormulaApprox x U =
+      explicitFormulaApprox x T -
+        ∑ ρ ∈ (nontrivialZerosFinset U \ nontrivialZerosFinset T),
+          (x : ℂ) ^ ρ / ρ := by
+  have hsum := finiteNontrivialZeroSum_eq_add_new_zeros (x := x) hTU
+  simp [explicitFormulaApprox, hsum]
+  abel
+
+lemma explicitFormulaApprox_add_new_zeros {x T U : ℝ} (hTU : T ≤ U) :
+    explicitFormulaApprox x U +
+        ∑ ρ ∈ (nontrivialZerosFinset U \ nontrivialZerosFinset T),
+          (x : ℂ) ^ ρ / ρ =
+      explicitFormulaApprox x T := by
+  rw [explicitFormulaApprox_eq_sub_new_zeros hTU]
+  abel
+
+lemma explicitFormulaApprox_eq_of_global_height_bound {x B T : ℝ}
+    (hBT : B ≤ T)
+    (hbound : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → |ρ.im| ≤ B) :
+    explicitFormulaApprox x T = explicitFormulaApprox x B :=
+  explicitFormulaApprox_congr_zero_sum
+    (finiteNontrivialZeroSum_eq_of_global_height_bound hBT hbound)
 
 lemma explicitFormulaApprox_eq_of_neg (x : ℝ) {T : ℝ} (hT : T < 0) :
     explicitFormulaApprox x T =
