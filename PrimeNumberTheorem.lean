@@ -2267,6 +2267,54 @@ lemma explicit_formula_von_mangoldt_iff_re_im_error_isLittleO_one
       explicit_formula_von_mangoldt_im_error_isLittleO_one h⟩,
     fun h => explicit_formula_von_mangoldt_of_re_im_error_isLittleO_one h.1 h.2⟩
 
+lemma explicit_formula_von_mangoldt_norm_error_tendsto_zero
+    {x : ℝ} {hx : x ≥ 2}
+    (h : explicit_formula_von_mangoldt x hx) :
+    Tendsto (fun T : ℝ =>
+      ‖explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)‖) atTop (𝓝 0) :=
+  tendsto_zero_iff_norm_tendsto_zero.mp
+    (explicit_formula_von_mangoldt_error_tendsto_zero h)
+
+lemma explicit_formula_von_mangoldt_of_norm_error_tendsto_zero
+    {x : ℝ} {hx : x ≥ 2}
+    (h : Tendsto (fun T : ℝ =>
+      ‖explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)‖) atTop (𝓝 0)) :
+    explicit_formula_von_mangoldt x hx :=
+  explicit_formula_von_mangoldt_of_error_tendsto_zero
+    (tendsto_zero_iff_norm_tendsto_zero.mpr h)
+
+lemma explicit_formula_von_mangoldt_iff_norm_error_tendsto_zero
+    {x : ℝ} {hx : x ≥ 2} :
+    explicit_formula_von_mangoldt x hx ↔
+      Tendsto (fun T : ℝ =>
+        ‖explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)‖) atTop (𝓝 0) :=
+  ⟨explicit_formula_von_mangoldt_norm_error_tendsto_zero,
+    explicit_formula_von_mangoldt_of_norm_error_tendsto_zero⟩
+
+lemma explicit_formula_von_mangoldt_norm_error_isLittleO_one
+    {x : ℝ} {hx : x ≥ 2}
+    (h : explicit_formula_von_mangoldt x hx) :
+    (fun T : ℝ => ‖explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)‖)
+      =o[atTop] (fun _T : ℝ => (1 : ℝ)) :=
+  (isLittleO_one_iff ℝ).mpr
+    (explicit_formula_von_mangoldt_norm_error_tendsto_zero h)
+
+lemma explicit_formula_von_mangoldt_of_norm_error_isLittleO_one
+    {x : ℝ} {hx : x ≥ 2}
+    (h : (fun T : ℝ => ‖explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)‖)
+      =o[atTop] (fun _T : ℝ => (1 : ℝ))) :
+    explicit_formula_von_mangoldt x hx :=
+  explicit_formula_von_mangoldt_of_norm_error_tendsto_zero
+    ((isLittleO_one_iff ℝ).mp h)
+
+lemma explicit_formula_von_mangoldt_iff_norm_error_isLittleO_one
+    {x : ℝ} {hx : x ≥ 2} :
+    explicit_formula_von_mangoldt x hx ↔
+      (fun T : ℝ => ‖explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)‖)
+        =o[atTop] (fun _T : ℝ => (1 : ℝ)) :=
+  ⟨explicit_formula_von_mangoldt_norm_error_isLittleO_one,
+    explicit_formula_von_mangoldt_of_norm_error_isLittleO_one⟩
+
 /-- 零点对素数分布的贡献
 
 每个零点 ρ = β + iγ 贡献振荡项 x^ρ/ρ = x^β e^{iγ log x} / ρ
