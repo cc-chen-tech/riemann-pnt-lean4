@@ -1213,6 +1213,30 @@ lemma log_sq_div_sqrt_tendsto_zero :
             rw [hsqrt_eq]
   simpa using hsq.congr' heq
 
+lemma sqrt_mul_log_sq_isLittleO_id :
+    (fun x : ℝ => Real.sqrt x * (Real.log x)^2)
+      =o[atTop] (fun x : ℝ => x) := by
+  have hratio :
+      Tendsto (fun x : ℝ => Real.sqrt x * (Real.log x)^2 / x) atTop (𝓝 0) := by
+    have heq :
+        (fun x : ℝ => Real.sqrt x * (Real.log x)^2 / x)
+          =ᶠ[atTop] fun x : ℝ => (Real.log x)^2 / Real.sqrt x := by
+      filter_upwards [eventually_gt_atTop (0 : ℝ)] with x hx
+      have hsqrt_pos : Real.sqrt x ≠ 0 :=
+        ne_of_gt (Real.sqrt_pos.2 hx)
+      have hx_eq : (Real.sqrt x)^2 = x :=
+        Real.sq_sqrt (le_of_lt hx)
+      calc
+        Real.sqrt x * (Real.log x)^2 / x
+            = Real.sqrt x * (Real.log x)^2 / (Real.sqrt x)^2 := by
+                rw [hx_eq]
+        _ = (Real.log x)^2 / Real.sqrt x := by
+                field_simp [hsqrt_pos]
+    exact log_sq_div_sqrt_tendsto_zero.congr' heq.symm
+  refine (isLittleO_iff_tendsto' ?_).2 hratio
+  filter_upwards [eventually_gt_atTop (0 : ℝ)] with x hx hzero
+  exact (hx.ne' hzero).elim
+
 lemma sqrt_mul_log_isLittleO_logIntegral :
     (fun x : ℝ => Real.sqrt x * Real.log x)
       =o[atTop] (fun x : ℝ => logIntegral x) := by
@@ -1305,6 +1329,44 @@ lemma PNTForm1_of_RH_ErrorBound (h : RH_ErrorBound) : PNTForm1 :=
 
 lemma PNTForm3_of_RH_ErrorBound (h : RH_ErrorBound) : PNTForm3 :=
   PNTForm3_of_PNTForm2 (PNTForm2_of_RH_ErrorBound h)
+
+lemma RH_PsiErrorBound.isLittleO_id
+    (h : RH_PsiErrorBound) :
+    (fun x : ℝ => chebyshevPsi x - x) =o[atTop] (fun x : ℝ => x) := by
+  rw [RH_PsiErrorBound] at h
+  exact h.trans_isLittleO sqrt_mul_log_sq_isLittleO_id
+
+lemma PNTForm3_of_RH_PsiErrorBound (h : RH_PsiErrorBound) : PNTForm3 := by
+  have hsmall := h.isLittleO_id
+  have hratio := hsmall.tendsto_div_nhds_zero
+  have hsum :
+      Tendsto (fun x : ℝ => 1 + (chebyshevPsi x - x) / x) atTop (𝓝 1) := by
+    simpa using (tendsto_const_nhds.add hratio :
+      Tendsto (fun x : ℝ => (1 : ℝ) + (chebyshevPsi x - x) / x)
+        atTop (𝓝 ((1 : ℝ) + 0)))
+  have heq :
+      (fun x : ℝ => 1 + (chebyshevPsi x - x) / x)
+        =ᶠ[atTop] fun x : ℝ => chebyshevPsi x / x := by
+    filter_upwards [eventually_gt_atTop (0 : ℝ)] with x hx
+    have hx_ne : x ≠ 0 := hx.ne'
+    field_simp [hx_ne]
+    ring
+  exact hsum.congr' heq
+
+lemma PNTForm2_of_RH_PsiErrorBound (h : RH_PsiErrorBound) : PNTForm2 :=
+  PNTForm2_of_PNTForm3 (PNTForm3_of_RH_PsiErrorBound h)
+
+lemma PNTForm1_of_RH_PsiErrorBound (h : RH_PsiErrorBound) : PNTForm1 :=
+  PNTForm1_of_PNTForm3 (PNTForm3_of_RH_PsiErrorBound h)
+
+lemma PNTForm3_of_RH_ThetaErrorBound (h : RH_ThetaErrorBound) : PNTForm3 :=
+  PNTForm3_of_RH_PsiErrorBound (RH_PsiErrorBound_of_RH_ThetaErrorBound h)
+
+lemma PNTForm2_of_RH_ThetaErrorBound (h : RH_ThetaErrorBound) : PNTForm2 :=
+  PNTForm2_of_PNTForm3 (PNTForm3_of_RH_ThetaErrorBound h)
+
+lemma PNTForm1_of_RH_ThetaErrorBound (h : RH_ThetaErrorBound) : PNTForm1 :=
+  PNTForm1_of_PNTForm3 (PNTForm3_of_RH_ThetaErrorBound h)
 /-- Target statement: RH iff the RH-scale prime-counting error bound.
 
 This is a standard deep equivalence, but the current project does not provide
@@ -2015,9 +2077,14 @@ noncomputable def explicitFormulaApprox (x T : ℝ) : ℂ :=
     - deriv riemannZeta 0 / riemannZeta 0
     - (1 / 2 : ℂ) * (Real.log (1 - x^(-2 : ℝ)) : ℂ)
 
+lemma explicitFormulaApprox_congr_finset {x T U : ℝ}
+    (h : nontrivialZerosFinset T = nontrivialZerosFinset U) :
+    explicitFormulaApprox x T = explicitFormulaApprox x U := by
+  simp [explicitFormulaApprox, finiteNontrivialZeroSum, h]
+
 lemma explicitFormulaApprox_congr_zero_sum {x T U : ℝ}
     (h : finiteNontrivialZeroSum x T = finiteNontrivialZeroSum x U) :
-    explicitFormulaApprox x T = explicitFormulaApprox x U := by
+  explicitFormulaApprox x T = explicitFormulaApprox x U := by
   simp [explicitFormulaApprox, h]
 
 lemma explicitFormulaApprox_congr_height {x T U : ℝ}
@@ -2099,6 +2166,24 @@ lemma explicit_formula_von_mangoldt_iff_error_tendsto_zero
         explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)) atTop (𝓝 0) :=
   ⟨explicit_formula_von_mangoldt_error_tendsto_zero,
     explicit_formula_von_mangoldt_of_error_tendsto_zero⟩
+
+lemma explicit_formula_von_mangoldt_iff_reverse_error_tendsto_zero
+    {x : ℝ} {hx : x ≥ 2} :
+    explicit_formula_von_mangoldt x hx ↔
+      Tendsto (fun T : ℝ =>
+        (chebyshevPsi0 x : ℂ) - explicitFormulaApprox x T) atTop (𝓝 0) := by
+  constructor
+  · intro h
+    have hz := explicit_formula_von_mangoldt_error_tendsto_zero h
+    have hneg := hz.neg
+    simpa [sub_eq_add_neg, add_comm] using hneg
+  · intro h
+    have hneg := h.neg
+    have hz :
+        Tendsto (fun T : ℝ =>
+          explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)) atTop (𝓝 0) := by
+      simpa [sub_eq_add_neg, add_comm] using hneg
+    exact explicit_formula_von_mangoldt_of_error_tendsto_zero hz
 
 lemma explicit_formula_von_mangoldt_of_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2}
