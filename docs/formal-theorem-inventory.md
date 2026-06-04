@@ -102,6 +102,7 @@ Supporting declarations include:
 - `hardy_zeros_unbounded_of_two_signed_moments`
 - `hardy_zeros_abs_unbounded_of_integral_asymptotic_one_two`
 - `hardy_zeros_unbounded_of_integral_asymptotic_one_two`
+- `infinitely_many_zeros_on_critical_line_of_hardy_littlewood_lower_bound`
 
 ### `HardyTheorem.lean`
 
@@ -175,6 +176,7 @@ This file provides project-level definitions and wrappers:
 - `RiemannHypothesis.riemannHypothesis_iff_zeros_on_critical_line`
 - `KnownResults.zeta_no_zeros_on_one_line`
 - `KnownResults.zeta_no_zeros_on_zero_line`
+- `KnownResults.infinitely_many_zeros_on_critical_line_of_hardy_littlewood_lower_bound`
 
 It also records exploratory strategy strings.  Those strings are explanatory
 metadata, not proof results.

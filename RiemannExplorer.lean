@@ -222,6 +222,12 @@ theorem infinitely_many_zeros_on_critical_line_of_selberg_zero_proportion
   infinitely_many_zeros_on_critical_line
     (HardyTheorem.hardy_theorem_target_of_selberg_zero_proportion h)
 
+theorem infinitely_many_zeros_on_critical_line_of_hardy_littlewood_lower_bound
+    (h : HardyTheorem.hardy_littlewood_lower_bound_target) :
+    {s : ℂ | s.re = 1 / 2 ∧ riemannZeta s = 0}.Infinite :=
+  infinitely_many_zeros_on_critical_line
+    (HardyTheorem.hardy_theorem_target_of_hardy_littlewood_lower_bound h)
+
 theorem infinitely_many_zeros_on_critical_line_of_conrey_target
     (h : conrey_40_percent_zeros_on_critical_line_target) :
     {s : ℂ | s.re = 1 / 2 ∧ riemannZeta s = 0}.Infinite :=
