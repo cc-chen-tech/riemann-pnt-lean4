@@ -1914,6 +1914,22 @@ theorem rh_statement_iff_mathlib :
     _root_.RiemannHypothesis ↔ RiemannHypothesis.Statement :=
   rh_iff_nontrivial_zeros_on_line
 
+theorem rh_iff_optimal_error_of_mathlib_implications
+    (h_forward : _root_.RiemannHypothesis → RH_PrimeCountingLiErrorBound)
+    (h_reverse : RH_PrimeCountingLiErrorBound → _root_.RiemannHypothesis) :
+    rh_iff_optimal_error :=
+  rh_iff_optimal_error_of_implications
+    (fun hRH => h_forward (rh_statement_iff_mathlib.mpr hRH))
+    (fun herror => rh_statement_iff_mathlib.mp (h_reverse herror))
+
+theorem rh_iff_optimal_error_of_mathlib_pointwise_implications
+    (h_forward : _root_.RiemannHypothesis → RH_ErrorBound)
+    (h_reverse : RH_ErrorBound → _root_.RiemannHypothesis) :
+    rh_iff_optimal_error :=
+  rh_iff_optimal_error_of_pointwise_implications
+    (fun hRH => h_forward (rh_statement_iff_mathlib.mpr hRH))
+    (fun herror => rh_statement_iff_mathlib.mp (h_reverse herror))
+
 theorem RH_PrimeCountingLiErrorBound_of_mathlib_RH_of_rh_iff_optimal_error
     (h : rh_iff_optimal_error) :
     _root_.RiemannHypothesis → RH_PrimeCountingLiErrorBound := by
@@ -1926,6 +1942,19 @@ theorem RH_ErrorBound_of_mathlib_RH_of_rh_iff_optimal_error
   intro hRH
   exact RH_ErrorBound_of_RH_PrimeCountingLiErrorBound
     (RH_PrimeCountingLiErrorBound_of_mathlib_RH_of_rh_iff_optimal_error h hRH)
+
+theorem mathlib_RH_of_rh_iff_optimal_error
+    (h : rh_iff_optimal_error) :
+    RH_PrimeCountingLiErrorBound → _root_.RiemannHypothesis := by
+  intro herror
+  exact rh_statement_iff_mathlib.mpr (h.mpr herror)
+
+theorem mathlib_RH_of_rh_iff_pointwise_error
+    (h : rh_iff_optimal_error) :
+    RH_ErrorBound → _root_.RiemannHypothesis := by
+  intro herror
+  exact mathlib_RH_of_rh_iff_optimal_error h
+    (RH_PrimeCountingLiErrorBound_of_RH_ErrorBound herror)
 
 theorem PNTForm2_of_mathlib_RH_of_rh_iff_optimal_error
     (h : rh_iff_optimal_error) :
