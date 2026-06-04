@@ -100,6 +100,7 @@ The following proved declarations are the main entry points for future work:
 - `PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_error_isLittleO_one`
 - `PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_re_im_tendsto`
 - `PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_re_im_error_tendsto_zero`
+- `PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_re_im_error_isLittleO_one`
 - `HardyTheorem.hardyZ_zero_iff_zeta_zero`
 - `HardyTheorem.hardyZ_continuous`
 - `HardyTheorem.critical_line_zeta_zero_neg_height`

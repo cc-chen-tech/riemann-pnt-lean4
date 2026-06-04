@@ -2026,6 +2026,45 @@ lemma explicit_formula_von_mangoldt_iff_re_im_error_tendsto_zero
       explicit_formula_von_mangoldt_im_error_tendsto_zero h⟩,
     fun h => explicit_formula_von_mangoldt_of_re_im_error_tendsto_zero h.1 h.2⟩
 
+lemma explicit_formula_von_mangoldt_re_error_isLittleO_one
+    {x : ℝ} {hx : x ≥ 2}
+    (h : explicit_formula_von_mangoldt x hx) :
+    (fun T : ℝ => (explicitFormulaApprox x T).re - chebyshevPsi0 x)
+        =o[atTop] (fun _T : ℝ => (1 : ℝ)) :=
+  (isLittleO_one_iff ℝ).mpr
+    (explicit_formula_von_mangoldt_re_error_tendsto_zero h)
+
+lemma explicit_formula_von_mangoldt_im_error_isLittleO_one
+    {x : ℝ} {hx : x ≥ 2}
+    (h : explicit_formula_von_mangoldt x hx) :
+    (fun T : ℝ => (explicitFormulaApprox x T).im)
+        =o[atTop] (fun _T : ℝ => (1 : ℝ)) :=
+  (isLittleO_one_iff ℝ).mpr
+    (explicit_formula_von_mangoldt_im_error_tendsto_zero h)
+
+lemma explicit_formula_von_mangoldt_of_re_im_error_isLittleO_one
+    {x : ℝ} {hx : x ≥ 2}
+    (hre :
+      (fun T : ℝ => (explicitFormulaApprox x T).re - chebyshevPsi0 x)
+        =o[atTop] (fun _T : ℝ => (1 : ℝ)))
+    (him : (fun T : ℝ => (explicitFormulaApprox x T).im)
+        =o[atTop] (fun _T : ℝ => (1 : ℝ))) :
+    explicit_formula_von_mangoldt x hx :=
+  explicit_formula_von_mangoldt_of_re_im_error_tendsto_zero
+    ((isLittleO_one_iff ℝ).mp hre)
+    ((isLittleO_one_iff ℝ).mp him)
+
+lemma explicit_formula_von_mangoldt_iff_re_im_error_isLittleO_one
+    {x : ℝ} {hx : x ≥ 2} :
+    explicit_formula_von_mangoldt x hx ↔
+      (fun T : ℝ => (explicitFormulaApprox x T).re - chebyshevPsi0 x)
+        =o[atTop] (fun _T : ℝ => (1 : ℝ)) ∧
+      (fun T : ℝ => (explicitFormulaApprox x T).im)
+        =o[atTop] (fun _T : ℝ => (1 : ℝ)) :=
+  ⟨fun h => ⟨explicit_formula_von_mangoldt_re_error_isLittleO_one h,
+      explicit_formula_von_mangoldt_im_error_isLittleO_one h⟩,
+    fun h => explicit_formula_von_mangoldt_of_re_im_error_isLittleO_one h.1 h.2⟩
+
 /-- 零点对素数分布的贡献
 
 每个零点 ρ = β + iγ 贡献振荡项 x^ρ/ρ = x^β e^{iγ log x} / ρ
