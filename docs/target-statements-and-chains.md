@@ -171,6 +171,7 @@ For the chain accounting:
 - `HardyTheorem.hardy_theorem_target_iff_abs_unbounded_of_bounded_strips`
 - `HardyTheorem.hardy_zeros_unbounded_iff_abs_unbounded_of_neg_symm`
 - `HardyTheorem.hardy_zeros_unbounded_iff_abs_unbounded`
+- `HardyTheorem.hardy_theorem_target_iff_unbounded_of_bounded_strips`
 - `HardyTheorem.exists_zero_on_critical_line_of_unbounded`
 - `HardyTheorem.exists_zero_on_critical_line_of_abs_unbounded`
 - `HardyTheorem.hardy_zeros_abs_unbounded_of_two_signed_moments_of_bounded_strips`

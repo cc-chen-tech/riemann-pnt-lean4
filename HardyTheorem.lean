@@ -1109,6 +1109,13 @@ lemma hardy_zeros_unbounded_iff_abs_unbounded :
   hardy_zeros_unbounded_iff_abs_unbounded_of_neg_symm
     critical_line_zeta_zero_neg_height
 
+lemma hardy_theorem_target_iff_unbounded_of_bounded_strips
+    (hstrip : ∀ B : ℝ,
+      {t : ℝ | |t| ≤ B ∧ riemannZeta (0.5 + I * t) = 0}.Finite) :
+    hardy_theorem_target ↔ hardy_zeros_unbounded_target :=
+  Iff.trans (hardy_theorem_target_iff_abs_unbounded_of_bounded_strips hstrip)
+    hardy_zeros_unbounded_iff_abs_unbounded.symm
+
 lemma hardy_zeros_unbounded_of_two_signed_moments_of_bounded_strips
     (hstrip : ∀ B : ℝ,
       {t : ℝ | |t| ≤ B ∧ riemannZeta (0.5 + I * t) = 0}.Finite)
