@@ -109,6 +109,8 @@ Supporting declarations include:
 - `infinitely_many_zeros_on_critical_line_of_two_signed_moments`
 - `infinitely_many_zeros_on_critical_line_of_integral_asymptotic_one_two`
 - `infinitely_many_zeros_on_critical_line_of_hardy_littlewood_lower_bound`
+- `exists_zero_on_critical_line_of_two_signed_moments`
+- `exists_zero_on_critical_line_of_integral_asymptotic_one_two`
 - `exists_zero_on_critical_line_of_hardy_littlewood_lower_bound`
 - `exists_zero_on_critical_line_of_selberg_zero_proportion`
 - `exists_zero_on_critical_line_of_conrey_40_percent_target`
@@ -129,6 +131,9 @@ Core verified declarations:
 - `hardy_two_signed_moments_target_iff_integral_asymptotic_one_two`
 - `hardy_theorem_target_of_two_signed_moments`
 - `hardy_theorem_target_of_integral_asymptotic_one_two`
+- `exists_zero_on_critical_line_of_hardy_theorem_target`
+- `exists_zero_on_critical_line_of_two_signed_moments`
+- `exists_zero_on_critical_line_of_integral_asymptotic_one_two`
 - `hardy_theorem_target_iff_abs_unbounded_of_bounded_strips`
 - `hardy_zeros_abs_unbounded_of_two_signed_moments_of_bounded_strips`
 - `hardy_zeros_unbounded_of_two_signed_moments_of_bounded_strips`
@@ -186,6 +191,8 @@ This file provides project-level definitions and wrappers:
 - `KnownResults.zeta_no_zeros_on_one_line`
 - `KnownResults.zeta_no_zeros_on_zero_line`
 - `KnownResults.infinitely_many_zeros_on_critical_line_of_hardy_littlewood_lower_bound`
+- `KnownResults.exists_zero_on_critical_line_of_two_signed_moments`
+- `KnownResults.exists_zero_on_critical_line_of_integral_asymptotic_one_two`
 - `KnownResults.exists_zero_on_critical_line_of_hardy_littlewood_lower_bound`
 - `KnownResults.exists_zero_on_critical_line_of_selberg_zero_proportion`
 

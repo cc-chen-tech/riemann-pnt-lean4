@@ -1661,6 +1661,17 @@ theorem exists_zero_on_critical_line_of_hardy_littlewood_lower_bound
     ∃ t : ℝ, riemannZeta (0.5 + I * t) = 0 :=
   HardyTheorem.exists_zero_on_critical_line_of_hardy_littlewood_lower_bound h
 
+theorem exists_zero_on_critical_line_of_two_signed_moments
+    (hmom : HardyTheorem.hardy_two_signed_moments_target) :
+    ∃ t : ℝ, riemannZeta (0.5 + I * t) = 0 :=
+  HardyTheorem.exists_zero_on_critical_line_of_two_signed_moments hmom
+
+theorem exists_zero_on_critical_line_of_integral_asymptotic_one_two
+    (h1 : HardyTheorem.integral_asymptotic_target 1)
+    (h2 : HardyTheorem.integral_asymptotic_target 2) :
+    ∃ t : ℝ, riemannZeta (0.5 + I * t) = 0 :=
+  HardyTheorem.exists_zero_on_critical_line_of_integral_asymptotic_one_two h1 h2
+
 theorem exists_zero_on_critical_line_of_selberg_zero_proportion
     (h : HardyTheorem.selberg_zero_proportion_target) :
     ∃ t : ℝ, riemannZeta (0.5 + I * t) = 0 :=

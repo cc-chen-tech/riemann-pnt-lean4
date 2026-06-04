@@ -893,6 +893,18 @@ estimates needed for the final contradiction. -/
 def hardy_theorem_target : Prop :=
     {t : ℝ | riemannZeta (0.5 + I * t) = 0}.Infinite
 
+lemma exists_zero_on_critical_line_of_hardy_theorem_target
+    (h : hardy_theorem_target) :
+    ∃ t : ℝ, riemannZeta (0.5 + I * t) = 0 := by
+  by_contra hnone
+  push Not at hnone
+  have hfinite : {t : ℝ | riemannZeta (0.5 + I * t) = 0}.Finite := by
+    have hempty : {t : ℝ | riemannZeta (0.5 + I * t) = 0} = ∅ := by
+      ext t
+      simp [hnone t]
+    simp [hempty]
+  exact h hfinite
+
 /-- Conditional Hardy theorem from the two signed moment asymptotics alone.
 
 If there were only finitely many critical-line zeros, the continuous Hardy
@@ -919,6 +931,19 @@ lemma hardy_theorem_target_of_integral_asymptotic_one_two
     hardy_theorem_target :=
   hardy_theorem_target_of_two_signed_moments
     (hardy_two_signed_moments_of_integral_asymptotic_one_two h1 h2)
+
+lemma exists_zero_on_critical_line_of_two_signed_moments
+    (hmom : hardy_two_signed_moments_target) :
+    ∃ t : ℝ, riemannZeta (0.5 + I * t) = 0 :=
+  exists_zero_on_critical_line_of_hardy_theorem_target
+    (hardy_theorem_target_of_two_signed_moments hmom)
+
+lemma exists_zero_on_critical_line_of_integral_asymptotic_one_two
+    (h1 : integral_asymptotic_target 1)
+    (h2 : integral_asymptotic_target 2) :
+    ∃ t : ℝ, riemannZeta (0.5 + I * t) = 0 :=
+  exists_zero_on_critical_line_of_hardy_theorem_target
+    (hardy_theorem_target_of_integral_asymptotic_one_two h1 h2)
 
 /-- Conditional Hardy theorem from the exact analytic inputs used in the
 classical sign-change argument.

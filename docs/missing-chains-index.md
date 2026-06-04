@@ -110,6 +110,9 @@ The following proved declarations are the main entry points for future work:
 - `HardyTheorem.hardy_two_signed_moments_target_iff_integral_asymptotic_one_two`
 - `HardyTheorem.hardy_theorem_target_of_two_signed_moments`
 - `HardyTheorem.hardy_theorem_target_of_integral_asymptotic_one_two`
+- `HardyTheorem.exists_zero_on_critical_line_of_hardy_theorem_target`
+- `HardyTheorem.exists_zero_on_critical_line_of_two_signed_moments`
+- `HardyTheorem.exists_zero_on_critical_line_of_integral_asymptotic_one_two`
 - `HardyTheorem.hardy_theorem_target_iff_abs_unbounded_of_bounded_strips`
 - `HardyTheorem.hardy_zeros_unbounded_iff_abs_unbounded_of_neg_symm`
 - `HardyTheorem.hardy_zeros_unbounded_iff_abs_unbounded`
@@ -130,6 +133,8 @@ The following proved declarations are the main entry points for future work:
 - `PrimeNumberTheorem.infinitely_many_zeros_on_critical_line_of_two_signed_moments`
 - `PrimeNumberTheorem.infinitely_many_zeros_on_critical_line_of_integral_asymptotic_one_two`
 - `PrimeNumberTheorem.infinitely_many_zeros_on_critical_line_of_hardy_littlewood_lower_bound`
+- `PrimeNumberTheorem.exists_zero_on_critical_line_of_two_signed_moments`
+- `PrimeNumberTheorem.exists_zero_on_critical_line_of_integral_asymptotic_one_two`
 - `PrimeNumberTheorem.exists_zero_on_critical_line_of_hardy_littlewood_lower_bound`
 - `PrimeNumberTheorem.exists_zero_on_critical_line_of_selberg_zero_proportion`
 - `PrimeNumberTheorem.exists_zero_on_critical_line_of_conrey_40_percent_target`
