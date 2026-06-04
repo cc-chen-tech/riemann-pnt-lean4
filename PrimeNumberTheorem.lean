@@ -1186,6 +1186,118 @@ lemma RH_PrimeCountingLiErrorBound_iff_RH_ErrorBound :
     RH_PrimeCountingLiErrorBound ↔ RH_ErrorBound :=
   RH_ErrorBound_iff_RH_PrimeCountingLiErrorBound.symm
 
+lemma log_sq_div_sqrt_tendsto_zero :
+    Tendsto (fun x : ℝ => (Real.log x)^2 / Real.sqrt x) atTop (𝓝 0) := by
+  have hq :
+      Tendsto (fun x : ℝ => Real.log x / x ^ (1 / 4 : ℝ)) atTop (𝓝 0) :=
+    (isLittleO_log_rpow_atTop (by norm_num : (0 : ℝ) < 1 / 4)).tendsto_div_nhds_zero
+  have hsq := hq.mul hq
+  have heq :
+      (fun x : ℝ => (Real.log x / x ^ (1 / 4 : ℝ)) *
+          (Real.log x / x ^ (1 / 4 : ℝ)))
+        =ᶠ[atTop] fun x : ℝ => (Real.log x)^2 / Real.sqrt x := by
+    filter_upwards [eventually_gt_atTop (0 : ℝ)] with x hx
+    have hxnonneg : 0 ≤ x := le_of_lt hx
+    have hxpow_ne : x ^ (1 / 4 : ℝ) ≠ 0 :=
+      (Real.rpow_ne_zero hxnonneg (by norm_num : (1 / 4 : ℝ) ≠ 0)).2 hx.ne'
+    have hsqrt_eq : Real.sqrt x = x ^ (1 / 2 : ℝ) := Real.sqrt_eq_rpow x
+    calc
+      (Real.log x / x ^ (1 / 4 : ℝ)) *
+          (Real.log x / x ^ (1 / 4 : ℝ))
+          = (Real.log x)^2 / (x ^ (1 / 4 : ℝ) * x ^ (1 / 4 : ℝ)) := by
+            field_simp [hxpow_ne]
+      _ = (Real.log x)^2 / x ^ (1 / 2 : ℝ) := by
+            rw [← Real.rpow_add hx]
+            norm_num
+      _ = (Real.log x)^2 / Real.sqrt x := by
+            rw [hsqrt_eq]
+  simpa using hsq.congr' heq
+
+lemma sqrt_mul_log_isLittleO_logIntegral :
+    (fun x : ℝ => Real.sqrt x * Real.log x)
+      =o[atTop] (fun x : ℝ => logIntegral x) := by
+  have hnum :
+      Tendsto (fun x : ℝ => Real.sqrt x * (Real.log x)^2 / x) atTop (𝓝 0) := by
+    have heq :
+        (fun x : ℝ => Real.sqrt x * (Real.log x)^2 / x)
+          =ᶠ[atTop] fun x : ℝ => (Real.log x)^2 / Real.sqrt x := by
+      filter_upwards [eventually_gt_atTop (0 : ℝ)] with x hx
+      have hsqrt_pos : Real.sqrt x ≠ 0 := by
+        exact ne_of_gt (Real.sqrt_pos.2 hx)
+      have hx_eq : (Real.sqrt x)^2 = x :=
+        Real.sq_sqrt (le_of_lt hx)
+      calc
+        Real.sqrt x * (Real.log x)^2 / x
+            = Real.sqrt x * (Real.log x)^2 / (Real.sqrt x)^2 := by
+                rw [hx_eq]
+        _ = (Real.log x)^2 / Real.sqrt x := by
+                field_simp [hsqrt_pos]
+    exact log_sq_div_sqrt_tendsto_zero.congr' heq.symm
+  have hden : Tendsto (fun x : ℝ => logIntegral x * Real.log x / x) atTop (𝓝 1) :=
+    logIntegral_asymptotic
+  have hratio :
+      Tendsto
+        (fun x : ℝ =>
+          (Real.sqrt x * (Real.log x)^2 / x) /
+            (logIntegral x * Real.log x / x))
+        atTop (𝓝 0) := by
+    simpa using hnum.div hden (by norm_num : (1 : ℝ) ≠ 0)
+  have heq :
+      (fun x : ℝ =>
+          (Real.sqrt x * (Real.log x)^2 / x) /
+            (logIntegral x * Real.log x / x))
+        =ᶠ[atTop] fun x : ℝ => (Real.sqrt x * Real.log x) / logIntegral x := by
+    filter_upwards [eventually_ge_atTop (3 : ℝ)] with x hx
+    have hxpos : x ≠ 0 := by linarith
+    have hlog_pos : Real.log x ≠ 0 := ne_of_gt (Real.log_pos (by linarith))
+    have hli_pos : logIntegral x ≠ 0 := ne_of_gt (logIntegral_pos (by linarith))
+    field_simp [hxpos, hlog_pos, hli_pos]
+  refine (isLittleO_iff_tendsto' ?_).2 (hratio.congr' heq)
+  filter_upwards [eventually_ge_atTop (3 : ℝ)] with x hx hzero
+  have hli_ne : logIntegral x ≠ 0 := ne_of_gt (logIntegral_pos (by linarith))
+  exact (hli_ne hzero).elim
+
+lemma RH_PrimeCountingLiErrorBound.isLittleO_logIntegral
+    (h : RH_PrimeCountingLiErrorBound) :
+    (fun x : ℝ => (primeCounting x : ℝ) - logIntegral x)
+      =o[atTop] (fun x : ℝ => logIntegral x) := by
+  rw [RH_PrimeCountingLiErrorBound] at h
+  exact h.trans_isLittleO sqrt_mul_log_isLittleO_logIntegral
+
+lemma PNTForm2_of_RH_PrimeCountingLiErrorBound
+    (h : RH_PrimeCountingLiErrorBound) : PNTForm2 := by
+  have hsmall := h.isLittleO_logIntegral
+  have hratio := hsmall.tendsto_div_nhds_zero
+  have hsum :
+      Tendsto
+        (fun x : ℝ =>
+          1 + ((primeCounting x : ℝ) - logIntegral x) / logIntegral x)
+        atTop (𝓝 1) := by
+    simpa using (tendsto_const_nhds.add hratio :
+      Tendsto
+        (fun x : ℝ =>
+          (1 : ℝ) + ((primeCounting x : ℝ) - logIntegral x) / logIntegral x)
+        atTop (𝓝 ((1 : ℝ) + 0)))
+  have heq :
+      (fun x : ℝ =>
+          1 + ((primeCounting x : ℝ) - logIntegral x) / logIntegral x)
+        =ᶠ[atTop] fun x : ℝ => (primeCounting x : ℝ) / logIntegral x := by
+    filter_upwards [eventually_ge_atTop (3 : ℝ)] with x hx
+    have hli_ne : logIntegral x ≠ 0 := ne_of_gt (logIntegral_pos (by linarith))
+    field_simp [hli_ne]
+    ring
+  exact hsum.congr' heq
+
+lemma PNTForm1_of_RH_PrimeCountingLiErrorBound
+    (h : RH_PrimeCountingLiErrorBound) : PNTForm1 :=
+  PNTForm1_of_PNTForm2 (PNTForm2_of_RH_PrimeCountingLiErrorBound h)
+
+lemma PNTForm2_of_RH_ErrorBound (h : RH_ErrorBound) : PNTForm2 :=
+  PNTForm2_of_RH_PrimeCountingLiErrorBound
+    (RH_PrimeCountingLiErrorBound_of_RH_ErrorBound h)
+
+lemma PNTForm1_of_RH_ErrorBound (h : RH_ErrorBound) : PNTForm1 :=
+  PNTForm1_of_PNTForm2 (PNTForm2_of_RH_ErrorBound h)
 /-- Target statement: RH iff the RH-scale prime-counting error bound.
 
 This is a standard deep equivalence, but the current project does not provide
