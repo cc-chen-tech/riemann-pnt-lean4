@@ -527,6 +527,9 @@ theorem hardyZ_continuous : Continuous hardyZ := by
 noncomputable def weightFunction (n : ℕ) (t : ℝ) : ℝ :=
   t ^ (2 * n)
 
+lemma weightFunction_nonneg (n : ℕ) (t : ℝ) : 0 ≤ weightFunction n t := by
+  simpa [weightFunction] using (even_two_mul n).pow_nonneg t
+
 noncomputable def weightedIntegralOf (f : ℝ → ℝ) (n : ℕ) (T : ℝ) : ℝ :=
   ∫ t in (0)..T, weightFunction n t * f t
 
