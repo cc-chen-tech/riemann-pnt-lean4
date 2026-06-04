@@ -234,6 +234,16 @@ theorem infinitely_many_zeros_on_critical_line_of_conrey_target
   infinitely_many_zeros_on_critical_line
     (hardy_theorem_target_of_conrey_target h)
 
+theorem exists_zero_on_critical_line_of_hardy_littlewood_lower_bound
+    (h : HardyTheorem.hardy_littlewood_lower_bound_target) :
+    ∃ t : ℝ, riemannZeta (0.5 + I * t) = 0 :=
+  HardyTheorem.exists_zero_on_critical_line_of_hardy_littlewood_lower_bound h
+
+theorem exists_zero_on_critical_line_of_selberg_zero_proportion
+    (h : HardyTheorem.selberg_zero_proportion_target) :
+    ∃ t : ℝ, riemannZeta (0.5 + I * t) = 0 :=
+  HardyTheorem.exists_zero_on_critical_line_of_selberg_zero_proportion h
+
 theorem exists_zero_on_critical_line_of_conrey_target
     (h : conrey_40_percent_zeros_on_critical_line_target) :
     ∃ t : ℝ, riemannZeta (0.5 + I * t) = 0 :=

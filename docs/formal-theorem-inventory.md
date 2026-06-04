@@ -105,6 +105,9 @@ Supporting declarations include:
 - `infinitely_many_zeros_on_critical_line_of_two_signed_moments`
 - `infinitely_many_zeros_on_critical_line_of_integral_asymptotic_one_two`
 - `infinitely_many_zeros_on_critical_line_of_hardy_littlewood_lower_bound`
+- `exists_zero_on_critical_line_of_hardy_littlewood_lower_bound`
+- `exists_zero_on_critical_line_of_selberg_zero_proportion`
+- `exists_zero_on_critical_line_of_conrey_40_percent_target`
 
 ### `HardyTheorem.lean`
 
@@ -179,6 +182,8 @@ This file provides project-level definitions and wrappers:
 - `KnownResults.zeta_no_zeros_on_one_line`
 - `KnownResults.zeta_no_zeros_on_zero_line`
 - `KnownResults.infinitely_many_zeros_on_critical_line_of_hardy_littlewood_lower_bound`
+- `KnownResults.exists_zero_on_critical_line_of_hardy_littlewood_lower_bound`
+- `KnownResults.exists_zero_on_critical_line_of_selberg_zero_proportion`
 
 It also records exploratory strategy strings.  Those strings are explanatory
 metadata, not proof results.
