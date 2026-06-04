@@ -2021,6 +2021,34 @@ lemma mem_nontrivialZerosFinset {ρ : ℂ} {T : ℝ} :
   unfold nontrivialZerosFinset
   exact Set.Finite.mem_toFinset (finite_nontrivial_zeros_bounded_height T)
 
+lemma nontrivialZerosFinset_eq_empty_iff {T : ℝ} :
+    nontrivialZerosFinset T = ∅ ↔
+      ¬ ∃ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ ∧ |ρ.im| ≤ T := by
+  constructor
+  · intro hempty hzero
+    rcases hzero with ⟨ρ, hρ⟩
+    have hmem : ρ ∈ nontrivialZerosFinset T :=
+      mem_nontrivialZerosFinset.mpr hρ
+    rw [hempty] at hmem
+    simp at hmem
+  · intro hnone
+    ext ρ
+    constructor
+    · intro hρ
+      exact (hnone ⟨ρ, mem_nontrivialZerosFinset.mp hρ⟩).elim
+    · simp
+
+lemma nontrivialZerosFinset_nonempty_iff {T : ℝ} :
+    (nontrivialZerosFinset T).Nonempty ↔
+      ∃ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ ∧ |ρ.im| ≤ T := by
+  constructor
+  · intro hne
+    rcases hne with ⟨ρ, hρ⟩
+    exact ⟨ρ, mem_nontrivialZerosFinset.mp hρ⟩
+  · intro hzero
+    rcases hzero with ⟨ρ, hρ⟩
+    exact ⟨ρ, mem_nontrivialZerosFinset.mpr hρ⟩
+
 lemma nontrivial_zero_mem_nontrivialZerosFinset {ρ : ℂ} {T : ℝ}
     (hρ : RiemannHypothesis.IsNontrivialZero ρ) (hT : |ρ.im| ≤ T) :
     ρ ∈ nontrivialZerosFinset T :=
@@ -2063,6 +2091,11 @@ lemma finiteNontrivialZeroSum_eq_zero_of_neg (x : ℝ) {T : ℝ} (hT : T < 0) :
     finiteNontrivialZeroSum x T = 0 := by
   simp [finiteNontrivialZeroSum, nontrivialZerosFinset_eq_empty_of_neg hT]
 
+lemma finiteNontrivialZeroSum_eq_zero_of_nontrivialZerosFinset_eq_empty
+    (x : ℝ) {T : ℝ} (hT : nontrivialZerosFinset T = ∅) :
+    finiteNontrivialZeroSum x T = 0 := by
+  simp [finiteNontrivialZeroSum, hT]
+
 lemma one_sub_mem_nontrivialZerosFinset {ρ : ℂ} {T : ℝ}
     (hρ : ρ ∈ nontrivialZerosFinset T) :
     1 - ρ ∈ nontrivialZerosFinset T := by
@@ -2103,6 +2136,28 @@ lemma finiteNontrivialZeroSum_congr_height {x T U : ℝ}
     finiteNontrivialZeroSum x T = finiteNontrivialZeroSum x U := by
   simp [finiteNontrivialZeroSum, nontrivialZerosFinset_ext_of_height_iff h]
 
+lemma finiteNontrivialZeroSum_eq_add_new_zeros {x T U : ℝ} (hTU : T ≤ U) :
+    finiteNontrivialZeroSum x U =
+      finiteNontrivialZeroSum x T +
+        ∑ ρ ∈ (nontrivialZerosFinset U \ nontrivialZerosFinset T),
+          (x : ℂ) ^ ρ / ρ := by
+  classical
+  have hsubset : nontrivialZerosFinset T ⊆ nontrivialZerosFinset U := by
+    intro ρ hρ
+    exact nontrivialZerosFinset_mono hTU hρ
+  rw [finiteNontrivialZeroSum, finiteNontrivialZeroSum]
+  have hsum :
+      (∑ ρ ∈ (nontrivialZerosFinset U \ nontrivialZerosFinset T),
+          (x : ℂ) ^ ρ / ρ)
+        + (∑ ρ ∈ nontrivialZerosFinset T, (x : ℂ) ^ ρ / ρ)
+        =
+      ∑ ρ ∈ nontrivialZerosFinset U, (x : ℂ) ^ ρ / ρ :=
+    Finset.sum_sdiff (s₁ := nontrivialZerosFinset T)
+      (s₂ := nontrivialZerosFinset U)
+      (f := fun ρ : ℂ => (x : ℂ) ^ ρ / ρ) hsubset
+  rw [← hsum]
+  abel
+
 /-- The height-truncated right-hand side appearing in the explicit formula
 target, factored out so later contour arguments can rewrite it directly. -/
 noncomputable def explicitFormulaApprox (x T : ℝ) : ℂ :=
@@ -2126,6 +2181,12 @@ lemma explicitFormulaApprox_congr_height {x T U : ℝ}
       (|ρ.im| ≤ T ↔ |ρ.im| ≤ U)) :
     explicitFormulaApprox x T = explicitFormulaApprox x U :=
   explicitFormulaApprox_congr_zero_sum (finiteNontrivialZeroSum_congr_height h)
+
+lemma explicitFormulaApprox_sub_explicitFormulaApprox
+    (x T U : ℝ) :
+    explicitFormulaApprox x T - explicitFormulaApprox x U =
+      finiteNontrivialZeroSum x U - finiteNontrivialZeroSum x T := by
+  simp [explicitFormulaApprox]
 
 lemma explicitFormulaApprox_eq_of_neg (x : ℝ) {T : ℝ} (hT : T < 0) :
     explicitFormulaApprox x T =
