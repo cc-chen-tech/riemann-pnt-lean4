@@ -71,6 +71,7 @@ For the chain accounting:
 - `PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_error_tendsto_zero`
 - `PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_error_isLittleO_one`
 - `PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_re_im_tendsto`
+- `PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_re_im_error_tendsto_zero`
 
 ### Missing mathlib/analytic infrastructure
 
@@ -113,7 +114,11 @@ For the chain accounting:
 - `PrimeNumberTheorem.RH_ErrorBound_of_RH_PrimeCountingLiErrorBound_of_finite_intervals`
 - `PrimeNumberTheorem.RH_ErrorBound_of_RH_PrimeCountingLiErrorBound`
 - `PrimeNumberTheorem.RH_ErrorBound_iff_RH_PrimeCountingLiErrorBound`
+- `PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_iff_RH_ErrorBound`
 - `PrimeNumberTheorem.rh_iff_pointwise_error_iff`
+- `PrimeNumberTheorem.rh_iff_optimal_error_of_pointwise_implications`
+- `PrimeNumberTheorem.RH_ErrorBound_of_rh_iff_optimal_error`
+- `PrimeNumberTheorem.RiemannHypothesis_of_rh_iff_pointwise_error`
 - `PrimeNumberTheorem.primeCounting_logIntegral_finite_interval_bound`
 
 ### Missing mathlib/analytic infrastructure

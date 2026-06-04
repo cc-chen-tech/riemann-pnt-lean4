@@ -93,6 +93,11 @@ Supporting declarations include:
 - `logIntegral_nonneg`
 - `logIntegral_pos`
 - `riemannZeta_not_frequently_zero_nhdsNE_of_ne_one`
+- `RH_PrimeCountingLiErrorBound_iff_RH_ErrorBound`
+- `rh_iff_optimal_error_of_pointwise_implications`
+- `RH_ErrorBound_of_rh_iff_optimal_error`
+- `RiemannHypothesis_of_rh_iff_pointwise_error`
+- `explicit_formula_von_mangoldt_iff_re_im_error_tendsto_zero`
 - `hardy_zeros_abs_unbounded_of_two_signed_moments`
 - `hardy_zeros_unbounded_of_two_signed_moments`
 - `hardy_zeros_abs_unbounded_of_integral_asymptotic_one_two`

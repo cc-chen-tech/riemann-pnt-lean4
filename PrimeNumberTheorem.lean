@@ -1173,6 +1173,10 @@ lemma RH_ErrorBound_iff_RH_PrimeCountingLiErrorBound :
   ⟨RH_PrimeCountingLiErrorBound_of_RH_ErrorBound,
     RH_ErrorBound_of_RH_PrimeCountingLiErrorBound⟩
 
+lemma RH_PrimeCountingLiErrorBound_iff_RH_ErrorBound :
+    RH_PrimeCountingLiErrorBound ↔ RH_ErrorBound :=
+  RH_ErrorBound_iff_RH_PrimeCountingLiErrorBound.symm
+
 /-- Target statement: RH iff the RH-scale prime-counting error bound.
 
 This is a standard deep equivalence, but the current project does not provide
@@ -1204,6 +1208,15 @@ lemma rh_iff_pointwise_error_iff :
     · intro herror
       exact h.mpr (RH_ErrorBound_of_RH_PrimeCountingLiErrorBound herror)
 
+/-- Pointwise version of the RH/error equivalence target from two supplied
+implications.  This is just the already-proved pointwise/Big-O bridge wrapped
+around the target interface. -/
+lemma rh_iff_optimal_error_of_pointwise_implications
+    (h_forward : RiemannHypothesis.Statement → RH_ErrorBound)
+    (h_reverse : RH_ErrorBound → RiemannHypothesis.Statement) :
+    rh_iff_optimal_error :=
+  (rh_iff_pointwise_error_iff).mpr ⟨h_forward, h_reverse⟩
+
 /-- Packaging lemma for the RH/error equivalence target.
 
 The hard work remains the two implications supplied as hypotheses; this lemma
@@ -1223,6 +1236,18 @@ lemma RiemannHypothesis_of_rh_iff_optimal_error
     (h : rh_iff_optimal_error) :
     RH_PrimeCountingLiErrorBound → RiemannHypothesis.Statement :=
   h.mpr
+
+lemma RH_ErrorBound_of_rh_iff_optimal_error
+    (h : rh_iff_optimal_error) :
+    RiemannHypothesis.Statement → RH_ErrorBound := by
+  intro hRH
+  exact RH_ErrorBound_of_RH_PrimeCountingLiErrorBound (h.mp hRH)
+
+lemma RiemannHypothesis_of_rh_iff_pointwise_error
+    (h : rh_iff_optimal_error) :
+    RH_ErrorBound → RiemannHypothesis.Statement := by
+  intro herror
+  exact h.mpr (RH_PrimeCountingLiErrorBound_of_RH_ErrorBound herror)
 
 /-! ## 零点对称性 -/
 
@@ -1922,6 +1947,29 @@ lemma explicit_formula_von_mangoldt_of_re_im_tendsto
   simpa [explicit_formula_von_mangoldt] using
     hsum.congr' (Filter.EventuallyEq.of_eq h_eq)
 
+lemma explicit_formula_von_mangoldt_of_re_im_error_tendsto_zero
+    {x : ℝ} {hx : x ≥ 2}
+    (hre : Tendsto
+      (fun T : ℝ => (explicitFormulaApprox x T).re - chebyshevPsi0 x)
+      atTop (𝓝 0))
+    (him : Tendsto (fun T : ℝ => (explicitFormulaApprox x T).im)
+      atTop (𝓝 0)) :
+    explicit_formula_von_mangoldt x hx := by
+  have hconst :
+      Tendsto (fun _T : ℝ => chebyshevPsi0 x) atTop
+        (𝓝 (chebyshevPsi0 x)) :=
+    tendsto_const_nhds
+  have hsum := hre.add hconst
+  have h_eq :
+      (fun T : ℝ =>
+          (explicitFormulaApprox x T).re - chebyshevPsi0 x +
+            chebyshevPsi0 x)
+        = fun T : ℝ => (explicitFormulaApprox x T).re := by
+    funext T
+    ring
+  exact explicit_formula_von_mangoldt_of_re_im_tendsto
+    (by simpa using hsum.congr' (Filter.EventuallyEq.of_eq h_eq)) him
+
 lemma explicit_formula_von_mangoldt_iff_re_im_tendsto
     {x : ℝ} {hx : x ≥ 2} :
     explicit_formula_von_mangoldt x hx ↔
@@ -1931,6 +1979,17 @@ lemma explicit_formula_von_mangoldt_iff_re_im_tendsto
   ⟨fun h => ⟨explicit_formula_von_mangoldt_re_tendsto h,
       explicit_formula_von_mangoldt_im_tendsto_zero h⟩,
     fun h => explicit_formula_von_mangoldt_of_re_im_tendsto h.1 h.2⟩
+
+lemma explicit_formula_von_mangoldt_iff_re_im_error_tendsto_zero
+    {x : ℝ} {hx : x ≥ 2} :
+    explicit_formula_von_mangoldt x hx ↔
+      Tendsto
+        (fun T : ℝ => (explicitFormulaApprox x T).re - chebyshevPsi0 x)
+        atTop (𝓝 0) ∧
+      Tendsto (fun T : ℝ => (explicitFormulaApprox x T).im) atTop (𝓝 0) :=
+  ⟨fun h => ⟨explicit_formula_von_mangoldt_re_error_tendsto_zero h,
+      explicit_formula_von_mangoldt_im_error_tendsto_zero h⟩,
+    fun h => explicit_formula_von_mangoldt_of_re_im_error_tendsto_zero h.1 h.2⟩
 
 /-- 零点对素数分布的贡献
 
