@@ -138,6 +138,8 @@ Core verified declarations:
 - `exists_zero_on_critical_line_of_integral_asymptotic_one_two`
 - `hardy_theorem_target_iff_abs_unbounded_of_bounded_strips`
 - `hardy_zeros_abs_unbounded_of_two_signed_moments_of_bounded_strips`
+- `exists_zero_on_critical_line_of_unbounded`
+- `exists_zero_on_critical_line_of_abs_unbounded`
 - `hardy_zeros_unbounded_of_two_signed_moments_of_bounded_strips`
 - `hardy_zeros_abs_unbounded_of_integral_asymptotic_one_two_of_bounded_strips`
 - `hardy_zeros_unbounded_of_integral_asymptotic_one_two_of_bounded_strips`

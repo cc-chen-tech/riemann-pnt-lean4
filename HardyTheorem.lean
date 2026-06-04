@@ -1009,6 +1009,18 @@ lemma hardy_theorem_target_of_abs_unbounded
     simpa [Metric.closedBall, dist_eq_norm] using htmem
   linarith
 
+lemma exists_zero_on_critical_line_of_unbounded
+    (h : hardy_zeros_unbounded_target) :
+    ∃ t : ℝ, riemannZeta (0.5 + I * t) = 0 :=
+  exists_zero_on_critical_line_of_hardy_theorem_target
+    (hardy_theorem_target_of_unbounded h)
+
+lemma exists_zero_on_critical_line_of_abs_unbounded
+    (h : hardy_zeros_abs_unbounded_target) :
+    ∃ t : ℝ, riemannZeta (0.5 + I * t) = 0 :=
+  exists_zero_on_critical_line_of_hardy_theorem_target
+    (hardy_theorem_target_of_abs_unbounded h)
+
 lemma hardy_zeros_abs_unbounded_of_hardy_theorem_target_of_bounded_strips
     (hstrip : ∀ B : ℝ,
       {t : ℝ | |t| ≤ B ∧ riemannZeta (0.5 + I * t) = 0}.Finite)
