@@ -102,6 +102,8 @@ Supporting declarations include:
 - `hardy_zeros_unbounded_of_two_signed_moments`
 - `hardy_zeros_abs_unbounded_of_integral_asymptotic_one_two`
 - `hardy_zeros_unbounded_of_integral_asymptotic_one_two`
+- `infinitely_many_zeros_on_critical_line_of_two_signed_moments`
+- `infinitely_many_zeros_on_critical_line_of_integral_asymptotic_one_two`
 - `infinitely_many_zeros_on_critical_line_of_hardy_littlewood_lower_bound`
 
 ### `HardyTheorem.lean`

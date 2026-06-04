@@ -123,6 +123,8 @@ The following proved declarations are the main entry points for future work:
 - `PrimeNumberTheorem.hardy_zeros_unbounded_of_hardy_littlewood_lower_bound`
 - `PrimeNumberTheorem.hardy_zeros_unbounded_of_selberg_zero_proportion`
 - `PrimeNumberTheorem.hardy_zeros_unbounded_of_conrey_40_percent_target`
+- `PrimeNumberTheorem.infinitely_many_zeros_on_critical_line_of_two_signed_moments`
+- `PrimeNumberTheorem.infinitely_many_zeros_on_critical_line_of_integral_asymptotic_one_two`
 - `PrimeNumberTheorem.infinitely_many_zeros_on_critical_line_of_hardy_littlewood_lower_bound`
 - `HardyTheorem.hardy_zeros_abs_unbounded_of_hardy_littlewood_lower_bound_of_bounded_strips`
 - `HardyTheorem.hardy_zeros_unbounded_of_hardy_littlewood_lower_bound_of_bounded_strips`

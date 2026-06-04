@@ -1622,6 +1622,19 @@ theorem infinitely_many_zeros_on_critical_line_of_selberg_zero_proportion
   KnownResults.infinitely_many_zeros_on_critical_line
     (hardy_theorem_target_of_selberg_zero_proportion h)
 
+theorem infinitely_many_zeros_on_critical_line_of_two_signed_moments
+    (hmom : HardyTheorem.hardy_two_signed_moments_target) :
+    {s : ℂ | s.re = 1 / 2 ∧ riemannZeta s = 0}.Infinite :=
+  KnownResults.infinitely_many_zeros_on_critical_line
+    (HardyTheorem.hardy_theorem_target_of_two_signed_moments hmom)
+
+theorem infinitely_many_zeros_on_critical_line_of_integral_asymptotic_one_two
+    (h1 : HardyTheorem.integral_asymptotic_target 1)
+    (h2 : HardyTheorem.integral_asymptotic_target 2) :
+    {s : ℂ | s.re = 1 / 2 ∧ riemannZeta s = 0}.Infinite :=
+  KnownResults.infinitely_many_zeros_on_critical_line
+    (HardyTheorem.hardy_theorem_target_of_integral_asymptotic_one_two h1 h2)
+
 theorem infinitely_many_zeros_on_critical_line_of_hardy_littlewood_lower_bound
     (h : HardyTheorem.hardy_littlewood_lower_bound_target) :
     {s : ℂ | s.re = 1 / 2 ∧ riemannZeta s = 0}.Infinite :=
