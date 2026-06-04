@@ -1852,6 +1852,40 @@ theorem rh_statement_iff_mathlib :
     _root_.RiemannHypothesis ↔ RiemannHypothesis.Statement :=
   rh_iff_nontrivial_zeros_on_line
 
+theorem RH_PrimeCountingLiErrorBound_of_mathlib_RH_of_rh_iff_optimal_error
+    (h : rh_iff_optimal_error) :
+    _root_.RiemannHypothesis → RH_PrimeCountingLiErrorBound := by
+  intro hRH
+  exact h.mp (rh_statement_iff_mathlib.mp hRH)
+
+theorem RH_ErrorBound_of_mathlib_RH_of_rh_iff_optimal_error
+    (h : rh_iff_optimal_error) :
+    _root_.RiemannHypothesis → RH_ErrorBound := by
+  intro hRH
+  exact RH_ErrorBound_of_RH_PrimeCountingLiErrorBound
+    (RH_PrimeCountingLiErrorBound_of_mathlib_RH_of_rh_iff_optimal_error h hRH)
+
+theorem PNTForm2_of_mathlib_RH_of_rh_iff_optimal_error
+    (h : rh_iff_optimal_error) :
+    _root_.RiemannHypothesis → PNTForm2 := by
+  intro hRH
+  exact PNTForm2_of_RH_PrimeCountingLiErrorBound
+    (RH_PrimeCountingLiErrorBound_of_mathlib_RH_of_rh_iff_optimal_error h hRH)
+
+theorem PNTForm1_of_mathlib_RH_of_rh_iff_optimal_error
+    (h : rh_iff_optimal_error) :
+    _root_.RiemannHypothesis → PNTForm1 := by
+  intro hRH
+  exact PNTForm1_of_RH_PrimeCountingLiErrorBound
+    (RH_PrimeCountingLiErrorBound_of_mathlib_RH_of_rh_iff_optimal_error h hRH)
+
+theorem PNTForm3_of_mathlib_RH_of_rh_iff_optimal_error
+    (h : rh_iff_optimal_error) :
+    _root_.RiemannHypothesis → PNTForm3 := by
+  intro hRH
+  exact PNTForm3_of_RH_PrimeCountingLiErrorBound
+    (RH_PrimeCountingLiErrorBound_of_mathlib_RH_of_rh_iff_optimal_error h hRH)
+
 /-- ζ 在 s=1 处有一阶极点：(s-1)²ζ(s) → 0 -/
 theorem riemannZeta_pole_simple :
     Filter.Tendsto (fun s ↦ (s - 1) ^ 2 * riemannZeta s) (𝓝[≠] 1) (𝓝 0) := by
