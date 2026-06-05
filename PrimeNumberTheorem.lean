@@ -2130,6 +2130,22 @@ lemma one_sub_mem_nontrivialZerosFinset_iff {ρ : ℂ} {T : ℝ} :
     ring
   · exact one_sub_mem_nontrivialZerosFinset
 
+lemma sum_nontrivialZerosFinset_one_sub (T : ℝ) (f : ℂ → ℂ) :
+    (∑ ρ ∈ nontrivialZerosFinset T, f (1 - ρ)) =
+      ∑ ρ ∈ nontrivialZerosFinset T, f ρ := by
+  classical
+  refine Finset.sum_nbij' (fun ρ : ℂ => 1 - ρ) (fun ρ : ℂ => 1 - ρ) ?_ ?_ ?_ ?_ ?_
+  · intro ρ hρ
+    exact one_sub_mem_nontrivialZerosFinset hρ
+  · intro ρ hρ
+    exact one_sub_mem_nontrivialZerosFinset hρ
+  · intro ρ _hρ
+    ring
+  · intro ρ _hρ
+    ring
+  · intro ρ _hρ
+    rfl
+
 lemma nontrivialZerosFinset_ext_of_height_iff {T U : ℝ}
     (h : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ →
       (|ρ.im| ≤ T ↔ |ρ.im| ≤ U)) :
