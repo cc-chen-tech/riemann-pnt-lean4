@@ -850,6 +850,30 @@ lemma psi_sub_theta_isBigO_rh_scale :
   rw [Real.norm_eq_abs, Real.norm_eq_abs, abs_of_nonneg hg_nonneg]
   exact le_trans hmain' hscale
 
+lemma chebyshevTheta_isBigO_id :
+    (fun x : ℝ => Chebyshev.theta x) =O[atTop] (fun x : ℝ => x) := by
+  refine Asymptotics.IsBigO.of_bound (Real.log 4) ?_
+  filter_upwards [eventually_ge_atTop (0 : ℝ)] with x hx
+  have htheta_nonneg : 0 ≤ Chebyshev.theta x := Chebyshev.theta_nonneg x
+  have htheta_le := Chebyshev.theta_le_log4_mul_x hx
+  rw [Real.norm_eq_abs, Real.norm_eq_abs, abs_of_nonneg htheta_nonneg,
+    abs_of_nonneg hx]
+  exact htheta_le
+
+lemma mathlibChebyshevPsi_isBigO_id :
+    (fun x : ℝ => Chebyshev.psi x) =O[atTop] (fun x : ℝ => x) := by
+  refine Asymptotics.IsBigO.of_bound (Real.log 4 + 4) ?_
+  filter_upwards [eventually_ge_atTop (0 : ℝ)] with x hx
+  have hpsi_nonneg : 0 ≤ Chebyshev.psi x := Chebyshev.psi_nonneg x
+  have hpsi_le := Chebyshev.psi_le_const_mul_self hx
+  rw [Real.norm_eq_abs, Real.norm_eq_abs, abs_of_nonneg hpsi_nonneg,
+    abs_of_nonneg hx]
+  exact hpsi_le
+
+lemma chebyshevPsi_isBigO_id :
+    (fun x : ℝ => chebyshevPsi x) =O[atTop] (fun x : ℝ => x) := by
+  simpa [chebyshevPsi_eq_mathlib] using mathlibChebyshevPsi_isBigO_id
+
 /-- RH-scale `ψ` error implies the corresponding `θ` error. -/
 lemma RH_ThetaErrorBound_of_RH_PsiErrorBound
     (hψ : RH_PsiErrorBound) : RH_ThetaErrorBound := by
