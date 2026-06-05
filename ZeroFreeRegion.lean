@@ -588,6 +588,21 @@ def classical_zero_free_region : Prop :=
 lemma log_abs_pos_of_two_le {t : ℝ} (ht : 2 ≤ |t|) : 0 < Real.log |t| :=
   Real.log_pos (lt_of_lt_of_le (by norm_num : (1 : ℝ) < 2) ht)
 
+/-- Above height `3`, `log |t|` is already larger than `1`. -/
+lemma log_abs_gt_one_of_three_le {t : ℝ} (ht : 3 ≤ |t|) :
+    1 < Real.log |t| := by
+  have ht_pos : 0 < |t| := by linarith
+  have hexp_lt_three : Real.exp 1 < (3 : ℝ) := by
+    calc
+      Real.exp 1 < 2.7182818286 := Real.exp_one_lt_d9
+      _ < (3 : ℝ) := by norm_num
+  exact (Real.lt_log_iff_exp_lt ht_pos).mpr (lt_of_lt_of_le hexp_lt_three ht)
+
+/-- Above height `3`, the log-log factor in the Vinogradov-Korobov width is positive. -/
+lemma log_log_abs_pos_of_three_le {t : ℝ} (ht : 3 ≤ |t|) :
+    0 < Real.log (Real.log |t|) :=
+  Real.log_pos (log_abs_gt_one_of_three_le ht)
+
 lemma classical_zero_free_region_on_one_line
     (hclassical : classical_zero_free_region) :
     ∀ s : ℂ, 2 ≤ |s.im| → s.re = 1 → riemannZeta s ≠ 0 := by
@@ -676,6 +691,23 @@ lemma compact_patch_classical_zero_free_region_of_width
       exact (div_le_iff₀ hlog_pos).mpr hc_le_dlog
     linarith
 
+/-- Version of the width patch for high-height inputs stated in real and
+imaginary coordinates.  This is the natural shape of many complex-analysis
+zero-free estimates before they are packaged as statements about arbitrary
+`s : ℂ`. -/
+lemma compact_patch_classical_zero_free_region_of_width_re_im
+    (T0 : ℝ) (hT0 : 2 ≤ T0) (width : ℝ → ℝ)
+    (hregion : ∀ β t : ℝ, T0 ≤ |t| →
+      β ≥ 1 - width |t| → riemannZeta ((β : ℂ) + I * t) ≠ 0)
+    (hwidth : ∃ c > 0, ∀ t : ℝ, T0 ≤ |t| →
+      c / Real.log |t| ≤ width |t|) :
+    classical_zero_free_region := by
+  refine compact_patch_classical_zero_free_region_of_width T0 hT0 width ?_ hwidth
+  intro s hsheight hsre
+  have hs_decomp : ((s.re : ℂ) + I * s.im) = s := by
+    apply Complex.ext <;> simp
+  simpa [hs_decomp] using hregion s.re s.im hsheight hsre
+
 /-- A high-height `c / log |t|` zero-free theorem is the special case of the
 general width patch with `width t = c / log t`. -/
 lemma compact_patch_classical_zero_free_region_via_width
@@ -686,6 +718,20 @@ lemma compact_patch_classical_zero_free_region_via_width
     classical_zero_free_region := by
   rcases hhigh with ⟨chigh, hchigh_pos, hhigh_region⟩
   exact compact_patch_classical_zero_free_region_of_width T0 hT0
+    (fun t : ℝ => chigh / Real.log t)
+    hhigh_region
+    ⟨chigh, hchigh_pos, by intro t _; rfl⟩
+
+/-- Coordinate version of `compact_patch_classical_zero_free_region`. -/
+lemma compact_patch_classical_zero_free_region_re_im
+    (T0 : ℝ) (hT0 : 2 ≤ T0)
+    (hhigh :
+      ∃ c > 0, ∀ β t : ℝ, T0 ≤ |t| →
+        β ≥ 1 - c / Real.log |t| →
+        riemannZeta ((β : ℂ) + I * t) ≠ 0) :
+    classical_zero_free_region := by
+  rcases hhigh with ⟨chigh, hchigh_pos, hhigh_region⟩
+  exact compact_patch_classical_zero_free_region_of_width_re_im T0 hT0
     (fun t : ℝ => chigh / Real.log t)
     hhigh_region
     ⟨chigh, hchigh_pos, by intro t _; rfl⟩
@@ -744,6 +790,19 @@ lemma classical_zero_free_region_high_height_at_three
     需要指数和估计，远超当前 Mathlib 范畴。 -/
 def vinogradov_korobov_zero_free_region : Prop :=
     ∃ c > 0, ∀ s : ℂ, |s.im| ≥ 3 → s.re ≥ 1 - c / (Real.log |s.im|)^(2/3 : ℝ) * (Real.log (Real.log |s.im|))^(-1/3 : ℝ) → riemannZeta s ≠ 0
+
+lemma vinogradov_korobov_width_pos_of_three_le {c t : ℝ}
+    (hc : 0 < c) (ht : 3 ≤ |t|) :
+    0 <
+      c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+        (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) := by
+  have hlog_gt_one : 1 < Real.log |t| := log_abs_gt_one_of_three_le ht
+  have hlog_pos : 0 < Real.log |t| := by linarith
+  have hloglog_pos : 0 < Real.log (Real.log |t|) :=
+    log_log_abs_pos_of_three_le ht
+  exact mul_pos
+    (div_pos hc (Real.rpow_pos_of_pos hlog_pos (2 / 3 : ℝ)))
+    (Real.rpow_pos_of_pos hloglog_pos (-1 / 3 : ℝ))
 
 lemma vinogradov_korobov_zero_free_region_high_height
     (T0 : ℝ) (hT0 : 3 ≤ T0)
@@ -828,6 +887,26 @@ lemma vinogradov_korobov_width_comparison :
           (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) := by
       rw [hx_def, div_eq_mul_inv, Real.rpow_neg hx_pos.le]
       ring
+
+/-- Coordinate-form Vinogradov-Korobov input implies the classical zero-free region.
+
+Future analytic proofs often first produce a statement about real variables
+`β` and `t`; this bridge packages that shape directly into the existing
+compact patch plus width comparison. -/
+lemma classical_zero_free_region_of_vinogradov_korobov_re_im
+    (hvk : ∃ c > 0, ∀ β t : ℝ, 3 ≤ |t| →
+      β ≥
+        1 - c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta ((β : ℂ) + I * t) ≠ 0) :
+    classical_zero_free_region := by
+  rcases hvk with ⟨cvk, hcvk_pos, hvk_region⟩
+  exact compact_patch_classical_zero_free_region_of_width_re_im 3 (by norm_num)
+    (fun t : ℝ =>
+      cvk / (Real.log t) ^ (2 / 3 : ℝ) *
+        (Real.log (Real.log t)) ^ (-1 / 3 : ℝ))
+    hvk_region
+    (vinogradov_korobov_width_comparison cvk hcvk_pos)
 
 /-- The Vinogradov-Korobov target supplies a high-height classical-width
 zero-free region above height `3`.

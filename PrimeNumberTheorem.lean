@@ -873,6 +873,12 @@ lemma PNTForm2_iff_error_isLittleO_logIntegral :
   ⟨PNTForm2_error_isLittleO_logIntegral,
     PNTForm2_of_error_isLittleO_logIntegral⟩
 
+lemma PNTForm2_error_isLittleO_id
+    (h : PNTForm2) :
+    (fun x : ℝ => (primeCounting x : ℝ) - logIntegral x)
+      =o[atTop] (fun x : ℝ => x) :=
+  (PNTForm2_error_isLittleO_logIntegral h).trans logIntegral_isLittleO_id
+
 lemma PNTForm3_of_PNTForm2 (h : PNTForm2) : PNTForm3 :=
   PNTForm2_iff_PNTForm3.mp h
 
@@ -954,6 +960,14 @@ lemma mathlibChebyshevPsi_isBigO_id :
 lemma chebyshevPsi_isBigO_id :
     (fun x : ℝ => chebyshevPsi x) =O[atTop] (fun x : ℝ => x) := by
   simpa [chebyshevPsi_eq_mathlib] using mathlibChebyshevPsi_isBigO_id
+
+lemma chebyshevPsi_sub_id_isBigO_id :
+    (fun x : ℝ => chebyshevPsi x - x) =O[atTop] (fun x : ℝ => x) :=
+  chebyshevPsi_isBigO_id.sub (isBigO_refl (fun x : ℝ => x) atTop)
+
+lemma chebyshevTheta_sub_id_isBigO_id :
+    (fun x : ℝ => Chebyshev.theta x - x) =O[atTop] (fun x : ℝ => x) :=
+  chebyshevTheta_isBigO_id.sub (isBigO_refl (fun x : ℝ => x) atTop)
 
 /-- RH-scale `ψ` error implies the corresponding `θ` error. -/
 lemma RH_ThetaErrorBound_of_RH_PsiErrorBound
@@ -1128,6 +1142,12 @@ lemma primeCounting_isBigO_id :
   rw [Real.norm_eq_abs, Real.norm_eq_abs, abs_of_nonneg hpc_nonneg,
     abs_of_nonneg hx_nonneg]
   exact hpc_le
+
+lemma primeCounting_sub_logIntegral_isBigO_id :
+    (fun x : ℝ => (primeCounting x : ℝ) - logIntegral x)
+      =O[atTop] (fun x : ℝ => x) := by
+  have hpi := primeCounting_isBigO_id
+  exact hpi.sub logIntegral_isBigO_id
 
 /-- A crude upper bound for `Li(x)` on a bounded interval. -/
 lemma logIntegral_le_interval_bound {x X : ℝ} (hx2 : 2 ≤ x) (hxX : x ≤ X) :
@@ -1412,6 +1432,12 @@ lemma RH_PrimeCountingLiErrorBound.isLittleO_logIntegral
       =o[atTop] (fun x : ℝ => logIntegral x) := by
   rw [RH_PrimeCountingLiErrorBound] at h
   exact h.trans_isLittleO sqrt_mul_log_isLittleO_logIntegral
+
+lemma RH_PrimeCountingLiErrorBound.isLittleO_id
+    (h : RH_PrimeCountingLiErrorBound) :
+    (fun x : ℝ => (primeCounting x : ℝ) - logIntegral x)
+      =o[atTop] (fun x : ℝ => x) :=
+  h.isLittleO_logIntegral.trans logIntegral_isLittleO_id
 
 lemma PNTForm2_of_RH_PrimeCountingLiErrorBound
     (h : RH_PrimeCountingLiErrorBound) : PNTForm2 := by
