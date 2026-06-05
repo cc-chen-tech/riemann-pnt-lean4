@@ -1028,6 +1028,26 @@ lemma primeCounting_le_floor_add_one {x X : ℝ} (hxX : x ≤ X) :
     omega
   simpa [Set.ncard_coe_finset] using hncard
 
+lemma primeCounting_isBigO_id :
+    (fun x : ℝ => (primeCounting x : ℝ)) =O[atTop] (fun x : ℝ => x) := by
+  refine Asymptotics.IsBigO.of_bound 2 ?_
+  filter_upwards [eventually_ge_atTop (1 : ℝ)] with x hx
+  have hx_nonneg : 0 ≤ x := by linarith
+  have hpc_nat : primeCounting x ≤ ⌊x⌋₊ + 1 :=
+    primeCounting_le_floor_add_one (x := x) (X := x) le_rfl
+  have hpc_floor : (primeCounting x : ℝ) ≤ ((⌊x⌋₊ + 1 : ℕ) : ℝ) := by
+    exact_mod_cast hpc_nat
+  have hfloor : ((⌊x⌋₊ : ℕ) : ℝ) ≤ x := Nat.floor_le hx_nonneg
+  have hfloor_add : ((⌊x⌋₊ + 1 : ℕ) : ℝ) ≤ x + 1 := by
+    norm_num
+    linarith
+  have hpc_le : (primeCounting x : ℝ) ≤ 2 * x := by
+    linarith
+  have hpc_nonneg : 0 ≤ (primeCounting x : ℝ) := by positivity
+  rw [Real.norm_eq_abs, Real.norm_eq_abs, abs_of_nonneg hpc_nonneg,
+    abs_of_nonneg hx_nonneg]
+  exact hpc_le
+
 /-- A crude upper bound for `Li(x)` on a bounded interval. -/
 lemma logIntegral_le_interval_bound {x X : ℝ} (hx2 : 2 ≤ x) (hxX : x ≤ X) :
     logIntegral x ≤ (X - 2) / Real.log 2 := by
