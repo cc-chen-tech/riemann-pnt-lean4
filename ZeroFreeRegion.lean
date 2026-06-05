@@ -578,6 +578,18 @@ lemma classical_zero_free_region_compact_at_two :
       s.re ≥ 1 - d → riemannZeta s ≠ 0 :=
   classical_zero_free_region_compact 2 (by norm_num)
 
+lemma classical_zero_free_region_compact_re_im (T : ℝ) (hT : T ≥ 2) :
+    ∃ d > 0, ∀ β t : ℝ, |t| ≤ T →
+      β ≥ 1 - d → riemannZeta ((β : ℂ) + I * t) ≠ 0 := by
+  rcases classical_zero_free_region_compact T hT with ⟨d, hd_pos, hcompact⟩
+  refine ⟨d, hd_pos, ?_⟩
+  intro β t ht hβ
+  have hheight : |((β : ℂ) + I * t).im| ≤ T := by
+    simpa using ht
+  have hre : ((β : ℂ) + I * t).re ≥ 1 - d := by
+    simpa using hβ
+  exact hcompact ((β : ℂ) + I * t) hheight hre
+
 /-- 经典零点自由区域：ζ(s) ≠ 0 对于 Re(s) ≥ 1 - c/log|t| (|t| ≥ 2)。
     这还需要把 Hadamard 因子分解或 Borel-Carathéodory 等复分析工具
     专门应用到 ζ 的增长估计和对数导数估计上。 -/
@@ -627,6 +639,19 @@ lemma log_abs_gt_one_of_three_le {t : ℝ} (ht : 3 ≤ |t|) :
 lemma log_log_abs_pos_of_three_le {t : ℝ} (ht : 3 ≤ |t|) :
     0 < Real.log (Real.log |t|) :=
   Real.log_pos (log_abs_gt_one_of_three_le ht)
+
+lemma re_im_decomp (s : ℂ) : ((s.re : ℂ) + I * s.im) = s := by
+  apply Complex.ext <;> simp
+
+lemma compact_log_width_le_of_two_le {c d t : ℝ}
+    (hc : c ≤ d * Real.log 2) (hd : 0 ≤ d) (ht : 2 ≤ |t|) :
+    c / Real.log |t| ≤ d := by
+  have hlog_pos : 0 < Real.log |t| := log_abs_pos_of_two_le ht
+  have hlog_mono : Real.log (2 : ℝ) ≤ Real.log |t| :=
+    Real.log_le_log (by norm_num) ht
+  have hc_le_dlog : c ≤ d * Real.log |t| :=
+    le_trans hc (mul_le_mul_of_nonneg_left hlog_mono hd)
+  exact (div_le_iff₀ hlog_pos).mpr hc_le_dlog
 
 lemma classical_zero_free_region_on_one_line
     (hclassical : classical_zero_free_region) :
@@ -805,6 +830,26 @@ lemma classical_zero_free_region_iff_high_height_at_three :
         s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0 :=
   classical_zero_free_region_iff_high_height 3 (by norm_num)
 
+lemma classical_zero_free_region_iff_high_height_re_im
+    (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    classical_zero_free_region ↔
+      ∃ c > 0, ∀ β t : ℝ, T0 ≤ |t| →
+        β ≥ 1 - c / Real.log |t| →
+        riemannZeta ((β : ℂ) + I * t) ≠ 0 := by
+  constructor
+  · intro h
+    rcases classical_zero_free_region_high_height T0 hT0 h with
+      ⟨c, hc_pos, hregion⟩
+    refine ⟨c, hc_pos, ?_⟩
+    intro β t ht hβ
+    have hheight : T0 ≤ |((β : ℂ) + I * t).im| := by
+      simpa using ht
+    have hre :
+        ((β : ℂ) + I * t).re ≥ 1 - c / Real.log |((β : ℂ) + I * t).im| := by
+      simpa using hβ
+    exact hregion ((β : ℂ) + I * t) hheight hre
+  · exact compact_patch_classical_zero_free_region_re_im T0 hT0
+
 lemma classical_zero_free_region_high_height_at_three
     (hclassical : classical_zero_free_region) :
     ∃ c > 0, ∀ s : ℂ, 3 ≤ |s.im| →
@@ -870,6 +915,27 @@ lemma vinogradov_korobov_zero_free_region_high_height
   refine ⟨c, hc_pos, ?_⟩
   intro s hsT hsre
   exact hregion s (hT0.trans hsT) hsre
+
+lemma vinogradov_korobov_zero_free_region_high_height_re_im
+    (T0 : ℝ) (hT0 : 3 ≤ T0)
+    (hvk : vinogradov_korobov_zero_free_region) :
+    ∃ c > 0, ∀ β t : ℝ, T0 ≤ |t| →
+      β ≥
+        1 - c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta ((β : ℂ) + I * t) ≠ 0 := by
+  rcases vinogradov_korobov_zero_free_region_high_height T0 hT0 hvk with
+    ⟨c, hc_pos, hregion⟩
+  refine ⟨c, hc_pos, ?_⟩
+  intro β t ht hβ
+  have hheight : T0 ≤ |((β : ℂ) + I * t).im| := by
+    simpa using ht
+  have hre :
+      ((β : ℂ) + I * t).re ≥
+        1 - c / (Real.log |((β : ℂ) + I * t).im|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |((β : ℂ) + I * t).im|)) ^ (-1 / 3 : ℝ) := by
+    simpa using hβ
+  exact hregion ((β : ℂ) + I * t) hheight hre
 
 /-- Conditional bridge from the Vinogradov-Korobov target to the classical
 zero-free region.
