@@ -560,6 +560,32 @@ lemma logIntegral_asymptotic :
     linarith [hx]
   simpa using Tendsto.congr' h_eq' h_add
 
+lemma logIntegral_isLittleO_id :
+    (fun x : ℝ => logIntegral x) =o[atTop] (fun x : ℝ => x) := by
+  have hmain : Tendsto (fun x : ℝ => logIntegral x * Real.log x / x) atTop (𝓝 1) :=
+    logIntegral_asymptotic
+  have hlog_inv : Tendsto (fun x : ℝ => (Real.log x)⁻¹) atTop (𝓝 0) := by
+    exact tendsto_inv_atTop_zero.comp Real.tendsto_log_atTop
+  have hratio :
+      Tendsto
+        (fun x : ℝ => (logIntegral x * Real.log x / x) * (Real.log x)⁻¹)
+        atTop (𝓝 0) := by
+    simpa using hmain.mul hlog_inv
+  have heq :
+      (fun x : ℝ => (logIntegral x * Real.log x / x) * (Real.log x)⁻¹)
+        =ᶠ[atTop] fun x : ℝ => logIntegral x / x := by
+    filter_upwards [eventually_ge_atTop (3 : ℝ)] with x hx
+    have hlog_ne : Real.log x ≠ 0 := ne_of_gt (Real.log_pos (by linarith))
+    field_simp [hlog_ne]
+  refine (isLittleO_iff_tendsto' ?_).2 (hratio.congr' heq)
+  filter_upwards [eventually_ge_atTop (3 : ℝ)] with x hx hzero
+  have hxpos : 0 < x := by linarith
+  exact False.elim (hxpos.ne' hzero)
+
+lemma logIntegral_isBigO_id :
+    (fun x : ℝ => logIntegral x) =O[atTop] (fun x : ℝ => x) :=
+  logIntegral_isLittleO_id.isBigO
+
 /-- 三種形式等価 -/
 theorem pnt_forms_equivalent :
     (PNTForm1 ↔ PNTForm2) ∧ (PNTForm2 ↔ PNTForm3) := by
