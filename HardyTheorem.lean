@@ -1352,13 +1352,10 @@ least one critical-line zero at nonnegative height. -/
 lemma exists_nonnegative_zero_on_critical_line_of_hardy_littlewood_lower_bound
     (h : hardy_littlewood_lower_bound_target) :
     ∃ t : ℝ, 0 ≤ t ∧ riemannZeta (0.5 + I * t) = 0 := by
-  rcases h with ⟨C, hC_pos, T0, hbound⟩
-  let T : ℝ := max T0 1
-  have hT0 : T0 ≤ T := le_max_left T0 1
-  have hT_pos : 0 < T := lt_of_lt_of_le zero_lt_one (le_max_right T0 1)
-  have hcount := hbound T hT0
-  have hncard_pos : 0 < zeroCountOnCriticalLine T :=
-    zeroCountOnCriticalLine_pos_of_linear_lower_bound hC_pos hT_pos hcount
+  rcases eventually_atTop.mp
+      (eventually_nat_lt_zeroCountOnCriticalLine_of_hardy_littlewood_lower_bound h 0) with
+    ⟨T, hT⟩
+  have hncard_pos : 0 < zeroCountOnCriticalLine T := hT T le_rfl
   rcases exists_zero_of_zeroCountOnCriticalLine_pos hncard_pos with
     ⟨t, ht_nonneg, _htT, htzero⟩
   exact ⟨t, ht_nonneg, htzero⟩
