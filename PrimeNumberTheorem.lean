@@ -1518,6 +1518,29 @@ lemma PNTForm2_of_RH_ThetaErrorBound (h : RH_ThetaErrorBound) : PNTForm2 :=
 
 lemma PNTForm1_of_RH_ThetaErrorBound (h : RH_ThetaErrorBound) : PNTForm1 :=
   PNTForm1_of_PNTForm3 (PNTForm3_of_RH_ThetaErrorBound h)
+
+lemma PNTForms_of_RH_PrimeCountingLiErrorBound
+    (h : RH_PrimeCountingLiErrorBound) :
+    PNTForm1 ∧ PNTForm2 ∧ PNTForm3 :=
+  ⟨PNTForm1_of_RH_PrimeCountingLiErrorBound h,
+    PNTForm2_of_RH_PrimeCountingLiErrorBound h,
+    PNTForm3_of_RH_PrimeCountingLiErrorBound h⟩
+
+lemma PNTForms_of_RH_ErrorBound (h : RH_ErrorBound) :
+    PNTForm1 ∧ PNTForm2 ∧ PNTForm3 :=
+  PNTForms_of_RH_PrimeCountingLiErrorBound
+    (RH_PrimeCountingLiErrorBound_of_RH_ErrorBound h)
+
+lemma PNTForms_of_RH_PsiErrorBound (h : RH_PsiErrorBound) :
+    PNTForm1 ∧ PNTForm2 ∧ PNTForm3 :=
+  ⟨PNTForm1_of_RH_PsiErrorBound h,
+    PNTForm2_of_RH_PsiErrorBound h,
+    PNTForm3_of_RH_PsiErrorBound h⟩
+
+lemma PNTForms_of_RH_ThetaErrorBound (h : RH_ThetaErrorBound) :
+    PNTForm1 ∧ PNTForm2 ∧ PNTForm3 :=
+  PNTForms_of_RH_PsiErrorBound (RH_PsiErrorBound_of_RH_ThetaErrorBound h)
+
 /-- Target statement: RH iff the RH-scale prime-counting error bound.
 
 This is a standard deep equivalence, but the current project does not provide
@@ -2774,6 +2797,19 @@ lemma explicit_formula_von_mangoldt_norm_error_tendsto_zero
   tendsto_zero_iff_norm_tendsto_zero.mp
     (explicit_formula_von_mangoldt_error_tendsto_zero h)
 
+lemma explicit_formula_von_mangoldt_reverse_norm_error_tendsto_zero
+    {x : ℝ} {hx : x ≥ 2}
+    (h : explicit_formula_von_mangoldt x hx) :
+    Tendsto (fun T : ℝ =>
+      ‖(chebyshevPsi0 x : ℂ) - explicitFormulaApprox x T‖) atTop (𝓝 0) := by
+  have hnorm := explicit_formula_von_mangoldt_norm_error_tendsto_zero h
+  have h_eq :
+      (fun T : ℝ => ‖(chebyshevPsi0 x : ℂ) - explicitFormulaApprox x T‖) =
+        fun T : ℝ => ‖explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)‖ := by
+    funext T
+    rw [norm_sub_rev]
+  simpa [h_eq] using hnorm
+
 lemma explicit_formula_von_mangoldt_of_norm_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2}
     (h : Tendsto (fun T : ℝ =>
@@ -2781,6 +2817,27 @@ lemma explicit_formula_von_mangoldt_of_norm_error_tendsto_zero
     explicit_formula_von_mangoldt x hx :=
   explicit_formula_von_mangoldt_of_error_tendsto_zero
     (tendsto_zero_iff_norm_tendsto_zero.mpr h)
+
+lemma explicit_formula_von_mangoldt_of_reverse_norm_error_tendsto_zero
+    {x : ℝ} {hx : x ≥ 2}
+    (h : Tendsto (fun T : ℝ =>
+      ‖(chebyshevPsi0 x : ℂ) - explicitFormulaApprox x T‖) atTop (𝓝 0)) :
+    explicit_formula_von_mangoldt x hx := by
+  refine explicit_formula_von_mangoldt_of_norm_error_tendsto_zero ?_
+  have h_eq :
+      (fun T : ℝ => ‖explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)‖) =
+        fun T : ℝ => ‖(chebyshevPsi0 x : ℂ) - explicitFormulaApprox x T‖ := by
+    funext T
+    rw [norm_sub_rev]
+  simpa [h_eq] using h
+
+lemma explicit_formula_von_mangoldt_iff_reverse_norm_error_tendsto_zero
+    {x : ℝ} {hx : x ≥ 2} :
+    explicit_formula_von_mangoldt x hx ↔
+      Tendsto (fun T : ℝ =>
+        ‖(chebyshevPsi0 x : ℂ) - explicitFormulaApprox x T‖) atTop (𝓝 0) :=
+  ⟨explicit_formula_von_mangoldt_reverse_norm_error_tendsto_zero,
+    explicit_formula_von_mangoldt_of_reverse_norm_error_tendsto_zero⟩
 
 lemma explicit_formula_von_mangoldt_of_eventually_norm_le
     {x : ℝ} {hx : x ≥ 2} {E : ℝ → ℝ}
