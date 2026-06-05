@@ -1389,31 +1389,16 @@ lemma hardy_theorem_target_of_hardy_littlewood_lower_bound
     hardy_theorem_target := by
   classical
   intro hfinite
-  rcases h with ⟨C, hC_pos, T0, hbound⟩
   let allZeros : Set ℝ := {t : ℝ | riemannZeta (0.5 + I * t) = 0}
   let N : ℕ := allZeros.ncard
-  let T : ℝ := max T0 (max 1 (((N : ℝ) + 1) / C))
-  have hT0 : T0 ≤ T := le_max_left T0 (max 1 (((N : ℝ) + 1) / C))
-  have hT_large : ((N : ℝ) + 1) / C ≤ T := by
-    exact le_trans (le_max_right 1 (((N : ℝ) + 1) / C))
-      (le_max_right T0 (max 1 (((N : ℝ) + 1) / C)))
-  have hN_lt_CT : (N : ℝ) < C * T := by
-    have hmul : C * (((N : ℝ) + 1) / C) ≤ C * T :=
-      mul_le_mul_of_nonneg_left hT_large hC_pos.le
-    have hC_ne : C ≠ 0 := ne_of_gt hC_pos
-    have hC_mul : C * (((N : ℝ) + 1) / C) = (N : ℝ) + 1 := by
-      field_simp [hC_ne]
-    have hN1_le : (N : ℝ) + 1 ≤ C * T := by
-      rw [← hC_mul]
-      exact hmul
-    linarith
+  rcases eventually_atTop.mp
+      (eventually_nat_lt_zeroCountOnCriticalLine_of_hardy_littlewood_lower_bound h N) with
+    ⟨T, hT⟩
+  have hcount_gt_N : N < zeroCountOnCriticalLine T := hT T le_rfl
   have hcount_le_N_nat : zeroCountOnCriticalLine T ≤ N := by
     simpa [allZeros, N] using
       zeroCountOnCriticalLine_le_ncard_allZeros_of_finite T hfinite
-  have hcount_le_N : (zeroCountOnCriticalLine T : ℝ) ≤ N := by
-    exact_mod_cast hcount_le_N_nat
-  have hcount_lower := hbound T hT0
-  linarith
+  omega
 
 lemma hardy_theorem_target_of_selberg_zero_proportion
     (h : selberg_zero_proportion_target) :
