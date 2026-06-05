@@ -2211,6 +2211,13 @@ lemma nontrivialZerosFinset_mono {T U : ℝ} (hTU : T ≤ U) {ρ : ℂ}
   rcases mem_nontrivialZerosFinset.mp hρ with ⟨hzero, hheight⟩
   exact mem_nontrivialZerosFinset.mpr ⟨hzero, le_trans hheight hTU⟩
 
+lemma nontrivialZerosFinset_sdiff_eq_empty_of_le
+    {T U : ℝ} (hUT : U ≤ T) :
+    nontrivialZerosFinset U \ nontrivialZerosFinset T = ∅ := by
+  apply Finset.sdiff_eq_empty_iff_subset.mpr
+  intro ρ hρ
+  exact nontrivialZerosFinset_mono hUT hρ
+
 lemma not_mem_nontrivialZerosFinset_of_height_lt {ρ : ℂ} {T : ℝ}
     (hT : T < |ρ.im|) :
     ρ ∉ nontrivialZerosFinset T := by
@@ -2416,9 +2423,16 @@ lemma explicitFormulaApprox_sub_eq_new_zeros {x T U : ℝ} (hTU : T ≤ U) :
   rw [explicitFormulaApprox_eq_sub_new_zeros hTU]
   abel
 
+lemma explicitFormulaApprox_sub_norm_eq_new_zeros
+    {x T U : ℝ} (hTU : T ≤ U) :
+    ‖explicitFormulaApprox x T - explicitFormulaApprox x U‖ =
+      ‖∑ ρ ∈ (nontrivialZerosFinset U \ nontrivialZerosFinset T),
+        (x : ℂ) ^ ρ / ρ‖ := by
+  rw [explicitFormulaApprox_sub_eq_new_zeros hTU]
+
 lemma explicitFormulaApprox_add_new_zeros {x T U : ℝ} (hTU : T ≤ U) :
     explicitFormulaApprox x U +
-        ∑ ρ ∈ (nontrivialZerosFinset U \ nontrivialZerosFinset T),
+      ∑ ρ ∈ (nontrivialZerosFinset U \ nontrivialZerosFinset T),
           (x : ℂ) ^ ρ / ρ =
       explicitFormulaApprox x T := by
   rw [explicitFormulaApprox_eq_sub_new_zeros hTU]
@@ -2779,6 +2793,16 @@ lemma explicit_formula_von_mangoldt_of_eventually_norm_le
   exact Eventually.of_forall fun T =>
     norm_nonneg (explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ))
 
+lemma explicit_formula_von_mangoldt_of_eventually_norm_le_const_mul_inv
+    {x C : ℝ} {hx : x ≥ 2}
+    (hbound : ∀ᶠ T in atTop,
+      ‖explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)‖ ≤ C * T⁻¹) :
+    explicit_formula_von_mangoldt x hx := by
+  refine explicit_formula_von_mangoldt_of_eventually_norm_le ?_ hbound
+  simpa using
+    (tendsto_const_nhds.mul tendsto_inv_atTop_zero :
+      Tendsto (fun T : ℝ => C * T⁻¹) atTop (𝓝 (C * 0)))
+
 /-- Coordinate estimates for the real and imaginary errors are enough to close
 the explicit-formula target.  This is the shape naturally produced by many
 contour estimates before they are repackaged as a complex norm bound. -/
@@ -2802,6 +2826,22 @@ lemma explicit_formula_von_mangoldt_of_eventually_re_im_abs_le
       hEim
       (Eventually.of_forall fun T => abs_nonneg _)
       him_bound
+
+lemma explicit_formula_von_mangoldt_of_eventually_re_im_abs_le_const_mul_inv
+    {x Cre Cim : ℝ} {hx : x ≥ 2}
+    (hre_bound : ∀ᶠ T in atTop,
+      |(explicitFormulaApprox x T).re - chebyshevPsi0 x| ≤ Cre * T⁻¹)
+    (him_bound : ∀ᶠ T in atTop,
+      |(explicitFormulaApprox x T).im| ≤ Cim * T⁻¹) :
+    explicit_formula_von_mangoldt x hx := by
+  refine explicit_formula_von_mangoldt_of_eventually_re_im_abs_le ?_ ?_
+    hre_bound him_bound
+  · simpa using
+      (tendsto_const_nhds.mul tendsto_inv_atTop_zero :
+        Tendsto (fun T : ℝ => Cre * T⁻¹) atTop (𝓝 (Cre * 0)))
+  · simpa using
+      (tendsto_const_nhds.mul tendsto_inv_atTop_zero :
+        Tendsto (fun T : ℝ => Cim * T⁻¹) atTop (𝓝 (Cim * 0)))
 
 lemma explicit_formula_von_mangoldt_re_abs_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2}

@@ -395,6 +395,17 @@ theorem hardyZ_zero_iff_zeta_zero (t : ℝ) :
   · exact hardyZ_zero_implies_zeta_zero t
   · exact zeta_zero_implies_hardyZ_zero t
 
+lemma hardyZ_zero_set_eq_critical_line_zeta_zero_set :
+    {t : ℝ | hardyZ t = 0} =
+      {t : ℝ | riemannZeta (0.5 + I * t) = 0} := by
+  ext t
+  exact hardyZ_zero_iff_zeta_zero t
+
+lemma hardyZ_zero_set_finite_iff_critical_line_zeta_zero_set_finite :
+    {t : ℝ | hardyZ t = 0}.Finite ↔
+      {t : ℝ | riemannZeta (0.5 + I * t) = 0}.Finite := by
+  rw [hardyZ_zero_set_eq_critical_line_zeta_zero_set]
+
 /-- Z(t) 是连续函数 -/
 theorem hardyZ_continuous : Continuous hardyZ := by
   have h_eq : ∀ t : ℝ, hardyZ t = (completedRiemannZeta ((0.5 : ℂ) + I * t)).re / ‖Gammaℝ ((0.5 : ℂ) + I * t)‖ := by
@@ -896,6 +907,10 @@ estimates needed for the final contradiction. -/
 def hardy_theorem_target : Prop :=
     {t : ℝ | riemannZeta (0.5 + I * t) = 0}.Infinite
 
+lemma hardy_theorem_target_iff_hardyZ_zero_set_infinite :
+    hardy_theorem_target ↔ {t : ℝ | hardyZ t = 0}.Infinite := by
+  rw [hardy_theorem_target, hardyZ_zero_set_eq_critical_line_zeta_zero_set]
+
 lemma exists_zero_on_critical_line_of_hardy_theorem_target
     (h : hardy_theorem_target) :
     ∃ t : ℝ, riemannZeta (0.5 + I * t) = 0 := by
@@ -977,6 +992,17 @@ absolute height.  This is often the most convenient interface when one has a
 finite-zero theorem in bounded vertical strips. -/
 def hardy_zeros_abs_unbounded_target : Prop :=
     ∀ T : ℝ, ∃ t : ℝ, T ≤ |t| ∧ riemannZeta (0.5 + I * t) = 0
+
+lemma hardy_zeros_unbounded_target_iff_hardyZ_unbounded :
+    hardy_zeros_unbounded_target ↔
+      ∀ T : ℝ, ∃ t : ℝ, T ≤ t ∧ hardyZ t = 0 := by
+  constructor
+  · intro h T
+    rcases h T with ⟨t, hTt, htzero⟩
+    exact ⟨t, hTt, (hardyZ_zero_iff_zeta_zero t).mpr htzero⟩
+  · intro h T
+    rcases h T with ⟨t, hTt, htzero⟩
+    exact ⟨t, hTt, (hardyZ_zero_iff_zeta_zero t).mp htzero⟩
 
 lemma hardy_zeros_abs_unbounded_of_unbounded
     (h : hardy_zeros_unbounded_target) : hardy_zeros_abs_unbounded_target := by
@@ -1173,6 +1199,13 @@ lemma exists_zero_of_zeroCountOnCriticalLine_pos {T : ℝ}
       exact (hnone (t : ℝ) t.property.1 t.property.2) ht
     · simp
   simp [hempty] at hS
+
+lemma exists_hardyZ_zero_of_zeroCountOnCriticalLine_pos {T : ℝ}
+    (h : 0 < zeroCountOnCriticalLine T) :
+    ∃ t : ℝ, 0 ≤ t ∧ t ≤ T ∧ hardyZ t = 0 := by
+  rcases exists_zero_of_zeroCountOnCriticalLine_pos h with
+    ⟨t, ht0, htT, htzero⟩
+  exact ⟨t, ht0, htT, (hardyZ_zero_iff_zeta_zero t).mpr htzero⟩
 
 lemma zeroCountOnCriticalLine_pos_of_exists_of_finite {T : ℝ}
     (hfinite :
