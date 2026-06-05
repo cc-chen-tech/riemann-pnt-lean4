@@ -249,6 +249,30 @@ theorem hardy_littlewood_lower_bound_target_of_conrey_target
   HardyTheorem.hardy_littlewood_lower_bound_target_of_selberg_zero_proportion
     (selberg_zero_proportion_target_of_conrey_target h)
 
+theorem eventually_linear_lower_bound_of_conrey_target
+    (h : conrey_40_percent_zeros_on_critical_line_target) :
+    ∃ C > 0, ∀ᶠ T in atTop,
+      (HardyTheorem.zeroCountOnCriticalLine T : ℝ) ≥ C * T :=
+  HardyTheorem.eventually_linear_lower_bound_of_selberg_zero_proportion
+    (selberg_zero_proportion_target_of_conrey_target h)
+
+theorem eventually_nat_lt_zeroCountOnCriticalLine_of_hardy_littlewood_lower_bound
+    (h : HardyTheorem.hardy_littlewood_lower_bound_target) (N : ℕ) :
+    ∀ᶠ T in atTop, N < HardyTheorem.zeroCountOnCriticalLine T :=
+  HardyTheorem.eventually_nat_lt_zeroCountOnCriticalLine_of_hardy_littlewood_lower_bound h N
+
+theorem eventually_nat_lt_zeroCountOnCriticalLine_of_selberg_zero_proportion
+    (h : HardyTheorem.selberg_zero_proportion_target) (N : ℕ) :
+    ∀ᶠ T in atTop, N < HardyTheorem.zeroCountOnCriticalLine T :=
+  HardyTheorem.eventually_nat_lt_zeroCountOnCriticalLine_of_hardy_littlewood_lower_bound
+    (HardyTheorem.hardy_littlewood_lower_bound_target_of_selberg_zero_proportion h) N
+
+theorem eventually_nat_lt_zeroCountOnCriticalLine_of_conrey_target
+    (h : conrey_40_percent_zeros_on_critical_line_target) (N : ℕ) :
+    ∀ᶠ T in atTop, N < HardyTheorem.zeroCountOnCriticalLine T :=
+  eventually_nat_lt_zeroCountOnCriticalLine_of_selberg_zero_proportion
+    (selberg_zero_proportion_target_of_conrey_target h) N
+
 theorem hardy_theorem_target_of_conrey_target
     (h : conrey_40_percent_zeros_on_critical_line_target) :
     HardyTheorem.hardy_theorem_target :=
