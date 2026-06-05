@@ -584,6 +584,31 @@ lemma classical_zero_free_region_compact_at_two :
 def classical_zero_free_region : Prop :=
     ∃ c > 0, ∀ s : ℂ, |s.im| ≥ 2 → s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0
 
+/-- Coordinate form of the classical zero-free-region target. -/
+lemma classical_zero_free_region_iff_re_im :
+    classical_zero_free_region ↔
+      ∃ c > 0, ∀ β t : ℝ, 2 ≤ |t| →
+        β ≥ 1 - c / Real.log |t| →
+        riemannZeta ((β : ℂ) + I * t) ≠ 0 := by
+  constructor
+  · intro hclassical
+    rcases hclassical with ⟨c, hc_pos, hregion⟩
+    refine ⟨c, hc_pos, ?_⟩
+    intro β t ht hβ
+    have hheight : |((β : ℂ) + I * t).im| ≥ 2 := by
+      simpa using ht
+    have hre :
+        ((β : ℂ) + I * t).re ≥ 1 - c / Real.log |((β : ℂ) + I * t).im| := by
+      simpa using hβ
+    exact hregion ((β : ℂ) + I * t) hheight hre
+  · intro hcoord
+    rcases hcoord with ⟨c, hc_pos, hregion⟩
+    refine ⟨c, hc_pos, ?_⟩
+    intro s hsheight hsre
+    have hs_decomp : ((s.re : ℂ) + I * s.im) = s := by
+      apply Complex.ext <;> simp
+    simpa [hs_decomp] using hregion s.re s.im hsheight hsre
+
 /-- `log |t|` is positive throughout the classical zero-free-region range. -/
 lemma log_abs_pos_of_two_le {t : ℝ} (ht : 2 ≤ |t|) : 0 < Real.log |t| :=
   Real.log_pos (lt_of_lt_of_le (by norm_num : (1 : ℝ) < 2) ht)
@@ -790,6 +815,35 @@ lemma classical_zero_free_region_high_height_at_three
     需要指数和估计，远超当前 Mathlib 范畴。 -/
 def vinogradov_korobov_zero_free_region : Prop :=
     ∃ c > 0, ∀ s : ℂ, |s.im| ≥ 3 → s.re ≥ 1 - c / (Real.log |s.im|)^(2/3 : ℝ) * (Real.log (Real.log |s.im|))^(-1/3 : ℝ) → riemannZeta s ≠ 0
+
+/-- Coordinate form of the Vinogradov-Korobov zero-free-region target. -/
+lemma vinogradov_korobov_zero_free_region_iff_re_im :
+    vinogradov_korobov_zero_free_region ↔
+      ∃ c > 0, ∀ β t : ℝ, 3 ≤ |t| →
+        β ≥
+          1 - c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+            (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+        riemannZeta ((β : ℂ) + I * t) ≠ 0 := by
+  constructor
+  · intro hvk
+    rcases hvk with ⟨c, hc_pos, hregion⟩
+    refine ⟨c, hc_pos, ?_⟩
+    intro β t ht hβ
+    have hheight : |((β : ℂ) + I * t).im| ≥ 3 := by
+      simpa using ht
+    have hre :
+        ((β : ℂ) + I * t).re ≥
+          1 - c / (Real.log |((β : ℂ) + I * t).im|) ^ (2 / 3 : ℝ) *
+            (Real.log (Real.log |((β : ℂ) + I * t).im|)) ^ (-1 / 3 : ℝ) := by
+      simpa using hβ
+    exact hregion ((β : ℂ) + I * t) hheight hre
+  · intro hcoord
+    rcases hcoord with ⟨c, hc_pos, hregion⟩
+    refine ⟨c, hc_pos, ?_⟩
+    intro s hsheight hsre
+    have hs_decomp : ((s.re : ℂ) + I * s.im) = s := by
+      apply Complex.ext <;> simp
+    simpa [hs_decomp] using hregion s.re s.im hsheight hsre
 
 lemma vinogradov_korobov_width_pos_of_three_le {c t : ℝ}
     (hc : 0 < c) (ht : 3 ≤ |t|) :
