@@ -1209,6 +1209,25 @@ lemma zeroCountOnCriticalLine_mono_of_finite {T U : ℝ}
     exact Subtype.ext
       (congr_arg (fun z : Set.Icc (0 : ℝ) U => (z : ℝ)) heq)
 
+lemma zeroCountOnCriticalLine_le_ncard_allZeros_of_finite
+    (T : ℝ)
+    (hfinite : {t : ℝ | riemannZeta (0.5 + I * t) = 0}.Finite) :
+    zeroCountOnCriticalLine T ≤
+      {t : ℝ | riemannZeta (0.5 + I * t) = 0}.ncard := by
+  classical
+  let countedZeros : Set (Set.Icc (0 : ℝ) T) :=
+    {t : Set.Icc (0 : ℝ) T | riemannZeta (0.5 + I * (t : ℝ)) = 0}
+  let allZeros : Set ℝ := {t : ℝ | riemannZeta (0.5 + I * t) = 0}
+  have hle :=
+    Set.ncard_le_ncard_of_injOn
+      (fun t : Set.Icc (0 : ℝ) T => (t : ℝ))
+      (s := countedZeros) (t := allZeros) ?_ ?_ hfinite
+  · simpa [zeroCountOnCriticalLine, countedZeros, allZeros] using hle
+  · intro t ht
+    exact ht
+  · intro t₁ _ t₂ _ heq
+    exact Subtype.ext heq
+
 lemma zeroCountOnCriticalLine_pos_of_linear_lower_bound {C T : ℝ}
     (hC : 0 < C) (hT : 0 < T)
     (hbound : C * T ≤ (zeroCountOnCriticalLine T : ℝ)) :
@@ -1224,6 +1243,32 @@ def hardy_littlewood_lower_bound_target : Prop :=
 def selberg_zero_proportion_target : Prop :=
     ∃ c > 0, ∃ T0 : ℝ, ∀ T ≥ T0,
       (zeroCountOnCriticalLine T : ℝ) ≥ c * (T / (2*Real.pi) * Real.log T)
+
+lemma eventually_nat_lt_zeroCountOnCriticalLine_of_hardy_littlewood_lower_bound
+    (h : hardy_littlewood_lower_bound_target) (N : ℕ) :
+    ∀ᶠ T in atTop, N < zeroCountOnCriticalLine T := by
+  rcases h with ⟨C, hC_pos, T0, hbound⟩
+  filter_upwards
+    [eventually_ge_atTop (max T0 (max 1 (((N : ℝ) + 1) / C)))] with T hT
+  have hT0 : T0 ≤ T := le_trans (le_max_left T0 (max 1 (((N : ℝ) + 1) / C))) hT
+  have hlarge : ((N : ℝ) + 1) / C ≤ T := by
+    exact le_trans
+      (le_trans (le_max_right 1 (((N : ℝ) + 1) / C))
+        (le_max_right T0 (max 1 (((N : ℝ) + 1) / C)))) hT
+  have hN_lt_CT : (N : ℝ) < C * T := by
+    have hmul : C * (((N : ℝ) + 1) / C) ≤ C * T :=
+      mul_le_mul_of_nonneg_left hlarge hC_pos.le
+    have hC_ne : C ≠ 0 := ne_of_gt hC_pos
+    have hC_mul : C * (((N : ℝ) + 1) / C) = (N : ℝ) + 1 := by
+      field_simp [hC_ne]
+    have hN1_le : (N : ℝ) + 1 ≤ C * T := by
+      rw [← hC_mul]
+      exact hmul
+    linarith
+  have hcount_lower := hbound T hT0
+  have hN_lt_count : (N : ℝ) < (zeroCountOnCriticalLine T : ℝ) :=
+    lt_of_lt_of_le hN_lt_CT hcount_lower
+  exact_mod_cast hN_lt_count
 
 /-- Selberg's positive-proportion target implies the weaker
 Hardy--Littlewood linear lower-bound target. -/
@@ -1257,6 +1302,16 @@ lemma hardy_littlewood_lower_bound_target_of_selberg_zero_proportion
         _ ≤ c * (T / (2 * Real.pi)) * Real.log T := hmul
         _ = c * (T / (2 * Real.pi) * Real.log T) := by ring
     exact le_trans htarget hsel
+
+lemma eventually_linear_lower_bound_of_selberg_zero_proportion
+    (h : selberg_zero_proportion_target) :
+    ∃ C > 0, ∀ᶠ T in atTop,
+      (zeroCountOnCriticalLine T : ℝ) ≥ C * T := by
+  rcases hardy_littlewood_lower_bound_target_of_selberg_zero_proportion h with
+    ⟨C, hC_pos, T0, hbound⟩
+  refine ⟨C, hC_pos, ?_⟩
+  filter_upwards [eventually_ge_atTop T0] with T hT
+  exact hbound T hT
 
 /-- A Hardy--Littlewood lower-bound target is already enough to extract at
 least one critical-line zero at nonnegative height. -/
@@ -1318,18 +1373,9 @@ lemma hardy_theorem_target_of_hardy_littlewood_lower_bound
       rw [← hC_mul]
       exact hmul
     linarith
-  let countedZeros : Set (Set.Icc (0 : ℝ) T) :=
-    {t : Set.Icc (0 : ℝ) T | riemannZeta (0.5 + I * (t : ℝ)) = 0}
   have hcount_le_N_nat : zeroCountOnCriticalLine T ≤ N := by
-    have hle :=
-      Set.ncard_le_ncard_of_injOn
-        (fun t : Set.Icc (0 : ℝ) T => (t : ℝ))
-        (s := countedZeros) (t := allZeros) ?_ ?_ hfinite
-    · simpa [zeroCountOnCriticalLine, countedZeros, allZeros, N] using hle
-    · intro t ht
-      exact ht
-    · intro t₁ _ t₂ _ heq
-      exact Subtype.ext heq
+    simpa [allZeros, N] using
+      zeroCountOnCriticalLine_le_ncard_allZeros_of_finite T hfinite
   have hcount_le_N : (zeroCountOnCriticalLine T : ℝ) ≤ N := by
     exact_mod_cast hcount_le_N_nat
   have hcount_lower := hbound T hT0

@@ -2066,6 +2066,24 @@ lemma not_mem_nontrivialZerosFinset_of_height_lt {ρ : ℂ} {T : ℝ}
   intro hρ
   exact not_le_of_gt hT (mem_nontrivialZerosFinset.mp hρ).2
 
+lemma mem_nontrivialZerosFinset_sdiff {ρ : ℂ} {T U : ℝ} :
+    ρ ∈ (nontrivialZerosFinset U \ nontrivialZerosFinset T) ↔
+      RiemannHypothesis.IsNontrivialZero ρ ∧ |ρ.im| ≤ U ∧ T < |ρ.im| := by
+  constructor
+  · intro hρ
+    simp only [Finset.mem_sdiff] at hρ
+    rcases mem_nontrivialZerosFinset.mp hρ.1 with ⟨hzero, hheightU⟩
+    have hheightT : T < |ρ.im| := by
+      by_contra hnot
+      have hle : |ρ.im| ≤ T := le_of_not_gt hnot
+      exact hρ.2 (mem_nontrivialZerosFinset.mpr ⟨hzero, hle⟩)
+    exact ⟨hzero, hheightU, hheightT⟩
+  · intro hρ
+    rcases hρ with ⟨hzero, hheightU, hheightT⟩
+    simp only [Finset.mem_sdiff]
+    exact ⟨mem_nontrivialZerosFinset.mpr ⟨hzero, hheightU⟩,
+      not_mem_nontrivialZerosFinset_of_height_lt hheightT⟩
+
 lemma nontrivial_zero_ne_zero {ρ : ℂ}
     (hρ : RiemannHypothesis.IsNontrivialZero ρ) : ρ ≠ 0 := by
   intro h0
@@ -2177,6 +2195,14 @@ lemma finiteNontrivialZeroSum_eq_add_new_zeros {x T U : ℝ} (hTU : T ≤ U) :
   rw [← hsum]
   abel
 
+lemma finiteNontrivialZeroSum_sub_eq_new_zeros {x T U : ℝ} (hTU : T ≤ U) :
+    finiteNontrivialZeroSum x U - finiteNontrivialZeroSum x T =
+      ∑ ρ ∈ (nontrivialZerosFinset U \ nontrivialZerosFinset T),
+        (x : ℂ) ^ ρ / ρ := by
+  have h := finiteNontrivialZeroSum_eq_add_new_zeros (x := x) hTU
+  rw [h]
+  abel
+
 /-- The height-truncated right-hand side appearing in the explicit formula
 target, factored out so later contour arguments can rewrite it directly. -/
 noncomputable def explicitFormulaApprox (x T : ℝ) : ℂ :=
@@ -2216,6 +2242,13 @@ lemma explicitFormulaApprox_eq_sub_new_zeros {x T U : ℝ} (hTU : T ≤ U) :
   simp [explicitFormulaApprox, hsum]
   abel
 
+lemma explicitFormulaApprox_sub_eq_new_zeros {x T U : ℝ} (hTU : T ≤ U) :
+    explicitFormulaApprox x T - explicitFormulaApprox x U =
+      ∑ ρ ∈ (nontrivialZerosFinset U \ nontrivialZerosFinset T),
+        (x : ℂ) ^ ρ / ρ := by
+  rw [explicitFormulaApprox_eq_sub_new_zeros hTU]
+  abel
+
 lemma explicitFormulaApprox_add_new_zeros {x T U : ℝ} (hTU : T ≤ U) :
     explicitFormulaApprox x U +
         ∑ ρ ∈ (nontrivialZerosFinset U \ nontrivialZerosFinset T),
@@ -2230,6 +2263,13 @@ lemma explicitFormulaApprox_eq_of_global_height_bound {x B T : ℝ}
     explicitFormulaApprox x T = explicitFormulaApprox x B :=
   explicitFormulaApprox_congr_zero_sum
     (finiteNontrivialZeroSum_eq_of_global_height_bound hBT hbound)
+
+lemma explicitFormulaApprox_eventually_eq_of_global_height_bound {x B : ℝ}
+    (hbound : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → |ρ.im| ≤ B) :
+    (fun T : ℝ => explicitFormulaApprox x T) =ᶠ[atTop]
+      fun _T : ℝ => explicitFormulaApprox x B := by
+  filter_upwards [eventually_ge_atTop B] with T hBT
+  exact explicitFormulaApprox_eq_of_global_height_bound hBT hbound
 
 lemma explicitFormulaApprox_eq_of_neg (x : ℝ) {T : ℝ} (hT : T < 0) :
     explicitFormulaApprox x T =
@@ -2529,6 +2569,17 @@ lemma explicit_formula_von_mangoldt_of_norm_error_tendsto_zero
     explicit_formula_von_mangoldt x hx :=
   explicit_formula_von_mangoldt_of_error_tendsto_zero
     (tendsto_zero_iff_norm_tendsto_zero.mpr h)
+
+lemma explicit_formula_von_mangoldt_of_eventually_norm_le
+    {x : ℝ} {hx : x ≥ 2} {E : ℝ → ℝ}
+    (hE : Tendsto E atTop (𝓝 0))
+    (hbound : ∀ᶠ T in atTop,
+      ‖explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)‖ ≤ E T) :
+    explicit_formula_von_mangoldt x hx := by
+  refine explicit_formula_von_mangoldt_of_norm_error_tendsto_zero ?_
+  refine tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds hE ?_ hbound
+  exact Eventually.of_forall fun T =>
+    norm_nonneg (explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ))
 
 lemma explicit_formula_von_mangoldt_iff_norm_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2} :
