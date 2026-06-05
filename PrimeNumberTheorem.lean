@@ -2325,6 +2325,37 @@ lemma explicit_formula_von_mangoldt_of_eventually_exact {x : ℝ} {hx : x ≥ 2}
     explicit_formula_von_mangoldt x hx := by
   exact tendsto_nhds_of_eventually_eq h
 
+lemma explicit_formula_von_mangoldt_of_global_height_bound_exact
+    {x B : ℝ} {hx : x ≥ 2}
+    (hbound : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → |ρ.im| ≤ B)
+    (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ)) :
+    explicit_formula_von_mangoldt x hx := by
+  refine explicit_formula_von_mangoldt_of_eventually_exact ?_
+  exact (explicitFormulaApprox_eventually_eq_of_global_height_bound
+    (x := x) (B := B) hbound).mono fun _T hT => by
+      simpa using hT.trans hB
+
+lemma explicitFormulaApprox_eq_chebyshevPsi0_of_global_height_bound
+    {x B : ℝ} {hx : x ≥ 2}
+    (hbound : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → |ρ.im| ≤ B)
+    (h : explicit_formula_von_mangoldt x hx) :
+    explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ) := by
+  have hconst :
+      Tendsto (fun _T : ℝ => explicitFormulaApprox x B) atTop
+        (𝓝 (chebyshevPsi0 x : ℂ)) :=
+    Tendsto.congr'
+      (explicitFormulaApprox_eventually_eq_of_global_height_bound
+        (x := x) (B := B) hbound) h
+  exact tendsto_nhds_unique tendsto_const_nhds hconst
+
+lemma explicit_formula_von_mangoldt_iff_global_height_bound_exact
+    {x B : ℝ} {hx : x ≥ 2}
+    (hbound : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → |ρ.im| ≤ B) :
+    explicit_formula_von_mangoldt x hx ↔
+      explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ) :=
+  ⟨explicitFormulaApprox_eq_chebyshevPsi0_of_global_height_bound hbound,
+    explicit_formula_von_mangoldt_of_global_height_bound_exact hbound⟩
+
 lemma explicit_formula_von_mangoldt_of_error_tendsto_zero {x : ℝ} {hx : x ≥ 2}
     (h : Tendsto (fun T : ℝ =>
       explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)) atTop (𝓝 0)) :
