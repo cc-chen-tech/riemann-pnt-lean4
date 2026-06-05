@@ -696,6 +696,21 @@ lemma weightedIntegralOf_tail_dominates_of_tendsto_atTop
     weightedIntegralOf_tail_dominates f n :=
   ⟨0, by simpa [weightedIntegralOf] using h⟩
 
+lemma weightedIntegralOf_tail_dominates_neg_of_tendsto_atBot
+    {f : ℝ → ℝ} {n : ℕ}
+    (h : Tendsto (fun T => weightedIntegralOf f n T) atTop atBot) :
+    weightedIntegralOf_tail_dominates (fun t => -f t) n := by
+  refine weightedIntegralOf_tail_dominates_of_tendsto_atTop ?_
+  have hneg :
+      Tendsto (fun T : ℝ => -weightedIntegralOf f n T) atTop atTop :=
+    Filter.tendsto_neg_atBot_atTop.comp h
+  have h_eq :
+      (fun T : ℝ => weightedIntegralOf (fun t => -f t) n T)
+        = fun T : ℝ => -weightedIntegralOf f n T := by
+    funext T
+    exact weightedIntegralOf_neg f n T
+  exact hneg.congr' (Filter.EventuallyEq.of_eq h_eq.symm)
+
 /-- Tail dominance turns the full weighted integral eventually positive.
 
 The continuity hypothesis supplies interval integrability, so the integral can
@@ -729,6 +744,24 @@ lemma weightedIntegralOf_eventually_positive_of_tail_dominates
     (μ := MeasureTheory.volume) (hg.intervalIntegrable 0 A) (hg.intervalIntegrable A T)]
   simpa using hpos
 
+lemma weightedIntegralOf_eventually_negative_of_neg_tail_dominates
+    (f : ℝ → ℝ) (n : ℕ) (hf : Continuous f)
+    (h_neg : ∀ᶠ t in atTop, f t < 0)
+    (h_tail : weightedIntegralOf_tail_dominates (fun t => -f t) n) :
+    ∀ᶠ T in atTop, weightedIntegralOf f n T < 0 := by
+  have h_neg_pos : ∀ᶠ t in atTop, (fun s => -f s) t > 0 := by
+    filter_upwards [h_neg] with t ht
+    linarith
+  have h_int_pos :
+      ∀ᶠ T in atTop, weightedIntegralOf (fun s => -f s) n T > 0 :=
+    weightedIntegralOf_eventually_positive_of_tail_dominates
+      (fun s => -f s) n hf.neg h_neg_pos h_tail
+  filter_upwards [h_int_pos] with T hT
+  have h_eq : weightedIntegralOf (fun s => -f s) n T = -weightedIntegralOf f n T :=
+    weightedIntegralOf_neg f n T
+  rw [h_eq] at hT
+  linarith
+
 lemma weighted_integral_eventually_positive_of_hardyZ_positive
     (n : ℕ) (h_pos : ∀ᶠ t in atTop, hardyZ t > 0)
     (h_tail : weightedIntegralOf_tail_dominates hardyZ n) :
@@ -741,19 +774,9 @@ lemma weighted_integral_eventually_negative_of_hardyZ_negative
     (n : ℕ) (h_neg : ∀ᶠ t in atTop, hardyZ t < 0)
     (h_tail : weightedIntegralOf_tail_dominates (fun t => -hardyZ t) n) :
     ∀ᶠ T in atTop, weightedIntegral n T < 0 := by
-  have h_neg_pos : ∀ᶠ t in atTop, (fun s => -hardyZ s) t > 0 := by
-    filter_upwards [h_neg] with t ht
-    linarith
-  have h_int_pos :
-      ∀ᶠ T in atTop, weightedIntegralOf (fun s => -hardyZ s) n T > 0 :=
-    weightedIntegralOf_eventually_positive_of_tail_dominates
-      (fun s => -hardyZ s) n hardyZ_continuous.neg h_neg_pos h_tail
-  filter_upwards [h_int_pos] with T hT
-  have h_eq : weightedIntegralOf (fun s => -hardyZ s) n T = -weightedIntegral n T := by
-    unfold weightedIntegral
-    exact weightedIntegralOf_neg hardyZ n T
-  rw [h_eq] at hT
-  linarith
+  simpa [weightedIntegral] using
+    weightedIntegralOf_eventually_negative_of_neg_tail_dominates
+      hardyZ n hardyZ_continuous h_neg h_tail
 
 lemma weightedIntegral_eventually_bddBelow_of_hardyZ_positive
     (n : ℕ) (h_pos : ∀ᶠ t in atTop, hardyZ t > 0) :
@@ -856,18 +879,9 @@ lemma weightedIntegral_two_eventually_positive_of_two_signed_moments
 lemma weightedIntegralOf_neg_hardyZ_one_tail_dominates_of_two_signed_moments
     (h : hardy_two_signed_moments_target) :
     weightedIntegralOf_tail_dominates (fun t => -hardyZ t) 1 := by
-  refine weightedIntegralOf_tail_dominates_of_tendsto_atTop ?_
-  have hbot := weightedIntegral_one_tendsto_atBot_of_two_signed_moments h
-  have hneg :
-      Tendsto (fun T : ℝ => -weightedIntegral 1 T) atTop atTop :=
-    Filter.tendsto_neg_atBot_atTop.comp hbot
-  have h_eq :
-      (fun T : ℝ => weightedIntegralOf (fun t => -hardyZ t) 1 T)
-        = fun T : ℝ => -weightedIntegral 1 T := by
-    funext T
-    unfold weightedIntegral
-    exact weightedIntegralOf_neg hardyZ 1 T
-  exact hneg.congr' (Filter.EventuallyEq.of_eq h_eq.symm)
+  exact weightedIntegralOf_tail_dominates_neg_of_tendsto_atBot
+    (by simpa [weightedIntegral] using
+      weightedIntegral_one_tendsto_atBot_of_two_signed_moments h)
 
 lemma weightedIntegralOf_hardyZ_two_tail_dominates_of_two_signed_moments
     (h : hardy_two_signed_moments_target) :
