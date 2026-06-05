@@ -182,6 +182,15 @@ theorem infinitely_many_nontrivial_zeros_on_critical_line
     · simpa [RiemannHypothesis.criticalLine] using hre
   exact hcrit.mono hsubset
 
+theorem hardyZ_zero_iff_critical_line_zeta_zero (t : ℝ) :
+    HardyTheorem.hardyZ t = 0 ↔ riemannZeta (0.5 + I * t) = 0 :=
+  HardyTheorem.hardyZ_zero_iff_zeta_zero t
+
+theorem hardy_theorem_target_iff_hardyZ_zero_set_infinite :
+    HardyTheorem.hardy_theorem_target ↔
+      {t : ℝ | HardyTheorem.hardyZ t = 0}.Infinite :=
+  HardyTheorem.hardy_theorem_target_iff_hardyZ_zero_set_infinite
+
 lemma complex_critical_line_zero_is_nontrivial {s : ℂ}
     (hre : s.re = 1 / 2) (hzero : riemannZeta s = 0) :
     RiemannHypothesis.IsNontrivialZero s ∧
@@ -287,6 +296,11 @@ theorem hardy_zeros_unbounded_of_conrey_target_of_bounded_strips
   HardyTheorem.hardy_zeros_unbounded_of_hardy_theorem_target_of_bounded_strips
     hstrip (hardy_theorem_target_of_conrey_target h)
 
+theorem hardy_zeros_abs_unbounded_target_of_unbounded
+    (h : HardyTheorem.hardy_zeros_unbounded_target) :
+    HardyTheorem.hardy_zeros_abs_unbounded_target :=
+  HardyTheorem.hardy_zeros_abs_unbounded_of_unbounded h
+
 theorem hardy_theorem_target_of_two_signed_moments
     (hmom : HardyTheorem.hardy_two_signed_moments_target) :
     HardyTheorem.hardy_theorem_target :=
@@ -316,6 +330,12 @@ theorem infinitely_many_zeros_on_critical_line_of_conrey_target
   infinitely_many_zeros_on_critical_line
     (hardy_theorem_target_of_conrey_target h)
 
+theorem infinitely_many_zeros_on_critical_line_of_unbounded
+    (h : HardyTheorem.hardy_zeros_unbounded_target) :
+    {s : ℂ | s.re = 1 / 2 ∧ riemannZeta s = 0}.Infinite :=
+  infinitely_many_zeros_on_critical_line
+    (HardyTheorem.hardy_theorem_target_of_unbounded h)
+
 theorem infinitely_many_nontrivial_zeros_on_critical_line_of_selberg_zero_proportion
     (h : HardyTheorem.selberg_zero_proportion_target) :
     {s : ℂ | RiemannHypothesis.IsNontrivialZero s ∧
@@ -336,6 +356,13 @@ theorem infinitely_many_nontrivial_zeros_on_critical_line_of_conrey_target
       s ∈ RiemannHypothesis.criticalLine}.Infinite :=
   infinitely_many_nontrivial_zeros_on_critical_line
     (hardy_theorem_target_of_conrey_target h)
+
+theorem infinitely_many_nontrivial_zeros_on_critical_line_of_unbounded
+    (h : HardyTheorem.hardy_zeros_unbounded_target) :
+    {s : ℂ | RiemannHypothesis.IsNontrivialZero s ∧
+      s ∈ RiemannHypothesis.criticalLine}.Infinite :=
+  infinitely_many_nontrivial_zeros_on_critical_line
+    (HardyTheorem.hardy_theorem_target_of_unbounded h)
 
 theorem exists_zero_on_critical_line_of_two_signed_moments
     (hmom : HardyTheorem.hardy_two_signed_moments_target) :
