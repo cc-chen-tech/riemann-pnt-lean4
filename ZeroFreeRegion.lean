@@ -590,6 +590,14 @@ lemma classical_zero_free_region_compact_re_im (T : ℝ) (hT : T ≥ 2) :
     simpa using hβ
   exact hcompact ((β : ℂ) + I * t) hheight hre
 
+lemma classical_zero_free_region_compact_band_re_im (T : ℝ) (hT : T ≥ 2) :
+    ∃ d > 0, ∀ β t : ℝ, 2 ≤ |t| → |t| ≤ T →
+      β ≥ 1 - d → riemannZeta ((β : ℂ) + I * t) ≠ 0 := by
+  rcases classical_zero_free_region_compact_re_im T hT with ⟨d, hd_pos, hcompact⟩
+  refine ⟨d, hd_pos, ?_⟩
+  intro β t _ht_lower ht_upper hβ
+  exact hcompact β t ht_upper hβ
+
 /-- 经典零点自由区域：ζ(s) ≠ 0 对于 Re(s) ≥ 1 - c/log|t| (|t| ≥ 2)。
     这还需要把 Hadamard 因子分解或 Borel-Carathéodory 等复分析工具
     专门应用到 ζ 的增长估计和对数导数估计上。 -/
@@ -794,6 +802,14 @@ lemma compact_patch_classical_zero_free_region_at_three
         s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0) :
     classical_zero_free_region :=
   compact_patch_classical_zero_free_region 3 (by norm_num) hhigh
+
+lemma compact_patch_classical_zero_free_region_re_im_at_three
+    (hhigh :
+      ∃ c > 0, ∀ β t : ℝ, 3 ≤ |t| →
+        β ≥ 1 - c / Real.log |t| →
+        riemannZeta ((β : ℂ) + I * t) ≠ 0) :
+    classical_zero_free_region :=
+  compact_patch_classical_zero_free_region_re_im 3 (by norm_num) hhigh
 
 /-- Any classical zero-free region immediately restricts to an arbitrary
 high-height range.  This is the easy direction paired with

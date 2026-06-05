@@ -336,6 +336,12 @@ theorem infinitely_many_zeros_on_critical_line_of_unbounded
   infinitely_many_zeros_on_critical_line
     (HardyTheorem.hardy_theorem_target_of_unbounded h)
 
+theorem infinitely_many_zeros_on_critical_line_of_abs_unbounded
+    (h : HardyTheorem.hardy_zeros_abs_unbounded_target) :
+    {s : ℂ | s.re = 1 / 2 ∧ riemannZeta s = 0}.Infinite :=
+  infinitely_many_zeros_on_critical_line
+    (HardyTheorem.hardy_theorem_target_of_abs_unbounded h)
+
 theorem infinitely_many_nontrivial_zeros_on_critical_line_of_selberg_zero_proportion
     (h : HardyTheorem.selberg_zero_proportion_target) :
     {s : ℂ | RiemannHypothesis.IsNontrivialZero s ∧
@@ -363,6 +369,13 @@ theorem infinitely_many_nontrivial_zeros_on_critical_line_of_unbounded
       s ∈ RiemannHypothesis.criticalLine}.Infinite :=
   infinitely_many_nontrivial_zeros_on_critical_line
     (HardyTheorem.hardy_theorem_target_of_unbounded h)
+
+theorem infinitely_many_nontrivial_zeros_on_critical_line_of_abs_unbounded
+    (h : HardyTheorem.hardy_zeros_abs_unbounded_target) :
+    {s : ℂ | RiemannHypothesis.IsNontrivialZero s ∧
+      s ∈ RiemannHypothesis.criticalLine}.Infinite :=
+  infinitely_many_nontrivial_zeros_on_critical_line
+    (HardyTheorem.hardy_theorem_target_of_abs_unbounded h)
 
 theorem exists_zero_on_critical_line_of_two_signed_moments
     (hmom : HardyTheorem.hardy_two_signed_moments_target) :

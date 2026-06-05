@@ -1018,6 +1018,17 @@ lemma hardy_zeros_unbounded_target_iff_hardyZ_unbounded :
     rcases h T with ⟨t, hTt, htzero⟩
     exact ⟨t, hTt, (hardyZ_zero_iff_zeta_zero t).mp htzero⟩
 
+lemma hardy_zeros_abs_unbounded_target_iff_hardyZ_abs_unbounded :
+    hardy_zeros_abs_unbounded_target ↔
+      ∀ T : ℝ, ∃ t : ℝ, T ≤ |t| ∧ hardyZ t = 0 := by
+  constructor
+  · intro h T
+    rcases h T with ⟨t, hTt, htzero⟩
+    exact ⟨t, hTt, (hardyZ_zero_iff_zeta_zero t).mpr htzero⟩
+  · intro h T
+    rcases h T with ⟨t, hTt, htzero⟩
+    exact ⟨t, hTt, (hardyZ_zero_iff_zeta_zero t).mp htzero⟩
+
 lemma hardy_zeros_abs_unbounded_of_unbounded
     (h : hardy_zeros_unbounded_target) : hardy_zeros_abs_unbounded_target := by
   intro T
@@ -1165,6 +1176,14 @@ lemma hardy_theorem_target_iff_unbounded_of_bounded_strips
     hardy_theorem_target ↔ hardy_zeros_unbounded_target :=
   Iff.trans (hardy_theorem_target_iff_abs_unbounded_of_bounded_strips hstrip)
     hardy_zeros_unbounded_iff_abs_unbounded.symm
+
+lemma hardy_theorem_target_iff_hardyZ_unbounded_of_bounded_strips
+    (hstrip : ∀ B : ℝ,
+      {t : ℝ | |t| ≤ B ∧ riemannZeta (0.5 + I * t) = 0}.Finite) :
+    hardy_theorem_target ↔
+      ∀ T : ℝ, ∃ t : ℝ, T ≤ t ∧ hardyZ t = 0 :=
+  Iff.trans (hardy_theorem_target_iff_unbounded_of_bounded_strips hstrip)
+    hardy_zeros_unbounded_target_iff_hardyZ_unbounded
 
 lemma hardy_zeros_unbounded_of_hardy_theorem_target_of_bounded_strips
     (hstrip : ∀ B : ℝ,
@@ -1364,6 +1383,14 @@ lemma eventually_exists_zero_on_critical_line_interval_of_hardy_littlewood_lower
     [eventually_zeroCountOnCriticalLine_pos_of_hardy_littlewood_lower_bound h] with T hT
   exact exists_zero_of_zeroCountOnCriticalLine_pos hT
 
+lemma eventually_exists_hardyZ_zero_interval_of_hardy_littlewood_lower_bound
+    (h : hardy_littlewood_lower_bound_target) :
+    ∀ᶠ T in atTop,
+      ∃ t : ℝ, 0 ≤ t ∧ t ≤ T ∧ hardyZ t = 0 := by
+  filter_upwards
+    [eventually_zeroCountOnCriticalLine_pos_of_hardy_littlewood_lower_bound h] with T hT
+  exact exists_hardyZ_zero_of_zeroCountOnCriticalLine_pos hT
+
 /-- Selberg's positive-proportion target implies the weaker
 Hardy--Littlewood linear lower-bound target. -/
 lemma hardy_littlewood_lower_bound_target_of_selberg_zero_proportion
@@ -1425,6 +1452,13 @@ lemma eventually_exists_zero_on_critical_line_interval_of_selberg_zero_proportio
       ∃ t : ℝ, 0 ≤ t ∧ t ≤ T ∧ riemannZeta (0.5 + I * t) = 0 := by
   filter_upwards [eventually_zeroCountOnCriticalLine_pos_of_selberg_zero_proportion h] with T hT
   exact exists_zero_of_zeroCountOnCriticalLine_pos hT
+
+lemma eventually_exists_hardyZ_zero_interval_of_selberg_zero_proportion
+    (h : selberg_zero_proportion_target) :
+    ∀ᶠ T in atTop,
+      ∃ t : ℝ, 0 ≤ t ∧ t ≤ T ∧ hardyZ t = 0 := by
+  filter_upwards [eventually_zeroCountOnCriticalLine_pos_of_selberg_zero_proportion h] with T hT
+  exact exists_hardyZ_zero_of_zeroCountOnCriticalLine_pos hT
 
 /-- A Hardy--Littlewood lower-bound target is already enough to extract at
 least one critical-line zero at nonnegative height. -/

@@ -45,6 +45,20 @@ theorem infinitely_many_zeros_on_critical_line_of_hardy_unbounded
     {s : ℂ | s.re = 1 / 2 ∧ riemannZeta s = 0}.Infinite :=
   KnownResults.infinitely_many_zeros_on_critical_line_of_unbounded h
 
+/-- Public bridge between one-sided and absolute-height Hardy unbounded targets. -/
+theorem hardy_zeros_unbounded_iff_abs_unbounded :
+    HardyTheorem.hardy_zeros_unbounded_target ↔
+      HardyTheorem.hardy_zeros_abs_unbounded_target :=
+  HardyTheorem.hardy_zeros_unbounded_iff_abs_unbounded
+
+/-- Public bridge from Hardy's absolute-height unbounded target to infinitely
+many critical-line zeros. -/
+theorem infinitely_many_zeros_on_critical_line_of_hardy_abs_unbounded
+    (h : HardyTheorem.hardy_zeros_abs_unbounded_target) :
+    {s : ℂ | s.re = 1 / 2 ∧ riemannZeta s = 0}.Infinite :=
+  KnownResults.infinitely_many_zeros_on_critical_line
+    (HardyTheorem.hardy_theorem_target_of_abs_unbounded h)
+
 /-- Public entry point for the norm-error formulation of the corrected
 height-truncated von Mangoldt explicit-formula target. -/
 theorem explicit_formula_von_mangoldt_iff_norm_error_tendsto_zero

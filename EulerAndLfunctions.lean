@@ -82,6 +82,17 @@ theorem zeta_pos_real {s : ℝ} (hs : 1 < s) : 0 < (riemannZeta (s : ℂ)).re :=
 theorem zeta_ne_zero {s : ℂ} (hs : 1 < s.re) : riemannZeta s ≠ 0 :=
   riemannZeta_ne_zero_of_one_lt_re hs
 
+/-- ζ(s) ≠ 0 on the closed half-plane `Re(s) ≥ 1`.
+    Wrapper around Mathlib's boundary-inclusive nonvanishing theorem. -/
+theorem zeta_ne_zero_of_one_le_re {s : ℂ} (hs : 1 ≤ s.re) :
+    riemannZeta s ≠ 0 :=
+  riemannZeta_ne_zero_of_one_le_re hs
+
+/-- Coordinate form of ζ(s) ≠ 0 on the closed half-plane `Re(s) ≥ 1`. -/
+theorem zeta_ne_zero_re_im_of_one_le {β t : ℝ} (hβ : 1 ≤ β) :
+    riemannZeta ((β : ℂ) + I * t) ≠ 0 := by
+  exact zeta_ne_zero_of_one_le_re (by simpa using hβ)
+
 end ZetaValues
 
 /-! ## Dirichlet L-Function Nonvanishing -/
@@ -104,5 +115,11 @@ theorem lfunction_ne_zero {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N)
     {s : ℂ} (hs : 1 < s.re) : LFunction χ s ≠ 0 := by
   rw [LFunction_eq_LSeries χ hs]
   exact lseries_ne_zero χ hs
+
+/-- Coordinate form of `LFunction` nonvanishing in `Re(s) > 1`. -/
+theorem lfunction_ne_zero_re_im {N : ℕ} [NeZero N]
+    (χ : DirichletCharacter ℂ N) {σ t : ℝ} (hσ : 1 < σ) :
+    LFunction χ ((σ : ℂ) + I * t) ≠ 0 := by
+  exact lfunction_ne_zero χ (by simpa using hσ)
 
 end DirichletNonvanishing
