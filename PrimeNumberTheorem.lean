@@ -818,6 +818,61 @@ lemma PNTForm2_of_PNTForm1 (h : PNTForm1) : PNTForm2 :=
 lemma PNTForm1_of_PNTForm2 (h : PNTForm2) : PNTForm1 :=
   PNTForm1_iff_PNTForm2.mpr h
 
+lemma PNTForm2_error_isLittleO_logIntegral
+    (h : PNTForm2) :
+    (fun x : ℝ => (primeCounting x : ℝ) - logIntegral x)
+      =o[atTop] (fun x : ℝ => logIntegral x) := by
+  have hratio :
+      Tendsto (fun x : ℝ => (primeCounting x : ℝ) / logIntegral x - 1)
+        atTop (𝓝 0) := by
+    simpa using (h.sub tendsto_const_nhds :
+      Tendsto (fun x : ℝ => (primeCounting x : ℝ) / logIntegral x - (1 : ℝ))
+        atTop (𝓝 (1 - 1)))
+  have heq :
+      (fun x : ℝ => (primeCounting x : ℝ) / logIntegral x - 1)
+        =ᶠ[atTop]
+      fun x : ℝ => ((primeCounting x : ℝ) - logIntegral x) / logIntegral x := by
+    filter_upwards [eventually_ge_atTop (3 : ℝ)] with x hx
+    have hli_ne : logIntegral x ≠ 0 := ne_of_gt (logIntegral_pos (by linarith))
+    field_simp [hli_ne]
+  refine (isLittleO_iff_tendsto' ?_).2 (hratio.congr' heq)
+  filter_upwards [eventually_ge_atTop (3 : ℝ)] with x hx hzero
+  have hli_ne : logIntegral x ≠ 0 := ne_of_gt (logIntegral_pos (by linarith))
+  exact False.elim (hli_ne hzero)
+
+lemma PNTForm2_of_error_isLittleO_logIntegral
+    (h :
+      (fun x : ℝ => (primeCounting x : ℝ) - logIntegral x)
+        =o[atTop] (fun x : ℝ => logIntegral x)) :
+    PNTForm2 := by
+  have hratio := h.tendsto_div_nhds_zero
+  have hsum :
+      Tendsto
+        (fun x : ℝ =>
+          1 + ((primeCounting x : ℝ) - logIntegral x) / logIntegral x)
+        atTop (𝓝 1) := by
+    simpa using (tendsto_const_nhds.add hratio :
+      Tendsto
+        (fun x : ℝ =>
+          (1 : ℝ) + ((primeCounting x : ℝ) - logIntegral x) / logIntegral x)
+        atTop (𝓝 ((1 : ℝ) + 0)))
+  have heq :
+      (fun x : ℝ =>
+          1 + ((primeCounting x : ℝ) - logIntegral x) / logIntegral x)
+        =ᶠ[atTop] fun x : ℝ => (primeCounting x : ℝ) / logIntegral x := by
+    filter_upwards [eventually_ge_atTop (3 : ℝ)] with x hx
+    have hli_ne : logIntegral x ≠ 0 := ne_of_gt (logIntegral_pos (by linarith))
+    field_simp [hli_ne]
+    ring
+  exact hsum.congr' heq
+
+lemma PNTForm2_iff_error_isLittleO_logIntegral :
+    PNTForm2 ↔
+      (fun x : ℝ => (primeCounting x : ℝ) - logIntegral x)
+        =o[atTop] (fun x : ℝ => logIntegral x) :=
+  ⟨PNTForm2_error_isLittleO_logIntegral,
+    PNTForm2_of_error_isLittleO_logIntegral⟩
+
 lemma PNTForm3_of_PNTForm2 (h : PNTForm2) : PNTForm3 :=
   PNTForm2_iff_PNTForm3.mp h
 
