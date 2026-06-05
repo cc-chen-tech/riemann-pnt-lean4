@@ -1188,6 +1188,40 @@ lemma zeroCountOnCriticalLine_pos_of_exists_of_finite {T : ℝ}
   have hpos : 0 < S.ncard := (Set.ncard_pos hfinite).mpr ⟨_, hmem⟩
   simpa [zeroCountOnCriticalLine, S] using hpos
 
+lemma zeroCountOnCriticalLine_pos_iff_exists_of_finite {T : ℝ}
+    (hfinite :
+      {t : Set.Icc (0 : ℝ) T | riemannZeta (0.5 + I * (t : ℝ)) = 0}.Finite) :
+    0 < zeroCountOnCriticalLine T ↔
+      ∃ t : ℝ, 0 ≤ t ∧ t ≤ T ∧ riemannZeta (0.5 + I * t) = 0 :=
+  ⟨exists_zero_of_zeroCountOnCriticalLine_pos,
+    zeroCountOnCriticalLine_pos_of_exists_of_finite hfinite⟩
+
+lemma zeroCountOnCriticalLine_eq_zero_of_no_zero {T : ℝ}
+    (h : ¬ ∃ t : ℝ, 0 ≤ t ∧ t ≤ T ∧ riemannZeta (0.5 + I * t) = 0) :
+    zeroCountOnCriticalLine T = 0 := by
+  classical
+  let S : Set (Set.Icc (0 : ℝ) T) :=
+    {t : Set.Icc (0 : ℝ) T | riemannZeta (0.5 + I * (t : ℝ)) = 0}
+  have hempty : S = ∅ := by
+    ext t
+    constructor
+    · intro ht
+      exact (h ⟨(t : ℝ), t.property.1, t.property.2, ht⟩).elim
+    · simp
+  simp [zeroCountOnCriticalLine, S, hempty]
+
+lemma zeroCountOnCriticalLine_eq_zero_iff_no_zero_of_finite {T : ℝ}
+    (hfinite :
+      {t : Set.Icc (0 : ℝ) T | riemannZeta (0.5 + I * (t : ℝ)) = 0}.Finite) :
+    zeroCountOnCriticalLine T = 0 ↔
+      ¬ ∃ t : ℝ, 0 ≤ t ∧ t ≤ T ∧ riemannZeta (0.5 + I * t) = 0 := by
+  constructor
+  · intro hzero hexists
+    have hpos : 0 < zeroCountOnCriticalLine T :=
+      zeroCountOnCriticalLine_pos_of_exists_of_finite hfinite hexists
+    omega
+  · exact zeroCountOnCriticalLine_eq_zero_of_no_zero
+
 lemma zeroCountOnCriticalLine_mono_of_finite {T U : ℝ}
     (hTU : T ≤ U)
     (hfiniteU :
