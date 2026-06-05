@@ -2779,6 +2779,58 @@ lemma explicit_formula_von_mangoldt_of_eventually_norm_le
   exact Eventually.of_forall fun T =>
     norm_nonneg (explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ))
 
+/-- Coordinate estimates for the real and imaginary errors are enough to close
+the explicit-formula target.  This is the shape naturally produced by many
+contour estimates before they are repackaged as a complex norm bound. -/
+lemma explicit_formula_von_mangoldt_of_eventually_re_im_abs_le
+    {x : ℝ} {hx : x ≥ 2} {Ere Eim : ℝ → ℝ}
+    (hEre : Tendsto Ere atTop (𝓝 0))
+    (hEim : Tendsto Eim atTop (𝓝 0))
+    (hre_bound : ∀ᶠ T in atTop,
+      |(explicitFormulaApprox x T).re - chebyshevPsi0 x| ≤ Ere T)
+    (him_bound : ∀ᶠ T in atTop,
+      |(explicitFormulaApprox x T).im| ≤ Eim T) :
+    explicit_formula_von_mangoldt x hx := by
+  refine explicit_formula_von_mangoldt_of_re_im_error_tendsto_zero ?_ ?_
+  · rw [tendsto_zero_iff_abs_tendsto_zero]
+    exact tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds
+      hEre
+      (Eventually.of_forall fun T => abs_nonneg _)
+      hre_bound
+  · rw [tendsto_zero_iff_abs_tendsto_zero]
+    exact tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds
+      hEim
+      (Eventually.of_forall fun T => abs_nonneg _)
+      him_bound
+
+lemma explicit_formula_von_mangoldt_re_abs_error_tendsto_zero
+    {x : ℝ} {hx : x ≥ 2}
+    (h : explicit_formula_von_mangoldt x hx) :
+    Tendsto (fun T : ℝ =>
+      |(explicitFormulaApprox x T).re - chebyshevPsi0 x|) atTop (𝓝 0) := by
+  simpa using (explicit_formula_von_mangoldt_re_error_tendsto_zero h).abs
+
+lemma explicit_formula_von_mangoldt_im_abs_error_tendsto_zero
+    {x : ℝ} {hx : x ≥ 2}
+    (h : explicit_formula_von_mangoldt x hx) :
+    Tendsto (fun T : ℝ => |(explicitFormulaApprox x T).im|) atTop (𝓝 0) := by
+  simpa using (explicit_formula_von_mangoldt_im_error_tendsto_zero h).abs
+
+lemma explicit_formula_von_mangoldt_iff_re_im_abs_error_tendsto_zero
+    {x : ℝ} {hx : x ≥ 2} :
+    explicit_formula_von_mangoldt x hx ↔
+      Tendsto (fun T : ℝ =>
+        |(explicitFormulaApprox x T).re - chebyshevPsi0 x|) atTop (𝓝 0) ∧
+      Tendsto (fun T : ℝ => |(explicitFormulaApprox x T).im|) atTop (𝓝 0) := by
+  constructor
+  · intro h
+    exact ⟨explicit_formula_von_mangoldt_re_abs_error_tendsto_zero h,
+      explicit_formula_von_mangoldt_im_abs_error_tendsto_zero h⟩
+  · intro h
+    exact explicit_formula_von_mangoldt_of_re_im_error_tendsto_zero
+      ((tendsto_zero_iff_abs_tendsto_zero _).mpr h.1)
+      ((tendsto_zero_iff_abs_tendsto_zero _).mpr h.2)
+
 lemma explicit_formula_von_mangoldt_iff_norm_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2} :
     explicit_formula_von_mangoldt x hx ↔
