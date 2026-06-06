@@ -11,6 +11,7 @@ lean_lib RiemannPNT where
     `RiemannExplorer,
     `GammaResidue,
     `HardyTheorem,
+    `HardyTheorem.Phase1Aux,
     `EulerAndLfunctions,
     `PrimeNumberTheorem,
     `ZeroFreeRegion
