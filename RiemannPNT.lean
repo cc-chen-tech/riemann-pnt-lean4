@@ -46,6 +46,24 @@ theorem rh_iff_optimal_error_iff_mathlib :
         PrimeNumberTheorem.RH_PrimeCountingLiErrorBound) :=
   PrimeNumberTheorem.rh_iff_optimal_error_iff_mathlib
 
+/-- Public closed-half-plane nonvanishing theorem for the Riemann zeta
+function. -/
+theorem zeta_ne_zero_of_one_le_re {s : ℂ} (hs : 1 ≤ s.re) :
+    riemannZeta s ≠ 0 :=
+  ZetaValues.zeta_ne_zero_of_one_le_re hs
+
+/-- Public coordinate form of zeta nonvanishing on `Re(s) ≥ 1`. -/
+theorem zeta_ne_zero_re_im_of_one_le {β t : ℝ} (hβ : 1 ≤ β) :
+    riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0 :=
+  ZetaValues.zeta_ne_zero_re_im_of_one_le hβ
+
+/-- Public coordinate form of Dirichlet `LFunction` nonvanishing in
+`Re(s) > 1`. -/
+theorem dirichlet_lfunction_ne_zero_re_im {N : ℕ} [NeZero N]
+    (χ : DirichletCharacter ℂ N) {σ t : ℝ} (hσ : 1 < σ) :
+    DirichletCharacter.LFunction χ ((σ : ℂ) + Complex.I * t) ≠ 0 :=
+  DirichletNonvanishing.lfunction_ne_zero_re_im χ hσ
+
 /-- Public coordinate form of the classical zero-free-region target. -/
 theorem classical_zero_free_region_iff_re_im :
     ZeroFreeRegion.classical_zero_free_region ↔
@@ -60,6 +78,35 @@ theorem classical_zero_free_region_of_vinogradov_korobov
     (hvk : ZeroFreeRegion.vinogradov_korobov_zero_free_region) :
     ZeroFreeRegion.classical_zero_free_region :=
   ZeroFreeRegion.classical_zero_free_region_of_vinogradov_korobov hvk
+
+/-- Public high-height coordinate interface for the classical zero-free-region
+target. -/
+theorem classical_zero_free_region_iff_high_height_re_im
+    (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    ZeroFreeRegion.classical_zero_free_region ↔
+      ∃ c > 0, ∀ β t : ℝ, T0 ≤ |t| →
+        β ≥ 1 - c / Real.log |t| →
+        riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0 :=
+  ZeroFreeRegion.classical_zero_free_region_iff_high_height_re_im T0 hT0
+
+/-- Public coordinate compact-patching theorem at the height cutoff `3`. -/
+theorem compact_patch_classical_zero_free_region_re_im_at_three
+    (hhigh :
+      ∃ c > 0, ∀ β t : ℝ, 3 ≤ |t| →
+        β ≥ 1 - c / Real.log |t| →
+        riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.compact_patch_classical_zero_free_region_re_im_at_three hhigh
+
+/-- Public coordinate form of the Vinogradov-Korobov zero-free-region target. -/
+theorem vinogradov_korobov_zero_free_region_iff_re_im :
+    ZeroFreeRegion.vinogradov_korobov_zero_free_region ↔
+      ∃ c > 0, ∀ β t : ℝ, 3 ≤ |t| →
+        β ≥
+          1 - c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+            (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+        riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0 :=
+  ZeroFreeRegion.vinogradov_korobov_zero_free_region_iff_re_im
 
 /-- Public bridge from Hardy's unbounded-height target to infinitely many
 critical-line zeros. -/
