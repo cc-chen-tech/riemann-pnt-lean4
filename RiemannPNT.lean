@@ -668,6 +668,18 @@ theorem nontrivial_zero_mem_nontrivialZerosFinset {ρ : ℂ} {T : ℝ}
     ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T :=
   PrimeNumberTheorem.nontrivial_zero_mem_nontrivialZerosFinset hρ hT
 
+/-- Public nonzero fact for nontrivial zeta zeros. -/
+theorem nontrivial_zero_ne_zero {ρ : ℂ}
+    (hρ : _root_.RiemannHypothesis.IsNontrivialZero ρ) : ρ ≠ 0 :=
+  PrimeNumberTheorem.nontrivial_zero_ne_zero hρ
+
+/-- Public elementwise monotonicity of height-truncated nontrivial-zero
+finsets. -/
+theorem nontrivialZerosFinset_mono {T U : ℝ} (hTU : T ≤ U) {ρ : ℂ}
+    (hρ : ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T) :
+    ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U :=
+  PrimeNumberTheorem.nontrivialZerosFinset_mono hTU hρ
+
 /-- Public monotonicity of the height-truncated nontrivial-zero finset. -/
 theorem nontrivialZerosFinset_subset {T U : ℝ} (hTU : T ≤ U) :
     PrimeNumberTheorem.nontrivialZerosFinset T ⊆
