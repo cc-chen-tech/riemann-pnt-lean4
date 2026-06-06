@@ -564,6 +564,55 @@ def integral_asymptotic_target (n : ℕ) : Prop :=
       (fun T => weightedIntegral n T) ~[atTop]
         (fun T => ((-1 : ℝ) ^ n * A) * T ^ ((2 * n : ℝ) + 1 / 4))
 
+lemma integral_asymptotic_target_of_asymptotic {n : ℕ}
+    (hn : 1 ≤ n) {A : ℝ} (hA : 0 < A)
+    (hasymp :
+      (fun T => weightedIntegral n T) ~[atTop]
+        (fun T => ((-1 : ℝ) ^ n * A) * T ^ ((2 * n : ℝ) + 1 / 4))) :
+    integral_asymptotic_target n :=
+  ⟨hn, A, hA, hasymp⟩
+
+lemma integral_asymptotic_target_ge_one {n : ℕ}
+    (h : integral_asymptotic_target n) : 1 ≤ n :=
+  h.1
+
+lemma exists_positive_asymptotic_of_integral_asymptotic_target {n : ℕ}
+    (h : integral_asymptotic_target n) :
+    ∃ A : ℝ, 0 < A ∧
+      (fun T => weightedIntegral n T) ~[atTop]
+        (fun T => ((-1 : ℝ) ^ n * A) * T ^ ((2 * n : ℝ) + 1 / 4)) :=
+  h.2
+
+lemma integral_asymptotic_target_one_iff :
+    integral_asymptotic_target 1 ↔
+      ∃ A : ℝ, 0 < A ∧
+        (fun T => weightedIntegral 1 T) ~[atTop]
+          (fun T => -A * T ^ ((2 : ℝ) + 1 / 4)) := by
+  constructor
+  · intro h
+    rcases h with ⟨_, A, hApos, hA⟩
+    refine ⟨A, hApos, ?_⟩
+    simpa using hA
+  · intro h
+    rcases h with ⟨A, hApos, hA⟩
+    refine ⟨by norm_num, A, hApos, ?_⟩
+    simpa using hA
+
+lemma integral_asymptotic_target_two_iff :
+    integral_asymptotic_target 2 ↔
+      ∃ A : ℝ, 0 < A ∧
+        (fun T => weightedIntegral 2 T) ~[atTop]
+          (fun T => A * T ^ ((2 * 2 : ℝ) + 1 / 4)) := by
+  constructor
+  · intro h
+    rcases h with ⟨_, A, hApos, hA⟩
+    refine ⟨A, hApos, ?_⟩
+    simpa using hA
+  · intro h
+    rcases h with ⟨A, hApos, hA⟩
+    refine ⟨by norm_num, A, hApos, ?_⟩
+    simpa using hA
+
 /-- Minimal two-moment target sufficient for the Hardy sign contradiction. -/
 def hardy_two_signed_moments_target : Prop :=
     (∃ A : ℝ, 0 < A ∧
@@ -1013,6 +1062,34 @@ finite-zero theorem in bounded vertical strips. -/
 def hardy_zeros_abs_unbounded_target : Prop :=
     ∀ T : ℝ, ∃ t : ℝ, T ≤ |t| ∧ riemannZeta (0.5 + I * t) = 0
 
+lemma hardy_zeros_unbounded_target_iff_eventually_exists :
+    hardy_zeros_unbounded_target ↔
+      ∀ᶠ T in atTop,
+        ∃ t : ℝ, T ≤ t ∧ riemannZeta (0.5 + I * t) = 0 := by
+  constructor
+  · intro h
+    filter_upwards with T
+    exact h T
+  · intro h T
+    rcases eventually_atTop.mp h with ⟨T0, hT0⟩
+    rcases hT0 (max T T0) (le_max_right T T0) with
+      ⟨t, ht_ge, htzero⟩
+    exact ⟨t, le_trans (le_max_left T T0) ht_ge, htzero⟩
+
+lemma hardy_zeros_abs_unbounded_target_iff_eventually_exists_abs :
+    hardy_zeros_abs_unbounded_target ↔
+      ∀ᶠ T in atTop,
+        ∃ t : ℝ, T ≤ |t| ∧ riemannZeta (0.5 + I * t) = 0 := by
+  constructor
+  · intro h
+    filter_upwards with T
+    exact h T
+  · intro h T
+    rcases eventually_atTop.mp h with ⟨T0, hT0⟩
+    rcases hT0 (max T T0) (le_max_right T T0) with
+      ⟨t, ht_ge, htzero⟩
+    exact ⟨t, le_trans (le_max_left T T0) ht_ge, htzero⟩
+
 lemma hardy_zeros_unbounded_target_iff_hardyZ_unbounded :
     hardy_zeros_unbounded_target ↔
       ∀ T : ℝ, ∃ t : ℝ, T ≤ t ∧ hardyZ t = 0 := by
@@ -1402,6 +1479,41 @@ def selberg_zero_proportion_target : Prop :=
     ∃ c > 0, ∃ T0 : ℝ, ∀ T ≥ T0,
       (zeroCountOnCriticalLine T : ℝ) ≥ c * (T / (2*Real.pi) * Real.log T)
 
+lemma hardy_littlewood_lower_bound_target_iff_eventually_linear_lower_bound :
+    hardy_littlewood_lower_bound_target ↔
+      ∃ C > 0, ∀ᶠ T in atTop,
+        (zeroCountOnCriticalLine T : ℝ) ≥ C * T := by
+  constructor
+  · intro h
+    rcases h with ⟨C, hCpos, T0, hbound⟩
+    refine ⟨C, hCpos, ?_⟩
+    filter_upwards [eventually_ge_atTop T0] with T hT
+    exact hbound T hT
+  · intro h
+    rcases h with ⟨C, hCpos, hbound⟩
+    rcases eventually_atTop.mp hbound with ⟨T0, hT0⟩
+    refine ⟨C, hCpos, T0, ?_⟩
+    intro T hT
+    exact hT0 T hT
+
+lemma selberg_zero_proportion_target_iff_eventually_log_lower_bound :
+    selberg_zero_proportion_target ↔
+      ∃ c > 0, ∀ᶠ T in atTop,
+        (zeroCountOnCriticalLine T : ℝ) ≥
+          c * (T / (2 * Real.pi) * Real.log T) := by
+  constructor
+  · intro h
+    rcases h with ⟨c, hcpos, T0, hbound⟩
+    refine ⟨c, hcpos, ?_⟩
+    filter_upwards [eventually_ge_atTop T0] with T hT
+    exact hbound T hT
+  · intro h
+    rcases h with ⟨c, hcpos, hbound⟩
+    rcases eventually_atTop.mp hbound with ⟨T0, hT0⟩
+    refine ⟨c, hcpos, T0, ?_⟩
+    intro T hT
+    exact hT0 T hT
+
 lemma eventually_nat_lt_zeroCountOnCriticalLine_of_hardy_littlewood_lower_bound
     (h : hardy_littlewood_lower_bound_target) (N : ℕ) :
     ∀ᶠ T in atTop, N < zeroCountOnCriticalLine T := by
@@ -1617,6 +1729,23 @@ def gamma_asymptotic_half_plus_it_target : Prop :=
       (fun (t : ℝ) => Real.sqrt (2*Real.pi) * Complex.exp (I * t * Real.log t - I * t) *
         Complex.exp (-Real.pi * t / 2))
 
+lemma gamma_asymptotic_half_plus_it_target_iff_asymptotic :
+    gamma_asymptotic_half_plus_it_target ↔
+      (fun (t : ℝ) => Complex.Gamma (0.5 + I * t)) ~[atTop]
+        (fun (t : ℝ) => Real.sqrt (2*Real.pi) *
+          Complex.exp (I * t * Real.log t - I * t) *
+          Complex.exp (-Real.pi * t / 2)) :=
+  Iff.rfl
+
+lemma gamma_asymptotic_half_plus_it_target_of_asymptotic
+    (h :
+      (fun (t : ℝ) => Complex.Gamma (0.5 + I * t)) ~[atTop]
+        (fun (t : ℝ) => Real.sqrt (2*Real.pi) *
+          Complex.exp (I * t * Real.log t - I * t) *
+          Complex.exp (-Real.pi * t / 2))) :
+    gamma_asymptotic_half_plus_it_target :=
+  h
+
 /-- The principal-value `thetaPhase` is not expected to satisfy a global exact
 closed formula.  A future development should introduce an unwrapped
 Riemann-Siegel theta function and prove this asymptotic target for it. -/
@@ -1625,6 +1754,25 @@ def theta_asymptotic_target : Prop :=
       (∀ t : ℝ, Complex.exp (I * theta t) = Complex.exp (I * thetaPhase t)) ∧
       (fun t : ℝ => theta t) ~[atTop]
         (fun t : ℝ => (t/2) * Real.log (t/(2*Real.pi)) - t/2 - Real.pi/8)
+
+lemma theta_asymptotic_target_iff_exists :
+    theta_asymptotic_target ↔
+      ∃ theta : ℝ → ℝ,
+        (∀ t : ℝ, Complex.exp (I * theta t) =
+          Complex.exp (I * thetaPhase t)) ∧
+        (fun t : ℝ => theta t) ~[atTop]
+          (fun t : ℝ => (t/2) * Real.log (t/(2*Real.pi)) - t/2 - Real.pi/8) :=
+  Iff.rfl
+
+lemma theta_asymptotic_target_of
+    (theta : ℝ → ℝ)
+    (hphase : ∀ t : ℝ, Complex.exp (I * theta t) =
+      Complex.exp (I * thetaPhase t))
+    (hasymp :
+      (fun t : ℝ => theta t) ~[atTop]
+        (fun t : ℝ => (t/2) * Real.log (t/(2*Real.pi)) - t/2 - Real.pi/8)) :
+    theta_asymptotic_target :=
+  ⟨theta, hphase, hasymp⟩
 
 /-- Target form of the approximate functional equation.  The previous exact
 finite-sum equality omitted the necessary remainder term. -/
@@ -1637,5 +1785,33 @@ def approximate_functional_equation_target : Prop :=
           ∑ n ∈ Finset.range (Nat.floor (Real.sqrt (t / (2*Real.pi)))),
             1/((n+1 : ℂ) ^ (0.5 - I*t))
         + R ∧ ‖R‖ ≤ C * t^(-1/4 : ℝ)
+
+lemma approximate_functional_equation_target_of
+    (C : ℝ) (hC : 0 < C)
+    (hrem : ∀ t : ℝ, t > 1 → ∃ R : ℂ,
+      (riemannZeta (0.5 + I * (t : ℂ)) =
+        ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+          1/((n+1 : ℂ) ^ (0.5 + I * (t : ℂ)))
+        + Complex.exp (I * (thetaPhase t : ℂ)) *
+          ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+            1/((n+1 : ℂ) ^ (0.5 - I * (t : ℂ)))
+        + R) ∧ ‖R‖ ≤ C * (t : ℝ)^(-1/4 : ℝ)) :
+    approximate_functional_equation_target :=
+  ⟨C, hC, hrem⟩
+
+lemma eventually_approximate_functional_equation_of_target
+    (h : approximate_functional_equation_target) :
+    ∃ C : ℝ, C > 0 ∧ Filter.Eventually (fun t : ℝ => ∃ R : ℂ,
+      (riemannZeta (0.5 + I * (t : ℂ)) =
+        ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+          1/((n+1 : ℂ) ^ (0.5 + I * (t : ℂ)))
+        + Complex.exp (I * (thetaPhase t : ℂ)) *
+          ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+            1/((n+1 : ℂ) ^ (0.5 - I * (t : ℂ)))
+        + R) ∧ ‖R‖ ≤ C * (t : ℝ)^(-1/4 : ℝ)) atTop := by
+  rcases h with ⟨C, hC, hrem⟩
+  refine ⟨C, hC, ?_⟩
+  filter_upwards [eventually_gt_atTop (1 : ℝ)] with t ht
+  exact hrem t ht
 
 end HardyTheorem.Details

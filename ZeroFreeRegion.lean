@@ -629,6 +629,21 @@ lemma classical_zero_free_region_iff_re_im :
       apply Complex.ext <;> simp
     simpa [hs_decomp] using hregion s.re s.im hsheight hsre
 
+lemma classical_zero_free_region_to_re_im
+    (hclassical : classical_zero_free_region) :
+    ∃ c > 0, ∀ β t : ℝ, 2 ≤ |t| →
+      β ≥ 1 - c / Real.log |t| →
+      riemannZeta ((β : ℂ) + I * t) ≠ 0 :=
+  classical_zero_free_region_iff_re_im.mp hclassical
+
+lemma classical_zero_free_region_of_re_im
+    (hcoord :
+      ∃ c > 0, ∀ β t : ℝ, 2 ≤ |t| →
+        β ≥ 1 - c / Real.log |t| →
+        riemannZeta ((β : ℂ) + I * t) ≠ 0) :
+    classical_zero_free_region :=
+  classical_zero_free_region_iff_re_im.mpr hcoord
+
 /-- `log |t|` is positive throughout the classical zero-free-region range. -/
 lemma log_abs_pos_of_two_le {t : ℝ} (ht : 2 ≤ |t|) : 0 < Real.log |t| :=
   Real.log_pos (lt_of_lt_of_le (by norm_num : (1 : ℝ) < 2) ht)
@@ -699,6 +714,34 @@ lemma zero_free_region_mono_width_re_im
   refine hlarge β t htheight ?_
   have hwidth' := hwidth t htheight
   linarith
+
+lemma classical_zero_free_region_high_height_mono_const
+    {T0 csmall clarge : ℝ} (hT0 : 2 ≤ T0)
+    (hc : csmall ≤ clarge)
+    (hlarge : ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥ 1 - clarge / Real.log |s.im| → riemannZeta s ≠ 0) :
+    ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥ 1 - csmall / Real.log |s.im| → riemannZeta s ≠ 0 :=
+  zero_free_region_mono_width
+    (width_small := fun t : ℝ => csmall / Real.log t)
+    (width_large := fun t : ℝ => clarge / Real.log t)
+    hlarge
+    (fun _t ht => classical_width_mono_const hc (hT0.trans ht))
+
+lemma classical_zero_free_region_high_height_mono_const_re_im
+    {T0 csmall clarge : ℝ} (hT0 : 2 ≤ T0)
+    (hc : csmall ≤ clarge)
+    (hlarge : ∀ β t : ℝ, T0 ≤ |t| →
+      β ≥ 1 - clarge / Real.log |t| →
+      riemannZeta ((β : ℂ) + I * t) ≠ 0) :
+    ∀ β t : ℝ, T0 ≤ |t| →
+      β ≥ 1 - csmall / Real.log |t| →
+      riemannZeta ((β : ℂ) + I * t) ≠ 0 :=
+  zero_free_region_mono_width_re_im
+    (width_small := fun t : ℝ => csmall / Real.log t)
+    (width_large := fun t : ℝ => clarge / Real.log t)
+    hlarge
+    (fun _t ht => classical_width_mono_const hc (hT0.trans ht))
 
 lemma classical_zero_free_region_on_one_line
     (hclassical : classical_zero_free_region) :
@@ -914,6 +957,15 @@ lemma classical_zero_free_region_iff_high_height_re_im_at_three :
         riemannZeta ((β : ℂ) + I * t) ≠ 0 :=
   classical_zero_free_region_iff_high_height_re_im 3 (by norm_num)
 
+lemma classical_zero_free_region_of_high_height_re_im
+    (T0 : ℝ) (hT0 : 2 ≤ T0)
+    (hcoord :
+      ∃ c > 0, ∀ β t : ℝ, T0 ≤ |t| →
+        β ≥ 1 - c / Real.log |t| →
+        riemannZeta ((β : ℂ) + I * t) ≠ 0) :
+    classical_zero_free_region :=
+  (classical_zero_free_region_iff_high_height_re_im T0 hT0).mpr hcoord
+
 lemma classical_zero_free_region_high_height_at_three
     (hclassical : classical_zero_free_region) :
     ∃ c > 0, ∀ s : ℂ, 3 ≤ |s.im| →
@@ -954,6 +1006,25 @@ lemma vinogradov_korobov_zero_free_region_iff_re_im :
       apply Complex.ext <;> simp
     simpa [hs_decomp] using hregion s.re s.im hsheight hsre
 
+lemma vinogradov_korobov_zero_free_region_to_re_im
+    (hvk : vinogradov_korobov_zero_free_region) :
+    ∃ c > 0, ∀ β t : ℝ, 3 ≤ |t| →
+      β ≥
+        1 - c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta ((β : ℂ) + I * t) ≠ 0 :=
+  vinogradov_korobov_zero_free_region_iff_re_im.mp hvk
+
+lemma vinogradov_korobov_zero_free_region_of_re_im
+    (hcoord :
+      ∃ c > 0, ∀ β t : ℝ, 3 ≤ |t| →
+        β ≥
+          1 - c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+            (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+        riemannZeta ((β : ℂ) + I * t) ≠ 0) :
+    vinogradov_korobov_zero_free_region :=
+  vinogradov_korobov_zero_free_region_iff_re_im.mpr hcoord
+
 lemma vinogradov_korobov_width_pos_of_three_le {c t : ℝ}
     (hc : 0 < c) (ht : 3 ≤ |t|) :
     0 <
@@ -990,6 +1061,52 @@ lemma vinogradov_korobov_width_mono_const {csmall clarge t : ℝ}
     div_le_div_of_nonneg_right hc hden_pos.le
   exact mul_le_mul_of_nonneg_right hbase hfactor_nonneg
 
+lemma vinogradov_korobov_zero_free_region_high_height_mono_const
+    {T0 csmall clarge : ℝ} (hT0 : 3 ≤ T0)
+    (hc : csmall ≤ clarge)
+    (hlarge : ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥
+        1 - clarge / (Real.log |s.im|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |s.im|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta s ≠ 0) :
+    ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥
+        1 - csmall / (Real.log |s.im|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |s.im|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta s ≠ 0 :=
+  zero_free_region_mono_width
+    (width_small := fun t : ℝ =>
+      csmall / (Real.log t) ^ (2 / 3 : ℝ) *
+        (Real.log (Real.log t)) ^ (-1 / 3 : ℝ))
+    (width_large := fun t : ℝ =>
+      clarge / (Real.log t) ^ (2 / 3 : ℝ) *
+        (Real.log (Real.log t)) ^ (-1 / 3 : ℝ))
+    hlarge
+    (fun _t ht => vinogradov_korobov_width_mono_const hc (hT0.trans ht))
+
+lemma vinogradov_korobov_zero_free_region_high_height_mono_const_re_im
+    {T0 csmall clarge : ℝ} (hT0 : 3 ≤ T0)
+    (hc : csmall ≤ clarge)
+    (hlarge : ∀ β t : ℝ, T0 ≤ |t| →
+      β ≥
+        1 - clarge / (Real.log |t|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta ((β : ℂ) + I * t) ≠ 0) :
+    ∀ β t : ℝ, T0 ≤ |t| →
+      β ≥
+        1 - csmall / (Real.log |t|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta ((β : ℂ) + I * t) ≠ 0 :=
+  zero_free_region_mono_width_re_im
+    (width_small := fun t : ℝ =>
+      csmall / (Real.log t) ^ (2 / 3 : ℝ) *
+        (Real.log (Real.log t)) ^ (-1 / 3 : ℝ))
+    (width_large := fun t : ℝ =>
+      clarge / (Real.log t) ^ (2 / 3 : ℝ) *
+        (Real.log (Real.log t)) ^ (-1 / 3 : ℝ))
+    hlarge
+    (fun _t ht => vinogradov_korobov_width_mono_const hc (hT0.trans ht))
+
 lemma vinogradov_korobov_zero_free_region_high_height
     (T0 : ℝ) (hT0 : 3 ≤ T0)
     (hvk : vinogradov_korobov_zero_free_region) :
@@ -1002,6 +1119,27 @@ lemma vinogradov_korobov_zero_free_region_high_height
   refine ⟨c, hc_pos, ?_⟩
   intro s hsT hsre
   exact hregion s (hT0.trans hsT) hsre
+
+lemma vinogradov_korobov_zero_free_region_iff_high_height_at_three :
+    vinogradov_korobov_zero_free_region ↔
+      ∃ c > 0, ∀ s : ℂ, 3 ≤ |s.im| →
+        s.re ≥
+          1 - c / (Real.log |s.im|) ^ (2 / 3 : ℝ) *
+            (Real.log (Real.log |s.im|)) ^ (-1 / 3 : ℝ) →
+        riemannZeta s ≠ 0 := by
+  constructor
+  · exact vinogradov_korobov_zero_free_region_high_height 3 (by norm_num)
+  · intro h
+    simpa [vinogradov_korobov_zero_free_region] using h
+
+lemma vinogradov_korobov_zero_free_region_high_height_at_three
+    (hvk : vinogradov_korobov_zero_free_region) :
+    ∃ c > 0, ∀ s : ℂ, 3 ≤ |s.im| →
+      s.re ≥
+        1 - c / (Real.log |s.im|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |s.im|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta s ≠ 0 :=
+  vinogradov_korobov_zero_free_region_high_height 3 (by norm_num) hvk
 
 lemma vinogradov_korobov_zero_free_region_high_height_re_im
     (T0 : ℝ) (hT0 : 3 ≤ T0)

@@ -586,6 +586,26 @@ lemma logIntegral_isBigO_id :
     (fun x : ℝ => logIntegral x) =O[atTop] (fun x : ℝ => x) :=
   logIntegral_isLittleO_id.isBigO
 
+lemma id_div_log_isLittleO_id :
+    (fun x : ℝ => x / Real.log x) =o[atTop] (fun x : ℝ => x) := by
+  have hlog_inv :
+      Tendsto (fun x : ℝ => (Real.log x)⁻¹) atTop (𝓝 0) := by
+    exact tendsto_inv_atTop_zero.comp Real.tendsto_log_atTop
+  have hratio :
+      Tendsto (fun x : ℝ => (x / Real.log x) / x) atTop (𝓝 0) := by
+    have heq :
+        (fun x : ℝ => (Real.log x)⁻¹)
+          =ᶠ[atTop] fun x : ℝ => (x / Real.log x) / x := by
+      filter_upwards [eventually_ge_atTop (2 : ℝ)] with x hx
+      have hx_ne : x ≠ 0 := by linarith
+      have hlog_ne : Real.log x ≠ 0 :=
+        ne_of_gt (Real.log_pos (by linarith))
+      field_simp [hx_ne, hlog_ne]
+    exact hlog_inv.congr' heq
+  refine (isLittleO_iff_tendsto' ?_).2 hratio
+  filter_upwards [eventually_gt_atTop (0 : ℝ)] with x hx hzero
+  exact False.elim (hx.ne' hzero)
+
 /-- 三種形式等価 -/
 theorem pnt_forms_equivalent :
     (PNTForm1 ↔ PNTForm2) ∧ (PNTForm2 ↔ PNTForm3) := by
@@ -1000,6 +1020,41 @@ lemma PNTForm3_iff_error_isLittleO_id :
       (fun x : ℝ => chebyshevPsi x - x) =o[atTop] (fun x : ℝ => x) :=
   ⟨PNTForm3_error_isLittleO_id,
     PNTForm3_of_error_isLittleO_id⟩
+
+lemma PNTForm1_error_isLittleO_id
+    (h : PNTForm1) :
+    (fun x : ℝ => (primeCounting x : ℝ) - x / Real.log x)
+      =o[atTop] (fun x : ℝ => x) :=
+  (PNTForm1_error_isLittleO_main h).trans id_div_log_isLittleO_id
+
+lemma PNTForm1_error_isBigO_main
+    (h : PNTForm1) :
+    (fun x : ℝ => (primeCounting x : ℝ) - x / Real.log x)
+      =O[atTop] (fun x : ℝ => x / Real.log x) :=
+  (PNTForm1_error_isLittleO_main h).isBigO
+
+lemma PNTForm1_error_isBigO_id
+    (h : PNTForm1) :
+    (fun x : ℝ => (primeCounting x : ℝ) - x / Real.log x)
+      =O[atTop] (fun x : ℝ => x) :=
+  (PNTForm1_error_isLittleO_id h).isBigO
+
+lemma PNTForm2_error_isBigO_logIntegral
+    (h : PNTForm2) :
+    (fun x : ℝ => (primeCounting x : ℝ) - logIntegral x)
+      =O[atTop] (fun x : ℝ => logIntegral x) :=
+  (PNTForm2_error_isLittleO_logIntegral h).isBigO
+
+lemma PNTForm2_error_isBigO_id
+    (h : PNTForm2) :
+    (fun x : ℝ => (primeCounting x : ℝ) - logIntegral x)
+      =O[atTop] (fun x : ℝ => x) :=
+  (PNTForm2_error_isLittleO_id h).isBigO
+
+lemma PNTForm3_error_isBigO_id
+    (h : PNTForm3) :
+    (fun x : ℝ => chebyshevPsi x - x) =O[atTop] (fun x : ℝ => x) :=
+  (PNTForm3_error_isLittleO_id h).isBigO
 
 /-! ## 与黎曼猜想的联系 -/
 
@@ -2136,6 +2191,30 @@ lemma RH_ErrorBound.isLittleO_id
       =o[atTop] (fun x : ℝ => x) :=
   (RH_PrimeCountingLiErrorBound_of_RH_ErrorBound h).isLittleO_id
 
+lemma RH_PrimeCountingLiErrorBound.isBigO_logIntegral
+    (h : RH_PrimeCountingLiErrorBound) :
+    (fun x : ℝ => (primeCounting x : ℝ) - logIntegral x)
+      =O[atTop] (fun x : ℝ => logIntegral x) :=
+  h.isLittleO_logIntegral.isBigO
+
+lemma RH_PrimeCountingLiErrorBound.isBigO_id
+    (h : RH_PrimeCountingLiErrorBound) :
+    (fun x : ℝ => (primeCounting x : ℝ) - logIntegral x)
+      =O[atTop] (fun x : ℝ => x) :=
+  h.isLittleO_id.isBigO
+
+lemma RH_ErrorBound.isBigO_logIntegral
+    (h : RH_ErrorBound) :
+    (fun x : ℝ => (primeCounting x : ℝ) - logIntegral x)
+      =O[atTop] (fun x : ℝ => logIntegral x) :=
+  h.isLittleO_logIntegral.isBigO
+
+lemma RH_ErrorBound.isBigO_id
+    (h : RH_ErrorBound) :
+    (fun x : ℝ => (primeCounting x : ℝ) - logIntegral x)
+      =O[atTop] (fun x : ℝ => x) :=
+  h.isLittleO_id.isBigO
+
 lemma PNTForm2_of_RH_PrimeCountingLiErrorBound
     (h : RH_PrimeCountingLiErrorBound) : PNTForm2 := by
   have hsmall := h.isLittleO_logIntegral
@@ -2189,6 +2268,16 @@ lemma RH_ThetaErrorBound.isLittleO_id
     (fun x : ℝ => Chebyshev.theta x - x) =o[atTop] (fun x : ℝ => x) := by
   rw [RH_ThetaErrorBound] at h
   exact h.trans_isLittleO sqrt_mul_log_sq_isLittleO_id
+
+lemma RH_PsiErrorBound.isBigO_id
+    (h : RH_PsiErrorBound) :
+    (fun x : ℝ => chebyshevPsi x - x) =O[atTop] (fun x : ℝ => x) :=
+  h.isLittleO_id.isBigO
+
+lemma RH_ThetaErrorBound.isBigO_id
+    (h : RH_ThetaErrorBound) :
+    (fun x : ℝ => Chebyshev.theta x - x) =O[atTop] (fun x : ℝ => x) :=
+  h.isLittleO_id.isBigO
 
 lemma PNTForm3_of_RH_PsiErrorBound (h : RH_PsiErrorBound) : PNTForm3 := by
   have hsmall := h.isLittleO_id
@@ -2270,6 +2359,14 @@ lemma PNTForms_of_RH_PsiErrorBound (h : RH_PsiErrorBound) :
 lemma PNTForms_of_RH_ThetaErrorBound (h : RH_ThetaErrorBound) :
     PNTForm1 ∧ PNTForm2 ∧ PNTForm3 :=
   PNTForms_of_RH_PsiErrorBound (RH_PsiErrorBound_of_RH_ThetaErrorBound h)
+
+lemma PNTForms_of_chebyshevPsi0_sub_id_isBigO
+    (hψ0 :
+      (fun x : ℝ => chebyshevPsi0 x - x)
+        =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2)) :
+    PNTForm1 ∧ PNTForm2 ∧ PNTForm3 :=
+  PNTForms_of_RH_PsiErrorBound
+    (RH_PsiErrorBound_of_chebyshevPsi0_sub_id_isBigO hψ0)
 
 /-- Target statement: RH iff the RH-scale prime-counting error bound.
 
@@ -2380,6 +2477,22 @@ lemma RiemannHypothesis_of_rh_iff_pointwise_error
     RH_ErrorBound → RiemannHypothesis.Statement := by
   intro herror
   exact h.mpr (RH_PrimeCountingLiErrorBound_of_RH_ErrorBound herror)
+
+lemma RH_PrimeCountingLiErrorBound_iff_RiemannHypothesis_of_rh_iff_optimal_error
+    (h : rh_iff_optimal_error) :
+    RH_PrimeCountingLiErrorBound ↔ RiemannHypothesis.Statement :=
+  h.symm
+
+lemma RH_ErrorBound_iff_RiemannHypothesis_of_rh_iff_optimal_error
+    (h : rh_iff_optimal_error) :
+    RH_ErrorBound ↔ RiemannHypothesis.Statement :=
+  (rh_iff_pointwise_error_iff.mp h).symm
+
+lemma PNTForms_of_rh_iff_optimal_error
+    (h : rh_iff_optimal_error) :
+    RiemannHypothesis.Statement → PNTForm1 ∧ PNTForm2 ∧ PNTForm3 := by
+  intro hRH
+  exact PNTForms_of_RH_PrimeCountingLiErrorBound (h.mp hRH)
 
 /-! ## 零点对称性 -/
 
@@ -3647,6 +3760,33 @@ lemma explicit_formula_von_mangoldt_iff_reverse_norm_error_tendsto_zero
   ⟨explicit_formula_von_mangoldt_reverse_norm_error_tendsto_zero,
     explicit_formula_von_mangoldt_of_reverse_norm_error_tendsto_zero⟩
 
+lemma explicit_formula_von_mangoldt_reverse_norm_error_isLittleO_one
+    {x : ℝ} {hx : x ≥ 2}
+    (h : explicit_formula_von_mangoldt x hx) :
+    (fun T : ℝ =>
+      ‖(chebyshevPsi0 x : ℂ) - explicitFormulaApprox x T‖)
+        =o[atTop] (fun _T : ℝ => (1 : ℝ)) :=
+  (isLittleO_one_iff ℝ).mpr
+    (explicit_formula_von_mangoldt_reverse_norm_error_tendsto_zero h)
+
+lemma explicit_formula_von_mangoldt_of_reverse_norm_error_isLittleO_one
+    {x : ℝ} {hx : x ≥ 2}
+    (h : (fun T : ℝ =>
+      ‖(chebyshevPsi0 x : ℂ) - explicitFormulaApprox x T‖)
+        =o[atTop] (fun _T : ℝ => (1 : ℝ))) :
+    explicit_formula_von_mangoldt x hx :=
+  explicit_formula_von_mangoldt_of_reverse_norm_error_tendsto_zero
+    ((isLittleO_one_iff ℝ).mp h)
+
+lemma explicit_formula_von_mangoldt_iff_reverse_norm_error_isLittleO_one
+    {x : ℝ} {hx : x ≥ 2} :
+    explicit_formula_von_mangoldt x hx ↔
+      (fun T : ℝ =>
+        ‖(chebyshevPsi0 x : ℂ) - explicitFormulaApprox x T‖)
+          =o[atTop] (fun _T : ℝ => (1 : ℝ)) :=
+  ⟨explicit_formula_von_mangoldt_reverse_norm_error_isLittleO_one,
+    explicit_formula_von_mangoldt_of_reverse_norm_error_isLittleO_one⟩
+
 lemma explicit_formula_von_mangoldt_of_eventually_norm_le
     {x : ℝ} {hx : x ≥ 2} {E : ℝ → ℝ}
     (hE : Tendsto E atTop (𝓝 0))
@@ -3692,12 +3832,37 @@ lemma explicit_formula_von_mangoldt_of_norm_error_isBigO_tendsto_zero
       norm_nonneg _
     simpa [Real.norm_eq_abs, abs_of_nonneg hnorm_nonneg] using hT
 
+lemma explicit_formula_von_mangoldt_of_reverse_norm_error_isBigO_tendsto_zero
+    {x : ℝ} {hx : x ≥ 2} {E : ℝ → ℝ}
+    (hE : Tendsto E atTop (𝓝 0))
+    (hO :
+      (fun T : ℝ => ‖(chebyshevPsi0 x : ℂ) - explicitFormulaApprox x T‖)
+        =O[atTop] E) :
+    explicit_formula_von_mangoldt x hx := by
+  refine explicit_formula_von_mangoldt_of_norm_error_isBigO_tendsto_zero hE ?_
+  have h_eq :
+      (fun T : ℝ => ‖explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)‖) =
+        fun T : ℝ => ‖(chebyshevPsi0 x : ℂ) - explicitFormulaApprox x T‖ := by
+    funext T
+    rw [norm_sub_rev]
+  simpa [h_eq] using hO
+
 lemma explicit_formula_von_mangoldt_of_eventually_norm_le_const_mul_inv
     {x C : ℝ} {hx : x ≥ 2}
     (hbound : ∀ᶠ T in atTop,
       ‖explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)‖ ≤ C * T⁻¹) :
     explicit_formula_von_mangoldt x hx := by
   refine explicit_formula_von_mangoldt_of_eventually_norm_le ?_ hbound
+  simpa using
+    (tendsto_const_nhds.mul tendsto_inv_atTop_zero :
+      Tendsto (fun T : ℝ => C * T⁻¹) atTop (𝓝 (C * 0)))
+
+lemma explicit_formula_von_mangoldt_of_eventually_reverse_norm_le_const_mul_inv
+    {x C : ℝ} {hx : x ≥ 2}
+    (hbound : ∀ᶠ T in atTop,
+      ‖(chebyshevPsi0 x : ℂ) - explicitFormulaApprox x T‖ ≤ C * T⁻¹) :
+    explicit_formula_von_mangoldt x hx := by
+  refine explicit_formula_von_mangoldt_of_eventually_reverse_norm_le ?_ hbound
   simpa using
     (tendsto_const_nhds.mul tendsto_inv_atTop_zero :
       Tendsto (fun T : ℝ => C * T⁻¹) atTop (𝓝 (C * 0)))
@@ -3769,6 +3934,49 @@ lemma explicit_formula_von_mangoldt_iff_re_im_abs_error_tendsto_zero
     exact explicit_formula_von_mangoldt_of_re_im_error_tendsto_zero
       ((tendsto_zero_iff_abs_tendsto_zero _).mpr h.1)
       ((tendsto_zero_iff_abs_tendsto_zero _).mpr h.2)
+
+lemma explicit_formula_von_mangoldt_re_abs_error_isLittleO_one
+    {x : ℝ} {hx : x ≥ 2}
+    (h : explicit_formula_von_mangoldt x hx) :
+    (fun T : ℝ =>
+      |(explicitFormulaApprox x T).re - chebyshevPsi0 x|)
+        =o[atTop] (fun _T : ℝ => (1 : ℝ)) :=
+  (isLittleO_one_iff ℝ).mpr
+    (explicit_formula_von_mangoldt_re_abs_error_tendsto_zero h)
+
+lemma explicit_formula_von_mangoldt_im_abs_error_isLittleO_one
+    {x : ℝ} {hx : x ≥ 2}
+    (h : explicit_formula_von_mangoldt x hx) :
+    (fun T : ℝ => |(explicitFormulaApprox x T).im|)
+        =o[atTop] (fun _T : ℝ => (1 : ℝ)) :=
+  (isLittleO_one_iff ℝ).mpr
+    (explicit_formula_von_mangoldt_im_abs_error_tendsto_zero h)
+
+lemma explicit_formula_von_mangoldt_of_re_im_abs_error_isLittleO_one
+    {x : ℝ} {hx : x ≥ 2}
+    (hre :
+      (fun T : ℝ =>
+        |(explicitFormulaApprox x T).re - chebyshevPsi0 x|)
+          =o[atTop] (fun _T : ℝ => (1 : ℝ)))
+    (him : (fun T : ℝ => |(explicitFormulaApprox x T).im|)
+        =o[atTop] (fun _T : ℝ => (1 : ℝ))) :
+    explicit_formula_von_mangoldt x hx :=
+  (explicit_formula_von_mangoldt_iff_re_im_abs_error_tendsto_zero).mpr
+    ⟨(isLittleO_one_iff ℝ).mp hre,
+      (isLittleO_one_iff ℝ).mp him⟩
+
+lemma explicit_formula_von_mangoldt_iff_re_im_abs_error_isLittleO_one
+    {x : ℝ} {hx : x ≥ 2} :
+    explicit_formula_von_mangoldt x hx ↔
+      (fun T : ℝ =>
+        |(explicitFormulaApprox x T).re - chebyshevPsi0 x|)
+          =o[atTop] (fun _T : ℝ => (1 : ℝ)) ∧
+      (fun T : ℝ => |(explicitFormulaApprox x T).im|)
+          =o[atTop] (fun _T : ℝ => (1 : ℝ)) :=
+  ⟨fun h => ⟨explicit_formula_von_mangoldt_re_abs_error_isLittleO_one h,
+      explicit_formula_von_mangoldt_im_abs_error_isLittleO_one h⟩,
+    fun h => explicit_formula_von_mangoldt_of_re_im_abs_error_isLittleO_one
+      h.1 h.2⟩
 
 lemma explicit_formula_von_mangoldt_iff_norm_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2} :
