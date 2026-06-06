@@ -136,6 +136,23 @@ theorem dirichlet_lfunction_ne_zero_re_im {N : ℕ} [NeZero N]
     DirichletCharacter.LFunction χ ((σ : ℂ) + Complex.I * t) ≠ 0 :=
   DirichletNonvanishing.lfunction_ne_zero_re_im χ hσ
 
+/-- Public Gamma residue at zero. -/
+theorem gamma_residue_at_zero :
+    Tendsto (fun s : ℂ => s * Complex.Gamma s) (𝓝[≠] 0) (𝓝 1) :=
+  GammaResidue.gamma_residue_at_zero
+
+/-- Public Gamma residue formula at the negative integers. -/
+theorem gamma_residue_at_neg_natural (n : ℕ) :
+    Tendsto (fun s : ℂ => (s + n) * Complex.Gamma s) (𝓝[≠] (-n : ℂ))
+      (𝓝 ((-1 : ℂ) ^ n / (n.factorial : ℂ))) :=
+  GammaResidue.gamma_residue_at_neg_natural n
+
+/-- Public simple-pole package for Gamma at negative integers. -/
+theorem gamma_simple_pole_at_neg_natural (n : ℕ) :
+    ∃ f : ℂ → ℂ, AnalyticAt ℂ f (-n : ℂ) ∧ f (-n : ℂ) ≠ 0 ∧
+      ∀ s : ℂ, (s + (n : ℂ)) ≠ 0 → Complex.Gamma s = f s / (s + n) :=
+  GammaResidue.IsSimplePoleOfGamma n
+
 /-- Public coordinate form of the classical zero-free-region target. -/
 theorem classical_zero_free_region_iff_re_im :
     ZeroFreeRegion.classical_zero_free_region ↔
