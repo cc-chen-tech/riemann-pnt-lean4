@@ -2801,6 +2801,32 @@ theorem conrey_40_percent_zeros_on_critical_line_target_iff_selberg :
       HardyTheorem.selberg_zero_proportion_target :=
   KnownResults.conrey_40_percent_zeros_on_critical_line_target_iff_selberg
 
+/-- Public eventually-logarithmic lower-bound form of the Conrey-style target. -/
+theorem conrey_40_percent_zeros_on_critical_line_target_iff_eventually_log_lower_bound :
+    KnownResults.conrey_40_percent_zeros_on_critical_line_target ↔
+      ∃ c > 0, ∀ᶠ T in atTop,
+        (HardyTheorem.zeroCountOnCriticalLine T : ℝ) ≥
+          c * (T / (2 * Real.pi) * Real.log T) :=
+  KnownResults.conrey_40_percent_zeros_on_critical_line_target_iff_eventually_log_lower_bound
+
+/-- Public constructor for the Conrey-style target from the eventually-log
+lower-bound form. -/
+theorem conrey_40_percent_zeros_on_critical_line_target_of_eventually_log_lower_bound
+    (h : ∃ c > 0, ∀ᶠ T in atTop,
+      (HardyTheorem.zeroCountOnCriticalLine T : ℝ) ≥
+        c * (T / (2 * Real.pi) * Real.log T)) :
+    KnownResults.conrey_40_percent_zeros_on_critical_line_target :=
+  KnownResults.conrey_40_percent_zeros_on_critical_line_target_of_eventually_log_lower_bound h
+
+/-- Public destructor from the Conrey-style target to its eventually-log
+lower-bound form. -/
+theorem eventually_log_lower_bound_of_conrey_40_percent_zeros_on_critical_line_target
+    (h : KnownResults.conrey_40_percent_zeros_on_critical_line_target) :
+    ∃ c > 0, ∀ᶠ T in atTop,
+      (HardyTheorem.zeroCountOnCriticalLine T : ℝ) ≥
+        c * (T / (2 * Real.pi) * Real.log T) :=
+  KnownResults.eventually_log_lower_bound_of_conrey_40_percent_zeros_on_critical_line_target h
+
 /-- Public bridge from Selberg's positive-proportion target to the
 Conrey-style 40-percent target statement used in this project. -/
 theorem conrey_40_percent_zeros_on_critical_line_target_of_selberg

@@ -247,6 +247,28 @@ theorem conrey_40_percent_zeros_on_critical_line_target_iff_selberg :
       HardyTheorem.selberg_zero_proportion_target :=
   Iff.rfl
 
+theorem conrey_40_percent_zeros_on_critical_line_target_iff_eventually_log_lower_bound :
+    conrey_40_percent_zeros_on_critical_line_target ↔
+      ∃ c > 0, ∀ᶠ T in atTop,
+        (HardyTheorem.zeroCountOnCriticalLine T : ℝ) ≥
+          c * (T / (2 * Real.pi) * Real.log T) :=
+  conrey_40_percent_zeros_on_critical_line_target_iff_selberg.trans
+    HardyTheorem.selberg_zero_proportion_target_iff_eventually_log_lower_bound
+
+theorem conrey_40_percent_zeros_on_critical_line_target_of_eventually_log_lower_bound
+    (h : ∃ c > 0, ∀ᶠ T in atTop,
+      (HardyTheorem.zeroCountOnCriticalLine T : ℝ) ≥
+        c * (T / (2 * Real.pi) * Real.log T)) :
+    conrey_40_percent_zeros_on_critical_line_target :=
+  conrey_40_percent_zeros_on_critical_line_target_iff_eventually_log_lower_bound.mpr h
+
+theorem eventually_log_lower_bound_of_conrey_40_percent_zeros_on_critical_line_target
+    (h : conrey_40_percent_zeros_on_critical_line_target) :
+    ∃ c > 0, ∀ᶠ T in atTop,
+      (HardyTheorem.zeroCountOnCriticalLine T : ℝ) ≥
+        c * (T / (2 * Real.pi) * Real.log T) :=
+  conrey_40_percent_zeros_on_critical_line_target_iff_eventually_log_lower_bound.mp h
+
 theorem selberg_zero_proportion_target_of_conrey_target
     (h : conrey_40_percent_zeros_on_critical_line_target) :
     HardyTheorem.selberg_zero_proportion_target :=
