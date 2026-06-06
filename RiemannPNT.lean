@@ -1076,6 +1076,54 @@ theorem log_deriv_zeta_lower_bound (σ : ℝ) (hσ : 1 < σ) (t : ℝ) :
           riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re :=
   ZeroFreeRegion.log_deriv_zeta_lower_bound σ hσ t
 
+/-- Public positivity of `log |t|` above height `2`. -/
+theorem log_abs_pos_of_two_le {t : ℝ} (ht : 2 ≤ |t|) :
+    0 < Real.log |t| :=
+  ZeroFreeRegion.log_abs_pos_of_two_le ht
+
+/-- Public lower bound `1 < log |t|` above height `3`. -/
+theorem log_abs_gt_one_of_three_le {t : ℝ} (ht : 3 ≤ |t|) :
+    1 < Real.log |t| :=
+  ZeroFreeRegion.log_abs_gt_one_of_three_le ht
+
+/-- Public positivity of the log-log factor above height `3`. -/
+theorem log_log_abs_pos_of_three_le {t : ℝ} (ht : 3 ≤ |t|) :
+    0 < Real.log (Real.log |t|) :=
+  ZeroFreeRegion.log_log_abs_pos_of_three_le ht
+
+/-- Public real/imaginary coordinate decomposition for complex numbers. -/
+theorem re_im_decomp (s : ℂ) : ((s.re : ℂ) + Complex.I * s.im) = s :=
+  ZeroFreeRegion.re_im_decomp s
+
+/-- Public comparison between a compact-patch width and a logarithmic width. -/
+theorem compact_log_width_le_of_two_le {c d t : ℝ}
+    (hc : c ≤ d * Real.log 2) (hd : 0 ≤ d) (ht : 2 ≤ |t|) :
+    c / Real.log |t| ≤ d :=
+  ZeroFreeRegion.compact_log_width_le_of_two_le hc hd ht
+
+/-- Public monotonicity principle for zero-free strips under width shrinkage. -/
+theorem zero_free_region_mono_width
+    {T0 : ℝ} {width_small width_large : ℝ → ℝ}
+    (hlarge : ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥ 1 - width_large |s.im| → riemannZeta s ≠ 0)
+    (hwidth : ∀ t : ℝ, T0 ≤ |t| → width_small |t| ≤ width_large |t|) :
+    ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥ 1 - width_small |s.im| → riemannZeta s ≠ 0 :=
+  ZeroFreeRegion.zero_free_region_mono_width hlarge hwidth
+
+/-- Public coordinate monotonicity principle for zero-free strips under width
+shrinkage. -/
+theorem zero_free_region_mono_width_re_im
+    {T0 : ℝ} {width_small width_large : ℝ → ℝ}
+    (hlarge : ∀ β t : ℝ, T0 ≤ |t| →
+      β ≥ 1 - width_large |t| →
+      riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0)
+    (hwidth : ∀ t : ℝ, T0 ≤ |t| → width_small |t| ≤ width_large |t|) :
+    ∀ β t : ℝ, T0 ≤ |t| →
+      β ≥ 1 - width_small |t| →
+      riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0 :=
+  ZeroFreeRegion.zero_free_region_mono_width_re_im hlarge hwidth
+
 /-- Public coordinate form of Dirichlet `LFunction` nonvanishing in
 `Re(s) > 1`. -/
 theorem dirichlet_lfunction_ne_zero_re_im {N : ℕ} [NeZero N]
@@ -1141,6 +1189,22 @@ theorem classical_zero_free_region_on_one_line
     (hclassical : ZeroFreeRegion.classical_zero_free_region) :
     ∀ s : ℂ, 2 ≤ |s.im| → s.re = 1 → riemannZeta s ≠ 0 :=
   ZeroFreeRegion.classical_zero_free_region_on_one_line hclassical
+
+/-- Public high-height projection of the classical zero-free-region target. -/
+theorem classical_zero_free_region_high_height
+    (T0 : ℝ) (hT0 : 2 ≤ T0)
+    (hclassical : ZeroFreeRegion.classical_zero_free_region) :
+    ∃ c > 0, ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0 :=
+  ZeroFreeRegion.classical_zero_free_region_high_height T0 hT0 hclassical
+
+/-- Public height-`3` high-height projection of the classical zero-free-region
+target. -/
+theorem classical_zero_free_region_high_height_at_three
+    (hclassical : ZeroFreeRegion.classical_zero_free_region) :
+    ∃ c > 0, ∀ s : ℂ, 3 ≤ |s.im| →
+      s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0 :=
+  ZeroFreeRegion.classical_zero_free_region_high_height_at_three hclassical
 
 /-- Public high-height interface for the classical zero-free-region target. -/
 theorem classical_zero_free_region_iff_high_height
