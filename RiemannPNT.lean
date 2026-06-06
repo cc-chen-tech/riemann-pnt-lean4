@@ -242,6 +242,59 @@ theorem pnt_form3_of_mathlib_RH_of_rh_iff_optimal_error
     _root_.RiemannHypothesis → PrimeNumberTheorem.PNTForm3 :=
   PrimeNumberTheorem.PNTForm3_of_mathlib_RH_of_rh_iff_optimal_error h
 
+/-- Public equivalence between Mathlib's RH predicate and the nontrivial-zero
+line statement. -/
+theorem rh_iff_nontrivial_zeros_on_line :
+    _root_.RiemannHypothesis ↔
+      ∀ s : ℂ, _root_.RiemannHypothesis.IsNontrivialZero s → s.re = 1 / 2 :=
+  PrimeNumberTheorem.rh_iff_nontrivial_zeros_on_line
+
+/-- Public functional-equation symmetry for nontrivial zeros. -/
+theorem nontrivial_zero_symmetric
+    {ρ : ℂ} (hρ : riemannZeta ρ = 0)
+    (hre : 0 < ρ.re) (hre' : ρ.re < 1) :
+    riemannZeta (1 - ρ) = 0 :=
+  PrimeNumberTheorem.nontrivial_zero_symmetric hρ hre hre'
+
+/-- Public packaged symmetry: `1 - ρ` is a nontrivial zero whenever `ρ` is. -/
+theorem nontrivial_zero_symmetric'
+    {ρ : ℂ} (h : _root_.RiemannHypothesis.IsNontrivialZero ρ) :
+    _root_.RiemannHypothesis.IsNontrivialZero (1 - ρ) :=
+  PrimeNumberTheorem.nontrivial_zero_symmetric' h
+
+/-- Public critical-strip location theorem for nontrivial zeta zeros. -/
+theorem nontrivial_zero_in_critical_strip {s : ℂ}
+    (hζ : riemannZeta s = 0)
+    (hnt : ¬∃ n : ℕ, s = -2 * ((n : ℂ) + 1))
+    (hs1 : s ≠ 1) :
+    0 < s.re ∧ s.re < 1 :=
+  PrimeNumberTheorem.nontrivial_zero_in_critical_strip hζ hnt hs1
+
+/-- Public local isolated-zero statement for `riemannZeta` away from the pole. -/
+theorem riemannZeta_not_frequently_zero_nhdsNE_of_ne_one
+    {x : ℂ} (hx : x ≠ 1) :
+    ¬ ∃ᶠ z in 𝓝[≠] x, riemannZeta z = 0 :=
+  PrimeNumberTheorem.riemannZeta_not_frequently_zero_nhdsNE_of_ne_one hx
+
+/-- Public local finiteness of nontrivial zeta zeros in bounded height. -/
+theorem finite_nontrivial_zeros_bounded_height (T : ℝ) :
+    Set.Finite
+      {s : ℂ | _root_.RiemannHypothesis.IsNontrivialZero s ∧ |s.im| ≤ T} :=
+  PrimeNumberTheorem.finite_nontrivial_zeros_bounded_height T
+
+/-- Public simple-pole consequence at `s = 1`: `(s - 1)^2 ζ(s) → 0`. -/
+theorem riemannZeta_pole_simple :
+    Tendsto (fun s : ℂ => (s - 1) ^ 2 * riemannZeta s) (𝓝[≠] 1) (𝓝 0) :=
+  PrimeNumberTheorem.riemannZeta_pole_simple
+
+/-- Public RH symmetry consistency for nontrivial zeros. -/
+theorem rh_zero_symmetric_self_consistent
+    {ρ : ℂ}
+    (hRH : _root_.RiemannHypothesis.Statement)
+    (h : _root_.RiemannHypothesis.IsNontrivialZero ρ) :
+    ρ.re = 1 / 2 ∧ (1 - ρ).re = 1 / 2 :=
+  PrimeNumberTheorem.rh_zero_symmetric_self_consistent hRH h
+
 /-- Public closed-half-plane nonvanishing theorem for the Riemann zeta
 function. -/
 theorem zeta_ne_zero_of_one_le_re {s : ℂ} (hs : 1 ≤ s.re) :
