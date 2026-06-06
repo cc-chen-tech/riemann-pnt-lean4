@@ -86,6 +86,87 @@ theorem pnt_form3_iff_error_isLittleO_id :
         =o[atTop] (fun x : ℝ => x) :=
   PrimeNumberTheorem.PNTForm3_iff_error_isLittleO_id
 
+/-- Public Big-O bound for the logarithmic integral normalization. -/
+theorem logIntegral_isBigO_id :
+    (fun x : ℝ => PrimeNumberTheorem.logIntegral x)
+      =O[atTop] (fun x : ℝ => x) :=
+  PrimeNumberTheorem.logIntegral_isBigO_id
+
+/-- Public crude Big-O bound for the local prime-counting normalization. -/
+theorem primeCounting_isBigO_id :
+    (fun x : ℝ => (PrimeNumberTheorem.primeCounting x : ℝ))
+      =O[atTop] (fun x : ℝ => x) :=
+  PrimeNumberTheorem.primeCounting_isBigO_id
+
+/-- Public crude Big-O bound for the `π(x) - Li(x)` error. -/
+theorem primeCounting_sub_logIntegral_isBigO_id :
+    (fun x : ℝ =>
+      (PrimeNumberTheorem.primeCounting x : ℝ) -
+        PrimeNumberTheorem.logIntegral x)
+      =O[atTop] (fun x : ℝ => x) :=
+  PrimeNumberTheorem.primeCounting_sub_logIntegral_isBigO_id
+
+/-- Public error-term consequence of PNT form 1. -/
+theorem pnt_form1_error_isLittleO_main
+    (h : PrimeNumberTheorem.PNTForm1) :
+    (fun x : ℝ =>
+      (PrimeNumberTheorem.primeCounting x : ℝ) - x / Real.log x)
+      =o[atTop] (fun x : ℝ => x / Real.log x) :=
+  PrimeNumberTheorem.PNTForm1_error_isLittleO_main h
+
+/-- Public constructor for PNT form 1 from its error-term formulation. -/
+theorem pnt_form1_of_error_isLittleO_main
+    (h :
+      (fun x : ℝ =>
+        (PrimeNumberTheorem.primeCounting x : ℝ) - x / Real.log x)
+        =o[atTop] (fun x : ℝ => x / Real.log x)) :
+    PrimeNumberTheorem.PNTForm1 :=
+  PrimeNumberTheorem.PNTForm1_of_error_isLittleO_main h
+
+/-- Public error-term consequence of PNT form 2 relative to `Li`. -/
+theorem pnt_form2_error_isLittleO_logIntegral
+    (h : PrimeNumberTheorem.PNTForm2) :
+    (fun x : ℝ =>
+      (PrimeNumberTheorem.primeCounting x : ℝ) -
+        PrimeNumberTheorem.logIntegral x)
+      =o[atTop] (fun x : ℝ => PrimeNumberTheorem.logIntegral x) :=
+  PrimeNumberTheorem.PNTForm2_error_isLittleO_logIntegral h
+
+/-- Public constructor for PNT form 2 from its `Li` error-term formulation. -/
+theorem pnt_form2_of_error_isLittleO_logIntegral
+    (h :
+      (fun x : ℝ =>
+        (PrimeNumberTheorem.primeCounting x : ℝ) -
+          PrimeNumberTheorem.logIntegral x)
+        =o[atTop] (fun x : ℝ => PrimeNumberTheorem.logIntegral x)) :
+    PrimeNumberTheorem.PNTForm2 :=
+  PrimeNumberTheorem.PNTForm2_of_error_isLittleO_logIntegral h
+
+/-- Public error-term consequence of PNT form 2 relative to the identity
+function. -/
+theorem pnt_form2_error_isLittleO_id
+    (h : PrimeNumberTheorem.PNTForm2) :
+    (fun x : ℝ =>
+      (PrimeNumberTheorem.primeCounting x : ℝ) -
+        PrimeNumberTheorem.logIntegral x)
+      =o[atTop] (fun x : ℝ => x) :=
+  PrimeNumberTheorem.PNTForm2_error_isLittleO_id h
+
+/-- Public error-term consequence of PNT form 3. -/
+theorem pnt_form3_error_isLittleO_id
+    (h : PrimeNumberTheorem.PNTForm3) :
+    (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi x - x)
+      =o[atTop] (fun x : ℝ => x) :=
+  PrimeNumberTheorem.PNTForm3_error_isLittleO_id h
+
+/-- Public constructor for PNT form 3 from its error-term formulation. -/
+theorem pnt_form3_of_error_isLittleO_id
+    (h :
+      (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi x - x)
+        =o[atTop] (fun x : ℝ => x)) :
+    PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForm3_of_error_isLittleO_id h
+
 /-- Public bridge from the `Li` RH-scale prime-counting target to the
 logarithmic-integral PNT form. -/
 theorem pnt_form2_of_rh_primeCountingLiErrorBound
