@@ -2358,6 +2358,71 @@ theorem exists_nontrivial_zero_on_critical_line_of_conrey_target
       s ∈ _root_.RiemannHypothesis.criticalLine :=
   KnownResults.exists_nontrivial_zero_on_critical_line_of_conrey_target h
 
+/-- Public definitional unfolding of the corrected height-truncated von
+Mangoldt explicit-formula target. -/
+theorem explicit_formula_von_mangoldt_iff
+    {x : ℝ} {hx : x ≥ 2} :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx ↔
+      Tendsto (fun T : ℝ => PrimeNumberTheorem.explicitFormulaApprox x T)
+        atTop (𝓝 (PrimeNumberTheorem.chebyshevPsi0 x : ℂ)) :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_iff
+
+/-- Public constructor for the corrected explicit-formula target from an
+eventually equal approximation family. -/
+theorem explicit_formula_von_mangoldt_of_eventually_eq
+    {x : ℝ} {hx : x ≥ 2} {F : ℝ → ℂ}
+    (hF : F =ᶠ[atTop]
+      fun T : ℝ => PrimeNumberTheorem.explicitFormulaApprox x T)
+    (h : Tendsto F atTop (𝓝 (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))) :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_eventually_eq hF h
+
+/-- Public constructor for the corrected explicit-formula target from eventual
+exact equality to `ψ₀`. -/
+theorem explicit_formula_von_mangoldt_of_eventually_exact
+    {x : ℝ} {hx : x ≥ 2}
+    (h : ∀ᶠ T in atTop,
+      PrimeNumberTheorem.explicitFormulaApprox x T =
+        (PrimeNumberTheorem.chebyshevPsi0 x : ℂ)) :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_eventually_exact h
+
+/-- Public constructor for the corrected explicit-formula target from complex
+error convergence to zero. -/
+theorem explicit_formula_von_mangoldt_of_error_tendsto_zero
+    {x : ℝ} {hx : x ≥ 2}
+    (h : Tendsto
+      (fun T : ℝ =>
+        PrimeNumberTheorem.explicitFormulaApprox x T -
+          (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
+      atTop (𝓝 0)) :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_error_tendsto_zero h
+
+/-- Public elimination from the corrected explicit-formula target to complex
+error convergence to zero. -/
+theorem explicit_formula_von_mangoldt_error_tendsto_zero
+    {x : ℝ} {hx : x ≥ 2}
+    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt x hx) :
+    Tendsto
+      (fun T : ℝ =>
+        PrimeNumberTheorem.explicitFormulaApprox x T -
+          (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
+      atTop (𝓝 0) :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_error_tendsto_zero h
+
+/-- Public constructor for the corrected explicit-formula target from norm
+error convergence to zero. -/
+theorem explicit_formula_von_mangoldt_of_norm_error_tendsto_zero
+    {x : ℝ} {hx : x ≥ 2}
+    (h : Tendsto
+      (fun T : ℝ =>
+        ‖PrimeNumberTheorem.explicitFormulaApprox x T -
+          (PrimeNumberTheorem.chebyshevPsi0 x : ℂ)‖)
+      atTop (𝓝 0)) :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_norm_error_tendsto_zero h
+
 /-- Public entry point for the norm-error formulation of the corrected
 height-truncated von Mangoldt explicit-formula target. -/
 theorem explicit_formula_von_mangoldt_iff_norm_error_tendsto_zero
