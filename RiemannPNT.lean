@@ -3257,6 +3257,35 @@ theorem eventually_nat_lt_zeroCountOnCriticalLine_of_conrey_target
     ∀ᶠ T in atTop, N < HardyTheorem.zeroCountOnCriticalLine T :=
   KnownResults.eventually_nat_lt_zeroCountOnCriticalLine_of_conrey_target h N
 
+/-- Public bridge from eventual domination of every fixed natural count to
+unbounded critical-line zero counts. -/
+theorem zeroCountOnCriticalLine_unbounded_of_eventually_nat_lt
+    (h : ∀ N : ℕ, ∀ᶠ T in atTop,
+      N < HardyTheorem.zeroCountOnCriticalLine T) :
+    ∀ N : ℕ, ∃ T : ℝ, N < HardyTheorem.zeroCountOnCriticalLine T :=
+  HardyTheorem.zeroCountOnCriticalLine_unbounded_of_eventually_nat_lt_zeroCountOnCriticalLine
+    h
+
+/-- Public zero-count unboundedness from the Hardy--Littlewood linear
+lower-bound target. -/
+theorem zeroCountOnCriticalLine_unbounded_of_hardy_littlewood_lower_bound
+    (h : HardyTheorem.hardy_littlewood_lower_bound_target) :
+    ∀ N : ℕ, ∃ T : ℝ, N < HardyTheorem.zeroCountOnCriticalLine T :=
+  HardyTheorem.zeroCountOnCriticalLine_unbounded_of_hardy_littlewood_lower_bound h
+
+/-- Public zero-count unboundedness from Selberg's positive-proportion target. -/
+theorem zeroCountOnCriticalLine_unbounded_of_selberg_zero_proportion
+    (h : HardyTheorem.selberg_zero_proportion_target) :
+    ∀ N : ℕ, ∃ T : ℝ, N < HardyTheorem.zeroCountOnCriticalLine T :=
+  HardyTheorem.zeroCountOnCriticalLine_unbounded_of_selberg_zero_proportion h
+
+/-- Public zero-count unboundedness from the Conrey-style positive-proportion
+target. -/
+theorem zeroCountOnCriticalLine_unbounded_of_conrey_target
+    (h : KnownResults.conrey_40_percent_zeros_on_critical_line_target) :
+    ∀ N : ℕ, ∃ T : ℝ, N < HardyTheorem.zeroCountOnCriticalLine T :=
+  KnownResults.zeroCountOnCriticalLine_unbounded_of_conrey_target h
+
 /-- Public bridge from unbounded critical-line zero counts to Hardy's
 infinite-zero target. -/
 theorem hardy_theorem_target_of_zeroCountOnCriticalLine_unbounded

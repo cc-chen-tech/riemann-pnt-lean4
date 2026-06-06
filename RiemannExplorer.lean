@@ -304,6 +304,12 @@ theorem eventually_nat_lt_zeroCountOnCriticalLine_of_conrey_target
   eventually_nat_lt_zeroCountOnCriticalLine_of_selberg_zero_proportion
     (selberg_zero_proportion_target_of_conrey_target h) N
 
+theorem zeroCountOnCriticalLine_unbounded_of_conrey_target
+    (h : conrey_40_percent_zeros_on_critical_line_target) :
+    ∀ N : ℕ, ∃ T : ℝ, N < HardyTheorem.zeroCountOnCriticalLine T :=
+  HardyTheorem.zeroCountOnCriticalLine_unbounded_of_eventually_nat_lt_zeroCountOnCriticalLine
+    (fun N => eventually_nat_lt_zeroCountOnCriticalLine_of_conrey_target h N)
+
 theorem infinitely_many_zeros_on_critical_line_of_eventually_nat_lt_zeroCountOnCriticalLine
     (h : ∀ N : ℕ, ∀ᶠ T in atTop, N < HardyTheorem.zeroCountOnCriticalLine T) :
     {s : ℂ | s.re = 1 / 2 ∧ riemannZeta s = 0}.Infinite :=
