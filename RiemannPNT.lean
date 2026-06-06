@@ -117,6 +117,12 @@ theorem logIntegral_isBigO_id :
       =O[atTop] (fun x : ℝ => x) :=
   PrimeNumberTheorem.logIntegral_isBigO_id
 
+/-- Public little-o estimate for the main PNT comparison denominator
+`x/log x`. -/
+theorem id_div_log_isLittleO_id :
+    (fun x : ℝ => x / Real.log x) =o[atTop] (fun x : ℝ => x) :=
+  PrimeNumberTheorem.id_div_log_isLittleO_id
+
 /-- Public crude Big-O bound for the local prime-counting normalization. -/
 theorem primeCounting_isBigO_id :
     (fun x : ℝ => (PrimeNumberTheorem.primeCounting x : ℝ))
@@ -139,6 +145,30 @@ theorem pnt_form1_error_isLittleO_main
       =o[atTop] (fun x : ℝ => x / Real.log x) :=
   PrimeNumberTheorem.PNTForm1_error_isLittleO_main h
 
+/-- Public identity-scale little-o consequence of PNT form 1. -/
+theorem pnt_form1_error_isLittleO_id
+    (h : PrimeNumberTheorem.PNTForm1) :
+    (fun x : ℝ =>
+      (PrimeNumberTheorem.primeCounting x : ℝ) - x / Real.log x)
+      =o[atTop] (fun x : ℝ => x) :=
+  PrimeNumberTheorem.PNTForm1_error_isLittleO_id h
+
+/-- Public Big-O consequence of PNT form 1 at its natural scale. -/
+theorem pnt_form1_error_isBigO_main
+    (h : PrimeNumberTheorem.PNTForm1) :
+    (fun x : ℝ =>
+      (PrimeNumberTheorem.primeCounting x : ℝ) - x / Real.log x)
+      =O[atTop] (fun x : ℝ => x / Real.log x) :=
+  PrimeNumberTheorem.PNTForm1_error_isBigO_main h
+
+/-- Public identity-scale Big-O consequence of PNT form 1. -/
+theorem pnt_form1_error_isBigO_id
+    (h : PrimeNumberTheorem.PNTForm1) :
+    (fun x : ℝ =>
+      (PrimeNumberTheorem.primeCounting x : ℝ) - x / Real.log x)
+      =O[atTop] (fun x : ℝ => x) :=
+  PrimeNumberTheorem.PNTForm1_error_isBigO_id h
+
 /-- Public constructor for PNT form 1 from its error-term formulation. -/
 theorem pnt_form1_of_error_isLittleO_main
     (h :
@@ -156,6 +186,15 @@ theorem pnt_form2_error_isLittleO_logIntegral
         PrimeNumberTheorem.logIntegral x)
       =o[atTop] (fun x : ℝ => PrimeNumberTheorem.logIntegral x) :=
   PrimeNumberTheorem.PNTForm2_error_isLittleO_logIntegral h
+
+/-- Public Big-O consequence of PNT form 2 at the `Li` scale. -/
+theorem pnt_form2_error_isBigO_logIntegral
+    (h : PrimeNumberTheorem.PNTForm2) :
+    (fun x : ℝ =>
+      (PrimeNumberTheorem.primeCounting x : ℝ) -
+        PrimeNumberTheorem.logIntegral x)
+      =O[atTop] (fun x : ℝ => PrimeNumberTheorem.logIntegral x) :=
+  PrimeNumberTheorem.PNTForm2_error_isBigO_logIntegral h
 
 /-- Public constructor for PNT form 2 from its `Li` error-term formulation. -/
 theorem pnt_form2_of_error_isLittleO_logIntegral
@@ -177,12 +216,28 @@ theorem pnt_form2_error_isLittleO_id
       =o[atTop] (fun x : ℝ => x) :=
   PrimeNumberTheorem.PNTForm2_error_isLittleO_id h
 
+/-- Public identity-scale Big-O consequence of PNT form 2. -/
+theorem pnt_form2_error_isBigO_id
+    (h : PrimeNumberTheorem.PNTForm2) :
+    (fun x : ℝ =>
+      (PrimeNumberTheorem.primeCounting x : ℝ) -
+        PrimeNumberTheorem.logIntegral x)
+      =O[atTop] (fun x : ℝ => x) :=
+  PrimeNumberTheorem.PNTForm2_error_isBigO_id h
+
 /-- Public error-term consequence of PNT form 3. -/
 theorem pnt_form3_error_isLittleO_id
     (h : PrimeNumberTheorem.PNTForm3) :
     (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi x - x)
       =o[atTop] (fun x : ℝ => x) :=
   PrimeNumberTheorem.PNTForm3_error_isLittleO_id h
+
+/-- Public identity-scale Big-O consequence of PNT form 3. -/
+theorem pnt_form3_error_isBigO_id
+    (h : PrimeNumberTheorem.PNTForm3) :
+    (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi x - x)
+      =O[atTop] (fun x : ℝ => x) :=
+  PrimeNumberTheorem.PNTForm3_error_isBigO_id h
 
 /-- Public constructor for PNT form 3 from its error-term formulation. -/
 theorem pnt_form3_of_error_isLittleO_id
@@ -648,6 +703,15 @@ theorem pnt_form3_of_chebyshevPsi0_sub_id_isBigO
         =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2)) :
     PrimeNumberTheorem.PNTForm3 :=
   PrimeNumberTheorem.PNTForm3_of_chebyshevPsi0_sub_id_isBigO hψ0
+
+/-- Public all-three-PNT bridge from the midpoint `ψ₀` RH-scale target. -/
+theorem pnt_forms_of_chebyshevPsi0_sub_id_isBigO
+    (hψ0 :
+      (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi0 x - x)
+        =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2)) :
+    PrimeNumberTheorem.PNTForm1 ∧ PrimeNumberTheorem.PNTForm2 ∧
+      PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForms_of_chebyshevPsi0_sub_id_isBigO hψ0
 
 /-- Public conditional partial-summation bridge from the `θ` RH-scale target
 to the prime-counting `Li` RH-scale target. -/
@@ -1406,6 +1470,32 @@ theorem zero_free_region_mono_width_re_im
       riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0 :=
   ZeroFreeRegion.zero_free_region_mono_width_re_im hlarge hwidth
 
+/-- Public high-height constant-monotonicity for the classical zero-free
+width. -/
+theorem classical_zero_free_region_high_height_mono_const
+    {T0 csmall clarge : ℝ} (hT0 : 2 ≤ T0)
+    (hc : csmall ≤ clarge)
+    (hlarge : ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥ 1 - clarge / Real.log |s.im| → riemannZeta s ≠ 0) :
+    ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥ 1 - csmall / Real.log |s.im| → riemannZeta s ≠ 0 :=
+  ZeroFreeRegion.classical_zero_free_region_high_height_mono_const
+    hT0 hc hlarge
+
+/-- Public coordinate high-height constant-monotonicity for the classical
+zero-free width. -/
+theorem classical_zero_free_region_high_height_mono_const_re_im
+    {T0 csmall clarge : ℝ} (hT0 : 2 ≤ T0)
+    (hc : csmall ≤ clarge)
+    (hlarge : ∀ β t : ℝ, T0 ≤ |t| →
+      β ≥ 1 - clarge / Real.log |t| →
+      riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0) :
+    ∀ β t : ℝ, T0 ≤ |t| →
+      β ≥ 1 - csmall / Real.log |t| →
+      riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0 :=
+  ZeroFreeRegion.classical_zero_free_region_high_height_mono_const_re_im
+    hT0 hc hlarge
+
 /-- Public coordinate form of Dirichlet `LFunction` nonvanishing in
 `Re(s) > 1`. -/
 theorem dirichlet_lfunction_ne_zero_re_im {N : ℕ} [NeZero N]
@@ -1437,6 +1527,24 @@ theorem classical_zero_free_region_iff_re_im :
         β ≥ 1 - c / Real.log |t| →
         riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0 :=
   ZeroFreeRegion.classical_zero_free_region_iff_re_im
+
+/-- Public forward coordinate unpacking of the classical zero-free-region
+target. -/
+theorem classical_zero_free_region_to_re_im
+    (hclassical : ZeroFreeRegion.classical_zero_free_region) :
+    ∃ c > 0, ∀ β t : ℝ, 2 ≤ |t| →
+      β ≥ 1 - c / Real.log |t| →
+      riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0 :=
+  ZeroFreeRegion.classical_zero_free_region_to_re_im hclassical
+
+/-- Public coordinate constructor for the classical zero-free-region target. -/
+theorem classical_zero_free_region_of_re_im
+    (hcoord :
+      ∃ c > 0, ∀ β t : ℝ, 2 ≤ |t| →
+        β ≥ 1 - c / Real.log |t| →
+        riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_re_im hcoord
 
 /-- Public compact zero-free strip next to `Re(s)=1`, valid for bounded
 height. -/
@@ -1539,6 +1647,17 @@ theorem compact_patch_classical_zero_free_region_re_im_at_three
     ZeroFreeRegion.classical_zero_free_region :=
   ZeroFreeRegion.compact_patch_classical_zero_free_region_re_im_at_three hhigh
 
+/-- Public constructor from a coordinate high-height classical-width input. -/
+theorem classical_zero_free_region_of_high_height_re_im
+    (T0 : ℝ) (hT0 : 2 ≤ T0)
+    (hcoord :
+      ∃ c > 0, ∀ β t : ℝ, T0 ≤ |t| →
+        β ≥ 1 - c / Real.log |t| →
+        riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_high_height_re_im
+    T0 hT0 hcoord
+
 /-- Public compact patch from a high-height classical-width input. -/
 theorem compact_patch_classical_zero_free_region
     (T0 : ℝ) (hT0 : 2 ≤ T0)
@@ -1591,6 +1710,27 @@ theorem vinogradov_korobov_zero_free_region_iff_re_im :
         riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0 :=
   ZeroFreeRegion.vinogradov_korobov_zero_free_region_iff_re_im
 
+/-- Public forward coordinate unpacking of the Vinogradov-Korobov target. -/
+theorem vinogradov_korobov_zero_free_region_to_re_im
+    (hvk : ZeroFreeRegion.vinogradov_korobov_zero_free_region) :
+    ∃ c > 0, ∀ β t : ℝ, 3 ≤ |t| →
+      β ≥
+        1 - c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0 :=
+  ZeroFreeRegion.vinogradov_korobov_zero_free_region_to_re_im hvk
+
+/-- Public coordinate constructor for the Vinogradov-Korobov target. -/
+theorem vinogradov_korobov_zero_free_region_of_re_im
+    (hcoord :
+      ∃ c > 0, ∀ β t : ℝ, 3 ≤ |t| →
+        β ≥
+          1 - c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+            (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+        riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0) :
+    ZeroFreeRegion.vinogradov_korobov_zero_free_region :=
+  ZeroFreeRegion.vinogradov_korobov_zero_free_region_of_re_im hcoord
+
 /-- Public high-height interface for the Vinogradov-Korobov target. -/
 theorem vinogradov_korobov_zero_free_region_high_height
     (T0 : ℝ) (hT0 : 3 ≤ T0)
@@ -1613,6 +1753,63 @@ theorem vinogradov_korobov_zero_free_region_high_height_re_im
       riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0 :=
   ZeroFreeRegion.vinogradov_korobov_zero_free_region_high_height_re_im
     T0 hT0 hvk
+
+/-- Public height-`3` high-height interface for the Vinogradov-Korobov target. -/
+theorem vinogradov_korobov_zero_free_region_iff_high_height_at_three :
+    ZeroFreeRegion.vinogradov_korobov_zero_free_region ↔
+      ∃ c > 0, ∀ s : ℂ, 3 ≤ |s.im| →
+        s.re ≥
+          1 - c / (Real.log |s.im|) ^ (2 / 3 : ℝ) *
+            (Real.log (Real.log |s.im|)) ^ (-1 / 3 : ℝ) →
+        riemannZeta s ≠ 0 :=
+  ZeroFreeRegion.vinogradov_korobov_zero_free_region_iff_high_height_at_three
+
+/-- Public high-height projection of the Vinogradov-Korobov target at height
+`3`. -/
+theorem vinogradov_korobov_zero_free_region_high_height_at_three
+    (hvk : ZeroFreeRegion.vinogradov_korobov_zero_free_region) :
+    ∃ c > 0, ∀ s : ℂ, 3 ≤ |s.im| →
+      s.re ≥
+        1 - c / (Real.log |s.im|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |s.im|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta s ≠ 0 :=
+  ZeroFreeRegion.vinogradov_korobov_zero_free_region_high_height_at_three hvk
+
+/-- Public high-height constant-monotonicity for the Vinogradov-Korobov
+width. -/
+theorem vinogradov_korobov_zero_free_region_high_height_mono_const
+    {T0 csmall clarge : ℝ} (hT0 : 3 ≤ T0)
+    (hc : csmall ≤ clarge)
+    (hlarge : ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥
+        1 - clarge / (Real.log |s.im|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |s.im|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta s ≠ 0) :
+    ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥
+        1 - csmall / (Real.log |s.im|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |s.im|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta s ≠ 0 :=
+  ZeroFreeRegion.vinogradov_korobov_zero_free_region_high_height_mono_const
+    hT0 hc hlarge
+
+/-- Public coordinate high-height constant-monotonicity for the
+Vinogradov-Korobov width. -/
+theorem vinogradov_korobov_zero_free_region_high_height_mono_const_re_im
+    {T0 csmall clarge : ℝ} (hT0 : 3 ≤ T0)
+    (hc : csmall ≤ clarge)
+    (hlarge : ∀ β t : ℝ, T0 ≤ |t| →
+      β ≥
+        1 - clarge / (Real.log |t|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0) :
+    ∀ β t : ℝ, T0 ≤ |t| →
+      β ≥
+        1 - csmall / (Real.log |t|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0 :=
+  ZeroFreeRegion.vinogradov_korobov_zero_free_region_high_height_mono_const_re_im
+    hT0 hc hlarge
 
 /-- Public positivity of the classical `c / log |t|` width above height `2`. -/
 theorem classical_width_pos_of_two_le {c t : ℝ} (hc : 0 < c) (ht : 2 ≤ |t|) :
@@ -1789,6 +1986,50 @@ theorem hardy_two_signed_moments_target_iff_integral_asymptotic_one_two :
       HardyTheorem.integral_asymptotic_target 1 ∧
         HardyTheorem.integral_asymptotic_target 2 :=
   HardyTheorem.hardy_two_signed_moments_target_iff_integral_asymptotic_one_two
+
+/-- Public constructor for a weighted-integral asymptotic target from its
+positive leading constant and asymptotic equivalence. -/
+theorem integral_asymptotic_target_of_asymptotic {n : ℕ}
+    (hn : 1 ≤ n) {A : ℝ} (hA : 0 < A)
+    (hasymp :
+      (fun T => HardyTheorem.weightedIntegral n T) ~[atTop]
+        (fun T => ((-1 : ℝ) ^ n * A) *
+          T ^ ((2 * n : ℝ) + 1 / 4))) :
+    HardyTheorem.integral_asymptotic_target n :=
+  HardyTheorem.integral_asymptotic_target_of_asymptotic hn hA hasymp
+
+/-- Public lower-bound destructor for weighted-integral asymptotic targets. -/
+theorem integral_asymptotic_target_ge_one {n : ℕ}
+    (h : HardyTheorem.integral_asymptotic_target n) : 1 ≤ n :=
+  HardyTheorem.integral_asymptotic_target_ge_one h
+
+/-- Public positive-leading-constant destructor for weighted-integral
+asymptotic targets. -/
+theorem exists_positive_asymptotic_of_integral_asymptotic_target {n : ℕ}
+    (h : HardyTheorem.integral_asymptotic_target n) :
+    ∃ A : ℝ, 0 < A ∧
+      (fun T => HardyTheorem.weightedIntegral n T) ~[atTop]
+        (fun T => ((-1 : ℝ) ^ n * A) *
+          T ^ ((2 * n : ℝ) + 1 / 4)) :=
+  HardyTheorem.exists_positive_asymptotic_of_integral_asymptotic_target h
+
+/-- Public unfolded form of the first Hardy weighted-integral asymptotic
+target. -/
+theorem integral_asymptotic_target_one_iff :
+    HardyTheorem.integral_asymptotic_target 1 ↔
+      ∃ A : ℝ, 0 < A ∧
+        (fun T => HardyTheorem.weightedIntegral 1 T) ~[atTop]
+          (fun T => -A * T ^ ((2 : ℝ) + 1 / 4)) :=
+  HardyTheorem.integral_asymptotic_target_one_iff
+
+/-- Public unfolded form of the second Hardy weighted-integral asymptotic
+target. -/
+theorem integral_asymptotic_target_two_iff :
+    HardyTheorem.integral_asymptotic_target 2 ↔
+      ∃ A : ℝ, 0 < A ∧
+        (fun T => HardyTheorem.weightedIntegral 2 T) ~[atTop]
+          (fun T => A * T ^ ((2 * 2 : ℝ) + 1 / 4)) :=
+  HardyTheorem.integral_asymptotic_target_two_iff
 
 /-- Public bridge from the two signed Hardy moments to the first integral
 asymptotic target. -/
@@ -2081,11 +2322,25 @@ theorem hardy_zeros_unbounded_target_iff_hardyZ_unbounded :
       ∀ T : ℝ, ∃ t : ℝ, T ≤ t ∧ HardyTheorem.hardyZ t = 0 :=
   HardyTheorem.hardy_zeros_unbounded_target_iff_hardyZ_unbounded
 
+/-- Public eventual-existence form of the positive-height Hardy zero target. -/
+theorem hardy_zeros_unbounded_target_iff_eventually_exists :
+    HardyTheorem.hardy_zeros_unbounded_target ↔
+      ∀ᶠ T in atTop,
+        ∃ t : ℝ, T ≤ t ∧ riemannZeta (0.5 + Complex.I * t) = 0 :=
+  HardyTheorem.hardy_zeros_unbounded_target_iff_eventually_exists
+
 /-- Public HardyZ form of the absolute-height unbounded target. -/
 theorem hardy_zeros_abs_unbounded_target_iff_hardyZ_abs_unbounded :
     HardyTheorem.hardy_zeros_abs_unbounded_target ↔
       ∀ T : ℝ, ∃ t : ℝ, T ≤ |t| ∧ HardyTheorem.hardyZ t = 0 :=
   HardyTheorem.hardy_zeros_abs_unbounded_target_iff_hardyZ_abs_unbounded
+
+/-- Public eventual-existence form of the absolute-height Hardy zero target. -/
+theorem hardy_zeros_abs_unbounded_target_iff_eventually_exists_abs :
+    HardyTheorem.hardy_zeros_abs_unbounded_target ↔
+      ∀ᶠ T in atTop,
+        ∃ t : ℝ, T ≤ |t| ∧ riemannZeta (0.5 + Complex.I * t) = 0 :=
+  HardyTheorem.hardy_zeros_abs_unbounded_target_iff_eventually_exists_abs
 
 /-- Public equivalence between Hardy's infinite-zero target and the
 absolute-height unbounded target, using the local finiteness of zeta zeros in
@@ -2265,6 +2520,21 @@ theorem infinitely_many_zeros_on_critical_line_of_integral_asymptotic_one_two
     {s : ℂ | s.re = 1 / 2 ∧ riemannZeta s = 0}.Infinite :=
   KnownResults.infinitely_many_zeros_on_critical_line_of_integral_asymptotic_one_two
     h1 h2
+
+/-- Public eventually-linear form of the Hardy--Littlewood lower-bound target. -/
+theorem hardy_littlewood_lower_bound_target_iff_eventually_linear_lower_bound :
+    HardyTheorem.hardy_littlewood_lower_bound_target ↔
+      ∃ C > 0, ∀ᶠ T in atTop,
+        (HardyTheorem.zeroCountOnCriticalLine T : ℝ) ≥ C * T :=
+  HardyTheorem.hardy_littlewood_lower_bound_target_iff_eventually_linear_lower_bound
+
+/-- Public eventually-logarithmic form of Selberg's positive-proportion target. -/
+theorem selberg_zero_proportion_target_iff_eventually_log_lower_bound :
+    HardyTheorem.selberg_zero_proportion_target ↔
+      ∃ c > 0, ∀ᶠ T in atTop,
+        (HardyTheorem.zeroCountOnCriticalLine T : ℝ) ≥
+          c * (T / (2 * Real.pi) * Real.log T) :=
+  HardyTheorem.selberg_zero_proportion_target_iff_eventually_log_lower_bound
 
 /-- Public bridge from the Hardy--Littlewood lower-bound target to infinitely
 many complex critical-line zeros. -/
@@ -2931,6 +3201,20 @@ theorem explicit_formula_von_mangoldt_of_norm_error_isBigO_tendsto_zero
   PrimeNumberTheorem.explicit_formula_von_mangoldt_of_norm_error_isBigO_tendsto_zero
     hE hO
 
+/-- Public bridge: a reverse-norm Big-O error estimate against any function
+tending to zero closes the corrected explicit-formula target. -/
+theorem explicit_formula_von_mangoldt_of_reverse_norm_error_isBigO_tendsto_zero
+    {x : ℝ} {hx : x ≥ 2} {E : ℝ → ℝ}
+    (hE : Tendsto E atTop (𝓝 0))
+    (hO :
+      (fun T : ℝ =>
+        ‖(PrimeNumberTheorem.chebyshevPsi0 x : ℂ) -
+          PrimeNumberTheorem.explicitFormulaApprox x T‖)
+        =O[atTop] E) :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_reverse_norm_error_isBigO_tendsto_zero
+    hE hO
+
 /-- Public bridge: an eventual `C/T` norm error estimate closes the corrected
 explicit-formula target. -/
 theorem explicit_formula_von_mangoldt_of_eventually_norm_le_const_mul_inv
@@ -2940,6 +3224,17 @@ theorem explicit_formula_von_mangoldt_of_eventually_norm_le_const_mul_inv
         (PrimeNumberTheorem.chebyshevPsi0 x : ℂ)‖ ≤ C * T⁻¹) :
     PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
   PrimeNumberTheorem.explicit_formula_von_mangoldt_of_eventually_norm_le_const_mul_inv
+    hbound
+
+/-- Public bridge: an eventual reverse `C/T` norm error estimate closes the
+corrected explicit-formula target. -/
+theorem explicit_formula_von_mangoldt_of_eventually_reverse_norm_le_const_mul_inv
+    {x C : ℝ} {hx : x ≥ 2}
+    (hbound : ∀ᶠ T in atTop,
+      ‖(PrimeNumberTheorem.chebyshevPsi0 x : ℂ) -
+        PrimeNumberTheorem.explicitFormulaApprox x T‖ ≤ C * T⁻¹) :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_eventually_reverse_norm_le_const_mul_inv
     hbound
 
 /-- Public bridge: eventual real and imaginary error bounds by functions
