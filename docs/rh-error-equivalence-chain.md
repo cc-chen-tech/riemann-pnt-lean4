@@ -25,6 +25,8 @@ The current project already provides these usable endpoints and support lemmas.
 | `theta_error_integral_isBigO_sqrt_mul_log` | Bounds the Abel integral error from `RH_ThetaErrorBound`. |
 | `RH_PrimeCountingLiErrorBound_of_RH_ThetaErrorBound` | Closed partial-summation bridge from RH-scale `theta` error to RH-scale `pi - Li` error. |
 | `RH_PrimeCountingLiErrorBound_of_RH_PsiErrorBound` | Same bridge after the local `psi`/`theta` error equivalence. |
+| `RH_ErrorBound_of_RH_ThetaErrorBound` | Converts the closed `theta` bridge to the pointwise textbook `RH_ErrorBound` target. |
+| `RH_ErrorBound_of_RH_PsiErrorBound` | Same pointwise endpoint after the local `psi`/`theta` error equivalence. |
 | `explicit_formula_von_mangoldt` | Present only as a target `Prop`; its current infinite zero sum is not the final formal theorem shape needed for estimates. |
 
 ## Current Target Assessment

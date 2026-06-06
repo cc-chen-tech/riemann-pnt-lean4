@@ -92,6 +92,8 @@ The following proved declarations are the main entry points for future work:
 - `PrimeNumberTheorem.theta_error_integral_isBigO_sqrt_mul_log`
 - `PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_RH_ThetaErrorBound`
 - `PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_RH_PsiErrorBound`
+- `PrimeNumberTheorem.RH_ErrorBound_of_RH_ThetaErrorBound`
+- `PrimeNumberTheorem.RH_ErrorBound_of_RH_PsiErrorBound`
 - `PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_RH_ErrorBound`
 - `PrimeNumberTheorem.RH_ErrorBound_of_RH_PrimeCountingLiErrorBound_of_finite_intervals`
 - `PrimeNumberTheorem.RH_ErrorBound_of_RH_PrimeCountingLiErrorBound`
