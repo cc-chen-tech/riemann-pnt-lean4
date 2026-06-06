@@ -307,6 +307,97 @@ theorem explicit_formula_von_mangoldt_iff_reverse_norm_error_tendsto_zero
           PrimeNumberTheorem.explicitFormulaApprox x T‖) atTop (𝓝 0) :=
   PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_reverse_norm_error_tendsto_zero
 
+/-- Public norm-small-o formulation of the corrected explicit-formula target. -/
+theorem explicit_formula_von_mangoldt_iff_norm_error_isLittleO_one
+    {x : ℝ} {hx : x ≥ 2} :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx ↔
+      (fun T : ℝ =>
+        ‖PrimeNumberTheorem.explicitFormulaApprox x T -
+          (PrimeNumberTheorem.chebyshevPsi0 x : ℂ)‖)
+        =o[atTop] (fun _T : ℝ => (1 : ℝ)) :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_norm_error_isLittleO_one
+
+/-- Public real/imaginary error formulation of the corrected explicit-formula
+target. -/
+theorem explicit_formula_von_mangoldt_iff_re_im_error_tendsto_zero
+    {x : ℝ} {hx : x ≥ 2} :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx ↔
+      Tendsto
+        (fun T : ℝ =>
+          (PrimeNumberTheorem.explicitFormulaApprox x T).re -
+            PrimeNumberTheorem.chebyshevPsi0 x)
+        atTop (𝓝 0) ∧
+      Tendsto
+        (fun T : ℝ => (PrimeNumberTheorem.explicitFormulaApprox x T).im)
+        atTop (𝓝 0) :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_re_im_error_tendsto_zero
+
+/-- Public absolute real/imaginary error formulation of the corrected
+explicit-formula target. -/
+theorem explicit_formula_von_mangoldt_iff_re_im_abs_error_tendsto_zero
+    {x : ℝ} {hx : x ≥ 2} :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx ↔
+      Tendsto
+        (fun T : ℝ =>
+          |(PrimeNumberTheorem.explicitFormulaApprox x T).re -
+            PrimeNumberTheorem.chebyshevPsi0 x|)
+        atTop (𝓝 0) ∧
+      Tendsto
+        (fun T : ℝ => |(PrimeNumberTheorem.explicitFormulaApprox x T).im|)
+        atTop (𝓝 0) :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_re_im_abs_error_tendsto_zero
+
+/-- Public bridge: any eventual norm error bound by a function tending to zero
+closes the corrected explicit-formula target. -/
+theorem explicit_formula_von_mangoldt_of_eventually_norm_le
+    {x : ℝ} {hx : x ≥ 2} {E : ℝ → ℝ}
+    (hE : Tendsto E atTop (𝓝 0))
+    (hbound : ∀ᶠ T in atTop,
+      ‖PrimeNumberTheorem.explicitFormulaApprox x T -
+        (PrimeNumberTheorem.chebyshevPsi0 x : ℂ)‖ ≤ E T) :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_eventually_norm_le
+    hE hbound
+
+/-- Public bridge: an eventual `C/T` norm error estimate closes the corrected
+explicit-formula target. -/
+theorem explicit_formula_von_mangoldt_of_eventually_norm_le_const_mul_inv
+    {x C : ℝ} {hx : x ≥ 2}
+    (hbound : ∀ᶠ T in atTop,
+      ‖PrimeNumberTheorem.explicitFormulaApprox x T -
+        (PrimeNumberTheorem.chebyshevPsi0 x : ℂ)‖ ≤ C * T⁻¹) :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_eventually_norm_le_const_mul_inv
+    hbound
+
+/-- Public bridge: eventual real and imaginary error bounds by functions
+tending to zero close the corrected explicit-formula target. -/
+theorem explicit_formula_von_mangoldt_of_eventually_re_im_abs_le
+    {x : ℝ} {hx : x ≥ 2} {Ere Eim : ℝ → ℝ}
+    (hEre : Tendsto Ere atTop (𝓝 0))
+    (hEim : Tendsto Eim atTop (𝓝 0))
+    (hre_bound : ∀ᶠ T in atTop,
+      |(PrimeNumberTheorem.explicitFormulaApprox x T).re -
+        PrimeNumberTheorem.chebyshevPsi0 x| ≤ Ere T)
+    (him_bound : ∀ᶠ T in atTop,
+      |(PrimeNumberTheorem.explicitFormulaApprox x T).im| ≤ Eim T) :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_eventually_re_im_abs_le
+    hEre hEim hre_bound him_bound
+
+/-- Public bridge: eventual `C/T` real and imaginary error estimates close the
+corrected explicit-formula target. -/
+theorem explicit_formula_von_mangoldt_of_eventually_re_im_abs_le_const_mul_inv
+    {x Cre Cim : ℝ} {hx : x ≥ 2}
+    (hre_bound : ∀ᶠ T in atTop,
+      |(PrimeNumberTheorem.explicitFormulaApprox x T).re -
+        PrimeNumberTheorem.chebyshevPsi0 x| ≤ Cre * T⁻¹)
+    (him_bound : ∀ᶠ T in atTop,
+      |(PrimeNumberTheorem.explicitFormulaApprox x T).im| ≤ Cim * T⁻¹) :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_eventually_re_im_abs_le_const_mul_inv
+    hre_bound him_bound
+
 /-- Public stability bridge: if the zero sum has no new terms eventually and
 the stable truncation equals `ψ₀(x)`, then the explicit-formula target follows. -/
 theorem explicit_formula_von_mangoldt_of_eventually_no_new_zeros
