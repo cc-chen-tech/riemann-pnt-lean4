@@ -3636,6 +3636,90 @@ lemma norm_new_zero_contribution_sum_le_sqrt_mul_sum_inv_norm_of_RH
     hRH hx (nontrivialZerosFinset U \ nontrivialZerosFinset T)
     (fun ρ hρ => (mem_nontrivialZerosFinset_sdiff.mp hρ).1)
 
+/-- Under RH, a nontrivial zero has norm at least `1/2`. -/
+lemma norm_nontrivial_zero_ge_half_of_RH
+    (hRH : RiemannHypothesis.Statement)
+    {ρ : ℂ} (hρ : RiemannHypothesis.IsNontrivialZero ρ) :
+    (1 / 2 : ℝ) ≤ ‖ρ‖ := by
+  have hle : |ρ.re| ≤ ‖ρ‖ := Complex.abs_re_le_norm ρ
+  have habs : |ρ.re| = (1 / 2 : ℝ) := by
+    rw [hRH ρ hρ]
+    norm_num
+  simpa [habs] using hle
+
+/-- Under RH, the reciprocal norm of a nontrivial zero is at most `2`. -/
+lemma inv_norm_nontrivial_zero_le_two_of_RH
+    (hRH : RiemannHypothesis.Statement)
+    {ρ : ℂ} (hρ : RiemannHypothesis.IsNontrivialZero ρ) :
+    ‖ρ‖⁻¹ ≤ (2 : ℝ) := by
+  have hhalf := norm_nontrivial_zero_ge_half_of_RH hRH hρ
+  have hnorm_pos : 0 < ‖ρ‖ :=
+    norm_pos_iff.mpr (nontrivial_zero_ne_zero hρ)
+  have hmul : (1 : ℝ) ≤ 2 * ‖ρ‖ := by
+    nlinarith
+  have hdiv : (1 : ℝ) / ‖ρ‖ ≤ 2 := by
+    rw [div_le_iff₀ hnorm_pos]
+    exact hmul
+  simpa [one_div] using hdiv
+
+/-- RH bounds any finite reciprocal-norm sum by twice the number of zeros. -/
+lemma sum_inv_norm_le_two_card_of_RH
+    (hRH : RiemannHypothesis.Statement) (S : Finset ℂ)
+    (hS : ∀ ρ ∈ S, RiemannHypothesis.IsNontrivialZero ρ) :
+    (∑ ρ ∈ S, ‖ρ‖⁻¹) ≤ (2 : ℝ) * S.card := by
+  calc
+    (∑ ρ ∈ S, ‖ρ‖⁻¹) ≤ ∑ ρ ∈ S, (2 : ℝ) := by
+      refine Finset.sum_le_sum ?_
+      intro ρ hρ
+      exact inv_norm_nontrivial_zero_le_two_of_RH hRH (hS ρ hρ)
+    _ = (2 : ℝ) * S.card := by
+      rw [Finset.sum_const]
+      simp [nsmul_eq_mul]
+      ring
+
+/-- RH bounds the height-truncated reciprocal-norm zero sum by the zero count. -/
+lemma sum_inv_norm_nontrivialZerosFinset_le_two_card_of_RH
+    (hRH : RiemannHypothesis.Statement) (T : ℝ) :
+    (∑ ρ ∈ nontrivialZerosFinset T, ‖ρ‖⁻¹) ≤
+      (2 : ℝ) * (nontrivialZerosFinset T).card := by
+  exact sum_inv_norm_le_two_card_of_RH hRH (nontrivialZerosFinset T)
+    (fun ρ hρ => (mem_nontrivialZerosFinset.mp hρ).1)
+
+/-- RH bounds the reciprocal-norm sum over newly appearing zeros by their count. -/
+lemma sum_inv_norm_new_zeros_le_two_card_of_RH
+    (hRH : RiemannHypothesis.Statement) (T U : ℝ) :
+    (∑ ρ ∈ (nontrivialZerosFinset U \ nontrivialZerosFinset T), ‖ρ‖⁻¹) ≤
+      (2 : ℝ) * (nontrivialZerosFinset U \ nontrivialZerosFinset T).card := by
+  exact sum_inv_norm_le_two_card_of_RH hRH
+    (nontrivialZerosFinset U \ nontrivialZerosFinset T)
+    (fun ρ hρ => (mem_nontrivialZerosFinset_sdiff.mp hρ).1)
+
+/-- RH count-bound for the height-truncated nontrivial-zero sum. -/
+lemma norm_finiteNontrivialZeroSum_le_sqrt_mul_two_card_of_RH
+    (hRH : RiemannHypothesis.Statement)
+    {x T : ℝ} (hx : 0 < x) :
+    ‖finiteNontrivialZeroSum x T‖ ≤
+      Real.sqrt x * ((2 : ℝ) * (nontrivialZerosFinset T).card) := by
+  have hbound :=
+    norm_finiteNontrivialZeroSum_le_sqrt_mul_sum_inv_norm_of_RH hRH hx
+      (T := T)
+  have hsum := sum_inv_norm_nontrivialZerosFinset_le_two_card_of_RH hRH T
+  exact hbound.trans (mul_le_mul_of_nonneg_left hsum (Real.sqrt_nonneg x))
+
+/-- RH count-bound for the new-zero contribution between two truncation heights. -/
+lemma norm_new_zero_contribution_sum_le_sqrt_mul_two_card_of_RH
+    (hRH : RiemannHypothesis.Statement)
+    {x T U : ℝ} (hx : 0 < x) :
+    ‖∑ ρ ∈ (nontrivialZerosFinset U \ nontrivialZerosFinset T),
+        (x : ℂ) ^ ρ / ρ‖ ≤
+      Real.sqrt x *
+        ((2 : ℝ) * (nontrivialZerosFinset U \ nontrivialZerosFinset T).card) := by
+  have hbound :=
+    norm_new_zero_contribution_sum_le_sqrt_mul_sum_inv_norm_of_RH hRH hx
+      (T := T) (U := U)
+  have hsum := sum_inv_norm_new_zeros_le_two_card_of_RH hRH T U
+  exact hbound.trans (mul_le_mul_of_nonneg_left hsum (Real.sqrt_nonneg x))
+
 /-- 零点对素数分布的贡献
 
 每个零点 ρ = β + iγ 贡献振荡项 x^ρ/ρ = x^β e^{iγ log x} / ρ

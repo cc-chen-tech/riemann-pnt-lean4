@@ -449,6 +449,72 @@ theorem norm_new_zero_contribution_sum_le_sqrt_mul_sum_inv_norm_of_RH
   PrimeNumberTheorem.norm_new_zero_contribution_sum_le_sqrt_mul_sum_inv_norm_of_RH
     hRH hx
 
+/-- Public RH lower bound for the norm of a nontrivial zero. -/
+theorem norm_nontrivial_zero_ge_half_of_RH
+    (hRH : _root_.RiemannHypothesis.Statement)
+    {ρ : ℂ} (hρ : _root_.RiemannHypothesis.IsNontrivialZero ρ) :
+    (1 / 2 : ℝ) ≤ ‖ρ‖ :=
+  PrimeNumberTheorem.norm_nontrivial_zero_ge_half_of_RH hRH hρ
+
+/-- Public RH upper bound for the reciprocal norm of a nontrivial zero. -/
+theorem inv_norm_nontrivial_zero_le_two_of_RH
+    (hRH : _root_.RiemannHypothesis.Statement)
+    {ρ : ℂ} (hρ : _root_.RiemannHypothesis.IsNontrivialZero ρ) :
+    ‖ρ‖⁻¹ ≤ (2 : ℝ) :=
+  PrimeNumberTheorem.inv_norm_nontrivial_zero_le_two_of_RH hRH hρ
+
+/-- Public RH bound for finite reciprocal-norm zero sums. -/
+theorem sum_inv_norm_le_two_card_of_RH
+    (hRH : _root_.RiemannHypothesis.Statement) (S : Finset ℂ)
+    (hS : ∀ ρ ∈ S, _root_.RiemannHypothesis.IsNontrivialZero ρ) :
+    (∑ ρ ∈ S, ‖ρ‖⁻¹) ≤ (2 : ℝ) * S.card :=
+  PrimeNumberTheorem.sum_inv_norm_le_two_card_of_RH hRH S hS
+
+/-- Public RH bound for the truncated reciprocal-norm zero sum. -/
+theorem sum_inv_norm_nontrivialZerosFinset_le_two_card_of_RH
+    (hRH : _root_.RiemannHypothesis.Statement) (T : ℝ) :
+    (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T, ‖ρ‖⁻¹) ≤
+      (2 : ℝ) * (PrimeNumberTheorem.nontrivialZerosFinset T).card :=
+  PrimeNumberTheorem.sum_inv_norm_nontrivialZerosFinset_le_two_card_of_RH
+    hRH T
+
+/-- Public RH bound for reciprocal-norm sums over newly appearing zeros. -/
+theorem sum_inv_norm_new_zeros_le_two_card_of_RH
+    (hRH : _root_.RiemannHypothesis.Statement) (T U : ℝ) :
+    (∑ ρ ∈
+        (PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T), ‖ρ‖⁻¹) ≤
+      (2 : ℝ) *
+        (PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T).card :=
+  PrimeNumberTheorem.sum_inv_norm_new_zeros_le_two_card_of_RH hRH T U
+
+/-- Public RH count-bound for the height-truncated nontrivial-zero sum. -/
+theorem norm_finiteNontrivialZeroSum_le_sqrt_mul_two_card_of_RH
+    (hRH : _root_.RiemannHypothesis.Statement)
+    {x T : ℝ} (hx : 0 < x) :
+    ‖PrimeNumberTheorem.finiteNontrivialZeroSum x T‖ ≤
+      Real.sqrt x *
+        ((2 : ℝ) * (PrimeNumberTheorem.nontrivialZerosFinset T).card) :=
+  PrimeNumberTheorem.norm_finiteNontrivialZeroSum_le_sqrt_mul_two_card_of_RH
+    hRH hx
+
+/-- Public RH count-bound for the new-zero contribution between truncation
+heights. -/
+theorem norm_new_zero_contribution_sum_le_sqrt_mul_two_card_of_RH
+    (hRH : _root_.RiemannHypothesis.Statement)
+    {x T U : ℝ} (hx : 0 < x) :
+    ‖∑ ρ ∈
+        (PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T),
+        (x : ℂ) ^ ρ / ρ‖ ≤
+      Real.sqrt x *
+        ((2 : ℝ) *
+          (PrimeNumberTheorem.nontrivialZerosFinset U \
+            PrimeNumberTheorem.nontrivialZerosFinset T).card) :=
+  PrimeNumberTheorem.norm_new_zero_contribution_sum_le_sqrt_mul_two_card_of_RH
+    hRH hx
+
 /-- Public stability bridge: if the zero sum has no new terms eventually and
 the stable truncation equals `ψ₀(x)`, then the explicit-formula target follows. -/
 theorem explicit_formula_von_mangoldt_of_eventually_no_new_zeros
