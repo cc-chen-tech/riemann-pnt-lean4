@@ -3720,6 +3720,29 @@ lemma norm_new_zero_contribution_sum_le_sqrt_mul_two_card_of_RH
   have hsum := sum_inv_norm_new_zeros_le_two_card_of_RH hRH T U
   exact hbound.trans (mul_le_mul_of_nonneg_left hsum (Real.sqrt_nonneg x))
 
+/-- RH Cauchy-type bound for two height truncations of the explicit-formula
+approximation, measured by the reciprocal-norm sum of newly included zeros. -/
+lemma norm_explicitFormulaApprox_sub_le_sqrt_mul_sum_inv_norm_of_RH
+    (hRH : RiemannHypothesis.Statement)
+    {x T U : ℝ} (hx : 0 < x) (hTU : T ≤ U) :
+    ‖explicitFormulaApprox x T - explicitFormulaApprox x U‖ ≤
+      Real.sqrt x *
+        ∑ ρ ∈ (nontrivialZerosFinset U \ nontrivialZerosFinset T), ‖ρ‖⁻¹ := by
+  rw [explicitFormulaApprox_sub_norm_eq_new_zeros hTU]
+  exact norm_new_zero_contribution_sum_le_sqrt_mul_sum_inv_norm_of_RH
+    hRH hx
+
+/-- RH Cauchy-type bound for two height truncations of the explicit-formula
+approximation, measured by the number of newly included zeros. -/
+lemma norm_explicitFormulaApprox_sub_le_sqrt_mul_two_card_of_RH
+    (hRH : RiemannHypothesis.Statement)
+    {x T U : ℝ} (hx : 0 < x) (hTU : T ≤ U) :
+    ‖explicitFormulaApprox x T - explicitFormulaApprox x U‖ ≤
+      Real.sqrt x *
+        ((2 : ℝ) * (nontrivialZerosFinset U \ nontrivialZerosFinset T).card) := by
+  rw [explicitFormulaApprox_sub_norm_eq_new_zeros hTU]
+  exact norm_new_zero_contribution_sum_le_sqrt_mul_two_card_of_RH hRH hx
+
 /-- 零点对素数分布的贡献
 
 每个零点 ρ = β + iγ 贡献振荡项 x^ρ/ρ = x^β e^{iγ log x} / ρ

@@ -515,6 +515,34 @@ theorem norm_new_zero_contribution_sum_le_sqrt_mul_two_card_of_RH
   PrimeNumberTheorem.norm_new_zero_contribution_sum_le_sqrt_mul_two_card_of_RH
     hRH hx
 
+/-- Public RH Cauchy-type bound for two explicit-formula truncations,
+measured by the reciprocal-norm sum of newly included zeros. -/
+theorem norm_explicitFormulaApprox_sub_le_sqrt_mul_sum_inv_norm_of_RH
+    (hRH : _root_.RiemannHypothesis.Statement)
+    {x T U : ℝ} (hx : 0 < x) (hTU : T ≤ U) :
+    ‖PrimeNumberTheorem.explicitFormulaApprox x T -
+        PrimeNumberTheorem.explicitFormulaApprox x U‖ ≤
+      Real.sqrt x *
+        ∑ ρ ∈
+          (PrimeNumberTheorem.nontrivialZerosFinset U \
+            PrimeNumberTheorem.nontrivialZerosFinset T), ‖ρ‖⁻¹ :=
+  PrimeNumberTheorem.norm_explicitFormulaApprox_sub_le_sqrt_mul_sum_inv_norm_of_RH
+    hRH hx hTU
+
+/-- Public RH Cauchy-type bound for two explicit-formula truncations,
+measured by the number of newly included zeros. -/
+theorem norm_explicitFormulaApprox_sub_le_sqrt_mul_two_card_of_RH
+    (hRH : _root_.RiemannHypothesis.Statement)
+    {x T U : ℝ} (hx : 0 < x) (hTU : T ≤ U) :
+    ‖PrimeNumberTheorem.explicitFormulaApprox x T -
+        PrimeNumberTheorem.explicitFormulaApprox x U‖ ≤
+      Real.sqrt x *
+        ((2 : ℝ) *
+          (PrimeNumberTheorem.nontrivialZerosFinset U \
+            PrimeNumberTheorem.nontrivialZerosFinset T).card) :=
+  PrimeNumberTheorem.norm_explicitFormulaApprox_sub_le_sqrt_mul_two_card_of_RH
+    hRH hx hTU
+
 /-- Public stability bridge: if the zero sum has no new terms eventually and
 the stable truncation equals `ψ₀(x)`, then the explicit-formula target follows. -/
 theorem explicit_formula_von_mangoldt_of_eventually_no_new_zeros
