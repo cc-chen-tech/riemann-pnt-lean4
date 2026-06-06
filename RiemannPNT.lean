@@ -1310,6 +1310,217 @@ theorem RH_ErrorBound_of_chebyshevPsi0_sub_id_isBigO
     PrimeNumberTheorem.RH_ErrorBound :=
   PrimeNumberTheorem.RH_ErrorBound_of_chebyshevPsi0_sub_id_isBigO hψ0
 
+theorem RH_PsiErrorBound_of_eventual_abs_bound {C : ℝ}
+    (h : ∀ᶠ x in atTop,
+      |PrimeNumberTheorem.chebyshevPsi x - x| ≤
+        C * (Real.sqrt x * (Real.log x)^2)) :
+    PrimeNumberTheorem.RH_PsiErrorBound :=
+  PrimeNumberTheorem.RH_PsiErrorBound_of_eventual_abs_bound h
+
+theorem RH_PsiErrorBound_of_pointwise {C : ℝ}
+    (hC : 0 < C)
+    (h : ∀ x ≥ 2,
+      |PrimeNumberTheorem.chebyshevPsi x - x| ≤
+        C * (Real.sqrt x * (Real.log x)^2)) :
+    PrimeNumberTheorem.RH_PsiErrorBound :=
+  PrimeNumberTheorem.RH_PsiErrorBound_of_pointwise hC h
+
+theorem RH_ThetaErrorBound_of_eventual_abs_bound {C : ℝ}
+    (h : ∀ᶠ x in atTop,
+      |Chebyshev.theta x - x| ≤
+        C * (Real.sqrt x * (Real.log x)^2)) :
+    PrimeNumberTheorem.RH_ThetaErrorBound :=
+  PrimeNumberTheorem.RH_ThetaErrorBound_of_eventual_abs_bound h
+
+theorem RH_ThetaErrorBound_of_pointwise {C : ℝ}
+    (hC : 0 < C)
+    (h : ∀ x ≥ 2,
+      |Chebyshev.theta x - x| ≤
+        C * (Real.sqrt x * (Real.log x)^2)) :
+    PrimeNumberTheorem.RH_ThetaErrorBound :=
+  PrimeNumberTheorem.RH_ThetaErrorBound_of_pointwise hC h
+
+theorem RH_PrimeCountingLiErrorBound_of_RH_ThetaErrorBound_of_integral_error
+    (hθ : PrimeNumberTheorem.RH_ThetaErrorBound)
+    (hintegral :
+      (fun x : ℝ =>
+        ∫ t in (2)..x,
+          (Chebyshev.theta t - t) / (t * Real.log t ^ 2))
+        =O[atTop] (fun x : ℝ => Real.sqrt x * Real.log x)) :
+    PrimeNumberTheorem.RH_PrimeCountingLiErrorBound :=
+  PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_RH_ThetaErrorBound_of_integral_error
+    hθ hintegral
+
+theorem RH_PrimeCountingLiErrorBound_of_RH_PsiErrorBound_of_integral_error
+    (hψ : PrimeNumberTheorem.RH_PsiErrorBound)
+    (hintegral :
+      (fun x : ℝ =>
+        ∫ t in (2)..x,
+          (Chebyshev.theta t - t) / (t * Real.log t ^ 2))
+        =O[atTop] (fun x : ℝ => Real.sqrt x * Real.log x)) :
+    PrimeNumberTheorem.RH_PrimeCountingLiErrorBound :=
+  PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_RH_PsiErrorBound_of_integral_error
+    hψ hintegral
+
+theorem RH_PrimeCountingLiErrorBound_of_eventual_abs_bound {C : ℝ}
+    (h : ∀ᶠ x in atTop,
+      |(PrimeNumberTheorem.primeCounting x : ℝ) -
+          PrimeNumberTheorem.logIntegral x| ≤
+        C * (Real.sqrt x * Real.log x)) :
+    PrimeNumberTheorem.RH_PrimeCountingLiErrorBound :=
+  PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_eventual_abs_bound h
+
+theorem RH_PrimeCountingLiErrorBound_of_pointwise :
+    PrimeNumberTheorem.RH_ErrorBound →
+      PrimeNumberTheorem.RH_PrimeCountingLiErrorBound :=
+  PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_pointwise
+
+theorem RH_ErrorBound_of_RH_PrimeCountingLiErrorBound_of_finite_intervals
+    (h : PrimeNumberTheorem.RH_PrimeCountingLiErrorBound)
+    (hfinite : ∀ X ≥ 2, ∃ C > 0, ∀ x, 2 ≤ x → x ≤ X →
+      |(PrimeNumberTheorem.primeCounting x : ℝ) -
+          PrimeNumberTheorem.logIntegral x| ≤
+        C * (Real.sqrt x * Real.log x)) :
+    PrimeNumberTheorem.RH_ErrorBound :=
+  PrimeNumberTheorem.RH_ErrorBound_of_RH_PrimeCountingLiErrorBound_of_finite_intervals
+    h hfinite
+
+theorem chebyshevPsi_asymptotic_of_RH_PsiErrorBound
+    (hψ : PrimeNumberTheorem.RH_PsiErrorBound) :
+    Tendsto (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi x / x)
+      atTop (𝓝 1) :=
+  PrimeNumberTheorem.chebyshevPsi_asymptotic_of_RH_PsiErrorBound hψ
+
+theorem chebyshevPsi_asymptotic_of_RH_ThetaErrorBound
+    (hθ : PrimeNumberTheorem.RH_ThetaErrorBound) :
+    Tendsto (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi x / x)
+      atTop (𝓝 1) :=
+  PrimeNumberTheorem.chebyshevPsi_asymptotic_of_RH_ThetaErrorBound hθ
+
+theorem mathlibChebyshevPsi_asymptotic_of_RH_PsiErrorBound
+    (hψ : PrimeNumberTheorem.RH_PsiErrorBound) :
+    Tendsto (fun x : ℝ => Chebyshev.psi x / x) atTop (𝓝 1) :=
+  PrimeNumberTheorem.mathlibChebyshevPsi_asymptotic_of_RH_PsiErrorBound hψ
+
+theorem mathlibChebyshevPsi_asymptotic_of_RH_ThetaErrorBound
+    (hθ : PrimeNumberTheorem.RH_ThetaErrorBound) :
+    Tendsto (fun x : ℝ => Chebyshev.psi x / x) atTop (𝓝 1) :=
+  PrimeNumberTheorem.mathlibChebyshevPsi_asymptotic_of_RH_ThetaErrorBound hθ
+
+theorem chebyshevTheta_asymptotic_of_RH_ThetaErrorBound
+    (hθ : PrimeNumberTheorem.RH_ThetaErrorBound) :
+    Tendsto (fun x : ℝ => Chebyshev.theta x / x) atTop (𝓝 1) :=
+  PrimeNumberTheorem.chebyshevTheta_asymptotic_of_RH_ThetaErrorBound hθ
+
+theorem chebyshevTheta_asymptotic_of_RH_PsiErrorBound
+    (hψ : PrimeNumberTheorem.RH_PsiErrorBound) :
+    Tendsto (fun x : ℝ => Chebyshev.theta x / x) atTop (𝓝 1) :=
+  PrimeNumberTheorem.chebyshevTheta_asymptotic_of_RH_PsiErrorBound hψ
+
+theorem rh_iff_optimal_error_iff :
+    PrimeNumberTheorem.rh_iff_optimal_error ↔
+      (RiemannHypothesis.Statement ↔
+        PrimeNumberTheorem.RH_PrimeCountingLiErrorBound) :=
+  PrimeNumberTheorem.rh_iff_optimal_error_iff
+
+theorem rh_iff_optimal_error_of_implications
+    (h_forward :
+      RiemannHypothesis.Statement →
+        PrimeNumberTheorem.RH_PrimeCountingLiErrorBound)
+    (h_reverse :
+      PrimeNumberTheorem.RH_PrimeCountingLiErrorBound →
+        RiemannHypothesis.Statement) :
+    PrimeNumberTheorem.rh_iff_optimal_error :=
+  PrimeNumberTheorem.rh_iff_optimal_error_of_implications
+    h_forward h_reverse
+
+theorem rh_iff_optimal_error_of_pointwise_implications
+    (h_forward : RiemannHypothesis.Statement → PrimeNumberTheorem.RH_ErrorBound)
+    (h_reverse : PrimeNumberTheorem.RH_ErrorBound → RiemannHypothesis.Statement) :
+    PrimeNumberTheorem.rh_iff_optimal_error :=
+  PrimeNumberTheorem.rh_iff_optimal_error_of_pointwise_implications
+    h_forward h_reverse
+
+theorem RH_PrimeCountingLiErrorBound_of_rh_iff_optimal_error
+    (h : PrimeNumberTheorem.rh_iff_optimal_error) :
+    RiemannHypothesis.Statement →
+      PrimeNumberTheorem.RH_PrimeCountingLiErrorBound :=
+  PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_rh_iff_optimal_error h
+
+theorem RiemannHypothesis_of_rh_iff_optimal_error
+    (h : PrimeNumberTheorem.rh_iff_optimal_error) :
+    PrimeNumberTheorem.RH_PrimeCountingLiErrorBound →
+      RiemannHypothesis.Statement :=
+  PrimeNumberTheorem.RiemannHypothesis_of_rh_iff_optimal_error h
+
+theorem RH_ErrorBound_of_rh_iff_optimal_error
+    (h : PrimeNumberTheorem.rh_iff_optimal_error) :
+    RiemannHypothesis.Statement → PrimeNumberTheorem.RH_ErrorBound :=
+  PrimeNumberTheorem.RH_ErrorBound_of_rh_iff_optimal_error h
+
+theorem PNTForm1_of_rh_iff_optimal_error
+    (h : PrimeNumberTheorem.rh_iff_optimal_error) :
+    RiemannHypothesis.Statement → PrimeNumberTheorem.PNTForm1 :=
+  PrimeNumberTheorem.PNTForm1_of_rh_iff_optimal_error h
+
+theorem PNTForm2_of_rh_iff_optimal_error
+    (h : PrimeNumberTheorem.rh_iff_optimal_error) :
+    RiemannHypothesis.Statement → PrimeNumberTheorem.PNTForm2 :=
+  PrimeNumberTheorem.PNTForm2_of_rh_iff_optimal_error h
+
+theorem PNTForm3_of_rh_iff_optimal_error
+    (h : PrimeNumberTheorem.rh_iff_optimal_error) :
+    RiemannHypothesis.Statement → PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForm3_of_rh_iff_optimal_error h
+
+theorem RiemannHypothesis_of_rh_iff_pointwise_error
+    (h : PrimeNumberTheorem.rh_iff_optimal_error) :
+    PrimeNumberTheorem.RH_ErrorBound → RiemannHypothesis.Statement :=
+  PrimeNumberTheorem.RiemannHypothesis_of_rh_iff_pointwise_error h
+
+theorem RH_PrimeCountingLiErrorBound_iff_RiemannHypothesis_of_rh_iff_optimal_error
+    (h : PrimeNumberTheorem.rh_iff_optimal_error) :
+    PrimeNumberTheorem.RH_PrimeCountingLiErrorBound ↔
+      RiemannHypothesis.Statement :=
+  PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_iff_RiemannHypothesis_of_rh_iff_optimal_error h
+
+theorem RH_ErrorBound_iff_RiemannHypothesis_of_rh_iff_optimal_error
+    (h : PrimeNumberTheorem.rh_iff_optimal_error) :
+    PrimeNumberTheorem.RH_ErrorBound ↔ RiemannHypothesis.Statement :=
+  PrimeNumberTheorem.RH_ErrorBound_iff_RiemannHypothesis_of_rh_iff_optimal_error h
+
+theorem PNTForms_of_rh_iff_optimal_error
+    (h : PrimeNumberTheorem.rh_iff_optimal_error) :
+    RiemannHypothesis.Statement → PrimeNumberTheorem.PNTForm1 ∧
+      PrimeNumberTheorem.PNTForm2 ∧ PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForms_of_rh_iff_optimal_error h
+
+theorem RH_PrimeCountingLiErrorBound_of_mathlib_RH_of_rh_iff_optimal_error
+    (h : PrimeNumberTheorem.rh_iff_optimal_error) :
+    _root_.RiemannHypothesis →
+      PrimeNumberTheorem.RH_PrimeCountingLiErrorBound :=
+  PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_mathlib_RH_of_rh_iff_optimal_error h
+
+theorem RH_ErrorBound_of_mathlib_RH_of_rh_iff_optimal_error
+    (h : PrimeNumberTheorem.rh_iff_optimal_error) :
+    _root_.RiemannHypothesis → PrimeNumberTheorem.RH_ErrorBound :=
+  PrimeNumberTheorem.RH_ErrorBound_of_mathlib_RH_of_rh_iff_optimal_error h
+
+theorem PNTForm1_of_mathlib_RH_of_rh_iff_optimal_error
+    (h : PrimeNumberTheorem.rh_iff_optimal_error) :
+    _root_.RiemannHypothesis → PrimeNumberTheorem.PNTForm1 :=
+  PrimeNumberTheorem.PNTForm1_of_mathlib_RH_of_rh_iff_optimal_error h
+
+theorem PNTForm2_of_mathlib_RH_of_rh_iff_optimal_error
+    (h : PrimeNumberTheorem.rh_iff_optimal_error) :
+    _root_.RiemannHypothesis → PrimeNumberTheorem.PNTForm2 :=
+  PrimeNumberTheorem.PNTForm2_of_mathlib_RH_of_rh_iff_optimal_error h
+
+theorem PNTForm3_of_mathlib_RH_of_rh_iff_optimal_error
+    (h : PrimeNumberTheorem.rh_iff_optimal_error) :
+    _root_.RiemannHypothesis → PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForm3_of_mathlib_RH_of_rh_iff_optimal_error h
+
 /-- Public conditional partial-summation bridge from the `θ` RH-scale target
 to the prime-counting `Li` RH-scale target. -/
 theorem rh_primeCountingLiErrorBound_of_theta_error_and_integral_error
