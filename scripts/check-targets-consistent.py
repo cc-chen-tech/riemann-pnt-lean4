@@ -18,13 +18,17 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 STATUS_PATH = ROOT / "docs" / "current-target-status.json"
 
+NON_TARGET_PROP_PREDICATES = {
+    "weightedIntegralOf_tail_dominates",
+}
+
 def scan_targets() -> set[str]:
     pat = re.compile(r"^def\s+([A-Za-z_][A-Za-z0-9_]*)\s*(?:\(.*\))?\s*:\s*Prop\s*:=" )
     names: set[str] = set()
     for path in sorted(ROOT.glob("*.lean")):
         for line in path.read_text(encoding="utf-8").splitlines():
             m = pat.match(line.strip())
-            if m:
+            if m and m.group(1) not in NON_TARGET_PROP_PREDICATES:
                 names.add(m.group(1))
     return names
 

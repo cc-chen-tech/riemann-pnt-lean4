@@ -15,11 +15,6 @@
         "depends_on": []
       },
       {
-        "name": "weightedIntegralOf_tail_dominates",
-        "shape": "∃A, Tendsto (fun T => ∫ t in A..T, weightFunction n t * f t) atTop atTop",
-        "depends_on": []
-      },
-      {
         "name": "hardy_theorem_target",
         "shape": "{t | riemannZeta (1/2 + I*t)=0}.Infinite",
         "depends_on": []
@@ -160,7 +155,6 @@
     "Hardy theorem": [
       "integral_asymptotic_target",
       "hardy_two_signed_moments_target",
-      "weightedIntegralOf_tail_dominates",
       "hardy_theorem_target",
       "hardy_zeros_unbounded_target",
       "hardy_zeros_abs_unbounded_target",
@@ -186,5 +180,5 @@
       "rh_iff_optimal_error"
     ]
   },
-  "all_prop_defs_count": 23
+  "all_prop_defs_count": 22
 }

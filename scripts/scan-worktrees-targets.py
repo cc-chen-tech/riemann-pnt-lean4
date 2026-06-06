@@ -20,6 +20,9 @@ WORKTREE_ROOT = Path.home() / ".config" / "superpowers" / "worktrees" / "riemann
 TARGET_PAT = re.compile(r"^def\s+([A-Za-z_][A-Za-z0-9_]*)\s*(?:\(.*\))?\s*:\s*Prop\s*:=")
 DECL_PAT = re.compile(r"^(def|theorem|lemma|abbrev)\s+([A-Za-z_][A-Za-z0-9_]*)\b")
 PLACEHOLDER_PAT = re.compile(r"\b(sorry|admit|axiom)\b")
+NON_TARGET_PROP_PREDICATES = {
+    "weightedIntegralOf_tail_dominates",
+}
 
 
 @dataclass(frozen=True)
@@ -40,7 +43,7 @@ def scan_targets(path: Path) -> set[str]:
             continue
         for line in lines:
             m = TARGET_PAT.match(line.strip())
-            if m:
+            if m and m.group(1) not in NON_TARGET_PROP_PREDICATES:
                 targets.add(m.group(1))
     return targets
 

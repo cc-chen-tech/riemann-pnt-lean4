@@ -5,7 +5,7 @@ current Lean checkout.  The project currently builds and contains no
 `sorry`/`admit`/`axiom` placeholders in Lean source, but several deep goals are
 intentionally recorded as `def ... : Prop` target statements.
 
-At present there are **23** unresolved `def ... : Prop` targets, and they are
+At present there are **22** unresolved `def ... : Prop` targets, and they are
 partitioned into exactly **4** analytic chains:
 
 1. Quantitative zero-free region
@@ -37,7 +37,7 @@ parallel:
 | Quantitative zero-free region | `classical_zero_free_region` and `vinogradov_korobov_zero_free_region` are `def ... : Prop` targets | Add zeta-specific meromorphic/growth/log-derivative estimates; do not cite compact zero-free region as the classical `c / log |t|` result | Prove conditional 3-4-1 algebra and compact-to-high-height patching lemmas | 2 |
 | Explicit formula | `explicit_formula_von_mangoldt` is a `def ... : Prop` target | Replace the unconditional infinite `tsum` target with a truncated Perron/residue formula for `psi0`, then a principal-value limit | Define `psi0`, finite zero sums with multiplicity, good heights, and contour-error terms | 1 |
 | RH error equivalence | `rh_iff_optimal_error` is a `def ... : Prop` target | Stage the result through `=O[atTop]` predicates for `psi`, `theta`, and `primeCounting - logIntegral` | Add explicit `IsBigO` target predicates and quantitative partial-summation milestones | 8 |
-| Hardy theorem | `hardy_theorem_target` and related moment/asymptotic targets are `def ... : Prop` targets | Use an unbounded-height zero target as the main theorem; use signed moment targets, not merely nonzero constants | Prove bounded-zero eventual-sign control and generic asymptotic sign lemmas | 12 (11 in `HardyTheorem`, 1 in `RiemannExplorer`) |
+| Hardy theorem | `hardy_theorem_target` and related moment/asymptotic targets are `def ... : Prop` targets | Use an unbounded-height zero target as the main theorem; use signed moment targets, not merely nonzero constants | Prove bounded-zero eventual-sign control and generic asymptotic sign lemmas | 11 (10 in `HardyTheorem`, 1 in `RiemannExplorer`) |
 
 ## Target-to-Chain Mapping
 
@@ -56,7 +56,6 @@ parallel:
 | `PrimeNumberTheorem.lean` | `explicit_formula_von_mangoldt` | Explicit formula | Main missing explicit-formula pipeline target |
 | `HardyTheorem.lean` | `integral_asymptotic_target` | Hardy theorem | Signed-moment asymptotic input |
 | `HardyTheorem.lean` | `hardy_two_signed_moments_target` | Hardy theorem | Asymptotics for the first two weighted moments |
-| `HardyTheorem.lean` | `weightedIntegralOf_tail_dominates` | Hardy theorem | Auxiliary tail-divergence predicate; no longer required by the main signed-moment bridge |
 | `HardyTheorem.lean` | `hardy_theorem_target` | Hardy theorem | Combined target of Hardy theorem output |
 | `HardyTheorem.lean` | `hardy_zeros_unbounded_target` | Hardy theorem | Harder zero distribution output in an unbounded-height form |
 | `HardyTheorem.lean` | `hardy_zeros_abs_unbounded_target` | Hardy theorem | Equivalent form requiring symmetry/absolute-value zero extraction |
@@ -166,6 +165,10 @@ actually supplied and checked by Lean.  In particular:
 - do not use a theorem statement for a mathematically false intermediate
   statement;
 - do not cite `def ... : Prop` targets as completed formal results.
+
+`HardyTheorem.weightedIntegralOf_tail_dominates` remains a `Prop`-valued
+predicate in Lean, but it is a reusable hypothesis form rather than an
+unresolved target statement.
 
 ## Verification Commands
 

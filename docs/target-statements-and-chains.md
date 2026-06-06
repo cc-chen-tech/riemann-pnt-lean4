@@ -8,19 +8,19 @@ All entries are intentionally **not** exported as theorems.  They are explicit
 
 ## Target count
 
-- `HardyTheorem` namespace: 11
+- `HardyTheorem` namespace: 10
 - `PrimeNumberTheorem` namespace: 9
 - `ZeroFreeRegion` namespace: 2
 - `RiemannExplorer` namespace: 1
 
-Total: **23**.
+Total: **22**.
 
 For the chain accounting:
 
 - Quantitative zero-free region chain: 2
 - Explicit formula chain: 1
 - RH/prime-counting error chain: 8
-- Hardy theorem chain: 12 (11 in `HardyTheorem`, 1 in `RiemannExplorer`)
+- Hardy theorem chain: 11 (10 in `HardyTheorem`, 1 in `RiemannExplorer`)
 
 ## Chain 1: Quantitative zero-free region
 
@@ -143,7 +143,6 @@ For the chain accounting:
 
 - `HardyTheorem.integral_asymptotic_target`
 - `HardyTheorem.hardy_two_signed_moments_target`
-- `HardyTheorem.weightedIntegralOf_tail_dominates`
 - `HardyTheorem.hardy_theorem_target`
 - `HardyTheorem.hardy_zeros_unbounded_target`
 - `HardyTheorem.hardy_zeros_abs_unbounded_target`
@@ -223,6 +222,9 @@ For the chain accounting:
 
 ## Non-target declarations to avoid confusion
 
+- `HardyTheorem.weightedIntegralOf_tail_dominates` is a reusable predicate
+  used as a hypothesis in conditional tail-dominance bridges, not an
+  unconditional theorem target.
 - `RiemannExplorer.conrey_40_percent_zeros_on_critical_line_target`
   appears as a downstream target form and is kept intentionally in
   `RiemannExplorer`.

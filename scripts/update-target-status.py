@@ -17,6 +17,9 @@ STATUS_PATH = ROOT / "docs" / "current-target-status.json"
 PROP_DEF_RE = re.compile(
     r"^def\s+([A-Za-z_][A-Za-z0-9_]*)\s*(?:\(.*\))?\s*:\s*Prop\s*:="
 )
+NON_TARGET_PROP_PREDICATES = {
+    "weightedIntegralOf_tail_dominates",
+}
 
 # Manual chain map used by the remaining-work dashboard.
 CHAIN_SUMMARY = [
@@ -62,7 +65,6 @@ TARGET_CHAIN_MAP = {
     "explicit_formula_von_mangoldt": "Explicit formula",
     "integral_asymptotic_target": "Hardy theorem",
     "hardy_two_signed_moments_target": "Hardy theorem",
-    "weightedIntegralOf_tail_dominates": "Hardy theorem",
     "hardy_theorem_target": "Hardy theorem",
     "hardy_zeros_unbounded_target": "Hardy theorem",
     "hardy_zeros_abs_unbounded_target": "Hardy theorem",
@@ -89,6 +91,8 @@ def scan_targets() -> dict[str, list[str]]:
         for i, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
             m = PROP_DEF_RE.match(line.strip())
             if not m:
+                continue
+            if m.group(1) in NON_TARGET_PROP_PREDICATES:
                 continue
             file_targets.append(m.group(1))
         if file_targets:
