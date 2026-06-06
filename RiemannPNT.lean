@@ -153,6 +153,217 @@ theorem pnt_form3_iff_error_isLittleO_id :
         =o[atTop] (fun x : ℝ => x) :=
   PrimeNumberTheorem.PNTForm3_iff_error_isLittleO_id
 
+/-! ### Exact-name PNT aliases
+
+These aliases intentionally keep the theorem identifiers from
+`PrimeNumberTheorem.lean` available through the public API namespace. -/
+
+theorem pnt_forms_equivalent :
+    (PrimeNumberTheorem.PNTForm1 ↔ PrimeNumberTheorem.PNTForm2) ∧
+      (PrimeNumberTheorem.PNTForm2 ↔ PrimeNumberTheorem.PNTForm3) :=
+  PrimeNumberTheorem.pnt_forms_equivalent
+
+theorem PNTForm1_iff_PNTForm2 :
+    PrimeNumberTheorem.PNTForm1 ↔ PrimeNumberTheorem.PNTForm2 :=
+  PrimeNumberTheorem.PNTForm1_iff_PNTForm2
+
+theorem PNTForm2_iff_PNTForm1 :
+    PrimeNumberTheorem.PNTForm2 ↔ PrimeNumberTheorem.PNTForm1 :=
+  PrimeNumberTheorem.PNTForm2_iff_PNTForm1
+
+theorem PNTForm2_iff_PNTForm3 :
+    PrimeNumberTheorem.PNTForm2 ↔ PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForm2_iff_PNTForm3
+
+theorem PNTForm3_iff_PNTForm2 :
+    PrimeNumberTheorem.PNTForm3 ↔ PrimeNumberTheorem.PNTForm2 :=
+  PrimeNumberTheorem.PNTForm3_iff_PNTForm2
+
+theorem PNTForm1_iff_PNTForm3 :
+    PrimeNumberTheorem.PNTForm1 ↔ PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForm1_iff_PNTForm3
+
+theorem PNTForm3_iff_PNTForm1 :
+    PrimeNumberTheorem.PNTForm3 ↔ PrimeNumberTheorem.PNTForm1 :=
+  PrimeNumberTheorem.PNTForm3_iff_PNTForm1
+
+theorem PNTForm2_of_PNTForm1
+    (h : PrimeNumberTheorem.PNTForm1) :
+    PrimeNumberTheorem.PNTForm2 :=
+  PrimeNumberTheorem.PNTForm2_of_PNTForm1 h
+
+theorem PNTForm1_of_PNTForm2
+    (h : PrimeNumberTheorem.PNTForm2) :
+    PrimeNumberTheorem.PNTForm1 :=
+  PrimeNumberTheorem.PNTForm1_of_PNTForm2 h
+
+theorem PNTForm3_of_PNTForm2
+    (h : PrimeNumberTheorem.PNTForm2) :
+    PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForm3_of_PNTForm2 h
+
+theorem PNTForm2_of_PNTForm3
+    (h : PrimeNumberTheorem.PNTForm3) :
+    PrimeNumberTheorem.PNTForm2 :=
+  PrimeNumberTheorem.PNTForm2_of_PNTForm3 h
+
+theorem PNTForm3_of_PNTForm1
+    (h : PrimeNumberTheorem.PNTForm1) :
+    PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForm3_of_PNTForm1 h
+
+theorem PNTForm1_of_PNTForm3
+    (h : PrimeNumberTheorem.PNTForm3) :
+    PrimeNumberTheorem.PNTForm1 :=
+  PrimeNumberTheorem.PNTForm1_of_PNTForm3 h
+
+theorem PNTForm1_iff_chebyshevTheta_asymptotic :
+    PrimeNumberTheorem.PNTForm1 ↔
+      Tendsto (fun x : ℝ => Chebyshev.theta x / x) atTop (𝓝 1) :=
+  PrimeNumberTheorem.PNTForm1_iff_chebyshevTheta_asymptotic
+
+theorem PNTForm2_iff_chebyshevTheta_asymptotic :
+    PrimeNumberTheorem.PNTForm2 ↔
+      Tendsto (fun x : ℝ => Chebyshev.theta x / x) atTop (𝓝 1) :=
+  PrimeNumberTheorem.PNTForm2_iff_chebyshevTheta_asymptotic
+
+theorem PNTForm3_iff_chebyshevTheta_asymptotic :
+    PrimeNumberTheorem.PNTForm3 ↔
+      Tendsto (fun x : ℝ => Chebyshev.theta x / x) atTop (𝓝 1) :=
+  PrimeNumberTheorem.PNTForm3_iff_chebyshevTheta_asymptotic
+
+theorem PNTForm1_iff_mathlibChebyshevPsi_asymptotic :
+    PrimeNumberTheorem.PNTForm1 ↔
+      Tendsto (fun x : ℝ => Chebyshev.psi x / x) atTop (𝓝 1) :=
+  PrimeNumberTheorem.PNTForm1_iff_mathlibChebyshevPsi_asymptotic
+
+theorem PNTForm2_iff_mathlibChebyshevPsi_asymptotic :
+    PrimeNumberTheorem.PNTForm2 ↔
+      Tendsto (fun x : ℝ => Chebyshev.psi x / x) atTop (𝓝 1) :=
+  PrimeNumberTheorem.PNTForm2_iff_mathlibChebyshevPsi_asymptotic
+
+theorem PNTForm3_iff_mathlibChebyshevPsi_asymptotic :
+    PrimeNumberTheorem.PNTForm3 ↔
+      Tendsto (fun x : ℝ => Chebyshev.psi x / x) atTop (𝓝 1) :=
+  PrimeNumberTheorem.PNTForm3_iff_mathlibChebyshevPsi_asymptotic
+
+theorem PNTForm1_error_isLittleO_main
+    (h : PrimeNumberTheorem.PNTForm1) :
+    (fun x : ℝ =>
+      (PrimeNumberTheorem.primeCounting x : ℝ) - x / Real.log x)
+      =o[atTop] (fun x : ℝ => x / Real.log x) :=
+  PrimeNumberTheorem.PNTForm1_error_isLittleO_main h
+
+theorem PNTForm1_error_isLittleO_id
+    (h : PrimeNumberTheorem.PNTForm1) :
+    (fun x : ℝ =>
+      (PrimeNumberTheorem.primeCounting x : ℝ) - x / Real.log x)
+      =o[atTop] (fun x : ℝ => x) :=
+  PrimeNumberTheorem.PNTForm1_error_isLittleO_id h
+
+theorem PNTForm1_error_isBigO_main
+    (h : PrimeNumberTheorem.PNTForm1) :
+    (fun x : ℝ =>
+      (PrimeNumberTheorem.primeCounting x : ℝ) - x / Real.log x)
+      =O[atTop] (fun x : ℝ => x / Real.log x) :=
+  PrimeNumberTheorem.PNTForm1_error_isBigO_main h
+
+theorem PNTForm1_error_isBigO_id
+    (h : PrimeNumberTheorem.PNTForm1) :
+    (fun x : ℝ =>
+      (PrimeNumberTheorem.primeCounting x : ℝ) - x / Real.log x)
+      =O[atTop] (fun x : ℝ => x) :=
+  PrimeNumberTheorem.PNTForm1_error_isBigO_id h
+
+theorem PNTForm1_of_error_isLittleO_main
+    (h :
+      (fun x : ℝ =>
+        (PrimeNumberTheorem.primeCounting x : ℝ) - x / Real.log x)
+        =o[atTop] (fun x : ℝ => x / Real.log x)) :
+    PrimeNumberTheorem.PNTForm1 :=
+  PrimeNumberTheorem.PNTForm1_of_error_isLittleO_main h
+
+theorem PNTForm1_iff_error_isLittleO_main :
+    PrimeNumberTheorem.PNTForm1 ↔
+      (fun x : ℝ =>
+        (PrimeNumberTheorem.primeCounting x : ℝ) - x / Real.log x)
+        =o[atTop] (fun x : ℝ => x / Real.log x) :=
+  PrimeNumberTheorem.PNTForm1_iff_error_isLittleO_main
+
+theorem PNTForm2_error_isLittleO_logIntegral
+    (h : PrimeNumberTheorem.PNTForm2) :
+    (fun x : ℝ =>
+      (PrimeNumberTheorem.primeCounting x : ℝ) -
+        PrimeNumberTheorem.logIntegral x)
+      =o[atTop] (fun x : ℝ => PrimeNumberTheorem.logIntegral x) :=
+  PrimeNumberTheorem.PNTForm2_error_isLittleO_logIntegral h
+
+theorem PNTForm2_error_isLittleO_id
+    (h : PrimeNumberTheorem.PNTForm2) :
+    (fun x : ℝ =>
+      (PrimeNumberTheorem.primeCounting x : ℝ) -
+        PrimeNumberTheorem.logIntegral x)
+      =o[atTop] (fun x : ℝ => x) :=
+  PrimeNumberTheorem.PNTForm2_error_isLittleO_id h
+
+theorem PNTForm2_error_isBigO_logIntegral
+    (h : PrimeNumberTheorem.PNTForm2) :
+    (fun x : ℝ =>
+      (PrimeNumberTheorem.primeCounting x : ℝ) -
+        PrimeNumberTheorem.logIntegral x)
+      =O[atTop] (fun x : ℝ => PrimeNumberTheorem.logIntegral x) :=
+  PrimeNumberTheorem.PNTForm2_error_isBigO_logIntegral h
+
+theorem PNTForm2_error_isBigO_id
+    (h : PrimeNumberTheorem.PNTForm2) :
+    (fun x : ℝ =>
+      (PrimeNumberTheorem.primeCounting x : ℝ) -
+        PrimeNumberTheorem.logIntegral x)
+      =O[atTop] (fun x : ℝ => x) :=
+  PrimeNumberTheorem.PNTForm2_error_isBigO_id h
+
+theorem PNTForm2_of_error_isLittleO_logIntegral
+    (h :
+      (fun x : ℝ =>
+        (PrimeNumberTheorem.primeCounting x : ℝ) -
+          PrimeNumberTheorem.logIntegral x)
+        =o[atTop] (fun x : ℝ => PrimeNumberTheorem.logIntegral x)) :
+    PrimeNumberTheorem.PNTForm2 :=
+  PrimeNumberTheorem.PNTForm2_of_error_isLittleO_logIntegral h
+
+theorem PNTForm2_iff_error_isLittleO_logIntegral :
+    PrimeNumberTheorem.PNTForm2 ↔
+      (fun x : ℝ =>
+        (PrimeNumberTheorem.primeCounting x : ℝ) -
+          PrimeNumberTheorem.logIntegral x)
+        =o[atTop] (fun x : ℝ => PrimeNumberTheorem.logIntegral x) :=
+  PrimeNumberTheorem.PNTForm2_iff_error_isLittleO_logIntegral
+
+theorem PNTForm3_error_isLittleO_id
+    (h : PrimeNumberTheorem.PNTForm3) :
+    (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi x - x)
+      =o[atTop] (fun x : ℝ => x) :=
+  PrimeNumberTheorem.PNTForm3_error_isLittleO_id h
+
+theorem PNTForm3_error_isBigO_id
+    (h : PrimeNumberTheorem.PNTForm3) :
+    (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi x - x)
+      =O[atTop] (fun x : ℝ => x) :=
+  PrimeNumberTheorem.PNTForm3_error_isBigO_id h
+
+theorem PNTForm3_of_error_isLittleO_id
+    (h :
+      (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi x - x)
+        =o[atTop] (fun x : ℝ => x)) :
+    PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForm3_of_error_isLittleO_id h
+
+theorem PNTForm3_iff_error_isLittleO_id :
+    PrimeNumberTheorem.PNTForm3 ↔
+      (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi x - x)
+        =o[atTop] (fun x : ℝ => x) :=
+  PrimeNumberTheorem.PNTForm3_iff_error_isLittleO_id
+
 /-- Public Big-O bound for the logarithmic integral normalization. -/
 theorem logIntegral_isBigO_id :
     (fun x : ℝ => PrimeNumberTheorem.logIntegral x)
