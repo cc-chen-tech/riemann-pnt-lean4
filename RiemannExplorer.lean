@@ -282,6 +282,57 @@ theorem eventually_nat_lt_zeroCountOnCriticalLine_of_conrey_target
   eventually_nat_lt_zeroCountOnCriticalLine_of_selberg_zero_proportion
     (selberg_zero_proportion_target_of_conrey_target h) N
 
+theorem eventually_zeroCountOnCriticalLine_pos_of_hardy_littlewood_lower_bound
+    (h : HardyTheorem.hardy_littlewood_lower_bound_target) :
+    ∀ᶠ T in atTop, 0 < HardyTheorem.zeroCountOnCriticalLine T :=
+  HardyTheorem.eventually_zeroCountOnCriticalLine_pos_of_hardy_littlewood_lower_bound h
+
+theorem eventually_zeroCountOnCriticalLine_pos_of_selberg_zero_proportion
+    (h : HardyTheorem.selberg_zero_proportion_target) :
+    ∀ᶠ T in atTop, 0 < HardyTheorem.zeroCountOnCriticalLine T :=
+  HardyTheorem.eventually_zeroCountOnCriticalLine_pos_of_selberg_zero_proportion h
+
+theorem eventually_zeroCountOnCriticalLine_pos_of_conrey_target
+    (h : conrey_40_percent_zeros_on_critical_line_target) :
+    ∀ᶠ T in atTop, 0 < HardyTheorem.zeroCountOnCriticalLine T :=
+  eventually_zeroCountOnCriticalLine_pos_of_selberg_zero_proportion
+    (selberg_zero_proportion_target_of_conrey_target h)
+
+theorem eventually_exists_zero_on_critical_line_interval_of_hardy_littlewood_lower_bound
+    (h : HardyTheorem.hardy_littlewood_lower_bound_target) :
+    ∀ᶠ T in atTop,
+      ∃ t : ℝ, 0 ≤ t ∧ t ≤ T ∧ riemannZeta (0.5 + I * t) = 0 :=
+  HardyTheorem.eventually_exists_zero_on_critical_line_interval_of_hardy_littlewood_lower_bound h
+
+theorem eventually_exists_zero_on_critical_line_interval_of_selberg_zero_proportion
+    (h : HardyTheorem.selberg_zero_proportion_target) :
+    ∀ᶠ T in atTop,
+      ∃ t : ℝ, 0 ≤ t ∧ t ≤ T ∧ riemannZeta (0.5 + I * t) = 0 :=
+  HardyTheorem.eventually_exists_zero_on_critical_line_interval_of_selberg_zero_proportion h
+
+theorem eventually_exists_zero_on_critical_line_interval_of_conrey_target
+    (h : conrey_40_percent_zeros_on_critical_line_target) :
+    ∀ᶠ T in atTop,
+      ∃ t : ℝ, 0 ≤ t ∧ t ≤ T ∧ riemannZeta (0.5 + I * t) = 0 :=
+  eventually_exists_zero_on_critical_line_interval_of_selberg_zero_proportion
+    (selberg_zero_proportion_target_of_conrey_target h)
+
+theorem eventually_exists_hardyZ_zero_interval_of_hardy_littlewood_lower_bound
+    (h : HardyTheorem.hardy_littlewood_lower_bound_target) :
+    ∀ᶠ T in atTop, ∃ t : ℝ, 0 ≤ t ∧ t ≤ T ∧ HardyTheorem.hardyZ t = 0 :=
+  HardyTheorem.eventually_exists_hardyZ_zero_interval_of_hardy_littlewood_lower_bound h
+
+theorem eventually_exists_hardyZ_zero_interval_of_selberg_zero_proportion
+    (h : HardyTheorem.selberg_zero_proportion_target) :
+    ∀ᶠ T in atTop, ∃ t : ℝ, 0 ≤ t ∧ t ≤ T ∧ HardyTheorem.hardyZ t = 0 :=
+  HardyTheorem.eventually_exists_hardyZ_zero_interval_of_selberg_zero_proportion h
+
+theorem eventually_exists_hardyZ_zero_interval_of_conrey_target
+    (h : conrey_40_percent_zeros_on_critical_line_target) :
+    ∀ᶠ T in atTop, ∃ t : ℝ, 0 ≤ t ∧ t ≤ T ∧ HardyTheorem.hardyZ t = 0 :=
+  eventually_exists_hardyZ_zero_interval_of_selberg_zero_proportion
+    (selberg_zero_proportion_target_of_conrey_target h)
+
 theorem hardy_theorem_target_of_conrey_target
     (h : conrey_40_percent_zeros_on_critical_line_target) :
     HardyTheorem.hardy_theorem_target :=

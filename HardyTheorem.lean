@@ -1185,6 +1185,14 @@ lemma hardy_theorem_target_iff_hardyZ_unbounded_of_bounded_strips
   Iff.trans (hardy_theorem_target_iff_unbounded_of_bounded_strips hstrip)
     hardy_zeros_unbounded_target_iff_hardyZ_unbounded
 
+lemma hardy_theorem_target_iff_hardyZ_abs_unbounded_of_bounded_strips
+    (hstrip : ∀ B : ℝ,
+      {t : ℝ | |t| ≤ B ∧ riemannZeta (0.5 + I * t) = 0}.Finite) :
+    hardy_theorem_target ↔
+      ∀ T : ℝ, ∃ t : ℝ, T ≤ |t| ∧ hardyZ t = 0 :=
+  Iff.trans (hardy_theorem_target_iff_abs_unbounded_of_bounded_strips hstrip)
+    hardy_zeros_abs_unbounded_target_iff_hardyZ_abs_unbounded
+
 lemma hardy_zeros_unbounded_of_hardy_theorem_target_of_bounded_strips
     (hstrip : ∀ B : ℝ,
       {t : ℝ | |t| ≤ B ∧ riemannZeta (0.5 + I * t) = 0}.Finite)
