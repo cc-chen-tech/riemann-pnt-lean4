@@ -82,6 +82,35 @@ theorem infinitely_many_zeros_on_critical_line_of_hardy_abs_unbounded
   KnownResults.infinitely_many_zeros_on_critical_line
     (HardyTheorem.hardy_theorem_target_of_abs_unbounded h)
 
+/-- Public interval-zero consequence of the Hardy--Littlewood lower-bound
+target. -/
+theorem eventually_exists_zero_on_critical_line_interval_of_hardy_littlewood_lower_bound
+    (h : HardyTheorem.hardy_littlewood_lower_bound_target) :
+    ∀ᶠ T in atTop,
+      ∃ t : ℝ, 0 ≤ t ∧ t ≤ T ∧ riemannZeta (0.5 + Complex.I * t) = 0 :=
+  KnownResults.eventually_exists_zero_on_critical_line_interval_of_hardy_littlewood_lower_bound h
+
+/-- Public interval-zero consequence of Selberg's positive-proportion target. -/
+theorem eventually_exists_zero_on_critical_line_interval_of_selberg_zero_proportion
+    (h : HardyTheorem.selberg_zero_proportion_target) :
+    ∀ᶠ T in atTop,
+      ∃ t : ℝ, 0 ≤ t ∧ t ≤ T ∧ riemannZeta (0.5 + Complex.I * t) = 0 :=
+  KnownResults.eventually_exists_zero_on_critical_line_interval_of_selberg_zero_proportion h
+
+/-- Public Hardy-Z interval-zero consequence of the Hardy--Littlewood
+lower-bound target. -/
+theorem eventually_exists_hardyZ_zero_interval_of_hardy_littlewood_lower_bound
+    (h : HardyTheorem.hardy_littlewood_lower_bound_target) :
+    ∀ᶠ T in atTop, ∃ t : ℝ, 0 ≤ t ∧ t ≤ T ∧ HardyTheorem.hardyZ t = 0 :=
+  KnownResults.eventually_exists_hardyZ_zero_interval_of_hardy_littlewood_lower_bound h
+
+/-- Public Hardy-Z interval-zero consequence of Selberg's positive-proportion
+target. -/
+theorem eventually_exists_hardyZ_zero_interval_of_selberg_zero_proportion
+    (h : HardyTheorem.selberg_zero_proportion_target) :
+    ∀ᶠ T in atTop, ∃ t : ℝ, 0 ≤ t ∧ t ≤ T ∧ HardyTheorem.hardyZ t = 0 :=
+  KnownResults.eventually_exists_hardyZ_zero_interval_of_selberg_zero_proportion h
+
 /-- Public entry point for the norm-error formulation of the corrected
 height-truncated von Mangoldt explicit-formula target. -/
 theorem explicit_formula_von_mangoldt_iff_norm_error_tendsto_zero
