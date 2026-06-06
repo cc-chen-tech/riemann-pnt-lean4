@@ -9,6 +9,33 @@ open Complex Filter Topology Asymptotics ComplexConjugate
 
 namespace RiemannPNT.API
 
+/-- Public compatibility bridge between the project's prime-counting
+normalization and Mathlib's `Nat.primeCounting`. -/
+theorem primeCounting_eq_mathlib (x : ℝ) (hx : 0 ≤ x) :
+    PrimeNumberTheorem.primeCounting x = Nat.primeCounting ⌊x⌋₊ :=
+  PrimeNumberTheorem.primeCounting_eq_mathlib x hx
+
+/-- Public compatibility bridge between the project's von Mangoldt function and
+Mathlib's arithmetic-function definition. -/
+theorem vonMangoldt_eq_mathlib (n : ℕ) :
+    PrimeNumberTheorem.vonMangoldt n =
+      ArithmeticFunction.vonMangoldt n :=
+  PrimeNumberTheorem.vonMangoldt_eq_mathlib n
+
+/-- Public compatibility bridge between the project's Chebyshev-ψ normalization
+and Mathlib's `Chebyshev.psi`. -/
+theorem chebyshevPsi_eq_mathlib (x : ℝ) :
+    PrimeNumberTheorem.chebyshevPsi x = Chebyshev.psi x :=
+  PrimeNumberTheorem.chebyshevPsi_eq_mathlib x
+
+/-- Public integration-by-parts formula for the logarithmic integral
+normalization used in the PNT chain. -/
+theorem logIntegral_integration_by_parts (x : ℝ) (hx : 2 ≤ x) :
+    PrimeNumberTheorem.logIntegral x =
+      x / Real.log x - 2 / Real.log 2 +
+        ∫ t in (2)..x, 1 / (Real.log t)^2 :=
+  PrimeNumberTheorem.logIntegral_integration_by_parts x hx
+
 /-- Public entry point for the equivalence of the three PNT formulations used
 in the project. -/
 theorem pnt_forms_equiv :
@@ -102,6 +129,28 @@ theorem rh_error_bound_iff_composable :
       PrimeNumberTheorem.RH_PrimeCountingLiErrorBound :=
   PrimeNumberTheorem.RH_ErrorBound_iff_RH_PrimeCountingLiErrorBound
 
+/-- Public equivalence between the RH-scale ψ and θ error targets. -/
+theorem rh_psi_error_bound_iff_rh_theta_error_bound :
+    PrimeNumberTheorem.RH_PsiErrorBound ↔ PrimeNumberTheorem.RH_ThetaErrorBound :=
+  PrimeNumberTheorem.RH_PsiErrorBound_iff_RH_ThetaErrorBound
+
+/-- Public reverse orientation of the RH-scale ψ/θ error equivalence. -/
+theorem rh_theta_error_bound_iff_rh_psi_error_bound :
+    PrimeNumberTheorem.RH_ThetaErrorBound ↔ PrimeNumberTheorem.RH_PsiErrorBound :=
+  PrimeNumberTheorem.RH_ThetaErrorBound_iff_RH_PsiErrorBound
+
+/-- Public implication from RH-scale ψ error to RH-scale θ error. -/
+theorem rh_theta_error_bound_of_rh_psi_error_bound
+    (hψ : PrimeNumberTheorem.RH_PsiErrorBound) :
+    PrimeNumberTheorem.RH_ThetaErrorBound :=
+  PrimeNumberTheorem.RH_ThetaErrorBound_of_RH_PsiErrorBound hψ
+
+/-- Public implication from RH-scale θ error to RH-scale ψ error. -/
+theorem rh_psi_error_bound_of_rh_theta_error_bound
+    (hθ : PrimeNumberTheorem.RH_ThetaErrorBound) :
+    PrimeNumberTheorem.RH_PsiErrorBound :=
+  PrimeNumberTheorem.RH_PsiErrorBound_of_RH_ThetaErrorBound hθ
+
 /-- Public endpoint estimate in the partial-summation bridge from `θ` errors
 to prime-counting errors. -/
 theorem theta_error_div_log_isBigO_sqrt_mul_log
@@ -133,6 +182,18 @@ theorem rh_primeCountingLiErrorBound_of_psi_error
     (hψ : PrimeNumberTheorem.RH_PsiErrorBound) :
     PrimeNumberTheorem.RH_PrimeCountingLiErrorBound :=
   PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_RH_PsiErrorBound hψ
+
+/-- Public exact partial-summation identity connecting prime-counting `Li`
+error to the Chebyshev-θ endpoint and Abel-integral errors. -/
+theorem primeCounting_sub_logIntegral_eq_theta_error_integral
+    {x : ℝ} (hx : 2 ≤ x) :
+    (PrimeNumberTheorem.primeCounting x : ℝ) -
+        PrimeNumberTheorem.logIntegral x =
+      (Chebyshev.theta x - x) / Real.log x +
+        (∫ t in (2)..x,
+          (Chebyshev.theta t - t) / (t * Real.log t ^ 2)) +
+        2 / Real.log 2 :=
+  PrimeNumberTheorem.primeCounting_sub_logIntegral_eq_theta_error_integral hx
 
 /-- Public bridge from the `θ` RH-scale target to the pointwise textbook
 prime-counting RH error target. -/
@@ -426,11 +487,54 @@ theorem mem_nontrivialZerosFinset {ρ : ℂ} {T : ℝ} :
       _root_.RiemannHypothesis.IsNontrivialZero ρ ∧ |ρ.im| ≤ T :=
   PrimeNumberTheorem.mem_nontrivialZerosFinset
 
+/-- Public emptiness criterion for the height-truncated nontrivial-zero finset. -/
+theorem nontrivialZerosFinset_eq_empty_iff {T : ℝ} :
+    PrimeNumberTheorem.nontrivialZerosFinset T = ∅ ↔
+      ¬ ∃ ρ : ℂ, _root_.RiemannHypothesis.IsNontrivialZero ρ ∧ |ρ.im| ≤ T :=
+  PrimeNumberTheorem.nontrivialZerosFinset_eq_empty_iff
+
+/-- Public nonemptiness criterion for the height-truncated nontrivial-zero
+finset. -/
+theorem nontrivialZerosFinset_nonempty_iff {T : ℝ} :
+    (PrimeNumberTheorem.nontrivialZerosFinset T).Nonempty ↔
+      ∃ ρ : ℂ, _root_.RiemannHypothesis.IsNontrivialZero ρ ∧ |ρ.im| ≤ T :=
+  PrimeNumberTheorem.nontrivialZerosFinset_nonempty_iff
+
+/-- Public constructor for membership in the height-truncated nontrivial-zero
+finset. -/
+theorem nontrivial_zero_mem_nontrivialZerosFinset {ρ : ℂ} {T : ℝ}
+    (hρ : _root_.RiemannHypothesis.IsNontrivialZero ρ) (hT : |ρ.im| ≤ T) :
+    ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T :=
+  PrimeNumberTheorem.nontrivial_zero_mem_nontrivialZerosFinset hρ hT
+
 /-- Public monotonicity of the height-truncated nontrivial-zero finset. -/
 theorem nontrivialZerosFinset_subset {T U : ℝ} (hTU : T ≤ U) :
     PrimeNumberTheorem.nontrivialZerosFinset T ⊆
       PrimeNumberTheorem.nontrivialZerosFinset U :=
   PrimeNumberTheorem.nontrivialZerosFinset_subset hTU
+
+/-- Public empty-new-zeros criterion when the upper truncation height is no
+larger than the old one. -/
+theorem nontrivialZerosFinset_sdiff_eq_empty_of_le
+    {T U : ℝ} (hUT : U ≤ T) :
+    PrimeNumberTheorem.nontrivialZerosFinset U \
+        PrimeNumberTheorem.nontrivialZerosFinset T = ∅ :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_eq_empty_of_le hUT
+
+/-- Public exclusion criterion from a height-truncated nontrivial-zero finset. -/
+theorem not_mem_nontrivialZerosFinset_of_height_lt {ρ : ℂ} {T : ℝ}
+    (hT : T < |ρ.im|) :
+    ρ ∉ PrimeNumberTheorem.nontrivialZerosFinset T :=
+  PrimeNumberTheorem.not_mem_nontrivialZerosFinset_of_height_lt hT
+
+/-- Public membership criterion for newly appearing zeros between two
+truncation heights. -/
+theorem mem_nontrivialZerosFinset_sdiff {ρ : ℂ} {T U : ℝ} :
+    ρ ∈ (PrimeNumberTheorem.nontrivialZerosFinset U \
+        PrimeNumberTheorem.nontrivialZerosFinset T) ↔
+      _root_.RiemannHypothesis.IsNontrivialZero ρ ∧ |ρ.im| ≤ U ∧
+        T < |ρ.im| :=
+  PrimeNumberTheorem.mem_nontrivialZerosFinset_sdiff
 
 /-- Public symmetry of the height-truncated nontrivial-zero finset under
 `ρ ↦ 1 - ρ`. -/
