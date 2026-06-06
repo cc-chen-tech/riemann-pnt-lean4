@@ -14,7 +14,8 @@ lean_lib RiemannPNT where
     `EulerAndLfunctions,
     `PrimeNumberTheorem,
     `PrimeNumberTheorem.ExplicitFormulaAux,
-    `ZeroFreeRegion
+    `ZeroFreeRegion,
+    `ZeroFreeRegion.MeromorphicAux
   ]
 
 require mathlib from "./vendor/mathlib"
