@@ -5,7 +5,7 @@ import EulerAndLfunctions
 import PrimeNumberTheorem
 import ZeroFreeRegion
 
-open Filter Topology
+open Filter Topology Asymptotics
 
 namespace RiemannPNT.API
 
@@ -16,12 +16,35 @@ theorem pnt_forms_equiv :
       (PrimeNumberTheorem.PNTForm2 ↔ PrimeNumberTheorem.PNTForm3) :=
   PrimeNumberTheorem.pnt_forms_equivalent
 
+/-- Public error-term form of `PNTForm1`. -/
+theorem pnt_form1_iff_error_isLittleO_main :
+    PrimeNumberTheorem.PNTForm1 ↔
+      (fun x : ℝ =>
+        (PrimeNumberTheorem.primeCounting x : ℝ) - x / Real.log x)
+        =o[atTop] (fun x : ℝ => x / Real.log x) :=
+  PrimeNumberTheorem.PNTForm1_iff_error_isLittleO_main
+
+/-- Public error-term form of `PNTForm3`. -/
+theorem pnt_form3_iff_error_isLittleO_id :
+    PrimeNumberTheorem.PNTForm3 ↔
+      (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi x - x)
+        =o[atTop] (fun x : ℝ => x) :=
+  PrimeNumberTheorem.PNTForm3_iff_error_isLittleO_id
+
 /-- Public entry point for the equivalence between the pointwise and
 composable RH-scale prime-counting error targets. -/
 theorem rh_error_bound_iff_composable :
     PrimeNumberTheorem.RH_ErrorBound ↔
       PrimeNumberTheorem.RH_PrimeCountingLiErrorBound :=
   PrimeNumberTheorem.RH_ErrorBound_iff_RH_PrimeCountingLiErrorBound
+
+/-- Public bridge between the project's RH/error target and Mathlib's RH
+predicate. -/
+theorem rh_iff_optimal_error_iff_mathlib :
+    PrimeNumberTheorem.rh_iff_optimal_error ↔
+      (_root_.RiemannHypothesis ↔
+        PrimeNumberTheorem.RH_PrimeCountingLiErrorBound) :=
+  PrimeNumberTheorem.rh_iff_optimal_error_iff_mathlib
 
 /-- Public coordinate form of the classical zero-free-region target. -/
 theorem classical_zero_free_region_iff_re_im :
@@ -68,5 +91,29 @@ theorem explicit_formula_von_mangoldt_iff_norm_error_tendsto_zero
         ‖PrimeNumberTheorem.explicitFormulaApprox x T -
           (PrimeNumberTheorem.chebyshevPsi0 x : ℂ)‖) atTop (𝓝 0) :=
   PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_norm_error_tendsto_zero
+
+/-- Public reverse-norm error formulation of the corrected explicit-formula
+target. -/
+theorem explicit_formula_von_mangoldt_iff_reverse_norm_error_tendsto_zero
+    {x : ℝ} {hx : x ≥ 2} :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx ↔
+      Tendsto (fun T : ℝ =>
+        ‖(PrimeNumberTheorem.chebyshevPsi0 x : ℂ) -
+          PrimeNumberTheorem.explicitFormulaApprox x T‖) atTop (𝓝 0) :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_reverse_norm_error_tendsto_zero
+
+/-- Public stability bridge: if the zero sum has no new terms eventually and
+the stable truncation equals `ψ₀(x)`, then the explicit-formula target follows. -/
+theorem explicit_formula_von_mangoldt_of_eventually_no_new_zeros
+    {x B : ℝ} {hx : x ≥ 2}
+    (hnew : ∀ᶠ T in atTop,
+      B ≤ T ∧
+        PrimeNumberTheorem.nontrivialZerosFinset T \
+            PrimeNumberTheorem.nontrivialZerosFinset B = ∅)
+    (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
+      (PrimeNumberTheorem.chebyshevPsi0 x : ℂ)) :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_eventually_no_new_zeros
+    hnew hB
 
 end RiemannPNT.API
