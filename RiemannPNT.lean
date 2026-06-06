@@ -193,6 +193,35 @@ theorem hardy_zeros_unbounded_iff_abs_unbounded :
       HardyTheorem.hardy_zeros_abs_unbounded_target :=
   HardyTheorem.hardy_zeros_unbounded_iff_abs_unbounded
 
+/-- Public equivalence between Hardy's infinite-zero target and the
+absolute-height unbounded target, using the local finiteness of zeta zeros in
+bounded height. -/
+theorem hardy_theorem_target_iff_abs_unbounded :
+    HardyTheorem.hardy_theorem_target ↔
+      HardyTheorem.hardy_zeros_abs_unbounded_target :=
+  PrimeNumberTheorem.hardy_theorem_target_iff_abs_unbounded
+
+/-- Public equivalence between Hardy's infinite-zero target and the
+positive-height unbounded target, using symmetry on the critical line. -/
+theorem hardy_theorem_target_iff_unbounded :
+    HardyTheorem.hardy_theorem_target ↔
+      HardyTheorem.hardy_zeros_unbounded_target :=
+  PrimeNumberTheorem.hardy_theorem_target_iff_unbounded
+
+/-- Public bridge from Hardy's infinite-zero target to arbitrarily large
+absolute-height critical-line zeros. -/
+theorem hardy_zeros_abs_unbounded_of_hardy_theorem_target
+    (h : HardyTheorem.hardy_theorem_target) :
+    HardyTheorem.hardy_zeros_abs_unbounded_target :=
+  PrimeNumberTheorem.hardy_zeros_abs_unbounded_of_hardy_theorem_target h
+
+/-- Public bridge from Hardy's infinite-zero target to arbitrarily large
+positive-height critical-line zeros. -/
+theorem hardy_zeros_unbounded_of_hardy_theorem_target
+    (h : HardyTheorem.hardy_theorem_target) :
+    HardyTheorem.hardy_zeros_unbounded_target :=
+  PrimeNumberTheorem.hardy_zeros_unbounded_of_hardy_theorem_target h
+
 /-- Public bridge from Hardy's absolute-height unbounded target to infinitely
 many critical-line zeros. -/
 theorem infinitely_many_zeros_on_critical_line_of_hardy_abs_unbounded
@@ -229,6 +258,34 @@ theorem eventually_exists_hardyZ_zero_interval_of_selberg_zero_proportion
     (h : HardyTheorem.selberg_zero_proportion_target) :
     ∀ᶠ T in atTop, ∃ t : ℝ, 0 ≤ t ∧ t ≤ T ∧ HardyTheorem.hardyZ t = 0 :=
   KnownResults.eventually_exists_hardyZ_zero_interval_of_selberg_zero_proportion h
+
+/-- Public bridge from Hardy--Littlewood's linear lower-bound target to
+arbitrarily large positive-height critical-line zeros. -/
+theorem hardy_zeros_unbounded_of_hardy_littlewood_lower_bound
+    (h : HardyTheorem.hardy_littlewood_lower_bound_target) :
+    HardyTheorem.hardy_zeros_unbounded_target :=
+  PrimeNumberTheorem.hardy_zeros_unbounded_of_hardy_littlewood_lower_bound h
+
+/-- Public bridge from Hardy--Littlewood's linear lower-bound target to
+arbitrarily large absolute-height critical-line zeros. -/
+theorem hardy_zeros_abs_unbounded_of_hardy_littlewood_lower_bound
+    (h : HardyTheorem.hardy_littlewood_lower_bound_target) :
+    HardyTheorem.hardy_zeros_abs_unbounded_target :=
+  PrimeNumberTheorem.hardy_zeros_abs_unbounded_of_hardy_littlewood_lower_bound h
+
+/-- Public bridge from Selberg's positive-proportion target to arbitrarily
+large positive-height critical-line zeros. -/
+theorem hardy_zeros_unbounded_of_selberg_zero_proportion
+    (h : HardyTheorem.selberg_zero_proportion_target) :
+    HardyTheorem.hardy_zeros_unbounded_target :=
+  PrimeNumberTheorem.hardy_zeros_unbounded_of_selberg_zero_proportion h
+
+/-- Public bridge from Selberg's positive-proportion target to arbitrarily
+large absolute-height critical-line zeros. -/
+theorem hardy_zeros_abs_unbounded_of_selberg_zero_proportion
+    (h : HardyTheorem.selberg_zero_proportion_target) :
+    HardyTheorem.hardy_zeros_abs_unbounded_target :=
+  PrimeNumberTheorem.hardy_zeros_abs_unbounded_of_selberg_zero_proportion h
 
 /-- Public entry point for the norm-error formulation of the corrected
 height-truncated von Mangoldt explicit-formula target. -/
