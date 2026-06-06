@@ -1017,6 +1017,19 @@ theorem finite_nontrivial_zeros_bounded_height (T : ℝ) :
       {s : ℂ | _root_.RiemannHypothesis.IsNontrivialZero s ∧ |s.im| ≤ T} :=
   PrimeNumberTheorem.finite_nontrivial_zeros_bounded_height T
 
+/-- Public real-height finite-set form for zeta zeros on the critical line. -/
+theorem critical_line_zeta_zeros_bounded_height_finite (B : ℝ) :
+    Set.Finite
+      {t : ℝ | |t| ≤ B ∧
+        riemannZeta ((0.5 : ℂ) + Complex.I * t) = 0} :=
+  PrimeNumberTheorem.critical_line_zeta_zeros_bounded_height_finite B
+
+/-- Public real-height finite-set form for Hardy `Z` zeros. -/
+theorem hardyZ_zeros_bounded_height_finite (B : ℝ) :
+    Set.Finite
+      {t : ℝ | |t| ≤ B ∧ HardyTheorem.hardyZ t = 0} :=
+  PrimeNumberTheorem.hardyZ_zeros_bounded_height_finite B
+
 /-- Public simple-pole consequence at `s = 1`: `(s - 1)^2 ζ(s) → 0`. -/
 theorem riemannZeta_pole_simple :
     Tendsto (fun s : ℂ => (s - 1) ^ 2 * riemannZeta s) (𝓝[≠] 1) (𝓝 0) :=
@@ -2561,6 +2574,20 @@ theorem hardy_theorem_target_iff_unbounded :
     HardyTheorem.hardy_theorem_target ↔
       HardyTheorem.hardy_zeros_unbounded_target :=
   PrimeNumberTheorem.hardy_theorem_target_iff_unbounded
+
+/-- Public unconditional Hardy-Z absolute-height form of Hardy's infinite-zero
+target. -/
+theorem hardy_theorem_target_iff_hardyZ_abs_unbounded :
+    HardyTheorem.hardy_theorem_target ↔
+      ∀ T : ℝ, ∃ t : ℝ, T ≤ |t| ∧ HardyTheorem.hardyZ t = 0 :=
+  PrimeNumberTheorem.hardy_theorem_target_iff_hardyZ_abs_unbounded
+
+/-- Public unconditional Hardy-Z positive-height form of Hardy's infinite-zero
+target. -/
+theorem hardy_theorem_target_iff_hardyZ_unbounded :
+    HardyTheorem.hardy_theorem_target ↔
+      ∀ T : ℝ, ∃ t : ℝ, T ≤ t ∧ HardyTheorem.hardyZ t = 0 :=
+  PrimeNumberTheorem.hardy_theorem_target_iff_hardyZ_unbounded
 
 /-- Public bounded-strip version of the equivalence between Hardy's infinite
 zero target and absolute-height unbounded zeros. -/

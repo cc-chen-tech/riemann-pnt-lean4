@@ -2684,6 +2684,45 @@ theorem finite_nontrivial_zeros_bounded_height (T : ℝ) :
     exact hz_prod_ne (by rw [hz_zero, mul_zero])
   · exact riemannZeta_not_frequently_zero_nhdsNE_of_ne_one hx1 hfreqZ
 
+/-- Critical-line zeta zeros are finite in every bounded height interval.
+
+This packages `finite_nontrivial_zeros_bounded_height` in the real-height
+interface used by the Hardy sign-change targets. -/
+theorem critical_line_zeta_zeros_bounded_height_finite (B : ℝ) :
+    Set.Finite
+      {t : ℝ | |t| ≤ B ∧ riemannZeta ((0.5 : ℂ) + I * t) = 0} := by
+  classical
+  let linePoint : ℝ → ℂ := fun t => (0.5 : ℂ) + I * t
+  let realZeros : Set ℝ :=
+    {t : ℝ | |t| ≤ B ∧ riemannZeta (linePoint t) = 0}
+  have hcomplex_fin :
+      (linePoint '' realZeros).Finite := by
+    refine (finite_nontrivial_zeros_bounded_height B).subset ?_
+    intro s hs
+    rcases hs with ⟨t, ht, rfl⟩
+    refine ⟨?_, ?_⟩
+    · refine ⟨ht.2, ?_, ?_⟩
+      · norm_num [linePoint]
+      · norm_num [linePoint]
+    · have him : (linePoint t).im = t := by
+        norm_num [linePoint]
+      simpa [him] using ht.1
+  have hinj : Set.InjOn linePoint realZeros := by
+    intro t₁ _ t₂ _ h_eq
+    have him := congr_arg Complex.im h_eq
+    simp [linePoint] at him
+    exact him
+  have hreal_fin : realZeros.Finite :=
+    Set.Finite.of_finite_image hcomplex_fin hinj
+  simpa [realZeros, linePoint] using hreal_fin
+
+/-- Hardy `Z` zeros are finite in every bounded height interval. -/
+theorem hardyZ_zeros_bounded_height_finite (B : ℝ) :
+    Set.Finite {t : ℝ | |t| ≤ B ∧ HardyTheorem.hardyZ t = 0} := by
+  refine (critical_line_zeta_zeros_bounded_height_finite B).subset ?_
+  intro t ht
+  exact ⟨ht.1, (HardyTheorem.hardyZ_zero_iff_zeta_zero t).mp ht.2⟩
+
 /-- Hardy's infinite critical-line zero target implies that the corresponding
 real heights are unbounded in absolute value.
 
@@ -2741,6 +2780,23 @@ theorem hardy_theorem_target_iff_unbounded :
       HardyTheorem.hardy_zeros_unbounded_target :=
   ⟨hardy_zeros_unbounded_of_hardy_theorem_target,
     HardyTheorem.hardy_theorem_target_of_unbounded⟩
+
+/-- Unconditional Hardy-Z absolute-height form of Hardy's infinite-zero target.
+
+The bounded-strip finiteness hypothesis required by the Hardy-only file is
+discharged here from the zeta local-finiteness theorem. -/
+theorem hardy_theorem_target_iff_hardyZ_abs_unbounded :
+    HardyTheorem.hardy_theorem_target ↔
+      ∀ T : ℝ, ∃ t : ℝ, T ≤ |t| ∧ HardyTheorem.hardyZ t = 0 :=
+  HardyTheorem.hardy_theorem_target_iff_hardyZ_abs_unbounded_of_hardyZ_bounded_strips
+    hardyZ_zeros_bounded_height_finite
+
+/-- Unconditional Hardy-Z positive-height form of Hardy's infinite-zero target. -/
+theorem hardy_theorem_target_iff_hardyZ_unbounded :
+    HardyTheorem.hardy_theorem_target ↔
+      ∀ T : ℝ, ∃ t : ℝ, T ≤ t ∧ HardyTheorem.hardyZ t = 0 :=
+  Iff.trans hardy_theorem_target_iff_unbounded
+    HardyTheorem.hardy_zeros_unbounded_target_iff_hardyZ_unbounded
 
 theorem hardy_theorem_target_of_two_signed_moments
     (hmom : HardyTheorem.hardy_two_signed_moments_target) :
