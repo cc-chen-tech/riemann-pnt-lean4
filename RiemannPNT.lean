@@ -1087,6 +1087,229 @@ theorem chebyshevTheta_asymptotic_of_rh_psi_error_bound
     Tendsto (fun x : ℝ => Chebyshev.theta x / x) atTop (𝓝 1) :=
   PrimeNumberTheorem.chebyshevTheta_asymptotic_of_RH_PsiErrorBound hψ
 
+/-! ### Exact-name RH/PNT bridge aliases -/
+
+theorem PNTForm1_of_RH_PrimeCountingLiErrorBound :
+    PrimeNumberTheorem.RH_PrimeCountingLiErrorBound →
+      PrimeNumberTheorem.PNTForm1 :=
+  PrimeNumberTheorem.PNTForm1_of_RH_PrimeCountingLiErrorBound
+
+theorem PNTForm2_of_RH_PrimeCountingLiErrorBound :
+    PrimeNumberTheorem.RH_PrimeCountingLiErrorBound →
+      PrimeNumberTheorem.PNTForm2 :=
+  PrimeNumberTheorem.PNTForm2_of_RH_PrimeCountingLiErrorBound
+
+theorem PNTForm3_of_RH_PrimeCountingLiErrorBound :
+    PrimeNumberTheorem.RH_PrimeCountingLiErrorBound →
+      PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForm3_of_RH_PrimeCountingLiErrorBound
+
+theorem PNTForm1_of_RH_ErrorBound :
+    PrimeNumberTheorem.RH_ErrorBound → PrimeNumberTheorem.PNTForm1 :=
+  PrimeNumberTheorem.PNTForm1_of_RH_ErrorBound
+
+theorem PNTForm2_of_RH_ErrorBound :
+    PrimeNumberTheorem.RH_ErrorBound → PrimeNumberTheorem.PNTForm2 :=
+  PrimeNumberTheorem.PNTForm2_of_RH_ErrorBound
+
+theorem PNTForm3_of_RH_ErrorBound :
+    PrimeNumberTheorem.RH_ErrorBound → PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForm3_of_RH_ErrorBound
+
+theorem PNTForm1_of_RH_PsiErrorBound :
+    PrimeNumberTheorem.RH_PsiErrorBound → PrimeNumberTheorem.PNTForm1 :=
+  PrimeNumberTheorem.PNTForm1_of_RH_PsiErrorBound
+
+theorem PNTForm2_of_RH_PsiErrorBound :
+    PrimeNumberTheorem.RH_PsiErrorBound → PrimeNumberTheorem.PNTForm2 :=
+  PrimeNumberTheorem.PNTForm2_of_RH_PsiErrorBound
+
+theorem PNTForm3_of_RH_PsiErrorBound :
+    PrimeNumberTheorem.RH_PsiErrorBound → PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForm3_of_RH_PsiErrorBound
+
+theorem PNTForm1_of_RH_ThetaErrorBound :
+    PrimeNumberTheorem.RH_ThetaErrorBound → PrimeNumberTheorem.PNTForm1 :=
+  PrimeNumberTheorem.PNTForm1_of_RH_ThetaErrorBound
+
+theorem PNTForm2_of_RH_ThetaErrorBound :
+    PrimeNumberTheorem.RH_ThetaErrorBound → PrimeNumberTheorem.PNTForm2 :=
+  PrimeNumberTheorem.PNTForm2_of_RH_ThetaErrorBound
+
+theorem PNTForm3_of_RH_ThetaErrorBound :
+    PrimeNumberTheorem.RH_ThetaErrorBound → PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForm3_of_RH_ThetaErrorBound
+
+theorem PNTForm1_of_chebyshevPsi0_sub_id_isBigO
+    (hψ0 :
+      (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi0 x - x)
+        =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2)) :
+    PrimeNumberTheorem.PNTForm1 :=
+  PrimeNumberTheorem.PNTForm1_of_chebyshevPsi0_sub_id_isBigO hψ0
+
+theorem PNTForm2_of_chebyshevPsi0_sub_id_isBigO
+    (hψ0 :
+      (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi0 x - x)
+        =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2)) :
+    PrimeNumberTheorem.PNTForm2 :=
+  PrimeNumberTheorem.PNTForm2_of_chebyshevPsi0_sub_id_isBigO hψ0
+
+theorem PNTForm3_of_chebyshevPsi0_sub_id_isBigO
+    (hψ0 :
+      (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi0 x - x)
+        =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2)) :
+    PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForm3_of_chebyshevPsi0_sub_id_isBigO hψ0
+
+theorem PNTForms_of_RH_PrimeCountingLiErrorBound
+    (h : PrimeNumberTheorem.RH_PrimeCountingLiErrorBound) :
+    PrimeNumberTheorem.PNTForm1 ∧ PrimeNumberTheorem.PNTForm2 ∧
+      PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForms_of_RH_PrimeCountingLiErrorBound h
+
+theorem PNTForms_of_RH_ErrorBound
+    (h : PrimeNumberTheorem.RH_ErrorBound) :
+    PrimeNumberTheorem.PNTForm1 ∧ PrimeNumberTheorem.PNTForm2 ∧
+      PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForms_of_RH_ErrorBound h
+
+theorem PNTForms_of_RH_PsiErrorBound
+    (h : PrimeNumberTheorem.RH_PsiErrorBound) :
+    PrimeNumberTheorem.PNTForm1 ∧ PrimeNumberTheorem.PNTForm2 ∧
+      PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForms_of_RH_PsiErrorBound h
+
+theorem PNTForms_of_RH_ThetaErrorBound
+    (h : PrimeNumberTheorem.RH_ThetaErrorBound) :
+    PrimeNumberTheorem.PNTForm1 ∧ PrimeNumberTheorem.PNTForm2 ∧
+      PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForms_of_RH_ThetaErrorBound h
+
+theorem PNTForms_of_chebyshevPsi0_sub_id_isBigO
+    (hψ0 :
+      (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi0 x - x)
+        =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2)) :
+    PrimeNumberTheorem.PNTForm1 ∧ PrimeNumberTheorem.PNTForm2 ∧
+      PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForms_of_chebyshevPsi0_sub_id_isBigO hψ0
+
+theorem PNTForms_of_chebyshevTheta_asymptotic
+    (hθ : Tendsto (fun x : ℝ => Chebyshev.theta x / x) atTop (𝓝 1)) :
+    PrimeNumberTheorem.PNTForm1 ∧ PrimeNumberTheorem.PNTForm2 ∧
+      PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForms_of_chebyshevTheta_asymptotic hθ
+
+theorem PNTForms_of_mathlibChebyshevPsi_asymptotic
+    (hψ : Tendsto (fun x : ℝ => Chebyshev.psi x / x) atTop (𝓝 1)) :
+    PrimeNumberTheorem.PNTForm1 ∧ PrimeNumberTheorem.PNTForm2 ∧
+      PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForms_of_mathlibChebyshevPsi_asymptotic hψ
+
+theorem RH_PsiErrorBound_iff_RH_ThetaErrorBound :
+    PrimeNumberTheorem.RH_PsiErrorBound ↔
+      PrimeNumberTheorem.RH_ThetaErrorBound :=
+  PrimeNumberTheorem.RH_PsiErrorBound_iff_RH_ThetaErrorBound
+
+theorem RH_ThetaErrorBound_iff_RH_PsiErrorBound :
+    PrimeNumberTheorem.RH_ThetaErrorBound ↔
+      PrimeNumberTheorem.RH_PsiErrorBound :=
+  PrimeNumberTheorem.RH_ThetaErrorBound_iff_RH_PsiErrorBound
+
+theorem RH_ThetaErrorBound_of_RH_PsiErrorBound :
+    PrimeNumberTheorem.RH_PsiErrorBound →
+      PrimeNumberTheorem.RH_ThetaErrorBound :=
+  PrimeNumberTheorem.RH_ThetaErrorBound_of_RH_PsiErrorBound
+
+theorem RH_PsiErrorBound_of_RH_ThetaErrorBound :
+    PrimeNumberTheorem.RH_ThetaErrorBound →
+      PrimeNumberTheorem.RH_PsiErrorBound :=
+  PrimeNumberTheorem.RH_PsiErrorBound_of_RH_ThetaErrorBound
+
+theorem RH_PsiErrorBound_iff_chebyshevPsi0_sub_id_isBigO :
+    PrimeNumberTheorem.RH_PsiErrorBound ↔
+      (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi0 x - x)
+        =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2) :=
+  PrimeNumberTheorem.RH_PsiErrorBound_iff_chebyshevPsi0_sub_id_isBigO
+
+theorem RH_PsiErrorBound_of_chebyshevPsi0_sub_id_isBigO
+    (hψ0 :
+      (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi0 x - x)
+        =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2)) :
+    PrimeNumberTheorem.RH_PsiErrorBound :=
+  PrimeNumberTheorem.RH_PsiErrorBound_of_chebyshevPsi0_sub_id_isBigO hψ0
+
+theorem RH_PsiErrorBound_iff_mathlibChebyshevPsi_sub_id_isBigO :
+    PrimeNumberTheorem.RH_PsiErrorBound ↔
+      (fun x : ℝ => Chebyshev.psi x - x)
+        =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2) :=
+  PrimeNumberTheorem.RH_PsiErrorBound_iff_mathlibChebyshevPsi_sub_id_isBigO
+
+theorem mathlibChebyshevPsi_sub_id_isBigO_of_RH_PsiErrorBound
+    (h : PrimeNumberTheorem.RH_PsiErrorBound) :
+    (fun x : ℝ => Chebyshev.psi x - x)
+      =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2) :=
+  PrimeNumberTheorem.mathlibChebyshevPsi_sub_id_isBigO_of_RH_PsiErrorBound h
+
+theorem RH_PsiErrorBound_of_mathlibChebyshevPsi_sub_id_isBigO
+    (h :
+      (fun x : ℝ => Chebyshev.psi x - x)
+        =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2)) :
+    PrimeNumberTheorem.RH_PsiErrorBound :=
+  PrimeNumberTheorem.RH_PsiErrorBound_of_mathlibChebyshevPsi_sub_id_isBigO h
+
+theorem RH_PrimeCountingLiErrorBound_of_RH_ThetaErrorBound :
+    PrimeNumberTheorem.RH_ThetaErrorBound →
+      PrimeNumberTheorem.RH_PrimeCountingLiErrorBound :=
+  PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_RH_ThetaErrorBound
+
+theorem RH_PrimeCountingLiErrorBound_of_RH_PsiErrorBound :
+    PrimeNumberTheorem.RH_PsiErrorBound →
+      PrimeNumberTheorem.RH_PrimeCountingLiErrorBound :=
+  PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_RH_PsiErrorBound
+
+theorem RH_PrimeCountingLiErrorBound_of_chebyshevPsi0_sub_id_isBigO
+    (hψ0 :
+      (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi0 x - x)
+        =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2)) :
+    PrimeNumberTheorem.RH_PrimeCountingLiErrorBound :=
+  PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_chebyshevPsi0_sub_id_isBigO
+    hψ0
+
+theorem RH_ErrorBound_iff_RH_PrimeCountingLiErrorBound :
+    PrimeNumberTheorem.RH_ErrorBound ↔
+      PrimeNumberTheorem.RH_PrimeCountingLiErrorBound :=
+  PrimeNumberTheorem.RH_ErrorBound_iff_RH_PrimeCountingLiErrorBound
+
+theorem RH_PrimeCountingLiErrorBound_iff_RH_ErrorBound :
+    PrimeNumberTheorem.RH_PrimeCountingLiErrorBound ↔
+      PrimeNumberTheorem.RH_ErrorBound :=
+  PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_iff_RH_ErrorBound
+
+theorem RH_PrimeCountingLiErrorBound_of_RH_ErrorBound :
+    PrimeNumberTheorem.RH_ErrorBound →
+      PrimeNumberTheorem.RH_PrimeCountingLiErrorBound :=
+  PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_RH_ErrorBound
+
+theorem RH_ErrorBound_of_RH_PrimeCountingLiErrorBound :
+    PrimeNumberTheorem.RH_PrimeCountingLiErrorBound →
+      PrimeNumberTheorem.RH_ErrorBound :=
+  PrimeNumberTheorem.RH_ErrorBound_of_RH_PrimeCountingLiErrorBound
+
+theorem RH_ErrorBound_of_RH_ThetaErrorBound :
+    PrimeNumberTheorem.RH_ThetaErrorBound → PrimeNumberTheorem.RH_ErrorBound :=
+  PrimeNumberTheorem.RH_ErrorBound_of_RH_ThetaErrorBound
+
+theorem RH_ErrorBound_of_RH_PsiErrorBound :
+    PrimeNumberTheorem.RH_PsiErrorBound → PrimeNumberTheorem.RH_ErrorBound :=
+  PrimeNumberTheorem.RH_ErrorBound_of_RH_PsiErrorBound
+
+theorem RH_ErrorBound_of_chebyshevPsi0_sub_id_isBigO
+    (hψ0 :
+      (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi0 x - x)
+        =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2)) :
+    PrimeNumberTheorem.RH_ErrorBound :=
+  PrimeNumberTheorem.RH_ErrorBound_of_chebyshevPsi0_sub_id_isBigO hψ0
+
 /-- Public conditional partial-summation bridge from the `θ` RH-scale target
 to the prime-counting `Li` RH-scale target. -/
 theorem rh_primeCountingLiErrorBound_of_theta_error_and_integral_error
