@@ -1875,4 +1875,38 @@ lemma eventually_approximate_functional_equation_of_target
   filter_upwards [eventually_gt_atTop (1 : ℝ)] with t ht
   exact hrem t ht
 
+/-- The approximate-functional-equation target is equivalent to an eventually
+valid large-height estimate together with a bounded-height patch below every
+chosen threshold. -/
+lemma approximate_functional_equation_target_iff_eventually_and_bounded_patch :
+    approximate_functional_equation_target ↔
+      ∃ Clarge Csmall : ℝ, 0 < max Clarge Csmall ∧
+        Filter.Eventually (fun t : ℝ => ∃ R : ℂ,
+          (riemannZeta (0.5 + I * (t : ℂ)) =
+            ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+              1/((n+1 : ℂ) ^ (0.5 + I * (t : ℂ)))
+            + Complex.exp (I * (thetaPhase t : ℂ)) *
+              ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+                1/((n+1 : ℂ) ^ (0.5 - I * (t : ℂ)))
+            + R) ∧ ‖R‖ ≤ Clarge * (t : ℝ)^(-1/4 : ℝ)) atTop ∧
+        ∀ T t : ℝ, 1 < t → t < T → ∃ R : ℂ,
+          (riemannZeta (0.5 + I * (t : ℂ)) =
+            ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+              1/((n+1 : ℂ) ^ (0.5 + I * (t : ℂ)))
+            + Complex.exp (I * (thetaPhase t : ℂ)) *
+              ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+                1/((n+1 : ℂ) ^ (0.5 - I * (t : ℂ)))
+            + R) ∧ ‖R‖ ≤ Csmall * (t : ℝ)^(-1/4 : ℝ) := by
+  constructor
+  · intro h
+    rcases h with ⟨C, hC, hrem⟩
+    refine ⟨C, C, by simpa using hC, ?_, ?_⟩
+    · filter_upwards [eventually_gt_atTop (1 : ℝ)] with t ht
+      exact hrem t ht
+    · intro _T t ht _htT
+      exact hrem t ht
+  · rintro ⟨Clarge, Csmall, hC, hlarge, hsmall⟩
+    exact approximate_functional_equation_target_of_eventually_and_bounded_patch
+      Clarge Csmall hC hlarge hsmall
+
 end HardyTheorem.Details

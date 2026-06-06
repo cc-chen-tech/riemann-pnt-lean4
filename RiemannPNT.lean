@@ -3817,4 +3817,28 @@ theorem approximate_functional_equation_target_of_eventually_and_bounded_patch
   HardyTheorem.Details.approximate_functional_equation_target_of_eventually_and_bounded_patch
     Clarge Csmall hC hlarge hsmall
 
+/-- Public iff form of the approximate-functional-equation target: an
+eventually valid large-height estimate plus bounded-height patches is exactly
+the global target statement. -/
+theorem approximate_functional_equation_target_iff_eventually_and_bounded_patch :
+    HardyTheorem.Details.approximate_functional_equation_target ↔
+      ∃ Clarge Csmall : ℝ, 0 < max Clarge Csmall ∧
+        Filter.Eventually (fun t : ℝ => ∃ R : ℂ,
+          (riemannZeta (0.5 + Complex.I * (t : ℂ)) =
+            ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+              1/((n+1 : ℂ) ^ (0.5 + Complex.I * (t : ℂ)))
+            + Complex.exp (Complex.I * (HardyTheorem.thetaPhase t : ℂ)) *
+              ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+                1/((n+1 : ℂ) ^ (0.5 - Complex.I * (t : ℂ)))
+            + R) ∧ ‖R‖ ≤ Clarge * (t : ℝ)^(-1/4 : ℝ)) atTop ∧
+        ∀ T t : ℝ, 1 < t → t < T → ∃ R : ℂ,
+          (riemannZeta (0.5 + Complex.I * (t : ℂ)) =
+            ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+              1/((n+1 : ℂ) ^ (0.5 + Complex.I * (t : ℂ)))
+            + Complex.exp (Complex.I * (HardyTheorem.thetaPhase t : ℂ)) *
+              ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+                1/((n+1 : ℂ) ^ (0.5 - Complex.I * (t : ℂ)))
+            + R) ∧ ‖R‖ ≤ Csmall * (t : ℝ)^(-1/4 : ℝ) :=
+  HardyTheorem.Details.approximate_functional_equation_target_iff_eventually_and_bounded_patch
+
 end RiemannPNT.API
