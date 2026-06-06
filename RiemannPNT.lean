@@ -1256,6 +1256,17 @@ theorem vinogradov_korobov_zero_free_region_high_height_re_im
   ZeroFreeRegion.vinogradov_korobov_zero_free_region_high_height_re_im
     T0 hT0 hvk
 
+/-- Public positivity of the classical `c / log |t|` width above height `2`. -/
+theorem classical_width_pos_of_two_le {c t : ℝ} (hc : 0 < c) (ht : 2 ≤ |t|) :
+    0 < c / Real.log |t| :=
+  ZeroFreeRegion.classical_width_pos_of_two_le hc ht
+
+/-- Public monotonicity of the classical width in the width constant. -/
+theorem classical_width_mono_const {csmall clarge t : ℝ}
+    (hc : csmall ≤ clarge) (ht : 2 ≤ |t|) :
+    csmall / Real.log |t| ≤ clarge / Real.log |t| :=
+  ZeroFreeRegion.classical_width_mono_const hc ht
+
 /-- Public positivity of the Vinogradov-Korobov width above height `3`. -/
 theorem vinogradov_korobov_width_pos_of_three_le {c t : ℝ}
     (hc : 0 < c) (ht : 3 ≤ |t|) :
@@ -1263,6 +1274,15 @@ theorem vinogradov_korobov_width_pos_of_three_le {c t : ℝ}
       c / (Real.log |t|) ^ (2 / 3 : ℝ) *
         (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) :=
   ZeroFreeRegion.vinogradov_korobov_width_pos_of_three_le hc ht
+
+/-- Public monotonicity of the Vinogradov-Korobov width in the width constant. -/
+theorem vinogradov_korobov_width_mono_const {csmall clarge t : ℝ}
+    (hc : csmall ≤ clarge) (ht : 3 ≤ |t|) :
+    csmall / (Real.log |t|) ^ (2 / 3 : ℝ) *
+        (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) ≤
+      clarge / (Real.log |t|) ^ (2 / 3 : ℝ) *
+        (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) :=
+  ZeroFreeRegion.vinogradov_korobov_width_mono_const hc ht
 
 /-- Public pointwise width comparison showing that the Vinogradov-Korobov strip
 dominates the classical `c / log |t|` strip above height `3`. -/
@@ -1395,6 +1415,14 @@ theorem hardyZ_eventually_const_sign_of_finite_zeros
     (∀ᶠ t in atTop, HardyTheorem.hardyZ t > 0) ∨
       (∀ᶠ t in atTop, HardyTheorem.hardyZ t < 0) :=
   HardyTheorem.hardyZ_eventually_const_sign_of_finite_zeros hfinite
+
+/-- Public structure lemma: finitely many zeta zeros on the critical line force
+Hardy-Z eventual constant sign at positive height. -/
+theorem hardyZ_eventually_const_sign_of_finite_critical_line_zeros
+    (hfinite : {t : ℝ | riemannZeta (0.5 + Complex.I * t) = 0}.Finite) :
+    (∀ᶠ t in atTop, HardyTheorem.hardyZ t > 0) ∨
+      (∀ᶠ t in atTop, HardyTheorem.hardyZ t < 0) :=
+  HardyTheorem.hardyZ_eventually_const_sign_of_finite_critical_line_zeros hfinite
 
 /-- Public packaging equivalence: the two signed Hardy moments are exactly the
 first two signed integral-asymptotic targets. -/
@@ -1756,6 +1784,16 @@ theorem hardy_theorem_target_iff_hardyZ_abs_unbounded_of_bounded_strips
   HardyTheorem.hardy_theorem_target_iff_hardyZ_abs_unbounded_of_bounded_strips
     hstrip
 
+/-- Public bounded-strip Hardy-Z zero-set form of the absolute-height
+unbounded equivalence. -/
+theorem hardy_theorem_target_iff_hardyZ_abs_unbounded_of_hardyZ_bounded_strips
+    (hstrip : ∀ B : ℝ,
+      {t : ℝ | |t| ≤ B ∧ HardyTheorem.hardyZ t = 0}.Finite) :
+    HardyTheorem.hardy_theorem_target ↔
+      ∀ T : ℝ, ∃ t : ℝ, T ≤ |t| ∧ HardyTheorem.hardyZ t = 0 :=
+  HardyTheorem.hardy_theorem_target_iff_hardyZ_abs_unbounded_of_hardyZ_bounded_strips
+    hstrip
+
 /-- Public bounded-strip bridge from Hardy's infinite-zero target to
 absolute-height unbounded zeros. -/
 theorem hardy_zeros_abs_unbounded_of_hardy_theorem_target_of_bounded_strips
@@ -2070,6 +2108,16 @@ theorem zeroCountOnCriticalLine_pos_iff_exists_of_finite {T : ℝ}
       ∃ t : ℝ, 0 ≤ t ∧ t ≤ T ∧
         riemannZeta (0.5 + Complex.I * t) = 0 :=
   HardyTheorem.zeroCountOnCriticalLine_pos_iff_exists_of_finite hfinite
+
+/-- Public finite-set equivalence between positive zero count and existence of
+an interval Hardy-Z zero. -/
+theorem zeroCountOnCriticalLine_pos_iff_exists_hardyZ_zero_of_finite {T : ℝ}
+    (hfinite :
+      {t : Set.Icc (0 : ℝ) T |
+        riemannZeta (0.5 + Complex.I * (t : ℝ)) = 0}.Finite) :
+    0 < HardyTheorem.zeroCountOnCriticalLine T ↔
+      ∃ t : ℝ, 0 ≤ t ∧ t ≤ T ∧ HardyTheorem.hardyZ t = 0 :=
+  HardyTheorem.zeroCountOnCriticalLine_pos_iff_exists_hardyZ_zero_of_finite hfinite
 
 /-- Public no-zero criterion for a zero critical-line interval count. -/
 theorem zeroCountOnCriticalLine_eq_zero_of_no_zero {T : ℝ}
