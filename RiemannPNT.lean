@@ -650,6 +650,115 @@ theorem exists_zero_on_critical_line_of_integral_asymptotic_one_two
     ∃ t : ℝ, riemannZeta (0.5 + Complex.I * t) = 0 :=
   HardyTheorem.exists_zero_on_critical_line_of_integral_asymptotic_one_two h1 h2
 
+/-- Public consequence: Hardy's infinite-zero target gives at least one complex
+critical-line zero. -/
+theorem exists_complex_zero_on_critical_line_of_hardy_theorem_target
+    (h : HardyTheorem.hardy_theorem_target) :
+    ∃ s : ℂ, s.re = 1 / 2 ∧ riemannZeta s = 0 :=
+  KnownResults.exists_complex_zero_on_critical_line_of_hardy_theorem_target h
+
+/-- Public consequence: Hardy's infinite-zero target gives at least one
+nontrivial zero on the critical line. -/
+theorem exists_nontrivial_zero_on_critical_line_of_hardy_theorem_target
+    (h : HardyTheorem.hardy_theorem_target) :
+    ∃ s : ℂ, _root_.RiemannHypothesis.IsNontrivialZero s ∧
+      s ∈ _root_.RiemannHypothesis.criticalLine :=
+  KnownResults.exists_nontrivial_zero_on_critical_line_of_hardy_theorem_target h
+
+/-- Public consequence: the first two signed Hardy moments give at least one
+complex critical-line zero. -/
+theorem exists_complex_zero_on_critical_line_of_two_signed_moments
+    (hmom : HardyTheorem.hardy_two_signed_moments_target) :
+    ∃ s : ℂ, s.re = 1 / 2 ∧ riemannZeta s = 0 :=
+  KnownResults.exists_complex_zero_on_critical_line_of_hardy_theorem_target
+    (HardyTheorem.hardy_theorem_target_of_two_signed_moments hmom)
+
+/-- Public consequence: the first two signed Hardy moments give at least one
+nontrivial zero on the critical line. -/
+theorem exists_nontrivial_zero_on_critical_line_of_two_signed_moments
+    (hmom : HardyTheorem.hardy_two_signed_moments_target) :
+    ∃ s : ℂ, _root_.RiemannHypothesis.IsNontrivialZero s ∧
+      s ∈ _root_.RiemannHypothesis.criticalLine :=
+  KnownResults.exists_nontrivial_zero_on_critical_line_of_hardy_theorem_target
+    (HardyTheorem.hardy_theorem_target_of_two_signed_moments hmom)
+
+/-- Public consequence: the first two Hardy integral asymptotics give at least
+one complex critical-line zero. -/
+theorem exists_complex_zero_on_critical_line_of_integral_asymptotic_one_two
+    (h1 : HardyTheorem.integral_asymptotic_target 1)
+    (h2 : HardyTheorem.integral_asymptotic_target 2) :
+    ∃ s : ℂ, s.re = 1 / 2 ∧ riemannZeta s = 0 :=
+  KnownResults.exists_complex_zero_on_critical_line_of_hardy_theorem_target
+    (HardyTheorem.hardy_theorem_target_of_integral_asymptotic_one_two h1 h2)
+
+/-- Public consequence: the first two Hardy integral asymptotics give at least
+one nontrivial zero on the critical line. -/
+theorem exists_nontrivial_zero_on_critical_line_of_integral_asymptotic_one_two
+    (h1 : HardyTheorem.integral_asymptotic_target 1)
+    (h2 : HardyTheorem.integral_asymptotic_target 2) :
+    ∃ s : ℂ, _root_.RiemannHypothesis.IsNontrivialZero s ∧
+      s ∈ _root_.RiemannHypothesis.criticalLine :=
+  KnownResults.exists_nontrivial_zero_on_critical_line_of_hardy_theorem_target
+    (HardyTheorem.hardy_theorem_target_of_integral_asymptotic_one_two h1 h2)
+
+/-- Public consequence: the Hardy--Littlewood lower-bound target gives at least
+one real critical-line zero. -/
+theorem exists_zero_on_critical_line_of_hardy_littlewood_lower_bound
+    (h : HardyTheorem.hardy_littlewood_lower_bound_target) :
+    ∃ t : ℝ, riemannZeta (0.5 + Complex.I * t) = 0 :=
+  KnownResults.exists_zero_on_critical_line_of_hardy_littlewood_lower_bound h
+
+/-- Public consequence: the Hardy--Littlewood lower-bound target gives at least
+one nonnegative real critical-line zero. -/
+theorem exists_nonnegative_zero_on_critical_line_of_hardy_littlewood_lower_bound
+    (h : HardyTheorem.hardy_littlewood_lower_bound_target) :
+    ∃ t : ℝ, 0 ≤ t ∧ riemannZeta (0.5 + Complex.I * t) = 0 :=
+  KnownResults.exists_nonnegative_zero_on_critical_line_of_hardy_littlewood_lower_bound h
+
+/-- Public consequence: the Hardy--Littlewood lower-bound target gives at least
+one complex critical-line zero. -/
+theorem exists_complex_zero_on_critical_line_of_hardy_littlewood_lower_bound
+    (h : HardyTheorem.hardy_littlewood_lower_bound_target) :
+    ∃ s : ℂ, s.re = 1 / 2 ∧ riemannZeta s = 0 :=
+  KnownResults.exists_complex_zero_on_critical_line_of_hardy_littlewood_lower_bound h
+
+/-- Public consequence: the Hardy--Littlewood lower-bound target gives at least
+one nontrivial zero on the critical line. -/
+theorem exists_nontrivial_zero_on_critical_line_of_hardy_littlewood_lower_bound
+    (h : HardyTheorem.hardy_littlewood_lower_bound_target) :
+    ∃ s : ℂ, _root_.RiemannHypothesis.IsNontrivialZero s ∧
+      s ∈ _root_.RiemannHypothesis.criticalLine :=
+  KnownResults.exists_nontrivial_zero_on_critical_line_of_hardy_littlewood_lower_bound h
+
+/-- Public consequence: Selberg's positive-proportion target gives at least
+one real critical-line zero. -/
+theorem exists_zero_on_critical_line_of_selberg_zero_proportion
+    (h : HardyTheorem.selberg_zero_proportion_target) :
+    ∃ t : ℝ, riemannZeta (0.5 + Complex.I * t) = 0 :=
+  KnownResults.exists_zero_on_critical_line_of_selberg_zero_proportion h
+
+/-- Public consequence: Selberg's positive-proportion target gives at least
+one nonnegative real critical-line zero. -/
+theorem exists_nonnegative_zero_on_critical_line_of_selberg_zero_proportion
+    (h : HardyTheorem.selberg_zero_proportion_target) :
+    ∃ t : ℝ, 0 ≤ t ∧ riemannZeta (0.5 + Complex.I * t) = 0 :=
+  KnownResults.exists_nonnegative_zero_on_critical_line_of_selberg_zero_proportion h
+
+/-- Public consequence: Selberg's positive-proportion target gives at least one
+complex critical-line zero. -/
+theorem exists_complex_zero_on_critical_line_of_selberg_zero_proportion
+    (h : HardyTheorem.selberg_zero_proportion_target) :
+    ∃ s : ℂ, s.re = 1 / 2 ∧ riemannZeta s = 0 :=
+  KnownResults.exists_complex_zero_on_critical_line_of_selberg_zero_proportion h
+
+/-- Public consequence: Selberg's positive-proportion target gives at least one
+nontrivial zero on the critical line. -/
+theorem exists_nontrivial_zero_on_critical_line_of_selberg_zero_proportion
+    (h : HardyTheorem.selberg_zero_proportion_target) :
+    ∃ s : ℂ, _root_.RiemannHypothesis.IsNontrivialZero s ∧
+      s ∈ _root_.RiemannHypothesis.criticalLine :=
+  KnownResults.exists_nontrivial_zero_on_critical_line_of_selberg_zero_proportion h
+
 /-- Public bridge from Hardy's unbounded-height target to infinitely many
 critical-line zeros. -/
 theorem infinitely_many_zeros_on_critical_line_of_hardy_unbounded
@@ -758,6 +867,102 @@ theorem infinitely_many_zeros_on_critical_line_of_hardy_abs_unbounded
     {s : ℂ | s.re = 1 / 2 ∧ riemannZeta s = 0}.Infinite :=
   KnownResults.infinitely_many_zeros_on_critical_line
     (HardyTheorem.hardy_theorem_target_of_abs_unbounded h)
+
+/-- Public bridge from Hardy's infinite-zero target to infinitely many complex
+critical-line zeros. -/
+theorem infinitely_many_zeros_on_critical_line_of_hardy_theorem_target
+    (h : HardyTheorem.hardy_theorem_target) :
+    {s : ℂ | s.re = 1 / 2 ∧ riemannZeta s = 0}.Infinite :=
+  KnownResults.infinitely_many_zeros_on_critical_line h
+
+/-- Public bridge from the first two signed Hardy moments to infinitely many
+complex critical-line zeros. -/
+theorem infinitely_many_zeros_on_critical_line_of_two_signed_moments
+    (hmom : HardyTheorem.hardy_two_signed_moments_target) :
+    {s : ℂ | s.re = 1 / 2 ∧ riemannZeta s = 0}.Infinite :=
+  KnownResults.infinitely_many_zeros_on_critical_line_of_two_signed_moments hmom
+
+/-- Public bridge from the first two Hardy integral asymptotics to infinitely
+many complex critical-line zeros. -/
+theorem infinitely_many_zeros_on_critical_line_of_integral_asymptotic_one_two
+    (h1 : HardyTheorem.integral_asymptotic_target 1)
+    (h2 : HardyTheorem.integral_asymptotic_target 2) :
+    {s : ℂ | s.re = 1 / 2 ∧ riemannZeta s = 0}.Infinite :=
+  KnownResults.infinitely_many_zeros_on_critical_line_of_integral_asymptotic_one_two
+    h1 h2
+
+/-- Public bridge from the Hardy--Littlewood lower-bound target to infinitely
+many complex critical-line zeros. -/
+theorem infinitely_many_zeros_on_critical_line_of_hardy_littlewood_lower_bound
+    (h : HardyTheorem.hardy_littlewood_lower_bound_target) :
+    {s : ℂ | s.re = 1 / 2 ∧ riemannZeta s = 0}.Infinite :=
+  KnownResults.infinitely_many_zeros_on_critical_line_of_hardy_littlewood_lower_bound h
+
+/-- Public bridge from Selberg's positive-proportion target to infinitely many
+complex critical-line zeros. -/
+theorem infinitely_many_zeros_on_critical_line_of_selberg_zero_proportion
+    (h : HardyTheorem.selberg_zero_proportion_target) :
+    {s : ℂ | s.re = 1 / 2 ∧ riemannZeta s = 0}.Infinite :=
+  KnownResults.infinitely_many_zeros_on_critical_line_of_selberg_zero_proportion h
+
+/-- Public bridge from Hardy's infinite-zero target to infinitely many
+nontrivial critical-line zeros. -/
+theorem infinitely_many_nontrivial_zeros_on_critical_line_of_hardy_theorem_target
+    (h : HardyTheorem.hardy_theorem_target) :
+    {s : ℂ | _root_.RiemannHypothesis.IsNontrivialZero s ∧
+      s ∈ _root_.RiemannHypothesis.criticalLine}.Infinite :=
+  KnownResults.infinitely_many_nontrivial_zeros_on_critical_line h
+
+/-- Public bridge from the first two signed Hardy moments to infinitely many
+nontrivial critical-line zeros. -/
+theorem infinitely_many_nontrivial_zeros_on_critical_line_of_two_signed_moments
+    (hmom : HardyTheorem.hardy_two_signed_moments_target) :
+    {s : ℂ | _root_.RiemannHypothesis.IsNontrivialZero s ∧
+      s ∈ _root_.RiemannHypothesis.criticalLine}.Infinite :=
+  KnownResults.infinitely_many_nontrivial_zeros_on_critical_line_of_two_signed_moments
+    hmom
+
+/-- Public bridge from the first two Hardy integral asymptotics to infinitely
+many nontrivial critical-line zeros. -/
+theorem infinitely_many_nontrivial_zeros_on_critical_line_of_integral_asymptotic_one_two
+    (h1 : HardyTheorem.integral_asymptotic_target 1)
+    (h2 : HardyTheorem.integral_asymptotic_target 2) :
+    {s : ℂ | _root_.RiemannHypothesis.IsNontrivialZero s ∧
+      s ∈ _root_.RiemannHypothesis.criticalLine}.Infinite :=
+  KnownResults.infinitely_many_nontrivial_zeros_on_critical_line_of_integral_asymptotic_one_two
+    h1 h2
+
+/-- Public bridge from Hardy's unbounded-height target to infinitely many
+nontrivial critical-line zeros. -/
+theorem infinitely_many_nontrivial_zeros_on_critical_line_of_hardy_unbounded
+    (h : HardyTheorem.hardy_zeros_unbounded_target) :
+    {s : ℂ | _root_.RiemannHypothesis.IsNontrivialZero s ∧
+      s ∈ _root_.RiemannHypothesis.criticalLine}.Infinite :=
+  KnownResults.infinitely_many_nontrivial_zeros_on_critical_line_of_unbounded h
+
+/-- Public bridge from Hardy's absolute-height unbounded target to infinitely
+many nontrivial critical-line zeros. -/
+theorem infinitely_many_nontrivial_zeros_on_critical_line_of_hardy_abs_unbounded
+    (h : HardyTheorem.hardy_zeros_abs_unbounded_target) :
+    {s : ℂ | _root_.RiemannHypothesis.IsNontrivialZero s ∧
+      s ∈ _root_.RiemannHypothesis.criticalLine}.Infinite :=
+  KnownResults.infinitely_many_nontrivial_zeros_on_critical_line_of_abs_unbounded h
+
+/-- Public bridge from Hardy--Littlewood's lower-bound target to infinitely many
+nontrivial critical-line zeros. -/
+theorem infinitely_many_nontrivial_zeros_on_critical_line_of_hardy_littlewood_lower_bound
+    (h : HardyTheorem.hardy_littlewood_lower_bound_target) :
+    {s : ℂ | _root_.RiemannHypothesis.IsNontrivialZero s ∧
+      s ∈ _root_.RiemannHypothesis.criticalLine}.Infinite :=
+  KnownResults.infinitely_many_nontrivial_zeros_on_critical_line_of_hardy_littlewood_lower_bound h
+
+/-- Public bridge from Selberg's positive-proportion target to infinitely many
+nontrivial critical-line zeros. -/
+theorem infinitely_many_nontrivial_zeros_on_critical_line_of_selberg_zero_proportion
+    (h : HardyTheorem.selberg_zero_proportion_target) :
+    {s : ℂ | _root_.RiemannHypothesis.IsNontrivialZero s ∧
+      s ∈ _root_.RiemannHypothesis.criticalLine}.Infinite :=
+  KnownResults.infinitely_many_nontrivial_zeros_on_critical_line_of_selberg_zero_proportion h
 
 /-- Public interval-zero consequence of the Hardy--Littlewood lower-bound
 target. -/
