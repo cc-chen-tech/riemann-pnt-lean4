@@ -543,6 +543,62 @@ theorem norm_explicitFormulaApprox_sub_le_sqrt_mul_two_card_of_RH
   PrimeNumberTheorem.norm_explicitFormulaApprox_sub_le_sqrt_mul_two_card_of_RH
     hRH hx hTU
 
+/-- Public real-part RH Cauchy-type truncation bound, measured by the
+reciprocal-norm sum of newly included zeros. -/
+theorem abs_re_explicitFormulaApprox_sub_le_sqrt_mul_sum_inv_norm_of_RH
+    (hRH : _root_.RiemannHypothesis.Statement)
+    {x T U : ℝ} (hx : 0 < x) (hTU : T ≤ U) :
+    |(PrimeNumberTheorem.explicitFormulaApprox x T -
+        PrimeNumberTheorem.explicitFormulaApprox x U).re| ≤
+      Real.sqrt x *
+        ∑ ρ ∈
+          (PrimeNumberTheorem.nontrivialZerosFinset U \
+            PrimeNumberTheorem.nontrivialZerosFinset T), ‖ρ‖⁻¹ :=
+  PrimeNumberTheorem.abs_re_explicitFormulaApprox_sub_le_sqrt_mul_sum_inv_norm_of_RH
+    hRH hx hTU
+
+/-- Public imaginary-part RH Cauchy-type truncation bound, measured by the
+reciprocal-norm sum of newly included zeros. -/
+theorem abs_im_explicitFormulaApprox_sub_le_sqrt_mul_sum_inv_norm_of_RH
+    (hRH : _root_.RiemannHypothesis.Statement)
+    {x T U : ℝ} (hx : 0 < x) (hTU : T ≤ U) :
+    |(PrimeNumberTheorem.explicitFormulaApprox x T -
+        PrimeNumberTheorem.explicitFormulaApprox x U).im| ≤
+      Real.sqrt x *
+        ∑ ρ ∈
+          (PrimeNumberTheorem.nontrivialZerosFinset U \
+            PrimeNumberTheorem.nontrivialZerosFinset T), ‖ρ‖⁻¹ :=
+  PrimeNumberTheorem.abs_im_explicitFormulaApprox_sub_le_sqrt_mul_sum_inv_norm_of_RH
+    hRH hx hTU
+
+/-- Public real-part RH Cauchy-type truncation bound, measured by the number of
+newly included zeros. -/
+theorem abs_re_explicitFormulaApprox_sub_le_sqrt_mul_two_card_of_RH
+    (hRH : _root_.RiemannHypothesis.Statement)
+    {x T U : ℝ} (hx : 0 < x) (hTU : T ≤ U) :
+    |(PrimeNumberTheorem.explicitFormulaApprox x T -
+        PrimeNumberTheorem.explicitFormulaApprox x U).re| ≤
+      Real.sqrt x *
+        ((2 : ℝ) *
+          (PrimeNumberTheorem.nontrivialZerosFinset U \
+            PrimeNumberTheorem.nontrivialZerosFinset T).card) :=
+  PrimeNumberTheorem.abs_re_explicitFormulaApprox_sub_le_sqrt_mul_two_card_of_RH
+    hRH hx hTU
+
+/-- Public imaginary-part RH Cauchy-type truncation bound, measured by the
+number of newly included zeros. -/
+theorem abs_im_explicitFormulaApprox_sub_le_sqrt_mul_two_card_of_RH
+    (hRH : _root_.RiemannHypothesis.Statement)
+    {x T U : ℝ} (hx : 0 < x) (hTU : T ≤ U) :
+    |(PrimeNumberTheorem.explicitFormulaApprox x T -
+        PrimeNumberTheorem.explicitFormulaApprox x U).im| ≤
+      Real.sqrt x *
+        ((2 : ℝ) *
+          (PrimeNumberTheorem.nontrivialZerosFinset U \
+            PrimeNumberTheorem.nontrivialZerosFinset T).card) :=
+  PrimeNumberTheorem.abs_im_explicitFormulaApprox_sub_le_sqrt_mul_two_card_of_RH
+    hRH hx hTU
+
 /-- Public stability bridge: if the zero sum has no new terms eventually and
 the stable truncation equals `ψ₀(x)`, then the explicit-formula target follows. -/
 theorem explicit_formula_von_mangoldt_of_eventually_no_new_zeros
