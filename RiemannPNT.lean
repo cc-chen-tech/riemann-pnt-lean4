@@ -150,6 +150,28 @@ theorem rh_iff_optimal_error_of_mathlib_pointwise_implications
   PrimeNumberTheorem.rh_iff_optimal_error_of_mathlib_pointwise_implications
     h_forward h_reverse
 
+/-- Public packaging lemma for closing the RH/error target from a future RH-to-`ψ`
+error theorem. -/
+theorem rh_iff_optimal_error_of_RH_PsiErrorBound_implications
+    (h_forward : _root_.RiemannHypothesis.Statement →
+      PrimeNumberTheorem.RH_PsiErrorBound)
+    (h_reverse : PrimeNumberTheorem.RH_PrimeCountingLiErrorBound →
+      _root_.RiemannHypothesis.Statement) :
+    PrimeNumberTheorem.rh_iff_optimal_error :=
+  PrimeNumberTheorem.rh_iff_optimal_error_of_RH_PsiErrorBound_implications
+    h_forward h_reverse
+
+/-- Public packaging lemma for closing the RH/error target from a future RH-to-`θ`
+error theorem. -/
+theorem rh_iff_optimal_error_of_RH_ThetaErrorBound_implications
+    (h_forward : _root_.RiemannHypothesis.Statement →
+      PrimeNumberTheorem.RH_ThetaErrorBound)
+    (h_reverse : PrimeNumberTheorem.RH_PrimeCountingLiErrorBound →
+      _root_.RiemannHypothesis.Statement) :
+    PrimeNumberTheorem.rh_iff_optimal_error :=
+  PrimeNumberTheorem.rh_iff_optimal_error_of_RH_ThetaErrorBound_implications
+    h_forward h_reverse
+
 /-- Public forward direction from the RH/error target plus Mathlib RH to the
 composable prime-counting error bound. -/
 theorem rh_primeCountingLiErrorBound_of_mathlib_RH_of_rh_iff_optimal_error
@@ -179,6 +201,13 @@ theorem mathlib_RH_of_rh_iff_pointwise_error
     (h : PrimeNumberTheorem.rh_iff_optimal_error) :
     PrimeNumberTheorem.RH_ErrorBound → _root_.RiemannHypothesis :=
   PrimeNumberTheorem.mathlib_RH_of_rh_iff_pointwise_error h
+
+/-- Public Mathlib-facing pointwise textbook form of the RH/error equivalence
+target. -/
+theorem rh_iff_optimal_error_iff_mathlib_pointwise :
+    PrimeNumberTheorem.rh_iff_optimal_error ↔
+      (_root_.RiemannHypothesis ↔ PrimeNumberTheorem.RH_ErrorBound) :=
+  PrimeNumberTheorem.rh_iff_optimal_error_iff_mathlib_pointwise
 
 /-- Public consequence: the RH/error target turns Mathlib RH into PNT form 1. -/
 theorem pnt_form1_of_mathlib_RH_of_rh_iff_optimal_error
@@ -564,6 +593,20 @@ theorem explicit_formula_von_mangoldt_of_eventually_norm_le
     PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
   PrimeNumberTheorem.explicit_formula_von_mangoldt_of_eventually_norm_le
     hE hbound
+
+/-- Public bridge: a Big-O norm error estimate against any function tending to
+zero closes the corrected explicit-formula target. -/
+theorem explicit_formula_von_mangoldt_of_norm_error_isBigO_tendsto_zero
+    {x : ℝ} {hx : x ≥ 2} {E : ℝ → ℝ}
+    (hE : Tendsto E atTop (𝓝 0))
+    (hO :
+      (fun T : ℝ =>
+        ‖PrimeNumberTheorem.explicitFormulaApprox x T -
+          (PrimeNumberTheorem.chebyshevPsi0 x : ℂ)‖)
+        =O[atTop] E) :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_norm_error_isBigO_tendsto_zero
+    hE hO
 
 /-- Public bridge: an eventual `C/T` norm error estimate closes the corrected
 explicit-formula target. -/

@@ -2167,6 +2167,26 @@ lemma rh_iff_optimal_error_of_implications
     rh_iff_optimal_error :=
   ⟨h_forward, h_reverse⟩
 
+/-- Close the RH/error target from a future RH-to-`ψ` error theorem plus the
+reverse implication from the prime-counting error target. -/
+lemma rh_iff_optimal_error_of_RH_PsiErrorBound_implications
+    (h_forward : RiemannHypothesis.Statement → RH_PsiErrorBound)
+    (h_reverse : RH_PrimeCountingLiErrorBound → RiemannHypothesis.Statement) :
+    rh_iff_optimal_error :=
+  rh_iff_optimal_error_of_implications
+    (fun hRH => RH_PrimeCountingLiErrorBound_of_RH_PsiErrorBound (h_forward hRH))
+    h_reverse
+
+/-- Close the RH/error target from a future RH-to-`θ` error theorem plus the
+reverse implication from the prime-counting error target. -/
+lemma rh_iff_optimal_error_of_RH_ThetaErrorBound_implications
+    (h_forward : RiemannHypothesis.Statement → RH_ThetaErrorBound)
+    (h_reverse : RH_PrimeCountingLiErrorBound → RiemannHypothesis.Statement) :
+    rh_iff_optimal_error :=
+  rh_iff_optimal_error_of_implications
+    (fun hRH => RH_PrimeCountingLiErrorBound_of_RH_ThetaErrorBound (h_forward hRH))
+    h_reverse
+
 lemma RH_PrimeCountingLiErrorBound_of_rh_iff_optimal_error
     (h : rh_iff_optimal_error) :
     RiemannHypothesis.Statement → RH_PrimeCountingLiErrorBound :=
@@ -2722,6 +2742,17 @@ theorem mathlib_RH_of_rh_iff_pointwise_error
   intro herror
   exact mathlib_RH_of_rh_iff_optimal_error h
     (RH_PrimeCountingLiErrorBound_of_RH_ErrorBound herror)
+
+/-- Mathlib-facing pointwise textbook form of the RH/error equivalence target. -/
+theorem rh_iff_optimal_error_iff_mathlib_pointwise :
+    rh_iff_optimal_error ↔
+      (_root_.RiemannHypothesis ↔ RH_ErrorBound) := by
+  constructor
+  · intro h
+    exact ⟨RH_ErrorBound_of_mathlib_RH_of_rh_iff_optimal_error h,
+      mathlib_RH_of_rh_iff_pointwise_error h⟩
+  · intro h
+    exact rh_iff_optimal_error_of_mathlib_pointwise_implications h.mp h.mpr
 
 theorem PNTForm2_of_mathlib_RH_of_rh_iff_optimal_error
     (h : rh_iff_optimal_error) :
@@ -3472,6 +3503,30 @@ lemma explicit_formula_von_mangoldt_of_eventually_norm_le
   refine tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds hE ?_ hbound
   exact Eventually.of_forall fun T =>
     norm_nonneg (explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ))
+
+/-- A Big-O norm error estimate against any function tending to zero closes the
+corrected explicit-formula target. -/
+lemma explicit_formula_von_mangoldt_of_norm_error_isBigO_tendsto_zero
+    {x : ℝ} {hx : x ≥ 2} {E : ℝ → ℝ}
+    (hE : Tendsto E atTop (𝓝 0))
+    (hO :
+      (fun T : ℝ => ‖explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)‖)
+        =O[atTop] E) :
+    explicit_formula_von_mangoldt x hx := by
+  rcases hO.exists_pos with ⟨C, _hCpos, hCO⟩
+  refine explicit_formula_von_mangoldt_of_eventually_norm_le
+    (E := fun T : ℝ => C * ‖E T‖) ?_ ?_
+  · have hEnorm :
+        Tendsto (fun T : ℝ => ‖E T‖) atTop (𝓝 0) :=
+      tendsto_zero_iff_norm_tendsto_zero.mp hE
+    simpa using
+      (tendsto_const_nhds.mul hEnorm :
+        Tendsto (fun T : ℝ => C * ‖E T‖) atTop (𝓝 (C * 0)))
+  · filter_upwards [hCO.bound] with T hT
+    have hnorm_nonneg :
+        0 ≤ ‖explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)‖ :=
+      norm_nonneg _
+    simpa [Real.norm_eq_abs, abs_of_nonneg hnorm_nonneg] using hT
 
 lemma explicit_formula_von_mangoldt_of_eventually_norm_le_const_mul_inv
     {x C : ℝ} {hx : x ≥ 2}
