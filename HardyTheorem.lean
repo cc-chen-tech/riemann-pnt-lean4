@@ -1367,6 +1367,25 @@ lemma zeroCountOnCriticalLine_le_ncard_allZeros_of_finite
   · intro t₁ _ t₂ _ heq
     exact Subtype.ext heq
 
+lemma hardy_theorem_target_of_zeroCountOnCriticalLine_unbounded
+    (h : ∀ N : ℕ, ∃ T : ℝ, N < zeroCountOnCriticalLine T) :
+    hardy_theorem_target := by
+  classical
+  intro hfinite
+  let allZeros : Set ℝ := {t : ℝ | riemannZeta (0.5 + I * t) = 0}
+  let N : ℕ := allZeros.ncard
+  rcases h N with ⟨T, hT⟩
+  have hcount_le_N_nat : zeroCountOnCriticalLine T ≤ N := by
+    simpa [allZeros, N] using
+      zeroCountOnCriticalLine_le_ncard_allZeros_of_finite T hfinite
+  omega
+
+lemma hardy_theorem_target_of_eventually_nat_lt_zeroCountOnCriticalLine
+    (h : ∀ N : ℕ, ∀ᶠ T in atTop, N < zeroCountOnCriticalLine T) :
+    hardy_theorem_target :=
+  hardy_theorem_target_of_zeroCountOnCriticalLine_unbounded
+    (fun N => (h N).exists)
+
 lemma zeroCountOnCriticalLine_pos_of_linear_lower_bound {C T : ℝ}
     (hC : 0 < C) (hT : 0 < T)
     (hbound : C * T ≤ (zeroCountOnCriticalLine T : ℝ)) :
