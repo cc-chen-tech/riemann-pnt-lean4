@@ -222,6 +222,53 @@ theorem hardy_zeros_unbounded_of_hardy_theorem_target
     HardyTheorem.hardy_zeros_unbounded_target :=
   PrimeNumberTheorem.hardy_zeros_unbounded_of_hardy_theorem_target h
 
+/-- Public bridge from the first two signed Hardy moment targets to Hardy's
+infinite-zero target. -/
+theorem hardy_theorem_target_of_two_signed_moments
+    (hmom : HardyTheorem.hardy_two_signed_moments_target) :
+    HardyTheorem.hardy_theorem_target :=
+  PrimeNumberTheorem.hardy_theorem_target_of_two_signed_moments hmom
+
+/-- Public bridge from the first two Hardy integral asymptotics to Hardy's
+infinite-zero target. -/
+theorem hardy_theorem_target_of_integral_asymptotic_one_two
+    (h1 : HardyTheorem.integral_asymptotic_target 1)
+    (h2 : HardyTheorem.integral_asymptotic_target 2) :
+    HardyTheorem.hardy_theorem_target :=
+  PrimeNumberTheorem.hardy_theorem_target_of_integral_asymptotic_one_two h1 h2
+
+/-- Public bridge from the first two signed Hardy moments to arbitrarily large
+absolute-height critical-line zeros. -/
+theorem hardy_zeros_abs_unbounded_of_two_signed_moments
+    (hmom : HardyTheorem.hardy_two_signed_moments_target) :
+    HardyTheorem.hardy_zeros_abs_unbounded_target :=
+  PrimeNumberTheorem.hardy_zeros_abs_unbounded_of_two_signed_moments hmom
+
+/-- Public bridge from the first two signed Hardy moments to arbitrarily large
+positive-height critical-line zeros. -/
+theorem hardy_zeros_unbounded_of_two_signed_moments
+    (hmom : HardyTheorem.hardy_two_signed_moments_target) :
+    HardyTheorem.hardy_zeros_unbounded_target :=
+  PrimeNumberTheorem.hardy_zeros_unbounded_of_two_signed_moments hmom
+
+/-- Public bridge from the first two Hardy integral asymptotics to arbitrarily
+large absolute-height critical-line zeros. -/
+theorem hardy_zeros_abs_unbounded_of_integral_asymptotic_one_two
+    (h1 : HardyTheorem.integral_asymptotic_target 1)
+    (h2 : HardyTheorem.integral_asymptotic_target 2) :
+    HardyTheorem.hardy_zeros_abs_unbounded_target :=
+  PrimeNumberTheorem.hardy_zeros_abs_unbounded_of_integral_asymptotic_one_two
+    h1 h2
+
+/-- Public bridge from the first two Hardy integral asymptotics to arbitrarily
+large positive-height critical-line zeros. -/
+theorem hardy_zeros_unbounded_of_integral_asymptotic_one_two
+    (h1 : HardyTheorem.integral_asymptotic_target 1)
+    (h2 : HardyTheorem.integral_asymptotic_target 2) :
+    HardyTheorem.hardy_zeros_unbounded_target :=
+  PrimeNumberTheorem.hardy_zeros_unbounded_of_integral_asymptotic_one_two
+    h1 h2
+
 /-- Public bridge from Hardy's absolute-height unbounded target to infinitely
 many critical-line zeros. -/
 theorem infinitely_many_zeros_on_critical_line_of_hardy_abs_unbounded
@@ -273,6 +320,13 @@ theorem hardy_zeros_abs_unbounded_of_hardy_littlewood_lower_bound
     HardyTheorem.hardy_zeros_abs_unbounded_target :=
   PrimeNumberTheorem.hardy_zeros_abs_unbounded_of_hardy_littlewood_lower_bound h
 
+/-- Public bridge from Hardy--Littlewood's linear lower-bound target to
+Hardy's infinite-zero target. -/
+theorem hardy_theorem_target_of_hardy_littlewood_lower_bound
+    (h : HardyTheorem.hardy_littlewood_lower_bound_target) :
+    HardyTheorem.hardy_theorem_target :=
+  PrimeNumberTheorem.hardy_theorem_target_of_hardy_littlewood_lower_bound h
+
 /-- Public bridge from Selberg's positive-proportion target to arbitrarily
 large positive-height critical-line zeros. -/
 theorem hardy_zeros_unbounded_of_selberg_zero_proportion
@@ -286,6 +340,34 @@ theorem hardy_zeros_abs_unbounded_of_selberg_zero_proportion
     (h : HardyTheorem.selberg_zero_proportion_target) :
     HardyTheorem.hardy_zeros_abs_unbounded_target :=
   PrimeNumberTheorem.hardy_zeros_abs_unbounded_of_selberg_zero_proportion h
+
+/-- Public bridge from Selberg's positive-proportion target to Hardy's
+infinite-zero target. -/
+theorem hardy_theorem_target_of_selberg_zero_proportion
+    (h : HardyTheorem.selberg_zero_proportion_target) :
+    HardyTheorem.hardy_theorem_target :=
+  PrimeNumberTheorem.hardy_theorem_target_of_selberg_zero_proportion h
+
+/-- Public bridge from Conrey's positive-proportion target to Hardy's
+infinite-zero target. -/
+theorem hardy_theorem_target_of_conrey_40_percent_target
+    (h : KnownResults.conrey_40_percent_zeros_on_critical_line_target) :
+    HardyTheorem.hardy_theorem_target :=
+  PrimeNumberTheorem.hardy_theorem_target_of_conrey_40_percent_target h
+
+/-- Public bridge from Conrey's positive-proportion target to arbitrarily
+large absolute-height critical-line zeros. -/
+theorem hardy_zeros_abs_unbounded_of_conrey_40_percent_target
+    (h : KnownResults.conrey_40_percent_zeros_on_critical_line_target) :
+    HardyTheorem.hardy_zeros_abs_unbounded_target :=
+  PrimeNumberTheorem.hardy_zeros_abs_unbounded_of_conrey_40_percent_target h
+
+/-- Public bridge from Conrey's positive-proportion target to arbitrarily
+large positive-height critical-line zeros. -/
+theorem hardy_zeros_unbounded_of_conrey_40_percent_target
+    (h : KnownResults.conrey_40_percent_zeros_on_critical_line_target) :
+    HardyTheorem.hardy_zeros_unbounded_target :=
+  PrimeNumberTheorem.hardy_zeros_unbounded_of_conrey_40_percent_target h
 
 /-- Public entry point for the norm-error formulation of the corrected
 height-truncated von Mangoldt explicit-formula target. -/
