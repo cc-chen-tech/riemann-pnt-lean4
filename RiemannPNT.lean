@@ -84,6 +84,21 @@ theorem rh_error_bound_of_psi_error
     PrimeNumberTheorem.RH_ErrorBound :=
   PrimeNumberTheorem.RH_ErrorBound_of_RH_PsiErrorBound hψ
 
+/-- Public bound showing that the jump term between `ψ` and the midpoint
+convention `ψ₀` is negligible at the RH error scale. -/
+theorem jumpVonMangoldt_isBigO_rh_scale :
+    (fun x : ℝ => PrimeNumberTheorem.jumpVonMangoldt x)
+      =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2) :=
+  PrimeNumberTheorem.jumpVonMangoldt_isBigO_rh_scale
+
+/-- Public equivalence between the RH-scale error target for `ψ` and the
+corresponding midpoint-convention `ψ₀` target. -/
+theorem rh_psi_error_bound_iff_chebyshevPsi0_sub_id_isBigO :
+    PrimeNumberTheorem.RH_PsiErrorBound ↔
+      (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi0 x - x)
+        =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2) :=
+  PrimeNumberTheorem.RH_PsiErrorBound_iff_chebyshevPsi0_sub_id_isBigO
+
 /-- Public conditional partial-summation bridge from the `θ` RH-scale target
 to the prime-counting `Li` RH-scale target. -/
 theorem rh_primeCountingLiErrorBound_of_theta_error_and_integral_error

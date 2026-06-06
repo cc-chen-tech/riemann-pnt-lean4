@@ -1013,6 +1013,86 @@ def RH_ThetaErrorBound : Prop :=
   (fun x : ℝ => Chebyshev.theta x - x)
     =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2)
 
+/-- The jump term separating the right-continuous `ψ` from the midpoint
+convention `ψ₀` is negligible at the RH error scale. -/
+lemma jumpVonMangoldt_isBigO_rh_scale :
+    (fun x : ℝ => jumpVonMangoldt x)
+      =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2) := by
+  refine Asymptotics.IsBigO.of_bound 1 ?_
+  filter_upwards [eventually_ge_atTop (Real.exp 1)] with x hx
+  have hxpos : 0 < x := lt_of_lt_of_le (Real.exp_pos 1) hx
+  have hx1 : 1 ≤ x := by
+    have h_exp_one : (1 : ℝ) ≤ Real.exp 1 := by
+      rw [Real.one_le_exp_iff]
+      norm_num
+    exact le_trans h_exp_one hx
+  have hlog_ge_one : 1 ≤ Real.log x :=
+    (Real.le_log_iff_exp_le hxpos).mpr hx
+  have hlog_nonneg : 0 ≤ Real.log x := by linarith
+  have hlog_le_sq : Real.log x ≤ (Real.log x)^2 := by nlinarith
+  have hsqrt_ge_one : 1 ≤ Real.sqrt x := by
+    apply Real.le_sqrt_of_sq_le
+    nlinarith
+  have htarget_nonneg : 0 ≤ Real.sqrt x * (Real.log x)^2 :=
+    mul_nonneg (Real.sqrt_nonneg x) (sq_nonneg _)
+  have hjump_nonneg : 0 ≤ jumpVonMangoldt x := by
+    classical
+    rw [jumpVonMangoldt]
+    split_ifs with h
+    · rw [vonMangoldt_eq_mathlib]
+      exact ArithmeticFunction.vonMangoldt_nonneg
+    · norm_num
+  have hjump_le_log : jumpVonMangoldt x ≤ Real.log x := by
+    classical
+    rw [jumpVonMangoldt]
+    split_ifs with h
+    · have hchoose := Classical.choose_spec h
+      rw [vonMangoldt_eq_mathlib]
+      calc
+        ArithmeticFunction.vonMangoldt (Classical.choose h) ≤
+            Real.log ((Classical.choose h : ℕ) : ℝ) :=
+          ArithmeticFunction.vonMangoldt_le_log
+        _ = Real.log x := by rw [← hchoose]
+    · exact hlog_nonneg
+  have hlog_le_scale :
+      Real.log x ≤ Real.sqrt x * (Real.log x)^2 := by
+    nlinarith [hlog_le_sq, hsqrt_ge_one, sq_nonneg (Real.log x)]
+  rw [Real.norm_eq_abs, Real.norm_eq_abs, abs_of_nonneg htarget_nonneg, one_mul]
+  exact le_trans (by simpa [abs_of_nonneg hjump_nonneg] using hjump_le_log) hlog_le_scale
+
+/-- The midpoint explicit-formula convention `ψ₀` has the same RH-scale error
+target as the right-continuous Chebyshev `ψ`. -/
+lemma RH_PsiErrorBound_iff_chebyshevPsi0_sub_id_isBigO :
+    RH_PsiErrorBound ↔
+      (fun x : ℝ => chebyshevPsi0 x - x)
+        =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2) := by
+  have hjump_half :
+      (fun x : ℝ => jumpVonMangoldt x / 2)
+        =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2) := by
+    simpa [div_eq_mul_inv, mul_comm] using
+      jumpVonMangoldt_isBigO_rh_scale.const_mul_left (1 / 2 : ℝ)
+  constructor
+  · intro hψ
+    rw [RH_PsiErrorBound] at hψ
+    have hsub := hψ.sub hjump_half
+    have heq :
+        (fun x : ℝ => chebyshevPsi x - x - jumpVonMangoldt x / 2) =
+          fun x : ℝ => chebyshevPsi0 x - x := by
+      funext x
+      simp [chebyshevPsi0]
+      ring
+    simpa [heq] using hsub
+  · intro hψ0
+    rw [RH_PsiErrorBound]
+    have hadd := hψ0.add hjump_half
+    have heq :
+        (fun x : ℝ => chebyshevPsi0 x - x + jumpVonMangoldt x / 2) =
+          fun x : ℝ => chebyshevPsi x - x := by
+      funext x
+      simp [chebyshevPsi0]
+      ring
+    simpa [heq] using hadd
+
 /-- The standard bound `ψ(x)-θ(x)=O(sqrt x log x)` is small enough for the
 RH-scale `sqrt x log^2 x` error term. -/
 lemma psi_sub_theta_isBigO_rh_scale :
