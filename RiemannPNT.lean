@@ -1006,6 +1006,68 @@ theorem hardy_theorem_target_iff_unbounded :
       HardyTheorem.hardy_zeros_unbounded_target :=
   PrimeNumberTheorem.hardy_theorem_target_iff_unbounded
 
+/-- Public bounded-strip version of the equivalence between Hardy's infinite
+zero target and absolute-height unbounded zeros. -/
+theorem hardy_theorem_target_iff_abs_unbounded_of_bounded_strips
+    (hstrip : ∀ B : ℝ,
+      {t : ℝ | |t| ≤ B ∧
+        riemannZeta (0.5 + Complex.I * t) = 0}.Finite) :
+    HardyTheorem.hardy_theorem_target ↔
+      HardyTheorem.hardy_zeros_abs_unbounded_target :=
+  HardyTheorem.hardy_theorem_target_iff_abs_unbounded_of_bounded_strips hstrip
+
+/-- Public bounded-strip version of the equivalence between Hardy's infinite
+zero target and positive-height unbounded zeros. -/
+theorem hardy_theorem_target_iff_unbounded_of_bounded_strips
+    (hstrip : ∀ B : ℝ,
+      {t : ℝ | |t| ≤ B ∧
+        riemannZeta (0.5 + Complex.I * t) = 0}.Finite) :
+    HardyTheorem.hardy_theorem_target ↔
+      HardyTheorem.hardy_zeros_unbounded_target :=
+  HardyTheorem.hardy_theorem_target_iff_unbounded_of_bounded_strips hstrip
+
+/-- Public bounded-strip Hardy-Z form of the unbounded-height equivalence. -/
+theorem hardy_theorem_target_iff_hardyZ_unbounded_of_bounded_strips
+    (hstrip : ∀ B : ℝ,
+      {t : ℝ | |t| ≤ B ∧
+        riemannZeta (0.5 + Complex.I * t) = 0}.Finite) :
+    HardyTheorem.hardy_theorem_target ↔
+      ∀ T : ℝ, ∃ t : ℝ, T ≤ t ∧ HardyTheorem.hardyZ t = 0 :=
+  HardyTheorem.hardy_theorem_target_iff_hardyZ_unbounded_of_bounded_strips hstrip
+
+/-- Public bounded-strip Hardy-Z form of the absolute-height unbounded
+equivalence. -/
+theorem hardy_theorem_target_iff_hardyZ_abs_unbounded_of_bounded_strips
+    (hstrip : ∀ B : ℝ,
+      {t : ℝ | |t| ≤ B ∧
+        riemannZeta (0.5 + Complex.I * t) = 0}.Finite) :
+    HardyTheorem.hardy_theorem_target ↔
+      ∀ T : ℝ, ∃ t : ℝ, T ≤ |t| ∧ HardyTheorem.hardyZ t = 0 :=
+  HardyTheorem.hardy_theorem_target_iff_hardyZ_abs_unbounded_of_bounded_strips
+    hstrip
+
+/-- Public bounded-strip bridge from Hardy's infinite-zero target to
+absolute-height unbounded zeros. -/
+theorem hardy_zeros_abs_unbounded_of_hardy_theorem_target_of_bounded_strips
+    (hstrip : ∀ B : ℝ,
+      {t : ℝ | |t| ≤ B ∧
+        riemannZeta (0.5 + Complex.I * t) = 0}.Finite)
+    (h : HardyTheorem.hardy_theorem_target) :
+    HardyTheorem.hardy_zeros_abs_unbounded_target :=
+  HardyTheorem.hardy_zeros_abs_unbounded_of_hardy_theorem_target_of_bounded_strips
+    hstrip h
+
+/-- Public bounded-strip bridge from Hardy's infinite-zero target to
+positive-height unbounded zeros. -/
+theorem hardy_zeros_unbounded_of_hardy_theorem_target_of_bounded_strips
+    (hstrip : ∀ B : ℝ,
+      {t : ℝ | |t| ≤ B ∧
+        riemannZeta (0.5 + Complex.I * t) = 0}.Finite)
+    (h : HardyTheorem.hardy_theorem_target) :
+    HardyTheorem.hardy_zeros_unbounded_target :=
+  HardyTheorem.hardy_zeros_unbounded_of_hardy_theorem_target_of_bounded_strips
+    hstrip h
+
 /-- Public bridge from Hardy's infinite-zero target to arbitrarily large
 absolute-height critical-line zeros. -/
 theorem hardy_zeros_abs_unbounded_of_hardy_theorem_target
