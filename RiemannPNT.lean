@@ -16,6 +16,24 @@ theorem pnt_forms_equiv :
       (PrimeNumberTheorem.PNTForm2 ↔ PrimeNumberTheorem.PNTForm3) :=
   PrimeNumberTheorem.pnt_forms_equivalent
 
+/-- Public equivalence between the prime-counting and logarithmic-integral PNT
+forms. -/
+theorem pnt_form1_iff_pnt_form2 :
+    PrimeNumberTheorem.PNTForm1 ↔ PrimeNumberTheorem.PNTForm2 :=
+  PrimeNumberTheorem.PNTForm1_iff_PNTForm2
+
+/-- Public equivalence between the logarithmic-integral and Chebyshev-ψ PNT
+forms. -/
+theorem pnt_form2_iff_pnt_form3 :
+    PrimeNumberTheorem.PNTForm2 ↔ PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForm2_iff_PNTForm3
+
+/-- Public transitive equivalence between the prime-counting and Chebyshev-ψ
+PNT forms. -/
+theorem pnt_form1_iff_pnt_form3 :
+    PrimeNumberTheorem.PNTForm1 ↔ PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForm1_iff_PNTForm3
+
 /-- Public error-term form of `PNTForm1`. -/
 theorem pnt_form1_iff_error_isLittleO_main :
     PrimeNumberTheorem.PNTForm1 ↔
@@ -24,12 +42,58 @@ theorem pnt_form1_iff_error_isLittleO_main :
         =o[atTop] (fun x : ℝ => x / Real.log x) :=
   PrimeNumberTheorem.PNTForm1_iff_error_isLittleO_main
 
+/-- Public error-term form of `PNTForm2`. -/
+theorem pnt_form2_iff_error_isLittleO_logIntegral :
+    PrimeNumberTheorem.PNTForm2 ↔
+      (fun x : ℝ =>
+        (PrimeNumberTheorem.primeCounting x : ℝ) -
+          PrimeNumberTheorem.logIntegral x)
+        =o[atTop] (fun x : ℝ => PrimeNumberTheorem.logIntegral x) :=
+  PrimeNumberTheorem.PNTForm2_iff_error_isLittleO_logIntegral
+
 /-- Public error-term form of `PNTForm3`. -/
 theorem pnt_form3_iff_error_isLittleO_id :
     PrimeNumberTheorem.PNTForm3 ↔
       (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi x - x)
         =o[atTop] (fun x : ℝ => x) :=
   PrimeNumberTheorem.PNTForm3_iff_error_isLittleO_id
+
+/-- Public bridge from the `Li` RH-scale prime-counting target to the
+logarithmic-integral PNT form. -/
+theorem pnt_form2_of_rh_primeCountingLiErrorBound
+    (h : PrimeNumberTheorem.RH_PrimeCountingLiErrorBound) :
+    PrimeNumberTheorem.PNTForm2 :=
+  PrimeNumberTheorem.PNTForm2_of_RH_PrimeCountingLiErrorBound h
+
+/-- Public bridge from the `Li` RH-scale prime-counting target to all three PNT
+forms. -/
+theorem pnt_forms_of_rh_primeCountingLiErrorBound
+    (h : PrimeNumberTheorem.RH_PrimeCountingLiErrorBound) :
+    PrimeNumberTheorem.PNTForm1 ∧ PrimeNumberTheorem.PNTForm2 ∧
+      PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForms_of_RH_PrimeCountingLiErrorBound h
+
+/-- Public bridge from the textbook pointwise RH-scale prime-counting target to
+all three PNT forms. -/
+theorem pnt_forms_of_rh_error_bound
+    (h : PrimeNumberTheorem.RH_ErrorBound) :
+    PrimeNumberTheorem.PNTForm1 ∧ PrimeNumberTheorem.PNTForm2 ∧
+      PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForms_of_RH_ErrorBound h
+
+/-- Public bridge from the `ψ` RH-scale target to all three PNT forms. -/
+theorem pnt_forms_of_rh_psi_error_bound
+    (h : PrimeNumberTheorem.RH_PsiErrorBound) :
+    PrimeNumberTheorem.PNTForm1 ∧ PrimeNumberTheorem.PNTForm2 ∧
+      PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForms_of_RH_PsiErrorBound h
+
+/-- Public bridge from the `θ` RH-scale target to all three PNT forms. -/
+theorem pnt_forms_of_rh_theta_error_bound
+    (h : PrimeNumberTheorem.RH_ThetaErrorBound) :
+    PrimeNumberTheorem.PNTForm1 ∧ PrimeNumberTheorem.PNTForm2 ∧
+      PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForms_of_RH_ThetaErrorBound h
 
 /-- Public entry point for the equivalence between the pointwise and
 composable RH-scale prime-counting error targets. -/
