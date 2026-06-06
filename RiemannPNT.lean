@@ -2071,6 +2071,13 @@ theorem conrey_40_percent_zeros_on_critical_line_target_iff_selberg :
       HardyTheorem.selberg_zero_proportion_target :=
   KnownResults.conrey_40_percent_zeros_on_critical_line_target_iff_selberg
 
+/-- Public bridge from Selberg's positive-proportion target to the
+Conrey-style 40-percent target statement used in this project. -/
+theorem conrey_40_percent_zeros_on_critical_line_target_of_selberg
+    (h : HardyTheorem.selberg_zero_proportion_target) :
+    KnownResults.conrey_40_percent_zeros_on_critical_line_target :=
+  KnownResults.conrey_40_percent_zeros_on_critical_line_target_of_selberg h
+
 /-- Public bridge from the Conrey-style target to Selberg's positive-proportion
 target. -/
 theorem selberg_zero_proportion_target_of_conrey_target
@@ -2084,6 +2091,15 @@ theorem hardy_littlewood_lower_bound_target_of_conrey_target
     (h : KnownResults.conrey_40_percent_zeros_on_critical_line_target) :
     HardyTheorem.hardy_littlewood_lower_bound_target :=
   KnownResults.hardy_littlewood_lower_bound_target_of_conrey_target h
+
+/-- Public bounded-strip bridge from the Conrey-style target to Hardy's
+one-sided unbounded-height target. -/
+theorem hardy_zeros_unbounded_of_conrey_target_of_bounded_strips
+    (hstrip : ∀ B : ℝ,
+      {t : ℝ | |t| ≤ B ∧ riemannZeta (0.5 + Complex.I * t) = 0}.Finite)
+    (h : KnownResults.conrey_40_percent_zeros_on_critical_line_target) :
+    HardyTheorem.hardy_zeros_unbounded_target :=
+  KnownResults.hardy_zeros_unbounded_of_conrey_target_of_bounded_strips hstrip h
 
 /-- Public extraction of an interval zero from a positive critical-line zero
 count. -/
