@@ -911,6 +911,43 @@ theorem explicit_formula_von_mangoldt_iff_re_im_abs_error_tendsto_zero
         atTop (𝓝 0) :=
   PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_re_im_abs_error_tendsto_zero
 
+/-- Public exact bridge: if all nontrivial zeros are bounded in height and one
+stable truncation equals `ψ₀`, the corrected explicit formula target closes. -/
+theorem explicit_formula_von_mangoldt_of_global_height_bound_exact
+    {x B : ℝ} {hx : x ≥ 2}
+    (hbound : ∀ ρ : ℂ, _root_.RiemannHypothesis.IsNontrivialZero ρ →
+      |ρ.im| ≤ B)
+    (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
+      (PrimeNumberTheorem.chebyshevPsi0 x : ℂ)) :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_global_height_bound_exact
+    hbound hB
+
+/-- Public exact bridge: under a global zero-height bound, the corrected
+explicit formula target is equivalent to equality at the stable truncation. -/
+theorem explicit_formula_von_mangoldt_iff_global_height_bound_exact
+    {x B : ℝ} {hx : x ≥ 2}
+    (hbound : ∀ ρ : ℂ, _root_.RiemannHypothesis.IsNontrivialZero ρ →
+      |ρ.im| ≤ B) :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx ↔
+      PrimeNumberTheorem.explicitFormulaApprox x B =
+        (PrimeNumberTheorem.chebyshevPsi0 x : ℂ) :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_global_height_bound_exact
+    hbound
+
+/-- Public reverse exact bridge: if the corrected explicit formula target holds
+and all nontrivial zeros are globally height-bounded, the stable truncation
+equals `ψ₀`. -/
+theorem explicitFormulaApprox_eq_chebyshevPsi0_of_global_height_bound
+    {x B : ℝ} {hx : x ≥ 2}
+    (hbound : ∀ ρ : ℂ, _root_.RiemannHypothesis.IsNontrivialZero ρ →
+      |ρ.im| ≤ B)
+    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt x hx) :
+    PrimeNumberTheorem.explicitFormulaApprox x B =
+      (PrimeNumberTheorem.chebyshevPsi0 x : ℂ) :=
+  PrimeNumberTheorem.explicitFormulaApprox_eq_chebyshevPsi0_of_global_height_bound
+    hbound h
+
 /-- Public bridge: any eventual norm error bound by a function tending to zero
 closes the corrected explicit-formula target. -/
 theorem explicit_formula_von_mangoldt_of_eventually_norm_le
