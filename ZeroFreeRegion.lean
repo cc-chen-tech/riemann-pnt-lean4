@@ -30,7 +30,7 @@ checkout.
 
 - `classical_zero_free_region` — quantitative σ ≥ 1 - c/log|t|
   (requires zeta-specific growth/log-derivative estimates built from tools
-  such as Hadamard factorization or Borel-Carathéodory)
+  such as Hadamard factorization or Mathlib's Borel-Carathéodory theorem)
 - `vinogradov_korobov_zero_free_region` — requires exponential sum estimates
 
 ## Dependencies
@@ -676,6 +676,31 @@ lemma log_log_abs_pos_of_three_le {t : ℝ} (ht : 3 ≤ |t|) :
 
 lemma re_im_decomp (s : ℂ) : ((s.re : ℂ) + I * s.im) = s := by
   apply Complex.ext <;> simp
+
+/-- Local namespace entry point for Mathlib's Borel-Carathéodory theorem in the
+vanishing-at-zero form. This is one of the complex-analytic tools used in
+standard proofs of quantitative zero-free regions; the remaining gap is the
+zeta-specific growth/log-derivative input needed to apply it to `riemannZeta`. -/
+lemma borelCaratheodory_zero
+    {f : ℂ → ℂ} {M R : ℝ} {z : ℂ}
+    (hM : 0 < M) (hf : DifferentiableOn ℂ f (Metric.ball 0 R))
+    (hf₁ : Set.MapsTo f (Metric.ball 0 R) {w | w.re ≤ M})
+    (hR : 0 < R) (hz : z ∈ Metric.ball 0 R)
+    (hf₂ : f 0 = 0) :
+    ‖f z‖ ≤ 2 * M * ‖z‖ / (R - ‖z‖) :=
+  Complex.borelCaratheodory_zero hM hf hf₁ hR hz hf₂
+
+/-- Local namespace entry point for Mathlib's general Borel-Carathéodory
+theorem. -/
+lemma borelCaratheodory
+    {f : ℂ → ℂ} {M R : ℝ} {z : ℂ}
+    (hM : 0 < M) (hf : DifferentiableOn ℂ f (Metric.ball 0 R))
+    (hf₁ : Set.MapsTo f (Metric.ball 0 R) {w | w.re ≤ M})
+    (hR : 0 < R) (hz : z ∈ Metric.ball 0 R) :
+    ‖f z‖ ≤
+      2 * M * ‖z‖ / (R - ‖z‖) +
+        ‖f 0‖ * (R + ‖z‖) / (R - ‖z‖) :=
+  Complex.borelCaratheodory hM hf hf₁ hR hz
 
 lemma compact_log_width_le_of_two_le {c d t : ℝ}
     (hc : c ≤ d * Real.log 2) (hd : 0 ≤ d) (ht : 2 ≤ |t|) :
