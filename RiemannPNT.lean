@@ -87,6 +87,27 @@ theorem pnt_form1_iff_pnt_form3 :
     PrimeNumberTheorem.PNTForm1 ↔ PrimeNumberTheorem.PNTForm3 :=
   PrimeNumberTheorem.PNTForm1_iff_PNTForm3
 
+/-- Public equivalence between the Chebyshev-ψ PNT form and the Mathlib
+Chebyshev-θ asymptotic. -/
+theorem pnt_form3_iff_chebyshevTheta_asymptotic :
+    PrimeNumberTheorem.PNTForm3 ↔
+      Tendsto (fun x : ℝ => Chebyshev.theta x / x) atTop (𝓝 1) :=
+  PrimeNumberTheorem.PNTForm3_iff_chebyshevTheta_asymptotic
+
+/-- Public equivalence between the prime-counting PNT form and the Mathlib
+Chebyshev-θ asymptotic. -/
+theorem pnt_form1_iff_chebyshevTheta_asymptotic :
+    PrimeNumberTheorem.PNTForm1 ↔
+      Tendsto (fun x : ℝ => Chebyshev.theta x / x) atTop (𝓝 1) :=
+  PrimeNumberTheorem.PNTForm1_iff_chebyshevTheta_asymptotic
+
+/-- Public equivalence between the logarithmic-integral PNT form and the
+Mathlib Chebyshev-θ asymptotic. -/
+theorem pnt_form2_iff_chebyshevTheta_asymptotic :
+    PrimeNumberTheorem.PNTForm2 ↔
+      Tendsto (fun x : ℝ => Chebyshev.theta x / x) atTop (𝓝 1) :=
+  PrimeNumberTheorem.PNTForm2_iff_chebyshevTheta_asymptotic
+
 /-- Public error-term form of `PNTForm1`. -/
 theorem pnt_form1_iff_error_isLittleO_main :
     PrimeNumberTheorem.PNTForm1 ↔

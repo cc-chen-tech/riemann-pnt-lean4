@@ -2122,6 +2122,67 @@ lemma sqrt_mul_log_sq_isLittleO_id :
   filter_upwards [eventually_gt_atTop (0 : ℝ)] with x hx hzero
   exact (hx.ne' hzero).elim
 
+/-- The Chebyshev `ψ` and `θ` PNT-normalized forms differ by `o(1)`. -/
+lemma chebyshevPsi_sub_theta_div_id_tendsto_zero :
+    Tendsto (fun x : ℝ =>
+      (chebyshevPsi x - Chebyshev.theta x) / x) atTop (𝓝 0) :=
+  (psi_sub_theta_isBigO_rh_scale.trans_isLittleO
+    sqrt_mul_log_sq_isLittleO_id).tendsto_div_nhds_zero
+
+/-- The Chebyshev-ψ PNT form is equivalent to the Mathlib Chebyshev-θ
+asymptotic.  This exposes the comparison used internally in the equivalence of
+the project PNT forms. -/
+lemma PNTForm3_iff_chebyshevTheta_asymptotic :
+    PNTForm3 ↔
+      Tendsto (fun x : ℝ => Chebyshev.theta x / x) atTop (𝓝 1) := by
+  constructor
+  · intro hψ
+    have hdiff := chebyshevPsi_sub_theta_div_id_tendsto_zero
+    have hsub :
+        Tendsto
+          (fun x : ℝ =>
+            chebyshevPsi x / x -
+              (chebyshevPsi x - Chebyshev.theta x) / x)
+          atTop (𝓝 1) := by
+      simpa using hψ.sub hdiff
+    have heq :
+        (fun x : ℝ =>
+            chebyshevPsi x / x -
+              (chebyshevPsi x - Chebyshev.theta x) / x)
+          =ᶠ[atTop] fun x : ℝ => Chebyshev.theta x / x := by
+      filter_upwards [eventually_gt_atTop (0 : ℝ)] with x hx
+      field_simp [hx.ne']
+      ring
+    exact hsub.congr' heq
+  · intro hθ
+    have hdiff := chebyshevPsi_sub_theta_div_id_tendsto_zero
+    have hadd :
+        Tendsto
+          (fun x : ℝ =>
+            Chebyshev.theta x / x +
+              (chebyshevPsi x - Chebyshev.theta x) / x)
+          atTop (𝓝 1) := by
+      simpa using hθ.add hdiff
+    have heq :
+        (fun x : ℝ =>
+            Chebyshev.theta x / x +
+              (chebyshevPsi x - Chebyshev.theta x) / x)
+          =ᶠ[atTop] fun x : ℝ => chebyshevPsi x / x := by
+      filter_upwards [eventually_gt_atTop (0 : ℝ)] with x hx
+      field_simp [hx.ne']
+      ring
+    simpa [PNTForm3] using hadd.congr' heq
+
+lemma PNTForm1_iff_chebyshevTheta_asymptotic :
+    PNTForm1 ↔
+      Tendsto (fun x : ℝ => Chebyshev.theta x / x) atTop (𝓝 1) :=
+  Iff.trans PNTForm1_iff_PNTForm3 PNTForm3_iff_chebyshevTheta_asymptotic
+
+lemma PNTForm2_iff_chebyshevTheta_asymptotic :
+    PNTForm2 ↔
+      Tendsto (fun x : ℝ => Chebyshev.theta x / x) atTop (𝓝 1) :=
+  Iff.trans PNTForm2_iff_PNTForm3 PNTForm3_iff_chebyshevTheta_asymptotic
+
 /-- A Mathlib-level Chebyshev-`θ` PNT asymptotic closes all three project PNT
 forms.  This isolates the exact remaining upstream-style statement needed for
 `PNTForm1`, `PNTForm2`, and `PNTForm3`; the `ψ - θ` gap is already negligible
