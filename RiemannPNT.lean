@@ -1499,6 +1499,57 @@ theorem borelCaratheodory
         ‖f 0‖ * (R + ‖z‖) / (R - ‖z‖) :=
   ZeroFreeRegion.borelCaratheodory hM hf hf₁ hR hz
 
+section JensenWrapper
+
+open MeromorphicAt MeromorphicOn Metric Real
+
+/-- Public Jensen formula routed through the zero-free-region namespace. -/
+theorem jensen_circleAverage_log_norm
+    {c : ℂ} {R : ℝ} {f : ℂ → ℂ}
+    (hR : R ≠ 0) (hf : MeromorphicOn f (closedBall c |R|)) :
+    circleAverage (Real.log ‖f ·‖) c R
+      = ∑ᶠ u, divisor f (closedBall c |R|) u * Real.log (R * ‖c - u‖⁻¹)
+        + divisor f (closedBall c |R|) c * Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt f c‖ :=
+  ZeroFreeRegion.jensen_circleAverage_log_norm hR hf
+
+end JensenWrapper
+
+/-- Public Phragmén-Lindelöf vertical-strip principle routed through the
+zero-free-region namespace. -/
+theorem phragmenLindelof_vertical_strip
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+    {f : ℂ → E} {a b C : ℝ} {z : ℂ}
+    (hfd : DiffContOnCl ℂ f (Complex.re ⁻¹' Set.Ioo a b))
+    (hB : ∃ c < Real.pi / (b - a), ∃ B,
+      f =O[Filter.comap (_root_.abs ∘ Complex.im) Filter.atTop ⊓
+          𝓟 (Complex.re ⁻¹' Set.Ioo a b)]
+        fun z => Real.exp (B * Real.exp (c * |z.im|)))
+    (hle_a : ∀ z : ℂ, Complex.re z = a → ‖f z‖ ≤ C)
+    (hle_b : ∀ z : ℂ, Complex.re z = b → ‖f z‖ ≤ C)
+    (hza : a ≤ Complex.re z) (hzb : Complex.re z ≤ b) :
+    ‖f z‖ ≤ C :=
+  ZeroFreeRegion.phragmenLindelof_vertical_strip
+    hfd hB hle_a hle_b hza hzb
+
+/-- Public Hadamard three-lines theorem routed through the zero-free-region
+namespace. -/
+theorem hadamardThreeLines_norm_le_interp
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+    {f : ℂ → E} {z : ℂ} {A B l u : ℝ}
+    (hul : l < u)
+    (hz : z ∈ Complex.HadamardThreeLines.verticalClosedStrip l u)
+    (hd : DiffContOnCl ℂ f (Complex.HadamardThreeLines.verticalStrip l u))
+    (hB : BddAbove
+      ((norm ∘ f) '' Complex.HadamardThreeLines.verticalClosedStrip l u))
+    (ha : ∀ z ∈ Complex.re ⁻¹' {l}, ‖f z‖ ≤ A)
+    (hb : ∀ z ∈ Complex.re ⁻¹' {u}, ‖f z‖ ≤ B) :
+    ‖f z‖ ≤
+      A ^ (1 - (z.re - l) / (u - l)) *
+        B ^ ((z.re - l) / (u - l)) :=
+  ZeroFreeRegion.hadamardThreeLines_norm_le_interp
+    hul hz hd hB ha hb
+
 /-- Public 3-4-1 contradiction criterion for high-height zero-free regions
 from zeta logarithmic-derivative bounds. -/
 theorem three_four_one_zero_free_high_height_of_log_deriv_bounds

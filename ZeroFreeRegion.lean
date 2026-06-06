@@ -30,7 +30,8 @@ checkout.
 
 - `classical_zero_free_region` — quantitative σ ≥ 1 - c/log|t|
   (requires zeta-specific growth/log-derivative estimates built from tools
-  such as Hadamard factorization or Mathlib's Borel-Carathéodory theorem)
+  such as Mathlib's Borel-Carathéodory, Jensen, Phragmén-Lindelöf, and
+  Hadamard three-lines theorems)
 - `vinogradov_korobov_zero_free_region` — requires exponential sum estimates
 
 ## Dependencies
@@ -701,6 +702,58 @@ lemma borelCaratheodory
       2 * M * ‖z‖ / (R - ‖z‖) +
         ‖f 0‖ * (R + ‖z‖) / (R - ‖z‖) :=
   Complex.borelCaratheodory hM hf hf₁ hR hz
+
+section JensenWrapper
+
+open MeromorphicAt MeromorphicOn Metric Real
+
+/-- Local namespace entry point for Mathlib's Jensen formula.  The theorem is
+available in Mathlib; applying it to `riemannZeta` still requires the
+zeta-specific meromorphic setup and growth estimates. -/
+lemma jensen_circleAverage_log_norm
+    {c : ℂ} {R : ℝ} {f : ℂ → ℂ}
+    (hR : R ≠ 0) (hf : MeromorphicOn f (closedBall c |R|)) :
+    circleAverage (Real.log ‖f ·‖) c R
+      = ∑ᶠ u, divisor f (closedBall c |R|) u * Real.log (R * ‖c - u‖⁻¹)
+        + divisor f (closedBall c |R|) c * Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt f c‖ :=
+  MeromorphicOn.circleAverage_log_norm hR hf
+
+end JensenWrapper
+
+/-- Local namespace entry point for Mathlib's Phragmén-Lindelöf principle in a
+vertical strip. -/
+lemma phragmenLindelof_vertical_strip
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+    {f : ℂ → E} {a b C : ℝ} {z : ℂ}
+    (hfd : DiffContOnCl ℂ f (Complex.re ⁻¹' Set.Ioo a b))
+    (hB : ∃ c < Real.pi / (b - a), ∃ B,
+      f =O[Filter.comap (_root_.abs ∘ Complex.im) Filter.atTop ⊓
+          𝓟 (Complex.re ⁻¹' Set.Ioo a b)]
+        fun z => Real.exp (B * Real.exp (c * |z.im|)))
+    (hle_a : ∀ z : ℂ, Complex.re z = a → ‖f z‖ ≤ C)
+    (hle_b : ∀ z : ℂ, Complex.re z = b → ‖f z‖ ≤ C)
+    (hza : a ≤ Complex.re z) (hzb : Complex.re z ≤ b) :
+    ‖f z‖ ≤ C :=
+  PhragmenLindelof.vertical_strip hfd hB hle_a hle_b hza hzb
+
+/-- Local namespace entry point for Mathlib's Hadamard three-lines theorem in
+the bounded-boundary form. -/
+lemma hadamardThreeLines_norm_le_interp
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+    {f : ℂ → E} {z : ℂ} {A B l u : ℝ}
+    (hul : l < u)
+    (hz : z ∈ Complex.HadamardThreeLines.verticalClosedStrip l u)
+    (hd : DiffContOnCl ℂ f (Complex.HadamardThreeLines.verticalStrip l u))
+    (hB : BddAbove
+      ((norm ∘ f) '' Complex.HadamardThreeLines.verticalClosedStrip l u))
+    (ha : ∀ z ∈ Complex.re ⁻¹' {l}, ‖f z‖ ≤ A)
+    (hb : ∀ z ∈ Complex.re ⁻¹' {u}, ‖f z‖ ≤ B) :
+    ‖f z‖ ≤
+      A ^ (1 - (z.re - l) / (u - l)) *
+        B ^ ((z.re - l) / (u - l)) :=
+  Complex.HadamardThreeLines.norm_le_interp_of_mem_verticalClosedStrip'
+    hul hz hd hB ha hb
 
 /-- A source-level 3-4-1 contradiction criterion for high-height zero-free
 regions.
