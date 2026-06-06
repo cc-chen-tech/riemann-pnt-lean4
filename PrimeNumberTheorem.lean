@@ -1324,6 +1324,262 @@ lemma two_div_log_two_isBigO_sqrt_mul_log :
     abs_of_nonneg hscale_nonneg]
   exact hbound
 
+/-- Elementary tail integral bound used by RH-scale partial summation:
+`∫_A^x dt / sqrt(t) ≤ 2 sqrt(x)` for `0 < A ≤ x`. -/
+lemma integral_one_div_sqrt_le_two_sqrt {A x : ℝ}
+    (hA : 0 < A) (hAx : A ≤ x) :
+    ∫ t in A..x, 1 / Real.sqrt t ≤ 2 * Real.sqrt x := by
+  have h_eq :
+      (∫ t in A..x, 1 / Real.sqrt t) =
+        ∫ t in A..x, t ^ (-1 / 2 : ℝ) := by
+    apply intervalIntegral.integral_congr
+    intro t ht
+    have htpos : 0 < t := by
+      rw [Set.mem_uIcc] at ht
+      cases ht with
+      | inl h => exact lt_of_lt_of_le hA h.1
+      | inr h => exact lt_of_lt_of_le hA (le_trans hAx h.1)
+    calc
+      1 / Real.sqrt t = (t ^ (1 / 2 : ℝ))⁻¹ := by
+        rw [Real.sqrt_eq_rpow]
+        ring_nf
+      _ = t ^ (-(1 / 2 : ℝ)) := by
+        rw [Real.rpow_neg (le_of_lt htpos)]
+      _ = t ^ (-1 / 2 : ℝ) := by ring_nf
+  rw [h_eq, integral_rpow (Or.inl (by norm_num : (-1 : ℝ) < -1 / 2))]
+  norm_num
+  rw [Real.sqrt_eq_rpow x]
+  have hA_sqrt_nonneg : 0 ≤ A ^ (1 / 2 : ℝ) :=
+    Real.rpow_nonneg (le_of_lt hA) _
+  nlinarith
+
+/-- Interval integrability of the Abel integral error kernel on any interval
+starting at height at least `2`. -/
+lemma intervalIntegrable_theta_error_div_id_log_sq_of_le
+    {a b : ℝ} (ha : 2 ≤ a) (hab : a ≤ b) :
+    IntervalIntegrable
+      (fun t : ℝ => (Chebyshev.theta t - t) / (t * Real.log t ^ 2))
+      volume a b := by
+  let thetaTerm : ℝ → ℝ :=
+    fun t => Chebyshev.theta t / (t * Real.log t ^ 2)
+  let oneTerm : ℝ → ℝ := fun t => 1 / Real.log t ^ 2
+  let diffTerm : ℝ → ℝ := fun t => thetaTerm t - oneTerm t
+  have hb : 2 ≤ b := le_trans ha hab
+  have htheta_2b :
+      IntervalIntegrable thetaTerm volume 2 b := by
+    dsimp [thetaTerm]
+    exact (intervalIntegrable_iff_integrableOn_Icc_of_le hb).2
+      (Chebyshev.integrableOn_theta_div_id_mul_log_sq b)
+  have htheta_ab : IntervalIntegrable thetaTerm volume a b := by
+    refine htheta_2b.mono_set ?_
+    exact Set.uIcc_subset_uIcc
+      (by
+        rw [Set.mem_uIcc]
+        left
+        exact ⟨ha, hab⟩)
+      (by
+        rw [Set.mem_uIcc]
+        left
+        exact ⟨hb, le_rfl⟩)
+  have hone_ab : IntervalIntegrable oneTerm volume a b := by
+    dsimp [oneTerm]
+    exact Chebyshev.intervalIntegrable_one_div_log_sq (by linarith) (by linarith)
+  have hdiff : IntervalIntegrable diffTerm volume a b :=
+    htheta_ab.sub hone_ab
+  have heq :
+      Set.EqOn diffTerm
+        (fun t : ℝ => (Chebyshev.theta t - t) / (t * Real.log t ^ 2))
+        (Set.uIoc a b) := by
+    intro t ht
+    have htu : t ∈ Set.uIcc a b := Set.uIoc_subset_uIcc ht
+    have ht2 : 2 ≤ t := by
+      rw [Set.mem_uIcc] at htu
+      cases htu with
+      | inl h => exact le_trans ha h.1
+      | inr h => exact le_trans ha (le_trans hab h.1)
+    have ht_ne : t ≠ 0 := by linarith
+    have hlog_ne : Real.log t ≠ 0 :=
+      Real.log_ne_zero_of_pos_of_ne_one (by linarith) (by linarith)
+    dsimp [diffTerm, thetaTerm, oneTerm]
+    field_simp [ht_ne, hlog_ne]
+  exact (intervalIntegrable_congr heq).mp hdiff
+
+/-- Under the RH-scale `θ` error target, the Abel integral error in the
+partial-summation formula has the right `sqrt x log x` size. -/
+lemma theta_error_integral_isBigO_sqrt_mul_log
+    (hθ : RH_ThetaErrorBound) :
+    (fun x : ℝ =>
+      ∫ t in (2)..x,
+        (Chebyshev.theta t - t) / (t * Real.log t ^ 2))
+      =O[atTop] (fun x : ℝ => Real.sqrt x * Real.log x) := by
+  rw [RH_ThetaErrorBound] at hθ
+  rcases hθ.exists_pos with ⟨Cθ, hCθ_pos, hθO⟩
+  rcases eventually_atTop.mp hθO.bound with ⟨A0, hθ_bound⟩
+  let A : ℝ := max (max A0 (Real.exp 1)) 2
+  let K : ℝ → ℝ := fun t : ℝ =>
+    (Chebyshev.theta t - t) / (t * Real.log t ^ 2)
+  let I0 : ℝ := ∫ t in (2)..A, K t
+  let D : ℝ := Real.sqrt 2 * Real.log 2
+  let C : ℝ := |I0| / D + 2 * Cθ
+  have hA2 : 2 ≤ A := le_max_right (max A0 (Real.exp 1)) 2
+  have hA0 : A0 ≤ A := le_trans (le_max_left A0 (Real.exp 1))
+    (le_max_left (max A0 (Real.exp 1)) 2)
+  have hAexp : Real.exp 1 ≤ A := le_trans (le_max_right A0 (Real.exp 1))
+    (le_max_left (max A0 (Real.exp 1)) 2)
+  have hlog2_pos : 0 < Real.log 2 := Real.log_pos (by norm_num)
+  have hD_pos : 0 < D := by
+    exact mul_pos (Real.sqrt_pos.2 (by norm_num)) hlog2_pos
+  have hC_nonneg : 0 ≤ C := by
+    dsimp [C]
+    positivity
+  refine Asymptotics.IsBigO.of_bound C ?_
+  filter_upwards [eventually_ge_atTop A] with x hxA
+  have hx2 : 2 ≤ x := le_trans hA2 hxA
+  have hxpos : 0 < x := by linarith
+  have hx1 : 1 ≤ x := by linarith
+  have hlog_nonneg : 0 ≤ Real.log x := Real.log_nonneg hx1
+  have hscale_nonneg : 0 ≤ Real.sqrt x * Real.log x :=
+    mul_nonneg (Real.sqrt_nonneg x) hlog_nonneg
+  have hD_le_scale : D ≤ Real.sqrt x * Real.log x := by
+    have hsqrt_le : Real.sqrt 2 ≤ Real.sqrt x :=
+      Real.sqrt_le_sqrt hx2
+    have hlog_le : Real.log 2 ≤ Real.log x :=
+      Real.log_le_log (by norm_num) hx2
+    simpa [D] using
+      mul_le_mul hsqrt_le hlog_le (Real.log_nonneg (by norm_num))
+        (Real.sqrt_nonneg x)
+  have hK_2A : IntervalIntegrable K volume 2 A :=
+    intervalIntegrable_theta_error_div_id_log_sq_of_le
+      (a := 2) (b := A) (by norm_num) hA2
+  have hK_Ax : IntervalIntegrable K volume A x :=
+    intervalIntegrable_theta_error_div_id_log_sq_of_le hA2 hxA
+  have hsplit :
+      (∫ t in (2)..x, K t) =
+        (∫ t in (2)..A, K t) + ∫ t in A..x, K t := by
+    simpa [K] using
+      (intervalIntegral.integral_add_adjacent_intervals hK_2A hK_Ax).symm
+  have htail_abs :
+      |∫ t in A..x, K t| ≤ 2 * Cθ * Real.sqrt x := by
+    have habs :
+        |∫ t in A..x, K t| ≤ ∫ t in A..x, |K t| :=
+      intervalIntegral.abs_integral_le_integral_abs hxA
+    have h_absK : IntervalIntegrable (fun t : ℝ => |K t|) volume A x :=
+      hK_Ax.abs
+    have h_bound_fun :
+        IntervalIntegrable (fun t : ℝ => Cθ * (1 / Real.sqrt t)) volume A x := by
+      refine ContinuousOn.intervalIntegrable ?_
+      intro t ht
+      refine ContinuousAt.continuousWithinAt ?_
+      exact continuousAt_const.mul
+        (continuousAt_const.div (Real.continuous_sqrt.continuousAt)
+          (by
+            have htpos : 0 < t := by
+              rw [Set.mem_uIcc] at ht
+              cases ht with
+              | inl h => exact lt_of_lt_of_le (by linarith : 0 < A) h.1
+              | inr h => exact lt_of_lt_of_le (by linarith : 0 < A) (le_trans hxA h.1)
+            exact (Real.sqrt_pos.2 htpos).ne'))
+    have hmono :
+        (∫ t in A..x, |K t|) ≤
+          ∫ t in A..x, Cθ * (1 / Real.sqrt t) := by
+      refine intervalIntegral.integral_mono_on hxA h_absK h_bound_fun ?_
+      intro t ht
+      have htA : A ≤ t := ht.1
+      have ht2 : 2 ≤ t := le_trans hA2 htA
+      have htpos : 0 < t := by linarith
+      have ht1 : 1 ≤ t := by linarith
+      have hlog_pos : 0 < Real.log t := by
+        have hlog_ge : 1 ≤ Real.log t :=
+          (Real.le_log_iff_exp_le htpos).mpr (le_trans hAexp htA)
+        linarith
+      have hlog_nonneg_t : 0 ≤ Real.log t := hlog_pos.le
+      have hsqrt_abs : |Real.sqrt t| = Real.sqrt t :=
+        abs_of_nonneg (Real.sqrt_nonneg t)
+      have hlog_sq_abs : |(Real.log t)^2| = (Real.log t)^2 :=
+        abs_of_nonneg (sq_nonneg _)
+      have htarget_nonneg : 0 ≤ Real.sqrt t * (Real.log t)^2 :=
+        mul_nonneg (Real.sqrt_nonneg t) (sq_nonneg _)
+      have hθt := hθ_bound t (le_trans hA0 htA)
+      have hθt_abs :
+          |Chebyshev.theta t - t| ≤
+            Cθ * (Real.sqrt t * (Real.log t)^2) := by
+        simpa [Real.norm_eq_abs, abs_mul, hsqrt_abs, hlog_sq_abs,
+          abs_of_nonneg htarget_nonneg, mul_assoc] using hθt
+      have ht_ne : t ≠ 0 := by linarith
+      have hlog_ne : Real.log t ≠ 0 := hlog_pos.ne'
+      have hden_pos : 0 < t * Real.log t ^ 2 := by
+        exact mul_pos htpos (sq_pos_of_ne_zero hlog_ne)
+      calc
+        |K t|
+            = |Chebyshev.theta t - t| / (t * Real.log t ^ 2) := by
+              simp [K, abs_div, abs_of_pos hden_pos]
+        _ ≤ (Cθ * (Real.sqrt t * (Real.log t)^2)) /
+              (t * Real.log t ^ 2) :=
+              div_le_div_of_nonneg_right hθt_abs hden_pos.le
+        _ = Cθ * (1 / Real.sqrt t) := by
+              field_simp [ht_ne, hlog_ne, (Real.sqrt_pos.2 htpos).ne']
+              rw [Real.sq_sqrt htpos.le]
+    have htail_le :
+        |∫ t in A..x, K t| ≤
+          ∫ t in A..x, Cθ * (1 / Real.sqrt t) :=
+      le_trans habs hmono
+    have hconst_pull :
+        (∫ t in A..x, Cθ * (1 / Real.sqrt t)) =
+          Cθ * ∫ t in A..x, 1 / Real.sqrt t := by
+      rw [intervalIntegral.integral_const_mul]
+    have htail_bound :
+        (∫ t in A..x, Cθ * (1 / Real.sqrt t)) ≤
+          Cθ * (2 * Real.sqrt x) := by
+      rw [hconst_pull]
+      exact mul_le_mul_of_nonneg_left
+        (integral_one_div_sqrt_le_two_sqrt (by linarith : 0 < A) hxA)
+        hCθ_pos.le
+    have hrewrite : Cθ * (2 * Real.sqrt x) = 2 * Cθ * Real.sqrt x := by ring
+    exact le_trans htail_le (by simpa [hrewrite] using htail_bound)
+  have htail_scale :
+      |∫ t in A..x, K t| ≤ 2 * Cθ * (Real.sqrt x * Real.log x) := by
+    have hlog_ge_one : 1 ≤ Real.log x :=
+      (Real.le_log_iff_exp_le hxpos).mpr (le_trans hAexp hxA)
+    have hsqrt_nonneg : 0 ≤ Real.sqrt x := Real.sqrt_nonneg x
+    have htail_mono :
+        2 * Cθ * Real.sqrt x ≤
+          2 * Cθ * (Real.sqrt x * Real.log x) := by
+      have hcoef_nonneg : 0 ≤ 2 * Cθ :=
+        mul_nonneg (by norm_num) hCθ_pos.le
+      have hsqrt_le : Real.sqrt x ≤ Real.sqrt x * Real.log x := by
+        nlinarith
+      exact mul_le_mul_of_nonneg_left hsqrt_le hcoef_nonneg
+    exact le_trans htail_abs htail_mono
+  have hinitial_scale :
+      |I0| ≤ (|I0| / D) * (Real.sqrt x * Real.log x) := by
+    have hcoef_nonneg : 0 ≤ |I0| / D :=
+      div_nonneg (abs_nonneg _) hD_pos.le
+    have hmul :
+        (|I0| / D) * D ≤ (|I0| / D) * (Real.sqrt x * Real.log x) :=
+      mul_le_mul_of_nonneg_left hD_le_scale hcoef_nonneg
+    have hmul_eq : (|I0| / D) * D = |I0| := by
+      field_simp [ne_of_gt hD_pos]
+    linarith
+  have htotal :
+      |∫ t in (2)..x, K t| ≤ C * (Real.sqrt x * Real.log x) := by
+    calc
+      |∫ t in (2)..x, K t|
+          = |I0 + ∫ t in A..x, K t| := by
+            rw [hsplit]
+      _ ≤ |I0| + |∫ t in A..x, K t| := abs_add_le _ _
+      _ ≤ (|I0| / D) * (Real.sqrt x * Real.log x) +
+            2 * Cθ * (Real.sqrt x * Real.log x) :=
+            add_le_add hinitial_scale htail_scale
+      _ = C * (Real.sqrt x * Real.log x) := by
+            dsimp [C]
+            ring
+  have hsqrt_abs : |Real.sqrt x| = Real.sqrt x :=
+    abs_of_nonneg (Real.sqrt_nonneg x)
+  have hlog_abs : |Real.log x| = Real.log x :=
+    abs_of_nonneg hlog_nonneg
+  simpa [K, Real.norm_eq_abs, abs_mul, hsqrt_abs, hlog_abs,
+    abs_of_nonneg hscale_nonneg, mul_assoc] using htotal
+
 /-- Conditional partial-summation bridge from the `θ` RH-scale target to the
 prime-counting `Li` RH-scale target.
 
@@ -1357,6 +1613,20 @@ lemma RH_PrimeCountingLiErrorBound_of_RH_PsiErrorBound_of_integral_error
     RH_PrimeCountingLiErrorBound :=
   RH_PrimeCountingLiErrorBound_of_RH_ThetaErrorBound_of_integral_error
     (RH_ThetaErrorBound_of_RH_PsiErrorBound hψ) hintegral
+
+/-- Closed partial-summation bridge from the `θ` RH-scale target to the
+prime-counting `Li` RH-scale target. -/
+lemma RH_PrimeCountingLiErrorBound_of_RH_ThetaErrorBound
+    (hθ : RH_ThetaErrorBound) : RH_PrimeCountingLiErrorBound :=
+  RH_PrimeCountingLiErrorBound_of_RH_ThetaErrorBound_of_integral_error
+    hθ (theta_error_integral_isBigO_sqrt_mul_log hθ)
+
+/-- Closed partial-summation bridge from the `ψ` RH-scale target to the
+prime-counting `Li` RH-scale target. -/
+lemma RH_PrimeCountingLiErrorBound_of_RH_PsiErrorBound
+    (hψ : RH_PsiErrorBound) : RH_PrimeCountingLiErrorBound :=
+  RH_PrimeCountingLiErrorBound_of_RH_ThetaErrorBound
+    (RH_ThetaErrorBound_of_RH_PsiErrorBound hψ)
 
 /-- An eventual absolute-value estimate is enough to close the prime-counting
 `Li` Big-O target. -/
