@@ -938,6 +938,44 @@ lemma compact_patch_classical_zero_free_region
       exact (div_le_iff₀ hlog_pos).mpr hc_le_dlog
     linarith
 
+/-- Full classical zero-free-region closure from the 3-4-1 high-height
+logarithmic-derivative bounds.
+
+The deep analytic work is still isolated in the three logarithmic-derivative
+estimates and the real-variable margin.  This theorem performs the verified
+assembly step: first use the 3-4-1 contradiction to obtain the high-height
+strip, then patch the bounded-height range by compactness. -/
+lemma classical_zero_free_region_of_log_deriv_bounds
+    {T0 c : ℝ} {σOf realBound twoBound : ℝ → ℝ}
+    {zeroBound : ℝ → ℝ → ℝ}
+    (hT0 : 2 ≤ T0) (hc_pos : 0 < c)
+    (hσ_gt : ∀ t : ℝ, T0 ≤ |t| → 1 < σOf t)
+    (hσ_le : ∀ t : ℝ, T0 ≤ |t| → σOf t ≤ 2)
+    (hσ_sub_pos : ∀ β t : ℝ, T0 ≤ |t| → β < 1 →
+      β ≥ 1 - c / Real.log |t| → 0 < σOf t - β)
+    (hreal :
+      ∀ t : ℝ, T0 ≤ |t| → 1 < σOf t → σOf t ≤ 2 →
+        (-deriv riemannZeta (σOf t : ℂ) / riemannZeta (σOf t : ℂ)).re ≤
+          realBound t)
+    (hzero :
+      ∀ β t : ℝ, T0 ≤ |t| → 1 < σOf t → σOf t ≤ 2 → β < 1 →
+        β ≥ 1 - c / Real.log |t| → 0 < σOf t - β →
+        riemannZeta ((β : ℂ) + I * t) = 0 →
+        (-deriv riemannZeta ((σOf t : ℂ) + I * t) /
+          riemannZeta ((σOf t : ℂ) + I * t)).re ≤ zeroBound β t)
+    (htwo :
+      ∀ t : ℝ, T0 ≤ |t| → 1 < σOf t → σOf t ≤ 2 →
+        (-deriv riemannZeta ((σOf t : ℂ) + 2 * I * t) /
+          riemannZeta ((σOf t : ℂ) + 2 * I * t)).re ≤ twoBound t)
+    (hmargin :
+      ∀ β t : ℝ, T0 ≤ |t| → β < 1 →
+        β ≥ 1 - c / Real.log |t| →
+        3 * realBound t + 4 * zeroBound β t + twoBound t < 0) :
+    classical_zero_free_region :=
+  compact_patch_classical_zero_free_region T0 hT0
+    (three_four_one_zero_free_high_height_of_log_deriv_bounds
+      hT0 hc_pos hσ_gt hσ_le hσ_sub_pos hreal hzero htwo hmargin)
+
 /-- General compact patching lemma for any high-height zero-free width.
 
 If a deep argument proves zero-freeness above a height `T0` with some width

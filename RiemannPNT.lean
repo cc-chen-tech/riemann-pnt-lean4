@@ -1591,6 +1591,38 @@ theorem three_four_one_zero_free_high_height_of_log_deriv_bounds
   ZeroFreeRegion.three_four_one_zero_free_high_height_of_log_deriv_bounds
     hT0 hc_pos hσ_gt hσ_le hσ_sub_pos hreal hzero htwo hmargin
 
+/-- Public closure from the 3-4-1 logarithmic-derivative bounds to the full
+classical zero-free-region target, using the compact bounded-height patch. -/
+theorem classical_zero_free_region_of_log_deriv_bounds
+    {T0 c : ℝ} {σOf realBound twoBound : ℝ → ℝ}
+    {zeroBound : ℝ → ℝ → ℝ}
+    (hT0 : 2 ≤ T0) (hc_pos : 0 < c)
+    (hσ_gt : ∀ t : ℝ, T0 ≤ |t| → 1 < σOf t)
+    (hσ_le : ∀ t : ℝ, T0 ≤ |t| → σOf t ≤ 2)
+    (hσ_sub_pos : ∀ β t : ℝ, T0 ≤ |t| → β < 1 →
+      β ≥ 1 - c / Real.log |t| → 0 < σOf t - β)
+    (hreal :
+      ∀ t : ℝ, T0 ≤ |t| → 1 < σOf t → σOf t ≤ 2 →
+        (-deriv riemannZeta (σOf t : ℂ) / riemannZeta (σOf t : ℂ)).re ≤
+          realBound t)
+    (hzero :
+      ∀ β t : ℝ, T0 ≤ |t| → 1 < σOf t → σOf t ≤ 2 → β < 1 →
+        β ≥ 1 - c / Real.log |t| → 0 < σOf t - β →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 →
+        (-deriv riemannZeta ((σOf t : ℂ) + Complex.I * t) /
+          riemannZeta ((σOf t : ℂ) + Complex.I * t)).re ≤ zeroBound β t)
+    (htwo :
+      ∀ t : ℝ, T0 ≤ |t| → 1 < σOf t → σOf t ≤ 2 →
+        (-deriv riemannZeta ((σOf t : ℂ) + 2 * Complex.I * t) /
+          riemannZeta ((σOf t : ℂ) + 2 * Complex.I * t)).re ≤ twoBound t)
+    (hmargin :
+      ∀ β t : ℝ, T0 ≤ |t| → β < 1 →
+        β ≥ 1 - c / Real.log |t| →
+        3 * realBound t + 4 * zeroBound β t + twoBound t < 0) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_log_deriv_bounds
+    hT0 hc_pos hσ_gt hσ_le hσ_sub_pos hreal hzero htwo hmargin
+
 /-- Public comparison between a compact-patch width and a logarithmic width. -/
 theorem compact_log_width_le_of_two_le {c d t : ℝ}
     (hc : c ≤ d * Real.log 2) (hd : 0 ≤ d) (ht : 2 ≤ |t|) :
