@@ -661,6 +661,34 @@ lemma compact_log_width_le_of_two_le {c d t : ℝ}
     le_trans hc (mul_le_mul_of_nonneg_left hlog_mono hd)
   exact (div_le_iff₀ hlog_pos).mpr hc_le_dlog
 
+/-- Monotonicity for zero-free strips stated with an arbitrary width function:
+if a larger-width strip is zero-free, then every smaller-width strip is also
+zero-free. -/
+lemma zero_free_region_mono_width
+    {T0 : ℝ} {width_small width_large : ℝ → ℝ}
+    (hlarge : ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥ 1 - width_large |s.im| → riemannZeta s ≠ 0)
+    (hwidth : ∀ t : ℝ, T0 ≤ |t| → width_small |t| ≤ width_large |t|) :
+    ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥ 1 - width_small |s.im| → riemannZeta s ≠ 0 := by
+  intro s hsheight hsre
+  refine hlarge s hsheight ?_
+  have hwidth' := hwidth s.im hsheight
+  linarith
+
+/-- Coordinate form of `zero_free_region_mono_width`. -/
+lemma zero_free_region_mono_width_re_im
+    {T0 : ℝ} {width_small width_large : ℝ → ℝ}
+    (hlarge : ∀ β t : ℝ, T0 ≤ |t| →
+      β ≥ 1 - width_large |t| → riemannZeta ((β : ℂ) + I * t) ≠ 0)
+    (hwidth : ∀ t : ℝ, T0 ≤ |t| → width_small |t| ≤ width_large |t|) :
+    ∀ β t : ℝ, T0 ≤ |t| →
+      β ≥ 1 - width_small |t| → riemannZeta ((β : ℂ) + I * t) ≠ 0 := by
+  intro β t htheight hβ
+  refine hlarge β t htheight ?_
+  have hwidth' := hwidth t htheight
+  linarith
+
 lemma classical_zero_free_region_on_one_line
     (hclassical : classical_zero_free_region) :
     ∀ s : ℂ, 2 ≤ |s.im| → s.re = 1 → riemannZeta s ≠ 0 := by
@@ -866,6 +894,15 @@ lemma classical_zero_free_region_iff_high_height_re_im
     exact hregion ((β : ℂ) + I * t) hheight hre
   · exact compact_patch_classical_zero_free_region_re_im T0 hT0
 
+/-- Height `3` specialization of the coordinate high-height interface, matching
+the Vinogradov-Korobov cutoff. -/
+lemma classical_zero_free_region_iff_high_height_re_im_at_three :
+    classical_zero_free_region ↔
+      ∃ c > 0, ∀ β t : ℝ, 3 ≤ |t| →
+        β ≥ 1 - c / Real.log |t| →
+        riemannZeta ((β : ℂ) + I * t) ≠ 0 :=
+  classical_zero_free_region_iff_high_height_re_im 3 (by norm_num)
+
 lemma classical_zero_free_region_high_height_at_three
     (hclassical : classical_zero_free_region) :
     ∃ c > 0, ∀ s : ℂ, 3 ≤ |s.im| →
@@ -974,18 +1011,13 @@ lemma classical_zero_free_region_of_vinogradov_korobov_with_comparison
     (fun s hsheight hsre => hvk_region s hsheight hsre)
     (hcompare cvk hcvk_pos)
 
-/-- Above height `3`, the Vinogradov-Korobov width dominates a classical
-`c / log |t|` width.  The proof is purely real-variable: for
-`x = log |t| > 1`, `log x ≤ x`, so the negative exponent `-1/3` reverses
-the inequality. -/
-lemma vinogradov_korobov_width_comparison :
-    ∀ c > 0, ∃ c' > 0, ∀ t : ℝ, 3 ≤ |t| →
-      c' / Real.log |t| ≤
-        c / (Real.log |t|) ^ (2 / 3 : ℝ) *
-          (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) := by
-  intro c hc
-  refine ⟨c, hc, ?_⟩
-  intro t ht
+/-- Pointwise real-variable width comparison behind the
+Vinogradov-Korobov-to-classical bridge. -/
+lemma classical_width_le_vinogradov_korobov_width {c t : ℝ}
+    (hc : 0 ≤ c) (ht : 3 ≤ |t|) :
+    c / Real.log |t| ≤
+      c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+        (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) := by
   set x : ℝ := Real.log |t| with hx_def
   have ht_pos : 0 < |t| := by linarith
   have hexp_lt_three : Real.exp 1 < (3 : ℝ) := by
@@ -1010,11 +1042,10 @@ lemma vinogradov_korobov_width_comparison :
     rw [hx_split]
     exact mul_le_mul_of_nonneg_left hpow
       (Real.rpow_nonneg hx_pos.le (-(2 / 3 : ℝ)))
-  have hc_nonneg : 0 ≤ c := hc.le
   have hscaled :
       c * x ^ (-1 : ℝ) ≤
         c * (x ^ (-(2 / 3 : ℝ)) * (Real.log x) ^ (-1 / 3 : ℝ)) :=
-    mul_le_mul_of_nonneg_left hbase hc_nonneg
+    mul_le_mul_of_nonneg_left hbase hc
   calc
     c / Real.log |t| = c * x ^ (-1 : ℝ) := by
       rw [hx_def, div_eq_mul_inv, Real.rpow_neg hx_pos.le, Real.rpow_one]
@@ -1023,6 +1054,18 @@ lemma vinogradov_korobov_width_comparison :
           (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) := by
       rw [hx_def, div_eq_mul_inv, Real.rpow_neg hx_pos.le]
       ring
+
+/-- Above height `3`, the Vinogradov-Korobov width dominates a classical
+`c / log |t|` width.  The proof is purely real-variable: for
+`x = log |t| > 1`, `log x ≤ x`, so the negative exponent `-1/3` reverses
+the inequality. -/
+lemma vinogradov_korobov_width_comparison :
+    ∀ c > 0, ∃ c' > 0, ∀ t : ℝ, 3 ≤ |t| →
+      c' / Real.log |t| ≤
+        c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) := by
+  intro c hc
+  exact ⟨c, hc, fun _t ht => classical_width_le_vinogradov_korobov_width hc.le ht⟩
 
 /-- Coordinate-form Vinogradov-Korobov input implies the classical zero-free region.
 
@@ -1060,6 +1103,25 @@ lemma vinogradov_korobov_high_height_classical_zero_free_region
   refine hvk_region s hsheight ?_
   have hwidth' := hwidth s.im hsheight
   linarith
+
+/-- Coordinate form of
+`vinogradov_korobov_high_height_classical_zero_free_region`. -/
+lemma vinogradov_korobov_high_height_classical_zero_free_region_re_im
+    (hvk : vinogradov_korobov_zero_free_region) :
+    ∃ c > 0, ∀ β t : ℝ, 3 ≤ |t| →
+      β ≥ 1 - c / Real.log |t| →
+      riemannZeta ((β : ℂ) + I * t) ≠ 0 := by
+  rcases vinogradov_korobov_high_height_classical_zero_free_region hvk with
+    ⟨c, hc_pos, hregion⟩
+  refine ⟨c, hc_pos, ?_⟩
+  intro β t ht hβ
+  have hheight : 3 ≤ |((β : ℂ) + I * t).im| := by
+    simpa using ht
+  have hre :
+      ((β : ℂ) + I * t).re ≥
+        1 - c / Real.log |((β : ℂ) + I * t).im| := by
+    simpa using hβ
+  exact hregion ((β : ℂ) + I * t) hheight hre
 
 /-- The Vinogradov-Korobov target implies the classical zero-free-region target.
 

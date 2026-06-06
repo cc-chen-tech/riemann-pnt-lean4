@@ -258,6 +258,15 @@ theorem classical_zero_free_region_iff_high_height_re_im
         riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0 :=
   ZeroFreeRegion.classical_zero_free_region_iff_high_height_re_im T0 hT0
 
+/-- Public height-`3` coordinate interface for the classical zero-free-region
+target, matching the Vinogradov-Korobov cutoff. -/
+theorem classical_zero_free_region_iff_high_height_re_im_at_three :
+    ZeroFreeRegion.classical_zero_free_region ↔
+      ∃ c > 0, ∀ β t : ℝ, 3 ≤ |t| →
+        β ≥ 1 - c / Real.log |t| →
+        riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0 :=
+  ZeroFreeRegion.classical_zero_free_region_iff_high_height_re_im_at_three
+
 /-- Public coordinate compact-patching theorem at the height cutoff `3`. -/
 theorem compact_patch_classical_zero_free_region_re_im_at_three
     (hhigh :
@@ -276,6 +285,24 @@ theorem vinogradov_korobov_zero_free_region_iff_re_im :
             (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
         riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0 :=
   ZeroFreeRegion.vinogradov_korobov_zero_free_region_iff_re_im
+
+/-- Public pointwise width comparison showing that the Vinogradov-Korobov strip
+dominates the classical `c / log |t|` strip above height `3`. -/
+theorem classical_width_le_vinogradov_korobov_width {c t : ℝ}
+    (hc : 0 ≤ c) (ht : 3 ≤ |t|) :
+    c / Real.log |t| ≤
+      c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+        (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) :=
+  ZeroFreeRegion.classical_width_le_vinogradov_korobov_width hc ht
+
+/-- Public high-height classical-width consequence of the Vinogradov-Korobov
+target, in real/imaginary coordinates. -/
+theorem vinogradov_korobov_high_height_classical_zero_free_region_re_im
+    (hvk : ZeroFreeRegion.vinogradov_korobov_zero_free_region) :
+    ∃ c > 0, ∀ β t : ℝ, 3 ≤ |t| →
+      β ≥ 1 - c / Real.log |t| →
+      riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0 :=
+  ZeroFreeRegion.vinogradov_korobov_high_height_classical_zero_free_region_re_im hvk
 
 /-- Public bridge from Hardy's unbounded-height target to infinitely many
 critical-line zeros. -/
