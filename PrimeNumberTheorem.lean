@@ -2124,6 +2124,18 @@ lemma RH_PrimeCountingLiErrorBound.isLittleO_id
       =o[atTop] (fun x : ℝ => x) :=
   h.isLittleO_logIntegral.trans logIntegral_isLittleO_id
 
+lemma RH_ErrorBound.isLittleO_logIntegral
+    (h : RH_ErrorBound) :
+    (fun x : ℝ => (primeCounting x : ℝ) - logIntegral x)
+      =o[atTop] (fun x : ℝ => logIntegral x) :=
+  (RH_PrimeCountingLiErrorBound_of_RH_ErrorBound h).isLittleO_logIntegral
+
+lemma RH_ErrorBound.isLittleO_id
+    (h : RH_ErrorBound) :
+    (fun x : ℝ => (primeCounting x : ℝ) - logIntegral x)
+      =o[atTop] (fun x : ℝ => x) :=
+  (RH_PrimeCountingLiErrorBound_of_RH_ErrorBound h).isLittleO_id
+
 lemma PNTForm2_of_RH_PrimeCountingLiErrorBound
     (h : RH_PrimeCountingLiErrorBound) : PNTForm2 := by
   have hsmall := h.isLittleO_logIntegral
@@ -3645,6 +3657,16 @@ lemma explicit_formula_von_mangoldt_of_eventually_norm_le
   refine tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds hE ?_ hbound
   exact Eventually.of_forall fun T =>
     norm_nonneg (explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ))
+
+lemma explicit_formula_von_mangoldt_of_eventually_reverse_norm_le
+    {x : ℝ} {hx : x ≥ 2} {E : ℝ → ℝ}
+    (hE : Tendsto E atTop (𝓝 0))
+    (hbound : ∀ᶠ T in atTop,
+      ‖(chebyshevPsi0 x : ℂ) - explicitFormulaApprox x T‖ ≤ E T) :
+    explicit_formula_von_mangoldt x hx := by
+  refine explicit_formula_von_mangoldt_of_eventually_norm_le hE ?_
+  filter_upwards [hbound] with T hT
+  rwa [norm_sub_rev]
 
 /-- A Big-O norm error estimate against any function tending to zero closes the
 corrected explicit-formula target. -/
