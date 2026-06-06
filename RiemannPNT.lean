@@ -413,6 +413,40 @@ theorem rh_psi_error_bound_of_rh_theta_error_bound
     PrimeNumberTheorem.RH_PsiErrorBound :=
   PrimeNumberTheorem.RH_PsiErrorBound_of_RH_ThetaErrorBound hθ
 
+/-- Public RH-scale bound for the gap between `ψ` and `θ`. -/
+theorem psi_sub_theta_isBigO_rh_scale :
+    (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi x - Chebyshev.theta x)
+      =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2) :=
+  PrimeNumberTheorem.psi_sub_theta_isBigO_rh_scale
+
+/-- Public crude Big-O bound for Mathlib's Chebyshev `θ`. -/
+theorem chebyshevTheta_isBigO_id :
+    (fun x : ℝ => Chebyshev.theta x) =O[atTop] (fun x : ℝ => x) :=
+  PrimeNumberTheorem.chebyshevTheta_isBigO_id
+
+/-- Public crude Big-O bound for Mathlib's Chebyshev `ψ`. -/
+theorem mathlibChebyshevPsi_isBigO_id :
+    (fun x : ℝ => Chebyshev.psi x) =O[atTop] (fun x : ℝ => x) :=
+  PrimeNumberTheorem.mathlibChebyshevPsi_isBigO_id
+
+/-- Public crude Big-O bound for the local Chebyshev `ψ` normalization. -/
+theorem chebyshevPsi_isBigO_id :
+    (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi x)
+      =O[atTop] (fun x : ℝ => x) :=
+  PrimeNumberTheorem.chebyshevPsi_isBigO_id
+
+/-- Public crude Big-O bound for the local Chebyshev `ψ(x)-x` error. -/
+theorem chebyshevPsi_sub_id_isBigO_id :
+    (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi x - x)
+      =O[atTop] (fun x : ℝ => x) :=
+  PrimeNumberTheorem.chebyshevPsi_sub_id_isBigO_id
+
+/-- Public crude Big-O bound for the Chebyshev `θ(x)-x` error. -/
+theorem chebyshevTheta_sub_id_isBigO_id :
+    (fun x : ℝ => Chebyshev.theta x - x)
+      =O[atTop] (fun x : ℝ => x) :=
+  PrimeNumberTheorem.chebyshevTheta_sub_id_isBigO_id
+
 /-- Public endpoint estimate in the partial-summation bridge from `θ` errors
 to prime-counting errors. -/
 theorem theta_error_div_log_isBigO_sqrt_mul_log
@@ -420,6 +454,26 @@ theorem theta_error_div_log_isBigO_sqrt_mul_log
     (fun x : ℝ => (Chebyshev.theta x - x) / Real.log x)
       =O[atTop] (fun x : ℝ => Real.sqrt x * Real.log x) :=
   PrimeNumberTheorem.theta_error_div_log_isBigO_sqrt_mul_log hθ
+
+/-- Public fixed-endpoint constant estimate in the partial-summation bridge. -/
+theorem two_div_log_two_isBigO_sqrt_mul_log :
+    (fun _x : ℝ => 2 / Real.log 2)
+      =O[atTop] (fun x : ℝ => Real.sqrt x * Real.log x) :=
+  PrimeNumberTheorem.two_div_log_two_isBigO_sqrt_mul_log
+
+/-- Public elementary tail-integral estimate used in the Abel integral bound. -/
+theorem integral_one_div_sqrt_le_two_sqrt {A x : ℝ}
+    (hA : 0 < A) (hAx : A ≤ x) :
+    ∫ t in A..x, 1 / Real.sqrt t ≤ 2 * Real.sqrt x :=
+  PrimeNumberTheorem.integral_one_div_sqrt_le_two_sqrt hA hAx
+
+/-- Public interval-integrability package for the Abel error kernel. -/
+theorem intervalIntegrable_theta_error_div_id_log_sq_of_le
+    {a b : ℝ} (ha : 2 ≤ a) (hab : a ≤ b) :
+    IntervalIntegrable
+      (fun t : ℝ => (Chebyshev.theta t - t) / (t * Real.log t ^ 2))
+      MeasureTheory.volume a b :=
+  PrimeNumberTheorem.intervalIntegrable_theta_error_div_id_log_sq_of_le ha hab
 
 /-- Public Abel-integral estimate in the partial-summation bridge from `θ`
 errors to prime-counting errors. -/
