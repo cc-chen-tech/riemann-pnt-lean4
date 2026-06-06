@@ -118,6 +118,86 @@ theorem rh_iff_optimal_error_iff_mathlib :
         PrimeNumberTheorem.RH_PrimeCountingLiErrorBound) :=
   PrimeNumberTheorem.rh_iff_optimal_error_iff_mathlib
 
+/-- Public compatibility bridge between Mathlib's RH predicate and the local
+`RiemannHypothesis.Statement` interface used in the project files. -/
+theorem rh_statement_iff_mathlib :
+    _root_.RiemannHypothesis ↔ _root_.RiemannHypothesis.Statement :=
+  PrimeNumberTheorem.rh_statement_iff_mathlib
+
+/-- Public pointwise textbook-error form of the project's RH/error target. -/
+theorem rh_iff_pointwise_error_iff :
+    PrimeNumberTheorem.rh_iff_optimal_error ↔
+      (_root_.RiemannHypothesis.Statement ↔ PrimeNumberTheorem.RH_ErrorBound) :=
+  PrimeNumberTheorem.rh_iff_pointwise_error_iff
+
+/-- Public packaging lemma for closing the RH/error target from Mathlib-RH
+implications in composable Big-O form. -/
+theorem rh_iff_optimal_error_of_mathlib_implications
+    (h_forward : _root_.RiemannHypothesis →
+      PrimeNumberTheorem.RH_PrimeCountingLiErrorBound)
+    (h_reverse : PrimeNumberTheorem.RH_PrimeCountingLiErrorBound →
+      _root_.RiemannHypothesis) :
+    PrimeNumberTheorem.rh_iff_optimal_error :=
+  PrimeNumberTheorem.rh_iff_optimal_error_of_mathlib_implications
+    h_forward h_reverse
+
+/-- Public packaging lemma for closing the RH/error target from Mathlib-RH
+implications in pointwise textbook form. -/
+theorem rh_iff_optimal_error_of_mathlib_pointwise_implications
+    (h_forward : _root_.RiemannHypothesis → PrimeNumberTheorem.RH_ErrorBound)
+    (h_reverse : PrimeNumberTheorem.RH_ErrorBound → _root_.RiemannHypothesis) :
+    PrimeNumberTheorem.rh_iff_optimal_error :=
+  PrimeNumberTheorem.rh_iff_optimal_error_of_mathlib_pointwise_implications
+    h_forward h_reverse
+
+/-- Public forward direction from the RH/error target plus Mathlib RH to the
+composable prime-counting error bound. -/
+theorem rh_primeCountingLiErrorBound_of_mathlib_RH_of_rh_iff_optimal_error
+    (h : PrimeNumberTheorem.rh_iff_optimal_error) :
+    _root_.RiemannHypothesis →
+      PrimeNumberTheorem.RH_PrimeCountingLiErrorBound :=
+  PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_mathlib_RH_of_rh_iff_optimal_error
+    h
+
+/-- Public forward direction from the RH/error target plus Mathlib RH to the
+pointwise textbook prime-counting error bound. -/
+theorem rh_error_bound_of_mathlib_RH_of_rh_iff_optimal_error
+    (h : PrimeNumberTheorem.rh_iff_optimal_error) :
+    _root_.RiemannHypothesis → PrimeNumberTheorem.RH_ErrorBound :=
+  PrimeNumberTheorem.RH_ErrorBound_of_mathlib_RH_of_rh_iff_optimal_error h
+
+/-- Public reverse direction from the composable prime-counting error bound to
+Mathlib RH, assuming the RH/error target. -/
+theorem mathlib_RH_of_rh_iff_optimal_error
+    (h : PrimeNumberTheorem.rh_iff_optimal_error) :
+    PrimeNumberTheorem.RH_PrimeCountingLiErrorBound → _root_.RiemannHypothesis :=
+  PrimeNumberTheorem.mathlib_RH_of_rh_iff_optimal_error h
+
+/-- Public reverse direction from the pointwise textbook error bound to Mathlib
+RH, assuming the RH/error target. -/
+theorem mathlib_RH_of_rh_iff_pointwise_error
+    (h : PrimeNumberTheorem.rh_iff_optimal_error) :
+    PrimeNumberTheorem.RH_ErrorBound → _root_.RiemannHypothesis :=
+  PrimeNumberTheorem.mathlib_RH_of_rh_iff_pointwise_error h
+
+/-- Public consequence: the RH/error target turns Mathlib RH into PNT form 1. -/
+theorem pnt_form1_of_mathlib_RH_of_rh_iff_optimal_error
+    (h : PrimeNumberTheorem.rh_iff_optimal_error) :
+    _root_.RiemannHypothesis → PrimeNumberTheorem.PNTForm1 :=
+  PrimeNumberTheorem.PNTForm1_of_mathlib_RH_of_rh_iff_optimal_error h
+
+/-- Public consequence: the RH/error target turns Mathlib RH into PNT form 2. -/
+theorem pnt_form2_of_mathlib_RH_of_rh_iff_optimal_error
+    (h : PrimeNumberTheorem.rh_iff_optimal_error) :
+    _root_.RiemannHypothesis → PrimeNumberTheorem.PNTForm2 :=
+  PrimeNumberTheorem.PNTForm2_of_mathlib_RH_of_rh_iff_optimal_error h
+
+/-- Public consequence: the RH/error target turns Mathlib RH into PNT form 3. -/
+theorem pnt_form3_of_mathlib_RH_of_rh_iff_optimal_error
+    (h : PrimeNumberTheorem.rh_iff_optimal_error) :
+    _root_.RiemannHypothesis → PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForm3_of_mathlib_RH_of_rh_iff_optimal_error h
+
 /-- Public closed-half-plane nonvanishing theorem for the Riemann zeta
 function. -/
 theorem zeta_ne_zero_of_one_le_re {s : ℂ} (hs : 1 ≤ s.re) :
