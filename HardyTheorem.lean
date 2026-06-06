@@ -1463,6 +1463,13 @@ lemma hardy_theorem_target_of_eventually_nat_lt_zeroCountOnCriticalLine
   hardy_theorem_target_of_zeroCountOnCriticalLine_unbounded
     (fun N => (h N).exists)
 
+lemma zeroCountOnCriticalLine_unbounded_of_eventually_nat_lt_zeroCountOnCriticalLine
+    (h : ∀ N : ℕ, ∀ᶠ T in atTop, N < zeroCountOnCriticalLine T) :
+    ∀ N : ℕ, ∃ T : ℝ, N < zeroCountOnCriticalLine T := by
+  intro N
+  rcases eventually_atTop.mp (h N) with ⟨T, hT⟩
+  exact ⟨T, hT T le_rfl⟩
+
 lemma zeroCountOnCriticalLine_pos_of_linear_lower_bound {C T : ℝ}
     (hC : 0 < C) (hT : 0 < T)
     (hbound : C * T ≤ (zeroCountOnCriticalLine T : ℝ)) :
@@ -1540,6 +1547,13 @@ lemma eventually_nat_lt_zeroCountOnCriticalLine_of_hardy_littlewood_lower_bound
     lt_of_lt_of_le hN_lt_CT hcount_lower
   exact_mod_cast hN_lt_count
 
+lemma zeroCountOnCriticalLine_unbounded_of_hardy_littlewood_lower_bound
+    (h : hardy_littlewood_lower_bound_target) :
+    ∀ N : ℕ, ∃ T : ℝ, N < zeroCountOnCriticalLine T := by
+  intro N
+  exact zeroCountOnCriticalLine_unbounded_of_eventually_nat_lt_zeroCountOnCriticalLine
+    (fun N => eventually_nat_lt_zeroCountOnCriticalLine_of_hardy_littlewood_lower_bound h N) N
+
 lemma eventually_zeroCountOnCriticalLine_pos_of_hardy_littlewood_lower_bound
     (h : hardy_littlewood_lower_bound_target) :
     ∀ᶠ T in atTop, 0 < zeroCountOnCriticalLine T :=
@@ -1610,6 +1624,13 @@ lemma eventually_nat_lt_zeroCountOnCriticalLine_of_selberg_zero_proportion
   eventually_nat_lt_zeroCountOnCriticalLine_of_hardy_littlewood_lower_bound
     (hardy_littlewood_lower_bound_target_of_selberg_zero_proportion h) N
 
+lemma zeroCountOnCriticalLine_unbounded_of_selberg_zero_proportion
+    (h : selberg_zero_proportion_target) :
+    ∀ N : ℕ, ∃ T : ℝ, N < zeroCountOnCriticalLine T := by
+  intro N
+  exact zeroCountOnCriticalLine_unbounded_of_eventually_nat_lt_zeroCountOnCriticalLine
+    (fun N => eventually_nat_lt_zeroCountOnCriticalLine_of_selberg_zero_proportion h N) N
+
 lemma eventually_zeroCountOnCriticalLine_pos_of_selberg_zero_proportion
     (h : selberg_zero_proportion_target) :
     ∀ᶠ T in atTop, 0 < zeroCountOnCriticalLine T :=
@@ -1666,25 +1687,15 @@ lemma exists_nonnegative_zero_on_critical_line_of_selberg_zero_proportion
 
 lemma hardy_theorem_target_of_hardy_littlewood_lower_bound
     (h : hardy_littlewood_lower_bound_target) :
-    hardy_theorem_target := by
-  classical
-  intro hfinite
-  let allZeros : Set ℝ := {t : ℝ | riemannZeta (0.5 + I * t) = 0}
-  let N : ℕ := allZeros.ncard
-  rcases eventually_atTop.mp
-      (eventually_nat_lt_zeroCountOnCriticalLine_of_hardy_littlewood_lower_bound h N) with
-    ⟨T, hT⟩
-  have hcount_gt_N : N < zeroCountOnCriticalLine T := hT T le_rfl
-  have hcount_le_N_nat : zeroCountOnCriticalLine T ≤ N := by
-    simpa [allZeros, N] using
-      zeroCountOnCriticalLine_le_ncard_allZeros_of_finite T hfinite
-  omega
+    hardy_theorem_target :=
+  hardy_theorem_target_of_zeroCountOnCriticalLine_unbounded
+    (zeroCountOnCriticalLine_unbounded_of_hardy_littlewood_lower_bound h)
 
 lemma hardy_theorem_target_of_selberg_zero_proportion
     (h : selberg_zero_proportion_target) :
     hardy_theorem_target :=
-  hardy_theorem_target_of_hardy_littlewood_lower_bound
-    (hardy_littlewood_lower_bound_target_of_selberg_zero_proportion h)
+  hardy_theorem_target_of_zeroCountOnCriticalLine_unbounded
+    (zeroCountOnCriticalLine_unbounded_of_selberg_zero_proportion h)
 
 lemma hardy_zeros_abs_unbounded_of_hardy_littlewood_lower_bound_of_bounded_strips
     (hstrip : ∀ B : ℝ,

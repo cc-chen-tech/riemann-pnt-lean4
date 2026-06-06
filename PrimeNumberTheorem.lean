@@ -2510,6 +2510,52 @@ lemma PNTForms_of_chebyshevPsi0_sub_id_isBigO
   PNTForms_of_RH_PsiErrorBound
     (RH_PsiErrorBound_of_chebyshevPsi0_sub_id_isBigO hψ0)
 
+/-- Direct Chebyshev-ψ asymptotic consequence of the `ψ` RH-scale error
+target, stated without requiring callers to unfold `PNTForm3`. -/
+lemma chebyshevPsi_asymptotic_of_RH_PsiErrorBound
+    (hψ : RH_PsiErrorBound) :
+    Tendsto (fun x : ℝ => chebyshevPsi x / x) atTop (𝓝 1) :=
+  PNTForm3_of_RH_PsiErrorBound hψ
+
+/-- Direct Chebyshev-ψ asymptotic consequence of the `θ` RH-scale error
+target. -/
+lemma chebyshevPsi_asymptotic_of_RH_ThetaErrorBound
+    (hθ : RH_ThetaErrorBound) :
+    Tendsto (fun x : ℝ => chebyshevPsi x / x) atTop (𝓝 1) :=
+  PNTForm3_of_RH_ThetaErrorBound hθ
+
+/-- Mathlib Chebyshev-ψ asymptotic consequence of the local `ψ` RH-scale
+error target. -/
+lemma mathlibChebyshevPsi_asymptotic_of_RH_PsiErrorBound
+    (hψ : RH_PsiErrorBound) :
+    Tendsto (fun x : ℝ => Chebyshev.psi x / x) atTop (𝓝 1) :=
+  PNTForm3_iff_mathlibChebyshevPsi_asymptotic.mp
+    (PNTForm3_of_RH_PsiErrorBound hψ)
+
+/-- Mathlib Chebyshev-ψ asymptotic consequence of the local `θ` RH-scale
+error target. -/
+lemma mathlibChebyshevPsi_asymptotic_of_RH_ThetaErrorBound
+    (hθ : RH_ThetaErrorBound) :
+    Tendsto (fun x : ℝ => Chebyshev.psi x / x) atTop (𝓝 1) :=
+  PNTForm3_iff_mathlibChebyshevPsi_asymptotic.mp
+    (PNTForm3_of_RH_ThetaErrorBound hθ)
+
+/-- Mathlib Chebyshev-θ asymptotic consequence of the local `θ` RH-scale
+error target. -/
+lemma chebyshevTheta_asymptotic_of_RH_ThetaErrorBound
+    (hθ : RH_ThetaErrorBound) :
+    Tendsto (fun x : ℝ => Chebyshev.theta x / x) atTop (𝓝 1) :=
+  PNTForm3_iff_chebyshevTheta_asymptotic.mp
+    (PNTForm3_of_RH_ThetaErrorBound hθ)
+
+/-- Mathlib Chebyshev-θ asymptotic consequence of the local `ψ` RH-scale
+error target. -/
+lemma chebyshevTheta_asymptotic_of_RH_PsiErrorBound
+    (hψ : RH_PsiErrorBound) :
+    Tendsto (fun x : ℝ => Chebyshev.theta x / x) atTop (𝓝 1) :=
+  PNTForm3_iff_chebyshevTheta_asymptotic.mp
+    (PNTForm3_of_RH_PsiErrorBound hψ)
+
 /-- Target statement: RH iff the RH-scale prime-counting error bound.
 
 This is a standard deep equivalence, but the current project does not provide

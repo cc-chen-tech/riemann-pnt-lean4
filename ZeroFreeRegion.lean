@@ -1464,6 +1464,48 @@ lemma classical_zero_free_region_of_vinogradov_korobov_re_im
     hvk_region
     (vinogradov_korobov_width_comparison cvk hcvk_pos)
 
+/-- A high-height Vinogradov-Korobov-width input above any cutoff `T0 ≥ 3`
+implies the classical zero-free-region target.
+
+This is useful when the analytic estimate is proved only eventually; the
+bounded-height gap is filled by the compact strip, and the VK width dominates a
+classical logarithmic width above `T0`. -/
+lemma classical_zero_free_region_of_vinogradov_korobov_high_height
+    (T0 : ℝ) (hT0 : 3 ≤ T0)
+    (hvk : ∃ c > 0, ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥
+        1 - c / (Real.log |s.im|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |s.im|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta s ≠ 0) :
+    classical_zero_free_region := by
+  rcases hvk with ⟨cvk, hcvk_pos, hvk_region⟩
+  exact compact_patch_classical_zero_free_region_of_width T0 (by linarith)
+    (fun t : ℝ =>
+      cvk / (Real.log t) ^ (2 / 3 : ℝ) *
+        (Real.log (Real.log t)) ^ (-1 / 3 : ℝ))
+    hvk_region
+    ⟨cvk, hcvk_pos, fun _t ht =>
+      classical_width_le_vinogradov_korobov_width hcvk_pos.le (hT0.trans ht)⟩
+
+/-- Coordinate high-height Vinogradov-Korobov-width input above any cutoff
+`T0 ≥ 3` implies the classical zero-free-region target. -/
+lemma classical_zero_free_region_of_vinogradov_korobov_high_height_re_im
+    (T0 : ℝ) (hT0 : 3 ≤ T0)
+    (hvk : ∃ c > 0, ∀ β t : ℝ, T0 ≤ |t| →
+      β ≥
+        1 - c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta ((β : ℂ) + I * t) ≠ 0) :
+    classical_zero_free_region := by
+  rcases hvk with ⟨cvk, hcvk_pos, hvk_region⟩
+  exact compact_patch_classical_zero_free_region_of_width_re_im T0 (by linarith)
+    (fun t : ℝ =>
+      cvk / (Real.log t) ^ (2 / 3 : ℝ) *
+        (Real.log (Real.log t)) ^ (-1 / 3 : ℝ))
+    hvk_region
+    ⟨cvk, hcvk_pos, fun _t ht =>
+      classical_width_le_vinogradov_korobov_width hcvk_pos.le (hT0.trans ht)⟩
+
 /-- The Vinogradov-Korobov target supplies a high-height classical-width
 zero-free region above height `3`.
 

@@ -179,6 +179,32 @@ theorem primeCounting_sub_logIntegral_isBigO_id :
       =O[atTop] (fun x : ℝ => x) :=
   PrimeNumberTheorem.primeCounting_sub_logIntegral_isBigO_id
 
+/-- Public finite-interval bound for the local prime-counting normalization. -/
+theorem primeCounting_le_floor_add_one {x X : ℝ} (hxX : x ≤ X) :
+    PrimeNumberTheorem.primeCounting x ≤ ⌊X⌋₊ + 1 :=
+  PrimeNumberTheorem.primeCounting_le_floor_add_one hxX
+
+/-- Public crude upper bound for the logarithmic integral on a bounded
+interval. -/
+theorem logIntegral_le_interval_bound {x X : ℝ} (hx2 : 2 ≤ x)
+    (hxX : x ≤ X) :
+    PrimeNumberTheorem.logIntegral x ≤ (X - 2) / Real.log 2 :=
+  PrimeNumberTheorem.logIntegral_le_interval_bound hx2 hxX
+
+/-- Public lower bound for the RH prime-counting error scale on `[2, ∞)`. -/
+theorem sqrt_mul_log_lower_bound {x : ℝ} (hx2 : 2 ≤ x) :
+    Real.sqrt 2 * Real.log 2 ≤ Real.sqrt x * Real.log x :=
+  PrimeNumberTheorem.sqrt_mul_log_lower_bound hx2
+
+/-- Public finite-initial-interval control used to turn eventual RH-scale
+prime-counting `Li` bounds into pointwise bounds. -/
+theorem primeCounting_logIntegral_finite_interval_bound :
+    ∀ X ≥ 2, ∃ C > 0, ∀ x, 2 ≤ x → x ≤ X →
+      |(PrimeNumberTheorem.primeCounting x : ℝ) -
+          PrimeNumberTheorem.logIntegral x| ≤
+        C * (Real.sqrt x * Real.log x) :=
+  PrimeNumberTheorem.primeCounting_logIntegral_finite_interval_bound
+
 /-- Public error-term consequence of PNT form 1. -/
 theorem pnt_form1_error_isLittleO_main
     (h : PrimeNumberTheorem.PNTForm1) :
@@ -468,6 +494,18 @@ theorem rh_primeCountingLiErrorBound_of_eventual_abs_bound {C : ℝ}
         C * (Real.sqrt x * Real.log x)) :
     PrimeNumberTheorem.RH_PrimeCountingLiErrorBound :=
   PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_eventual_abs_bound h
+
+/-- Public conditional reverse bridge from the composable prime-counting
+`Li` Big-O target to the textbook pointwise RH error target. -/
+theorem rh_error_bound_of_rh_primeCountingLiErrorBound_of_finite_intervals
+    (h : PrimeNumberTheorem.RH_PrimeCountingLiErrorBound)
+    (hfinite : ∀ X ≥ 2, ∃ C > 0, ∀ x, 2 ≤ x → x ≤ X →
+      |(PrimeNumberTheorem.primeCounting x : ℝ) -
+          PrimeNumberTheorem.logIntegral x| ≤
+        C * (Real.sqrt x * Real.log x)) :
+    PrimeNumberTheorem.RH_ErrorBound :=
+  PrimeNumberTheorem.RH_ErrorBound_of_RH_PrimeCountingLiErrorBound_of_finite_intervals
+    h hfinite
 
 /-- Public pointwise-bound constructor from the textbook RH error target to
 the prime-counting `Li` Big-O target. -/
@@ -793,6 +831,50 @@ theorem pnt_forms_of_mathlibChebyshevPsi_asymptotic
     PrimeNumberTheorem.PNTForm1 ∧ PrimeNumberTheorem.PNTForm2 ∧
       PrimeNumberTheorem.PNTForm3 :=
   PrimeNumberTheorem.PNTForms_of_mathlibChebyshevPsi_asymptotic hψ
+
+/-- Public direct local Chebyshev-ψ asymptotic consequence of the `ψ`
+RH-scale error target. -/
+theorem chebyshevPsi_asymptotic_of_rh_psi_error_bound
+    (hψ : PrimeNumberTheorem.RH_PsiErrorBound) :
+    Tendsto (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi x / x)
+      atTop (𝓝 1) :=
+  PrimeNumberTheorem.chebyshevPsi_asymptotic_of_RH_PsiErrorBound hψ
+
+/-- Public direct local Chebyshev-ψ asymptotic consequence of the `θ`
+RH-scale error target. -/
+theorem chebyshevPsi_asymptotic_of_rh_theta_error_bound
+    (hθ : PrimeNumberTheorem.RH_ThetaErrorBound) :
+    Tendsto (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi x / x)
+      atTop (𝓝 1) :=
+  PrimeNumberTheorem.chebyshevPsi_asymptotic_of_RH_ThetaErrorBound hθ
+
+/-- Public Mathlib Chebyshev-ψ asymptotic consequence of the local `ψ`
+RH-scale error target. -/
+theorem mathlibChebyshevPsi_asymptotic_of_rh_psi_error_bound
+    (hψ : PrimeNumberTheorem.RH_PsiErrorBound) :
+    Tendsto (fun x : ℝ => Chebyshev.psi x / x) atTop (𝓝 1) :=
+  PrimeNumberTheorem.mathlibChebyshevPsi_asymptotic_of_RH_PsiErrorBound hψ
+
+/-- Public Mathlib Chebyshev-ψ asymptotic consequence of the local `θ`
+RH-scale error target. -/
+theorem mathlibChebyshevPsi_asymptotic_of_rh_theta_error_bound
+    (hθ : PrimeNumberTheorem.RH_ThetaErrorBound) :
+    Tendsto (fun x : ℝ => Chebyshev.psi x / x) atTop (𝓝 1) :=
+  PrimeNumberTheorem.mathlibChebyshevPsi_asymptotic_of_RH_ThetaErrorBound hθ
+
+/-- Public Mathlib Chebyshev-θ asymptotic consequence of the local `θ`
+RH-scale error target. -/
+theorem chebyshevTheta_asymptotic_of_rh_theta_error_bound
+    (hθ : PrimeNumberTheorem.RH_ThetaErrorBound) :
+    Tendsto (fun x : ℝ => Chebyshev.theta x / x) atTop (𝓝 1) :=
+  PrimeNumberTheorem.chebyshevTheta_asymptotic_of_RH_ThetaErrorBound hθ
+
+/-- Public Mathlib Chebyshev-θ asymptotic consequence of the local `ψ`
+RH-scale error target. -/
+theorem chebyshevTheta_asymptotic_of_rh_psi_error_bound
+    (hψ : PrimeNumberTheorem.RH_PsiErrorBound) :
+    Tendsto (fun x : ℝ => Chebyshev.theta x / x) atTop (𝓝 1) :=
+  PrimeNumberTheorem.chebyshevTheta_asymptotic_of_RH_PsiErrorBound hψ
 
 /-- Public conditional partial-summation bridge from the `θ` RH-scale target
 to the prime-counting `Li` RH-scale target. -/
@@ -2159,6 +2241,34 @@ theorem classical_zero_free_region_of_vinogradov_korobov_re_im
         riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0) :
     ZeroFreeRegion.classical_zero_free_region :=
   ZeroFreeRegion.classical_zero_free_region_of_vinogradov_korobov_re_im hvk
+
+/-- Public bridge from an eventually valid Vinogradov-Korobov-width input to
+the classical zero-free-region target. -/
+theorem classical_zero_free_region_of_vinogradov_korobov_high_height
+    (T0 : ℝ) (hT0 : 3 ≤ T0)
+    (hvk :
+      ∃ c > 0, ∀ s : ℂ, T0 ≤ |s.im| →
+        s.re ≥
+          1 - c / (Real.log |s.im|) ^ (2 / 3 : ℝ) *
+            (Real.log (Real.log |s.im|)) ^ (-1 / 3 : ℝ) →
+        riemannZeta s ≠ 0) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_vinogradov_korobov_high_height
+    T0 hT0 hvk
+
+/-- Public bridge from an eventually valid coordinate Vinogradov-Korobov-width
+input to the classical zero-free-region target. -/
+theorem classical_zero_free_region_of_vinogradov_korobov_high_height_re_im
+    (T0 : ℝ) (hT0 : 3 ≤ T0)
+    (hvk :
+      ∃ c > 0, ∀ β t : ℝ, T0 ≤ |t| →
+        β ≥
+          1 - c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+            (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+        riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_vinogradov_korobov_high_height_re_im
+    T0 hT0 hvk
 
 /-- Public equivalence between Hardy's real `Z` zeros and zeta zeros on the
 critical line. -/
