@@ -3583,6 +3583,59 @@ lemma explicit_formula_von_mangoldt_iff_norm_error_isLittleO_one
   ⟨explicit_formula_von_mangoldt_norm_error_isLittleO_one,
     explicit_formula_von_mangoldt_of_norm_error_isLittleO_one⟩
 
+/-- Norm of a single nontrivial-zero contribution in the explicit formula. -/
+lemma norm_zero_contribution_eq (ρ : ℂ) {x : ℝ} (hx : 0 < x) :
+    ‖(x : ℂ) ^ ρ / ρ‖ = x ^ ρ.re / ‖ρ‖ := by
+  rw [norm_div, Complex.norm_cpow_eq_rpow_re_of_pos hx]
+
+/-- Under RH, each nontrivial-zero contribution has `sqrt x` amplitude. -/
+lemma norm_zero_contribution_eq_sqrt_of_RH
+    (hRH : RiemannHypothesis.Statement)
+    {ρ : ℂ} (hρ : RiemannHypothesis.IsNontrivialZero ρ)
+    {x : ℝ} (hx : 0 < x) :
+    ‖(x : ℂ) ^ ρ / ρ‖ = Real.sqrt x / ‖ρ‖ := by
+  rw [norm_zero_contribution_eq ρ hx, hRH ρ hρ, Real.sqrt_eq_rpow]
+
+/-- Under RH, a finite sum of nontrivial-zero contributions is bounded by
+`sqrt x` times the reciprocal-norm sum of the zeros. -/
+lemma norm_sum_zero_contributions_le_sqrt_mul_sum_inv_norm_of_RH
+    (hRH : RiemannHypothesis.Statement)
+    {x : ℝ} (hx : 0 < x) (S : Finset ℂ)
+    (hS : ∀ ρ ∈ S, RiemannHypothesis.IsNontrivialZero ρ) :
+    ‖∑ ρ ∈ S, (x : ℂ) ^ ρ / ρ‖ ≤
+      Real.sqrt x * ∑ ρ ∈ S, ‖ρ‖⁻¹ := by
+  calc
+    ‖∑ ρ ∈ S, (x : ℂ) ^ ρ / ρ‖
+        ≤ ∑ ρ ∈ S, ‖(x : ℂ) ^ ρ / ρ‖ := norm_sum_le S _
+    _ = ∑ ρ ∈ S, Real.sqrt x / ‖ρ‖ := by
+          refine Finset.sum_congr rfl ?_
+          intro ρ hρ
+          exact norm_zero_contribution_eq_sqrt_of_RH hRH (hS ρ hρ) hx
+    _ = Real.sqrt x * ∑ ρ ∈ S, ‖ρ‖⁻¹ := by
+          simp [div_eq_mul_inv, Finset.mul_sum]
+
+/-- RH bound for the height-truncated nontrivial-zero sum. -/
+lemma norm_finiteNontrivialZeroSum_le_sqrt_mul_sum_inv_norm_of_RH
+    (hRH : RiemannHypothesis.Statement)
+    {x T : ℝ} (hx : 0 < x) :
+    ‖finiteNontrivialZeroSum x T‖ ≤
+      Real.sqrt x * ∑ ρ ∈ nontrivialZerosFinset T, ‖ρ‖⁻¹ := by
+  exact norm_sum_zero_contributions_le_sqrt_mul_sum_inv_norm_of_RH
+    hRH hx (nontrivialZerosFinset T)
+    (fun ρ hρ => (mem_nontrivialZerosFinset.mp hρ).1)
+
+/-- RH bound for the newly appearing zeros between two truncation heights. -/
+lemma norm_new_zero_contribution_sum_le_sqrt_mul_sum_inv_norm_of_RH
+    (hRH : RiemannHypothesis.Statement)
+    {x T U : ℝ} (hx : 0 < x) :
+    ‖∑ ρ ∈ (nontrivialZerosFinset U \ nontrivialZerosFinset T),
+        (x : ℂ) ^ ρ / ρ‖ ≤
+      Real.sqrt x *
+        ∑ ρ ∈ (nontrivialZerosFinset U \ nontrivialZerosFinset T), ‖ρ‖⁻¹ := by
+  exact norm_sum_zero_contributions_le_sqrt_mul_sum_inv_norm_of_RH
+    hRH hx (nontrivialZerosFinset U \ nontrivialZerosFinset T)
+    (fun ρ hρ => (mem_nontrivialZerosFinset_sdiff.mp hρ).1)
+
 /-- 零点对素数分布的贡献
 
 每个零点 ρ = β + iγ 贡献振荡项 x^ρ/ρ = x^β e^{iγ log x} / ρ
