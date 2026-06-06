@@ -37,6 +37,31 @@ theorem logIntegral_integration_by_parts (x : ℝ) (hx : 2 ≤ x) :
         ∫ t in (2)..x, 1 / (Real.log t)^2 :=
   PrimeNumberTheorem.logIntegral_integration_by_parts x hx
 
+/-- Public nonnegativity of the logarithmic integral normalization on
+`[2,∞)`. -/
+theorem logIntegral_nonneg {x : ℝ} (hx : 2 ≤ x) :
+    0 ≤ PrimeNumberTheorem.logIntegral x :=
+  PrimeNumberTheorem.logIntegral_nonneg hx
+
+/-- Public positivity of the logarithmic integral normalization on `(2,∞)`. -/
+theorem logIntegral_pos {x : ℝ} (hx : 2 < x) :
+    0 < PrimeNumberTheorem.logIntegral x :=
+  PrimeNumberTheorem.logIntegral_pos hx
+
+/-- Public asymptotic normalization `Li(x) ~ x/log x`. -/
+theorem logIntegral_asymptotic :
+    Tendsto
+      (fun x : ℝ =>
+        PrimeNumberTheorem.logIntegral x * Real.log x / x)
+      atTop (𝓝 1) :=
+  PrimeNumberTheorem.logIntegral_asymptotic
+
+/-- Public little-o form of `Li(x)=o(x)`. -/
+theorem logIntegral_isLittleO_id :
+    (fun x : ℝ => PrimeNumberTheorem.logIntegral x)
+      =o[atTop] (fun x : ℝ => x) :=
+  PrimeNumberTheorem.logIntegral_isLittleO_id
+
 /-- Public entry point for the equivalence of the three PNT formulations used
 in the project. -/
 theorem pnt_forms_equiv :
@@ -296,6 +321,13 @@ theorem rh_error_bound_of_rh_primeCountingLiErrorBound
     PrimeNumberTheorem.RH_ErrorBound :=
   PrimeNumberTheorem.RH_ErrorBound_of_RH_PrimeCountingLiErrorBound h
 
+/-- Public reverse orientation of the pointwise/composable RH-scale
+prime-counting error equivalence. -/
+theorem rh_primeCountingLiErrorBound_iff_rh_error_bound :
+    PrimeNumberTheorem.RH_PrimeCountingLiErrorBound ↔
+      PrimeNumberTheorem.RH_ErrorBound :=
+  PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_iff_RH_ErrorBound
+
 /-- Public eventual-bound constructor for the `ψ` RH-scale Big-O target. -/
 theorem rh_psi_error_bound_of_eventual_abs_bound {C : ℝ}
     (h : ∀ᶠ x in atTop,
@@ -446,6 +478,23 @@ theorem chebyshevTheta_sub_id_isBigO_id :
     (fun x : ℝ => Chebyshev.theta x - x)
       =O[atTop] (fun x : ℝ => x) :=
   PrimeNumberTheorem.chebyshevTheta_sub_id_isBigO_id
+
+/-- Public limit `log(x)^2 / sqrt(x) → 0`. -/
+theorem log_sq_div_sqrt_tendsto_zero :
+    Tendsto (fun x : ℝ => (Real.log x)^2 / Real.sqrt x) atTop (𝓝 0) :=
+  PrimeNumberTheorem.log_sq_div_sqrt_tendsto_zero
+
+/-- Public fact that the RH `ψ` scale is little-o of the identity. -/
+theorem sqrt_mul_log_sq_isLittleO_id :
+    (fun x : ℝ => Real.sqrt x * (Real.log x)^2)
+      =o[atTop] (fun x : ℝ => x) :=
+  PrimeNumberTheorem.sqrt_mul_log_sq_isLittleO_id
+
+/-- Public fact that the RH prime-counting scale is little-o of `Li(x)`. -/
+theorem sqrt_mul_log_isLittleO_logIntegral :
+    (fun x : ℝ => Real.sqrt x * Real.log x)
+      =o[atTop] (fun x : ℝ => PrimeNumberTheorem.logIntegral x) :=
+  PrimeNumberTheorem.sqrt_mul_log_isLittleO_logIntegral
 
 /-- Public endpoint estimate in the partial-summation bridge from `θ` errors
 to prime-counting errors. -/
@@ -646,6 +695,34 @@ theorem rh_iff_pointwise_error_iff :
       (_root_.RiemannHypothesis.Statement ↔ PrimeNumberTheorem.RH_ErrorBound) :=
   PrimeNumberTheorem.rh_iff_pointwise_error_iff
 
+/-- Public local-Statement form of the project's RH/error equivalence target. -/
+theorem rh_iff_optimal_error_iff_statement :
+    PrimeNumberTheorem.rh_iff_optimal_error ↔
+      (_root_.RiemannHypothesis.Statement ↔
+        PrimeNumberTheorem.RH_PrimeCountingLiErrorBound) :=
+  PrimeNumberTheorem.rh_iff_optimal_error_iff
+
+/-- Public local-Statement packaging lemma for closing the RH/error target from
+the two composable Big-O implications. -/
+theorem rh_iff_optimal_error_of_statement_implications
+    (h_forward : _root_.RiemannHypothesis.Statement →
+      PrimeNumberTheorem.RH_PrimeCountingLiErrorBound)
+    (h_reverse : PrimeNumberTheorem.RH_PrimeCountingLiErrorBound →
+      _root_.RiemannHypothesis.Statement) :
+    PrimeNumberTheorem.rh_iff_optimal_error :=
+  PrimeNumberTheorem.rh_iff_optimal_error_of_implications h_forward h_reverse
+
+/-- Public local-Statement packaging lemma for closing the RH/error target from
+the two pointwise textbook implications. -/
+theorem rh_iff_optimal_error_of_statement_pointwise_implications
+    (h_forward : _root_.RiemannHypothesis.Statement →
+      PrimeNumberTheorem.RH_ErrorBound)
+    (h_reverse : PrimeNumberTheorem.RH_ErrorBound →
+      _root_.RiemannHypothesis.Statement) :
+    PrimeNumberTheorem.rh_iff_optimal_error :=
+  PrimeNumberTheorem.rh_iff_optimal_error_of_pointwise_implications
+    h_forward h_reverse
+
 /-- Public packaging lemma for closing the RH/error target from Mathlib-RH
 implications in composable Big-O form. -/
 theorem rh_iff_optimal_error_of_mathlib_implications
@@ -718,6 +795,35 @@ theorem mathlib_RH_of_rh_iff_pointwise_error
     PrimeNumberTheorem.RH_ErrorBound → _root_.RiemannHypothesis :=
   PrimeNumberTheorem.mathlib_RH_of_rh_iff_pointwise_error h
 
+/-- Public local-Statement forward direction of the RH/error target. -/
+theorem rh_primeCountingLiErrorBound_of_rh_iff_optimal_error
+    (h : PrimeNumberTheorem.rh_iff_optimal_error) :
+    _root_.RiemannHypothesis.Statement →
+      PrimeNumberTheorem.RH_PrimeCountingLiErrorBound :=
+  PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_rh_iff_optimal_error h
+
+/-- Public local-Statement reverse direction of the RH/error target. -/
+theorem riemannHypothesis_statement_of_rh_iff_optimal_error
+    (h : PrimeNumberTheorem.rh_iff_optimal_error) :
+    PrimeNumberTheorem.RH_PrimeCountingLiErrorBound →
+      _root_.RiemannHypothesis.Statement :=
+  PrimeNumberTheorem.RiemannHypothesis_of_rh_iff_optimal_error h
+
+/-- Public local-Statement forward direction into the pointwise textbook RH
+error target. -/
+theorem rh_error_bound_of_statement_of_rh_iff_optimal_error
+    (h : PrimeNumberTheorem.rh_iff_optimal_error) :
+    _root_.RiemannHypothesis.Statement → PrimeNumberTheorem.RH_ErrorBound :=
+  PrimeNumberTheorem.RH_ErrorBound_of_rh_iff_optimal_error h
+
+/-- Public local-Statement reverse direction from the pointwise textbook RH
+error target. -/
+theorem riemannHypothesis_statement_of_rh_iff_pointwise_error
+    (h : PrimeNumberTheorem.rh_iff_optimal_error) :
+    PrimeNumberTheorem.RH_ErrorBound →
+      _root_.RiemannHypothesis.Statement :=
+  PrimeNumberTheorem.RiemannHypothesis_of_rh_iff_pointwise_error h
+
 /-- Public Mathlib-facing pointwise textbook form of the RH/error equivalence
 target. -/
 theorem rh_iff_optimal_error_iff_mathlib_pointwise :
@@ -742,6 +848,27 @@ theorem pnt_form3_of_mathlib_RH_of_rh_iff_optimal_error
     (h : PrimeNumberTheorem.rh_iff_optimal_error) :
     _root_.RiemannHypothesis → PrimeNumberTheorem.PNTForm3 :=
   PrimeNumberTheorem.PNTForm3_of_mathlib_RH_of_rh_iff_optimal_error h
+
+/-- Public local-Statement consequence: the RH/error target turns local RH into
+PNT form 1. -/
+theorem pnt_form1_of_statement_of_rh_iff_optimal_error
+    (h : PrimeNumberTheorem.rh_iff_optimal_error) :
+    _root_.RiemannHypothesis.Statement → PrimeNumberTheorem.PNTForm1 :=
+  PrimeNumberTheorem.PNTForm1_of_rh_iff_optimal_error h
+
+/-- Public local-Statement consequence: the RH/error target turns local RH into
+PNT form 2. -/
+theorem pnt_form2_of_statement_of_rh_iff_optimal_error
+    (h : PrimeNumberTheorem.rh_iff_optimal_error) :
+    _root_.RiemannHypothesis.Statement → PrimeNumberTheorem.PNTForm2 :=
+  PrimeNumberTheorem.PNTForm2_of_rh_iff_optimal_error h
+
+/-- Public local-Statement consequence: the RH/error target turns local RH into
+PNT form 3. -/
+theorem pnt_form3_of_statement_of_rh_iff_optimal_error
+    (h : PrimeNumberTheorem.rh_iff_optimal_error) :
+    _root_.RiemannHypothesis.Statement → PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForm3_of_rh_iff_optimal_error h
 
 /-- Public equivalence between Mathlib's RH predicate and the nontrivial-zero
 line statement. -/
