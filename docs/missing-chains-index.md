@@ -36,7 +36,7 @@ parallel:
 | --- | --- | --- | --- | --- |
 | Quantitative zero-free region | `classical_zero_free_region` and `vinogradov_korobov_zero_free_region` are `def ... : Prop` targets | Add zeta-specific meromorphic/growth/log-derivative estimates; do not cite compact zero-free region as the classical `c / log |t|` result | Prove conditional 3-4-1 algebra and compact-to-high-height patching lemmas | 2 |
 | Explicit formula | `explicit_formula_von_mangoldt` is a `def ... : Prop` target | Replace the unconditional infinite `tsum` target with a truncated Perron/residue formula for `psi0`, then a principal-value limit | Define `psi0`, finite zero sums with multiplicity, good heights, and contour-error terms | 1 |
-| RH error equivalence | `rh_iff_optimal_error` is a `def ... : Prop` target | Stage the result through `=O[atTop]` predicates for `psi`, `theta`, and `primeCounting - logIntegral` | Add explicit `IsBigO` target predicates and quantitative partial-summation milestones | 8 |
+| RH error equivalence | `rh_iff_optimal_error` is a `def ... : Prop` target | Stage the result through `=O[atTop]` predicates for `psi`, `theta`, and `primeCounting - logIntegral` | Prove the explicit-formula-to-`RH_PsiErrorBound` direction and the reverse error-to-RH direction | 8 |
 | Hardy theorem | `hardy_theorem_target` and related moment/asymptotic targets are `def ... : Prop` targets | Use an unbounded-height zero target as the main theorem; use signed moment targets, not merely nonzero constants | Prove bounded-zero eventual-sign control and generic asymptotic sign lemmas | 11 (10 in `HardyTheorem`, 1 in `RiemannExplorer`) |
 
 ## Target-to-Chain Mapping
@@ -50,7 +50,7 @@ parallel:
 | `PrimeNumberTheorem.lean` | `PNTForm3` | RH error equivalence | Equivalent to `PNTForm1`/`PNTForm2`; included as a target interface |
 | `PrimeNumberTheorem.lean` | `RH_PsiErrorBound` | RH error equivalence | Needs explicit-formula error control under RH |
 | `PrimeNumberTheorem.lean` | `RH_ThetaErrorBound` | RH error equivalence | Needs the same Hardy–Littlewood style input as `RH_PsiErrorBound` |
-| `PrimeNumberTheorem.lean` | `RH_PrimeCountingLiErrorBound` | RH error equivalence | Partial-summation bridge from Chebyshev bounds to prime counting |
+| `PrimeNumberTheorem.lean` | `RH_PrimeCountingLiErrorBound` | RH error equivalence | Now follows from `RH_ThetaErrorBound`; target remains open because the upstream RH-scale Chebyshev bound is still a target |
 | `PrimeNumberTheorem.lean` | `RH_ErrorBound` | RH error equivalence | Textbook pointwise reformulation of `RH_PrimeCountingLiErrorBound` |
 | `PrimeNumberTheorem.lean` | `rh_iff_optimal_error` | RH error equivalence | Final RH ↔ prime-counting error equivalence statement |
 | `PrimeNumberTheorem.lean` | `explicit_formula_von_mangoldt` | Explicit formula | Main missing explicit-formula pipeline target |
@@ -88,6 +88,10 @@ The following proved declarations are the main entry points for future work:
 - `PrimeNumberTheorem.PNTForm3_iff_PNTForm2`
 - `PrimeNumberTheorem.PNTForm3_iff_PNTForm1`
 - `PrimeNumberTheorem.RH_PsiErrorBound_iff_RH_ThetaErrorBound`
+- `PrimeNumberTheorem.theta_error_div_log_isBigO_sqrt_mul_log`
+- `PrimeNumberTheorem.theta_error_integral_isBigO_sqrt_mul_log`
+- `PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_RH_ThetaErrorBound`
+- `PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_RH_PsiErrorBound`
 - `PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_RH_ErrorBound`
 - `PrimeNumberTheorem.RH_ErrorBound_of_RH_PrimeCountingLiErrorBound_of_finite_intervals`
 - `PrimeNumberTheorem.RH_ErrorBound_of_RH_PrimeCountingLiErrorBound`

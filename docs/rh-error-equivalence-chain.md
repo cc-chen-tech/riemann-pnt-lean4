@@ -22,6 +22,9 @@ The current project already provides these usable endpoints and support lemmas.
 | `pnt_forms_equivalent` | Proves asymptotic equivalence of `PNTForm1`, `PNTForm2`, and `PNTForm3`. |
 | `Chebyshev.abs_psi_sub_theta_le_sqrt_mul_log` | Already used locally to show `psi(x) - theta(x) = o(x)`; can also absorb the `psi` to `theta` error under RH. |
 | `Chebyshev.primeCounting_sub_theta_div_log_isBigO` | Current weak unconditional bridge for PNT equivalence; not strong enough for RH error terms. |
+| `theta_error_integral_isBigO_sqrt_mul_log` | Bounds the Abel integral error from `RH_ThetaErrorBound`. |
+| `RH_PrimeCountingLiErrorBound_of_RH_ThetaErrorBound` | Closed partial-summation bridge from RH-scale `theta` error to RH-scale `pi - Li` error. |
+| `RH_PrimeCountingLiErrorBound_of_RH_PsiErrorBound` | Same bridge after the local `psi`/`theta` error equivalence. |
 | `explicit_formula_von_mangoldt` | Present only as a target `Prop`; its current infinite zero sum is not the final formal theorem shape needed for estimates. |
 
 ## Current Target Assessment
@@ -226,16 +229,21 @@ Current status:
 - `pnt_forms_equivalent` proves asymptotic PNT equivalences.
 - `Chebyshev.primeCounting_sub_theta_div_log_isBigO` gives a weaker
   unconditional `O(x / log^2 x)` bridge used for asymptotic equivalence.
-- Neither theorem supplies the quantitative RH-scale partial summation needed
-  here.
+- `primeCounting_sub_logIntegral_eq_theta_error_integral` supplies the exact
+  Abel decomposition in the project's normalization.
+- `theta_error_div_log_isBigO_sqrt_mul_log` bounds the endpoint term from
+  `RH_ThetaErrorBound`.
+- `theta_error_integral_isBigO_sqrt_mul_log` bounds the Abel integral error
+  from `RH_ThetaErrorBound`.
+- `RH_PrimeCountingLiErrorBound_of_RH_ThetaErrorBound` closes the forward
+  quantitative partial-summation bridge.
 
 Formalization dependencies:
 
-- Stieltjes or summatory partial summation for `Nat.primeCounting` and
-  `Chebyshev.theta`.
-- Integral estimates for
-  `sqrt t * log^2 t / (t * log^2 t) = 1 / sqrt t`.
-- Normalization lemmas aligning project `logIntegral` with the main term.
+- No remaining dependency for the forward
+  `RH_ThetaErrorBound -> RH_PrimeCountingLiErrorBound` bridge.
+- The open work is upstream: prove `RH_PsiErrorBound` / `RH_ThetaErrorBound`
+  from an explicit formula under RH.
 
 ## Reverse Chain: `primeCounting - Li` to RH
 
@@ -348,7 +356,7 @@ The smallest coherent route to make
    `N(T) = O(T log T)` and `sum 1 / |rho| = O(log^2 T)`.
 4. Prove `RH -> RH_PsiErrorBound` by bounding the truncated explicit formula.
 5. Use the existing `psi - theta` Mathlib bound to get `RH_ThetaErrorBound`.
-6. Prove quantitative partial summation
+6. Use the proved quantitative partial-summation bridge
    `RH_ThetaErrorBound -> RH_PrimeCountingLiErrorBound`.
 7. For the reverse direction, prove quantitative partial summation back to
    `RH_PsiErrorBound`.

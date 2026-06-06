@@ -114,6 +114,10 @@ For the chain accounting:
 - `PrimeNumberTheorem.primeCounting_eq_mathlib`
 - `PrimeNumberTheorem.chebyshevPsi_eq_mathlib`
 - `PrimeNumberTheorem.RH_PsiErrorBound_iff_RH_ThetaErrorBound`
+- `PrimeNumberTheorem.theta_error_div_log_isBigO_sqrt_mul_log`
+- `PrimeNumberTheorem.theta_error_integral_isBigO_sqrt_mul_log`
+- `PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_RH_ThetaErrorBound`
+- `PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_RH_PsiErrorBound`
 - `PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_RH_ErrorBound`
 - `PrimeNumberTheorem.RH_ErrorBound_of_RH_PrimeCountingLiErrorBound_of_finite_intervals`
 - `PrimeNumberTheorem.RH_ErrorBound_of_RH_PrimeCountingLiErrorBound`
@@ -131,7 +135,9 @@ For the chain accounting:
    including truncation parameter handling;
 2. zero-counting and reciprocal-zero sum control (e.g. `N(T)` and `sum 1/|rho|`)
    for converting explicit-formula sums to `sqrt(x) log^2 x`-type bounds;
-3. precise `Chebyshev` ⇄ `primeCounting` bridge under RH-quality errors;
+3. upstream proof of `RH_PsiErrorBound` / `RH_ThetaErrorBound`; the forward
+   `Chebyshev` to `primeCounting` bridge under RH-quality errors is already
+   proved by `RH_PrimeCountingLiErrorBound_of_RH_ThetaErrorBound`;
 4. reverse implication machinery (error bounds on `pi`/`Li` imply RH in
    the required direction).
 
