@@ -687,6 +687,12 @@ lemma hardyZ_eventually_const_sign_of_finite_zeros
     (∀ᶠ t in atTop, hardyZ t > 0) ∨ (∀ᶠ t in atTop, hardyZ t < 0) :=
   hardyZ_eventually_const_sign_of_bounded_zeros (Set.Finite.isBounded h)
 
+lemma hardyZ_eventually_const_sign_of_finite_critical_line_zeros
+    (h : {t : ℝ | riemannZeta (0.5 + I * t) = 0}.Finite) :
+    (∀ᶠ t in atTop, hardyZ t > 0) ∨ (∀ᶠ t in atTop, hardyZ t < 0) := by
+  exact hardyZ_eventually_const_sign_of_finite_zeros
+    (hardyZ_zero_set_finite_iff_critical_line_zeta_zero_set_finite.mpr h)
+
 def weightedIntegralOf_tail_dominates (f : ℝ → ℝ) (n : ℕ) : Prop :=
   ∃ A : ℝ, Tendsto (fun T => ∫ t in A..T, weightFunction n t * f t) atTop atTop
 
@@ -1193,6 +1199,19 @@ lemma hardy_theorem_target_iff_hardyZ_abs_unbounded_of_bounded_strips
   Iff.trans (hardy_theorem_target_iff_abs_unbounded_of_bounded_strips hstrip)
     hardy_zeros_abs_unbounded_target_iff_hardyZ_abs_unbounded
 
+lemma hardy_theorem_target_iff_hardyZ_abs_unbounded_of_hardyZ_bounded_strips
+    (hstrip : ∀ B : ℝ,
+      {t : ℝ | |t| ≤ B ∧ hardyZ t = 0}.Finite) :
+    hardy_theorem_target ↔
+      ∀ T : ℝ, ∃ t : ℝ, T ≤ |t| ∧ hardyZ t = 0 :=
+  Iff.trans
+    (hardy_theorem_target_iff_abs_unbounded_of_bounded_strips (by
+      intro B
+      exact (hstrip B).subset (by
+        intro t ht
+        exact ⟨ht.1, (hardyZ_zero_iff_zeta_zero t).mpr ht.2⟩)))
+    hardy_zeros_abs_unbounded_target_iff_hardyZ_abs_unbounded
+
 lemma hardy_zeros_unbounded_of_hardy_theorem_target_of_bounded_strips
     (hstrip : ∀ B : ℝ,
       {t : ℝ | |t| ≤ B ∧ riemannZeta (0.5 + I * t) = 0}.Finite)
@@ -1269,6 +1288,18 @@ lemma zeroCountOnCriticalLine_pos_iff_exists_of_finite {T : ℝ}
       ∃ t : ℝ, 0 ≤ t ∧ t ≤ T ∧ riemannZeta (0.5 + I * t) = 0 :=
   ⟨exists_zero_of_zeroCountOnCriticalLine_pos,
     zeroCountOnCriticalLine_pos_of_exists_of_finite hfinite⟩
+
+lemma zeroCountOnCriticalLine_pos_iff_exists_hardyZ_zero_of_finite {T : ℝ}
+    (hfinite :
+      {t : Set.Icc (0 : ℝ) T | riemannZeta (0.5 + I * (t : ℝ)) = 0}.Finite) :
+    0 < zeroCountOnCriticalLine T ↔
+      ∃ t : ℝ, 0 ≤ t ∧ t ≤ T ∧ hardyZ t = 0 := by
+  constructor
+  · exact exists_hardyZ_zero_of_zeroCountOnCriticalLine_pos
+  · intro h
+    rcases h with ⟨t, ht0, htT, htzero⟩
+    exact zeroCountOnCriticalLine_pos_of_exists_of_finite hfinite
+      ⟨t, ht0, htT, (hardyZ_zero_iff_zeta_zero t).mp htzero⟩
 
 lemma zeroCountOnCriticalLine_eq_zero_of_no_zero {T : ℝ}
     (h : ¬ ∃ t : ℝ, 0 ≤ t ∧ t ≤ T ∧ riemannZeta (0.5 + I * t) = 0) :

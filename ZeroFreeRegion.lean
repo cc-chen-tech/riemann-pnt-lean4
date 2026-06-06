@@ -633,6 +633,17 @@ lemma classical_zero_free_region_iff_re_im :
 lemma log_abs_pos_of_two_le {t : ℝ} (ht : 2 ≤ |t|) : 0 < Real.log |t| :=
   Real.log_pos (lt_of_lt_of_le (by norm_num : (1 : ℝ) < 2) ht)
 
+/-- The classical `c / log |t|` width is positive in its height range. -/
+lemma classical_width_pos_of_two_le {c t : ℝ} (hc : 0 < c) (ht : 2 ≤ |t|) :
+    0 < c / Real.log |t| :=
+  div_pos hc (log_abs_pos_of_two_le ht)
+
+/-- The classical `c / log |t|` width is monotone in the width constant. -/
+lemma classical_width_mono_const {csmall clarge t : ℝ}
+    (hc : csmall ≤ clarge) (ht : 2 ≤ |t|) :
+    csmall / Real.log |t| ≤ clarge / Real.log |t| :=
+  div_le_div_of_nonneg_right hc (log_abs_pos_of_two_le ht).le
+
 /-- Above height `3`, `log |t|` is already larger than `1`. -/
 lemma log_abs_gt_one_of_three_le {t : ℝ} (ht : 3 ≤ |t|) :
     1 < Real.log |t| := by
@@ -955,6 +966,29 @@ lemma vinogradov_korobov_width_pos_of_three_le {c t : ℝ}
   exact mul_pos
     (div_pos hc (Real.rpow_pos_of_pos hlog_pos (2 / 3 : ℝ)))
     (Real.rpow_pos_of_pos hloglog_pos (-1 / 3 : ℝ))
+
+/-- The Vinogradov-Korobov width is monotone in the width constant. -/
+lemma vinogradov_korobov_width_mono_const {csmall clarge t : ℝ}
+    (hc : csmall ≤ clarge) (ht : 3 ≤ |t|) :
+    csmall / (Real.log |t|) ^ (2 / 3 : ℝ) *
+        (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) ≤
+      clarge / (Real.log |t|) ^ (2 / 3 : ℝ) *
+        (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) := by
+  have hlog_pos : 0 < Real.log |t| := by
+    have h := log_abs_gt_one_of_three_le ht
+    linarith
+  have hden_pos : 0 < (Real.log |t|) ^ (2 / 3 : ℝ) :=
+    Real.rpow_pos_of_pos hlog_pos (2 / 3 : ℝ)
+  have hloglog_pos : 0 < Real.log (Real.log |t|) :=
+    log_log_abs_pos_of_three_le ht
+  have hfactor_nonneg :
+      0 ≤ (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) :=
+    (Real.rpow_pos_of_pos hloglog_pos (-1 / 3 : ℝ)).le
+  have hbase :
+      csmall / (Real.log |t|) ^ (2 / 3 : ℝ) ≤
+        clarge / (Real.log |t|) ^ (2 / 3 : ℝ) :=
+    div_le_div_of_nonneg_right hc hden_pos.le
+  exact mul_le_mul_of_nonneg_right hbase hfactor_nonneg
 
 lemma vinogradov_korobov_zero_free_region_high_height
     (T0 : ℝ) (hT0 : 3 ≤ T0)
