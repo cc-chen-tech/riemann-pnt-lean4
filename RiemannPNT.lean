@@ -2389,6 +2389,31 @@ theorem weightedIntegralOf_neg (f : ℝ → ℝ) (n : ℕ) (T : ℝ) :
       -HardyTheorem.weightedIntegralOf f n T :=
   HardyTheorem.weightedIntegralOf_neg f n T
 
+/-- Public nonnegativity of Hardy's polynomial weight. -/
+theorem weightFunction_nonneg (n : ℕ) (t : ℝ) :
+    0 ≤ HardyTheorem.weightFunction n t :=
+  HardyTheorem.weightFunction_nonneg n t
+
+/-- Public positivity consequence for weighted Hardy integrals under eventual
+positive sign and tail dominance. -/
+theorem weighted_integral_eventually_positive_of_hardyZ_positive
+    (n : ℕ) (h_pos : ∀ᶠ t in atTop, HardyTheorem.hardyZ t > 0)
+    (h_tail : HardyTheorem.weightedIntegralOf_tail_dominates
+      HardyTheorem.hardyZ n) :
+    ∀ᶠ T in atTop, HardyTheorem.weightedIntegral n T > 0 :=
+  HardyTheorem.weighted_integral_eventually_positive_of_hardyZ_positive
+    n h_pos h_tail
+
+/-- Public negativity consequence for weighted Hardy integrals under eventual
+negative sign and signed tail dominance. -/
+theorem weighted_integral_eventually_negative_of_hardyZ_negative
+    (n : ℕ) (h_neg : ∀ᶠ t in atTop, HardyTheorem.hardyZ t < 0)
+    (h_tail : HardyTheorem.weightedIntegralOf_tail_dominates
+      (fun t => -HardyTheorem.hardyZ t) n) :
+    ∀ᶠ T in atTop, HardyTheorem.weightedIntegral n T < 0 :=
+  HardyTheorem.weighted_integral_eventually_negative_of_hardyZ_negative
+    n h_neg h_tail
+
 /-- Public structure lemma: bounded Hardy-Z zeros force eventual constant sign
 at positive height. -/
 theorem hardyZ_eventually_const_sign_of_bounded_zeros
@@ -2776,6 +2801,72 @@ theorem hardy_zeros_abs_unbounded_target_iff_eventually_exists_abs :
         ∃ t : ℝ, T ≤ |t| ∧ riemannZeta (0.5 + Complex.I * t) = 0 :=
   HardyTheorem.hardy_zeros_abs_unbounded_target_iff_eventually_exists_abs
 
+/-- Public bridge from one-sided unbounded Hardy zeros to absolute-height
+unbounded Hardy zeros. -/
+theorem hardy_zeros_abs_unbounded_of_unbounded
+    (h : HardyTheorem.hardy_zeros_unbounded_target) :
+    HardyTheorem.hardy_zeros_abs_unbounded_target :=
+  HardyTheorem.hardy_zeros_abs_unbounded_of_unbounded h
+
+/-- Public bridge from Hardy's one-sided unbounded target to the infinite-zero
+target. -/
+theorem hardy_theorem_target_of_unbounded
+    (h : HardyTheorem.hardy_zeros_unbounded_target) :
+    HardyTheorem.hardy_theorem_target :=
+  HardyTheorem.hardy_theorem_target_of_unbounded h
+
+/-- Public bridge from Hardy's absolute-height unbounded target to the
+infinite-zero target. -/
+theorem hardy_theorem_target_of_abs_unbounded
+    (h : HardyTheorem.hardy_zeros_abs_unbounded_target) :
+    HardyTheorem.hardy_theorem_target :=
+  HardyTheorem.hardy_theorem_target_of_abs_unbounded h
+
+/-- Public extraction of a nonnegative critical-line zero from Hardy's
+one-sided unbounded target. -/
+theorem exists_nonnegative_zero_on_critical_line_of_unbounded
+    (h : HardyTheorem.hardy_zeros_unbounded_target) :
+    ∃ t : ℝ, 0 ≤ t ∧ riemannZeta (0.5 + Complex.I * t) = 0 :=
+  HardyTheorem.exists_nonnegative_zero_on_critical_line_of_unbounded h
+
+/-- Public extraction of a critical-line zero from Hardy's one-sided unbounded
+target. -/
+theorem exists_zero_on_critical_line_of_unbounded
+    (h : HardyTheorem.hardy_zeros_unbounded_target) :
+    ∃ t : ℝ, riemannZeta (0.5 + Complex.I * t) = 0 :=
+  HardyTheorem.exists_zero_on_critical_line_of_unbounded h
+
+/-- Public extraction of a critical-line zero from Hardy's absolute-height
+unbounded target. -/
+theorem exists_zero_on_critical_line_of_abs_unbounded
+    (h : HardyTheorem.hardy_zeros_abs_unbounded_target) :
+    ∃ t : ℝ, riemannZeta (0.5 + Complex.I * t) = 0 :=
+  HardyTheorem.exists_zero_on_critical_line_of_abs_unbounded h
+
+/-- Public symmetry of critical-line zeta zeros under height negation. -/
+theorem critical_line_zeta_zero_neg_height (t : ℝ)
+    (h : riemannZeta (0.5 + Complex.I * t) = 0) :
+    riemannZeta (0.5 + Complex.I * (-t)) = 0 :=
+  HardyTheorem.critical_line_zeta_zero_neg_height t h
+
+/-- Public bridge from absolute-height unboundedness to one-sided
+unboundedness, parameterized by height-negation symmetry. -/
+theorem hardy_zeros_unbounded_of_abs_unbounded_of_neg_symm
+    (hsymm : ∀ t : ℝ, riemannZeta (0.5 + Complex.I * t) = 0 →
+      riemannZeta (0.5 + Complex.I * (-t)) = 0)
+    (h : HardyTheorem.hardy_zeros_abs_unbounded_target) :
+    HardyTheorem.hardy_zeros_unbounded_target :=
+  HardyTheorem.hardy_zeros_unbounded_of_abs_unbounded_of_neg_symm hsymm h
+
+/-- Public equivalence between one-sided and absolute-height Hardy
+unboundedness under height-negation symmetry. -/
+theorem hardy_zeros_unbounded_iff_abs_unbounded_of_neg_symm
+    (hsymm : ∀ t : ℝ, riemannZeta (0.5 + Complex.I * t) = 0 →
+      riemannZeta (0.5 + Complex.I * (-t)) = 0) :
+    HardyTheorem.hardy_zeros_unbounded_target ↔
+      HardyTheorem.hardy_zeros_abs_unbounded_target :=
+  HardyTheorem.hardy_zeros_unbounded_iff_abs_unbounded_of_neg_symm hsymm
+
 /-- Public equivalence between Hardy's infinite-zero target and the
 absolute-height unbounded target, using the local finiteness of zeta zeros in
 bounded height. -/
@@ -2983,6 +3074,51 @@ theorem selberg_zero_proportion_target_iff_eventually_log_lower_bound :
         (HardyTheorem.zeroCountOnCriticalLine T : ℝ) ≥
           c * (T / (2 * Real.pi) * Real.log T) :=
   HardyTheorem.selberg_zero_proportion_target_iff_eventually_log_lower_bound
+
+/-- Public eventual domination of any fixed natural count from the
+Hardy--Littlewood lower-bound target. -/
+theorem eventually_nat_lt_zeroCountOnCriticalLine_of_hardy_littlewood_lower_bound
+    (h : HardyTheorem.hardy_littlewood_lower_bound_target) (N : ℕ) :
+    ∀ᶠ T in atTop, N < HardyTheorem.zeroCountOnCriticalLine T :=
+  HardyTheorem.eventually_nat_lt_zeroCountOnCriticalLine_of_hardy_littlewood_lower_bound
+    h N
+
+/-- Public eventual positivity of the critical-line zero count from the
+Hardy--Littlewood lower-bound target. -/
+theorem eventually_zeroCountOnCriticalLine_pos_of_hardy_littlewood_lower_bound
+    (h : HardyTheorem.hardy_littlewood_lower_bound_target) :
+    ∀ᶠ T in atTop, 0 < HardyTheorem.zeroCountOnCriticalLine T :=
+  HardyTheorem.eventually_zeroCountOnCriticalLine_pos_of_hardy_littlewood_lower_bound h
+
+/-- Public bridge: Selberg's positive-proportion target implies the
+Hardy--Littlewood lower-bound target. -/
+theorem hardy_littlewood_lower_bound_target_of_selberg_zero_proportion
+    (h : HardyTheorem.selberg_zero_proportion_target) :
+    HardyTheorem.hardy_littlewood_lower_bound_target :=
+  HardyTheorem.hardy_littlewood_lower_bound_target_of_selberg_zero_proportion h
+
+/-- Public eventual linear lower-bound consequence of Selberg's
+positive-proportion target. -/
+theorem eventually_linear_lower_bound_of_selberg_zero_proportion
+    (h : HardyTheorem.selberg_zero_proportion_target) :
+    ∃ C > 0, ∀ᶠ T in atTop,
+      (HardyTheorem.zeroCountOnCriticalLine T : ℝ) ≥ C * T :=
+  HardyTheorem.eventually_linear_lower_bound_of_selberg_zero_proportion h
+
+/-- Public eventual domination of any fixed natural count from Selberg's
+positive-proportion target. -/
+theorem eventually_nat_lt_zeroCountOnCriticalLine_of_selberg_zero_proportion
+    (h : HardyTheorem.selberg_zero_proportion_target) (N : ℕ) :
+    ∀ᶠ T in atTop, N < HardyTheorem.zeroCountOnCriticalLine T :=
+  HardyTheorem.eventually_nat_lt_zeroCountOnCriticalLine_of_selberg_zero_proportion
+    h N
+
+/-- Public eventual positivity of the critical-line zero count from Selberg's
+positive-proportion target. -/
+theorem eventually_zeroCountOnCriticalLine_pos_of_selberg_zero_proportion
+    (h : HardyTheorem.selberg_zero_proportion_target) :
+    ∀ᶠ T in atTop, 0 < HardyTheorem.zeroCountOnCriticalLine T :=
+  HardyTheorem.eventually_zeroCountOnCriticalLine_pos_of_selberg_zero_proportion h
 
 /-- Public bridge from the Hardy--Littlewood lower-bound target to infinitely
 many complex critical-line zeros. -/
@@ -3301,6 +3437,15 @@ theorem eventually_nat_lt_zeroCountOnCriticalLine_of_conrey_target
 /-- Public bridge from eventual domination of every fixed natural count to
 unbounded critical-line zero counts. -/
 theorem zeroCountOnCriticalLine_unbounded_of_eventually_nat_lt
+    (h : ∀ N : ℕ, ∀ᶠ T in atTop,
+      N < HardyTheorem.zeroCountOnCriticalLine T) :
+    ∀ N : ℕ, ∃ T : ℝ, N < HardyTheorem.zeroCountOnCriticalLine T :=
+  HardyTheorem.zeroCountOnCriticalLine_unbounded_of_eventually_nat_lt_zeroCountOnCriticalLine
+    h
+
+/-- Public exact-name bridge from eventual domination of every fixed natural
+count to unbounded critical-line zero counts. -/
+theorem zeroCountOnCriticalLine_unbounded_of_eventually_nat_lt_zeroCountOnCriticalLine
     (h : ∀ N : ℕ, ∀ᶠ T in atTop,
       N < HardyTheorem.zeroCountOnCriticalLine T) :
     ∀ N : ℕ, ∃ T : ℝ, N < HardyTheorem.zeroCountOnCriticalLine T :=
