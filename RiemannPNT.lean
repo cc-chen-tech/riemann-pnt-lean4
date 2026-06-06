@@ -5,7 +5,7 @@ import EulerAndLfunctions
 import PrimeNumberTheorem
 import ZeroFreeRegion
 
-open Filter Topology Asymptotics
+open Complex Filter Topology Asymptotics ComplexConjugate
 
 namespace RiemannPNT.API
 
@@ -511,6 +511,24 @@ theorem zeta_ne_zero_re_im_of_one_le {β t : ℝ} (hβ : 1 ≤ β) :
     riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0 :=
   ZetaValues.zeta_ne_zero_re_im_of_one_le hβ
 
+/-- Public known-result form: zeta has no zeros on the line `Re(s)=1`. -/
+theorem zeta_no_zeros_on_one_line :
+    ∀ s : ℂ, s.re = 1 → riemannZeta s ≠ 0 :=
+  KnownResults.zeta_no_zeros_on_one_line
+
+/-- Public known-result form: zeta has no zeros on the line `Re(s)=0`. -/
+theorem zeta_no_zeros_on_zero_line :
+    ∀ s : ℂ, s.re = 0 → riemannZeta s ≠ 0 :=
+  KnownResults.zeta_no_zeros_on_zero_line
+
+/-- Public helper: a zeta zero on the critical line is a nontrivial zero and
+belongs to the project's critical-line set. -/
+theorem complex_critical_line_zero_is_nontrivial {s : ℂ}
+    (hre : s.re = 1 / 2) (hzero : riemannZeta s = 0) :
+    _root_.RiemannHypothesis.IsNontrivialZero s ∧
+      s ∈ _root_.RiemannHypothesis.criticalLine :=
+  KnownResults.complex_critical_line_zero_is_nontrivial hre hzero
+
 /-- Public coordinate form of Dirichlet `LFunction` nonvanishing in
 `Re(s) > 1`. -/
 theorem dirichlet_lfunction_ne_zero_re_im {N : ℕ} [NeZero N]
@@ -754,6 +772,72 @@ critical line. -/
 theorem hardyZ_zero_iff_zeta_zero (t : ℝ) :
     HardyTheorem.hardyZ t = 0 ↔ riemannZeta (0.5 + Complex.I * t) = 0 :=
   HardyTheorem.hardyZ_zero_iff_zeta_zero t
+
+/-- Public explicit formula for Hardy's real `Z` function. -/
+theorem hardyZ_explicit (t : ℝ) :
+    HardyTheorem.hardyZ t =
+      (riemannZeta (0.5 + Complex.I * t)).re *
+        Real.cos (HardyTheorem.thetaPhase t)
+      - (riemannZeta (0.5 + Complex.I * t)).im *
+        Real.sin (HardyTheorem.thetaPhase t) :=
+  HardyTheorem.hardyZ_explicit t
+
+/-- Public value of the Hardy phase at zero. -/
+theorem thetaPhase_zero :
+    HardyTheorem.thetaPhase 0 =
+      Complex.arg (Complex.Gamma (1 / 4 : ℂ)) :=
+  HardyTheorem.thetaPhase_zero
+
+/-- Public forward zero transfer from zeta to Hardy `Z`. -/
+theorem zeta_zero_implies_hardyZ_zero
+    (t : ℝ) (h : riemannZeta (0.5 + Complex.I * t) = 0) :
+    HardyTheorem.hardyZ t = 0 :=
+  HardyTheorem.zeta_zero_implies_hardyZ_zero t h
+
+/-- Public conjugation identity for completed zeta in the half-plane
+`Re(s)>1`. -/
+theorem completedRiemannZeta_conj_eq_of_one_lt_re {s : ℂ} (hs : 1 < s.re) :
+    completedRiemannZeta (conj s) = conj (completedRiemannZeta s) :=
+  HardyTheorem.completedRiemannZeta_conj_eq_of_one_lt_re hs
+
+/-- Public conjugation identity for the entire completed zeta variant. -/
+theorem completedRiemannZeta₀_conj_eq (s : ℂ) :
+    completedRiemannZeta₀ (conj s) = conj (completedRiemannZeta₀ s) :=
+  HardyTheorem.completedRiemannZeta₀_conj_eq s
+
+/-- Public reality statement for completed zeta on the critical line. -/
+theorem completedRiemannZeta_critical_line_real (t : ℝ) :
+    ∃ r : ℝ, completedRiemannZeta ((1 / 2 : ℂ) + Complex.I * t) = r :=
+  HardyTheorem.completedRiemannZeta_critical_line_real t
+
+/-- Public polar-coordinate real/imaginary formula for the Gamma factor on the
+critical line. -/
+theorem Gammaℝ_re_im_arg (t : ℝ) :
+    (Gammaℝ ((1 / 2 : ℂ) + Complex.I * t)).re =
+        ‖Gammaℝ ((1 / 2 : ℂ) + Complex.I * t)‖ *
+          Real.cos (HardyTheorem.thetaPhase t) ∧
+      (Gammaℝ ((1 / 2 : ℂ) + Complex.I * t)).im =
+        ‖Gammaℝ ((1 / 2 : ℂ) + Complex.I * t)‖ *
+          Real.sin (HardyTheorem.thetaPhase t) :=
+  HardyTheorem.Gammaℝ_re_im_arg t
+
+/-- Public equality of the Hardy-Z zero set and the critical-line zeta-zero
+set. -/
+theorem hardyZ_zero_set_eq_critical_line_zeta_zero_set :
+    {t : ℝ | HardyTheorem.hardyZ t = 0} =
+      {t : ℝ | riemannZeta (0.5 + Complex.I * t) = 0} :=
+  HardyTheorem.hardyZ_zero_set_eq_critical_line_zeta_zero_set
+
+/-- Public finiteness equivalence for Hardy-Z and zeta zeros on the critical
+line. -/
+theorem hardyZ_zero_set_finite_iff_critical_line_zeta_zero_set_finite :
+    {t : ℝ | HardyTheorem.hardyZ t = 0}.Finite ↔
+      {t : ℝ | riemannZeta (0.5 + Complex.I * t) = 0}.Finite :=
+  HardyTheorem.hardyZ_zero_set_finite_iff_critical_line_zeta_zero_set_finite
+
+/-- Public continuity theorem for Hardy's real `Z` function. -/
+theorem hardyZ_continuous : Continuous HardyTheorem.hardyZ :=
+  HardyTheorem.hardyZ_continuous
 
 /-- Public packaging equivalence: the two signed Hardy moments are exactly the
 first two signed integral-asymptotic targets. -/
