@@ -348,6 +348,49 @@ theorem vinogradov_korobov_high_height_classical_zero_free_region_re_im
       riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0 :=
   ZeroFreeRegion.vinogradov_korobov_high_height_classical_zero_free_region_re_im hvk
 
+/-- Public equivalence between Hardy's real `Z` zeros and zeta zeros on the
+critical line. -/
+theorem hardyZ_zero_iff_zeta_zero (t : ℝ) :
+    HardyTheorem.hardyZ t = 0 ↔ riemannZeta (0.5 + Complex.I * t) = 0 :=
+  HardyTheorem.hardyZ_zero_iff_zeta_zero t
+
+/-- Public packaging equivalence: the two signed Hardy moments are exactly the
+first two signed integral-asymptotic targets. -/
+theorem hardy_two_signed_moments_target_iff_integral_asymptotic_one_two :
+    HardyTheorem.hardy_two_signed_moments_target ↔
+      HardyTheorem.integral_asymptotic_target 1 ∧
+        HardyTheorem.integral_asymptotic_target 2 :=
+  HardyTheorem.hardy_two_signed_moments_target_iff_integral_asymptotic_one_two
+
+/-- Public bridge from the two signed Hardy moments to the first integral
+asymptotic target. -/
+theorem integral_asymptotic_one_of_two_signed_moments
+    (h : HardyTheorem.hardy_two_signed_moments_target) :
+    HardyTheorem.integral_asymptotic_target 1 :=
+  HardyTheorem.integral_asymptotic_one_of_two_signed_moments h
+
+/-- Public bridge from the two signed Hardy moments to the second integral
+asymptotic target. -/
+theorem integral_asymptotic_two_of_two_signed_moments
+    (h : HardyTheorem.hardy_two_signed_moments_target) :
+    HardyTheorem.integral_asymptotic_target 2 :=
+  HardyTheorem.integral_asymptotic_two_of_two_signed_moments h
+
+/-- Public packaging lemma from the first two integral asymptotics to the two
+signed Hardy moment target. -/
+theorem hardy_two_signed_moments_of_integral_asymptotic_one_two
+    (h1 : HardyTheorem.integral_asymptotic_target 1)
+    (h2 : HardyTheorem.integral_asymptotic_target 2) :
+    HardyTheorem.hardy_two_signed_moments_target :=
+  HardyTheorem.hardy_two_signed_moments_of_integral_asymptotic_one_two h1 h2
+
+/-- Public equivalence between Hardy's infinite-zero target and infinitude of
+Hardy `Z` zeros. -/
+theorem hardy_theorem_target_iff_hardyZ_zero_set_infinite :
+    HardyTheorem.hardy_theorem_target ↔
+      {t : ℝ | HardyTheorem.hardyZ t = 0}.Infinite :=
+  HardyTheorem.hardy_theorem_target_iff_hardyZ_zero_set_infinite
+
 /-- Public bridge from Hardy's unbounded-height target to infinitely many
 critical-line zeros. -/
 theorem infinitely_many_zeros_on_critical_line_of_hardy_unbounded
@@ -360,6 +403,18 @@ theorem hardy_zeros_unbounded_iff_abs_unbounded :
     HardyTheorem.hardy_zeros_unbounded_target ↔
       HardyTheorem.hardy_zeros_abs_unbounded_target :=
   HardyTheorem.hardy_zeros_unbounded_iff_abs_unbounded
+
+/-- Public HardyZ form of the positive-height unbounded target. -/
+theorem hardy_zeros_unbounded_target_iff_hardyZ_unbounded :
+    HardyTheorem.hardy_zeros_unbounded_target ↔
+      ∀ T : ℝ, ∃ t : ℝ, T ≤ t ∧ HardyTheorem.hardyZ t = 0 :=
+  HardyTheorem.hardy_zeros_unbounded_target_iff_hardyZ_unbounded
+
+/-- Public HardyZ form of the absolute-height unbounded target. -/
+theorem hardy_zeros_abs_unbounded_target_iff_hardyZ_abs_unbounded :
+    HardyTheorem.hardy_zeros_abs_unbounded_target ↔
+      ∀ T : ℝ, ∃ t : ℝ, T ≤ |t| ∧ HardyTheorem.hardyZ t = 0 :=
+  HardyTheorem.hardy_zeros_abs_unbounded_target_iff_hardyZ_abs_unbounded
 
 /-- Public equivalence between Hardy's infinite-zero target and the
 absolute-height unbounded target, using the local finiteness of zeta zeros in
