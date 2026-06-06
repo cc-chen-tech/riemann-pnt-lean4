@@ -543,6 +543,56 @@ theorem classical_zero_free_region_iff_re_im :
         riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0 :=
   ZeroFreeRegion.classical_zero_free_region_iff_re_im
 
+/-- Public compact zero-free strip next to `Re(s)=1`, valid for bounded
+height. -/
+theorem classical_zero_free_region_compact (T : ℝ) (hT : T ≥ 2) :
+    ∃ d > 0, ∀ s : ℂ, |s.im| ≤ T →
+      s.re ≥ 1 - d → riemannZeta s ≠ 0 :=
+  ZeroFreeRegion.classical_zero_free_region_compact T hT
+
+/-- Public compact zero-free strip at height `T=2`. -/
+theorem classical_zero_free_region_compact_at_two :
+    ∃ d > 0, ∀ s : ℂ, |s.im| ≤ 2 →
+      s.re ≥ 1 - d → riemannZeta s ≠ 0 :=
+  ZeroFreeRegion.classical_zero_free_region_compact_at_two
+
+/-- Public coordinate form of the compact zero-free strip. -/
+theorem classical_zero_free_region_compact_re_im
+    (T : ℝ) (hT : T ≥ 2) :
+    ∃ d > 0, ∀ β t : ℝ, |t| ≤ T →
+      β ≥ 1 - d → riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0 :=
+  ZeroFreeRegion.classical_zero_free_region_compact_re_im T hT
+
+/-- Public coordinate compact strip restricted to the band `2 ≤ |t| ≤ T`. -/
+theorem classical_zero_free_region_compact_band_re_im
+    (T : ℝ) (hT : T ≥ 2) :
+    ∃ d > 0, ∀ β t : ℝ, 2 ≤ |t| → |t| ≤ T →
+      β ≥ 1 - d → riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0 :=
+  ZeroFreeRegion.classical_zero_free_region_compact_band_re_im T hT
+
+/-- Public consequence: a classical zero-free region implies nonvanishing on
+the line `Re(s)=1` in its height range. -/
+theorem classical_zero_free_region_on_one_line
+    (hclassical : ZeroFreeRegion.classical_zero_free_region) :
+    ∀ s : ℂ, 2 ≤ |s.im| → s.re = 1 → riemannZeta s ≠ 0 :=
+  ZeroFreeRegion.classical_zero_free_region_on_one_line hclassical
+
+/-- Public high-height interface for the classical zero-free-region target. -/
+theorem classical_zero_free_region_iff_high_height
+    (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    ZeroFreeRegion.classical_zero_free_region ↔
+      ∃ c > 0, ∀ s : ℂ, T0 ≤ |s.im| →
+        s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0 :=
+  ZeroFreeRegion.classical_zero_free_region_iff_high_height T0 hT0
+
+/-- Public height-`3` high-height interface for the classical zero-free-region
+target. -/
+theorem classical_zero_free_region_iff_high_height_at_three :
+    ZeroFreeRegion.classical_zero_free_region ↔
+      ∃ c > 0, ∀ s : ℂ, 3 ≤ |s.im| →
+        s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0 :=
+  ZeroFreeRegion.classical_zero_free_region_iff_high_height_at_three
+
 /-- Public bridge: the Vinogradov-Korobov target implies the classical
 zero-free-region target. -/
 theorem classical_zero_free_region_of_vinogradov_korobov
@@ -578,6 +628,48 @@ theorem compact_patch_classical_zero_free_region_re_im_at_three
     ZeroFreeRegion.classical_zero_free_region :=
   ZeroFreeRegion.compact_patch_classical_zero_free_region_re_im_at_three hhigh
 
+/-- Public compact patch from a high-height classical-width input. -/
+theorem compact_patch_classical_zero_free_region
+    (T0 : ℝ) (hT0 : 2 ≤ T0)
+    (hhigh :
+      ∃ c > 0, ∀ s : ℂ, T0 ≤ |s.im| →
+        s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.compact_patch_classical_zero_free_region T0 hT0 hhigh
+
+/-- Public compact patch from a coordinate high-height classical-width input. -/
+theorem compact_patch_classical_zero_free_region_re_im
+    (T0 : ℝ) (hT0 : 2 ≤ T0)
+    (hhigh :
+      ∃ c > 0, ∀ β t : ℝ, T0 ≤ |t| →
+        β ≥ 1 - c / Real.log |t| →
+        riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.compact_patch_classical_zero_free_region_re_im T0 hT0 hhigh
+
+/-- Public compact patch from an arbitrary high-height width function. -/
+theorem compact_patch_classical_zero_free_region_of_width
+    (T0 : ℝ) (hT0 : 2 ≤ T0) (width : ℝ → ℝ)
+    (hregion : ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥ 1 - width |s.im| → riemannZeta s ≠ 0)
+    (hwidth : ∃ c > 0, ∀ t : ℝ, T0 ≤ |t| →
+      c / Real.log |t| ≤ width |t|) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.compact_patch_classical_zero_free_region_of_width
+    T0 hT0 width hregion hwidth
+
+/-- Public coordinate compact patch from an arbitrary high-height width
+function. -/
+theorem compact_patch_classical_zero_free_region_of_width_re_im
+    (T0 : ℝ) (hT0 : 2 ≤ T0) (width : ℝ → ℝ)
+    (hregion : ∀ β t : ℝ, T0 ≤ |t| →
+      β ≥ 1 - width |t| → riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0)
+    (hwidth : ∃ c > 0, ∀ t : ℝ, T0 ≤ |t| →
+      c / Real.log |t| ≤ width |t|) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.compact_patch_classical_zero_free_region_of_width_re_im
+    T0 hT0 width hregion hwidth
+
 /-- Public coordinate form of the Vinogradov-Korobov zero-free-region target. -/
 theorem vinogradov_korobov_zero_free_region_iff_re_im :
     ZeroFreeRegion.vinogradov_korobov_zero_free_region ↔
@@ -587,6 +679,37 @@ theorem vinogradov_korobov_zero_free_region_iff_re_im :
             (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
         riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0 :=
   ZeroFreeRegion.vinogradov_korobov_zero_free_region_iff_re_im
+
+/-- Public high-height interface for the Vinogradov-Korobov target. -/
+theorem vinogradov_korobov_zero_free_region_high_height
+    (T0 : ℝ) (hT0 : 3 ≤ T0)
+    (hvk : ZeroFreeRegion.vinogradov_korobov_zero_free_region) :
+    ∃ c > 0, ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥
+        1 - c / (Real.log |s.im|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |s.im|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta s ≠ 0 :=
+  ZeroFreeRegion.vinogradov_korobov_zero_free_region_high_height T0 hT0 hvk
+
+/-- Public coordinate high-height interface for the Vinogradov-Korobov target. -/
+theorem vinogradov_korobov_zero_free_region_high_height_re_im
+    (T0 : ℝ) (hT0 : 3 ≤ T0)
+    (hvk : ZeroFreeRegion.vinogradov_korobov_zero_free_region) :
+    ∃ c > 0, ∀ β t : ℝ, T0 ≤ |t| →
+      β ≥
+        1 - c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0 :=
+  ZeroFreeRegion.vinogradov_korobov_zero_free_region_high_height_re_im
+    T0 hT0 hvk
+
+/-- Public positivity of the Vinogradov-Korobov width above height `3`. -/
+theorem vinogradov_korobov_width_pos_of_three_le {c t : ℝ}
+    (hc : 0 < c) (ht : 3 ≤ |t|) :
+    0 <
+      c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+        (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) :=
+  ZeroFreeRegion.vinogradov_korobov_width_pos_of_three_le hc ht
 
 /-- Public pointwise width comparison showing that the Vinogradov-Korobov strip
 dominates the classical `c / log |t|` strip above height `3`. -/
@@ -605,6 +728,26 @@ theorem vinogradov_korobov_high_height_classical_zero_free_region_re_im
       β ≥ 1 - c / Real.log |t| →
       riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0 :=
   ZeroFreeRegion.vinogradov_korobov_high_height_classical_zero_free_region_re_im hvk
+
+/-- Public non-coordinate high-height classical-width consequence of the
+Vinogradov-Korobov target. -/
+theorem vinogradov_korobov_high_height_classical_zero_free_region
+    (hvk : ZeroFreeRegion.vinogradov_korobov_zero_free_region) :
+    ∃ c > 0, ∀ s : ℂ, 3 ≤ |s.im| →
+      s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0 :=
+  ZeroFreeRegion.vinogradov_korobov_high_height_classical_zero_free_region hvk
+
+/-- Public bridge from a coordinate Vinogradov-Korobov input to the classical
+zero-free-region target. -/
+theorem classical_zero_free_region_of_vinogradov_korobov_re_im
+    (hvk :
+      ∃ c > 0, ∀ β t : ℝ, 3 ≤ |t| →
+        β ≥
+          1 - c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+            (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+        riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_vinogradov_korobov_re_im hvk
 
 /-- Public equivalence between Hardy's real `Z` zeros and zeta zeros on the
 critical line. -/
