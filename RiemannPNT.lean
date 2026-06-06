@@ -295,6 +295,87 @@ theorem rh_zero_symmetric_self_consistent
     ρ.re = 1 / 2 ∧ (1 - ρ).re = 1 / 2 :=
   PrimeNumberTheorem.rh_zero_symmetric_self_consistent hRH h
 
+/-- Public membership criterion for the height-truncated nontrivial-zero
+finset. -/
+theorem mem_nontrivialZerosFinset {ρ : ℂ} {T : ℝ} :
+    ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T ↔
+      _root_.RiemannHypothesis.IsNontrivialZero ρ ∧ |ρ.im| ≤ T :=
+  PrimeNumberTheorem.mem_nontrivialZerosFinset
+
+/-- Public monotonicity of the height-truncated nontrivial-zero finset. -/
+theorem nontrivialZerosFinset_subset {T U : ℝ} (hTU : T ≤ U) :
+    PrimeNumberTheorem.nontrivialZerosFinset T ⊆
+      PrimeNumberTheorem.nontrivialZerosFinset U :=
+  PrimeNumberTheorem.nontrivialZerosFinset_subset hTU
+
+/-- Public symmetry of the height-truncated nontrivial-zero finset under
+`ρ ↦ 1 - ρ`. -/
+theorem one_sub_mem_nontrivialZerosFinset_iff {ρ : ℂ} {T : ℝ} :
+    1 - ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T ↔
+      ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T :=
+  PrimeNumberTheorem.one_sub_mem_nontrivialZerosFinset_iff
+
+/-- Public equality of height-truncated zero finsets under a global height
+bound. -/
+theorem nontrivialZerosFinset_eq_of_global_height_bound {B T : ℝ}
+    (hBT : B ≤ T)
+    (hbound : ∀ ρ : ℂ, _root_.RiemannHypothesis.IsNontrivialZero ρ →
+      |ρ.im| ≤ B) :
+    PrimeNumberTheorem.nontrivialZerosFinset T =
+      PrimeNumberTheorem.nontrivialZerosFinset B :=
+  PrimeNumberTheorem.nontrivialZerosFinset_eq_of_global_height_bound hBT hbound
+
+/-- Public stability of the finite nontrivial-zero sum under a global height
+bound. -/
+theorem finiteNontrivialZeroSum_eq_of_global_height_bound {x B T : ℝ}
+    (hBT : B ≤ T)
+    (hbound : ∀ ρ : ℂ, _root_.RiemannHypothesis.IsNontrivialZero ρ →
+      |ρ.im| ≤ B) :
+    PrimeNumberTheorem.finiteNontrivialZeroSum x T =
+      PrimeNumberTheorem.finiteNontrivialZeroSum x B :=
+  PrimeNumberTheorem.finiteNontrivialZeroSum_eq_of_global_height_bound hBT hbound
+
+/-- Public decomposition of a larger zero sum into an old sum plus newly included
+zeros. -/
+theorem finiteNontrivialZeroSum_eq_add_new_zeros {x T U : ℝ} (hTU : T ≤ U) :
+    PrimeNumberTheorem.finiteNontrivialZeroSum x U =
+      PrimeNumberTheorem.finiteNontrivialZeroSum x T +
+        ∑ ρ ∈
+          (PrimeNumberTheorem.nontrivialZerosFinset U \
+            PrimeNumberTheorem.nontrivialZerosFinset T),
+          (x : ℂ) ^ ρ / ρ :=
+  PrimeNumberTheorem.finiteNontrivialZeroSum_eq_add_new_zeros hTU
+
+/-- Public expression for the change in the explicit-formula truncation as the
+new zero contribution. -/
+theorem explicitFormulaApprox_sub_eq_new_zeros {x T U : ℝ} (hTU : T ≤ U) :
+    PrimeNumberTheorem.explicitFormulaApprox x T -
+      PrimeNumberTheorem.explicitFormulaApprox x U =
+      ∑ ρ ∈
+        (PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T),
+        (x : ℂ) ^ ρ / ρ :=
+  PrimeNumberTheorem.explicitFormulaApprox_sub_eq_new_zeros hTU
+
+/-- Public stability of the explicit-formula truncation under a global height
+bound for nontrivial zeros. -/
+theorem explicitFormulaApprox_eq_of_global_height_bound {x B T : ℝ}
+    (hBT : B ≤ T)
+    (hbound : ∀ ρ : ℂ, _root_.RiemannHypothesis.IsNontrivialZero ρ →
+      |ρ.im| ≤ B) :
+    PrimeNumberTheorem.explicitFormulaApprox x T =
+      PrimeNumberTheorem.explicitFormulaApprox x B :=
+  PrimeNumberTheorem.explicitFormulaApprox_eq_of_global_height_bound hBT hbound
+
+/-- Public eventual stability of the explicit-formula truncation under a global
+height bound for nontrivial zeros. -/
+theorem explicitFormulaApprox_eventually_eq_of_global_height_bound {x B : ℝ}
+    (hbound : ∀ ρ : ℂ, _root_.RiemannHypothesis.IsNontrivialZero ρ →
+      |ρ.im| ≤ B) :
+    (fun T : ℝ => PrimeNumberTheorem.explicitFormulaApprox x T) =ᶠ[atTop]
+      fun _T : ℝ => PrimeNumberTheorem.explicitFormulaApprox x B :=
+  PrimeNumberTheorem.explicitFormulaApprox_eventually_eq_of_global_height_bound hbound
+
 /-- Public closed-half-plane nonvanishing theorem for the Riemann zeta
 function. -/
 theorem zeta_ne_zero_of_one_le_re {s : ℂ} (hs : 1 ≤ s.re) :
