@@ -2183,6 +2183,24 @@ lemma PNTForm2_iff_chebyshevTheta_asymptotic :
       Tendsto (fun x : ℝ => Chebyshev.theta x / x) atTop (𝓝 1) :=
   Iff.trans PNTForm2_iff_PNTForm3 PNTForm3_iff_chebyshevTheta_asymptotic
 
+/-- The project Chebyshev-ψ PNT form is definitionally the Mathlib
+Chebyshev-ψ asymptotic after unfolding the local normalization. -/
+lemma PNTForm3_iff_mathlibChebyshevPsi_asymptotic :
+    PNTForm3 ↔
+      Tendsto (fun x : ℝ => Chebyshev.psi x / x) atTop (𝓝 1) := by
+  rw [PNTForm3]
+  simp [chebyshevPsi_eq_mathlib]
+
+lemma PNTForm1_iff_mathlibChebyshevPsi_asymptotic :
+    PNTForm1 ↔
+      Tendsto (fun x : ℝ => Chebyshev.psi x / x) atTop (𝓝 1) :=
+  Iff.trans PNTForm1_iff_PNTForm3 PNTForm3_iff_mathlibChebyshevPsi_asymptotic
+
+lemma PNTForm2_iff_mathlibChebyshevPsi_asymptotic :
+    PNTForm2 ↔
+      Tendsto (fun x : ℝ => Chebyshev.psi x / x) atTop (𝓝 1) :=
+  Iff.trans PNTForm2_iff_PNTForm3 PNTForm3_iff_mathlibChebyshevPsi_asymptotic
+
 /-- A Mathlib-level Chebyshev-`θ` PNT asymptotic closes all three project PNT
 forms.  This isolates the exact remaining upstream-style statement needed for
 `PNTForm1`, `PNTForm2`, and `PNTForm3`; the `ψ - θ` gap is already negligible
