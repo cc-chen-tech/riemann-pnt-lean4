@@ -2338,6 +2338,12 @@ theorem zeta_zero_implies_hardyZ_zero
     HardyTheorem.hardyZ t = 0 :=
   HardyTheorem.zeta_zero_implies_hardyZ_zero t h
 
+/-- Public reverse zero transfer from Hardy `Z` to zeta on the critical line. -/
+theorem hardyZ_zero_implies_zeta_zero
+    (t : ℝ) (h : HardyTheorem.hardyZ t = 0) :
+    riemannZeta (0.5 + Complex.I * t) = 0 :=
+  HardyTheorem.hardyZ_zero_implies_zeta_zero t h
+
 /-- Public conjugation identity for completed zeta in the half-plane
 `Re(s)>1`. -/
 theorem completedRiemannZeta_conj_eq_of_one_lt_re {s : ℂ} (hs : 1 < s.re) :
@@ -2968,6 +2974,52 @@ theorem hardy_zeros_unbounded_of_hardy_theorem_target_of_bounded_strips
   HardyTheorem.hardy_zeros_unbounded_of_hardy_theorem_target_of_bounded_strips
     hstrip h
 
+/-- Public bounded-strip bridge from the first two signed Hardy moments to
+absolute-height unbounded critical-line zeros. -/
+theorem hardy_zeros_abs_unbounded_of_two_signed_moments_of_bounded_strips
+    (hstrip : ∀ B : ℝ,
+      {t : ℝ | |t| ≤ B ∧
+        riemannZeta (0.5 + Complex.I * t) = 0}.Finite)
+    (hmom : HardyTheorem.hardy_two_signed_moments_target) :
+    HardyTheorem.hardy_zeros_abs_unbounded_target :=
+  HardyTheorem.hardy_zeros_abs_unbounded_of_two_signed_moments_of_bounded_strips
+    hstrip hmom
+
+/-- Public bounded-strip bridge from the first two Hardy integral asymptotics
+to absolute-height unbounded critical-line zeros. -/
+theorem hardy_zeros_abs_unbounded_of_integral_asymptotic_one_two_of_bounded_strips
+    (hstrip : ∀ B : ℝ,
+      {t : ℝ | |t| ≤ B ∧
+        riemannZeta (0.5 + Complex.I * t) = 0}.Finite)
+    (h1 : HardyTheorem.integral_asymptotic_target 1)
+    (h2 : HardyTheorem.integral_asymptotic_target 2) :
+    HardyTheorem.hardy_zeros_abs_unbounded_target :=
+  HardyTheorem.hardy_zeros_abs_unbounded_of_integral_asymptotic_one_two_of_bounded_strips
+    hstrip h1 h2
+
+/-- Public bounded-strip bridge from the first two signed Hardy moments to
+one-sided unbounded critical-line zeros. -/
+theorem hardy_zeros_unbounded_of_two_signed_moments_of_bounded_strips
+    (hstrip : ∀ B : ℝ,
+      {t : ℝ | |t| ≤ B ∧
+        riemannZeta (0.5 + Complex.I * t) = 0}.Finite)
+    (hmom : HardyTheorem.hardy_two_signed_moments_target) :
+    HardyTheorem.hardy_zeros_unbounded_target :=
+  HardyTheorem.hardy_zeros_unbounded_of_two_signed_moments_of_bounded_strips
+    hstrip hmom
+
+/-- Public bounded-strip bridge from the first two Hardy integral asymptotics
+to one-sided unbounded critical-line zeros. -/
+theorem hardy_zeros_unbounded_of_integral_asymptotic_one_two_of_bounded_strips
+    (hstrip : ∀ B : ℝ,
+      {t : ℝ | |t| ≤ B ∧
+        riemannZeta (0.5 + Complex.I * t) = 0}.Finite)
+    (h1 : HardyTheorem.integral_asymptotic_target 1)
+    (h2 : HardyTheorem.integral_asymptotic_target 2) :
+    HardyTheorem.hardy_zeros_unbounded_target :=
+  HardyTheorem.hardy_zeros_unbounded_of_integral_asymptotic_one_two_of_bounded_strips
+    hstrip h1 h2
+
 /-- Public bridge from Hardy's infinite-zero target to arbitrarily large
 absolute-height critical-line zeros. -/
 theorem hardy_zeros_abs_unbounded_of_hardy_theorem_target
@@ -2988,6 +3040,18 @@ theorem hardy_theorem_target_of_two_signed_moments
     (hmom : HardyTheorem.hardy_two_signed_moments_target) :
     HardyTheorem.hardy_theorem_target :=
   PrimeNumberTheorem.hardy_theorem_target_of_two_signed_moments hmom
+
+/-- Public bridge from the first two signed Hardy moments plus explicit tail
+dominance hypotheses to Hardy's infinite-zero target. -/
+theorem hardy_theorem_target_of_two_signed_moments_and_tail_dominance
+    (hmom : HardyTheorem.hardy_two_signed_moments_target)
+    (htail_pos : HardyTheorem.weightedIntegralOf_tail_dominates
+      HardyTheorem.hardyZ 1)
+    (htail_neg : HardyTheorem.weightedIntegralOf_tail_dominates
+      (fun t => -HardyTheorem.hardyZ t) 2) :
+    HardyTheorem.hardy_theorem_target :=
+  HardyTheorem.hardy_theorem_target_of_two_signed_moments_and_tail_dominance
+    hmom htail_pos htail_neg
 
 /-- Public bridge from the first two Hardy integral asymptotics to Hardy's
 infinite-zero target. -/
@@ -3263,6 +3327,50 @@ theorem hardy_theorem_target_of_selberg_zero_proportion
     (h : HardyTheorem.selberg_zero_proportion_target) :
     HardyTheorem.hardy_theorem_target :=
   PrimeNumberTheorem.hardy_theorem_target_of_selberg_zero_proportion h
+
+/-- Public bounded-strip bridge from Hardy--Littlewood's linear lower-bound
+target to absolute-height unbounded critical-line zeros. -/
+theorem hardy_zeros_abs_unbounded_of_hardy_littlewood_lower_bound_of_bounded_strips
+    (hstrip : ∀ B : ℝ,
+      {t : ℝ | |t| ≤ B ∧
+        riemannZeta (0.5 + Complex.I * t) = 0}.Finite)
+    (h : HardyTheorem.hardy_littlewood_lower_bound_target) :
+    HardyTheorem.hardy_zeros_abs_unbounded_target :=
+  HardyTheorem.hardy_zeros_abs_unbounded_of_hardy_littlewood_lower_bound_of_bounded_strips
+    hstrip h
+
+/-- Public bounded-strip bridge from Hardy--Littlewood's linear lower-bound
+target to one-sided unbounded critical-line zeros. -/
+theorem hardy_zeros_unbounded_of_hardy_littlewood_lower_bound_of_bounded_strips
+    (hstrip : ∀ B : ℝ,
+      {t : ℝ | |t| ≤ B ∧
+        riemannZeta (0.5 + Complex.I * t) = 0}.Finite)
+    (h : HardyTheorem.hardy_littlewood_lower_bound_target) :
+    HardyTheorem.hardy_zeros_unbounded_target :=
+  HardyTheorem.hardy_zeros_unbounded_of_hardy_littlewood_lower_bound_of_bounded_strips
+    hstrip h
+
+/-- Public bounded-strip bridge from Selberg's positive-proportion target to
+absolute-height unbounded critical-line zeros. -/
+theorem hardy_zeros_abs_unbounded_of_selberg_zero_proportion_of_bounded_strips
+    (hstrip : ∀ B : ℝ,
+      {t : ℝ | |t| ≤ B ∧
+        riemannZeta (0.5 + Complex.I * t) = 0}.Finite)
+    (h : HardyTheorem.selberg_zero_proportion_target) :
+    HardyTheorem.hardy_zeros_abs_unbounded_target :=
+  HardyTheorem.hardy_zeros_abs_unbounded_of_selberg_zero_proportion_of_bounded_strips
+    hstrip h
+
+/-- Public bounded-strip bridge from Selberg's positive-proportion target to
+one-sided unbounded critical-line zeros. -/
+theorem hardy_zeros_unbounded_of_selberg_zero_proportion_of_bounded_strips
+    (hstrip : ∀ B : ℝ,
+      {t : ℝ | |t| ≤ B ∧
+        riemannZeta (0.5 + Complex.I * t) = 0}.Finite)
+    (h : HardyTheorem.selberg_zero_proportion_target) :
+    HardyTheorem.hardy_zeros_unbounded_target :=
+  HardyTheorem.hardy_zeros_unbounded_of_selberg_zero_proportion_of_bounded_strips
+    hstrip h
 
 /-- Public equivalence between the Conrey-style 40-percent target and the
 project's Selberg positive-proportion target. -/
