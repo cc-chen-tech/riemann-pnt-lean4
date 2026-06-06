@@ -3789,6 +3789,64 @@ lemma abs_im_explicitFormulaApprox_sub_le_sqrt_mul_two_card_of_RH
   (Complex.abs_im_le_norm _).trans
     (norm_explicitFormulaApprox_sub_le_sqrt_mul_two_card_of_RH hRH hx hTU)
 
+/-- Conditional explicit-formula bridge from an RH tail bound stated with the
+reciprocal-norm sum over newly included zeros.
+
+The hard analytic input remains the base identity `hB` and the tail estimate
+`htail`; this lemma only packages the already-proved RH truncation-gap bound
+into the `explicit_formula_von_mangoldt` convergence target. -/
+lemma explicit_formula_von_mangoldt_of_RH_base_and_new_zero_sum_tendsto_zero
+    (hRH : RiemannHypothesis.Statement)
+    {x B : ℝ} {hx : x ≥ 2}
+    (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
+    (htail :
+      Tendsto
+        (fun T : ℝ =>
+          Real.sqrt x *
+            ∑ ρ ∈ (nontrivialZerosFinset T \ nontrivialZerosFinset B), ‖ρ‖⁻¹)
+        atTop (𝓝 0)) :
+    explicit_formula_von_mangoldt x hx := by
+  have hxpos : 0 < x := by linarith
+  refine explicit_formula_von_mangoldt_of_eventually_norm_le htail ?_
+  filter_upwards [eventually_ge_atTop B] with T hBT
+  have hgap :=
+    norm_explicitFormulaApprox_sub_le_sqrt_mul_sum_inv_norm_of_RH
+      hRH hxpos (T := B) (U := T) hBT
+  calc
+    ‖explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)‖
+        = ‖explicitFormulaApprox x B - explicitFormulaApprox x T‖ := by
+          rw [← hB, norm_sub_rev]
+    _ ≤ Real.sqrt x *
+          ∑ ρ ∈ (nontrivialZerosFinset T \ nontrivialZerosFinset B), ‖ρ‖⁻¹ :=
+          hgap
+
+/-- Conditional explicit-formula bridge from an RH tail bound stated with the
+count of newly included zeros. -/
+lemma explicit_formula_von_mangoldt_of_RH_base_and_new_zero_card_tendsto_zero
+    (hRH : RiemannHypothesis.Statement)
+    {x B : ℝ} {hx : x ≥ 2}
+    (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
+    (htail :
+      Tendsto
+        (fun T : ℝ =>
+          Real.sqrt x *
+            ((2 : ℝ) * (nontrivialZerosFinset T \ nontrivialZerosFinset B).card))
+        atTop (𝓝 0)) :
+    explicit_formula_von_mangoldt x hx := by
+  have hxpos : 0 < x := by linarith
+  refine explicit_formula_von_mangoldt_of_eventually_norm_le htail ?_
+  filter_upwards [eventually_ge_atTop B] with T hBT
+  have hgap :=
+    norm_explicitFormulaApprox_sub_le_sqrt_mul_two_card_of_RH
+      hRH hxpos (T := B) (U := T) hBT
+  calc
+    ‖explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)‖
+        = ‖explicitFormulaApprox x B - explicitFormulaApprox x T‖ := by
+          rw [← hB, norm_sub_rev]
+    _ ≤ Real.sqrt x *
+          ((2 : ℝ) * (nontrivialZerosFinset T \ nontrivialZerosFinset B).card) :=
+          hgap
+
 /-- 零点对素数分布的贡献
 
 每个零点 ρ = β + iγ 贡献振荡项 x^ρ/ρ = x^β e^{iγ log x} / ρ

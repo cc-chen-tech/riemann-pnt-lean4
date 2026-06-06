@@ -599,6 +599,44 @@ theorem abs_im_explicitFormulaApprox_sub_le_sqrt_mul_two_card_of_RH
   PrimeNumberTheorem.abs_im_explicitFormulaApprox_sub_le_sqrt_mul_two_card_of_RH
     hRH hx hTU
 
+/-- Public conditional explicit-formula bridge from an RH reciprocal-norm tail
+bound over newly included zeros. -/
+theorem explicit_formula_von_mangoldt_of_RH_base_and_new_zero_sum_tendsto_zero
+    (hRH : _root_.RiemannHypothesis.Statement)
+    {x B : ℝ} {hx : x ≥ 2}
+    (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
+      (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
+    (htail :
+      Tendsto
+        (fun T : ℝ =>
+          Real.sqrt x *
+            ∑ ρ ∈
+              (PrimeNumberTheorem.nontrivialZerosFinset T \
+                PrimeNumberTheorem.nontrivialZerosFinset B), ‖ρ‖⁻¹)
+        atTop (𝓝 0)) :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_RH_base_and_new_zero_sum_tendsto_zero
+    hRH hB htail
+
+/-- Public conditional explicit-formula bridge from an RH zero-count tail bound
+over newly included zeros. -/
+theorem explicit_formula_von_mangoldt_of_RH_base_and_new_zero_card_tendsto_zero
+    (hRH : _root_.RiemannHypothesis.Statement)
+    {x B : ℝ} {hx : x ≥ 2}
+    (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
+      (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
+    (htail :
+      Tendsto
+        (fun T : ℝ =>
+          Real.sqrt x *
+            ((2 : ℝ) *
+              (PrimeNumberTheorem.nontrivialZerosFinset T \
+                PrimeNumberTheorem.nontrivialZerosFinset B).card))
+        atTop (𝓝 0)) :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_RH_base_and_new_zero_card_tendsto_zero
+    hRH hB htail
+
 /-- Public stability bridge: if the zero sum has no new terms eventually and
 the stable truncation equals `ψ₀(x)`, then the explicit-formula target follows. -/
 theorem explicit_formula_von_mangoldt_of_eventually_no_new_zeros
