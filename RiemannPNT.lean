@@ -3734,4 +3734,28 @@ theorem approximate_functional_equation_target_of_threshold_bounds
   HardyTheorem.Details.approximate_functional_equation_target_of_threshold_bounds
     Clarge Csmall T hC hlarge hsmall
 
+/-- Public patching bridge for the approximate functional equation target from
+an eventually valid large-height estimate plus bounded-height patches. -/
+theorem approximate_functional_equation_target_of_eventually_and_bounded_patch
+    (Clarge Csmall : ℝ) (hC : 0 < max Clarge Csmall)
+    (hlarge : Filter.Eventually (fun t : ℝ => ∃ R : ℂ,
+      (riemannZeta (0.5 + Complex.I * (t : ℂ)) =
+        ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+          1/((n+1 : ℂ) ^ (0.5 + Complex.I * (t : ℂ)))
+        + Complex.exp (Complex.I * (HardyTheorem.thetaPhase t : ℂ)) *
+          ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+            1/((n+1 : ℂ) ^ (0.5 - Complex.I * (t : ℂ)))
+        + R) ∧ ‖R‖ ≤ Clarge * (t : ℝ)^(-1/4 : ℝ)) atTop)
+    (hsmall : ∀ T t : ℝ, 1 < t → t < T → ∃ R : ℂ,
+      (riemannZeta (0.5 + Complex.I * (t : ℂ)) =
+        ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+          1/((n+1 : ℂ) ^ (0.5 + Complex.I * (t : ℂ)))
+        + Complex.exp (Complex.I * (HardyTheorem.thetaPhase t : ℂ)) *
+          ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+            1/((n+1 : ℂ) ^ (0.5 - Complex.I * (t : ℂ)))
+        + R) ∧ ‖R‖ ≤ Csmall * (t : ℝ)^(-1/4 : ℝ)) :
+    HardyTheorem.Details.approximate_functional_equation_target :=
+  HardyTheorem.Details.approximate_functional_equation_target_of_eventually_and_bounded_patch
+    Clarge Csmall hC hlarge hsmall
+
 end RiemannPNT.API

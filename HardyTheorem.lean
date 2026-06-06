@@ -1834,6 +1834,32 @@ lemma approximate_functional_equation_target_of_threshold_bounds
     refine ⟨R, hR_eq, le_trans hR_bound ?_⟩
     exact mul_le_mul_of_nonneg_right (le_max_right Clarge Csmall) hpow_nonneg
 
+/-- Close the approximate-functional-equation target from an eventually valid
+large-height estimate and a bounded-height patch available below any chosen
+threshold. -/
+lemma approximate_functional_equation_target_of_eventually_and_bounded_patch
+    (Clarge Csmall : ℝ) (hC : 0 < max Clarge Csmall)
+    (hlarge : Filter.Eventually (fun t : ℝ => ∃ R : ℂ,
+      (riemannZeta (0.5 + I * (t : ℂ)) =
+        ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+          1/((n+1 : ℂ) ^ (0.5 + I * (t : ℂ)))
+        + Complex.exp (I * (thetaPhase t : ℂ)) *
+          ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+            1/((n+1 : ℂ) ^ (0.5 - I * (t : ℂ)))
+        + R) ∧ ‖R‖ ≤ Clarge * (t : ℝ)^(-1/4 : ℝ)) atTop)
+    (hsmall : ∀ T t : ℝ, 1 < t → t < T → ∃ R : ℂ,
+      (riemannZeta (0.5 + I * (t : ℂ)) =
+        ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+          1/((n+1 : ℂ) ^ (0.5 + I * (t : ℂ)))
+        + Complex.exp (I * (thetaPhase t : ℂ)) *
+          ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+            1/((n+1 : ℂ) ^ (0.5 - I * (t : ℂ)))
+        + R) ∧ ‖R‖ ≤ Csmall * (t : ℝ)^(-1/4 : ℝ)) :
+    approximate_functional_equation_target := by
+  rcases eventually_atTop.1 hlarge with ⟨T, hT⟩
+  exact approximate_functional_equation_target_of_threshold_bounds
+    Clarge Csmall T hC hT (hsmall T)
+
 lemma eventually_approximate_functional_equation_of_target
     (h : approximate_functional_equation_target) :
     ∃ C : ℝ, C > 0 ∧ Filter.Eventually (fun t : ℝ => ∃ R : ℂ,
