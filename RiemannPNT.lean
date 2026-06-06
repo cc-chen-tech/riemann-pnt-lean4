@@ -276,6 +276,26 @@ theorem rh_primeCountingLiErrorBound_isLittleO_id
       =o[atTop] (fun x : ℝ => x) :=
   PrimeNumberTheorem.RH_PrimeCountingLiErrorBound.isLittleO_id h
 
+/-- Public little-o consequence of the textbook pointwise RH-scale
+prime-counting target relative to `Li`. -/
+theorem rh_error_bound_isLittleO_logIntegral
+    (h : PrimeNumberTheorem.RH_ErrorBound) :
+    (fun x : ℝ =>
+      (PrimeNumberTheorem.primeCounting x : ℝ) -
+        PrimeNumberTheorem.logIntegral x)
+      =o[atTop] (fun x : ℝ => PrimeNumberTheorem.logIntegral x) :=
+  PrimeNumberTheorem.RH_ErrorBound.isLittleO_logIntegral h
+
+/-- Public little-o consequence of the textbook pointwise RH-scale
+prime-counting target relative to the identity function. -/
+theorem rh_error_bound_isLittleO_id
+    (h : PrimeNumberTheorem.RH_ErrorBound) :
+    (fun x : ℝ =>
+      (PrimeNumberTheorem.primeCounting x : ℝ) -
+        PrimeNumberTheorem.logIntegral x)
+      =o[atTop] (fun x : ℝ => x) :=
+  PrimeNumberTheorem.RH_ErrorBound.isLittleO_id h
+
 /-- Public little-o consequence of the `ψ` RH-scale Big-O target. -/
 theorem rh_psi_error_bound_isLittleO_id
     (h : PrimeNumberTheorem.RH_PsiErrorBound) :
@@ -2272,6 +2292,30 @@ theorem eventually_nat_lt_zeroCountOnCriticalLine_of_conrey_target
     ∀ᶠ T in atTop, N < HardyTheorem.zeroCountOnCriticalLine T :=
   KnownResults.eventually_nat_lt_zeroCountOnCriticalLine_of_conrey_target h N
 
+/-- Public bridge from unbounded critical-line zero counts to Hardy's
+infinite-zero target. -/
+theorem hardy_theorem_target_of_zeroCountOnCriticalLine_unbounded
+    (h : ∀ N : ℕ, ∃ T : ℝ, N < HardyTheorem.zeroCountOnCriticalLine T) :
+    HardyTheorem.hardy_theorem_target :=
+  HardyTheorem.hardy_theorem_target_of_zeroCountOnCriticalLine_unbounded h
+
+/-- Public bridge from eventual domination of every fixed natural count to
+Hardy's infinite-zero target. -/
+theorem hardy_theorem_target_of_eventually_nat_lt_zeroCountOnCriticalLine
+    (h : ∀ N : ℕ, ∀ᶠ T in atTop,
+      N < HardyTheorem.zeroCountOnCriticalLine T) :
+    HardyTheorem.hardy_theorem_target :=
+  HardyTheorem.hardy_theorem_target_of_eventually_nat_lt_zeroCountOnCriticalLine h
+
+/-- Public consequence: eventual domination of every fixed natural count gives
+infinitely many complex zeros on the critical line. -/
+theorem infinitely_many_zeros_on_critical_line_of_eventually_nat_lt_zeroCountOnCriticalLine
+    (h : ∀ N : ℕ, ∀ᶠ T in atTop,
+      N < HardyTheorem.zeroCountOnCriticalLine T) :
+    {s : ℂ | s.re = 1 / 2 ∧ riemannZeta s = 0}.Infinite :=
+  KnownResults.infinitely_many_zeros_on_critical_line_of_eventually_nat_lt_zeroCountOnCriticalLine
+    h
+
 /-- Public eventual positivity of the critical-line zero count from the
 Conrey-style target. -/
 theorem eventually_zeroCountOnCriticalLine_pos_of_conrey_target
@@ -2422,6 +2466,18 @@ theorem explicit_formula_von_mangoldt_of_norm_error_tendsto_zero
       atTop (𝓝 0)) :
     PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
   PrimeNumberTheorem.explicit_formula_von_mangoldt_of_norm_error_tendsto_zero h
+
+/-- Public constructor for the corrected explicit-formula target from an
+eventual reverse-norm error bound by a function tending to zero. -/
+theorem explicit_formula_von_mangoldt_of_eventually_reverse_norm_le
+    {x : ℝ} {hx : x ≥ 2} {E : ℝ → ℝ}
+    (hE : Tendsto E atTop (𝓝 0))
+    (hbound : ∀ᶠ T in atTop,
+      ‖(PrimeNumberTheorem.chebyshevPsi0 x : ℂ) -
+        PrimeNumberTheorem.explicitFormulaApprox x T‖ ≤ E T) :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_eventually_reverse_norm_le
+    hE hbound
 
 /-- Public entry point for the norm-error formulation of the corrected
 height-truncated von Mangoldt explicit-formula target. -/
