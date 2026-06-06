@@ -830,6 +830,49 @@ theorem hardy_theorem_target_of_selberg_zero_proportion
     HardyTheorem.hardy_theorem_target :=
   PrimeNumberTheorem.hardy_theorem_target_of_selberg_zero_proportion h
 
+/-- Public equivalence between the Conrey-style 40-percent target and the
+project's Selberg positive-proportion target. -/
+theorem conrey_40_percent_zeros_on_critical_line_target_iff_selberg :
+    KnownResults.conrey_40_percent_zeros_on_critical_line_target ↔
+      HardyTheorem.selberg_zero_proportion_target :=
+  KnownResults.conrey_40_percent_zeros_on_critical_line_target_iff_selberg
+
+/-- Public bridge from the Conrey-style target to Selberg's positive-proportion
+target. -/
+theorem selberg_zero_proportion_target_of_conrey_target
+    (h : KnownResults.conrey_40_percent_zeros_on_critical_line_target) :
+    HardyTheorem.selberg_zero_proportion_target :=
+  KnownResults.selberg_zero_proportion_target_of_conrey_target h
+
+/-- Public bridge from the Conrey-style target to the Hardy-Littlewood linear
+lower-bound target. -/
+theorem hardy_littlewood_lower_bound_target_of_conrey_target
+    (h : KnownResults.conrey_40_percent_zeros_on_critical_line_target) :
+    HardyTheorem.hardy_littlewood_lower_bound_target :=
+  KnownResults.hardy_littlewood_lower_bound_target_of_conrey_target h
+
+/-- Public eventual linear lower bound on critical-line zeros from the
+Conrey-style target. -/
+theorem eventually_linear_lower_bound_of_conrey_target
+    (h : KnownResults.conrey_40_percent_zeros_on_critical_line_target) :
+    ∃ C > 0, ∀ᶠ T in atTop,
+      (HardyTheorem.zeroCountOnCriticalLine T : ℝ) ≥ C * T :=
+  KnownResults.eventually_linear_lower_bound_of_conrey_target h
+
+/-- Public eventual domination of any fixed natural count from the Conrey-style
+target. -/
+theorem eventually_nat_lt_zeroCountOnCriticalLine_of_conrey_target
+    (h : KnownResults.conrey_40_percent_zeros_on_critical_line_target) (N : ℕ) :
+    ∀ᶠ T in atTop, N < HardyTheorem.zeroCountOnCriticalLine T :=
+  KnownResults.eventually_nat_lt_zeroCountOnCriticalLine_of_conrey_target h N
+
+/-- Public eventual positivity of the critical-line zero count from the
+Conrey-style target. -/
+theorem eventually_zeroCountOnCriticalLine_pos_of_conrey_target
+    (h : KnownResults.conrey_40_percent_zeros_on_critical_line_target) :
+    ∀ᶠ T in atTop, 0 < HardyTheorem.zeroCountOnCriticalLine T :=
+  KnownResults.eventually_zeroCountOnCriticalLine_pos_of_conrey_target h
+
 /-- Public bridge from Conrey's positive-proportion target to Hardy's
 infinite-zero target. -/
 theorem hardy_theorem_target_of_conrey_40_percent_target
@@ -850,6 +893,64 @@ theorem hardy_zeros_unbounded_of_conrey_40_percent_target
     (h : KnownResults.conrey_40_percent_zeros_on_critical_line_target) :
     HardyTheorem.hardy_zeros_unbounded_target :=
   PrimeNumberTheorem.hardy_zeros_unbounded_of_conrey_40_percent_target h
+
+/-- Public interval-zero consequence of the Conrey-style target. -/
+theorem eventually_exists_zero_on_critical_line_interval_of_conrey_target
+    (h : KnownResults.conrey_40_percent_zeros_on_critical_line_target) :
+    ∀ᶠ T in atTop,
+      ∃ t : ℝ, 0 ≤ t ∧ t ≤ T ∧ riemannZeta (0.5 + Complex.I * t) = 0 :=
+  KnownResults.eventually_exists_zero_on_critical_line_interval_of_conrey_target h
+
+/-- Public Hardy-Z interval-zero consequence of the Conrey-style target. -/
+theorem eventually_exists_hardyZ_zero_interval_of_conrey_target
+    (h : KnownResults.conrey_40_percent_zeros_on_critical_line_target) :
+    ∀ᶠ T in atTop,
+      ∃ t : ℝ, 0 ≤ t ∧ t ≤ T ∧ HardyTheorem.hardyZ t = 0 :=
+  KnownResults.eventually_exists_hardyZ_zero_interval_of_conrey_target h
+
+/-- Public consequence: the Conrey-style target implies infinitely many
+critical-line zeros. -/
+theorem infinitely_many_zeros_on_critical_line_of_conrey_target
+    (h : KnownResults.conrey_40_percent_zeros_on_critical_line_target) :
+    {s : ℂ | s.re = 1 / 2 ∧ riemannZeta s = 0}.Infinite :=
+  KnownResults.infinitely_many_zeros_on_critical_line_of_conrey_target h
+
+/-- Public consequence: the Conrey-style target implies infinitely many
+nontrivial zeros on the critical line. -/
+theorem infinitely_many_nontrivial_zeros_on_critical_line_of_conrey_target
+    (h : KnownResults.conrey_40_percent_zeros_on_critical_line_target) :
+    {s : ℂ | _root_.RiemannHypothesis.IsNontrivialZero s ∧
+      s ∈ _root_.RiemannHypothesis.criticalLine}.Infinite :=
+  KnownResults.infinitely_many_nontrivial_zeros_on_critical_line_of_conrey_target h
+
+/-- Public consequence: the Conrey-style target gives at least one real
+critical-line zero. -/
+theorem exists_zero_on_critical_line_of_conrey_target
+    (h : KnownResults.conrey_40_percent_zeros_on_critical_line_target) :
+    ∃ t : ℝ, riemannZeta (0.5 + Complex.I * t) = 0 :=
+  KnownResults.exists_zero_on_critical_line_of_conrey_target h
+
+/-- Public consequence: the Conrey-style target gives at least one nonnegative
+real critical-line zero. -/
+theorem exists_nonnegative_zero_on_critical_line_of_conrey_target
+    (h : KnownResults.conrey_40_percent_zeros_on_critical_line_target) :
+    ∃ t : ℝ, 0 ≤ t ∧ riemannZeta (0.5 + Complex.I * t) = 0 :=
+  KnownResults.exists_nonnegative_zero_on_critical_line_of_conrey_target h
+
+/-- Public consequence: the Conrey-style target gives at least one complex zero
+on the critical line. -/
+theorem exists_complex_zero_on_critical_line_of_conrey_target
+    (h : KnownResults.conrey_40_percent_zeros_on_critical_line_target) :
+    ∃ s : ℂ, s.re = 1 / 2 ∧ riemannZeta s = 0 :=
+  KnownResults.exists_complex_zero_on_critical_line_of_conrey_target h
+
+/-- Public consequence: the Conrey-style target gives at least one nontrivial
+zero on the critical line. -/
+theorem exists_nontrivial_zero_on_critical_line_of_conrey_target
+    (h : KnownResults.conrey_40_percent_zeros_on_critical_line_target) :
+    ∃ s : ℂ, _root_.RiemannHypothesis.IsNontrivialZero s ∧
+      s ∈ _root_.RiemannHypothesis.criticalLine :=
+  KnownResults.exists_nontrivial_zero_on_critical_line_of_conrey_target h
 
 /-- Public entry point for the norm-error formulation of the corrected
 height-truncated von Mangoldt explicit-formula target. -/
