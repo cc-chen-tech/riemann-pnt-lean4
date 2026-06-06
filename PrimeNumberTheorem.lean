@@ -1093,6 +1093,21 @@ lemma RH_PsiErrorBound_iff_chebyshevPsi0_sub_id_isBigO :
       ring
     simpa [heq] using hadd
 
+/-- Forward direction of `RH_PsiErrorBound_iff_chebyshevPsi0_sub_id_isBigO`. -/
+lemma chebyshevPsi0_sub_id_isBigO_of_RH_PsiErrorBound
+    (hψ : RH_PsiErrorBound) :
+    (fun x : ℝ => chebyshevPsi0 x - x)
+      =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2) :=
+  RH_PsiErrorBound_iff_chebyshevPsi0_sub_id_isBigO.mp hψ
+
+/-- Reverse direction of `RH_PsiErrorBound_iff_chebyshevPsi0_sub_id_isBigO`. -/
+lemma RH_PsiErrorBound_of_chebyshevPsi0_sub_id_isBigO
+    (hψ0 :
+      (fun x : ℝ => chebyshevPsi0 x - x)
+        =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2)) :
+    RH_PsiErrorBound :=
+  RH_PsiErrorBound_iff_chebyshevPsi0_sub_id_isBigO.mpr hψ0
+
 /-- The standard bound `ψ(x)-θ(x)=O(sqrt x log x)` is small enough for the
 RH-scale `sqrt x log^2 x` error term. -/
 lemma psi_sub_theta_isBigO_rh_scale :
@@ -1708,6 +1723,16 @@ lemma RH_PrimeCountingLiErrorBound_of_RH_PsiErrorBound
   RH_PrimeCountingLiErrorBound_of_RH_ThetaErrorBound
     (RH_ThetaErrorBound_of_RH_PsiErrorBound hψ)
 
+/-- Closed partial-summation bridge from the midpoint `ψ₀` RH-scale target to
+the prime-counting `Li` RH-scale target. -/
+lemma RH_PrimeCountingLiErrorBound_of_chebyshevPsi0_sub_id_isBigO
+    (hψ0 :
+      (fun x : ℝ => chebyshevPsi0 x - x)
+        =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2)) :
+    RH_PrimeCountingLiErrorBound :=
+  RH_PrimeCountingLiErrorBound_of_RH_PsiErrorBound
+    (RH_PsiErrorBound_of_chebyshevPsi0_sub_id_isBigO hψ0)
+
 /-- An eventual absolute-value estimate is enough to close the prime-counting
 `Li` Big-O target. -/
 lemma RH_PrimeCountingLiErrorBound_of_eventual_abs_bound {C : ℝ}
@@ -1972,6 +1997,16 @@ lemma RH_ErrorBound_of_RH_PsiErrorBound
   RH_ErrorBound_of_RH_ThetaErrorBound
     (RH_ThetaErrorBound_of_RH_PsiErrorBound hψ)
 
+/-- Midpoint `ψ₀` RH-scale error implies the pointwise textbook
+prime-counting RH error target. -/
+lemma RH_ErrorBound_of_chebyshevPsi0_sub_id_isBigO
+    (hψ0 :
+      (fun x : ℝ => chebyshevPsi0 x - x)
+        =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2)) :
+    RH_ErrorBound :=
+  RH_ErrorBound_of_RH_PsiErrorBound
+    (RH_PsiErrorBound_of_chebyshevPsi0_sub_id_isBigO hψ0)
+
 lemma RH_ErrorBound_iff_RH_PrimeCountingLiErrorBound :
     RH_ErrorBound ↔ RH_PrimeCountingLiErrorBound :=
   ⟨RH_PrimeCountingLiErrorBound_of_RH_ErrorBound,
@@ -2165,6 +2200,33 @@ lemma PNTForm2_of_RH_PsiErrorBound (h : RH_PsiErrorBound) : PNTForm2 :=
 
 lemma PNTForm1_of_RH_PsiErrorBound (h : RH_PsiErrorBound) : PNTForm1 :=
   PNTForm1_of_PNTForm3 (PNTForm3_of_RH_PsiErrorBound h)
+
+/-- Midpoint `ψ₀` RH-scale error implies the Chebyshev form of PNT. -/
+lemma PNTForm3_of_chebyshevPsi0_sub_id_isBigO
+    (hψ0 :
+      (fun x : ℝ => chebyshevPsi0 x - x)
+        =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2)) :
+    PNTForm3 :=
+  PNTForm3_of_RH_PsiErrorBound
+    (RH_PsiErrorBound_of_chebyshevPsi0_sub_id_isBigO hψ0)
+
+/-- Midpoint `ψ₀` RH-scale error implies the `π(x) ~ Li(x)` PNT form. -/
+lemma PNTForm2_of_chebyshevPsi0_sub_id_isBigO
+    (hψ0 :
+      (fun x : ℝ => chebyshevPsi0 x - x)
+        =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2)) :
+    PNTForm2 :=
+  PNTForm2_of_RH_PsiErrorBound
+    (RH_PsiErrorBound_of_chebyshevPsi0_sub_id_isBigO hψ0)
+
+/-- Midpoint `ψ₀` RH-scale error implies the `π(x) ~ x / log x` PNT form. -/
+lemma PNTForm1_of_chebyshevPsi0_sub_id_isBigO
+    (hψ0 :
+      (fun x : ℝ => chebyshevPsi0 x - x)
+        =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2)) :
+    PNTForm1 :=
+  PNTForm1_of_RH_PsiErrorBound
+    (RH_PsiErrorBound_of_chebyshevPsi0_sub_id_isBigO hψ0)
 
 lemma PNTForm3_of_RH_ThetaErrorBound (h : RH_ThetaErrorBound) : PNTForm3 :=
   PNTForm3_of_RH_PsiErrorBound (RH_PsiErrorBound_of_RH_ThetaErrorBound h)

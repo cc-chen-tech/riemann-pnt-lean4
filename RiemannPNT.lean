@@ -99,6 +99,66 @@ theorem rh_psi_error_bound_iff_chebyshevPsi0_sub_id_isBigO :
         =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2) :=
   PrimeNumberTheorem.RH_PsiErrorBound_iff_chebyshevPsi0_sub_id_isBigO
 
+/-- Public forward direction from the `ψ` RH-scale target to the midpoint `ψ₀`
+error target. -/
+theorem chebyshevPsi0_sub_id_isBigO_of_RH_PsiErrorBound
+    (hψ : PrimeNumberTheorem.RH_PsiErrorBound) :
+    (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi0 x - x)
+      =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2) :=
+  PrimeNumberTheorem.chebyshevPsi0_sub_id_isBigO_of_RH_PsiErrorBound hψ
+
+/-- Public reverse direction from the midpoint `ψ₀` error target to the `ψ`
+RH-scale target. -/
+theorem rh_psi_error_bound_of_chebyshevPsi0_sub_id_isBigO
+    (hψ0 :
+      (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi0 x - x)
+        =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2)) :
+    PrimeNumberTheorem.RH_PsiErrorBound :=
+  PrimeNumberTheorem.RH_PsiErrorBound_of_chebyshevPsi0_sub_id_isBigO hψ0
+
+/-- Public bridge from the midpoint `ψ₀` RH-scale target to the prime-counting
+`Li` RH-scale target. -/
+theorem rh_primeCountingLiErrorBound_of_chebyshevPsi0_sub_id_isBigO
+    (hψ0 :
+      (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi0 x - x)
+        =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2)) :
+    PrimeNumberTheorem.RH_PrimeCountingLiErrorBound :=
+  PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_chebyshevPsi0_sub_id_isBigO
+    hψ0
+
+/-- Public bridge from the midpoint `ψ₀` RH-scale target to the pointwise
+textbook prime-counting RH error target. -/
+theorem rh_error_bound_of_chebyshevPsi0_sub_id_isBigO
+    (hψ0 :
+      (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi0 x - x)
+        =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2)) :
+    PrimeNumberTheorem.RH_ErrorBound :=
+  PrimeNumberTheorem.RH_ErrorBound_of_chebyshevPsi0_sub_id_isBigO hψ0
+
+/-- Public bridge from the midpoint `ψ₀` RH-scale target to PNT form 1. -/
+theorem pnt_form1_of_chebyshevPsi0_sub_id_isBigO
+    (hψ0 :
+      (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi0 x - x)
+        =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2)) :
+    PrimeNumberTheorem.PNTForm1 :=
+  PrimeNumberTheorem.PNTForm1_of_chebyshevPsi0_sub_id_isBigO hψ0
+
+/-- Public bridge from the midpoint `ψ₀` RH-scale target to PNT form 2. -/
+theorem pnt_form2_of_chebyshevPsi0_sub_id_isBigO
+    (hψ0 :
+      (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi0 x - x)
+        =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2)) :
+    PrimeNumberTheorem.PNTForm2 :=
+  PrimeNumberTheorem.PNTForm2_of_chebyshevPsi0_sub_id_isBigO hψ0
+
+/-- Public bridge from the midpoint `ψ₀` RH-scale target to PNT form 3. -/
+theorem pnt_form3_of_chebyshevPsi0_sub_id_isBigO
+    (hψ0 :
+      (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi0 x - x)
+        =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2)) :
+    PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForm3_of_chebyshevPsi0_sub_id_isBigO hψ0
+
 /-- Public conditional partial-summation bridge from the `θ` RH-scale target
 to the prime-counting `Li` RH-scale target. -/
 theorem rh_primeCountingLiErrorBound_of_theta_error_and_integral_error
