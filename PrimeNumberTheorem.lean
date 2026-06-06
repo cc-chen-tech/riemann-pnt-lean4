@@ -818,6 +818,68 @@ lemma PNTForm2_of_PNTForm1 (h : PNTForm1) : PNTForm2 :=
 lemma PNTForm1_of_PNTForm2 (h : PNTForm2) : PNTForm1 :=
   PNTForm1_iff_PNTForm2.mpr h
 
+lemma PNTForm1_error_isLittleO_main
+    (h : PNTForm1) :
+    (fun x : ℝ => (primeCounting x : ℝ) - x / Real.log x)
+      =o[atTop] (fun x : ℝ => x / Real.log x) := by
+  have hratio :
+      Tendsto (fun x : ℝ =>
+        ((primeCounting x : ℝ) * Real.log x / x) - 1) atTop (𝓝 0) := by
+    simpa using (h.sub tendsto_const_nhds :
+      Tendsto (fun x : ℝ =>
+        (primeCounting x : ℝ) * Real.log x / x - (1 : ℝ))
+        atTop (𝓝 (1 - 1)))
+  have heq :
+      (fun x : ℝ => ((primeCounting x : ℝ) * Real.log x / x) - 1)
+        =ᶠ[atTop]
+      fun x : ℝ => ((primeCounting x : ℝ) - x / Real.log x) /
+        (x / Real.log x) := by
+    filter_upwards [eventually_ge_atTop (2 : ℝ)] with x hx
+    have hx_ne : x ≠ 0 := by linarith
+    have hlog_ne : Real.log x ≠ 0 := ne_of_gt (Real.log_pos (by linarith))
+    field_simp [hx_ne, hlog_ne]
+  refine (isLittleO_iff_tendsto' ?_).2 (hratio.congr' heq)
+  filter_upwards [eventually_ge_atTop (2 : ℝ)] with x hx hzero
+  have hx_ne : x ≠ 0 := by linarith
+  have hlog_ne : Real.log x ≠ 0 := ne_of_gt (Real.log_pos (by linarith))
+  exact False.elim ((div_ne_zero hx_ne hlog_ne) hzero)
+
+lemma PNTForm1_of_error_isLittleO_main
+    (h : (fun x : ℝ => (primeCounting x : ℝ) - x / Real.log x)
+      =o[atTop] (fun x : ℝ => x / Real.log x)) :
+    PNTForm1 := by
+  have hratio := h.tendsto_div_nhds_zero
+  have hsum :
+      Tendsto
+        (fun x : ℝ =>
+          1 + ((primeCounting x : ℝ) - x / Real.log x) /
+            (x / Real.log x))
+        atTop (𝓝 1) := by
+    simpa using (tendsto_const_nhds.add hratio :
+      Tendsto
+        (fun x : ℝ =>
+          (1 : ℝ) + ((primeCounting x : ℝ) - x / Real.log x) /
+            (x / Real.log x))
+        atTop (𝓝 ((1 : ℝ) + 0)))
+  have heq :
+      (fun x : ℝ =>
+          1 + ((primeCounting x : ℝ) - x / Real.log x) /
+            (x / Real.log x))
+        =ᶠ[atTop] fun x : ℝ => (primeCounting x : ℝ) * Real.log x / x := by
+    filter_upwards [eventually_ge_atTop (2 : ℝ)] with x hx
+    have hx_ne : x ≠ 0 := by linarith
+    have hlog_ne : Real.log x ≠ 0 := ne_of_gt (Real.log_pos (by linarith))
+    field_simp [hx_ne, hlog_ne]
+    ring
+  exact hsum.congr' heq
+
+lemma PNTForm1_iff_error_isLittleO_main :
+    PNTForm1 ↔
+      (fun x : ℝ => (primeCounting x : ℝ) - x / Real.log x)
+        =o[atTop] (fun x : ℝ => x / Real.log x) :=
+  ⟨PNTForm1_error_isLittleO_main,
+    PNTForm1_of_error_isLittleO_main⟩
+
 lemma PNTForm2_error_isLittleO_logIntegral
     (h : PNTForm2) :
     (fun x : ℝ => (primeCounting x : ℝ) - logIntegral x)
@@ -897,6 +959,47 @@ lemma PNTForm3_of_PNTForm1 (h : PNTForm1) : PNTForm3 :=
 
 lemma PNTForm1_of_PNTForm3 (h : PNTForm3) : PNTForm1 :=
   PNTForm1_iff_PNTForm3.mpr h
+
+lemma PNTForm3_error_isLittleO_id
+    (h : PNTForm3) :
+    (fun x : ℝ => chebyshevPsi x - x) =o[atTop] (fun x : ℝ => x) := by
+  have hratio :
+      Tendsto (fun x : ℝ => chebyshevPsi x / x - 1) atTop (𝓝 0) := by
+    simpa using (h.sub tendsto_const_nhds :
+      Tendsto (fun x : ℝ => chebyshevPsi x / x - (1 : ℝ)) atTop (𝓝 (1 - 1)))
+  have heq :
+      (fun x : ℝ => chebyshevPsi x / x - 1)
+        =ᶠ[atTop] fun x : ℝ => (chebyshevPsi x - x) / x := by
+    filter_upwards [eventually_gt_atTop (0 : ℝ)] with x hx
+    have hx_ne : x ≠ 0 := hx.ne'
+    field_simp [hx_ne]
+  refine (isLittleO_iff_tendsto' ?_).2 (hratio.congr' heq)
+  filter_upwards [eventually_gt_atTop (0 : ℝ)] with x hx hzero
+  exact False.elim (hx.ne' hzero)
+
+lemma PNTForm3_of_error_isLittleO_id
+    (h : (fun x : ℝ => chebyshevPsi x - x) =o[atTop] (fun x : ℝ => x)) :
+    PNTForm3 := by
+  have hratio := h.tendsto_div_nhds_zero
+  have hsum :
+      Tendsto (fun x : ℝ => 1 + (chebyshevPsi x - x) / x) atTop (𝓝 1) := by
+    simpa using (tendsto_const_nhds.add hratio :
+      Tendsto (fun x : ℝ => (1 : ℝ) + (chebyshevPsi x - x) / x)
+        atTop (𝓝 ((1 : ℝ) + 0)))
+  have heq :
+      (fun x : ℝ => 1 + (chebyshevPsi x - x) / x)
+        =ᶠ[atTop] fun x : ℝ => chebyshevPsi x / x := by
+    filter_upwards [eventually_gt_atTop (0 : ℝ)] with x hx
+    have hx_ne : x ≠ 0 := hx.ne'
+    field_simp [hx_ne]
+    ring
+  exact hsum.congr' heq
+
+lemma PNTForm3_iff_error_isLittleO_id :
+    PNTForm3 ↔
+      (fun x : ℝ => chebyshevPsi x - x) =o[atTop] (fun x : ℝ => x) :=
+  ⟨PNTForm3_error_isLittleO_id,
+    PNTForm3_of_error_isLittleO_id⟩
 
 /-! ## 与黎曼猜想的联系 -/
 
@@ -1485,6 +1588,12 @@ lemma RH_PsiErrorBound.isLittleO_id
     (h : RH_PsiErrorBound) :
     (fun x : ℝ => chebyshevPsi x - x) =o[atTop] (fun x : ℝ => x) := by
   rw [RH_PsiErrorBound] at h
+  exact h.trans_isLittleO sqrt_mul_log_sq_isLittleO_id
+
+lemma RH_ThetaErrorBound.isLittleO_id
+    (h : RH_ThetaErrorBound) :
+    (fun x : ℝ => Chebyshev.theta x - x) =o[atTop] (fun x : ℝ => x) := by
+  rw [RH_ThetaErrorBound] at h
   exact h.trans_isLittleO sqrt_mul_log_sq_isLittleO_id
 
 lemma PNTForm3_of_RH_PsiErrorBound (h : RH_PsiErrorBound) : PNTForm3 := by
@@ -2088,6 +2197,23 @@ theorem rh_statement_iff_mathlib :
     _root_.RiemannHypothesis ↔ RiemannHypothesis.Statement :=
   rh_iff_nontrivial_zeros_on_line
 
+theorem rh_iff_optimal_error_iff_mathlib :
+    rh_iff_optimal_error ↔
+      (_root_.RiemannHypothesis ↔ RH_PrimeCountingLiErrorBound) := by
+  constructor
+  · intro h
+    constructor
+    · intro hRH
+      exact h.mp (rh_statement_iff_mathlib.mp hRH)
+    · intro herror
+      exact rh_statement_iff_mathlib.mpr (h.mpr herror)
+  · intro h
+    constructor
+    · intro hRH
+      exact h.mp (rh_statement_iff_mathlib.mpr hRH)
+    · intro herror
+      exact rh_statement_iff_mathlib.mp (h.mpr herror)
+
 theorem rh_iff_optimal_error_of_mathlib_implications
     (h_forward : _root_.RiemannHypothesis → RH_PrimeCountingLiErrorBound)
     (h_reverse : RH_PrimeCountingLiErrorBound → _root_.RiemannHypothesis) :
@@ -2233,6 +2359,11 @@ lemma nontrivialZerosFinset_mono {T U : ℝ} (hTU : T ≤ U) {ρ : ℂ}
     ρ ∈ nontrivialZerosFinset U := by
   rcases mem_nontrivialZerosFinset.mp hρ with ⟨hzero, hheight⟩
   exact mem_nontrivialZerosFinset.mpr ⟨hzero, le_trans hheight hTU⟩
+
+lemma nontrivialZerosFinset_subset {T U : ℝ} (hTU : T ≤ U) :
+    nontrivialZerosFinset T ⊆ nontrivialZerosFinset U := by
+  intro ρ hρ
+  exact nontrivialZerosFinset_mono hTU hρ
 
 lemma nontrivialZerosFinset_sdiff_eq_empty_of_le
     {T U : ℝ} (hUT : U ≤ T) :
@@ -2400,6 +2531,13 @@ lemma finiteNontrivialZeroSum_sub_eq_new_zeros {x T U : ℝ} (hTU : T ≤ U) :
   rw [h]
   abel
 
+lemma finiteNontrivialZeroSum_eq_of_sdiff_eq_empty
+    {x T U : ℝ} (hTU : T ≤ U)
+    (hnew : nontrivialZerosFinset U \ nontrivialZerosFinset T = ∅) :
+    finiteNontrivialZeroSum x U = finiteNontrivialZeroSum x T := by
+  have h := finiteNontrivialZeroSum_eq_add_new_zeros (x := x) hTU
+  simpa [hnew] using h
+
 /-- The height-truncated right-hand side appearing in the explicit formula
 target, factored out so later contour arguments can rewrite it directly. -/
 noncomputable def explicitFormulaApprox (x T : ℝ) : ℂ :=
@@ -2438,6 +2576,13 @@ lemma explicitFormulaApprox_eq_sub_new_zeros {x T U : ℝ} (hTU : T ≤ U) :
   have hsum := finiteNontrivialZeroSum_eq_add_new_zeros (x := x) hTU
   simp [explicitFormulaApprox, hsum]
   abel
+
+lemma explicitFormulaApprox_eq_of_sdiff_eq_empty
+    {x T U : ℝ} (hTU : T ≤ U)
+    (hnew : nontrivialZerosFinset U \ nontrivialZerosFinset T = ∅) :
+    explicitFormulaApprox x U = explicitFormulaApprox x T := by
+  rw [explicitFormulaApprox_eq_sub_new_zeros (x := x) hTU]
+  simp [hnew]
 
 lemma explicitFormulaApprox_sub_eq_new_zeros {x T U : ℝ} (hTU : T ≤ U) :
     explicitFormulaApprox x T - explicitFormulaApprox x U =
@@ -2522,6 +2667,17 @@ lemma explicit_formula_von_mangoldt_of_global_height_bound_exact
   exact (explicitFormulaApprox_eventually_eq_of_global_height_bound
     (x := x) (B := B) hbound).mono fun _T hT => by
       simpa using hT.trans hB
+
+lemma explicit_formula_von_mangoldt_of_eventually_no_new_zeros
+    {x B : ℝ} {hx : x ≥ 2}
+    (hnew : ∀ᶠ T in atTop,
+      B ≤ T ∧ nontrivialZerosFinset T \ nontrivialZerosFinset B = ∅)
+    (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ)) :
+    explicit_formula_von_mangoldt x hx := by
+  refine explicit_formula_von_mangoldt_of_eventually_exact ?_
+  filter_upwards [hnew] with T hT
+  exact (explicitFormulaApprox_eq_of_sdiff_eq_empty
+    (x := x) hT.1 hT.2).trans hB
 
 lemma explicitFormulaApprox_eq_chebyshevPsi0_of_global_height_bound
     {x B : ℝ} {hx : x ≥ 2}
