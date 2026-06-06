@@ -1175,6 +1175,189 @@ def RH_ErrorBound : Prop :=
   ∃ C > 0, ∀ x ≥ 2,
     |(primeCounting x : ℝ) - logIntegral x| ≤ C * Real.sqrt x * Real.log x
 
+/-- Exact partial-summation error decomposition connecting the project
+`primeCounting`/`logIntegral` normalization to Mathlib's Chebyshev `θ`.
+
+This is the algebraic endpoint needed before estimating the integral term:
+`π(x)-Li(x)` is the endpoint `θ(x)-x` error divided by `log x`, plus the
+corresponding Abel integral error, plus the lower-endpoint constant. -/
+lemma primeCounting_sub_logIntegral_eq_theta_error_integral
+    {x : ℝ} (hx : 2 ≤ x) :
+    (primeCounting x : ℝ) - logIntegral x =
+      (Chebyshev.theta x - x) / Real.log x +
+        (∫ t in (2)..x,
+          (Chebyshev.theta t - t) / (t * Real.log t ^ 2)) +
+        2 / Real.log 2 := by
+  have hx_nonneg : 0 ≤ x := by linarith
+  have hpc :
+      (primeCounting x : ℝ) =
+        Chebyshev.theta x / Real.log x +
+          ∫ t in (2)..x, Chebyshev.theta t / (t * Real.log t ^ 2) := by
+    have hpc_eq := primeCounting_eq_mathlib x hx_nonneg
+    have hmath := Chebyshev.primeCounting_eq_theta_div_log_add_integral hx
+    rw [hpc_eq]
+    exact hmath
+  have hli := logIntegral_integration_by_parts x hx
+  have htheta_int :
+      IntervalIntegrable
+        (fun t : ℝ => Chebyshev.theta t / (t * Real.log t ^ 2))
+        volume 2 x := by
+    exact (intervalIntegrable_iff_integrableOn_Icc_of_le hx).2
+      (Chebyshev.integrableOn_theta_div_id_mul_log_sq x)
+  have hone_int :
+      IntervalIntegrable (fun t : ℝ => 1 / Real.log t ^ 2) volume 2 x :=
+    Chebyshev.intervalIntegrable_one_div_log_sq (by norm_num) (by linarith)
+  have hintegral :
+      (∫ t in (2)..x, Chebyshev.theta t / (t * Real.log t ^ 2)) -
+          ∫ t in (2)..x, 1 / Real.log t ^ 2 =
+        ∫ t in (2)..x,
+          (Chebyshev.theta t - t) / (t * Real.log t ^ 2) := by
+    rw [← intervalIntegral.integral_sub htheta_int hone_int]
+    apply intervalIntegral.integral_congr
+    intro t ht
+    have ht2 : 2 ≤ t := by
+      rw [Set.mem_uIcc] at ht
+      cases ht with
+      | inl h => exact h.1
+      | inr h => exact le_trans hx h.1
+    have ht_ne : t ≠ 0 := by linarith
+    have hlog_ne : Real.log t ≠ 0 :=
+      Real.log_ne_zero_of_pos_of_ne_one (by linarith) (by linarith)
+    field_simp [ht_ne, hlog_ne]
+  calc
+    (primeCounting x : ℝ) - logIntegral x
+        = (Chebyshev.theta x / Real.log x +
+              ∫ t in (2)..x, Chebyshev.theta t / (t * Real.log t ^ 2)) -
+            (x / Real.log x - 2 / Real.log 2 +
+              ∫ t in (2)..x, 1 / Real.log t ^ 2) := by
+              rw [hpc, hli]
+    _ = (Chebyshev.theta x - x) / Real.log x +
+          (((∫ t in (2)..x, Chebyshev.theta t / (t * Real.log t ^ 2)) -
+            ∫ t in (2)..x, 1 / Real.log t ^ 2)) +
+          2 / Real.log 2 := by
+            ring
+    _ = (Chebyshev.theta x - x) / Real.log x +
+          (∫ t in (2)..x,
+            (Chebyshev.theta t - t) / (t * Real.log t ^ 2)) +
+          2 / Real.log 2 := by
+            rw [hintegral]
+
+/-- The endpoint contribution `(θ(x)-x)/log x` has the right RH-scale size
+whenever the `θ` RH-scale error target is available. -/
+lemma theta_error_div_log_isBigO_sqrt_mul_log
+    (hθ : RH_ThetaErrorBound) :
+    (fun x : ℝ => (Chebyshev.theta x - x) / Real.log x)
+      =O[atTop] (fun x : ℝ => Real.sqrt x * Real.log x) := by
+  rw [RH_ThetaErrorBound] at hθ
+  rcases hθ.exists_pos with ⟨C, hCpos, hCO⟩
+  refine Asymptotics.IsBigO.of_bound C ?_
+  filter_upwards [hCO.bound, eventually_ge_atTop (Real.exp 1)] with x hxC hx
+  have hxpos : 0 < x := lt_of_lt_of_le (Real.exp_pos 1) hx
+  have hx1 : 1 ≤ x := by
+    have h_exp_one : (1 : ℝ) ≤ Real.exp 1 := by
+      rw [Real.one_le_exp_iff]
+      norm_num
+    exact le_trans h_exp_one hx
+  have hlog_pos : 0 < Real.log x := by
+    have hlog_ge : 1 ≤ Real.log x :=
+      (Real.le_log_iff_exp_le hxpos).mpr hx
+    linarith
+  have hlog_nonneg : 0 ≤ Real.log x := hlog_pos.le
+  have hscale_nonneg : 0 ≤ Real.sqrt x * Real.log x :=
+    mul_nonneg (Real.sqrt_nonneg x) hlog_nonneg
+  have htarget_nonneg : 0 ≤ Real.sqrt x * (Real.log x)^2 :=
+    mul_nonneg (Real.sqrt_nonneg x) (sq_nonneg _)
+  have hsqrt_abs : |Real.sqrt x| = Real.sqrt x :=
+    abs_of_nonneg (Real.sqrt_nonneg x)
+  have hlog_abs : |Real.log x| = Real.log x :=
+    abs_of_nonneg hlog_nonneg
+  have hlog_sq_abs : |(Real.log x)^2| = (Real.log x)^2 :=
+    abs_of_nonneg (sq_nonneg _)
+  have hxC' :
+      |Chebyshev.theta x - x| ≤
+        C * (Real.sqrt x * (Real.log x)^2) := by
+    simpa [Real.norm_eq_abs, abs_mul, hsqrt_abs, hlog_sq_abs,
+      abs_of_nonneg htarget_nonneg, mul_assoc] using hxC
+  rw [Real.norm_eq_abs, Real.norm_eq_abs, abs_div, hlog_abs,
+    abs_of_nonneg hscale_nonneg]
+  calc
+    |Chebyshev.theta x - x| / Real.log x
+        ≤ (C * (Real.sqrt x * (Real.log x)^2)) / Real.log x :=
+          div_le_div_of_nonneg_right hxC' hlog_nonneg
+    _ = C * (Real.sqrt x * Real.log x) := by
+          field_simp [hlog_pos.ne']
+
+/-- The fixed lower-endpoint constant in the partial-summation decomposition
+is negligible at the RH-scale denominator. -/
+lemma two_div_log_two_isBigO_sqrt_mul_log :
+    (fun _x : ℝ => 2 / Real.log 2)
+      =O[atTop] (fun x : ℝ => Real.sqrt x * Real.log x) := by
+  let D : ℝ := Real.sqrt 2 * Real.log 2
+  let C : ℝ := (2 / Real.log 2) / D
+  have hlog2_pos : 0 < Real.log 2 := Real.log_pos (by norm_num)
+  have hD_pos : 0 < D := by
+    exact mul_pos (Real.sqrt_pos.2 (by norm_num)) hlog2_pos
+  have hconst_nonneg : 0 ≤ 2 / Real.log 2 :=
+    div_nonneg (by norm_num) hlog2_pos.le
+  refine Asymptotics.IsBigO.of_bound C ?_
+  filter_upwards [eventually_ge_atTop (2 : ℝ)] with x hx
+  have hscale_lower : D ≤ Real.sqrt x * Real.log x := by
+    have hsqrt_le : Real.sqrt 2 ≤ Real.sqrt x :=
+      Real.sqrt_le_sqrt hx
+    have hlog_le : Real.log 2 ≤ Real.log x :=
+      Real.log_le_log (by norm_num) hx
+    simpa [D] using
+      mul_le_mul hsqrt_le hlog_le (Real.log_nonneg (by norm_num))
+        (Real.sqrt_nonneg x)
+  have hscale_nonneg : 0 ≤ Real.sqrt x * Real.log x :=
+    le_trans hD_pos.le hscale_lower
+  have hC_nonneg : 0 ≤ C :=
+    div_nonneg hconst_nonneg hD_pos.le
+  have hbound : 2 / Real.log 2 ≤ C * (Real.sqrt x * Real.log x) := by
+    have hmul : C * D ≤ C * (Real.sqrt x * Real.log x) :=
+      mul_le_mul_of_nonneg_left hscale_lower hC_nonneg
+    have hCD : C * D = 2 / Real.log 2 := by
+      dsimp [C]
+      field_simp [ne_of_gt hD_pos]
+    linarith
+  rw [Real.norm_eq_abs, Real.norm_eq_abs, abs_of_nonneg hconst_nonneg,
+    abs_of_nonneg hscale_nonneg]
+  exact hbound
+
+/-- Conditional partial-summation bridge from the `θ` RH-scale target to the
+prime-counting `Li` RH-scale target.
+
+The only remaining analytic input is the Abel integral error estimate, isolated
+as `hintegral`. -/
+lemma RH_PrimeCountingLiErrorBound_of_RH_ThetaErrorBound_of_integral_error
+    (hθ : RH_ThetaErrorBound)
+    (hintegral :
+      (fun x : ℝ =>
+        ∫ t in (2)..x,
+          (Chebyshev.theta t - t) / (t * Real.log t ^ 2))
+        =O[atTop] (fun x : ℝ => Real.sqrt x * Real.log x)) :
+    RH_PrimeCountingLiErrorBound := by
+  rw [RH_PrimeCountingLiErrorBound]
+  have hend := theta_error_div_log_isBigO_sqrt_mul_log hθ
+  have hconst := two_div_log_two_isBigO_sqrt_mul_log
+  have hsum := (hend.add hintegral).add hconst
+  refine hsum.congr' ?_ EventuallyEq.rfl
+  filter_upwards [eventually_ge_atTop (2 : ℝ)] with x hx
+  exact (primeCounting_sub_logIntegral_eq_theta_error_integral hx).symm
+
+/-- Same partial-summation bridge with a `ψ` RH-scale hypothesis; the existing
+`ψ`/`θ` equivalence discharges the endpoint input. -/
+lemma RH_PrimeCountingLiErrorBound_of_RH_PsiErrorBound_of_integral_error
+    (hψ : RH_PsiErrorBound)
+    (hintegral :
+      (fun x : ℝ =>
+        ∫ t in (2)..x,
+          (Chebyshev.theta t - t) / (t * Real.log t ^ 2))
+        =O[atTop] (fun x : ℝ => Real.sqrt x * Real.log x)) :
+    RH_PrimeCountingLiErrorBound :=
+  RH_PrimeCountingLiErrorBound_of_RH_ThetaErrorBound_of_integral_error
+    (RH_ThetaErrorBound_of_RH_PsiErrorBound hψ) hintegral
+
 /-- An eventual absolute-value estimate is enough to close the prime-counting
 `Li` Big-O target. -/
 lemma RH_PrimeCountingLiErrorBound_of_eventual_abs_bound {C : ℝ}

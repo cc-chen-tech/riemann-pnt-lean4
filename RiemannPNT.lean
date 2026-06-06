@@ -38,6 +38,40 @@ theorem rh_error_bound_iff_composable :
       PrimeNumberTheorem.RH_PrimeCountingLiErrorBound :=
   PrimeNumberTheorem.RH_ErrorBound_iff_RH_PrimeCountingLiErrorBound
 
+/-- Public endpoint estimate in the partial-summation bridge from `θ` errors
+to prime-counting errors. -/
+theorem theta_error_div_log_isBigO_sqrt_mul_log
+    (hθ : PrimeNumberTheorem.RH_ThetaErrorBound) :
+    (fun x : ℝ => (Chebyshev.theta x - x) / Real.log x)
+      =O[atTop] (fun x : ℝ => Real.sqrt x * Real.log x) :=
+  PrimeNumberTheorem.theta_error_div_log_isBigO_sqrt_mul_log hθ
+
+/-- Public conditional partial-summation bridge from the `θ` RH-scale target
+to the prime-counting `Li` RH-scale target. -/
+theorem rh_primeCountingLiErrorBound_of_theta_error_and_integral_error
+    (hθ : PrimeNumberTheorem.RH_ThetaErrorBound)
+    (hintegral :
+      (fun x : ℝ =>
+        ∫ t in (2)..x,
+          (Chebyshev.theta t - t) / (t * Real.log t ^ 2))
+        =O[atTop] (fun x : ℝ => Real.sqrt x * Real.log x)) :
+    PrimeNumberTheorem.RH_PrimeCountingLiErrorBound :=
+  PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_RH_ThetaErrorBound_of_integral_error
+    hθ hintegral
+
+/-- Public conditional partial-summation bridge from the `ψ` RH-scale target
+to the prime-counting `Li` RH-scale target. -/
+theorem rh_primeCountingLiErrorBound_of_psi_error_and_integral_error
+    (hψ : PrimeNumberTheorem.RH_PsiErrorBound)
+    (hintegral :
+      (fun x : ℝ =>
+        ∫ t in (2)..x,
+          (Chebyshev.theta t - t) / (t * Real.log t ^ 2))
+        =O[atTop] (fun x : ℝ => Real.sqrt x * Real.log x)) :
+    PrimeNumberTheorem.RH_PrimeCountingLiErrorBound :=
+  PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_RH_PsiErrorBound_of_integral_error
+    hψ hintegral
+
 /-- Public bridge between the project's RH/error target and Mathlib's RH
 predicate. -/
 theorem rh_iff_optimal_error_iff_mathlib :
