@@ -785,6 +785,55 @@ theorem hardy_two_signed_moments_of_integral_asymptotic_one_two
     HardyTheorem.hardy_two_signed_moments_target :=
   HardyTheorem.hardy_two_signed_moments_of_integral_asymptotic_one_two h1 h2
 
+/-- Public tail-dominance bridge from divergence of a weighted integral to
+`atTop`. -/
+theorem weightedIntegralOf_tail_dominates_of_tendsto_atTop
+    {f : ℝ → ℝ} {n : ℕ}
+    (h : Tendsto (fun T => HardyTheorem.weightedIntegralOf f n T) atTop atTop) :
+    HardyTheorem.weightedIntegralOf_tail_dominates f n :=
+  HardyTheorem.weightedIntegralOf_tail_dominates_of_tendsto_atTop h
+
+/-- Public tail-dominance bridge for the negated function from divergence to
+`atBot`. -/
+theorem weightedIntegralOf_tail_dominates_neg_of_tendsto_atBot
+    {f : ℝ → ℝ} {n : ℕ}
+    (h : Tendsto (fun T => HardyTheorem.weightedIntegralOf f n T) atTop atBot) :
+    HardyTheorem.weightedIntegralOf_tail_dominates (fun t => -f t) n :=
+  HardyTheorem.weightedIntegralOf_tail_dominates_neg_of_tendsto_atBot h
+
+/-- Public eventual-positivity consequence of tail dominance. -/
+theorem weightedIntegralOf_eventually_positive_of_tail_dominates
+    (f : ℝ → ℝ) (n : ℕ) (hf : Continuous f)
+    (hpos : ∀ᶠ t in atTop, f t > 0)
+    (htail : HardyTheorem.weightedIntegralOf_tail_dominates f n) :
+    ∀ᶠ T in atTop, HardyTheorem.weightedIntegralOf f n T > 0 :=
+  HardyTheorem.weightedIntegralOf_eventually_positive_of_tail_dominates
+    f n hf hpos htail
+
+/-- Public eventual-negativity consequence of tail dominance for the negated
+function. -/
+theorem weightedIntegralOf_eventually_negative_of_neg_tail_dominates
+    (f : ℝ → ℝ) (n : ℕ) (hf : Continuous f)
+    (hneg : ∀ᶠ t in atTop, f t < 0)
+    (htail : HardyTheorem.weightedIntegralOf_tail_dominates (fun t => -f t) n) :
+    ∀ᶠ T in atTop, HardyTheorem.weightedIntegralOf f n T < 0 :=
+  HardyTheorem.weightedIntegralOf_eventually_negative_of_neg_tail_dominates
+    f n hf hneg htail
+
+/-- Public bounded-below consequence for weighted Hardy integrals under
+eventual positivity of `Z`. -/
+theorem weightedIntegral_eventually_bddBelow_of_hardyZ_positive
+    (n : ℕ) (hpos : ∀ᶠ t in atTop, HardyTheorem.hardyZ t > 0) :
+    ∃ C : ℝ, ∀ᶠ T in atTop, C ≤ HardyTheorem.weightedIntegral n T :=
+  HardyTheorem.weightedIntegral_eventually_bddBelow_of_hardyZ_positive n hpos
+
+/-- Public bounded-above consequence for weighted Hardy integrals under
+eventual negativity of `Z`. -/
+theorem weightedIntegral_eventually_bddAbove_of_hardyZ_negative
+    (n : ℕ) (hneg : ∀ᶠ t in atTop, HardyTheorem.hardyZ t < 0) :
+    ∃ C : ℝ, ∀ᶠ T in atTop, HardyTheorem.weightedIntegral n T ≤ C :=
+  HardyTheorem.weightedIntegral_eventually_bddAbove_of_hardyZ_negative n hneg
+
 /-- Public consequence of the two signed Hardy moments: the first weighted
 integral tends to `atBot`. -/
 theorem weightedIntegral_one_tendsto_atBot_of_two_signed_moments
