@@ -4295,6 +4295,77 @@ theorem explicit_formula_von_mangoldt_of_eventually_no_new_zeros
   PrimeNumberTheorem.explicit_formula_von_mangoldt_of_eventually_no_new_zeros
     hnew hB
 
+/-- Public Gamma-asymptotic target in its unfolded asymptotic form. -/
+theorem gamma_asymptotic_half_plus_it_target_iff_asymptotic :
+    HardyTheorem.Details.gamma_asymptotic_half_plus_it_target ↔
+      (fun (t : ℝ) => Complex.Gamma (0.5 + Complex.I * t)) ~[atTop]
+        (fun (t : ℝ) => Real.sqrt (2*Real.pi) *
+          Complex.exp (Complex.I * t * Real.log t - Complex.I * t) *
+          Complex.exp (-Real.pi * t / 2)) :=
+  HardyTheorem.Details.gamma_asymptotic_half_plus_it_target_iff_asymptotic
+
+/-- Public constructor for the Gamma-asymptotic target. -/
+theorem gamma_asymptotic_half_plus_it_target_of_asymptotic
+    (h :
+      (fun (t : ℝ) => Complex.Gamma (0.5 + Complex.I * t)) ~[atTop]
+        (fun (t : ℝ) => Real.sqrt (2*Real.pi) *
+          Complex.exp (Complex.I * t * Real.log t - Complex.I * t) *
+          Complex.exp (-Real.pi * t / 2))) :
+    HardyTheorem.Details.gamma_asymptotic_half_plus_it_target :=
+  HardyTheorem.Details.gamma_asymptotic_half_plus_it_target_of_asymptotic h
+
+/-- Public unfolded form of the unwrapped theta-asymptotic target. -/
+theorem theta_asymptotic_target_iff_exists :
+    HardyTheorem.Details.theta_asymptotic_target ↔
+      ∃ theta : ℝ → ℝ,
+        (∀ t : ℝ, Complex.exp (Complex.I * theta t) =
+          Complex.exp (Complex.I * HardyTheorem.thetaPhase t)) ∧
+        (fun t : ℝ => theta t) ~[atTop]
+          (fun t : ℝ =>
+            (t/2) * Real.log (t/(2*Real.pi)) - t/2 - Real.pi/8) :=
+  HardyTheorem.Details.theta_asymptotic_target_iff_exists
+
+/-- Public constructor for the unwrapped theta-asymptotic target. -/
+theorem theta_asymptotic_target_of
+    (theta : ℝ → ℝ)
+    (hphase : ∀ t : ℝ, Complex.exp (Complex.I * theta t) =
+      Complex.exp (Complex.I * HardyTheorem.thetaPhase t))
+    (hasymp :
+      (fun t : ℝ => theta t) ~[atTop]
+        (fun t : ℝ =>
+          (t/2) * Real.log (t/(2*Real.pi)) - t/2 - Real.pi/8)) :
+    HardyTheorem.Details.theta_asymptotic_target :=
+  HardyTheorem.Details.theta_asymptotic_target_of theta hphase hasymp
+
+/-- Public direct constructor for the approximate-functional-equation target
+from a global remainder estimate. -/
+theorem approximate_functional_equation_target_of
+    (C : ℝ) (hC : 0 < C)
+    (hrem : ∀ t : ℝ, t > 1 → ∃ R : ℂ,
+      (riemannZeta (0.5 + Complex.I * (t : ℂ)) =
+        ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+          1/((n+1 : ℂ) ^ (0.5 + Complex.I * (t : ℂ)))
+        + Complex.exp (Complex.I * (HardyTheorem.thetaPhase t : ℂ)) *
+          ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+            1/((n+1 : ℂ) ^ (0.5 - Complex.I * (t : ℂ)))
+        + R) ∧ ‖R‖ ≤ C * (t : ℝ)^(-1/4 : ℝ)) :
+    HardyTheorem.Details.approximate_functional_equation_target :=
+  HardyTheorem.Details.approximate_functional_equation_target_of C hC hrem
+
+/-- Public destructor: the approximate-functional-equation target supplies an
+eventual large-height remainder estimate. -/
+theorem eventually_approximate_functional_equation_of_target
+    (h : HardyTheorem.Details.approximate_functional_equation_target) :
+    ∃ C : ℝ, C > 0 ∧ Filter.Eventually (fun t : ℝ => ∃ R : ℂ,
+      (riemannZeta (0.5 + Complex.I * (t : ℂ)) =
+        ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+          1/((n+1 : ℂ) ^ (0.5 + Complex.I * (t : ℂ)))
+        + Complex.exp (Complex.I * (HardyTheorem.thetaPhase t : ℂ)) *
+          ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+            1/((n+1 : ℂ) ^ (0.5 - Complex.I * (t : ℂ)))
+        + R) ∧ ‖R‖ ≤ C * (t : ℝ)^(-1/4 : ℝ)) atTop :=
+  HardyTheorem.Details.eventually_approximate_functional_equation_of_target h
+
 /-- Public patching bridge for the approximate functional equation target:
 large-height analytic estimates plus bounded-height estimates close the global
 target. -/
