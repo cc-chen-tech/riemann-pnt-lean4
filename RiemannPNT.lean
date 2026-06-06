@@ -1989,6 +1989,14 @@ theorem compact_patch_classical_zero_free_region_re_im_at_three
     ZeroFreeRegion.classical_zero_free_region :=
   ZeroFreeRegion.compact_patch_classical_zero_free_region_re_im_at_three hhigh
 
+/-- Public compact-patching theorem at the height cutoff `3`. -/
+theorem compact_patch_classical_zero_free_region_at_three
+    (hhigh :
+      ∃ c > 0, ∀ s : ℂ, 3 ≤ |s.im| →
+        s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.compact_patch_classical_zero_free_region_at_three hhigh
+
 /-- Public constructor from a coordinate high-height classical-width input. -/
 theorem classical_zero_free_region_of_high_height_re_im
     (T0 : ℝ) (hT0 : 2 ≤ T0)
@@ -2008,6 +2016,17 @@ theorem compact_patch_classical_zero_free_region
         s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0) :
     ZeroFreeRegion.classical_zero_free_region :=
   ZeroFreeRegion.compact_patch_classical_zero_free_region T0 hT0 hhigh
+
+/-- Public compact patch from a high-height classical-width input stated as an
+existential width theorem. -/
+theorem compact_patch_classical_zero_free_region_via_width
+    (T0 : ℝ) (hT0 : 2 ≤ T0)
+    (hhigh :
+      ∃ c > 0, ∀ s : ℂ, T0 ≤ |s.im| →
+        s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.compact_patch_classical_zero_free_region_via_width
+    T0 hT0 hhigh
 
 /-- Public compact patch from a coordinate high-height classical-width input. -/
 theorem compact_patch_classical_zero_free_region_re_im
@@ -2213,6 +2232,15 @@ theorem classical_width_le_vinogradov_korobov_width {c t : ℝ}
         (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) :=
   ZeroFreeRegion.classical_width_le_vinogradov_korobov_width hc ht
 
+/-- Public real-variable width comparison used to convert a
+Vinogradov-Korobov-width high-height theorem into a classical-width one. -/
+theorem vinogradov_korobov_width_comparison :
+    ∀ c > 0, ∃ c' > 0, ∀ t : ℝ, 3 ≤ |t| →
+      c' / Real.log |t| ≤
+        c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) :=
+  ZeroFreeRegion.vinogradov_korobov_width_comparison
+
 /-- Public high-height classical-width consequence of the Vinogradov-Korobov
 target, in real/imaginary coordinates. -/
 theorem vinogradov_korobov_high_height_classical_zero_free_region_re_im
@@ -2241,6 +2269,19 @@ theorem classical_zero_free_region_of_vinogradov_korobov_re_im
         riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0) :
     ZeroFreeRegion.classical_zero_free_region :=
   ZeroFreeRegion.classical_zero_free_region_of_vinogradov_korobov_re_im hvk
+
+/-- Public conditional bridge from the Vinogradov-Korobov target to the
+classical zero-free-region target, parameterized by the real-variable width
+comparison. -/
+theorem classical_zero_free_region_of_vinogradov_korobov_with_comparison
+    (hvk : ZeroFreeRegion.vinogradov_korobov_zero_free_region)
+    (hcompare : ∀ c > 0, ∃ c' > 0, ∀ t : ℝ, 3 ≤ |t| →
+      c' / Real.log |t| ≤
+        c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ)) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_vinogradov_korobov_with_comparison
+    hvk hcompare
 
 /-- Public bridge from an eventually valid Vinogradov-Korobov-width input to
 the classical zero-free-region target. -/
