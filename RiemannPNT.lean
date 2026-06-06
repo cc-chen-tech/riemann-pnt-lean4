@@ -70,6 +70,20 @@ theorem rh_primeCountingLiErrorBound_of_psi_error
     PrimeNumberTheorem.RH_PrimeCountingLiErrorBound :=
   PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_RH_PsiErrorBound hψ
 
+/-- Public bridge from the `θ` RH-scale target to the pointwise textbook
+prime-counting RH error target. -/
+theorem rh_error_bound_of_theta_error
+    (hθ : PrimeNumberTheorem.RH_ThetaErrorBound) :
+    PrimeNumberTheorem.RH_ErrorBound :=
+  PrimeNumberTheorem.RH_ErrorBound_of_RH_ThetaErrorBound hθ
+
+/-- Public bridge from the `ψ` RH-scale target to the pointwise textbook
+prime-counting RH error target. -/
+theorem rh_error_bound_of_psi_error
+    (hψ : PrimeNumberTheorem.RH_PsiErrorBound) :
+    PrimeNumberTheorem.RH_ErrorBound :=
+  PrimeNumberTheorem.RH_ErrorBound_of_RH_PsiErrorBound hψ
+
 /-- Public conditional partial-summation bridge from the `θ` RH-scale target
 to the prime-counting `Li` RH-scale target. -/
 theorem rh_primeCountingLiErrorBound_of_theta_error_and_integral_error

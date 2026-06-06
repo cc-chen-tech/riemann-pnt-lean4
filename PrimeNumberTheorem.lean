@@ -1878,6 +1878,20 @@ lemma RH_ErrorBound_of_RH_PrimeCountingLiErrorBound
   RH_ErrorBound_of_RH_PrimeCountingLiErrorBound_of_finite_intervals h
     primeCounting_logIntegral_finite_interval_bound
 
+/-- RH-scale `θ` error implies the pointwise textbook prime-counting RH error
+target. -/
+lemma RH_ErrorBound_of_RH_ThetaErrorBound
+    (hθ : RH_ThetaErrorBound) : RH_ErrorBound :=
+  RH_ErrorBound_of_RH_PrimeCountingLiErrorBound
+    (RH_PrimeCountingLiErrorBound_of_RH_ThetaErrorBound hθ)
+
+/-- RH-scale `ψ` error implies the pointwise textbook prime-counting RH error
+target. -/
+lemma RH_ErrorBound_of_RH_PsiErrorBound
+    (hψ : RH_PsiErrorBound) : RH_ErrorBound :=
+  RH_ErrorBound_of_RH_ThetaErrorBound
+    (RH_ThetaErrorBound_of_RH_PsiErrorBound hψ)
+
 lemma RH_ErrorBound_iff_RH_PrimeCountingLiErrorBound :
     RH_ErrorBound ↔ RH_PrimeCountingLiErrorBound :=
   ⟨RH_PrimeCountingLiErrorBound_of_RH_ErrorBound,
