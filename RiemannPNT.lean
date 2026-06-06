@@ -558,6 +558,29 @@ theorem mathlibChebyshevPsi_isBigO_id :
     (fun x : ℝ => Chebyshev.psi x) =O[atTop] (fun x : ℝ => x) :=
   PrimeNumberTheorem.mathlibChebyshevPsi_isBigO_id
 
+/-- Public normalization bridge between the project ψ RH-scale target and
+Mathlib's `Chebyshev.psi` error form. -/
+theorem rh_psi_error_bound_iff_mathlibChebyshevPsi_sub_id_isBigO :
+    PrimeNumberTheorem.RH_PsiErrorBound ↔
+      (fun x : ℝ => Chebyshev.psi x - x)
+        =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2) :=
+  PrimeNumberTheorem.RH_PsiErrorBound_iff_mathlibChebyshevPsi_sub_id_isBigO
+
+/-- Public forward direction of the Mathlib ψ normalization bridge. -/
+theorem mathlibChebyshevPsi_sub_id_isBigO_of_rh_psi_error_bound
+    (h : PrimeNumberTheorem.RH_PsiErrorBound) :
+    (fun x : ℝ => Chebyshev.psi x - x)
+      =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2) :=
+  PrimeNumberTheorem.mathlibChebyshevPsi_sub_id_isBigO_of_RH_PsiErrorBound h
+
+/-- Public reverse direction of the Mathlib ψ normalization bridge. -/
+theorem rh_psi_error_bound_of_mathlibChebyshevPsi_sub_id_isBigO
+    (h :
+      (fun x : ℝ => Chebyshev.psi x - x)
+        =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2)) :
+    PrimeNumberTheorem.RH_PsiErrorBound :=
+  PrimeNumberTheorem.RH_PsiErrorBound_of_mathlibChebyshevPsi_sub_id_isBigO h
+
 /-- Public crude Big-O bound for the local Chebyshev `ψ` normalization. -/
 theorem chebyshevPsi_isBigO_id :
     (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi x)

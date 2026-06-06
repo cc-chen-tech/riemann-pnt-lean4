@@ -1214,6 +1214,28 @@ lemma chebyshevPsi_isBigO_id :
     (fun x : ℝ => chebyshevPsi x) =O[atTop] (fun x : ℝ => x) := by
   simpa [chebyshevPsi_eq_mathlib] using mathlibChebyshevPsi_isBigO_id
 
+/-- Normalization bridge between the project `chebyshevPsi` RH-scale error
+target and Mathlib's `Chebyshev.psi`. -/
+lemma RH_PsiErrorBound_iff_mathlibChebyshevPsi_sub_id_isBigO :
+    RH_PsiErrorBound ↔
+      (fun x : ℝ => Chebyshev.psi x - x)
+        =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2) := by
+  rw [RH_PsiErrorBound]
+  simp [chebyshevPsi_eq_mathlib]
+
+lemma mathlibChebyshevPsi_sub_id_isBigO_of_RH_PsiErrorBound
+    (h : RH_PsiErrorBound) :
+    (fun x : ℝ => Chebyshev.psi x - x)
+      =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2) :=
+  RH_PsiErrorBound_iff_mathlibChebyshevPsi_sub_id_isBigO.mp h
+
+lemma RH_PsiErrorBound_of_mathlibChebyshevPsi_sub_id_isBigO
+    (h :
+      (fun x : ℝ => Chebyshev.psi x - x)
+        =O[atTop] (fun x : ℝ => Real.sqrt x * (Real.log x)^2)) :
+    RH_PsiErrorBound :=
+  RH_PsiErrorBound_iff_mathlibChebyshevPsi_sub_id_isBigO.mpr h
+
 lemma chebyshevPsi_sub_id_isBigO_id :
     (fun x : ℝ => chebyshevPsi x - x) =O[atTop] (fun x : ℝ => x) :=
   chebyshevPsi_isBigO_id.sub (isBigO_refl (fun x : ℝ => x) atTop)
