@@ -2154,6 +2154,15 @@ lemma PNTForms_of_chebyshevTheta_asymptotic
     simpa [PNTForm3] using hsum.congr' heq
   exact ⟨PNTForm1_of_PNTForm3 hψ, PNTForm2_of_PNTForm3 hψ, hψ⟩
 
+/-- A Mathlib-level Chebyshev-`ψ` PNT asymptotic closes all three project PNT
+forms. -/
+lemma PNTForms_of_mathlibChebyshevPsi_asymptotic
+    (hψ : Tendsto (fun x : ℝ => Chebyshev.psi x / x) atTop (𝓝 1)) :
+    PNTForm1 ∧ PNTForm2 ∧ PNTForm3 := by
+  have hlocal : PNTForm3 := by
+    simpa [PNTForm3, chebyshevPsi_eq_mathlib] using hψ
+  exact ⟨PNTForm1_of_PNTForm3 hlocal, PNTForm2_of_PNTForm3 hlocal, hlocal⟩
+
 lemma sqrt_mul_log_isLittleO_logIntegral :
     (fun x : ℝ => Real.sqrt x * Real.log x)
       =o[atTop] (fun x : ℝ => logIntegral x) := by

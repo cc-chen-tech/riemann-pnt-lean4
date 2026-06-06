@@ -721,6 +721,14 @@ theorem pnt_forms_of_chebyshevTheta_asymptotic
       PrimeNumberTheorem.PNTForm3 :=
   PrimeNumberTheorem.PNTForms_of_chebyshevTheta_asymptotic hθ
 
+/-- Public bridge from the Mathlib Chebyshev-`ψ` asymptotic to all three PNT
+forms. -/
+theorem pnt_forms_of_mathlibChebyshevPsi_asymptotic
+    (hψ : Tendsto (fun x : ℝ => Chebyshev.psi x / x) atTop (𝓝 1)) :
+    PrimeNumberTheorem.PNTForm1 ∧ PrimeNumberTheorem.PNTForm2 ∧
+      PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForms_of_mathlibChebyshevPsi_asymptotic hψ
+
 /-- Public conditional partial-summation bridge from the `θ` RH-scale target
 to the prime-counting `Li` RH-scale target. -/
 theorem rh_primeCountingLiErrorBound_of_theta_error_and_integral_error
