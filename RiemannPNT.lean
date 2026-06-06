@@ -6,6 +6,7 @@ import PrimeNumberTheorem
 import ZeroFreeRegion
 
 open Complex Filter Topology Asymptotics ComplexConjugate
+open scoped ArithmeticFunction LSeries.notation
 
 namespace RiemannPNT.API
 
@@ -632,6 +633,102 @@ theorem complex_critical_line_zero_is_nontrivial {s : ℂ}
     _root_.RiemannHypothesis.IsNontrivialZero s ∧
       s ∈ _root_.RiemannHypothesis.criticalLine :=
   KnownResults.complex_critical_line_zero_is_nontrivial hre hzero
+
+/-- Public trigonometric core of de la Vallée Poussin's 3-4-1 inequality. -/
+theorem trig_identity_nonneg (θ : ℝ) :
+    3 + 4 * Real.cos θ + Real.cos (2 * θ) ≥ 0 :=
+  ZeroFreeRegion.trig_identity_nonneg θ
+
+/-- Public positivity of the real zeta function on `(1, ∞)`. -/
+theorem riemannZeta_pos_of_real_gt_one (s : ℝ) (hs : 1 < s) :
+    0 < (riemannZeta (s : ℂ)).re :=
+  ZeroFreeRegion.riemannZeta_pos_of_real_gt_one s hs
+
+/-- Public Euler-product logarithmic form for real zeta values. -/
+theorem log_riemannZeta_dirichlet_series (s : ℝ) (hs : 1 < s) :
+    Real.log (riemannZeta (s : ℂ)).re =
+      ∑' p : Nat.Primes,
+        Real.log (1 / (1 - (p : ℝ) ^ (-s))) :=
+  ZeroFreeRegion.log_riemannZeta_dirichlet_series s hs
+
+/-- Public real-part Dirichlet-series representation for the logarithmic
+derivative of zeta in `Re(s)>1`. -/
+theorem log_deriv_zeta_re_series (s : ℂ) (hs : 1 < s.re) :
+    (-deriv riemannZeta s / riemannZeta s).re =
+      ∑' n : ℕ,
+        Λ n * Real.cos (s.im * Real.log n) / (n : ℝ) ^ s.re :=
+  ZeroFreeRegion.log_deriv_zeta_re_series s hs
+
+/-- Public real-valued series formula for `ζ(σ)` when `σ>1`. -/
+theorem riemannZeta_re_eq_tsum_real (σ : ℝ) (hσ : 1 < σ) :
+    (riemannZeta (σ : ℂ)).re =
+      ∑' n : ℕ, 1 / (↑n + 1 : ℝ) ^ σ :=
+  ZeroFreeRegion.riemannZeta_re_eq_tsum_real σ hσ
+
+/-- Public summability of the real zeta series for `σ>1`. -/
+theorem summable_one_div_rpow (σ : ℝ) (hσ : 1 < σ) :
+    Summable (fun n : ℕ => 1 / (↑n + 1 : ℝ) ^ σ) :=
+  ZeroFreeRegion.summable_one_div_rpow σ hσ
+
+/-- Public lower bound `ζ(σ)>1` on the real half-line `σ>1`. -/
+theorem riemannZeta_re_gt_one (σ : ℝ) (hσ : 1 < σ) :
+    (riemannZeta (σ : ℂ)).re > 1 :=
+  ZeroFreeRegion.riemannZeta_re_gt_one σ hσ
+
+/-- Public integral-comparison lower bound for real zeta values. -/
+theorem riemannZeta_gt_one_div_sub (σ : ℝ) (hσ : 1 < σ) :
+    (riemannZeta (σ : ℂ)).re > 1 / (σ - 1) :=
+  ZeroFreeRegion.riemannZeta_gt_one_div_sub σ hσ
+
+/-- Public complementary upper bound for real zeta values near the pole. -/
+theorem riemannZeta_re_le_sigma_div_sub (σ : ℝ) (hσ : 1 < σ) :
+    (riemannZeta (σ : ℂ)).re ≤ σ / (σ - 1) :=
+  ZeroFreeRegion.riemannZeta_re_le_sigma_div_sub σ hσ
+
+/-- Public residue sandwich at `s=1`: `1 < (σ-1)ζ(σ) ≤ σ`. -/
+theorem residue_bounds (σ : ℝ) (hσ : 1 < σ) :
+    1 < (σ - 1) * (riemannZeta (σ : ℂ)).re ∧
+      (σ - 1) * (riemannZeta (σ : ℂ)).re ≤ σ :=
+  ZeroFreeRegion.residue_bounds σ hσ
+
+/-- Public positivity of the real logarithmic derivative series. -/
+theorem log_deriv_zeta_pos_real (σ : ℝ) (hσ : 1 < σ) :
+    0 < (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re :=
+  ZeroFreeRegion.log_deriv_zeta_pos_real σ hσ
+
+/-- Public pure-real specialization of the logarithmic-derivative Dirichlet
+series. -/
+theorem log_deriv_zeta_real_eq_series (σ : ℝ) (hσ : 1 < σ) :
+    (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re =
+      ∑' n : ℕ, Λ n / (n : ℝ) ^ σ :=
+  ZeroFreeRegion.log_deriv_zeta_real_eq_series σ hσ
+
+/-- Public antitonicity of `-Re(ζ'/ζ)` on the real half-line `(1, ∞)`. -/
+theorem log_deriv_zeta_antitone
+    {σ₁ σ₂ : ℝ} (hσ₁ : 1 < σ₁) (hσ₂ : σ₁ ≤ σ₂) :
+    (-deriv riemannZeta (σ₂ : ℂ) / riemannZeta (σ₂ : ℂ)).re ≤
+      (-deriv riemannZeta (σ₁ : ℂ) / riemannZeta (σ₁ : ℂ)).re :=
+  ZeroFreeRegion.log_deriv_zeta_antitone hσ₁ hσ₂
+
+/-- Public de la Vallée Poussin 3-4-1 nonnegativity combination. -/
+theorem log_deriv_zeta_nonneg_combination (σ : ℝ) (hσ : 1 < σ) (t : ℝ) :
+    3 * (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re
+      + 4 * (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+          riemannZeta ((σ : ℂ) + Complex.I * t)).re
+      + (-deriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t) /
+          riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re ≥ 0 :=
+  ZeroFreeRegion.log_deriv_zeta_nonneg_combination σ hσ t
+
+/-- Public algebraic lower-bound corollary of the 3-4-1 inequality. -/
+theorem log_deriv_zeta_lower_bound (σ : ℝ) (hσ : 1 < σ) (t : ℝ) :
+    (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+        riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+      -(3 / 4 : ℝ) *
+        (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re
+      - (1 / 4 : ℝ) *
+        (-deriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t) /
+          riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re :=
+  ZeroFreeRegion.log_deriv_zeta_lower_bound σ hσ t
 
 /-- Public coordinate form of Dirichlet `LFunction` nonvanishing in
 `Re(s) > 1`. -/
