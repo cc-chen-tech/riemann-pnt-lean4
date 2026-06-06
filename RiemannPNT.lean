@@ -1177,6 +1177,25 @@ theorem explicit_formula_von_mangoldt_iff_reverse_norm_error_tendsto_zero
           PrimeNumberTheorem.explicitFormulaApprox x T‖) atTop (𝓝 0) :=
   PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_reverse_norm_error_tendsto_zero
 
+/-- Public complex error formulation of the corrected explicit-formula target. -/
+theorem explicit_formula_von_mangoldt_iff_error_tendsto_zero
+    {x : ℝ} {hx : x ≥ 2} :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx ↔
+      Tendsto (fun T : ℝ =>
+        PrimeNumberTheorem.explicitFormulaApprox x T -
+          (PrimeNumberTheorem.chebyshevPsi0 x : ℂ)) atTop (𝓝 0) :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_error_tendsto_zero
+
+/-- Public reverse complex error formulation of the corrected explicit-formula
+target. -/
+theorem explicit_formula_von_mangoldt_iff_reverse_error_tendsto_zero
+    {x : ℝ} {hx : x ≥ 2} :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx ↔
+      Tendsto (fun T : ℝ =>
+        (PrimeNumberTheorem.chebyshevPsi0 x : ℂ) -
+          PrimeNumberTheorem.explicitFormulaApprox x T) atTop (𝓝 0) :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_reverse_error_tendsto_zero
+
 /-- Public norm-small-o formulation of the corrected explicit-formula target. -/
 theorem explicit_formula_von_mangoldt_iff_norm_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2} :
@@ -1186,6 +1205,41 @@ theorem explicit_formula_von_mangoldt_iff_norm_error_isLittleO_one
           (PrimeNumberTheorem.chebyshevPsi0 x : ℂ)‖)
         =o[atTop] (fun _T : ℝ => (1 : ℝ)) :=
   PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_norm_error_isLittleO_one
+
+/-- Public complex-small-o formulation of the corrected explicit-formula
+target. -/
+theorem explicit_formula_von_mangoldt_iff_error_isLittleO_one
+    {x : ℝ} {hx : x ≥ 2} :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx ↔
+      (fun T : ℝ =>
+        PrimeNumberTheorem.explicitFormulaApprox x T -
+          (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
+        =o[atTop] (fun _T : ℝ => (1 : ℂ)) :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_error_isLittleO_one
+
+/-- Public reverse-complex-small-o formulation of the corrected
+explicit-formula target. -/
+theorem explicit_formula_von_mangoldt_iff_reverse_error_isLittleO_one
+    {x : ℝ} {hx : x ≥ 2} :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx ↔
+      (fun T : ℝ =>
+        (PrimeNumberTheorem.chebyshevPsi0 x : ℂ) -
+          PrimeNumberTheorem.explicitFormulaApprox x T)
+        =o[atTop] (fun _T : ℝ => (1 : ℂ)) :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_reverse_error_isLittleO_one
+
+/-- Public coordinate convergence formulation of the corrected explicit-formula
+target. -/
+theorem explicit_formula_von_mangoldt_iff_re_im_tendsto
+    {x : ℝ} {hx : x ≥ 2} :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx ↔
+      Tendsto
+        (fun T : ℝ => (PrimeNumberTheorem.explicitFormulaApprox x T).re)
+        atTop (𝓝 (PrimeNumberTheorem.chebyshevPsi0 x)) ∧
+      Tendsto
+        (fun T : ℝ => (PrimeNumberTheorem.explicitFormulaApprox x T).im)
+        atTop (𝓝 0) :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_re_im_tendsto
 
 /-- Public real/imaginary error formulation of the corrected explicit-formula
 target. -/
@@ -1201,6 +1255,19 @@ theorem explicit_formula_von_mangoldt_iff_re_im_error_tendsto_zero
         (fun T : ℝ => (PrimeNumberTheorem.explicitFormulaApprox x T).im)
         atTop (𝓝 0) :=
   PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_re_im_error_tendsto_zero
+
+/-- Public coordinate-small-o formulation of the corrected explicit-formula
+target. -/
+theorem explicit_formula_von_mangoldt_iff_re_im_error_isLittleO_one
+    {x : ℝ} {hx : x ≥ 2} :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx ↔
+      (fun T : ℝ =>
+        (PrimeNumberTheorem.explicitFormulaApprox x T).re -
+          PrimeNumberTheorem.chebyshevPsi0 x)
+        =o[atTop] (fun _T : ℝ => (1 : ℝ)) ∧
+      (fun T : ℝ => (PrimeNumberTheorem.explicitFormulaApprox x T).im)
+        =o[atTop] (fun _T : ℝ => (1 : ℝ)) :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_re_im_error_isLittleO_one
 
 /-- Public absolute real/imaginary error formulation of the corrected
 explicit-formula target. -/
