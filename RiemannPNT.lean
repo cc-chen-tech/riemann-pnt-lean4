@@ -93,6 +93,20 @@ theorem pnt_form2_of_rh_primeCountingLiErrorBound
     PrimeNumberTheorem.PNTForm2 :=
   PrimeNumberTheorem.PNTForm2_of_RH_PrimeCountingLiErrorBound h
 
+/-- Public bridge from the `Li` RH-scale prime-counting target to
+`π(x) ~ x / log x`. -/
+theorem pnt_form1_of_rh_primeCountingLiErrorBound
+    (h : PrimeNumberTheorem.RH_PrimeCountingLiErrorBound) :
+    PrimeNumberTheorem.PNTForm1 :=
+  PrimeNumberTheorem.PNTForm1_of_RH_PrimeCountingLiErrorBound h
+
+/-- Public bridge from the `Li` RH-scale prime-counting target to the
+Chebyshev-ψ PNT form. -/
+theorem pnt_form3_of_rh_primeCountingLiErrorBound
+    (h : PrimeNumberTheorem.RH_PrimeCountingLiErrorBound) :
+    PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForm3_of_RH_PrimeCountingLiErrorBound h
+
 /-- Public bridge from the `Li` RH-scale prime-counting target to all three PNT
 forms. -/
 theorem pnt_forms_of_rh_primeCountingLiErrorBound
@@ -109,12 +123,51 @@ theorem pnt_forms_of_rh_error_bound
       PrimeNumberTheorem.PNTForm3 :=
   PrimeNumberTheorem.PNTForms_of_RH_ErrorBound h
 
+/-- Public bridge from the textbook pointwise RH-scale prime-counting target
+to `π(x) ~ x / log x`. -/
+theorem pnt_form1_of_rh_error_bound
+    (h : PrimeNumberTheorem.RH_ErrorBound) :
+    PrimeNumberTheorem.PNTForm1 :=
+  PrimeNumberTheorem.PNTForm1_of_RH_ErrorBound h
+
+/-- Public bridge from the textbook pointwise RH-scale prime-counting target
+to `π(x) ~ Li(x)`. -/
+theorem pnt_form2_of_rh_error_bound
+    (h : PrimeNumberTheorem.RH_ErrorBound) :
+    PrimeNumberTheorem.PNTForm2 :=
+  PrimeNumberTheorem.PNTForm2_of_RH_ErrorBound h
+
+/-- Public bridge from the textbook pointwise RH-scale prime-counting target
+to the Chebyshev-ψ PNT form. -/
+theorem pnt_form3_of_rh_error_bound
+    (h : PrimeNumberTheorem.RH_ErrorBound) :
+    PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForm3_of_RH_ErrorBound h
+
 /-- Public bridge from the `ψ` RH-scale target to all three PNT forms. -/
 theorem pnt_forms_of_rh_psi_error_bound
     (h : PrimeNumberTheorem.RH_PsiErrorBound) :
     PrimeNumberTheorem.PNTForm1 ∧ PrimeNumberTheorem.PNTForm2 ∧
       PrimeNumberTheorem.PNTForm3 :=
   PrimeNumberTheorem.PNTForms_of_RH_PsiErrorBound h
+
+/-- Public bridge from the `ψ` RH-scale target to `π(x) ~ x / log x`. -/
+theorem pnt_form1_of_rh_psi_error_bound
+    (h : PrimeNumberTheorem.RH_PsiErrorBound) :
+    PrimeNumberTheorem.PNTForm1 :=
+  PrimeNumberTheorem.PNTForm1_of_RH_PsiErrorBound h
+
+/-- Public bridge from the `ψ` RH-scale target to `π(x) ~ Li(x)`. -/
+theorem pnt_form2_of_rh_psi_error_bound
+    (h : PrimeNumberTheorem.RH_PsiErrorBound) :
+    PrimeNumberTheorem.PNTForm2 :=
+  PrimeNumberTheorem.PNTForm2_of_RH_PsiErrorBound h
+
+/-- Public bridge from the `ψ` RH-scale target to the Chebyshev-ψ PNT form. -/
+theorem pnt_form3_of_rh_psi_error_bound
+    (h : PrimeNumberTheorem.RH_PsiErrorBound) :
+    PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForm3_of_RH_PsiErrorBound h
 
 /-- Public bridge from the `θ` RH-scale target to all three PNT forms. -/
 theorem pnt_forms_of_rh_theta_error_bound
@@ -123,12 +176,119 @@ theorem pnt_forms_of_rh_theta_error_bound
       PrimeNumberTheorem.PNTForm3 :=
   PrimeNumberTheorem.PNTForms_of_RH_ThetaErrorBound h
 
+/-- Public bridge from the `θ` RH-scale target to `π(x) ~ x / log x`. -/
+theorem pnt_form1_of_rh_theta_error_bound
+    (h : PrimeNumberTheorem.RH_ThetaErrorBound) :
+    PrimeNumberTheorem.PNTForm1 :=
+  PrimeNumberTheorem.PNTForm1_of_RH_ThetaErrorBound h
+
+/-- Public bridge from the `θ` RH-scale target to `π(x) ~ Li(x)`. -/
+theorem pnt_form2_of_rh_theta_error_bound
+    (h : PrimeNumberTheorem.RH_ThetaErrorBound) :
+    PrimeNumberTheorem.PNTForm2 :=
+  PrimeNumberTheorem.PNTForm2_of_RH_ThetaErrorBound h
+
+/-- Public bridge from the `θ` RH-scale target to the Chebyshev-ψ PNT form. -/
+theorem pnt_form3_of_rh_theta_error_bound
+    (h : PrimeNumberTheorem.RH_ThetaErrorBound) :
+    PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForm3_of_RH_ThetaErrorBound h
+
 /-- Public entry point for the equivalence between the pointwise and
 composable RH-scale prime-counting error targets. -/
 theorem rh_error_bound_iff_composable :
     PrimeNumberTheorem.RH_ErrorBound ↔
       PrimeNumberTheorem.RH_PrimeCountingLiErrorBound :=
   PrimeNumberTheorem.RH_ErrorBound_iff_RH_PrimeCountingLiErrorBound
+
+/-- Public bridge from the textbook pointwise RH-scale prime-counting target
+to the composable Big-O target. -/
+theorem rh_primeCountingLiErrorBound_of_rh_error_bound
+    (h : PrimeNumberTheorem.RH_ErrorBound) :
+    PrimeNumberTheorem.RH_PrimeCountingLiErrorBound :=
+  PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_RH_ErrorBound h
+
+/-- Public bridge from the composable Big-O RH-scale prime-counting target to
+the textbook pointwise target. -/
+theorem rh_error_bound_of_rh_primeCountingLiErrorBound
+    (h : PrimeNumberTheorem.RH_PrimeCountingLiErrorBound) :
+    PrimeNumberTheorem.RH_ErrorBound :=
+  PrimeNumberTheorem.RH_ErrorBound_of_RH_PrimeCountingLiErrorBound h
+
+/-- Public eventual-bound constructor for the `ψ` RH-scale Big-O target. -/
+theorem rh_psi_error_bound_of_eventual_abs_bound {C : ℝ}
+    (h : ∀ᶠ x in atTop,
+      |PrimeNumberTheorem.chebyshevPsi x - x| ≤
+        C * (Real.sqrt x * (Real.log x)^2)) :
+    PrimeNumberTheorem.RH_PsiErrorBound :=
+  PrimeNumberTheorem.RH_PsiErrorBound_of_eventual_abs_bound h
+
+/-- Public pointwise-bound constructor for the `ψ` RH-scale Big-O target. -/
+theorem rh_psi_error_bound_of_pointwise {C : ℝ}
+    (hC : 0 < C)
+    (h : ∀ x ≥ 2,
+      |PrimeNumberTheorem.chebyshevPsi x - x| ≤
+        C * (Real.sqrt x * (Real.log x)^2)) :
+    PrimeNumberTheorem.RH_PsiErrorBound :=
+  PrimeNumberTheorem.RH_PsiErrorBound_of_pointwise hC h
+
+/-- Public eventual-bound constructor for the `θ` RH-scale Big-O target. -/
+theorem rh_theta_error_bound_of_eventual_abs_bound {C : ℝ}
+    (h : ∀ᶠ x in atTop,
+      |Chebyshev.theta x - x| ≤
+        C * (Real.sqrt x * (Real.log x)^2)) :
+    PrimeNumberTheorem.RH_ThetaErrorBound :=
+  PrimeNumberTheorem.RH_ThetaErrorBound_of_eventual_abs_bound h
+
+/-- Public pointwise-bound constructor for the `θ` RH-scale Big-O target. -/
+theorem rh_theta_error_bound_of_pointwise {C : ℝ}
+    (hC : 0 < C)
+    (h : ∀ x ≥ 2,
+      |Chebyshev.theta x - x| ≤
+        C * (Real.sqrt x * (Real.log x)^2)) :
+    PrimeNumberTheorem.RH_ThetaErrorBound :=
+  PrimeNumberTheorem.RH_ThetaErrorBound_of_pointwise hC h
+
+/-- Public eventual-bound constructor for the prime-counting `Li` RH-scale
+Big-O target. -/
+theorem rh_primeCountingLiErrorBound_of_eventual_abs_bound {C : ℝ}
+    (h : ∀ᶠ x in atTop,
+      |(PrimeNumberTheorem.primeCounting x : ℝ) -
+          PrimeNumberTheorem.logIntegral x| ≤
+        C * (Real.sqrt x * Real.log x)) :
+    PrimeNumberTheorem.RH_PrimeCountingLiErrorBound :=
+  PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_eventual_abs_bound h
+
+/-- Public pointwise-bound constructor from the textbook RH error target to
+the prime-counting `Li` Big-O target. -/
+theorem rh_primeCountingLiErrorBound_of_pointwise
+    (h : PrimeNumberTheorem.RH_ErrorBound) :
+    PrimeNumberTheorem.RH_PrimeCountingLiErrorBound :=
+  PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_of_pointwise h
+
+/-- Public little-o consequence of the prime-counting `Li` RH-scale Big-O
+target. -/
+theorem rh_primeCountingLiErrorBound_isLittleO_id
+    (h : PrimeNumberTheorem.RH_PrimeCountingLiErrorBound) :
+    (fun x : ℝ =>
+      (PrimeNumberTheorem.primeCounting x : ℝ) -
+        PrimeNumberTheorem.logIntegral x)
+      =o[atTop] (fun x : ℝ => x) :=
+  PrimeNumberTheorem.RH_PrimeCountingLiErrorBound.isLittleO_id h
+
+/-- Public little-o consequence of the `ψ` RH-scale Big-O target. -/
+theorem rh_psi_error_bound_isLittleO_id
+    (h : PrimeNumberTheorem.RH_PsiErrorBound) :
+    (fun x : ℝ => PrimeNumberTheorem.chebyshevPsi x - x)
+      =o[atTop] (fun x : ℝ => x) :=
+  PrimeNumberTheorem.RH_PsiErrorBound.isLittleO_id h
+
+/-- Public little-o consequence of the `θ` RH-scale Big-O target. -/
+theorem rh_theta_error_bound_isLittleO_id
+    (h : PrimeNumberTheorem.RH_ThetaErrorBound) :
+    (fun x : ℝ => Chebyshev.theta x - x)
+      =o[atTop] (fun x : ℝ => x) :=
+  PrimeNumberTheorem.RH_ThetaErrorBound.isLittleO_id h
 
 /-- Public equivalence between the RH-scale ψ and θ error targets. -/
 theorem rh_psi_error_bound_iff_rh_theta_error_bound :
