@@ -1802,6 +1802,29 @@ theorem vinogradov_korobov_zero_free_region_high_height_at_three
       riemannZeta s ≠ 0 :=
   ZeroFreeRegion.vinogradov_korobov_zero_free_region_high_height_at_three hvk
 
+/-- Public height-`3` coordinate high-height interface for the
+Vinogradov-Korobov target. -/
+theorem vinogradov_korobov_zero_free_region_iff_high_height_re_im_at_three :
+    ZeroFreeRegion.vinogradov_korobov_zero_free_region ↔
+      ∃ c > 0, ∀ β t : ℝ, 3 ≤ |t| →
+        β ≥
+          1 - c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+            (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+        riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0 :=
+  ZeroFreeRegion.vinogradov_korobov_zero_free_region_iff_high_height_re_im_at_three
+
+/-- Public coordinate high-height projection of the Vinogradov-Korobov target
+at height `3`. -/
+theorem vinogradov_korobov_zero_free_region_high_height_re_im_at_three
+    (hvk : ZeroFreeRegion.vinogradov_korobov_zero_free_region) :
+    ∃ c > 0, ∀ β t : ℝ, 3 ≤ |t| →
+      β ≥
+        1 - c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0 :=
+  ZeroFreeRegion.vinogradov_korobov_zero_free_region_high_height_re_im_at_three
+    hvk
+
 /-- Public high-height constant-monotonicity for the Vinogradov-Korobov
 width. -/
 theorem vinogradov_korobov_zero_free_region_high_height_mono_const

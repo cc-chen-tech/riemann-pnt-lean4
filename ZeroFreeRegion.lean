@@ -1162,6 +1162,26 @@ lemma vinogradov_korobov_zero_free_region_high_height_re_im
     simpa using hβ
   exact hregion ((β : ℂ) + I * t) hheight hre
 
+lemma vinogradov_korobov_zero_free_region_iff_high_height_re_im_at_three :
+    vinogradov_korobov_zero_free_region ↔
+      ∃ c > 0, ∀ β t : ℝ, 3 ≤ |t| →
+        β ≥
+          1 - c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+            (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+        riemannZeta ((β : ℂ) + I * t) ≠ 0 := by
+  constructor
+  · exact vinogradov_korobov_zero_free_region_high_height_re_im 3 (by norm_num)
+  · exact vinogradov_korobov_zero_free_region_of_re_im
+
+lemma vinogradov_korobov_zero_free_region_high_height_re_im_at_three
+    (hvk : vinogradov_korobov_zero_free_region) :
+    ∃ c > 0, ∀ β t : ℝ, 3 ≤ |t| →
+      β ≥
+        1 - c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta ((β : ℂ) + I * t) ≠ 0 :=
+  vinogradov_korobov_zero_free_region_high_height_re_im 3 (by norm_num) hvk
+
 /-- Conditional bridge from the Vinogradov-Korobov target to the classical
 zero-free region.
 
