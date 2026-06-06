@@ -943,6 +943,28 @@ theorem hardyZ_zero_set_finite_iff_critical_line_zeta_zero_set_finite :
 theorem hardyZ_continuous : Continuous HardyTheorem.hardyZ :=
   HardyTheorem.hardyZ_continuous
 
+/-- Public sign-change helper for negating weighted integrals. -/
+theorem weightedIntegralOf_neg (f : ℝ → ℝ) (n : ℕ) (T : ℝ) :
+    HardyTheorem.weightedIntegralOf (fun t => -f t) n T =
+      -HardyTheorem.weightedIntegralOf f n T :=
+  HardyTheorem.weightedIntegralOf_neg f n T
+
+/-- Public structure lemma: bounded Hardy-Z zeros force eventual constant sign
+at positive height. -/
+theorem hardyZ_eventually_const_sign_of_bounded_zeros
+    (hbounded : Bornology.IsBounded {t : ℝ | HardyTheorem.hardyZ t = 0}) :
+    (∀ᶠ t in atTop, HardyTheorem.hardyZ t > 0) ∨
+      (∀ᶠ t in atTop, HardyTheorem.hardyZ t < 0) :=
+  HardyTheorem.hardyZ_eventually_const_sign_of_bounded_zeros hbounded
+
+/-- Public structure lemma: finitely many Hardy-Z zeros force eventual constant
+sign at positive height. -/
+theorem hardyZ_eventually_const_sign_of_finite_zeros
+    (hfinite : {t : ℝ | HardyTheorem.hardyZ t = 0}.Finite) :
+    (∀ᶠ t in atTop, HardyTheorem.hardyZ t > 0) ∨
+      (∀ᶠ t in atTop, HardyTheorem.hardyZ t < 0) :=
+  HardyTheorem.hardyZ_eventually_const_sign_of_finite_zeros hfinite
+
 /-- Public packaging equivalence: the two signed Hardy moments are exactly the
 first two signed integral-asymptotic targets. -/
 theorem hardy_two_signed_moments_target_iff_integral_asymptotic_one_two :
@@ -1064,6 +1086,26 @@ theorem weightedIntegralOf_hardyZ_two_tail_dominates_of_two_signed_moments
     (h : HardyTheorem.hardy_two_signed_moments_target) :
     HardyTheorem.weightedIntegralOf_tail_dominates HardyTheorem.hardyZ 2 :=
   HardyTheorem.weightedIntegralOf_hardyZ_two_tail_dominates_of_two_signed_moments h
+
+/-- Public contradiction: finite Hardy-Z zeros are incompatible with the two
+signed Hardy moment asymptotics. -/
+theorem finite_zeros_contradiction_of_two_signed_moments
+    (hfinite : {t : ℝ | HardyTheorem.hardyZ t = 0}.Finite)
+    (hmom : HardyTheorem.hardy_two_signed_moments_target) :
+    False :=
+  HardyTheorem.finite_zeros_contradiction_of_two_signed_moments hfinite hmom
+
+/-- Public contradiction package with explicit tail-dominance hypotheses. -/
+theorem finite_zeros_contradiction_of_two_signed_moments_and_tail_dominance
+    (hfinite : {t : ℝ | HardyTheorem.hardyZ t = 0}.Finite)
+    (hmom : HardyTheorem.hardy_two_signed_moments_target)
+    (htail_pos : HardyTheorem.weightedIntegralOf_tail_dominates HardyTheorem.hardyZ 1)
+    (htail_neg :
+      HardyTheorem.weightedIntegralOf_tail_dominates
+        (fun t => -HardyTheorem.hardyZ t) 2) :
+    False :=
+  HardyTheorem.finite_zeros_contradiction_of_two_signed_moments_and_tail_dominance
+    hfinite hmom htail_pos htail_neg
 
 /-- Public equivalence between Hardy's infinite-zero target and infinitude of
 Hardy `Z` zeros. -/
@@ -1561,6 +1603,88 @@ theorem hardy_littlewood_lower_bound_target_of_conrey_target
     (h : KnownResults.conrey_40_percent_zeros_on_critical_line_target) :
     HardyTheorem.hardy_littlewood_lower_bound_target :=
   KnownResults.hardy_littlewood_lower_bound_target_of_conrey_target h
+
+/-- Public extraction of an interval zero from a positive critical-line zero
+count. -/
+theorem exists_zero_of_zeroCountOnCriticalLine_pos {T : ℝ}
+    (h : 0 < HardyTheorem.zeroCountOnCriticalLine T) :
+    ∃ t : ℝ, 0 ≤ t ∧ t ≤ T ∧ riemannZeta (0.5 + Complex.I * t) = 0 :=
+  HardyTheorem.exists_zero_of_zeroCountOnCriticalLine_pos h
+
+/-- Public extraction of an interval Hardy-Z zero from a positive critical-line
+zero count. -/
+theorem exists_hardyZ_zero_of_zeroCountOnCriticalLine_pos {T : ℝ}
+    (h : 0 < HardyTheorem.zeroCountOnCriticalLine T) :
+    ∃ t : ℝ, 0 ≤ t ∧ t ≤ T ∧ HardyTheorem.hardyZ t = 0 :=
+  HardyTheorem.exists_hardyZ_zero_of_zeroCountOnCriticalLine_pos h
+
+/-- Public finite-set criterion turning an interval zero into a positive
+critical-line zero count. -/
+theorem zeroCountOnCriticalLine_pos_of_exists_of_finite {T : ℝ}
+    (hfinite :
+      {t : Set.Icc (0 : ℝ) T |
+        riemannZeta (0.5 + Complex.I * (t : ℝ)) = 0}.Finite)
+    (h : ∃ t : ℝ, 0 ≤ t ∧ t ≤ T ∧
+      riemannZeta (0.5 + Complex.I * t) = 0) :
+    0 < HardyTheorem.zeroCountOnCriticalLine T :=
+  HardyTheorem.zeroCountOnCriticalLine_pos_of_exists_of_finite hfinite h
+
+/-- Public finite-set equivalence between positive zero count and existence of
+an interval zero. -/
+theorem zeroCountOnCriticalLine_pos_iff_exists_of_finite {T : ℝ}
+    (hfinite :
+      {t : Set.Icc (0 : ℝ) T |
+        riemannZeta (0.5 + Complex.I * (t : ℝ)) = 0}.Finite) :
+    0 < HardyTheorem.zeroCountOnCriticalLine T ↔
+      ∃ t : ℝ, 0 ≤ t ∧ t ≤ T ∧
+        riemannZeta (0.5 + Complex.I * t) = 0 :=
+  HardyTheorem.zeroCountOnCriticalLine_pos_iff_exists_of_finite hfinite
+
+/-- Public no-zero criterion for a zero critical-line interval count. -/
+theorem zeroCountOnCriticalLine_eq_zero_of_no_zero {T : ℝ}
+    (h : ¬ ∃ t : ℝ, 0 ≤ t ∧ t ≤ T ∧
+      riemannZeta (0.5 + Complex.I * t) = 0) :
+    HardyTheorem.zeroCountOnCriticalLine T = 0 :=
+  HardyTheorem.zeroCountOnCriticalLine_eq_zero_of_no_zero h
+
+/-- Public finite-set equivalence between zero count and absence of interval
+zeros. -/
+theorem zeroCountOnCriticalLine_eq_zero_iff_no_zero_of_finite {T : ℝ}
+    (hfinite :
+      {t : Set.Icc (0 : ℝ) T |
+        riemannZeta (0.5 + Complex.I * (t : ℝ)) = 0}.Finite) :
+    HardyTheorem.zeroCountOnCriticalLine T = 0 ↔
+      ¬ ∃ t : ℝ, 0 ≤ t ∧ t ≤ T ∧
+        riemannZeta (0.5 + Complex.I * t) = 0 :=
+  HardyTheorem.zeroCountOnCriticalLine_eq_zero_iff_no_zero_of_finite hfinite
+
+/-- Public monotonicity of the critical-line zero count, under the finite-count
+hypothesis at the larger height. -/
+theorem zeroCountOnCriticalLine_mono_of_finite {T U : ℝ}
+    (hTU : T ≤ U)
+    (hfiniteU :
+      {t : Set.Icc (0 : ℝ) U |
+        riemannZeta (0.5 + Complex.I * (t : ℝ)) = 0}.Finite) :
+    HardyTheorem.zeroCountOnCriticalLine T ≤
+      HardyTheorem.zeroCountOnCriticalLine U :=
+  HardyTheorem.zeroCountOnCriticalLine_mono_of_finite hTU hfiniteU
+
+/-- Public comparison of the interval count to the total critical-line zero
+count when the total set is finite. -/
+theorem zeroCountOnCriticalLine_le_ncard_allZeros_of_finite
+    (T : ℝ)
+    (hfinite : {t : ℝ | riemannZeta (0.5 + Complex.I * t) = 0}.Finite) :
+    HardyTheorem.zeroCountOnCriticalLine T ≤
+      {t : ℝ | riemannZeta (0.5 + Complex.I * t) = 0}.ncard :=
+  HardyTheorem.zeroCountOnCriticalLine_le_ncard_allZeros_of_finite T hfinite
+
+/-- Public positivity criterion from a linear lower bound on the interval zero
+count. -/
+theorem zeroCountOnCriticalLine_pos_of_linear_lower_bound {C T : ℝ}
+    (hC : 0 < C) (hT : 0 < T)
+    (hbound : C * T ≤ (HardyTheorem.zeroCountOnCriticalLine T : ℝ)) :
+    0 < HardyTheorem.zeroCountOnCriticalLine T :=
+  HardyTheorem.zeroCountOnCriticalLine_pos_of_linear_lower_bound hC hT hbound
 
 /-- Public eventual linear lower bound on critical-line zeros from the
 Conrey-style target. -/
