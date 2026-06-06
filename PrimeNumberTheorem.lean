@@ -3932,6 +3932,50 @@ lemma explicit_formula_von_mangoldt_of_eventually_re_im_abs_le
       (Eventually.of_forall fun T => abs_nonneg _)
       him_bound
 
+/-- Big-O estimates for the real and imaginary explicit-formula errors,
+against functions tending to zero, close the corrected explicit-formula target.
+
+This is the natural interface for contour-error estimates that are proved in
+separate real and imaginary parts rather than as one complex norm estimate. -/
+lemma explicit_formula_von_mangoldt_of_re_im_abs_error_isBigO_tendsto_zero
+    {x : ℝ} {hx : x ≥ 2} {Ere Eim : ℝ → ℝ}
+    (hEre : Tendsto Ere atTop (𝓝 0))
+    (hEim : Tendsto Eim atTop (𝓝 0))
+    (hreO :
+      (fun T : ℝ => |(explicitFormulaApprox x T).re - chebyshevPsi0 x|)
+        =O[atTop] Ere)
+    (himO :
+      (fun T : ℝ => |(explicitFormulaApprox x T).im|)
+        =O[atTop] Eim) :
+    explicit_formula_von_mangoldt x hx := by
+  rcases hreO.exists_pos with ⟨Cre, _hCre_pos, hCreO⟩
+  rcases himO.exists_pos with ⟨Cim, _hCim_pos, hCimO⟩
+  refine explicit_formula_von_mangoldt_of_eventually_re_im_abs_le
+    (Ere := fun T : ℝ => Cre * ‖Ere T‖)
+    (Eim := fun T : ℝ => Cim * ‖Eim T‖) ?_ ?_ ?_ ?_
+  · have hnorm :
+        Tendsto (fun T : ℝ => ‖Ere T‖) atTop (𝓝 0) :=
+      tendsto_zero_iff_norm_tendsto_zero.mp hEre
+    simpa using
+      (tendsto_const_nhds.mul hnorm :
+        Tendsto (fun T : ℝ => Cre * ‖Ere T‖) atTop (𝓝 (Cre * 0)))
+  · have hnorm :
+        Tendsto (fun T : ℝ => ‖Eim T‖) atTop (𝓝 0) :=
+      tendsto_zero_iff_norm_tendsto_zero.mp hEim
+    simpa using
+      (tendsto_const_nhds.mul hnorm :
+        Tendsto (fun T : ℝ => Cim * ‖Eim T‖) atTop (𝓝 (Cim * 0)))
+  · filter_upwards [hCreO.bound] with T hT
+    have hnonneg :
+        0 ≤ |(explicitFormulaApprox x T).re - chebyshevPsi0 x| :=
+      abs_nonneg _
+    simpa [Real.norm_eq_abs, abs_of_nonneg hnonneg] using hT
+  · filter_upwards [hCimO.bound] with T hT
+    have hnonneg :
+        0 ≤ |(explicitFormulaApprox x T).im| :=
+      abs_nonneg _
+    simpa [Real.norm_eq_abs, abs_of_nonneg hnonneg] using hT
+
 lemma explicit_formula_von_mangoldt_of_eventually_re_im_abs_le_const_mul_inv
     {x Cre Cim : ℝ} {hx : x ≥ 2}
     (hre_bound : ∀ᶠ T in atTop,

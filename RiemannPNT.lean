@@ -3483,6 +3483,25 @@ theorem explicit_formula_von_mangoldt_of_eventually_re_im_abs_le
   PrimeNumberTheorem.explicit_formula_von_mangoldt_of_eventually_re_im_abs_le
     hEre hEim hre_bound him_bound
 
+/-- Public bridge: Big-O real and imaginary error estimates against functions
+tending to zero close the corrected explicit-formula target. -/
+theorem explicit_formula_von_mangoldt_of_re_im_abs_error_isBigO_tendsto_zero
+    {x : ℝ} {hx : x ≥ 2} {Ere Eim : ℝ → ℝ}
+    (hEre : Tendsto Ere atTop (𝓝 0))
+    (hEim : Tendsto Eim atTop (𝓝 0))
+    (hreO :
+      (fun T : ℝ =>
+        |(PrimeNumberTheorem.explicitFormulaApprox x T).re -
+          PrimeNumberTheorem.chebyshevPsi0 x|)
+        =O[atTop] Ere)
+    (himO :
+      (fun T : ℝ =>
+        |(PrimeNumberTheorem.explicitFormulaApprox x T).im|)
+        =O[atTop] Eim) :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_re_im_abs_error_isBigO_tendsto_zero
+    hEre hEim hreO himO
+
 /-- Public bridge: eventual `C/T` real and imaginary error estimates close the
 corrected explicit-formula target. -/
 theorem explicit_formula_von_mangoldt_of_eventually_re_im_abs_le_const_mul_inv
