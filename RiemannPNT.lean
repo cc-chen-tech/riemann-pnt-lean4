@@ -384,12 +384,77 @@ theorem hardy_two_signed_moments_of_integral_asymptotic_one_two
     HardyTheorem.hardy_two_signed_moments_target :=
   HardyTheorem.hardy_two_signed_moments_of_integral_asymptotic_one_two h1 h2
 
+/-- Public consequence of the two signed Hardy moments: the first weighted
+integral tends to `atBot`. -/
+theorem weightedIntegral_one_tendsto_atBot_of_two_signed_moments
+    (h : HardyTheorem.hardy_two_signed_moments_target) :
+    Tendsto (fun T : ℝ => HardyTheorem.weightedIntegral 1 T) atTop atBot :=
+  HardyTheorem.weightedIntegral_one_tendsto_atBot_of_two_signed_moments h
+
+/-- Public consequence of the two signed Hardy moments: the first weighted
+integral is eventually negative. -/
+theorem weightedIntegral_one_eventually_negative_of_two_signed_moments
+    (h : HardyTheorem.hardy_two_signed_moments_target) :
+    ∀ᶠ T in atTop, HardyTheorem.weightedIntegral 1 T < 0 :=
+  HardyTheorem.weightedIntegral_one_eventually_negative_of_two_signed_moments h
+
+/-- Public consequence of the two signed Hardy moments: the second weighted
+integral tends to `atTop`. -/
+theorem weightedIntegral_two_tendsto_atTop_of_two_signed_moments
+    (h : HardyTheorem.hardy_two_signed_moments_target) :
+    Tendsto (fun T : ℝ => HardyTheorem.weightedIntegral 2 T) atTop atTop :=
+  HardyTheorem.weightedIntegral_two_tendsto_atTop_of_two_signed_moments h
+
+/-- Public consequence of the two signed Hardy moments: the second weighted
+integral is eventually positive. -/
+theorem weightedIntegral_two_eventually_positive_of_two_signed_moments
+    (h : HardyTheorem.hardy_two_signed_moments_target) :
+    ∀ᶠ T in atTop, 0 < HardyTheorem.weightedIntegral 2 T :=
+  HardyTheorem.weightedIntegral_two_eventually_positive_of_two_signed_moments h
+
+/-- Public tail-dominance consequence for `-hardyZ` from the first signed
+Hardy moment. -/
+theorem weightedIntegralOf_neg_hardyZ_one_tail_dominates_of_two_signed_moments
+    (h : HardyTheorem.hardy_two_signed_moments_target) :
+    HardyTheorem.weightedIntegralOf_tail_dominates
+      (fun t => -HardyTheorem.hardyZ t) 1 :=
+  HardyTheorem.weightedIntegralOf_neg_hardyZ_one_tail_dominates_of_two_signed_moments h
+
+/-- Public tail-dominance consequence for `hardyZ` from the second signed
+Hardy moment. -/
+theorem weightedIntegralOf_hardyZ_two_tail_dominates_of_two_signed_moments
+    (h : HardyTheorem.hardy_two_signed_moments_target) :
+    HardyTheorem.weightedIntegralOf_tail_dominates HardyTheorem.hardyZ 2 :=
+  HardyTheorem.weightedIntegralOf_hardyZ_two_tail_dominates_of_two_signed_moments h
+
 /-- Public equivalence between Hardy's infinite-zero target and infinitude of
 Hardy `Z` zeros. -/
 theorem hardy_theorem_target_iff_hardyZ_zero_set_infinite :
     HardyTheorem.hardy_theorem_target ↔
       {t : ℝ | HardyTheorem.hardyZ t = 0}.Infinite :=
   HardyTheorem.hardy_theorem_target_iff_hardyZ_zero_set_infinite
+
+/-- Public consequence: Hardy's infinite-zero target gives at least one
+critical-line zero. -/
+theorem exists_zero_on_critical_line_of_hardy_theorem_target
+    (h : HardyTheorem.hardy_theorem_target) :
+    ∃ t : ℝ, riemannZeta (0.5 + Complex.I * t) = 0 :=
+  HardyTheorem.exists_zero_on_critical_line_of_hardy_theorem_target h
+
+/-- Public consequence: the first two signed Hardy moments give at least one
+critical-line zero. -/
+theorem exists_zero_on_critical_line_of_two_signed_moments
+    (hmom : HardyTheorem.hardy_two_signed_moments_target) :
+    ∃ t : ℝ, riemannZeta (0.5 + Complex.I * t) = 0 :=
+  HardyTheorem.exists_zero_on_critical_line_of_two_signed_moments hmom
+
+/-- Public consequence: the first two Hardy integral asymptotics give at least
+one critical-line zero. -/
+theorem exists_zero_on_critical_line_of_integral_asymptotic_one_two
+    (h1 : HardyTheorem.integral_asymptotic_target 1)
+    (h2 : HardyTheorem.integral_asymptotic_target 2) :
+    ∃ t : ℝ, riemannZeta (0.5 + Complex.I * t) = 0 :=
+  HardyTheorem.exists_zero_on_critical_line_of_integral_asymptotic_one_two h1 h2
 
 /-- Public bridge from Hardy's unbounded-height target to infinitely many
 critical-line zeros. -/
