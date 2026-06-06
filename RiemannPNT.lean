@@ -537,12 +537,62 @@ theorem mem_nontrivialZerosFinset_sdiff {ρ : ℂ} {T U : ℝ} :
         T < |ρ.im| :=
   PrimeNumberTheorem.mem_nontrivialZerosFinset_sdiff
 
+/-- Public nonzero denominator fact for elements of the height-truncated
+nontrivial-zero finset. -/
+theorem ne_zero_of_mem_nontrivialZerosFinset {ρ : ℂ} {T : ℝ}
+    (hρ : ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T) : ρ ≠ 0 :=
+  PrimeNumberTheorem.ne_zero_of_mem_nontrivialZerosFinset hρ
+
+/-- Public emptiness of the height-truncated nontrivial-zero finset at negative
+height. -/
+theorem nontrivialZerosFinset_eq_empty_of_neg {T : ℝ} (hT : T < 0) :
+    PrimeNumberTheorem.nontrivialZerosFinset T = ∅ :=
+  PrimeNumberTheorem.nontrivialZerosFinset_eq_empty_of_neg hT
+
+/-- Public zero value of the finite nontrivial-zero sum at negative height. -/
+theorem finiteNontrivialZeroSum_eq_zero_of_neg
+    (x : ℝ) {T : ℝ} (hT : T < 0) :
+    PrimeNumberTheorem.finiteNontrivialZeroSum x T = 0 :=
+  PrimeNumberTheorem.finiteNontrivialZeroSum_eq_zero_of_neg x hT
+
+/-- Public zero value of the finite nontrivial-zero sum when the truncation
+finset is empty. -/
+theorem finiteNontrivialZeroSum_eq_zero_of_nontrivialZerosFinset_eq_empty
+    (x : ℝ) {T : ℝ}
+    (hT : PrimeNumberTheorem.nontrivialZerosFinset T = ∅) :
+    PrimeNumberTheorem.finiteNontrivialZeroSum x T = 0 :=
+  PrimeNumberTheorem.finiteNontrivialZeroSum_eq_zero_of_nontrivialZerosFinset_eq_empty
+    x hT
+
+/-- Public forward symmetry of the height-truncated nontrivial-zero finset under
+`ρ ↦ 1 - ρ`. -/
+theorem one_sub_mem_nontrivialZerosFinset {ρ : ℂ} {T : ℝ}
+    (hρ : ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T) :
+    1 - ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T :=
+  PrimeNumberTheorem.one_sub_mem_nontrivialZerosFinset hρ
+
 /-- Public symmetry of the height-truncated nontrivial-zero finset under
 `ρ ↦ 1 - ρ`. -/
 theorem one_sub_mem_nontrivialZerosFinset_iff {ρ : ℂ} {T : ℝ} :
     1 - ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T ↔
       ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T :=
   PrimeNumberTheorem.one_sub_mem_nontrivialZerosFinset_iff
+
+/-- Public symmetry identity for sums over the height-truncated nontrivial-zero
+finset. -/
+theorem sum_nontrivialZerosFinset_one_sub (T : ℝ) (f : ℂ → ℂ) :
+    (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T, f (1 - ρ)) =
+      ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T, f ρ :=
+  PrimeNumberTheorem.sum_nontrivialZerosFinset_one_sub T f
+
+/-- Public extensionality criterion for height-truncated nontrivial-zero
+finsets. -/
+theorem nontrivialZerosFinset_ext_of_height_iff {T U : ℝ}
+    (h : ∀ ρ : ℂ, _root_.RiemannHypothesis.IsNontrivialZero ρ →
+      (|ρ.im| ≤ T ↔ |ρ.im| ≤ U)) :
+    PrimeNumberTheorem.nontrivialZerosFinset T =
+      PrimeNumberTheorem.nontrivialZerosFinset U :=
+  PrimeNumberTheorem.nontrivialZerosFinset_ext_of_height_iff h
 
 /-- Public equality of height-truncated zero finsets under a global height
 bound. -/
@@ -564,6 +614,22 @@ theorem finiteNontrivialZeroSum_eq_of_global_height_bound {x B T : ℝ}
       PrimeNumberTheorem.finiteNontrivialZeroSum x B :=
   PrimeNumberTheorem.finiteNontrivialZeroSum_eq_of_global_height_bound hBT hbound
 
+/-- Public congruence of finite zero sums from equality of truncation finsets. -/
+theorem finiteNontrivialZeroSum_congr_finset {x T U : ℝ}
+    (h : PrimeNumberTheorem.nontrivialZerosFinset T =
+      PrimeNumberTheorem.nontrivialZerosFinset U) :
+    PrimeNumberTheorem.finiteNontrivialZeroSum x T =
+      PrimeNumberTheorem.finiteNontrivialZeroSum x U :=
+  PrimeNumberTheorem.finiteNontrivialZeroSum_congr_finset h
+
+/-- Public congruence of finite zero sums from equivalent height predicates. -/
+theorem finiteNontrivialZeroSum_congr_height {x T U : ℝ}
+    (h : ∀ ρ : ℂ, _root_.RiemannHypothesis.IsNontrivialZero ρ →
+      (|ρ.im| ≤ T ↔ |ρ.im| ≤ U)) :
+    PrimeNumberTheorem.finiteNontrivialZeroSum x T =
+      PrimeNumberTheorem.finiteNontrivialZeroSum x U :=
+  PrimeNumberTheorem.finiteNontrivialZeroSum_congr_height h
+
 /-- Public decomposition of a larger zero sum into an old sum plus newly included
 zeros. -/
 theorem finiteNontrivialZeroSum_eq_add_new_zeros {x T U : ℝ} (hTU : T ≤ U) :
@@ -575,6 +641,74 @@ theorem finiteNontrivialZeroSum_eq_add_new_zeros {x T U : ℝ} (hTU : T ≤ U) :
           (x : ℂ) ^ ρ / ρ :=
   PrimeNumberTheorem.finiteNontrivialZeroSum_eq_add_new_zeros hTU
 
+/-- Public subtraction form of the new-zero contribution between truncation
+heights. -/
+theorem finiteNontrivialZeroSum_sub_eq_new_zeros {x T U : ℝ} (hTU : T ≤ U) :
+    PrimeNumberTheorem.finiteNontrivialZeroSum x U -
+        PrimeNumberTheorem.finiteNontrivialZeroSum x T =
+      ∑ ρ ∈
+        (PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T),
+        (x : ℂ) ^ ρ / ρ :=
+  PrimeNumberTheorem.finiteNontrivialZeroSum_sub_eq_new_zeros hTU
+
+/-- Public stability of finite zero sums when no new zeros enter between
+truncation heights. -/
+theorem finiteNontrivialZeroSum_eq_of_sdiff_eq_empty
+    {x T U : ℝ} (hTU : T ≤ U)
+    (hnew : PrimeNumberTheorem.nontrivialZerosFinset U \
+        PrimeNumberTheorem.nontrivialZerosFinset T = ∅) :
+    PrimeNumberTheorem.finiteNontrivialZeroSum x U =
+      PrimeNumberTheorem.finiteNontrivialZeroSum x T :=
+  PrimeNumberTheorem.finiteNontrivialZeroSum_eq_of_sdiff_eq_empty hTU hnew
+
+/-- Public congruence of explicit-formula truncations from equality of zero
+finsets. -/
+theorem explicitFormulaApprox_congr_finset {x T U : ℝ}
+    (h : PrimeNumberTheorem.nontrivialZerosFinset T =
+      PrimeNumberTheorem.nontrivialZerosFinset U) :
+    PrimeNumberTheorem.explicitFormulaApprox x T =
+      PrimeNumberTheorem.explicitFormulaApprox x U :=
+  PrimeNumberTheorem.explicitFormulaApprox_congr_finset h
+
+/-- Public congruence of explicit-formula truncations from equality of zero
+sums. -/
+theorem explicitFormulaApprox_congr_zero_sum {x T U : ℝ}
+    (h : PrimeNumberTheorem.finiteNontrivialZeroSum x T =
+      PrimeNumberTheorem.finiteNontrivialZeroSum x U) :
+    PrimeNumberTheorem.explicitFormulaApprox x T =
+      PrimeNumberTheorem.explicitFormulaApprox x U :=
+  PrimeNumberTheorem.explicitFormulaApprox_congr_zero_sum h
+
+/-- Public congruence of explicit-formula truncations from equivalent height
+predicates. -/
+theorem explicitFormulaApprox_congr_height {x T U : ℝ}
+    (h : ∀ ρ : ℂ, _root_.RiemannHypothesis.IsNontrivialZero ρ →
+      (|ρ.im| ≤ T ↔ |ρ.im| ≤ U)) :
+    PrimeNumberTheorem.explicitFormulaApprox x T =
+      PrimeNumberTheorem.explicitFormulaApprox x U :=
+  PrimeNumberTheorem.explicitFormulaApprox_congr_height h
+
+/-- Public identity reducing the difference of explicit-formula truncations to
+the difference of finite zero sums. -/
+theorem explicitFormulaApprox_sub_explicitFormulaApprox (x T U : ℝ) :
+    PrimeNumberTheorem.explicitFormulaApprox x T -
+        PrimeNumberTheorem.explicitFormulaApprox x U =
+      PrimeNumberTheorem.finiteNontrivialZeroSum x U -
+        PrimeNumberTheorem.finiteNontrivialZeroSum x T :=
+  PrimeNumberTheorem.explicitFormulaApprox_sub_explicitFormulaApprox x T U
+
+/-- Public explicit expression for the larger truncation in terms of the older
+truncation and newly included zeros. -/
+theorem explicitFormulaApprox_eq_sub_new_zeros {x T U : ℝ} (hTU : T ≤ U) :
+    PrimeNumberTheorem.explicitFormulaApprox x U =
+      PrimeNumberTheorem.explicitFormulaApprox x T -
+        ∑ ρ ∈
+          (PrimeNumberTheorem.nontrivialZerosFinset U \
+            PrimeNumberTheorem.nontrivialZerosFinset T),
+          (x : ℂ) ^ ρ / ρ :=
+  PrimeNumberTheorem.explicitFormulaApprox_eq_sub_new_zeros hTU
+
 /-- Public expression for the change in the explicit-formula truncation as the
 new zero contribution. -/
 theorem explicitFormulaApprox_sub_eq_new_zeros {x T U : ℝ} (hTU : T ≤ U) :
@@ -585,6 +719,37 @@ theorem explicitFormulaApprox_sub_eq_new_zeros {x T U : ℝ} (hTU : T ≤ U) :
           PrimeNumberTheorem.nontrivialZerosFinset T),
         (x : ℂ) ^ ρ / ρ :=
   PrimeNumberTheorem.explicitFormulaApprox_sub_eq_new_zeros hTU
+
+/-- Public norm identity for the change in explicit-formula truncations. -/
+theorem explicitFormulaApprox_sub_norm_eq_new_zeros {x T U : ℝ} (hTU : T ≤ U) :
+    ‖PrimeNumberTheorem.explicitFormulaApprox x T -
+        PrimeNumberTheorem.explicitFormulaApprox x U‖ =
+      ‖∑ ρ ∈
+        (PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T),
+        (x : ℂ) ^ ρ / ρ‖ :=
+  PrimeNumberTheorem.explicitFormulaApprox_sub_norm_eq_new_zeros hTU
+
+/-- Public add-back form of the new-zero contribution between truncation
+heights. -/
+theorem explicitFormulaApprox_add_new_zeros {x T U : ℝ} (hTU : T ≤ U) :
+    PrimeNumberTheorem.explicitFormulaApprox x U +
+        ∑ ρ ∈
+          (PrimeNumberTheorem.nontrivialZerosFinset U \
+            PrimeNumberTheorem.nontrivialZerosFinset T),
+          (x : ℂ) ^ ρ / ρ =
+      PrimeNumberTheorem.explicitFormulaApprox x T :=
+  PrimeNumberTheorem.explicitFormulaApprox_add_new_zeros hTU
+
+/-- Public stability of explicit-formula truncations when no new zeros enter
+between truncation heights. -/
+theorem explicitFormulaApprox_eq_of_sdiff_eq_empty
+    {x T U : ℝ} (hTU : T ≤ U)
+    (hnew : PrimeNumberTheorem.nontrivialZerosFinset U \
+        PrimeNumberTheorem.nontrivialZerosFinset T = ∅) :
+    PrimeNumberTheorem.explicitFormulaApprox x U =
+      PrimeNumberTheorem.explicitFormulaApprox x T :=
+  PrimeNumberTheorem.explicitFormulaApprox_eq_of_sdiff_eq_empty hTU hnew
 
 /-- Public stability of the explicit-formula truncation under a global height
 bound for nontrivial zeros. -/
@@ -604,6 +769,15 @@ theorem explicitFormulaApprox_eventually_eq_of_global_height_bound {x B : ℝ}
     (fun T : ℝ => PrimeNumberTheorem.explicitFormulaApprox x T) =ᶠ[atTop]
       fun _T : ℝ => PrimeNumberTheorem.explicitFormulaApprox x B :=
   PrimeNumberTheorem.explicitFormulaApprox_eventually_eq_of_global_height_bound hbound
+
+/-- Public explicit-formula truncation at negative height, where the finite
+zero sum is empty. -/
+theorem explicitFormulaApprox_eq_of_neg (x : ℝ) {T : ℝ} (hT : T < 0) :
+    PrimeNumberTheorem.explicitFormulaApprox x T =
+      (x : ℂ)
+        - deriv riemannZeta 0 / riemannZeta 0
+        - (1 / 2 : ℂ) * (Real.log (1 - x^(-2 : ℝ)) : ℂ) :=
+  PrimeNumberTheorem.explicitFormulaApprox_eq_of_neg x hT
 
 /-- Public closed-half-plane nonvanishing theorem for the Riemann zeta
 function. -/
