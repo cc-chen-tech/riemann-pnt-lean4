@@ -859,6 +859,14 @@ theorem sqrt_mul_log_sq_isLittleO_id :
       =o[atTop] (fun x : ℝ => x) :=
   PrimeNumberTheorem.sqrt_mul_log_sq_isLittleO_id
 
+/-- Public fact that the project Chebyshev `ψ` and Mathlib Chebyshev `θ`
+normalizations differ by `o(1)` after division by `x`. -/
+theorem chebyshevPsi_sub_theta_div_id_tendsto_zero :
+    Tendsto (fun x : ℝ =>
+      (PrimeNumberTheorem.chebyshevPsi x - Chebyshev.theta x) / x)
+      atTop (𝓝 0) :=
+  PrimeNumberTheorem.chebyshevPsi_sub_theta_div_id_tendsto_zero
+
 /-- Public fact that the RH prime-counting scale is little-o of `Li(x)`. -/
 theorem sqrt_mul_log_isLittleO_logIntegral :
     (fun x : ℝ => Real.sqrt x * Real.log x)
@@ -2165,6 +2173,13 @@ theorem zeta_no_zeros_on_one_line :
 theorem zeta_no_zeros_on_zero_line :
     ∀ s : ℂ, s.re = 0 → riemannZeta s ≠ 0 :=
   KnownResults.zeta_no_zeros_on_zero_line
+
+/-- Public nonvanishing theorem for zeta in the closed left half-plane away
+from the trivial zeros. -/
+theorem riemannZeta_ne_zero_of_re_le_zero {s : ℂ} (hs : s.re ≤ 0)
+    (htrivial : ∀ n : ℕ, s ≠ -2 * ((n : ℂ) + 1)) :
+    riemannZeta s ≠ 0 :=
+  PrimeNumberTheorem.riemannZeta_ne_zero_of_re_le_zero hs htrivial
 
 /-- Public helper: a zeta zero on the critical line is a nontrivial zero and
 belongs to the project's critical-line set. -/
@@ -4298,6 +4313,13 @@ theorem infinitely_many_zeros_on_critical_line_of_conrey_target
     {s : ℂ | s.re = 1 / 2 ∧ riemannZeta s = 0}.Infinite :=
   KnownResults.infinitely_many_zeros_on_critical_line_of_conrey_target h
 
+/-- Public exact-name bridge from the Conrey-style target to infinitely many
+complex critical-line zeros. -/
+theorem infinitely_many_zeros_on_critical_line_of_conrey_40_percent_target
+    (h : KnownResults.conrey_40_percent_zeros_on_critical_line_target) :
+    {s : ℂ | s.re = 1 / 2 ∧ riemannZeta s = 0}.Infinite :=
+  PrimeNumberTheorem.infinitely_many_zeros_on_critical_line_of_conrey_40_percent_target h
+
 /-- Public consequence: the Conrey-style target implies infinitely many
 nontrivial zeros on the critical line. -/
 theorem infinitely_many_nontrivial_zeros_on_critical_line_of_conrey_target
@@ -4312,6 +4334,13 @@ theorem exists_zero_on_critical_line_of_conrey_target
     (h : KnownResults.conrey_40_percent_zeros_on_critical_line_target) :
     ∃ t : ℝ, riemannZeta (0.5 + Complex.I * t) = 0 :=
   KnownResults.exists_zero_on_critical_line_of_conrey_target h
+
+/-- Public exact-name bridge from the Conrey-style target to at least one real
+critical-line zero. -/
+theorem exists_zero_on_critical_line_of_conrey_40_percent_target
+    (h : KnownResults.conrey_40_percent_zeros_on_critical_line_target) :
+    ∃ t : ℝ, riemannZeta (0.5 + Complex.I * t) = 0 :=
+  PrimeNumberTheorem.exists_zero_on_critical_line_of_conrey_40_percent_target h
 
 /-- Public consequence: the Conrey-style target gives at least one nonnegative
 real critical-line zero. -/
@@ -4986,6 +5015,17 @@ theorem norm_zero_contribution_eq
     (ρ : ℂ) {x : ℝ} (hx : 0 < x) :
     ‖(x : ℂ) ^ ρ / ρ‖ = x ^ ρ.re / ‖ρ‖ :=
   PrimeNumberTheorem.norm_zero_contribution_eq ρ hx
+
+/-- Public oscillatory formula for a single zero contribution in the explicit
+formula. -/
+theorem zero_contribution
+    (ρ : ℂ) (hρ : _root_.RiemannHypothesis.IsNontrivialZero ρ)
+    (x : ℝ) (hx : x > 1) :
+    (x : ℂ) ^ ρ / ρ =
+      Real.exp (ρ.re * Real.log x) *
+        (Real.cos (ρ.im * Real.log x) +
+          Complex.I * Real.sin (ρ.im * Real.log x)) / ρ :=
+  PrimeNumberTheorem.zero_contribution ρ hρ x hx
 
 /-- Public RH specialization: each nontrivial-zero contribution has
 `sqrt x` amplitude. -/
