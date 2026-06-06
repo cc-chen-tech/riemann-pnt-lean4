@@ -888,6 +888,33 @@ theorem riemannHypothesis_statement_of_rh_iff_pointwise_error
       _root_.RiemannHypothesis.Statement :=
   PrimeNumberTheorem.RiemannHypothesis_of_rh_iff_pointwise_error h
 
+/-- Public reverse equivalence induced by the RH/error target in composable
+Big-O form. -/
+theorem rh_primeCountingLiErrorBound_iff_statement_of_rh_iff_optimal_error
+    (h : PrimeNumberTheorem.rh_iff_optimal_error) :
+    PrimeNumberTheorem.RH_PrimeCountingLiErrorBound ↔
+      _root_.RiemannHypothesis.Statement :=
+  PrimeNumberTheorem.RH_PrimeCountingLiErrorBound_iff_RiemannHypothesis_of_rh_iff_optimal_error
+    h
+
+/-- Public reverse equivalence induced by the RH/error target in pointwise
+textbook form. -/
+theorem rh_error_bound_iff_statement_of_rh_iff_optimal_error
+    (h : PrimeNumberTheorem.rh_iff_optimal_error) :
+    PrimeNumberTheorem.RH_ErrorBound ↔
+      _root_.RiemannHypothesis.Statement :=
+  PrimeNumberTheorem.RH_ErrorBound_iff_RiemannHypothesis_of_rh_iff_optimal_error
+    h
+
+/-- Public local-Statement consequence: the RH/error target turns local RH into
+all three PNT forms. -/
+theorem pnt_forms_of_statement_of_rh_iff_optimal_error
+    (h : PrimeNumberTheorem.rh_iff_optimal_error) :
+    _root_.RiemannHypothesis.Statement →
+      PrimeNumberTheorem.PNTForm1 ∧ PrimeNumberTheorem.PNTForm2 ∧
+        PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForms_of_rh_iff_optimal_error h
+
 /-- Public Mathlib-facing pointwise textbook form of the RH/error equivalence
 target. -/
 theorem rh_iff_optimal_error_iff_mathlib_pointwise :
