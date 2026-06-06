@@ -713,6 +713,14 @@ theorem pnt_forms_of_chebyshevPsi0_sub_id_isBigO
       PrimeNumberTheorem.PNTForm3 :=
   PrimeNumberTheorem.PNTForms_of_chebyshevPsi0_sub_id_isBigO hψ0
 
+/-- Public bridge from the Mathlib Chebyshev-`θ` asymptotic to all three PNT
+forms. -/
+theorem pnt_forms_of_chebyshevTheta_asymptotic
+    (hθ : Tendsto (fun x : ℝ => Chebyshev.theta x / x) atTop (𝓝 1)) :
+    PrimeNumberTheorem.PNTForm1 ∧ PrimeNumberTheorem.PNTForm2 ∧
+      PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForms_of_chebyshevTheta_asymptotic hθ
+
 /-- Public conditional partial-summation bridge from the `θ` RH-scale target
 to the prime-counting `Li` RH-scale target. -/
 theorem rh_primeCountingLiErrorBound_of_theta_error_and_integral_error
@@ -1467,6 +1475,62 @@ theorem log_log_abs_pos_of_three_le {t : ℝ} (ht : 3 ≤ |t|) :
 /-- Public real/imaginary coordinate decomposition for complex numbers. -/
 theorem re_im_decomp (s : ℂ) : ((s.re : ℂ) + Complex.I * s.im) = s :=
   ZeroFreeRegion.re_im_decomp s
+
+/-- Public Borel-Carathéodory theorem in the vanishing-at-zero form, routed
+through the zero-free-region namespace. -/
+theorem borelCaratheodory_zero
+    {f : ℂ → ℂ} {M R : ℝ} {z : ℂ}
+    (hM : 0 < M) (hf : DifferentiableOn ℂ f (Metric.ball 0 R))
+    (hf₁ : Set.MapsTo f (Metric.ball 0 R) {w | w.re ≤ M})
+    (hR : 0 < R) (hz : z ∈ Metric.ball 0 R)
+    (hf₂ : f 0 = 0) :
+    ‖f z‖ ≤ 2 * M * ‖z‖ / (R - ‖z‖) :=
+  ZeroFreeRegion.borelCaratheodory_zero hM hf hf₁ hR hz hf₂
+
+/-- Public Borel-Carathéodory theorem routed through the zero-free-region
+namespace. -/
+theorem borelCaratheodory
+    {f : ℂ → ℂ} {M R : ℝ} {z : ℂ}
+    (hM : 0 < M) (hf : DifferentiableOn ℂ f (Metric.ball 0 R))
+    (hf₁ : Set.MapsTo f (Metric.ball 0 R) {w | w.re ≤ M})
+    (hR : 0 < R) (hz : z ∈ Metric.ball 0 R) :
+    ‖f z‖ ≤
+      2 * M * ‖z‖ / (R - ‖z‖) +
+        ‖f 0‖ * (R + ‖z‖) / (R - ‖z‖) :=
+  ZeroFreeRegion.borelCaratheodory hM hf hf₁ hR hz
+
+/-- Public 3-4-1 contradiction criterion for high-height zero-free regions
+from zeta logarithmic-derivative bounds. -/
+theorem three_four_one_zero_free_high_height_of_log_deriv_bounds
+    {T0 c : ℝ} {σOf realBound twoBound : ℝ → ℝ}
+    {zeroBound : ℝ → ℝ → ℝ}
+    (hT0 : 2 ≤ T0) (hc_pos : 0 < c)
+    (hσ_gt : ∀ t : ℝ, T0 ≤ |t| → 1 < σOf t)
+    (hσ_le : ∀ t : ℝ, T0 ≤ |t| → σOf t ≤ 2)
+    (hσ_sub_pos : ∀ β t : ℝ, T0 ≤ |t| → β < 1 →
+      β ≥ 1 - c / Real.log |t| → 0 < σOf t - β)
+    (hreal :
+      ∀ t : ℝ, T0 ≤ |t| → 1 < σOf t → σOf t ≤ 2 →
+        (-deriv riemannZeta (σOf t : ℂ) / riemannZeta (σOf t : ℂ)).re ≤
+          realBound t)
+    (hzero :
+      ∀ β t : ℝ, T0 ≤ |t| → 1 < σOf t → σOf t ≤ 2 → β < 1 →
+        β ≥ 1 - c / Real.log |t| → 0 < σOf t - β →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 →
+        (-deriv riemannZeta ((σOf t : ℂ) + Complex.I * t) /
+          riemannZeta ((σOf t : ℂ) + Complex.I * t)).re ≤ zeroBound β t)
+    (htwo :
+      ∀ t : ℝ, T0 ≤ |t| → 1 < σOf t → σOf t ≤ 2 →
+        (-deriv riemannZeta ((σOf t : ℂ) + 2 * Complex.I * t) /
+          riemannZeta ((σOf t : ℂ) + 2 * Complex.I * t)).re ≤ twoBound t)
+    (hmargin :
+      ∀ β t : ℝ, T0 ≤ |t| → β < 1 →
+        β ≥ 1 - c / Real.log |t| →
+        3 * realBound t + 4 * zeroBound β t + twoBound t < 0) :
+    ∃ c' > 0, ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥ 1 - c' / Real.log |s.im| → riemannZeta s ≠ 0 :=
+  ZeroFreeRegion.three_four_one_zero_free_high_height_of_log_deriv_bounds
+    hT0 hc_pos hσ_gt hσ_le hσ_sub_pos hreal hzero htwo hmargin
 
 /-- Public comparison between a compact-patch width and a logarithmic width. -/
 theorem compact_log_width_le_of_two_le {c d t : ℝ}
@@ -3567,5 +3631,30 @@ theorem explicit_formula_von_mangoldt_of_eventually_no_new_zeros
     PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
   PrimeNumberTheorem.explicit_formula_von_mangoldt_of_eventually_no_new_zeros
     hnew hB
+
+/-- Public patching bridge for the approximate functional equation target:
+large-height analytic estimates plus bounded-height estimates close the global
+target. -/
+theorem approximate_functional_equation_target_of_threshold_bounds
+    (Clarge Csmall T : ℝ) (hC : 0 < max Clarge Csmall)
+    (hlarge : ∀ t : ℝ, T ≤ t → ∃ R : ℂ,
+      (riemannZeta (0.5 + Complex.I * (t : ℂ)) =
+        ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+          1/((n+1 : ℂ) ^ (0.5 + Complex.I * (t : ℂ)))
+        + Complex.exp (Complex.I * (HardyTheorem.thetaPhase t : ℂ)) *
+          ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+            1/((n+1 : ℂ) ^ (0.5 - Complex.I * (t : ℂ)))
+        + R) ∧ ‖R‖ ≤ Clarge * (t : ℝ)^(-1/4 : ℝ))
+    (hsmall : ∀ t : ℝ, 1 < t → t < T → ∃ R : ℂ,
+      (riemannZeta (0.5 + Complex.I * (t : ℂ)) =
+        ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+          1/((n+1 : ℂ) ^ (0.5 + Complex.I * (t : ℂ)))
+        + Complex.exp (Complex.I * (HardyTheorem.thetaPhase t : ℂ)) *
+          ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+            1/((n+1 : ℂ) ^ (0.5 - Complex.I * (t : ℂ)))
+        + R) ∧ ‖R‖ ≤ Csmall * (t : ℝ)^(-1/4 : ℝ)) :
+    HardyTheorem.Details.approximate_functional_equation_target :=
+  HardyTheorem.Details.approximate_functional_equation_target_of_threshold_bounds
+    Clarge Csmall T hC hlarge hsmall
 
 end RiemannPNT.API

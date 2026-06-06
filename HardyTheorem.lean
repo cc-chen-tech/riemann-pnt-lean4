@@ -1799,6 +1799,41 @@ lemma approximate_functional_equation_target_of
     approximate_functional_equation_target :=
   ⟨C, hC, hrem⟩
 
+/-- Close the approximate-functional-equation target from separate large-height
+and bounded-height estimates. This is the natural patching step after an
+asymptotic proof gives the remainder bound only above a threshold. -/
+lemma approximate_functional_equation_target_of_threshold_bounds
+    (Clarge Csmall T : ℝ) (hC : 0 < max Clarge Csmall)
+    (hlarge : ∀ t : ℝ, T ≤ t → ∃ R : ℂ,
+      (riemannZeta (0.5 + I * (t : ℂ)) =
+        ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+          1/((n+1 : ℂ) ^ (0.5 + I * (t : ℂ)))
+        + Complex.exp (I * (thetaPhase t : ℂ)) *
+          ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+            1/((n+1 : ℂ) ^ (0.5 - I * (t : ℂ)))
+        + R) ∧ ‖R‖ ≤ Clarge * (t : ℝ)^(-1/4 : ℝ))
+    (hsmall : ∀ t : ℝ, 1 < t → t < T → ∃ R : ℂ,
+      (riemannZeta (0.5 + I * (t : ℂ)) =
+        ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+          1/((n+1 : ℂ) ^ (0.5 + I * (t : ℂ)))
+        + Complex.exp (I * (thetaPhase t : ℂ)) *
+          ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+            1/((n+1 : ℂ) ^ (0.5 - I * (t : ℂ)))
+        + R) ∧ ‖R‖ ≤ Csmall * (t : ℝ)^(-1/4 : ℝ)) :
+    approximate_functional_equation_target := by
+  let C := max Clarge Csmall
+  refine approximate_functional_equation_target_of C hC ?_
+  intro t ht
+  have htpos : 0 < t := by linarith
+  have hpow_nonneg : 0 ≤ t ^ (-1/4 : ℝ) := Real.rpow_nonneg htpos.le _
+  by_cases hT : T ≤ t
+  · rcases hlarge t hT with ⟨R, hR_eq, hR_bound⟩
+    refine ⟨R, hR_eq, le_trans hR_bound ?_⟩
+    exact mul_le_mul_of_nonneg_right (le_max_left Clarge Csmall) hpow_nonneg
+  · rcases hsmall t ht (lt_of_not_ge hT) with ⟨R, hR_eq, hR_bound⟩
+    refine ⟨R, hR_eq, le_trans hR_bound ?_⟩
+    exact mul_le_mul_of_nonneg_right (le_max_right Clarge Csmall) hpow_nonneg
+
 lemma eventually_approximate_functional_equation_of_target
     (h : approximate_functional_equation_target) :
     ∃ C : ℝ, C > 0 ∧ Filter.Eventually (fun t : ℝ => ∃ R : ℂ,

@@ -2122,6 +2122,38 @@ lemma sqrt_mul_log_sq_isLittleO_id :
   filter_upwards [eventually_gt_atTop (0 : ℝ)] with x hx hzero
   exact (hx.ne' hzero).elim
 
+/-- A Mathlib-level Chebyshev-`θ` PNT asymptotic closes all three project PNT
+forms.  This isolates the exact remaining upstream-style statement needed for
+`PNTForm1`, `PNTForm2`, and `PNTForm3`; the `ψ - θ` gap is already negligible
+using the available Chebyshev bound. -/
+lemma PNTForms_of_chebyshevTheta_asymptotic
+    (hθ : Tendsto (fun x : ℝ => Chebyshev.theta x / x) atTop (𝓝 1)) :
+    PNTForm1 ∧ PNTForm2 ∧ PNTForm3 := by
+  have hdiffO :
+      (fun x : ℝ => chebyshevPsi x - Chebyshev.theta x)
+        =o[atTop] (fun x : ℝ => x) :=
+    psi_sub_theta_isBigO_rh_scale.trans_isLittleO sqrt_mul_log_sq_isLittleO_id
+  have hdiff :
+      Tendsto (fun x : ℝ => (chebyshevPsi x - Chebyshev.theta x) / x)
+        atTop (𝓝 0) :=
+    hdiffO.tendsto_div_nhds_zero
+  have hψ : PNTForm3 := by
+    have hsum :
+        Tendsto
+          (fun x : ℝ =>
+            Chebyshev.theta x / x + (chebyshevPsi x - Chebyshev.theta x) / x)
+          atTop (𝓝 1) := by
+      simpa using hθ.add hdiff
+    have heq :
+        (fun x : ℝ =>
+            Chebyshev.theta x / x + (chebyshevPsi x - Chebyshev.theta x) / x)
+          =ᶠ[atTop] fun x : ℝ => chebyshevPsi x / x := by
+      filter_upwards [eventually_gt_atTop (0 : ℝ)] with x hx
+      field_simp [hx.ne']
+      ring
+    simpa [PNTForm3] using hsum.congr' heq
+  exact ⟨PNTForm1_of_PNTForm3 hψ, PNTForm2_of_PNTForm3 hψ, hψ⟩
+
 lemma sqrt_mul_log_isLittleO_logIntegral :
     (fun x : ℝ => Real.sqrt x * Real.log x)
       =o[atTop] (fun x : ℝ => logIntegral x) := by

@@ -702,6 +702,75 @@ lemma borelCaratheodory
         ‖f 0‖ * (R + ‖z‖) / (R - ‖z‖) :=
   Complex.borelCaratheodory hM hf hf₁ hR hz
 
+/-- A source-level 3-4-1 contradiction criterion for high-height zero-free
+regions.
+
+The analytic inputs are isolated as three upper bounds for the logarithmic
+derivative at `σ`, `σ + it`, and `σ + 2it`.  The final hypothesis is the
+real-variable margin showing that those upper bounds make the de la Vallée
+Poussin 3-4-1 combination strictly negative for any zero in the proposed
+strip.  The proved `log_deriv_zeta_nonneg_combination` then gives the
+contradiction. -/
+lemma three_four_one_zero_free_high_height_of_log_deriv_bounds
+    {T0 c : ℝ} {σOf realBound twoBound : ℝ → ℝ}
+    {zeroBound : ℝ → ℝ → ℝ}
+    (_hT0 : 2 ≤ T0) (hc_pos : 0 < c)
+    (hσ_gt : ∀ t : ℝ, T0 ≤ |t| → 1 < σOf t)
+    (hσ_le : ∀ t : ℝ, T0 ≤ |t| → σOf t ≤ 2)
+    (hσ_sub_pos : ∀ β t : ℝ, T0 ≤ |t| → β < 1 →
+      β ≥ 1 - c / Real.log |t| → 0 < σOf t - β)
+    (hreal :
+      ∀ t : ℝ, T0 ≤ |t| → 1 < σOf t → σOf t ≤ 2 →
+        (-deriv riemannZeta (σOf t : ℂ) / riemannZeta (σOf t : ℂ)).re ≤
+          realBound t)
+    (hzero :
+      ∀ β t : ℝ, T0 ≤ |t| → 1 < σOf t → σOf t ≤ 2 → β < 1 →
+        β ≥ 1 - c / Real.log |t| → 0 < σOf t - β →
+        riemannZeta ((β : ℂ) + I * t) = 0 →
+        (-deriv riemannZeta ((σOf t : ℂ) + I * t) /
+          riemannZeta ((σOf t : ℂ) + I * t)).re ≤ zeroBound β t)
+    (htwo :
+      ∀ t : ℝ, T0 ≤ |t| → 1 < σOf t → σOf t ≤ 2 →
+        (-deriv riemannZeta ((σOf t : ℂ) + 2 * I * t) /
+          riemannZeta ((σOf t : ℂ) + 2 * I * t)).re ≤ twoBound t)
+    (hmargin :
+      ∀ β t : ℝ, T0 ≤ |t| → β < 1 →
+        β ≥ 1 - c / Real.log |t| →
+        3 * realBound t + 4 * zeroBound β t + twoBound t < 0) :
+    ∃ c' > 0, ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥ 1 - c' / Real.log |s.im| → riemannZeta s ≠ 0 := by
+  refine ⟨c, hc_pos, ?_⟩
+  intro s hsheight hsre hs_zero
+  have hs_lt_one : s.re < 1 := by
+    by_contra hs_not_lt
+    exact (riemannZeta_ne_zero_of_one_le_re (le_of_not_gt hs_not_lt)) hs_zero
+  have hσ_gt' : 1 < σOf s.im := hσ_gt s.im hsheight
+  have hσ_le' : σOf s.im ≤ 2 := hσ_le s.im hsheight
+  have hσ_sub' : 0 < σOf s.im - s.re :=
+    hσ_sub_pos s.re s.im hsheight hs_lt_one hsre
+  have hs_zero_re_im : riemannZeta ((s.re : ℂ) + I * s.im) = 0 := by
+    simpa [re_im_decomp s] using hs_zero
+  have hnonneg :=
+    log_deriv_zeta_nonneg_combination (σOf s.im) hσ_gt' s.im
+  have hreal' :=
+    hreal s.im hsheight hσ_gt' hσ_le'
+  have hzero' :=
+    hzero s.re s.im hsheight hσ_gt' hσ_le' hs_lt_one hsre hσ_sub' hs_zero_re_im
+  have htwo' :=
+    htwo s.im hsheight hσ_gt' hσ_le'
+  have hupper :
+      3 * (-deriv riemannZeta (σOf s.im : ℂ) /
+            riemannZeta (σOf s.im : ℂ)).re
+        + 4 * (-deriv riemannZeta ((σOf s.im : ℂ) + I * s.im) /
+            riemannZeta ((σOf s.im : ℂ) + I * s.im)).re
+        + (-deriv riemannZeta ((σOf s.im : ℂ) + 2 * I * s.im) /
+            riemannZeta ((σOf s.im : ℂ) + 2 * I * s.im)).re
+        ≤ 3 * realBound s.im + 4 * zeroBound s.re s.im + twoBound s.im := by
+    nlinarith
+  have hneg :=
+    hmargin s.re s.im hsheight hs_lt_one hsre
+  linarith
+
 lemma compact_log_width_le_of_two_le {c d t : ℝ}
     (hc : c ≤ d * Real.log 2) (hd : 0 ≤ d) (ht : 2 ≤ |t|) :
     c / Real.log |t| ≤ d := by
