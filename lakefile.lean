@@ -19,11 +19,5 @@ lean_lib RiemannPNT where
     `HardyTheorem.Phase1Aux,
     `HardyTheorem.AFE
   ]
-    `EulerAndLfunctions,
-    `PrimeNumberTheorem,
-    `PrimeNumberTheorem.ExplicitFormulaAux,
-    `ZeroFreeRegion,
-    `ZeroFreeRegion.MeromorphicAux
-  ]
 
 require mathlib from "./vendor/mathlib"
