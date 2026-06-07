@@ -1,5 +1,9 @@
 /.lake/
 /build/
 /lake-packages/
+/vendor/
+__pycache__/
+*.pyc
 *.olean
 *.trace
+experiments/rh/output/*.csv

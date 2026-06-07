@@ -1,0 +1,184 @@
+{
+  "timestamp": "2026-06-04",
+  "status": "not-yet-complete",
+  "completed_without_sorry": true,
+  "remaining_prop_targets": {
+    "HardyTheorem": [
+      {
+        "name": "integral_asymptotic_target",
+        "shape": "n ≥ 1 ∧ ∃ A>0, weightedIntegral n ~[atTop] (fun T => ((-1)^n*A) * T ^ ((2*n)+1/4))",
+        "depends_on": []
+      },
+      {
+        "name": "hardy_two_signed_moments_target",
+        "shape": "(∃A>0, weightedIntegral 1 ~ (-A*...)) ∧ (∃B>0, weightedIntegral 2 ~ (B*...))",
+        "depends_on": []
+      },
+      {
+        "name": "hardy_theorem_target",
+        "shape": "{t | riemannZeta (1/2 + I*t)=0}.Infinite",
+        "depends_on": []
+      },
+      {
+        "name": "hardy_zeros_unbounded_target",
+        "shape": "∀T, ∃t, T ≤ t ∧ riemannZeta (1/2 + I*t)=0",
+        "depends_on": []
+      },
+      {
+        "name": "hardy_zeros_abs_unbounded_target",
+        "shape": "∀T, ∃t, T ≤ |t| ∧ riemannZeta (1/2 + I*t)=0",
+        "depends_on": []
+      },
+      {
+        "name": "hardy_littlewood_lower_bound_target",
+        "shape": "∃C>0, ∃T0, ∀T≥T0, (zeroCountOnCriticalLine T:ℝ) ≥ C*T",
+        "depends_on": []
+      },
+      {
+        "name": "selberg_zero_proportion_target",
+        "shape": "∃c>0,∃T0,∀T≥T0, (zeroCountOnCriticalLine T:ℝ) ≥ c*(T/(2π)*log T)",
+        "depends_on": []
+      },
+      {
+        "name": "gamma_asymptotic_half_plus_it_target",
+        "shape": "(fun t => Gamma(1/2 + I*t)) ~ (sqrt(2π) * exp(I*t*log t - I*t) * exp(-π*t/2))",
+        "depends_on": []
+      },
+      {
+        "name": "theta_asymptotic_target",
+        "shape": "∃θ, exp(I*θ t)=exp(I*thetaPhase t) ∧ (fun t => θ t) ~ (t/2*log(t/(2π))-t/2-π/8)",
+        "depends_on": []
+      },
+      {
+        "name": "approximate_functional_equation_target",
+        "shape": "∃C>0, ∀t>1, ∃R, zeta(1/2+It)=finite sums + R ∧ ‖R‖ ≤ C*t^(-1/4)",
+        "depends_on": []
+      }
+    ],
+    "PrimeNumberTheorem": [
+      {
+        "name": "PNTForm1",
+        "shape": "Tendsto (fun x => (primeCounting x:ℝ)*log x / x) atTop (𝓝 1)",
+        "depends_on": []
+      },
+      {
+        "name": "PNTForm2",
+        "shape": "Tendsto (fun x => (primeCounting x:ℝ)/logIntegral x) atTop (𝓝 1)",
+        "depends_on": []
+      },
+      {
+        "name": "PNTForm3",
+        "shape": "Tendsto (fun x => chebyshevPsi x / x) atTop (𝓝 1)",
+        "depends_on": []
+      },
+      {
+        "name": "RH_PsiErrorBound",
+        "shape": "(fun x => chebyshevPsi x - x) =O[atTop] (fun x => sqrt x * (log x)^2)",
+        "depends_on": []
+      },
+      {
+        "name": "RH_ThetaErrorBound",
+        "shape": "(fun x => Chebyshev.theta x - x) =O[atTop] (fun x => sqrt x * (log x)^2)",
+        "depends_on": []
+      },
+      {
+        "name": "RH_PrimeCountingLiErrorBound",
+        "shape": "(fun x => (primeCounting x:ℝ)-logIntegral x) =O[atTop] (fun x => sqrt x * log x)",
+        "depends_on": []
+      },
+      {
+        "name": "RH_ErrorBound",
+        "shape": "∃C>0, ∀x≥2, |(primeCounting x:ℝ)-logIntegral x| ≤ C*sqrt x*log x",
+        "depends_on": []
+      },
+      {
+        "name": "rh_iff_optimal_error",
+        "shape": "RiemannHypothesis.Statement ↔ RH_PrimeCountingLiErrorBound",
+        "depends_on": []
+      },
+      {
+        "name": "explicit_formula_von_mangoldt",
+        "shape": "Tendsto (T ↦ explicitFormulaApprox x T) atTop (𝓝 (chebyshevPsi0 x))",
+        "depends_on": []
+      }
+    ],
+    "RiemannExplorer": [
+      {
+        "name": "conrey_40_percent_zeros_on_critical_line_target",
+        "shape": "∃c>0, ∃T0, ∀T≥T0, zeroCountOnCriticalLine T ≥ c*(T/(2π)*log T)",
+        "depends_on": []
+      }
+    ],
+    "ZeroFreeRegion": [
+      {
+        "name": "classical_zero_free_region",
+        "shape": "∃c>0, ∀s, |s.im|≥2 → s.re ≥ 1 - c/log|s.im| → riemannZeta s ≠ 0",
+        "depends_on": []
+      },
+      {
+        "name": "vinogradov_korobov_zero_free_region",
+        "shape": "∃c>0, ∀s, |s.im|≥3 → s.re ≥ 1 - c/(log|s.im|)^(2/3)* (log(log|s.im|))^(-1/3) → riemannZeta s ≠ 0",
+        "depends_on": []
+      }
+    ]
+  },
+  "chain_summary": [
+    {
+      "name": "Quantitative zero-free region",
+      "target": "classical_zero_free_region",
+      "status": "not proved in Lean",
+      "next_step": "supply high-height zero-free/derivative estimates and keep compact patching lemmas already formalized"
+    },
+    {
+      "name": "Explicit formula",
+      "target": "explicit_formula_von_mangoldt",
+      "status": "not proved in Lean",
+      "next_step": "finish Perron-to-residue finite-height chain, then pass from contour sum to truncated/ψ0 limit"
+    },
+    {
+      "name": "RH error equivalence",
+      "target": "rh_iff_optimal_error",
+      "status": "not proved in Lean",
+      "next_step": "bridge explicit formula through RH-scale psi/theta error and convert to prime-counting Li error"
+    },
+    {
+      "name": "Hardy theorem",
+      "target": "hardy_theorem_target",
+      "status": "not proved in Lean",
+      "next_step": "prove Hardy signed moment asymptotics; the main signed-moment bridge no longer needs tail-dominance"
+    }
+  ],
+  "chain_inventory": {
+    "Explicit formula": [
+      "explicit_formula_von_mangoldt"
+    ],
+    "Hardy theorem": [
+      "integral_asymptotic_target",
+      "hardy_two_signed_moments_target",
+      "hardy_theorem_target",
+      "hardy_zeros_unbounded_target",
+      "hardy_zeros_abs_unbounded_target",
+      "hardy_littlewood_lower_bound_target",
+      "selberg_zero_proportion_target",
+      "gamma_asymptotic_half_plus_it_target",
+      "theta_asymptotic_target",
+      "approximate_functional_equation_target",
+      "conrey_40_percent_zeros_on_critical_line_target"
+    ],
+    "Quantitative zero-free region": [
+      "classical_zero_free_region",
+      "vinogradov_korobov_zero_free_region"
+    ],
+    "RH error equivalence": [
+      "PNTForm1",
+      "PNTForm2",
+      "PNTForm3",
+      "RH_PsiErrorBound",
+      "RH_ThetaErrorBound",
+      "RH_PrimeCountingLiErrorBound",
+      "RH_ErrorBound",
+      "rh_iff_optimal_error"
+    ]
+  },
+  "all_prop_defs_count": 22
+}

@@ -8,37 +8,40 @@ de la Vallée Poussin's 3-4-1 inequality:
 
   3·Re(-ζ'/ζ(σ)) + 4·Re(-ζ'/ζ(σ+it)) + Re(-ζ'/ζ(σ+2it)) ≥ 0
 
-From this trigonometric inequality, we deduce that ζ(s) ≠ 0 on the line Re(s) = 1,
-and more generally, that for any fixed height T, there exists a zero-free region
-of the form {Re(s) ≥ 1 - d_T, |Im(s)| ≤ T} for some d_T > 0.
+This file records verified supporting lemmas and target theorems for the
+classical zero-free-region argument. The trigonometric identity and the full
+logarithmic-derivative 3-4-1 combination are proved, as is the compact
+zero-free strip for each bounded height. The zero-free-region theorems that
+need deeper analytic input are recorded as `Prop` target statements in this
+checkout.
 
-## Key results (sorry-free)
+## Verified and partial results
 
 1. `trig_identity_nonneg` — 3 + 4cos θ + cos 2θ = 2(1+cos θ)² ≥ 0
 2. `zeta_no_zeros_on_line_one` — ζ(s) ≠ 0 on Re(s) = 1
 3. `log_deriv_zeta_re_series` — -Re(ζ'/ζ(s)) expressed as a Dirichlet series in von Mangoldt Λ
-4. `log_deriv_zeta_nonneg_combination` — the 3-4-1 combination is non-negative
+4. `log_deriv_zeta_nonneg_combination` — full 3-4-1 combination
 5. `classical_zero_free_region_compact` — compact zero-free region for bounded height
 6. `residue_bounds` — 1 < (σ-1)ζ(σ) ≤ σ for σ > 1, confirming residue 1 at s=1
 7. `log_deriv_zeta_pos_real` — -Re(ζ'/ζ(σ)) > 0 for real σ > 1
 8. `log_deriv_zeta_antitone` — -Re(ζ'/ζ) is decreasing on (1, ∞)
 
-## Remaining sorry
+## Unproved target statements
 
 - `classical_zero_free_region` — quantitative σ ≥ 1 - c/log|t|
-  (requires Hadamard factorization or Borel-Carathéodory, not yet in Mathlib)
+  (requires zeta-specific growth/log-derivative estimates built from tools
+  such as Mathlib's Borel-Carathéodory, Jensen, Phragmén-Lindelöf, and
+  Hadamard three-lines theorems)
 - `vinogradov_korobov_zero_free_region` — requires exponential sum estimates
 
 ## Dependencies
 
 - Mathlib (riemannZeta, Complex analysis, L-series)
 - RiemannExplorer
-- PrimeNumberTheorem (for vonMangoldt, chebyshevPsi)
 -/
 
 import Mathlib
 import RiemannExplorer
-import PrimeNumberTheorem
 
 open Complex BigOperators Filter Nat Topology MeasureTheory Asymptotics
 open scoped ArithmeticFunction LSeries.notation
@@ -176,12 +179,12 @@ private lemma natCast_cpow_neg_re {n : ℕ} (hn : n ≠ 0) (s : ℂ) :
   have h_re : ((↑(Real.log (n : ℝ)) : ℂ) * (-s)).re = -(s.re * Real.log n) := by
     have : (↑(Real.log (n : ℝ)) : ℂ) = ⟨Real.log n, 0⟩ := rfl
     rw [this]
-    simp [Complex.mul_re, Complex.neg_re, Complex.neg_im]
+    simp [Complex.mul_re, Complex.neg_re]
     ring
   have h_im : ((↑(Real.log (n : ℝ)) : ℂ) * (-s)).im = -(s.im * Real.log n) := by
     have : (↑(Real.log (n : ℝ)) : ℂ) = ⟨Real.log n, 0⟩ := rfl
     rw [this]
-    simp [Complex.mul_im, Complex.neg_re, Complex.neg_im]
+    simp [Complex.mul_im, Complex.neg_im]
     ring
   rw [Complex.exp_re, h_re, h_im]
   congr 1
@@ -203,7 +206,7 @@ lemma log_deriv_zeta_re_series (s : ℂ) (hs : 1 < s.re) :
   apply tsum_congr
   intro n
   rcases Nat.eq_zero_or_pos n with rfl | hn
-  · simp [LSeries.term, ArithmeticFunction.vonMangoldt_apply]
+  · simp [LSeries.term]
   · rw [LSeries.term_def₀ (by simp : (↗Λ) 0 = 0)]
     have hn' : n ≠ 0 := hn.ne'
     have h_re := natCast_cpow_neg_re hn' s
@@ -360,7 +363,7 @@ lemma log_deriv_zeta_pos_real (σ : ℝ) (hσ : 1 < σ) :
     exact h_map.congr (fun n ↦ by
       simp only [Complex.reCLM_apply, LSeries.term]
       split_ifs with hn
-      · subst hn; simp [ArithmeticFunction.vonMangoldt]
+      · subst hn; simp
       · rw [div_eq_mul_inv, ← cpow_neg, Complex.re_ofReal_mul,
             natCast_cpow_neg_re hn, Real.rpow_neg (Nat.cast_nonneg n)]
         simp only [Complex.ofReal_im, Complex.ofReal_re, zero_mul, Real.cos_zero, mul_one,
@@ -449,32 +452,1105 @@ lemma log_deriv_zeta_nonneg_combination (σ : ℝ) (hσ : 1 < σ) (t : ℝ) :
   have hs1 := h_re_summable _ hσ_re1
   have hs2 := h_re_summable _ hσ_re2
   have hs3 := h_re_summable _ hσ_re3
+  have h1c : Summable (fun n : ℕ ↦ Λ n * Real.cos 0 / (↑n : ℝ) ^ σ) := by
+    simpa using hs1
+  have h1' : Summable (fun n : ℕ ↦ Λ n / (↑n : ℝ) ^ σ) := by
+    simpa using hs1
+  have h2' : Summable (fun n : ℕ ↦ Λ n * Real.cos (t * Real.log ↑n) / (↑n : ℝ) ^ σ) := by
+    simpa using hs2
+  have h3' : Summable (fun n : ℕ ↦ Λ n * Real.cos (2 * t * Real.log ↑n) / (↑n : ℝ) ^ σ) := by
+    simpa [mul_assoc] using hs3
   -- Combine the three series into one
   have h_sum : Summable (fun n : ℕ ↦
     Λ n * (3 + 4 * Real.cos (t * Real.log ↑n) + Real.cos (2 * t * Real.log ↑n)) / (↑n : ℝ) ^ σ) := by
-    -- Each coefficient is non-negative by trig_identity_nonneg
-    sorry
-  sorry
+    refine ((h1'.mul_left 3).add ((h2'.mul_left 4).add h3')).congr ?_
+    intro n
+    ring
+  have h_lhs :
+      3 * (∑' n : ℕ, Λ n * Real.cos 0 / (↑n : ℝ) ^ σ)
+        + 4 * (∑' n : ℕ, Λ n * Real.cos (t * Real.log ↑n) / (↑n : ℝ) ^ σ)
+        + (∑' n : ℕ, Λ n * Real.cos (2 * t * Real.log ↑n) / (↑n : ℝ) ^ σ)
+      =
+      ∑' n : ℕ, Λ n * (3 + 4 * Real.cos (t * Real.log ↑n)
+        + Real.cos (2 * t * Real.log ↑n)) / (↑n : ℝ) ^ σ := by
+    have hsum0 := h1c.mul_left 3
+    have hsum1 := h2'.mul_left 4
+    have hsum2 := h3'
+    rw [← tsum_mul_left, ← tsum_mul_left, ← hsum0.tsum_add hsum1,
+      ← (hsum0.add hsum1).tsum_add hsum2]
+    apply tsum_congr
+    intro n
+    simp [Real.cos_zero]
+    ring
+  rw [h_lhs]
+  exact tsum_nonneg (fun n ↦ by
+    rcases Nat.eq_zero_or_pos n with rfl | hn
+    · simp [ArithmeticFunction.vonMangoldt]
+    · have hΛ : 0 ≤ Λ n := ArithmeticFunction.vonMangoldt_nonneg
+      have hden : 0 ≤ (n : ℝ) ^ σ :=
+        (Real.rpow_pos_of_pos (Nat.cast_pos.mpr hn) σ).le
+      have htrig : 0 ≤ 3 + 4 * Real.cos (t * Real.log (n : ℝ))
+          + Real.cos (2 * t * Real.log (n : ℝ)) := by
+        simpa [mul_assoc] using trig_identity_nonneg (t * Real.log (n : ℝ))
+      exact div_nonneg (mul_nonneg hΛ htrig) hden)
 
-/-- 紧致零自由区域：对任意 T ≥ 2，存在 d > 0 使 ζ 在 {|Im(s)| ≤ T, Re(s) ≥ 1-d} 无零点。
-    这是从 3-4-1 不等式和 Re(s)=1 上的非零性通过紧致性论证得到的。 -/
-theorem classical_zero_free_region_compact (T : ℝ) (hT : T ≥ 2) :
+/-- Algebraic lower-bound corollary of the 3-4-1 inequality. -/
+lemma log_deriv_zeta_lower_bound (σ : ℝ) (hσ : 1 < σ) (t : ℝ) :
+    (- deriv riemannZeta ((σ : ℂ) + I * t) / riemannZeta ((σ : ℂ) + I * t)).re ≥
+      -(3 / 4 : ℝ) * (- deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re
+      - (1 / 4 : ℝ) *
+        (- deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+          riemannZeta ((σ : ℂ) + 2 * I * t)).re := by
+  have h := log_deriv_zeta_nonneg_combination σ hσ t
+  linarith
+
+/-- ζ is nonzero in a full neighborhood of `1`.
+
+Although `riemannZeta` has a junk value at `1` in Mathlib, the residue statement
+gives nonvanishing on a punctured neighborhood, and `riemannZeta_one_ne_zero`
+handles the point itself. -/
+private lemma eventually_riemannZeta_ne_zero_nhds_one :
+    ∀ᶠ s : ℂ in 𝓝 (1 : ℂ), riemannZeta s ≠ 0 := by
+  have hpunct : ∀ᶠ s : ℂ in 𝓝[≠] (1 : ℂ), (s - 1) * riemannZeta s ≠ 0 := by
+    have hopen : IsOpen ({z : ℂ | z ≠ 0}) := isOpen_compl_singleton
+    exact riemannZeta_residue_one.eventually (hopen.mem_nhds one_ne_zero)
+  rw [eventually_nhdsWithin_iff] at hpunct
+  filter_upwards [hpunct] with s hs
+  by_cases hs1 : s = 1
+  · simp [hs1, riemannZeta_one_ne_zero]
+  · exact fun hz ↦ hs hs1 (by simp [hz])
+
+/-- The nonvanishing locus of ζ is open. -/
+private lemma isOpen_setOf_riemannZeta_ne_zero : IsOpen {s : ℂ | riemannZeta s ≠ 0} := by
+  rw [isOpen_iff_mem_nhds]
+  intro s hs
+  by_cases hs1 : s = 1
+  · simpa [hs1] using eventually_riemannZeta_ne_zero_nhds_one
+  · exact (differentiableAt_riemannZeta hs1).continuousAt.preimage_mem_nhds
+      (isOpen_compl_singleton.mem_nhds hs)
+
+/-- Compact zero-free region next to the line `Re(s) = 1`.
+
+For fixed height `T`, compactness of the vertical segment
+`{s | s.re = 1 ∧ |s.im| ≤ T}` and openness of the nonvanishing locus give a
+uniform closed thickening inside the nonvanishing locus. Points with `re ≥ 1`
+are handled directly by `riemannZeta_ne_zero_of_one_le_re`; points with
+`1 - d ≤ re < 1` lie in that thickening by vertical projection. -/
+theorem classical_zero_free_region_compact (T : ℝ) (_hT : T ≥ 2) :
     ∃ d > 0, ∀ s : ℂ, |s.im| ≤ T → s.re ≥ 1 - d → riemannZeta s ≠ 0 := by
-  -- 使用序列紧致性 + 连续性 + 已证明的 Re(s)=1 上的非零性
-  sorry
+  let verticalSegment : Set ℂ := ({1} : Set ℝ) ×ℂ Set.Icc (-T) T
+  have hK : IsCompact verticalSegment := by
+    simpa [verticalSegment] using
+      (isCompact_singleton.reProdIm (isCompact_Icc : IsCompact (Set.Icc (-T) T)))
+  have hKsub : verticalSegment ⊆ {s : ℂ | riemannZeta s ≠ 0} := by
+    intro z hz
+    change z ∈ ({1} : Set ℝ) ×ℂ Set.Icc (-T) T at hz
+    rw [mem_reProdIm] at hz
+    have hzre : z.re = 1 := by simpa using hz.1
+    exact riemannZeta_ne_zero_of_one_le_re (by linarith)
+  obtain ⟨d, hdpos, hdsub⟩ :=
+    hK.exists_cthickening_subset_open isOpen_setOf_riemannZeta_ne_zero hKsub
+  refine ⟨d, hdpos, ?_⟩
+  intro s him hsre
+  by_cases hge : 1 ≤ s.re
+  · exact riemannZeta_ne_zero_of_one_le_re hge
+  · have hlt : s.re < 1 := lt_of_not_ge hge
+    let k : ℂ := ⟨1, s.im⟩
+    have hk : k ∈ verticalSegment := by
+      change k ∈ ({1} : Set ℝ) ×ℂ Set.Icc (-T) T
+      rw [mem_reProdIm]
+      constructor
+      · simp [k]
+      · simpa [k] using (abs_le.mp him)
+    have hdist : dist s k ≤ d := by
+      have hdist' : dist s k ≤ |s.re - 1| := by
+        calc
+          dist s k = ‖s - k‖ := dist_eq_norm s k
+          _ ≤ |(s - k).re| + |(s - k).im| := norm_le_abs_re_add_abs_im _
+          _ = |s.re - 1| := by simp [k]
+      have habs : |s.re - 1| ≤ d := by
+        rw [abs_of_nonpos (by linarith)]
+        linarith
+      exact hdist'.trans habs
+    exact hdsub (Metric.mem_cthickening_of_dist_le s k d verticalSegment hk hdist)
+
+lemma classical_zero_free_region_compact_at_two :
+    ∃ d > 0, ∀ s : ℂ, |s.im| ≤ 2 →
+      s.re ≥ 1 - d → riemannZeta s ≠ 0 :=
+  classical_zero_free_region_compact 2 (by norm_num)
+
+lemma classical_zero_free_region_compact_re_im (T : ℝ) (hT : T ≥ 2) :
+    ∃ d > 0, ∀ β t : ℝ, |t| ≤ T →
+      β ≥ 1 - d → riemannZeta ((β : ℂ) + I * t) ≠ 0 := by
+  rcases classical_zero_free_region_compact T hT with ⟨d, hd_pos, hcompact⟩
+  refine ⟨d, hd_pos, ?_⟩
+  intro β t ht hβ
+  have hheight : |((β : ℂ) + I * t).im| ≤ T := by
+    simpa using ht
+  have hre : ((β : ℂ) + I * t).re ≥ 1 - d := by
+    simpa using hβ
+  exact hcompact ((β : ℂ) + I * t) hheight hre
+
+lemma classical_zero_free_region_compact_band_re_im (T : ℝ) (hT : T ≥ 2) :
+    ∃ d > 0, ∀ β t : ℝ, 2 ≤ |t| → |t| ≤ T →
+      β ≥ 1 - d → riemannZeta ((β : ℂ) + I * t) ≠ 0 := by
+  rcases classical_zero_free_region_compact_re_im T hT with ⟨d, hd_pos, hcompact⟩
+  refine ⟨d, hd_pos, ?_⟩
+  intro β t _ht_lower ht_upper hβ
+  exact hcompact β t ht_upper hβ
 
 /-- 经典零点自由区域：ζ(s) ≠ 0 对于 Re(s) ≥ 1 - c/log|t| (|t| ≥ 2)。
-    这需要 Hadamard 因子分解或 Borel-Carathéodory 定理，目前 Mathlib 缺失。 -/
-theorem classical_zero_free_region :
-    ∃ c > 0, ∀ s : ℂ, |s.im| ≥ 2 → s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0 := by
-  -- 需要 Hadamard 因子分解 或 Borel-Carathéodory 引理
-  sorry
+    这还需要把 Hadamard 因子分解或 Borel-Carathéodory 等复分析工具
+    专门应用到 ζ 的增长估计和对数导数估计上。 -/
+def classical_zero_free_region : Prop :=
+    ∃ c > 0, ∀ s : ℂ, |s.im| ≥ 2 → s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0
+
+/-- Coordinate form of the classical zero-free-region target. -/
+lemma classical_zero_free_region_iff_re_im :
+    classical_zero_free_region ↔
+      ∃ c > 0, ∀ β t : ℝ, 2 ≤ |t| →
+        β ≥ 1 - c / Real.log |t| →
+        riemannZeta ((β : ℂ) + I * t) ≠ 0 := by
+  constructor
+  · intro hclassical
+    rcases hclassical with ⟨c, hc_pos, hregion⟩
+    refine ⟨c, hc_pos, ?_⟩
+    intro β t ht hβ
+    have hheight : |((β : ℂ) + I * t).im| ≥ 2 := by
+      simpa using ht
+    have hre :
+        ((β : ℂ) + I * t).re ≥ 1 - c / Real.log |((β : ℂ) + I * t).im| := by
+      simpa using hβ
+    exact hregion ((β : ℂ) + I * t) hheight hre
+  · intro hcoord
+    rcases hcoord with ⟨c, hc_pos, hregion⟩
+    refine ⟨c, hc_pos, ?_⟩
+    intro s hsheight hsre
+    have hs_decomp : ((s.re : ℂ) + I * s.im) = s := by
+      apply Complex.ext <;> simp
+    simpa [hs_decomp] using hregion s.re s.im hsheight hsre
+
+lemma classical_zero_free_region_to_re_im
+    (hclassical : classical_zero_free_region) :
+    ∃ c > 0, ∀ β t : ℝ, 2 ≤ |t| →
+      β ≥ 1 - c / Real.log |t| →
+      riemannZeta ((β : ℂ) + I * t) ≠ 0 :=
+  classical_zero_free_region_iff_re_im.mp hclassical
+
+lemma classical_zero_free_region_of_re_im
+    (hcoord :
+      ∃ c > 0, ∀ β t : ℝ, 2 ≤ |t| →
+        β ≥ 1 - c / Real.log |t| →
+        riemannZeta ((β : ℂ) + I * t) ≠ 0) :
+    classical_zero_free_region :=
+  classical_zero_free_region_iff_re_im.mpr hcoord
+
+/-- `log |t|` is positive throughout the classical zero-free-region range. -/
+lemma log_abs_pos_of_two_le {t : ℝ} (ht : 2 ≤ |t|) : 0 < Real.log |t| :=
+  Real.log_pos (lt_of_lt_of_le (by norm_num : (1 : ℝ) < 2) ht)
+
+/-- The classical `c / log |t|` width is positive in its height range. -/
+lemma classical_width_pos_of_two_le {c t : ℝ} (hc : 0 < c) (ht : 2 ≤ |t|) :
+    0 < c / Real.log |t| :=
+  div_pos hc (log_abs_pos_of_two_le ht)
+
+/-- The classical `c / log |t|` width is monotone in the width constant. -/
+lemma classical_width_mono_const {csmall clarge t : ℝ}
+    (hc : csmall ≤ clarge) (ht : 2 ≤ |t|) :
+    csmall / Real.log |t| ≤ clarge / Real.log |t| :=
+  div_le_div_of_nonneg_right hc (log_abs_pos_of_two_le ht).le
+
+/-- Above height `3`, `log |t|` is already larger than `1`. -/
+lemma log_abs_gt_one_of_three_le {t : ℝ} (ht : 3 ≤ |t|) :
+    1 < Real.log |t| := by
+  have ht_pos : 0 < |t| := by linarith
+  have hexp_lt_three : Real.exp 1 < (3 : ℝ) := by
+    calc
+      Real.exp 1 < 2.7182818286 := Real.exp_one_lt_d9
+      _ < (3 : ℝ) := by norm_num
+  exact (Real.lt_log_iff_exp_lt ht_pos).mpr (lt_of_lt_of_le hexp_lt_three ht)
+
+/-- Above height `3`, the log-log factor in the Vinogradov-Korobov width is positive. -/
+lemma log_log_abs_pos_of_three_le {t : ℝ} (ht : 3 ≤ |t|) :
+    0 < Real.log (Real.log |t|) :=
+  Real.log_pos (log_abs_gt_one_of_three_le ht)
+
+lemma re_im_decomp (s : ℂ) : ((s.re : ℂ) + I * s.im) = s := by
+  apply Complex.ext <;> simp
+
+/-- Local namespace entry point for Mathlib's Borel-Carathéodory theorem in the
+vanishing-at-zero form. This is one of the complex-analytic tools used in
+standard proofs of quantitative zero-free regions; the remaining gap is the
+zeta-specific growth/log-derivative input needed to apply it to `riemannZeta`. -/
+lemma borelCaratheodory_zero
+    {f : ℂ → ℂ} {M R : ℝ} {z : ℂ}
+    (hM : 0 < M) (hf : DifferentiableOn ℂ f (Metric.ball 0 R))
+    (hf₁ : Set.MapsTo f (Metric.ball 0 R) {w | w.re ≤ M})
+    (hR : 0 < R) (hz : z ∈ Metric.ball 0 R)
+    (hf₂ : f 0 = 0) :
+    ‖f z‖ ≤ 2 * M * ‖z‖ / (R - ‖z‖) :=
+  Complex.borelCaratheodory_zero hM hf hf₁ hR hz hf₂
+
+/-- Local namespace entry point for Mathlib's general Borel-Carathéodory
+theorem. -/
+lemma borelCaratheodory
+    {f : ℂ → ℂ} {M R : ℝ} {z : ℂ}
+    (hM : 0 < M) (hf : DifferentiableOn ℂ f (Metric.ball 0 R))
+    (hf₁ : Set.MapsTo f (Metric.ball 0 R) {w | w.re ≤ M})
+    (hR : 0 < R) (hz : z ∈ Metric.ball 0 R) :
+    ‖f z‖ ≤
+      2 * M * ‖z‖ / (R - ‖z‖) +
+        ‖f 0‖ * (R + ‖z‖) / (R - ‖z‖) :=
+  Complex.borelCaratheodory hM hf hf₁ hR hz
+
+section JensenWrapper
+
+open MeromorphicAt MeromorphicOn Metric Real
+
+/-- Local namespace entry point for Mathlib's Jensen formula.  The theorem is
+available in Mathlib; applying it to `riemannZeta` still requires the
+zeta-specific meromorphic setup and growth estimates. -/
+lemma jensen_circleAverage_log_norm
+    {c : ℂ} {R : ℝ} {f : ℂ → ℂ}
+    (hR : R ≠ 0) (hf : MeromorphicOn f (closedBall c |R|)) :
+    circleAverage (Real.log ‖f ·‖) c R
+      = ∑ᶠ u, divisor f (closedBall c |R|) u * Real.log (R * ‖c - u‖⁻¹)
+        + divisor f (closedBall c |R|) c * Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt f c‖ :=
+  MeromorphicOn.circleAverage_log_norm hR hf
+
+end JensenWrapper
+
+/-- Local namespace entry point for Mathlib's Phragmén-Lindelöf principle in a
+vertical strip. -/
+lemma phragmenLindelof_vertical_strip
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+    {f : ℂ → E} {a b C : ℝ} {z : ℂ}
+    (hfd : DiffContOnCl ℂ f (Complex.re ⁻¹' Set.Ioo a b))
+    (hB : ∃ c < Real.pi / (b - a), ∃ B,
+      f =O[Filter.comap (_root_.abs ∘ Complex.im) Filter.atTop ⊓
+          𝓟 (Complex.re ⁻¹' Set.Ioo a b)]
+        fun z => Real.exp (B * Real.exp (c * |z.im|)))
+    (hle_a : ∀ z : ℂ, Complex.re z = a → ‖f z‖ ≤ C)
+    (hle_b : ∀ z : ℂ, Complex.re z = b → ‖f z‖ ≤ C)
+    (hza : a ≤ Complex.re z) (hzb : Complex.re z ≤ b) :
+    ‖f z‖ ≤ C :=
+  PhragmenLindelof.vertical_strip hfd hB hle_a hle_b hza hzb
+
+/-- Local namespace entry point for Mathlib's Hadamard three-lines theorem in
+the bounded-boundary form. -/
+lemma hadamardThreeLines_norm_le_interp
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+    {f : ℂ → E} {z : ℂ} {A B l u : ℝ}
+    (hul : l < u)
+    (hz : z ∈ Complex.HadamardThreeLines.verticalClosedStrip l u)
+    (hd : DiffContOnCl ℂ f (Complex.HadamardThreeLines.verticalStrip l u))
+    (hB : BddAbove
+      ((norm ∘ f) '' Complex.HadamardThreeLines.verticalClosedStrip l u))
+    (ha : ∀ z ∈ Complex.re ⁻¹' {l}, ‖f z‖ ≤ A)
+    (hb : ∀ z ∈ Complex.re ⁻¹' {u}, ‖f z‖ ≤ B) :
+    ‖f z‖ ≤
+      A ^ (1 - (z.re - l) / (u - l)) *
+        B ^ ((z.re - l) / (u - l)) :=
+  Complex.HadamardThreeLines.norm_le_interp_of_mem_verticalClosedStrip'
+    hul hz hd hB ha hb
+
+/-- A source-level 3-4-1 contradiction criterion for high-height zero-free
+regions.
+
+The analytic inputs are isolated as three upper bounds for the logarithmic
+derivative at `σ`, `σ + it`, and `σ + 2it`.  The final hypothesis is the
+real-variable margin showing that those upper bounds make the de la Vallée
+Poussin 3-4-1 combination strictly negative for any zero in the proposed
+strip.  The proved `log_deriv_zeta_nonneg_combination` then gives the
+contradiction. -/
+lemma three_four_one_zero_free_high_height_of_log_deriv_bounds
+    {T0 c : ℝ} {σOf realBound twoBound : ℝ → ℝ}
+    {zeroBound : ℝ → ℝ → ℝ}
+    (_hT0 : 2 ≤ T0) (hc_pos : 0 < c)
+    (hσ_gt : ∀ t : ℝ, T0 ≤ |t| → 1 < σOf t)
+    (hσ_le : ∀ t : ℝ, T0 ≤ |t| → σOf t ≤ 2)
+    (hσ_sub_pos : ∀ β t : ℝ, T0 ≤ |t| → β < 1 →
+      β ≥ 1 - c / Real.log |t| → 0 < σOf t - β)
+    (hreal :
+      ∀ t : ℝ, T0 ≤ |t| → 1 < σOf t → σOf t ≤ 2 →
+        (-deriv riemannZeta (σOf t : ℂ) / riemannZeta (σOf t : ℂ)).re ≤
+          realBound t)
+    (hzero :
+      ∀ β t : ℝ, T0 ≤ |t| → 1 < σOf t → σOf t ≤ 2 → β < 1 →
+        β ≥ 1 - c / Real.log |t| → 0 < σOf t - β →
+        riemannZeta ((β : ℂ) + I * t) = 0 →
+        (-deriv riemannZeta ((σOf t : ℂ) + I * t) /
+          riemannZeta ((σOf t : ℂ) + I * t)).re ≤ zeroBound β t)
+    (htwo :
+      ∀ t : ℝ, T0 ≤ |t| → 1 < σOf t → σOf t ≤ 2 →
+        (-deriv riemannZeta ((σOf t : ℂ) + 2 * I * t) /
+          riemannZeta ((σOf t : ℂ) + 2 * I * t)).re ≤ twoBound t)
+    (hmargin :
+      ∀ β t : ℝ, T0 ≤ |t| → β < 1 →
+        β ≥ 1 - c / Real.log |t| →
+        3 * realBound t + 4 * zeroBound β t + twoBound t < 0) :
+    ∃ c' > 0, ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥ 1 - c' / Real.log |s.im| → riemannZeta s ≠ 0 := by
+  refine ⟨c, hc_pos, ?_⟩
+  intro s hsheight hsre hs_zero
+  have hs_lt_one : s.re < 1 := by
+    by_contra hs_not_lt
+    exact (riemannZeta_ne_zero_of_one_le_re (le_of_not_gt hs_not_lt)) hs_zero
+  have hσ_gt' : 1 < σOf s.im := hσ_gt s.im hsheight
+  have hσ_le' : σOf s.im ≤ 2 := hσ_le s.im hsheight
+  have hσ_sub' : 0 < σOf s.im - s.re :=
+    hσ_sub_pos s.re s.im hsheight hs_lt_one hsre
+  have hs_zero_re_im : riemannZeta ((s.re : ℂ) + I * s.im) = 0 := by
+    simpa [re_im_decomp s] using hs_zero
+  have hnonneg :=
+    log_deriv_zeta_nonneg_combination (σOf s.im) hσ_gt' s.im
+  have hreal' :=
+    hreal s.im hsheight hσ_gt' hσ_le'
+  have hzero' :=
+    hzero s.re s.im hsheight hσ_gt' hσ_le' hs_lt_one hsre hσ_sub' hs_zero_re_im
+  have htwo' :=
+    htwo s.im hsheight hσ_gt' hσ_le'
+  have hupper :
+      3 * (-deriv riemannZeta (σOf s.im : ℂ) /
+            riemannZeta (σOf s.im : ℂ)).re
+        + 4 * (-deriv riemannZeta ((σOf s.im : ℂ) + I * s.im) /
+            riemannZeta ((σOf s.im : ℂ) + I * s.im)).re
+        + (-deriv riemannZeta ((σOf s.im : ℂ) + 2 * I * s.im) /
+            riemannZeta ((σOf s.im : ℂ) + 2 * I * s.im)).re
+        ≤ 3 * realBound s.im + 4 * zeroBound s.re s.im + twoBound s.im := by
+    nlinarith
+  have hneg :=
+    hmargin s.re s.im hsheight hs_lt_one hsre
+  linarith
+
+lemma compact_log_width_le_of_two_le {c d t : ℝ}
+    (hc : c ≤ d * Real.log 2) (hd : 0 ≤ d) (ht : 2 ≤ |t|) :
+    c / Real.log |t| ≤ d := by
+  have hlog_pos : 0 < Real.log |t| := log_abs_pos_of_two_le ht
+  have hlog_mono : Real.log (2 : ℝ) ≤ Real.log |t| :=
+    Real.log_le_log (by norm_num) ht
+  have hc_le_dlog : c ≤ d * Real.log |t| :=
+    le_trans hc (mul_le_mul_of_nonneg_left hlog_mono hd)
+  exact (div_le_iff₀ hlog_pos).mpr hc_le_dlog
+
+/-- Monotonicity for zero-free strips stated with an arbitrary width function:
+if a larger-width strip is zero-free, then every smaller-width strip is also
+zero-free. -/
+lemma zero_free_region_mono_width
+    {T0 : ℝ} {width_small width_large : ℝ → ℝ}
+    (hlarge : ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥ 1 - width_large |s.im| → riemannZeta s ≠ 0)
+    (hwidth : ∀ t : ℝ, T0 ≤ |t| → width_small |t| ≤ width_large |t|) :
+    ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥ 1 - width_small |s.im| → riemannZeta s ≠ 0 := by
+  intro s hsheight hsre
+  refine hlarge s hsheight ?_
+  have hwidth' := hwidth s.im hsheight
+  linarith
+
+/-- Coordinate form of `zero_free_region_mono_width`. -/
+lemma zero_free_region_mono_width_re_im
+    {T0 : ℝ} {width_small width_large : ℝ → ℝ}
+    (hlarge : ∀ β t : ℝ, T0 ≤ |t| →
+      β ≥ 1 - width_large |t| → riemannZeta ((β : ℂ) + I * t) ≠ 0)
+    (hwidth : ∀ t : ℝ, T0 ≤ |t| → width_small |t| ≤ width_large |t|) :
+    ∀ β t : ℝ, T0 ≤ |t| →
+      β ≥ 1 - width_small |t| → riemannZeta ((β : ℂ) + I * t) ≠ 0 := by
+  intro β t htheight hβ
+  refine hlarge β t htheight ?_
+  have hwidth' := hwidth t htheight
+  linarith
+
+lemma classical_zero_free_region_high_height_mono_const
+    {T0 csmall clarge : ℝ} (hT0 : 2 ≤ T0)
+    (hc : csmall ≤ clarge)
+    (hlarge : ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥ 1 - clarge / Real.log |s.im| → riemannZeta s ≠ 0) :
+    ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥ 1 - csmall / Real.log |s.im| → riemannZeta s ≠ 0 :=
+  zero_free_region_mono_width
+    (width_small := fun t : ℝ => csmall / Real.log t)
+    (width_large := fun t : ℝ => clarge / Real.log t)
+    hlarge
+    (fun _t ht => classical_width_mono_const hc (hT0.trans ht))
+
+lemma classical_zero_free_region_high_height_mono_const_re_im
+    {T0 csmall clarge : ℝ} (hT0 : 2 ≤ T0)
+    (hc : csmall ≤ clarge)
+    (hlarge : ∀ β t : ℝ, T0 ≤ |t| →
+      β ≥ 1 - clarge / Real.log |t| →
+      riemannZeta ((β : ℂ) + I * t) ≠ 0) :
+    ∀ β t : ℝ, T0 ≤ |t| →
+      β ≥ 1 - csmall / Real.log |t| →
+      riemannZeta ((β : ℂ) + I * t) ≠ 0 :=
+  zero_free_region_mono_width_re_im
+    (width_small := fun t : ℝ => csmall / Real.log t)
+    (width_large := fun t : ℝ => clarge / Real.log t)
+    hlarge
+    (fun _t ht => classical_width_mono_const hc (hT0.trans ht))
+
+lemma classical_zero_free_region_on_one_line
+    (hclassical : classical_zero_free_region) :
+    ∀ s : ℂ, 2 ≤ |s.im| → s.re = 1 → riemannZeta s ≠ 0 := by
+  rcases hclassical with ⟨c, hc_pos, hregion⟩
+  intro s hs2 hsre
+  refine hregion s hs2 ?_
+  have hlog_pos : 0 < Real.log |s.im| := log_abs_pos_of_two_le hs2
+  have hwidth_pos : 0 < c / Real.log |s.im| := div_pos hc_pos hlog_pos
+  rw [hsre]
+  linarith
+
+/-- Patch a high-height quantitative zero-free region with the compact
+zero-free strip at bounded height.
+
+This is the final elementary assembly step in the classical zero-free-region
+argument.  The deep input is isolated in `hhigh`; the proof here only combines
+that input with `classical_zero_free_region_compact`. -/
+lemma compact_patch_classical_zero_free_region
+    (T0 : ℝ) (hT0 : 2 ≤ T0)
+    (hhigh :
+      ∃ c > 0, ∀ s : ℂ, T0 ≤ |s.im| →
+        s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0) :
+    classical_zero_free_region := by
+  rcases hhigh with ⟨chigh, hchigh_pos, hhigh_region⟩
+  rcases classical_zero_free_region_compact T0 hT0 with ⟨d, hd_pos, hcompact⟩
+  let c := min chigh (d * Real.log 2)
+  have hlog2_pos : 0 < Real.log (2 : ℝ) := Real.log_pos (by norm_num)
+  have hc_pos : 0 < c := lt_min hchigh_pos (mul_pos hd_pos hlog2_pos)
+  refine ⟨c, hc_pos, ?_⟩
+  intro s hs2 hsre
+  by_cases hlarge : T0 ≤ |s.im|
+  · refine hhigh_region s hlarge ?_
+    have hlog_pos : 0 < Real.log |s.im| := log_abs_pos_of_two_le hs2
+    have hc_le : c ≤ chigh := min_le_left chigh (d * Real.log 2)
+    have hdiv : c / Real.log |s.im| ≤ chigh / Real.log |s.im| :=
+      div_le_div_of_nonneg_right hc_le hlog_pos.le
+    linarith
+  · refine hcompact s (le_of_not_ge hlarge) ?_
+    have hlog_pos : 0 < Real.log |s.im| := log_abs_pos_of_two_le hs2
+    have hlog_mono : Real.log (2 : ℝ) ≤ Real.log |s.im| :=
+      Real.log_le_log (by norm_num) hs2
+    have hc_le : c ≤ d * Real.log 2 := min_le_right chigh (d * Real.log 2)
+    have hc_le_dlog : c ≤ d * Real.log |s.im| :=
+      le_trans hc_le (mul_le_mul_of_nonneg_left hlog_mono hd_pos.le)
+    have hfrac : c / Real.log |s.im| ≤ d := by
+      exact (div_le_iff₀ hlog_pos).mpr hc_le_dlog
+    linarith
+
+/-- Full classical zero-free-region closure from the 3-4-1 high-height
+logarithmic-derivative bounds.
+
+The deep analytic work is still isolated in the three logarithmic-derivative
+estimates and the real-variable margin.  This theorem performs the verified
+assembly step: first use the 3-4-1 contradiction to obtain the high-height
+strip, then patch the bounded-height range by compactness. -/
+lemma classical_zero_free_region_of_log_deriv_bounds
+    {T0 c : ℝ} {σOf realBound twoBound : ℝ → ℝ}
+    {zeroBound : ℝ → ℝ → ℝ}
+    (hT0 : 2 ≤ T0) (hc_pos : 0 < c)
+    (hσ_gt : ∀ t : ℝ, T0 ≤ |t| → 1 < σOf t)
+    (hσ_le : ∀ t : ℝ, T0 ≤ |t| → σOf t ≤ 2)
+    (hσ_sub_pos : ∀ β t : ℝ, T0 ≤ |t| → β < 1 →
+      β ≥ 1 - c / Real.log |t| → 0 < σOf t - β)
+    (hreal :
+      ∀ t : ℝ, T0 ≤ |t| → 1 < σOf t → σOf t ≤ 2 →
+        (-deriv riemannZeta (σOf t : ℂ) / riemannZeta (σOf t : ℂ)).re ≤
+          realBound t)
+    (hzero :
+      ∀ β t : ℝ, T0 ≤ |t| → 1 < σOf t → σOf t ≤ 2 → β < 1 →
+        β ≥ 1 - c / Real.log |t| → 0 < σOf t - β →
+        riemannZeta ((β : ℂ) + I * t) = 0 →
+        (-deriv riemannZeta ((σOf t : ℂ) + I * t) /
+          riemannZeta ((σOf t : ℂ) + I * t)).re ≤ zeroBound β t)
+    (htwo :
+      ∀ t : ℝ, T0 ≤ |t| → 1 < σOf t → σOf t ≤ 2 →
+        (-deriv riemannZeta ((σOf t : ℂ) + 2 * I * t) /
+          riemannZeta ((σOf t : ℂ) + 2 * I * t)).re ≤ twoBound t)
+    (hmargin :
+      ∀ β t : ℝ, T0 ≤ |t| → β < 1 →
+        β ≥ 1 - c / Real.log |t| →
+        3 * realBound t + 4 * zeroBound β t + twoBound t < 0) :
+    classical_zero_free_region :=
+  compact_patch_classical_zero_free_region T0 hT0
+    (three_four_one_zero_free_high_height_of_log_deriv_bounds
+      hT0 hc_pos hσ_gt hσ_le hσ_sub_pos hreal hzero htwo hmargin)
+
+/-- General compact patching lemma for any high-height zero-free width.
+
+If a deep argument proves zero-freeness above a height `T0` with some width
+`width |Im s|`, and a classical `c / log |Im s|` width is eventually dominated
+by that width, then the compact strip fills the bounded-height gap and yields
+the classical target statement. -/
+lemma compact_patch_classical_zero_free_region_of_width
+    (T0 : ℝ) (hT0 : 2 ≤ T0) (width : ℝ → ℝ)
+    (hregion : ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥ 1 - width |s.im| → riemannZeta s ≠ 0)
+    (hwidth : ∃ c > 0, ∀ t : ℝ, T0 ≤ |t| →
+      c / Real.log |t| ≤ width |t|) :
+    classical_zero_free_region := by
+  rcases hwidth with ⟨cwidth, hcwidth_pos, hwidth_bound⟩
+  rcases classical_zero_free_region_compact T0 hT0 with ⟨d, hd_pos, hcompact⟩
+  let c := min cwidth (d * Real.log 2)
+  have hlog2_pos : 0 < Real.log (2 : ℝ) := Real.log_pos (by norm_num)
+  have hc_pos : 0 < c := lt_min hcwidth_pos (mul_pos hd_pos hlog2_pos)
+  refine ⟨c, hc_pos, ?_⟩
+  intro s hs2 hsre
+  by_cases hlarge : T0 ≤ |s.im|
+  · refine hregion s hlarge ?_
+    have hlog_pos : 0 < Real.log |s.im| := log_abs_pos_of_two_le hs2
+    have hc_le : c ≤ cwidth := min_le_left cwidth (d * Real.log 2)
+    have hdiv : c / Real.log |s.im| ≤ cwidth / Real.log |s.im| :=
+      div_le_div_of_nonneg_right hc_le hlog_pos.le
+    have hwidth' : cwidth / Real.log |s.im| ≤ width |s.im| :=
+      hwidth_bound s.im hlarge
+    linarith
+  · refine hcompact s (le_of_not_ge hlarge) ?_
+    have hlog_pos : 0 < Real.log |s.im| := log_abs_pos_of_two_le hs2
+    have hlog_mono : Real.log (2 : ℝ) ≤ Real.log |s.im| :=
+      Real.log_le_log (by norm_num) hs2
+    have hc_le : c ≤ d * Real.log 2 := min_le_right cwidth (d * Real.log 2)
+    have hc_le_dlog : c ≤ d * Real.log |s.im| :=
+      le_trans hc_le (mul_le_mul_of_nonneg_left hlog_mono hd_pos.le)
+    have hfrac : c / Real.log |s.im| ≤ d := by
+      exact (div_le_iff₀ hlog_pos).mpr hc_le_dlog
+    linarith
+
+/-- Version of the width patch for high-height inputs stated in real and
+imaginary coordinates.  This is the natural shape of many complex-analysis
+zero-free estimates before they are packaged as statements about arbitrary
+`s : ℂ`. -/
+lemma compact_patch_classical_zero_free_region_of_width_re_im
+    (T0 : ℝ) (hT0 : 2 ≤ T0) (width : ℝ → ℝ)
+    (hregion : ∀ β t : ℝ, T0 ≤ |t| →
+      β ≥ 1 - width |t| → riemannZeta ((β : ℂ) + I * t) ≠ 0)
+    (hwidth : ∃ c > 0, ∀ t : ℝ, T0 ≤ |t| →
+      c / Real.log |t| ≤ width |t|) :
+    classical_zero_free_region := by
+  refine compact_patch_classical_zero_free_region_of_width T0 hT0 width ?_ hwidth
+  intro s hsheight hsre
+  have hs_decomp : ((s.re : ℂ) + I * s.im) = s := by
+    apply Complex.ext <;> simp
+  simpa [hs_decomp] using hregion s.re s.im hsheight hsre
+
+/-- A high-height `c / log |t|` zero-free theorem is the special case of the
+general width patch with `width t = c / log t`. -/
+lemma compact_patch_classical_zero_free_region_via_width
+    (T0 : ℝ) (hT0 : 2 ≤ T0)
+    (hhigh :
+      ∃ c > 0, ∀ s : ℂ, T0 ≤ |s.im| →
+        s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0) :
+    classical_zero_free_region := by
+  rcases hhigh with ⟨chigh, hchigh_pos, hhigh_region⟩
+  exact compact_patch_classical_zero_free_region_of_width T0 hT0
+    (fun t : ℝ => chigh / Real.log t)
+    hhigh_region
+    ⟨chigh, hchigh_pos, by intro t _; rfl⟩
+
+/-- Coordinate version of `compact_patch_classical_zero_free_region`. -/
+lemma compact_patch_classical_zero_free_region_re_im
+    (T0 : ℝ) (hT0 : 2 ≤ T0)
+    (hhigh :
+      ∃ c > 0, ∀ β t : ℝ, T0 ≤ |t| →
+        β ≥ 1 - c / Real.log |t| →
+        riemannZeta ((β : ℂ) + I * t) ≠ 0) :
+    classical_zero_free_region := by
+  rcases hhigh with ⟨chigh, hchigh_pos, hhigh_region⟩
+  exact compact_patch_classical_zero_free_region_of_width_re_im T0 hT0
+    (fun t : ℝ => chigh / Real.log t)
+    hhigh_region
+    ⟨chigh, hchigh_pos, by intro t _; rfl⟩
+
+/-- Specialize the compact patch to the height cutoff used by the
+Vinogradov-Korobov target. -/
+lemma compact_patch_classical_zero_free_region_at_three
+    (hhigh :
+      ∃ c > 0, ∀ s : ℂ, 3 ≤ |s.im| →
+        s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0) :
+    classical_zero_free_region :=
+  compact_patch_classical_zero_free_region 3 (by norm_num) hhigh
+
+lemma compact_patch_classical_zero_free_region_re_im_at_three
+    (hhigh :
+      ∃ c > 0, ∀ β t : ℝ, 3 ≤ |t| →
+        β ≥ 1 - c / Real.log |t| →
+        riemannZeta ((β : ℂ) + I * t) ≠ 0) :
+    classical_zero_free_region :=
+  compact_patch_classical_zero_free_region_re_im 3 (by norm_num) hhigh
+
+/-- Any classical zero-free region immediately restricts to an arbitrary
+high-height range.  This is the easy direction paired with
+`compact_patch_classical_zero_free_region`. -/
+lemma classical_zero_free_region_high_height
+    (T0 : ℝ) (hT0 : 2 ≤ T0)
+    (hclassical : classical_zero_free_region) :
+    ∃ c > 0, ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0 := by
+  rcases hclassical with ⟨c, hc_pos, hregion⟩
+  refine ⟨c, hc_pos, ?_⟩
+  intro s hsT hsre
+  exact hregion s (hT0.trans hsT) hsre
+
+/-- The classical zero-free-region target is equivalent to proving the same
+`c / log |t|` width only above any fixed height `T0 ≥ 2`.
+
+The forward direction is restriction to high height; the reverse direction is
+the compact patch next to `Re(s) = 1`. -/
+lemma classical_zero_free_region_iff_high_height
+    (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    classical_zero_free_region ↔
+      ∃ c > 0, ∀ s : ℂ, T0 ≤ |s.im| →
+        s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0 := by
+  constructor
+  · exact classical_zero_free_region_high_height T0 hT0
+  · exact compact_patch_classical_zero_free_region T0 hT0
+
+/-- Height `3` specialization of the high-height interface, matching the
+Vinogradov-Korobov target's cutoff. -/
+lemma classical_zero_free_region_iff_high_height_at_three :
+    classical_zero_free_region ↔
+      ∃ c > 0, ∀ s : ℂ, 3 ≤ |s.im| →
+        s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0 :=
+  classical_zero_free_region_iff_high_height 3 (by norm_num)
+
+lemma classical_zero_free_region_iff_high_height_re_im
+    (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    classical_zero_free_region ↔
+      ∃ c > 0, ∀ β t : ℝ, T0 ≤ |t| →
+        β ≥ 1 - c / Real.log |t| →
+        riemannZeta ((β : ℂ) + I * t) ≠ 0 := by
+  constructor
+  · intro h
+    rcases classical_zero_free_region_high_height T0 hT0 h with
+      ⟨c, hc_pos, hregion⟩
+    refine ⟨c, hc_pos, ?_⟩
+    intro β t ht hβ
+    have hheight : T0 ≤ |((β : ℂ) + I * t).im| := by
+      simpa using ht
+    have hre :
+        ((β : ℂ) + I * t).re ≥ 1 - c / Real.log |((β : ℂ) + I * t).im| := by
+      simpa using hβ
+    exact hregion ((β : ℂ) + I * t) hheight hre
+  · exact compact_patch_classical_zero_free_region_re_im T0 hT0
+
+/-- Height `3` specialization of the coordinate high-height interface, matching
+the Vinogradov-Korobov cutoff. -/
+lemma classical_zero_free_region_iff_high_height_re_im_at_three :
+    classical_zero_free_region ↔
+      ∃ c > 0, ∀ β t : ℝ, 3 ≤ |t| →
+        β ≥ 1 - c / Real.log |t| →
+        riemannZeta ((β : ℂ) + I * t) ≠ 0 :=
+  classical_zero_free_region_iff_high_height_re_im 3 (by norm_num)
+
+lemma classical_zero_free_region_of_high_height_re_im
+    (T0 : ℝ) (hT0 : 2 ≤ T0)
+    (hcoord :
+      ∃ c > 0, ∀ β t : ℝ, T0 ≤ |t| →
+        β ≥ 1 - c / Real.log |t| →
+        riemannZeta ((β : ℂ) + I * t) ≠ 0) :
+    classical_zero_free_region :=
+  (classical_zero_free_region_iff_high_height_re_im T0 hT0).mpr hcoord
+
+lemma classical_zero_free_region_high_height_at_three
+    (hclassical : classical_zero_free_region) :
+    ∃ c > 0, ∀ s : ℂ, 3 ≤ |s.im| →
+      s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0 :=
+  classical_zero_free_region_high_height 3 (by norm_num) hclassical
 
 /-- Vinogradov-Korobov 零点自由区域：目前最广的已知零自由区域。
     需要指数和估计，远超当前 Mathlib 范畴。 -/
-theorem vinogradov_korobov_zero_free_region :
-    ∃ c > 0, ∀ s : ℂ, |s.im| ≥ 3 → s.re ≥ 1 - c / (Real.log |s.im|)^(2/3 : ℝ) * (Real.log (Real.log |s.im|))^(-1/3 : ℝ) → riemannZeta s ≠ 0 := by
-  -- 需要指数和估计
-  sorry
+def vinogradov_korobov_zero_free_region : Prop :=
+    ∃ c > 0, ∀ s : ℂ, |s.im| ≥ 3 → s.re ≥ 1 - c / (Real.log |s.im|)^(2/3 : ℝ) * (Real.log (Real.log |s.im|))^(-1/3 : ℝ) → riemannZeta s ≠ 0
+
+/-- Coordinate form of the Vinogradov-Korobov zero-free-region target. -/
+lemma vinogradov_korobov_zero_free_region_iff_re_im :
+    vinogradov_korobov_zero_free_region ↔
+      ∃ c > 0, ∀ β t : ℝ, 3 ≤ |t| →
+        β ≥
+          1 - c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+            (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+        riemannZeta ((β : ℂ) + I * t) ≠ 0 := by
+  constructor
+  · intro hvk
+    rcases hvk with ⟨c, hc_pos, hregion⟩
+    refine ⟨c, hc_pos, ?_⟩
+    intro β t ht hβ
+    have hheight : |((β : ℂ) + I * t).im| ≥ 3 := by
+      simpa using ht
+    have hre :
+        ((β : ℂ) + I * t).re ≥
+          1 - c / (Real.log |((β : ℂ) + I * t).im|) ^ (2 / 3 : ℝ) *
+            (Real.log (Real.log |((β : ℂ) + I * t).im|)) ^ (-1 / 3 : ℝ) := by
+      simpa using hβ
+    exact hregion ((β : ℂ) + I * t) hheight hre
+  · intro hcoord
+    rcases hcoord with ⟨c, hc_pos, hregion⟩
+    refine ⟨c, hc_pos, ?_⟩
+    intro s hsheight hsre
+    have hs_decomp : ((s.re : ℂ) + I * s.im) = s := by
+      apply Complex.ext <;> simp
+    simpa [hs_decomp] using hregion s.re s.im hsheight hsre
+
+lemma vinogradov_korobov_zero_free_region_to_re_im
+    (hvk : vinogradov_korobov_zero_free_region) :
+    ∃ c > 0, ∀ β t : ℝ, 3 ≤ |t| →
+      β ≥
+        1 - c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta ((β : ℂ) + I * t) ≠ 0 :=
+  vinogradov_korobov_zero_free_region_iff_re_im.mp hvk
+
+lemma vinogradov_korobov_zero_free_region_of_re_im
+    (hcoord :
+      ∃ c > 0, ∀ β t : ℝ, 3 ≤ |t| →
+        β ≥
+          1 - c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+            (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+        riemannZeta ((β : ℂ) + I * t) ≠ 0) :
+    vinogradov_korobov_zero_free_region :=
+  vinogradov_korobov_zero_free_region_iff_re_im.mpr hcoord
+
+lemma vinogradov_korobov_width_pos_of_three_le {c t : ℝ}
+    (hc : 0 < c) (ht : 3 ≤ |t|) :
+    0 <
+      c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+        (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) := by
+  have hlog_gt_one : 1 < Real.log |t| := log_abs_gt_one_of_three_le ht
+  have hlog_pos : 0 < Real.log |t| := by linarith
+  have hloglog_pos : 0 < Real.log (Real.log |t|) :=
+    log_log_abs_pos_of_three_le ht
+  exact mul_pos
+    (div_pos hc (Real.rpow_pos_of_pos hlog_pos (2 / 3 : ℝ)))
+    (Real.rpow_pos_of_pos hloglog_pos (-1 / 3 : ℝ))
+
+/-- The Vinogradov-Korobov width is monotone in the width constant. -/
+lemma vinogradov_korobov_width_mono_const {csmall clarge t : ℝ}
+    (hc : csmall ≤ clarge) (ht : 3 ≤ |t|) :
+    csmall / (Real.log |t|) ^ (2 / 3 : ℝ) *
+        (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) ≤
+      clarge / (Real.log |t|) ^ (2 / 3 : ℝ) *
+        (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) := by
+  have hlog_pos : 0 < Real.log |t| := by
+    have h := log_abs_gt_one_of_three_le ht
+    linarith
+  have hden_pos : 0 < (Real.log |t|) ^ (2 / 3 : ℝ) :=
+    Real.rpow_pos_of_pos hlog_pos (2 / 3 : ℝ)
+  have hloglog_pos : 0 < Real.log (Real.log |t|) :=
+    log_log_abs_pos_of_three_le ht
+  have hfactor_nonneg :
+      0 ≤ (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) :=
+    (Real.rpow_pos_of_pos hloglog_pos (-1 / 3 : ℝ)).le
+  have hbase :
+      csmall / (Real.log |t|) ^ (2 / 3 : ℝ) ≤
+        clarge / (Real.log |t|) ^ (2 / 3 : ℝ) :=
+    div_le_div_of_nonneg_right hc hden_pos.le
+  exact mul_le_mul_of_nonneg_right hbase hfactor_nonneg
+
+lemma vinogradov_korobov_zero_free_region_high_height_mono_const
+    {T0 csmall clarge : ℝ} (hT0 : 3 ≤ T0)
+    (hc : csmall ≤ clarge)
+    (hlarge : ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥
+        1 - clarge / (Real.log |s.im|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |s.im|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta s ≠ 0) :
+    ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥
+        1 - csmall / (Real.log |s.im|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |s.im|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta s ≠ 0 :=
+  zero_free_region_mono_width
+    (width_small := fun t : ℝ =>
+      csmall / (Real.log t) ^ (2 / 3 : ℝ) *
+        (Real.log (Real.log t)) ^ (-1 / 3 : ℝ))
+    (width_large := fun t : ℝ =>
+      clarge / (Real.log t) ^ (2 / 3 : ℝ) *
+        (Real.log (Real.log t)) ^ (-1 / 3 : ℝ))
+    hlarge
+    (fun _t ht => vinogradov_korobov_width_mono_const hc (hT0.trans ht))
+
+lemma vinogradov_korobov_zero_free_region_high_height_mono_const_re_im
+    {T0 csmall clarge : ℝ} (hT0 : 3 ≤ T0)
+    (hc : csmall ≤ clarge)
+    (hlarge : ∀ β t : ℝ, T0 ≤ |t| →
+      β ≥
+        1 - clarge / (Real.log |t|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta ((β : ℂ) + I * t) ≠ 0) :
+    ∀ β t : ℝ, T0 ≤ |t| →
+      β ≥
+        1 - csmall / (Real.log |t|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta ((β : ℂ) + I * t) ≠ 0 :=
+  zero_free_region_mono_width_re_im
+    (width_small := fun t : ℝ =>
+      csmall / (Real.log t) ^ (2 / 3 : ℝ) *
+        (Real.log (Real.log t)) ^ (-1 / 3 : ℝ))
+    (width_large := fun t : ℝ =>
+      clarge / (Real.log t) ^ (2 / 3 : ℝ) *
+        (Real.log (Real.log t)) ^ (-1 / 3 : ℝ))
+    hlarge
+    (fun _t ht => vinogradov_korobov_width_mono_const hc (hT0.trans ht))
+
+lemma vinogradov_korobov_zero_free_region_high_height
+    (T0 : ℝ) (hT0 : 3 ≤ T0)
+    (hvk : vinogradov_korobov_zero_free_region) :
+    ∃ c > 0, ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥
+        1 - c / (Real.log |s.im|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |s.im|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta s ≠ 0 := by
+  rcases hvk with ⟨c, hc_pos, hregion⟩
+  refine ⟨c, hc_pos, ?_⟩
+  intro s hsT hsre
+  exact hregion s (hT0.trans hsT) hsre
+
+lemma vinogradov_korobov_zero_free_region_iff_high_height_at_three :
+    vinogradov_korobov_zero_free_region ↔
+      ∃ c > 0, ∀ s : ℂ, 3 ≤ |s.im| →
+        s.re ≥
+          1 - c / (Real.log |s.im|) ^ (2 / 3 : ℝ) *
+            (Real.log (Real.log |s.im|)) ^ (-1 / 3 : ℝ) →
+        riemannZeta s ≠ 0 := by
+  constructor
+  · exact vinogradov_korobov_zero_free_region_high_height 3 (by norm_num)
+  · intro h
+    simpa [vinogradov_korobov_zero_free_region] using h
+
+lemma vinogradov_korobov_zero_free_region_high_height_at_three
+    (hvk : vinogradov_korobov_zero_free_region) :
+    ∃ c > 0, ∀ s : ℂ, 3 ≤ |s.im| →
+      s.re ≥
+        1 - c / (Real.log |s.im|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |s.im|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta s ≠ 0 :=
+  vinogradov_korobov_zero_free_region_high_height 3 (by norm_num) hvk
+
+lemma vinogradov_korobov_zero_free_region_high_height_re_im
+    (T0 : ℝ) (hT0 : 3 ≤ T0)
+    (hvk : vinogradov_korobov_zero_free_region) :
+    ∃ c > 0, ∀ β t : ℝ, T0 ≤ |t| →
+      β ≥
+        1 - c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta ((β : ℂ) + I * t) ≠ 0 := by
+  rcases vinogradov_korobov_zero_free_region_high_height T0 hT0 hvk with
+    ⟨c, hc_pos, hregion⟩
+  refine ⟨c, hc_pos, ?_⟩
+  intro β t ht hβ
+  have hheight : T0 ≤ |((β : ℂ) + I * t).im| := by
+    simpa using ht
+  have hre :
+      ((β : ℂ) + I * t).re ≥
+        1 - c / (Real.log |((β : ℂ) + I * t).im|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |((β : ℂ) + I * t).im|)) ^ (-1 / 3 : ℝ) := by
+    simpa using hβ
+  exact hregion ((β : ℂ) + I * t) hheight hre
+
+lemma vinogradov_korobov_zero_free_region_iff_high_height_re_im_at_three :
+    vinogradov_korobov_zero_free_region ↔
+      ∃ c > 0, ∀ β t : ℝ, 3 ≤ |t| →
+        β ≥
+          1 - c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+            (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+        riemannZeta ((β : ℂ) + I * t) ≠ 0 := by
+  constructor
+  · exact vinogradov_korobov_zero_free_region_high_height_re_im 3 (by norm_num)
+  · exact vinogradov_korobov_zero_free_region_of_re_im
+
+lemma vinogradov_korobov_zero_free_region_high_height_re_im_at_three
+    (hvk : vinogradov_korobov_zero_free_region) :
+    ∃ c > 0, ∀ β t : ℝ, 3 ≤ |t| →
+      β ≥
+        1 - c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta ((β : ℂ) + I * t) ≠ 0 :=
+  vinogradov_korobov_zero_free_region_high_height_re_im 3 (by norm_num) hvk
+
+/-- Conditional bridge from the Vinogradov-Korobov target to the classical
+zero-free region.
+
+The analytic content remains in `hvk`; the remaining hypothesis `hcompare` is
+only the real-variable width comparison saying that, above height `3`, some
+`c' / log |t|` strip is contained in the Vinogradov-Korobov strip. -/
+lemma classical_zero_free_region_of_vinogradov_korobov_with_comparison
+    (hvk : vinogradov_korobov_zero_free_region)
+    (hcompare : ∀ c > 0, ∃ c' > 0, ∀ t : ℝ, 3 ≤ |t| →
+      c' / Real.log |t| ≤
+        c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ)) :
+    classical_zero_free_region := by
+  rcases hvk with ⟨cvk, hcvk_pos, hvk_region⟩
+  exact compact_patch_classical_zero_free_region_of_width 3 (by norm_num)
+    (fun t : ℝ =>
+      cvk / (Real.log t) ^ (2 / 3 : ℝ) *
+        (Real.log (Real.log t)) ^ (-1 / 3 : ℝ))
+    (fun s hsheight hsre => hvk_region s hsheight hsre)
+    (hcompare cvk hcvk_pos)
+
+/-- Pointwise real-variable width comparison behind the
+Vinogradov-Korobov-to-classical bridge. -/
+lemma classical_width_le_vinogradov_korobov_width {c t : ℝ}
+    (hc : 0 ≤ c) (ht : 3 ≤ |t|) :
+    c / Real.log |t| ≤
+      c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+        (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) := by
+  set x : ℝ := Real.log |t| with hx_def
+  have ht_pos : 0 < |t| := by linarith
+  have hexp_lt_three : Real.exp 1 < (3 : ℝ) := by
+    calc
+      Real.exp 1 < 2.7182818286 := Real.exp_one_lt_d9
+      _ < (3 : ℝ) := by norm_num
+  have hx_gt_one : 1 < x := by
+    rw [hx_def]
+    exact (Real.lt_log_iff_exp_lt ht_pos).mpr (lt_of_lt_of_le hexp_lt_three ht)
+  have hx_pos : 0 < x := lt_trans (by norm_num) hx_gt_one
+  have hlogx_pos : 0 < Real.log x := Real.log_pos hx_gt_one
+  have hlogx_le_x : Real.log x ≤ x := Real.log_le_self hx_pos.le
+  have hpow :
+      x ^ (-1 / 3 : ℝ) ≤ (Real.log x) ^ (-1 / 3 : ℝ) := by
+    exact Real.rpow_le_rpow_of_nonpos hlogx_pos hlogx_le_x (by norm_num)
+  have hx_split :
+      x ^ (-1 : ℝ) = x ^ (-(2 / 3 : ℝ)) * x ^ (-1 / 3 : ℝ) := by
+    rw [← Real.rpow_add hx_pos]
+    norm_num
+  have hbase :
+      x ^ (-1 : ℝ) ≤ x ^ (-(2 / 3 : ℝ)) * (Real.log x) ^ (-1 / 3 : ℝ) := by
+    rw [hx_split]
+    exact mul_le_mul_of_nonneg_left hpow
+      (Real.rpow_nonneg hx_pos.le (-(2 / 3 : ℝ)))
+  have hscaled :
+      c * x ^ (-1 : ℝ) ≤
+        c * (x ^ (-(2 / 3 : ℝ)) * (Real.log x) ^ (-1 / 3 : ℝ)) :=
+    mul_le_mul_of_nonneg_left hbase hc
+  calc
+    c / Real.log |t| = c * x ^ (-1 : ℝ) := by
+      rw [hx_def, div_eq_mul_inv, Real.rpow_neg hx_pos.le, Real.rpow_one]
+    _ ≤ c * (x ^ (-(2 / 3 : ℝ)) * (Real.log x) ^ (-1 / 3 : ℝ)) := hscaled
+    _ = c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) := by
+      rw [hx_def, div_eq_mul_inv, Real.rpow_neg hx_pos.le]
+      ring
+
+/-- Above height `3`, the Vinogradov-Korobov width dominates a classical
+`c / log |t|` width.  The proof is purely real-variable: for
+`x = log |t| > 1`, `log x ≤ x`, so the negative exponent `-1/3` reverses
+the inequality. -/
+lemma vinogradov_korobov_width_comparison :
+    ∀ c > 0, ∃ c' > 0, ∀ t : ℝ, 3 ≤ |t| →
+      c' / Real.log |t| ≤
+        c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) := by
+  intro c hc
+  exact ⟨c, hc, fun _t ht => classical_width_le_vinogradov_korobov_width hc.le ht⟩
+
+/-- Coordinate-form Vinogradov-Korobov input implies the classical zero-free region.
+
+Future analytic proofs often first produce a statement about real variables
+`β` and `t`; this bridge packages that shape directly into the existing
+compact patch plus width comparison. -/
+lemma classical_zero_free_region_of_vinogradov_korobov_re_im
+    (hvk : ∃ c > 0, ∀ β t : ℝ, 3 ≤ |t| →
+      β ≥
+        1 - c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta ((β : ℂ) + I * t) ≠ 0) :
+    classical_zero_free_region := by
+  rcases hvk with ⟨cvk, hcvk_pos, hvk_region⟩
+  exact compact_patch_classical_zero_free_region_of_width_re_im 3 (by norm_num)
+    (fun t : ℝ =>
+      cvk / (Real.log t) ^ (2 / 3 : ℝ) *
+        (Real.log (Real.log t)) ^ (-1 / 3 : ℝ))
+    hvk_region
+    (vinogradov_korobov_width_comparison cvk hcvk_pos)
+
+/-- A high-height Vinogradov-Korobov-width input above any cutoff `T0 ≥ 3`
+implies the classical zero-free-region target.
+
+This is useful when the analytic estimate is proved only eventually; the
+bounded-height gap is filled by the compact strip, and the VK width dominates a
+classical logarithmic width above `T0`. -/
+lemma classical_zero_free_region_of_vinogradov_korobov_high_height
+    (T0 : ℝ) (hT0 : 3 ≤ T0)
+    (hvk : ∃ c > 0, ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥
+        1 - c / (Real.log |s.im|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |s.im|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta s ≠ 0) :
+    classical_zero_free_region := by
+  rcases hvk with ⟨cvk, hcvk_pos, hvk_region⟩
+  exact compact_patch_classical_zero_free_region_of_width T0 (by linarith)
+    (fun t : ℝ =>
+      cvk / (Real.log t) ^ (2 / 3 : ℝ) *
+        (Real.log (Real.log t)) ^ (-1 / 3 : ℝ))
+    hvk_region
+    ⟨cvk, hcvk_pos, fun _t ht =>
+      classical_width_le_vinogradov_korobov_width hcvk_pos.le (hT0.trans ht)⟩
+
+/-- Coordinate high-height Vinogradov-Korobov-width input above any cutoff
+`T0 ≥ 3` implies the classical zero-free-region target. -/
+lemma classical_zero_free_region_of_vinogradov_korobov_high_height_re_im
+    (T0 : ℝ) (hT0 : 3 ≤ T0)
+    (hvk : ∃ c > 0, ∀ β t : ℝ, T0 ≤ |t| →
+      β ≥
+        1 - c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta ((β : ℂ) + I * t) ≠ 0) :
+    classical_zero_free_region := by
+  rcases hvk with ⟨cvk, hcvk_pos, hvk_region⟩
+  exact compact_patch_classical_zero_free_region_of_width_re_im T0 (by linarith)
+    (fun t : ℝ =>
+      cvk / (Real.log t) ^ (2 / 3 : ℝ) *
+        (Real.log (Real.log t)) ^ (-1 / 3 : ℝ))
+    hvk_region
+    ⟨cvk, hcvk_pos, fun _t ht =>
+      classical_width_le_vinogradov_korobov_width hcvk_pos.le (hT0.trans ht)⟩
+
+/-- The Vinogradov-Korobov target supplies a high-height classical-width
+zero-free region above height `3`.
+
+This isolates the real-variable comparison from the compact patching step. -/
+lemma vinogradov_korobov_high_height_classical_zero_free_region
+    (hvk : vinogradov_korobov_zero_free_region) :
+    ∃ c > 0, ∀ s : ℂ, 3 ≤ |s.im| →
+      s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0 := by
+  rcases hvk with ⟨cvk, hcvk_pos, hvk_region⟩
+  rcases vinogradov_korobov_width_comparison cvk hcvk_pos with
+    ⟨cclassical, hcclassical_pos, hwidth⟩
+  refine ⟨cclassical, hcclassical_pos, ?_⟩
+  intro s hsheight hsre
+  refine hvk_region s hsheight ?_
+  have hwidth' := hwidth s.im hsheight
+  linarith
+
+/-- Coordinate form of
+`vinogradov_korobov_high_height_classical_zero_free_region`. -/
+lemma vinogradov_korobov_high_height_classical_zero_free_region_re_im
+    (hvk : vinogradov_korobov_zero_free_region) :
+    ∃ c > 0, ∀ β t : ℝ, 3 ≤ |t| →
+      β ≥ 1 - c / Real.log |t| →
+      riemannZeta ((β : ℂ) + I * t) ≠ 0 := by
+  rcases vinogradov_korobov_high_height_classical_zero_free_region hvk with
+    ⟨c, hc_pos, hregion⟩
+  refine ⟨c, hc_pos, ?_⟩
+  intro β t ht hβ
+  have hheight : 3 ≤ |((β : ℂ) + I * t).im| := by
+    simpa using ht
+  have hre :
+      ((β : ℂ) + I * t).re ≥
+        1 - c / Real.log |((β : ℂ) + I * t).im| := by
+    simpa using hβ
+  exact hregion ((β : ℂ) + I * t) hheight hre
+
+/-- The Vinogradov-Korobov target implies the classical zero-free-region target.
+
+This bridge contains no analytic proof of the Vinogradov-Korobov theorem; it
+only discharges the real-variable width comparison and then reuses the compact
+patching lemma at height `3`. -/
+lemma classical_zero_free_region_of_vinogradov_korobov
+    (hvk : vinogradov_korobov_zero_free_region) :
+    classical_zero_free_region :=
+  compact_patch_classical_zero_free_region_at_three
+    (vinogradov_korobov_high_height_classical_zero_free_region hvk)
 
 end ZeroFreeRegion
