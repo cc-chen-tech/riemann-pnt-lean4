@@ -86,6 +86,12 @@ Core verified declarations:
 - `tendsto_mul_logDeriv_riemannZeta_simplePoleAtOne`
   proves `(s - 1) * logDeriv riemannZeta s -> -1` at the punctured
   neighborhood of `1`.
+- `eventually_norm_mul_logDeriv_riemannZeta_le_two`
+  proves the normalized logarithmic derivative is eventually bounded by `2`
+  near the pole.
+- `eventually_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one`
+  proves the local pole-order bound
+  `norm (logDeriv riemannZeta s) <= 2 / norm (s - 1)` eventually near `1`.
 - `meromorphicAt_logDeriv_riemannZeta_one`
   proves the logarithmic derivative is meromorphic at the pole.
 - `meromorphicOn_logDeriv_riemannZeta_closedBall`

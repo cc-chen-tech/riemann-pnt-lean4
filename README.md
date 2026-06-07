@@ -151,6 +151,7 @@ Lean declarations in `ZeroFreeRegion.lean` and
 | `ZeroFreeRegion.deriv_riemannZetaReciprocalModelAtOne_one` | `lemma` | Proves the reciprocal local model has derivative `1` at `1`. | Records that `1/ζ` has the expected simple-zero local model. |
 | `ZeroFreeRegion.tendsto_mul_logDeriv_inv_riemannZeta_simpleZeroAtOne` | `lemma` | Proves `(s-1) * logDeriv (1/ζ)(s) → 1` in the punctured neighborhood of `1`. | Converts the reciprocal simple-zero model into a logarithmic-residue statement. |
 | `ZeroFreeRegion.tendsto_mul_logDeriv_riemannZeta_simplePoleAtOne` | `lemma` | Proves `(s-1) * logDeriv ζ(s) → -1` in the punctured neighborhood of `1`. | Principal-part input for future Borel-Caratheodory/Jensen estimates on `ζ'/ζ`. |
+| `ZeroFreeRegion.eventually_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one` | `lemma` | Proves eventually near `1`, `‖logDeriv ζ(s)‖ ≤ 2 / ‖s-1‖`. | Local pole-order bound that can feed later quantitative estimates. |
 | `ZeroFreeRegion.meromorphicOn_logDeriv_riemannZeta_closedBall` | `lemma` | Proves the logarithmic derivative `logDeriv riemannZeta` is meromorphic on every closed ball. | Local analytic input for future Borel-Caratheodory/Jensen bounds on `ζ'/ζ`. |
 
 Two important boundaries:
@@ -160,8 +161,9 @@ Two important boundaries:
   `ZeroFreeRegion.classical_zero_free_region`.
 - `ZeroFreeRegion.residue_bounds` and
   `ZeroFreeRegion.tendsto_mul_logDeriv_riemannZeta_simplePoleAtOne` give
-  local pole/principal-part control, but do not by themselves prove a global
-  logarithmic-derivative growth estimate.
+  local pole/principal-part control.  The derived local norm bound
+  `ZeroFreeRegion.eventually_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one`
+  is still not a global logarithmic-derivative growth estimate.
 - `ZeroFreeRegion.meromorphicOn_logDeriv_riemannZeta_closedBall` records
   meromorphicity of `ζ'/ζ`, but does not by itself prove the
   Borel-Caratheodory/Jensen growth estimates needed for the quantitative

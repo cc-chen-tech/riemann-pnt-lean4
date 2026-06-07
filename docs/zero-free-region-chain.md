@@ -152,8 +152,12 @@ denominator condition is recorded as
 principal-part behavior is now also proved as
 `ZeroFreeRegion.tendsto_mul_logDeriv_riemannZeta_simplePoleAtOne`, namely
 `(s - 1) * logDeriv riemannZeta s -> -1` in the punctured neighborhood of
-`1`.  The next work starts from these meromorphic/nonvanishing/principal-part
-facts and proves quantitative local logarithmic-derivative estimates.
+`1`.  This has also been packaged into the local norm bound
+`ZeroFreeRegion.eventually_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one`,
+which says eventually near the pole
+`‖logDeriv riemannZeta s‖ <= 2 / ‖s - 1‖`.  The next work starts from these
+meromorphic/nonvanishing/principal-part facts and proves the vertical-height
+logarithmic-derivative estimates needed for the quantitative strip.
 
 ### 2. Polynomial Growth for Zeta in Vertical Disks
 

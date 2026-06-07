@@ -2266,6 +2266,19 @@ theorem tendsto_mul_logDeriv_riemannZeta_simplePoleAtOne :
       (𝓝[≠] (1 : ℂ)) (𝓝 (-1 : ℂ)) :=
   ZeroFreeRegion.tendsto_mul_logDeriv_riemannZeta_simplePoleAtOne
 
+/-- Public local normalized bound for the zeta logarithmic derivative near
+its pole. -/
+theorem eventually_norm_mul_logDeriv_riemannZeta_le_two :
+    ∀ᶠ s in 𝓝[≠] (1 : ℂ),
+      ‖(s - 1) * logDeriv riemannZeta s‖ ≤ 2 :=
+  ZeroFreeRegion.eventually_norm_mul_logDeriv_riemannZeta_le_two
+
+/-- Public local pole-order norm bound for the zeta logarithmic derivative. -/
+theorem eventually_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one :
+    ∀ᶠ s in 𝓝[≠] (1 : ℂ),
+      ‖logDeriv riemannZeta s‖ ≤ 2 / ‖s - 1‖ :=
+  ZeroFreeRegion.eventually_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one
+
 /-- Public meromorphicity of the zeta logarithmic derivative at `1`. -/
 theorem meromorphicAt_logDeriv_riemannZeta_one :
     MeromorphicAt (logDeriv riemannZeta) (1 : ℂ) :=

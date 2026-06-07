@@ -268,6 +268,42 @@ lemma tendsto_mul_logDeriv_riemannZeta_simplePoleAtOne :
   rw [hs]
   ring
 
+/-- Local boundedness of the normalized logarithmic derivative at the zeta pole.
+
+This is a direct norm-bound corollary of
+`tendsto_mul_logDeriv_riemannZeta_simplePoleAtOne`; it packages the
+principal-part limit into a shape that later Borel-Carathéodory/Jensen estimates
+can consume. -/
+lemma eventually_norm_mul_logDeriv_riemannZeta_le_two :
+    ∀ᶠ s in 𝓝[≠] (1 : ℂ),
+      ‖(s - 1) * logDeriv riemannZeta s‖ ≤ 2 := by
+  have hnorm :
+      Tendsto
+        (fun s : ℂ => ‖(s - 1) * logDeriv riemannZeta s‖)
+        (𝓝[≠] (1 : ℂ)) (𝓝 (1 : ℝ)) := by
+    simpa using tendsto_mul_logDeriv_riemannZeta_simplePoleAtOne.norm
+  exact hnorm.eventually (eventually_le_nhds (by norm_num : (1 : ℝ) < 2))
+
+/-- Local pole-order norm bound for the zeta logarithmic derivative.
+
+Near `1` away from the pole,
+`logDeriv riemannZeta` is bounded by a constant multiple of `1 / ‖s - 1‖`.
+This is still only a local bound; it is not the global vertical-strip growth
+estimate needed for the quantitative zero-free region. -/
+lemma eventually_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one :
+    ∀ᶠ s in 𝓝[≠] (1 : ℂ),
+      ‖logDeriv riemannZeta s‖ ≤ 2 / ‖s - 1‖ := by
+  filter_upwards [eventually_norm_mul_logDeriv_riemannZeta_le_two,
+    self_mem_nhdsWithin] with s hbound hs1
+  have hs_ne : s - 1 ≠ 0 :=
+    sub_ne_zero.mpr (Set.mem_compl_singleton_iff.mp hs1)
+  have hnorm_pos : 0 < ‖s - 1‖ := norm_pos_iff.mpr hs_ne
+  have hmul : ‖logDeriv riemannZeta s‖ * ‖s - 1‖ ≤ 2 := by
+    have hmul' : ‖s - 1‖ * ‖logDeriv riemannZeta s‖ ≤ 2 := by
+      simpa [norm_mul] using hbound
+    simpa [mul_comm] using hmul'
+  exact (le_div_iff₀ hnorm_pos).mpr hmul
+
 /-- ζ has a simple pole at `1`, expressed as meromorphic order `-1`. -/
 lemma meromorphicOrderAt_riemannZeta_one :
     meromorphicOrderAt riemannZeta (1 : ℂ) = (-1 : ℤ) := by
