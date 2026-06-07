@@ -48,6 +48,38 @@ standard de la Vallee Poussin contradiction:
 4. choose `η` and the final constant `c` small enough to contradict
    nonnegativity.
 
+## Verified Conditional Assembly
+
+The low-risk Lean assembly around the 3-4-1 inequality and the bounded-height
+patch is already proved in `ZeroFreeRegion.lean`.  These declarations do not
+prove the missing analytic estimates; they make the exact remaining inputs
+explicit.
+
+```lean
+ZeroFreeRegion.three_four_one_zero_free_high_height_of_log_deriv_bounds
+ZeroFreeRegion.compact_patch_classical_zero_free_region
+ZeroFreeRegion.classical_zero_free_region_of_log_deriv_bounds
+ZeroFreeRegion.compact_patch_classical_zero_free_region_of_width
+ZeroFreeRegion.compact_patch_classical_zero_free_region_of_width_re_im
+ZeroFreeRegion.classical_zero_free_region_iff_high_height
+ZeroFreeRegion.classical_zero_free_region_iff_high_height_re_im
+ZeroFreeRegion.classical_zero_free_region_of_vinogradov_korobov
+ZeroFreeRegion.classical_width_le_vinogradov_korobov_width
+```
+
+Consequences:
+
+- A high-height `c / log |t|` zero-free estimate now closes the full
+  `classical_zero_free_region` target by `compact_patch_classical_zero_free_region`.
+- A high-height coordinate estimate in variables `(β, t)` also closes the target
+  via `compact_patch_classical_zero_free_region_re_im`.
+- A Vinogradov-Korobov-width estimate, if supplied, now implies the classical
+  zero-free-region target by the proved real-variable width comparison.
+
+The remaining work for the classical zero-free region is therefore not the
+algebraic 3-4-1 contradiction or bounded-height patching; it is the
+zeta-specific logarithmic-derivative estimates described below.
+
 ## Mathlib API Check
 
 The local Mathlib already contains more relevant complex-analysis API than the
@@ -296,14 +328,13 @@ lemma three_four_one_zero_free_high_height
       riemannZeta s ≠ 0
 ```
 
-Mathlib status:
-This is mostly algebra plus the already-proved
-`log_deriv_zeta_nonneg_combination`.
+Lean status:
+This is already proved in the more flexible source-level form
+`three_four_one_zero_free_high_height_of_log_deriv_bounds`.
 
-Difficulty:
-Medium-Low.  The constants are tedious but not conceptually hard.  This is a
-good immediate Lean target once the three analytic estimates are assumed as
-hypotheses.
+Remaining difficulty:
+None for the conditional assembly.  The real work is still proving the three
+analytic estimates supplied as hypotheses.
 
 ### 8. Compact-to-All-Heights Patching
 
@@ -323,36 +354,38 @@ lemma compact_patch_classical_zero_free_region
     ZeroFreeRegion.classical_zero_free_region
 ```
 
-Mathlib status:
-All ingredients appear available: `classical_zero_free_region_compact`, basic
-real-log positivity for `2 ≤ |t|`, and elementary inequalities.
+Lean status:
+This is already proved as `compact_patch_classical_zero_free_region`, with
+coordinate and arbitrary-width variants:
+`compact_patch_classical_zero_free_region_re_im`,
+`compact_patch_classical_zero_free_region_of_width`, and
+`compact_patch_classical_zero_free_region_of_width_re_im`.
 
-Difficulty:
-Low.  This is the most immediately fillable non-analytic lemma.  It should be
-proved only after introducing a high-height theorem or as a conditional lemma.
+Remaining difficulty:
+None for patching.  The high-height estimate remains the missing input.
 
 ## Suggested Execution Order
 
-1. Prove the low-risk conditional algebra lemmas:
-   `three_four_one_zero_free_high_height` and
-   `compact_patch_classical_zero_free_region`.
-2. Add zeta meromorphic/divisor infrastructure around `riemannZeta`.
-3. Prove the local pole logarithmic-derivative bound near `1`.
-4. Prove a reusable Borel-Caratheodory/Jensen regular-part estimate for
+1. Add zeta meromorphic/divisor infrastructure around `riemannZeta`, including
+   the pole at `1`.
+2. Prove the local pole logarithmic-derivative bound near `1`.
+3. Prove a reusable Borel-Caratheodory/Jensen regular-part estimate for
    meromorphic functions with polynomial growth.
-5. Specialize it to zeta to obtain the zero-height and `2t` estimates.
+4. Specialize it to zeta to obtain the zero-height and `2t` estimates.
+5. Feed those estimates into the already-proved conditional 3-4-1 assembly.
 6. Only then convert `classical_zero_free_region` from `def ... : Prop` to a
    theorem, and verify with `lake env lean -R . ZeroFreeRegion.lean`.
 
-## Immediately Fillable Lemmas
+## Already Filled Non-Analytic Lemmas
 
-The best immediate Lean work that does not require new deep analysis is:
+The non-analytic Lean work that used to be the easiest target is now complete:
 
-- a conditional high-height algebra lemma wrapping the 3-4-1 contradiction;
-- the compact patch from high height to all `|t| ≥ 2`;
-- small real-analysis helper lemmas such as
-  `2 ≤ |t| → 0 < Real.log |t|`.
+- conditional high-height algebra wrapping the 3-4-1 contradiction;
+- compact patching from high height to all `|t| ≥ 2`;
+- coordinate-form patching in `(β, t)`;
+- arbitrary-width patching;
+- real-variable comparison showing the Vinogradov-Korobov width dominates a
+  classical `c / log |t|` width.
 
-These would not prove `classical_zero_free_region` by themselves, but they
-would make the remaining analytic assumptions explicit and reduce the final
-assembly to named hypotheses.
+The next useful Lean work is zeta-specific: meromorphicity at the pole,
+logarithmic-derivative estimates, and Borel-Caratheodory/Jensen specialization.
