@@ -2205,6 +2205,18 @@ theorem meromorphicOn_riemannZeta_closedBall (c : ℂ) (R : ℝ) :
     MeromorphicOn riemannZeta (Metric.closedBall c R) :=
   ZeroFreeRegion.meromorphicOn_riemannZeta_closedBall c R
 
+/-- Public meromorphic order of ζ at its pole `s = 1`. -/
+theorem meromorphicOrderAt_riemannZeta_one :
+    meromorphicOrderAt riemannZeta (1 : ℂ) = (-1 : ℤ) :=
+  ZeroFreeRegion.meromorphicOrderAt_riemannZeta_one
+
+/-- Public divisor value of ζ at its pole on any meromorphic domain containing
+`1`. -/
+theorem divisor_riemannZeta_pole_one {U : Set ℂ}
+    (hU : (1 : ℂ) ∈ U) (hζ : MeromorphicOn riemannZeta U) :
+    MeromorphicOn.divisor riemannZeta U (1 : ℂ) = (-1 : ℤ) :=
+  ZeroFreeRegion.divisor_riemannZeta_pole_one hU hζ
+
 /-- Public trigonometric core of de la Vallée Poussin's 3-4-1 inequality. -/
 theorem trig_identity_nonneg (θ : ℝ) :
     3 + 4 * Real.cos θ + Real.cos (2 * θ) ≥ 0 :=

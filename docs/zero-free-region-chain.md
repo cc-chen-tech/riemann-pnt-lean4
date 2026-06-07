@@ -142,10 +142,10 @@ zeta API are enough for the local meromorphicity step.  This project now proves
 `ZeroFreeRegion.meromorphicOn_riemannZeta_closedBall`.
 
 Difficulty:
-The meromorphic-on-closed-balls statement is done.  The remaining part of this
-block is the divisor/pole-order statement
-`(MeromorphicOn.divisor riemannZeta U) 1 = -1`, needed for residue bookkeeping
-and local logarithmic-derivative estimates.
+This block is now done, including
+`ZeroFreeRegion.meromorphicOrderAt_riemannZeta_one` and
+`ZeroFreeRegion.divisor_riemannZeta_pole_one`.  The next work starts from this
+API and proves local logarithmic-derivative estimates.
 
 ### 2. Polynomial Growth for Zeta in Vertical Disks
 
@@ -368,14 +368,13 @@ None for patching.  The high-height estimate remains the missing input.
 
 ## Suggested Execution Order
 
-1. Prove the divisor/pole-order statement for `riemannZeta` at `1` from the
-   proved `meromorphicAt_riemannZeta_one` and residue normalization.
-2. Prove the local pole logarithmic-derivative bound near `1`.
-3. Prove a reusable Borel-Caratheodory/Jensen regular-part estimate for
+1. Prove the local pole logarithmic-derivative bound near `1` using the proved
+   simple-pole/divisor API.
+2. Prove a reusable Borel-Caratheodory/Jensen regular-part estimate for
    meromorphic functions with polynomial growth.
-4. Specialize it to zeta to obtain the zero-height and `2t` estimates.
-5. Feed those estimates into the already-proved conditional 3-4-1 assembly.
-6. Only then convert `classical_zero_free_region` from `def ... : Prop` to a
+3. Specialize it to zeta to obtain the zero-height and `2t` estimates.
+4. Feed those estimates into the already-proved conditional 3-4-1 assembly.
+5. Only then convert `classical_zero_free_region` from `def ... : Prop` to a
    theorem, and verify with `lake env lean -R . ZeroFreeRegion.lean`.
 
 ## Already Filled Non-Analytic Lemmas
@@ -389,5 +388,5 @@ The non-analytic Lean work that used to be the easiest target is now complete:
 - real-variable comparison showing the Vinogradov-Korobov width dominates a
   classical `c / log |t|` width.
 
-The next useful Lean work is zeta-specific: pole-order/divisor control,
-logarithmic-derivative estimates, and Borel-Caratheodory/Jensen specialization.
+The next useful Lean work is zeta-specific: logarithmic-derivative estimates
+and Borel-Caratheodory/Jensen specialization.
