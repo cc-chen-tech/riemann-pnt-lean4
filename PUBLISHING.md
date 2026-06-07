@@ -23,7 +23,7 @@ python3 scripts/list-prop-targets.py
 rg -n '\\b(sorry|admit|axiom)\\b' *.lean
 ```
 
-The commands should return a stable 23-item target inventory and no placeholders
+The commands should return a stable 22-item target inventory and no placeholders
 (`sorry`/`admit`/`axiom`) in Lean sources. This does not mean the PNT or RH has
 been proved: several deep results are recorded only as `def ... : Prop` targets.
 

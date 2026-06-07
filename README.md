@@ -5,6 +5,22 @@ function, Hardy's theorem, zero-free regions, and Prime Number Theorem statement
 It is built on Mathlib and currently serves as a buildable proof framework with
 explicitly isolated unproved target statements.
 
+The publishable core of the current repository is:
+
+> **de la Vallee Poussin 3-4-1 machinery and a compact zero-free strip in Lean 4**
+
+This means the project verifies the local analytic mechanism
+
+1. the real-part Dirichlet-series expansion for `-ζ'/ζ` in terms of the von
+   Mangoldt function;
+2. the 3-4-1 logarithmic-derivative inequality using
+   `3 + 4*cos θ + cos (2*θ) >= 0`;
+3. the compactness argument turning Mathlib's nonvanishing on `Re(s) >= 1` into
+   a positive-width zero-free strip for each fixed height bound.
+
+The repository does **not** claim the classical quantitative zero-free region
+`σ >= 1 - c / log |t|`, the full PNT, or RH.
+
 ## Status
 
 `lake build` succeeds with Lean 4.29.1 / Mathlib 4.29.1. The repository is not
@@ -21,9 +37,9 @@ Current code status:
 
 Total: 0 syntactic `sorry` occurrences in Lean source files.
 
-Unresolved target declarations (currently not promoted to theorems): **23**.
+Unresolved target declarations (currently not promoted to theorems): **22**.
 
- - `HardyTheorem` namespace: 11
+ - `HardyTheorem` namespace: 10
  - `PrimeNumberTheorem` namespace: 9
  - `ZeroFreeRegion` namespace: 2
  - `RiemannExplorer` namespace: 1
@@ -54,7 +70,7 @@ The project currently verifies several supporting statements, including:
 - the compact zero-free region near `Re(s)=1` for each bounded height;
 - finiteness of nontrivial zeros in each bounded-height strip.
 
-## Unfinished Core Targets
+## Publication Core and Remaining Targets
 
 ### 3-4-1 Logarithmic-Derivative Combination
 
@@ -79,6 +95,11 @@ The three classical forms are equivalent:
 2. π(x) ~ Li(x)
 3. ψ(x) ~ x
 
+These equivalence and error-propagation lemmas are supporting infrastructure.
+They are useful for composition once an analytic PNT input is available, but the
+three PNT forms themselves remain `def ... : Prop` target statements in this
+repository.
+
 ### Von Mangoldt Explicit Formula
 
 The current repository contains this as a corrected `Prop` target statement,
@@ -86,6 +107,40 @@ not as a proved theorem.  The Lean target now uses the midpoint convention
 `chebyshevPsi0` and a height-truncated zero contribution
 `finiteNontrivialZeroSum`, rather than an unconditional unordered `tsum` over
 all nontrivial zeros.
+
+### Target Statements, Not Proved Theorems
+
+The remaining 22 target declarations are intentionally `def ... : Prop` rather
+than theorem declarations. They are tracked as future proof obligations and must
+not be cited as completed proofs:
+
+- PNT and RH-scale error targets:
+  `PNTForm1`, `PNTForm2`, `PNTForm3`, `RH_PsiErrorBound`,
+  `RH_ThetaErrorBound`, `RH_PrimeCountingLiErrorBound`, `RH_ErrorBound`,
+  `rh_iff_optimal_error`;
+- explicit formula target:
+  `explicit_formula_von_mangoldt`;
+- quantitative zero-free-region targets:
+  `classical_zero_free_region`, `vinogradov_korobov_zero_free_region`;
+- Hardy/critical-line targets:
+  `integral_asymptotic_target`, `hardy_two_signed_moments_target`,
+  `hardy_theorem_target`, `hardy_zeros_unbounded_target`,
+  `hardy_zeros_abs_unbounded_target`, `hardy_littlewood_lower_bound_target`,
+  `selberg_zero_proportion_target`, `gamma_asymptotic_half_plus_it_target`,
+  `theta_asymptotic_target`, `approximate_functional_equation_target`,
+  `conrey_40_percent_zeros_on_critical_line_target`.
+
+The four missing analytic chains are:
+
+1. **Quantitative zero-free region**: upgrade the compact strip to
+   `1 - c / log |t|` using zeta growth and logarithmic-derivative estimates
+   together with Borel-Caratheodory or Hadamard/Jensen machinery.
+2. **Explicit formula**: prove the Perron/residue-theorem chain that yields the
+   finite-height Riemann-von Mangoldt formula for `chebyshevPsi0`.
+3. **RH error equivalence**: connect the explicit formula under RH to the
+   `sqrt x * log x` prime-counting error and prove the reverse implication.
+4. **Hardy theorem**: prove the signed moment/asymptotic inputs for Hardy's
+   theorem and the stronger critical-line zero-counting targets.
 
 ## Quick Start
 
