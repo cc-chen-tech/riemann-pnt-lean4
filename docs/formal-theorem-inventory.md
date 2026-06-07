@@ -113,6 +113,16 @@ Core verified declarations:
 - `eventually_norm_logDeriv_riemannZeta_lt_const_div_norm_sub_one`
   proves the flexible local pole-order bound
   `norm (logDeriv riemannZeta s) < C / norm (s - 1)` for every `C > 1`.
+- `logDeriv_riemannZeta_eq_deriv_div`,
+  `neg_logDeriv_riemannZeta_eq_neg_deriv_div`,
+  `neg_deriv_div_riemannZeta_eq_neg_logDeriv`,
+  `logDeriv_riemannZeta_re_eq_deriv_div_re`,
+  `neg_logDeriv_riemannZeta_re_eq_neg_deriv_div_re`,
+  `neg_deriv_div_riemannZeta_re_eq_neg_logDeriv_re`,
+  `norm_logDeriv_riemannZeta_eq_norm_deriv_div`, and
+  `norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv`
+  bridge Mathlib's `logDeriv ζ` notation with the quotient notation
+  `ζ'/ζ` and `-ζ'/ζ` used by the 3-4-1 estimates.
 - `eventually_norm_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one`
   rewrites the eventual local pole-order bound in explicit quotient notation
   `deriv riemannZeta s / riemannZeta s`.

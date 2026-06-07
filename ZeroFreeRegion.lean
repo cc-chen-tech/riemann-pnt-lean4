@@ -504,6 +504,54 @@ lemma log_deriv_zeta_lower_bound (σ : ℝ) (hσ : 1 < σ) (t : ℝ) :
   have h := log_deriv_zeta_nonneg_combination σ hσ t
   linarith
 
+/-- Definition-level bridge from Mathlib's `logDeriv ζ` notation to the
+classical quotient `ζ'/ζ`. -/
+lemma logDeriv_riemannZeta_eq_deriv_div (s : ℂ) :
+    logDeriv riemannZeta s = deriv riemannZeta s / riemannZeta s :=
+  rfl
+
+/-- Negated quotient form of `logDeriv_riemannZeta_eq_deriv_div`, matching the
+notation used in the 3-4-1 inequality. -/
+lemma neg_logDeriv_riemannZeta_eq_neg_deriv_div (s : ℂ) :
+    -logDeriv riemannZeta s = -deriv riemannZeta s / riemannZeta s := by
+  simp [logDeriv_riemannZeta_eq_deriv_div, neg_div]
+
+/-- Reverse direction of the negated logarithmic-derivative bridge. -/
+lemma neg_deriv_div_riemannZeta_eq_neg_logDeriv (s : ℂ) :
+    -deriv riemannZeta s / riemannZeta s = -logDeriv riemannZeta s :=
+  (neg_logDeriv_riemannZeta_eq_neg_deriv_div s).symm
+
+/-- Real-part bridge from `logDeriv ζ` to `ζ'/ζ`. -/
+lemma logDeriv_riemannZeta_re_eq_deriv_div_re (s : ℂ) :
+    (logDeriv riemannZeta s).re =
+      (deriv riemannZeta s / riemannZeta s).re := by
+  rw [logDeriv_riemannZeta_eq_deriv_div]
+
+/-- Real-part bridge for the negated logarithmic derivative, matching
+`-ζ'/ζ`. -/
+lemma neg_logDeriv_riemannZeta_re_eq_neg_deriv_div_re (s : ℂ) :
+    (-logDeriv riemannZeta s).re =
+      (-deriv riemannZeta s / riemannZeta s).re := by
+  rw [neg_logDeriv_riemannZeta_eq_neg_deriv_div]
+
+/-- Reverse real-part bridge for the negated quotient. -/
+lemma neg_deriv_div_riemannZeta_re_eq_neg_logDeriv_re (s : ℂ) :
+    (-deriv riemannZeta s / riemannZeta s).re =
+      (-logDeriv riemannZeta s).re :=
+  (neg_logDeriv_riemannZeta_re_eq_neg_deriv_div_re s).symm
+
+/-- Norm bridge from `logDeriv ζ` to `ζ'/ζ`. -/
+lemma norm_logDeriv_riemannZeta_eq_norm_deriv_div (s : ℂ) :
+    ‖logDeriv riemannZeta s‖ =
+      ‖deriv riemannZeta s / riemannZeta s‖ := by
+  rw [logDeriv_riemannZeta_eq_deriv_div]
+
+/-- Norm bridge for the negated quotient form `-ζ'/ζ`. -/
+lemma norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv (s : ℂ) :
+    ‖-deriv riemannZeta s / riemannZeta s‖ =
+      ‖logDeriv riemannZeta s‖ := by
+  rw [neg_deriv_div_riemannZeta_eq_neg_logDeriv, norm_neg]
+
 /-- ζ is nonzero in a full neighborhood of `1`.
 
 Although `riemannZeta` has a junk value at `1` in Mathlib, the residue statement

@@ -2767,6 +2767,51 @@ theorem log_deriv_zeta_lower_bound (σ : ℝ) (hσ : 1 < σ) (t : ℝ) :
           riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re :=
   ZeroFreeRegion.log_deriv_zeta_lower_bound σ hσ t
 
+/-- Public bridge from Mathlib's `logDeriv ζ` notation to `ζ'/ζ`. -/
+theorem logDeriv_riemannZeta_eq_deriv_div (s : ℂ) :
+    logDeriv riemannZeta s = deriv riemannZeta s / riemannZeta s :=
+  ZeroFreeRegion.logDeriv_riemannZeta_eq_deriv_div s
+
+/-- Public bridge from `-logDeriv ζ` to `-ζ'/ζ`. -/
+theorem neg_logDeriv_riemannZeta_eq_neg_deriv_div (s : ℂ) :
+    -logDeriv riemannZeta s = -deriv riemannZeta s / riemannZeta s :=
+  ZeroFreeRegion.neg_logDeriv_riemannZeta_eq_neg_deriv_div s
+
+/-- Public reverse bridge from `-ζ'/ζ` to `-logDeriv ζ`. -/
+theorem neg_deriv_div_riemannZeta_eq_neg_logDeriv (s : ℂ) :
+    -deriv riemannZeta s / riemannZeta s = -logDeriv riemannZeta s :=
+  ZeroFreeRegion.neg_deriv_div_riemannZeta_eq_neg_logDeriv s
+
+/-- Public real-part bridge from `logDeriv ζ` to `ζ'/ζ`. -/
+theorem logDeriv_riemannZeta_re_eq_deriv_div_re (s : ℂ) :
+    (logDeriv riemannZeta s).re =
+      (deriv riemannZeta s / riemannZeta s).re :=
+  ZeroFreeRegion.logDeriv_riemannZeta_re_eq_deriv_div_re s
+
+/-- Public real-part bridge from `-logDeriv ζ` to `-ζ'/ζ`. -/
+theorem neg_logDeriv_riemannZeta_re_eq_neg_deriv_div_re (s : ℂ) :
+    (-logDeriv riemannZeta s).re =
+      (-deriv riemannZeta s / riemannZeta s).re :=
+  ZeroFreeRegion.neg_logDeriv_riemannZeta_re_eq_neg_deriv_div_re s
+
+/-- Public reverse real-part bridge from `-ζ'/ζ` to `-logDeriv ζ`. -/
+theorem neg_deriv_div_riemannZeta_re_eq_neg_logDeriv_re (s : ℂ) :
+    (-deriv riemannZeta s / riemannZeta s).re =
+      (-logDeriv riemannZeta s).re :=
+  ZeroFreeRegion.neg_deriv_div_riemannZeta_re_eq_neg_logDeriv_re s
+
+/-- Public norm bridge from `logDeriv ζ` to `ζ'/ζ`. -/
+theorem norm_logDeriv_riemannZeta_eq_norm_deriv_div (s : ℂ) :
+    ‖logDeriv riemannZeta s‖ =
+      ‖deriv riemannZeta s / riemannZeta s‖ :=
+  ZeroFreeRegion.norm_logDeriv_riemannZeta_eq_norm_deriv_div s
+
+/-- Public norm bridge from `-ζ'/ζ` to `logDeriv ζ`. -/
+theorem norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv (s : ℂ) :
+    ‖-deriv riemannZeta s / riemannZeta s‖ =
+      ‖logDeriv riemannZeta s‖ :=
+  ZeroFreeRegion.norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv s
+
 /-- Public positivity of `log |t|` above height `2`. -/
 theorem log_abs_pos_of_two_le {t : ℝ} (ht : 2 ≤ |t|) :
     0 < Real.log |t| :=

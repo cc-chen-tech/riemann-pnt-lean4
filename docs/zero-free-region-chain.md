@@ -429,9 +429,11 @@ lemma zeta_logDeriv_regular_part_bound
 
 Mathlib status:
 `Complex.borelCaratheodory` exists.  `MeromorphicOn.logDeriv` and
-`logDeriv` infrastructure exist.  Missing is the zeta-specific specialization
-that combines meromorphicity, zero extraction, polynomial growth, and the
-translation from `logDeriv riemannZeta` to `deriv riemannZeta / riemannZeta`.
+`logDeriv` infrastructure exist.  This repository now has the notation bridges
+`ZeroFreeRegion.logDeriv_riemannZeta_eq_deriv_div` and
+`ZeroFreeRegion.neg_logDeriv_riemannZeta_re_eq_neg_deriv_div_re`, so the
+remaining gap is the zeta-specific specialization that combines meromorphicity,
+zero extraction, and polynomial growth into the stated regular-part estimate.
 
 Difficulty:
 High.  This is the core formalization of the classical Borel-Caratheodory
