@@ -6,7 +6,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 
 ## Purpose
 
-This file declares the project-internal **interface** for the
+This file declares the project-internal **interface statement** for the
 "rectangle contour integral equals `2πi • (sum of residues)`" theorem.
 This theorem is the joint glue between the explicit-formula chain
 (Chain 2 in `docs/target-statements-and-chains.md`) and the
@@ -14,12 +14,11 @@ RH / prime-counting error chain (Chain 3): both chains shift
 contours past a finite rectangle around the critical strip and must
 absorb the residue at `s = 1` and at the zeros of `ζ`.
 
-The current declaration is intentionally a **signature-only target**:
-a `def ... : Prop` whose body is the trivially-true proposition `True`.
-The body is a placeholder — its purpose is to (a) lock the argument
-list, (b) let downstream code (`import MathlibAux.RectangleResidue`)
-use the name as a typed predicate, and (c) survive `verify-baseline.sh`
-(there is no `sorry` / `admit` / `axiom` and the body is `True`).
+The current declaration is intentionally a **target statement**, not a
+proved theorem: a `def ... : Prop` whose body records the finite-residue
+shape we eventually need.  It locks the argument list and lets downstream
+code (`import MathlibAux.RectangleResidue`) use the name as a typed
+predicate without exporting a fake theorem.
 
 The actual residue theorem is **deliberately deferred** to a later
 phase: building it from scratch in Lean 4.29.1 / Mathlib 4.29.1 requires
@@ -67,16 +66,41 @@ compiles and that the interface is non-vacuous (it can be satisfied).
 
 import Mathlib
 
--- This file declares a `def ... : Prop` whose body is the trivially-true
--- proposition `True`.  The def's parameter list is the *public contract* the
--- rest of the project imports, so the parameters `f`, `c`, `hpos` are
--- intentionally unused in the body — they exist only to lock the public
--- argument list.  Disable the unused-variable linter for this file.
+-- The def's parameter list is the *public contract* the rest of the project
+-- imports.  Some witnesses are intentionally part of the statement shape
+-- rather than used by executable code.  Disable the unused-variable linter
+-- for this file.
 set_option linter.unusedVariables false
 
 namespace MathlibAux
 
-/-! ## Rectangle meromorphic residue target (interface placeholder) -/
+open Complex
+open Set
+open scoped BigOperators Interval
+
+/-! ## Rectangle geometry and boundary integral expression -/
+
+/-- Closed rectangle centered at `c` with half-side `R`, expressed in real and
+imaginary coordinates. -/
+def closedRectangle (c : ℂ) (R : ℝ) : Set ℂ :=
+  [[c.re - R, c.re + R]] ×ℂ [[c.im - R, c.im + R]]
+
+/-- Open rectangle centered at `c` with half-side `R`, expressed in real and
+imaginary coordinates. -/
+def openRectangle (c : ℂ) (R : ℝ) : Set ℂ :=
+  Ioo (c.re - R) (c.re + R) ×ℂ Ioo (c.im - R) (c.im + R)
+
+/-- Boundary integral expression used by Mathlib's rectangle Cauchy-Goursat
+API, specialized to the rectangle centered at `c` with half-side `R`. -/
+noncomputable def rectangleBoundaryIntegral
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+    (f : ℂ → E) (c : ℂ) (R : ℝ) : E :=
+  (∫ x : ℝ in (c.re - R)..(c.re + R), f (x + (c.im - R) * Complex.I)) -
+    (∫ x : ℝ in (c.re - R)..(c.re + R), f (x + (c.im + R) * Complex.I)) +
+      Complex.I • (∫ y : ℝ in (c.im - R)..(c.im + R), f ((c.re + R) + y * Complex.I)) -
+        Complex.I • (∫ y : ℝ in (c.im - R)..(c.im + R), f ((c.re - R) + y * Complex.I))
+
+/-! ## Rectangle meromorphic residue target (interface statement) -/
 
 /--
 Project-internal target statement:
@@ -90,7 +114,8 @@ The argument list is the **public contract** the rest of the project
 imports:
 
 - `E : Type*`  — codomain with a `NormedAddCommGroup` structure
-  (so that contour integrals in `E` make sense);
+  and a complex normed-space structure (so that contour integrals in `E`
+  make sense);
 - `f : ℂ → E` — the function being integrated;
 - `c : ℂ`     — centre of the rectangle (both real and imaginary
   coordinates);
@@ -100,49 +125,52 @@ imports:
 - `hpos : 0 < R` — explicit witness that the rectangle is
   non-degenerate.
 
-The body is `True` because the actual residue equality is a deep
-"high-difficulty" target (project rating) and is deliberately
-deferred to a later phase.  Downstream code uses the predicate
-purely as a typed interface.  Because the body is `True`, the
-parameter names `f`, `c`, `hpos` are intentionally unused in the
-body — they exist only to lock the public argument list.  The
-linter is silenced below for this declaration only.
+The body is a real `Prop` statement: there is a finite pole set and a
+residue function for which the Mathlib rectangle-boundary integral equals
+`2πi` times the residue sum.  This is still **not a proof** of the residue
+theorem; it is the target shape that future Perron / explicit-formula work
+must discharge.
 
 **This is NOT a `theorem`** — it is a `def` returning `Prop`.  The
-Lean kernel accepts the body `True` without requiring a proof, and
+Lean kernel accepts the proposition without requiring a proof, and
 `verify-baseline.sh` will not flag it (no `sorry` / `admit` / `axiom`).
 -/
 def rectangleIntegral_meromorphic_eq_residue_sum
-    {E : Type*} [NormedAddCommGroup E]
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
     {f : ℂ → E} {c : ℂ} {R : ℝ}
     (hpos : 0 < R) : Prop :=
-  True
+  0 < R ∧
+    ∃ (poles : Finset ℂ) (residue : ℂ → E),
+      MeromorphicOn f (closedRectangle c R) ∧
+        (∀ z ∈ openRectangle c R, z ∉ poles → DifferentiableAt ℂ f z) ∧
+          (∀ z ∈ poles, z ∈ openRectangle c R) ∧
+            rectangleBoundaryIntegral f c R =
+              (2 * Real.pi * Complex.I) • (∑ z ∈ poles, residue z)
 
 /-! ## Trivial sanity-check lemma -/
 
 /--
 **Sanity check**: the constant-zero function has zero contour integral
 around every rectangle and the residue sum at every finite support is
-trivially zero, so the interface predicate holds.
+trivially zero, so the interface predicate holds using the empty pole set.
 
-This is the one helper lemma we ship with the interface: it costs
-nothing to prove (the body of the predicate is `True`) but exercises
-the argument-list agreement between caller and callee.  In particular
-it shows that the constant-zero function is accepted as a `ℂ → E`
-value (here `E := ℂ`) and that the `hpos` witness is correctly
-threaded.
-
-When the body of `rectangleIntegral_meromorphic_eq_residue_sum` is
-later promoted to the real residue equation, this lemma will become
-`trivial` *and* additionally require a small contour-integral
-argument showing the constant-zero function integrates to zero.  We
-intentionally do not commit to that extra layer now: the discipline
-of the project is "interface only" for this target.
+This does not prove the meromorphic residue theorem for arbitrary `f`;
+it only checks that the statement is satisfiable in the degenerate
+zero-function case and that the boundary-integral expression reduces as
+expected.
 -/
 lemma rectangleIntegral_const_zero {R : ℝ} (hpos : 0 < R) :
-    @rectangleIntegral_meromorphic_eq_residue_sum ℂ _
-      (fun _ : ℂ => (0 : ℂ)) (0 : ℂ) R hpos :=
-  trivial
+    rectangleIntegral_meromorphic_eq_residue_sum
+      (E := ℂ) (f := fun _ : ℂ => (0 : ℂ)) (c := 0) (R := R) hpos :=
+  by
+    refine ⟨hpos, ∅, fun _ => 0, ?_, ?_, ?_, ?_⟩
+    · intro z hz
+      exact MeromorphicAt.const (0 : ℂ) z
+    · intro z hz hzp
+      exact differentiableAt_const (0 : ℂ)
+    · intro z hz
+      simp at hz
+    · simp [rectangleBoundaryIntegral]
 
 /-
 ## Why we do NOT export a `of_meromorphicOn` wrapper
@@ -153,9 +181,9 @@ predicate.  In Lean 4.29.1, packaging that hypothesis into a
 usable form for the contour-integral machinery hits a known
 destructure / `Classical.choose` type-inference sharp edge (see
 the project discipline block in `TASK_BRIEF.md`).  Adding it now
-risks the build without contributing to the "interface-locking"
+risks the build without contributing to the "interface-statement"
 goal of this task.  The wrapper is to be revisited in a later
-phase once the actual residue equation is filled in; at that
+phase once the actual residue equality is filled in; at that
 point the `MeromorphicOn` chain can be wired up cleanly.
 
 End of `MathlibAux.RectangleResidue`. -/

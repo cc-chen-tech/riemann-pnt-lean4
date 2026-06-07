@@ -240,8 +240,8 @@ For the chain accounting:
   is the upper-level Conrey target form.  The submodule declaration
   `RiemannExplorer.Conrey40.conrey_40_percent_zeros_on_critical_line_target`
   is only a route-interface alias to this target.
-- `MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum` is the only
-  remaining body-`True` route interface.  It marks the missing rectangle
+- `MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum` is a route
+  interface with a real statement body.  It marks the missing rectangle
   contour/residue theorem and is not counted as a mathematical target.
 - `PrimeNumberTheorem.ExplicitFormulaAux.goodHeight` is a reusable contour
   height predicate, not a proof target.

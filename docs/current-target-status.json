@@ -205,15 +205,15 @@
       "name": "rectangleIntegral_meromorphic_eq_residue_sum",
       "qualified_name": "MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum",
       "file": "MathlibAux/RectangleResidue.lean",
-      "line": 115,
+      "line": 138,
       "chain": "Explicit formula",
-      "body": "True"
+      "body": "real_statement"
     },
     {
       "name": "ExplicitFormulaTruncatedTarget",
       "qualified_name": "PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget",
       "file": "PrimeNumberTheorem/ExplicitFormulaTruncated.lean",
-      "line": 127,
+      "line": 126,
       "chain": "Explicit formula",
       "body": "real_statement"
     },
@@ -301,7 +301,7 @@
   },
   "mathematical_target_count": 22,
   "route_interface_count": 4,
-  "route_interface_true_body_count": 1,
+  "route_interface_true_body_count": 0,
   "reusable_predicate_count": 2,
   "unclassified_prop_def_count": 0,
   "all_scanned_prop_defs_count": 28

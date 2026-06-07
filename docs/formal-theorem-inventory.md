@@ -288,7 +288,7 @@ Route interfaces:
 - `RiemannExplorer.Conrey40.conrey_40_percent_zeros_on_critical_line_target`
   alias interface to `KnownResults.conrey_40_percent_zeros_on_critical_line_target`.
 - `MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum`
-  body-`True` interface for missing rectangle contour/residue infrastructure.
+  real-statement interface for missing rectangle contour/residue infrastructure.
 
 Reusable predicates:
 

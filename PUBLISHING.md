@@ -32,10 +32,10 @@ classified, checks the 22-item mathematical target inventory, and validates the
 four chain-gap buckets. This does not mean the PNT or RH has been proved:
 several deep results are recorded only as `def ... : Prop` targets.
 
-As of the current baseline, the only route interface whose body is still
-`True` is `MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum`. It is an
-explicit marker for missing rectangle contour/residue infrastructure, not a
-completed theorem.
+As of the current baseline, no route interface has a body equal to `True`.
+`MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum` is still an explicit
+marker for missing rectangle contour/residue infrastructure, but its body is now
+a real `Prop` statement rather than a trivially true placeholder.
 
 ## Unproved Target Statements
 

@@ -91,9 +91,9 @@ Full `def ... : Prop` inventory:
   `PrimeNumberTheorem.ExplicitFormulaAux.goodHeight`);
 - unclassified Prop definitions: 0.
 
-The only remaining route interface whose body is still `True` is
-`MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum`; it is kept as an
-explicit contour/residue-theorem interface, not as a proved theorem.
+No route interface currently has a body equal to `True`.  The rectangle
+contour/residue interface is a real `Prop` statement, but it is still not a
+proved theorem.
 
 ## File Overview
 
@@ -108,7 +108,7 @@ explicit contour/residue-theorem interface, not as a proved theorem.
 | `ZeroFreeRegion.lean` | 3-4-1 setup, log derivative series, compact zero-free region, quantitative zero-free-region targets | sorry-free, quantitative targets unproved |
 | `PrimeNumberTheorem/ExplicitFormulaAux.lean` | `chebyshevPsi0`, `goodHeight`, finite zero-sum support helpers | sorry-free, support predicate only |
 | `PrimeNumberTheorem/ExplicitFormulaTruncated.lean` | Truncated explicit-formula route interface with a real Prop body | sorry-free, route interface unproved |
-| `MathlibAux/RectangleResidue.lean` | Rectangle residue route interface for future Perron/explicit-formula work | sorry-free, body-`True` interface |
+| `MathlibAux/RectangleResidue.lean` | Rectangle residue route interface for future Perron/explicit-formula work | sorry-free, route interface unproved |
 | `HardyTheorem/AFE.lean` | Corrected AFE route interface using an unwrapped theta wrapper | sorry-free, route interface unproved |
 | `RiemannExplorer/Conrey40.lean` | Conrey target alias to the upper-level `KnownResults` target | sorry-free, route interface alias |
 

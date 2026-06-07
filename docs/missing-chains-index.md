@@ -184,11 +184,9 @@ Additional non-target Prop declarations:
   height predicate.
 - `HardyTheorem.AFE.zeta_critical_afe_target`,
   `PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget`,
-  and `RiemannExplorer.Conrey40.conrey_40_percent_zeros_on_critical_line_target`
-  are route interfaces with real statement bodies.
-- `MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum` is the only
-  remaining body-`True` route interface and marks the missing rectangle
-  contour/residue theorem.
+  `MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum`, and
+  `RiemannExplorer.Conrey40.conrey_40_percent_zeros_on_critical_line_target`
+  are route interfaces with real statement bodies or aliases.
 
 ## Verification Commands
 
