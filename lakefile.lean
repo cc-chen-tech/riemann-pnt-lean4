@@ -13,6 +13,8 @@ lean_lib RiemannPNT where
     `HardyTheorem,
     `EulerAndLfunctions,
     `PrimeNumberTheorem,
+    `PrimeNumberTheorem.ExplicitFormulaAux,
+    `PrimeNumberTheorem.ExplicitFormulaTruncated,
     `ZeroFreeRegion
   ]
 
