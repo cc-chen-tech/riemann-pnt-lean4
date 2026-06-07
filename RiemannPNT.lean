@@ -3336,6 +3336,50 @@ theorem borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_o
   ZeroFreeRegion.borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le
     hM ha₀ hHpos hlog ha hb hH hR hz
 
+/-- Public differentiability of the signed logarithmic derivative `-logDeriv ζ`
+on positive-height right half-strips. -/
+theorem differentiableOn_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re
+    {a b H : ℝ} (ha : 1 ≤ a) (hH : 0 < H) :
+    DifferentiableOn ℂ (fun z : ℂ => -logDeriv riemannZeta z)
+      (ZeroFreeRegion.verticalRegion a b H) :=
+  ZeroFreeRegion.differentiableOn_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re
+    ha hH
+
+/-- Public pointwise Borel-Carathéodory bound for `-logDeriv ζ` on a
+positive-height right half-strip. -/
+theorem borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le
+    {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M) (ha₀ : 1 ≤ a) (hHpos : 0 < H)
+    (hlog : ∀ w : ℂ, w ∈ verticalRegion a b H →
+      (-logDeriv riemannZeta w).re ≤ M)
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R) (hz : z ∈ Metric.ball ((σ : ℂ) + Complex.I * t) R) :
+    ‖-logDeriv riemannZeta z‖ ≤
+      2 * M * ‖z - ((σ : ℂ) + Complex.I * t)‖ /
+          (R - ‖z - ((σ : ℂ) + Complex.I * t)‖) +
+        ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ *
+          (R + ‖z - ((σ : ℂ) + Complex.I * t)‖) /
+          (R - ‖z - ((σ : ℂ) + Complex.I * t)‖) :=
+  ZeroFreeRegion.borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le
+    hM ha₀ hHpos hlog ha hb hH hR hz
+
+/-- Public oscillation Borel-Carathéodory bound for `-logDeriv ζ` on a
+positive-height right half-strip. -/
+theorem borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le
+    {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M) (ha₀ : 1 ≤ a) (hHpos : 0 < H)
+    (hlog : ∀ w : ℂ, w ∈ verticalRegion a b H →
+      ((-logDeriv riemannZeta w) -
+        (-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t))).re ≤ M)
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R) (hz : z ∈ Metric.ball ((σ : ℂ) + Complex.I * t) R) :
+    ‖(-logDeriv riemannZeta z) -
+        (-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t))‖ ≤
+      2 * M * ‖z - ((σ : ℂ) + Complex.I * t)‖ /
+        (R - ‖z - ((σ : ℂ) + Complex.I * t)‖) :=
+  ZeroFreeRegion.borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le
+    hM ha₀ hHpos hlog ha hb hH hR hz
+
 section JensenWrapper
 
 open MeromorphicAt MeromorphicOn Metric Real

@@ -153,7 +153,14 @@ proved:
   `ZeroFreeRegion.borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le`
   and
   `ZeroFreeRegion.borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le`
-  therefore leave only the real-part height estimate as the Borel input;
+  therefore leave only the real-part height estimate as the Borel input.  The
+  signed wrappers
+  `ZeroFreeRegion.differentiableOn_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re`,
+  `ZeroFreeRegion.borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le`,
+  and
+  `ZeroFreeRegion.borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le`
+  provide the same interface in the `-logDeriv ζ` convention used by the
+  3-4-1 inequality;
   `ZeroFreeRegion.jensen_circleAverage_log_norm_verticalRegion` is the matching
   Jensen entry point for zero-count and divisor estimates.
 - The zeta-specific regularity layer now includes

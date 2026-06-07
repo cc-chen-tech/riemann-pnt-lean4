@@ -387,6 +387,12 @@ Core verified declarations:
   are the same `logDeriv ζ` Borel interfaces with that differentiability
   hypothesis discharged; the only remaining Borel input is a pointwise
   real-part height bound.
+- `differentiableOn_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re`,
+  `borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le`,
+  and
+  `borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le`
+  repeat this Borel regularity layer in the signed `-logDeriv ζ` convention
+  used by the 3-4-1 inequality.
 - `jensen_circleAverage_log_norm_verticalRegion`
   combines Jensen's formula with the same closed-disk geometry and ambient
   vertical-region meromorphicity.

@@ -2174,6 +2174,56 @@ lemma borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_
       ha₀ hHpos)
     hlog ha hb hH hR hz
 
+/-- On a positive-height right half-strip, the signed logarithmic derivative
+`-logDeriv ζ` is differentiable. -/
+lemma differentiableOn_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re
+    {a b H : ℝ} (ha : 1 ≤ a) (hH : 0 < H) :
+    DifferentiableOn ℂ (fun z : ℂ => -logDeriv riemannZeta z)
+      (verticalRegion a b H) :=
+  (differentiableOn_logDeriv_riemannZeta_verticalRegion_of_one_le_re
+    ha hH).neg
+
+/-- Borel-Carathéodory for the signed logarithmic derivative `-logDeriv ζ` on
+a right half-strip.  This is the sign convention used by the 3-4-1 inequality. -/
+lemma borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le
+    {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M) (ha₀ : 1 ≤ a) (hHpos : 0 < H)
+    (hlog : ∀ w : ℂ, w ∈ verticalRegion a b H →
+      (-logDeriv riemannZeta w).re ≤ M)
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R) (hz : z ∈ Metric.ball ((σ : ℂ) + I * t) R) :
+    ‖-logDeriv riemannZeta z‖ ≤
+      2 * M * ‖z - ((σ : ℂ) + I * t)‖ /
+          (R - ‖z - ((σ : ℂ) + I * t)‖) +
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ *
+          (R + ‖z - ((σ : ℂ) + I * t)‖) /
+          (R - ‖z - ((σ : ℂ) + I * t)‖) := by
+  refine borelCaratheodory_centered_verticalRegion hM
+    (differentiableOn_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re
+      ha₀ hHpos) ?_ ha hb hH hR hz
+  intro w hw
+  exact hlog w hw
+
+/-- Oscillation Borel-Carathéodory for the signed logarithmic derivative
+`-logDeriv ζ` on a right half-strip. -/
+lemma borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le
+    {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M) (ha₀ : 1 ≤ a) (hHpos : 0 < H)
+    (hlog : ∀ w : ℂ, w ∈ verticalRegion a b H →
+      ((-logDeriv riemannZeta w) -
+        (-logDeriv riemannZeta ((σ : ℂ) + I * t))).re ≤ M)
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R) (hz : z ∈ Metric.ball ((σ : ℂ) + I * t) R) :
+    ‖(-logDeriv riemannZeta z) -
+        (-logDeriv riemannZeta ((σ : ℂ) + I * t))‖ ≤
+      2 * M * ‖z - ((σ : ℂ) + I * t)‖ /
+        (R - ‖z - ((σ : ℂ) + I * t)‖) := by
+  refine borelCaratheodory_sub_centered_verticalRegion hM
+    (differentiableOn_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re
+      ha₀ hHpos) ?_ ha hb hH hR hz
+  intro w hw
+  exact hlog w hw
+
 /-- Jensen formula specialized to the logarithmic derivative of ζ on a closed
 ball. -/
 lemma jensen_circleAverage_log_norm_logDeriv_riemannZeta_closedBall
