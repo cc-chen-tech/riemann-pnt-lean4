@@ -356,6 +356,9 @@ Core verified declarations:
   `borelCaratheodory_sub_centered_verticalRegion`
   combine the centered Borel-Caratheodory wrappers with the local disk
   geometry, using ambient `verticalRegion` hypotheses directly.
+- `borelCaratheodory_centered_half_radius_bound`
+  turns the centered Borel-Caratheodory rational factors into the constant
+  bound `||f z|| <= 2 M + 3 ||f c||` on the half-radius subdisk.
 - `borelCaratheodory_riemannZeta_verticalRegion` and
   `borelCaratheodory_sub_riemannZeta_verticalRegion`
   specialize the same Borel wrappers to ζ and centered ζ, leaving only
@@ -393,6 +396,10 @@ Core verified declarations:
   `borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le`
   repeat this Borel regularity layer in the signed `-logDeriv ζ` convention
   used by the 3-4-1 inequality.
+- `borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius`
+  combines the signed right-half-strip Borel wrapper with the half-radius
+  constant bound, eliminating the denominator terms in the common local-disk
+  application.
 - `jensen_circleAverage_log_norm_verticalRegion`
   combines Jensen's formula with the same closed-disk geometry and ambient
   vertical-region meromorphicity.

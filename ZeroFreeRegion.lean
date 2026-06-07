@@ -1250,6 +1250,47 @@ lemma borelCaratheodory_centered
     (f := g) hM hgdiff hgmaps hR hz0
   simpa [g, add_sub_cancel_right] using h
 
+/-- Half-radius corollary of centered Borel-Carathéodory.
+
+Inside the disk of radius `R/2`, the standard rational factors are bounded by
+absolute constants.  This is the form usually needed when local analytic
+estimates reserve half of the disk radius for geometry. -/
+lemma borelCaratheodory_centered_half_radius_bound
+    {f : ℂ → ℂ} {M R : ℝ} {c z : ℂ}
+    (hM : 0 < M) (hf : DifferentiableOn ℂ f (Metric.ball c R))
+    (hf₁ : Set.MapsTo f (Metric.ball c R) {w | w.re ≤ M})
+    (hR : 0 < R) (hz_half : ‖z - c‖ ≤ R / 2) :
+    ‖f z‖ ≤ 2 * M + 3 * ‖f c‖ := by
+  have hz_norm_nonneg : 0 ≤ ‖z - c‖ := norm_nonneg _
+  have hz_lt : ‖z - c‖ < R := by linarith
+  have hz_ball : z ∈ Metric.ball c R := by
+    simpa [Metric.mem_ball, dist_eq_norm] using hz_lt
+  have hbc := borelCaratheodory_centered hM hf hf₁ hR hz_ball
+  have hden_pos : 0 < R - ‖z - c‖ := by linarith
+  have hratio1 : ‖z - c‖ / (R - ‖z - c‖) ≤ 1 := by
+    rw [div_le_one hden_pos]
+    linarith
+  have hratio2 : (R + ‖z - c‖) / (R - ‖z - c‖) ≤ 3 := by
+    rw [div_le_iff₀ hden_pos]
+    linarith
+  have hterm1 :
+      2 * M * ‖z - c‖ / (R - ‖z - c‖) ≤ 2 * M := by
+    calc
+      2 * M * ‖z - c‖ / (R - ‖z - c‖)
+          = (2 * M) * (‖z - c‖ / (R - ‖z - c‖)) := by ring
+      _ ≤ (2 * M) * 1 :=
+          mul_le_mul_of_nonneg_left hratio1 (by nlinarith [hM.le])
+      _ = 2 * M := by ring
+  have hterm2 :
+      ‖f c‖ * (R + ‖z - c‖) / (R - ‖z - c‖) ≤ 3 * ‖f c‖ := by
+    calc
+      ‖f c‖ * (R + ‖z - c‖) / (R - ‖z - c‖)
+          = ‖f c‖ * ((R + ‖z - c‖) / (R - ‖z - c‖)) := by ring
+      _ ≤ ‖f c‖ * 3 :=
+          mul_le_mul_of_nonneg_left hratio2 (norm_nonneg _)
+      _ = 3 * ‖f c‖ := by ring
+  linarith
+
 /-- Centered Borel-Carathéodory oscillation estimate.
 
 This form bounds the change `f z - f c` directly from a real-part bound on the
