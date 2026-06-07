@@ -2602,6 +2602,53 @@ theorem classical_zero_free_region_of_sigma_log_shift_estimates
   ZeroFreeRegion.classical_zero_free_region_of_sigma_log_shift_estimates
     C Czero Ctwo T0 hC hC_lt hK hT0 hzero htwo
 
+/-- Public concrete `5/4` real-axis coefficient version of the shifted-estimate
+closure. -/
+theorem classical_zero_free_region_of_sigma_log_shift_estimates_five_fourths
+    (Czero Ctwo T0 : ℝ) (hK : 0 ≤ 4 * Czero + Ctwo) (hT0 : 2 ≤ T0)
+    (hzero :
+      ∀ a c β t : ℝ, 0 < a → 0 < c → a ≤ Real.log 2 →
+        T0 ≤ |t| → β < 1 →
+        β ≥ 1 - c / Real.log |t| →
+        0 < (1 + a / Real.log |t|) - β →
+        riemannZeta ((β : ℂ) + I * t) = 0 →
+        (-deriv riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t) /
+          riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t)).re ≤
+            -1 / ((1 + a / Real.log |t|) - β) +
+              Czero * Real.log |t|)
+    (htwo :
+      ∀ a t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+        (-deriv riemannZeta
+            ((1 + a / Real.log |t| : ℝ) + 2 * I * t) /
+          riemannZeta ((1 + a / Real.log |t| : ℝ) + 2 * I * t)).re ≤
+            Ctwo * Real.log |t|) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_sigma_log_shift_estimates_five_fourths
+    Czero Ctwo T0 hK hT0 hzero htwo
+
+/-- Public same-constant version of the shifted-estimate closure. -/
+theorem classical_zero_free_region_of_sigma_log_shift_estimates_same_const
+    (B T0 : ℝ) (hB : 0 ≤ B) (hT0 : 2 ≤ T0)
+    (hzero :
+      ∀ a c β t : ℝ, 0 < a → 0 < c → a ≤ Real.log 2 →
+        T0 ≤ |t| → β < 1 →
+        β ≥ 1 - c / Real.log |t| →
+        0 < (1 + a / Real.log |t|) - β →
+        riemannZeta ((β : ℂ) + I * t) = 0 →
+        (-deriv riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t) /
+          riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t)).re ≤
+            -1 / ((1 + a / Real.log |t|) - β) +
+              B * Real.log |t|)
+    (htwo :
+      ∀ a t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+        (-deriv riemannZeta
+            ((1 + a / Real.log |t| : ℝ) + 2 * I * t) /
+          riemannZeta ((1 + a / Real.log |t| : ℝ) + 2 * I * t)).re ≤
+            B * Real.log |t|) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_sigma_log_shift_estimates_same_const
+    B T0 hB hT0 hzero htwo
+
 /-- Public meromorphicity of the zeta logarithmic derivative at `1`. -/
 theorem meromorphicAt_logDeriv_riemannZeta_one :
     MeromorphicAt (logDeriv riemannZeta) (1 : ℂ) :=

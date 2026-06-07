@@ -270,6 +270,11 @@ combines the local pole input, small-constant choice, standard `sigma`, 3-4-1
 contradiction, and compact patch into one conditional theorem.  At this point,
 the quantitative zero-free-region chain has no remaining real-variable
 assembly gap; the remaining gap is the pair of zeta-specific shifted estimates.
+Two caller-facing variants remove incidental parameters:
+`ZeroFreeRegion.classical_zero_free_region_of_sigma_log_shift_estimates_five_fourths`
+fixes the real-axis coefficient to `5/4`, and
+`ZeroFreeRegion.classical_zero_free_region_of_sigma_log_shift_estimates_same_const`
+uses one nonnegative logarithmic coefficient for both shifted estimates.
 The next work starts from these meromorphic/nonvanishing/principal-part facts
 and proves the vertical-height logarithmic-derivative estimates needed for the
 quantitative strip.

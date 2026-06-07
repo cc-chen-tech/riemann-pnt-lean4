@@ -989,6 +989,63 @@ lemma classical_zero_free_region_of_sigma_log_shift_estimates
     exact three_four_one_sigmaOf_log_margin hT0 ha_pos hc_pos ht hβ_lt hβ
       hconst'
 
+/-- Concrete version of
+`classical_zero_free_region_of_sigma_log_shift_estimates` using the fixed
+real-axis coefficient `5/4`.
+
+The local pole input allows every coefficient `C > 1`; choosing `5/4` keeps
+the strict `C < 4/3` margin needed by the 3-4-1 constant selection. -/
+lemma classical_zero_free_region_of_sigma_log_shift_estimates_five_fourths
+    (Czero Ctwo T0 : ℝ) (hK : 0 ≤ 4 * Czero + Ctwo) (hT0 : 2 ≤ T0)
+    (hzero :
+      ∀ a c β t : ℝ, 0 < a → 0 < c → a ≤ Real.log 2 →
+        T0 ≤ |t| → β < 1 →
+        β ≥ 1 - c / Real.log |t| →
+        0 < (1 + a / Real.log |t|) - β →
+        riemannZeta ((β : ℂ) + I * t) = 0 →
+        (-deriv riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t) /
+          riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t)).re ≤
+            -1 / ((1 + a / Real.log |t|) - β) +
+              Czero * Real.log |t|)
+    (htwo :
+      ∀ a t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+        (-deriv riemannZeta
+            ((1 + a / Real.log |t| : ℝ) + 2 * I * t) /
+          riemannZeta ((1 + a / Real.log |t| : ℝ) + 2 * I * t)).re ≤
+            Ctwo * Real.log |t|) :
+    classical_zero_free_region :=
+  classical_zero_free_region_of_sigma_log_shift_estimates
+    (5 / 4) Czero Ctwo T0
+    (by norm_num) (by norm_num) hK hT0 hzero htwo
+
+/-- Same-constant version of the shifted-estimate closure.
+
+If both shifted logarithmic-derivative estimates are available with the same
+nonnegative logarithmic coefficient `B`, then the classical zero-free-region
+target follows. -/
+lemma classical_zero_free_region_of_sigma_log_shift_estimates_same_const
+    (B T0 : ℝ) (hB : 0 ≤ B) (hT0 : 2 ≤ T0)
+    (hzero :
+      ∀ a c β t : ℝ, 0 < a → 0 < c → a ≤ Real.log 2 →
+        T0 ≤ |t| → β < 1 →
+        β ≥ 1 - c / Real.log |t| →
+        0 < (1 + a / Real.log |t|) - β →
+        riemannZeta ((β : ℂ) + I * t) = 0 →
+        (-deriv riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t) /
+          riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t)).re ≤
+            -1 / ((1 + a / Real.log |t|) - β) +
+              B * Real.log |t|)
+    (htwo :
+      ∀ a t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+        (-deriv riemannZeta
+            ((1 + a / Real.log |t| : ℝ) + 2 * I * t) /
+          riemannZeta ((1 + a / Real.log |t| : ℝ) + 2 * I * t)).re ≤
+            B * Real.log |t|) :
+    classical_zero_free_region := by
+  refine classical_zero_free_region_of_sigma_log_shift_estimates_five_fourths
+    B B T0 ?_ hT0 hzero htwo
+  nlinarith
+
 /-- ζ has a simple pole at `1`, expressed as meromorphic order `-1`. -/
 lemma meromorphicOrderAt_riemannZeta_one :
     meromorphicOrderAt riemannZeta (1 : ℂ) = (-1 : ℤ) := by
