@@ -1313,6 +1313,52 @@ lemma borelCaratheodory_sub_riemannZeta_verticalRegion
     (differentiableOn_riemannZeta_verticalRegion_of_pos_height hHpos)
     hζ ha hb hH hR hz
 
+/-- Conditional Borel-Carathéodory bound for the logarithmic derivative of ζ on
+a disk centered at `σ + I*t`.
+
+This wrapper deliberately keeps differentiability of `logDeriv riemannZeta` as
+an explicit hypothesis: proving that hypothesis is part of the remaining
+zeta-specific analytic input, while this lemma supplies the reusable local
+Borel-Carathéodory bookkeeping. -/
+lemma borelCaratheodory_logDeriv_riemannZeta_verticalRegion
+    {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M)
+    (hlogdiff :
+      DifferentiableOn ℂ (logDeriv riemannZeta) (verticalRegion a b H))
+    (hlog : Set.MapsTo (logDeriv riemannZeta)
+      (verticalRegion a b H) {w | w.re ≤ M})
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R) (hz : z ∈ Metric.ball ((σ : ℂ) + I * t) R) :
+    ‖logDeriv riemannZeta z‖ ≤
+      2 * M * ‖z - ((σ : ℂ) + I * t)‖ /
+          (R - ‖z - ((σ : ℂ) + I * t)‖) +
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ *
+          (R + ‖z - ((σ : ℂ) + I * t)‖) /
+          (R - ‖z - ((σ : ℂ) + I * t)‖) :=
+  borelCaratheodory_centered_verticalRegion hM
+    hlogdiff hlog ha hb hH hR hz
+
+/-- Conditional oscillation form of Borel-Carathéodory for the logarithmic
+derivative of ζ on a disk centered at `σ + I*t`. -/
+lemma borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion
+    {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M)
+    (hlogdiff :
+      DifferentiableOn ℂ (logDeriv riemannZeta) (verticalRegion a b H))
+    (hlog : Set.MapsTo
+      (fun w =>
+        logDeriv riemannZeta w -
+          logDeriv riemannZeta ((σ : ℂ) + I * t))
+      (verticalRegion a b H) {w | w.re ≤ M})
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R) (hz : z ∈ Metric.ball ((σ : ℂ) + I * t) R) :
+    ‖logDeriv riemannZeta z -
+        logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+      2 * M * ‖z - ((σ : ℂ) + I * t)‖ /
+        (R - ‖z - ((σ : ℂ) + I * t)‖) :=
+  borelCaratheodory_sub_centered_verticalRegion hM
+    hlogdiff hlog ha hb hH hR hz
+
 section JensenWrapper
 
 open MeromorphicAt MeromorphicOn Metric Real

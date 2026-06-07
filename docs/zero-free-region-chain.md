@@ -126,7 +126,11 @@ proved:
   the direct Borel entry points for later zeta/log-derivative growth estimates;
   `ZeroFreeRegion.borelCaratheodory_riemannZeta_verticalRegion` and
   `ZeroFreeRegion.borelCaratheodory_sub_riemannZeta_verticalRegion`
-  specialize this interface to ζ itself;
+  specialize this interface to ζ itself, while
+  `ZeroFreeRegion.borelCaratheodory_logDeriv_riemannZeta_verticalRegion` and
+  `ZeroFreeRegion.borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion`
+  provide the conditional `logDeriv ζ` versions with differentiability and
+  real-part bounds left as explicit analytic inputs;
   `ZeroFreeRegion.jensen_circleAverage_log_norm_verticalRegion` is the matching
   Jensen entry point for zero-count and divisor estimates.
 - The zeta-specific regularity layer now includes
