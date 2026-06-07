@@ -252,6 +252,11 @@ Core verified declarations:
 - `closedBall_sigma_it_subset_verticalRegion` and
   `ball_sigma_it_subset_verticalRegion`
   upgrade the same facts to set inclusions for entire local disks.
+- `verticalRegion`, `mem_verticalRegion`,
+  `mapsTo_add_closedBall_zero_sigma_it_verticalRegion`, and
+  `mapsTo_add_ball_zero_sigma_it_verticalRegion`
+  name the vertical target set and prove that zero-centered disks translate
+  into it under the same margin hypotheses.
 
 ### `PrimeNumberTheorem.lean`
 

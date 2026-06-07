@@ -886,6 +886,15 @@ lemma log_log_abs_pos_of_three_le {t : ℝ} (ht : 3 ≤ |t|) :
     0 < Real.log (Real.log |t|) :=
   Real.log_pos (log_abs_gt_one_of_three_le ht)
 
+/-- The vertical region used by local zero-free-region estimates: real part in
+`[a,b]` and imaginary height at least `H`. -/
+def verticalRegion (a b H : ℝ) : Set ℂ :=
+  {z : ℂ | z.re ∈ Set.Icc a b ∧ H ≤ |z.im|}
+
+lemma mem_verticalRegion {z : ℂ} {a b H : ℝ} :
+    z ∈ verticalRegion a b H ↔ z.re ∈ Set.Icc a b ∧ H ≤ |z.im| :=
+  Iff.rfl
+
 lemma re_im_decomp (s : ℂ) : ((s.re : ℂ) + I * s.im) = s := by
   apply Complex.ext <;> simp
 
@@ -1024,18 +1033,42 @@ lemma ball_sigma_it_mem_verticalRegion {z : ℂ} {σ t R a b H : ℝ}
 /-- Closed-disk inclusion into a vertical region around a `σ + I*t` center. -/
 lemma closedBall_sigma_it_subset_verticalRegion {σ t R a b H : ℝ}
     (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|) :
-    Metric.closedBall ((σ : ℂ) + I * t) R ⊆
-      {z : ℂ | z.re ∈ Set.Icc a b ∧ H ≤ |z.im|} := by
+    Metric.closedBall ((σ : ℂ) + I * t) R ⊆ verticalRegion a b H := by
   intro z hz
   exact closedBall_sigma_it_mem_verticalRegion hz ha hb hH
 
 /-- Open-disk inclusion into a vertical region around a `σ + I*t` center. -/
 lemma ball_sigma_it_subset_verticalRegion {σ t R a b H : ℝ}
     (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|) :
-    Metric.ball ((σ : ℂ) + I * t) R ⊆
-      {z : ℂ | z.re ∈ Set.Icc a b ∧ H ≤ |z.im|} := by
+    Metric.ball ((σ : ℂ) + I * t) R ⊆ verticalRegion a b H := by
   intro z hz
   exact ball_sigma_it_mem_verticalRegion hz ha hb hH
+
+/-- Translating a zero-centered closed disk by `σ + I*t` maps it into the
+vertical region whenever the translated disk has the required strip and height
+margins. -/
+lemma mapsTo_add_closedBall_zero_sigma_it_verticalRegion {σ t R a b H : ℝ}
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|) :
+    Set.MapsTo (fun w : ℂ => ((σ : ℂ) + I * t) + w)
+      (Metric.closedBall 0 R) (verticalRegion a b H) := by
+  intro w hw
+  have hz : ((σ : ℂ) + I * t) + w ∈
+      Metric.closedBall ((σ : ℂ) + I * t) R := by
+    simpa [Metric.mem_closedBall, dist_eq_norm] using hw
+  exact closedBall_sigma_it_subset_verticalRegion ha hb hH hz
+
+/-- Translating a zero-centered open disk by `σ + I*t` maps it into the
+vertical region whenever the translated disk has the required strip and height
+margins. -/
+lemma mapsTo_add_ball_zero_sigma_it_verticalRegion {σ t R a b H : ℝ}
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|) :
+    Set.MapsTo (fun w : ℂ => ((σ : ℂ) + I * t) + w)
+      (Metric.ball 0 R) (verticalRegion a b H) := by
+  intro w hw
+  have hz : ((σ : ℂ) + I * t) + w ∈
+      Metric.ball ((σ : ℂ) + I * t) R := by
+    simpa [Metric.mem_ball, dist_eq_norm] using hw
+  exact ball_sigma_it_subset_verticalRegion ha hb hH hz
 
 /-- Local namespace entry point for Mathlib's Borel-Carathéodory theorem in the
 vanishing-at-zero form. This is one of the complex-analytic tools used in

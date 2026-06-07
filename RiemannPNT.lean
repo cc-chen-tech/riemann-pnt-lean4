@@ -2770,6 +2770,15 @@ theorem log_log_abs_pos_of_three_le {t : ℝ} (ht : 3 ≤ |t|) :
     0 < Real.log (Real.log |t|) :=
   ZeroFreeRegion.log_log_abs_pos_of_three_le ht
 
+/-- Public vertical region used by local zero-free-region estimates. -/
+abbrev verticalRegion (a b H : ℝ) : Set ℂ :=
+  ZeroFreeRegion.verticalRegion a b H
+
+/-- Public membership characterization for `verticalRegion`. -/
+theorem mem_verticalRegion {z : ℂ} {a b H : ℝ} :
+    z ∈ verticalRegion a b H ↔ z.re ∈ Set.Icc a b ∧ H ≤ |z.im| :=
+  ZeroFreeRegion.mem_verticalRegion
+
 /-- Public real/imaginary coordinate decomposition for complex numbers. -/
 theorem re_im_decomp (s : ℂ) : ((s.re : ℂ) + Complex.I * s.im) = s :=
   ZeroFreeRegion.re_im_decomp s
@@ -2881,7 +2890,7 @@ center. -/
 theorem closedBall_sigma_it_subset_verticalRegion {σ t R a b H : ℝ}
     (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|) :
     Metric.closedBall ((σ : ℂ) + Complex.I * t) R ⊆
-      {z : ℂ | z.re ∈ Set.Icc a b ∧ H ≤ |z.im|} :=
+      verticalRegion a b H :=
   ZeroFreeRegion.closedBall_sigma_it_subset_verticalRegion ha hb hH
 
 /-- Public open-disk inclusion into a vertical region around a `σ + I*t`
@@ -2889,8 +2898,24 @@ center. -/
 theorem ball_sigma_it_subset_verticalRegion {σ t R a b H : ℝ}
     (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|) :
     Metric.ball ((σ : ℂ) + Complex.I * t) R ⊆
-      {z : ℂ | z.re ∈ Set.Icc a b ∧ H ≤ |z.im|} :=
+      verticalRegion a b H :=
   ZeroFreeRegion.ball_sigma_it_subset_verticalRegion ha hb hH
+
+/-- Public translated closed-disk map into a vertical region around a `σ + I*t`
+center. -/
+theorem mapsTo_add_closedBall_zero_sigma_it_verticalRegion {σ t R a b H : ℝ}
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|) :
+    Set.MapsTo (fun w : ℂ => ((σ : ℂ) + Complex.I * t) + w)
+      (Metric.closedBall 0 R) (verticalRegion a b H) :=
+  ZeroFreeRegion.mapsTo_add_closedBall_zero_sigma_it_verticalRegion ha hb hH
+
+/-- Public translated open-disk map into a vertical region around a `σ + I*t`
+center. -/
+theorem mapsTo_add_ball_zero_sigma_it_verticalRegion {σ t R a b H : ℝ}
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|) :
+    Set.MapsTo (fun w : ℂ => ((σ : ℂ) + Complex.I * t) + w)
+      (Metric.ball 0 R) (verticalRegion a b H) :=
+  ZeroFreeRegion.mapsTo_add_ball_zero_sigma_it_verticalRegion ha hb hH
 
 /-- Public Borel-Carathéodory theorem in the vanishing-at-zero form, routed
 through the zero-free-region namespace. -/

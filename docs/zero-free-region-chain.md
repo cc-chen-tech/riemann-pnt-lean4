@@ -110,7 +110,12 @@ proved:
   direct real-strip and vertical-region membership statements, and
   `ZeroFreeRegion.closedBall_sigma_it_subset_verticalRegion` /
   `ZeroFreeRegion.ball_sigma_it_subset_verticalRegion` lift them to inclusion
-  statements for whole local disks.
+  statements for whole local disks.  The `ZeroFreeRegion.verticalRegion`
+  abbreviation names this set, and
+  `ZeroFreeRegion.mapsTo_add_closedBall_zero_sigma_it_verticalRegion` /
+  `ZeroFreeRegion.mapsTo_add_ball_zero_sigma_it_verticalRegion` supply the
+  translated zero-centered disk shape used by the centered
+  Borel-Caratheodory wrappers.
 
 ## Mathlib API Check
 
