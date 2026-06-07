@@ -171,6 +171,8 @@ principal-part limit also gives
 `ZeroFreeRegion.eventually_norm_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one`,
 and
 `ZeroFreeRegion.eventually_abs_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one`.
+The corresponding one-sided real-part form is
+`ZeroFreeRegion.eventually_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one`.
 It is also packaged into the disk-shaped
 `ZeroFreeRegion.exists_punctured_ball_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one`.
 The same local estimate is also available on a smaller closed punctured ball as
@@ -190,11 +192,15 @@ and
 `ZeroFreeRegion.exists_punctured_closedBall_norm_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one`;
 the corresponding real-part analogue is
 `ZeroFreeRegion.exists_punctured_closedBall_abs_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one`.
+The one-sided real-part closed-ball form is
+`ZeroFreeRegion.exists_punctured_closedBall_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one`.
 For the real-axis term in the 3-4-1 contradiction, this has also been
 specialized to real parameters as
 `ZeroFreeRegion.exists_rightNeighborhood_abs_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_sub_one`,
 which yields `|Re(-zeta'/zeta)(sigma)| < C / (sigma - 1)` for
 `1 < sigma` sufficiently close to `1`.
+The direct one-sided real-axis form is
+`ZeroFreeRegion.exists_rightNeighborhood_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_sub_one`.
 The next work starts from these meromorphic/nonvanishing/principal-part facts
 and proves the vertical-height logarithmic-derivative estimates needed for the
 quantitative strip.

@@ -409,6 +409,17 @@ lemma eventually_abs_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_
       rw [logDeriv_apply, neg_div, norm_neg]
     _ < C / ‖s - 1‖ := hs
 
+/-- Flexible eventual one-sided real-part pole-order bound near `1` for
+`-ζ'/ζ`. -/
+lemma eventually_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one
+    (C : ℝ) (hC : 1 < C) :
+    ∀ᶠ s in 𝓝[≠] (1 : ℂ),
+      (-deriv riemannZeta s / riemannZeta s).re < C / ‖s - 1‖ := by
+  filter_upwards
+    [eventually_abs_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one C hC]
+    with s hs
+  exact lt_of_le_of_lt (le_abs_self _) hs
+
 /-- Punctured-ball form of the local pole-order norm bound for the zeta
 logarithmic derivative.
 
@@ -527,6 +538,18 @@ lemma exists_punctured_closedBall_abs_re_neg_deriv_riemannZeta_div_riemannZeta_l
     exact lt_of_le_of_lt hs_dist (half_lt_self hr_pos),
     Set.mem_compl_singleton_iff.mpr hs_ne⟩
 
+/-- Closed punctured-ball one-sided real-part pole-order bound for `-ζ'/ζ`,
+with any constant `C > 1`. -/
+lemma exists_punctured_closedBall_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one
+    (C : ℝ) (hC : 1 < C) :
+    ∃ r > 0, ∀ s : ℂ, s ≠ 1 → dist s 1 ≤ r →
+      (-deriv riemannZeta s / riemannZeta s).re < C / ‖s - 1‖ := by
+  rcases exists_punctured_closedBall_abs_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one
+      C hC with ⟨r, hr_pos, hbound⟩
+  refine ⟨r, hr_pos, ?_⟩
+  intro s hs_ne hs_dist
+  exact lt_of_le_of_lt (le_abs_self _) (hbound s hs_ne hs_dist)
+
 /-- Real-axis specialization of the local pole-order real-part bound for
 `-ζ'/ζ`.
 
@@ -557,6 +580,18 @@ lemma exists_rightNeighborhood_abs_re_neg_deriv_riemannZeta_div_riemannZeta_lt_c
       simpa using (RCLike.norm_ofReal (K := ℂ) (σ - 1))
     rw [hnorm_eq_abs, abs_of_nonneg (sub_nonneg.mpr hσ_gt.le)]
   simpa [hnorm_eq] using hbound (σ : ℂ) hs_ne hdist
+
+/-- Real-axis one-sided specialization of the local pole-order real-part bound
+for `-ζ'/ζ`. -/
+lemma exists_rightNeighborhood_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_sub_one
+    (C : ℝ) (hC : 1 < C) :
+    ∃ d : ℝ, 0 < d ∧ ∀ σ : ℝ, 1 < σ → σ ≤ 1 + d →
+      (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re < C / (σ - 1) := by
+  rcases exists_rightNeighborhood_abs_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_sub_one
+      C hC with ⟨d, hd_pos, hbound⟩
+  refine ⟨d, hd_pos, ?_⟩
+  intro σ hσ_gt hσ_le
+  exact lt_of_le_of_lt (le_abs_self _) (hbound σ hσ_gt hσ_le)
 
 /-- ζ has a simple pole at `1`, expressed as meromorphic order `-1`. -/
 lemma meromorphicOrderAt_riemannZeta_one :

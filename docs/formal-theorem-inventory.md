@@ -116,6 +116,9 @@ Core verified declarations:
 - `eventually_abs_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one`
   gives the corresponding eventual real-part bound with any constant
   `C > 1`.
+- `eventually_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one`
+  gives the one-sided eventual real-part upper bound with any constant
+  `C > 1`.
 - `exists_punctured_ball_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one`
   packages that local pole-order bound as an explicit punctured-ball
   neighborhood around `1`.
@@ -140,9 +143,15 @@ Core verified declarations:
 - `exists_punctured_closedBall_abs_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one`
   gives the corresponding closed punctured-ball real-part bound with any
   constant `C > 1`.
+- `exists_punctured_closedBall_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one`
+  gives the one-sided closed punctured-ball real-part upper bound with any
+  constant `C > 1`.
 - `exists_rightNeighborhood_abs_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_sub_one`
   specializes the local real-part bound to real-axis parameters
   `1 < sigma <= 1 + d`, replacing `norm ((sigma : C) - 1)` by `sigma - 1`.
+- `exists_rightNeighborhood_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_sub_one`
+  gives the corresponding real-axis one-sided upper bound without the absolute
+  value.
 - `meromorphicAt_logDeriv_riemannZeta_one`
   proves the logarithmic derivative is meromorphic at the pole.
 - `meromorphicOn_logDeriv_riemannZeta_closedBall`
