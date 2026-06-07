@@ -11,6 +11,7 @@ lean_lib RiemannPNT where
     `RiemannExplorer,
     `GammaResidue,
     `HardyTheorem,
+    `HardyTheorem.AFE,
     `EulerAndLfunctions,
     `PrimeNumberTheorem,
     `ZeroFreeRegion
