@@ -2217,6 +2217,17 @@ theorem divisor_riemannZeta_pole_one {U : Set ℂ}
     MeromorphicOn.divisor riemannZeta U (1 : ℂ) = (-1 : ℤ) :=
   ZeroFreeRegion.divisor_riemannZeta_pole_one hU hζ
 
+/-- Public local nonvanishing of the zeta pole unit at `1`. -/
+theorem eventually_ne_zero_riemannZetaPoleUnitAtOne :
+    ∀ᶠ s in 𝓝 (1 : ℂ), ZeroFreeRegion.riemannZetaPoleUnitAtOne s ≠ 0 :=
+  ZeroFreeRegion.eventually_ne_zero_riemannZetaPoleUnitAtOne
+
+/-- Public local nonvanishing of ζ in a punctured neighborhood of its pole
+`1`. -/
+theorem eventually_ne_zero_riemannZeta_nhdsNE_one :
+    ∀ᶠ s in 𝓝[≠] (1 : ℂ), riemannZeta s ≠ 0 :=
+  ZeroFreeRegion.eventually_ne_zero_riemannZeta_nhdsNE_one
+
 /-- Public meromorphicity of the zeta logarithmic derivative at `1`. -/
 theorem meromorphicAt_logDeriv_riemannZeta_one :
     MeromorphicAt (logDeriv riemannZeta) (1 : ℂ) :=

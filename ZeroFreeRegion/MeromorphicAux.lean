@@ -80,6 +80,12 @@ lemma riemannZetaPoleUnitAtOne_one :
     riemannZetaPoleUnitAtOne 1 = 1 := by
   simp [riemannZetaPoleUnitAtOne]
 
+/-- The pole unit is nonzero near `1`. -/
+lemma eventually_ne_zero_riemannZetaPoleUnitAtOne :
+    ∀ᶠ s in 𝓝 (1 : ℂ), riemannZetaPoleUnitAtOne s ≠ 0 :=
+  analyticAt_riemannZetaPoleUnitAtOne.continuousAt.eventually_ne
+    (by rw [riemannZetaPoleUnitAtOne_one]; exact one_ne_zero)
+
 /-- Local decomposition of ζ at `1` as a regular analytic part plus a simple
 pole term. -/
 lemma eventuallyEq_riemannZeta_regular_add_poleAtOne :
@@ -131,6 +137,17 @@ lemma eventuallyEq_riemannZeta_simplePoleAtOne :
   have hsub : s - 1 ≠ 0 := sub_ne_zero.mpr hs1'
   simp only [riemannZetaPoleUnitAtOne, smul_eq_mul, zpow_neg, zpow_one]
   rw [mul_add, ← mul_assoc, inv_mul_cancel₀ hsub, one_mul]
+
+/-- ζ is nonzero in a punctured neighborhood of its pole `1`. -/
+lemma eventually_ne_zero_riemannZeta_nhdsNE_one :
+    ∀ᶠ s in 𝓝[≠] (1 : ℂ), riemannZeta s ≠ 0 := by
+  filter_upwards [eventuallyEq_riemannZeta_simplePoleAtOne,
+    self_mem_nhdsWithin,
+    eventually_ne_zero_riemannZetaPoleUnitAtOne.filter_mono nhdsWithin_le_nhds]
+    with s hζ hs1 hunit
+  rw [← hζ]
+  have hs1' : s ≠ 1 := Set.mem_compl_singleton_iff.mp hs1
+  exact smul_ne_zero (zpow_ne_zero _ (sub_ne_zero.mpr hs1')) hunit
 
 /-- ζ has a simple pole at `1`, expressed as meromorphic order `-1`. -/
 lemma meromorphicOrderAt_riemannZeta_one :
