@@ -386,6 +386,14 @@ with existential wrapper
 `ZeroFreeRegion.classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_bound_and_two_t_bound`:
 prove the same norm regular-part estimate in `-logDeriv zeta` notation and the
 matching `sigma+2it` logarithmic bound for one nonnegative coefficient `B`.
+The two-coefficient wrappers
+`ZeroFreeRegion.classical_zero_free_region_of_neg_logDeriv_regular_part_norm_bounds`
+and
+`ZeroFreeRegion.classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_bounds`
+remove even that bookkeeping requirement: the regular-part norm estimate and
+the `sigma+2it` estimate may be proved with separate nonnegative coefficients,
+which the Lean proof merges using `max` and positivity of `log |t|` at height
+at least `2`.
 This is still conditional; it does not prove the quantitative zero-free region
 until those two zeta-specific estimates are proved.
 The next work starts from these meromorphic/nonvanishing/principal-part facts

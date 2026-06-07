@@ -1323,6 +1323,57 @@ lemma classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_bound_
   exact classical_zero_free_region_of_neg_logDeriv_regular_part_norm_bound_and_two_t_bound
     B hB hregular htwo
 
+/-- Two-coefficient version of the `-logDeriv ζ` norm-bound regular-part
+closure.
+
+The remaining analytic estimates may naturally come with different
+nonnegative logarithmic coefficients.  This lemma verifies that the zero-free
+region chain only needs their maximum. -/
+lemma classical_zero_free_region_of_neg_logDeriv_regular_part_norm_bounds
+    (Bregular Btwo : ℝ) (hBregular : 0 ≤ Bregular) (_hBtwo : 0 ≤ Btwo)
+    (hregular :
+      ∀ s ρ : ℂ, 2 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+        riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+        0 < s.re - ρ.re →
+        ‖-logDeriv riemannZeta s + (s - ρ)⁻¹‖ ≤
+          Bregular * Real.log |s.im|)
+    (htwo :
+      ∀ σ t : ℝ, 2 ≤ |t| → 1 < σ → σ ≤ 2 →
+        (-logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤
+          Btwo * Real.log |t|) :
+    classical_zero_free_region := by
+  refine classical_zero_free_region_of_neg_logDeriv_regular_part_norm_bound_and_two_t_bound
+    (max Bregular Btwo) (le_max_of_le_left hBregular) ?_ ?_
+  · intro s ρ hs_height hs_re_mem hζρ hρ_im_eq hρ_re_lt hsub
+    have hlog_nonneg : 0 ≤ Real.log |s.im| :=
+      (log_abs_pos_of_two_le hs_height).le
+    exact le_trans
+      (hregular s ρ hs_height hs_re_mem hζρ hρ_im_eq hρ_re_lt hsub)
+      (mul_le_mul_of_nonneg_right (le_max_left Bregular Btwo) hlog_nonneg)
+  · intro σ t ht hσ_gt hσ_le
+    have hlog_nonneg : 0 ≤ Real.log |t| :=
+      (log_abs_pos_of_two_le ht).le
+    exact le_trans (htwo σ t ht hσ_gt hσ_le)
+      (mul_le_mul_of_nonneg_right (le_max_right Bregular Btwo) hlog_nonneg)
+
+/-- Existential two-coefficient version of the `-logDeriv ζ` norm-bound
+regular-part closure. -/
+lemma classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_bounds
+    (h :
+      ∃ Bregular Btwo : ℝ, 0 ≤ Bregular ∧ 0 ≤ Btwo ∧
+        (∀ s ρ : ℂ, 2 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+          riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+          0 < s.re - ρ.re →
+          ‖-logDeriv riemannZeta s + (s - ρ)⁻¹‖ ≤
+            Bregular * Real.log |s.im|) ∧
+        (∀ σ t : ℝ, 2 ≤ |t| → 1 < σ → σ ≤ 2 →
+          (-logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤
+            Btwo * Real.log |t|)) :
+    classical_zero_free_region := by
+  rcases h with ⟨Bregular, Btwo, hBregular, hBtwo, hregular, htwo⟩
+  exact classical_zero_free_region_of_neg_logDeriv_regular_part_norm_bounds
+    Bregular Btwo hBregular hBtwo hregular htwo
+
 /-- ζ has a simple pole at `1`, expressed as meromorphic order `-1`. -/
 lemma meromorphicOrderAt_riemannZeta_one :
     meromorphicOrderAt riemannZeta (1 : ℂ) = (-1 : ℤ) := by

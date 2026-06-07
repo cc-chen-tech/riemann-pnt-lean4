@@ -250,6 +250,11 @@ Core verified declarations:
 - `classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_bound_and_two_t_bound`
   packages the `-logDeriv zeta` norm-bound input under one nonnegative
   logarithmic coefficient.
+- `classical_zero_free_region_of_neg_logDeriv_regular_part_norm_bounds`
+  allows separate nonnegative logarithmic coefficients for the regular-part
+  norm estimate and the `sigma+2it` estimate, merging them by `max`.
+- `classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_bounds`
+  packages the same two-coefficient analytic input existentially.
 - `meromorphicAt_logDeriv_riemannZeta_one`
   proves the logarithmic derivative is meromorphic at the pole.
 - `meromorphicOn_logDeriv_riemannZeta_closedBall`
