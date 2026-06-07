@@ -226,6 +226,9 @@ Core verified declarations:
 - `borelCaratheodory_centered`
   translates Mathlib's general Borel-Caratheodory theorem to disks centered at
   arbitrary `c`.
+- `borelCaratheodory_sub_centered`
+  bounds `||f z - f c||` from a real-part bound on the centered function
+  `f - f(c)`.
 
 ### `PrimeNumberTheorem.lean`
 

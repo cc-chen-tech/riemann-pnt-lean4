@@ -977,6 +977,25 @@ lemma borelCaratheodory_centered
     (f := g) hM hgdiff hgmaps hR hz0
   simpa [g, add_sub_cancel_right] using h
 
+/-- Centered Borel-Carathéodory oscillation estimate.
+
+This form bounds the change `f z - f c` directly from a real-part bound on the
+same centered function.  It is the most convenient form for later regular-part
+estimates where the value at the center is subtracted before applying
+Borel-Carathéodory. -/
+lemma borelCaratheodory_sub_centered
+    {f : ℂ → ℂ} {M R : ℝ} {c z : ℂ}
+    (hM : 0 < M) (hf : DifferentiableOn ℂ f (Metric.ball c R))
+    (hf₁ : Set.MapsTo (fun w => f w - f c) (Metric.ball c R)
+      {w | w.re ≤ M})
+    (hR : 0 < R) (hz : z ∈ Metric.ball c R) :
+    ‖f z - f c‖ ≤ 2 * M * ‖z - c‖ / (R - ‖z - c‖) := by
+  have hgdiff : DifferentiableOn ℂ (fun w => f w - f c) (Metric.ball c R) := by
+    intro w hw
+    exact (hf w hw).sub (differentiableWithinAt_const (f c))
+  have hgzero : (fun w => f w - f c) c = 0 := by simp
+  exact borelCaratheodory_zero_centered hM hgdiff hf₁ hR hz hgzero
+
 section JensenWrapper
 
 open MeromorphicAt MeromorphicOn Metric Real

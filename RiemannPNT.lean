@@ -2818,6 +2818,16 @@ theorem borelCaratheodory_centered
         ‖f c‖ * (R + ‖z - c‖) / (R - ‖z - c‖) :=
   ZeroFreeRegion.borelCaratheodory_centered hM hf hf₁ hR hz
 
+/-- Public centered Borel-Carathéodory oscillation estimate. -/
+theorem borelCaratheodory_sub_centered
+    {f : ℂ → ℂ} {M R : ℝ} {c z : ℂ}
+    (hM : 0 < M) (hf : DifferentiableOn ℂ f (Metric.ball c R))
+    (hf₁ : Set.MapsTo (fun w => f w - f c) (Metric.ball c R)
+      {w | w.re ≤ M})
+    (hR : 0 < R) (hz : z ∈ Metric.ball c R) :
+    ‖f z - f c‖ ≤ 2 * M * ‖z - c‖ / (R - ‖z - c‖) :=
+  ZeroFreeRegion.borelCaratheodory_sub_centered hM hf hf₁ hR hz
+
 section JensenWrapper
 
 open MeromorphicAt MeromorphicOn Metric Real
