@@ -6,12 +6,13 @@ intended for reviewers and for future work planning.
 Current verified baseline:
 
 ```bash
-lake build
-rg -n "sorry|admit|axiom" *.lean
+./scripts/verify-baseline.sh
+python3 -m pytest
 ```
 
-At the time of writing, `lake build` succeeds and the placeholder search has no
-Lean-source matches.
+At the time of writing, `lake build` succeeds, the recursive placeholder scan
+has no project Lean-source matches, the target inventory is stable at 22
+declarations, and the Python experiment tests pass.
 
 ## Proved Project-Local Results
 
@@ -211,9 +212,9 @@ metadata, not proof results.
 The following declarations are intentionally `def ... : Prop` targets.  They
 are not exported as theorems and should not be cited as proved.
 
-As of `2026-06-03`, there are **23** target declarations:
+As of `2026-06-07`, there are **22** target declarations:
 
-- `HardyTheorem` namespace: **11**
+- `HardyTheorem` namespace: **10**
 - `PrimeNumberTheorem` namespace: **9**
 - `ZeroFreeRegion` namespace: **2**
 - `RiemannExplorer` namespace: **1**
@@ -243,7 +244,6 @@ As of `2026-06-03`, there are **23** target declarations:
 
 - `integral_asymptotic_target`
 - `hardy_two_signed_moments_target`
-- `weightedIntegralOf_tail_dominates`
 - `hardy_theorem_target`
 - `hardy_zeros_unbounded_target`
 - `hardy_zeros_abs_unbounded_target`

@@ -18,8 +18,9 @@
 \theoremstyle{remark}
 \newtheorem{remark}[theorem]{Remark}
 
-\title{\bfseries Lean 4 Infrastructure Toward the Analytic Prime Number Theorem\\
-{\large Zeta-Function Formalization, Zero-Free-Region Targets, and Gap Analysis}}
+\title{\bfseries Formalizing the 3-4-1 Inequality and a Compact Zero-Free Strip\\
+for the Riemann Zeta Function in Lean~4\\
+{\large Explicit-Formula Targets and Prime Number Theorem Infrastructure}}
 
 \author{Edward Deepseek\\
   \texttt{Maxminicherry@gmail.com}
@@ -32,23 +33,25 @@
 \maketitle
 
 \begin{abstract}
-We report on a buildable Lean~4 project developing infrastructure toward
-formalizing de~la~Vall\'ee~Poussin's analytic proof of the Prime Number
-Theorem (PNT).  The repository works directly with Mathlib's
-\texttt{riemannZeta} API and contains formal statements and supporting lemmas
-for the 3-4-1 trigonometric method, a compact zero-free region, quantitative
-zero-free-region targets, pole-behavior facts, Hardy's theorem targets, and
-PNT-equivalence statements.
+We report on a buildable Lean~4 project whose main verified contribution is
+the formalization of de~la~Vall\'ee~Poussin's 3-4-1 logarithmic-derivative
+machinery for the Riemann zeta function, together with a compact zero-free
+strip at bounded height.  The development works directly with Mathlib's
+\texttt{riemannZeta} API and proves the real-part Dirichlet-series expansion
+for \(-\zeta'/\zeta\), the full 3-4-1 nonnegativity combination, residue-scale
+bounds near \(s=1\), and a nonconstructive positive-width zero-free strip for
+each fixed height bound.
 
 The present development should be read as a verified framework with explicit
 unproved target statements, not as a completed PNT formalization.  With
 Lean~4.29.1 and Mathlib~4.29.1 the project builds successfully and contains no
-syntactic \texttt{sorry} occurrences.  The remaining targets include Hardy's
-integral asymptotics, the quantitative zero-free regions, the von Mangoldt
-explicit formula, and standard RH/PNT error-term equivalences.
-We give a precise
-inventory of what is verified, what remains conjectural within the code, and
-which Mathlib components would be needed to close the gaps.
+syntactic \texttt{sorry} occurrences.  Secondary infrastructure includes
+corrected target statements for the Riemann--von Mangoldt explicit formula
+using midpoint Chebyshev functions and finite-height truncations, proved
+PNT-form equivalence wrappers, RH-scale error-propagation interfaces, and a
+Hardy \(Z\)-function framework.  We give a precise inventory of what is
+verified, what remains conjectural within the code, and which Mathlib
+components would be needed to close the remaining analytic chains.
 \end{abstract}
 
 %=====================================================================
@@ -76,18 +79,24 @@ Notably absent, however, has been a complete formalization of the
 \emph{original} analytic proof via the 3-4-1 inequality.  This project is an
 intermediate step toward such a formalization in Lean~4, built on Mathlib.
 
-Our contributions are:
+Our contributions are deliberately stratified:
 
 \begin{enumerate}[noitemsep]
-  \item A Lean~4 development of the trigonometric identity underlying
-    de~la~Vall\'ee~Poussin's 3-4-1 method, together with a verified
-    logarithmic-derivative series combination.
-  \item A verified compact zero-free region for bounded height, plus target
-    statements for quantitative zero-free regions of $\zeta(s)$ near
-    $\Re(s)=1$.
-  \item Supporting facts around zeta non-vanishing, pole-behavior wrappers,
-    Euler products, zeta values, Hardy's theorem, and PNT-equivalence
-    statements.
+  \item \textbf{Primary verified module:} the real-part logarithmic-derivative
+    Dirichlet series, the de~la~Vall\'ee~Poussin 3-4-1 inequality, and the
+    compact zero-free strip.  This is the core paper contribution.
+  \item \textbf{Explicit-formula target correction:} a Lean-facing
+    Riemann--von Mangoldt target using the midpoint Chebyshev function
+    \(\psi_0\), finite-height zero sums, and explicit truncation/error
+    conventions rather than an unordered infinite zero sum.
+  \item \textbf{PNT infrastructure:} proved equivalence wrappers for the
+    standard PNT forms and RH-scale error-propagation interfaces that will
+    compose with a future proof of \(\psi(x)\sim x\) or a future explicit
+    formula theorem.
+  \item \textbf{Hardy framework:} a Hardy \(Z\)-function and critical-line-zero
+    framework, with target statements for Hardy, Hardy--Littlewood, Selberg,
+    and Conrey-style zero-counting results.  These are treated as future work
+    rather than as the main theorem of the paper.
   \item A reproducible Lean~4.29.1 build and an explicit gap table listing the
     remaining unproved target statements.
 \end{enumerate}

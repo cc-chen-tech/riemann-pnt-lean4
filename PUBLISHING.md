@@ -7,8 +7,9 @@ completed proof of the Prime Number Theorem or the Riemann Hypothesis.
 
 - Lean toolchain: `leanprover/lean4:v4.29.1`
 - Build command: `lake build`
-- Last verified local result: `Build completed successfully (8255 jobs).`
+- Last verified local result: `Build completed successfully (8262 jobs).`
 - Current code-level `sorry` count: 0
+- Remaining `def ... : Prop` targets: 22
 
 ## Required Gates Before Public Mathematical Claims
 
@@ -18,14 +19,14 @@ strong mathematical claim about the repository.
 ```bash
 ./scripts/verify-baseline.sh
 
-lake build
+python3 -m pytest
 python3 scripts/list-prop-targets.py
-rg -n '\\b(sorry|admit|axiom)\\b' *.lean
 ```
 
-The commands should return a stable 22-item target inventory and no placeholders
-(`sorry`/`admit`/`axiom`) in Lean sources. This does not mean the PNT or RH has
-been proved: several deep results are recorded only as `def ... : Prop` targets.
+The baseline script runs `lake build`, recursively scans project Lean sources
+for real placeholder proof forms, checks the 22-item target inventory, and
+validates the four chain-gap buckets. This does not mean the PNT or RH has been
+proved: several deep results are recorded only as `def ... : Prop` targets.
 
 ## Unproved Target Statements
 
