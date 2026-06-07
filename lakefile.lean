@@ -13,7 +13,8 @@ lean_lib RiemannPNT where
     `HardyTheorem,
     `EulerAndLfunctions,
     `PrimeNumberTheorem,
-    `ZeroFreeRegion
+    `ZeroFreeRegion,
+    `MathlibAux.RectangleResidue
   ]
 
 require mathlib from "./vendor/mathlib"
