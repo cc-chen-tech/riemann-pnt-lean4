@@ -788,6 +788,89 @@ lemma three_four_one_sigmaOf_log_margin
     exact hconst_neg
   exact lt_of_le_of_lt hupper hright
 
+/-- Pure real-variable choice of the small constants in the standard
+`σ = 1 + a / log |t|` setup.
+
+For any real-axis coefficient `C < 4/3` and any nonnegative shifted-remainder
+constant `K`, one can choose positive `a` and `c`, with `a` small enough to
+fit the local pole-neighborhood constraints, so that the 3-4-1 margin
+inequality `3*C/a + K < 4/(a+c)` holds. -/
+lemma exists_sigmaOf_log_margin_constants
+    {C K d : ℝ} (hC_pos : 1 < C) (hC_lt : C < 4 / 3)
+    (hK : 0 ≤ K) (hd : 0 < d) :
+    ∃ a c : ℝ, 0 < a ∧ 0 < c ∧
+      a ≤ Real.log 2 ∧ a ≤ d * Real.log 2 ∧
+      3 * C / a + K < 4 / (a + c) := by
+  let delta : ℝ := 4 - 3 * C
+  have hdelta_pos : 0 < delta := by
+    dsimp [delta]
+    nlinarith
+  have hlog2_pos : 0 < Real.log (2 : ℝ) := Real.log_pos (by norm_num)
+  have hdlog_pos : 0 < d * Real.log (2 : ℝ) :=
+    mul_pos hd hlog2_pos
+  have hK1_pos : 0 < K + 1 := by linarith
+  let A : ℝ := delta / (4 * (K + 1))
+  have hA_pos : 0 < A := by
+    dsimp [A]
+    exact div_pos hdelta_pos (mul_pos (by norm_num) hK1_pos)
+  let a : ℝ := min (Real.log (2 : ℝ)) (min (d * Real.log (2 : ℝ)) A)
+  have ha_pos : 0 < a := by
+    dsimp [a]
+    exact lt_min hlog2_pos (lt_min hdlog_pos hA_pos)
+  have ha_le_log2 : a ≤ Real.log (2 : ℝ) := by
+    dsimp [a]
+    exact min_le_left _ _
+  have ha_le_dlog : a ≤ d * Real.log (2 : ℝ) := by
+    dsimp [a]
+    exact le_trans (min_le_right _ _) (min_le_left _ _)
+  have ha_le_A : a ≤ A := by
+    dsimp [a]
+    exact le_trans (min_le_right _ _) (min_le_right _ _)
+  let c : ℝ := a * delta / 8
+  have hc_pos : 0 < c := by
+    dsimp [c]
+    exact div_pos (mul_pos ha_pos hdelta_pos) (by norm_num)
+  have hKa_le : K * a ≤ delta / 4 := by
+    have hKa_le_A : K * a ≤ K * A :=
+      mul_le_mul_of_nonneg_left ha_le_A hK
+    have hKA_le : K * A ≤ delta / 4 := by
+      have hK_le_K1 : K ≤ K + 1 := by linarith
+      have hfrac_le : K / (K + 1) ≤ 1 :=
+        (div_le_one hK1_pos).mpr hK_le_K1
+      calc
+        K * A = delta / 4 * (K / (K + 1)) := by
+          dsimp [A]
+          field_simp [hK1_pos.ne']
+        _ ≤ delta / 4 * 1 :=
+            mul_le_mul_of_nonneg_left hfrac_le (by positivity)
+        _ = delta / 4 := by ring
+    exact le_trans hKa_le_A hKA_le
+  have hleft_bound : 3 * C + K * a ≤ 4 - 3 * delta / 4 := by
+    dsimp [delta] at hdelta_pos ⊢
+    nlinarith [hKa_le]
+  have hfac_pos : 0 < 1 + delta / 8 := by positivity
+  have hright_lower : 4 - delta / 2 ≤ 4 / (1 + delta / 8) := by
+    rw [le_div_iff₀ hfac_pos]
+    nlinarith [sq_nonneg delta]
+  have hright_eq : 4 * a / (a + c) = 4 / (1 + delta / 8) := by
+    dsimp [c]
+    field_simp [ha_pos.ne', hfac_pos.ne']
+  have hmain_num : 3 * C + K * a < 4 * a / (a + c) := by
+    rw [hright_eq]
+    have hstrict : 4 - 3 * delta / 4 < 4 - delta / 2 := by
+      nlinarith [hdelta_pos]
+    exact lt_of_le_of_lt hleft_bound (lt_of_lt_of_le hstrict hright_lower)
+  have htarget : 3 * C / a + K < 4 / (a + c) := by
+    have hmul :
+        a * (3 * C / a + K) < a * (4 / (a + c)) := by
+      calc
+        a * (3 * C / a + K) = 3 * C + K * a := by
+          field_simp [ha_pos.ne']
+        _ < 4 * a / (a + c) := hmain_num
+        _ = a * (4 / (a + c)) := by ring
+    exact lt_of_mul_lt_mul_left hmul ha_pos.le
+  exact ⟨a, c, ha_pos, hc_pos, ha_le_log2, ha_le_dlog, htarget⟩
+
 /-- Above height `3`, `log |t|` is already larger than `1`. -/
 lemma log_abs_gt_one_of_three_le {t : ℝ} (ht : 3 ≤ |t|) :
     1 < Real.log |t| := by

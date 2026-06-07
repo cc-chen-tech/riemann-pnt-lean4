@@ -60,6 +60,9 @@ Supporting declarations include:
 - `three_four_one_sigmaOf_log_margin`
   proves the pure real-variable negativity margin for the standard choice
   `σ = 1 + a / log |t|`.
+- `exists_sigmaOf_log_margin_constants`
+  chooses positive constants `a,c` satisfying the standard smallness
+  constraints and `3*C/a + K < 4/(a+c)` when `1 < C < 4/3`.
 
 Private technical lemma:
 

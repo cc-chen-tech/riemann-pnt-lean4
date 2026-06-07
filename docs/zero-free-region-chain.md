@@ -253,6 +253,11 @@ The pure real-variable part of that final margin is now isolated as
 have constants satisfying `3*Creal/a + 4*Czero + Ctwo < 4/(a+c)`, the 3-4-1
 upper bound is strictly negative for every zero candidate
 `beta >= 1 - c / log |t|`.
+The small-constant choice itself is also proved as
+`ZeroFreeRegion.exists_sigmaOf_log_margin_constants`: if the real-axis
+coefficient satisfies `1 < C < 4/3` and the combined shifted-remainder constant
+`K` is nonnegative, it produces positive `a,c` satisfying both smallness
+constraints and the strict margin inequality.
 The wrapper
 `ZeroFreeRegion.exists_sigmaOf_log_classical_zero_free_region_of_shift_bounds`
 combines this algebra with the closure theorem, leaving exactly the two
