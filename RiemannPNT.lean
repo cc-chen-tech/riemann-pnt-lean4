@@ -3263,6 +3263,21 @@ theorem sigmaOf_log_le_one_add {T0 a d t : ℝ} (hT0 : 2 ≤ T0)
     1 + a / Real.log |t| ≤ 1 + d :=
   ZeroFreeRegion.sigmaOf_log_le_one_add hT0 ha_le hd ht
 
+/-- Public real-variable negativity margin for the standard high-height choice
+`σ = 1 + a / log |t|`. -/
+theorem three_four_one_sigmaOf_log_margin
+    {T0 a c Creal Czero Ctwo β t : ℝ}
+    (hT0 : 2 ≤ T0) (ha : 0 < a) (hc : 0 < c)
+    (ht : T0 ≤ |t|) (hβ_lt : β < 1)
+    (hβ : β ≥ 1 - c / Real.log |t|)
+    (hconst : 3 * Creal / a + 4 * Czero + Ctwo < 4 / (a + c)) :
+    3 * (Creal * Real.log |t| / a)
+      + 4 * (-1 / ((1 + a / Real.log |t|) - β) +
+          Czero * Real.log |t|)
+      + Ctwo * Real.log |t| < 0 :=
+  ZeroFreeRegion.three_four_one_sigmaOf_log_margin
+    hT0 ha hc ht hβ_lt hβ hconst
+
 /-- Public positivity of the Vinogradov-Korobov width above height `3`. -/
 theorem vinogradov_korobov_width_pos_of_three_le {c t : ℝ}
     (hc : 0 < c) (ht : 3 ≤ |t|) :

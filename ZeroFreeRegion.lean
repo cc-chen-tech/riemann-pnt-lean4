@@ -713,6 +713,81 @@ lemma sigmaOf_log_le_one_add {T0 a d t : ℝ} (hT0 : 2 ≤ T0)
     exact (div_le_iff₀ hlog_pos).mpr ha_le_dlog
   linarith
 
+/-- Pure real-variable negativity margin for the standard high-height choice
+`σ = 1 + a / log |t|`.
+
+If the zero term is bounded by `-1 / (σ - β) + Czero log |t|`, the real-axis
+term by `Creal log |t| / a`, and the `σ + 2it` term by `Ctwo log |t|`, then
+the 3-4-1 upper bound is strictly negative whenever
+`3*Creal/a + 4*Czero + Ctwo < 4/(a+c)` and
+`β ≥ 1 - c / log |t|`. -/
+lemma three_four_one_sigmaOf_log_margin
+    {T0 a c Creal Czero Ctwo β t : ℝ}
+    (hT0 : 2 ≤ T0) (ha : 0 < a) (hc : 0 < c)
+    (ht : T0 ≤ |t|) (hβ_lt : β < 1)
+    (hβ : β ≥ 1 - c / Real.log |t|)
+    (hconst : 3 * Creal / a + 4 * Czero + Ctwo < 4 / (a + c)) :
+    3 * (Creal * Real.log |t| / a)
+      + 4 * (-1 / ((1 + a / Real.log |t|) - β) +
+          Czero * Real.log |t|)
+      + Ctwo * Real.log |t| < 0 := by
+  have hlog_pos : 0 < Real.log |t| :=
+    log_abs_pos_of_two_le (hT0.trans ht)
+  have hden_pos : 0 < (1 + a / Real.log |t|) - β :=
+    sigmaOf_log_sub_pos hT0 ha ht hβ_lt
+  have hac_pos : 0 < a + c := add_pos ha hc
+  have hβ_mul : Real.log |t| - c ≤ β * Real.log |t| := by
+    have hmul := mul_le_mul_of_nonneg_right hβ hlog_pos.le
+    field_simp [hlog_pos.ne'] at hmul
+    simpa [mul_comm] using hmul
+  have hden_le : (1 + a / Real.log |t|) - β ≤ (a + c) / Real.log |t| := by
+    field_simp [hlog_pos.ne']
+    nlinarith [hβ_mul]
+  have hinv :
+      -1 / ((1 + a / Real.log |t|) - β) ≤
+        -Real.log |t| / (a + c) := by
+    have hrec :
+        1 / ((a + c) / Real.log |t|) ≤
+          1 / ((1 + a / Real.log |t|) - β) :=
+      one_div_le_one_div_of_le hden_pos hden_le
+    have heq :
+        1 / ((a + c) / Real.log |t|) = Real.log |t| / (a + c) := by
+      field_simp [hlog_pos.ne', hac_pos.ne']
+    rw [heq] at hrec
+    have hneg := neg_le_neg hrec
+    simpa [neg_div] using hneg
+  have hupper :
+      3 * (Creal * Real.log |t| / a)
+        + 4 * (-1 / ((1 + a / Real.log |t|) - β) +
+            Czero * Real.log |t|)
+        + Ctwo * Real.log |t| ≤
+      3 * (Creal * Real.log |t| / a)
+        + 4 * (-Real.log |t| / (a + c) +
+            Czero * Real.log |t|)
+        + Ctwo * Real.log |t| := by
+    nlinarith
+  have hconst_neg :
+      (3 * Creal / a + 4 * Czero + Ctwo - 4 / (a + c)) *
+        Real.log |t| < 0 := by
+    exact mul_neg_of_neg_of_pos (sub_neg.mpr hconst) hlog_pos
+  have hright :
+      3 * (Creal * Real.log |t| / a)
+        + 4 * (-Real.log |t| / (a + c) +
+            Czero * Real.log |t|)
+        + Ctwo * Real.log |t| < 0 := by
+    have heq :
+        3 * (Creal * Real.log |t| / a)
+          + 4 * (-Real.log |t| / (a + c) +
+              Czero * Real.log |t|)
+          + Ctwo * Real.log |t| =
+        (3 * Creal / a + 4 * Czero + Ctwo - 4 / (a + c)) *
+          Real.log |t| := by
+      field_simp [ha.ne', hac_pos.ne']
+      ring
+    rw [heq]
+    exact hconst_neg
+  exact lt_of_le_of_lt hupper hright
+
 /-- Above height `3`, `log |t|` is already larger than `1`. -/
 lemma log_abs_gt_one_of_three_le {t : ℝ} (ht : 3 ≤ |t|) :
     1 < Real.log |t| := by

@@ -248,6 +248,11 @@ then packages this standard `sigmaOf` choice into the full verified
 3-4-1 high-height assembly and the compact bounded-height patch.  Its only
 remaining hypotheses are the two shifted logarithmic-derivative estimates and
 the final real-variable negativity margin.
+The pure real-variable part of that final margin is now isolated as
+`ZeroFreeRegion.three_four_one_sigmaOf_log_margin`: once the shifted estimates
+have constants satisfying `3*Creal/a + 4*Czero + Ctwo < 4/(a+c)`, the 3-4-1
+upper bound is strictly negative for every zero candidate
+`beta >= 1 - c / log |t|`.
 The next work starts from these meromorphic/nonvanishing/principal-part facts
 and proves the vertical-height logarithmic-derivative estimates needed for the
 quantitative strip.

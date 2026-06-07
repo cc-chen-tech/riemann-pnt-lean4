@@ -57,6 +57,9 @@ Supporting declarations include:
   proves this choice stays to the right of any `β < 1`.
 - `sigmaOf_log_le_one_add`
   connects this choice to local right-neighborhood hypotheses `σ <= 1 + d`.
+- `three_four_one_sigmaOf_log_margin`
+  proves the pure real-variable negativity margin for the standard choice
+  `σ = 1 + a / log |t|`.
 
 Private technical lemma:
 
