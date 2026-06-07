@@ -148,9 +148,12 @@ This block is now done, including
 also connected to this API by
 `ZeroFreeRegion.meromorphicOn_logDeriv_riemannZeta_closedBall`; the local
 denominator condition is recorded as
-`ZeroFreeRegion.eventually_ne_zero_riemannZeta_nhdsNE_one`.  The next work
-starts from these meromorphic/nonvanishing facts and proves quantitative local
-logarithmic-derivative estimates.
+`ZeroFreeRegion.eventually_ne_zero_riemannZeta_nhdsNE_one`.  The local
+principal-part behavior is now also proved as
+`ZeroFreeRegion.tendsto_mul_logDeriv_riemannZeta_simplePoleAtOne`, namely
+`(s - 1) * logDeriv riemannZeta s -> -1` in the punctured neighborhood of
+`1`.  The next work starts from these meromorphic/nonvanishing/principal-part
+facts and proves quantitative local logarithmic-derivative estimates.
 
 ### 2. Polynomial Growth for Zeta in Vertical Disks
 

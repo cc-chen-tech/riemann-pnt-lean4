@@ -54,6 +54,43 @@ Private technical lemma:
 - `natCast_cpow_neg_re`
   computes `Re ((n : C)^(-s))` for positive natural `n`.
 
+### `ZeroFreeRegion/MeromorphicAux.lean`
+
+Core verified declarations:
+
+- `meromorphicAt_riemannZeta_of_ne_one`
+  proves zeta is meromorphic away from the pole at `1`.
+- `meromorphicAt_riemannZeta_one`
+  proves zeta is meromorphic at the pole by a local regular-plus-pole
+  decomposition.
+- `meromorphicOn_riemannZeta_closedBall`
+  proves zeta is meromorphic on every closed ball.
+- `eventuallyEq_riemannZeta_simplePoleAtOne`
+  gives the local simple-pole normal form for zeta.
+- `eventually_ne_zero_riemannZeta_nhdsNE_one`
+  proves zeta is eventually nonzero in the punctured neighborhood of `1`.
+- `eventuallyEq_inv_riemannZeta_simpleZeroAtOne`
+  identifies the local reciprocal of zeta with the analytic simple-zero model.
+- `analyticAt_riemannZetaReciprocalModelAtOne`
+  proves the reciprocal local model is analytic at `1`.
+- `deriv_riemannZetaReciprocalModelAtOne_one`
+  proves the reciprocal local model has derivative `1` at `1`.
+- `meromorphicOrderAt_riemannZeta_one`
+  proves `meromorphicOrderAt riemannZeta 1 = -1`.
+- `divisor_riemannZeta_pole_one`
+  records the divisor value of zeta at its pole on meromorphic domains.
+- `tendsto_mul_logDeriv_inv_riemannZeta_simpleZeroAtOne`
+  proves `(s - 1) * logDeriv (fun z => (riemannZeta z)^-1) s -> 1`.
+- `eventuallyEq_logDeriv_inv_riemannZeta`
+  proves `logDeriv (1 / zeta) = -logDeriv zeta` in a punctured neighborhood.
+- `tendsto_mul_logDeriv_riemannZeta_simplePoleAtOne`
+  proves `(s - 1) * logDeriv riemannZeta s -> -1` at the punctured
+  neighborhood of `1`.
+- `meromorphicAt_logDeriv_riemannZeta_one`
+  proves the logarithmic derivative is meromorphic at the pole.
+- `meromorphicOn_logDeriv_riemannZeta_closedBall`
+  proves the logarithmic derivative is meromorphic on every closed ball.
+
 ### `PrimeNumberTheorem.lean`
 
 Core verified declarations:

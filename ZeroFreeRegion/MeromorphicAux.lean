@@ -56,6 +56,14 @@ On a punctured neighborhood of `1`,
 noncomputable def riemannZetaPoleUnitAtOne (s : ℂ) : ℂ :=
   (s - 1) * riemannZetaRegularAtOne s + (Gammaℝ s)⁻¹
 
+/-- The analytic local model for the reciprocal of ζ at its pole `1`.
+
+On a punctured neighborhood of `1`, this agrees with `1 / ζ(s)`.
+The model has the correct value at the center, unlike Mathlib's global
+`riemannZeta` value at the pole. -/
+noncomputable def riemannZetaReciprocalModelAtOne (s : ℂ) : ℂ :=
+  (s - 1) * (riemannZetaPoleUnitAtOne s)⁻¹
+
 /-- The regular part in the local decomposition of ζ at `1` is analytic. -/
 lemma analyticAt_riemannZetaRegularAtOne :
     AnalyticAt ℂ riemannZetaRegularAtOne 1 := by
@@ -154,13 +162,110 @@ the inverse pole unit. -/
 lemma eventuallyEq_inv_riemannZeta_simpleZeroAtOne :
     (fun s : ℂ => (riemannZeta s)⁻¹)
       =ᶠ[𝓝[≠] (1 : ℂ)]
-      (fun s : ℂ => (s - 1) * (riemannZetaPoleUnitAtOne s)⁻¹) := by
+      riemannZetaReciprocalModelAtOne := by
   filter_upwards [eventuallyEq_riemannZeta_simplePoleAtOne,
     self_mem_nhdsWithin] with s hζ hs1
   have hs1' : s ≠ 1 := Set.mem_compl_singleton_iff.mp hs1
   rw [← hζ]
-  simp only [smul_eq_mul, zpow_neg, zpow_one]
+  simp only [riemannZetaReciprocalModelAtOne, smul_eq_mul, zpow_neg, zpow_one]
   rw [mul_inv_rev, inv_inv]
+  ring
+
+/-- The reciprocal local model is analytic at `1`. -/
+lemma analyticAt_riemannZetaReciprocalModelAtOne :
+    AnalyticAt ℂ riemannZetaReciprocalModelAtOne 1 := by
+  unfold riemannZetaReciprocalModelAtOne
+  exact (analyticAt_id.sub analyticAt_const).mul
+    (analyticAt_riemannZetaPoleUnitAtOne.inv
+      (by rw [riemannZetaPoleUnitAtOne_one]; exact one_ne_zero))
+
+/-- The reciprocal local model vanishes at `1`. -/
+lemma riemannZetaReciprocalModelAtOne_one :
+    riemannZetaReciprocalModelAtOne 1 = 0 := by
+  simp [riemannZetaReciprocalModelAtOne]
+
+/-- The reciprocal local model has a simple zero at `1`. -/
+lemma deriv_riemannZetaReciprocalModelAtOne_one :
+    deriv riemannZetaReciprocalModelAtOne 1 = 1 := by
+  unfold riemannZetaReciprocalModelAtOne
+  have hleft : DifferentiableAt ℂ (fun s : ℂ => s - 1) 1 :=
+    differentiableAt_id.sub (differentiableAt_const (1 : ℂ))
+  have hright :
+      DifferentiableAt ℂ (fun s : ℂ => (riemannZetaPoleUnitAtOne s)⁻¹) 1 :=
+    analyticAt_riemannZetaPoleUnitAtOne.differentiableAt.inv
+      (by rw [riemannZetaPoleUnitAtOne_one]; exact one_ne_zero)
+  change deriv ((fun s : ℂ => s - 1) *
+      fun s : ℂ => (riemannZetaPoleUnitAtOne s)⁻¹) 1 = 1
+  rw [deriv_mul hleft hright]
+  simp [riemannZetaPoleUnitAtOne_one]
+
+/-- The reciprocal local model has logarithmic residue `1` at its simple zero. -/
+lemma tendsto_mul_logDeriv_riemannZetaReciprocalModelAtOne :
+    Tendsto
+      (fun w : ℂ =>
+        (w - 1) * logDeriv riemannZetaReciprocalModelAtOne w)
+      (𝓝[≠] (1 : ℂ)) (𝓝 1) :=
+  analyticAt_riemannZetaReciprocalModelAtOne.tendsto_mul_logDeriv_simple_zero
+    riemannZetaReciprocalModelAtOne_one
+    (by rw [deriv_riemannZetaReciprocalModelAtOne_one]; exact one_ne_zero)
+
+/-- The logarithmic derivative of `1 / ζ` agrees with that of the reciprocal
+local model in a punctured neighborhood of the pole. -/
+lemma eventuallyEq_logDeriv_inv_riemannZeta_reciprocalModelAtOne :
+    (fun s : ℂ => logDeriv (fun z : ℂ => (riemannZeta z)⁻¹) s)
+      =ᶠ[𝓝[≠] (1 : ℂ)]
+    (fun s : ℂ => logDeriv riemannZetaReciprocalModelAtOne s) := by
+  have hval :
+      (fun s : ℂ => (riemannZeta s)⁻¹)
+        =ᶠ[𝓝[≠] (1 : ℂ)] riemannZetaReciprocalModelAtOne :=
+    eventuallyEq_inv_riemannZeta_simpleZeroAtOne
+  have hderiv := hval.nhdsNE_deriv
+  filter_upwards [hval, hderiv] with s hs hds
+  simp [logDeriv_apply, hs, hds]
+
+/-- The reciprocal of ζ has logarithmic residue `1` at the pole of ζ. -/
+lemma tendsto_mul_logDeriv_inv_riemannZeta_simpleZeroAtOne :
+    Tendsto
+      (fun w : ℂ =>
+        (w - 1) * logDeriv (fun z : ℂ => (riemannZeta z)⁻¹) w)
+      (𝓝[≠] (1 : ℂ)) (𝓝 1) := by
+  refine tendsto_mul_logDeriv_riemannZetaReciprocalModelAtOne.congr' ?_
+  filter_upwards [eventuallyEq_logDeriv_inv_riemannZeta_reciprocalModelAtOne]
+    with s hs
+  simp [hs]
+
+/-- In a punctured neighborhood of `1`, the logarithmic derivative of
+`1 / ζ` is the negative of the logarithmic derivative of ζ. -/
+lemma eventuallyEq_logDeriv_inv_riemannZeta :
+    (fun s : ℂ => logDeriv (fun z : ℂ => (riemannZeta z)⁻¹) s)
+      =ᶠ[𝓝[≠] (1 : ℂ)]
+    (fun s : ℂ => -logDeriv riemannZeta s) := by
+  filter_upwards [self_mem_nhdsWithin,
+    eventually_ne_zero_riemannZeta_nhdsNE_one] with s hs1 _hζ
+  have hs1' : s ≠ 1 := Set.mem_compl_singleton_iff.mp hs1
+  have hpow :=
+    logDeriv_fun_zpow (f := riemannZeta) (x := s)
+      (differentiableAt_riemannZeta hs1') (-1)
+  simpa [zpow_neg, zpow_one] using hpow
+
+/-- The logarithmic derivative of ζ has logarithmic residue `-1` at the
+simple pole `s = 1`.
+
+Equivalently, `(s - 1) * ζ'(s) / ζ(s)` tends to `-1` as `s → 1` away from
+the pole.  This is the local principal-part input needed before applying
+Borel-Carathéodory/Jensen estimates to `ζ'/ζ`. -/
+lemma tendsto_mul_logDeriv_riemannZeta_simplePoleAtOne :
+    Tendsto (fun w : ℂ => (w - 1) * logDeriv riemannZeta w)
+      (𝓝[≠] (1 : ℂ)) (𝓝 (-1 : ℂ)) := by
+  have hneg :
+      Tendsto
+        (fun w : ℂ =>
+          -((w - 1) * logDeriv (fun z : ℂ => (riemannZeta z)⁻¹) w))
+        (𝓝[≠] (1 : ℂ)) (𝓝 (-1 : ℂ)) := by
+    simpa using tendsto_mul_logDeriv_inv_riemannZeta_simpleZeroAtOne.neg
+  refine hneg.congr' ?_
+  filter_upwards [eventuallyEq_logDeriv_inv_riemannZeta] with s hs
+  rw [hs]
   ring
 
 /-- ζ has a simple pole at `1`, expressed as meromorphic order `-1`. -/

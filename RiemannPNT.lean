@@ -2232,9 +2232,39 @@ theorem eventually_ne_zero_riemannZeta_nhdsNE_one :
 theorem eventuallyEq_inv_riemannZeta_simpleZeroAtOne :
     (fun s : ℂ => (riemannZeta s)⁻¹)
       =ᶠ[𝓝[≠] (1 : ℂ)]
-      (fun s : ℂ => (s - 1) *
-        (ZeroFreeRegion.riemannZetaPoleUnitAtOne s)⁻¹) :=
+      ZeroFreeRegion.riemannZetaReciprocalModelAtOne :=
   ZeroFreeRegion.eventuallyEq_inv_riemannZeta_simpleZeroAtOne
+
+/-- Public analyticity of the reciprocal zeta model at `1`. -/
+theorem analyticAt_riemannZetaReciprocalModelAtOne :
+    AnalyticAt ℂ ZeroFreeRegion.riemannZetaReciprocalModelAtOne (1 : ℂ) :=
+  ZeroFreeRegion.analyticAt_riemannZetaReciprocalModelAtOne
+
+/-- Public simple-zero derivative for the reciprocal zeta model at `1`. -/
+theorem deriv_riemannZetaReciprocalModelAtOne_one :
+    deriv ZeroFreeRegion.riemannZetaReciprocalModelAtOne (1 : ℂ) = 1 :=
+  ZeroFreeRegion.deriv_riemannZetaReciprocalModelAtOne_one
+
+/-- Public logarithmic-residue limit for the reciprocal of ζ at `1`. -/
+theorem tendsto_mul_logDeriv_inv_riemannZeta_simpleZeroAtOne :
+    Tendsto
+      (fun w : ℂ =>
+        (w - 1) * logDeriv (fun z : ℂ => (riemannZeta z)⁻¹) w)
+      (𝓝[≠] (1 : ℂ)) (𝓝 1) :=
+  ZeroFreeRegion.tendsto_mul_logDeriv_inv_riemannZeta_simpleZeroAtOne
+
+/-- Public local relation between `logDeriv (1 / ζ)` and `-logDeriv ζ`. -/
+theorem eventuallyEq_logDeriv_inv_riemannZeta :
+    (fun s : ℂ => logDeriv (fun z : ℂ => (riemannZeta z)⁻¹) s)
+      =ᶠ[𝓝[≠] (1 : ℂ)]
+    (fun s : ℂ => -logDeriv riemannZeta s) :=
+  ZeroFreeRegion.eventuallyEq_logDeriv_inv_riemannZeta
+
+/-- Public logarithmic-residue limit for ζ at its simple pole `1`. -/
+theorem tendsto_mul_logDeriv_riemannZeta_simplePoleAtOne :
+    Tendsto (fun w : ℂ => (w - 1) * logDeriv riemannZeta w)
+      (𝓝[≠] (1 : ℂ)) (𝓝 (-1 : ℂ)) :=
+  ZeroFreeRegion.tendsto_mul_logDeriv_riemannZeta_simplePoleAtOne
 
 /-- Public meromorphicity of the zeta logarithmic derivative at `1`. -/
 theorem meromorphicAt_logDeriv_riemannZeta_one :
