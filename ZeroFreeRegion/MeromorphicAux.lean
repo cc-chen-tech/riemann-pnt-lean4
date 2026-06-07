@@ -2110,6 +2110,70 @@ lemma meromorphicOn_logDeriv_riemannZeta_verticalRegion (a b H : ℝ) :
     MeromorphicOn (logDeriv riemannZeta) (verticalRegion a b H) :=
   (meromorphicOn_riemannZeta_verticalRegion a b H).logDeriv
 
+/-- On a positive-height right half-strip, `logDeriv ζ` is differentiable.
+
+The positive-height hypothesis excludes the pole at `1`; the lower real-part
+bound `1 <= a` lets Mathlib's nonvanishing theorem for ζ on `Re(s) >= 1`
+remove the denominator of the logarithmic derivative. -/
+lemma differentiableOn_logDeriv_riemannZeta_verticalRegion_of_one_le_re
+    {a b H : ℝ} (ha : 1 ≤ a) (hH : 0 < H) :
+    DifferentiableOn ℂ (logDeriv riemannZeta) (verticalRegion a b H) := by
+  intro z hz
+  have hsubset : verticalRegion a b H ⊆ ({z : ℂ | z ≠ 1} : Set ℂ) := by
+    intro w hw
+    exact ne_one_of_mem_verticalRegion_of_pos_height hw hH
+  have han : AnalyticOnNhd ℂ riemannZeta (verticalRegion a b H) :=
+    analyticOnNhd_riemannZeta_ne_one.mono hsubset
+  have hzeta_diff : DifferentiableAt ℂ riemannZeta z :=
+    (han z hz).differentiableAt
+  have hderiv_diff : DifferentiableAt ℂ (deriv riemannZeta) z :=
+    (han.deriv z hz).differentiableAt
+  have hzeta_ne : riemannZeta z ≠ 0 :=
+    riemannZeta_ne_zero_of_one_le_re (le_trans ha hz.1.1)
+  exact (hderiv_diff.div hzeta_diff hzeta_ne).differentiableWithinAt
+
+/-- Borel-Carathéodory for `logDeriv ζ` on a right half-strip, with the
+`DifferentiableOn` hypothesis discharged by zeta nonvanishing on `Re(s) >= 1`.
+
+The remaining analytic input is the pointwise real-part bound on
+`logDeriv ζ`; this is the estimate future height/growth arguments must supply. -/
+lemma borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le
+    {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M) (ha₀ : 1 ≤ a) (hHpos : 0 < H)
+    (hlog : ∀ w : ℂ, w ∈ verticalRegion a b H →
+      (logDeriv riemannZeta w).re ≤ M)
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R) (hz : z ∈ Metric.ball ((σ : ℂ) + I * t) R) :
+    ‖logDeriv riemannZeta z‖ ≤
+      2 * M * ‖z - ((σ : ℂ) + I * t)‖ /
+          (R - ‖z - ((σ : ℂ) + I * t)‖) +
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ *
+          (R + ‖z - ((σ : ℂ) + I * t)‖) /
+          (R - ‖z - ((σ : ℂ) + I * t)‖) :=
+  borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_re_le hM
+    (differentiableOn_logDeriv_riemannZeta_verticalRegion_of_one_le_re
+      ha₀ hHpos)
+    hlog ha hb hH hR hz
+
+/-- Oscillation Borel-Carathéodory for `logDeriv ζ` on a right half-strip,
+with differentiability discharged by zeta nonvanishing on `Re(s) >= 1`. -/
+lemma borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le
+    {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M) (ha₀ : 1 ≤ a) (hHpos : 0 < H)
+    (hlog : ∀ w : ℂ, w ∈ verticalRegion a b H →
+      (logDeriv riemannZeta w -
+        logDeriv riemannZeta ((σ : ℂ) + I * t)).re ≤ M)
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R) (hz : z ∈ Metric.ball ((σ : ℂ) + I * t) R) :
+    ‖logDeriv riemannZeta z -
+        logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+      2 * M * ‖z - ((σ : ℂ) + I * t)‖ /
+        (R - ‖z - ((σ : ℂ) + I * t)‖) :=
+  borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_re_le hM
+    (differentiableOn_logDeriv_riemannZeta_verticalRegion_of_one_le_re
+      ha₀ hHpos)
+    hlog ha hb hH hR hz
+
 /-- Jensen formula specialized to the logarithmic derivative of ζ on a closed
 ball. -/
 lemma jensen_circleAverage_log_norm_logDeriv_riemannZeta_closedBall

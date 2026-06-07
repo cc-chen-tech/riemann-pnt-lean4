@@ -146,13 +146,21 @@ proved:
   `∀ z ∈ verticalRegion, Re(...) ≤ M`, with
   `ZeroFreeRegion.mapsTo_logDeriv_riemannZeta_verticalRegion_of_re_le` and
   `ZeroFreeRegion.mapsTo_sub_logDeriv_riemannZeta_verticalRegion_of_re_le`
-  supplying the `Set.MapsTo` conversion;
+  supplying the `Set.MapsTo` conversion.  On positive-height right half-strips,
+  `ZeroFreeRegion.differentiableOn_logDeriv_riemannZeta_verticalRegion_of_one_le_re`
+  now discharges the differentiability hypothesis from
+  `riemannZeta_ne_zero_of_one_le_re`; the wrappers
+  `ZeroFreeRegion.borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le`
+  and
+  `ZeroFreeRegion.borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le`
+  therefore leave only the real-part height estimate as the Borel input;
   `ZeroFreeRegion.jensen_circleAverage_log_norm_verticalRegion` is the matching
   Jensen entry point for zero-count and divisor estimates.
 - The zeta-specific regularity layer now includes
   `ZeroFreeRegion.differentiableOn_riemannZeta_verticalRegion_of_pos_height`,
-  `ZeroFreeRegion.meromorphicOn_riemannZeta_verticalRegion`, and
-  `ZeroFreeRegion.meromorphicOn_logDeriv_riemannZeta_verticalRegion`, plus
+  `ZeroFreeRegion.meromorphicOn_riemannZeta_verticalRegion`,
+  `ZeroFreeRegion.meromorphicOn_logDeriv_riemannZeta_verticalRegion`, and the
+  right-half-strip differentiability theorem for `logDeriv ζ`, plus
   Jensen specializations for ζ and `logDeriv ζ` on `sigma + I*t` disks:
   `ZeroFreeRegion.jensen_circleAverage_log_norm_riemannZeta_verticalRegion`
   and

@@ -2671,6 +2671,15 @@ theorem meromorphicOn_logDeriv_riemannZeta_verticalRegion (a b H : ℝ) :
       (ZeroFreeRegion.verticalRegion a b H) :=
   ZeroFreeRegion.meromorphicOn_logDeriv_riemannZeta_verticalRegion a b H
 
+/-- Public differentiability of `logDeriv ζ` on positive-height right
+half-strips. -/
+theorem differentiableOn_logDeriv_riemannZeta_verticalRegion_of_one_le_re
+    {a b H : ℝ} (ha : 1 ≤ a) (hH : 0 < H) :
+    DifferentiableOn ℂ (logDeriv riemannZeta)
+      (ZeroFreeRegion.verticalRegion a b H) :=
+  ZeroFreeRegion.differentiableOn_logDeriv_riemannZeta_verticalRegion_of_one_le_re
+    ha hH
+
 /-- Public trigonometric core of de la Vallée Poussin's 3-4-1 inequality. -/
 theorem trig_identity_nonneg (θ : ℝ) :
     3 + 4 * Real.cos θ + Real.cos (2 * θ) ≥ 0 :=
@@ -3289,6 +3298,43 @@ theorem borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_re_le
         (R - ‖z - ((σ : ℂ) + Complex.I * t)‖) :=
   ZeroFreeRegion.borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_re_le
     hM hlogdiff hlog ha hb hH hR hz
+
+/-- Public pointwise Borel-Carathéodory bound for `logDeriv ζ` on a
+positive-height right half-strip, with differentiability discharged by
+ζ-nonvanishing on `Re(s) >= 1`. -/
+theorem borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le
+    {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M) (ha₀ : 1 ≤ a) (hHpos : 0 < H)
+    (hlog : ∀ w : ℂ, w ∈ verticalRegion a b H →
+      (logDeriv riemannZeta w).re ≤ M)
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R) (hz : z ∈ Metric.ball ((σ : ℂ) + Complex.I * t) R) :
+    ‖logDeriv riemannZeta z‖ ≤
+      2 * M * ‖z - ((σ : ℂ) + Complex.I * t)‖ /
+          (R - ‖z - ((σ : ℂ) + Complex.I * t)‖) +
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ *
+          (R + ‖z - ((σ : ℂ) + Complex.I * t)‖) /
+          (R - ‖z - ((σ : ℂ) + Complex.I * t)‖) :=
+  ZeroFreeRegion.borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le
+    hM ha₀ hHpos hlog ha hb hH hR hz
+
+/-- Public oscillation Borel-Carathéodory bound for `logDeriv ζ` on a
+positive-height right half-strip, with differentiability discharged by
+ζ-nonvanishing on `Re(s) >= 1`. -/
+theorem borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le
+    {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M) (ha₀ : 1 ≤ a) (hHpos : 0 < H)
+    (hlog : ∀ w : ℂ, w ∈ verticalRegion a b H →
+      (logDeriv riemannZeta w -
+        logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤ M)
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R) (hz : z ∈ Metric.ball ((σ : ℂ) + Complex.I * t) R) :
+    ‖logDeriv riemannZeta z -
+        logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+      2 * M * ‖z - ((σ : ℂ) + Complex.I * t)‖ /
+        (R - ‖z - ((σ : ℂ) + Complex.I * t)‖) :=
+  ZeroFreeRegion.borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le
+    hM ha₀ hHpos hlog ha hb hH hR hz
 
 section JensenWrapper
 

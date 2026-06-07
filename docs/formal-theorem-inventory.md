@@ -378,6 +378,15 @@ Core verified declarations:
   let future height estimates enter this layer as ordinary pointwise
   `∀ z ∈ verticalRegion, Re(...) ≤ M` hypotheses rather than prepackaged
   `Set.MapsTo` assumptions.
+- `differentiableOn_logDeriv_riemannZeta_verticalRegion_of_one_le_re`
+  proves the missing differentiability hypothesis automatically on
+  positive-height right half-strips, using ζ nonvanishing on `Re(s) >= 1`.
+- `borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le`
+  and
+  `borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le`
+  are the same `logDeriv ζ` Borel interfaces with that differentiability
+  hypothesis discharged; the only remaining Borel input is a pointwise
+  real-part height bound.
 - `jensen_circleAverage_log_norm_verticalRegion`
   combines Jensen's formula with the same closed-disk geometry and ambient
   vertical-region meromorphicity.
