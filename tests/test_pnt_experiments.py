@@ -36,4 +36,3 @@ def test_generate_dataset_uses_increasing_integer_sample_points():
     assert rows[0].x == 10
     assert rows[-1].x == 100
     assert all(row.psi_x >= row.theta_x for row in rows)
-

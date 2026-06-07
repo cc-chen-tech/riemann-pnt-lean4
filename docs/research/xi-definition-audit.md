@@ -204,4 +204,3 @@ an immediate proof attempt. The first implementation should prove only:
 - a clean statement of zero correspondence for nontrivial zeros.
 
 Once those are stable, the Li criterion route has a credible Lean foundation.
-

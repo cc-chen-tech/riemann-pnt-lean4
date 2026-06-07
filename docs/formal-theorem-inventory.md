@@ -213,10 +213,10 @@ are not exported as theorems and should not be cited as proved.
 
 As of `2026-06-03`, there are **23** target declarations:
 
-- `HardyTheorem` namespace: **11**  
-- `PrimeNumberTheorem` namespace: **9**  
-- `ZeroFreeRegion` namespace: **2**  
-- `RiemannExplorer` namespace: **1**  
+- `HardyTheorem` namespace: **11**
+- `PrimeNumberTheorem` namespace: **9**
+- `ZeroFreeRegion` namespace: **2**
+- `RiemannExplorer` namespace: **1**
 
 ### `ZeroFreeRegion.lean`
 

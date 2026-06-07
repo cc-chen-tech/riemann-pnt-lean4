@@ -294,4 +294,3 @@ The next productive decision is whether to start with:
 
 Recommended next step: start with `Xi Definition Audit`, then immediately write
 the `Li Criterion Research Note`.
-

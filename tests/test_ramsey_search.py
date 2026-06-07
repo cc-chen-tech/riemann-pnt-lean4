@@ -25,4 +25,3 @@ def test_find_ramsey_counterexample_respects_small_known_values():
     assert not ramsey.contains_clique(triangle_free_or_independent_3_on_five, 3)
     assert not ramsey.contains_independent_set(triangle_free_or_independent_3_on_five, 3)
     assert triangle_free_or_independent_3_on_six is None
-

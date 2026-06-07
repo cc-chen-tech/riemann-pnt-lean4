@@ -198,4 +198,3 @@ Do the next step in this order:
    cleanup settles.
 4. Postpone Lean implementation of Li criterion until `xiFunction` has a
    stable API.
-
