@@ -130,7 +130,15 @@ proved:
   `ZeroFreeRegion.borelCaratheodory_logDeriv_riemannZeta_verticalRegion` and
   `ZeroFreeRegion.borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion`
   provide the conditional `logDeriv ζ` versions with differentiability and
-  real-part bounds left as explicit analytic inputs;
+  real-part bounds left as explicit analytic inputs.  The pointwise variants
+  `ZeroFreeRegion.borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_re_le`
+  and
+  `ZeroFreeRegion.borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_re_le`
+  accept future height estimates directly in the usual form
+  `∀ z ∈ verticalRegion, Re(...) ≤ M`, with
+  `ZeroFreeRegion.mapsTo_logDeriv_riemannZeta_verticalRegion_of_re_le` and
+  `ZeroFreeRegion.mapsTo_sub_logDeriv_riemannZeta_verticalRegion_of_re_le`
+  supplying the `Set.MapsTo` conversion;
   `ZeroFreeRegion.jensen_circleAverage_log_norm_verticalRegion` is the matching
   Jensen entry point for zero-count and divisor estimates.
 - The zeta-specific regularity layer now includes

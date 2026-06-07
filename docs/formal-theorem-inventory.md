@@ -273,6 +273,13 @@ Core verified declarations:
   `borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion`
   specialize the same local Borel geometry to `logDeriv ζ`, while keeping the
   remaining differentiability and real-part bounds explicit.
+- `mapsTo_logDeriv_riemannZeta_verticalRegion_of_re_le`,
+  `mapsTo_sub_logDeriv_riemannZeta_verticalRegion_of_re_le`,
+  `borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_re_le`, and
+  `borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_re_le`
+  let future height estimates enter this layer as ordinary pointwise
+  `∀ z ∈ verticalRegion, Re(...) ≤ M` hypotheses rather than prepackaged
+  `Set.MapsTo` assumptions.
 - `jensen_circleAverage_log_norm_verticalRegion`
   combines Jensen's formula with the same closed-disk geometry and ambient
   vertical-region meromorphicity.

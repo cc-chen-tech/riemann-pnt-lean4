@@ -3129,6 +3129,70 @@ theorem borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion
   ZeroFreeRegion.borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion
     hM hlogdiff hlog ha hb hH hR hz
 
+/-- Public conversion from a pointwise real-part estimate for `logDeriv ζ` to
+the `Set.MapsTo` Borel-Carathéodory input. -/
+theorem mapsTo_logDeriv_riemannZeta_verticalRegion_of_re_le
+    {a b H M : ℝ}
+    (hlog : ∀ z : ℂ, z ∈ verticalRegion a b H →
+      (logDeriv riemannZeta z).re ≤ M) :
+    Set.MapsTo (logDeriv riemannZeta)
+      (verticalRegion a b H) {w | w.re ≤ M} :=
+  ZeroFreeRegion.mapsTo_logDeriv_riemannZeta_verticalRegion_of_re_le hlog
+
+/-- Public conversion from a pointwise centered `logDeriv ζ` real-part
+estimate to the `Set.MapsTo` Borel-Carathéodory input. -/
+theorem mapsTo_sub_logDeriv_riemannZeta_verticalRegion_of_re_le
+    {σ t a b H M : ℝ}
+    (hlog : ∀ z : ℂ, z ∈ verticalRegion a b H →
+      (logDeriv riemannZeta z -
+        logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤ M) :
+    Set.MapsTo
+      (fun z =>
+        logDeriv riemannZeta z -
+          logDeriv riemannZeta ((σ : ℂ) + Complex.I * t))
+      (verticalRegion a b H) {w | w.re ≤ M} :=
+  ZeroFreeRegion.mapsTo_sub_logDeriv_riemannZeta_verticalRegion_of_re_le
+    hlog
+
+/-- Public pointwise-estimate form of the conditional Borel-Carathéodory bound
+for the logarithmic derivative of ζ on a `σ + I*t` disk. -/
+theorem borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_re_le
+    {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M)
+    (hlogdiff :
+      DifferentiableOn ℂ (logDeriv riemannZeta) (verticalRegion a b H))
+    (hlog : ∀ w : ℂ, w ∈ verticalRegion a b H →
+      (logDeriv riemannZeta w).re ≤ M)
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R) (hz : z ∈ Metric.ball ((σ : ℂ) + Complex.I * t) R) :
+    ‖logDeriv riemannZeta z‖ ≤
+      2 * M * ‖z - ((σ : ℂ) + Complex.I * t)‖ /
+          (R - ‖z - ((σ : ℂ) + Complex.I * t)‖) +
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ *
+          (R + ‖z - ((σ : ℂ) + Complex.I * t)‖) /
+          (R - ‖z - ((σ : ℂ) + Complex.I * t)‖) :=
+  ZeroFreeRegion.borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_re_le
+    hM hlogdiff hlog ha hb hH hR hz
+
+/-- Public pointwise-estimate form of the conditional oscillation
+Borel-Carathéodory bound for the logarithmic derivative of ζ. -/
+theorem borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_re_le
+    {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M)
+    (hlogdiff :
+      DifferentiableOn ℂ (logDeriv riemannZeta) (verticalRegion a b H))
+    (hlog : ∀ w : ℂ, w ∈ verticalRegion a b H →
+      (logDeriv riemannZeta w -
+        logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤ M)
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R) (hz : z ∈ Metric.ball ((σ : ℂ) + Complex.I * t) R) :
+    ‖logDeriv riemannZeta z -
+        logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+      2 * M * ‖z - ((σ : ℂ) + Complex.I * t)‖ /
+        (R - ‖z - ((σ : ℂ) + Complex.I * t)‖) :=
+  ZeroFreeRegion.borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_re_le
+    hM hlogdiff hlog ha hb hH hR hz
+
 section JensenWrapper
 
 open MeromorphicAt MeromorphicOn Metric Real

@@ -1359,6 +1359,75 @@ lemma borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion
   borelCaratheodory_sub_centered_verticalRegion hM
     hlogdiff hlog ha hb hH hR hz
 
+/-- Convert a pointwise real-part estimate for `logDeriv ζ` on an ambient
+vertical region to the `Set.MapsTo` input expected by the
+Borel-Carathéodory wrappers. -/
+lemma mapsTo_logDeriv_riemannZeta_verticalRegion_of_re_le
+    {a b H M : ℝ}
+    (hlog : ∀ z : ℂ, z ∈ verticalRegion a b H →
+      (logDeriv riemannZeta z).re ≤ M) :
+    Set.MapsTo (logDeriv riemannZeta)
+      (verticalRegion a b H) {w | w.re ≤ M} := by
+  intro z hz
+  exact hlog z hz
+
+/-- Convert a pointwise real-part estimate for the centered logarithmic
+derivative to the `Set.MapsTo` input expected by the oscillation
+Borel-Carathéodory wrapper. -/
+lemma mapsTo_sub_logDeriv_riemannZeta_verticalRegion_of_re_le
+    {σ t a b H M : ℝ}
+    (hlog : ∀ z : ℂ, z ∈ verticalRegion a b H →
+      (logDeriv riemannZeta z -
+        logDeriv riemannZeta ((σ : ℂ) + I * t)).re ≤ M) :
+    Set.MapsTo
+      (fun z =>
+        logDeriv riemannZeta z -
+          logDeriv riemannZeta ((σ : ℂ) + I * t))
+      (verticalRegion a b H) {w | w.re ≤ M} := by
+  intro z hz
+  exact hlog z hz
+
+/-- Pointwise-estimate form of the conditional Borel-Carathéodory bound for
+`logDeriv ζ` on a disk centered at `σ + I*t`. -/
+lemma borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_re_le
+    {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M)
+    (hlogdiff :
+      DifferentiableOn ℂ (logDeriv riemannZeta) (verticalRegion a b H))
+    (hlog : ∀ w : ℂ, w ∈ verticalRegion a b H →
+      (logDeriv riemannZeta w).re ≤ M)
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R) (hz : z ∈ Metric.ball ((σ : ℂ) + I * t) R) :
+    ‖logDeriv riemannZeta z‖ ≤
+      2 * M * ‖z - ((σ : ℂ) + I * t)‖ /
+          (R - ‖z - ((σ : ℂ) + I * t)‖) +
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ *
+          (R + ‖z - ((σ : ℂ) + I * t)‖) /
+          (R - ‖z - ((σ : ℂ) + I * t)‖) :=
+  borelCaratheodory_logDeriv_riemannZeta_verticalRegion hM hlogdiff
+    (mapsTo_logDeriv_riemannZeta_verticalRegion_of_re_le hlog)
+    ha hb hH hR hz
+
+/-- Pointwise-estimate form of the conditional oscillation
+Borel-Carathéodory bound for `logDeriv ζ` on a disk centered at `σ + I*t`. -/
+lemma borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_re_le
+    {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M)
+    (hlogdiff :
+      DifferentiableOn ℂ (logDeriv riemannZeta) (verticalRegion a b H))
+    (hlog : ∀ w : ℂ, w ∈ verticalRegion a b H →
+      (logDeriv riemannZeta w -
+        logDeriv riemannZeta ((σ : ℂ) + I * t)).re ≤ M)
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R) (hz : z ∈ Metric.ball ((σ : ℂ) + I * t) R) :
+    ‖logDeriv riemannZeta z -
+        logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+      2 * M * ‖z - ((σ : ℂ) + I * t)‖ /
+        (R - ‖z - ((σ : ℂ) + I * t)‖) :=
+  borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion hM hlogdiff
+    (mapsTo_sub_logDeriv_riemannZeta_verticalRegion_of_re_le hlog)
+    ha hb hH hR hz
+
 section JensenWrapper
 
 open MeromorphicAt MeromorphicOn Metric Real
