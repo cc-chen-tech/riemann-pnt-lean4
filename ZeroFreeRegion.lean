@@ -954,6 +954,37 @@ lemma ball_abs_im_ge_of_add_le {z c : ℂ} {R H : ℝ}
   exact closedBall_abs_im_ge_of_add_le
     (Metric.ball_subset_closedBall hz) hH
 
+/-- Real-coordinate bounds in a closed ball centered at `σ + I*t`. -/
+lemma closedBall_sigma_it_re_bounds {z : ℂ} {σ t R : ℝ}
+    (hz : z ∈ Metric.closedBall ((σ : ℂ) + I * t) R) :
+    σ - R ≤ z.re ∧ z.re ≤ σ + R := by
+  have h := closedBall_re_bounds (z := z) (c := (σ : ℂ) + I * t) (R := R) hz
+  simpa using h
+
+/-- Real-coordinate bounds in an open ball centered at `σ + I*t`. -/
+lemma ball_sigma_it_re_bounds {z : ℂ} {σ t R : ℝ}
+    (hz : z ∈ Metric.ball ((σ : ℂ) + I * t) R) :
+    σ - R ≤ z.re ∧ z.re ≤ σ + R := by
+  exact closedBall_sigma_it_re_bounds
+    (Metric.ball_subset_closedBall hz)
+
+/-- Height transfer in a closed ball centered at `σ + I*t`. -/
+lemma closedBall_sigma_it_abs_im_ge_of_add_le {z : ℂ} {σ t R H : ℝ}
+    (hz : z ∈ Metric.closedBall ((σ : ℂ) + I * t) R)
+    (hH : H + R ≤ |t|) :
+    H ≤ |z.im| := by
+  exact closedBall_abs_im_ge_of_add_le
+    (z := z) (c := (σ : ℂ) + I * t) (R := R) (H := H) hz
+    (by simpa using hH)
+
+/-- Height transfer in an open ball centered at `σ + I*t`. -/
+lemma ball_sigma_it_abs_im_ge_of_add_le {z : ℂ} {σ t R H : ℝ}
+    (hz : z ∈ Metric.ball ((σ : ℂ) + I * t) R)
+    (hH : H + R ≤ |t|) :
+    H ≤ |z.im| := by
+  exact closedBall_sigma_it_abs_im_ge_of_add_le
+    (Metric.ball_subset_closedBall hz) hH
+
 /-- Local namespace entry point for Mathlib's Borel-Carathéodory theorem in the
 vanishing-at-zero form. This is one of the complex-analytic tools used in
 standard proofs of quantitative zero-free regions; the remaining gap is the

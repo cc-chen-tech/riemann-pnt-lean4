@@ -2822,6 +2822,32 @@ theorem ball_abs_im_ge_of_add_le {z c : ℂ} {R H : ℝ}
     H ≤ |z.im| :=
   ZeroFreeRegion.ball_abs_im_ge_of_add_le hz hH
 
+/-- Public real-coordinate bounds in a closed ball centered at `σ + I*t`. -/
+theorem closedBall_sigma_it_re_bounds {z : ℂ} {σ t R : ℝ}
+    (hz : z ∈ Metric.closedBall ((σ : ℂ) + Complex.I * t) R) :
+    σ - R ≤ z.re ∧ z.re ≤ σ + R :=
+  ZeroFreeRegion.closedBall_sigma_it_re_bounds hz
+
+/-- Public real-coordinate bounds in an open ball centered at `σ + I*t`. -/
+theorem ball_sigma_it_re_bounds {z : ℂ} {σ t R : ℝ}
+    (hz : z ∈ Metric.ball ((σ : ℂ) + Complex.I * t) R) :
+    σ - R ≤ z.re ∧ z.re ≤ σ + R :=
+  ZeroFreeRegion.ball_sigma_it_re_bounds hz
+
+/-- Public height transfer in a closed ball centered at `σ + I*t`. -/
+theorem closedBall_sigma_it_abs_im_ge_of_add_le {z : ℂ} {σ t R H : ℝ}
+    (hz : z ∈ Metric.closedBall ((σ : ℂ) + Complex.I * t) R)
+    (hH : H + R ≤ |t|) :
+    H ≤ |z.im| :=
+  ZeroFreeRegion.closedBall_sigma_it_abs_im_ge_of_add_le hz hH
+
+/-- Public height transfer in an open ball centered at `σ + I*t`. -/
+theorem ball_sigma_it_abs_im_ge_of_add_le {z : ℂ} {σ t R H : ℝ}
+    (hz : z ∈ Metric.ball ((σ : ℂ) + Complex.I * t) R)
+    (hH : H + R ≤ |t|) :
+    H ≤ |z.im| :=
+  ZeroFreeRegion.ball_sigma_it_abs_im_ge_of_add_le hz hH
+
 /-- Public Borel-Carathéodory theorem in the vanishing-at-zero form, routed
 through the zero-free-region namespace. -/
 theorem borelCaratheodory_zero

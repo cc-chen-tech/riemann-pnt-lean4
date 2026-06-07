@@ -240,6 +240,10 @@ Core verified declarations:
 - `closedBall_abs_im_ge_of_add_le` and `ball_abs_im_ge_of_add_le`
   transfer a high imaginary-height bound from the disk center to every point in
   the disk.
+- `closedBall_sigma_it_re_bounds`, `ball_sigma_it_re_bounds`,
+  `closedBall_sigma_it_abs_im_ge_of_add_le`, and
+  `ball_sigma_it_abs_im_ge_of_add_le`
+  specialize the same disk geometry to centers written as `sigma + I*t`.
 
 ### `PrimeNumberTheorem.lean`
 

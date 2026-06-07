@@ -98,6 +98,11 @@ proved:
   `ZeroFreeRegion.ball_abs_im_ge_of_add_le`
   provide the disk geometry needed to transfer vertical-strip real-coordinate
   and high-height hypotheses onto Borel-Caratheodory/Jensen disks.
+  The corresponding `sigma + I*t` specializations are
+  `ZeroFreeRegion.closedBall_sigma_it_re_bounds`,
+  `ZeroFreeRegion.ball_sigma_it_re_bounds`,
+  `ZeroFreeRegion.closedBall_sigma_it_abs_im_ge_of_add_le`, and
+  `ZeroFreeRegion.ball_sigma_it_abs_im_ge_of_add_le`.
 
 ## Mathlib API Check
 
