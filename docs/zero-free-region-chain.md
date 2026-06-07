@@ -379,8 +379,13 @@ It accepts the more natural Borel/Jensen output
 into `1/(Re(s)-Re(rho))`, and `Re(z) <= ||z||` supplies the real-part estimate.
 Its existential wrapper
 `ZeroFreeRegion.classical_zero_free_region_of_exists_regular_part_norm_bound_and_two_t_bound`
-is now the tightest conditional interface: prove that norm regular-part bound
-and the `sigma+2it` logarithmic bound for one nonnegative coefficient `B`.
+packages the quotient-notation norm input.  The caller-facing version closest
+to future Borel/Jensen work is
+`ZeroFreeRegion.classical_zero_free_region_of_neg_logDeriv_regular_part_norm_bound_and_two_t_bound`,
+with existential wrapper
+`ZeroFreeRegion.classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_bound_and_two_t_bound`:
+prove the same norm regular-part estimate in `-logDeriv zeta` notation and the
+matching `sigma+2it` logarithmic bound for one nonnegative coefficient `B`.
 This is still conditional; it does not prove the quantitative zero-free region
 until those two zeta-specific estimates are proved.
 The next work starts from these meromorphic/nonvanishing/principal-part facts

@@ -1279,6 +1279,50 @@ lemma classical_zero_free_region_of_exists_regular_part_norm_bound_and_two_t_bou
   exact classical_zero_free_region_of_regular_part_norm_bound_and_two_t_bound
     B hB hregular htwo
 
+/-- Logarithmic-derivative notation form of the norm-bound regular-part
+closure.
+
+Future Borel/Jensen arguments naturally produce estimates for `logDeriv ζ`.
+This wrapper rewrites those estimates into the quotient notation
+`-ζ'/ζ` used by the 3-4-1 machinery. -/
+lemma classical_zero_free_region_of_neg_logDeriv_regular_part_norm_bound_and_two_t_bound
+    (B : ℝ) (hB : 0 ≤ B)
+    (hregular :
+      ∀ s ρ : ℂ, 2 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+        riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+        0 < s.re - ρ.re →
+        ‖-logDeriv riemannZeta s + (s - ρ)⁻¹‖ ≤ B * Real.log |s.im|)
+    (htwo :
+      ∀ σ t : ℝ, 2 ≤ |t| → 1 < σ → σ ≤ 2 →
+        (-logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤
+          B * Real.log |t|) :
+    classical_zero_free_region := by
+  refine classical_zero_free_region_of_regular_part_norm_bound_and_two_t_bound
+    B hB ?_ ?_
+  · intro s ρ hs_height hs_re_mem hζρ hρ_im_eq hρ_re_lt hsub
+    simpa [neg_logDeriv_riemannZeta_eq_neg_deriv_div] using
+      hregular s ρ hs_height hs_re_mem hζρ hρ_im_eq hρ_re_lt hsub
+  · intro σ t ht hσ_gt hσ_le
+    simpa [neg_logDeriv_riemannZeta_eq_neg_deriv_div] using
+      htwo σ t ht hσ_gt hσ_le
+
+/-- Existential logarithmic-derivative notation form of the norm-bound
+regular-part closure. -/
+lemma classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_bound_and_two_t_bound
+    (h :
+      ∃ B : ℝ, 0 ≤ B ∧
+        (∀ s ρ : ℂ, 2 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+          riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+          0 < s.re - ρ.re →
+          ‖-logDeriv riemannZeta s + (s - ρ)⁻¹‖ ≤ B * Real.log |s.im|) ∧
+        (∀ σ t : ℝ, 2 ≤ |t| → 1 < σ → σ ≤ 2 →
+          (-logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤
+            B * Real.log |t|)) :
+    classical_zero_free_region := by
+  rcases h with ⟨B, hB, hregular, htwo⟩
+  exact classical_zero_free_region_of_neg_logDeriv_regular_part_norm_bound_and_two_t_bound
+    B hB hregular htwo
+
 /-- ζ has a simple pole at `1`, expressed as meromorphic order `-1`. -/
 lemma meromorphicOrderAt_riemannZeta_one :
     meromorphicOrderAt riemannZeta (1 : ℂ) = (-1 : ℤ) := by

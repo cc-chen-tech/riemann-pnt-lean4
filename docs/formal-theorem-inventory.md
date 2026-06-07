@@ -244,6 +244,12 @@ Core verified declarations:
 - `classical_zero_free_region_of_exists_regular_part_norm_bound_and_two_t_bound`
   packages that norm-bound regular-part input under one nonnegative
   logarithmic coefficient.
+- `classical_zero_free_region_of_neg_logDeriv_regular_part_norm_bound_and_two_t_bound`
+  is the same norm-bound closure in Mathlib's natural `-logDeriv zeta`
+  notation, rewriting through the verified quotient bridge.
+- `classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_bound_and_two_t_bound`
+  packages the `-logDeriv zeta` norm-bound input under one nonnegative
+  logarithmic coefficient.
 - `meromorphicAt_logDeriv_riemannZeta_one`
   proves the logarithmic derivative is meromorphic at the pole.
 - `meromorphicOn_logDeriv_riemannZeta_closedBall`
