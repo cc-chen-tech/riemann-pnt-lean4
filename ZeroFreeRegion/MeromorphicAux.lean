@@ -346,6 +346,16 @@ lemma eventually_norm_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one 
     with s hs
   simpa [logDeriv_apply] using hs
 
+/-- Flexible eventual pole-order bound near `1` in explicit quotient notation
+`ζ'/ζ`. -/
+lemma eventually_norm_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one
+    (C : ℝ) (hC : 1 < C) :
+    ∀ᶠ s in 𝓝[≠] (1 : ℂ),
+      ‖deriv riemannZeta s / riemannZeta s‖ < C / ‖s - 1‖ := by
+  filter_upwards [eventually_norm_logDeriv_riemannZeta_lt_const_div_norm_sub_one C hC]
+    with s hs
+  simpa [logDeriv_apply] using hs
+
 /-- Eventual pole-order bound near `1` for the signed quotient `-ζ'/ζ`. -/
 lemma eventually_norm_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one :
     ∀ᶠ s in 𝓝[≠] (1 : ℂ),
@@ -357,6 +367,20 @@ lemma eventually_norm_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_
         ‖deriv riemannZeta s / riemannZeta s‖ := by
           rw [neg_div, norm_neg]
     _ ≤ 2 / ‖s - 1‖ := hs
+
+/-- Flexible eventual pole-order bound near `1` for the signed quotient
+`-ζ'/ζ`. -/
+lemma eventually_norm_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one
+    (C : ℝ) (hC : 1 < C) :
+    ∀ᶠ s in 𝓝[≠] (1 : ℂ),
+      ‖-deriv riemannZeta s / riemannZeta s‖ < C / ‖s - 1‖ := by
+  filter_upwards [eventually_norm_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one C hC]
+    with s hs
+  calc
+    ‖-deriv riemannZeta s / riemannZeta s‖ =
+        ‖deriv riemannZeta s / riemannZeta s‖ := by
+          rw [neg_div, norm_neg]
+    _ < C / ‖s - 1‖ := hs
 
 /-- Eventual real-part pole-order bound near `1` for the signed quotient
 `-ζ'/ζ`. -/
@@ -428,6 +452,23 @@ lemma exists_punctured_closedBall_norm_deriv_riemannZeta_div_riemannZeta_le_two_
   intro s hs_ne hs_dist
   simpa [logDeriv_apply] using hbound s hs_ne hs_dist
 
+/-- Closed punctured-ball flexible pole-order bound in quotient notation
+`ζ'/ζ`. -/
+lemma exists_punctured_closedBall_norm_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one
+    (C : ℝ) (hC : 1 < C) :
+    ∃ r > 0, ∀ s : ℂ, s ≠ 1 → dist s 1 ≤ r →
+      ‖deriv riemannZeta s / riemannZeta s‖ < C / ‖s - 1‖ := by
+  have hmem :
+      {s : ℂ | ‖deriv riemannZeta s / riemannZeta s‖ <
+          C / ‖s - 1‖} ∈ 𝓝[{1}ᶜ] (1 : ℂ) :=
+    eventually_norm_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one C hC
+  rcases Metric.mem_nhdsWithin_iff.mp hmem with ⟨r, hr_pos, hr_sub⟩
+  refine ⟨r / 2, half_pos hr_pos, ?_⟩
+  intro s hs_ne hs_dist
+  exact hr_sub ⟨by
+    exact lt_of_le_of_lt hs_dist (half_lt_self hr_pos),
+    Set.mem_compl_singleton_iff.mpr hs_ne⟩
+
 /-- Closed punctured-ball pole-order bound for the negative logarithmic
 derivative `-ζ'/ζ`, matching the sign convention of the 3-4-1 inequality. -/
 lemma exists_punctured_closedBall_norm_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one :
@@ -442,6 +483,21 @@ lemma exists_punctured_closedBall_norm_neg_deriv_riemannZeta_div_riemannZeta_le_
         ‖deriv riemannZeta s / riemannZeta s‖ := by
           rw [neg_div, norm_neg]
     _ ≤ 2 / ‖s - 1‖ := hbound s hs_ne hs_dist
+
+/-- Closed punctured-ball flexible pole-order bound for `-ζ'/ζ`. -/
+lemma exists_punctured_closedBall_norm_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one
+    (C : ℝ) (hC : 1 < C) :
+    ∃ r > 0, ∀ s : ℂ, s ≠ 1 → dist s 1 ≤ r →
+      ‖-deriv riemannZeta s / riemannZeta s‖ < C / ‖s - 1‖ := by
+  rcases exists_punctured_closedBall_norm_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one
+      C hC with ⟨r, hr_pos, hbound⟩
+  refine ⟨r, hr_pos, ?_⟩
+  intro s hs_ne hs_dist
+  calc
+    ‖-deriv riemannZeta s / riemannZeta s‖ =
+        ‖deriv riemannZeta s / riemannZeta s‖ := by
+          rw [neg_div, norm_neg]
+    _ < C / ‖s - 1‖ := hbound s hs_ne hs_dist
 
 /-- Closed punctured-ball real-part pole-order bound for `-ζ'/ζ`. -/
 lemma exists_punctured_closedBall_abs_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one :

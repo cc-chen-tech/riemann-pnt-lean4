@@ -2301,12 +2301,27 @@ theorem eventually_norm_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_on
       ‖deriv riemannZeta s / riemannZeta s‖ ≤ 2 / ‖s - 1‖ :=
   ZeroFreeRegion.eventually_norm_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one
 
+/-- Public flexible local pole-order norm bound near `1` in quotient notation
+`ζ'/ζ`. -/
+theorem eventually_norm_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one
+    (C : ℝ) (hC : 1 < C) :
+    ∀ᶠ s in 𝓝[≠] (1 : ℂ),
+      ‖deriv riemannZeta s / riemannZeta s‖ < C / ‖s - 1‖ :=
+  ZeroFreeRegion.eventually_norm_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one C hC
+
 /-- Public local pole-order norm bound near `1` for the signed quotient
 `-ζ'/ζ`. -/
 theorem eventually_norm_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one :
     ∀ᶠ s in 𝓝[≠] (1 : ℂ),
       ‖-deriv riemannZeta s / riemannZeta s‖ ≤ 2 / ‖s - 1‖ :=
   ZeroFreeRegion.eventually_norm_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one
+
+/-- Public flexible local pole-order norm bound near `1` for `-ζ'/ζ`. -/
+theorem eventually_norm_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one
+    (C : ℝ) (hC : 1 < C) :
+    ∀ᶠ s in 𝓝[≠] (1 : ℂ),
+      ‖-deriv riemannZeta s / riemannZeta s‖ < C / ‖s - 1‖ :=
+  ZeroFreeRegion.eventually_norm_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one C hC
 
 /-- Public local real-part pole-order norm bound near `1` for `-ζ'/ζ`. -/
 theorem eventually_abs_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one :
@@ -2342,12 +2357,28 @@ theorem exists_punctured_closedBall_norm_deriv_riemannZeta_div_riemannZeta_le_tw
       ‖deriv riemannZeta s / riemannZeta s‖ ≤ 2 / ‖s - 1‖ :=
   ZeroFreeRegion.exists_punctured_closedBall_norm_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one
 
+/-- Public closed punctured-ball flexible pole-order norm bound in quotient
+notation `ζ'/ζ`. -/
+theorem exists_punctured_closedBall_norm_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one
+    (C : ℝ) (hC : 1 < C) :
+    ∃ r > 0, ∀ s : ℂ, s ≠ 1 → dist s 1 ≤ r →
+      ‖deriv riemannZeta s / riemannZeta s‖ < C / ‖s - 1‖ :=
+  ZeroFreeRegion.exists_punctured_closedBall_norm_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one C hC
+
 /-- Public closed punctured-ball pole-order bound for the signed quotient
 `-ζ'/ζ`. -/
 theorem exists_punctured_closedBall_norm_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one :
     ∃ r > 0, ∀ s : ℂ, s ≠ 1 → dist s 1 ≤ r →
       ‖-deriv riemannZeta s / riemannZeta s‖ ≤ 2 / ‖s - 1‖ :=
   ZeroFreeRegion.exists_punctured_closedBall_norm_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one
+
+/-- Public closed punctured-ball flexible pole-order norm bound for
+`-ζ'/ζ`. -/
+theorem exists_punctured_closedBall_norm_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one
+    (C : ℝ) (hC : 1 < C) :
+    ∃ r > 0, ∀ s : ℂ, s ≠ 1 → dist s 1 ≤ r →
+      ‖-deriv riemannZeta s / riemannZeta s‖ < C / ‖s - 1‖ :=
+  ZeroFreeRegion.exists_punctured_closedBall_norm_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one C hC
 
 /-- Public closed punctured-ball real-part bound for `-ζ'/ζ`. -/
 theorem exists_punctured_closedBall_abs_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one :
