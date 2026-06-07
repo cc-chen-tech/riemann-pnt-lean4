@@ -2217,6 +2217,16 @@ theorem divisor_riemannZeta_pole_one {U : Set ℂ}
     MeromorphicOn.divisor riemannZeta U (1 : ℂ) = (-1 : ℤ) :=
   ZeroFreeRegion.divisor_riemannZeta_pole_one hU hζ
 
+/-- Public meromorphicity of the zeta logarithmic derivative at `1`. -/
+theorem meromorphicAt_logDeriv_riemannZeta_one :
+    MeromorphicAt (logDeriv riemannZeta) (1 : ℂ) :=
+  ZeroFreeRegion.meromorphicAt_logDeriv_riemannZeta_one
+
+/-- Public meromorphicity of the zeta logarithmic derivative on closed balls. -/
+theorem meromorphicOn_logDeriv_riemannZeta_closedBall (c : ℂ) (R : ℝ) :
+    MeromorphicOn (logDeriv riemannZeta) (Metric.closedBall c R) :=
+  ZeroFreeRegion.meromorphicOn_logDeriv_riemannZeta_closedBall c R
+
 /-- Public trigonometric core of de la Vallée Poussin's 3-4-1 inequality. -/
 theorem trig_identity_nonneg (θ : ℝ) :
     3 + 4 * Real.cos θ + Real.cos (2 * θ) ≥ 0 :=

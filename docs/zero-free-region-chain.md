@@ -144,8 +144,11 @@ zeta API are enough for the local meromorphicity step.  This project now proves
 Difficulty:
 This block is now done, including
 `ZeroFreeRegion.meromorphicOrderAt_riemannZeta_one` and
-`ZeroFreeRegion.divisor_riemannZeta_pole_one`.  The next work starts from this
-API and proves local logarithmic-derivative estimates.
+`ZeroFreeRegion.divisor_riemannZeta_pole_one`.  The logarithmic derivative is
+also connected to this API by
+`ZeroFreeRegion.meromorphicOn_logDeriv_riemannZeta_closedBall`.  The next work
+starts from these meromorphic facts and proves quantitative local
+logarithmic-derivative estimates.
 
 ### 2. Polynomial Growth for Zeta in Vertical Disks
 

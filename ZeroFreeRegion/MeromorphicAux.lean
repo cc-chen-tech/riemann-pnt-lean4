@@ -168,4 +168,14 @@ lemma meromorphicOn_riemannZeta_closedBall (c : ℂ) (R : ℝ) :
     exact meromorphicAt_riemannZeta_one
   · exact meromorphicAt_riemannZeta_of_ne_one s hs
 
+/-- The logarithmic derivative of ζ is meromorphic at the pole `1`. -/
+lemma meromorphicAt_logDeriv_riemannZeta_one :
+    MeromorphicAt (logDeriv riemannZeta) (1 : ℂ) :=
+  meromorphicAt_riemannZeta_one.deriv.div meromorphicAt_riemannZeta_one
+
+/-- The logarithmic derivative of ζ is meromorphic on every closed ball. -/
+lemma meromorphicOn_logDeriv_riemannZeta_closedBall (c : ℂ) (R : ℝ) :
+    MeromorphicOn (logDeriv riemannZeta) (closedBall c R) :=
+  (meromorphicOn_riemannZeta_closedBall c R).logDeriv
+
 end ZeroFreeRegion

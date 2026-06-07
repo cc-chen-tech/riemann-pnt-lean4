@@ -155,7 +155,8 @@ Needed:
    simple-pole divisor value proved as
    `ZeroFreeRegion.divisor_riemannZeta_pole_one`).
 2. Meromorphicity of
-   `fun s => -deriv riemannZeta s / riemannZeta s * (x : Complex)^s / s`.
+   `fun s => -deriv riemannZeta s / riemannZeta s * (x : Complex)^s / s`
+   (the `logDeriv riemannZeta` factor is now meromorphic on closed balls).
 3. Residue at `s = 1`: contribution `x`.
 4. Residue at `s = 0`: contribution `-deriv riemannZeta 0 / riemannZeta 0`.
 5. Residue at a nontrivial zero `rho`: contribution

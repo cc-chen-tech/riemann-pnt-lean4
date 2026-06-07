@@ -145,6 +145,7 @@ Lean declarations in `ZeroFreeRegion.lean` and
 | `ZeroFreeRegion.meromorphicOn_riemannZeta_closedBall` | `lemma` | Proves ζ is meromorphic on every closed ball. | Rectangle/Jensen/Perron infrastructure hook for the zero-free and explicit-formula chains. |
 | `ZeroFreeRegion.meromorphicOrderAt_riemannZeta_one` | `lemma` | Proves `meromorphicOrderAt riemannZeta 1 = -1`. | Records that the pole at `1` is simple in Mathlib's meromorphic-order API. |
 | `ZeroFreeRegion.divisor_riemannZeta_pole_one` | `lemma` | Proves `(MeromorphicOn.divisor riemannZeta U) 1 = -1` for any meromorphic domain `U` containing `1`. | Enables divisor/residue bookkeeping for Jensen, rectangle-residue, and log-derivative work. |
+| `ZeroFreeRegion.meromorphicOn_logDeriv_riemannZeta_closedBall` | `lemma` | Proves the logarithmic derivative `logDeriv riemannZeta` is meromorphic on every closed ball. | Local analytic input for future Borel-Caratheodory/Jensen bounds on `ζ'/ζ`. |
 
 Two important boundaries:
 
@@ -153,9 +154,10 @@ Two important boundaries:
   `ZeroFreeRegion.classical_zero_free_region`.
 - `ZeroFreeRegion.residue_bounds` gives real-axis residue-scale inequalities,
   but does not by itself prove a global logarithmic-derivative growth estimate.
-- `ZeroFreeRegion.divisor_riemannZeta_pole_one` records the simple pole in the
-  divisor API, but does not by itself prove the Borel-Caratheodory/Jensen
-  growth estimates needed for the quantitative zero-free region.
+- `ZeroFreeRegion.meromorphicOn_logDeriv_riemannZeta_closedBall` records
+  meromorphicity of `ζ'/ζ`, but does not by itself prove the
+  Borel-Caratheodory/Jensen growth estimates needed for the quantitative
+  zero-free region.
 
 ## Publication Core and Remaining Targets
 
