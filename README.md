@@ -21,6 +21,37 @@ This means the project verifies the local analytic mechanism
 The repository does **not** claim the classical quantitative zero-free region
 `σ >= 1 - c / log |t|`, the full PNT, or RH.
 
+## Paper Positioning
+
+The recommended paper framing is to make the `3-4-1 + compact zero-free strip`
+module the main contribution, with the remaining infrastructure presented as
+secondary contributions and future work.  This keeps the claims tight:
+
+1. **Primary contribution:** formalizing the real-part logarithmic-derivative
+   Dirichlet series, the de la Vallee Poussin 3-4-1 inequality, and the compact
+   zero-free strip.
+2. **Secondary contribution:** correctly formulating the Riemann-von Mangoldt
+   explicit formula target using `chebyshevPsi0`, finite-height truncations, and
+   explicit error/remainder forms rather than an unordered infinite zero sum.
+3. **Supporting contribution:** proving PNT-form equivalences and RH-scale error
+   propagation lemmas that will compose with a future proof of `ψ(x) ~ x` or a
+   future explicit formula theorem.
+4. **Framework contribution:** building a Hardy-Z/critical-line-zero framework
+   with explicit target statements for Hardy, Hardy-Littlewood, Selberg, and
+   Conrey-style zero-counting results.
+5. **Mathlib roadmap:** isolating the missing analytic inputs: zeta growth and
+   logarithmic-derivative estimates for quantitative zero-free regions, Perron
+   and residue-theorem machinery for the explicit formula, and special-function
+   asymptotics for Hardy's theorem.
+
+The strongest current title direction is:
+
+> **Formalizing the 3-4-1 Inequality and a Compact Zero-Free Strip for the
+> Riemann Zeta Function in Lean 4**
+
+Broader PNT/RH/Hardy titles should be used only if the title clearly says this
+is infrastructure or a framework, not a completed proof of PNT or RH.
+
 ## Status
 
 `lake build` succeeds with Lean 4.29.1 / Mathlib 4.29.1. The repository is not
