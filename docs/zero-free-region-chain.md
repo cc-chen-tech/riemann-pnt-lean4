@@ -123,7 +123,9 @@ proved:
   Borel-Caratheodory and Jensen.  The combined
   `ZeroFreeRegion.borelCaratheodory_centered_verticalRegion` and
   `ZeroFreeRegion.borelCaratheodory_sub_centered_verticalRegion` wrappers are
-  the direct Borel entry points for later zeta/log-derivative growth estimates.
+  the direct Borel entry points for later zeta/log-derivative growth estimates;
+  `ZeroFreeRegion.jensen_circleAverage_log_norm_verticalRegion` is the matching
+  Jensen entry point for zero-count and divisor estimates.
 
 ## Mathlib API Check
 

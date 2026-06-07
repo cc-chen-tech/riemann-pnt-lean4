@@ -3038,6 +3038,23 @@ theorem jensen_circleAverage_log_norm
         + Real.log ‖meromorphicTrailingCoeffAt f c‖ :=
   ZeroFreeRegion.jensen_circleAverage_log_norm hR hf
 
+/-- Public Jensen formula on a `σ + I*t` disk with ambient vertical-region
+meromorphicity. -/
+theorem jensen_circleAverage_log_norm_verticalRegion
+    {f : ℂ → ℂ} {R σ t a b H : ℝ}
+    (hR : R ≠ 0) (hf : MeromorphicOn f (verticalRegion a b H))
+    (ha : a + |R| ≤ σ) (hb : σ + |R| ≤ b) (hH : H + |R| ≤ |t|) :
+    circleAverage (Real.log ‖f ·‖) ((σ : ℂ) + Complex.I * t) R
+      = ∑ᶠ u,
+          divisor f (closedBall ((σ : ℂ) + Complex.I * t) |R|) u *
+            Real.log (R * ‖((σ : ℂ) + Complex.I * t) - u‖⁻¹)
+        + divisor f (closedBall ((σ : ℂ) + Complex.I * t) |R|)
+            ((σ : ℂ) + Complex.I * t) * Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt f
+            ((σ : ℂ) + Complex.I * t)‖ :=
+  ZeroFreeRegion.jensen_circleAverage_log_norm_verticalRegion
+    hR hf ha hb hH
+
 /-- Public Jensen formula specialized to ζ on a closed ball. -/
 theorem jensen_circleAverage_log_norm_riemannZeta_closedBall
     {c : ℂ} {R : ℝ} (hR : R ≠ 0) :

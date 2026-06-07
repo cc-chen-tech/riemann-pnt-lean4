@@ -265,6 +265,9 @@ Core verified declarations:
   `borelCaratheodory_sub_centered_verticalRegion`
   combine the centered Borel-Caratheodory wrappers with the local disk
   geometry, using ambient `verticalRegion` hypotheses directly.
+- `jensen_circleAverage_log_norm_verticalRegion`
+  combines Jensen's formula with the same closed-disk geometry and ambient
+  vertical-region meromorphicity.
 
 ### `PrimeNumberTheorem.lean`
 

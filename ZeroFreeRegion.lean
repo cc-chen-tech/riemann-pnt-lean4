@@ -1262,6 +1262,24 @@ lemma jensen_circleAverage_log_norm
         + Real.log ‖meromorphicTrailingCoeffAt f c‖ :=
   MeromorphicOn.circleAverage_log_norm hR hf
 
+/-- Jensen formula on a disk centered at `σ + I*t`, with meromorphicity
+supplied on an ambient vertical region. -/
+lemma jensen_circleAverage_log_norm_verticalRegion
+    {f : ℂ → ℂ} {R σ t a b H : ℝ}
+    (hR : R ≠ 0) (hf : MeromorphicOn f (verticalRegion a b H))
+    (ha : a + |R| ≤ σ) (hb : σ + |R| ≤ b) (hH : H + |R| ≤ |t|) :
+    circleAverage (Real.log ‖f ·‖) ((σ : ℂ) + I * t) R
+      = ∑ᶠ u,
+          divisor f (closedBall ((σ : ℂ) + I * t) |R|) u *
+            Real.log (R * ‖((σ : ℂ) + I * t) - u‖⁻¹)
+        + divisor f (closedBall ((σ : ℂ) + I * t) |R|)
+            ((σ : ℂ) + I * t) * Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt f ((σ : ℂ) + I * t)‖ := by
+  exact jensen_circleAverage_log_norm hR
+    (meromorphicOn_closedBall_sigma_it_of_meromorphicOn_verticalRegion
+      (f := f) (σ := σ) (t := t) (R := |R|) (a := a) (b := b) (H := H)
+      hf ha hb hH)
+
 end JensenWrapper
 
 /-- Local namespace entry point for Mathlib's Phragmén-Lindelöf principle in a
