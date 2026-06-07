@@ -155,7 +155,12 @@ principal-part behavior is now also proved as
 `1`.  This has also been packaged into the local norm bound
 `ZeroFreeRegion.eventually_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one`,
 which says eventually near the pole
-`‖logDeriv riemannZeta s‖ <= 2 / ‖s - 1‖`, and into the disk-shaped
+`‖logDeriv riemannZeta s‖ <= 2 / ‖s - 1‖`.  The same eventual bound is
+available in quotient notation as
+`ZeroFreeRegion.eventually_norm_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one`
+and
+`ZeroFreeRegion.eventually_norm_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one`.
+It is also packaged into the disk-shaped
 `ZeroFreeRegion.exists_punctured_ball_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one`.
 The same local estimate is also available on a smaller closed punctured ball as
 `ZeroFreeRegion.exists_punctured_closedBall_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one`,

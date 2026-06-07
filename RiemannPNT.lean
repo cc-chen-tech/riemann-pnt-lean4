@@ -2279,6 +2279,19 @@ theorem eventually_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one :
       ‖logDeriv riemannZeta s‖ ≤ 2 / ‖s - 1‖ :=
   ZeroFreeRegion.eventually_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one
 
+/-- Public local pole-order norm bound near `1` in quotient notation `ζ'/ζ`. -/
+theorem eventually_norm_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one :
+    ∀ᶠ s in 𝓝[≠] (1 : ℂ),
+      ‖deriv riemannZeta s / riemannZeta s‖ ≤ 2 / ‖s - 1‖ :=
+  ZeroFreeRegion.eventually_norm_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one
+
+/-- Public local pole-order norm bound near `1` for the signed quotient
+`-ζ'/ζ`. -/
+theorem eventually_norm_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one :
+    ∀ᶠ s in 𝓝[≠] (1 : ℂ),
+      ‖-deriv riemannZeta s / riemannZeta s‖ ≤ 2 / ‖s - 1‖ :=
+  ZeroFreeRegion.eventually_norm_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one
+
 /-- Public punctured-ball form of the local pole-order norm bound for the
 zeta logarithmic derivative. -/
 theorem exists_punctured_ball_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one :

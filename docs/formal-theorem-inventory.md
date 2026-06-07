@@ -92,6 +92,12 @@ Core verified declarations:
 - `eventually_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one`
   proves the local pole-order bound
   `norm (logDeriv riemannZeta s) <= 2 / norm (s - 1)` eventually near `1`.
+- `eventually_norm_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one`
+  rewrites the eventual local pole-order bound in explicit quotient notation
+  `deriv riemannZeta s / riemannZeta s`.
+- `eventually_norm_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one`
+  rewrites the eventual local pole-order bound for the signed quotient
+  `-deriv riemannZeta s / riemannZeta s`.
 - `exists_punctured_ball_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one`
   packages that local pole-order bound as an explicit punctured-ball
   neighborhood around `1`.

@@ -304,6 +304,26 @@ lemma eventually_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one :
     simpa [mul_comm] using hmul'
   exact (le_div_iff₀ hnorm_pos).mpr hmul
 
+/-- Eventual pole-order bound near `1` in explicit quotient notation `ζ'/ζ`. -/
+lemma eventually_norm_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one :
+    ∀ᶠ s in 𝓝[≠] (1 : ℂ),
+      ‖deriv riemannZeta s / riemannZeta s‖ ≤ 2 / ‖s - 1‖ := by
+  filter_upwards [eventually_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one]
+    with s hs
+  simpa [logDeriv_apply] using hs
+
+/-- Eventual pole-order bound near `1` for the signed quotient `-ζ'/ζ`. -/
+lemma eventually_norm_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one :
+    ∀ᶠ s in 𝓝[≠] (1 : ℂ),
+      ‖-deriv riemannZeta s / riemannZeta s‖ ≤ 2 / ‖s - 1‖ := by
+  filter_upwards [eventually_norm_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one]
+    with s hs
+  calc
+    ‖-deriv riemannZeta s / riemannZeta s‖ =
+        ‖deriv riemannZeta s / riemannZeta s‖ := by
+          rw [neg_div, norm_neg]
+    _ ≤ 2 / ‖s - 1‖ := hs
+
 /-- Punctured-ball form of the local pole-order norm bound for the zeta
 logarithmic derivative.
 
