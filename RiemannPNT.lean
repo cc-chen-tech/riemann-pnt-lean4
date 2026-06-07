@@ -2441,6 +2441,17 @@ theorem exists_rightNeighborhood_hreal_two_div_sub_one (T0 : ℝ) :
           2 / (σOf t - 1) :=
   ZeroFreeRegion.exists_rightNeighborhood_hreal_two_div_sub_one T0
 
+/-- Public concrete real-axis `hreal` bound for
+`σOf t = 1 + a / log |t|`. -/
+theorem exists_sigmaOf_log_hreal_two_div_sub_one (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    ∃ d : ℝ, 0 < d ∧ ∀ a : ℝ, 0 < a → a ≤ Real.log 2 →
+      a ≤ d * Real.log 2 →
+      ∀ t : ℝ, T0 ≤ |t| →
+        (-deriv riemannZeta ((1 + a / Real.log |t| : ℝ) : ℂ) /
+            riemannZeta ((1 + a / Real.log |t| : ℝ) : ℂ)).re ≤
+          2 / ((1 + a / Real.log |t|) - 1) :=
+  ZeroFreeRegion.exists_sigmaOf_log_hreal_two_div_sub_one T0 hT0
+
 /-- Public real-axis specialization of the local norm bound for `-ζ'/ζ`
 near the pole at `1`. -/
 theorem exists_rightNeighborhood_norm_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_sub_one
@@ -2476,6 +2487,18 @@ theorem exists_rightNeighborhood_hreal_const_div_sub_one (C : ℝ) (hC : 1 < C)
         (-deriv riemannZeta (σOf t : ℂ) / riemannZeta (σOf t : ℂ)).re ≤
           C / (σOf t - 1) :=
   ZeroFreeRegion.exists_rightNeighborhood_hreal_const_div_sub_one C hC T0
+
+/-- Public flexible real-axis `hreal` bound for
+`σOf t = 1 + a / log |t|`. -/
+theorem exists_sigmaOf_log_hreal_const_div_sub_one (C : ℝ) (hC : 1 < C)
+    (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    ∃ d : ℝ, 0 < d ∧ ∀ a : ℝ, 0 < a → a ≤ Real.log 2 →
+      a ≤ d * Real.log 2 →
+      ∀ t : ℝ, T0 ≤ |t| →
+        (-deriv riemannZeta ((1 + a / Real.log |t| : ℝ) : ℂ) /
+            riemannZeta ((1 + a / Real.log |t| : ℝ) : ℂ)).re ≤
+          C / ((1 + a / Real.log |t|) - 1) :=
+  ZeroFreeRegion.exists_sigmaOf_log_hreal_const_div_sub_one C hC T0 hT0
 
 /-- Public meromorphicity of the zeta logarithmic derivative at `1`. -/
 theorem meromorphicAt_logDeriv_riemannZeta_one :

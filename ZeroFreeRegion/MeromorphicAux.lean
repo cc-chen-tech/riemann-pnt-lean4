@@ -21,6 +21,7 @@ This file establishes basic meromorphic properties of `riemannZeta` needed by bo
 
 import Mathlib
 import RiemannExplorer
+import ZeroFreeRegion
 
 open Complex BigOperators Filter Nat Topology MeasureTheory Asymptotics
 open scoped ArithmeticFunction LSeries.notation
@@ -713,6 +714,57 @@ lemma exists_rightNeighborhood_hreal_const_div_sub_one (C : ℝ) (hC : 1 < C)
   refine ⟨d, hd_pos, ?_⟩
   intro σOf hσ_gt hσ_near t ht _hgt _hle
   exact le_of_lt (hbound (σOf t) (hσ_gt t ht) (hσ_near t ht))
+
+/-- Concrete real-axis `hreal` bound for the standard choice
+`σOf t = 1 + a / log |t|`.
+
+The smallness condition `a ≤ d * log 2` is exactly what ensures that this
+standard choice remains inside the local right neighborhood supplied by the
+pole estimate. -/
+lemma exists_sigmaOf_log_hreal_two_div_sub_one (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    ∃ d : ℝ, 0 < d ∧ ∀ a : ℝ, 0 < a → a ≤ Real.log 2 →
+      a ≤ d * Real.log 2 →
+      ∀ t : ℝ, T0 ≤ |t| →
+        (-deriv riemannZeta ((1 + a / Real.log |t| : ℝ) : ℂ) /
+            riemannZeta ((1 + a / Real.log |t| : ℝ) : ℂ)).re ≤
+          2 / ((1 + a / Real.log |t|) - 1) := by
+  rcases exists_rightNeighborhood_hreal_two_div_sub_one T0 with
+    ⟨d, hd_pos, hreal⟩
+  refine ⟨d, hd_pos, ?_⟩
+  intro a ha_pos ha_le_log2 ha_le_near t ht
+  let σOf : ℝ → ℝ := fun u => 1 + a / Real.log |u|
+  have hσ_gt : ∀ u : ℝ, T0 ≤ |u| → 1 < σOf u :=
+    fun u hu => sigmaOf_log_gt_one hT0 ha_pos hu
+  have hσ_near : ∀ u : ℝ, T0 ≤ |u| → σOf u ≤ 1 + d :=
+    fun u hu => sigmaOf_log_le_one_add hT0 ha_le_near hd_pos.le hu
+  have hσ_le : σOf t ≤ 2 :=
+    sigmaOf_log_le_two hT0 ha_le_log2 ht
+  have hbound := hreal σOf hσ_gt hσ_near t ht (hσ_gt t ht) hσ_le
+  simpa [σOf] using hbound
+
+/-- Flexible real-axis `hreal` bound for the standard choice
+`σOf t = 1 + a / log |t|`. -/
+lemma exists_sigmaOf_log_hreal_const_div_sub_one (C : ℝ) (hC : 1 < C)
+    (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    ∃ d : ℝ, 0 < d ∧ ∀ a : ℝ, 0 < a → a ≤ Real.log 2 →
+      a ≤ d * Real.log 2 →
+      ∀ t : ℝ, T0 ≤ |t| →
+        (-deriv riemannZeta ((1 + a / Real.log |t| : ℝ) : ℂ) /
+            riemannZeta ((1 + a / Real.log |t| : ℝ) : ℂ)).re ≤
+          C / ((1 + a / Real.log |t|) - 1) := by
+  rcases exists_rightNeighborhood_hreal_const_div_sub_one C hC T0 with
+    ⟨d, hd_pos, hreal⟩
+  refine ⟨d, hd_pos, ?_⟩
+  intro a ha_pos ha_le_log2 ha_le_near t ht
+  let σOf : ℝ → ℝ := fun u => 1 + a / Real.log |u|
+  have hσ_gt : ∀ u : ℝ, T0 ≤ |u| → 1 < σOf u :=
+    fun u hu => sigmaOf_log_gt_one hT0 ha_pos hu
+  have hσ_near : ∀ u : ℝ, T0 ≤ |u| → σOf u ≤ 1 + d :=
+    fun u hu => sigmaOf_log_le_one_add hT0 ha_le_near hd_pos.le hu
+  have hσ_le : σOf t ≤ 2 :=
+    sigmaOf_log_le_two hT0 ha_le_log2 ht
+  have hbound := hreal σOf hσ_gt hσ_near t ht (hσ_gt t ht) hσ_le
+  simpa [σOf] using hbound
 
 /-- ζ has a simple pole at `1`, expressed as meromorphic order `-1`. -/
 lemma meromorphicOrderAt_riemannZeta_one :

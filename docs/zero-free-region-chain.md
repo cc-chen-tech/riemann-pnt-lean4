@@ -232,6 +232,12 @@ the 3-4-1 high-height assembly:
 `hreal` hypothesis for `realBound t = 2 / (sigmaOf t - 1)` or
 `realBound t = C / (sigmaOf t - 1)` whenever the chosen `sigmaOf t` remains in
 the local right neighborhood of `1`.
+For the standard choice `sigmaOf t = 1 + a / log |t|`, the concrete and
+flexible versions are now specialized further as
+`ZeroFreeRegion.exists_sigmaOf_log_hreal_two_div_sub_one` and
+`ZeroFreeRegion.exists_sigmaOf_log_hreal_const_div_sub_one`.  These leave only
+the expected smallness constraints on `a`: positivity, `a <= log 2`, and
+`a <= d log 2` for the local-neighborhood radius returned by the pole estimate.
 The next work starts from these meromorphic/nonvanishing/principal-part facts
 and proves the vertical-height logarithmic-derivative estimates needed for the
 quantitative strip.
