@@ -2273,11 +2273,27 @@ theorem eventually_norm_mul_logDeriv_riemannZeta_le_two :
       ‖(s - 1) * logDeriv riemannZeta s‖ ≤ 2 :=
   ZeroFreeRegion.eventually_norm_mul_logDeriv_riemannZeta_le_two
 
+/-- Public flexible local normalized bound for the zeta logarithmic derivative:
+any constant `C > 1` eventually bounds the normalized norm. -/
+theorem eventually_norm_mul_logDeriv_riemannZeta_lt_const
+    (C : ℝ) (hC : 1 < C) :
+    ∀ᶠ s in 𝓝[≠] (1 : ℂ),
+      ‖(s - 1) * logDeriv riemannZeta s‖ < C :=
+  ZeroFreeRegion.eventually_norm_mul_logDeriv_riemannZeta_lt_const C hC
+
 /-- Public local pole-order norm bound for the zeta logarithmic derivative. -/
 theorem eventually_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one :
     ∀ᶠ s in 𝓝[≠] (1 : ℂ),
       ‖logDeriv riemannZeta s‖ ≤ 2 / ‖s - 1‖ :=
   ZeroFreeRegion.eventually_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one
+
+/-- Public flexible local pole-order norm bound for the zeta logarithmic
+derivative. -/
+theorem eventually_norm_logDeriv_riemannZeta_lt_const_div_norm_sub_one
+    (C : ℝ) (hC : 1 < C) :
+    ∀ᶠ s in 𝓝[≠] (1 : ℂ),
+      ‖logDeriv riemannZeta s‖ < C / ‖s - 1‖ :=
+  ZeroFreeRegion.eventually_norm_logDeriv_riemannZeta_lt_const_div_norm_sub_one C hC
 
 /-- Public local pole-order norm bound near `1` in quotient notation `ζ'/ζ`. -/
 theorem eventually_norm_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one :
@@ -2297,6 +2313,13 @@ theorem eventually_abs_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_
     ∀ᶠ s in 𝓝[≠] (1 : ℂ),
       |(-deriv riemannZeta s / riemannZeta s).re| ≤ 2 / ‖s - 1‖ :=
   ZeroFreeRegion.eventually_abs_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one
+
+/-- Public flexible local real-part bound near `1` for `-ζ'/ζ`. -/
+theorem eventually_abs_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one
+    (C : ℝ) (hC : 1 < C) :
+    ∀ᶠ s in 𝓝[≠] (1 : ℂ),
+      |(-deriv riemannZeta s / riemannZeta s).re| < C / ‖s - 1‖ :=
+  ZeroFreeRegion.eventually_abs_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one C hC
 
 /-- Public punctured-ball form of the local pole-order norm bound for the
 zeta logarithmic derivative. -/
@@ -2331,6 +2354,14 @@ theorem exists_punctured_closedBall_abs_re_neg_deriv_riemannZeta_div_riemannZeta
     ∃ r > 0, ∀ s : ℂ, s ≠ 1 → dist s 1 ≤ r →
       |(-deriv riemannZeta s / riemannZeta s).re| ≤ 2 / ‖s - 1‖ :=
   ZeroFreeRegion.exists_punctured_closedBall_abs_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one
+
+/-- Public closed punctured-ball real-part bound for `-ζ'/ζ`, with any
+constant `C > 1`. -/
+theorem exists_punctured_closedBall_abs_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one
+    (C : ℝ) (hC : 1 < C) :
+    ∃ r > 0, ∀ s : ℂ, s ≠ 1 → dist s 1 ≤ r →
+      |(-deriv riemannZeta s / riemannZeta s).re| < C / ‖s - 1‖ :=
+  ZeroFreeRegion.exists_punctured_closedBall_abs_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one C hC
 
 /-- Public meromorphicity of the zeta logarithmic derivative at `1`. -/
 theorem meromorphicAt_logDeriv_riemannZeta_one :

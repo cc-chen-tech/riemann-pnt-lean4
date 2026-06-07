@@ -89,9 +89,15 @@ Core verified declarations:
 - `eventually_norm_mul_logDeriv_riemannZeta_le_two`
   proves the normalized logarithmic derivative is eventually bounded by `2`
   near the pole.
+- `eventually_norm_mul_logDeriv_riemannZeta_lt_const`
+  proves the normalized logarithmic derivative is eventually bounded by any
+  real constant `C > 1`.
 - `eventually_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one`
   proves the local pole-order bound
   `norm (logDeriv riemannZeta s) <= 2 / norm (s - 1)` eventually near `1`.
+- `eventually_norm_logDeriv_riemannZeta_lt_const_div_norm_sub_one`
+  proves the flexible local pole-order bound
+  `norm (logDeriv riemannZeta s) < C / norm (s - 1)` for every `C > 1`.
 - `eventually_norm_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one`
   rewrites the eventual local pole-order bound in explicit quotient notation
   `deriv riemannZeta s / riemannZeta s`.
@@ -101,6 +107,9 @@ Core verified declarations:
 - `eventually_abs_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one`
   bounds the real part of the signed quotient by
   `2 / norm (s - 1)` eventually near `1`.
+- `eventually_abs_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one`
+  gives the corresponding eventual real-part bound with any constant
+  `C > 1`.
 - `exists_punctured_ball_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one`
   packages that local pole-order bound as an explicit punctured-ball
   neighborhood around `1`.
@@ -116,6 +125,9 @@ Core verified declarations:
 - `exists_punctured_closedBall_abs_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one`
   bounds the real part of the signed quotient on a closed punctured ball
   around `1`.
+- `exists_punctured_closedBall_abs_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one`
+  gives the corresponding closed punctured-ball real-part bound with any
+  constant `C > 1`.
 - `meromorphicAt_logDeriv_riemannZeta_one`
   proves the logarithmic derivative is meromorphic at the pole.
 - `meromorphicOn_logDeriv_riemannZeta_closedBall`

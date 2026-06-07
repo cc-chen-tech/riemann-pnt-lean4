@@ -284,6 +284,21 @@ lemma eventually_norm_mul_logDeriv_riemannZeta_le_two :
     simpa using tendsto_mul_logDeriv_riemannZeta_simplePoleAtOne.norm
   exact hnorm.eventually (eventually_le_nhds (by norm_num : (1 : ℝ) < 2))
 
+/-- Flexible local boundedness of the normalized logarithmic derivative.
+
+Since `(s - 1) * logDeriv riemannZeta s` tends to `-1`, its norm is eventually
+less than any real constant strictly larger than `1`. -/
+lemma eventually_norm_mul_logDeriv_riemannZeta_lt_const
+    (C : ℝ) (hC : 1 < C) :
+    ∀ᶠ s in 𝓝[≠] (1 : ℂ),
+      ‖(s - 1) * logDeriv riemannZeta s‖ < C := by
+  have hnorm :
+      Tendsto
+        (fun s : ℂ => ‖(s - 1) * logDeriv riemannZeta s‖)
+        (𝓝[≠] (1 : ℂ)) (𝓝 (1 : ℝ)) := by
+    simpa using tendsto_mul_logDeriv_riemannZeta_simplePoleAtOne.norm
+  exact hnorm.eventually (eventually_lt_nhds hC)
+
 /-- Local pole-order norm bound for the zeta logarithmic derivative.
 
 Near `1` away from the pole,
@@ -303,6 +318,25 @@ lemma eventually_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one :
       simpa [norm_mul] using hbound
     simpa [mul_comm] using hmul'
   exact (le_div_iff₀ hnorm_pos).mpr hmul
+
+/-- Flexible local pole-order norm bound for the zeta logarithmic derivative.
+
+For every constant `C > 1`, the logarithmic derivative is eventually bounded by
+`C / ‖s - 1‖` near the pole. -/
+lemma eventually_norm_logDeriv_riemannZeta_lt_const_div_norm_sub_one
+    (C : ℝ) (hC : 1 < C) :
+    ∀ᶠ s in 𝓝[≠] (1 : ℂ),
+      ‖logDeriv riemannZeta s‖ < C / ‖s - 1‖ := by
+  filter_upwards [eventually_norm_mul_logDeriv_riemannZeta_lt_const C hC,
+    self_mem_nhdsWithin] with s hbound hs1
+  have hs_ne : s - 1 ≠ 0 :=
+    sub_ne_zero.mpr (Set.mem_compl_singleton_iff.mp hs1)
+  have hnorm_pos : 0 < ‖s - 1‖ := norm_pos_iff.mpr hs_ne
+  have hmul : ‖logDeriv riemannZeta s‖ * ‖s - 1‖ < C := by
+    have hmul' : ‖s - 1‖ * ‖logDeriv riemannZeta s‖ < C := by
+      simpa [norm_mul] using hbound
+    simpa [mul_comm] using hmul'
+  exact (lt_div_iff₀ hnorm_pos).mpr hmul
 
 /-- Eventual pole-order bound near `1` in explicit quotient notation `ζ'/ζ`. -/
 lemma eventually_norm_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one :
@@ -333,6 +367,23 @@ lemma eventually_abs_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_su
     [eventually_norm_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one]
     with s hs
   exact le_trans (abs_re_le_norm (-deriv riemannZeta s / riemannZeta s)) hs
+
+/-- Flexible eventual real-part pole-order bound near `1` for the signed
+quotient `-ζ'/ζ`. -/
+lemma eventually_abs_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one
+    (C : ℝ) (hC : 1 < C) :
+    ∀ᶠ s in 𝓝[≠] (1 : ℂ),
+      |(-deriv riemannZeta s / riemannZeta s).re| < C / ‖s - 1‖ := by
+  filter_upwards
+    [eventually_norm_logDeriv_riemannZeta_lt_const_div_norm_sub_one C hC]
+    with s hs
+  calc
+    |(-deriv riemannZeta s / riemannZeta s).re| ≤
+        ‖-deriv riemannZeta s / riemannZeta s‖ :=
+          abs_re_le_norm (-deriv riemannZeta s / riemannZeta s)
+    _ = ‖logDeriv riemannZeta s‖ := by
+      rw [logDeriv_apply, neg_div, norm_neg]
+    _ < C / ‖s - 1‖ := hs
 
 /-- Punctured-ball form of the local pole-order norm bound for the zeta
 logarithmic derivative.
@@ -402,6 +453,23 @@ lemma exists_punctured_closedBall_abs_re_neg_deriv_riemannZeta_div_riemannZeta_l
   intro s hs_ne hs_dist
   exact le_trans (abs_re_le_norm (-deriv riemannZeta s / riemannZeta s))
     (hbound s hs_ne hs_dist)
+
+/-- Closed punctured-ball real-part pole-order bound for `-ζ'/ζ`, with any
+constant `C > 1`. -/
+lemma exists_punctured_closedBall_abs_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one
+    (C : ℝ) (hC : 1 < C) :
+    ∃ r > 0, ∀ s : ℂ, s ≠ 1 → dist s 1 ≤ r →
+      |(-deriv riemannZeta s / riemannZeta s).re| < C / ‖s - 1‖ := by
+  have hmem :
+      {s : ℂ | |(-deriv riemannZeta s / riemannZeta s).re| <
+          C / ‖s - 1‖} ∈ 𝓝[{1}ᶜ] (1 : ℂ) :=
+    eventually_abs_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one C hC
+  rcases Metric.mem_nhdsWithin_iff.mp hmem with ⟨r, hr_pos, hr_sub⟩
+  refine ⟨r / 2, half_pos hr_pos, ?_⟩
+  intro s hs_ne hs_dist
+  exact hr_sub ⟨by
+    exact lt_of_le_of_lt hs_dist (half_lt_self hr_pos),
+    Set.mem_compl_singleton_iff.mpr hs_ne⟩
 
 /-- ζ has a simple pole at `1`, expressed as meromorphic order `-1`. -/
 lemma meromorphicOrderAt_riemannZeta_one :
