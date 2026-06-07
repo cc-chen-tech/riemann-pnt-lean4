@@ -412,6 +412,14 @@ auxiliary lemma `ZeroFreeRegion.log_abs_two_mul_le_two_log_abs` proves
 wrapper
 `ZeroFreeRegion.classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound`
 is now the highest-level conditional interface for this branch.
+The sign-convention wrappers
+`ZeroFreeRegion.classical_zero_free_region_of_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound`
+and
+`ZeroFreeRegion.classical_zero_free_region_of_exists_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound`
+present the same interface in the standard local-zero form
+`||logDeriv zeta(s) - (s-rho)^(-1)|| <= B log |Im(s)|`, converting to the
+signed 3-4-1 convention by `||-x|| = ||x||`.  This is the preferred statement
+for future Borel/Jensen principal-part estimates.
 This is still conditional; it does not prove the quantitative zero-free region
 until those two zeta-specific estimates are proved.
 The next work starts from these meromorphic/nonvanishing/principal-part facts

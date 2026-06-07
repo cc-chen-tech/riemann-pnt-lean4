@@ -1503,6 +1503,59 @@ lemma classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_bound_
     classical_zero_free_region_of_neg_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound
       Bregular Bvertical hBregular hBvertical hregular hvertical
 
+/-- Sign-convention wrapper for the regular-part/vertical-strip closure.
+
+Local zero estimates are often stated as
+`logDeriv ζ(s) - (s - ρ)⁻¹ = O(log |Im s|)`.  The 3-4-1 chain uses the
+equivalent signed form `-logDeriv ζ(s) + (s - ρ)⁻¹`; this lemma performs only
+that sign conversion, together with the harmless norm equality
+`||-logDeriv ζ|| = ||logDeriv ζ||` for the vertical estimate. -/
+lemma classical_zero_free_region_of_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound
+    (Bregular Bvertical : ℝ)
+    (hBregular : 0 ≤ Bregular) (hBvertical : 0 ≤ Bvertical)
+    (hregular :
+      ∀ s ρ : ℂ, 2 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+        riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+        0 < s.re - ρ.re →
+        ‖logDeriv riemannZeta s - (s - ρ)⁻¹‖ ≤
+          Bregular * Real.log |s.im|)
+    (hvertical :
+      ∀ z : ℂ, 2 ≤ |z.im| → z.re ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta z‖ ≤ Bvertical * Real.log |z.im|) :
+    classical_zero_free_region := by
+  refine
+    classical_zero_free_region_of_neg_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound
+      Bregular Bvertical hBregular hBvertical ?_ ?_
+  · intro s ρ hs_height hs_re_mem hζρ hρ_im_eq hρ_re_lt hsub
+    calc
+      ‖-logDeriv riemannZeta s + (s - ρ)⁻¹‖
+          = ‖-(logDeriv riemannZeta s - (s - ρ)⁻¹)‖ := by ring_nf
+      _ = ‖logDeriv riemannZeta s - (s - ρ)⁻¹‖ := norm_neg _
+      _ ≤ Bregular * Real.log |s.im| :=
+          hregular s ρ hs_height hs_re_mem hζρ hρ_im_eq hρ_re_lt hsub
+  · intro z hz_height hz_re_mem
+    calc
+      ‖-logDeriv riemannZeta z‖ = ‖logDeriv riemannZeta z‖ := norm_neg _
+      _ ≤ Bvertical * Real.log |z.im| := hvertical z hz_height hz_re_mem
+
+/-- Existential sign-convention wrapper for the regular-part/vertical-strip
+closure. -/
+lemma classical_zero_free_region_of_exists_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound
+    (h :
+      ∃ Bregular Bvertical : ℝ, 0 ≤ Bregular ∧ 0 ≤ Bvertical ∧
+        (∀ s ρ : ℂ, 2 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+          riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+          0 < s.re - ρ.re →
+          ‖logDeriv riemannZeta s - (s - ρ)⁻¹‖ ≤
+            Bregular * Real.log |s.im|) ∧
+        (∀ z : ℂ, 2 ≤ |z.im| → z.re ∈ Set.Icc 1 2 →
+          ‖logDeriv riemannZeta z‖ ≤ Bvertical * Real.log |z.im|)) :
+    classical_zero_free_region := by
+  rcases h with ⟨Bregular, Bvertical, hBregular, hBvertical, hregular, hvertical⟩
+  exact
+    classical_zero_free_region_of_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound
+      Bregular Bvertical hBregular hBvertical hregular hvertical
+
 /-- ζ has a simple pole at `1`, expressed as meromorphic order `-1`. -/
 lemma meromorphicOrderAt_riemannZeta_one :
     meromorphicOrderAt riemannZeta (1 : ℂ) = (-1 : ℤ) := by

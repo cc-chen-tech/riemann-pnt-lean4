@@ -270,6 +270,12 @@ Core verified declarations:
 - `classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound`
   packages the regular-part norm estimate and vertical-strip log-derivative
   norm estimate existentially.
+- `classical_zero_free_region_of_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound`
+  is the same highest-level closure in the natural local-zero convention
+  `||logDeriv zeta(s) - (s-rho)^{-1}|| <= B log |Im(s)|`, converting signs by
+  `||-x|| = ||x||`.
+- `classical_zero_free_region_of_exists_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound`
+  packages that positive-log-derivative convention existentially.
 - `meromorphicAt_logDeriv_riemannZeta_one`
   proves the logarithmic derivative is meromorphic at the pole.
 - `meromorphicOn_logDeriv_riemannZeta_closedBall`
