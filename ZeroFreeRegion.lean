@@ -660,6 +660,59 @@ lemma classical_width_mono_const {csmall clarge t : ℝ}
     csmall / Real.log |t| ≤ clarge / Real.log |t| :=
   div_le_div_of_nonneg_right hc (log_abs_pos_of_two_le ht).le
 
+/-- The standard high-height choice `σ = 1 + a / log |t|` lies to the right of
+the pole line when `a > 0`. -/
+lemma sigmaOf_log_gt_one {T0 a t : ℝ} (hT0 : 2 ≤ T0) (ha : 0 < a)
+    (ht : T0 ≤ |t|) :
+    1 < 1 + a / Real.log |t| := by
+  have hlog_pos : 0 < Real.log |t| := log_abs_pos_of_two_le (hT0.trans ht)
+  have hwidth_pos : 0 < a / Real.log |t| := div_pos ha hlog_pos
+  linarith
+
+/-- If `a ≤ log 2`, then the standard high-height choice
+`σ = 1 + a / log |t|` remains at most `2` throughout any range
+`T0 ≤ |t|` with `T0 ≥ 2`. -/
+lemma sigmaOf_log_le_two {T0 a t : ℝ} (hT0 : 2 ≤ T0)
+    (ha_le : a ≤ Real.log 2) (ht : T0 ≤ |t|) :
+    1 + a / Real.log |t| ≤ 2 := by
+  have ht2 : 2 ≤ |t| := hT0.trans ht
+  have hlog_pos : 0 < Real.log |t| := log_abs_pos_of_two_le ht2
+  have hlog_mono : Real.log (2 : ℝ) ≤ Real.log |t| :=
+    Real.log_le_log (by norm_num) ht2
+  have ha_le_log : a ≤ Real.log |t| := le_trans ha_le hlog_mono
+  have hdiv_le : a / Real.log |t| ≤ 1 := by
+    exact (div_le_iff₀ hlog_pos).mpr (by simpa using ha_le_log)
+  linarith
+
+/-- The standard high-height choice `σ = 1 + a / log |t|` stays strictly to
+the right of every `β < 1`.  This is the `hσ_sub_pos` real-variable input
+used by the 3-4-1 contradiction. -/
+lemma sigmaOf_log_sub_pos {T0 a β t : ℝ} (hT0 : 2 ≤ T0) (ha : 0 < a)
+    (ht : T0 ≤ |t|) (hβ_lt : β < 1) :
+    0 < (1 + a / Real.log |t|) - β := by
+  have hσ_gt : 1 < 1 + a / Real.log |t| :=
+    sigmaOf_log_gt_one hT0 ha ht
+  linarith
+
+/-- A local right-neighborhood condition for the standard choice
+`σ = 1 + a / log |t|`.
+
+If `a ≤ d log 2`, then `σ ≤ 1 + d` in every height range above `2`.
+This is the bridge needed to use local pole estimates whose hypotheses are
+phrased as `σ ≤ 1 + d`. -/
+lemma sigmaOf_log_le_one_add {T0 a d t : ℝ} (hT0 : 2 ≤ T0)
+    (ha_le : a ≤ d * Real.log 2) (hd : 0 ≤ d) (ht : T0 ≤ |t|) :
+    1 + a / Real.log |t| ≤ 1 + d := by
+  have ht2 : 2 ≤ |t| := hT0.trans ht
+  have hlog_pos : 0 < Real.log |t| := log_abs_pos_of_two_le ht2
+  have hlog_mono : Real.log (2 : ℝ) ≤ Real.log |t| :=
+    Real.log_le_log (by norm_num) ht2
+  have ha_le_dlog : a ≤ d * Real.log |t| :=
+    le_trans ha_le (mul_le_mul_of_nonneg_left hlog_mono hd)
+  have hdiv_le : a / Real.log |t| ≤ d := by
+    exact (div_le_iff₀ hlog_pos).mpr ha_le_dlog
+  linarith
+
 /-- Above height `3`, `log |t|` is already larger than `1`. -/
 lemma log_abs_gt_one_of_three_le {t : ℝ} (ht : 3 ≤ |t|) :
     1 < Real.log |t| := by

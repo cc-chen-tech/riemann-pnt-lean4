@@ -3164,6 +3164,31 @@ theorem classical_width_mono_const {csmall clarge t : ℝ}
     csmall / Real.log |t| ≤ clarge / Real.log |t| :=
   ZeroFreeRegion.classical_width_mono_const hc ht
 
+/-- Public positivity of the standard high-height choice
+`1 + a / log |t|`. -/
+theorem sigmaOf_log_gt_one {T0 a t : ℝ} (hT0 : 2 ≤ T0) (ha : 0 < a)
+    (ht : T0 ≤ |t|) :
+    1 < 1 + a / Real.log |t| :=
+  ZeroFreeRegion.sigmaOf_log_gt_one hT0 ha ht
+
+/-- Public upper bound `1 + a / log |t| ≤ 2` when `a ≤ log 2`. -/
+theorem sigmaOf_log_le_two {T0 a t : ℝ} (hT0 : 2 ≤ T0)
+    (ha_le : a ≤ Real.log 2) (ht : T0 ≤ |t|) :
+    1 + a / Real.log |t| ≤ 2 :=
+  ZeroFreeRegion.sigmaOf_log_le_two hT0 ha_le ht
+
+/-- Public positivity of `(1 + a / log |t|) - β` for `β < 1`. -/
+theorem sigmaOf_log_sub_pos {T0 a β t : ℝ} (hT0 : 2 ≤ T0) (ha : 0 < a)
+    (ht : T0 ≤ |t|) (hβ_lt : β < 1) :
+    0 < (1 + a / Real.log |t|) - β :=
+  ZeroFreeRegion.sigmaOf_log_sub_pos hT0 ha ht hβ_lt
+
+/-- Public local-neighborhood bound for `1 + a / log |t|`. -/
+theorem sigmaOf_log_le_one_add {T0 a d t : ℝ} (hT0 : 2 ≤ T0)
+    (ha_le : a ≤ d * Real.log 2) (hd : 0 ≤ d) (ht : T0 ≤ |t|) :
+    1 + a / Real.log |t| ≤ 1 + d :=
+  ZeroFreeRegion.sigmaOf_log_le_one_add hT0 ha_le hd ht
+
 /-- Public positivity of the Vinogradov-Korobov width above height `3`. -/
 theorem vinogradov_korobov_width_pos_of_three_le {c t : ℝ}
     (hc : 0 < c) (ht : 3 ≤ |t|) :

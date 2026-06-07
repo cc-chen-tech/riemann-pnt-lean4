@@ -48,6 +48,15 @@ Supporting declarations include:
 - `riemannZeta_gt_one_div_sub`
 - `riemannZeta_re_le_sigma_div_sub`
 - `log_deriv_zeta_real_eq_series`
+- `sigmaOf_log_gt_one`
+  proves the standard high-height choice `1 + a / log |t|` is greater than
+  `1` when `a > 0`.
+- `sigmaOf_log_le_two`
+  proves this choice is at most `2` when `a <= log 2`.
+- `sigmaOf_log_sub_pos`
+  proves this choice stays to the right of any `β < 1`.
+- `sigmaOf_log_le_one_add`
+  connects this choice to local right-neighborhood hypotheses `σ <= 1 + d`.
 
 Private technical lemma:
 

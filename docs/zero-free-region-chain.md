@@ -80,6 +80,20 @@ The remaining work for the classical zero-free region is therefore not the
 algebraic 3-4-1 contradiction or bounded-height patching; it is the
 zeta-specific logarithmic-derivative estimates described below.
 
+The standard real-variable choice
+`sigmaOf t = 1 + a / Real.log |t|` now has its elementary side conditions
+proved:
+
+- `ZeroFreeRegion.sigmaOf_log_gt_one`
+  proves `1 < sigmaOf t` above height `2` when `a > 0`.
+- `ZeroFreeRegion.sigmaOf_log_le_two`
+  proves `sigmaOf t <= 2` above height `2` when `a <= log 2`.
+- `ZeroFreeRegion.sigmaOf_log_sub_pos`
+  proves `0 < sigmaOf t - beta` for every `beta < 1`.
+- `ZeroFreeRegion.sigmaOf_log_le_one_add`
+  proves `sigmaOf t <= 1 + d` from `a <= d log 2`, letting local
+  right-neighborhood estimates feed the high-height assembly.
+
 ## Mathlib API Check
 
 The local Mathlib already contains more relevant complex-analysis API than the
