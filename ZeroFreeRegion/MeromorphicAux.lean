@@ -1935,6 +1935,85 @@ lemma classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_one_
     classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_one_add_log_bound_high_height
       T0 C hT0 hC hregular hvertical
 
+/-- Above height `3`, `log(|t| + 3)` is controlled by `2 log |t|`. -/
+lemma log_abs_add_three_le_two_log_abs {t : ℝ} (ht : 3 ≤ |t|) :
+    Real.log (|t| + 3) ≤ 2 * Real.log |t| := by
+  have ht_pos : 0 < |t| := by linarith
+  have hsum_pos : 0 < |t| + 3 := by linarith
+  have hsum_le : |t| + 3 ≤ 2 * |t| := by linarith
+  have hlog_le : Real.log (|t| + 3) ≤ Real.log (2 * |t|) :=
+    Real.log_le_log hsum_pos hsum_le
+  have hlog_mul : Real.log (2 * |t|) = Real.log 2 + Real.log |t| := by
+    rw [Real.log_mul (by norm_num : (2 : ℝ) ≠ 0) (ne_of_gt ht_pos)]
+  have hlog_two_le : Real.log 2 ≤ Real.log |t| :=
+    Real.log_le_log (by norm_num) (by linarith : (2 : ℝ) ≤ |t|)
+  calc
+    Real.log (|t| + 3) ≤ Real.log (2 * |t|) := hlog_le
+    _ = Real.log 2 + Real.log |t| := hlog_mul
+    _ ≤ 2 * Real.log |t| := by linarith
+
+/-- Coordinate high-height closure from a single `C * log(|t| + 3)` bound.
+
+This shape is common in analytic estimates because it is harmless at small
+height.  Above height `3`, `log(|t| + 3) <= 2 log |t|`, so the estimate feeds
+the affine-log coordinate closure. -/
+lemma classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_abs_add_three_bound_high_height
+    (T0 C : ℝ) (hT0 : 3 ≤ T0) (hC : 0 ≤ C)
+    (hregular :
+      ∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+        0 < σ - β →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+            (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+          C * Real.log (|t| + 3))
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          C * Real.log (|t| + 3)) :
+    classical_zero_free_region := by
+  refine
+    classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_affine_bounds_high_height
+      T0 0 (2 * C) 0 (2 * C) hT0 (by norm_num) (by nlinarith)
+      (by norm_num) (by nlinarith) ?_ ?_
+  · intro σ β t ht hσ hζ hβ hsub
+    have hlog := log_abs_add_three_le_two_log_abs (hT0.trans ht)
+    calc
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+          (((σ - β : ℝ) : ℂ)⁻¹)‖
+          ≤ C * Real.log (|t| + 3) :=
+            hregular σ β t ht hσ hζ hβ hsub
+      _ ≤ C * (2 * Real.log |t|) :=
+            mul_le_mul_of_nonneg_left hlog hC
+      _ = 0 + (2 * C) * Real.log |t| := by ring
+  · intro σ t ht hσ
+    have hlog := log_abs_add_three_le_two_log_abs (hT0.trans ht)
+    calc
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖
+          ≤ C * Real.log (|t| + 3) := hvertical σ t ht hσ
+      _ ≤ C * (2 * Real.log |t|) :=
+            mul_le_mul_of_nonneg_left hlog hC
+      _ = 0 + (2 * C) * Real.log |t| := by ring
+
+/-- Existential coordinate high-height closure from a single
+`C * log(|t| + 3)` bound. -/
+lemma classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_log_abs_add_three_bound_high_height
+    (h :
+      ∃ T0 C : ℝ, 3 ≤ T0 ∧ 0 ≤ C ∧
+        (∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+          0 < σ - β →
+          ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+              (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+            C * Real.log (|t| + 3)) ∧
+        (∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+            C * Real.log (|t| + 3))) :
+    classical_zero_free_region := by
+  rcases h with ⟨T0, C, hT0, hC, hregular, hvertical⟩
+  exact
+    classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_abs_add_three_bound_high_height
+      T0 C hT0 hC hregular hvertical
+
 /-- Existential high-height closure from affine logarithmic bounds. -/
 lemma classical_zero_free_region_of_exists_logDeriv_regular_part_norm_affine_log_bound_and_vertical_logDeriv_norm_affine_log_bound_high_height
     (h :

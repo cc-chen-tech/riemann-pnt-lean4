@@ -448,6 +448,14 @@ and
 `ZeroFreeRegion.classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_one_add_log_bound_high_height`
 specialize this one step further to the common estimate shape
 `C * (1 + log |t|)` for both remaining zeta-specific bounds.
+The safe-height logarithm wrappers
+`ZeroFreeRegion.classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_abs_add_three_bound_high_height`
+and
+`ZeroFreeRegion.classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_log_abs_add_three_bound_high_height`
+accept the equally common shape `C * log(|t| + 3)`.  The comparison lemma
+`ZeroFreeRegion.log_abs_add_three_le_two_log_abs` proves
+`log(|t| + 3) <= 2 log |t|` above height `3`, so these estimates feed the same
+coordinate affine-log closure.
 This is still conditional; it does not prove the quantitative zero-free region
 until those two zeta-specific estimates are proved.
 The next work starts from these meromorphic/nonvanishing/principal-part facts
