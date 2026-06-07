@@ -2577,6 +2577,31 @@ theorem exists_sigmaOf_log_classical_zero_free_region_of_shift_bounds
   ZeroFreeRegion.exists_sigmaOf_log_classical_zero_free_region_of_shift_bounds
     C hC T0 hT0 hc_pos
 
+/-- Public high-level conditional closure of the classical zero-free region
+from the two zeta-specific shifted logarithmic-derivative estimates. -/
+theorem classical_zero_free_region_of_sigma_log_shift_estimates
+    (C Czero Ctwo T0 : ℝ) (hC : 1 < C) (hC_lt : C < 4 / 3)
+    (hK : 0 ≤ 4 * Czero + Ctwo) (hT0 : 2 ≤ T0)
+    (hzero :
+      ∀ a c β t : ℝ, 0 < a → 0 < c → a ≤ Real.log 2 →
+        T0 ≤ |t| → β < 1 →
+        β ≥ 1 - c / Real.log |t| →
+        0 < (1 + a / Real.log |t|) - β →
+        riemannZeta ((β : ℂ) + I * t) = 0 →
+        (-deriv riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t) /
+          riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t)).re ≤
+            -1 / ((1 + a / Real.log |t|) - β) +
+              Czero * Real.log |t|)
+    (htwo :
+      ∀ a t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+        (-deriv riemannZeta
+            ((1 + a / Real.log |t| : ℝ) + 2 * I * t) /
+          riemannZeta ((1 + a / Real.log |t| : ℝ) + 2 * I * t)).re ≤
+            Ctwo * Real.log |t|) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_sigma_log_shift_estimates
+    C Czero Ctwo T0 hC hC_lt hK hT0 hzero htwo
+
 /-- Public meromorphicity of the zeta logarithmic derivative at `1`. -/
 theorem meromorphicAt_logDeriv_riemannZeta_one :
     MeromorphicAt (logDeriv riemannZeta) (1 : ℂ) :=

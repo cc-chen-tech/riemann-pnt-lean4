@@ -923,6 +923,72 @@ lemma exists_sigmaOf_log_classical_zero_free_region_of_shift_bounds
   · intro β t ht hβ_lt hβ
     exact three_four_one_sigmaOf_log_margin hT0 ha_pos hc_pos ht hβ_lt hβ hconst
 
+/-- High-level conditional closure of the classical zero-free region from the
+two zeta-specific shifted logarithmic-derivative estimates.
+
+This theorem consumes:
+
+* the local pole input already proved in this file;
+* the pure real-variable constant selection
+  `exists_sigmaOf_log_margin_constants`;
+* the verified 3-4-1 high-height contradiction and compact bounded-height
+  patch.
+
+The remaining hypotheses are exactly the two analytic shifted estimates:
+the zero-height estimate with the `-1/(σ-β)` contribution, and the
+`σ+2it` estimate. -/
+lemma classical_zero_free_region_of_sigma_log_shift_estimates
+    (C Czero Ctwo T0 : ℝ) (hC : 1 < C) (hC_lt : C < 4 / 3)
+    (hK : 0 ≤ 4 * Czero + Ctwo) (hT0 : 2 ≤ T0)
+    (hzero :
+      ∀ a c β t : ℝ, 0 < a → 0 < c → a ≤ Real.log 2 →
+        T0 ≤ |t| → β < 1 →
+        β ≥ 1 - c / Real.log |t| →
+        0 < (1 + a / Real.log |t|) - β →
+        riemannZeta ((β : ℂ) + I * t) = 0 →
+        (-deriv riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t) /
+          riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t)).re ≤
+            -1 / ((1 + a / Real.log |t|) - β) +
+              Czero * Real.log |t|)
+    (htwo :
+      ∀ a t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+        (-deriv riemannZeta
+            ((1 + a / Real.log |t| : ℝ) + 2 * I * t) /
+          riemannZeta ((1 + a / Real.log |t| : ℝ) + 2 * I * t)).re ≤
+            Ctwo * Real.log |t|) :
+    classical_zero_free_region := by
+  rcases exists_sigmaOf_log_hreal_const_mul_log_div C hC T0 hT0 with
+    ⟨d, hd_pos, hreal⟩
+  rcases exists_sigmaOf_log_margin_constants (C := C)
+      (K := 4 * Czero + Ctwo) (d := d) hC hC_lt hK hd_pos with
+    ⟨a, c, ha_pos, hc_pos, ha_le_log2, ha_le_near, hconst⟩
+  let σOf : ℝ → ℝ := fun t => 1 + a / Real.log |t|
+  refine classical_zero_free_region_of_log_deriv_bounds
+    (T0 := T0) (c := c) (σOf := σOf)
+    (realBound := fun t => C * Real.log |t| / a)
+    (zeroBound := fun β t =>
+      -1 / ((1 + a / Real.log |t|) - β) + Czero * Real.log |t|)
+    (twoBound := fun t => Ctwo * Real.log |t|)
+    hT0 hc_pos ?_ ?_ ?_ ?_ ?_ ?_ ?_
+  · intro t ht
+    exact sigmaOf_log_gt_one hT0 ha_pos ht
+  · intro t ht
+    exact sigmaOf_log_le_two hT0 ha_le_log2 ht
+  · intro β t ht hβ_lt _hβ
+    exact sigmaOf_log_sub_pos hT0 ha_pos ht hβ_lt
+  · intro t ht _hgt _hle
+    simpa [σOf] using hreal a ha_pos ha_le_log2 ha_le_near t ht
+  · intro β t ht _hgt _hle hβ_lt hβ hsub hζ
+    simpa [σOf] using
+      hzero a c β t ha_pos hc_pos ha_le_log2 ht hβ_lt hβ hsub hζ
+  · intro t ht _hgt _hle
+    simpa [σOf] using htwo a t ha_pos ha_le_log2 ht
+  · intro β t ht hβ_lt hβ
+    have hconst' : 3 * C / a + 4 * Czero + Ctwo < 4 / (a + c) := by
+      simpa [add_assoc] using hconst
+    exact three_four_one_sigmaOf_log_margin hT0 ha_pos hc_pos ht hβ_lt hβ
+      hconst'
+
 /-- ζ has a simple pole at `1`, expressed as meromorphic order `-1`. -/
 lemma meromorphicOrderAt_riemannZeta_one :
     meromorphicOrderAt riemannZeta (1 : ℂ) = (-1 : ℤ) := by

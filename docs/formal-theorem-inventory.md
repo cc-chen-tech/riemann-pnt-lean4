@@ -201,6 +201,10 @@ Core verified declarations:
 - `exists_sigmaOf_log_classical_zero_free_region_of_shift_bounds`
   specializes that closure theorem to the usual shifted estimates
   `-1/(sigma-beta) + Czero log |t|` and `Ctwo log |t|`.
+- `classical_zero_free_region_of_sigma_log_shift_estimates`
+  combines local pole control, constant selection, standard `sigma`, 3-4-1,
+  and compact patching, leaving exactly the two shifted estimates as analytic
+  inputs.
 - `meromorphicAt_logDeriv_riemannZeta_one`
   proves the logarithmic derivative is meromorphic at the pole.
 - `meromorphicOn_logDeriv_riemannZeta_closedBall`

@@ -264,6 +264,12 @@ combines this algebra with the closure theorem, leaving exactly the two
 zeta-specific shifted estimates:
 `Re(-zeta'/zeta)(sigma+it) <= -1/(sigma-beta) + Czero log |t|` at a zero
 candidate and `Re(-zeta'/zeta)(sigma+2it) <= Ctwo log |t|`.
+Finally,
+`ZeroFreeRegion.classical_zero_free_region_of_sigma_log_shift_estimates`
+combines the local pole input, small-constant choice, standard `sigma`, 3-4-1
+contradiction, and compact patch into one conditional theorem.  At this point,
+the quantitative zero-free-region chain has no remaining real-variable
+assembly gap; the remaining gap is the pair of zeta-specific shifted estimates.
 The next work starts from these meromorphic/nonvanishing/principal-part facts
 and proves the vertical-height logarithmic-derivative estimates needed for the
 quantitative strip.
