@@ -265,6 +265,10 @@ Core verified declarations:
   `borelCaratheodory_sub_centered_verticalRegion`
   combine the centered Borel-Caratheodory wrappers with the local disk
   geometry, using ambient `verticalRegion` hypotheses directly.
+- `borelCaratheodory_riemannZeta_verticalRegion` and
+  `borelCaratheodory_sub_riemannZeta_verticalRegion`
+  specialize the same Borel wrappers to ζ and centered ζ, leaving only
+  ambient real-part bounds as future analytic inputs.
 - `jensen_circleAverage_log_norm_verticalRegion`
   combines Jensen's formula with the same closed-disk geometry and ambient
   vertical-region meromorphicity.

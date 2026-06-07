@@ -124,6 +124,9 @@ proved:
   `ZeroFreeRegion.borelCaratheodory_centered_verticalRegion` and
   `ZeroFreeRegion.borelCaratheodory_sub_centered_verticalRegion` wrappers are
   the direct Borel entry points for later zeta/log-derivative growth estimates;
+  `ZeroFreeRegion.borelCaratheodory_riemannZeta_verticalRegion` and
+  `ZeroFreeRegion.borelCaratheodory_sub_riemannZeta_verticalRegion`
+  specialize this interface to ζ itself;
   `ZeroFreeRegion.jensen_circleAverage_log_norm_verticalRegion` is the matching
   Jensen entry point for zero-count and divisor estimates.
 - The zeta-specific regularity layer now includes

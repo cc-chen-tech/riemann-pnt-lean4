@@ -3055,6 +3055,39 @@ theorem borelCaratheodory_sub_centered_verticalRegion
   ZeroFreeRegion.borelCaratheodory_sub_centered_verticalRegion
     hM hf hf₁ ha hb hH hR hz
 
+/-- Public Borel-Carathéodory bound specialized to ζ on a `σ + I*t` disk with
+ambient vertical-region hypotheses. -/
+theorem borelCaratheodory_riemannZeta_verticalRegion
+    {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M) (hHpos : 0 < H)
+    (hζ : Set.MapsTo riemannZeta (verticalRegion a b H) {w | w.re ≤ M})
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R) (hz : z ∈ Metric.ball ((σ : ℂ) + Complex.I * t) R) :
+    ‖riemannZeta z‖ ≤
+      2 * M * ‖z - ((σ : ℂ) + Complex.I * t)‖ /
+          (R - ‖z - ((σ : ℂ) + Complex.I * t)‖) +
+        ‖riemannZeta ((σ : ℂ) + Complex.I * t)‖ *
+          (R + ‖z - ((σ : ℂ) + Complex.I * t)‖) /
+          (R - ‖z - ((σ : ℂ) + Complex.I * t)‖) :=
+  ZeroFreeRegion.borelCaratheodory_riemannZeta_verticalRegion
+    hM hHpos hζ ha hb hH hR hz
+
+/-- Public oscillation Borel-Carathéodory bound specialized to ζ on a
+`σ + I*t` disk with ambient vertical-region hypotheses. -/
+theorem borelCaratheodory_sub_riemannZeta_verticalRegion
+    {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M) (hHpos : 0 < H)
+    (hζ : Set.MapsTo
+      (fun w => riemannZeta w - riemannZeta ((σ : ℂ) + Complex.I * t))
+      (verticalRegion a b H) {w | w.re ≤ M})
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R) (hz : z ∈ Metric.ball ((σ : ℂ) + Complex.I * t) R) :
+    ‖riemannZeta z - riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+      2 * M * ‖z - ((σ : ℂ) + Complex.I * t)‖ /
+        (R - ‖z - ((σ : ℂ) + Complex.I * t)‖) :=
+  ZeroFreeRegion.borelCaratheodory_sub_riemannZeta_verticalRegion
+    hM hHpos hζ ha hb hH hR hz
+
 section JensenWrapper
 
 open MeromorphicAt MeromorphicOn Metric Real

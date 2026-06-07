@@ -1271,6 +1271,48 @@ lemma borelCaratheodory_sub_centered_verticalRegion
     exact hf₁ (ball_sigma_it_subset_verticalRegion ha hb hH hw)
   exact borelCaratheodory_sub_centered hM hfdisk hmaps hR hz
 
+/-- Borel-Carathéodory specialized to ζ on a disk centered at `σ + I*t`.
+
+The only zeta-specific hypothesis left is an ambient real-part bound on ζ over
+the vertical region.  This is the exact shape needed before supplying a future
+growth estimate. -/
+lemma borelCaratheodory_riemannZeta_verticalRegion
+    {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M) (hHpos : 0 < H)
+    (hζ : Set.MapsTo riemannZeta (verticalRegion a b H) {w | w.re ≤ M})
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R) (hz : z ∈ Metric.ball ((σ : ℂ) + I * t) R) :
+    ‖riemannZeta z‖ ≤
+      2 * M * ‖z - ((σ : ℂ) + I * t)‖ /
+          (R - ‖z - ((σ : ℂ) + I * t)‖) +
+        ‖riemannZeta ((σ : ℂ) + I * t)‖ *
+          (R + ‖z - ((σ : ℂ) + I * t)‖) /
+          (R - ‖z - ((σ : ℂ) + I * t)‖) :=
+  borelCaratheodory_centered_verticalRegion hM
+    (differentiableOn_riemannZeta_verticalRegion_of_pos_height hHpos)
+    hζ ha hb hH hR hz
+
+/-- Oscillation form of Borel-Carathéodory specialized to ζ on a disk centered
+at `σ + I*t`.
+
+The remaining input is an ambient real-part bound for the centered function
+`ζ(w) - ζ(σ+it)`, matching the regular-part estimates used in classical
+zero-free-region proofs. -/
+lemma borelCaratheodory_sub_riemannZeta_verticalRegion
+    {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M) (hHpos : 0 < H)
+    (hζ : Set.MapsTo
+      (fun w => riemannZeta w - riemannZeta ((σ : ℂ) + I * t))
+      (verticalRegion a b H) {w | w.re ≤ M})
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R) (hz : z ∈ Metric.ball ((σ : ℂ) + I * t) R) :
+    ‖riemannZeta z - riemannZeta ((σ : ℂ) + I * t)‖ ≤
+      2 * M * ‖z - ((σ : ℂ) + I * t)‖ /
+        (R - ‖z - ((σ : ℂ) + I * t)‖) :=
+  borelCaratheodory_sub_centered_verticalRegion hM
+    (differentiableOn_riemannZeta_verticalRegion_of_pos_height hHpos)
+    hζ ha hb hH hR hz
+
 section JensenWrapper
 
 open MeromorphicAt MeromorphicOn Metric Real
