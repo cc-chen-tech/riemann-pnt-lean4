@@ -229,6 +229,11 @@ Core verified declarations:
 - `borelCaratheodory_sub_centered`
   bounds `||f z - f c||` from a real-part bound on the centered function
   `f - f(c)`.
+- `jensen_circleAverage_log_norm_riemannZeta_closedBall`
+  specializes Mathlib's Jensen formula to `riemannZeta` on closed balls.
+- `jensen_circleAverage_log_norm_logDeriv_riemannZeta_closedBall`
+  specializes Mathlib's Jensen formula to `logDeriv riemannZeta` on closed
+  balls.
 
 ### `PrimeNumberTheorem.lean`
 

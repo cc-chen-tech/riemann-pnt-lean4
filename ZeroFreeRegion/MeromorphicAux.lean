@@ -1137,6 +1137,17 @@ lemma meromorphicOn_riemannZeta_closedBall (c : ℂ) (R : ℝ) :
     exact meromorphicAt_riemannZeta_one
   · exact meromorphicAt_riemannZeta_of_ne_one s hs
 
+/-- Jensen formula specialized to ζ on a closed ball. -/
+lemma jensen_circleAverage_log_norm_riemannZeta_closedBall
+    {c : ℂ} {R : ℝ} (hR : R ≠ 0) :
+    circleAverage (Real.log ‖riemannZeta ·‖) c R
+      = ∑ᶠ u, divisor riemannZeta (closedBall c |R|) u *
+          Real.log (R * ‖c - u‖⁻¹)
+        + divisor riemannZeta (closedBall c |R|) c * Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt riemannZeta c‖ :=
+  jensen_circleAverage_log_norm hR
+    (meromorphicOn_riemannZeta_closedBall c |R|)
+
 /-- The logarithmic derivative of ζ is meromorphic at the pole `1`. -/
 lemma meromorphicAt_logDeriv_riemannZeta_one :
     MeromorphicAt (logDeriv riemannZeta) (1 : ℂ) :=
@@ -1146,5 +1157,17 @@ lemma meromorphicAt_logDeriv_riemannZeta_one :
 lemma meromorphicOn_logDeriv_riemannZeta_closedBall (c : ℂ) (R : ℝ) :
     MeromorphicOn (logDeriv riemannZeta) (closedBall c R) :=
   (meromorphicOn_riemannZeta_closedBall c R).logDeriv
+
+/-- Jensen formula specialized to the logarithmic derivative of ζ on a closed
+ball. -/
+lemma jensen_circleAverage_log_norm_logDeriv_riemannZeta_closedBall
+    {c : ℂ} {R : ℝ} (hR : R ≠ 0) :
+    circleAverage (Real.log ‖logDeriv riemannZeta ·‖) c R
+      = ∑ᶠ u, divisor (logDeriv riemannZeta) (closedBall c |R|) u *
+          Real.log (R * ‖c - u‖⁻¹)
+        + divisor (logDeriv riemannZeta) (closedBall c |R|) c * Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt (logDeriv riemannZeta) c‖ :=
+  jensen_circleAverage_log_norm hR
+    (meromorphicOn_logDeriv_riemannZeta_closedBall c |R|)
 
 end ZeroFreeRegion

@@ -2842,6 +2842,27 @@ theorem jensen_circleAverage_log_norm
         + Real.log ‖meromorphicTrailingCoeffAt f c‖ :=
   ZeroFreeRegion.jensen_circleAverage_log_norm hR hf
 
+/-- Public Jensen formula specialized to ζ on a closed ball. -/
+theorem jensen_circleAverage_log_norm_riemannZeta_closedBall
+    {c : ℂ} {R : ℝ} (hR : R ≠ 0) :
+    circleAverage (Real.log ‖riemannZeta ·‖) c R
+      = ∑ᶠ u, divisor riemannZeta (closedBall c |R|) u *
+          Real.log (R * ‖c - u‖⁻¹)
+        + divisor riemannZeta (closedBall c |R|) c * Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt riemannZeta c‖ :=
+  ZeroFreeRegion.jensen_circleAverage_log_norm_riemannZeta_closedBall hR
+
+/-- Public Jensen formula specialized to the logarithmic derivative of ζ on a
+closed ball. -/
+theorem jensen_circleAverage_log_norm_logDeriv_riemannZeta_closedBall
+    {c : ℂ} {R : ℝ} (hR : R ≠ 0) :
+    circleAverage (Real.log ‖logDeriv riemannZeta ·‖) c R
+      = ∑ᶠ u, divisor (logDeriv riemannZeta) (closedBall c |R|) u *
+          Real.log (R * ‖c - u‖⁻¹)
+        + divisor (logDeriv riemannZeta) (closedBall c |R|) c * Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt (logDeriv riemannZeta) c‖ :=
+  ZeroFreeRegion.jensen_circleAverage_log_norm_logDeriv_riemannZeta_closedBall hR
+
 end JensenWrapper
 
 /-- Public Phragmén-Lindelöf vertical-strip principle routed through the

@@ -109,7 +109,10 @@ comments in `ZeroFreeRegion.lean` suggest:
   also packages the common centered-function use case `f - f(c)`.
 - `MeromorphicOn.circleAverage_log_norm` exists in
   `Mathlib.Analysis.Complex.JensenFormula`; this is the local Jensen formula
-  over closed balls for meromorphic functions.
+  over closed balls for meromorphic functions.  The project now specializes it
+  to `riemannZeta` and `logDeriv riemannZeta` as
+  `ZeroFreeRegion.jensen_circleAverage_log_norm_riemannZeta_closedBall` and
+  `ZeroFreeRegion.jensen_circleAverage_log_norm_logDeriv_riemannZeta_closedBall`.
 - `Complex.HadamardThreeLines.norm_le_interp_of_mem_verticalClosedStrip'` and
   related declarations exist in `Mathlib.Analysis.Complex.Hadamard`.
 - `PowerSeries.exists_isWeierstrassFactorization` exists, but this is
@@ -129,6 +132,8 @@ Useful checked names:
 #check ZeroFreeRegion.borelCaratheodory_zero_centered
 #check ZeroFreeRegion.borelCaratheodory_sub_centered
 #check MeromorphicOn.circleAverage_log_norm
+#check ZeroFreeRegion.jensen_circleAverage_log_norm_riemannZeta_closedBall
+#check ZeroFreeRegion.jensen_circleAverage_log_norm_logDeriv_riemannZeta_closedBall
 #check Complex.HadamardThreeLines.norm_le_interp_of_mem_verticalClosedStrip'
 #check PowerSeries.exists_isWeierstrassFactorization
 #check riemannZeta_residue_one
