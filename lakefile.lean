@@ -18,7 +18,8 @@ lean_lib RiemannPNT where
     `ZeroFreeRegion.MeromorphicAux,
     `HardyTheorem.Phase1Aux,
     `HardyTheorem.AFE,
-    `MathlibAux.RectangleResidue
+    `MathlibAux.RectangleResidue,
+    `PrimeNumberTheorem.ExplicitFormulaTruncated
   ]
 
 require mathlib from "./vendor/mathlib"
