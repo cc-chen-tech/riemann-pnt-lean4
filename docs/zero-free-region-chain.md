@@ -107,7 +107,10 @@ proved:
   `ZeroFreeRegion.ball_sigma_it_re_mem_Icc`,
   `ZeroFreeRegion.closedBall_sigma_it_mem_verticalRegion`, and
   `ZeroFreeRegion.ball_sigma_it_mem_verticalRegion` package the same facts as
-  direct real-strip and vertical-region membership statements.
+  direct real-strip and vertical-region membership statements, and
+  `ZeroFreeRegion.closedBall_sigma_it_subset_verticalRegion` /
+  `ZeroFreeRegion.ball_sigma_it_subset_verticalRegion` lift them to inclusion
+  statements for whole local disks.
 
 ## Mathlib API Check
 

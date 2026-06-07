@@ -1021,6 +1021,22 @@ lemma ball_sigma_it_mem_verticalRegion {z : ℂ} {σ t R a b H : ℝ}
   closedBall_sigma_it_mem_verticalRegion
     (Metric.ball_subset_closedBall hz) ha hb hH
 
+/-- Closed-disk inclusion into a vertical region around a `σ + I*t` center. -/
+lemma closedBall_sigma_it_subset_verticalRegion {σ t R a b H : ℝ}
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|) :
+    Metric.closedBall ((σ : ℂ) + I * t) R ⊆
+      {z : ℂ | z.re ∈ Set.Icc a b ∧ H ≤ |z.im|} := by
+  intro z hz
+  exact closedBall_sigma_it_mem_verticalRegion hz ha hb hH
+
+/-- Open-disk inclusion into a vertical region around a `σ + I*t` center. -/
+lemma ball_sigma_it_subset_verticalRegion {σ t R a b H : ℝ}
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|) :
+    Metric.ball ((σ : ℂ) + I * t) R ⊆
+      {z : ℂ | z.re ∈ Set.Icc a b ∧ H ≤ |z.im|} := by
+  intro z hz
+  exact ball_sigma_it_mem_verticalRegion hz ha hb hH
+
 /-- Local namespace entry point for Mathlib's Borel-Carathéodory theorem in the
 vanishing-at-zero form. This is one of the complex-analytic tools used in
 standard proofs of quantitative zero-free regions; the remaining gap is the

@@ -249,6 +249,9 @@ Core verified declarations:
   `ball_sigma_it_mem_verticalRegion`
   package those center-specialized estimates as real-strip membership and
   simultaneous real-strip/high-height membership.
+- `closedBall_sigma_it_subset_verticalRegion` and
+  `ball_sigma_it_subset_verticalRegion`
+  upgrade the same facts to set inclusions for entire local disks.
 
 ### `PrimeNumberTheorem.lean`
 

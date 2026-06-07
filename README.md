@@ -205,6 +205,7 @@ Lean declarations in `ZeroFreeRegion.lean` and
 | `ZeroFreeRegion.closedBall_abs_im_ge_of_add_le` / `ZeroFreeRegion.ball_abs_im_ge_of_add_le` | `lemma` | If a disk center has imaginary height at least `H+R`, then every point in the disk has imaginary height at least `H`. | Transfers high-height zeta estimates from centers to all points in local disks. |
 | `ZeroFreeRegion.closedBall_sigma_it_re_bounds` / `ZeroFreeRegion.closedBall_sigma_it_abs_im_ge_of_add_le` | `lemma` | Specializes the disk geometry to centers of the form `σ+it`. | Direct geometry interface for zeta estimates on disks centered in vertical strips. |
 | `ZeroFreeRegion.closedBall_sigma_it_mem_verticalRegion` / `ZeroFreeRegion.ball_sigma_it_mem_verticalRegion` | `lemma` | Packages the `σ+it` disk geometry as simultaneous real-strip and high-height membership. | Direct vertical-region transfer for future Borel-Caratheodory/Jensen/zeta growth estimates. |
+| `ZeroFreeRegion.closedBall_sigma_it_subset_verticalRegion` / `ZeroFreeRegion.ball_sigma_it_subset_verticalRegion` | `lemma` | Upgrades the same vertical-region membership to set inclusion for local disks. | Lets future estimates restrict whole Borel/Jensen disks to a vertical strip in one hypothesis. |
 
 Two important boundaries:
 

@@ -2876,6 +2876,22 @@ theorem ball_sigma_it_mem_verticalRegion {z : ℂ} {σ t R a b H : ℝ}
     z.re ∈ Set.Icc a b ∧ H ≤ |z.im| :=
   ZeroFreeRegion.ball_sigma_it_mem_verticalRegion hz ha hb hH
 
+/-- Public closed-disk inclusion into a vertical region around a `σ + I*t`
+center. -/
+theorem closedBall_sigma_it_subset_verticalRegion {σ t R a b H : ℝ}
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|) :
+    Metric.closedBall ((σ : ℂ) + Complex.I * t) R ⊆
+      {z : ℂ | z.re ∈ Set.Icc a b ∧ H ≤ |z.im|} :=
+  ZeroFreeRegion.closedBall_sigma_it_subset_verticalRegion ha hb hH
+
+/-- Public open-disk inclusion into a vertical region around a `σ + I*t`
+center. -/
+theorem ball_sigma_it_subset_verticalRegion {σ t R a b H : ℝ}
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|) :
+    Metric.ball ((σ : ℂ) + Complex.I * t) R ⊆
+      {z : ℂ | z.re ∈ Set.Icc a b ∧ H ≤ |z.im|} :=
+  ZeroFreeRegion.ball_sigma_it_subset_verticalRegion ha hb hH
+
 /-- Public Borel-Carathéodory theorem in the vanishing-at-zero form, routed
 through the zero-free-region namespace. -/
 theorem borelCaratheodory_zero
