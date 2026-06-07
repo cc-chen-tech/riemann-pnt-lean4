@@ -9,7 +9,10 @@ completed proof of the Prime Number Theorem or the Riemann Hypothesis.
 - Build command: `lake build`
 - Last verified local result: `Build completed successfully (8262 jobs).`
 - Current code-level `sorry` count: 0
-- Remaining `def ... : Prop` targets: 22
+- Remaining mathematical `def ... : Prop` targets: 22
+- Route-interface `def ... : Prop` declarations: 4
+- Reusable Prop predicates: 2
+- Unclassified Prop declarations: 0
 
 ## Required Gates Before Public Mathematical Claims
 
@@ -24,9 +27,15 @@ python3 scripts/list-prop-targets.py
 ```
 
 The baseline script runs `lake build`, recursively scans project Lean sources
-for real placeholder proof forms, checks the 22-item target inventory, and
-validates the four chain-gap buckets. This does not mean the PNT or RH has been
-proved: several deep results are recorded only as `def ... : Prop` targets.
+for real placeholder proof forms, checks that every `def ... : Prop` is
+classified, checks the 22-item mathematical target inventory, and validates the
+four chain-gap buckets. This does not mean the PNT or RH has been proved:
+several deep results are recorded only as `def ... : Prop` targets.
+
+As of the current baseline, the only route interface whose body is still
+`True` is `MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum`. It is an
+explicit marker for missing rectangle contour/residue infrastructure, not a
+completed theorem.
 
 ## Unproved Target Statements
 

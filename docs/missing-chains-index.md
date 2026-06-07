@@ -5,8 +5,10 @@ current Lean checkout.  The project currently builds and contains no
 `sorry`/`admit`/`axiom` placeholders in Lean source, but several deep goals are
 intentionally recorded as `def ... : Prop` target statements.
 
-At present there are **22** unresolved `def ... : Prop` targets, and they are
-partitioned into exactly **4** analytic chains:
+At present there are **22** unresolved mathematical `def ... : Prop` targets,
+partitioned into exactly **4** analytic chains.  The recursive scanner also
+tracks 4 route interfaces and 2 reusable Prop predicates so subdirectory
+interfaces cannot be hidden by the target count:
 
 1. Quantitative zero-free region
 2. Explicit formula
@@ -37,14 +39,14 @@ parallel:
 | Quantitative zero-free region | `classical_zero_free_region` and `vinogradov_korobov_zero_free_region` are `def ... : Prop` targets | Add zeta-specific meromorphic/growth/log-derivative estimates; do not cite compact zero-free region as the classical `c / log |t|` result | Prove conditional 3-4-1 algebra and compact-to-high-height patching lemmas | 2 |
 | Explicit formula | `explicit_formula_von_mangoldt` is a `def ... : Prop` target | Replace the unconditional infinite `tsum` target with a truncated Perron/residue formula for `psi0`, then a principal-value limit | Define `psi0`, finite zero sums with multiplicity, good heights, and contour-error terms | 1 |
 | RH error equivalence | `rh_iff_optimal_error` is a `def ... : Prop` target | Stage the result through `=O[atTop]` predicates for `psi`, `theta`, and `primeCounting - logIntegral` | Prove the explicit-formula-to-`RH_PsiErrorBound` direction and the reverse error-to-RH direction | 8 |
-| Hardy theorem | `hardy_theorem_target` and related moment/asymptotic targets are `def ... : Prop` targets | Use an unbounded-height zero target as the main theorem; use signed moment targets, not merely nonzero constants | Prove bounded-zero eventual-sign control and generic asymptotic sign lemmas | 11 (10 in `HardyTheorem`, 1 in `RiemannExplorer`) |
+| Hardy theorem | `hardy_theorem_target` and related moment/asymptotic targets are `def ... : Prop` targets | Use an unbounded-height zero target as the main theorem; use signed moment targets, not merely nonzero constants | Prove bounded-zero eventual-sign control and generic asymptotic sign lemmas | 11 (7 in `HardyTheorem`, 3 in `HardyTheorem.Details`, 1 in `KnownResults`) |
 
 ## Target-to-Chain Mapping
 
 | File | Target | Chain | Why it is still open |
 | --- | --- | --- | --- |
 | `ZeroFreeRegion.lean` | `classical_zero_free_region` | Quantitative zero-free region | Requires analytic growth and derivative estimates beyond compactness |
-| `ZeroFreeRegion.lean` | `vinogradov_korobov_zero_free_region` | Quantitative zero-free region | Requires Vinogradov–Korobov exponential-sum technology |
+| `ZeroFreeRegion.lean` | `vinogradov_korobov_zero_free_region` (global namespace) | Quantitative zero-free region | Requires Vinogradov–Korobov exponential-sum technology |
 | `PrimeNumberTheorem.lean` | `PNTForm1` | RH error equivalence | Formal statement of one classical asymptotic shape, kept as an interface |
 | `PrimeNumberTheorem.lean` | `PNTForm2` | RH error equivalence | Equivalent to `PNTForm1` once one form is proved; no additional chain input yet |
 | `PrimeNumberTheorem.lean` | `PNTForm3` | RH error equivalence | Equivalent to `PNTForm1`/`PNTForm2`; included as a target interface |
@@ -61,10 +63,10 @@ parallel:
 | `HardyTheorem.lean` | `hardy_zeros_abs_unbounded_target` | Hardy theorem | Equivalent form requiring symmetry/absolute-value zero extraction |
 | `HardyTheorem.lean` | `hardy_littlewood_lower_bound_target` | Hardy theorem | Quantitative lower bound on critical-line zeros needed for positive density |
 | `HardyTheorem.lean` | `selberg_zero_proportion_target` | Hardy theorem | Proportional form of Hardy-type lower bounds |
-| `HardyTheorem.lean` | `gamma_asymptotic_half_plus_it_target` | Hardy theorem | Gamma asymptotic used in approximate functional equation setup |
-| `HardyTheorem.lean` | `theta_asymptotic_target` | Hardy theorem | Riemann–Siegel theta asymptotic setup |
-| `HardyTheorem.lean` | `approximate_functional_equation_target` | Hardy theorem | Residual error form of the AFE used by Hardy integrals |
-| `RiemannExplorer.lean` | `conrey_40_percent_zeros_on_critical_line_target` | Hardy theorem | Proportionality target for zero density on the critical line |
+| `HardyTheorem.lean` | `HardyTheorem.Details.gamma_asymptotic_half_plus_it_target` | Hardy theorem | Gamma asymptotic used in approximate functional equation setup |
+| `HardyTheorem.lean` | `HardyTheorem.Details.theta_asymptotic_target` | Hardy theorem | Riemann–Siegel theta asymptotic setup |
+| `HardyTheorem.lean` | `HardyTheorem.Details.approximate_functional_equation_target` | Hardy theorem | Residual error form of the AFE used by Hardy integrals |
+| `RiemannExplorer.lean` | `KnownResults.conrey_40_percent_zeros_on_critical_line_target` | Hardy theorem | Proportionality target for zero density on the critical line |
 
 ## Verified Starting Points
 
@@ -175,6 +177,18 @@ actually supplied and checked by Lean.  In particular:
 `HardyTheorem.weightedIntegralOf_tail_dominates` remains a `Prop`-valued
 predicate in Lean, but it is a reusable hypothesis form rather than an
 unresolved target statement.
+
+Additional non-target Prop declarations:
+
+- `PrimeNumberTheorem.ExplicitFormulaAux.goodHeight` is a reusable contour
+  height predicate.
+- `HardyTheorem.AFE.zeta_critical_afe_target`,
+  `PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget`,
+  and `RiemannExplorer.Conrey40.conrey_40_percent_zeros_on_critical_line_target`
+  are route interfaces with real statement bodies.
+- `MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum` is the only
+  remaining body-`True` route interface and marks the missing rectangle
+  contour/residue theorem.
 
 ## Verification Commands
 

@@ -68,12 +68,32 @@ Current code status:
 
 Total: 0 syntactic `sorry` occurrences in Lean source files.
 
-Unresolved target declarations (currently not promoted to theorems): **22**.
+Unresolved mathematical target declarations (currently not promoted to
+theorems): **22**.
 
- - `HardyTheorem` namespace: 10
+ - `HardyTheorem` namespace: 7
+ - `HardyTheorem.Details` namespace: 3
  - `PrimeNumberTheorem` namespace: 9
- - `ZeroFreeRegion` namespace: 2
- - `RiemannExplorer` namespace: 1
+ - `KnownResults` namespace: 1
+ - `ZeroFreeRegion` namespace: 1
+ - global namespace: 1 (`vinogradov_korobov_zero_free_region`)
+
+Full `def ... : Prop` inventory:
+
+- mathematical targets: 22;
+- route interfaces: 4
+  (`HardyTheorem.AFE.zeta_critical_afe_target`,
+  `MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum`,
+  `PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget`,
+  `RiemannExplorer.Conrey40.conrey_40_percent_zeros_on_critical_line_target`);
+- reusable predicates: 2
+  (`HardyTheorem.weightedIntegralOf_tail_dominates`,
+  `PrimeNumberTheorem.ExplicitFormulaAux.goodHeight`);
+- unclassified Prop definitions: 0.
+
+The only remaining route interface whose body is still `True` is
+`MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum`; it is kept as an
+explicit contour/residue-theorem interface, not as a proved theorem.
 
 ## File Overview
 
@@ -86,6 +106,11 @@ Unresolved target declarations (currently not promoted to theorems): **22**.
 | `HardyTheorem.lean` | Hardy Z-function setup with corrected target statements for critical-line zeros | sorry-free, targets unproved |
 | `PrimeNumberTheorem.lean` | PNT forms, equivalences, Li(x) asymptotics, zero symmetry, bounded-height zero finiteness, explicit formula target | sorry-free, targets unproved |
 | `ZeroFreeRegion.lean` | 3-4-1 setup, log derivative series, compact zero-free region, quantitative zero-free-region targets | sorry-free, quantitative targets unproved |
+| `PrimeNumberTheorem/ExplicitFormulaAux.lean` | `chebyshevPsi0`, `goodHeight`, finite zero-sum support helpers | sorry-free, support predicate only |
+| `PrimeNumberTheorem/ExplicitFormulaTruncated.lean` | Truncated explicit-formula route interface with a real Prop body | sorry-free, route interface unproved |
+| `MathlibAux/RectangleResidue.lean` | Rectangle residue route interface for future Perron/explicit-formula work | sorry-free, body-`True` interface |
+| `HardyTheorem/AFE.lean` | Corrected AFE route interface using an unwrapped theta wrapper | sorry-free, route interface unproved |
+| `RiemannExplorer/Conrey40.lean` | Conrey target alias to the upper-level `KnownResults` target | sorry-free, route interface alias |
 
 ## Verified Components
 
@@ -157,9 +182,11 @@ not be cited as completed proofs:
   `integral_asymptotic_target`, `hardy_two_signed_moments_target`,
   `hardy_theorem_target`, `hardy_zeros_unbounded_target`,
   `hardy_zeros_abs_unbounded_target`, `hardy_littlewood_lower_bound_target`,
-  `selberg_zero_proportion_target`, `gamma_asymptotic_half_plus_it_target`,
-  `theta_asymptotic_target`, `approximate_functional_equation_target`,
-  `conrey_40_percent_zeros_on_critical_line_target`.
+  `selberg_zero_proportion_target`,
+  `HardyTheorem.Details.gamma_asymptotic_half_plus_it_target`,
+  `HardyTheorem.Details.theta_asymptotic_target`,
+  `HardyTheorem.Details.approximate_functional_equation_target`,
+  `KnownResults.conrey_40_percent_zeros_on_critical_line_target`.
 
 The four missing analytic chains are:
 

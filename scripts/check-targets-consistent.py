@@ -1,36 +1,32 @@
 #!/usr/bin/env python3
-"""Fail if unresolved `def ... : Prop` count changes unexpectedly.
+"""Fail if project-local `def ... : Prop` bookkeeping changes unexpectedly.
 
-This script is intended as a local CI guard: it recomputes Prop targets from
-all top-level Lean files and compares against the canonical `docs` status file.
+This script is intended as a local CI guard: it recursively scans project Lean
+files, requires every Prop-valued definition to be classified, and compares the
+mathematical target set against the canonical `docs` status file.
 
 It is not a proof checker; it only validates that the repository's explicit
-"target statements" remain a single controlled set.
+"target statements" and interface placeholders remain controlled.
 """
 
 from __future__ import annotations
 
 from pathlib import Path
 import json
-import re
 import sys
+
+from target_inventory import ROOT, scan_prop_defs
 
 ROOT = Path(__file__).resolve().parents[1]
 STATUS_PATH = ROOT / "docs" / "current-target-status.json"
 
-NON_TARGET_PROP_PREDICATES = {
-    "weightedIntegralOf_tail_dominates",
-}
 
 def scan_targets() -> set[str]:
-    pat = re.compile(r"^def\s+([A-Za-z_][A-Za-z0-9_]*)\s*(?:\(.*\))?\s*:\s*Prop\s*:=" )
-    names: set[str] = set()
-    for path in sorted(ROOT.glob("*.lean")):
-        for line in path.read_text(encoding="utf-8").splitlines():
-            m = pat.match(line.strip())
-            if m and m.group(1) not in NON_TARGET_PROP_PREDICATES:
-                names.add(m.group(1))
-    return names
+    return {
+        record.qualified_name
+        for record in scan_prop_defs(ROOT)
+        if record.category == "mathematical_target"
+    }
 
 
 def load_status() -> set[str]:
@@ -40,13 +36,26 @@ def load_status() -> set[str]:
         return set()
     remaining = data.get("remaining_prop_targets", {})
     out: set[str] = set()
-    for entries in remaining.values():
+    for namespace, entries in remaining.items():
         for item in entries:
-            out.add(item["name"])
+            if "qualified_name" in item:
+                out.add(item["qualified_name"])
+            else:
+                out.add(f"{namespace}.{item['name']}")
     return out
 
 
 def main() -> None:
+    records = scan_prop_defs(ROOT)
+    unclassified = [r for r in records if r.category == "unclassified"]
+    if unclassified:
+        print("Unclassified Prop definitions in Lean files:")
+        for r in unclassified:
+            rel = r.file.relative_to(ROOT)
+            print(f"  ! {rel}:{r.line_no}:{r.qualified_name}  |  {r.signature}")
+        print("Classify these as mathematical targets, route interfaces, or reusable predicates.")
+        sys.exit(1)
+
     scanned = scan_targets()
     status = load_status()
     if not status:
@@ -64,7 +73,17 @@ def main() -> None:
                 print(f"  - {x}")
         print(f"scan={len(scanned)} status={len(status)}")
         sys.exit(1)
-    print(f"target inventory consistent: {len(scanned)} targets")
+
+    route_interfaces = [r for r in records if r.category == "route_interface"]
+    reusable_predicates = [r for r in records if r.category == "reusable_predicate"]
+    true_interfaces = [r for r in route_interfaces if r.body_is_true]
+    print(
+        "target inventory consistent: "
+        f"{len(scanned)} mathematical targets, "
+        f"{len(route_interfaces)} route interfaces "
+        f"({len(true_interfaces)} body=True), "
+        f"{len(reusable_predicates)} reusable predicates"
+    )
 
 
 if __name__ == "__main__":

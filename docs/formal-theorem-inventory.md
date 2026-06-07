@@ -11,7 +11,8 @@ python3 -m pytest
 ```
 
 At the time of writing, `lake build` succeeds, the recursive placeholder scan
-has no project Lean-source matches, the target inventory is stable at 22
+has no project Lean-source matches, the scanner classifies every project
+`def ... : Prop`, the mathematical target inventory is stable at 22
 declarations, and the Python experiment tests pass.
 
 ## Proved Project-Local Results
@@ -212,12 +213,14 @@ metadata, not proof results.
 The following declarations are intentionally `def ... : Prop` targets.  They
 are not exported as theorems and should not be cited as proved.
 
-As of `2026-06-07`, there are **22** target declarations:
+As of `2026-06-08`, there are **22** mathematical target declarations:
 
-- `HardyTheorem` namespace: **10**
+- `HardyTheorem` namespace: **7**
+- `HardyTheorem.Details` namespace: **3**
 - `PrimeNumberTheorem` namespace: **9**
-- `ZeroFreeRegion` namespace: **2**
-- `RiemannExplorer` namespace: **1**
+- `KnownResults` namespace: **1**
+- `ZeroFreeRegion` namespace: **1**
+- global namespace: **1** (`vinogradov_korobov_zero_free_region`)
 
 ### `ZeroFreeRegion.lean`
 
@@ -225,7 +228,9 @@ As of `2026-06-07`, there are **22** target declarations:
   target: a uniform zero-free region
   `Re(s) >= 1 - c / log |Im(s)|`.
 - `vinogradov_korobov_zero_free_region`
-  target: the stronger Vinogradov-Korobov zero-free region.
+  target: the stronger Vinogradov-Korobov zero-free region.  This declaration
+  currently lives in the global namespace even though it is in
+  `ZeroFreeRegion.lean`.
 
 ### `PrimeNumberTheorem.lean`
 
@@ -249,6 +254,9 @@ As of `2026-06-07`, there are **22** target declarations:
 - `hardy_zeros_abs_unbounded_target`
 - `hardy_littlewood_lower_bound_target`
 - `selberg_zero_proportion_target`
+
+### `HardyTheorem.Details`
+
 - `gamma_asymptotic_half_plus_it_target`
 - `theta_asymptotic_target`
 - `approximate_functional_equation_target`
@@ -260,11 +268,32 @@ hypothesis is needed.  The weighted-integral positivity/negativity bridge and
 the finite-zero contradiction under signed-moment and tail-dominance hypotheses
 are now proved lemmas, not target statements.
 
-### `RiemannExplorer.lean`
+### `KnownResults` in `RiemannExplorer.lean`
 
 - `conrey_40_percent_zeros_on_critical_line_target`
   target: a positive-proportion statement on critical-line zeros, expressed as
   a target alias for `HardyTheorem.selberg_zero_proportion_target`.
+
+## Route Interfaces and Reusable Predicates
+
+The recursive Prop scanner also tracks route interfaces and ordinary predicates
+so they are not hidden inside subdirectories or mistaken for proved theorems.
+
+Route interfaces:
+
+- `HardyTheorem.AFE.zeta_critical_afe_target`
+  real-statement AFE interface for the Hardy chain.
+- `PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget`
+  real-statement truncated explicit-formula interface.
+- `RiemannExplorer.Conrey40.conrey_40_percent_zeros_on_critical_line_target`
+  alias interface to `KnownResults.conrey_40_percent_zeros_on_critical_line_target`.
+- `MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum`
+  body-`True` interface for missing rectangle contour/residue infrastructure.
+
+Reusable predicates:
+
+- `HardyTheorem.weightedIntegralOf_tail_dominates`
+- `PrimeNumberTheorem.ExplicitFormulaAux.goodHeight`
 
 Current status in `HardyTheorem.lean` target list:
 

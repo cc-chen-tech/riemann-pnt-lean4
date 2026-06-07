@@ -1,27 +1,16 @@
 #!/usr/bin/env python3
-"""Regenerate docs/current-target-status.json from current Lean `def ... : Prop` targets."""
+"""Regenerate docs/current-target-status.json from the Lean Prop inventory."""
 
 from __future__ import annotations
 
-from pathlib import Path
 from datetime import datetime
 import json
-import re
 
-ROOT = Path(__file__).resolve().parents[1]
+from target_inventory import ROOT, MATH_TARGETS, scan_prop_defs
+
+
 STATUS_PATH = ROOT / "docs" / "current-target-status.json"
 
-# Match declarations like:
-#   def foo : Prop :=
-#   def foo (x : α) : Prop :=
-PROP_DEF_RE = re.compile(
-    r"^def\s+([A-Za-z_][A-Za-z0-9_]*)\s*(?:\(.*\))?\s*:\s*Prop\s*:="
-)
-NON_TARGET_PROP_PREDICATES = {
-    "weightedIntegralOf_tail_dominates",
-}
-
-# Manual chain map used by the remaining-work dashboard.
 CHAIN_SUMMARY = [
     {
         "name": "Quantitative zero-free region",
@@ -50,57 +39,6 @@ CHAIN_SUMMARY = [
 ]
 
 
-# Target-specific chain assignments for machine-readable dashboards.
-TARGET_CHAIN_MAP = {
-    "classical_zero_free_region": "Quantitative zero-free region",
-    "vinogradov_korobov_zero_free_region": "Quantitative zero-free region",
-    "PNTForm1": "RH error equivalence",
-    "PNTForm2": "RH error equivalence",
-    "PNTForm3": "RH error equivalence",
-    "RH_PsiErrorBound": "RH error equivalence",
-    "RH_ThetaErrorBound": "RH error equivalence",
-    "RH_PrimeCountingLiErrorBound": "RH error equivalence",
-    "RH_ErrorBound": "RH error equivalence",
-    "rh_iff_optimal_error": "RH error equivalence",
-    "explicit_formula_von_mangoldt": "Explicit formula",
-    "integral_asymptotic_target": "Hardy theorem",
-    "hardy_two_signed_moments_target": "Hardy theorem",
-    "hardy_theorem_target": "Hardy theorem",
-    "hardy_zeros_unbounded_target": "Hardy theorem",
-    "hardy_zeros_abs_unbounded_target": "Hardy theorem",
-    "hardy_littlewood_lower_bound_target": "Hardy theorem",
-    "selberg_zero_proportion_target": "Hardy theorem",
-    "gamma_asymptotic_half_plus_it_target": "Hardy theorem",
-    "theta_asymptotic_target": "Hardy theorem",
-    "approximate_functional_equation_target": "Hardy theorem",
-    "conrey_40_percent_zeros_on_critical_line_target": "Hardy theorem",
-}
-
-
-def _chain_of(target: str) -> str:
-    """Assign a chain name to a target for dashboarding."""
-    return TARGET_CHAIN_MAP.get(target, "Uncategorized")
-
-
-def scan_targets() -> dict[str, list[str]]:
-    """Return remaining target declarations grouped by source file basename."""
-    remaining: dict[str, list[str]] = {}
-
-    for path in sorted(ROOT.glob("*.lean")):
-        file_targets: list[str] = []
-        for i, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
-            m = PROP_DEF_RE.match(line.strip())
-            if not m:
-                continue
-            if m.group(1) in NON_TARGET_PROP_PREDICATES:
-                continue
-            file_targets.append(m.group(1))
-        if file_targets:
-            remaining[path.name] = file_targets
-
-    return remaining
-
-
 def load_previous_shapes() -> dict[str, str]:
     """Load existing target shapes so we do not overwrite handcrafted metadata."""
     if not STATUS_PATH.exists():
@@ -109,51 +47,106 @@ def load_previous_shapes() -> dict[str, str]:
     out: dict[str, str] = {}
     for entries in data.get("remaining_prop_targets", {}).values():
         for item in entries:
+            if "qualified_name" in item:
+                out[item["qualified_name"]] = item.get("shape", "<unknown>")
             out[item["name"]] = item.get("shape", "<unknown>")
     return out
 
 
-def build_status(remaining: dict[str, list[str]]) -> dict[str, object]:
-    all_count = sum(len(v) for v in remaining.values())
+def _namespace_of(qualified_name: str) -> str:
+    if "." not in qualified_name:
+        return "Global"
+    return qualified_name.rsplit(".", 1)[0]
+
+
+def build_status() -> dict[str, object]:
+    records = scan_prop_defs(ROOT)
+    math_targets = [r for r in records if r.category == "mathematical_target"]
+    route_interfaces = [r for r in records if r.category == "route_interface"]
+    reusable_predicates = [r for r in records if r.category == "reusable_predicate"]
+    unclassified = [r for r in records if r.category == "unclassified"]
     previous_shapes = load_previous_shapes()
 
-    # Keep the file keys short and namespace-like for readability.
     grouped: dict[str, list[dict[str, object]]] = {}
-    for file, entries in remaining.items():
-        file_key = file.removesuffix(".lean")
-        grouped[file_key] = [
+    for record in math_targets:
+        namespace = _namespace_of(record.qualified_name)
+        grouped.setdefault(namespace, []).append(
             {
-                "name": item,
-                "shape": previous_shapes.get(item, "<unknown>"),
+                "name": record.name,
+                "qualified_name": record.qualified_name,
+                "file": str(record.file.relative_to(ROOT)),
+                "line": record.line_no,
+                "shape": previous_shapes.get(
+                    record.qualified_name,
+                    previous_shapes.get(record.name, "<unknown>"),
+                ),
                 "depends_on": [],
             }
-            for item in entries
-        ]
+        )
 
     return {
         "timestamp": datetime.now().strftime("%Y-%m-%d"),
         "status": "not-yet-complete",
         "completed_without_sorry": True,
         "remaining_prop_targets": grouped,
+        "route_interface_targets": [
+            {
+                "name": r.name,
+                "qualified_name": r.qualified_name,
+                "file": str(r.file.relative_to(ROOT)),
+                "line": r.line_no,
+                "chain": r.chain,
+                "body": "True" if r.body_is_true else "real_statement",
+            }
+            for r in route_interfaces
+        ],
+        "reusable_predicates": [
+            {
+                "name": r.name,
+                "qualified_name": r.qualified_name,
+                "file": str(r.file.relative_to(ROOT)),
+                "line": r.line_no,
+            }
+            for r in reusable_predicates
+        ],
+        "unclassified_prop_defs": [
+            {
+                "name": r.name,
+                "qualified_name": r.qualified_name,
+                "file": str(r.file.relative_to(ROOT)),
+                "line": r.line_no,
+            }
+            for r in unclassified
+        ],
         "chain_summary": CHAIN_SUMMARY,
         "chain_inventory": {
             chain: [
-                item["name"]
-                for file_targets in grouped.values()
-                for item in file_targets
-                if _chain_of(item["name"]) == chain
+                r.name
+                for r in math_targets
+                if MATH_TARGETS[r.qualified_name] == chain
             ]
-            for chain in sorted(set(_chain_of(item["name"]) for file_targets in grouped.values() for item in file_targets))
+            for chain in sorted(set(MATH_TARGETS[r.qualified_name] for r in math_targets))
         },
-        "all_prop_defs_count": all_count,
+        "mathematical_target_count": len(math_targets),
+        "route_interface_count": len(route_interfaces),
+        "route_interface_true_body_count": len([r for r in route_interfaces if r.body_is_true]),
+        "reusable_predicate_count": len(reusable_predicates),
+        "unclassified_prop_def_count": len(unclassified),
+        "all_scanned_prop_defs_count": len(records),
     }
 
 
 def main() -> None:
-    status = build_status(scan_targets())
+    status = build_status()
     STATUS_PATH.write_text(json.dumps(status, ensure_ascii=False, indent=2) + "\n")
     print(f"wrote {STATUS_PATH.relative_to(ROOT)}")
-    print(f"TOTAL: {status['all_prop_defs_count']}")
+    print(
+        "TOTAL: "
+        f"{status['mathematical_target_count']} mathematical targets, "
+        f"{status['route_interface_count']} route interfaces, "
+        f"{status['reusable_predicate_count']} reusable predicates, "
+        f"{status['unclassified_prop_def_count']} unclassified"
+    )
 
 
 if __name__ == "__main__":

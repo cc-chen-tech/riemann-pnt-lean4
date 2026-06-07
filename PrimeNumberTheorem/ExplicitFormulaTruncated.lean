@@ -2,11 +2,11 @@
 Copyright (c) 2026 Riemann PNT Project. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 
-# Truncated Explicit Formula — Main Target (interface placeholder)
+# Truncated Explicit Formula — Main Target
 
 ## Purpose
 
-This file declares the project-internal **interface** for the
+This file declares the project-internal target statement for the
 "truncated von Mangoldt explicit formula" main target.  The target
 locks the signature of the asymptotic identity
 
@@ -20,15 +20,13 @@ where `ψ₀` is the midpoint-convention Chebyshev-`ψ` (declared as
 over the nontrivial zeros of `ζ` with `|Im ρ| ≤ T`, and the trailing
 `O(x / T · log²(x))` is the error term.
 
-## Why a `def ... : Prop` placeholder
+## Why a `def ... : Prop` target
 
-The current declaration is intentionally a **signature-only target**:
-a `def ... : Prop` whose body is the trivially-true proposition `True`.
-The body is a placeholder — its purpose is to (a) lock the argument
-list (`T`, `hT`, `x`, `hx`), (b) let downstream code
-(`import PrimeNumberTheorem.ExplicitFormulaTruncated`) use the name
-as a typed predicate, and (c) survive `verify-baseline.sh`
-(there is no `sorry` / `admit` / `axiom` and the body is `True`).
+The current declaration is intentionally a **target**, not a theorem:
+a `def ... : Prop` with a real mathematical body.  Its purpose is to
+(a) lock the argument list (`T`, `hT`, `x`, `hx`), (b) let downstream
+code (`import PrimeNumberTheorem.ExplicitFormulaTruncated`) use the
+name as a typed predicate, and (c) avoid exporting an unproved theorem.
 
 The actual explicit-formula proof is **deliberately deferred** to a
 later phase: building it from scratch in Lean 4.29.1 / Mathlib 4.29.1
@@ -42,15 +40,13 @@ main target" for the intended future body.
 
 ## Inventory
 
-### 1 core def (Prop target, placeholder)
+### 1 core def (Prop target)
 - `ExplicitFormulaTruncatedTarget` — the main asymptotic-identity
   predicate.
 
-### 1 simple lemma (sanity check)
-- `explicitFormulaTruncated_trivial` — proves the predicate
-  when its body is `True`.  When the body is later promoted to the
-  real explicit formula, this lemma will need a real proof; for now
-  it just exercises the argument list.
+### 1 simple lemma (identity check)
+- `explicitFormulaTruncated_of` — repackages an assumption of the target,
+  making clear that this file does not prove the target unconditionally.
 
 ## Dependencies (already proved / already declared)
 
@@ -72,13 +68,12 @@ import PrimeNumberTheorem
 import PrimeNumberTheorem.ExplicitFormulaAux
 
 open Complex
-open scoped ArithmeticFunction
+open scoped ArithmeticFunction BigOperators
 
--- This file declares a `def ... : Prop` whose body is the trivially-true
--- proposition `True`.  The def's parameter list is the *public contract* the
--- rest of the project imports, so the parameters `T`, `hT`, `x`, `hx` are
--- intentionally unused in the body — they exist only to lock the public
--- argument list.  Disable the unused-variable linter for this file.
+-- This file declares a `def ... : Prop` target rather than an exported theorem.
+-- The parameter list is the public contract the rest of the project imports.
+-- Disable the unused-variable linter because the proof witnesses `hT` and `hx`
+-- exist to lock that contract even when the Prop body only needs `T` and `x`.
 set_option linter.unusedVariables false
 
 namespace PrimeNumberTheorem
@@ -126,39 +121,28 @@ where:
   (so `x^ρ` is well-defined and the log-terms are real).
 
 **This is NOT a `theorem`** — it is a `def` returning `Prop`.  The
-Lean kernel accepts the body `True` without requiring a proof, and
-`verify-baseline.sh` will not flag it (no `sorry` / `admit` /
-`axiom`).  When the body is later promoted to the real explicit
-formula, this declaration will become a `theorem` whose proof
-combines Perron's formula with the rectangle residue interface. -/
+repository tracks it as an unproved target whose eventual proof should
+combine Perron's formula with the rectangle residue interface. -/
 def ExplicitFormulaTruncatedTarget (T : ℝ) (hT : 0 < T) (x : ℝ) (hx : 0 < x) : Prop :=
-  True
+  ∃ C > (0 : ℝ),
+    ‖((ExplicitFormulaAux.chebyshevPsi0 x : ℂ) -
+      ((x : ℂ)
+        - (∑ ρ ∈ ExplicitFormulaAux.finiteNontrivialZeroSum T,
+            (x : ℂ) ^ ρ / ρ)
+        - (Real.log (2 * Real.pi) : ℂ)
+        - (1 / 2 : ℂ) * (Real.log (1 - x ^ (-2 : ℝ)) : ℂ)))‖
+      ≤ C * x / T * (Real.log x) ^ 2
 
-/-! ## Trivial sanity-check lemma -/
+/-! ## Assumption-repackaging lemma -/
 
-/-- **Sanity check**: when the body of `ExplicitFormulaTruncatedTarget`
-is `True`, the predicate holds for every positive truncation height
-`T` and every positive evaluation point `x`.
+/-- Repackage an assumed truncated explicit formula target.
 
-This is the one helper lemma we ship with the interface: it costs
-nothing to prove (the body of the predicate is `True`) but exercises
-the argument-list agreement between caller and callee.  In
-particular it shows that the four-argument signature
-`(T, hT, x, hx)` is correctly threaded by downstream `simp` /
-`exact` calls and that the type-class resolution on the `ℝ`
-parameters works as expected.
-
-When the body of `ExplicitFormulaTruncatedTarget` is later promoted
-to the real explicit formula, this lemma will need a real proof:
-the main-term `x`, the residue sum `∑ x^ρ / ρ`, the constant
-`log(2π) + (1/2) log(1 − 1/x²)`, and the error term
-`O(x / T · log²(x))` must all be assembled from Perron's formula
-and the rectangle residue interface.  We intentionally do not
-commit to that proof now: the discipline of this task is
-"interface only" for this target. -/
-lemma explicitFormulaTruncated_trivial (T : ℝ) (hT : 0 < T) (x : ℝ) (hx : 0 < x) :
+This lemma is intentionally conditional: the file records the target shape but
+does not prove Perron's formula or the rectangle residue chain. -/
+lemma explicitFormulaTruncated_of (T : ℝ) (hT : 0 < T) (x : ℝ) (hx : 0 < x)
+    (h : ExplicitFormulaTruncatedTarget T hT x hx) :
     ExplicitFormulaTruncatedTarget T hT x hx :=
-  trivial
+  h
 
 end ExplicitFormulaTruncated
 end PrimeNumberTheorem

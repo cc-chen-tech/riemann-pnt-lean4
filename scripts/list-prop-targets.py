@@ -1,33 +1,38 @@
 #!/usr/bin/env python3
-"""Print unresolved Lean target declarations of form `def ... : Prop :=`.
+"""Print project-local Lean `def ... : Prop` declarations by category.
 
 Usage:
   python3 scripts/list-prop-targets.py
-  # emits each declaration name and a total count.
+  # emits mathematical targets, route interfaces, reusable predicates, and
+  # unclassified Prop definitions.
 """
 
-from pathlib import Path
-import re
+from __future__ import annotations
 
-root = Path(__file__).resolve().parents[1]
-pat = re.compile(
-    r"^def\s+([A-Za-z_][A-Za-z0-9_]*)\s*(?:\(.*\))?\s*:\s*Prop\s*:="
-)
+from target_inventory import ROOT, scan_prop_defs
 
-# `def ... : Prop` is also useful for reusable predicates.  These are not
-# unresolved theorem targets and should not be counted as remaining proof gaps.
-NON_TARGET_PROP_PREDICATES = {
-    "weightedIntegralOf_tail_dominates",
+
+def _print_group(title: str, records) -> None:
+    print(title)
+    for r in records:
+        rel = r.file.relative_to(ROOT)
+        true_tag = " body=True" if r.body_is_true else ""
+        chain = f" chain={r.chain}" if r.chain else ""
+        print(f"{rel}:{r.line_no}:{r.qualified_name}{true_tag}{chain}  |  {r.signature}")
+    print(f"TOTAL {title}: {len(records)}")
+    print()
+
+
+records = scan_prop_defs()
+groups = {
+    "mathematical_target": [r for r in records if r.category == "mathematical_target"],
+    "route_interface": [r for r in records if r.category == "route_interface"],
+    "reusable_predicate": [r for r in records if r.category == "reusable_predicate"],
+    "unclassified": [r for r in records if r.category == "unclassified"],
 }
 
-entries = []
-for path in sorted(root.glob("*.lean")):
-    for i, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
-        m = pat.match(line.strip())
-        if m and m.group(1) not in NON_TARGET_PROP_PREDICATES:
-            entries.append((path.name, i, m.group(1), line.strip()))
+print("Prop declarations in project Lean sources:")
+for name in ["mathematical_target", "route_interface", "reusable_predicate", "unclassified"]:
+    _print_group(name, groups[name])
 
-print("Unresolved Prop declarations in Lean sources:")
-for file, line_no, name, source in entries:
-    print(f"{file}:{line_no}:{name}  |  {source}")
-print(f"TOTAL: {len(entries)}")
+print(f"TOTAL scanned Prop defs: {len(records)}")

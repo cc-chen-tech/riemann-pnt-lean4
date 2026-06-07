@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Scan the main checkout and nearby Codex worktrees for unresolved `def ... : Prop` names.
+"""Scan the main checkout and nearby Codex worktrees for target inventory drift.
 
 The goal is to quickly detect whether another worktree has solved or introduced
-target declarations that differ from the authoritative main checkout set.
+mathematical target declarations or unclassified Prop definitions that differ
+from the authoritative main checkout set.
 """
 
 from __future__ import annotations
@@ -13,16 +14,13 @@ from subprocess import check_output
 import re
 import sys
 
+from target_inventory import scan_prop_defs
 
 ROOT = Path(__file__).resolve().parents[1]
 WORKTREE_ROOT = Path.home() / ".config" / "superpowers" / "worktrees" / "riemann-pnt-lean4"
 
-TARGET_PAT = re.compile(r"^def\s+([A-Za-z_][A-Za-z0-9_]*)\s*(?:\(.*\))?\s*:\s*Prop\s*:=")
 DECL_PAT = re.compile(r"^(def|theorem|lemma|abbrev)\s+([A-Za-z_][A-Za-z0-9_]*)\b")
 PLACEHOLDER_PAT = re.compile(r"\b(sorry|admit|axiom)\b")
-NON_TARGET_PROP_PREDICATES = {
-    "weightedIntegralOf_tail_dominates",
-}
 
 
 @dataclass(frozen=True)
@@ -34,18 +32,21 @@ class Decl:
 
 
 def scan_targets(path: Path) -> set[str]:
-    """Collect top-level unresolved `def ... : Prop` declarations in `.lean` files."""
-    targets: set[str] = set()
-    for file in sorted(path.glob("*.lean")):
-        try:
-            lines = file.read_text(encoding="utf-8").splitlines()
-        except OSError:
-            continue
-        for line in lines:
-            m = TARGET_PAT.match(line.strip())
-            if m and m.group(1) not in NON_TARGET_PROP_PREDICATES:
-                targets.add(m.group(1))
-    return targets
+    """Collect recursively classified mathematical target declarations."""
+    return {
+        record.qualified_name
+        for record in scan_prop_defs(path)
+        if record.category == "mathematical_target"
+    }
+
+
+def scan_unclassified(path: Path) -> set[str]:
+    """Collect recursively found unclassified Prop definitions."""
+    return {
+        record.qualified_name
+        for record in scan_prop_defs(path)
+        if record.category == "unclassified"
+    }
 
 
 def scan_decls(path: Path) -> dict[str, list[Decl]]:
@@ -98,7 +99,17 @@ def branch_name(path: Path) -> str:
 
 def main() -> int:
     base_targets = scan_targets(ROOT)
-    print(f"[scan] base checkout: {ROOT} ({len(base_targets)} targets)")
+    base_unclassified = scan_unclassified(ROOT)
+    print(
+        f"[scan] base checkout: {ROOT} "
+        f"({len(base_targets)} mathematical targets, "
+        f"{len(base_unclassified)} unclassified Prop defs)"
+    )
+    if base_unclassified:
+        print("[scan] base checkout has unclassified Prop definitions:")
+        for item in sorted(base_unclassified):
+            print(f"  ! {item}")
+        return 1
 
     if not WORKTREE_ROOT.exists():
         print(f"[scan] worktree root missing: {WORKTREE_ROOT}")
@@ -107,14 +118,19 @@ def main() -> int:
     had_diff = False
     for wt in sorted(p for p in WORKTREE_ROOT.iterdir() if p.is_dir()):
         wt_targets, wt_path = scan_worktree(wt)
+        wt_unclassified = scan_unclassified(wt)
         wt_decls = scan_decls(wt)
         wt_placeholders = placeholder_lines(wt)
-        if wt_targets == base_targets:
-            print(f"[scan] {wt.name}: same target set ({len(wt_targets)}) [{branch_name(wt)}]")
+        if wt_targets == base_targets and not wt_unclassified:
+            print(f"[scan] {wt.name}: same mathematical target set ({len(wt_targets)}) [{branch_name(wt)}]")
             continue
 
         had_diff = True
-        print(f"[scan] {wt.name}: target mismatch [{branch_name(wt)}]")
+        print(f"[scan] {wt.name}: target/classification mismatch [{branch_name(wt)}]")
+        if wt_unclassified:
+            print("  ! unclassified Prop definitions:")
+            for t in sorted(wt_unclassified):
+                print(f"    ! {t}")
         extra = sorted(wt_targets - base_targets)
         missing = sorted(base_targets - wt_targets)
         if extra:

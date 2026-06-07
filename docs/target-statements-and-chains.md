@@ -1,17 +1,19 @@
 # Unproved Target Statements and Missing Chains
 
 This file is the authoritative checklist of the remaining `def ... : Prop`
-statements (as of `2026-06-03`) in this Lean checkout.
+statements (as of `2026-06-08`) in this Lean checkout.
 
 All entries are intentionally **not** exported as theorems.  They are explicit
 `Prop` targets used as roadmap checkpoints.
 
 ## Target count
 
-- `HardyTheorem` namespace: 10
+- `HardyTheorem` namespace: 7
+- `HardyTheorem.Details` namespace: 3
 - `PrimeNumberTheorem` namespace: 9
-- `ZeroFreeRegion` namespace: 2
-- `RiemannExplorer` namespace: 1
+- `KnownResults` namespace: 1
+- `ZeroFreeRegion` namespace: 1
+- global namespace: 1
 
 Total: **22**.
 
@@ -20,14 +22,15 @@ For the chain accounting:
 - Quantitative zero-free region chain: 2
 - Explicit formula chain: 1
 - RH/prime-counting error chain: 8
-- Hardy theorem chain: 11 (10 in `HardyTheorem`, 1 in `RiemannExplorer`)
+- Hardy theorem chain: 11 (7 in `HardyTheorem`, 3 in `HardyTheorem.Details`,
+  1 in `KnownResults`)
 
 ## Chain 1: Quantitative zero-free region
 
 ### Target declarations
 
 - `ZeroFreeRegion.classical_zero_free_region`
-- `ZeroFreeRegion.vinogradov_korobov_zero_free_region`
+- `vinogradov_korobov_zero_free_region`
 
 ### Current verified anchor theorems
 
@@ -156,10 +159,10 @@ For the chain accounting:
 - `HardyTheorem.hardy_zeros_abs_unbounded_target`
 - `HardyTheorem.hardy_littlewood_lower_bound_target`
 - `HardyTheorem.selberg_zero_proportion_target`
-- `HardyTheorem.gamma_asymptotic_half_plus_it_target`
-- `HardyTheorem.theta_asymptotic_target`
-- `HardyTheorem.approximate_functional_equation_target`
-- `RiemannExplorer.conrey_40_percent_zeros_on_critical_line_target`
+- `HardyTheorem.Details.gamma_asymptotic_half_plus_it_target`
+- `HardyTheorem.Details.theta_asymptotic_target`
+- `HardyTheorem.Details.approximate_functional_equation_target`
+- `KnownResults.conrey_40_percent_zeros_on_critical_line_target`
 
 ### Current verified anchor theorems
 
@@ -233,8 +236,14 @@ For the chain accounting:
 - `HardyTheorem.weightedIntegralOf_tail_dominates` is a reusable predicate
   used as a hypothesis in conditional tail-dominance bridges, not an
   unconditional theorem target.
-- `RiemannExplorer.conrey_40_percent_zeros_on_critical_line_target`
-  appears as a downstream target form and is kept intentionally in
-  `RiemannExplorer`.
+- `KnownResults.conrey_40_percent_zeros_on_critical_line_target`
+  is the upper-level Conrey target form.  The submodule declaration
+  `RiemannExplorer.Conrey40.conrey_40_percent_zeros_on_critical_line_target`
+  is only a route-interface alias to this target.
+- `MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum` is the only
+  remaining body-`True` route interface.  It marks the missing rectangle
+  contour/residue theorem and is not counted as a mathematical target.
+- `PrimeNumberTheorem.ExplicitFormulaAux.goodHeight` is a reusable contour
+  height predicate, not a proof target.
 
 All of the above is meant to be consumed as a roadmap, not a claim of completion.

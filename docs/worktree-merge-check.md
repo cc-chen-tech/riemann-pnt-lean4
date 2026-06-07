@@ -18,7 +18,7 @@
   `vinogradov_korobov_zero_free_region`, `explicit_formula_von_mangoldt`, `rh_iff_optimal_error`），
   但经核验这些位置仍有 `sorry` 记录，尚未构成可直接 cherry-pick 的闭合证明。
 - 另外这些分支有额外 `def` 目标（例如 `IsSimplePoleOfGamma`, `IsTrivialZero`, `Statement` 等），
-  同时缺失主分支的 23 个核心目标之一部分（例如 `hardy_two_signed_moments_target`,
+  同时缺失当时主分支的一部分核心目标（例如 `hardy_two_signed_moments_target`,
   `RH_PsiErrorBound`, `RH_ThetaErrorBound`, `selberg_zero_proportion_target` 等）。
 
 因此当前不建议直接合并；需先在分支内按主分支目标命名与链路对齐后再评估可复用内容。
@@ -37,7 +37,9 @@
 ## 当前主干状态确认
 
 - `lake build` 通过（无 `sorry`/`admit`/`axiom`）。
-- `scripts/check-targets-consistent.py` 输出目标数为 `23`，与 `docs/current-target-status.json` 一致。
+- 2026-06-03 当时的旧扫描输出已过期，不再作为目标计数依据。
+- 2026-06-08 当前主干的递归扫描输出为：22 个数学目标、4 个路线接口、
+  2 个可复用 Prop 谓词、0 个未分类 Prop 定义。
 
 ## 建议
 
