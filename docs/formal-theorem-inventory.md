@@ -282,6 +282,12 @@ Core verified declarations:
   `T0 >= 2`, and the bounded-height gap is filled by the compact patch.
 - `classical_zero_free_region_of_exists_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height`
   packages the high-height positive-log-derivative convention existentially.
+- `classical_zero_free_region_of_logDeriv_regular_part_norm_affine_log_bound_and_vertical_logDeriv_norm_affine_log_bound_high_height`
+  converts high-height estimates of the natural form
+  `A + B * log |Im|` into the multiplicative logarithmic interface, using
+  `1 <= log |Im|` above height `3`.
+- `classical_zero_free_region_of_exists_logDeriv_regular_part_norm_affine_log_bound_and_vertical_logDeriv_norm_affine_log_bound_high_height`
+  packages the affine-log high-height interface existentially.
 - `meromorphicAt_logDeriv_riemannZeta_one`
   proves the logarithmic derivative is meromorphic at the pole.
 - `meromorphicOn_logDeriv_riemannZeta_closedBall`

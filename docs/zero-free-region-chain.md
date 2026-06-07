@@ -428,6 +428,13 @@ are the preferred interface for future Borel/Jensen principal-part estimates:
 they require the regular-part and vertical-strip logarithmic-derivative bounds
 only above an arbitrary cutoff `T0 >= 2`, then use the verified compact patch to
 fill the bounded-height gap in the final classical zero-free-region target.
+The affine-log wrappers
+`ZeroFreeRegion.classical_zero_free_region_of_logDeriv_regular_part_norm_affine_log_bound_and_vertical_logDeriv_norm_affine_log_bound_high_height`
+and
+`ZeroFreeRegion.classical_zero_free_region_of_exists_logDeriv_regular_part_norm_affine_log_bound_and_vertical_logDeriv_norm_affine_log_bound_high_height`
+are even closer to the expected Borel/Jensen output: they accept estimates of
+the form `A + B log |Im|` above height `3`, absorb the additive constants using
+`1 <= log |Im|`, and then feed the high-height logarithmic interface.
 This is still conditional; it does not prove the quantitative zero-free region
 until those two zeta-specific estimates are proved.
 The next work starts from these meromorphic/nonvanishing/principal-part facts

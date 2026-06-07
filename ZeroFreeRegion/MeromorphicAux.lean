@@ -1737,6 +1737,90 @@ lemma classical_zero_free_region_of_exists_logDeriv_regular_part_norm_bound_and_
     classical_zero_free_region_of_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height
       T0 Bregular Bvertical hT0 hBregular hBvertical hregular hvertical
 
+/-- High-height closure from affine logarithmic bounds.
+
+The analytic estimates produced by Borel-Carathéodory/Jensen arguments often
+have the shape `A + B * log |Im|`.  Above height `3`, `1 <= log |Im|`, so the
+additive constant is absorbed into the logarithmic coefficient.  This wrapper
+then feeds the normalized estimates into
+`classical_zero_free_region_of_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height`. -/
+lemma classical_zero_free_region_of_logDeriv_regular_part_norm_affine_log_bound_and_vertical_logDeriv_norm_affine_log_bound_high_height
+    (T0 Aregular Bregular Avertical Bvertical : ℝ)
+    (hT0 : 3 ≤ T0)
+    (hAregular : 0 ≤ Aregular) (hBregular : 0 ≤ Bregular)
+    (hAvertical : 0 ≤ Avertical) (hBvertical : 0 ≤ Bvertical)
+    (hregular :
+      ∀ s ρ : ℂ, T0 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+        riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+        0 < s.re - ρ.re →
+        ‖logDeriv riemannZeta s - (s - ρ)⁻¹‖ ≤
+          Aregular + Bregular * Real.log |s.im|)
+    (hvertical :
+      ∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta z‖ ≤ Avertical + Bvertical * Real.log |z.im|) :
+    classical_zero_free_region := by
+  have hT0_two : 2 ≤ T0 := by linarith
+  refine
+    classical_zero_free_region_of_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height
+      T0 (Aregular + Bregular) (Avertical + Bvertical) hT0_two
+      (by linarith) (by linarith) ?_ ?_
+  · intro s ρ hs_height hs_re_mem hζρ hρ_im hρ_re hsub
+    have hlog_ge_one : 1 ≤ Real.log |s.im| :=
+      (log_abs_gt_one_of_three_le (hT0.trans hs_height)).le
+    have hA_le : Aregular ≤ Aregular * Real.log |s.im| := by
+      calc
+        Aregular = Aregular * 1 := by ring
+        _ ≤ Aregular * Real.log |s.im| :=
+            mul_le_mul_of_nonneg_left hlog_ge_one hAregular
+    calc
+      ‖logDeriv riemannZeta s - (s - ρ)⁻¹‖
+          ≤ Aregular + Bregular * Real.log |s.im| :=
+            hregular s ρ hs_height hs_re_mem hζρ hρ_im hρ_re hsub
+      _ ≤ Aregular * Real.log |s.im| +
+            Bregular * Real.log |s.im| := by
+            linarith
+      _ = (Aregular + Bregular) * Real.log |s.im| := by ring
+  · intro z hz_height hz_re_mem
+    have hlog_ge_one : 1 ≤ Real.log |z.im| :=
+      (log_abs_gt_one_of_three_le (hT0.trans hz_height)).le
+    have hA_le : Avertical ≤ Avertical * Real.log |z.im| := by
+      calc
+        Avertical = Avertical * 1 := by ring
+        _ ≤ Avertical * Real.log |z.im| :=
+            mul_le_mul_of_nonneg_left hlog_ge_one hAvertical
+    calc
+      ‖logDeriv riemannZeta z‖
+          ≤ Avertical + Bvertical * Real.log |z.im| :=
+            hvertical z hz_height hz_re_mem
+      _ ≤ Avertical * Real.log |z.im| +
+            Bvertical * Real.log |z.im| := by
+            linarith
+      _ = (Avertical + Bvertical) * Real.log |z.im| := by ring
+
+/-- Existential high-height closure from affine logarithmic bounds. -/
+lemma classical_zero_free_region_of_exists_logDeriv_regular_part_norm_affine_log_bound_and_vertical_logDeriv_norm_affine_log_bound_high_height
+    (h :
+      ∃ T0 Aregular Bregular Avertical Bvertical : ℝ,
+        3 ≤ T0 ∧
+        0 ≤ Aregular ∧ 0 ≤ Bregular ∧
+        0 ≤ Avertical ∧ 0 ≤ Bvertical ∧
+        (∀ s ρ : ℂ, T0 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+          riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+          0 < s.re - ρ.re →
+          ‖logDeriv riemannZeta s - (s - ρ)⁻¹‖ ≤
+            Aregular + Bregular * Real.log |s.im|) ∧
+        (∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc 1 2 →
+          ‖logDeriv riemannZeta z‖ ≤
+            Avertical + Bvertical * Real.log |z.im|)) :
+    classical_zero_free_region := by
+  rcases h with
+    ⟨T0, Aregular, Bregular, Avertical, Bvertical, hT0,
+      hAregular, hBregular, hAvertical, hBvertical, hregular, hvertical⟩
+  exact
+    classical_zero_free_region_of_logDeriv_regular_part_norm_affine_log_bound_and_vertical_logDeriv_norm_affine_log_bound_high_height
+      T0 Aregular Bregular Avertical Bvertical hT0 hAregular hBregular
+      hAvertical hBvertical hregular hvertical
+
 /-- ζ has a simple pole at `1`, expressed as meromorphic order `-1`. -/
 lemma meromorphicOrderAt_riemannZeta_one :
     meromorphicOrderAt riemannZeta (1 : ℂ) = (-1 : ℤ) := by
