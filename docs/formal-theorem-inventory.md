@@ -195,6 +195,9 @@ Core verified declarations:
 - `exists_sigmaOf_log_classical_zero_free_region_of_log_deriv_bounds`
   packages the standard `sigma(t) = 1 + a / log |t|` choice into the verified
   3-4-1 high-height contradiction and compact bounded-height patch.
+- `exists_sigmaOf_log_classical_zero_free_region_of_shift_bounds`
+  specializes that closure theorem to the usual shifted estimates
+  `-1/(sigma-beta) + Czero log |t|` and `Ctwo log |t|`.
 - `meromorphicAt_logDeriv_riemannZeta_one`
   proves the logarithmic derivative is meromorphic at the pole.
 - `meromorphicOn_logDeriv_riemannZeta_closedBall`

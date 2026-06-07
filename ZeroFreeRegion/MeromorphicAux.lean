@@ -880,6 +880,49 @@ lemma exists_sigmaOf_log_classical_zero_free_region_of_log_deriv_bounds
   · intro β t ht hβ_lt hβ
     exact hmargin β t ht hβ_lt hβ
 
+/-- Classical zero-free-region closure for the standard `σ = 1 + a/log |t|`
+choice with the usual shifted logarithmic-derivative bound shapes.
+
+Compared with
+`exists_sigmaOf_log_classical_zero_free_region_of_log_deriv_bounds`, this
+lemma also discharges the final real-variable margin by
+`three_four_one_sigmaOf_log_margin`.  The remaining inputs are the two
+zeta-specific shifted estimates and the constant inequality
+`3*C/a + 4*Czero + Ctwo < 4/(a+c)`. -/
+lemma exists_sigmaOf_log_classical_zero_free_region_of_shift_bounds
+    (C : ℝ) (hC : 1 < C) (T0 : ℝ) (hT0 : 2 ≤ T0)
+    {c : ℝ} (hc_pos : 0 < c) :
+    ∃ d : ℝ, 0 < d ∧ ∀ a : ℝ, 0 < a → a ≤ Real.log 2 →
+      a ≤ d * Real.log 2 →
+      ∀ Czero Ctwo : ℝ,
+        (3 * C / a + 4 * Czero + Ctwo < 4 / (a + c)) →
+        (∀ β t : ℝ, T0 ≤ |t| → β < 1 →
+          β ≥ 1 - c / Real.log |t| →
+          0 < (1 + a / Real.log |t|) - β →
+          riemannZeta ((β : ℂ) + I * t) = 0 →
+          (-deriv riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t) /
+            riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t)).re ≤
+              -1 / ((1 + a / Real.log |t|) - β) +
+                Czero * Real.log |t|) →
+        (∀ t : ℝ, T0 ≤ |t| →
+          (-deriv riemannZeta
+              ((1 + a / Real.log |t| : ℝ) + 2 * I * t) /
+            riemannZeta ((1 + a / Real.log |t| : ℝ) + 2 * I * t)).re ≤
+              Ctwo * Real.log |t|) →
+        classical_zero_free_region := by
+  rcases exists_sigmaOf_log_classical_zero_free_region_of_log_deriv_bounds
+      C hC T0 hT0 hc_pos with ⟨d, hd_pos, hclosure⟩
+  refine ⟨d, hd_pos, ?_⟩
+  intro a ha_pos ha_le_log2 ha_le_near Czero Ctwo hconst hzero htwo
+  refine hclosure a ha_pos ha_le_log2 ha_le_near
+    (fun β t =>
+      -1 / ((1 + a / Real.log |t|) - β) + Czero * Real.log |t|)
+    (fun t => Ctwo * Real.log |t|) ?_ ?_ ?_
+  · exact hzero
+  · exact htwo
+  · intro β t ht hβ_lt hβ
+    exact three_four_one_sigmaOf_log_margin hT0 ha_pos hc_pos ht hβ_lt hβ hconst
+
 /-- ζ has a simple pole at `1`, expressed as meromorphic order `-1`. -/
 lemma meromorphicOrderAt_riemannZeta_one :
     meromorphicOrderAt riemannZeta (1 : ℂ) = (-1 : ℤ) := by

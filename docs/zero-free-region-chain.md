@@ -253,6 +253,12 @@ The pure real-variable part of that final margin is now isolated as
 have constants satisfying `3*Creal/a + 4*Czero + Ctwo < 4/(a+c)`, the 3-4-1
 upper bound is strictly negative for every zero candidate
 `beta >= 1 - c / log |t|`.
+The wrapper
+`ZeroFreeRegion.exists_sigmaOf_log_classical_zero_free_region_of_shift_bounds`
+combines this algebra with the closure theorem, leaving exactly the two
+zeta-specific shifted estimates:
+`Re(-zeta'/zeta)(sigma+it) <= -1/(sigma-beta) + Czero log |t|` at a zero
+candidate and `Re(-zeta'/zeta)(sigma+2it) <= Ctwo log |t|`.
 The next work starts from these meromorphic/nonvanishing/principal-part facts
 and proves the vertical-height logarithmic-derivative estimates needed for the
 quantitative strip.

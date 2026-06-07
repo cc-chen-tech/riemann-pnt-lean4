@@ -2551,6 +2551,32 @@ theorem exists_sigmaOf_log_classical_zero_free_region_of_log_deriv_bounds
   ZeroFreeRegion.exists_sigmaOf_log_classical_zero_free_region_of_log_deriv_bounds
     C hC T0 hT0 hc_pos
 
+/-- Public closure theorem for the standard `σ = 1 + a/log |t|` choice with
+the usual shifted logarithmic-derivative bound shapes. -/
+theorem exists_sigmaOf_log_classical_zero_free_region_of_shift_bounds
+    (C : ℝ) (hC : 1 < C) (T0 : ℝ) (hT0 : 2 ≤ T0)
+    {c : ℝ} (hc_pos : 0 < c) :
+    ∃ d : ℝ, 0 < d ∧ ∀ a : ℝ, 0 < a → a ≤ Real.log 2 →
+      a ≤ d * Real.log 2 →
+      ∀ Czero Ctwo : ℝ,
+        (3 * C / a + 4 * Czero + Ctwo < 4 / (a + c)) →
+        (∀ β t : ℝ, T0 ≤ |t| → β < 1 →
+          β ≥ 1 - c / Real.log |t| →
+          0 < (1 + a / Real.log |t|) - β →
+          riemannZeta ((β : ℂ) + I * t) = 0 →
+          (-deriv riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t) /
+            riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t)).re ≤
+              -1 / ((1 + a / Real.log |t|) - β) +
+                Czero * Real.log |t|) →
+        (∀ t : ℝ, T0 ≤ |t| →
+          (-deriv riemannZeta
+              ((1 + a / Real.log |t| : ℝ) + 2 * I * t) /
+            riemannZeta ((1 + a / Real.log |t| : ℝ) + 2 * I * t)).re ≤
+              Ctwo * Real.log |t|) →
+        ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.exists_sigmaOf_log_classical_zero_free_region_of_shift_bounds
+    C hC T0 hT0 hc_pos
+
 /-- Public meromorphicity of the zeta logarithmic derivative at `1`. -/
 theorem meromorphicAt_logDeriv_riemannZeta_one :
     MeromorphicAt (logDeriv riemannZeta) (1 : ℂ) :=
