@@ -126,7 +126,15 @@ proved:
   the direct Borel entry points for later zeta/log-derivative growth estimates;
   `ZeroFreeRegion.borelCaratheodory_riemannZeta_verticalRegion` and
   `ZeroFreeRegion.borelCaratheodory_sub_riemannZeta_verticalRegion`
-  specialize this interface to ζ itself, while
+  specialize this interface to ζ itself.  Their pointwise variants
+  `ZeroFreeRegion.borelCaratheodory_riemannZeta_verticalRegion_of_re_le`
+  and
+  `ZeroFreeRegion.borelCaratheodory_sub_riemannZeta_verticalRegion_of_re_le`
+  accept zeta growth estimates directly as
+  `∀ z ∈ verticalRegion, Re(...) ≤ M` hypotheses, with
+  `ZeroFreeRegion.mapsTo_riemannZeta_verticalRegion_of_re_le` and
+  `ZeroFreeRegion.mapsTo_sub_riemannZeta_verticalRegion_of_re_le`
+  supplying the `Set.MapsTo` conversion.
   `ZeroFreeRegion.borelCaratheodory_logDeriv_riemannZeta_verticalRegion` and
   `ZeroFreeRegion.borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion`
   provide the conditional `logDeriv ζ` versions with differentiability and

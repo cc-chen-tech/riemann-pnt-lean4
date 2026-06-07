@@ -3088,6 +3088,58 @@ theorem borelCaratheodory_sub_riemannZeta_verticalRegion
   ZeroFreeRegion.borelCaratheodory_sub_riemannZeta_verticalRegion
     hM hHpos hζ ha hb hH hR hz
 
+/-- Public conversion from a pointwise real-part estimate for ζ to the
+`Set.MapsTo` Borel-Carathéodory input. -/
+theorem mapsTo_riemannZeta_verticalRegion_of_re_le
+    {a b H M : ℝ}
+    (hζ : ∀ z : ℂ, z ∈ verticalRegion a b H →
+      (riemannZeta z).re ≤ M) :
+    Set.MapsTo riemannZeta (verticalRegion a b H) {w | w.re ≤ M} :=
+  ZeroFreeRegion.mapsTo_riemannZeta_verticalRegion_of_re_le hζ
+
+/-- Public conversion from a pointwise centered ζ real-part estimate to the
+`Set.MapsTo` Borel-Carathéodory input. -/
+theorem mapsTo_sub_riemannZeta_verticalRegion_of_re_le
+    {σ t a b H M : ℝ}
+    (hζ : ∀ z : ℂ, z ∈ verticalRegion a b H →
+      (riemannZeta z - riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤ M) :
+    Set.MapsTo
+      (fun z => riemannZeta z - riemannZeta ((σ : ℂ) + Complex.I * t))
+      (verticalRegion a b H) {w | w.re ≤ M} :=
+  ZeroFreeRegion.mapsTo_sub_riemannZeta_verticalRegion_of_re_le hζ
+
+/-- Public pointwise-estimate form of Borel-Carathéodory specialized to ζ on a
+`σ + I*t` disk. -/
+theorem borelCaratheodory_riemannZeta_verticalRegion_of_re_le
+    {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M) (hHpos : 0 < H)
+    (hζ : ∀ w : ℂ, w ∈ verticalRegion a b H → (riemannZeta w).re ≤ M)
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R) (hz : z ∈ Metric.ball ((σ : ℂ) + Complex.I * t) R) :
+    ‖riemannZeta z‖ ≤
+      2 * M * ‖z - ((σ : ℂ) + Complex.I * t)‖ /
+          (R - ‖z - ((σ : ℂ) + Complex.I * t)‖) +
+        ‖riemannZeta ((σ : ℂ) + Complex.I * t)‖ *
+          (R + ‖z - ((σ : ℂ) + Complex.I * t)‖) /
+          (R - ‖z - ((σ : ℂ) + Complex.I * t)‖) :=
+  ZeroFreeRegion.borelCaratheodory_riemannZeta_verticalRegion_of_re_le
+    hM hHpos hζ ha hb hH hR hz
+
+/-- Public pointwise-estimate form of the oscillation Borel-Carathéodory
+wrapper specialized to ζ. -/
+theorem borelCaratheodory_sub_riemannZeta_verticalRegion_of_re_le
+    {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M) (hHpos : 0 < H)
+    (hζ : ∀ w : ℂ, w ∈ verticalRegion a b H →
+      (riemannZeta w - riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤ M)
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R) (hz : z ∈ Metric.ball ((σ : ℂ) + Complex.I * t) R) :
+    ‖riemannZeta z - riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+      2 * M * ‖z - ((σ : ℂ) + Complex.I * t)‖ /
+        (R - ‖z - ((σ : ℂ) + Complex.I * t)‖) :=
+  ZeroFreeRegion.borelCaratheodory_sub_riemannZeta_verticalRegion_of_re_le
+    hM hHpos hζ ha hb hH hR hz
+
 /-- Public conditional Borel-Carathéodory bound for the logarithmic derivative
 of ζ on a `σ + I*t` disk. -/
 theorem borelCaratheodory_logDeriv_riemannZeta_verticalRegion
