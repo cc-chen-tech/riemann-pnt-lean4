@@ -766,6 +766,65 @@ lemma exists_sigmaOf_log_hreal_const_div_sub_one (C : ℝ) (hC : 1 < C)
   have hbound := hreal σOf hσ_gt hσ_near t ht (hσ_gt t ht) hσ_le
   simpa [σOf] using hbound
 
+/-- Algebraic normalization for the standard high-height choice
+`σ = 1 + a / log |t|`.
+
+This rewrites the local pole denominator into the vertical-height scale used in
+the quantitative zero-free-region argument. -/
+lemma const_div_sigmaOf_log_sub_one_eq_mul_log_div (C : ℝ)
+    {T0 a t : ℝ} (hT0 : 2 ≤ T0) (ha : a ≠ 0) (ht : T0 ≤ |t|) :
+    C / ((1 + a / Real.log |t|) - 1) = C * Real.log |t| / a := by
+  have hlog_pos : 0 < Real.log |t| := log_abs_pos_of_two_le (hT0.trans ht)
+  have hlog_ne : Real.log |t| ≠ 0 := ne_of_gt hlog_pos
+  have hden : ((1 + a / Real.log |t|) - 1) = a / Real.log |t| := by ring
+  rw [hden]
+  field_simp [ha, hlog_ne]
+
+/-- Concrete real-axis `hreal` bound for
+`σOf t = 1 + a / log |t|`, normalized as an `O(log |t|)` estimate. -/
+lemma exists_sigmaOf_log_hreal_two_mul_log_div (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    ∃ d : ℝ, 0 < d ∧ ∀ a : ℝ, 0 < a → a ≤ Real.log 2 →
+      a ≤ d * Real.log 2 →
+      ∀ t : ℝ, T0 ≤ |t| →
+        (-deriv riemannZeta ((1 + a / Real.log |t| : ℝ) : ℂ) /
+            riemannZeta ((1 + a / Real.log |t| : ℝ) : ℂ)).re ≤
+          2 * Real.log |t| / a := by
+  rcases exists_sigmaOf_log_hreal_two_div_sub_one T0 hT0 with
+    ⟨d, hd_pos, hreal⟩
+  refine ⟨d, hd_pos, ?_⟩
+  intro a ha_pos ha_le_log2 ha_le_near t ht
+  have hbound := hreal a ha_pos ha_le_log2 ha_le_near t ht
+  calc
+    (-deriv riemannZeta ((1 + a / Real.log |t| : ℝ) : ℂ) /
+        riemannZeta ((1 + a / Real.log |t| : ℝ) : ℂ)).re
+        ≤ 2 / ((1 + a / Real.log |t|) - 1) := hbound
+    _ = 2 * Real.log |t| / a :=
+        const_div_sigmaOf_log_sub_one_eq_mul_log_div 2 hT0
+          (ne_of_gt ha_pos) ht
+
+/-- Flexible real-axis `hreal` bound for
+`σOf t = 1 + a / log |t|`, normalized as an `O(log |t|)` estimate. -/
+lemma exists_sigmaOf_log_hreal_const_mul_log_div (C : ℝ) (hC : 1 < C)
+    (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    ∃ d : ℝ, 0 < d ∧ ∀ a : ℝ, 0 < a → a ≤ Real.log 2 →
+      a ≤ d * Real.log 2 →
+      ∀ t : ℝ, T0 ≤ |t| →
+        (-deriv riemannZeta ((1 + a / Real.log |t| : ℝ) : ℂ) /
+            riemannZeta ((1 + a / Real.log |t| : ℝ) : ℂ)).re ≤
+          C * Real.log |t| / a := by
+  rcases exists_sigmaOf_log_hreal_const_div_sub_one C hC T0 hT0 with
+    ⟨d, hd_pos, hreal⟩
+  refine ⟨d, hd_pos, ?_⟩
+  intro a ha_pos ha_le_log2 ha_le_near t ht
+  have hbound := hreal a ha_pos ha_le_log2 ha_le_near t ht
+  calc
+    (-deriv riemannZeta ((1 + a / Real.log |t| : ℝ) : ℂ) /
+        riemannZeta ((1 + a / Real.log |t| : ℝ) : ℂ)).re
+        ≤ C / ((1 + a / Real.log |t|) - 1) := hbound
+    _ = C * Real.log |t| / a :=
+        const_div_sigmaOf_log_sub_one_eq_mul_log_div C hT0
+          (ne_of_gt ha_pos) ht
+
 /-- ζ has a simple pole at `1`, expressed as meromorphic order `-1`. -/
 lemma meromorphicOrderAt_riemannZeta_one :
     meromorphicOrderAt riemannZeta (1 : ℂ) = (-1 : ℤ) := by

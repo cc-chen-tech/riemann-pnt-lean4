@@ -168,6 +168,9 @@ Core verified declarations:
 - `exists_sigmaOf_log_hreal_two_div_sub_one`
   specializes the concrete `hreal` package to the standard high-height choice
   `sigmaOf t = 1 + a / log |t|`.
+- `exists_sigmaOf_log_hreal_two_mul_log_div`
+  normalizes that concrete specialization into the vertical-height estimate
+  `Re(-zeta'/zeta)(1 + a / log |t|) <= 2 * log |t| / a`.
 - `exists_rightNeighborhood_norm_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_sub_one`
   specializes the local signed-quotient norm bound to real-axis parameters
   `1 < sigma <= 1 + d`, replacing `norm ((sigma : C) - 1)` by `sigma - 1`.
@@ -183,6 +186,9 @@ Core verified declarations:
 - `exists_sigmaOf_log_hreal_const_div_sub_one`
   specializes the flexible `hreal` package to the standard high-height choice
   `sigmaOf t = 1 + a / log |t|`.
+- `exists_sigmaOf_log_hreal_const_mul_log_div`
+  normalizes the flexible specialization into the vertical-height estimate
+  `Re(-zeta'/zeta)(1 + a / log |t|) <= C * log |t| / a`.
 - `meromorphicAt_logDeriv_riemannZeta_one`
   proves the logarithmic derivative is meromorphic at the pole.
 - `meromorphicOn_logDeriv_riemannZeta_closedBall`

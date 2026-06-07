@@ -238,6 +238,10 @@ flexible versions are now specialized further as
 `ZeroFreeRegion.exists_sigmaOf_log_hreal_const_div_sub_one`.  These leave only
 the expected smallness constraints on `a`: positivity, `a <= log 2`, and
 `a <= d log 2` for the local-neighborhood radius returned by the pole estimate.
+The same inputs are also normalized into the vertical-height scale by
+`ZeroFreeRegion.exists_sigmaOf_log_hreal_two_mul_log_div` and
+`ZeroFreeRegion.exists_sigmaOf_log_hreal_const_mul_log_div`, giving the real-axis
+term directly as `<= 2 * log |t| / a` or `<= C * log |t| / a`.
 The next work starts from these meromorphic/nonvanishing/principal-part facts
 and proves the vertical-height logarithmic-derivative estimates needed for the
 quantitative strip.
