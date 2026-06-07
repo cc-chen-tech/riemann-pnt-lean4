@@ -275,6 +275,15 @@ Two caller-facing variants remove incidental parameters:
 fixes the real-axis coefficient to `5/4`, and
 `ZeroFreeRegion.classical_zero_free_region_of_sigma_log_shift_estimates_same_const`
 uses one nonnegative logarithmic coefficient for both shifted estimates.
+The wrappers
+`ZeroFreeRegion.classical_zero_free_region_of_sigma_log_shift_estimates_same_const_at_two`
+and
+`ZeroFreeRegion.classical_zero_free_region_of_exists_sigma_log_shift_estimates_same_const`
+then fix the height cutoff to `2` and package the remaining gap as one
+existential input: a nonnegative logarithmic coefficient `B` that proves both
+shifted estimates.  Thus the next analytic task is not more 3-4-1 assembly;
+it is proving that `B` exists for the zeta-specific shifted logarithmic
+derivative bounds.
 The next work starts from these meromorphic/nonvanishing/principal-part facts
 and proves the vertical-height logarithmic-derivative estimates needed for the
 quantitative strip.

@@ -210,6 +210,12 @@ Core verified declarations:
   `1 < C < 4/3` hypotheses from the caller-facing closure.
 - `classical_zero_free_region_of_sigma_log_shift_estimates_same_const`
   uses one nonnegative logarithmic coefficient for both shifted estimates.
+- `classical_zero_free_region_of_sigma_log_shift_estimates_same_const_at_two`
+  fixes the height cutoff in that same-constant closure to `2`, matching the
+  target statement.
+- `classical_zero_free_region_of_exists_sigma_log_shift_estimates_same_const`
+  packages the remaining quantitative zero-free-region input as existence of
+  one nonnegative logarithmic coefficient for both shifted estimates.
 - `meromorphicAt_logDeriv_riemannZeta_one`
   proves the logarithmic derivative is meromorphic at the pole.
 - `meromorphicOn_logDeriv_riemannZeta_closedBall`

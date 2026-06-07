@@ -2913,6 +2913,50 @@ theorem classical_zero_free_region_of_log_deriv_bounds
   ZeroFreeRegion.classical_zero_free_region_of_log_deriv_bounds
     hT0 hc_pos hσ_gt hσ_le hσ_sub_pos hreal hzero htwo hmargin
 
+/-- Public height-`2` same-constant shifted-estimate closure. -/
+theorem classical_zero_free_region_of_sigma_log_shift_estimates_same_const_at_two
+    (B : ℝ) (hB : 0 ≤ B)
+    (hzero :
+      ∀ a c β t : ℝ, 0 < a → 0 < c → a ≤ Real.log 2 →
+        2 ≤ |t| → β < 1 →
+        β ≥ 1 - c / Real.log |t| →
+        0 < (1 + a / Real.log |t|) - β →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 →
+        (-deriv riemannZeta ((1 + a / Real.log |t| : ℝ) + Complex.I * t) /
+          riemannZeta ((1 + a / Real.log |t| : ℝ) + Complex.I * t)).re ≤
+            -1 / ((1 + a / Real.log |t|) - β) +
+              B * Real.log |t|)
+    (htwo :
+      ∀ a t : ℝ, 0 < a → a ≤ Real.log 2 → 2 ≤ |t| →
+        (-deriv riemannZeta
+            ((1 + a / Real.log |t| : ℝ) + 2 * Complex.I * t) /
+          riemannZeta ((1 + a / Real.log |t| : ℝ) + 2 * Complex.I * t)).re ≤
+            B * Real.log |t|) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_sigma_log_shift_estimates_same_const_at_two
+    B hB hzero htwo
+
+/-- Public existential same-constant shifted-estimate closure at height `2`. -/
+theorem classical_zero_free_region_of_exists_sigma_log_shift_estimates_same_const
+    (h :
+      ∃ B : ℝ, 0 ≤ B ∧
+        (∀ a c β t : ℝ, 0 < a → 0 < c → a ≤ Real.log 2 →
+          2 ≤ |t| → β < 1 →
+          β ≥ 1 - c / Real.log |t| →
+          0 < (1 + a / Real.log |t|) - β →
+          riemannZeta ((β : ℂ) + Complex.I * t) = 0 →
+          (-deriv riemannZeta ((1 + a / Real.log |t| : ℝ) + Complex.I * t) /
+            riemannZeta ((1 + a / Real.log |t| : ℝ) + Complex.I * t)).re ≤
+              -1 / ((1 + a / Real.log |t|) - β) +
+                B * Real.log |t|) ∧
+        (∀ a t : ℝ, 0 < a → a ≤ Real.log 2 → 2 ≤ |t| →
+          (-deriv riemannZeta
+              ((1 + a / Real.log |t| : ℝ) + 2 * Complex.I * t) /
+            riemannZeta ((1 + a / Real.log |t| : ℝ) + 2 * Complex.I * t)).re ≤
+              B * Real.log |t|)) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_sigma_log_shift_estimates_same_const h
+
 /-- Public comparison between a compact-patch width and a logarithmic width. -/
 theorem compact_log_width_le_of_two_le {c d t : ℝ}
     (hc : c ≤ d * Real.log 2) (hd : 0 ≤ d) (ht : 2 ≤ |t|) :

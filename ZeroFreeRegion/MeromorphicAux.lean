@@ -1046,6 +1046,61 @@ lemma classical_zero_free_region_of_sigma_log_shift_estimates_same_const
     B B T0 ?_ hT0 hzero htwo
   nlinarith
 
+/-- Height-`2` same-constant shifted-estimate closure.
+
+This is the caller-facing form matching the height cutoff in
+`classical_zero_free_region`: once the two shifted logarithmic-derivative
+estimates hold for all `|t| >= 2` with one nonnegative logarithmic coefficient
+`B`, the classical zero-free-region target follows. -/
+lemma classical_zero_free_region_of_sigma_log_shift_estimates_same_const_at_two
+    (B : ℝ) (hB : 0 ≤ B)
+    (hzero :
+      ∀ a c β t : ℝ, 0 < a → 0 < c → a ≤ Real.log 2 →
+        2 ≤ |t| → β < 1 →
+        β ≥ 1 - c / Real.log |t| →
+        0 < (1 + a / Real.log |t|) - β →
+        riemannZeta ((β : ℂ) + I * t) = 0 →
+        (-deriv riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t) /
+          riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t)).re ≤
+            -1 / ((1 + a / Real.log |t|) - β) +
+              B * Real.log |t|)
+    (htwo :
+      ∀ a t : ℝ, 0 < a → a ≤ Real.log 2 → 2 ≤ |t| →
+        (-deriv riemannZeta
+            ((1 + a / Real.log |t| : ℝ) + 2 * I * t) /
+          riemannZeta ((1 + a / Real.log |t| : ℝ) + 2 * I * t)).re ≤
+            B * Real.log |t|) :
+    classical_zero_free_region :=
+  classical_zero_free_region_of_sigma_log_shift_estimates_same_const
+    B 2 hB (by norm_num) hzero htwo
+
+/-- Existential same-constant shifted-estimate closure at height `2`.
+
+This packages the remaining quantitative zero-free-region analytic gap into a
+single input: prove that one nonnegative logarithmic coefficient `B` controls
+both shifted logarithmic-derivative estimates for all `|t| >= 2`. -/
+lemma classical_zero_free_region_of_exists_sigma_log_shift_estimates_same_const
+    (h :
+      ∃ B : ℝ, 0 ≤ B ∧
+        (∀ a c β t : ℝ, 0 < a → 0 < c → a ≤ Real.log 2 →
+          2 ≤ |t| → β < 1 →
+          β ≥ 1 - c / Real.log |t| →
+          0 < (1 + a / Real.log |t|) - β →
+          riemannZeta ((β : ℂ) + I * t) = 0 →
+          (-deriv riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t) /
+            riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t)).re ≤
+              -1 / ((1 + a / Real.log |t|) - β) +
+                B * Real.log |t|) ∧
+        (∀ a t : ℝ, 0 < a → a ≤ Real.log 2 → 2 ≤ |t| →
+          (-deriv riemannZeta
+              ((1 + a / Real.log |t| : ℝ) + 2 * I * t) /
+            riemannZeta ((1 + a / Real.log |t| : ℝ) + 2 * I * t)).re ≤
+              B * Real.log |t|)) :
+    classical_zero_free_region := by
+  rcases h with ⟨B, hB, hzero, htwo⟩
+  exact classical_zero_free_region_of_sigma_log_shift_estimates_same_const_at_two
+    B hB hzero htwo
+
 /-- ζ has a simple pole at `1`, expressed as meromorphic order `-1`. -/
 lemma meromorphicOrderAt_riemannZeta_one :
     meromorphicOrderAt riemannZeta (1 : ℂ) = (-1 : ℤ) := by
