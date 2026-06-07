@@ -324,6 +324,16 @@ lemma eventually_norm_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_
           rw [neg_div, norm_neg]
     _ ≤ 2 / ‖s - 1‖ := hs
 
+/-- Eventual real-part pole-order bound near `1` for the signed quotient
+`-ζ'/ζ`. -/
+lemma eventually_abs_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one :
+    ∀ᶠ s in 𝓝[≠] (1 : ℂ),
+      |(-deriv riemannZeta s / riemannZeta s).re| ≤ 2 / ‖s - 1‖ := by
+  filter_upwards
+    [eventually_norm_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one]
+    with s hs
+  exact le_trans (abs_re_le_norm (-deriv riemannZeta s / riemannZeta s)) hs
+
 /-- Punctured-ball form of the local pole-order norm bound for the zeta
 logarithmic derivative.
 
@@ -381,6 +391,17 @@ lemma exists_punctured_closedBall_norm_neg_deriv_riemannZeta_div_riemannZeta_le_
         ‖deriv riemannZeta s / riemannZeta s‖ := by
           rw [neg_div, norm_neg]
     _ ≤ 2 / ‖s - 1‖ := hbound s hs_ne hs_dist
+
+/-- Closed punctured-ball real-part pole-order bound for `-ζ'/ζ`. -/
+lemma exists_punctured_closedBall_abs_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one :
+    ∃ r > 0, ∀ s : ℂ, s ≠ 1 → dist s 1 ≤ r →
+      |(-deriv riemannZeta s / riemannZeta s).re| ≤ 2 / ‖s - 1‖ := by
+  rcases exists_punctured_closedBall_norm_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one
+    with ⟨r, hr_pos, hbound⟩
+  refine ⟨r, hr_pos, ?_⟩
+  intro s hs_ne hs_dist
+  exact le_trans (abs_re_le_norm (-deriv riemannZeta s / riemannZeta s))
+    (hbound s hs_ne hs_dist)
 
 /-- ζ has a simple pole at `1`, expressed as meromorphic order `-1`. -/
 lemma meromorphicOrderAt_riemannZeta_one :

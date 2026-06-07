@@ -98,6 +98,9 @@ Core verified declarations:
 - `eventually_norm_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one`
   rewrites the eventual local pole-order bound for the signed quotient
   `-deriv riemannZeta s / riemannZeta s`.
+- `eventually_abs_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one`
+  bounds the real part of the signed quotient by
+  `2 / norm (s - 1)` eventually near `1`.
 - `exists_punctured_ball_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one`
   packages that local pole-order bound as an explicit punctured-ball
   neighborhood around `1`.
@@ -110,6 +113,9 @@ Core verified declarations:
 - `exists_punctured_closedBall_norm_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one`
   rewrites the same local bound for the signed quotient
   `-deriv riemannZeta s / riemannZeta s`.
+- `exists_punctured_closedBall_abs_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one`
+  bounds the real part of the signed quotient on a closed punctured ball
+  around `1`.
 - `meromorphicAt_logDeriv_riemannZeta_one`
   proves the logarithmic derivative is meromorphic at the pole.
 - `meromorphicOn_logDeriv_riemannZeta_closedBall`
