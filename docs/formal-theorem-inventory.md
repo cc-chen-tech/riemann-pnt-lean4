@@ -268,6 +268,17 @@ Core verified declarations:
 - `jensen_circleAverage_log_norm_verticalRegion`
   combines Jensen's formula with the same closed-disk geometry and ambient
   vertical-region meromorphicity.
+- `one_not_mem_verticalRegion_of_pos_height`,
+  `ne_one_of_mem_verticalRegion_of_pos_height`, and
+  `differentiableOn_riemannZeta_verticalRegion_of_pos_height`
+  prove that positive-height vertical regions avoid ζ's pole and therefore
+  support ζ differentiability.
+- `meromorphicOn_riemannZeta_verticalRegion`,
+  `meromorphicOn_logDeriv_riemannZeta_verticalRegion`,
+  `jensen_circleAverage_log_norm_riemannZeta_verticalRegion`, and
+  `jensen_circleAverage_log_norm_logDeriv_riemannZeta_verticalRegion`
+  specialize the ambient vertical-region meromorphic/Jensen interfaces to ζ
+  and its logarithmic derivative.
 
 ### `PrimeNumberTheorem.lean`
 

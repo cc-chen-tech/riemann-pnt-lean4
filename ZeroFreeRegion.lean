@@ -895,6 +895,31 @@ lemma mem_verticalRegion {z : ℂ} {a b H : ℝ} :
     z ∈ verticalRegion a b H ↔ z.re ∈ Set.Icc a b ∧ H ≤ |z.im| :=
   Iff.rfl
 
+/-- A positive-height vertical region excludes the pole `1`. -/
+lemma one_not_mem_verticalRegion_of_pos_height {a b H : ℝ} (hH : 0 < H) :
+    (1 : ℂ) ∉ verticalRegion a b H := by
+  intro h
+  have hheight : H ≤ |(1 : ℂ).im| := h.2
+  simpa using lt_of_lt_of_le hH hheight
+
+/-- Any point in a positive-height vertical region is different from the pole
+`1`. -/
+lemma ne_one_of_mem_verticalRegion_of_pos_height {z : ℂ} {a b H : ℝ}
+    (hz : z ∈ verticalRegion a b H) (hH : 0 < H) :
+    z ≠ 1 := by
+  intro hz1
+  exact one_not_mem_verticalRegion_of_pos_height (a := a) (b := b) hH
+    (by simpa [hz1] using hz)
+
+/-- ζ is differentiable on every positive-height vertical region, since such a
+region avoids the pole at `1`. -/
+lemma differentiableOn_riemannZeta_verticalRegion_of_pos_height
+    {a b H : ℝ} (hH : 0 < H) :
+    DifferentiableOn ℂ riemannZeta (verticalRegion a b H) := by
+  intro z hz
+  exact (differentiableAt_riemannZeta
+    (ne_one_of_mem_verticalRegion_of_pos_height hz hH)).differentiableWithinAt
+
 lemma re_im_decomp (s : ℂ) : ((s.re : ℂ) + I * s.im) = s := by
   apply Complex.ext <;> simp
 

@@ -2659,6 +2659,18 @@ theorem meromorphicOn_logDeriv_riemannZeta_closedBall (c : ℂ) (R : ℝ) :
     MeromorphicOn (logDeriv riemannZeta) (Metric.closedBall c R) :=
   ZeroFreeRegion.meromorphicOn_logDeriv_riemannZeta_closedBall c R
 
+/-- Public meromorphicity of ζ on a project vertical region. -/
+theorem meromorphicOn_riemannZeta_verticalRegion (a b H : ℝ) :
+    MeromorphicOn riemannZeta (ZeroFreeRegion.verticalRegion a b H) :=
+  ZeroFreeRegion.meromorphicOn_riemannZeta_verticalRegion a b H
+
+/-- Public meromorphicity of the logarithmic derivative of ζ on a project
+vertical region. -/
+theorem meromorphicOn_logDeriv_riemannZeta_verticalRegion (a b H : ℝ) :
+    MeromorphicOn (logDeriv riemannZeta)
+      (ZeroFreeRegion.verticalRegion a b H) :=
+  ZeroFreeRegion.meromorphicOn_logDeriv_riemannZeta_verticalRegion a b H
+
 /-- Public trigonometric core of de la Vallée Poussin's 3-4-1 inequality. -/
 theorem trig_identity_nonneg (θ : ℝ) :
     3 + 4 * Real.cos θ + Real.cos (2 * θ) ≥ 0 :=
@@ -2778,6 +2790,25 @@ abbrev verticalRegion (a b H : ℝ) : Set ℂ :=
 theorem mem_verticalRegion {z : ℂ} {a b H : ℝ} :
     z ∈ verticalRegion a b H ↔ z.re ∈ Set.Icc a b ∧ H ≤ |z.im| :=
   ZeroFreeRegion.mem_verticalRegion
+
+/-- Public fact that a positive-height vertical region excludes the pole `1`. -/
+theorem one_not_mem_verticalRegion_of_pos_height {a b H : ℝ}
+    (hH : 0 < H) :
+    (1 : ℂ) ∉ verticalRegion a b H :=
+  ZeroFreeRegion.one_not_mem_verticalRegion_of_pos_height hH
+
+/-- Public fact that points in a positive-height vertical region are not the
+pole `1`. -/
+theorem ne_one_of_mem_verticalRegion_of_pos_height {z : ℂ} {a b H : ℝ}
+    (hz : z ∈ verticalRegion a b H) (hH : 0 < H) :
+    z ≠ 1 :=
+  ZeroFreeRegion.ne_one_of_mem_verticalRegion_of_pos_height hz hH
+
+/-- Public differentiability of ζ on positive-height vertical regions. -/
+theorem differentiableOn_riemannZeta_verticalRegion_of_pos_height
+    {a b H : ℝ} (hH : 0 < H) :
+    DifferentiableOn ℂ riemannZeta (verticalRegion a b H) :=
+  ZeroFreeRegion.differentiableOn_riemannZeta_verticalRegion_of_pos_height hH
 
 /-- Public real/imaginary coordinate decomposition for complex numbers. -/
 theorem re_im_decomp (s : ℂ) : ((s.re : ℂ) + Complex.I * s.im) = s :=
@@ -3065,6 +3096,26 @@ theorem jensen_circleAverage_log_norm_riemannZeta_closedBall
         + Real.log ‖meromorphicTrailingCoeffAt riemannZeta c‖ :=
   ZeroFreeRegion.jensen_circleAverage_log_norm_riemannZeta_closedBall hR
 
+/-- Public Jensen formula specialized to ζ on a `σ + I*t` disk using ambient
+vertical-region bookkeeping. -/
+theorem jensen_circleAverage_log_norm_riemannZeta_verticalRegion
+    {R σ t a b H : ℝ}
+    (hR : R ≠ 0) (ha : a + |R| ≤ σ)
+    (hb : σ + |R| ≤ b) (hH : H + |R| ≤ |t|) :
+    circleAverage (Real.log ‖riemannZeta ·‖)
+        ((σ : ℂ) + Complex.I * t) R
+      = ∑ᶠ u,
+          divisor riemannZeta
+            (closedBall ((σ : ℂ) + Complex.I * t) |R|) u *
+            Real.log (R * ‖((σ : ℂ) + Complex.I * t) - u‖⁻¹)
+        + divisor riemannZeta
+            (closedBall ((σ : ℂ) + Complex.I * t) |R|)
+            ((σ : ℂ) + Complex.I * t) * Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt riemannZeta
+            ((σ : ℂ) + Complex.I * t)‖ :=
+  ZeroFreeRegion.jensen_circleAverage_log_norm_riemannZeta_verticalRegion
+    hR ha hb hH
+
 /-- Public Jensen formula specialized to the logarithmic derivative of ζ on a
 closed ball. -/
 theorem jensen_circleAverage_log_norm_logDeriv_riemannZeta_closedBall
@@ -3075,6 +3126,26 @@ theorem jensen_circleAverage_log_norm_logDeriv_riemannZeta_closedBall
         + divisor (logDeriv riemannZeta) (closedBall c |R|) c * Real.log R
         + Real.log ‖meromorphicTrailingCoeffAt (logDeriv riemannZeta) c‖ :=
   ZeroFreeRegion.jensen_circleAverage_log_norm_logDeriv_riemannZeta_closedBall hR
+
+/-- Public Jensen formula specialized to the logarithmic derivative of ζ on a
+`σ + I*t` disk using ambient vertical-region bookkeeping. -/
+theorem jensen_circleAverage_log_norm_logDeriv_riemannZeta_verticalRegion
+    {R σ t a b H : ℝ}
+    (hR : R ≠ 0) (ha : a + |R| ≤ σ)
+    (hb : σ + |R| ≤ b) (hH : H + |R| ≤ |t|) :
+    circleAverage (Real.log ‖logDeriv riemannZeta ·‖)
+        ((σ : ℂ) + Complex.I * t) R
+      = ∑ᶠ u,
+          divisor (logDeriv riemannZeta)
+            (closedBall ((σ : ℂ) + Complex.I * t) |R|) u *
+            Real.log (R * ‖((σ : ℂ) + Complex.I * t) - u‖⁻¹)
+        + divisor (logDeriv riemannZeta)
+            (closedBall ((σ : ℂ) + Complex.I * t) |R|)
+            ((σ : ℂ) + Complex.I * t) * Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt (logDeriv riemannZeta)
+            ((σ : ℂ) + Complex.I * t)‖ :=
+  ZeroFreeRegion.jensen_circleAverage_log_norm_logDeriv_riemannZeta_verticalRegion
+    hR ha hb hH
 
 end JensenWrapper
 
