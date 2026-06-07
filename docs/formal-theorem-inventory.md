@@ -92,6 +92,9 @@ Core verified declarations:
 - `eventually_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one`
   proves the local pole-order bound
   `norm (logDeriv riemannZeta s) <= 2 / norm (s - 1)` eventually near `1`.
+- `exists_punctured_ball_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one`
+  packages that local pole-order bound as an explicit punctured-ball
+  neighborhood around `1`.
 - `meromorphicAt_logDeriv_riemannZeta_one`
   proves the logarithmic derivative is meromorphic at the pole.
 - `meromorphicOn_logDeriv_riemannZeta_closedBall`

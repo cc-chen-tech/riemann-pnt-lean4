@@ -304,6 +304,25 @@ lemma eventually_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one :
     simpa [mul_comm] using hmul'
   exact (le_div_iff₀ hnorm_pos).mpr hmul
 
+/-- Punctured-ball form of the local pole-order norm bound for the zeta
+logarithmic derivative.
+
+This is often easier to use in later disk estimates than the raw
+`eventually` form: inside a sufficiently small punctured ball around `1`,
+`logDeriv riemannZeta` is bounded by `2 / ‖s - 1‖`. -/
+lemma exists_punctured_ball_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one :
+    ∃ r > 0, ∀ s : ℂ, s ≠ 1 → dist s 1 < r →
+      ‖logDeriv riemannZeta s‖ ≤ 2 / ‖s - 1‖ := by
+  have hmem :
+      {s : ℂ | ‖logDeriv riemannZeta s‖ ≤ 2 / ‖s - 1‖}
+        ∈ 𝓝[{1}ᶜ] (1 : ℂ) :=
+    eventually_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one
+  rcases Metric.mem_nhdsWithin_iff.mp hmem with ⟨r, hr_pos, hr_sub⟩
+  refine ⟨r, hr_pos, ?_⟩
+  intro s hs_ne hs_dist
+  exact hr_sub ⟨by simpa [Metric.mem_ball] using hs_dist,
+    Set.mem_compl_singleton_iff.mpr hs_ne⟩
+
 /-- ζ has a simple pole at `1`, expressed as meromorphic order `-1`. -/
 lemma meromorphicOrderAt_riemannZeta_one :
     meromorphicOrderAt riemannZeta (1 : ℂ) = (-1 : ℤ) := by

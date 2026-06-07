@@ -2279,6 +2279,13 @@ theorem eventually_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one :
       ‖logDeriv riemannZeta s‖ ≤ 2 / ‖s - 1‖ :=
   ZeroFreeRegion.eventually_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one
 
+/-- Public punctured-ball form of the local pole-order norm bound for the
+zeta logarithmic derivative. -/
+theorem exists_punctured_ball_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one :
+    ∃ r > 0, ∀ s : ℂ, s ≠ 1 → dist s 1 < r →
+      ‖logDeriv riemannZeta s‖ ≤ 2 / ‖s - 1‖ :=
+  ZeroFreeRegion.exists_punctured_ball_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one
+
 /-- Public meromorphicity of the zeta logarithmic derivative at `1`. -/
 theorem meromorphicAt_logDeriv_riemannZeta_one :
     MeromorphicAt (logDeriv riemannZeta) (1 : ℂ) :=

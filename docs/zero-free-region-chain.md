@@ -155,9 +155,11 @@ principal-part behavior is now also proved as
 `1`.  This has also been packaged into the local norm bound
 `ZeroFreeRegion.eventually_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one`,
 which says eventually near the pole
-`‖logDeriv riemannZeta s‖ <= 2 / ‖s - 1‖`.  The next work starts from these
-meromorphic/nonvanishing/principal-part facts and proves the vertical-height
-logarithmic-derivative estimates needed for the quantitative strip.
+`‖logDeriv riemannZeta s‖ <= 2 / ‖s - 1‖`, and into the disk-shaped
+`ZeroFreeRegion.exists_punctured_ball_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one`.
+The next work starts from these meromorphic/nonvanishing/principal-part facts
+and proves the vertical-height logarithmic-derivative estimates needed for the
+quantitative strip.
 
 ### 2. Polynomial Growth for Zeta in Vertical Disks
 
