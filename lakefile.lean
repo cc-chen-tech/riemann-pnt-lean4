@@ -9,6 +9,7 @@ lean_lib RiemannPNT where
   roots := #[
     `RiemannPNT,
     `RiemannExplorer,
+    `RiemannExplorer.Conrey40,
     `GammaResidue,
     `HardyTheorem,
     `EulerAndLfunctions,
