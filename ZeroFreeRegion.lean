@@ -1196,6 +1196,56 @@ lemma borelCaratheodory_sub_centered
   have hgzero : (fun w => f w - f c) c = 0 := by simp
   exact borelCaratheodory_zero_centered hM hgdiff hf₁ hR hz hgzero
 
+/-- Borel-Carathéodory on a disk centered at `σ + I*t`, with differentiability
+and real-part control supplied on an ambient vertical region. -/
+lemma borelCaratheodory_centered_verticalRegion
+    {f : ℂ → ℂ} {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M) (hf : DifferentiableOn ℂ f (verticalRegion a b H))
+    (hf₁ : Set.MapsTo f (verticalRegion a b H) {w | w.re ≤ M})
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R) (hz : z ∈ Metric.ball ((σ : ℂ) + I * t) R) :
+    ‖f z‖ ≤
+      2 * M * ‖z - ((σ : ℂ) + I * t)‖ /
+          (R - ‖z - ((σ : ℂ) + I * t)‖) +
+        ‖f ((σ : ℂ) + I * t)‖ *
+          (R + ‖z - ((σ : ℂ) + I * t)‖) /
+          (R - ‖z - ((σ : ℂ) + I * t)‖) := by
+  have hfdisk :
+      DifferentiableOn ℂ f (Metric.ball ((σ : ℂ) + I * t) R) :=
+    differentiableOn_ball_sigma_it_of_differentiableOn_verticalRegion
+      hf ha hb hH
+  have hmaps :
+      Set.MapsTo f (Metric.ball ((σ : ℂ) + I * t) R)
+        {w | w.re ≤ M} := by
+    intro w hw
+    exact hf₁ (ball_sigma_it_subset_verticalRegion ha hb hH hw)
+  exact borelCaratheodory_centered hM hfdisk hmaps hR hz
+
+/-- Oscillation form of Borel-Carathéodory on a disk centered at `σ + I*t`,
+with differentiability and real-part control supplied on an ambient vertical
+region. -/
+lemma borelCaratheodory_sub_centered_verticalRegion
+    {f : ℂ → ℂ} {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M) (hf : DifferentiableOn ℂ f (verticalRegion a b H))
+    (hf₁ : Set.MapsTo
+      (fun w => f w - f ((σ : ℂ) + I * t))
+      (verticalRegion a b H) {w | w.re ≤ M})
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R) (hz : z ∈ Metric.ball ((σ : ℂ) + I * t) R) :
+    ‖f z - f ((σ : ℂ) + I * t)‖ ≤
+      2 * M * ‖z - ((σ : ℂ) + I * t)‖ /
+        (R - ‖z - ((σ : ℂ) + I * t)‖) := by
+  have hfdisk :
+      DifferentiableOn ℂ f (Metric.ball ((σ : ℂ) + I * t) R) :=
+    differentiableOn_ball_sigma_it_of_differentiableOn_verticalRegion
+      hf ha hb hH
+  have hmaps :
+      Set.MapsTo (fun w => f w - f ((σ : ℂ) + I * t))
+        (Metric.ball ((σ : ℂ) + I * t) R) {w | w.re ≤ M} := by
+    intro w hw
+    exact hf₁ (ball_sigma_it_subset_verticalRegion ha hb hH hw)
+  exact borelCaratheodory_sub_centered hM hfdisk hmaps hR hz
+
 section JensenWrapper
 
 open MeromorphicAt MeromorphicOn Metric Real

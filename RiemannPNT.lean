@@ -2991,6 +2991,39 @@ theorem borelCaratheodory_sub_centered
     ‖f z - f c‖ ≤ 2 * M * ‖z - c‖ / (R - ‖z - c‖) :=
   ZeroFreeRegion.borelCaratheodory_sub_centered hM hf hf₁ hR hz
 
+/-- Public Borel-Carathéodory on a `σ + I*t` disk with ambient
+vertical-region hypotheses. -/
+theorem borelCaratheodory_centered_verticalRegion
+    {f : ℂ → ℂ} {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M) (hf : DifferentiableOn ℂ f (verticalRegion a b H))
+    (hf₁ : Set.MapsTo f (verticalRegion a b H) {w | w.re ≤ M})
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R) (hz : z ∈ Metric.ball ((σ : ℂ) + Complex.I * t) R) :
+    ‖f z‖ ≤
+      2 * M * ‖z - ((σ : ℂ) + Complex.I * t)‖ /
+          (R - ‖z - ((σ : ℂ) + Complex.I * t)‖) +
+        ‖f ((σ : ℂ) + Complex.I * t)‖ *
+          (R + ‖z - ((σ : ℂ) + Complex.I * t)‖) /
+          (R - ‖z - ((σ : ℂ) + Complex.I * t)‖) :=
+  ZeroFreeRegion.borelCaratheodory_centered_verticalRegion
+    hM hf hf₁ ha hb hH hR hz
+
+/-- Public oscillation form of Borel-Carathéodory on a `σ + I*t` disk with
+ambient vertical-region hypotheses. -/
+theorem borelCaratheodory_sub_centered_verticalRegion
+    {f : ℂ → ℂ} {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M) (hf : DifferentiableOn ℂ f (verticalRegion a b H))
+    (hf₁ : Set.MapsTo
+      (fun w => f w - f ((σ : ℂ) + Complex.I * t))
+      (verticalRegion a b H) {w | w.re ≤ M})
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R) (hz : z ∈ Metric.ball ((σ : ℂ) + Complex.I * t) R) :
+    ‖f z - f ((σ : ℂ) + Complex.I * t)‖ ≤
+      2 * M * ‖z - ((σ : ℂ) + Complex.I * t)‖ /
+        (R - ‖z - ((σ : ℂ) + Complex.I * t)‖) :=
+  ZeroFreeRegion.borelCaratheodory_sub_centered_verticalRegion
+    hM hf hf₁ ha hb hH hR hz
+
 section JensenWrapper
 
 open MeromorphicAt MeromorphicOn Metric Real

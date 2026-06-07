@@ -261,6 +261,10 @@ Core verified declarations:
   `meromorphicOn_closedBall_sigma_it_of_meromorphicOn_verticalRegion`
   restrict vertical-region regularity to the local disks used by
   Borel-Caratheodory and Jensen.
+- `borelCaratheodory_centered_verticalRegion` and
+  `borelCaratheodory_sub_centered_verticalRegion`
+  combine the centered Borel-Caratheodory wrappers with the local disk
+  geometry, using ambient `verticalRegion` hypotheses directly.
 
 ### `PrimeNumberTheorem.lean`
 

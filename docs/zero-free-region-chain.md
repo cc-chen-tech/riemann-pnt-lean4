@@ -120,7 +120,10 @@ proved:
   and
   `ZeroFreeRegion.meromorphicOn_closedBall_sigma_it_of_meromorphicOn_verticalRegion`
   restrict vertical-region regularity to the local disks required by
-  Borel-Caratheodory and Jensen.
+  Borel-Caratheodory and Jensen.  The combined
+  `ZeroFreeRegion.borelCaratheodory_centered_verticalRegion` and
+  `ZeroFreeRegion.borelCaratheodory_sub_centered_verticalRegion` wrappers are
+  the direct Borel entry points for later zeta/log-derivative growth estimates.
 
 ## Mathlib API Check
 
