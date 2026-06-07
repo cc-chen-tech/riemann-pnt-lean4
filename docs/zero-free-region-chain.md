@@ -102,7 +102,12 @@ proved:
   `ZeroFreeRegion.closedBall_sigma_it_re_bounds`,
   `ZeroFreeRegion.ball_sigma_it_re_bounds`,
   `ZeroFreeRegion.closedBall_sigma_it_abs_im_ge_of_add_le`, and
-  `ZeroFreeRegion.ball_sigma_it_abs_im_ge_of_add_le`.
+  `ZeroFreeRegion.ball_sigma_it_abs_im_ge_of_add_le`; the combined wrappers
+  `ZeroFreeRegion.closedBall_sigma_it_re_mem_Icc`,
+  `ZeroFreeRegion.ball_sigma_it_re_mem_Icc`,
+  `ZeroFreeRegion.closedBall_sigma_it_mem_verticalRegion`, and
+  `ZeroFreeRegion.ball_sigma_it_mem_verticalRegion` package the same facts as
+  direct real-strip and vertical-region membership statements.
 
 ## Mathlib API Check
 

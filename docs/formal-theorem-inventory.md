@@ -244,6 +244,11 @@ Core verified declarations:
   `closedBall_sigma_it_abs_im_ge_of_add_le`, and
   `ball_sigma_it_abs_im_ge_of_add_le`
   specialize the same disk geometry to centers written as `sigma + I*t`.
+- `closedBall_sigma_it_re_mem_Icc`, `ball_sigma_it_re_mem_Icc`,
+  `closedBall_sigma_it_mem_verticalRegion`, and
+  `ball_sigma_it_mem_verticalRegion`
+  package those center-specialized estimates as real-strip membership and
+  simultaneous real-strip/high-height membership.
 
 ### `PrimeNumberTheorem.lean`
 

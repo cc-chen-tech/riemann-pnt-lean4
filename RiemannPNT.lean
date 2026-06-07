@@ -2848,6 +2848,34 @@ theorem ball_sigma_it_abs_im_ge_of_add_le {z : ℂ} {σ t R H : ℝ}
     H ≤ |z.im| :=
   ZeroFreeRegion.ball_sigma_it_abs_im_ge_of_add_le hz hH
 
+/-- Public real-strip membership for a closed ball centered at `σ + I*t`. -/
+theorem closedBall_sigma_it_re_mem_Icc {z : ℂ} {σ t R a b : ℝ}
+    (hz : z ∈ Metric.closedBall ((σ : ℂ) + Complex.I * t) R)
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) :
+    z.re ∈ Set.Icc a b :=
+  ZeroFreeRegion.closedBall_sigma_it_re_mem_Icc hz ha hb
+
+/-- Public real-strip membership for an open ball centered at `σ + I*t`. -/
+theorem ball_sigma_it_re_mem_Icc {z : ℂ} {σ t R a b : ℝ}
+    (hz : z ∈ Metric.ball ((σ : ℂ) + Complex.I * t) R)
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) :
+    z.re ∈ Set.Icc a b :=
+  ZeroFreeRegion.ball_sigma_it_re_mem_Icc hz ha hb
+
+/-- Public vertical-region membership for a closed ball centered at `σ + I*t`. -/
+theorem closedBall_sigma_it_mem_verticalRegion {z : ℂ} {σ t R a b H : ℝ}
+    (hz : z ∈ Metric.closedBall ((σ : ℂ) + Complex.I * t) R)
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|) :
+    z.re ∈ Set.Icc a b ∧ H ≤ |z.im| :=
+  ZeroFreeRegion.closedBall_sigma_it_mem_verticalRegion hz ha hb hH
+
+/-- Public vertical-region membership for an open ball centered at `σ + I*t`. -/
+theorem ball_sigma_it_mem_verticalRegion {z : ℂ} {σ t R a b H : ℝ}
+    (hz : z ∈ Metric.ball ((σ : ℂ) + Complex.I * t) R)
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|) :
+    z.re ∈ Set.Icc a b ∧ H ≤ |z.im| :=
+  ZeroFreeRegion.ball_sigma_it_mem_verticalRegion hz ha hb hH
+
 /-- Public Borel-Carathéodory theorem in the vanishing-at-zero form, routed
 through the zero-free-region namespace. -/
 theorem borelCaratheodory_zero

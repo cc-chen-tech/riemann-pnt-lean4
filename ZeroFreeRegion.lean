@@ -985,6 +985,42 @@ lemma ball_sigma_it_abs_im_ge_of_add_le {z : ℂ} {σ t R H : ℝ}
   exact closedBall_sigma_it_abs_im_ge_of_add_le
     (Metric.ball_subset_closedBall hz) hH
 
+/-- A closed disk centered at `σ + I*t` stays in a prescribed real strip when
+the center is at least `R` away from both real-coordinate boundaries. -/
+lemma closedBall_sigma_it_re_mem_Icc {z : ℂ} {σ t R a b : ℝ}
+    (hz : z ∈ Metric.closedBall ((σ : ℂ) + I * t) R)
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) :
+    z.re ∈ Set.Icc a b := by
+  have h := closedBall_sigma_it_re_bounds
+    (z := z) (σ := σ) (t := t) (R := R) hz
+  exact ⟨by linarith, by linarith⟩
+
+/-- An open disk centered at `σ + I*t` stays in a prescribed real strip when
+the center is at least `R` away from both real-coordinate boundaries. -/
+lemma ball_sigma_it_re_mem_Icc {z : ℂ} {σ t R a b : ℝ}
+    (hz : z ∈ Metric.ball ((σ : ℂ) + I * t) R)
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) :
+    z.re ∈ Set.Icc a b :=
+  closedBall_sigma_it_re_mem_Icc (Metric.ball_subset_closedBall hz) ha hb
+
+/-- A closed disk centered at `σ + I*t` stays in a vertical region: real part in
+`[a,b]` and imaginary height at least `H`. -/
+lemma closedBall_sigma_it_mem_verticalRegion {z : ℂ} {σ t R a b H : ℝ}
+    (hz : z ∈ Metric.closedBall ((σ : ℂ) + I * t) R)
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|) :
+    z.re ∈ Set.Icc a b ∧ H ≤ |z.im| :=
+  ⟨closedBall_sigma_it_re_mem_Icc hz ha hb,
+    closedBall_sigma_it_abs_im_ge_of_add_le hz hH⟩
+
+/-- An open disk centered at `σ + I*t` stays in a vertical region: real part in
+`[a,b]` and imaginary height at least `H`. -/
+lemma ball_sigma_it_mem_verticalRegion {z : ℂ} {σ t R a b H : ℝ}
+    (hz : z ∈ Metric.ball ((σ : ℂ) + I * t) R)
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|) :
+    z.re ∈ Set.Icc a b ∧ H ≤ |z.im| :=
+  closedBall_sigma_it_mem_verticalRegion
+    (Metric.ball_subset_closedBall hz) ha hb hH
+
 /-- Local namespace entry point for Mathlib's Borel-Carathéodory theorem in the
 vanishing-at-zero form. This is one of the complex-analytic tools used in
 standard proofs of quantitative zero-free regions; the remaining gap is the
