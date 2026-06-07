@@ -2409,6 +2409,27 @@ theorem exists_punctured_closedBall_re_neg_deriv_riemannZeta_div_riemannZeta_lt_
       (-deriv riemannZeta s / riemannZeta s).re < C / ‖s - 1‖ :=
   ZeroFreeRegion.exists_punctured_closedBall_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one C hC
 
+/-- Public real-axis specialization of the local norm bound with constant `2`
+for `-ζ'/ζ` near the pole at `1`. -/
+theorem exists_rightNeighborhood_norm_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_sub_one :
+    ∃ d : ℝ, 0 < d ∧ ∀ σ : ℝ, 1 < σ → σ ≤ 1 + d →
+      ‖-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)‖ ≤ 2 / (σ - 1) :=
+  ZeroFreeRegion.exists_rightNeighborhood_norm_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_sub_one
+
+/-- Public real-axis specialization of the local real-part bound with constant
+`2` for `-ζ'/ζ` near the pole at `1`. -/
+theorem exists_rightNeighborhood_abs_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_sub_one :
+    ∃ d : ℝ, 0 < d ∧ ∀ σ : ℝ, 1 < σ → σ ≤ 1 + d →
+      |(-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re| ≤ 2 / (σ - 1) :=
+  ZeroFreeRegion.exists_rightNeighborhood_abs_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_sub_one
+
+/-- Public real-axis one-sided local real-part bound with constant `2` for
+`-ζ'/ζ` near the pole at `1`. -/
+theorem exists_rightNeighborhood_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_sub_one :
+    ∃ d : ℝ, 0 < d ∧ ∀ σ : ℝ, 1 < σ → σ ≤ 1 + d →
+      (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re ≤ 2 / (σ - 1) :=
+  ZeroFreeRegion.exists_rightNeighborhood_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_sub_one
+
 /-- Public real-axis specialization of the local norm bound for `-ζ'/ζ`
 near the pole at `1`. -/
 theorem exists_rightNeighborhood_norm_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_sub_one

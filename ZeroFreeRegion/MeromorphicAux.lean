@@ -550,6 +550,58 @@ lemma exists_punctured_closedBall_re_neg_deriv_riemannZeta_div_riemannZeta_lt_co
   intro s hs_ne hs_dist
   exact lt_of_le_of_lt (le_abs_self _) (hbound s hs_ne hs_dist)
 
+/-- Real-axis specialization of the local pole-order norm bound for `-ζ'/ζ`
+with the concrete constant `2`.
+
+For real `σ > 1` sufficiently close to `1`, this rewrites the complex local
+bound `‖-ζ'/ζ(s)‖ ≤ 2 / ‖s - 1‖` as `‖-ζ'/ζ(σ)‖ ≤ 2 / (σ - 1)`. -/
+lemma exists_rightNeighborhood_norm_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_sub_one :
+    ∃ d : ℝ, 0 < d ∧ ∀ σ : ℝ, 1 < σ → σ ≤ 1 + d →
+      ‖-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)‖ ≤ 2 / (σ - 1) := by
+  rcases exists_punctured_closedBall_norm_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one
+    with ⟨r, hr_pos, hbound⟩
+  refine ⟨r, hr_pos, ?_⟩
+  intro σ hσ_gt hσ_le
+  have hσ_ne_one : σ ≠ 1 := ne_of_gt hσ_gt
+  have hs_ne : (σ : ℂ) ≠ 1 := by
+    intro hs
+    exact hσ_ne_one (by simpa using congrArg Complex.re hs)
+  have hdist : dist (σ : ℂ) (1 : ℂ) ≤ r := by
+    have hdist_eq : dist (σ : ℂ) (1 : ℂ) = |σ - 1| := by
+      simpa using Complex.isometry_ofReal.dist_eq σ 1
+    have habs_eq : |σ - 1| = σ - 1 := abs_of_nonneg (sub_nonneg.mpr hσ_gt.le)
+    rw [hdist_eq, habs_eq]
+    linarith
+  have hnorm_eq : ‖(σ : ℂ) - 1‖ = σ - 1 := by
+    have hnorm_eq_abs : ‖(σ : ℂ) - 1‖ = |σ - 1| := by
+      rw [← Complex.ofReal_one, ← Complex.ofReal_sub]
+      simpa using (RCLike.norm_ofReal (K := ℂ) (σ - 1))
+    rw [hnorm_eq_abs, abs_of_nonneg (sub_nonneg.mpr hσ_gt.le)]
+  simpa [hnorm_eq] using hbound (σ : ℂ) hs_ne hdist
+
+/-- Real-axis specialization of the local pole-order real-part bound for
+`-ζ'/ζ` with the concrete constant `2`. -/
+lemma exists_rightNeighborhood_abs_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_sub_one :
+    ∃ d : ℝ, 0 < d ∧ ∀ σ : ℝ, 1 < σ → σ ≤ 1 + d →
+      |(-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re| ≤ 2 / (σ - 1) := by
+  rcases exists_rightNeighborhood_norm_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_sub_one
+    with ⟨d, hd_pos, hbound⟩
+  refine ⟨d, hd_pos, ?_⟩
+  intro σ hσ_gt hσ_le
+  exact le_trans (abs_re_le_norm (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)))
+    (hbound σ hσ_gt hσ_le)
+
+/-- Real-axis one-sided specialization of the local real-part bound for
+`-ζ'/ζ` with the concrete constant `2`. -/
+lemma exists_rightNeighborhood_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_sub_one :
+    ∃ d : ℝ, 0 < d ∧ ∀ σ : ℝ, 1 < σ → σ ≤ 1 + d →
+      (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re ≤ 2 / (σ - 1) := by
+  rcases exists_rightNeighborhood_abs_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_sub_one
+    with ⟨d, hd_pos, hbound⟩
+  refine ⟨d, hd_pos, ?_⟩
+  intro σ hσ_gt hσ_le
+  exact le_trans (le_abs_self _) (hbound σ hσ_gt hσ_le)
+
 /-- Real-axis specialization of the local pole-order norm bound for `-ζ'/ζ`.
 
 For every `C > 1`, the bound `‖-ζ'/ζ(σ)‖ < C / (σ - 1)` holds for real
