@@ -257,6 +257,10 @@ Core verified declarations:
   `mapsTo_add_ball_zero_sigma_it_verticalRegion`
   name the vertical target set and prove that zero-centered disks translate
   into it under the same margin hypotheses.
+- `differentiableOn_ball_sigma_it_of_differentiableOn_verticalRegion` and
+  `meromorphicOn_closedBall_sigma_it_of_meromorphicOn_verticalRegion`
+  restrict vertical-region regularity to the local disks used by
+  Borel-Caratheodory and Jensen.
 
 ### `PrimeNumberTheorem.lean`
 

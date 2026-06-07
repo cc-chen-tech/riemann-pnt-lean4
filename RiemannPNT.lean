@@ -2917,6 +2917,26 @@ theorem mapsTo_add_ball_zero_sigma_it_verticalRegion {σ t R a b H : ℝ}
       (Metric.ball 0 R) (verticalRegion a b H) :=
   ZeroFreeRegion.mapsTo_add_ball_zero_sigma_it_verticalRegion ha hb hH
 
+/-- Public differentiability restriction from a vertical region to a local
+open disk centered at `σ + I*t`. -/
+theorem differentiableOn_ball_sigma_it_of_differentiableOn_verticalRegion
+    {f : ℂ → ℂ} {σ t R a b H : ℝ}
+    (hf : DifferentiableOn ℂ f (verticalRegion a b H))
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|) :
+    DifferentiableOn ℂ f (Metric.ball ((σ : ℂ) + Complex.I * t) R) :=
+  ZeroFreeRegion.differentiableOn_ball_sigma_it_of_differentiableOn_verticalRegion
+    hf ha hb hH
+
+/-- Public meromorphicity restriction from a vertical region to a local closed
+disk centered at `σ + I*t`. -/
+theorem meromorphicOn_closedBall_sigma_it_of_meromorphicOn_verticalRegion
+    {f : ℂ → ℂ} {σ t R a b H : ℝ}
+    (hf : MeromorphicOn f (verticalRegion a b H))
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|) :
+    MeromorphicOn f (Metric.closedBall ((σ : ℂ) + Complex.I * t) R) :=
+  ZeroFreeRegion.meromorphicOn_closedBall_sigma_it_of_meromorphicOn_verticalRegion
+    hf ha hb hH
+
 /-- Public Borel-Carathéodory theorem in the vanishing-at-zero form, routed
 through the zero-free-region namespace. -/
 theorem borelCaratheodory_zero

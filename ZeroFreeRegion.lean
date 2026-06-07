@@ -1070,6 +1070,25 @@ lemma mapsTo_add_ball_zero_sigma_it_verticalRegion {σ t R a b H : ℝ}
     simpa [Metric.mem_ball, dist_eq_norm] using hw
   exact ball_sigma_it_subset_verticalRegion ha hb hH hz
 
+/-- A function differentiable on a vertical region is differentiable on any
+open local disk contained in that region. -/
+lemma differentiableOn_ball_sigma_it_of_differentiableOn_verticalRegion
+    {f : ℂ → ℂ} {σ t R a b H : ℝ}
+    (hf : DifferentiableOn ℂ f (verticalRegion a b H))
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|) :
+    DifferentiableOn ℂ f (Metric.ball ((σ : ℂ) + I * t) R) :=
+  hf.mono (ball_sigma_it_subset_verticalRegion ha hb hH)
+
+/-- A function meromorphic on a vertical region is meromorphic on any closed
+local disk contained in that region. -/
+lemma meromorphicOn_closedBall_sigma_it_of_meromorphicOn_verticalRegion
+    {f : ℂ → ℂ} {σ t R a b H : ℝ}
+    (hf : MeromorphicOn f (verticalRegion a b H))
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|) :
+    MeromorphicOn f (Metric.closedBall ((σ : ℂ) + I * t) R) := by
+  intro z hz
+  exact hf z (closedBall_sigma_it_subset_verticalRegion ha hb hH hz)
+
 /-- Local namespace entry point for Mathlib's Borel-Carathéodory theorem in the
 vanishing-at-zero form. This is one of the complex-analytic tools used in
 standard proofs of quantitative zero-free regions; the remaining gap is the

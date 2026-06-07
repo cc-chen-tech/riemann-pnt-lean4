@@ -115,7 +115,12 @@ proved:
   `ZeroFreeRegion.mapsTo_add_closedBall_zero_sigma_it_verticalRegion` /
   `ZeroFreeRegion.mapsTo_add_ball_zero_sigma_it_verticalRegion` supply the
   translated zero-centered disk shape used by the centered
-  Borel-Caratheodory wrappers.
+  Borel-Caratheodory wrappers.  Finally,
+  `ZeroFreeRegion.differentiableOn_ball_sigma_it_of_differentiableOn_verticalRegion`
+  and
+  `ZeroFreeRegion.meromorphicOn_closedBall_sigma_it_of_meromorphicOn_verticalRegion`
+  restrict vertical-region regularity to the local disks required by
+  Borel-Caratheodory and Jensen.
 
 ## Mathlib API Check
 
