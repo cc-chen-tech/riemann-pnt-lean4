@@ -1556,6 +1556,187 @@ lemma classical_zero_free_region_of_exists_logDeriv_regular_part_norm_bound_and_
     classical_zero_free_region_of_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound
       Bregular Bvertical hBregular hBvertical hregular hvertical
 
+/-- High-height version of the positive `logDeriv ζ` regular-part/vertical-strip
+closure.
+
+Future Borel-Carathéodory or Jensen estimates are usually proved only above a
+sufficiently large height.  This wrapper accepts the two remaining analytic
+inputs only on `T0 <= |Im|`, then uses the already verified compact patch to
+fill the bounded-height gap in the final classical zero-free-region target. -/
+lemma classical_zero_free_region_of_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height
+    (T0 Bregular Bvertical : ℝ)
+    (hT0 : 2 ≤ T0) (hBregular : 0 ≤ Bregular)
+    (hBvertical : 0 ≤ Bvertical)
+    (hregular :
+      ∀ s ρ : ℂ, T0 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+        riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+        0 < s.re - ρ.re →
+        ‖logDeriv riemannZeta s - (s - ρ)⁻¹‖ ≤
+          Bregular * Real.log |s.im|)
+    (hvertical :
+      ∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta z‖ ≤ Bvertical * Real.log |z.im|) :
+    classical_zero_free_region := by
+  let B : ℝ := max Bregular (2 * Bvertical)
+  have hB : 0 ≤ B := le_trans hBregular (le_max_left Bregular (2 * Bvertical))
+  refine classical_zero_free_region_of_sigma_log_shift_estimates_same_const
+    B T0 hB hT0 ?_ ?_
+  · intro a c β t ha_pos _hc_pos ha_le_log2 ht hβ_lt _hβ hsub hζ
+    let s : ℂ := ((1 + a / Real.log |t| : ℝ) : ℂ) + I * t
+    let ρ : ℂ := (β : ℂ) + I * t
+    have hs_re : s.re = 1 + a / Real.log |t| := by simp [s]
+    have hs_im : s.im = t := by simp [s]
+    have hρ_re : ρ.re = β := by simp [ρ]
+    have hρ_im : ρ.im = t := by simp [ρ]
+    have hs_re_gt : 1 < s.re := by
+      rw [hs_re]
+      exact sigmaOf_log_gt_one hT0 ha_pos ht
+    have hs_re_le : s.re ≤ 2 := by
+      rw [hs_re]
+      exact sigmaOf_log_le_two hT0 ha_le_log2 ht
+    have hs_re_mem : s.re ∈ Set.Icc 1 2 := ⟨hs_re_gt.le, hs_re_le⟩
+    have hs_height : T0 ≤ |s.im| := by
+      simpa [hs_im] using ht
+    have hρ_im_eq : ρ.im = s.im := by
+      simp [hρ_im, hs_im]
+    have hρ_re_lt : ρ.re < 1 := by
+      simpa [hρ_re] using hβ_lt
+    have hsub' : 0 < s.re - ρ.re := by
+      simpa [hs_re, hρ_re] using hsub
+    have hζρ : riemannZeta ρ = 0 := by
+      simpa [ρ] using hζ
+    have hreg_pos :=
+      hregular s ρ hs_height hs_re_mem hζρ hρ_im_eq hρ_re_lt hsub'
+    have hreg_signed :
+        ‖-logDeriv riemannZeta s + (s - ρ)⁻¹‖ ≤
+          Bregular * Real.log |s.im| := by
+      calc
+        ‖-logDeriv riemannZeta s + (s - ρ)⁻¹‖
+            = ‖-(logDeriv riemannZeta s - (s - ρ)⁻¹)‖ := by ring_nf
+        _ = ‖logDeriv riemannZeta s - (s - ρ)⁻¹‖ := norm_neg _
+        _ ≤ Bregular * Real.log |s.im| := hreg_pos
+    have hreg_re :
+        (-deriv riemannZeta s / riemannZeta s).re +
+            1 / (s.re - ρ.re) ≤
+          Bregular * Real.log |s.im| := by
+      have hmain :
+          (-logDeriv riemannZeta s + (s - ρ)⁻¹).re ≤
+            Bregular * Real.log |s.im| := by
+        calc
+          (-logDeriv riemannZeta s + (s - ρ)⁻¹).re
+              ≤ |(-logDeriv riemannZeta s + (s - ρ)⁻¹).re| := le_abs_self _
+          _ ≤ ‖-logDeriv riemannZeta s + (s - ρ)⁻¹‖ :=
+              abs_re_le_norm _
+          _ ≤ Bregular * Real.log |s.im| := hreg_signed
+      have hinv : ((s - ρ)⁻¹).re = 1 / (s.re - ρ.re) :=
+        inv_sub_same_im_re hρ_im_eq hsub'
+      simpa [Complex.add_re, neg_deriv_div_riemannZeta_re_eq_neg_logDeriv_re,
+        hinv] using hmain
+    have hlog_nonneg : 0 ≤ Real.log |t| :=
+      (log_abs_pos_of_two_le (hT0.trans ht)).le
+    have hBregular_le_B : Bregular ≤ B := le_max_left Bregular (2 * Bvertical)
+    have hrewrite :
+        (-deriv riemannZeta
+              ((1 + a / Real.log |t| : ℝ) + I * t) /
+            riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t)).re
+          + 1 / ((1 + a / Real.log |t|) - β) ≤
+            B * Real.log |t| := by
+      calc
+        (-deriv riemannZeta
+              ((1 + a / Real.log |t| : ℝ) + I * t) /
+            riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t)).re
+          + 1 / ((1 + a / Real.log |t|) - β)
+            ≤ Bregular * Real.log |t| := by
+              simpa [s, ρ, hs_re, hs_im, hρ_re] using hreg_re
+        _ ≤ B * Real.log |t| :=
+              mul_le_mul_of_nonneg_right hBregular_le_B hlog_nonneg
+    calc
+      (-deriv riemannZeta
+            ((1 + a / Real.log |t| : ℝ) + I * t) /
+          riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t)).re
+          =
+            ((-deriv riemannZeta
+                ((1 + a / Real.log |t| : ℝ) + I * t) /
+              riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t)).re
+              + 1 / ((1 + a / Real.log |t|) - β))
+              - 1 / ((1 + a / Real.log |t|) - β) := by
+              ring
+      _ ≤ B * Real.log |t| - 1 / ((1 + a / Real.log |t|) - β) := by
+              exact sub_le_sub_right hrewrite _
+      _ = -1 / ((1 + a / Real.log |t|) - β) + B * Real.log |t| := by
+              ring
+  · intro a t ha_pos ha_le_log2 ht
+    let z : ℂ := ((1 + a / Real.log |t| : ℝ) : ℂ) + 2 * I * t
+    have hz_re_mem : z.re ∈ Set.Icc 1 2 := by
+      have hz_re : z.re = 1 + a / Real.log |t| := by simp [z]
+      exact ⟨by
+        rw [hz_re]
+        exact (sigmaOf_log_gt_one hT0 ha_pos ht).le,
+        by
+          rw [hz_re]
+          exact sigmaOf_log_le_two hT0 ha_le_log2 ht⟩
+    have hz_height : T0 ≤ |z.im| := by
+      have hz_im_abs : |z.im| = |(2 : ℝ) * t| := by
+        simp [z, abs_mul]
+      have htwo_abs : |(2 : ℝ) * t| = 2 * |t| := by
+        rw [abs_mul]
+        norm_num
+      rw [hz_im_abs, htwo_abs]
+      have ht_nonneg : 0 ≤ |t| := abs_nonneg t
+      nlinarith
+    have hlog :
+        Real.log |z.im| ≤ 2 * Real.log |t| := by
+      have hz_im_abs : |z.im| = |(2 : ℝ) * t| := by
+        simp [z, abs_mul]
+      rw [hz_im_abs]
+      exact log_abs_two_mul_le_two_log_abs (hT0.trans ht)
+    have hlog_nonneg : 0 ≤ Real.log |t| :=
+      (log_abs_pos_of_two_le (hT0.trans ht)).le
+    have htwoB_le : 2 * Bvertical ≤ B := le_max_right Bregular (2 * Bvertical)
+    have hbound := hvertical z hz_height hz_re_mem
+    have hnorm_bound :
+        ‖logDeriv riemannZeta z‖ ≤ B * Real.log |t| := by
+      calc
+        ‖logDeriv riemannZeta z‖
+            ≤ Bvertical * Real.log |z.im| := hbound
+        _ ≤ Bvertical * (2 * Real.log |t|) :=
+            mul_le_mul_of_nonneg_left hlog hBvertical
+        _ = (2 * Bvertical) * Real.log |t| := by ring
+        _ ≤ B * Real.log |t| :=
+            mul_le_mul_of_nonneg_right htwoB_le hlog_nonneg
+    calc
+      (-deriv riemannZeta
+          ((1 + a / Real.log |t| : ℝ) + 2 * I * t) /
+        riemannZeta ((1 + a / Real.log |t| : ℝ) + 2 * I * t)).re
+          ≤ ‖-deriv riemannZeta z / riemannZeta z‖ := by
+            have hle :
+                (-deriv riemannZeta z / riemannZeta z).re ≤
+                  ‖-deriv riemannZeta z / riemannZeta z‖ :=
+              le_trans (le_abs_self _) (abs_re_le_norm _)
+            simpa [z] using hle
+      _ = ‖logDeriv riemannZeta z‖ :=
+          norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv z
+      _ ≤ B * Real.log |t| := hnorm_bound
+
+/-- Existential high-height version of the positive `logDeriv ζ`
+regular-part/vertical-strip closure. -/
+lemma classical_zero_free_region_of_exists_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height
+    (T0 : ℝ) (hT0 : 2 ≤ T0)
+    (h :
+      ∃ Bregular Bvertical : ℝ, 0 ≤ Bregular ∧ 0 ≤ Bvertical ∧
+        (∀ s ρ : ℂ, T0 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+          riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+          0 < s.re - ρ.re →
+          ‖logDeriv riemannZeta s - (s - ρ)⁻¹‖ ≤
+            Bregular * Real.log |s.im|) ∧
+        (∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc 1 2 →
+          ‖logDeriv riemannZeta z‖ ≤ Bvertical * Real.log |z.im|)) :
+    classical_zero_free_region := by
+  rcases h with ⟨Bregular, Bvertical, hBregular, hBvertical, hregular, hvertical⟩
+  exact
+    classical_zero_free_region_of_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height
+      T0 Bregular Bvertical hT0 hBregular hBvertical hregular hvertical
+
 /-- ζ has a simple pole at `1`, expressed as meromorphic order `-1`. -/
 lemma meromorphicOrderAt_riemannZeta_one :
     meromorphicOrderAt riemannZeta (1 : ℂ) = (-1 : ℤ) := by

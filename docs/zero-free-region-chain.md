@@ -419,7 +419,15 @@ and
 present the same interface in the standard local-zero form
 `||logDeriv zeta(s) - (s-rho)^(-1)|| <= B log |Im(s)|`, converting to the
 signed 3-4-1 convention by `||-x|| = ||x||`.  This is the preferred statement
-for future Borel/Jensen principal-part estimates.
+for estimates that are already available from height `2`.
+The high-height wrappers
+`ZeroFreeRegion.classical_zero_free_region_of_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height`
+and
+`ZeroFreeRegion.classical_zero_free_region_of_exists_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height`
+are the preferred interface for future Borel/Jensen principal-part estimates:
+they require the regular-part and vertical-strip logarithmic-derivative bounds
+only above an arbitrary cutoff `T0 >= 2`, then use the verified compact patch to
+fill the bounded-height gap in the final classical zero-free-region target.
 This is still conditional; it does not prove the quantitative zero-free region
 until those two zeta-specific estimates are proved.
 The next work starts from these meromorphic/nonvanishing/principal-part facts

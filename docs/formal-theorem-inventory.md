@@ -276,6 +276,12 @@ Core verified declarations:
   `||-x|| = ||x||`.
 - `classical_zero_free_region_of_exists_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound`
   packages that positive-log-derivative convention existentially.
+- `classical_zero_free_region_of_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height`
+  is the high-height version of the same positive-log-derivative closure: the
+  two zeta-specific estimates only need to hold for `T0 <= |Im|`, with
+  `T0 >= 2`, and the bounded-height gap is filled by the compact patch.
+- `classical_zero_free_region_of_exists_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height`
+  packages the high-height positive-log-derivative convention existentially.
 - `meromorphicAt_logDeriv_riemannZeta_one`
   proves the logarithmic derivative is meromorphic at the pole.
 - `meromorphicOn_logDeriv_riemannZeta_closedBall`
