@@ -1797,6 +1797,89 @@ lemma classical_zero_free_region_of_logDeriv_regular_part_norm_affine_log_bound_
             linarith
       _ = (Avertical + Bvertical) * Real.log |z.im| := by ring
 
+/-- Coordinate version of the high-height affine-log closure.
+
+This is the same analytic input as
+`classical_zero_free_region_of_logDeriv_regular_part_norm_affine_log_bound_and_vertical_logDeriv_norm_affine_log_bound_high_height`,
+but stated in the real variables `sigma`, `beta`, and `t`.  It is often the
+most convenient shape for estimates proved by hand from Borel-Carathéodory or
+Jensen arguments. -/
+lemma classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_affine_bounds_high_height
+    (T0 Aregular Bregular Avertical Bvertical : ℝ)
+    (hT0 : 3 ≤ T0)
+    (hAregular : 0 ≤ Aregular) (hBregular : 0 ≤ Bregular)
+    (hAvertical : 0 ≤ Avertical) (hBvertical : 0 ≤ Bvertical)
+    (hregular :
+      ∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+        0 < σ - β →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+            (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+          Aregular + Bregular * Real.log |t|)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          Avertical + Bvertical * Real.log |t|) :
+    classical_zero_free_region := by
+  refine
+    classical_zero_free_region_of_logDeriv_regular_part_norm_affine_log_bound_and_vertical_logDeriv_norm_affine_log_bound_high_height
+      T0 Aregular Bregular Avertical Bvertical hT0 hAregular hBregular
+      hAvertical hBvertical ?_ ?_
+  · intro s ρ hs_height hs_re_mem hζρ hρ_im_eq hρ_re_lt hsub
+    have hs_decomp : ((s.re : ℂ) + I * s.im) = s := by
+      apply Complex.ext <;> simp
+    have hρ_decomp : ((ρ.re : ℂ) + I * s.im) = ρ := by
+      apply Complex.ext
+      · simp
+      · simp [hρ_im_eq]
+    have hinv :
+        (((s.re - ρ.re : ℝ) : ℂ)⁻¹) = (s - ρ)⁻¹ := by
+      have hsub_eq : s - ρ = ((s.re - ρ.re : ℝ) : ℂ) := by
+        apply Complex.ext
+        · simp
+        · simp [hρ_im_eq]
+      rw [hsub_eq]
+    have hζ_coord :
+        riemannZeta ((ρ.re : ℂ) + I * s.im) = 0 := by
+      simpa [hρ_decomp] using hζρ
+    have h :=
+      hregular s.re ρ.re s.im hs_height hs_re_mem hζ_coord hρ_re_lt hsub
+    have harg :
+        logDeriv riemannZeta ((s.re : ℂ) + I * s.im) =
+          logDeriv riemannZeta s := by
+      rw [hs_decomp]
+    rwa [harg, hinv] at h
+  · intro z hz_height hz_re_mem
+    have hz_decomp : ((z.re : ℂ) + I * z.im) = z := by
+      apply Complex.ext <;> simp
+    have h := hvertical z.re z.im hz_height hz_re_mem
+    simpa [hz_decomp] using h
+
+/-- Existential coordinate version of the high-height affine-log closure. -/
+lemma classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_affine_bounds_high_height
+    (h :
+      ∃ T0 Aregular Bregular Avertical Bvertical : ℝ,
+        3 ≤ T0 ∧
+        0 ≤ Aregular ∧ 0 ≤ Bregular ∧
+        0 ≤ Avertical ∧ 0 ≤ Bvertical ∧
+        (∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+          0 < σ - β →
+          ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+              (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+            Aregular + Bregular * Real.log |t|) ∧
+        (∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+            Avertical + Bvertical * Real.log |t|)) :
+    classical_zero_free_region := by
+  rcases h with
+    ⟨T0, Aregular, Bregular, Avertical, Bvertical, hT0,
+      hAregular, hBregular, hAvertical, hBvertical, hregular, hvertical⟩
+  exact
+    classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_affine_bounds_high_height
+      T0 Aregular Bregular Avertical Bvertical hT0 hAregular hBregular
+      hAvertical hBvertical hregular hvertical
+
 /-- Existential high-height closure from affine logarithmic bounds. -/
 lemma classical_zero_free_region_of_exists_logDeriv_regular_part_norm_affine_log_bound_and_vertical_logDeriv_norm_affine_log_bound_high_height
     (h :

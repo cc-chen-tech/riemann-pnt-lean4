@@ -288,6 +288,12 @@ Core verified declarations:
   `1 <= log |Im|` above height `3`.
 - `classical_zero_free_region_of_exists_logDeriv_regular_part_norm_affine_log_bound_and_vertical_logDeriv_norm_affine_log_bound_high_height`
   packages the affine-log high-height interface existentially.
+- `classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_affine_bounds_high_height`
+  is the coordinate form of the affine-log closure, with the regular-part
+  estimate stated for `sigma + i t` and same-height zero candidates
+  `beta + i t`.
+- `classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_affine_bounds_high_height`
+  packages the coordinate affine-log interface existentially.
 - `meromorphicAt_logDeriv_riemannZeta_one`
   proves the logarithmic derivative is meromorphic at the pole.
 - `meromorphicOn_logDeriv_riemannZeta_closedBall`

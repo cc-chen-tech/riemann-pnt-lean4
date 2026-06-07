@@ -3846,6 +3846,49 @@ theorem classical_zero_free_region_of_exists_logDeriv_regular_part_norm_affine_l
     ZeroFreeRegion.classical_zero_free_region :=
   ZeroFreeRegion.classical_zero_free_region_of_exists_logDeriv_regular_part_norm_affine_log_bound_and_vertical_logDeriv_norm_affine_log_bound_high_height h
 
+/-- Public coordinate high-height closure from affine logarithmic bounds for
+positive `logDeriv ζ` estimates. -/
+theorem classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_affine_bounds_high_height
+    (T0 Aregular Bregular Avertical Bvertical : ℝ)
+    (hT0 : 3 ≤ T0)
+    (hAregular : 0 ≤ Aregular) (hBregular : 0 ≤ Bregular)
+    (hAvertical : 0 ≤ Avertical) (hBvertical : 0 ≤ Bvertical)
+    (hregular :
+      ∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < σ - β →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) -
+            (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+          Aregular + Bregular * Real.log |t|)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          Avertical + Bvertical * Real.log |t|) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_affine_bounds_high_height
+    T0 Aregular Bregular Avertical Bvertical hT0 hAregular hBregular
+    hAvertical hBvertical hregular hvertical
+
+/-- Public existential coordinate high-height closure from affine logarithmic
+bounds for positive `logDeriv ζ` estimates. -/
+theorem classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_affine_bounds_high_height
+    (h :
+      ∃ T0 Aregular Bregular Avertical Bvertical : ℝ,
+        3 ≤ T0 ∧
+        0 ≤ Aregular ∧ 0 ≤ Bregular ∧
+        0 ≤ Avertical ∧ 0 ≤ Bvertical ∧
+        (∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+          0 < σ - β →
+          ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) -
+              (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+            Aregular + Bregular * Real.log |t|) ∧
+        (∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+            Avertical + Bvertical * Real.log |t|)) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_affine_bounds_high_height h
+
 /-- Public comparison between a compact-patch width and a logarithmic width. -/
 theorem compact_log_width_le_of_two_le {c d t : ℝ}
     (hc : c ≤ d * Real.log 2) (hd : 0 ≤ d) (ht : 2 ≤ |t|) :

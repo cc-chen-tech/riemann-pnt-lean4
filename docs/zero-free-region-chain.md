@@ -435,6 +435,13 @@ and
 are even closer to the expected Borel/Jensen output: they accept estimates of
 the form `A + B log |Im|` above height `3`, absorb the additive constants using
 `1 <= log |Im|`, and then feed the high-height logarithmic interface.
+The coordinate wrappers
+`ZeroFreeRegion.classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_affine_bounds_high_height`
+and
+`ZeroFreeRegion.classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_affine_bounds_high_height`
+state the same affine-log inputs directly in real variables `sigma`, `beta`,
+and `t`, matching the usual analytic proof notation around points `sigma+it`
+and same-height zero candidates `beta+it`.
 This is still conditional; it does not prove the quantitative zero-free region
 until those two zeta-specific estimates are proved.
 The next work starts from these meromorphic/nonvanishing/principal-part facts
