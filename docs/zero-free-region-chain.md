@@ -442,6 +442,12 @@ and
 state the same affine-log inputs directly in real variables `sigma`, `beta`,
 and `t`, matching the usual analytic proof notation around points `sigma+it`
 and same-height zero candidates `beta+it`.
+The single-constant wrappers
+`ZeroFreeRegion.classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_one_add_log_bound_high_height`
+and
+`ZeroFreeRegion.classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_one_add_log_bound_high_height`
+specialize this one step further to the common estimate shape
+`C * (1 + log |t|)` for both remaining zeta-specific bounds.
 This is still conditional; it does not prove the quantitative zero-free region
 until those two zeta-specific estimates are proved.
 The next work starts from these meromorphic/nonvanishing/principal-part facts

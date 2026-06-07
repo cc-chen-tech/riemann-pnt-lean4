@@ -294,6 +294,12 @@ Core verified declarations:
   `beta + i t`.
 - `classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_affine_bounds_high_height`
   packages the coordinate affine-log interface existentially.
+- `classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_one_add_log_bound_high_height`
+  specializes the coordinate interface to the common single-constant estimate
+  `C * (1 + log |t|)` for both the regular-part and vertical log-derivative
+  bounds.
+- `classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_one_add_log_bound_high_height`
+  packages that single-constant coordinate interface existentially.
 - `meromorphicAt_logDeriv_riemannZeta_one`
   proves the logarithmic derivative is meromorphic at the pole.
 - `meromorphicOn_logDeriv_riemannZeta_closedBall`

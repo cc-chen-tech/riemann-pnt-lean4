@@ -1880,6 +1880,61 @@ lemma classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_affi
       T0 Aregular Bregular Avertical Bvertical hT0 hAregular hBregular
       hAvertical hBvertical hregular hvertical
 
+/-- Coordinate high-height closure from a single `C * (1 + log |t|)` bound.
+
+This is a convenience layer for the common big-O style output of analytic
+estimates: the same nonnegative constant controls the regular-part estimate and
+the vertical-strip logarithmic-derivative estimate. -/
+lemma classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_one_add_log_bound_high_height
+    (T0 C : ℝ) (hT0 : 3 ≤ T0) (hC : 0 ≤ C)
+    (hregular :
+      ∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+        0 < σ - β →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+            (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+          C * (1 + Real.log |t|))
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          C * (1 + Real.log |t|)) :
+    classical_zero_free_region := by
+  refine
+    classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_affine_bounds_high_height
+      T0 C C C C hT0 hC hC hC hC ?_ ?_
+  · intro σ β t ht hσ hζ hβ hsub
+    calc
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+          (((σ - β : ℝ) : ℂ)⁻¹)‖
+          ≤ C * (1 + Real.log |t|) :=
+            hregular σ β t ht hσ hζ hβ hsub
+      _ = C + C * Real.log |t| := by ring
+  · intro σ t ht hσ
+    calc
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖
+          ≤ C * (1 + Real.log |t|) := hvertical σ t ht hσ
+      _ = C + C * Real.log |t| := by ring
+
+/-- Existential coordinate high-height closure from a single
+`C * (1 + log |t|)` bound. -/
+lemma classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_one_add_log_bound_high_height
+    (h :
+      ∃ T0 C : ℝ, 3 ≤ T0 ∧ 0 ≤ C ∧
+        (∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+          0 < σ - β →
+          ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+              (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+            C * (1 + Real.log |t|)) ∧
+        (∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+            C * (1 + Real.log |t|))) :
+    classical_zero_free_region := by
+  rcases h with ⟨T0, C, hT0, hC, hregular, hvertical⟩
+  exact
+    classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_one_add_log_bound_high_height
+      T0 C hT0 hC hregular hvertical
+
 /-- Existential high-height closure from affine logarithmic bounds. -/
 lemma classical_zero_free_region_of_exists_logDeriv_regular_part_norm_affine_log_bound_and_vertical_logDeriv_norm_affine_log_bound_high_height
     (h :
