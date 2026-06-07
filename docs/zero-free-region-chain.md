@@ -211,6 +211,13 @@ which yields `|Re(-zeta'/zeta)(sigma)| < C / (sigma - 1)` for
 `1 < sigma` sufficiently close to `1`.
 The direct one-sided real-axis form is
 `ZeroFreeRegion.exists_rightNeighborhood_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_sub_one`.
+These estimates are also packaged in the exact real-axis input shape used by
+the 3-4-1 high-height assembly:
+`ZeroFreeRegion.exists_rightNeighborhood_hreal_two_div_sub_one` and
+`ZeroFreeRegion.exists_rightNeighborhood_hreal_const_div_sub_one` produce the
+`hreal` hypothesis for `realBound t = 2 / (sigmaOf t - 1)` or
+`realBound t = C / (sigmaOf t - 1)` whenever the chosen `sigmaOf t` remains in
+the local right neighborhood of `1`.
 The next work starts from these meromorphic/nonvanishing/principal-part facts
 and proves the vertical-height logarithmic-derivative estimates needed for the
 quantitative strip.

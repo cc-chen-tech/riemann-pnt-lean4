@@ -602,6 +602,25 @@ lemma exists_rightNeighborhood_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_d
   intro σ hσ_gt hσ_le
   exact le_trans (le_abs_self _) (hbound σ hσ_gt hσ_le)
 
+/-- The concrete real-axis local bound in the exact shape needed for the
+`hreal` input of the 3-4-1 high-height assembly.
+
+If a future choice of `σOf t` stays inside a sufficiently small right
+neighborhood of `1`, then the real-axis term is bounded by
+`2 / (σOf t - 1)`. -/
+lemma exists_rightNeighborhood_hreal_two_div_sub_one (T0 : ℝ) :
+    ∃ d : ℝ, 0 < d ∧ ∀ σOf : ℝ → ℝ,
+      (∀ t : ℝ, T0 ≤ |t| → 1 < σOf t) →
+      (∀ t : ℝ, T0 ≤ |t| → σOf t ≤ 1 + d) →
+      ∀ t : ℝ, T0 ≤ |t| → 1 < σOf t → σOf t ≤ 2 →
+        (-deriv riemannZeta (σOf t : ℂ) / riemannZeta (σOf t : ℂ)).re ≤
+          2 / (σOf t - 1) := by
+  rcases exists_rightNeighborhood_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_sub_one
+    with ⟨d, hd_pos, hbound⟩
+  refine ⟨d, hd_pos, ?_⟩
+  intro σOf hσ_gt hσ_near t ht _hgt _hle
+  exact hbound (σOf t) (hσ_gt t ht) (hσ_near t ht)
+
 /-- Real-axis specialization of the local pole-order norm bound for `-ζ'/ζ`.
 
 For every `C > 1`, the bound `‖-ζ'/ζ(σ)‖ < C / (σ - 1)` holds for real
@@ -674,6 +693,26 @@ lemma exists_rightNeighborhood_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const
   refine ⟨d, hd_pos, ?_⟩
   intro σ hσ_gt hσ_le
   exact lt_of_le_of_lt (le_abs_self _) (hbound σ hσ_gt hσ_le)
+
+/-- Flexible real-axis local bound in the exact shape needed for the `hreal`
+input of the 3-4-1 high-height assembly.
+
+For every `C > 1`, if a future choice of `σOf t` stays inside a sufficiently
+small right neighborhood of `1`, then the real-axis term is bounded by
+`C / (σOf t - 1)`. -/
+lemma exists_rightNeighborhood_hreal_const_div_sub_one (C : ℝ) (hC : 1 < C)
+    (T0 : ℝ) :
+    ∃ d : ℝ, 0 < d ∧ ∀ σOf : ℝ → ℝ,
+      (∀ t : ℝ, T0 ≤ |t| → 1 < σOf t) →
+      (∀ t : ℝ, T0 ≤ |t| → σOf t ≤ 1 + d) →
+      ∀ t : ℝ, T0 ≤ |t| → 1 < σOf t → σOf t ≤ 2 →
+        (-deriv riemannZeta (σOf t : ℂ) / riemannZeta (σOf t : ℂ)).re ≤
+          C / (σOf t - 1) := by
+  rcases exists_rightNeighborhood_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_sub_one
+      C hC with ⟨d, hd_pos, hbound⟩
+  refine ⟨d, hd_pos, ?_⟩
+  intro σOf hσ_gt hσ_near t ht _hgt _hle
+  exact le_of_lt (hbound (σOf t) (hσ_gt t ht) (hσ_near t ht))
 
 /-- ζ has a simple pole at `1`, expressed as meromorphic order `-1`. -/
 lemma meromorphicOrderAt_riemannZeta_one :

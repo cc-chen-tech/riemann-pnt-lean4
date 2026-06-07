@@ -2430,6 +2430,17 @@ theorem exists_rightNeighborhood_re_neg_deriv_riemannZeta_div_riemannZeta_le_two
       (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re ≤ 2 / (σ - 1) :=
   ZeroFreeRegion.exists_rightNeighborhood_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_sub_one
 
+/-- Public package of the concrete real-axis local bound in the `hreal` shape
+used by the 3-4-1 high-height assembly. -/
+theorem exists_rightNeighborhood_hreal_two_div_sub_one (T0 : ℝ) :
+    ∃ d : ℝ, 0 < d ∧ ∀ σOf : ℝ → ℝ,
+      (∀ t : ℝ, T0 ≤ |t| → 1 < σOf t) →
+      (∀ t : ℝ, T0 ≤ |t| → σOf t ≤ 1 + d) →
+      ∀ t : ℝ, T0 ≤ |t| → 1 < σOf t → σOf t ≤ 2 →
+        (-deriv riemannZeta (σOf t : ℂ) / riemannZeta (σOf t : ℂ)).re ≤
+          2 / (σOf t - 1) :=
+  ZeroFreeRegion.exists_rightNeighborhood_hreal_two_div_sub_one T0
+
 /-- Public real-axis specialization of the local norm bound for `-ζ'/ζ`
 near the pole at `1`. -/
 theorem exists_rightNeighborhood_norm_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_sub_one
@@ -2453,6 +2464,18 @@ theorem exists_rightNeighborhood_re_neg_deriv_riemannZeta_div_riemannZeta_lt_con
     ∃ d : ℝ, 0 < d ∧ ∀ σ : ℝ, 1 < σ → σ ≤ 1 + d →
       (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re < C / (σ - 1) :=
   ZeroFreeRegion.exists_rightNeighborhood_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_sub_one C hC
+
+/-- Public flexible package of the real-axis local bound in the `hreal` shape
+used by the 3-4-1 high-height assembly. -/
+theorem exists_rightNeighborhood_hreal_const_div_sub_one (C : ℝ) (hC : 1 < C)
+    (T0 : ℝ) :
+    ∃ d : ℝ, 0 < d ∧ ∀ σOf : ℝ → ℝ,
+      (∀ t : ℝ, T0 ≤ |t| → 1 < σOf t) →
+      (∀ t : ℝ, T0 ≤ |t| → σOf t ≤ 1 + d) →
+      ∀ t : ℝ, T0 ≤ |t| → 1 < σOf t → σOf t ≤ 2 →
+        (-deriv riemannZeta (σOf t : ℂ) / riemannZeta (σOf t : ℂ)).re ≤
+          C / (σOf t - 1) :=
+  ZeroFreeRegion.exists_rightNeighborhood_hreal_const_div_sub_one C hC T0
 
 /-- Public meromorphicity of the zeta logarithmic derivative at `1`. -/
 theorem meromorphicAt_logDeriv_riemannZeta_one :

@@ -153,6 +153,9 @@ Core verified declarations:
   gives the corresponding concrete real-axis real-part bound.
 - `exists_rightNeighborhood_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_sub_one`
   gives the corresponding concrete real-axis one-sided upper bound.
+- `exists_rightNeighborhood_hreal_two_div_sub_one`
+  packages the concrete real-axis bound in the exact `hreal` shape used by
+  the 3-4-1 high-height assembly.
 - `exists_rightNeighborhood_norm_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_sub_one`
   specializes the local signed-quotient norm bound to real-axis parameters
   `1 < sigma <= 1 + d`, replacing `norm ((sigma : C) - 1)` by `sigma - 1`.
@@ -162,6 +165,9 @@ Core verified declarations:
 - `exists_rightNeighborhood_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_sub_one`
   gives the corresponding real-axis one-sided upper bound without the absolute
   value.
+- `exists_rightNeighborhood_hreal_const_div_sub_one`
+  packages the flexible real-axis bound in the exact `hreal` shape used by the
+  3-4-1 high-height assembly.
 - `meromorphicAt_logDeriv_riemannZeta_one`
   proves the logarithmic derivative is meromorphic at the pole.
 - `meromorphicOn_logDeriv_riemannZeta_closedBall`
