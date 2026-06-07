@@ -914,6 +914,69 @@ lemma borelCaratheodory
         ‖f 0‖ * (R + ‖z‖) / (R - ‖z‖) :=
   Complex.borelCaratheodory hM hf hf₁ hR hz
 
+/-- Centered Borel-Carathéodory theorem in the vanishing-at-center form.
+
+This is the disk-centered version needed when applying the theorem around
+points such as `1 + I*t` rather than around `0`. -/
+lemma borelCaratheodory_zero_centered
+    {f : ℂ → ℂ} {M R : ℝ} {c z : ℂ}
+    (hM : 0 < M) (hf : DifferentiableOn ℂ f (Metric.ball c R))
+    (hf₁ : Set.MapsTo f (Metric.ball c R) {w | w.re ≤ M})
+    (hR : 0 < R) (hz : z ∈ Metric.ball c R)
+    (hf₂ : f c = 0) :
+    ‖f z‖ ≤ 2 * M * ‖z - c‖ / (R - ‖z - c‖) := by
+  let g : ℂ → ℂ := fun w => f (c + w)
+  have hz0 : z - c ∈ Metric.ball 0 R := by
+    simpa [Metric.mem_ball, dist_eq_norm] using hz
+  have hgdiff : DifferentiableOn ℂ g (Metric.ball 0 R) := by
+    intro w hw
+    have hwc : c + w ∈ Metric.ball c R := by
+      simpa [Metric.mem_ball, dist_eq_norm] using hw
+    have hfd : DifferentiableAt ℂ f (c + w) :=
+      hf.differentiableAt (Metric.isOpen_ball.mem_nhds hwc)
+    exact (hfd.comp w (differentiableAt_id.const_add c)).differentiableWithinAt
+  have hgmaps : Set.MapsTo g (Metric.ball 0 R) {w | w.re ≤ M} := by
+    intro w hw
+    have hwc : c + w ∈ Metric.ball c R := by
+      simpa [Metric.mem_ball, dist_eq_norm] using hw
+    exact hf₁ hwc
+  have hgzero : g 0 = 0 := by simpa [g] using hf₂
+  have h := borelCaratheodory_zero
+    (f := g) hM hgdiff hgmaps hR hz0 hgzero
+  simpa [g, add_sub_cancel_right] using h
+
+/-- Centered Borel-Carathéodory theorem.
+
+This translation wrapper avoids redoing the change of variables from a disk
+centered at `c` to a disk centered at `0` in every future zeta-specific
+application. -/
+lemma borelCaratheodory_centered
+    {f : ℂ → ℂ} {M R : ℝ} {c z : ℂ}
+    (hM : 0 < M) (hf : DifferentiableOn ℂ f (Metric.ball c R))
+    (hf₁ : Set.MapsTo f (Metric.ball c R) {w | w.re ≤ M})
+    (hR : 0 < R) (hz : z ∈ Metric.ball c R) :
+    ‖f z‖ ≤
+      2 * M * ‖z - c‖ / (R - ‖z - c‖) +
+        ‖f c‖ * (R + ‖z - c‖) / (R - ‖z - c‖) := by
+  let g : ℂ → ℂ := fun w => f (c + w)
+  have hz0 : z - c ∈ Metric.ball 0 R := by
+    simpa [Metric.mem_ball, dist_eq_norm] using hz
+  have hgdiff : DifferentiableOn ℂ g (Metric.ball 0 R) := by
+    intro w hw
+    have hwc : c + w ∈ Metric.ball c R := by
+      simpa [Metric.mem_ball, dist_eq_norm] using hw
+    have hfd : DifferentiableAt ℂ f (c + w) :=
+      hf.differentiableAt (Metric.isOpen_ball.mem_nhds hwc)
+    exact (hfd.comp w (differentiableAt_id.const_add c)).differentiableWithinAt
+  have hgmaps : Set.MapsTo g (Metric.ball 0 R) {w | w.re ≤ M} := by
+    intro w hw
+    have hwc : c + w ∈ Metric.ball c R := by
+      simpa [Metric.mem_ball, dist_eq_norm] using hw
+    exact hf₁ hwc
+  have h := borelCaratheodory
+    (f := g) hM hgdiff hgmaps hR hz0
+  simpa [g, add_sub_cancel_right] using h
+
 section JensenWrapper
 
 open MeromorphicAt MeromorphicOn Metric Real

@@ -220,6 +220,12 @@ Core verified declarations:
   proves the logarithmic derivative is meromorphic at the pole.
 - `meromorphicOn_logDeriv_riemannZeta_closedBall`
   proves the logarithmic derivative is meromorphic on every closed ball.
+- `borelCaratheodory_zero_centered`
+  translates Mathlib's vanishing-at-zero Borel-Caratheodory theorem to disks
+  centered at arbitrary `c`.
+- `borelCaratheodory_centered`
+  translates Mathlib's general Borel-Caratheodory theorem to disks centered at
+  arbitrary `c`.
 
 ### `PrimeNumberTheorem.lean`
 

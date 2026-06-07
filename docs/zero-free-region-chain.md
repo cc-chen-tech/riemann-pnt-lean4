@@ -101,6 +101,10 @@ comments in `ZeroFreeRegion.lean` suggest:
 
 - `Complex.borelCaratheodory` and `Complex.borelCaratheodory_zero` exist in
   `Mathlib.Analysis.Complex.BorelCaratheodory`.
+  The project now also proves the centered wrappers
+  `ZeroFreeRegion.borelCaratheodory_centered` and
+  `ZeroFreeRegion.borelCaratheodory_zero_centered`, so future zeta estimates
+  can work directly on disks centered at `1+it` or nearby shifted points.
 - `MeromorphicOn.circleAverage_log_norm` exists in
   `Mathlib.Analysis.Complex.JensenFormula`; this is the local Jensen formula
   over closed balls for meromorphic functions.
@@ -119,6 +123,8 @@ Useful checked names:
 
 ```lean
 #check Complex.borelCaratheodory
+#check ZeroFreeRegion.borelCaratheodory_centered
+#check ZeroFreeRegion.borelCaratheodory_zero_centered
 #check MeromorphicOn.circleAverage_log_norm
 #check Complex.HadamardThreeLines.norm_le_interp_of_mem_verticalClosedStrip'
 #check PowerSeries.exists_isWeierstrassFactorization

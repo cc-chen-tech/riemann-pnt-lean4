@@ -2797,6 +2797,27 @@ theorem borelCaratheodory
         ‖f 0‖ * (R + ‖z‖) / (R - ‖z‖) :=
   ZeroFreeRegion.borelCaratheodory hM hf hf₁ hR hz
 
+/-- Public centered Borel-Carathéodory theorem in the vanishing-at-center form. -/
+theorem borelCaratheodory_zero_centered
+    {f : ℂ → ℂ} {M R : ℝ} {c z : ℂ}
+    (hM : 0 < M) (hf : DifferentiableOn ℂ f (Metric.ball c R))
+    (hf₁ : Set.MapsTo f (Metric.ball c R) {w | w.re ≤ M})
+    (hR : 0 < R) (hz : z ∈ Metric.ball c R)
+    (hf₂ : f c = 0) :
+    ‖f z‖ ≤ 2 * M * ‖z - c‖ / (R - ‖z - c‖) :=
+  ZeroFreeRegion.borelCaratheodory_zero_centered hM hf hf₁ hR hz hf₂
+
+/-- Public centered Borel-Carathéodory theorem. -/
+theorem borelCaratheodory_centered
+    {f : ℂ → ℂ} {M R : ℝ} {c z : ℂ}
+    (hM : 0 < M) (hf : DifferentiableOn ℂ f (Metric.ball c R))
+    (hf₁ : Set.MapsTo f (Metric.ball c R) {w | w.re ≤ M})
+    (hR : 0 < R) (hz : z ∈ Metric.ball c R) :
+    ‖f z‖ ≤
+      2 * M * ‖z - c‖ / (R - ‖z - c‖) +
+        ‖f c‖ * (R + ‖z - c‖) / (R - ‖z - c‖) :=
+  ZeroFreeRegion.borelCaratheodory_centered hM hf hf₁ hR hz
+
 section JensenWrapper
 
 open MeromorphicAt MeromorphicOn Metric Real
