@@ -1420,6 +1420,89 @@ lemma classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_and_tw
   exact classical_zero_free_region_of_neg_logDeriv_regular_part_norm_and_two_t_norm_bounds
     Bregular Btwo hBregular hBtwo hregular htwo
 
+/-- Logarithmic comparison used when a vertical-strip estimate is applied at
+height `2t` but the zero-free-region target is stated in terms of `log |t|`. -/
+lemma log_abs_two_mul_le_two_log_abs {t : ℝ} (ht : 2 ≤ |t|) :
+    Real.log |(2 : ℝ) * t| ≤ 2 * Real.log |t| := by
+  have ht_pos : 0 < |t| := lt_of_lt_of_le (by norm_num) ht
+  have hlog_two_le : Real.log 2 ≤ Real.log |t| :=
+    Real.log_le_log (by norm_num) ht
+  calc
+    Real.log |(2 : ℝ) * t| = Real.log (2 * |t|) := by
+      simp [abs_mul]
+    _ = Real.log 2 + Real.log |t| := by
+      rw [Real.log_mul (by norm_num : (2 : ℝ) ≠ 0) (ne_of_gt ht_pos)]
+    _ ≤ 2 * Real.log |t| := by
+      linarith
+
+/-- Closure from a zero-candidate regular-part norm estimate and a vertical-strip
+norm estimate for `-logDeriv ζ`.
+
+The vertical estimate is stated for all `z` with `1 <= Re z <= 2` and
+`|Im z| >= 2`; this wrapper specializes it to the `σ+2it` point needed by the
+3-4-1 combination, paying only a factor of `2` in the logarithmic coefficient. -/
+lemma classical_zero_free_region_of_neg_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound
+    (Bregular Bvertical : ℝ)
+    (hBregular : 0 ≤ Bregular) (hBvertical : 0 ≤ Bvertical)
+    (hregular :
+      ∀ s ρ : ℂ, 2 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+        riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+        0 < s.re - ρ.re →
+        ‖-logDeriv riemannZeta s + (s - ρ)⁻¹‖ ≤
+          Bregular * Real.log |s.im|)
+    (hvertical :
+      ∀ z : ℂ, 2 ≤ |z.im| → z.re ∈ Set.Icc 1 2 →
+        ‖-logDeriv riemannZeta z‖ ≤ Bvertical * Real.log |z.im|) :
+    classical_zero_free_region := by
+  refine
+    classical_zero_free_region_of_neg_logDeriv_regular_part_norm_and_two_t_norm_bounds
+      Bregular (2 * Bvertical) hBregular (by nlinarith) hregular ?_
+  intro σ t ht hσ_gt hσ_le
+  let z : ℂ := (σ : ℂ) + 2 * I * t
+  have hz_re_mem : z.re ∈ Set.Icc 1 2 := by
+    simp [z, hσ_gt.le, hσ_le]
+  have hz_height : 2 ≤ |z.im| := by
+    have hz_im_abs : |z.im| = |(2 : ℝ) * t| := by
+      simp [z, abs_mul]
+    have htwo_abs : |(2 : ℝ) * t| = 2 * |t| := by
+      rw [abs_mul]
+      norm_num
+    rw [hz_im_abs, htwo_abs]
+    have ht_nonneg : 0 ≤ |t| := abs_nonneg t
+    nlinarith
+  have hlog :
+      Real.log |z.im| ≤ 2 * Real.log |t| := by
+    have hz_im_abs : |z.im| = |(2 : ℝ) * t| := by
+      simp [z, abs_mul]
+    rw [hz_im_abs]
+    exact log_abs_two_mul_le_two_log_abs ht
+  have hbound := hvertical z hz_height hz_re_mem
+  calc
+    ‖-logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖
+        = ‖-logDeriv riemannZeta z‖ := by simp [z]
+    _ ≤ Bvertical * Real.log |z.im| := hbound
+    _ ≤ Bvertical * (2 * Real.log |t|) :=
+        mul_le_mul_of_nonneg_left hlog hBvertical
+    _ = (2 * Bvertical) * Real.log |t| := by ring
+
+/-- Existential version of
+`classical_zero_free_region_of_neg_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound`. -/
+lemma classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound
+    (h :
+      ∃ Bregular Bvertical : ℝ, 0 ≤ Bregular ∧ 0 ≤ Bvertical ∧
+        (∀ s ρ : ℂ, 2 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+          riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+          0 < s.re - ρ.re →
+          ‖-logDeriv riemannZeta s + (s - ρ)⁻¹‖ ≤
+            Bregular * Real.log |s.im|) ∧
+        (∀ z : ℂ, 2 ≤ |z.im| → z.re ∈ Set.Icc 1 2 →
+          ‖-logDeriv riemannZeta z‖ ≤ Bvertical * Real.log |z.im|)) :
+    classical_zero_free_region := by
+  rcases h with ⟨Bregular, Bvertical, hBregular, hBvertical, hregular, hvertical⟩
+  exact
+    classical_zero_free_region_of_neg_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound
+      Bregular Bvertical hBregular hBvertical hregular hvertical
+
 /-- ζ has a simple pole at `1`, expressed as meromorphic order `-1`. -/
 lemma meromorphicOrderAt_riemannZeta_one :
     meromorphicOrderAt riemannZeta (1 : ℂ) = (-1 : ℤ) := by

@@ -261,6 +261,15 @@ Core verified declarations:
   real-part estimate by `Re(z) <= ||z||`.
 - `classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_and_two_t_norm_bounds`
   packages the fully norm-bound two-coefficient input existentially.
+- `log_abs_two_mul_le_two_log_abs`
+  proves `log |2t| <= 2 log |t|` for `|t| >= 2`, converting vertical estimates
+  at height `2t` to the logarithmic scale used in the zero-free-region target.
+- `classical_zero_free_region_of_neg_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound`
+  reduces the `sigma+2it` input to a general vertical-strip norm estimate
+  `||-logDeriv zeta(z)|| <= B log |Im(z)|` on `1 <= Re(z) <= 2`.
+- `classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound`
+  packages the regular-part norm estimate and vertical-strip log-derivative
+  norm estimate existentially.
 - `meromorphicAt_logDeriv_riemannZeta_one`
   proves the logarithmic derivative is meromorphic at the pole.
 - `meromorphicOn_logDeriv_riemannZeta_closedBall`

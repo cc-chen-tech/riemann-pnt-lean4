@@ -3698,6 +3698,45 @@ theorem classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_and_
     ZeroFreeRegion.classical_zero_free_region :=
   ZeroFreeRegion.classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_and_two_t_norm_bounds h
 
+/-- Public logarithmic comparison for applying vertical estimates at height
+`2t`. -/
+theorem log_abs_two_mul_le_two_log_abs {t : ℝ} (ht : 2 ≤ |t|) :
+    Real.log |(2 : ℝ) * t| ≤ 2 * Real.log |t| :=
+  ZeroFreeRegion.log_abs_two_mul_le_two_log_abs ht
+
+/-- Public closure from a regular-part norm estimate and a vertical-strip norm
+estimate for `-logDeriv ζ`. -/
+theorem classical_zero_free_region_of_neg_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound
+    (Bregular Bvertical : ℝ)
+    (hBregular : 0 ≤ Bregular) (hBvertical : 0 ≤ Bvertical)
+    (hregular :
+      ∀ s ρ : ℂ, 2 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+        riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+        0 < s.re - ρ.re →
+        ‖-logDeriv riemannZeta s + (s - ρ)⁻¹‖ ≤
+          Bregular * Real.log |s.im|)
+    (hvertical :
+      ∀ z : ℂ, 2 ≤ |z.im| → z.re ∈ Set.Icc 1 2 →
+        ‖-logDeriv riemannZeta z‖ ≤ Bvertical * Real.log |z.im|) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_neg_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound
+    Bregular Bvertical hBregular hBvertical hregular hvertical
+
+/-- Public existential closure from a regular-part norm estimate and a
+vertical-strip norm estimate for `-logDeriv ζ`. -/
+theorem classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound
+    (h :
+      ∃ Bregular Bvertical : ℝ, 0 ≤ Bregular ∧ 0 ≤ Bvertical ∧
+        (∀ s ρ : ℂ, 2 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+          riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+          0 < s.re - ρ.re →
+          ‖-logDeriv riemannZeta s + (s - ρ)⁻¹‖ ≤
+            Bregular * Real.log |s.im|) ∧
+        (∀ z : ℂ, 2 ≤ |z.im| → z.re ∈ Set.Icc 1 2 →
+          ‖-logDeriv riemannZeta z‖ ≤ Bvertical * Real.log |z.im|)) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound h
+
 /-- Public comparison between a compact-patch width and a logarithmic width. -/
 theorem compact_log_width_le_of_two_le {c d t : ℝ}
     (hc : c ≤ d * Real.log 2) (hd : 0 ≤ d) (ht : 2 ≤ |t|) :

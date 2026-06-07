@@ -402,6 +402,16 @@ also allow the `sigma+2it` input to be supplied as a norm estimate, using
 `Re(z) <= ||z||` to recover the real-part bound required by the 3-4-1
 combination.  This is the most analysis-facing conditional interface currently
 available in the project.
+One further wrapper removes the special `sigma+2it` input altogether:
+`ZeroFreeRegion.classical_zero_free_region_of_neg_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound`
+accepts a standard vertical-strip estimate
+`||-logDeriv zeta(z)|| <= B log |Im(z)|` for `1 <= Re(z) <= 2` and
+`|Im(z)| >= 2`.  It specializes this estimate at `z = sigma + 2it`; the
+auxiliary lemma `ZeroFreeRegion.log_abs_two_mul_le_two_log_abs` proves
+`log |2t| <= 2 log |t|`, so the coefficient only doubles.  Its existential
+wrapper
+`ZeroFreeRegion.classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound`
+is now the highest-level conditional interface for this branch.
 This is still conditional; it does not prove the quantitative zero-free region
 until those two zeta-specific estimates are proved.
 The next work starts from these meromorphic/nonvanishing/principal-part facts
