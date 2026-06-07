@@ -255,6 +255,12 @@ Core verified declarations:
   norm estimate and the `sigma+2it` estimate, merging them by `max`.
 - `classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_bounds`
   packages the same two-coefficient analytic input existentially.
+- `classical_zero_free_region_of_neg_logDeriv_regular_part_norm_and_two_t_norm_bounds`
+  lets both remaining analytic inputs be supplied as norm estimates in
+  `-logDeriv zeta` notation, converting the `sigma+2it` norm estimate to a
+  real-part estimate by `Re(z) <= ||z||`.
+- `classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_and_two_t_norm_bounds`
+  packages the fully norm-bound two-coefficient input existentially.
 - `meromorphicAt_logDeriv_riemannZeta_one`
   proves the logarithmic derivative is meromorphic at the pole.
 - `meromorphicOn_logDeriv_riemannZeta_closedBall`
