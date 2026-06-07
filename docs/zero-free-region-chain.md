@@ -93,6 +93,11 @@ proved:
 - `ZeroFreeRegion.sigmaOf_log_le_one_add`
   proves `sigmaOf t <= 1 + d` from `a <= d log 2`, letting local
   right-neighborhood estimates feed the high-height assembly.
+- `ZeroFreeRegion.closedBall_re_bounds` / `ZeroFreeRegion.ball_re_bounds` and
+  `ZeroFreeRegion.closedBall_abs_im_ge_of_add_le` /
+  `ZeroFreeRegion.ball_abs_im_ge_of_add_le`
+  provide the disk geometry needed to transfer vertical-strip real-coordinate
+  and high-height hypotheses onto Borel-Caratheodory/Jensen disks.
 
 ## Mathlib API Check
 

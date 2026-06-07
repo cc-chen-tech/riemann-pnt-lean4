@@ -234,6 +234,12 @@ Core verified declarations:
 - `jensen_circleAverage_log_norm_logDeriv_riemannZeta_closedBall`
   specializes Mathlib's Jensen formula to `logDeriv riemannZeta` on closed
   balls.
+- `closedBall_re_bounds` and `ball_re_bounds`
+  bound real coordinates of points in complex disks by center plus/minus
+  radius.
+- `closedBall_abs_im_ge_of_add_le` and `ball_abs_im_ge_of_add_le`
+  transfer a high imaginary-height bound from the disk center to every point in
+  the disk.
 
 ### `PrimeNumberTheorem.lean`
 

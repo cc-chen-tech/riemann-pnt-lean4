@@ -2774,6 +2774,54 @@ theorem log_log_abs_pos_of_three_le {t : ℝ} (ht : 3 ≤ |t|) :
 theorem re_im_decomp (s : ℂ) : ((s.re : ℂ) + Complex.I * s.im) = s :=
   ZeroFreeRegion.re_im_decomp s
 
+/-- Public bound of real-coordinate displacement by complex norm. -/
+theorem abs_re_sub_le_norm_sub (z c : ℂ) :
+    |z.re - c.re| ≤ ‖z - c‖ :=
+  ZeroFreeRegion.abs_re_sub_le_norm_sub z c
+
+/-- Public bound of imaginary-coordinate displacement by complex norm. -/
+theorem abs_im_sub_le_norm_sub (z c : ℂ) :
+    |z.im - c.im| ≤ ‖z - c‖ :=
+  ZeroFreeRegion.abs_im_sub_le_norm_sub z c
+
+/-- Public real-coordinate bounds for a point in a closed complex ball. -/
+theorem closedBall_re_bounds {z c : ℂ} {R : ℝ}
+    (hz : z ∈ Metric.closedBall c R) :
+    c.re - R ≤ z.re ∧ z.re ≤ c.re + R :=
+  ZeroFreeRegion.closedBall_re_bounds hz
+
+/-- Public real-coordinate bounds for a point in an open complex ball. -/
+theorem ball_re_bounds {z c : ℂ} {R : ℝ}
+    (hz : z ∈ Metric.ball c R) :
+    c.re - R ≤ z.re ∧ z.re ≤ c.re + R :=
+  ZeroFreeRegion.ball_re_bounds hz
+
+/-- Public imaginary-height lower bound for a point in a closed complex ball. -/
+theorem closedBall_abs_im_lower {z c : ℂ} {R : ℝ}
+    (hz : z ∈ Metric.closedBall c R) :
+    |c.im| - R ≤ |z.im| :=
+  ZeroFreeRegion.closedBall_abs_im_lower hz
+
+/-- Public imaginary-height lower bound for a point in an open complex ball. -/
+theorem ball_abs_im_lower {z c : ℂ} {R : ℝ}
+    (hz : z ∈ Metric.ball c R) :
+    |c.im| - R ≤ |z.im| :=
+  ZeroFreeRegion.ball_abs_im_lower hz
+
+/-- Public closed-ball height transfer from a high center to all points in the
+ball. -/
+theorem closedBall_abs_im_ge_of_add_le {z c : ℂ} {R H : ℝ}
+    (hz : z ∈ Metric.closedBall c R) (hH : H + R ≤ |c.im|) :
+    H ≤ |z.im| :=
+  ZeroFreeRegion.closedBall_abs_im_ge_of_add_le hz hH
+
+/-- Public open-ball height transfer from a high center to all points in the
+ball. -/
+theorem ball_abs_im_ge_of_add_le {z c : ℂ} {R H : ℝ}
+    (hz : z ∈ Metric.ball c R) (hH : H + R ≤ |c.im|) :
+    H ≤ |z.im| :=
+  ZeroFreeRegion.ball_abs_im_ge_of_add_le hz hH
+
 /-- Public Borel-Carathéodory theorem in the vanishing-at-zero form, routed
 through the zero-free-region namespace. -/
 theorem borelCaratheodory_zero

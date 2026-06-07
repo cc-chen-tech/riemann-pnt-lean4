@@ -889,6 +889,71 @@ lemma log_log_abs_pos_of_three_le {t : ℝ} (ht : 3 ≤ |t|) :
 lemma re_im_decomp (s : ℂ) : ((s.re : ℂ) + I * s.im) = s := by
   apply Complex.ext <;> simp
 
+/-- The real-coordinate displacement is bounded by the complex norm. -/
+lemma abs_re_sub_le_norm_sub (z c : ℂ) : |z.re - c.re| ≤ ‖z - c‖ := by
+  simpa [Complex.sub_re] using Complex.abs_re_le_norm (z - c)
+
+/-- The imaginary-coordinate displacement is bounded by the complex norm. -/
+lemma abs_im_sub_le_norm_sub (z c : ℂ) : |z.im - c.im| ≤ ‖z - c‖ := by
+  have h := Complex.abs_re_le_norm (I * (z - c))
+  simpa [Complex.mul_re, Complex.norm_I, Complex.norm_mul, Complex.sub_im,
+    abs_sub_comm z.im c.im] using h
+
+/-- Real-coordinate bounds for a point in a closed complex ball. -/
+lemma closedBall_re_bounds {z c : ℂ} {R : ℝ}
+    (hz : z ∈ Metric.closedBall c R) :
+    c.re - R ≤ z.re ∧ z.re ≤ c.re + R := by
+  have hdist : ‖z - c‖ ≤ R := by
+    simpa [Metric.mem_closedBall, dist_eq_norm] using hz
+  have hre : |z.re - c.re| ≤ R :=
+    le_trans (abs_re_sub_le_norm_sub z c) hdist
+  constructor <;> linarith [abs_le.mp hre]
+
+/-- Real-coordinate bounds for a point in an open complex ball. -/
+lemma ball_re_bounds {z c : ℂ} {R : ℝ}
+    (hz : z ∈ Metric.ball c R) :
+    c.re - R ≤ z.re ∧ z.re ≤ c.re + R := by
+  exact closedBall_re_bounds
+    (Metric.ball_subset_closedBall hz)
+
+/-- Imaginary height lower bound for a point in a closed complex ball. -/
+lemma closedBall_abs_im_lower {z c : ℂ} {R : ℝ}
+    (hz : z ∈ Metric.closedBall c R) :
+    |c.im| - R ≤ |z.im| := by
+  have hdist : ‖z - c‖ ≤ R := by
+    simpa [Metric.mem_closedBall, dist_eq_norm] using hz
+  have him : |z.im - c.im| ≤ R :=
+    le_trans (abs_im_sub_le_norm_sub z c) hdist
+  have htri : |c.im| ≤ |z.im| + |z.im - c.im| := by
+    calc
+      |c.im| = |z.im - (z.im - c.im)| := by ring_nf
+      _ ≤ |z.im| + |z.im - c.im| := by
+        simpa [abs_sub_comm c.im z.im] using abs_sub_le z.im 0 (z.im - c.im)
+  linarith
+
+/-- Imaginary height lower bound for a point in an open complex ball. -/
+lemma ball_abs_im_lower {z c : ℂ} {R : ℝ}
+    (hz : z ∈ Metric.ball c R) :
+    |c.im| - R ≤ |z.im| := by
+  exact closedBall_abs_im_lower
+    (Metric.ball_subset_closedBall hz)
+
+/-- If the center of a closed ball is high enough, every point in the ball
+stays above the requested imaginary-height threshold. -/
+lemma closedBall_abs_im_ge_of_add_le {z c : ℂ} {R H : ℝ}
+    (hz : z ∈ Metric.closedBall c R) (hH : H + R ≤ |c.im|) :
+    H ≤ |z.im| := by
+  have h := closedBall_abs_im_lower (z := z) (c := c) (R := R) hz
+  linarith
+
+/-- If the center of an open ball is high enough, every point in the ball
+stays above the requested imaginary-height threshold. -/
+lemma ball_abs_im_ge_of_add_le {z c : ℂ} {R H : ℝ}
+    (hz : z ∈ Metric.ball c R) (hH : H + R ≤ |c.im|) :
+    H ≤ |z.im| := by
+  exact closedBall_abs_im_ge_of_add_le
+    (Metric.ball_subset_closedBall hz) hH
+
 /-- Local namespace entry point for Mathlib's Borel-Carathéodory theorem in the
 vanishing-at-zero form. This is one of the complex-analytic tools used in
 standard proofs of quantitative zero-free regions; the remaining gap is the
