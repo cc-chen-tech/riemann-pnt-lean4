@@ -336,6 +336,32 @@ lemma exists_punctured_closedBall_norm_logDeriv_riemannZeta_le_two_div_norm_sub_
   intro s hs_ne hs_dist
   exact hball s hs_ne (lt_of_le_of_lt hs_dist (half_lt_self hr_pos))
 
+/-- Closed punctured-ball pole-order bound in the explicit quotient notation
+`ζ'/ζ`.  This is the form used by later quantitative zero-free estimates. -/
+lemma exists_punctured_closedBall_norm_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one :
+    ∃ r > 0, ∀ s : ℂ, s ≠ 1 → dist s 1 ≤ r →
+      ‖deriv riemannZeta s / riemannZeta s‖ ≤ 2 / ‖s - 1‖ := by
+  rcases exists_punctured_closedBall_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one
+    with ⟨r, hr_pos, hbound⟩
+  refine ⟨r, hr_pos, ?_⟩
+  intro s hs_ne hs_dist
+  simpa [logDeriv_apply] using hbound s hs_ne hs_dist
+
+/-- Closed punctured-ball pole-order bound for the negative logarithmic
+derivative `-ζ'/ζ`, matching the sign convention of the 3-4-1 inequality. -/
+lemma exists_punctured_closedBall_norm_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one :
+    ∃ r > 0, ∀ s : ℂ, s ≠ 1 → dist s 1 ≤ r →
+      ‖-deriv riemannZeta s / riemannZeta s‖ ≤ 2 / ‖s - 1‖ := by
+  rcases exists_punctured_closedBall_norm_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one
+    with ⟨r, hr_pos, hbound⟩
+  refine ⟨r, hr_pos, ?_⟩
+  intro s hs_ne hs_dist
+  calc
+    ‖-deriv riemannZeta s / riemannZeta s‖ =
+        ‖deriv riemannZeta s / riemannZeta s‖ := by
+          rw [neg_div, norm_neg]
+    _ ≤ 2 / ‖s - 1‖ := hbound s hs_ne hs_dist
+
 /-- ζ has a simple pole at `1`, expressed as meromorphic order `-1`. -/
 lemma meromorphicOrderAt_riemannZeta_one :
     meromorphicOrderAt riemannZeta (1 : ℂ) = (-1 : ℤ) := by

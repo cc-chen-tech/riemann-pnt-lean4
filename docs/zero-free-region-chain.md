@@ -161,6 +161,11 @@ The same local estimate is also available on a smaller closed punctured ball as
 `ZeroFreeRegion.exists_punctured_closedBall_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one`,
 which is the form needed when a later argument ranges over compact closed
 local neighborhoods.
+For compatibility with the sign conventions used in the 3-4-1 contradiction,
+the closed-ball estimate is also exposed in explicit quotient notation as
+`ZeroFreeRegion.exists_punctured_closedBall_norm_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one`
+and
+`ZeroFreeRegion.exists_punctured_closedBall_norm_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one`.
 The next work starts from these meromorphic/nonvanishing/principal-part facts
 and proves the vertical-height logarithmic-derivative estimates needed for the
 quantitative strip.

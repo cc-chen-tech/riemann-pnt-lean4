@@ -2293,6 +2293,20 @@ theorem exists_punctured_closedBall_norm_logDeriv_riemannZeta_le_two_div_norm_su
       ‖logDeriv riemannZeta s‖ ≤ 2 / ‖s - 1‖ :=
   ZeroFreeRegion.exists_punctured_closedBall_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one
 
+/-- Public closed punctured-ball pole-order bound in quotient notation
+`ζ'/ζ`. -/
+theorem exists_punctured_closedBall_norm_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one :
+    ∃ r > 0, ∀ s : ℂ, s ≠ 1 → dist s 1 ≤ r →
+      ‖deriv riemannZeta s / riemannZeta s‖ ≤ 2 / ‖s - 1‖ :=
+  ZeroFreeRegion.exists_punctured_closedBall_norm_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one
+
+/-- Public closed punctured-ball pole-order bound for the signed quotient
+`-ζ'/ζ`. -/
+theorem exists_punctured_closedBall_norm_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one :
+    ∃ r > 0, ∀ s : ℂ, s ≠ 1 → dist s 1 ≤ r →
+      ‖-deriv riemannZeta s / riemannZeta s‖ ≤ 2 / ‖s - 1‖ :=
+  ZeroFreeRegion.exists_punctured_closedBall_norm_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one
+
 /-- Public meromorphicity of the zeta logarithmic derivative at `1`. -/
 theorem meromorphicAt_logDeriv_riemannZeta_one :
     MeromorphicAt (logDeriv riemannZeta) (1 : ℂ) :=

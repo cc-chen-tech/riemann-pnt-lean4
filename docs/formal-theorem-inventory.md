@@ -98,6 +98,12 @@ Core verified declarations:
 - `exists_punctured_closedBall_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one`
   packages the same local pole-order bound on a smaller closed punctured ball
   around `1`.
+- `exists_punctured_closedBall_norm_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one`
+  rewrites the closed punctured-ball local bound in explicit quotient notation
+  `deriv riemannZeta s / riemannZeta s`.
+- `exists_punctured_closedBall_norm_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one`
+  rewrites the same local bound for the signed quotient
+  `-deriv riemannZeta s / riemannZeta s`.
 - `meromorphicAt_logDeriv_riemannZeta_one`
   proves the logarithmic derivative is meromorphic at the pole.
 - `meromorphicOn_logDeriv_riemannZeta_closedBall`
