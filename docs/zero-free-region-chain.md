@@ -362,7 +362,7 @@ existential input: a nonnegative logarithmic coefficient `B` that proves both
 shifted estimates.  Thus the next analytic task is not more 3-4-1 assembly;
 it is proving that `B` exists for the zeta-specific shifted logarithmic
 derivative bounds.
-The current narrowest bridge is
+The first regular-part bridge is
 `ZeroFreeRegion.classical_zero_free_region_of_regular_part_bound_and_two_t_bound`:
 instead of asking directly for the zero-candidate shifted estimate, it accepts
 the Borel-Caratheodory/Jensen-shaped regular-part estimate
@@ -370,8 +370,19 @@ the Borel-Caratheodory/Jensen-shaped regular-part estimate
 `sigma+2it` logarithmic bound.  Its existential wrapper
 `ZeroFreeRegion.classical_zero_free_region_of_exists_regular_part_bound_and_two_t_bound`
 packages those two remaining analytic estimates under one nonnegative
-coefficient.  This is still conditional; it does not prove the quantitative
-zero-free region until those two zeta-specific estimates are proved.
+coefficient.
+The narrower norm-bound bridge is
+`ZeroFreeRegion.classical_zero_free_region_of_regular_part_norm_bound_and_two_t_bound`.
+It accepts the more natural Borel/Jensen output
+`||-zeta'/zeta(s)+(s-rho)^(-1)|| <= B log |Im(s)|`; the algebraic lemma
+`ZeroFreeRegion.inv_sub_same_im_re` converts the same-height principal part
+into `1/(Re(s)-Re(rho))`, and `Re(z) <= ||z||` supplies the real-part estimate.
+Its existential wrapper
+`ZeroFreeRegion.classical_zero_free_region_of_exists_regular_part_norm_bound_and_two_t_bound`
+is now the tightest conditional interface: prove that norm regular-part bound
+and the `sigma+2it` logarithmic bound for one nonnegative coefficient `B`.
+This is still conditional; it does not prove the quantitative zero-free region
+until those two zeta-specific estimates are proved.
 The next work starts from these meromorphic/nonvanishing/principal-part facts
 and proves the vertical-height logarithmic-derivative estimates needed for the
 quantitative strip.

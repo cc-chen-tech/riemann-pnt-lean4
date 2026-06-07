@@ -1198,6 +1198,87 @@ lemma classical_zero_free_region_of_exists_regular_part_bound_and_two_t_bound
   exact classical_zero_free_region_of_regular_part_bound_and_two_t_bound
     B hB hregular htwo
 
+/-- Real part of `(s - ρ)⁻¹` when `s` and `ρ` have the same imaginary part.
+
+This is the algebraic bridge between a complex regular-part estimate
+`-ζ'/ζ(s) + (s - ρ)⁻¹` and the real-variable singular term
+`1 / (s.re - ρ.re)` used in the de la Vallée Poussin contradiction. -/
+lemma inv_sub_same_im_re {s ρ : ℂ} (him : ρ.im = s.im)
+    (hsub : 0 < s.re - ρ.re) :
+    ((s - ρ)⁻¹).re = 1 / (s.re - ρ.re) := by
+  have hsub_eq : s - ρ = ((s.re - ρ.re : ℝ) : ℂ) := by
+    exact Complex.ext (by simp) (by simp [him])
+  have hne : s.re - ρ.re ≠ 0 := ne_of_gt hsub
+  rw [hsub_eq]
+  rw [Complex.inv_re, Complex.normSq_ofReal]
+  field_simp [hne, one_div]
+  simp
+
+/-- Close the classical zero-free-region target from a norm bound on the
+complex regular part of `-ζ'/ζ` near a zero and the corresponding `σ + 2it`
+estimate.
+
+This is the form closest to the output of a future Borel-Carathéodory/Jensen
+argument: the analytic input bounds the norm of
+`-ζ'/ζ(s) + (s - ρ)⁻¹`; this lemma converts that norm estimate into the
+real-part regular estimate consumed by
+`classical_zero_free_region_of_regular_part_bound_and_two_t_bound`. -/
+lemma classical_zero_free_region_of_regular_part_norm_bound_and_two_t_bound
+    (B : ℝ) (hB : 0 ≤ B)
+    (hregular :
+      ∀ s ρ : ℂ, 2 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+        riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+        0 < s.re - ρ.re →
+        ‖-deriv riemannZeta s / riemannZeta s + (s - ρ)⁻¹‖ ≤
+          B * Real.log |s.im|)
+    (htwo :
+      ∀ σ t : ℝ, 2 ≤ |t| → 1 < σ → σ ≤ 2 →
+        (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+          riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤
+            B * Real.log |t|) :
+    classical_zero_free_region := by
+  refine classical_zero_free_region_of_regular_part_bound_and_two_t_bound
+    B hB ?_ htwo
+  intro s ρ hs_height hs_re_mem hζρ hρ_im_eq hρ_re_lt hsub
+  let regularPart : ℂ :=
+    -deriv riemannZeta s / riemannZeta s + (s - ρ)⁻¹
+  have hregular_norm :
+      ‖regularPart‖ ≤ B * Real.log |s.im| := by
+    simpa [regularPart] using
+      hregular s ρ hs_height hs_re_mem hζρ hρ_im_eq hρ_re_lt hsub
+  have hregular_re_le :
+      regularPart.re ≤ ‖regularPart‖ :=
+    le_trans (le_abs_self regularPart.re) (abs_re_le_norm regularPart)
+  have hregular_re :
+      regularPart.re =
+        (-deriv riemannZeta s / riemannZeta s).re +
+          1 / (s.re - ρ.re) := by
+    simp [regularPart, inv_sub_same_im_re hρ_im_eq hsub]
+  calc
+    (-deriv riemannZeta s / riemannZeta s).re +
+        1 / (s.re - ρ.re)
+        = regularPart.re := hregular_re.symm
+    _ ≤ ‖regularPart‖ := hregular_re_le
+    _ ≤ B * Real.log |s.im| := hregular_norm
+
+/-- Existential norm-bound form of the regular-part zero-free closure. -/
+lemma classical_zero_free_region_of_exists_regular_part_norm_bound_and_two_t_bound
+    (h :
+      ∃ B : ℝ, 0 ≤ B ∧
+        (∀ s ρ : ℂ, 2 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+          riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+          0 < s.re - ρ.re →
+          ‖-deriv riemannZeta s / riemannZeta s + (s - ρ)⁻¹‖ ≤
+            B * Real.log |s.im|) ∧
+        (∀ σ t : ℝ, 2 ≤ |t| → 1 < σ → σ ≤ 2 →
+          (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤
+              B * Real.log |t|)) :
+    classical_zero_free_region := by
+  rcases h with ⟨B, hB, hregular, htwo⟩
+  exact classical_zero_free_region_of_regular_part_norm_bound_and_two_t_bound
+    B hB hregular htwo
+
 /-- ζ has a simple pole at `1`, expressed as meromorphic order `-1`. -/
 lemma meromorphicOrderAt_riemannZeta_one :
     meromorphicOrderAt riemannZeta (1 : ℂ) = (-1 : ℤ) := by

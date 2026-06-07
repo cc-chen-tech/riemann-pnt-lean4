@@ -233,6 +233,17 @@ Core verified declarations:
 - `classical_zero_free_region_of_exists_regular_part_bound_and_two_t_bound`
   packages those two remaining analytic estimates under one nonnegative
   logarithmic coefficient.
+- `inv_sub_same_im_re`
+  rewrites `Re((s-rho)^{-1})` as `1/(Re(s)-Re(rho))` when `s` and `rho`
+  have the same imaginary part, converting the complex principal part into
+  the real singular term used by the zero-free-region contradiction.
+- `classical_zero_free_region_of_regular_part_norm_bound_and_two_t_bound`
+  replaces the regular-part real estimate by the norm estimate
+  `||-zeta'/zeta(s)+(s-rho)^{-1}|| <= B log |Im(s)|`, together with the
+  `sigma+2it` shifted estimate.
+- `classical_zero_free_region_of_exists_regular_part_norm_bound_and_two_t_bound`
+  packages that norm-bound regular-part input under one nonnegative
+  logarithmic coefficient.
 - `meromorphicAt_logDeriv_riemannZeta_one`
   proves the logarithmic derivative is meromorphic at the pole.
 - `meromorphicOn_logDeriv_riemannZeta_closedBall`
