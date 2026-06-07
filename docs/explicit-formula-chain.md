@@ -150,7 +150,9 @@ Already available or partially available:
 
 Needed:
 
-1. Meromorphicity of `riemannZeta` on rectangles, with the pole at `1`.
+1. Meromorphicity of `riemannZeta` on rectangles, with the pole at `1`
+   (proved as `ZeroFreeRegion.meromorphicOn_riemannZeta_closedBall`; residue
+   bookkeeping still needs divisor/pole-order API).
 2. Meromorphicity of
    `fun s => -deriv riemannZeta s / riemannZeta s * (x : Complex)^s / s`.
 3. Residue at `s = 1`: contribution `x`.

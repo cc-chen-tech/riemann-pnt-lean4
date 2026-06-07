@@ -136,14 +136,16 @@ lemma riemannZeta_divisor_pole_one
 ```
 
 Mathlib status:
-`differentiableAt_riemannZeta` and `riemannZeta_residue_one` exist, but I did
-not find a direct `MeromorphicOn riemannZeta ...` theorem or divisor theorem
-for the pole at `1`.
+`differentiableAt_riemannZeta`, `riemannZeta_residue_one`, and the completed
+zeta API are enough for the local meromorphicity step.  This project now proves
+`ZeroFreeRegion.meromorphicAt_riemannZeta_one` and
+`ZeroFreeRegion.meromorphicOn_riemannZeta_closedBall`.
 
 Difficulty:
-Medium.  Away from `1` this is routine from differentiability.  At `1`, the
-proof should use the completed zeta API or the residue theorem already in
-Mathlib, then connect it to `MeromorphicAt`/`MeromorphicOn.divisor`.
+The meromorphic-on-closed-balls statement is done.  The remaining part of this
+block is the divisor/pole-order statement
+`(MeromorphicOn.divisor riemannZeta U) 1 = -1`, needed for residue bookkeeping
+and local logarithmic-derivative estimates.
 
 ### 2. Polynomial Growth for Zeta in Vertical Disks
 
@@ -366,8 +368,8 @@ None for patching.  The high-height estimate remains the missing input.
 
 ## Suggested Execution Order
 
-1. Add zeta meromorphic/divisor infrastructure around `riemannZeta`, including
-   the pole at `1`.
+1. Prove the divisor/pole-order statement for `riemannZeta` at `1` from the
+   proved `meromorphicAt_riemannZeta_one` and residue normalization.
 2. Prove the local pole logarithmic-derivative bound near `1`.
 3. Prove a reusable Borel-Caratheodory/Jensen regular-part estimate for
    meromorphic functions with polynomial growth.
@@ -387,5 +389,5 @@ The non-analytic Lean work that used to be the easiest target is now complete:
 - real-variable comparison showing the Vinogradov-Korobov width dominates a
   classical `c / log |t|` width.
 
-The next useful Lean work is zeta-specific: meromorphicity at the pole,
+The next useful Lean work is zeta-specific: pole-order/divisor control,
 logarithmic-derivative estimates, and Borel-Caratheodory/Jensen specialization.

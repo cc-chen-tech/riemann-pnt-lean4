@@ -124,13 +124,14 @@ The project currently verifies several supporting statements, including:
 - several zeta nonvanishing and pole-behavior wrappers from Mathlib;
 - the Gamma residue formula at negative integers and numerical special cases;
 - the compact zero-free region near `Re(s)=1` for each bounded height;
+- meromorphicity of `riemannZeta` at its pole and on closed balls;
 - finiteness of nontrivial zeros in each bounded-height strip.
 
 ## Publishable Core Theorem Inventory
 
 The following declarations are the current paper-grade core.  They are proved
-Lean declarations in `ZeroFreeRegion.lean`, not `def ... : Prop` target
-statements.
+Lean declarations in `ZeroFreeRegion.lean` and
+`ZeroFreeRegion/MeromorphicAux.lean`, not `def ... : Prop` target statements.
 
 | Lean declaration | Kind | Mathematical content | Publication role |
 |---|---|---|---|
@@ -140,6 +141,8 @@ statements.
 | `ZeroFreeRegion.log_deriv_zeta_lower_bound` | `lemma` | Rearranges the 3-4-1 inequality into the lower bound for `Re(-ζ'/ζ(σ+it))`. | Algebraic corollary used by the future quantitative zero-free-region chain. |
 | `ZeroFreeRegion.residue_bounds` | `lemma` | Proves `1 < (σ-1) Re(ζ(σ)) ≤ σ` for `σ > 1`. | Real-axis residue-scale control near the pole at `1`. |
 | `ZeroFreeRegion.classical_zero_free_region_compact` | `theorem` | For every `T ≥ 2`, proves existence of `d > 0` such that `ζ(s) ≠ 0` whenever `|Im(s)| ≤ T` and `Re(s) ≥ 1-d`. | Compact zero-free strip, the topological output of Mathlib nonvanishing plus openness/compactness. |
+| `ZeroFreeRegion.meromorphicAt_riemannZeta_one` | `lemma` | Proves ζ is meromorphic at its pole `s = 1` by rewriting it as an analytic regular part plus `(s-1)⁻¹ / Γℝ(s)`. | Supplies the local meromorphic input needed by divisor, residue, and logarithmic-derivative infrastructure. |
+| `ZeroFreeRegion.meromorphicOn_riemannZeta_closedBall` | `lemma` | Proves ζ is meromorphic on every closed ball. | Rectangle/Jensen/Perron infrastructure hook for the zero-free and explicit-formula chains. |
 
 Two important boundaries:
 
@@ -148,6 +151,8 @@ Two important boundaries:
   `ZeroFreeRegion.classical_zero_free_region`.
 - `ZeroFreeRegion.residue_bounds` gives real-axis residue-scale inequalities,
   but does not by itself prove a global logarithmic-derivative growth estimate.
+- `ZeroFreeRegion.meromorphicAt_riemannZeta_one` proves meromorphicity, not the
+  divisor/pole-order identity needed for automated residue bookkeeping.
 
 ## Publication Core and Remaining Targets
 

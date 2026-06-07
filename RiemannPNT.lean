@@ -4,6 +4,7 @@ import HardyTheorem
 import EulerAndLfunctions
 import PrimeNumberTheorem
 import ZeroFreeRegion
+import ZeroFreeRegion.MeromorphicAux
 
 open Complex Filter Topology Asymptotics ComplexConjugate
 open scoped ArithmeticFunction LSeries.notation
@@ -2188,6 +2189,21 @@ theorem complex_critical_line_zero_is_nontrivial {s : ℂ}
     _root_.RiemannHypothesis.IsNontrivialZero s ∧
       s ∈ _root_.RiemannHypothesis.criticalLine :=
   KnownResults.complex_critical_line_zero_is_nontrivial hre hzero
+
+/-- Public meromorphicity of ζ away from its pole. -/
+theorem meromorphicAt_riemannZeta_of_ne_one (s : ℂ) (hs : s ≠ 1) :
+    MeromorphicAt riemannZeta s :=
+  ZeroFreeRegion.meromorphicAt_riemannZeta_of_ne_one s hs
+
+/-- Public meromorphicity of ζ at its pole `s = 1`. -/
+theorem meromorphicAt_riemannZeta_one :
+    MeromorphicAt riemannZeta (1 : ℂ) :=
+  ZeroFreeRegion.meromorphicAt_riemannZeta_one
+
+/-- Public meromorphicity of ζ on closed balls. -/
+theorem meromorphicOn_riemannZeta_closedBall (c : ℂ) (R : ℝ) :
+    MeromorphicOn riemannZeta (Metric.closedBall c R) :=
+  ZeroFreeRegion.meromorphicOn_riemannZeta_closedBall c R
 
 /-- Public trigonometric core of de la Vallée Poussin's 3-4-1 inequality. -/
 theorem trig_identity_nonneg (θ : ℝ) :

@@ -10,14 +10,8 @@ This file establishes basic meromorphic properties of `riemannZeta` needed by bo
 ## Verified results
 
 1. `meromorphicAt_riemannZeta_of_ne_one` — ζ is meromorphic at every point ≠ 1.
-2. `meromorphicOn_riemannZeta_closedBall` — meromorphic on any closed ball.
-
-## Deferred
-
-- `meromorphicAt_riemannZeta_one` — requires Mathlib API for
-  `(z-1)² ζ z` removable-singularity at 1; deferred to a follow-up commit
-  because it depends on `Function.update` / junk-value-patching which
-  is fragile and not central to this initial scaffolding PR.
+2. `meromorphicAt_riemannZeta_one` — ζ is meromorphic at its pole.
+3. `meromorphicOn_riemannZeta_closedBall` — ζ is meromorphic on any closed ball.
 
 ## Dependencies
 
@@ -50,12 +44,46 @@ lemma meromorphicAt_riemannZeta_of_ne_one (s : ℂ) (hs : s ≠ 1) :
     MeromorphicAt riemannZeta s :=
   (analyticOnNhd_riemannZeta_ne_one s hs).meromorphicAt
 
-/-- ζ is meromorphic on any closed ball `closedBall c R`, restricted to the
-points where ζ is analytic (i.e. s ≠ 1).
+/-- ζ is meromorphic at `1`.
 
-This is the version of `meromorphicOn` for ζ that we can prove directly from
-existing Mathlib API.  The full version including the pole at `s = 1`
-requires `meromorphicAt_riemannZeta_one` (deferred). -/
+The proof rewrites ζ on a punctured neighborhood of `1` as the sum of an
+analytic regular part and the simple pole term
+`(s - 1)⁻¹ * (Gammaℝ s)⁻¹`. -/
+lemma meromorphicAt_riemannZeta_one :
+    MeromorphicAt riemannZeta 1 := by
+  let regular : ℂ → ℂ := fun s =>
+    (completedRiemannZeta₀ s - 1 / s) * (Gammaℝ s)⁻¹
+  let pole : ℂ → ℂ := fun s =>
+    (s - 1)⁻¹ * (Gammaℝ s)⁻¹
+  have hcompleted : AnalyticAt ℂ completedRiemannZeta₀ 1 :=
+    differentiable_completedZeta₀.analyticAt 1
+  have hone_div : AnalyticAt ℂ (fun s : ℂ => 1 / s) 1 := by
+    exact (analyticAt_const.div analyticAt_id one_ne_zero)
+  have hgamma_inv : AnalyticAt ℂ (fun s : ℂ => (Gammaℝ s)⁻¹) 1 :=
+    differentiable_Gammaℝ_inv.analyticAt 1
+  have hregular : MeromorphicAt regular 1 := by
+    exact ((hcompleted.sub hone_div).mul hgamma_inv).meromorphicAt
+  have hsub : MeromorphicAt (fun s : ℂ => s - 1) 1 :=
+    (analyticAt_id.sub analyticAt_const).meromorphicAt
+  have hpole : MeromorphicAt pole 1 := by
+    exact hsub.inv.mul hgamma_inv.meromorphicAt
+  have hsum : MeromorphicAt (fun s => regular s + pole s) 1 :=
+    hregular.add hpole
+  refine hsum.congr ?_
+  filter_upwards [eventually_ne_nhdsWithin one_ne_zero, self_mem_nhdsWithin] with s hs0 _hs1
+  simp only [regular, pole]
+  rw [riemannZeta_def_of_ne_zero hs0, completedRiemannZeta_eq, div_eq_mul_inv]
+  have hden : (1 - s) = -(s - 1) := by ring
+  rw [hden]
+  simp [div_eq_mul_inv]
+  have hinv : (s - 1)⁻¹ = - (1 - s)⁻¹ := by
+    have hlin : (s - 1) = -(1 - s) := by ring
+    rw [hlin, inv_neg]
+  rw [hinv]
+  ring
+
+/-- ζ is meromorphic on any closed ball `closedBall c R`, restricted to the
+points where ζ is analytic (i.e. s ≠ 1). -/
 lemma meromorphicOn_riemannZeta_closedBall_of_ne_one (c : ℂ) (R : ℝ) :
     MeromorphicOn riemannZeta (closedBall c R \ {1}) := by
   intro s hs
@@ -63,5 +91,14 @@ lemma meromorphicOn_riemannZeta_closedBall_of_ne_one (c : ℂ) (R : ℝ) :
   rcases hs with ⟨hs_ball, hs_ne⟩
   -- s ≠ 1, so ζ is meromorphicAt s.
   exact meromorphicAt_riemannZeta_of_ne_one s hs_ne
+
+/-- ζ is meromorphic on any closed ball. -/
+lemma meromorphicOn_riemannZeta_closedBall (c : ℂ) (R : ℝ) :
+    MeromorphicOn riemannZeta (closedBall c R) := by
+  intro s _hs
+  by_cases hs : s = 1
+  · subst hs
+    exact meromorphicAt_riemannZeta_one
+  · exact meromorphicAt_riemannZeta_of_ne_one s hs
 
 end ZeroFreeRegion
