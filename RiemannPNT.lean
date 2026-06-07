@@ -2228,6 +2228,14 @@ theorem eventually_ne_zero_riemannZeta_nhdsNE_one :
     ∀ᶠ s in 𝓝[≠] (1 : ℂ), riemannZeta s ≠ 0 :=
   ZeroFreeRegion.eventually_ne_zero_riemannZeta_nhdsNE_one
 
+/-- Public reciprocal local model for ζ near its pole `1`. -/
+theorem eventuallyEq_inv_riemannZeta_simpleZeroAtOne :
+    (fun s : ℂ => (riemannZeta s)⁻¹)
+      =ᶠ[𝓝[≠] (1 : ℂ)]
+      (fun s : ℂ => (s - 1) *
+        (ZeroFreeRegion.riemannZetaPoleUnitAtOne s)⁻¹) :=
+  ZeroFreeRegion.eventuallyEq_inv_riemannZeta_simpleZeroAtOne
+
 /-- Public meromorphicity of the zeta logarithmic derivative at `1`. -/
 theorem meromorphicAt_logDeriv_riemannZeta_one :
     MeromorphicAt (logDeriv riemannZeta) (1 : ℂ) :=

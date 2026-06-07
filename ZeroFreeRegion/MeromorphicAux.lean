@@ -149,6 +149,20 @@ lemma eventually_ne_zero_riemannZeta_nhdsNE_one :
   have hs1' : s ≠ 1 := Set.mem_compl_singleton_iff.mp hs1
   exact smul_ne_zero (zpow_ne_zero _ (sub_ne_zero.mpr hs1')) hunit
 
+/-- Reciprocal local model: near the pole, `1 / ζ(s)` is `(s-1)` times
+the inverse pole unit. -/
+lemma eventuallyEq_inv_riemannZeta_simpleZeroAtOne :
+    (fun s : ℂ => (riemannZeta s)⁻¹)
+      =ᶠ[𝓝[≠] (1 : ℂ)]
+      (fun s : ℂ => (s - 1) * (riemannZetaPoleUnitAtOne s)⁻¹) := by
+  filter_upwards [eventuallyEq_riemannZeta_simplePoleAtOne,
+    self_mem_nhdsWithin] with s hζ hs1
+  have hs1' : s ≠ 1 := Set.mem_compl_singleton_iff.mp hs1
+  rw [← hζ]
+  simp only [smul_eq_mul, zpow_neg, zpow_one]
+  rw [mul_inv_rev, inv_inv]
+  ring
+
 /-- ζ has a simple pole at `1`, expressed as meromorphic order `-1`. -/
 lemma meromorphicOrderAt_riemannZeta_one :
     meromorphicOrderAt riemannZeta (1 : ℂ) = (-1 : ℤ) := by
