@@ -1101,6 +1101,103 @@ lemma classical_zero_free_region_of_exists_sigma_log_shift_estimates_same_const
   exact classical_zero_free_region_of_sigma_log_shift_estimates_same_const_at_two
     B hB hzero htwo
 
+/-- Close the classical zero-free-region target from a complex regular-part
+logarithmic-derivative estimate and the corresponding `σ + 2it` estimate.
+
+The hypothesis `hregular` is the Borel-Carathéodory/Jensen-style analytic
+input: near a zero `ρ` at the same height as `s`, the singular contribution
+`-1 / (s.re - ρ.re)` is subtracted from `Re(-ζ'/ζ)(s)`, leaving an
+`O(log |Im s|)` regular part.  This lemma verifies that such a complex-shaped
+estimate feeds the already proved same-constant shifted-estimate closure. -/
+lemma classical_zero_free_region_of_regular_part_bound_and_two_t_bound
+    (B : ℝ) (hB : 0 ≤ B)
+    (hregular :
+      ∀ s ρ : ℂ, 2 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+        riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+        0 < s.re - ρ.re →
+        ((-deriv riemannZeta s / riemannZeta s).re +
+            1 / (s.re - ρ.re)) ≤ B * Real.log |s.im|)
+    (htwo :
+      ∀ σ t : ℝ, 2 ≤ |t| → 1 < σ → σ ≤ 2 →
+        (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+          riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤
+            B * Real.log |t|) :
+    classical_zero_free_region := by
+  refine classical_zero_free_region_of_sigma_log_shift_estimates_same_const_at_two
+    B hB ?_ ?_
+  · intro a _c β t ha_pos _hc_pos ha_le_log2 ht hβ_lt _hβ hsub hζ
+    let s : ℂ := ((1 + a / Real.log |t| : ℝ) : ℂ) + I * t
+    let ρ : ℂ := (β : ℂ) + I * t
+    have hs_re : s.re = 1 + a / Real.log |t| := by simp [s]
+    have hs_im : s.im = t := by simp [s]
+    have hρ_re : ρ.re = β := by simp [ρ]
+    have hρ_im : ρ.im = t := by simp [ρ]
+    have hs_re_gt : 1 < s.re := by
+      rw [hs_re]
+      exact sigmaOf_log_gt_one (T0 := 2) (by norm_num) ha_pos ht
+    have hs_re_le : s.re ≤ 2 := by
+      rw [hs_re]
+      exact sigmaOf_log_le_two (T0 := 2) (by norm_num) ha_le_log2 ht
+    have hs_re_mem : s.re ∈ Set.Icc 1 2 := ⟨hs_re_gt.le, hs_re_le⟩
+    have hs_height : 2 ≤ |s.im| := by
+      simpa [hs_im] using ht
+    have hρ_im_eq : ρ.im = s.im := by
+      simp [hρ_im, hs_im]
+    have hρ_re_lt : ρ.re < 1 := by
+      simpa [hρ_re] using hβ_lt
+    have hsub' : 0 < s.re - ρ.re := by
+      simpa [hs_re, hρ_re] using hsub
+    have hζρ : riemannZeta ρ = 0 := by
+      simpa [ρ] using hζ
+    have hreg :=
+      hregular s ρ hs_height hs_re_mem hζρ hρ_im_eq hρ_re_lt hsub'
+    have hrewrite :
+        (-deriv riemannZeta
+              ((1 + a / Real.log |t| : ℝ) + I * t) /
+            riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t)).re
+          + 1 / ((1 + a / Real.log |t|) - β) ≤
+            B * Real.log |t| := by
+      simpa [s, ρ, hs_re, hs_im, hρ_re] using hreg
+    calc
+      (-deriv riemannZeta
+            ((1 + a / Real.log |t| : ℝ) + I * t) /
+          riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t)).re
+          =
+            ((-deriv riemannZeta
+                ((1 + a / Real.log |t| : ℝ) + I * t) /
+              riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t)).re
+              + 1 / ((1 + a / Real.log |t|) - β))
+              - 1 / ((1 + a / Real.log |t|) - β) := by
+              ring
+      _ ≤ B * Real.log |t| - 1 / ((1 + a / Real.log |t|) - β) := by
+              exact sub_le_sub_right hrewrite _
+      _ = -1 / ((1 + a / Real.log |t|) - β) + B * Real.log |t| := by
+              ring
+  · intro a t ha_pos ha_le_log2 ht
+    exact htwo (1 + a / Real.log |t|) t ht
+      (sigmaOf_log_gt_one (T0 := 2) (by norm_num) ha_pos ht)
+      (sigmaOf_log_le_two (T0 := 2) (by norm_num) ha_le_log2 ht)
+
+/-- Existential form of
+`classical_zero_free_region_of_regular_part_bound_and_two_t_bound`, packaging
+the remaining analytic input as one nonnegative logarithmic coefficient. -/
+lemma classical_zero_free_region_of_exists_regular_part_bound_and_two_t_bound
+    (h :
+      ∃ B : ℝ, 0 ≤ B ∧
+        (∀ s ρ : ℂ, 2 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+          riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+          0 < s.re - ρ.re →
+          ((-deriv riemannZeta s / riemannZeta s).re +
+              1 / (s.re - ρ.re)) ≤ B * Real.log |s.im|) ∧
+        (∀ σ t : ℝ, 2 ≤ |t| → 1 < σ → σ ≤ 2 →
+          (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤
+              B * Real.log |t|)) :
+    classical_zero_free_region := by
+  rcases h with ⟨B, hB, hregular, htwo⟩
+  exact classical_zero_free_region_of_regular_part_bound_and_two_t_bound
+    B hB hregular htwo
+
 /-- ζ has a simple pole at `1`, expressed as meromorphic order `-1`. -/
 lemma meromorphicOrderAt_riemannZeta_one :
     meromorphicOrderAt riemannZeta (1 : ℂ) = (-1 : ℤ) := by

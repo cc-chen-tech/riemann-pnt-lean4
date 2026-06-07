@@ -226,6 +226,13 @@ Core verified declarations:
 - `classical_zero_free_region_of_exists_sigma_log_shift_estimates_same_const`
   packages the remaining quantitative zero-free-region input as existence of
   one nonnegative logarithmic coefficient for both shifted estimates.
+- `classical_zero_free_region_of_regular_part_bound_and_two_t_bound`
+  converts the expected Borel-Caratheodory/Jensen regular-part estimate
+  `Re(-zeta'/zeta)(s)+1/(Re(s)-Re(rho)) <= B log |Im(s)|`, together with the
+  `sigma+2it` shifted estimate, into the classical zero-free-region target.
+- `classical_zero_free_region_of_exists_regular_part_bound_and_two_t_bound`
+  packages those two remaining analytic estimates under one nonnegative
+  logarithmic coefficient.
 - `meromorphicAt_logDeriv_riemannZeta_one`
   proves the logarithmic derivative is meromorphic at the pole.
 - `meromorphicOn_logDeriv_riemannZeta_closedBall`

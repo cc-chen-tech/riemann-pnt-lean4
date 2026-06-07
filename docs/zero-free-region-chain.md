@@ -362,6 +362,16 @@ existential input: a nonnegative logarithmic coefficient `B` that proves both
 shifted estimates.  Thus the next analytic task is not more 3-4-1 assembly;
 it is proving that `B` exists for the zeta-specific shifted logarithmic
 derivative bounds.
+The current narrowest bridge is
+`ZeroFreeRegion.classical_zero_free_region_of_regular_part_bound_and_two_t_bound`:
+instead of asking directly for the zero-candidate shifted estimate, it accepts
+the Borel-Caratheodory/Jensen-shaped regular-part estimate
+`Re(-zeta'/zeta)(s)+1/(Re(s)-Re(rho)) <= B log |Im(s)|`, plus the matching
+`sigma+2it` logarithmic bound.  Its existential wrapper
+`ZeroFreeRegion.classical_zero_free_region_of_exists_regular_part_bound_and_two_t_bound`
+packages those two remaining analytic estimates under one nonnegative
+coefficient.  This is still conditional; it does not prove the quantitative
+zero-free region until those two zeta-specific estimates are proved.
 The next work starts from these meromorphic/nonvanishing/principal-part facts
 and proves the vertical-height logarithmic-derivative estimates needed for the
 quantitative strip.
