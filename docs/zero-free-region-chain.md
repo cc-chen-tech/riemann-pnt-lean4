@@ -242,6 +242,12 @@ The same inputs are also normalized into the vertical-height scale by
 `ZeroFreeRegion.exists_sigmaOf_log_hreal_two_mul_log_div` and
 `ZeroFreeRegion.exists_sigmaOf_log_hreal_const_mul_log_div`, giving the real-axis
 term directly as `<= 2 * log |t| / a` or `<= C * log |t| / a`.
+The theorem
+`ZeroFreeRegion.exists_sigmaOf_log_classical_zero_free_region_of_log_deriv_bounds`
+then packages this standard `sigmaOf` choice into the full verified
+3-4-1 high-height assembly and the compact bounded-height patch.  Its only
+remaining hypotheses are the two shifted logarithmic-derivative estimates and
+the final real-variable negativity margin.
 The next work starts from these meromorphic/nonvanishing/principal-part facts
 and proves the vertical-height logarithmic-derivative estimates needed for the
 quantitative strip.

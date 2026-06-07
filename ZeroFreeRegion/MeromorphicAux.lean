@@ -825,6 +825,61 @@ lemma exists_sigmaOf_log_hreal_const_mul_log_div (C : ℝ) (hC : 1 < C)
         const_div_sigmaOf_log_sub_one_eq_mul_log_div C hT0
           (ne_of_gt ha_pos) ht
 
+/-- Classical zero-free-region closure for the standard high-height choice
+`σ(t) = 1 + a / log |t|`.
+
+This packages the already-proved real-axis pole input, the elementary side
+conditions for `σ(t)`, and the compact bounded-height patch.  The remaining
+analytic inputs are exactly the two shifted logarithmic-derivative estimates
+and the real-variable negativity margin. -/
+lemma exists_sigmaOf_log_classical_zero_free_region_of_log_deriv_bounds
+    (C : ℝ) (hC : 1 < C) (T0 : ℝ) (hT0 : 2 ≤ T0)
+    {c : ℝ} (hc_pos : 0 < c) :
+    ∃ d : ℝ, 0 < d ∧ ∀ a : ℝ, 0 < a → a ≤ Real.log 2 →
+      a ≤ d * Real.log 2 →
+      ∀ (zeroBound : ℝ → ℝ → ℝ) (twoBound : ℝ → ℝ),
+        (∀ β t : ℝ, T0 ≤ |t| → β < 1 →
+          β ≥ 1 - c / Real.log |t| →
+          0 < (1 + a / Real.log |t|) - β →
+          riemannZeta ((β : ℂ) + I * t) = 0 →
+          (-deriv riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t) /
+            riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t)).re ≤
+              zeroBound β t) →
+        (∀ t : ℝ, T0 ≤ |t| →
+          (-deriv riemannZeta
+              ((1 + a / Real.log |t| : ℝ) + 2 * I * t) /
+            riemannZeta ((1 + a / Real.log |t| : ℝ) + 2 * I * t)).re ≤
+              twoBound t) →
+        (∀ β t : ℝ, T0 ≤ |t| → β < 1 →
+          β ≥ 1 - c / Real.log |t| →
+          3 * (C * Real.log |t| / a) + 4 * zeroBound β t +
+            twoBound t < 0) →
+        classical_zero_free_region := by
+  rcases exists_sigmaOf_log_hreal_const_mul_log_div C hC T0 hT0 with
+    ⟨d, hd_pos, hreal⟩
+  refine ⟨d, hd_pos, ?_⟩
+  intro a ha_pos ha_le_log2 ha_le_near zeroBound twoBound hzero htwo hmargin
+  let σOf : ℝ → ℝ := fun t => 1 + a / Real.log |t|
+  refine classical_zero_free_region_of_log_deriv_bounds
+    (T0 := T0) (c := c) (σOf := σOf)
+    (realBound := fun t => C * Real.log |t| / a)
+    (twoBound := twoBound) (zeroBound := zeroBound)
+    hT0 hc_pos ?_ ?_ ?_ ?_ ?_ ?_ ?_
+  · intro t ht
+    exact sigmaOf_log_gt_one hT0 ha_pos ht
+  · intro t ht
+    exact sigmaOf_log_le_two hT0 ha_le_log2 ht
+  · intro β t ht hβ_lt hβ
+    exact sigmaOf_log_sub_pos hT0 ha_pos ht hβ_lt
+  · intro t ht _hgt _hle
+    simpa [σOf] using hreal a ha_pos ha_le_log2 ha_le_near t ht
+  · intro β t ht _hgt _hle hβ_lt hβ hsub hζ
+    simpa [σOf] using hzero β t ht hβ_lt hβ hsub hζ
+  · intro t ht _hgt _hle
+    simpa [σOf] using htwo t ht
+  · intro β t ht hβ_lt hβ
+    exact hmargin β t ht hβ_lt hβ
+
 /-- ζ has a simple pole at `1`, expressed as meromorphic order `-1`. -/
 lemma meromorphicOrderAt_riemannZeta_one :
     meromorphicOrderAt riemannZeta (1 : ℂ) = (-1 : ℤ) := by

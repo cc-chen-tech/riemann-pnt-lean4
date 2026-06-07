@@ -2523,6 +2523,34 @@ theorem exists_sigmaOf_log_hreal_const_mul_log_div (C : ℝ) (hC : 1 < C)
           C * Real.log |t| / a :=
   ZeroFreeRegion.exists_sigmaOf_log_hreal_const_mul_log_div C hC T0 hT0
 
+/-- Public closure theorem for the standard choice
+`σ(t) = 1 + a / log |t|` in the high-height 3-4-1 argument. -/
+theorem exists_sigmaOf_log_classical_zero_free_region_of_log_deriv_bounds
+    (C : ℝ) (hC : 1 < C) (T0 : ℝ) (hT0 : 2 ≤ T0)
+    {c : ℝ} (hc_pos : 0 < c) :
+    ∃ d : ℝ, 0 < d ∧ ∀ a : ℝ, 0 < a → a ≤ Real.log 2 →
+      a ≤ d * Real.log 2 →
+      ∀ (zeroBound : ℝ → ℝ → ℝ) (twoBound : ℝ → ℝ),
+        (∀ β t : ℝ, T0 ≤ |t| → β < 1 →
+          β ≥ 1 - c / Real.log |t| →
+          0 < (1 + a / Real.log |t|) - β →
+          riemannZeta ((β : ℂ) + I * t) = 0 →
+          (-deriv riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t) /
+            riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t)).re ≤
+              zeroBound β t) →
+        (∀ t : ℝ, T0 ≤ |t| →
+          (-deriv riemannZeta
+              ((1 + a / Real.log |t| : ℝ) + 2 * I * t) /
+            riemannZeta ((1 + a / Real.log |t| : ℝ) + 2 * I * t)).re ≤
+              twoBound t) →
+        (∀ β t : ℝ, T0 ≤ |t| → β < 1 →
+          β ≥ 1 - c / Real.log |t| →
+          3 * (C * Real.log |t| / a) + 4 * zeroBound β t +
+            twoBound t < 0) →
+        ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.exists_sigmaOf_log_classical_zero_free_region_of_log_deriv_bounds
+    C hC T0 hT0 hc_pos
+
 /-- Public meromorphicity of the zeta logarithmic derivative at `1`. -/
 theorem meromorphicAt_logDeriv_riemannZeta_one :
     MeromorphicAt (logDeriv riemannZeta) (1 : ℂ) :=

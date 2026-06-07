@@ -189,6 +189,9 @@ Core verified declarations:
 - `exists_sigmaOf_log_hreal_const_mul_log_div`
   normalizes the flexible specialization into the vertical-height estimate
   `Re(-zeta'/zeta)(1 + a / log |t|) <= C * log |t| / a`.
+- `exists_sigmaOf_log_classical_zero_free_region_of_log_deriv_bounds`
+  packages the standard `sigma(t) = 1 + a / log |t|` choice into the verified
+  3-4-1 high-height contradiction and compact bounded-height patch.
 - `meromorphicAt_logDeriv_riemannZeta_one`
   proves the logarithmic derivative is meromorphic at the pole.
 - `meromorphicOn_logDeriv_riemannZeta_closedBall`
