@@ -157,6 +157,10 @@ principal-part behavior is now also proved as
 which says eventually near the pole
 `‖logDeriv riemannZeta s‖ <= 2 / ‖s - 1‖`, and into the disk-shaped
 `ZeroFreeRegion.exists_punctured_ball_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one`.
+The same local estimate is also available on a smaller closed punctured ball as
+`ZeroFreeRegion.exists_punctured_closedBall_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one`,
+which is the form needed when a later argument ranges over compact closed
+local neighborhoods.
 The next work starts from these meromorphic/nonvanishing/principal-part facts
 and proves the vertical-height logarithmic-derivative estimates needed for the
 quantitative strip.

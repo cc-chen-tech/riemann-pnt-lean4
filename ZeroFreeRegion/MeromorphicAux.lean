@@ -323,6 +323,19 @@ lemma exists_punctured_ball_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one :
   exact hr_sub ⟨by simpa [Metric.mem_ball] using hs_dist,
     Set.mem_compl_singleton_iff.mpr hs_ne⟩
 
+/-- Closed punctured-ball form of the same local pole-order norm bound.
+
+The radius is obtained by shrinking the open-ball radius.  This is convenient
+for later estimates on compact closed disks around the pole. -/
+lemma exists_punctured_closedBall_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one :
+    ∃ r > 0, ∀ s : ℂ, s ≠ 1 → dist s 1 ≤ r →
+      ‖logDeriv riemannZeta s‖ ≤ 2 / ‖s - 1‖ := by
+  rcases exists_punctured_ball_norm_logDeriv_riemannZeta_le_two_div_norm_sub_one
+    with ⟨r, hr_pos, hball⟩
+  refine ⟨r / 2, half_pos hr_pos, ?_⟩
+  intro s hs_ne hs_dist
+  exact hball s hs_ne (lt_of_le_of_lt hs_dist (half_lt_self hr_pos))
+
 /-- ζ has a simple pole at `1`, expressed as meromorphic order `-1`. -/
 lemma meromorphicOrderAt_riemannZeta_one :
     meromorphicOrderAt riemannZeta (1 : ℂ) = (-1 : ℤ) := by
