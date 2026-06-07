@@ -527,6 +527,37 @@ lemma exists_punctured_closedBall_abs_re_neg_deriv_riemannZeta_div_riemannZeta_l
     exact lt_of_le_of_lt hs_dist (half_lt_self hr_pos),
     Set.mem_compl_singleton_iff.mpr hs_ne⟩
 
+/-- Real-axis specialization of the local pole-order real-part bound for
+`-ζ'/ζ`.
+
+For every `C > 1`, the bound `|Re(-ζ'/ζ)(σ)| < C / (σ - 1)` holds for
+real `σ > 1` sufficiently close to `1`.  This is a convenient form for the
+real-axis term in the de la Vallée Poussin 3-4-1 argument. -/
+lemma exists_rightNeighborhood_abs_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_sub_one
+    (C : ℝ) (hC : 1 < C) :
+    ∃ d : ℝ, 0 < d ∧ ∀ σ : ℝ, 1 < σ → σ ≤ 1 + d →
+      |(-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re| < C / (σ - 1) := by
+  rcases exists_punctured_closedBall_abs_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one
+      C hC with ⟨r, hr_pos, hbound⟩
+  refine ⟨r, hr_pos, ?_⟩
+  intro σ hσ_gt hσ_le
+  have hσ_ne_one : σ ≠ 1 := ne_of_gt hσ_gt
+  have hs_ne : (σ : ℂ) ≠ 1 := by
+    intro hs
+    exact hσ_ne_one (by simpa using congrArg Complex.re hs)
+  have hdist : dist (σ : ℂ) (1 : ℂ) ≤ r := by
+    have hdist_eq : dist (σ : ℂ) (1 : ℂ) = |σ - 1| := by
+      simpa using Complex.isometry_ofReal.dist_eq σ 1
+    have habs_eq : |σ - 1| = σ - 1 := abs_of_nonneg (sub_nonneg.mpr hσ_gt.le)
+    rw [hdist_eq, habs_eq]
+    linarith
+  have hnorm_eq : ‖(σ : ℂ) - 1‖ = σ - 1 := by
+    have hnorm_eq_abs : ‖(σ : ℂ) - 1‖ = |σ - 1| := by
+      rw [← Complex.ofReal_one, ← Complex.ofReal_sub]
+      simpa using (RCLike.norm_ofReal (K := ℂ) (σ - 1))
+    rw [hnorm_eq_abs, abs_of_nonneg (sub_nonneg.mpr hσ_gt.le)]
+  simpa [hnorm_eq] using hbound (σ : ℂ) hs_ne hdist
+
 /-- ζ has a simple pole at `1`, expressed as meromorphic order `-1`. -/
 lemma meromorphicOrderAt_riemannZeta_one :
     meromorphicOrderAt riemannZeta (1 : ℂ) = (-1 : ℤ) := by

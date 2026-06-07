@@ -2394,6 +2394,14 @@ theorem exists_punctured_closedBall_abs_re_neg_deriv_riemannZeta_div_riemannZeta
       |(-deriv riemannZeta s / riemannZeta s).re| < C / ‖s - 1‖ :=
   ZeroFreeRegion.exists_punctured_closedBall_abs_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one C hC
 
+/-- Public real-axis specialization of the local real-part bound for
+`-ζ'/ζ` near the pole at `1`. -/
+theorem exists_rightNeighborhood_abs_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_sub_one
+    (C : ℝ) (hC : 1 < C) :
+    ∃ d : ℝ, 0 < d ∧ ∀ σ : ℝ, 1 < σ → σ ≤ 1 + d →
+      |(-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re| < C / (σ - 1) :=
+  ZeroFreeRegion.exists_rightNeighborhood_abs_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_sub_one C hC
+
 /-- Public meromorphicity of the zeta logarithmic derivative at `1`. -/
 theorem meromorphicAt_logDeriv_riemannZeta_one :
     MeromorphicAt (logDeriv riemannZeta) (1 : ℂ) :=
