@@ -146,6 +146,9 @@ Core verified declarations:
 - `exists_punctured_closedBall_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one`
   gives the one-sided closed punctured-ball real-part upper bound with any
   constant `C > 1`.
+- `exists_rightNeighborhood_norm_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_sub_one`
+  specializes the local signed-quotient norm bound to real-axis parameters
+  `1 < sigma <= 1 + d`, replacing `norm ((sigma : C) - 1)` by `sigma - 1`.
 - `exists_rightNeighborhood_abs_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_sub_one`
   specializes the local real-part bound to real-axis parameters
   `1 < sigma <= 1 + d`, replacing `norm ((sigma : C) - 1)` by `sigma - 1`.

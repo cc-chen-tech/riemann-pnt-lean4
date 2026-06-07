@@ -195,7 +195,10 @@ the corresponding real-part analogue is
 The one-sided real-part closed-ball form is
 `ZeroFreeRegion.exists_punctured_closedBall_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one`.
 For the real-axis term in the 3-4-1 contradiction, this has also been
-specialized to real parameters as
+specialized at the norm level as
+`ZeroFreeRegion.exists_rightNeighborhood_norm_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_sub_one`,
+which yields `norm (-zeta'/zeta)(sigma) < C / (sigma - 1)` for `1 < sigma`
+sufficiently close to `1`, and at the real-part level as
 `ZeroFreeRegion.exists_rightNeighborhood_abs_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_sub_one`,
 which yields `|Re(-zeta'/zeta)(sigma)| < C / (sigma - 1)` for
 `1 < sigma` sufficiently close to `1`.
