@@ -142,6 +142,11 @@ Core verified declarations:
 - `eventually_norm_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_norm_sub_one`
   rewrites the flexible eventual pole-order bound for the signed quotient
   for every `C > 1`.
+- `log_norm_neg_logDeriv_riemannZeta_eq`
+  proves pointwise that the logarithmic norm is unchanged by replacing
+  `logDeriv riemannZeta` with `-logDeriv riemannZeta`.
+- `circleAverage_log_norm_neg_logDeriv_riemannZeta_eq`
+  lifts the same `norm_neg` conversion to the Jensen left-side circle average.
 - `eventually_abs_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one`
   bounds the real part of the signed quotient by
   `2 / norm (s - 1)` eventually near `1`.

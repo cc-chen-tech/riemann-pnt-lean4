@@ -3907,6 +3907,21 @@ theorem jensen_circleAverage_log_norm_logDeriv_riemannZeta_closedBall
         + Real.log ‖meromorphicTrailingCoeffAt (logDeriv riemannZeta) c‖ :=
   ZeroFreeRegion.jensen_circleAverage_log_norm_logDeriv_riemannZeta_closedBall hR
 
+/-- Public pointwise equality between the logarithmic norms of signed and
+unsigned logarithmic derivatives of ζ. -/
+theorem log_norm_neg_logDeriv_riemannZeta_eq (z : ℂ) :
+    Real.log ‖-logDeriv riemannZeta z‖ =
+      Real.log ‖logDeriv riemannZeta z‖ :=
+  ZeroFreeRegion.log_norm_neg_logDeriv_riemannZeta_eq z
+
+/-- Public circle-average equality between the Jensen left sides for signed
+and unsigned logarithmic derivatives of ζ. -/
+theorem circleAverage_log_norm_neg_logDeriv_riemannZeta_eq
+    (c : ℂ) (R : ℝ) :
+    circleAverage (fun z : ℂ => Real.log ‖-logDeriv riemannZeta z‖) c R =
+      circleAverage (Real.log ‖logDeriv riemannZeta ·‖) c R :=
+  ZeroFreeRegion.circleAverage_log_norm_neg_logDeriv_riemannZeta_eq c R
+
 /-- Public Jensen formula specialized to the signed logarithmic derivative of
 ζ on a closed ball. -/
 theorem jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_closedBall

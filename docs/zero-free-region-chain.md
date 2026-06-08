@@ -220,6 +220,12 @@ proved:
   `ZeroFreeRegion.jensen_circleAverage_log_norm_logDeriv_riemannZeta_verticalRegion`
   and
   `ZeroFreeRegion.jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_verticalRegion`.
+  The pointwise conversion
+  `ZeroFreeRegion.log_norm_neg_logDeriv_riemannZeta_eq` and circle-average
+  conversion
+  `ZeroFreeRegion.circleAverage_log_norm_neg_logDeriv_riemannZeta_eq` make the
+  Jensen left side identical in the `logDeriv ζ` and `-logDeriv ζ`
+  conventions.
 
 ## Mathlib API Check
 
@@ -261,6 +267,7 @@ Useful checked names:
 #check MeromorphicOn.circleAverage_log_norm
 #check ZeroFreeRegion.jensen_circleAverage_log_norm_riemannZeta_closedBall
 #check ZeroFreeRegion.jensen_circleAverage_log_norm_logDeriv_riemannZeta_closedBall
+#check ZeroFreeRegion.circleAverage_log_norm_neg_logDeriv_riemannZeta_eq
 #check ZeroFreeRegion.jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_closedBall
 #check Complex.HadamardThreeLines.norm_le_interp_of_mem_verticalClosedStrip'
 #check PowerSeries.exists_isWeierstrassFactorization

@@ -3780,6 +3780,21 @@ lemma jensen_circleAverage_log_norm_logDeriv_riemannZeta_closedBall
   jensen_circleAverage_log_norm hR
     (meromorphicOn_logDeriv_riemannZeta_closedBall c |R|)
 
+/-- The signed and unsigned logarithmic derivatives have the same logarithmic
+norm pointwise. -/
+lemma log_norm_neg_logDeriv_riemannZeta_eq (z : ℂ) :
+    Real.log ‖-logDeriv riemannZeta z‖ =
+      Real.log ‖logDeriv riemannZeta z‖ := by
+  simp
+
+/-- The circle-average side of Jensen's formula is unchanged when replacing
+`logDeriv ζ` by `-logDeriv ζ`. -/
+lemma circleAverage_log_norm_neg_logDeriv_riemannZeta_eq (c : ℂ) (R : ℝ) :
+    circleAverage (fun z : ℂ => Real.log ‖-logDeriv riemannZeta z‖) c R =
+      circleAverage (Real.log ‖logDeriv riemannZeta ·‖) c R :=
+  circleAverage_congr_sphere fun z _hz =>
+    log_norm_neg_logDeriv_riemannZeta_eq z
+
 /-- Jensen formula specialized to the signed logarithmic derivative of ζ on a
 closed ball. -/
 lemma jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_closedBall

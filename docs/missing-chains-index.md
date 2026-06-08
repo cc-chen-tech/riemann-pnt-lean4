@@ -107,6 +107,8 @@ The following proved declarations are the main entry points for future work:
 - `ZeroFreeRegion.borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius`
 - `ZeroFreeRegion.borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius`
 - `ZeroFreeRegion.meromorphicOn_neg_logDeriv_riemannZeta_verticalRegion`
+- `ZeroFreeRegion.log_norm_neg_logDeriv_riemannZeta_eq`
+- `ZeroFreeRegion.circleAverage_log_norm_neg_logDeriv_riemannZeta_eq`
 - `ZeroFreeRegion.jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_verticalRegion`
 - `ZeroFreeRegion.residue_bounds`
 - `ZeroFreeRegion.classical_zero_free_region_compact`
