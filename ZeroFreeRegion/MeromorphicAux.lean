@@ -3351,10 +3351,21 @@ lemma meromorphicAt_logDeriv_riemannZeta_one :
     MeromorphicAt (logDeriv riemannZeta) (1 : ℂ) :=
   meromorphicAt_riemannZeta_one.deriv.div meromorphicAt_riemannZeta_one
 
+/-- The signed logarithmic derivative of ζ is meromorphic at the pole `1`. -/
+lemma meromorphicAt_neg_logDeriv_riemannZeta_one :
+    MeromorphicAt (fun z : ℂ => -logDeriv riemannZeta z) (1 : ℂ) :=
+  meromorphicAt_logDeriv_riemannZeta_one.neg
+
 /-- The logarithmic derivative of ζ is meromorphic on every closed ball. -/
 lemma meromorphicOn_logDeriv_riemannZeta_closedBall (c : ℂ) (R : ℝ) :
     MeromorphicOn (logDeriv riemannZeta) (closedBall c R) :=
   (meromorphicOn_riemannZeta_closedBall c R).logDeriv
+
+/-- The signed logarithmic derivative of ζ is meromorphic on every closed
+ball. -/
+lemma meromorphicOn_neg_logDeriv_riemannZeta_closedBall (c : ℂ) (R : ℝ) :
+    MeromorphicOn (fun z : ℂ => -logDeriv riemannZeta z) (closedBall c R) :=
+  (meromorphicOn_logDeriv_riemannZeta_closedBall c R).neg
 
 /-- ζ is meromorphic on every project vertical region. -/
 lemma meromorphicOn_riemannZeta_verticalRegion (a b H : ℝ) :
@@ -3370,6 +3381,13 @@ region. -/
 lemma meromorphicOn_logDeriv_riemannZeta_verticalRegion (a b H : ℝ) :
     MeromorphicOn (logDeriv riemannZeta) (verticalRegion a b H) :=
   (meromorphicOn_riemannZeta_verticalRegion a b H).logDeriv
+
+/-- The signed logarithmic derivative of ζ is meromorphic on every project
+vertical region. -/
+lemma meromorphicOn_neg_logDeriv_riemannZeta_verticalRegion (a b H : ℝ) :
+    MeromorphicOn (fun z : ℂ => -logDeriv riemannZeta z)
+      (verticalRegion a b H) :=
+  (meromorphicOn_logDeriv_riemannZeta_verticalRegion a b H).neg
 
 /-- On a positive-height right half-strip, `logDeriv ζ` is differentiable.
 
@@ -3762,6 +3780,21 @@ lemma jensen_circleAverage_log_norm_logDeriv_riemannZeta_closedBall
   jensen_circleAverage_log_norm hR
     (meromorphicOn_logDeriv_riemannZeta_closedBall c |R|)
 
+/-- Jensen formula specialized to the signed logarithmic derivative of ζ on a
+closed ball. -/
+lemma jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_closedBall
+    {c : ℂ} {R : ℝ} (hR : R ≠ 0) :
+    circleAverage (fun z : ℂ => Real.log ‖-logDeriv riemannZeta z‖) c R
+      = ∑ᶠ u,
+          divisor (fun z : ℂ => -logDeriv riemannZeta z) (closedBall c |R|) u *
+            Real.log (R * ‖c - u‖⁻¹)
+        + divisor (fun z : ℂ => -logDeriv riemannZeta z) (closedBall c |R|) c *
+            Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt
+            (fun z : ℂ => -logDeriv riemannZeta z) c‖ :=
+  jensen_circleAverage_log_norm hR
+    (meromorphicOn_neg_logDeriv_riemannZeta_closedBall c |R|)
+
 /-- Jensen formula specialized to ζ on a `σ + I*t` disk using the ambient
 vertical-region wrapper. -/
 lemma jensen_circleAverage_log_norm_riemannZeta_verticalRegion
@@ -3798,5 +3831,26 @@ lemma jensen_circleAverage_log_norm_logDeriv_riemannZeta_verticalRegion
             ((σ : ℂ) + I * t)‖ :=
   jensen_circleAverage_log_norm_verticalRegion hR
     (meromorphicOn_logDeriv_riemannZeta_verticalRegion a b H) ha hb hH
+
+/-- Jensen formula specialized to the signed logarithmic derivative of ζ on a
+`σ + I*t` disk using the ambient vertical-region wrapper. -/
+lemma jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_verticalRegion
+    {R σ t a b H : ℝ}
+    (hR : R ≠ 0) (ha : a + |R| ≤ σ)
+    (hb : σ + |R| ≤ b) (hH : H + |R| ≤ |t|) :
+    circleAverage (fun z : ℂ => Real.log ‖-logDeriv riemannZeta z‖)
+        ((σ : ℂ) + I * t) R
+      = ∑ᶠ u,
+          divisor (fun z : ℂ => -logDeriv riemannZeta z)
+            (closedBall ((σ : ℂ) + I * t) |R|) u *
+            Real.log (R * ‖((σ : ℂ) + I * t) - u‖⁻¹)
+        + divisor (fun z : ℂ => -logDeriv riemannZeta z)
+            (closedBall ((σ : ℂ) + I * t) |R|)
+            ((σ : ℂ) + I * t) * Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt
+            (fun z : ℂ => -logDeriv riemannZeta z)
+            ((σ : ℂ) + I * t)‖ :=
+  jensen_circleAverage_log_norm_verticalRegion hR
+    (meromorphicOn_neg_logDeriv_riemannZeta_verticalRegion a b H) ha hb hH
 
 end ZeroFreeRegion

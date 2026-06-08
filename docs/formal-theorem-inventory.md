@@ -443,8 +443,13 @@ Core verified declarations:
   existentially.
 - `meromorphicAt_logDeriv_riemannZeta_one`
   proves the logarithmic derivative is meromorphic at the pole.
+- `meromorphicAt_neg_logDeriv_riemannZeta_one`
+  proves the signed logarithmic derivative is meromorphic at the pole.
 - `meromorphicOn_logDeriv_riemannZeta_closedBall`
   proves the logarithmic derivative is meromorphic on every closed ball.
+- `meromorphicOn_neg_logDeriv_riemannZeta_closedBall`
+  proves the signed logarithmic derivative is meromorphic on every closed
+  ball.
 - `borelCaratheodory_zero_centered`
   translates Mathlib's vanishing-at-zero Borel-Caratheodory theorem to disks
   centered at arbitrary `c`.
@@ -458,6 +463,9 @@ Core verified declarations:
   specializes Mathlib's Jensen formula to `riemannZeta` on closed balls.
 - `jensen_circleAverage_log_norm_logDeriv_riemannZeta_closedBall`
   specializes Mathlib's Jensen formula to `logDeriv riemannZeta` on closed
+  balls.
+- `jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_closedBall`
+  specializes Mathlib's Jensen formula to `-logDeriv riemannZeta` on closed
   balls.
 - `closedBall_re_bounds` and `ball_re_bounds`
   bound real coordinates of points in complex disks by center plus/minus
@@ -574,10 +582,12 @@ Core verified declarations:
   support ζ differentiability.
 - `meromorphicOn_riemannZeta_verticalRegion`,
   `meromorphicOn_logDeriv_riemannZeta_verticalRegion`,
+  `meromorphicOn_neg_logDeriv_riemannZeta_verticalRegion`,
   `jensen_circleAverage_log_norm_riemannZeta_verticalRegion`, and
-  `jensen_circleAverage_log_norm_logDeriv_riemannZeta_verticalRegion`
+  `jensen_circleAverage_log_norm_logDeriv_riemannZeta_verticalRegion`,
+  `jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_verticalRegion`
   specialize the ambient vertical-region meromorphic/Jensen interfaces to ζ
-  and its logarithmic derivative.
+  and both logarithmic-derivative sign conventions.
 
 ### `PrimeNumberTheorem.lean`
 

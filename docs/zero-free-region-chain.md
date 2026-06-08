@@ -210,12 +210,16 @@ proved:
 - The zeta-specific regularity layer now includes
   `ZeroFreeRegion.differentiableOn_riemannZeta_verticalRegion_of_pos_height`,
   `ZeroFreeRegion.meromorphicOn_riemannZeta_verticalRegion`,
-  `ZeroFreeRegion.meromorphicOn_logDeriv_riemannZeta_verticalRegion`, and the
+  `ZeroFreeRegion.meromorphicOn_logDeriv_riemannZeta_verticalRegion`,
+  `ZeroFreeRegion.meromorphicOn_neg_logDeriv_riemannZeta_verticalRegion`, and the
   right-half-strip differentiability theorem for `logDeriv ζ`, plus
-  Jensen specializations for ζ and `logDeriv ζ` on `sigma + I*t` disks:
+  Jensen specializations for ζ, `logDeriv ζ`, and `-logDeriv ζ` on
+  `sigma + I*t` disks:
   `ZeroFreeRegion.jensen_circleAverage_log_norm_riemannZeta_verticalRegion`
   and
-  `ZeroFreeRegion.jensen_circleAverage_log_norm_logDeriv_riemannZeta_verticalRegion`.
+  `ZeroFreeRegion.jensen_circleAverage_log_norm_logDeriv_riemannZeta_verticalRegion`
+  and
+  `ZeroFreeRegion.jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_verticalRegion`.
 
 ## Mathlib API Check
 
@@ -257,6 +261,7 @@ Useful checked names:
 #check MeromorphicOn.circleAverage_log_norm
 #check ZeroFreeRegion.jensen_circleAverage_log_norm_riemannZeta_closedBall
 #check ZeroFreeRegion.jensen_circleAverage_log_norm_logDeriv_riemannZeta_closedBall
+#check ZeroFreeRegion.jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_closedBall
 #check Complex.HadamardThreeLines.norm_le_interp_of_mem_verticalClosedStrip'
 #check PowerSeries.exists_isWeierstrassFactorization
 #check riemannZeta_residue_one
