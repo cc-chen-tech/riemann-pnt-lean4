@@ -592,6 +592,11 @@ and
 `ZeroFreeRegion.classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_affine_log_norm_add_three_bounds_high_height`
 provide the same full-height handoff in the `-logDeriv zeta` convention used
 by the 3-4-1 inequality and the signed Borel wrappers.
+The multiplicative signed variants
+`ZeroFreeRegion.classical_zero_free_region_of_neg_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height`
+and
+`ZeroFreeRegion.classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height`
+are the same handoff with additive constants set to zero.
 This is still conditional; it does not prove the quantitative zero-free region
 until those two zeta-specific estimates are proved.
 The next work starts from these meromorphic/nonvanishing/principal-part facts

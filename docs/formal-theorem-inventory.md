@@ -382,6 +382,11 @@ Core verified declarations:
   `-logDeriv zeta` convention.
 - `classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_affine_log_norm_add_three_bounds_high_height`
   packages that signed affine full-height interface existentially.
+- `classical_zero_free_region_of_neg_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height`
+  accepts signed multiplicative full-height estimates with separate regular
+  part and vertical-strip constants.
+- `classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height`
+  packages that signed multiplicative full-height interface existentially.
 - `meromorphicAt_logDeriv_riemannZeta_one`
   proves the logarithmic derivative is meromorphic at the pole.
 - `meromorphicOn_logDeriv_riemannZeta_closedBall`
