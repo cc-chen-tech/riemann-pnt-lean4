@@ -477,6 +477,11 @@ Core verified declarations:
   `borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius`
   are the positive `logDeriv ζ` half-radius versions, matching the local
   regular-part sign convention.
+- `borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius`
+  and
+  `borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius`
+  normalize those positive half-radius Borel outputs to affine
+  `A + B log(||sigma+it|| + 3)` bounds.
 - `differentiableOn_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re`,
   `borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le`,
   and

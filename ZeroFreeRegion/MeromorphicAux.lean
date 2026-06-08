@@ -2814,6 +2814,95 @@ lemma borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_
   intro w hw
   exact hlog w hw
 
+/-- Half-radius Borel-Carathéodory bound for `logDeriv ζ` with an affine
+full-height logarithmic real-part input.
+
+The raw Borel output is `2*M + 3*‖logDeriv ζ center‖`.  This wrapper accepts
+`M = A + B log(‖center‖+3)` and an affine center bound, then normalizes the
+result to the same affine full-height scale. -/
+lemma borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius
+    {Are Bre Acenter Bcenter R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < Are + Bre * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (ha₀ : 1 ≤ a) (hHpos : 0 < H)
+    (hlog : ∀ w : ℂ, w ∈ verticalRegion a b H →
+      (logDeriv riemannZeta w).re ≤
+        Are + Bre * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (hcenter :
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+        Acenter + Bcenter * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + I * t)‖ ≤ R / 2) :
+    ‖logDeriv riemannZeta z‖ ≤
+      (2 * Are + 3 * Acenter) +
+        (2 * Bre + 3 * Bcenter) *
+          Real.log (‖((σ : ℂ) + I * t)‖ + 3) := by
+  let ell : ℝ := Real.log (‖((σ : ℂ) + I * t)‖ + 3)
+  let mBound : ℝ := Are + Bre * ell
+  have hborel :
+      ‖logDeriv riemannZeta z‖ ≤
+        2 * mBound + 3 * ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ := by
+    refine
+      borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius
+        (M := mBound) (R := R) (σ := σ) (t := t) (a := a) (b := b)
+        (H := H) (z := z) ?_ ha₀ hHpos ?_ ha hb hH hR hz_half
+    · simpa [mBound, ell] using hM
+    · intro w hw
+      simpa [mBound, ell] using hlog w hw
+  have hcenter_mul :
+      3 * ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+        3 * (Acenter + Bcenter * ell) := by
+    exact mul_le_mul_of_nonneg_left (by simpa [ell] using hcenter)
+      (by norm_num : (0 : ℝ) ≤ 3)
+  calc
+    ‖logDeriv riemannZeta z‖
+        ≤ 2 * mBound + 3 * ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ :=
+          hborel
+    _ ≤ 2 * mBound + 3 * (Acenter + Bcenter * ell) := by
+      nlinarith
+    _ = (2 * Are + 3 * Acenter) +
+          (2 * Bre + 3 * Bcenter) *
+            Real.log (‖((σ : ℂ) + I * t)‖ + 3) := by
+      simp [mBound, ell]
+      ring
+
+/-- Half-radius oscillation Borel-Carathéodory bound for `logDeriv ζ` with an
+affine full-height logarithmic real-part input. -/
+lemma borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius
+    {Are Bre R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < Are + Bre * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (ha₀ : 1 ≤ a) (hHpos : 0 < H)
+    (hlog : ∀ w : ℂ, w ∈ verticalRegion a b H →
+      (logDeriv riemannZeta w -
+        logDeriv riemannZeta ((σ : ℂ) + I * t)).re ≤
+          Are + Bre * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + I * t)‖ ≤ R / 2) :
+    ‖logDeriv riemannZeta z -
+        logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+      2 * Are + 2 * Bre * Real.log (‖((σ : ℂ) + I * t)‖ + 3) := by
+  let ell : ℝ := Real.log (‖((σ : ℂ) + I * t)‖ + 3)
+  let mBound : ℝ := Are + Bre * ell
+  have hborel :
+      ‖logDeriv riemannZeta z -
+          logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤ 2 * mBound := by
+    refine
+      borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius
+        (M := mBound) (R := R) (σ := σ) (t := t) (a := a) (b := b)
+        (H := H) (z := z) ?_ ha₀ hHpos ?_ ha hb hH hR hz_half
+    · simpa [mBound, ell] using hM
+    · intro w hw
+      simpa [mBound, ell] using hlog w hw
+  calc
+    ‖logDeriv riemannZeta z -
+        logDeriv riemannZeta ((σ : ℂ) + I * t)‖
+        ≤ 2 * mBound := hborel
+    _ = 2 * Are + 2 * Bre *
+          Real.log (‖((σ : ℂ) + I * t)‖ + 3) := by
+      simp [mBound, ell]
+      ring
+
 /-- On a positive-height right half-strip, the signed logarithmic derivative
 `-logDeriv ζ` is differentiable. -/
 lemma differentiableOn_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re
