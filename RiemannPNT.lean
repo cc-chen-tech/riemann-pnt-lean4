@@ -2833,6 +2833,48 @@ theorem meromorphicOn_neg_logDeriv_riemannZeta_closedBall (c : ℂ) (R : ℝ) :
       (Metric.closedBall c R) :=
   ZeroFreeRegion.meromorphicOn_neg_logDeriv_riemannZeta_closedBall c R
 
+/-- Public generic bridge: analytic nonvanishing implies analytic logarithmic
+derivative. -/
+theorem analyticAt_logDeriv_of_analyticAt_ne_zero
+    {f : ℂ → ℂ} {z : ℂ}
+    (han : AnalyticAt ℂ f z) (hne : f z ≠ 0) :
+    AnalyticAt ℂ (logDeriv f) z :=
+  ZeroFreeRegion.analyticAt_logDeriv_of_analyticAt_ne_zero han hne
+
+/-- Public zeta-specific bridge from analyticity and nonvanishing of ζ to
+analyticity of `logDeriv ζ`. -/
+theorem analyticAt_logDeriv_riemannZeta_of_analyticAt_ne_zero
+    {z : ℂ}
+    (han : AnalyticAt ℂ riemannZeta z) (hne : riemannZeta z ≠ 0) :
+    AnalyticAt ℂ (logDeriv riemannZeta) z :=
+  ZeroFreeRegion.analyticAt_logDeriv_riemannZeta_of_analyticAt_ne_zero han hne
+
+/-- Public zeta-specific bridge away from the pole: if ζ is nonzero at `z`,
+then `logDeriv ζ` is analytic at `z`. -/
+theorem analyticAt_logDeriv_riemannZeta_of_ne_one_of_ne_zero
+    (z : ℂ) (hz1 : z ≠ 1) (hne : riemannZeta z ≠ 0) :
+    AnalyticAt ℂ (logDeriv riemannZeta) z :=
+  ZeroFreeRegion.analyticAt_logDeriv_riemannZeta_of_ne_one_of_ne_zero
+    z hz1 hne
+
+/-- Public right-half-plane bridge: away from the pole, `logDeriv ζ` is
+analytic on `Re z >= 1`. -/
+theorem analyticAt_logDeriv_riemannZeta_of_one_le_re_of_ne_one
+    {z : ℂ} (hre : 1 ≤ z.re) (hz1 : z ≠ 1) :
+    AnalyticAt ℂ (logDeriv riemannZeta) z :=
+  ZeroFreeRegion.analyticAt_logDeriv_riemannZeta_of_one_le_re_of_ne_one
+    hre hz1
+
+/-- Public pointwise closed-ball wrapper for analyticity of `logDeriv ζ` from
+local analyticity and nonvanishing of ζ. -/
+theorem analyticAt_logDeriv_riemannZeta_closedBall_of_ne_one_of_ne_zero
+    (c : ℂ) (R : ℝ)
+    (h1 : ∀ u ∈ Metric.closedBall c R, u ≠ 1)
+    (hne : ∀ u ∈ Metric.closedBall c R, riemannZeta u ≠ 0) :
+    ∀ u ∈ Metric.closedBall c R, AnalyticAt ℂ (logDeriv riemannZeta) u :=
+  ZeroFreeRegion.analyticAt_logDeriv_riemannZeta_closedBall_of_ne_one_of_ne_zero
+    c R h1 hne
+
 /-- Public meromorphicity of ζ on a project vertical region. -/
 theorem meromorphicOn_riemannZeta_verticalRegion (a b H : ℝ) :
     MeromorphicOn riemannZeta (ZeroFreeRegion.verticalRegion a b H) :=

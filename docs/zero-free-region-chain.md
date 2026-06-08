@@ -293,7 +293,13 @@ proved:
   and
   `ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_eq_zero_of_analyticAt_ne_zero`
   expose the same vanishing conclusion from the more natural local hypotheses
-  produced by holomorphy and nonvanishing arguments.
+  produced by holomorphy and nonvanishing arguments.  The new analytic
+  regularity bridge
+  `ZeroFreeRegion.analyticAt_logDeriv_riemannZeta_of_one_le_re_of_ne_one`
+  packages the right-half-plane zeta nonvanishing theorem into pointwise
+  analyticity of `logDeriv ζ` away from the pole, while
+  `ZeroFreeRegion.analyticAt_logDeriv_riemannZeta_closedBall_of_ne_one_of_ne_zero`
+  gives the closed-ball version needed by the local Jensen/log-counting layer.
 
 ## Mathlib API Check
 
@@ -365,6 +371,11 @@ Useful checked names:
 #check ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_eq_zero_of_order_eq_zero
 #check ZeroFreeRegion.valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_zero_of_order_eq_zero
 #check ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_order_eq_zero
+#check ZeroFreeRegion.analyticAt_logDeriv_of_analyticAt_ne_zero
+#check ZeroFreeRegion.analyticAt_logDeriv_riemannZeta_of_analyticAt_ne_zero
+#check ZeroFreeRegion.analyticAt_logDeriv_riemannZeta_of_ne_one_of_ne_zero
+#check ZeroFreeRegion.analyticAt_logDeriv_riemannZeta_of_one_le_re_of_ne_one
+#check ZeroFreeRegion.analyticAt_logDeriv_riemannZeta_closedBall_of_ne_one_of_ne_zero
 #check ZeroFreeRegion.valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_zero_of_analyticAt_ne_zero
 #check ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_eq_zero_of_analyticAt_ne_zero
 #check ZeroFreeRegion.valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_zero_of_analyticAt_ne_zero

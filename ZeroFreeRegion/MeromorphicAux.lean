@@ -3367,6 +3367,48 @@ lemma meromorphicOn_neg_logDeriv_riemannZeta_closedBall (c : ℂ) (R : ℝ) :
     MeromorphicOn (fun z : ℂ => -logDeriv riemannZeta z) (closedBall c R) :=
   (meromorphicOn_logDeriv_riemannZeta_closedBall c R).neg
 
+/-- If `f` is analytic and nonzero at `z`, then its logarithmic derivative is
+analytic at `z`. -/
+lemma analyticAt_logDeriv_of_analyticAt_ne_zero {f : ℂ → ℂ} {z : ℂ}
+    (han : AnalyticAt ℂ f z) (hne : f z ≠ 0) :
+    AnalyticAt ℂ (logDeriv f) z :=
+  han.deriv.div han hne
+
+/-- Zeta-specific wrapper for analyticity of the logarithmic derivative from
+analyticity and nonvanishing of ζ. -/
+lemma analyticAt_logDeriv_riemannZeta_of_analyticAt_ne_zero {z : ℂ}
+    (han : AnalyticAt ℂ riemannZeta z) (hne : riemannZeta z ≠ 0) :
+    AnalyticAt ℂ (logDeriv riemannZeta) z :=
+  analyticAt_logDeriv_of_analyticAt_ne_zero han hne
+
+/-- Away from the pole, if ζ is nonzero at `z`, then `logDeriv ζ` is analytic
+at `z`. -/
+lemma analyticAt_logDeriv_riemannZeta_of_ne_one_of_ne_zero
+    (z : ℂ) (hz1 : z ≠ 1) (hne : riemannZeta z ≠ 0) :
+    AnalyticAt ℂ (logDeriv riemannZeta) z :=
+  analyticAt_logDeriv_riemannZeta_of_analyticAt_ne_zero
+    (analyticOnNhd_riemannZeta_ne_one z hz1) hne
+
+/-- On the closed right half-plane, away from the pole, `logDeriv ζ` is
+analytic; zeta nonvanishing is supplied by Mathlib's boundary nonvanishing
+theorem. -/
+lemma analyticAt_logDeriv_riemannZeta_of_one_le_re_of_ne_one
+    {z : ℂ} (hre : 1 ≤ z.re) (hz1 : z ≠ 1) :
+    AnalyticAt ℂ (logDeriv riemannZeta) z :=
+  analyticAt_logDeriv_riemannZeta_of_ne_one_of_ne_zero z hz1
+    (riemannZeta_ne_zero_of_one_le_re hre)
+
+/-- Pointwise closed-ball wrapper: if ζ is analytic and nonzero at every point
+of the ball, then `logDeriv ζ` is analytic at every point of the ball. -/
+lemma analyticAt_logDeriv_riemannZeta_closedBall_of_ne_one_of_ne_zero
+    (c : ℂ) (R : ℝ)
+    (h1 : ∀ u ∈ closedBall c R, u ≠ 1)
+    (hne : ∀ u ∈ closedBall c R, riemannZeta u ≠ 0) :
+    ∀ u ∈ closedBall c R, AnalyticAt ℂ (logDeriv riemannZeta) u := by
+  intro u hu
+  exact analyticAt_logDeriv_riemannZeta_of_ne_one_of_ne_zero u
+    (h1 u hu) (hne u hu)
+
 /-- ζ is meromorphic on every project vertical region. -/
 lemma meromorphicOn_riemannZeta_verticalRegion (a b H : ℝ) :
     MeromorphicOn riemannZeta (verticalRegion a b H) := by

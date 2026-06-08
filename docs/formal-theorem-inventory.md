@@ -241,6 +241,18 @@ Core verified declarations:
   specializes the order-zero log-counting bridge to `σ + I*t` disks.
 - `valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_order_eq_zero`
   provides the signed `σ + I*t` version in unsigned order bookkeeping.
+- `analyticAt_logDeriv_of_analyticAt_ne_zero`
+  proves the generic local fact that an analytic nonzero function has analytic
+  logarithmic derivative.
+- `analyticAt_logDeriv_riemannZeta_of_analyticAt_ne_zero`
+  specializes the generic bridge to ζ.
+- `analyticAt_logDeriv_riemannZeta_of_ne_one_of_ne_zero`
+  derives analyticity of `logDeriv ζ` away from the pole when ζ is nonzero.
+- `analyticAt_logDeriv_riemannZeta_of_one_le_re_of_ne_one`
+  uses Mathlib zeta nonvanishing on `Re(s) >= 1` to discharge the nonzero
+  hypothesis away from the pole.
+- `analyticAt_logDeriv_riemannZeta_closedBall_of_ne_one_of_ne_zero`
+  packages the same pointwise analytic bridge for closed balls.
 - `valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_zero_of_analyticAt_ne_zero`
   turns analytic-and-nonzero local hypotheses on `logDeriv ζ` directly into
   vanishing of the translated log-counting difference.
