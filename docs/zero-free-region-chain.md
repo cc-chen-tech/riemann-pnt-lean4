@@ -545,6 +545,12 @@ accept the equally common shape `C * log(|t| + 3)`.  The comparison lemma
 `ZeroFreeRegion.log_abs_add_three_le_two_log_abs` proves
 `log(|t| + 3) <= 2 log |t|` above height `3`, so these estimates feed the same
 coordinate affine-log closure.
+The variants
+`ZeroFreeRegion.classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_abs_add_three_bounds_high_height`
+and
+`ZeroFreeRegion.classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_log_abs_add_three_bounds_high_height`
+drop the unnecessary shared-constant assumption by allowing different
+regular-part and vertical-strip constants.
 This is still conditional; it does not prove the quantitative zero-free region
 until those two zeta-specific estimates are proved.
 The next work starts from these meromorphic/nonvanishing/principal-part facts

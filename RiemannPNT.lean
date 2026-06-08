@@ -4391,6 +4391,26 @@ theorem classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_abs_a
   ZeroFreeRegion.classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_abs_add_three_bound_high_height
     T0 C hT0 hC hregular hvertical
 
+/-- Public coordinate high-height closure from separate
+`Cregular * log(|t| + 3)` and `Cvertical * log(|t| + 3)` bounds. -/
+theorem classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_abs_add_three_bounds_high_height
+    (T0 Cregular Cvertical : ℝ) (hT0 : 3 ≤ T0)
+    (hCregular : 0 ≤ Cregular) (hCvertical : 0 ≤ Cvertical)
+    (hregular :
+      ∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < σ - β →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) -
+            (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+          Cregular * Real.log (|t| + 3))
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          Cvertical * Real.log (|t| + 3)) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_abs_add_three_bounds_high_height
+    T0 Cregular Cvertical hT0 hCregular hCvertical hregular hvertical
+
 /-- Public existential coordinate high-height closure from a single
 `C * log(|t| + 3)` bound for positive `logDeriv ζ` estimates. -/
 theorem classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_log_abs_add_three_bound_high_height
@@ -4407,6 +4427,25 @@ theorem classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_lo
             C * Real.log (|t| + 3))) :
     ZeroFreeRegion.classical_zero_free_region :=
   ZeroFreeRegion.classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_log_abs_add_three_bound_high_height h
+
+/-- Public existential coordinate high-height closure from separate
+`Cregular * log(|t| + 3)` and `Cvertical * log(|t| + 3)` bounds. -/
+theorem classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_log_abs_add_three_bounds_high_height
+    (h :
+      ∃ T0 Cregular Cvertical : ℝ, 3 ≤ T0 ∧
+        0 ≤ Cregular ∧ 0 ≤ Cvertical ∧
+        (∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+          0 < σ - β →
+          ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) -
+              (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+            Cregular * Real.log (|t| + 3)) ∧
+        (∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+            Cvertical * Real.log (|t| + 3))) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_log_abs_add_three_bounds_high_height
+    h
 
 /-- Public comparison between a compact-patch width and a logarithmic width. -/
 theorem compact_log_width_le_of_two_le {c d t : ℝ}
