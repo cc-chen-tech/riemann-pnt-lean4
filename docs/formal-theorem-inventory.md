@@ -63,6 +63,10 @@ Supporting declarations include:
 - `exists_sigmaOf_log_margin_constants`
   chooses positive constants `a,c` satisfying the standard smallness
   constraints and `3*C/a + K < 4/(a+c)` when `1 < C < 4/3`.
+- `exists_sigmaOf_log_margin_constants_for_shift_bounds`
+  specializes the constant choice to nonnegative shifted-estimate coefficients
+  `Czero,Ctwo`, producing the exact margin
+  `3*C/a + 4*Czero + Ctwo < 4/(a+c)`.
 
 Private technical lemma:
 

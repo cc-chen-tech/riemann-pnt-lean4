@@ -4765,6 +4765,16 @@ theorem exists_sigmaOf_log_margin_constants
       3 * C / a + K < 4 / (a + c) :=
   ZeroFreeRegion.exists_sigmaOf_log_margin_constants hC_pos hC_lt hK hd
 
+/-- Public specialized constant choice for the usual shifted-estimate shape. -/
+theorem exists_sigmaOf_log_margin_constants_for_shift_bounds
+    {C Czero Ctwo d : ℝ} (hC_pos : 1 < C) (hC_lt : C < 4 / 3)
+    (hCzero : 0 ≤ Czero) (hCtwo : 0 ≤ Ctwo) (hd : 0 < d) :
+    ∃ a c : ℝ, 0 < a ∧ 0 < c ∧
+      a ≤ Real.log 2 ∧ a ≤ d * Real.log 2 ∧
+      3 * C / a + 4 * Czero + Ctwo < 4 / (a + c) :=
+  ZeroFreeRegion.exists_sigmaOf_log_margin_constants_for_shift_bounds
+    hC_pos hC_lt hCzero hCtwo hd
+
 /-- Public positivity of the Vinogradov-Korobov width above height `3`. -/
 theorem vinogradov_korobov_width_pos_of_three_le {c t : ℝ}
     (hc : 0 < c) (ht : 3 ≤ |t|) :

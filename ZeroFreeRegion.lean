@@ -1025,6 +1025,25 @@ lemma exists_sigmaOf_log_margin_constants
     exact lt_of_mul_lt_mul_left hmul ha_pos.le
   exact ⟨a, c, ha_pos, hc_pos, ha_le_log2, ha_le_dlog, htarget⟩
 
+/-- Specialized constant choice for the usual shifted-estimate shape.
+
+If the real-axis coefficient satisfies `1 < C < 4/3` and the two remaining
+shifted-estimate coefficients are nonnegative, then one can choose positive
+`a,c`, with `a` small enough for the local pole-neighborhood constraints, so
+that the exact margin used by `three_four_one_sigmaOf_log_margin` holds. -/
+lemma exists_sigmaOf_log_margin_constants_for_shift_bounds
+    {C Czero Ctwo d : ℝ} (hC_pos : 1 < C) (hC_lt : C < 4 / 3)
+    (hCzero : 0 ≤ Czero) (hCtwo : 0 ≤ Ctwo) (hd : 0 < d) :
+    ∃ a c : ℝ, 0 < a ∧ 0 < c ∧
+      a ≤ Real.log 2 ∧ a ≤ d * Real.log 2 ∧
+      3 * C / a + 4 * Czero + Ctwo < 4 / (a + c) := by
+  have hK : 0 ≤ 4 * Czero + Ctwo := by nlinarith
+  rcases exists_sigmaOf_log_margin_constants (C := C)
+      (K := 4 * Czero + Ctwo) (d := d) hC_pos hC_lt hK hd with
+    ⟨a, c, ha_pos, hc_pos, ha_le_log2, ha_le_dlog, hmargin⟩
+  exact ⟨a, c, ha_pos, hc_pos, ha_le_log2, ha_le_dlog, by
+    simpa [add_assoc] using hmargin⟩
+
 /-- Above height `3`, `log |t|` is already larger than `1`. -/
 lemma log_abs_gt_one_of_three_le {t : ℝ} (ht : 3 ≤ |t|) :
     1 < Real.log |t| := by
