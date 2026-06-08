@@ -342,6 +342,11 @@ Core verified declarations:
   packages that two-constant Big-O shaped interface existentially.
 - `log_abs_add_three_le_two_log_abs`
   proves `log(|t| + 3) <= 2 log |t|` for `|t| >= 3`.
+- `norm_sigma_add_I_mul_le_abs_add_two`
+  proves `||sigma + it|| <= |t| + 2` on `1 <= sigma <= 2`.
+- `log_norm_sigma_add_I_mul_add_three_le_two_log_abs`
+  proves `log(||sigma + it|| + 3) <= 2 log |t|` for
+  `1 <= sigma <= 2` and `|t| >= 5`.
 - `classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_abs_add_three_bound_high_height`
   specializes the coordinate interface to estimates stated as
   `C * log(|t| + 3)` for both remaining zeta-specific bounds.
@@ -353,6 +358,11 @@ Core verified declarations:
 - `classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_log_abs_add_three_bounds_high_height`
   packages that two-constant safe-height logarithmic interface
   existentially.
+- `classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height`
+  accepts separate constants in estimates stated with the full complex
+  height `log(||sigma + it|| + 3)`.
+- `classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height`
+  packages that full-height logarithmic interface existentially.
 - `meromorphicAt_logDeriv_riemannZeta_one`
   proves the logarithmic derivative is meromorphic at the pole.
 - `meromorphicOn_logDeriv_riemannZeta_closedBall`

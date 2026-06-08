@@ -2212,6 +2212,59 @@ lemma log_abs_add_three_le_two_log_abs {t : ℝ} (ht : 3 ≤ |t|) :
     _ = Real.log 2 + Real.log |t| := hlog_mul
     _ ≤ 2 * Real.log |t| := by linarith
 
+/-- On the strip `1 <= σ <= 2`, `‖σ + it‖` is bounded by `|t| + 2`. -/
+lemma norm_sigma_add_I_mul_le_abs_add_two {σ t : ℝ}
+    (hσ : σ ∈ Set.Icc 1 2) :
+    ‖((σ : ℂ) + I * (t : ℂ))‖ ≤ |t| + 2 := by
+  have hnorm :
+      ‖((σ : ℂ) + I * (t : ℂ))‖ ≤ ‖(σ : ℂ)‖ + ‖I * (t : ℂ)‖ :=
+    norm_add_le _ _
+  have hσ_norm : ‖(σ : ℂ)‖ = |σ| := by
+    simp
+  have hIt_norm : ‖I * (t : ℂ)‖ = |t| := by
+    rw [norm_mul, Complex.norm_I]
+    simp
+  have hσ_abs_le : |σ| ≤ 2 := by
+    rw [abs_of_nonneg (by linarith [hσ.1])]
+    exact hσ.2
+  calc
+    ‖((σ : ℂ) + I * (t : ℂ))‖
+        ≤ ‖(σ : ℂ)‖ + ‖I * (t : ℂ)‖ := hnorm
+    _ = |σ| + |t| := by rw [hσ_norm, hIt_norm]
+    _ ≤ 2 + |t| := by nlinarith [hσ_abs_le]
+    _ = |t| + 2 := by ring
+
+/-- Above height `5`, `log(‖σ + it‖ + 3)` is controlled by
+`2 log |t|` uniformly for `1 <= σ <= 2`. -/
+lemma log_norm_sigma_add_I_mul_add_three_le_two_log_abs {σ t : ℝ}
+    (hσ : σ ∈ Set.Icc 1 2) (ht : 5 ≤ |t|) :
+    Real.log (‖((σ : ℂ) + I * (t : ℂ))‖ + 3) ≤
+      2 * Real.log |t| := by
+  have hnorm_le :
+      ‖((σ : ℂ) + I * (t : ℂ))‖ ≤ |t| + 2 :=
+    norm_sigma_add_I_mul_le_abs_add_two hσ
+  have ht_pos : 0 < |t| := by linarith
+  have hleft_pos : 0 < ‖((σ : ℂ) + I * (t : ℂ))‖ + 3 := by positivity
+  have hsum_le :
+      ‖((σ : ℂ) + I * (t : ℂ))‖ + 3 ≤ 2 * |t| := by
+    calc
+      ‖((σ : ℂ) + I * (t : ℂ))‖ + 3
+          ≤ (|t| + 2) + 3 := by nlinarith [hnorm_le]
+      _ ≤ 2 * |t| := by linarith
+  have hlog_le :
+      Real.log (‖((σ : ℂ) + I * (t : ℂ))‖ + 3) ≤
+        Real.log (2 * |t|) :=
+    Real.log_le_log hleft_pos hsum_le
+  have hlog_mul : Real.log (2 * |t|) = Real.log 2 + Real.log |t| := by
+    rw [Real.log_mul (by norm_num : (2 : ℝ) ≠ 0) (ne_of_gt ht_pos)]
+  have hlog_two_le : Real.log 2 ≤ Real.log |t| :=
+    Real.log_le_log (by norm_num) (by linarith : (2 : ℝ) ≤ |t|)
+  calc
+    Real.log (‖((σ : ℂ) + I * (t : ℂ))‖ + 3)
+        ≤ Real.log (2 * |t|) := hlog_le
+    _ = Real.log 2 + Real.log |t| := hlog_mul
+    _ ≤ 2 * Real.log |t| := by linarith
+
 /-- Coordinate high-height closure from a single `C * log(|t| + 3)` bound.
 
 This shape is common in analytic estimates because it is harmless at small
@@ -2338,6 +2391,75 @@ lemma classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_log_
     ⟨T0, Cregular, Cvertical, hT0, hCregular, hCvertical, hregular, hvertical⟩
   exact
     classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_abs_add_three_bounds_high_height
+      T0 Cregular Cvertical hT0 hCregular hCvertical hregular hvertical
+
+/-- Coordinate high-height closure from separate
+`Cregular * log(‖σ+it‖ + 3)` and `Cvertical * log(‖σ+it‖ + 3)` bounds.
+
+This accepts estimates stated in terms of the full complex height.  On the
+strip `1 <= σ <= 2` and above height `5`, that logarithm is absorbed into
+`2 log |t|`. -/
+lemma classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height
+    (T0 Cregular Cvertical : ℝ) (hT0 : 5 ≤ T0)
+    (hCregular : 0 ≤ Cregular) (hCvertical : 0 ≤ Cvertical)
+    (hregular :
+      ∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+        0 < σ - β →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+            (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+          Cregular * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          Cvertical * Real.log (‖((σ : ℂ) + I * t)‖ + 3)) :
+    classical_zero_free_region := by
+  refine
+    classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_affine_bounds_high_height
+      T0 0 (2 * Cregular) 0 (2 * Cvertical) (by linarith)
+      (by norm_num) (by nlinarith) (by norm_num) (by nlinarith) ?_ ?_
+  · intro σ β t ht hσ hζ hβ hsub
+    have hlog :=
+      log_norm_sigma_add_I_mul_add_three_le_two_log_abs hσ (hT0.trans ht)
+    calc
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+          (((σ - β : ℝ) : ℂ)⁻¹)‖
+          ≤ Cregular * Real.log (‖((σ : ℂ) + I * t)‖ + 3) :=
+            hregular σ β t ht hσ hζ hβ hsub
+      _ ≤ Cregular * (2 * Real.log |t|) :=
+            mul_le_mul_of_nonneg_left hlog hCregular
+      _ = 0 + (2 * Cregular) * Real.log |t| := by ring
+  · intro σ t ht hσ
+    have hlog :=
+      log_norm_sigma_add_I_mul_add_three_le_two_log_abs hσ (hT0.trans ht)
+    calc
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖
+          ≤ Cvertical * Real.log (‖((σ : ℂ) + I * t)‖ + 3) :=
+            hvertical σ t ht hσ
+      _ ≤ Cvertical * (2 * Real.log |t|) :=
+            mul_le_mul_of_nonneg_left hlog hCvertical
+      _ = 0 + (2 * Cvertical) * Real.log |t| := by ring
+
+/-- Existential coordinate high-height closure from separate
+`Cregular * log(‖σ+it‖ + 3)` and `Cvertical * log(‖σ+it‖ + 3)` bounds. -/
+lemma classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height
+    (h :
+      ∃ T0 Cregular Cvertical : ℝ, 5 ≤ T0 ∧
+        0 ≤ Cregular ∧ 0 ≤ Cvertical ∧
+        (∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+          0 < σ - β →
+          ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+              (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+            Cregular * Real.log (‖((σ : ℂ) + I * t)‖ + 3)) ∧
+        (∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+            Cvertical * Real.log (‖((σ : ℂ) + I * t)‖ + 3))) :
+    classical_zero_free_region := by
+  rcases h with
+    ⟨T0, Cregular, Cvertical, hT0, hCregular, hCvertical, hregular, hvertical⟩
+  exact
+    classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height
       T0 Cregular Cvertical hT0 hCregular hCvertical hregular hvertical
 
 /-- Existential high-height closure from affine logarithmic bounds. -/
