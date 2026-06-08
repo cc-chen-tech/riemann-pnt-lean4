@@ -618,6 +618,12 @@ and
 `ZeroFreeRegion.classical_zero_free_region_of_exists_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height`
 state the same handoff directly for estimates in variables `s`, `rho`, and
 `z`, which is the shape closest to future Borel/Jensen arguments.
+The single-constant variants
+`ZeroFreeRegion.classical_zero_free_region_of_logDeriv_regular_part_norm_log_norm_add_three_bound_high_height`
+and
+`ZeroFreeRegion.classical_zero_free_region_of_exists_logDeriv_regular_part_norm_log_norm_add_three_bound_high_height`
+package the common complex-variable Big-O shape where one constant controls
+both remaining full-height estimates.
 The affine variants
 `ZeroFreeRegion.classical_zero_free_region_of_logDeriv_regular_part_norm_affine_log_norm_add_three_bounds_high_height`
 and
@@ -642,6 +648,12 @@ and
 `ZeroFreeRegion.classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height`
 are the same signed full-height handoff for complex-variable estimates, with
 additive constants set to zero.
+The signed single-constant variants
+`ZeroFreeRegion.classical_zero_free_region_of_neg_logDeriv_regular_part_norm_log_norm_add_three_bound_high_height`
+and
+`ZeroFreeRegion.classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_log_norm_add_three_bound_high_height`
+are the compact `-logDeriv zeta` convention handoff when one constant controls
+both estimates.
 This is still conditional; it does not prove the quantitative zero-free region
 until those two zeta-specific estimates are proved.
 The next work starts from these meromorphic/nonvanishing/principal-part facts

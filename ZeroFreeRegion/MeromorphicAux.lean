@@ -2923,6 +2923,43 @@ lemma classical_zero_free_region_of_exists_logDeriv_regular_part_norm_log_norm_a
     classical_zero_free_region_of_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height
       T0 Cregular Cvertical hT0 hCregular hCvertical hregular hvertical
 
+/-- Complex-variable high-height closure from a single
+`C * log(‖s‖ + 3)` / `C * log(‖z‖ + 3)` bound for both remaining estimates. -/
+lemma classical_zero_free_region_of_logDeriv_regular_part_norm_log_norm_add_three_bound_high_height
+    (T0 C : ℝ) (hT0 : 5 ≤ T0) (hC : 0 ≤ C)
+    (hregular :
+      ∀ s ρ : ℂ, T0 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+        riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+        0 < s.re - ρ.re →
+        ‖logDeriv riemannZeta s - (s - ρ)⁻¹‖ ≤
+          C * Real.log (‖s‖ + 3))
+    (hvertical :
+      ∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta z‖ ≤
+          C * Real.log (‖z‖ + 3)) :
+    classical_zero_free_region :=
+  classical_zero_free_region_of_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height
+    T0 C C hT0 hC hC hregular hvertical
+
+/-- Existential complex-variable high-height closure from a single
+full-height logarithmic constant for both remaining estimates. -/
+lemma classical_zero_free_region_of_exists_logDeriv_regular_part_norm_log_norm_add_three_bound_high_height
+    (h :
+      ∃ T0 C : ℝ, 5 ≤ T0 ∧ 0 ≤ C ∧
+        (∀ s ρ : ℂ, T0 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+          riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+          0 < s.re - ρ.re →
+          ‖logDeriv riemannZeta s - (s - ρ)⁻¹‖ ≤
+            C * Real.log (‖s‖ + 3)) ∧
+        (∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc 1 2 →
+          ‖logDeriv riemannZeta z‖ ≤
+            C * Real.log (‖z‖ + 3))) :
+    classical_zero_free_region := by
+  rcases h with ⟨T0, C, hT0, hC, hregular, hvertical⟩
+  exact
+    classical_zero_free_region_of_logDeriv_regular_part_norm_log_norm_add_three_bound_high_height
+      T0 C hT0 hC hregular hvertical
+
 /-- Complex-variable high-height closure from affine full-height logarithmic
 bounds.
 
@@ -3200,6 +3237,43 @@ lemma classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_log_no
   exact
     classical_zero_free_region_of_neg_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height
       T0 Cregular Cvertical hT0 hCregular hCvertical hregular hvertical
+
+/-- Signed complex-variable high-height closure from a single
+full-height logarithmic constant for both remaining estimates. -/
+lemma classical_zero_free_region_of_neg_logDeriv_regular_part_norm_log_norm_add_three_bound_high_height
+    (T0 C : ℝ) (hT0 : 5 ≤ T0) (hC : 0 ≤ C)
+    (hregular :
+      ∀ s ρ : ℂ, T0 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+        riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+        0 < s.re - ρ.re →
+        ‖-logDeriv riemannZeta s + (s - ρ)⁻¹‖ ≤
+          C * Real.log (‖s‖ + 3))
+    (hvertical :
+      ∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc 1 2 →
+        ‖-logDeriv riemannZeta z‖ ≤
+          C * Real.log (‖z‖ + 3)) :
+    classical_zero_free_region :=
+  classical_zero_free_region_of_neg_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height
+    T0 C C hT0 hC hC hregular hvertical
+
+/-- Existential signed complex-variable high-height closure from a single
+full-height logarithmic constant for both remaining estimates. -/
+lemma classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_log_norm_add_three_bound_high_height
+    (h :
+      ∃ T0 C : ℝ, 5 ≤ T0 ∧ 0 ≤ C ∧
+        (∀ s ρ : ℂ, T0 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+          riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+          0 < s.re - ρ.re →
+          ‖-logDeriv riemannZeta s + (s - ρ)⁻¹‖ ≤
+            C * Real.log (‖s‖ + 3)) ∧
+        (∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc 1 2 →
+          ‖-logDeriv riemannZeta z‖ ≤
+            C * Real.log (‖z‖ + 3))) :
+    classical_zero_free_region := by
+  rcases h with ⟨T0, C, hT0, hC, hregular, hvertical⟩
+  exact
+    classical_zero_free_region_of_neg_logDeriv_regular_part_norm_log_norm_add_three_bound_high_height
+      T0 C hT0 hC hregular hvertical
 
 /-- Existential high-height closure from affine logarithmic bounds. -/
 lemma classical_zero_free_region_of_exists_logDeriv_regular_part_norm_affine_log_bound_and_vertical_logDeriv_norm_affine_log_bound_high_height

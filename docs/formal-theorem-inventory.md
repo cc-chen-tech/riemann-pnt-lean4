@@ -409,6 +409,12 @@ Core verified declarations:
 - `classical_zero_free_region_of_exists_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height`
   packages that complex-variable full-height logarithmic interface
   existentially.
+- `classical_zero_free_region_of_logDeriv_regular_part_norm_log_norm_add_three_bound_high_height`
+  specializes the complex-variable full-height logarithmic interface to
+  one shared constant.
+- `classical_zero_free_region_of_exists_logDeriv_regular_part_norm_log_norm_add_three_bound_high_height`
+  packages the shared-constant complex-variable full-height interface
+  existentially.
 - `classical_zero_free_region_of_logDeriv_regular_part_norm_affine_log_norm_add_three_bounds_high_height`
   accepts affine full-height estimates `A + B log(||s|| + 3)` and
   `A + B log(||z|| + 3)` directly in complex variables.
@@ -429,6 +435,12 @@ Core verified declarations:
   part and vertical-strip constants.
 - `classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height`
   packages that signed multiplicative full-height interface existentially.
+- `classical_zero_free_region_of_neg_logDeriv_regular_part_norm_log_norm_add_three_bound_high_height`
+  specializes the signed complex-variable full-height interface to one
+  shared constant.
+- `classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_log_norm_add_three_bound_high_height`
+  packages the shared-constant signed complex-variable full-height interface
+  existentially.
 - `meromorphicAt_logDeriv_riemannZeta_one`
   proves the logarithmic derivative is meromorphic at the pole.
 - `meromorphicOn_logDeriv_riemannZeta_closedBall`
