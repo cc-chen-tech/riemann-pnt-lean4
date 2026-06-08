@@ -2549,6 +2549,16 @@ theorem exists_sigmaOf_log_two_t_bound_const_mul_log_div
           C * Real.log |t| / a :=
   ZeroFreeRegion.exists_sigmaOf_log_two_t_bound_const_mul_log_div C hC T0 hT0
 
+/-- Public obstruction showing that the weak `σ+2it` estimate with the same
+`1/a` loss as the real-axis estimate cannot close the standard 3-4-1 margin. -/
+theorem sigmaOf_log_weak_two_t_margin_impossible
+    {a c Creal Czero Ctwo : ℝ}
+    (ha : 0 < a) (hc : 0 < c)
+    (hCreal : 1 ≤ Creal) (hCzero : 0 ≤ Czero) (hCtwo : 1 ≤ Ctwo) :
+    ¬ (3 * Creal / a + 4 * Czero + Ctwo / a < 4 / (a + c)) :=
+  ZeroFreeRegion.sigmaOf_log_weak_two_t_margin_impossible
+    ha hc hCreal hCzero hCtwo
+
 /-- Public closure theorem for the standard choice
 `σ(t) = 1 + a / log |t|` in the high-height 3-4-1 argument. -/
 theorem exists_sigmaOf_log_classical_zero_free_region_of_log_deriv_bounds

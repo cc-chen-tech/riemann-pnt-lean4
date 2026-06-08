@@ -900,6 +900,34 @@ lemma three_four_one_sigmaOf_log_margin
     exact hconst_neg
   exact lt_of_le_of_lt hupper hright
 
+/-- If the `σ + 2it` estimate still has the same `1/a` pole-loss as the
+real-axis estimate, the standard 3-4-1 margin cannot close.
+
+This records the precise obstruction for the weak bound obtained from the
+half-plane L-series triangle inequality: even before adding any nonnegative
+regular-part contribution, coefficients `Creal ≥ 1` and `Ctwo ≥ 1` force the
+left side of the required constant inequality to be at least `4/a`, whereas
+`4/(a+c) < 4/a` for every positive strip width `c`. -/
+lemma sigmaOf_log_weak_two_t_margin_impossible
+    {a c Creal Czero Ctwo : ℝ}
+    (ha : 0 < a) (hc : 0 < c)
+    (hCreal : 1 ≤ Creal) (hCzero : 0 ≤ Czero) (hCtwo : 1 ≤ Ctwo) :
+    ¬ (3 * Creal / a + 4 * Czero + Ctwo / a < 4 / (a + c)) := by
+  intro hmargin
+  have hac_pos : 0 < a + c := add_pos ha hc
+  have hright_lt : 4 / (a + c) < 4 / a := by
+    exact div_lt_div_of_pos_left (by norm_num : (0 : ℝ) < 4) ha
+      (by linarith)
+  have hleft_ge : 4 / a ≤ 3 * Creal / a + 4 * Czero + Ctwo / a := by
+    have h3 : 3 / a ≤ 3 * Creal / a := by
+      exact div_le_div_of_nonneg_right (by nlinarith : 3 ≤ 3 * Creal) ha.le
+    have htwo : 1 / a ≤ Ctwo / a := by
+      exact div_le_div_of_nonneg_right hCtwo ha.le
+    have hzero : 0 ≤ 4 * Czero := by nlinarith
+    have hsplit : 4 / a = 3 / a + 1 / a := by ring
+    linarith
+  linarith
+
 /-- Pure real-variable choice of the small constants in the standard
 `σ = 1 + a / log |t|` setup.
 

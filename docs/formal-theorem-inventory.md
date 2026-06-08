@@ -205,6 +205,17 @@ Core verified declarations:
 - `exists_sigmaOf_log_hreal_const_mul_log_div`
   normalizes the flexible specialization into the vertical-height estimate
   `Re(-zeta'/zeta)(1 + a / log |t|) <= C * log |t| / a`.
+- `exists_sigmaOf_log_two_t_norm_bound_const_mul_log_div`
+  controls the `sigma + 2it` point by the half-plane L-series triangle
+  inequality, with the unavoidable absolute-convergence scale
+  `<= C * log |t| / a`.
+- `exists_sigmaOf_log_two_t_bound_const_mul_log_div`
+  converts the same weak `sigma + 2it` norm estimate into the real-part shape
+  used by the third term of the 3-4-1 inequality.
+- `sigmaOf_log_weak_two_t_margin_impossible`
+  proves that this weak `1/a` scale cannot satisfy the standard 3-4-1 constant
+  margin when the real-axis and `sigma + 2it` coefficients are both at least
+  one.
 - `exists_sigmaOf_log_classical_zero_free_region_of_log_deriv_bounds`
   packages the standard `sigma(t) = 1 + a / log |t|` choice into the verified
   3-4-1 high-height contradiction and compact bounded-height patch.

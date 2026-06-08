@@ -379,6 +379,11 @@ the same `<= C * log |t| / a` scale, so they do not close the classical
 3-4-1 margin.  They mark the exact limit of what follows from absolute
 convergence alone; the remaining analytic estimate must remove this `1/a`
 loss and prove a genuine vertical-strip `O(log |t|)` bound.
+This obstruction is now formalized as
+`ZeroFreeRegion.sigmaOf_log_weak_two_t_margin_impossible`: once the real-axis
+and `sigma + 2it` terms both carry coefficients at least `1/a`, the required
+constant inequality is impossible for every positive width `c`, even before any
+nonnegative regular-part contribution is added.
 The theorem
 `ZeroFreeRegion.exists_sigmaOf_log_classical_zero_free_region_of_log_deriv_bounds`
 then packages this standard `sigmaOf` choice into the full verified
