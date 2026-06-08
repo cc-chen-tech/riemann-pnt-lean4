@@ -2174,6 +2174,45 @@ lemma borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_
       ha₀ hHpos)
     hlog ha hb hH hR hz
 
+/-- Half-radius Borel-Carathéodory bound for `logDeriv ζ` on a right
+half-strip, with differentiability discharged by zeta nonvanishing on
+`Re(s) >= 1`. -/
+lemma borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius
+    {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M) (ha₀ : 1 ≤ a) (hHpos : 0 < H)
+    (hlog : ∀ w : ℂ, w ∈ verticalRegion a b H →
+      (logDeriv riemannZeta w).re ≤ M)
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + I * t)‖ ≤ R / 2) :
+    ‖logDeriv riemannZeta z‖ ≤
+      2 * M + 3 * ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ := by
+  refine borelCaratheodory_centered_verticalRegion_half_radius_bound hM
+    (differentiableOn_logDeriv_riemannZeta_verticalRegion_of_one_le_re
+      ha₀ hHpos) ?_ ha hb hH hR hz_half
+  intro w hw
+  exact hlog w hw
+
+/-- Half-radius oscillation Borel-Carathéodory bound for `logDeriv ζ` on a
+right half-strip, with differentiability discharged by zeta nonvanishing on
+`Re(s) >= 1`. -/
+lemma borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius
+    {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M) (ha₀ : 1 ≤ a) (hHpos : 0 < H)
+    (hlog : ∀ w : ℂ, w ∈ verticalRegion a b H →
+      (logDeriv riemannZeta w -
+        logDeriv riemannZeta ((σ : ℂ) + I * t)).re ≤ M)
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + I * t)‖ ≤ R / 2) :
+    ‖logDeriv riemannZeta z -
+        logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤ 2 * M := by
+  refine borelCaratheodory_sub_centered_verticalRegion_half_radius_bound hM
+    (differentiableOn_logDeriv_riemannZeta_verticalRegion_of_one_le_re
+      ha₀ hHpos) ?_ ha hb hH hR hz_half
+  intro w hw
+  exact hlog w hw
+
 /-- On a positive-height right half-strip, the signed logarithmic derivative
 `-logDeriv ζ` is differentiable. -/
 lemma differentiableOn_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re

@@ -362,6 +362,10 @@ Core verified declarations:
 - `borelCaratheodory_sub_centered_half_radius_bound`
   gives the matching oscillation form `||f z - f c|| <= 2 M` on the
   half-radius subdisk.
+- `borelCaratheodory_centered_verticalRegion_half_radius_bound` and
+  `borelCaratheodory_sub_centered_verticalRegion_half_radius_bound`
+  combine the same half-radius estimates with the ambient `verticalRegion`
+  disk geometry.
 - `borelCaratheodory_riemannZeta_verticalRegion` and
   `borelCaratheodory_sub_riemannZeta_verticalRegion`
   specialize the same Borel wrappers to ζ and centered ζ, leaving only
@@ -393,6 +397,11 @@ Core verified declarations:
   are the same `logDeriv ζ` Borel interfaces with that differentiability
   hypothesis discharged; the only remaining Borel input is a pointwise
   real-part height bound.
+- `borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius`
+  and
+  `borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius`
+  are the positive `logDeriv ζ` half-radius versions, matching the local
+  regular-part sign convention.
 - `differentiableOn_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re`,
   `borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le`,
   and

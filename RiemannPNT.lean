@@ -3131,6 +3131,35 @@ theorem borelCaratheodory_sub_centered_verticalRegion
   ZeroFreeRegion.borelCaratheodory_sub_centered_verticalRegion
     hM hf hf₁ ha hb hH hR hz
 
+/-- Public half-radius Borel-Carathéodory on a `σ + I*t` disk with ambient
+vertical-region hypotheses. -/
+theorem borelCaratheodory_centered_verticalRegion_half_radius_bound
+    {f : ℂ → ℂ} {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M) (hf : DifferentiableOn ℂ f (verticalRegion a b H))
+    (hf₁ : Set.MapsTo f (verticalRegion a b H) {w | w.re ≤ M})
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + Complex.I * t)‖ ≤ R / 2) :
+    ‖f z‖ ≤
+      2 * M + 3 * ‖f ((σ : ℂ) + Complex.I * t)‖ :=
+  ZeroFreeRegion.borelCaratheodory_centered_verticalRegion_half_radius_bound
+    hM hf hf₁ ha hb hH hR hz_half
+
+/-- Public half-radius oscillation Borel-Carathéodory on a `σ + I*t` disk with
+ambient vertical-region hypotheses. -/
+theorem borelCaratheodory_sub_centered_verticalRegion_half_radius_bound
+    {f : ℂ → ℂ} {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M) (hf : DifferentiableOn ℂ f (verticalRegion a b H))
+    (hf₁ : Set.MapsTo
+      (fun w => f w - f ((σ : ℂ) + Complex.I * t))
+      (verticalRegion a b H) {w | w.re ≤ M})
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + Complex.I * t)‖ ≤ R / 2) :
+    ‖f z - f ((σ : ℂ) + Complex.I * t)‖ ≤ 2 * M :=
+  ZeroFreeRegion.borelCaratheodory_sub_centered_verticalRegion_half_radius_bound
+    hM hf hf₁ ha hb hH hR hz_half
+
 /-- Public Borel-Carathéodory bound specialized to ζ on a `σ + I*t` disk with
 ambient vertical-region hypotheses. -/
 theorem borelCaratheodory_riemannZeta_verticalRegion
@@ -3357,6 +3386,37 @@ theorem borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_o
         (R - ‖z - ((σ : ℂ) + Complex.I * t)‖) :=
   ZeroFreeRegion.borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le
     hM ha₀ hHpos hlog ha hb hH hR hz
+
+/-- Public half-radius Borel-Carathéodory bound for `logDeriv ζ` on a
+positive-height right half-strip. -/
+theorem borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius
+    {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M) (ha₀ : 1 ≤ a) (hHpos : 0 < H)
+    (hlog : ∀ w : ℂ, w ∈ verticalRegion a b H →
+      (logDeriv riemannZeta w).re ≤ M)
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + Complex.I * t)‖ ≤ R / 2) :
+    ‖logDeriv riemannZeta z‖ ≤
+      2 * M + 3 * ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ :=
+  ZeroFreeRegion.borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius
+    hM ha₀ hHpos hlog ha hb hH hR hz_half
+
+/-- Public half-radius oscillation Borel-Carathéodory bound for `logDeriv ζ`
+on a positive-height right half-strip. -/
+theorem borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius
+    {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M) (ha₀ : 1 ≤ a) (hHpos : 0 < H)
+    (hlog : ∀ w : ℂ, w ∈ verticalRegion a b H →
+      (logDeriv riemannZeta w -
+        logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤ M)
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + Complex.I * t)‖ ≤ R / 2) :
+    ‖logDeriv riemannZeta z -
+        logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤ 2 * M :=
+  ZeroFreeRegion.borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius
+    hM ha₀ hHpos hlog ha hb hH hR hz_half
 
 /-- Public differentiability of the signed logarithmic derivative `-logDeriv ζ`
 on positive-height right half-strips. -/

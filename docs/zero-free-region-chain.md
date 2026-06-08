@@ -162,13 +162,22 @@ proved:
   provide the same interface in the `-logDeriv ζ` convention used by the
   3-4-1 inequality.  The general half-radius wrappers
   `ZeroFreeRegion.borelCaratheodory_centered_half_radius_bound` and
-  `ZeroFreeRegion.borelCaratheodory_sub_centered_half_radius_bound`, together
-  with the signed specializations
+  `ZeroFreeRegion.borelCaratheodory_sub_centered_half_radius_bound`, plus the
+  ambient vertical-region forms
+  `ZeroFreeRegion.borelCaratheodory_centered_verticalRegion_half_radius_bound`
+  and
+  `ZeroFreeRegion.borelCaratheodory_sub_centered_verticalRegion_half_radius_bound`,
+  convert the Borel disk-denominator terms into the fixed half-radius bounds
+  `2M + 3||f(c)||` and `2M`.  The positive `logDeriv ζ` specializations
+  `ZeroFreeRegion.borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius`
+  and
+  `ZeroFreeRegion.borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius`,
+  together with the signed specializations
   `ZeroFreeRegion.borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius`
   and
   `ZeroFreeRegion.borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius`,
-  convert the Borel disk-denominator terms into the fixed half-radius bounds
-  `2M + 3||f(c)||` and `2M`;
+  expose those fixed half-radius bounds in both logarithmic-derivative sign
+  conventions;
   `ZeroFreeRegion.jensen_circleAverage_log_norm_verticalRegion` is the matching
   Jensen entry point for zero-count and divisor estimates.
 - The zeta-specific regularity layer now includes
