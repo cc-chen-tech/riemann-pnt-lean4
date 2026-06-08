@@ -4707,6 +4707,48 @@ theorem classical_zero_free_region_of_exists_logDeriv_regular_part_norm_affine_l
   ZeroFreeRegion.classical_zero_free_region_of_exists_logDeriv_regular_part_norm_affine_log_norm_add_three_bounds_high_height
     h
 
+/-- Public signed complex-variable high-height closure from affine full-height
+logarithmic bounds. -/
+theorem classical_zero_free_region_of_neg_logDeriv_regular_part_norm_affine_log_norm_add_three_bounds_high_height
+    (T0 Aregular Bregular Avertical Bvertical : ℝ)
+    (hT0 : 5 ≤ T0)
+    (hAregular : 0 ≤ Aregular) (hBregular : 0 ≤ Bregular)
+    (hAvertical : 0 ≤ Avertical) (hBvertical : 0 ≤ Bvertical)
+    (hregular :
+      ∀ s ρ : ℂ, T0 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+        riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+        0 < s.re - ρ.re →
+        ‖-logDeriv riemannZeta s + (s - ρ)⁻¹‖ ≤
+          Aregular + Bregular * Real.log (‖s‖ + 3))
+    (hvertical :
+      ∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc 1 2 →
+        ‖-logDeriv riemannZeta z‖ ≤
+          Avertical + Bvertical * Real.log (‖z‖ + 3)) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_neg_logDeriv_regular_part_norm_affine_log_norm_add_three_bounds_high_height
+    T0 Aregular Bregular Avertical Bvertical hT0 hAregular hBregular
+    hAvertical hBvertical hregular hvertical
+
+/-- Public existential signed complex-variable high-height closure from affine
+full-height logarithmic bounds. -/
+theorem classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_affine_log_norm_add_three_bounds_high_height
+    (h :
+      ∃ T0 Aregular Bregular Avertical Bvertical : ℝ,
+        5 ≤ T0 ∧
+        0 ≤ Aregular ∧ 0 ≤ Bregular ∧
+        0 ≤ Avertical ∧ 0 ≤ Bvertical ∧
+        (∀ s ρ : ℂ, T0 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+          riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+          0 < s.re - ρ.re →
+          ‖-logDeriv riemannZeta s + (s - ρ)⁻¹‖ ≤
+            Aregular + Bregular * Real.log (‖s‖ + 3)) ∧
+        (∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc 1 2 →
+          ‖-logDeriv riemannZeta z‖ ≤
+            Avertical + Bvertical * Real.log (‖z‖ + 3))) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_affine_log_norm_add_three_bounds_high_height
+    h
+
 /-- Public comparison between a compact-patch width and a logarithmic width. -/
 theorem compact_log_width_le_of_two_le {c d t : ℝ}
     (hc : c ≤ d * Real.log 2) (hd : 0 ≤ d) (ht : 2 ≤ |t|) :

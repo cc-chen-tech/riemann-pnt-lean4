@@ -377,6 +377,11 @@ Core verified declarations:
   `A + B log(||z|| + 3)` directly in complex variables.
 - `classical_zero_free_region_of_exists_logDeriv_regular_part_norm_affine_log_norm_add_three_bounds_high_height`
   packages that affine full-height logarithmic interface existentially.
+- `classical_zero_free_region_of_neg_logDeriv_regular_part_norm_affine_log_norm_add_three_bounds_high_height`
+  accepts the same affine full-height estimates in the signed
+  `-logDeriv zeta` convention.
+- `classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_affine_log_norm_add_three_bounds_high_height`
+  packages that signed affine full-height interface existentially.
 - `meromorphicAt_logDeriv_riemannZeta_one`
   proves the logarithmic derivative is meromorphic at the pole.
 - `meromorphicOn_logDeriv_riemannZeta_closedBall`

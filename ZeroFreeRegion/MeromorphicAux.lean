@@ -2615,6 +2615,71 @@ lemma classical_zero_free_region_of_exists_logDeriv_regular_part_norm_affine_log
       T0 Aregular Bregular Avertical Bvertical hT0 hAregular hBregular
       hAvertical hBvertical hregular hvertical
 
+/-- Signed complex-variable high-height closure from affine full-height
+logarithmic bounds.
+
+This is the same handoff as
+`classical_zero_free_region_of_logDeriv_regular_part_norm_affine_log_norm_add_three_bounds_high_height`,
+but in the `-logDeriv ζ` sign convention used by the 3-4-1 inequality and
+the signed Borel wrappers. -/
+lemma classical_zero_free_region_of_neg_logDeriv_regular_part_norm_affine_log_norm_add_three_bounds_high_height
+    (T0 Aregular Bregular Avertical Bvertical : ℝ)
+    (hT0 : 5 ≤ T0)
+    (hAregular : 0 ≤ Aregular) (hBregular : 0 ≤ Bregular)
+    (hAvertical : 0 ≤ Avertical) (hBvertical : 0 ≤ Bvertical)
+    (hregular :
+      ∀ s ρ : ℂ, T0 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+        riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+        0 < s.re - ρ.re →
+        ‖-logDeriv riemannZeta s + (s - ρ)⁻¹‖ ≤
+          Aregular + Bregular * Real.log (‖s‖ + 3))
+    (hvertical :
+      ∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc 1 2 →
+        ‖-logDeriv riemannZeta z‖ ≤
+          Avertical + Bvertical * Real.log (‖z‖ + 3)) :
+    classical_zero_free_region := by
+  refine
+    classical_zero_free_region_of_logDeriv_regular_part_norm_affine_log_norm_add_three_bounds_high_height
+      T0 Aregular Bregular Avertical Bvertical hT0 hAregular hBregular
+      hAvertical hBvertical ?_ ?_
+  · intro s ρ hs_height hs_re_mem hζρ hρ_im_eq hρ_re_lt hsub
+    calc
+      ‖logDeriv riemannZeta s - (s - ρ)⁻¹‖
+          = ‖-(-logDeriv riemannZeta s + (s - ρ)⁻¹)‖ := by ring_nf
+      _ = ‖-logDeriv riemannZeta s + (s - ρ)⁻¹‖ := norm_neg _
+      _ ≤ Aregular + Bregular * Real.log (‖s‖ + 3) :=
+          hregular s ρ hs_height hs_re_mem hζρ hρ_im_eq hρ_re_lt hsub
+  · intro z hz_height hz_re_mem
+    calc
+      ‖logDeriv riemannZeta z‖ = ‖-logDeriv riemannZeta z‖ := (norm_neg _).symm
+      _ ≤ Avertical + Bvertical * Real.log (‖z‖ + 3) :=
+          hvertical z hz_height hz_re_mem
+
+/-- Existential signed complex-variable high-height closure from affine
+full-height logarithmic bounds. -/
+lemma classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_affine_log_norm_add_three_bounds_high_height
+    (h :
+      ∃ T0 Aregular Bregular Avertical Bvertical : ℝ,
+        5 ≤ T0 ∧
+        0 ≤ Aregular ∧ 0 ≤ Bregular ∧
+        0 ≤ Avertical ∧ 0 ≤ Bvertical ∧
+        (∀ s ρ : ℂ, T0 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+          riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+          0 < s.re - ρ.re →
+          ‖-logDeriv riemannZeta s + (s - ρ)⁻¹‖ ≤
+            Aregular + Bregular * Real.log (‖s‖ + 3)) ∧
+        (∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc 1 2 →
+          ‖-logDeriv riemannZeta z‖ ≤
+            Avertical + Bvertical * Real.log (‖z‖ + 3))) :
+    classical_zero_free_region := by
+  rcases h with
+    ⟨T0, Aregular, Bregular, Avertical, Bvertical, hT0,
+      hAregular, hBregular, hAvertical, hBvertical, hregular, hvertical⟩
+  exact
+    classical_zero_free_region_of_neg_logDeriv_regular_part_norm_affine_log_norm_add_three_bounds_high_height
+      T0 Aregular Bregular Avertical Bvertical hT0 hAregular hBregular
+      hAvertical hBvertical hregular hvertical
+
 /-- Existential high-height closure from affine logarithmic bounds. -/
 lemma classical_zero_free_region_of_exists_logDeriv_regular_part_norm_affine_log_bound_and_vertical_logDeriv_norm_affine_log_bound_high_height
     (h :
