@@ -2559,6 +2559,16 @@ theorem sigmaOf_log_weak_two_t_margin_impossible
   ZeroFreeRegion.sigmaOf_log_weak_two_t_margin_impossible
     ha hc hCreal hCzero hCtwo
 
+/-- Public existential obstruction for attempting to close the standard
+3-4-1 margin with a weak `σ+2it` estimate that still has a `1/a` loss. -/
+theorem no_sigmaOf_log_margin_constants_with_weak_two_t
+    {Creal Czero Ctwo : ℝ}
+    (hCreal : 1 ≤ Creal) (hCzero : 0 ≤ Czero) (hCtwo : 1 ≤ Ctwo) :
+    ¬ ∃ a c : ℝ, 0 < a ∧ 0 < c ∧
+      3 * Creal / a + 4 * Czero + Ctwo / a < 4 / (a + c) :=
+  ZeroFreeRegion.no_sigmaOf_log_margin_constants_with_weak_two_t
+    hCreal hCzero hCtwo
+
 /-- Public closure theorem for the standard choice
 `σ(t) = 1 + a / log |t|` in the high-height 3-4-1 argument. -/
 theorem exists_sigmaOf_log_classical_zero_free_region_of_log_deriv_bounds

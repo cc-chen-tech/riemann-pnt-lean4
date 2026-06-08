@@ -928,6 +928,20 @@ lemma sigmaOf_log_weak_two_t_margin_impossible
     linarith
   linarith
 
+/-- Existential form of `sigmaOf_log_weak_two_t_margin_impossible`.
+
+If both the real-axis and weak `σ + 2it` coefficients are at least one, no
+positive choice of the standard constants `a,c` can satisfy the 3-4-1 margin
+with a `Ctwo/a` third term. -/
+lemma no_sigmaOf_log_margin_constants_with_weak_two_t
+    {Creal Czero Ctwo : ℝ}
+    (hCreal : 1 ≤ Creal) (hCzero : 0 ≤ Czero) (hCtwo : 1 ≤ Ctwo) :
+    ¬ ∃ a c : ℝ, 0 < a ∧ 0 < c ∧
+      3 * Creal / a + 4 * Czero + Ctwo / a < 4 / (a + c) := by
+  rintro ⟨a, c, ha, hc, hmargin⟩
+  exact sigmaOf_log_weak_two_t_margin_impossible
+    ha hc hCreal hCzero hCtwo hmargin
+
 /-- Pure real-variable choice of the small constants in the standard
 `σ = 1 + a / log |t|` setup.
 

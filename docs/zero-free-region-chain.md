@@ -383,7 +383,10 @@ This obstruction is now formalized as
 `ZeroFreeRegion.sigmaOf_log_weak_two_t_margin_impossible`: once the real-axis
 and `sigma + 2it` terms both carry coefficients at least `1/a`, the required
 constant inequality is impossible for every positive width `c`, even before any
-nonnegative regular-part contribution is added.
+nonnegative regular-part contribution is added.  The existential wrapper
+`ZeroFreeRegion.no_sigmaOf_log_margin_constants_with_weak_two_t` states the
+same obstruction as nonexistence of positive constants `a,c` satisfying the
+standard weak-margin inequality.
 The theorem
 `ZeroFreeRegion.exists_sigmaOf_log_classical_zero_free_region_of_log_deriv_bounds`
 then packages this standard `sigmaOf` choice into the full verified
