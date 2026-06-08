@@ -136,6 +136,7 @@ Lean declarations in `ZeroFreeRegion.lean` and
 | Lean declaration | Kind | Mathematical content | Publication role |
 |---|---|---|---|
 | `ZeroFreeRegion.log_deriv_zeta_re_series` | `lemma` | For `Re(s) > 1`, expands `Re(-ζ'(s)/ζ(s))` as the von Mangoldt Dirichlet series `∑' n, Λ(n) cos(Im(s) log n) / n^Re(s)`. | Main technical bridge from Mathlib's complex L-series identity to a real series usable in the 3-4-1 argument. |
+| `ZeroFreeRegion.norm_logDeriv_riemannZeta_le_real_neg_deriv_div` | `lemma` | For `Re(s) > 1`, proves `‖logDeriv ζ(s)‖ ≤ Re(-ζ'/ζ(Re(s)))` by applying the triangle inequality to the von Mangoldt L-series. | Zeta-specific half-plane bound that reduces a vertical log-derivative estimate to the real-axis series in the region of absolute convergence. |
 | `ZeroFreeRegion.trig_identity_nonneg` | `lemma` | Proves `3 + 4 cos θ + cos(2θ) ≥ 0` via `2(1+cos θ)^2`. | Pointwise nonnegativity input for the de la Vallee Poussin combination. |
 | `ZeroFreeRegion.log_deriv_zeta_nonneg_combination` | `lemma` | Proves `3 Re(-ζ'/ζ(σ)) + 4 Re(-ζ'/ζ(σ+it)) + Re(-ζ'/ζ(σ+2it)) ≥ 0` for `σ > 1`. | Primary 3-4-1 theorem. |
 | `ZeroFreeRegion.log_deriv_zeta_lower_bound` | `lemma` | Rearranges the 3-4-1 inequality into the lower bound for `Re(-ζ'/ζ(σ+it))`. | Algebraic corollary used by the future quantitative zero-free-region chain. |

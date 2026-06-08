@@ -74,6 +74,7 @@ The following proved declarations are the main entry points for future work:
 
 - `ZeroFreeRegion.log_deriv_zeta_re_series`
 - `ZeroFreeRegion.log_deriv_zeta_nonneg_combination`
+- `ZeroFreeRegion.norm_logDeriv_riemannZeta_le_real_neg_deriv_div`
 - `ZeroFreeRegion.residue_bounds`
 - `ZeroFreeRegion.classical_zero_free_region_compact`
 - `ZeroFreeRegion.compact_patch_classical_zero_free_region_at_three`

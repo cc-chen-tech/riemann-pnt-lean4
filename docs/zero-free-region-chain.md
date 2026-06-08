@@ -26,6 +26,12 @@ ZeroFreeRegion.log_deriv_zeta_nonneg_combination
     + (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
         riemannZeta ((σ : ℂ) + 2 * I * t)).re ≥ 0
 
+ZeroFreeRegion.norm_logDeriv_riemannZeta_le_real_neg_deriv_div
+  (s : ℂ) (hs : 1 < s.re) :
+  ‖logDeriv riemannZeta s‖ ≤
+    (-deriv riemannZeta (s.re : ℂ) /
+      riemannZeta (s.re : ℂ)).re
+
 ZeroFreeRegion.residue_bounds
   (σ : ℝ) (hσ : 1 < σ) :
   1 < (σ - 1) * (riemannZeta (σ : ℂ)).re ∧
@@ -47,6 +53,12 @@ standard de la Vallee Poussin contradiction:
    `σ + it` term contributes `-1 / (σ - β) + O(log |t|)`;
 4. choose `η` and the final constant `c` small enough to contradict
    nonnegativity.
+
+The `σ + 2it` term now has a proved half-plane reduction:
+`norm_logDeriv_riemannZeta_le_real_neg_deriv_div` bounds it by the real-axis
+value at the same real part whenever `σ > 1`. The remaining work is therefore
+to turn the real-axis value at `σ = 1 + a / log |t|` into the required
+`O(log |t|)` bound and to prove the local zero-candidate regular-part estimate.
 
 ## Verified Conditional Assembly
 
@@ -743,6 +755,8 @@ The non-analytic Lean work that used to be the easiest target is now complete:
 - arbitrary-width patching;
 - real-variable comparison showing the Vinogradov-Korobov width dominates a
   classical `c / log |t|` width.
+- half-plane von Mangoldt L-series triangle inequality reducing
+  `‖logDeriv ζ(s)‖` to the real-axis `-Re(ζ'/ζ(Re(s)))` for `Re(s) > 1`.
 
 The next useful Lean work is zeta-specific: logarithmic-derivative estimates
 and Borel-Caratheodory/Jensen specialization.

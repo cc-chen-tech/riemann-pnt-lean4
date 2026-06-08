@@ -2749,6 +2749,26 @@ theorem log_deriv_zeta_real_eq_series (σ : ℝ) (hσ : 1 < σ) :
       ∑' n : ℕ, Λ n / (n : ℝ) ^ σ :=
   ZeroFreeRegion.log_deriv_zeta_real_eq_series σ hσ
 
+/-- Public termwise norm formula for von Mangoldt L-series terms. -/
+theorem norm_LSeries_vonMangoldt_term_eq_real (s : ℂ) (n : ℕ) :
+    ‖LSeries.term (↗Λ) s n‖ = Λ n / (n : ℝ) ^ s.re :=
+  ZeroFreeRegion.norm_LSeries_vonMangoldt_term_eq_real s n
+
+/-- Public triangle-inequality bound for the von Mangoldt L-series in the
+absolute-convergence half-plane. -/
+theorem norm_LSeries_vonMangoldt_le_real_series (s : ℂ) (hs : 1 < s.re) :
+    ‖LSeries (↗Λ) s‖ ≤ ∑' n : ℕ, Λ n / (n : ℝ) ^ s.re :=
+  ZeroFreeRegion.norm_LSeries_vonMangoldt_le_real_series s hs
+
+/-- Public half-plane bound for the zeta logarithmic derivative:
+`‖logDeriv ζ(s)‖` is controlled by the real-axis value
+`-Re(ζ'/ζ(Re(s)))`. -/
+theorem norm_logDeriv_riemannZeta_le_real_neg_deriv_div
+    (s : ℂ) (hs : 1 < s.re) :
+    ‖logDeriv riemannZeta s‖ ≤
+      (-deriv riemannZeta (s.re : ℂ) / riemannZeta (s.re : ℂ)).re :=
+  ZeroFreeRegion.norm_logDeriv_riemannZeta_le_real_neg_deriv_div s hs
+
 /-- Public antitonicity of `-Re(ζ'/ζ)` on the real half-line `(1, ∞)`. -/
 theorem log_deriv_zeta_antitone
     {σ₁ σ₂ : ℝ} (hσ₁ : 1 < σ₁) (hσ₂ : σ₁ ≤ σ₂) :

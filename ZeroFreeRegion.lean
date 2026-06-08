@@ -379,6 +379,70 @@ lemma log_deriv_zeta_real_eq_series (σ : ℝ) (hσ : 1 < σ) :
   simp only [Complex.ofReal_im, Complex.ofReal_re, zero_mul, Real.cos_zero, mul_one] at h
   exact h
 
+/-- Norm of one von Mangoldt L-series term in the half-plane expression.
+
+This removes the oscillatory factor from `n^{-s}`: the norm only sees
+`n^{-Re(s)}`. It is the termwise input for bounding the vertical logarithmic
+derivative by the real-axis one. -/
+lemma norm_LSeries_vonMangoldt_term_eq_real (s : ℂ) (n : ℕ) :
+    ‖LSeries.term (↗Λ) s n‖ = Λ n / (n : ℝ) ^ s.re := by
+  rcases Nat.eq_zero_or_pos n with rfl | hn
+  · simp [LSeries.term, ArithmeticFunction.vonMangoldt]
+  · rw [LSeries.term_def₀ (by simp : (↗Λ) 0 = 0)]
+    have hn_pos : (0 : ℝ) < (n : ℝ) := Nat.cast_pos.mpr hn
+    rw [norm_mul]
+    have h_cast : (n : ℂ) = ((n : ℝ) : ℂ) := by norm_num
+    rw [h_cast, Complex.norm_cpow_eq_rpow_re_of_pos hn_pos (-s)]
+    simp only [neg_re]
+    have h_normΛ : ‖(↑(Λ n) : ℂ)‖ = Λ n := by
+      simp [abs_of_nonneg ArithmeticFunction.vonMangoldt_nonneg]
+    rw [h_normΛ]
+    rw [Real.rpow_neg (le_of_lt hn_pos)]
+    ring
+
+/-- In `Re(s) > 1`, the von Mangoldt L-series is dominated by the same
+Dirichlet series on the real axis.
+
+This is just the triangle inequality for absolutely convergent L-series,
+together with `norm_LSeries_vonMangoldt_term_eq_real`. -/
+lemma norm_LSeries_vonMangoldt_le_real_series (s : ℂ) (hs : 1 < s.re) :
+    ‖LSeries (↗Λ) s‖ ≤ ∑' n : ℕ, Λ n / (n : ℝ) ^ s.re := by
+  have h_ls : LSeriesSummable (↗Λ) s :=
+    ArithmeticFunction.LSeriesSummable_vonMangoldt hs
+  have h_norm_summable :
+      Summable (fun n : ℕ => ‖LSeries.term (↗Λ) s n‖) :=
+    summable_norm_iff.mpr h_ls
+  calc
+    ‖LSeries (↗Λ) s‖ = ‖∑' n : ℕ, LSeries.term (↗Λ) s n‖ := by rfl
+    _ ≤ ∑' n : ℕ, ‖LSeries.term (↗Λ) s n‖ :=
+      norm_tsum_le_tsum_norm h_norm_summable
+    _ = ∑' n : ℕ, Λ n / (n : ℝ) ^ s.re := by
+      apply tsum_congr
+      intro n
+      exact norm_LSeries_vonMangoldt_term_eq_real s n
+
+/-- For `Re(s) > 1`, the logarithmic derivative on the vertical line is
+bounded by the real-axis logarithmic derivative at the same real part.
+
+This is the Dirichlet-series triangle inequality for von Mangoldt's series:
+`‖ζ'/ζ(s)‖ ≤ -Re(ζ'/ζ(Re(s)))`. It is a useful zeta-specific replacement for
+one of the generic vertical-strip estimates in the quantitative zero-free
+region chain, valid in the half-plane of absolute convergence. -/
+lemma norm_logDeriv_riemannZeta_le_real_neg_deriv_div (s : ℂ) (hs : 1 < s.re) :
+    ‖logDeriv riemannZeta s‖ ≤
+      (-deriv riemannZeta (s.re : ℂ) / riemannZeta (s.re : ℂ)).re := by
+  have h_lseries := ArithmeticFunction.LSeries_vonMangoldt_eq_deriv_riemannZeta_div hs
+  have h_real := log_deriv_zeta_real_eq_series s.re hs
+  rw [h_real]
+  calc
+    ‖logDeriv riemannZeta s‖ = ‖LSeries (↗Λ) s‖ := by
+      rw [h_lseries]
+      change ‖deriv riemannZeta s / riemannZeta s‖ =
+        ‖-deriv riemannZeta s / riemannZeta s‖
+      rw [neg_div, norm_neg]
+    _ ≤ ∑' n : ℕ, Λ n / (n : ℝ) ^ s.re :=
+      norm_LSeries_vonMangoldt_le_real_series s hs
+
 /-- -ζ'/ζ(σ) 关于 σ 单调递减：若 σ₁ ≤ σ₂ 且 1 < σ₁，
     则 -Re(ζ'/ζ(σ₂)) ≤ -Re(ζ'/ζ(σ₁))。
     由 Dirichlet 级数逐项递减得出。 -/
