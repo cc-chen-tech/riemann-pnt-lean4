@@ -4247,6 +4247,33 @@ lemma valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_l
   valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_localDivisor_pure
     ((σ : ℂ) + I * t) hR
 
+/-- If `logDeriv ζ` has order zero at every point of a closed ball, its divisor
+on that closed ball vanishes pointwise. -/
+lemma divisor_logDeriv_riemannZeta_closedBall_eq_zero_of_order_eq_zero
+    (c : ℂ) (R : ℝ)
+    (horder : ∀ u ∈ closedBall c R,
+      meromorphicOrderAt (logDeriv riemannZeta) u = 0) :
+    ∀ u ∈ closedBall c R,
+      divisor (logDeriv riemannZeta) (closedBall c R) u = 0 := by
+  intro u hu
+  rw [divisor_apply (meromorphicOn_logDeriv_riemannZeta_closedBall c R) hu]
+  rw [horder u hu]
+  simp
+
+/-- Analyticity and nonvanishing of `logDeriv ζ` at every point of a closed
+ball imply that its divisor on the closed ball vanishes pointwise. -/
+lemma divisor_logDeriv_riemannZeta_closedBall_eq_zero_of_analyticAt_ne_zero
+    (c : ℂ) (R : ℝ)
+    (han : ∀ u ∈ closedBall c R, AnalyticAt ℂ (logDeriv riemannZeta) u)
+    (hne : ∀ u ∈ closedBall c R, logDeriv riemannZeta u ≠ 0) :
+    ∀ u ∈ closedBall c R,
+      divisor (logDeriv riemannZeta) (closedBall c R) u = 0 :=
+  divisor_logDeriv_riemannZeta_closedBall_eq_zero_of_order_eq_zero c R
+    (fun u hu => by
+      rw [(han u hu).meromorphicOrderAt_eq]
+      rw [(han u hu).analyticOrderAt_eq_zero.2 (hne u hu)]
+      simp)
+
 /-- If the logarithmic derivative has no divisor contribution on the local
 closed ball, the translated log-counting difference for `logDeriv ζ` vanishes. -/
 lemma valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_zero_of_divisor_eq_zero
@@ -4334,6 +4361,64 @@ lemma valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_e
             (z + ((σ : ℂ) + I * t))) ⊤) R = 0 :=
   valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_eq_zero_of_divisor_eq_zero
     ((σ : ℂ) + I * t) hR hdiv
+
+/-- If `logDeriv ζ` has order zero throughout the local closed ball, the
+translated log-counting difference for `logDeriv ζ` vanishes. -/
+lemma valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_zero_of_order_eq_zero
+    (c : ℂ) {R : ℝ} (hR : R ≠ 0)
+    (horder : ∀ u ∈ closedBall c |R|,
+      meromorphicOrderAt (logDeriv riemannZeta) u = 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => logDeriv riemannZeta (z + c)) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => logDeriv riemannZeta (z + c)) ⊤) R = 0 :=
+  valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_zero_of_divisor_eq_zero
+    c hR
+    (divisor_logDeriv_riemannZeta_closedBall_eq_zero_of_order_eq_zero c |R| horder)
+
+/-- Signed version of the order-zero log-counting vanishing lemma, with the
+order hypothesis stated for unsigned `logDeriv ζ`. -/
+lemma valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_eq_zero_of_order_eq_zero
+    (c : ℂ) {R : ℝ} (hR : R ≠ 0)
+    (horder : ∀ u ∈ closedBall c |R|,
+      meromorphicOrderAt (logDeriv riemannZeta) u = 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => -logDeriv riemannZeta (z + c)) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => -logDeriv riemannZeta (z + c)) ⊤) R = 0 :=
+  valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_eq_zero_of_divisor_eq_zero
+    c hR
+    (divisor_logDeriv_riemannZeta_closedBall_eq_zero_of_order_eq_zero c |R| horder)
+
+/-- `σ + I*t` specialization of the order-zero log-counting vanishing lemma
+for `logDeriv ζ`. -/
+lemma valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_zero_of_order_eq_zero
+    {σ t R : ℝ} (hR : R ≠ 0)
+    (horder : ∀ u ∈ closedBall ((σ : ℂ) + I * t) |R|,
+      meromorphicOrderAt (logDeriv riemannZeta) u = 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => logDeriv riemannZeta
+          (z + ((σ : ℂ) + I * t))) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => logDeriv riemannZeta
+            (z + ((σ : ℂ) + I * t))) ⊤) R = 0 :=
+  valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_zero_of_order_eq_zero
+    ((σ : ℂ) + I * t) hR horder
+
+/-- Signed `σ + I*t` specialization of the order-zero log-counting vanishing
+lemma, with the order hypothesis stated for unsigned `logDeriv ζ`. -/
+lemma valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_order_eq_zero
+    {σ t R : ℝ} (hR : R ≠ 0)
+    (horder : ∀ u ∈ closedBall ((σ : ℂ) + I * t) |R|,
+      meromorphicOrderAt (logDeriv riemannZeta) u = 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => -logDeriv riemannZeta
+          (z + ((σ : ℂ) + I * t))) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => -logDeriv riemannZeta
+            (z + ((σ : ℂ) + I * t))) ⊤) R = 0 :=
+  valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_eq_zero_of_order_eq_zero
+    ((σ : ℂ) + I * t) hR horder
 
 /-- Jensen formula specialized to the signed logarithmic derivative of ζ on a
 closed ball. -/

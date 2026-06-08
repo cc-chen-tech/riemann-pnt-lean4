@@ -226,6 +226,21 @@ Core verified declarations:
   disks.
 - `valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_divisor_eq_zero`
   provides the signed `σ + I*t` version in unsigned bookkeeping.
+- `divisor_logDeriv_riemannZeta_closedBall_eq_zero_of_order_eq_zero`
+  converts pointwise order zero of `logDeriv ζ` on a closed ball into
+  pointwise vanishing of its local divisor.
+- `divisor_logDeriv_riemannZeta_closedBall_eq_zero_of_analyticAt_ne_zero`
+  gives the analytic-and-nonzero version of the same divisor-vanishing bridge.
+- `valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_zero_of_order_eq_zero`
+  turns an order-zero hypothesis on the local closed ball directly into
+  vanishing of the translated log-counting difference for `logDeriv ζ`.
+- `valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_eq_zero_of_order_eq_zero`
+  gives the signed `-logDeriv ζ` version with the same unsigned order
+  hypothesis.
+- `valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_zero_of_order_eq_zero`
+  specializes the order-zero log-counting bridge to `σ + I*t` disks.
+- `valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_order_eq_zero`
+  provides the signed `σ + I*t` version in unsigned order bookkeeping.
 - `eventually_abs_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one`
   bounds the real part of the signed quotient by
   `2 / norm (s - 1)` eventually near `1`.

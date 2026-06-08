@@ -3580,6 +3580,85 @@ theorem valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned
   ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_divisor_eq_zero
     hR hdiv
 
+/-- Public bridge from pointwise order zero of `logDeriv ζ` on a closed ball
+to vanishing of its local divisor. -/
+theorem divisor_logDeriv_riemannZeta_closedBall_eq_zero_of_order_eq_zero
+    (c : ℂ) (R : ℝ)
+    (horder : ∀ u ∈ Metric.closedBall c R,
+      meromorphicOrderAt (logDeriv riemannZeta) u = 0) :
+    ∀ u ∈ Metric.closedBall c R,
+      MeromorphicOn.divisor (logDeriv riemannZeta)
+        (Metric.closedBall c R) u = 0 :=
+  ZeroFreeRegion.divisor_logDeriv_riemannZeta_closedBall_eq_zero_of_order_eq_zero
+    c R horder
+
+/-- Public bridge from analytic nonvanishing of `logDeriv ζ` on a closed ball
+to vanishing of its local divisor. -/
+theorem divisor_logDeriv_riemannZeta_closedBall_eq_zero_of_analyticAt_ne_zero
+    (c : ℂ) (R : ℝ)
+    (han : ∀ u ∈ Metric.closedBall c R, AnalyticAt ℂ (logDeriv riemannZeta) u)
+    (hne : ∀ u ∈ Metric.closedBall c R, logDeriv riemannZeta u ≠ 0) :
+    ∀ u ∈ Metric.closedBall c R,
+      MeromorphicOn.divisor (logDeriv riemannZeta)
+        (Metric.closedBall c R) u = 0 :=
+  ZeroFreeRegion.divisor_logDeriv_riemannZeta_closedBall_eq_zero_of_analyticAt_ne_zero
+    c R han hne
+
+/-- Public order-zero local log-counting vanishing lemma for `logDeriv ζ`. -/
+theorem valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_zero_of_order_eq_zero
+    (c : ℂ) {R : ℝ} (hR : R ≠ 0)
+    (horder : ∀ u ∈ Metric.closedBall c |R|,
+      meromorphicOrderAt (logDeriv riemannZeta) u = 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => logDeriv riemannZeta (z + c)) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => logDeriv riemannZeta (z + c)) ⊤) R = 0 :=
+  ZeroFreeRegion.valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_zero_of_order_eq_zero
+    c hR horder
+
+/-- Public signed order-zero local log-counting vanishing lemma for
+`-logDeriv ζ`, with the order hypothesis stated for unsigned `logDeriv ζ`. -/
+theorem valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_eq_zero_of_order_eq_zero
+    (c : ℂ) {R : ℝ} (hR : R ≠ 0)
+    (horder : ∀ u ∈ Metric.closedBall c |R|,
+      meromorphicOrderAt (logDeriv riemannZeta) u = 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => -logDeriv riemannZeta (z + c)) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => -logDeriv riemannZeta (z + c)) ⊤) R = 0 :=
+  ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_eq_zero_of_order_eq_zero
+    c hR horder
+
+/-- Public `σ + I*t` order-zero local log-counting vanishing lemma for
+`logDeriv ζ`. -/
+theorem valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_zero_of_order_eq_zero
+    {σ t R : ℝ} (hR : R ≠ 0)
+    (horder : ∀ u ∈ Metric.closedBall ((σ : ℂ) + Complex.I * t) |R|,
+      meromorphicOrderAt (logDeriv riemannZeta) u = 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => logDeriv riemannZeta
+          (z + ((σ : ℂ) + Complex.I * t))) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => logDeriv riemannZeta
+            (z + ((σ : ℂ) + Complex.I * t))) ⊤) R = 0 :=
+  ZeroFreeRegion.valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_zero_of_order_eq_zero
+    hR horder
+
+/-- Public signed `σ + I*t` order-zero local log-counting vanishing lemma, with
+the order hypothesis stated for unsigned `logDeriv ζ`. -/
+theorem valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_order_eq_zero
+    {σ t R : ℝ} (hR : R ≠ 0)
+    (horder : ∀ u ∈ Metric.closedBall ((σ : ℂ) + Complex.I * t) |R|,
+      meromorphicOrderAt (logDeriv riemannZeta) u = 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => -logDeriv riemannZeta
+          (z + ((σ : ℂ) + Complex.I * t))) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => -logDeriv riemannZeta
+            (z + ((σ : ℂ) + Complex.I * t))) ⊤) R = 0 :=
+  ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_order_eq_zero
+    hR horder
+
 /-- Public Borel-Carathéodory theorem in the vanishing-at-zero form, routed
 through the zero-free-region namespace. -/
 theorem borelCaratheodory_zero

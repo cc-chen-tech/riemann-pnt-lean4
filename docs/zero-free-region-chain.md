@@ -281,6 +281,13 @@ proved:
   additionally turn a no-divisor hypothesis on the local closed ball into
   literal vanishing of the translated log-counting difference; the corresponding
   `σ + I*t` wrappers state this directly in the vertical-strip coordinates.
+  The order-zero wrappers
+  `ZeroFreeRegion.divisor_logDeriv_riemannZeta_closedBall_eq_zero_of_order_eq_zero`
+  and
+  `ZeroFreeRegion.valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_zero_of_order_eq_zero`
+  add the next local step: an analytic estimate can now be routed through
+  pointwise order zero of `logDeriv ζ` directly to log-counting vanishing,
+  without manually opening the divisor definition.
 
 ## Mathlib API Check
 
@@ -346,6 +353,12 @@ Useful checked names:
 #check ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_eq_zero_of_divisor_eq_zero
 #check ZeroFreeRegion.valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_zero_of_divisor_eq_zero
 #check ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_divisor_eq_zero
+#check ZeroFreeRegion.divisor_logDeriv_riemannZeta_closedBall_eq_zero_of_order_eq_zero
+#check ZeroFreeRegion.divisor_logDeriv_riemannZeta_closedBall_eq_zero_of_analyticAt_ne_zero
+#check ZeroFreeRegion.valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_zero_of_order_eq_zero
+#check ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_eq_zero_of_order_eq_zero
+#check ZeroFreeRegion.valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_zero_of_order_eq_zero
+#check ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_order_eq_zero
 #check Complex.HadamardThreeLines.norm_le_interp_of_mem_verticalClosedStrip'
 #check PowerSeries.exists_isWeierstrassFactorization
 #check riemannZeta_residue_one
