@@ -3421,6 +3421,23 @@ lemma analyticAt_logDeriv_riemannZeta_closedBall_of_one_le_re_of_ne_one
   exact analyticAt_logDeriv_riemannZeta_of_one_le_re_of_ne_one
     (hre u hu) (h1 u hu)
 
+/-- Disk-geometric analyticity wrapper for `logDeriv ζ` on a closed disk
+centered at `σ + I*t`.  The numeric hypotheses put the disk in `Re >= 1`
+and keep it a positive height away from the pole. -/
+lemma analyticAt_logDeriv_riemannZeta_closedBall_sigma_it_of_disk_right_half
+    {σ t R H : ℝ}
+    (hσ : 1 + R ≤ σ) (hHpos : 0 < H) (hH : H + R ≤ |t|) :
+    ∀ u ∈ closedBall ((σ : ℂ) + I * t) R,
+      AnalyticAt ℂ (logDeriv riemannZeta) u :=
+  analyticAt_logDeriv_riemannZeta_closedBall_of_one_le_re_of_ne_one
+    ((σ : ℂ) + I * t) R
+    (fun u hu =>
+      closedBall_sigma_it_one_le_re_of_add_le
+        (z := u) (σ := σ) (t := t) (R := R) hu hσ)
+    (fun u hu =>
+      closedBall_sigma_it_ne_one_of_height_add_le
+        (z := u) (σ := σ) (t := t) (R := R) (H := H) hu hHpos hH)
+
 /-- ζ is meromorphic on every project vertical region. -/
 lemma meromorphicOn_riemannZeta_verticalRegion (a b H : ℝ) :
     MeromorphicOn riemannZeta (verticalRegion a b H) := by
@@ -4655,6 +4672,33 @@ lemma valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_e
       closedBall_sigma_it_ne_one_of_height_add_le
         (z := u) (σ := σ) (t := t) (R := |R|) (H := H) hu hHpos hH)
     hlogne
+
+/-- Nonvanishing of the signed logarithmic derivative implies nonvanishing of
+the unsigned logarithmic derivative. -/
+lemma logDeriv_riemannZeta_ne_zero_of_neg_logDeriv_ne_zero {z : ℂ}
+    (hneg : -logDeriv riemannZeta z ≠ 0) :
+    logDeriv riemannZeta z ≠ 0 := by
+  intro h
+  apply hneg
+  simp [h]
+
+/-- Signed disk-geometric log-counting vanishing with the local nonvanishing
+hypothesis stated directly for `-logDeriv ζ`. -/
+lemma valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_eq_zero_of_disk_right_half_of_neg_logDeriv_ne_zero
+    {σ t R H : ℝ} (hR : R ≠ 0)
+    (hσ : 1 + |R| ≤ σ) (hHpos : 0 < H) (hH : H + |R| ≤ |t|)
+    (hnegne : ∀ u ∈ closedBall ((σ : ℂ) + I * t) |R|,
+      -logDeriv riemannZeta u ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => -logDeriv riemannZeta
+          (z + ((σ : ℂ) + I * t))) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => -logDeriv riemannZeta
+            (z + ((σ : ℂ) + I * t))) ⊤) R = 0 :=
+  valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_disk_right_half_of_logDeriv_ne_zero
+    hR hσ hHpos hH
+    (fun u hu =>
+      logDeriv_riemannZeta_ne_zero_of_neg_logDeriv_ne_zero (hnegne u hu))
 
 /-- Jensen formula specialized to the signed logarithmic derivative of ζ on a
 closed ball. -/

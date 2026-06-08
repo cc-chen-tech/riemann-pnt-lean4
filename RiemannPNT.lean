@@ -2885,6 +2885,16 @@ theorem analyticAt_logDeriv_riemannZeta_closedBall_of_one_le_re_of_ne_one
   ZeroFreeRegion.analyticAt_logDeriv_riemannZeta_closedBall_of_one_le_re_of_ne_one
     c R hre h1
 
+/-- Public disk-geometric analyticity wrapper for `logDeriv ζ` on a closed
+disk centered at `σ + I*t`. -/
+theorem analyticAt_logDeriv_riemannZeta_closedBall_sigma_it_of_disk_right_half
+    {σ t R H : ℝ}
+    (hσ : 1 + R ≤ σ) (hHpos : 0 < H) (hH : H + R ≤ |t|) :
+    ∀ u ∈ Metric.closedBall ((σ : ℂ) + Complex.I * t) R,
+      AnalyticAt ℂ (logDeriv riemannZeta) u :=
+  ZeroFreeRegion.analyticAt_logDeriv_riemannZeta_closedBall_sigma_it_of_disk_right_half
+    hσ hHpos hH
+
 /-- Public meromorphicity of ζ on a project vertical region. -/
 theorem meromorphicOn_riemannZeta_verticalRegion (a b H : ℝ) :
     MeromorphicOn riemannZeta (ZeroFreeRegion.verticalRegion a b H) :=
@@ -3887,6 +3897,29 @@ theorem valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned
             (z + ((σ : ℂ) + Complex.I * t))) ⊤) R = 0 :=
   ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_disk_right_half_of_logDeriv_ne_zero
     hR hσ hHpos hH hlogne
+
+/-- Public nonvanishing conversion from signed to unsigned logarithmic
+derivative. -/
+theorem logDeriv_riemannZeta_ne_zero_of_neg_logDeriv_ne_zero {z : ℂ}
+    (hneg : -logDeriv riemannZeta z ≠ 0) :
+    logDeriv riemannZeta z ≠ 0 :=
+  ZeroFreeRegion.logDeriv_riemannZeta_ne_zero_of_neg_logDeriv_ne_zero hneg
+
+/-- Public signed disk-geometric log-counting vanishing with the local
+nonvanishing hypothesis stated directly for `-logDeriv ζ`. -/
+theorem valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_eq_zero_of_disk_right_half_of_neg_logDeriv_ne_zero
+    {σ t R H : ℝ} (hR : R ≠ 0)
+    (hσ : 1 + |R| ≤ σ) (hHpos : 0 < H) (hH : H + |R| ≤ |t|)
+    (hnegne : ∀ u ∈ Metric.closedBall ((σ : ℂ) + Complex.I * t) |R|,
+      -logDeriv riemannZeta u ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => -logDeriv riemannZeta
+          (z + ((σ : ℂ) + Complex.I * t))) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => -logDeriv riemannZeta
+            (z + ((σ : ℂ) + Complex.I * t))) ⊤) R = 0 :=
+  ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_eq_zero_of_disk_right_half_of_neg_logDeriv_ne_zero
+    hR hσ hHpos hH hnegne
 
 /-- Public Borel-Carathéodory theorem in the vanishing-at-zero form, routed
 through the zero-free-region namespace. -/

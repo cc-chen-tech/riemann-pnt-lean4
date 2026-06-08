@@ -289,6 +289,15 @@ Core verified declarations:
 - `valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_disk_right_half_of_logDeriv_ne_zero`
   gives the signed `-logDeriv zeta` version while keeping the nonvanishing
   hypothesis on the unsigned logarithmic derivative.
+- `analyticAt_logDeriv_riemannZeta_closedBall_sigma_it_of_disk_right_half`
+  packages the same disk geometry as pointwise analyticity of `logDeriv zeta`
+  on the whole `sigma + I*t` disk.
+- `logDeriv_riemannZeta_ne_zero_of_neg_logDeriv_ne_zero`
+  converts local nonvanishing of `-logDeriv zeta` to local nonvanishing of
+  `logDeriv zeta`.
+- `valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_eq_zero_of_disk_right_half_of_neg_logDeriv_ne_zero`
+  gives the signed disk log-counting vanishing wrapper with the nonvanishing
+  hypothesis stated directly for `-logDeriv zeta`.
 - `eventually_abs_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one`
   bounds the real part of the signed quotient by
   `2 / norm (s - 1)` eventually near `1`.

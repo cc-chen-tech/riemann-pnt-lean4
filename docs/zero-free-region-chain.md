@@ -317,7 +317,13 @@ proved:
   `ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_disk_right_half_of_logDeriv_ne_zero`
   discharge the right-half-plane and pole-exclusion hypotheses directly from
   `1+|R| <= sigma`, `0 < H`, and `H+|R| <= |t|`, leaving only local
-  nonvanishing of `logDeriv ζ` on the disk.
+  nonvanishing of `logDeriv ζ` on the disk.  The analyticity wrapper
+  `ZeroFreeRegion.analyticAt_logDeriv_riemannZeta_closedBall_sigma_it_of_disk_right_half`
+  exposes the same geometry as direct pointwise analyticity on the whole disk,
+  and
+  `ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_eq_zero_of_disk_right_half_of_neg_logDeriv_ne_zero`
+  lets signed Jensen/Borel estimates keep the local nonvanishing hypothesis in
+  the `-logDeriv ζ` convention used by the 3-4-1 inequality.
 
 ## Mathlib API Check
 
@@ -407,6 +413,9 @@ Useful checked names:
 #check ZeroFreeRegion.closedBall_sigma_it_ne_one_of_height_add_le
 #check ZeroFreeRegion.valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_zero_of_disk_right_half_of_logDeriv_ne_zero
 #check ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_disk_right_half_of_logDeriv_ne_zero
+#check ZeroFreeRegion.analyticAt_logDeriv_riemannZeta_closedBall_sigma_it_of_disk_right_half
+#check ZeroFreeRegion.logDeriv_riemannZeta_ne_zero_of_neg_logDeriv_ne_zero
+#check ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_eq_zero_of_disk_right_half_of_neg_logDeriv_ne_zero
 #check Complex.HadamardThreeLines.norm_le_interp_of_mem_verticalClosedStrip'
 #check PowerSeries.exists_isWeierstrassFactorization
 #check riemannZeta_residue_one
