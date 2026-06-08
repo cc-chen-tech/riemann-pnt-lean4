@@ -276,6 +276,19 @@ Core verified declarations:
   specializes the right-half-plane bridge to `σ + I*t` disks.
 - `valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_one_le_re_of_ne_one_of_logDeriv_ne_zero`
   provides the signed `σ + I*t` version in unsigned bookkeeping.
+- `closedBall_sigma_it_one_le_re_of_add_le`
+  converts the numeric disk condition `1 + R <= sigma` into the pointwise
+  right-half-plane hypothesis `1 <= z.re` on disks centered at `sigma + I*t`.
+- `closedBall_sigma_it_ne_one_of_height_add_le`
+  converts positive-height disk data `0 < H` and `H + R <= |t|` into
+  pointwise exclusion of the pole `1`.
+- `valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_zero_of_disk_right_half_of_logDeriv_ne_zero`
+  packages the two disk-geometric hypotheses together with local
+  nonvanishing of `logDeriv zeta` into log-counting vanishing for
+  `logDeriv zeta`.
+- `valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_disk_right_half_of_logDeriv_ne_zero`
+  gives the signed `-logDeriv zeta` version while keeping the nonvanishing
+  hypothesis on the unsigned logarithmic derivative.
 - `eventually_abs_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one`
   bounds the real part of the signed quotient by
   `2 / norm (s - 1)` eventually near `1`.

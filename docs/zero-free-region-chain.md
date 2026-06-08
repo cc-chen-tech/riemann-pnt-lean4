@@ -114,7 +114,12 @@ proved:
   `ZeroFreeRegion.closedBall_sigma_it_re_bounds`,
   `ZeroFreeRegion.ball_sigma_it_re_bounds`,
   `ZeroFreeRegion.closedBall_sigma_it_abs_im_ge_of_add_le`, and
-  `ZeroFreeRegion.ball_sigma_it_abs_im_ge_of_add_le`; the combined wrappers
+  `ZeroFreeRegion.ball_sigma_it_abs_im_ge_of_add_le`.  The new direct
+  hypotheses
+  `ZeroFreeRegion.closedBall_sigma_it_one_le_re_of_add_le` and
+  `ZeroFreeRegion.closedBall_sigma_it_ne_one_of_height_add_le` turn numeric
+  disk conditions into the pointwise right-half-plane and pole-exclusion inputs
+  needed by the local `logDeriv ζ` layer.  The combined wrappers
   `ZeroFreeRegion.closedBall_sigma_it_re_mem_Icc`,
   `ZeroFreeRegion.ball_sigma_it_re_mem_Icc`,
   `ZeroFreeRegion.closedBall_sigma_it_mem_verticalRegion`, and
@@ -306,7 +311,13 @@ proved:
   `ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_eq_zero_of_one_le_re_of_ne_one_of_logDeriv_ne_zero`
   now combine these facts into direct log-counting vanishing on local balls in
   `Re(s) >= 1`, leaving only pole exclusion and nonvanishing of `logDeriv ζ`
-  as local hypotheses.
+  as local hypotheses.  The disk-geometric specializations
+  `ZeroFreeRegion.valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_zero_of_disk_right_half_of_logDeriv_ne_zero`
+  and
+  `ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_disk_right_half_of_logDeriv_ne_zero`
+  discharge the right-half-plane and pole-exclusion hypotheses directly from
+  `1+|R| <= sigma`, `0 < H`, and `H+|R| <= |t|`, leaving only local
+  nonvanishing of `logDeriv ζ` on the disk.
 
 ## Mathlib API Check
 
@@ -392,6 +403,10 @@ Useful checked names:
 #check ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_eq_zero_of_one_le_re_of_ne_one_of_logDeriv_ne_zero
 #check ZeroFreeRegion.valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_zero_of_one_le_re_of_ne_one_of_logDeriv_ne_zero
 #check ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_one_le_re_of_ne_one_of_logDeriv_ne_zero
+#check ZeroFreeRegion.closedBall_sigma_it_one_le_re_of_add_le
+#check ZeroFreeRegion.closedBall_sigma_it_ne_one_of_height_add_le
+#check ZeroFreeRegion.valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_zero_of_disk_right_half_of_logDeriv_ne_zero
+#check ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_disk_right_half_of_logDeriv_ne_zero
 #check Complex.HadamardThreeLines.norm_le_interp_of_mem_verticalClosedStrip'
 #check PowerSeries.exists_isWeierstrassFactorization
 #check riemannZeta_residue_one

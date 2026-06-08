@@ -1204,6 +1204,33 @@ lemma closedBall_sigma_it_abs_im_ge_of_add_le {z : ℂ} {σ t R H : ℝ}
     (z := z) (c := (σ : ℂ) + I * t) (R := R) (H := H) hz
     (by simpa using hH)
 
+/-- A closed disk centered at `σ + I*t` stays in the closed right half-plane
+when its center is at least `R` to the right of the line `Re = 1`. -/
+lemma closedBall_sigma_it_one_le_re_of_add_le {z : ℂ} {σ t R : ℝ}
+    (hz : z ∈ Metric.closedBall ((σ : ℂ) + I * t) R)
+    (hσ : 1 + R ≤ σ) :
+    1 ≤ z.re := by
+  have h := closedBall_sigma_it_re_bounds
+    (z := z) (σ := σ) (t := t) (R := R) hz
+  linarith
+
+/-- A closed disk centered at high imaginary height avoids the pole `1`.
+This is the pointwise form used when converting disk hypotheses into
+right-half-plane logarithmic-derivative hypotheses. -/
+lemma closedBall_sigma_it_ne_one_of_height_add_le {z : ℂ} {σ t R H : ℝ}
+    (hz : z ∈ Metric.closedBall ((σ : ℂ) + I * t) R)
+    (hHpos : 0 < H) (hH : H + R ≤ |t|) :
+    z ≠ 1 := by
+  have him : H ≤ |z.im| :=
+    closedBall_sigma_it_abs_im_ge_of_add_le
+      (z := z) (σ := σ) (t := t) (R := R) (H := H) hz hH
+  intro hz1
+  have hzero : H ≤ |(1 : ℂ).im| := by
+    simpa [hz1] using him
+  have hzero' : H ≤ 0 := by
+    simpa using hzero
+  linarith
+
 /-- Height transfer in an open ball centered at `σ + I*t`. -/
 lemma ball_sigma_it_abs_im_ge_of_add_le {z : ℂ} {σ t R H : ℝ}
     (hz : z ∈ Metric.ball ((σ : ℂ) + I * t) R)

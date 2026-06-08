@@ -3188,6 +3188,22 @@ theorem closedBall_sigma_it_abs_im_ge_of_add_le {z : ℂ} {σ t R H : ℝ}
     H ≤ |z.im| :=
   ZeroFreeRegion.closedBall_sigma_it_abs_im_ge_of_add_le hz hH
 
+/-- Public right-half-plane containment criterion for a closed disk centered at
+`σ + I*t`. -/
+theorem closedBall_sigma_it_one_le_re_of_add_le {z : ℂ} {σ t R : ℝ}
+    (hz : z ∈ Metric.closedBall ((σ : ℂ) + Complex.I * t) R)
+    (hσ : 1 + R ≤ σ) :
+    1 ≤ z.re :=
+  ZeroFreeRegion.closedBall_sigma_it_one_le_re_of_add_le hz hσ
+
+/-- Public pole-exclusion criterion for a high closed disk centered at
+`σ + I*t`. -/
+theorem closedBall_sigma_it_ne_one_of_height_add_le {z : ℂ} {σ t R H : ℝ}
+    (hz : z ∈ Metric.closedBall ((σ : ℂ) + Complex.I * t) R)
+    (hHpos : 0 < H) (hH : H + R ≤ |t|) :
+    z ≠ 1 :=
+  ZeroFreeRegion.closedBall_sigma_it_ne_one_of_height_add_le hz hHpos hH
+
 /-- Public height transfer in an open ball centered at `σ + I*t`. -/
 theorem ball_sigma_it_abs_im_ge_of_add_le {z : ℂ} {σ t R H : ℝ}
     (hz : z ∈ Metric.ball ((σ : ℂ) + Complex.I * t) R)
@@ -3838,6 +3854,39 @@ theorem valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned
             (z + ((σ : ℂ) + Complex.I * t))) ⊤) R = 0 :=
   ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_one_le_re_of_ne_one_of_logDeriv_ne_zero
     hR hre h1 hlogne
+
+/-- Public disk-geometric specialization of the right-half-plane local
+log-counting vanishing lemma for `logDeriv ζ`. -/
+theorem valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_zero_of_disk_right_half_of_logDeriv_ne_zero
+    {σ t R H : ℝ} (hR : R ≠ 0)
+    (hσ : 1 + |R| ≤ σ) (hHpos : 0 < H) (hH : H + |R| ≤ |t|)
+    (hlogne : ∀ u ∈ Metric.closedBall ((σ : ℂ) + Complex.I * t) |R|,
+      logDeriv riemannZeta u ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => logDeriv riemannZeta
+          (z + ((σ : ℂ) + Complex.I * t))) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => logDeriv riemannZeta
+            (z + ((σ : ℂ) + Complex.I * t))) ⊤) R = 0 :=
+  ZeroFreeRegion.valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_zero_of_disk_right_half_of_logDeriv_ne_zero
+    hR hσ hHpos hH hlogne
+
+/-- Public signed disk-geometric specialization of the right-half-plane local
+log-counting vanishing lemma, with hypotheses stated for unsigned
+`logDeriv ζ`. -/
+theorem valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_disk_right_half_of_logDeriv_ne_zero
+    {σ t R H : ℝ} (hR : R ≠ 0)
+    (hσ : 1 + |R| ≤ σ) (hHpos : 0 < H) (hH : H + |R| ≤ |t|)
+    (hlogne : ∀ u ∈ Metric.closedBall ((σ : ℂ) + Complex.I * t) |R|,
+      logDeriv riemannZeta u ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => -logDeriv riemannZeta
+          (z + ((σ : ℂ) + Complex.I * t))) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => -logDeriv riemannZeta
+            (z + ((σ : ℂ) + Complex.I * t))) ⊤) R = 0 :=
+  ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_disk_right_half_of_logDeriv_ne_zero
+    hR hσ hHpos hH hlogne
 
 /-- Public Borel-Carathéodory theorem in the vanishing-at-zero form, routed
 through the zero-free-region namespace. -/
