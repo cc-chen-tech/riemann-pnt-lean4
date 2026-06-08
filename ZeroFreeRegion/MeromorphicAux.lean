@@ -3389,6 +3389,38 @@ lemma meromorphicOn_neg_logDeriv_riemannZeta_verticalRegion (a b H : ℝ) :
       (verticalRegion a b H) :=
   (meromorphicOn_logDeriv_riemannZeta_verticalRegion a b H).neg
 
+/-- ζ is globally meromorphic. -/
+lemma meromorphic_riemannZeta :
+    Meromorphic riemannZeta := by
+  intro s
+  by_cases hs : s = 1
+  · subst hs
+    exact meromorphicAt_riemannZeta_one
+  · exact meromorphicAt_riemannZeta_of_ne_one s hs
+
+/-- The logarithmic derivative of ζ is globally meromorphic. -/
+lemma meromorphic_logDeriv_riemannZeta :
+    Meromorphic (logDeriv riemannZeta) :=
+  meromorphic_riemannZeta.deriv.div meromorphic_riemannZeta
+
+/-- The signed logarithmic derivative `-logDeriv ζ` is globally
+meromorphic. -/
+lemma meromorphic_neg_logDeriv_riemannZeta :
+    Meromorphic (fun z : ℂ => -logDeriv riemannZeta z) := by
+  simpa only [Pi.neg_apply] using meromorphic_logDeriv_riemannZeta.neg
+
+/-- Translating the input of a global meromorphic function preserves
+meromorphicity.
+
+This is the bridge needed to use Mathlib's zero-centered value-distribution
+log-counting API on disks centered at arbitrary complex points. -/
+lemma meromorphic_comp_add_const {f : ℂ → ℂ}
+    (hf : Meromorphic f) (c : ℂ) :
+    Meromorphic (fun z : ℂ => f (z + c)) := by
+  intro z
+  exact MeromorphicAt.comp_analyticAt (hf (z + c))
+    (analyticAt_id.add analyticAt_const)
+
 /-- On a positive-height right half-strip, `logDeriv ζ` is differentiable.
 
 The positive-height hypothesis excludes the pole at `1`; the lower real-part
@@ -3869,6 +3901,75 @@ lemma log_norm_meromorphicTrailingCoeffAt_neg_logDeriv_riemannZeta_eq
   have hf : MeromorphicAt (logDeriv riemannZeta) z := by
     exact meromorphicOn_logDeriv_riemannZeta_closedBall z 0 z (by simp)
   rw [norm_meromorphicTrailingCoeffAt_neg_of_meromorphicAt hf]
+
+/-- Value-distribution Jensen formula translated from Mathlib's zero-centered
+statement to a disk centered at `c`.
+
+The function being counted is the translated function `z ↦ f (z+c)`, while
+the circle-average side is stated on the original disk centered at `c`. -/
+lemma valueDistribution_logCounting_translate_eq_circleAverage_sub_const
+    {f : ℂ → ℂ} (c : ℂ)
+    (hf : Meromorphic (fun z : ℂ => f (z + c)))
+    {R : ℝ} (hR : R ≠ 0) :
+    (ValueDistribution.logCounting (fun z : ℂ => f (z + c)) 0 -
+        ValueDistribution.logCounting (fun z : ℂ => f (z + c)) ⊤) R =
+      circleAverage (fun z : ℂ => Real.log ‖f z‖) c R -
+        Real.log ‖meromorphicTrailingCoeffAt
+          (fun z : ℂ => f (z + c)) 0‖ := by
+  rw [ValueDistribution.logCounting_zero_sub_logCounting_top_eq_circleAverage_sub_const
+    hf hR]
+  rw [circleAverage_map_add_const
+    (f := fun z : ℂ => Real.log ‖f z‖) (c := c) (R := R)]
+
+/-- Translated value-distribution Jensen formula for `logDeriv ζ`. -/
+lemma valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_circleAverage_sub_const
+    (c : ℂ) {R : ℝ} (hR : R ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => logDeriv riemannZeta (z + c)) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => logDeriv riemannZeta (z + c)) ⊤) R =
+      circleAverage (fun z : ℂ => Real.log ‖logDeriv riemannZeta z‖) c R -
+        Real.log ‖meromorphicTrailingCoeffAt
+          (fun z : ℂ => logDeriv riemannZeta (z + c)) 0‖ := by
+  exact valueDistribution_logCounting_translate_eq_circleAverage_sub_const
+    (f := fun z : ℂ => logDeriv riemannZeta z)
+    c
+    (meromorphic_comp_add_const meromorphic_logDeriv_riemannZeta c) hR
+
+/-- Translated value-distribution Jensen formula for `-logDeriv ζ`. -/
+lemma valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_eq_circleAverage_sub_const
+    (c : ℂ) {R : ℝ} (hR : R ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => -logDeriv riemannZeta (z + c)) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => -logDeriv riemannZeta (z + c)) ⊤) R =
+      circleAverage (fun z : ℂ => Real.log ‖-logDeriv riemannZeta z‖) c R -
+        Real.log ‖meromorphicTrailingCoeffAt
+          (fun z : ℂ => -logDeriv riemannZeta (z + c)) 0‖ := by
+  exact valueDistribution_logCounting_translate_eq_circleAverage_sub_const
+    (f := fun z : ℂ => -logDeriv riemannZeta z)
+    c
+    (meromorphic_comp_add_const meromorphic_neg_logDeriv_riemannZeta c) hR
+
+/-- Translated value-distribution Jensen formula for the signed logarithmic
+derivative, with the circle-average and trailing-coefficient terms rewritten to
+the unsigned `logDeriv ζ` convention. -/
+lemma valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_circleAverage
+    (c : ℂ) {R : ℝ} (hR : R ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => -logDeriv riemannZeta (z + c)) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => -logDeriv riemannZeta (z + c)) ⊤) R =
+      circleAverage (fun z : ℂ => Real.log ‖logDeriv riemannZeta z‖) c R -
+        Real.log ‖meromorphicTrailingCoeffAt
+          (fun z : ℂ => logDeriv riemannZeta (z + c)) 0‖ := by
+  rw [valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_eq_circleAverage_sub_const
+    c hR]
+  rw [circleAverage_log_norm_neg_logDeriv_riemannZeta_eq]
+  have hf0 :
+      MeromorphicAt (fun z : ℂ => logDeriv riemannZeta (z + c)) 0 :=
+    (meromorphic_comp_add_const meromorphic_logDeriv_riemannZeta c) 0
+  rw [norm_meromorphicTrailingCoeffAt_neg_of_meromorphicAt hf0]
 
 /-- Jensen formula specialized to the signed logarithmic derivative of ζ on a
 closed ball. -/

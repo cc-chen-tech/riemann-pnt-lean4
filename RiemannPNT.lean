@@ -3223,6 +3223,82 @@ theorem meromorphicOn_closedBall_sigma_it_of_meromorphicOn_verticalRegion
   ZeroFreeRegion.meromorphicOn_closedBall_sigma_it_of_meromorphicOn_verticalRegion
     hf ha hb hH
 
+/-- Public global meromorphicity of ζ. -/
+theorem meromorphic_riemannZeta :
+    Meromorphic riemannZeta :=
+  ZeroFreeRegion.meromorphic_riemannZeta
+
+/-- Public global meromorphicity of the logarithmic derivative of ζ. -/
+theorem meromorphic_logDeriv_riemannZeta :
+    Meromorphic (logDeriv riemannZeta) :=
+  ZeroFreeRegion.meromorphic_logDeriv_riemannZeta
+
+/-- Public global meromorphicity of the signed logarithmic derivative
+`-logDeriv ζ`. -/
+theorem meromorphic_neg_logDeriv_riemannZeta :
+    Meromorphic (fun z : ℂ => -logDeriv riemannZeta z) :=
+  ZeroFreeRegion.meromorphic_neg_logDeriv_riemannZeta
+
+/-- Public input-translation closure for global meromorphic functions. -/
+theorem meromorphic_comp_add_const {f : ℂ → ℂ}
+    (hf : Meromorphic f) (c : ℂ) :
+    Meromorphic (fun z : ℂ => f (z + c)) :=
+  ZeroFreeRegion.meromorphic_comp_add_const hf c
+
+/-- Public translated value-distribution Jensen formula. -/
+theorem valueDistribution_logCounting_translate_eq_circleAverage_sub_const
+    {f : ℂ → ℂ} (c : ℂ)
+    (hf : Meromorphic (fun z : ℂ => f (z + c)))
+    {R : ℝ} (hR : R ≠ 0) :
+    (ValueDistribution.logCounting (fun z : ℂ => f (z + c)) 0 -
+        ValueDistribution.logCounting (fun z : ℂ => f (z + c)) ⊤) R =
+      Real.circleAverage (fun z : ℂ => Real.log ‖f z‖) c R -
+        Real.log ‖meromorphicTrailingCoeffAt
+          (fun z : ℂ => f (z + c)) 0‖ :=
+  ZeroFreeRegion.valueDistribution_logCounting_translate_eq_circleAverage_sub_const
+    c hf hR
+
+/-- Public translated value-distribution Jensen formula for `logDeriv ζ`. -/
+theorem valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_circleAverage_sub_const
+    (c : ℂ) {R : ℝ} (hR : R ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => logDeriv riemannZeta (z + c)) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => logDeriv riemannZeta (z + c)) ⊤) R =
+      Real.circleAverage (fun z : ℂ => Real.log ‖logDeriv riemannZeta z‖) c R -
+        Real.log ‖meromorphicTrailingCoeffAt
+          (fun z : ℂ => logDeriv riemannZeta (z + c)) 0‖ :=
+  ZeroFreeRegion.valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_circleAverage_sub_const
+    c hR
+
+/-- Public translated value-distribution Jensen formula for `-logDeriv ζ`. -/
+theorem valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_eq_circleAverage_sub_const
+    (c : ℂ) {R : ℝ} (hR : R ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => -logDeriv riemannZeta (z + c)) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => -logDeriv riemannZeta (z + c)) ⊤) R =
+      Real.circleAverage (fun z : ℂ => Real.log ‖-logDeriv riemannZeta z‖) c R -
+        Real.log ‖meromorphicTrailingCoeffAt
+          (fun z : ℂ => -logDeriv riemannZeta (z + c)) 0‖ :=
+  ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_eq_circleAverage_sub_const
+    c hR
+
+/-- Public translated value-distribution Jensen formula for `-logDeriv ζ`,
+with the circle-average and trailing-coefficient terms rewritten in the
+unsigned `logDeriv ζ` convention. -/
+theorem valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_circleAverage
+    (c : ℂ) {R : ℝ} (hR : R ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => -logDeriv riemannZeta (z + c)) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => -logDeriv riemannZeta (z + c)) ⊤) R =
+      Real.circleAverage (fun z : ℂ => Real.log ‖logDeriv riemannZeta z‖) c R -
+        Real.log ‖meromorphicTrailingCoeffAt
+          (fun z : ℂ => logDeriv riemannZeta (z + c)) 0‖ :=
+  ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_circleAverage
+    c hR
+
 /-- Public Borel-Carathéodory theorem in the vanishing-at-zero form, routed
 through the zero-free-region namespace. -/
 theorem borelCaratheodory_zero

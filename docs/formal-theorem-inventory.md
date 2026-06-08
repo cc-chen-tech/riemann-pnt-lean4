@@ -166,6 +166,23 @@ Core verified declarations:
   `jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_verticalRegion_unsigned_terms`
   combine the signed Jensen left side with unsigned `logDeriv ζ` divisor and
   trailing-coefficient terms.
+- `meromorphic_riemannZeta`, `meromorphic_logDeriv_riemannZeta`, and
+  `meromorphic_neg_logDeriv_riemannZeta` package ζ, `logDeriv ζ`, and
+  `-logDeriv ζ` as global meromorphic functions, not just functions
+  meromorphic on chosen closed balls.
+- `meromorphic_comp_add_const` proves that translating the input of a global
+  meromorphic function preserves global meromorphicity, the exact regularity
+  input needed for zero-centered value-distribution log-counting.
+- `valueDistribution_logCounting_translate_eq_circleAverage_sub_const`
+  translates Mathlib's zero-centered value-distribution Jensen formula to a
+  disk centered at an arbitrary complex point `c`.
+- `valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_circleAverage_sub_const`
+  specializes that bridge to `logDeriv ζ`.
+- `valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_eq_circleAverage_sub_const`
+  specializes it to the signed logarithmic derivative `-logDeriv ζ`.
+- `valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_circleAverage`
+  rewrites the signed bridge's circle-average and trailing-coefficient terms
+  into the unsigned `logDeriv ζ` convention.
 - `eventually_abs_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one`
   bounds the real part of the signed quotient by
   `2 / norm (s - 1)` eventually near `1`.

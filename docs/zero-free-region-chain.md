@@ -238,6 +238,17 @@ proved:
   and
   `ZeroFreeRegion.jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_verticalRegion_unsigned_terms`
   expose exactly this combination.
+- The value-distribution log-counting API is zero-centered, but the zero-free
+  chain uses disks centered at points such as `σ+it`.  The project now proves
+  `ZeroFreeRegion.valueDistribution_logCounting_translate_eq_circleAverage_sub_const`,
+  which applies Mathlib's log-counting Jensen theorem to the translated
+  function `z ↦ f (z+c)` and rewrites the circle average back to the original
+  disk centered at `c`.  The zeta-specific wrappers
+  `ZeroFreeRegion.valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_circleAverage_sub_const`
+  and
+  `ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_circleAverage`
+  make this bridge available for `logDeriv ζ` and the signed `-logDeriv ζ`
+  convention used by 3-4-1.
 
 ## Mathlib API Check
 
@@ -284,6 +295,8 @@ Useful checked names:
 #check ZeroFreeRegion.log_norm_meromorphicTrailingCoeffAt_neg_logDeriv_riemannZeta_eq
 #check ZeroFreeRegion.jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_closedBall
 #check ZeroFreeRegion.jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_closedBall_unsigned_terms
+#check ZeroFreeRegion.valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_circleAverage_sub_const
+#check ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_circleAverage
 #check Complex.HadamardThreeLines.norm_le_interp_of_mem_verticalClosedStrip'
 #check PowerSeries.exists_isWeierstrassFactorization
 #check riemannZeta_residue_one
