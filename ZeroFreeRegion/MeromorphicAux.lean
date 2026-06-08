@@ -3795,6 +3795,47 @@ lemma circleAverage_log_norm_neg_logDeriv_riemannZeta_eq (c : ℂ) (R : ℝ) :
   circleAverage_congr_sphere fun z _hz =>
     log_norm_neg_logDeriv_riemannZeta_eq z
 
+/-- Multiplying a meromorphic complex-valued function by `-1` does not change
+its divisor. -/
+lemma divisor_neg_of_meromorphicOn {f : ℂ → ℂ} {U : Set ℂ}
+    (hf : MeromorphicOn f U) :
+    divisor (fun z : ℂ => -f z) U = divisor f U := by
+  ext z
+  by_cases hz : z ∈ U
+  · have hneg : MeromorphicOn (fun z : ℂ => -f z) U := by
+      simpa only [Pi.neg_apply] using hf.neg
+    rw [MeromorphicOn.divisor_apply hneg hz, MeromorphicOn.divisor_apply hf hz]
+    have hfun : (fun w : ℂ => -f w) = (fun _ : ℂ => (-1 : ℂ)) • f := by
+      ext w
+      simp
+    have horder :
+        meromorphicOrderAt (fun w : ℂ => -f w) z =
+          meromorphicOrderAt f z := by
+      rw [hfun]
+      exact meromorphicOrderAt_smul_of_ne_zero
+        (f := f) (g := fun _ : ℂ => (-1 : ℂ)) (x := z)
+        analyticAt_const (by norm_num)
+    rw [horder]
+  · simp [hz]
+
+/-- The signed and unsigned logarithmic derivatives of ζ have the same divisor
+on every closed ball. -/
+lemma divisor_neg_logDeriv_riemannZeta_eq_divisor_logDeriv_closedBall
+    (c : ℂ) (R : ℝ) :
+    divisor (fun z : ℂ => -logDeriv riemannZeta z) (closedBall c R) =
+      divisor (logDeriv riemannZeta) (closedBall c R) :=
+  divisor_neg_of_meromorphicOn
+    (meromorphicOn_logDeriv_riemannZeta_closedBall c R)
+
+/-- The signed and unsigned logarithmic derivatives of ζ have the same divisor
+on the project's vertical regions. -/
+lemma divisor_neg_logDeriv_riemannZeta_eq_divisor_logDeriv_verticalRegion
+    (a b H : ℝ) :
+    divisor (fun z : ℂ => -logDeriv riemannZeta z) (verticalRegion a b H) =
+      divisor (logDeriv riemannZeta) (verticalRegion a b H) :=
+  divisor_neg_of_meromorphicOn
+    (meromorphicOn_logDeriv_riemannZeta_verticalRegion a b H)
+
 /-- Jensen formula specialized to the signed logarithmic derivative of ζ on a
 closed ball. -/
 lemma jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_closedBall

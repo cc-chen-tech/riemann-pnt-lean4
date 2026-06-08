@@ -147,6 +147,13 @@ Core verified declarations:
   `logDeriv riemannZeta` with `-logDeriv riemannZeta`.
 - `circleAverage_log_norm_neg_logDeriv_riemannZeta_eq`
   lifts the same `norm_neg` conversion to the Jensen left-side circle average.
+- `divisor_neg_of_meromorphicOn`
+  proves that multiplying a meromorphic complex-valued function by `-1` does
+  not change its divisor.
+- `divisor_neg_logDeriv_riemannZeta_eq_divisor_logDeriv_closedBall` and
+  `divisor_neg_logDeriv_riemannZeta_eq_divisor_logDeriv_verticalRegion`
+  specialize this divisor invariance to the signed/unsigned logarithmic
+  derivatives of ζ on closed balls and project vertical regions.
 - `eventually_abs_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one`
   bounds the real part of the signed quotient by
   `2 / norm (s - 1)` eventually near `1`.

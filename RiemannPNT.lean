@@ -3922,6 +3922,32 @@ theorem circleAverage_log_norm_neg_logDeriv_riemannZeta_eq
       circleAverage (Real.log ‖logDeriv riemannZeta ·‖) c R :=
   ZeroFreeRegion.circleAverage_log_norm_neg_logDeriv_riemannZeta_eq c R
 
+/-- Public helper: multiplying a meromorphic complex-valued function by `-1`
+does not change its divisor. -/
+theorem divisor_neg_of_meromorphicOn {f : ℂ → ℂ} {U : Set ℂ}
+    (hf : MeromorphicOn f U) :
+    divisor (fun z : ℂ => -f z) U = divisor f U :=
+  ZeroFreeRegion.divisor_neg_of_meromorphicOn hf
+
+/-- Public closed-ball divisor equality for signed and unsigned logarithmic
+derivatives of ζ. -/
+theorem divisor_neg_logDeriv_riemannZeta_eq_divisor_logDeriv_closedBall
+    (c : ℂ) (R : ℝ) :
+    divisor (fun z : ℂ => -logDeriv riemannZeta z) (closedBall c R) =
+      divisor (logDeriv riemannZeta) (closedBall c R) :=
+  ZeroFreeRegion.divisor_neg_logDeriv_riemannZeta_eq_divisor_logDeriv_closedBall c R
+
+/-- Public vertical-region divisor equality for signed and unsigned
+logarithmic derivatives of ζ. -/
+theorem divisor_neg_logDeriv_riemannZeta_eq_divisor_logDeriv_verticalRegion
+    (a b H : ℝ) :
+    divisor (fun z : ℂ => -logDeriv riemannZeta z)
+        (ZeroFreeRegion.verticalRegion a b H) =
+      divisor (logDeriv riemannZeta)
+        (ZeroFreeRegion.verticalRegion a b H) :=
+  ZeroFreeRegion.divisor_neg_logDeriv_riemannZeta_eq_divisor_logDeriv_verticalRegion
+    a b H
+
 /-- Public Jensen formula specialized to the signed logarithmic derivative of
 ζ on a closed ball. -/
 theorem jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_closedBall
