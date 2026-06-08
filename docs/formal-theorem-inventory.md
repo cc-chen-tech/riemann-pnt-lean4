@@ -336,6 +336,10 @@ Core verified declarations:
   bounds.
 - `classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_one_add_log_bound_high_height`
   packages that single-constant coordinate interface existentially.
+- `classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_one_add_log_bounds_high_height`
+  allows separate constants in the `C * (1 + log |t|)` estimate shape.
+- `classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_one_add_log_bounds_high_height`
+  packages that two-constant Big-O shaped interface existentially.
 - `log_abs_add_three_le_two_log_abs`
   proves `log(|t| + 3) <= 2 log |t|` for `|t| >= 3`.
 - `classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_abs_add_three_bound_high_height`

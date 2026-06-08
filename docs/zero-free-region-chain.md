@@ -537,6 +537,11 @@ and
 `ZeroFreeRegion.classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_one_add_log_bound_high_height`
 specialize this one step further to the common estimate shape
 `C * (1 + log |t|)` for both remaining zeta-specific bounds.
+The variants
+`ZeroFreeRegion.classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_one_add_log_bounds_high_height`
+and
+`ZeroFreeRegion.classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_one_add_log_bounds_high_height`
+allow different constants for those two Big-O estimates.
 The safe-height logarithm wrappers
 `ZeroFreeRegion.classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_abs_add_three_bound_high_height`
 and

@@ -2118,6 +2118,41 @@ lemma classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_one_add_log
           ≤ C * (1 + Real.log |t|) := hvertical σ t ht hσ
       _ = C + C * Real.log |t| := by ring
 
+/-- Coordinate high-height closure from separate
+`Cregular * (1 + log |t|)` and `Cvertical * (1 + log |t|)` bounds. -/
+lemma classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_one_add_log_bounds_high_height
+    (T0 Cregular Cvertical : ℝ) (hT0 : 3 ≤ T0)
+    (hCregular : 0 ≤ Cregular) (hCvertical : 0 ≤ Cvertical)
+    (hregular :
+      ∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+        0 < σ - β →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+            (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+          Cregular * (1 + Real.log |t|))
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          Cvertical * (1 + Real.log |t|)) :
+    classical_zero_free_region := by
+  refine
+    classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_affine_bounds_high_height
+      T0 Cregular Cregular Cvertical Cvertical hT0 hCregular hCregular
+      hCvertical hCvertical ?_ ?_
+  · intro σ β t ht hσ hζ hβ hsub
+    calc
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+          (((σ - β : ℝ) : ℂ)⁻¹)‖
+          ≤ Cregular * (1 + Real.log |t|) :=
+            hregular σ β t ht hσ hζ hβ hsub
+      _ = Cregular + Cregular * Real.log |t| := by ring
+  · intro σ t ht hσ
+    calc
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖
+          ≤ Cvertical * (1 + Real.log |t|) :=
+            hvertical σ t ht hσ
+      _ = Cvertical + Cvertical * Real.log |t| := by ring
+
 /-- Existential coordinate high-height closure from a single
 `C * (1 + log |t|)` bound. -/
 lemma classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_one_add_log_bound_high_height
@@ -2137,6 +2172,28 @@ lemma classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_one_
   exact
     classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_one_add_log_bound_high_height
       T0 C hT0 hC hregular hvertical
+
+/-- Existential coordinate high-height closure from separate
+`Cregular * (1 + log |t|)` and `Cvertical * (1 + log |t|)` bounds. -/
+lemma classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_one_add_log_bounds_high_height
+    (h :
+      ∃ T0 Cregular Cvertical : ℝ, 3 ≤ T0 ∧
+        0 ≤ Cregular ∧ 0 ≤ Cvertical ∧
+        (∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+          0 < σ - β →
+          ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+              (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+            Cregular * (1 + Real.log |t|)) ∧
+        (∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+            Cvertical * (1 + Real.log |t|))) :
+    classical_zero_free_region := by
+  rcases h with
+    ⟨T0, Cregular, Cvertical, hT0, hCregular, hCvertical, hregular, hvertical⟩
+  exact
+    classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_one_add_log_bounds_high_height
+      T0 Cregular Cvertical hT0 hCregular hCvertical hregular hvertical
 
 /-- Above height `3`, `log(|t| + 3)` is controlled by `2 log |t|`. -/
 lemma log_abs_add_three_le_two_log_abs {t : ℝ} (ht : 3 ≤ |t|) :
