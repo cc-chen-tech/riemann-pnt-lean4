@@ -2249,6 +2249,32 @@ lemma borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_
   intro w hw
   exact hlog w (ball_sigma_it_subset_verticalRegion ha hb hH hw)
 
+/-- Half-radius oscillation Borel-Carathéodory bound for `-logDeriv ζ` on a
+right half-strip.
+
+This is the centered regular-part shape used when controlling variation of
+`-ζ'/ζ` across a local disk. -/
+lemma borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius
+    {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M) (ha₀ : 1 ≤ a) (hHpos : 0 < H)
+    (hlog : ∀ w : ℂ, w ∈ verticalRegion a b H →
+      ((-logDeriv riemannZeta w) -
+        (-logDeriv riemannZeta ((σ : ℂ) + I * t))).re ≤ M)
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + I * t)‖ ≤ R / 2) :
+    ‖(-logDeriv riemannZeta z) -
+        (-logDeriv riemannZeta ((σ : ℂ) + I * t))‖ ≤ 2 * M := by
+  refine borelCaratheodory_sub_centered_half_radius_bound
+    (f := fun z : ℂ => -logDeriv riemannZeta z)
+    (c := (σ : ℂ) + I * t) hM
+    (differentiableOn_ball_sigma_it_of_differentiableOn_verticalRegion
+      (differentiableOn_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re
+        ha₀ hHpos)
+      ha hb hH) ?_ hR hz_half
+  intro w hw
+  exact hlog w (ball_sigma_it_subset_verticalRegion ha hb hH hw)
+
 /-- Jensen formula specialized to the logarithmic derivative of ζ on a closed
 ball. -/
 lemma jensen_circleAverage_log_norm_logDeriv_riemannZeta_closedBall

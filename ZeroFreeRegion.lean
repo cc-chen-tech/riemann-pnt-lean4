@@ -1310,6 +1310,37 @@ lemma borelCaratheodory_sub_centered
   have hgzero : (fun w => f w - f c) c = 0 := by simp
   exact borelCaratheodory_zero_centered hM hgdiff hf₁ hR hz hgzero
 
+/-- Half-radius corollary of the centered oscillation Borel-Carathéodory
+estimate.
+
+On the half-radius subdisk, the factor `||z-c||/(R-||z-c||)` is at most `1`,
+so the oscillation estimate has the clean bound `2*M`. -/
+lemma borelCaratheodory_sub_centered_half_radius_bound
+    {f : ℂ → ℂ} {M R : ℝ} {c z : ℂ}
+    (hM : 0 < M) (hf : DifferentiableOn ℂ f (Metric.ball c R))
+    (hf₁ : Set.MapsTo (fun w => f w - f c) (Metric.ball c R)
+      {w | w.re ≤ M})
+    (hR : 0 < R) (hz_half : ‖z - c‖ ≤ R / 2) :
+    ‖f z - f c‖ ≤ 2 * M := by
+  have hz_norm_nonneg : 0 ≤ ‖z - c‖ := norm_nonneg _
+  have hz_lt : ‖z - c‖ < R := by linarith
+  have hz_ball : z ∈ Metric.ball c R := by
+    simpa [Metric.mem_ball, dist_eq_norm] using hz_lt
+  have hbc := borelCaratheodory_sub_centered hM hf hf₁ hR hz_ball
+  have hden_pos : 0 < R - ‖z - c‖ := by linarith
+  have hratio : ‖z - c‖ / (R - ‖z - c‖) ≤ 1 := by
+    rw [div_le_one hden_pos]
+    linarith
+  have hterm :
+      2 * M * ‖z - c‖ / (R - ‖z - c‖) ≤ 2 * M := by
+    calc
+      2 * M * ‖z - c‖ / (R - ‖z - c‖)
+          = (2 * M) * (‖z - c‖ / (R - ‖z - c‖)) := by ring
+      _ ≤ (2 * M) * 1 :=
+          mul_le_mul_of_nonneg_left hratio (by nlinarith [hM.le])
+      _ = 2 * M := by ring
+  exact le_trans hbc hterm
+
 /-- Borel-Carathéodory on a disk centered at `σ + I*t`, with differentiability
 and real-part control supplied on an ambient vertical region. -/
 lemma borelCaratheodory_centered_verticalRegion

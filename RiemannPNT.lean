@@ -3086,6 +3086,18 @@ theorem borelCaratheodory_sub_centered
     ‖f z - f c‖ ≤ 2 * M * ‖z - c‖ / (R - ‖z - c‖) :=
   ZeroFreeRegion.borelCaratheodory_sub_centered hM hf hf₁ hR hz
 
+/-- Public half-radius corollary of the centered Borel-Carathéodory
+oscillation estimate. -/
+theorem borelCaratheodory_sub_centered_half_radius_bound
+    {f : ℂ → ℂ} {M R : ℝ} {c z : ℂ}
+    (hM : 0 < M) (hf : DifferentiableOn ℂ f (Metric.ball c R))
+    (hf₁ : Set.MapsTo (fun w => f w - f c) (Metric.ball c R)
+      {w | w.re ≤ M})
+    (hR : 0 < R) (hz_half : ‖z - c‖ ≤ R / 2) :
+    ‖f z - f c‖ ≤ 2 * M :=
+  ZeroFreeRegion.borelCaratheodory_sub_centered_half_radius_bound
+    hM hf hf₁ hR hz_half
+
 /-- Public Borel-Carathéodory on a `σ + I*t` disk with ambient
 vertical-region hypotheses. -/
 theorem borelCaratheodory_centered_verticalRegion
@@ -3403,6 +3415,22 @@ theorem borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_o
     ‖-logDeriv riemannZeta z‖ ≤
       2 * M + 3 * ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ :=
   ZeroFreeRegion.borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius
+    hM ha₀ hHpos hlog ha hb hH hR hz_half
+
+/-- Public half-radius oscillation Borel-Carathéodory bound for `-logDeriv ζ`
+on a positive-height right half-strip. -/
+theorem borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius
+    {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M) (ha₀ : 1 ≤ a) (hHpos : 0 < H)
+    (hlog : ∀ w : ℂ, w ∈ verticalRegion a b H →
+      ((-logDeriv riemannZeta w) -
+        (-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t))).re ≤ M)
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + Complex.I * t)‖ ≤ R / 2) :
+    ‖(-logDeriv riemannZeta z) -
+        (-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t))‖ ≤ 2 * M :=
+  ZeroFreeRegion.borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius
     hM ha₀ hHpos hlog ha hb hH hR hz_half
 
 section JensenWrapper

@@ -359,6 +359,9 @@ Core verified declarations:
 - `borelCaratheodory_centered_half_radius_bound`
   turns the centered Borel-Caratheodory rational factors into the constant
   bound `||f z|| <= 2 M + 3 ||f c||` on the half-radius subdisk.
+- `borelCaratheodory_sub_centered_half_radius_bound`
+  gives the matching oscillation form `||f z - f c|| <= 2 M` on the
+  half-radius subdisk.
 - `borelCaratheodory_riemannZeta_verticalRegion` and
   `borelCaratheodory_sub_riemannZeta_verticalRegion`
   specialize the same Borel wrappers to ζ and centered ζ, leaving only
@@ -400,6 +403,9 @@ Core verified declarations:
   combines the signed right-half-strip Borel wrapper with the half-radius
   constant bound, eliminating the denominator terms in the common local-disk
   application.
+- `borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius`
+  is the signed oscillation half-radius version used for centered
+  regular-part control of `-ζ'/ζ`.
 - `jensen_circleAverage_log_norm_verticalRegion`
   combines Jensen's formula with the same closed-disk geometry and ambient
   vertical-region meromorphicity.

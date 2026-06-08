@@ -160,12 +160,15 @@ proved:
   and
   `ZeroFreeRegion.borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le`
   provide the same interface in the `-logDeriv ζ` convention used by the
-  3-4-1 inequality.  The general
-  `ZeroFreeRegion.borelCaratheodory_centered_half_radius_bound` and signed
-  specialization
+  3-4-1 inequality.  The general half-radius wrappers
+  `ZeroFreeRegion.borelCaratheodory_centered_half_radius_bound` and
+  `ZeroFreeRegion.borelCaratheodory_sub_centered_half_radius_bound`, together
+  with the signed specializations
   `ZeroFreeRegion.borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius`
-  also convert the Borel disk-denominator terms into the fixed half-radius
-  bound `2M + 3||f(c)||`;
+  and
+  `ZeroFreeRegion.borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius`,
+  convert the Borel disk-denominator terms into the fixed half-radius bounds
+  `2M + 3||f(c)||` and `2M`;
   `ZeroFreeRegion.jensen_circleAverage_log_norm_verticalRegion` is the matching
   Jensen entry point for zero-count and divisor estimates.
 - The zeta-specific regularity layer now includes
