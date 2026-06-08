@@ -370,6 +370,12 @@ Core verified declarations:
   `C * log(|t| + 3)` for both remaining zeta-specific bounds.
 - `classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_log_abs_add_three_bound_high_height`
   packages the `log(|t| + 3)` coordinate interface existentially.
+- `classical_zero_free_region_of_re_im_neg_logDeriv_regular_part_norm_log_abs_add_three_bound_high_height`
+  accepts the same single-constant safe-height logarithmic interface in the
+  signed `-logDeriv zeta` convention.
+- `classical_zero_free_region_of_exists_re_im_neg_logDeriv_regular_part_norm_log_abs_add_three_bound_high_height`
+  packages that signed single-constant safe-height logarithmic interface
+  existentially.
 - `classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_abs_add_three_bounds_high_height`
   allows separate `Cregular * log(|t| + 3)` and
   `Cvertical * log(|t| + 3)` bounds.

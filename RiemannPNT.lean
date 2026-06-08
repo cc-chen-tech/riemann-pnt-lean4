@@ -4748,6 +4748,43 @@ theorem classical_zero_free_region_of_exists_re_im_neg_logDeriv_regular_part_nor
   ZeroFreeRegion.classical_zero_free_region_of_exists_re_im_neg_logDeriv_regular_part_norm_log_abs_add_three_bounds_high_height
     h
 
+/-- Public signed coordinate high-height closure from a single
+`C * log(|t| + 3)` bound. -/
+theorem classical_zero_free_region_of_re_im_neg_logDeriv_regular_part_norm_log_abs_add_three_bound_high_height
+    (T0 C : ℝ) (hT0 : 3 ≤ T0) (hC : 0 ≤ C)
+    (hregular :
+      ∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < σ - β →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) +
+            (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+          C * Real.log (|t| + 3))
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          C * Real.log (|t| + 3)) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_re_im_neg_logDeriv_regular_part_norm_log_abs_add_three_bound_high_height
+    T0 C hT0 hC hregular hvertical
+
+/-- Public existential signed coordinate high-height closure from a single
+`C * log(|t| + 3)` bound. -/
+theorem classical_zero_free_region_of_exists_re_im_neg_logDeriv_regular_part_norm_log_abs_add_three_bound_high_height
+    (h :
+      ∃ T0 C : ℝ, 3 ≤ T0 ∧ 0 ≤ C ∧
+        (∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+          0 < σ - β →
+          ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) +
+              (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+            C * Real.log (|t| + 3)) ∧
+        (∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+            C * Real.log (|t| + 3))) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_re_im_neg_logDeriv_regular_part_norm_log_abs_add_three_bound_high_height
+    h
+
 /-- Public coordinate high-height closure from separate
 `Cregular * log(‖σ+it‖ + 3)` and `Cvertical * log(‖σ+it‖ + 3)` bounds. -/
 theorem classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height
