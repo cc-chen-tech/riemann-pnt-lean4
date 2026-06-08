@@ -3659,6 +3659,70 @@ theorem valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned
   ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_order_eq_zero
     hR horder
 
+/-- Public analytic-and-nonzero local log-counting vanishing lemma for
+`logDeriv ζ`. -/
+theorem valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_zero_of_analyticAt_ne_zero
+    (c : ℂ) {R : ℝ} (hR : R ≠ 0)
+    (han : ∀ u ∈ Metric.closedBall c |R|,
+      AnalyticAt ℂ (logDeriv riemannZeta) u)
+    (hne : ∀ u ∈ Metric.closedBall c |R|,
+      logDeriv riemannZeta u ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => logDeriv riemannZeta (z + c)) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => logDeriv riemannZeta (z + c)) ⊤) R = 0 :=
+  ZeroFreeRegion.valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_zero_of_analyticAt_ne_zero
+    c hR han hne
+
+/-- Public signed analytic-and-nonzero local log-counting vanishing lemma for
+`-logDeriv ζ`, with hypotheses stated for unsigned `logDeriv ζ`. -/
+theorem valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_eq_zero_of_analyticAt_ne_zero
+    (c : ℂ) {R : ℝ} (hR : R ≠ 0)
+    (han : ∀ u ∈ Metric.closedBall c |R|,
+      AnalyticAt ℂ (logDeriv riemannZeta) u)
+    (hne : ∀ u ∈ Metric.closedBall c |R|,
+      logDeriv riemannZeta u ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => -logDeriv riemannZeta (z + c)) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => -logDeriv riemannZeta (z + c)) ⊤) R = 0 :=
+  ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_eq_zero_of_analyticAt_ne_zero
+    c hR han hne
+
+/-- Public `σ + I*t` analytic-and-nonzero local log-counting vanishing lemma
+for `logDeriv ζ`. -/
+theorem valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_zero_of_analyticAt_ne_zero
+    {σ t R : ℝ} (hR : R ≠ 0)
+    (han : ∀ u ∈ Metric.closedBall ((σ : ℂ) + Complex.I * t) |R|,
+      AnalyticAt ℂ (logDeriv riemannZeta) u)
+    (hne : ∀ u ∈ Metric.closedBall ((σ : ℂ) + Complex.I * t) |R|,
+      logDeriv riemannZeta u ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => logDeriv riemannZeta
+          (z + ((σ : ℂ) + Complex.I * t))) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => logDeriv riemannZeta
+            (z + ((σ : ℂ) + Complex.I * t))) ⊤) R = 0 :=
+  ZeroFreeRegion.valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_zero_of_analyticAt_ne_zero
+    hR han hne
+
+/-- Public signed `σ + I*t` analytic-and-nonzero local log-counting vanishing
+lemma, with hypotheses stated for unsigned `logDeriv ζ`. -/
+theorem valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_analyticAt_ne_zero
+    {σ t R : ℝ} (hR : R ≠ 0)
+    (han : ∀ u ∈ Metric.closedBall ((σ : ℂ) + Complex.I * t) |R|,
+      AnalyticAt ℂ (logDeriv riemannZeta) u)
+    (hne : ∀ u ∈ Metric.closedBall ((σ : ℂ) + Complex.I * t) |R|,
+      logDeriv riemannZeta u ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => -logDeriv riemannZeta
+          (z + ((σ : ℂ) + Complex.I * t))) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => -logDeriv riemannZeta
+            (z + ((σ : ℂ) + Complex.I * t))) ⊤) R = 0 :=
+  ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_analyticAt_ne_zero
+    hR han hne
+
 /-- Public Borel-Carathéodory theorem in the vanishing-at-zero form, routed
 through the zero-free-region namespace. -/
 theorem borelCaratheodory_zero
