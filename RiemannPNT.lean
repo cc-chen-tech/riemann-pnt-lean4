@@ -3985,6 +3985,20 @@ theorem jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_closedBall
             (fun z : ℂ => -logDeriv riemannZeta z) c‖ :=
   ZeroFreeRegion.jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_closedBall hR
 
+/-- Public Jensen formula for `-logDeriv ζ` on a closed ball, with unsigned
+`logDeriv ζ` divisor and trailing coefficient terms on the right-hand side. -/
+theorem jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_closedBall_unsigned_terms
+    {c : ℂ} {R : ℝ} (hR : R ≠ 0) :
+    circleAverage (fun z : ℂ => Real.log ‖-logDeriv riemannZeta z‖) c R
+      = ∑ᶠ u,
+          divisor (logDeriv riemannZeta) (closedBall c |R|) u *
+            Real.log (R * ‖c - u‖⁻¹)
+        + divisor (logDeriv riemannZeta) (closedBall c |R|) c *
+            Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt (logDeriv riemannZeta) c‖ :=
+  ZeroFreeRegion.jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_closedBall_unsigned_terms
+    hR
+
 /-- Public Jensen formula specialized to the logarithmic derivative of ζ on a
 `σ + I*t` disk using ambient vertical-region bookkeeping. -/
 theorem jensen_circleAverage_log_norm_logDeriv_riemannZeta_verticalRegion
@@ -4024,6 +4038,26 @@ theorem jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_verticalRegion
             (fun z : ℂ => -logDeriv riemannZeta z)
             ((σ : ℂ) + Complex.I * t)‖ :=
   ZeroFreeRegion.jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_verticalRegion
+    hR ha hb hH
+
+/-- Public Jensen formula for `-logDeriv ζ` on a `σ + I*t` disk, with unsigned
+`logDeriv ζ` divisor and trailing coefficient terms on the right-hand side. -/
+theorem jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_verticalRegion_unsigned_terms
+    {R σ t a b H : ℝ}
+    (hR : R ≠ 0) (ha : a + |R| ≤ σ)
+    (hb : σ + |R| ≤ b) (hH : H + |R| ≤ |t|) :
+    circleAverage (fun z : ℂ => Real.log ‖-logDeriv riemannZeta z‖)
+        ((σ : ℂ) + Complex.I * t) R
+      = ∑ᶠ u,
+          divisor (logDeriv riemannZeta)
+            (closedBall ((σ : ℂ) + Complex.I * t) |R|) u *
+            Real.log (R * ‖((σ : ℂ) + Complex.I * t) - u‖⁻¹)
+        + divisor (logDeriv riemannZeta)
+            (closedBall ((σ : ℂ) + Complex.I * t) |R|)
+            ((σ : ℂ) + Complex.I * t) * Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt (logDeriv riemannZeta)
+            ((σ : ℂ) + Complex.I * t)‖ :=
+  ZeroFreeRegion.jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_verticalRegion_unsigned_terms
     hR ha hb hH
 
 end JensenWrapper

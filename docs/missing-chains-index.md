@@ -113,6 +113,8 @@ The following proved declarations are the main entry points for future work:
 - `ZeroFreeRegion.divisor_neg_logDeriv_riemannZeta_eq_divisor_logDeriv_verticalRegion`
 - `ZeroFreeRegion.log_norm_meromorphicTrailingCoeffAt_neg_logDeriv_riemannZeta_eq`
 - `ZeroFreeRegion.jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_verticalRegion`
+- `ZeroFreeRegion.jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_closedBall_unsigned_terms`
+- `ZeroFreeRegion.jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_verticalRegion_unsigned_terms`
 - `ZeroFreeRegion.residue_bounds`
 - `ZeroFreeRegion.classical_zero_free_region_compact`
 - `ZeroFreeRegion.compact_patch_classical_zero_free_region_at_three`

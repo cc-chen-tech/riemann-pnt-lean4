@@ -161,6 +161,11 @@ Core verified declarations:
 - `log_norm_meromorphicTrailingCoeffAt_neg_logDeriv_riemannZeta_eq`
   specializes the trailing-coefficient logarithmic norm equality to the
   signed/unsigned logarithmic derivatives of ζ.
+- `jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_closedBall_unsigned_terms`
+  and
+  `jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_verticalRegion_unsigned_terms`
+  combine the signed Jensen left side with unsigned `logDeriv ζ` divisor and
+  trailing-coefficient terms.
 - `eventually_abs_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one`
   bounds the real part of the signed quotient by
   `2 / norm (s - 1)` eventually near `1`.
