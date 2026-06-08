@@ -4338,6 +4338,39 @@ theorem borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_re_le
   ZeroFreeRegion.borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_re_le
     hM hlogdiff hlog ha hb hH hR hz
 
+/-- Public direct Borel-Carathéodory wrapper for `logDeriv ζ` on a `σ+it`
+disk whose geometry puts it in the right half-plane and away from the pole. -/
+theorem borelCaratheodory_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_re_le
+    {M R σ t H : ℝ} {z : ℂ}
+    (hM : 0 < M) (hσ : 1 + R ≤ σ) (hHpos : 0 < H) (hH : H + R ≤ |t|)
+    (hlog : ∀ w : ℂ, w ∈ Metric.ball ((σ : ℂ) + Complex.I * t) R →
+      (logDeriv riemannZeta w).re ≤ M)
+    (hR : 0 < R) (hz : z ∈ Metric.ball ((σ : ℂ) + Complex.I * t) R) :
+    ‖logDeriv riemannZeta z‖ ≤
+      2 * M * ‖z - ((σ : ℂ) + Complex.I * t)‖ /
+          (R - ‖z - ((σ : ℂ) + Complex.I * t)‖) +
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ *
+          (R + ‖z - ((σ : ℂ) + Complex.I * t)‖) /
+          (R - ‖z - ((σ : ℂ) + Complex.I * t)‖) :=
+  ZeroFreeRegion.borelCaratheodory_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_re_le
+    hM hσ hHpos hH hlog hR hz
+
+/-- Public direct oscillation Borel-Carathéodory wrapper for `logDeriv ζ` on a
+right-half `σ+it` disk. -/
+theorem borelCaratheodory_sub_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_re_le
+    {M R σ t H : ℝ} {z : ℂ}
+    (hM : 0 < M) (hσ : 1 + R ≤ σ) (hHpos : 0 < H) (hH : H + R ≤ |t|)
+    (hlog : ∀ w : ℂ, w ∈ Metric.ball ((σ : ℂ) + Complex.I * t) R →
+      (logDeriv riemannZeta w -
+        logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤ M)
+    (hR : 0 < R) (hz : z ∈ Metric.ball ((σ : ℂ) + Complex.I * t) R) :
+    ‖logDeriv riemannZeta z -
+        logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+      2 * M * ‖z - ((σ : ℂ) + Complex.I * t)‖ /
+        (R - ‖z - ((σ : ℂ) + Complex.I * t)‖) :=
+  ZeroFreeRegion.borelCaratheodory_sub_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_re_le
+    hM hσ hHpos hH hlog hR hz
+
 /-- Public pointwise Borel-Carathéodory bound for `logDeriv ζ` on a
 positive-height right half-strip, with differentiability discharged by
 ζ-nonvanishing on `Re(s) >= 1`. -/

@@ -709,6 +709,12 @@ Core verified declarations:
   are the same `logDeriv ζ` Borel interfaces with that differentiability
   hypothesis discharged; the only remaining Borel input is a pointwise
   real-part height bound.
+- `borelCaratheodory_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_re_le`
+  and
+  `borelCaratheodory_sub_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_re_le`
+  are direct disk-geometric versions: they avoid the ambient `verticalRegion`
+  wrapper and leave only a pointwise real-part bound on the local `sigma+I*t`
+  ball.
 - `borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius`
   and
   `borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius`

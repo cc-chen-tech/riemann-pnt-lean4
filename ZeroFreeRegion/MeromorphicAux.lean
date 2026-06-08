@@ -3480,6 +3480,58 @@ lemma differentiableOn_neg_logDeriv_riemannZeta_comp_add_sigma_it_ball_of_disk_r
     (differentiableOn_logDeriv_riemannZeta_comp_add_sigma_it_ball_of_disk_right_half
       (σ := σ) (t := t) (R := R) (H := H) hσ hHpos hH).neg
 
+/-- Direct Borel-Carathéodory wrapper for `logDeriv ζ` on a `σ + I*t` disk
+whose geometry places it in the right half-plane and away from the pole.  The
+only analytic input left is the real-part bound on that local disk. -/
+lemma borelCaratheodory_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_re_le
+    {M R σ t H : ℝ} {z : ℂ}
+    (hM : 0 < M) (hσ : 1 + R ≤ σ) (hHpos : 0 < H) (hH : H + R ≤ |t|)
+    (hlog : ∀ w : ℂ, w ∈ ball ((σ : ℂ) + I * t) R →
+      (logDeriv riemannZeta w).re ≤ M)
+    (hR : 0 < R) (hz : z ∈ ball ((σ : ℂ) + I * t) R) :
+    ‖logDeriv riemannZeta z‖ ≤
+      2 * M * ‖z - ((σ : ℂ) + I * t)‖ /
+          (R - ‖z - ((σ : ℂ) + I * t)‖) +
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ *
+          (R + ‖z - ((σ : ℂ) + I * t)‖) /
+          (R - ‖z - ((σ : ℂ) + I * t)‖) := by
+  have hdiff : DifferentiableOn ℂ (logDeriv riemannZeta)
+      (ball ((σ : ℂ) + I * t) R) := by
+    exact (differentiableOn_logDeriv_riemannZeta_closedBall_sigma_it_of_disk_right_half
+      (σ := σ) (t := t) (R := R) (H := H) hσ hHpos hH).mono
+        Metric.ball_subset_closedBall
+  have hmaps : Set.MapsTo (logDeriv riemannZeta)
+      (ball ((σ : ℂ) + I * t) R) {w | w.re ≤ M} := by
+    intro w hw
+    exact hlog w hw
+  exact borelCaratheodory_centered hM hdiff hmaps hR hz
+
+/-- Direct oscillation Borel-Carathéodory wrapper for `logDeriv ζ` on a
+`σ + I*t` disk with right-half-plane geometry. -/
+lemma borelCaratheodory_sub_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_re_le
+    {M R σ t H : ℝ} {z : ℂ}
+    (hM : 0 < M) (hσ : 1 + R ≤ σ) (hHpos : 0 < H) (hH : H + R ≤ |t|)
+    (hlog : ∀ w : ℂ, w ∈ ball ((σ : ℂ) + I * t) R →
+      (logDeriv riemannZeta w -
+        logDeriv riemannZeta ((σ : ℂ) + I * t)).re ≤ M)
+    (hR : 0 < R) (hz : z ∈ ball ((σ : ℂ) + I * t) R) :
+    ‖logDeriv riemannZeta z -
+        logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+      2 * M * ‖z - ((σ : ℂ) + I * t)‖ /
+        (R - ‖z - ((σ : ℂ) + I * t)‖) := by
+  have hdiff : DifferentiableOn ℂ (logDeriv riemannZeta)
+      (ball ((σ : ℂ) + I * t) R) := by
+    exact (differentiableOn_logDeriv_riemannZeta_closedBall_sigma_it_of_disk_right_half
+      (σ := σ) (t := t) (R := R) (H := H) hσ hHpos hH).mono
+        Metric.ball_subset_closedBall
+  have hmaps : Set.MapsTo
+      (fun w => logDeriv riemannZeta w -
+        logDeriv riemannZeta ((σ : ℂ) + I * t))
+      (ball ((σ : ℂ) + I * t) R) {w | w.re ≤ M} := by
+    intro w hw
+    exact hlog w hw
+  exact borelCaratheodory_sub_centered hM hdiff hmaps hR hz
+
 /-- ζ is meromorphic on every project vertical region. -/
 lemma meromorphicOn_riemannZeta_verticalRegion (a b H : ℝ) :
     MeromorphicOn riemannZeta (verticalRegion a b H) := by
