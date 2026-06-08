@@ -236,9 +236,15 @@ Core verified declarations:
   combines local pole control, constant selection, standard `sigma`, 3-4-1,
   and compact patching, leaving exactly the two shifted estimates as analytic
   inputs.
+- `classical_zero_free_region_of_sigma_log_shift_estimates_nonneg_constants`
+  is the same closure with individual nonnegative shifted coefficients
+  `Czero,Ctwo` instead of the bundled `0 <= 4*Czero + Ctwo`.
 - `classical_zero_free_region_of_sigma_log_shift_estimates_five_fourths`
   fixes the real-axis coefficient to `5/4`, removing the abstract
   `1 < C < 4/3` hypotheses from the caller-facing closure.
+- `classical_zero_free_region_of_sigma_log_shift_estimates_five_fourths_nonneg_constants`
+  combines the fixed `5/4` real-axis coefficient with the individual
+  nonnegative shifted-coefficient interface.
 - `classical_zero_free_region_of_sigma_log_shift_estimates_same_const`
   uses one nonnegative logarithmic coefficient for both shifted estimates.
 - `classical_zero_free_region_of_sigma_log_shift_estimates_same_const_at_two`

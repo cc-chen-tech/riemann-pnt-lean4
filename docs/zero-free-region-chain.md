@@ -424,8 +424,13 @@ contradiction, and compact patch into one conditional theorem.  At this point,
 the quantitative zero-free-region chain has no remaining real-variable
 assembly gap; the remaining gap is the pair of zeta-specific shifted estimates.
 Two caller-facing variants remove incidental parameters:
+`ZeroFreeRegion.classical_zero_free_region_of_sigma_log_shift_estimates_nonneg_constants`
+replaces the bundled `0 <= 4*Czero + Ctwo` hypothesis by individual
+nonnegativity of `Czero,Ctwo`,
 `ZeroFreeRegion.classical_zero_free_region_of_sigma_log_shift_estimates_five_fourths`
-fixes the real-axis coefficient to `5/4`, and
+fixes the real-axis coefficient to `5/4`,
+`ZeroFreeRegion.classical_zero_free_region_of_sigma_log_shift_estimates_five_fourths_nonneg_constants`
+combines those two simplifications, and
 `ZeroFreeRegion.classical_zero_free_region_of_sigma_log_shift_estimates_same_const`
 uses one nonnegative logarithmic coefficient for both shifted estimates.
 The wrappers

@@ -1052,6 +1052,35 @@ lemma classical_zero_free_region_of_sigma_log_shift_estimates
     exact three_four_one_sigmaOf_log_margin hT0 ha_pos hc_pos ht hβ_lt hβ
       hconst'
 
+/-- Nonnegative-constant wrapper for
+`classical_zero_free_region_of_sigma_log_shift_estimates`.
+
+This is the caller-facing version when the two shifted logarithmic-derivative
+coefficients are known individually nonnegative, rather than already packaged
+as `0 <= 4*Czero + Ctwo`. -/
+lemma classical_zero_free_region_of_sigma_log_shift_estimates_nonneg_constants
+    (C Czero Ctwo T0 : ℝ) (hC : 1 < C) (hC_lt : C < 4 / 3)
+    (hCzero : 0 ≤ Czero) (hCtwo : 0 ≤ Ctwo) (hT0 : 2 ≤ T0)
+    (hzero :
+      ∀ a c β t : ℝ, 0 < a → 0 < c → a ≤ Real.log 2 →
+        T0 ≤ |t| → β < 1 →
+        β ≥ 1 - c / Real.log |t| →
+        0 < (1 + a / Real.log |t|) - β →
+        riemannZeta ((β : ℂ) + I * t) = 0 →
+        (-deriv riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t) /
+          riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t)).re ≤
+            -1 / ((1 + a / Real.log |t|) - β) +
+              Czero * Real.log |t|)
+    (htwo :
+      ∀ a t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+        (-deriv riemannZeta
+            ((1 + a / Real.log |t| : ℝ) + 2 * I * t) /
+          riemannZeta ((1 + a / Real.log |t| : ℝ) + 2 * I * t)).re ≤
+            Ctwo * Real.log |t|) :
+    classical_zero_free_region :=
+  classical_zero_free_region_of_sigma_log_shift_estimates
+    C Czero Ctwo T0 hC hC_lt (by nlinarith) hT0 hzero htwo
+
 /-- Concrete version of
 `classical_zero_free_region_of_sigma_log_shift_estimates` using the fixed
 real-axis coefficient `5/4`.
@@ -1080,6 +1109,30 @@ lemma classical_zero_free_region_of_sigma_log_shift_estimates_five_fourths
   classical_zero_free_region_of_sigma_log_shift_estimates
     (5 / 4) Czero Ctwo T0
     (by norm_num) (by norm_num) hK hT0 hzero htwo
+
+/-- Nonnegative-constant wrapper for the fixed `5/4` real-axis coefficient. -/
+lemma classical_zero_free_region_of_sigma_log_shift_estimates_five_fourths_nonneg_constants
+    (Czero Ctwo T0 : ℝ) (hCzero : 0 ≤ Czero) (hCtwo : 0 ≤ Ctwo)
+    (hT0 : 2 ≤ T0)
+    (hzero :
+      ∀ a c β t : ℝ, 0 < a → 0 < c → a ≤ Real.log 2 →
+        T0 ≤ |t| → β < 1 →
+        β ≥ 1 - c / Real.log |t| →
+        0 < (1 + a / Real.log |t|) - β →
+        riemannZeta ((β : ℂ) + I * t) = 0 →
+        (-deriv riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t) /
+          riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t)).re ≤
+            -1 / ((1 + a / Real.log |t|) - β) +
+              Czero * Real.log |t|)
+    (htwo :
+      ∀ a t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+        (-deriv riemannZeta
+            ((1 + a / Real.log |t| : ℝ) + 2 * I * t) /
+          riemannZeta ((1 + a / Real.log |t| : ℝ) + 2 * I * t)).re ≤
+            Ctwo * Real.log |t|) :
+    classical_zero_free_region :=
+  classical_zero_free_region_of_sigma_log_shift_estimates_five_fourths
+    Czero Ctwo T0 (by nlinarith) hT0 hzero htwo
 
 /-- Same-constant version of the shifted-estimate closure.
 
