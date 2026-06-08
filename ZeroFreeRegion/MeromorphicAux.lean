@@ -2083,6 +2083,74 @@ lemma classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_affi
       T0 Aregular Bregular Avertical Bvertical hT0 hAregular hBregular
       hAvertical hBvertical hregular hvertical
 
+/-- Signed coordinate version of the high-height affine-log closure.
+
+This is the `-logDeriv ζ` counterpart of
+`classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_affine_bounds_high_height`,
+with estimates stated in the real variables `σ`, `β`, and `t`. -/
+lemma classical_zero_free_region_of_re_im_neg_logDeriv_regular_part_norm_affine_bounds_high_height
+    (T0 Aregular Bregular Avertical Bvertical : ℝ)
+    (hT0 : 3 ≤ T0)
+    (hAregular : 0 ≤ Aregular) (hBregular : 0 ≤ Bregular)
+    (hAvertical : 0 ≤ Avertical) (hBvertical : 0 ≤ Bvertical)
+    (hregular :
+      ∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+        0 < σ - β →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t) +
+            (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+          Aregular + Bregular * Real.log |t|)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          Avertical + Bvertical * Real.log |t|) :
+    classical_zero_free_region := by
+  refine
+    classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_affine_bounds_high_height
+      T0 Aregular Bregular Avertical Bvertical hT0 hAregular hBregular
+      hAvertical hBvertical ?_ ?_
+  · intro σ β t ht hσ hζ hβ hsub
+    calc
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+          (((σ - β : ℝ) : ℂ)⁻¹)‖
+          = ‖-(-logDeriv riemannZeta ((σ : ℂ) + I * t) +
+              (((σ - β : ℝ) : ℂ)⁻¹))‖ := by ring_nf
+      _ = ‖-logDeriv riemannZeta ((σ : ℂ) + I * t) +
+            (((σ - β : ℝ) : ℂ)⁻¹)‖ := norm_neg _
+      _ ≤ Aregular + Bregular * Real.log |t| :=
+          hregular σ β t ht hσ hζ hβ hsub
+  · intro σ t ht hσ
+    calc
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖
+          = ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ := (norm_neg _).symm
+      _ ≤ Avertical + Bvertical * Real.log |t| := hvertical σ t ht hσ
+
+/-- Existential signed coordinate version of the high-height affine-log
+closure. -/
+lemma classical_zero_free_region_of_exists_re_im_neg_logDeriv_regular_part_norm_affine_bounds_high_height
+    (h :
+      ∃ T0 Aregular Bregular Avertical Bvertical : ℝ,
+        3 ≤ T0 ∧
+        0 ≤ Aregular ∧ 0 ≤ Bregular ∧
+        0 ≤ Avertical ∧ 0 ≤ Bvertical ∧
+        (∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+          0 < σ - β →
+          ‖-logDeriv riemannZeta ((σ : ℂ) + I * t) +
+              (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+            Aregular + Bregular * Real.log |t|) ∧
+        (∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+            Avertical + Bvertical * Real.log |t|)) :
+    classical_zero_free_region := by
+  rcases h with
+    ⟨T0, Aregular, Bregular, Avertical, Bvertical, hT0,
+      hAregular, hBregular, hAvertical, hBvertical, hregular, hvertical⟩
+  exact
+    classical_zero_free_region_of_re_im_neg_logDeriv_regular_part_norm_affine_bounds_high_height
+      T0 Aregular Bregular Avertical Bvertical hT0 hAregular hBregular
+      hAvertical hBvertical hregular hvertical
+
 /-- Coordinate high-height closure from a single `C * (1 + log |t|)` bound.
 
 This is a convenience layer for the common big-O style output of analytic

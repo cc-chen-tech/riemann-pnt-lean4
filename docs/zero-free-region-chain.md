@@ -539,6 +539,12 @@ and
 state the same affine-log inputs directly in real variables `sigma`, `beta`,
 and `t`, matching the usual analytic proof notation around points `sigma+it`
 and same-height zero candidates `beta+it`.
+The signed coordinate affine variants
+`ZeroFreeRegion.classical_zero_free_region_of_re_im_neg_logDeriv_regular_part_norm_affine_bounds_high_height`
+and
+`ZeroFreeRegion.classical_zero_free_region_of_exists_re_im_neg_logDeriv_regular_part_norm_affine_bounds_high_height`
+give the same permissive `A + B log |t|` interface in the `-logDeriv zeta`
+notation used by the 3-4-1 inequality.
 The single-constant wrappers
 `ZeroFreeRegion.classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_one_add_log_bound_high_height`
 and
