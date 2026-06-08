@@ -723,6 +723,16 @@ Core verified declarations:
   `borelCaratheodory_sub_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_re_le`
   are the matching direct disk-geometric Borel wrappers in the
   `-logDeriv zeta` convention.
+- `borelCaratheodory_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_re_le_half_radius`
+  and
+  `borelCaratheodory_sub_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_re_le_half_radius`
+  remove the raw Borel disk denominator terms directly on local `sigma+I*t`
+  disks for `logDeriv zeta`.
+- `borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_re_le_half_radius`
+  and
+  `borelCaratheodory_sub_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_re_le_half_radius`
+  give the same direct half-radius interface in the `-logDeriv zeta`
+  convention used by the 3-4-1 argument.
 - `borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius`
   and
   `borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius`
