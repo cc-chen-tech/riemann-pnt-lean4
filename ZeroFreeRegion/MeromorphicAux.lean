@@ -5157,6 +5157,72 @@ lemma jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_closedBall_unsigned
   rw [divisor_neg_logDeriv_riemannZeta_eq_divisor_logDeriv_closedBall c |R|]
   rw [log_norm_meromorphicTrailingCoeffAt_neg_logDeriv_riemannZeta_eq c]
 
+/-- Jensen formula specialized directly to ζ on a `σ + I*t` disk. -/
+lemma jensen_circleAverage_log_norm_riemannZeta_sigma_it
+    {R σ t : ℝ} (hR : R ≠ 0) :
+    circleAverage (Real.log ‖riemannZeta ·‖) ((σ : ℂ) + I * t) R
+      = ∑ᶠ u,
+          divisor riemannZeta (closedBall ((σ : ℂ) + I * t) |R|) u *
+            Real.log (R * ‖((σ : ℂ) + I * t) - u‖⁻¹)
+        + divisor riemannZeta (closedBall ((σ : ℂ) + I * t) |R|)
+            ((σ : ℂ) + I * t) * Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt riemannZeta
+            ((σ : ℂ) + I * t)‖ :=
+  jensen_circleAverage_log_norm_riemannZeta_closedBall hR
+
+/-- Jensen formula specialized directly to `logDeriv ζ` on a `σ + I*t`
+disk. -/
+lemma jensen_circleAverage_log_norm_logDeriv_riemannZeta_sigma_it
+    {R σ t : ℝ} (hR : R ≠ 0) :
+    circleAverage (Real.log ‖logDeriv riemannZeta ·‖)
+        ((σ : ℂ) + I * t) R
+      = ∑ᶠ u,
+          divisor (logDeriv riemannZeta)
+            (closedBall ((σ : ℂ) + I * t) |R|) u *
+            Real.log (R * ‖((σ : ℂ) + I * t) - u‖⁻¹)
+        + divisor (logDeriv riemannZeta)
+            (closedBall ((σ : ℂ) + I * t) |R|)
+            ((σ : ℂ) + I * t) * Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt (logDeriv riemannZeta)
+            ((σ : ℂ) + I * t)‖ :=
+  jensen_circleAverage_log_norm_logDeriv_riemannZeta_closedBall hR
+
+/-- Jensen formula specialized directly to `-logDeriv ζ` on a `σ + I*t`
+disk. -/
+lemma jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_sigma_it
+    {R σ t : ℝ} (hR : R ≠ 0) :
+    circleAverage (fun z : ℂ => Real.log ‖-logDeriv riemannZeta z‖)
+        ((σ : ℂ) + I * t) R
+      = ∑ᶠ u,
+          divisor (fun z : ℂ => -logDeriv riemannZeta z)
+            (closedBall ((σ : ℂ) + I * t) |R|) u *
+            Real.log (R * ‖((σ : ℂ) + I * t) - u‖⁻¹)
+        + divisor (fun z : ℂ => -logDeriv riemannZeta z)
+            (closedBall ((σ : ℂ) + I * t) |R|)
+            ((σ : ℂ) + I * t) * Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt
+            (fun z : ℂ => -logDeriv riemannZeta z)
+            ((σ : ℂ) + I * t)‖ :=
+  jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_closedBall hR
+
+/-- Jensen formula specialized directly to `-logDeriv ζ` on a `σ + I*t`
+disk, with unsigned `logDeriv ζ` divisor and trailing coefficient terms on the
+right-hand side. -/
+lemma jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_sigma_it_unsigned_terms
+    {R σ t : ℝ} (hR : R ≠ 0) :
+    circleAverage (fun z : ℂ => Real.log ‖-logDeriv riemannZeta z‖)
+        ((σ : ℂ) + I * t) R
+      = ∑ᶠ u,
+          divisor (logDeriv riemannZeta)
+            (closedBall ((σ : ℂ) + I * t) |R|) u *
+            Real.log (R * ‖((σ : ℂ) + I * t) - u‖⁻¹)
+        + divisor (logDeriv riemannZeta)
+            (closedBall ((σ : ℂ) + I * t) |R|)
+            ((σ : ℂ) + I * t) * Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt (logDeriv riemannZeta)
+            ((σ : ℂ) + I * t)‖ :=
+  jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_closedBall_unsigned_terms hR
+
 /-- Jensen formula specialized to ζ on a `σ + I*t` disk using the ambient
 vertical-region wrapper. -/
 lemma jensen_circleAverage_log_norm_riemannZeta_verticalRegion

@@ -339,6 +339,7 @@ Lean declarations in `ZeroFreeRegion.lean` and
 | `ZeroFreeRegion.differentiableOn_riemannZeta_verticalRegion_of_pos_height` / `ZeroFreeRegion.meromorphicOn_logDeriv_riemannZeta_verticalRegion` | `lemma` | Supplies ζ differentiability on positive-height vertical regions and log-derivative meromorphicity on all such regions. | Zeta-specific regularity layer feeding the Borel/Jensen wrappers. |
 | `ZeroFreeRegion.jensen_circleAverage_log_norm_riemannZeta_verticalRegion` / `ZeroFreeRegion.jensen_circleAverage_log_norm_logDeriv_riemannZeta_verticalRegion` | `lemma` | Specializes the vertical-region Jensen wrapper to ζ and `logDeriv ζ`. | Ready-to-use zeta Jensen statements for future zero-count/log-derivative estimates. |
 | `ZeroFreeRegion.meromorphicOn_neg_logDeriv_riemannZeta_verticalRegion` / `ZeroFreeRegion.jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_verticalRegion` | `lemma` | Signed vertical-region meromorphicity and Jensen specialization for `-logDeriv ζ`. | Lets future high-height Jensen estimates stay in the signed convention used by 3-4-1. |
+| `ZeroFreeRegion.jensen_circleAverage_log_norm_riemannZeta_sigma_it` / `ZeroFreeRegion.jensen_circleAverage_log_norm_logDeriv_riemannZeta_sigma_it` / signed analogues | `lemma` | Direct Jensen formulas on `σ+it` disks, including a signed-left/unsigned-right version for `-logDeriv ζ`. | Avoids ambient vertical-region bookkeeping when the local Jensen disk is already the natural object. |
 
 Two important boundaries:
 

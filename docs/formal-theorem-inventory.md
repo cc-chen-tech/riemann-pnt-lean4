@@ -787,6 +787,12 @@ Core verified declarations:
   `jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_verticalRegion`
   specialize the ambient vertical-region meromorphic/Jensen interfaces to ζ
   and both logarithmic-derivative sign conventions.
+- `jensen_circleAverage_log_norm_riemannZeta_sigma_it`,
+  `jensen_circleAverage_log_norm_logDeriv_riemannZeta_sigma_it`,
+  `jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_sigma_it`, and
+  `jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_sigma_it_unsigned_terms`
+  provide the same Jensen formulas directly on `sigma+I*t` disks without
+  ambient vertical-region bookkeeping.
 
 ### `PrimeNumberTheorem.lean`
 

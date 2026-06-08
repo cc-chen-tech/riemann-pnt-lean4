@@ -252,6 +252,14 @@ proved:
   `ZeroFreeRegion.jensen_circleAverage_log_norm_logDeriv_riemannZeta_verticalRegion`
   and
   `ZeroFreeRegion.jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_verticalRegion`.
+  The direct disk versions
+  `ZeroFreeRegion.jensen_circleAverage_log_norm_riemannZeta_sigma_it`,
+  `ZeroFreeRegion.jensen_circleAverage_log_norm_logDeriv_riemannZeta_sigma_it`,
+  `ZeroFreeRegion.jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_sigma_it`,
+  and
+  `ZeroFreeRegion.jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_sigma_it_unsigned_terms`
+  specialize Jensen directly to the local `sigma+I*t` disk without routing
+  through an ambient `verticalRegion`.
   The pointwise conversion
   `ZeroFreeRegion.log_norm_neg_logDeriv_riemannZeta_eq` and circle-average
   conversion
@@ -403,6 +411,10 @@ Useful checked names:
 #check ZeroFreeRegion.log_norm_meromorphicTrailingCoeffAt_neg_logDeriv_riemannZeta_eq
 #check ZeroFreeRegion.jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_closedBall
 #check ZeroFreeRegion.jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_closedBall_unsigned_terms
+#check ZeroFreeRegion.jensen_circleAverage_log_norm_riemannZeta_sigma_it
+#check ZeroFreeRegion.jensen_circleAverage_log_norm_logDeriv_riemannZeta_sigma_it
+#check ZeroFreeRegion.jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_sigma_it
+#check ZeroFreeRegion.jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_sigma_it_unsigned_terms
 #check ZeroFreeRegion.valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_circleAverage_sub_const
 #check ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_circleAverage
 #check ZeroFreeRegion.valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_circleAverage_sub_const
