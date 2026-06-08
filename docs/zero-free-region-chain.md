@@ -565,6 +565,13 @@ comparison lemmas
 `ZeroFreeRegion.norm_sigma_add_I_mul_le_abs_add_two` and
 `ZeroFreeRegion.log_norm_sigma_add_I_mul_add_three_le_two_log_abs` normalize
 that scale to `log |t|` on the strip `1 <= sigma <= 2`.
+The complex-variable comparison
+`ZeroFreeRegion.log_norm_add_three_le_two_log_abs_im` and the wrappers
+`ZeroFreeRegion.classical_zero_free_region_of_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height`
+and
+`ZeroFreeRegion.classical_zero_free_region_of_exists_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height`
+state the same handoff directly for estimates in variables `s`, `rho`, and
+`z`, which is the shape closest to future Borel/Jensen arguments.
 This is still conditional; it does not prove the quantitative zero-free region
 until those two zeta-specific estimates are proved.
 The next work starts from these meromorphic/nonvanishing/principal-part facts

@@ -347,6 +347,9 @@ Core verified declarations:
 - `log_norm_sigma_add_I_mul_add_three_le_two_log_abs`
   proves `log(||sigma + it|| + 3) <= 2 log |t|` for
   `1 <= sigma <= 2` and `|t| >= 5`.
+- `log_norm_add_three_le_two_log_abs_im`
+  is the corresponding complex-variable comparison in terms of
+  `s.re` and `s.im`.
 - `classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_abs_add_three_bound_high_height`
   specializes the coordinate interface to estimates stated as
   `C * log(|t| + 3)` for both remaining zeta-specific bounds.
@@ -363,6 +366,12 @@ Core verified declarations:
   height `log(||sigma + it|| + 3)`.
 - `classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height`
   packages that full-height logarithmic interface existentially.
+- `classical_zero_free_region_of_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height`
+  accepts complex-variable regular-part and vertical-strip estimates
+  stated with `log(||s|| + 3)` and `log(||z|| + 3)`.
+- `classical_zero_free_region_of_exists_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height`
+  packages that complex-variable full-height logarithmic interface
+  existentially.
 - `meromorphicAt_logDeriv_riemannZeta_one`
   proves the logarithmic derivative is meromorphic at the pole.
 - `meromorphicOn_logDeriv_riemannZeta_closedBall`

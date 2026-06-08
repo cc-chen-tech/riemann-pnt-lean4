@@ -4424,6 +4424,12 @@ theorem log_norm_sigma_add_I_mul_add_three_le_two_log_abs {σ t : ℝ}
       2 * Real.log |t| :=
   ZeroFreeRegion.log_norm_sigma_add_I_mul_add_three_le_two_log_abs hσ ht
 
+/-- Public complex-variable logarithmic comparison on `1 <= Re(s) <= 2`. -/
+theorem log_norm_add_three_le_two_log_abs_im {s : ℂ}
+    (hs_re : s.re ∈ Set.Icc 1 2) (hs_height : 5 ≤ |s.im|) :
+    Real.log (‖s‖ + 3) ≤ 2 * Real.log |s.im| :=
+  ZeroFreeRegion.log_norm_add_three_le_two_log_abs_im hs_re hs_height
+
 /-- Public coordinate high-height closure from a single `C * log(|t| + 3)`
 bound for positive `logDeriv ζ` estimates. -/
 theorem classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_abs_add_three_bound_high_height
@@ -4536,6 +4542,43 @@ theorem classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_lo
             Cvertical * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3))) :
     ZeroFreeRegion.classical_zero_free_region :=
   ZeroFreeRegion.classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height
+    h
+
+/-- Public complex-variable high-height closure from separate
+`Cregular * log(‖s‖ + 3)` and `Cvertical * log(‖z‖ + 3)` bounds. -/
+theorem classical_zero_free_region_of_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height
+    (T0 Cregular Cvertical : ℝ) (hT0 : 5 ≤ T0)
+    (hCregular : 0 ≤ Cregular) (hCvertical : 0 ≤ Cvertical)
+    (hregular :
+      ∀ s ρ : ℂ, T0 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+        riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+        0 < s.re - ρ.re →
+        ‖logDeriv riemannZeta s - (s - ρ)⁻¹‖ ≤
+          Cregular * Real.log (‖s‖ + 3))
+    (hvertical :
+      ∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta z‖ ≤
+          Cvertical * Real.log (‖z‖ + 3)) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height
+    T0 Cregular Cvertical hT0 hCregular hCvertical hregular hvertical
+
+/-- Public existential complex-variable high-height closure from separate
+`Cregular * log(‖s‖ + 3)` and `Cvertical * log(‖z‖ + 3)` bounds. -/
+theorem classical_zero_free_region_of_exists_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height
+    (h :
+      ∃ T0 Cregular Cvertical : ℝ, 5 ≤ T0 ∧
+        0 ≤ Cregular ∧ 0 ≤ Cvertical ∧
+        (∀ s ρ : ℂ, T0 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+          riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+          0 < s.re - ρ.re →
+          ‖logDeriv riemannZeta s - (s - ρ)⁻¹‖ ≤
+            Cregular * Real.log (‖s‖ + 3)) ∧
+        (∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc 1 2 →
+          ‖logDeriv riemannZeta z‖ ≤
+            Cvertical * Real.log (‖z‖ + 3))) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height
     h
 
 /-- Public comparison between a compact-patch width and a logarithmic width. -/

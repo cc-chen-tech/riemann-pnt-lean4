@@ -2265,6 +2265,16 @@ lemma log_norm_sigma_add_I_mul_add_three_le_two_log_abs {σ t : ℝ}
     _ = Real.log 2 + Real.log |t| := hlog_mul
     _ ≤ 2 * Real.log |t| := by linarith
 
+/-- Complex-variable form of the full-height logarithmic comparison. -/
+lemma log_norm_add_three_le_two_log_abs_im {s : ℂ}
+    (hs_re : s.re ∈ Set.Icc 1 2) (hs_height : 5 ≤ |s.im|) :
+    Real.log (‖s‖ + 3) ≤ 2 * Real.log |s.im| := by
+  have hs_decomp : ((s.re : ℂ) + I * (s.im : ℂ)) = s := by
+    apply Complex.ext <;> simp
+  simpa [hs_decomp] using
+    log_norm_sigma_add_I_mul_add_three_le_two_log_abs
+      (σ := s.re) (t := s.im) hs_re hs_height
+
 /-- Coordinate high-height closure from a single `C * log(|t| + 3)` bound.
 
 This shape is common in analytic estimates because it is harmless at small
@@ -2460,6 +2470,72 @@ lemma classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_log_
     ⟨T0, Cregular, Cvertical, hT0, hCregular, hCvertical, hregular, hvertical⟩
   exact
     classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height
+      T0 Cregular Cvertical hT0 hCregular hCvertical hregular hvertical
+
+/-- Complex-variable high-height closure from separate
+`Cregular * log(‖s‖ + 3)` and `Cvertical * log(‖z‖ + 3)` bounds.
+
+This is the form closest to many Borel-Carathéodory/Jensen outputs: the
+regular-part estimate is stated for complex variables `s, ρ`, while the
+vertical estimate is stated for an arbitrary `z` in the same vertical strip. -/
+lemma classical_zero_free_region_of_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height
+    (T0 Cregular Cvertical : ℝ) (hT0 : 5 ≤ T0)
+    (hCregular : 0 ≤ Cregular) (hCvertical : 0 ≤ Cvertical)
+    (hregular :
+      ∀ s ρ : ℂ, T0 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+        riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+        0 < s.re - ρ.re →
+        ‖logDeriv riemannZeta s - (s - ρ)⁻¹‖ ≤
+          Cregular * Real.log (‖s‖ + 3))
+    (hvertical :
+      ∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta z‖ ≤
+          Cvertical * Real.log (‖z‖ + 3)) :
+    classical_zero_free_region := by
+  refine
+    classical_zero_free_region_of_logDeriv_regular_part_norm_affine_log_bound_and_vertical_logDeriv_norm_affine_log_bound_high_height
+      T0 0 (2 * Cregular) 0 (2 * Cvertical) (by linarith)
+      (by norm_num) (by nlinarith) (by norm_num) (by nlinarith) ?_ ?_
+  · intro s ρ hs_height hs_re_mem hζρ hρ_im_eq hρ_re_lt hsub
+    have hlog := log_norm_add_three_le_two_log_abs_im hs_re_mem
+      (hT0.trans hs_height)
+    calc
+      ‖logDeriv riemannZeta s - (s - ρ)⁻¹‖
+          ≤ Cregular * Real.log (‖s‖ + 3) :=
+            hregular s ρ hs_height hs_re_mem hζρ hρ_im_eq hρ_re_lt hsub
+      _ ≤ Cregular * (2 * Real.log |s.im|) :=
+            mul_le_mul_of_nonneg_left hlog hCregular
+      _ = 0 + (2 * Cregular) * Real.log |s.im| := by ring
+  · intro z hz_height hz_re_mem
+    have hlog := log_norm_add_three_le_two_log_abs_im hz_re_mem
+      (hT0.trans hz_height)
+    calc
+      ‖logDeriv riemannZeta z‖
+          ≤ Cvertical * Real.log (‖z‖ + 3) :=
+            hvertical z hz_height hz_re_mem
+      _ ≤ Cvertical * (2 * Real.log |z.im|) :=
+            mul_le_mul_of_nonneg_left hlog hCvertical
+      _ = 0 + (2 * Cvertical) * Real.log |z.im| := by ring
+
+/-- Existential complex-variable high-height closure from separate
+`Cregular * log(‖s‖ + 3)` and `Cvertical * log(‖z‖ + 3)` bounds. -/
+lemma classical_zero_free_region_of_exists_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height
+    (h :
+      ∃ T0 Cregular Cvertical : ℝ, 5 ≤ T0 ∧
+        0 ≤ Cregular ∧ 0 ≤ Cvertical ∧
+        (∀ s ρ : ℂ, T0 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+          riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+          0 < s.re - ρ.re →
+          ‖logDeriv riemannZeta s - (s - ρ)⁻¹‖ ≤
+            Cregular * Real.log (‖s‖ + 3)) ∧
+        (∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc 1 2 →
+          ‖logDeriv riemannZeta z‖ ≤
+            Cvertical * Real.log (‖z‖ + 3))) :
+    classical_zero_free_region := by
+  rcases h with
+    ⟨T0, Cregular, Cvertical, hT0, hCregular, hCvertical, hregular, hvertical⟩
+  exact
+    classical_zero_free_region_of_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height
       T0 Cregular Cvertical hT0 hCregular hCvertical hregular hvertical
 
 /-- Existential high-height closure from affine logarithmic bounds. -/
