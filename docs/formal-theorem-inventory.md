@@ -366,6 +366,11 @@ Core verified declarations:
   height `log(||sigma + it|| + 3)`.
 - `classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height`
   packages that full-height logarithmic interface existentially.
+- `classical_zero_free_region_of_re_im_neg_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height`
+  accepts the same coordinate full-height estimates in the signed
+  `-logDeriv zeta` convention.
+- `classical_zero_free_region_of_exists_re_im_neg_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height`
+  packages that signed coordinate full-height interface existentially.
 - `classical_zero_free_region_of_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height`
   accepts complex-variable regular-part and vertical-strip estimates
   stated with `log(||s|| + 3)` and `log(||z|| + 3)`.

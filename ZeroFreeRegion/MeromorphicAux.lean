@@ -2472,6 +2472,68 @@ lemma classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_log_
     classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height
       T0 Cregular Cvertical hT0 hCregular hCvertical hregular hvertical
 
+/-- Signed coordinate high-height closure from separate
+`Cregular * log(‖σ+it‖ + 3)` and `Cvertical * log(‖σ+it‖ + 3)` bounds.
+
+This is the coordinate version of the signed full-height handoff, matching the
+`-logDeriv ζ` sign convention used by the 3-4-1 inequality. -/
+lemma classical_zero_free_region_of_re_im_neg_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height
+    (T0 Cregular Cvertical : ℝ) (hT0 : 5 ≤ T0)
+    (hCregular : 0 ≤ Cregular) (hCvertical : 0 ≤ Cvertical)
+    (hregular :
+      ∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+        0 < σ - β →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t) +
+            (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+          Cregular * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          Cvertical * Real.log (‖((σ : ℂ) + I * t)‖ + 3)) :
+    classical_zero_free_region := by
+  refine
+    classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height
+      T0 Cregular Cvertical hT0 hCregular hCvertical ?_ ?_
+  · intro σ β t ht hσ hζ hβ hsub
+    calc
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+          (((σ - β : ℝ) : ℂ)⁻¹)‖
+          = ‖-(-logDeriv riemannZeta ((σ : ℂ) + I * t) +
+              (((σ - β : ℝ) : ℂ)⁻¹))‖ := by ring_nf
+      _ = ‖-logDeriv riemannZeta ((σ : ℂ) + I * t) +
+            (((σ - β : ℝ) : ℂ)⁻¹)‖ := norm_neg _
+      _ ≤ Cregular * Real.log (‖((σ : ℂ) + I * t)‖ + 3) :=
+          hregular σ β t ht hσ hζ hβ hsub
+  · intro σ t ht hσ
+    calc
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖
+          = ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ := (norm_neg _).symm
+      _ ≤ Cvertical * Real.log (‖((σ : ℂ) + I * t)‖ + 3) :=
+          hvertical σ t ht hσ
+
+/-- Existential signed coordinate high-height closure from separate
+`Cregular * log(‖σ+it‖ + 3)` and `Cvertical * log(‖σ+it‖ + 3)` bounds. -/
+lemma classical_zero_free_region_of_exists_re_im_neg_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height
+    (h :
+      ∃ T0 Cregular Cvertical : ℝ, 5 ≤ T0 ∧
+        0 ≤ Cregular ∧ 0 ≤ Cvertical ∧
+        (∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+          0 < σ - β →
+          ‖-logDeriv riemannZeta ((σ : ℂ) + I * t) +
+              (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+            Cregular * Real.log (‖((σ : ℂ) + I * t)‖ + 3)) ∧
+        (∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+            Cvertical * Real.log (‖((σ : ℂ) + I * t)‖ + 3))) :
+    classical_zero_free_region := by
+  rcases h with
+    ⟨T0, Cregular, Cvertical, hT0, hCregular, hCvertical, hregular, hvertical⟩
+  exact
+    classical_zero_free_region_of_re_im_neg_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height
+      T0 Cregular Cvertical hT0 hCregular hCvertical hregular hvertical
+
 /-- Complex-variable high-height closure from separate
 `Cregular * log(‖s‖ + 3)` and `Cvertical * log(‖z‖ + 3)` bounds.
 
