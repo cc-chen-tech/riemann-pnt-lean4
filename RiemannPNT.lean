@@ -2875,6 +2875,16 @@ theorem analyticAt_logDeriv_riemannZeta_closedBall_of_ne_one_of_ne_zero
   ZeroFreeRegion.analyticAt_logDeriv_riemannZeta_closedBall_of_ne_one_of_ne_zero
     c R h1 hne
 
+/-- Public right-half-plane closed-ball wrapper for analyticity of
+`logDeriv ζ` from `Re >= 1` and pole exclusion. -/
+theorem analyticAt_logDeriv_riemannZeta_closedBall_of_one_le_re_of_ne_one
+    (c : ℂ) (R : ℝ)
+    (hre : ∀ u ∈ Metric.closedBall c R, 1 ≤ u.re)
+    (h1 : ∀ u ∈ Metric.closedBall c R, u ≠ 1) :
+    ∀ u ∈ Metric.closedBall c R, AnalyticAt ℂ (logDeriv riemannZeta) u :=
+  ZeroFreeRegion.analyticAt_logDeriv_riemannZeta_closedBall_of_one_le_re_of_ne_one
+    c R hre h1
+
 /-- Public meromorphicity of ζ on a project vertical region. -/
 theorem meromorphicOn_riemannZeta_verticalRegion (a b H : ℝ) :
     MeromorphicOn riemannZeta (ZeroFreeRegion.verticalRegion a b H) :=
@@ -3764,6 +3774,70 @@ theorem valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned
             (z + ((σ : ℂ) + Complex.I * t))) ⊤) R = 0 :=
   ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_analyticAt_ne_zero
     hR han hne
+
+/-- Public right-half-plane local log-counting vanishing lemma for
+`logDeriv ζ`, leaving only pole exclusion and nonvanishing of `logDeriv ζ`
+as local hypotheses. -/
+theorem valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_zero_of_one_le_re_of_ne_one_of_logDeriv_ne_zero
+    (c : ℂ) {R : ℝ} (hR : R ≠ 0)
+    (hre : ∀ u ∈ Metric.closedBall c |R|, 1 ≤ u.re)
+    (h1 : ∀ u ∈ Metric.closedBall c |R|, u ≠ 1)
+    (hlogne : ∀ u ∈ Metric.closedBall c |R|, logDeriv riemannZeta u ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => logDeriv riemannZeta (z + c)) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => logDeriv riemannZeta (z + c)) ⊤) R = 0 :=
+  ZeroFreeRegion.valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_zero_of_one_le_re_of_ne_one_of_logDeriv_ne_zero
+    c hR hre h1 hlogne
+
+/-- Public signed right-half-plane local log-counting vanishing lemma, with
+hypotheses stated for unsigned `logDeriv ζ`. -/
+theorem valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_eq_zero_of_one_le_re_of_ne_one_of_logDeriv_ne_zero
+    (c : ℂ) {R : ℝ} (hR : R ≠ 0)
+    (hre : ∀ u ∈ Metric.closedBall c |R|, 1 ≤ u.re)
+    (h1 : ∀ u ∈ Metric.closedBall c |R|, u ≠ 1)
+    (hlogne : ∀ u ∈ Metric.closedBall c |R|, logDeriv riemannZeta u ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => -logDeriv riemannZeta (z + c)) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => -logDeriv riemannZeta (z + c)) ⊤) R = 0 :=
+  ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_eq_zero_of_one_le_re_of_ne_one_of_logDeriv_ne_zero
+    c hR hre h1 hlogne
+
+/-- Public `σ + I*t` specialization of the right-half-plane local
+log-counting vanishing lemma for `logDeriv ζ`. -/
+theorem valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_zero_of_one_le_re_of_ne_one_of_logDeriv_ne_zero
+    {σ t R : ℝ} (hR : R ≠ 0)
+    (hre : ∀ u ∈ Metric.closedBall ((σ : ℂ) + Complex.I * t) |R|, 1 ≤ u.re)
+    (h1 : ∀ u ∈ Metric.closedBall ((σ : ℂ) + Complex.I * t) |R|, u ≠ 1)
+    (hlogne : ∀ u ∈ Metric.closedBall ((σ : ℂ) + Complex.I * t) |R|,
+      logDeriv riemannZeta u ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => logDeriv riemannZeta
+          (z + ((σ : ℂ) + Complex.I * t))) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => logDeriv riemannZeta
+            (z + ((σ : ℂ) + Complex.I * t))) ⊤) R = 0 :=
+  ZeroFreeRegion.valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_zero_of_one_le_re_of_ne_one_of_logDeriv_ne_zero
+    hR hre h1 hlogne
+
+/-- Public signed `σ + I*t` specialization of the right-half-plane local
+log-counting vanishing lemma, with hypotheses stated for unsigned
+`logDeriv ζ`. -/
+theorem valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_one_le_re_of_ne_one_of_logDeriv_ne_zero
+    {σ t R : ℝ} (hR : R ≠ 0)
+    (hre : ∀ u ∈ Metric.closedBall ((σ : ℂ) + Complex.I * t) |R|, 1 ≤ u.re)
+    (h1 : ∀ u ∈ Metric.closedBall ((σ : ℂ) + Complex.I * t) |R|, u ≠ 1)
+    (hlogne : ∀ u ∈ Metric.closedBall ((σ : ℂ) + Complex.I * t) |R|,
+      logDeriv riemannZeta u ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => -logDeriv riemannZeta
+          (z + ((σ : ℂ) + Complex.I * t))) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => -logDeriv riemannZeta
+            (z + ((σ : ℂ) + Complex.I * t))) ⊤) R = 0 :=
+  ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_one_le_re_of_ne_one_of_logDeriv_ne_zero
+    hR hre h1 hlogne
 
 /-- Public Borel-Carathéodory theorem in the vanishing-at-zero form, routed
 through the zero-free-region namespace. -/

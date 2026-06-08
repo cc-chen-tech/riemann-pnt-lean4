@@ -253,6 +253,9 @@ Core verified declarations:
   hypothesis away from the pole.
 - `analyticAt_logDeriv_riemannZeta_closedBall_of_ne_one_of_ne_zero`
   packages the same pointwise analytic bridge for closed balls.
+- `analyticAt_logDeriv_riemannZeta_closedBall_of_one_le_re_of_ne_one`
+  uses right-half-plane zeta nonvanishing to prove pointwise analyticity of
+  `logDeriv ζ` on closed balls that avoid the pole.
 - `valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_zero_of_analyticAt_ne_zero`
   turns analytic-and-nonzero local hypotheses on `logDeriv ζ` directly into
   vanishing of the translated log-counting difference.
@@ -264,6 +267,15 @@ Core verified declarations:
 - `valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_analyticAt_ne_zero`
   provides the signed `σ + I*t` version in unsigned analytic/nonzero
   bookkeeping.
+- `valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_zero_of_one_le_re_of_ne_one_of_logDeriv_ne_zero`
+  packages right-half-plane zeta nonvanishing, pole exclusion, and local
+  nonvanishing of `logDeriv ζ` into translated log-counting vanishing.
+- `valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_eq_zero_of_one_le_re_of_ne_one_of_logDeriv_ne_zero`
+  gives the signed version with the same unsigned hypotheses.
+- `valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_zero_of_one_le_re_of_ne_one_of_logDeriv_ne_zero`
+  specializes the right-half-plane bridge to `σ + I*t` disks.
+- `valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_one_le_re_of_ne_one_of_logDeriv_ne_zero`
+  provides the signed `σ + I*t` version in unsigned bookkeeping.
 - `eventually_abs_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one`
   bounds the real part of the signed quotient by
   `2 / norm (s - 1)` eventually near `1`.
