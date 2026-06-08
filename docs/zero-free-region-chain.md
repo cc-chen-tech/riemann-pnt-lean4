@@ -199,6 +199,10 @@ proved:
   `ZeroFreeRegion.borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius`
   and
   `ZeroFreeRegion.borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius`,
+  plus the signed affine wrappers
+  `ZeroFreeRegion.borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius`
+  and
+  `ZeroFreeRegion.borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius`,
   expose those fixed half-radius bounds in both logarithmic-derivative sign
   conventions;
   `ZeroFreeRegion.jensen_circleAverage_log_norm_verticalRegion` is the matching

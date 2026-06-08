@@ -495,6 +495,11 @@ Core verified declarations:
 - `borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius`
   is the signed oscillation half-radius version used for centered
   regular-part control of `-ζ'/ζ`.
+- `borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius`
+  and
+  `borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius`
+  normalize the signed half-radius Borel outputs to affine
+  `A + B log(||sigma+it|| + 3)` bounds.
 - `jensen_circleAverage_log_norm_verticalRegion`
   combines Jensen's formula with the same closed-disk geometry and ambient
   vertical-region meromorphicity.
