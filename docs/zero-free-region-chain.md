@@ -605,6 +605,12 @@ and
 provide the same handoff in the `-logDeriv zeta` convention used by the
 3-4-1 inequality, with hypotheses stated directly in real variables
 `sigma`, `beta`, and `t`.
+The single-constant variants
+`ZeroFreeRegion.classical_zero_free_region_of_re_im_neg_logDeriv_regular_part_norm_log_norm_add_three_bound_high_height`
+and
+`ZeroFreeRegion.classical_zero_free_region_of_exists_re_im_neg_logDeriv_regular_part_norm_log_norm_add_three_bound_high_height`
+package the common Big-O shape where one constant controls both remaining
+full-height signed estimates.
 The complex-variable comparison
 `ZeroFreeRegion.log_norm_add_three_le_two_log_abs_im` and the wrappers
 `ZeroFreeRegion.classical_zero_free_region_of_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height`

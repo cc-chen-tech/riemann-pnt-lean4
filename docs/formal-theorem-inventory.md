@@ -397,6 +397,12 @@ Core verified declarations:
   `-logDeriv zeta` convention.
 - `classical_zero_free_region_of_exists_re_im_neg_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height`
   packages that signed coordinate full-height interface existentially.
+- `classical_zero_free_region_of_re_im_neg_logDeriv_regular_part_norm_log_norm_add_three_bound_high_height`
+  specializes that signed coordinate full-height interface to one shared
+  constant for both remaining estimates.
+- `classical_zero_free_region_of_exists_re_im_neg_logDeriv_regular_part_norm_log_norm_add_three_bound_high_height`
+  packages the shared-constant signed coordinate full-height interface
+  existentially.
 - `classical_zero_free_region_of_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height`
   accepts complex-variable regular-part and vertical-strip estimates
   stated with `log(||s|| + 3)` and `log(||z|| + 3)`.
