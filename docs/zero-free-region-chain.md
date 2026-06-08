@@ -264,7 +264,17 @@ proved:
   and
   `ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_localDivisor`
   give the same direct handoff in the coordinates used by the high-height
-  zero-free-region chain.
+  zero-free-region chain.  The trailing-coefficient translation lemmas
+  `ZeroFreeRegion.meromorphicTrailingCoeffAt_comp_add_const_zero` and
+  `ZeroFreeRegion.log_norm_meromorphicTrailingCoeffAt_comp_add_const_zero`
+  then cancel the extra translated trailing-coefficient term.  The resulting
+  pure wrappers
+  `ZeroFreeRegion.valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_localDivisor_pure`
+  and
+  `ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_localDivisor_pure`
+  express translated log-counting directly as the two local-divisor terms.
+  Their `σ + I*t` specializations provide the cleanest current API for future
+  high-height Jensen estimates.
 
 ## Mathlib API Check
 
@@ -319,6 +329,13 @@ Useful checked names:
 #check ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_localDivisor
 #check ZeroFreeRegion.valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_localDivisor
 #check ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_localDivisor
+#check ZeroFreeRegion.meromorphicTrailingCoeffAt_comp_add_const_zero
+#check ZeroFreeRegion.norm_meromorphicTrailingCoeffAt_comp_add_const_zero
+#check ZeroFreeRegion.log_norm_meromorphicTrailingCoeffAt_comp_add_const_zero
+#check ZeroFreeRegion.valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_localDivisor_pure
+#check ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_localDivisor_pure
+#check ZeroFreeRegion.valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_localDivisor_pure
+#check ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_localDivisor_pure
 #check Complex.HadamardThreeLines.norm_le_interp_of_mem_verticalClosedStrip'
 #check PowerSeries.exists_isWeierstrassFactorization
 #check riemannZeta_residue_one

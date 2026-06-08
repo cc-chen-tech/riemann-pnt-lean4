@@ -200,6 +200,21 @@ Core verified declarations:
 - `valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_localDivisor`
   provides the signed `σ + I*t` local-divisor version in the same unsigned
   bookkeeping convention.
+- `meromorphicTrailingCoeffAt_comp_add_const_zero`,
+  `norm_meromorphicTrailingCoeffAt_comp_add_const_zero`, and
+  `log_norm_meromorphicTrailingCoeffAt_comp_add_const_zero` prove that
+  translating a meromorphic function's input by `c` preserves the trailing
+  coefficient at the translated center `0`, including norm and log-norm forms.
+- `valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_localDivisor_pure`
+  cancels the translated trailing-coefficient terms in the `logDeriv ζ`
+  local-divisor bridge.
+- `valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_localDivisor_pure`
+  gives the signed `-logDeriv ζ` version with the same unsigned local-divisor
+  right-hand side.
+- `valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_localDivisor_pure`
+  specializes the pure local-divisor bridge to `σ + I*t` disks.
+- `valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_localDivisor_pure`
+  provides the signed pure `σ + I*t` version in unsigned bookkeeping.
 - `eventually_abs_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one`
   bounds the real part of the signed quotient by
   `2 / norm (s - 1)` eventually near `1`.

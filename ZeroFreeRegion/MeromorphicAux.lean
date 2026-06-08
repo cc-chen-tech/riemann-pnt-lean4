@@ -3902,6 +3902,83 @@ lemma log_norm_meromorphicTrailingCoeffAt_neg_logDeriv_riemannZeta_eq
     exact meromorphicOn_logDeriv_riemannZeta_closedBall z 0 z (by simp)
   rw [norm_meromorphicTrailingCoeffAt_neg_of_meromorphicAt hf]
 
+/-- Translating the input by `c` preserves the meromorphic trailing coefficient
+at the translated center. -/
+lemma meromorphicTrailingCoeffAt_comp_add_const_zero
+    {f : ℂ → ℂ} (c : ℂ) (hf : MeromorphicAt f c) :
+    meromorphicTrailingCoeffAt (fun z : ℂ => f (z + c)) 0 =
+      meromorphicTrailingCoeffAt f c := by
+  have horder :
+      meromorphicOrderAt (fun z : ℂ => f (z + c)) 0 =
+        meromorphicOrderAt f c := by
+    simpa [Function.comp_def] using
+      (meromorphicOrderAt_comp_of_deriv_ne_zero
+        (f := f) (g := fun z : ℂ => z + c) (x := 0)
+        (by fun_prop) (by simp))
+  have hfcomp : MeromorphicAt (fun z : ℂ => f (z + c)) 0 := by
+    simpa [Function.comp_def] using
+      (meromorphicAt_comp_iff_of_deriv_ne_zero
+        (f := f) (g := fun z : ℂ => z + c) (x := 0)
+        (by fun_prop) (by simp)).2 (by simpa using hf)
+  by_cases htop : meromorphicOrderAt f c = ⊤
+  · rw [MeromorphicAt.meromorphicTrailingCoeffAt_of_order_eq_top
+      (f := fun z : ℂ => f (z + c)) (x := 0) (by simp [horder, htop])]
+    rw [MeromorphicAt.meromorphicTrailingCoeffAt_of_order_eq_top
+      (f := f) (x := c) htop]
+  · obtain ⟨g, hg, hgne, hfg⟩ := (meromorphicOrderAt_ne_top_iff hf).1 htop
+    have hnc : ¬EventuallyConst (fun z : ℂ => z + c) (𝓝 0) := by
+      intro hconst
+      rw [eventuallyConst_iff_analyticOrderAt_sub_eq_top] at hconst
+      have hlin : AnalyticAt ℂ (fun z : ℂ => z + c) 0 := by
+        fun_prop
+      have hone :
+          analyticOrderAt ((fun z : ℂ => z + c) · -
+              (fun z : ℂ => z + c) 0) 0 = 1 :=
+        hlin.analyticOrderAt_sub_eq_one_of_deriv_ne_zero (by simp)
+      rw [hone] at hconst
+      norm_num at hconst
+    have htendsto :
+        Tendsto (fun z : ℂ => z + c) (𝓝[≠] 0) (𝓝[≠] c) := by
+      have hlin : AnalyticAt ℂ (fun z : ℂ => z + c) 0 := by
+        fun_prop
+      change map (fun z : ℂ => z + c) (𝓝[≠] 0) ≤ 𝓝[≠] c
+      convert hlin.map_nhdsNE hnc using 1
+      simp
+    have hgcomp : AnalyticAt ℂ (fun z : ℂ => g (z + c)) 0 := by
+      have hlin : AnalyticAt ℂ (fun z : ℂ => z + c) 0 := by
+        fun_prop
+      simpa [Function.comp_def] using
+        hg.comp_of_eq' hlin (by simp)
+    have hfg_comp :
+        (fun z : ℂ => f (z + c)) =ᶠ[𝓝[≠] 0]
+          fun z : ℂ =>
+            (z - 0) ^
+              (meromorphicOrderAt (fun z : ℂ => f (z + c)) 0).untop₀ •
+              (fun z : ℂ => g (z + c)) z := by
+      rw [horder]
+      filter_upwards [hfg.comp_tendsto htendsto] with z hz
+      simpa [sub_eq_add_neg, add_assoc, add_comm, add_left_comm] using hz
+    rw [hgcomp.meromorphicTrailingCoeffAt_of_ne_zero_of_eq_nhdsNE
+      (by simpa using hgne) hfg_comp]
+    rw [hg.meromorphicTrailingCoeffAt_of_ne_zero_of_eq_nhdsNE hgne hfg]
+    simp
+
+/-- Translating the input by `c` preserves the norm of the meromorphic
+trailing coefficient at the translated center. -/
+lemma norm_meromorphicTrailingCoeffAt_comp_add_const_zero
+    {f : ℂ → ℂ} (c : ℂ) (hf : MeromorphicAt f c) :
+    ‖meromorphicTrailingCoeffAt (fun z : ℂ => f (z + c)) 0‖ =
+      ‖meromorphicTrailingCoeffAt f c‖ := by
+  rw [meromorphicTrailingCoeffAt_comp_add_const_zero c hf]
+
+/-- Translating the input by `c` preserves the logarithmic norm of the
+meromorphic trailing coefficient at the translated center. -/
+lemma log_norm_meromorphicTrailingCoeffAt_comp_add_const_zero
+    {f : ℂ → ℂ} (c : ℂ) (hf : MeromorphicAt f c) :
+    Real.log ‖meromorphicTrailingCoeffAt (fun z : ℂ => f (z + c)) 0‖ =
+      Real.log ‖meromorphicTrailingCoeffAt f c‖ := by
+  rw [norm_meromorphicTrailingCoeffAt_comp_add_const_zero c hf]
+
 /-- Value-distribution Jensen formula translated from Mathlib's zero-centered
 statement to a disk centered at `c`.
 
@@ -4094,6 +4171,80 @@ lemma valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_l
           (fun z : ℂ => logDeriv riemannZeta
             (z + ((σ : ℂ) + I * t))) 0‖ :=
   valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_localDivisor
+    ((σ : ℂ) + I * t) hR
+
+/-- Translated log-counting Jensen formula for `logDeriv ζ`, with translated
+trailing-coefficient terms cancelled. -/
+lemma valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_localDivisor_pure
+    (c : ℂ) {R : ℝ} (hR : R ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => logDeriv riemannZeta (z + c)) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => logDeriv riemannZeta (z + c)) ⊤) R =
+      (∑ᶠ u, divisor (logDeriv riemannZeta) (closedBall c |R|) u *
+          Real.log (R * ‖c - u‖⁻¹))
+        + divisor (logDeriv riemannZeta) (closedBall c |R|) c * Real.log R := by
+  rw [valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_localDivisor
+    c hR]
+  rw [log_norm_meromorphicTrailingCoeffAt_comp_add_const_zero c
+    (meromorphic_logDeriv_riemannZeta c)]
+  ring
+
+/-- Signed translated log-counting Jensen formula for `-logDeriv ζ`, with the
+right-hand side in unsigned `logDeriv ζ` local-divisor notation and translated
+trailing-coefficient terms cancelled. -/
+lemma valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_localDivisor_pure
+    (c : ℂ) {R : ℝ} (hR : R ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => -logDeriv riemannZeta (z + c)) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => -logDeriv riemannZeta (z + c)) ⊤) R =
+      (∑ᶠ u, divisor (logDeriv riemannZeta) (closedBall c |R|) u *
+          Real.log (R * ‖c - u‖⁻¹))
+        + divisor (logDeriv riemannZeta) (closedBall c |R|) c * Real.log R := by
+  rw [valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_localDivisor
+    c hR]
+  rw [log_norm_meromorphicTrailingCoeffAt_comp_add_const_zero c
+    (meromorphic_logDeriv_riemannZeta c)]
+  ring
+
+/-- Pure local-divisor translated log-counting Jensen formula for `logDeriv ζ`
+on a disk centered at `σ + I*t`. -/
+lemma valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_localDivisor_pure
+    {σ t R : ℝ} (hR : R ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => logDeriv riemannZeta
+          (z + ((σ : ℂ) + I * t))) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => logDeriv riemannZeta
+            (z + ((σ : ℂ) + I * t))) ⊤) R =
+      (∑ᶠ u, divisor (logDeriv riemannZeta)
+          (closedBall ((σ : ℂ) + I * t) |R|) u *
+          Real.log (R * ‖((σ : ℂ) + I * t) - u‖⁻¹))
+        + divisor (logDeriv riemannZeta)
+            (closedBall ((σ : ℂ) + I * t) |R|)
+            ((σ : ℂ) + I * t) * Real.log R :=
+  valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_localDivisor_pure
+    ((σ : ℂ) + I * t) hR
+
+/-- Signed pure local-divisor translated log-counting Jensen formula for
+`-logDeriv ζ` on a disk centered at `σ + I*t`, using unsigned `logDeriv ζ`
+local-divisor terms. -/
+lemma valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_localDivisor_pure
+    {σ t R : ℝ} (hR : R ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => -logDeriv riemannZeta
+          (z + ((σ : ℂ) + I * t))) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => -logDeriv riemannZeta
+            (z + ((σ : ℂ) + I * t))) ⊤) R =
+      (∑ᶠ u, divisor (logDeriv riemannZeta)
+          (closedBall ((σ : ℂ) + I * t) |R|) u *
+          Real.log (R * ‖((σ : ℂ) + I * t) - u‖⁻¹))
+        + divisor (logDeriv riemannZeta)
+            (closedBall ((σ : ℂ) + I * t) |R|)
+            ((σ : ℂ) + I * t) * Real.log R :=
+  valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_localDivisor_pure
     ((σ : ℂ) + I * t) hR
 
 /-- Jensen formula specialized to the signed logarithmic derivative of ζ on a
