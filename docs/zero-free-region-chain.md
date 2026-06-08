@@ -259,7 +259,14 @@ proved:
   and
   `ZeroFreeRegion.jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_sigma_it_unsigned_terms`
   specialize Jensen directly to the local `sigma+I*t` disk without routing
-  through an ambient `verticalRegion`.
+  through an ambient `verticalRegion`.  The positive-radius variants
+  `ZeroFreeRegion.jensen_circleAverage_log_norm_riemannZeta_sigma_it_of_pos_radius`,
+  `ZeroFreeRegion.jensen_circleAverage_log_norm_logDeriv_riemannZeta_sigma_it_of_pos_radius`,
+  `ZeroFreeRegion.jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_sigma_it_of_pos_radius`,
+  and
+  `ZeroFreeRegion.jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_sigma_it_unsigned_terms_of_pos_radius`
+  state the same formulas with closed balls of radius `R` under `0 < R`,
+  matching the radius convention used by the local Borel-Caratheodory wrappers.
   The pointwise conversion
   `ZeroFreeRegion.log_norm_neg_logDeriv_riemannZeta_eq` and circle-average
   conversion
@@ -352,7 +359,14 @@ proved:
   `ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_disk_right_half_of_logDeriv_ne_zero`
   discharge the right-half-plane and pole-exclusion hypotheses directly from
   `1+|R| <= sigma`, `0 < H`, and `H+|R| <= |t|`, leaving only local
-  nonvanishing of `logDeriv ζ` on the disk.  The analyticity wrapper
+  nonvanishing of `logDeriv ζ` on the disk.  Their positive-radius forms
+  `ZeroFreeRegion.valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_zero_of_disk_right_half_of_logDeriv_ne_zero_pos_radius`,
+  `ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_disk_right_half_of_logDeriv_ne_zero_pos_radius`,
+  and
+  `ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_eq_zero_of_disk_right_half_of_neg_logDeriv_ne_zero_pos_radius`
+  replace those numeric hypotheses by `1+R <= sigma` and `H+R <= |t|`
+  under `0 < R`, which is the direct handoff shape from the Borel disk layer.
+  The analyticity wrapper
   `ZeroFreeRegion.analyticAt_logDeriv_riemannZeta_closedBall_sigma_it_of_disk_right_half`
   exposes the same geometry as direct pointwise analyticity on the whole disk,
   and

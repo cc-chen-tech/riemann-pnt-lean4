@@ -298,6 +298,15 @@ Core verified declarations:
 - `valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_eq_zero_of_disk_right_half_of_neg_logDeriv_ne_zero`
   gives the signed disk log-counting vanishing wrapper with the nonvanishing
   hypothesis stated directly for `-logDeriv zeta`.
+- `valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_zero_of_disk_right_half_of_logDeriv_ne_zero_pos_radius`
+  is the positive-radius version of the direct `sigma + I*t` log-counting
+  bridge, replacing the old `|R|` disk radius with `R` under `0 < R`.
+- `valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_disk_right_half_of_logDeriv_ne_zero_pos_radius`
+  gives the same positive-radius normalization for the signed left side with
+  unsigned `logDeriv zeta` nonvanishing.
+- `valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_eq_zero_of_disk_right_half_of_neg_logDeriv_ne_zero_pos_radius`
+  gives the positive-radius normalization with the local nonvanishing
+  hypothesis stated directly for `-logDeriv zeta`.
 - `differentiableOn_logDeriv_riemannZeta_closedBall_sigma_it_of_disk_right_half`
   turns the disk-geometric analyticity wrapper into `DifferentiableOn` on the
   closed `sigma + I*t` disk.
@@ -793,6 +802,13 @@ Core verified declarations:
   `jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_sigma_it_unsigned_terms`
   provide the same Jensen formulas directly on `sigma+I*t` disks without
   ambient vertical-region bookkeeping.
+- `jensen_circleAverage_log_norm_riemannZeta_sigma_it_of_pos_radius`,
+  `jensen_circleAverage_log_norm_logDeriv_riemannZeta_sigma_it_of_pos_radius`,
+  `jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_sigma_it_of_pos_radius`,
+  and
+  `jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_sigma_it_unsigned_terms_of_pos_radius`
+  are the positive-radius versions of the direct Jensen formulas, with
+  closed balls stated using radius `R` instead of `|R|`.
 
 ### `PrimeNumberTheorem.lean`
 

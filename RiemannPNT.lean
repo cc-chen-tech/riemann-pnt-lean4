@@ -3923,6 +3923,22 @@ theorem valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_zero_of_d
   ZeroFreeRegion.valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_zero_of_disk_right_half_of_logDeriv_ne_zero
     hR hσ hHpos hH hlogne
 
+/-- Public positive-radius disk-geometric log-counting vanishing lemma for
+`logDeriv ζ`. -/
+theorem valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_zero_of_disk_right_half_of_logDeriv_ne_zero_pos_radius
+    {σ t R H : ℝ} (hR : 0 < R)
+    (hσ : 1 + R ≤ σ) (hHpos : 0 < H) (hH : H + R ≤ |t|)
+    (hlogne : ∀ u ∈ Metric.closedBall ((σ : ℂ) + Complex.I * t) R,
+      logDeriv riemannZeta u ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => logDeriv riemannZeta
+          (z + ((σ : ℂ) + Complex.I * t))) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => logDeriv riemannZeta
+            (z + ((σ : ℂ) + Complex.I * t))) ⊤) R = 0 :=
+  ZeroFreeRegion.valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_zero_of_disk_right_half_of_logDeriv_ne_zero_pos_radius
+    hR hσ hHpos hH hlogne
+
 /-- Public signed disk-geometric specialization of the right-half-plane local
 log-counting vanishing lemma, with hypotheses stated for unsigned
 `logDeriv ζ`. -/
@@ -3938,6 +3954,22 @@ theorem valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned
           (fun z : ℂ => -logDeriv riemannZeta
             (z + ((σ : ℂ) + Complex.I * t))) ⊤) R = 0 :=
   ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_disk_right_half_of_logDeriv_ne_zero
+    hR hσ hHpos hH hlogne
+
+/-- Public positive-radius signed disk-geometric log-counting vanishing lemma,
+with hypotheses stated for unsigned `logDeriv ζ`. -/
+theorem valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_disk_right_half_of_logDeriv_ne_zero_pos_radius
+    {σ t R H : ℝ} (hR : 0 < R)
+    (hσ : 1 + R ≤ σ) (hHpos : 0 < H) (hH : H + R ≤ |t|)
+    (hlogne : ∀ u ∈ Metric.closedBall ((σ : ℂ) + Complex.I * t) R,
+      logDeriv riemannZeta u ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => -logDeriv riemannZeta
+          (z + ((σ : ℂ) + Complex.I * t))) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => -logDeriv riemannZeta
+            (z + ((σ : ℂ) + Complex.I * t))) ⊤) R = 0 :=
+  ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_disk_right_half_of_logDeriv_ne_zero_pos_radius
     hR hσ hHpos hH hlogne
 
 /-- Public nonvanishing conversion from signed to unsigned logarithmic
@@ -3961,6 +3993,22 @@ theorem valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_eq_zero_
           (fun z : ℂ => -logDeriv riemannZeta
             (z + ((σ : ℂ) + Complex.I * t))) ⊤) R = 0 :=
   ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_eq_zero_of_disk_right_half_of_neg_logDeriv_ne_zero
+    hR hσ hHpos hH hnegne
+
+/-- Public positive-radius signed disk-geometric log-counting vanishing with
+the local nonvanishing hypothesis stated directly for `-logDeriv ζ`. -/
+theorem valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_eq_zero_of_disk_right_half_of_neg_logDeriv_ne_zero_pos_radius
+    {σ t R H : ℝ} (hR : 0 < R)
+    (hσ : 1 + R ≤ σ) (hHpos : 0 < H) (hH : H + R ≤ |t|)
+    (hnegne : ∀ u ∈ Metric.closedBall ((σ : ℂ) + Complex.I * t) R,
+      -logDeriv riemannZeta u ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => -logDeriv riemannZeta
+          (z + ((σ : ℂ) + Complex.I * t))) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => -logDeriv riemannZeta
+            (z + ((σ : ℂ) + Complex.I * t))) ⊤) R = 0 :=
+  ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_eq_zero_of_disk_right_half_of_neg_logDeriv_ne_zero_pos_radius
     hR hσ hHpos hH hnegne
 
 /-- Public Borel-Carathéodory theorem in the vanishing-at-zero form, routed
@@ -4959,6 +5007,23 @@ theorem jensen_circleAverage_log_norm_riemannZeta_sigma_it
             ((σ : ℂ) + Complex.I * t)‖ :=
   ZeroFreeRegion.jensen_circleAverage_log_norm_riemannZeta_sigma_it hR
 
+/-- Public positive-radius Jensen formula specialized directly to ζ on a
+`σ + I*t` disk. -/
+theorem jensen_circleAverage_log_norm_riemannZeta_sigma_it_of_pos_radius
+    {R σ t : ℝ} (hR : 0 < R) :
+    circleAverage (Real.log ‖riemannZeta ·‖)
+        ((σ : ℂ) + Complex.I * t) R
+      = ∑ᶠ u,
+          divisor riemannZeta
+            (closedBall ((σ : ℂ) + Complex.I * t) R) u *
+            Real.log (R * ‖((σ : ℂ) + Complex.I * t) - u‖⁻¹)
+        + divisor riemannZeta
+            (closedBall ((σ : ℂ) + Complex.I * t) R)
+            ((σ : ℂ) + Complex.I * t) * Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt riemannZeta
+            ((σ : ℂ) + Complex.I * t)‖ :=
+  ZeroFreeRegion.jensen_circleAverage_log_norm_riemannZeta_sigma_it_of_pos_radius hR
+
 /-- Public Jensen formula specialized directly to `logDeriv ζ` on a
 `σ + I*t` disk. -/
 theorem jensen_circleAverage_log_norm_logDeriv_riemannZeta_sigma_it
@@ -4975,6 +5040,23 @@ theorem jensen_circleAverage_log_norm_logDeriv_riemannZeta_sigma_it
         + Real.log ‖meromorphicTrailingCoeffAt (logDeriv riemannZeta)
             ((σ : ℂ) + Complex.I * t)‖ :=
   ZeroFreeRegion.jensen_circleAverage_log_norm_logDeriv_riemannZeta_sigma_it hR
+
+/-- Public positive-radius Jensen formula specialized directly to
+`logDeriv ζ` on a `σ + I*t` disk. -/
+theorem jensen_circleAverage_log_norm_logDeriv_riemannZeta_sigma_it_of_pos_radius
+    {R σ t : ℝ} (hR : 0 < R) :
+    circleAverage (Real.log ‖logDeriv riemannZeta ·‖)
+        ((σ : ℂ) + Complex.I * t) R
+      = ∑ᶠ u,
+          divisor (logDeriv riemannZeta)
+            (closedBall ((σ : ℂ) + Complex.I * t) R) u *
+            Real.log (R * ‖((σ : ℂ) + Complex.I * t) - u‖⁻¹)
+        + divisor (logDeriv riemannZeta)
+            (closedBall ((σ : ℂ) + Complex.I * t) R)
+            ((σ : ℂ) + Complex.I * t) * Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt (logDeriv riemannZeta)
+            ((σ : ℂ) + Complex.I * t)‖ :=
+  ZeroFreeRegion.jensen_circleAverage_log_norm_logDeriv_riemannZeta_sigma_it_of_pos_radius hR
 
 /-- Public Jensen formula specialized directly to `-logDeriv ζ` on a
 `σ + I*t` disk. -/
@@ -4995,6 +5077,25 @@ theorem jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_sigma_it
   ZeroFreeRegion.jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_sigma_it
     hR
 
+/-- Public positive-radius Jensen formula specialized directly to
+`-logDeriv ζ` on a `σ + I*t` disk. -/
+theorem jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_sigma_it_of_pos_radius
+    {R σ t : ℝ} (hR : 0 < R) :
+    circleAverage (fun z : ℂ => Real.log ‖-logDeriv riemannZeta z‖)
+        ((σ : ℂ) + Complex.I * t) R
+      = ∑ᶠ u,
+          divisor (fun z : ℂ => -logDeriv riemannZeta z)
+            (closedBall ((σ : ℂ) + Complex.I * t) R) u *
+            Real.log (R * ‖((σ : ℂ) + Complex.I * t) - u‖⁻¹)
+        + divisor (fun z : ℂ => -logDeriv riemannZeta z)
+            (closedBall ((σ : ℂ) + Complex.I * t) R)
+            ((σ : ℂ) + Complex.I * t) * Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt
+            (fun z : ℂ => -logDeriv riemannZeta z)
+            ((σ : ℂ) + Complex.I * t)‖ :=
+  ZeroFreeRegion.jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_sigma_it_of_pos_radius
+    hR
+
 /-- Public Jensen formula specialized directly to `-logDeriv ζ` on a
 `σ + I*t` disk, with unsigned `logDeriv ζ` divisor and trailing coefficient
 terms on the right-hand side. -/
@@ -5012,6 +5113,25 @@ theorem jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_sigma_it_unsigned
         + Real.log ‖meromorphicTrailingCoeffAt (logDeriv riemannZeta)
             ((σ : ℂ) + Complex.I * t)‖ :=
   ZeroFreeRegion.jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_sigma_it_unsigned_terms
+    hR
+
+/-- Public positive-radius Jensen formula for the signed left side on a
+`σ + I*t` disk, with unsigned `logDeriv ζ` divisor and trailing coefficient
+terms. -/
+theorem jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_sigma_it_unsigned_terms_of_pos_radius
+    {R σ t : ℝ} (hR : 0 < R) :
+    circleAverage (fun z : ℂ => Real.log ‖-logDeriv riemannZeta z‖)
+        ((σ : ℂ) + Complex.I * t) R
+      = ∑ᶠ u,
+          divisor (logDeriv riemannZeta)
+            (closedBall ((σ : ℂ) + Complex.I * t) R) u *
+            Real.log (R * ‖((σ : ℂ) + Complex.I * t) - u‖⁻¹)
+        + divisor (logDeriv riemannZeta)
+            (closedBall ((σ : ℂ) + Complex.I * t) R)
+            ((σ : ℂ) + Complex.I * t) * Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt (logDeriv riemannZeta)
+            ((σ : ℂ) + Complex.I * t)‖ :=
+  ZeroFreeRegion.jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_sigma_it_unsigned_terms_of_pos_radius
     hR
 
 /-- Public Jensen formula specialized to the logarithmic derivative of ζ on a

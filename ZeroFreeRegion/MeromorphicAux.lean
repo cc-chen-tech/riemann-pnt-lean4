@@ -5076,6 +5076,31 @@ lemma valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_zero_of_dis
         (z := u) (σ := σ) (t := t) (R := |R|) (H := H) hu hHpos hH)
     hlogne
 
+/-- Positive-radius version of the direct disk-geometric log-counting
+vanishing lemma for `logDeriv ζ`.  This normalizes the disk radius from
+`|R|` to `R`, matching the Borel-Carathéodory APIs. -/
+lemma valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_zero_of_disk_right_half_of_logDeriv_ne_zero_pos_radius
+    {σ t R H : ℝ} (hR : 0 < R)
+    (hσ : 1 + R ≤ σ) (hHpos : 0 < H) (hH : H + R ≤ |t|)
+    (hlogne : ∀ u ∈ closedBall ((σ : ℂ) + I * t) R,
+      logDeriv riemannZeta u ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => logDeriv riemannZeta
+          (z + ((σ : ℂ) + I * t))) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => logDeriv riemannZeta
+            (z + ((σ : ℂ) + I * t))) ⊤) R = 0 := by
+  have hAbs : |R| = R := abs_of_pos hR
+  have hσ' : 1 + |R| ≤ σ := by simpa [hAbs] using hσ
+  have hH' : H + |R| ≤ |t| := by simpa [hAbs] using hH
+  have hlogne' : ∀ u ∈ closedBall ((σ : ℂ) + I * t) |R|,
+      logDeriv riemannZeta u ≠ 0 := by
+    intro u hu
+    exact hlogne u (by simpa [hAbs] using hu)
+  simpa [hAbs] using
+    valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_zero_of_disk_right_half_of_logDeriv_ne_zero
+      (σ := σ) (t := t) (R := R) (H := H) hR.ne' hσ' hHpos hH' hlogne'
+
 /-- Signed disk-geometric specialization of the right-half-plane log-counting
 vanishing lemma, with hypotheses stated for unsigned `logDeriv ζ`. -/
 lemma valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_disk_right_half_of_logDeriv_ne_zero
@@ -5098,6 +5123,30 @@ lemma valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_e
       closedBall_sigma_it_ne_one_of_height_add_le
         (z := u) (σ := σ) (t := t) (R := |R|) (H := H) hu hHpos hH)
     hlogne
+
+/-- Positive-radius signed disk-geometric log-counting vanishing lemma, with
+hypotheses stated for unsigned `logDeriv ζ`. -/
+lemma valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_disk_right_half_of_logDeriv_ne_zero_pos_radius
+    {σ t R H : ℝ} (hR : 0 < R)
+    (hσ : 1 + R ≤ σ) (hHpos : 0 < H) (hH : H + R ≤ |t|)
+    (hlogne : ∀ u ∈ closedBall ((σ : ℂ) + I * t) R,
+      logDeriv riemannZeta u ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => -logDeriv riemannZeta
+          (z + ((σ : ℂ) + I * t))) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => -logDeriv riemannZeta
+            (z + ((σ : ℂ) + I * t))) ⊤) R = 0 := by
+  have hAbs : |R| = R := abs_of_pos hR
+  have hσ' : 1 + |R| ≤ σ := by simpa [hAbs] using hσ
+  have hH' : H + |R| ≤ |t| := by simpa [hAbs] using hH
+  have hlogne' : ∀ u ∈ closedBall ((σ : ℂ) + I * t) |R|,
+      logDeriv riemannZeta u ≠ 0 := by
+    intro u hu
+    exact hlogne u (by simpa [hAbs] using hu)
+  simpa [hAbs] using
+    valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_disk_right_half_of_logDeriv_ne_zero
+      (σ := σ) (t := t) (R := R) (H := H) hR.ne' hσ' hHpos hH' hlogne'
 
 /-- Nonvanishing of the signed logarithmic derivative implies nonvanishing of
 the unsigned logarithmic derivative. -/
@@ -5125,6 +5174,30 @@ lemma valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_eq_zero_of
     hR hσ hHpos hH
     (fun u hu =>
       logDeriv_riemannZeta_ne_zero_of_neg_logDeriv_ne_zero (hnegne u hu))
+
+/-- Positive-radius signed disk-geometric log-counting vanishing with the
+local nonvanishing hypothesis stated directly for `-logDeriv ζ`. -/
+lemma valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_eq_zero_of_disk_right_half_of_neg_logDeriv_ne_zero_pos_radius
+    {σ t R H : ℝ} (hR : 0 < R)
+    (hσ : 1 + R ≤ σ) (hHpos : 0 < H) (hH : H + R ≤ |t|)
+    (hnegne : ∀ u ∈ closedBall ((σ : ℂ) + I * t) R,
+      -logDeriv riemannZeta u ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => -logDeriv riemannZeta
+          (z + ((σ : ℂ) + I * t))) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => -logDeriv riemannZeta
+            (z + ((σ : ℂ) + I * t))) ⊤) R = 0 := by
+  have hAbs : |R| = R := abs_of_pos hR
+  have hσ' : 1 + |R| ≤ σ := by simpa [hAbs] using hσ
+  have hH' : H + |R| ≤ |t| := by simpa [hAbs] using hH
+  have hnegne' : ∀ u ∈ closedBall ((σ : ℂ) + I * t) |R|,
+      -logDeriv riemannZeta u ≠ 0 := by
+    intro u hu
+    exact hnegne u (by simpa [hAbs] using hu)
+  simpa [hAbs] using
+    valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_eq_zero_of_disk_right_half_of_neg_logDeriv_ne_zero
+      (σ := σ) (t := t) (R := R) (H := H) hR.ne' hσ' hHpos hH' hnegne'
 
 /-- Jensen formula specialized to the signed logarithmic derivative of ζ on a
 closed ball. -/
@@ -5170,6 +5243,25 @@ lemma jensen_circleAverage_log_norm_riemannZeta_sigma_it
             ((σ : ℂ) + I * t)‖ :=
   jensen_circleAverage_log_norm_riemannZeta_closedBall hR
 
+/-- Positive-radius Jensen formula specialized directly to ζ on a
+`σ + I*t` disk. -/
+lemma jensen_circleAverage_log_norm_riemannZeta_sigma_it_of_pos_radius
+    {R σ t : ℝ} (hR : 0 < R) :
+    circleAverage (Real.log ‖riemannZeta ·‖) ((σ : ℂ) + I * t) R
+      = ∑ᶠ u,
+          divisor riemannZeta (closedBall ((σ : ℂ) + I * t) R) u *
+            Real.log (R * ‖((σ : ℂ) + I * t) - u‖⁻¹)
+        + divisor riemannZeta (closedBall ((σ : ℂ) + I * t) R)
+            ((σ : ℂ) + I * t) * Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt riemannZeta
+            ((σ : ℂ) + I * t)‖ := by
+  have hAbs : |R| = R := abs_of_pos hR
+  have h :=
+    jensen_circleAverage_log_norm_riemannZeta_sigma_it
+      (R := R) (σ := σ) (t := t) hR.ne'
+  rw [hAbs] at h
+  exact h
+
 /-- Jensen formula specialized directly to `logDeriv ζ` on a `σ + I*t`
 disk. -/
 lemma jensen_circleAverage_log_norm_logDeriv_riemannZeta_sigma_it
@@ -5186,6 +5278,28 @@ lemma jensen_circleAverage_log_norm_logDeriv_riemannZeta_sigma_it
         + Real.log ‖meromorphicTrailingCoeffAt (logDeriv riemannZeta)
             ((σ : ℂ) + I * t)‖ :=
   jensen_circleAverage_log_norm_logDeriv_riemannZeta_closedBall hR
+
+/-- Positive-radius Jensen formula specialized directly to `logDeriv ζ` on a
+`σ + I*t` disk. -/
+lemma jensen_circleAverage_log_norm_logDeriv_riemannZeta_sigma_it_of_pos_radius
+    {R σ t : ℝ} (hR : 0 < R) :
+    circleAverage (Real.log ‖logDeriv riemannZeta ·‖)
+        ((σ : ℂ) + I * t) R
+      = ∑ᶠ u,
+          divisor (logDeriv riemannZeta)
+            (closedBall ((σ : ℂ) + I * t) R) u *
+            Real.log (R * ‖((σ : ℂ) + I * t) - u‖⁻¹)
+        + divisor (logDeriv riemannZeta)
+            (closedBall ((σ : ℂ) + I * t) R)
+            ((σ : ℂ) + I * t) * Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt (logDeriv riemannZeta)
+            ((σ : ℂ) + I * t)‖ := by
+  have hAbs : |R| = R := abs_of_pos hR
+  have h :=
+    jensen_circleAverage_log_norm_logDeriv_riemannZeta_sigma_it
+      (R := R) (σ := σ) (t := t) hR.ne'
+  rw [hAbs] at h
+  exact h
 
 /-- Jensen formula specialized directly to `-logDeriv ζ` on a `σ + I*t`
 disk. -/
@@ -5205,6 +5319,29 @@ lemma jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_sigma_it
             ((σ : ℂ) + I * t)‖ :=
   jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_closedBall hR
 
+/-- Positive-radius Jensen formula specialized directly to `-logDeriv ζ` on a
+`σ + I*t` disk. -/
+lemma jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_sigma_it_of_pos_radius
+    {R σ t : ℝ} (hR : 0 < R) :
+    circleAverage (fun z : ℂ => Real.log ‖-logDeriv riemannZeta z‖)
+        ((σ : ℂ) + I * t) R
+      = ∑ᶠ u,
+          divisor (fun z : ℂ => -logDeriv riemannZeta z)
+            (closedBall ((σ : ℂ) + I * t) R) u *
+            Real.log (R * ‖((σ : ℂ) + I * t) - u‖⁻¹)
+        + divisor (fun z : ℂ => -logDeriv riemannZeta z)
+            (closedBall ((σ : ℂ) + I * t) R)
+            ((σ : ℂ) + I * t) * Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt
+            (fun z : ℂ => -logDeriv riemannZeta z)
+            ((σ : ℂ) + I * t)‖ := by
+  have hAbs : |R| = R := abs_of_pos hR
+  have h :=
+    jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_sigma_it
+      (R := R) (σ := σ) (t := t) hR.ne'
+  rw [hAbs] at h
+  exact h
+
 /-- Jensen formula specialized directly to `-logDeriv ζ` on a `σ + I*t`
 disk, with unsigned `logDeriv ζ` divisor and trailing coefficient terms on the
 right-hand side. -/
@@ -5222,6 +5359,28 @@ lemma jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_sigma_it_unsigned_t
         + Real.log ‖meromorphicTrailingCoeffAt (logDeriv riemannZeta)
             ((σ : ℂ) + I * t)‖ :=
   jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_closedBall_unsigned_terms hR
+
+/-- Positive-radius Jensen formula for the signed left side on a `σ + I*t`
+disk, with unsigned `logDeriv ζ` divisor and trailing coefficient terms. -/
+lemma jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_sigma_it_unsigned_terms_of_pos_radius
+    {R σ t : ℝ} (hR : 0 < R) :
+    circleAverage (fun z : ℂ => Real.log ‖-logDeriv riemannZeta z‖)
+        ((σ : ℂ) + I * t) R
+      = ∑ᶠ u,
+          divisor (logDeriv riemannZeta)
+            (closedBall ((σ : ℂ) + I * t) R) u *
+            Real.log (R * ‖((σ : ℂ) + I * t) - u‖⁻¹)
+        + divisor (logDeriv riemannZeta)
+            (closedBall ((σ : ℂ) + I * t) R)
+            ((σ : ℂ) + I * t) * Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt (logDeriv riemannZeta)
+            ((σ : ℂ) + I * t)‖ := by
+  have hAbs : |R| = R := abs_of_pos hR
+  have h :=
+    jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_sigma_it_unsigned_terms
+      (R := R) (σ := σ) (t := t) hR.ne'
+  rw [hAbs] at h
+  exact h
 
 /-- Jensen formula specialized to ζ on a `σ + I*t` disk using the ambient
 vertical-region wrapper. -/
