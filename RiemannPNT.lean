@@ -2523,6 +2523,32 @@ theorem exists_sigmaOf_log_hreal_const_mul_log_div (C : ℝ) (hC : 1 < C)
           C * Real.log |t| / a :=
   ZeroFreeRegion.exists_sigmaOf_log_hreal_const_mul_log_div C hC T0 hT0
 
+/-- Public weak `σ+2it` norm bound obtained from the half-plane von Mangoldt
+L-series triangle inequality.  The coefficient still contains the `1/a` loss. -/
+theorem exists_sigmaOf_log_two_t_norm_bound_const_mul_log_div
+    (C : ℝ) (hC : 1 < C) (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    ∃ d : ℝ, 0 < d ∧ ∀ a : ℝ, 0 < a → a ≤ Real.log 2 →
+      a ≤ d * Real.log 2 →
+      ∀ t : ℝ, T0 ≤ |t| →
+        ‖logDeriv riemannZeta
+          ((1 + a / Real.log |t| : ℝ) + 2 * Complex.I * t)‖ ≤
+          C * Real.log |t| / a :=
+  ZeroFreeRegion.exists_sigmaOf_log_two_t_norm_bound_const_mul_log_div
+    C hC T0 hT0
+
+/-- Public weak `σ+2it` real-part bound in the shape of the third 3-4-1 term.
+The coefficient still contains the `1/a` loss. -/
+theorem exists_sigmaOf_log_two_t_bound_const_mul_log_div
+    (C : ℝ) (hC : 1 < C) (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    ∃ d : ℝ, 0 < d ∧ ∀ a : ℝ, 0 < a → a ≤ Real.log 2 →
+      a ≤ d * Real.log 2 →
+      ∀ t : ℝ, T0 ≤ |t| →
+        (-deriv riemannZeta
+          ((1 + a / Real.log |t| : ℝ) + 2 * Complex.I * t) /
+          riemannZeta ((1 + a / Real.log |t| : ℝ) + 2 * Complex.I * t)).re ≤
+          C * Real.log |t| / a :=
+  ZeroFreeRegion.exists_sigmaOf_log_two_t_bound_const_mul_log_div C hC T0 hT0
+
 /-- Public closure theorem for the standard choice
 `σ(t) = 1 + a / log |t|` in the high-height 3-4-1 argument. -/
 theorem exists_sigmaOf_log_classical_zero_free_region_of_log_deriv_bounds

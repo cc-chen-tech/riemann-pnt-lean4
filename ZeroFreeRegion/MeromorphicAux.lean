@@ -825,6 +825,69 @@ lemma exists_sigmaOf_log_hreal_const_mul_log_div (C : ℝ) (hC : 1 < C)
         const_div_sigmaOf_log_sub_one_eq_mul_log_div C hT0
           (ne_of_gt ha_pos) ht
 
+/-- Weak `σ + 2it` norm bound obtained from the absolutely convergent
+von Mangoldt L-series.
+
+This uses `norm_logDeriv_riemannZeta_le_real_neg_deriv_div` to reduce the
+vertical value to the real-axis logarithmic derivative at the same real part.
+The price is the factor `1/a`, so this is not yet the sharp vertical-strip
+estimate needed to close the classical zero-free region. -/
+lemma exists_sigmaOf_log_two_t_norm_bound_const_mul_log_div
+    (C : ℝ) (hC : 1 < C) (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    ∃ d : ℝ, 0 < d ∧ ∀ a : ℝ, 0 < a → a ≤ Real.log 2 →
+      a ≤ d * Real.log 2 →
+      ∀ t : ℝ, T0 ≤ |t| →
+        ‖logDeriv riemannZeta
+          ((1 + a / Real.log |t| : ℝ) + 2 * I * t)‖ ≤
+          C * Real.log |t| / a := by
+  rcases exists_sigmaOf_log_hreal_const_mul_log_div C hC T0 hT0 with
+    ⟨d, hd_pos, hreal⟩
+  refine ⟨d, hd_pos, ?_⟩
+  intro a ha_pos ha_le_log2 ha_le_near t ht
+  let σ : ℝ := 1 + a / Real.log |t|
+  let z : ℂ := (σ : ℂ) + 2 * I * t
+  have hz_re : z.re = σ := by simp [z]
+  have hσ_gt : 1 < σ := sigmaOf_log_gt_one hT0 ha_pos ht
+  have hz_gt : 1 < z.re := by simpa [hz_re] using hσ_gt
+  have hnorm := norm_logDeriv_riemannZeta_le_real_neg_deriv_div z hz_gt
+  have hreal_bound := hreal a ha_pos ha_le_log2 ha_le_near t ht
+  calc
+    ‖logDeriv riemannZeta z‖
+        ≤ (-deriv riemannZeta (z.re : ℂ) /
+          riemannZeta (z.re : ℂ)).re := hnorm
+    _ = (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re := by
+      rw [hz_re]
+    _ ≤ C * Real.log |t| / a := by
+      simpa [σ] using hreal_bound
+
+/-- Weak `σ + 2it` real-part bound obtained from the half-plane L-series norm
+bound.
+
+This is directly shaped like the third term in the 3-4-1 inequality, but the
+coefficient is `C/a` rather than a height-independent constant.  It records the
+honest boundary of what follows from absolute convergence alone. -/
+lemma exists_sigmaOf_log_two_t_bound_const_mul_log_div
+    (C : ℝ) (hC : 1 < C) (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    ∃ d : ℝ, 0 < d ∧ ∀ a : ℝ, 0 < a → a ≤ Real.log 2 →
+      a ≤ d * Real.log 2 →
+      ∀ t : ℝ, T0 ≤ |t| →
+        (-deriv riemannZeta
+          ((1 + a / Real.log |t| : ℝ) + 2 * I * t) /
+          riemannZeta ((1 + a / Real.log |t| : ℝ) + 2 * I * t)).re ≤
+          C * Real.log |t| / a := by
+  rcases exists_sigmaOf_log_two_t_norm_bound_const_mul_log_div C hC T0 hT0 with
+    ⟨d, hd_pos, hnorm⟩
+  refine ⟨d, hd_pos, ?_⟩
+  intro a ha_pos ha_le_log2 ha_le_near t ht
+  let z : ℂ := (1 + a / Real.log |t| : ℝ) + 2 * I * t
+  calc
+    (-deriv riemannZeta z / riemannZeta z).re
+        ≤ ‖-deriv riemannZeta z / riemannZeta z‖ := Complex.re_le_norm _
+    _ = ‖logDeriv riemannZeta z‖ :=
+      norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv z
+    _ ≤ C * Real.log |t| / a :=
+      hnorm a ha_pos ha_le_log2 ha_le_near t ht
+
 /-- Classical zero-free-region closure for the standard high-height choice
 `σ(t) = 1 + a / log |t|`.
 

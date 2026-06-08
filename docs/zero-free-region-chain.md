@@ -371,6 +371,14 @@ The same inputs are also normalized into the vertical-height scale by
 `ZeroFreeRegion.exists_sigmaOf_log_hreal_two_mul_log_div` and
 `ZeroFreeRegion.exists_sigmaOf_log_hreal_const_mul_log_div`, giving the real-axis
 term directly as `<= 2 * log |t| / a` or `<= C * log |t| / a`.
+The half-plane L-series triangle inequality now also gives weak `sigma + 2it`
+controls:
+`ZeroFreeRegion.exists_sigmaOf_log_two_t_norm_bound_const_mul_log_div` and
+`ZeroFreeRegion.exists_sigmaOf_log_two_t_bound_const_mul_log_div`.  These have
+the same `<= C * log |t| / a` scale, so they do not close the classical
+3-4-1 margin.  They mark the exact limit of what follows from absolute
+convergence alone; the remaining analytic estimate must remove this `1/a`
+loss and prove a genuine vertical-strip `O(log |t|)` bound.
 The theorem
 `ZeroFreeRegion.exists_sigmaOf_log_classical_zero_free_region_of_log_deriv_bounds`
 then packages this standard `sigmaOf` choice into the full verified
