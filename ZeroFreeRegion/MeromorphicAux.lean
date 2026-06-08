@@ -1134,6 +1134,34 @@ lemma classical_zero_free_region_of_sigma_log_shift_estimates_five_fourths_nonne
   classical_zero_free_region_of_sigma_log_shift_estimates_five_fourths
     Czero Ctwo T0 (by nlinarith) hT0 hzero htwo
 
+/-- Existential wrapper for the fixed `5/4` nonnegative shifted-estimate
+closure.
+
+This packages the remaining shifted-estimate input as the existence of
+nonnegative constants `Czero,Ctwo` and a high-height cutoff `T0 >= 2`. -/
+lemma classical_zero_free_region_of_exists_sigma_log_shift_estimates_five_fourths_nonneg_constants
+    (h :
+      ∃ Czero Ctwo T0 : ℝ, 0 ≤ Czero ∧ 0 ≤ Ctwo ∧ 2 ≤ T0 ∧
+        (∀ a c β t : ℝ, 0 < a → 0 < c → a ≤ Real.log 2 →
+          T0 ≤ |t| → β < 1 →
+          β ≥ 1 - c / Real.log |t| →
+          0 < (1 + a / Real.log |t|) - β →
+          riemannZeta ((β : ℂ) + I * t) = 0 →
+          (-deriv riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t) /
+            riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t)).re ≤
+              -1 / ((1 + a / Real.log |t|) - β) +
+                Czero * Real.log |t|) ∧
+        (∀ a t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+          (-deriv riemannZeta
+              ((1 + a / Real.log |t| : ℝ) + 2 * I * t) /
+            riemannZeta ((1 + a / Real.log |t| : ℝ) + 2 * I * t)).re ≤
+              Ctwo * Real.log |t|)) :
+    classical_zero_free_region := by
+  rcases h with ⟨Czero, Ctwo, T0, hCzero, hCtwo, hT0, hzero, htwo⟩
+  exact
+    classical_zero_free_region_of_sigma_log_shift_estimates_five_fourths_nonneg_constants
+      Czero Ctwo T0 hCzero hCtwo hT0 hzero htwo
+
 /-- Same-constant version of the shifted-estimate closure.
 
 If both shifted logarithmic-derivative estimates are available with the same

@@ -245,6 +245,9 @@ Core verified declarations:
 - `classical_zero_free_region_of_sigma_log_shift_estimates_five_fourths_nonneg_constants`
   combines the fixed `5/4` real-axis coefficient with the individual
   nonnegative shifted-coefficient interface.
+- `classical_zero_free_region_of_exists_sigma_log_shift_estimates_five_fourths_nonneg_constants`
+  packages that fixed `5/4` nonnegative interface as one existential analytic
+  input.
 - `classical_zero_free_region_of_sigma_log_shift_estimates_same_const`
   uses one nonnegative logarithmic coefficient for both shifted estimates.
 - `classical_zero_free_region_of_sigma_log_shift_estimates_same_const_at_two`

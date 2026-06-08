@@ -430,7 +430,10 @@ nonnegativity of `Czero,Ctwo`,
 `ZeroFreeRegion.classical_zero_free_region_of_sigma_log_shift_estimates_five_fourths`
 fixes the real-axis coefficient to `5/4`,
 `ZeroFreeRegion.classical_zero_free_region_of_sigma_log_shift_estimates_five_fourths_nonneg_constants`
-combines those two simplifications, and
+combines those two simplifications,
+`ZeroFreeRegion.classical_zero_free_region_of_exists_sigma_log_shift_estimates_five_fourths_nonneg_constants`
+packages that fixed `5/4` nonnegative interface as one existential analytic
+input, and
 `ZeroFreeRegion.classical_zero_free_region_of_sigma_log_shift_estimates_same_const`
 uses one nonnegative logarithmic coefficient for both shifted estimates.
 The wrappers
