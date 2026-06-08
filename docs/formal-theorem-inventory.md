@@ -340,6 +340,16 @@ Core verified declarations:
   allows separate constants in the `C * (1 + log |t|)` estimate shape.
 - `classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_one_add_log_bounds_high_height`
   packages that two-constant Big-O shaped interface existentially.
+- `classical_zero_free_region_of_re_im_neg_logDeriv_regular_part_norm_one_add_log_bound_high_height`
+  accepts the same single-constant `C * (1 + log |t|)` interface in the
+  signed `-logDeriv zeta` convention.
+- `classical_zero_free_region_of_exists_re_im_neg_logDeriv_regular_part_norm_one_add_log_bound_high_height`
+  packages that signed single-constant interface existentially.
+- `classical_zero_free_region_of_re_im_neg_logDeriv_regular_part_norm_one_add_log_bounds_high_height`
+  accepts separate signed `Cregular * (1 + log |t|)` and
+  `Cvertical * (1 + log |t|)` bounds.
+- `classical_zero_free_region_of_exists_re_im_neg_logDeriv_regular_part_norm_one_add_log_bounds_high_height`
+  packages that signed two-constant Big-O shaped interface existentially.
 - `log_abs_add_three_le_two_log_abs`
   proves `log(|t| + 3) <= 2 log |t|` for `|t| >= 3`.
 - `norm_sigma_add_I_mul_le_abs_add_two`
