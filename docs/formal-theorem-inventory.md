@@ -298,6 +298,15 @@ Core verified declarations:
 - `valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_eq_zero_of_disk_right_half_of_neg_logDeriv_ne_zero`
   gives the signed disk log-counting vanishing wrapper with the nonvanishing
   hypothesis stated directly for `-logDeriv zeta`.
+- `differentiableOn_logDeriv_riemannZeta_closedBall_sigma_it_of_disk_right_half`
+  turns the disk-geometric analyticity wrapper into `DifferentiableOn` on the
+  closed `sigma + I*t` disk.
+- `differentiableOn_logDeriv_riemannZeta_comp_add_sigma_it_ball_of_disk_right_half`
+  gives the centered-open-disk regularity input for
+  `z ↦ logDeriv zeta (z + (sigma + I*t))`.
+- `differentiableOn_neg_logDeriv_riemannZeta_comp_add_sigma_it_ball_of_disk_right_half`
+  provides the same centered-open-disk regularity in the signed
+  `-logDeriv zeta` convention.
 - `eventually_abs_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one`
   bounds the real part of the signed quotient by
   `2 / norm (s - 1)` eventually near `1`.

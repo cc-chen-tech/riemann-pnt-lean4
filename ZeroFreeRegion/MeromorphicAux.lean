@@ -3438,6 +3438,48 @@ lemma analyticAt_logDeriv_riemannZeta_closedBall_sigma_it_of_disk_right_half
       closedBall_sigma_it_ne_one_of_height_add_le
         (z := u) (σ := σ) (t := t) (R := R) (H := H) hu hHpos hH)
 
+/-- Differentiability of `logDeriv ζ` on a closed `σ + I*t` disk in the
+right half-plane and away from the pole. -/
+lemma differentiableOn_logDeriv_riemannZeta_closedBall_sigma_it_of_disk_right_half
+    {σ t R H : ℝ}
+    (hσ : 1 + R ≤ σ) (hHpos : 0 < H) (hH : H + R ≤ |t|) :
+    DifferentiableOn ℂ (logDeriv riemannZeta)
+      (closedBall ((σ : ℂ) + I * t) R) := by
+  intro u hu
+  exact (analyticAt_logDeriv_riemannZeta_closedBall_sigma_it_of_disk_right_half
+    hσ hHpos hH u hu).differentiableWithinAt
+
+/-- Differentiability of the zero-centered translate
+`z ↦ logDeriv ζ (z + (σ + I*t))` on the local open disk used by centered
+Borel-Caratheodory wrappers. -/
+lemma differentiableOn_logDeriv_riemannZeta_comp_add_sigma_it_ball_of_disk_right_half
+    {σ t R H : ℝ}
+    (hσ : 1 + R ≤ σ) (hHpos : 0 < H) (hH : H + R ≤ |t|) :
+    DifferentiableOn ℂ
+      (fun z : ℂ => logDeriv riemannZeta (z + ((σ : ℂ) + I * t)))
+      (ball 0 R) := by
+  intro z hz
+  let c : ℂ := (σ : ℂ) + I * t
+  have hzc : z + c ∈ closedBall c R := by
+    simpa [c, Metric.mem_closedBall, dist_eq_norm, add_comm, add_left_comm,
+      add_assoc] using Metric.ball_subset_closedBall hz
+  exact
+    ((analyticAt_logDeriv_riemannZeta_closedBall_sigma_it_of_disk_right_half
+      (σ := σ) (t := t) (R := R) (H := H) hσ hHpos hH
+      (z + c) hzc).differentiableAt.comp z
+        (differentiableAt_id.add (differentiableAt_const c))).differentiableWithinAt
+
+/-- Signed translated differentiability wrapper for the centered local disk. -/
+lemma differentiableOn_neg_logDeriv_riemannZeta_comp_add_sigma_it_ball_of_disk_right_half
+    {σ t R H : ℝ}
+    (hσ : 1 + R ≤ σ) (hHpos : 0 < H) (hH : H + R ≤ |t|) :
+    DifferentiableOn ℂ
+      (fun z : ℂ => -logDeriv riemannZeta (z + ((σ : ℂ) + I * t)))
+      (ball 0 R) := by
+  simpa only [Pi.neg_apply] using
+    (differentiableOn_logDeriv_riemannZeta_comp_add_sigma_it_ball_of_disk_right_half
+      (σ := σ) (t := t) (R := R) (H := H) hσ hHpos hH).neg
+
 /-- ζ is meromorphic on every project vertical region. -/
 lemma meromorphicOn_riemannZeta_verticalRegion (a b H : ℝ) :
     MeromorphicOn riemannZeta (verticalRegion a b H) := by

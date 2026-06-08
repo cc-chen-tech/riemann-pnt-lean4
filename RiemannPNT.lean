@@ -2895,6 +2895,38 @@ theorem analyticAt_logDeriv_riemannZeta_closedBall_sigma_it_of_disk_right_half
   ZeroFreeRegion.analyticAt_logDeriv_riemannZeta_closedBall_sigma_it_of_disk_right_half
     hσ hHpos hH
 
+/-- Public differentiability wrapper for `logDeriv ζ` on a closed
+`σ + I*t` disk in the right half-plane and away from the pole. -/
+theorem differentiableOn_logDeriv_riemannZeta_closedBall_sigma_it_of_disk_right_half
+    {σ t R H : ℝ}
+    (hσ : 1 + R ≤ σ) (hHpos : 0 < H) (hH : H + R ≤ |t|) :
+    DifferentiableOn ℂ (logDeriv riemannZeta)
+      (Metric.closedBall ((σ : ℂ) + Complex.I * t) R) :=
+  ZeroFreeRegion.differentiableOn_logDeriv_riemannZeta_closedBall_sigma_it_of_disk_right_half
+    hσ hHpos hH
+
+/-- Public differentiability wrapper for the zero-centered translate of
+`logDeriv ζ` on the local open disk. -/
+theorem differentiableOn_logDeriv_riemannZeta_comp_add_sigma_it_ball_of_disk_right_half
+    {σ t R H : ℝ}
+    (hσ : 1 + R ≤ σ) (hHpos : 0 < H) (hH : H + R ≤ |t|) :
+    DifferentiableOn ℂ
+      (fun z : ℂ => logDeriv riemannZeta (z + ((σ : ℂ) + Complex.I * t)))
+      (Metric.ball 0 R) :=
+  ZeroFreeRegion.differentiableOn_logDeriv_riemannZeta_comp_add_sigma_it_ball_of_disk_right_half
+    hσ hHpos hH
+
+/-- Public signed differentiability wrapper for the zero-centered translate of
+`-logDeriv ζ` on the local open disk. -/
+theorem differentiableOn_neg_logDeriv_riemannZeta_comp_add_sigma_it_ball_of_disk_right_half
+    {σ t R H : ℝ}
+    (hσ : 1 + R ≤ σ) (hHpos : 0 < H) (hH : H + R ≤ |t|) :
+    DifferentiableOn ℂ
+      (fun z : ℂ => -logDeriv riemannZeta (z + ((σ : ℂ) + Complex.I * t)))
+      (Metric.ball 0 R) :=
+  ZeroFreeRegion.differentiableOn_neg_logDeriv_riemannZeta_comp_add_sigma_it_ball_of_disk_right_half
+    hσ hHpos hH
+
 /-- Public meromorphicity of ζ on a project vertical region. -/
 theorem meromorphicOn_riemannZeta_verticalRegion (a b H : ℝ) :
     MeromorphicOn riemannZeta (ZeroFreeRegion.verticalRegion a b H) :=
