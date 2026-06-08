@@ -154,6 +154,13 @@ Core verified declarations:
   `divisor_neg_logDeriv_riemannZeta_eq_divisor_logDeriv_verticalRegion`
   specialize this divisor invariance to the signed/unsigned logarithmic
   derivatives of ζ on closed balls and project vertical regions.
+- `meromorphicTrailingCoeffAt_neg_of_meromorphicAt` and
+  `norm_meromorphicTrailingCoeffAt_neg_of_meromorphicAt`
+  prove the trailing-coefficient sign conversion and norm invariance for
+  meromorphic complex-valued functions.
+- `log_norm_meromorphicTrailingCoeffAt_neg_logDeriv_riemannZeta_eq`
+  specializes the trailing-coefficient logarithmic norm equality to the
+  signed/unsigned logarithmic derivatives of ζ.
 - `eventually_abs_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one`
   bounds the real part of the signed quotient by
   `2 / norm (s - 1)` eventually near `1`.

@@ -3836,6 +3836,40 @@ lemma divisor_neg_logDeriv_riemannZeta_eq_divisor_logDeriv_verticalRegion
   divisor_neg_of_meromorphicOn
     (meromorphicOn_logDeriv_riemannZeta_verticalRegion a b H)
 
+/-- Multiplying a meromorphic function by `-1` negates its trailing
+coefficient. -/
+lemma meromorphicTrailingCoeffAt_neg_of_meromorphicAt
+    {f : ℂ → ℂ} {z : ℂ} (hf : MeromorphicAt f z) :
+    meromorphicTrailingCoeffAt (fun w : ℂ => -f w) z =
+      -meromorphicTrailingCoeffAt f z := by
+  have hfun : (fun w : ℂ => -f w) = (fun _ : ℂ => (-1 : ℂ)) • f := by
+    ext w
+    simp
+  rw [hfun]
+  simpa using
+    (MeromorphicAt.meromorphicTrailingCoeffAt_smul
+      (x := z) (f₁ := fun _ : ℂ => (-1 : ℂ)) (f₂ := f)
+      (MeromorphicAt.const (-1 : ℂ) z) hf)
+
+/-- Multiplying a meromorphic function by `-1` does not change the norm of its
+trailing coefficient. -/
+lemma norm_meromorphicTrailingCoeffAt_neg_of_meromorphicAt
+    {f : ℂ → ℂ} {z : ℂ} (hf : MeromorphicAt f z) :
+    ‖meromorphicTrailingCoeffAt (fun w : ℂ => -f w) z‖ =
+      ‖meromorphicTrailingCoeffAt f z‖ := by
+  rw [meromorphicTrailingCoeffAt_neg_of_meromorphicAt hf, norm_neg]
+
+/-- The signed and unsigned logarithmic derivatives of ζ have the same
+logarithmic norm of the trailing coefficient at every point. -/
+lemma log_norm_meromorphicTrailingCoeffAt_neg_logDeriv_riemannZeta_eq
+    (z : ℂ) :
+    Real.log ‖meromorphicTrailingCoeffAt
+        (fun w : ℂ => -logDeriv riemannZeta w) z‖ =
+      Real.log ‖meromorphicTrailingCoeffAt (logDeriv riemannZeta) z‖ := by
+  have hf : MeromorphicAt (logDeriv riemannZeta) z := by
+    exact meromorphicOn_logDeriv_riemannZeta_closedBall z 0 z (by simp)
+  rw [norm_meromorphicTrailingCoeffAt_neg_of_meromorphicAt hf]
+
 /-- Jensen formula specialized to the signed logarithmic derivative of ζ on a
 closed ball. -/
 lemma jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_closedBall

@@ -230,7 +230,9 @@ proved:
   and
   `ZeroFreeRegion.divisor_neg_logDeriv_riemannZeta_eq_divisor_logDeriv_verticalRegion`
   make the Jensen right-side divisor bookkeeping identical in both sign
-  conventions.
+  conventions, while
+  `ZeroFreeRegion.log_norm_meromorphicTrailingCoeffAt_neg_logDeriv_riemannZeta_eq`
+  gives the same conversion for the Jensen trailing-coefficient term.
 
 ## Mathlib API Check
 
@@ -274,6 +276,7 @@ Useful checked names:
 #check ZeroFreeRegion.jensen_circleAverage_log_norm_logDeriv_riemannZeta_closedBall
 #check ZeroFreeRegion.circleAverage_log_norm_neg_logDeriv_riemannZeta_eq
 #check ZeroFreeRegion.divisor_neg_logDeriv_riemannZeta_eq_divisor_logDeriv_closedBall
+#check ZeroFreeRegion.log_norm_meromorphicTrailingCoeffAt_neg_logDeriv_riemannZeta_eq
 #check ZeroFreeRegion.jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_closedBall
 #check Complex.HadamardThreeLines.norm_le_interp_of_mem_verticalClosedStrip'
 #check PowerSeries.exists_isWeierstrassFactorization

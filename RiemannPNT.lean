@@ -3948,6 +3948,29 @@ theorem divisor_neg_logDeriv_riemannZeta_eq_divisor_logDeriv_verticalRegion
   ZeroFreeRegion.divisor_neg_logDeriv_riemannZeta_eq_divisor_logDeriv_verticalRegion
     a b H
 
+/-- Public trailing-coefficient conversion under multiplication by `-1`. -/
+theorem meromorphicTrailingCoeffAt_neg_of_meromorphicAt
+    {f : ℂ → ℂ} {z : ℂ} (hf : MeromorphicAt f z) :
+    meromorphicTrailingCoeffAt (fun w : ℂ => -f w) z =
+      -meromorphicTrailingCoeffAt f z :=
+  ZeroFreeRegion.meromorphicTrailingCoeffAt_neg_of_meromorphicAt hf
+
+/-- Public norm version of trailing-coefficient sign invariance. -/
+theorem norm_meromorphicTrailingCoeffAt_neg_of_meromorphicAt
+    {f : ℂ → ℂ} {z : ℂ} (hf : MeromorphicAt f z) :
+    ‖meromorphicTrailingCoeffAt (fun w : ℂ => -f w) z‖ =
+      ‖meromorphicTrailingCoeffAt f z‖ :=
+  ZeroFreeRegion.norm_meromorphicTrailingCoeffAt_neg_of_meromorphicAt hf
+
+/-- Public trailing-coefficient logarithmic norm equality for signed and
+unsigned logarithmic derivatives of ζ. -/
+theorem log_norm_meromorphicTrailingCoeffAt_neg_logDeriv_riemannZeta_eq
+    (z : ℂ) :
+    Real.log ‖meromorphicTrailingCoeffAt
+        (fun w : ℂ => -logDeriv riemannZeta w) z‖ =
+      Real.log ‖meromorphicTrailingCoeffAt (logDeriv riemannZeta) z‖ :=
+  ZeroFreeRegion.log_norm_meromorphicTrailingCoeffAt_neg_logDeriv_riemannZeta_eq z
+
 /-- Public Jensen formula specialized to the signed logarithmic derivative of
 ζ on a closed ball. -/
 theorem jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_closedBall
