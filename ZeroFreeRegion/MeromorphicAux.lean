@@ -2538,6 +2538,83 @@ lemma classical_zero_free_region_of_exists_logDeriv_regular_part_norm_log_norm_a
     classical_zero_free_region_of_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height
       T0 Cregular Cvertical hT0 hCregular hCvertical hregular hvertical
 
+/-- Complex-variable high-height closure from affine full-height logarithmic
+bounds.
+
+This accepts estimates of the shape `A + B * log(‖s‖ + 3)` directly on
+complex variables.  Above height `5`, the full-height logarithm is absorbed
+into the affine `log |Im|` closure. -/
+lemma classical_zero_free_region_of_logDeriv_regular_part_norm_affine_log_norm_add_three_bounds_high_height
+    (T0 Aregular Bregular Avertical Bvertical : ℝ)
+    (hT0 : 5 ≤ T0)
+    (hAregular : 0 ≤ Aregular) (hBregular : 0 ≤ Bregular)
+    (hAvertical : 0 ≤ Avertical) (hBvertical : 0 ≤ Bvertical)
+    (hregular :
+      ∀ s ρ : ℂ, T0 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+        riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+        0 < s.re - ρ.re →
+        ‖logDeriv riemannZeta s - (s - ρ)⁻¹‖ ≤
+          Aregular + Bregular * Real.log (‖s‖ + 3))
+    (hvertical :
+      ∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta z‖ ≤
+          Avertical + Bvertical * Real.log (‖z‖ + 3)) :
+    classical_zero_free_region := by
+  refine
+    classical_zero_free_region_of_logDeriv_regular_part_norm_affine_log_bound_and_vertical_logDeriv_norm_affine_log_bound_high_height
+      T0 Aregular (2 * Bregular) Avertical (2 * Bvertical)
+      (by linarith) hAregular (by nlinarith) hAvertical
+      (by nlinarith) ?_ ?_
+  · intro s ρ hs_height hs_re_mem hζρ hρ_im_eq hρ_re_lt hsub
+    have hlog := log_norm_add_three_le_two_log_abs_im hs_re_mem
+      (hT0.trans hs_height)
+    calc
+      ‖logDeriv riemannZeta s - (s - ρ)⁻¹‖
+          ≤ Aregular + Bregular * Real.log (‖s‖ + 3) :=
+            hregular s ρ hs_height hs_re_mem hζρ hρ_im_eq hρ_re_lt hsub
+      _ ≤ Aregular + Bregular * (2 * Real.log |s.im|) := by
+            have hmul :=
+              mul_le_mul_of_nonneg_left hlog hBregular
+            nlinarith
+      _ = Aregular + (2 * Bregular) * Real.log |s.im| := by ring
+  · intro z hz_height hz_re_mem
+    have hlog := log_norm_add_three_le_two_log_abs_im hz_re_mem
+      (hT0.trans hz_height)
+    calc
+      ‖logDeriv riemannZeta z‖
+          ≤ Avertical + Bvertical * Real.log (‖z‖ + 3) :=
+            hvertical z hz_height hz_re_mem
+      _ ≤ Avertical + Bvertical * (2 * Real.log |z.im|) := by
+            have hmul :=
+              mul_le_mul_of_nonneg_left hlog hBvertical
+            nlinarith
+      _ = Avertical + (2 * Bvertical) * Real.log |z.im| := by ring
+
+/-- Existential complex-variable high-height closure from affine full-height
+logarithmic bounds. -/
+lemma classical_zero_free_region_of_exists_logDeriv_regular_part_norm_affine_log_norm_add_three_bounds_high_height
+    (h :
+      ∃ T0 Aregular Bregular Avertical Bvertical : ℝ,
+        5 ≤ T0 ∧
+        0 ≤ Aregular ∧ 0 ≤ Bregular ∧
+        0 ≤ Avertical ∧ 0 ≤ Bvertical ∧
+        (∀ s ρ : ℂ, T0 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+          riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+          0 < s.re - ρ.re →
+          ‖logDeriv riemannZeta s - (s - ρ)⁻¹‖ ≤
+            Aregular + Bregular * Real.log (‖s‖ + 3)) ∧
+        (∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc 1 2 →
+          ‖logDeriv riemannZeta z‖ ≤
+            Avertical + Bvertical * Real.log (‖z‖ + 3))) :
+    classical_zero_free_region := by
+  rcases h with
+    ⟨T0, Aregular, Bregular, Avertical, Bvertical, hT0,
+      hAregular, hBregular, hAvertical, hBvertical, hregular, hvertical⟩
+  exact
+    classical_zero_free_region_of_logDeriv_regular_part_norm_affine_log_norm_add_three_bounds_high_height
+      T0 Aregular Bregular Avertical Bvertical hT0 hAregular hBregular
+      hAvertical hBvertical hregular hvertical
+
 /-- Existential high-height closure from affine logarithmic bounds. -/
 lemma classical_zero_free_region_of_exists_logDeriv_regular_part_norm_affine_log_bound_and_vertical_logDeriv_norm_affine_log_bound_high_height
     (h :
