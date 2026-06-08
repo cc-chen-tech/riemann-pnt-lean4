@@ -253,6 +253,9 @@ Core verified declarations:
   input.
 - `classical_zero_free_region_of_sigma_log_shift_estimates_same_const`
   uses one nonnegative logarithmic coefficient for both shifted estimates.
+- `classical_zero_free_region_of_exists_sigma_log_shift_estimates_same_const_high_height`
+  packages the same-constant shifted estimates as one existential high-height
+  analytic input; the existing compact patch closes the bounded-height range.
 - `classical_zero_free_region_of_sigma_log_shift_estimates_same_const_at_two`
   fixes the height cutoff in that same-constant closure to `2`, matching the
   target statement.

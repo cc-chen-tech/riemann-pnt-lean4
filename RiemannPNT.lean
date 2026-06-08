@@ -2789,6 +2789,28 @@ theorem classical_zero_free_region_of_sigma_log_shift_estimates_same_const
   ZeroFreeRegion.classical_zero_free_region_of_sigma_log_shift_estimates_same_const
     B T0 hB hT0 hzero htwo
 
+/-- Public existential high-height same-constant shifted-estimate closure. -/
+theorem classical_zero_free_region_of_exists_sigma_log_shift_estimates_same_const_high_height
+    (h :
+      ∃ B T0 : ℝ, 0 ≤ B ∧ 2 ≤ T0 ∧
+        (∀ a c β t : ℝ, 0 < a → 0 < c → a ≤ Real.log 2 →
+          T0 ≤ |t| → β < 1 →
+          β ≥ 1 - c / Real.log |t| →
+          0 < (1 + a / Real.log |t|) - β →
+          riemannZeta ((β : ℂ) + I * t) = 0 →
+          (-deriv riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t) /
+            riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t)).re ≤
+              -1 / ((1 + a / Real.log |t|) - β) +
+                B * Real.log |t|) ∧
+        (∀ a t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+          (-deriv riemannZeta
+              ((1 + a / Real.log |t| : ℝ) + 2 * I * t) /
+            riemannZeta ((1 + a / Real.log |t| : ℝ) + 2 * I * t)).re ≤
+              B * Real.log |t|)) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_sigma_log_shift_estimates_same_const_high_height
+    h
+
 /-- Public meromorphicity of the zeta logarithmic derivative at `1`. -/
 theorem meromorphicAt_logDeriv_riemannZeta_one :
     MeromorphicAt (logDeriv riemannZeta) (1 : ℂ) :=

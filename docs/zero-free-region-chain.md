@@ -438,6 +438,10 @@ packages that fixed `5/4` nonnegative interface as one existential analytic
 input, and
 `ZeroFreeRegion.classical_zero_free_region_of_sigma_log_shift_estimates_same_const`
 uses one nonnegative logarithmic coefficient for both shifted estimates.
+`ZeroFreeRegion.classical_zero_free_region_of_exists_sigma_log_shift_estimates_same_const_high_height`
+packages that same-constant input when the shifted estimates are available
+only above a sufficiently large height; the compact patching in the closure
+handles the remaining bounded-height range.
 The wrappers
 `ZeroFreeRegion.classical_zero_free_region_of_sigma_log_shift_estimates_same_const_at_two`
 and

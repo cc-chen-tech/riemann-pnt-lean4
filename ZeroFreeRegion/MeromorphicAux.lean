@@ -1221,6 +1221,34 @@ lemma classical_zero_free_region_of_sigma_log_shift_estimates_same_const
     B B T0 ?_ hT0 hzero htwo
   nlinarith
 
+/-- Existential high-height same-constant shifted-estimate closure.
+
+This packages the common situation where both shifted logarithmic-derivative
+estimates are proved only above some sufficiently large height.  The compact
+patching already built into `classical_zero_free_region_of_sigma_log_shift_estimates_same_const`
+handles the bounded-height range. -/
+lemma classical_zero_free_region_of_exists_sigma_log_shift_estimates_same_const_high_height
+    (h :
+      ∃ B T0 : ℝ, 0 ≤ B ∧ 2 ≤ T0 ∧
+        (∀ a c β t : ℝ, 0 < a → 0 < c → a ≤ Real.log 2 →
+          T0 ≤ |t| → β < 1 →
+          β ≥ 1 - c / Real.log |t| →
+          0 < (1 + a / Real.log |t|) - β →
+          riemannZeta ((β : ℂ) + I * t) = 0 →
+          (-deriv riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t) /
+            riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t)).re ≤
+              -1 / ((1 + a / Real.log |t|) - β) +
+                B * Real.log |t|) ∧
+        (∀ a t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+          (-deriv riemannZeta
+              ((1 + a / Real.log |t| : ℝ) + 2 * I * t) /
+            riemannZeta ((1 + a / Real.log |t| : ℝ) + 2 * I * t)).re ≤
+              B * Real.log |t|)) :
+    classical_zero_free_region := by
+  rcases h with ⟨B, T0, hB, hT0, hzero, htwo⟩
+  exact classical_zero_free_region_of_sigma_log_shift_estimates_same_const
+    B T0 hB hT0 hzero htwo
+
 /-- Height-`2` same-constant shifted-estimate closure.
 
 This is the caller-facing form matching the height cutoff in
