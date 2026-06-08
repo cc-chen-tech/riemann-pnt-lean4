@@ -134,7 +134,14 @@ proved:
   `∀ z ∈ verticalRegion, Re(...) ≤ M` hypotheses, with
   `ZeroFreeRegion.mapsTo_riemannZeta_verticalRegion_of_re_le` and
   `ZeroFreeRegion.mapsTo_sub_riemannZeta_verticalRegion_of_re_le`
-  supplying the `Set.MapsTo` conversion.
+  supplying the `Set.MapsTo` conversion.  The corresponding half-radius
+  wrappers
+  `ZeroFreeRegion.borelCaratheodory_riemannZeta_verticalRegion_half_radius_bound`,
+  `ZeroFreeRegion.borelCaratheodory_sub_riemannZeta_verticalRegion_half_radius_bound`,
+  `ZeroFreeRegion.borelCaratheodory_riemannZeta_verticalRegion_of_re_le_half_radius`,
+  and
+  `ZeroFreeRegion.borelCaratheodory_sub_riemannZeta_verticalRegion_of_re_le_half_radius`
+  remove the Borel denominator factors for ζ growth estimates.
   `ZeroFreeRegion.borelCaratheodory_logDeriv_riemannZeta_verticalRegion` and
   `ZeroFreeRegion.borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion`
   provide the conditional `logDeriv ζ` versions with differentiability and

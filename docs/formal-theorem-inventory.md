@@ -377,6 +377,11 @@ Core verified declarations:
   provide the pointwise-estimate interface for those ζ bounds, so future
   growth estimates can be stated as ordinary
   `∀ z ∈ verticalRegion, Re(...) ≤ M` hypotheses.
+- `borelCaratheodory_riemannZeta_verticalRegion_half_radius_bound`,
+  `borelCaratheodory_sub_riemannZeta_verticalRegion_half_radius_bound`,
+  `borelCaratheodory_riemannZeta_verticalRegion_of_re_le_half_radius`, and
+  `borelCaratheodory_sub_riemannZeta_verticalRegion_of_re_le_half_radius`
+  give the denominator-free half-radius variants for ζ itself.
 - `borelCaratheodory_logDeriv_riemannZeta_verticalRegion` and
   `borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion`
   specialize the same local Borel geometry to `logDeriv ζ`, while keeping the

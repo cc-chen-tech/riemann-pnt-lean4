@@ -1482,6 +1482,37 @@ lemma borelCaratheodory_sub_riemannZeta_verticalRegion
     (differentiableOn_riemannZeta_verticalRegion_of_pos_height hHpos)
     hζ ha hb hH hR hz
 
+/-- Half-radius Borel-Carathéodory specialized to ζ on a disk centered at
+`σ + I*t`. -/
+lemma borelCaratheodory_riemannZeta_verticalRegion_half_radius_bound
+    {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M) (hHpos : 0 < H)
+    (hζ : Set.MapsTo riemannZeta (verticalRegion a b H) {w | w.re ≤ M})
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + I * t)‖ ≤ R / 2) :
+    ‖riemannZeta z‖ ≤
+      2 * M + 3 * ‖riemannZeta ((σ : ℂ) + I * t)‖ :=
+  borelCaratheodory_centered_verticalRegion_half_radius_bound hM
+    (differentiableOn_riemannZeta_verticalRegion_of_pos_height hHpos)
+    hζ ha hb hH hR hz_half
+
+/-- Half-radius oscillation Borel-Carathéodory specialized to ζ on a disk
+centered at `σ + I*t`. -/
+lemma borelCaratheodory_sub_riemannZeta_verticalRegion_half_radius_bound
+    {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M) (hHpos : 0 < H)
+    (hζ : Set.MapsTo
+      (fun w => riemannZeta w - riemannZeta ((σ : ℂ) + I * t))
+      (verticalRegion a b H) {w | w.re ≤ M})
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + I * t)‖ ≤ R / 2) :
+    ‖riemannZeta z - riemannZeta ((σ : ℂ) + I * t)‖ ≤ 2 * M :=
+  borelCaratheodory_sub_centered_verticalRegion_half_radius_bound hM
+    (differentiableOn_riemannZeta_verticalRegion_of_pos_height hHpos)
+    hζ ha hb hH hR hz_half
+
 /-- Convert a pointwise real-part estimate for ζ on an ambient vertical region
 to the `Set.MapsTo` input expected by the Borel-Carathéodory wrappers. -/
 lemma mapsTo_riemannZeta_verticalRegion_of_re_le
@@ -1537,6 +1568,36 @@ lemma borelCaratheodory_sub_riemannZeta_verticalRegion_of_re_le
   borelCaratheodory_sub_riemannZeta_verticalRegion hM hHpos
     (mapsTo_sub_riemannZeta_verticalRegion_of_re_le hζ)
     ha hb hH hR hz
+
+/-- Pointwise-estimate half-radius Borel-Carathéodory specialized to ζ on a
+disk centered at `σ + I*t`. -/
+lemma borelCaratheodory_riemannZeta_verticalRegion_of_re_le_half_radius
+    {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M) (hHpos : 0 < H)
+    (hζ : ∀ w : ℂ, w ∈ verticalRegion a b H → (riemannZeta w).re ≤ M)
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + I * t)‖ ≤ R / 2) :
+    ‖riemannZeta z‖ ≤
+      2 * M + 3 * ‖riemannZeta ((σ : ℂ) + I * t)‖ :=
+  borelCaratheodory_riemannZeta_verticalRegion_half_radius_bound hM hHpos
+    (mapsTo_riemannZeta_verticalRegion_of_re_le hζ)
+    ha hb hH hR hz_half
+
+/-- Pointwise-estimate half-radius oscillation Borel-Carathéodory specialized
+to ζ on a disk centered at `σ + I*t`. -/
+lemma borelCaratheodory_sub_riemannZeta_verticalRegion_of_re_le_half_radius
+    {M R σ t a b H : ℝ} {z : ℂ}
+    (hM : 0 < M) (hHpos : 0 < H)
+    (hζ : ∀ w : ℂ, w ∈ verticalRegion a b H →
+      (riemannZeta w - riemannZeta ((σ : ℂ) + I * t)).re ≤ M)
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + I * t)‖ ≤ R / 2) :
+    ‖riemannZeta z - riemannZeta ((σ : ℂ) + I * t)‖ ≤ 2 * M :=
+  borelCaratheodory_sub_riemannZeta_verticalRegion_half_radius_bound hM hHpos
+    (mapsTo_sub_riemannZeta_verticalRegion_of_re_le hζ)
+    ha hb hH hR hz_half
 
 /-- Conditional Borel-Carathéodory bound for the logarithmic derivative of ζ on
 a disk centered at `σ + I*t`.
