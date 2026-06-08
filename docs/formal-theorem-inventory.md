@@ -239,6 +239,9 @@ Core verified declarations:
 - `classical_zero_free_region_of_sigma_log_shift_estimates_nonneg_constants`
   is the same closure with individual nonnegative shifted coefficients
   `Czero,Ctwo` instead of the bundled `0 <= 4*Czero + Ctwo`.
+- `classical_zero_free_region_of_exists_sigma_log_shift_estimates_nonneg_constants`
+  packages the general nonnegative shifted-estimate interface as one
+  existential analytic input with some `1 < C < 4/3`.
 - `classical_zero_free_region_of_sigma_log_shift_estimates_five_fourths`
   fixes the real-axis coefficient to `5/4`, removing the abstract
   `1 < C < 4/3` hypotheses from the caller-facing closure.

@@ -1081,6 +1081,37 @@ lemma classical_zero_free_region_of_sigma_log_shift_estimates_nonneg_constants
   classical_zero_free_region_of_sigma_log_shift_estimates
     C Czero Ctwo T0 hC hC_lt (by nlinarith) hT0 hzero htwo
 
+/-- Existential wrapper for the nonnegative shifted-estimate closure.
+
+This is the general coefficient version of the remaining analytic input:
+some real-axis coefficient `C` with `1 < C < 4/3`, nonnegative shifted
+coefficients `Czero,Ctwo`, and a height cutoff `T0 >= 2` suffice once the two
+shifted logarithmic-derivative estimates are proved. -/
+lemma classical_zero_free_region_of_exists_sigma_log_shift_estimates_nonneg_constants
+    (h :
+      ∃ C Czero Ctwo T0 : ℝ,
+        1 < C ∧ C < 4 / 3 ∧ 0 ≤ Czero ∧ 0 ≤ Ctwo ∧ 2 ≤ T0 ∧
+        (∀ a c β t : ℝ, 0 < a → 0 < c → a ≤ Real.log 2 →
+          T0 ≤ |t| → β < 1 →
+          β ≥ 1 - c / Real.log |t| →
+          0 < (1 + a / Real.log |t|) - β →
+          riemannZeta ((β : ℂ) + I * t) = 0 →
+          (-deriv riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t) /
+            riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t)).re ≤
+              -1 / ((1 + a / Real.log |t|) - β) +
+                Czero * Real.log |t|) ∧
+        (∀ a t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+          (-deriv riemannZeta
+              ((1 + a / Real.log |t| : ℝ) + 2 * I * t) /
+            riemannZeta ((1 + a / Real.log |t| : ℝ) + 2 * I * t)).re ≤
+              Ctwo * Real.log |t|)) :
+    classical_zero_free_region := by
+  rcases h with
+    ⟨C, Czero, Ctwo, T0, hC, hC_lt, hCzero, hCtwo, hT0, hzero, htwo⟩
+  exact
+    classical_zero_free_region_of_sigma_log_shift_estimates_nonneg_constants
+      C Czero Ctwo T0 hC hC_lt hCzero hCtwo hT0 hzero htwo
+
 /-- Concrete version of
 `classical_zero_free_region_of_sigma_log_shift_estimates` using the fixed
 real-axis coefficient `5/4`.

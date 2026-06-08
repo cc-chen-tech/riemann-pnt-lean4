@@ -82,6 +82,7 @@ The following proved declarations are the main entry points for future work:
 - `ZeroFreeRegion.exists_sigmaOf_log_margin_constants_for_shift_bounds`
 - `ZeroFreeRegion.exists_sigmaOf_log_margin_constants_same_const`
 - `ZeroFreeRegion.classical_zero_free_region_of_sigma_log_shift_estimates_nonneg_constants`
+- `ZeroFreeRegion.classical_zero_free_region_of_exists_sigma_log_shift_estimates_nonneg_constants`
 - `ZeroFreeRegion.classical_zero_free_region_of_sigma_log_shift_estimates_five_fourths_nonneg_constants`
 - `ZeroFreeRegion.classical_zero_free_region_of_exists_sigma_log_shift_estimates_five_fourths_nonneg_constants`
 - `ZeroFreeRegion.residue_bounds`
