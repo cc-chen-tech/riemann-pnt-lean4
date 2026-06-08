@@ -599,6 +599,12 @@ and
 `ZeroFreeRegion.classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_affine_log_norm_add_three_bounds_high_height`
 provide the same full-height handoff in the `-logDeriv zeta` convention used
 by the 3-4-1 inequality and the signed Borel wrappers.
+The signed coordinate affine variants
+`ZeroFreeRegion.classical_zero_free_region_of_re_im_neg_logDeriv_regular_part_norm_affine_log_norm_add_three_bounds_high_height`
+and
+`ZeroFreeRegion.classical_zero_free_region_of_exists_re_im_neg_logDeriv_regular_part_norm_affine_log_norm_add_three_bounds_high_height`
+are the same additive-constant interface in variables `sigma`, `beta`, and
+`t`.
 The multiplicative signed variants
 `ZeroFreeRegion.classical_zero_free_region_of_neg_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height`
 and

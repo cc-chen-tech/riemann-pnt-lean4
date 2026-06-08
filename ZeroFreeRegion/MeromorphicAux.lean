@@ -2742,6 +2742,90 @@ lemma classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_affine
       T0 Aregular Bregular Avertical Bvertical hT0 hAregular hBregular
       hAvertical hBvertical hregular hvertical
 
+/-- Signed coordinate high-height closure from affine full-height logarithmic
+bounds.
+
+This is the real-coordinate form of
+`classical_zero_free_region_of_neg_logDeriv_regular_part_norm_affine_log_norm_add_three_bounds_high_height`,
+for estimates stated directly in variables `σ`, `β`, and `t`. -/
+lemma classical_zero_free_region_of_re_im_neg_logDeriv_regular_part_norm_affine_log_norm_add_three_bounds_high_height
+    (T0 Aregular Bregular Avertical Bvertical : ℝ)
+    (hT0 : 5 ≤ T0)
+    (hAregular : 0 ≤ Aregular) (hBregular : 0 ≤ Bregular)
+    (hAvertical : 0 ≤ Avertical) (hBvertical : 0 ≤ Bvertical)
+    (hregular :
+      ∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+        0 < σ - β →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t) +
+            (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+          Aregular + Bregular * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          Avertical + Bvertical * Real.log (‖((σ : ℂ) + I * t)‖ + 3)) :
+    classical_zero_free_region := by
+  refine
+    classical_zero_free_region_of_neg_logDeriv_regular_part_norm_affine_log_norm_add_three_bounds_high_height
+      T0 Aregular Bregular Avertical Bvertical hT0 hAregular hBregular
+      hAvertical hBvertical ?_ ?_
+  · intro s ρ hs_height hs_re_mem hζρ hρ_im_eq hρ_re_lt hsub
+    have hs_decomp : ((s.re : ℂ) + I * s.im) = s := by
+      apply Complex.ext <;> simp
+    have hρ_decomp : ((ρ.re : ℂ) + I * s.im) = ρ := by
+      apply Complex.ext
+      · simp
+      · simp [hρ_im_eq]
+    have hinv :
+        (((s.re - ρ.re : ℝ) : ℂ)⁻¹) = (s - ρ)⁻¹ := by
+      have hsub_eq : s - ρ = ((s.re - ρ.re : ℝ) : ℂ) := by
+        apply Complex.ext
+        · simp
+        · simp [hρ_im_eq]
+      rw [hsub_eq]
+    have hζ_coord :
+        riemannZeta ((ρ.re : ℂ) + I * s.im) = 0 := by
+      simpa [hρ_decomp] using hζρ
+    have h :=
+      hregular s.re ρ.re s.im hs_height hs_re_mem hζ_coord hρ_re_lt hsub
+    have harg :
+        -logDeriv riemannZeta ((s.re : ℂ) + I * s.im) +
+            (((s.re - ρ.re : ℝ) : ℂ)⁻¹) =
+          -logDeriv riemannZeta s + (s - ρ)⁻¹ := by
+      rw [hs_decomp, hinv]
+    rwa [harg, hs_decomp] at h
+  · intro z hz_height hz_re_mem
+    have hz_decomp : ((z.re : ℂ) + I * z.im) = z := by
+      apply Complex.ext <;> simp
+    have h := hvertical z.re z.im hz_height hz_re_mem
+    simpa [hz_decomp] using h
+
+/-- Existential signed coordinate high-height closure from affine full-height
+logarithmic bounds. -/
+lemma classical_zero_free_region_of_exists_re_im_neg_logDeriv_regular_part_norm_affine_log_norm_add_three_bounds_high_height
+    (h :
+      ∃ T0 Aregular Bregular Avertical Bvertical : ℝ,
+        5 ≤ T0 ∧
+        0 ≤ Aregular ∧ 0 ≤ Bregular ∧
+        0 ≤ Avertical ∧ 0 ≤ Bvertical ∧
+        (∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+          0 < σ - β →
+          ‖-logDeriv riemannZeta ((σ : ℂ) + I * t) +
+              (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+            Aregular + Bregular * Real.log (‖((σ : ℂ) + I * t)‖ + 3)) ∧
+        (∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+            Avertical + Bvertical * Real.log (‖((σ : ℂ) + I * t)‖ + 3))) :
+    classical_zero_free_region := by
+  rcases h with
+    ⟨T0, Aregular, Bregular, Avertical, Bvertical, hT0,
+      hAregular, hBregular, hAvertical, hBvertical, hregular, hvertical⟩
+  exact
+    classical_zero_free_region_of_re_im_neg_logDeriv_regular_part_norm_affine_log_norm_add_three_bounds_high_height
+      T0 Aregular Bregular Avertical Bvertical hT0 hAregular hBregular
+      hAvertical hBvertical hregular hvertical
+
 /-- Signed complex-variable high-height closure from multiplicative
 full-height logarithmic bounds.
 
