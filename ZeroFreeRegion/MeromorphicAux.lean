@@ -4006,6 +4006,96 @@ lemma valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_c
   valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_circleAverage
     ((σ : ℂ) + I * t) hR
 
+/-- Translated log-counting Jensen formula for `logDeriv ζ`, rewritten all the
+way to the local-divisor side on the original disk centered at `c`.
+
+The remaining trailing-coefficient term is intentionally the translated
+zero-centered one.  This avoids requiring a separate theorem that identifies
+translated trailing coefficients with original trailing coefficients. -/
+lemma valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_localDivisor
+    (c : ℂ) {R : ℝ} (hR : R ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => logDeriv riemannZeta (z + c)) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => logDeriv riemannZeta (z + c)) ⊤) R =
+      (∑ᶠ u, divisor (logDeriv riemannZeta) (closedBall c |R|) u *
+          Real.log (R * ‖c - u‖⁻¹)
+        + divisor (logDeriv riemannZeta) (closedBall c |R|) c * Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt (logDeriv riemannZeta) c‖) -
+        Real.log ‖meromorphicTrailingCoeffAt
+          (fun z : ℂ => logDeriv riemannZeta (z + c)) 0‖ := by
+  rw [valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_circleAverage_sub_const
+    c hR]
+  rw [jensen_circleAverage_log_norm_logDeriv_riemannZeta_closedBall hR]
+
+/-- Signed translated log-counting Jensen formula for `-logDeriv ζ`, rewritten
+to the unsigned `logDeriv ζ` local-divisor side on the original disk centered
+at `c`. -/
+lemma valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_localDivisor
+    (c : ℂ) {R : ℝ} (hR : R ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => -logDeriv riemannZeta (z + c)) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => -logDeriv riemannZeta (z + c)) ⊤) R =
+      (∑ᶠ u, divisor (logDeriv riemannZeta) (closedBall c |R|) u *
+          Real.log (R * ‖c - u‖⁻¹)
+        + divisor (logDeriv riemannZeta) (closedBall c |R|) c * Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt (logDeriv riemannZeta) c‖) -
+        Real.log ‖meromorphicTrailingCoeffAt
+          (fun z : ℂ => logDeriv riemannZeta (z + c)) 0‖ := by
+  rw [valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_circleAverage
+    c hR]
+  rw [jensen_circleAverage_log_norm_logDeriv_riemannZeta_closedBall hR]
+
+/-- Local-divisor version of translated log-counting Jensen for `logDeriv ζ`
+on a disk centered at `σ + I*t`. -/
+lemma valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_localDivisor
+    {σ t R : ℝ} (hR : R ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => logDeriv riemannZeta
+          (z + ((σ : ℂ) + I * t))) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => logDeriv riemannZeta
+            (z + ((σ : ℂ) + I * t))) ⊤) R =
+      (∑ᶠ u, divisor (logDeriv riemannZeta)
+          (closedBall ((σ : ℂ) + I * t) |R|) u *
+          Real.log (R * ‖((σ : ℂ) + I * t) - u‖⁻¹)
+        + divisor (logDeriv riemannZeta)
+            (closedBall ((σ : ℂ) + I * t) |R|)
+            ((σ : ℂ) + I * t) * Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt (logDeriv riemannZeta)
+            ((σ : ℂ) + I * t)‖) -
+        Real.log ‖meromorphicTrailingCoeffAt
+          (fun z : ℂ => logDeriv riemannZeta
+            (z + ((σ : ℂ) + I * t))) 0‖ :=
+  valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_localDivisor
+    ((σ : ℂ) + I * t) hR
+
+/-- Signed local-divisor version of translated log-counting Jensen for
+`-logDeriv ζ` on a disk centered at `σ + I*t`, using unsigned local-divisor
+terms. -/
+lemma valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_localDivisor
+    {σ t R : ℝ} (hR : R ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => -logDeriv riemannZeta
+          (z + ((σ : ℂ) + I * t))) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => -logDeriv riemannZeta
+            (z + ((σ : ℂ) + I * t))) ⊤) R =
+      (∑ᶠ u, divisor (logDeriv riemannZeta)
+          (closedBall ((σ : ℂ) + I * t) |R|) u *
+          Real.log (R * ‖((σ : ℂ) + I * t) - u‖⁻¹)
+        + divisor (logDeriv riemannZeta)
+            (closedBall ((σ : ℂ) + I * t) |R|)
+            ((σ : ℂ) + I * t) * Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt (logDeriv riemannZeta)
+            ((σ : ℂ) + I * t)‖) -
+        Real.log ‖meromorphicTrailingCoeffAt
+          (fun z : ℂ => logDeriv riemannZeta
+            (z + ((σ : ℂ) + I * t))) 0‖ :=
+  valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_localDivisor
+    ((σ : ℂ) + I * t) hR
+
 /-- Jensen formula specialized to the signed logarithmic derivative of ζ on a
 closed ball. -/
 lemma jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_closedBall

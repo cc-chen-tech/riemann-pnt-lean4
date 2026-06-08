@@ -3338,6 +3338,95 @@ theorem valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned
   ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_circleAverage
     hR
 
+/-- Public translated log-counting Jensen formula for `logDeriv ζ`, rewritten
+to the local-divisor side on the original disk centered at `c`. -/
+theorem valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_localDivisor
+    (c : ℂ) {R : ℝ} (hR : R ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => logDeriv riemannZeta (z + c)) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => logDeriv riemannZeta (z + c)) ⊤) R =
+      (∑ᶠ u, MeromorphicOn.divisor (logDeriv riemannZeta)
+          (Metric.closedBall c |R|) u *
+          Real.log (R * ‖c - u‖⁻¹)
+        + MeromorphicOn.divisor (logDeriv riemannZeta)
+          (Metric.closedBall c |R|) c *
+          Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt (logDeriv riemannZeta) c‖) -
+        Real.log ‖meromorphicTrailingCoeffAt
+          (fun z : ℂ => logDeriv riemannZeta (z + c)) 0‖ :=
+  ZeroFreeRegion.valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_localDivisor
+    c hR
+
+/-- Public signed translated log-counting Jensen formula for `-logDeriv ζ`,
+rewritten to unsigned `logDeriv ζ` local-divisor terms. -/
+theorem valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_localDivisor
+    (c : ℂ) {R : ℝ} (hR : R ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => -logDeriv riemannZeta (z + c)) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => -logDeriv riemannZeta (z + c)) ⊤) R =
+      (∑ᶠ u, MeromorphicOn.divisor (logDeriv riemannZeta)
+          (Metric.closedBall c |R|) u *
+          Real.log (R * ‖c - u‖⁻¹)
+        + MeromorphicOn.divisor (logDeriv riemannZeta)
+          (Metric.closedBall c |R|) c *
+          Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt (logDeriv riemannZeta) c‖) -
+        Real.log ‖meromorphicTrailingCoeffAt
+          (fun z : ℂ => logDeriv riemannZeta (z + c)) 0‖ :=
+  ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_localDivisor
+    c hR
+
+/-- Public local-divisor version of translated log-counting Jensen for
+`logDeriv ζ` on a disk centered at `σ + I*t`. -/
+theorem valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_localDivisor
+    {σ t R : ℝ} (hR : R ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => logDeriv riemannZeta
+          (z + ((σ : ℂ) + Complex.I * t))) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => logDeriv riemannZeta
+            (z + ((σ : ℂ) + Complex.I * t))) ⊤) R =
+      (∑ᶠ u, MeromorphicOn.divisor (logDeriv riemannZeta)
+          (Metric.closedBall ((σ : ℂ) + Complex.I * t) |R|) u *
+          Real.log (R * ‖((σ : ℂ) + Complex.I * t) - u‖⁻¹)
+        + MeromorphicOn.divisor (logDeriv riemannZeta)
+            (Metric.closedBall ((σ : ℂ) + Complex.I * t) |R|)
+            ((σ : ℂ) + Complex.I * t) * Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt (logDeriv riemannZeta)
+            ((σ : ℂ) + Complex.I * t)‖) -
+        Real.log ‖meromorphicTrailingCoeffAt
+          (fun z : ℂ => logDeriv riemannZeta
+            (z + ((σ : ℂ) + Complex.I * t))) 0‖ :=
+  ZeroFreeRegion.valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_localDivisor
+    hR
+
+/-- Public signed local-divisor version of translated log-counting Jensen for
+`-logDeriv ζ` on a disk centered at `σ + I*t`, using unsigned local-divisor
+terms. -/
+theorem valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_localDivisor
+    {σ t R : ℝ} (hR : R ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => -logDeriv riemannZeta
+          (z + ((σ : ℂ) + Complex.I * t))) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => -logDeriv riemannZeta
+            (z + ((σ : ℂ) + Complex.I * t))) ⊤) R =
+      (∑ᶠ u, MeromorphicOn.divisor (logDeriv riemannZeta)
+          (Metric.closedBall ((σ : ℂ) + Complex.I * t) |R|) u *
+          Real.log (R * ‖((σ : ℂ) + Complex.I * t) - u‖⁻¹)
+        + MeromorphicOn.divisor (logDeriv riemannZeta)
+            (Metric.closedBall ((σ : ℂ) + Complex.I * t) |R|)
+            ((σ : ℂ) + Complex.I * t) * Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt (logDeriv riemannZeta)
+            ((σ : ℂ) + Complex.I * t)‖) -
+        Real.log ‖meromorphicTrailingCoeffAt
+          (fun z : ℂ => logDeriv riemannZeta
+            (z + ((σ : ℂ) + Complex.I * t))) 0‖ :=
+  ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_localDivisor
+    hR
+
 /-- Public Borel-Carathéodory theorem in the vanishing-at-zero form, routed
 through the zero-free-region namespace. -/
 theorem borelCaratheodory_zero

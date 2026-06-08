@@ -189,6 +189,17 @@ Core verified declarations:
 - `valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_circleAverage`
   provides the matching signed `-logDeriv ζ` wrapper at `σ + I*t`, with
   unsigned `logDeriv ζ` circle-average and trailing-coefficient terms.
+- `valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_localDivisor`
+  rewrites the translated log-counting difference directly to the closed-ball
+  local-divisor side for `logDeriv ζ`.
+- `valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_localDivisor`
+  gives the matching signed `-logDeriv ζ` bridge while keeping the right-hand
+  side in unsigned `logDeriv ζ` divisor/trailing-coefficient notation.
+- `valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_localDivisor`
+  specializes the local-divisor log-counting bridge to `σ + I*t` disks.
+- `valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_localDivisor`
+  provides the signed `σ + I*t` local-divisor version in the same unsigned
+  bookkeeping convention.
 - `eventually_abs_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one`
   bounds the real part of the signed quotient by
   `2 / norm (s - 1)` eventually near `1`.
