@@ -715,6 +715,14 @@ Core verified declarations:
   are direct disk-geometric versions: they avoid the ambient `verticalRegion`
   wrapper and leave only a pointwise real-part bound on the local `sigma+I*t`
   ball.
+- `differentiableOn_neg_logDeriv_riemannZeta_closedBall_sigma_it_of_disk_right_half`
+  gives the signed closed-disk differentiability wrapper used by direct
+  signed Borel estimates.
+- `borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_re_le`
+  and
+  `borelCaratheodory_sub_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_re_le`
+  are the matching direct disk-geometric Borel wrappers in the
+  `-logDeriv zeta` convention.
 - `borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius`
   and
   `borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius`

@@ -2905,6 +2905,16 @@ theorem differentiableOn_logDeriv_riemannZeta_closedBall_sigma_it_of_disk_right_
   ZeroFreeRegion.differentiableOn_logDeriv_riemannZeta_closedBall_sigma_it_of_disk_right_half
     hσ hHpos hH
 
+/-- Public signed differentiability wrapper for `-logDeriv ζ` on a closed
+`σ + I*t` disk in the right half-plane and away from the pole. -/
+theorem differentiableOn_neg_logDeriv_riemannZeta_closedBall_sigma_it_of_disk_right_half
+    {σ t R H : ℝ}
+    (hσ : 1 + R ≤ σ) (hHpos : 0 < H) (hH : H + R ≤ |t|) :
+    DifferentiableOn ℂ (fun z : ℂ => -logDeriv riemannZeta z)
+      (Metric.closedBall ((σ : ℂ) + Complex.I * t) R) :=
+  ZeroFreeRegion.differentiableOn_neg_logDeriv_riemannZeta_closedBall_sigma_it_of_disk_right_half
+    hσ hHpos hH
+
 /-- Public differentiability wrapper for the zero-centered translate of
 `logDeriv ζ` on the local open disk. -/
 theorem differentiableOn_logDeriv_riemannZeta_comp_add_sigma_it_ball_of_disk_right_half
@@ -4369,6 +4379,39 @@ theorem borelCaratheodory_sub_logDeriv_riemannZeta_sigma_it_of_disk_right_half_o
       2 * M * ‖z - ((σ : ℂ) + Complex.I * t)‖ /
         (R - ‖z - ((σ : ℂ) + Complex.I * t)‖) :=
   ZeroFreeRegion.borelCaratheodory_sub_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_re_le
+    hM hσ hHpos hH hlog hR hz
+
+/-- Public direct Borel-Carathéodory wrapper for `-logDeriv ζ` on a `σ+it`
+disk whose geometry puts it in the right half-plane and away from the pole. -/
+theorem borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_re_le
+    {M R σ t H : ℝ} {z : ℂ}
+    (hM : 0 < M) (hσ : 1 + R ≤ σ) (hHpos : 0 < H) (hH : H + R ≤ |t|)
+    (hlog : ∀ w : ℂ, w ∈ Metric.ball ((σ : ℂ) + Complex.I * t) R →
+      (-logDeriv riemannZeta w).re ≤ M)
+    (hR : 0 < R) (hz : z ∈ Metric.ball ((σ : ℂ) + Complex.I * t) R) :
+    ‖-logDeriv riemannZeta z‖ ≤
+      2 * M * ‖z - ((σ : ℂ) + Complex.I * t)‖ /
+          (R - ‖z - ((σ : ℂ) + Complex.I * t)‖) +
+        ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ *
+          (R + ‖z - ((σ : ℂ) + Complex.I * t)‖) /
+          (R - ‖z - ((σ : ℂ) + Complex.I * t)‖) :=
+  ZeroFreeRegion.borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_re_le
+    hM hσ hHpos hH hlog hR hz
+
+/-- Public direct oscillation Borel-Carathéodory wrapper for `-logDeriv ζ` on
+a right-half `σ+it` disk. -/
+theorem borelCaratheodory_sub_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_re_le
+    {M R σ t H : ℝ} {z : ℂ}
+    (hM : 0 < M) (hσ : 1 + R ≤ σ) (hHpos : 0 < H) (hH : H + R ≤ |t|)
+    (hlog : ∀ w : ℂ, w ∈ Metric.ball ((σ : ℂ) + Complex.I * t) R →
+      (-logDeriv riemannZeta w -
+        -logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤ M)
+    (hR : 0 < R) (hz : z ∈ Metric.ball ((σ : ℂ) + Complex.I * t) R) :
+    ‖-logDeriv riemannZeta z -
+        -logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+      2 * M * ‖z - ((σ : ℂ) + Complex.I * t)‖ /
+        (R - ‖z - ((σ : ℂ) + Complex.I * t)‖) :=
+  ZeroFreeRegion.borelCaratheodory_sub_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_re_le
     hM hσ hHpos hH hlog hR hz
 
 /-- Public pointwise Borel-Carathéodory bound for `logDeriv ζ` on a

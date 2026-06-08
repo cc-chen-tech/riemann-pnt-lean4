@@ -190,7 +190,13 @@ proved:
   and
   `ZeroFreeRegion.borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le`
   provide the same interface in the `-logDeriv ζ` convention used by the
-  3-4-1 inequality.  The general half-radius wrappers
+  3-4-1 inequality.  The direct signed disk wrappers
+  `ZeroFreeRegion.borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_re_le`
+  and
+  `ZeroFreeRegion.borelCaratheodory_sub_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_re_le`
+  similarly avoid the ambient `verticalRegion` detour when the real-part
+  estimate is naturally stated on a local right-half `sigma+I*t` ball.  The
+  general half-radius wrappers
   `ZeroFreeRegion.borelCaratheodory_centered_half_radius_bound` and
   `ZeroFreeRegion.borelCaratheodory_sub_centered_half_radius_bound`, plus the
   ambient vertical-region forms
@@ -429,10 +435,13 @@ Useful checked names:
 #check ZeroFreeRegion.logDeriv_riemannZeta_ne_zero_of_neg_logDeriv_ne_zero
 #check ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_eq_zero_of_disk_right_half_of_neg_logDeriv_ne_zero
 #check ZeroFreeRegion.differentiableOn_logDeriv_riemannZeta_closedBall_sigma_it_of_disk_right_half
+#check ZeroFreeRegion.differentiableOn_neg_logDeriv_riemannZeta_closedBall_sigma_it_of_disk_right_half
 #check ZeroFreeRegion.differentiableOn_logDeriv_riemannZeta_comp_add_sigma_it_ball_of_disk_right_half
 #check ZeroFreeRegion.differentiableOn_neg_logDeriv_riemannZeta_comp_add_sigma_it_ball_of_disk_right_half
 #check ZeroFreeRegion.borelCaratheodory_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_re_le
 #check ZeroFreeRegion.borelCaratheodory_sub_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_re_le
+#check ZeroFreeRegion.borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_re_le
+#check ZeroFreeRegion.borelCaratheodory_sub_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_re_le
 #check Complex.HadamardThreeLines.norm_le_interp_of_mem_verticalClosedStrip'
 #check PowerSeries.exists_isWeierstrassFactorization
 #check riemannZeta_residue_one
