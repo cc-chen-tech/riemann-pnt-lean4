@@ -4247,6 +4247,94 @@ lemma valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_l
   valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_localDivisor_pure
     ((σ : ℂ) + I * t) hR
 
+/-- If the logarithmic derivative has no divisor contribution on the local
+closed ball, the translated log-counting difference for `logDeriv ζ` vanishes. -/
+lemma valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_zero_of_divisor_eq_zero
+    (c : ℂ) {R : ℝ} (hR : R ≠ 0)
+    (hdiv : ∀ u ∈ closedBall c |R|,
+      divisor (logDeriv riemannZeta) (closedBall c |R|) u = 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => logDeriv riemannZeta (z + c)) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => logDeriv riemannZeta (z + c)) ⊤) R = 0 := by
+  rw [valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_localDivisor_pure
+    c hR]
+  have hterm : ∀ u : ℂ,
+      divisor (logDeriv riemannZeta) (closedBall c |R|) u *
+          Real.log (R * ‖c - u‖⁻¹) = 0 := by
+    intro u
+    by_cases hu : u ∈ closedBall c |R|
+    · rw [hdiv u hu]
+      norm_num
+    · have hz :
+          divisor (logDeriv riemannZeta) (closedBall c |R|) u = 0 := by
+        simp [hu]
+      rw [hz]
+      norm_num
+  rw [finsum_eq_zero_of_forall_eq_zero hterm]
+  have hc : c ∈ closedBall c |R| := by simp
+  rw [hdiv c hc]
+  norm_num
+
+/-- Signed version of the zero-divisor local log-counting vanishing lemma,
+with the divisor hypothesis stated for unsigned `logDeriv ζ`. -/
+lemma valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_eq_zero_of_divisor_eq_zero
+    (c : ℂ) {R : ℝ} (hR : R ≠ 0)
+    (hdiv : ∀ u ∈ closedBall c |R|,
+      divisor (logDeriv riemannZeta) (closedBall c |R|) u = 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => -logDeriv riemannZeta (z + c)) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => -logDeriv riemannZeta (z + c)) ⊤) R = 0 := by
+  rw [valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_localDivisor_pure
+    c hR]
+  have hterm : ∀ u : ℂ,
+      divisor (logDeriv riemannZeta) (closedBall c |R|) u *
+          Real.log (R * ‖c - u‖⁻¹) = 0 := by
+    intro u
+    by_cases hu : u ∈ closedBall c |R|
+    · rw [hdiv u hu]
+      norm_num
+    · have hz :
+          divisor (logDeriv riemannZeta) (closedBall c |R|) u = 0 := by
+        simp [hu]
+      rw [hz]
+      norm_num
+  rw [finsum_eq_zero_of_forall_eq_zero hterm]
+  have hc : c ∈ closedBall c |R| := by simp
+  rw [hdiv c hc]
+  norm_num
+
+/-- `σ + I*t` specialization of the zero-divisor local log-counting vanishing
+lemma for `logDeriv ζ`. -/
+lemma valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_zero_of_divisor_eq_zero
+    {σ t R : ℝ} (hR : R ≠ 0)
+    (hdiv : ∀ u ∈ closedBall ((σ : ℂ) + I * t) |R|,
+      divisor (logDeriv riemannZeta) (closedBall ((σ : ℂ) + I * t) |R|) u = 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => logDeriv riemannZeta
+          (z + ((σ : ℂ) + I * t))) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => logDeriv riemannZeta
+            (z + ((σ : ℂ) + I * t))) ⊤) R = 0 :=
+  valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_zero_of_divisor_eq_zero
+    ((σ : ℂ) + I * t) hR hdiv
+
+/-- Signed `σ + I*t` specialization of the zero-divisor local log-counting
+vanishing lemma, with the divisor hypothesis stated for unsigned `logDeriv ζ`. -/
+lemma valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_divisor_eq_zero
+    {σ t R : ℝ} (hR : R ≠ 0)
+    (hdiv : ∀ u ∈ closedBall ((σ : ℂ) + I * t) |R|,
+      divisor (logDeriv riemannZeta) (closedBall ((σ : ℂ) + I * t) |R|) u = 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => -logDeriv riemannZeta
+          (z + ((σ : ℂ) + I * t))) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => -logDeriv riemannZeta
+            (z + ((σ : ℂ) + I * t))) ⊤) R = 0 :=
+  valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_eq_zero_of_divisor_eq_zero
+    ((σ : ℂ) + I * t) hR hdiv
+
 /-- Jensen formula specialized to the signed logarithmic derivative of ζ on a
 closed ball. -/
 lemma jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_closedBall

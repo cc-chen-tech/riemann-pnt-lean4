@@ -215,6 +215,17 @@ Core verified declarations:
   specializes the pure local-divisor bridge to `σ + I*t` disks.
 - `valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_localDivisor_pure`
   provides the signed pure `σ + I*t` version in unsigned bookkeeping.
+- `valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_zero_of_divisor_eq_zero`
+  turns a zero-divisor hypothesis on the closed ball into vanishing of the
+  translated log-counting difference for `logDeriv ζ`.
+- `valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_eq_zero_of_divisor_eq_zero`
+  gives the signed `-logDeriv ζ` version with the same unsigned divisor
+  hypothesis.
+- `valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_zero_of_divisor_eq_zero`
+  specializes the zero-divisor log-counting vanishing bridge to `σ + I*t`
+  disks.
+- `valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_divisor_eq_zero`
+  provides the signed `σ + I*t` version in unsigned bookkeeping.
 - `eventually_abs_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one`
   bounds the real part of the signed quotient by
   `2 / norm (s - 1)` eventually near `1`.
