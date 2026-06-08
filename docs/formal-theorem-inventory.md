@@ -361,6 +361,11 @@ Core verified declarations:
 - `classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_log_abs_add_three_bounds_high_height`
   packages that two-constant safe-height logarithmic interface
   existentially.
+- `classical_zero_free_region_of_re_im_neg_logDeriv_regular_part_norm_log_abs_add_three_bounds_high_height`
+  accepts the same two-constant safe-height logarithmic interface in the
+  signed `-logDeriv zeta` convention.
+- `classical_zero_free_region_of_exists_re_im_neg_logDeriv_regular_part_norm_log_abs_add_three_bounds_high_height`
+  packages that signed safe-height logarithmic interface existentially.
 - `classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height`
   accepts separate constants in estimates stated with the full complex
   height `log(||sigma + it|| + 3)`.

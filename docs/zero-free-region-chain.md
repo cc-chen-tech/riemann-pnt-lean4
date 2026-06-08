@@ -564,6 +564,12 @@ and
 `ZeroFreeRegion.classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_log_abs_add_three_bounds_high_height`
 drop the unnecessary shared-constant assumption by allowing different
 regular-part and vertical-strip constants.
+The signed variants
+`ZeroFreeRegion.classical_zero_free_region_of_re_im_neg_logDeriv_regular_part_norm_log_abs_add_three_bounds_high_height`
+and
+`ZeroFreeRegion.classical_zero_free_region_of_exists_re_im_neg_logDeriv_regular_part_norm_log_abs_add_three_bounds_high_height`
+provide the same `log(|t|+3)` interface in the `-logDeriv zeta`
+convention used by the 3-4-1 inequality.
 The full-height variants
 `ZeroFreeRegion.classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height`
 and
