@@ -3299,6 +3299,45 @@ theorem valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigne
   ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_circleAverage
     c hR
 
+/-- Public value-distribution Jensen formula for `logDeriv ζ` on a disk
+centered at `σ + I*t`. -/
+theorem valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_circleAverage_sub_const
+    {σ t R : ℝ} (hR : R ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => logDeriv riemannZeta
+          (z + ((σ : ℂ) + Complex.I * t))) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => logDeriv riemannZeta
+            (z + ((σ : ℂ) + Complex.I * t))) ⊤) R =
+      Real.circleAverage
+        (fun z : ℂ => Real.log ‖logDeriv riemannZeta z‖)
+        ((σ : ℂ) + Complex.I * t) R -
+        Real.log ‖meromorphicTrailingCoeffAt
+          (fun z : ℂ => logDeriv riemannZeta
+            (z + ((σ : ℂ) + Complex.I * t))) 0‖ :=
+  ZeroFreeRegion.valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_circleAverage_sub_const
+    hR
+
+/-- Public value-distribution Jensen formula for `-logDeriv ζ` on a disk
+centered at `σ + I*t`, rewritten to unsigned circle-average and
+trailing-coefficient terms. -/
+theorem valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_circleAverage
+    {σ t R : ℝ} (hR : R ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => -logDeriv riemannZeta
+          (z + ((σ : ℂ) + Complex.I * t))) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => -logDeriv riemannZeta
+            (z + ((σ : ℂ) + Complex.I * t))) ⊤) R =
+      Real.circleAverage
+        (fun z : ℂ => Real.log ‖logDeriv riemannZeta z‖)
+        ((σ : ℂ) + Complex.I * t) R -
+        Real.log ‖meromorphicTrailingCoeffAt
+          (fun z : ℂ => logDeriv riemannZeta
+            (z + ((σ : ℂ) + Complex.I * t))) 0‖ :=
+  ZeroFreeRegion.valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_circleAverage
+    hR
+
 /-- Public Borel-Carathéodory theorem in the vanishing-at-zero form, routed
 through the zero-free-region namespace. -/
 theorem borelCaratheodory_zero

@@ -183,6 +183,12 @@ Core verified declarations:
 - `valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_circleAverage`
   rewrites the signed bridge's circle-average and trailing-coefficient terms
   into the unsigned `logDeriv ζ` convention.
+- `valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_circleAverage_sub_const`
+  specializes the translated log-counting Jensen bridge to disks centered at
+  `σ + I*t`.
+- `valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_circleAverage`
+  provides the matching signed `-logDeriv ζ` wrapper at `σ + I*t`, with
+  unsigned `logDeriv ζ` circle-average and trailing-coefficient terms.
 - `eventually_abs_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_norm_sub_one`
   bounds the real part of the signed quotient by
   `2 / norm (s - 1)` eventually near `1`.

@@ -3971,6 +3971,41 @@ lemma valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_
     (meromorphic_comp_add_const meromorphic_logDeriv_riemannZeta c) 0
   rw [norm_meromorphicTrailingCoeffAt_neg_of_meromorphicAt hf0]
 
+/-- Value-distribution Jensen formula for `logDeriv ζ` on the disk centered at
+`σ + I*t`, stated in the coordinates used by the zero-free-region chain. -/
+lemma valueDistribution_logCounting_logDeriv_riemannZeta_sigma_it_eq_circleAverage_sub_const
+    {σ t R : ℝ} (hR : R ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => logDeriv riemannZeta (z + ((σ : ℂ) + I * t))) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => logDeriv riemannZeta (z + ((σ : ℂ) + I * t))) ⊤) R =
+      circleAverage (fun z : ℂ => Real.log ‖logDeriv riemannZeta z‖)
+        ((σ : ℂ) + I * t) R -
+        Real.log ‖meromorphicTrailingCoeffAt
+          (fun z : ℂ => logDeriv riemannZeta
+            (z + ((σ : ℂ) + I * t))) 0‖ :=
+  valueDistribution_logCounting_logDeriv_riemannZeta_translate_eq_circleAverage_sub_const
+    ((σ : ℂ) + I * t) hR
+
+/-- Value-distribution Jensen formula for `-logDeriv ζ` on the disk centered at
+`σ + I*t`, with the circle-average and trailing-coefficient terms rewritten
+to the unsigned `logDeriv ζ` convention. -/
+lemma valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_circleAverage
+    {σ t R : ℝ} (hR : R ≠ 0) :
+    (ValueDistribution.logCounting
+        (fun z : ℂ => -logDeriv riemannZeta
+          (z + ((σ : ℂ) + I * t))) 0 -
+        ValueDistribution.logCounting
+          (fun z : ℂ => -logDeriv riemannZeta
+            (z + ((σ : ℂ) + I * t))) ⊤) R =
+      circleAverage (fun z : ℂ => Real.log ‖logDeriv riemannZeta z‖)
+        ((σ : ℂ) + I * t) R -
+        Real.log ‖meromorphicTrailingCoeffAt
+          (fun z : ℂ => logDeriv riemannZeta
+            (z + ((σ : ℂ) + I * t))) 0‖ :=
+  valueDistribution_logCounting_neg_logDeriv_riemannZeta_translate_unsigned_circleAverage
+    ((σ : ℂ) + I * t) hR
+
 /-- Jensen formula specialized to the signed logarithmic derivative of ζ on a
 closed ball. -/
 lemma jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_closedBall
