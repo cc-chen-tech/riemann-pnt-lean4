@@ -408,6 +408,9 @@ The shifted-estimate specialization
 the `K` bookkeeping when the remaining constants are already named as
 nonnegative `Czero,Ctwo`, producing the exact margin
 `3*C/a + 4*Czero + Ctwo < 4/(a+c)`.
+The same-coefficient specialization
+`ZeroFreeRegion.exists_sigmaOf_log_margin_constants_same_const` packages the
+frequent case `Czero = Ctwo = B`, producing `3*C/a + 5*B < 4/(a+c)`.
 The wrapper
 `ZeroFreeRegion.exists_sigmaOf_log_classical_zero_free_region_of_shift_bounds`
 combines this algebra with the closure theorem, leaving exactly the two

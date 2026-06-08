@@ -80,6 +80,7 @@ The following proved declarations are the main entry points for future work:
 - `ZeroFreeRegion.sigmaOf_log_weak_two_t_margin_impossible`
 - `ZeroFreeRegion.no_sigmaOf_log_margin_constants_with_weak_two_t`
 - `ZeroFreeRegion.exists_sigmaOf_log_margin_constants_for_shift_bounds`
+- `ZeroFreeRegion.exists_sigmaOf_log_margin_constants_same_const`
 - `ZeroFreeRegion.residue_bounds`
 - `ZeroFreeRegion.classical_zero_free_region_compact`
 - `ZeroFreeRegion.compact_patch_classical_zero_free_region_at_three`

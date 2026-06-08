@@ -67,6 +67,9 @@ Supporting declarations include:
   specializes the constant choice to nonnegative shifted-estimate coefficients
   `Czero,Ctwo`, producing the exact margin
   `3*C/a + 4*Czero + Ctwo < 4/(a+c)`.
+- `exists_sigmaOf_log_margin_constants_same_const`
+  specializes the same constant selection to one nonnegative coefficient `B`,
+  producing `3*C/a + 5*B < 4/(a+c)`.
 
 Private technical lemma:
 
