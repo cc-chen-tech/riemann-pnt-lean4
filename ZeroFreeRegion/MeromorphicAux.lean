@@ -3698,6 +3698,172 @@ lemma borelCaratheodory_sub_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_half
     (f := fun w : ℂ => -logDeriv riemannZeta w)
     (c := (σ : ℂ) + I * t) hM hdiff hmaps hR hz_half
 
+/-- Direct half-radius Borel-Carathéodory bound for `logDeriv ζ` with an
+affine full-height real-part input on the local `σ + I*t` disk. -/
+lemma borelCaratheodory_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_affine_re_le_half_radius
+    {Are Bre Acenter Bcenter R σ t H : ℝ} {z : ℂ}
+    (hM : 0 < Are + Bre * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (hσ : 1 + R ≤ σ) (hHpos : 0 < H) (hH : H + R ≤ |t|)
+    (hlog : ∀ w : ℂ, w ∈ ball ((σ : ℂ) + I * t) R →
+      (logDeriv riemannZeta w).re ≤
+        Are + Bre * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (hcenter :
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+        Acenter + Bcenter * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + I * t)‖ ≤ R / 2) :
+    ‖logDeriv riemannZeta z‖ ≤
+      (2 * Are + 3 * Acenter) +
+        (2 * Bre + 3 * Bcenter) *
+          Real.log (‖((σ : ℂ) + I * t)‖ + 3) := by
+  let ell : ℝ := Real.log (‖((σ : ℂ) + I * t)‖ + 3)
+  let mBound : ℝ := Are + Bre * ell
+  have hborel :
+      ‖logDeriv riemannZeta z‖ ≤
+        2 * mBound + 3 * ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ := by
+    refine
+      borelCaratheodory_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_re_le_half_radius
+        (M := mBound) (R := R) (σ := σ) (t := t) (H := H) (z := z)
+        ?_ hσ hHpos hH ?_ hR hz_half
+    · simpa [mBound, ell] using hM
+    · intro w hw
+      simpa [mBound, ell] using hlog w hw
+  have hcenter_mul :
+      3 * ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+        3 * (Acenter + Bcenter * ell) := by
+    exact mul_le_mul_of_nonneg_left (by simpa [ell] using hcenter)
+      (by norm_num : (0 : ℝ) ≤ 3)
+  calc
+    ‖logDeriv riemannZeta z‖
+        ≤ 2 * mBound + 3 * ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ :=
+          hborel
+    _ ≤ 2 * mBound + 3 * (Acenter + Bcenter * ell) := by
+      nlinarith
+    _ = (2 * Are + 3 * Acenter) +
+          (2 * Bre + 3 * Bcenter) *
+            Real.log (‖((σ : ℂ) + I * t)‖ + 3) := by
+      simp [mBound, ell]
+      ring
+
+/-- Direct half-radius oscillation Borel-Carathéodory bound for `logDeriv ζ`
+with an affine full-height real-part input on the local `σ + I*t` disk. -/
+lemma borelCaratheodory_sub_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_affine_re_le_half_radius
+    {Are Bre R σ t H : ℝ} {z : ℂ}
+    (hM : 0 < Are + Bre * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (hσ : 1 + R ≤ σ) (hHpos : 0 < H) (hH : H + R ≤ |t|)
+    (hlog : ∀ w : ℂ, w ∈ ball ((σ : ℂ) + I * t) R →
+      (logDeriv riemannZeta w -
+        logDeriv riemannZeta ((σ : ℂ) + I * t)).re ≤
+          Are + Bre * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + I * t)‖ ≤ R / 2) :
+    ‖logDeriv riemannZeta z -
+        logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+      2 * Are + 2 * Bre * Real.log (‖((σ : ℂ) + I * t)‖ + 3) := by
+  let ell : ℝ := Real.log (‖((σ : ℂ) + I * t)‖ + 3)
+  let mBound : ℝ := Are + Bre * ell
+  have hborel :
+      ‖logDeriv riemannZeta z -
+          logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤ 2 * mBound := by
+    refine
+      borelCaratheodory_sub_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_re_le_half_radius
+        (M := mBound) (R := R) (σ := σ) (t := t) (H := H) (z := z)
+        ?_ hσ hHpos hH ?_ hR hz_half
+    · simpa [mBound, ell] using hM
+    · intro w hw
+      simpa [mBound, ell] using hlog w hw
+  calc
+    ‖logDeriv riemannZeta z -
+        logDeriv riemannZeta ((σ : ℂ) + I * t)‖
+        ≤ 2 * mBound := hborel
+    _ = 2 * Are + 2 * Bre *
+          Real.log (‖((σ : ℂ) + I * t)‖ + 3) := by
+      simp [mBound, ell]
+      ring
+
+/-- Direct half-radius Borel-Carathéodory bound for `-logDeriv ζ` with an
+affine full-height real-part input on the local `σ + I*t` disk. -/
+lemma borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_affine_re_le_half_radius
+    {Are Bre Acenter Bcenter R σ t H : ℝ} {z : ℂ}
+    (hM : 0 < Are + Bre * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (hσ : 1 + R ≤ σ) (hHpos : 0 < H) (hH : H + R ≤ |t|)
+    (hlog : ∀ w : ℂ, w ∈ ball ((σ : ℂ) + I * t) R →
+      (-logDeriv riemannZeta w).re ≤
+        Are + Bre * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (hcenter :
+      ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+        Acenter + Bcenter * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + I * t)‖ ≤ R / 2) :
+    ‖-logDeriv riemannZeta z‖ ≤
+      (2 * Are + 3 * Acenter) +
+        (2 * Bre + 3 * Bcenter) *
+          Real.log (‖((σ : ℂ) + I * t)‖ + 3) := by
+  let ell : ℝ := Real.log (‖((σ : ℂ) + I * t)‖ + 3)
+  let mBound : ℝ := Are + Bre * ell
+  have hborel :
+      ‖-logDeriv riemannZeta z‖ ≤
+        2 * mBound + 3 * ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ := by
+    refine
+      borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_re_le_half_radius
+        (M := mBound) (R := R) (σ := σ) (t := t) (H := H) (z := z)
+        ?_ hσ hHpos hH ?_ hR hz_half
+    · simpa [mBound, ell] using hM
+    · intro w hw
+      simpa [mBound, ell] using hlog w hw
+  have hcenter_mul :
+      3 * ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+        3 * (Acenter + Bcenter * ell) := by
+    exact mul_le_mul_of_nonneg_left (by simpa [ell] using hcenter)
+      (by norm_num : (0 : ℝ) ≤ 3)
+  calc
+    ‖-logDeriv riemannZeta z‖
+        ≤ 2 * mBound + 3 * ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ :=
+          hborel
+    _ ≤ 2 * mBound + 3 * (Acenter + Bcenter * ell) := by
+      nlinarith
+    _ = (2 * Are + 3 * Acenter) +
+          (2 * Bre + 3 * Bcenter) *
+            Real.log (‖((σ : ℂ) + I * t)‖ + 3) := by
+      simp [mBound, ell]
+      ring
+
+/-- Direct half-radius oscillation Borel-Carathéodory bound for `-logDeriv ζ`
+with an affine full-height real-part input on the local `σ + I*t` disk. -/
+lemma borelCaratheodory_sub_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_affine_re_le_half_radius
+    {Are Bre R σ t H : ℝ} {z : ℂ}
+    (hM : 0 < Are + Bre * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (hσ : 1 + R ≤ σ) (hHpos : 0 < H) (hH : H + R ≤ |t|)
+    (hlog : ∀ w : ℂ, w ∈ ball ((σ : ℂ) + I * t) R →
+      (-logDeriv riemannZeta w -
+        -logDeriv riemannZeta ((σ : ℂ) + I * t)).re ≤
+          Are + Bre * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + I * t)‖ ≤ R / 2) :
+    ‖-logDeriv riemannZeta z -
+        -logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+      2 * Are + 2 * Bre * Real.log (‖((σ : ℂ) + I * t)‖ + 3) := by
+  let ell : ℝ := Real.log (‖((σ : ℂ) + I * t)‖ + 3)
+  let mBound : ℝ := Are + Bre * ell
+  have hborel :
+      ‖-logDeriv riemannZeta z -
+          -logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤ 2 * mBound := by
+    refine
+      borelCaratheodory_sub_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_re_le_half_radius
+        (M := mBound) (R := R) (σ := σ) (t := t) (H := H) (z := z)
+        ?_ hσ hHpos hH ?_ hR hz_half
+    · simpa [mBound, ell] using hM
+    · intro w hw
+      simpa [mBound, ell] using hlog w hw
+  calc
+    ‖-logDeriv riemannZeta z -
+        -logDeriv riemannZeta ((σ : ℂ) + I * t)‖
+        ≤ 2 * mBound := hborel
+    _ = 2 * Are + 2 * Bre *
+          Real.log (‖((σ : ℂ) + I * t)‖ + 3) := by
+      simp [mBound, ell]
+      ring
+
 /-- ζ is meromorphic on every project vertical region. -/
 lemma meromorphicOn_riemannZeta_verticalRegion (a b H : ℝ) :
     MeromorphicOn riemannZeta (verticalRegion a b H) := by

@@ -733,6 +733,16 @@ Core verified declarations:
   `borelCaratheodory_sub_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_re_le_half_radius`
   give the same direct half-radius interface in the `-logDeriv zeta`
   convention used by the 3-4-1 argument.
+- `borelCaratheodory_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_affine_re_le_half_radius`
+  and
+  `borelCaratheodory_sub_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_affine_re_le_half_radius`
+  normalize direct disk real-part inputs of the form
+  `A + B log(||sigma+I*t||+3)` to denominator-free half-radius bounds.
+- `borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_affine_re_le_half_radius`
+  and
+  `borelCaratheodory_sub_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_affine_re_le_half_radius`
+  provide the same affine direct half-radius interface in the signed
+  `-logDeriv zeta` convention.
 - `borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius`
   and
   `borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius`
