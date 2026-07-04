@@ -6512,6 +6512,45 @@ lemma exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_vertical
     _ ≤ C * Real.log |t| := by
         simpa [z] using hnorm σ t hσ_left hσ_right ht
 
+/-- Shifted norm bridge from a future Borel/Jensen-style affine growth
+estimate at the ordinary vertical point `sigma + iu`. -/
+lemma exists_norm_logDeriv_riemannZeta_shifted_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height
+    (T0 A B : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ u : ℝ, T0 ≤ |u| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * u)‖ ≤
+          A + B * Real.log (‖((σ : ℂ) + I * u)‖ + 3)) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖ ≤ C * Real.log |t| := by
+  rcases
+      exists_re_im_logDeriv_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height
+        T0 A B hT0 hA hB hvertical with
+    ⟨C, T0', hC, _hT0', hnorm⟩
+  exact
+    exists_norm_logDeriv_riemannZeta_shifted_vertical_log_bound_of_vertical_log_bound
+      (T0 := T0') (B := C) hC hnorm
+
+/-- Shifted real-part quotient bridge from a future Borel/Jensen-style affine
+growth estimate at the ordinary vertical point `sigma + iu`. -/
+lemma exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height
+    (T0 A B : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ u : ℝ, T0 ≤ |u| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * u)‖ ≤
+          A + B * Real.log (‖((σ : ℂ) + I * u)‖ + 3)) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤ C * Real.log |t| := by
+  rcases
+      exists_re_im_logDeriv_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height
+        T0 A B hT0 hA hB hvertical with
+    ⟨C, T0', hC, _hT0', hnorm⟩
+  exact
+    exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_vertical_norm_log_bound
+      (T0 := T0') (B := C) hC hnorm
+
 /-- Borel-Carathéodory for the signed logarithmic derivative `-logDeriv ζ` on
 a right half-strip.  This is the sign convention used by the 3-4-1 inequality. -/
 lemma borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le
