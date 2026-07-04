@@ -820,6 +820,52 @@ lemma exists_re_neg_deriv_div_riemannZeta_fixed_margin_three_four_one_bounds
           ≤ C₂ * Real.log (|t| + 3) := hbound₂ σ t hσ
       _ ≤ (C₁ + C₂) * Real.log (|t| + 3) := hC₂_log_le
 
+/-- Fixed-margin logarithmic upper bound for the full 3-4-1 combination,
+paired with its proved nonnegativity. -/
+lemma exists_three_four_one_combination_le_log_abs_add_three_of_one_add_le
+    {ε : ℝ} (hε : 0 < ε) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ σ t : ℝ, 1 + ε ≤ σ →
+      0 ≤
+        3 * (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re
+        + 4 * (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re
+        + (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re ∧
+      3 * (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re
+        + 4 * (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re
+        + (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re
+          ≤ C * Real.log (|t| + 3) := by
+  rcases exists_re_neg_deriv_div_riemannZeta_fixed_margin_three_four_one_bounds
+      hε with ⟨C₀, hC₀, hbounds⟩
+  refine ⟨8 * C₀, mul_nonneg (by norm_num) hC₀, ?_⟩
+  intro σ t hσ
+  have hσ_gt : 1 < σ := by linarith
+  rcases hbounds σ t hσ with ⟨h0, h1, h2⟩
+  constructor
+  · exact log_deriv_zeta_nonneg_combination σ hσ_gt t
+  · have hupper :
+        3 * (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re
+          + 4 * (-deriv riemannZeta ((σ : ℂ) + I * t) /
+              riemannZeta ((σ : ℂ) + I * t)).re
+          + (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+              riemannZeta ((σ : ℂ) + 2 * I * t)).re
+            ≤ 3 * (C₀ * Real.log (|t| + 3))
+              + 4 * (C₀ * Real.log (|t| + 3))
+              + C₀ * Real.log (|t| + 3) := by
+      nlinarith
+    calc
+      3 * (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re
+          + 4 * (-deriv riemannZeta ((σ : ℂ) + I * t) /
+              riemannZeta ((σ : ℂ) + I * t)).re
+          + (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+              riemannZeta ((σ : ℂ) + 2 * I * t)).re
+          ≤ 3 * (C₀ * Real.log (|t| + 3))
+              + 4 * (C₀ * Real.log (|t| + 3))
+              + C₀ * Real.log (|t| + 3) := hupper
+      _ = (8 * C₀) * Real.log (|t| + 3) := by ring
+
 /-- ζ is nonzero in a full neighborhood of `1`.
 
 Although `riemannZeta` has a junk value at `1` in Mathlib, the residue statement

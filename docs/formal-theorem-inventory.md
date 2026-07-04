@@ -58,6 +58,9 @@ Core verified declarations:
 - `exists_re_neg_deriv_div_riemannZeta_fixed_margin_three_four_one_bounds`
   packages the real-axis, `sigma + I*t`, and `sigma + 2*I*t` real-part terms
   under one fixed-margin `C * log (|t| + 3)` bound.
+- `exists_three_four_one_combination_le_log_abs_add_three_of_one_add_le`
+  combines the 3-4-1 nonnegativity theorem with the fixed-margin term bounds,
+  giving a nonnegative `O(log (|t|+3))` bound for the whole combination.
 
 Supporting declarations include:
 

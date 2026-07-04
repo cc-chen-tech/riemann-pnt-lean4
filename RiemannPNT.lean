@@ -3126,6 +3126,25 @@ theorem exists_re_neg_deriv_div_riemannZeta_fixed_margin_three_four_one_bounds
           C * Real.log (|t| + 3) :=
   ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_fixed_margin_three_four_one_bounds hε
 
+/-- Public fixed-margin logarithmic upper bound for the full 3-4-1
+combination, paired with its nonnegativity. -/
+theorem exists_three_four_one_combination_le_log_abs_add_three_of_one_add_le
+    {ε : ℝ} (hε : 0 < ε) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ σ t : ℝ, 1 + ε ≤ σ →
+      0 ≤
+        3 * (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re
+        + 4 * (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re
+        + (-deriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t) /
+            riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re ∧
+      3 * (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re
+        + 4 * (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re
+        + (-deriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t) /
+            riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re
+          ≤ C * Real.log (|t| + 3) :=
+  ZeroFreeRegion.exists_three_four_one_combination_le_log_abs_add_three_of_one_add_le hε
+
 /-- Public de la Vallée Poussin 3-4-1 nonnegativity combination. -/
 theorem log_deriv_zeta_nonneg_combination (σ : ℝ) (hσ : 1 < σ) (t : ℝ) :
     3 * (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re

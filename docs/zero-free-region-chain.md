@@ -79,6 +79,9 @@ the imaginary part.
 The one-entry package
 `exists_re_neg_deriv_div_riemannZeta_fixed_margin_three_four_one_bounds` gives
 one constant for the real-axis, `σ+it`, and `σ+2it` real-part terms together.
+`exists_three_four_one_combination_le_log_abs_add_three_of_one_add_le` then
+combines those bounds with the proved 3-4-1 nonnegativity, bounding the whole
+fixed-margin combination by `O(log(|t|+3))`.
 
 ## Verified Conditional Assembly
 
@@ -649,6 +652,7 @@ uniform boundary-strip input.
 The same limitation applies to the fixed-margin `sigma + 2it` real-part bound:
 it is a proved shifted-term estimate, but only under `1+epsilon <= sigma`.
 The single-constant fixed-margin 3-4-1 package has the same limitation.
+So does the fixed-margin full-combination upper bound.
 This obstruction is now formalized as
 `ZeroFreeRegion.sigmaOf_log_weak_two_t_margin_impossible`: once the real-axis
 and `sigma + 2it` terms both carry coefficients at least `1/a`, the required
