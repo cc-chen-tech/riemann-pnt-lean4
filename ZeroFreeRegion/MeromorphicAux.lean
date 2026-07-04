@@ -5538,6 +5538,110 @@ lemma differentiableOn_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re
   (differentiableOn_logDeriv_riemannZeta_verticalRegion_of_one_le_re
     ha hH).neg
 
+/-- On any bounded positive-height vertical band in the right half-plane,
+`logDeriv ζ` has a finite norm bound.
+
+This is the compact bounded-height patch needed by the zero-free-region chain:
+it uses only compactness and the fact that ζ has no zeros on `Re(s) >= 1`.
+The hard high-height estimate remains the logarithmic bound uniformly as
+`|Im(s)| -> ∞`. -/
+lemma exists_norm_logDeriv_riemannZeta_bound_on_compact_vertical_band
+    {H T : ℝ} (hH : 0 < H) :
+    ∃ C ≥ 0, ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      H ≤ |z.im| → |z.im| ≤ T →
+      ‖logDeriv riemannZeta z‖ ≤ C := by
+  let K : Set ℂ :=
+    Set.Icc (1 : ℝ) 2 ×ℂ (Set.Icc H T ∪ Set.Icc (-T) (-H))
+  have hK : IsCompact K := by
+    have him : IsCompact (Set.Icc H T ∪ Set.Icc (-T) (-H)) :=
+      (isCompact_Icc : IsCompact (Set.Icc H T)).union
+        (isCompact_Icc : IsCompact (Set.Icc (-T) (-H)))
+    simpa [K] using
+      ((isCompact_Icc : IsCompact (Set.Icc (1 : ℝ) 2)).reProdIm him)
+  have hKsub : K ⊆ verticalRegion 1 2 H := by
+    intro z hz
+    change z ∈ Set.Icc (1 : ℝ) 2 ×ℂ
+      (Set.Icc H T ∪ Set.Icc (-T) (-H)) at hz
+    rw [mem_reProdIm] at hz
+    constructor
+    · exact hz.1
+    · rcases hz.2 with him | him
+      · have hnonneg : 0 ≤ z.im := by linarith [hH, him.1]
+        simpa [abs_of_nonneg hnonneg] using him.1
+      · have hnonpos : z.im ≤ 0 := by linarith [hH, him.2]
+        rw [abs_of_nonpos hnonpos]
+        linarith [him.2]
+  have hcont : ContinuousOn (fun z : ℂ => ‖logDeriv riemannZeta z‖) K := by
+    exact ((differentiableOn_logDeriv_riemannZeta_verticalRegion_of_one_le_re
+      (a := 1) (b := 2) (H := H) (by norm_num) hH).continuousOn.mono hKsub).norm
+  rcases hK.bddAbove_image hcont with ⟨C₀, hC₀⟩
+  refine ⟨max C₀ 0, le_max_right C₀ 0, ?_⟩
+  intro z hzre hzH hzT
+  have hzK : z ∈ K := by
+    change z ∈ Set.Icc (1 : ℝ) 2 ×ℂ
+      (Set.Icc H T ∪ Set.Icc (-T) (-H))
+    rw [mem_reProdIm]
+    constructor
+    · exact hzre
+    · by_cases hnonneg : 0 ≤ z.im
+      · left
+        constructor
+        · simpa [abs_of_nonneg hnonneg] using hzH
+        · simpa [abs_of_nonneg hnonneg] using hzT
+      · right
+        have hnonpos : z.im ≤ 0 := le_of_lt (lt_of_not_ge hnonneg)
+        constructor
+        · have hlower : -T ≤ z.im := by
+            have h := (abs_le.mp hzT).1
+            linarith
+          exact hlower
+        · have hupper : z.im ≤ -H := by
+            have h : H ≤ -z.im := by
+              simpa [abs_of_nonpos hnonpos] using hzH
+            linarith
+          exact hupper
+  exact (hC₀ ⟨z, hzK, rfl⟩).trans (le_max_left C₀ 0)
+
+/-- Signed compact bounded-height norm bound for `-logDeriv ζ`. -/
+lemma exists_norm_neg_logDeriv_riemannZeta_bound_on_compact_vertical_band
+    {H T : ℝ} (hH : 0 < H) :
+    ∃ C ≥ 0, ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      H ≤ |z.im| → |z.im| ≤ T →
+      ‖-logDeriv riemannZeta z‖ ≤ C := by
+  rcases exists_norm_logDeriv_riemannZeta_bound_on_compact_vertical_band
+      (H := H) (T := T) hH with ⟨C, hC_nonneg, hC⟩
+  refine ⟨C, hC_nonneg, ?_⟩
+  intro z hzre hzH hzT
+  simpa using hC z hzre hzH hzT
+
+/-- Coordinate compact bounded-height norm bound for `logDeriv ζ` on
+`σ + i t`. -/
+lemma exists_norm_logDeriv_riemannZeta_sigma_it_bound_on_compact_vertical_band
+    {H T : ℝ} (hH : 0 < H) :
+    ∃ C ≥ 0, ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 →
+      H ≤ |t| → |t| ≤ T →
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤ C := by
+  rcases exists_norm_logDeriv_riemannZeta_bound_on_compact_vertical_band
+      (H := H) (T := T) hH with ⟨C, hC_nonneg, hC⟩
+  refine ⟨C, hC_nonneg, ?_⟩
+  intro σ t hσ htH htT
+  exact hC ((σ : ℂ) + I * t) (by simpa using hσ) (by simpa using htH)
+    (by simpa using htT)
+
+/-- Signed coordinate compact bounded-height norm bound for `-logDeriv ζ` on
+`σ + i t`. -/
+lemma exists_norm_neg_logDeriv_riemannZeta_sigma_it_bound_on_compact_vertical_band
+    {H T : ℝ} (hH : 0 < H) :
+    ∃ C ≥ 0, ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 →
+      H ≤ |t| → |t| ≤ T →
+      ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤ C := by
+  rcases exists_norm_neg_logDeriv_riemannZeta_bound_on_compact_vertical_band
+      (H := H) (T := T) hH with ⟨C, hC_nonneg, hC⟩
+  refine ⟨C, hC_nonneg, ?_⟩
+  intro σ t hσ htH htT
+  exact hC ((σ : ℂ) + I * t) (by simpa using hσ) (by simpa using htH)
+    (by simpa using htT)
+
 /-- Borel-Carathéodory for the signed logarithmic derivative `-logDeriv ζ` on
 a right half-strip.  This is the sign convention used by the 3-4-1 inequality. -/
 lemma borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le

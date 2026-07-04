@@ -3321,6 +3321,45 @@ theorem exists_norm_neg_logDeriv_riemannZeta_le_log_abs_im_add_three_of_one_add_
   ZeroFreeRegion.exists_norm_neg_logDeriv_riemannZeta_le_log_abs_im_add_three_of_one_add_le_re
     hε
 
+/-- Public compact bounded-height norm bound for `logDeriv ζ` in the right
+half-strip `1 <= Re(z) <= 2`, `H <= |Im(z)| <= T`. -/
+theorem exists_norm_logDeriv_riemannZeta_bound_on_compact_vertical_band
+    {H T : ℝ} (hH : 0 < H) :
+    ∃ C ≥ 0, ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      H ≤ |z.im| → |z.im| ≤ T →
+      ‖logDeriv riemannZeta z‖ ≤ C :=
+  ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_bound_on_compact_vertical_band
+    hH
+
+/-- Public signed compact bounded-height norm bound for `-logDeriv ζ`. -/
+theorem exists_norm_neg_logDeriv_riemannZeta_bound_on_compact_vertical_band
+    {H T : ℝ} (hH : 0 < H) :
+    ∃ C ≥ 0, ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      H ≤ |z.im| → |z.im| ≤ T →
+      ‖-logDeriv riemannZeta z‖ ≤ C :=
+  ZeroFreeRegion.exists_norm_neg_logDeriv_riemannZeta_bound_on_compact_vertical_band
+    hH
+
+/-- Public coordinate compact bounded-height norm bound for `logDeriv ζ` on
+`σ + i t`. -/
+theorem exists_norm_logDeriv_riemannZeta_sigma_it_bound_on_compact_vertical_band
+    {H T : ℝ} (hH : 0 < H) :
+    ∃ C ≥ 0, ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 →
+      H ≤ |t| → |t| ≤ T →
+      ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤ C :=
+  ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_sigma_it_bound_on_compact_vertical_band
+    hH
+
+/-- Public signed coordinate compact bounded-height norm bound for
+`-logDeriv ζ` on `σ + i t`. -/
+theorem exists_norm_neg_logDeriv_riemannZeta_sigma_it_bound_on_compact_vertical_band
+    {H T : ℝ} (hH : 0 < H) :
+    ∃ C ≥ 0, ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 →
+      H ≤ |t| → |t| ≤ T →
+      ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤ C :=
+  ZeroFreeRegion.exists_norm_neg_logDeriv_riemannZeta_sigma_it_bound_on_compact_vertical_band
+    hH
+
 /-- Public coordinate form of the fixed-margin vertical logarithmic bound for
 `logDeriv ζ` on points `σ + it`. -/
 theorem exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_add_three_of_one_add_le
