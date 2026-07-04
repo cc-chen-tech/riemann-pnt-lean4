@@ -1120,6 +1120,90 @@ lemma exists_sigma_ge_sigmaOf_log_two_t_re_neg_deriv_div_bound_log_scale
           hbound a ha_pos ha_le_log2 ha_le_near σ t ht hσ_lower hσ_le
     _ = (C / a) * Real.log |t| := by ring
 
+/-- Weak arbitrary-imaginary-coordinate moving-strip norm bound in standard
+`B * log |t|` form, with `B` allowed to depend on the fixed moving-strip
+parameter `a`.
+
+The point being estimated has imaginary coordinate `u`; the height parameter
+`t` controls both the lower edge `1 + a / log |t|` and the logarithmic scale. -/
+lemma exists_sigma_ge_sigmaOf_log_any_im_norm_bound_log_scale
+    (C : ℝ) (hC : 1 < C) (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    ∃ d : ℝ, 0 < d ∧ ∀ a : ℝ, 0 < a → a ≤ Real.log 2 →
+      a ≤ d * Real.log 2 →
+      ∃ B : ℝ, 0 ≤ B ∧ ∀ σ t u : ℝ, T0 ≤ |t| →
+        1 + a / Real.log |t| ≤ σ → σ ≤ 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * u)‖ ≤
+          B * Real.log |t| := by
+  rcases exists_sigma_ge_sigmaOf_log_any_im_norm_bound_const_mul_log_div
+      C hC T0 hT0 with
+    ⟨d, hd_pos, hnorm⟩
+  refine ⟨d, hd_pos, ?_⟩
+  intro a ha_pos ha_le_log2 ha_le_near
+  refine ⟨C / a, div_nonneg (by linarith [hC]) (le_of_lt ha_pos), ?_⟩
+  intro σ t u ht hσ_lower hσ_le
+  calc
+    ‖logDeriv riemannZeta ((σ : ℂ) + I * u)‖
+        ≤ C * Real.log |t| / a :=
+          hnorm a ha_pos ha_le_log2 ha_le_near σ t u ht hσ_lower hσ_le
+    _ = (C / a) * Real.log |t| := by ring
+
+/-- Weak arbitrary-imaginary-coordinate moving-strip real-part bound in
+standard `B * log |t|` form. -/
+lemma exists_sigma_ge_sigmaOf_log_any_im_re_neg_deriv_div_bound_log_scale
+    (C : ℝ) (hC : 1 < C) (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    ∃ d : ℝ, 0 < d ∧ ∀ a : ℝ, 0 < a → a ≤ Real.log 2 →
+      a ≤ d * Real.log 2 →
+      ∃ B : ℝ, 0 ≤ B ∧ ∀ σ t u : ℝ, T0 ≤ |t| →
+        1 + a / Real.log |t| ≤ σ → σ ≤ 2 →
+        (-deriv riemannZeta ((σ : ℂ) + I * u) /
+            riemannZeta ((σ : ℂ) + I * u)).re ≤
+          B * Real.log |t| := by
+  rcases exists_sigma_ge_sigmaOf_log_any_im_re_neg_deriv_div_bound_const_mul_log_div
+      C hC T0 hT0 with
+    ⟨d, hd_pos, hbound⟩
+  refine ⟨d, hd_pos, ?_⟩
+  intro a ha_pos ha_le_log2 ha_le_near
+  refine ⟨C / a, div_nonneg (by linarith [hC]) (le_of_lt ha_pos), ?_⟩
+  intro σ t u ht hσ_lower hσ_le
+  calc
+    (-deriv riemannZeta ((σ : ℂ) + I * u) /
+        riemannZeta ((σ : ℂ) + I * u)).re
+        ≤ C * Real.log |t| / a :=
+          hbound a ha_pos ha_le_log2 ha_le_near σ t u ht hσ_lower hσ_le
+    _ = (C / a) * Real.log |t| := by ring
+
+/-- Weak moving-strip package controlling both shifted real-part terms
+`σ+it` and `σ+2it` with the same `B * log |t|` coefficient.
+
+This is still the absolute-convergence package, so `B` depends on the fixed
+choice of `a`.  The theorem is useful as an honest comparison point for the
+future zeta-specific shifted estimates, which must produce constants
+independent of this `1/a` loss. -/
+lemma exists_sigma_ge_sigmaOf_log_shift_pair_re_neg_deriv_div_bound_log_scale
+    (C : ℝ) (hC : 1 < C) (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    ∃ d : ℝ, 0 < d ∧ ∀ a : ℝ, 0 < a → a ≤ Real.log 2 →
+      a ≤ d * Real.log 2 →
+      ∃ B : ℝ, 0 ≤ B ∧ ∀ σ t : ℝ, T0 ≤ |t| →
+        1 + a / Real.log |t| ≤ σ → σ ≤ 2 →
+          (-deriv riemannZeta ((σ : ℂ) + I * t) /
+              riemannZeta ((σ : ℂ) + I * t)).re ≤
+            B * Real.log |t| ∧
+          (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+              riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤
+            B * Real.log |t| := by
+  rcases exists_sigma_ge_sigmaOf_log_any_im_re_neg_deriv_div_bound_log_scale
+      C hC T0 hT0 with
+    ⟨d, hd_pos, hbound⟩
+  refine ⟨d, hd_pos, ?_⟩
+  intro a ha_pos ha_le_log2 ha_le_near
+  rcases hbound a ha_pos ha_le_log2 ha_le_near with ⟨B, hB, hany⟩
+  refine ⟨B, hB, ?_⟩
+  intro σ t ht hσ_lower hσ_le
+  constructor
+  · exact hany σ t t ht hσ_lower hσ_le
+  · have htwo := hany σ t (2 * t) ht hσ_lower hσ_le
+    simpa [mul_assoc, mul_left_comm, mul_comm] using htwo
+
 /-- Classical zero-free-region closure for the standard high-height choice
 `σ(t) = 1 + a / log |t|`.
 

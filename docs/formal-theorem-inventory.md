@@ -595,6 +595,15 @@ Core verified declarations:
   `B * log |t|` form for each fixed `a`, with `B = C/a`.
 - `exists_sigma_ge_sigmaOf_log_two_t_re_neg_deriv_div_bound_log_scale`
   gives the corresponding one-sided real-part `B * log |t|` estimate.
+- `exists_sigma_ge_sigmaOf_log_any_im_norm_bound_log_scale`
+  rewrites the arbitrary-imaginary-coordinate moving-strip norm estimate in
+  standard `B * log |t|` form for each fixed `a`.
+- `exists_sigma_ge_sigmaOf_log_any_im_re_neg_deriv_div_bound_log_scale`
+  gives the corresponding arbitrary-imaginary-coordinate one-sided real-part
+  estimate.
+- `exists_sigma_ge_sigmaOf_log_shift_pair_re_neg_deriv_div_bound_log_scale`
+  packages the weak moving-strip estimates for both `sigma + it` and
+  `sigma + 2it` under one shared coefficient `B`, still with `B = C/a`.
 - `sigmaOf_log_weak_two_t_margin_impossible`
   proves that this weak `1/a` scale cannot satisfy the standard 3-4-1 constant
   margin when the real-axis and `sigma + 2it` coefficients are both at least

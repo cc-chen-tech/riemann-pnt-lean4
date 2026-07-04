@@ -2658,6 +2658,50 @@ theorem exists_sigma_ge_sigmaOf_log_two_t_re_neg_deriv_div_bound_log_scale
   ZeroFreeRegion.exists_sigma_ge_sigmaOf_log_two_t_re_neg_deriv_div_bound_log_scale
     C hC T0 hT0
 
+/-- Public weak arbitrary-imaginary-coordinate moving-strip norm bound in
+standard `B * log |t|` form, with `B` depending on the fixed parameter `a`. -/
+theorem exists_sigma_ge_sigmaOf_log_any_im_norm_bound_log_scale
+    (C : ℝ) (hC : 1 < C) (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    ∃ d : ℝ, 0 < d ∧ ∀ a : ℝ, 0 < a → a ≤ Real.log 2 →
+      a ≤ d * Real.log 2 →
+      ∃ B : ℝ, 0 ≤ B ∧ ∀ σ t u : ℝ, T0 ≤ |t| →
+        1 + a / Real.log |t| ≤ σ → σ ≤ 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * u)‖ ≤
+          B * Real.log |t| :=
+  ZeroFreeRegion.exists_sigma_ge_sigmaOf_log_any_im_norm_bound_log_scale
+    C hC T0 hT0
+
+/-- Public weak arbitrary-imaginary-coordinate moving-strip real-part bound in
+standard `B * log |t|` form, with `B` depending on the fixed parameter `a`. -/
+theorem exists_sigma_ge_sigmaOf_log_any_im_re_neg_deriv_div_bound_log_scale
+    (C : ℝ) (hC : 1 < C) (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    ∃ d : ℝ, 0 < d ∧ ∀ a : ℝ, 0 < a → a ≤ Real.log 2 →
+      a ≤ d * Real.log 2 →
+      ∃ B : ℝ, 0 ≤ B ∧ ∀ σ t u : ℝ, T0 ≤ |t| →
+        1 + a / Real.log |t| ≤ σ → σ ≤ 2 →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * u) /
+            riemannZeta ((σ : ℂ) + Complex.I * u)).re ≤
+          B * Real.log |t| :=
+  ZeroFreeRegion.exists_sigma_ge_sigmaOf_log_any_im_re_neg_deriv_div_bound_log_scale
+    C hC T0 hT0
+
+/-- Public weak moving-strip package controlling both `σ+it` and `σ+2it`
+real-part terms with the same `B * log |t|` coefficient. -/
+theorem exists_sigma_ge_sigmaOf_log_shift_pair_re_neg_deriv_div_bound_log_scale
+    (C : ℝ) (hC : 1 < C) (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    ∃ d : ℝ, 0 < d ∧ ∀ a : ℝ, 0 < a → a ≤ Real.log 2 →
+      a ≤ d * Real.log 2 →
+      ∃ B : ℝ, 0 ≤ B ∧ ∀ σ t : ℝ, T0 ≤ |t| →
+        1 + a / Real.log |t| ≤ σ → σ ≤ 2 →
+          (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+              riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
+            B * Real.log |t| ∧
+          (-deriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t) /
+              riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re ≤
+            B * Real.log |t| :=
+  ZeroFreeRegion.exists_sigma_ge_sigmaOf_log_shift_pair_re_neg_deriv_div_bound_log_scale
+    C hC T0 hT0
+
 /-- Public obstruction showing that the weak `σ+2it` estimate with the same
 `1/a` loss as the real-axis estimate cannot close the standard 3-4-1 margin. -/
 theorem sigmaOf_log_weak_two_t_margin_impossible
