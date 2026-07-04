@@ -397,6 +397,38 @@ Hardy's integral asymptotics
 \end{tabular}
 \end{table}
 
+\subsection{Distance to the Classical PNT Route}
+
+The current formalization should be understood as the front half of the
+de~la~Vall\'ee~Poussin mechanism:
+\[
+  -\zeta'/\zeta \text{ Dirichlet series}
+  \quad\Longrightarrow\quad
+  \text{3-4-1 inequality}
+  \quad\Longrightarrow\quad
+  \text{compact zero-free strip}.
+\]
+This is still far from a complete PNT proof along the classical route.  The
+remaining zero-free-region step requires a boundary-strip logarithmic-derivative
+estimate, schematically
+\[
+  \|\operatorname{logDeriv}\zeta(z)\|
+    \leq B \log |\Im z|
+  \quad
+  (1 \leq \Re z \leq 2,\ |\Im z|\geq T_0),
+\]
+together with a zero-candidate regular-part estimate of the form
+\[
+  \operatorname{Re}\!\left(-\frac{\zeta'}{\zeta}(\sigma+it)\right)
+    \leq -\frac{1}{\sigma-\beta} + O(\log |t|)
+\]
+when \(\rho=\beta+it\) is a zero.  The project proves fixed-margin
+logarithmic-derivative bounds in half-planes \(1+\varepsilon\leq \Re z\),
+but those are consequences of absolute convergence and do not reach the
+boundary strip \(1\leq \Re z\leq 2\).  This is the main analytic wall before
+the classical zero-free region, and it is separate from the later
+Perron/explicit-formula or Tauberian step needed to derive PNT.
+
 \subsection{The Borel--Carath\'eodory Shortcut}
 
 The quantitative zero-free region $\sigma \geq 1-c/\log|t|$ typically

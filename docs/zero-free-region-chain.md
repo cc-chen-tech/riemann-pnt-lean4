@@ -8,6 +8,41 @@ Current Lean status: `ZeroFreeRegion.lean` checks with
 `lake env lean -R . ZeroFreeRegion.lean`.  The quantitative target is still a
 `def ... : Prop`, not a proved theorem.
 
+## Current Distance Boundary
+
+The repository has formalized the front half of the de la Vallee Poussin
+machinery:
+
+```text
+von Mangoldt series for -zeta'/zeta
+        -> 3-4-1 inequality
+        -> compact zero-free strip
+        -> conditional high-height closure interfaces
+```
+
+It has not yet crossed the analytic boundary needed for the classical
+zero-free region.  The next hard input is not a wrapper or documentation item;
+it is a boundary-strip logarithmic-derivative estimate, for example:
+
+```lean
+∃ B T0, ∀ z : ℂ,
+  1 ≤ z.re → z.re ≤ 2 → T0 ≤ |z.im| →
+  ‖logDeriv riemannZeta z‖ ≤ B * Real.log |z.im|
+```
+
+The existing fixed-margin theorem proves this only in half-planes
+`1 + ε ≤ Re(z)`.  That follows from absolute convergence and does not imply the
+uniform boundary-strip estimate above.  A second missing input is the
+zero-candidate regular-part estimate
+
+```text
+Re(-ζ'/ζ(σ + i t)) <= -1 / (σ - β) + O(log |t|)
+```
+
+when `ρ = β + i t` is a zero.  These are the hard analytic estimates usually
+supplied by zeta growth plus Borel-Caratheodory, Jensen/Hadamard, or equivalent
+zero-repulsion machinery.
+
 ## Verified Starting Points
 
 The following declarations are available in the current checkout:

@@ -62,6 +62,60 @@ Do not describe this repository as a first formalization of PNT, a completed
 classical analytic PNT proof, a proof of RH, or a completed quantitative
 zero-free-region formalization.
 
+## Distance to PNT
+
+The current project is best viewed as the front half of the classical
+de la Vallee Poussin engine, not as a near-complete PNT proof.
+
+| Goal | Current distance |
+|---|---|
+| Publish a Lean 4 formalization module around `3-4-1 + compact strip` | comparatively close |
+| Prove the classical zero-free region `1 - c / log |t|` | still far; needs core analytic estimates |
+| Derive a full PNT proof along this route | very far |
+| Derive a PNT with classical error term | farther still |
+
+The verified chain currently looks like:
+
+```text
+von Mangoldt series for -zeta'/zeta
+        -> 3-4-1 inequality
+        -> compact zero-free strip
+        -> conditional closure interfaces
+```
+
+To reach classical PNT through this route, at least two major analytic segments
+are still missing:
+
+```text
+A. Quantitative zero-free region:
+   zeta(s) != 0 for Re(s) >= 1 - c / log |Im(s)|
+
+B. From the zero-free region to PNT:
+   explicit formula / Perron or Tauberian input,
+   psi(x) ~ x,
+   pi(x) ~ x / log x
+```
+
+The next genuinely hard lemma is not another target inventory update.  It is a
+boundary-strip logarithmic-derivative estimate of the following shape:
+
+```lean
+∃ B T0, ∀ z : ℂ,
+  1 ≤ z.re → z.re ≤ 2 → T0 ≤ |z.im| →
+  ‖logDeriv riemannZeta z‖ ≤ B * Real.log |z.im|
+```
+
+and, near a zero candidate `ρ = β + i t`, a regular-part estimate of the shape:
+
+```text
+Re(-ζ'/ζ(σ + i t)) <= -1 / (σ - β) + O(log |t|).
+```
+
+These are the current hard wall.  They normally require zeta growth estimates
+together with Borel-Caratheodory, Jensen/Hadamard factorization, or equivalent
+zero-repulsion machinery.  The repository already has fixed-margin estimates
+for `1 + ε <= Re(s)`, but those do not reach the boundary strip `1 <= Re(s)`.
+
 ## Paper Positioning
 
 The recommended paper framing is to make the `3-4-1 + compact zero-free strip`

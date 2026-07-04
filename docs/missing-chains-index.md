@@ -52,6 +52,11 @@ Lean 4 infrastructure for the de la Vallee Poussin 3-4-1 machinery and a
 compact zero-free strip.  It is not a first PNT formalization, not a completed
 classical analytic PNT proof, and not a proof of RH.
 
+For the zero-free-region route specifically, the next meaningful mathematical
+milestone is a boundary-strip estimate for `logDeriv riemannZeta` and the
+corresponding zero-candidate regular-part estimate.  Reducing the target count
+or adding more wrappers does not by itself move the project across that wall.
+
 ## Chain Status Summary
 
 | Chain | Current Lean target status | Main correction before proof work | Smallest useful next step | Open target count |

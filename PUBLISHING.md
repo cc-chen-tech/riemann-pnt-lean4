@@ -69,6 +69,34 @@ Do not claim:
 - completion of any `def ... : Prop` target unless it has been replaced by a
   checked theorem/lemma.
 
+## Maturity Boundary
+
+For public positioning, treat the current repository as:
+
+```text
+proved front half of the de la Vallee Poussin zero-free-region machinery
+```
+
+not as:
+
+```text
+near-complete PNT proof
+```
+
+The immediate mathematical blocker is the boundary-strip zeta estimate, not the
+documentation layer:
+
+```lean
+∃ B T0, ∀ z : ℂ,
+  1 ≤ z.re → z.re ≤ 2 → T0 ≤ |z.im| →
+  ‖logDeriv riemannZeta z‖ ≤ B * Real.log |z.im|
+```
+
+Together with a zero-candidate regular-part estimate for `-ζ'/ζ`, this would
+feed the existing conditional zero-free-region closures.  Until these estimates
+are proved in Lean, the correct publishable claim remains the local
+`3-4-1 + compact zero-free strip` module.
+
 ## Unproved Target Statements
 
 | File | Remaining `sorry` count | Main target statements |
