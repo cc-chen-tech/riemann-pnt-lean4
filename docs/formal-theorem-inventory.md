@@ -585,6 +585,12 @@ Core verified declarations:
 - `classical_zero_free_region_of_exists_re_im_multiplicity_logDeriv_regular_part_norm_one_add_log_bound_high_height`
   and `..._bounds_high_height` package these multiplicity-aware one-add-log
   coordinate interfaces existentially.
+- `classical_zero_free_region_of_re_im_multiplicity_neg_logDeriv_regular_part_norm_one_add_log_bound_high_height`
+  and `..._bounds_high_height` are the signed `-logDeriv zeta` versions of the
+  same multiplicity-aware coordinate one-add-log closures.
+- `classical_zero_free_region_of_exists_re_im_multiplicity_neg_logDeriv_regular_part_norm_one_add_log_bound_high_height`
+  and `..._bounds_high_height` package those signed high-height inputs
+  existentially.
 - `classical_zero_free_region_of_exists_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height`
   packages the high-height positive-log-derivative convention existentially.
 - `classical_zero_free_region_of_logDeriv_regular_part_norm_affine_log_bound_and_vertical_logDeriv_norm_affine_log_bound_high_height`
