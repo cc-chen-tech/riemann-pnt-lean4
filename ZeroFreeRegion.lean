@@ -1235,6 +1235,46 @@ lemma no_sigmaOf_log_margin_constants_with_weak_two_t
   exact sigmaOf_log_weak_two_t_margin_impossible
     ha hc hCreal hCzero hCtwo hmargin
 
+/-- Same obstruction when both shifted terms are controlled only at the weak
+`Cshift/a` scale.
+
+This is the constant-level boundary for the shared weak moving-strip package:
+if the `σ+it` and `σ+2it` terms both carry the same `1/a` loss, then their
+combined coefficient already overwhelms the `4/(a+c)` margin available from the
+zero-repulsion term. -/
+lemma sigmaOf_log_weak_shift_pair_margin_impossible
+    {a c Creal Cshift : ℝ}
+    (ha : 0 < a) (hc : 0 < c)
+    (hCreal : 1 ≤ Creal) (hCshift : 1 ≤ Cshift) :
+    ¬ (3 * Creal / a + 5 * (Cshift / a) < 4 / (a + c)) := by
+  intro hmargin
+  have hright_lt : 4 / (a + c) < 4 / a := by
+    exact div_lt_div_of_pos_left (by norm_num : (0 : ℝ) < 4) ha
+      (by linarith)
+  have hleft_ge : 4 / a ≤ 3 * Creal / a + 5 * (Cshift / a) := by
+    have h3 : 3 / a ≤ 3 * Creal / a := by
+      exact div_le_div_of_nonneg_right (by nlinarith : 3 ≤ 3 * Creal) ha.le
+    have h1_shift : 1 / a ≤ Cshift / a := by
+      exact div_le_div_of_nonneg_right hCshift ha.le
+    have hshift_nonneg : 0 ≤ Cshift / a :=
+      div_nonneg (by linarith) ha.le
+    have hshift_five : Cshift / a ≤ 5 * (Cshift / a) := by
+      nlinarith
+    have hsplit : 4 / a = 3 / a + 1 / a := by ring
+    linarith
+  linarith
+
+/-- Existential form of
+`sigmaOf_log_weak_shift_pair_margin_impossible`. -/
+lemma no_sigmaOf_log_margin_constants_with_weak_shift_pair
+    {Creal Cshift : ℝ}
+    (hCreal : 1 ≤ Creal) (hCshift : 1 ≤ Cshift) :
+    ¬ ∃ a c : ℝ, 0 < a ∧ 0 < c ∧
+      3 * Creal / a + 5 * (Cshift / a) < 4 / (a + c) := by
+  rintro ⟨a, c, ha, hc, hmargin⟩
+  exact sigmaOf_log_weak_shift_pair_margin_impossible
+    ha hc hCreal hCshift hmargin
+
 /-- Pure real-variable choice of the small constants in the standard
 `σ = 1 + a / log |t|` setup.
 

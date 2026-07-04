@@ -2722,6 +2722,26 @@ theorem no_sigmaOf_log_margin_constants_with_weak_two_t
   ZeroFreeRegion.no_sigmaOf_log_margin_constants_with_weak_two_t
     hCreal hCzero hCtwo
 
+/-- Public obstruction when both shifted terms only have the weak `C/a`
+scale. -/
+theorem sigmaOf_log_weak_shift_pair_margin_impossible
+    {a c Creal Cshift : ℝ}
+    (ha : 0 < a) (hc : 0 < c)
+    (hCreal : 1 ≤ Creal) (hCshift : 1 ≤ Cshift) :
+    ¬ (3 * Creal / a + 5 * (Cshift / a) < 4 / (a + c)) :=
+  ZeroFreeRegion.sigmaOf_log_weak_shift_pair_margin_impossible
+    ha hc hCreal hCshift
+
+/-- Public existential obstruction for a shared weak shifted-term coefficient
+with `1/a` loss. -/
+theorem no_sigmaOf_log_margin_constants_with_weak_shift_pair
+    {Creal Cshift : ℝ}
+    (hCreal : 1 ≤ Creal) (hCshift : 1 ≤ Cshift) :
+    ¬ ∃ a c : ℝ, 0 < a ∧ 0 < c ∧
+      3 * Creal / a + 5 * (Cshift / a) < 4 / (a + c) :=
+  ZeroFreeRegion.no_sigmaOf_log_margin_constants_with_weak_shift_pair
+    hCreal hCshift
+
 /-- Public closure theorem for the standard choice
 `σ(t) = 1 + a / log |t|` in the high-height 3-4-1 argument. -/
 theorem exists_sigmaOf_log_classical_zero_free_region_of_log_deriv_bounds

@@ -611,6 +611,12 @@ Core verified declarations:
 - `no_sigmaOf_log_margin_constants_with_weak_two_t`
   packages the same obstruction as nonexistence of positive constants `a,c`
   satisfying the standard weak-margin inequality.
+- `sigmaOf_log_weak_shift_pair_margin_impossible`
+  proves the stronger obstruction when both shifted terms are controlled only
+  by the same weak `Cshift/a` scale.
+- `no_sigmaOf_log_margin_constants_with_weak_shift_pair`
+  packages that shared-weak-shift obstruction as nonexistence of positive
+  constants `a,c`.
 - `exists_sigmaOf_log_classical_zero_free_region_of_log_deriv_bounds`
   packages the standard `sigma(t) = 1 + a / log |t|` choice into the verified
   3-4-1 high-height contradiction and compact bounded-height patch.
