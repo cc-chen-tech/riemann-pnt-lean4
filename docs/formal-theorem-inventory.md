@@ -1117,6 +1117,11 @@ Core verified declarations:
   `borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`
   combine that right-shifted handoff with the wider logarithmic comparison,
   producing a pure `C log |t|` bound from the same local hypotheses.
+- `re_neg_deriv_div_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_logDeriv_re_le_half_radius`
+  and
+  `re_neg_deriv_div_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_neg_logDeriv_re_le_half_radius`
+  convert those normalized right-shifted norm bounds into the
+  `Re(-zeta'/zeta) <= C log |t|` convention used by the 3-4-1 chain.
 - `borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius`
   and
   `borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius`

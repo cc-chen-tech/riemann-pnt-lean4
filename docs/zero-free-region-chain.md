@@ -288,7 +288,12 @@ proved:
   and
   `ZeroFreeRegion.borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`
   convert those right-shifted outputs to the pure `C log |t|` scale once the
-  same local hypotheses are supplied.  The
+  same local hypotheses are supplied.  The quotient forms
+  `ZeroFreeRegion.re_neg_deriv_div_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_logDeriv_re_le_half_radius`
+  and
+  `ZeroFreeRegion.re_neg_deriv_div_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_neg_logDeriv_re_le_half_radius`
+  translate these norm bounds into the `Re(-zeta'/zeta)` convention consumed by
+  the 3-4-1 inequality.  The
   general half-radius wrappers
   `ZeroFreeRegion.borelCaratheodory_centered_half_radius_bound` and
   `ZeroFreeRegion.borelCaratheodory_sub_centered_half_radius_bound`, plus the
