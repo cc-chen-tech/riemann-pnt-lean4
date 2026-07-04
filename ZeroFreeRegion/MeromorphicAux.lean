@@ -1030,6 +1030,45 @@ lemma exists_sigma_ge_sigmaOf_log_any_im_re_neg_deriv_div_bound_const_mul_log_di
       simpa [z] using hnorm a ha_pos ha_le_log2 ha_le_near σ t u ht
         hσ_lower hσ_le
 
+/-- Weak moving-strip norm bound specialized to the `σ + 2it` point appearing
+in the third term of the 3-4-1 inequality. -/
+lemma exists_sigma_ge_sigmaOf_log_two_t_norm_bound_const_mul_log_div
+    (C : ℝ) (hC : 1 < C) (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    ∃ d : ℝ, 0 < d ∧ ∀ a : ℝ, 0 < a → a ≤ Real.log 2 →
+      a ≤ d * Real.log 2 →
+      ∀ σ t : ℝ, T0 ≤ |t| →
+        1 + a / Real.log |t| ≤ σ → σ ≤ 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖ ≤
+          C * Real.log |t| / a := by
+  rcases exists_sigma_ge_sigmaOf_log_any_im_norm_bound_const_mul_log_div
+      C hC T0 hT0 with
+    ⟨d, hd_pos, hnorm⟩
+  refine ⟨d, hd_pos, ?_⟩
+  intro a ha_pos ha_le_log2 ha_le_near σ t ht hσ_lower hσ_le
+  have hbound := hnorm a ha_pos ha_le_log2 ha_le_near σ t (2 * t)
+    ht hσ_lower hσ_le
+  simpa [mul_assoc, mul_left_comm, mul_comm] using hbound
+
+/-- Weak moving-strip real-part bound specialized to the `σ + 2it` point
+appearing in the third term of the 3-4-1 inequality. -/
+lemma exists_sigma_ge_sigmaOf_log_two_t_re_neg_deriv_div_bound_const_mul_log_div
+    (C : ℝ) (hC : 1 < C) (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    ∃ d : ℝ, 0 < d ∧ ∀ a : ℝ, 0 < a → a ≤ Real.log 2 →
+      a ≤ d * Real.log 2 →
+      ∀ σ t : ℝ, T0 ≤ |t| →
+        1 + a / Real.log |t| ≤ σ → σ ≤ 2 →
+        (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤
+          C * Real.log |t| / a := by
+  rcases exists_sigma_ge_sigmaOf_log_any_im_re_neg_deriv_div_bound_const_mul_log_div
+      C hC T0 hT0 with
+    ⟨d, hd_pos, hbound⟩
+  refine ⟨d, hd_pos, ?_⟩
+  intro a ha_pos ha_le_log2 ha_le_near σ t ht hσ_lower hσ_le
+  have h := hbound a ha_pos ha_le_log2 ha_le_near σ t (2 * t)
+    ht hσ_lower hσ_le
+  simpa [mul_assoc, mul_left_comm, mul_comm] using h
+
 /-- Classical zero-free-region closure for the standard high-height choice
 `σ(t) = 1 + a / log |t|`.
 

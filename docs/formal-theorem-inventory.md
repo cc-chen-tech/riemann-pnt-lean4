@@ -585,6 +585,11 @@ Core verified declarations:
 - `exists_sigma_ge_sigmaOf_log_any_im_re_neg_deriv_div_bound_const_mul_log_div`
   gives the corresponding arbitrary-imaginary-coordinate real-part estimate in
   the `-zeta'/zeta` sign convention.
+- `exists_sigma_ge_sigmaOf_log_two_t_norm_bound_const_mul_log_div`
+  specializes the arbitrary-imaginary-coordinate estimate to the `sigma + 2it`
+  point used by the third term of the 3-4-1 inequality.
+- `exists_sigma_ge_sigmaOf_log_two_t_re_neg_deriv_div_bound_const_mul_log_div`
+  gives the corresponding `sigma + 2it` one-sided real-part estimate.
 - `sigmaOf_log_weak_two_t_margin_impossible`
   proves that this weak `1/a` scale cannot satisfy the standard 3-4-1 constant
   margin when the real-axis and `sigma + 2it` coefficients are both at least
