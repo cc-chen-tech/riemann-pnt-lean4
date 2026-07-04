@@ -1141,6 +1141,11 @@ Core verified declarations:
   `re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_neg_logDeriv_re_le_half_radius`
   repeat the same handoff for the shifted third 3-4-1 point `sigma+2it`,
   absorbing `log |2t|` into `log |t|`.
+- `re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_norm_of_affine_logDeriv_re_le_half_radius`
+  and
+  `re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_norm_of_affine_neg_logDeriv_re_le_half_radius`
+  provide the shifted third-term handoff in the same full-height
+  `C log(||sigma+it|| + 3)` scale as the main `sigma+it` estimate.
 - `borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius`
   and
   `borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius`
