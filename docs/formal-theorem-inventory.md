@@ -317,6 +317,14 @@ Core verified declarations:
   and `exists_punctured_closedBall_norm_neg_logDeriv_add_order_mul_inv_le_of_eventuallyEq`
   provide the signed `-logDeriv` version used by the de la Vallée Poussin
   zero-free chain.
+- `exists_punctured_ball_norm_logDeriv_sub_order_mul_inv_le_of_analyticAt_order_eq_nat`
+  and its closed-ball form combine the multiplicity factorization itself with
+  an eventual bound on the local analytic unit.
+- `exists_punctured_ball_norm_neg_logDeriv_add_order_mul_inv_le_of_analyticAt_order_eq_nat`
+  and its closed-ball form give the signed version of the same bridge.
+- `exists_punctured_ball_norm_logDeriv_riemannZeta_sub_order_mul_inv_le_of_order_eq_nat`
+  and its signed/closed variants specialize these bridges to zeta zeros away
+  from the pole.
 - `analyticAt_logDeriv_of_analyticAt_ne_zero`
   proves the generic local fact that an analytic nonzero function has analytic
   logarithmic derivative.

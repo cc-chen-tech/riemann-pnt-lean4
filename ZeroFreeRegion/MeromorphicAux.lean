@@ -4582,6 +4582,120 @@ lemma exists_punctured_closedBall_norm_neg_logDeriv_add_order_mul_inv_le_of_even
   intro z hz_ne hz_dist
   exact hball z hz_ne (lt_of_le_of_lt hz_dist (half_lt_self hr_pos))
 
+/-- Combine `analyticOrderAt f x = n` with an eventual bound on the logarithmic
+derivative of the local analytic unit, producing an explicit punctured-ball
+bound for `logDeriv f - n/(z-x)`. -/
+lemma exists_punctured_ball_norm_logDeriv_sub_order_mul_inv_le_of_analyticAt_order_eq_nat
+    {f : ℂ → ℂ} {x : ℂ} {n : ℕ} {M : ℝ}
+    (hf : AnalyticAt ℂ f x) (horder : analyticOrderAt f x = n)
+    (hregularBound :
+      ∀ g : ℂ → ℂ, AnalyticAt ℂ g x → g x ≠ 0 →
+        ∀ᶠ z in 𝓝[≠] x, ‖logDeriv g z‖ ≤ M) :
+    ∃ r > 0, ∀ z : ℂ, z ≠ x → dist z x < r →
+      ‖logDeriv f z - (n : ℂ) * (z - x)⁻¹‖ ≤ M := by
+  rcases exists_eventuallyEq_logDeriv_sub_order_mul_inv_of_analyticAt_order_eq_nat
+      hf horder with ⟨g, hg, hg_ne, hsep⟩
+  exact exists_punctured_ball_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq
+    hsep (hregularBound g hg hg_ne)
+
+/-- Closed-ball version of
+`exists_punctured_ball_norm_logDeriv_sub_order_mul_inv_le_of_analyticAt_order_eq_nat`. -/
+lemma exists_punctured_closedBall_norm_logDeriv_sub_order_mul_inv_le_of_analyticAt_order_eq_nat
+    {f : ℂ → ℂ} {x : ℂ} {n : ℕ} {M : ℝ}
+    (hf : AnalyticAt ℂ f x) (horder : analyticOrderAt f x = n)
+    (hregularBound :
+      ∀ g : ℂ → ℂ, AnalyticAt ℂ g x → g x ≠ 0 →
+        ∀ᶠ z in 𝓝[≠] x, ‖logDeriv g z‖ ≤ M) :
+    ∃ r > 0, ∀ z : ℂ, z ≠ x → dist z x ≤ r →
+      ‖logDeriv f z - (n : ℂ) * (z - x)⁻¹‖ ≤ M := by
+  rcases exists_eventuallyEq_logDeriv_sub_order_mul_inv_of_analyticAt_order_eq_nat
+      hf horder with ⟨g, hg, hg_ne, hsep⟩
+  exact exists_punctured_closedBall_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq
+    hsep (hregularBound g hg hg_ne)
+
+/-- Signed version of
+`exists_punctured_ball_norm_logDeriv_sub_order_mul_inv_le_of_analyticAt_order_eq_nat`. -/
+lemma exists_punctured_ball_norm_neg_logDeriv_add_order_mul_inv_le_of_analyticAt_order_eq_nat
+    {f : ℂ → ℂ} {x : ℂ} {n : ℕ} {M : ℝ}
+    (hf : AnalyticAt ℂ f x) (horder : analyticOrderAt f x = n)
+    (hregularBound :
+      ∀ g : ℂ → ℂ, AnalyticAt ℂ g x → g x ≠ 0 →
+        ∀ᶠ z in 𝓝[≠] x, ‖-logDeriv g z‖ ≤ M) :
+    ∃ r > 0, ∀ z : ℂ, z ≠ x → dist z x < r →
+      ‖-logDeriv f z + (n : ℂ) * (z - x)⁻¹‖ ≤ M := by
+  rcases exists_eventuallyEq_neg_logDeriv_add_order_mul_inv_of_analyticAt_order_eq_nat
+      hf horder with ⟨g, hg, hg_ne, hsep⟩
+  exact exists_punctured_ball_norm_neg_logDeriv_add_order_mul_inv_le_of_eventuallyEq
+    hsep (hregularBound g hg hg_ne)
+
+/-- Closed-ball signed version of
+`exists_punctured_ball_norm_neg_logDeriv_add_order_mul_inv_le_of_analyticAt_order_eq_nat`. -/
+lemma exists_punctured_closedBall_norm_neg_logDeriv_add_order_mul_inv_le_of_analyticAt_order_eq_nat
+    {f : ℂ → ℂ} {x : ℂ} {n : ℕ} {M : ℝ}
+    (hf : AnalyticAt ℂ f x) (horder : analyticOrderAt f x = n)
+    (hregularBound :
+      ∀ g : ℂ → ℂ, AnalyticAt ℂ g x → g x ≠ 0 →
+        ∀ᶠ z in 𝓝[≠] x, ‖-logDeriv g z‖ ≤ M) :
+    ∃ r > 0, ∀ z : ℂ, z ≠ x → dist z x ≤ r →
+      ‖-logDeriv f z + (n : ℂ) * (z - x)⁻¹‖ ≤ M := by
+  rcases exists_eventuallyEq_neg_logDeriv_add_order_mul_inv_of_analyticAt_order_eq_nat
+      hf horder with ⟨g, hg, hg_ne, hsep⟩
+  exact exists_punctured_closedBall_norm_neg_logDeriv_add_order_mul_inv_le_of_eventuallyEq
+    hsep (hregularBound g hg hg_ne)
+
+/-- Zeta-specific version of
+`exists_punctured_ball_norm_logDeriv_sub_order_mul_inv_le_of_analyticAt_order_eq_nat`. -/
+lemma exists_punctured_ball_norm_logDeriv_riemannZeta_sub_order_mul_inv_le_of_order_eq_nat
+    {ρ : ℂ} {n : ℕ} {M : ℝ} (hρ1 : ρ ≠ 1)
+    (horder : analyticOrderAt riemannZeta ρ = n)
+    (hregularBound :
+      ∀ g : ℂ → ℂ, AnalyticAt ℂ g ρ → g ρ ≠ 0 →
+        ∀ᶠ z in 𝓝[≠] ρ, ‖logDeriv g z‖ ≤ M) :
+    ∃ r > 0, ∀ z : ℂ, z ≠ ρ → dist z ρ < r →
+      ‖logDeriv riemannZeta z - (n : ℂ) * (z - ρ)⁻¹‖ ≤ M :=
+  exists_punctured_ball_norm_logDeriv_sub_order_mul_inv_le_of_analyticAt_order_eq_nat
+    (f := riemannZeta) (x := ρ) (n := n) (M := M)
+    (analyticOnNhd_riemannZeta_ne_one ρ hρ1) horder hregularBound
+
+/-- Closed-ball zeta-specific regular-part norm bridge. -/
+lemma exists_punctured_closedBall_norm_logDeriv_riemannZeta_sub_order_mul_inv_le_of_order_eq_nat
+    {ρ : ℂ} {n : ℕ} {M : ℝ} (hρ1 : ρ ≠ 1)
+    (horder : analyticOrderAt riemannZeta ρ = n)
+    (hregularBound :
+      ∀ g : ℂ → ℂ, AnalyticAt ℂ g ρ → g ρ ≠ 0 →
+        ∀ᶠ z in 𝓝[≠] ρ, ‖logDeriv g z‖ ≤ M) :
+    ∃ r > 0, ∀ z : ℂ, z ≠ ρ → dist z ρ ≤ r →
+      ‖logDeriv riemannZeta z - (n : ℂ) * (z - ρ)⁻¹‖ ≤ M :=
+  exists_punctured_closedBall_norm_logDeriv_sub_order_mul_inv_le_of_analyticAt_order_eq_nat
+    (f := riemannZeta) (x := ρ) (n := n) (M := M)
+    (analyticOnNhd_riemannZeta_ne_one ρ hρ1) horder hregularBound
+
+/-- Signed zeta-specific regular-part norm bridge. -/
+lemma exists_punctured_ball_norm_neg_logDeriv_riemannZeta_add_order_mul_inv_le_of_order_eq_nat
+    {ρ : ℂ} {n : ℕ} {M : ℝ} (hρ1 : ρ ≠ 1)
+    (horder : analyticOrderAt riemannZeta ρ = n)
+    (hregularBound :
+      ∀ g : ℂ → ℂ, AnalyticAt ℂ g ρ → g ρ ≠ 0 →
+        ∀ᶠ z in 𝓝[≠] ρ, ‖-logDeriv g z‖ ≤ M) :
+    ∃ r > 0, ∀ z : ℂ, z ≠ ρ → dist z ρ < r →
+      ‖-logDeriv riemannZeta z + (n : ℂ) * (z - ρ)⁻¹‖ ≤ M :=
+  exists_punctured_ball_norm_neg_logDeriv_add_order_mul_inv_le_of_analyticAt_order_eq_nat
+    (f := riemannZeta) (x := ρ) (n := n) (M := M)
+    (analyticOnNhd_riemannZeta_ne_one ρ hρ1) horder hregularBound
+
+/-- Closed-ball signed zeta-specific regular-part norm bridge. -/
+lemma exists_punctured_closedBall_norm_neg_logDeriv_riemannZeta_add_order_mul_inv_le_of_order_eq_nat
+    {ρ : ℂ} {n : ℕ} {M : ℝ} (hρ1 : ρ ≠ 1)
+    (horder : analyticOrderAt riemannZeta ρ = n)
+    (hregularBound :
+      ∀ g : ℂ → ℂ, AnalyticAt ℂ g ρ → g ρ ≠ 0 →
+        ∀ᶠ z in 𝓝[≠] ρ, ‖-logDeriv g z‖ ≤ M) :
+    ∃ r > 0, ∀ z : ℂ, z ≠ ρ → dist z ρ ≤ r →
+      ‖-logDeriv riemannZeta z + (n : ℂ) * (z - ρ)⁻¹‖ ≤ M :=
+  exists_punctured_closedBall_norm_neg_logDeriv_add_order_mul_inv_le_of_analyticAt_order_eq_nat
+    (f := riemannZeta) (x := ρ) (n := n) (M := M)
+    (analyticOnNhd_riemannZeta_ne_one ρ hρ1) horder hregularBound
+
 /-- If `f` is analytic and nonzero at `z`, then its logarithmic derivative is
 analytic at `z`. -/
 lemma analyticAt_logDeriv_of_analyticAt_ne_zero {f : ℂ → ℂ} {z : ℂ}
