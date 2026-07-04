@@ -3526,6 +3526,66 @@ theorem exists_norm_neg_logDeriv_riemannZeta_sigma_two_it_affine_log_abs_add_thr
   ZeroFreeRegion.exists_norm_neg_logDeriv_riemannZeta_sigma_two_it_affine_log_abs_add_three_bound_of_high_height_log_abs_bound
     hH hHT0 hB hhigh
 
+/-- Public compact patch preserving the exact `C * log |t|` scale for
+`‖logDeriv ζ‖` at `σ + it`, once the patched range starts at height at
+least `3`. -/
+theorem exists_norm_logDeriv_riemannZeta_sigma_it_log_abs_bound_of_high_height_log_abs_bound
+    {H T0 B : ℝ} (hH3 : 3 ≤ H) (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 → T0 ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤ B * Real.log |t|) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 → H ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤ C * Real.log |t| :=
+  ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_sigma_it_log_abs_bound_of_high_height_log_abs_bound
+    hH3 hB hhigh
+
+/-- Public signed compact patch preserving the exact `C * log |t|` scale for
+`‖-logDeriv ζ‖` at `σ + it`, once the patched range starts at height at
+least `3`. -/
+theorem exists_norm_neg_logDeriv_riemannZeta_sigma_it_log_abs_bound_of_high_height_log_abs_bound
+    {H T0 B : ℝ} (hH3 : 3 ≤ H) (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 → T0 ≤ |t| →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤ B * Real.log |t|) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 → H ≤ |t| →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤ C * Real.log |t| :=
+  ZeroFreeRegion.exists_norm_neg_logDeriv_riemannZeta_sigma_it_log_abs_bound_of_high_height_log_abs_bound
+    hH3 hB hhigh
+
+/-- Public compact patch preserving the exact `C * log |t|` scale for
+`‖logDeriv ζ‖` at `σ + 2it`, once the patched range starts at height at
+least `3`. -/
+theorem exists_norm_logDeriv_riemannZeta_sigma_two_it_log_abs_bound_of_high_height_log_abs_bound
+    {H T0 B : ℝ} (hH3 : 3 ≤ H) (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 → T0 ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t)‖ ≤
+          B * Real.log |t|) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 → H ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t)‖ ≤
+          C * Real.log |t| :=
+  ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_sigma_two_it_log_abs_bound_of_high_height_log_abs_bound
+    hH3 hB hhigh
+
+/-- Public signed compact patch preserving the exact `C * log |t|` scale for
+`‖-logDeriv ζ‖` at `σ + 2it`, once the patched range starts at height at
+least `3`. -/
+theorem exists_norm_neg_logDeriv_riemannZeta_sigma_two_it_log_abs_bound_of_high_height_log_abs_bound
+    {H T0 B : ℝ} (hH3 : 3 ≤ H) (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 → T0 ≤ |t| →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t)‖ ≤
+          B * Real.log |t|) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 → H ≤ |t| →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t)‖ ≤
+          C * Real.log |t| :=
+  ZeroFreeRegion.exists_norm_neg_logDeriv_riemannZeta_sigma_two_it_log_abs_bound_of_high_height_log_abs_bound
+    hH3 hB hhigh
+
 /-- Public coordinate form of the fixed-margin vertical logarithmic bound for
 `logDeriv ζ` on points `σ + it`. -/
 theorem exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_add_three_of_one_add_le

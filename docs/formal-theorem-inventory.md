@@ -90,6 +90,15 @@ Core verified declarations:
   `sigma + 2it`.
 - `exists_norm_neg_logDeriv_riemannZeta_sigma_two_it_affine_log_abs_add_three_bound_of_high_height_log_abs_bound`
   is the signed `-logDeriv zeta` version at `sigma + 2it`.
+- `exists_norm_logDeriv_riemannZeta_sigma_it_log_abs_bound_of_high_height_log_abs_bound`
+  patches a high-height norm estimate while preserving the exact
+  `C * log |t|` scale at `sigma + it` for height ranges starting at `3`.
+- `exists_norm_neg_logDeriv_riemannZeta_sigma_it_log_abs_bound_of_high_height_log_abs_bound`
+  is the signed `-logDeriv zeta` exact-log norm patch at `sigma + it`.
+- `exists_norm_logDeriv_riemannZeta_sigma_two_it_log_abs_bound_of_high_height_log_abs_bound`
+  is the exact-log norm patch at the shifted point `sigma + 2it`.
+- `exists_norm_neg_logDeriv_riemannZeta_sigma_two_it_log_abs_bound_of_high_height_log_abs_bound`
+  is the signed exact-log norm patch at `sigma + 2it`.
 - `exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_add_three_of_one_add_le`
   is the coordinate form of the same fixed-margin logarithmic bound on
   vertical lines `sigma + it`.
