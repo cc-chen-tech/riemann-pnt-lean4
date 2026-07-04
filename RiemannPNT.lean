@@ -3450,6 +3450,21 @@ theorem exists_re_neg_deriv_div_riemannZeta_sigma_it_log_abs_bound_of_high_heigh
   ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_sigma_it_log_abs_bound_of_high_height_log_abs_bound
     hH3 hB hhigh
 
+/-- Public objective-shaped vertical logarithmic bound wrapper for the real-part
+quotient convention `Re(-zeta'/zeta)` at `sigma + it`. -/
+theorem exists_re_neg_deriv_div_riemannZeta_vertical_log_bound_of_high_height_log_abs_bound
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤ B * Real.log |t|) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤ C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_vertical_log_bound_of_high_height_log_abs_bound
+    hB hhigh
+
 /-- Public compact patch preserving the exact `C * log |t|` scale for the
 shifted real-part quotient estimate at `σ + 2it`, once the patched range starts
 at height at least `3`. -/
@@ -3466,6 +3481,21 @@ theorem exists_re_neg_deriv_div_riemannZeta_sigma_two_it_log_abs_bound_of_high_h
             riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re ≤ C * Real.log |t| :=
   ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_sigma_two_it_log_abs_bound_of_high_height_log_abs_bound
     hH3 hB hhigh
+
+/-- Public objective-shaped vertical logarithmic bound wrapper for the shifted
+real-part quotient convention `Re(-zeta'/zeta)` at `sigma + 2it`. -/
+theorem exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_high_height_log_abs_bound
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t) /
+            riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re ≤ B * Real.log |t|) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t) /
+            riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re ≤ C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_high_height_log_abs_bound
+    hB hhigh
 
 /-- Public compact patch from a high-height `B * log |t|` estimate to an
 all-height affine `A + B' * log(|t| + 3)` estimate for `logDeriv ζ`. -/

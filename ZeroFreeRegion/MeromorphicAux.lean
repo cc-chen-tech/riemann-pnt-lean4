@@ -5866,6 +5866,31 @@ lemma exists_re_neg_deriv_div_riemannZeta_sigma_it_log_abs_bound_of_high_height_
       _ ≤ (C₀ + B) * Real.log |t| := by
         nlinarith [mul_nonneg hC₀_nonneg hlog_nonneg]
 
+/-- Objective-shaped vertical logarithmic bound wrapper for the real-part
+quotient convention `Re(-zeta'/zeta)` at `sigma + it`.  This packages the
+compact-height patch in the form consumed by the classical zero-free-region
+contradiction route, while keeping the high-height analytic estimate explicit
+as an input. -/
+lemma exists_re_neg_deriv_div_riemannZeta_vertical_log_bound_of_high_height_log_abs_bound
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re ≤ B * Real.log |t|) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re ≤ C * Real.log |t| := by
+  rcases exists_re_neg_deriv_div_riemannZeta_sigma_it_log_abs_bound_of_high_height_log_abs_bound
+      (H := 3) (T0 := T0) (B := B) (by norm_num) hB
+      (by
+        intro σ t hσ ht
+        exact hhigh σ t hσ.1 hσ.2 ht) with
+    ⟨C, hC_nonneg, hbound⟩
+  refine ⟨C, 3, hC_nonneg, by norm_num, ?_⟩
+  intro σ t hσ_left hσ_right ht
+  exact hbound σ t ⟨hσ_left, hσ_right⟩ ht
+
 /-- Compact patch preserving the exact `C * log |t|` scale for the shifted
 real-part quotient estimate at `σ + 2it`, provided `H >= 3`. -/
 lemma exists_re_neg_deriv_div_riemannZeta_sigma_two_it_log_abs_bound_of_high_height_log_abs_bound
@@ -5906,6 +5931,30 @@ lemma exists_re_neg_deriv_div_riemannZeta_sigma_two_it_log_abs_bound_of_high_hei
           ≤ B * Real.log |t| := hhigh σ t hσ ht_high
       _ ≤ (C₀ + B) * Real.log |t| := by
         nlinarith [mul_nonneg hC₀_nonneg hlog_nonneg]
+
+/-- Objective-shaped vertical logarithmic bound wrapper for the shifted
+real-part quotient convention `Re(-zeta'/zeta)` at `sigma + 2it`.  This is the
+shifted input shape used by the 3-4-1 inequality in the quantitative
+zero-free-region route. -/
+lemma exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_high_height_log_abs_bound
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤ B * Real.log |t|) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤ C * Real.log |t| := by
+  rcases exists_re_neg_deriv_div_riemannZeta_sigma_two_it_log_abs_bound_of_high_height_log_abs_bound
+      (H := 3) (T0 := T0) (B := B) (by norm_num) hB
+      (by
+        intro σ t hσ ht
+        exact hhigh σ t hσ.1 hσ.2 ht) with
+    ⟨C, hC_nonneg, hbound⟩
+  refine ⟨C, 3, hC_nonneg, by norm_num, ?_⟩
+  intro σ t hσ_left hσ_right ht
+  exact hbound σ t ⟨hσ_left, hσ_right⟩ ht
 
 /-- Compact patch from a high-height `B * log |t|` estimate to an all-height
 affine `A + B' * log(|t| + 3)` estimate for `logDeriv ζ`.

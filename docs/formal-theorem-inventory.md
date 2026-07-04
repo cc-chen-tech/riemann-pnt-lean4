@@ -77,9 +77,16 @@ Core verified declarations:
 - `exists_re_neg_deriv_div_riemannZeta_sigma_it_log_abs_bound_of_high_height_log_abs_bound`
   patches a high-height real-part quotient estimate while preserving the exact
   `C * log |t|` scale on any range starting at height at least `3`.
+- `exists_re_neg_deriv_div_riemannZeta_vertical_log_bound_of_high_height_log_abs_bound`
+  repackages that exact-log real-part quotient patch in the standard
+  `1 <= sigma -> sigma <= 2 -> T0 <= |t|` vertical-bound form used by the
+  quantitative zero-free-region chain.
 - `exists_re_neg_deriv_div_riemannZeta_sigma_two_it_log_abs_bound_of_high_height_log_abs_bound`
   is the exact-log compact-patching bridge for the shifted point
   `sigma + 2it`.
+- `exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_high_height_log_abs_bound`
+  is the same objective-shaped real-part quotient patch for the shifted
+  3-4-1 point `sigma + 2it`.
 - `exists_norm_logDeriv_riemannZeta_sigma_it_affine_log_abs_add_three_bound_of_high_height_log_abs_bound`
   patches a future high-height `B * log |t|` estimate with the compact band
   bound, producing an all-height affine `A + B' * log(|t| + 3)` estimate.
