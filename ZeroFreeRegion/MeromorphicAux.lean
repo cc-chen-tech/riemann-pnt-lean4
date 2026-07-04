@@ -3050,6 +3050,23 @@ lemma exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_of_fixed_margin
         mul_le_mul_of_nonneg_left hlog hC
     _ = (2 * C) * Real.log |t| := by ring
 
+/-- Signed fixed-margin high-height vertical logarithmic bound in the exact
+`C * log |t|` scale. -/
+lemma exists_norm_neg_logDeriv_riemannZeta_sigma_it_le_log_abs_of_fixed_margin
+    {ε : ℝ} (hε : 0 < ε) :
+    ∃ C T0 : ℝ, 0 ≤ C ∧ 3 ≤ T0 ∧
+      ∀ σ t : ℝ, 1 + ε ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          C * Real.log |t| := by
+  rcases exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_of_fixed_margin
+      hε with ⟨C, T0, hC, hT0, hbound⟩
+  refine ⟨C, T0, hC, hT0, ?_⟩
+  intro σ t hσ hσ_le ht
+  calc
+    ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖
+        = ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ := norm_neg _
+    _ ≤ C * Real.log |t| := hbound σ t hσ hσ_le ht
+
 /-- Fixed-margin high-height logarithmic bound for the shifted third
 3-4-1 point `σ + 2it`, again in the exact `C * log |t|` scale.
 
@@ -3072,6 +3089,23 @@ lemma exists_norm_logDeriv_riemannZeta_sigma_two_it_le_log_abs_of_fixed_margin
     _ ≤ C * (2 * Real.log |t|) :=
         mul_le_mul_of_nonneg_left hlog hC
     _ = (2 * C) * Real.log |t| := by ring
+
+/-- Signed fixed-margin high-height logarithmic bound for the shifted third
+3-4-1 point `σ + 2it`. -/
+lemma exists_norm_neg_logDeriv_riemannZeta_sigma_two_it_le_log_abs_of_fixed_margin
+    {ε : ℝ} (hε : 0 < ε) :
+    ∃ C T0 : ℝ, 0 ≤ C ∧ 3 ≤ T0 ∧
+      ∀ σ t : ℝ, 1 + ε ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖ ≤
+          C * Real.log |t| := by
+  rcases exists_norm_logDeriv_riemannZeta_sigma_two_it_le_log_abs_of_fixed_margin
+      hε with ⟨C, T0, hC, hT0, hbound⟩
+  refine ⟨C, T0, hC, hT0, ?_⟩
+  intro σ t hσ hσ_le ht
+  calc
+    ‖-logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖
+        = ‖logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖ := norm_neg _
+    _ ≤ C * Real.log |t| := hbound σ t hσ hσ_le ht
 
 /-- On the strip `1 <= σ <= 2`, `‖σ + it‖` is bounded by `|t| + 2`. -/
 lemma norm_sigma_add_I_mul_le_abs_add_two {σ t : ℝ}
