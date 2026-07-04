@@ -293,7 +293,12 @@ proved:
   and
   `ZeroFreeRegion.re_neg_deriv_div_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_neg_logDeriv_re_le_half_radius`
   translate these norm bounds into the `Re(-zeta'/zeta)` convention consumed by
-  the 3-4-1 inequality.  The
+  the 3-4-1 inequality.  The shifted versions
+  `ZeroFreeRegion.re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_logDeriv_re_le_half_radius`
+  and
+  `ZeroFreeRegion.re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_neg_logDeriv_re_le_half_radius`
+  supply the analogous `sigma+2it` third-term estimate, using
+  `log |2t| <= 2 log |t|`.  The
   general half-radius wrappers
   `ZeroFreeRegion.borelCaratheodory_centered_half_radius_bound` and
   `ZeroFreeRegion.borelCaratheodory_sub_centered_half_radius_bound`, plus the

@@ -1122,6 +1122,11 @@ Core verified declarations:
   `re_neg_deriv_div_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_neg_logDeriv_re_le_half_radius`
   convert those normalized right-shifted norm bounds into the
   `Re(-zeta'/zeta) <= C log |t|` convention used by the 3-4-1 chain.
+- `re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_logDeriv_re_le_half_radius`
+  and
+  `re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_neg_logDeriv_re_le_half_radius`
+  repeat the same handoff for the shifted third 3-4-1 point `sigma+2it`,
+  absorbing `log |2t|` into `log |t|`.
 - `borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius`
   and
   `borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius`
