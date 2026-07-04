@@ -2794,6 +2794,33 @@ theorem no_zeros_on_one_third_of_strong_pnt_error_bridge
     simpa [Complex.sub_re, hs] using hcalc
   exact hbridge herror (1 - s) hsym hre
 
+/-- Power-scale Chebyshev-`ψ` error statement `ψ(x) - x = O(x ^ θ)`. -/
+abbrev PsiPowerErrorBound (θ : ℝ) : Prop :=
+  (fun x : ℝ => chebyshevPsi x - x) =O[atTop] (fun x : ℝ => x ^ θ)
+
+/-- A concrete form of the proposed strong PNT-error input: some power saving
+strictly below the `2 / 3` barrier for `ψ(x) - x`. -/
+abbrev PsiPowerErrorBelowTwoThirds : Prop :=
+  ∃ θ : ℝ, 0 ≤ θ ∧ θ < (2 / 3 : ℝ) ∧ PsiPowerErrorBound θ
+
+/-- Route interface for the converse explicit-formula step:
+`ψ(x) - x = O(x ^ θ)` for some `θ < 2 / 3` rules out nontrivial zeros on
+the reflected line `Re(s) = 2 / 3`. -/
+abbrev PsiPowerErrorBelowTwoThirdsExcludesLineTwoThirds : Prop :=
+  PsiPowerErrorBelowTwoThirds →
+    ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ →
+      ρ.re = (2 / 3 : ℝ) → False
+
+/-- Concrete `ψ`-error version of the `Re(s) = 1 / 3` bridge.  The hard
+analytic input is the converse explicit-formula implication packaged in
+`PsiPowerErrorBelowTwoThirdsExcludesLineTwoThirds`. -/
+theorem no_zeros_on_one_third_of_psi_power_error_below_two_thirds_bridge
+    (hbridge : PsiPowerErrorBelowTwoThirdsExcludesLineTwoThirds)
+    (herror : PsiPowerErrorBelowTwoThirds) :
+    NoZerosOnVerticalLine (1 / 3) :=
+  no_zeros_on_one_third_of_strong_pnt_error_bridge
+    (StrongPNTError := PsiPowerErrorBelowTwoThirds) hbridge herror
+
 /-! ## 平凡零点表征 -/
 
 /-- ζ(s) 在 Re(s) ≤ 0 区域的唯一零点是平凡零点 -2, -4, -6, ...

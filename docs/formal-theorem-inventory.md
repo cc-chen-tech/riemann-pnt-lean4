@@ -684,6 +684,11 @@ Core verified declarations:
   `re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_multiplicity_regular_part_norm_one_add_log`
   turn coordinate `C * (1 + log |t|)` regular-part estimates at `|t| >= 3`
   into pure `2*C*log |t|` real-part singular estimates.
+- `re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_regular_part_norm_log_abs_add_three`
+  and
+  `re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_multiplicity_regular_part_norm_log_abs_add_three`
+  turn coordinate `C * log(|t| + 3)` regular-part estimates at `|t| >= 3`
+  into pure `2*C*log |t|` real-part singular estimates.
 - `classical_zero_free_region_of_regular_part_norm_bound_and_two_t_bound`
   replaces the regular-part real estimate by the norm estimate
   `||-zeta'/zeta(s)+(s-rho)^{-1}|| <= B log |Im(s)|`, together with the
@@ -1138,6 +1143,13 @@ Core verified declarations:
   `no_zeros_on_one_third_of_strong_pnt_error_bridge`
   isolate the formal bridge from a future strong-PNT-error converse excluding
   `Re(s) = 2/3` zeros to a no-zero result on `Re(s) = 1/3`.
+- `PsiPowerErrorBound`, `PsiPowerErrorBelowTwoThirds`, and
+  `PsiPowerErrorBelowTwoThirdsExcludesLineTwoThirds`
+  package a concrete Chebyshev-`psi` power-error version of that future
+  converse-explicit-formula input.
+- `no_zeros_on_one_third_of_psi_power_error_below_two_thirds_bridge`
+  specializes the abstract strong-PNT-error bridge to the `psi` power-error
+  interface.
 - `riemannZeta_ne_zero_of_re_le_zero`
   excludes nontrivial zeros in `Re(s) <= 0`, except for the trivial zero
   locations.

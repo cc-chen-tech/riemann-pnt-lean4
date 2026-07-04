@@ -3484,6 +3484,58 @@ lemma log_abs_add_three_le_two_log_abs {t : ℝ} (ht : 3 ≤ |t|) :
     _ = Real.log 2 + Real.log |t| := hlog_mul
     _ ≤ 2 * Real.log |t| := by linarith
 
+/-- Coordinate bridge from a `C * log (|t| + 3)` local regular-part bound to a
+pure logarithmic real-part bound at heights `|t| >= 3`. -/
+lemma re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_regular_part_norm_log_abs_add_three
+    {σ β t C : ℝ}
+    (hC : 0 ≤ C) (ht : 3 ≤ |t|)
+    (hregular :
+      ‖-logDeriv riemannZeta ((σ : ℂ) + I * t) +
+          (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+        C * Real.log (|t| + 3))
+    (hsub : 0 < σ - β) :
+    (-deriv riemannZeta ((σ : ℂ) + I * t) /
+        riemannZeta ((σ : ℂ) + I * t)).re +
+      1 / (σ - β) ≤ (2 * C) * Real.log |t| := by
+  have hbase :=
+    re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_regular_part_norm
+      hregular hsub
+  have hlog := log_abs_add_three_le_two_log_abs ht
+  calc
+    (-deriv riemannZeta ((σ : ℂ) + I * t) /
+        riemannZeta ((σ : ℂ) + I * t)).re +
+      1 / (σ - β)
+        ≤ C * Real.log (|t| + 3) := hbase
+    _ ≤ C * (2 * Real.log |t|) :=
+        mul_le_mul_of_nonneg_left hlog hC
+    _ = (2 * C) * Real.log |t| := by ring
+
+/-- Multiplicity-aware coordinate bridge from a `C * log (|t| + 3)` local
+regular-part bound to a pure logarithmic real-part bound. -/
+lemma re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_multiplicity_regular_part_norm_log_abs_add_three
+    {σ β t C : ℝ} {n : ℕ}
+    (hC : 0 ≤ C) (ht : 3 ≤ |t|)
+    (hregular :
+      ‖-logDeriv riemannZeta ((σ : ℂ) + I * t) +
+          (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+        C * Real.log (|t| + 3))
+    (hn : 0 < n) (hsub : 0 < σ - β) :
+    (-deriv riemannZeta ((σ : ℂ) + I * t) /
+        riemannZeta ((σ : ℂ) + I * t)).re +
+      1 / (σ - β) ≤ (2 * C) * Real.log |t| := by
+  have hbase :=
+    re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_multiplicity_regular_part_norm
+      hregular hn hsub
+  have hlog := log_abs_add_three_le_two_log_abs ht
+  calc
+    (-deriv riemannZeta ((σ : ℂ) + I * t) /
+        riemannZeta ((σ : ℂ) + I * t)).re +
+      1 / (σ - β)
+        ≤ C * Real.log (|t| + 3) := hbase
+    _ ≤ C * (2 * Real.log |t|) :=
+        mul_le_mul_of_nonneg_left hlog hC
+    _ = (2 * C) * Real.log |t| := by ring
+
 /-- Fixed-margin high-height vertical logarithmic bound in the exact
 `C * log |t|` scale.
 
