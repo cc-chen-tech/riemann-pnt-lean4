@@ -7300,6 +7300,98 @@ theorem log_abs_add_three_le_two_log_abs {t : ℝ} (ht : 3 ≤ |t|) :
     Real.log (|t| + 3) ≤ 2 * Real.log |t| :=
   ZeroFreeRegion.log_abs_add_three_le_two_log_abs ht
 
+/-- Public standalone normalization from an affine `log(|t|+3)` vertical
+`logDeriv ζ` estimate to the exact `C * log |t|` scale. -/
+theorem exists_re_im_logDeriv_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height
+    (T0 A B : ℝ) (hT0 : 3 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          A + B * Real.log (|t| + 3)) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_im_logDeriv_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height
+    T0 A B hT0 hA hB hvertical
+
+/-- Public standalone normalization from a multiplicative `log(|t|+3)`
+vertical `logDeriv ζ` estimate to the exact `C * log |t|` scale. -/
+theorem exists_re_im_logDeriv_vertical_log_bound_of_log_abs_add_three_bound_high_height
+    (T0 C : ℝ) (hT0 : 3 ≤ T0) (hC : 0 ≤ C)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          C * Real.log (|t| + 3)) :
+    ∃ C' T0' : ℝ, 0 ≤ C' ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          C' * Real.log |t| :=
+  ZeroFreeRegion.exists_re_im_logDeriv_vertical_log_bound_of_log_abs_add_three_bound_high_height
+    T0 C hT0 hC hvertical
+
+/-- Public signed normalization from an affine `log(|t|+3)` vertical
+`-logDeriv ζ` estimate to the exact `C * log |t|` scale. -/
+theorem exists_re_im_neg_logDeriv_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height
+    (T0 A B : ℝ) (hT0 : 3 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          A + B * Real.log (|t| + 3)) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_im_neg_logDeriv_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height
+    T0 A B hT0 hA hB hvertical
+
+/-- Public signed normalization from a multiplicative `log(|t|+3)` vertical
+`-logDeriv ζ` estimate to the exact `C * log |t|` scale. -/
+theorem exists_re_im_neg_logDeriv_vertical_log_bound_of_log_abs_add_three_bound_high_height
+    (T0 C : ℝ) (hT0 : 3 ≤ T0) (hC : 0 ≤ C)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          C * Real.log (|t| + 3)) :
+    ∃ C' T0' : ℝ, 0 ≤ C' ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          C' * Real.log |t| :=
+  ZeroFreeRegion.exists_re_im_neg_logDeriv_vertical_log_bound_of_log_abs_add_three_bound_high_height
+    T0 C hT0 hC hvertical
+
+/-- Public real-part quotient form of the affine `log(|t|+3)`
+`logDeriv ζ` normalization. -/
+theorem exists_re_neg_deriv_div_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height
+    (T0 A B : ℝ) (hT0 : 3 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          A + B * Real.log (|t| + 3)) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
+          C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_deriv_div_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height
+    T0 A B hT0 hA hB hvertical
+
+/-- Public real-part quotient form of the signed affine `log(|t|+3)`
+`-logDeriv ζ` normalization. -/
+theorem exists_re_neg_deriv_div_vertical_log_bound_of_neg_affine_log_abs_add_three_bound_high_height
+    (T0 A B : ℝ) (hT0 : 3 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          A + B * Real.log (|t| + 3)) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
+          C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_deriv_div_vertical_log_bound_of_neg_affine_log_abs_add_three_bound_high_height
+    T0 A B hT0 hA hB hvertical
+
 /-- Public norm bound `‖σ+it‖ ≤ |t| + 2` on `1 <= σ <= 2`. -/
 theorem norm_sigma_add_I_mul_le_abs_add_two {σ t : ℝ}
     (hσ : σ ∈ Set.Icc 1 2) :

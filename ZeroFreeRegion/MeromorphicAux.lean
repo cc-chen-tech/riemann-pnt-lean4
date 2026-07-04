@@ -3484,6 +3484,171 @@ lemma log_abs_add_three_le_two_log_abs {t : ℝ} (ht : 3 ≤ |t|) :
     _ = Real.log 2 + Real.log |t| := hlog_mul
     _ ≤ 2 * Real.log |t| := by linarith
 
+/-- Standalone normalization of a future vertical-strip log-derivative
+estimate already stated in the safe height scale `A + B * log(|t| + 3)`.
+
+This is the objective-shaped handoff for the next hard analytic input: once a
+high-height estimate on `1 <= sigma <= 2` is known in the common
+`log(|t| + 3)` scale, this theorem converts it into the exact
+`C * log |t|` form used by the quantitative zero-free-region chain.  It does
+not prove the missing zeta-specific growth estimate. -/
+lemma exists_re_im_logDeriv_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height
+    (T0 A B : ℝ) (hT0 : 3 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          A + B * Real.log (|t| + 3)) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          C * Real.log |t| := by
+  refine ⟨A + 2 * B, T0, add_nonneg hA (mul_nonneg (by norm_num) hB),
+    hT0, ?_⟩
+  intro σ t hσ_left hσ_right ht
+  have hσ_mem : σ ∈ Set.Icc 1 2 := ⟨hσ_left, hσ_right⟩
+  have ht3 : 3 ≤ |t| := hT0.trans ht
+  have hlog_ge_one : 1 ≤ Real.log |t| :=
+    (log_abs_gt_one_of_three_le ht3).le
+  have hA_le : A ≤ A * Real.log |t| := by
+    calc
+      A = A * 1 := by ring
+      _ ≤ A * Real.log |t| :=
+          mul_le_mul_of_nonneg_left hlog_ge_one hA
+  have hlog_abs : Real.log (|t| + 3) ≤ 2 * Real.log |t| :=
+    log_abs_add_three_le_two_log_abs ht3
+  calc
+    ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖
+        ≤ A + B * Real.log (|t| + 3) :=
+          hvertical σ t ht hσ_mem
+    _ ≤ A * Real.log |t| + B * (2 * Real.log |t|) := by
+          exact add_le_add hA_le (mul_le_mul_of_nonneg_left hlog_abs hB)
+    _ = (A + 2 * B) * Real.log |t| := by ring
+
+/-- Multiplicative version of
+`exists_re_im_logDeriv_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height`. -/
+lemma exists_re_im_logDeriv_vertical_log_bound_of_log_abs_add_three_bound_high_height
+    (T0 C : ℝ) (hT0 : 3 ≤ T0) (hC : 0 ≤ C)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          C * Real.log (|t| + 3)) :
+    ∃ C' T0' : ℝ, 0 ≤ C' ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          C' * Real.log |t| := by
+  refine
+    exists_re_im_logDeriv_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height
+      T0 0 C hT0 (by norm_num) hC ?_
+  intro σ t ht hσ
+  simpa using hvertical σ t ht hσ
+
+/-- Signed standalone normalization of a future `-logDeriv ζ` estimate in the
+safe height scale `A + B * log(|t| + 3)`. -/
+lemma exists_re_im_neg_logDeriv_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height
+    (T0 A B : ℝ) (hT0 : 3 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          A + B * Real.log (|t| + 3)) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          C * Real.log |t| := by
+  have hvertical_pos :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          A + B * Real.log (|t| + 3) := by
+    intro σ t ht hσ
+    calc
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖
+          = ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ := (norm_neg _).symm
+      _ ≤ A + B * Real.log (|t| + 3) := hvertical σ t ht hσ
+  rcases
+      exists_re_im_logDeriv_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height
+        T0 A B hT0 hA hB hvertical_pos with
+    ⟨C, T0', hC, hT0', hbound⟩
+  refine ⟨C, T0', hC, hT0', ?_⟩
+  intro σ t hσ_left hσ_right ht
+  calc
+    ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖
+        = ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ := norm_neg _
+    _ ≤ C * Real.log |t| := hbound σ t hσ_left hσ_right ht
+
+/-- Multiplicative signed version of
+`exists_re_im_neg_logDeriv_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height`. -/
+lemma exists_re_im_neg_logDeriv_vertical_log_bound_of_log_abs_add_three_bound_high_height
+    (T0 C : ℝ) (hT0 : 3 ≤ T0) (hC : 0 ≤ C)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          C * Real.log (|t| + 3)) :
+    ∃ C' T0' : ℝ, 0 ≤ C' ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          C' * Real.log |t| := by
+  refine
+    exists_re_im_neg_logDeriv_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height
+      T0 0 C hT0 (by norm_num) hC ?_
+  intro σ t ht hσ
+  simpa using hvertical σ t ht hσ
+
+/-- Real-part quotient version of
+`exists_re_im_logDeriv_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height`. -/
+lemma exists_re_neg_deriv_div_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height
+    (T0 A B : ℝ) (hT0 : 3 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          A + B * Real.log (|t| + 3)) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re ≤
+          C * Real.log |t| := by
+  rcases
+      exists_re_im_logDeriv_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height
+        T0 A B hT0 hA hB hvertical with
+    ⟨C, T0', hC, hT0', hnorm⟩
+  refine ⟨C, T0', hC, hT0', ?_⟩
+  intro σ t hσ_left hσ_right ht
+  let z : ℂ := (σ : ℂ) + I * t
+  calc
+    (-deriv riemannZeta z / riemannZeta z).re
+        ≤ ‖-deriv riemannZeta z / riemannZeta z‖ := Complex.re_le_norm _
+    _ = ‖logDeriv riemannZeta z‖ :=
+        norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv z
+    _ ≤ C * Real.log |t| := by
+        simpa [z] using hnorm σ t hσ_left hσ_right ht
+
+/-- Signed-norm real-part quotient version of
+`exists_re_neg_deriv_div_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height`. -/
+lemma exists_re_neg_deriv_div_vertical_log_bound_of_neg_affine_log_abs_add_three_bound_high_height
+    (T0 A B : ℝ) (hT0 : 3 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          A + B * Real.log (|t| + 3)) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re ≤
+          C * Real.log |t| := by
+  rcases
+      exists_re_im_neg_logDeriv_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height
+        T0 A B hT0 hA hB hvertical with
+    ⟨C, T0', hC, hT0', hnorm⟩
+  refine ⟨C, T0', hC, hT0', ?_⟩
+  intro σ t hσ_left hσ_right ht
+  let z : ℂ := (σ : ℂ) + I * t
+  calc
+    (-deriv riemannZeta z / riemannZeta z).re
+        ≤ ‖-deriv riemannZeta z / riemannZeta z‖ := Complex.re_le_norm _
+    _ = ‖logDeriv riemannZeta z‖ :=
+        norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv z
+    _ = ‖-logDeriv riemannZeta z‖ := (norm_neg _).symm
+    _ ≤ C * Real.log |t| := by
+        simpa [z] using hnorm σ t hσ_left hσ_right ht
+
 /-- Coordinate bridge from a `C * log (|t| + 3)` local regular-part bound to a
 pure logarithmic real-part bound at heights `|t| >= 3`. -/
 lemma re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_regular_part_norm_log_abs_add_three
