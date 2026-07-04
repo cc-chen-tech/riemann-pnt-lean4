@@ -144,5 +144,33 @@ lemma explicitFormulaTruncated_of (T : ℝ) (hT : 0 < T) (x : ℝ) (hx : 0 < x)
     ExplicitFormulaTruncatedTarget T hT x hx :=
   h
 
+/-! ## Converse route toward power-scale PNT error barriers -/
+
+/-- Route interface from the truncated explicit formula target to the
+power-scale converse used by the `Re(s)=1/3` bridge.
+
+This keeps two dependencies explicit:
+1. the future proof of the truncated explicit formula for all admissible
+   heights and positive `x`;
+2. the future oscillation/converse argument extracting a zero-free half-plane
+   from a `ψ(x)-x = O(x^θ)` bound with `θ < β`.
+
+It is intentionally a `Prop` interface, not a theorem asserting either
+dependency unconditionally. -/
+def ExplicitFormulaTruncatedConverseRoute (β : ℝ) : Prop :=
+  (∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
+      ExplicitFormulaTruncatedTarget T hT x hx) →
+    PrimeNumberTheorem.ExplicitFormulaConversePowerTarget β
+
+/-- Repackage a truncated-explicit-formula converse route as the power
+converse target used by the main PNT bridge. -/
+lemma explicitFormulaConversePower_of_truncated_route
+    {β : ℝ}
+    (hroute : ExplicitFormulaTruncatedConverseRoute β)
+    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
+      ExplicitFormulaTruncatedTarget T hT x hx) :
+    PrimeNumberTheorem.ExplicitFormulaConversePowerTarget β :=
+  hroute hexplicit
+
 end ExplicitFormulaTruncated
 end PrimeNumberTheorem

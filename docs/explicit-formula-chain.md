@@ -211,6 +211,13 @@ For the principal value final formula:
 For a PNT proof, the truncated formula plus a zero-free region and boundary
 estimates may be more useful than the full principal-value exact formula.
 
+The current Lean API also names the converse route explicitly:
+`PrimeNumberTheorem.ExplicitFormulaConversePowerTarget` and
+`PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute`
+package the future step from a uniform truncated explicit formula plus an
+oscillation argument to zero-free vertical-line consequences.  These are route
+interfaces, not proved analytic theorems.
+
 ## Recommended next formalization order
 
 1. Add definitions only: `jumpVonMangoldt`, `chebyshevPsi0`,

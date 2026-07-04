@@ -705,6 +705,54 @@ lemma log_deriv_zeta_nonneg_combination (σ : ℝ) (hσ : 1 < σ) (t : ℝ) :
         simpa [mul_assoc] using trig_identity_nonneg (t * Real.log (n : ℝ))
       exact div_nonneg (mul_nonneg hΛ htrig) hden)
 
+private lemma finset_summable_sum_real {ι : Type*}
+    (S : Finset ι) (f : ι → ℕ → ℝ)
+    (hf : ∀ i ∈ S, Summable (f i)) :
+    Summable (fun n : ℕ => ∑ i ∈ S, f i n) := by
+  classical
+  induction S using Finset.induction_on with
+  | empty =>
+      simp
+  | insert a S ha ih =>
+      have hfa : Summable (f a) := hf a (Finset.mem_insert_self a S)
+      have hfS : ∀ i ∈ S, Summable (f i) := by
+        intro i hi
+        exact hf i (Finset.mem_insert_of_mem hi)
+      have hsumS : Summable (fun n : ℕ => ∑ i ∈ S, f i n) := ih hfS
+      refine (hfa.add hsumS).congr ?_
+      intro n
+      simp [ha]
+
+private lemma finset_sum_tsum_eq_tsum_sum_real {ι : Type*}
+    (S : Finset ι) (f : ι → ℕ → ℝ)
+    (hf : ∀ i ∈ S, Summable (f i)) :
+    (∑ i ∈ S, ∑' n : ℕ, f i n) =
+      ∑' n : ℕ, ∑ i ∈ S, f i n := by
+  classical
+  induction S using Finset.induction_on with
+  | empty =>
+      simp
+  | insert a S ha ih =>
+      have hfa : Summable (f a) := hf a (Finset.mem_insert_self a S)
+      have hfS : ∀ i ∈ S, Summable (f i) := by
+        intro i hi
+        exact hf i (Finset.mem_insert_of_mem hi)
+      have hsumS : Summable (fun n : ℕ => ∑ i ∈ S, f i n) :=
+        finset_summable_sum_real S f hfS
+      have hih := ih hfS
+      calc
+        (∑ i ∈ insert a S, ∑' n : ℕ, f i n)
+            = (∑' n : ℕ, f a n) + ∑ i ∈ S, ∑' n : ℕ, f i n := by
+                simp [ha]
+        _ = (∑' n : ℕ, f a n) + ∑' n : ℕ, ∑ i ∈ S, f i n := by
+                rw [hih]
+        _ = ∑' n : ℕ, (f a n + ∑ i ∈ S, f i n) := by
+                rw [← hfa.tsum_add hsumS]
+        _ = ∑' n : ℕ, ∑ i ∈ insert a S, f i n := by
+                apply tsum_congr
+                intro n
+                simp [ha]
+
 /-! ### Finite trigonometric-detector skeleton
 
 The following lemmas isolate the part of the de la Vallée Poussin/Heath-Brown
@@ -713,6 +761,80 @@ analytic identity `hseries` is deliberately explicit: proving it automatically
 for large detector polynomials is a separate finite-sum/Dirichlet-series
 exchange step.
 -/
+
+/-- Finite logarithmic-derivative combinations can be expanded into one
+von Mangoldt Dirichlet series weighted by the corresponding finite cosine
+polynomial. -/
+lemma log_deriv_zeta_finset_series_identity
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ) (S : Finset ℕ) (a : ℕ → ℝ) :
+      (∑ k ∈ S, a k *
+        (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+          riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re)
+        =
+      ∑' n : ℕ,
+        Λ n *
+          (∑ k ∈ S, a k * Real.cos ((k : ℝ) * (t * Real.log (n : ℝ)))) /
+            (n : ℝ) ^ σ := by
+  classical
+  let term : ℕ → ℕ → ℝ :=
+    fun k n =>
+      Λ n * Real.cos ((k : ℝ) * (t * Real.log (n : ℝ))) / (n : ℝ) ^ σ
+  have h_re_summable : ∀ (s : ℂ), 1 < s.re →
+      Summable (fun n : ℕ ↦ Λ n * Real.cos (s.im * Real.log ↑n) / (↑n : ℝ) ^ s.re) := by
+    intro s hs
+    have h_ls := ArithmeticFunction.LSeriesSummable_vonMangoldt hs
+    have h_map := Complex.reCLM.summable h_ls
+    exact h_map.congr (fun n ↦ by
+      simp only [Complex.reCLM_apply, LSeries.term]
+      split_ifs with hn
+      · subst hn; simp [ArithmeticFunction.vonMangoldt]
+      · rw [div_eq_mul_inv, ← cpow_neg, Complex.re_ofReal_mul,
+            natCast_cpow_neg_re hn, Real.rpow_neg (Nat.cast_nonneg n)]
+        ring)
+  have hterm_summable : ∀ k : ℕ, Summable (term k) := by
+    intro k
+    have hs : 1 < (((σ : ℂ) + (k : ℂ) * I * t)).re := by
+      simp [hσ]
+    have h := h_re_summable (((σ : ℂ) + (k : ℂ) * I * t)) hs
+    simpa [term, mul_assoc] using h
+  have hweighted : ∀ k ∈ S, Summable (fun n : ℕ => a k * term k n) := by
+    intro k _hk
+    exact (hterm_summable k).mul_left (a k)
+  have hseries : ∀ k ∈ S,
+      (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+          riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re =
+        ∑' n : ℕ, term k n := by
+    intro k _hk
+    have hs : 1 < (((σ : ℂ) + (k : ℂ) * I * t)).re := by
+      simp [hσ]
+    have h := log_deriv_zeta_re_series (((σ : ℂ) + (k : ℂ) * I * t)) hs
+    simpa [term, mul_assoc] using h
+  calc
+    (∑ k ∈ S, a k *
+        (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+          riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re)
+        = ∑ k ∈ S, a k * (∑' n : ℕ, term k n) := by
+            apply Finset.sum_congr rfl
+            intro k hk
+            rw [hseries k hk]
+    _ = ∑ k ∈ S, ∑' n : ℕ, a k * term k n := by
+            apply Finset.sum_congr rfl
+            intro k _hk
+            rw [tsum_mul_left]
+    _ = ∑' n : ℕ, ∑ k ∈ S, a k * term k n :=
+            finset_sum_tsum_eq_tsum_sum_real S (fun k n => a k * term k n) hweighted
+    _ =
+      ∑' n : ℕ,
+        Λ n *
+          (∑ k ∈ S, a k * Real.cos ((k : ℝ) * (t * Real.log (n : ℝ)))) /
+            (n : ℝ) ^ σ := by
+            apply tsum_congr
+            intro n
+            dsimp [term]
+            rw [Finset.mul_sum, Finset.sum_div]
+            apply Finset.sum_congr rfl
+            intro k _hk
+            ring
 
 /-- General finite trigonometric detector: once a finite logarithmic-derivative
 combination is identified with a von Mangoldt Dirichlet series weighted by a
@@ -763,6 +885,57 @@ lemma log_deriv_zeta_nonneg_list_combination
         (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
           riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re :=
   log_deriv_zeta_nonneg_finset_combination σ hσ t ks.toFinset a hseries hpoly
+
+/-- Automatic finite trigonometric detector: the finite
+logarithmic-derivative combination is nonnegative once the corresponding
+finite cosine polynomial is pointwise nonnegative. -/
+lemma log_deriv_zeta_nonneg_finset_combination_auto
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ) (S : Finset ℕ) (a : ℕ → ℝ)
+    (hpoly : ∀ θ : ℝ, 0 ≤ ∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ)) :
+    0 ≤
+      ∑ k ∈ S, a k *
+        (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+          riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re :=
+  log_deriv_zeta_nonneg_finset_combination σ hσ t S a
+    (log_deriv_zeta_finset_series_identity σ hσ t S a) hpoly
+
+/-- List-indexed automatic finite trigonometric detector. -/
+lemma log_deriv_zeta_nonneg_list_combination_auto
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ) (ks : List ℕ) (a : ℕ → ℝ)
+    (hpoly : ∀ θ : ℝ, 0 ≤ ∑ k ∈ ks.toFinset, a k * Real.cos ((k : ℝ) * θ)) :
+    0 ≤
+      ∑ k ∈ ks.toFinset, a k *
+        (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+          riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re :=
+  log_deriv_zeta_nonneg_finset_combination_auto σ hσ t ks.toFinset a hpoly
+
+/-- A simple square certificate for pointwise nonnegativity of a finite cosine
+polynomial.  This is a first certificate hook; more general complex-exponential
+sum-of-squares certificates can refine this interface later. -/
+lemma trigPolynomial_nonneg_of_sq_certificate
+    (S K : Finset ℕ) (a c : ℕ → ℝ)
+    (hcert : ∀ θ : ℝ,
+      (∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ)) =
+        (∑ k ∈ K, c k * Real.cos ((k : ℝ) * θ)) ^ 2) :
+    ∀ θ : ℝ, 0 ≤ ∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ) := by
+  intro θ
+  rw [hcert θ]
+  exact sq_nonneg _
+
+/-- Automatic finite detector from a square certificate for the detector
+cosine polynomial. -/
+lemma log_deriv_zeta_nonneg_finset_combination_auto_of_sq_certificate
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ)
+    (S K : Finset ℕ) (a c : ℕ → ℝ)
+    (hcert : ∀ θ : ℝ,
+      (∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ)) =
+        (∑ k ∈ K, c k * Real.cos ((k : ℝ) * θ)) ^ 2) :
+    0 ≤
+      ∑ k ∈ S, a k *
+        (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+          riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re :=
+  log_deriv_zeta_nonneg_finset_combination_auto σ hσ t S a
+    (trigPolynomial_nonneg_of_sq_certificate S K a c hcert)
 
 /-- The existing `3-4-1` theorem as the base detector instance. -/
 lemma log_deriv_zeta_nonneg_three_four_one_from_finset

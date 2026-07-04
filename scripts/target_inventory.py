@@ -57,7 +57,9 @@ MATH_TARGETS = {
 }
 
 ROUTE_INTERFACES = {
+    "PrimeNumberTheorem.ExplicitFormulaConversePowerTarget": "Explicit formula",
     "PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget": "Explicit formula",
+    "PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute": "Explicit formula",
     "MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum": "Explicit formula",
     "HardyTheorem.AFE.zeta_critical_afe_target": "Hardy theorem",
     "RiemannExplorer.Conrey40.conrey_40_percent_zeros_on_critical_line_target": "Hardy theorem",

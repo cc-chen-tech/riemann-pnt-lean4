@@ -7,7 +7,7 @@ intentionally recorded as `def ... : Prop` target statements.
 
 At present there are **22** unresolved mathematical `def ... : Prop` targets,
 partitioned into exactly **4** analytic chains.  The recursive scanner also
-tracks 4 route interfaces and 2 reusable Prop predicates so subdirectory
+tracks 6 route interfaces and 2 reusable Prop predicates so subdirectory
 interfaces cannot be hidden by the target count:
 
 1. Quantitative zero-free region

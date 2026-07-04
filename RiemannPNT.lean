@@ -3,6 +3,7 @@ import GammaResidue
 import HardyTheorem
 import EulerAndLfunctions
 import PrimeNumberTheorem
+import PrimeNumberTheorem.ExplicitFormulaTruncated
 import ZeroFreeRegion
 import ZeroFreeRegion.MeromorphicAux
 
@@ -1813,6 +1814,24 @@ theorem finite_zero_sum_nonnegative_of_pairing_condition
   PrimeNumberTheorem.finite_zero_sum_nonnegative_of_pairing_condition
     S F pair hpair
 
+/-- Public strip-local Stechkin/Heath-Brown pair-positivity interface. -/
+abbrev LaplacePairPositive (F : ℂ → ℂ) (center : ℝ) : Prop :=
+  PrimeNumberTheorem.LaplacePairPositive F center
+
+/-- Public finite paired-zero nonnegativity from strip-local pair positivity. -/
+theorem finite_zero_sum_nonnegative_of_laplace_pair_positive
+    (S : Finset ℂ) (F : ℂ → ℂ) (center : ℝ)
+    (hF : PrimeNumberTheorem.LaplacePairPositive F center)
+    (hstrip : ∀ ρ ∈ S, 0 ≤ ρ.re ∧ ρ.re ≤ center) :
+    0 ≤ ∑ ρ ∈ S, ((F ρ).re + (F ((center : ℂ) - ρ)).re) :=
+  PrimeNumberTheorem.finite_zero_sum_nonnegative_of_laplace_pair_positive
+    S F center hF hstrip
+
+/-- Public explicit-formula converse interface for excluding zeros from a
+power-scale Chebyshev-`ψ` error bound. -/
+abbrev ExplicitFormulaConversePowerTarget (β : ℝ) : Prop :=
+  PrimeNumberTheorem.ExplicitFormulaConversePowerTarget β
+
 /-- Public conditional bridge from a general `ψ` power-saving error below a
 line to zero-freeness on that vertical line. -/
 theorem no_zeros_on_vertical_line_of_psi_power_error_bridge
@@ -1823,6 +1842,16 @@ theorem no_zeros_on_vertical_line_of_psi_power_error_bridge
   PrimeNumberTheorem.no_zeros_on_vertical_line_of_psi_power_error_bridge
     hβ_pos hβ_lt_one hbridge herror
 
+/-- Public conditional bridge from the explicit-formula converse interface to
+zero-freeness on the same vertical line. -/
+theorem no_zeros_on_vertical_line_of_explicit_formula_converse_power
+    {β : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hbridge : PrimeNumberTheorem.ExplicitFormulaConversePowerTarget β)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine β :=
+  PrimeNumberTheorem.no_zeros_on_vertical_line_of_explicit_formula_converse_power
+    hβ_pos hβ_lt_one hbridge herror
+
 /-- Public specialization of the general `ψ` power-saving bridge to the
 reflected `2/3` line and hence the `1/3` line. -/
 theorem no_zeros_on_one_third_of_general_psi_power_error_bridge
@@ -1831,6 +1860,15 @@ theorem no_zeros_on_one_third_of_general_psi_power_error_bridge
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine (2 / 3)) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) :=
   PrimeNumberTheorem.no_zeros_on_one_third_of_general_psi_power_error_bridge
+    hbridge herror
+
+/-- Public specialization of the explicit-formula converse bridge to the
+reflected `2/3` line and hence the `1/3` line. -/
+theorem no_zeros_on_one_third_of_explicit_formula_converse_power
+    (hbridge : PrimeNumberTheorem.ExplicitFormulaConversePowerTarget (2 / 3))
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine (2 / 3)) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) :=
+  PrimeNumberTheorem.no_zeros_on_one_third_of_explicit_formula_converse_power
     hbridge herror
 
 /-- Public critical-strip location theorem for nontrivial zeta zeros. -/
@@ -1994,6 +2032,43 @@ theorem sum_nontrivialZerosFinset_one_sub (T : ℝ) (f : ℂ → ℂ) :
     (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T, f (1 - ρ)) =
       ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T, f ρ :=
   PrimeNumberTheorem.sum_nontrivialZerosFinset_one_sub T f
+
+/-- Public nonnegativity of finite nontrivial-zero contributions paired by
+the zeta symmetry `ρ ↦ 1 - ρ`. -/
+theorem nontrivialZerosFinset_pair_sum_nonnegative
+    (T : ℝ) (F : ℂ → ℂ)
+    (hF : PrimeNumberTheorem.ZeroPairContributionNonnegative F 1) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+      ((F ρ).re + (F (1 - ρ)).re) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_pair_sum_nonnegative T F hF
+
+/-- Public reindexing identity for real-valued finite zero sums under
+`ρ ↦ 1 - ρ`. -/
+theorem sum_nontrivialZerosFinset_pair_re (T : ℝ) (F : ℂ → ℂ) :
+    (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T, (F (1 - ρ)).re) =
+      ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T, (F ρ).re :=
+  PrimeNumberTheorem.sum_nontrivialZerosFinset_pair_re T F
+
+/-- Public paired contribution rewrite for finite nontrivial-zero sums. -/
+theorem nontrivialZerosFinset_pair_contribution_eq_two_sum_re
+    (T : ℝ) (F : ℂ → ℂ) :
+    (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+      ((F ρ).re + (F (1 - ρ)).re)) =
+      2 * ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T, (F ρ).re :=
+  PrimeNumberTheorem.nontrivialZerosFinset_pair_contribution_eq_two_sum_re
+    T F
+
+/-- Public finite nontrivial-zero paired-sum nonnegativity from strip-local
+Laplace-pair positivity. -/
+theorem nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive
+    (T : ℝ) (F : ℂ → ℂ) (center : ℝ)
+    (hF : PrimeNumberTheorem.LaplacePairPositive F center)
+    (hstrip : ∀ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+      0 ≤ ρ.re ∧ ρ.re ≤ center) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+      ((F ρ).re + (F ((center : ℂ) - ρ)).re) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive
+    T F center hF hstrip
 
 /-- Public extensionality criterion for height-truncated nontrivial-zero
 finsets. -/
@@ -4216,6 +4291,20 @@ theorem log_deriv_zeta_nonneg_combination (σ : ℝ) (hσ : 1 < σ) (t : ℝ) :
           riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re ≥ 0 :=
   ZeroFreeRegion.log_deriv_zeta_nonneg_combination σ hσ t
 
+/-- Public finite logarithmic-derivative series identity for trigonometric
+detector combinations. -/
+theorem log_deriv_zeta_finset_series_identity
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ) (S : Finset ℕ) (a : ℕ → ℝ) :
+      (∑ k ∈ S, a k *
+        (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t) /
+          riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re)
+        =
+      ∑' n : ℕ,
+        Λ n *
+          (∑ k ∈ S, a k * Real.cos ((k : ℝ) * (t * Real.log (n : ℝ)))) /
+            (n : ℝ) ^ σ :=
+  ZeroFreeRegion.log_deriv_zeta_finset_series_identity σ hσ t S a
+
 /-- Public finite trigonometric-detector skeleton for logarithmic-derivative
 combinations. -/
 theorem log_deriv_zeta_nonneg_finset_combination
@@ -4236,6 +4325,18 @@ theorem log_deriv_zeta_nonneg_finset_combination
           riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re :=
   ZeroFreeRegion.log_deriv_zeta_nonneg_finset_combination
     σ hσ t S a hseries hpoly
+
+/-- Public automatic finite trigonometric-detector theorem: the required
+series identity is discharged from `log_deriv_zeta_re_series`. -/
+theorem log_deriv_zeta_nonneg_finset_combination_auto
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ) (S : Finset ℕ) (a : ℕ → ℝ)
+    (hpoly : ∀ θ : ℝ, 0 ≤ ∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ)) :
+    0 ≤
+      ∑ k ∈ S, a k *
+        (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t) /
+          riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re :=
+  ZeroFreeRegion.log_deriv_zeta_nonneg_finset_combination_auto
+    σ hσ t S a hpoly
 
 /-- Public list-indexed finite trigonometric-detector wrapper. -/
 theorem log_deriv_zeta_nonneg_list_combination
@@ -4259,6 +4360,19 @@ theorem log_deriv_zeta_nonneg_list_combination
           riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re :=
   ZeroFreeRegion.log_deriv_zeta_nonneg_list_combination
     σ hσ t ks a hseries hpoly
+
+/-- Public automatic list-indexed finite trigonometric-detector theorem. -/
+theorem log_deriv_zeta_nonneg_list_combination_auto
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ) (ks : List ℕ) (a : ℕ → ℝ)
+    (hpoly :
+      ∀ θ : ℝ, 0 ≤
+        ∑ k ∈ ks.toFinset, a k * Real.cos ((k : ℝ) * θ)) :
+    0 ≤
+      ∑ k ∈ ks.toFinset, a k *
+        (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t) /
+          riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re :=
+  ZeroFreeRegion.log_deriv_zeta_nonneg_list_combination_auto
+    σ hσ t ks a hpoly
 
 /-- Public statement of the existing `3-4-1` theorem in the finite-detector
 section. -/
@@ -11176,6 +11290,24 @@ theorem explicit_formula_von_mangoldt_iff
       Tendsto (fun T : ℝ => PrimeNumberTheorem.explicitFormulaApprox x T)
         atTop (𝓝 (PrimeNumberTheorem.chebyshevPsi0 x : ℂ)) :=
   PrimeNumberTheorem.explicit_formula_von_mangoldt_iff
+
+/-- Public route interface from a future truncated explicit formula to the
+power-scale explicit-formula converse target. -/
+abbrev ExplicitFormulaTruncatedConverseRoute (β : ℝ) : Prop :=
+  PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute β
+
+/-- Public repackaging of a truncated-explicit-formula converse route as the
+power-scale explicit-formula converse interface. -/
+theorem explicitFormulaConversePower_of_truncated_route
+    {β : ℝ}
+    (hroute :
+      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute β)
+    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
+      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget
+        T hT x hx) :
+    PrimeNumberTheorem.ExplicitFormulaConversePowerTarget β :=
+  PrimeNumberTheorem.ExplicitFormulaTruncated.explicitFormulaConversePower_of_truncated_route
+    hroute hexplicit
 
 /-- Public constructor for the corrected explicit-formula target from an
 eventually equal approximation family. -/

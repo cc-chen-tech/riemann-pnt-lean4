@@ -2719,6 +2719,15 @@ of the concrete Laplace transform used in an explicit zero detector.
 abbrev ZeroPairContributionNonnegative (F : ℂ → ℂ) (center : ℂ) : Prop :=
   ∀ z : ℂ, 0 ≤ (F z).re + (F (center - z)).re
 
+/-- Strip-local Stechkin/Heath-Brown pair positivity.
+
+The positivity assumption is only required for points whose real part lies in
+`[0, center]`; this is the shape needed before specializing to a finite family
+of zeros known to lie in the relevant strip. -/
+abbrev LaplacePairPositive (F : ℂ → ℂ) (center : ℝ) : Prop :=
+  ∀ z : ℂ, 0 ≤ z.re → z.re ≤ center →
+    0 ≤ (F z).re + (F ((center : ℂ) - z)).re
+
 /-- Direct use of the zero-pair nonnegativity condition. -/
 lemma zero_pair_contribution_nonnegative_of_reflection_condition
     {F : ℂ → ℂ} {center z : ℂ}
@@ -2734,6 +2743,15 @@ lemma finite_zero_sum_nonnegative_of_pairing_condition
     (hpair : ∀ ρ ∈ S, 0 ≤ (F ρ).re + (F (pair ρ)).re) :
     0 ≤ ∑ ρ ∈ S, ((F ρ).re + (F (pair ρ)).re) :=
   Finset.sum_nonneg hpair
+
+/-- Finite paired contributions are nonnegative from strip-local pair
+positivity, provided every point in the finite set lies in the strip. -/
+lemma finite_zero_sum_nonnegative_of_laplace_pair_positive
+    (S : Finset ℂ) (F : ℂ → ℂ) (center : ℝ)
+    (hF : LaplacePairPositive F center)
+    (hstrip : ∀ ρ ∈ S, 0 ≤ ρ.re ∧ ρ.re ≤ center) :
+    0 ≤ ∑ ρ ∈ S, ((F ρ).re + (F ((center : ℂ) - ρ)).re) :=
+  Finset.sum_nonneg (fun ρ hρ => hF ρ (hstrip ρ hρ).1 (hstrip ρ hρ).2)
 
 /-! ### Vertical-line bridges around `Re(s) = 1 / 3`
 
@@ -2859,6 +2877,16 @@ abbrev PsiPowerErrorBelowLineExcludesZerosRightOf (β : ℝ) : Prop :=
   PsiPowerErrorBelowLine β →
     ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → β ≤ ρ.re → False
 
+/-- Explicit-formula converse target: a power saving below `β` for
+Chebyshev-`ψ` excludes nontrivial zeros on or to the right of `Re(s)=β`.
+
+This is intentionally a route interface.  The missing mathematics is the
+converse explicit-formula/oscillation theorem turning a zero term `x^ρ / ρ`
+into an obstruction to a smaller power-scale PNT error. -/
+def ExplicitFormulaConversePowerTarget (β : ℝ) : Prop :=
+  PsiPowerErrorBelowLine β →
+    ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → β ≤ ρ.re → False
+
 /-- Conditional bridge from a general `ψ` power-saving error to a zero-free
 vertical line at the same real part. -/
 theorem no_zeros_on_vertical_line_of_psi_power_error_bridge
@@ -2873,6 +2901,15 @@ theorem no_zeros_on_vertical_line_of_psi_power_error_bridge
     · linarith [hs, hβ_lt_one]
   exact hbridge herror s hnt (le_of_eq hs.symm)
 
+/-- Same vertical-line bridge with the explicit-formula converse dependency
+named directly. -/
+theorem no_zeros_on_vertical_line_of_explicit_formula_converse_power
+    {β : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hbridge : ExplicitFormulaConversePowerTarget β)
+    (herror : PsiPowerErrorBelowLine β) :
+    NoZerosOnVerticalLine β :=
+  no_zeros_on_vertical_line_of_psi_power_error_bridge hβ_pos hβ_lt_one hbridge herror
+
 /-- Specialization of the general `ψ`-error bridge to the reflected
 `Re(s) = 2 / 3` line, hence to `Re(s) = 1 / 3` by zero symmetry. -/
 theorem no_zeros_on_one_third_of_general_psi_power_error_bridge
@@ -2883,6 +2920,15 @@ theorem no_zeros_on_one_third_of_general_psi_power_error_bridge
     (StrongPNTError := PsiPowerErrorBelowLine (2 / 3))
     (fun herror' ρ hρ hρre => hbridge herror' ρ hρ (le_of_eq hρre.symm))
     herror
+
+/-- Specialization of the explicit-formula converse bridge: excluding
+nontrivial zeros on or to the right of `Re(s)=2/3` excludes zeta zeros on the
+reflected line `Re(s)=1/3`. -/
+theorem no_zeros_on_one_third_of_explicit_formula_converse_power
+    (hbridge : ExplicitFormulaConversePowerTarget (2 / 3))
+    (herror : PsiPowerErrorBelowLine (2 / 3)) :
+    NoZerosOnVerticalLine (1 / 3) :=
+  no_zeros_on_one_third_of_general_psi_power_error_bridge hbridge herror
 
 /-! ## 平凡零点表征 -/
 
@@ -3642,6 +3688,56 @@ lemma sum_nontrivialZerosFinset_one_sub (T : ℝ) (f : ℂ → ℂ) :
     ring
   · intro ρ _hρ
     rfl
+
+/-! The next two lemmas specialize the abstract zero-pair skeleton to the
+finite family of nontrivial zeta zeros used by the explicit-formula
+infrastructure below. -/
+
+/-- Finite nontrivial-zero contributions are nonnegative when paired by the
+zeta functional-equation symmetry `ρ ↦ 1 - ρ`. -/
+lemma nontrivialZerosFinset_pair_sum_nonnegative
+    (T : ℝ) (F : ℂ → ℂ)
+    (hF : ZeroPairContributionNonnegative F 1) :
+    0 ≤ ∑ ρ ∈ nontrivialZerosFinset T, ((F ρ).re + (F (1 - ρ)).re) :=
+  Finset.sum_nonneg (fun ρ _hρ => hF ρ)
+
+/-- Reindex a real-valued finite zero sum by the zeta zero symmetry
+`ρ ↦ 1 - ρ`. -/
+lemma sum_nontrivialZerosFinset_pair_re (T : ℝ) (F : ℂ → ℂ) :
+    (∑ ρ ∈ nontrivialZerosFinset T, (F (1 - ρ)).re) =
+      ∑ ρ ∈ nontrivialZerosFinset T, (F ρ).re := by
+  classical
+  refine Finset.sum_nbij' (fun ρ : ℂ => 1 - ρ) (fun ρ : ℂ => 1 - ρ) ?_ ?_ ?_ ?_ ?_
+  · intro ρ hρ
+    exact one_sub_mem_nontrivialZerosFinset hρ
+  · intro ρ hρ
+    exact one_sub_mem_nontrivialZerosFinset hρ
+  · intro ρ _hρ
+    ring
+  · intro ρ _hρ
+    ring
+  · intro ρ _hρ
+    rfl
+
+/-- A paired finite zero contribution equals twice the unpaired real-part sum,
+after reindexing by `ρ ↦ 1 - ρ`. -/
+lemma nontrivialZerosFinset_pair_contribution_eq_two_sum_re
+    (T : ℝ) (F : ℂ → ℂ) :
+    (∑ ρ ∈ nontrivialZerosFinset T, ((F ρ).re + (F (1 - ρ)).re)) =
+      2 * ∑ ρ ∈ nontrivialZerosFinset T, (F ρ).re := by
+  rw [Finset.sum_add_distrib, sum_nontrivialZerosFinset_pair_re]
+  ring
+
+/-- Specialize strip-local Stechkin/Heath-Brown pair positivity to the finite
+family of nontrivial zeros up to height `T`. -/
+lemma nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive
+    (T : ℝ) (F : ℂ → ℂ) (center : ℝ)
+    (hF : LaplacePairPositive F center)
+    (hstrip : ∀ ρ ∈ nontrivialZerosFinset T, 0 ≤ ρ.re ∧ ρ.re ≤ center) :
+    0 ≤ ∑ ρ ∈ nontrivialZerosFinset T,
+      ((F ρ).re + (F ((center : ℂ) - ρ)).re) :=
+  finite_zero_sum_nonnegative_of_laplace_pair_positive
+    (nontrivialZerosFinset T) F center hF hstrip
 
 lemma nontrivialZerosFinset_ext_of_height_iff {T U : ℝ}
     (h : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ →

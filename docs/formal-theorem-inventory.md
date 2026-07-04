@@ -34,12 +34,21 @@ Core verified declarations:
   extracts the real-part Dirichlet series for `-zeta'/zeta`.
 - `log_deriv_zeta_nonneg_combination`
   proves the full 3-4-1 logarithmic-derivative nonnegativity combination.
+- `log_deriv_zeta_finset_series_identity`
+  proves the finite-sum/Dirichlet-series exchange needed to expand arbitrary
+  finite logarithmic-derivative detector combinations in the half-plane
+  `sigma > 1`.
 - `log_deriv_zeta_nonneg_finset_combination`
   proves a finite trigonometric-detector skeleton: after supplying the
   Dirichlet-series identity and pointwise nonnegativity of the detector
   polynomial, the finite logarithmic-derivative combination is nonnegative.
 - `log_deriv_zeta_nonneg_list_combination`
   is the list-indexed wrapper for the same detector skeleton.
+- `log_deriv_zeta_nonneg_finset_combination_auto` and
+  `log_deriv_zeta_nonneg_list_combination_auto`
+  discharge the finite Dirichlet-series identity automatically from
+  `log_deriv_zeta_finset_series_identity`, leaving only pointwise
+  nonnegativity of the finite cosine polynomial as an input.
 - `log_deriv_zeta_nonneg_three_four_one_from_finset`
   re-exposes the verified 3-4-1 theorem as the base detector instance.
 - `classical_zero_free_region_compact`
@@ -1254,10 +1263,19 @@ Core verified declarations:
 - `nontrivial_zero_symmetric'`
   packages the symmetry as preservation of `IsNontrivialZero`.
 - `ZeroPairContributionNonnegative`,
-  `zero_pair_contribution_nonnegative_of_reflection_condition`, and
-  `finite_zero_sum_nonnegative_of_pairing_condition`
+  `zero_pair_contribution_nonnegative_of_reflection_condition`,
+  `finite_zero_sum_nonnegative_of_pairing_condition`,
+  `LaplacePairPositive`, and
+  `finite_zero_sum_nonnegative_of_laplace_pair_positive`
   isolate a finite paired-zero nonnegativity skeleton for future
   Stechkin/Heath-Brown style zero detector arguments.
+- `nontrivialZerosFinset_pair_sum_nonnegative`,
+  `sum_nontrivialZerosFinset_pair_re`,
+  `nontrivialZerosFinset_pair_contribution_eq_two_sum_re`, and
+  `nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive`
+  specialize the paired-zero skeleton to the finite family of nontrivial zeta
+  zeros up to bounded height, including the symmetry `rho -> 1 - rho` and the
+  strip-local pair-positivity interface.
 - `NoZerosOnVerticalLine`
   is a reusable predicate for excluding zeta zeros on a fixed vertical line.
 - `no_zeros_on_one_third_of_RH`
@@ -1286,6 +1304,11 @@ Core verified declarations:
   generalize the `2/3` psi-power-error bridge to arbitrary vertical lines in
   the critical strip, with the explicit-formula converse still kept as an
   assumption.
+- `ExplicitFormulaConversePowerTarget`,
+  `no_zeros_on_vertical_line_of_explicit_formula_converse_power`, and
+  `no_zeros_on_one_third_of_explicit_formula_converse_power`
+  name the explicit-formula converse dependency directly and specialize it to
+  the reflected `Re(s)=1/3` route.
 - `riemannZeta_ne_zero_of_re_le_zero`
   excludes nontrivial zeros in `Re(s) <= 0`, except for the trivial zero
   locations.
@@ -1502,8 +1525,14 @@ Route interfaces:
 
 - `HardyTheorem.AFE.zeta_critical_afe_target`
   real-statement AFE interface for the Hardy chain.
+- `PrimeNumberTheorem.ExplicitFormulaConversePowerTarget`
+  route interface from a future power-scale `psi` error converse to exclusion
+  of nontrivial zeros on or to the right of a vertical line.
 - `PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget`
   real-statement truncated explicit-formula interface.
+- `PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute`
+  route interface from a future uniform truncated explicit formula plus
+  oscillation/converse argument to `ExplicitFormulaConversePowerTarget`.
 - `RiemannExplorer.Conrey40.conrey_40_percent_zeros_on_critical_line_target`
   alias interface to `KnownResults.conrey_40_percent_zeros_on_critical_line_target`.
 - `MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum`

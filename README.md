@@ -182,9 +182,11 @@ theorems): **22**.
 Full `def ... : Prop` inventory:
 
 - mathematical targets: 22;
-- route interfaces: 4
+- route interfaces: 6
   (`HardyTheorem.AFE.zeta_critical_afe_target`,
   `MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum`,
+  `PrimeNumberTheorem.ExplicitFormulaConversePowerTarget`,
+  `PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute`,
   `PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget`,
   `RiemannExplorer.Conrey40.conrey_40_percent_zeros_on_critical_line_target`);
 - reusable predicates: 2
@@ -249,7 +251,9 @@ Lean declarations in `ZeroFreeRegion.lean` and
 | `ZeroFreeRegion.exists_three_four_one_combination_le_log_abs_add_three_of_one_add_le` | `lemma` | Proves the full 3-4-1 combination is nonnegative and bounded above by `C log(|t|+3)` on each fixed-margin half-plane. | Couples the proved 3-4-1 nonnegativity theorem with the fixed-margin vertical estimates. |
 | `ZeroFreeRegion.trig_identity_nonneg` | `lemma` | Proves `3 + 4 cos θ + cos(2θ) ≥ 0` via `2(1+cos θ)^2`. | Pointwise nonnegativity input for the de la Vallee Poussin combination. |
 | `ZeroFreeRegion.log_deriv_zeta_nonneg_combination` | `lemma` | Proves `3 Re(-ζ'/ζ(σ)) + 4 Re(-ζ'/ζ(σ+it)) + Re(-ζ'/ζ(σ+2it)) ≥ 0` for `σ > 1`. | Primary 3-4-1 theorem. |
-| `ZeroFreeRegion.log_deriv_zeta_nonneg_finset_combination` / `...list_combination` | `lemma` | General finite trigonometric-detector skeleton: a finite logarithmic-derivative combination is nonnegative once it is identified with a von Mangoldt series weighted by a nonnegative trigonometric polynomial. | Abstracts the finite algebraic core behind possible Stechkin/Heath-Brown detector variants; the analytic series identity remains an explicit input. |
+| `ZeroFreeRegion.log_deriv_zeta_finset_series_identity` | `lemma` | Expands any finite logarithmic-derivative detector combination into one von Mangoldt Dirichlet series weighted by the corresponding finite cosine polynomial. | Removes the manual `hseries` input for finite detector combinations in the absolute-convergence half-plane. |
+| `ZeroFreeRegion.log_deriv_zeta_nonneg_finset_combination` / `...list_combination` | `lemma` | General finite trigonometric-detector skeleton: a finite logarithmic-derivative combination is nonnegative once it is identified with a von Mangoldt series weighted by a nonnegative trigonometric polynomial. | Abstracts the finite algebraic core behind possible Stechkin/Heath-Brown detector variants. |
+| `ZeroFreeRegion.log_deriv_zeta_nonneg_finset_combination_auto` / `...list_combination_auto` | `lemma` | Automatic finite detector versions: the series identity is discharged from `log_deriv_zeta_re_series`, leaving only the finite trigonometric-polynomial nonnegativity hypothesis. | First reusable Lean step toward higher-degree de la Vallee Poussin/Stechkin detector polynomials. |
 | `ZeroFreeRegion.log_deriv_zeta_nonneg_three_four_one_from_finset` | `lemma` | Re-exposes the existing 3-4-1 theorem as the base finite-detector instance. | Keeps the generalized detector API tied to the verified 3-4-1 result. |
 | `ZeroFreeRegion.log_deriv_zeta_lower_bound` | `lemma` | Rearranges the 3-4-1 inequality into the lower bound for `Re(-ζ'/ζ(σ+it))`. | Algebraic corollary used by the future quantitative zero-free-region chain. |
 | `ZeroFreeRegion.logDeriv_riemannZeta_eq_deriv_div` / `ZeroFreeRegion.neg_logDeriv_riemannZeta_re_eq_neg_deriv_div_re` | `lemma` | Bridges Mathlib's `logDeriv ζ` notation with the classical `ζ'/ζ` and `-ζ'/ζ` quotient notation, including real-part and norm forms. | Lets future Borel/Jensen `logDeriv` estimates rewrite directly into the 3-4-1 sign convention. |
@@ -573,6 +577,13 @@ not as a proved theorem.  The Lean target now uses the midpoint convention
 `chebyshevPsi0` and a height-truncated zero contribution
 `finiteNontrivialZeroSum`, rather than an unconditional unordered `tsum` over
 all nontrivial zeros.
+
+The explicit-formula side also contains route interfaces such as
+`PrimeNumberTheorem.ExplicitFormulaConversePowerTarget` and
+`PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute`.
+These name the future oscillation/converse dependency from a truncated explicit
+formula to zero-free vertical lines; they are not unconditional proofs of those
+analytic inputs.
 
 ### Target Statements, Not Proved Theorems
 
