@@ -1131,6 +1131,11 @@ Core verified declarations:
   `re_neg_deriv_div_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_neg_logDeriv_re_le_half_radius`
   convert those normalized right-shifted norm bounds into the
   `Re(-zeta'/zeta) <= C log |t|` convention used by the 3-4-1 chain.
+- `re_neg_deriv_div_riemannZeta_sigma_it_right_shift_le_log_norm_of_affine_logDeriv_re_le_half_radius`
+  and
+  `re_neg_deriv_div_riemannZeta_sigma_it_right_shift_le_log_norm_of_affine_neg_logDeriv_re_le_half_radius`
+  provide the same real-part quotient conversion in the full complex-height
+  `C log(||sigma+it|| + 3)` scale.
 - `re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_logDeriv_re_le_half_radius`
   and
   `re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_neg_logDeriv_re_le_half_radius`
@@ -1184,6 +1189,10 @@ Core verified declarations:
   `borelCaratheodory_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_norm_of_affine_re_le_half_radius`
   are the corresponding multiplicity-aware regular-part bridges in the full
   complex-height `C log(||sigma+it|| + 3)` scale.
+- `re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_shift_le_log_norm_of_affine_regularPart_re_le_half_radius`
+  converts the signed multiplicity-aware regular-part norm bound into the
+  full-height zero-repulsion estimate
+  `Re(-zeta'/zeta)(sigma+it) + 1/(sigma-beta) <= C log(||sigma+it||+3)`.
 - `jensen_circleAverage_log_norm_verticalRegion`
   combines Jensen's formula with the same closed-disk geometry and ambient
   vertical-region meromorphicity.

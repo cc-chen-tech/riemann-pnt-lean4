@@ -299,7 +299,11 @@ proved:
   and
   `ZeroFreeRegion.re_neg_deriv_div_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_neg_logDeriv_re_le_half_radius`
   translate these norm bounds into the `Re(-zeta'/zeta)` convention consumed by
-  the 3-4-1 inequality.  The shifted versions
+  the 3-4-1 inequality; the full-height counterparts
+  `ZeroFreeRegion.re_neg_deriv_div_riemannZeta_sigma_it_right_shift_le_log_norm_of_affine_logDeriv_re_le_half_radius`
+  and
+  `ZeroFreeRegion.re_neg_deriv_div_riemannZeta_sigma_it_right_shift_le_log_norm_of_affine_neg_logDeriv_re_le_half_radius`
+  expose the same quotient handoff in the `log(||sigma+it||+3)` scale.  The shifted versions
   `ZeroFreeRegion.re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_logDeriv_re_le_half_radius`
   and
   `ZeroFreeRegion.re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_neg_logDeriv_re_le_half_radius`
@@ -352,7 +356,10 @@ proved:
   and
   `ZeroFreeRegion.borelCaratheodory_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_norm_of_affine_re_le_half_radius`
   make the same multiplicity-aware handoff available to closures formulated
-  with `log(||sigma+it||+3)`.  The regular-part
+  with `log(||sigma+it||+3)`, while
+  `ZeroFreeRegion.re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_shift_le_log_norm_of_affine_regularPart_re_le_half_radius`
+  converts that full-height regular-part norm bound into the matching
+  zero-repulsion estimate.  The regular-part
   differentiability, real-part, and center bounds are still open zeta-specific
   analytic estimates;
   `ZeroFreeRegion.jensen_circleAverage_log_norm_verticalRegion` is the matching
