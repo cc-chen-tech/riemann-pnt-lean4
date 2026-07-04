@@ -5736,6 +5736,56 @@ theorem borelCaratheodory_sub_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_ha
   ZeroFreeRegion.borelCaratheodory_sub_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_affine_re_le_half_radius
     hM hσ hHpos hH hlog hR hz_half
 
+/-- Public right-shifted half-radius Borel-Carathéodory transfer for
+`logDeriv ζ`: a disk centered at `(σ+r)+it` controls the point `σ+it`. -/
+theorem borelCaratheodory_logDeriv_riemannZeta_sigma_it_right_shift_of_affine_re_le_half_radius
+    {Are Bre Acenter Bcenter r H σ t : ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hHpos : 0 < H)
+    (hH : H + 2 * r ≤ |t|)
+    (hM :
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * t)‖ + 3))
+    (hlog : ∀ w : ℂ,
+      w ∈ Metric.ball (((σ + r : ℝ) : ℂ) + Complex.I * t) (2 * r) →
+        (logDeriv riemannZeta w).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * t)‖ + 3))
+    (hcenter :
+      ‖logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + Complex.I * t)‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * t)‖ + 3)) :
+    ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+      (2 * Are + 3 * Acenter) +
+        (2 * Bre + 3 * Bcenter) *
+          Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * t)‖ + 3) :=
+  ZeroFreeRegion.borelCaratheodory_logDeriv_riemannZeta_sigma_it_right_shift_of_affine_re_le_half_radius
+    hr hσ hHpos hH hM hlog hcenter
+
+/-- Public signed right-shifted half-radius Borel-Carathéodory transfer for
+`-logDeriv ζ`, matching the sign convention used in the 3-4-1 route. -/
+theorem borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_of_affine_re_le_half_radius
+    {Are Bre Acenter Bcenter r H σ t : ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hHpos : 0 < H)
+    (hH : H + 2 * r ≤ |t|)
+    (hM :
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * t)‖ + 3))
+    (hlog : ∀ w : ℂ,
+      w ∈ Metric.ball (((σ + r : ℝ) : ℂ) + Complex.I * t) (2 * r) →
+        (-logDeriv riemannZeta w).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * t)‖ + 3))
+    (hcenter :
+      ‖-logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + Complex.I * t)‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * t)‖ + 3)) :
+    ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+      (2 * Are + 3 * Acenter) +
+        (2 * Bre + 3 * Bcenter) *
+          Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * t)‖ + 3) :=
+  ZeroFreeRegion.borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_of_affine_re_le_half_radius
+    hr hσ hHpos hH hM hlog hcenter
+
 /-- Public pointwise Borel-Carathéodory bound for `logDeriv ζ` on a
 positive-height right half-strip, with differentiability discharged by
 ζ-nonvanishing on `Re(s) >= 1`. -/

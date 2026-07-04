@@ -6157,6 +6157,99 @@ lemma borelCaratheodory_sub_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_half
       simp [mBound, ell]
       ring
 
+/-- Right-shifted half-radius Borel-Carathéodory transfer for `logDeriv ζ`.
+It controls the boundary-near point `σ + I*t` from a disk centered at
+`(σ + r) + I*t`; the hypotheses make the radius-`2r` disk stay in `Re ≥ 1`
+and away from the pole.  The real-part and center estimates remain explicit
+analytic inputs. -/
+lemma borelCaratheodory_logDeriv_riemannZeta_sigma_it_right_shift_of_affine_re_le_half_radius
+    {Are Bre Acenter Bcenter r H σ t : ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hHpos : 0 < H)
+    (hH : H + 2 * r ≤ |t|)
+    (hM :
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hlog : ∀ w : ℂ,
+      w ∈ ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r) →
+        (logDeriv riemannZeta w).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hcenter :
+      ‖logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + I * t)‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3)) :
+    ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+      (2 * Are + 3 * Acenter) +
+        (2 * Bre + 3 * Bcenter) *
+          Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3) := by
+  have hR : 0 < 2 * r := by nlinarith
+  have hσ_center : 1 + 2 * r ≤ σ + r := by nlinarith
+  have hz_half :
+      ‖((σ : ℂ) + I * t) - (((σ + r : ℝ) : ℂ) + I * t)‖ ≤
+        (2 * r) / 2 := by
+    have hdiff :
+        ((σ : ℂ) + I * t) - (((σ + r : ℝ) : ℂ) + I * t) =
+          -(r : ℂ) := by
+      rw [Complex.ofReal_add]
+      ring
+    calc
+      ‖((σ : ℂ) + I * t) - (((σ + r : ℝ) : ℂ) + I * t)‖
+          = ‖-(r : ℂ)‖ := by rw [hdiff]
+      _ = r := by simp [abs_of_pos hr]
+      _ ≤ (2 * r) / 2 := by
+        rw [show (2 * r) / 2 = r by ring]
+  exact
+    borelCaratheodory_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_affine_re_le_half_radius
+      (Are := Are) (Bre := Bre) (Acenter := Acenter) (Bcenter := Bcenter)
+      (R := 2 * r) (σ := σ + r) (t := t) (H := H)
+      (z := (σ : ℂ) + I * t) hM hσ_center hHpos hH hlog hcenter hR hz_half
+
+/-- Signed right-shifted half-radius Borel-Carathéodory transfer for
+`-logDeriv ζ`.  This is the same geometric handoff as
+`borelCaratheodory_logDeriv_riemannZeta_sigma_it_right_shift_of_affine_re_le_half_radius`,
+but in the sign convention used by the 3-4-1 inequality. -/
+lemma borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_of_affine_re_le_half_radius
+    {Are Bre Acenter Bcenter r H σ t : ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hHpos : 0 < H)
+    (hH : H + 2 * r ≤ |t|)
+    (hM :
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hlog : ∀ w : ℂ,
+      w ∈ ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r) →
+        (-logDeriv riemannZeta w).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hcenter :
+      ‖-logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + I * t)‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3)) :
+    ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+      (2 * Are + 3 * Acenter) +
+        (2 * Bre + 3 * Bcenter) *
+          Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3) := by
+  have hR : 0 < 2 * r := by nlinarith
+  have hσ_center : 1 + 2 * r ≤ σ + r := by nlinarith
+  have hz_half :
+      ‖((σ : ℂ) + I * t) - (((σ + r : ℝ) : ℂ) + I * t)‖ ≤
+        (2 * r) / 2 := by
+    have hdiff :
+        ((σ : ℂ) + I * t) - (((σ + r : ℝ) : ℂ) + I * t) =
+          -(r : ℂ) := by
+      rw [Complex.ofReal_add]
+      ring
+    calc
+      ‖((σ : ℂ) + I * t) - (((σ + r : ℝ) : ℂ) + I * t)‖
+          = ‖-(r : ℂ)‖ := by rw [hdiff]
+      _ = r := by simp [abs_of_pos hr]
+      _ ≤ (2 * r) / 2 := by
+        rw [show (2 * r) / 2 = r by ring]
+  exact
+    borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_affine_re_le_half_radius
+      (Are := Are) (Bre := Bre) (Acenter := Acenter) (Bcenter := Bcenter)
+      (R := 2 * r) (σ := σ + r) (t := t) (H := H)
+      (z := (σ : ℂ) + I * t) hM hσ_center hHpos hH hlog hcenter hR hz_half
+
 /-- ζ is meromorphic on every project vertical region. -/
 lemma meromorphicOn_riemannZeta_verticalRegion (a b H : ℝ) :
     MeromorphicOn riemannZeta (verticalRegion a b H) := by

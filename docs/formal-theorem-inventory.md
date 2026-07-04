@@ -1103,6 +1103,12 @@ Core verified declarations:
   `borelCaratheodory_sub_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_affine_re_le_half_radius`
   provide the same affine direct half-radius interface in the signed
   `-logDeriv zeta` convention.
+- `borelCaratheodory_logDeriv_riemannZeta_sigma_it_right_shift_of_affine_re_le_half_radius`
+  and
+  `borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_of_affine_re_le_half_radius`
+  move the affine half-radius Borel handoff to a disk centered at
+  `(sigma+r)+I*t`, controlling the boundary-near point `sigma+I*t` while
+  keeping the local real-part and center estimates as explicit hypotheses.
 - `borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius`
   and
   `borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius`
