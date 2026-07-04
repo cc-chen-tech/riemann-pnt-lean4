@@ -164,7 +164,7 @@ Current code status:
 |---|---:|---|
 | `GammaResidue.lean` | 0 | General Gamma residue formula completed |
 | `HardyTheorem.lean` | 0 | Hardy-Z phase facts proved; corrected integral asymptotic, positivity and zero-counting targets |
-| `PrimeNumberTheorem.lean` | 0 | Bounded-height zero finiteness proved; RH error equivalence and von Mangoldt explicit formula targets |
+| `PrimeNumberTheorem.lean` | 0 | Bounded-height zero finiteness and zero-symmetry bridges proved; RH error equivalence and von Mangoldt explicit formula targets |
 | `ZeroFreeRegion.lean` | 0 | 3-4-1 and compact zero-free region proved; quantitative zero-free-region targets |
 
 Total: 0 syntactic `sorry` occurrences in Lean source files.

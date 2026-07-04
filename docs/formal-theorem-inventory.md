@@ -1124,6 +1124,20 @@ Core verified declarations:
   proves symmetry of nontrivial zeros under `rho -> 1 - rho`.
 - `nontrivial_zero_symmetric'`
   packages the symmetry as preservation of `IsNontrivialZero`.
+- `NoZerosOnVerticalLine`
+  is a reusable predicate for excluding zeta zeros on a fixed vertical line.
+- `no_zeros_on_one_third_of_RH`
+  proves that RH implies no zeta zeros on `Re(s) = 1/3`.
+- `no_zeros_on_one_third_of_right_halfplane_two_thirds`
+  reflects a zero-free statement on `Re(s) >= 2/3` to exclude zeros on
+  `Re(s) = 1/3`.
+- `exists_nontrivial_zero_on_one_third_iff_two_thirds`
+  proves the nontrivial-zero existence equivalence between the reflected
+  lines `Re(s) = 1/3` and `Re(s) = 2/3`.
+- `NoZerosOnVerticalLineOneThirdOfStrongPNTError` and
+  `no_zeros_on_one_third_of_strong_pnt_error_bridge`
+  isolate the formal bridge from a future strong-PNT-error converse excluding
+  `Re(s) = 2/3` zeros to a no-zero result on `Re(s) = 1/3`.
 - `riemannZeta_ne_zero_of_re_le_zero`
   excludes nontrivial zeros in `Re(s) <= 0`, except for the trivial zero
   locations.

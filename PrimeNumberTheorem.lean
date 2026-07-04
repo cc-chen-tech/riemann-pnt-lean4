@@ -2708,6 +2708,92 @@ theorem nontrivial_zero_symmetric' {ρ : ℂ}
   · simp [Complex.sub_re]; linarith
   · simp [Complex.sub_re]; linarith
 
+/-! ### Vertical-line bridges around `Re(s) = 1 / 3`
+
+These lemmas do not prove a new zero-free line.  They isolate the easy formal
+reductions needed to turn a future analytic input on the reflected
+`Re(s) = 2 / 3` line into a statement about `Re(s) = 1 / 3`.
+-/
+
+/-- Zeta has no zeros on the vertical line `Re(s) = σ`. -/
+abbrev NoZerosOnVerticalLine (σ : ℝ) : Prop :=
+  ∀ s : ℂ, s.re = σ → riemannZeta s ≠ 0
+
+/-- A line-free statement at `Re(s) = 1 / 3` follows immediately from RH. -/
+theorem no_zeros_on_one_third_of_RH
+    (hRH : RiemannHypothesis.Statement) :
+    NoZerosOnVerticalLine (1 / 3) := by
+  intro s hs hzero
+  have hnt : RiemannHypothesis.IsNontrivialZero s := by
+    refine ⟨hzero, ?_, ?_⟩
+    · nlinarith [hs]
+    · nlinarith [hs]
+  have hhalf : s.re = 1 / 2 := hRH s hnt
+  nlinarith [hs, hhalf]
+
+/-- A zero-free half-plane `Re(s) ≥ 2 / 3` excludes zeros on `Re(s) = 1 / 3`
+by the functional-equation symmetry `ρ ↦ 1 - ρ`. -/
+theorem no_zeros_on_one_third_of_right_halfplane_two_thirds
+    (hRight : ∀ s : ℂ, (2 / 3 : ℝ) ≤ s.re → riemannZeta s ≠ 0) :
+    NoZerosOnVerticalLine (1 / 3) := by
+  intro s hs hzero
+  have hnt : RiemannHypothesis.IsNontrivialZero s := by
+    refine ⟨hzero, ?_, ?_⟩
+    · nlinarith [hs]
+    · nlinarith [hs]
+  have hsym : RiemannHypothesis.IsNontrivialZero (1 - s) :=
+    nontrivial_zero_symmetric' hnt
+  have hre : (1 - s).re = (2 / 3 : ℝ) := by
+    have hcalc : (1 : ℝ) - (1 / 3) = 2 / 3 := by norm_num
+    simpa [Complex.sub_re, hs] using hcalc
+  exact (hRight (1 - s) (le_of_eq hre.symm)) hsym.1
+
+/-- Existence of a nontrivial zero on `Re(s) = 1 / 3` is equivalent to
+existence of a nontrivial zero on the reflected line `Re(s) = 2 / 3`. -/
+theorem exists_nontrivial_zero_on_one_third_iff_two_thirds :
+    (∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = (1 / 3 : ℝ)) ↔
+      (∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = (2 / 3 : ℝ)) := by
+  constructor
+  · rintro ⟨s, hnt, hs⟩
+    refine ⟨1 - s, nontrivial_zero_symmetric' hnt, ?_⟩
+    have hcalc : (1 : ℝ) - (1 / 3) = 2 / 3 := by norm_num
+    simpa [Complex.sub_re, hs] using hcalc
+  · rintro ⟨s, hnt, hs⟩
+    refine ⟨1 - s, nontrivial_zero_symmetric' hnt, ?_⟩
+    have hcalc : (1 : ℝ) - (2 / 3) = 1 / 3 := by norm_num
+    simpa [Complex.sub_re, hs] using hcalc
+
+/-- Route interface for the proposed converse-explicit-formula strategy.
+
+The intended analytic input is: a sufficiently strong PNT error term implies
+that no nontrivial zero can lie on the reflected line `Re(s) = 2 / 3`.
+This predicate intentionally keeps the hard explicit-formula converse as an
+assumption, so the following theorem is only a formal bridge. -/
+abbrev NoZerosOnVerticalLineOneThirdOfStrongPNTError
+    (StrongPNTError : Prop) : Prop :=
+  StrongPNTError →
+    ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ →
+      ρ.re = (2 / 3 : ℝ) → False
+
+/-- If a chosen strong PNT-error statement excludes nontrivial zeros on
+`Re(s) = 2 / 3`, then it also excludes zeta zeros on `Re(s) = 1 / 3`. -/
+theorem no_zeros_on_one_third_of_strong_pnt_error_bridge
+    {StrongPNTError : Prop}
+    (hbridge : NoZerosOnVerticalLineOneThirdOfStrongPNTError StrongPNTError)
+    (herror : StrongPNTError) :
+    NoZerosOnVerticalLine (1 / 3) := by
+  intro s hs hzero
+  have hnt : RiemannHypothesis.IsNontrivialZero s := by
+    refine ⟨hzero, ?_, ?_⟩
+    · nlinarith [hs]
+    · nlinarith [hs]
+  have hsym : RiemannHypothesis.IsNontrivialZero (1 - s) :=
+    nontrivial_zero_symmetric' hnt
+  have hre : (1 - s).re = (2 / 3 : ℝ) := by
+    have hcalc : (1 : ℝ) - (1 / 3) = 2 / 3 := by norm_num
+    simpa [Complex.sub_re, hs] using hcalc
+  exact hbridge herror (1 - s) hsym hre
+
 /-! ## 平凡零点表征 -/
 
 /-- ζ(s) 在 Re(s) ≤ 0 区域的唯一零点是平凡零点 -2, -4, -6, ...
