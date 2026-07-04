@@ -7604,6 +7604,46 @@ theorem classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_abs_a
   ZeroFreeRegion.classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_abs_add_three_bounds_high_height
     T0 Cregular Cvertical hT0 hCregular hCvertical hregular hvertical
 
+/-- Public coordinate high-height closure from affine `log(|t|+3)` bounds. -/
+theorem classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_affine_log_abs_add_three_bounds_high_height
+    (T0 Aregular Bregular Avertical Bvertical : ℝ) (hT0 : 3 ≤ T0)
+    (hAregular : 0 ≤ Aregular) (hBregular : 0 ≤ Bregular)
+    (hAvertical : 0 ≤ Avertical) (hBvertical : 0 ≤ Bvertical)
+    (hregular :
+      ∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < σ - β →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) -
+            (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+          Aregular + Bregular * Real.log (|t| + 3))
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          Avertical + Bvertical * Real.log (|t| + 3)) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_affine_log_abs_add_three_bounds_high_height
+    T0 Aregular Bregular Avertical Bvertical hT0 hAregular hBregular
+    hAvertical hBvertical hregular hvertical
+
+/-- Public existential coordinate high-height closure from affine
+`log(|t|+3)` bounds. -/
+theorem classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_affine_log_abs_add_three_bounds_high_height
+    (h :
+      ∃ T0 Aregular Bregular Avertical Bvertical : ℝ, 3 ≤ T0 ∧
+        0 ≤ Aregular ∧ 0 ≤ Bregular ∧ 0 ≤ Avertical ∧ 0 ≤ Bvertical ∧
+        (∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+          0 < σ - β →
+          ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) -
+              (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+            Aregular + Bregular * Real.log (|t| + 3)) ∧
+        (∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+            Avertical + Bvertical * Real.log (|t| + 3))) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_affine_log_abs_add_three_bounds_high_height
+    h
+
 /-- Public existential coordinate high-height closure from a single
 `C * log(|t| + 3)` bound for positive `logDeriv ζ` estimates. -/
 theorem classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_log_abs_add_three_bound_high_height
@@ -7659,6 +7699,47 @@ theorem classical_zero_free_region_of_re_im_neg_logDeriv_regular_part_norm_log_a
     ZeroFreeRegion.classical_zero_free_region :=
   ZeroFreeRegion.classical_zero_free_region_of_re_im_neg_logDeriv_regular_part_norm_log_abs_add_three_bounds_high_height
     T0 Cregular Cvertical hT0 hCregular hCvertical hregular hvertical
+
+/-- Public signed coordinate high-height closure from affine `log(|t|+3)`
+bounds in the `-logDeriv ζ` convention. -/
+theorem classical_zero_free_region_of_re_im_neg_logDeriv_regular_part_norm_affine_log_abs_add_three_bounds_high_height
+    (T0 Aregular Bregular Avertical Bvertical : ℝ) (hT0 : 3 ≤ T0)
+    (hAregular : 0 ≤ Aregular) (hBregular : 0 ≤ Bregular)
+    (hAvertical : 0 ≤ Avertical) (hBvertical : 0 ≤ Bvertical)
+    (hregular :
+      ∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < σ - β →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) +
+            (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+          Aregular + Bregular * Real.log (|t| + 3))
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          Avertical + Bvertical * Real.log (|t| + 3)) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_re_im_neg_logDeriv_regular_part_norm_affine_log_abs_add_three_bounds_high_height
+    T0 Aregular Bregular Avertical Bvertical hT0 hAregular hBregular
+    hAvertical hBvertical hregular hvertical
+
+/-- Public existential signed coordinate high-height closure from affine
+`log(|t|+3)` bounds. -/
+theorem classical_zero_free_region_of_exists_re_im_neg_logDeriv_regular_part_norm_affine_log_abs_add_three_bounds_high_height
+    (h :
+      ∃ T0 Aregular Bregular Avertical Bvertical : ℝ, 3 ≤ T0 ∧
+        0 ≤ Aregular ∧ 0 ≤ Bregular ∧ 0 ≤ Avertical ∧ 0 ≤ Bvertical ∧
+        (∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+          0 < σ - β →
+          ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) +
+              (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+            Aregular + Bregular * Real.log (|t| + 3)) ∧
+        (∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+            Avertical + Bvertical * Real.log (|t| + 3))) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_re_im_neg_logDeriv_regular_part_norm_affine_log_abs_add_three_bounds_high_height
+    h
 
 /-- Public existential signed coordinate high-height closure from separate
 `Cregular * log(|t| + 3)` and `Cvertical * log(|t| + 3)` bounds. -/

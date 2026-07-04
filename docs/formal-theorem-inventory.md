@@ -882,6 +882,16 @@ Core verified declarations:
   signed `-logDeriv zeta` convention.
 - `classical_zero_free_region_of_exists_re_im_neg_logDeriv_regular_part_norm_log_abs_add_three_bounds_high_height`
   packages that signed safe-height logarithmic interface existentially.
+- `classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_affine_log_abs_add_three_bounds_high_height`
+  accepts affine safe-height estimates
+  `Aregular + Bregular * log(|t| + 3)` and
+  `Avertical + Bvertical * log(|t| + 3)`.
+- `classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_affine_log_abs_add_three_bounds_high_height`
+  packages that affine safe-height interface existentially.
+- `classical_zero_free_region_of_re_im_neg_logDeriv_regular_part_norm_affine_log_abs_add_three_bounds_high_height`
+  is the signed `-logDeriv zeta` version of the affine safe-height interface.
+- `classical_zero_free_region_of_exists_re_im_neg_logDeriv_regular_part_norm_affine_log_abs_add_three_bounds_high_height`
+  packages the signed affine safe-height interface existentially.
 - `classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height`
   accepts separate constants in estimates stated with the full complex
   height `log(||sigma + it|| + 3)`.
