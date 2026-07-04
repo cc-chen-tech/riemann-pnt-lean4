@@ -760,6 +760,66 @@ lemma exists_re_neg_deriv_div_riemannZeta_sigma_two_it_le_log_abs_add_three_of_o
         norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv z
     _ ≤ C * Real.log (|t| + 3) := hbound σ t hσ
 
+/-- A single fixed-margin logarithmic bound for all three real-part terms
+appearing in the 3-4-1 combination.
+
+This is deliberately a fixed-margin result: the hypothesis is `1+ε ≤ σ`.
+The classical zero-free region still needs the corresponding estimates for the
+moving choice `σ = 1 + a / log |t|`. -/
+lemma exists_re_neg_deriv_div_riemannZeta_fixed_margin_three_four_one_bounds
+    {ε : ℝ} (hε : 0 < ε) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ σ t : ℝ, 1 + ε ≤ σ →
+      (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re ≤
+          C * Real.log (|t| + 3) ∧
+      (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re ≤
+          C * Real.log (|t| + 3) ∧
+      (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+          riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤
+          C * Real.log (|t| + 3) := by
+  rcases exists_re_neg_deriv_div_riemannZeta_sigma_it_le_log_abs_add_three_of_one_add_le
+      hε with ⟨C₁, hC₁, hbound₁⟩
+  rcases exists_re_neg_deriv_div_riemannZeta_sigma_two_it_le_log_abs_add_three_of_one_add_le
+      hε with ⟨C₂, hC₂, hbound₂⟩
+  refine ⟨C₁ + C₂, add_nonneg hC₁ hC₂, ?_⟩
+  intro σ t hσ
+  have hlog_nonneg : 0 ≤ Real.log (|t| + 3) := by
+    exact Real.log_nonneg (by nlinarith [abs_nonneg t] : (1 : ℝ) ≤ |t| + 3)
+  have hlog3_le : Real.log (3 : ℝ) ≤ Real.log (|t| + 3) := by
+    apply Real.log_le_log (by norm_num : (0 : ℝ) < 3)
+    nlinarith [abs_nonneg t]
+  have hC₁_le : C₁ ≤ C₁ + C₂ := by linarith
+  have hC₂_le : C₂ ≤ C₁ + C₂ := by linarith
+  have hC₁_log_le :
+      C₁ * Real.log (|t| + 3) ≤ (C₁ + C₂) * Real.log (|t| + 3) :=
+    mul_le_mul_of_nonneg_right hC₁_le hlog_nonneg
+  have hC₂_log_le :
+      C₂ * Real.log (|t| + 3) ≤ (C₁ + C₂) * Real.log (|t| + 3) :=
+    mul_le_mul_of_nonneg_right hC₂_le hlog_nonneg
+  constructor
+  · have hzero := hbound₁ σ 0 hσ
+    have hzero' :
+        (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re ≤
+          C₁ * Real.log (3 : ℝ) := by
+      simpa using hzero
+    calc
+      (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re
+          ≤ C₁ * Real.log (3 : ℝ) := hzero'
+      _ ≤ C₁ * Real.log (|t| + 3) :=
+          mul_le_mul_of_nonneg_left hlog3_le hC₁
+      _ ≤ (C₁ + C₂) * Real.log (|t| + 3) := hC₁_log_le
+  constructor
+  · calc
+      (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re
+          ≤ C₁ * Real.log (|t| + 3) := hbound₁ σ t hσ
+      _ ≤ (C₁ + C₂) * Real.log (|t| + 3) := hC₁_log_le
+  · calc
+      (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+          riemannZeta ((σ : ℂ) + 2 * I * t)).re
+          ≤ C₂ * Real.log (|t| + 3) := hbound₂ σ t hσ
+      _ ≤ (C₁ + C₂) * Real.log (|t| + 3) := hC₂_log_le
+
 /-- ζ is nonzero in a full neighborhood of `1`.
 
 Although `riemannZeta` has a junk value at `1` in Mathlib, the residue statement

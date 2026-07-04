@@ -55,6 +55,9 @@ Core verified declarations:
 - `exists_re_neg_deriv_div_riemannZeta_sigma_two_it_le_log_abs_add_three_of_one_add_le`
   converts that shifted norm bound into the real-part form used by the third
   term of the 3-4-1 inequality.
+- `exists_re_neg_deriv_div_riemannZeta_fixed_margin_three_four_one_bounds`
+  packages the real-axis, `sigma + I*t`, and `sigma + 2*I*t` real-part terms
+  under one fixed-margin `C * log (|t| + 3)` bound.
 
 Supporting declarations include:
 
