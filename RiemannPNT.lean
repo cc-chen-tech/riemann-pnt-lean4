@@ -2921,6 +2921,54 @@ theorem exists_eventuallyEq_neg_logDeriv_riemannZeta_add_order_mul_inv_of_order_
   ZeroFreeRegion.exists_eventuallyEq_neg_logDeriv_riemannZeta_add_order_mul_inv_of_order_eq_nat
     hρ1 horder
 
+/-- Public bridge from an eventually-equal regular part to an explicit
+punctured-ball norm bound. -/
+theorem exists_punctured_ball_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq
+    {f regular : ℂ → ℂ} {x : ℂ} {n : ℕ} {M : ℝ}
+    (hsep : ∀ᶠ z in 𝓝[≠] x,
+      logDeriv f z - (n : ℂ) * (z - x)⁻¹ = regular z)
+    (hbound : ∀ᶠ z in 𝓝[≠] x, ‖regular z‖ ≤ M) :
+    ∃ r > 0, ∀ z : ℂ, z ≠ x → dist z x < r →
+      ‖logDeriv f z - (n : ℂ) * (z - x)⁻¹‖ ≤ M :=
+  ZeroFreeRegion.exists_punctured_ball_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq
+    hsep hbound
+
+/-- Public closed-ball version of the eventually-to-punctured-ball regular-part
+norm bridge. -/
+theorem exists_punctured_closedBall_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq
+    {f regular : ℂ → ℂ} {x : ℂ} {n : ℕ} {M : ℝ}
+    (hsep : ∀ᶠ z in 𝓝[≠] x,
+      logDeriv f z - (n : ℂ) * (z - x)⁻¹ = regular z)
+    (hbound : ∀ᶠ z in 𝓝[≠] x, ‖regular z‖ ≤ M) :
+    ∃ r > 0, ∀ z : ℂ, z ≠ x → dist z x ≤ r →
+      ‖logDeriv f z - (n : ℂ) * (z - x)⁻¹‖ ≤ M :=
+  ZeroFreeRegion.exists_punctured_closedBall_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq
+    hsep hbound
+
+/-- Public signed bridge from an eventually-equal regular part to an explicit
+punctured-ball norm bound. -/
+theorem exists_punctured_ball_norm_neg_logDeriv_add_order_mul_inv_le_of_eventuallyEq
+    {f regular : ℂ → ℂ} {x : ℂ} {n : ℕ} {M : ℝ}
+    (hsep : ∀ᶠ z in 𝓝[≠] x,
+      -logDeriv f z + (n : ℂ) * (z - x)⁻¹ = regular z)
+    (hbound : ∀ᶠ z in 𝓝[≠] x, ‖regular z‖ ≤ M) :
+    ∃ r > 0, ∀ z : ℂ, z ≠ x → dist z x < r →
+      ‖-logDeriv f z + (n : ℂ) * (z - x)⁻¹‖ ≤ M :=
+  ZeroFreeRegion.exists_punctured_ball_norm_neg_logDeriv_add_order_mul_inv_le_of_eventuallyEq
+    hsep hbound
+
+/-- Public closed-ball signed eventually-to-punctured-ball regular-part norm
+bridge. -/
+theorem exists_punctured_closedBall_norm_neg_logDeriv_add_order_mul_inv_le_of_eventuallyEq
+    {f regular : ℂ → ℂ} {x : ℂ} {n : ℕ} {M : ℝ}
+    (hsep : ∀ᶠ z in 𝓝[≠] x,
+      -logDeriv f z + (n : ℂ) * (z - x)⁻¹ = regular z)
+    (hbound : ∀ᶠ z in 𝓝[≠] x, ‖regular z‖ ≤ M) :
+    ∃ r > 0, ∀ z : ℂ, z ≠ x → dist z x ≤ r →
+      ‖-logDeriv f z + (n : ℂ) * (z - x)⁻¹‖ ≤ M :=
+  ZeroFreeRegion.exists_punctured_closedBall_norm_neg_logDeriv_add_order_mul_inv_le_of_eventuallyEq
+    hsep hbound
+
 /-- Public generic bridge: analytic nonvanishing implies analytic logarithmic
 derivative. -/
 theorem analyticAt_logDeriv_of_analyticAt_ne_zero

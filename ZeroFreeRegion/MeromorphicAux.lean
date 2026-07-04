@@ -4510,6 +4510,78 @@ lemma exists_eventuallyEq_neg_logDeriv_riemannZeta_add_order_mul_inv_of_order_eq
   exists_eventuallyEq_neg_logDeriv_add_order_mul_inv_of_analyticAt_order_eq_nat
     (analyticOnNhd_riemannZeta_ne_one ρ hρ1) horder
 
+/-- Convert an eventually-equal regular part for `logDeriv f` into an explicit
+punctured-ball norm bound.
+
+The analytic work is isolated in the two hypotheses: `hsep` separates the
+multiplicity-weighted principal part on a punctured neighborhood, and `hbound`
+bounds the remaining regular part there. -/
+lemma exists_punctured_ball_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq
+    {f regular : ℂ → ℂ} {x : ℂ} {n : ℕ} {M : ℝ}
+    (hsep : ∀ᶠ z in 𝓝[≠] x,
+      logDeriv f z - (n : ℂ) * (z - x)⁻¹ = regular z)
+    (hbound : ∀ᶠ z in 𝓝[≠] x, ‖regular z‖ ≤ M) :
+    ∃ r > 0, ∀ z : ℂ, z ≠ x → dist z x < r →
+      ‖logDeriv f z - (n : ℂ) * (z - x)⁻¹‖ ≤ M := by
+  have hmem :
+      {z : ℂ | ‖logDeriv f z - (n : ℂ) * (z - x)⁻¹‖ ≤ M} ∈ 𝓝[{x}ᶜ] x := by
+    filter_upwards [hsep, hbound] with z hsepz hboundz
+    simpa [hsepz] using hboundz
+  rcases Metric.mem_nhdsWithin_iff.mp hmem with ⟨r, hr_pos, hr_sub⟩
+  refine ⟨r, hr_pos, ?_⟩
+  intro z hz_ne hz_dist
+  exact hr_sub ⟨by simpa [Metric.mem_ball] using hz_dist,
+    Set.mem_compl_singleton_iff.mpr hz_ne⟩
+
+/-- Closed punctured-ball version of
+`exists_punctured_ball_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq`. -/
+lemma exists_punctured_closedBall_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq
+    {f regular : ℂ → ℂ} {x : ℂ} {n : ℕ} {M : ℝ}
+    (hsep : ∀ᶠ z in 𝓝[≠] x,
+      logDeriv f z - (n : ℂ) * (z - x)⁻¹ = regular z)
+    (hbound : ∀ᶠ z in 𝓝[≠] x, ‖regular z‖ ≤ M) :
+    ∃ r > 0, ∀ z : ℂ, z ≠ x → dist z x ≤ r →
+      ‖logDeriv f z - (n : ℂ) * (z - x)⁻¹‖ ≤ M := by
+  rcases exists_punctured_ball_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq
+      hsep hbound with ⟨r, hr_pos, hball⟩
+  refine ⟨r / 2, half_pos hr_pos, ?_⟩
+  intro z hz_ne hz_dist
+  exact hball z hz_ne (lt_of_le_of_lt hz_dist (half_lt_self hr_pos))
+
+/-- Signed version of
+`exists_punctured_ball_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq`,
+for the `-logDeriv f + n/(z-x)` convention. -/
+lemma exists_punctured_ball_norm_neg_logDeriv_add_order_mul_inv_le_of_eventuallyEq
+    {f regular : ℂ → ℂ} {x : ℂ} {n : ℕ} {M : ℝ}
+    (hsep : ∀ᶠ z in 𝓝[≠] x,
+      -logDeriv f z + (n : ℂ) * (z - x)⁻¹ = regular z)
+    (hbound : ∀ᶠ z in 𝓝[≠] x, ‖regular z‖ ≤ M) :
+    ∃ r > 0, ∀ z : ℂ, z ≠ x → dist z x < r →
+      ‖-logDeriv f z + (n : ℂ) * (z - x)⁻¹‖ ≤ M := by
+  have hmem :
+      {z : ℂ | ‖-logDeriv f z + (n : ℂ) * (z - x)⁻¹‖ ≤ M} ∈ 𝓝[{x}ᶜ] x := by
+    filter_upwards [hsep, hbound] with z hsepz hboundz
+    simpa [hsepz] using hboundz
+  rcases Metric.mem_nhdsWithin_iff.mp hmem with ⟨r, hr_pos, hr_sub⟩
+  refine ⟨r, hr_pos, ?_⟩
+  intro z hz_ne hz_dist
+  exact hr_sub ⟨by simpa [Metric.mem_ball] using hz_dist,
+    Set.mem_compl_singleton_iff.mpr hz_ne⟩
+
+/-- Closed punctured-ball signed regular-part norm bridge. -/
+lemma exists_punctured_closedBall_norm_neg_logDeriv_add_order_mul_inv_le_of_eventuallyEq
+    {f regular : ℂ → ℂ} {x : ℂ} {n : ℕ} {M : ℝ}
+    (hsep : ∀ᶠ z in 𝓝[≠] x,
+      -logDeriv f z + (n : ℂ) * (z - x)⁻¹ = regular z)
+    (hbound : ∀ᶠ z in 𝓝[≠] x, ‖regular z‖ ≤ M) :
+    ∃ r > 0, ∀ z : ℂ, z ≠ x → dist z x ≤ r →
+      ‖-logDeriv f z + (n : ℂ) * (z - x)⁻¹‖ ≤ M := by
+  rcases exists_punctured_ball_norm_neg_logDeriv_add_order_mul_inv_le_of_eventuallyEq
+      hsep hbound with ⟨r, hr_pos, hball⟩
+  refine ⟨r / 2, half_pos hr_pos, ?_⟩
+  intro z hz_ne hz_dist
+  exact hball z hz_ne (lt_of_le_of_lt hz_dist (half_lt_self hr_pos))
+
 /-- If `f` is analytic and nonzero at `z`, then its logarithmic derivative is
 analytic at `z`. -/
 lemma analyticAt_logDeriv_of_analyticAt_ne_zero {f : ℂ → ℂ} {z : ℂ}

@@ -309,6 +309,14 @@ Core verified declarations:
   gives the signed zeta-specific multiplicity-weighted form
   `-logDeriv ζ + n/(z-ρ)`, avoiding a simple-zero assumption in the local
   algebra layer.
+- `exists_punctured_ball_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq`
+  and `exists_punctured_closedBall_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq`
+  convert an eventually-equal multiplicity regular part and an eventual norm
+  bound into explicit punctured open/closed ball estimates.
+- `exists_punctured_ball_norm_neg_logDeriv_add_order_mul_inv_le_of_eventuallyEq`
+  and `exists_punctured_closedBall_norm_neg_logDeriv_add_order_mul_inv_le_of_eventuallyEq`
+  provide the signed `-logDeriv` version used by the de la Vallée Poussin
+  zero-free chain.
 - `analyticAt_logDeriv_of_analyticAt_ne_zero`
   proves the generic local fact that an analytic nonzero function has analytic
   logarithmic derivative.
