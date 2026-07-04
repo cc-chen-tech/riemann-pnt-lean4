@@ -5642,6 +5642,112 @@ lemma exists_norm_neg_logDeriv_riemannZeta_sigma_it_bound_on_compact_vertical_ba
   exact hC ((σ : ℂ) + I * t) (by simpa using hσ) (by simpa using htH)
     (by simpa using htT)
 
+/-- Coordinate compact bounded-height norm bound for `logDeriv ζ` at the
+shifted point `σ + 2it`. -/
+lemma exists_norm_logDeriv_riemannZeta_sigma_two_it_bound_on_compact_vertical_band
+    {H T : ℝ} (hH : 0 < H) :
+    ∃ C ≥ 0, ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 →
+      H ≤ |t| → |t| ≤ T →
+      ‖logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖ ≤ C := by
+  have h2H : 0 < 2 * H := by positivity
+  rcases exists_norm_logDeriv_riemannZeta_sigma_it_bound_on_compact_vertical_band
+      (H := 2 * H) (T := 2 * T) h2H with ⟨C, hC_nonneg, hC⟩
+  refine ⟨C, hC_nonneg, ?_⟩
+  intro σ t hσ htH htT
+  have hheight_lower : 2 * H ≤ |2 * t| := by
+    calc
+      2 * H ≤ 2 * |t| := by nlinarith
+      _ = |2 * t| := by simp [abs_mul]
+  have hheight_upper : |2 * t| ≤ 2 * T := by
+    calc
+      |2 * t| = 2 * |t| := by simp [abs_mul]
+      _ ≤ 2 * T := by nlinarith
+  have hbound := hC σ (2 * t) hσ hheight_lower hheight_upper
+  have hrewrite :
+      ((σ : ℂ) + I * (((2 * t : ℝ) : ℂ))) =
+        ((σ : ℂ) + 2 * I * t) := by
+    norm_num [Complex.ofReal_mul]
+    ring
+  calc
+    ‖logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖
+        = ‖logDeriv riemannZeta
+            ((σ : ℂ) + I * (((2 * t : ℝ) : ℂ)))‖ := by
+          rw [hrewrite]
+    _ ≤ C := hbound
+
+/-- Signed coordinate compact bounded-height norm bound for `-logDeriv ζ` at
+the shifted point `σ + 2it`. -/
+lemma exists_norm_neg_logDeriv_riemannZeta_sigma_two_it_bound_on_compact_vertical_band
+    {H T : ℝ} (hH : 0 < H) :
+    ∃ C ≥ 0, ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 →
+      H ≤ |t| → |t| ≤ T →
+      ‖-logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖ ≤ C := by
+  have h2H : 0 < 2 * H := by positivity
+  rcases exists_norm_neg_logDeriv_riemannZeta_sigma_it_bound_on_compact_vertical_band
+      (H := 2 * H) (T := 2 * T) h2H with ⟨C, hC_nonneg, hC⟩
+  refine ⟨C, hC_nonneg, ?_⟩
+  intro σ t hσ htH htT
+  have hheight_lower : 2 * H ≤ |2 * t| := by
+    calc
+      2 * H ≤ 2 * |t| := by nlinarith
+      _ = |2 * t| := by simp [abs_mul]
+  have hheight_upper : |2 * t| ≤ 2 * T := by
+    calc
+      |2 * t| = 2 * |t| := by simp [abs_mul]
+      _ ≤ 2 * T := by nlinarith
+  have hbound := hC σ (2 * t) hσ hheight_lower hheight_upper
+  have hrewrite :
+      ((σ : ℂ) + I * (((2 * t : ℝ) : ℂ))) =
+        ((σ : ℂ) + 2 * I * t) := by
+    norm_num [Complex.ofReal_mul]
+    ring
+  calc
+    ‖-logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖
+        = ‖-logDeriv riemannZeta
+            ((σ : ℂ) + I * (((2 * t : ℝ) : ℂ)))‖ := by
+          rw [hrewrite]
+    _ ≤ C := hbound
+
+/-- Compact bounded-height real-part bound for the quotient convention
+`-ζ'/ζ` at `σ + it`. -/
+lemma exists_re_neg_deriv_div_riemannZeta_sigma_it_bound_on_compact_vertical_band
+    {H T : ℝ} (hH : 0 < H) :
+    ∃ C ≥ 0, ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 →
+      H ≤ |t| → |t| ≤ T →
+      (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re ≤ C := by
+  rcases exists_norm_neg_logDeriv_riemannZeta_sigma_it_bound_on_compact_vertical_band
+      (H := H) (T := T) hH with ⟨C, hC_nonneg, hC⟩
+  refine ⟨C, hC_nonneg, ?_⟩
+  intro σ t hσ htH htT
+  let z : ℂ := (σ : ℂ) + I * t
+  calc
+    (-deriv riemannZeta z / riemannZeta z).re
+        = (-logDeriv riemannZeta z).re :=
+          neg_deriv_div_riemannZeta_re_eq_neg_logDeriv_re z
+    _ ≤ ‖-logDeriv riemannZeta z‖ := Complex.re_le_norm _
+    _ ≤ C := hC σ t hσ htH htT
+
+/-- Compact bounded-height real-part bound for the quotient convention
+`-ζ'/ζ` at the shifted point `σ + 2it`. -/
+lemma exists_re_neg_deriv_div_riemannZeta_sigma_two_it_bound_on_compact_vertical_band
+    {H T : ℝ} (hH : 0 < H) :
+    ∃ C ≥ 0, ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 →
+      H ≤ |t| → |t| ≤ T →
+      (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+          riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤ C := by
+  rcases exists_norm_neg_logDeriv_riemannZeta_sigma_two_it_bound_on_compact_vertical_band
+      (H := H) (T := T) hH with ⟨C, hC_nonneg, hC⟩
+  refine ⟨C, hC_nonneg, ?_⟩
+  intro σ t hσ htH htT
+  let z : ℂ := (σ : ℂ) + 2 * I * t
+  calc
+    (-deriv riemannZeta z / riemannZeta z).re
+        = (-logDeriv riemannZeta z).re :=
+          neg_deriv_div_riemannZeta_re_eq_neg_logDeriv_re z
+    _ ≤ ‖-logDeriv riemannZeta z‖ := Complex.re_le_norm _
+    _ ≤ C := hC σ t hσ htH htT
+
 /-- Compact patch from a high-height `B * log |t|` estimate to an all-height
 affine `A + B' * log(|t| + 3)` estimate for `logDeriv ζ`.
 
