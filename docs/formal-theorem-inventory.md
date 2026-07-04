@@ -64,6 +64,11 @@ Core verified declarations:
   bound, producing an all-height affine `A + B' * log(|t| + 3)` estimate.
 - `exists_norm_neg_logDeriv_riemannZeta_sigma_it_affine_log_abs_add_three_bound_of_high_height_log_abs_bound`
   is the signed `-logDeriv zeta` version of the same compact-patching bridge.
+- `exists_norm_logDeriv_riemannZeta_sigma_two_it_affine_log_abs_add_three_bound_of_high_height_log_abs_bound`
+  is the corresponding compact-patching bridge for the shifted 3-4-1 point
+  `sigma + 2it`.
+- `exists_norm_neg_logDeriv_riemannZeta_sigma_two_it_affine_log_abs_add_three_bound_of_high_height_log_abs_bound`
+  is the signed `-logDeriv zeta` version at `sigma + 2it`.
 - `exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_add_three_of_one_add_le`
   is the coordinate form of the same fixed-margin logarithmic bound on
   vertical lines `sigma + it`.
