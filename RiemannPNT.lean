@@ -5948,6 +5948,73 @@ theorem re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affi
   ZeroFreeRegion.re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_neg_logDeriv_re_le_half_radius
     hr hσ hσr hHpos hH ht hA hB hM hlog hcenter
 
+/-- Public right-shifted Borel-Carathéodory transfer for the signed regular
+part `-logDeriv ζ(w) + (w-ρ)⁻¹`, normalized to the pure `log |t|` scale. -/
+theorem borelCaratheodory_neg_logDeriv_regularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius
+    {Are Bre Acenter Bcenter r σ β t : ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3) (ht : 6 ≤ |t|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hM :
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * t)‖ + 3))
+    (hdiff :
+      DifferentiableOn ℂ
+        (fun w : ℂ =>
+          -logDeriv riemannZeta w + (w - ((β : ℂ) + Complex.I * t))⁻¹)
+        (Metric.ball (((σ + r : ℝ) : ℂ) + Complex.I * t) (2 * r)))
+    (hlog : ∀ w : ℂ,
+      w ∈ Metric.ball (((σ + r : ℝ) : ℂ) + Complex.I * t) (2 * r) →
+        (-logDeriv riemannZeta w + (w - ((β : ℂ) + Complex.I * t))⁻¹).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * t)‖ + 3))
+    (hcenter :
+      ‖-logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + Complex.I * t) +
+          ((((σ + r : ℝ) : ℂ) + Complex.I * t) -
+            ((β : ℂ) + Complex.I * t))⁻¹‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * t)‖ + 3)) :
+    ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) +
+        (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+      ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+        Real.log |t| :=
+  ZeroFreeRegion.borelCaratheodory_neg_logDeriv_regularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius
+    hr hσ hσr ht hA hB hM hdiff hlog hcenter
+
+/-- Public zero-repulsion real-part form of the right-shifted Borel transfer
+for the signed regular part. -/
+theorem re_neg_logDeriv_riemannZeta_sigma_it_add_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius
+    {Are Bre Acenter Bcenter r σ β t : ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3) (ht : 6 ≤ |t|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hM :
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * t)‖ + 3))
+    (hdiff :
+      DifferentiableOn ℂ
+        (fun w : ℂ =>
+          -logDeriv riemannZeta w + (w - ((β : ℂ) + Complex.I * t))⁻¹)
+        (Metric.ball (((σ + r : ℝ) : ℂ) + Complex.I * t) (2 * r)))
+    (hlog : ∀ w : ℂ,
+      w ∈ Metric.ball (((σ + r : ℝ) : ℂ) + Complex.I * t) (2 * r) →
+        (-logDeriv riemannZeta w + (w - ((β : ℂ) + Complex.I * t))⁻¹).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * t)‖ + 3))
+    (hcenter :
+      ‖-logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + Complex.I * t) +
+          ((((σ + r : ℝ) : ℂ) + Complex.I * t) -
+            ((β : ℂ) + Complex.I * t))⁻¹‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * t)‖ + 3))
+    (hsub : 0 < σ - β) :
+    (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+        riemannZeta ((σ : ℂ) + Complex.I * t)).re + 1 / (σ - β) ≤
+      ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+        Real.log |t| :=
+  ZeroFreeRegion.re_neg_logDeriv_riemannZeta_sigma_it_add_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius
+    hr hσ hσr ht hA hB hM hdiff hlog hcenter hsub
+
 /-- Public pointwise Borel-Carathéodory bound for `logDeriv ζ` on a
 positive-height right half-strip, with differentiability discharged by
 ζ-nonvanishing on `Re(s) >= 1`. -/

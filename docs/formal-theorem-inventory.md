@@ -1155,6 +1155,12 @@ Core verified declarations:
   `borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius`
   normalize the signed half-radius Borel outputs to affine
   `A + B log(||sigma+it|| + 3)` bounds.
+- `borelCaratheodory_neg_logDeriv_regularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`
+  applies the right-shifted Borel normalization to the zero-candidate regular
+  part `-logDeriv zeta(w) + (w-rho)^(-1)`.
+- `re_neg_logDeriv_riemannZeta_sigma_it_add_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius`
+  turns that normalized regular-part norm bound into the real zero-repulsion
+  estimate `Re(-zeta'/zeta)(sigma+it) + 1/(sigma-beta) <= C log |t|`.
 - `jensen_circleAverage_log_norm_verticalRegion`
   combines Jensen's formula with the same closed-disk geometry and ambient
   vertical-region meromorphicity.

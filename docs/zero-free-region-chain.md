@@ -324,7 +324,15 @@ proved:
   and
   `ZeroFreeRegion.borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius`,
   expose those fixed half-radius bounds in both logarithmic-derivative sign
-  conventions;
+  conventions.  The zero-candidate regular-part bridge
+  `ZeroFreeRegion.borelCaratheodory_neg_logDeriv_regularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`
+  applies the same right-shifted normalization to
+  `-logDeriv zeta(w) + (w-rho)^(-1)`, and
+  `ZeroFreeRegion.re_neg_logDeriv_riemannZeta_sigma_it_add_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius`
+  converts it to the exact
+  `Re(-zeta'/zeta)(sigma+it) + 1/(sigma-beta) <= C log |t|`
+  zero-repulsion input.  The regular-part differentiability, real-part, and
+  center bounds are still open zeta-specific analytic estimates;
   `ZeroFreeRegion.jensen_circleAverage_log_norm_verticalRegion` is the matching
   Jensen entry point for zero-count and divisor estimates.
 - The zeta-specific regularity layer now includes
