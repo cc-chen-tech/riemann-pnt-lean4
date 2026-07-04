@@ -571,6 +571,11 @@ Core verified declarations:
   positive zero multiplicity `n`.
 - `classical_zero_free_region_of_exists_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height`
   packages the same multiplicity-aware high-height inputs existentially.
+- `classical_zero_free_region_of_re_im_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height`
+  is the coordinate version of the multiplicity-aware high-height closure, with
+  estimates stated for `sigma+it` and same-height zero candidates `beta+it`.
+- `classical_zero_free_region_of_exists_re_im_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height`
+  packages the coordinate multiplicity-aware high-height inputs existentially.
 - `classical_zero_free_region_of_exists_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height`
   packages the high-height positive-log-derivative convention existentially.
 - `classical_zero_free_region_of_logDeriv_regular_part_norm_affine_log_bound_and_vertical_logDeriv_norm_affine_log_bound_high_height`

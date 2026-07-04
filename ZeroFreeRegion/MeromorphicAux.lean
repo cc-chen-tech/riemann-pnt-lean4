@@ -2205,6 +2205,86 @@ lemma classical_zero_free_region_of_exists_multiplicity_logDeriv_regular_part_no
     classical_zero_free_region_of_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height
       T0 Bregular Bvertical hT0 hBregular hBvertical hregular hvertical
 
+/-- Coordinate high-height version of the multiplicity-aware positive
+`logDeriv ζ` regular-part/vertical-strip closure.
+
+This is the same input as
+`classical_zero_free_region_of_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height`,
+but stated in the real variables `sigma`, `beta`, and `t`. -/
+lemma classical_zero_free_region_of_re_im_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height
+    (T0 Bregular Bvertical : ℝ)
+    (hT0 : 2 ≤ T0) (hBregular : 0 ≤ Bregular)
+    (hBvertical : 0 ≤ Bvertical)
+    (hregular :
+      ∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+        0 < σ - β →
+        ∃ n : ℕ, 0 < n ∧
+          ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+              (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+            Bregular * Real.log |t|)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          Bvertical * Real.log |t|) :
+    classical_zero_free_region := by
+  refine
+    classical_zero_free_region_of_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height
+      T0 Bregular Bvertical hT0 hBregular hBvertical ?_ ?_
+  · intro s ρ hs_height hs_re_mem hζρ hρ_im_eq hρ_re_lt hsub
+    have hs_decomp : ((s.re : ℂ) + I * s.im) = s := by
+      apply Complex.ext <;> simp
+    have hρ_decomp : ((ρ.re : ℂ) + I * s.im) = ρ := by
+      apply Complex.ext
+      · simp
+      · simp [hρ_im_eq]
+    have hinv :
+        ((s.re : ℂ) - (ρ.re : ℂ))⁻¹ = (s - ρ)⁻¹ := by
+      have hsub_eq : s - ρ = ((s.re : ℂ) - (ρ.re : ℂ)) := by
+        apply Complex.ext
+        · simp
+        · simp [hρ_im_eq]
+      rw [← hsub_eq]
+    have hζ_coord :
+        riemannZeta ((ρ.re : ℂ) + I * s.im) = 0 := by
+      simpa [hρ_decomp] using hζρ
+    rcases hregular s.re ρ.re s.im hs_height hs_re_mem hζ_coord hρ_re_lt hsub with
+      ⟨n, hn_pos, hbound⟩
+    refine ⟨n, hn_pos, ?_⟩
+    have harg :
+        logDeriv riemannZeta ((s.re : ℂ) + I * s.im) =
+          logDeriv riemannZeta s := by
+      rw [hs_decomp]
+    simpa [harg, hinv] using hbound
+  · intro z hz_height hz_re_mem
+    have hz_decomp : ((z.re : ℂ) + I * z.im) = z := by
+      apply Complex.ext <;> simp
+    have h := hvertical z.re z.im hz_height hz_re_mem
+    simpa [hz_decomp] using h
+
+/-- Existential coordinate high-height version of the multiplicity-aware
+positive `logDeriv ζ` regular-part/vertical-strip closure. -/
+lemma classical_zero_free_region_of_exists_re_im_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height
+    (h :
+      ∃ T0 Bregular Bvertical : ℝ, 2 ≤ T0 ∧
+        0 ≤ Bregular ∧ 0 ≤ Bvertical ∧
+        (∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+          0 < σ - β →
+          ∃ n : ℕ, 0 < n ∧
+            ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+                (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+              Bregular * Real.log |t|) ∧
+        (∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+            Bvertical * Real.log |t|)) :
+    classical_zero_free_region := by
+  rcases h with
+    ⟨T0, Bregular, Bvertical, hT0, hBregular, hBvertical, hregular, hvertical⟩
+  exact
+    classical_zero_free_region_of_re_im_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height
+      T0 Bregular Bvertical hT0 hBregular hBvertical hregular hvertical
+
 /-- Existential high-height version of the positive `logDeriv ζ`
 regular-part/vertical-strip closure. -/
 lemma classical_zero_free_region_of_exists_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height
