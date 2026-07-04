@@ -3082,6 +3082,19 @@ theorem exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_add_three_of_one_ad
         C * Real.log (|t| + 3) :=
   ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_add_three_of_one_add_le hε
 
+/-- Public fixed-margin high-height vertical logarithmic bound in the exact
+`C * log |t|` scale.
+
+This is the proved fixed-margin analogue of the missing boundary-strip
+estimate: it assumes `1+ε ≤ σ`, not merely `1 ≤ σ`. -/
+theorem exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_of_fixed_margin
+    {ε : ℝ} (hε : 0 < ε) :
+    ∃ C T0 : ℝ, 0 ≤ C ∧ 3 ≤ T0 ∧
+      ∀ σ t : ℝ, 1 + ε ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          C * Real.log |t| :=
+  ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_of_fixed_margin hε
+
 /-- Public fixed-margin real-part bound for the shifted `σ+it` second term in
 the 3-4-1 inequality. -/
 theorem exists_re_neg_deriv_div_riemannZeta_sigma_it_le_log_abs_add_three_of_one_add_le
@@ -3100,6 +3113,16 @@ theorem exists_norm_logDeriv_riemannZeta_sigma_two_it_le_log_abs_add_three_of_on
       ‖logDeriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t)‖ ≤
         C * Real.log (|t| + 3) :=
   ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_sigma_two_it_le_log_abs_add_three_of_one_add_le hε
+
+/-- Public fixed-margin high-height logarithmic bound for the shifted third
+3-4-1 point `σ + 2it`, in the exact `C * log |t|` scale. -/
+theorem exists_norm_logDeriv_riemannZeta_sigma_two_it_le_log_abs_of_fixed_margin
+    {ε : ℝ} (hε : 0 < ε) :
+    ∃ C T0 : ℝ, 0 ≤ C ∧ 3 ≤ T0 ∧
+      ∀ σ t : ℝ, 1 + ε ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t)‖ ≤
+          C * Real.log |t| :=
+  ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_sigma_two_it_le_log_abs_of_fixed_margin hε
 
 /-- Public fixed-margin real-part bound for the shifted `σ+2it` third term in
 the 3-4-1 inequality. -/

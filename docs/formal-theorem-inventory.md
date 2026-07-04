@@ -50,6 +50,9 @@ Core verified declarations:
 - `exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_add_three_of_one_add_le`
   is the coordinate form of the same fixed-margin logarithmic bound on
   vertical lines `sigma + it`.
+- `exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_of_fixed_margin`
+  converts that fixed-margin coordinate bound to the exact high-height scale
+  `C * log |t|`, still under the hypothesis `1 + epsilon <= sigma`.
 - `log_abs_two_mul_add_three_le_two_log_abs_add_three`
   proves the elementary comparison
   `log (|2*t| + 3) <= 2 * log (|t| + 3)`.
@@ -59,6 +62,9 @@ Core verified declarations:
 - `exists_norm_logDeriv_riemannZeta_sigma_two_it_le_log_abs_add_three_of_one_add_le`
   specializes fixed-margin logarithmic control to the shifted point
   `sigma + 2*I*t`.
+- `exists_norm_logDeriv_riemannZeta_sigma_two_it_le_log_abs_of_fixed_margin`
+  converts that shifted fixed-margin bound to the exact high-height scale
+  `C * log |t|`.
 - `exists_re_neg_deriv_div_riemannZeta_sigma_two_it_le_log_abs_add_three_of_one_add_le`
   converts that shifted norm bound into the real-part form used by the third
   term of the 3-4-1 inequality.

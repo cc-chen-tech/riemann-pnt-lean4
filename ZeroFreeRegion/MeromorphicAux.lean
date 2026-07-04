@@ -2396,6 +2396,55 @@ lemma log_abs_add_three_le_two_log_abs {t : ℝ} (ht : 3 ≤ |t|) :
     _ = Real.log 2 + Real.log |t| := hlog_mul
     _ ≤ 2 * Real.log |t| := by linarith
 
+/-- Fixed-margin high-height vertical logarithmic bound in the exact
+`C * log |t|` scale.
+
+This is the strongest statement currently available from the absolute
+convergence half-plane alone: for each fixed `ε > 0`, the estimate holds on
+`1 + ε <= σ`.  It deliberately does not reach the boundary strip
+`1 <= σ <= 2`, which remains the hard analytic input for the classical
+zero-free region. -/
+lemma exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_of_fixed_margin
+    {ε : ℝ} (hε : 0 < ε) :
+    ∃ C T0 : ℝ, 0 ≤ C ∧ 3 ≤ T0 ∧
+      ∀ σ t : ℝ, 1 + ε ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          C * Real.log |t| := by
+  rcases exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_add_three_of_one_add_le
+      hε with ⟨C, hC, hbound⟩
+  refine ⟨2 * C, 3, mul_nonneg (by norm_num) hC, by norm_num, ?_⟩
+  intro σ t hσ _hσ_le ht
+  have hlog := log_abs_add_three_le_two_log_abs ht
+  calc
+    ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖
+        ≤ C * Real.log (|t| + 3) := hbound σ t hσ
+    _ ≤ C * (2 * Real.log |t|) :=
+        mul_le_mul_of_nonneg_left hlog hC
+    _ = (2 * C) * Real.log |t| := by ring
+
+/-- Fixed-margin high-height logarithmic bound for the shifted third
+3-4-1 point `σ + 2it`, again in the exact `C * log |t|` scale.
+
+Like `exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_of_fixed_margin`,
+this is a fixed-margin result and not the missing boundary-strip estimate. -/
+lemma exists_norm_logDeriv_riemannZeta_sigma_two_it_le_log_abs_of_fixed_margin
+    {ε : ℝ} (hε : 0 < ε) :
+    ∃ C T0 : ℝ, 0 ≤ C ∧ 3 ≤ T0 ∧
+      ∀ σ t : ℝ, 1 + ε ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖ ≤
+          C * Real.log |t| := by
+  rcases exists_norm_logDeriv_riemannZeta_sigma_two_it_le_log_abs_add_three_of_one_add_le
+      hε with ⟨C, hC, hbound⟩
+  refine ⟨2 * C, 3, mul_nonneg (by norm_num) hC, by norm_num, ?_⟩
+  intro σ t hσ _hσ_le ht
+  have hlog := log_abs_add_three_le_two_log_abs ht
+  calc
+    ‖logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖
+        ≤ C * Real.log (|t| + 3) := hbound σ t hσ
+    _ ≤ C * (2 * Real.log |t|) :=
+        mul_le_mul_of_nonneg_left hlog hC
+    _ = (2 * C) * Real.log |t| := by ring
+
 /-- On the strip `1 <= σ <= 2`, `‖σ + it‖` is bounded by `|t| + 2`. -/
 lemma norm_sigma_add_I_mul_le_abs_add_two {σ t : ℝ}
     (hσ : σ ∈ Set.Icc 1 2) :

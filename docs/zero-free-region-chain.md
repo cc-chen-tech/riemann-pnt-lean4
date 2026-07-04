@@ -111,6 +111,12 @@ and
 bound `σ+2it` by `C * log(|t|+3)` whenever `1+ε <= σ`. The helper
 `log_abs_two_mul_add_three_le_two_log_abs_add_three` absorbs the factor `2` in
 the imaginary part.
+The high-height forms
+`exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_of_fixed_margin` and
+`exists_norm_logDeriv_riemannZeta_sigma_two_it_le_log_abs_of_fixed_margin`
+put the same proved fixed-margin estimates into the exact `C * log |t|` scale.
+They still assume `1+ε <= σ`, so they are not substitutes for the missing
+boundary-strip estimate.
 The one-entry package
 `exists_re_neg_deriv_div_riemannZeta_fixed_margin_three_four_one_bounds` gives
 one constant for the real-axis, `σ+it`, and `σ+2it` real-part terms together.
