@@ -76,6 +76,7 @@ The following proved declarations are the main entry points for future work:
 - `ZeroFreeRegion.log_deriv_zeta_nonneg_combination`
 - `ZeroFreeRegion.norm_logDeriv_riemannZeta_le_real_neg_deriv_div`
 - `ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_le_log_abs_im_add_three_of_one_add_le_re`
+- `ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_sigma_two_it_le_log_abs_add_three_of_one_add_le`
 - `ZeroFreeRegion.exists_sigmaOf_log_two_t_norm_bound_const_mul_log_div`
 - `ZeroFreeRegion.exists_sigmaOf_log_two_t_bound_const_mul_log_div`
 - `ZeroFreeRegion.sigmaOf_log_weak_two_t_margin_impossible`

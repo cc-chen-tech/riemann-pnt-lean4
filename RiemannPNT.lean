@@ -3082,6 +3082,25 @@ theorem exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_add_three_of_one_ad
         C * Real.log (|t| + 3) :=
   ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_add_three_of_one_add_le hε
 
+/-- Public fixed-margin norm bound for the shifted `σ+2it` logarithmic
+derivative term used by the 3-4-1 inequality. -/
+theorem exists_norm_logDeriv_riemannZeta_sigma_two_it_le_log_abs_add_three_of_one_add_le
+    {ε : ℝ} (hε : 0 < ε) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ σ t : ℝ, 1 + ε ≤ σ →
+      ‖logDeriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t)‖ ≤
+        C * Real.log (|t| + 3) :=
+  ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_sigma_two_it_le_log_abs_add_three_of_one_add_le hε
+
+/-- Public fixed-margin real-part bound for the shifted `σ+2it` third term in
+the 3-4-1 inequality. -/
+theorem exists_re_neg_deriv_div_riemannZeta_sigma_two_it_le_log_abs_add_three_of_one_add_le
+    {ε : ℝ} (hε : 0 < ε) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ σ t : ℝ, 1 + ε ≤ σ →
+      (-deriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t) /
+          riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re ≤
+        C * Real.log (|t| + 3) :=
+  ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_sigma_two_it_le_log_abs_add_three_of_one_add_le hε
+
 /-- Public de la Vallée Poussin 3-4-1 nonnegativity combination. -/
 theorem log_deriv_zeta_nonneg_combination (σ : ℝ) (hσ : 1 < σ) (t : ℝ) :
     3 * (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re

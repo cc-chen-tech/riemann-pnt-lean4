@@ -532,6 +532,51 @@ lemma exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_add_three_of_one_add_
   intro σ t hσ
   simpa using hbound ((σ : ℂ) + I * t) (by simpa using hσ)
 
+/-- Elementary log comparison used to move from the point `σ + 2it` back to
+the same height scale `log(|t|+3)`. -/
+lemma log_abs_two_mul_add_three_le_two_log_abs_add_three (t : ℝ) :
+    Real.log (|2 * t| + 3) ≤ 2 * Real.log (|t| + 3) := by
+  have ht_nonneg : 0 ≤ |t| := abs_nonneg t
+  have hleft_pos : 0 < |2 * t| + 3 := by
+    nlinarith [abs_nonneg (2 * t)]
+  have hbase_pos : 0 < |t| + 3 := by
+    nlinarith
+  have h_abs_two : |2 * t| = 2 * |t| := by
+    rw [abs_mul, abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 2)]
+  have hle : |2 * t| + 3 ≤ (|t| + 3) ^ 2 := by
+    rw [h_abs_two]
+    nlinarith [sq_nonneg |t|]
+  have hlog_le : Real.log (|2 * t| + 3) ≤ Real.log ((|t| + 3) ^ 2) :=
+    Real.log_le_log hleft_pos hle
+  have hlog_sq : Real.log ((|t| + 3) ^ 2) = 2 * Real.log (|t| + 3) := by
+    rw [sq, Real.log_mul (ne_of_gt hbase_pos) (ne_of_gt hbase_pos)]
+    ring
+  simpa [hlog_sq] using hlog_le
+
+/-- Fixed-margin `σ + 2it` norm bound for the zeta logarithmic derivative.
+
+This is the shifted third point used by the 3-4-1 combination, but still under
+the fixed-margin hypothesis `1+ε ≤ σ`. -/
+lemma exists_norm_logDeriv_riemannZeta_sigma_two_it_le_log_abs_add_three_of_one_add_le
+    {ε : ℝ} (hε : 0 < ε) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ σ t : ℝ, 1 + ε ≤ σ →
+      ‖logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖ ≤
+        C * Real.log (|t| + 3) := by
+  rcases exists_norm_logDeriv_riemannZeta_le_log_abs_im_add_three_of_one_add_le_re
+      hε with ⟨C, hC, hbound⟩
+  refine ⟨2 * C, mul_nonneg (by norm_num) hC, ?_⟩
+  intro σ t hσ
+  have hmain :=
+    hbound ((σ : ℂ) + 2 * I * t) (by simpa using hσ)
+  calc
+    ‖logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖
+        ≤ C * Real.log (|2 * t| + 3) := by
+          simpa using hmain
+    _ ≤ C * (2 * Real.log (|t| + 3)) :=
+          mul_le_mul_of_nonneg_left
+            (log_abs_two_mul_add_three_le_two_log_abs_add_three t) hC
+    _ = (2 * C) * Real.log (|t| + 3) := by ring
+
 /-- **de la Vallée Poussin 三角组合的非负性**
 
     对于 σ > 1 和实数 t，有
@@ -674,6 +719,26 @@ lemma norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv (s : ℂ) :
     ‖-deriv riemannZeta s / riemannZeta s‖ =
       ‖logDeriv riemannZeta s‖ := by
   rw [neg_deriv_div_riemannZeta_eq_neg_logDeriv, norm_neg]
+
+/-- Fixed-margin real-part bound for the shifted `σ + 2it` term in the
+3-4-1 inequality. -/
+lemma exists_re_neg_deriv_div_riemannZeta_sigma_two_it_le_log_abs_add_three_of_one_add_le
+    {ε : ℝ} (hε : 0 < ε) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ σ t : ℝ, 1 + ε ≤ σ →
+      (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+          riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤
+        C * Real.log (|t| + 3) := by
+  rcases exists_norm_logDeriv_riemannZeta_sigma_two_it_le_log_abs_add_three_of_one_add_le
+      hε with ⟨C, hC, hbound⟩
+  refine ⟨C, hC, ?_⟩
+  intro σ t hσ
+  let z : ℂ := (σ : ℂ) + 2 * I * t
+  calc
+    (-deriv riemannZeta z / riemannZeta z).re
+        ≤ ‖-deriv riemannZeta z / riemannZeta z‖ := Complex.re_le_norm _
+    _ = ‖logDeriv riemannZeta z‖ :=
+        norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv z
+    _ ≤ C * Real.log (|t| + 3) := hbound σ t hσ
 
 /-- ζ is nonzero in a full neighborhood of `1`.
 

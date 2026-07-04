@@ -67,6 +67,13 @@ shows that for every `ε > 0` there is `C >= 0` with
 This follows from absolute convergence, the L-series triangle inequality, and
 real-axis antitonicity. It does not close the classical zero-free region, whose
 missing estimate must hold uniformly in the boundary strip down to `Re z = 1`.
+The shifted 3-4-1 third point has the corresponding fixed-margin forms:
+`exists_norm_logDeriv_riemannZeta_sigma_two_it_le_log_abs_add_three_of_one_add_le`
+and
+`exists_re_neg_deriv_div_riemannZeta_sigma_two_it_le_log_abs_add_three_of_one_add_le`
+bound `σ+2it` by `C * log(|t|+3)` whenever `1+ε <= σ`. The helper
+`log_abs_two_mul_add_three_le_two_log_abs_add_three` absorbs the factor `2` in
+the imaginary part.
 
 ## Verified Conditional Assembly
 
@@ -634,6 +641,8 @@ The fixed-margin logarithmic bound
 is useful evidence of the available half-plane control, but it applies only
 after choosing a fixed `epsilon > 0`; it therefore cannot replace the missing
 uniform boundary-strip input.
+The same limitation applies to the fixed-margin `sigma + 2it` real-part bound:
+it is a proved shifted-term estimate, but only under `1+epsilon <= sigma`.
 This obstruction is now formalized as
 `ZeroFreeRegion.sigmaOf_log_weak_two_t_margin_impossible`: once the real-axis
 and `sigma + 2it` terms both carry coefficients at least `1/a`, the required
