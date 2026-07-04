@@ -1167,6 +1167,9 @@ Core verified declarations:
 - `re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius`
   converts that multiplicity-aware bound to the same unit-principal
   zero-repulsion estimate using `n >= 1`.
+- `borelCaratheodory_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`
+  is the positive-sign multiplicity-aware Borel handoff for
+  `logDeriv zeta(w) - n * (w-rho)^(-1)`.
 - `jensen_circleAverage_log_norm_verticalRegion`
   combines Jensen's formula with the same closed-disk geometry and ambient
   vertical-region meromorphicity.

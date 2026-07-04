@@ -336,7 +336,11 @@ proved:
   and
   `ZeroFreeRegion.re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius`
   gives the same handoff for `-logDeriv zeta(w)+n(w-rho)^(-1)` with
-  `n >= 1`, avoiding a hidden simple-zero assumption.  The regular-part
+  `n >= 1`, avoiding a hidden simple-zero assumption.  The positive-sign
+  companion
+  `ZeroFreeRegion.borelCaratheodory_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`
+  handles `logDeriv zeta(w)-n(w-rho)^(-1)`, matching the direct output of
+  local factorization estimates before sign conversion.  The regular-part
   differentiability, real-part, and center bounds are still open zeta-specific
   analytic estimates;
   `ZeroFreeRegion.jensen_circleAverage_log_norm_verticalRegion` is the matching
