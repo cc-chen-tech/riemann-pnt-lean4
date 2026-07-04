@@ -3476,6 +3476,69 @@ lemma meromorphicOn_neg_logDeriv_riemannZeta_closedBall (c : ℂ) (R : ℝ) :
     MeromorphicOn (fun z : ℂ => -logDeriv riemannZeta z) (closedBall c R) :=
   (meromorphicOn_logDeriv_riemannZeta_closedBall c R).neg
 
+/-- A simple analytic zero admits the local unit factorization
+`f z = (z - x) * g z` on the punctured neighborhood of the zero.
+
+This is the local algebraic input for separating the principal part of a
+logarithmic derivative near a simple zero. -/
+lemma exists_eventuallyEq_sub_mul_unit_of_analyticAt_zero_deriv_ne_zero
+    {f : ℂ → ℂ} {x : ℂ}
+    (hf : AnalyticAt ℂ f x) (hfx : f x = 0) (hf' : deriv f x ≠ 0) :
+    ∃ g : ℂ → ℂ, AnalyticAt ℂ g x ∧ g x ≠ 0 ∧
+      ∀ᶠ z in 𝓝[≠] x, f z = (z - x) * g z := by
+  have horder : meromorphicOrderAt f x = (1 : WithTop ℤ) := by
+    rw [hf.meromorphicOrderAt_eq,
+      hf.analyticOrderAt_eq_one_of_zero_deriv_ne_zero hfx hf']
+    simp
+  rcases (meromorphicOrderAt_eq_int_iff hf.meromorphicAt).1 horder with
+    ⟨g, hg, hg_ne, hfg⟩
+  refine ⟨g, hg, hg_ne, ?_⟩
+  filter_upwards [hfg] with z hz
+  simpa using hz
+
+/-- Near a simple analytic zero, subtracting the principal logarithmic pole
+leaves the logarithmic derivative of the local analytic unit.
+
+This is the local equality behind the future estimate
+`logDeriv ζ(s) - (s - ρ)⁻¹ = O(log |Im ρ|)` near a simple zero `ρ`; the
+global height bound for that regular part is a separate analytic estimate. -/
+lemma exists_eventuallyEq_logDeriv_sub_inv_of_analyticAt_zero_deriv_ne_zero
+    {f : ℂ → ℂ} {x : ℂ}
+    (hf : AnalyticAt ℂ f x) (hfx : f x = 0) (hf' : deriv f x ≠ 0) :
+    ∃ g : ℂ → ℂ, AnalyticAt ℂ g x ∧ g x ≠ 0 ∧
+      ∀ᶠ z in 𝓝[≠] x, logDeriv f z - (z - x)⁻¹ = logDeriv g z := by
+  rcases exists_eventuallyEq_sub_mul_unit_of_analyticAt_zero_deriv_ne_zero
+      hf hfx hf' with ⟨g, hg, hg_ne, hfg⟩
+  refine ⟨g, hg, hg_ne, ?_⟩
+  have hfg_deriv :
+      deriv f =ᶠ[𝓝[≠] x] deriv (fun z : ℂ => (z - x) * g z) :=
+    Filter.EventuallyEq.nhdsNE_deriv hfg
+  have hg_ne_eventually : ∀ᶠ z in 𝓝[≠] x, g z ≠ 0 :=
+    (hg.continuousAt.tendsto.eventually_ne hg_ne).filter_mono
+      nhdsWithin_le_nhds
+  have hg_diff_eventually : ∀ᶠ z in 𝓝[≠] x, DifferentiableAt ℂ g z :=
+    (hg.eventually_analyticAt.mono fun _ hz => hz.differentiableAt).filter_mono
+      nhdsWithin_le_nhds
+  have hz_ne : ∀ᶠ z in 𝓝[≠] x, z ≠ x :=
+    self_mem_nhdsWithin
+  filter_upwards [hfg, hfg_deriv, hg_ne_eventually, hg_diff_eventually, hz_ne] with
+    z hfgz hderivz hgz hgdiffz hz
+  have hlog_factor :
+      logDeriv f z = logDeriv (fun w : ℂ => (w - x) * g w) z := by
+    simp [logDeriv_apply, hderivz, hfgz]
+  have hmul :
+      logDeriv (fun w : ℂ => (w - x) * g w) z =
+        logDeriv (fun w : ℂ => w - x) z + logDeriv g z := by
+    rw [logDeriv_mul]
+    · simpa using sub_ne_zero.mpr hz
+    · exact hgz
+    · fun_prop
+    · exact hgdiffz
+  have hlinear : logDeriv (fun w : ℂ => w - x) z = (z - x)⁻¹ := by
+    simp [logDeriv_apply]
+  rw [hlog_factor, hmul, hlinear]
+  abel
+
 /-- If `f` is analytic and nonzero at `z`, then its logarithmic derivative is
 analytic at `z`. -/
 lemma analyticAt_logDeriv_of_analyticAt_ne_zero {f : ℂ → ℂ} {z : ℂ}

@@ -2833,6 +2833,25 @@ theorem meromorphicOn_neg_logDeriv_riemannZeta_closedBall (c : ℂ) (R : ℝ) :
       (Metric.closedBall c R) :=
   ZeroFreeRegion.meromorphicOn_neg_logDeriv_riemannZeta_closedBall c R
 
+/-- Public local factorization of a simple analytic zero into `(z - x)` times
+an analytic unit on the punctured neighborhood. -/
+theorem exists_eventuallyEq_sub_mul_unit_of_analyticAt_zero_deriv_ne_zero
+    {f : ℂ → ℂ} {x : ℂ}
+    (hf : AnalyticAt ℂ f x) (hfx : f x = 0) (hf' : deriv f x ≠ 0) :
+    ∃ g : ℂ → ℂ, AnalyticAt ℂ g x ∧ g x ≠ 0 ∧
+      ∀ᶠ z in 𝓝[≠] x, f z = (z - x) * g z :=
+  ZeroFreeRegion.exists_eventuallyEq_sub_mul_unit_of_analyticAt_zero_deriv_ne_zero
+    hf hfx hf'
+
+/-- Public simple-zero logarithmic-derivative principal-part separation. -/
+theorem exists_eventuallyEq_logDeriv_sub_inv_of_analyticAt_zero_deriv_ne_zero
+    {f : ℂ → ℂ} {x : ℂ}
+    (hf : AnalyticAt ℂ f x) (hfx : f x = 0) (hf' : deriv f x ≠ 0) :
+    ∃ g : ℂ → ℂ, AnalyticAt ℂ g x ∧ g x ≠ 0 ∧
+      ∀ᶠ z in 𝓝[≠] x, logDeriv f z - (z - x)⁻¹ = logDeriv g z :=
+  ZeroFreeRegion.exists_eventuallyEq_logDeriv_sub_inv_of_analyticAt_zero_deriv_ne_zero
+    hf hfx hf'
+
 /-- Public generic bridge: analytic nonvanishing implies analytic logarithmic
 derivative. -/
 theorem analyticAt_logDeriv_of_analyticAt_ne_zero

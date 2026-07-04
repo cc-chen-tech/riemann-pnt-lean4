@@ -279,6 +279,14 @@ Core verified declarations:
   specializes the order-zero log-counting bridge to `σ + I*t` disks.
 - `valueDistribution_logCounting_neg_logDeriv_riemannZeta_sigma_it_unsigned_eq_zero_of_order_eq_zero`
   provides the signed `σ + I*t` version in unsigned order bookkeeping.
+- `exists_eventuallyEq_sub_mul_unit_of_analyticAt_zero_deriv_ne_zero`
+  factors a simple analytic zero as `(z - x) * g z` with analytic unit `g` on
+  a punctured neighborhood, giving the local algebra input for later
+  principal-part separation of `logDeriv`.
+- `exists_eventuallyEq_logDeriv_sub_inv_of_analyticAt_zero_deriv_ne_zero`
+  upgrades that factorization to
+  `logDeriv f z - (z - x)⁻¹ = logDeriv g z` on the punctured neighborhood,
+  isolating the simple-zero principal logarithmic pole from the regular part.
 - `analyticAt_logDeriv_of_analyticAt_ne_zero`
   proves the generic local fact that an analytic nonzero function has analytic
   logarithmic derivative.
