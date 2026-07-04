@@ -59,6 +59,11 @@ Core verified declarations:
   is the coordinate form on points `sigma + it`.
 - `exists_norm_neg_logDeriv_riemannZeta_sigma_it_bound_on_compact_vertical_band`
   is the signed coordinate form on points `sigma + it`.
+- `exists_norm_logDeriv_riemannZeta_sigma_it_affine_log_abs_add_three_bound_of_high_height_log_abs_bound`
+  patches a future high-height `B * log |t|` estimate with the compact band
+  bound, producing an all-height affine `A + B' * log(|t| + 3)` estimate.
+- `exists_norm_neg_logDeriv_riemannZeta_sigma_it_affine_log_abs_add_three_bound_of_high_height_log_abs_bound`
+  is the signed `-logDeriv zeta` version of the same compact-patching bridge.
 - `exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_add_three_of_one_add_le`
   is the coordinate form of the same fixed-margin logarithmic bound on
   vertical lines `sigma + it`.

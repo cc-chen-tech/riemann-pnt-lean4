@@ -114,9 +114,11 @@ Re(-ζ'/ζ(σ + i t)) <= -1 / (σ - β) + O(log |t|).
 These are the current hard wall.  They normally require zeta growth estimates
 together with Borel-Caratheodory, Jensen/Hadamard factorization, or equivalent
 zero-repulsion machinery.  The repository already has fixed-margin estimates
-for `1 + ε <= Re(s)` and compact bounded-height norm bounds for
-`H <= |Im(s)| <= T`, but those do not provide the missing high-height
-boundary-strip estimate on `1 <= Re(s)`.
+for `1 + ε <= Re(s)`, compact bounded-height norm bounds for
+`H <= |Im(s)| <= T`, and bridge lemmas that patch a future high-height
+`B * log |t|` estimate into an all-height affine logarithmic estimate.  Those
+bridges still do not provide the missing high-height boundary-strip estimate on
+`1 <= Re(s)`.
 
 ## Paper Positioning
 
