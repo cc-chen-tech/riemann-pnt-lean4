@@ -566,6 +566,11 @@ Core verified declarations:
   is the high-height version of the same positive-log-derivative closure: the
   two zeta-specific estimates only need to hold for `T0 <= |Im|`, with
   `T0 >= 2`, and the bounded-height gap is filled by the compact patch.
+- `classical_zero_free_region_of_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height`
+  is the high-height version allowing the regular-part estimate to isolate a
+  positive zero multiplicity `n`.
+- `classical_zero_free_region_of_exists_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height`
+  packages the same multiplicity-aware high-height inputs existentially.
 - `classical_zero_free_region_of_exists_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height`
   packages the high-height positive-log-derivative convention existentially.
 - `classical_zero_free_region_of_logDeriv_regular_part_norm_affine_log_bound_and_vertical_logDeriv_norm_affine_log_bound_high_height`

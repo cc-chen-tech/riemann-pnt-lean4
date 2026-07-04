@@ -5835,6 +5835,44 @@ theorem classical_zero_free_region_of_logDeriv_regular_part_norm_bound_and_verti
   ZeroFreeRegion.classical_zero_free_region_of_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height
     T0 Bregular Bvertical hT0 hBregular hBvertical hregular hvertical
 
+/-- Public high-height closure with a multiplicity-weighted positive
+`logDeriv ζ` regular part and vertical-strip norm estimates. -/
+theorem classical_zero_free_region_of_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height
+    (T0 Bregular Bvertical : ℝ)
+    (hT0 : 2 ≤ T0) (hBregular : 0 ≤ Bregular)
+    (hBvertical : 0 ≤ Bvertical)
+    (hregular :
+      ∀ s ρ : ℂ, T0 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+        riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+        0 < s.re - ρ.re →
+        ∃ n : ℕ, 0 < n ∧
+          ‖logDeriv riemannZeta s - (n : ℂ) * (s - ρ)⁻¹‖ ≤
+            Bregular * Real.log |s.im|)
+    (hvertical :
+      ∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta z‖ ≤ Bvertical * Real.log |z.im|) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height
+    T0 Bregular Bvertical hT0 hBregular hBvertical hregular hvertical
+
+/-- Public existential high-height closure with a multiplicity-weighted positive
+`logDeriv ζ` regular part. -/
+theorem classical_zero_free_region_of_exists_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height
+    (T0 : ℝ) (hT0 : 2 ≤ T0)
+    (h :
+      ∃ Bregular Bvertical : ℝ, 0 ≤ Bregular ∧ 0 ≤ Bvertical ∧
+        (∀ s ρ : ℂ, T0 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+          riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+          0 < s.re - ρ.re →
+          ∃ n : ℕ, 0 < n ∧
+            ‖logDeriv riemannZeta s - (n : ℂ) * (s - ρ)⁻¹‖ ≤
+              Bregular * Real.log |s.im|) ∧
+        (∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc 1 2 →
+          ‖logDeriv riemannZeta z‖ ≤ Bvertical * Real.log |z.im|)) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height
+    T0 hT0 h
+
 /-- Public existential high-height closure from positive `logDeriv ζ`
 regular-part and vertical-strip norm estimates. -/
 theorem classical_zero_free_region_of_exists_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height
