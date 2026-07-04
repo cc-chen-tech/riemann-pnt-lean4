@@ -6437,6 +6437,102 @@ lemma borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs
       simp [A0, B0]
       ring
 
+/-- Right-shifted Borel transfer in the full complex-height logarithmic scale.
+This is a direct weakening of
+`borelCaratheodory_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`
+using `log |t| <= log(‖σ+it‖+3)`. -/
+lemma borelCaratheodory_logDeriv_riemannZeta_sigma_it_right_shift_le_log_norm_of_affine_re_le_half_radius
+    {Are Bre Acenter Bcenter r H σ t : ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3)
+    (hHpos : 0 < H) (hH : H + 2 * r ≤ |t|) (ht : 6 ≤ |t|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hM :
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hlog : ∀ w : ℂ,
+      w ∈ ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r) →
+        (logDeriv riemannZeta w).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hcenter :
+      ‖logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + I * t)‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3)) :
+    ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+      ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+        Real.log (‖((σ : ℂ) + I * t)‖ + 3) := by
+  let C : ℝ := (2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)
+  have hbase :
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+        C * Real.log |t| := by
+    simpa [C] using
+      borelCaratheodory_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius
+        (Are := Are) (Bre := Bre) (Acenter := Acenter) (Bcenter := Bcenter)
+        (r := r) (H := H) (σ := σ) (t := t)
+        hr hσ hσr hHpos hH ht hA hB hM hlog hcenter
+  have hC : 0 ≤ C := by
+    simp [C]
+    nlinarith [hA, hB]
+  have hlog_le :
+      Real.log |t| ≤ Real.log (‖((σ : ℂ) + I * t)‖ + 3) :=
+    log_abs_le_log_norm_sigma_add_I_mul_add_three (σ := σ) (t := t)
+      (by linarith : 0 < |t|)
+  calc
+    ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖
+        ≤ C * Real.log |t| := hbase
+    _ ≤ C * Real.log (‖((σ : ℂ) + I * t)‖ + 3) :=
+        mul_le_mul_of_nonneg_left hlog_le hC
+    _ = ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+        Real.log (‖((σ : ℂ) + I * t)‖ + 3) := by simp [C]
+
+/-- Signed right-shifted Borel transfer in the full complex-height logarithmic
+scale. -/
+lemma borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_log_norm_of_affine_re_le_half_radius
+    {Are Bre Acenter Bcenter r H σ t : ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3)
+    (hHpos : 0 < H) (hH : H + 2 * r ≤ |t|) (ht : 6 ≤ |t|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hM :
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hlog : ∀ w : ℂ,
+      w ∈ ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r) →
+        (-logDeriv riemannZeta w).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hcenter :
+      ‖-logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + I * t)‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3)) :
+    ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+      ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+        Real.log (‖((σ : ℂ) + I * t)‖ + 3) := by
+  let C : ℝ := (2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)
+  have hbase :
+      ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+        C * Real.log |t| := by
+    simpa [C] using
+      borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius
+        (Are := Are) (Bre := Bre) (Acenter := Acenter) (Bcenter := Bcenter)
+        (r := r) (H := H) (σ := σ) (t := t)
+        hr hσ hσr hHpos hH ht hA hB hM hlog hcenter
+  have hC : 0 ≤ C := by
+    simp [C]
+    nlinarith [hA, hB]
+  have hlog_le :
+      Real.log |t| ≤ Real.log (‖((σ : ℂ) + I * t)‖ + 3) :=
+    log_abs_le_log_norm_sigma_add_I_mul_add_three (σ := σ) (t := t)
+      (by linarith : 0 < |t|)
+  calc
+    ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖
+        ≤ C * Real.log |t| := hbase
+    _ ≤ C * Real.log (‖((σ : ℂ) + I * t)‖ + 3) :=
+        mul_le_mul_of_nonneg_left hlog_le hC
+    _ = ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+        Real.log (‖((σ : ℂ) + I * t)‖ + 3) := by simp [C]
+
 /-- Real-part quotient form of the right-shifted Borel transfer for
 `logDeriv ζ`.  This is the sign convention consumed by the 3-4-1
 zero-free-region route. -/
@@ -7021,6 +7117,122 @@ lemma borelCaratheodory_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le
           (mul_le_mul_of_nonneg_left hlog_norm (by simpa [B0] using hB))
       _ = (A0 + 2 * B0) * Real.log |t| := by ring
   simpa [f, target, rho, htarget_sub, A0, B0] using hnorm
+
+/-- Multiplicity-aware signed regular-part Borel transfer in the full
+complex-height logarithmic scale. -/
+lemma borelCaratheodory_neg_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_norm_of_affine_re_le_half_radius
+    {Are Bre Acenter Bcenter r σ β t : ℝ} {n : ℕ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3) (ht : 6 ≤ |t|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hM :
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hdiff :
+      DifferentiableOn ℂ
+        (fun w : ℂ =>
+          -logDeriv riemannZeta w +
+            (n : ℂ) * (w - ((β : ℂ) + I * t))⁻¹)
+        (ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r)))
+    (hlog : ∀ w : ℂ,
+      w ∈ ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r) →
+        (-logDeriv riemannZeta w +
+            (n : ℂ) * (w - ((β : ℂ) + I * t))⁻¹).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hcenter :
+      ‖-logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + I * t) +
+          (n : ℂ) *
+            ((((σ + r : ℝ) : ℂ) + I * t) - ((β : ℂ) + I * t))⁻¹‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3)) :
+    ‖-logDeriv riemannZeta ((σ : ℂ) + I * t) +
+        (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+      ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+        Real.log (‖((σ : ℂ) + I * t)‖ + 3) := by
+  let C : ℝ := (2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)
+  have hbase :
+      ‖-logDeriv riemannZeta ((σ : ℂ) + I * t) +
+          (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+        C * Real.log |t| := by
+    simpa [C] using
+      borelCaratheodory_neg_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius
+        (Are := Are) (Bre := Bre) (Acenter := Acenter) (Bcenter := Bcenter)
+        (r := r) (σ := σ) (β := β) (t := t) (n := n)
+        hr hσ hσr ht hA hB hM hdiff hlog hcenter
+  have hC : 0 ≤ C := by
+    simp [C]
+    nlinarith [hA, hB]
+  have hlog_le :
+      Real.log |t| ≤ Real.log (‖((σ : ℂ) + I * t)‖ + 3) :=
+    log_abs_le_log_norm_sigma_add_I_mul_add_three (σ := σ) (t := t)
+      (by linarith : 0 < |t|)
+  calc
+    ‖-logDeriv riemannZeta ((σ : ℂ) + I * t) +
+        (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖
+        ≤ C * Real.log |t| := hbase
+    _ ≤ C * Real.log (‖((σ : ℂ) + I * t)‖ + 3) :=
+        mul_le_mul_of_nonneg_left hlog_le hC
+    _ = ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+        Real.log (‖((σ : ℂ) + I * t)‖ + 3) := by simp [C]
+
+/-- Multiplicity-aware positive regular-part Borel transfer in the full
+complex-height logarithmic scale. -/
+lemma borelCaratheodory_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_norm_of_affine_re_le_half_radius
+    {Are Bre Acenter Bcenter r σ β t : ℝ} {n : ℕ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3) (ht : 6 ≤ |t|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hM :
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hdiff :
+      DifferentiableOn ℂ
+        (fun w : ℂ =>
+          logDeriv riemannZeta w -
+            (n : ℂ) * (w - ((β : ℂ) + I * t))⁻¹)
+        (ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r)))
+    (hlog : ∀ w : ℂ,
+      w ∈ ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r) →
+        (logDeriv riemannZeta w -
+            (n : ℂ) * (w - ((β : ℂ) + I * t))⁻¹).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hcenter :
+      ‖logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + I * t) -
+          (n : ℂ) *
+            ((((σ + r : ℝ) : ℂ) + I * t) - ((β : ℂ) + I * t))⁻¹‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3)) :
+    ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+        (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+      ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+        Real.log (‖((σ : ℂ) + I * t)‖ + 3) := by
+  let C : ℝ := (2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)
+  have hbase :
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+          (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+        C * Real.log |t| := by
+    simpa [C] using
+      borelCaratheodory_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius
+        (Are := Are) (Bre := Bre) (Acenter := Acenter) (Bcenter := Bcenter)
+        (r := r) (σ := σ) (β := β) (t := t) (n := n)
+        hr hσ hσr ht hA hB hM hdiff hlog hcenter
+  have hC : 0 ≤ C := by
+    simp [C]
+    nlinarith [hA, hB]
+  have hlog_le :
+      Real.log |t| ≤ Real.log (‖((σ : ℂ) + I * t)‖ + 3) :=
+    log_abs_le_log_norm_sigma_add_I_mul_add_three (σ := σ) (t := t)
+      (by linarith : 0 < |t|)
+  calc
+    ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+        (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖
+        ≤ C * Real.log |t| := hbase
+    _ ≤ C * Real.log (‖((σ : ℂ) + I * t)‖ + 3) :=
+        mul_le_mul_of_nonneg_left hlog_le hC
+    _ = ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+        Real.log (‖((σ : ℂ) + I * t)‖ + 3) := by simp [C]
 
 /-- ζ is meromorphic on every project vertical region. -/
 lemma meromorphicOn_riemannZeta_verticalRegion (a b H : ℝ) :

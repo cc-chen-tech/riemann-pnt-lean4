@@ -1120,6 +1120,12 @@ Core verified declarations:
   `borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`
   combine that right-shifted handoff with the wider logarithmic comparison,
   producing a pure `C log |t|` bound from the same local hypotheses.
+- `borelCaratheodory_logDeriv_riemannZeta_sigma_it_right_shift_le_log_norm_of_affine_re_le_half_radius`
+  and
+  `borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_log_norm_of_affine_re_le_half_radius`
+  repackage the same right-shifted handoff in the full complex-height scale
+  `C log(||sigma+it|| + 3)`, so closures stated in the natural norm scale can
+  consume the normalized Borel output.
 - `re_neg_deriv_div_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_logDeriv_re_le_half_radius`
   and
   `re_neg_deriv_div_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_neg_logDeriv_re_le_half_radius`
@@ -1173,6 +1179,11 @@ Core verified declarations:
 - `borelCaratheodory_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`
   is the positive-sign multiplicity-aware Borel handoff for
   `logDeriv zeta(w) - n * (w-rho)^(-1)`.
+- `borelCaratheodory_neg_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_norm_of_affine_re_le_half_radius`
+  and
+  `borelCaratheodory_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_norm_of_affine_re_le_half_radius`
+  are the corresponding multiplicity-aware regular-part bridges in the full
+  complex-height `C log(||sigma+it|| + 3)` scale.
 - `jensen_circleAverage_log_norm_verticalRegion`
   combines Jensen's formula with the same closed-disk geometry and ambient
   vertical-region meromorphicity.

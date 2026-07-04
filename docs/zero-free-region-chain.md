@@ -289,9 +289,12 @@ proved:
   `ZeroFreeRegion.borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`
   convert those right-shifted outputs to the pure `C log |t|` scale once the
   same local hypotheses are supplied.  The reverse comparison
-  `ZeroFreeRegion.log_abs_le_log_norm_sigma_add_I_mul_add_three` lets those
-  already-normalized outputs feed closures whose hypotheses are stated in the
-  full complex-height `log(||sigma+it||+3)` scale.  The quotient forms
+  `ZeroFreeRegion.log_abs_le_log_norm_sigma_add_I_mul_add_three`, together with
+  `ZeroFreeRegion.borelCaratheodory_logDeriv_riemannZeta_sigma_it_right_shift_le_log_norm_of_affine_re_le_half_radius`
+  and
+  `ZeroFreeRegion.borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_log_norm_of_affine_re_le_half_radius`,
+  lets those already-normalized outputs feed closures whose hypotheses are
+  stated in the full complex-height `log(||sigma+it||+3)` scale.  The quotient forms
   `ZeroFreeRegion.re_neg_deriv_div_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_logDeriv_re_le_half_radius`
   and
   `ZeroFreeRegion.re_neg_deriv_div_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_neg_logDeriv_re_le_half_radius`
@@ -343,7 +346,13 @@ proved:
   companion
   `ZeroFreeRegion.borelCaratheodory_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`
   handles `logDeriv zeta(w)-n(w-rho)^(-1)`, matching the direct output of
-  local factorization estimates before sign conversion.  The regular-part
+  local factorization estimates before sign conversion.  The full-height scale
+  companions
+  `ZeroFreeRegion.borelCaratheodory_neg_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_norm_of_affine_re_le_half_radius`
+  and
+  `ZeroFreeRegion.borelCaratheodory_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_norm_of_affine_re_le_half_radius`
+  make the same multiplicity-aware handoff available to closures formulated
+  with `log(||sigma+it||+3)`.  The regular-part
   differentiability, real-part, and center bounds are still open zeta-specific
   analytic estimates;
   `ZeroFreeRegion.jensen_circleAverage_log_norm_verticalRegion` is the matching
