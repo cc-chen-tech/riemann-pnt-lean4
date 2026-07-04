@@ -1898,6 +1898,66 @@ lemma re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_multiplicity_regular_pa
       hregular' hn hρ_im_eq hsub'
   simpa [s, ρ] using h
 
+/-- Coordinate bridge for the common `C * (1 + log |t|)` local regular-part
+bound, normalized to a pure logarithmic bound at heights `|t| >= 3`. -/
+lemma re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_regular_part_norm_one_add_log
+    {σ β t C : ℝ}
+    (hC : 0 ≤ C) (ht : 3 ≤ |t|)
+    (hregular :
+      ‖-logDeriv riemannZeta ((σ : ℂ) + I * t) +
+          (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+        C * (1 + Real.log |t|))
+    (hsub : 0 < σ - β) :
+    (-deriv riemannZeta ((σ : ℂ) + I * t) /
+        riemannZeta ((σ : ℂ) + I * t)).re +
+      1 / (σ - β) ≤ (2 * C) * Real.log |t| := by
+  have hbase :=
+    re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_regular_part_norm
+      hregular hsub
+  have hlog_ge_one : 1 ≤ Real.log |t| :=
+    (log_abs_gt_one_of_three_le ht).le
+  have hC_le : C ≤ C * Real.log |t| := by
+    calc
+      C = C * 1 := by ring
+      _ ≤ C * Real.log |t| := mul_le_mul_of_nonneg_left hlog_ge_one hC
+  calc
+    (-deriv riemannZeta ((σ : ℂ) + I * t) /
+        riemannZeta ((σ : ℂ) + I * t)).re +
+      1 / (σ - β)
+        ≤ C * (1 + Real.log |t|) := hbase
+    _ = C + C * Real.log |t| := by ring
+    _ ≤ (2 * C) * Real.log |t| := by nlinarith
+
+/-- Multiplicity-aware coordinate bridge for the common
+`C * (1 + log |t|)` local regular-part bound. -/
+lemma re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_multiplicity_regular_part_norm_one_add_log
+    {σ β t C : ℝ} {n : ℕ}
+    (hC : 0 ≤ C) (ht : 3 ≤ |t|)
+    (hregular :
+      ‖-logDeriv riemannZeta ((σ : ℂ) + I * t) +
+          (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+        C * (1 + Real.log |t|))
+    (hn : 0 < n) (hsub : 0 < σ - β) :
+    (-deriv riemannZeta ((σ : ℂ) + I * t) /
+        riemannZeta ((σ : ℂ) + I * t)).re +
+      1 / (σ - β) ≤ (2 * C) * Real.log |t| := by
+  have hbase :=
+    re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_multiplicity_regular_part_norm
+      hregular hn hsub
+  have hlog_ge_one : 1 ≤ Real.log |t| :=
+    (log_abs_gt_one_of_three_le ht).le
+  have hC_le : C ≤ C * Real.log |t| := by
+    calc
+      C = C * 1 := by ring
+      _ ≤ C * Real.log |t| := mul_le_mul_of_nonneg_left hlog_ge_one hC
+  calc
+    (-deriv riemannZeta ((σ : ℂ) + I * t) /
+        riemannZeta ((σ : ℂ) + I * t)).re +
+      1 / (σ - β)
+        ≤ C * (1 + Real.log |t|) := hbase
+    _ = C + C * Real.log |t| := by ring
+    _ ≤ (2 * C) * Real.log |t| := by nlinarith
+
 /-- Close the classical zero-free-region target from a norm bound on the
 complex regular part of `-ζ'/ζ` near a zero and the corresponding `σ + 2it`
 estimate.

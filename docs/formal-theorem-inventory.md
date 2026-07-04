@@ -679,6 +679,11 @@ Core verified declarations:
   `re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_multiplicity_regular_part_norm`
   are coordinate versions for estimates stated directly at `sigma + i t`
   with same-height zero candidate `beta + i t`.
+- `re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_regular_part_norm_one_add_log`
+  and
+  `re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_multiplicity_regular_part_norm_one_add_log`
+  turn coordinate `C * (1 + log |t|)` regular-part estimates at `|t| >= 3`
+  into pure `2*C*log |t|` real-part singular estimates.
 - `classical_zero_free_region_of_regular_part_norm_bound_and_two_t_bound`
   replaces the regular-part real estimate by the norm estimate
   `||-zeta'/zeta(s)+(s-rho)^{-1}|| <= B log |Im(s)|`, together with the

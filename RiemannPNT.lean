@@ -6441,6 +6441,38 @@ theorem re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_multiplicity_regular_
   ZeroFreeRegion.re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_multiplicity_regular_part_norm
     hregular hn hsub
 
+/-- Public coordinate bridge from a `C * (1 + log |t|)` regular-part norm
+bound to a pure-log real-part singular estimate, for `|t| >= 3`. -/
+theorem re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_regular_part_norm_one_add_log
+    {σ β t C : ℝ}
+    (hC : 0 ≤ C) (ht : 3 ≤ |t|)
+    (hregular :
+      ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) +
+          (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+        C * (1 + Real.log |t|))
+    (hsub : 0 < σ - β) :
+    (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+        riemannZeta ((σ : ℂ) + Complex.I * t)).re +
+      1 / (σ - β) ≤ (2 * C) * Real.log |t| :=
+  ZeroFreeRegion.re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_regular_part_norm_one_add_log
+    hC ht hregular hsub
+
+/-- Public multiplicity-aware coordinate bridge from a
+`C * (1 + log |t|)` regular-part norm bound to a pure-log real-part estimate. -/
+theorem re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_multiplicity_regular_part_norm_one_add_log
+    {σ β t C : ℝ} {n : ℕ}
+    (hC : 0 ≤ C) (ht : 3 ≤ |t|)
+    (hregular :
+      ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) +
+          (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+        C * (1 + Real.log |t|))
+    (hn : 0 < n) (hsub : 0 < σ - β) :
+    (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+        riemannZeta ((σ : ℂ) + Complex.I * t)).re +
+      1 / (σ - β) ≤ (2 * C) * Real.log |t| :=
+  ZeroFreeRegion.re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_multiplicity_regular_part_norm_one_add_log
+    hC ht hregular hn hsub
+
 /-- Public norm-bound regular-part closure at height `2`. -/
 theorem classical_zero_free_region_of_regular_part_norm_bound_and_two_t_bound
     (B : ℝ) (hB : 0 ≤ B)
