@@ -473,6 +473,65 @@ lemma log_deriv_zeta_antitone {σ₁ σ₂ : ℝ} (hσ₁ : 1 < σ₁) (hσ₂ :
           div_eq_mul_inv])
   exact (h_summable σ₂ (lt_of_lt_of_le hσ₁ hσ₂)).tsum_le_tsum h_pointwise (h_summable σ₁ hσ₁)
 
+/-- Fixed-margin vertical logarithmic bound for the zeta logarithmic derivative.
+
+For every `ε > 0`, the absolute-convergence half-plane
+`1 + ε ≤ Re(s)` has a constant `C` such that
+`‖logDeriv ζ(s)‖ ≤ C log(|Im(s)| + 3)`. This is a genuine high-line bound
+available from the von Mangoldt L-series triangle inequality and real-axis
+monotonicity. It deliberately stays a fixed distance from `Re(s)=1`; the
+quantitative zero-free region still needs the missing boundary-strip estimate
+with `1 ≤ Re(s) ≤ 2`. -/
+lemma exists_norm_logDeriv_riemannZeta_le_log_abs_im_add_three_of_one_add_le_re
+    {ε : ℝ} (hε : 0 < ε) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ z : ℂ, 1 + ε ≤ z.re →
+      ‖logDeriv riemannZeta z‖ ≤ C * Real.log (|z.im| + 3) := by
+  let σ₀ : ℝ := 1 + ε
+  let K : ℝ := (-deriv riemannZeta (σ₀ : ℂ) / riemannZeta (σ₀ : ℂ)).re
+  let log3 : ℝ := Real.log (3 : ℝ)
+  have hσ₀ : 1 < σ₀ := by
+    dsimp [σ₀]
+    linarith
+  have hK_pos : 0 < K := by
+    dsimp [K]
+    exact log_deriv_zeta_pos_real σ₀ hσ₀
+  have hlog3_pos : 0 < log3 := by
+    dsimp [log3]
+    exact Real.log_pos (by norm_num : (1 : ℝ) < 3)
+  refine ⟨K / log3, div_nonneg hK_pos.le hlog3_pos.le, ?_⟩
+  intro z hz
+  have hz_gt : 1 < z.re := lt_of_lt_of_le hσ₀ hz
+  have hlog_le : log3 ≤ Real.log (|z.im| + 3) := by
+    dsimp [log3]
+    apply Real.log_le_log (by norm_num : (0 : ℝ) < 3)
+    nlinarith [abs_nonneg z.im]
+  have hK_eq : (K / log3) * log3 = K := by
+    exact div_mul_cancel₀ K (ne_of_gt hlog3_pos)
+  calc
+    ‖logDeriv riemannZeta z‖
+        ≤ (-deriv riemannZeta (z.re : ℂ) / riemannZeta (z.re : ℂ)).re :=
+          norm_logDeriv_riemannZeta_le_real_neg_deriv_div z hz_gt
+    _ ≤ K := by
+          dsimp [K, σ₀]
+          exact log_deriv_zeta_antitone hσ₀ hz
+    _ = (K / log3) * log3 := hK_eq.symm
+    _ ≤ (K / log3) * Real.log (|z.im| + 3) :=
+          mul_le_mul_of_nonneg_left hlog_le (div_nonneg hK_pos.le hlog3_pos.le)
+
+/-- Coordinate form of
+`exists_norm_logDeriv_riemannZeta_le_log_abs_im_add_three_of_one_add_le_re`
+on vertical lines `σ + it`. -/
+lemma exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_add_three_of_one_add_le
+    {ε : ℝ} (hε : 0 < ε) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ σ t : ℝ, 1 + ε ≤ σ →
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+        C * Real.log (|t| + 3) := by
+  rcases exists_norm_logDeriv_riemannZeta_le_log_abs_im_add_three_of_one_add_le_re
+      hε with ⟨C, hC, hbound⟩
+  refine ⟨C, hC, ?_⟩
+  intro σ t hσ
+  simpa using hbound ((σ : ℂ) + I * t) (by simpa using hσ)
+
 /-- **de la Vallée Poussin 三角组合的非负性**
 
     对于 σ > 1 和实数 t，有

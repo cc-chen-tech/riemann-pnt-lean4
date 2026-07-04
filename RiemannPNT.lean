@@ -3061,6 +3061,27 @@ theorem log_deriv_zeta_antitone
       (-deriv riemannZeta (σ₁ : ℂ) / riemannZeta (σ₁ : ℂ)).re :=
   ZeroFreeRegion.log_deriv_zeta_antitone hσ₁ hσ₂
 
+/-- Public fixed-margin vertical logarithmic bound for `logDeriv ζ`.
+
+For every `ε > 0`, there is a constant `C` such that
+`‖logDeriv ζ(z)‖ ≤ C log(|Im z|+3)` throughout `1+ε ≤ Re z`. This is the
+absolute-convergence half-plane bound; the zero-free-region chain still needs
+the harder boundary-strip estimate down to `Re z = 1`. -/
+theorem exists_norm_logDeriv_riemannZeta_le_log_abs_im_add_three_of_one_add_le_re
+    {ε : ℝ} (hε : 0 < ε) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ z : ℂ, 1 + ε ≤ z.re →
+      ‖logDeriv riemannZeta z‖ ≤ C * Real.log (|z.im| + 3) :=
+  ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_le_log_abs_im_add_three_of_one_add_le_re hε
+
+/-- Public coordinate form of the fixed-margin vertical logarithmic bound for
+`logDeriv ζ` on points `σ + it`. -/
+theorem exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_add_three_of_one_add_le
+    {ε : ℝ} (hε : 0 < ε) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ σ t : ℝ, 1 + ε ≤ σ →
+      ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+        C * Real.log (|t| + 3) :=
+  ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_add_three_of_one_add_le hε
+
 /-- Public de la Vallée Poussin 3-4-1 nonnegativity combination. -/
 theorem log_deriv_zeta_nonneg_combination (σ : ℝ) (hσ : 1 < σ) (t : ℝ) :
     3 * (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re

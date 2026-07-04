@@ -60,6 +60,14 @@ value at the same real part whenever `σ > 1`. The remaining work is therefore
 to turn the real-axis value at `σ = 1 + a / log |t|` into the required
 `O(log |t|)` bound and to prove the local zero-candidate regular-part estimate.
 
+A fixed-margin version of this logarithmic control is already proved:
+`exists_norm_logDeriv_riemannZeta_le_log_abs_im_add_three_of_one_add_le_re`
+shows that for every `ε > 0` there is `C >= 0` with
+`‖logDeriv ζ(z)‖ <= C * log(|Im z| + 3)` throughout `1 + ε <= Re z`.
+This follows from absolute convergence, the L-series triangle inequality, and
+real-axis antitonicity. It does not close the classical zero-free region, whose
+missing estimate must hold uniformly in the boundary strip down to `Re z = 1`.
+
 ## Verified Conditional Assembly
 
 The low-risk Lean assembly around the 3-4-1 inequality and the bounded-height
@@ -621,6 +629,11 @@ the same `<= C * log |t| / a` scale, so they do not close the classical
 3-4-1 margin.  They mark the exact limit of what follows from absolute
 convergence alone; the remaining analytic estimate must remove this `1/a`
 loss and prove a genuine vertical-strip `O(log |t|)` bound.
+The fixed-margin logarithmic bound
+`ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_le_log_abs_im_add_three_of_one_add_le_re`
+is useful evidence of the available half-plane control, but it applies only
+after choosing a fixed `epsilon > 0`; it therefore cannot replace the missing
+uniform boundary-strip input.
 This obstruction is now formalized as
 `ZeroFreeRegion.sigmaOf_log_weak_two_t_margin_impossible`: once the real-axis
 and `sigma + 2it` terms both carry coefficients at least `1/a`, the required

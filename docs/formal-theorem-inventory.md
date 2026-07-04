@@ -36,6 +36,13 @@ Core verified declarations:
   proves positivity of the real-axis logarithmic derivative expression.
 - `log_deriv_zeta_antitone`
   proves the real-axis antitone property of the logarithmic derivative series.
+- `exists_norm_logDeriv_riemannZeta_le_log_abs_im_add_three_of_one_add_le_re`
+  proves that for every fixed `epsilon > 0`, `logDeriv zeta` has a
+  `C * log (|Im z| + 3)` norm bound throughout the half-plane
+  `1 + epsilon <= Re z`.
+- `exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_add_three_of_one_add_le`
+  is the coordinate form of the same fixed-margin logarithmic bound on
+  vertical lines `sigma + it`.
 
 Supporting declarations include:
 
