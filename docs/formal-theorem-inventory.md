@@ -74,6 +74,12 @@ Core verified declarations:
   affine logarithmic bound at `sigma + it`.
 - `exists_re_neg_deriv_div_riemannZeta_sigma_two_it_affine_log_abs_add_three_bound_of_high_height_log_abs_bound`
   is the same real-part compact-patching bridge at `sigma + 2it`.
+- `exists_re_neg_deriv_div_riemannZeta_sigma_it_log_abs_bound_of_high_height_log_abs_bound`
+  patches a high-height real-part quotient estimate while preserving the exact
+  `C * log |t|` scale on any range starting at height at least `3`.
+- `exists_re_neg_deriv_div_riemannZeta_sigma_two_it_log_abs_bound_of_high_height_log_abs_bound`
+  is the exact-log compact-patching bridge for the shifted point
+  `sigma + 2it`.
 - `exists_norm_logDeriv_riemannZeta_sigma_it_affine_log_abs_add_three_bound_of_high_height_log_abs_bound`
   patches a future high-height `B * log |t|` estimate with the compact band
   bound, producing an all-height affine `A + B' * log(|t| + 3)` estimate.

@@ -5824,6 +5824,89 @@ lemma exists_re_neg_deriv_div_riemannZeta_sigma_two_it_affine_log_abs_add_three_
           mul_le_mul_of_nonneg_left hlog_le hB
       _ ≤ C + B * Real.log (|t| + 3) := by linarith
 
+/-- Compact patch preserving the exact `C * log |t|` scale for the real-part
+quotient estimate at `σ + it`, provided the patched height starts at
+`H >= 3`. -/
+lemma exists_re_neg_deriv_div_riemannZeta_sigma_it_log_abs_bound_of_high_height_log_abs_bound
+    {H T0 B : ℝ} (hH3 : 3 ≤ H) (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 → T0 ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re ≤ B * Real.log |t|) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 → H ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re ≤ C * Real.log |t| := by
+  have hHpos : 0 < H := by linarith
+  rcases exists_re_neg_deriv_div_riemannZeta_sigma_it_bound_on_compact_vertical_band
+      (H := H) (T := T0) hHpos with ⟨C₀, hC₀_nonneg, hC₀⟩
+  refine ⟨C₀ + B, add_nonneg hC₀_nonneg hB, ?_⟩
+  intro σ t hσ htH
+  have hlog_ge_one : 1 ≤ Real.log |t| :=
+    (log_abs_gt_one_of_three_le (hH3.trans htH)).le
+  have hlog_nonneg : 0 ≤ Real.log |t| := by linarith
+  by_cases ht_low : |t| ≤ T0
+  · have hcompact := hC₀ σ t hσ htH ht_low
+    have hC₀_le : C₀ ≤ C₀ * Real.log |t| := by
+      calc
+        C₀ = C₀ * 1 := by ring
+        _ ≤ C₀ * Real.log |t| :=
+            mul_le_mul_of_nonneg_left hlog_ge_one hC₀_nonneg
+    calc
+      (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re ≤ C₀ := hcompact
+      _ ≤ C₀ * Real.log |t| := hC₀_le
+      _ ≤ (C₀ + B) * Real.log |t| := by
+        nlinarith [mul_nonneg hB hlog_nonneg]
+  · have ht_high : T0 ≤ |t| := le_of_lt (lt_of_not_ge ht_low)
+    calc
+      (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re
+          ≤ B * Real.log |t| := hhigh σ t hσ ht_high
+      _ ≤ (C₀ + B) * Real.log |t| := by
+        nlinarith [mul_nonneg hC₀_nonneg hlog_nonneg]
+
+/-- Compact patch preserving the exact `C * log |t|` scale for the shifted
+real-part quotient estimate at `σ + 2it`, provided `H >= 3`. -/
+lemma exists_re_neg_deriv_div_riemannZeta_sigma_two_it_log_abs_bound_of_high_height_log_abs_bound
+    {H T0 B : ℝ} (hH3 : 3 ≤ H) (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 → T0 ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤ B * Real.log |t|) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 → H ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤ C * Real.log |t| := by
+  have hHpos : 0 < H := by linarith
+  rcases exists_re_neg_deriv_div_riemannZeta_sigma_two_it_bound_on_compact_vertical_band
+      (H := H) (T := T0) hHpos with ⟨C₀, hC₀_nonneg, hC₀⟩
+  refine ⟨C₀ + B, add_nonneg hC₀_nonneg hB, ?_⟩
+  intro σ t hσ htH
+  have hlog_ge_one : 1 ≤ Real.log |t| :=
+    (log_abs_gt_one_of_three_le (hH3.trans htH)).le
+  have hlog_nonneg : 0 ≤ Real.log |t| := by linarith
+  by_cases ht_low : |t| ≤ T0
+  · have hcompact := hC₀ σ t hσ htH ht_low
+    have hC₀_le : C₀ ≤ C₀ * Real.log |t| := by
+      calc
+        C₀ = C₀ * 1 := by ring
+        _ ≤ C₀ * Real.log |t| :=
+            mul_le_mul_of_nonneg_left hlog_ge_one hC₀_nonneg
+    calc
+      (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+          riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤ C₀ := hcompact
+      _ ≤ C₀ * Real.log |t| := hC₀_le
+      _ ≤ (C₀ + B) * Real.log |t| := by
+        nlinarith [mul_nonneg hB hlog_nonneg]
+  · have ht_high : T0 ≤ |t| := le_of_lt (lt_of_not_ge ht_low)
+    calc
+      (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+          riemannZeta ((σ : ℂ) + 2 * I * t)).re
+          ≤ B * Real.log |t| := hhigh σ t hσ ht_high
+      _ ≤ (C₀ + B) * Real.log |t| := by
+        nlinarith [mul_nonneg hC₀_nonneg hlog_nonneg]
+
 /-- Compact patch from a high-height `B * log |t|` estimate to an all-height
 affine `A + B' * log(|t| + 3)` estimate for `logDeriv ζ`.
 

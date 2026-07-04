@@ -3434,6 +3434,39 @@ theorem exists_re_neg_deriv_div_riemannZeta_sigma_two_it_affine_log_abs_add_thre
   ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_sigma_two_it_affine_log_abs_add_three_bound_of_high_height_log_abs_bound
     hH hHT0 hB hhigh
 
+/-- Public compact patch preserving the exact `C * log |t|` scale for the
+real-part quotient estimate at `σ + it`, once the patched range starts at
+height at least `3`. -/
+theorem exists_re_neg_deriv_div_riemannZeta_sigma_it_log_abs_bound_of_high_height_log_abs_bound
+    {H T0 B : ℝ} (hH3 : 3 ≤ H) (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 → T0 ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤ B * Real.log |t|) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 → H ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤ C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_sigma_it_log_abs_bound_of_high_height_log_abs_bound
+    hH3 hB hhigh
+
+/-- Public compact patch preserving the exact `C * log |t|` scale for the
+shifted real-part quotient estimate at `σ + 2it`, once the patched range starts
+at height at least `3`. -/
+theorem exists_re_neg_deriv_div_riemannZeta_sigma_two_it_log_abs_bound_of_high_height_log_abs_bound
+    {H T0 B : ℝ} (hH3 : 3 ≤ H) (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 → T0 ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t) /
+            riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re ≤
+          B * Real.log |t|) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 → H ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t) /
+            riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re ≤ C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_sigma_two_it_log_abs_bound_of_high_height_log_abs_bound
+    hH3 hB hhigh
+
 /-- Public compact patch from a high-height `B * log |t|` estimate to an
 all-height affine `A + B' * log(|t| + 3)` estimate for `logDeriv ζ`. -/
 theorem exists_norm_logDeriv_riemannZeta_sigma_it_affine_log_abs_add_three_bound_of_high_height_log_abs_bound
