@@ -2549,6 +2549,34 @@ theorem exists_sigmaOf_log_two_t_bound_const_mul_log_div
           C * Real.log |t| / a :=
   ZeroFreeRegion.exists_sigmaOf_log_two_t_bound_const_mul_log_div C hC T0 hT0
 
+/-- Public weak moving-strip norm bound to the right of
+`σ = 1 + a / log |t|`.  The coefficient still contains the `1/a` loss from
+absolute convergence. -/
+theorem exists_sigma_ge_sigmaOf_log_norm_bound_const_mul_log_div
+    (C : ℝ) (hC : 1 < C) (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    ∃ d : ℝ, 0 < d ∧ ∀ a : ℝ, 0 < a → a ≤ Real.log 2 →
+      a ≤ d * Real.log 2 →
+      ∀ σ t : ℝ, T0 ≤ |t| →
+        1 + a / Real.log |t| ≤ σ → σ ≤ 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          C * Real.log |t| / a :=
+  ZeroFreeRegion.exists_sigma_ge_sigmaOf_log_norm_bound_const_mul_log_div
+    C hC T0 hT0
+
+/-- Public weak moving-strip real-part bound to the right of
+`σ = 1 + a / log |t|`, in the sign convention used by the 3-4-1 inequality. -/
+theorem exists_sigma_ge_sigmaOf_log_re_neg_deriv_div_bound_const_mul_log_div
+    (C : ℝ) (hC : 1 < C) (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    ∃ d : ℝ, 0 < d ∧ ∀ a : ℝ, 0 < a → a ≤ Real.log 2 →
+      a ≤ d * Real.log 2 →
+      ∀ σ t : ℝ, T0 ≤ |t| →
+        1 + a / Real.log |t| ≤ σ → σ ≤ 2 →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
+          C * Real.log |t| / a :=
+  ZeroFreeRegion.exists_sigma_ge_sigmaOf_log_re_neg_deriv_div_bound_const_mul_log_div
+    C hC T0 hT0
+
 /-- Public obstruction showing that the weak `σ+2it` estimate with the same
 `1/a` loss as the real-axis estimate cannot close the standard 3-4-1 margin. -/
 theorem sigmaOf_log_weak_two_t_margin_impossible

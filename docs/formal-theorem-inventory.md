@@ -571,6 +571,13 @@ Core verified declarations:
 - `exists_sigmaOf_log_two_t_bound_const_mul_log_div`
   converts the same weak `sigma + 2it` norm estimate into the real-part shape
   used by the third term of the 3-4-1 inequality.
+- `exists_sigma_ge_sigmaOf_log_norm_bound_const_mul_log_div`
+  extends the same weak absolute-convergence norm bound from the standard
+  point `sigma = 1 + a / log |t|` to the moving half-strip
+  `1 + a / log |t| <= sigma <= 2`.
+- `exists_sigma_ge_sigmaOf_log_re_neg_deriv_div_bound_const_mul_log_div`
+  converts that moving-half-strip norm estimate into the one-sided real-part
+  shape used by the 3-4-1 inequality.
 - `sigmaOf_log_weak_two_t_margin_impossible`
   proves that this weak `1/a` scale cannot satisfy the standard 3-4-1 constant
   margin when the real-axis and `sigma + 2it` coefficients are both at least
