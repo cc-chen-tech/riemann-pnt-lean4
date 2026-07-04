@@ -3837,6 +3837,53 @@ lemma log_norm_sigma_add_I_mul_add_three_le_two_log_abs {σ t : ℝ}
     _ = Real.log 2 + Real.log |t| := hlog_mul
     _ ≤ 2 * Real.log |t| := by linarith
 
+/-- Variant of `log_norm_sigma_add_I_mul_add_three_le_two_log_abs` for the
+right-shifted centers used by local Borel-Carathéodory disks.  The wider
+`1 <= σ <= 3` strip costs only raising the safe height from `5` to `6`. -/
+lemma log_norm_sigma_add_I_mul_add_three_le_two_log_abs_of_re_le_three {σ t : ℝ}
+    (hσ : σ ∈ Set.Icc 1 3) (ht : 6 ≤ |t|) :
+    Real.log (‖((σ : ℂ) + I * (t : ℂ))‖ + 3) ≤
+      2 * Real.log |t| := by
+  have hnorm :
+      ‖((σ : ℂ) + I * (t : ℂ))‖ ≤ ‖(σ : ℂ)‖ + ‖I * (t : ℂ)‖ :=
+    norm_add_le _ _
+  have hσ_norm : ‖(σ : ℂ)‖ = |σ| := by
+    simp
+  have hIt_norm : ‖I * (t : ℂ)‖ = |t| := by
+    rw [norm_mul, Complex.norm_I]
+    simp
+  have hσ_abs_le : |σ| ≤ 3 := by
+    rw [abs_of_nonneg (by linarith [hσ.1])]
+    exact hσ.2
+  have hnorm_le : ‖((σ : ℂ) + I * (t : ℂ))‖ ≤ |t| + 3 := by
+    calc
+      ‖((σ : ℂ) + I * (t : ℂ))‖
+          ≤ ‖(σ : ℂ)‖ + ‖I * (t : ℂ)‖ := hnorm
+      _ = |σ| + |t| := by rw [hσ_norm, hIt_norm]
+      _ ≤ 3 + |t| := by nlinarith [hσ_abs_le]
+      _ = |t| + 3 := by ring
+  have ht_pos : 0 < |t| := by linarith
+  have hleft_pos : 0 < ‖((σ : ℂ) + I * (t : ℂ))‖ + 3 := by positivity
+  have hsum_le :
+      ‖((σ : ℂ) + I * (t : ℂ))‖ + 3 ≤ 2 * |t| := by
+    calc
+      ‖((σ : ℂ) + I * (t : ℂ))‖ + 3
+          ≤ (|t| + 3) + 3 := by nlinarith [hnorm_le]
+      _ ≤ 2 * |t| := by linarith
+  have hlog_le :
+      Real.log (‖((σ : ℂ) + I * (t : ℂ))‖ + 3) ≤
+        Real.log (2 * |t|) :=
+    Real.log_le_log hleft_pos hsum_le
+  have hlog_mul : Real.log (2 * |t|) = Real.log 2 + Real.log |t| := by
+    rw [Real.log_mul (by norm_num : (2 : ℝ) ≠ 0) (ne_of_gt ht_pos)]
+  have hlog_two_le : Real.log 2 ≤ Real.log |t| :=
+    Real.log_le_log (by norm_num) (by linarith : (2 : ℝ) ≤ |t|)
+  calc
+    Real.log (‖((σ : ℂ) + I * (t : ℂ))‖ + 3)
+        ≤ Real.log (2 * |t|) := hlog_le
+    _ = Real.log 2 + Real.log |t| := hlog_mul
+    _ ≤ 2 * Real.log |t| := by linarith
+
 /-- Complex-variable form of the full-height logarithmic comparison. -/
 lemma log_norm_add_three_le_two_log_abs_im {s : ℂ}
     (hs_re : s.re ∈ Set.Icc 1 2) (hs_height : 5 ≤ |s.im|) :
@@ -6249,6 +6296,132 @@ lemma borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_of_affine_
       (Are := Are) (Bre := Bre) (Acenter := Acenter) (Bcenter := Bcenter)
       (R := 2 * r) (σ := σ + r) (t := t) (H := H)
       (z := (σ : ℂ) + I * t) hM hσ_center hHpos hH hlog hcenter hR hz_half
+
+/-- Right-shifted Borel transfer normalized to the pure `log |t|` scale.
+This composes the local right-shifted Borel handoff with the elementary bound
+`log(‖(σ+r)+it‖+3) <= 2 log |t|` on `1 <= σ+r <= 3`.  The zeta-specific
+real-part and center estimates are still hypotheses. -/
+lemma borelCaratheodory_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius
+    {Are Bre Acenter Bcenter r H σ t : ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3)
+    (hHpos : 0 < H) (hH : H + 2 * r ≤ |t|) (ht : 6 ≤ |t|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hM :
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hlog : ∀ w : ℂ,
+      w ∈ ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r) →
+        (logDeriv riemannZeta w).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hcenter :
+      ‖logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + I * t)‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3)) :
+    ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+      ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+        Real.log |t| := by
+  let A0 : ℝ := 2 * Are + 3 * Acenter
+  let B0 : ℝ := 2 * Bre + 3 * Bcenter
+  have hbase :
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+        A0 + B0 * Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3) := by
+    simpa [A0, B0] using
+      borelCaratheodory_logDeriv_riemannZeta_sigma_it_right_shift_of_affine_re_le_half_radius
+        (Are := Are) (Bre := Bre) (Acenter := Acenter) (Bcenter := Bcenter)
+        (r := r) (H := H) (σ := σ) (t := t)
+        hr hσ hHpos hH hM hlog hcenter
+  have hcenter_re : σ + r ∈ Set.Icc 1 3 := by
+    constructor
+    · nlinarith [hr, hσ]
+    · exact hσr
+  have hlog_norm :
+      Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3) ≤
+        2 * Real.log |t| := by
+    simpa using
+      log_norm_sigma_add_I_mul_add_three_le_two_log_abs_of_re_le_three
+        (σ := σ + r) (t := t) hcenter_re ht
+  have hlog_ge_one : 1 ≤ Real.log |t| :=
+    (log_abs_gt_one_of_three_le (by linarith : 3 ≤ |t|)).le
+  have hA_le : A0 ≤ A0 * Real.log |t| := by
+    calc
+      A0 = A0 * 1 := by ring
+      _ ≤ A0 * Real.log |t| :=
+          mul_le_mul_of_nonneg_left hlog_ge_one (by simpa [A0] using hA)
+  calc
+    ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖
+        ≤ A0 + B0 * Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3) :=
+          hbase
+    _ ≤ A0 * Real.log |t| + B0 * (2 * Real.log |t|) := by
+        exact add_le_add hA_le
+          (mul_le_mul_of_nonneg_left hlog_norm (by simpa [B0] using hB))
+    _ = ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+        Real.log |t| := by
+      simp [A0, B0]
+      ring
+
+/-- Signed version of the right-shifted Borel transfer normalized to the pure
+`log |t|` scale. -/
+lemma borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius
+    {Are Bre Acenter Bcenter r H σ t : ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3)
+    (hHpos : 0 < H) (hH : H + 2 * r ≤ |t|) (ht : 6 ≤ |t|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hM :
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hlog : ∀ w : ℂ,
+      w ∈ ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r) →
+        (-logDeriv riemannZeta w).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hcenter :
+      ‖-logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + I * t)‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3)) :
+    ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+      ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+        Real.log |t| := by
+  let A0 : ℝ := 2 * Are + 3 * Acenter
+  let B0 : ℝ := 2 * Bre + 3 * Bcenter
+  have hbase :
+      ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+        A0 + B0 * Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3) := by
+    simpa [A0, B0] using
+      borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_of_affine_re_le_half_radius
+        (Are := Are) (Bre := Bre) (Acenter := Acenter) (Bcenter := Bcenter)
+        (r := r) (H := H) (σ := σ) (t := t)
+        hr hσ hHpos hH hM hlog hcenter
+  have hcenter_re : σ + r ∈ Set.Icc 1 3 := by
+    constructor
+    · nlinarith [hr, hσ]
+    · exact hσr
+  have hlog_norm :
+      Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3) ≤
+        2 * Real.log |t| := by
+    simpa using
+      log_norm_sigma_add_I_mul_add_three_le_two_log_abs_of_re_le_three
+        (σ := σ + r) (t := t) hcenter_re ht
+  have hlog_ge_one : 1 ≤ Real.log |t| :=
+    (log_abs_gt_one_of_three_le (by linarith : 3 ≤ |t|)).le
+  have hA_le : A0 ≤ A0 * Real.log |t| := by
+    calc
+      A0 = A0 * 1 := by ring
+      _ ≤ A0 * Real.log |t| :=
+          mul_le_mul_of_nonneg_left hlog_ge_one (by simpa [A0] using hA)
+  calc
+    ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖
+        ≤ A0 + B0 * Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3) :=
+          hbase
+    _ ≤ A0 * Real.log |t| + B0 * (2 * Real.log |t|) := by
+        exact add_le_add hA_le
+          (mul_le_mul_of_nonneg_left hlog_norm (by simpa [B0] using hB))
+    _ = ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+        Real.log |t| := by
+      simp [A0, B0]
+      ring
 
 /-- ζ is meromorphic on every project vertical region. -/
 lemma meromorphicOn_riemannZeta_verticalRegion (a b H : ℝ) :

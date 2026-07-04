@@ -281,7 +281,14 @@ proved:
   `ZeroFreeRegion.borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_of_affine_re_le_half_radius`
   apply the same Borel handoff from a disk centered at `(sigma+r)+I*t` to the
   left-shifted point `sigma+I*t`, while still leaving the local real-part and
-  center estimates as hypotheses.  The
+  center estimates as hypotheses.  The widened comparison
+  `ZeroFreeRegion.log_norm_sigma_add_I_mul_add_three_le_two_log_abs_of_re_le_three`
+  and the normalized right-shift wrappers
+  `ZeroFreeRegion.borelCaratheodory_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`
+  and
+  `ZeroFreeRegion.borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`
+  convert those right-shifted outputs to the pure `C log |t|` scale once the
+  same local hypotheses are supplied.  The
   general half-radius wrappers
   `ZeroFreeRegion.borelCaratheodory_centered_half_radius_bound` and
   `ZeroFreeRegion.borelCaratheodory_sub_centered_half_radius_bound`, plus the

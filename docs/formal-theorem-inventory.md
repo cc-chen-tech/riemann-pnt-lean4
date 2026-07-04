@@ -846,6 +846,9 @@ Core verified declarations:
 - `log_norm_sigma_add_I_mul_add_three_le_two_log_abs`
   proves `log(||sigma + it|| + 3) <= 2 log |t|` for
   `1 <= sigma <= 2` and `|t| >= 5`.
+- `log_norm_sigma_add_I_mul_add_three_le_two_log_abs_of_re_le_three`
+  proves the same comparison on the wider `1 <= sigma <= 3` strip for
+  `|t| >= 6`, matching right-shifted Borel centers.
 - `log_norm_add_three_le_two_log_abs_im`
   is the corresponding complex-variable comparison in terms of
   `s.re` and `s.im`.
@@ -1109,6 +1112,11 @@ Core verified declarations:
   move the affine half-radius Borel handoff to a disk centered at
   `(sigma+r)+I*t`, controlling the boundary-near point `sigma+I*t` while
   keeping the local real-part and center estimates as explicit hypotheses.
+- `borelCaratheodory_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`
+  and
+  `borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`
+  combine that right-shifted handoff with the wider logarithmic comparison,
+  producing a pure `C log |t|` bound from the same local hypotheses.
 - `borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius`
   and
   `borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius`
