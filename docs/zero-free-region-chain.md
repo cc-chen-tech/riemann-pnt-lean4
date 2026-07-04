@@ -68,6 +68,8 @@ This follows from absolute convergence, the L-series triangle inequality, and
 real-axis antitonicity. It does not close the classical zero-free region, whose
 missing estimate must hold uniformly in the boundary strip down to `Re z = 1`.
 The shifted 3-4-1 third point has the corresponding fixed-margin forms:
+`exists_re_neg_deriv_div_riemannZeta_sigma_it_le_log_abs_add_three_of_one_add_le`
+handles the `σ+it` real-part quotient term, while
 `exists_norm_logDeriv_riemannZeta_sigma_two_it_le_log_abs_add_three_of_one_add_le`
 and
 `exists_re_neg_deriv_div_riemannZeta_sigma_two_it_le_log_abs_add_three_of_one_add_le`

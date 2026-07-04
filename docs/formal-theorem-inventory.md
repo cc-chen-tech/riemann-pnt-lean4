@@ -46,6 +46,9 @@ Core verified declarations:
 - `log_abs_two_mul_add_three_le_two_log_abs_add_three`
   proves the elementary comparison
   `log (|2*t| + 3) <= 2 * log (|t| + 3)`.
+- `exists_re_neg_deriv_div_riemannZeta_sigma_it_le_log_abs_add_three_of_one_add_le`
+  converts the fixed-margin `sigma + I*t` norm estimate into the real-part
+  quotient convention used in the 3-4-1 inequality.
 - `exists_norm_logDeriv_riemannZeta_sigma_two_it_le_log_abs_add_three_of_one_add_le`
   specializes fixed-margin logarithmic control to the shifted point
   `sigma + 2*I*t`.

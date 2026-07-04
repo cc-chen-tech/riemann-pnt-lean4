@@ -720,6 +720,26 @@ lemma norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv (s : ℂ) :
       ‖logDeriv riemannZeta s‖ := by
   rw [neg_deriv_div_riemannZeta_eq_neg_logDeriv, norm_neg]
 
+/-- Fixed-margin real-part bound for the shifted `σ + it` term in the
+3-4-1 inequality. -/
+lemma exists_re_neg_deriv_div_riemannZeta_sigma_it_le_log_abs_add_three_of_one_add_le
+    {ε : ℝ} (hε : 0 < ε) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ σ t : ℝ, 1 + ε ≤ σ →
+      (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re ≤
+        C * Real.log (|t| + 3) := by
+  rcases exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_add_three_of_one_add_le
+      hε with ⟨C, hC, hbound⟩
+  refine ⟨C, hC, ?_⟩
+  intro σ t hσ
+  let z : ℂ := (σ : ℂ) + I * t
+  calc
+    (-deriv riemannZeta z / riemannZeta z).re
+        ≤ ‖-deriv riemannZeta z / riemannZeta z‖ := Complex.re_le_norm _
+    _ = ‖logDeriv riemannZeta z‖ :=
+        norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv z
+    _ ≤ C * Real.log (|t| + 3) := hbound σ t hσ
+
 /-- Fixed-margin real-part bound for the shifted `σ + 2it` term in the
 3-4-1 inequality. -/
 lemma exists_re_neg_deriv_div_riemannZeta_sigma_two_it_le_log_abs_add_three_of_one_add_le
