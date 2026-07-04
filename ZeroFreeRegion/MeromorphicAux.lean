@@ -1464,6 +1464,63 @@ lemma classical_zero_free_region_of_regular_part_norm_bound_and_two_t_bound
     _ ≤ ‖regularPart‖ := hregular_re_le
     _ ≤ B * Real.log |s.im| := hregular_norm
 
+/-- Multiplicity-aware regular-part zero-free closure.
+
+Future local arguments naturally isolate
+`-ζ'/ζ(s) + n (s - ρ)⁻¹`, where `n` is the zero multiplicity.  Since
+`n ≥ 1`, this still supplies the unit-principal-part real inequality consumed
+by `classical_zero_free_region_of_regular_part_bound_and_two_t_bound`. -/
+lemma classical_zero_free_region_of_exists_multiplicity_regular_part_norm_bound_and_two_t_bound
+    (B : ℝ) (hB : 0 ≤ B)
+    (hregular :
+      ∀ s ρ : ℂ, 2 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+        riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+        0 < s.re - ρ.re →
+        ∃ n : ℕ, 0 < n ∧
+          ‖-deriv riemannZeta s / riemannZeta s + (n : ℂ) * (s - ρ)⁻¹‖ ≤
+            B * Real.log |s.im|)
+    (htwo :
+      ∀ σ t : ℝ, 2 ≤ |t| → 1 < σ → σ ≤ 2 →
+        (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+          riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤
+            B * Real.log |t|) :
+    classical_zero_free_region := by
+  refine classical_zero_free_region_of_regular_part_bound_and_two_t_bound
+    B hB ?_ htwo
+  intro s ρ hs_height hs_re_mem hζρ hρ_im_eq hρ_re_lt hsub
+  rcases hregular s ρ hs_height hs_re_mem hζρ hρ_im_eq hρ_re_lt hsub with
+    ⟨n, hn_pos, hn_bound⟩
+  let regularPart : ℂ :=
+    -deriv riemannZeta s / riemannZeta s + (n : ℂ) * (s - ρ)⁻¹
+  have hregular_norm :
+      ‖regularPart‖ ≤ B * Real.log |s.im| := by
+    simpa [regularPart] using hn_bound
+  have hregular_re_le :
+      regularPart.re ≤ ‖regularPart‖ :=
+    le_trans (le_abs_self regularPart.re) (abs_re_le_norm regularPart)
+  have hinv_re : ((s - ρ)⁻¹).re = 1 / (s.re - ρ.re) :=
+    inv_sub_same_im_re hρ_im_eq hsub
+  have hregular_re :
+      regularPart.re =
+        (-deriv riemannZeta s / riemannZeta s).re +
+          (n : ℝ) * (1 / (s.re - ρ.re)) := by
+    simp [regularPart, hinv_re]
+  have hunit_le_mult :
+      1 / (s.re - ρ.re) ≤ (n : ℝ) * (1 / (s.re - ρ.re)) := by
+    have hnonneg : 0 ≤ 1 / (s.re - ρ.re) := by
+      positivity
+    have hn_one : (1 : ℝ) ≤ n := by
+      exact_mod_cast Nat.succ_le_iff.mpr hn_pos
+    simpa using mul_le_mul_of_nonneg_right hn_one hnonneg
+  calc
+    (-deriv riemannZeta s / riemannZeta s).re +
+        1 / (s.re - ρ.re)
+        ≤ regularPart.re := by
+          rw [hregular_re]
+          linarith
+    _ ≤ ‖regularPart‖ := hregular_re_le
+    _ ≤ B * Real.log |s.im| := hregular_norm
+
 /-- Existential norm-bound form of the regular-part zero-free closure. -/
 lemma classical_zero_free_region_of_exists_regular_part_norm_bound_and_two_t_bound
     (h :

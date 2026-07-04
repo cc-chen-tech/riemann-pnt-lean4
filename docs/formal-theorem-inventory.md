@@ -519,6 +519,11 @@ Core verified declarations:
   replaces the regular-part real estimate by the norm estimate
   `||-zeta'/zeta(s)+(s-rho)^{-1}|| <= B log |Im(s)|`, together with the
   `sigma+2it` shifted estimate.
+- `classical_zero_free_region_of_exists_multiplicity_regular_part_norm_bound_and_two_t_bound`
+  accepts a future local estimate for
+  `||-zeta'/zeta(s)+n(s-rho)^{-1}||` with some positive multiplicity `n`,
+  and recovers the unit-principal real estimate used by the existing
+  zero-free-region bridge.
 - `classical_zero_free_region_of_exists_regular_part_norm_bound_and_two_t_bound`
   packages that norm-bound regular-part input under one nonnegative
   logarithmic coefficient.
