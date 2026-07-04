@@ -6763,6 +6763,153 @@ lemma re_neg_logDeriv_riemannZeta_sigma_it_add_inv_right_shift_le_log_abs_of_aff
     re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_regular_part_norm
       hregular hsub
 
+/-- Multiplicity-aware right-shifted Borel-Carathéodory transfer for the signed
+regular part `-logDeriv ζ(w) + n (w-ρ)⁻¹`, normalized to the pure `log |t|`
+scale.  The analytic estimates for this regular part remain explicit
+hypotheses. -/
+lemma borelCaratheodory_neg_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius
+    {Are Bre Acenter Bcenter r σ β t : ℝ} {n : ℕ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3) (ht : 6 ≤ |t|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hM :
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hdiff :
+      DifferentiableOn ℂ
+        (fun w : ℂ =>
+          -logDeriv riemannZeta w +
+            (n : ℂ) * (w - ((β : ℂ) + I * t))⁻¹)
+        (ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r)))
+    (hlog : ∀ w : ℂ,
+      w ∈ ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r) →
+        (-logDeriv riemannZeta w +
+            (n : ℂ) * (w - ((β : ℂ) + I * t))⁻¹).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hcenter :
+      ‖-logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + I * t) +
+          (n : ℂ) *
+            ((((σ + r : ℝ) : ℂ) + I * t) - ((β : ℂ) + I * t))⁻¹‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3)) :
+    ‖-logDeriv riemannZeta ((σ : ℂ) + I * t) +
+        (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+      ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+        Real.log |t| := by
+  let center : ℂ := ((σ + r : ℝ) : ℂ) + I * t
+  let target : ℂ := (σ : ℂ) + I * t
+  let rho : ℂ := (β : ℂ) + I * t
+  let f : ℂ → ℂ :=
+    fun w : ℂ => -logDeriv riemannZeta w + (n : ℂ) * (w - rho)⁻¹
+  let ell : ℝ := Real.log (‖center‖ + 3)
+  let M : ℝ := Are + Bre * ell
+  let A0 : ℝ := 2 * Are + 3 * Acenter
+  let B0 : ℝ := 2 * Bre + 3 * Bcenter
+  have hR : 0 < 2 * r := by nlinarith
+  have hz_half : ‖target - center‖ ≤ (2 * r) / 2 := by
+    have hdiff_center : target - center = -(r : ℂ) := by
+      simp [target, center, Complex.ofReal_add]
+    calc
+      ‖target - center‖ = ‖-(r : ℂ)‖ := by rw [hdiff_center]
+      _ = r := by simp [abs_of_pos hr]
+      _ ≤ (2 * r) / 2 := by
+        rw [show (2 * r) / 2 = r by ring]
+  have hborel_raw : ‖f target‖ ≤ 2 * M + 3 * ‖f center‖ := by
+    refine
+      borelCaratheodory_centered_half_radius_bound
+        (f := f) (c := center) (M := M) (R := 2 * r) (z := target)
+        ?_ ?_ ?_ hR hz_half
+    · simpa [M, ell, center] using hM
+    · simpa [f, rho, center] using hdiff
+    · intro w hw
+      simpa [f, rho, M, ell, center] using hlog w hw
+  have hcenter_mul : 3 * ‖f center‖ ≤ 3 * (Acenter + Bcenter * ell) := by
+    exact mul_le_mul_of_nonneg_left
+      (by simpa [f, rho, center, ell] using hcenter)
+      (by norm_num : (0 : ℝ) ≤ 3)
+  have hbase : ‖f target‖ ≤ A0 + B0 * ell := by
+    calc
+      ‖f target‖ ≤ 2 * M + 3 * ‖f center‖ := hborel_raw
+      _ ≤ 2 * M + 3 * (Acenter + Bcenter * ell) := by nlinarith
+      _ = A0 + B0 * ell := by
+        simp [M, A0, B0]
+        ring
+  have hcenter_re : σ + r ∈ Set.Icc 1 3 := by
+    constructor
+    · nlinarith [hr, hσ]
+    · exact hσr
+  have hlog_norm : ell ≤ 2 * Real.log |t| := by
+    simpa [ell, center] using
+      log_norm_sigma_add_I_mul_add_three_le_two_log_abs_of_re_le_three
+        (σ := σ + r) (t := t) hcenter_re ht
+  have hlog_ge_one : 1 ≤ Real.log |t| :=
+    (log_abs_gt_one_of_three_le (by linarith : 3 ≤ |t|)).le
+  have hA_le : A0 ≤ A0 * Real.log |t| := by
+    calc
+      A0 = A0 * 1 := by ring
+      _ ≤ A0 * Real.log |t| :=
+          mul_le_mul_of_nonneg_left hlog_ge_one (by simpa [A0] using hA)
+  have htarget_sub : target - rho = ((σ - β : ℝ) : ℂ) := by
+    simp [target, rho, Complex.ofReal_sub]
+  have hnorm :
+      ‖f target‖ ≤ (A0 + 2 * B0) * Real.log |t| := by
+    calc
+      ‖f target‖ ≤ A0 + B0 * ell := hbase
+      _ ≤ A0 * Real.log |t| + B0 * (2 * Real.log |t|) := by
+        exact add_le_add hA_le
+          (mul_le_mul_of_nonneg_left hlog_norm (by simpa [B0] using hB))
+      _ = (A0 + 2 * B0) * Real.log |t| := by ring
+  simpa [f, target, rho, htarget_sub, A0, B0] using hnorm
+
+/-- Multiplicity-aware zero-repulsion form of
+`borelCaratheodory_neg_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`.
+It still concludes the unit-principal estimate because `n >= 1` only makes the
+singular real term stronger. -/
+lemma re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius
+    {Are Bre Acenter Bcenter r σ β t : ℝ} {n : ℕ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3) (ht : 6 ≤ |t|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hM :
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hdiff :
+      DifferentiableOn ℂ
+        (fun w : ℂ =>
+          -logDeriv riemannZeta w +
+            (n : ℂ) * (w - ((β : ℂ) + I * t))⁻¹)
+        (ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r)))
+    (hlog : ∀ w : ℂ,
+      w ∈ ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r) →
+        (-logDeriv riemannZeta w +
+            (n : ℂ) * (w - ((β : ℂ) + I * t))⁻¹).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hcenter :
+      ‖-logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + I * t) +
+          (n : ℂ) *
+            ((((σ + r : ℝ) : ℂ) + I * t) - ((β : ℂ) + I * t))⁻¹‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hn : 0 < n) (hsub : 0 < σ - β) :
+    (-deriv riemannZeta ((σ : ℂ) + I * t) /
+        riemannZeta ((σ : ℂ) + I * t)).re + 1 / (σ - β) ≤
+      ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+        Real.log |t| := by
+  have hregular :
+      ‖-logDeriv riemannZeta ((σ : ℂ) + I * t) +
+          (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+        ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+          Real.log |t| :=
+    borelCaratheodory_neg_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius
+      (Are := Are) (Bre := Bre) (Acenter := Acenter) (Bcenter := Bcenter)
+      (r := r) (σ := σ) (β := β) (t := t) (n := n)
+      hr hσ hσr ht hA hB hM hdiff hlog hcenter
+  exact
+    re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_multiplicity_regular_part_norm
+      hregular hn hsub
+
 /-- ζ is meromorphic on every project vertical region. -/
 lemma meromorphicOn_riemannZeta_verticalRegion (a b H : ℝ) :
     MeromorphicOn riemannZeta (verticalRegion a b H) := by
