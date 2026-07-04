@@ -906,6 +906,14 @@ are the preferred interface for future Borel/Jensen principal-part estimates:
 they require the regular-part and vertical-strip logarithmic-derivative bounds
 only above an arbitrary cutoff `T0 >= 2`, then use the verified compact patch to
 fill the bounded-height gap in the final classical zero-free-region target.
+The coordinate unit-principal wrappers
+`ZeroFreeRegion.classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height`
+and
+`ZeroFreeRegion.classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height`
+state the same handoff directly in real variables `sigma`, `beta`, and `t`,
+with the local principal part written as `(sigma-beta)^{-1}`.  They are the
+non-multiplicity caller-facing form of the multiplicity-aware coordinate
+closure.
 The affine-log wrappers
 `ZeroFreeRegion.classical_zero_free_region_of_logDeriv_regular_part_norm_affine_log_bound_and_vertical_logDeriv_norm_affine_log_bound_high_height`
 and

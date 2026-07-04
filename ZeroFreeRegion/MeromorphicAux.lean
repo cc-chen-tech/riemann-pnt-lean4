@@ -2834,6 +2834,58 @@ lemma classical_zero_free_region_of_re_im_multiplicity_logDeriv_regular_part_nor
     have h := hvertical z.re z.im hz_height hz_re_mem
     simpa [hz_decomp] using h
 
+/-- Coordinate high-height closure for the usual unit-principal
+`logDeriv ζ` regular part.
+
+This is the caller-facing specialization of the multiplicity-aware coordinate
+closure with multiplicity `1`; it is the shape most directly produced by a
+future Borel-Carathéodory/Jensen estimate around a zero candidate
+`rho = beta + it`. -/
+lemma classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height
+    (T0 Bregular Bvertical : ℝ)
+    (hT0 : 2 ≤ T0) (hBregular : 0 ≤ Bregular)
+    (hBvertical : 0 ≤ Bvertical)
+    (hregular :
+      ∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+        0 < σ - β →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+            (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+          Bregular * Real.log |t|)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          Bvertical * Real.log |t|) :
+    classical_zero_free_region := by
+  refine
+    classical_zero_free_region_of_re_im_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height
+      T0 Bregular Bvertical hT0 hBregular hBvertical ?_ hvertical
+  intro σ β t ht hσ hζ hβ hsub
+  refine ⟨1, by norm_num, ?_⟩
+  simpa using hregular σ β t ht hσ hζ hβ hsub
+
+/-- Existential coordinate high-height closure for the unit-principal
+`logDeriv ζ` regular-part and vertical-strip estimates. -/
+lemma classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height
+    (h :
+      ∃ T0 Bregular Bvertical : ℝ, 2 ≤ T0 ∧
+        0 ≤ Bregular ∧ 0 ≤ Bvertical ∧
+        (∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+          0 < σ - β →
+          ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+              (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+            Bregular * Real.log |t|) ∧
+        (∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+            Bvertical * Real.log |t|)) :
+    classical_zero_free_region := by
+  rcases h with
+    ⟨T0, Bregular, Bvertical, hT0, hBregular, hBvertical, hregular, hvertical⟩
+  exact
+    classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height
+      T0 Bregular Bvertical hT0 hBregular hBvertical hregular hvertical
+
 /-- Existential coordinate high-height version of the multiplicity-aware
 positive `logDeriv ζ` regular-part/vertical-strip closure. -/
 lemma classical_zero_free_region_of_exists_re_im_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height
