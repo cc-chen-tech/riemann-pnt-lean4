@@ -1035,6 +1035,13 @@ and
 `ZeroFreeRegion.classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_log_norm_add_three_bound_high_height`
 are the compact `-logDeriv zeta` convention handoff when one constant controls
 both estimates.
+For the separate vertical-strip part of this program,
+`ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_shift_pair_vertical_log_bound_of_vertical_log_bound`
+now packages a single future ordinary estimate
+`||logDeriv zeta(sigma+iu)|| <= B log |u|` into one shared existential
+bound for both `sigma+it` and `sigma+2it`.  This is a proved bookkeeping
+bridge for the 3-4-1 inputs, not a proof of the zeta-specific high-height
+estimate itself.
 This is still conditional; it does not prove the quantitative zero-free region
 until those two zeta-specific estimates are proved.
 The next work starts from these meromorphic/nonvanishing/principal-part facts

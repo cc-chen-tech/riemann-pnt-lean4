@@ -8714,6 +8714,49 @@ lemma exists_norm_logDeriv_riemannZeta_shifted_vertical_log_bound_of_vertical_lo
   intro σ t hσ_left hσ_right ht
   exact hbound σ t ⟨hσ_left, hσ_right⟩ ht
 
+/-- Pair package for the high-height logarithmic derivative estimate needed by
+the 3-4-1 inequality.  A single future vertical estimate at `sigma + iu`
+provides, after compact patching and the `u = 2t` shift, one shared constant
+controlling both `sigma + it` and `sigma + 2it`. -/
+lemma exists_norm_logDeriv_riemannZeta_shift_pair_vertical_log_bound_of_vertical_log_bound
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ u : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |u| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * u)‖ ≤ B * Real.log |u|) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤ C * Real.log |t| ∧
+        ‖logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖ ≤ C * Real.log |t| := by
+  rcases exists_norm_logDeriv_riemannZeta_vertical_log_bound_of_high_height_log_abs_bound
+      (T0 := T0) (B := B) hB hhigh with
+    ⟨C₁, T₁, hC₁, hT₁, hmain⟩
+  rcases exists_norm_logDeriv_riemannZeta_shifted_vertical_log_bound_of_vertical_log_bound
+      (T0 := T0) (B := B) hB hhigh with
+    ⟨C₂, T₂, hC₂, hT₂, hshift⟩
+  let C : ℝ := max C₁ C₂
+  let Tstar : ℝ := max T₁ T₂
+  refine ⟨C, Tstar, ?_, ?_, ?_⟩
+  · exact hC₁.trans (le_max_left C₁ C₂)
+  · exact hT₁.trans (le_max_left T₁ T₂)
+  · intro σ t hσ_left hσ_right ht
+    have hT₁_abs : T₁ ≤ |t| := (le_max_left T₁ T₂).trans ht
+    have hT₂_abs : T₂ ≤ |t| := (le_max_right T₁ T₂).trans ht
+    have hthree_abs : 3 ≤ |t| := hT₁.trans hT₁_abs
+    have hlog_nonneg : 0 ≤ Real.log |t| := by
+      have hone_abs : 1 ≤ |t| := by linarith
+      exact Real.log_nonneg hone_abs
+    constructor
+    · calc
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖
+            ≤ C₁ * Real.log |t| := hmain σ t hσ_left hσ_right hT₁_abs
+        _ ≤ C * Real.log |t| :=
+            mul_le_mul_of_nonneg_right (le_max_left C₁ C₂) hlog_nonneg
+    · calc
+        ‖logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖
+            ≤ C₂ * Real.log |t| := hshift σ t hσ_left hσ_right hT₂_abs
+        _ ≤ C * Real.log |t| :=
+            mul_le_mul_of_nonneg_right (le_max_right C₁ C₂) hlog_nonneg
+
 /-- Real-part quotient version of
 `exists_norm_logDeriv_riemannZeta_shifted_vertical_log_bound_of_vertical_log_bound`. -/
 lemma exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_vertical_norm_log_bound

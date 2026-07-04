@@ -136,6 +136,10 @@ Core verified declarations:
 - `exists_norm_logDeriv_riemannZeta_shifted_vertical_log_bound_of_vertical_log_bound`
   derives the shifted `sigma + 2it` norm estimate from the ordinary vertical
   estimate at `sigma + iu`, absorbing the comparison `log |2t| <= 2 log |t|`.
+- `exists_norm_logDeriv_riemannZeta_shift_pair_vertical_log_bound_of_vertical_log_bound`
+  packages that same future ordinary vertical estimate into one shared
+  existential `C * log |t|` bound for both `sigma + it` and `sigma + 2it`,
+  matching the two norm inputs needed by the 3-4-1 route.
 - `exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_vertical_norm_log_bound`
   converts that shifted norm estimate into the real-part quotient convention
   needed by the 3-4-1 inequality.
