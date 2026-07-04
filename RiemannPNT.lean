@@ -2881,6 +2881,46 @@ theorem exists_eventuallyEq_neg_logDeriv_riemannZeta_add_inv_of_simple_zero
   ZeroFreeRegion.exists_eventuallyEq_neg_logDeriv_riemannZeta_add_inv_of_simple_zero
     hρ1 hzero hsimple
 
+/-- Public multiplicity-weighted principal-part separation. -/
+theorem exists_eventuallyEq_logDeriv_sub_order_mul_inv_of_analyticAt_order_eq_nat
+    {f : ℂ → ℂ} {x : ℂ} {n : ℕ}
+    (hf : AnalyticAt ℂ f x) (horder : analyticOrderAt f x = n) :
+    ∃ g : ℂ → ℂ, AnalyticAt ℂ g x ∧ g x ≠ 0 ∧
+      ∀ᶠ z in 𝓝[≠] x,
+        logDeriv f z - (n : ℂ) * (z - x)⁻¹ = logDeriv g z :=
+  ZeroFreeRegion.exists_eventuallyEq_logDeriv_sub_order_mul_inv_of_analyticAt_order_eq_nat
+    hf horder
+
+/-- Public signed multiplicity-weighted principal-part separation. -/
+theorem exists_eventuallyEq_neg_logDeriv_add_order_mul_inv_of_analyticAt_order_eq_nat
+    {f : ℂ → ℂ} {x : ℂ} {n : ℕ}
+    (hf : AnalyticAt ℂ f x) (horder : analyticOrderAt f x = n) :
+    ∃ g : ℂ → ℂ, AnalyticAt ℂ g x ∧ g x ≠ 0 ∧
+      ∀ᶠ z in 𝓝[≠] x,
+        -logDeriv f z + (n : ℂ) * (z - x)⁻¹ = -logDeriv g z :=
+  ZeroFreeRegion.exists_eventuallyEq_neg_logDeriv_add_order_mul_inv_of_analyticAt_order_eq_nat
+    hf horder
+
+/-- Public zeta-specific multiplicity-weighted principal-part separation. -/
+theorem exists_eventuallyEq_logDeriv_riemannZeta_sub_order_mul_inv_of_order_eq_nat
+    {ρ : ℂ} {n : ℕ} (hρ1 : ρ ≠ 1)
+    (horder : analyticOrderAt riemannZeta ρ = n) :
+    ∃ g : ℂ → ℂ, AnalyticAt ℂ g ρ ∧ g ρ ≠ 0 ∧
+      ∀ᶠ z in 𝓝[≠] ρ,
+        logDeriv riemannZeta z - (n : ℂ) * (z - ρ)⁻¹ = logDeriv g z :=
+  ZeroFreeRegion.exists_eventuallyEq_logDeriv_riemannZeta_sub_order_mul_inv_of_order_eq_nat
+    hρ1 horder
+
+/-- Public signed zeta-specific multiplicity-weighted principal-part separation. -/
+theorem exists_eventuallyEq_neg_logDeriv_riemannZeta_add_order_mul_inv_of_order_eq_nat
+    {ρ : ℂ} {n : ℕ} (hρ1 : ρ ≠ 1)
+    (horder : analyticOrderAt riemannZeta ρ = n) :
+    ∃ g : ℂ → ℂ, AnalyticAt ℂ g ρ ∧ g ρ ≠ 0 ∧
+      ∀ᶠ z in 𝓝[≠] ρ,
+        -logDeriv riemannZeta z + (n : ℂ) * (z - ρ)⁻¹ = -logDeriv g z :=
+  ZeroFreeRegion.exists_eventuallyEq_neg_logDeriv_riemannZeta_add_order_mul_inv_of_order_eq_nat
+    hρ1 horder
+
 /-- Public generic bridge: analytic nonvanishing implies analytic logarithmic
 derivative. -/
 theorem analyticAt_logDeriv_of_analyticAt_ne_zero

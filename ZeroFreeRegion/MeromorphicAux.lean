@@ -3578,6 +3578,98 @@ lemma exists_eventuallyEq_neg_logDeriv_riemannZeta_add_inv_of_simple_zero
   exists_eventuallyEq_neg_logDeriv_add_inv_of_analyticAt_zero_deriv_ne_zero
     (analyticOnNhd_riemannZeta_ne_one ρ hρ1) hzero hsimple
 
+/-- Local logarithmic-derivative principal-part separation at an analytic point
+of finite natural order `n`.
+
+For a zero of multiplicity `n`, this is the multiplicity-weighted form
+`logDeriv f z - n/(z-x) = logDeriv g z`.  It also covers the nonzero case
+`n = 0`, where the principal part vanishes. -/
+lemma exists_eventuallyEq_logDeriv_sub_order_mul_inv_of_analyticAt_order_eq_nat
+    {f : ℂ → ℂ} {x : ℂ} {n : ℕ}
+    (hf : AnalyticAt ℂ f x) (horder : analyticOrderAt f x = n) :
+    ∃ g : ℂ → ℂ, AnalyticAt ℂ g x ∧ g x ≠ 0 ∧
+      ∀ᶠ z in 𝓝[≠] x,
+        logDeriv f z - (n : ℂ) * (z - x)⁻¹ = logDeriv g z := by
+  have hmer : meromorphicOrderAt f x = ((n : ℤ) : WithTop ℤ) := by
+    rw [hf.meromorphicOrderAt_eq, horder]
+    simp
+  rcases (meromorphicOrderAt_eq_int_iff hf.meromorphicAt).1 hmer with
+    ⟨g, hg, hg_ne, hfg⟩
+  refine ⟨g, hg, hg_ne, ?_⟩
+  have hfg' : ∀ᶠ z in 𝓝[≠] x, f z = (z - x) ^ n * g z := by
+    filter_upwards [hfg] with z hz
+    simpa [zpow_natCast] using hz
+  have hfg_deriv :
+      deriv f =ᶠ[𝓝[≠] x] deriv (fun z : ℂ => (z - x) ^ n * g z) :=
+    Filter.EventuallyEq.nhdsNE_deriv hfg'
+  have hg_ne_eventually : ∀ᶠ z in 𝓝[≠] x, g z ≠ 0 :=
+    (hg.continuousAt.tendsto.eventually_ne hg_ne).filter_mono
+      nhdsWithin_le_nhds
+  have hg_diff_eventually : ∀ᶠ z in 𝓝[≠] x, DifferentiableAt ℂ g z :=
+    (hg.eventually_analyticAt.mono fun _ hz => hz.differentiableAt).filter_mono
+      nhdsWithin_le_nhds
+  have hz_ne : ∀ᶠ z in 𝓝[≠] x, z ≠ x :=
+    self_mem_nhdsWithin
+  filter_upwards [hfg', hfg_deriv, hg_ne_eventually, hg_diff_eventually, hz_ne] with
+    z hfgz hderivz hgz hgdiffz hz
+  have hpow_ne : (z - x) ^ n ≠ 0 :=
+    pow_ne_zero _ (sub_ne_zero.mpr hz)
+  have hlog_factor :
+      logDeriv f z = logDeriv (fun w : ℂ => (w - x) ^ n * g w) z := by
+    simp [logDeriv_apply, hderivz, hfgz]
+  have hmul :
+      logDeriv (fun w : ℂ => (w - x) ^ n * g w) z =
+        logDeriv (fun w : ℂ => (w - x) ^ n) z + logDeriv g z := by
+    rw [logDeriv_mul]
+    · exact hpow_ne
+    · exact hgz
+    · fun_prop
+    · exact hgdiffz
+  have hpow :
+      logDeriv (fun w : ℂ => (w - x) ^ n) z =
+        (n : ℂ) * (z - x)⁻¹ := by
+    rw [logDeriv_fun_pow]
+    · simp [logDeriv_apply]
+    · fun_prop
+  rw [hlog_factor, hmul, hpow]
+  abel
+
+/-- Signed multiplicity-weighted principal-part separation. -/
+lemma exists_eventuallyEq_neg_logDeriv_add_order_mul_inv_of_analyticAt_order_eq_nat
+    {f : ℂ → ℂ} {x : ℂ} {n : ℕ}
+    (hf : AnalyticAt ℂ f x) (horder : analyticOrderAt f x = n) :
+    ∃ g : ℂ → ℂ, AnalyticAt ℂ g x ∧ g x ≠ 0 ∧
+      ∀ᶠ z in 𝓝[≠] x,
+        -logDeriv f z + (n : ℂ) * (z - x)⁻¹ = -logDeriv g z := by
+  rcases exists_eventuallyEq_logDeriv_sub_order_mul_inv_of_analyticAt_order_eq_nat
+      hf horder with ⟨g, hg, hg_ne, hfg⟩
+  refine ⟨g, hg, hg_ne, ?_⟩
+  filter_upwards [hfg] with z hz
+  rw [← hz]
+  abel
+
+/-- Zeta-specific multiplicity-weighted principal-part separation for
+`logDeriv ζ` at any finite-order point away from the pole. -/
+lemma exists_eventuallyEq_logDeriv_riemannZeta_sub_order_mul_inv_of_order_eq_nat
+    {ρ : ℂ} {n : ℕ} (hρ1 : ρ ≠ 1)
+    (horder : analyticOrderAt riemannZeta ρ = n) :
+    ∃ g : ℂ → ℂ, AnalyticAt ℂ g ρ ∧ g ρ ≠ 0 ∧
+      ∀ᶠ z in 𝓝[≠] ρ,
+        logDeriv riemannZeta z - (n : ℂ) * (z - ρ)⁻¹ = logDeriv g z :=
+  exists_eventuallyEq_logDeriv_sub_order_mul_inv_of_analyticAt_order_eq_nat
+    (analyticOnNhd_riemannZeta_ne_one ρ hρ1) horder
+
+/-- Signed zeta-specific multiplicity-weighted principal-part separation,
+matching `-ζ'/ζ + n/(s-ρ)`. -/
+lemma exists_eventuallyEq_neg_logDeriv_riemannZeta_add_order_mul_inv_of_order_eq_nat
+    {ρ : ℂ} {n : ℕ} (hρ1 : ρ ≠ 1)
+    (horder : analyticOrderAt riemannZeta ρ = n) :
+    ∃ g : ℂ → ℂ, AnalyticAt ℂ g ρ ∧ g ρ ≠ 0 ∧
+      ∀ᶠ z in 𝓝[≠] ρ,
+        -logDeriv riemannZeta z + (n : ℂ) * (z - ρ)⁻¹ = -logDeriv g z :=
+  exists_eventuallyEq_neg_logDeriv_add_order_mul_inv_of_analyticAt_order_eq_nat
+    (analyticOnNhd_riemannZeta_ne_one ρ hρ1) horder
+
 /-- If `f` is analytic and nonzero at `z`, then its logarithmic derivative is
 analytic at `z`. -/
 lemma analyticAt_logDeriv_of_analyticAt_ne_zero {f : ℂ → ℂ} {z : ℂ}

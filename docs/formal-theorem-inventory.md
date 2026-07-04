@@ -296,6 +296,19 @@ Core verified declarations:
 - `exists_eventuallyEq_neg_logDeriv_riemannZeta_add_inv_of_simple_zero`
   packages the signed zeta-specific form matching the regular-part norm
   hypotheses used by the conditional zero-free-region bridge.
+- `exists_eventuallyEq_logDeriv_sub_order_mul_inv_of_analyticAt_order_eq_nat`
+  proves the multiplicity-weighted local decomposition
+  `logDeriv f z - n/(z-x) = logDeriv g z` from
+  `analyticOrderAt f x = n`.
+- `exists_eventuallyEq_neg_logDeriv_add_order_mul_inv_of_analyticAt_order_eq_nat`
+  gives the corresponding signed multiplicity-weighted form.
+- `exists_eventuallyEq_logDeriv_riemannZeta_sub_order_mul_inv_of_order_eq_nat`
+  specializes the multiplicity-weighted decomposition to `riemannZeta` away
+  from its pole.
+- `exists_eventuallyEq_neg_logDeriv_riemannZeta_add_order_mul_inv_of_order_eq_nat`
+  gives the signed zeta-specific multiplicity-weighted form
+  `-logDeriv ζ + n/(z-ρ)`, avoiding a simple-zero assumption in the local
+  algebra layer.
 - `analyticAt_logDeriv_of_analyticAt_ne_zero`
   proves the generic local fact that an analytic nonzero function has analytic
   logarithmic derivative.
