@@ -663,6 +663,12 @@ Core verified declarations:
 - `exists_re_im_logDeriv_vertical_log_bound_of_log_norm_add_three_bound_high_height`
   is the multiplicative version for inputs already stated as
   `C log(||sigma+it||+3)`.
+- `exists_re_im_neg_logDeriv_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height`
+  is the signed affine full-height normalizer for future estimates on
+  `||-logDeriv zeta (sigma+it)||`.
+- `exists_re_im_neg_logDeriv_vertical_log_bound_of_log_norm_add_three_bound_high_height`
+  is the signed multiplicative version for inputs already stated as
+  `C log(||sigma+it||+3)`.
 - `classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_abs_add_three_bound_high_height`
   specializes the coordinate interface to estimates stated as
   `C * log(|t| + 3)` for both remaining zeta-specific bounds.

@@ -3196,6 +3196,62 @@ lemma exists_re_im_logDeriv_vertical_log_bound_of_log_norm_add_three_bound_high_
   intro σ t ht hσ
   simpa using hvertical σ t ht hσ
 
+/-- Signed standalone normalization of a future vertical-strip
+`-logDeriv ζ` estimate.
+
+This is the same bookkeeping as
+`exists_re_im_logDeriv_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height`,
+but in the sign convention used by the 3-4-1 inequality.  It does not prove
+the missing zeta-specific growth estimate. -/
+lemma exists_re_im_neg_logDeriv_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height
+    (T0 A B : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          A + B * Real.log (‖((σ : ℂ) + I * t)‖ + 3)) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 5 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          C * Real.log |t| := by
+  have hvertical_pos :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          A + B * Real.log (‖((σ : ℂ) + I * t)‖ + 3) := by
+    intro σ t ht hσ
+    calc
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖
+          = ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ := (norm_neg _).symm
+      _ ≤ A + B * Real.log (‖((σ : ℂ) + I * t)‖ + 3) :=
+          hvertical σ t ht hσ
+  rcases
+      exists_re_im_logDeriv_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height
+        T0 A B hT0 hA hB hvertical_pos
+    with ⟨C, T0', hC, hT0', hbound⟩
+  refine ⟨C, T0', hC, hT0', ?_⟩
+  intro σ t hσ_left hσ_right ht
+  calc
+    ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖
+        = ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ := norm_neg _
+    _ ≤ C * Real.log |t| := hbound σ t hσ_left hσ_right ht
+
+/-- Multiplicative full-height signed version of
+`exists_re_im_neg_logDeriv_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height`. -/
+lemma exists_re_im_neg_logDeriv_vertical_log_bound_of_log_norm_add_three_bound_high_height
+    (T0 C : ℝ) (hT0 : 5 ≤ T0) (hC : 0 ≤ C)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          C * Real.log (‖((σ : ℂ) + I * t)‖ + 3)) :
+    ∃ C' T0' : ℝ, 0 ≤ C' ∧ 5 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          C' * Real.log |t| := by
+  refine
+    exists_re_im_neg_logDeriv_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height
+      T0 0 C hT0 (by norm_num) hC ?_
+  intro σ t ht hσ
+  simpa using hvertical σ t ht hσ
+
 /-- Coordinate high-height closure from a single `C * log(|t| + 3)` bound.
 
 This shape is common in analytic estimates because it is harmless at small
