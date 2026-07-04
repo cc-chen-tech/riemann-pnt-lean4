@@ -1039,9 +1039,11 @@ For the separate vertical-strip part of this program,
 `ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_shift_pair_vertical_log_bound_of_vertical_log_bound`
 now packages a single future ordinary estimate
 `||logDeriv zeta(sigma+iu)|| <= B log |u|` into one shared existential
-bound for both `sigma+it` and `sigma+2it`.  This is a proved bookkeeping
-bridge for the 3-4-1 inputs, not a proof of the zeta-specific high-height
-estimate itself.
+bound for both `sigma+it` and `sigma+2it`.  The companion theorem
+`ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_vertical_norm_log_bound`
+then converts the same input into the real-part quotient bounds used directly
+by the 3-4-1 inequality.  These are proved bookkeeping bridges, not a proof of
+the zeta-specific high-height estimate itself.
 This is still conditional; it does not prove the quantitative zero-free region
 until those two zeta-specific estimates are proved.
 The next work starts from these meromorphic/nonvanishing/principal-part facts

@@ -140,6 +140,10 @@ Core verified declarations:
   packages that same future ordinary vertical estimate into one shared
   existential `C * log |t|` bound for both `sigma + it` and `sigma + 2it`,
   matching the two norm inputs needed by the 3-4-1 route.
+- `exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_vertical_norm_log_bound`
+  converts the shared norm package into one shared real-part quotient package
+  for `Re(-zeta'/zeta)(sigma+it)` and `Re(-zeta'/zeta)(sigma+2it)`, the direct
+  sign convention of the 3-4-1 inequality.
 - `exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_vertical_norm_log_bound`
   converts that shifted norm estimate into the real-part quotient convention
   needed by the 3-4-1 inequality.

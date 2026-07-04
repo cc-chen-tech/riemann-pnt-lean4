@@ -8757,6 +8757,45 @@ lemma exists_norm_logDeriv_riemannZeta_shift_pair_vertical_log_bound_of_vertical
         _ ≤ C * Real.log |t| :=
             mul_le_mul_of_nonneg_right (le_max_right C₁ C₂) hlog_nonneg
 
+/-- Real-part pair package for the high-height logarithmic derivative estimate
+needed by the 3-4-1 inequality.  A single future norm bound for
+`logDeriv ζ(sigma+iu)` gives one shared constant controlling
+`Re(-ζ'/ζ)(sigma+it)` and `Re(-ζ'/ζ)(sigma+2it)`. -/
+lemma exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_vertical_norm_log_bound
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ u : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |u| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * u)‖ ≤ B * Real.log |u|) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re ≤ C * Real.log |t| ∧
+        (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤ C * Real.log |t| := by
+  rcases exists_norm_logDeriv_riemannZeta_shift_pair_vertical_log_bound_of_vertical_log_bound
+      (T0 := T0) (B := B) hB hhigh with
+    ⟨C, T0', hC, hT0', hpair⟩
+  refine ⟨C, T0', hC, hT0', ?_⟩
+  intro σ t hσ_left hσ_right ht
+  rcases hpair σ t hσ_left hσ_right ht with ⟨hmain, hshift⟩
+  constructor
+  · let z : ℂ := (σ : ℂ) + I * t
+    calc
+      (-deriv riemannZeta z / riemannZeta z).re
+          ≤ ‖-deriv riemannZeta z / riemannZeta z‖ := Complex.re_le_norm _
+      _ = ‖logDeriv riemannZeta z‖ :=
+          norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv z
+      _ ≤ C * Real.log |t| := by
+          simpa [z] using hmain
+  · let z : ℂ := (σ : ℂ) + 2 * I * t
+    calc
+      (-deriv riemannZeta z / riemannZeta z).re
+          ≤ ‖-deriv riemannZeta z / riemannZeta z‖ := Complex.re_le_norm _
+      _ = ‖logDeriv riemannZeta z‖ :=
+          norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv z
+      _ ≤ C * Real.log |t| := by
+          simpa [z] using hshift
+
 /-- Real-part quotient version of
 `exists_norm_logDeriv_riemannZeta_shifted_vertical_log_bound_of_vertical_log_bound`. -/
 lemma exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_vertical_norm_log_bound
