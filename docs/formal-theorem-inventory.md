@@ -34,6 +34,14 @@ Core verified declarations:
   extracts the real-part Dirichlet series for `-zeta'/zeta`.
 - `log_deriv_zeta_nonneg_combination`
   proves the full 3-4-1 logarithmic-derivative nonnegativity combination.
+- `log_deriv_zeta_nonneg_finset_combination`
+  proves a finite trigonometric-detector skeleton: after supplying the
+  Dirichlet-series identity and pointwise nonnegativity of the detector
+  polynomial, the finite logarithmic-derivative combination is nonnegative.
+- `log_deriv_zeta_nonneg_list_combination`
+  is the list-indexed wrapper for the same detector skeleton.
+- `log_deriv_zeta_nonneg_three_four_one_from_finset`
+  re-exposes the verified 3-4-1 theorem as the base detector instance.
 - `classical_zero_free_region_compact`
   proves a nonconstructive positive-width zero-free strip for each bounded
   height.
@@ -1166,6 +1174,11 @@ Core verified declarations:
   proves symmetry of nontrivial zeros under `rho -> 1 - rho`.
 - `nontrivial_zero_symmetric'`
   packages the symmetry as preservation of `IsNontrivialZero`.
+- `ZeroPairContributionNonnegative`,
+  `zero_pair_contribution_nonnegative_of_reflection_condition`, and
+  `finite_zero_sum_nonnegative_of_pairing_condition`
+  isolate a finite paired-zero nonnegativity skeleton for future
+  Stechkin/Heath-Brown style zero detector arguments.
 - `NoZerosOnVerticalLine`
   is a reusable predicate for excluding zeta zeros on a fixed vertical line.
 - `no_zeros_on_one_third_of_RH`
@@ -1187,6 +1200,13 @@ Core verified declarations:
 - `no_zeros_on_one_third_of_psi_power_error_below_two_thirds_bridge`
   specializes the abstract strong-PNT-error bridge to the `psi` power-error
   interface.
+- `PsiPowerErrorBelowLine`,
+  `PsiPowerErrorBelowLineExcludesZerosRightOf`,
+  `no_zeros_on_vertical_line_of_psi_power_error_bridge`, and
+  `no_zeros_on_one_third_of_general_psi_power_error_bridge`
+  generalize the `2/3` psi-power-error bridge to arbitrary vertical lines in
+  the critical strip, with the explicit-formula converse still kept as an
+  assumption.
 - `riemannZeta_ne_zero_of_re_le_zero`
   excludes nontrivial zeros in `Re(s) <= 0`, except for the trivial zero
   locations.

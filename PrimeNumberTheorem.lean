@@ -2708,6 +2708,33 @@ theorem nontrivial_zero_symmetric' {ρ : ℂ}
   · simp [Complex.sub_re]; linarith
   · simp [Complex.sub_re]; linarith
 
+/-! ### Zero-pair contribution skeleton
+
+This is the finite combinatorial core behind the Stechkin/Heath-Brown pairing
+condition `Re F(z) + Re F(center - z) >= 0`.  It deliberately stays independent
+of the concrete Laplace transform used in an explicit zero detector.
+-/
+
+/-- A contribution function is nonnegative after pairing around `center`. -/
+abbrev ZeroPairContributionNonnegative (F : ℂ → ℂ) (center : ℂ) : Prop :=
+  ∀ z : ℂ, 0 ≤ (F z).re + (F (center - z)).re
+
+/-- Direct use of the zero-pair nonnegativity condition. -/
+lemma zero_pair_contribution_nonnegative_of_reflection_condition
+    {F : ℂ → ℂ} {center z : ℂ}
+    (hF : ZeroPairContributionNonnegative F center) :
+    0 ≤ (F z).re + (F (center - z)).re :=
+  hF z
+
+/-- Finite paired zero contributions are nonnegative if every paired summand
+is nonnegative.  A later analytic specialization can instantiate `pair ρ` as
+the reflected zero, for example `center - ρ`. -/
+lemma finite_zero_sum_nonnegative_of_pairing_condition
+    (S : Finset ℂ) (F : ℂ → ℂ) (pair : ℂ → ℂ)
+    (hpair : ∀ ρ ∈ S, 0 ≤ (F ρ).re + (F (pair ρ)).re) :
+    0 ≤ ∑ ρ ∈ S, ((F ρ).re + (F (pair ρ)).re) :=
+  Finset.sum_nonneg hpair
+
 /-! ### Vertical-line bridges around `Re(s) = 1 / 3`
 
 These lemmas do not prove a new zero-free line.  They isolate the easy formal
@@ -2820,6 +2847,42 @@ theorem no_zeros_on_one_third_of_psi_power_error_below_two_thirds_bridge
     NoZerosOnVerticalLine (1 / 3) :=
   no_zeros_on_one_third_of_strong_pnt_error_bridge
     (StrongPNTError := PsiPowerErrorBelowTwoThirds) hbridge herror
+
+/-- General power-saving `ψ` error below a real boundary line. -/
+abbrev PsiPowerErrorBelowLine (β : ℝ) : Prop :=
+  ∃ θ : ℝ, 0 ≤ θ ∧ θ < β ∧ PsiPowerErrorBound θ
+
+/-- Route interface for the converse explicit-formula principle: a `ψ` error
+with exponent below `β` excludes nontrivial zeros on or to the right of
+`Re(s) = β`. -/
+abbrev PsiPowerErrorBelowLineExcludesZerosRightOf (β : ℝ) : Prop :=
+  PsiPowerErrorBelowLine β →
+    ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → β ≤ ρ.re → False
+
+/-- Conditional bridge from a general `ψ` power-saving error to a zero-free
+vertical line at the same real part. -/
+theorem no_zeros_on_vertical_line_of_psi_power_error_bridge
+    {β : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hbridge : PsiPowerErrorBelowLineExcludesZerosRightOf β)
+    (herror : PsiPowerErrorBelowLine β) :
+    NoZerosOnVerticalLine β := by
+  intro s hs hzero
+  have hnt : RiemannHypothesis.IsNontrivialZero s := by
+    refine ⟨hzero, ?_, ?_⟩
+    · linarith [hs, hβ_pos]
+    · linarith [hs, hβ_lt_one]
+  exact hbridge herror s hnt (le_of_eq hs.symm)
+
+/-- Specialization of the general `ψ`-error bridge to the reflected
+`Re(s) = 2 / 3` line, hence to `Re(s) = 1 / 3` by zero symmetry. -/
+theorem no_zeros_on_one_third_of_general_psi_power_error_bridge
+    (hbridge : PsiPowerErrorBelowLineExcludesZerosRightOf (2 / 3))
+    (herror : PsiPowerErrorBelowLine (2 / 3)) :
+    NoZerosOnVerticalLine (1 / 3) :=
+  no_zeros_on_one_third_of_strong_pnt_error_bridge
+    (StrongPNTError := PsiPowerErrorBelowLine (2 / 3))
+    (fun herror' ρ hρ hρre => hbridge herror' ρ hρ (le_of_eq hρre.symm))
+    herror
 
 /-! ## 平凡零点表征 -/
 

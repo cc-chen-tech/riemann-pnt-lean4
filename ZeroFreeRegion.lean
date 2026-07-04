@@ -705,6 +705,76 @@ lemma log_deriv_zeta_nonneg_combination (σ : ℝ) (hσ : 1 < σ) (t : ℝ) :
         simpa [mul_assoc] using trig_identity_nonneg (t * Real.log (n : ℝ))
       exact div_nonneg (mul_nonneg hΛ htrig) hden)
 
+/-! ### Finite trigonometric-detector skeleton
+
+The following lemmas isolate the part of the de la Vallée Poussin/Heath-Brown
+method that only uses nonnegativity of a finite trigonometric polynomial.  The
+analytic identity `hseries` is deliberately explicit: proving it automatically
+for large detector polynomials is a separate finite-sum/Dirichlet-series
+exchange step.
+-/
+
+/-- General finite trigonometric detector: once a finite logarithmic-derivative
+combination is identified with a von Mangoldt Dirichlet series weighted by a
+nonnegative trigonometric polynomial, the combination is nonnegative. -/
+lemma log_deriv_zeta_nonneg_finset_combination
+    (σ : ℝ) (_hσ : 1 < σ) (t : ℝ) (S : Finset ℕ) (a : ℕ → ℝ)
+    (hseries :
+      (∑ k ∈ S, a k *
+        (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+          riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re)
+        =
+      ∑' n : ℕ,
+        Λ n *
+          (∑ k ∈ S, a k * Real.cos ((k : ℝ) * (t * Real.log (n : ℝ)))) /
+            (n : ℝ) ^ σ)
+    (hpoly : ∀ θ : ℝ, 0 ≤ ∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ)) :
+    0 ≤
+      ∑ k ∈ S, a k *
+        (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+          riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re := by
+  rw [hseries]
+  exact tsum_nonneg (fun n ↦ by
+    rcases Nat.eq_zero_or_pos n with rfl | hn
+    · simp [ArithmeticFunction.vonMangoldt]
+    · have hΛ : 0 ≤ Λ n := ArithmeticFunction.vonMangoldt_nonneg
+      have htrig : 0 ≤
+          ∑ k ∈ S, a k * Real.cos ((k : ℝ) * (t * Real.log (n : ℝ))) :=
+        hpoly (t * Real.log (n : ℝ))
+      have hden : 0 ≤ (n : ℝ) ^ σ :=
+        (Real.rpow_pos_of_pos (Nat.cast_pos.mpr hn) σ).le
+      exact div_nonneg (mul_nonneg hΛ htrig) hden)
+
+/-- List-indexed wrapper for `log_deriv_zeta_nonneg_finset_combination`. -/
+lemma log_deriv_zeta_nonneg_list_combination
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ) (ks : List ℕ) (a : ℕ → ℝ)
+    (hseries :
+      (∑ k ∈ ks.toFinset, a k *
+        (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+          riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re)
+        =
+      ∑' n : ℕ,
+        Λ n *
+          (∑ k ∈ ks.toFinset, a k * Real.cos ((k : ℝ) * (t * Real.log (n : ℝ)))) /
+            (n : ℝ) ^ σ)
+    (hpoly : ∀ θ : ℝ, 0 ≤ ∑ k ∈ ks.toFinset, a k * Real.cos ((k : ℝ) * θ)) :
+    0 ≤
+      ∑ k ∈ ks.toFinset, a k *
+        (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+          riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re :=
+  log_deriv_zeta_nonneg_finset_combination σ hσ t ks.toFinset a hseries hpoly
+
+/-- The existing `3-4-1` theorem as the base detector instance. -/
+lemma log_deriv_zeta_nonneg_three_four_one_from_finset
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ) :
+    0 ≤
+      3 * (- deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re
+      + 4 * (- deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re
+      + (- deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+          riemannZeta ((σ : ℂ) + 2 * I * t)).re :=
+  log_deriv_zeta_nonneg_combination σ hσ t
+
 /-- Algebraic lower-bound corollary of the 3-4-1 inequality. -/
 lemma log_deriv_zeta_lower_bound (σ : ℝ) (hσ : 1 < σ) (t : ℝ) :
     (- deriv riemannZeta ((σ : ℂ) + I * t) / riemannZeta ((σ : ℂ) + I * t)).re ≥

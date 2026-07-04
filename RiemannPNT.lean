@@ -1798,6 +1798,41 @@ theorem nontrivial_zero_symmetric'
     _root_.RiemannHypothesis.IsNontrivialZero (1 - ρ) :=
   PrimeNumberTheorem.nontrivial_zero_symmetric' h
 
+/-- Public direct use of a zero-pair nonnegativity condition. -/
+theorem zero_pair_contribution_nonnegative_of_reflection_condition
+    {F : ℂ → ℂ} {center z : ℂ}
+    (hF : PrimeNumberTheorem.ZeroPairContributionNonnegative F center) :
+    0 ≤ (F z).re + (F (center - z)).re :=
+  PrimeNumberTheorem.zero_pair_contribution_nonnegative_of_reflection_condition hF
+
+/-- Public finite paired-zero nonnegativity skeleton. -/
+theorem finite_zero_sum_nonnegative_of_pairing_condition
+    (S : Finset ℂ) (F : ℂ → ℂ) (pair : ℂ → ℂ)
+    (hpair : ∀ ρ ∈ S, 0 ≤ (F ρ).re + (F (pair ρ)).re) :
+    0 ≤ ∑ ρ ∈ S, ((F ρ).re + (F (pair ρ)).re) :=
+  PrimeNumberTheorem.finite_zero_sum_nonnegative_of_pairing_condition
+    S F pair hpair
+
+/-- Public conditional bridge from a general `ψ` power-saving error below a
+line to zero-freeness on that vertical line. -/
+theorem no_zeros_on_vertical_line_of_psi_power_error_bridge
+    {β : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hbridge : PrimeNumberTheorem.PsiPowerErrorBelowLineExcludesZerosRightOf β)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine β :=
+  PrimeNumberTheorem.no_zeros_on_vertical_line_of_psi_power_error_bridge
+    hβ_pos hβ_lt_one hbridge herror
+
+/-- Public specialization of the general `ψ` power-saving bridge to the
+reflected `2/3` line and hence the `1/3` line. -/
+theorem no_zeros_on_one_third_of_general_psi_power_error_bridge
+    (hbridge :
+      PrimeNumberTheorem.PsiPowerErrorBelowLineExcludesZerosRightOf (2 / 3))
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine (2 / 3)) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) :=
+  PrimeNumberTheorem.no_zeros_on_one_third_of_general_psi_power_error_bridge
+    hbridge herror
+
 /-- Public critical-strip location theorem for nontrivial zeta zeros. -/
 theorem nontrivial_zero_in_critical_strip {s : ℂ}
     (hζ : riemannZeta s = 0)
@@ -4114,6 +4149,62 @@ theorem log_deriv_zeta_nonneg_combination (σ : ℝ) (hσ : 1 < σ) (t : ℝ) :
       + (-deriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t) /
           riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re ≥ 0 :=
   ZeroFreeRegion.log_deriv_zeta_nonneg_combination σ hσ t
+
+/-- Public finite trigonometric-detector skeleton for logarithmic-derivative
+combinations. -/
+theorem log_deriv_zeta_nonneg_finset_combination
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ) (S : Finset ℕ) (a : ℕ → ℝ)
+    (hseries :
+      (∑ k ∈ S, a k *
+        (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t) /
+          riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re)
+        =
+      ∑' n : ℕ,
+        Λ n *
+          (∑ k ∈ S, a k * Real.cos ((k : ℝ) * (t * Real.log (n : ℝ)))) /
+            (n : ℝ) ^ σ)
+    (hpoly : ∀ θ : ℝ, 0 ≤ ∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ)) :
+    0 ≤
+      ∑ k ∈ S, a k *
+        (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t) /
+          riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re :=
+  ZeroFreeRegion.log_deriv_zeta_nonneg_finset_combination
+    σ hσ t S a hseries hpoly
+
+/-- Public list-indexed finite trigonometric-detector wrapper. -/
+theorem log_deriv_zeta_nonneg_list_combination
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ) (ks : List ℕ) (a : ℕ → ℝ)
+    (hseries :
+      (∑ k ∈ ks.toFinset, a k *
+        (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t) /
+          riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re)
+        =
+      ∑' n : ℕ,
+        Λ n *
+          (∑ k ∈ ks.toFinset,
+            a k * Real.cos ((k : ℝ) * (t * Real.log (n : ℝ)))) /
+            (n : ℝ) ^ σ)
+    (hpoly :
+      ∀ θ : ℝ, 0 ≤
+        ∑ k ∈ ks.toFinset, a k * Real.cos ((k : ℝ) * θ)) :
+    0 ≤
+      ∑ k ∈ ks.toFinset, a k *
+        (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t) /
+          riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re :=
+  ZeroFreeRegion.log_deriv_zeta_nonneg_list_combination
+    σ hσ t ks a hseries hpoly
+
+/-- Public statement of the existing `3-4-1` theorem in the finite-detector
+section. -/
+theorem log_deriv_zeta_nonneg_three_four_one_from_finset
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ) :
+    0 ≤
+      3 * (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re
+      + 4 * (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+          riemannZeta ((σ : ℂ) + Complex.I * t)).re
+      + (-deriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t) /
+          riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re :=
+  ZeroFreeRegion.log_deriv_zeta_nonneg_three_four_one_from_finset σ hσ t
 
 /-- Public algebraic lower-bound corollary of the 3-4-1 inequality. -/
 theorem log_deriv_zeta_lower_bound (σ : ℝ) (hσ : 1 < σ) (t : ℝ) :
