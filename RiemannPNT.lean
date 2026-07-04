@@ -3554,6 +3554,34 @@ theorem exists_norm_neg_logDeriv_riemannZeta_sigma_it_log_abs_bound_of_high_heig
   ZeroFreeRegion.exists_norm_neg_logDeriv_riemannZeta_sigma_it_log_abs_bound_of_high_height_log_abs_bound
     hH3 hB hhigh
 
+/-- Public objective-shaped vertical logarithmic bound wrapper.  A future
+high-height `B * log |t|` estimate on `1 <= sigma <= 2` patches with the compact
+bounded-height theorem to produce the standard existential form needed by the
+quantitative zero-free-region chain. -/
+theorem exists_norm_logDeriv_riemannZeta_vertical_log_bound_of_high_height_log_abs_bound
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤ B * Real.log |t|) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤ C * Real.log |t| :=
+  ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_vertical_log_bound_of_high_height_log_abs_bound
+    hB hhigh
+
+/-- Public signed objective-shaped vertical logarithmic bound wrapper for
+`-logDeriv zeta`. -/
+theorem exists_norm_neg_logDeriv_riemannZeta_vertical_log_bound_of_high_height_log_abs_bound
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤ B * Real.log |t|) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤ C * Real.log |t| :=
+  ZeroFreeRegion.exists_norm_neg_logDeriv_riemannZeta_vertical_log_bound_of_high_height_log_abs_bound
+    hB hhigh
+
 /-- Public compact patch preserving the exact `C * log |t|` scale for
 `‖logDeriv ζ‖` at `σ + 2it`, once the patched range starts at height at
 least `3`. -/

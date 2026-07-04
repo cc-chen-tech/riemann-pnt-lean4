@@ -6157,6 +6157,50 @@ lemma exists_norm_neg_logDeriv_riemannZeta_sigma_it_log_abs_bound_of_high_height
       _ ≤ (C₀ + B) * Real.log |t| := by
         nlinarith [mul_nonneg hC₀_nonneg hlog_nonneg]
 
+/-- Objective-shaped vertical logarithmic bound wrapper: a future high-height
+`B * log |t|` estimate on the boundary strip `1 <= sigma <= 2` patches with the
+compact bounded-height theorem to give the standard existential form used by
+the quantitative zero-free-region chain.  This theorem packages the shape of
+the hard estimate; it does not prove the zeta-specific high-height input. -/
+lemma exists_norm_logDeriv_riemannZeta_vertical_log_bound_of_high_height_log_abs_bound
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤ B * Real.log |t|) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤ C * Real.log |t| := by
+  rcases exists_norm_logDeriv_riemannZeta_sigma_it_log_abs_bound_of_high_height_log_abs_bound
+      (H := 3) (T0 := T0) (B := B) (by norm_num) hB
+      (by
+        intro σ t hσ ht
+        exact hhigh σ t hσ.1 hσ.2 ht) with
+    ⟨C, hC_nonneg, hbound⟩
+  refine ⟨C, 3, hC_nonneg, by norm_num, ?_⟩
+  intro σ t hσ_left hσ_right ht
+  exact hbound σ t ⟨hσ_left, hσ_right⟩ ht
+
+/-- Signed objective-shaped version of the vertical logarithmic bound wrapper
+for `-logDeriv zeta`.  The analytic high-height estimate remains an explicit
+input; the theorem only proves the compact-height patching and API shape. -/
+lemma exists_norm_neg_logDeriv_riemannZeta_vertical_log_bound_of_high_height_log_abs_bound
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤ B * Real.log |t|) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤ C * Real.log |t| := by
+  rcases exists_norm_neg_logDeriv_riemannZeta_sigma_it_log_abs_bound_of_high_height_log_abs_bound
+      (H := 3) (T0 := T0) (B := B) (by norm_num) hB
+      (by
+        intro σ t hσ ht
+        exact hhigh σ t hσ.1 hσ.2 ht) with
+    ⟨C, hC_nonneg, hbound⟩
+  refine ⟨C, 3, hC_nonneg, by norm_num, ?_⟩
+  intro σ t hσ_left hσ_right ht
+  exact hbound σ t ⟨hσ_left, hσ_right⟩ ht
+
 /-- Compact patch preserving the exact `C * log |t|` scale for the norm of
 `logDeriv ζ` at `σ + 2it`, provided `H >= 3`. -/
 lemma exists_norm_logDeriv_riemannZeta_sigma_two_it_log_abs_bound_of_high_height_log_abs_bound
