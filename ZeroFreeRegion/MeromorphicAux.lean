@@ -1733,6 +1733,105 @@ lemma inv_sub_same_im_re {s ρ : ℂ} (him : ρ.im = s.im)
   field_simp [hne, one_div]
   simp
 
+/-- Convert a signed regular-part norm bound near a zeta zero into the
+real-part bound used by the de la Vallee Poussin zero-repulsion argument. -/
+lemma re_neg_deriv_div_riemannZeta_add_inv_le_of_regular_part_norm
+    {s ρ : ℂ} {M : ℝ}
+    (hregular :
+      ‖-deriv riemannZeta s / riemannZeta s + (s - ρ)⁻¹‖ ≤ M)
+    (him : ρ.im = s.im) (hsub : 0 < s.re - ρ.re) :
+    (-deriv riemannZeta s / riemannZeta s).re +
+        1 / (s.re - ρ.re) ≤ M := by
+  let regularPart : ℂ :=
+    -deriv riemannZeta s / riemannZeta s + (s - ρ)⁻¹
+  have hregular_norm : ‖regularPart‖ ≤ M := by
+    simpa [regularPart] using hregular
+  have hregular_re_le :
+      regularPart.re ≤ ‖regularPart‖ :=
+    le_trans (le_abs_self regularPart.re) (abs_re_le_norm regularPart)
+  have hregular_re :
+      regularPart.re =
+        (-deriv riemannZeta s / riemannZeta s).re +
+          1 / (s.re - ρ.re) := by
+    simp [regularPart, inv_sub_same_im_re him hsub]
+  calc
+    (-deriv riemannZeta s / riemannZeta s).re +
+        1 / (s.re - ρ.re)
+        = regularPart.re := hregular_re.symm
+    _ ≤ ‖regularPart‖ := hregular_re_le
+    _ ≤ M := hregular_norm
+
+/-- Multiplicity-aware version of
+`re_neg_deriv_div_riemannZeta_add_inv_le_of_regular_part_norm`.
+
+If a local argument isolates `n (s-rho)^{-1}` with `n >= 1`, the same norm
+bound still implies the weaker unit-principal real-part inequality needed in
+the zero-free-region contradiction. -/
+lemma re_neg_deriv_div_riemannZeta_add_inv_le_of_multiplicity_regular_part_norm
+    {s ρ : ℂ} {n : ℕ} {M : ℝ}
+    (hregular :
+      ‖-deriv riemannZeta s / riemannZeta s +
+          (n : ℂ) * (s - ρ)⁻¹‖ ≤ M)
+    (hn : 0 < n) (him : ρ.im = s.im)
+    (hsub : 0 < s.re - ρ.re) :
+    (-deriv riemannZeta s / riemannZeta s).re +
+        1 / (s.re - ρ.re) ≤ M := by
+  let regularPart : ℂ :=
+    -deriv riemannZeta s / riemannZeta s + (n : ℂ) * (s - ρ)⁻¹
+  have hregular_norm : ‖regularPart‖ ≤ M := by
+    simpa [regularPart] using hregular
+  have hregular_re_le :
+      regularPart.re ≤ ‖regularPart‖ :=
+    le_trans (le_abs_self regularPart.re) (abs_re_le_norm regularPart)
+  have hinv_re : ((s - ρ)⁻¹).re = 1 / (s.re - ρ.re) :=
+    inv_sub_same_im_re him hsub
+  have hregular_re :
+      regularPart.re =
+        (-deriv riemannZeta s / riemannZeta s).re +
+          (n : ℝ) * (1 / (s.re - ρ.re)) := by
+    simp [regularPart, hinv_re]
+  have hunit_le_mult :
+      1 / (s.re - ρ.re) ≤ (n : ℝ) * (1 / (s.re - ρ.re)) := by
+    have hnonneg : 0 ≤ 1 / (s.re - ρ.re) := by
+      positivity
+    have hn_one : (1 : ℝ) ≤ n := by
+      exact_mod_cast Nat.succ_le_iff.mpr hn
+    simpa using mul_le_mul_of_nonneg_right hn_one hnonneg
+  calc
+    (-deriv riemannZeta s / riemannZeta s).re +
+        1 / (s.re - ρ.re)
+        ≤ regularPart.re := by
+          rw [hregular_re]
+          linarith
+    _ ≤ ‖regularPart‖ := hregular_re_le
+    _ ≤ M := hregular_norm
+
+/-- Signed `-logDeriv zeta` notation form of
+`re_neg_deriv_div_riemannZeta_add_inv_le_of_regular_part_norm`. -/
+lemma re_neg_logDeriv_riemannZeta_add_inv_le_of_regular_part_norm
+    {s ρ : ℂ} {M : ℝ}
+    (hregular : ‖-logDeriv riemannZeta s + (s - ρ)⁻¹‖ ≤ M)
+    (him : ρ.im = s.im) (hsub : 0 < s.re - ρ.re) :
+    (-deriv riemannZeta s / riemannZeta s).re +
+        1 / (s.re - ρ.re) ≤ M :=
+  re_neg_deriv_div_riemannZeta_add_inv_le_of_regular_part_norm
+    (by simpa [neg_logDeriv_riemannZeta_eq_neg_deriv_div] using hregular)
+    him hsub
+
+/-- Multiplicity-aware signed `-logDeriv zeta` notation form of the
+regular-part norm to real-part bridge. -/
+lemma re_neg_logDeriv_riemannZeta_add_inv_le_of_multiplicity_regular_part_norm
+    {s ρ : ℂ} {n : ℕ} {M : ℝ}
+    (hregular :
+      ‖-logDeriv riemannZeta s + (n : ℂ) * (s - ρ)⁻¹‖ ≤ M)
+    (hn : 0 < n) (him : ρ.im = s.im)
+    (hsub : 0 < s.re - ρ.re) :
+    (-deriv riemannZeta s / riemannZeta s).re +
+        1 / (s.re - ρ.re) ≤ M :=
+  re_neg_deriv_div_riemannZeta_add_inv_le_of_multiplicity_regular_part_norm
+    (by simpa [neg_logDeriv_riemannZeta_eq_neg_deriv_div] using hregular)
+    hn him hsub
+
 /-- Close the classical zero-free-region target from a norm bound on the
 complex regular part of `-ζ'/ζ` near a zero and the corresponding `σ + 2it`
 estimate.
@@ -1759,26 +1858,10 @@ lemma classical_zero_free_region_of_regular_part_norm_bound_and_two_t_bound
   refine classical_zero_free_region_of_regular_part_bound_and_two_t_bound
     B hB ?_ htwo
   intro s ρ hs_height hs_re_mem hζρ hρ_im_eq hρ_re_lt hsub
-  let regularPart : ℂ :=
-    -deriv riemannZeta s / riemannZeta s + (s - ρ)⁻¹
-  have hregular_norm :
-      ‖regularPart‖ ≤ B * Real.log |s.im| := by
-    simpa [regularPart] using
-      hregular s ρ hs_height hs_re_mem hζρ hρ_im_eq hρ_re_lt hsub
-  have hregular_re_le :
-      regularPart.re ≤ ‖regularPart‖ :=
-    le_trans (le_abs_self regularPart.re) (abs_re_le_norm regularPart)
-  have hregular_re :
-      regularPart.re =
-        (-deriv riemannZeta s / riemannZeta s).re +
-          1 / (s.re - ρ.re) := by
-    simp [regularPart, inv_sub_same_im_re hρ_im_eq hsub]
-  calc
-    (-deriv riemannZeta s / riemannZeta s).re +
-        1 / (s.re - ρ.re)
-        = regularPart.re := hregular_re.symm
-    _ ≤ ‖regularPart‖ := hregular_re_le
-    _ ≤ B * Real.log |s.im| := hregular_norm
+  exact
+    re_neg_deriv_div_riemannZeta_add_inv_le_of_regular_part_norm
+      (hregular s ρ hs_height hs_re_mem hζρ hρ_im_eq hρ_re_lt hsub)
+      hρ_im_eq hsub
 
 /-- Multiplicity-aware regular-part zero-free closure.
 
@@ -1806,36 +1889,9 @@ lemma classical_zero_free_region_of_exists_multiplicity_regular_part_norm_bound_
   intro s ρ hs_height hs_re_mem hζρ hρ_im_eq hρ_re_lt hsub
   rcases hregular s ρ hs_height hs_re_mem hζρ hρ_im_eq hρ_re_lt hsub with
     ⟨n, hn_pos, hn_bound⟩
-  let regularPart : ℂ :=
-    -deriv riemannZeta s / riemannZeta s + (n : ℂ) * (s - ρ)⁻¹
-  have hregular_norm :
-      ‖regularPart‖ ≤ B * Real.log |s.im| := by
-    simpa [regularPart] using hn_bound
-  have hregular_re_le :
-      regularPart.re ≤ ‖regularPart‖ :=
-    le_trans (le_abs_self regularPart.re) (abs_re_le_norm regularPart)
-  have hinv_re : ((s - ρ)⁻¹).re = 1 / (s.re - ρ.re) :=
-    inv_sub_same_im_re hρ_im_eq hsub
-  have hregular_re :
-      regularPart.re =
-        (-deriv riemannZeta s / riemannZeta s).re +
-          (n : ℝ) * (1 / (s.re - ρ.re)) := by
-    simp [regularPart, hinv_re]
-  have hunit_le_mult :
-      1 / (s.re - ρ.re) ≤ (n : ℝ) * (1 / (s.re - ρ.re)) := by
-    have hnonneg : 0 ≤ 1 / (s.re - ρ.re) := by
-      positivity
-    have hn_one : (1 : ℝ) ≤ n := by
-      exact_mod_cast Nat.succ_le_iff.mpr hn_pos
-    simpa using mul_le_mul_of_nonneg_right hn_one hnonneg
-  calc
-    (-deriv riemannZeta s / riemannZeta s).re +
-        1 / (s.re - ρ.re)
-        ≤ regularPart.re := by
-          rw [hregular_re]
-          linarith
-    _ ≤ ‖regularPart‖ := hregular_re_le
-    _ ≤ B * Real.log |s.im| := hregular_norm
+  exact
+    re_neg_deriv_div_riemannZeta_add_inv_le_of_multiplicity_regular_part_norm
+      hn_bound hn_pos hρ_im_eq hsub
 
 /-- Existential norm-bound form of the regular-part zero-free closure. -/
 lemma classical_zero_free_region_of_exists_regular_part_norm_bound_and_two_t_bound
@@ -2221,20 +2277,9 @@ lemma classical_zero_free_region_of_logDeriv_regular_part_norm_bound_and_vertica
     have hreg_re :
         (-deriv riemannZeta s / riemannZeta s).re +
             1 / (s.re - ρ.re) ≤
-          Bregular * Real.log |s.im| := by
-      have hmain :
-          (-logDeriv riemannZeta s + (s - ρ)⁻¹).re ≤
-            Bregular * Real.log |s.im| := by
-        calc
-          (-logDeriv riemannZeta s + (s - ρ)⁻¹).re
-              ≤ |(-logDeriv riemannZeta s + (s - ρ)⁻¹).re| := le_abs_self _
-          _ ≤ ‖-logDeriv riemannZeta s + (s - ρ)⁻¹‖ :=
-              abs_re_le_norm _
-          _ ≤ Bregular * Real.log |s.im| := hreg_signed
-      have hinv : ((s - ρ)⁻¹).re = 1 / (s.re - ρ.re) :=
-        inv_sub_same_im_re hρ_im_eq hsub'
-      simpa [Complex.add_re, neg_deriv_div_riemannZeta_re_eq_neg_logDeriv_re,
-        hinv] using hmain
+          Bregular * Real.log |s.im| :=
+      re_neg_logDeriv_riemannZeta_add_inv_le_of_regular_part_norm
+        hreg_signed hρ_im_eq hsub'
     have hlog_nonneg : 0 ≤ Real.log |t| :=
       (log_abs_pos_of_two_le (hT0.trans ht)).le
     have hBregular_le_B : Bregular ≤ B := le_max_left Bregular (2 * Bvertical)
@@ -2385,36 +2430,9 @@ lemma classical_zero_free_region_of_multiplicity_logDeriv_regular_part_norm_boun
     have hreg_re :
         (-deriv riemannZeta s / riemannZeta s).re +
             1 / (s.re - ρ.re) ≤
-          Bregular * Real.log |s.im| := by
-      let regularPart : ℂ := -logDeriv riemannZeta s + (n : ℂ) * (s - ρ)⁻¹
-      have hmain : regularPart.re ≤ Bregular * Real.log |s.im| := by
-        calc
-          regularPart.re ≤ |regularPart.re| := le_abs_self _
-          _ ≤ ‖regularPart‖ := abs_re_le_norm _
-          _ ≤ Bregular * Real.log |s.im| := by
-              simpa [regularPart] using hreg_signed
-      have hinv : ((s - ρ)⁻¹).re = 1 / (s.re - ρ.re) :=
-        inv_sub_same_im_re hρ_im_eq hsub'
-      have hregular_re :
-          regularPart.re =
-            (-deriv riemannZeta s / riemannZeta s).re +
-              (n : ℝ) * (1 / (s.re - ρ.re)) := by
-        simp [regularPart, Complex.add_re,
-          neg_deriv_div_riemannZeta_re_eq_neg_logDeriv_re, hinv]
-      have hunit_le_mult :
-          1 / (s.re - ρ.re) ≤ (n : ℝ) * (1 / (s.re - ρ.re)) := by
-        have hnonneg : 0 ≤ 1 / (s.re - ρ.re) := by
-          positivity
-        have hn_one : (1 : ℝ) ≤ n := by
-          exact_mod_cast Nat.succ_le_iff.mpr hn_pos
-        simpa using mul_le_mul_of_nonneg_right hn_one hnonneg
-      calc
-        (-deriv riemannZeta s / riemannZeta s).re +
-            1 / (s.re - ρ.re)
-            ≤ regularPart.re := by
-              rw [hregular_re]
-              linarith
-        _ ≤ Bregular * Real.log |s.im| := hmain
+          Bregular * Real.log |s.im| :=
+      re_neg_logDeriv_riemannZeta_add_inv_le_of_multiplicity_regular_part_norm
+        hreg_signed hn_pos hρ_im_eq hsub'
     have hlog_nonneg : 0 ≤ Real.log |t| :=
       (log_abs_pos_of_two_le (hT0.trans ht)).le
     have hBregular_le_B : Bregular ≤ B := le_max_left Bregular (2 * Bvertical)

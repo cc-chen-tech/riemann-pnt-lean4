@@ -6364,6 +6364,55 @@ theorem inv_sub_same_im_re {s ρ : ℂ} (him : ρ.im = s.im)
     ((s - ρ)⁻¹).re = 1 / (s.re - ρ.re) :=
   ZeroFreeRegion.inv_sub_same_im_re him hsub
 
+/-- Public pointwise bridge from a quotient-notation regular-part norm bound
+to the real-part singular estimate used in the zero-free contradiction. -/
+theorem re_neg_deriv_div_riemannZeta_add_inv_le_of_regular_part_norm
+    {s ρ : ℂ} {M : ℝ}
+    (hregular :
+      ‖-deriv riemannZeta s / riemannZeta s + (s - ρ)⁻¹‖ ≤ M)
+    (him : ρ.im = s.im) (hsub : 0 < s.re - ρ.re) :
+    (-deriv riemannZeta s / riemannZeta s).re +
+        1 / (s.re - ρ.re) ≤ M :=
+  ZeroFreeRegion.re_neg_deriv_div_riemannZeta_add_inv_le_of_regular_part_norm
+    hregular him hsub
+
+/-- Public multiplicity-aware version of the regular-part norm to real-part
+bridge. -/
+theorem re_neg_deriv_div_riemannZeta_add_inv_le_of_multiplicity_regular_part_norm
+    {s ρ : ℂ} {n : ℕ} {M : ℝ}
+    (hregular :
+      ‖-deriv riemannZeta s / riemannZeta s +
+          (n : ℂ) * (s - ρ)⁻¹‖ ≤ M)
+    (hn : 0 < n) (him : ρ.im = s.im)
+    (hsub : 0 < s.re - ρ.re) :
+    (-deriv riemannZeta s / riemannZeta s).re +
+        1 / (s.re - ρ.re) ≤ M :=
+  ZeroFreeRegion.re_neg_deriv_div_riemannZeta_add_inv_le_of_multiplicity_regular_part_norm
+    hregular hn him hsub
+
+/-- Public signed `-logDeriv zeta` notation bridge from a regular-part norm
+bound to the quotient real-part singular estimate. -/
+theorem re_neg_logDeriv_riemannZeta_add_inv_le_of_regular_part_norm
+    {s ρ : ℂ} {M : ℝ}
+    (hregular : ‖-logDeriv riemannZeta s + (s - ρ)⁻¹‖ ≤ M)
+    (him : ρ.im = s.im) (hsub : 0 < s.re - ρ.re) :
+    (-deriv riemannZeta s / riemannZeta s).re +
+        1 / (s.re - ρ.re) ≤ M :=
+  ZeroFreeRegion.re_neg_logDeriv_riemannZeta_add_inv_le_of_regular_part_norm
+    hregular him hsub
+
+/-- Public multiplicity-aware signed `-logDeriv zeta` notation bridge. -/
+theorem re_neg_logDeriv_riemannZeta_add_inv_le_of_multiplicity_regular_part_norm
+    {s ρ : ℂ} {n : ℕ} {M : ℝ}
+    (hregular :
+      ‖-logDeriv riemannZeta s + (n : ℂ) * (s - ρ)⁻¹‖ ≤ M)
+    (hn : 0 < n) (him : ρ.im = s.im)
+    (hsub : 0 < s.re - ρ.re) :
+    (-deriv riemannZeta s / riemannZeta s).re +
+        1 / (s.re - ρ.re) ≤ M :=
+  ZeroFreeRegion.re_neg_logDeriv_riemannZeta_add_inv_le_of_multiplicity_regular_part_norm
+    hregular hn him hsub
+
 /-- Public norm-bound regular-part closure at height `2`. -/
 theorem classical_zero_free_region_of_regular_part_norm_bound_and_two_t_bound
     (B : ℝ) (hB : 0 ≤ B)

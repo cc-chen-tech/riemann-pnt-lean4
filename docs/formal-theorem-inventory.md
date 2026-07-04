@@ -664,6 +664,17 @@ Core verified declarations:
   rewrites `Re((s-rho)^{-1})` as `1/(Re(s)-Re(rho))` when `s` and `rho`
   have the same imaginary part, converting the complex principal part into
   the real singular term used by the zero-free-region contradiction.
+- `re_neg_deriv_div_riemannZeta_add_inv_le_of_regular_part_norm`
+  converts a pointwise quotient-notation norm bound
+  `||-zeta'/zeta(s)+(s-rho)^{-1}|| <= M` into the real-part inequality
+  `Re(-zeta'/zeta(s))+1/(Re(s)-Re(rho)) <= M`.
+- `re_neg_deriv_div_riemannZeta_add_inv_le_of_multiplicity_regular_part_norm`
+  is the multiplicity-aware version: a bound for
+  `||-zeta'/zeta(s)+n(s-rho)^{-1}||` with `n > 0` still gives the weaker
+  unit-principal real-part estimate needed by the zero-free contradiction.
+- `re_neg_logDeriv_riemannZeta_add_inv_le_of_regular_part_norm` and
+  `re_neg_logDeriv_riemannZeta_add_inv_le_of_multiplicity_regular_part_norm`
+  are the same bridges in Mathlib's signed `-logDeriv zeta` notation.
 - `classical_zero_free_region_of_regular_part_norm_bound_and_two_t_bound`
   replaces the regular-part real estimate by the norm estimate
   `||-zeta'/zeta(s)+(s-rho)^{-1}|| <= B log |Im(s)|`, together with the
