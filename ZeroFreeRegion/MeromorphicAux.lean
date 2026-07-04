@@ -1069,6 +1069,57 @@ lemma exists_sigma_ge_sigmaOf_log_two_t_re_neg_deriv_div_bound_const_mul_log_div
     ht hσ_lower hσ_le
   simpa [mul_assoc, mul_left_comm, mul_comm] using h
 
+/-- Weak moving-strip `σ + 2it` norm bound in standard `B * log |t|`
+form, with `B` allowed to depend on the fixed moving-strip parameter `a`.
+
+This is still the absolute-convergence estimate: the generated constant is
+`B = C/a`, so the theorem does not close the classical zero-free-region margin. -/
+lemma exists_sigma_ge_sigmaOf_log_two_t_norm_bound_log_scale
+    (C : ℝ) (hC : 1 < C) (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    ∃ d : ℝ, 0 < d ∧ ∀ a : ℝ, 0 < a → a ≤ Real.log 2 →
+      a ≤ d * Real.log 2 →
+      ∃ B : ℝ, 0 ≤ B ∧ ∀ σ t : ℝ, T0 ≤ |t| →
+        1 + a / Real.log |t| ≤ σ → σ ≤ 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖ ≤
+          B * Real.log |t| := by
+  rcases exists_sigma_ge_sigmaOf_log_two_t_norm_bound_const_mul_log_div
+      C hC T0 hT0 with
+    ⟨d, hd_pos, hnorm⟩
+  refine ⟨d, hd_pos, ?_⟩
+  intro a ha_pos ha_le_log2 ha_le_near
+  refine ⟨C / a, div_nonneg (by linarith [hC]) (le_of_lt ha_pos), ?_⟩
+  intro σ t ht hσ_lower hσ_le
+  calc
+    ‖logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖
+        ≤ C * Real.log |t| / a :=
+          hnorm a ha_pos ha_le_log2 ha_le_near σ t ht hσ_lower hσ_le
+    _ = (C / a) * Real.log |t| := by ring
+
+/-- Weak moving-strip `σ + 2it` real-part bound in standard `B * log |t|`
+form, with `B` allowed to depend on the fixed moving-strip parameter `a`. -/
+lemma exists_sigma_ge_sigmaOf_log_two_t_re_neg_deriv_div_bound_log_scale
+    (C : ℝ) (hC : 1 < C) (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    ∃ d : ℝ, 0 < d ∧ ∀ a : ℝ, 0 < a → a ≤ Real.log 2 →
+      a ≤ d * Real.log 2 →
+      ∃ B : ℝ, 0 ≤ B ∧ ∀ σ t : ℝ, T0 ≤ |t| →
+        1 + a / Real.log |t| ≤ σ → σ ≤ 2 →
+        (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤
+          B * Real.log |t| := by
+  rcases exists_sigma_ge_sigmaOf_log_two_t_re_neg_deriv_div_bound_const_mul_log_div
+      C hC T0 hT0 with
+    ⟨d, hd_pos, hbound⟩
+  refine ⟨d, hd_pos, ?_⟩
+  intro a ha_pos ha_le_log2 ha_le_near
+  refine ⟨C / a, div_nonneg (by linarith [hC]) (le_of_lt ha_pos), ?_⟩
+  intro σ t ht hσ_lower hσ_le
+  calc
+    (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+        riemannZeta ((σ : ℂ) + 2 * I * t)).re
+        ≤ C * Real.log |t| / a :=
+          hbound a ha_pos ha_le_log2 ha_le_near σ t ht hσ_lower hσ_le
+    _ = (C / a) * Real.log |t| := by ring
+
 /-- Classical zero-free-region closure for the standard high-height choice
 `σ(t) = 1 + a / log |t|`.
 
