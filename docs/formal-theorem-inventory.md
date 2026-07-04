@@ -287,6 +287,15 @@ Core verified declarations:
   upgrades that factorization to
   `logDeriv f z - (z - x)⁻¹ = logDeriv g z` on the punctured neighborhood,
   isolating the simple-zero principal logarithmic pole from the regular part.
+- `exists_eventuallyEq_neg_logDeriv_add_inv_of_analyticAt_zero_deriv_ne_zero`
+  gives the signed `-logDeriv f z + (z - x)⁻¹ = -logDeriv g z` version used
+  by de la Vallée Poussin estimates.
+- `exists_eventuallyEq_logDeriv_riemannZeta_sub_inv_of_simple_zero`
+  specializes the principal-part separation to a simple zero of `riemannZeta`
+  away from the pole `1`.
+- `exists_eventuallyEq_neg_logDeriv_riemannZeta_add_inv_of_simple_zero`
+  packages the signed zeta-specific form matching the regular-part norm
+  hypotheses used by the conditional zero-free-region bridge.
 - `analyticAt_logDeriv_of_analyticAt_ne_zero`
   proves the generic local fact that an analytic nonzero function has analytic
   logarithmic derivative.

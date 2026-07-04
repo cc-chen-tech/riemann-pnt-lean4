@@ -2852,6 +2852,35 @@ theorem exists_eventuallyEq_logDeriv_sub_inv_of_analyticAt_zero_deriv_ne_zero
   ZeroFreeRegion.exists_eventuallyEq_logDeriv_sub_inv_of_analyticAt_zero_deriv_ne_zero
     hf hfx hf'
 
+/-- Public signed simple-zero logarithmic-derivative decomposition. -/
+theorem exists_eventuallyEq_neg_logDeriv_add_inv_of_analyticAt_zero_deriv_ne_zero
+    {f : ℂ → ℂ} {x : ℂ}
+    (hf : AnalyticAt ℂ f x) (hfx : f x = 0) (hf' : deriv f x ≠ 0) :
+    ∃ g : ℂ → ℂ, AnalyticAt ℂ g x ∧ g x ≠ 0 ∧
+      ∀ᶠ z in 𝓝[≠] x, -logDeriv f z + (z - x)⁻¹ = -logDeriv g z :=
+  ZeroFreeRegion.exists_eventuallyEq_neg_logDeriv_add_inv_of_analyticAt_zero_deriv_ne_zero
+    hf hfx hf'
+
+/-- Public zeta-specific simple-zero principal-part separation. -/
+theorem exists_eventuallyEq_logDeriv_riemannZeta_sub_inv_of_simple_zero
+    {ρ : ℂ} (hρ1 : ρ ≠ 1) (hzero : riemannZeta ρ = 0)
+    (hsimple : deriv riemannZeta ρ ≠ 0) :
+    ∃ g : ℂ → ℂ, AnalyticAt ℂ g ρ ∧ g ρ ≠ 0 ∧
+      ∀ᶠ z in 𝓝[≠] ρ,
+        logDeriv riemannZeta z - (z - ρ)⁻¹ = logDeriv g z :=
+  ZeroFreeRegion.exists_eventuallyEq_logDeriv_riemannZeta_sub_inv_of_simple_zero
+    hρ1 hzero hsimple
+
+/-- Public signed zeta-specific simple-zero principal-part separation. -/
+theorem exists_eventuallyEq_neg_logDeriv_riemannZeta_add_inv_of_simple_zero
+    {ρ : ℂ} (hρ1 : ρ ≠ 1) (hzero : riemannZeta ρ = 0)
+    (hsimple : deriv riemannZeta ρ ≠ 0) :
+    ∃ g : ℂ → ℂ, AnalyticAt ℂ g ρ ∧ g ρ ≠ 0 ∧
+      ∀ᶠ z in 𝓝[≠] ρ,
+        -logDeriv riemannZeta z + (z - ρ)⁻¹ = -logDeriv g z :=
+  ZeroFreeRegion.exists_eventuallyEq_neg_logDeriv_riemannZeta_add_inv_of_simple_zero
+    hρ1 hzero hsimple
+
 /-- Public generic bridge: analytic nonvanishing implies analytic logarithmic
 derivative. -/
 theorem analyticAt_logDeriv_of_analyticAt_ne_zero

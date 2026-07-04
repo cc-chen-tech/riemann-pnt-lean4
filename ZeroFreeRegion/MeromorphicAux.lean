@@ -3539,6 +3539,45 @@ lemma exists_eventuallyEq_logDeriv_sub_inv_of_analyticAt_zero_deriv_ne_zero
   rw [hlog_factor, hmul, hlinear]
   abel
 
+/-- Signed form of the simple-zero logarithmic-derivative decomposition.  This
+is the sign convention used by the de la Vallée Poussin `-ζ'/ζ` estimates. -/
+lemma exists_eventuallyEq_neg_logDeriv_add_inv_of_analyticAt_zero_deriv_ne_zero
+    {f : ℂ → ℂ} {x : ℂ}
+    (hf : AnalyticAt ℂ f x) (hfx : f x = 0) (hf' : deriv f x ≠ 0) :
+    ∃ g : ℂ → ℂ, AnalyticAt ℂ g x ∧ g x ≠ 0 ∧
+      ∀ᶠ z in 𝓝[≠] x, -logDeriv f z + (z - x)⁻¹ = -logDeriv g z := by
+  rcases exists_eventuallyEq_logDeriv_sub_inv_of_analyticAt_zero_deriv_ne_zero
+      hf hfx hf' with ⟨g, hg, hg_ne, hfg⟩
+  refine ⟨g, hg, hg_ne, ?_⟩
+  filter_upwards [hfg] with z hz
+  rw [← hz]
+  abel
+
+/-- Zeta-specific simple-zero principal-part separation for `logDeriv ζ`.
+
+The hypotheses intentionally include the simple-zero condition
+`deriv riemannZeta ρ ≠ 0`; multiple zeros require the corresponding
+multiplicity-weighted principal part and are not claimed here. -/
+lemma exists_eventuallyEq_logDeriv_riemannZeta_sub_inv_of_simple_zero
+    {ρ : ℂ} (hρ1 : ρ ≠ 1) (hzero : riemannZeta ρ = 0)
+    (hsimple : deriv riemannZeta ρ ≠ 0) :
+    ∃ g : ℂ → ℂ, AnalyticAt ℂ g ρ ∧ g ρ ≠ 0 ∧
+      ∀ᶠ z in 𝓝[≠] ρ,
+        logDeriv riemannZeta z - (z - ρ)⁻¹ = logDeriv g z :=
+  exists_eventuallyEq_logDeriv_sub_inv_of_analyticAt_zero_deriv_ne_zero
+    (analyticOnNhd_riemannZeta_ne_one ρ hρ1) hzero hsimple
+
+/-- Signed zeta-specific simple-zero principal-part separation, matching the
+`-ζ'/ζ + (s-ρ)⁻¹` regular-part shape used by the zero-free-region bridge. -/
+lemma exists_eventuallyEq_neg_logDeriv_riemannZeta_add_inv_of_simple_zero
+    {ρ : ℂ} (hρ1 : ρ ≠ 1) (hzero : riemannZeta ρ = 0)
+    (hsimple : deriv riemannZeta ρ ≠ 0) :
+    ∃ g : ℂ → ℂ, AnalyticAt ℂ g ρ ∧ g ρ ≠ 0 ∧
+      ∀ᶠ z in 𝓝[≠] ρ,
+        -logDeriv riemannZeta z + (z - ρ)⁻¹ = -logDeriv g z :=
+  exists_eventuallyEq_neg_logDeriv_add_inv_of_analyticAt_zero_deriv_ne_zero
+    (analyticOnNhd_riemannZeta_ne_one ρ hρ1) hzero hsimple
+
 /-- If `f` is analytic and nonzero at `z`, then its logarithmic derivative is
 analytic at `z`. -/
 lemma analyticAt_logDeriv_of_analyticAt_ne_zero {f : ℂ → ℂ} {z : ℂ}
