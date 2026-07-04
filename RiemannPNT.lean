@@ -2720,6 +2720,72 @@ theorem exists_sigma_ge_sigmaOf_log_any_im_re_neg_deriv_div_bound_log_scale
   ZeroFreeRegion.exists_sigma_ge_sigmaOf_log_any_im_re_neg_deriv_div_bound_log_scale
     C hC T0 hT0
 
+/-- Public signed weak moving-strip norm bound to the right of
+`σ = 1 + a / log |t|`.  This is a sign-convention wrapper around the unsigned
+norm bound and preserves the explicit `1/a` loss. -/
+theorem exists_sigma_ge_sigmaOf_log_neg_logDeriv_norm_bound_const_mul_log_div
+    (C : ℝ) (hC : 1 < C) (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    ∃ d : ℝ, 0 < d ∧ ∀ a : ℝ, 0 < a → a ≤ Real.log 2 →
+      a ≤ d * Real.log 2 →
+      ∀ σ t : ℝ, T0 ≤ |t| →
+        1 + a / Real.log |t| ≤ σ → σ ≤ 2 →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          C * Real.log |t| / a :=
+  ZeroFreeRegion.exists_sigma_ge_sigmaOf_log_neg_logDeriv_norm_bound_const_mul_log_div
+    C hC T0 hT0
+
+/-- Public signed arbitrary-imaginary-coordinate weak moving-strip norm
+bound; `t` controls the scale while `u` is the estimated height. -/
+theorem exists_sigma_ge_sigmaOf_log_any_im_neg_logDeriv_norm_bound_const_mul_log_div
+    (C : ℝ) (hC : 1 < C) (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    ∃ d : ℝ, 0 < d ∧ ∀ a : ℝ, 0 < a → a ≤ Real.log 2 →
+      a ≤ d * Real.log 2 →
+      ∀ σ t u : ℝ, T0 ≤ |t| →
+        1 + a / Real.log |t| ≤ σ → σ ≤ 2 →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * u)‖ ≤
+          C * Real.log |t| / a :=
+  ZeroFreeRegion.exists_sigma_ge_sigmaOf_log_any_im_neg_logDeriv_norm_bound_const_mul_log_div
+    C hC T0 hT0
+
+/-- Public signed weak moving-strip norm bound specialized to the `σ+2it`
+point in the third term of the 3-4-1 inequality. -/
+theorem exists_sigma_ge_sigmaOf_log_two_t_neg_logDeriv_norm_bound_const_mul_log_div
+    (C : ℝ) (hC : 1 < C) (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    ∃ d : ℝ, 0 < d ∧ ∀ a : ℝ, 0 < a → a ≤ Real.log 2 →
+      a ≤ d * Real.log 2 →
+      ∀ σ t : ℝ, T0 ≤ |t| →
+        1 + a / Real.log |t| ≤ σ → σ ≤ 2 →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t)‖ ≤
+          C * Real.log |t| / a :=
+  ZeroFreeRegion.exists_sigma_ge_sigmaOf_log_two_t_neg_logDeriv_norm_bound_const_mul_log_div
+    C hC T0 hT0
+
+/-- Public signed arbitrary-imaginary-coordinate weak moving-strip norm bound
+in standard `B * log |t|` form, with `B` still depending on `a`. -/
+theorem exists_sigma_ge_sigmaOf_log_any_im_neg_logDeriv_norm_bound_log_scale
+    (C : ℝ) (hC : 1 < C) (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    ∃ d : ℝ, 0 < d ∧ ∀ a : ℝ, 0 < a → a ≤ Real.log 2 →
+      a ≤ d * Real.log 2 →
+      ∃ B : ℝ, 0 ≤ B ∧ ∀ σ t u : ℝ, T0 ≤ |t| →
+        1 + a / Real.log |t| ≤ σ → σ ≤ 2 →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * u)‖ ≤
+          B * Real.log |t| :=
+  ZeroFreeRegion.exists_sigma_ge_sigmaOf_log_any_im_neg_logDeriv_norm_bound_log_scale
+    C hC T0 hT0
+
+/-- Public signed weak `σ+2it` moving-strip norm bound in standard
+`B * log |t|` form, with `B` still depending on `a`. -/
+theorem exists_sigma_ge_sigmaOf_log_two_t_neg_logDeriv_norm_bound_log_scale
+    (C : ℝ) (hC : 1 < C) (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    ∃ d : ℝ, 0 < d ∧ ∀ a : ℝ, 0 < a → a ≤ Real.log 2 →
+      a ≤ d * Real.log 2 →
+      ∃ B : ℝ, 0 ≤ B ∧ ∀ σ t : ℝ, T0 ≤ |t| →
+        1 + a / Real.log |t| ≤ σ → σ ≤ 2 →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t)‖ ≤
+          B * Real.log |t| :=
+  ZeroFreeRegion.exists_sigma_ge_sigmaOf_log_two_t_neg_logDeriv_norm_bound_log_scale
+    C hC T0 hT0
+
 /-- Public weak moving-strip package controlling both `σ+it` and `σ+2it`
 real-part terms with the same `B * log |t|` coefficient. -/
 theorem exists_sigma_ge_sigmaOf_log_shift_pair_re_neg_deriv_div_bound_log_scale

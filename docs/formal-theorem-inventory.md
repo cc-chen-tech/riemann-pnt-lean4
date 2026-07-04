@@ -620,6 +620,18 @@ Core verified declarations:
 - `exists_sigma_ge_sigmaOf_log_any_im_re_neg_deriv_div_bound_log_scale`
   gives the corresponding arbitrary-imaginary-coordinate one-sided real-part
   estimate.
+- `exists_sigma_ge_sigmaOf_log_neg_logDeriv_norm_bound_const_mul_log_div`
+  gives the signed `-logDeriv zeta` norm variant of the weak moving-strip
+  estimate, preserving the same `1/a` loss.
+- `exists_sigma_ge_sigmaOf_log_any_im_neg_logDeriv_norm_bound_const_mul_log_div`
+  generalizes that signed norm estimate to arbitrary imaginary coordinate `u`.
+- `exists_sigma_ge_sigmaOf_log_two_t_neg_logDeriv_norm_bound_const_mul_log_div`
+  specializes the signed norm estimate to the `sigma + 2it` point.
+- `exists_sigma_ge_sigmaOf_log_any_im_neg_logDeriv_norm_bound_log_scale`
+  rewrites the arbitrary-imaginary signed norm estimate in `B * log |t|`
+  form for fixed `a`, with `B = C/a`.
+- `exists_sigma_ge_sigmaOf_log_two_t_neg_logDeriv_norm_bound_log_scale`
+  gives the corresponding signed `sigma + 2it` log-scale norm estimate.
 - `exists_sigma_ge_sigmaOf_log_shift_pair_re_neg_deriv_div_bound_log_scale`
   packages the weak moving-strip estimates for both `sigma + it` and
   `sigma + 2it` under one shared coefficient `B`, still with `B = C/a`.

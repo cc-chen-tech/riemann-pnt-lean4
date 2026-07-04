@@ -56,6 +56,10 @@ For the zero-free-region route specifically, the next meaningful mathematical
 milestone is a boundary-strip estimate for `logDeriv riemannZeta` and the
 corresponding zero-candidate regular-part estimate.  Reducing the target count
 or adding more wrappers does not by itself move the project across that wall.
+The signed weak moving-strip `-logDeriv` norm wrappers expose the right public
+API shape for this future estimate, but they still come from absolute
+convergence and retain the `1/a` loss; they should be cited as comparison
+interfaces, not as the missing uniform `O(log |t|)` bound.
 
 ## Chain Status Summary
 

@@ -759,6 +759,15 @@ The same limitation applies to the fixed-margin `sigma + 2it` real-part bound:
 it is a proved shifted-term estimate, but only under `1+epsilon <= sigma`.
 The single-constant fixed-margin 3-4-1 package has the same limitation.
 So does the fixed-margin full-combination upper bound.
+For sign-convention compatibility, the weak moving-strip inventory now also
+contains signed `-logDeriv zeta` norm variants:
+`ZeroFreeRegion.exists_sigma_ge_sigmaOf_log_neg_logDeriv_norm_bound_const_mul_log_div`,
+`ZeroFreeRegion.exists_sigma_ge_sigmaOf_log_any_im_neg_logDeriv_norm_bound_const_mul_log_div`,
+`ZeroFreeRegion.exists_sigma_ge_sigmaOf_log_two_t_neg_logDeriv_norm_bound_const_mul_log_div`,
+`ZeroFreeRegion.exists_sigma_ge_sigmaOf_log_any_im_neg_logDeriv_norm_bound_log_scale`,
+and `ZeroFreeRegion.exists_sigma_ge_sigmaOf_log_two_t_neg_logDeriv_norm_bound_log_scale`.
+These are useful public comparison interfaces, but they are still wrappers
+around the absolute-convergence estimates and keep `B = C/a` in log-scale form.
 This obstruction is now formalized as
 `ZeroFreeRegion.sigmaOf_log_weak_two_t_margin_impossible`: once the real-axis
 and `sigma + 2it` terms both carry coefficients at least `1/a`, the required
