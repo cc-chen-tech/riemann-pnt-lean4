@@ -578,6 +578,13 @@ Core verified declarations:
 - `exists_sigma_ge_sigmaOf_log_re_neg_deriv_div_bound_const_mul_log_div`
   converts that moving-half-strip norm estimate into the one-sided real-part
   shape used by the 3-4-1 inequality.
+- `exists_sigma_ge_sigmaOf_log_any_im_norm_bound_const_mul_log_div`
+  generalizes the moving-half-strip norm estimate so the estimated point has
+  arbitrary imaginary part `u`, while `t` still controls the scale
+  `log |t|`.
+- `exists_sigma_ge_sigmaOf_log_any_im_re_neg_deriv_div_bound_const_mul_log_div`
+  gives the corresponding arbitrary-imaginary-coordinate real-part estimate in
+  the `-zeta'/zeta` sign convention.
 - `sigmaOf_log_weak_two_t_margin_impossible`
   proves that this weak `1/a` scale cannot satisfy the standard 3-4-1 constant
   margin when the real-axis and `sigma + 2it` coefficients are both at least

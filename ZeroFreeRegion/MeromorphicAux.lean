@@ -959,6 +959,77 @@ lemma exists_sigma_ge_sigmaOf_log_re_neg_deriv_div_bound_const_mul_log_div
       simpa [z] using hnorm a ha_pos ha_le_log2 ha_le_near σ t ht
         hσ_lower hσ_le
 
+/-- Weak moving-strip norm bound with an arbitrary imaginary coordinate.
+
+The height parameter `t` only controls the logarithmic scale and the lower
+edge `1 + a / log |t|`; the point being estimated may have imaginary part
+`u`.  This is useful for feeding both `σ+it` and `σ+2it` terms from the same
+high-height scale. -/
+lemma exists_sigma_ge_sigmaOf_log_any_im_norm_bound_const_mul_log_div
+    (C : ℝ) (hC : 1 < C) (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    ∃ d : ℝ, 0 < d ∧ ∀ a : ℝ, 0 < a → a ≤ Real.log 2 →
+      a ≤ d * Real.log 2 →
+      ∀ σ t u : ℝ, T0 ≤ |t| →
+        1 + a / Real.log |t| ≤ σ → σ ≤ 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * u)‖ ≤
+          C * Real.log |t| / a := by
+  rcases exists_sigmaOf_log_hreal_const_mul_log_div C hC T0 hT0 with
+    ⟨d, hd_pos, hreal⟩
+  refine ⟨d, hd_pos, ?_⟩
+  intro a ha_pos ha_le_log2 ha_le_near σ t u ht hσ_lower _hσ_le
+  let σ0 : ℝ := 1 + a / Real.log |t|
+  let z : ℂ := (σ : ℂ) + I * u
+  have hz_re : z.re = σ := by simp [z]
+  have hσ0_gt : 1 < σ0 := by
+    simpa [σ0] using sigmaOf_log_gt_one hT0 ha_pos ht
+  have hz_gt : 1 < z.re := by
+    rw [hz_re]
+    exact lt_of_lt_of_le hσ0_gt hσ_lower
+  have hnorm := norm_logDeriv_riemannZeta_le_real_neg_deriv_div z hz_gt
+  have hanti :
+      (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re ≤
+      (-deriv riemannZeta (σ0 : ℂ) / riemannZeta (σ0 : ℂ)).re := by
+    simpa [σ0] using log_deriv_zeta_antitone hσ0_gt hσ_lower
+  have hreal_bound :
+      (-deriv riemannZeta (σ0 : ℂ) / riemannZeta (σ0 : ℂ)).re ≤
+        C * Real.log |t| / a := by
+    simpa [σ0] using hreal a ha_pos ha_le_log2 ha_le_near t ht
+  calc
+    ‖logDeriv riemannZeta z‖
+        ≤ (-deriv riemannZeta (z.re : ℂ) / riemannZeta (z.re : ℂ)).re := hnorm
+    _ = (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re := by
+      rw [hz_re]
+    _ ≤ (-deriv riemannZeta (σ0 : ℂ) / riemannZeta (σ0 : ℂ)).re := hanti
+    _ ≤ C * Real.log |t| / a := hreal_bound
+
+/-- Weak moving-strip real-part bound with an arbitrary imaginary coordinate.
+
+This is the `-ζ'/ζ` real-part form of
+`exists_sigma_ge_sigmaOf_log_any_im_norm_bound_const_mul_log_div`. -/
+lemma exists_sigma_ge_sigmaOf_log_any_im_re_neg_deriv_div_bound_const_mul_log_div
+    (C : ℝ) (hC : 1 < C) (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    ∃ d : ℝ, 0 < d ∧ ∀ a : ℝ, 0 < a → a ≤ Real.log 2 →
+      a ≤ d * Real.log 2 →
+      ∀ σ t u : ℝ, T0 ≤ |t| →
+        1 + a / Real.log |t| ≤ σ → σ ≤ 2 →
+        (-deriv riemannZeta ((σ : ℂ) + I * u) /
+            riemannZeta ((σ : ℂ) + I * u)).re ≤
+          C * Real.log |t| / a := by
+  rcases exists_sigma_ge_sigmaOf_log_any_im_norm_bound_const_mul_log_div
+      C hC T0 hT0 with
+    ⟨d, hd_pos, hnorm⟩
+  refine ⟨d, hd_pos, ?_⟩
+  intro a ha_pos ha_le_log2 ha_le_near σ t u ht hσ_lower hσ_le
+  let z : ℂ := (σ : ℂ) + I * u
+  calc
+    (-deriv riemannZeta z / riemannZeta z).re
+        ≤ ‖-deriv riemannZeta z / riemannZeta z‖ := Complex.re_le_norm _
+    _ = ‖logDeriv riemannZeta z‖ :=
+      norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv z
+    _ ≤ C * Real.log |t| / a := by
+      simpa [z] using hnorm a ha_pos ha_le_log2 ha_le_near σ t u ht
+        hσ_lower hσ_le
+
 /-- Classical zero-free-region closure for the standard high-height choice
 `σ(t) = 1 + a / log |t|`.
 
