@@ -3497,6 +3497,34 @@ theorem exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_high_h
   ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_high_height_log_abs_bound
     hB hhigh
 
+/-- Public norm-to-real-part high-height bridge for the standard vertical point
+`sigma + it`. -/
+theorem exists_re_neg_deriv_div_riemannZeta_vertical_log_bound_of_norm_high_height_log_abs_bound
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤ B * Real.log |t|) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤ C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_vertical_log_bound_of_norm_high_height_log_abs_bound
+    hB hhigh
+
+/-- Public norm-to-real-part high-height bridge for the shifted 3-4-1 point
+`sigma + 2it`. -/
+theorem exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_norm_high_height_log_abs_bound
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t)‖ ≤ B * Real.log |t|) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t) /
+            riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re ≤ C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_norm_high_height_log_abs_bound
+    hB hhigh
+
 /-- Public compact patch from a high-height `B * log |t|` estimate to an
 all-height affine `A + B' * log(|t| + 3)` estimate for `logDeriv ζ`. -/
 theorem exists_norm_logDeriv_riemannZeta_sigma_it_affine_log_abs_add_three_bound_of_high_height_log_abs_bound

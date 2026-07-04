@@ -5956,6 +5956,55 @@ lemma exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_high_hei
   intro σ t hσ_left hσ_right ht
   exact hbound σ t ⟨hσ_left, hσ_right⟩ ht
 
+/-- Norm-to-real-part high-height bridge for the standard vertical point
+`sigma + it`.  A future norm estimate for `logDeriv zeta` immediately supplies
+the real-part quotient estimate consumed by the 3-4-1 zero-free-region route. -/
+lemma exists_re_neg_deriv_div_riemannZeta_vertical_log_bound_of_norm_high_height_log_abs_bound
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤ B * Real.log |t|) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re ≤ C * Real.log |t| := by
+  refine
+    exists_re_neg_deriv_div_riemannZeta_vertical_log_bound_of_high_height_log_abs_bound
+      (T0 := T0) (B := B) hB ?_
+  intro σ t hσ_left hσ_right ht
+  let z : ℂ := (σ : ℂ) + I * t
+  calc
+    (-deriv riemannZeta z / riemannZeta z).re
+        ≤ ‖-deriv riemannZeta z / riemannZeta z‖ := Complex.re_le_norm _
+    _ = ‖logDeriv riemannZeta z‖ :=
+        norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv z
+    _ ≤ B * Real.log |t| := by
+        simpa [z] using hhigh σ t hσ_left hσ_right ht
+
+/-- Shifted norm-to-real-part high-height bridge for the 3-4-1 point
+`sigma + 2it`. -/
+lemma exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_norm_high_height_log_abs_bound
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖ ≤ B * Real.log |t|) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤ C * Real.log |t| := by
+  refine
+    exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_high_height_log_abs_bound
+      (T0 := T0) (B := B) hB ?_
+  intro σ t hσ_left hσ_right ht
+  let z : ℂ := (σ : ℂ) + 2 * I * t
+  calc
+    (-deriv riemannZeta z / riemannZeta z).re
+        ≤ ‖-deriv riemannZeta z / riemannZeta z‖ := Complex.re_le_norm _
+    _ = ‖logDeriv riemannZeta z‖ :=
+        norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv z
+    _ ≤ B * Real.log |t| := by
+        simpa [z] using hhigh σ t hσ_left hσ_right ht
+
 /-- Compact patch from a high-height `B * log |t|` estimate to an all-height
 affine `A + B' * log(|t| + 3)` estimate for `logDeriv ζ`.
 
