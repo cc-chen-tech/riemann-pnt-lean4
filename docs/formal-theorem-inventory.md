@@ -751,6 +751,12 @@ Core verified declarations:
 - `exists_re_im_neg_logDeriv_vertical_log_bound_of_log_norm_add_three_bound_high_height`
   is the signed multiplicative version for inputs already stated as
   `C log(||sigma+it||+3)`.
+- `exists_re_neg_deriv_div_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height`
+  converts the same affine norm-growth input for `logDeriv zeta` directly into
+  the real-part quotient convention `Re(-zeta'/zeta) <= C log |t|`.
+- `exists_re_neg_deriv_div_vertical_log_bound_of_neg_affine_log_norm_add_three_bound_high_height`
+  is the signed-norm version, consuming an affine growth estimate for
+  `||-logDeriv zeta||` and producing the same real-part quotient output.
 - `classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_abs_add_three_bound_high_height`
   specializes the coordinate interface to estimates stated as
   `C * log(|t| + 3)` for both remaining zeta-specific bounds.
