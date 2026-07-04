@@ -4376,6 +4376,121 @@ theorem log_deriv_zeta_nonneg_finset_combination_auto
   ZeroFreeRegion.log_deriv_zeta_nonneg_finset_combination_auto
     σ hσ t S a hpoly
 
+/-- Public square-certificate hook for finite cosine detector nonnegativity. -/
+theorem trigPolynomial_nonneg_of_sq_certificate
+    (S K : Finset ℕ) (a c : ℕ → ℝ)
+    (hcert : ∀ θ : ℝ,
+      (∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ)) =
+        (∑ k ∈ K, c k * Real.cos ((k : ℝ) * θ)) ^ 2) :
+    ∀ θ : ℝ, 0 ≤ ∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ) :=
+  ZeroFreeRegion.trigPolynomial_nonneg_of_sq_certificate S K a c hcert
+
+/-- Public automatic finite detector from a real square certificate. -/
+theorem log_deriv_zeta_nonneg_finset_combination_auto_of_sq_certificate
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ)
+    (S K : Finset ℕ) (a c : ℕ → ℝ)
+    (hcert : ∀ θ : ℝ,
+      (∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ)) =
+        (∑ k ∈ K, c k * Real.cos ((k : ℝ) * θ)) ^ 2) :
+    0 ≤
+      ∑ k ∈ S, a k *
+        (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t) /
+          riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re :=
+  ZeroFreeRegion.log_deriv_zeta_nonneg_finset_combination_auto_of_sq_certificate
+    σ hσ t S K a c hcert
+
+/-- Public complex-exponential absolute-square certificate predicate. -/
+abbrev ComplexExpAbsSqCertificate
+    (S K : Finset ℕ) (a : ℕ → ℝ) (c : ℕ → ℂ) : Prop :=
+  ZeroFreeRegion.ComplexExpAbsSqCertificate S K a c
+
+/-- Public complex-exponential absolute-square certificate hook. -/
+theorem trigPolynomial_nonneg_of_complex_exp_abs_sq_certificate
+    (S K : Finset ℕ) (a : ℕ → ℝ) (c : ℕ → ℂ)
+    (hcert : ∀ θ : ℝ,
+      (∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ)) =
+        ‖∑ k ∈ K, c k * Complex.exp ((k : ℂ) * Complex.I * (θ : ℂ))‖ ^ 2) :
+    ∀ θ : ℝ, 0 ≤ ∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ) :=
+  ZeroFreeRegion.trigPolynomial_nonneg_of_complex_exp_abs_sq_certificate
+    S K a c hcert
+
+/-- Public automatic finite detector from a complex-exponential
+absolute-square certificate. -/
+theorem log_deriv_zeta_nonneg_finset_combination_auto_of_complex_exp_abs_sq_certificate
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ)
+    (S K : Finset ℕ) (a : ℕ → ℝ) (c : ℕ → ℂ)
+    (hcert : ∀ θ : ℝ,
+      (∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ)) =
+        ‖∑ k ∈ K, c k * Complex.exp ((k : ℂ) * Complex.I * (θ : ℂ))‖ ^ 2) :
+    0 ≤
+      ∑ k ∈ S, a k *
+        (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t) /
+          riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re :=
+  ZeroFreeRegion.log_deriv_zeta_nonneg_finset_combination_auto_of_complex_exp_abs_sq_certificate
+    σ hσ t S K a c hcert
+
+/-- Public predicate-based complex-exponential certificate hook. -/
+theorem trigPolynomial_nonneg_of_complex_exp_abs_sq_certificate'
+    (S K : Finset ℕ) (a : ℕ → ℝ) (c : ℕ → ℂ)
+    (hcert : ComplexExpAbsSqCertificate S K a c) :
+    ∀ θ : ℝ, 0 ≤ ∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ) :=
+  ZeroFreeRegion.trigPolynomial_nonneg_of_complex_exp_abs_sq_certificate'
+    S K a c hcert
+
+/-- Public predicate-based automatic finite detector from a
+complex-exponential absolute-square certificate. -/
+theorem log_deriv_zeta_nonneg_finset_combination_auto_of_complex_exp_abs_sq_certificate'
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ)
+    (S K : Finset ℕ) (a : ℕ → ℝ) (c : ℕ → ℂ)
+    (hcert : ComplexExpAbsSqCertificate S K a c) :
+    0 ≤
+      ∑ k ∈ S, a k *
+        (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t) /
+          riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re :=
+  ZeroFreeRegion.log_deriv_zeta_nonneg_finset_combination_auto_of_complex_exp_abs_sq_certificate'
+    σ hσ t S K a c hcert
+
+/-- Public constant-one complex-exponential certificate. -/
+theorem complexExpAbsSqCertificate_const_one :
+    ComplexExpAbsSqCertificate ({0} : Finset ℕ) ({0} : Finset ℕ)
+      (fun _ => (1 : ℝ)) (fun _ => (1 : ℂ)) :=
+  ZeroFreeRegion.complexExpAbsSqCertificate_const_one
+
+/-- Public automatic detector from the constant-one complex-exponential
+certificate. -/
+theorem log_deriv_zeta_nonneg_const_one_detector_from_complex_exp_certificate
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ) :
+    0 ≤
+      ∑ k ∈ ({0} : Finset ℕ), (1 : ℝ) *
+        (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t) /
+          riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re :=
+  ZeroFreeRegion.log_deriv_zeta_nonneg_const_one_detector_from_complex_exp_certificate
+    σ hσ t
+
+/-- Public coefficients for the toy detector polynomial `2 + 2 cos theta`. -/
+abbrev twoAddTwoCosDetectorCoeff : ℕ → ℝ :=
+  ZeroFreeRegion.twoAddTwoCosDetectorCoeff
+
+/-- Public coefficients for the toy exponential sum `1 + exp(i theta)`. -/
+abbrev onePlusExpCoeff : ℕ → ℂ :=
+  ZeroFreeRegion.onePlusExpCoeff
+
+/-- Public concrete certificate `2 + 2 cos theta = ‖1 + exp(i theta)‖^2`. -/
+theorem complexExpAbsSqCertificate_two_add_two_cos :
+    ComplexExpAbsSqCertificate ({0, 1} : Finset ℕ) ({0, 1} : Finset ℕ)
+      twoAddTwoCosDetectorCoeff onePlusExpCoeff :=
+  ZeroFreeRegion.complexExpAbsSqCertificate_two_add_two_cos
+
+/-- Public automatic detector from the concrete `2 + 2 cos theta` certificate. -/
+theorem log_deriv_zeta_nonneg_two_add_two_cos_detector_from_complex_exp_certificate
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ) :
+    0 ≤
+      ∑ k ∈ ({0, 1} : Finset ℕ), twoAddTwoCosDetectorCoeff k *
+        (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t) /
+          riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re :=
+  ZeroFreeRegion.log_deriv_zeta_nonneg_two_add_two_cos_detector_from_complex_exp_certificate
+    σ hσ t
+
 /-- Public list-indexed finite trigonometric-detector wrapper. -/
 theorem log_deriv_zeta_nonneg_list_combination
     (σ : ℝ) (hσ : 1 < σ) (t : ℝ) (ks : List ℕ) (a : ℕ → ℝ)

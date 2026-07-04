@@ -49,6 +49,15 @@ Core verified declarations:
   discharge the finite Dirichlet-series identity automatically from
   `log_deriv_zeta_finset_series_identity`, leaving only pointwise
   nonnegativity of the finite cosine polynomial as an input.
+- `trigPolynomial_nonneg_of_sq_certificate` and
+  `log_deriv_zeta_nonneg_finset_combination_auto_of_sq_certificate`
+  turn a finite cosine-square certificate into pointwise detector
+  nonnegativity and then into the automatic finite detector inequality.
+- `ComplexExpAbsSqCertificate`,
+  `trigPolynomial_nonneg_of_complex_exp_abs_sq_certificate`,
+  `log_deriv_zeta_nonneg_finset_combination_auto_of_complex_exp_abs_sq_certificate`,
+  and their predicate-based wrappers provide the corresponding
+  complex-exponential absolute-square certificate interface.
 - `log_deriv_zeta_nonneg_three_four_one_from_finset`
   re-exposes the verified 3-4-1 theorem as the base detector instance.
 - `classical_zero_free_region_compact`

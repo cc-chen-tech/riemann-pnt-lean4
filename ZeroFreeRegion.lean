@@ -937,6 +937,132 @@ lemma log_deriv_zeta_nonneg_finset_combination_auto_of_sq_certificate
   log_deriv_zeta_nonneg_finset_combination_auto σ hσ t S a
     (trigPolynomial_nonneg_of_sq_certificate S K a c hcert)
 
+/-- Complex-exponential absolute-square certificate for pointwise
+nonnegativity of a finite cosine polynomial.  This is the certificate shape
+closest to high-degree trigonometric detectors written as
+`|sum c_k exp(i k theta)|^2`. -/
+lemma trigPolynomial_nonneg_of_complex_exp_abs_sq_certificate
+    (S K : Finset ℕ) (a : ℕ → ℝ) (c : ℕ → ℂ)
+    (hcert : ∀ θ : ℝ,
+      (∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ)) =
+        ‖∑ k ∈ K, c k * Complex.exp ((k : ℂ) * I * (θ : ℂ))‖ ^ 2) :
+    ∀ θ : ℝ, 0 ≤ ∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ) := by
+  intro θ
+  rw [hcert θ]
+  exact sq_nonneg _
+
+/-- Automatic finite detector from a complex-exponential absolute-square
+certificate for the detector cosine polynomial. -/
+lemma log_deriv_zeta_nonneg_finset_combination_auto_of_complex_exp_abs_sq_certificate
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ)
+    (S K : Finset ℕ) (a : ℕ → ℝ) (c : ℕ → ℂ)
+    (hcert : ∀ θ : ℝ,
+      (∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ)) =
+        ‖∑ k ∈ K, c k * Complex.exp ((k : ℂ) * I * (θ : ℂ))‖ ^ 2) :
+    0 ≤
+      ∑ k ∈ S, a k *
+        (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+          riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re :=
+  log_deriv_zeta_nonneg_finset_combination_auto σ hσ t S a
+    (trigPolynomial_nonneg_of_complex_exp_abs_sq_certificate S K a c hcert)
+
+/-- Compact predicate for a complex-exponential absolute-square certificate of
+a finite cosine polynomial. -/
+abbrev ComplexExpAbsSqCertificate
+    (S K : Finset ℕ) (a : ℕ → ℝ) (c : ℕ → ℂ) : Prop :=
+  ∀ θ : ℝ,
+    (∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ)) =
+      ‖∑ k ∈ K, c k * Complex.exp ((k : ℂ) * I * (θ : ℂ))‖ ^ 2
+
+/-- Predicate-based version of
+`trigPolynomial_nonneg_of_complex_exp_abs_sq_certificate`. -/
+lemma trigPolynomial_nonneg_of_complex_exp_abs_sq_certificate'
+    (S K : Finset ℕ) (a : ℕ → ℝ) (c : ℕ → ℂ)
+    (hcert : ComplexExpAbsSqCertificate S K a c) :
+    ∀ θ : ℝ, 0 ≤ ∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ) :=
+  trigPolynomial_nonneg_of_complex_exp_abs_sq_certificate S K a c hcert
+
+/-- Predicate-based automatic finite detector from a complex-exponential
+absolute-square certificate. -/
+lemma log_deriv_zeta_nonneg_finset_combination_auto_of_complex_exp_abs_sq_certificate'
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ)
+    (S K : Finset ℕ) (a : ℕ → ℝ) (c : ℕ → ℂ)
+    (hcert : ComplexExpAbsSqCertificate S K a c) :
+    0 ≤
+      ∑ k ∈ S, a k *
+        (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+          riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re :=
+  log_deriv_zeta_nonneg_finset_combination_auto_of_complex_exp_abs_sq_certificate
+    σ hσ t S K a c hcert
+
+/-- Minimal concrete complex-exponential absolute-square certificate:
+`1 = ‖exp(0)‖^2`.  This is a template for later finite coefficient-table
+certificates. -/
+lemma complexExpAbsSqCertificate_const_one :
+    ComplexExpAbsSqCertificate ({0} : Finset ℕ) ({0} : Finset ℕ)
+      (fun _ => (1 : ℝ)) (fun _ => (1 : ℂ)) := by
+  intro θ
+  simp
+
+/-- The automatic detector theorem applied to the constant-one
+complex-exponential certificate. -/
+lemma log_deriv_zeta_nonneg_const_one_detector_from_complex_exp_certificate
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ) :
+    0 ≤
+      ∑ k ∈ ({0} : Finset ℕ), (1 : ℝ) *
+        (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+          riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re :=
+  log_deriv_zeta_nonneg_finset_combination_auto_of_complex_exp_abs_sq_certificate'
+    σ hσ t ({0} : Finset ℕ) ({0} : Finset ℕ)
+    (fun _ => (1 : ℝ)) (fun _ => (1 : ℂ))
+    complexExpAbsSqCertificate_const_one
+
+/-- Coefficients for the toy detector polynomial `2 + 2 cos theta`. -/
+def twoAddTwoCosDetectorCoeff (k : ℕ) : ℝ :=
+  if k = 0 then 2 else if k = 1 then 2 else 0
+
+/-- Coefficients for the toy exponential sum `1 + exp(i theta)`. -/
+def onePlusExpCoeff (k : ℕ) : ℂ :=
+  if k = 0 then 1 else if k = 1 then 1 else 0
+
+/-- Concrete nontrivial complex-exponential certificate:
+`2 + 2 cos theta = ‖1 + exp(i theta)‖^2`. -/
+lemma complexExpAbsSqCertificate_two_add_two_cos :
+    ComplexExpAbsSqCertificate ({0, 1} : Finset ℕ) ({0, 1} : Finset ℕ)
+      twoAddTwoCosDetectorCoeff onePlusExpCoeff := by
+  intro θ
+  simp [twoAddTwoCosDetectorCoeff, onePlusExpCoeff]
+  rw [← Complex.normSq_eq_norm_sq, Complex.normSq_add]
+  have hexp : Complex.exp (I * (θ : ℂ)) =
+      (Real.cos θ : ℂ) + (Real.sin θ : ℂ) * I := by
+    have hmul : I * (θ : ℂ) = (θ : ℂ) * I := by ring
+    rw [hmul, Complex.exp_ofReal_mul_I]
+  rw [hexp]
+  simp [Complex.normSq_apply]
+  have hcosre : (Complex.cos (θ : ℂ)).re = Real.cos θ := by
+    have hcos : Complex.cos (θ : ℂ) = (Real.cos θ : ℂ) := by
+      simp
+    exact hcos ▸ rfl
+  have hsinre : (Complex.sin (θ : ℂ)).re = Real.sin θ := by
+    have hsin : Complex.sin (θ : ℂ) = (Real.sin θ : ℂ) := by
+      simp
+    exact hsin ▸ rfl
+  rw [hcosre, hsinre]
+  nlinarith [Real.sin_sq_add_cos_sq θ]
+
+/-- The automatic detector theorem applied to the concrete certificate
+`2 + 2 cos theta = ‖1 + exp(i theta)‖^2`. -/
+lemma log_deriv_zeta_nonneg_two_add_two_cos_detector_from_complex_exp_certificate
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ) :
+    0 ≤
+      ∑ k ∈ ({0, 1} : Finset ℕ), twoAddTwoCosDetectorCoeff k *
+        (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+          riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re :=
+  log_deriv_zeta_nonneg_finset_combination_auto_of_complex_exp_abs_sq_certificate'
+    σ hσ t ({0, 1} : Finset ℕ) ({0, 1} : Finset ℕ)
+    twoAddTwoCosDetectorCoeff onePlusExpCoeff
+    complexExpAbsSqCertificate_two_add_two_cos
+
 /-- The existing `3-4-1` theorem as the base detector instance. -/
 lemma log_deriv_zeta_nonneg_three_four_one_from_finset
     (σ : ℝ) (hσ : 1 < σ) (t : ℝ) :
