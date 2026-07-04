@@ -7939,6 +7939,14 @@ theorem norm_sigma_add_I_mul_le_abs_add_two {σ t : ℝ}
     ‖((σ : ℂ) + Complex.I * (t : ℂ))‖ ≤ |t| + 2 :=
   ZeroFreeRegion.norm_sigma_add_I_mul_le_abs_add_two hσ
 
+/-- Public lower logarithmic comparison from imaginary height to full complex
+height. -/
+theorem log_abs_le_log_norm_sigma_add_I_mul_add_three {σ t : ℝ}
+    (ht : 0 < |t|) :
+    Real.log |t| ≤
+      Real.log (‖((σ : ℂ) + Complex.I * (t : ℂ))‖ + 3) :=
+  ZeroFreeRegion.log_abs_le_log_norm_sigma_add_I_mul_add_three ht
+
 /-- Public logarithmic comparison for full complex height on `1 <= σ <= 2`. -/
 theorem log_norm_sigma_add_I_mul_add_three_le_two_log_abs {σ t : ℝ}
     (hσ : σ ∈ Set.Icc 1 2) (ht : 5 ≤ |t|) :

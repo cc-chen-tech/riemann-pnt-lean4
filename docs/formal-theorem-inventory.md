@@ -849,6 +849,9 @@ Core verified declarations:
 - `log_norm_sigma_add_I_mul_add_three_le_two_log_abs_of_re_le_three`
   proves the same comparison on the wider `1 <= sigma <= 3` strip for
   `|t| >= 6`, matching right-shifted Borel centers.
+- `log_abs_le_log_norm_sigma_add_I_mul_add_three`
+  proves the reverse comparison `log |t| <= log(||sigma+it||+3)` at positive
+  height, so already-normalized Borel outputs can feed full-height closures.
 - `log_norm_add_three_le_two_log_abs_im`
   is the corresponding complex-variable comparison in terms of
   `s.re` and `s.im`.

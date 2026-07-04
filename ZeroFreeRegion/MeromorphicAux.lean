@@ -3800,11 +3800,25 @@ lemma norm_sigma_add_I_mul_le_abs_add_two {σ t : ℝ}
     rw [abs_of_nonneg (by linarith [hσ.1])]
     exact hσ.2
   calc
-    ‖((σ : ℂ) + I * (t : ℂ))‖
-        ≤ ‖(σ : ℂ)‖ + ‖I * (t : ℂ)‖ := hnorm
-    _ = |σ| + |t| := by rw [hσ_norm, hIt_norm]
-    _ ≤ 2 + |t| := by nlinarith [hσ_abs_le]
-    _ = |t| + 2 := by ring
+      ‖((σ : ℂ) + I * (t : ℂ))‖
+          ≤ ‖(σ : ℂ)‖ + ‖I * (t : ℂ)‖ := hnorm
+      _ = |σ| + |t| := by rw [hσ_norm, hIt_norm]
+      _ ≤ 2 + |t| := by nlinarith [hσ_abs_le]
+      _ = |t| + 2 := by ring
+
+/-- The imaginary-height logarithm is bounded by the full complex-height
+logarithm.  This is the direction needed when a Borel estimate has already
+been normalized to `log |t|` but an existing high-height closure expects
+`log(‖σ+it‖+3)`. -/
+lemma log_abs_le_log_norm_sigma_add_I_mul_add_three {σ t : ℝ}
+    (ht : 0 < |t|) :
+    Real.log |t| ≤
+      Real.log (‖((σ : ℂ) + I * (t : ℂ))‖ + 3) := by
+  have hle_norm : |t| ≤ ‖((σ : ℂ) + I * (t : ℂ))‖ := by
+    simpa using Complex.abs_im_le_norm ((σ : ℂ) + I * (t : ℂ))
+  have hle : |t| ≤ ‖((σ : ℂ) + I * (t : ℂ))‖ + 3 := by
+    nlinarith
+  exact Real.log_le_log ht hle
 
 /-- Above height `5`, `log(‖σ + it‖ + 3)` is controlled by
 `2 log |t|` uniformly for `1 <= σ <= 2`. -/
