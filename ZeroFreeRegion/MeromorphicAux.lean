@@ -5748,6 +5748,82 @@ lemma exists_re_neg_deriv_div_riemannZeta_sigma_two_it_bound_on_compact_vertical
     _ ≤ ‖-logDeriv riemannZeta z‖ := Complex.re_le_norm _
     _ ≤ C := hC σ t hσ htH htT
 
+/-- Compact patch from a high-height `B * log |t|` real-part quotient estimate
+to an all-height affine `A + B' * log(|t| + 3)` estimate at `σ + it`. -/
+lemma exists_re_neg_deriv_div_riemannZeta_sigma_it_affine_log_abs_add_three_bound_of_high_height_log_abs_bound
+    {H T0 B : ℝ} (hH : 0 < H) (hHT0 : H ≤ T0) (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 → T0 ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re ≤ B * Real.log |t|) :
+    ∃ A B' : ℝ, 0 ≤ A ∧ 0 ≤ B' ∧
+      ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 → H ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re ≤
+          A + B' * Real.log (|t| + 3) := by
+  rcases exists_re_neg_deriv_div_riemannZeta_sigma_it_bound_on_compact_vertical_band
+      (H := H) (T := T0) hH with ⟨C, hC_nonneg, hC⟩
+  refine ⟨C, B, hC_nonneg, hB, ?_⟩
+  intro σ t hσ htH
+  have hlog_nonneg : 0 ≤ Real.log (|t| + 3) := by
+    exact Real.log_nonneg (by linarith [abs_nonneg t])
+  by_cases ht_low : |t| ≤ T0
+  · have hcompact := hC σ t hσ htH ht_low
+    calc
+      (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re ≤ C := hcompact
+      _ ≤ C + B * Real.log (|t| + 3) := by
+        nlinarith [mul_nonneg hB hlog_nonneg]
+  · have ht_high : T0 ≤ |t| := le_of_lt (lt_of_not_ge ht_low)
+    have ht_pos : 0 < |t| := by linarith [hH, hHT0, ht_high]
+    have hlog_le : Real.log |t| ≤ Real.log (|t| + 3) := by
+      exact Real.log_le_log ht_pos (by linarith)
+    calc
+      (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re
+          ≤ B * Real.log |t| := hhigh σ t hσ ht_high
+      _ ≤ B * Real.log (|t| + 3) :=
+          mul_le_mul_of_nonneg_left hlog_le hB
+      _ ≤ C + B * Real.log (|t| + 3) := by linarith
+
+/-- Compact patch from a high-height `B * log |t|` real-part quotient estimate
+to an all-height affine estimate at the shifted point `σ + 2it`. -/
+lemma exists_re_neg_deriv_div_riemannZeta_sigma_two_it_affine_log_abs_add_three_bound_of_high_height_log_abs_bound
+    {H T0 B : ℝ} (hH : 0 < H) (hHT0 : H ≤ T0) (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 → T0 ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤ B * Real.log |t|) :
+    ∃ A B' : ℝ, 0 ≤ A ∧ 0 ≤ B' ∧
+      ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 → H ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤
+          A + B' * Real.log (|t| + 3) := by
+  rcases exists_re_neg_deriv_div_riemannZeta_sigma_two_it_bound_on_compact_vertical_band
+      (H := H) (T := T0) hH with ⟨C, hC_nonneg, hC⟩
+  refine ⟨C, B, hC_nonneg, hB, ?_⟩
+  intro σ t hσ htH
+  have hlog_nonneg : 0 ≤ Real.log (|t| + 3) := by
+    exact Real.log_nonneg (by linarith [abs_nonneg t])
+  by_cases ht_low : |t| ≤ T0
+  · have hcompact := hC σ t hσ htH ht_low
+    calc
+      (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+          riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤ C := hcompact
+      _ ≤ C + B * Real.log (|t| + 3) := by
+        nlinarith [mul_nonneg hB hlog_nonneg]
+  · have ht_high : T0 ≤ |t| := le_of_lt (lt_of_not_ge ht_low)
+    have ht_pos : 0 < |t| := by linarith [hH, hHT0, ht_high]
+    have hlog_le : Real.log |t| ≤ Real.log (|t| + 3) := by
+      exact Real.log_le_log ht_pos (by linarith)
+    calc
+      (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+          riemannZeta ((σ : ℂ) + 2 * I * t)).re
+          ≤ B * Real.log |t| := hhigh σ t hσ ht_high
+      _ ≤ B * Real.log (|t| + 3) :=
+          mul_le_mul_of_nonneg_left hlog_le hB
+      _ ≤ C + B * Real.log (|t| + 3) := by linarith
+
 /-- Compact patch from a high-height `B * log |t|` estimate to an all-height
 affine `A + B' * log(|t| + 3)` estimate for `logDeriv ζ`.
 

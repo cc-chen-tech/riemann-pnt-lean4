@@ -69,6 +69,11 @@ Core verified declarations:
   `Re(-zeta'/zeta)` at `sigma + it`.
 - `exists_re_neg_deriv_div_riemannZeta_sigma_two_it_bound_on_compact_vertical_band`
   is the same real-part compact bound for the shifted point `sigma + 2it`.
+- `exists_re_neg_deriv_div_riemannZeta_sigma_it_affine_log_abs_add_three_bound_of_high_height_log_abs_bound`
+  patches a future high-height real-part quotient estimate into an all-height
+  affine logarithmic bound at `sigma + it`.
+- `exists_re_neg_deriv_div_riemannZeta_sigma_two_it_affine_log_abs_add_three_bound_of_high_height_log_abs_bound`
+  is the same real-part compact-patching bridge at `sigma + 2it`.
 - `exists_norm_logDeriv_riemannZeta_sigma_it_affine_log_abs_add_three_bound_of_high_height_log_abs_bound`
   patches a future high-height `B * log |t|` estimate with the compact band
   bound, producing an all-height affine `A + B' * log(|t| + 3)` estimate.
