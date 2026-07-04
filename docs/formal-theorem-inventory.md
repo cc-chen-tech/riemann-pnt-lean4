@@ -3,6 +3,13 @@
 This inventory separates proved Lean declarations from target statements.  It is
 intended for reviewers and for future work planning.
 
+It records internal proof status only.  It should not be read as a standalone
+SOTA comparison or as a claim that this repository is the first PNT
+formalization, a completed classical analytic PNT proof, or a proof of RH.
+External academic value must be judged separately against Isabelle/HOL PNT,
+HOL Light PNT, Lean `PrimeNumberTheoremAnd`, Mathlib zeta/L-function
+infrastructure, and current Lean PNT repositories at submission time.
+
 Current verified baseline:
 
 ```bash
@@ -1097,10 +1104,11 @@ The project uses substantial Mathlib infrastructure, including:
 - zeta asymptotics around the harmonic-series expansion;
 - compactness and analytic continuation APIs.
 
-The project-local novelty is the assembly and formal proof of the intermediate
-zeta-function infrastructure listed above, especially the real-part
-logarithmic-derivative series, the 3-4-1 combination, compact zero-free strip,
-and residue-scale inequalities.
+The project-local contribution is the assembly and formal proof of the
+intermediate zeta-function infrastructure listed above, especially the
+real-part logarithmic-derivative series, the 3-4-1 combination, compact
+zero-free strip, and residue-scale inequalities.  Its external novelty should
+be assessed only after the separate SOTA comparison described in the README.
 
 ## Missing Chains for a Complete Analytic PNT
 

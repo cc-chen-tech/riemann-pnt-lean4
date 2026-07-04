@@ -43,9 +43,9 @@ bounds near \(s=1\), and a nonconstructive positive-width zero-free strip for
 each fixed height bound.
 
 The present development should be read as a verified framework with explicit
-unproved target statements, not as a completed PNT formalization.  With
-Lean~4.29.1 and Mathlib~4.29.1 the project builds successfully and contains no
-syntactic \texttt{sorry} occurrences.  Secondary infrastructure includes
+unproved target statements, not as a first or completed PNT formalization.
+With Lean~4.29.1 and Mathlib~4.29.1 the project builds successfully and
+contains no syntactic \texttt{sorry} occurrences.  Secondary infrastructure includes
 corrected target statements for the Riemann--von Mangoldt explicit formula
 using midpoint Chebyshev functions and finite-height truncations, proved
 PNT-form equivalence wrappers, RH-scale error-propagation interfaces, and a
@@ -75,9 +75,11 @@ long-standing challenge. Previous formalizations have taken different routes:
     formalizing the Wiener--Ikehara proof in Lean~4.
 \end{itemize}
 
-Notably absent, however, has been a complete formalization of the
-\emph{original} analytic proof via the 3-4-1 inequality.  This project is an
-intermediate step toward such a formalization in Lean~4, built on Mathlib.
+These external baselines fix the claim boundary for this paper.  We do not
+claim a first formalization of the PNT, nor a completed formalization of the
+classical analytic proof.  Instead, we isolate a local Lean~4 module for the
+de~la~Vall\'ee~Poussin 3-4-1 mechanism and its compact zero-free-strip
+consequence, built on Mathlib.
 
 Our contributions are deliberately stratified:
 
@@ -422,9 +424,9 @@ results beyond the PNT.
 
 \paragraph{Elementary proof in Isabelle.}
 Avigad, Donnelly, Gray, and Raff (2007)~\cite{avigad2007pnt} formalized the
-elementary Selberg--Erd\H{o}s proof in Isabelle/HOL. This remains the only
-complete formalization of the PNT, but the elementary route avoids all
-complex analysis and does not give error terms.
+elementary Selberg--Erd\H{o}s proof in Isabelle/HOL.  This is a complete PNT
+formalization by an elementary route; it avoids all complex analysis and does
+not develop the de~la~Vall\'ee~Poussin zero-free-region machinery.
 
 \paragraph{Newman's proof in HOL Light.}
 Harrison (2009)~\cite{harrison2009pnt} formalized Newman's short analytic
@@ -436,17 +438,24 @@ Kontorovich and Tao's ongoing project~\cite{pntand} formalizes the PNT
 via the Wiener--Ikehara theorem, a Fourier-analytic approach that avoids
 much of the classical zeta theory.
 
+\paragraph{Newer Lean PNT efforts.}
+The Lean PNT landscape is moving quickly.  Recent projects such as
+\texttt{strongpnt}~\cite{strongpnt} should be rechecked before submission;
+they further reinforce that this paper should not claim a first Lean
+formalization of PNT.
+
 \paragraph{Zeta function in Mathlib.}
 Loeffler and Stoll have built the foundational zeta function theory in
 Mathlib, including the functional equation, Euler product, and Dirichlet
 $L$-functions~\cite{mathlib}. Our work directly extends this foundation.
 
 \paragraph{Our contribution.}
-Our formalization is the first to tackle the \emph{classical} analytic proof
-directly, developing the 3-4-1 inequality and compact zero-free region.
-It is complementary to \texttt{PrimeNumberTheoremAnd}: where the latter uses
-modern Fourier analysis, we develop the traditional complex-analytic
-machinery that yields explicit error terms.
+Our contribution is narrower and complementary: in Lean~4, we verify a
+project-local module for the 3-4-1 inequality, related logarithmic-derivative
+series manipulations, and a compact zero-free strip.  We do not claim the first
+PNT formalization, a completed classical analytic PNT proof, or the
+quantitative de~la~Vall\'ee~Poussin zero-free region
+\(\sigma \geq 1-c/\log|t|\).
 
 %=====================================================================
 \section{Conclusion and Future Work}
@@ -458,6 +467,11 @@ Prime Number Theorem.  The current development is not yet a completed formal
 proof of the PNT: it contains no explicit \texttt{sorry} occurrences, but it
 still has unproved target statements for quantitative zero-free regions,
 Hardy-theorem moment estimates, and explicit-formula machinery.
+
+The intended publication claim is therefore relative to existing PNT
+formalizations by other routes: this work contributes a local Lean~4
+formalization of de~la~Vall\'ee~Poussin-style 3-4-1 infrastructure, not a new
+completion of PNT or RH.
 
 The immediate path to a publishable artifact is therefore twofold.  First,
 keep the repository reproducible and its claims aligned with the checked Lean
@@ -501,6 +515,11 @@ J.~Harrison.
 A.~Kontorovich and T.~Tao.
 \newblock {PrimeNumberTheoremAnd}.
 \newblock \url{https://github.com/AlexKontorovich/PrimeNumberTheoremAnd}, 2024.
+
+\bibitem{strongpnt}
+Math Inc.
+\newblock {Strong PNT}.
+\newblock \url{https://math-inc.github.io/strongpnt/}, 2025.
 
 \bibitem{mathlib}
 The Mathlib Community.

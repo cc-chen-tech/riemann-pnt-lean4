@@ -6,6 +6,28 @@ statements (as of `2026-06-08`) in this Lean checkout.
 All entries are intentionally **not** exported as theorems.  They are explicit
 `Prop` targets used as roadmap checkpoints.
 
+## How to Read This Inventory
+
+This file measures **internal proof progress** only.  It answers questions like:
+
+- which Lean declarations are still roadmap targets;
+- which verified declarations currently anchor each missing chain;
+- which analytic inputs would let a target be promoted to a proved theorem.
+
+It does **not** answer the external SOTA question.  A smaller target count does
+not imply that this repository is close to proving RH, completing PNT, or
+becoming the first PNT formalization.  External academic positioning must be
+checked separately against Isabelle/HOL PNT, HOL Light PNT, Lean
+`PrimeNumberTheoremAnd`, Mathlib's zeta/L-function infrastructure, and current
+Lean repositories at the time of submission.
+
+The safe project positioning is:
+
+```text
+local Lean 4 formalization of de la Vallee Poussin 3-4-1 machinery
+and a compact zero-free strip
+```
+
 ## Target count
 
 - `HardyTheorem` namespace: 7

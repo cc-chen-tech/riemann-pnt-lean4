@@ -32,6 +32,26 @@ parallel:
 - `docs/hardy-theorem-chain.md`
   Hardy Z-function moment estimates and critical-line zeros.
 
+## Evaluation Boundary
+
+This page is a local proof-roadmap document.  It should not be used by itself
+to make external novelty claims.
+
+Two questions must stay separate:
+
+- **Internal proof progress:** which target statements remain in this checkout,
+  and which proved Lean declarations currently anchor each chain.
+- **External academic value:** how this checkout compares with existing PNT and
+  zeta/L-function formalizations, including Isabelle/HOL elementary PNT,
+  HOL Light Newman's proof, Lean `PrimeNumberTheoremAnd`, Mathlib's
+  zeta/L-function library, and any newer Lean repositories current at
+  submission time.
+
+The safe publication claim is a local one: this repository develops verified
+Lean 4 infrastructure for the de la Vallee Poussin 3-4-1 machinery and a
+compact zero-free strip.  It is not a first PNT formalization, not a completed
+classical analytic PNT proof, and not a proof of RH.
+
 ## Chain Status Summary
 
 | Chain | Current Lean target status | Main correction before proof work | Smallest useful next step | Open target count |
@@ -287,6 +307,10 @@ actually supplied and checked by Lean.  In particular:
 - do not use a theorem statement for a mathematically false intermediate
   statement;
 - do not cite `def ... : Prop` targets as completed formal results.
+- do not cite local target-count reduction as evidence that PNT or RH has been
+  proved or is near completion.
+- do not advertise this repository as the first PNT formalization or as a
+  complete de la Vallee Poussin proof.
 
 `HardyTheorem.weightedIntegralOf_tail_dominates` remains a `Prop`-valued
 predicate in Lean, but it is a reusable hypothesis form rather than an

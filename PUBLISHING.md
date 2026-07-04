@@ -37,6 +37,38 @@ As of the current baseline, no route interface has a body equal to `True`.
 marker for missing rectangle contour/residue infrastructure, but its body is now
 a real `Prop` statement rather than a trivially true placeholder.
 
+## Required SOTA Check Before Public Claims
+
+Before a paper, release note, README headline, talk abstract, or arXiv
+submission makes a novelty claim, check the external baseline separately from
+the local Lean target inventory.
+
+Minimum external comparison set:
+
+- Isabelle/HOL formalizations of the elementary PNT;
+- HOL Light formalization of Newman's analytic PNT proof;
+- Lean `PrimeNumberTheoremAnd`;
+- Mathlib's `riemannZeta`, Euler product, functional equation, nonvanishing,
+  and Dirichlet `L`-function infrastructure;
+- newer Lean PNT repositories current at submission time.
+
+Allowed claim shape:
+
+```text
+Verified Lean 4 infrastructure for the de la Vallee Poussin 3-4-1 machinery
+and a compact zero-free strip, complementary to existing PNT formalizations by
+other routes.
+```
+
+Do not claim:
+
+- first formalization of PNT;
+- completed formalization of the original analytic PNT proof;
+- proof of the classical quantitative zero-free region `1 - c / log |t|`;
+- proof of the full PNT, RH, or RH-equivalent prime-counting error terms;
+- completion of any `def ... : Prop` target unless it has been replaced by a
+  checked theorem/lemma.
+
 ## Unproved Target Statements
 
 | File | Remaining `sorry` count | Main target statements |

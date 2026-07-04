@@ -1,4 +1,4 @@
-# Riemann Zeta Function and Prime Number Theorem — Lean 4 Formalization
+# De la Vallee Poussin 3-4-1 Infrastructure for the Riemann Zeta Function in Lean 4
 
 A Lean 4 project developing formalized infrastructure around the Riemann zeta
 function, Hardy's theorem, zero-free regions, and Prime Number Theorem statements.
@@ -21,11 +21,54 @@ This means the project verifies the local analytic mechanism
 The repository does **not** claim the classical quantitative zero-free region
 `σ >= 1 - c / log |t|`, the full PNT, or RH.
 
+## Evaluation Framework
+
+This repository should be evaluated under two separate lenses.
+
+### Internal proof progress
+
+The internal status asks what the current Lean checkout proves.  For this
+purpose, the relevant distinction is:
+
+- proved Lean declarations such as `theorem`/`lemma`;
+- unproved roadmap declarations written as `def ... : Prop`;
+- route interfaces and reusable predicates that are intentionally not exported
+  as theorems.
+
+The internal target count is useful for engineering progress, but it is not by
+itself a novelty or publication claim.
+
+### External SOTA positioning
+
+The external academic value must be judged only after comparing with existing
+formalizations and Mathlib infrastructure.  In particular, existing work already
+includes:
+
+- elementary PNT formalizations in Isabelle/HOL;
+- Newman's analytic PNT proof in HOL Light;
+- Lean PNT work via the Wiener-Ikehara route in `PrimeNumberTheoremAnd`;
+- Mathlib's zeta/L-function formalization, including `riemannZeta`, Euler
+  products, the functional equation, and nonvanishing in `Re(s) >= 1`;
+- newer Lean repositories should also be checked before making a public SOTA
+  claim.
+
+Therefore the stable claim for this repository is narrower:
+
+> A local Lean 4 formalization of the de la Vallee Poussin 3-4-1 machinery and
+> compact zero-free strip, complementary to existing PNT formalizations by other
+> routes.
+
+Do not describe this repository as a first formalization of PNT, a completed
+classical analytic PNT proof, a proof of RH, or a completed quantitative
+zero-free-region formalization.
+
 ## Paper Positioning
 
 The recommended paper framing is to make the `3-4-1 + compact zero-free strip`
-module the main contribution, with the remaining infrastructure presented as
-secondary contributions and future work.  This keeps the claims tight:
+module the main contribution, after explicitly locating the project relative to
+the existing PNT and zeta/L-function formalization landscape.  The remaining
+infrastructure should be presented as secondary contributions and future work.
+This keeps the claims tight:
 
 1. **Primary contribution:** formalizing the real-part logarithmic-derivative
    Dirichlet series, the de la Vallee Poussin 3-4-1 inequality, and the compact
@@ -502,10 +545,17 @@ estimates before the quantitative zero-free region can be closed.
 
 ## Related Work
 
-- [PrimeNumberTheoremAnd](https://github.com/AlexKontorovich/PrimeNumberTheoremAnd) (Lean 4) — PNT via Wiener-Ikehara
-- Avigad et al. (2007) — Elementary PNT in Isabelle
-- Harrison (2009) — Newman's analytic PNT in HOL Light
-- Mathlib's `riemannZeta` — Zeta function basics by Loeffler & Stoll
+- [PrimeNumberTheoremAnd](https://github.com/AlexKontorovich/PrimeNumberTheoremAnd)
+  (Lean 4) — PNT and related analytic number theory goals via routes including
+  Wiener-Ikehara.
+- [strongpnt](https://github.com/math-inc/strongpnt) (Lean 4) — AI-generated
+  Lean formalization of the strong PNT; check its current state before any
+  public SOTA comparison.
+- Avigad et al. (2007) — Elementary PNT in Isabelle/HOL.
+- Harrison (2009) — Newman's analytic PNT in HOL Light.
+- Mathlib's `riemannZeta` and zeta/L-function work by Loeffler--Stoll — zeta
+  basics, Euler products, the functional equation, and nonvanishing in the
+  closed half-plane `Re(s) >= 1`.
 
 ## Citation
 
@@ -513,7 +563,7 @@ If you use this work in your research, please cite:
 
 ```bibtex
 @software{riemann_pnt_lean4,
-  title = {Lean 4 Infrastructure Toward Analytic Prime Number Theorem Formalization},
+  title = {Lean 4 Infrastructure for de la Vallee Poussin 3-4-1 Zeta Machinery},
   year = {2026},
   url = {https://github.com/cc-chen-tech/riemann-pnt-lean4}
 }

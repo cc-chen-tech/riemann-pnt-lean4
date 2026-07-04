@@ -4,6 +4,29 @@ This note records the main project-local mathematical contributions in the
 current Lean checkout.  The statements below are aligned with the checked Lean
 declarations, rather than with earlier draft descriptions.
 
+## Scope Relative to Existing Formalizations
+
+This file is an internal theorem inventory, not a claim that this repository is
+the first formalization of the Prime Number Theorem or a completed classical
+analytic PNT proof.
+
+External SOTA has to be checked separately before making publication claims.
+Relevant baselines include Isabelle/HOL formalizations of elementary PNT,
+HOL Light formalizations of Newman's analytic PNT proof, Lean PNT work such as
+`PrimeNumberTheoremAnd`, Mathlib's zeta and Dirichlet `L`-function
+infrastructure, and any newer Lean repositories current at submission time.
+
+The stable project-local contribution is narrower:
+
+```text
+de la Vallee Poussin 3-4-1 machinery and compact zero-free strip in Lean 4
+```
+
+In particular, the theorem inventory below should be read as verified support
+for that local module, not as evidence that PNT, RH, the quantitative
+`1 - c / log |t|` zero-free region, or the full explicit formula has been
+proved.
+
 ## 1. Real Part of the Logarithmic Derivative Series
 
 **Lean declaration:** `ZeroFreeRegion.log_deriv_zeta_re_series`
@@ -183,8 +206,9 @@ stated result.
 ## What This Does and Does Not Prove
 
 The project-local contribution is not a complete proof of the Prime Number
-Theorem or the Riemann Hypothesis.  The verified contribution is the Lean
-formalization of supporting infrastructure:
+Theorem or the Riemann Hypothesis, and it is not a claim to be the first PNT
+formalization.  The verified contribution is the Lean formalization of
+supporting infrastructure for one classical local route:
 
 - the real-part Dirichlet-series representation of `-zeta'/zeta`;
 - the full 3-4-1 logarithmic-derivative nonnegativity argument;
