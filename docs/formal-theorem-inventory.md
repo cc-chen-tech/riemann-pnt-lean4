@@ -116,6 +116,12 @@ Core verified declarations:
 - `exists_norm_neg_logDeriv_riemannZeta_vertical_log_bound_of_high_height_log_abs_bound`
   is the signed `-logDeriv zeta` version of that objective-shaped vertical
   logarithmic bound wrapper.
+- `exists_norm_logDeriv_riemannZeta_shifted_vertical_log_bound_of_vertical_log_bound`
+  derives the shifted `sigma + 2it` norm estimate from the ordinary vertical
+  estimate at `sigma + iu`, absorbing the comparison `log |2t| <= 2 log |t|`.
+- `exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_vertical_norm_log_bound`
+  converts that shifted norm estimate into the real-part quotient convention
+  needed by the 3-4-1 inequality.
 - `exists_norm_logDeriv_riemannZeta_sigma_two_it_log_abs_bound_of_high_height_log_abs_bound`
   is the exact-log norm patch at the shifted point `sigma + 2it`.
 - `exists_norm_neg_logDeriv_riemannZeta_sigma_two_it_log_abs_bound_of_high_height_log_abs_bound`

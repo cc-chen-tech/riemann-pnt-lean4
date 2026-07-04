@@ -6434,6 +6434,84 @@ lemma exists_norm_neg_logDeriv_riemannZeta_sigma_two_it_log_abs_bound_of_high_he
       _ ≤ (C₀ + B) * Real.log |t| := by
         nlinarith [mul_nonneg hC₀_nonneg hlog_nonneg]
 
+/-- A future high-height norm estimate at the ordinary vertical point
+`sigma + iu` automatically yields the shifted norm estimate at `sigma + 2it`
+needed by the 3-4-1 inequality, after absorbing `log |2t| <= 2 log |t|`. -/
+lemma exists_norm_logDeriv_riemannZeta_shifted_vertical_log_bound_of_vertical_log_bound
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ u : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |u| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * u)‖ ≤ B * Real.log |u|) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖ ≤ C * Real.log |t| := by
+  have hB2 : 0 ≤ 2 * B := by nlinarith
+  let T1 : ℝ := max T0 3
+  have hshift :
+      ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 → T1 ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖ ≤
+          (2 * B) * Real.log |t| := by
+    intro σ t hσ ht
+    have hT0_le_abs_t : T0 ≤ |t| := (le_max_left T0 (3 : ℝ)).trans ht
+    have hthree_le_abs_t : 3 ≤ |t| := (le_max_right T0 (3 : ℝ)).trans ht
+    have htwo_le_abs_t : 2 ≤ |t| := by linarith
+    have hT0_le_abs_two_t : T0 ≤ |2 * t| := by
+      calc
+        T0 ≤ |t| := hT0_le_abs_t
+        _ ≤ |2 * t| := by
+          rw [abs_mul]
+          have ht_nonneg : 0 ≤ |t| := abs_nonneg t
+          norm_num
+          nlinarith
+    have hlog_two : Real.log |2 * t| ≤ 2 * Real.log |t| :=
+      log_abs_two_mul_le_two_log_abs htwo_le_abs_t
+    have hrewrite :
+        ((σ : ℂ) + I * (((2 * t : ℝ) : ℂ))) =
+          ((σ : ℂ) + 2 * I * t) := by
+      norm_num [Complex.ofReal_mul]
+      ring
+    calc
+      ‖logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖
+          = ‖logDeriv riemannZeta
+              ((σ : ℂ) + I * (((2 * t : ℝ) : ℂ)))‖ := by
+            rw [hrewrite]
+      _ ≤ B * Real.log |2 * t| :=
+          hhigh σ (2 * t) hσ.1 hσ.2 hT0_le_abs_two_t
+      _ ≤ B * (2 * Real.log |t|) :=
+          mul_le_mul_of_nonneg_left hlog_two hB
+      _ = (2 * B) * Real.log |t| := by ring
+  rcases exists_norm_logDeriv_riemannZeta_sigma_two_it_log_abs_bound_of_high_height_log_abs_bound
+      (H := 3) (T0 := T1) (B := 2 * B) (by norm_num) hB2 hshift with
+    ⟨C, hC_nonneg, hbound⟩
+  refine ⟨C, 3, hC_nonneg, by norm_num, ?_⟩
+  intro σ t hσ_left hσ_right ht
+  exact hbound σ t ⟨hσ_left, hσ_right⟩ ht
+
+/-- Real-part quotient version of
+`exists_norm_logDeriv_riemannZeta_shifted_vertical_log_bound_of_vertical_log_bound`. -/
+lemma exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_vertical_norm_log_bound
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ u : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |u| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * u)‖ ≤ B * Real.log |u|) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤ C * Real.log |t| := by
+  rcases exists_norm_logDeriv_riemannZeta_shifted_vertical_log_bound_of_vertical_log_bound
+      (T0 := T0) (B := B) hB hhigh with
+    ⟨C, T0', hC, hT0', hnorm⟩
+  refine ⟨C, T0', hC, hT0', ?_⟩
+  intro σ t hσ_left hσ_right ht
+  let z : ℂ := (σ : ℂ) + 2 * I * t
+  calc
+    (-deriv riemannZeta z / riemannZeta z).re
+        ≤ ‖-deriv riemannZeta z / riemannZeta z‖ := Complex.re_le_norm _
+    _ = ‖logDeriv riemannZeta z‖ :=
+        norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv z
+    _ ≤ C * Real.log |t| := by
+        simpa [z] using hnorm σ t hσ_left hσ_right ht
+
 /-- Borel-Carathéodory for the signed logarithmic derivative `-logDeriv ζ` on
 a right half-strip.  This is the sign convention used by the 3-4-1 inequality. -/
 lemma borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le

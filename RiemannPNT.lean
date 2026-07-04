@@ -3640,6 +3640,37 @@ theorem exists_norm_neg_logDeriv_riemannZeta_vertical_log_bound_of_high_height_l
   ZeroFreeRegion.exists_norm_neg_logDeriv_riemannZeta_vertical_log_bound_of_high_height_log_abs_bound
     hB hhigh
 
+/-- Public shifted norm bridge: a future high-height estimate at `sigma + iu`
+gives the `sigma + 2it` 3-4-1 input after absorbing `log |2t|`. -/
+theorem exists_norm_logDeriv_riemannZeta_shifted_vertical_log_bound_of_vertical_log_bound
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ u : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |u| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * u)‖ ≤
+          B * Real.log |u|) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t)‖ ≤
+          C * Real.log |t| :=
+  ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_shifted_vertical_log_bound_of_vertical_log_bound
+    hB hhigh
+
+/-- Public shifted real-part quotient bridge from an ordinary vertical norm
+estimate. -/
+theorem exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_vertical_norm_log_bound
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ u : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |u| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * u)‖ ≤
+          B * Real.log |u|) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t) /
+            riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re ≤
+          C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_vertical_norm_log_bound
+    hB hhigh
+
 /-- Public compact patch preserving the exact `C * log |t|` scale for
 `‖logDeriv ζ‖` at `σ + 2it`, once the patched range starts at height at
 least `3`. -/
