@@ -675,6 +675,10 @@ Core verified declarations:
 - `re_neg_logDeriv_riemannZeta_add_inv_le_of_regular_part_norm` and
   `re_neg_logDeriv_riemannZeta_add_inv_le_of_multiplicity_regular_part_norm`
   are the same bridges in Mathlib's signed `-logDeriv zeta` notation.
+- `re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_regular_part_norm` and
+  `re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_multiplicity_regular_part_norm`
+  are coordinate versions for estimates stated directly at `sigma + i t`
+  with same-height zero candidate `beta + i t`.
 - `classical_zero_free_region_of_regular_part_norm_bound_and_two_t_bound`
   replaces the regular-part real estimate by the norm estimate
   `||-zeta'/zeta(s)+(s-rho)^{-1}|| <= B log |Im(s)|`, together with the

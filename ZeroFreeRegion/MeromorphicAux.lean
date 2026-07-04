@@ -1832,6 +1832,72 @@ lemma re_neg_logDeriv_riemannZeta_add_inv_le_of_multiplicity_regular_part_norm
     (by simpa [neg_logDeriv_riemannZeta_eq_neg_deriv_div] using hregular)
     hn him hsub
 
+/-- Coordinate form of the signed regular-part bridge at `s = sigma + i t`
+and a same-height zero candidate `rho = beta + i t`. -/
+lemma re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_regular_part_norm
+    {σ β t M : ℝ}
+    (hregular :
+      ‖-logDeriv riemannZeta ((σ : ℂ) + I * t) +
+          (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤ M)
+    (hsub : 0 < σ - β) :
+    (-deriv riemannZeta ((σ : ℂ) + I * t) /
+        riemannZeta ((σ : ℂ) + I * t)).re +
+      1 / (σ - β) ≤ M := by
+  let s : ℂ := (σ : ℂ) + I * t
+  let ρ : ℂ := (β : ℂ) + I * t
+  have hρ_im_eq : ρ.im = s.im := by simp [ρ, s]
+  have hsub' : 0 < s.re - ρ.re := by simpa [s, ρ] using hsub
+  have hinv :
+      (((σ - β : ℝ) : ℂ)⁻¹) = (s - ρ)⁻¹ := by
+    have hsub_eq : s - ρ = ((σ - β : ℝ) : ℂ) := by
+      apply Complex.ext <;> simp [s, ρ]
+    rw [← hsub_eq]
+  have hregular' :
+      ‖-logDeriv riemannZeta s + (s - ρ)⁻¹‖ ≤ M := by
+    calc
+      ‖-logDeriv riemannZeta s + (s - ρ)⁻¹‖
+          = ‖-logDeriv riemannZeta ((σ : ℂ) + I * t) +
+              (((σ - β : ℝ) : ℂ)⁻¹)‖ := by
+              rw [← hinv]
+      _ ≤ M := hregular
+  have h :=
+    re_neg_logDeriv_riemannZeta_add_inv_le_of_regular_part_norm
+      hregular' hρ_im_eq hsub'
+  simpa [s, ρ] using h
+
+/-- Multiplicity-aware coordinate form of the signed regular-part bridge at
+`s = sigma + i t` and `rho = beta + i t`. -/
+lemma re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_multiplicity_regular_part_norm
+    {σ β t M : ℝ} {n : ℕ}
+    (hregular :
+      ‖-logDeriv riemannZeta ((σ : ℂ) + I * t) +
+          (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤ M)
+    (hn : 0 < n) (hsub : 0 < σ - β) :
+    (-deriv riemannZeta ((σ : ℂ) + I * t) /
+        riemannZeta ((σ : ℂ) + I * t)).re +
+      1 / (σ - β) ≤ M := by
+  let s : ℂ := (σ : ℂ) + I * t
+  let ρ : ℂ := (β : ℂ) + I * t
+  have hρ_im_eq : ρ.im = s.im := by simp [ρ, s]
+  have hsub' : 0 < s.re - ρ.re := by simpa [s, ρ] using hsub
+  have hinv :
+      (((σ - β : ℝ) : ℂ)⁻¹) = (s - ρ)⁻¹ := by
+    have hsub_eq : s - ρ = ((σ - β : ℝ) : ℂ) := by
+      apply Complex.ext <;> simp [s, ρ]
+    rw [← hsub_eq]
+  have hregular' :
+      ‖-logDeriv riemannZeta s + (n : ℂ) * (s - ρ)⁻¹‖ ≤ M := by
+    calc
+      ‖-logDeriv riemannZeta s + (n : ℂ) * (s - ρ)⁻¹‖
+          = ‖-logDeriv riemannZeta ((σ : ℂ) + I * t) +
+              (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ := by
+              rw [← hinv]
+      _ ≤ M := hregular
+  have h :=
+    re_neg_logDeriv_riemannZeta_add_inv_le_of_multiplicity_regular_part_norm
+      hregular' hn hρ_im_eq hsub'
+  simpa [s, ρ] using h
+
 /-- Close the classical zero-free-region target from a norm bound on the
 complex regular part of `-ζ'/ζ` near a zero and the corresponding `σ + 2it`
 estimate.

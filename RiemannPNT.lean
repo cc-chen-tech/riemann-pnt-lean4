@@ -6413,6 +6413,34 @@ theorem re_neg_logDeriv_riemannZeta_add_inv_le_of_multiplicity_regular_part_norm
   ZeroFreeRegion.re_neg_logDeriv_riemannZeta_add_inv_le_of_multiplicity_regular_part_norm
     hregular hn him hsub
 
+/-- Public coordinate form of the signed regular-part bridge at
+`s = sigma + i t` and `rho = beta + i t`. -/
+theorem re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_regular_part_norm
+    {σ β t M : ℝ}
+    (hregular :
+      ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) +
+          (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤ M)
+    (hsub : 0 < σ - β) :
+    (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+        riemannZeta ((σ : ℂ) + Complex.I * t)).re +
+      1 / (σ - β) ≤ M :=
+  ZeroFreeRegion.re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_regular_part_norm
+    hregular hsub
+
+/-- Public multiplicity-aware coordinate form of the signed regular-part
+bridge at `s = sigma + i t` and `rho = beta + i t`. -/
+theorem re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_multiplicity_regular_part_norm
+    {σ β t M : ℝ} {n : ℕ}
+    (hregular :
+      ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) +
+          (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤ M)
+    (hn : 0 < n) (hsub : 0 < σ - β) :
+    (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+        riemannZeta ((σ : ℂ) + Complex.I * t)).re +
+      1 / (σ - β) ≤ M :=
+  ZeroFreeRegion.re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_multiplicity_regular_part_norm
+    hregular hn hsub
+
 /-- Public norm-bound regular-part closure at height `2`. -/
 theorem classical_zero_free_region_of_regular_part_norm_bound_and_two_t_bound
     (B : ℝ) (hB : 0 ≤ B)
