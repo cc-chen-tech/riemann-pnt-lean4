@@ -6028,6 +6028,36 @@ theorem log_norm_add_three_le_two_log_abs_im {s : ℂ}
     Real.log (‖s‖ + 3) ≤ 2 * Real.log |s.im| :=
   ZeroFreeRegion.log_norm_add_three_le_two_log_abs_im hs_re hs_height
 
+/-- Public standalone normalization from an affine full-height vertical
+`logDeriv ζ` estimate to the exact `C * log |t|` scale. -/
+theorem exists_re_im_logDeriv_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height
+    (T0 A B : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          A + B * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3)) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 5 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_im_logDeriv_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height
+    T0 A B hT0 hA hB hvertical
+
+/-- Public standalone normalization from a multiplicative full-height vertical
+`logDeriv ζ` estimate to the exact `C * log |t|` scale. -/
+theorem exists_re_im_logDeriv_vertical_log_bound_of_log_norm_add_three_bound_high_height
+    (T0 C : ℝ) (hT0 : 5 ≤ T0) (hC : 0 ≤ C)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          C * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3)) :
+    ∃ C' T0' : ℝ, 0 ≤ C' ∧ 5 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          C' * Real.log |t| :=
+  ZeroFreeRegion.exists_re_im_logDeriv_vertical_log_bound_of_log_norm_add_three_bound_high_height
+    T0 C hT0 hC hvertical
+
 /-- Public coordinate high-height closure from a single `C * log(|t| + 3)`
 bound for positive `logDeriv ζ` estimates. -/
 theorem classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_abs_add_three_bound_high_height

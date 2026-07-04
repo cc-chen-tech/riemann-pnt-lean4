@@ -2508,6 +2508,66 @@ lemma log_norm_add_three_le_two_log_abs_im {s : ℂ}
     log_norm_sigma_add_I_mul_add_three_le_two_log_abs
       (σ := s.re) (t := s.im) hs_re hs_height
 
+/-- Standalone normalization of a future vertical-strip log-derivative estimate.
+
+If a high-height estimate for `logDeriv ζ` on `1 <= σ <= 2` is available in
+the natural Borel/Jensen scale `A + B * log(‖σ+it‖ + 3)`, then above the same
+height it has the exact classical scale `C * log |t|`.  This theorem does not
+prove the missing zeta-specific growth estimate; it removes the remaining
+constant and height-scale bookkeeping once that estimate is supplied. -/
+lemma exists_re_im_logDeriv_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height
+    (T0 A B : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          A + B * Real.log (‖((σ : ℂ) + I * t)‖ + 3)) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 5 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          C * Real.log |t| := by
+  refine ⟨A + 2 * B, T0, add_nonneg hA (mul_nonneg (by norm_num) hB),
+    hT0, ?_⟩
+  intro σ t hσ_left hσ_right ht
+  have hσ_mem : σ ∈ Set.Icc 1 2 := ⟨hσ_left, hσ_right⟩
+  have ht5 : 5 ≤ |t| := hT0.trans ht
+  have hlog_ge_one : 1 ≤ Real.log |t| := by
+    exact (log_abs_gt_one_of_three_le (by linarith : 3 ≤ |t|)).le
+  have hA_le : A ≤ A * Real.log |t| := by
+    calc
+      A = A * 1 := by ring
+      _ ≤ A * Real.log |t| :=
+          mul_le_mul_of_nonneg_left hlog_ge_one hA
+  have hlog_norm :
+      Real.log (‖((σ : ℂ) + I * t)‖ + 3) ≤ 2 * Real.log |t| := by
+    simpa using
+      log_norm_sigma_add_I_mul_add_three_le_two_log_abs
+        (σ := σ) (t := t) hσ_mem ht5
+  calc
+    ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖
+        ≤ A + B * Real.log (‖((σ : ℂ) + I * t)‖ + 3) :=
+          hvertical σ t ht hσ_mem
+    _ ≤ A * Real.log |t| + B * (2 * Real.log |t|) := by
+          exact add_le_add hA_le (mul_le_mul_of_nonneg_left hlog_norm hB)
+    _ = (A + 2 * B) * Real.log |t| := by ring
+
+/-- Multiplicative full-height version of
+`exists_re_im_logDeriv_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height`. -/
+lemma exists_re_im_logDeriv_vertical_log_bound_of_log_norm_add_three_bound_high_height
+    (T0 C : ℝ) (hT0 : 5 ≤ T0) (hC : 0 ≤ C)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          C * Real.log (‖((σ : ℂ) + I * t)‖ + 3)) :
+    ∃ C' T0' : ℝ, 0 ≤ C' ∧ 5 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          C' * Real.log |t| := by
+  refine
+    exists_re_im_logDeriv_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height
+      T0 0 C hT0 (by norm_num) hC ?_
+  intro σ t ht hσ
+  simpa using hvertical σ t ht hσ
+
 /-- Coordinate high-height closure from a single `C * log(|t| + 3)` bound.
 
 This shape is common in analytic estimates because it is harmless at small

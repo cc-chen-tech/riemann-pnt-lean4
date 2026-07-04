@@ -577,6 +577,13 @@ Core verified declarations:
 - `log_norm_add_three_le_two_log_abs_im`
   is the corresponding complex-variable comparison in terms of
   `s.re` and `s.im`.
+- `exists_re_im_logDeriv_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height`
+  converts a future boundary-strip estimate
+  `||logDeriv zeta (sigma+it)|| <= A + B log(||sigma+it||+3)` into
+  the exact `C log |t|` target shape.
+- `exists_re_im_logDeriv_vertical_log_bound_of_log_norm_add_three_bound_high_height`
+  is the multiplicative version for inputs already stated as
+  `C log(||sigma+it||+3)`.
 - `classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_abs_add_three_bound_high_height`
   specializes the coordinate interface to estimates stated as
   `C * log(|t| + 3)` for both remaining zeta-specific bounds.
