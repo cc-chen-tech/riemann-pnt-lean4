@@ -674,6 +674,18 @@ Core verified declarations:
   height `log(||sigma + it|| + 3)`.
 - `classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height`
   packages that full-height logarithmic interface existentially.
+- `classical_zero_free_region_of_re_im_multiplicity_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height`
+  and `..._bound_high_height` are the multiplicity-aware coordinate versions,
+  allowing the regular-part estimate to isolate `n/(sigma-beta)`.
+- `classical_zero_free_region_of_exists_re_im_multiplicity_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height`
+  and `..._bound_high_height` package those multiplicity-aware full-height
+  coordinate inputs existentially.
+- `classical_zero_free_region_of_re_im_multiplicity_neg_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height`
+  and `..._bound_high_height` are the signed `-logDeriv zeta` multiplicity
+  versions of the same full-height coordinate handoff.
+- `classical_zero_free_region_of_exists_re_im_multiplicity_neg_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height`
+  and `..._bound_high_height` package those signed multiplicity-aware inputs
+  existentially.
 - `classical_zero_free_region_of_re_im_neg_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height`
   accepts the same coordinate full-height estimates in the signed
   `-logDeriv zeta` convention.

@@ -6610,6 +6610,166 @@ theorem classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_lo
   ZeroFreeRegion.classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height
     h
 
+/-- Public coordinate multiplicity-aware high-height closure from separate
+`Cregular * log(‖σ+it‖ + 3)` and `Cvertical * log(‖σ+it‖ + 3)` bounds. -/
+theorem classical_zero_free_region_of_re_im_multiplicity_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height
+    (T0 Cregular Cvertical : ℝ) (hT0 : 5 ≤ T0)
+    (hCregular : 0 ≤ Cregular) (hCvertical : 0 ≤ Cvertical)
+    (hregular :
+      ∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < σ - β →
+        ∃ n : ℕ, 0 < n ∧
+          ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) -
+              (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+            Cregular * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3))
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          Cvertical * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3)) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_re_im_multiplicity_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height
+    T0 Cregular Cvertical hT0 hCregular hCvertical hregular hvertical
+
+/-- Public coordinate multiplicity-aware high-height closure from one
+`C * log(‖σ+it‖ + 3)` bound. -/
+theorem classical_zero_free_region_of_re_im_multiplicity_logDeriv_regular_part_norm_log_norm_add_three_bound_high_height
+    (T0 C : ℝ) (hT0 : 5 ≤ T0) (hC : 0 ≤ C)
+    (hregular :
+      ∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < σ - β →
+        ∃ n : ℕ, 0 < n ∧
+          ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) -
+              (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+            C * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3))
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          C * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3)) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_re_im_multiplicity_logDeriv_regular_part_norm_log_norm_add_three_bound_high_height
+    T0 C hT0 hC hregular hvertical
+
+/-- Public existential coordinate multiplicity-aware high-height closure from
+separate full-height logarithmic bounds. -/
+theorem classical_zero_free_region_of_exists_re_im_multiplicity_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height
+    (h :
+      ∃ T0 Cregular Cvertical : ℝ, 5 ≤ T0 ∧
+        0 ≤ Cregular ∧ 0 ≤ Cvertical ∧
+        (∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+          0 < σ - β →
+          ∃ n : ℕ, 0 < n ∧
+            ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) -
+                (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+              Cregular * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3)) ∧
+        (∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+            Cvertical * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3))) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_re_im_multiplicity_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height
+    h
+
+/-- Public existential coordinate multiplicity-aware high-height closure from
+one full-height logarithmic bound. -/
+theorem classical_zero_free_region_of_exists_re_im_multiplicity_logDeriv_regular_part_norm_log_norm_add_three_bound_high_height
+    (h :
+      ∃ T0 C : ℝ, 5 ≤ T0 ∧ 0 ≤ C ∧
+        (∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+          0 < σ - β →
+          ∃ n : ℕ, 0 < n ∧
+            ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) -
+                (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+              C * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3)) ∧
+        (∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+            C * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3))) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_re_im_multiplicity_logDeriv_regular_part_norm_log_norm_add_three_bound_high_height
+    h
+
+/-- Public signed coordinate multiplicity-aware high-height closure from
+separate full-height logarithmic bounds. -/
+theorem classical_zero_free_region_of_re_im_multiplicity_neg_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height
+    (T0 Cregular Cvertical : ℝ) (hT0 : 5 ≤ T0)
+    (hCregular : 0 ≤ Cregular) (hCvertical : 0 ≤ Cvertical)
+    (hregular :
+      ∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < σ - β →
+        ∃ n : ℕ, 0 < n ∧
+          ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) +
+              (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+            Cregular * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3))
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          Cvertical * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3)) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_re_im_multiplicity_neg_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height
+    T0 Cregular Cvertical hT0 hCregular hCvertical hregular hvertical
+
+/-- Public signed coordinate multiplicity-aware high-height closure from one
+full-height logarithmic bound. -/
+theorem classical_zero_free_region_of_re_im_multiplicity_neg_logDeriv_regular_part_norm_log_norm_add_three_bound_high_height
+    (T0 C : ℝ) (hT0 : 5 ≤ T0) (hC : 0 ≤ C)
+    (hregular :
+      ∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < σ - β →
+        ∃ n : ℕ, 0 < n ∧
+          ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) +
+              (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+            C * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3))
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          C * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3)) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_re_im_multiplicity_neg_logDeriv_regular_part_norm_log_norm_add_three_bound_high_height
+    T0 C hT0 hC hregular hvertical
+
+/-- Public existential signed coordinate multiplicity-aware high-height closure
+from separate full-height logarithmic bounds. -/
+theorem classical_zero_free_region_of_exists_re_im_multiplicity_neg_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height
+    (h :
+      ∃ T0 Cregular Cvertical : ℝ, 5 ≤ T0 ∧
+        0 ≤ Cregular ∧ 0 ≤ Cvertical ∧
+        (∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+          0 < σ - β →
+          ∃ n : ℕ, 0 < n ∧
+            ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) +
+                (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+              Cregular * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3)) ∧
+        (∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+            Cvertical * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3))) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_re_im_multiplicity_neg_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height
+    h
+
+/-- Public existential signed coordinate multiplicity-aware high-height closure
+from one full-height logarithmic bound. -/
+theorem classical_zero_free_region_of_exists_re_im_multiplicity_neg_logDeriv_regular_part_norm_log_norm_add_three_bound_high_height
+    (h :
+      ∃ T0 C : ℝ, 5 ≤ T0 ∧ 0 ≤ C ∧
+        (∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+          0 < σ - β →
+          ∃ n : ℕ, 0 < n ∧
+            ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) +
+                (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+              C * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3)) ∧
+        (∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+            C * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3))) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_re_im_multiplicity_neg_logDeriv_regular_part_norm_log_norm_add_three_bound_high_height
+    h
+
 /-- Public signed coordinate high-height closure from separate
 `Cregular * log(‖σ+it‖ + 3)` and `Cvertical * log(‖σ+it‖ + 3)` bounds. -/
 theorem classical_zero_free_region_of_re_im_neg_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height
