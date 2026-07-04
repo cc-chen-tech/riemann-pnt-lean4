@@ -1566,6 +1566,33 @@ lemma classical_zero_free_region_of_neg_logDeriv_regular_part_norm_bound_and_two
     simpa [neg_logDeriv_riemannZeta_eq_neg_deriv_div] using
       htwo σ t ht hσ_gt hσ_le
 
+/-- Multiplicity-aware `-logDeriv ζ` notation form of the regular-part
+zero-free closure. -/
+lemma classical_zero_free_region_of_exists_multiplicity_neg_logDeriv_regular_part_norm_bound_and_two_t_bound
+    (B : ℝ) (hB : 0 ≤ B)
+    (hregular :
+      ∀ s ρ : ℂ, 2 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+        riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+        0 < s.re - ρ.re →
+        ∃ n : ℕ, 0 < n ∧
+          ‖-logDeriv riemannZeta s + (n : ℂ) * (s - ρ)⁻¹‖ ≤
+            B * Real.log |s.im|)
+    (htwo :
+      ∀ σ t : ℝ, 2 ≤ |t| → 1 < σ → σ ≤ 2 →
+        (-logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤
+          B * Real.log |t|) :
+    classical_zero_free_region := by
+  refine classical_zero_free_region_of_exists_multiplicity_regular_part_norm_bound_and_two_t_bound
+    B hB ?_ ?_
+  · intro s ρ hs_height hs_re_mem hζρ hρ_im_eq hρ_re_lt hsub
+    rcases hregular s ρ hs_height hs_re_mem hζρ hρ_im_eq hρ_re_lt hsub with
+      ⟨n, hn_pos, hn_bound⟩
+    exact ⟨n, hn_pos, by
+      simpa [neg_logDeriv_riemannZeta_eq_neg_deriv_div] using hn_bound⟩
+  · intro σ t ht hσ_gt hσ_le
+    simpa [neg_logDeriv_riemannZeta_eq_neg_deriv_div] using
+      htwo σ t ht hσ_gt hσ_le
+
 /-- Existential logarithmic-derivative notation form of the norm-bound
 regular-part closure. -/
 lemma classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_bound_and_two_t_bound

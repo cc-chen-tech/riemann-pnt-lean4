@@ -530,6 +530,9 @@ Core verified declarations:
 - `classical_zero_free_region_of_neg_logDeriv_regular_part_norm_bound_and_two_t_bound`
   is the same norm-bound closure in Mathlib's natural `-logDeriv zeta`
   notation, rewriting through the verified quotient bridge.
+- `classical_zero_free_region_of_exists_multiplicity_neg_logDeriv_regular_part_norm_bound_and_two_t_bound`
+  is the multiplicity-aware closure in `-logDeriv zeta` notation, directly
+  matching the output shape of the local principal-part decomposition lemmas.
 - `classical_zero_free_region_of_exists_neg_logDeriv_regular_part_norm_bound_and_two_t_bound`
   packages the `-logDeriv zeta` norm-bound input under one nonnegative
   logarithmic coefficient.
