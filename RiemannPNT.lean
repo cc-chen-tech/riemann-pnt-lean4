@@ -3313,6 +3313,14 @@ theorem exists_norm_logDeriv_riemannZeta_le_log_abs_im_add_three_of_one_add_le_r
       ‖logDeriv riemannZeta z‖ ≤ C * Real.log (|z.im| + 3) :=
   ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_le_log_abs_im_add_three_of_one_add_le_re hε
 
+/-- Public signed fixed-margin vertical logarithmic bound for `-logDeriv ζ`. -/
+theorem exists_norm_neg_logDeriv_riemannZeta_le_log_abs_im_add_three_of_one_add_le_re
+    {ε : ℝ} (hε : 0 < ε) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ z : ℂ, 1 + ε ≤ z.re →
+      ‖-logDeriv riemannZeta z‖ ≤ C * Real.log (|z.im| + 3) :=
+  ZeroFreeRegion.exists_norm_neg_logDeriv_riemannZeta_le_log_abs_im_add_three_of_one_add_le_re
+    hε
+
 /-- Public coordinate form of the fixed-margin vertical logarithmic bound for
 `logDeriv ζ` on points `σ + it`. -/
 theorem exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_add_three_of_one_add_le
@@ -3321,6 +3329,16 @@ theorem exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_add_three_of_one_ad
       ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
         C * Real.log (|t| + 3) :=
   ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_add_three_of_one_add_le hε
+
+/-- Public signed coordinate fixed-margin vertical logarithmic bound for
+`-logDeriv ζ` on points `σ + it`. -/
+theorem exists_norm_neg_logDeriv_riemannZeta_sigma_it_le_log_abs_add_three_of_one_add_le
+    {ε : ℝ} (hε : 0 < ε) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ σ t : ℝ, 1 + ε ≤ σ →
+      ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+        C * Real.log (|t| + 3) :=
+  ZeroFreeRegion.exists_norm_neg_logDeriv_riemannZeta_sigma_it_le_log_abs_add_three_of_one_add_le
+    hε
 
 /-- Public fixed-margin high-height vertical logarithmic bound in the exact
 `C * log |t|` scale.
@@ -3364,6 +3382,16 @@ theorem exists_norm_logDeriv_riemannZeta_sigma_two_it_le_log_abs_add_three_of_on
       ‖logDeriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t)‖ ≤
         C * Real.log (|t| + 3) :=
   ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_sigma_two_it_le_log_abs_add_three_of_one_add_le hε
+
+/-- Public signed fixed-margin norm bound for the shifted `σ+2it`
+logarithmic derivative term. -/
+theorem exists_norm_neg_logDeriv_riemannZeta_sigma_two_it_le_log_abs_add_three_of_one_add_le
+    {ε : ℝ} (hε : 0 < ε) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ σ t : ℝ, 1 + ε ≤ σ →
+      ‖-logDeriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t)‖ ≤
+        C * Real.log (|t| + 3) :=
+  ZeroFreeRegion.exists_norm_neg_logDeriv_riemannZeta_sigma_two_it_le_log_abs_add_three_of_one_add_le
+    hε
 
 /-- Public fixed-margin high-height logarithmic bound for the shifted third
 3-4-1 point `σ + 2it`, in the exact `C * log |t|` scale. -/

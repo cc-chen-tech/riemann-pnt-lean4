@@ -47,9 +47,13 @@ Core verified declarations:
   proves that for every fixed `epsilon > 0`, `logDeriv zeta` has a
   `C * log (|Im z| + 3)` norm bound throughout the half-plane
   `1 + epsilon <= Re z`.
+- `exists_norm_neg_logDeriv_riemannZeta_le_log_abs_im_add_three_of_one_add_le_re`
+  is the signed version of the same fixed-margin half-plane bound.
 - `exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_add_three_of_one_add_le`
   is the coordinate form of the same fixed-margin logarithmic bound on
   vertical lines `sigma + it`.
+- `exists_norm_neg_logDeriv_riemannZeta_sigma_it_le_log_abs_add_three_of_one_add_le`
+  is the signed coordinate form on vertical lines `sigma + it`.
 - `exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_of_fixed_margin`
   converts that fixed-margin coordinate bound to the exact high-height scale
   `C * log |t|`, still under the hypothesis `1 + epsilon <= sigma`.
@@ -64,6 +68,8 @@ Core verified declarations:
 - `exists_norm_logDeriv_riemannZeta_sigma_two_it_le_log_abs_add_three_of_one_add_le`
   specializes fixed-margin logarithmic control to the shifted point
   `sigma + 2*I*t`.
+- `exists_norm_neg_logDeriv_riemannZeta_sigma_two_it_le_log_abs_add_three_of_one_add_le`
+  is the signed shifted fixed-margin bound in the same `log(|t|+3)` scale.
 - `exists_norm_logDeriv_riemannZeta_sigma_two_it_le_log_abs_of_fixed_margin`
   converts that shifted fixed-margin bound to the exact high-height scale
   `C * log |t|`.
