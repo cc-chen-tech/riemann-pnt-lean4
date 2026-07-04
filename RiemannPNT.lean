@@ -5914,6 +5914,85 @@ theorem classical_zero_free_region_of_exists_re_im_multiplicity_logDeriv_regular
     ZeroFreeRegion.classical_zero_free_region :=
   ZeroFreeRegion.classical_zero_free_region_of_exists_re_im_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height h
 
+/-- Public coordinate multiplicity-aware high-height closure from a single
+`C * (1 + log |t|)` bound. -/
+theorem classical_zero_free_region_of_re_im_multiplicity_logDeriv_regular_part_norm_one_add_log_bound_high_height
+    (T0 C : ℝ) (hT0 : 3 ≤ T0) (hC : 0 ≤ C)
+    (hregular :
+      ∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < σ - β →
+        ∃ n : ℕ, 0 < n ∧
+          ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) -
+              (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+            C * (1 + Real.log |t|))
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          C * (1 + Real.log |t|)) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_re_im_multiplicity_logDeriv_regular_part_norm_one_add_log_bound_high_height
+    T0 C hT0 hC hregular hvertical
+
+/-- Public coordinate multiplicity-aware high-height closure from separate
+`Cregular * (1 + log |t|)` and `Cvertical * (1 + log |t|)` bounds. -/
+theorem classical_zero_free_region_of_re_im_multiplicity_logDeriv_regular_part_norm_one_add_log_bounds_high_height
+    (T0 Cregular Cvertical : ℝ) (hT0 : 3 ≤ T0)
+    (hCregular : 0 ≤ Cregular) (hCvertical : 0 ≤ Cvertical)
+    (hregular :
+      ∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < σ - β →
+        ∃ n : ℕ, 0 < n ∧
+          ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) -
+              (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+            Cregular * (1 + Real.log |t|)
+          )
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          Cvertical * (1 + Real.log |t|)) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_re_im_multiplicity_logDeriv_regular_part_norm_one_add_log_bounds_high_height
+    T0 Cregular Cvertical hT0 hCregular hCvertical hregular hvertical
+
+/-- Public existential coordinate multiplicity-aware high-height closure from
+a single `C * (1 + log |t|)` bound. -/
+theorem classical_zero_free_region_of_exists_re_im_multiplicity_logDeriv_regular_part_norm_one_add_log_bound_high_height
+    (h :
+      ∃ T0 C : ℝ, 3 ≤ T0 ∧ 0 ≤ C ∧
+        (∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+          0 < σ - β →
+          ∃ n : ℕ, 0 < n ∧
+            ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) -
+                (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+              C * (1 + Real.log |t|)) ∧
+        (∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+            C * (1 + Real.log |t|))) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_re_im_multiplicity_logDeriv_regular_part_norm_one_add_log_bound_high_height h
+
+/-- Public existential coordinate multiplicity-aware high-height closure from
+separate `Cregular * (1 + log |t|)` and `Cvertical * (1 + log |t|)` bounds. -/
+theorem classical_zero_free_region_of_exists_re_im_multiplicity_logDeriv_regular_part_norm_one_add_log_bounds_high_height
+    (h :
+      ∃ T0 Cregular Cvertical : ℝ, 3 ≤ T0 ∧
+        0 ≤ Cregular ∧ 0 ≤ Cvertical ∧
+        (∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+          0 < σ - β →
+          ∃ n : ℕ, 0 < n ∧
+            ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) -
+                (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+              Cregular * (1 + Real.log |t|)) ∧
+        (∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+          ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+            Cvertical * (1 + Real.log |t|))) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_re_im_multiplicity_logDeriv_regular_part_norm_one_add_log_bounds_high_height h
+
 /-- Public existential high-height closure from positive `logDeriv ζ`
 regular-part and vertical-strip norm estimates. -/
 theorem classical_zero_free_region_of_exists_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height

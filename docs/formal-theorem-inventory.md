@@ -576,6 +576,15 @@ Core verified declarations:
   estimates stated for `sigma+it` and same-height zero candidates `beta+it`.
 - `classical_zero_free_region_of_exists_re_im_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height`
   packages the coordinate multiplicity-aware high-height inputs existentially.
+- `classical_zero_free_region_of_re_im_multiplicity_logDeriv_regular_part_norm_one_add_log_bound_high_height`
+  accepts the common single-coefficient estimate shape `C * (1 + log |t|)`
+  while preserving the positive multiplicity `n` in the local principal part.
+- `classical_zero_free_region_of_re_im_multiplicity_logDeriv_regular_part_norm_one_add_log_bounds_high_height`
+  allows separate `Cregular * (1 + log |t|)` and
+  `Cvertical * (1 + log |t|)` coefficients for the two analytic estimates.
+- `classical_zero_free_region_of_exists_re_im_multiplicity_logDeriv_regular_part_norm_one_add_log_bound_high_height`
+  and `..._bounds_high_height` package these multiplicity-aware one-add-log
+  coordinate interfaces existentially.
 - `classical_zero_free_region_of_exists_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height`
   packages the high-height positive-log-derivative convention existentially.
 - `classical_zero_free_region_of_logDeriv_regular_part_norm_affine_log_bound_and_vertical_logDeriv_norm_affine_log_bound_high_height`
