@@ -1827,10 +1827,50 @@ theorem finite_zero_sum_nonnegative_of_laplace_pair_positive
   PrimeNumberTheorem.finite_zero_sum_nonnegative_of_laplace_pair_positive
     S F center hF hstrip
 
+/-- Public vertical-line zero-free predicate for zeta. -/
+abbrev NoZerosOnVerticalLine (σ : ℝ) : Prop :=
+  PrimeNumberTheorem.NoZerosOnVerticalLine σ
+
+/-- Public power-scale Chebyshev-`ψ` error predicate. -/
+abbrev PsiPowerErrorBound (θ : ℝ) : Prop :=
+  PrimeNumberTheorem.PsiPowerErrorBound θ
+
+/-- Public concrete `ψ` error input below the `2/3` barrier. -/
+abbrev PsiPowerErrorBelowTwoThirds : Prop :=
+  PrimeNumberTheorem.PsiPowerErrorBelowTwoThirds
+
+/-- Public concrete converse interface: the `ψ` error below `2/3` excludes
+nontrivial zeros on `Re(s)=2/3`. -/
+abbrev PsiPowerErrorBelowTwoThirdsExcludesLineTwoThirds : Prop :=
+  PrimeNumberTheorem.PsiPowerErrorBelowTwoThirdsExcludesLineTwoThirds
+
+/-- Public general power-saving `ψ` error below a boundary line. -/
+abbrev PsiPowerErrorBelowLine (β : ℝ) : Prop :=
+  PrimeNumberTheorem.PsiPowerErrorBelowLine β
+
+/-- Public general converse interface: a `ψ` power saving below `β` excludes
+nontrivial zeros on or to the right of `Re(s)=β`. -/
+abbrev PsiPowerErrorBelowLineExcludesZerosRightOf (β : ℝ) : Prop :=
+  PrimeNumberTheorem.PsiPowerErrorBelowLineExcludesZerosRightOf β
+
 /-- Public explicit-formula converse interface for excluding zeros from a
 power-scale Chebyshev-`ψ` error bound. -/
 abbrev ExplicitFormulaConversePowerTarget (β : ℝ) : Prop :=
   PrimeNumberTheorem.ExplicitFormulaConversePowerTarget β
+
+/-- Public bridge: RH excludes zeta zeros on `Re(s)=1/3`. -/
+theorem no_zeros_on_one_third_of_RH
+    (hRH : _root_.RiemannHypothesis.Statement) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) :=
+  PrimeNumberTheorem.no_zeros_on_one_third_of_RH hRH
+
+/-- Public specialized right-half-plane bridge: zero-freeness in
+`Re(s) >= 2/3` excludes zeros on the reflected line `Re(s)=1/3`. -/
+theorem no_zeros_on_one_third_of_right_halfplane_two_thirds
+    (hRight : ∀ s : ℂ, (2 / 3 : ℝ) ≤ s.re → riemannZeta s ≠ 0) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) :=
+  PrimeNumberTheorem.no_zeros_on_one_third_of_right_halfplane_two_thirds
+    hRight
 
 /-- Public conditional bridge from a general `ψ` power-saving error below a
 line to zero-freeness on that vertical line. -/
@@ -1888,6 +1928,15 @@ theorem exists_nontrivial_zero_on_line_iff_reflected (β : ℝ) :
         s.re = 1 - β) :=
   PrimeNumberTheorem.exists_nontrivial_zero_on_line_iff_reflected β
 
+/-- Public specialization: nontrivial zeros on `Re(s)=1/3` exist exactly when
+nontrivial zeros on the reflected line `Re(s)=2/3` exist. -/
+theorem exists_nontrivial_zero_on_one_third_iff_two_thirds :
+    (∃ s : ℂ, _root_.RiemannHypothesis.IsNontrivialZero s ∧
+      s.re = (1 / 3 : ℝ)) ↔
+      (∃ s : ℂ, _root_.RiemannHypothesis.IsNontrivialZero s ∧
+        s.re = (2 / 3 : ℝ)) :=
+  PrimeNumberTheorem.exists_nontrivial_zero_on_one_third_iff_two_thirds
+
 /-- Public reflected-line equivalence for zero-freeness in the critical strip. -/
 theorem no_zeros_on_vertical_line_iff_reflected
     {β : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1) :
@@ -1904,6 +1953,15 @@ theorem no_zeros_on_one_third_of_general_psi_power_error_bridge
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine (2 / 3)) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) :=
   PrimeNumberTheorem.no_zeros_on_one_third_of_general_psi_power_error_bridge
+    hbridge herror
+
+/-- Public concrete `ψ`-error bridge: a power saving below `2/3` plus the
+converse line-exclusion interface excludes zeta zeros on `Re(s)=1/3`. -/
+theorem no_zeros_on_one_third_of_psi_power_error_below_two_thirds_bridge
+    (hbridge : PrimeNumberTheorem.PsiPowerErrorBelowTwoThirdsExcludesLineTwoThirds)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowTwoThirds) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) :=
+  PrimeNumberTheorem.no_zeros_on_one_third_of_psi_power_error_below_two_thirds_bridge
     hbridge herror
 
 /-- Public specialization of the explicit-formula converse bridge to the
@@ -2082,6 +2140,23 @@ theorem nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positiv
   PrimeNumberTheorem.nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive
     T U F center hF hstrip
 
+/-- Public paired-average nonnegativity over newly included zeros from
+strip-local Laplace-pair positivity around an arbitrary real center. -/
+theorem nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_laplace_pair_positive
+    (T U : ℝ) (F : ℂ → ℂ) (center : ℝ)
+    (hF : PrimeNumberTheorem.LaplacePairPositive F center)
+    (hstrip : ∀ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+        PrimeNumberTheorem.nontrivialZerosFinset T,
+      0 ≤ ρ.re ∧ ρ.re ≤ center) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T,
+        ((F ρ).re + (F ((center : ℂ) - ρ)).re)) /
+        (((PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ)) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_laplace_pair_positive
+    T U F center hF hstrip
+
 /-- Public paired-sum nonnegativity over newly included zeros from center-one
 Laplace-pair positivity. -/
 theorem nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive_one
@@ -2091,6 +2166,20 @@ theorem nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positiv
         PrimeNumberTheorem.nontrivialZerosFinset T,
       ((F ρ).re + (F (1 - ρ)).re) :=
   PrimeNumberTheorem.nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive_one
+    T U F hF
+
+/-- Public center-one paired-average nonnegativity over newly included zeros
+from strip-local Laplace-pair positivity. -/
+theorem nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_laplace_pair_positive_one
+    (T U : ℝ) (F : ℂ → ℂ)
+    (hF : PrimeNumberTheorem.LaplacePairPositive F 1) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T,
+        ((F ρ).re + (F (1 - ρ)).re)) /
+        (((PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ)) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_laplace_pair_positive_one
     T U F hF
 
 /-- Public unpaired new-zero real-part nonnegativity from center-one
@@ -2223,6 +2312,20 @@ theorem nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive
   PrimeNumberTheorem.nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive
     T F center hF hstrip
 
+/-- Public finite nontrivial-zero paired-average nonnegativity from strip-local
+Laplace-pair positivity. -/
+theorem nontrivialZerosFinset_pair_average_nonnegative_of_laplace_pair_positive
+    (T : ℝ) (F : ℂ → ℂ) (center : ℝ)
+    (hF : PrimeNumberTheorem.LaplacePairPositive F center)
+    (hstrip : ∀ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+      0 ≤ ρ.re ∧ ρ.re ≤ center) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+        ((F ρ).re + (F ((center : ℂ) - ρ)).re)) /
+        ((PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_pair_average_nonnegative_of_laplace_pair_positive
+    T F center hF hstrip
+
 /-- Public center-one specialization of finite nontrivial-zero paired-sum
 nonnegativity from strip-local Laplace-pair positivity. -/
 theorem nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive_one
@@ -2231,6 +2334,18 @@ theorem nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive_one
     0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
       ((F ρ).re + (F (1 - ρ)).re) :=
   PrimeNumberTheorem.nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive_one
+    T F hF
+
+/-- Public center-one finite nontrivial-zero paired-average nonnegativity from
+strip-local Laplace-pair positivity. -/
+theorem nontrivialZerosFinset_pair_average_nonnegative_of_laplace_pair_positive_one
+    (T : ℝ) (F : ℂ → ℂ)
+    (hF : PrimeNumberTheorem.LaplacePairPositive F 1) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+        ((F ρ).re + (F (1 - ρ)).re)) /
+        ((PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_pair_average_nonnegative_of_laplace_pair_positive_one
     T F hF
 
 theorem nontrivialZerosFinset_sum_re_nonnegative_of_laplace_pair_positive_one
@@ -2454,6 +2569,17 @@ theorem explicitFormulaApprox_eq_of_global_height_bound {x B T : ℝ}
     PrimeNumberTheorem.explicitFormulaApprox x T =
       PrimeNumberTheorem.explicitFormulaApprox x B :=
   PrimeNumberTheorem.explicitFormulaApprox_eq_of_global_height_bound hBT hbound
+
+/-- Public eventual no-new-zero bridge from a global height bound. -/
+theorem nontrivialZerosFinset_eventually_sdiff_eq_empty_of_global_height_bound
+    {B : ℝ}
+    (hbound : ∀ ρ : ℂ, _root_.RiemannHypothesis.IsNontrivialZero ρ →
+      |ρ.im| ≤ B) :
+    ∀ᶠ T in atTop,
+      PrimeNumberTheorem.nontrivialZerosFinset T \
+        PrimeNumberTheorem.nontrivialZerosFinset B = ∅ :=
+  PrimeNumberTheorem.nontrivialZerosFinset_eventually_sdiff_eq_empty_of_global_height_bound
+    hbound
 
 /-- Public eventual stability of the explicit-formula truncation under a global
 height bound for nontrivial zeros. -/
@@ -5203,6 +5329,12 @@ theorem btyScaledComplexExpAbsSqCertificate :
       btyDetectorCoeff btyExpCoeff :=
   ZeroFreeRegion.btyScaledComplexExpAbsSqCertificate
 
+/-- Public pointwise nonnegativity of the BTY degree-16 cosine detector. -/
+theorem btyDetectorPolynomial_nonneg (θ : ℝ) :
+    0 ≤ ∑ k ∈ btyDetectorSupport,
+      btyDetectorCoeff k * Real.cos ((k : ℝ) * θ) :=
+  ZeroFreeRegion.btyDetectorPolynomial_nonneg θ
+
 /-- Public automatic logarithmic-derivative detector inequality from the full
 BTY scaled certificate. -/
 theorem log_deriv_zeta_nonneg_bty_detector_from_scaled_certificate
@@ -5271,6 +5403,92 @@ theorem log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_shift_upper_bound
       - ((3458648 : ℝ) / 2163835) * B :=
   ZeroFreeRegion.log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_shift_upper_bound_simplified
     σ hσ t B hupper
+
+/-- Public uniform norm-bound version of the BTY `k = 1` lower bound. -/
+theorem log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_vertical_norm_bound
+    (σ : ℝ) (hσ : 1 < σ) (t B : ℝ)
+    (hupper : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      ‖logDeriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)‖ ≤ B) :
+    (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+      riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+      - ((3458648 : ℝ) / 2163835) * B :=
+  ZeroFreeRegion.log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_vertical_norm_bound
+    σ hσ t B hupper
+
+/-- Public uniform logarithmic norm-bound version of the BTY `k = 1` lower
+bound. -/
+theorem log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_vertical_log_bound
+    (σ : ℝ) (hσ : 1 < σ) (t B L0 : ℝ)
+    (hupper : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      ‖logDeriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)‖ ≤ B * L0) :
+    (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+      riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+      - ((3458648 : ℝ) / 2163835) * (B * L0) :=
+  ZeroFreeRegion.log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_vertical_log_bound
+    σ hσ t B L0 hupper
+
+/-- Public handoff from a one-variable vertical logarithmic-derivative bound
+to the finite-family BTY detector bound. -/
+theorem btyDetector_uniform_vertical_log_bound_of_global_log_abs_add_three_bound
+    (σ t B L0 : ℝ) (hB : 0 ≤ B)
+    (hglobal : ∀ u : ℝ,
+      ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * u)‖ ≤
+        B * Real.log (|u| + 3))
+    (hlog : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      Real.log (|(k : ℝ) * t| + 3) ≤ L0) :
+    ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      ‖logDeriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)‖ ≤ B * L0 :=
+  ZeroFreeRegion.btyDetector_uniform_vertical_log_bound_of_global_log_abs_add_three_bound
+    σ t B L0 hB hglobal hlog
+
+/-- Public BTY lower bound from a one-variable vertical logarithmic-derivative
+bound and finite detector-frequency height comparison. -/
+theorem log_deriv_zeta_bty_detector_one_lower_bound_of_global_vertical_log_abs_add_three_bound
+    (σ : ℝ) (hσ : 1 < σ) (t B L0 : ℝ) (hB : 0 ≤ B)
+    (hglobal : ∀ u : ℝ,
+      ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * u)‖ ≤
+        B * Real.log (|u| + 3))
+    (hlog : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      Real.log (|(k : ℝ) * t| + 3) ≤ L0) :
+    (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+      riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+      - ((3458648 : ℝ) / 2163835) * (B * L0) :=
+  ZeroFreeRegion.log_deriv_zeta_bty_detector_one_lower_bound_of_global_vertical_log_abs_add_three_bound
+    σ hσ t B L0 hB hglobal hlog
+
+/-- Public automatic finite BTY support height comparison. -/
+theorem btyDetector_log_abs_mul_add_three_le_log_seventeen_mul_abs_add_three
+    (t : ℝ) {k : ℕ} (hk : k ∈ btyDetectorSupport.erase 1) :
+    Real.log (|(k : ℝ) * t| + 3) ≤ Real.log (17 * (|t| + 3)) :=
+  ZeroFreeRegion.btyDetector_log_abs_mul_add_three_le_log_seventeen_mul_abs_add_three
+    t hk
+
+/-- Public BTY lower bound from a one-variable vertical logarithmic-derivative
+bound, with the finite detector-frequency height comparison discharged
+automatically. -/
+theorem log_deriv_zeta_bty_detector_one_lower_bound_of_global_vertical_log_abs_add_three_bound_auto
+    (σ : ℝ) (hσ : 1 < σ) (t B : ℝ) (hB : 0 ≤ B)
+    (hglobal : ∀ u : ℝ,
+      ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * u)‖ ≤
+        B * Real.log (|u| + 3)) :
+    (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+      riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+      - ((3458648 : ℝ) / 2163835) *
+        (B * Real.log (17 * (|t| + 3))) :=
+  ZeroFreeRegion.log_deriv_zeta_bty_detector_one_lower_bound_of_global_vertical_log_abs_add_three_bound_auto
+    σ hσ t B hB hglobal
+
+/-- Public fixed-margin BTY lower bound from the existing vertical
+logarithmic-derivative estimate for `Re(s) >= 1 + ε`. -/
+theorem exists_log_deriv_zeta_bty_detector_one_lower_bound_of_one_add_le
+    {ε : ℝ} (hε : 0 < ε) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ σ t : ℝ, 1 + ε ≤ σ →
+      (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+        riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+        - ((3458648 : ℝ) / 2163835) *
+          (C * Real.log (17 * (|t| + 3))) :=
+  ZeroFreeRegion.exists_log_deriv_zeta_bty_detector_one_lower_bound_of_one_add_le
+    hε
 
 /-- Public constant-one complex-exponential certificate. -/
 theorem complexExpAbsSqCertificate_const_one :
@@ -7623,6 +7841,51 @@ theorem log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_signed_right_shif
     ring
   rw [hheight] at hupper
   exact hupper.trans (hBupper k hk)
+
+/-- Simplified-constant signed version of
+`log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_signed_right_shift_borel_family`. -/
+theorem log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_signed_right_shift_borel_family_simplified
+    {Are Bre Acenter Bcenter r H σ t Bupper : ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3)
+    (hHpos : 0 < H)
+    (hH : ∀ k, k ∈ btyDetectorSupport.erase 1 → H + 2 * r ≤ |(k : ℝ) * t|)
+    (ht : ∀ k, k ∈ btyDetectorSupport.erase 1 → 6 ≤ |(k : ℝ) * t|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hM : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) +
+          Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hlog : ∀ k, k ∈ btyDetectorSupport.erase 1 → ∀ w : ℂ,
+      w ∈ Metric.ball
+          (((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ))) (2 * r) →
+        (-logDeriv riemannZeta w).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) +
+              Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hcenter : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      ‖-logDeriv riemannZeta
+          (((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hBupper : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+        Real.log (‖((σ : ℂ) + (k : ℂ) * Complex.I * t)‖ + 3) ≤ Bupper) :
+    (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+      riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+      - ((3458648 : ℝ) / 2163835) * Bupper := by
+  have h :=
+    log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_signed_right_shift_borel_family
+      hr hσ hσr hHpos hH ht hA hB hM hlog hcenter hBupper
+  have hconst :
+      - (((6917296 : ℝ) / 2485395) * Bupper) / btyDetectorCoeff 1 =
+        - ((3458648 : ℝ) / 2163835) * Bupper := by
+    rw [btyDetectorCoeff_one]
+    ring_nf
+  simpa [hconst] using h
 
 /-- Public shifted third-term real-part quotient form of the right-shifted
 Borel transfer for `logDeriv ζ`. -/
@@ -10540,6 +10803,18 @@ theorem circleAverage_log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_radius
       Real.log A + (2 * B) * Real.log (|t| + |R| + 3) :=
   ZeroFreeRegion.circleAverage_log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_radius_three_of_polynomial_growth
     hT0 hA hB hleft hright hheight hpoly
+
+/-- Public coordinate zeta polynomial-growth-to-log-growth conversion in the
+classical high-height scale `log |t|`. -/
+theorem log_norm_riemannZeta_sigma_it_le_affine_log_abs_of_polynomial_growth
+    {T0 A B : ℝ} (hA : 1 ≤ A) (hB : 0 ≤ B)
+    (hpoly : ∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc (1 : ℝ) 3 →
+      ‖riemannZeta z‖ ≤ A * (‖z‖ + 3) ^ B) :
+    ∀ σ t : ℝ, T0 ≤ |t| → 6 ≤ |t| → σ ∈ Set.Icc (1 : ℝ) 3 →
+      Real.log ‖riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+        Real.log A + (2 * B) * Real.log |t| :=
+  ZeroFreeRegion.log_norm_riemannZeta_sigma_it_le_affine_log_abs_of_polynomial_growth
+    hA hB hpoly
 
 /-- Public standalone normalization from an affine full-height vertical
 `logDeriv ζ` estimate to the exact `C * log |t|` scale. -/
@@ -14397,6 +14672,49 @@ theorem new_zero_card_tail_tendsto_zero_of_eventually_sdiff_eq_empty
   PrimeNumberTheorem.new_zero_card_tail_tendsto_zero_of_eventually_sdiff_eq_empty
     hnew
 
+/-- Public eventual-zero statement for the new-zero contribution under a global
+height bound. -/
+theorem new_zero_contribution_sum_eventually_zero_of_global_height_bound
+    {x B : ℝ}
+    (hbound : ∀ ρ : ℂ, _root_.RiemannHypothesis.IsNontrivialZero ρ →
+      |ρ.im| ≤ B) :
+    (fun T : ℝ =>
+      ∑ ρ ∈ (PrimeNumberTheorem.nontrivialZerosFinset T \
+          PrimeNumberTheorem.nontrivialZerosFinset B),
+        (x : ℂ) ^ ρ / ρ) =ᶠ[atTop] fun _T : ℝ => 0 :=
+  PrimeNumberTheorem.new_zero_contribution_sum_eventually_zero_of_global_height_bound
+    hbound
+
+/-- Public reciprocal-norm new-zero tail convergence under a global height
+bound. -/
+theorem new_zero_inv_norm_tail_tendsto_zero_of_global_height_bound
+    {x B : ℝ}
+    (hbound : ∀ ρ : ℂ, _root_.RiemannHypothesis.IsNontrivialZero ρ →
+      |ρ.im| ≤ B) :
+    Tendsto
+      (fun T : ℝ =>
+        Real.sqrt x *
+          ∑ ρ ∈ (PrimeNumberTheorem.nontrivialZerosFinset T \
+              PrimeNumberTheorem.nontrivialZerosFinset B), ‖ρ‖⁻¹)
+      atTop (𝓝 0) :=
+  PrimeNumberTheorem.new_zero_inv_norm_tail_tendsto_zero_of_global_height_bound
+    hbound
+
+/-- Public zero-count new-zero tail convergence under a global height bound. -/
+theorem new_zero_card_tail_tendsto_zero_of_global_height_bound
+    {x B : ℝ}
+    (hbound : ∀ ρ : ℂ, _root_.RiemannHypothesis.IsNontrivialZero ρ →
+      |ρ.im| ≤ B) :
+    Tendsto
+      (fun T : ℝ =>
+        Real.sqrt x *
+          ((2 : ℝ) *
+            (PrimeNumberTheorem.nontrivialZerosFinset T \
+              PrimeNumberTheorem.nontrivialZerosFinset B).card))
+      atTop (𝓝 0) :=
+  PrimeNumberTheorem.new_zero_card_tail_tendsto_zero_of_global_height_bound
+    hbound
+
 /-- Public conditional explicit-formula bridge from an RH reciprocal-norm tail
 bound over newly included zeros. -/
 theorem explicit_formula_von_mangoldt_of_RH_base_and_new_zero_sum_tendsto_zero
@@ -14434,6 +14752,61 @@ theorem explicit_formula_von_mangoldt_of_RH_base_and_new_zero_card_tendsto_zero
     PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
   PrimeNumberTheorem.explicit_formula_von_mangoldt_of_RH_base_and_new_zero_card_tendsto_zero
     hRH hB htail
+
+/-- Public composed bridge from RH, a base explicit-formula identity, and
+eventual absence of new zero terms, using the reciprocal-norm tail route. -/
+theorem explicit_formula_von_mangoldt_of_RH_base_and_eventually_no_new_zeros_via_sum_tail
+    (hRH : _root_.RiemannHypothesis.Statement)
+    {x B : ℝ} {hx : x ≥ 2}
+    (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
+      (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
+    (hnew : ∀ᶠ T in atTop,
+      PrimeNumberTheorem.nontrivialZerosFinset T \
+        PrimeNumberTheorem.nontrivialZerosFinset B = ∅) :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_RH_base_and_eventually_no_new_zeros_via_sum_tail
+    hRH hB hnew
+
+/-- Public composed bridge from RH, a base explicit-formula identity, and
+eventual absence of new zero terms, using the zero-count tail route. -/
+theorem explicit_formula_von_mangoldt_of_RH_base_and_eventually_no_new_zeros_via_card_tail
+    (hRH : _root_.RiemannHypothesis.Statement)
+    {x B : ℝ} {hx : x ≥ 2}
+    (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
+      (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
+    (hnew : ∀ᶠ T in atTop,
+      PrimeNumberTheorem.nontrivialZerosFinset T \
+        PrimeNumberTheorem.nontrivialZerosFinset B = ∅) :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_RH_base_and_eventually_no_new_zeros_via_card_tail
+    hRH hB hnew
+
+/-- Public RH-tail route from a global zero-height bound, using the
+reciprocal-norm tail interface.  The exact global-height bridge is stronger;
+this wrapper keeps the tail-route API explicit. -/
+theorem explicit_formula_von_mangoldt_of_RH_base_and_global_height_bound_via_sum_tail
+    (hRH : _root_.RiemannHypothesis.Statement)
+    {x B : ℝ} {hx : x ≥ 2}
+    (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
+      (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
+    (hbound : ∀ ρ : ℂ, _root_.RiemannHypothesis.IsNontrivialZero ρ →
+      |ρ.im| ≤ B) :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_RH_base_and_global_height_bound_via_sum_tail
+    hRH hB hbound
+
+/-- Public RH-tail route from a global zero-height bound, using the zero-count
+tail interface. -/
+theorem explicit_formula_von_mangoldt_of_RH_base_and_global_height_bound_via_card_tail
+    (hRH : _root_.RiemannHypothesis.Statement)
+    {x B : ℝ} {hx : x ≥ 2}
+    (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
+      (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
+    (hbound : ∀ ρ : ℂ, _root_.RiemannHypothesis.IsNontrivialZero ρ →
+      |ρ.im| ≤ B) :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_RH_base_and_global_height_bound_via_card_tail
+    hRH hB hbound
 
 /-- Public stability bridge: if the zero sum has no new terms eventually and
 the stable truncation equals `ψ₀(x)`, then the explicit-formula target follows. -/

@@ -3896,6 +3896,23 @@ lemma nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive
   finite_zero_sum_nonnegative_of_laplace_pair_positive
     (nontrivialZerosFinset U \ nontrivialZerosFinset T) F center hF hstrip
 
+/-- Average paired contribution over newly included nontrivial zeros is
+nonnegative from strip-local Laplace-pair positivity.  This does not reindex to
+an unpaired sum unless the pairing center is known to preserve the zero set. -/
+lemma nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_laplace_pair_positive
+    (T U : ℝ) (F : ℂ → ℂ) (center : ℝ)
+    (hF : LaplacePairPositive F center)
+    (hstrip : ∀ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+      0 ≤ ρ.re ∧ ρ.re ≤ center) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        ((F ρ).re + (F ((center : ℂ) - ρ)).re)) /
+        (((nontrivialZerosFinset U \ nontrivialZerosFinset T).card : ℝ)) :=
+  div_nonneg
+    (nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive
+      T U F center hF hstrip)
+    (Nat.cast_nonneg _)
+
 /-- Center-one Laplace-pair positivity gives paired-sum nonnegativity over the
 newly included nontrivial zeros between two height cutoffs. -/
 lemma nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive_one
@@ -3909,6 +3926,21 @@ lemma nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive_
       have hU : ρ ∈ nontrivialZerosFinset U := (Finset.mem_sdiff.mp hρ).1
       rcases mem_nontrivialZerosFinset.mp hU with ⟨hzero, _hheight⟩
       exact ⟨le_of_lt hzero.2.1, le_of_lt hzero.2.2⟩)
+
+/-- Average paired contribution over newly included nontrivial zeros is
+nonnegative from center-one Laplace-pair positivity.  This packages the common
+critical-strip center used by Stechkin/Heath-Brown pair detectors. -/
+lemma nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_laplace_pair_positive_one
+    (T U : ℝ) (F : ℂ → ℂ)
+    (hF : LaplacePairPositive F 1) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        ((F ρ).re + (F (1 - ρ)).re)) /
+        (((nontrivialZerosFinset U \ nontrivialZerosFinset T).card : ℝ)) :=
+  div_nonneg
+    (nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive_one
+      T U F hF)
+    (Nat.cast_nonneg _)
 
 /-- Center-one Laplace-pair positivity makes the unpaired real-part sum over
 newly included nontrivial zeros nonnegative. -/
@@ -3962,6 +3994,21 @@ lemma nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive
   finite_zero_sum_nonnegative_of_laplace_pair_positive
     (nontrivialZerosFinset T) F center hF hstrip
 
+/-- Average paired contribution over height-truncated nontrivial zeros is
+nonnegative from strip-local Laplace-pair positivity. -/
+lemma nontrivialZerosFinset_pair_average_nonnegative_of_laplace_pair_positive
+    (T : ℝ) (F : ℂ → ℂ) (center : ℝ)
+    (hF : LaplacePairPositive F center)
+    (hstrip : ∀ ρ ∈ nontrivialZerosFinset T, 0 ≤ ρ.re ∧ ρ.re ≤ center) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset T,
+        ((F ρ).re + (F ((center : ℂ) - ρ)).re)) /
+        (((nontrivialZerosFinset T).card : ℝ)) :=
+  div_nonneg
+    (nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive
+      T F center hF hstrip)
+    (Nat.cast_nonneg _)
+
 /-- Center-one specialization of the Stechkin/Heath-Brown pair-positivity
 bridge for height-truncated nontrivial zeros.  The critical-strip bounds are
 discharged from membership in `nontrivialZerosFinset`. -/
@@ -3975,6 +4022,20 @@ lemma nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive_one
       intro ρ hρ
       rcases mem_nontrivialZerosFinset.mp hρ with ⟨hzero, _hheight⟩
       exact ⟨le_of_lt hzero.2.1, le_of_lt hzero.2.2⟩)
+
+/-- Average paired contribution over height-truncated nontrivial zeros is
+nonnegative from center-one Laplace-pair positivity. -/
+lemma nontrivialZerosFinset_pair_average_nonnegative_of_laplace_pair_positive_one
+    (T : ℝ) (F : ℂ → ℂ)
+    (hF : LaplacePairPositive F 1) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset T,
+        ((F ρ).re + (F (1 - ρ)).re)) /
+        (((nontrivialZerosFinset T).card : ℝ)) :=
+  div_nonneg
+    (nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive_one
+      T F hF)
+    (Nat.cast_nonneg _)
 
 /-- Center-one Laplace-pair positivity also makes the unpaired real-part sum
 nonnegative, after reindexing the reflected half of the paired sum by
@@ -4153,6 +4214,16 @@ lemma explicitFormulaApprox_eq_of_global_height_bound {x B T : ℝ}
     explicitFormulaApprox x T = explicitFormulaApprox x B :=
   explicitFormulaApprox_congr_zero_sum
     (finiteNontrivialZeroSum_eq_of_global_height_bound hBT hbound)
+
+/-- A global height bound on nontrivial zeros implies that, eventually, no new
+zeros appear above the base cutoff. -/
+lemma nontrivialZerosFinset_eventually_sdiff_eq_empty_of_global_height_bound
+    {B : ℝ}
+    (hbound : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → |ρ.im| ≤ B) :
+    ∀ᶠ T in atTop, nontrivialZerosFinset T \ nontrivialZerosFinset B = ∅ := by
+  filter_upwards [eventually_ge_atTop B] with T hBT
+  rw [nontrivialZerosFinset_eq_of_global_height_bound hBT hbound]
+  simp
 
 lemma explicitFormulaApprox_eventually_eq_of_global_height_bound {x B : ℝ}
     (hbound : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → |ρ.im| ≤ B) :
@@ -5092,6 +5163,43 @@ lemma new_zero_card_tail_tendsto_zero_of_eventually_sdiff_eq_empty
   filter_upwards [hnew] with T hT
   simp [hT]
 
+/-- Under a global height bound on nontrivial zeros, the new-zero contribution
+above the base cutoff is eventually zero. -/
+lemma new_zero_contribution_sum_eventually_zero_of_global_height_bound
+    {x B : ℝ}
+    (hbound : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → |ρ.im| ≤ B) :
+    (fun T : ℝ =>
+      ∑ ρ ∈ (nontrivialZerosFinset T \ nontrivialZerosFinset B),
+        (x : ℂ) ^ ρ / ρ) =ᶠ[atTop] fun _T : ℝ => 0 :=
+  new_zero_contribution_sum_eventually_zero_of_eventually_sdiff_eq_empty
+    (nontrivialZerosFinset_eventually_sdiff_eq_empty_of_global_height_bound hbound)
+
+/-- Under a global height bound on nontrivial zeros, the reciprocal-norm
+new-zero tail used in the RH truncation bound tends to zero. -/
+lemma new_zero_inv_norm_tail_tendsto_zero_of_global_height_bound
+    {x B : ℝ}
+    (hbound : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → |ρ.im| ≤ B) :
+    Tendsto
+      (fun T : ℝ =>
+        Real.sqrt x *
+          ∑ ρ ∈ (nontrivialZerosFinset T \ nontrivialZerosFinset B), ‖ρ‖⁻¹)
+      atTop (𝓝 0) :=
+  new_zero_inv_norm_tail_tendsto_zero_of_eventually_sdiff_eq_empty
+    (nontrivialZerosFinset_eventually_sdiff_eq_empty_of_global_height_bound hbound)
+
+/-- Under a global height bound on nontrivial zeros, the new-zero count tail
+used in the RH truncation bound tends to zero. -/
+lemma new_zero_card_tail_tendsto_zero_of_global_height_bound
+    {x B : ℝ}
+    (hbound : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → |ρ.im| ≤ B) :
+    Tendsto
+      (fun T : ℝ =>
+        Real.sqrt x *
+          ((2 : ℝ) * (nontrivialZerosFinset T \ nontrivialZerosFinset B).card))
+      atTop (𝓝 0) :=
+  new_zero_card_tail_tendsto_zero_of_eventually_sdiff_eq_empty
+    (nontrivialZerosFinset_eventually_sdiff_eq_empty_of_global_height_bound hbound)
+
 /-- Conditional explicit-formula bridge from an RH tail bound stated with the
 reciprocal-norm sum over newly included zeros.
 
@@ -5149,6 +5257,64 @@ lemma explicit_formula_von_mangoldt_of_RH_base_and_new_zero_card_tendsto_zero
     _ ≤ Real.sqrt x *
           ((2 : ℝ) * (nontrivialZerosFinset T \ nontrivialZerosFinset B).card) :=
           hgap
+
+/-- Conditional explicit-formula bridge obtained by composing the RH
+reciprocal-norm tail bound with eventual absence of new zero terms.  This keeps
+the hard input as the base identity `hB`; the tail convergence is discharged
+from `hnew`. -/
+lemma explicit_formula_von_mangoldt_of_RH_base_and_eventually_no_new_zeros_via_sum_tail
+    (hRH : RiemannHypothesis.Statement)
+    {x B : ℝ} {hx : x ≥ 2}
+    (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
+    (hnew : ∀ᶠ T in atTop,
+      nontrivialZerosFinset T \ nontrivialZerosFinset B = ∅) :
+    explicit_formula_von_mangoldt x hx :=
+  explicit_formula_von_mangoldt_of_RH_base_and_new_zero_sum_tendsto_zero
+    hRH hB
+    (new_zero_inv_norm_tail_tendsto_zero_of_eventually_sdiff_eq_empty
+      (x := x) hnew)
+
+/-- Count-tail version of
+`explicit_formula_von_mangoldt_of_RH_base_and_eventually_no_new_zeros_via_sum_tail`. -/
+lemma explicit_formula_von_mangoldt_of_RH_base_and_eventually_no_new_zeros_via_card_tail
+    (hRH : RiemannHypothesis.Statement)
+    {x B : ℝ} {hx : x ≥ 2}
+    (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
+    (hnew : ∀ᶠ T in atTop,
+      nontrivialZerosFinset T \ nontrivialZerosFinset B = ∅) :
+    explicit_formula_von_mangoldt x hx :=
+  explicit_formula_von_mangoldt_of_RH_base_and_new_zero_card_tendsto_zero
+    hRH hB
+    (new_zero_card_tail_tendsto_zero_of_eventually_sdiff_eq_empty
+      (x := x) hnew)
+
+/-- RH-tail route from a global zero-height bound.  The stronger exact bridge
+`explicit_formula_von_mangoldt_of_global_height_bound_exact` already avoids the
+RH hypothesis; this lemma records the same stability through the explicit
+new-zero-tail interface. -/
+lemma explicit_formula_von_mangoldt_of_RH_base_and_global_height_bound_via_sum_tail
+    (hRH : RiemannHypothesis.Statement)
+    {x B : ℝ} {hx : x ≥ 2}
+    (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
+    (hbound : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → |ρ.im| ≤ B) :
+    explicit_formula_von_mangoldt x hx :=
+  explicit_formula_von_mangoldt_of_RH_base_and_new_zero_sum_tendsto_zero
+    hRH hB
+    (new_zero_inv_norm_tail_tendsto_zero_of_global_height_bound
+      (x := x) hbound)
+
+/-- Count-tail version of
+`explicit_formula_von_mangoldt_of_RH_base_and_global_height_bound_via_sum_tail`. -/
+lemma explicit_formula_von_mangoldt_of_RH_base_and_global_height_bound_via_card_tail
+    (hRH : RiemannHypothesis.Statement)
+    {x B : ℝ} {hx : x ≥ 2}
+    (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
+    (hbound : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → |ρ.im| ≤ B) :
+    explicit_formula_von_mangoldt x hx :=
+  explicit_formula_von_mangoldt_of_RH_base_and_new_zero_card_tendsto_zero
+    hRH hB
+    (new_zero_card_tail_tendsto_zero_of_global_height_bound
+      (x := x) hbound)
 
 /-- 零点对素数分布的贡献
 

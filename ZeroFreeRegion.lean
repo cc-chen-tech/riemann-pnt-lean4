@@ -1566,6 +1566,18 @@ lemma btyScaledComplexExpAbsSqCertificate :
             Complex.exp ((k : ℂ) * I * (θ : ℂ))‖ ^ 2 := by
       simp [btyExpCoeff]
 
+/-- Pointwise nonnegativity of the BTY degree-16 cosine detector.
+
+This is the reusable detector fact extracted from the full scaled
+complex-exponential absolute-square certificate. -/
+lemma btyDetectorPolynomial_nonneg (θ : ℝ) :
+    0 ≤ ∑ k ∈ btyDetectorSupport,
+      btyDetectorCoeff k * Real.cos ((k : ℝ) * θ) :=
+  trigPolynomial_nonneg_of_scaled_complex_exp_abs_sq_certificate
+    btyDetectorScale btyDetectorSupport btyExpSupport
+    btyDetectorCoeff btyExpCoeff
+    btyDetectorScale_pos btyScaledComplexExpAbsSqCertificate θ
+
 /-- Automatic logarithmic-derivative detector inequality from the full BTY
 scaled certificate. -/
 lemma log_deriv_zeta_nonneg_bty_detector_from_scaled_certificate
@@ -1574,10 +1586,9 @@ lemma log_deriv_zeta_nonneg_bty_detector_from_scaled_certificate
       ∑ k ∈ btyDetectorSupport, btyDetectorCoeff k *
         (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
           riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re :=
-  log_deriv_zeta_nonneg_finset_combination_auto_of_scaled_complex_exp_abs_sq_certificate
-    σ hσ t btyDetectorScale btyDetectorSupport btyExpSupport
-    btyDetectorCoeff btyExpCoeff btyDetectorScale_pos
-    btyScaledComplexExpAbsSqCertificate
+  log_deriv_zeta_nonneg_finset_combination_auto
+    σ hσ t btyDetectorSupport btyDetectorCoeff
+    btyDetectorPolynomial_nonneg
 
 /-- Lower bound for the first shifted logarithmic-derivative term obtained from
 the degree-16 BTY detector. -/
@@ -1812,6 +1823,144 @@ lemma norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv (s : ℂ) :
     ‖-deriv riemannZeta s / riemannZeta s‖ =
       ‖logDeriv riemannZeta s‖ := by
   rw [neg_deriv_div_riemannZeta_eq_neg_logDeriv, norm_neg]
+
+/-- Uniform norm-bound version of the BTY `k = 1` lower bound.
+
+This is the handoff used when a later Jensen/Borel step supplies one common
+norm bound for all remaining BTY frequencies. -/
+lemma log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_vertical_norm_bound
+    (σ : ℝ) (hσ : 1 < σ) (t B : ℝ)
+    (hupper : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      ‖logDeriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)‖ ≤ B) :
+    (-deriv riemannZeta ((σ : ℂ) + I * t) /
+      riemannZeta ((σ : ℂ) + I * t)).re ≥
+      - ((3458648 : ℝ) / 2163835) * B := by
+  refine
+    log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_shift_upper_bound_simplified
+      σ hσ t B ?_
+  intro k hk
+  let z : ℂ := (σ : ℂ) + (k : ℂ) * I * t
+  calc
+    (-deriv riemannZeta z / riemannZeta z).re
+        ≤ ‖-deriv riemannZeta z / riemannZeta z‖ := Complex.re_le_norm _
+    _ = ‖logDeriv riemannZeta z‖ :=
+        norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv z
+    _ ≤ B := hupper k hk
+
+/-- Uniform logarithmic norm-bound version of the BTY `k = 1` lower bound. -/
+lemma log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_vertical_log_bound
+    (σ : ℝ) (hσ : 1 < σ) (t B L0 : ℝ)
+    (hupper : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      ‖logDeriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)‖ ≤ B * L0) :
+    (-deriv riemannZeta ((σ : ℂ) + I * t) /
+      riemannZeta ((σ : ℂ) + I * t)).re ≥
+      - ((3458648 : ℝ) / 2163835) * (B * L0) :=
+  log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_vertical_norm_bound
+    σ hσ t (B * L0) hupper
+
+/-- Convert a one-variable vertical logarithmic-derivative bound into the
+finite-family bound required by the BTY detector.
+
+The only height bookkeeping left to the caller is the finite log-scale
+comparison `hlog` for the detector frequencies. -/
+lemma btyDetector_uniform_vertical_log_bound_of_global_log_abs_add_three_bound
+    (σ t B L0 : ℝ) (hB : 0 ≤ B)
+    (hglobal : ∀ u : ℝ,
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * u)‖ ≤
+        B * Real.log (|u| + 3))
+    (hlog : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      Real.log (|(k : ℝ) * t| + 3) ≤ L0) :
+    ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      ‖logDeriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)‖ ≤ B * L0 := by
+  intro k hk
+  have hglobal_k := hglobal ((k : ℝ) * t)
+  calc
+    ‖logDeriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)‖
+        ≤ B * Real.log (|(k : ℝ) * t| + 3) := by
+          simpa [Complex.ofReal_mul, mul_assoc, mul_comm, mul_left_comm]
+            using hglobal_k
+    _ ≤ B * L0 := mul_le_mul_of_nonneg_left (hlog k hk) hB
+
+/-- BTY lower bound from a one-variable vertical logarithmic-derivative bound.
+
+This packages the remaining high-height input in the classical form
+`‖logDeriv ζ(σ+iu)‖ <= B log(|u|+3)`, plus a finite detector-frequency
+height comparison. -/
+lemma log_deriv_zeta_bty_detector_one_lower_bound_of_global_vertical_log_abs_add_three_bound
+    (σ : ℝ) (hσ : 1 < σ) (t B L0 : ℝ) (hB : 0 ≤ B)
+    (hglobal : ∀ u : ℝ,
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * u)‖ ≤
+        B * Real.log (|u| + 3))
+    (hlog : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      Real.log (|(k : ℝ) * t| + 3) ≤ L0) :
+    (-deriv riemannZeta ((σ : ℂ) + I * t) /
+      riemannZeta ((σ : ℂ) + I * t)).re ≥
+      - ((3458648 : ℝ) / 2163835) * (B * L0) :=
+  log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_vertical_log_bound
+    σ hσ t B L0
+    (btyDetector_uniform_vertical_log_bound_of_global_log_abs_add_three_bound
+      σ t B L0 hB hglobal hlog)
+
+/-- Automatic finite height comparison for the BTY support.
+
+The support is contained in `{0, ..., 16}`, so every detector frequency is
+absorbed by the coarse common scale `log(17 * (|t| + 3))`. -/
+lemma btyDetector_log_abs_mul_add_three_le_log_seventeen_mul_abs_add_three
+    (t : ℝ) {k : ℕ} (hk : k ∈ btyDetectorSupport.erase 1) :
+    Real.log (|(k : ℝ) * t| + 3) ≤ Real.log (17 * (|t| + 3)) := by
+  have hk_mem : k ∈ btyDetectorSupport := Finset.mem_of_mem_erase hk
+  have hk_lt : k < 17 := by
+    simpa [btyDetectorSupport] using hk_mem
+  have hk_nonneg : 0 ≤ (k : ℝ) := Nat.cast_nonneg k
+  have hk_le : (k : ℝ) ≤ 16 := by
+    exact_mod_cast Nat.le_of_lt_succ hk_lt
+  have ht_nonneg : 0 ≤ |t| := abs_nonneg t
+  have hleft_pos : 0 < |(k : ℝ) * t| + 3 := by
+    nlinarith [abs_nonneg ((k : ℝ) * t)]
+  have hle : |(k : ℝ) * t| + 3 ≤ 17 * (|t| + 3) := by
+    rw [abs_mul, abs_of_nonneg hk_nonneg]
+    nlinarith
+  exact Real.log_le_log hleft_pos hle
+
+/-- BTY lower bound from a one-variable vertical logarithmic-derivative bound,
+with the finite detector-frequency height comparison discharged automatically.
+-/
+lemma log_deriv_zeta_bty_detector_one_lower_bound_of_global_vertical_log_abs_add_three_bound_auto
+    (σ : ℝ) (hσ : 1 < σ) (t B : ℝ) (hB : 0 ≤ B)
+    (hglobal : ∀ u : ℝ,
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * u)‖ ≤
+        B * Real.log (|u| + 3)) :
+    (-deriv riemannZeta ((σ : ℂ) + I * t) /
+      riemannZeta ((σ : ℂ) + I * t)).re ≥
+      - ((3458648 : ℝ) / 2163835) *
+        (B * Real.log (17 * (|t| + 3))) :=
+  log_deriv_zeta_bty_detector_one_lower_bound_of_global_vertical_log_abs_add_three_bound
+    σ hσ t B (Real.log (17 * (|t| + 3))) hB hglobal
+    (fun k hk =>
+      btyDetector_log_abs_mul_add_three_le_log_seventeen_mul_abs_add_three
+        t (k := k) hk)
+
+/-- Fixed-margin BTY lower bound from the existing vertical logarithmic
+derivative estimate for `Re(s) >= 1 + ε`.
+
+This is not the classical zero-free-region scale, but it closes the
+fixed-margin detector handoff without leaving any finite-support bookkeeping
+hypotheses. -/
+lemma exists_log_deriv_zeta_bty_detector_one_lower_bound_of_one_add_le
+    {ε : ℝ} (hε : 0 < ε) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ σ t : ℝ, 1 + ε ≤ σ →
+      (-deriv riemannZeta ((σ : ℂ) + I * t) /
+        riemannZeta ((σ : ℂ) + I * t)).re ≥
+        - ((3458648 : ℝ) / 2163835) *
+          (C * Real.log (17 * (|t| + 3))) := by
+  rcases exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_add_three_of_one_add_le
+      hε with ⟨C, hC, hbound⟩
+  refine ⟨C, hC, ?_⟩
+  intro σ t hσ
+  have hσ_gt : 1 < σ := by nlinarith [hε, hσ]
+  exact
+    log_deriv_zeta_bty_detector_one_lower_bound_of_global_vertical_log_abs_add_three_bound_auto
+      σ hσ_gt t C hC (fun u => hbound σ u hσ)
 
 /-- Fixed-margin real-part bound for the shifted `σ + it` term in the
 3-4-1 inequality. -/
