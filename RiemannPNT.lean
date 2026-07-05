@@ -5346,6 +5346,29 @@ theorem log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_shift_upper_bound
   ZeroFreeRegion.log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_shift_upper_bound_simplified
     σ hσ t B hupper
 
+/-- Public uniform norm-bound version of the BTY `k = 1` lower bound. -/
+theorem log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_vertical_norm_bound
+    (σ : ℝ) (hσ : 1 < σ) (t B : ℝ)
+    (hupper : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      ‖logDeriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)‖ ≤ B) :
+    (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+      riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+      - ((3458648 : ℝ) / 2163835) * B :=
+  ZeroFreeRegion.log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_vertical_norm_bound
+    σ hσ t B hupper
+
+/-- Public uniform logarithmic norm-bound version of the BTY `k = 1` lower
+bound. -/
+theorem log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_vertical_log_bound
+    (σ : ℝ) (hσ : 1 < σ) (t B L0 : ℝ)
+    (hupper : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      ‖logDeriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)‖ ≤ B * L0) :
+    (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+      riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+      - ((3458648 : ℝ) / 2163835) * (B * L0) :=
+  ZeroFreeRegion.log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_vertical_log_bound
+    σ hσ t B L0 hupper
+
 /-- Public constant-one complex-exponential certificate. -/
 theorem complexExpAbsSqCertificate_const_one :
     ComplexExpAbsSqCertificate ({0} : Finset ℕ) ({0} : Finset ℕ)

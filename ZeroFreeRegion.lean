@@ -1824,6 +1824,40 @@ lemma norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv (s : ℂ) :
       ‖logDeriv riemannZeta s‖ := by
   rw [neg_deriv_div_riemannZeta_eq_neg_logDeriv, norm_neg]
 
+/-- Uniform norm-bound version of the BTY `k = 1` lower bound.
+
+This is the handoff used when a later Jensen/Borel step supplies one common
+norm bound for all remaining BTY frequencies. -/
+lemma log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_vertical_norm_bound
+    (σ : ℝ) (hσ : 1 < σ) (t B : ℝ)
+    (hupper : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      ‖logDeriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)‖ ≤ B) :
+    (-deriv riemannZeta ((σ : ℂ) + I * t) /
+      riemannZeta ((σ : ℂ) + I * t)).re ≥
+      - ((3458648 : ℝ) / 2163835) * B := by
+  refine
+    log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_shift_upper_bound_simplified
+      σ hσ t B ?_
+  intro k hk
+  let z : ℂ := (σ : ℂ) + (k : ℂ) * I * t
+  calc
+    (-deriv riemannZeta z / riemannZeta z).re
+        ≤ ‖-deriv riemannZeta z / riemannZeta z‖ := Complex.re_le_norm _
+    _ = ‖logDeriv riemannZeta z‖ :=
+        norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv z
+    _ ≤ B := hupper k hk
+
+/-- Uniform logarithmic norm-bound version of the BTY `k = 1` lower bound. -/
+lemma log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_vertical_log_bound
+    (σ : ℝ) (hσ : 1 < σ) (t B L0 : ℝ)
+    (hupper : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      ‖logDeriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)‖ ≤ B * L0) :
+    (-deriv riemannZeta ((σ : ℂ) + I * t) /
+      riemannZeta ((σ : ℂ) + I * t)).re ≥
+      - ((3458648 : ℝ) / 2163835) * (B * L0) :=
+  log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_vertical_norm_bound
+    σ hσ t (B * L0) hupper
+
 /-- Fixed-margin real-part bound for the shifted `σ + it` term in the
 3-4-1 inequality. -/
 lemma exists_re_neg_deriv_div_riemannZeta_sigma_it_le_log_abs_add_three_of_one_add_le
