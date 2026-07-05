@@ -1681,6 +1681,47 @@ Core verified declarations:
   center-one pair-positive finite-zero machinery.  This gives concrete
   Stechkin/Heath-Brown-style kernels a direct supplier shape, but it does not
   prove positivity for any such analytic kernel by itself.
+- `weightedKernelCombo`,
+  `weightedKernelCombo_re_nonnegative_on_strip`,
+  `laplacePairPositive_weightedKernelCombo`, and
+  `laplacePairPositive_one_weightedKernelCombo`
+  prove that finite nonnegative real-weighted combinations of kernels preserve
+  pointwise strip positivity and strip-local pair positivity.
+- `nontrivialZerosFinset_sum_re_nonnegative_of_weightedKernelCombo`,
+  `nontrivialZerosFinset_average_re_nonnegative_of_weightedKernelCombo`,
+  `nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_weightedKernelCombo`, and
+  `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_weightedKernelCombo`
+  specialize that generic weighted-combination closure to full finite-zero and
+  new-zero contribution sums and averages.
+- `resolventLaplaceKernel`,
+  `resolventLaplaceKernel_re_nonnegative_of_nonneg_re`,
+  `resolventLaplaceKernel_re_nonnegative_on_critical_strip`,
+  `laplacePairPositive_resolventLaplaceKernel`, and
+  `laplacePairPositive_one_resolventLaplaceKernel`
+  provide a concrete prototype supplier `z ↦ (a + z)⁻¹`: for every `a >= 0`
+  its real part is nonnegative on the right half-plane, hence it supplies the
+  center-one zero-pair positivity interface.
+- `nontrivialZerosFinset_sum_re_nonnegative_of_resolventLaplaceKernel`,
+  `nontrivialZerosFinset_average_re_nonnegative_of_resolventLaplaceKernel`,
+  `nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_resolventLaplaceKernel`,
+  and
+  `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_resolventLaplaceKernel`
+  specialize that prototype kernel to the full finite-zero and new-zero
+  contribution sums and averages.
+- `resolventLaplaceKernelCombo`,
+  `resolventLaplaceKernelCombo_re_nonnegative_of_nonneg_re`,
+  `resolventLaplaceKernelCombo_re_nonnegative_on_critical_strip`,
+  `laplacePairPositive_resolventLaplaceKernelCombo`, and
+  `laplacePairPositive_one_resolventLaplaceKernelCombo`
+  extend the same positivity supplier to finite nonnegative combinations
+  `sum k in K, w k * (a k + z)^-1` with `w k >= 0` and `a k >= 0`.
+- `nontrivialZerosFinset_sum_re_nonnegative_of_resolventLaplaceKernelCombo`,
+  `nontrivialZerosFinset_average_re_nonnegative_of_resolventLaplaceKernelCombo`,
+  `nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_resolventLaplaceKernelCombo`,
+  and
+  `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_resolventLaplaceKernelCombo`
+  specialize those finite nonnegative combinations to the full finite-zero and
+  new-zero contribution sums and averages.
 - `norm_finiteNontrivialZeroSum_sub_le_new_zeros_sum_norm`
   bounds the finite zero-sum change between two truncation heights by the
   summed norms of the newly included zero contributions, a direct finite

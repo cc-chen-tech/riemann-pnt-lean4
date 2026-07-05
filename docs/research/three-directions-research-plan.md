@@ -99,6 +99,18 @@ Verified assets now include:
   `nontrivialZerosFinset_sum_re_nonnegative_of_re_nonnegative_on_critical_strip`,
   `nontrivialZerosFinset_average_re_nonnegative_of_re_nonnegative_on_critical_strip`,
   and the corresponding new-zero `sdiff` sum/average wrappers.
+- generic finite nonnegative kernel-combination closure:
+  `weightedKernelCombo`,
+  `laplacePairPositive_weightedKernelCombo`, and the corresponding full/new-zero
+  sum and average nonnegativity wrappers.
+- a concrete resolvent/Laplace prototype kernel
+  `resolventLaplaceKernel a z = ((a : Complex) + z)⁻¹`, with right-half-plane
+  real-part positivity, center-one pair positivity, and finite-zero/new-zero
+  sum and average nonnegativity wrappers for every `a >= 0`.
+- finite nonnegative combinations of those prototype kernels,
+  `resolventLaplaceKernelCombo`, with the same right-half-plane positivity,
+  pair-positivity, and finite-zero/new-zero sum and average nonnegativity
+  wrappers.
 
 Important boundary:
 
@@ -107,11 +119,14 @@ it into an unpaired sum needs a proof that the chosen center-pair map preserves
 the relevant zero set.  For zeta this is available at center `1`, via
 `rho -> 1 - rho`, not for an arbitrary center.
 
-Next useful step is no longer another abstract finset wrapper.  It needs a
-concrete Stechkin/Heath-Brown kernel positivity theorem, either directly as
-`LaplacePairPositive F 1` or via the stronger pointwise critical-strip supplier
-above.  Without that analytic positivity input, further work would mostly
-rename existing lemmas.
+The generic weighted-combination closure and resolvent/Laplace prototype are
+real concrete suppliers for the finite-zero pairing API, and the combination
+wrappers match the algebraic shape of detectors built by summing positive
+elementary kernels.  They are still not the full Stechkin/Heath-Brown kernel used
+in the latest zero-free-region arguments. The next useful step is to formalize
+a nontrivial detector kernel from that literature and prove either
+`LaplacePairPositive F 1` or the stronger pointwise critical-strip positivity
+certificate for it.
 
 ## Direction 3: explicit formula / PNT error bridge
 
