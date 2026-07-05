@@ -746,11 +746,11 @@ global explicit formula.
 The finite zero-pair infrastructure also contains proved positivity suppliers
 for elementary detector kernels.  The public API includes the resolvent kernel
 `resolventLaplaceKernel`, its center-reflected version
-`symmetricResolventLaplaceKernel`, finite nonnegative kernel combinations, and
-their height-truncated/new-zero sum and average nonnegativity wrappers.  These
-are concrete algebraic suppliers for later Stechkin/Heath-Brown-style detector
-arguments; they do not prove the missing high-height zeta growth or
-logarithmic-derivative estimates.
+`symmetricResolventLaplaceKernel`, finite nonnegative ordinary and symmetric
+kernel combinations, and their height-truncated/new-zero sum, average, and
+paired-contribution nonnegativity wrappers.  These are concrete algebraic
+suppliers for later Stechkin/Heath-Brown-style detector arguments; they do not
+prove the missing high-height zeta growth or logarithmic-derivative estimates.
 
 ### Target Statements, Not Proved Theorems
 

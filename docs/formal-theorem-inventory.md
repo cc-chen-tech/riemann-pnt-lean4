@@ -1803,6 +1803,25 @@ Core verified declarations:
   `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_symmetricResolventLaplaceKernel`
   specialize the center-one symmetric resolvent to full finite-zero and
   new-zero contribution sums and averages.
+- `symmetricResolventLaplaceKernelCombo`,
+  `symmetricResolventLaplaceKernelCombo_re_nonnegative_on_strip`,
+  `laplacePairPositive_symmetricResolventLaplaceKernelCombo`, and
+  `laplacePairPositive_one_symmetricResolventLaplaceKernelCombo`
+  extend the center-reflected supplier to finite nonnegative combinations
+  `sum k in K, w k * ((a k + z)^-1 + (a k + 1 - z)^-1)`.
+- `nontrivialZerosFinset_sum_re_nonnegative_of_symmetricResolventLaplaceKernelCombo`,
+  `nontrivialZerosFinset_average_re_nonnegative_of_symmetricResolventLaplaceKernelCombo`,
+  `nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_symmetricResolventLaplaceKernelCombo`,
+  and
+  `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_symmetricResolventLaplaceKernelCombo`
+  specialize those finite symmetric combinations to full finite-zero and
+  new-zero real-part sums and averages.
+- `nontrivialZerosFinset_pair_sum_nonnegative_of_symmetricResolventLaplaceKernelCombo`,
+  `nontrivialZerosFinset_pair_average_nonnegative_of_symmetricResolventLaplaceKernelCombo`,
+  `nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_symmetricResolventLaplaceKernelCombo`,
+  and
+  `nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_symmetricResolventLaplaceKernelCombo`
+  expose the paired contribution versions for finite symmetric combinations.
 - `resolventLaplaceKernelCombo`,
   `resolventLaplaceKernelCombo_re_nonnegative_of_nonneg_re`,
   `resolventLaplaceKernelCombo_re_nonnegative_on_critical_strip`,
@@ -2201,6 +2220,9 @@ Route interfaces:
   `RiemannPNT.API.no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_below_two_thirds`
   public concrete wrappers for the same conditional truncated route when the
   `psi` error is stated as `PsiPowerErrorBelowTwoThirds`.
+- `RiemannPNT.API.no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_below_two_thirds`
+  public concrete reflected-line wrapper for any `beta >= 2/3`, using
+  `PsiPowerErrorBelowTwoThirds` and the same conditional truncated route.
 - `RiemannExplorer.Conrey40.conrey_40_percent_zeros_on_critical_line_target`
   alias interface to `KnownResults.conrey_40_percent_zeros_on_critical_line_target`.
 - `MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum`

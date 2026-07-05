@@ -2897,6 +2897,52 @@ lemma laplacePairPositive_one_symmetricResolventLaplaceKernel
   laplacePairPositive_symmetricResolventLaplaceKernel
     (center := 1) ha
 
+/-- Finite nonnegative combinations of center-reflected symmetric
+resolvent/Laplace kernels. -/
+noncomputable def symmetricResolventLaplaceKernelCombo
+    (K : Finset ℕ) (w a : ℕ → ℝ) (center : ℝ) (z : ℂ) : ℂ :=
+  ∑ k ∈ K, (w k : ℂ) * symmetricResolventLaplaceKernel (a k) center z
+
+/-- Centered-strip real-part positivity for finite nonnegative combinations of
+symmetric resolvent/Laplace kernels. -/
+lemma symmetricResolventLaplaceKernelCombo_re_nonnegative_on_strip
+    {K : Finset ℕ} {w a : ℕ → ℝ} {center : ℝ}
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k) :
+    ∀ z : ℂ, 0 ≤ z.re → z.re ≤ center →
+      0 ≤ (symmetricResolventLaplaceKernelCombo K w a center z).re := by
+  intro z hz_left hz_right
+  rw [symmetricResolventLaplaceKernelCombo]
+  change 0 ≤ Complex.reCLM
+    (∑ k ∈ K,
+      (w k : ℂ) * symmetricResolventLaplaceKernel (a k) center z)
+  rw [map_sum]
+  refine Finset.sum_nonneg ?_
+  intro k hk
+  have hterm :=
+    symmetricResolventLaplaceKernel_re_nonnegative_on_strip
+      (ha k hk) z hz_left hz_right
+  exact by
+    simpa [Complex.mul_re] using mul_nonneg (hw k hk) hterm
+
+/-- Finite nonnegative combinations of symmetric resolvent/Laplace kernels
+supply strip-local pair positivity. -/
+lemma laplacePairPositive_symmetricResolventLaplaceKernelCombo
+    {K : Finset ℕ} {w a : ℕ → ℝ} {center : ℝ}
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k) :
+    LaplacePairPositive
+      (symmetricResolventLaplaceKernelCombo K w a center) center :=
+  laplacePairPositive_of_re_nonnegative_on_strip
+    (symmetricResolventLaplaceKernelCombo_re_nonnegative_on_strip hw ha)
+
+/-- Center-one pair positivity for finite nonnegative combinations of symmetric
+resolvent/Laplace kernels. -/
+lemma laplacePairPositive_one_symmetricResolventLaplaceKernelCombo
+    {K : Finset ℕ} {w a : ℕ → ℝ}
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k) :
+    LaplacePairPositive (symmetricResolventLaplaceKernelCombo K w a 1) 1 :=
+  laplacePairPositive_symmetricResolventLaplaceKernelCombo
+    (center := 1) hw ha
+
 /-- Finite nonnegative linear combinations of resolvent/Laplace prototype
 kernels.  This is a Lean-facing model for detector kernels built by summing
 elementary right-half-plane-positive pieces. -/
@@ -3336,6 +3382,15 @@ theorem psiPowerErrorBelowLine_mono {β γ : ℝ}
     PsiPowerErrorBelowLine γ := by
   rcases herror with ⟨θ, hθ_nonneg, hθ_lt, hθ_bound⟩
   exact ⟨θ, hθ_nonneg, lt_of_lt_of_le hθ_lt hβγ, hθ_bound⟩
+
+/-- A concrete `θ < 2/3` `ψ`-error input is also below any boundary
+`β >= 2/3`. -/
+theorem psiPowerErrorBelowLine_of_below_two_thirds_of_two_thirds_le
+    {β : ℝ} (hβ : (2 / 3 : ℝ) ≤ β)
+    (herror : PsiPowerErrorBelowTwoThirds) :
+    PsiPowerErrorBelowLine β :=
+  psiPowerErrorBelowLine_mono hβ
+    (psiPowerErrorBelowLine_two_thirds_of_below_two_thirds herror)
 
 /-- Route interface for the converse explicit-formula principle: a `ψ` error
 with exponent below `β` excludes nontrivial zeros on or to the right of
@@ -4759,6 +4814,62 @@ lemma nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_resolventLaplaceKe
     T U (resolventLaplaceKernelCombo K w a)
     (laplacePairPositive_one_resolventLaplaceKernelCombo hw ha)
 
+/-- Finite nonnegative combinations of center-one symmetric
+resolvent/Laplace kernels give a nonnegative real-part sum over newly included
+nontrivial zeros. -/
+lemma nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_symmetricResolventLaplaceKernelCombo
+    (T U : ℝ) (K : Finset ℕ) (w a : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k) :
+    0 ≤
+      ∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        (symmetricResolventLaplaceKernelCombo K w a 1 ρ).re :=
+  nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_re_nonnegative_on_critical_strip
+    T U (symmetricResolventLaplaceKernelCombo K w a 1)
+    (symmetricResolventLaplaceKernelCombo_re_nonnegative_on_strip hw ha)
+
+/-- Finite nonnegative combinations of center-one symmetric
+resolvent/Laplace kernels give a nonnegative average real-part contribution
+over newly included nontrivial zeros. -/
+lemma nontrivialZerosFinset_sdiff_average_re_nonnegative_of_symmetricResolventLaplaceKernelCombo
+    (T U : ℝ) (K : Finset ℕ) (w a : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        (symmetricResolventLaplaceKernelCombo K w a 1 ρ).re) /
+        (((nontrivialZerosFinset U \ nontrivialZerosFinset T).card : ℝ)) :=
+  nontrivialZerosFinset_sdiff_average_re_nonnegative_of_re_nonnegative_on_critical_strip
+    T U (symmetricResolventLaplaceKernelCombo K w a 1)
+    (symmetricResolventLaplaceKernelCombo_re_nonnegative_on_strip hw ha)
+
+/-- Finite nonnegative combinations of center-one symmetric
+resolvent/Laplace kernels give a nonnegative paired sum over newly included
+nontrivial zeros. -/
+lemma nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_symmetricResolventLaplaceKernelCombo
+    (T U : ℝ) (K : Finset ℕ) (w a : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k) :
+    0 ≤
+      ∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        ((symmetricResolventLaplaceKernelCombo K w a 1 ρ).re +
+          (symmetricResolventLaplaceKernelCombo K w a 1 (1 - ρ)).re) :=
+  nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive_one
+    T U (symmetricResolventLaplaceKernelCombo K w a 1)
+    (laplacePairPositive_one_symmetricResolventLaplaceKernelCombo hw ha)
+
+/-- Finite nonnegative combinations of center-one symmetric
+resolvent/Laplace kernels give a nonnegative paired average over newly included
+nontrivial zeros. -/
+lemma nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_symmetricResolventLaplaceKernelCombo
+    (T U : ℝ) (K : Finset ℕ) (w a : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        ((symmetricResolventLaplaceKernelCombo K w a 1 ρ).re +
+          (symmetricResolventLaplaceKernelCombo K w a 1 (1 - ρ)).re)) /
+        (((nontrivialZerosFinset U \ nontrivialZerosFinset T).card : ℝ)) :=
+  nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_laplace_pair_positive_one
+    T U (symmetricResolventLaplaceKernelCombo K w a 1)
+    (laplacePairPositive_one_symmetricResolventLaplaceKernelCombo hw ha)
+
 /-- Finite nonnegative affine resolvent/Laplace combinations give a
 nonnegative real-part sum over newly included nontrivial zeros. -/
 lemma nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_affineResolventLaplaceKernelCombo
@@ -5140,6 +5251,62 @@ lemma nontrivialZerosFinset_pair_average_nonnegative_of_resolventLaplaceKernelCo
   nontrivialZerosFinset_pair_average_nonnegative_of_laplace_pair_positive_one
     T (resolventLaplaceKernelCombo K w a)
     (laplacePairPositive_one_resolventLaplaceKernelCombo hw ha)
+
+/-- Finite nonnegative combinations of center-one symmetric
+resolvent/Laplace kernels give a nonnegative real-part sum over
+height-truncated nontrivial zeros. -/
+lemma nontrivialZerosFinset_sum_re_nonnegative_of_symmetricResolventLaplaceKernelCombo
+    (T : ℝ) (K : Finset ℕ) (w a : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k) :
+    0 ≤
+      ∑ ρ ∈ nontrivialZerosFinset T,
+        (symmetricResolventLaplaceKernelCombo K w a 1 ρ).re :=
+  nontrivialZerosFinset_sum_re_nonnegative_of_re_nonnegative_on_critical_strip
+    T (symmetricResolventLaplaceKernelCombo K w a 1)
+    (symmetricResolventLaplaceKernelCombo_re_nonnegative_on_strip hw ha)
+
+/-- Finite nonnegative combinations of center-one symmetric
+resolvent/Laplace kernels give a nonnegative average real-part contribution
+over height-truncated nontrivial zeros. -/
+lemma nontrivialZerosFinset_average_re_nonnegative_of_symmetricResolventLaplaceKernelCombo
+    (T : ℝ) (K : Finset ℕ) (w a : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset T,
+        (symmetricResolventLaplaceKernelCombo K w a 1 ρ).re) /
+        (((nontrivialZerosFinset T).card : ℝ)) :=
+  nontrivialZerosFinset_average_re_nonnegative_of_re_nonnegative_on_critical_strip
+    T (symmetricResolventLaplaceKernelCombo K w a 1)
+    (symmetricResolventLaplaceKernelCombo_re_nonnegative_on_strip hw ha)
+
+/-- Finite nonnegative combinations of center-one symmetric
+resolvent/Laplace kernels give a nonnegative paired sum over height-truncated
+nontrivial zeros. -/
+lemma nontrivialZerosFinset_pair_sum_nonnegative_of_symmetricResolventLaplaceKernelCombo
+    (T : ℝ) (K : Finset ℕ) (w a : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k) :
+    0 ≤
+      ∑ ρ ∈ nontrivialZerosFinset T,
+        ((symmetricResolventLaplaceKernelCombo K w a 1 ρ).re +
+          (symmetricResolventLaplaceKernelCombo K w a 1 (1 - ρ)).re) :=
+  nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive_one
+    T (symmetricResolventLaplaceKernelCombo K w a 1)
+    (laplacePairPositive_one_symmetricResolventLaplaceKernelCombo hw ha)
+
+/-- Finite nonnegative combinations of center-one symmetric
+resolvent/Laplace kernels give a nonnegative paired average over
+height-truncated nontrivial zeros. -/
+lemma nontrivialZerosFinset_pair_average_nonnegative_of_symmetricResolventLaplaceKernelCombo
+    (T : ℝ) (K : Finset ℕ) (w a : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset T,
+        ((symmetricResolventLaplaceKernelCombo K w a 1 ρ).re +
+          (symmetricResolventLaplaceKernelCombo K w a 1 (1 - ρ)).re)) /
+        (((nontrivialZerosFinset T).card : ℝ)) :=
+  nontrivialZerosFinset_pair_average_nonnegative_of_laplace_pair_positive_one
+    T (symmetricResolventLaplaceKernelCombo K w a 1)
+    (laplacePairPositive_one_symmetricResolventLaplaceKernelCombo hw ha)
 
 /-- Finite nonnegative affine resolvent/Laplace combinations give a
 nonnegative real-part sum over height-truncated nontrivial zeros. -/

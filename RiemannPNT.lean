@@ -2159,6 +2159,42 @@ theorem laplacePairPositive_one_symmetricResolventLaplaceKernel
   PrimeNumberTheorem.laplacePairPositive_one_symmetricResolventLaplaceKernel
     ha
 
+/-- Public finite nonnegative combination of center-reflected symmetric
+resolvent/Laplace kernels. -/
+noncomputable abbrev symmetricResolventLaplaceKernelCombo
+    (K : Finset ℕ) (w a : ℕ → ℝ) (center : ℝ) : ℂ → ℂ :=
+  PrimeNumberTheorem.symmetricResolventLaplaceKernelCombo K w a center
+
+/-- Public centered-strip real-part positivity for finite nonnegative
+combinations of symmetric resolvent/Laplace kernels. -/
+theorem symmetricResolventLaplaceKernelCombo_re_nonnegative_on_strip
+    {K : Finset ℕ} {w a : ℕ → ℝ} {center : ℝ}
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k) :
+    ∀ z : ℂ, 0 ≤ z.re → z.re ≤ center →
+      0 ≤ (symmetricResolventLaplaceKernelCombo K w a center z).re :=
+  PrimeNumberTheorem.symmetricResolventLaplaceKernelCombo_re_nonnegative_on_strip
+    hw ha
+
+/-- Public strip-local pair positivity for finite nonnegative combinations of
+symmetric resolvent/Laplace kernels. -/
+theorem laplacePairPositive_symmetricResolventLaplaceKernelCombo
+    {K : Finset ℕ} {w a : ℕ → ℝ} {center : ℝ}
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k) :
+    PrimeNumberTheorem.LaplacePairPositive
+      (symmetricResolventLaplaceKernelCombo K w a center) center :=
+  PrimeNumberTheorem.laplacePairPositive_symmetricResolventLaplaceKernelCombo
+    hw ha
+
+/-- Public center-one pair positivity for finite nonnegative combinations of
+symmetric resolvent/Laplace kernels. -/
+theorem laplacePairPositive_one_symmetricResolventLaplaceKernelCombo
+    {K : Finset ℕ} {w a : ℕ → ℝ}
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k) :
+    PrimeNumberTheorem.LaplacePairPositive
+      (symmetricResolventLaplaceKernelCombo K w a 1) 1 :=
+  PrimeNumberTheorem.laplacePairPositive_one_symmetricResolventLaplaceKernelCombo
+    hw ha
+
 /-- Public finite nonnegative resolvent/Laplace kernel combination. -/
 noncomputable abbrev resolventLaplaceKernelCombo
     (K : Finset ℕ) (w a : ℕ → ℝ) : ℂ → ℂ :=
@@ -2339,6 +2375,15 @@ theorem psiPowerErrorBelowLine_mono {β γ : ℝ}
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
     PrimeNumberTheorem.PsiPowerErrorBelowLine γ :=
   PrimeNumberTheorem.psiPowerErrorBelowLine_mono hβγ herror
+
+/-- Public bridge from the concrete `θ < 2/3` `ψ`-error input to any
+below-line predicate with boundary at least `2/3`. -/
+theorem psiPowerErrorBelowLine_of_below_two_thirds_of_two_thirds_le
+    {β : ℝ} (hβ : (2 / 3 : ℝ) ≤ β)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowTwoThirds) :
+    PrimeNumberTheorem.PsiPowerErrorBelowLine β :=
+  PrimeNumberTheorem.psiPowerErrorBelowLine_of_below_two_thirds_of_two_thirds_le
+    hβ herror
 
 /-- Public general converse interface: a `ψ` power saving below `β` excludes
 nontrivial zeros on or to the right of `Re(s)=β`. -/
@@ -3086,6 +3131,58 @@ theorem nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_resolventLaplace
   PrimeNumberTheorem.nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_resolventLaplaceKernelCombo
     T U K w a hw ha
 
+/-- Public new-zero real-part sum nonnegativity for finite nonnegative
+combinations of center-one symmetric resolvent/Laplace kernels. -/
+theorem nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_symmetricResolventLaplaceKernelCombo
+    (T U : ℝ) (K : Finset ℕ) (w a : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+        PrimeNumberTheorem.nontrivialZerosFinset T,
+      (symmetricResolventLaplaceKernelCombo K w a 1 ρ).re :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_symmetricResolventLaplaceKernelCombo
+    T U K w a hw ha
+
+/-- Public new-zero average real-part nonnegativity for finite nonnegative
+combinations of center-one symmetric resolvent/Laplace kernels. -/
+theorem nontrivialZerosFinset_sdiff_average_re_nonnegative_of_symmetricResolventLaplaceKernelCombo
+    (T U : ℝ) (K : Finset ℕ) (w a : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T,
+        (symmetricResolventLaplaceKernelCombo K w a 1 ρ).re) /
+        (((PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ)) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_average_re_nonnegative_of_symmetricResolventLaplaceKernelCombo
+    T U K w a hw ha
+
+/-- Public new-zero paired-sum nonnegativity for finite nonnegative
+combinations of center-one symmetric resolvent/Laplace kernels. -/
+theorem nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_symmetricResolventLaplaceKernelCombo
+    (T U : ℝ) (K : Finset ℕ) (w a : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+        PrimeNumberTheorem.nontrivialZerosFinset T,
+      ((symmetricResolventLaplaceKernelCombo K w a 1 ρ).re +
+        (symmetricResolventLaplaceKernelCombo K w a 1 (1 - ρ)).re) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_symmetricResolventLaplaceKernelCombo
+    T U K w a hw ha
+
+/-- Public new-zero paired-average nonnegativity for finite nonnegative
+combinations of center-one symmetric resolvent/Laplace kernels. -/
+theorem nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_symmetricResolventLaplaceKernelCombo
+    (T U : ℝ) (K : Finset ℕ) (w a : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T,
+        ((symmetricResolventLaplaceKernelCombo K w a 1 ρ).re +
+          (symmetricResolventLaplaceKernelCombo K w a 1 (1 - ρ)).re)) /
+        (((PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ)) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_symmetricResolventLaplaceKernelCombo
+    T U K w a hw ha
+
 /-- Public new-zero real-part sum nonnegativity for finite nonnegative affine
 resolvent/Laplace kernel combinations. -/
 theorem nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_affineResolventLaplaceKernelCombo
@@ -3524,6 +3621,52 @@ theorem nontrivialZerosFinset_pair_average_nonnegative_of_resolventLaplaceKernel
           (resolventLaplaceKernelCombo K w a (1 - ρ)).re)) /
         ((PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ) :=
   PrimeNumberTheorem.nontrivialZerosFinset_pair_average_nonnegative_of_resolventLaplaceKernelCombo
+    T K w a hw ha
+
+/-- Public finite-zero real-part sum nonnegativity for finite nonnegative
+combinations of center-one symmetric resolvent/Laplace kernels. -/
+theorem nontrivialZerosFinset_sum_re_nonnegative_of_symmetricResolventLaplaceKernelCombo
+    (T : ℝ) (K : Finset ℕ) (w a : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+      (symmetricResolventLaplaceKernelCombo K w a 1 ρ).re :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sum_re_nonnegative_of_symmetricResolventLaplaceKernelCombo
+    T K w a hw ha
+
+/-- Public finite-zero average real-part nonnegativity for finite nonnegative
+combinations of center-one symmetric resolvent/Laplace kernels. -/
+theorem nontrivialZerosFinset_average_re_nonnegative_of_symmetricResolventLaplaceKernelCombo
+    (T : ℝ) (K : Finset ℕ) (w a : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+        (symmetricResolventLaplaceKernelCombo K w a 1 ρ).re) /
+        ((PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_average_re_nonnegative_of_symmetricResolventLaplaceKernelCombo
+    T K w a hw ha
+
+/-- Public finite-zero paired-sum nonnegativity for finite nonnegative
+combinations of center-one symmetric resolvent/Laplace kernels. -/
+theorem nontrivialZerosFinset_pair_sum_nonnegative_of_symmetricResolventLaplaceKernelCombo
+    (T : ℝ) (K : Finset ℕ) (w a : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+      ((symmetricResolventLaplaceKernelCombo K w a 1 ρ).re +
+        (symmetricResolventLaplaceKernelCombo K w a 1 (1 - ρ)).re) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_pair_sum_nonnegative_of_symmetricResolventLaplaceKernelCombo
+    T K w a hw ha
+
+/-- Public finite-zero paired-average nonnegativity for finite nonnegative
+combinations of center-one symmetric resolvent/Laplace kernels. -/
+theorem nontrivialZerosFinset_pair_average_nonnegative_of_symmetricResolventLaplaceKernelCombo
+    (T : ℝ) (K : Finset ℕ) (w a : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+        ((symmetricResolventLaplaceKernelCombo K w a 1 ρ).re +
+          (symmetricResolventLaplaceKernelCombo K w a 1 (1 - ρ)).re)) /
+        ((PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_pair_average_nonnegative_of_symmetricResolventLaplaceKernelCombo
     T K w a hw ha
 
 /-- Public finite-zero real-part sum nonnegativity for finite nonnegative
@@ -15650,6 +15793,23 @@ theorem no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route
     (PrimeNumberTheorem.ExplicitFormulaTruncated.explicitFormulaConversePower_of_truncated_route
       hroute hexplicit)
     herror
+
+/-- Concrete `θ < 2/3` version of the reflected-line truncated
+explicit-formula bridge for any boundary `β >= 2/3`. -/
+theorem no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_below_two_thirds
+    {β : ℝ} (hβ_two_thirds : (2 / 3 : ℝ) ≤ β) (hβ_lt_one : β < 1)
+    (hroute :
+      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute β)
+    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
+      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget
+        T hT x hx)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowTwoThirds) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (1 - β) :=
+  no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route
+    (lt_of_lt_of_le (by norm_num : (0 : ℝ) < 2 / 3) hβ_two_thirds)
+    hβ_lt_one hroute hexplicit
+    (PrimeNumberTheorem.psiPowerErrorBelowLine_of_below_two_thirds_of_two_thirds_le
+      hβ_two_thirds herror)
 
 /-- Public constructor for the corrected explicit-formula target from an
 eventually equal approximation family. -/
