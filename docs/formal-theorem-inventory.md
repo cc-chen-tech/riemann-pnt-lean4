@@ -1897,6 +1897,18 @@ Core verified declarations:
   `explicitFormulaConversePowerTarget_of_psiPowerErrorBelowLineExcludesZerosRightOf`
   keep the explicitly named explicit-formula converse target interchangeable
   with the underlying `psi`-power-error zero-exclusion interface.
+- `no_zeros_on_vertical_line_of_explicit_formula_converse_power_mono_error`
+  and
+  `no_zeros_on_reflected_line_of_explicit_formula_converse_power_mono_error`
+  let an explicit-formula converse target at boundary `gamma` consume a
+  stronger `psi` error already proved below any smaller boundary `beta <=
+  gamma`.
+- `no_zeros_on_vertical_line_of_psi_power_error_bridge_mono_error`
+  and
+  `no_zeros_on_reflected_line_of_psi_power_error_bridge_mono_error`
+  provide the same monotone-error wrappers for the underlying
+  `PsiPowerErrorBelowLineExcludesZerosRightOf` route interface, without first
+  renaming it as an explicit-formula converse target.
 - `no_zeros_on_two_thirds_of_explicit_formula_converse_power`,
   `no_zeros_on_one_third_of_explicit_formula_converse_power_below_two_thirds`,
   and

@@ -200,7 +200,17 @@ Verified assets now include:
   `no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_below_two_thirds`;
   `no_zeros_on_one_third_of_truncated_explicit_formula_converse_route`;
   `no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_below_two_thirds`;
-  `no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route`.
+  `no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route`;
+  `no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_below_two_thirds`.
+- the monotonic `ψ`-error bridges `psiPowerErrorBelowLine_mono` and
+  `psiPowerErrorBelowLine_of_below_two_thirds_of_two_thirds_le`, which let a
+  stronger below-line error input feed any weaker boundary, including the
+  concrete `theta < 2/3` input at any `beta >= 2/3`.
+- monotone-error explicit-formula converse wrappers:
+  `no_zeros_on_vertical_line_of_psi_power_error_bridge_mono_error`;
+  `no_zeros_on_reflected_line_of_psi_power_error_bridge_mono_error`;
+  `no_zeros_on_vertical_line_of_explicit_formula_converse_power_mono_error`;
+  `no_zeros_on_reflected_line_of_explicit_formula_converse_power_mono_error`.
 - route-interface conversion bridges:
   `psiPowerErrorBelowLineExcludesZerosRightOf_of_explicit_formula_converse_power`;
   `explicitFormulaConversePowerTarget_of_psiPowerErrorBelowLineExcludesZerosRightOf`.
