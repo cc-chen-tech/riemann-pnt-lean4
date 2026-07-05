@@ -946,6 +946,193 @@ lemma log_deriv_zeta_nonneg_list_combination_auto
           riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re :=
   log_deriv_zeta_nonneg_finset_combination_auto σ hσ t ks.toFinset a hpoly
 
+/-! ### Finite-detector algebraic lower bounds
+
+The next lemmas are detector-agnostic algebra: once a finite detector
+combination is nonnegative and the coefficient of one frequency is positive,
+that frequency's logarithmic-derivative term can be bounded below by the
+remaining detector terms.  If the remaining coefficients are nonnegative, any
+upper bounds for those shifted terms can be absorbed into the same lower-bound
+shape.  This is the algebraic handoff used by higher-degree
+Stechkin/Heath-Brown/Bellotti-Trudgian-Yang detectors.
+-/
+
+/-- Solve a nonnegative finite weighted sum for one positive-coefficient
+summand. -/
+lemma finite_weighted_sum_single_lower_bound
+    (S : Finset ℕ) (a x : ℕ → ℝ) {m : ℕ}
+    (hm : m ∈ S) (ha : 0 < a m)
+    (hnonneg : 0 ≤ ∑ k ∈ S, a k * x k) :
+    x m ≥ - (∑ k ∈ S.erase m, a k * x k) / a m := by
+  have hsum :
+      a m * x m + ∑ k ∈ S.erase m, a k * x k =
+        ∑ k ∈ S, a k * x k := by
+    exact Finset.add_sum_erase S (fun k => a k * x k) hm
+  have hnonneg' : 0 ≤ a m * x m + ∑ k ∈ S.erase m, a k * x k := by
+    simpa [hsum] using hnonneg
+  have hmul : -(∑ k ∈ S.erase m, a k * x k) ≤ a m * x m := by
+    linarith
+  exact (div_le_iff₀ ha).mpr (by simpa [mul_comm] using hmul)
+
+/-- Solve a nonnegative finite weighted sum for one positive-coefficient
+summand, after replacing all other summands by coefficient-compatible upper
+bounds. -/
+lemma finite_weighted_sum_single_lower_bound_of_upper_bounds
+    (S : Finset ℕ) (a x B : ℕ → ℝ) {m : ℕ}
+    (hm : m ∈ S) (ha : 0 < a m)
+    (ha_nonneg : ∀ k, k ∈ S.erase m → 0 ≤ a k)
+    (hx_upper : ∀ k, k ∈ S.erase m → x k ≤ B k)
+    (hnonneg : 0 ≤ ∑ k ∈ S, a k * x k) :
+    x m ≥ - (∑ k ∈ S.erase m, a k * B k) / a m := by
+  have hbase :
+      x m ≥ - (∑ k ∈ S.erase m, a k * x k) / a m :=
+    finite_weighted_sum_single_lower_bound S a x hm ha hnonneg
+  have hsum_le :
+      (∑ k ∈ S.erase m, a k * x k) ≤
+        ∑ k ∈ S.erase m, a k * B k := by
+    apply Finset.sum_le_sum
+    intro k hk
+    exact mul_le_mul_of_nonneg_left (hx_upper k hk) (ha_nonneg k hk)
+  have hdiv :
+      - (∑ k ∈ S.erase m, a k * B k) / a m ≤
+      - (∑ k ∈ S.erase m, a k * x k) / a m :=
+    div_le_div_of_nonneg_right (neg_le_neg hsum_le) (le_of_lt ha)
+  exact le_trans hdiv hbase
+
+/-- Uniform-upper-bound version of
+`finite_weighted_sum_single_lower_bound_of_upper_bounds`.  This is the algebra
+needed when one common estimate controls every shifted term except the selected
+positive-coefficient term. -/
+lemma finite_weighted_sum_single_lower_bound_of_uniform_upper_bound
+    (S : Finset ℕ) (a x : ℕ → ℝ) {m : ℕ} (B : ℝ)
+    (hm : m ∈ S) (ha : 0 < a m)
+    (ha_nonneg : ∀ k, k ∈ S.erase m → 0 ≤ a k)
+    (hx_upper : ∀ k, k ∈ S.erase m → x k ≤ B)
+    (hnonneg : 0 ≤ ∑ k ∈ S, a k * x k) :
+    x m ≥ - ((∑ k ∈ S.erase m, a k) * B) / a m := by
+  have h :=
+    finite_weighted_sum_single_lower_bound_of_upper_bounds
+      S a x (fun _ => B) hm ha ha_nonneg hx_upper hnonneg
+  simpa [Finset.sum_mul] using h
+
+/-- Detector lower-bound corollary for any finite logarithmic-derivative
+combination already known to be nonnegative. -/
+lemma log_deriv_zeta_finset_single_lower_bound_of_nonneg
+    (σ : ℝ) (t : ℝ) (S : Finset ℕ) (a : ℕ → ℝ) {m : ℕ}
+    (hm : m ∈ S) (ha : 0 < a m)
+    (hnonneg :
+      0 ≤
+        ∑ k ∈ S, a k *
+          (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+            riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re) :
+    (-deriv riemannZeta ((σ : ℂ) + (m : ℂ) * I * t) /
+      riemannZeta ((σ : ℂ) + (m : ℂ) * I * t)).re ≥
+      - (∑ k ∈ S.erase m, a k *
+          (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+            riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re) / a m :=
+  finite_weighted_sum_single_lower_bound S a
+    (fun k =>
+      (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+        riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re)
+    hm ha hnonneg
+
+/-- Automatic detector lower bound: the finite detector nonnegativity itself is
+generated from the nonnegative trigonometric polynomial hypothesis. -/
+lemma log_deriv_zeta_finset_single_lower_bound_auto
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ)
+    (S : Finset ℕ) (a : ℕ → ℝ) {m : ℕ}
+    (hm : m ∈ S) (ha : 0 < a m)
+    (hpoly : ∀ θ : ℝ, 0 ≤ ∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ)) :
+    (-deriv riemannZeta ((σ : ℂ) + (m : ℂ) * I * t) /
+      riemannZeta ((σ : ℂ) + (m : ℂ) * I * t)).re ≥
+      - (∑ k ∈ S.erase m, a k *
+          (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+            riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re) / a m :=
+  log_deriv_zeta_finset_single_lower_bound_of_nonneg σ t S a hm ha
+    (log_deriv_zeta_nonneg_finset_combination_auto σ hσ t S a hpoly)
+
+/-- Detector lower-bound corollary after bounding every shifted term except the
+selected positive-coefficient term. -/
+lemma log_deriv_zeta_finset_single_lower_bound_of_shift_upper_bounds
+    (σ : ℝ) (t : ℝ) (S : Finset ℕ) (a B : ℕ → ℝ) {m : ℕ}
+    (hm : m ∈ S) (ha : 0 < a m)
+    (ha_nonneg : ∀ k, k ∈ S.erase m → 0 ≤ a k)
+    (hupper : ∀ k, k ∈ S.erase m →
+      (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+        riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re ≤ B k)
+    (hnonneg :
+      0 ≤
+        ∑ k ∈ S, a k *
+          (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+            riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re) :
+    (-deriv riemannZeta ((σ : ℂ) + (m : ℂ) * I * t) /
+      riemannZeta ((σ : ℂ) + (m : ℂ) * I * t)).re ≥
+      - (∑ k ∈ S.erase m, a k * B k) / a m :=
+  finite_weighted_sum_single_lower_bound_of_upper_bounds S a
+    (fun k =>
+      (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+        riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re)
+    B hm ha ha_nonneg hupper hnonneg
+
+/-- Detector lower-bound corollary after bounding every shifted term except the
+selected positive-coefficient term by one common bound. -/
+lemma log_deriv_zeta_finset_single_lower_bound_of_uniform_shift_upper_bound
+    (σ : ℝ) (t : ℝ) (S : Finset ℕ) (a : ℕ → ℝ) {m : ℕ} (B : ℝ)
+    (hm : m ∈ S) (ha : 0 < a m)
+    (ha_nonneg : ∀ k, k ∈ S.erase m → 0 ≤ a k)
+    (hupper : ∀ k, k ∈ S.erase m →
+      (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+        riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re ≤ B)
+    (hnonneg :
+      0 ≤
+        ∑ k ∈ S, a k *
+          (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+            riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re) :
+    (-deriv riemannZeta ((σ : ℂ) + (m : ℂ) * I * t) /
+      riemannZeta ((σ : ℂ) + (m : ℂ) * I * t)).re ≥
+      - ((∑ k ∈ S.erase m, a k) * B) / a m :=
+  finite_weighted_sum_single_lower_bound_of_uniform_upper_bound S a
+    (fun k =>
+      (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+        riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re)
+    B hm ha ha_nonneg hupper hnonneg
+
+/-- Automatic detector lower bound from shifted upper bounds and a nonnegative
+trigonometric-polynomial certificate. -/
+lemma log_deriv_zeta_finset_single_lower_bound_auto_of_shift_upper_bounds
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ)
+    (S : Finset ℕ) (a B : ℕ → ℝ) {m : ℕ}
+    (hm : m ∈ S) (ha : 0 < a m)
+    (ha_nonneg : ∀ k, k ∈ S.erase m → 0 ≤ a k)
+    (hupper : ∀ k, k ∈ S.erase m →
+      (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+        riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re ≤ B k)
+    (hpoly : ∀ θ : ℝ, 0 ≤ ∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ)) :
+    (-deriv riemannZeta ((σ : ℂ) + (m : ℂ) * I * t) /
+      riemannZeta ((σ : ℂ) + (m : ℂ) * I * t)).re ≥
+      - (∑ k ∈ S.erase m, a k * B k) / a m :=
+  log_deriv_zeta_finset_single_lower_bound_of_shift_upper_bounds
+    σ t S a B hm ha ha_nonneg hupper
+    (log_deriv_zeta_nonneg_finset_combination_auto σ hσ t S a hpoly)
+
+/-- Automatic detector lower bound from one common shifted upper bound and a
+nonnegative trigonometric-polynomial certificate. -/
+lemma log_deriv_zeta_finset_single_lower_bound_auto_of_uniform_shift_upper_bound
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ)
+    (S : Finset ℕ) (a : ℕ → ℝ) {m : ℕ} (B : ℝ)
+    (hm : m ∈ S) (ha : 0 < a m)
+    (ha_nonneg : ∀ k, k ∈ S.erase m → 0 ≤ a k)
+    (hupper : ∀ k, k ∈ S.erase m →
+      (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+        riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re ≤ B)
+    (hpoly : ∀ θ : ℝ, 0 ≤ ∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ)) :
+    (-deriv riemannZeta ((σ : ℂ) + (m : ℂ) * I * t) /
+      riemannZeta ((σ : ℂ) + (m : ℂ) * I * t)).re ≥
+      - ((∑ k ∈ S.erase m, a k) * B) / a m :=
+  log_deriv_zeta_finset_single_lower_bound_of_uniform_shift_upper_bound
+    σ t S a B hm ha ha_nonneg hupper
+    (log_deriv_zeta_nonneg_finset_combination_auto σ hσ t S a hpoly)
+
 /-- A simple square certificate for pointwise nonnegativity of a finite cosine
 polynomial.  This is a first certificate hook; more general complex-exponential
 sum-of-squares certificates can refine this interface later. -/
@@ -1073,6 +1260,66 @@ lemma log_deriv_zeta_nonneg_finset_combination_auto_of_scaled_complex_exp_abs_sq
   log_deriv_zeta_nonneg_finset_combination_auto σ hσ t S a
     (trigPolynomial_nonneg_of_scaled_complex_exp_abs_sq_certificate
       scale S K a c hscale hcert)
+
+/-- Selected-term lower bound directly from a positive scaled
+complex-exponential absolute-square certificate. -/
+lemma log_deriv_zeta_finset_single_lower_bound_of_scaled_complex_exp_abs_sq_certificate
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ)
+    (scale : ℝ) (S K : Finset ℕ) (a : ℕ → ℝ) (c : ℕ → ℂ)
+    {m : ℕ} (hm : m ∈ S) (ha : 0 < a m)
+    (hscale : 0 < scale)
+    (hcert : ScaledComplexExpAbsSqCertificate scale S K a c) :
+    (-deriv riemannZeta ((σ : ℂ) + (m : ℂ) * I * t) /
+      riemannZeta ((σ : ℂ) + (m : ℂ) * I * t)).re ≥
+      - (∑ k ∈ S.erase m, a k *
+          (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+            riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re) / a m :=
+  log_deriv_zeta_finset_single_lower_bound_of_nonneg σ t S a hm ha
+    (log_deriv_zeta_nonneg_finset_combination_auto_of_scaled_complex_exp_abs_sq_certificate
+      σ hσ t scale S K a c hscale hcert)
+
+/-- Selected-term lower bound from a positive scaled complex-exponential
+absolute-square certificate, after absorbing supplied upper bounds for all
+remaining shifted terms. -/
+lemma
+    log_deriv_zeta_finset_single_lower_bound_of_shift_upper_bounds_of_scaled_complex_exp_abs_sq_certificate
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ)
+    (scale : ℝ) (S K : Finset ℕ) (a B : ℕ → ℝ) (c : ℕ → ℂ)
+    {m : ℕ} (hm : m ∈ S) (ha : 0 < a m)
+    (ha_nonneg : ∀ k, k ∈ S.erase m → 0 ≤ a k)
+    (hupper : ∀ k, k ∈ S.erase m →
+      (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+        riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re ≤ B k)
+    (hscale : 0 < scale)
+    (hcert : ScaledComplexExpAbsSqCertificate scale S K a c) :
+    (-deriv riemannZeta ((σ : ℂ) + (m : ℂ) * I * t) /
+      riemannZeta ((σ : ℂ) + (m : ℂ) * I * t)).re ≥
+      - (∑ k ∈ S.erase m, a k * B k) / a m :=
+  log_deriv_zeta_finset_single_lower_bound_of_shift_upper_bounds
+    σ t S a B hm ha ha_nonneg hupper
+    (log_deriv_zeta_nonneg_finset_combination_auto_of_scaled_complex_exp_abs_sq_certificate
+      σ hσ t scale S K a c hscale hcert)
+
+/-- Uniform shifted-upper-bound version of the selected-term lower bound from a
+positive scaled complex-exponential absolute-square certificate. -/
+lemma
+    log_deriv_zeta_finset_single_lower_bound_of_uniform_shift_upper_bound_of_scaled_complex_exp_abs_sq_certificate
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ)
+    (scale : ℝ) (S K : Finset ℕ) (a : ℕ → ℝ) (c : ℕ → ℂ)
+    {m : ℕ} (B : ℝ) (hm : m ∈ S) (ha : 0 < a m)
+    (ha_nonneg : ∀ k, k ∈ S.erase m → 0 ≤ a k)
+    (hupper : ∀ k, k ∈ S.erase m →
+      (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+        riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re ≤ B)
+    (hscale : 0 < scale)
+    (hcert : ScaledComplexExpAbsSqCertificate scale S K a c) :
+    (-deriv riemannZeta ((σ : ℂ) + (m : ℂ) * I * t) /
+      riemannZeta ((σ : ℂ) + (m : ℂ) * I * t)).re ≥
+      - ((∑ k ∈ S.erase m, a k) * B) / a m :=
+  log_deriv_zeta_finset_single_lower_bound_of_uniform_shift_upper_bound
+    σ t S a B hm ha ha_nonneg hupper
+    (log_deriv_zeta_nonneg_finset_combination_auto_of_scaled_complex_exp_abs_sq_certificate
+      σ hσ t scale S K a c hscale hcert)
 
 /-- Conjugating the finite-detector unit exponential changes the sign of the
 phase. -/
@@ -1230,6 +1477,18 @@ lemma btyDetectorCoeff_sum_one_to_K :
   rw [hIcc]
   norm_num [btyDetectorCoeff, btyRawCoeff, btyDetectorScale]
 
+/-- Sum of all BTY detector coefficients except the selected `k = 1` term. -/
+lemma btyDetectorCoeff_sum_support_erase_one :
+    (∑ k ∈ btyDetectorSupport.erase 1, btyDetectorCoeff k) =
+      (6917296 : ℝ) / 2485395 := by
+  have herase :
+      btyDetectorSupport.erase 1 =
+        ({0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16} :
+          Finset ℕ) := by
+    decide
+  rw [herase]
+  norm_num [btyDetectorCoeff, btyRawCoeff, btyDetectorScale]
+
 /-- The BTY detector has no cosine coefficients beyond degree `16`. -/
 lemma btyDetectorCoeff_eq_zero_of_seventeen_le {k : ℕ} (hk : 17 ≤ k) :
     btyDetectorCoeff k = 0 := by
@@ -1240,6 +1499,20 @@ lemma btyDetectorCoeff_eq_zero_of_seventeen_le {k : ℕ} (hk : 17 ≤ k) :
 /-- The first shifted term belongs to the BTY detector support. -/
 lemma one_mem_btyDetectorSupport : 1 ∈ btyDetectorSupport := by
   simp [btyDetectorSupport]
+
+/-- Every coefficient in the BTY detector support is nonnegative. -/
+lemma btyDetectorCoeff_nonneg_of_mem_support {k : ℕ}
+    (hk : k ∈ btyDetectorSupport) :
+    0 ≤ btyDetectorCoeff k := by
+  rw [btyDetectorSupport] at hk
+  fin_cases hk <;> norm_num [btyDetectorCoeff, btyRawCoeff, btyDetectorScale]
+
+/-- Every coefficient in the BTY detector support is strictly positive. -/
+lemma btyDetectorCoeff_pos_of_mem_support {k : ℕ}
+    (hk : k ∈ btyDetectorSupport) :
+    0 < btyDetectorCoeff k := by
+  rw [btyDetectorSupport] at hk
+  fin_cases hk <;> norm_num [btyDetectorCoeff, btyRawCoeff, btyDetectorScale]
 
 set_option maxHeartbeats 800000 in
 /-- The BTY cosine coefficients regroup the exponential-square double sum. -/
@@ -1324,6 +1597,64 @@ lemma log_deriv_zeta_bty_first_shift_lower_bound
     btyDetectorCoeff_one_pos
     (log_deriv_zeta_nonneg_bty_detector_from_scaled_certificate σ hσ t)
   simpa [x] using hbound
+
+/-- Algebraic lower-bound corollary for the `k=1` term of the BTY detector. -/
+lemma log_deriv_zeta_bty_detector_one_lower_bound
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ) :
+    (-deriv riemannZeta ((σ : ℂ) + I * t) /
+      riemannZeta ((σ : ℂ) + I * t)).re ≥
+      - (∑ k ∈ btyDetectorSupport.erase 1, btyDetectorCoeff k *
+          (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+            riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re) / btyDetectorCoeff 1 := by
+  have hmem : 1 ∈ btyDetectorSupport := by
+    norm_num [btyDetectorSupport]
+  simpa [one_mul] using
+    log_deriv_zeta_finset_single_lower_bound_of_nonneg
+      σ t btyDetectorSupport btyDetectorCoeff hmem btyDetectorCoeff_one_pos
+      (log_deriv_zeta_nonneg_bty_detector_from_scaled_certificate σ hσ t)
+
+/-- If all BTY shifted terms except `k=1` have supplied upper bounds, then the
+`k=1` logarithmic-derivative term has the corresponding weighted lower bound. -/
+lemma log_deriv_zeta_bty_detector_one_lower_bound_of_shift_upper_bounds
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ) (B : ℕ → ℝ)
+    (hupper : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+        riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re ≤ B k) :
+    (-deriv riemannZeta ((σ : ℂ) + I * t) /
+      riemannZeta ((σ : ℂ) + I * t)).re ≥
+      - (∑ k ∈ btyDetectorSupport.erase 1, btyDetectorCoeff k * B k) /
+        btyDetectorCoeff 1 := by
+  have hmem : 1 ∈ btyDetectorSupport := by
+    norm_num [btyDetectorSupport]
+  have hcoeff_nonneg :
+      ∀ k, k ∈ btyDetectorSupport.erase 1 → 0 ≤ btyDetectorCoeff k := by
+    intro k hk
+    exact btyDetectorCoeff_nonneg_of_mem_support (Finset.mem_of_mem_erase hk)
+  simpa [one_mul] using
+    log_deriv_zeta_finset_single_lower_bound_of_shift_upper_bounds
+      σ t btyDetectorSupport btyDetectorCoeff B hmem btyDetectorCoeff_one_pos
+      hcoeff_nonneg hupper
+      (log_deriv_zeta_nonneg_bty_detector_from_scaled_certificate σ hσ t)
+
+/-- Uniform shifted-term version of the BTY `k = 1` lower bound.  This is the
+shape needed when later analytic estimates supply one common upper bound for all
+remaining shifted logarithmic-derivative terms. -/
+lemma log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_shift_upper_bound
+    (σ : ℝ) (hσ : 1 < σ) (t B : ℝ)
+    (hupper : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+        riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re ≤ B) :
+    (-deriv riemannZeta ((σ : ℂ) + I * t) /
+      riemannZeta ((σ : ℂ) + I * t)).re ≥
+      - (((6917296 : ℝ) / 2485395) * B) / btyDetectorCoeff 1 := by
+  have h :=
+    log_deriv_zeta_bty_detector_one_lower_bound_of_shift_upper_bounds
+      σ hσ t (fun _ => B) hupper
+  have hsum :
+      (∑ k ∈ btyDetectorSupport.erase 1, btyDetectorCoeff k * B) =
+        ((6917296 : ℝ) / 2485395) * B := by
+    rw [← Finset.sum_mul, btyDetectorCoeff_sum_support_erase_one]
+  simpa [hsum] using h
 
 /-- Minimal concrete complex-exponential absolute-square certificate:
 `1 = ‖exp(0)‖^2`.  This is a template for later finite coefficient-table

@@ -233,12 +233,24 @@ and packaging: a zero on `Re(s)=1/3` reflects to one on `Re(s)=2/3`.  The
 unproved analytic part remains the explicit-formula converse/oscillation
 argument that would justify `ExplicitFormulaConversePowerTarget (2 / 3)`.
 
+The same reflection step is now available without hard-coding `1/3`.
+`PrimeNumberTheorem.no_zeros_on_reflected_line_of_explicit_formula_converse_power`
+takes `0 < beta < 1`, an `ExplicitFormulaConversePowerTarget beta`, and a
+`PsiPowerErrorBelowLine beta` hypothesis, and returns
+`NoZerosOnVerticalLine (1 - beta)`.  This remains a formal bridge: the hard
+analytic content is still the converse explicit-formula theorem that would
+produce `ExplicitFormulaConversePowerTarget beta`.
+
 The public facade also exposes
 `RiemannPNT.API.no_zeros_on_one_third_of_truncated_explicit_formula_converse_route`,
 which composes the truncated route
 `ExplicitFormulaTruncatedConverseRoute (2 / 3)`, a future proof of the
 truncated explicit formula for all admissible `T,x`, and the `ψ` power-saving
 hypothesis into the same `NoZerosOnVerticalLine (1 / 3)` conclusion.
+The generalized facade
+`RiemannPNT.API.no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route`
+does the same composition for arbitrary `0 < beta < 1`, yielding
+`NoZerosOnVerticalLine (1 - beta)`.
 
 ## Recommended next formalization order
 

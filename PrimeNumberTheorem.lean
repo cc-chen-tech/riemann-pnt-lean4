@@ -2808,6 +2808,48 @@ theorem exists_nontrivial_zero_on_one_third_iff_two_thirds :
     have hcalc : (1 : ℝ) - (2 / 3) = 1 / 3 := by norm_num
     simpa [Complex.sub_re, hs] using hcalc
 
+/-- General reflected-line existence equivalence for nontrivial zeros:
+`ρ ↦ 1-ρ` sends the line `Re(s)=β` to `Re(s)=1-β`, and is its own inverse. -/
+theorem exists_nontrivial_zero_on_line_iff_reflected (β : ℝ) :
+    (∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = β) ↔
+      (∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = 1 - β) := by
+  constructor
+  · rintro ⟨s, hnt, hs⟩
+    refine ⟨1 - s, nontrivial_zero_symmetric' hnt, ?_⟩
+    simp [Complex.sub_re, hs]
+  · rintro ⟨s, hnt, hs⟩
+    refine ⟨1 - s, nontrivial_zero_symmetric' hnt, ?_⟩
+    have hcalc : (1 : ℝ) - (1 - β) = β := by ring
+    simp [Complex.sub_re, hs, hcalc]
+
+/-- In the critical strip, zero-freeness of a vertical line is equivalent to
+zero-freeness of the reflected line. -/
+theorem no_zeros_on_vertical_line_iff_reflected
+    {β : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1) :
+    NoZerosOnVerticalLine β ↔ NoZerosOnVerticalLine (1 - β) := by
+  constructor
+  · intro hleft s hs hzero
+    have hnt : RiemannHypothesis.IsNontrivialZero s := by
+      refine ⟨hzero, ?_, ?_⟩
+      · linarith [hs, hβ_lt_one]
+      · linarith [hs, hβ_pos]
+    have hsym : RiemannHypothesis.IsNontrivialZero (1 - s) :=
+      nontrivial_zero_symmetric' hnt
+    have hre : (1 - s).re = β := by
+      have hcalc : (1 : ℝ) - (1 - β) = β := by ring
+      simp [Complex.sub_re, hs, hcalc]
+    exact hleft (1 - s) hre hsym.1
+  · intro hright s hs hzero
+    have hnt : RiemannHypothesis.IsNontrivialZero s := by
+      refine ⟨hzero, ?_, ?_⟩
+      · linarith [hs, hβ_pos]
+      · linarith [hs, hβ_lt_one]
+    have hsym : RiemannHypothesis.IsNontrivialZero (1 - s) :=
+      nontrivial_zero_symmetric' hnt
+    have hre : (1 - s).re = 1 - β := by
+      simp [Complex.sub_re, hs]
+    exact hright (1 - s) hre hsym.1
+
 /-- Route interface for the proposed converse-explicit-formula strategy.
 
 The intended analytic input is: a sufficiently strong PNT error term implies
@@ -2909,6 +2951,36 @@ theorem no_zeros_on_vertical_line_of_explicit_formula_converse_power
     (herror : PsiPowerErrorBelowLine β) :
     NoZerosOnVerticalLine β :=
   no_zeros_on_vertical_line_of_psi_power_error_bridge hβ_pos hβ_lt_one hbridge herror
+
+/-- Reflected-line version of the `ψ` power-saving bridge: if a power saving
+below `β` excludes zeros on or to the right of `Re(s)=β`, then it excludes zeros
+on the reflected line `Re(s)=1-β`. -/
+theorem no_zeros_on_reflected_line_of_psi_power_error_bridge
+    {β : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hbridge : PsiPowerErrorBelowLineExcludesZerosRightOf β)
+    (herror : PsiPowerErrorBelowLine β) :
+    NoZerosOnVerticalLine (1 - β) := by
+  intro s hs hzero
+  have hnt : RiemannHypothesis.IsNontrivialZero s := by
+    refine ⟨hzero, ?_, ?_⟩
+    · linarith [hs, hβ_lt_one]
+    · linarith [hs, hβ_pos]
+  have hsym : RiemannHypothesis.IsNontrivialZero (1 - s) :=
+    nontrivial_zero_symmetric' hnt
+  have hre : (1 - s).re = β := by
+    have hcalc : (1 : ℝ) - (1 - β) = β := by ring
+    simp [Complex.sub_re, hs, hcalc]
+  exact hbridge herror (1 - s) hsym (le_of_eq hre.symm)
+
+/-- Reflected-line bridge with the explicit-formula converse dependency named
+directly. -/
+theorem no_zeros_on_reflected_line_of_explicit_formula_converse_power
+    {β : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hbridge : ExplicitFormulaConversePowerTarget β)
+    (herror : PsiPowerErrorBelowLine β) :
+    NoZerosOnVerticalLine (1 - β) :=
+  no_zeros_on_reflected_line_of_psi_power_error_bridge
+    hβ_pos hβ_lt_one hbridge herror
 
 /-- Specialization of the general `ψ`-error bridge to the reflected
 `Re(s) = 2 / 3` line, hence to `Re(s) = 1 / 3` by zero symmetry. -/
@@ -3752,6 +3824,19 @@ lemma nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive_one
       intro ρ hρ
       rcases mem_nontrivialZerosFinset.mp hρ with ⟨hzero, _hheight⟩
       exact ⟨le_of_lt hzero.2.1, le_of_lt hzero.2.2⟩)
+
+/-- Center-one Laplace-pair positivity also makes the unpaired real-part sum
+nonnegative, after reindexing the reflected half of the paired sum by
+`ρ ↦ 1 - ρ`. -/
+lemma nontrivialZerosFinset_sum_re_nonnegative_of_laplace_pair_positive_one
+    (T : ℝ) (F : ℂ → ℂ)
+    (hF : LaplacePairPositive F 1) :
+    0 ≤ ∑ ρ ∈ nontrivialZerosFinset T, (F ρ).re := by
+  have hpair :=
+    nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive_one
+      T F hF
+  rw [nontrivialZerosFinset_pair_contribution_eq_two_sum_re] at hpair
+  nlinarith
 
 lemma nontrivialZerosFinset_ext_of_height_iff {T U : ℝ}
     (h : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ →

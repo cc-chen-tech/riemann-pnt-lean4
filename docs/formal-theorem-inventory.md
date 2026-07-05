@@ -72,13 +72,33 @@ Core verified declarations:
   provide the scaled certificate shape
   `scale * P(theta) = ||sum c_k exp(i k theta)||^2`, avoiding square-root
   coefficients in finite detector tables.
+- `log_deriv_zeta_finset_single_lower_bound_of_scaled_complex_exp_abs_sq_certificate`,
+  `log_deriv_zeta_finset_single_lower_bound_of_shift_upper_bounds_of_scaled_complex_exp_abs_sq_certificate`,
+  and
+  `log_deriv_zeta_finset_single_lower_bound_of_uniform_shift_upper_bound_of_scaled_complex_exp_abs_sq_certificate`
+  feed a scaled detector certificate directly into selected-term lower-bound
+  extraction, optionally absorbing pointwise or uniform upper bounds for all
+  remaining shifted terms.
 - `btyRawCoeff`, `btyDetectorCoeff_zero`, `btyDetectorCoeff_one`,
-  `btyDetectorCoeff_sum_one_to_K`, and
-  `btyDetectorCoeff_eq_zero_of_seventeen_le` encode the
+  `btyDetectorCoeff_sum_one_to_K`, `btyDetectorCoeff_sum_support_erase_one`,
+  and `btyDetectorCoeff_eq_zero_of_seventeen_le` encode the
   Bellotti-Trudgian-Yang degree-16 detector coefficients, verify the quoted
   values `a_0 = 1`, `a_1 = 865534 / 497079`, and
-  `sum_{1 <= k <= 16} a_k = 2919857 / 828465`, and prove support truncation
-  beyond degree `16`.
+  `sum_{1 <= k <= 16} a_k = 2919857 / 828465`, compute the coefficient sum
+  away from `k = 1` as `6917296 / 2485395`, and prove support truncation beyond
+  degree `16`.
+- `finite_weighted_sum_single_lower_bound`,
+  `finite_weighted_sum_single_lower_bound_of_upper_bounds`,
+  `finite_weighted_sum_single_lower_bound_of_uniform_upper_bound`,
+  `log_deriv_zeta_finset_single_lower_bound_of_nonneg`,
+  `log_deriv_zeta_finset_single_lower_bound_auto`,
+  `log_deriv_zeta_finset_single_lower_bound_of_shift_upper_bounds`, and
+  `log_deriv_zeta_finset_single_lower_bound_auto_of_shift_upper_bounds`,
+  `log_deriv_zeta_finset_single_lower_bound_of_uniform_shift_upper_bound`, and
+  `log_deriv_zeta_finset_single_lower_bound_auto_of_uniform_shift_upper_bound`
+  isolate one positive-coefficient term from a nonnegative finite detector sum,
+  with variants that absorb supplied upper bounds for the remaining shifted
+  terms, including one common upper bound for all remaining shifts.
 - `norm_sq_sum_real_coeff_complex_exp_eq_double_sum`,
   `bty_scaled_detector_sum_eq_double_sum`,
   `btyScaledComplexExpAbsSqCertificate`, and
@@ -86,6 +106,15 @@ Core verified declarations:
   real-coefficient exponential-square norms as double Fourier cosine sums,
   prove the full scaled BTY detector certificate, and derive the corresponding
   automatic logarithmic-derivative detector inequality.
+- `btyDetectorCoeff_nonneg_of_mem_support`,
+  `btyDetectorCoeff_pos_of_mem_support`,
+  `btyDetectorCoeff_one_pos`,
+  `log_deriv_zeta_bty_detector_one_lower_bound`,
+  `log_deriv_zeta_bty_detector_one_lower_bound_of_shift_upper_bounds`, and
+  `log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_shift_upper_bound`
+  specialize the detector lower-bound extraction to the BTY `k = 1` term and
+  package the exact interface needed by future shifted log-derivative upper
+  bounds.
 - `log_deriv_zeta_nonneg_three_four_one_from_finset`
   re-exposes the verified 3-4-1 theorem as the base detector instance.
 - `classical_zero_free_region_compact`
@@ -1357,6 +1386,9 @@ Core verified declarations:
   specializes that finite paired-zero nonnegativity bridge to center `1`,
   discharging the critical-strip side condition from membership in
   `nontrivialZerosFinset`.
+- `nontrivialZerosFinset_sum_re_nonnegative_of_laplace_pair_positive_one`
+  converts the paired finite-zero nonnegativity into nonnegativity of the
+  unpaired real-part sum using the `rho -> 1 - rho` reindexing identity.
 - `NoZerosOnVerticalLine`
   is a reusable predicate for excluding zeta zeros on a fixed vertical line.
 - `no_zeros_on_one_third_of_RH`
@@ -1367,6 +1399,10 @@ Core verified declarations:
 - `exists_nontrivial_zero_on_one_third_iff_two_thirds`
   proves the nontrivial-zero existence equivalence between the reflected
   lines `Re(s) = 1/3` and `Re(s) = 2/3`.
+- `exists_nontrivial_zero_on_line_iff_reflected` and
+  `no_zeros_on_vertical_line_iff_reflected`
+  generalize the same functional-equation reflection to arbitrary vertical
+  lines `Re(s)=beta` and `Re(s)=1-beta` in the critical strip.
 - `NoZerosOnVerticalLineOneThirdOfStrongPNTError` and
   `no_zeros_on_one_third_of_strong_pnt_error_bridge`
   isolate the formal bridge from a future strong-PNT-error converse excluding
@@ -1380,16 +1416,19 @@ Core verified declarations:
   interface.
 - `PsiPowerErrorBelowLine`,
   `PsiPowerErrorBelowLineExcludesZerosRightOf`,
-  `no_zeros_on_vertical_line_of_psi_power_error_bridge`, and
+  `no_zeros_on_vertical_line_of_psi_power_error_bridge`,
+  `no_zeros_on_reflected_line_of_psi_power_error_bridge`, and
   `no_zeros_on_one_third_of_general_psi_power_error_bridge`
   generalize the `2/3` psi-power-error bridge to arbitrary vertical lines in
   the critical strip, with the explicit-formula converse still kept as an
   assumption.
 - `ExplicitFormulaConversePowerTarget`,
-  `no_zeros_on_vertical_line_of_explicit_formula_converse_power`, and
+  `no_zeros_on_vertical_line_of_explicit_formula_converse_power`,
+  `no_zeros_on_reflected_line_of_explicit_formula_converse_power`, and
   `no_zeros_on_one_third_of_explicit_formula_converse_power`
-  name the explicit-formula converse dependency directly and specialize it to
-  the reflected `Re(s)=1/3` route.
+  name the explicit-formula converse dependency directly, including the general
+  reflected-line route `Re(s)=1-beta`, and specialize it to the reflected
+  `Re(s)=1/3` route.
 - `riemannZeta_ne_zero_of_re_le_zero`
   excludes nontrivial zeros in `Re(s) <= 0`, except for the trivial zero
   locations.
@@ -1614,6 +1653,10 @@ Route interfaces:
 - `PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute`
   route interface from a future uniform truncated explicit formula plus
   oscillation/converse argument to `ExplicitFormulaConversePowerTarget`.
+- `RiemannPNT.API.no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route`
+  public bridge from a truncated explicit-formula route at any `0 < beta < 1`
+  and a `psi` power saving below `beta` to no zeros on the reflected line
+  `Re(s)=1-beta`.
 - `RiemannExplorer.Conrey40.conrey_40_percent_zeros_on_critical_line_target`
   alias interface to `KnownResults.conrey_40_percent_zeros_on_critical_line_target`.
 - `MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum`

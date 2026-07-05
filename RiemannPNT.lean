@@ -1852,6 +1852,41 @@ theorem no_zeros_on_vertical_line_of_explicit_formula_converse_power
   PrimeNumberTheorem.no_zeros_on_vertical_line_of_explicit_formula_converse_power
     hβ_pos hβ_lt_one hbridge herror
 
+/-- Public reflected-line bridge from a general `ψ` power-saving error below
+`β` to zero-freeness on `Re(s)=1-β`. -/
+theorem no_zeros_on_reflected_line_of_psi_power_error_bridge
+    {β : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hbridge : PrimeNumberTheorem.PsiPowerErrorBelowLineExcludesZerosRightOf β)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (1 - β) :=
+  PrimeNumberTheorem.no_zeros_on_reflected_line_of_psi_power_error_bridge
+    hβ_pos hβ_lt_one hbridge herror
+
+/-- Public reflected-line bridge with the explicit-formula converse dependency
+named directly. -/
+theorem no_zeros_on_reflected_line_of_explicit_formula_converse_power
+    {β : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hbridge : PrimeNumberTheorem.ExplicitFormulaConversePowerTarget β)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (1 - β) :=
+  PrimeNumberTheorem.no_zeros_on_reflected_line_of_explicit_formula_converse_power
+    hβ_pos hβ_lt_one hbridge herror
+
+/-- Public reflected-line existence equivalence for nontrivial zeros. -/
+theorem exists_nontrivial_zero_on_line_iff_reflected (β : ℝ) :
+    (∃ s : ℂ, _root_.RiemannHypothesis.IsNontrivialZero s ∧ s.re = β) ↔
+      (∃ s : ℂ, _root_.RiemannHypothesis.IsNontrivialZero s ∧
+        s.re = 1 - β) :=
+  PrimeNumberTheorem.exists_nontrivial_zero_on_line_iff_reflected β
+
+/-- Public reflected-line equivalence for zero-freeness in the critical strip. -/
+theorem no_zeros_on_vertical_line_iff_reflected
+    {β : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine β ↔
+      PrimeNumberTheorem.NoZerosOnVerticalLine (1 - β) :=
+  PrimeNumberTheorem.no_zeros_on_vertical_line_iff_reflected
+    hβ_pos hβ_lt_one
+
 /-- Public specialization of the general `ψ` power-saving bridge to the
 reflected `2/3` line and hence the `1/3` line. -/
 theorem no_zeros_on_one_third_of_general_psi_power_error_bridge
@@ -2078,6 +2113,13 @@ theorem nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive_one
     0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
       ((F ρ).re + (F (1 - ρ)).re) :=
   PrimeNumberTheorem.nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive_one
+    T F hF
+
+theorem nontrivialZerosFinset_sum_re_nonnegative_of_laplace_pair_positive_one
+    (T : ℝ) (F : ℂ → ℂ)
+    (hF : PrimeNumberTheorem.LaplacePairPositive F 1) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T, (F ρ).re :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sum_re_nonnegative_of_laplace_pair_positive_one
     T F hF
 
 /-- Public extensionality criterion for height-truncated nontrivial-zero
@@ -4710,6 +4752,176 @@ theorem log_deriv_zeta_nonneg_finset_combination_auto_of_scaled_complex_exp_abs_
   ZeroFreeRegion.log_deriv_zeta_nonneg_finset_combination_auto_of_scaled_complex_exp_abs_sq_certificate
     σ hσ t scale S K a c hscale hcert
 
+theorem log_deriv_zeta_finset_single_lower_bound_of_scaled_complex_exp_abs_sq_certificate
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ)
+    (scale : ℝ) (S K : Finset ℕ) (a : ℕ → ℝ) (c : ℕ → ℂ)
+    {m : ℕ} (hm : m ∈ S) (ha : 0 < a m)
+    (hscale : 0 < scale)
+    (hcert : ScaledComplexExpAbsSqCertificate scale S K a c) :
+    (-deriv riemannZeta ((σ : ℂ) + (m : ℂ) * Complex.I * t) /
+      riemannZeta ((σ : ℂ) + (m : ℂ) * Complex.I * t)).re ≥
+      - (∑ k ∈ S.erase m, a k *
+          (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t) /
+            riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re) / a m :=
+  ZeroFreeRegion.log_deriv_zeta_finset_single_lower_bound_of_scaled_complex_exp_abs_sq_certificate
+    σ hσ t scale S K a c hm ha hscale hcert
+
+theorem
+    log_deriv_zeta_finset_single_lower_bound_of_shift_upper_bounds_of_scaled_complex_exp_abs_sq_certificate
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ)
+    (scale : ℝ) (S K : Finset ℕ) (a B : ℕ → ℝ) (c : ℕ → ℂ)
+    {m : ℕ} (hm : m ∈ S) (ha : 0 < a m)
+    (ha_nonneg : ∀ k, k ∈ S.erase m → 0 ≤ a k)
+    (hupper : ∀ k, k ∈ S.erase m →
+      (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t) /
+        riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re ≤ B k)
+    (hscale : 0 < scale)
+    (hcert : ScaledComplexExpAbsSqCertificate scale S K a c) :
+    (-deriv riemannZeta ((σ : ℂ) + (m : ℂ) * Complex.I * t) /
+      riemannZeta ((σ : ℂ) + (m : ℂ) * Complex.I * t)).re ≥
+      - (∑ k ∈ S.erase m, a k * B k) / a m :=
+  ZeroFreeRegion.log_deriv_zeta_finset_single_lower_bound_of_shift_upper_bounds_of_scaled_complex_exp_abs_sq_certificate
+    σ hσ t scale S K a B c hm ha ha_nonneg hupper hscale hcert
+
+theorem
+    log_deriv_zeta_finset_single_lower_bound_of_uniform_shift_upper_bound_of_scaled_complex_exp_abs_sq_certificate
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ)
+    (scale : ℝ) (S K : Finset ℕ) (a : ℕ → ℝ) (c : ℕ → ℂ)
+    {m : ℕ} (B : ℝ) (hm : m ∈ S) (ha : 0 < a m)
+    (ha_nonneg : ∀ k, k ∈ S.erase m → 0 ≤ a k)
+    (hupper : ∀ k, k ∈ S.erase m →
+      (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t) /
+        riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re ≤ B)
+    (hscale : 0 < scale)
+    (hcert : ScaledComplexExpAbsSqCertificate scale S K a c) :
+    (-deriv riemannZeta ((σ : ℂ) + (m : ℂ) * Complex.I * t) /
+      riemannZeta ((σ : ℂ) + (m : ℂ) * Complex.I * t)).re ≥
+      - ((∑ k ∈ S.erase m, a k) * B) / a m :=
+  ZeroFreeRegion.log_deriv_zeta_finset_single_lower_bound_of_uniform_shift_upper_bound_of_scaled_complex_exp_abs_sq_certificate
+    σ hσ t scale S K a c B hm ha ha_nonneg hupper hscale hcert
+
+theorem finite_weighted_sum_single_lower_bound
+    (S : Finset ℕ) (a x : ℕ → ℝ) {m : ℕ}
+    (hm : m ∈ S) (ha : 0 < a m)
+    (hnonneg : 0 ≤ ∑ k ∈ S, a k * x k) :
+    x m ≥ - (∑ k ∈ S.erase m, a k * x k) / a m :=
+  ZeroFreeRegion.finite_weighted_sum_single_lower_bound S a x hm ha hnonneg
+
+theorem finite_weighted_sum_single_lower_bound_of_upper_bounds
+    (S : Finset ℕ) (a x B : ℕ → ℝ) {m : ℕ}
+    (hm : m ∈ S) (ha : 0 < a m)
+    (ha_nonneg : ∀ k, k ∈ S.erase m → 0 ≤ a k)
+    (hx_upper : ∀ k, k ∈ S.erase m → x k ≤ B k)
+    (hnonneg : 0 ≤ ∑ k ∈ S, a k * x k) :
+    x m ≥ - (∑ k ∈ S.erase m, a k * B k) / a m :=
+  ZeroFreeRegion.finite_weighted_sum_single_lower_bound_of_upper_bounds
+    S a x B hm ha ha_nonneg hx_upper hnonneg
+
+theorem finite_weighted_sum_single_lower_bound_of_uniform_upper_bound
+    (S : Finset ℕ) (a x : ℕ → ℝ) {m : ℕ} (B : ℝ)
+    (hm : m ∈ S) (ha : 0 < a m)
+    (ha_nonneg : ∀ k, k ∈ S.erase m → 0 ≤ a k)
+    (hx_upper : ∀ k, k ∈ S.erase m → x k ≤ B)
+    (hnonneg : 0 ≤ ∑ k ∈ S, a k * x k) :
+    x m ≥ - ((∑ k ∈ S.erase m, a k) * B) / a m :=
+  ZeroFreeRegion.finite_weighted_sum_single_lower_bound_of_uniform_upper_bound
+    S a x B hm ha ha_nonneg hx_upper hnonneg
+
+theorem log_deriv_zeta_finset_single_lower_bound_of_nonneg
+    (σ : ℝ) (t : ℝ) (S : Finset ℕ) (a : ℕ → ℝ) {m : ℕ}
+    (hm : m ∈ S) (ha : 0 < a m)
+    (hnonneg :
+      0 ≤
+        ∑ k ∈ S, a k *
+          (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t) /
+            riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re) :
+    (-deriv riemannZeta ((σ : ℂ) + (m : ℂ) * Complex.I * t) /
+      riemannZeta ((σ : ℂ) + (m : ℂ) * Complex.I * t)).re ≥
+      - (∑ k ∈ S.erase m, a k *
+          (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t) /
+            riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re) / a m :=
+  ZeroFreeRegion.log_deriv_zeta_finset_single_lower_bound_of_nonneg
+    σ t S a hm ha hnonneg
+
+theorem log_deriv_zeta_finset_single_lower_bound_auto
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ)
+    (S : Finset ℕ) (a : ℕ → ℝ) {m : ℕ}
+    (hm : m ∈ S) (ha : 0 < a m)
+    (hpoly : ∀ θ : ℝ, 0 ≤ ∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ)) :
+    (-deriv riemannZeta ((σ : ℂ) + (m : ℂ) * Complex.I * t) /
+      riemannZeta ((σ : ℂ) + (m : ℂ) * Complex.I * t)).re ≥
+      - (∑ k ∈ S.erase m, a k *
+          (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t) /
+            riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re) / a m :=
+  ZeroFreeRegion.log_deriv_zeta_finset_single_lower_bound_auto
+    σ hσ t S a hm ha hpoly
+
+theorem log_deriv_zeta_finset_single_lower_bound_of_shift_upper_bounds
+    (σ : ℝ) (t : ℝ) (S : Finset ℕ) (a B : ℕ → ℝ) {m : ℕ}
+    (hm : m ∈ S) (ha : 0 < a m)
+    (ha_nonneg : ∀ k, k ∈ S.erase m → 0 ≤ a k)
+    (hupper : ∀ k, k ∈ S.erase m →
+      (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t) /
+        riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re ≤ B k)
+    (hnonneg :
+      0 ≤
+        ∑ k ∈ S, a k *
+          (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t) /
+            riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re) :
+    (-deriv riemannZeta ((σ : ℂ) + (m : ℂ) * Complex.I * t) /
+      riemannZeta ((σ : ℂ) + (m : ℂ) * Complex.I * t)).re ≥
+      - (∑ k ∈ S.erase m, a k * B k) / a m :=
+  ZeroFreeRegion.log_deriv_zeta_finset_single_lower_bound_of_shift_upper_bounds
+    σ t S a B hm ha ha_nonneg hupper hnonneg
+
+theorem log_deriv_zeta_finset_single_lower_bound_of_uniform_shift_upper_bound
+    (σ : ℝ) (t : ℝ) (S : Finset ℕ) (a : ℕ → ℝ) {m : ℕ} (B : ℝ)
+    (hm : m ∈ S) (ha : 0 < a m)
+    (ha_nonneg : ∀ k, k ∈ S.erase m → 0 ≤ a k)
+    (hupper : ∀ k, k ∈ S.erase m →
+      (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t) /
+        riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re ≤ B)
+    (hnonneg :
+      0 ≤
+        ∑ k ∈ S, a k *
+          (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t) /
+            riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re) :
+    (-deriv riemannZeta ((σ : ℂ) + (m : ℂ) * Complex.I * t) /
+      riemannZeta ((σ : ℂ) + (m : ℂ) * Complex.I * t)).re ≥
+      - ((∑ k ∈ S.erase m, a k) * B) / a m :=
+  ZeroFreeRegion.log_deriv_zeta_finset_single_lower_bound_of_uniform_shift_upper_bound
+    σ t S a B hm ha ha_nonneg hupper hnonneg
+
+theorem log_deriv_zeta_finset_single_lower_bound_auto_of_shift_upper_bounds
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ)
+    (S : Finset ℕ) (a B : ℕ → ℝ) {m : ℕ}
+    (hm : m ∈ S) (ha : 0 < a m)
+    (ha_nonneg : ∀ k, k ∈ S.erase m → 0 ≤ a k)
+    (hupper : ∀ k, k ∈ S.erase m →
+      (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t) /
+        riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re ≤ B k)
+    (hpoly : ∀ θ : ℝ, 0 ≤ ∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ)) :
+    (-deriv riemannZeta ((σ : ℂ) + (m : ℂ) * Complex.I * t) /
+      riemannZeta ((σ : ℂ) + (m : ℂ) * Complex.I * t)).re ≥
+      - (∑ k ∈ S.erase m, a k * B k) / a m :=
+  ZeroFreeRegion.log_deriv_zeta_finset_single_lower_bound_auto_of_shift_upper_bounds
+    σ hσ t S a B hm ha ha_nonneg hupper hpoly
+
+theorem log_deriv_zeta_finset_single_lower_bound_auto_of_uniform_shift_upper_bound
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ)
+    (S : Finset ℕ) (a : ℕ → ℝ) {m : ℕ} (B : ℝ)
+    (hm : m ∈ S) (ha : 0 < a m)
+    (ha_nonneg : ∀ k, k ∈ S.erase m → 0 ≤ a k)
+    (hupper : ∀ k, k ∈ S.erase m →
+      (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t) /
+        riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re ≤ B)
+    (hpoly : ∀ θ : ℝ, 0 ≤ ∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ)) :
+    (-deriv riemannZeta ((σ : ℂ) + (m : ℂ) * Complex.I * t) /
+      riemannZeta ((σ : ℂ) + (m : ℂ) * Complex.I * t)).re ≥
+      - ((∑ k ∈ S.erase m, a k) * B) / a m :=
+  ZeroFreeRegion.log_deriv_zeta_finset_single_lower_bound_auto_of_uniform_shift_upper_bound
+    σ hσ t S a B hm ha ha_nonneg hupper hpoly
+
 /-- Public BTY detector scale `14912370`. -/
 abbrev btyDetectorScale : ℝ := ZeroFreeRegion.btyDetectorScale
 
@@ -4745,12 +4957,27 @@ theorem btyDetectorCoeff_sum_one_to_K :
       (2919857 : ℝ) / 828465 :=
   ZeroFreeRegion.btyDetectorCoeff_sum_one_to_K
 
+theorem btyDetectorCoeff_sum_support_erase_one :
+    (∑ k ∈ btyDetectorSupport.erase 1, btyDetectorCoeff k) =
+      (6917296 : ℝ) / 2485395 :=
+  ZeroFreeRegion.btyDetectorCoeff_sum_support_erase_one
+
 theorem btyDetectorCoeff_eq_zero_of_seventeen_le {k : ℕ} (hk : 17 ≤ k) :
     btyDetectorCoeff k = 0 :=
   ZeroFreeRegion.btyDetectorCoeff_eq_zero_of_seventeen_le hk
 
 theorem one_mem_btyDetectorSupport : 1 ∈ btyDetectorSupport :=
   ZeroFreeRegion.one_mem_btyDetectorSupport
+
+theorem btyDetectorCoeff_nonneg_of_mem_support {k : ℕ}
+    (hk : k ∈ btyDetectorSupport) :
+    0 ≤ btyDetectorCoeff k :=
+  ZeroFreeRegion.btyDetectorCoeff_nonneg_of_mem_support hk
+
+theorem btyDetectorCoeff_pos_of_mem_support {k : ℕ}
+    (hk : k ∈ btyDetectorSupport) :
+    0 < btyDetectorCoeff k :=
+  ZeroFreeRegion.btyDetectorCoeff_pos_of_mem_support hk
 
 /-- Public finite real-coefficient exponential-square expansion as a double
 Fourier cosine sum. -/
@@ -4802,6 +5029,39 @@ theorem log_deriv_zeta_bty_first_shift_lower_bound
             riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re) /
         btyDetectorCoeff 1 :=
   ZeroFreeRegion.log_deriv_zeta_bty_first_shift_lower_bound σ hσ t
+
+theorem log_deriv_zeta_bty_detector_one_lower_bound
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ) :
+    (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+      riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+      - (∑ k ∈ btyDetectorSupport.erase 1, btyDetectorCoeff k *
+          (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t) /
+            riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re) /
+        btyDetectorCoeff 1 :=
+  ZeroFreeRegion.log_deriv_zeta_bty_detector_one_lower_bound σ hσ t
+
+theorem log_deriv_zeta_bty_detector_one_lower_bound_of_shift_upper_bounds
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ) (B : ℕ → ℝ)
+    (hupper : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t) /
+        riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re ≤ B k) :
+    (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+      riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+      - (∑ k ∈ btyDetectorSupport.erase 1, btyDetectorCoeff k * B k) /
+        btyDetectorCoeff 1 :=
+  ZeroFreeRegion.log_deriv_zeta_bty_detector_one_lower_bound_of_shift_upper_bounds
+    σ hσ t B hupper
+
+theorem log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_shift_upper_bound
+    (σ : ℝ) (hσ : 1 < σ) (t B : ℝ)
+    (hupper : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t) /
+        riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re ≤ B) :
+    (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+      riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+      - (((6917296 : ℝ) / 2485395) * B) / btyDetectorCoeff 1 :=
+  ZeroFreeRegion.log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_shift_upper_bound
+    σ hσ t B hupper
 
 /-- Public constant-one complex-exponential certificate. -/
 theorem complexExpAbsSqCertificate_const_one :
@@ -12108,6 +12368,27 @@ theorem no_zeros_on_one_third_of_truncated_explicit_formula_converse_route
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine (2 / 3)) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) :=
   PrimeNumberTheorem.no_zeros_on_one_third_of_explicit_formula_converse_power
+    (PrimeNumberTheorem.ExplicitFormulaTruncated.explicitFormulaConversePower_of_truncated_route
+      hroute hexplicit)
+    herror
+
+/-- Public reflected-line version of the truncated explicit-formula bridge.
+
+For any `0 < β < 1`, a future truncated explicit formula route at the boundary
+`β`, together with a `ψ` power saving below `β`, excludes zeros on the reflected
+line `Re(s)=1-β`.  The hard analytic dependencies are still exactly the
+truncated formula and the converse/oscillation route. -/
+theorem no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route
+    {β : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hroute :
+      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute β)
+    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
+      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget
+        T hT x hx)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (1 - β) :=
+  PrimeNumberTheorem.no_zeros_on_reflected_line_of_explicit_formula_converse_power
+    hβ_pos hβ_lt_one
     (PrimeNumberTheorem.ExplicitFormulaTruncated.explicitFormulaConversePower_of_truncated_route
       hroute hexplicit)
     herror
