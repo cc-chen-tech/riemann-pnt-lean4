@@ -131,6 +131,15 @@ lower bound for `ζ`.  These theorems reduce the final target to standard
 complex-analysis-shaped zeta estimates; they still do not prove those
 primitive estimates.
 
+For the vertical `logDeriv ζ` side specifically,
+`ZeroFreeRegion.exists_logDeriv_affine_log_norm_add_three_bound_on_verticalRegion_of_compact_band_and_high_height`
+patches the proved compact bounded-height norm bound with a future high-height
+affine logarithmic estimate on `‖z‖ + 3`, and
+`ZeroFreeRegion.logDerivVerticalLogBound_of_compact_band_and_high_height_affine_log_norm_add_three_bound`
+feeds the result into the named `LogDerivVerticalLogBound` interface.  This
+keeps the next hard target precise: prove the high-height zeta-specific
+affine/logarithmic estimate, not another compactness patch.
+
 The even more direct wrappers
 `ZeroFreeRegion.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_high_height_logDeriv_bound`,
 `ZeroFreeRegion.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_high_height_negLogDeriv_bound`,

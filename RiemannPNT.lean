@@ -7193,6 +7193,29 @@ theorem exists_norm_logDeriv_riemannZeta_bound_on_compact_vertical_band
   ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_bound_on_compact_vertical_band
     hH
 
+/-- Public patch from compact-band and future high-height affine logarithmic
+`logDeriv ζ` bounds to a full vertical-region affine bound. -/
+theorem exists_logDeriv_affine_log_norm_add_three_bound_on_verticalRegion_of_compact_band_and_high_height
+    {H T A B : ℝ} (hH : 0 < H) (hB : 0 ≤ B)
+    (hhigh : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| →
+        ‖logDeriv riemannZeta z‖ ≤ A + B * Real.log (‖z‖ + 3)) :
+    ∃ A' ≥ 0, ∀ z : ℂ, z ∈ ZeroFreeRegion.verticalRegion 1 2 H →
+      ‖logDeriv riemannZeta z‖ ≤ A' + B * Real.log (‖z‖ + 3) :=
+  ZeroFreeRegion.exists_logDeriv_affine_log_norm_add_three_bound_on_verticalRegion_of_compact_band_and_high_height
+    hH hB hhigh
+
+/-- Public direct handoff from compact-plus-high-height affine `logDeriv ζ`
+bounds to the named vertical logarithmic-derivative interface. -/
+theorem logDerivVerticalLogBound_of_compact_band_and_high_height_affine_log_norm_add_three_bound
+    (H T A B : ℝ) (hH : 5 ≤ H) (hB : 0 ≤ B)
+    (hhigh : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| →
+        ‖logDeriv riemannZeta z‖ ≤ A + B * Real.log (‖z‖ + 3)) :
+    ∃ C T0 : ℝ, LogDerivVerticalLogBound C T0 :=
+  ZeroFreeRegion.logDerivVerticalLogBound_of_compact_band_and_high_height_affine_log_norm_add_three_bound
+    H T A B hH hB hhigh
+
 /-- Public signed compact bounded-height norm bound for `-logDeriv ζ`. -/
 theorem exists_norm_neg_logDeriv_riemannZeta_bound_on_compact_vertical_band
     {H T : ℝ} (hH : 0 < H) :

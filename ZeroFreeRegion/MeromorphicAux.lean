@@ -11556,6 +11556,58 @@ lemma exists_norm_logDeriv_riemannZeta_bound_on_compact_vertical_band
           exact hupper
   exact (hC₀ ⟨z, hzK, rfl⟩).trans (le_max_left C₀ 0)
 
+/-- Patch the compact bounded-height `logDeriv ζ` norm bound with a future
+high-height affine logarithmic estimate to cover the whole vertical region.
+
+The compact part is already proved by differentiability and compactness.  The
+remaining analytic input is the high-height estimate for `T <= |Im z|`, so this
+lemma exposes the all-height affine bound needed by vertical-region handoffs
+without claiming the future high-height estimate. -/
+lemma exists_logDeriv_affine_log_norm_add_three_bound_on_verticalRegion_of_compact_band_and_high_height
+    {H T A B : ℝ} (hH : 0 < H) (hB : 0 ≤ B)
+    (hhigh : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| →
+        ‖logDeriv riemannZeta z‖ ≤ A + B * Real.log (‖z‖ + 3)) :
+    ∃ A' ≥ 0, ∀ z : ℂ, z ∈ verticalRegion 1 2 H →
+      ‖logDeriv riemannZeta z‖ ≤ A' + B * Real.log (‖z‖ + 3) := by
+  rcases exists_norm_logDeriv_riemannZeta_bound_on_compact_vertical_band
+      (H := H) (T := T) hH with ⟨C, hC_nonneg, hcompact⟩
+  refine ⟨max C A, le_trans hC_nonneg (le_max_left C A), ?_⟩
+  intro z hz
+  rw [mem_verticalRegion] at hz
+  have hlog_nonneg : 0 ≤ Real.log (‖z‖ + 3) := by
+    apply Real.log_nonneg
+    nlinarith [norm_nonneg z]
+  by_cases hle : |z.im| ≤ T
+  · have hcompact_z : ‖logDeriv riemannZeta z‖ ≤ C :=
+      hcompact z hz.1 hz.2 hle
+    exact hcompact_z.trans
+      ((le_max_left C A).trans
+        (le_add_of_nonneg_right (mul_nonneg hB hlog_nonneg)))
+  · have hT : T ≤ |z.im| := le_of_not_ge hle
+    have hhigh_z :
+        ‖logDeriv riemannZeta z‖ ≤ A + B * Real.log (‖z‖ + 3) :=
+      hhigh z hz.1 hT
+    exact hhigh_z.trans
+      (add_le_add_left (le_max_right C A) (B * Real.log (‖z‖ + 3)))
+
+/-- Compact-plus-high-height affine `logDeriv ζ` bounds feed directly into the
+named vertical logarithmic-derivative interface. -/
+lemma logDerivVerticalLogBound_of_compact_band_and_high_height_affine_log_norm_add_three_bound
+    (H T A B : ℝ) (hH : 5 ≤ H) (hB : 0 ≤ B)
+    (hhigh : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| →
+        ‖logDeriv riemannZeta z‖ ≤ A + B * Real.log (‖z‖ + 3)) :
+    ∃ C T0 : ℝ, LogDerivVerticalLogBound C T0 := by
+  rcases
+      exists_logDeriv_affine_log_norm_add_three_bound_on_verticalRegion_of_compact_band_and_high_height
+        (H := H) (T := T) (A := A) (B := B)
+        (lt_of_lt_of_le (by norm_num : (0 : ℝ) < 5) hH) hB hhigh with
+    ⟨A', hA'_nonneg, hvertical⟩
+  exact
+    logDerivVerticalLogBound_of_affine_log_norm_add_three_bound_on_verticalRegion
+      H A' B hH hA'_nonneg hB hvertical
+
 /-- Signed compact bounded-height norm bound for `-logDeriv ζ`. -/
 lemma exists_norm_neg_logDeriv_riemannZeta_bound_on_compact_vertical_band
     {H T : ℝ} (hH : 0 < H) :

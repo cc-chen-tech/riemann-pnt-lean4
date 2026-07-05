@@ -188,6 +188,13 @@ Core verified declarations:
 - `exists_norm_logDeriv_riemannZeta_bound_on_compact_vertical_band`
   proves that `logDeriv zeta` has a finite norm bound on every compact
   positive-height band `1 <= Re z <= 2`, `H <= |Im z| <= T`.
+- `exists_logDeriv_affine_log_norm_add_three_bound_on_verticalRegion_of_compact_band_and_high_height`
+  patches that compact bounded-height `logDeriv zeta` norm bound with a future
+  high-height affine logarithmic bound, yielding an affine bound on the full
+  vertical region.
+- `logDerivVerticalLogBound_of_compact_band_and_high_height_affine_log_norm_add_three_bound`
+  feeds the compact-plus-high-height affine bound directly into the named
+  `LogDerivVerticalLogBound` interface.
 - `exists_norm_neg_logDeriv_riemannZeta_bound_on_compact_vertical_band`
   is the signed `-logDeriv zeta` version of the same compact bounded-height
   estimate.
