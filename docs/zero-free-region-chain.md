@@ -302,7 +302,12 @@ proved:
   and
   `ZeroFreeRegion.borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_log_norm_of_affine_re_le_half_radius`,
   lets those already-normalized outputs feed closures whose hypotheses are
-  stated in the full complex-height `log(||sigma+it||+3)` scale.  The quotient forms
+  stated in the full complex-height `log(||sigma+it||+3)` scale.  The companion
+  comparison
+  `ZeroFreeRegion.log_abs_add_three_le_log_norm_sigma_add_I_mul_add_three`
+  lets the proved fixed-margin half-plane bounds in the safe
+  `log(|Im|+3)` scale feed those same full-height center estimates.  The
+  quotient forms
   `ZeroFreeRegion.re_neg_deriv_div_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_logDeriv_re_le_half_radius`
   and
   `ZeroFreeRegion.re_neg_deriv_div_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_neg_logDeriv_re_le_half_radius`
@@ -334,6 +339,14 @@ proved:
   and
   `ZeroFreeRegion.re_neg_deriv_div_riemannZeta_shift_pair_right_shift_le_log_norm_of_affine_neg_logDeriv_re_le_half_radius`
   expose the same paired handoff in the `log(||sigma+it||+3)` scale.  The
+  existential variants
+  `ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shift_pair_right_shift_le_log_norm_of_affine_logDeriv_re_le_half_radius_fixed_margin_center`
+  and
+  `ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shift_pair_right_shift_le_log_norm_of_affine_neg_logDeriv_re_le_half_radius_fixed_margin_center`
+  discharge the two center norm estimates automatically from the fixed-margin
+  half-plane theorem; after this step, the right-shift pair bridge only needs
+  local real-part Borel inputs on the disks centered at `(sigma+r)+it` and
+  `(sigma+r)+2it`.  The
   general half-radius wrappers
   `ZeroFreeRegion.borelCaratheodory_centered_half_radius_bound` and
   `ZeroFreeRegion.borelCaratheodory_sub_centered_half_radius_bound`, plus the
