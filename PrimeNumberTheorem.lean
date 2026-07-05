@@ -2961,6 +2961,34 @@ lemma dampedKernel_pair_contribution_eq
   simp [dampedKernel, Complex.sub_re, Complex.mul_re]
   ring
 
+/-- Real-part identity for a self-damped kernel. -/
+lemma dampedKernel_self_re_eq
+    (κ : ℝ) (F : ℂ → ℂ) (z : ℂ) :
+    (dampedKernel κ F F z).re = (1 - κ) * (F z).re := by
+  simp [dampedKernel, Complex.sub_re, Complex.mul_re]
+  ring
+
+/-- Self-damping preserves pointwise strip real-part nonnegativity when the
+damping coefficient is at most one. -/
+lemma dampedKernel_self_re_nonnegative_on_strip_of_le_one
+    {κ center : ℝ} {F : ℂ → ℂ}
+    (hκ : κ ≤ 1)
+    (hF : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ center -> 0 ≤ (F z).re) :
+    ∀ z : ℂ, 0 ≤ z.re → z.re ≤ center ->
+      0 ≤ (dampedKernel κ F F z).re := by
+  intro z hz_left hz_right
+  rw [dampedKernel_self_re_eq]
+  exact mul_nonneg (sub_nonneg.mpr hκ) (hF z hz_left hz_right)
+
+/-- Center-one self-damped pointwise real-part nonnegativity supplier. -/
+lemma dampedKernel_self_re_nonnegative_on_critical_strip_of_le_one
+    {κ : ℝ} {F : ℂ → ℂ}
+    (hκ : κ ≤ 1)
+    (hF : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 -> 0 ≤ (F z).re) :
+    ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 ->
+      0 ≤ (dampedKernel κ F F z).re :=
+  dampedKernel_self_re_nonnegative_on_strip_of_le_one hκ hF
+
 /-- A controlled signed/damped kernel supplies strip-local pair positivity.
 
 The input is the Stechkin-style real inequality: on the relevant strip, the
@@ -3065,6 +3093,36 @@ lemma laplacePairPositive_one_weightedDampedKernelCombo_self_of_le_one
       (weightedKernelCombo K w (fun k => dampedKernel (κ k) (F k) (F k)))
       1 :=
   laplacePairPositive_weightedDampedKernelCombo_self_of_le_one hw hκ hF
+
+/-- Finite nonnegative combinations of self-damped pointwise-positive kernels
+remain pointwise real-part nonnegative on a strip. -/
+lemma weightedDampedKernelCombo_self_re_nonnegative_on_strip_of_le_one
+    {K : Finset ℕ} {w κ : ℕ → ℝ} {F : ℕ → ℂ → ℂ} {center : ℝ}
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (hF : ∀ k ∈ K, ∀ z : ℂ, 0 ≤ z.re → z.re ≤ center ->
+      0 ≤ (F k z).re) :
+    ∀ z : ℂ, 0 ≤ z.re → z.re ≤ center ->
+      0 ≤ (weightedKernelCombo K w
+        (fun k => dampedKernel (κ k) (F k) (F k)) z).re :=
+  weightedKernelCombo_re_nonnegative_on_strip hw
+    (fun k hk =>
+      dampedKernel_self_re_nonnegative_on_strip_of_le_one
+        (hκ k hk) (hF k hk))
+
+/-- Center-one version of weighted self-damped pointwise real-part
+nonnegativity. -/
+lemma weightedDampedKernelCombo_self_re_nonnegative_on_critical_strip_of_le_one
+    {K : Finset ℕ} {w κ : ℕ → ℝ} {F : ℕ → ℂ → ℂ}
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (hF : ∀ k ∈ K, ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 ->
+      0 ≤ (F k z).re) :
+    ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 ->
+      0 ≤ (weightedKernelCombo K w
+        (fun k => dampedKernel (κ k) (F k) (F k)) z).re :=
+  weightedDampedKernelCombo_self_re_nonnegative_on_strip_of_le_one
+    hw hκ hF
 
 /-- Finite nonnegative linear combinations of resolvent/Laplace prototype
 kernels.  This is a Lean-facing model for detector kernels built by summing

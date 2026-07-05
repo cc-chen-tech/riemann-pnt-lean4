@@ -2283,6 +2283,32 @@ theorem dampedKernel_pair_contribution_eq
           κ * ((G z).re + (G ((center : ℂ) - z)).re) :=
   PrimeNumberTheorem.dampedKernel_pair_contribution_eq κ center F G z
 
+/-- Public real-part identity for a self-damped kernel. -/
+theorem dampedKernel_self_re_eq
+    (κ : ℝ) (F : ℂ → ℂ) (z : ℂ) :
+    (dampedKernel κ F F z).re = (1 - κ) * (F z).re :=
+  PrimeNumberTheorem.dampedKernel_self_re_eq κ F z
+
+/-- Public self-damped pointwise strip real-part nonnegativity supplier. -/
+theorem dampedKernel_self_re_nonnegative_on_strip_of_le_one
+    {κ center : ℝ} {F : ℂ → ℂ}
+    (hκ : κ ≤ 1)
+    (hF : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ center -> 0 ≤ (F z).re) :
+    ∀ z : ℂ, 0 ≤ z.re → z.re ≤ center ->
+      0 ≤ (dampedKernel κ F F z).re :=
+  PrimeNumberTheorem.dampedKernel_self_re_nonnegative_on_strip_of_le_one
+    hκ hF
+
+/-- Public center-one self-damped pointwise real-part nonnegativity supplier. -/
+theorem dampedKernel_self_re_nonnegative_on_critical_strip_of_le_one
+    {κ : ℝ} {F : ℂ → ℂ}
+    (hκ : κ ≤ 1)
+    (hF : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 -> 0 ≤ (F z).re) :
+    ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 ->
+      0 ≤ (dampedKernel κ F F z).re :=
+  PrimeNumberTheorem.dampedKernel_self_re_nonnegative_on_critical_strip_of_le_one
+    hκ hF
+
 /-- Public controlled signed/damped kernel pair-positivity bridge. -/
 theorem laplacePairPositive_dampedKernel_of_pair_le
     {κ center : ℝ} {F G : ℂ → ℂ}
@@ -2368,6 +2394,34 @@ theorem laplacePairPositive_one_weightedDampedKernelCombo_self_of_le_one
       (weightedKernelCombo K w
         (fun k => dampedKernel (κ k) (F k) (F k))) 1 :=
   PrimeNumberTheorem.laplacePairPositive_one_weightedDampedKernelCombo_self_of_le_one
+    hw hκ hF
+
+/-- Public pointwise real-part nonnegativity for finite weighted self-damped
+detector kernels on a strip. -/
+theorem weightedDampedKernelCombo_self_re_nonnegative_on_strip_of_le_one
+    {K : Finset ℕ} {w κ : ℕ → ℝ} {F : ℕ → ℂ → ℂ} {center : ℝ}
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (hF : ∀ k ∈ K, ∀ z : ℂ, 0 ≤ z.re → z.re ≤ center ->
+      0 ≤ (F k z).re) :
+    ∀ z : ℂ, 0 ≤ z.re → z.re ≤ center ->
+      0 ≤ (weightedKernelCombo K w
+        (fun k => dampedKernel (κ k) (F k) (F k)) z).re :=
+  PrimeNumberTheorem.weightedDampedKernelCombo_self_re_nonnegative_on_strip_of_le_one
+    hw hκ hF
+
+/-- Public center-one pointwise real-part nonnegativity for finite weighted
+self-damped detector kernels. -/
+theorem weightedDampedKernelCombo_self_re_nonnegative_on_critical_strip_of_le_one
+    {K : Finset ℕ} {w κ : ℕ → ℝ} {F : ℕ → ℂ → ℂ}
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (hF : ∀ k ∈ K, ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 ->
+      0 ≤ (F k z).re) :
+    ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 ->
+      0 ≤ (weightedKernelCombo K w
+        (fun k => dampedKernel (κ k) (F k) (F k)) z).re :=
+  PrimeNumberTheorem.weightedDampedKernelCombo_self_re_nonnegative_on_critical_strip_of_le_one
     hw hκ hF
 
 /-- Public finite-zero paired-sum nonnegativity for a damped detector kernel. -/

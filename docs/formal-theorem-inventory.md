@@ -1857,6 +1857,9 @@ Core verified declarations:
   `nontrivialZerosFinset U \ nontrivialZerosFinset T`.
 - `laplacePairPositive_dampedKernel_self_of_le_one`,
   `laplacePairPositive_one_dampedKernel_self_of_le_one`,
+  `dampedKernel_self_re_eq`,
+  `dampedKernel_self_re_nonnegative_on_strip_of_le_one`,
+  `dampedKernel_self_re_nonnegative_on_critical_strip_of_le_one`,
   `nontrivialZerosFinset_pair_sum_nonnegative_of_dampedKernel_self`,
   `nontrivialZerosFinset_pair_average_nonnegative_of_dampedKernel_self`,
   `nontrivialZerosFinset_sum_re_nonnegative_of_dampedKernel_self`,
@@ -1866,7 +1869,8 @@ Core verified declarations:
   `nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_dampedKernel_self`, and
   `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_dampedKernel_self`
   specialize the same damped detector package to `F - kappa * F` under
-  `kappa <= 1`.
+  `kappa <= 1`, including both pointwise real-part nonnegativity and
+  pair-positive finite-zero consequences.
 - `laplacePairPositive_weightedDampedKernelCombo_of_pair_le`,
   `laplacePairPositive_one_weightedDampedKernelCombo_of_pair_le`,
   `nontrivialZerosFinset_pair_sum_nonnegative_of_weightedDampedKernelCombo`,
@@ -1882,6 +1886,8 @@ Core verified declarations:
   damped kernels.
 - `laplacePairPositive_weightedDampedKernelCombo_self_of_le_one`,
   `laplacePairPositive_one_weightedDampedKernelCombo_self_of_le_one`,
+  `weightedDampedKernelCombo_self_re_nonnegative_on_strip_of_le_one`,
+  `weightedDampedKernelCombo_self_re_nonnegative_on_critical_strip_of_le_one`,
   `nontrivialZerosFinset_pair_sum_nonnegative_of_weightedDampedKernelCombo_self`,
   `nontrivialZerosFinset_pair_average_nonnegative_of_weightedDampedKernelCombo_self`,
   `nontrivialZerosFinset_sum_re_nonnegative_of_weightedDampedKernelCombo_self`,
