@@ -279,11 +279,21 @@ Core verified declarations:
   safe-height estimate shape.
 - `exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height`
   is the corresponding shifted real-part quotient output for `log(|u|+3)`.
+- `exists_norm_logDeriv_riemannZeta_shifted_vertical_log_bound_of_log_abs_add_three_bound_high_height`
+  is the multiplicative `B * log(|u|+3)` specialization of the shifted norm
+  bridge, avoiding a dummy affine constant at call sites.
+- `exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_log_abs_add_three_bound_high_height`
+  is the corresponding multiplicative shifted real-part quotient bridge.
 - `exists_norm_logDeriv_riemannZeta_shifted_vertical_log_bound_of_neg_affine_log_abs_add_three_bound_high_height`
   is the signed-input shifted norm bridge for future estimates on
   `||-logDeriv zeta||`.
 - `exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_neg_affine_log_abs_add_three_bound_high_height`
   is the signed-input shifted real-part quotient bridge.
+- `exists_norm_logDeriv_riemannZeta_shifted_vertical_log_bound_of_neg_log_abs_add_three_bound_high_height`
+  is the signed multiplicative `B * log(|u|+3)` specialization of the shifted
+  norm bridge.
+- `exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_neg_log_abs_add_three_bound_high_height`
+  is the signed multiplicative shifted real-part quotient bridge.
 - `exists_norm_logDeriv_riemannZeta_sigma_two_it_log_abs_bound_of_high_height_log_abs_bound`
   is the exact-log norm patch at the shifted point `sigma + 2it`.
 - `exists_norm_neg_logDeriv_riemannZeta_sigma_two_it_log_abs_bound_of_high_height_log_abs_bound`

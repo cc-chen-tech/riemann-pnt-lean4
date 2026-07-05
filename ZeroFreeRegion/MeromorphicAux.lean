@@ -12623,6 +12623,39 @@ lemma exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_affine_l
     exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_vertical_norm_log_bound
       (T0 := T0') (B := C) hC hnorm
 
+/-- Shifted norm bridge from a future ordinary vertical estimate already
+stated as `B * log(|u| + 3)`. -/
+lemma exists_norm_logDeriv_riemannZeta_shifted_vertical_log_bound_of_log_abs_add_three_bound_high_height
+    (T0 B : ℝ) (hT0 : 3 ≤ T0) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ u : ℝ, T0 ≤ |u| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * u)‖ ≤
+          B * Real.log (|u| + 3)) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖ ≤ C * Real.log |t| :=
+  exists_norm_logDeriv_riemannZeta_shifted_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height
+    T0 0 B hT0 (by norm_num) hB (by
+      intro σ u hu hσ
+      simpa using hvertical σ u hu hσ)
+
+/-- Shifted real-part quotient bridge from a future ordinary vertical estimate
+already stated as `B * log(|u| + 3)`. -/
+lemma exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_log_abs_add_three_bound_high_height
+    (T0 B : ℝ) (hT0 : 3 ≤ T0) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ u : ℝ, T0 ≤ |u| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * u)‖ ≤
+          B * Real.log (|u| + 3)) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤ C * Real.log |t| :=
+  exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height
+    T0 0 B hT0 (by norm_num) hB (by
+      intro σ u hu hσ
+      simpa using hvertical σ u hu hσ)
+
 /-- Signed-input shifted norm bridge from a future ordinary vertical estimate
 for `-logDeriv ζ` in the safe height scale `A + B * log(|u| + 3)`. -/
 lemma exists_norm_logDeriv_riemannZeta_shifted_vertical_log_bound_of_neg_affine_log_abs_add_three_bound_high_height
@@ -12678,6 +12711,39 @@ lemma exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_neg_affi
   exact
     exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_vertical_norm_log_bound
       (T0 := T0') (B := C) hC hnorm
+
+/-- Signed-input shifted norm bridge from a future ordinary vertical estimate
+for `-logDeriv ζ` already stated as `B * log(|u| + 3)`. -/
+lemma exists_norm_logDeriv_riemannZeta_shifted_vertical_log_bound_of_neg_log_abs_add_three_bound_high_height
+    (T0 B : ℝ) (hT0 : 3 ≤ T0) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ u : ℝ, T0 ≤ |u| → σ ∈ Set.Icc 1 2 →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * u)‖ ≤
+          B * Real.log (|u| + 3)) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖ ≤ C * Real.log |t| :=
+  exists_norm_logDeriv_riemannZeta_shifted_vertical_log_bound_of_neg_affine_log_abs_add_three_bound_high_height
+    T0 0 B hT0 (by norm_num) hB (by
+      intro σ u hu hσ
+      simpa using hvertical σ u hu hσ)
+
+/-- Signed-input shifted real-part quotient bridge from a future ordinary
+vertical estimate for `-logDeriv ζ` already stated as `B * log(|u| + 3)`. -/
+lemma exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_neg_log_abs_add_three_bound_high_height
+    (T0 B : ℝ) (hT0 : 3 ≤ T0) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ u : ℝ, T0 ≤ |u| → σ ∈ Set.Icc 1 2 →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * u)‖ ≤
+          B * Real.log (|u| + 3)) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤ C * Real.log |t| :=
+  exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_neg_affine_log_abs_add_three_bound_high_height
+    T0 0 B hT0 (by norm_num) hB (by
+      intro σ u hu hσ
+      simpa using hvertical σ u hu hσ)
 
 /-- Borel-Carathéodory for the signed logarithmic derivative `-logDeriv ζ` on
 a right half-strip.  This is the sign convention used by the 3-4-1 inequality. -/

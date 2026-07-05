@@ -5931,6 +5931,37 @@ theorem exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_affine
   ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height
     T0 A B hT0 hA hB hvertical
 
+/-- Public shifted norm bridge from a future multiplicative
+`log(|u|+3)` norm-growth estimate at the ordinary vertical point. -/
+theorem exists_norm_logDeriv_riemannZeta_shifted_vertical_log_bound_of_log_abs_add_three_bound_high_height
+    (T0 B : ℝ) (hT0 : 3 ≤ T0) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ u : ℝ, T0 ≤ |u| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * u)‖ ≤
+          B * Real.log (|u| + 3)) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t)‖ ≤
+          C * Real.log |t| :=
+  ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_shifted_vertical_log_bound_of_log_abs_add_three_bound_high_height
+    T0 B hT0 hB hvertical
+
+/-- Public shifted real-part quotient bridge from a future multiplicative
+`log(|u|+3)` norm-growth estimate at the ordinary vertical point. -/
+theorem exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_log_abs_add_three_bound_high_height
+    (T0 B : ℝ) (hT0 : 3 ≤ T0) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ u : ℝ, T0 ≤ |u| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * u)‖ ≤
+          B * Real.log (|u| + 3)) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t) /
+            riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re ≤
+          C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_log_abs_add_three_bound_high_height
+    T0 B hT0 hB hvertical
+
 /-- Public shifted norm bridge from a future signed affine `log(|u|+3)`
 growth estimate for `-logDeriv ζ` at the ordinary vertical point. -/
 theorem exists_norm_logDeriv_riemannZeta_shifted_vertical_log_bound_of_neg_affine_log_abs_add_three_bound_high_height
@@ -5961,6 +5992,37 @@ theorem exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_neg_af
           C * Real.log |t| :=
   ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_neg_affine_log_abs_add_three_bound_high_height
     T0 A B hT0 hA hB hvertical
+
+/-- Public shifted norm bridge from a future signed multiplicative
+`log(|u|+3)` growth estimate for `-logDeriv ζ`. -/
+theorem exists_norm_logDeriv_riemannZeta_shifted_vertical_log_bound_of_neg_log_abs_add_three_bound_high_height
+    (T0 B : ℝ) (hT0 : 3 ≤ T0) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ u : ℝ, T0 ≤ |u| → σ ∈ Set.Icc 1 2 →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * u)‖ ≤
+          B * Real.log (|u| + 3)) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t)‖ ≤
+          C * Real.log |t| :=
+  ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_shifted_vertical_log_bound_of_neg_log_abs_add_three_bound_high_height
+    T0 B hT0 hB hvertical
+
+/-- Public shifted real-part quotient bridge from a future signed
+multiplicative `log(|u|+3)` growth estimate for `-logDeriv ζ`. -/
+theorem exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_neg_log_abs_add_three_bound_high_height
+    (T0 B : ℝ) (hT0 : 3 ≤ T0) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ u : ℝ, T0 ≤ |u| → σ ∈ Set.Icc 1 2 →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * u)‖ ≤
+          B * Real.log (|u| + 3)) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t) /
+            riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re ≤
+          C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_neg_log_abs_add_three_bound_high_height
+    T0 B hT0 hB hvertical
 
 /-- Public compact patch preserving the exact `C * log |t|` scale for
 `‖logDeriv ζ‖` at `σ + 2it`, once the patched range starts at height at
