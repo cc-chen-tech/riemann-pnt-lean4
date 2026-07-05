@@ -8,7 +8,7 @@ interfaces and small lemmas without overstating any unresolved analytic theorem.
 
 - Worktree: `/Users/luicy/AI/Riemann/.worktrees/riemann-three-directions-research`
 - Branch: `research/three-directions`
-- Current base: `dc9452d feat(zero-free): add polynomial growth log handoff`
+- Current base: `0946b01 feat(zero-free): lift zeta growth handoff to circle averages`
 - Research work on this branch currently covers:
   - signed BTY detector/Borel facades;
   - center-one and general-center zero-pair bridges;
@@ -23,6 +23,11 @@ interfaces and small lemmas without overstating any unresolved analytic theorem.
 Verified assets now include:
 
 - the BTY degree-16 trigonometric detector;
+- the automatic finite Dirichlet-series identity
+  `log_deriv_zeta_finset_series_identity`, so the detector `hseries` input is
+  no longer a manual hypothesis in the automatic detector route;
+- the pointwise BTY detector nonnegativity theorem
+  `btyDetectorPolynomial_nonneg`;
 - the simplified uniform BTY penalty
   `log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_shift_upper_bound_simplified`;
 - the unsigned simplified Borel facade
@@ -38,10 +43,11 @@ Next useful step:
 log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_vertical_pair_bound
 ```
 
-This is not a purely formal wrapper yet.  The existing shift-pair estimates
-cover the classical `t, 2t` shape and the Borel facade accepts a finset-wide
-upper-bound hypothesis over `btyDetectorSupport.erase 1`; closing the next
-bridge requires a uniform high-height/log bound for every BTY support index.
+The formerly separate `hseries` step is now closed in Lean.  The next bridge is
+not a purely formal wrapper: the existing shift-pair estimates cover the
+classical `t, 2t` shape, while the Borel facade accepts a finset-wide
+upper-bound hypothesis over `btyDetectorSupport.erase 1`.  Closing that bridge
+requires a uniform high-height/log bound for every BTY support index.
 The new polynomial-growth handoff removes one piece of height bookkeeping once
 a usable zeta polynomial-growth input is available, but it does not prove that
 input or a log-derivative estimate.

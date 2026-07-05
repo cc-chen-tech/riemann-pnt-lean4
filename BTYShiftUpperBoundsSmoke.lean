@@ -15,6 +15,7 @@ import RiemannPNT
 #check ZeroFreeRegion.btyDetectorCoeff_pos_of_mem_support
 #check ZeroFreeRegion.btyDetectorCoeff_one_pos
 #check ZeroFreeRegion.btyDetectorCoeff_sum_support_erase_one
+#check ZeroFreeRegion.btyDetectorPolynomial_nonneg
 #check ZeroFreeRegion.log_deriv_zeta_bty_detector_one_lower_bound
 #check ZeroFreeRegion.log_deriv_zeta_bty_detector_one_lower_bound_of_shift_upper_bounds
 #check ZeroFreeRegion.log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_shift_upper_bound
@@ -53,6 +54,7 @@ import RiemannPNT
 #check RiemannPNT.API.btyDetectorCoeff_pos_of_mem_support
 #check RiemannPNT.API.btyDetectorCoeff_one_pos
 #check RiemannPNT.API.btyDetectorCoeff_sum_support_erase_one
+#check RiemannPNT.API.btyDetectorPolynomial_nonneg
 #check RiemannPNT.API.log_deriv_zeta_bty_detector_one_lower_bound
 #check RiemannPNT.API.log_deriv_zeta_bty_detector_one_lower_bound_of_shift_upper_bounds
 #check RiemannPNT.API.log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_shift_upper_bound

@@ -1566,6 +1566,18 @@ lemma btyScaledComplexExpAbsSqCertificate :
             Complex.exp ((k : ℂ) * I * (θ : ℂ))‖ ^ 2 := by
       simp [btyExpCoeff]
 
+/-- Pointwise nonnegativity of the BTY degree-16 cosine detector.
+
+This is the reusable detector fact extracted from the full scaled
+complex-exponential absolute-square certificate. -/
+lemma btyDetectorPolynomial_nonneg (θ : ℝ) :
+    0 ≤ ∑ k ∈ btyDetectorSupport,
+      btyDetectorCoeff k * Real.cos ((k : ℝ) * θ) :=
+  trigPolynomial_nonneg_of_scaled_complex_exp_abs_sq_certificate
+    btyDetectorScale btyDetectorSupport btyExpSupport
+    btyDetectorCoeff btyExpCoeff
+    btyDetectorScale_pos btyScaledComplexExpAbsSqCertificate θ
+
 /-- Automatic logarithmic-derivative detector inequality from the full BTY
 scaled certificate. -/
 lemma log_deriv_zeta_nonneg_bty_detector_from_scaled_certificate
@@ -1574,10 +1586,9 @@ lemma log_deriv_zeta_nonneg_bty_detector_from_scaled_certificate
       ∑ k ∈ btyDetectorSupport, btyDetectorCoeff k *
         (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
           riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re :=
-  log_deriv_zeta_nonneg_finset_combination_auto_of_scaled_complex_exp_abs_sq_certificate
-    σ hσ t btyDetectorScale btyDetectorSupport btyExpSupport
-    btyDetectorCoeff btyExpCoeff btyDetectorScale_pos
-    btyScaledComplexExpAbsSqCertificate
+  log_deriv_zeta_nonneg_finset_combination_auto
+    σ hσ t btyDetectorSupport btyDetectorCoeff
+    btyDetectorPolynomial_nonneg
 
 /-- Lower bound for the first shifted logarithmic-derivative term obtained from
 the degree-16 BTY detector. -/

@@ -5271,6 +5271,12 @@ theorem btyScaledComplexExpAbsSqCertificate :
       btyDetectorCoeff btyExpCoeff :=
   ZeroFreeRegion.btyScaledComplexExpAbsSqCertificate
 
+/-- Public pointwise nonnegativity of the BTY degree-16 cosine detector. -/
+theorem btyDetectorPolynomial_nonneg (θ : ℝ) :
+    0 ≤ ∑ k ∈ btyDetectorSupport,
+      btyDetectorCoeff k * Real.cos ((k : ℝ) * θ) :=
+  ZeroFreeRegion.btyDetectorPolynomial_nonneg θ
+
 /-- Public automatic logarithmic-derivative detector inequality from the full
 BTY scaled certificate. -/
 theorem log_deriv_zeta_nonneg_bty_detector_from_scaled_certificate
