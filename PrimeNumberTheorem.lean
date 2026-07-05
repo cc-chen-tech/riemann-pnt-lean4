@@ -3449,6 +3449,14 @@ theorem psiPowerErrorBelowTwoThirds_of_pointwise
       filter_upwards [eventually_ge_atTop X] with x hx
       exact h x hx)
 
+/-- A power-saving statement at exponent `2/3 - delta` supplies the concrete
+below-`2/3` `ψ`-power-error input. -/
+theorem psiPowerErrorBelowTwoThirds_of_power_saving
+    {delta : ℝ} (hdelta_pos : 0 < delta) (hdelta_le : delta ≤ (2 / 3 : ℝ))
+    (herror : PsiPowerErrorBound ((2 / 3 : ℝ) - delta)) :
+    PsiPowerErrorBelowTwoThirds :=
+  ⟨(2 / 3 : ℝ) - delta, by linarith, by linarith, herror⟩
+
 /-- Route interface for the converse explicit-formula step:
 `ψ(x) - x = O(x ^ θ)` for some `θ < 2 / 3` rules out nontrivial zeros on
 the reflected line `Re(s) = 2 / 3`. -/
@@ -3503,6 +3511,14 @@ theorem psiPowerErrorBelowLine_of_pointwise
     (by
       filter_upwards [eventually_ge_atTop X] with x hx
       exact h x hx)
+
+/-- A power-saving statement at exponent `β - delta` supplies the below-line
+`ψ`-power-error input at the boundary `β`. -/
+theorem psiPowerErrorBelowLine_of_power_saving
+    {β delta : ℝ} (hdelta_pos : 0 < delta) (hθ_nonneg : 0 ≤ β - delta)
+    (herror : PsiPowerErrorBound (β - delta)) :
+    PsiPowerErrorBelowLine β :=
+  ⟨β - delta, hθ_nonneg, by linarith, herror⟩
 
 /-- The concrete `θ < 2/3` `ψ`-error input is the specialization of the
 general below-line predicate at `β = 2/3`. -/
@@ -3790,6 +3806,28 @@ theorem no_zeros_on_two_thirds_of_explicit_formula_converse_power_below_two_thir
     NoZerosOnVerticalLine (2 / 3) :=
   no_zeros_on_two_thirds_of_explicit_formula_converse_power hbridge
     (psiPowerErrorBelowLine_two_thirds_of_below_two_thirds herror)
+
+/-- Conditional `O(x^(2/3-δ))` bridge to zero-freeness on `Re(s)=1/3`,
+assuming the explicit-formula converse route at `2/3`. -/
+theorem no_zeros_on_one_third_of_explicit_formula_converse_power_saving
+    {delta : ℝ} (hdelta_pos : 0 < delta) (hdelta_le : delta ≤ (2 / 3 : ℝ))
+    (hbridge : ExplicitFormulaConversePowerTarget (2 / 3))
+    (herror : PsiPowerErrorBound ((2 / 3 : ℝ) - delta)) :
+    NoZerosOnVerticalLine (1 / 3) :=
+  no_zeros_on_one_third_of_explicit_formula_converse_power_below_two_thirds
+    hbridge
+    (psiPowerErrorBelowTwoThirds_of_power_saving hdelta_pos hdelta_le herror)
+
+/-- Conditional `O(x^(2/3-δ))` bridge to zero-freeness on `Re(s)=2/3`,
+assuming the explicit-formula converse route at `2/3`. -/
+theorem no_zeros_on_two_thirds_of_explicit_formula_converse_power_saving
+    {delta : ℝ} (hdelta_pos : 0 < delta) (hdelta_le : delta ≤ (2 / 3 : ℝ))
+    (hbridge : ExplicitFormulaConversePowerTarget (2 / 3))
+    (herror : PsiPowerErrorBound ((2 / 3 : ℝ) - delta)) :
+    NoZerosOnVerticalLine (2 / 3) :=
+  no_zeros_on_two_thirds_of_explicit_formula_converse_power_below_two_thirds
+    hbridge
+    (psiPowerErrorBelowTwoThirds_of_power_saving hdelta_pos hdelta_le herror)
 
 /-! ## 平凡零点表征 -/
 

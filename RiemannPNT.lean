@@ -2694,6 +2694,15 @@ theorem psiPowerErrorBelowTwoThirds_of_pointwise
   PrimeNumberTheorem.psiPowerErrorBelowTwoThirds_of_pointwise
     hθ_nonneg hθ_lt h
 
+/-- Public constructor from an `O(x^(2/3-delta))` power saving to the concrete
+below-`2/3` `ψ`-power-error input. -/
+theorem psiPowerErrorBelowTwoThirds_of_power_saving
+    {delta : ℝ} (hdelta_pos : 0 < delta) (hdelta_le : delta ≤ (2 / 3 : ℝ))
+    (herror : PrimeNumberTheorem.PsiPowerErrorBound ((2 / 3 : ℝ) - delta)) :
+    PrimeNumberTheorem.PsiPowerErrorBelowTwoThirds :=
+  PrimeNumberTheorem.psiPowerErrorBelowTwoThirds_of_power_saving
+    hdelta_pos hdelta_le herror
+
 /-- Public concrete converse interface: the `ψ` error below `2/3` excludes
 nontrivial zeros on `Re(s)=2/3`. -/
 abbrev PsiPowerErrorBelowTwoThirdsExcludesLineTwoThirds : Prop :=
@@ -2721,6 +2730,15 @@ theorem psiPowerErrorBelowLine_of_pointwise
       |PrimeNumberTheorem.chebyshevPsi x - x| ≤ C * x ^ θ) :
     PrimeNumberTheorem.PsiPowerErrorBelowLine β :=
   PrimeNumberTheorem.psiPowerErrorBelowLine_of_pointwise hθ_nonneg hθ_lt h
+
+/-- Public constructor from an `O(x^(beta-delta))` power saving to the
+below-line `ψ`-power-error input at `beta`. -/
+theorem psiPowerErrorBelowLine_of_power_saving
+    {β delta : ℝ} (hdelta_pos : 0 < delta) (hθ_nonneg : 0 ≤ β - delta)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBound (β - delta)) :
+    PrimeNumberTheorem.PsiPowerErrorBelowLine β :=
+  PrimeNumberTheorem.psiPowerErrorBelowLine_of_power_saving
+    hdelta_pos hθ_nonneg herror
 
 /-- Public bridge from the concrete `θ < 2/3` `ψ`-error input to the general
 below-line predicate at `β = 2/3`. -/
@@ -3034,6 +3052,26 @@ theorem no_zeros_on_two_thirds_of_explicit_formula_converse_power_below_two_thir
     PrimeNumberTheorem.NoZerosOnVerticalLine (2 / 3) :=
   PrimeNumberTheorem.no_zeros_on_two_thirds_of_explicit_formula_converse_power_below_two_thirds
     hbridge herror
+
+/-- Public conditional `O(x^(2/3-delta))` bridge to zero-freeness on
+`Re(s)=1/3`, assuming the explicit-formula converse route at `2/3`. -/
+theorem no_zeros_on_one_third_of_explicit_formula_converse_power_saving
+    {delta : ℝ} (hdelta_pos : 0 < delta) (hdelta_le : delta ≤ (2 / 3 : ℝ))
+    (hbridge : PrimeNumberTheorem.ExplicitFormulaConversePowerTarget (2 / 3))
+    (herror : PrimeNumberTheorem.PsiPowerErrorBound ((2 / 3 : ℝ) - delta)) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) :=
+  PrimeNumberTheorem.no_zeros_on_one_third_of_explicit_formula_converse_power_saving
+    hdelta_pos hdelta_le hbridge herror
+
+/-- Public conditional `O(x^(2/3-delta))` bridge to zero-freeness on
+`Re(s)=2/3`, assuming the explicit-formula converse route at `2/3`. -/
+theorem no_zeros_on_two_thirds_of_explicit_formula_converse_power_saving
+    {delta : ℝ} (hdelta_pos : 0 < delta) (hdelta_le : delta ≤ (2 / 3 : ℝ))
+    (hbridge : PrimeNumberTheorem.ExplicitFormulaConversePowerTarget (2 / 3))
+    (herror : PrimeNumberTheorem.PsiPowerErrorBound ((2 / 3 : ℝ) - delta)) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (2 / 3) :=
+  PrimeNumberTheorem.no_zeros_on_two_thirds_of_explicit_formula_converse_power_saving
+    hdelta_pos hdelta_le hbridge herror
 
 /-- Public critical-strip location theorem for nontrivial zeta zeros. -/
 theorem nontrivial_zero_in_critical_strip {s : ℂ}
