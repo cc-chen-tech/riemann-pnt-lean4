@@ -1263,6 +1263,32 @@ Core verified declarations:
   `re_neg_deriv_div_riemannZeta_sigma_it_right_shift_le_log_norm_of_affine_neg_logDeriv_re_le_half_radius`
   provide the same real-part quotient conversion in the full complex-height
   `C log(||sigma+it|| + 3)` scale.
+- `re_neg_deriv_div_riemannZeta_finset_right_shift_le_log_norm_of_affine_logDeriv_re_le_half_radius`
+  and
+  `re_neg_deriv_div_riemannZeta_finset_right_shift_le_log_norm_of_affine_neg_logDeriv_re_le_half_radius`
+  package the same right-shifted quotient conversion over a finite family of
+  heights `tau k`, giving the Borel-side supplier shape needed before
+  higher-degree finite detectors consume one shifted upper bound per
+  frequency.
+- `RiemannPNT.API.log_deriv_zeta_finset_single_lower_bound_auto_of_right_shift_borel_family`
+  and
+  `RiemannPNT.API.log_deriv_zeta_finset_single_lower_bound_auto_of_signed_right_shift_borel_family`
+  compose those finite-family Borel suppliers with the automatic finite
+  detector lower-bound theorem, so the detector algebra now consumes
+  right-shifted local Borel hypotheses directly over `S.erase m`.
+- `RiemannPNT.API.log_deriv_zeta_bty_detector_one_lower_bound_of_right_shift_borel_family`
+  and
+  `RiemannPNT.API.log_deriv_zeta_bty_detector_one_lower_bound_of_signed_right_shift_borel_family`
+  specialize that composition to the checked BTY degree-16 detector and the
+  selected `k = 1` term, discharging the BTY certificate and coefficient
+  nonnegativity side conditions.
+- `RiemannPNT.API.log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_right_shift_borel_family`
+  and
+  `RiemannPNT.API.log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_signed_right_shift_borel_family`
+  add a final uniform-bound comparison for the remaining BTY frequencies and
+  use the computed sum
+  `sum_{k in btyDetectorSupport.erase 1} btyDetectorCoeff k =
+  6917296 / 2485395`.
 - `re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_logDeriv_re_le_half_radius`
   and
   `re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_neg_logDeriv_re_le_half_radius`
@@ -1319,6 +1345,9 @@ Core verified declarations:
   removes the separate center norm hypothesis from the multiplicity-aware
   zero-repulsion handoff; the explicit center principal-part cost is
   `(n : Real) / r`, and `n >= 1` still recovers the unit principal conclusion.
+- `exists_borelCaratheodory_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius_fixed_margin_center`
+  provides the analogous center-discharged Borel handoff in the positive
+  local-factorization sign convention `logDeriv zeta(w) - n*(w-rho)^(-1)`.
 - `re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius`
   converts that multiplicity-aware bound to the same unit-principal
   zero-repulsion estimate using `n >= 1`.
@@ -1401,6 +1430,19 @@ Core verified declarations:
 - `nontrivialZerosFinset_sum_re_nonnegative_of_laplace_pair_positive_one`
   converts the paired finite-zero nonnegativity into nonnegativity of the
   unpaired real-part sum using the `rho -> 1 - rho` reindexing identity.
+- `nontrivialZerosFinset_average_re_nonnegative_of_pair_contribution_nonnegative`
+  and
+  `nontrivialZerosFinset_average_re_nonnegative_of_laplace_pair_positive_one`
+  turn the same finite-zero real-part nonnegativity statements into normalized
+  average-contribution forms over `nontrivialZerosFinset T`.
+- `one_sub_mem_nontrivialZerosFinset_sdiff`,
+  `sum_nontrivialZerosFinset_sdiff_pair_re`,
+  `nontrivialZerosFinset_sdiff_pair_contribution_eq_two_sum_re`, and
+  `nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_pair_contribution_nonnegative`
+  repeat the reflection/reindexing/nonnegativity layer for newly included
+  zeros between two truncation heights
+  `nontrivialZerosFinset U \ nontrivialZerosFinset T`, matching the blockwise
+  zero contributions used by truncated explicit-formula arguments.
 - `NoZerosOnVerticalLine`
   is a reusable predicate for excluding zeta zeros on a fixed vertical line.
 - `no_zeros_on_one_third_of_RH`
@@ -1444,6 +1486,10 @@ Core verified declarations:
   name the explicit-formula converse dependency directly, including the general
   reflected-line route `Re(s)=1-beta`, and specialize it to the reflected
   `Re(s)=1/3` route.
+- `no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route`
+  gives the direct right-side-line consequence of the same conditional
+  truncated explicit-formula route at `beta = 2/3`, before applying the
+  reflected `1/3` bridge.
 - `riemannZeta_ne_zero_of_re_le_zero`
   excludes nontrivial zeros in `Re(s) <= 0`, except for the trivial zero
   locations.
@@ -1672,6 +1718,9 @@ Route interfaces:
   public bridge from a truncated explicit-formula route at any `0 < beta < 1`
   and a `psi` power saving below `beta` to no zeros on the reflected line
   `Re(s)=1-beta`.
+- `RiemannPNT.API.no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route`
+  public bridge from the same conditional route at `beta = 2/3` to no zeros on
+  the right-side line `Re(s)=2/3`.
 - `RiemannExplorer.Conrey40.conrey_40_percent_zeros_on_critical_line_target`
   alias interface to `KnownResults.conrey_40_percent_zeros_on_critical_line_target`.
 - `MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum`

@@ -2029,6 +2029,45 @@ theorem mem_nontrivialZerosFinset_sdiff {ρ : ℂ} {T U : ℝ} :
         T < |ρ.im| :=
   PrimeNumberTheorem.mem_nontrivialZerosFinset_sdiff
 
+/-- Public symmetry of newly included height-truncated zeros under
+`ρ ↦ 1 - ρ`. -/
+theorem one_sub_mem_nontrivialZerosFinset_sdiff {ρ : ℂ} {T U : ℝ}
+    (hρ : ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+        PrimeNumberTheorem.nontrivialZerosFinset T) :
+    1 - ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+        PrimeNumberTheorem.nontrivialZerosFinset T :=
+  PrimeNumberTheorem.one_sub_mem_nontrivialZerosFinset_sdiff hρ
+
+/-- Public reindexing identity for real-valued new-zero finite sums under
+`ρ ↦ 1 - ρ`. -/
+theorem sum_nontrivialZerosFinset_sdiff_pair_re (T U : ℝ) (F : ℂ → ℂ) :
+    (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+        PrimeNumberTheorem.nontrivialZerosFinset T, (F (1 - ρ)).re) =
+      ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+        PrimeNumberTheorem.nontrivialZerosFinset T, (F ρ).re :=
+  PrimeNumberTheorem.sum_nontrivialZerosFinset_sdiff_pair_re T U F
+
+/-- Public paired contribution rewrite for newly included finite zero sums. -/
+theorem nontrivialZerosFinset_sdiff_pair_contribution_eq_two_sum_re
+    (T U : ℝ) (F : ℂ → ℂ) :
+    (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+        PrimeNumberTheorem.nontrivialZerosFinset T,
+      ((F ρ).re + (F (1 - ρ)).re)) =
+      2 * ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+        PrimeNumberTheorem.nontrivialZerosFinset T, (F ρ).re :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_pair_contribution_eq_two_sum_re
+    T U F
+
+/-- Public unpaired finite new-zero real-part nonnegativity from a global
+pair-contribution condition. -/
+theorem nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_pair_contribution_nonnegative
+    (T U : ℝ) (F : ℂ → ℂ)
+    (hF : PrimeNumberTheorem.ZeroPairContributionNonnegative F 1) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+        PrimeNumberTheorem.nontrivialZerosFinset T, (F ρ).re :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_pair_contribution_nonnegative
+    T U F hF
+
 /-- Public nonzero denominator fact for elements of the height-truncated
 nontrivial-zero finset. -/
 theorem ne_zero_of_mem_nontrivialZerosFinset {ρ : ℂ} {T : ℝ}
@@ -2139,6 +2178,33 @@ theorem nontrivialZerosFinset_sum_re_nonnegative_of_laplace_pair_positive_one
     0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T, (F ρ).re :=
   PrimeNumberTheorem.nontrivialZerosFinset_sum_re_nonnegative_of_laplace_pair_positive_one
     T F hF
+
+/-- Public average finite-zero real-part nonnegativity from a global
+pair-contribution condition.  When the truncation finset is empty this uses
+Lean's total division convention, so the displayed average is `0`. -/
+theorem nontrivialZerosFinset_average_re_nonnegative_of_pair_contribution_nonnegative
+    (T : ℝ) (F : ℂ → ℂ)
+    (hF : PrimeNumberTheorem.ZeroPairContributionNonnegative F 1) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T, (F ρ).re) /
+        ((PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ) := by
+  exact div_nonneg
+    (PrimeNumberTheorem.nontrivialZerosFinset_sum_re_nonnegative_of_pair_contribution_nonnegative
+      T F hF)
+    (Nat.cast_nonneg _)
+
+/-- Public average finite-zero real-part nonnegativity from center-one
+Laplace-pair positivity. -/
+theorem nontrivialZerosFinset_average_re_nonnegative_of_laplace_pair_positive_one
+    (T : ℝ) (F : ℂ → ℂ)
+    (hF : PrimeNumberTheorem.LaplacePairPositive F 1) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T, (F ρ).re) /
+        ((PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ) := by
+  exact div_nonneg
+    (PrimeNumberTheorem.nontrivialZerosFinset_sum_re_nonnegative_of_laplace_pair_positive_one
+      T F hF)
+    (Nat.cast_nonneg _)
 
 /-- Public extensionality criterion for height-truncated nontrivial-zero
 finsets. -/
@@ -6962,6 +7028,386 @@ theorem re_neg_deriv_div_riemannZeta_sigma_it_right_shift_le_log_norm_of_affine_
   ZeroFreeRegion.re_neg_deriv_div_riemannZeta_sigma_it_right_shift_le_log_norm_of_affine_neg_logDeriv_re_le_half_radius
     hr hσ hσr hHpos hH ht hA hB hM hlog hcenter
 
+/-- Public finite-family right-shifted Borel quotient bridge for
+`logDeriv ζ`. -/
+theorem re_neg_deriv_div_riemannZeta_finset_right_shift_le_log_norm_of_affine_logDeriv_re_le_half_radius
+    {Are Bre Acenter Bcenter r H σ : ℝ} {S : Finset ℕ} {τ : ℕ → ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3)
+    (hHpos : 0 < H)
+    (hH : ∀ k, k ∈ S → H + 2 * r ≤ |τ k|)
+    (ht : ∀ k, k ∈ S → 6 ≤ |τ k|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hM : ∀ k, k ∈ S →
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * τ k)‖ + 3))
+    (hlog : ∀ k, k ∈ S → ∀ w : ℂ,
+      w ∈ Metric.ball (((σ + r : ℝ) : ℂ) + Complex.I * τ k) (2 * r) →
+        (logDeriv riemannZeta w).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * τ k)‖ + 3))
+    (hcenter : ∀ k, k ∈ S →
+      ‖logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + Complex.I * τ k)‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * τ k)‖ + 3)) :
+    ∀ k, k ∈ S →
+      (-deriv riemannZeta ((σ : ℂ) + Complex.I * τ k) /
+          riemannZeta ((σ : ℂ) + Complex.I * τ k)).re ≤
+        ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+          Real.log (‖((σ : ℂ) + Complex.I * τ k)‖ + 3) :=
+  ZeroFreeRegion.re_neg_deriv_div_riemannZeta_finset_right_shift_le_log_norm_of_affine_logDeriv_re_le_half_radius
+    hr hσ hσr hHpos hH ht hA hB hM hlog hcenter
+
+/-- Public signed finite-family right-shifted Borel quotient bridge for
+`-logDeriv ζ`. -/
+theorem re_neg_deriv_div_riemannZeta_finset_right_shift_le_log_norm_of_affine_neg_logDeriv_re_le_half_radius
+    {Are Bre Acenter Bcenter r H σ : ℝ} {S : Finset ℕ} {τ : ℕ → ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3)
+    (hHpos : 0 < H)
+    (hH : ∀ k, k ∈ S → H + 2 * r ≤ |τ k|)
+    (ht : ∀ k, k ∈ S → 6 ≤ |τ k|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hM : ∀ k, k ∈ S →
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * τ k)‖ + 3))
+    (hlog : ∀ k, k ∈ S → ∀ w : ℂ,
+      w ∈ Metric.ball (((σ + r : ℝ) : ℂ) + Complex.I * τ k) (2 * r) →
+        (-logDeriv riemannZeta w).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * τ k)‖ + 3))
+    (hcenter : ∀ k, k ∈ S →
+      ‖-logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + Complex.I * τ k)‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * τ k)‖ + 3)) :
+    ∀ k, k ∈ S →
+      (-deriv riemannZeta ((σ : ℂ) + Complex.I * τ k) /
+          riemannZeta ((σ : ℂ) + Complex.I * τ k)).re ≤
+        ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+          Real.log (‖((σ : ℂ) + Complex.I * τ k)‖ + 3) :=
+  ZeroFreeRegion.re_neg_deriv_div_riemannZeta_finset_right_shift_le_log_norm_of_affine_neg_logDeriv_re_le_half_radius
+    hr hσ hσr hHpos hH ht hA hB hM hlog hcenter
+
+/-- Public bridge combining the automatic finite detector lower-bound theorem
+with a finite-family right-shifted Borel supplier for `logDeriv ζ`.
+
+The Borel hypotheses are required only for the shifted frequencies in
+`S.erase m`; the selected detector term is then bounded below with those
+frequency-wise upper bounds inserted into the detector algebra. -/
+theorem log_deriv_zeta_finset_single_lower_bound_auto_of_right_shift_borel_family
+    {Are Bre Acenter Bcenter r H σ t : ℝ}
+    (S : Finset ℕ) (a : ℕ → ℝ) {m : ℕ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3)
+    (hHpos : 0 < H)
+    (hH : ∀ k, k ∈ S.erase m → H + 2 * r ≤ |(k : ℝ) * t|)
+    (ht : ∀ k, k ∈ S.erase m → 6 ≤ |(k : ℝ) * t|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hM : ∀ k, k ∈ S.erase m →
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hlog : ∀ k, k ∈ S.erase m → ∀ w : ℂ,
+      w ∈ Metric.ball
+          (((σ + r : ℝ) : ℂ) + Complex.I * ((((k : ℝ) * t : ℝ) : ℂ))) (2 * r) →
+        (logDeriv riemannZeta w).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hcenter : ∀ k, k ∈ S.erase m →
+      ‖logDeriv riemannZeta
+          (((σ + r : ℝ) : ℂ) + Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hm : m ∈ S) (ha : 0 < a m)
+    (ha_nonneg : ∀ k, k ∈ S.erase m → 0 ≤ a k)
+    (hpoly : ∀ θ : ℝ, 0 ≤ ∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ)) :
+    (-deriv riemannZeta ((σ : ℂ) + (m : ℂ) * Complex.I * t) /
+      riemannZeta ((σ : ℂ) + (m : ℂ) * Complex.I * t)).re ≥
+      - (∑ k ∈ S.erase m, a k *
+          (((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+            Real.log (‖((σ : ℂ) + (k : ℂ) * Complex.I * t)‖ + 3))) / a m := by
+  let C : ℝ := (2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)
+  refine
+    log_deriv_zeta_finset_single_lower_bound_auto_of_shift_upper_bounds
+      σ (by linarith) t S a
+      (fun k => C * Real.log (‖((σ : ℂ) + (k : ℂ) * Complex.I * t)‖ + 3))
+      hm ha ha_nonneg ?_ hpoly
+  intro k hk
+  have hupper :=
+    re_neg_deriv_div_riemannZeta_finset_right_shift_le_log_norm_of_affine_logDeriv_re_le_half_radius
+      (Are := Are) (Bre := Bre) (Acenter := Acenter) (Bcenter := Bcenter)
+      (r := r) (H := H) (σ := σ) (S := S.erase m)
+      (τ := fun k => (k : ℝ) * t)
+      hr hσ hσr hHpos hH ht hA hB hM hlog hcenter k hk
+  have hheight :
+      ((σ : ℂ) + Complex.I * (((k : ℝ) * t : ℝ) : ℂ)) =
+        ((σ : ℂ) + (k : ℂ) * Complex.I * t) := by
+    norm_num [Complex.ofReal_mul]
+    ring
+  rw [hheight] at hupper
+  simpa [C] using hupper
+
+/-- Public signed version of
+`log_deriv_zeta_finset_single_lower_bound_auto_of_right_shift_borel_family`,
+with Borel hypotheses stated for `-logDeriv ζ`. -/
+theorem log_deriv_zeta_finset_single_lower_bound_auto_of_signed_right_shift_borel_family
+    {Are Bre Acenter Bcenter r H σ t : ℝ}
+    (S : Finset ℕ) (a : ℕ → ℝ) {m : ℕ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3)
+    (hHpos : 0 < H)
+    (hH : ∀ k, k ∈ S.erase m → H + 2 * r ≤ |(k : ℝ) * t|)
+    (ht : ∀ k, k ∈ S.erase m → 6 ≤ |(k : ℝ) * t|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hM : ∀ k, k ∈ S.erase m →
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hlog : ∀ k, k ∈ S.erase m → ∀ w : ℂ,
+      w ∈ Metric.ball
+          (((σ + r : ℝ) : ℂ) + Complex.I * ((((k : ℝ) * t : ℝ) : ℂ))) (2 * r) →
+        (-logDeriv riemannZeta w).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hcenter : ∀ k, k ∈ S.erase m →
+      ‖-logDeriv riemannZeta
+          (((σ + r : ℝ) : ℂ) + Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hm : m ∈ S) (ha : 0 < a m)
+    (ha_nonneg : ∀ k, k ∈ S.erase m → 0 ≤ a k)
+    (hpoly : ∀ θ : ℝ, 0 ≤ ∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ)) :
+    (-deriv riemannZeta ((σ : ℂ) + (m : ℂ) * Complex.I * t) /
+      riemannZeta ((σ : ℂ) + (m : ℂ) * Complex.I * t)).re ≥
+      - (∑ k ∈ S.erase m, a k *
+          (((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+            Real.log (‖((σ : ℂ) + (k : ℂ) * Complex.I * t)‖ + 3))) / a m := by
+  let C : ℝ := (2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)
+  refine
+    log_deriv_zeta_finset_single_lower_bound_auto_of_shift_upper_bounds
+      σ (by linarith) t S a
+      (fun k => C * Real.log (‖((σ : ℂ) + (k : ℂ) * Complex.I * t)‖ + 3))
+      hm ha ha_nonneg ?_ hpoly
+  intro k hk
+  have hupper :=
+    re_neg_deriv_div_riemannZeta_finset_right_shift_le_log_norm_of_affine_neg_logDeriv_re_le_half_radius
+      (Are := Are) (Bre := Bre) (Acenter := Acenter) (Bcenter := Bcenter)
+      (r := r) (H := H) (σ := σ) (S := S.erase m)
+      (τ := fun k => (k : ℝ) * t)
+      hr hσ hσr hHpos hH ht hA hB hM hlog hcenter k hk
+  have hheight :
+      ((σ : ℂ) + Complex.I * (((k : ℝ) * t : ℝ) : ℂ)) =
+        ((σ : ℂ) + (k : ℂ) * Complex.I * t) := by
+    norm_num [Complex.ofReal_mul]
+    ring
+  rw [hheight] at hupper
+  simpa [C] using hupper
+
+/-- Public BTY degree-16 specialization of the finite detector/Borel-family
+bridge for `logDeriv ζ`.  This discharges the detector nonnegativity and BTY
+coefficient side conditions, leaving only the future right-shifted Borel
+hypotheses for the remaining frequencies. -/
+theorem log_deriv_zeta_bty_detector_one_lower_bound_of_right_shift_borel_family
+    {Are Bre Acenter Bcenter r H σ t : ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3)
+    (hHpos : 0 < H)
+    (hH : ∀ k, k ∈ btyDetectorSupport.erase 1 → H + 2 * r ≤ |(k : ℝ) * t|)
+    (ht : ∀ k, k ∈ btyDetectorSupport.erase 1 → 6 ≤ |(k : ℝ) * t|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hM : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) +
+          Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hlog : ∀ k, k ∈ btyDetectorSupport.erase 1 → ∀ w : ℂ,
+      w ∈ Metric.ball
+          (((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ))) (2 * r) →
+        (logDeriv riemannZeta w).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) +
+              Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hcenter : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      ‖logDeriv riemannZeta
+          (((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3)) :
+    (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+      riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+      - (∑ k ∈ btyDetectorSupport.erase 1, btyDetectorCoeff k *
+          (((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+            Real.log (‖((σ : ℂ) + (k : ℂ) * Complex.I * t)‖ + 3))) /
+        btyDetectorCoeff 1 := by
+  have h :=
+    log_deriv_zeta_finset_single_lower_bound_auto_of_right_shift_borel_family
+      (Are := Are) (Bre := Bre) (Acenter := Acenter) (Bcenter := Bcenter)
+      (r := r) (H := H) (σ := σ) (t := t)
+      btyDetectorSupport btyDetectorCoeff
+      hr hσ hσr hHpos hH ht hA hB hM hlog hcenter
+      one_mem_btyDetectorSupport btyDetectorCoeff_one_pos
+      (fun k hk => btyDetectorCoeff_nonneg_of_mem_support (Finset.mem_of_mem_erase hk))
+      (trigPolynomial_nonneg_of_scaled_complex_exp_abs_sq_certificate
+        btyDetectorScale btyDetectorSupport btyExpSupport
+        btyDetectorCoeff btyExpCoeff
+        btyDetectorScale_pos btyScaledComplexExpAbsSqCertificate)
+  simpa using h
+
+/-- Public signed BTY degree-16 specialization of the finite detector/Borel
+family bridge, with right-shifted Borel hypotheses stated for `-logDeriv ζ`. -/
+theorem log_deriv_zeta_bty_detector_one_lower_bound_of_signed_right_shift_borel_family
+    {Are Bre Acenter Bcenter r H σ t : ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3)
+    (hHpos : 0 < H)
+    (hH : ∀ k, k ∈ btyDetectorSupport.erase 1 → H + 2 * r ≤ |(k : ℝ) * t|)
+    (ht : ∀ k, k ∈ btyDetectorSupport.erase 1 → 6 ≤ |(k : ℝ) * t|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hM : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) +
+          Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hlog : ∀ k, k ∈ btyDetectorSupport.erase 1 → ∀ w : ℂ,
+      w ∈ Metric.ball
+          (((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ))) (2 * r) →
+        (-logDeriv riemannZeta w).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) +
+              Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hcenter : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      ‖-logDeriv riemannZeta
+          (((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3)) :
+    (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+      riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+      - (∑ k ∈ btyDetectorSupport.erase 1, btyDetectorCoeff k *
+          (((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+            Real.log (‖((σ : ℂ) + (k : ℂ) * Complex.I * t)‖ + 3))) /
+        btyDetectorCoeff 1 := by
+  have h :=
+    log_deriv_zeta_finset_single_lower_bound_auto_of_signed_right_shift_borel_family
+      (Are := Are) (Bre := Bre) (Acenter := Acenter) (Bcenter := Bcenter)
+      (r := r) (H := H) (σ := σ) (t := t)
+      btyDetectorSupport btyDetectorCoeff
+      hr hσ hσr hHpos hH ht hA hB hM hlog hcenter
+      one_mem_btyDetectorSupport btyDetectorCoeff_one_pos
+      (fun k hk => btyDetectorCoeff_nonneg_of_mem_support (Finset.mem_of_mem_erase hk))
+      (trigPolynomial_nonneg_of_scaled_complex_exp_abs_sq_certificate
+        btyDetectorScale btyDetectorSupport btyExpSupport
+        btyDetectorCoeff btyExpCoeff
+        btyDetectorScale_pos btyScaledComplexExpAbsSqCertificate)
+  simpa using h
+
+/-- Public BTY degree-16 right-shifted Borel bridge with a uniform final upper
+bound for the remaining frequencies.  The coefficient sum over
+`btyDetectorSupport.erase 1` is already evaluated. -/
+theorem log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_right_shift_borel_family
+    {Are Bre Acenter Bcenter r H σ t Bupper : ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3)
+    (hHpos : 0 < H)
+    (hH : ∀ k, k ∈ btyDetectorSupport.erase 1 → H + 2 * r ≤ |(k : ℝ) * t|)
+    (ht : ∀ k, k ∈ btyDetectorSupport.erase 1 → 6 ≤ |(k : ℝ) * t|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hM : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) +
+          Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hlog : ∀ k, k ∈ btyDetectorSupport.erase 1 → ∀ w : ℂ,
+      w ∈ Metric.ball
+          (((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ))) (2 * r) →
+        (logDeriv riemannZeta w).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) +
+              Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hcenter : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      ‖logDeriv riemannZeta
+          (((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hBupper : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+        Real.log (‖((σ : ℂ) + (k : ℂ) * Complex.I * t)‖ + 3) ≤ Bupper) :
+    (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+      riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+      - (((6917296 : ℝ) / 2485395) * Bupper) / btyDetectorCoeff 1 := by
+  refine
+    log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_shift_upper_bound
+      σ (by linarith) t Bupper ?_
+  intro k hk
+  have hupper :=
+    re_neg_deriv_div_riemannZeta_finset_right_shift_le_log_norm_of_affine_logDeriv_re_le_half_radius
+      (Are := Are) (Bre := Bre) (Acenter := Acenter) (Bcenter := Bcenter)
+      (r := r) (H := H) (σ := σ) (S := btyDetectorSupport.erase 1)
+      (τ := fun k => (k : ℝ) * t)
+      hr hσ hσr hHpos hH ht hA hB hM hlog hcenter k hk
+  have hheight :
+      ((σ : ℂ) + Complex.I * (((k : ℝ) * t : ℝ) : ℂ)) =
+        ((σ : ℂ) + (k : ℂ) * Complex.I * t) := by
+    norm_num [Complex.ofReal_mul]
+    ring
+  rw [hheight] at hupper
+  exact hupper.trans (hBupper k hk)
+
+/-- Public signed version of
+`log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_right_shift_borel_family`. -/
+theorem log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_signed_right_shift_borel_family
+    {Are Bre Acenter Bcenter r H σ t Bupper : ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3)
+    (hHpos : 0 < H)
+    (hH : ∀ k, k ∈ btyDetectorSupport.erase 1 → H + 2 * r ≤ |(k : ℝ) * t|)
+    (ht : ∀ k, k ∈ btyDetectorSupport.erase 1 → 6 ≤ |(k : ℝ) * t|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hM : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) +
+          Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hlog : ∀ k, k ∈ btyDetectorSupport.erase 1 → ∀ w : ℂ,
+      w ∈ Metric.ball
+          (((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ))) (2 * r) →
+        (-logDeriv riemannZeta w).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) +
+              Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hcenter : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      ‖-logDeriv riemannZeta
+          (((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hBupper : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+        Real.log (‖((σ : ℂ) + (k : ℂ) * Complex.I * t)‖ + 3) ≤ Bupper) :
+    (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+      riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+      - (((6917296 : ℝ) / 2485395) * Bupper) / btyDetectorCoeff 1 := by
+  refine
+    log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_shift_upper_bound
+      σ (by linarith) t Bupper ?_
+  intro k hk
+  have hupper :=
+    re_neg_deriv_div_riemannZeta_finset_right_shift_le_log_norm_of_affine_neg_logDeriv_re_le_half_radius
+      (Are := Are) (Bre := Bre) (Acenter := Acenter) (Bcenter := Bcenter)
+      (r := r) (H := H) (σ := σ) (S := btyDetectorSupport.erase 1)
+      (τ := fun k => (k : ℝ) * t)
+      hr hσ hσr hHpos hH ht hA hB hM hlog hcenter k hk
+  have hheight :
+      ((σ : ℂ) + Complex.I * (((k : ℝ) * t : ℝ) : ℂ)) =
+        ((σ : ℂ) + (k : ℂ) * Complex.I * t) := by
+    norm_num [Complex.ofReal_mul]
+    ring
+  rw [hheight] at hupper
+  exact hupper.trans (hBupper k hk)
+
 /-- Public shifted third-term real-part quotient form of the right-shifted
 Borel transfer for `logDeriv ζ`. -/
 theorem re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_logDeriv_re_le_half_radius
@@ -7585,6 +8031,35 @@ theorem borelCaratheodory_logDeriv_multiplicityRegularPart_sigma_it_right_shift_
         Real.log |t| :=
   ZeroFreeRegion.borelCaratheodory_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius
     hr hσ hσr ht hA hB hM hdiff hlog hcenter
+
+/-- Public positive-sign multiplicity-aware Borel bridge whose right-shifted
+regular-part center estimate is discharged by the fixed-margin `logDeriv ζ`
+bound and the explicit same-height principal-part distance estimate. -/
+theorem exists_borelCaratheodory_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius_fixed_margin_center
+    {Are Bre r σ β t : ℝ} {n : ℕ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3) (ht : 6 ≤ |t|)
+    (hβ : β < 1) (hAre : 0 ≤ Are) (hBre : 0 ≤ Bre)
+    (hM :
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * t)‖ + 3))
+    (hdiff :
+      DifferentiableOn ℂ
+        (fun w : ℂ =>
+          logDeriv riemannZeta w -
+            (n : ℂ) * (w - ((β : ℂ) + Complex.I * t))⁻¹)
+        (Metric.ball (((σ + r : ℝ) : ℂ) + Complex.I * t) (2 * r)))
+    (hlog : ∀ w : ℂ,
+      w ∈ Metric.ball (((σ + r : ℝ) : ℂ) + Complex.I * t) (2 * r) →
+        (logDeriv riemannZeta w -
+            (n : ℂ) * (w - ((β : ℂ) + Complex.I * t))⁻¹).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * t)‖ + 3)) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) -
+          (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+        C * Real.log |t| :=
+  ZeroFreeRegion.exists_borelCaratheodory_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius_fixed_margin_center
+    hr hσ hσr ht hβ hAre hBre hM hdiff hlog
 
 /-- Public multiplicity-aware signed regular-part Borel transfer in the full
 complex-height logarithmic scale. -/
@@ -12430,6 +12905,24 @@ theorem explicitFormulaConversePower_of_truncated_route
     PrimeNumberTheorem.ExplicitFormulaConversePowerTarget β :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.explicitFormulaConversePower_of_truncated_route
     hroute hexplicit
+
+/-- Public one-step conditional bridge from a future truncated explicit formula
+route and a `ψ` power saving below `2/3` to no zeros on the right-side line
+`Re(s)=2/3`. -/
+theorem no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route
+    (hroute :
+      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute
+        (2 / 3))
+    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
+      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget
+        T hT x hx)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine (2 / 3)) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (2 / 3) :=
+  PrimeNumberTheorem.no_zeros_on_vertical_line_of_explicit_formula_converse_power
+    (by norm_num) (by norm_num)
+    (PrimeNumberTheorem.ExplicitFormulaTruncated.explicitFormulaConversePower_of_truncated_route
+      hroute hexplicit)
+    herror
 
 /-- Public one-step conditional bridge from a future truncated explicit formula
 route and a `ψ` power saving below `2/3` to no zeros on `Re(s)=1/3`. -/

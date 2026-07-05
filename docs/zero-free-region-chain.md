@@ -316,7 +316,32 @@ proved:
   `ZeroFreeRegion.re_neg_deriv_div_riemannZeta_sigma_it_right_shift_le_log_norm_of_affine_logDeriv_re_le_half_radius`
   and
   `ZeroFreeRegion.re_neg_deriv_div_riemannZeta_sigma_it_right_shift_le_log_norm_of_affine_neg_logDeriv_re_le_half_radius`
-  expose the same quotient handoff in the `log(||sigma+it||+3)` scale.  The shifted versions
+  expose the same quotient handoff in the `log(||sigma+it||+3)` scale.  The
+  finite-family variants
+  `ZeroFreeRegion.re_neg_deriv_div_riemannZeta_finset_right_shift_le_log_norm_of_affine_logDeriv_re_le_half_radius`
+  and
+  `ZeroFreeRegion.re_neg_deriv_div_riemannZeta_finset_right_shift_le_log_norm_of_affine_neg_logDeriv_re_le_half_radius`
+  package this single-height handoff over a finite family of heights `tau k`,
+  which is the Borel-side supplier shape needed by higher-degree detector
+  polynomials before the remaining height-comparison work specializes
+  `tau k` to shifted frequencies such as `k*t`.  The public API bridges
+  `RiemannPNT.API.log_deriv_zeta_finset_single_lower_bound_auto_of_right_shift_borel_family`
+  and
+  `RiemannPNT.API.log_deriv_zeta_finset_single_lower_bound_auto_of_signed_right_shift_borel_family`
+  now compose that finite-family Borel supplier with the automatic finite
+  detector lower-bound theorem, eliminating the separate manual `hupper`
+  handoff.  Their BTY specializations
+  `RiemannPNT.API.log_deriv_zeta_bty_detector_one_lower_bound_of_right_shift_borel_family`
+  and
+  `RiemannPNT.API.log_deriv_zeta_bty_detector_one_lower_bound_of_signed_right_shift_borel_family`
+  discharge the checked degree-16 detector certificate and coefficient
+  side-conditions for the selected `k=1` term.  The uniform variants
+  `RiemannPNT.API.log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_right_shift_borel_family`
+  and
+  `RiemannPNT.API.log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_signed_right_shift_borel_family`
+  additionally use the computed remaining-coefficient sum
+  `6917296 / 2485395`, yielding the one-constant upper-bound interface needed
+  after future global height comparisons.  The shifted versions
   `ZeroFreeRegion.re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_logDeriv_re_le_half_radius`
   and
   `ZeroFreeRegion.re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_neg_logDeriv_re_le_half_radius`
@@ -398,7 +423,11 @@ proved:
   companion
   `ZeroFreeRegion.borelCaratheodory_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`
   handles `logDeriv zeta(w)-n(w-rho)^(-1)`, matching the direct output of
-  local factorization estimates before sign conversion.  The full-height scale
+  local factorization estimates before sign conversion; its wrapper
+  `ZeroFreeRegion.exists_borelCaratheodory_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius_fixed_margin_center`
+  discharges the corresponding positive-sign center bound from the fixed-margin
+  `logDeriv zeta` estimate and the same `(n : Real) / r` principal-part cost.
+  The full-height scale
   companions
   `ZeroFreeRegion.borelCaratheodory_neg_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_norm_of_affine_re_le_half_radius`
   and

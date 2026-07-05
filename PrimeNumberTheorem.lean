@@ -3828,6 +3828,61 @@ lemma nontrivialZerosFinset_sum_re_nonnegative_of_pair_contribution_nonnegative
   rw [nontrivialZerosFinset_pair_contribution_eq_two_sum_re] at hpair
   nlinarith
 
+/-- The newly included nontrivial zeros between two height cutoffs are closed
+under the zeta symmetry `ρ ↦ 1 - ρ`. -/
+lemma one_sub_mem_nontrivialZerosFinset_sdiff {ρ : ℂ} {T U : ℝ}
+    (hρ : ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T) :
+    1 - ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T := by
+  simp only [Finset.mem_sdiff] at hρ ⊢
+  exact ⟨one_sub_mem_nontrivialZerosFinset hρ.1, by
+    intro hT
+    exact hρ.2 ((one_sub_mem_nontrivialZerosFinset_iff).mp hT)⟩
+
+/-- Reindex a real-valued new-zero finite sum by the zeta zero symmetry
+`ρ ↦ 1 - ρ`. -/
+lemma sum_nontrivialZerosFinset_sdiff_pair_re (T U : ℝ) (F : ℂ → ℂ) :
+    (∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        (F (1 - ρ)).re) =
+      ∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T, (F ρ).re := by
+  classical
+  refine Finset.sum_nbij' (fun ρ : ℂ => 1 - ρ) (fun ρ : ℂ => 1 - ρ)
+    ?_ ?_ ?_ ?_ ?_
+  · intro ρ hρ
+    exact one_sub_mem_nontrivialZerosFinset_sdiff hρ
+  · intro ρ hρ
+    exact one_sub_mem_nontrivialZerosFinset_sdiff hρ
+  · intro ρ _hρ
+    ring
+  · intro ρ _hρ
+    ring
+  · intro ρ _hρ
+    rfl
+
+/-- A paired contribution over newly included nontrivial zeros equals twice the
+unpaired real-part sum. -/
+lemma nontrivialZerosFinset_sdiff_pair_contribution_eq_two_sum_re
+    (T U : ℝ) (F : ℂ → ℂ) :
+    (∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+      ((F ρ).re + (F (1 - ρ)).re)) =
+      2 * ∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        (F ρ).re := by
+  rw [Finset.sum_add_distrib, sum_nontrivialZerosFinset_sdiff_pair_re]
+  ring
+
+/-- A global pair-nonnegativity condition makes the unpaired real-part sum over
+newly included nontrivial zeros nonnegative. -/
+lemma nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_pair_contribution_nonnegative
+    (T U : ℝ) (F : ℂ → ℂ)
+    (hF : ZeroPairContributionNonnegative F 1) :
+    0 ≤
+      ∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T, (F ρ).re := by
+  have hpair :
+      0 ≤ ∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        ((F ρ).re + (F (1 - ρ)).re) :=
+    Finset.sum_nonneg (fun ρ _hρ => hF ρ)
+  rw [nontrivialZerosFinset_sdiff_pair_contribution_eq_two_sum_re] at hpair
+  nlinarith
+
 /-- Specialize strip-local Stechkin/Heath-Brown pair positivity to the finite
 family of nontrivial zeros up to height `T`. -/
 lemma nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive

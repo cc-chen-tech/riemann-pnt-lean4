@@ -211,6 +211,15 @@ For the principal value final formula:
 For a PNT proof, the truncated formula plus a zero-free region and boundary
 estimates may be more useful than the full principal-value exact formula.
 
+The finite-zero increment layer now has a matching symmetry API.  The public
+theorems `RiemannPNT.API.one_sub_mem_nontrivialZerosFinset_sdiff`,
+`RiemannPNT.API.sum_nontrivialZerosFinset_sdiff_pair_re`, and
+`RiemannPNT.API.nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_pair_contribution_nonnegative`
+show that newly included zeros between two truncation heights are closed under
+`rho -> 1 - rho`, can be reindexed by that symmetry, and inherit the
+pair-positivity nonnegativity statement.  This is still finite combinatorics;
+the analytic zero-density and contour estimates remain separate.
+
 The current Lean API also names the converse route explicitly:
 `PrimeNumberTheorem.ExplicitFormulaConversePowerTarget` and
 `PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute`
@@ -242,11 +251,17 @@ analytic content is still the converse explicit-formula theorem that would
 produce `ExplicitFormulaConversePowerTarget beta`.
 
 The public facade also exposes
-`RiemannPNT.API.no_zeros_on_one_third_of_truncated_explicit_formula_converse_route`,
+`RiemannPNT.API.no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route`,
 which composes the truncated route
 `ExplicitFormulaTruncatedConverseRoute (2 / 3)`, a future proof of the
 truncated explicit formula for all admissible `T,x`, and the `ψ` power-saving
-hypothesis into the same `NoZerosOnVerticalLine (1 / 3)` conclusion.
+hypothesis into the direct right-side conclusion
+`NoZerosOnVerticalLine (2 / 3)`.  This is the formal version of the
+explicit-formula/PNT-error step before using zero symmetry.
+The companion bridge
+`RiemannPNT.API.no_zeros_on_one_third_of_truncated_explicit_formula_converse_route`,
+uses the same hypotheses and then reflects the conclusion to
+`NoZerosOnVerticalLine (1 / 3)`.
 The generalized facade
 `RiemannPNT.API.no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route`
 does the same composition for arbitrary `0 < beta < 1`, yielding
