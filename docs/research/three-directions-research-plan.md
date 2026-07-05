@@ -91,6 +91,10 @@ Verified assets now include:
   `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_neg_affine_log_abs_add_three_bound_high_height_simplified`;
   `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_neg_log_abs_add_three_bound_high_height`;
   `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_neg_log_abs_add_three_bound_high_height_simplified`;
+- the exact-scale real-part version of the same BTY bridge:
+  `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_re_high_height_log_abs_bound`
+  and
+  `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_re_high_height_log_abs_bound_simplified`;
 - the polynomial-growth-to-`log |t|` zeta handoff:
   `log_norm_riemannZeta_sigma_it_le_affine_log_abs_of_polynomial_growth`.
 - cutoff-normalization wrappers for both classical and Vinogradov-Korobov

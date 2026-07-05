@@ -1147,6 +1147,12 @@ Core verified declarations:
   `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_neg_log_abs_add_three_bound_high_height_simplified`
   specialize that signed direct BTY bridge to multiplicative
   `C log(|t|+3)` high-height inputs.
+- `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_re_high_height_log_abs_bound`
+  and
+  `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_re_high_height_log_abs_bound_simplified`
+  feed an exact-scale future real-part input
+  `Re(-zeta'/zeta) <= B log |t|` directly into the fixed-margin BTY handoff
+  through the named `ReNegDerivDivVerticalLogBound` interface.
 - `exists_re_neg_deriv_div_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height`
   converts affine `log(|t|+3)` norm growth for `logDeriv zeta` directly into
   the real-part quotient convention `Re(-zeta'/zeta) <= C log |t|`.
@@ -1584,6 +1590,11 @@ Core verified declarations:
   `RiemannPNT.API.exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_neg_log_abs_add_three_bound_high_height_simplified`
   expose the same direct BTY bridge for signed `-logDeriv zeta` high-height
   inputs.
+- `RiemannPNT.API.exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_re_high_height_log_abs_bound`
+  and
+  `RiemannPNT.API.exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_re_high_height_log_abs_bound_simplified`
+  expose the exact-scale real-part version, consuming a future
+  `Re(-zeta'/zeta) <= B log |t|` high-height estimate directly.
 - `re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_logDeriv_re_le_half_radius`
   and
   `re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_neg_logDeriv_re_le_half_radius`

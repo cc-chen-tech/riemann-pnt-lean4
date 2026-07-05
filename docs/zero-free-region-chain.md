@@ -459,7 +459,12 @@ proved:
   and
   `RiemannPNT.API.exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_ReNegDerivDivVerticalLogBound`
   provide the same BTY handoff when the future vertical estimate is already
-  stated as `Re(-zeta'/zeta)` rather than as a norm bound.  The shifted versions
+  stated as `Re(-zeta'/zeta)` rather than as a norm bound.  The exact
+  high-height facades
+  `RiemannPNT.API.exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_re_high_height_log_abs_bound`
+  and
+  `RiemannPNT.API.exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_re_high_height_log_abs_bound_simplified`
+  consume a future `Re(-zeta'/zeta) <= B log |t|` estimate directly.  The shifted versions
   `ZeroFreeRegion.re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_logDeriv_re_le_half_radius`
   and
   `ZeroFreeRegion.re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_neg_logDeriv_re_le_half_radius`
