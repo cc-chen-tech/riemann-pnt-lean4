@@ -11493,6 +11493,133 @@ lemma exists_norm_riemannZeta_pos_lower_bound_on_verticalRegion_of_compact_band_
     exact le_trans (min_le_right _ _) (hhigh z hz.1 hT)
 
 /-- On any bounded positive-height vertical band in the right half-plane,
+`ζ'` has a finite norm bound.
+
+This is the derivative analogue of the compact `logDeriv` patch below.  It is
+pure compactness plus analyticity away from the pole at `1`; the genuine
+high-height derivative-growth estimate remains a separate future input. -/
+lemma exists_norm_deriv_riemannZeta_bound_on_compact_vertical_band
+    {H T : ℝ} (hH : 0 < H) :
+    ∃ C ≥ 0, ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      H ≤ |z.im| → |z.im| ≤ T →
+      ‖deriv riemannZeta z‖ ≤ C := by
+  let K : Set ℂ :=
+    Set.Icc (1 : ℝ) 2 ×ℂ (Set.Icc H T ∪ Set.Icc (-T) (-H))
+  have hK : IsCompact K := by
+    have him : IsCompact (Set.Icc H T ∪ Set.Icc (-T) (-H)) :=
+      (isCompact_Icc : IsCompact (Set.Icc H T)).union
+        (isCompact_Icc : IsCompact (Set.Icc (-T) (-H)))
+    simpa [K] using
+      ((isCompact_Icc : IsCompact (Set.Icc (1 : ℝ) 2)).reProdIm him)
+  have hKsub : K ⊆ verticalRegion 1 2 H := by
+    intro z hz
+    change z ∈ Set.Icc (1 : ℝ) 2 ×ℂ
+      (Set.Icc H T ∪ Set.Icc (-T) (-H)) at hz
+    rw [mem_reProdIm] at hz
+    constructor
+    · exact hz.1
+    · rcases hz.2 with him | him
+      · have hnonneg : 0 ≤ z.im := by linarith [hH, him.1]
+        simpa [abs_of_nonneg hnonneg] using him.1
+      · have hnonpos : z.im ≤ 0 := by linarith [hH, him.2]
+        rw [abs_of_nonpos hnonpos]
+        linarith [him.2]
+  have hsubset : verticalRegion 1 2 H ⊆ ({z : ℂ | z ≠ 1} : Set ℂ) := by
+    intro z hz
+    exact ne_one_of_mem_verticalRegion_of_pos_height hz hH
+  have han : AnalyticOnNhd ℂ riemannZeta (verticalRegion 1 2 H) :=
+    analyticOnNhd_riemannZeta_ne_one.mono hsubset
+  have hcont : ContinuousOn (fun z : ℂ => ‖deriv riemannZeta z‖) K := by
+    exact ((han.deriv.continuousOn.mono hKsub).norm)
+  rcases hK.bddAbove_image hcont with ⟨C₀, hC₀⟩
+  refine ⟨max C₀ 0, le_max_right C₀ 0, ?_⟩
+  intro z hzre hzH hzT
+  have hzK : z ∈ K := by
+    change z ∈ Set.Icc (1 : ℝ) 2 ×ℂ
+      (Set.Icc H T ∪ Set.Icc (-T) (-H))
+    rw [mem_reProdIm]
+    constructor
+    · exact hzre
+    · by_cases hnonneg : 0 ≤ z.im
+      · left
+        constructor
+        · simpa [abs_of_nonneg hnonneg] using hzH
+        · simpa [abs_of_nonneg hnonneg] using hzT
+      · right
+        have hnonpos : z.im ≤ 0 := le_of_lt (lt_of_not_ge hnonneg)
+        constructor
+        · have hlower : -T ≤ z.im := by
+            have h := (abs_le.mp hzT).1
+            linarith
+          exact hlower
+        · have hupper : z.im ≤ -H := by
+            have h : H ≤ -z.im := by
+              simpa [abs_of_nonpos hnonpos] using hzH
+            linarith
+          exact hupper
+  exact (hC₀ ⟨z, hzK, rfl⟩).trans (le_max_left C₀ 0)
+
+/-- Patch the compact bounded-height `ζ'` norm bound with a future high-height
+affine logarithmic estimate to cover the whole vertical region.
+
+This reduces the all-height derivative-growth obligation used by the
+`ζ'/ζ` bridge to the actual high-height analytic estimate plus compactness. -/
+lemma exists_deriv_riemannZeta_affine_log_norm_add_three_bound_on_verticalRegion_of_compact_band_and_high_height
+    {H T A B : ℝ} (hH : 0 < H) (hB : 0 ≤ B)
+    (hhigh : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| →
+        ‖deriv riemannZeta z‖ ≤ A + B * Real.log (‖z‖ + 3)) :
+    ∃ A' ≥ 0, ∀ z : ℂ, z ∈ verticalRegion 1 2 H →
+      ‖deriv riemannZeta z‖ ≤ A' + B * Real.log (‖z‖ + 3) := by
+  rcases exists_norm_deriv_riemannZeta_bound_on_compact_vertical_band
+      (H := H) (T := T) hH with ⟨C, hC_nonneg, hcompact⟩
+  refine ⟨max C A, le_trans hC_nonneg (le_max_left C A), ?_⟩
+  intro z hz
+  rw [mem_verticalRegion] at hz
+  have hlog_nonneg : 0 ≤ Real.log (‖z‖ + 3) := by
+    apply Real.log_nonneg
+    nlinarith [norm_nonneg z]
+  by_cases hle : |z.im| ≤ T
+  · have hcompact_z : ‖deriv riemannZeta z‖ ≤ C :=
+      hcompact z hz.1 hz.2 hle
+    exact hcompact_z.trans
+      ((le_max_left C A).trans
+        (le_add_of_nonneg_right (mul_nonneg hB hlog_nonneg)))
+  · have hT : T ≤ |z.im| := le_of_not_ge hle
+    have hhigh_z :
+        ‖deriv riemannZeta z‖ ≤ A + B * Real.log (‖z‖ + 3) :=
+      hhigh z hz.1 hT
+    exact hhigh_z.trans
+      (add_le_add_left (le_max_right C A) (B * Real.log (‖z‖ + 3)))
+
+/-- Compact-plus-high-height primitive `ζ'` and `ζ` estimates feed directly
+into the named vertical logarithmic-derivative interface.
+
+The compact band supplies both the bounded-height derivative bound and the
+bounded-height positive lower bound for `ζ`.  The only remaining inputs are the
+genuinely high-height derivative growth and zeta lower bound. -/
+lemma logDerivVerticalLogBound_of_compact_band_and_high_height_deriv_bound_zeta_lower_bound
+    (H T A B η : ℝ) (hH : 5 ≤ H) (hB : 0 ≤ B) (hη : 0 < η)
+    (hderiv : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| →
+        ‖deriv riemannZeta z‖ ≤ A + B * Real.log (‖z‖ + 3))
+    (hzeta : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| → η ≤ ‖riemannZeta z‖) :
+    ∃ C T0 : ℝ, LogDerivVerticalLogBound C T0 := by
+  have hHpos : 0 < H := lt_of_lt_of_le (by norm_num : (0 : ℝ) < 5) hH
+  rcases
+      exists_deriv_riemannZeta_affine_log_norm_add_three_bound_on_verticalRegion_of_compact_band_and_high_height
+        (H := H) (T := T) (A := A) (B := B) hHpos hB hderiv with
+    ⟨A', hA'_nonneg, hderiv_all⟩
+  rcases
+      exists_norm_riemannZeta_pos_lower_bound_on_verticalRegion_of_compact_band_and_high_height
+        (H := H) (T := T) (ηHigh := η) hHpos hη hzeta with
+    ⟨η', hη'_pos, hzeta_all⟩
+  exact
+    logDerivVerticalLogBound_of_deriv_bound_and_zeta_lower_bound_on_verticalRegion
+      H A' B η' hH hA'_nonneg hB hη'_pos hderiv_all hzeta_all
+
+/-- On any bounded positive-height vertical band in the right half-plane,
 `logDeriv ζ` has a finite norm bound.
 
 This is the compact bounded-height patch needed by the zero-free-region chain:

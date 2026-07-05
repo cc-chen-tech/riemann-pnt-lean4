@@ -7183,6 +7183,41 @@ theorem exists_norm_riemannZeta_pos_lower_bound_on_verticalRegion_of_compact_ban
   ZeroFreeRegion.exists_norm_riemannZeta_pos_lower_bound_on_verticalRegion_of_compact_band_and_high_height
     hH hηHigh hhigh
 
+/-- Public compact bounded-height norm bound for `ζ'` in the right half-strip
+`1 <= Re(z) <= 2`, `H <= |Im(z)| <= T`. -/
+theorem exists_norm_deriv_riemannZeta_bound_on_compact_vertical_band
+    {H T : ℝ} (hH : 0 < H) :
+    ∃ C ≥ 0, ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      H ≤ |z.im| → |z.im| ≤ T →
+      ‖deriv riemannZeta z‖ ≤ C :=
+  ZeroFreeRegion.exists_norm_deriv_riemannZeta_bound_on_compact_vertical_band
+    hH
+
+/-- Public patch from compact-band and future high-height affine logarithmic
+`ζ'` bounds to a full vertical-region affine derivative bound. -/
+theorem exists_deriv_riemannZeta_affine_log_norm_add_three_bound_on_verticalRegion_of_compact_band_and_high_height
+    {H T A B : ℝ} (hH : 0 < H) (hB : 0 ≤ B)
+    (hhigh : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| →
+        ‖deriv riemannZeta z‖ ≤ A + B * Real.log (‖z‖ + 3)) :
+    ∃ A' ≥ 0, ∀ z : ℂ, z ∈ ZeroFreeRegion.verticalRegion 1 2 H →
+      ‖deriv riemannZeta z‖ ≤ A' + B * Real.log (‖z‖ + 3) :=
+  ZeroFreeRegion.exists_deriv_riemannZeta_affine_log_norm_add_three_bound_on_verticalRegion_of_compact_band_and_high_height
+    hH hB hhigh
+
+/-- Public direct handoff from compact-plus-high-height primitive `ζ'` and
+`ζ` lower estimates to the named vertical logarithmic-derivative interface. -/
+theorem logDerivVerticalLogBound_of_compact_band_and_high_height_deriv_bound_zeta_lower_bound
+    (H T A B η : ℝ) (hH : 5 ≤ H) (hB : 0 ≤ B) (hη : 0 < η)
+    (hderiv : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| →
+        ‖deriv riemannZeta z‖ ≤ A + B * Real.log (‖z‖ + 3))
+    (hzeta : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| → η ≤ ‖riemannZeta z‖) :
+    ∃ C T0 : ℝ, LogDerivVerticalLogBound C T0 :=
+  ZeroFreeRegion.logDerivVerticalLogBound_of_compact_band_and_high_height_deriv_bound_zeta_lower_bound
+    H T A B η hH hB hη hderiv hzeta
+
 /-- Public compact bounded-height norm bound for `logDeriv ζ` in the right
 half-strip `1 <= Re(z) <= 2`, `H <= |Im(z)| <= T`. -/
 theorem exists_norm_logDeriv_riemannZeta_bound_on_compact_vertical_band

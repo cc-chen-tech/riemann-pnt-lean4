@@ -132,6 +132,18 @@ complex-analysis-shaped zeta estimates; they still do not prove those
 primitive estimates.
 
 For the vertical `logDeriv ζ` side specifically,
+`ZeroFreeRegion.exists_norm_deriv_riemannZeta_bound_on_compact_vertical_band`
+proves compact bounded-height control of `‖ζ'‖`, and
+`ZeroFreeRegion.exists_deriv_riemannZeta_affine_log_norm_add_three_bound_on_verticalRegion_of_compact_band_and_high_height`
+patches it with a future high-height affine derivative-growth estimate.
+Together with
+`ZeroFreeRegion.exists_norm_riemannZeta_pos_lower_bound_on_verticalRegion_of_compact_band_and_high_height`,
+the wrapper
+`ZeroFreeRegion.logDerivVerticalLogBound_of_compact_band_and_high_height_deriv_bound_zeta_lower_bound`
+feeds primitive `ζ'` growth and positive `ζ` lower-bound inputs directly into
+`LogDerivVerticalLogBound`.
+
+At the already-formed `logDeriv ζ` level,
 `ZeroFreeRegion.exists_logDeriv_affine_log_norm_add_three_bound_on_verticalRegion_of_compact_band_and_high_height`
 patches the proved compact bounded-height norm bound with a future high-height
 affine logarithmic estimate on `‖z‖ + 3`, and

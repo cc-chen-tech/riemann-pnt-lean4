@@ -185,6 +185,17 @@ Core verified declarations:
   patches that proved compact-band lower bound with a future high-height
   lower bound `T <= |Im z|` to supply one positive lower bound on
   `verticalRegion 1 2 H`.
+- `exists_norm_deriv_riemannZeta_bound_on_compact_vertical_band`
+  proves that `zeta'` has a finite norm bound on every compact positive-height
+  band `1 <= Re z <= 2`, `H <= |Im z| <= T`.
+- `exists_deriv_riemannZeta_affine_log_norm_add_three_bound_on_verticalRegion_of_compact_band_and_high_height`
+  patches that compact `zeta'` bound with a future high-height affine
+  logarithmic derivative-growth estimate to cover `verticalRegion 1 2 H`.
+- `logDerivVerticalLogBound_of_compact_band_and_high_height_deriv_bound_zeta_lower_bound`
+  combines the compact-patched `zeta'` growth estimate and compact-patched
+  positive `zeta` lower bound into the named `LogDerivVerticalLogBound`
+  interface.  The high-height derivative growth and zeta lower bound remain
+  the genuine analytic inputs.
 - `exists_norm_logDeriv_riemannZeta_bound_on_compact_vertical_band`
   proves that `logDeriv zeta` has a finite norm bound on every compact
   positive-height band `1 <= Re z <= 2`, `H <= |Im z| <= T`.
