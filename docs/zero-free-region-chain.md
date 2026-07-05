@@ -328,7 +328,12 @@ proved:
   combine the `t` and `2t` local Borel hypotheses into one shared
   `C log |t|` bound for both shifted real-part terms.  These are still
   conditional on the local zeta-specific Borel inputs; they only remove the
-  duplicated final bookkeeping before the 3-4-1 inequality.  The
+  duplicated final bookkeeping before the 3-4-1 inequality.  The full-height
+  variants
+  `ZeroFreeRegion.re_neg_deriv_div_riemannZeta_shift_pair_right_shift_le_log_norm_of_affine_logDeriv_re_le_half_radius`
+  and
+  `ZeroFreeRegion.re_neg_deriv_div_riemannZeta_shift_pair_right_shift_le_log_norm_of_affine_neg_logDeriv_re_le_half_radius`
+  expose the same paired handoff in the `log(||sigma+it||+3)` scale.  The
   general half-radius wrappers
   `ZeroFreeRegion.borelCaratheodory_centered_half_radius_bound` and
   `ZeroFreeRegion.borelCaratheodory_sub_centered_half_radius_bound`, plus the
