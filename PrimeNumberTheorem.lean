@@ -3883,6 +3883,61 @@ lemma nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_pair_contribution_nonneg
   rw [nontrivialZerosFinset_sdiff_pair_contribution_eq_two_sum_re] at hpair
   nlinarith
 
+/-- Center-one Laplace-pair positivity gives paired-sum nonnegativity over the
+newly included nontrivial zeros between two height cutoffs. -/
+lemma nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive_one
+    (T U : ℝ) (F : ℂ → ℂ)
+    (hF : LaplacePairPositive F 1) :
+    0 ≤ ∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+      ((F ρ).re + (F (1 - ρ)).re) :=
+  finite_zero_sum_nonnegative_of_laplace_pair_positive
+    (nontrivialZerosFinset U \ nontrivialZerosFinset T) F 1 hF (by
+      intro ρ hρ
+      have hU : ρ ∈ nontrivialZerosFinset U := (Finset.mem_sdiff.mp hρ).1
+      rcases mem_nontrivialZerosFinset.mp hU with ⟨hzero, _hheight⟩
+      exact ⟨le_of_lt hzero.2.1, le_of_lt hzero.2.2⟩)
+
+/-- Center-one Laplace-pair positivity makes the unpaired real-part sum over
+newly included nontrivial zeros nonnegative. -/
+lemma nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_laplace_pair_positive_one
+    (T U : ℝ) (F : ℂ → ℂ)
+    (hF : LaplacePairPositive F 1) :
+    0 ≤
+      ∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T, (F ρ).re := by
+  have hpair :=
+    nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive_one
+      T U F hF
+  rw [nontrivialZerosFinset_sdiff_pair_contribution_eq_two_sum_re] at hpair
+  nlinarith
+
+/-- Average real-part contribution over newly included nontrivial zeros is
+nonnegative under the global center-one pair-contribution condition.  If the
+new-zero finset is empty, Lean's total division convention makes the displayed
+average equal to `0`. -/
+lemma nontrivialZerosFinset_sdiff_average_re_nonnegative_of_pair_contribution_nonnegative
+    (T U : ℝ) (F : ℂ → ℂ)
+    (hF : ZeroPairContributionNonnegative F 1) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T, (F ρ).re) /
+        (((nontrivialZerosFinset U \ nontrivialZerosFinset T).card : ℝ)) := by
+  exact div_nonneg
+    (nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_pair_contribution_nonnegative
+      T U F hF)
+    (Nat.cast_nonneg _)
+
+/-- Average real-part contribution over newly included nontrivial zeros is
+nonnegative under center-one Laplace-pair positivity. -/
+lemma nontrivialZerosFinset_sdiff_average_re_nonnegative_of_laplace_pair_positive_one
+    (T U : ℝ) (F : ℂ → ℂ)
+    (hF : LaplacePairPositive F 1) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T, (F ρ).re) /
+        (((nontrivialZerosFinset U \ nontrivialZerosFinset T).card : ℝ)) := by
+  exact div_nonneg
+    (nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_laplace_pair_positive_one
+      T U F hF)
+    (Nat.cast_nonneg _)
+
 /-- Specialize strip-local Stechkin/Heath-Brown pair positivity to the finite
 family of nontrivial zeros up to height `T`. -/
 lemma nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive

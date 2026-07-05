@@ -1443,6 +1443,13 @@ Core verified declarations:
   zeros between two truncation heights
   `nontrivialZerosFinset U \ nontrivialZerosFinset T`, matching the blockwise
   zero contributions used by truncated explicit-formula arguments.
+- `nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive_one`,
+  `nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_laplace_pair_positive_one`,
+  `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_pair_contribution_nonnegative`,
+  and
+  `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_laplace_pair_positive_one`
+  add the corresponding center-one Laplace-pair and normalized-average
+  variants for those new-zero blocks.
 - `NoZerosOnVerticalLine`
   is a reusable predicate for excluding zeta zeros on a fixed vertical line.
 - `no_zeros_on_one_third_of_RH`

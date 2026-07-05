@@ -2068,6 +2068,53 @@ theorem nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_pair_contribution_nonn
   PrimeNumberTheorem.nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_pair_contribution_nonnegative
     T U F hF
 
+/-- Public paired-sum nonnegativity over newly included zeros from center-one
+Laplace-pair positivity. -/
+theorem nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive_one
+    (T U : ℝ) (F : ℂ → ℂ)
+    (hF : PrimeNumberTheorem.LaplacePairPositive F 1) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+        PrimeNumberTheorem.nontrivialZerosFinset T,
+      ((F ρ).re + (F (1 - ρ)).re) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive_one
+    T U F hF
+
+/-- Public unpaired new-zero real-part nonnegativity from center-one
+Laplace-pair positivity. -/
+theorem nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_laplace_pair_positive_one
+    (T U : ℝ) (F : ℂ → ℂ)
+    (hF : PrimeNumberTheorem.LaplacePairPositive F 1) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+        PrimeNumberTheorem.nontrivialZerosFinset T, (F ρ).re :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_laplace_pair_positive_one
+    T U F hF
+
+/-- Public average new-zero real-part nonnegativity from a global
+pair-contribution condition. -/
+theorem nontrivialZerosFinset_sdiff_average_re_nonnegative_of_pair_contribution_nonnegative
+    (T U : ℝ) (F : ℂ → ℂ)
+    (hF : PrimeNumberTheorem.ZeroPairContributionNonnegative F 1) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T, (F ρ).re) /
+        (((PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ)) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_average_re_nonnegative_of_pair_contribution_nonnegative
+    T U F hF
+
+/-- Public average new-zero real-part nonnegativity from center-one
+Laplace-pair positivity. -/
+theorem nontrivialZerosFinset_sdiff_average_re_nonnegative_of_laplace_pair_positive_one
+    (T U : ℝ) (F : ℂ → ℂ)
+    (hF : PrimeNumberTheorem.LaplacePairPositive F 1) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T, (F ρ).re) /
+        (((PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ)) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_average_re_nonnegative_of_laplace_pair_positive_one
+    T U F hF
+
 /-- Public nonzero denominator fact for elements of the height-truncated
 nontrivial-zero finset. -/
 theorem ne_zero_of_mem_nontrivialZerosFinset {ρ : ℂ} {T : ℝ}
