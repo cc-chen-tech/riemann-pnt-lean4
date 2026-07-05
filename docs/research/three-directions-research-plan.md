@@ -202,10 +202,12 @@ Verified assets now include:
   `psiPowerErrorBound_of_pointwise`,
   `psiPowerErrorBelowLine_of_eventual_abs_bound`,
   `psiPowerErrorBelowLine_of_pointwise`,
+  `psiPowerErrorBelowLine_of_power_saving`,
   `psiPowerErrorBelowTwoThirds_of_eventual_abs_bound`, and
-  `psiPowerErrorBelowTwoThirds_of_pointwise`.  These let a future analytic
-  estimate of the form `|ψ(x)-x| <= C*x^theta` feed the route predicates
-  directly.
+  `psiPowerErrorBelowTwoThirds_of_pointwise`, and
+  `psiPowerErrorBelowTwoThirds_of_power_saving`.  These let a future analytic
+  estimate of the form `|ψ(x)-x| <= C*x^theta` or
+  `ψ(x)-x = O(x^(beta-delta))` feed the route predicates directly.
 - the `1/3`/`2/3` reflection equivalence
   `exists_nontrivial_zero_on_one_third_iff_two_thirds`;
 - direct conditional bridges from RH, a zero-free right half-plane
@@ -214,6 +216,9 @@ Verified assets now include:
 - direct `Re(s)=2/3` wrappers for the concrete `psi` power-error route and for
   `ExplicitFormulaConversePowerTarget (2/3)`, plus concrete below-`2/3`
   wrappers for both the direct and reflected line conclusions;
+- direct conditional `O(x^(2/3-delta))` wrappers:
+  `no_zeros_on_one_third_of_explicit_formula_converse_power_saving` and
+  `no_zeros_on_two_thirds_of_explicit_formula_converse_power_saving`;
 - finite explicit-formula truncation increment identities;
 - new-zero norm/count tail bounds under RH;
 - eventual-no-new-zero tail convergence;

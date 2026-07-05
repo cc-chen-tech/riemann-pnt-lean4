@@ -1987,6 +1987,13 @@ Core verified declarations:
   turn eventual or pointwise estimates
   `|chebyshevPsi x - x| <= C * x^theta` into the corresponding power-error
   route predicates.
+- `psiPowerErrorBelowLine_of_power_saving`,
+  `psiPowerErrorBelowTwoThirds_of_power_saving`,
+  `no_zeros_on_one_third_of_explicit_formula_converse_power_saving`, and
+  `no_zeros_on_two_thirds_of_explicit_formula_converse_power_saving`
+  package the commonly stated conditional input
+  `psi(x)-x = O(x^(2/3-delta))` directly into the `1/3` and `2/3` line
+  exclusions, still assuming the explicit-formula converse route.
 - `no_zeros_on_one_third_of_psi_power_error_below_two_thirds_bridge`
   specializes the abstract strong-PNT-error bridge to the `psi` power-error
   interface.
