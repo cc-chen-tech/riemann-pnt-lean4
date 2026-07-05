@@ -3743,6 +3743,34 @@ theorem not_psi_power_error_below_two_thirds_of_exists_zero_on_one_third_bridge
     not_psi_power_error_below_two_thirds_of_exists_zero_right_of_bridge
       (γ := 2 / 3) (by norm_num) hbridge ⟨1 - s, hsym, hre⟩
 
+/-- Power-saving contrapositive of the `Re(s)=1/3` bridge: if a zero exists
+on `Re(s)=1/3`, then the specific `O(x^(2/3-delta))` `ψ` error cannot hold,
+assuming the `2/3` zero-exclusion route interface. -/
+theorem not_psi_power_error_bound_two_thirds_sub_delta_of_exists_zero_on_one_third_bridge
+    {delta : ℝ} (hdelta_pos : 0 < delta) (hdelta_le : delta ≤ (2 / 3 : ℝ))
+    (hbridge : PsiPowerErrorBelowLineExcludesZerosRightOf (2 / 3))
+    (hzero : ∃ s : ℂ, riemannZeta s = 0 ∧ s.re = (1 / 3 : ℝ)) :
+    ¬ PsiPowerErrorBound ((2 / 3 : ℝ) - delta) := by
+  intro herror
+  exact
+    not_psi_power_error_below_two_thirds_of_exists_zero_on_one_third_bridge
+      hbridge hzero
+      (psiPowerErrorBelowTwoThirds_of_power_saving
+        hdelta_pos hdelta_le herror)
+
+/-- Same power-saving contrapositive with the explicit-formula converse route
+dependency named directly. -/
+theorem not_psi_power_error_bound_two_thirds_sub_delta_of_exists_zero_on_one_third_explicit_formula_converse
+    {delta : ℝ} (hdelta_pos : 0 < delta) (hdelta_le : delta ≤ (2 / 3 : ℝ))
+    (hbridge : ExplicitFormulaConversePowerTarget (2 / 3))
+    (hzero : ∃ s : ℂ, riemannZeta s = 0 ∧ s.re = (1 / 3 : ℝ)) :
+    ¬ PsiPowerErrorBound ((2 / 3 : ℝ) - delta) :=
+  not_psi_power_error_bound_two_thirds_sub_delta_of_exists_zero_on_one_third_bridge
+    hdelta_pos hdelta_le
+    (psiPowerErrorBelowLineExcludesZerosRightOf_of_explicit_formula_converse_power
+      hbridge)
+    hzero
+
 /-- Conditional bridge from a general `ψ` power-saving error to a zero-free
 vertical line at the same real part. -/
 theorem no_zeros_on_vertical_line_of_psi_power_error_bridge

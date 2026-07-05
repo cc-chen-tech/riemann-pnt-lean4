@@ -2091,6 +2091,12 @@ Core verified declarations:
   `no_zeros_on_two_thirds_of_explicit_formula_converse_power_below_two_thirds`
   add direct and concrete `2/3` / `1/3` wrappers for the same conditional
   explicit-formula converse dependency.
+- `not_psi_power_error_bound_two_thirds_sub_delta_of_exists_zero_on_one_third_bridge`
+  and
+  `not_psi_power_error_bound_two_thirds_sub_delta_of_exists_zero_on_one_third_explicit_formula_converse`
+  record the contrapositive form: assuming the future `2/3` zero-exclusion
+  route, an actual zero on `Re(s)=1/3` rules out the concrete
+  `PsiPowerErrorBound (2/3 - delta)` for `0 < delta <= 2/3`.
 - `no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route`
   gives the direct right-side-line consequence of the same conditional
   truncated explicit-formula route at `beta = 2/3`, before applying the

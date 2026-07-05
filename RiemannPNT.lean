@@ -3340,6 +3340,26 @@ theorem not_psi_power_error_below_two_thirds_of_exists_zero_on_one_third_bridge
   PrimeNumberTheorem.not_psi_power_error_below_two_thirds_of_exists_zero_on_one_third_bridge
     hbridge hzero
 
+/-- Public power-saving contrapositive: a zero on `Re(s)=1/3` rules out a
+specific `O(x^(2/3-delta))` `ψ` error under the `2/3` route interface. -/
+theorem not_psi_power_error_bound_two_thirds_sub_delta_of_exists_zero_on_one_third_bridge
+    {delta : ℝ} (hdelta_pos : 0 < delta) (hdelta_le : delta ≤ (2 / 3 : ℝ))
+    (hbridge : PrimeNumberTheorem.PsiPowerErrorBelowLineExcludesZerosRightOf (2 / 3))
+    (hzero : ∃ s : ℂ, riemannZeta s = 0 ∧ s.re = (1 / 3 : ℝ)) :
+    ¬ PrimeNumberTheorem.PsiPowerErrorBound ((2 / 3 : ℝ) - delta) :=
+  PrimeNumberTheorem.not_psi_power_error_bound_two_thirds_sub_delta_of_exists_zero_on_one_third_bridge
+    hdelta_pos hdelta_le hbridge hzero
+
+/-- Public power-saving contrapositive with the explicit-formula converse
+route dependency named directly. -/
+theorem not_psi_power_error_bound_two_thirds_sub_delta_of_exists_zero_on_one_third_explicit_formula_converse
+    {delta : ℝ} (hdelta_pos : 0 < delta) (hdelta_le : delta ≤ (2 / 3 : ℝ))
+    (hbridge : PrimeNumberTheorem.ExplicitFormulaConversePowerTarget (2 / 3))
+    (hzero : ∃ s : ℂ, riemannZeta s = 0 ∧ s.re = (1 / 3 : ℝ)) :
+    ¬ PrimeNumberTheorem.PsiPowerErrorBound ((2 / 3 : ℝ) - delta) :=
+  PrimeNumberTheorem.not_psi_power_error_bound_two_thirds_sub_delta_of_exists_zero_on_one_third_explicit_formula_converse
+    hdelta_pos hdelta_le hbridge hzero
+
 /-- Public bridge: RH excludes zeta zeros on `Re(s)=1/3`. -/
 theorem no_zeros_on_one_third_of_RH
     (hRH : _root_.RiemannHypothesis.Statement) :
