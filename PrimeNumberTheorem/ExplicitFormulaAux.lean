@@ -51,6 +51,8 @@ file or the parent.
 - `finiteTrivialZeroSum_two_le_norm_of_mem` and
   `finiteTrivialZeroSum_inv_norm_le_half_of_mem` — denominator-estimate
   forms for retained finite trivial zeros.
+- `norm_trivial_zero_contribution_le_half_rpow_re` — single-term norm bound
+  for retained finite trivial-zero contributions.
 - `chebyshevPsi0_eq_chebyshevPsi_off_primePowers` — at a non
   prime-power point, `psi0 = psi`.
 - `jumpVonMangoldt_eq_vonMangoldt_of_primePower` — at a prime power,
@@ -293,6 +295,23 @@ lemma finiteTrivialZeroSum_inv_norm_le_half_of_mem {s : ℂ} {T : ℝ}
   have hnorm : (2 : ℝ) ≤ ‖s‖ := finiteTrivialZeroSum_two_le_norm_of_mem hs
   have h := one_div_le_one_div_of_le (by norm_num : (0 : ℝ) < 2) hnorm
   simpa [one_div] using h
+
+/-- A retained trivial-zero contribution has denominator at least `2`, so its
+norm is bounded by half of the usual `x ^ Re(s)` amplitude. -/
+lemma norm_trivial_zero_contribution_le_half_rpow_re {s : ℂ} {T x : ℝ}
+    (hs : s ∈ finiteTrivialZeroSum T) (hx : 0 < x) :
+    ‖(x : ℂ) ^ s / s‖ ≤ (1 / 2 : ℝ) * x ^ s.re := by
+  rw [PrimeNumberTheorem.norm_zero_contribution_eq s hx]
+  have hx_nonneg : 0 ≤ x ^ s.re :=
+    Real.rpow_nonneg (le_of_lt hx) s.re
+  have hinv : ‖s‖⁻¹ ≤ (1 / 2 : ℝ) :=
+    finiteTrivialZeroSum_inv_norm_le_half_of_mem hs
+  calc
+    x ^ s.re / ‖s‖ = x ^ s.re * ‖s‖⁻¹ := by
+      rw [div_eq_mul_inv]
+    _ ≤ x ^ s.re * (1 / 2 : ℝ) :=
+      mul_le_mul_of_nonneg_left hinv hx_nonneg
+    _ = (1 / 2 : ℝ) * x ^ s.re := by ring
 
 /-- Retained trivial zeros are disjoint from the nontrivial-zero strip
 predicate.  This records the separation between the finite trivial-zero

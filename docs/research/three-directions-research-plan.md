@@ -122,6 +122,7 @@ Verified assets now include:
   `PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_not_isNontrivialZero_of_mem`;
   `PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_two_le_norm_of_mem`;
   `PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_inv_norm_le_half_of_mem`;
+  `PrimeNumberTheorem.ExplicitFormulaAux.norm_trivial_zero_contribution_le_half_rpow_re`;
   `PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_card_le`.
 
 Next useful step:
@@ -305,6 +306,7 @@ Verified assets now include:
   `ExplicitFormulaAux.finiteTrivialZeroSum_not_isNontrivialZero_of_mem`;
   `ExplicitFormulaAux.finiteTrivialZeroSum_two_le_norm_of_mem`;
   `ExplicitFormulaAux.finiteTrivialZeroSum_inv_norm_le_half_of_mem`;
+  `ExplicitFormulaAux.norm_trivial_zero_contribution_le_half_rpow_re`;
   `ExplicitFormulaAux.finiteTrivialZeroSum_card_le`;
   `ExplicitFormulaAux.chebyshevPsi0_eq_chebyshevPsi_off_primePowers`;
   `ExplicitFormulaAux.jumpVonMangoldt_eq_vonMangoldt_of_primePower`.

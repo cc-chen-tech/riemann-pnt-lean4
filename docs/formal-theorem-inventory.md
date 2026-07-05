@@ -2521,6 +2521,10 @@ Support-level verified declarations:
   `finiteTrivialZeroSum_inv_norm_le_half_of_mem`
   package the retained trivial-zero support as the norm and reciprocal-norm
   bounds needed for later `x^s / s` estimates.
+- `norm_trivial_zero_contribution_le_half_rpow_re`
+  bounds each retained trivial-zero contribution by
+  `(1 / 2) * x ^ s.re` for `x > 0`.  This is a single-term estimate only, not
+  the infinite trivial-zero correction.
 - `RiemannPNT.API.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget`
   and `RiemannPNT.API.ExplicitFormulaTruncated.explicitFormulaTruncated_of`
   expose the typed truncated explicit-formula target and its conditional
