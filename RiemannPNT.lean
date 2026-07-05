@@ -12957,6 +12957,22 @@ theorem reNegDerivDivVerticalLogBound_of_affine_log_norm_add_three_bound_high_he
   ZeroFreeRegion.reNegDerivDivVerticalLogBound_of_affine_log_norm_add_three_bound_high_height
     T0 A B hT0 hA hB hvertical
 
+/-- Public direct real-part quotient bridge from derivative control for `ζ'`
+and a positive lower bound for `ζ`. -/
+theorem reNegDerivDivVerticalLogBound_of_deriv_bound_and_zeta_lower_bound_high_height
+    (T0 A B eta : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (heta : 0 < eta)
+    (hderiv :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖deriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          A + B * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3))
+    (hzeta :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        eta ≤ ‖riemannZeta ((σ : ℂ) + Complex.I * t)‖) :
+    ∃ C T0' : ℝ, ReNegDerivDivVerticalLogBound C T0' :=
+  ZeroFreeRegion.reNegDerivDivVerticalLogBound_of_deriv_bound_and_zeta_lower_bound_high_height
+    T0 A B eta hT0 hA hB heta hderiv hzeta
+
 /-- Public signed-norm variant of
 `reNegDerivDivVerticalLogBound_of_affine_log_norm_add_three_bound_high_height`. -/
 theorem reNegDerivDivVerticalLogBound_of_neg_affine_log_norm_add_three_bound_high_height
@@ -13063,6 +13079,21 @@ theorem reNegDerivDivVerticalLogBound_of_affine_log_norm_add_three_bound_on_vert
     ∃ C T0' : ℝ, ReNegDerivDivVerticalLogBound C T0' :=
   ZeroFreeRegion.reNegDerivDivVerticalLogBound_of_affine_log_norm_add_three_bound_on_verticalRegion
     T0 A B hT0 hA hB hvertical
+
+/-- Public real-part quotient vertical-region bridge from derivative control
+for `ζ'` plus a positive lower bound for `ζ`. -/
+theorem reNegDerivDivVerticalLogBound_of_deriv_bound_and_zeta_lower_bound_on_verticalRegion
+    (T0 A B eta : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (heta : 0 < eta)
+    (hderiv :
+      ∀ z : ℂ, z ∈ verticalRegion 1 2 T0 →
+        ‖deriv riemannZeta z‖ ≤ A + B * Real.log (‖z‖ + 3))
+    (hzeta :
+      ∀ z : ℂ, z ∈ verticalRegion 1 2 T0 →
+        eta ≤ ‖riemannZeta z‖) :
+    ∃ C T0' : ℝ, ReNegDerivDivVerticalLogBound C T0' :=
+  ZeroFreeRegion.reNegDerivDivVerticalLogBound_of_deriv_bound_and_zeta_lower_bound_on_verticalRegion
+    T0 A B eta hT0 hA hB heta hderiv hzeta
 
 /-- Public real-part quotient vertical-region bridge from a signed
 `-logDeriv ζ` norm estimate. -/

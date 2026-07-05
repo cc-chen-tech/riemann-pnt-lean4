@@ -5608,6 +5608,30 @@ lemma reNegDerivDivVerticalLogBound_of_affine_log_norm_add_three_bound_high_heig
     ⟨C, T0', hC, hT0', hbound⟩
   exact ⟨C, T0', hC, by linarith, hbound⟩
 
+/-- Direct real-part quotient bridge from a derivative-growth estimate for
+`ζ'` and a positive lower bound for `ζ`.
+
+This composes
+`logDerivVerticalLogBound_of_deriv_bound_and_zeta_lower_bound_high_height`
+with the standard conversion from the named `logDeriv` norm bound to the
+`Re(-ζ'/ζ)` interface consumed by the 3-4-1 route. -/
+lemma reNegDerivDivVerticalLogBound_of_deriv_bound_and_zeta_lower_bound_high_height
+    (T0 A B eta : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (heta : 0 < eta)
+    (hderiv :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖deriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          A + B * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (hzeta :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        eta ≤ ‖riemannZeta ((σ : ℂ) + I * t)‖) :
+    ∃ C T0' : ℝ, ReNegDerivDivVerticalLogBound C T0' := by
+  rcases
+      logDerivVerticalLogBound_of_deriv_bound_and_zeta_lower_bound_high_height
+        T0 A B eta hT0 hA hB heta hderiv hzeta with
+    ⟨C, T0', hlog⟩
+  exact ⟨C, T0', reNegDerivDivVerticalLogBound_of_logDerivVerticalLogBound hlog⟩
+
 /-- Signed-norm variant of
 `reNegDerivDivVerticalLogBound_of_affine_log_norm_add_three_bound_high_height`. -/
 lemma reNegDerivDivVerticalLogBound_of_neg_affine_log_norm_add_three_bound_high_height
@@ -5795,6 +5819,24 @@ lemma reNegDerivDivVerticalLogBound_of_affine_log_norm_add_three_bound_on_vertic
     simpa [verticalRegion] using
       (show σ ∈ Set.Icc (1 : ℝ) 2 ∧ T0 ≤ |t| from ⟨hσ, ht⟩)
   simpa using hvertical ((σ : ℂ) + I * t) hz
+
+/-- Real-part quotient vertical-region bridge from derivative control for
+`ζ'` plus a positive lower bound for `ζ`. -/
+lemma reNegDerivDivVerticalLogBound_of_deriv_bound_and_zeta_lower_bound_on_verticalRegion
+    (T0 A B eta : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (heta : 0 < eta)
+    (hderiv :
+      ∀ z : ℂ, z ∈ verticalRegion 1 2 T0 →
+        ‖deriv riemannZeta z‖ ≤ A + B * Real.log (‖z‖ + 3))
+    (hzeta :
+      ∀ z : ℂ, z ∈ verticalRegion 1 2 T0 →
+        eta ≤ ‖riemannZeta z‖) :
+    ∃ C T0' : ℝ, ReNegDerivDivVerticalLogBound C T0' := by
+  rcases
+      logDerivVerticalLogBound_of_deriv_bound_and_zeta_lower_bound_on_verticalRegion
+        T0 A B eta hT0 hA hB heta hderiv hzeta with
+    ⟨C, T0', hlog⟩
+  exact ⟨C, T0', reNegDerivDivVerticalLogBound_of_logDerivVerticalLogBound hlog⟩
 
 /-- Real-part quotient vertical-region bridge from a signed `-logDeriv ζ`
 norm estimate. -/
