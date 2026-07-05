@@ -1378,7 +1378,10 @@ Core verified declarations:
 - `nontrivialZerosFinset_pair_sum_nonnegative`,
   `sum_nontrivialZerosFinset_pair_re`,
   `nontrivialZerosFinset_pair_contribution_eq_two_sum_re`, and
-  `nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive`
+  `nontrivialZerosFinset_sum_re_nonnegative_of_pair_contribution_nonnegative`
+  specialize the global pair-nonnegativity skeleton to `nontrivialZerosFinset T`
+  and convert it into nonnegativity of the unpaired real-part sum.
+- `nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive`
   specialize the paired-zero skeleton to the finite family of nontrivial zeta
   zeros up to bounded height, including the symmetry `rho -> 1 - rho` and the
   strip-local pair-positivity interface.

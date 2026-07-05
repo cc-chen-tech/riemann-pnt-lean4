@@ -2102,6 +2102,15 @@ theorem nontrivialZerosFinset_pair_contribution_eq_two_sum_re
   PrimeNumberTheorem.nontrivialZerosFinset_pair_contribution_eq_two_sum_re
     T F
 
+/-- Public unpaired finite-zero real-part nonnegativity from a global
+pair-contribution condition. -/
+theorem nontrivialZerosFinset_sum_re_nonnegative_of_pair_contribution_nonnegative
+    (T : ℝ) (F : ℂ → ℂ)
+    (hF : PrimeNumberTheorem.ZeroPairContributionNonnegative F 1) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T, (F ρ).re :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sum_re_nonnegative_of_pair_contribution_nonnegative
+    T F hF
+
 /-- Public finite nontrivial-zero paired-sum nonnegativity from strip-local
 Laplace-pair positivity. -/
 theorem nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive

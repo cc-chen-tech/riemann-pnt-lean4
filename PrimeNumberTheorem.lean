@@ -3818,6 +3818,16 @@ lemma nontrivialZerosFinset_pair_contribution_eq_two_sum_re
   rw [Finset.sum_add_distrib, sum_nontrivialZerosFinset_pair_re]
   ring
 
+/-- A global pair-nonnegativity condition also makes the unpaired real-part sum
+over height-truncated nontrivial zeros nonnegative. -/
+lemma nontrivialZerosFinset_sum_re_nonnegative_of_pair_contribution_nonnegative
+    (T : ℝ) (F : ℂ → ℂ)
+    (hF : ZeroPairContributionNonnegative F 1) :
+    0 ≤ ∑ ρ ∈ nontrivialZerosFinset T, (F ρ).re := by
+  have hpair := nontrivialZerosFinset_pair_sum_nonnegative T F hF
+  rw [nontrivialZerosFinset_pair_contribution_eq_two_sum_re] at hpair
+  nlinarith
+
 /-- Specialize strip-local Stechkin/Heath-Brown pair positivity to the finite
 family of nontrivial zeros up to height `T`. -/
 lemma nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive
