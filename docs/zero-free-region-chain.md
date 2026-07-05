@@ -1179,6 +1179,22 @@ Mathematical statement:
 On fixed-radius disks or fixed-width strips near `Re(s) = 1`, `ζ(s)` has
 polynomial growth in `|Im(s)|`.
 
+Lean status:
+The zeta-specific polynomial growth theorem is still missing.  The bookkeeping
+handoff from such a theorem to the logarithmic scale used by Jensen and
+Borel-Caratheodory is now proved:
+
+```lean
+ZeroFreeRegion.log_norm_bound_of_polynomial_growth
+ZeroFreeRegion.log_norm_riemannZeta_le_affine_log_norm_add_three_of_polynomial_growth
+ZeroFreeRegion.log_norm_riemannZeta_sigma_it_le_affine_log_norm_add_three_of_polynomial_growth
+```
+
+These results convert an input of the form
+`||zeta z|| <= A * (||z|| + 3)^B` into
+`log ||zeta z|| <= log A + B * log (||z|| + 3)`.  They do not prove the
+polynomial growth bound itself.
+
 Suggested Lean statement:
 
 ```lean

@@ -119,7 +119,12 @@ for `1 + ε <= Re(s)`, compact bounded-height norm bounds for
 `H <= |Im(s)| <= T`, and bridge lemmas that patch a future high-height
 `B * log |t|` estimate into an all-height affine logarithmic estimate.  Those
 bridges still do not provide the missing high-height boundary-strip estimate on
-`1 <= Re(s)`.  On the pole side, the local decomposition
+`1 <= Re(s)`.  The polynomial-growth handoff into Jensen/Borel scale is also
+now proved: `ZeroFreeRegion.log_norm_bound_of_polynomial_growth` and its
+zeta-specific coordinate forms convert
+`‖ζ(s)‖ <= A * (‖s‖ + 3)^B` into
+`log ‖ζ(s)‖ <= log A + B log(‖s‖ + 3)`.  They do not prove the missing
+polynomial growth estimate itself.  On the pole side, the local decomposition
 `logDeriv ζ(s) = -(s-1)^-1 + logDeriv(unit)(s)` is now proved near `s=1`,
 and the unit logarithmic derivative is locally bounded; this improves the
 real-axis bookkeeping but still does not supply the missing high-height

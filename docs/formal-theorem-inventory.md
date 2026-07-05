@@ -993,6 +993,16 @@ Core verified declarations:
 - `log_norm_add_three_le_two_log_abs_im`
   is the corresponding complex-variable comparison in terms of
   `s.re` and `s.im`.
+- `log_norm_bound_of_polynomial_growth`
+  converts a pointwise polynomial-growth estimate
+  `||f z|| <= A * (||z|| + 3)^B`, with `A >= 1` and `B >= 0`, into the
+  affine logarithmic norm bound
+  `log ||f z|| <= log A + B * log(||z|| + 3)`.
+- `log_norm_riemannZeta_le_affine_log_norm_add_three_of_polynomial_growth`
+  specializes that conversion to a future zeta polynomial-growth estimate on
+  the high vertical region `T0 <= |Im z|`, `1 <= Re z <= 3`.
+- `log_norm_riemannZeta_sigma_it_le_affine_log_norm_add_three_of_polynomial_growth`
+  is the coordinate form at points `sigma + i t`.
 - `exists_re_im_logDeriv_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height`
   converts a future boundary-strip estimate
   `||logDeriv zeta (sigma+it)|| <= A + B log(||sigma+it||+3)` into

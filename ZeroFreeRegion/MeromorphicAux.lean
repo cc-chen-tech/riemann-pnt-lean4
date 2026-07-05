@@ -4424,6 +4424,84 @@ lemma log_norm_add_three_le_two_log_abs_im {s : ℂ}
     log_norm_sigma_add_I_mul_add_three_le_two_log_abs
       (σ := s.re) (t := s.im) hs_re hs_height
 
+/-- Convert a pointwise polynomial-growth estimate into the logarithmic growth
+scale used by Jensen and Borel-Carathéodory estimates.
+
+This is only real-variable bookkeeping: if `‖f z‖ <= A * (‖z‖+3)^B` with
+`A >= 1` and `B >= 0`, then the logarithm of the norm is bounded by the
+corresponding affine logarithmic expression.  It is intended as the first
+handoff from a future zeta-specific polynomial-growth theorem into the
+existing zero-free-region infrastructure. -/
+lemma log_norm_bound_of_polynomial_growth
+    {f : ℂ → ℂ} {A B : ℝ} (hA : 1 ≤ A) (hB : 0 ≤ B) (z : ℂ)
+    (hpoly : ‖f z‖ ≤ A * (‖z‖ + 3) ^ B) :
+    Real.log ‖f z‖ ≤ Real.log A + B * Real.log (‖z‖ + 3) := by
+  let x : ℝ := ‖f z‖
+  let y : ℝ := ‖z‖ + 3
+  have hx_nonneg : 0 ≤ x := by
+    dsimp [x]
+    exact norm_nonneg _
+  have hy_pos : 0 < y := by
+    dsimp [y]
+    positivity
+  have hy_one : 1 ≤ y := by
+    dsimp [y]
+    nlinarith [norm_nonneg z]
+  have hA_pos : 0 < A := lt_of_lt_of_le zero_lt_one hA
+  have hyB_pos : 0 < y ^ B := Real.rpow_pos_of_pos hy_pos B
+  by_cases hx_zero : x = 0
+  · have hlogA_nonneg : 0 ≤ Real.log A := Real.log_nonneg hA
+    have hlogy_nonneg : 0 ≤ Real.log y := Real.log_nonneg hy_one
+    have hB_log_nonneg : 0 ≤ B * Real.log y := mul_nonneg hB hlogy_nonneg
+    simp [x, hx_zero, Real.log_zero]
+    linarith
+  · have hx_pos : 0 < x := lt_of_le_of_ne hx_nonneg (Ne.symm hx_zero)
+    have hpoly_xy : x ≤ A * y ^ B := by
+      simpa [x, y] using hpoly
+    have hlog_le : Real.log x ≤ Real.log (A * y ^ B) :=
+      Real.log_le_log hx_pos hpoly_xy
+    have hlog_mul :
+        Real.log (A * y ^ B) = Real.log A + Real.log (y ^ B) := by
+      rw [Real.log_mul (ne_of_gt hA_pos) (ne_of_gt hyB_pos)]
+    have hlog_rpow : Real.log (y ^ B) = B * Real.log y :=
+      Real.log_rpow hy_pos B
+    calc
+      Real.log ‖f z‖ = Real.log x := by rfl
+      _ ≤ Real.log (A * y ^ B) := hlog_le
+      _ = Real.log A + B * Real.log y := by rw [hlog_mul, hlog_rpow]
+      _ = Real.log A + B * Real.log (‖z‖ + 3) := by rfl
+
+/-- Zeta-specific high-height form of
+`log_norm_bound_of_polynomial_growth`.
+
+The hypothesis is still the missing analytic input: a polynomial-growth bound
+for `riemannZeta` on a high vertical region.  The conclusion is the
+logarithmic norm-growth statement consumed by Jensen/Borel-style wrappers. -/
+lemma log_norm_riemannZeta_le_affine_log_norm_add_three_of_polynomial_growth
+    {T0 A B : ℝ} (hA : 1 ≤ A) (hB : 0 ≤ B)
+    (hpoly : ∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc (1 : ℝ) 3 →
+      ‖riemannZeta z‖ ≤ A * (‖z‖ + 3) ^ B) :
+    ∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc (1 : ℝ) 3 →
+      Real.log ‖riemannZeta z‖ ≤ Real.log A + B * Real.log (‖z‖ + 3) := by
+  intro z hz_height hz_re
+  exact log_norm_bound_of_polynomial_growth
+    (f := riemannZeta) hA hB z (hpoly z hz_height hz_re)
+
+/-- Coordinate form of the zeta polynomial-growth-to-log-growth conversion on
+points `sigma + i t`. -/
+lemma log_norm_riemannZeta_sigma_it_le_affine_log_norm_add_three_of_polynomial_growth
+    {T0 A B : ℝ} (hA : 1 ≤ A) (hB : 0 ≤ B)
+    (hpoly : ∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc (1 : ℝ) 3 →
+      ‖riemannZeta z‖ ≤ A * (‖z‖ + 3) ^ B) :
+    ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc (1 : ℝ) 3 →
+      Real.log ‖riemannZeta ((σ : ℂ) + I * t)‖ ≤
+        Real.log A + B * Real.log (‖((σ : ℂ) + I * t)‖ + 3) := by
+  intro σ t ht hσ
+  simpa using
+    log_norm_riemannZeta_le_affine_log_norm_add_three_of_polynomial_growth
+      (T0 := T0) (A := A) (B := B) hA hB hpoly
+      ((σ : ℂ) + I * t) (by simpa using ht) (by simpa using hσ)
+
 /-- Standalone normalization of a future vertical-strip log-derivative estimate.
 
 If a high-height estimate for `logDeriv ζ` on `1 <= σ <= 2` is available in
