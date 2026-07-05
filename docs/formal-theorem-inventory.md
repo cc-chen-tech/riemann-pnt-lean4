@@ -1039,6 +1039,13 @@ Core verified declarations:
   `logDerivRegularPartLogBound_mono_height`, and
   `multiplicityLogDerivRegularPartLogBound_mono_height`
   show the named high-height estimates remain valid after raising the cutoff.
+- `logDerivVerticalLogBound_mono_const`,
+  `negLogDerivVerticalLogBound_mono_const`,
+  `reNegDerivDivVerticalLogBound_mono_const`,
+  `logDerivRegularPartLogBound_mono_const`, and
+  `multiplicityLogDerivRegularPartLogBound_mono_const`
+  show the same named interfaces remain valid after increasing the bound
+  constant.
 - `multiplicityLogDerivRegularPartLogBound_of_logDerivRegularPartLogBound`
   turns the simple-principal-part regular estimate into the
   multiplicity-aware form with multiplicity `1`.

@@ -113,6 +113,15 @@ variants
 merge separately proved high-height regular-part and vertical estimates by
 taking the maximum cutoff.
 
+The same named interfaces are also monotone in the bound constant:
+`ZeroFreeRegion.logDerivVerticalLogBound_mono_const`,
+`ZeroFreeRegion.negLogDerivVerticalLogBound_mono_const`,
+`ZeroFreeRegion.reNegDerivDivVerticalLogBound_mono_const`,
+`ZeroFreeRegion.logDerivRegularPartLogBound_mono_const`, and
+`ZeroFreeRegion.multiplicityLogDerivRegularPartLogBound_mono_const` let later
+proofs replace separate constants by a larger shared constant without changing
+the analytic target shape.
+
 ## Verified Starting Points
 
 The following declarations are available in the current checkout:

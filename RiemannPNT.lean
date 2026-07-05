@@ -71,6 +71,22 @@ theorem negLogDerivVerticalLogBound_mono_height
     NegLogDerivVerticalLogBound C T1 :=
   ZeroFreeRegion.negLogDerivVerticalLogBound_mono_height h hT
 
+/-- Public monotonicity in the bound constant for the named vertical
+logarithmic-derivative bound. -/
+theorem logDerivVerticalLogBound_mono_const
+    {C D T0 : ℝ} (h : LogDerivVerticalLogBound C T0)
+    (hCD : C ≤ D) :
+    LogDerivVerticalLogBound D T0 :=
+  ZeroFreeRegion.logDerivVerticalLogBound_mono_const h hCD
+
+/-- Public monotonicity in the bound constant for the named signed vertical
+logarithmic-derivative bound. -/
+theorem negLogDerivVerticalLogBound_mono_const
+    {C D T0 : ℝ} (h : NegLogDerivVerticalLogBound C T0)
+    (hCD : C ≤ D) :
+    NegLogDerivVerticalLogBound D T0 :=
+  ZeroFreeRegion.negLogDerivVerticalLogBound_mono_const h hCD
+
 /-- Public monotonicity in the high-height cutoff for the named direct
 real-part quotient bound. -/
 theorem reNegDerivDivVerticalLogBound_mono_height
@@ -79,6 +95,14 @@ theorem reNegDerivDivVerticalLogBound_mono_height
     ReNegDerivDivVerticalLogBound C T1 :=
   ZeroFreeRegion.reNegDerivDivVerticalLogBound_mono_height h hT
 
+/-- Public monotonicity in the bound constant for the named direct real-part
+quotient bound. -/
+theorem reNegDerivDivVerticalLogBound_mono_const
+    {C D T0 : ℝ} (h : ReNegDerivDivVerticalLogBound C T0)
+    (hCD : C ≤ D) :
+    ReNegDerivDivVerticalLogBound D T0 :=
+  ZeroFreeRegion.reNegDerivDivVerticalLogBound_mono_const h hCD
+
 /-- Public monotonicity in the high-height cutoff for the named regular-part
 bound. -/
 theorem logDerivRegularPartLogBound_mono_height
@@ -86,6 +110,14 @@ theorem logDerivRegularPartLogBound_mono_height
     (hT : T0 ≤ T1) :
     LogDerivRegularPartLogBound C T1 :=
   ZeroFreeRegion.logDerivRegularPartLogBound_mono_height h hT
+
+/-- Public monotonicity in the bound constant for the named regular-part
+bound. -/
+theorem logDerivRegularPartLogBound_mono_const
+    {C D T0 : ℝ} (h : LogDerivRegularPartLogBound C T0)
+    (hCD : C ≤ D) :
+    LogDerivRegularPartLogBound D T0 :=
+  ZeroFreeRegion.logDerivRegularPartLogBound_mono_const h hCD
 
 /-- Public conversion from the simple-principal-part regular estimate to the
 multiplicity-aware regular estimate. -/
@@ -101,6 +133,14 @@ theorem multiplicityLogDerivRegularPartLogBound_mono_height
     (hT : T0 ≤ T1) :
     MultiplicityLogDerivRegularPartLogBound C T1 :=
   ZeroFreeRegion.multiplicityLogDerivRegularPartLogBound_mono_height h hT
+
+/-- Public monotonicity in the bound constant for the multiplicity-aware
+regular-part bound. -/
+theorem multiplicityLogDerivRegularPartLogBound_mono_const
+    {C D T0 : ℝ} (h : MultiplicityLogDerivRegularPartLogBound C T0)
+    (hCD : C ≤ D) :
+    MultiplicityLogDerivRegularPartLogBound D T0 :=
+  ZeroFreeRegion.multiplicityLogDerivRegularPartLogBound_mono_const h hCD
 
 /-- Public named-input assembly of the two remaining high-height analytic
 estimates into the classical zero-free-region target. -/

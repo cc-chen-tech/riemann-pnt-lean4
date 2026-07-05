@@ -4133,6 +4133,36 @@ lemma negLogDerivVerticalLogBound_mono_height
   intro σ t hσ_left hσ_right ht
   exact hbound σ t hσ_left hσ_right (le_trans hT ht)
 
+/-- A named vertical logarithmic-derivative bound remains valid after
+increasing the bound constant. -/
+lemma logDerivVerticalLogBound_mono_const
+    {C D T0 : ℝ} (h : LogDerivVerticalLogBound C T0)
+    (hCD : C ≤ D) :
+    LogDerivVerticalLogBound D T0 := by
+  rcases h with ⟨hC, hT0, hbound⟩
+  refine ⟨le_trans hC hCD, hT0, ?_⟩
+  intro σ t hσ_left hσ_right ht
+  have ht_two : 2 ≤ |t| := by linarith
+  have hlog_nonneg : 0 ≤ Real.log |t| :=
+    (log_abs_pos_of_two_le ht_two).le
+  exact (hbound σ t hσ_left hσ_right ht).trans
+    (mul_le_mul_of_nonneg_right hCD hlog_nonneg)
+
+/-- A named signed vertical logarithmic-derivative bound remains valid after
+increasing the bound constant. -/
+lemma negLogDerivVerticalLogBound_mono_const
+    {C D T0 : ℝ} (h : NegLogDerivVerticalLogBound C T0)
+    (hCD : C ≤ D) :
+    NegLogDerivVerticalLogBound D T0 := by
+  rcases h with ⟨hC, hT0, hbound⟩
+  refine ⟨le_trans hC hCD, hT0, ?_⟩
+  intro σ t hσ_left hσ_right ht
+  have ht_two : 2 ≤ |t| := by linarith
+  have hlog_nonneg : 0 ≤ Real.log |t| :=
+    (log_abs_pos_of_two_le ht_two).le
+  exact (hbound σ t hσ_left hσ_right ht).trans
+    (mul_le_mul_of_nonneg_right hCD hlog_nonneg)
+
 /-- A named direct real-part quotient bound remains valid after raising the
 high-height cutoff. -/
 lemma reNegDerivDivVerticalLogBound_mono_height
@@ -4144,6 +4174,21 @@ lemma reNegDerivDivVerticalLogBound_mono_height
   intro σ t hσ_left hσ_right ht
   exact hbound σ t hσ_left hσ_right (le_trans hT ht)
 
+/-- A named direct real-part quotient bound remains valid after increasing the
+bound constant. -/
+lemma reNegDerivDivVerticalLogBound_mono_const
+    {C D T0 : ℝ} (h : ReNegDerivDivVerticalLogBound C T0)
+    (hCD : C ≤ D) :
+    ReNegDerivDivVerticalLogBound D T0 := by
+  rcases h with ⟨hC, hT0, hbound⟩
+  refine ⟨le_trans hC hCD, hT0, ?_⟩
+  intro σ t hσ_left hσ_right ht
+  have ht_two : 2 ≤ |t| := by linarith
+  have hlog_nonneg : 0 ≤ Real.log |t| :=
+    (log_abs_pos_of_two_le ht_two).le
+  exact (hbound σ t hσ_left hσ_right ht).trans
+    (mul_le_mul_of_nonneg_right hCD hlog_nonneg)
+
 /-- A named zero-candidate regular-part bound remains valid after raising the
 high-height cutoff. -/
 lemma logDerivRegularPartLogBound_mono_height
@@ -4154,6 +4199,21 @@ lemma logDerivRegularPartLogBound_mono_height
   refine ⟨hC, le_trans hT0 hT, ?_⟩
   intro σ β t hσ_left hσ_right ht hζ hβ hsub
   exact hbound σ β t hσ_left hσ_right (le_trans hT ht) hζ hβ hsub
+
+/-- A named zero-candidate regular-part bound remains valid after increasing
+the bound constant. -/
+lemma logDerivRegularPartLogBound_mono_const
+    {C D T0 : ℝ} (h : LogDerivRegularPartLogBound C T0)
+    (hCD : C ≤ D) :
+    LogDerivRegularPartLogBound D T0 := by
+  rcases h with ⟨hC, hT0, hbound⟩
+  refine ⟨le_trans hC hCD, hT0, ?_⟩
+  intro σ β t hσ_left hσ_right ht hζ hβ hsub
+  have ht_two : 2 ≤ |t| := by linarith
+  have hlog_nonneg : 0 ≤ Real.log |t| :=
+    (log_abs_pos_of_two_le ht_two).le
+  exact (hbound σ β t hσ_left hσ_right ht hζ hβ hsub).trans
+    (mul_le_mul_of_nonneg_right hCD hlog_nonneg)
 
 /-- A simple-principal-part regular estimate is a multiplicity-aware estimate
 with multiplicity `1`. -/
@@ -4176,6 +4236,23 @@ lemma multiplicityLogDerivRegularPartLogBound_mono_height
   refine ⟨hC, le_trans hT0 hT, ?_⟩
   intro σ β t hσ_left hσ_right ht hζ hβ hsub
   exact hbound σ β t hσ_left hσ_right (le_trans hT ht) hζ hβ hsub
+
+/-- A named multiplicity-aware zero-candidate regular-part bound remains valid
+after increasing the bound constant. -/
+lemma multiplicityLogDerivRegularPartLogBound_mono_const
+    {C D T0 : ℝ} (h : MultiplicityLogDerivRegularPartLogBound C T0)
+    (hCD : C ≤ D) :
+    MultiplicityLogDerivRegularPartLogBound D T0 := by
+  rcases h with ⟨hC, hT0, hbound⟩
+  refine ⟨le_trans hC hCD, hT0, ?_⟩
+  intro σ β t hσ_left hσ_right ht hζ hβ hsub
+  rcases hbound σ β t hσ_left hσ_right ht hζ hβ hsub with
+    ⟨n, hn_pos, hnorm⟩
+  refine ⟨n, hn_pos, ?_⟩
+  have ht_two : 2 ≤ |t| := by linarith
+  have hlog_nonneg : 0 ≤ Real.log |t| :=
+    (log_abs_pos_of_two_le ht_two).le
+  exact hnorm.trans (mul_le_mul_of_nonneg_right hCD hlog_nonneg)
 
 /-- Named-input assembly of the two remaining high-height analytic estimates
 into the classical zero-free-region target.
