@@ -5329,6 +5329,63 @@ lemma log_norm_riemannZeta_sigma_it_le_affine_log_abs_of_polynomial_growth
       exact add_le_add le_rfl hscaled
     _ = Real.log A + (2 * B) * Real.log |t| := by ring
 
+/-- Cauchy derivative estimate for ζ on a disk whose closed ball avoids the
+pole at `1`.
+
+This is a genuine analytic bridge toward the high-height `logDeriv ζ` chain:
+once a future vertical-strip growth estimate bounds `‖ζ‖` on the boundary of a
+small disk, this lemma turns it into a bound for `‖ζ'‖` at the center. -/
+lemma norm_deriv_riemannZeta_le_of_sphere_norm_bound_avoid_one
+    {c : ℂ} {R M : ℝ} (hR : 0 < R)
+    (havoid : ∀ z : ℂ, z ∈ Metric.closedBall c R → z ≠ 1)
+    (hM : ∀ z : ℂ, z ∈ Metric.sphere c R → ‖riemannZeta z‖ ≤ M) :
+    ‖deriv riemannZeta c‖ ≤ M / R := by
+  have hdiff_closed :
+      DifferentiableOn ℂ riemannZeta (Metric.closedBall c R) := by
+    intro z hz
+    exact (differentiableAt_riemannZeta (havoid z hz)).differentiableWithinAt
+  have hclosure : closure (Metric.ball c R) ⊆ Metric.closedBall c R :=
+    Metric.closure_ball_subset_closedBall
+  have hdiff : DiffContOnCl ℂ riemannZeta (Metric.ball c R) :=
+    (hdiff_closed.mono hclosure).diffContOnCl
+  exact Complex.norm_deriv_le_of_forall_mem_sphere_norm_le hR hdiff hM
+
+/-- Distance-to-the-pole form of
+`norm_deriv_riemannZeta_le_of_sphere_norm_bound_avoid_one`. -/
+lemma norm_deriv_riemannZeta_le_of_sphere_norm_bound_dist_one
+    {c : ℂ} {R M : ℝ} (hR : 0 < R)
+    (havoid : R < ‖(1 : ℂ) - c‖)
+    (hM : ∀ z : ℂ, z ∈ Metric.sphere c R → ‖riemannZeta z‖ ≤ M) :
+    ‖deriv riemannZeta c‖ ≤ M / R := by
+  refine norm_deriv_riemannZeta_le_of_sphere_norm_bound_avoid_one hR ?_ hM
+  intro z hz hz1
+  have hdist : dist z c ≤ R := by
+    simpa [Metric.mem_closedBall] using hz
+  have hdist_one : dist (1 : ℂ) c ≤ R := by
+    simpa [hz1] using hdist
+  have hnorm_le : ‖(1 : ℂ) - c‖ ≤ R := by
+    simpa [dist_eq_norm] using hdist_one
+  exact (not_lt_of_ge hnorm_le) havoid
+
+/-- High-imaginary-coordinate form of the Cauchy derivative estimate for ζ.
+
+The hypothesis `R < |t|` is only used to keep the closed disk centered at
+`σ + i t` away from the pole at `1`; the boundary norm estimate remains the
+analytic input that must be supplied by a zeta-growth theorem. -/
+lemma norm_deriv_riemannZeta_sigma_it_le_of_sphere_norm_bound_height
+    {σ t R M : ℝ} (hR : 0 < R) (hheight : R < |t|)
+    (hM : ∀ z : ℂ,
+      z ∈ Metric.sphere ((σ : ℂ) + I * t) R → ‖riemannZeta z‖ ≤ M) :
+    ‖deriv riemannZeta ((σ : ℂ) + I * t)‖ ≤ M / R := by
+  refine norm_deriv_riemannZeta_le_of_sphere_norm_bound_dist_one hR ?_ hM
+  have him_le :
+      |(((1 : ℂ) - ((σ : ℂ) + I * t)).im)| ≤
+        ‖(1 : ℂ) - ((σ : ℂ) + I * t)‖ :=
+    Complex.abs_im_le_norm ((1 : ℂ) - ((σ : ℂ) + I * t))
+  have him_eq : |(((1 : ℂ) - ((σ : ℂ) + I * t)).im)| = |t| := by
+    simp
+  exact lt_of_lt_of_le hheight (by simpa [him_eq] using him_le)
+
 /-- Standalone normalization of a future vertical-strip log-derivative estimate.
 
 If a high-height estimate for `logDeriv ζ` on `1 <= σ <= 2` is available in

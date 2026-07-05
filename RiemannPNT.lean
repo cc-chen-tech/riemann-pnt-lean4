@@ -14214,6 +14214,34 @@ theorem log_norm_riemannZeta_sigma_it_le_affine_log_abs_of_polynomial_growth
   ZeroFreeRegion.log_norm_riemannZeta_sigma_it_le_affine_log_abs_of_polynomial_growth
     hA hB hpoly
 
+/-- Public Cauchy derivative estimate for ζ on a disk whose closed ball avoids
+the pole at `1`. -/
+theorem norm_deriv_riemannZeta_le_of_sphere_norm_bound_avoid_one
+    {c : ℂ} {R M : ℝ} (hR : 0 < R)
+    (havoid : ∀ z : ℂ, z ∈ Metric.closedBall c R → z ≠ 1)
+    (hM : ∀ z : ℂ, z ∈ Metric.sphere c R → ‖riemannZeta z‖ ≤ M) :
+    ‖deriv riemannZeta c‖ ≤ M / R :=
+  ZeroFreeRegion.norm_deriv_riemannZeta_le_of_sphere_norm_bound_avoid_one
+    hR havoid hM
+
+/-- Public distance-to-the-pole Cauchy derivative estimate for ζ. -/
+theorem norm_deriv_riemannZeta_le_of_sphere_norm_bound_dist_one
+    {c : ℂ} {R M : ℝ} (hR : 0 < R)
+    (havoid : R < ‖(1 : ℂ) - c‖)
+    (hM : ∀ z : ℂ, z ∈ Metric.sphere c R → ‖riemannZeta z‖ ≤ M) :
+    ‖deriv riemannZeta c‖ ≤ M / R :=
+  ZeroFreeRegion.norm_deriv_riemannZeta_le_of_sphere_norm_bound_dist_one
+    hR havoid hM
+
+/-- Public high-imaginary-coordinate Cauchy derivative estimate for ζ. -/
+theorem norm_deriv_riemannZeta_sigma_it_le_of_sphere_norm_bound_height
+    {σ t R M : ℝ} (hR : 0 < R) (hheight : R < |t|)
+    (hM : ∀ z : ℂ,
+      z ∈ Metric.sphere ((σ : ℂ) + Complex.I * t) R → ‖riemannZeta z‖ ≤ M) :
+    ‖deriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤ M / R :=
+  ZeroFreeRegion.norm_deriv_riemannZeta_sigma_it_le_of_sphere_norm_bound_height
+    hR hheight hM
+
 /-- Public standalone normalization from an affine full-height vertical
 `logDeriv ζ` estimate to the exact `C * log |t|` scale. -/
 theorem exists_re_im_logDeriv_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height

@@ -1370,6 +1370,9 @@ ZeroFreeRegion.log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_three_of_poly
 ZeroFreeRegion.circleAverage_log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_radius_three_of_polynomial_growth
 ZeroFreeRegion.jensen_localDivisor_riemannZeta_sigma_it_le_affine_log_abs_add_radius_three_of_polynomial_growth
 ZeroFreeRegion.jensen_localDivisor_riemannZeta_sigma_it_le_affine_log_abs_add_radius_three_of_polynomial_growth_of_pos_radius
+ZeroFreeRegion.norm_deriv_riemannZeta_le_of_sphere_norm_bound_avoid_one
+ZeroFreeRegion.norm_deriv_riemannZeta_le_of_sphere_norm_bound_dist_one
+ZeroFreeRegion.norm_deriv_riemannZeta_sigma_it_le_of_sphere_norm_bound_height
 ```
 
 These results convert an input of the form
@@ -1383,6 +1386,9 @@ for circles that remain inside the same high strip.
 The local-divisor theorem then rewrites that average through Jensen's formula,
 so the divisor/trailing-coefficient expression is bounded by the same scale.
 There is also a positive-radius form with `R` in place of `|R|`.
+The three Cauchy derivative estimates then turn a boundary `||zeta||` bound on
+a disk avoiding the pole into a center `||zeta'||` bound; they still need a
+separate lower bound for `||zeta||` before they yield a `logDeriv zeta` bound.
 They do not prove the polynomial growth bound itself.
 
 Suggested Lean statement:

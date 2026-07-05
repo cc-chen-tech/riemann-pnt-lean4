@@ -1209,6 +1209,11 @@ Core verified declarations:
 - `jensen_localDivisor_riemannZeta_sigma_it_le_affine_log_abs_add_radius_three_of_polynomial_growth_of_pos_radius`
   is the positive-radius form with all closed balls and height scales stated
   using `R` rather than `|R|`.
+- `norm_deriv_riemannZeta_le_of_sphere_norm_bound_avoid_one`,
+  `norm_deriv_riemannZeta_le_of_sphere_norm_bound_dist_one`, and
+  `norm_deriv_riemannZeta_sigma_it_le_of_sphere_norm_bound_height`
+  are Cauchy derivative estimates converting a boundary `||zeta||` bound on a
+  disk avoiding the pole into a center `||zeta'||` bound.
 - `exists_re_im_logDeriv_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height`
   converts a future boundary-strip estimate
   `||logDeriv zeta (sigma+it)|| <= A + B log(||sigma+it||+3)` into
