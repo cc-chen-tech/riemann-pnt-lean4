@@ -115,8 +115,8 @@ Verified assets now include:
   `affineResolventLaplaceKernel a b c z = (a + (b + c * z))⁻¹` and finite
   combinations `affineResolventLaplaceKernelCombo`, with right-half-plane
   positivity, center-one pair positivity, and full/new-zero sum and average
-  nonnegativity wrappers whenever the weights and affine parameters are
-  nonnegative.
+  nonnegativity wrappers for both the single-kernel and finite-combination
+  forms whenever the weights and affine parameters are nonnegative.
 
 Important boundary:
 

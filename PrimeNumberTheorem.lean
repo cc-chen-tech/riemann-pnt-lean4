@@ -4441,6 +4441,31 @@ lemma nontrivialZerosFinset_sdiff_average_re_nonnegative_of_resolventLaplaceKern
     T U (resolventLaplaceKernel a)
     (resolventLaplaceKernel_re_nonnegative_on_critical_strip ha)
 
+/-- The affine resolvent/Laplace prototype gives a nonnegative real-part sum
+over newly included nontrivial zeros. -/
+lemma nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_affineResolventLaplaceKernel
+    (T U a b c : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) :
+    0 ≤
+      ∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        (affineResolventLaplaceKernel a b c ρ).re :=
+  nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_re_nonnegative_on_critical_strip
+    T U (affineResolventLaplaceKernel a b c)
+    (affineResolventLaplaceKernel_re_nonnegative_on_critical_strip
+      ha hb hc)
+
+/-- The affine resolvent/Laplace prototype gives a nonnegative average
+real-part contribution over newly included nontrivial zeros. -/
+lemma nontrivialZerosFinset_sdiff_average_re_nonnegative_of_affineResolventLaplaceKernel
+    (T U a b c : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        (affineResolventLaplaceKernel a b c ρ).re) /
+        (((nontrivialZerosFinset U \ nontrivialZerosFinset T).card : ℝ)) :=
+  nontrivialZerosFinset_sdiff_average_re_nonnegative_of_re_nonnegative_on_critical_strip
+    T U (affineResolventLaplaceKernel a b c)
+    (affineResolventLaplaceKernel_re_nonnegative_on_critical_strip
+      ha hb hc)
+
 /-- Finite nonnegative resolvent/Laplace combinations give a nonnegative
 real-part sum over newly included nontrivial zeros. -/
 lemma nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_resolventLaplaceKernelCombo
@@ -4634,6 +4659,31 @@ lemma nontrivialZerosFinset_average_re_nonnegative_of_resolventLaplaceKernel
   nontrivialZerosFinset_average_re_nonnegative_of_re_nonnegative_on_critical_strip
     T (resolventLaplaceKernel a)
     (resolventLaplaceKernel_re_nonnegative_on_critical_strip ha)
+
+/-- The affine resolvent/Laplace prototype gives a nonnegative real-part sum
+over height-truncated nontrivial zeros. -/
+lemma nontrivialZerosFinset_sum_re_nonnegative_of_affineResolventLaplaceKernel
+    (T a b c : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) :
+    0 ≤
+      ∑ ρ ∈ nontrivialZerosFinset T,
+        (affineResolventLaplaceKernel a b c ρ).re :=
+  nontrivialZerosFinset_sum_re_nonnegative_of_re_nonnegative_on_critical_strip
+    T (affineResolventLaplaceKernel a b c)
+    (affineResolventLaplaceKernel_re_nonnegative_on_critical_strip
+      ha hb hc)
+
+/-- The affine resolvent/Laplace prototype gives a nonnegative average
+real-part contribution over height-truncated nontrivial zeros. -/
+lemma nontrivialZerosFinset_average_re_nonnegative_of_affineResolventLaplaceKernel
+    (T a b c : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset T,
+        (affineResolventLaplaceKernel a b c ρ).re) /
+        (((nontrivialZerosFinset T).card : ℝ)) :=
+  nontrivialZerosFinset_average_re_nonnegative_of_re_nonnegative_on_critical_strip
+    T (affineResolventLaplaceKernel a b c)
+    (affineResolventLaplaceKernel_re_nonnegative_on_critical_strip
+      ha hb hc)
 
 /-- Finite nonnegative resolvent/Laplace combinations give a nonnegative
 real-part sum over height-truncated nontrivial zeros. -/

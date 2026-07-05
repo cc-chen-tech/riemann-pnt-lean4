@@ -2738,6 +2738,29 @@ theorem nontrivialZerosFinset_sdiff_average_re_nonnegative_of_resolventLaplaceKe
   PrimeNumberTheorem.nontrivialZerosFinset_sdiff_average_re_nonnegative_of_resolventLaplaceKernel
     T U a ha
 
+/-- Public new-zero real-part sum nonnegativity for the affine
+resolvent/Laplace prototype kernel. -/
+theorem nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_affineResolventLaplaceKernel
+    (T U a b c : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+        PrimeNumberTheorem.nontrivialZerosFinset T,
+      (affineResolventLaplaceKernel a b c ρ).re :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_affineResolventLaplaceKernel
+    T U a b c ha hb hc
+
+/-- Public new-zero average real-part nonnegativity for the affine
+resolvent/Laplace prototype kernel. -/
+theorem nontrivialZerosFinset_sdiff_average_re_nonnegative_of_affineResolventLaplaceKernel
+    (T U a b c : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T,
+        (affineResolventLaplaceKernel a b c ρ).re) /
+        (((PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ)) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_average_re_nonnegative_of_affineResolventLaplaceKernel
+    T U a b c ha hb hc
+
 /-- Public new-zero real-part sum nonnegativity for finite nonnegative
 resolvent/Laplace kernel combinations. -/
 theorem nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_resolventLaplaceKernelCombo
@@ -3017,6 +3040,26 @@ theorem nontrivialZerosFinset_average_re_nonnegative_of_resolventLaplaceKernel
         ((PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ) :=
   PrimeNumberTheorem.nontrivialZerosFinset_average_re_nonnegative_of_resolventLaplaceKernel
     T a ha
+
+/-- Public finite-zero real-part sum nonnegativity for the affine
+resolvent/Laplace prototype kernel. -/
+theorem nontrivialZerosFinset_sum_re_nonnegative_of_affineResolventLaplaceKernel
+    (T a b c : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+      (affineResolventLaplaceKernel a b c ρ).re :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sum_re_nonnegative_of_affineResolventLaplaceKernel
+    T a b c ha hb hc
+
+/-- Public finite-zero average real-part nonnegativity for the affine
+resolvent/Laplace prototype kernel. -/
+theorem nontrivialZerosFinset_average_re_nonnegative_of_affineResolventLaplaceKernel
+    (T a b c : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+        (affineResolventLaplaceKernel a b c ρ).re) /
+        ((PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_average_re_nonnegative_of_affineResolventLaplaceKernel
+    T a b c ha hb hc
 
 /-- Public finite-zero real-part sum nonnegativity for finite nonnegative
 resolvent/Laplace kernel combinations. -/

@@ -1729,6 +1729,13 @@ Core verified declarations:
   `laplacePairPositive_one_affineResolventLaplaceKernel`
   extend the prototype supplier to nonnegative real affine precomposition
   `z ↦ (a + (b + c * z))^-1`, with `a >= 0`, `b >= 0`, and `c >= 0`.
+- `nontrivialZerosFinset_sum_re_nonnegative_of_affineResolventLaplaceKernel`,
+  `nontrivialZerosFinset_average_re_nonnegative_of_affineResolventLaplaceKernel`,
+  `nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_affineResolventLaplaceKernel`,
+  and
+  `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_affineResolventLaplaceKernel`
+  specialize the single affine prototype kernel to the full finite-zero and
+  new-zero contribution sums and averages.
 - `affineResolventLaplaceKernelCombo`,
   `affineResolventLaplaceKernelCombo_re_nonnegative_of_nonneg_re`,
   `affineResolventLaplaceKernelCombo_re_nonnegative_on_critical_strip`,
