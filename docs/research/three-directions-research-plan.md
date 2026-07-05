@@ -168,6 +168,9 @@ Verified assets now include:
   `no_zeros_on_one_third_of_truncated_explicit_formula_converse_route`;
   `no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_below_two_thirds`;
   `no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route`.
+- route-interface conversion bridges:
+  `psiPowerErrorBelowLineExcludesZerosRightOf_of_explicit_formula_converse_power`;
+  `explicitFormulaConversePowerTarget_of_psiPowerErrorBelowLineExcludesZerosRightOf`.
 
 Important boundary:
 

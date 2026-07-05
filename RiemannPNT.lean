@@ -2255,6 +2255,22 @@ power-scale Chebyshev-`ψ` error bound. -/
 abbrev ExplicitFormulaConversePowerTarget (β : ℝ) : Prop :=
   PrimeNumberTheorem.ExplicitFormulaConversePowerTarget β
 
+/-- Public conversion from the explicitly named explicit-formula converse
+target to the general `ψ`-power-error zero-exclusion interface. -/
+theorem psiPowerErrorBelowLineExcludesZerosRightOf_of_explicit_formula_converse_power
+    {β : ℝ} (h : PrimeNumberTheorem.ExplicitFormulaConversePowerTarget β) :
+    PrimeNumberTheorem.PsiPowerErrorBelowLineExcludesZerosRightOf β :=
+  PrimeNumberTheorem.psiPowerErrorBelowLineExcludesZerosRightOf_of_explicit_formula_converse_power
+    h
+
+/-- Public conversion from the general `ψ`-power-error zero-exclusion interface
+to the explicitly named explicit-formula converse target. -/
+theorem explicitFormulaConversePowerTarget_of_psiPowerErrorBelowLineExcludesZerosRightOf
+    {β : ℝ} (h : PrimeNumberTheorem.PsiPowerErrorBelowLineExcludesZerosRightOf β) :
+    PrimeNumberTheorem.ExplicitFormulaConversePowerTarget β :=
+  PrimeNumberTheorem.explicitFormulaConversePowerTarget_of_psiPowerErrorBelowLineExcludesZerosRightOf
+    h
+
 /-- Public bridge: RH excludes zeta zeros on `Re(s)=1/3`. -/
 theorem no_zeros_on_one_third_of_RH
     (hRH : _root_.RiemannHypothesis.Statement) :

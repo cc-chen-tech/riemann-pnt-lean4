@@ -3305,6 +3305,22 @@ def ExplicitFormulaConversePowerTarget (β : ℝ) : Prop :=
   PsiPowerErrorBelowLine β →
     ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → β ≤ ρ.re → False
 
+/-- The explicit-formula converse target supplies the general
+`ψ`-power-error zero-exclusion interface with the same boundary. -/
+theorem psiPowerErrorBelowLineExcludesZerosRightOf_of_explicit_formula_converse_power
+    {β : ℝ} (h : ExplicitFormulaConversePowerTarget β) :
+    PsiPowerErrorBelowLineExcludesZerosRightOf β := by
+  simpa [ExplicitFormulaConversePowerTarget,
+    PsiPowerErrorBelowLineExcludesZerosRightOf] using h
+
+/-- The general `ψ`-power-error zero-exclusion interface is the same
+route target as the explicitly named explicit-formula converse dependency. -/
+theorem explicitFormulaConversePowerTarget_of_psiPowerErrorBelowLineExcludesZerosRightOf
+    {β : ℝ} (h : PsiPowerErrorBelowLineExcludesZerosRightOf β) :
+    ExplicitFormulaConversePowerTarget β := by
+  simpa [ExplicitFormulaConversePowerTarget,
+    PsiPowerErrorBelowLineExcludesZerosRightOf] using h
+
 /-- Conditional bridge from a general `ψ` power-saving error to a zero-free
 vertical line at the same real part. -/
 theorem no_zeros_on_vertical_line_of_psi_power_error_bridge

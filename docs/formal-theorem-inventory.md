@@ -1812,6 +1812,11 @@ Core verified declarations:
   name the explicit-formula converse dependency directly, including the general
   reflected-line route `Re(s)=1-beta`, and specialize it to the reflected
   `Re(s)=1/3` route.
+- `psiPowerErrorBelowLineExcludesZerosRightOf_of_explicit_formula_converse_power`
+  and
+  `explicitFormulaConversePowerTarget_of_psiPowerErrorBelowLineExcludesZerosRightOf`
+  keep the explicitly named explicit-formula converse target interchangeable
+  with the underlying `psi`-power-error zero-exclusion interface.
 - `no_zeros_on_two_thirds_of_explicit_formula_converse_power`,
   `no_zeros_on_one_third_of_explicit_formula_converse_power_below_two_thirds`,
   and
