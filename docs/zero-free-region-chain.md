@@ -752,7 +752,8 @@ flexible versions are now specialized further as
 the expected smallness constraints on `a`: positivity, `a <= log 2`, and
 `a <= d log 2` for the local-neighborhood radius returned by the pole estimate.
 The same inputs are also normalized into the vertical-height scale by
-`ZeroFreeRegion.exists_sigmaOf_log_hreal_two_mul_log_div` and
+`ZeroFreeRegion.exists_sigmaOf_log_hreal_two_mul_log_div`,
+`ZeroFreeRegion.exists_sigmaOf_log_hreal_inv_sub_one_add_const_log_bound`, and
 `ZeroFreeRegion.exists_sigmaOf_log_hreal_const_mul_log_div`, giving the real-axis
 term directly as `<= 2 * log |t| / a` or `<= C * log |t| / a`.
 The half-plane L-series triangle inequality now also gives weak `sigma + 2it`

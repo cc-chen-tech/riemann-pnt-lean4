@@ -923,6 +923,60 @@ lemma const_div_sigmaOf_log_sub_one_eq_mul_log_div (C : ℝ)
   rw [hden]
   field_simp [ha, hlog_ne]
 
+/-- Additive pole-side real-axis bound at the standard high-height choice,
+normalized to the `log |t|` scale.
+
+This is the sharper bookkeeping form obtained from the proved local
+decomposition
+`logDeriv ζ(s) = -(s-1)⁻¹ + logDeriv(unit)(s)`: the singular term contributes
+`(1 / a) * log |t|`, while the locally bounded regular term contributes
+`(M / log 2) * log |t|` for `|t| >= 2`. -/
+lemma exists_sigmaOf_log_hreal_inv_sub_one_add_const_log_bound
+    (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    ∃ d M : ℝ, 0 < d ∧ 0 ≤ M ∧ ∀ a : ℝ, 0 < a →
+      a ≤ d * Real.log 2 →
+      ∀ t : ℝ, T0 ≤ |t| →
+        (-deriv riemannZeta ((1 + a / Real.log |t| : ℝ) : ℂ) /
+            riemannZeta ((1 + a / Real.log |t| : ℝ) : ℂ)).re ≤
+          (1 / a + M / Real.log 2) * Real.log |t| := by
+  rcases exists_rightNeighborhood_re_neg_deriv_riemannZeta_div_riemannZeta_le_inv_sub_one_add_const
+    with ⟨d, M, hd_pos, hM_nonneg, hreal⟩
+  refine ⟨d, M, hd_pos, hM_nonneg, ?_⟩
+  intro a ha_pos ha_le_near t ht
+  have hσ_gt :
+      1 < 1 + a / Real.log |t| :=
+    sigmaOf_log_gt_one hT0 ha_pos ht
+  have hσ_near :
+      1 + a / Real.log |t| ≤ 1 + d :=
+    sigmaOf_log_le_one_add hT0 ha_le_near hd_pos.le ht
+  have hbound :=
+    hreal (1 + a / Real.log |t|) hσ_gt hσ_near
+  have hmain :
+      1 / ((1 + a / Real.log |t|) - 1) = Real.log |t| / a := by
+    rw [const_div_sigmaOf_log_sub_one_eq_mul_log_div 1 hT0
+      (ne_of_gt ha_pos) ht]
+    simp
+  have hlog_two_pos : 0 < Real.log 2 := Real.log_pos (by norm_num : (1 : ℝ) < 2)
+  have hlog_two_le : Real.log 2 ≤ Real.log |t| :=
+    Real.log_le_log (by norm_num) (hT0.trans ht)
+  have hM_scale :
+      M ≤ (M / Real.log 2) * Real.log |t| := by
+    calc
+      M = (M / Real.log 2) * Real.log 2 := by
+        field_simp [ne_of_gt hlog_two_pos]
+      _ ≤ (M / Real.log 2) * Real.log |t| :=
+        mul_le_mul_of_nonneg_left hlog_two_le
+          (div_nonneg hM_nonneg hlog_two_pos.le)
+  calc
+    (-deriv riemannZeta ((1 + a / Real.log |t| : ℝ) : ℂ) /
+        riemannZeta ((1 + a / Real.log |t| : ℝ) : ℂ)).re
+        ≤ 1 / ((1 + a / Real.log |t|) - 1) + M := hbound
+    _ = Real.log |t| / a + M := by rw [hmain]
+    _ ≤ Real.log |t| / a + (M / Real.log 2) * Real.log |t| :=
+        by linarith
+    _ = (1 / a + M / Real.log 2) * Real.log |t| := by
+        ring_nf
+
 /-- Concrete real-axis `hreal` bound for
 `σOf t = 1 + a / log |t|`, normalized as an `O(log |t|)` estimate. -/
 lemma exists_sigmaOf_log_hreal_two_mul_log_div (T0 : ℝ) (hT0 : 2 ≤ T0) :

@@ -605,6 +605,10 @@ Core verified declarations:
 - `exists_sigmaOf_log_hreal_two_mul_log_div`
   normalizes that concrete specialization into the vertical-height estimate
   `Re(-zeta'/zeta)(1 + a / log |t|) <= 2 * log |t| / a`.
+- `exists_sigmaOf_log_hreal_inv_sub_one_add_const_log_bound`
+  specializes the additive pole-side estimate to the standard high-height
+  choice `1 + a / log |t|`, giving the separated coefficient
+  `(1 / a + M / log 2) * log |t|`.
 - `exists_rightNeighborhood_norm_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_sub_one`
   specializes the local signed-quotient norm bound to real-axis parameters
   `1 < sigma <= 1 + d`, replacing `norm ((sigma : C) - 1)` by `sigma - 1`.

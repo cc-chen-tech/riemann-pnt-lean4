@@ -2596,6 +2596,18 @@ theorem exists_sigmaOf_log_hreal_two_mul_log_div (T0 : ℝ) (hT0 : 2 ≤ T0) :
           2 * Real.log |t| / a :=
   ZeroFreeRegion.exists_sigmaOf_log_hreal_two_mul_log_div T0 hT0
 
+/-- Public additive pole-side `hreal` bound for
+`σOf t = 1 + a / log |t|`, normalized on the `log |t|` scale. -/
+theorem exists_sigmaOf_log_hreal_inv_sub_one_add_const_log_bound
+    (T0 : ℝ) (hT0 : 2 ≤ T0) :
+    ∃ d M : ℝ, 0 < d ∧ 0 ≤ M ∧ ∀ a : ℝ, 0 < a →
+      a ≤ d * Real.log 2 →
+      ∀ t : ℝ, T0 ≤ |t| →
+        (-deriv riemannZeta ((1 + a / Real.log |t| : ℝ) : ℂ) /
+            riemannZeta ((1 + a / Real.log |t| : ℝ) : ℂ)).re ≤
+          (1 / a + M / Real.log 2) * Real.log |t| :=
+  ZeroFreeRegion.exists_sigmaOf_log_hreal_inv_sub_one_add_const_log_bound T0 hT0
+
 /-- Public real-axis specialization of the local norm bound for `-ζ'/ζ`
 near the pole at `1`. -/
 theorem exists_rightNeighborhood_norm_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_sub_one
