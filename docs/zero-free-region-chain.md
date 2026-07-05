@@ -65,6 +65,10 @@ The named interfaces also feed the shifted 3-4-1 inputs directly via
 `ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_LogDerivVerticalLogBound`,
 and
 `ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_NegLogDerivVerticalLogBound`.
+For the higher-degree BTY detector, the mixed bridge
+`ZeroFreeRegion.log_deriv_zeta_bty_detector_one_lower_bound_of_center_and_LogDerivVerticalLogBound`
+uses the same named vertical bound for all nonzero detector frequencies and
+leaves only the real-axis `k = 0` quotient bound as a separate input.
 
 The matching zero-candidate regular-part estimate is now named as well:
 `ZeroFreeRegion.LogDerivRegularPartLogBound` and
@@ -393,7 +397,11 @@ proved:
   `RiemannPNT.API.log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_signed_right_shift_borel_family`
   additionally use the computed remaining-coefficient sum
   `6917296 / 2485395`, yielding the one-constant upper-bound interface needed
-  after future global height comparisons.  The shifted versions
+  after future global height comparisons.  The named-bound entrypoint
+  `RiemannPNT.API.log_deriv_zeta_bty_detector_one_lower_bound_of_center_and_LogDerivVerticalLogBound`
+  gives the current exact handoff from a future `LogDerivVerticalLogBound` to
+  the checked BTY detector, with the `k=0` center term still explicit.  The
+  shifted versions
   `ZeroFreeRegion.re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_logDeriv_re_le_half_radius`
   and
   `ZeroFreeRegion.re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_neg_logDeriv_re_le_half_radius`

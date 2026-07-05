@@ -118,6 +118,11 @@ Core verified declarations:
   package the exact interface needed by future shifted log-derivative upper
   bounds, including the simplified rational coefficient penalty
   `3458648 / 2163835`.
+- `log_deriv_zeta_bty_detector_one_lower_bound_of_center_and_LogDerivVerticalLogBound`
+  applies the named high-height vertical logarithmic-derivative bound to all
+  nonzero BTY frequencies while taking the `k = 0` real-axis term as a separate
+  upper-bound input.  This closes the finite-frequency bookkeeping for the BTY
+  handoff without asserting the zeta-specific vertical estimate itself.
 - `log_deriv_zeta_nonneg_three_four_one_from_finset`
   re-exposes the verified 3-4-1 theorem as the base detector instance.
 - `classical_zero_free_region_compact`
@@ -227,6 +232,10 @@ Core verified declarations:
   extra caller-side conversion.
 - `exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_NegLogDerivVerticalLogBound`
   is the named-interface version of the signed real-part shifted-pair handoff.
+- `log_deriv_zeta_bty_detector_one_lower_bound_of_center_and_LogDerivVerticalLogBound`
+  is the named-interface BTY handoff: it uses `LogDerivVerticalLogBound` for
+  every nonzero detector frequency and keeps the central `k = 0` term as a
+  separate real-axis quotient bound.
 - `exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_vertical_norm_log_bound`
   converts that shifted norm estimate into the real-part quotient convention
   needed by the 3-4-1 inequality.
@@ -1392,6 +1401,9 @@ Core verified declarations:
   `sum_{k in btyDetectorSupport.erase 1} btyDetectorCoeff k =
   6917296 / 2485395`; the unsigned simplified facade rewrites the resulting
   penalty as `3458648 / 2163835`.
+- `RiemannPNT.API.log_deriv_zeta_bty_detector_one_lower_bound_of_center_and_LogDerivVerticalLogBound`
+  exposes the mixed BTY entrypoint that consumes a future named vertical
+  logarithmic-derivative estimate plus a separate central-term bound.
 - `re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_logDeriv_re_le_half_radius`
   and
   `re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_neg_logDeriv_re_le_half_radius`

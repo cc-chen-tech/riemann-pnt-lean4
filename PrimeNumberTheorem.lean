@@ -2868,6 +2868,41 @@ theorem no_zeros_on_vertical_line_iff_reflected
       simp [Complex.sub_re, hs]
     exact hright (1 - s) hre hsym.1
 
+/-- Specialized reflection bridge: zero-freeness on `Re(s)=2/3` excludes zeros
+on `Re(s)=1/3`.  This packages the formal final step in the proposed
+explicit-formula/PNT-error route. -/
+theorem no_zeros_on_one_third_of_no_zeros_on_two_thirds
+    (h : NoZerosOnVerticalLine (2 / 3)) :
+    NoZerosOnVerticalLine (1 / 3) := by
+  intro s hs hzero
+  have hnt : RiemannHypothesis.IsNontrivialZero s := by
+    refine ⟨hzero, ?_, ?_⟩
+    · nlinarith [hs]
+    · nlinarith [hs]
+  have hsym : RiemannHypothesis.IsNontrivialZero (1 - s) :=
+    nontrivial_zero_symmetric' hnt
+  have hre : (1 - s).re = (2 / 3 : ℝ) := by
+    have hcalc : (1 : ℝ) - (1 / 3) = 2 / 3 := by norm_num
+    simpa [Complex.sub_re, hs] using hcalc
+  exact h (1 - s) hre hsym.1
+
+/-- The converse specialized reflection bridge, useful for keeping the two
+reflected line formulations interchangeable. -/
+theorem no_zeros_on_two_thirds_of_no_zeros_on_one_third
+    (h : NoZerosOnVerticalLine (1 / 3)) :
+    NoZerosOnVerticalLine (2 / 3) := by
+  intro s hs hzero
+  have hnt : RiemannHypothesis.IsNontrivialZero s := by
+    refine ⟨hzero, ?_, ?_⟩
+    · nlinarith [hs]
+    · nlinarith [hs]
+  have hsym : RiemannHypothesis.IsNontrivialZero (1 - s) :=
+    nontrivial_zero_symmetric' hnt
+  have hre : (1 - s).re = (1 / 3 : ℝ) := by
+    have hcalc : (1 : ℝ) - (2 / 3) = 1 / 3 := by norm_num
+    simpa [Complex.sub_re, hs] using hcalc
+  exact h (1 - s) hre hsym.1
+
 /-- Route interface for the proposed converse-explicit-formula strategy.
 
 The intended analytic input is: a sufficiently strong PNT error term implies

@@ -42,6 +42,11 @@ Verified assets now include:
   `btyDetector_log_abs_mul_add_three_le_log_seventeen_mul_abs_add_three`
   and its no-manual-`hlog` lower-bound wrapper
   `log_deriv_zeta_bty_detector_one_lower_bound_of_global_vertical_log_abs_add_three_bound_auto`;
+- the named vertical-bound BTY handoff
+  `log_deriv_zeta_bty_detector_one_lower_bound_of_center_and_LogDerivVerticalLogBound`,
+  which controls all nonzero BTY detector frequencies from
+  `LogDerivVerticalLogBound` and leaves only the real-axis `k=0` term as a
+  separate upper-bound input;
 - the fixed-margin closure
   `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_one_add_le`, which
   uses the existing `Re(s) >= 1 + epsilon` vertical `logDeriv` estimate;
@@ -55,19 +60,16 @@ Verified assets now include:
 Next useful step:
 
 ```lean
-log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_vertical_pair_bound
+log_deriv_zeta_bty_detector_one_lower_bound_of_center_bound_and_LogDerivVerticalLogBound
 ```
 
 The formerly separate `hseries` step is now closed in Lean.  The next bridge is
-not a purely formal wrapper: the existing shift-pair estimates cover the
-classical `t, 2t` shape, while the Borel facade accepts a finset-wide
-upper-bound hypothesis over `btyDetectorSupport.erase 1`.  Closing that bridge
-requires a uniform high-height/log bound for every BTY support index.  The new
-finite-family norm facades make the exact required input explicit, and the
-global-vertical handoff now reduces the finite-family part to a one-variable
-bound
-`‖logDeriv ζ(σ + i u)‖ <= B log(|u|+3)`.  The finite log-scale comparison is
-now automatic at the conservative common scale `log(17 * (|t|+3))`.
+not the finite-support bookkeeping anymore: the new named handoff reduces the
+nonzero BTY frequencies to the single future bound
+`LogDerivVerticalLogBound`.  What remains is to provide a usable center-term
+upper bound for `Re(-ζ'/ζ(σ))` at `k=0`, and then to prove the actual
+zeta-specific high-height estimate
+`‖logDeriv ζ(σ + i u)‖ <= B log |u|` on `1 <= σ <= 2`.
 The new polynomial-growth handoff removes one piece of height bookkeeping once
 a usable zeta polynomial-growth input is available, but it does not prove that
 input or a log-derivative estimate.  The fixed-margin closure is useful

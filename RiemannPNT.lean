@@ -2061,24 +2061,15 @@ theorem no_zeros_on_vertical_line_iff_reflected
 `Re(s)=1/3` zero-freeness. -/
 theorem no_zeros_on_one_third_of_no_zeros_on_two_thirds
     (h : PrimeNumberTheorem.NoZerosOnVerticalLine (2 / 3)) :
-    PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) := by
-  have hiff :=
-    PrimeNumberTheorem.no_zeros_on_vertical_line_iff_reflected
-      (β := (1 / 3 : ℝ)) (by norm_num) (by norm_num)
-  have hreflect : (1 - (1 / 3 : ℝ)) = (2 / 3 : ℝ) := by norm_num
-  exact hiff.mpr (hreflect.symm ▸ h)
+    PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) :=
+  PrimeNumberTheorem.no_zeros_on_one_third_of_no_zeros_on_two_thirds h
 
 /-- Public converse specialized reflection bridge, keeping the two reflected
 line formulations interchangeable. -/
 theorem no_zeros_on_two_thirds_of_no_zeros_on_one_third
     (h : PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3)) :
-    PrimeNumberTheorem.NoZerosOnVerticalLine (2 / 3) := by
-  have hiff :=
-    PrimeNumberTheorem.no_zeros_on_vertical_line_iff_reflected
-      (β := (1 / 3 : ℝ)) (by norm_num) (by norm_num)
-  have hreflect : (1 - (1 / 3 : ℝ)) = (2 / 3 : ℝ) := by norm_num
-  have hres := hiff.mp h
-  exact hreflect ▸ hres
+    PrimeNumberTheorem.NoZerosOnVerticalLine (2 / 3) :=
+  PrimeNumberTheorem.no_zeros_on_two_thirds_of_no_zeros_on_one_third h
 
 /-- Public specialization of the general `ψ` power-saving bridge to the
 reflected `2/3` line and hence the `1/3` line. -/
@@ -5691,6 +5682,21 @@ theorem log_deriv_zeta_bty_detector_one_lower_bound_of_global_vertical_log_abs_a
         (B * Real.log (17 * (|t| + 3))) :=
   ZeroFreeRegion.log_deriv_zeta_bty_detector_one_lower_bound_of_global_vertical_log_abs_add_three_bound_auto
     σ hσ t B hB hglobal
+
+/-- Public mixed BTY handoff from a named high-height vertical
+logarithmic-derivative bound plus a separate central `k = 0` upper bound. -/
+theorem log_deriv_zeta_bty_detector_one_lower_bound_of_center_and_LogDerivVerticalLogBound
+    {C T0 σ t B0 : ℝ} (h : LogDerivVerticalLogBound C T0)
+    (hσ : 1 < σ) (hσ_le : σ ≤ 2) (ht : T0 ≤ |t|)
+    (hcenter :
+      (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re ≤ B0) :
+    (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+      riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+      - (∑ k ∈ btyDetectorSupport.erase 1, btyDetectorCoeff k *
+          (if k = 0 then B0 else C * Real.log (17 * (|t| + 3)))) /
+        btyDetectorCoeff 1 :=
+  ZeroFreeRegion.log_deriv_zeta_bty_detector_one_lower_bound_of_center_and_LogDerivVerticalLogBound
+    h hσ hσ_le ht hcenter
 
 /-- Public fixed-margin BTY lower bound from the existing vertical
 logarithmic-derivative estimate for `Re(s) >= 1 + ε`. -/

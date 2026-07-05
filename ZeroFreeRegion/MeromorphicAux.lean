@@ -11295,6 +11295,80 @@ lemma exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_NegLo
     exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_neg_vertical_norm_log_bound
       (T0 := T0) (B := B) hB hbound
 
+/-- Mixed BTY handoff from a named high-height vertical logarithmic-derivative
+bound.
+
+The BTY support used for the `k = 1` lower bound is
+`btyDetectorSupport.erase 1`, which still contains `k = 0`.  A high-height
+bound cannot control that central term, so this bridge takes the `k = 0`
+upper bound separately and uses `LogDerivVerticalLogBound` only for the
+nonzero detector frequencies. -/
+lemma log_deriv_zeta_bty_detector_one_lower_bound_of_center_and_LogDerivVerticalLogBound
+    {C T0 σ t B0 : ℝ} (h : LogDerivVerticalLogBound C T0)
+    (hσ : 1 < σ) (hσ_le : σ ≤ 2) (ht : T0 ≤ |t|)
+    (hcenter :
+      (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re ≤ B0) :
+    (-deriv riemannZeta ((σ : ℂ) + I * t) /
+      riemannZeta ((σ : ℂ) + I * t)).re ≥
+      - (∑ k ∈ btyDetectorSupport.erase 1, btyDetectorCoeff k *
+          (if k = 0 then B0 else C * Real.log (17 * (|t| + 3)))) /
+        btyDetectorCoeff 1 := by
+  rcases h with ⟨hC, _hT0, hbound⟩
+  refine
+    log_deriv_zeta_bty_detector_one_lower_bound_of_shift_upper_bounds
+      σ hσ t
+      (fun k => if k = 0 then B0 else C * Real.log (17 * (|t| + 3)))
+      ?_
+  intro k hk
+  by_cases hk_zero : k = 0
+  · subst hk_zero
+    simpa using hcenter
+  · have hk_mem : k ∈ btyDetectorSupport := Finset.mem_of_mem_erase hk
+    have hk_lt : k < 17 := by
+      simpa [btyDetectorSupport] using hk_mem
+    have hk_pos_nat : 1 ≤ k := Nat.succ_le_of_lt (Nat.pos_of_ne_zero hk_zero)
+    have hk_pos_real : (1 : ℝ) ≤ k := by exact_mod_cast hk_pos_nat
+    have hk_nonneg_real : 0 ≤ (k : ℝ) := Nat.cast_nonneg k
+    have ht_abs_ge_three : 3 ≤ |t| := by linarith
+    have hkt_abs_eq : |(k : ℝ) * t| = (k : ℝ) * |t| := by
+      rw [abs_mul, abs_of_nonneg hk_nonneg_real]
+    have hheight : T0 ≤ |(k : ℝ) * t| := by
+      rw [hkt_abs_eq]
+      nlinarith
+    have hbound_k := hbound σ ((k : ℝ) * t) (le_of_lt hσ) hσ_le hheight
+    have hpoint :
+        ((σ : ℂ) + I * (((k : ℝ) * t : ℝ) : ℂ)) =
+          ((σ : ℂ) + (k : ℂ) * I * t) := by
+      norm_num [Complex.ofReal_mul]
+      ring
+    rw [hpoint] at hbound_k
+    have hk_le_real : (k : ℝ) ≤ 16 := by
+      exact_mod_cast Nat.le_of_lt_succ hk_lt
+    have hkt_abs_pos : 0 < |(k : ℝ) * t| := by
+      rw [hkt_abs_eq]
+      nlinarith
+    have hkt_abs_le_common : |(k : ℝ) * t| ≤ 17 * (|t| + 3) := by
+      rw [hkt_abs_eq]
+      nlinarith
+    have hlog_le :
+        Real.log |(k : ℝ) * t| ≤ Real.log (17 * (|t| + 3)) :=
+      Real.log_le_log hkt_abs_pos hkt_abs_le_common
+    have hscale_le :
+        C * Real.log |(k : ℝ) * t| ≤
+          C * Real.log (17 * (|t| + 3)) :=
+      mul_le_mul_of_nonneg_left hlog_le hC
+    let z : ℂ := (σ : ℂ) + (k : ℂ) * I * t
+    calc
+      (-deriv riemannZeta z / riemannZeta z).re
+          ≤ ‖-deriv riemannZeta z / riemannZeta z‖ := Complex.re_le_norm _
+      _ = ‖logDeriv riemannZeta z‖ :=
+          norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv z
+      _ ≤ C * Real.log |(k : ℝ) * t| := by
+          simpa [z] using hbound_k
+      _ ≤ C * Real.log (17 * (|t| + 3)) := hscale_le
+      _ = (if k = 0 then B0 else C * Real.log (17 * (|t| + 3))) := by
+          simp [hk_zero]
+
 /-- Real-part quotient version of
 `exists_norm_logDeriv_riemannZeta_shifted_vertical_log_bound_of_vertical_log_bound`. -/
 lemma exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_vertical_norm_log_bound
