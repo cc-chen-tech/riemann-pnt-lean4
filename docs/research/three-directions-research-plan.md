@@ -81,6 +81,10 @@ Verified assets now include:
   `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_affine_log_abs_add_three_bound_high_height`
   and
   `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_affine_log_abs_add_three_bound_high_height_simplified`;
+- the corresponding multiplicative `C * log(|t|+3)` BTY bridges:
+  `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_log_abs_add_three_bound_high_height`
+  and
+  `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_log_abs_add_three_bound_high_height_simplified`;
 - the polynomial-growth-to-`log |t|` zeta handoff:
   `log_norm_riemannZeta_sigma_it_le_affine_log_abs_of_polynomial_growth`.
 

@@ -6745,6 +6745,42 @@ theorem exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_cente
   ZeroFreeRegion.exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_affine_log_abs_add_three_bound_high_height_simplified
     hε hT0 hA hB hvertical
 
+/-- Public fixed-margin BTY handoff fed directly by a multiplicative
+high-height `log(|t|+3)` bound for `‖logDeriv ζ‖`. -/
+theorem exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_log_abs_add_three_bound_high_height
+    {ε T0 B : ℝ} (hε : 0 < ε) (hT0 : 3 ≤ T0) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          B * Real.log (|t| + 3)) :
+    ∃ K C T0' : ℝ, 0 ≤ K ∧ LogDerivVerticalLogBound C T0' ∧
+      ∀ σ t : ℝ, 1 + ε ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+          riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+          - (∑ k ∈ btyDetectorSupport.erase 1, btyDetectorCoeff k *
+              (if k = 0 then K else C * Real.log (17 * (|t| + 3)))) /
+            btyDetectorCoeff 1 :=
+  ZeroFreeRegion.exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_log_abs_add_three_bound_high_height
+    hε hT0 hB hvertical
+
+/-- Public simplified fixed-margin BTY handoff fed directly by a
+multiplicative high-height `log(|t|+3)` bound for `‖logDeriv ζ‖`. -/
+theorem exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_log_abs_add_three_bound_high_height_simplified
+    {ε T0 B : ℝ} (hε : 0 < ε) (hT0 : 3 ≤ T0) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          B * Real.log (|t| + 3)) :
+    ∃ K C T0' : ℝ, 0 ≤ K ∧ LogDerivVerticalLogBound C T0' ∧
+      ∀ σ t : ℝ, 1 + ε ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+          riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+          - (K + ((4431901 : ℝ) / 2485395) *
+              (C * Real.log (17 * (|t| + 3)))) /
+            btyDetectorCoeff 1 :=
+  ZeroFreeRegion.exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_log_abs_add_three_bound_high_height_simplified
+    hε hT0 hB hvertical
+
 /-- Public fixed-margin BTY lower bound from the existing vertical
 logarithmic-derivative estimate for `Re(s) >= 1 + ε`. -/
 theorem exists_log_deriv_zeta_bty_detector_one_lower_bound_of_one_add_le
