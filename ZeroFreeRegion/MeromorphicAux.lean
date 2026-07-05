@@ -12328,6 +12328,102 @@ lemma exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_
         intro σ t ht hσ
         simpa using hvertical σ t ht hσ)
 
+/-- Fixed-margin BTY handoff fed directly by an affine high-height
+`log(|t|+3)` bound for `‖-logDeriv ζ‖`. -/
+lemma exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_neg_affine_log_abs_add_three_bound_high_height
+    {ε T0 A B : ℝ} (hε : 0 < ε) (hT0 : 3 ≤ T0)
+    (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          A + B * Real.log (|t| + 3)) :
+    ∃ K C T0' : ℝ, 0 ≤ K ∧ LogDerivVerticalLogBound C T0' ∧
+      ∀ σ t : ℝ, 1 + ε ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re ≥
+          - (∑ k ∈ btyDetectorSupport.erase 1, btyDetectorCoeff k *
+              (if k = 0 then K else C * Real.log (17 * (|t| + 3)))) /
+            btyDetectorCoeff 1 := by
+  rcases negLogDeriv_riemannZeta_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height
+      T0 A B hT0 hA hB hvertical with
+    ⟨C, T0', hneg⟩
+  have hlog : LogDerivVerticalLogBound C T0' :=
+    logDerivVerticalLogBound_of_negLogDerivVerticalLogBound hneg
+  rcases exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_LogDerivVerticalLogBound
+      (ε := ε) (C := C) (T0 := T0') hε hlog with
+    ⟨K, hK, hbound⟩
+  exact ⟨K, C, T0', hK, hlog, hbound⟩
+
+/-- Simplified fixed-margin BTY handoff fed directly by an affine high-height
+`log(|t|+3)` bound for `‖-logDeriv ζ‖`. -/
+lemma exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_neg_affine_log_abs_add_three_bound_high_height_simplified
+    {ε T0 A B : ℝ} (hε : 0 < ε) (hT0 : 3 ≤ T0)
+    (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          A + B * Real.log (|t| + 3)) :
+    ∃ K C T0' : ℝ, 0 ≤ K ∧ LogDerivVerticalLogBound C T0' ∧
+      ∀ σ t : ℝ, 1 + ε ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re ≥
+          - (K + ((4431901 : ℝ) / 2485395) *
+              (C * Real.log (17 * (|t| + 3)))) /
+            btyDetectorCoeff 1 := by
+  rcases negLogDeriv_riemannZeta_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height
+      T0 A B hT0 hA hB hvertical with
+    ⟨C, T0', hneg⟩
+  have hlog : LogDerivVerticalLogBound C T0' :=
+    logDerivVerticalLogBound_of_negLogDerivVerticalLogBound hneg
+  rcases exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_LogDerivVerticalLogBound_simplified
+      (ε := ε) (C := C) (T0 := T0') hε hlog with
+    ⟨K, hK, hbound⟩
+  exact ⟨K, C, T0', hK, hlog, hbound⟩
+
+/-- Fixed-margin BTY handoff fed directly by a multiplicative high-height
+`log(|t|+3)` bound for `‖-logDeriv ζ‖`. -/
+lemma exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_neg_log_abs_add_three_bound_high_height
+    {ε T0 B : ℝ} (hε : 0 < ε) (hT0 : 3 ≤ T0) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          B * Real.log (|t| + 3)) :
+    ∃ K C T0' : ℝ, 0 ≤ K ∧ LogDerivVerticalLogBound C T0' ∧
+      ∀ σ t : ℝ, 1 + ε ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re ≥
+          - (∑ k ∈ btyDetectorSupport.erase 1, btyDetectorCoeff k *
+              (if k = 0 then K else C * Real.log (17 * (|t| + 3)))) /
+            btyDetectorCoeff 1 := by
+  exact
+    exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_neg_affine_log_abs_add_three_bound_high_height
+      (ε := ε) (T0 := T0) (A := 0) (B := B)
+      hε hT0 (by norm_num) hB (by
+        intro σ t ht hσ
+        simpa using hvertical σ t ht hσ)
+
+/-- Simplified fixed-margin BTY handoff fed directly by a multiplicative
+high-height `log(|t|+3)` bound for `‖-logDeriv ζ‖`. -/
+lemma exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_neg_log_abs_add_three_bound_high_height_simplified
+    {ε T0 B : ℝ} (hε : 0 < ε) (hT0 : 3 ≤ T0) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          B * Real.log (|t| + 3)) :
+    ∃ K C T0' : ℝ, 0 ≤ K ∧ LogDerivVerticalLogBound C T0' ∧
+      ∀ σ t : ℝ, 1 + ε ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re ≥
+          - (K + ((4431901 : ℝ) / 2485395) *
+              (C * Real.log (17 * (|t| + 3)))) /
+            btyDetectorCoeff 1 := by
+  exact
+    exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_neg_affine_log_abs_add_three_bound_high_height_simplified
+      (ε := ε) (T0 := T0) (A := 0) (B := B)
+      hε hT0 (by norm_num) hB (by
+        intro σ t ht hσ
+        simpa using hvertical σ t ht hσ)
+
 /-- Real-part quotient version of
 `exists_norm_logDeriv_riemannZeta_shifted_vertical_log_bound_of_vertical_log_bound`. -/
 lemma exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_vertical_norm_log_bound
