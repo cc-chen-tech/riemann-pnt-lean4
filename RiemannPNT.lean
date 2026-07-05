@@ -2200,6 +2200,15 @@ noncomputable abbrev dampedKernel
     (κ : ℝ) (F G : ℂ → ℂ) : ℂ → ℂ :=
   PrimeNumberTheorem.dampedKernel κ F G
 
+/-- Public algebraic pair-contribution identity for a damped kernel. -/
+theorem dampedKernel_pair_contribution_eq
+    (κ center : ℝ) (F G : ℂ → ℂ) (z : ℂ) :
+    (dampedKernel κ F G z).re +
+      (dampedKernel κ F G ((center : ℂ) - z)).re =
+        ((F z).re + (F ((center : ℂ) - z)).re) -
+          κ * ((G z).re + (G ((center : ℂ) - z)).re) :=
+  PrimeNumberTheorem.dampedKernel_pair_contribution_eq κ center F G z
+
 /-- Public controlled signed/damped kernel pair-positivity bridge. -/
 theorem laplacePairPositive_dampedKernel_of_pair_le
     {κ center : ℝ} {F G : ℂ → ℂ}

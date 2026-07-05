@@ -354,6 +354,7 @@ import RiemannPNT
 #check RiemannPNT.API.laplacePairPositive_symmetricResolventLaplaceKernelCombo
 #check RiemannPNT.API.laplacePairPositive_one_symmetricResolventLaplaceKernelCombo
 #check RiemannPNT.API.dampedKernel
+#check RiemannPNT.API.dampedKernel_pair_contribution_eq
 #check RiemannPNT.API.laplacePairPositive_dampedKernel_of_pair_le
 #check RiemannPNT.API.laplacePairPositive_one_dampedKernel_of_pair_le
 #check RiemannPNT.API.nontrivialZerosFinset_pair_sum_nonnegative_of_dampedKernel
