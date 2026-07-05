@@ -912,6 +912,14 @@ present the same interface in the standard local-zero form
 `||logDeriv zeta(s) - (s-rho)^(-1)|| <= B log |Im(s)|`, converting to the
 signed 3-4-1 convention by `||-x|| = ||x||`.  This is the preferred statement
 for estimates that are already available from height `2`.
+The local bounded-unit side of these principal-part decompositions is now
+automatic: `ZeroFreeRegion.exists_eventually_norm_logDeriv_le_const_of_analyticAt_ne_zero`
+and its signed version prove local boundedness of the logarithmic derivative
+for any analytic unit, and the `..._analyticAt_order_eq_nat_auto` lemmas
+package this into punctured-ball regular-part bounds, including zeta-specific
+auto wrappers.  These are local statements; the remaining hard input is still a
+uniform high-height logarithmic coefficient, not local existence of some
+constant.
 The high-height wrappers
 `ZeroFreeRegion.classical_zero_free_region_of_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height`
 and

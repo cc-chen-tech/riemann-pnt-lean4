@@ -3465,6 +3465,100 @@ theorem exists_punctured_closedBall_norm_neg_logDeriv_riemannZeta_add_order_mul_
   ZeroFreeRegion.exists_punctured_closedBall_norm_neg_logDeriv_riemannZeta_add_order_mul_inv_le_of_order_eq_nat
     hρ1 horder hregularBound
 
+/-- Public local boundedness of `logDeriv` for a nonvanishing analytic
+function. -/
+theorem exists_eventually_norm_logDeriv_le_const_of_analyticAt_ne_zero
+    {g : ℂ → ℂ} {x : ℂ} (hg : AnalyticAt ℂ g x) (hg_ne : g x ≠ 0) :
+    ∃ M : ℝ, 0 ≤ M ∧ ∀ᶠ z in 𝓝 x, ‖logDeriv g z‖ ≤ M :=
+  ZeroFreeRegion.exists_eventually_norm_logDeriv_le_const_of_analyticAt_ne_zero
+    hg hg_ne
+
+/-- Public signed local boundedness of `logDeriv` for a nonvanishing analytic
+function. -/
+theorem exists_eventually_norm_neg_logDeriv_le_const_of_analyticAt_ne_zero
+    {g : ℂ → ℂ} {x : ℂ} (hg : AnalyticAt ℂ g x) (hg_ne : g x ≠ 0) :
+    ∃ M : ℝ, 0 ≤ M ∧ ∀ᶠ z in 𝓝 x, ‖-logDeriv g z‖ ≤ M :=
+  ZeroFreeRegion.exists_eventually_norm_neg_logDeriv_le_const_of_analyticAt_ne_zero
+    hg hg_ne
+
+/-- Public automatic bridge from analytic order to a punctured-ball regular-part
+norm estimate. -/
+theorem exists_punctured_ball_norm_logDeriv_sub_order_mul_inv_le_of_analyticAt_order_eq_nat_auto
+    {f : ℂ → ℂ} {x : ℂ} {n : ℕ}
+    (hf : AnalyticAt ℂ f x) (horder : analyticOrderAt f x = n) :
+    ∃ r M : ℝ, 0 < r ∧ 0 ≤ M ∧ ∀ z : ℂ, z ≠ x → dist z x < r →
+      ‖logDeriv f z - (n : ℂ) * (z - x)⁻¹‖ ≤ M :=
+  ZeroFreeRegion.exists_punctured_ball_norm_logDeriv_sub_order_mul_inv_le_of_analyticAt_order_eq_nat_auto
+    hf horder
+
+/-- Public automatic closed-ball bridge from analytic order to a regular-part
+norm estimate. -/
+theorem exists_punctured_closedBall_norm_logDeriv_sub_order_mul_inv_le_of_analyticAt_order_eq_nat_auto
+    {f : ℂ → ℂ} {x : ℂ} {n : ℕ}
+    (hf : AnalyticAt ℂ f x) (horder : analyticOrderAt f x = n) :
+    ∃ r M : ℝ, 0 < r ∧ 0 ≤ M ∧ ∀ z : ℂ, z ≠ x → dist z x ≤ r →
+      ‖logDeriv f z - (n : ℂ) * (z - x)⁻¹‖ ≤ M :=
+  ZeroFreeRegion.exists_punctured_closedBall_norm_logDeriv_sub_order_mul_inv_le_of_analyticAt_order_eq_nat_auto
+    hf horder
+
+/-- Public automatic signed bridge from analytic order to a punctured-ball
+regular-part norm estimate. -/
+theorem exists_punctured_ball_norm_neg_logDeriv_add_order_mul_inv_le_of_analyticAt_order_eq_nat_auto
+    {f : ℂ → ℂ} {x : ℂ} {n : ℕ}
+    (hf : AnalyticAt ℂ f x) (horder : analyticOrderAt f x = n) :
+    ∃ r M : ℝ, 0 < r ∧ 0 ≤ M ∧ ∀ z : ℂ, z ≠ x → dist z x < r →
+      ‖-logDeriv f z + (n : ℂ) * (z - x)⁻¹‖ ≤ M :=
+  ZeroFreeRegion.exists_punctured_ball_norm_neg_logDeriv_add_order_mul_inv_le_of_analyticAt_order_eq_nat_auto
+    hf horder
+
+/-- Public automatic signed closed-ball bridge from analytic order to a
+regular-part norm estimate. -/
+theorem exists_punctured_closedBall_norm_neg_logDeriv_add_order_mul_inv_le_of_analyticAt_order_eq_nat_auto
+    {f : ℂ → ℂ} {x : ℂ} {n : ℕ}
+    (hf : AnalyticAt ℂ f x) (horder : analyticOrderAt f x = n) :
+    ∃ r M : ℝ, 0 < r ∧ 0 ≤ M ∧ ∀ z : ℂ, z ≠ x → dist z x ≤ r →
+      ‖-logDeriv f z + (n : ℂ) * (z - x)⁻¹‖ ≤ M :=
+  ZeroFreeRegion.exists_punctured_closedBall_norm_neg_logDeriv_add_order_mul_inv_le_of_analyticAt_order_eq_nat_auto
+    hf horder
+
+/-- Public automatic zeta-specific punctured-ball regular-part norm bridge. -/
+theorem exists_punctured_ball_norm_logDeriv_riemannZeta_sub_order_mul_inv_le_of_order_eq_nat_auto
+    {ρ : ℂ} {n : ℕ} (hρ1 : ρ ≠ 1)
+    (horder : analyticOrderAt riemannZeta ρ = n) :
+    ∃ r M : ℝ, 0 < r ∧ 0 ≤ M ∧ ∀ z : ℂ, z ≠ ρ → dist z ρ < r →
+      ‖logDeriv riemannZeta z - (n : ℂ) * (z - ρ)⁻¹‖ ≤ M :=
+  ZeroFreeRegion.exists_punctured_ball_norm_logDeriv_riemannZeta_sub_order_mul_inv_le_of_order_eq_nat_auto
+    hρ1 horder
+
+/-- Public automatic zeta-specific closed-ball regular-part norm bridge. -/
+theorem exists_punctured_closedBall_norm_logDeriv_riemannZeta_sub_order_mul_inv_le_of_order_eq_nat_auto
+    {ρ : ℂ} {n : ℕ} (hρ1 : ρ ≠ 1)
+    (horder : analyticOrderAt riemannZeta ρ = n) :
+    ∃ r M : ℝ, 0 < r ∧ 0 ≤ M ∧ ∀ z : ℂ, z ≠ ρ → dist z ρ ≤ r →
+      ‖logDeriv riemannZeta z - (n : ℂ) * (z - ρ)⁻¹‖ ≤ M :=
+  ZeroFreeRegion.exists_punctured_closedBall_norm_logDeriv_riemannZeta_sub_order_mul_inv_le_of_order_eq_nat_auto
+    hρ1 horder
+
+/-- Public automatic signed zeta-specific punctured-ball regular-part norm
+bridge. -/
+theorem exists_punctured_ball_norm_neg_logDeriv_riemannZeta_add_order_mul_inv_le_of_order_eq_nat_auto
+    {ρ : ℂ} {n : ℕ} (hρ1 : ρ ≠ 1)
+    (horder : analyticOrderAt riemannZeta ρ = n) :
+    ∃ r M : ℝ, 0 < r ∧ 0 ≤ M ∧ ∀ z : ℂ, z ≠ ρ → dist z ρ < r →
+      ‖-logDeriv riemannZeta z + (n : ℂ) * (z - ρ)⁻¹‖ ≤ M :=
+  ZeroFreeRegion.exists_punctured_ball_norm_neg_logDeriv_riemannZeta_add_order_mul_inv_le_of_order_eq_nat_auto
+    hρ1 horder
+
+/-- Public automatic signed zeta-specific closed-ball regular-part norm
+bridge. -/
+theorem exists_punctured_closedBall_norm_neg_logDeriv_riemannZeta_add_order_mul_inv_le_of_order_eq_nat_auto
+    {ρ : ℂ} {n : ℕ} (hρ1 : ρ ≠ 1)
+    (horder : analyticOrderAt riemannZeta ρ = n) :
+    ∃ r M : ℝ, 0 < r ∧ 0 ≤ M ∧ ∀ z : ℂ, z ≠ ρ → dist z ρ ≤ r →
+      ‖-logDeriv riemannZeta z + (n : ℂ) * (z - ρ)⁻¹‖ ≤ M :=
+  ZeroFreeRegion.exists_punctured_closedBall_norm_neg_logDeriv_riemannZeta_add_order_mul_inv_le_of_order_eq_nat_auto
+    hρ1 horder
+
 /-- Public generic bridge: analytic nonvanishing implies analytic logarithmic
 derivative. -/
 theorem analyticAt_logDeriv_of_analyticAt_ne_zero

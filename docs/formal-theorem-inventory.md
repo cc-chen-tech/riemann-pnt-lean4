@@ -764,6 +764,14 @@ Core verified declarations:
   `re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_multiplicity_regular_part_norm_log_abs_add_three`
   turn coordinate `C * log(|t| + 3)` regular-part estimates at `|t| >= 3`
   into pure `2*C*log |t|` real-part singular estimates.
+- `exists_eventually_norm_logDeriv_le_const_of_analyticAt_ne_zero` and
+  `exists_eventually_norm_neg_logDeriv_le_const_of_analyticAt_ne_zero`
+  prove local boundedness of `logDeriv g` and `-logDeriv g` for any analytic
+  function nonzero at the center.
+- The automatic `..._analyticAt_order_eq_nat_auto` lemmas, together with their
+  zeta-specific variants, turn analytic-order principal-part decompositions
+  into punctured-ball regular-part norm bounds with an internally chosen
+  constant, removing the manual `hregularBound` input.
 - `classical_zero_free_region_of_regular_part_norm_bound_and_two_t_bound`
   replaces the regular-part real estimate by the norm estimate
   `||-zeta'/zeta(s)+(s-rho)^{-1}|| <= B log |Im(s)|`, together with the
