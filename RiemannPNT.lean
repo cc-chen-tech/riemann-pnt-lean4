@@ -10610,6 +10610,19 @@ theorem log_abs_add_three_le_two_log_abs {t : ℝ} (ht : 3 ≤ |t|) :
     Real.log (|t| + 3) ≤ 2 * Real.log |t| :=
   ZeroFreeRegion.log_abs_add_three_le_two_log_abs ht
 
+/-- Public standard high-height vertical logarithmic-derivative bound on
+`1 <= sigma <= 2`. -/
+abbrev LogDerivVerticalLogBound (C T0 : ℝ) : Prop :=
+  ZeroFreeRegion.LogDerivVerticalLogBound C T0
+
+/-- Public signed version of `LogDerivVerticalLogBound`. -/
+abbrev NegLogDerivVerticalLogBound (C T0 : ℝ) : Prop :=
+  ZeroFreeRegion.NegLogDerivVerticalLogBound C T0
+
+/-- Public real-part quotient version of the vertical log-derivative bound. -/
+abbrev ReNegDerivDivVerticalLogBound (C T0 : ℝ) : Prop :=
+  ZeroFreeRegion.ReNegDerivDivVerticalLogBound C T0
+
 /-- Public standalone normalization from an affine `log(|t|+3)` vertical
 `logDeriv ζ` estimate to the exact `C * log |t|` scale. -/
 theorem exists_re_im_logDeriv_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height
@@ -10623,6 +10636,18 @@ theorem exists_re_im_logDeriv_vertical_log_bound_of_affine_log_abs_add_three_bou
         ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
           C * Real.log |t| :=
   ZeroFreeRegion.exists_re_im_logDeriv_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height
+    T0 A B hT0 hA hB hvertical
+
+/-- Public short-name constructor for the standard vertical log-derivative
+bound from an affine `log(|t|+3)` high-height estimate. -/
+theorem logDeriv_riemannZeta_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height
+    (T0 A B : ℝ) (hT0 : 3 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          A + B * Real.log (|t| + 3)) :
+    ∃ C T0' : ℝ, LogDerivVerticalLogBound C T0' :=
+  ZeroFreeRegion.logDeriv_riemannZeta_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height
     T0 A B hT0 hA hB hvertical
 
 /-- Public standalone normalization from a multiplicative `log(|t|+3)`
@@ -10655,6 +10680,18 @@ theorem exists_re_im_neg_logDeriv_vertical_log_bound_of_affine_log_abs_add_three
   ZeroFreeRegion.exists_re_im_neg_logDeriv_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height
     T0 A B hT0 hA hB hvertical
 
+/-- Public short-name signed constructor for the standard vertical
+log-derivative bound from an affine `log(|t|+3)` high-height estimate. -/
+theorem negLogDeriv_riemannZeta_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height
+    (T0 A B : ℝ) (hT0 : 3 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          A + B * Real.log (|t| + 3)) :
+    ∃ C T0' : ℝ, NegLogDerivVerticalLogBound C T0' :=
+  ZeroFreeRegion.negLogDeriv_riemannZeta_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height
+    T0 A B hT0 hA hB hvertical
+
 /-- Public signed normalization from a multiplicative `log(|t|+3)` vertical
 `-logDeriv ζ` estimate to the exact `C * log |t|` scale. -/
 theorem exists_re_im_neg_logDeriv_vertical_log_bound_of_log_abs_add_three_bound_high_height
@@ -10684,6 +10721,19 @@ theorem exists_re_neg_deriv_div_vertical_log_bound_of_affine_log_abs_add_three_b
             riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
           C * Real.log |t| :=
   ZeroFreeRegion.exists_re_neg_deriv_div_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height
+    T0 A B hT0 hA hB hvertical
+
+/-- Public short-name real-part quotient constructor for the standard
+vertical `Re(-zeta'/zeta)` bound from an affine `log(|t|+3)` high-height
+estimate. -/
+theorem reNegDerivDiv_riemannZeta_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height
+    (T0 A B : ℝ) (hT0 : 3 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          A + B * Real.log (|t| + 3)) :
+    ∃ C T0' : ℝ, ReNegDerivDivVerticalLogBound C T0' :=
+  ZeroFreeRegion.reNegDerivDiv_riemannZeta_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height
     T0 A B hT0 hA hB hvertical
 
 /-- Public real-part quotient form of the signed affine `log(|t|+3)`

@@ -43,6 +43,18 @@ when `ρ = β + i t` is a zero.  These are the hard analytic estimates usually
 supplied by zeta growth plus Borel-Caratheodory, Jensen/Hadamard, or equivalent
 zero-repulsion machinery.
 
+The boundary-strip estimate now has named Lean interfaces:
+`ZeroFreeRegion.LogDerivVerticalLogBound`,
+`ZeroFreeRegion.NegLogDerivVerticalLogBound`, and
+`ZeroFreeRegion.ReNegDerivDivVerticalLogBound`.  The constructors
+`ZeroFreeRegion.logDeriv_riemannZeta_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height`,
+`ZeroFreeRegion.negLogDeriv_riemannZeta_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height`,
+and
+`ZeroFreeRegion.reNegDerivDiv_riemannZeta_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height`
+convert future affine `A + B log(|t|+3)` high-height estimates into these
+interfaces.  They are proved normalization handoffs; they do not prove the
+zeta-specific estimate.
+
 ## Verified Starting Points
 
 The following declarations are available in the current checkout:

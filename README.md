@@ -106,6 +106,18 @@ boundary-strip logarithmic-derivative estimate of the following shape:
   ‖logDeriv riemannZeta z‖ ≤ B * Real.log |z.im|
 ```
 
+The checkout now names this objective-shaped interface as
+`ZeroFreeRegion.LogDerivVerticalLogBound`, with signed
+`ZeroFreeRegion.NegLogDerivVerticalLogBound` and real-part quotient
+`ZeroFreeRegion.ReNegDerivDivVerticalLogBound` variants.  The constructors
+`ZeroFreeRegion.logDeriv_riemannZeta_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height`,
+`ZeroFreeRegion.negLogDeriv_riemannZeta_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height`,
+and
+`ZeroFreeRegion.reNegDerivDiv_riemannZeta_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height`
+convert a future affine `A + B log(|t|+3)` high-height input into these exact
+`C log |t|` interfaces.  These are verified handoffs, not the missing
+zeta-specific high-height estimate itself.
+
 and, near a zero candidate `ρ = β + i t`, a regular-part estimate of the shape:
 
 ```text

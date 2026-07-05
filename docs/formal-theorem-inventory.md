@@ -963,20 +963,34 @@ Core verified declarations:
   packages that signed two-constant Big-O shaped interface existentially.
 - `log_abs_add_three_le_two_log_abs`
   proves `log(|t| + 3) <= 2 log |t|` for `|t| >= 3`.
+- `LogDerivVerticalLogBound`, `NegLogDerivVerticalLogBound`, and
+  `ReNegDerivDivVerticalLogBound`
+  name the standard `C * log |t|` high-height interfaces on
+  `1 <= sigma <= 2` for `logDeriv zeta`, `-logDeriv zeta`, and the real-part
+  quotient `Re(-zeta'/zeta)`.
 - `exists_re_im_logDeriv_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height`
   converts a future boundary-strip estimate
   `||logDeriv zeta (sigma+it)|| <= A + B log(|t|+3)` into the exact
   `C log |t|` target shape.
+- `logDeriv_riemannZeta_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height`
+  is the same conversion packaged against the named
+  `LogDerivVerticalLogBound` interface.
 - `exists_re_im_logDeriv_vertical_log_bound_of_log_abs_add_three_bound_high_height`
   is the multiplicative `C log(|t|+3)` version of that normalizer.
 - `exists_re_im_neg_logDeriv_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height`
   is the signed affine normalizer for future estimates on
   `||-logDeriv zeta (sigma+it)||`.
+- `negLogDeriv_riemannZeta_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height`
+  packages the signed affine normalizer against
+  `NegLogDerivVerticalLogBound`.
 - `exists_re_im_neg_logDeriv_vertical_log_bound_of_log_abs_add_three_bound_high_height`
   is the signed multiplicative `C log(|t|+3)` version.
 - `exists_re_neg_deriv_div_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height`
   converts affine `log(|t|+3)` norm growth for `logDeriv zeta` directly into
   the real-part quotient convention `Re(-zeta'/zeta) <= C log |t|`.
+- `reNegDerivDiv_riemannZeta_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height`
+  packages that real-part quotient conversion against the named
+  `ReNegDerivDivVerticalLogBound` interface.
 - `exists_re_neg_deriv_div_vertical_log_bound_of_neg_affine_log_abs_add_three_bound_high_height`
   is the signed-norm version, consuming affine growth for `||-logDeriv zeta||`.
 - `norm_sigma_add_I_mul_le_abs_add_two`
