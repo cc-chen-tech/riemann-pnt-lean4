@@ -1151,6 +1151,12 @@ Core verified declarations:
   and `reNegDerivDivVerticalLogBound_of_re_log_norm_add_three_bound_on_verticalRegion`
   provide the same direct real-part handoff for complex-variable estimates on
   `verticalRegion 1 2 T0`.
+- `exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_ReNegDerivDivVerticalLogBound`
+  applies a named direct real-part vertical bound at `u = 2t`, absorbing
+  `log |2t|` into `log |t|`, to produce the shifted third 3-4-1 input.
+- `exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_ReNegDerivDivVerticalLogBound`
+  packages the ordinary and shifted direct real-part estimates with one shared
+  constant and cutoff.
 - `classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_abs_add_three_bound_high_height`
   specializes the coordinate interface to estimates stated as
   `C * log(|t| + 3)` for both remaining zeta-specific bounds.

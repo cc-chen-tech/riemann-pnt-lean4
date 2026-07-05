@@ -11582,6 +11582,111 @@ lemma exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_NegLo
     exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_neg_vertical_norm_log_bound
       (T0 := T0) (B := B) hB hbound
 
+/-- Named-interface shifted third-term handoff from a direct real-part
+vertical bound.
+
+This is the `ReNegDerivDivVerticalLogBound` analogue of the norm-based shifted
+handoff: the ordinary vertical estimate at `sigma + iu` is applied with
+`u = 2t`, and `log |2t| <= 2 log |t|` absorbs the height change. -/
+lemma exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_ReNegDerivDivVerticalLogBound
+    {B T0 : ℝ} (h : ReNegDerivDivVerticalLogBound B T0) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤
+          C * Real.log |t| := by
+  rcases h with ⟨hB, _hT0, hbound⟩
+  have hB2 : 0 ≤ 2 * B := by nlinarith
+  let T1 : ℝ := max T0 3
+  have hshift :
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T1 ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤
+          (2 * B) * Real.log |t| := by
+    intro σ t hσ_left hσ_right ht
+    have hT0_le_abs_t : T0 ≤ |t| := (le_max_left T0 (3 : ℝ)).trans ht
+    have hthree_le_abs_t : 3 ≤ |t| := (le_max_right T0 (3 : ℝ)).trans ht
+    have htwo_le_abs_t : 2 ≤ |t| := by linarith
+    have hT0_le_abs_two_t : T0 ≤ |2 * t| := by
+      calc
+        T0 ≤ |t| := hT0_le_abs_t
+        _ ≤ |2 * t| := by
+          rw [abs_mul]
+          have ht_nonneg : 0 ≤ |t| := abs_nonneg t
+          norm_num
+          nlinarith
+    have hlog_two : Real.log |2 * t| ≤ 2 * Real.log |t| :=
+      log_abs_two_mul_le_two_log_abs htwo_le_abs_t
+    have hrewrite :
+        ((σ : ℂ) + I * (((2 * t : ℝ) : ℂ))) =
+          ((σ : ℂ) + 2 * I * t) := by
+      norm_num [Complex.ofReal_mul]
+      ring
+    calc
+      (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+          riemannZeta ((σ : ℂ) + 2 * I * t)).re
+          = (-deriv riemannZeta
+              ((σ : ℂ) + I * (((2 * t : ℝ) : ℂ))) /
+              riemannZeta ((σ : ℂ) + I * (((2 * t : ℝ) : ℂ)))).re := by
+            rw [hrewrite]
+      _ ≤ B * Real.log |2 * t| :=
+          hbound σ (2 * t) hσ_left hσ_right hT0_le_abs_two_t
+      _ ≤ B * (2 * Real.log |t|) :=
+          mul_le_mul_of_nonneg_left hlog_two hB
+      _ = (2 * B) * Real.log |t| := by ring
+  exact
+    exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_high_height_log_abs_bound
+      (T0 := T1) (B := 2 * B) hB2 hshift
+
+/-- Named-interface ordinary-plus-shifted handoff from a direct real-part
+vertical bound.
+
+This packages the two estimates actually consumed by the 3-4-1 inequality:
+`sigma + it` directly from `ReNegDerivDivVerticalLogBound`, and `sigma + 2it`
+from the shifted third-term handoff above. -/
+lemma exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_ReNegDerivDivVerticalLogBound
+    {B T0 : ℝ} (h : ReNegDerivDivVerticalLogBound B T0) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re ≤ C * Real.log |t| ∧
+        (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤ C * Real.log |t| := by
+  rcases h with ⟨hB, hT0, hbound⟩
+  rcases exists_re_neg_deriv_div_riemannZeta_vertical_log_bound_of_high_height_log_abs_bound
+      (T0 := T0) (B := B) hB hbound with
+    ⟨C₁, T₁, hC₁, hT₁, hmain⟩
+  have hNamed : ReNegDerivDivVerticalLogBound B T0 := ⟨hB, hT0, hbound⟩
+  rcases
+      exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_ReNegDerivDivVerticalLogBound
+        hNamed with
+    ⟨C₂, T₂, hC₂, hT₂, hshift⟩
+  let C : ℝ := max C₁ C₂
+  let Tstar : ℝ := max T₁ T₂
+  refine ⟨C, Tstar, ?_, ?_, ?_⟩
+  · exact hC₁.trans (le_max_left C₁ C₂)
+  · exact hT₁.trans (le_max_left T₁ T₂)
+  · intro σ t hσ_left hσ_right ht
+    have hT₁_abs : T₁ ≤ |t| := (le_max_left T₁ T₂).trans ht
+    have hT₂_abs : T₂ ≤ |t| := (le_max_right T₁ T₂).trans ht
+    have hthree_abs : 3 ≤ |t| := hT₁.trans hT₁_abs
+    have hlog_nonneg : 0 ≤ Real.log |t| := by
+      have hone_abs : 1 ≤ |t| := by linarith
+      exact Real.log_nonneg hone_abs
+    constructor
+    · calc
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re
+            ≤ C₁ * Real.log |t| := hmain σ t hσ_left hσ_right hT₁_abs
+        _ ≤ C * Real.log |t| :=
+            mul_le_mul_of_nonneg_right (le_max_left C₁ C₂) hlog_nonneg
+    · calc
+        (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re
+            ≤ C₂ * Real.log |t| := hshift σ t hσ_left hσ_right hT₂_abs
+        _ ≤ C * Real.log |t| :=
+            mul_le_mul_of_nonneg_right (le_max_right C₁ C₂) hlog_nonneg
+
 /-- Mixed BTY handoff from a named high-height vertical logarithmic-derivative
 bound.
 

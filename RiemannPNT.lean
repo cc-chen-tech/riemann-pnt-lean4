@@ -4802,6 +4802,33 @@ theorem exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_Neg
   ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_NegLogDerivVerticalLogBound
     h
 
+/-- Public named-interface shifted third-term handoff from a direct
+real-part vertical bound. -/
+theorem exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_ReNegDerivDivVerticalLogBound
+    {B T0 : ℝ} (h : ReNegDerivDivVerticalLogBound B T0) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t) /
+            riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re ≤
+          C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_ReNegDerivDivVerticalLogBound
+    h
+
+/-- Public named-interface ordinary-plus-shifted handoff from a direct
+real-part vertical bound. -/
+theorem exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_ReNegDerivDivVerticalLogBound
+    {B T0 : ℝ} (h : ReNegDerivDivVerticalLogBound B T0) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
+          C * Real.log |t| ∧
+        (-deriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t) /
+            riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re ≤
+          C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_ReNegDerivDivVerticalLogBound
+    h
+
 /-- Public shifted real-part quotient bridge from an ordinary vertical norm
 estimate. -/
 theorem exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_vertical_norm_log_bound
