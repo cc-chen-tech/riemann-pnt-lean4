@@ -3425,6 +3425,66 @@ theorem explicitFormulaConversePowerTarget_of_psiPowerErrorBelowLineExcludesZero
   simpa [ExplicitFormulaConversePowerTarget,
     PsiPowerErrorBelowLineExcludesZerosRightOf] using h
 
+/-- Contrapositive form of the general `ψ`-error zero-exclusion interface: if
+there is a nontrivial zero on or to the right of `Re(s)=β`, then the
+corresponding below-`β` `ψ` power saving cannot hold. -/
+theorem not_psi_power_error_below_line_of_exists_zero_right_of_bridge
+    {β : ℝ}
+    (hbridge : PsiPowerErrorBelowLineExcludesZerosRightOf β)
+    (hzero : ∃ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ ∧ β ≤ ρ.re) :
+    ¬ PsiPowerErrorBelowLine β := by
+  intro herror
+  rcases hzero with ⟨ρ, hρ, hρre⟩
+  exact hbridge herror ρ hρ hρre
+
+/-- Contrapositive form with the explicit-formula converse dependency named
+directly. -/
+theorem not_psi_power_error_below_line_of_exists_zero_right_of_explicit_formula_converse
+    {β : ℝ}
+    (hbridge : ExplicitFormulaConversePowerTarget β)
+    (hzero : ∃ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ ∧ β ≤ ρ.re) :
+    ¬ PsiPowerErrorBelowLine β :=
+  not_psi_power_error_below_line_of_exists_zero_right_of_bridge
+    (psiPowerErrorBelowLineExcludesZerosRightOf_of_explicit_formula_converse_power
+      hbridge)
+    hzero
+
+/-- A concrete below-`2/3` `ψ`-error input cannot coexist with a nontrivial
+zero on or to the right of any boundary `γ >= 2/3`, assuming the corresponding
+zero-exclusion route interface at `γ`. -/
+theorem not_psi_power_error_below_two_thirds_of_exists_zero_right_of_bridge
+    {γ : ℝ} (hγ : (2 / 3 : ℝ) ≤ γ)
+    (hbridge : PsiPowerErrorBelowLineExcludesZerosRightOf γ)
+    (hzero : ∃ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ ∧ γ ≤ ρ.re) :
+    ¬ PsiPowerErrorBelowTwoThirds := by
+  intro herror
+  exact
+    not_psi_power_error_below_line_of_exists_zero_right_of_bridge
+      hbridge hzero
+      (psiPowerErrorBelowLine_of_below_two_thirds_of_two_thirds_le
+        hγ herror)
+
+/-- If the `β = 2/3` zero-exclusion route is available, a zeta zero on
+`Re(s)=1/3` rules out a below-`2/3` `ψ` power saving.  This is the formal
+contrapositive of the proposed explicit-formula/PNT-error bridge. -/
+theorem not_psi_power_error_below_two_thirds_of_exists_zero_on_one_third_bridge
+    (hbridge : PsiPowerErrorBelowLineExcludesZerosRightOf (2 / 3))
+    (hzero : ∃ s : ℂ, riemannZeta s = 0 ∧ s.re = (1 / 3 : ℝ)) :
+    ¬ PsiPowerErrorBelowTwoThirds := by
+  rcases hzero with ⟨s, hs_zero, hs_re⟩
+  have hnt : RiemannHypothesis.IsNontrivialZero s := by
+    refine ⟨hs_zero, ?_, ?_⟩
+    · nlinarith [hs_re]
+    · nlinarith [hs_re]
+  have hsym : RiemannHypothesis.IsNontrivialZero (1 - s) :=
+    nontrivial_zero_symmetric' hnt
+  have hre : (2 / 3 : ℝ) ≤ (1 - s).re := by
+    have hcalc : (1 : ℝ) - (1 / 3) = 2 / 3 := by norm_num
+    exact le_of_eq (by simpa [Complex.sub_re, hs_re] using hcalc.symm)
+  exact
+    not_psi_power_error_below_two_thirds_of_exists_zero_right_of_bridge
+      (γ := 2 / 3) (by norm_num) hbridge ⟨1 - s, hsym, hre⟩
+
 /-- Conditional bridge from a general `ψ` power-saving error to a zero-free
 vertical line at the same real part. -/
 theorem no_zeros_on_vertical_line_of_psi_power_error_bridge
@@ -4710,6 +4770,31 @@ lemma nontrivialZerosFinset_sdiff_average_re_nonnegative_of_symmetricResolventLa
     T U (symmetricResolventLaplaceKernel a 1)
     (symmetricResolventLaplaceKernel_re_nonnegative_on_strip ha)
 
+/-- The center-one symmetric resolvent/Laplace kernel gives a nonnegative
+paired sum over newly included nontrivial zeros. -/
+lemma nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_symmetricResolventLaplaceKernel
+    (T U a : ℝ) (ha : 0 ≤ a) :
+    0 ≤
+      ∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        ((symmetricResolventLaplaceKernel a 1 ρ).re +
+          (symmetricResolventLaplaceKernel a 1 (1 - ρ)).re) :=
+  nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive_one
+    T U (symmetricResolventLaplaceKernel a 1)
+    (laplacePairPositive_one_symmetricResolventLaplaceKernel ha)
+
+/-- The center-one symmetric resolvent/Laplace kernel gives a nonnegative
+paired average over newly included nontrivial zeros. -/
+lemma nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_symmetricResolventLaplaceKernel
+    (T U a : ℝ) (ha : 0 ≤ a) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        ((symmetricResolventLaplaceKernel a 1 ρ).re +
+          (symmetricResolventLaplaceKernel a 1 (1 - ρ)).re)) /
+        (((nontrivialZerosFinset U \ nontrivialZerosFinset T).card : ℝ)) :=
+  nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_laplace_pair_positive_one
+    T U (symmetricResolventLaplaceKernel a 1)
+    (laplacePairPositive_one_symmetricResolventLaplaceKernel ha)
+
 /-- The affine resolvent/Laplace prototype gives a nonnegative real-part sum
 over newly included nontrivial zeros. -/
 lemma nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_affineResolventLaplaceKernel
@@ -5147,6 +5232,31 @@ lemma nontrivialZerosFinset_average_re_nonnegative_of_symmetricResolventLaplaceK
   nontrivialZerosFinset_average_re_nonnegative_of_re_nonnegative_on_critical_strip
     T (symmetricResolventLaplaceKernel a 1)
     (symmetricResolventLaplaceKernel_re_nonnegative_on_strip ha)
+
+/-- The center-one symmetric resolvent/Laplace kernel gives a nonnegative
+paired sum over height-truncated nontrivial zeros. -/
+lemma nontrivialZerosFinset_pair_sum_nonnegative_of_symmetricResolventLaplaceKernel
+    (T a : ℝ) (ha : 0 ≤ a) :
+    0 ≤
+      ∑ ρ ∈ nontrivialZerosFinset T,
+        ((symmetricResolventLaplaceKernel a 1 ρ).re +
+          (symmetricResolventLaplaceKernel a 1 (1 - ρ)).re) :=
+  nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive_one
+    T (symmetricResolventLaplaceKernel a 1)
+    (laplacePairPositive_one_symmetricResolventLaplaceKernel ha)
+
+/-- The center-one symmetric resolvent/Laplace kernel gives a nonnegative
+paired average over height-truncated nontrivial zeros. -/
+lemma nontrivialZerosFinset_pair_average_nonnegative_of_symmetricResolventLaplaceKernel
+    (T a : ℝ) (ha : 0 ≤ a) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset T,
+        ((symmetricResolventLaplaceKernel a 1 ρ).re +
+          (symmetricResolventLaplaceKernel a 1 (1 - ρ)).re)) /
+        (((nontrivialZerosFinset T).card : ℝ)) :=
+  nontrivialZerosFinset_pair_average_nonnegative_of_laplace_pair_positive_one
+    T (symmetricResolventLaplaceKernel a 1)
+    (laplacePairPositive_one_symmetricResolventLaplaceKernel ha)
 
 /-- The affine resolvent/Laplace prototype gives a nonnegative real-part sum
 over height-truncated nontrivial zeros. -/

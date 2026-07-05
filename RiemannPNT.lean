@@ -2411,6 +2411,44 @@ theorem explicitFormulaConversePowerTarget_of_psiPowerErrorBelowLineExcludesZero
   PrimeNumberTheorem.explicitFormulaConversePowerTarget_of_psiPowerErrorBelowLineExcludesZerosRightOf
     h
 
+/-- Public contrapositive form of the general `ψ`-error zero-exclusion
+interface. -/
+theorem not_psi_power_error_below_line_of_exists_zero_right_of_bridge
+    {β : ℝ}
+    (hbridge : PrimeNumberTheorem.PsiPowerErrorBelowLineExcludesZerosRightOf β)
+    (hzero : ∃ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ ∧ β ≤ ρ.re) :
+    ¬ PrimeNumberTheorem.PsiPowerErrorBelowLine β :=
+  PrimeNumberTheorem.not_psi_power_error_below_line_of_exists_zero_right_of_bridge
+    hbridge hzero
+
+/-- Public contrapositive form with the explicit-formula converse dependency
+named directly. -/
+theorem not_psi_power_error_below_line_of_exists_zero_right_of_explicit_formula_converse
+    {β : ℝ}
+    (hbridge : PrimeNumberTheorem.ExplicitFormulaConversePowerTarget β)
+    (hzero : ∃ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ ∧ β ≤ ρ.re) :
+    ¬ PrimeNumberTheorem.PsiPowerErrorBelowLine β :=
+  PrimeNumberTheorem.not_psi_power_error_below_line_of_exists_zero_right_of_explicit_formula_converse
+    hbridge hzero
+
+/-- Public concrete below-`2/3` contrapositive form at any larger boundary. -/
+theorem not_psi_power_error_below_two_thirds_of_exists_zero_right_of_bridge
+    {γ : ℝ} (hγ : (2 / 3 : ℝ) ≤ γ)
+    (hbridge : PrimeNumberTheorem.PsiPowerErrorBelowLineExcludesZerosRightOf γ)
+    (hzero : ∃ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ ∧ γ ≤ ρ.re) :
+    ¬ PrimeNumberTheorem.PsiPowerErrorBelowTwoThirds :=
+  PrimeNumberTheorem.not_psi_power_error_below_two_thirds_of_exists_zero_right_of_bridge
+    hγ hbridge hzero
+
+/-- Public concrete contrapositive: a zero on `Re(s)=1/3` rules out a
+below-`2/3` `ψ` power saving once the `2/3` zero-exclusion bridge is supplied. -/
+theorem not_psi_power_error_below_two_thirds_of_exists_zero_on_one_third_bridge
+    (hbridge : PrimeNumberTheorem.PsiPowerErrorBelowLineExcludesZerosRightOf (2 / 3))
+    (hzero : ∃ s : ℂ, riemannZeta s = 0 ∧ s.re = (1 / 3 : ℝ)) :
+    ¬ PrimeNumberTheorem.PsiPowerErrorBelowTwoThirds :=
+  PrimeNumberTheorem.not_psi_power_error_below_two_thirds_of_exists_zero_on_one_third_bridge
+    hbridge hzero
+
 /-- Public bridge: RH excludes zeta zeros on `Re(s)=1/3`. -/
 theorem no_zeros_on_one_third_of_RH
     (hRH : _root_.RiemannHypothesis.Statement) :
@@ -3031,6 +3069,31 @@ theorem nontrivialZerosFinset_sdiff_average_re_nonnegative_of_symmetricResolvent
   PrimeNumberTheorem.nontrivialZerosFinset_sdiff_average_re_nonnegative_of_symmetricResolventLaplaceKernel
     T U a ha
 
+/-- Public new-zero paired-sum nonnegativity for the center-one symmetric
+resolvent/Laplace kernel. -/
+theorem nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_symmetricResolventLaplaceKernel
+    (T U a : ℝ) (ha : 0 ≤ a) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+        PrimeNumberTheorem.nontrivialZerosFinset T,
+      ((symmetricResolventLaplaceKernel a 1 ρ).re +
+        (symmetricResolventLaplaceKernel a 1 (1 - ρ)).re) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_symmetricResolventLaplaceKernel
+    T U a ha
+
+/-- Public new-zero paired-average nonnegativity for the center-one symmetric
+resolvent/Laplace kernel. -/
+theorem nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_symmetricResolventLaplaceKernel
+    (T U a : ℝ) (ha : 0 ≤ a) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T,
+        ((symmetricResolventLaplaceKernel a 1 ρ).re +
+          (symmetricResolventLaplaceKernel a 1 (1 - ρ)).re)) /
+        (((PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ)) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_symmetricResolventLaplaceKernel
+    T U a ha
+
 /-- Public new-zero real-part sum nonnegativity for the affine
 resolvent/Laplace prototype kernel. -/
 theorem nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_affineResolventLaplaceKernel
@@ -3533,6 +3596,28 @@ theorem nontrivialZerosFinset_average_re_nonnegative_of_symmetricResolventLaplac
         (symmetricResolventLaplaceKernel a 1 ρ).re) /
         ((PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ) :=
   PrimeNumberTheorem.nontrivialZerosFinset_average_re_nonnegative_of_symmetricResolventLaplaceKernel
+    T a ha
+
+/-- Public finite-zero paired-sum nonnegativity for the center-one symmetric
+resolvent/Laplace kernel. -/
+theorem nontrivialZerosFinset_pair_sum_nonnegative_of_symmetricResolventLaplaceKernel
+    (T a : ℝ) (ha : 0 ≤ a) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+      ((symmetricResolventLaplaceKernel a 1 ρ).re +
+        (symmetricResolventLaplaceKernel a 1 (1 - ρ)).re) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_pair_sum_nonnegative_of_symmetricResolventLaplaceKernel
+    T a ha
+
+/-- Public finite-zero paired-average nonnegativity for the center-one
+symmetric resolvent/Laplace kernel. -/
+theorem nontrivialZerosFinset_pair_average_nonnegative_of_symmetricResolventLaplaceKernel
+    (T a : ℝ) (ha : 0 ≤ a) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+        ((symmetricResolventLaplaceKernel a 1 ρ).re +
+          (symmetricResolventLaplaceKernel a 1 (1 - ρ)).re)) /
+        ((PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_pair_average_nonnegative_of_symmetricResolventLaplaceKernel
     T a ha
 
 /-- Public finite-zero real-part sum nonnegativity for the affine

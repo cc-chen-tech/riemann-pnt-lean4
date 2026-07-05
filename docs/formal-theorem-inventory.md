@@ -1803,6 +1803,12 @@ Core verified declarations:
   `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_symmetricResolventLaplaceKernel`
   specialize the center-one symmetric resolvent to full finite-zero and
   new-zero contribution sums and averages.
+- `nontrivialZerosFinset_pair_sum_nonnegative_of_symmetricResolventLaplaceKernel`,
+  `nontrivialZerosFinset_pair_average_nonnegative_of_symmetricResolventLaplaceKernel`,
+  `nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_symmetricResolventLaplaceKernel`,
+  and
+  `nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_symmetricResolventLaplaceKernel`
+  expose the paired contribution versions for the single symmetric kernel.
 - `symmetricResolventLaplaceKernelCombo`,
   `symmetricResolventLaplaceKernelCombo_re_nonnegative_on_strip`,
   `laplacePairPositive_symmetricResolventLaplaceKernelCombo`, and
@@ -2223,6 +2229,10 @@ Route interfaces:
 - `RiemannPNT.API.no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_below_two_thirds`
   public concrete reflected-line wrapper for any `beta >= 2/3`, using
   `PsiPowerErrorBelowTwoThirds` and the same conditional truncated route.
+- `RiemannPNT.API.not_psi_power_error_below_line_of_exists_zero_right_of_bridge`
+  and its explicit-formula / below-`2/3` variants are contrapositive facades:
+  under the same future zero-exclusion bridge, an actual zero at or to the
+  right of the boundary rules out the corresponding `psi` power saving.
 - `RiemannExplorer.Conrey40.conrey_40_percent_zeros_on_critical_line_target`
   alias interface to `KnownResults.conrey_40_percent_zeros_on_critical_line_target`.
 - `MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum`
