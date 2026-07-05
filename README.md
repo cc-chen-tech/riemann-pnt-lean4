@@ -781,7 +781,10 @@ and the reflected `Re(s)=1/3` consequence of this conditional route, including
 direct wrappers for the concrete `theta < 2/3` `psi`-error input; the same
 bridges are also exposed inside
 `PrimeNumberTheorem.ExplicitFormulaTruncated` and
-`RiemannPNT.API.ExplicitFormulaTruncated`.  The truncated route is also
+`RiemannPNT.API.ExplicitFormulaTruncated`.  The public API also includes
+monotone-error truncated-route wrappers, where a `psi` power saving below a
+smaller boundary feeds a larger-boundary truncated route and yields direct or
+reflected zero exclusion at the larger boundary.  The truncated route is also
 repackaged directly as
 `PsiPowerErrorBelowLineExcludesZerosRightOf`, matching the right-half
 zero-exclusion route interface consumed by the general `psi`-error bridges.  It also

@@ -9,7 +9,7 @@ any unresolved analytic theorem.
 
 - Former worktree: `/Users/luicy/AI/Riemann/riemann-pnt-lean4/.worktrees/riemann-three-directions-research`
 - Branch snapshot: `research/three-directions`, now aligned with `main`
-- Current base: `ec2c729 feat(explicit-formula): expose truncated route no-zero bridges`
+- Current base: `95d4706 feat(zero-free): add compact real-part affine patch`
 - Research work already carried into `main` covers:
   - signed BTY detector/Borel facades;
   - center-one and general-center zero-pair bridges;
@@ -339,10 +339,15 @@ Verified assets now include:
   `no_zeros_on_one_third_of_truncated_explicit_formula_converse_route`;
   `no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_below_two_thirds`;
   `no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route`;
-  `no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_below_two_thirds`.
+  `no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_below_two_thirds`;
+  `no_zeros_on_vertical_line_of_truncated_explicit_formula_converse_route_mono_error`;
+  `no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error`.
   These now live in the core `ExplicitFormulaTruncated` module as well as the
   public `RiemannPNT.API.ExplicitFormulaTruncated` namespace; the route
-  conversion is also exposed as a top-level `RiemannPNT.API` theorem.
+  conversion and monotone-error zero-exclusion wrappers are also exposed as
+  top-level `RiemannPNT.API` theorems.  The monotone wrappers let a `psi` power
+  saving below a smaller boundary feed a larger-boundary truncated route,
+  yielding direct and reflected zero exclusion at that larger boundary.
 - explicit-formula auxiliary normalizers:
   `ExplicitFormulaAux.chebyshevPsi0`;
   `ExplicitFormulaAux.jumpVonMangoldt`;
@@ -383,7 +388,9 @@ Verified assets now include:
   `no_zeros_on_vertical_line_of_psi_power_error_below_two_thirds_mono_bridge`;
   `no_zeros_on_reflected_line_of_psi_power_error_below_two_thirds_mono_bridge`;
   `no_zeros_on_vertical_line_of_explicit_formula_converse_power_mono_error`;
-  `no_zeros_on_reflected_line_of_explicit_formula_converse_power_mono_error`.
+  `no_zeros_on_reflected_line_of_explicit_formula_converse_power_mono_error`;
+  `no_zeros_on_vertical_line_of_truncated_explicit_formula_converse_route_mono_error`;
+  `no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error`.
 - critical-strip zero-line/existence normalizers:
   `not_exists_nontrivial_zero_on_line_of_no_zeros_on_vertical_line`;
   `no_zeros_on_vertical_line_of_not_exists_nontrivial_zero_on_line`;

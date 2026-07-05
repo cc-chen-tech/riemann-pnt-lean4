@@ -262,5 +262,36 @@ theorem no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_
     (PrimeNumberTheorem.psiPowerErrorBelowLine_of_below_two_thirds_of_two_thirds_le
       hβ_two_thirds herror)
 
+/-- Monotone-error version of the truncated explicit-formula route: a `ψ`
+power saving below a smaller boundary `β` feeds a truncated route at any larger
+boundary `γ`. -/
+theorem no_zeros_on_vertical_line_of_truncated_explicit_formula_converse_route_mono_error
+    {β γ : ℝ} (hβγ : β ≤ γ) (hγ_pos : 0 < γ) (hγ_lt_one : γ < 1)
+    (hroute : ExplicitFormulaTruncatedConverseRoute γ)
+    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
+      ExplicitFormulaTruncatedTarget T hT x hx)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine γ :=
+  PrimeNumberTheorem.no_zeros_on_vertical_line_of_psi_power_error_bridge_mono_error
+    hβγ hγ_pos hγ_lt_one
+    (psiPowerErrorBelowLineExcludesZerosRightOf_of_truncated_route
+      hroute hexplicit)
+    herror
+
+/-- Reflected-line monotone-error version of the truncated explicit-formula
+route. -/
+theorem no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error
+    {β γ : ℝ} (hβγ : β ≤ γ) (hγ_pos : 0 < γ) (hγ_lt_one : γ < 1)
+    (hroute : ExplicitFormulaTruncatedConverseRoute γ)
+    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
+      ExplicitFormulaTruncatedTarget T hT x hx)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (1 - γ) :=
+  PrimeNumberTheorem.no_zeros_on_reflected_line_of_psi_power_error_bridge_mono_error
+    hβγ hγ_pos hγ_lt_one
+    (psiPowerErrorBelowLineExcludesZerosRightOf_of_truncated_route
+      hroute hexplicit)
+    herror
+
 end ExplicitFormulaTruncated
 end PrimeNumberTheorem
