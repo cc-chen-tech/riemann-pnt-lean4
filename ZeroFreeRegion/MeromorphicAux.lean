@@ -11469,6 +11469,29 @@ lemma exists_norm_riemannZeta_sigma_two_it_pos_lower_bound_of_high_height_pos_lo
   · have ht_high : T0 ≤ |t| := le_of_lt (lt_of_not_ge ht_low)
     exact (min_le_right η₀ η).trans (hhigh σ t hσ ht_high)
 
+/-- Patch the compact positive lower bound for `ζ` on bounded height bands
+with a future high-height lower bound to cover the whole vertical region.
+
+The compact bounded-height part is already proved by nonvanishing and
+compactness. The remaining analytic input is exactly the high-height lower
+bound for `T <= |Im z|`, so this lemma exposes the handoff in the shape used by
+the derivative-growth/lower-bound zero-free-region bridge. -/
+lemma exists_norm_riemannZeta_pos_lower_bound_on_verticalRegion_of_compact_band_and_high_height
+    {H T ηHigh : ℝ} (hH : 0 < H) (hηHigh : 0 < ηHigh)
+    (hhigh : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| → ηHigh ≤ ‖riemannZeta z‖) :
+    ∃ η > 0, ∀ z : ℂ, z ∈ verticalRegion 1 2 H →
+      η ≤ ‖riemannZeta z‖ := by
+  rcases exists_norm_riemannZeta_pos_lower_bound_on_compact_vertical_band
+      (H := H) (T := T) hH with ⟨ηCompact, hηCompact_pos, hcompact⟩
+  refine ⟨min ηCompact ηHigh, lt_min hηCompact_pos hηHigh, ?_⟩
+  intro z hz
+  rw [mem_verticalRegion] at hz
+  by_cases hle : |z.im| ≤ T
+  · exact le_trans (min_le_left _ _) (hcompact z hz.1 hz.2 hle)
+  · have hT : T ≤ |z.im| := le_of_not_ge hle
+    exact le_trans (min_le_right _ _) (hhigh z hz.1 hT)
+
 /-- On any bounded positive-height vertical band in the right half-plane,
 `logDeriv ζ` has a finite norm bound.
 

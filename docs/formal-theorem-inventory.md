@@ -181,6 +181,10 @@ Core verified declarations:
   bound above any fixed `H > 0`.
 - `exists_norm_riemannZeta_sigma_two_it_pos_lower_bound_of_high_height_pos_lower_bound`
   is the same compact patch for the shifted 3-4-1 point `sigma + 2it`.
+- `exists_norm_riemannZeta_pos_lower_bound_on_verticalRegion_of_compact_band_and_high_height`
+  patches that proved compact-band lower bound with a future high-height
+  lower bound `T <= |Im z|` to supply one positive lower bound on
+  `verticalRegion 1 2 H`.
 - `exists_norm_logDeriv_riemannZeta_bound_on_compact_vertical_band`
   proves that `logDeriv zeta` has a finite norm bound on every compact
   positive-height band `1 <= Re z <= 2`, `H <= |Im z| <= T`.

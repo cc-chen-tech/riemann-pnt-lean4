@@ -7169,8 +7169,19 @@ theorem exists_norm_riemannZeta_sigma_two_it_pos_lower_bound_of_high_height_pos_
     ∃ η' > 0, ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 →
       H ≤ |t| →
       η' ≤ ‖riemannZeta ((σ : ℂ) + 2 * Complex.I * t)‖ :=
-  ZeroFreeRegion.exists_norm_riemannZeta_sigma_two_it_pos_lower_bound_of_high_height_pos_lower_bound
+    ZeroFreeRegion.exists_norm_riemannZeta_sigma_two_it_pos_lower_bound_of_high_height_pos_lower_bound
     hH hη hhigh
+
+/-- Public patch from compact-band and future high-height positive lower bounds
+for `ζ` to a full vertical-region positive lower bound. -/
+theorem exists_norm_riemannZeta_pos_lower_bound_on_verticalRegion_of_compact_band_and_high_height
+    {H T ηHigh : ℝ} (hH : 0 < H) (hηHigh : 0 < ηHigh)
+    (hhigh : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| → ηHigh ≤ ‖riemannZeta z‖) :
+    ∃ η > 0, ∀ z : ℂ, z ∈ ZeroFreeRegion.verticalRegion 1 2 H →
+      η ≤ ‖riemannZeta z‖ :=
+  ZeroFreeRegion.exists_norm_riemannZeta_pos_lower_bound_on_verticalRegion_of_compact_band_and_high_height
+    hH hηHigh hhigh
 
 /-- Public compact bounded-height norm bound for `logDeriv ζ` in the right
 half-strip `1 <= Re(z) <= 2`, `H <= |Im(z)| <= T`. -/

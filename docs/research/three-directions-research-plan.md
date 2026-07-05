@@ -9,13 +9,16 @@ any unresolved analytic theorem.
 
 - Former worktree: `/Users/luicy/AI/Riemann/riemann-pnt-lean4/.worktrees/riemann-three-directions-research`
 - Branch snapshot: `research/three-directions`, now aligned with `main`
-- Current base: `4cadc7e docs(research): record weighted resolvent kernel bridges`
+- Current base: `ec2c729 feat(explicit-formula): expose truncated route no-zero bridges`
 - Research work already carried into `main` covers:
   - signed BTY detector/Borel facades;
   - center-one and general-center zero-pair bridges;
   - explicit-formula tail bridges from eventual/no-new-zero and global-height inputs;
   - a zeta polynomial-growth handoff to the classical high-height
-    `log |t|` scale.
+    `log |t|` scale;
+  - compact-band positive lower bounds for `zeta` and a patching handoff from
+    those proved compact bounds plus a future high-height lower bound to the
+    full `verticalRegion 1 2 H` lower-bound input.
 - Rule: do not present route interfaces or `def ... : Prop` targets as proved
   mathematics.
 
@@ -167,6 +170,14 @@ a usable zeta polynomial-growth input is available, but it does not prove that
 input or a log-derivative estimate.  The fixed-margin closure is useful
 infrastructure, not the classical shrinking-width estimate at
 `sigma = 1 + a / log |t|`.
+
+The lower-bound side now has the companion bridge
+`exists_norm_riemannZeta_pos_lower_bound_on_verticalRegion_of_compact_band_and_high_height`:
+the compact positive-height band is discharged by the proved nonvanishing plus
+compactness theorem, while the remaining assumption is exactly the future
+high-height lower bound for `T <= |Im z|`.  This narrows the derivative-growth
+route to two real analytic inputs on the full strip: an upper bound for `ζ'`
+and a positive lower bound for `ζ` at high height.
 
 ## Direction 2: Stechkin/Heath-Brown pair positivity
 
