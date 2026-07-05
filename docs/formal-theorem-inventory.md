@@ -1363,6 +1363,9 @@ Core verified declarations:
   is the positive-sign center-discharged version in the same full-height scale;
   it combines the fixed-margin `logDeriv zeta` bound with the explicit
   `(n : Real) / r` principal-part center cost.
+- `exists_borelCaratheodory_neg_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_norm_of_affine_re_le_half_radius_fixed_margin_center`
+  is the signed center-discharged full-height version, using the fixed-margin
+  `-logDeriv zeta` bound and the same `(n : Real) / r` center cost.
 - `re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_shift_le_log_norm_of_affine_regularPart_re_le_half_radius`
   converts the signed multiplicity-aware regular-part norm bound into the
   full-height zero-repulsion estimate
