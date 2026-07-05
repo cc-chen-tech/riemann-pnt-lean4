@@ -3874,6 +3874,37 @@ abbrev ReNegDerivDivVerticalLogBound (C T0 : ℝ) : Prop :=
           riemannZeta ((σ : ℂ) + I * t)).re ≤
         C * Real.log |t|
 
+/-- High-height local regular-part estimate at a zero candidate.
+
+This is the second hard analytic input for the quantitative zero-free-region
+chain, complementary to `LogDerivVerticalLogBound`.  It says that after
+subtracting the principal part `(s - rho)⁻¹` of a simple zero candidate on the
+same horizontal line, `logDeriv ζ` is `O(log |t|)` in the strip
+`1 <= Re(s) <= 2`.  The statement is a reusable target-shaped interface; it is
+not a proof of the zeta-specific Borel-Carathéodory/Jensen estimate. -/
+abbrev LogDerivRegularPartLogBound (C T0 : ℝ) : Prop :=
+  0 ≤ C ∧ 3 ≤ T0 ∧
+    ∀ σ β t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+      riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+      0 < σ - β →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+            (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+          C * Real.log |t|
+
+/-- Multiplicity-aware version of `LogDerivRegularPartLogBound`.
+
+This is the form expected from a local divisor argument when the zero
+candidate may have multiplicity `n`. -/
+abbrev MultiplicityLogDerivRegularPartLogBound (C T0 : ℝ) : Prop :=
+  0 ≤ C ∧ 3 ≤ T0 ∧
+    ∀ σ β t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+      riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+      0 < σ - β →
+        ∃ n : ℕ, 0 < n ∧
+          ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+              (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+            C * Real.log |t|
+
 /-- A named norm bound for `logDeriv ζ` directly supplies the corresponding
 real-part quotient bound. -/
 lemma reNegDerivDivVerticalLogBound_of_logDerivVerticalLogBound
@@ -3902,6 +3933,45 @@ lemma logDerivVerticalLogBound_of_negLogDerivVerticalLogBound
     ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖
         = ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ := (norm_neg _).symm
     _ ≤ C * Real.log |t| := hbound σ t hσ_left hσ_right ht
+
+/-- Named-input assembly of the two remaining high-height analytic estimates
+into the classical zero-free-region target.
+
+This theorem does not prove either hard estimate.  It verifies that the
+already-formalized de la Vallee Poussin chain closes once the regular-part
+bound and vertical logarithmic-derivative bound are supplied with the same
+height cutoff. -/
+lemma classical_zero_free_region_of_LogDerivRegularPartLogBound_and_LogDerivVerticalLogBound
+    {Bregular Bvertical T0 : ℝ}
+    (hregular : LogDerivRegularPartLogBound Bregular T0)
+    (hvertical : LogDerivVerticalLogBound Bvertical T0) :
+    classical_zero_free_region := by
+  rcases hregular with ⟨hBregular, hT0, hregular⟩
+  rcases hvertical with ⟨hBvertical, _hT0_vertical, hvertical⟩
+  refine
+    classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height
+      T0 Bregular Bvertical (by linarith) hBregular hBvertical ?_ ?_
+  · intro σ β t ht hσ_mem hζ hβ hsub
+    exact hregular σ β t hσ_mem.1 hσ_mem.2 ht hζ hβ hsub
+  · intro σ t ht hσ_mem
+    exact hvertical σ t hσ_mem.1 hσ_mem.2 ht
+
+/-- Multiplicity-aware named-input assembly of the two remaining high-height
+analytic estimates into the classical zero-free-region target. -/
+lemma classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_and_LogDerivVerticalLogBound
+    {Bregular Bvertical T0 : ℝ}
+    (hregular : MultiplicityLogDerivRegularPartLogBound Bregular T0)
+    (hvertical : LogDerivVerticalLogBound Bvertical T0) :
+    classical_zero_free_region := by
+  rcases hregular with ⟨hBregular, hT0, hregular⟩
+  rcases hvertical with ⟨hBvertical, _hT0_vertical, hvertical⟩
+  refine
+    classical_zero_free_region_of_re_im_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height
+      T0 Bregular Bvertical (by linarith) hBregular hBvertical ?_ ?_
+  · intro σ β t ht hσ_mem hζ hβ hsub
+    exact hregular σ β t hσ_mem.1 hσ_mem.2 ht hζ hβ hsub
+  · intro σ t ht hσ_mem
+    exact hvertical σ t hσ_mem.1 hσ_mem.2 ht
 
 /-- Standalone normalization of a future vertical-strip log-derivative
 estimate already stated in the safe height scale `A + B * log(|t| + 3)`.

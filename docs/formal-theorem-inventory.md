@@ -974,11 +974,24 @@ Core verified declarations:
   name the standard `C * log |t|` high-height interfaces on
   `1 <= sigma <= 2` for `logDeriv zeta`, `-logDeriv zeta`, and the real-part
   quotient `Re(-zeta'/zeta)`.
+- `LogDerivRegularPartLogBound`
+  names the companion high-height zero-candidate regular-part interface
+  `||logDeriv zeta (sigma+it) - (sigma-beta)^(-1)|| <= C log |t|`
+  for zeros `beta+it` with `beta < 1`.
+- `MultiplicityLogDerivRegularPartLogBound`
+  is the multiplicity-aware version of that regular-part interface, allowing
+  the principal part to be `n/(sigma-beta)` for some positive natural `n`.
 - `reNegDerivDivVerticalLogBound_of_logDerivVerticalLogBound`
   turns the named `logDeriv zeta` norm interface into the named
   `Re(-zeta'/zeta)` interface.
 - `logDerivVerticalLogBound_of_negLogDerivVerticalLogBound`
   turns the named signed norm interface into the unsigned norm interface.
+- `classical_zero_free_region_of_LogDerivRegularPartLogBound_and_LogDerivVerticalLogBound`
+  assembles the named regular-part interface and named vertical interface into
+  the classical zero-free-region target.
+- `classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_and_LogDerivVerticalLogBound`
+  is the same named-input assembly with zero multiplicity in the local
+  principal part.
 - `exists_re_im_logDeriv_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height`
   converts a future boundary-strip estimate
   `||logDeriv zeta (sigma+it)|| <= A + B log(|t|+3)` into the exact

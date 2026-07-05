@@ -25,6 +25,14 @@ abbrev NegLogDerivVerticalLogBound (C T0 : ℝ) : Prop :=
 abbrev ReNegDerivDivVerticalLogBound (C T0 : ℝ) : Prop :=
   ZeroFreeRegion.ReNegDerivDivVerticalLogBound C T0
 
+/-- Public high-height local regular-part estimate at a zero candidate. -/
+abbrev LogDerivRegularPartLogBound (C T0 : ℝ) : Prop :=
+  ZeroFreeRegion.LogDerivRegularPartLogBound C T0
+
+/-- Public multiplicity-aware local regular-part estimate. -/
+abbrev MultiplicityLogDerivRegularPartLogBound (C T0 : ℝ) : Prop :=
+  ZeroFreeRegion.MultiplicityLogDerivRegularPartLogBound C T0
+
 /-- Public conversion from the named `logDeriv ζ` norm bound to the
 `Re(-zeta'/zeta)` bound. -/
 theorem reNegDerivDivVerticalLogBound_of_logDerivVerticalLogBound
@@ -38,6 +46,26 @@ theorem logDerivVerticalLogBound_of_negLogDerivVerticalLogBound
     {C T0 : ℝ} (h : NegLogDerivVerticalLogBound C T0) :
     LogDerivVerticalLogBound C T0 :=
   ZeroFreeRegion.logDerivVerticalLogBound_of_negLogDerivVerticalLogBound h
+
+/-- Public named-input assembly of the two remaining high-height analytic
+estimates into the classical zero-free-region target. -/
+theorem classical_zero_free_region_of_LogDerivRegularPartLogBound_and_LogDerivVerticalLogBound
+    {Bregular Bvertical T0 : ℝ}
+    (hregular : LogDerivRegularPartLogBound Bregular T0)
+    (hvertical : LogDerivVerticalLogBound Bvertical T0) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_LogDerivRegularPartLogBound_and_LogDerivVerticalLogBound
+    hregular hvertical
+
+/-- Public multiplicity-aware named-input assembly of the two remaining
+high-height analytic estimates into the classical zero-free-region target. -/
+theorem classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_and_LogDerivVerticalLogBound
+    {Bregular Bvertical T0 : ℝ}
+    (hregular : MultiplicityLogDerivRegularPartLogBound Bregular T0)
+    (hvertical : LogDerivVerticalLogBound Bvertical T0) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_and_LogDerivVerticalLogBound
+    hregular hvertical
 
 /-- Public compatibility bridge between the project's prime-counting
 normalization and Mathlib's `Nat.primeCounting`. -/

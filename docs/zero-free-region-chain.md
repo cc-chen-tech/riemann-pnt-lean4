@@ -60,6 +60,19 @@ The named interfaces also feed the shifted 3-4-1 inputs directly via
 and
 `ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_NegLogDerivVerticalLogBound`.
 
+The matching zero-candidate regular-part estimate is now named as well:
+`ZeroFreeRegion.LogDerivRegularPartLogBound` and
+`ZeroFreeRegion.MultiplicityLogDerivRegularPartLogBound` state the expected
+`O(log |t|)` bound after subtracting the principal part of a zero on the same
+horizontal line.  The proved closures
+`ZeroFreeRegion.classical_zero_free_region_of_LogDerivRegularPartLogBound_and_LogDerivVerticalLogBound`
+and
+`ZeroFreeRegion.classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_and_LogDerivVerticalLogBound`
+show that the remaining classical zero-free-region target reduces to these
+named regular-part estimates plus the named vertical estimate.  This is still
+conditional: those two zeta-specific high-height estimates are not proved in
+this checkout.
+
 ## Verified Starting Points
 
 The following declarations are available in the current checkout:

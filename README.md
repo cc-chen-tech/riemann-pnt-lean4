@@ -118,7 +118,18 @@ convert a future affine `A + B log(|t|+3)` high-height input into these exact
 `C log |t|` interfaces.  These are verified handoffs, not the missing
 zeta-specific high-height estimate itself.
 
-and, near a zero candidate `ρ = β + i t`, a regular-part estimate of the shape:
+The second missing high-height input is also named in Lean:
+`ZeroFreeRegion.LogDerivRegularPartLogBound` and
+`ZeroFreeRegion.MultiplicityLogDerivRegularPartLogBound` state the expected
+local regular-part estimate near a zero candidate `ρ = β + i t`, with and
+without explicit zero multiplicity.  The verified conditional closures
+`ZeroFreeRegion.classical_zero_free_region_of_LogDerivRegularPartLogBound_and_LogDerivVerticalLogBound`
+and
+`ZeroFreeRegion.classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_and_LogDerivVerticalLogBound`
+show that these named regular-part inputs plus the named vertical bound close
+the existing Lean target `classical_zero_free_region`.
+
+Mathematically, that regular-part estimate has the shape:
 
 ```text
 Re(-ζ'/ζ(σ + i t)) <= -1 / (σ - β) + O(log |t|).
@@ -427,6 +438,8 @@ Lean declarations in `ZeroFreeRegion.lean` and
 | `ZeroFreeRegion.classical_zero_free_region_of_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height` | `lemma` | High-height version of the positive `logDeriv ζ` regular-part plus vertical-strip norm closure, requiring the two analytic estimates only for `T0 ≤ |Im|` with `T0 ≥ 2`. | Lets future Borel/Jensen estimates proved only above a large height close the full classical target via the existing compact patch. |
 | `ZeroFreeRegion.classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height` | `lemma` | Coordinate high-height version of the unit-principal positive `logDeriv ζ` regular-part closure, with inputs stated directly in `σ, β, t`. | Matches the most common future Borel/Jensen estimate shape before adding zero multiplicity bookkeeping. |
 | `ZeroFreeRegion.classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height` | `lemma` | Existential wrapper for the unit-principal coordinate high-height closure. | Single-entry target when the regular-part and vertical estimates are produced together in real coordinates. |
+| `ZeroFreeRegion.LogDerivRegularPartLogBound` / `ZeroFreeRegion.MultiplicityLogDerivRegularPartLogBound` | `abbrev : Prop` | Names the high-height zero-candidate regular-part `O(log |t|)` estimate, in simple-principal-part and multiplicity-aware forms. | Makes the second remaining hard analytic input as explicit as the vertical `LogDerivVerticalLogBound` interface. |
+| `ZeroFreeRegion.classical_zero_free_region_of_LogDerivRegularPartLogBound_and_LogDerivVerticalLogBound` / multiplicity-aware variant | `lemma` | Assembles the named regular-part input and named vertical log-derivative input into `classical_zero_free_region`. | Proves the current Lean zero-free chain is closed modulo exactly those two zeta-specific high-height estimates. |
 | `ZeroFreeRegion.classical_zero_free_region_of_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height` | `lemma` | High-height closure whose regular-part input may isolate `n/(s-ρ)` for a positive zero multiplicity, plus the vertical-strip `logDeriv` norm bound. | Aligns the final high-height conditional interface with the multiplicity-weighted local principal-part decomposition, avoiding a hidden simple-zero assumption. |
 | `ZeroFreeRegion.classical_zero_free_region_of_exists_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height` | `lemma` | Existential packaging of the multiplicity-aware high-height regular-part and vertical-strip norm inputs. | Single-entry high-height conditional interface for future multiplicity-aware Borel/Jensen estimates. |
 | `ZeroFreeRegion.classical_zero_free_region_of_re_im_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height` | `lemma` | Coordinate version of the multiplicity-aware high-height closure, with estimates stated in real variables `σ, β, t`. | Lets future estimates written directly for `σ+it` and same-height zero candidates `β+it` feed the multiplicity-aware bridge. |
