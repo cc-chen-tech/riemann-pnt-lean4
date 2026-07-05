@@ -3874,6 +3874,35 @@ abbrev ReNegDerivDivVerticalLogBound (C T0 : ℝ) : Prop :=
           riemannZeta ((σ : ℂ) + I * t)).re ≤
         C * Real.log |t|
 
+/-- A named norm bound for `logDeriv ζ` directly supplies the corresponding
+real-part quotient bound. -/
+lemma reNegDerivDivVerticalLogBound_of_logDerivVerticalLogBound
+    {C T0 : ℝ} (h : LogDerivVerticalLogBound C T0) :
+    ReNegDerivDivVerticalLogBound C T0 := by
+  rcases h with ⟨hC, hT0, hbound⟩
+  refine ⟨hC, hT0, ?_⟩
+  intro σ t hσ_left hσ_right ht
+  let z : ℂ := (σ : ℂ) + I * t
+  calc
+    (-deriv riemannZeta z / riemannZeta z).re
+        ≤ ‖-deriv riemannZeta z / riemannZeta z‖ := Complex.re_le_norm _
+    _ = ‖logDeriv riemannZeta z‖ :=
+        norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv z
+    _ ≤ C * Real.log |t| := by
+        simpa [z] using hbound σ t hσ_left hσ_right ht
+
+/-- A named signed norm bound is equivalent to the unsigned norm bound. -/
+lemma logDerivVerticalLogBound_of_negLogDerivVerticalLogBound
+    {C T0 : ℝ} (h : NegLogDerivVerticalLogBound C T0) :
+    LogDerivVerticalLogBound C T0 := by
+  rcases h with ⟨hC, hT0, hbound⟩
+  refine ⟨hC, hT0, ?_⟩
+  intro σ t hσ_left hσ_right ht
+  calc
+    ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖
+        = ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ := (norm_neg _).symm
+    _ ≤ C * Real.log |t| := hbound σ t hσ_left hσ_right ht
+
 /-- Standalone normalization of a future vertical-strip log-derivative
 estimate already stated in the safe height scale `A + B * log(|t| + 3)`.
 
@@ -11023,6 +11052,49 @@ lemma exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_neg_v
   exact
     exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_vertical_norm_log_bound
       (T0 := T0) (B := B) hB hnorm
+
+/-- Named-interface version of
+`exists_norm_logDeriv_riemannZeta_shift_pair_vertical_log_bound_of_vertical_log_bound`. -/
+lemma exists_norm_logDeriv_riemannZeta_shift_pair_vertical_log_bound_of_LogDerivVerticalLogBound
+    {B T0 : ℝ} (h : LogDerivVerticalLogBound B T0) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤ C * Real.log |t| ∧
+        ‖logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖ ≤
+          C * Real.log |t| := by
+  rcases h with ⟨hB, _hT0, hbound⟩
+  exact
+    exists_norm_logDeriv_riemannZeta_shift_pair_vertical_log_bound_of_vertical_log_bound
+      (T0 := T0) (B := B) hB hbound
+
+/-- Named-interface version of the real-part 3-4-1 shifted-pair handoff. -/
+lemma exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_LogDerivVerticalLogBound
+    {B T0 : ℝ} (h : LogDerivVerticalLogBound B T0) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re ≤ C * Real.log |t| ∧
+        (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤ C * Real.log |t| := by
+  rcases h with ⟨hB, _hT0, hbound⟩
+  exact
+    exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_vertical_norm_log_bound
+      (T0 := T0) (B := B) hB hbound
+
+/-- Named-interface signed version of the real-part 3-4-1 shifted-pair
+handoff. -/
+lemma exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_NegLogDerivVerticalLogBound
+    {B T0 : ℝ} (h : NegLogDerivVerticalLogBound B T0) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re ≤ C * Real.log |t| ∧
+        (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤ C * Real.log |t| := by
+  rcases h with ⟨hB, _hT0, hbound⟩
+  exact
+    exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_neg_vertical_norm_log_bound
+      (T0 := T0) (B := B) hB hbound
 
 /-- Real-part quotient version of
 `exists_norm_logDeriv_riemannZeta_shifted_vertical_log_bound_of_vertical_log_bound`. -/

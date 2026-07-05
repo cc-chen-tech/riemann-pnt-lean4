@@ -12,6 +12,33 @@ open scoped ArithmeticFunction LSeries.notation
 
 namespace RiemannPNT.API
 
+/-- Public standard high-height vertical logarithmic-derivative bound on
+`1 <= sigma <= 2`. -/
+abbrev LogDerivVerticalLogBound (C T0 : ℝ) : Prop :=
+  ZeroFreeRegion.LogDerivVerticalLogBound C T0
+
+/-- Public signed version of `LogDerivVerticalLogBound`. -/
+abbrev NegLogDerivVerticalLogBound (C T0 : ℝ) : Prop :=
+  ZeroFreeRegion.NegLogDerivVerticalLogBound C T0
+
+/-- Public real-part quotient version of the vertical log-derivative bound. -/
+abbrev ReNegDerivDivVerticalLogBound (C T0 : ℝ) : Prop :=
+  ZeroFreeRegion.ReNegDerivDivVerticalLogBound C T0
+
+/-- Public conversion from the named `logDeriv ζ` norm bound to the
+`Re(-zeta'/zeta)` bound. -/
+theorem reNegDerivDivVerticalLogBound_of_logDerivVerticalLogBound
+    {C T0 : ℝ} (h : LogDerivVerticalLogBound C T0) :
+    ReNegDerivDivVerticalLogBound C T0 :=
+  ZeroFreeRegion.reNegDerivDivVerticalLogBound_of_logDerivVerticalLogBound h
+
+/-- Public conversion from the named signed norm bound to the unsigned norm
+bound. -/
+theorem logDerivVerticalLogBound_of_negLogDerivVerticalLogBound
+    {C T0 : ℝ} (h : NegLogDerivVerticalLogBound C T0) :
+    LogDerivVerticalLogBound C T0 :=
+  ZeroFreeRegion.logDerivVerticalLogBound_of_negLogDerivVerticalLogBound h
+
 /-- Public compatibility bridge between the project's prime-counting
 normalization and Mathlib's `Nat.primeCounting`. -/
 theorem primeCounting_eq_mathlib (x : ℝ) (hx : 0 ≤ x) :
@@ -4552,6 +4579,48 @@ theorem exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_neg
           C * Real.log |t| :=
   ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_neg_vertical_norm_log_bound
     hB hhigh
+
+/-- Public named-interface version of the high-height shifted norm-pair
+handoff. -/
+theorem exists_norm_logDeriv_riemannZeta_shift_pair_vertical_log_bound_of_LogDerivVerticalLogBound
+    {B T0 : ℝ} (h : LogDerivVerticalLogBound B T0) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          C * Real.log |t| ∧
+        ‖logDeriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t)‖ ≤
+          C * Real.log |t| :=
+  ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_shift_pair_vertical_log_bound_of_LogDerivVerticalLogBound
+    h
+
+/-- Public named-interface version of the real-part shifted-pair handoff. -/
+theorem exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_LogDerivVerticalLogBound
+    {B T0 : ℝ} (h : LogDerivVerticalLogBound B T0) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
+          C * Real.log |t| ∧
+        (-deriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t) /
+            riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re ≤
+          C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_LogDerivVerticalLogBound
+    h
+
+/-- Public signed named-interface version of the real-part shifted-pair
+handoff. -/
+theorem exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_NegLogDerivVerticalLogBound
+    {B T0 : ℝ} (h : NegLogDerivVerticalLogBound B T0) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
+          C * Real.log |t| ∧
+        (-deriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t) /
+            riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re ≤
+          C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_NegLogDerivVerticalLogBound
+    h
 
 /-- Public shifted real-part quotient bridge from an ordinary vertical norm
 estimate. -/
@@ -10609,19 +10678,6 @@ theorem classical_zero_free_region_of_exists_re_im_neg_logDeriv_regular_part_nor
 theorem log_abs_add_three_le_two_log_abs {t : ℝ} (ht : 3 ≤ |t|) :
     Real.log (|t| + 3) ≤ 2 * Real.log |t| :=
   ZeroFreeRegion.log_abs_add_three_le_two_log_abs ht
-
-/-- Public standard high-height vertical logarithmic-derivative bound on
-`1 <= sigma <= 2`. -/
-abbrev LogDerivVerticalLogBound (C T0 : ℝ) : Prop :=
-  ZeroFreeRegion.LogDerivVerticalLogBound C T0
-
-/-- Public signed version of `LogDerivVerticalLogBound`. -/
-abbrev NegLogDerivVerticalLogBound (C T0 : ℝ) : Prop :=
-  ZeroFreeRegion.NegLogDerivVerticalLogBound C T0
-
-/-- Public real-part quotient version of the vertical log-derivative bound. -/
-abbrev ReNegDerivDivVerticalLogBound (C T0 : ℝ) : Prop :=
-  ZeroFreeRegion.ReNegDerivDivVerticalLogBound C T0
 
 /-- Public standalone normalization from an affine `log(|t|+3)` vertical
 `logDeriv ζ` estimate to the exact `C * log |t|` scale. -/

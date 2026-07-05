@@ -209,6 +209,8 @@ Core verified declarations:
   packages that same future ordinary vertical estimate into one shared
   existential `C * log |t|` bound for both `sigma + it` and `sigma + 2it`,
   matching the two norm inputs needed by the 3-4-1 route.
+- `exists_norm_logDeriv_riemannZeta_shift_pair_vertical_log_bound_of_LogDerivVerticalLogBound`
+  is the named-interface version of the same shifted norm-pair handoff.
 - `exists_norm_logDeriv_riemannZeta_shift_pair_vertical_log_bound_of_neg_vertical_log_bound`
   is the signed-input version: a future ordinary vertical estimate for
   `-logDeriv zeta` gives the same shared pair bound by norm invariance under
@@ -217,10 +219,14 @@ Core verified declarations:
   converts the shared norm package into one shared real-part quotient package
   for `Re(-zeta'/zeta)(sigma+it)` and `Re(-zeta'/zeta)(sigma+2it)`, the direct
   sign convention of the 3-4-1 inequality.
+- `exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_LogDerivVerticalLogBound`
+  is the named-interface version of that real-part shifted-pair handoff.
 - `exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_neg_vertical_norm_log_bound`
   is the corresponding signed-input real-part package, letting future
   `-logDeriv zeta` norm estimates enter the 3-4-1 quotient handoff without an
   extra caller-side conversion.
+- `exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_NegLogDerivVerticalLogBound`
+  is the named-interface version of the signed real-part shifted-pair handoff.
 - `exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_vertical_norm_log_bound`
   converts that shifted norm estimate into the real-part quotient convention
   needed by the 3-4-1 inequality.
@@ -968,6 +974,11 @@ Core verified declarations:
   name the standard `C * log |t|` high-height interfaces on
   `1 <= sigma <= 2` for `logDeriv zeta`, `-logDeriv zeta`, and the real-part
   quotient `Re(-zeta'/zeta)`.
+- `reNegDerivDivVerticalLogBound_of_logDerivVerticalLogBound`
+  turns the named `logDeriv zeta` norm interface into the named
+  `Re(-zeta'/zeta)` interface.
+- `logDerivVerticalLogBound_of_negLogDerivVerticalLogBound`
+  turns the named signed norm interface into the unsigned norm interface.
 - `exists_re_im_logDeriv_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height`
   converts a future boundary-strip estimate
   `||logDeriv zeta (sigma+it)|| <= A + B log(|t|+3)` into the exact

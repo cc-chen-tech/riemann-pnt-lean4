@@ -54,6 +54,11 @@ and
 convert future affine `A + B log(|t|+3)` high-height estimates into these
 interfaces.  They are proved normalization handoffs; they do not prove the
 zeta-specific estimate.
+The named interfaces also feed the shifted 3-4-1 inputs directly via
+`ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_shift_pair_vertical_log_bound_of_LogDerivVerticalLogBound`,
+`ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_LogDerivVerticalLogBound`,
+and
+`ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_NegLogDerivVerticalLogBound`.
 
 ## Verified Starting Points
 
