@@ -2913,6 +2913,124 @@ lemma laplacePairPositive_one_resolventLaplaceKernelCombo
     LaplacePairPositive (resolventLaplaceKernelCombo K w a) 1 :=
   laplacePairPositive_resolventLaplaceKernelCombo (center := 1) hw ha
 
+/-- Affine resolvent/Laplace prototype
+`z ↦ (a + (b + c z))⁻¹`.
+
+For nonnegative `a`, `b`, and `c`, this is a simple right-half-plane-positive
+kernel obtained by precomposing the resolvent prototype with a nonnegative
+real affine map. -/
+noncomputable def affineResolventLaplaceKernel
+    (a b c : ℝ) (z : ℂ) : ℂ :=
+  resolventLaplaceKernel a ((b : ℂ) + (c : ℂ) * z)
+
+/-- A nonnegative real affine precomposition preserves right-half-plane
+real-part positivity for the resolvent/Laplace prototype. -/
+lemma affineResolventLaplaceKernel_re_nonnegative_of_nonneg_re
+    {a b c : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
+    {z : ℂ} (hz : 0 ≤ z.re) :
+    0 ≤ (affineResolventLaplaceKernel a b c z).re := by
+  rw [affineResolventLaplaceKernel]
+  refine resolventLaplaceKernel_re_nonnegative_of_nonneg_re ha ?_
+  simp [Complex.add_re, Complex.mul_re, add_nonneg hb (mul_nonneg hc hz)]
+
+/-- Critical-strip positivity for the affine resolvent/Laplace prototype. -/
+lemma affineResolventLaplaceKernel_re_nonnegative_on_critical_strip
+    {a b c : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) :
+    ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      0 ≤ (affineResolventLaplaceKernel a b c z).re := by
+  intro z hz_left _hz_right
+  exact affineResolventLaplaceKernel_re_nonnegative_of_nonneg_re
+    ha hb hc hz_left
+
+/-- The affine resolvent/Laplace prototype supplies strip-local pair
+positivity for any real center. -/
+lemma laplacePairPositive_affineResolventLaplaceKernel
+    {a b c center : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) :
+    LaplacePairPositive (affineResolventLaplaceKernel a b c) center := by
+  intro z hz_left hz_right
+  have hpair_left : 0 ≤ ((center : ℂ) - z).re := by
+    simp [Complex.sub_re]
+    exact hz_right
+  exact add_nonneg
+    (affineResolventLaplaceKernel_re_nonnegative_of_nonneg_re
+      ha hb hc hz_left)
+    (affineResolventLaplaceKernel_re_nonnegative_of_nonneg_re
+      ha hb hc hpair_left)
+
+/-- Center-one affine resolvent/Laplace pair positivity. -/
+lemma laplacePairPositive_one_affineResolventLaplaceKernel
+    {a b c : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) :
+    LaplacePairPositive (affineResolventLaplaceKernel a b c) 1 :=
+  laplacePairPositive_affineResolventLaplaceKernel
+    (center := 1) ha hb hc
+
+/-- Finite nonnegative combinations of affine resolvent/Laplace prototype
+kernels. -/
+noncomputable def affineResolventLaplaceKernelCombo
+    (K : Finset ℕ) (w a b c : ℕ → ℝ) (z : ℂ) : ℂ :=
+  ∑ k ∈ K, (w k : ℂ) * affineResolventLaplaceKernel (a k) (b k) (c k) z
+
+/-- A finite nonnegative combination of affine resolvent/Laplace kernels has
+nonnegative real part on the closed right half-plane. -/
+lemma affineResolventLaplaceKernelCombo_re_nonnegative_of_nonneg_re
+    {K : Finset ℕ} {w a b c : ℕ → ℝ}
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k) (hc : ∀ k ∈ K, 0 ≤ c k)
+    {z : ℂ} (hz : 0 ≤ z.re) :
+    0 ≤ (affineResolventLaplaceKernelCombo K w a b c z).re := by
+  rw [affineResolventLaplaceKernelCombo]
+  change 0 ≤ Complex.reCLM
+    (∑ k ∈ K,
+      (w k : ℂ) * affineResolventLaplaceKernel (a k) (b k) (c k) z)
+  rw [map_sum]
+  refine Finset.sum_nonneg ?_
+  intro k hk
+  have hterm :=
+    affineResolventLaplaceKernel_re_nonnegative_of_nonneg_re
+      (ha k hk) (hb k hk) (hc k hk) hz
+  exact by
+    simpa [Complex.mul_re] using mul_nonneg (hw k hk) hterm
+
+/-- Critical-strip positivity for finite nonnegative affine
+resolvent/Laplace combinations. -/
+lemma affineResolventLaplaceKernelCombo_re_nonnegative_on_critical_strip
+    {K : Finset ℕ} {w a b c : ℕ → ℝ}
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k) (hc : ∀ k ∈ K, 0 ≤ c k) :
+    ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      0 ≤ (affineResolventLaplaceKernelCombo K w a b c z).re := by
+  intro z hz_left _hz_right
+  exact affineResolventLaplaceKernelCombo_re_nonnegative_of_nonneg_re
+    hw ha hb hc hz_left
+
+/-- Finite nonnegative affine resolvent/Laplace combinations supply
+strip-local pair positivity. -/
+lemma laplacePairPositive_affineResolventLaplaceKernelCombo
+    {K : Finset ℕ} {w a b c : ℕ → ℝ} {center : ℝ}
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k) (hc : ∀ k ∈ K, 0 ≤ c k) :
+    LaplacePairPositive (affineResolventLaplaceKernelCombo K w a b c)
+      center := by
+  intro z hz_left hz_right
+  have hpair_left : 0 ≤ ((center : ℂ) - z).re := by
+    simp [Complex.sub_re]
+    exact hz_right
+  exact add_nonneg
+    (affineResolventLaplaceKernelCombo_re_nonnegative_of_nonneg_re
+      hw ha hb hc hz_left)
+    (affineResolventLaplaceKernelCombo_re_nonnegative_of_nonneg_re
+      hw ha hb hc hpair_left)
+
+/-- Center-one finite nonnegative affine resolvent/Laplace combinations supply
+the zeta zero-pair positivity interface. -/
+lemma laplacePairPositive_one_affineResolventLaplaceKernelCombo
+    {K : Finset ℕ} {w a b c : ℕ → ℝ}
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k) (hc : ∀ k ∈ K, 0 ≤ c k) :
+    LaplacePairPositive (affineResolventLaplaceKernelCombo K w a b c) 1 :=
+  laplacePairPositive_affineResolventLaplaceKernelCombo
+    (center := 1) hw ha hb hc
+
 /-- Direct use of the zero-pair nonnegativity condition. -/
 lemma zero_pair_contribution_nonnegative_of_reflection_condition
     {F : ℂ → ℂ} {center z : ℂ}
@@ -4348,6 +4466,36 @@ lemma nontrivialZerosFinset_sdiff_average_re_nonnegative_of_resolventLaplaceKern
     T U (resolventLaplaceKernelCombo K w a)
     (resolventLaplaceKernelCombo_re_nonnegative_on_critical_strip hw ha)
 
+/-- Finite nonnegative affine resolvent/Laplace combinations give a
+nonnegative real-part sum over newly included nontrivial zeros. -/
+lemma nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_affineResolventLaplaceKernelCombo
+    (T U : ℝ) (K : Finset ℕ) (w a b c : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k) (hc : ∀ k ∈ K, 0 ≤ c k) :
+    0 ≤
+      ∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        (affineResolventLaplaceKernelCombo K w a b c ρ).re :=
+  nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_re_nonnegative_on_critical_strip
+    T U (affineResolventLaplaceKernelCombo K w a b c)
+    (affineResolventLaplaceKernelCombo_re_nonnegative_on_critical_strip
+      hw ha hb hc)
+
+/-- Finite nonnegative affine resolvent/Laplace combinations give a
+nonnegative average real-part contribution over newly included nontrivial
+zeros. -/
+lemma nontrivialZerosFinset_sdiff_average_re_nonnegative_of_affineResolventLaplaceKernelCombo
+    (T U : ℝ) (K : Finset ℕ) (w a b c : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k) (hc : ∀ k ∈ K, 0 ≤ c k) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        (affineResolventLaplaceKernelCombo K w a b c ρ).re) /
+        (((nontrivialZerosFinset U \ nontrivialZerosFinset T).card : ℝ)) :=
+  nontrivialZerosFinset_sdiff_average_re_nonnegative_of_re_nonnegative_on_critical_strip
+    T U (affineResolventLaplaceKernelCombo K w a b c)
+    (affineResolventLaplaceKernelCombo_re_nonnegative_on_critical_strip
+      hw ha hb hc)
+
 /-- Specialize strip-local Stechkin/Heath-Brown pair positivity to the finite
 family of nontrivial zeros up to height `T`. -/
 lemma nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive
@@ -4511,6 +4659,36 @@ lemma nontrivialZerosFinset_average_re_nonnegative_of_resolventLaplaceKernelComb
   nontrivialZerosFinset_average_re_nonnegative_of_re_nonnegative_on_critical_strip
     T (resolventLaplaceKernelCombo K w a)
     (resolventLaplaceKernelCombo_re_nonnegative_on_critical_strip hw ha)
+
+/-- Finite nonnegative affine resolvent/Laplace combinations give a
+nonnegative real-part sum over height-truncated nontrivial zeros. -/
+lemma nontrivialZerosFinset_sum_re_nonnegative_of_affineResolventLaplaceKernelCombo
+    (T : ℝ) (K : Finset ℕ) (w a b c : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k) (hc : ∀ k ∈ K, 0 ≤ c k) :
+    0 ≤
+      ∑ ρ ∈ nontrivialZerosFinset T,
+        (affineResolventLaplaceKernelCombo K w a b c ρ).re :=
+  nontrivialZerosFinset_sum_re_nonnegative_of_re_nonnegative_on_critical_strip
+    T (affineResolventLaplaceKernelCombo K w a b c)
+    (affineResolventLaplaceKernelCombo_re_nonnegative_on_critical_strip
+      hw ha hb hc)
+
+/-- Finite nonnegative affine resolvent/Laplace combinations give a
+nonnegative average real-part contribution over height-truncated nontrivial
+zeros. -/
+lemma nontrivialZerosFinset_average_re_nonnegative_of_affineResolventLaplaceKernelCombo
+    (T : ℝ) (K : Finset ℕ) (w a b c : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k) (hc : ∀ k ∈ K, 0 ≤ c k) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset T,
+        (affineResolventLaplaceKernelCombo K w a b c ρ).re) /
+        (((nontrivialZerosFinset T).card : ℝ)) :=
+  nontrivialZerosFinset_average_re_nonnegative_of_re_nonnegative_on_critical_strip
+    T (affineResolventLaplaceKernelCombo K w a b c)
+    (affineResolventLaplaceKernelCombo_re_nonnegative_on_critical_strip
+      hw ha hb hc)
 
 lemma nontrivialZerosFinset_ext_of_height_iff {T U : ℝ}
     (h : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ →

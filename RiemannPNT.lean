@@ -2116,6 +2116,97 @@ theorem laplacePairPositive_one_resolventLaplaceKernelCombo
   PrimeNumberTheorem.laplacePairPositive_one_resolventLaplaceKernelCombo
     hw ha
 
+/-- Public affine resolvent/Laplace prototype
+`z ↦ (a + (b + c z))⁻¹`. -/
+noncomputable abbrev affineResolventLaplaceKernel
+    (a b c : ℝ) : ℂ → ℂ :=
+  PrimeNumberTheorem.affineResolventLaplaceKernel a b c
+
+/-- Public right-half-plane real-part positivity for the affine
+resolvent/Laplace prototype. -/
+theorem affineResolventLaplaceKernel_re_nonnegative_of_nonneg_re
+    {a b c : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
+    {z : ℂ} (hz : 0 ≤ z.re) :
+    0 ≤ (affineResolventLaplaceKernel a b c z).re :=
+  PrimeNumberTheorem.affineResolventLaplaceKernel_re_nonnegative_of_nonneg_re
+    ha hb hc hz
+
+/-- Public critical-strip real-part positivity for the affine
+resolvent/Laplace prototype. -/
+theorem affineResolventLaplaceKernel_re_nonnegative_on_critical_strip
+    {a b c : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) :
+    ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      0 ≤ (affineResolventLaplaceKernel a b c z).re :=
+  PrimeNumberTheorem.affineResolventLaplaceKernel_re_nonnegative_on_critical_strip
+    ha hb hc
+
+/-- Public strip-local pair positivity for the affine resolvent/Laplace
+prototype. -/
+theorem laplacePairPositive_affineResolventLaplaceKernel
+    {a b c center : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) :
+    PrimeNumberTheorem.LaplacePairPositive
+      (affineResolventLaplaceKernel a b c) center :=
+  PrimeNumberTheorem.laplacePairPositive_affineResolventLaplaceKernel
+    (center := center) ha hb hc
+
+/-- Public center-one pair positivity for the affine resolvent/Laplace
+prototype. -/
+theorem laplacePairPositive_one_affineResolventLaplaceKernel
+    {a b c : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) :
+    PrimeNumberTheorem.LaplacePairPositive
+      (affineResolventLaplaceKernel a b c) 1 :=
+  PrimeNumberTheorem.laplacePairPositive_one_affineResolventLaplaceKernel
+    ha hb hc
+
+/-- Public finite nonnegative affine resolvent/Laplace kernel combination. -/
+noncomputable abbrev affineResolventLaplaceKernelCombo
+    (K : Finset ℕ) (w a b c : ℕ → ℝ) : ℂ → ℂ :=
+  PrimeNumberTheorem.affineResolventLaplaceKernelCombo K w a b c
+
+/-- Public right-half-plane real-part positivity for finite nonnegative affine
+resolvent/Laplace kernel combinations. -/
+theorem affineResolventLaplaceKernelCombo_re_nonnegative_of_nonneg_re
+    {K : Finset ℕ} {w a b c : ℕ → ℝ}
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k) (hc : ∀ k ∈ K, 0 ≤ c k)
+    {z : ℂ} (hz : 0 ≤ z.re) :
+    0 ≤ (affineResolventLaplaceKernelCombo K w a b c z).re :=
+  PrimeNumberTheorem.affineResolventLaplaceKernelCombo_re_nonnegative_of_nonneg_re
+    hw ha hb hc hz
+
+/-- Public critical-strip real-part positivity for finite nonnegative affine
+resolvent/Laplace kernel combinations. -/
+theorem affineResolventLaplaceKernelCombo_re_nonnegative_on_critical_strip
+    {K : Finset ℕ} {w a b c : ℕ → ℝ}
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k) (hc : ∀ k ∈ K, 0 ≤ c k) :
+    ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      0 ≤ (affineResolventLaplaceKernelCombo K w a b c z).re :=
+  PrimeNumberTheorem.affineResolventLaplaceKernelCombo_re_nonnegative_on_critical_strip
+    hw ha hb hc
+
+/-- Public strip-local pair positivity for finite nonnegative affine
+resolvent/Laplace kernel combinations. -/
+theorem laplacePairPositive_affineResolventLaplaceKernelCombo
+    {K : Finset ℕ} {w a b c : ℕ → ℝ} {center : ℝ}
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k) (hc : ∀ k ∈ K, 0 ≤ c k) :
+    PrimeNumberTheorem.LaplacePairPositive
+      (affineResolventLaplaceKernelCombo K w a b c) center :=
+  PrimeNumberTheorem.laplacePairPositive_affineResolventLaplaceKernelCombo
+    (center := center) hw ha hb hc
+
+/-- Public center-one pair positivity for finite nonnegative affine
+resolvent/Laplace kernel combinations. -/
+theorem laplacePairPositive_one_affineResolventLaplaceKernelCombo
+    {K : Finset ℕ} {w a b c : ℕ → ℝ}
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k) (hc : ∀ k ∈ K, 0 ≤ c k) :
+    PrimeNumberTheorem.LaplacePairPositive
+      (affineResolventLaplaceKernelCombo K w a b c) 1 :=
+  PrimeNumberTheorem.laplacePairPositive_one_affineResolventLaplaceKernelCombo
+    hw ha hb hc
+
 /-- Public finite paired-zero nonnegativity from strip-local pair positivity. -/
 theorem finite_zero_sum_nonnegative_of_laplace_pair_positive
     (S : Finset ℂ) (F : ℂ → ℂ) (center : ℝ)
@@ -2672,6 +2763,33 @@ theorem nontrivialZerosFinset_sdiff_average_re_nonnegative_of_resolventLaplaceKe
   PrimeNumberTheorem.nontrivialZerosFinset_sdiff_average_re_nonnegative_of_resolventLaplaceKernelCombo
     T U K w a hw ha
 
+/-- Public new-zero real-part sum nonnegativity for finite nonnegative affine
+resolvent/Laplace kernel combinations. -/
+theorem nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_affineResolventLaplaceKernelCombo
+    (T U : ℝ) (K : Finset ℕ) (w a b c : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k) (hc : ∀ k ∈ K, 0 ≤ c k) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+        PrimeNumberTheorem.nontrivialZerosFinset T,
+      (affineResolventLaplaceKernelCombo K w a b c ρ).re :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_affineResolventLaplaceKernelCombo
+    T U K w a b c hw ha hb hc
+
+/-- Public new-zero average real-part nonnegativity for finite nonnegative
+affine resolvent/Laplace kernel combinations. -/
+theorem nontrivialZerosFinset_sdiff_average_re_nonnegative_of_affineResolventLaplaceKernelCombo
+    (T U : ℝ) (K : Finset ℕ) (w a b c : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k) (hc : ∀ k ∈ K, 0 ≤ c k) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T,
+        (affineResolventLaplaceKernelCombo K w a b c ρ).re) /
+        (((PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ)) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_average_re_nonnegative_of_affineResolventLaplaceKernelCombo
+    T U K w a b c hw ha hb hc
+
 /-- Public nonzero denominator fact for elements of the height-truncated
 nontrivial-zero finset. -/
 theorem ne_zero_of_mem_nontrivialZerosFinset {ρ : ℂ} {T : ℝ}
@@ -2921,6 +3039,30 @@ theorem nontrivialZerosFinset_average_re_nonnegative_of_resolventLaplaceKernelCo
         ((PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ) :=
   PrimeNumberTheorem.nontrivialZerosFinset_average_re_nonnegative_of_resolventLaplaceKernelCombo
     T K w a hw ha
+
+/-- Public finite-zero real-part sum nonnegativity for finite nonnegative
+affine resolvent/Laplace kernel combinations. -/
+theorem nontrivialZerosFinset_sum_re_nonnegative_of_affineResolventLaplaceKernelCombo
+    (T : ℝ) (K : Finset ℕ) (w a b c : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k) (hc : ∀ k ∈ K, 0 ≤ c k) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+      (affineResolventLaplaceKernelCombo K w a b c ρ).re :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sum_re_nonnegative_of_affineResolventLaplaceKernelCombo
+    T K w a b c hw ha hb hc
+
+/-- Public finite-zero average real-part nonnegativity for finite nonnegative
+affine resolvent/Laplace kernel combinations. -/
+theorem nontrivialZerosFinset_average_re_nonnegative_of_affineResolventLaplaceKernelCombo
+    (T : ℝ) (K : Finset ℕ) (w a b c : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k) (hc : ∀ k ∈ K, 0 ≤ c k) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+        (affineResolventLaplaceKernelCombo K w a b c ρ).re) /
+        ((PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_average_re_nonnegative_of_affineResolventLaplaceKernelCombo
+    T K w a b c hw ha hb hc
 
 /-- Public extensionality criterion for height-truncated nontrivial-zero
 finsets. -/

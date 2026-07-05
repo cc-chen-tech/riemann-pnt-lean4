@@ -1722,6 +1722,27 @@ Core verified declarations:
   `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_resolventLaplaceKernelCombo`
   specialize those finite nonnegative combinations to the full finite-zero and
   new-zero contribution sums and averages.
+- `affineResolventLaplaceKernel`,
+  `affineResolventLaplaceKernel_re_nonnegative_of_nonneg_re`,
+  `affineResolventLaplaceKernel_re_nonnegative_on_critical_strip`,
+  `laplacePairPositive_affineResolventLaplaceKernel`, and
+  `laplacePairPositive_one_affineResolventLaplaceKernel`
+  extend the prototype supplier to nonnegative real affine precomposition
+  `z ↦ (a + (b + c * z))^-1`, with `a >= 0`, `b >= 0`, and `c >= 0`.
+- `affineResolventLaplaceKernelCombo`,
+  `affineResolventLaplaceKernelCombo_re_nonnegative_of_nonneg_re`,
+  `affineResolventLaplaceKernelCombo_re_nonnegative_on_critical_strip`,
+  `laplacePairPositive_affineResolventLaplaceKernelCombo`, and
+  `laplacePairPositive_one_affineResolventLaplaceKernelCombo`
+  extend the same supplier to finite nonnegative combinations of affine
+  resolvent kernels.
+- `nontrivialZerosFinset_sum_re_nonnegative_of_affineResolventLaplaceKernelCombo`,
+  `nontrivialZerosFinset_average_re_nonnegative_of_affineResolventLaplaceKernelCombo`,
+  `nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_affineResolventLaplaceKernelCombo`,
+  and
+  `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_affineResolventLaplaceKernelCombo`
+  specialize those affine finite nonnegative combinations to the full
+  finite-zero and new-zero contribution sums and averages.
 - `norm_finiteNontrivialZeroSum_sub_le_new_zeros_sum_norm`
   bounds the finite zero-sum change between two truncation heights by the
   summed norms of the newly included zero contributions, a direct finite

@@ -111,6 +111,12 @@ Verified assets now include:
   `resolventLaplaceKernelCombo`, with the same right-half-plane positivity,
   pair-positivity, and finite-zero/new-zero sum and average nonnegativity
   wrappers.
+- affine resolvent/Laplace prototype kernels
+  `affineResolventLaplaceKernel a b c z = (a + (b + c * z))⁻¹` and finite
+  combinations `affineResolventLaplaceKernelCombo`, with right-half-plane
+  positivity, center-one pair positivity, and full/new-zero sum and average
+  nonnegativity wrappers whenever the weights and affine parameters are
+  nonnegative.
 
 Important boundary:
 
@@ -119,12 +125,13 @@ it into an unpaired sum needs a proof that the chosen center-pair map preserves
 the relevant zero set.  For zeta this is available at center `1`, via
 `rho -> 1 - rho`, not for an arbitrary center.
 
-The generic weighted-combination closure and resolvent/Laplace prototype are
-real concrete suppliers for the finite-zero pairing API, and the combination
-wrappers match the algebraic shape of detectors built by summing positive
-elementary kernels.  They are still not the full Stechkin/Heath-Brown kernel used
-in the latest zero-free-region arguments. The next useful step is to formalize
-a nontrivial detector kernel from that literature and prove either
+The generic weighted-combination closure, resolvent/Laplace prototype, and
+affine resolvent/Laplace prototype are real concrete suppliers for the
+finite-zero pairing API, and the combination wrappers match the algebraic shape
+of detectors built by summing positive elementary kernels. They are still not
+the full Stechkin/Heath-Brown kernel used in the latest zero-free-region
+arguments. The next useful step is to formalize a nontrivial detector kernel
+from that literature and prove either
 `LaplacePairPositive F 1` or the stronger pointwise critical-strip positivity
 certificate for it.
 

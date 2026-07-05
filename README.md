@@ -303,7 +303,8 @@ The project currently verifies several supporting statements, including:
   zero-detector kernels, generic finite nonnegative kernel-combination closure,
   a concrete resolvent/Laplace prototype kernel with finite-zero and new-zero
   nonnegativity wrappers, finite nonnegative resolvent-kernel combinations with
-  the same wrappers, and
+  the same wrappers, affine resolvent-kernel combinations with the same
+  finite-zero/new-zero wrappers, and
   reflected-line conditional bridges for explicit-formula/PNT-error routes;
 - several zeta nonvanishing and pole-behavior wrappers from Mathlib;
 - the Gamma residue formula at negative integers and numerical special cases;
