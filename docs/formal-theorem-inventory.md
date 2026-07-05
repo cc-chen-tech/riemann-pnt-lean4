@@ -110,11 +110,14 @@ Core verified declarations:
   `btyDetectorCoeff_pos_of_mem_support`,
   `btyDetectorCoeff_one_pos`,
   `log_deriv_zeta_bty_detector_one_lower_bound`,
-  `log_deriv_zeta_bty_detector_one_lower_bound_of_shift_upper_bounds`, and
-  `log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_shift_upper_bound`
+  `log_deriv_zeta_bty_detector_one_lower_bound_of_shift_upper_bounds`,
+  `log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_shift_upper_bound`,
+  and
+  `log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_shift_upper_bound_simplified`
   specialize the detector lower-bound extraction to the BTY `k = 1` term and
   package the exact interface needed by future shifted log-derivative upper
-  bounds.
+  bounds, including the simplified rational coefficient penalty
+  `3458648 / 2163835`.
 - `log_deriv_zeta_nonneg_three_four_one_from_finset`
   re-exposes the verified 3-4-1 theorem as the base detector instance.
 - `classical_zero_free_region_compact`
@@ -1471,10 +1474,20 @@ Core verified declarations:
   `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_laplace_pair_positive_one`
   add the corresponding center-one Laplace-pair and normalized-average
   variants for those new-zero blocks.
+- `nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive`
+  generalizes the paired new-zero Laplace bridge to any caller-supplied real
+  pairing center, with the strip membership supplied as an explicit hypothesis.
 - `norm_finiteNontrivialZeroSum_sub_le_new_zeros_sum_norm`
   bounds the finite zero-sum change between two truncation heights by the
   summed norms of the newly included zero contributions, a direct finite
   triangle-inequality handoff for truncated explicit-formula bookkeeping.
+- `new_zero_contribution_sum_eventually_zero_of_eventually_sdiff_eq_empty`,
+  `new_zero_contribution_sum_tendsto_zero_of_eventually_sdiff_eq_empty`,
+  `new_zero_inv_norm_tail_tendsto_zero_of_eventually_sdiff_eq_empty`, and
+  `new_zero_card_tail_tendsto_zero_of_eventually_sdiff_eq_empty`
+  turn an eventual empty new-zero block into eventual zero or convergence to
+  zero for the finite zero contribution, reciprocal-norm tail, and zero-count
+  tail used by truncated explicit-formula/RH-error bookkeeping.
 - `NoZerosOnVerticalLine`
   is a reusable predicate for excluding zeta zeros on a fixed vertical line.
 - `no_zeros_on_one_third_of_RH`

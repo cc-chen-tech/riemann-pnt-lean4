@@ -250,6 +250,19 @@ takes `0 < beta < 1`, an `ExplicitFormulaConversePowerTarget beta`, and a
 analytic content is still the converse explicit-formula theorem that would
 produce `ExplicitFormulaConversePowerTarget beta`.
 
+The finite truncated-zero layer also has a narrow tail-collapse API for the
+degenerate case where no new zeros appear eventually above a base cutoff.  The
+public theorems
+`RiemannPNT.API.new_zero_contribution_sum_eventually_zero_of_eventually_sdiff_eq_empty`,
+`RiemannPNT.API.new_zero_contribution_sum_tendsto_zero_of_eventually_sdiff_eq_empty`,
+`RiemannPNT.API.new_zero_inv_norm_tail_tendsto_zero_of_eventually_sdiff_eq_empty`,
+and `RiemannPNT.API.new_zero_card_tail_tendsto_zero_of_eventually_sdiff_eq_empty`
+turn an eventual empty `nontrivialZerosFinset T \ nontrivialZerosFinset B`
+block into eventual zero or convergence to zero for the finite contribution
+and RH-tail controls.  These theorems are finite-tail handoffs and sanity
+checks; they do not assert that the actual zeta zero set eventually has no new
+zeros.
+
 The public facade also exposes
 `RiemannPNT.API.no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route`,
 which composes the truncated route

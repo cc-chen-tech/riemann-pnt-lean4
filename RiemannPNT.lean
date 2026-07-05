@@ -2068,6 +2068,20 @@ theorem nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_pair_contribution_nonn
   PrimeNumberTheorem.nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_pair_contribution_nonnegative
     T U F hF
 
+/-- Public strip-local Laplace-pair positivity for newly included nontrivial
+zeros, with an arbitrary real pairing center supplied by the caller. -/
+theorem nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive
+    (T U : ℝ) (F : ℂ → ℂ) (center : ℝ)
+    (hF : PrimeNumberTheorem.LaplacePairPositive F center)
+    (hstrip : ∀ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+        PrimeNumberTheorem.nontrivialZerosFinset T,
+      0 ≤ ρ.re ∧ ρ.re ≤ center) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+        PrimeNumberTheorem.nontrivialZerosFinset T,
+      ((F ρ).re + (F ((center : ℂ) - ρ)).re) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive
+    T U F center hF hstrip
+
 /-- Public paired-sum nonnegativity over newly included zeros from center-one
 Laplace-pair positivity. -/
 theorem nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive_one
@@ -5243,6 +5257,19 @@ theorem log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_shift_upper_bound
       riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
       - (((6917296 : ℝ) / 2485395) * B) / btyDetectorCoeff 1 :=
   ZeroFreeRegion.log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_shift_upper_bound
+    σ hσ t B hupper
+
+/-- Public simplified-rational version of the BTY uniform shifted-term lower
+bound. -/
+theorem log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_shift_upper_bound_simplified
+    (σ : ℝ) (hσ : 1 < σ) (t B : ℝ)
+    (hupper : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t) /
+        riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re ≤ B) :
+    (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+      riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+      - ((3458648 : ℝ) / 2163835) * B :=
+  ZeroFreeRegion.log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_shift_upper_bound_simplified
     σ hσ t B hupper
 
 /-- Public constant-one complex-exponential certificate. -/
@@ -14021,6 +14048,69 @@ theorem abs_im_explicitFormulaApprox_sub_le_sqrt_mul_two_card_of_RH
             PrimeNumberTheorem.nontrivialZerosFinset T).card) :=
   PrimeNumberTheorem.abs_im_explicitFormulaApprox_sub_le_sqrt_mul_two_card_of_RH
     hRH hx hTU
+
+/-- Public eventual-zero statement for the new-zero contribution when no new
+zeros appear eventually above a base cutoff. -/
+theorem new_zero_contribution_sum_eventually_zero_of_eventually_sdiff_eq_empty
+    {x B : ℝ}
+    (hnew : ∀ᶠ T in atTop,
+      PrimeNumberTheorem.nontrivialZerosFinset T \
+          PrimeNumberTheorem.nontrivialZerosFinset B = ∅) :
+    (fun T : ℝ =>
+      ∑ ρ ∈ (PrimeNumberTheorem.nontrivialZerosFinset T \
+          PrimeNumberTheorem.nontrivialZerosFinset B),
+        (x : ℂ) ^ ρ / ρ) =ᶠ[atTop] fun _T : ℝ => 0 :=
+  PrimeNumberTheorem.new_zero_contribution_sum_eventually_zero_of_eventually_sdiff_eq_empty
+    hnew
+
+/-- Public convergence-to-zero statement for the new-zero contribution when no
+new zeros appear eventually above a base cutoff. -/
+theorem new_zero_contribution_sum_tendsto_zero_of_eventually_sdiff_eq_empty
+    {x B : ℝ}
+    (hnew : ∀ᶠ T in atTop,
+      PrimeNumberTheorem.nontrivialZerosFinset T \
+          PrimeNumberTheorem.nontrivialZerosFinset B = ∅) :
+    Tendsto
+      (fun T : ℝ =>
+        ∑ ρ ∈ (PrimeNumberTheorem.nontrivialZerosFinset T \
+            PrimeNumberTheorem.nontrivialZerosFinset B),
+          (x : ℂ) ^ ρ / ρ)
+      atTop (𝓝 0) :=
+  PrimeNumberTheorem.new_zero_contribution_sum_tendsto_zero_of_eventually_sdiff_eq_empty
+    hnew
+
+/-- Public convergence-to-zero statement for the reciprocal-norm tail when no
+new zeros appear eventually above a base cutoff. -/
+theorem new_zero_inv_norm_tail_tendsto_zero_of_eventually_sdiff_eq_empty
+    {x B : ℝ}
+    (hnew : ∀ᶠ T in atTop,
+      PrimeNumberTheorem.nontrivialZerosFinset T \
+          PrimeNumberTheorem.nontrivialZerosFinset B = ∅) :
+    Tendsto
+      (fun T : ℝ =>
+        Real.sqrt x *
+          ∑ ρ ∈ (PrimeNumberTheorem.nontrivialZerosFinset T \
+              PrimeNumberTheorem.nontrivialZerosFinset B), ‖ρ‖⁻¹)
+      atTop (𝓝 0) :=
+  PrimeNumberTheorem.new_zero_inv_norm_tail_tendsto_zero_of_eventually_sdiff_eq_empty
+    hnew
+
+/-- Public convergence-to-zero statement for the zero-count tail when no new
+zeros appear eventually above a base cutoff. -/
+theorem new_zero_card_tail_tendsto_zero_of_eventually_sdiff_eq_empty
+    {x B : ℝ}
+    (hnew : ∀ᶠ T in atTop,
+      PrimeNumberTheorem.nontrivialZerosFinset T \
+          PrimeNumberTheorem.nontrivialZerosFinset B = ∅) :
+    Tendsto
+      (fun T : ℝ =>
+        Real.sqrt x *
+          ((2 : ℝ) *
+            (PrimeNumberTheorem.nontrivialZerosFinset T \
+              PrimeNumberTheorem.nontrivialZerosFinset B).card))
+      atTop (𝓝 0) :=
+  PrimeNumberTheorem.new_zero_card_tail_tendsto_zero_of_eventually_sdiff_eq_empty
+    hnew
 
 /-- Public conditional explicit-formula bridge from an RH reciprocal-norm tail
 bound over newly included zeros. -/

@@ -1656,6 +1656,26 @@ lemma log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_shift_upper_bound
     rw [← Finset.sum_mul, btyDetectorCoeff_sum_support_erase_one]
   simpa [hsum] using h
 
+/-- Uniform shifted-term version of the BTY `k = 1` lower bound with the
+coefficient penalty simplified to one explicit rational constant. -/
+lemma log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_shift_upper_bound_simplified
+    (σ : ℝ) (hσ : 1 < σ) (t B : ℝ)
+    (hupper : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+        riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re ≤ B) :
+    (-deriv riemannZeta ((σ : ℂ) + I * t) /
+      riemannZeta ((σ : ℂ) + I * t)).re ≥
+      - ((3458648 : ℝ) / 2163835) * B := by
+  have h :=
+    log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_shift_upper_bound
+      σ hσ t B hupper
+  have hconst :
+      - (((6917296 : ℝ) / 2485395) * B) / btyDetectorCoeff 1 =
+        - ((3458648 : ℝ) / 2163835) * B := by
+    rw [btyDetectorCoeff_one]
+    ring_nf
+  simpa [hconst] using h
+
 /-- Minimal concrete complex-exponential absolute-square certificate:
 `1 = ‖exp(0)‖^2`.  This is a template for later finite coefficient-table
 certificates. -/

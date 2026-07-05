@@ -3883,6 +3883,19 @@ lemma nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_pair_contribution_nonneg
   rw [nontrivialZerosFinset_sdiff_pair_contribution_eq_two_sum_re] at hpair
   nlinarith
 
+/-- Strip-local Laplace-pair positivity gives paired-sum nonnegativity over newly
+included nontrivial zeros, for any chosen real pairing center.  The caller only
+has to supply the strip membership proof for the new-zero block. -/
+lemma nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive
+    (T U : ℝ) (F : ℂ → ℂ) (center : ℝ)
+    (hF : LaplacePairPositive F center)
+    (hstrip : ∀ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+      0 ≤ ρ.re ∧ ρ.re ≤ center) :
+    0 ≤ ∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+      ((F ρ).re + (F ((center : ℂ) - ρ)).re) :=
+  finite_zero_sum_nonnegative_of_laplace_pair_positive
+    (nontrivialZerosFinset U \ nontrivialZerosFinset T) F center hF hstrip
+
 /-- Center-one Laplace-pair positivity gives paired-sum nonnegativity over the
 newly included nontrivial zeros between two height cutoffs. -/
 lemma nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive_one
@@ -3890,8 +3903,8 @@ lemma nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive_
     (hF : LaplacePairPositive F 1) :
     0 ≤ ∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
       ((F ρ).re + (F (1 - ρ)).re) :=
-  finite_zero_sum_nonnegative_of_laplace_pair_positive
-    (nontrivialZerosFinset U \ nontrivialZerosFinset T) F 1 hF (by
+  nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive
+    T U F 1 hF (by
       intro ρ hρ
       have hU : ρ ∈ nontrivialZerosFinset U := (Finset.mem_sdiff.mp hρ).1
       rcases mem_nontrivialZerosFinset.mp hU with ⟨hzero, _hheight⟩
@@ -5022,6 +5035,62 @@ lemma abs_im_explicitFormulaApprox_sub_le_sqrt_mul_two_card_of_RH
         ((2 : ℝ) * (nontrivialZerosFinset U \ nontrivialZerosFinset T).card) :=
   (Complex.abs_im_le_norm _).trans
     (norm_explicitFormulaApprox_sub_le_sqrt_mul_two_card_of_RH hRH hx hTU)
+
+/-- If no new zeros appear eventually above the base cutoff, then the finite
+new-zero contribution itself is eventually zero. -/
+lemma new_zero_contribution_sum_eventually_zero_of_eventually_sdiff_eq_empty
+    {x B : ℝ}
+    (hnew : ∀ᶠ T in atTop,
+      nontrivialZerosFinset T \ nontrivialZerosFinset B = ∅) :
+    (fun T : ℝ =>
+      ∑ ρ ∈ (nontrivialZerosFinset T \ nontrivialZerosFinset B),
+        (x : ℂ) ^ ρ / ρ) =ᶠ[atTop] fun _T : ℝ => 0 := by
+  filter_upwards [hnew] with T hT
+  simp [hT]
+
+/-- If no new zeros appear eventually above the base cutoff, then the finite
+new-zero contribution tends to zero. -/
+lemma new_zero_contribution_sum_tendsto_zero_of_eventually_sdiff_eq_empty
+    {x B : ℝ}
+    (hnew : ∀ᶠ T in atTop,
+      nontrivialZerosFinset T \ nontrivialZerosFinset B = ∅) :
+    Tendsto
+      (fun T : ℝ =>
+        ∑ ρ ∈ (nontrivialZerosFinset T \ nontrivialZerosFinset B),
+          (x : ℂ) ^ ρ / ρ)
+      atTop (𝓝 0) :=
+  tendsto_nhds_of_eventually_eq
+    (new_zero_contribution_sum_eventually_zero_of_eventually_sdiff_eq_empty hnew)
+
+/-- If no new zeros appear eventually above the base cutoff, then the reciprocal
+norm tail used in the RH truncation bound tends to zero. -/
+lemma new_zero_inv_norm_tail_tendsto_zero_of_eventually_sdiff_eq_empty
+    {x B : ℝ}
+    (hnew : ∀ᶠ T in atTop,
+      nontrivialZerosFinset T \ nontrivialZerosFinset B = ∅) :
+    Tendsto
+      (fun T : ℝ =>
+        Real.sqrt x *
+          ∑ ρ ∈ (nontrivialZerosFinset T \ nontrivialZerosFinset B), ‖ρ‖⁻¹)
+      atTop (𝓝 0) := by
+  refine tendsto_nhds_of_eventually_eq ?_
+  filter_upwards [hnew] with T hT
+  simp [hT]
+
+/-- If no new zeros appear eventually above the base cutoff, then the zero-count
+tail used in the RH truncation bound tends to zero. -/
+lemma new_zero_card_tail_tendsto_zero_of_eventually_sdiff_eq_empty
+    {x B : ℝ}
+    (hnew : ∀ᶠ T in atTop,
+      nontrivialZerosFinset T \ nontrivialZerosFinset B = ∅) :
+    Tendsto
+      (fun T : ℝ =>
+        Real.sqrt x *
+          ((2 : ℝ) * (nontrivialZerosFinset T \ nontrivialZerosFinset B).card))
+      atTop (𝓝 0) := by
+  refine tendsto_nhds_of_eventually_eq ?_
+  filter_upwards [hnew] with T hT
+  simp [hT]
 
 /-- Conditional explicit-formula bridge from an RH tail bound stated with the
 reciprocal-norm sum over newly included zeros.

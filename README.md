@@ -240,11 +240,13 @@ The project currently verifies several supporting statements, including:
   finite detector combination;
 - the BTY degree-16 detector lower bound for the first shifted
   logarithmic-derivative term;
-- BTY-specific coefficient positivity, remaining-coefficient sum, and shifted
-  upper-bound lower bridges for the selected `k=1` logarithmic-derivative term;
+- BTY-specific coefficient positivity, remaining-coefficient sum, shifted
+  upper-bound lower bridges, and the simplified rational constant bridge for
+  the selected `k=1` logarithmic-derivative term;
 - center-one finite zero-pair positivity bridges, average finite-zero
   contribution nonnegativity, new-zero block reflection/reindexing/averages/norm
-  bounds, and
+  bounds, eventually-zero/tendsto-zero tail collapses under empty new-zero
+  hypotheses, and
   reflected-line conditional bridges for explicit-formula/PNT-error routes;
 - several zeta nonvanishing and pole-behavior wrappers from Mathlib;
 - the Gamma residue formula at negative integers and numerical special cases;
@@ -287,7 +289,7 @@ Lean declarations in `ZeroFreeRegion.lean` and
 | `ZeroFreeRegion.ScaledComplexExpAbsSqCertificate` / `...scaled_complex_exp_abs_sq_certificate` / `...single_lower_bound_of_scaled_complex_exp_abs_sq_certificate` | `abbrev` / `lemma` | Packages the scaled certificate shape `scale * P(θ)=‖∑ c_k exp(i k θ)‖²`, derives detector nonnegativity when `scale > 0`, and feeds it directly into selected-term lower-bound extraction with optional shifted upper bounds. | Avoids square-root coefficients and matches integer-coefficient detector tables. |
 | `ZeroFreeRegion.btyRawCoeff` / `btyDetectorCoeff_zero` / `btyDetectorCoeff_one` / `btyDetectorCoeff_sum_one_to_K` / `btyDetectorCoeff_eq_zero_of_seventeen_le` | `def` / `lemma` | Encodes the Bellotti-Trudgian-Yang degree-16 exponential-square detector coefficient table, checks `a_0 = 1`, `a_1 = 865534 / 497079`, `∑_{1≤k≤16} a_k = 2919857 / 828465`, and proves coefficients vanish above degree `16`. | Concrete high-degree detector data sits behind the reusable finite-detector certificate API. |
 | `ZeroFreeRegion.norm_sq_sum_real_coeff_complex_exp_eq_double_sum` / `btyScaledComplexExpAbsSqCertificate` / `log_deriv_zeta_nonneg_bty_detector_from_scaled_certificate` | `lemma` | Expands a finite real-coefficient exponential-square norm as a double cosine sum, proves the full scaled BTY certificate, and feeds it into the automatic finite log-derivative detector theorem. | Gives a checked high-degree detector instance beyond the base 3-4-1 polynomial. |
-| `ZeroFreeRegion.btyDetectorCoeff_nonneg_of_mem_support` / `btyDetectorCoeff_sum_support_erase_one` / `log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_shift_upper_bound` | `lemma` | Proves BTY support coefficients are nonnegative/positive, computes the coefficient sum excluding `k=1` as `6917296 / 2485395`, and turns a uniform upper bound for the remaining shifted terms into a lower bound for `Re(-ζ'/ζ(σ+it))`. | Direct algebraic handoff from the checked BTY detector to future high-height shifted log-derivative estimates. |
+| `ZeroFreeRegion.btyDetectorCoeff_nonneg_of_mem_support` / `btyDetectorCoeff_sum_support_erase_one` / `log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_shift_upper_bound` / `..._simplified` | `lemma` | Proves BTY support coefficients are nonnegative/positive, computes the coefficient sum excluding `k=1` as `6917296 / 2485395`, and turns a uniform upper bound for the remaining shifted terms into a lower bound for `Re(-ζ'/ζ(σ+it))`, including the simplified coefficient `3458648 / 2163835`. | Direct algebraic handoff from the checked BTY detector to future high-height shifted log-derivative estimates. |
 | `ZeroFreeRegion.log_deriv_zeta_nonneg_three_four_one_from_finset` | `lemma` | Re-exposes the existing 3-4-1 theorem as the base finite-detector instance. | Keeps the generalized detector API tied to the verified 3-4-1 result. |
 | `ZeroFreeRegion.log_deriv_zeta_lower_bound` | `lemma` | Rearranges the 3-4-1 inequality into the lower bound for `Re(-ζ'/ζ(σ+it))`. | Algebraic corollary used by the future quantitative zero-free-region chain. |
 | `ZeroFreeRegion.logDeriv_riemannZeta_eq_deriv_div` / `ZeroFreeRegion.neg_logDeriv_riemannZeta_re_eq_neg_deriv_div_re` | `lemma` | Bridges Mathlib's `logDeriv ζ` notation with the classical `ζ'/ζ` and `-ζ'/ζ` quotient notation, including real-part and norm forms. | Lets future Borel/Jensen `logDeriv` estimates rewrite directly into the 3-4-1 sign convention. |
@@ -647,6 +649,17 @@ These name the future oscillation/converse dependency from a truncated explicit
 formula to zero-free vertical lines; they are not unconditional proofs of those
 analytic inputs.  The public API exposes both the direct `Re(s)=2/3` consequence
 and the reflected `Re(s)=1/3` consequence of this conditional route.
+
+The finite truncated-zero bookkeeping is proved as ordinary theorem-level
+infrastructure.  In particular,
+`new_zero_contribution_sum_eventually_zero_of_eventually_sdiff_eq_empty`,
+`new_zero_contribution_sum_tendsto_zero_of_eventually_sdiff_eq_empty`,
+`new_zero_inv_norm_tail_tendsto_zero_of_eventually_sdiff_eq_empty`, and
+`new_zero_card_tail_tendsto_zero_of_eventually_sdiff_eq_empty` show that if no
+new bounded-height zeros appear eventually above a base cutoff, then the finite
+new-zero contribution and the two RH-tail controls collapse to zero.  These are
+finite-combinatorial tail bridges, not substitutes for Perron's formula or the
+global explicit formula.
 
 ### Target Statements, Not Proved Theorems
 
