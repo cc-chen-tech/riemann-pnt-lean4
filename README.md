@@ -736,6 +736,15 @@ new-zero contribution and the two RH-tail controls collapse to zero.  These are
 finite-combinatorial tail bridges, not substitutes for Perron's formula or the
 global explicit formula.
 
+The finite zero-pair infrastructure also contains proved positivity suppliers
+for elementary detector kernels.  The public API includes the resolvent kernel
+`resolventLaplaceKernel`, its center-reflected version
+`symmetricResolventLaplaceKernel`, finite nonnegative kernel combinations, and
+their height-truncated/new-zero sum and average nonnegativity wrappers.  These
+are concrete algebraic suppliers for later Stechkin/Heath-Brown-style detector
+arguments; they do not prove the missing high-height zeta growth or
+logarithmic-derivative estimates.
+
 ### Target Statements, Not Proved Theorems
 
 The remaining 22 target declarations are intentionally `def ... : Prop` rather

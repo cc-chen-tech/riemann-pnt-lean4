@@ -1767,6 +1767,21 @@ Core verified declarations:
   `nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_resolventLaplaceKernel`
   expose the paired contribution versions for the single resolvent/Laplace
   prototype.
+- `symmetricResolventLaplaceKernel`,
+  `symmetricResolventLaplaceKernel_re_nonnegative_on_strip`,
+  `laplacePairPositive_symmetricResolventLaplaceKernel`, and
+  `laplacePairPositive_one_symmetricResolventLaplaceKernel`
+  package the center-reflected resolvent
+  `z ↦ (a + z)^-1 + (a + center - z)^-1`; for `a >= 0` it has
+  nonnegative real part across the centered strip and supplies the same
+  center-one zero-pair positivity interface.
+- `nontrivialZerosFinset_sum_re_nonnegative_of_symmetricResolventLaplaceKernel`,
+  `nontrivialZerosFinset_average_re_nonnegative_of_symmetricResolventLaplaceKernel`,
+  `nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_symmetricResolventLaplaceKernel`,
+  and
+  `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_symmetricResolventLaplaceKernel`
+  specialize the center-one symmetric resolvent to full finite-zero and
+  new-zero contribution sums and averages.
 - `resolventLaplaceKernelCombo`,
   `resolventLaplaceKernelCombo_re_nonnegative_of_nonneg_re`,
   `resolventLaplaceKernelCombo_re_nonnegative_on_critical_strip`,

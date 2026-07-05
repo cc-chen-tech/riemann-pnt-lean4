@@ -2071,6 +2071,38 @@ theorem laplacePairPositive_one_resolventLaplaceKernel
     PrimeNumberTheorem.LaplacePairPositive (resolventLaplaceKernel a) 1 :=
   PrimeNumberTheorem.laplacePairPositive_one_resolventLaplaceKernel ha
 
+/-- Public symmetric resolvent/Laplace prototype centered at a real point. -/
+noncomputable abbrev symmetricResolventLaplaceKernel
+    (a center : ℝ) : ℂ → ℂ :=
+  PrimeNumberTheorem.symmetricResolventLaplaceKernel a center
+
+/-- Public centered-strip real-part positivity for the symmetric
+resolvent/Laplace kernel. -/
+theorem symmetricResolventLaplaceKernel_re_nonnegative_on_strip
+    {a center : ℝ} (ha : 0 ≤ a) :
+    ∀ z : ℂ, 0 ≤ z.re → z.re ≤ center →
+      0 ≤ (symmetricResolventLaplaceKernel a center z).re :=
+  PrimeNumberTheorem.symmetricResolventLaplaceKernel_re_nonnegative_on_strip
+    ha
+
+/-- Public pair positivity for the symmetric resolvent/Laplace kernel at its
+center. -/
+theorem laplacePairPositive_symmetricResolventLaplaceKernel
+    {a center : ℝ} (ha : 0 ≤ a) :
+    PrimeNumberTheorem.LaplacePairPositive
+      (symmetricResolventLaplaceKernel a center) center :=
+  PrimeNumberTheorem.laplacePairPositive_symmetricResolventLaplaceKernel
+    ha
+
+/-- Public center-one pair positivity for the symmetric resolvent/Laplace
+kernel. -/
+theorem laplacePairPositive_one_symmetricResolventLaplaceKernel
+    {a : ℝ} (ha : 0 ≤ a) :
+    PrimeNumberTheorem.LaplacePairPositive
+      (symmetricResolventLaplaceKernel a 1) 1 :=
+  PrimeNumberTheorem.laplacePairPositive_one_symmetricResolventLaplaceKernel
+    ha
+
 /-- Public finite nonnegative resolvent/Laplace kernel combination. -/
 noncomputable abbrev resolventLaplaceKernelCombo
     (K : Finset ℕ) (w a : ℕ → ℝ) : ℂ → ℂ :=
@@ -2875,6 +2907,29 @@ theorem nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_resolventLaplace
   PrimeNumberTheorem.nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_resolventLaplaceKernel
     T U a ha
 
+/-- Public new-zero real-part sum nonnegativity for the center-one symmetric
+resolvent/Laplace kernel. -/
+theorem nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_symmetricResolventLaplaceKernel
+    (T U a : ℝ) (ha : 0 ≤ a) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+        PrimeNumberTheorem.nontrivialZerosFinset T,
+      (symmetricResolventLaplaceKernel a 1 ρ).re :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_symmetricResolventLaplaceKernel
+    T U a ha
+
+/-- Public new-zero average real-part nonnegativity for the center-one
+symmetric resolvent/Laplace kernel. -/
+theorem nontrivialZerosFinset_sdiff_average_re_nonnegative_of_symmetricResolventLaplaceKernel
+    (T U a : ℝ) (ha : 0 ≤ a) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T,
+        (symmetricResolventLaplaceKernel a 1 ρ).re) /
+        (((PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ)) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_average_re_nonnegative_of_symmetricResolventLaplaceKernel
+    T U a ha
+
 /-- Public new-zero real-part sum nonnegativity for the affine
 resolvent/Laplace prototype kernel. -/
 theorem nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_affineResolventLaplaceKernel
@@ -3305,6 +3360,26 @@ theorem nontrivialZerosFinset_pair_average_nonnegative_of_resolventLaplaceKernel
           (resolventLaplaceKernel a (1 - ρ)).re)) /
         ((PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ) :=
   PrimeNumberTheorem.nontrivialZerosFinset_pair_average_nonnegative_of_resolventLaplaceKernel
+    T a ha
+
+/-- Public finite-zero real-part sum nonnegativity for the center-one symmetric
+resolvent/Laplace kernel. -/
+theorem nontrivialZerosFinset_sum_re_nonnegative_of_symmetricResolventLaplaceKernel
+    (T a : ℝ) (ha : 0 ≤ a) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+      (symmetricResolventLaplaceKernel a 1 ρ).re :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sum_re_nonnegative_of_symmetricResolventLaplaceKernel
+    T a ha
+
+/-- Public finite-zero average real-part nonnegativity for the center-one
+symmetric resolvent/Laplace kernel. -/
+theorem nontrivialZerosFinset_average_re_nonnegative_of_symmetricResolventLaplaceKernel
+    (T a : ℝ) (ha : 0 ≤ a) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+        (symmetricResolventLaplaceKernel a 1 ρ).re) /
+        ((PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_average_re_nonnegative_of_symmetricResolventLaplaceKernel
     T a ha
 
 /-- Public finite-zero real-part sum nonnegativity for the affine

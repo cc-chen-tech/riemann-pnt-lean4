@@ -2856,6 +2856,47 @@ lemma laplacePairPositive_one_resolventLaplaceKernel
     LaplacePairPositive (resolventLaplaceKernel a) 1 :=
   laplacePairPositive_resolventLaplaceKernel (center := 1) ha
 
+/-- Symmetric resolvent/Laplace kernel centered at a real point:
+`z ↦ (a + z)⁻¹ + (a + center - z)⁻¹`.
+
+This packages the elementary center-reflection kernel used in zero-pair
+arguments before introducing more delicate Stechkin/Heath-Brown detectors. -/
+noncomputable def symmetricResolventLaplaceKernel
+    (a center : ℝ) (z : ℂ) : ℂ :=
+  resolventLaplaceKernel a z +
+    resolventLaplaceKernel a ((center : ℂ) - z)
+
+/-- The symmetric resolvent/Laplace kernel has nonnegative real part on its
+centered strip. -/
+lemma symmetricResolventLaplaceKernel_re_nonnegative_on_strip
+    {a center : ℝ} (ha : 0 ≤ a) :
+    ∀ z : ℂ, 0 ≤ z.re → z.re ≤ center →
+      0 ≤ (symmetricResolventLaplaceKernel a center z).re := by
+  intro z hz_left hz_right
+  have hpair_left : 0 ≤ ((center : ℂ) - z).re := by
+    simp [Complex.sub_re]
+    exact hz_right
+  rw [symmetricResolventLaplaceKernel, Complex.add_re]
+  exact add_nonneg
+    (resolventLaplaceKernel_re_nonnegative_of_nonneg_re ha hz_left)
+    (resolventLaplaceKernel_re_nonnegative_of_nonneg_re ha hpair_left)
+
+/-- The symmetric resolvent/Laplace kernel supplies strip-local pair
+positivity at its center. -/
+lemma laplacePairPositive_symmetricResolventLaplaceKernel
+    {a center : ℝ} (ha : 0 ≤ a) :
+    LaplacePairPositive (symmetricResolventLaplaceKernel a center) center :=
+  laplacePairPositive_of_re_nonnegative_on_strip
+    (symmetricResolventLaplaceKernel_re_nonnegative_on_strip ha)
+
+/-- Center-one symmetric resolvent/Laplace pair positivity, matching the zeta
+reflection `ρ ↦ 1 - ρ`. -/
+lemma laplacePairPositive_one_symmetricResolventLaplaceKernel
+    {a : ℝ} (ha : 0 ≤ a) :
+    LaplacePairPositive (symmetricResolventLaplaceKernel a 1) 1 :=
+  laplacePairPositive_symmetricResolventLaplaceKernel
+    (center := 1) ha
+
 /-- Finite nonnegative linear combinations of resolvent/Laplace prototype
 kernels.  This is a Lean-facing model for detector kernels built by summing
 elementary right-half-plane-positive pieces. -/
@@ -4591,6 +4632,29 @@ lemma nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_resolventLaplaceKe
     T U (resolventLaplaceKernel a)
     (laplacePairPositive_one_resolventLaplaceKernel ha)
 
+/-- The center-one symmetric resolvent/Laplace kernel gives a nonnegative
+real-part sum over newly included nontrivial zeros. -/
+lemma nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_symmetricResolventLaplaceKernel
+    (T U a : ℝ) (ha : 0 ≤ a) :
+    0 ≤
+      ∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        (symmetricResolventLaplaceKernel a 1 ρ).re :=
+  nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_re_nonnegative_on_critical_strip
+    T U (symmetricResolventLaplaceKernel a 1)
+    (symmetricResolventLaplaceKernel_re_nonnegative_on_strip ha)
+
+/-- The center-one symmetric resolvent/Laplace kernel gives a nonnegative
+average real-part contribution over newly included nontrivial zeros. -/
+lemma nontrivialZerosFinset_sdiff_average_re_nonnegative_of_symmetricResolventLaplaceKernel
+    (T U a : ℝ) (ha : 0 ≤ a) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        (symmetricResolventLaplaceKernel a 1 ρ).re) /
+        (((nontrivialZerosFinset U \ nontrivialZerosFinset T).card : ℝ)) :=
+  nontrivialZerosFinset_sdiff_average_re_nonnegative_of_re_nonnegative_on_critical_strip
+    T U (symmetricResolventLaplaceKernel a 1)
+    (symmetricResolventLaplaceKernel_re_nonnegative_on_strip ha)
+
 /-- The affine resolvent/Laplace prototype gives a nonnegative real-part sum
 over newly included nontrivial zeros. -/
 lemma nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_affineResolventLaplaceKernel
@@ -4949,6 +5013,29 @@ lemma nontrivialZerosFinset_pair_average_nonnegative_of_resolventLaplaceKernel
   nontrivialZerosFinset_pair_average_nonnegative_of_laplace_pair_positive_one
     T (resolventLaplaceKernel a)
     (laplacePairPositive_one_resolventLaplaceKernel ha)
+
+/-- The center-one symmetric resolvent/Laplace kernel gives a nonnegative
+real-part sum over height-truncated nontrivial zeros. -/
+lemma nontrivialZerosFinset_sum_re_nonnegative_of_symmetricResolventLaplaceKernel
+    (T a : ℝ) (ha : 0 ≤ a) :
+    0 ≤
+      ∑ ρ ∈ nontrivialZerosFinset T,
+        (symmetricResolventLaplaceKernel a 1 ρ).re :=
+  nontrivialZerosFinset_sum_re_nonnegative_of_re_nonnegative_on_critical_strip
+    T (symmetricResolventLaplaceKernel a 1)
+    (symmetricResolventLaplaceKernel_re_nonnegative_on_strip ha)
+
+/-- The center-one symmetric resolvent/Laplace kernel gives a nonnegative
+average real-part contribution over height-truncated nontrivial zeros. -/
+lemma nontrivialZerosFinset_average_re_nonnegative_of_symmetricResolventLaplaceKernel
+    (T a : ℝ) (ha : 0 ≤ a) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset T,
+        (symmetricResolventLaplaceKernel a 1 ρ).re) /
+        (((nontrivialZerosFinset T).card : ℝ)) :=
+  nontrivialZerosFinset_average_re_nonnegative_of_re_nonnegative_on_critical_strip
+    T (symmetricResolventLaplaceKernel a 1)
+    (symmetricResolventLaplaceKernel_re_nonnegative_on_strip ha)
 
 /-- The affine resolvent/Laplace prototype gives a nonnegative real-part sum
 over height-truncated nontrivial zeros. -/
