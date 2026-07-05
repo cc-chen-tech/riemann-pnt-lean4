@@ -15040,6 +15040,56 @@ theorem classical_zero_free_region_high_height_mono_const_re_im
   ZeroFreeRegion.classical_zero_free_region_high_height_mono_const_re_im
     hT0 hc hlarge
 
+/-- Public high-height cutoff-monotonicity for the classical zero-free
+width. -/
+theorem classical_zero_free_region_high_height_mono_cutoff
+    {T0 T1 c : ℝ} (hT : T0 ≤ T1)
+    (hregion : ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0) :
+    ∀ s : ℂ, T1 ≤ |s.im| →
+      s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0 :=
+  ZeroFreeRegion.classical_zero_free_region_high_height_mono_cutoff
+    hT hregion
+
+/-- Public coordinate high-height cutoff-monotonicity for the classical
+zero-free width. -/
+theorem classical_zero_free_region_high_height_mono_cutoff_re_im
+    {T0 T1 c : ℝ} (hT : T0 ≤ T1)
+    (hregion : ∀ β t : ℝ, T0 ≤ |t| →
+      β ≥ 1 - c / Real.log |t| →
+      riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0) :
+    ∀ β t : ℝ, T1 ≤ |t| →
+      β ≥ 1 - c / Real.log |t| →
+      riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0 :=
+  ZeroFreeRegion.classical_zero_free_region_high_height_mono_cutoff_re_im
+    hT hregion
+
+/-- Public existential high-height cutoff-monotonicity for the classical
+zero-free width. -/
+theorem classical_zero_free_region_high_height_exists_mono_cutoff
+    {T0 T1 : ℝ} (hT : T0 ≤ T1)
+    (hregion :
+      ∃ c > 0, ∀ s : ℂ, T0 ≤ |s.im| →
+        s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0) :
+    ∃ c > 0, ∀ s : ℂ, T1 ≤ |s.im| →
+      s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0 :=
+  ZeroFreeRegion.classical_zero_free_region_high_height_exists_mono_cutoff
+    hT hregion
+
+/-- Public coordinate existential high-height cutoff-monotonicity for the
+classical zero-free width. -/
+theorem classical_zero_free_region_high_height_exists_mono_cutoff_re_im
+    {T0 T1 : ℝ} (hT : T0 ≤ T1)
+    (hregion :
+      ∃ c > 0, ∀ β t : ℝ, T0 ≤ |t| →
+        β ≥ 1 - c / Real.log |t| →
+        riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0) :
+    ∃ c > 0, ∀ β t : ℝ, T1 ≤ |t| →
+      β ≥ 1 - c / Real.log |t| →
+      riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0 :=
+  ZeroFreeRegion.classical_zero_free_region_high_height_exists_mono_cutoff_re_im
+    hT hregion
+
 /-- Public coordinate form of Dirichlet `LFunction` nonvanishing in
 `Re(s) > 1`. -/
 theorem dirichlet_lfunction_ne_zero_re_im {N : ℕ} [NeZero N]

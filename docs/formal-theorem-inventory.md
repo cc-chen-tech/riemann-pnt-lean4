@@ -147,6 +147,10 @@ Core verified declarations:
   `classical_zero_free_region_high_height_re_im_at_three`
   project the classical zero-free-region target into coordinate high-height
   form, including the standard height-`3` cutoff.
+- `classical_zero_free_region_high_height_mono_cutoff`,
+  `classical_zero_free_region_high_height_mono_cutoff_re_im`, and the two
+  existential variants restrict a high-height classical-width estimate from
+  cutoff `T0` to any larger cutoff `T1`.
 - `residue_bounds`
   proves `1 < (sigma - 1) * Re(zeta(sigma)) <= sigma` for `sigma > 1`.
 - `log_deriv_zeta_pos_real`
