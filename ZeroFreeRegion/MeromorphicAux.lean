@@ -8617,6 +8617,81 @@ lemma exists_re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_shi
       hr hσ hσr ht hA hB hM hdiff hlog hcenter hn hsub
   exact ⟨C, hC, by simpa [C] using hmain⟩
 
+/-- Full-height version of
+`exists_re_neg_logDeriv_riemannZeta_sigma_it_add_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center`.
+It keeps the center estimate discharged and only changes the final height scale
+from `log |t|` to `log(‖σ+it‖+3)`. -/
+lemma exists_re_neg_logDeriv_riemannZeta_sigma_it_add_inv_right_shift_le_log_norm_of_affine_regularPart_re_le_half_radius_fixed_margin_center
+    {Are Bre r σ β t : ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3) (ht : 6 ≤ |t|)
+    (hβ : β < 1) (hAre : 0 ≤ Are) (hBre : 0 ≤ Bre)
+    (hM :
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hdiff :
+      DifferentiableOn ℂ
+        (fun w : ℂ =>
+          -logDeriv riemannZeta w + (w - ((β : ℂ) + I * t))⁻¹)
+        (ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r)))
+    (hlog : ∀ w : ℂ,
+      w ∈ ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r) →
+        (-logDeriv riemannZeta w + (w - ((β : ℂ) + I * t))⁻¹).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3)) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re + 1 / (σ - β) ≤
+        C * Real.log (‖((σ : ℂ) + I * t)‖ + 3) := by
+  rcases exists_re_neg_logDeriv_riemannZeta_sigma_it_add_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center
+      (Are := Are) (Bre := Bre) (r := r) (σ := σ) (β := β) (t := t)
+      hr hσ hσr ht hβ hAre hBre hM hdiff hlog with
+    ⟨C, hC, hbound⟩
+  refine ⟨C, hC, ?_⟩
+  have hlog_le :
+      Real.log |t| ≤ Real.log (‖((σ : ℂ) + I * t)‖ + 3) :=
+    log_abs_le_log_norm_sigma_add_I_mul_add_three (σ := σ) (t := t)
+      (by linarith : 0 < |t|)
+  exact hbound.trans (mul_le_mul_of_nonneg_left hlog_le hC)
+
+/-- Multiplicity-aware full-height version of
+`exists_re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center`.
+The center estimate remains discharged by the fixed-margin half-plane bound. -/
+lemma exists_re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_shift_le_log_norm_of_affine_regularPart_re_le_half_radius_fixed_margin_center
+    {Are Bre r σ β t : ℝ} {n : ℕ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3) (ht : 6 ≤ |t|)
+    (hβ : β < 1) (hAre : 0 ≤ Are) (hBre : 0 ≤ Bre)
+    (hM :
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hdiff :
+      DifferentiableOn ℂ
+        (fun w : ℂ =>
+          -logDeriv riemannZeta w +
+            (n : ℂ) * (w - ((β : ℂ) + I * t))⁻¹)
+        (ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r)))
+    (hlog : ∀ w : ℂ,
+      w ∈ ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r) →
+        (-logDeriv riemannZeta w +
+            (n : ℂ) * (w - ((β : ℂ) + I * t))⁻¹).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hn : 0 < n) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re + 1 / (σ - β) ≤
+        C * Real.log (‖((σ : ℂ) + I * t)‖ + 3) := by
+  rcases exists_re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center
+      (Are := Are) (Bre := Bre) (r := r) (σ := σ) (β := β)
+      (t := t) (n := n)
+      hr hσ hσr ht hβ hAre hBre hM hdiff hlog hn with
+    ⟨C, hC, hbound⟩
+  refine ⟨C, hC, ?_⟩
+  have hlog_le :
+      Real.log |t| ≤ Real.log (‖((σ : ℂ) + I * t)‖ + 3) :=
+    log_abs_le_log_norm_sigma_add_I_mul_add_three (σ := σ) (t := t)
+      (by linarith : 0 < |t|)
+  exact hbound.trans (mul_le_mul_of_nonneg_left hlog_le hC)
+
 /-- Multiplicity-aware right-shifted Borel-Carathéodory transfer for the
 positive logarithmic-derivative regular part
 `logDeriv ζ(w) - n (w-ρ)⁻¹`, normalized to the pure `log |t|` scale. -/
