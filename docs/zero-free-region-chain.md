@@ -89,6 +89,15 @@ named regular-part estimates plus the named vertical estimate.  This is still
 conditional: those two zeta-specific high-height estimates are not proved in
 this checkout.
 
+The direct real-part final assemblies
+`ZeroFreeRegion.classical_zero_free_region_of_LogDerivRegularPartLogBound_and_ReNegDerivDivVerticalLogBound`
+and
+`ZeroFreeRegion.classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_and_ReNegDerivDivVerticalLogBound`
+close the same conditional target from the exact `Re(-zeta'/zeta)` vertical
+estimate used by the 3-4-1 inequality.  This avoids requiring a stronger
+vertical norm bound when future analysis proves the signed real-part estimate
+directly.
+
 The two hard inputs do not need to share the same cutoff.  The monotonicity
 lemmas `ZeroFreeRegion.logDerivVerticalLogBound_mono_height`,
 `ZeroFreeRegion.reNegDerivDivVerticalLogBound_mono_height`,
@@ -98,6 +107,8 @@ cutoff to be raised, and the existential closures
 `ZeroFreeRegion.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_exists_LogDerivVerticalLogBound`
 and
 `ZeroFreeRegion.classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_exists_LogDerivVerticalLogBound`
+as well as the corresponding `...exists_ReNegDerivDivVerticalLogBound`
+variants
 merge separately proved high-height regular-part and vertical estimates by
 taking the maximum cutoff.
 
@@ -1110,6 +1121,13 @@ state the same handoff directly in real variables `sigma`, `beta`, and `t`,
 with the local principal part written as `(sigma-beta)^{-1}`.  They are the
 non-multiplicity caller-facing form of the multiplicity-aware coordinate
 closure.
+The direct real-part coordinate wrappers
+`ZeroFreeRegion.classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_bound_and_vertical_reNegDerivDiv_bound_high_height`
+and
+`ZeroFreeRegion.classical_zero_free_region_of_re_im_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_reNegDerivDiv_bound_high_height`
+keep the same regular-part input but consume the vertical estimate directly as
+`Re(-zeta'/zeta) <= C log |t|`, matching the exact quantity in the 3-4-1
+combination.
 The affine-log wrappers
 `ZeroFreeRegion.classical_zero_free_region_of_logDeriv_regular_part_norm_affine_log_bound_and_vertical_logDeriv_norm_affine_log_bound_high_height`
 and

@@ -938,6 +938,10 @@ Core verified declarations:
   is the coordinate unit-principal version of that high-height closure, with
   regular-part and vertical estimates stated directly for `sigma+it` and
   same-height zero candidates `beta+it`.
+- `classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_bound_and_vertical_reNegDerivDiv_bound_high_height`
+  is the coordinate unit-principal high-height closure where the vertical
+  input is the direct real-part estimate for `Re(-zeta'/zeta)`, not a norm
+  bound.
 - `classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height`
   packages the coordinate unit-principal high-height inputs existentially.
 - `classical_zero_free_region_of_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height`
@@ -948,6 +952,9 @@ Core verified declarations:
 - `classical_zero_free_region_of_re_im_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height`
   is the coordinate version of the multiplicity-aware high-height closure, with
   estimates stated for `sigma+it` and same-height zero candidates `beta+it`.
+- `classical_zero_free_region_of_re_im_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_reNegDerivDiv_bound_high_height`
+  is the multiplicity-aware coordinate high-height closure with the weaker
+  direct real-part vertical input.
 - `classical_zero_free_region_of_exists_re_im_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height`
   packages the coordinate multiplicity-aware high-height inputs existentially.
 - `classical_zero_free_region_of_re_im_multiplicity_logDeriv_regular_part_norm_one_add_log_bound_high_height`
@@ -1037,6 +1044,12 @@ Core verified declarations:
 - `classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_and_LogDerivVerticalLogBound`
   is the same named-input assembly with zero multiplicity in the local
   principal part.
+- `classical_zero_free_region_of_LogDerivRegularPartLogBound_and_ReNegDerivDivVerticalLogBound`
+  assembles the named regular-part interface and the named direct real-part
+  `Re(-zeta'/zeta)` vertical interface into the classical zero-free-region
+  target.
+- `classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_and_ReNegDerivDivVerticalLogBound`
+  is the multiplicity-aware direct real-part version of that final assembly.
 - `classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_exists_LogDerivVerticalLogBound`
   allows the regular-part and vertical estimates to be supplied
   existentially with different high-height cutoffs, then merges the cutoffs by
@@ -1044,6 +1057,9 @@ Core verified declarations:
 - `classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_exists_LogDerivVerticalLogBound`
   is the multiplicity-aware version of that different-cutoff existential
   assembly.
+- `classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_exists_ReNegDerivDivVerticalLogBound`
+  and its multiplicity-aware analogue provide the same different-cutoff
+  assembly for the direct real-part vertical interface.
 - `exists_re_im_logDeriv_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height`
   converts a future boundary-strip estimate
   `||logDeriv zeta (sigma+it)|| <= A + B log(|t|+3)` into the exact

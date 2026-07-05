@@ -132,6 +132,53 @@ theorem classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogB
   ZeroFreeRegion.classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_exists_LogDerivVerticalLogBound
     hregular hvertical
 
+/-- Public named-input assembly from the regular-part estimate and a direct
+real-part vertical bound for `-ζ'/ζ`. -/
+theorem classical_zero_free_region_of_LogDerivRegularPartLogBound_and_ReNegDerivDivVerticalLogBound
+    {Bregular Bvertical T0 : ℝ}
+    (hregular : LogDerivRegularPartLogBound Bregular T0)
+    (hvertical : ReNegDerivDivVerticalLogBound Bvertical T0) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_LogDerivRegularPartLogBound_and_ReNegDerivDivVerticalLogBound
+    hregular hvertical
+
+/-- Public multiplicity-aware named-input assembly from the regular-part
+estimate and a direct real-part vertical bound for `-ζ'/ζ`. -/
+theorem classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_and_ReNegDerivDivVerticalLogBound
+    {Bregular Bvertical T0 : ℝ}
+    (hregular : MultiplicityLogDerivRegularPartLogBound Bregular T0)
+    (hvertical : ReNegDerivDivVerticalLogBound Bvertical T0) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_and_ReNegDerivDivVerticalLogBound
+    hregular hvertical
+
+/-- Public existential assembly from regular-part and direct real-part vertical
+estimates with possibly different high-height cutoffs. -/
+theorem classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_exists_ReNegDerivDivVerticalLogBound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        LogDerivRegularPartLogBound Bregular Tregular)
+    (hvertical :
+      ∃ Bvertical Tvertical : ℝ,
+        ReNegDerivDivVerticalLogBound Bvertical Tvertical) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_exists_ReNegDerivDivVerticalLogBound
+    hregular hvertical
+
+/-- Public multiplicity-aware existential assembly from regular-part and
+direct real-part vertical estimates with possibly different high-height
+cutoffs. -/
+theorem classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_exists_ReNegDerivDivVerticalLogBound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        MultiplicityLogDerivRegularPartLogBound Bregular Tregular)
+    (hvertical :
+      ∃ Bvertical Tvertical : ℝ,
+        ReNegDerivDivVerticalLogBound Bvertical Tvertical) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_exists_ReNegDerivDivVerticalLogBound
+    hregular hvertical
+
 /-- Public compatibility bridge between the project's prime-counting
 normalization and Mathlib's `Nat.primeCounting`. -/
 theorem primeCounting_eq_mathlib (x : ℝ) (hx : 0 ≤ x) :

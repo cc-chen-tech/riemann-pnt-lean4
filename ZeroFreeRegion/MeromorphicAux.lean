@@ -3061,6 +3061,175 @@ lemma classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_bound_and_v
   refine ⟨1, by norm_num, ?_⟩
   simpa using hregular σ β t ht hσ hζ hβ hsub
 
+/-- Coordinate high-height closure with a multiplicity-weighted regular part
+and a direct real-part vertical estimate for `-ζ'/ζ`.
+
+Compared with
+`classical_zero_free_region_of_re_im_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height`,
+this theorem does not require a norm bound for the vertical `σ+2it` term.
+It accepts exactly the real-part inequality consumed by the 3-4-1 argument,
+paying only the usual factor `2` to rewrite the height `2t` in terms of `t`. -/
+lemma classical_zero_free_region_of_re_im_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_reNegDerivDiv_bound_high_height
+    (T0 Bregular Bvertical : ℝ)
+    (hT0 : 2 ≤ T0) (hBregular : 0 ≤ Bregular)
+    (hBvertical : 0 ≤ Bvertical)
+    (hregular :
+      ∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+        0 < σ - β →
+        ∃ n : ℕ, 0 < n ∧
+          ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+              (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+            Bregular * Real.log |t|)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re ≤
+          Bvertical * Real.log |t|) :
+    classical_zero_free_region := by
+  let B : ℝ := max Bregular (2 * Bvertical)
+  have hB : 0 ≤ B := le_trans hBregular (le_max_left Bregular (2 * Bvertical))
+  refine classical_zero_free_region_of_sigma_log_shift_estimates_same_const
+    B T0 hB hT0 ?_ ?_
+  · intro a c β t ha_pos _hc_pos ha_le_log2 ht hβ_lt _hβ hsub hζ
+    let σ : ℝ := 1 + a / Real.log |t|
+    let s : ℂ := (σ : ℂ) + I * t
+    let ρ : ℂ := (β : ℂ) + I * t
+    have hσ_gt : 1 < σ := by
+      simpa [σ] using sigmaOf_log_gt_one hT0 ha_pos ht
+    have hσ_le : σ ≤ 2 := by
+      simpa [σ] using sigmaOf_log_le_two hT0 ha_le_log2 ht
+    have hσ_mem : σ ∈ Set.Icc 1 2 := ⟨hσ_gt.le, hσ_le⟩
+    rcases hregular σ β t ht hσ_mem hζ hβ_lt hsub with
+      ⟨n, hn_pos, hreg_pos⟩
+    have hs_im : s.im = t := by simp [s, σ]
+    have hρ_im_eq : ρ.im = s.im := by simp [ρ, hs_im]
+    have hsub_complex : s - ρ = ((σ - β : ℝ) : ℂ) := by
+      apply Complex.ext <;> simp [s, ρ]
+    have hsub' : 0 < s.re - ρ.re := by
+      simpa [s, ρ, σ] using hsub
+    have hreg_pos_s :
+        ‖logDeriv riemannZeta s - (n : ℂ) * (s - ρ)⁻¹‖ ≤
+          Bregular * Real.log |s.im| := by
+      rw [hsub_complex, hs_im]
+      simpa [s] using hreg_pos
+    have hreg_signed :
+        ‖-logDeriv riemannZeta s + (n : ℂ) * (s - ρ)⁻¹‖ ≤
+          Bregular * Real.log |s.im| := by
+      calc
+        ‖-logDeriv riemannZeta s + (n : ℂ) * (s - ρ)⁻¹‖
+            = ‖-(logDeriv riemannZeta s - (n : ℂ) * (s - ρ)⁻¹)‖ := by
+              ring_nf
+        _ = ‖logDeriv riemannZeta s - (n : ℂ) * (s - ρ)⁻¹‖ := norm_neg _
+        _ ≤ Bregular * Real.log |s.im| := hreg_pos_s
+    have hreg_re :
+        (-deriv riemannZeta s / riemannZeta s).re +
+            1 / (s.re - ρ.re) ≤
+          Bregular * Real.log |s.im| :=
+      re_neg_logDeriv_riemannZeta_add_inv_le_of_multiplicity_regular_part_norm
+        hreg_signed hn_pos hρ_im_eq hsub'
+    have hlog_nonneg : 0 ≤ Real.log |t| :=
+      (log_abs_pos_of_two_le (hT0.trans ht)).le
+    have hBregular_le_B : Bregular ≤ B := le_max_left Bregular (2 * Bvertical)
+    have hrewrite :
+        (-deriv riemannZeta
+              ((1 + a / Real.log |t| : ℝ) + I * t) /
+            riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t)).re
+          + 1 / ((1 + a / Real.log |t|) - β) ≤
+            B * Real.log |t| := by
+      calc
+        (-deriv riemannZeta
+              ((1 + a / Real.log |t| : ℝ) + I * t) /
+            riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t)).re
+          + 1 / ((1 + a / Real.log |t|) - β)
+            ≤ Bregular * Real.log |t| := by
+              simpa [s, ρ, σ, hs_im] using hreg_re
+        _ ≤ B * Real.log |t| :=
+              mul_le_mul_of_nonneg_right hBregular_le_B hlog_nonneg
+    calc
+      (-deriv riemannZeta
+            ((1 + a / Real.log |t| : ℝ) + I * t) /
+          riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t)).re
+          =
+            ((-deriv riemannZeta
+                ((1 + a / Real.log |t| : ℝ) + I * t) /
+              riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t)).re
+              + 1 / ((1 + a / Real.log |t|) - β))
+              - 1 / ((1 + a / Real.log |t|) - β) := by
+              ring
+      _ ≤ B * Real.log |t| - 1 / ((1 + a / Real.log |t|) - β) := by
+              exact sub_le_sub_right hrewrite _
+      _ = -1 / ((1 + a / Real.log |t|) - β) + B * Real.log |t| := by
+              ring
+  · intro a t ha_pos ha_le_log2 ht
+    let σ : ℝ := 1 + a / Real.log |t|
+    have hσ_gt : 1 < σ := by
+      simpa [σ] using sigmaOf_log_gt_one hT0 ha_pos ht
+    have hσ_le : σ ≤ 2 := by
+      simpa [σ] using sigmaOf_log_le_two hT0 ha_le_log2 ht
+    have hσ_mem : σ ∈ Set.Icc 1 2 := ⟨hσ_gt.le, hσ_le⟩
+    have htwo_height : T0 ≤ |(2 : ℝ) * t| := by
+      have ht_nonneg : 0 ≤ |t| := abs_nonneg t
+      calc
+        T0 ≤ |t| := ht
+        _ ≤ 2 * |t| := by nlinarith
+        _ = |(2 : ℝ) * t| := by
+            rw [abs_mul]
+            norm_num
+    have hlog :
+        Real.log |(2 : ℝ) * t| ≤ 2 * Real.log |t| :=
+      log_abs_two_mul_le_two_log_abs (hT0.trans ht)
+    have hlog_nonneg : 0 ≤ Real.log |t| :=
+      (log_abs_pos_of_two_le (hT0.trans ht)).le
+    have htwoB_le : 2 * Bvertical ≤ B := le_max_right Bregular (2 * Bvertical)
+    have hbound := hvertical σ ((2 : ℝ) * t) htwo_height hσ_mem
+    have hz_eq : ((σ : ℂ) + I * ((2 : ℝ) * t)) =
+        ((σ : ℂ) + 2 * I * t) := by
+      simp [mul_left_comm, mul_comm]
+    have hbound' :
+        (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+          riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤
+          Bvertical * Real.log |(2 : ℝ) * t| := by
+      rw [← hz_eq]
+      simpa using hbound
+    calc
+      (-deriv riemannZeta
+          ((1 + a / Real.log |t| : ℝ) + 2 * I * t) /
+        riemannZeta ((1 + a / Real.log |t| : ℝ) + 2 * I * t)).re
+          ≤ Bvertical * Real.log |(2 : ℝ) * t| := by
+            simpa [σ] using hbound'
+      _ ≤ Bvertical * (2 * Real.log |t|) :=
+          mul_le_mul_of_nonneg_left hlog hBvertical
+      _ = (2 * Bvertical) * Real.log |t| := by ring
+      _ ≤ B * Real.log |t| :=
+          mul_le_mul_of_nonneg_right htwoB_le hlog_nonneg
+
+/-- Coordinate high-height closure for the usual unit-principal regular part
+and a direct real-part vertical estimate for `-ζ'/ζ`. -/
+lemma classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_bound_and_vertical_reNegDerivDiv_bound_high_height
+    (T0 Bregular Bvertical : ℝ)
+    (hT0 : 2 ≤ T0) (hBregular : 0 ≤ Bregular)
+    (hBvertical : 0 ≤ Bvertical)
+    (hregular :
+      ∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+        0 < σ - β →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+            (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+          Bregular * Real.log |t|)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re ≤
+          Bvertical * Real.log |t|) :
+    classical_zero_free_region := by
+  refine
+    classical_zero_free_region_of_re_im_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_reNegDerivDiv_bound_high_height
+      T0 Bregular Bvertical hT0 hBregular hBvertical ?_ hvertical
+  intro σ β t ht hσ hζ hβ hsub
+  refine ⟨1, by norm_num, ?_⟩
+  simpa using hregular σ β t ht hσ hζ hβ hsub
+
 /-- Existential coordinate high-height closure for the unit-principal
 `logDeriv ζ` regular-part and vertical-strip estimates. -/
 lemma classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height
@@ -4072,6 +4241,91 @@ lemma classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBou
       (le_max_right Tregular Tvertical)
   exact
     classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_and_LogDerivVerticalLogBound
+      hregularT hverticalT
+
+/-- Named-input assembly from the regular-part estimate and a direct real-part
+vertical bound for `-ζ'/ζ`.
+
+This is weaker than
+`classical_zero_free_region_of_LogDerivRegularPartLogBound_and_LogDerivVerticalLogBound`
+on the vertical side: future work may prove the exact real-part estimate used
+by the 3-4-1 inequality without first proving a full norm bound. -/
+lemma classical_zero_free_region_of_LogDerivRegularPartLogBound_and_ReNegDerivDivVerticalLogBound
+    {Bregular Bvertical T0 : ℝ}
+    (hregular : LogDerivRegularPartLogBound Bregular T0)
+    (hvertical : ReNegDerivDivVerticalLogBound Bvertical T0) :
+    classical_zero_free_region := by
+  rcases hregular with ⟨hBregular, hT0, hregular⟩
+  rcases hvertical with ⟨hBvertical, _hT0_vertical, hvertical⟩
+  refine
+    classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_bound_and_vertical_reNegDerivDiv_bound_high_height
+      T0 Bregular Bvertical (by linarith) hBregular hBvertical ?_ ?_
+  · intro σ β t ht hσ_mem hζ hβ hsub
+    exact hregular σ β t hσ_mem.1 hσ_mem.2 ht hζ hβ hsub
+  · intro σ t ht hσ_mem
+    exact hvertical σ t hσ_mem.1 hσ_mem.2 ht
+
+/-- Multiplicity-aware named-input assembly from the regular-part estimate and
+a direct real-part vertical bound for `-ζ'/ζ`. -/
+lemma classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_and_ReNegDerivDivVerticalLogBound
+    {Bregular Bvertical T0 : ℝ}
+    (hregular : MultiplicityLogDerivRegularPartLogBound Bregular T0)
+    (hvertical : ReNegDerivDivVerticalLogBound Bvertical T0) :
+    classical_zero_free_region := by
+  rcases hregular with ⟨hBregular, hT0, hregular⟩
+  rcases hvertical with ⟨hBvertical, _hT0_vertical, hvertical⟩
+  refine
+    classical_zero_free_region_of_re_im_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_reNegDerivDiv_bound_high_height
+      T0 Bregular Bvertical (by linarith) hBregular hBvertical ?_ ?_
+  · intro σ β t ht hσ_mem hζ hβ hsub
+    exact hregular σ β t hσ_mem.1 hσ_mem.2 ht hζ hβ hsub
+  · intro σ t ht hσ_mem
+    exact hvertical σ t hσ_mem.1 hσ_mem.2 ht
+
+/-- Existential named-input assembly from regular-part and direct real-part
+vertical estimates, allowing different high-height cutoffs. -/
+lemma classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_exists_ReNegDerivDivVerticalLogBound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        LogDerivRegularPartLogBound Bregular Tregular)
+    (hvertical :
+      ∃ Bvertical Tvertical : ℝ,
+        ReNegDerivDivVerticalLogBound Bvertical Tvertical) :
+    classical_zero_free_region := by
+  rcases hregular with ⟨Bregular, Tregular, hregular⟩
+  rcases hvertical with ⟨Bvertical, Tvertical, hvertical⟩
+  let T : ℝ := max Tregular Tvertical
+  have hregularT : LogDerivRegularPartLogBound Bregular T :=
+    logDerivRegularPartLogBound_mono_height hregular
+      (le_max_left Tregular Tvertical)
+  have hverticalT : ReNegDerivDivVerticalLogBound Bvertical T :=
+    reNegDerivDivVerticalLogBound_mono_height hvertical
+      (le_max_right Tregular Tvertical)
+  exact
+    classical_zero_free_region_of_LogDerivRegularPartLogBound_and_ReNegDerivDivVerticalLogBound
+      hregularT hverticalT
+
+/-- Multiplicity-aware existential named-input assembly from regular-part and
+direct real-part vertical estimates, allowing different high-height cutoffs. -/
+lemma classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_exists_ReNegDerivDivVerticalLogBound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        MultiplicityLogDerivRegularPartLogBound Bregular Tregular)
+    (hvertical :
+      ∃ Bvertical Tvertical : ℝ,
+        ReNegDerivDivVerticalLogBound Bvertical Tvertical) :
+    classical_zero_free_region := by
+  rcases hregular with ⟨Bregular, Tregular, hregular⟩
+  rcases hvertical with ⟨Bvertical, Tvertical, hvertical⟩
+  let T : ℝ := max Tregular Tvertical
+  have hregularT : MultiplicityLogDerivRegularPartLogBound Bregular T :=
+    multiplicityLogDerivRegularPartLogBound_mono_height hregular
+      (le_max_left Tregular Tvertical)
+  have hverticalT : ReNegDerivDivVerticalLogBound Bvertical T :=
+    reNegDerivDivVerticalLogBound_mono_height hvertical
+      (le_max_right Tregular Tvertical)
+  exact
+    classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_and_ReNegDerivDivVerticalLogBound
       hregularT hverticalT
 
 /-- Standalone normalization of a future vertical-strip log-derivative
