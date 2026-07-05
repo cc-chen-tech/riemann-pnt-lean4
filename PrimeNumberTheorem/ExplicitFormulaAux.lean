@@ -189,6 +189,48 @@ noncomputable def finiteTrivialZeroSum (T : ℝ) : Finset ℂ :=
   (Finset.range (Nat.floor (T / 2))).image
     fun n : ℕ => (-2 * ((n : ℕ) + 1) : ℂ)
 
+/-- Membership in the finite trivial-zero truncation is exactly being one of
+the displayed negative even integers in the chosen range. -/
+lemma mem_finiteTrivialZeroSum_iff {s : ℂ} {T : ℝ} :
+    s ∈ finiteTrivialZeroSum T ↔
+      ∃ n : ℕ, n < Nat.floor (T / 2) ∧
+        (-2 * ((n : ℕ) + 1) : ℂ) = s := by
+  constructor
+  · intro hs
+    rw [finiteTrivialZeroSum, Finset.mem_image] at hs
+    rcases hs with ⟨n, hn, hns⟩
+    exact ⟨n, Finset.mem_range.mp hn, hns⟩
+  · rintro ⟨n, hn, hns⟩
+    rw [finiteTrivialZeroSum, Finset.mem_image]
+    exact ⟨n, Finset.mem_range.mpr hn, hns⟩
+
+/-- Elements of the finite trivial-zero truncation lie on the real axis. -/
+lemma finiteTrivialZeroSum_im_eq_zero_of_mem {s : ℂ} {T : ℝ}
+    (hs : s ∈ finiteTrivialZeroSum T) :
+    s.im = 0 := by
+  rcases mem_finiteTrivialZeroSum_iff.mp hs with ⟨n, _hn, hns⟩
+  rw [← hns]
+  simp
+
+/-- Elements of the finite trivial-zero truncation have negative real part. -/
+lemma finiteTrivialZeroSum_re_lt_zero_of_mem {s : ℂ} {T : ℝ}
+    (hs : s ∈ finiteTrivialZeroSum T) :
+    s.re < 0 := by
+  rcases mem_finiteTrivialZeroSum_iff.mp hs with ⟨n, _hn, hns⟩
+  rw [← hns]
+  norm_num
+  exact_mod_cast Nat.succ_pos n
+
+/-- The number of retained trivial zeros is at most the floor cutoff. -/
+lemma finiteTrivialZeroSum_card_le (T : ℝ) :
+    (finiteTrivialZeroSum T).card ≤ Nat.floor (T / 2) := by
+  unfold finiteTrivialZeroSum
+  simpa using
+    (Finset.card_image_le :
+      ((Finset.range (Nat.floor (T / 2))).image
+        (fun n : ℕ => (-2 * ((n : ℕ) + 1) : ℂ))).card ≤
+          (Finset.range (Nat.floor (T / 2))).card)
+
 /-! ## Simple lemmas -/
 
 /-- At a point that is not a prime-power natural number, the

@@ -17291,6 +17291,26 @@ power-scale explicit-formula converse target. -/
 abbrev ExplicitFormulaTruncatedConverseRoute (β : ℝ) : Prop :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute β
 
+namespace ExplicitFormulaTruncated
+
+/-- Public truncated von Mangoldt explicit-formula target predicate.  This is
+still a target statement, not an unconditional theorem. -/
+abbrev ExplicitFormulaTruncatedTarget
+    (T : ℝ) (hT : 0 < T) (x : ℝ) (hx : 0 < x) : Prop :=
+  PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget
+    T hT x hx
+
+/-- Public conditional repackaging of an assumed truncated explicit-formula
+target. -/
+theorem explicitFormulaTruncated_of
+    (T : ℝ) (hT : 0 < T) (x : ℝ) (hx : 0 < x)
+    (h : ExplicitFormulaTruncatedTarget T hT x hx) :
+    ExplicitFormulaTruncatedTarget T hT x hx :=
+  PrimeNumberTheorem.ExplicitFormulaTruncated.explicitFormulaTruncated_of
+    T hT x hx h
+
+end ExplicitFormulaTruncated
+
 namespace ExplicitFormulaAux
 
 /-- Public midpoint-convention Chebyshev-`ψ` used in the explicit-formula
@@ -17319,6 +17339,33 @@ noncomputable def finiteNontrivialZeroSum (T : ℝ) : Finset ℂ :=
 formula sums. -/
 noncomputable def finiteTrivialZeroSum (T : ℝ) : Finset ℂ :=
   PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum T
+
+/-- Public membership characterization for the finite trivial-zero
+truncation. -/
+theorem mem_finiteTrivialZeroSum_iff {s : ℂ} {T : ℝ} :
+    s ∈ finiteTrivialZeroSum T ↔
+      ∃ n : ℕ, n < Nat.floor (T / 2) ∧
+        (-2 * ((n : ℕ) + 1) : ℂ) = s :=
+  PrimeNumberTheorem.ExplicitFormulaAux.mem_finiteTrivialZeroSum_iff
+
+/-- Public real-axis property for retained trivial zeros. -/
+theorem finiteTrivialZeroSum_im_eq_zero_of_mem {s : ℂ} {T : ℝ}
+    (hs : s ∈ finiteTrivialZeroSum T) :
+    s.im = 0 :=
+  PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_im_eq_zero_of_mem
+    hs
+
+/-- Public negative-real-part property for retained trivial zeros. -/
+theorem finiteTrivialZeroSum_re_lt_zero_of_mem {s : ℂ} {T : ℝ}
+    (hs : s ∈ finiteTrivialZeroSum T) :
+    s.re < 0 :=
+  PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_re_lt_zero_of_mem
+    hs
+
+/-- Public cardinality bound for the finite trivial-zero truncation. -/
+theorem finiteTrivialZeroSum_card_le (T : ℝ) :
+    (finiteTrivialZeroSum T).card ≤ Nat.floor (T / 2) :=
+  PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_card_le T
 
 /-- Public good-height normalization: no nontrivial zero has boundary height
 `T`. -/

@@ -2493,6 +2493,18 @@ Support-level verified declarations:
   according to membership in the self-height truncation.  This is support
   bookkeeping for the truncated explicit-formula target, not a proof of the
   analytic zero-order theory.
+- `mem_finiteTrivialZeroSum_iff`,
+  `finiteTrivialZeroSum_im_eq_zero_of_mem`,
+  `finiteTrivialZeroSum_re_lt_zero_of_mem`, and
+  `finiteTrivialZeroSum_card_le`
+  characterize the retained finite trivial zeros as the displayed negative
+  even integers, show they lie on the real axis with negative real part, and
+  bound the truncation size by `Nat.floor (T / 2)`.
+- `RiemannPNT.API.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget`
+  and `RiemannPNT.API.ExplicitFormulaTruncated.explicitFormulaTruncated_of`
+  expose the typed truncated explicit-formula target and its conditional
+  repackaging lemma through the public API.  They remain target infrastructure,
+  not an unconditional proof of the explicit formula.
 
 ## Missing Chains for a Complete Analytic PNT
 

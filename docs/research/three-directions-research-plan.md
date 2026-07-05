@@ -108,7 +108,11 @@ Verified assets now include:
   `PrimeNumberTheorem.ExplicitFormulaAux.not_goodHeight_iff_exists_zero_at_height`;
   `PrimeNumberTheorem.ExplicitFormulaAux.nontrivial_zero_mem_self_height`;
   `PrimeNumberTheorem.ExplicitFormulaAux.zeroMultiplicity_eq_one_of_mem`;
-  `PrimeNumberTheorem.ExplicitFormulaAux.zeroMultiplicity_eq_zero_of_not_mem`.
+  `PrimeNumberTheorem.ExplicitFormulaAux.zeroMultiplicity_eq_zero_of_not_mem`;
+  `PrimeNumberTheorem.ExplicitFormulaAux.mem_finiteTrivialZeroSum_iff`;
+  `PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_im_eq_zero_of_mem`;
+  `PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_re_lt_zero_of_mem`;
+  `PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_card_le`.
 
 Next useful step:
 
@@ -282,6 +286,10 @@ Verified assets now include:
   `ExplicitFormulaAux.nontrivial_zero_mem_self_height`;
   `ExplicitFormulaAux.zeroMultiplicity_eq_one_of_mem`;
   `ExplicitFormulaAux.zeroMultiplicity_eq_zero_of_not_mem`;
+  `ExplicitFormulaAux.mem_finiteTrivialZeroSum_iff`;
+  `ExplicitFormulaAux.finiteTrivialZeroSum_im_eq_zero_of_mem`;
+  `ExplicitFormulaAux.finiteTrivialZeroSum_re_lt_zero_of_mem`;
+  `ExplicitFormulaAux.finiteTrivialZeroSum_card_le`;
   `ExplicitFormulaAux.chebyshevPsi0_eq_chebyshevPsi_off_primePowers`;
   `ExplicitFormulaAux.jumpVonMangoldt_eq_vonMangoldt_of_primePower`.
 - the monotonic `ψ`-error bridges `psiPowerErrorBelowLine_mono` and

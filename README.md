@@ -733,7 +733,11 @@ truncated formulation: `goodHeight` is equivalent to saying that no
 nontrivial zero has boundary height `T`, failure of `goodHeight` is exactly
 such a boundary zero, every nontrivial zero belongs to its self-height
 truncation, and the current finset-based `zeroMultiplicity` is `1` or `0`
-according to membership in that truncation.
+according to membership in that truncation.  The finite trivial-zero
+truncation now also has theorem-level support: membership is characterized by
+the displayed negative even integers, retained trivial zeros lie on the real
+axis with negative real part, and the truncation cardinality is bounded by
+`Nat.floor (T / 2)`.
 
 The explicit-formula side also contains route interfaces such as
 `PrimeNumberTheorem.ExplicitFormulaConversePowerTarget` and
