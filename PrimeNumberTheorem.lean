@@ -4049,6 +4049,16 @@ lemma finiteNontrivialZeroSum_sub_eq_new_zeros {x T U : ℝ} (hTU : T ≤ U) :
   rw [h]
   abel
 
+/-- The change in the finite nontrivial-zero sum between two height cutoffs is
+bounded by the sum of the norms of the newly included zero contributions. -/
+lemma norm_finiteNontrivialZeroSum_sub_le_new_zeros_sum_norm
+    {x T U : ℝ} (hTU : T ≤ U) :
+    ‖finiteNontrivialZeroSum x U - finiteNontrivialZeroSum x T‖ ≤
+      ∑ ρ ∈ (nontrivialZerosFinset U \ nontrivialZerosFinset T),
+        ‖(x : ℂ) ^ ρ / ρ‖ := by
+  rw [finiteNontrivialZeroSum_sub_eq_new_zeros hTU]
+  exact norm_sum_le _ _
+
 lemma finiteNontrivialZeroSum_eq_of_sdiff_eq_empty
     {x T U : ℝ} (hTU : T ≤ U)
     (hnew : nontrivialZerosFinset U \ nontrivialZerosFinset T = ∅) :

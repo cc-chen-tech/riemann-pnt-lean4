@@ -243,7 +243,8 @@ The project currently verifies several supporting statements, including:
 - BTY-specific coefficient positivity, remaining-coefficient sum, and shifted
   upper-bound lower bridges for the selected `k=1` logarithmic-derivative term;
 - center-one finite zero-pair positivity bridges, average finite-zero
-  contribution nonnegativity, new-zero block reflection/reindexing/averages, and
+  contribution nonnegativity, new-zero block reflection/reindexing/averages/norm
+  bounds, and
   reflected-line conditional bridges for explicit-formula/PNT-error routes;
 - several zeta nonvanishing and pole-behavior wrappers from Mathlib;
 - the Gamma residue formula at negative integers and numerical special cases;
