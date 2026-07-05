@@ -20,7 +20,7 @@ import re
 
 
 ROOT = Path(__file__).resolve().parents[1]
-IGNORED_DIRS = {".git", ".lake", "vendor"}
+IGNORED_DIRS = {".git", ".lake", ".worktrees", "vendor"}
 
 DEF_START_RE = re.compile(
     r"^(?:noncomputable\s+)?def\s+([A-Za-z_][A-Za-z0-9_']*)\b"

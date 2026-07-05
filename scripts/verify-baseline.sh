@@ -13,7 +13,8 @@ printf '%s\n' "[verify-baseline] scanning for sorry/admit/axiom"
 if rg -n "^[[:space:]]*(sorry|admit|axiom)\b|:= by[[:space:]]*(sorry|admit)\b|\bby[[:space:]]+(sorry|admit)\b" \
   --glob '*.lean' \
   --glob '!vendor/**' \
-  --glob '!.lake/**'; then
+  --glob '!.lake/**' \
+  --glob '!.worktrees/**'; then
   echo "[verify-baseline] unexpected placeholder found"
   exit 1
 fi

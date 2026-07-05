@@ -1,15 +1,16 @@
-# Three Directions Research Worktree
+# Three Directions Research Notes
 
-This worktree tracks concrete Lean progress along three zero-free/PNT/RH-adjacent
-routes.  The branch is based on current `main`; the goal is to add verified
-interfaces and small lemmas without overstating any unresolved analytic theorem.
+These notes track concrete Lean progress along three zero-free/PNT/RH-adjacent
+routes.  The old repo-local worktree has been merged into `main` and removed;
+the goal remains to add verified interfaces and small lemmas without overstating
+any unresolved analytic theorem.
 
 ## Baseline
 
-- Worktree: `/Users/luicy/AI/Riemann/.worktrees/riemann-three-directions-research`
-- Branch: `research/three-directions`
-- Current base: `93589d2 feat(kernels): complete weighted resolvent zero-sum API`
-- Research work on this branch currently covers:
+- Former worktree: `/Users/luicy/AI/Riemann/riemann-pnt-lean4/.worktrees/riemann-three-directions-research`
+- Branch snapshot: `research/three-directions`, now aligned with `main`
+- Current base: `4cadc7e docs(research): record weighted resolvent kernel bridges`
+- Research work already carried into `main` covers:
   - signed BTY detector/Borel facades;
   - center-one and general-center zero-pair bridges;
   - explicit-formula tail bridges from eventual/no-new-zero and global-height inputs;
