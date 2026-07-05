@@ -3896,6 +3896,23 @@ lemma nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive
   finite_zero_sum_nonnegative_of_laplace_pair_positive
     (nontrivialZerosFinset U \ nontrivialZerosFinset T) F center hF hstrip
 
+/-- Average paired contribution over newly included nontrivial zeros is
+nonnegative from strip-local Laplace-pair positivity.  This does not reindex to
+an unpaired sum unless the pairing center is known to preserve the zero set. -/
+lemma nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_laplace_pair_positive
+    (T U : ℝ) (F : ℂ → ℂ) (center : ℝ)
+    (hF : LaplacePairPositive F center)
+    (hstrip : ∀ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+      0 ≤ ρ.re ∧ ρ.re ≤ center) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        ((F ρ).re + (F ((center : ℂ) - ρ)).re)) /
+        (((nontrivialZerosFinset U \ nontrivialZerosFinset T).card : ℝ)) :=
+  div_nonneg
+    (nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive
+      T U F center hF hstrip)
+    (Nat.cast_nonneg _)
+
 /-- Center-one Laplace-pair positivity gives paired-sum nonnegativity over the
 newly included nontrivial zeros between two height cutoffs. -/
 lemma nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive_one
@@ -3961,6 +3978,21 @@ lemma nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive
       ((F ρ).re + (F ((center : ℂ) - ρ)).re) :=
   finite_zero_sum_nonnegative_of_laplace_pair_positive
     (nontrivialZerosFinset T) F center hF hstrip
+
+/-- Average paired contribution over height-truncated nontrivial zeros is
+nonnegative from strip-local Laplace-pair positivity. -/
+lemma nontrivialZerosFinset_pair_average_nonnegative_of_laplace_pair_positive
+    (T : ℝ) (F : ℂ → ℂ) (center : ℝ)
+    (hF : LaplacePairPositive F center)
+    (hstrip : ∀ ρ ∈ nontrivialZerosFinset T, 0 ≤ ρ.re ∧ ρ.re ≤ center) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset T,
+        ((F ρ).re + (F ((center : ℂ) - ρ)).re)) /
+        (((nontrivialZerosFinset T).card : ℝ)) :=
+  div_nonneg
+    (nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive
+      T F center hF hstrip)
+    (Nat.cast_nonneg _)
 
 /-- Center-one specialization of the Stechkin/Heath-Brown pair-positivity
 bridge for height-truncated nontrivial zeros.  The critical-strip bounds are
@@ -5149,6 +5181,36 @@ lemma explicit_formula_von_mangoldt_of_RH_base_and_new_zero_card_tendsto_zero
     _ ≤ Real.sqrt x *
           ((2 : ℝ) * (nontrivialZerosFinset T \ nontrivialZerosFinset B).card) :=
           hgap
+
+/-- Conditional explicit-formula bridge obtained by composing the RH
+reciprocal-norm tail bound with eventual absence of new zero terms.  This keeps
+the hard input as the base identity `hB`; the tail convergence is discharged
+from `hnew`. -/
+lemma explicit_formula_von_mangoldt_of_RH_base_and_eventually_no_new_zeros_via_sum_tail
+    (hRH : RiemannHypothesis.Statement)
+    {x B : ℝ} {hx : x ≥ 2}
+    (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
+    (hnew : ∀ᶠ T in atTop,
+      nontrivialZerosFinset T \ nontrivialZerosFinset B = ∅) :
+    explicit_formula_von_mangoldt x hx :=
+  explicit_formula_von_mangoldt_of_RH_base_and_new_zero_sum_tendsto_zero
+    hRH hB
+    (new_zero_inv_norm_tail_tendsto_zero_of_eventually_sdiff_eq_empty
+      (x := x) hnew)
+
+/-- Count-tail version of
+`explicit_formula_von_mangoldt_of_RH_base_and_eventually_no_new_zeros_via_sum_tail`. -/
+lemma explicit_formula_von_mangoldt_of_RH_base_and_eventually_no_new_zeros_via_card_tail
+    (hRH : RiemannHypothesis.Statement)
+    {x B : ℝ} {hx : x ≥ 2}
+    (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
+    (hnew : ∀ᶠ T in atTop,
+      nontrivialZerosFinset T \ nontrivialZerosFinset B = ∅) :
+    explicit_formula_von_mangoldt x hx :=
+  explicit_formula_von_mangoldt_of_RH_base_and_new_zero_card_tendsto_zero
+    hRH hB
+    (new_zero_card_tail_tendsto_zero_of_eventually_sdiff_eq_empty
+      (x := x) hnew)
 
 /-- 零点对素数分布的贡献
 
