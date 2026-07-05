@@ -48,6 +48,13 @@ theorem logDerivVerticalLogBound_of_negLogDerivVerticalLogBound
     LogDerivVerticalLogBound C T0 :=
   ZeroFreeRegion.logDerivVerticalLogBound_of_negLogDerivVerticalLogBound h
 
+/-- Public direct conversion from the named signed norm bound to the
+`Re(-zeta'/zeta)` bound. -/
+theorem reNegDerivDivVerticalLogBound_of_negLogDerivVerticalLogBound
+    {C T0 : ℝ} (h : NegLogDerivVerticalLogBound C T0) :
+    ReNegDerivDivVerticalLogBound C T0 :=
+  ZeroFreeRegion.reNegDerivDivVerticalLogBound_of_negLogDerivVerticalLogBound h
+
 /-- Public monotonicity in the high-height cutoff for the named vertical
 logarithmic-derivative bound. -/
 theorem logDerivVerticalLogBound_mono_height
@@ -55,6 +62,14 @@ theorem logDerivVerticalLogBound_mono_height
     (hT : T0 ≤ T1) :
     LogDerivVerticalLogBound C T1 :=
   ZeroFreeRegion.logDerivVerticalLogBound_mono_height h hT
+
+/-- Public monotonicity in the high-height cutoff for the named signed
+vertical logarithmic-derivative bound. -/
+theorem negLogDerivVerticalLogBound_mono_height
+    {C T0 T1 : ℝ} (h : NegLogDerivVerticalLogBound C T0)
+    (hT : T0 ≤ T1) :
+    NegLogDerivVerticalLogBound C T1 :=
+  ZeroFreeRegion.negLogDerivVerticalLogBound_mono_height h hT
 
 /-- Public monotonicity in the high-height cutoff for the named direct
 real-part quotient bound. -/

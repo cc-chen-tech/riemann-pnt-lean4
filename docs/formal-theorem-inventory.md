@@ -1030,7 +1030,11 @@ Core verified declarations:
   `Re(-zeta'/zeta)` interface.
 - `logDerivVerticalLogBound_of_negLogDerivVerticalLogBound`
   turns the named signed norm interface into the unsigned norm interface.
+- `reNegDerivDivVerticalLogBound_of_negLogDerivVerticalLogBound`
+  turns the named signed norm interface directly into the named
+  `Re(-zeta'/zeta)` interface.
 - `logDerivVerticalLogBound_mono_height`,
+  `negLogDerivVerticalLogBound_mono_height`,
   `reNegDerivDivVerticalLogBound_mono_height`,
   `logDerivRegularPartLogBound_mono_height`, and
   `multiplicityLogDerivRegularPartLogBound_mono_height`

@@ -4103,12 +4103,31 @@ lemma logDerivVerticalLogBound_of_negLogDerivVerticalLogBound
         = ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ := (norm_neg _).symm
     _ ≤ C * Real.log |t| := hbound σ t hσ_left hσ_right ht
 
+/-- A named signed norm bound directly supplies the corresponding real-part
+quotient bound. -/
+lemma reNegDerivDivVerticalLogBound_of_negLogDerivVerticalLogBound
+    {C T0 : ℝ} (h : NegLogDerivVerticalLogBound C T0) :
+    ReNegDerivDivVerticalLogBound C T0 :=
+  reNegDerivDivVerticalLogBound_of_logDerivVerticalLogBound
+    (logDerivVerticalLogBound_of_negLogDerivVerticalLogBound h)
+
 /-- A named vertical logarithmic-derivative bound remains valid after raising
 the high-height cutoff. -/
 lemma logDerivVerticalLogBound_mono_height
     {C T0 T1 : ℝ} (h : LogDerivVerticalLogBound C T0)
     (hT : T0 ≤ T1) :
     LogDerivVerticalLogBound C T1 := by
+  rcases h with ⟨hC, hT0, hbound⟩
+  refine ⟨hC, le_trans hT0 hT, ?_⟩
+  intro σ t hσ_left hσ_right ht
+  exact hbound σ t hσ_left hσ_right (le_trans hT ht)
+
+/-- A named signed vertical logarithmic-derivative bound remains valid after
+raising the high-height cutoff. -/
+lemma negLogDerivVerticalLogBound_mono_height
+    {C T0 T1 : ℝ} (h : NegLogDerivVerticalLogBound C T0)
+    (hT : T0 ≤ T1) :
+    NegLogDerivVerticalLogBound C T1 := by
   rcases h with ⟨hC, hT0, hbound⟩
   refine ⟨hC, le_trans hT0 hT, ?_⟩
   intro σ t hσ_left hσ_right ht
