@@ -1874,6 +1874,19 @@ Core verified declarations:
   `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_weightedDampedKernelCombo`
   lift the signed detector bridge to finite nonnegative combinations of
   damped kernels.
+- `laplacePairPositive_weightedDampedKernelCombo_self_of_le_one`,
+  `laplacePairPositive_one_weightedDampedKernelCombo_self_of_le_one`,
+  `nontrivialZerosFinset_pair_sum_nonnegative_of_weightedDampedKernelCombo_self`,
+  `nontrivialZerosFinset_pair_average_nonnegative_of_weightedDampedKernelCombo_self`,
+  `nontrivialZerosFinset_sum_re_nonnegative_of_weightedDampedKernelCombo_self`,
+  `nontrivialZerosFinset_average_re_nonnegative_of_weightedDampedKernelCombo_self`,
+  `nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_weightedDampedKernelCombo_self`,
+  `nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_weightedDampedKernelCombo_self`,
+  `nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_weightedDampedKernelCombo_self`,
+  and
+  `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_weightedDampedKernelCombo_self`
+  specialize the finite weighted damped-kernel package to the self-damped case
+  `F k - (kappa k) * F k` under `kappa k <= 1`.
 - `nontrivialZerosFinset_sum_re_nonnegative_of_symmetricResolventLaplaceKernelCombo`,
   `nontrivialZerosFinset_average_re_nonnegative_of_symmetricResolventLaplaceKernelCombo`,
   `nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_symmetricResolventLaplaceKernelCombo`,

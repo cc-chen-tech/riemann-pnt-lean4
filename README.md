@@ -754,8 +754,9 @@ for elementary detector kernels.  The public API includes the resolvent kernel
 `symmetricResolventLaplaceKernel`, finite nonnegative ordinary and symmetric
 kernel combinations, the signed `dampedKernel` bridge `F - kappa * G`, and
 the self-damped specialization `dampedKernel kappa F F` when `kappa <= 1`,
-including their height-truncated/new-zero sum, average, and
-paired-contribution nonnegativity wrappers.  These are concrete algebraic
+including finite weighted self-damped combinations and their
+height-truncated/new-zero sum, average, and paired-contribution nonnegativity
+wrappers.  These are concrete algebraic
 suppliers for later Stechkin/Heath-Brown-style detector arguments; they do not
 prove the missing high-height zeta growth or logarithmic-derivative estimates.
 

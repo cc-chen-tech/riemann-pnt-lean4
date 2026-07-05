@@ -2271,6 +2271,31 @@ theorem laplacePairPositive_one_weightedDampedKernelCombo_of_pair_le
   PrimeNumberTheorem.laplacePairPositive_one_weightedDampedKernelCombo_of_pair_le
     hw hpair
 
+/-- Public pair positivity for finite weighted self-damped detector kernels. -/
+theorem laplacePairPositive_weightedDampedKernelCombo_self_of_le_one
+    {K : Finset ℕ} {w κ : ℕ → ℝ} {F : ℕ → ℂ → ℂ} {center : ℝ}
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (hF : ∀ k ∈ K, PrimeNumberTheorem.LaplacePairPositive (F k) center) :
+    PrimeNumberTheorem.LaplacePairPositive
+      (weightedKernelCombo K w
+        (fun k => dampedKernel (κ k) (F k) (F k))) center :=
+  PrimeNumberTheorem.laplacePairPositive_weightedDampedKernelCombo_self_of_le_one
+    hw hκ hF
+
+/-- Public center-one pair positivity for finite weighted self-damped detector
+kernels. -/
+theorem laplacePairPositive_one_weightedDampedKernelCombo_self_of_le_one
+    {K : Finset ℕ} {w κ : ℕ → ℝ} {F : ℕ → ℂ → ℂ}
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (hF : ∀ k ∈ K, PrimeNumberTheorem.LaplacePairPositive (F k) 1) :
+    PrimeNumberTheorem.LaplacePairPositive
+      (weightedKernelCombo K w
+        (fun k => dampedKernel (κ k) (F k) (F k))) 1 :=
+  PrimeNumberTheorem.laplacePairPositive_one_weightedDampedKernelCombo_self_of_le_one
+    hw hκ hF
+
 /-- Public finite-zero paired-sum nonnegativity for a damped detector kernel. -/
 theorem nontrivialZerosFinset_pair_sum_nonnegative_of_dampedKernel
     (T κ : ℝ) (F G : ℂ → ℂ)
@@ -2613,6 +2638,132 @@ theorem nontrivialZerosFinset_sdiff_average_re_nonnegative_of_weightedDampedKern
           PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ)) :=
   PrimeNumberTheorem.nontrivialZerosFinset_sdiff_average_re_nonnegative_of_weightedDampedKernelCombo
     T U K w κ F G hw hpair
+
+/-- Public finite-zero paired-sum nonnegativity for finite weighted self-damped
+detector kernels. -/
+theorem nontrivialZerosFinset_pair_sum_nonnegative_of_weightedDampedKernelCombo_self
+    (T : ℝ) (K : Finset ℕ) (w κ : ℕ → ℝ) (F : ℕ → ℂ → ℂ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (hF : ∀ k ∈ K, PrimeNumberTheorem.LaplacePairPositive (F k) 1) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+      ((weightedKernelCombo K w
+          (fun k => dampedKernel (κ k) (F k) (F k)) ρ).re +
+        (weightedKernelCombo K w
+          (fun k => dampedKernel (κ k) (F k) (F k)) (1 - ρ)).re) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_pair_sum_nonnegative_of_weightedDampedKernelCombo_self
+    T K w κ F hw hκ hF
+
+/-- Public finite-zero paired-average nonnegativity for finite weighted
+self-damped detector kernels. -/
+theorem nontrivialZerosFinset_pair_average_nonnegative_of_weightedDampedKernelCombo_self
+    (T : ℝ) (K : Finset ℕ) (w κ : ℕ → ℝ) (F : ℕ → ℂ → ℂ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (hF : ∀ k ∈ K, PrimeNumberTheorem.LaplacePairPositive (F k) 1) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+        ((weightedKernelCombo K w
+            (fun k => dampedKernel (κ k) (F k) (F k)) ρ).re +
+          (weightedKernelCombo K w
+            (fun k => dampedKernel (κ k) (F k) (F k)) (1 - ρ)).re)) /
+        ((PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_pair_average_nonnegative_of_weightedDampedKernelCombo_self
+    T K w κ F hw hκ hF
+
+/-- Public finite-zero unpaired real-part sum nonnegativity for finite weighted
+self-damped detector kernels. -/
+theorem nontrivialZerosFinset_sum_re_nonnegative_of_weightedDampedKernelCombo_self
+    (T : ℝ) (K : Finset ℕ) (w κ : ℕ → ℝ) (F : ℕ → ℂ → ℂ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (hF : ∀ k ∈ K, PrimeNumberTheorem.LaplacePairPositive (F k) 1) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+      (weightedKernelCombo K w
+        (fun k => dampedKernel (κ k) (F k) (F k)) ρ).re :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sum_re_nonnegative_of_weightedDampedKernelCombo_self
+    T K w κ F hw hκ hF
+
+/-- Public finite-zero unpaired real-part average nonnegativity for finite
+weighted self-damped detector kernels. -/
+theorem nontrivialZerosFinset_average_re_nonnegative_of_weightedDampedKernelCombo_self
+    (T : ℝ) (K : Finset ℕ) (w κ : ℕ → ℝ) (F : ℕ → ℂ → ℂ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (hF : ∀ k ∈ K, PrimeNumberTheorem.LaplacePairPositive (F k) 1) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+        (weightedKernelCombo K w
+          (fun k => dampedKernel (κ k) (F k) (F k)) ρ).re) /
+        ((PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_average_re_nonnegative_of_weightedDampedKernelCombo_self
+    T K w κ F hw hκ hF
+
+/-- Public new-zero paired-sum nonnegativity for finite weighted self-damped
+detector kernels. -/
+theorem nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_weightedDampedKernelCombo_self
+    (T U : ℝ) (K : Finset ℕ) (w κ : ℕ → ℝ) (F : ℕ → ℂ → ℂ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (hF : ∀ k ∈ K, PrimeNumberTheorem.LaplacePairPositive (F k) 1) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+        PrimeNumberTheorem.nontrivialZerosFinset T,
+      ((weightedKernelCombo K w
+          (fun k => dampedKernel (κ k) (F k) (F k)) ρ).re +
+        (weightedKernelCombo K w
+          (fun k => dampedKernel (κ k) (F k) (F k)) (1 - ρ)).re) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_weightedDampedKernelCombo_self
+    T U K w κ F hw hκ hF
+
+/-- Public new-zero paired-average nonnegativity for finite weighted self-damped
+detector kernels. -/
+theorem nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_weightedDampedKernelCombo_self
+    (T U : ℝ) (K : Finset ℕ) (w κ : ℕ → ℝ) (F : ℕ → ℂ → ℂ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (hF : ∀ k ∈ K, PrimeNumberTheorem.LaplacePairPositive (F k) 1) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T,
+        ((weightedKernelCombo K w
+            (fun k => dampedKernel (κ k) (F k) (F k)) ρ).re +
+          (weightedKernelCombo K w
+            (fun k => dampedKernel (κ k) (F k) (F k)) (1 - ρ)).re)) /
+        (((PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ)) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_weightedDampedKernelCombo_self
+    T U K w κ F hw hκ hF
+
+/-- Public new-zero unpaired real-part sum nonnegativity for finite weighted
+self-damped detector kernels. -/
+theorem nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_weightedDampedKernelCombo_self
+    (T U : ℝ) (K : Finset ℕ) (w κ : ℕ → ℝ) (F : ℕ → ℂ → ℂ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (hF : ∀ k ∈ K, PrimeNumberTheorem.LaplacePairPositive (F k) 1) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+        PrimeNumberTheorem.nontrivialZerosFinset T,
+      (weightedKernelCombo K w
+        (fun k => dampedKernel (κ k) (F k) (F k)) ρ).re :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_weightedDampedKernelCombo_self
+    T U K w κ F hw hκ hF
+
+/-- Public new-zero unpaired real-part average nonnegativity for finite weighted
+self-damped detector kernels. -/
+theorem nontrivialZerosFinset_sdiff_average_re_nonnegative_of_weightedDampedKernelCombo_self
+    (T U : ℝ) (K : Finset ℕ) (w κ : ℕ → ℝ) (F : ℕ → ℂ → ℂ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (hF : ∀ k ∈ K, PrimeNumberTheorem.LaplacePairPositive (F k) 1) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T,
+        (weightedKernelCombo K w
+          (fun k => dampedKernel (κ k) (F k) (F k)) ρ).re) /
+        (((PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ)) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_average_re_nonnegative_of_weightedDampedKernelCombo_self
+    T U K w κ F hw hκ hF
 
 /-- Public finite nonnegative resolvent/Laplace kernel combination. -/
 noncomputable abbrev resolventLaplaceKernelCombo
