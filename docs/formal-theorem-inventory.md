@@ -1347,6 +1347,10 @@ Core verified declarations:
   `borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius`
   normalize those positive half-radius Borel outputs to affine
   `A + B log(||sigma+it|| + 3)` bounds.
+- `borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_log_abs_add_three_re_le_half_radius`
+  converts the positive half-radius Borel output to the safer one-dimensional
+  height scale `A + B log(|t| + 3)`, assuming `1 <= sigma <= 2`,
+  `5 <= |t|`, and nonnegative affine slopes.
 - `differentiableOn_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re`,
   `borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le`,
   and
