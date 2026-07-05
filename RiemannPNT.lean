@@ -11335,6 +11335,72 @@ theorem reNegDerivDivVerticalLogBound_of_neg_affine_log_norm_add_three_bound_hig
   ZeroFreeRegion.reNegDerivDivVerticalLogBound_of_neg_affine_log_norm_add_three_bound_high_height
     T0 A B hT0 hA hB hvertical
 
+/-- Public complex-variable vertical-region version of
+`logDerivVerticalLogBound_of_affine_log_norm_add_three_bound_high_height`. -/
+theorem logDerivVerticalLogBound_of_affine_log_norm_add_three_bound_on_verticalRegion
+    (T0 A B : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ z : ℂ, z ∈ verticalRegion 1 2 T0 →
+        ‖logDeriv riemannZeta z‖ ≤ A + B * Real.log (‖z‖ + 3)) :
+    ∃ C T0' : ℝ, LogDerivVerticalLogBound C T0' :=
+  ZeroFreeRegion.logDerivVerticalLogBound_of_affine_log_norm_add_three_bound_on_verticalRegion
+    T0 A B hT0 hA hB hvertical
+
+/-- Public multiplicative complex-variable vertical-region version for
+`logDeriv ζ`. -/
+theorem logDerivVerticalLogBound_of_log_norm_add_three_bound_on_verticalRegion
+    (T0 C : ℝ) (hT0 : 5 ≤ T0) (hC : 0 ≤ C)
+    (hvertical :
+      ∀ z : ℂ, z ∈ verticalRegion 1 2 T0 →
+        ‖logDeriv riemannZeta z‖ ≤ C * Real.log (‖z‖ + 3)) :
+    ∃ C' T0' : ℝ, LogDerivVerticalLogBound C' T0' :=
+  ZeroFreeRegion.logDerivVerticalLogBound_of_log_norm_add_three_bound_on_verticalRegion
+    T0 C hT0 hC hvertical
+
+/-- Public signed complex-variable vertical-region version for
+`-logDeriv ζ`. -/
+theorem negLogDerivVerticalLogBound_of_affine_log_norm_add_three_bound_on_verticalRegion
+    (T0 A B : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ z : ℂ, z ∈ verticalRegion 1 2 T0 →
+        ‖-logDeriv riemannZeta z‖ ≤ A + B * Real.log (‖z‖ + 3)) :
+    ∃ C T0' : ℝ, NegLogDerivVerticalLogBound C T0' :=
+  ZeroFreeRegion.negLogDerivVerticalLogBound_of_affine_log_norm_add_three_bound_on_verticalRegion
+    T0 A B hT0 hA hB hvertical
+
+/-- Public multiplicative signed complex-variable vertical-region version for
+`-logDeriv ζ`. -/
+theorem negLogDerivVerticalLogBound_of_log_norm_add_three_bound_on_verticalRegion
+    (T0 C : ℝ) (hT0 : 5 ≤ T0) (hC : 0 ≤ C)
+    (hvertical :
+      ∀ z : ℂ, z ∈ verticalRegion 1 2 T0 →
+        ‖-logDeriv riemannZeta z‖ ≤ C * Real.log (‖z‖ + 3)) :
+    ∃ C' T0' : ℝ, NegLogDerivVerticalLogBound C' T0' :=
+  ZeroFreeRegion.negLogDerivVerticalLogBound_of_log_norm_add_three_bound_on_verticalRegion
+    T0 C hT0 hC hvertical
+
+/-- Public real-part quotient vertical-region bridge from a positive
+`logDeriv ζ` norm estimate. -/
+theorem reNegDerivDivVerticalLogBound_of_affine_log_norm_add_three_bound_on_verticalRegion
+    (T0 A B : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ z : ℂ, z ∈ verticalRegion 1 2 T0 →
+        ‖logDeriv riemannZeta z‖ ≤ A + B * Real.log (‖z‖ + 3)) :
+    ∃ C T0' : ℝ, ReNegDerivDivVerticalLogBound C T0' :=
+  ZeroFreeRegion.reNegDerivDivVerticalLogBound_of_affine_log_norm_add_three_bound_on_verticalRegion
+    T0 A B hT0 hA hB hvertical
+
+/-- Public real-part quotient vertical-region bridge from a signed
+`-logDeriv ζ` norm estimate. -/
+theorem reNegDerivDivVerticalLogBound_of_neg_affine_log_norm_add_three_bound_on_verticalRegion
+    (T0 A B : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ z : ℂ, z ∈ verticalRegion 1 2 T0 →
+        ‖-logDeriv riemannZeta z‖ ≤ A + B * Real.log (‖z‖ + 3)) :
+    ∃ C T0' : ℝ, ReNegDerivDivVerticalLogBound C T0' :=
+  ZeroFreeRegion.reNegDerivDivVerticalLogBound_of_neg_affine_log_norm_add_three_bound_on_verticalRegion
+    T0 A B hT0 hA hB hvertical
+
 /-- Public coordinate high-height closure from a single `C * log(|t| + 3)`
 bound for positive `logDeriv ζ` estimates. -/
 theorem classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_abs_add_three_bound_high_height

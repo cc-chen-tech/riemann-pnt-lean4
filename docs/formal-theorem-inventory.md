@@ -1139,6 +1139,10 @@ Core verified declarations:
   and `reNegDerivDivVerticalLogBound_of_neg_affine_log_norm_add_three_bound_high_height`
   package full-height norm-growth inputs into the named real-part quotient
   interface consumed by the 3-4-1 route.
+- `logDerivVerticalLogBound_of_affine_log_norm_add_three_bound_on_verticalRegion`
+  and its multiplicative, signed, and real-part variants accept estimates
+  stated directly on `verticalRegion 1 2 T0`, then specialize them to the
+  coordinate `sigma + i t` named vertical-bound interfaces.
 - `classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_abs_add_three_bound_high_height`
   specializes the coordinate interface to estimates stated as
   `C * log(|t| + 3)` for both remaining zeta-specific bounds.
