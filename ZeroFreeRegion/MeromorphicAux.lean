@@ -11290,6 +11290,116 @@ lemma differentiableOn_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re
   (differentiableOn_logDeriv_riemannZeta_verticalRegion_of_one_le_re
     ha hH).neg
 
+/-- On any bounded positive-height vertical band in `1 <= Re(z) <= 2`, the
+zeta function has a positive norm lower bound.
+
+This is the bounded-height companion to the hard high-height lower-bound input:
+compactness plus Mathlib's zero-freeness on `Re(s) >= 1` rules out zeros on the
+band, hence the continuous function `z ↦ ‖ζ(z)‖` attains a strictly positive
+minimum. If the band is empty, the statement is vacuous and we choose `η = 1`. -/
+lemma exists_norm_riemannZeta_pos_lower_bound_on_compact_vertical_band
+    {H T : ℝ} (hH : 0 < H) :
+    ∃ η > 0, ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      H ≤ |z.im| → |z.im| ≤ T →
+      η ≤ ‖riemannZeta z‖ := by
+  let K : Set ℂ :=
+    Set.Icc (1 : ℝ) 2 ×ℂ (Set.Icc H T ∪ Set.Icc (-T) (-H))
+  have hK : IsCompact K := by
+    have him : IsCompact (Set.Icc H T ∪ Set.Icc (-T) (-H)) :=
+      (isCompact_Icc : IsCompact (Set.Icc H T)).union
+        (isCompact_Icc : IsCompact (Set.Icc (-T) (-H)))
+    simpa [K] using
+      ((isCompact_Icc : IsCompact (Set.Icc (1 : ℝ) 2)).reProdIm him)
+  have hKsub : K ⊆ verticalRegion 1 2 H := by
+    intro z hz
+    change z ∈ Set.Icc (1 : ℝ) 2 ×ℂ
+      (Set.Icc H T ∪ Set.Icc (-T) (-H)) at hz
+    rw [mem_reProdIm] at hz
+    constructor
+    · exact hz.1
+    · rcases hz.2 with him | him
+      · have hnonneg : 0 ≤ z.im := by linarith [hH, him.1]
+        simpa [abs_of_nonneg hnonneg] using him.1
+      · have hnonpos : z.im ≤ 0 := by linarith [hH, him.2]
+        rw [abs_of_nonpos hnonpos]
+        linarith [him.2]
+  have hcont : ContinuousOn (fun z : ℂ => ‖riemannZeta z‖) K := by
+    exact ((differentiableOn_riemannZeta_verticalRegion_of_pos_height
+      (a := 1) (b := 2) (H := H) hH).continuousOn.mono hKsub).norm
+  have hnonzero : ∀ z ∈ K, riemannZeta z ≠ 0 := by
+    intro z hz
+    change z ∈ Set.Icc (1 : ℝ) 2 ×ℂ
+      (Set.Icc H T ∪ Set.Icc (-T) (-H)) at hz
+    rw [mem_reProdIm] at hz
+    exact riemannZeta_ne_zero_of_one_le_re hz.1.1
+  by_cases hne : K.Nonempty
+  · rcases hK.exists_isMinOn hne hcont with ⟨z₀, hz₀K, hzmin⟩
+    refine ⟨‖riemannZeta z₀‖, norm_pos_iff.mpr (hnonzero z₀ hz₀K), ?_⟩
+    intro z hzre hzH hzT
+    have hzK : z ∈ K := by
+      change z ∈ Set.Icc (1 : ℝ) 2 ×ℂ
+        (Set.Icc H T ∪ Set.Icc (-T) (-H))
+      rw [mem_reProdIm]
+      constructor
+      · exact hzre
+      · by_cases hnonneg : 0 ≤ z.im
+        · left
+          constructor
+          · simpa [abs_of_nonneg hnonneg] using hzH
+          · simpa [abs_of_nonneg hnonneg] using hzT
+        · right
+          have hnonpos : z.im ≤ 0 := le_of_lt (lt_of_not_ge hnonneg)
+          constructor
+          · have hlower : -T ≤ z.im := by
+              have h := (abs_le.mp hzT).1
+              linarith
+            exact hlower
+          · have hupper : z.im ≤ -H := by
+              have h : H ≤ -z.im := by
+                simpa [abs_of_nonpos hnonpos] using hzH
+              linarith
+            exact hupper
+    exact isMinOn_iff.mp hzmin z hzK
+  · refine ⟨1, by norm_num, ?_⟩
+    intro z hzre hzH hzT
+    have hzK : z ∈ K := by
+      change z ∈ Set.Icc (1 : ℝ) 2 ×ℂ
+        (Set.Icc H T ∪ Set.Icc (-T) (-H))
+      rw [mem_reProdIm]
+      constructor
+      · exact hzre
+      · by_cases hnonneg : 0 ≤ z.im
+        · left
+          constructor
+          · simpa [abs_of_nonneg hnonneg] using hzH
+          · simpa [abs_of_nonneg hnonneg] using hzT
+        · right
+          have hnonpos : z.im ≤ 0 := le_of_lt (lt_of_not_ge hnonneg)
+          constructor
+          · have hlower : -T ≤ z.im := by
+              have h := (abs_le.mp hzT).1
+              linarith
+            exact hlower
+          · have hupper : z.im ≤ -H := by
+              have h : H ≤ -z.im := by
+                simpa [abs_of_nonpos hnonpos] using hzH
+              linarith
+            exact hupper
+    exact False.elim (hne ⟨z, hzK⟩)
+
+/-- Coordinate form of the compact positive lower bound for `ζ(σ + it)`. -/
+lemma exists_norm_riemannZeta_sigma_it_pos_lower_bound_on_compact_vertical_band
+    {H T : ℝ} (hH : 0 < H) :
+    ∃ η > 0, ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 →
+      H ≤ |t| → |t| ≤ T →
+      η ≤ ‖riemannZeta ((σ : ℂ) + I * t)‖ := by
+  rcases exists_norm_riemannZeta_pos_lower_bound_on_compact_vertical_band
+      (H := H) (T := T) hH with ⟨η, hη_pos, hη⟩
+  refine ⟨η, hη_pos, ?_⟩
+  intro σ t hσ htH htT
+  exact hη ((σ : ℂ) + I * t) (by simpa using hσ) (by simpa using htH)
+    (by simpa using htT)
+
 /-- On any bounded positive-height vertical band in the right half-plane,
 `logDeriv ζ` has a finite norm bound.
 

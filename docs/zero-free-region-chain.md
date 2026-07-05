@@ -1399,6 +1399,10 @@ There is also a positive-radius form with `R` in place of `|R|`.
 The three Cauchy derivative estimates then turn a boundary `||zeta||` bound on
 a disk avoiding the pole into a center `||zeta'||` bound; they still need a
 separate lower bound for `||zeta||` before they yield a `logDeriv zeta` bound.
+The bounded-height version of that lower-bound input is now proved by
+`exists_norm_riemannZeta_pos_lower_bound_on_compact_vertical_band` and its
+coordinate `sigma+it` form; the unbounded high-height lower bound remains a
+zeta-specific analytic input.
 The sphere/lower-bound handoff composes that Cauchy step with the existing
 `zeta'`-plus-lower-bound bridge, so the primitive input can now be stated
 directly as boundary control for `zeta` on fixed-radius circles plus a center

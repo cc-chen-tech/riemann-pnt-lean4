@@ -167,6 +167,12 @@ Core verified declarations:
   `1 + epsilon <= Re z`.
 - `exists_norm_neg_logDeriv_riemannZeta_le_log_abs_im_add_three_of_one_add_le_re`
   is the signed version of the same fixed-margin half-plane bound.
+- `exists_norm_riemannZeta_pos_lower_bound_on_compact_vertical_band`
+  proves that `zeta` has a positive norm lower bound on every compact
+  positive-height band `1 <= Re z <= 2`, `H <= |Im z| <= T`.
+- `exists_norm_riemannZeta_sigma_it_pos_lower_bound_on_compact_vertical_band`
+  is the coordinate form of the same compact lower bound on points
+  `sigma + it`.
 - `exists_norm_logDeriv_riemannZeta_bound_on_compact_vertical_band`
   proves that `logDeriv zeta` has a finite norm bound on every compact
   positive-height band `1 <= Re z <= 2`, `H <= |Im z| <= T`.

@@ -157,11 +157,12 @@ Re(-ζ'/ζ(σ + i t)) <= -1 / (σ - β) + O(log |t|).
 These are the current hard wall.  They normally require zeta growth estimates
 together with Borel-Caratheodory, Jensen/Hadamard factorization, or equivalent
 zero-repulsion machinery.  The repository already has fixed-margin estimates
-for `1 + ε <= Re(s)`, compact bounded-height norm bounds for
-`H <= |Im(s)| <= T`, and bridge lemmas that patch a future high-height
-`B * log |t|` estimate into an all-height affine logarithmic estimate.  Those
-bridges still do not provide the missing high-height boundary-strip estimate on
-`1 <= Re(s)`.  The polynomial-growth handoff into Jensen/Borel scale is also
+for `1 + ε <= Re(s)`, compact bounded-height bounds for `logDeriv ζ`, compact
+bounded-height positive lower bounds for `ζ`, and bridge lemmas that patch a
+future high-height `B * log |t|` estimate into an all-height affine logarithmic
+estimate.  Those bridges still do not provide the missing high-height
+boundary-strip estimate on `1 <= Re(s)`.  The polynomial-growth handoff into
+Jensen/Borel scale is also
 now proved: `ZeroFreeRegion.log_norm_bound_of_polynomial_growth` and its
 zeta-specific coordinate forms convert
 `‖ζ(s)‖ <= A * (‖s‖ + 3)^B` into
@@ -690,6 +691,7 @@ Lean declarations in `ZeroFreeRegion.lean` and
 | `ZeroFreeRegion.jensen_circleAverage_log_norm_riemannZeta_sigma_it_of_pos_radius` / `ZeroFreeRegion.jensen_circleAverage_log_norm_logDeriv_riemannZeta_sigma_it_of_pos_radius` / signed analogues | `lemma` | Positive-radius direct Jensen formulas on `σ+it` disks. | Removes `|R|` radius bookkeeping in the Jensen local-divisor side when future estimates already assume `0<R`. |
 | `ZeroFreeRegion.norm_deriv_riemannZeta_le_of_sphere_norm_bound_avoid_one` / `ZeroFreeRegion.norm_deriv_riemannZeta_le_of_sphere_norm_bound_dist_one` | `lemma` | Cauchy derivative estimates for `ζ'` from a boundary `‖ζ‖` bound on a disk avoiding the pole at `1`. | Real bridge from future zeta-growth bounds to derivative bounds; it does not supply the growth bound itself. |
 | `ZeroFreeRegion.norm_deriv_riemannZeta_sigma_it_le_of_sphere_norm_bound_height` | `lemma` | Coordinate high-imaginary-height version: if `R < |t|`, a disk centered at `σ+it` avoids the pole and Cauchy's estimate gives `‖ζ'(σ+it)‖ ≤ M/R`. | Next link toward `logDeriv ζ` high-height control, still requiring both a boundary `‖ζ‖` estimate and a lower bound for `‖ζ‖` to form `ζ'/ζ`. |
+| `ZeroFreeRegion.exists_norm_riemannZeta_pos_lower_bound_on_compact_vertical_band` / `...sigma_it_pos_lower_bound_on_compact_vertical_band` | `lemma` | Proves a positive lower bound for `‖ζ‖` on every compact positive-height band `1 ≤ Re z ≤ 2`, `H ≤ |Im z| ≤ T`, plus the coordinate `σ+it` form. | Supplies the bounded-height version of the lower-bound input used by the derivative/lower-bound bridges; the high-height lower bound remains a genuine analytic gap. |
 
 Two important boundaries:
 

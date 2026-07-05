@@ -6930,6 +6930,25 @@ theorem exists_norm_neg_logDeriv_riemannZeta_le_log_abs_im_add_three_of_one_add_
   ZeroFreeRegion.exists_norm_neg_logDeriv_riemannZeta_le_log_abs_im_add_three_of_one_add_le_re
     hε
 
+/-- Public compact bounded-height positive lower bound for `ζ` in the right
+half-strip `1 <= Re(z) <= 2`, `H <= |Im(z)| <= T`. -/
+theorem exists_norm_riemannZeta_pos_lower_bound_on_compact_vertical_band
+    {H T : ℝ} (hH : 0 < H) :
+    ∃ η > 0, ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      H ≤ |z.im| → |z.im| ≤ T →
+      η ≤ ‖riemannZeta z‖ :=
+  ZeroFreeRegion.exists_norm_riemannZeta_pos_lower_bound_on_compact_vertical_band
+    hH
+
+/-- Public coordinate compact positive lower bound for `ζ(σ + it)`. -/
+theorem exists_norm_riemannZeta_sigma_it_pos_lower_bound_on_compact_vertical_band
+    {H T : ℝ} (hH : 0 < H) :
+    ∃ η > 0, ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 →
+      H ≤ |t| → |t| ≤ T →
+      η ≤ ‖riemannZeta ((σ : ℂ) + Complex.I * t)‖ :=
+  ZeroFreeRegion.exists_norm_riemannZeta_sigma_it_pos_lower_bound_on_compact_vertical_band
+    hH
+
 /-- Public compact bounded-height norm bound for `logDeriv ζ` in the right
 half-strip `1 <= Re(z) <= 2`, `H <= |Im(z)| <= T`. -/
 theorem exists_norm_logDeriv_riemannZeta_bound_on_compact_vertical_band
