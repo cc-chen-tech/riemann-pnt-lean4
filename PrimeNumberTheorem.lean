@@ -3983,6 +3983,28 @@ theorem no_zeros_on_reflected_line_of_explicit_formula_converse_power
   no_zeros_on_reflected_line_of_psi_power_error_bridge
     hβ_pos hβ_lt_one hbridge herror
 
+/-- Existence-form version of `no_zeros_on_vertical_line_of_psi_power_error_bridge`:
+the same conditional `ψ`-error route excludes nontrivial zeros on `Re(s)=β`. -/
+theorem not_exists_nontrivial_zero_on_line_of_psi_power_error_bridge
+    {β : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hbridge : PsiPowerErrorBelowLineExcludesZerosRightOf β)
+    (herror : PsiPowerErrorBelowLine β) :
+    ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = β :=
+  not_exists_nontrivial_zero_on_line_of_no_zeros_on_vertical_line
+    (no_zeros_on_vertical_line_of_psi_power_error_bridge
+      hβ_pos hβ_lt_one hbridge herror)
+
+/-- Reflected-line existence-form version of the conditional `ψ`-error route:
+the same input excludes nontrivial zeros on `Re(s)=1-β`. -/
+theorem not_exists_nontrivial_zero_on_reflected_line_of_psi_power_error_bridge
+    {β : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hbridge : PsiPowerErrorBelowLineExcludesZerosRightOf β)
+    (herror : PsiPowerErrorBelowLine β) :
+    ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = 1 - β :=
+  not_exists_nontrivial_zero_on_line_of_no_zeros_on_vertical_line
+    (no_zeros_on_reflected_line_of_psi_power_error_bridge
+      hβ_pos hβ_lt_one hbridge herror)
+
 /-- Direct power-saving version of the general `ψ`-error bridge: an
 `O(x^(β-delta))` input feeds the below-`β` zero-exclusion route and excludes
 zeta zeros on `Re(s)=β`. -/
@@ -4034,6 +4056,30 @@ theorem no_zeros_on_reflected_line_of_explicit_formula_converse_power_bound_sub_
     (psiPowerErrorBelowLineExcludesZerosRightOf_of_explicit_formula_converse_power
       hbridge)
     herror
+
+/-- Existence-form direct power-saving bridge with the explicit-formula
+converse route dependency named directly. -/
+theorem not_exists_nontrivial_zero_on_line_of_explicit_formula_converse_power_bound_sub_delta
+    {β delta : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hdelta_pos : 0 < delta) (hθ_nonneg : 0 ≤ β - delta)
+    (hbridge : ExplicitFormulaConversePowerTarget β)
+    (herror : PsiPowerErrorBound (β - delta)) :
+    ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = β :=
+  not_exists_nontrivial_zero_on_line_of_no_zeros_on_vertical_line
+    (no_zeros_on_vertical_line_of_explicit_formula_converse_power_bound_sub_delta
+      hβ_pos hβ_lt_one hdelta_pos hθ_nonneg hbridge herror)
+
+/-- Reflected-line existence-form direct power-saving bridge with the
+explicit-formula converse route dependency named directly. -/
+theorem not_exists_nontrivial_zero_on_reflected_line_of_explicit_formula_converse_power_bound_sub_delta
+    {β delta : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hdelta_pos : 0 < delta) (hθ_nonneg : 0 ≤ β - delta)
+    (hbridge : ExplicitFormulaConversePowerTarget β)
+    (herror : PsiPowerErrorBound (β - delta)) :
+    ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = 1 - β :=
+  not_exists_nontrivial_zero_on_line_of_no_zeros_on_vertical_line
+    (no_zeros_on_reflected_line_of_explicit_formula_converse_power_bound_sub_delta
+      hβ_pos hβ_lt_one hdelta_pos hθ_nonneg hbridge herror)
 
 /-- If a power saving below a smaller boundary `β` is available, it can feed
 the general `ψ`-error zero-exclusion interface at any larger boundary `γ`. -/

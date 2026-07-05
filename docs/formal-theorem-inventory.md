@@ -143,6 +143,10 @@ Core verified declarations:
 - `classical_zero_free_region_compact`
   proves a nonconstructive positive-width zero-free strip for each bounded
   height.
+- `classical_zero_free_region_high_height_re_im` and
+  `classical_zero_free_region_high_height_re_im_at_three`
+  project the classical zero-free-region target into coordinate high-height
+  form, including the standard height-`3` cutoff.
 - `residue_bounds`
   proves `1 < (sigma - 1) * Re(zeta(sigma)) <= sigma` for `sigma > 1`.
 - `log_deriv_zeta_pos_real`
@@ -2076,6 +2080,15 @@ Core verified declarations:
   package the concrete `PsiPowerErrorBound (beta - delta)` input directly into
   the same direct and reflected zero-free vertical-line conclusions, assuming
   the corresponding future zero-exclusion route at `beta`.
+- `not_exists_nontrivial_zero_on_line_of_psi_power_error_bridge`,
+  `not_exists_nontrivial_zero_on_reflected_line_of_psi_power_error_bridge`,
+  `not_exists_nontrivial_zero_on_line_of_explicit_formula_converse_power_bound_sub_delta`,
+  and
+  `not_exists_nontrivial_zero_on_reflected_line_of_explicit_formula_converse_power_bound_sub_delta`
+  are the existence-form versions of those conditional direct/reflected
+  bridges.  They convert the route output from `NoZerosOnVerticalLine beta` to
+  `¬ ∃ s, IsNontrivialZero s ∧ s.re = beta` or its reflected-line analogue,
+  without changing the underlying explicit-formula/PNT-error assumptions.
 - `psiPowerErrorBelowLineExcludesZerosRightOf_of_explicit_formula_converse_power`
   and
   `explicitFormulaConversePowerTarget_of_psiPowerErrorBelowLineExcludesZerosRightOf`

@@ -3903,6 +3903,21 @@ lemma classical_zero_free_region_iff_high_height_re_im_at_three :
         riemannZeta ((β : ℂ) + I * t) ≠ 0 :=
   classical_zero_free_region_iff_high_height_re_im 3 (by norm_num)
 
+lemma classical_zero_free_region_high_height_re_im
+    (T0 : ℝ) (hT0 : 2 ≤ T0)
+    (hclassical : classical_zero_free_region) :
+    ∃ c > 0, ∀ β t : ℝ, T0 ≤ |t| →
+      β ≥ 1 - c / Real.log |t| →
+      riemannZeta ((β : ℂ) + I * t) ≠ 0 :=
+  (classical_zero_free_region_iff_high_height_re_im T0 hT0).mp hclassical
+
+lemma classical_zero_free_region_high_height_re_im_at_three
+    (hclassical : classical_zero_free_region) :
+    ∃ c > 0, ∀ β t : ℝ, 3 ≤ |t| →
+      β ≥ 1 - c / Real.log |t| →
+      riemannZeta ((β : ℂ) + I * t) ≠ 0 :=
+  classical_zero_free_region_high_height_re_im 3 (by norm_num) hclassical
+
 lemma classical_zero_free_region_of_high_height_re_im
     (T0 : ℝ) (hT0 : 2 ≤ T0)
     (hcoord :

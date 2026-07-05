@@ -3496,6 +3496,28 @@ theorem no_zeros_on_reflected_line_of_explicit_formula_converse_power
   PrimeNumberTheorem.no_zeros_on_reflected_line_of_explicit_formula_converse_power
     hβ_pos hβ_lt_one hbridge herror
 
+/-- Public existence-form bridge from a general `ψ` power-saving error below a
+line to nonexistence of nontrivial zeros on that line. -/
+theorem not_exists_nontrivial_zero_on_line_of_psi_power_error_bridge
+    {β : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hbridge : PrimeNumberTheorem.PsiPowerErrorBelowLineExcludesZerosRightOf β)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
+    ¬ ∃ s : ℂ, _root_.RiemannHypothesis.IsNontrivialZero s ∧ s.re = β :=
+  PrimeNumberTheorem.not_exists_nontrivial_zero_on_line_of_psi_power_error_bridge
+    hβ_pos hβ_lt_one hbridge herror
+
+/-- Public reflected-line existence-form bridge from a general `ψ`
+power-saving error below `β` to nonexistence of nontrivial zeros on
+`Re(s)=1-β`. -/
+theorem not_exists_nontrivial_zero_on_reflected_line_of_psi_power_error_bridge
+    {β : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hbridge : PrimeNumberTheorem.PsiPowerErrorBelowLineExcludesZerosRightOf β)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
+    ¬ ∃ s : ℂ, _root_.RiemannHypothesis.IsNontrivialZero s ∧
+      s.re = 1 - β :=
+  PrimeNumberTheorem.not_exists_nontrivial_zero_on_reflected_line_of_psi_power_error_bridge
+    hβ_pos hβ_lt_one hbridge herror
+
 /-- Public direct power-saving version of the general `ψ`-error bridge. -/
 theorem no_zeros_on_vertical_line_of_psi_power_error_bound_sub_delta_bridge
     {β delta : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
@@ -3537,6 +3559,29 @@ theorem no_zeros_on_reflected_line_of_explicit_formula_converse_power_bound_sub_
     (herror : PrimeNumberTheorem.PsiPowerErrorBound (β - delta)) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (1 - β) :=
   PrimeNumberTheorem.no_zeros_on_reflected_line_of_explicit_formula_converse_power_bound_sub_delta
+    hβ_pos hβ_lt_one hdelta_pos hθ_nonneg hbridge herror
+
+/-- Public existence-form direct power-saving version with the
+explicit-formula converse route dependency named directly. -/
+theorem not_exists_nontrivial_zero_on_line_of_explicit_formula_converse_power_bound_sub_delta
+    {β delta : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hdelta_pos : 0 < delta) (hθ_nonneg : 0 ≤ β - delta)
+    (hbridge : PrimeNumberTheorem.ExplicitFormulaConversePowerTarget β)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBound (β - delta)) :
+    ¬ ∃ s : ℂ, _root_.RiemannHypothesis.IsNontrivialZero s ∧ s.re = β :=
+  PrimeNumberTheorem.not_exists_nontrivial_zero_on_line_of_explicit_formula_converse_power_bound_sub_delta
+    hβ_pos hβ_lt_one hdelta_pos hθ_nonneg hbridge herror
+
+/-- Public reflected-line existence-form direct power-saving version with the
+explicit-formula converse route dependency named directly. -/
+theorem not_exists_nontrivial_zero_on_reflected_line_of_explicit_formula_converse_power_bound_sub_delta
+    {β delta : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hdelta_pos : 0 < delta) (hθ_nonneg : 0 ≤ β - delta)
+    (hbridge : PrimeNumberTheorem.ExplicitFormulaConversePowerTarget β)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBound (β - delta)) :
+    ¬ ∃ s : ℂ, _root_.RiemannHypothesis.IsNontrivialZero s ∧
+      s.re = 1 - β :=
+  PrimeNumberTheorem.not_exists_nontrivial_zero_on_reflected_line_of_explicit_formula_converse_power_bound_sub_delta
     hβ_pos hβ_lt_one hdelta_pos hθ_nonneg hbridge herror
 
 /-- Public vertical-line bridge where the supplied `ψ` error is below a
@@ -15136,6 +15181,27 @@ theorem classical_zero_free_region_iff_high_height_re_im_at_three :
         β ≥ 1 - c / Real.log |t| →
         riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0 :=
   ZeroFreeRegion.classical_zero_free_region_iff_high_height_re_im_at_three
+
+/-- Public coordinate high-height projection of the classical
+zero-free-region target. -/
+theorem classical_zero_free_region_high_height_re_im
+    (T0 : ℝ) (hT0 : 2 ≤ T0)
+    (hclassical : ZeroFreeRegion.classical_zero_free_region) :
+    ∃ c > 0, ∀ β t : ℝ, T0 ≤ |t| →
+      β ≥ 1 - c / Real.log |t| →
+      riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0 :=
+  ZeroFreeRegion.classical_zero_free_region_high_height_re_im
+    T0 hT0 hclassical
+
+/-- Public height-`3` coordinate high-height projection of the classical
+zero-free-region target. -/
+theorem classical_zero_free_region_high_height_re_im_at_three
+    (hclassical : ZeroFreeRegion.classical_zero_free_region) :
+    ∃ c > 0, ∀ β t : ℝ, 3 ≤ |t| →
+      β ≥ 1 - c / Real.log |t| →
+      riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0 :=
+  ZeroFreeRegion.classical_zero_free_region_high_height_re_im_at_three
+    hclassical
 
 /-- Public coordinate compact-patching theorem at the height cutoff `3`. -/
 theorem compact_patch_classical_zero_free_region_re_im_at_three

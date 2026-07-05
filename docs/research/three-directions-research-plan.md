@@ -225,6 +225,15 @@ Verified assets now include:
   `no_zeros_on_reflected_line_of_psi_power_error_bound_sub_delta_bridge`,
   `not_psi_power_error_bound_sub_delta_of_exists_zero_on_line_bridge`, and
   `not_psi_power_error_bound_sub_delta_of_exists_zero_on_reflected_line_bridge`;
+- existence-form versions of the general `psi`-error and explicit-formula
+  converse bridges:
+  `not_exists_nontrivial_zero_on_line_of_psi_power_error_bridge`;
+  `not_exists_nontrivial_zero_on_reflected_line_of_psi_power_error_bridge`;
+  `not_exists_nontrivial_zero_on_line_of_explicit_formula_converse_power_bound_sub_delta`;
+  `not_exists_nontrivial_zero_on_reflected_line_of_explicit_formula_converse_power_bound_sub_delta`.
+  These expose the same conditional route directly as
+  `¬ ∃ s, IsNontrivialZero s ∧ s.re = ...`, matching the way the
+  `Re(s)=1/3` / reflected-line question is usually discussed.
 - finite explicit-formula truncation increment identities;
 - new-zero norm/count tail bounds under RH;
 - eventual-no-new-zero tail convergence;
