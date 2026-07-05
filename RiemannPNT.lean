@@ -5533,6 +5533,17 @@ theorem btyDetectorCoeff_sum_support_erase_one :
       (6917296 : ℝ) / 2485395 :=
   ZeroFreeRegion.btyDetectorCoeff_sum_support_erase_one
 
+theorem btyDetectorCoeff_sum_support_erase_one_erase_zero :
+    (∑ k ∈ (btyDetectorSupport.erase 1).erase 0, btyDetectorCoeff k) =
+      (4431901 : ℝ) / 2485395 :=
+  ZeroFreeRegion.btyDetectorCoeff_sum_support_erase_one_erase_zero
+
+theorem btyDetectorCoeff_mixed_center_sum (B0 bound : ℝ) :
+    (∑ k ∈ btyDetectorSupport.erase 1, btyDetectorCoeff k *
+      (if k = 0 then B0 else bound)) =
+      B0 + ((4431901 : ℝ) / 2485395) * bound :=
+  ZeroFreeRegion.btyDetectorCoeff_mixed_center_sum B0 bound
+
 theorem btyDetectorCoeff_eq_zero_of_seventeen_le {k : ℕ} (hk : 17 ≤ k) :
     btyDetectorCoeff k = 0 :=
   ZeroFreeRegion.btyDetectorCoeff_eq_zero_of_seventeen_le hk

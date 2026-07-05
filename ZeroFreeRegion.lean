@@ -1489,6 +1489,34 @@ lemma btyDetectorCoeff_sum_support_erase_one :
   rw [herase]
   norm_num [btyDetectorCoeff, btyRawCoeff, btyDetectorScale]
 
+/-- Sum of the BTY detector coefficients except the selected `k = 1` term and
+the central `k = 0` term. -/
+lemma btyDetectorCoeff_sum_support_erase_one_erase_zero :
+    (∑ k ∈ (btyDetectorSupport.erase 1).erase 0, btyDetectorCoeff k) =
+      (4431901 : ℝ) / 2485395 := by
+  have herase :
+      (btyDetectorSupport.erase 1).erase 0 =
+        ({2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16} :
+          Finset ℕ) := by
+    decide
+  rw [herase]
+  norm_num [btyDetectorCoeff, btyRawCoeff, btyDetectorScale]
+
+/-- Evaluate the mixed BTY coefficient sum with a separate central `k = 0`
+bound and one common bound for all remaining nonzero detector frequencies. -/
+lemma btyDetectorCoeff_mixed_center_sum (B0 bound : ℝ) :
+    (∑ k ∈ btyDetectorSupport.erase 1, btyDetectorCoeff k *
+      (if k = 0 then B0 else bound)) =
+      B0 + ((4431901 : ℝ) / 2485395) * bound := by
+  have herase :
+      btyDetectorSupport.erase 1 =
+        ({0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16} :
+          Finset ℕ) := by
+    decide
+  rw [herase]
+  norm_num [btyDetectorCoeff, btyRawCoeff, btyDetectorScale]
+  ring
+
 /-- The BTY detector has no cosine coefficients beyond degree `16`. -/
 lemma btyDetectorCoeff_eq_zero_of_seventeen_le {k : ℕ} (hk : 17 ≤ k) :
     btyDetectorCoeff k = 0 := by

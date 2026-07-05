@@ -118,6 +118,11 @@ Core verified declarations:
   package the exact interface needed by future shifted log-derivative upper
   bounds, including the simplified rational coefficient penalty
   `3458648 / 2163835`.
+- `btyDetectorCoeff_sum_support_erase_one_erase_zero` and
+  `btyDetectorCoeff_mixed_center_sum`
+  compute the remaining noncentral BTY coefficient sum
+  `4431901 / 2485395` and rewrite the mixed center/nonzero expression as
+  `B0 + (4431901 / 2485395) * L`.
 - `log_deriv_zeta_bty_detector_one_lower_bound_of_center_and_LogDerivVerticalLogBound`
   applies the named high-height vertical logarithmic-derivative bound to all
   nonzero BTY frequencies while taking the `k = 0` real-axis term as a separate

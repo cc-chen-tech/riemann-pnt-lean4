@@ -42,6 +42,9 @@ Verified assets now include:
   `btyDetector_log_abs_mul_add_three_le_log_seventeen_mul_abs_add_three`
   and its no-manual-`hlog` lower-bound wrapper
   `log_deriv_zeta_bty_detector_one_lower_bound_of_global_vertical_log_abs_add_three_bound_auto`;
+- the mixed center/nonzero coefficient evaluation
+  `btyDetectorCoeff_mixed_center_sum`, giving the exact noncentral coefficient
+  sum `4431901 / 2485395`;
 - the named vertical-bound BTY handoff
   `log_deriv_zeta_bty_detector_one_lower_bound_of_center_and_LogDerivVerticalLogBound`,
   which controls all nonzero BTY detector frequencies from
