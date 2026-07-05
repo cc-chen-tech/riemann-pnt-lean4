@@ -309,9 +309,10 @@ The project currently verifies several supporting statements, including:
   a concrete resolvent/Laplace prototype kernel with finite-zero and new-zero
   nonnegativity wrappers, a concrete self-damped resolvent/Laplace instance
   `dampedKernel kappa (resolventLaplaceKernel a) (resolventLaplaceKernel a)`,
-  finite nonnegative resolvent-kernel combinations with the same wrappers,
-  single and finite affine resolvent-kernel variants with the same
-  finite-zero/new-zero wrappers, and
+  finite nonnegative resolvent-kernel combinations and finite weighted
+  self-damped resolvent-kernel combinations with the same wrappers, single and
+  finite affine resolvent-kernel variants with the same finite-zero/new-zero
+  wrappers, and
   reflected-line conditional bridges for explicit-formula/PNT-error routes;
 - several zeta nonvanishing and pole-behavior wrappers from Mathlib;
 - the Gamma residue formula at negative integers and numerical special cases;
@@ -792,7 +793,9 @@ self-damped combinations, and direct height-truncated/new-zero sum, average,
 and paired-contribution nonnegativity wrappers from either pair-positivity or
 pointwise strip positivity.  The concrete self-damped resolvent instance
 `dampedKernel kappa (resolventLaplaceKernel a) (resolventLaplaceKernel a)` is
-also exposed for `kappa <= 1` and `0 <= a`.  These are concrete algebraic
+also exposed for `kappa <= 1` and `0 <= a`, together with finite weighted
+nonnegative combinations of such self-damped resolvent instances.  These are
+concrete algebraic
 suppliers for later Stechkin/Heath-Brown-style detector arguments; they do not
 prove the missing high-height zeta growth or logarithmic-derivative estimates.
 
