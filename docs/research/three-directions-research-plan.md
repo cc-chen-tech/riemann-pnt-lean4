@@ -9,6 +9,10 @@ interfaces and small lemmas without overstating any unresolved analytic theorem.
 - Worktree: `/Users/luicy/AI/Riemann/.worktrees/riemann-three-directions-research`
 - Branch: `research/three-directions`
 - Current base: `9266d36 feat(pnt): add simplified BTY Borel facade`
+- Research commits on this branch:
+  - `5279bc9 feat(research): extend three direction bridges`
+  - `5b91244 feat(research): add center-one paired average bridges`
+  - `cfcae71 feat(research): connect global height bounds to tail bridges`
 - Rule: do not present route interfaces or `def ... : Prop` targets as proved
   mathematics.
 
@@ -30,8 +34,10 @@ Next useful step:
 log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_vertical_pair_bound
 ```
 
-This would combine the signed/unsigned vertical-pair log bounds with the BTY
-detector facade.
+This is not a purely formal wrapper yet.  The existing shift-pair estimates
+cover the classical `t, 2t` shape and the Borel facade accepts a finset-wide
+upper-bound hypothesis over `btyDetectorSupport.erase 1`; closing the next
+bridge requires a uniform high-height/log bound for every BTY support index.
 
 ## Direction 2: Stechkin/Heath-Brown pair positivity
 
@@ -42,6 +48,9 @@ Verified assets now include:
 - paired-average bridges over full and new-zero finsets:
   `nontrivialZerosFinset_pair_average_nonnegative_of_laplace_pair_positive`;
   `nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_laplace_pair_positive`.
+- center-one paired-average convenience wrappers:
+  `nontrivialZerosFinset_pair_average_nonnegative_of_laplace_pair_positive_one`;
+  `nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_laplace_pair_positive_one`.
 
 Important boundary:
 
@@ -50,14 +59,10 @@ it into an unpaired sum needs a proof that the chosen center-pair map preserves
 the relevant zero set.  For zeta this is available at center `1`, via
 `rho -> 1 - rho`, not for an arbitrary center.
 
-Next useful step:
-
-```lean
-nontrivialZerosFinset_pair_average_nonnegative_of_center_one_laplace_pair_positive
-```
-
-as a convenience wrapper, then specialize it to concrete Stechkin kernels once
-their positivity theorem is available.
+Next useful step is no longer another finset wrapper.  It needs a concrete
+Stechkin/Heath-Brown kernel positivity theorem that instantiates
+`LaplacePairPositive F 1`; without that analytic positivity input, the remaining
+work would only rename existing lemmas.
 
 ## Direction 3: explicit formula / PNT error bridge
 
@@ -69,11 +74,19 @@ Verified assets now include:
 - composed bridges:
   `explicit_formula_von_mangoldt_of_RH_base_and_eventually_no_new_zeros_via_sum_tail`;
   `explicit_formula_von_mangoldt_of_RH_base_and_eventually_no_new_zeros_via_card_tail`.
+- global-height-bound-to-tail bridges:
+  `nontrivialZerosFinset_eventually_sdiff_eq_empty_of_global_height_bound`;
+  `new_zero_inv_norm_tail_tendsto_zero_of_global_height_bound`;
+  `new_zero_card_tail_tendsto_zero_of_global_height_bound`;
+  `explicit_formula_von_mangoldt_of_RH_base_and_global_height_bound_via_sum_tail`;
+  `explicit_formula_von_mangoldt_of_RH_base_and_global_height_bound_via_card_tail`.
 
 Important boundary:
 
-These theorems still assume the base explicit-formula identity.  They do not
-prove Perron's formula, contour shifting, or the converse theorem turning
+These theorems still assume the base explicit-formula identity at a stable
+truncation.  The global-height variants are route interfaces, not realistic
+unconditional inputs for zeta zeros.  They do not prove Perron's formula,
+contour shifting, or the converse theorem turning
 `psi(x) - x = O(x^(beta - delta))` into zero exclusion.
 
 ## Hard Gaps
