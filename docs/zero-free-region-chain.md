@@ -113,6 +113,17 @@ variants
 merge separately proved high-height regular-part and vertical estimates by
 taking the maximum cutoff.
 
+The primitive vertical estimates can now be fed directly into that final
+assembly.  The proved closures
+`ZeroFreeRegion.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_deriv_bound_zeta_lower_bound_high_height`
+and
+`ZeroFreeRegion.classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_deriv_bound_zeta_lower_bound_high_height`,
+together with their `..._on_verticalRegion` variants, compose the
+regular-part input with affine high-height control of `ζ'` and a positive
+lower bound for `ζ`.  These theorems reduce the final target to standard
+complex-analysis-shaped zeta estimates; they still do not prove those
+primitive estimates.
+
 The same named interfaces are also monotone in the bound constant:
 `ZeroFreeRegion.logDerivVerticalLogBound_mono_const`,
 `ZeroFreeRegion.negLogDerivVerticalLogBound_mono_const`,

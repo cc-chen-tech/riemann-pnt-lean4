@@ -235,6 +235,80 @@ theorem classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogB
   ZeroFreeRegion.classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_exists_ReNegDerivDivVerticalLogBound
     hregular hvertical
 
+/-- Public final conditional assembly from regular-part input plus primitive
+high-height derivative and zeta-lower controls. -/
+theorem classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_deriv_bound_zeta_lower_bound_high_height
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        LogDerivRegularPartLogBound Bregular Tregular)
+    (T0 A B eta : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (heta : 0 < eta)
+    (hderiv :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖deriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          A + B * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3))
+    (hzeta :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        eta ≤ ‖riemannZeta ((σ : ℂ) + Complex.I * t)‖) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_deriv_bound_zeta_lower_bound_high_height
+    hregular T0 A B eta hT0 hA hB heta hderiv hzeta
+
+/-- Public multiplicity-aware final conditional assembly from regular-part
+input plus primitive high-height derivative and zeta-lower controls. -/
+theorem classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_deriv_bound_zeta_lower_bound_high_height
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        MultiplicityLogDerivRegularPartLogBound Bregular Tregular)
+    (T0 A B eta : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (heta : 0 < eta)
+    (hderiv :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖deriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          A + B * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3))
+    (hzeta :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        eta ≤ ‖riemannZeta ((σ : ℂ) + Complex.I * t)‖) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_deriv_bound_zeta_lower_bound_high_height
+    hregular T0 A B eta hT0 hA hB heta hderiv hzeta
+
+/-- Public vertical-region final conditional assembly from regular-part input
+plus primitive derivative and zeta-lower controls. -/
+theorem classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_deriv_bound_zeta_lower_bound_on_verticalRegion
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        LogDerivRegularPartLogBound Bregular Tregular)
+    (T0 A B eta : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (heta : 0 < eta)
+    (hderiv :
+      ∀ z : ℂ, z ∈ ZeroFreeRegion.verticalRegion 1 2 T0 →
+        ‖deriv riemannZeta z‖ ≤ A + B * Real.log (‖z‖ + 3))
+    (hzeta :
+      ∀ z : ℂ, z ∈ ZeroFreeRegion.verticalRegion 1 2 T0 →
+        eta ≤ ‖riemannZeta z‖) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_deriv_bound_zeta_lower_bound_on_verticalRegion
+    hregular T0 A B eta hT0 hA hB heta hderiv hzeta
+
+/-- Public multiplicity-aware vertical-region final conditional assembly from
+regular-part input plus primitive derivative and zeta-lower controls. -/
+theorem classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_deriv_bound_zeta_lower_bound_on_verticalRegion
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        MultiplicityLogDerivRegularPartLogBound Bregular Tregular)
+    (T0 A B eta : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (heta : 0 < eta)
+    (hderiv :
+      ∀ z : ℂ, z ∈ ZeroFreeRegion.verticalRegion 1 2 T0 →
+        ‖deriv riemannZeta z‖ ≤ A + B * Real.log (‖z‖ + 3))
+    (hzeta :
+      ∀ z : ℂ, z ∈ ZeroFreeRegion.verticalRegion 1 2 T0 →
+        eta ≤ ‖riemannZeta z‖) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_deriv_bound_zeta_lower_bound_on_verticalRegion
+    hregular T0 A B eta hT0 hA hB heta hderiv hzeta
+
 /-- Public compatibility bridge between the project's prime-counting
 normalization and Mathlib's `Nat.primeCounting`. -/
 theorem primeCounting_eq_mathlib (x : ℝ) (hx : 0 ≤ x) :

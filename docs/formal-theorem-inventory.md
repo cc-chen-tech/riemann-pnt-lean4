@@ -1081,6 +1081,12 @@ Core verified declarations:
 - `classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_exists_ReNegDerivDivVerticalLogBound`
   and its multiplicity-aware analogue provide the same different-cutoff
   assembly for the direct real-part vertical interface.
+- `classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_deriv_bound_zeta_lower_bound_high_height`
+  and its multiplicity-aware / `verticalRegion` variants compose that final
+  assembly with the primitive `ζ'` growth plus positive `ζ` lower-bound
+  normalizer.  These are proved conditional bridges to
+  `classical_zero_free_region`; they do not prove the primitive zeta
+  estimates themselves.
 - `exists_re_im_logDeriv_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height`
   converts a future boundary-strip estimate
   `||logDeriv zeta (sigma+it)|| <= A + B log(|t|+3)` into the exact

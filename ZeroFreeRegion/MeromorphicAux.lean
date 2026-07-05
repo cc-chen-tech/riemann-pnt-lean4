@@ -5838,6 +5838,107 @@ lemma reNegDerivDivVerticalLogBound_of_deriv_bound_and_zeta_lower_bound_on_verti
     ⟨C, T0', hlog⟩
   exact ⟨C, T0', reNegDerivDivVerticalLogBound_of_logDerivVerticalLogBound hlog⟩
 
+/-- Final conditional assembly from the regular-part input plus primitive
+high-height zeta controls.
+
+This is the shortest target-facing bridge for the current de la Vallee Poussin
+route: once the regular-part estimate is available, it is enough to prove
+high-height affine growth for `ζ'` and a positive lower bound for `ζ` on
+`1 <= sigma <= 2`.  The theorem does not prove those zeta-specific analytic
+inputs; it only composes the existing vertical normalizer with the final
+zero-free-region assembly. -/
+lemma classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_deriv_bound_zeta_lower_bound_high_height
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        LogDerivRegularPartLogBound Bregular Tregular)
+    (T0 A B eta : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (heta : 0 < eta)
+    (hderiv :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖deriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          A + B * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (hzeta :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        eta ≤ ‖riemannZeta ((σ : ℂ) + I * t)‖) :
+    classical_zero_free_region := by
+  rcases
+      reNegDerivDivVerticalLogBound_of_deriv_bound_and_zeta_lower_bound_high_height
+        T0 A B eta hT0 hA hB heta hderiv hzeta with
+    ⟨C, Tvertical, hvertical⟩
+  exact
+    classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_exists_ReNegDerivDivVerticalLogBound
+      hregular ⟨C, Tvertical, hvertical⟩
+
+/-- Multiplicity-aware final conditional assembly from regular-part input plus
+primitive high-height zeta controls. -/
+lemma classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_deriv_bound_zeta_lower_bound_high_height
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        MultiplicityLogDerivRegularPartLogBound Bregular Tregular)
+    (T0 A B eta : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (heta : 0 < eta)
+    (hderiv :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖deriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          A + B * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (hzeta :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        eta ≤ ‖riemannZeta ((σ : ℂ) + I * t)‖) :
+    classical_zero_free_region := by
+  rcases
+      reNegDerivDivVerticalLogBound_of_deriv_bound_and_zeta_lower_bound_high_height
+        T0 A B eta hT0 hA hB heta hderiv hzeta with
+    ⟨C, Tvertical, hvertical⟩
+  exact
+    classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_exists_ReNegDerivDivVerticalLogBound
+      hregular ⟨C, Tvertical, hvertical⟩
+
+/-- Complex-variable vertical-region version of the final conditional assembly
+from regular-part input plus primitive zeta controls. -/
+lemma classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_deriv_bound_zeta_lower_bound_on_verticalRegion
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        LogDerivRegularPartLogBound Bregular Tregular)
+    (T0 A B eta : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (heta : 0 < eta)
+    (hderiv :
+      ∀ z : ℂ, z ∈ verticalRegion 1 2 T0 →
+        ‖deriv riemannZeta z‖ ≤ A + B * Real.log (‖z‖ + 3))
+    (hzeta :
+      ∀ z : ℂ, z ∈ verticalRegion 1 2 T0 →
+        eta ≤ ‖riemannZeta z‖) :
+    classical_zero_free_region := by
+  rcases
+      reNegDerivDivVerticalLogBound_of_deriv_bound_and_zeta_lower_bound_on_verticalRegion
+        T0 A B eta hT0 hA hB heta hderiv hzeta with
+    ⟨C, Tvertical, hvertical⟩
+  exact
+    classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_exists_ReNegDerivDivVerticalLogBound
+      hregular ⟨C, Tvertical, hvertical⟩
+
+/-- Multiplicity-aware complex-variable vertical-region version of the final
+conditional assembly from regular-part input plus primitive zeta controls. -/
+lemma classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_deriv_bound_zeta_lower_bound_on_verticalRegion
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        MultiplicityLogDerivRegularPartLogBound Bregular Tregular)
+    (T0 A B eta : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (heta : 0 < eta)
+    (hderiv :
+      ∀ z : ℂ, z ∈ verticalRegion 1 2 T0 →
+        ‖deriv riemannZeta z‖ ≤ A + B * Real.log (‖z‖ + 3))
+    (hzeta :
+      ∀ z : ℂ, z ∈ verticalRegion 1 2 T0 →
+        eta ≤ ‖riemannZeta z‖) :
+    classical_zero_free_region := by
+  rcases
+      reNegDerivDivVerticalLogBound_of_deriv_bound_and_zeta_lower_bound_on_verticalRegion
+        T0 A B eta hT0 hA hB heta hderiv hzeta with
+    ⟨C, Tvertical, hvertical⟩
+  exact
+    classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_exists_ReNegDerivDivVerticalLogBound
+      hregular ⟨C, Tvertical, hvertical⟩
+
 /-- Real-part quotient vertical-region bridge from a signed `-logDeriv ζ`
 norm estimate. -/
 lemma reNegDerivDivVerticalLogBound_of_neg_affine_log_norm_add_three_bound_on_verticalRegion
