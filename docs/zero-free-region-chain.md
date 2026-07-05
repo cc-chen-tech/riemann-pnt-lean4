@@ -1187,6 +1187,12 @@ interfaces used by the 3-4-1 route.
 The `..._on_verticalRegion` variants accept the same future estimates in the
 complex-variable form `z ∈ verticalRegion 1 2 T0`, then specialize to the
 coordinate points `sigma + i t`.
+For estimates that already bound the signed real part, the direct constructors
+`ZeroFreeRegion.reNegDerivDivVerticalLogBound_of_affine_re_log_norm_add_three_bound_high_height`
+and
+`ZeroFreeRegion.reNegDerivDivVerticalLogBound_of_affine_re_log_norm_add_three_bound_on_verticalRegion`
+feed `Re(-zeta'/zeta)` into the same named interface without first strengthening
+to a norm bound.
 The signed coordinate variants
 `ZeroFreeRegion.classical_zero_free_region_of_re_im_neg_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height`
 and

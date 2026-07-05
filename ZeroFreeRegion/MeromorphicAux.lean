@@ -5182,6 +5182,60 @@ lemma reNegDerivDivVerticalLogBound_of_neg_affine_log_norm_add_three_bound_high_
     ⟨C, T0', hC, hT0', hbound⟩
   exact ⟨C, T0', hC, by linarith, hbound⟩
 
+/-- Direct real-part quotient normalizer from a full-height affine estimate.
+
+This variant is closer to the 3-4-1 consumer than the norm-based versions:
+the input already bounds `Re(-ζ'/ζ)`, so the theorem only absorbs the additive
+constant and converts `log(‖σ+it‖+3)` to `log |t|`. -/
+lemma reNegDerivDivVerticalLogBound_of_affine_re_log_norm_add_three_bound_high_height
+    (T0 A B : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re ≤
+          A + B * Real.log (‖((σ : ℂ) + I * t)‖ + 3)) :
+    ∃ C T0' : ℝ, ReNegDerivDivVerticalLogBound C T0' := by
+  refine ⟨A + 2 * B, T0, add_nonneg hA (mul_nonneg (by norm_num) hB),
+    by linarith, ?_⟩
+  intro σ t hσ_left hσ_right ht
+  have hσ_mem : σ ∈ Set.Icc 1 2 := ⟨hσ_left, hσ_right⟩
+  have ht5 : 5 ≤ |t| := hT0.trans ht
+  have hlog_ge_one : 1 ≤ Real.log |t| := by
+    exact (log_abs_gt_one_of_three_le (by linarith : 3 ≤ |t|)).le
+  have hA_le : A ≤ A * Real.log |t| := by
+    calc
+      A = A * 1 := by ring
+      _ ≤ A * Real.log |t| :=
+          mul_le_mul_of_nonneg_left hlog_ge_one hA
+  have hlog_norm :
+      Real.log (‖((σ : ℂ) + I * t)‖ + 3) ≤ 2 * Real.log |t| := by
+    simpa using
+      log_norm_sigma_add_I_mul_add_three_le_two_log_abs
+        (σ := σ) (t := t) hσ_mem ht5
+  calc
+    (-deriv riemannZeta ((σ : ℂ) + I * t) /
+        riemannZeta ((σ : ℂ) + I * t)).re
+        ≤ A + B * Real.log (‖((σ : ℂ) + I * t)‖ + 3) :=
+          hvertical σ t ht hσ_mem
+    _ ≤ A * Real.log |t| + B * (2 * Real.log |t|) := by
+          exact add_le_add hA_le (mul_le_mul_of_nonneg_left hlog_norm hB)
+    _ = (A + 2 * B) * Real.log |t| := by ring
+
+/-- Multiplicative direct real-part quotient normalizer. -/
+lemma reNegDerivDivVerticalLogBound_of_re_log_norm_add_three_bound_high_height
+    (T0 C : ℝ) (hT0 : 5 ≤ T0) (hC : 0 ≤ C)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re ≤
+          C * Real.log (‖((σ : ℂ) + I * t)‖ + 3)) :
+    ∃ C' T0' : ℝ, ReNegDerivDivVerticalLogBound C' T0' := by
+  refine
+    reNegDerivDivVerticalLogBound_of_affine_re_log_norm_add_three_bound_high_height
+      T0 0 C hT0 (by norm_num) hC ?_
+  intro σ t ht hσ
+  simpa using hvertical σ t ht hσ
+
 /-- Complex-variable vertical-region version of
 `logDerivVerticalLogBound_of_affine_log_norm_add_three_bound_high_height`.
 
@@ -5281,6 +5335,40 @@ lemma reNegDerivDivVerticalLogBound_of_neg_affine_log_norm_add_three_bound_on_ve
   refine
     reNegDerivDivVerticalLogBound_of_neg_affine_log_norm_add_three_bound_high_height
       T0 A B hT0 hA hB ?_
+  intro σ t ht hσ
+  have hz : ((σ : ℂ) + I * t) ∈ verticalRegion 1 2 T0 := by
+    simpa [verticalRegion] using
+      (show σ ∈ Set.Icc (1 : ℝ) 2 ∧ T0 ≤ |t| from ⟨hσ, ht⟩)
+  simpa using hvertical ((σ : ℂ) + I * t) hz
+
+/-- Direct real-part quotient vertical-region bridge. -/
+lemma reNegDerivDivVerticalLogBound_of_affine_re_log_norm_add_three_bound_on_verticalRegion
+    (T0 A B : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ z : ℂ, z ∈ verticalRegion 1 2 T0 →
+        (-deriv riemannZeta z / riemannZeta z).re ≤
+          A + B * Real.log (‖z‖ + 3)) :
+    ∃ C T0' : ℝ, ReNegDerivDivVerticalLogBound C T0' := by
+  refine
+    reNegDerivDivVerticalLogBound_of_affine_re_log_norm_add_three_bound_high_height
+      T0 A B hT0 hA hB ?_
+  intro σ t ht hσ
+  have hz : ((σ : ℂ) + I * t) ∈ verticalRegion 1 2 T0 := by
+    simpa [verticalRegion] using
+      (show σ ∈ Set.Icc (1 : ℝ) 2 ∧ T0 ≤ |t| from ⟨hσ, ht⟩)
+  simpa using hvertical ((σ : ℂ) + I * t) hz
+
+/-- Multiplicative direct real-part quotient vertical-region bridge. -/
+lemma reNegDerivDivVerticalLogBound_of_re_log_norm_add_three_bound_on_verticalRegion
+    (T0 C : ℝ) (hT0 : 5 ≤ T0) (hC : 0 ≤ C)
+    (hvertical :
+      ∀ z : ℂ, z ∈ verticalRegion 1 2 T0 →
+        (-deriv riemannZeta z / riemannZeta z).re ≤
+          C * Real.log (‖z‖ + 3)) :
+    ∃ C' T0' : ℝ, ReNegDerivDivVerticalLogBound C' T0' := by
+  refine
+    reNegDerivDivVerticalLogBound_of_re_log_norm_add_three_bound_high_height
+      T0 C hT0 hC ?_
   intro σ t ht hσ
   have hz : ((σ : ℂ) + I * t) ∈ verticalRegion 1 2 T0 := by
     simpa [verticalRegion] using

@@ -1143,6 +1143,14 @@ Core verified declarations:
   and its multiplicative, signed, and real-part variants accept estimates
   stated directly on `verticalRegion 1 2 T0`, then specialize them to the
   coordinate `sigma + i t` named vertical-bound interfaces.
+- `reNegDerivDivVerticalLogBound_of_affine_re_log_norm_add_three_bound_high_height`
+  and `reNegDerivDivVerticalLogBound_of_re_log_norm_add_three_bound_high_height`
+  normalize direct `Re(-zeta'/zeta)` estimates in the full-height
+  `log(||sigma+it||+3)` scale.
+- `reNegDerivDivVerticalLogBound_of_affine_re_log_norm_add_three_bound_on_verticalRegion`
+  and `reNegDerivDivVerticalLogBound_of_re_log_norm_add_three_bound_on_verticalRegion`
+  provide the same direct real-part handoff for complex-variable estimates on
+  `verticalRegion 1 2 T0`.
 - `classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_abs_add_three_bound_high_height`
   specializes the coordinate interface to estimates stated as
   `C * log(|t| + 3)` for both remaining zeta-specific bounds.
