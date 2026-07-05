@@ -17447,6 +17447,14 @@ theorem norm_trivial_zero_contribution_le_half_rpow_re {s : ℂ} {T x : ℝ}
   PrimeNumberTheorem.ExplicitFormulaAux.norm_trivial_zero_contribution_le_half_rpow_re
     hs hx
 
+/-- Public `x >= 1` single-term norm bound for retained trivial-zero
+contributions. -/
+theorem norm_trivial_zero_contribution_le_half_rpow_neg_two
+    {s : ℂ} {T x : ℝ} (hs : s ∈ finiteTrivialZeroSum T) (hx : 1 ≤ x) :
+    ‖(x : ℂ) ^ s / s‖ ≤ (1 / 2 : ℝ) * x ^ (-2 : ℝ) :=
+  PrimeNumberTheorem.ExplicitFormulaAux.norm_trivial_zero_contribution_le_half_rpow_neg_two
+    hs hx
+
 /-- Public finite-sum norm bound for retained trivial-zero contributions. -/
 theorem norm_finiteTrivialZeroSum_contribution_le_half_sum_rpow_re
     (T x : ℝ) (hx : 0 < x) :

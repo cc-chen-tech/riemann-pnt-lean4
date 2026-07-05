@@ -740,10 +740,11 @@ the displayed negative even integers, retained trivial zeros lie on the real
 axis with real part at most `-2`, their denominators have `2 ≤ ‖s‖` and
 `‖s‖⁻¹ ≤ 1/2`, their absolute imaginary height is normalized to `0`, they are
 separated from the nontrivial-zero predicate, the single contribution
-`x^s/s` is bounded by `(1/2) * x^Re(s)`, the finite retained trivial-zero
-contribution sum is bounded by the corresponding finite sum of those
-amplitudes, and the truncation cardinality is bounded by `Nat.floor (T / 2)`.
-This still does not prove the infinite trivial-zero correction term.
+`x^s/s` is bounded by `(1/2) * x^Re(s)` and, for `x >= 1`, by
+`(1/2) * x^(-2)`, the finite retained trivial-zero contribution sum is bounded
+by the corresponding finite sum of those amplitudes, and the truncation
+cardinality is bounded by `Nat.floor (T / 2)`.  This still does not prove the
+infinite trivial-zero correction term.
 
 The explicit-formula side also contains route interfaces such as
 `PrimeNumberTheorem.ExplicitFormulaConversePowerTarget` and

@@ -2525,6 +2525,10 @@ Support-level verified declarations:
   bounds each retained trivial-zero contribution by
   `(1 / 2) * x ^ s.re` for `x > 0`.  This is a single-term estimate only, not
   the infinite trivial-zero correction.
+- `norm_trivial_zero_contribution_le_half_rpow_neg_two`
+  specializes the same single-term estimate to `x >= 1`, using the retained
+  trivial-zero fact `s.re <= -2` to bound the amplitude by
+  `(1 / 2) * x ^ (-2)`.
 - `norm_finiteTrivialZeroSum_contribution_le_half_sum_rpow_re`
   sums the preceding single-term estimate over the retained finite trivial-zero
   truncation.  This is still a finite-truncation estimate, not the infinite

@@ -53,6 +53,8 @@ file or the parent.
   forms for retained finite trivial zeros.
 - `norm_trivial_zero_contribution_le_half_rpow_re` — single-term norm bound
   for retained finite trivial-zero contributions.
+- `norm_trivial_zero_contribution_le_half_rpow_neg_two` — the `x >= 1`
+  specialization using `Re(s) <= -2`.
 - `norm_finiteTrivialZeroSum_contribution_le_half_sum_rpow_re` — finite-sum
   norm bound for retained finite trivial-zero contributions.
 - `chebyshevPsi0_eq_chebyshevPsi_off_primePowers` — at a non
@@ -314,6 +316,20 @@ lemma norm_trivial_zero_contribution_le_half_rpow_re {s : ℂ} {T x : ℝ}
     _ ≤ x ^ s.re * (1 / 2 : ℝ) :=
       mul_le_mul_of_nonneg_left hinv hx_nonneg
     _ = (1 / 2 : ℝ) * x ^ s.re := by ring
+
+/-- For `x >= 1`, each retained trivial-zero contribution is bounded by the
+first trivial-zero amplitude `x^(-2)` times the denominator factor `1/2`. -/
+lemma norm_trivial_zero_contribution_le_half_rpow_neg_two {s : ℂ} {T x : ℝ}
+    (hs : s ∈ finiteTrivialZeroSum T) (hx : 1 ≤ x) :
+    ‖(x : ℂ) ^ s / s‖ ≤ (1 / 2 : ℝ) * x ^ (-2 : ℝ) := by
+  have hx_pos : 0 < x := lt_of_lt_of_le zero_lt_one hx
+  have hterm := norm_trivial_zero_contribution_le_half_rpow_re hs hx_pos
+  have hre : s.re ≤ -2 := finiteTrivialZeroSum_re_le_neg_two_of_mem hs
+  have hrpow : x ^ s.re ≤ x ^ (-2 : ℝ) :=
+    Real.rpow_le_rpow_of_exponent_le hx hre
+  have hmul : (1 / 2 : ℝ) * x ^ s.re ≤ (1 / 2 : ℝ) * x ^ (-2 : ℝ) :=
+    mul_le_mul_of_nonneg_left hrpow (by norm_num)
+  exact le_trans hterm hmul
 
 /-- Finite retained trivial-zero contributions are bounded by the sum of the
 single-term `x ^ Re(s)` amplitudes.  This is still only the finite truncation,

@@ -123,6 +123,7 @@ Verified assets now include:
   `PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_two_le_norm_of_mem`;
   `PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_inv_norm_le_half_of_mem`;
   `PrimeNumberTheorem.ExplicitFormulaAux.norm_trivial_zero_contribution_le_half_rpow_re`;
+  `PrimeNumberTheorem.ExplicitFormulaAux.norm_trivial_zero_contribution_le_half_rpow_neg_two`;
   `PrimeNumberTheorem.ExplicitFormulaAux.norm_finiteTrivialZeroSum_contribution_le_half_sum_rpow_re`;
   `PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_card_le`.
 
@@ -308,6 +309,7 @@ Verified assets now include:
   `ExplicitFormulaAux.finiteTrivialZeroSum_two_le_norm_of_mem`;
   `ExplicitFormulaAux.finiteTrivialZeroSum_inv_norm_le_half_of_mem`;
   `ExplicitFormulaAux.norm_trivial_zero_contribution_le_half_rpow_re`;
+  `ExplicitFormulaAux.norm_trivial_zero_contribution_le_half_rpow_neg_two`;
   `ExplicitFormulaAux.norm_finiteTrivialZeroSum_contribution_le_half_sum_rpow_re`;
   `ExplicitFormulaAux.finiteTrivialZeroSum_card_le`;
   `ExplicitFormulaAux.chebyshevPsi0_eq_chebyshevPsi_off_primePowers`;
