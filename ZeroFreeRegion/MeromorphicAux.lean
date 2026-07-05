@@ -11059,6 +11059,89 @@ lemma borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_
       simp [mBound, ell]
       ring
 
+/-- Half-radius Borel-Carathéodory bound for the signed logarithmic derivative
+`-logDeriv ζ` with inputs already normalized to `log(|t|+3)`.
+
+This is the signed counterpart of
+`borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_log_abs_add_three_re_le_half_radius`,
+matching the sign convention used by the 3-4-1 inequality. -/
+lemma borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_log_abs_add_three_re_le_half_radius
+    {Are Bre Acenter Bcenter R σ t a b H : ℝ} {z : ℂ}
+    (hσ : σ ∈ Set.Icc 1 2) (ht : 5 ≤ |t|)
+    (hM : 0 < Are + Bre * Real.log (|t| + 3))
+    (hBre_nonneg : 0 ≤ Bre) (hBcenter_nonneg : 0 ≤ Bcenter)
+    (ha₀ : 1 ≤ a) (hHpos : 0 < H)
+    (hlog : ∀ w : ℂ, w ∈ verticalRegion a b H →
+      (-logDeriv riemannZeta w).re ≤
+        Are + Bre * Real.log (|t| + 3))
+    (hcenter :
+      ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+        Acenter + Bcenter * Real.log (|t| + 3))
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + I * t)‖ ≤ R / 2) :
+    ‖-logDeriv riemannZeta z‖ ≤
+      (2 * Are + 3 * Acenter) +
+        (4 * Bre + 6 * Bcenter) * Real.log (|t| + 3) := by
+  let ellNorm : ℝ := Real.log (‖((σ : ℂ) + I * t)‖ + 3)
+  let ellAbs : ℝ := Real.log (|t| + 3)
+  have hAbs_le_norm : ellAbs ≤ ellNorm := by
+    simpa [ellAbs, ellNorm] using
+      (log_abs_add_three_le_log_norm_sigma_add_I_mul_add_three
+        (σ := σ) (t := t))
+  have hNorm_le_abs2 : ellNorm ≤ 2 * ellAbs := by
+    simpa [ellAbs, ellNorm] using
+      (log_norm_sigma_add_I_mul_add_three_le_two_log_abs_add_three
+        (σ := σ) (t := t) hσ ht)
+  have hM_full :
+      0 < Are + Bre * ellNorm := by
+    have hle :
+        Are + Bre * ellAbs ≤ Are + Bre * ellNorm := by
+      nlinarith [mul_le_mul_of_nonneg_left hAbs_le_norm hBre_nonneg]
+    exact lt_of_lt_of_le (by simpa [ellAbs] using hM) hle
+  have hlog_full :
+      ∀ w : ℂ, w ∈ verticalRegion a b H →
+        (-logDeriv riemannZeta w).re ≤ Are + Bre * ellNorm := by
+    intro w hw
+    have hle :
+        Are + Bre * ellAbs ≤ Are + Bre * ellNorm := by
+      nlinarith [mul_le_mul_of_nonneg_left hAbs_le_norm hBre_nonneg]
+    exact le_trans (by simpa [ellAbs] using hlog w hw) hle
+  have hcenter_full :
+      ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+        Acenter + Bcenter * ellNorm := by
+    have hle :
+        Acenter + Bcenter * ellAbs ≤ Acenter + Bcenter * ellNorm := by
+      nlinarith [mul_le_mul_of_nonneg_left hAbs_le_norm hBcenter_nonneg]
+    exact le_trans (by simpa [ellAbs] using hcenter) hle
+  have hborel :
+      ‖-logDeriv riemannZeta z‖ ≤
+        (2 * Are + 3 * Acenter) +
+          (2 * Bre + 3 * Bcenter) * ellNorm := by
+    simpa [ellNorm] using
+      (borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius
+        (Are := Are) (Bre := Bre) (Acenter := Acenter)
+        (Bcenter := Bcenter) (R := R) (σ := σ) (t := t) (a := a)
+        (b := b) (H := H) (z := z)
+        hM_full ha₀ hHpos hlog_full hcenter_full ha hb hH hR hz_half)
+  have hcoeff_nonneg : 0 ≤ 2 * Bre + 3 * Bcenter := by
+    nlinarith [hBre_nonneg, hBcenter_nonneg]
+  have hscale :
+      (2 * Bre + 3 * Bcenter) * ellNorm ≤
+        (2 * Bre + 3 * Bcenter) * (2 * ellAbs) := by
+    exact mul_le_mul_of_nonneg_left hNorm_le_abs2 hcoeff_nonneg
+  calc
+    ‖-logDeriv riemannZeta z‖
+        ≤ (2 * Are + 3 * Acenter) +
+          (2 * Bre + 3 * Bcenter) * ellNorm := hborel
+    _ ≤ (2 * Are + 3 * Acenter) +
+          (2 * Bre + 3 * Bcenter) * (2 * ellAbs) := by
+      nlinarith [hscale]
+    _ = (2 * Are + 3 * Acenter) +
+          (4 * Bre + 6 * Bcenter) * Real.log (|t| + 3) := by
+      simp [ellAbs]
+      ring
+
 /-- Half-radius oscillation Borel-Carathéodory bound for the signed
 logarithmic derivative `-logDeriv ζ` with an affine full-height real-part
 input. -/

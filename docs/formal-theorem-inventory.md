@@ -1369,6 +1369,9 @@ Core verified declarations:
   `borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius`
   normalize the signed half-radius Borel outputs to affine
   `A + B log(||sigma+it|| + 3)` bounds.
+- `borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_log_abs_add_three_re_le_half_radius`
+  is the signed `log(|t| + 3)` version of the same half-radius Borel bridge,
+  matching the sign convention used by the 3-4-1 inequality.
 - `borelCaratheodory_neg_logDeriv_regularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`
   applies the right-shifted Borel normalization to the zero-candidate regular
   part `-logDeriv zeta(w) + (w-rho)^(-1)`.
