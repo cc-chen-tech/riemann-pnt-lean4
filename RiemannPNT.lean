@@ -14078,6 +14078,22 @@ theorem no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route
       hroute hexplicit)
     herror
 
+/-- Concrete `ψ`-error version of the truncated explicit-formula bridge to
+no zeros on `Re(s)=2/3`. -/
+theorem no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_below_two_thirds
+    (hroute :
+      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute
+        (2 / 3))
+    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
+      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget
+        T hT x hx)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowTwoThirds) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (2 / 3) :=
+  no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route
+    hroute hexplicit
+    (PrimeNumberTheorem.psiPowerErrorBelowLine_two_thirds_of_below_two_thirds
+      herror)
+
 /-- Public one-step conditional bridge from a future truncated explicit formula
 route and a `ψ` power saving below `2/3` to no zeros on `Re(s)=1/3`. -/
 theorem no_zeros_on_one_third_of_truncated_explicit_formula_converse_route
@@ -14093,6 +14109,22 @@ theorem no_zeros_on_one_third_of_truncated_explicit_formula_converse_route
     (PrimeNumberTheorem.ExplicitFormulaTruncated.explicitFormulaConversePower_of_truncated_route
       hroute hexplicit)
     herror
+
+/-- Concrete `ψ`-error version of the truncated explicit-formula bridge to
+no zeros on `Re(s)=1/3`. -/
+theorem no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_below_two_thirds
+    (hroute :
+      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute
+        (2 / 3))
+    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
+      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget
+        T hT x hx)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowTwoThirds) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) :=
+  no_zeros_on_one_third_of_truncated_explicit_formula_converse_route
+    hroute hexplicit
+    (PrimeNumberTheorem.psiPowerErrorBelowLine_two_thirds_of_below_two_thirds
+      herror)
 
 /-- Public reflected-line version of the truncated explicit-formula bridge.
 

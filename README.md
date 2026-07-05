@@ -704,7 +704,8 @@ The explicit-formula side also contains route interfaces such as
 These name the future oscillation/converse dependency from a truncated explicit
 formula to zero-free vertical lines; they are not unconditional proofs of those
 analytic inputs.  The public API exposes both the direct `Re(s)=2/3` consequence
-and the reflected `Re(s)=1/3` consequence of this conditional route.
+and the reflected `Re(s)=1/3` consequence of this conditional route, including
+direct wrappers for the concrete `theta < 2/3` `psi`-error input.
 
 The finite truncated-zero bookkeeping is proved as ordinary theorem-level
 infrastructure.  In particular,

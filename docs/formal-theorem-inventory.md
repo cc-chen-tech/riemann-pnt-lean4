@@ -1690,6 +1690,11 @@ Core verified declarations:
   gives the direct right-side-line consequence of the same conditional
   truncated explicit-formula route at `beta = 2/3`, before applying the
   reflected `1/3` bridge.
+- `no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_below_two_thirds`
+  and
+  `no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_below_two_thirds`
+  are the public concrete `psi`-error wrappers for the same truncated route,
+  using the already named `theta < 2/3` input.
 - `riemannZeta_ne_zero_of_re_le_zero`
   excludes nontrivial zeros in `Re(s) <= 0`, except for the trivial zero
   locations.
@@ -1921,6 +1926,11 @@ Route interfaces:
 - `RiemannPNT.API.no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route`
   public bridge from the same conditional route at `beta = 2/3` to no zeros on
   the right-side line `Re(s)=2/3`.
+- `RiemannPNT.API.no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_below_two_thirds`
+  and
+  `RiemannPNT.API.no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_below_two_thirds`
+  public concrete wrappers for the same conditional truncated route when the
+  `psi` error is stated as `PsiPowerErrorBelowTwoThirds`.
 - `RiemannExplorer.Conrey40.conrey_40_percent_zeros_on_critical_line_target`
   alias interface to `KnownResults.conrey_40_percent_zeros_on_critical_line_target`.
 - `MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum`

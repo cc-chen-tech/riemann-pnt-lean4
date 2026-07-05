@@ -136,7 +136,9 @@ Verified assets now include:
   `explicit_formula_von_mangoldt_of_RH_base_and_global_height_bound_via_card_tail`.
 - truncated explicit-formula converse facades:
   `no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route`;
+  `no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_below_two_thirds`;
   `no_zeros_on_one_third_of_truncated_explicit_formula_converse_route`;
+  `no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_below_two_thirds`;
   `no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route`.
 
 Important boundary:
