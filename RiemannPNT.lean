@@ -2195,6 +2195,57 @@ theorem laplacePairPositive_one_symmetricResolventLaplaceKernelCombo
   PrimeNumberTheorem.laplacePairPositive_one_symmetricResolventLaplaceKernelCombo
     hw ha
 
+/-- Public signed/damped pair-kernel model `F - κ • G`. -/
+noncomputable abbrev dampedKernel
+    (κ : ℝ) (F G : ℂ → ℂ) : ℂ → ℂ :=
+  PrimeNumberTheorem.dampedKernel κ F G
+
+/-- Public controlled signed/damped kernel pair-positivity bridge. -/
+theorem laplacePairPositive_dampedKernel_of_pair_le
+    {κ center : ℝ} {F G : ℂ → ℂ}
+    (hpair : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ center →
+      κ * ((G z).re + (G ((center : ℂ) - z)).re) ≤
+        (F z).re + (F ((center : ℂ) - z)).re) :
+    PrimeNumberTheorem.LaplacePairPositive
+      (dampedKernel κ F G) center :=
+  PrimeNumberTheorem.laplacePairPositive_dampedKernel_of_pair_le hpair
+
+/-- Public center-one controlled signed/damped kernel pair-positivity bridge. -/
+theorem laplacePairPositive_one_dampedKernel_of_pair_le
+    {κ : ℝ} {F G : ℂ → ℂ}
+    (hpair : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      κ * ((G z).re + (G (1 - z)).re) ≤
+        (F z).re + (F (1 - z)).re) :
+    PrimeNumberTheorem.LaplacePairPositive (dampedKernel κ F G) 1 :=
+  PrimeNumberTheorem.laplacePairPositive_one_dampedKernel_of_pair_le hpair
+
+/-- Public finite-zero paired-sum nonnegativity for a damped detector kernel. -/
+theorem nontrivialZerosFinset_pair_sum_nonnegative_of_dampedKernel
+    (T κ : ℝ) (F G : ℂ → ℂ)
+    (hpair : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      κ * ((G z).re + (G (1 - z)).re) ≤
+        (F z).re + (F (1 - z)).re) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+      ((dampedKernel κ F G ρ).re +
+        (dampedKernel κ F G (1 - ρ)).re) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_pair_sum_nonnegative_of_dampedKernel
+    T κ F G hpair
+
+/-- Public finite-zero paired-average nonnegativity for a damped detector
+kernel. -/
+theorem nontrivialZerosFinset_pair_average_nonnegative_of_dampedKernel
+    (T κ : ℝ) (F G : ℂ → ℂ)
+    (hpair : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      κ * ((G z).re + (G (1 - z)).re) ≤
+        (F z).re + (F (1 - z)).re) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+        ((dampedKernel κ F G ρ).re +
+          (dampedKernel κ F G (1 - ρ)).re)) /
+        ((PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_pair_average_nonnegative_of_dampedKernel
+    T κ F G hpair
+
 /-- Public finite nonnegative resolvent/Laplace kernel combination. -/
 noncomputable abbrev resolventLaplaceKernelCombo
     (K : Finset ℕ) (w a : ℕ → ℝ) : ℂ → ℂ :=

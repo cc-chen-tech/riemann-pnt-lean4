@@ -2943,6 +2943,50 @@ lemma laplacePairPositive_one_symmetricResolventLaplaceKernelCombo
   laplacePairPositive_symmetricResolventLaplaceKernelCombo
     (center := 1) hw ha
 
+/-- Signed/damped pair-kernel model `F - κ • G`.
+
+This is the Lean-facing shape of Stechkin-style detector terms, where a
+positive kernel is corrected by a controlled shifted kernel rather than only
+combined with nonnegative weights. -/
+noncomputable def dampedKernel (κ : ℝ) (F G : ℂ → ℂ) (z : ℂ) : ℂ :=
+  F z - (κ : ℂ) * G z
+
+/-- Algebraic pair-contribution identity for a damped kernel. -/
+lemma dampedKernel_pair_contribution_eq
+    (κ center : ℝ) (F G : ℂ → ℂ) (z : ℂ) :
+    (dampedKernel κ F G z).re +
+      (dampedKernel κ F G ((center : ℂ) - z)).re =
+        ((F z).re + (F ((center : ℂ) - z)).re) -
+          κ * ((G z).re + (G ((center : ℂ) - z)).re) := by
+  simp [dampedKernel, Complex.sub_re, Complex.mul_re]
+  ring
+
+/-- A controlled signed/damped kernel supplies strip-local pair positivity.
+
+The input is the Stechkin-style real inequality: on the relevant strip, the
+paired contribution of `F` dominates `κ` times the paired contribution of `G`. -/
+lemma laplacePairPositive_dampedKernel_of_pair_le
+    {κ center : ℝ} {F G : ℂ → ℂ}
+    (hpair : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ center →
+      κ * ((G z).re + (G ((center : ℂ) - z)).re) ≤
+        (F z).re + (F ((center : ℂ) - z)).re) :
+    LaplacePairPositive (dampedKernel κ F G) center := by
+  intro z hz_left hz_right
+  rw [dampedKernel_pair_contribution_eq]
+  exact sub_nonneg.mpr (hpair z hz_left hz_right)
+
+/-- Center-one version of the damped-kernel pair-positivity bridge, matching
+the zeta symmetry `ρ ↦ 1 - ρ`. -/
+lemma laplacePairPositive_one_dampedKernel_of_pair_le
+    {κ : ℝ} {F G : ℂ → ℂ}
+    (hpair : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      κ * ((G z).re + (G (1 - z)).re) ≤
+        (F z).re + (F (1 - z)).re) :
+    LaplacePairPositive (dampedKernel κ F G) 1 := by
+  refine laplacePairPositive_dampedKernel_of_pair_le ?_
+  intro z hz_left hz_right
+  simpa using hpair z hz_left hz_right
+
 /-- Finite nonnegative linear combinations of resolvent/Laplace prototype
 kernels.  This is a Lean-facing model for detector kernels built by summing
 elementary right-half-plane-positive pieces. -/
@@ -5069,6 +5113,37 @@ lemma nontrivialZerosFinset_pair_average_nonnegative_of_laplace_pair_positive_on
     (nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive_one
       T F hF)
     (Nat.cast_nonneg _)
+
+/-- Finite nontrivial-zero paired-sum nonnegativity for a damped detector
+kernel, after its Stechkin-style pair inequality has been proved on the
+critical strip. -/
+theorem nontrivialZerosFinset_pair_sum_nonnegative_of_dampedKernel
+    (T κ : ℝ) (F G : ℂ → ℂ)
+    (hpair : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      κ * ((G z).re + (G (1 - z)).re) ≤
+        (F z).re + (F (1 - z)).re) :
+    0 ≤ ∑ ρ ∈ nontrivialZerosFinset T,
+      ((dampedKernel κ F G ρ).re +
+        (dampedKernel κ F G (1 - ρ)).re) :=
+  nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive_one
+    T (dampedKernel κ F G)
+    (laplacePairPositive_one_dampedKernel_of_pair_le hpair)
+
+/-- Finite nontrivial-zero paired-average nonnegativity for a damped detector
+kernel. -/
+theorem nontrivialZerosFinset_pair_average_nonnegative_of_dampedKernel
+    (T κ : ℝ) (F G : ℂ → ℂ)
+    (hpair : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      κ * ((G z).re + (G (1 - z)).re) ≤
+        (F z).re + (F (1 - z)).re) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset T,
+        ((dampedKernel κ F G ρ).re +
+          (dampedKernel κ F G (1 - ρ)).re)) /
+        ((nontrivialZerosFinset T).card : ℝ) :=
+  nontrivialZerosFinset_pair_average_nonnegative_of_laplace_pair_positive_one
+    T (dampedKernel κ F G)
+    (laplacePairPositive_one_dampedKernel_of_pair_le hpair)
 
 /-- Center-one Laplace-pair positivity also makes the unpaired real-part sum
 nonnegative, after reindexing the reflected half of the paired sum by

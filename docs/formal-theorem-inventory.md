@@ -1815,6 +1815,14 @@ Core verified declarations:
   `laplacePairPositive_one_symmetricResolventLaplaceKernelCombo`
   extend the center-reflected supplier to finite nonnegative combinations
   `sum k in K, w k * ((a k + z)^-1 + (a k + 1 - z)^-1)`.
+- `dampedKernel`, `dampedKernel_pair_contribution_eq`,
+  `laplacePairPositive_dampedKernel_of_pair_le`,
+  `laplacePairPositive_one_dampedKernel_of_pair_le`,
+  `nontrivialZerosFinset_pair_sum_nonnegative_of_dampedKernel`, and
+  `nontrivialZerosFinset_pair_average_nonnegative_of_dampedKernel`
+  package the signed detector shape `F - kappa * G`: once the paired
+  Stechkin-style inequality for `F` and `G` is supplied on the critical strip,
+  the finite nontrivial-zero paired sum and average are nonnegative.
 - `nontrivialZerosFinset_sum_re_nonnegative_of_symmetricResolventLaplaceKernelCombo`,
   `nontrivialZerosFinset_average_re_nonnegative_of_symmetricResolventLaplaceKernelCombo`,
   `nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_symmetricResolventLaplaceKernelCombo`,
