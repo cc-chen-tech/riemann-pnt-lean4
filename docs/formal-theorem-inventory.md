@@ -1450,6 +1450,10 @@ Core verified declarations:
   `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_laplace_pair_positive_one`
   add the corresponding center-one Laplace-pair and normalized-average
   variants for those new-zero blocks.
+- `norm_finiteNontrivialZeroSum_sub_le_new_zeros_sum_norm`
+  bounds the finite zero-sum change between two truncation heights by the
+  summed norms of the newly included zero contributions, a direct finite
+  triangle-inequality handoff for truncated explicit-formula bookkeeping.
 - `NoZerosOnVerticalLine`
   is a reusable predicate for excluding zeta zeros on a fixed vertical line.
 - `no_zeros_on_one_third_of_RH`

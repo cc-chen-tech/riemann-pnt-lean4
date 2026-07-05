@@ -8819,6 +8819,44 @@ lemma exists_borelCaratheodory_logDeriv_multiplicityRegularPart_sigma_it_right_s
       hr hσ hσr ht hA hB hM hdiff hlog hcenter
   exact ⟨C, hC, by simpa [C] using hmain⟩
 
+/-- Positive-sign multiplicity-aware Borel bridge with the right-shifted
+regular-part center estimate discharged by the fixed-margin half-plane bound,
+in the full complex-height logarithmic scale. -/
+lemma exists_borelCaratheodory_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_norm_of_affine_re_le_half_radius_fixed_margin_center
+    {Are Bre r σ β t : ℝ} {n : ℕ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3) (ht : 6 ≤ |t|)
+    (hβ : β < 1) (hAre : 0 ≤ Are) (hBre : 0 ≤ Bre)
+    (hM :
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hdiff :
+      DifferentiableOn ℂ
+        (fun w : ℂ =>
+          logDeriv riemannZeta w -
+            (n : ℂ) * (w - ((β : ℂ) + I * t))⁻¹)
+        (ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r)))
+    (hlog : ∀ w : ℂ,
+      w ∈ ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r) →
+        (logDeriv riemannZeta w -
+            (n : ℂ) * (w - ((β : ℂ) + I * t))⁻¹).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3)) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+          (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+        C * Real.log (‖((σ : ℂ) + I * t)‖ + 3) := by
+  rcases exists_borelCaratheodory_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius_fixed_margin_center
+      (Are := Are) (Bre := Bre) (r := r) (σ := σ) (β := β)
+      (t := t) (n := n)
+      hr hσ hσr ht hβ hAre hBre hM hdiff hlog with
+    ⟨C, hC, hbound⟩
+  refine ⟨C, hC, ?_⟩
+  have hlog_le :
+      Real.log |t| ≤ Real.log (‖((σ : ℂ) + I * t)‖ + 3) :=
+    log_abs_le_log_norm_sigma_add_I_mul_add_three (σ := σ) (t := t)
+      (by linarith : 0 < |t|)
+  exact hbound.trans (mul_le_mul_of_nonneg_left hlog_le hC)
+
 /-- Multiplicity-aware signed regular-part Borel transfer in the full
 complex-height logarithmic scale. -/
 lemma borelCaratheodory_neg_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_norm_of_affine_re_le_half_radius
