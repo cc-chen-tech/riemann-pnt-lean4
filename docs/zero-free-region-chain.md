@@ -73,6 +73,8 @@ The fixed-margin variant
 `ZeroFreeRegion.exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_LogDerivVerticalLogBound`
 discharges that center bound from the existing `Re(s) >= 1 + epsilon` estimate
 when the caller stays a fixed distance to the right of the boundary.
+Their `_simplified` variants use `btyDetectorCoeff_mixed_center_sum` to expose
+the evaluated noncentral coefficient `4431901 / 2485395`.
 
 The matching zero-candidate regular-part estimate is now named as well:
 `ZeroFreeRegion.LogDerivRegularPartLogBound` and
@@ -407,7 +409,9 @@ proved:
   the checked BTY detector, with the `k=0` center term still explicit; its
   fixed-margin companion
   `RiemannPNT.API.exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_LogDerivVerticalLogBound`
-  removes that center input when `1 + epsilon <= sigma`.  The shifted versions
+  removes that center input when `1 + epsilon <= sigma`.  The `_simplified`
+  variants keep the same dependencies while exposing the evaluated coefficient
+  sum.  The shifted versions
   `ZeroFreeRegion.re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_logDeriv_re_le_half_radius`
   and
   `ZeroFreeRegion.re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_neg_logDeriv_re_le_half_radius`

@@ -5753,6 +5753,21 @@ theorem log_deriv_zeta_bty_detector_one_lower_bound_of_center_and_LogDerivVertic
   ZeroFreeRegion.log_deriv_zeta_bty_detector_one_lower_bound_of_center_and_LogDerivVerticalLogBound
     h hσ hσ_le ht hcenter
 
+/-- Public simplified mixed BTY handoff with the finite remaining-frequency
+coefficient sum evaluated explicitly. -/
+theorem log_deriv_zeta_bty_detector_one_lower_bound_of_center_and_LogDerivVerticalLogBound_simplified
+    {C T0 σ t B0 : ℝ} (h : LogDerivVerticalLogBound C T0)
+    (hσ : 1 < σ) (hσ_le : σ ≤ 2) (ht : T0 ≤ |t|)
+    (hcenter :
+      (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re ≤ B0) :
+    (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+      riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+      - (B0 + ((4431901 : ℝ) / 2485395) *
+          (C * Real.log (17 * (|t| + 3)))) /
+        btyDetectorCoeff 1 :=
+  ZeroFreeRegion.log_deriv_zeta_bty_detector_one_lower_bound_of_center_and_LogDerivVerticalLogBound_simplified
+    h hσ hσ_le ht hcenter
+
 /-- Public mixed BTY handoff whose central `k = 0` term is discharged by the
 proved fixed-margin logarithmic-derivative estimate. -/
 theorem exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_LogDerivVerticalLogBound
@@ -5765,6 +5780,20 @@ theorem exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_cente
             (if k = 0 then A else C * Real.log (17 * (|t| + 3)))) /
           btyDetectorCoeff 1 :=
   ZeroFreeRegion.exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_LogDerivVerticalLogBound
+    hε h
+
+/-- Public fixed-margin mixed BTY handoff with the finite remaining-frequency
+coefficient sum evaluated explicitly. -/
+theorem exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_LogDerivVerticalLogBound_simplified
+    {ε C T0 : ℝ} (hε : 0 < ε) (h : LogDerivVerticalLogBound C T0) :
+    ∃ A : ℝ, 0 ≤ A ∧ ∀ σ t : ℝ, 1 + ε ≤ σ → σ ≤ 2 →
+      T0 ≤ |t| →
+      (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+        riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+        - (A + ((4431901 : ℝ) / 2485395) *
+            (C * Real.log (17 * (|t| + 3)))) /
+          btyDetectorCoeff 1 :=
+  ZeroFreeRegion.exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_LogDerivVerticalLogBound_simplified
     hε h
 
 /-- Public fixed-margin BTY lower bound from the existing vertical

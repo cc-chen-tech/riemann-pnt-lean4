@@ -128,11 +128,16 @@ Core verified declarations:
   nonzero BTY frequencies while taking the `k = 0` real-axis term as a separate
   upper-bound input.  This closes the finite-frequency bookkeeping for the BTY
   handoff without asserting the zeta-specific vertical estimate itself.
+- `log_deriv_zeta_bty_detector_one_lower_bound_of_center_and_LogDerivVerticalLogBound_simplified`
+  rewrites the same mixed handoff using the evaluated noncentral coefficient
+  sum `4431901 / 2485395`.
 - `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_LogDerivVerticalLogBound`
   discharges that central `k = 0` input from the already proved fixed-margin
   `Re(s) >= 1 + epsilon` quotient estimate.  It is intentionally still a
   fixed-margin bridge, not the boundary estimate needed for the classical
   zero-free region.
+- `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_LogDerivVerticalLogBound_simplified`
+  is the fixed-margin version with the same coefficient-sum simplification.
 - `log_deriv_zeta_nonneg_three_four_one_from_finset`
   re-exposes the verified 3-4-1 theorem as the base detector instance.
 - `classical_zero_free_region_compact`
@@ -250,6 +255,8 @@ Core verified declarations:
   supplies that real-axis quotient bound from the fixed-margin API when
   `1 + epsilon <= sigma`, leaving only the named vertical estimate for nonzero
   detector frequencies.
+- The corresponding `_simplified` BTY handoff lemmas expose the same facts
+  after evaluating the noncentral coefficient sum.
 - `exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_vertical_norm_log_bound`
   converts that shifted norm estimate into the real-part quotient convention
   needed by the 3-4-1 inequality.

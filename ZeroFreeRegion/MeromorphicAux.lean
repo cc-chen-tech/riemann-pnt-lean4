@@ -11369,6 +11369,26 @@ lemma log_deriv_zeta_bty_detector_one_lower_bound_of_center_and_LogDerivVertical
       _ = (if k = 0 then B0 else C * Real.log (17 * (|t| + 3))) := by
           simp [hk_zero]
 
+/-- Simplified mixed BTY handoff with the finite remaining-frequency
+coefficient sum evaluated explicitly. -/
+lemma log_deriv_zeta_bty_detector_one_lower_bound_of_center_and_LogDerivVerticalLogBound_simplified
+    {C T0 σ t B0 : ℝ} (h : LogDerivVerticalLogBound C T0)
+    (hσ : 1 < σ) (hσ_le : σ ≤ 2) (ht : T0 ≤ |t|)
+    (hcenter :
+      (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re ≤ B0) :
+    (-deriv riemannZeta ((σ : ℂ) + I * t) /
+      riemannZeta ((σ : ℂ) + I * t)).re ≥
+      - (B0 + ((4431901 : ℝ) / 2485395) *
+          (C * Real.log (17 * (|t| + 3)))) /
+        btyDetectorCoeff 1 := by
+  have hmix :=
+    log_deriv_zeta_bty_detector_one_lower_bound_of_center_and_LogDerivVerticalLogBound
+      (C := C) (T0 := T0) (B0 := B0) h hσ hσ_le ht hcenter
+  have hsum :=
+    btyDetectorCoeff_mixed_center_sum B0 (C * Real.log (17 * (|t| + 3)))
+  rw [hsum] at hmix
+  exact hmix
+
 /-- Mixed BTY handoff with the central `k = 0` term discharged by the proved
 fixed-margin logarithmic-derivative estimate.
 
@@ -11396,6 +11416,28 @@ lemma exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_
       h (by linarith) hσ_le ht ?_
   have hcenter := hcenter_bound σ 0 hσ
   simpa using hcenter
+
+/-- Fixed-margin mixed BTY handoff with the finite remaining-frequency
+coefficient sum evaluated explicitly. -/
+lemma exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_LogDerivVerticalLogBound_simplified
+    {ε C T0 : ℝ} (hε : 0 < ε) (h : LogDerivVerticalLogBound C T0) :
+    ∃ A : ℝ, 0 ≤ A ∧ ∀ σ t : ℝ, 1 + ε ≤ σ → σ ≤ 2 →
+      T0 ≤ |t| →
+      (-deriv riemannZeta ((σ : ℂ) + I * t) /
+        riemannZeta ((σ : ℂ) + I * t)).re ≥
+        - (A + ((4431901 : ℝ) / 2485395) *
+            (C * Real.log (17 * (|t| + 3)))) /
+          btyDetectorCoeff 1 := by
+  rcases exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_LogDerivVerticalLogBound
+      (ε := ε) (C := C) (T0 := T0) hε h with
+    ⟨A, hA, hbound⟩
+  refine ⟨A, hA, ?_⟩
+  intro σ t hσ hσ_le ht
+  have hmix := hbound σ t hσ hσ_le ht
+  have hsum :=
+    btyDetectorCoeff_mixed_center_sum A (C * Real.log (17 * (|t| + 3)))
+  rw [hsum] at hmix
+  exact hmix
 
 /-- Real-part quotient version of
 `exists_norm_logDeriv_riemannZeta_shifted_vertical_log_bound_of_vertical_log_bound`. -/
