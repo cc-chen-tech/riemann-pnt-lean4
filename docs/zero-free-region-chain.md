@@ -436,7 +436,10 @@ proved:
   with `log(||sigma+it||+3)`.  The positive-sign
   `ZeroFreeRegion.exists_borelCaratheodory_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_norm_of_affine_re_le_half_radius_fixed_margin_center`
   variant additionally discharges the right-shifted center norm from the proved
-  fixed-margin `logDeriv zeta` estimate in that full-height scale, while
+  fixed-margin `logDeriv zeta` estimate in that full-height scale.  Its signed
+  analogue
+  `ZeroFreeRegion.exists_borelCaratheodory_neg_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_norm_of_affine_re_le_half_radius_fixed_margin_center`
+  does the same directly for `-logDeriv zeta(w)+n(w-rho)^(-1)`, while
   `ZeroFreeRegion.re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_shift_le_log_norm_of_affine_regularPart_re_le_half_radius`
   converts that full-height regular-part norm bound into the matching
   zero-repulsion estimate.  The regular-part
