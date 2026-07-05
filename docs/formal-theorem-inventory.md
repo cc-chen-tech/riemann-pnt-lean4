@@ -2063,6 +2063,14 @@ Core verified declarations:
   name the explicit-formula converse dependency directly, including the general
   reflected-line route `Re(s)=1-beta`, and specialize it to the reflected
   `Re(s)=1/3` route.
+- `no_zeros_on_vertical_line_of_psi_power_error_bound_sub_delta_bridge`,
+  `no_zeros_on_reflected_line_of_psi_power_error_bound_sub_delta_bridge`,
+  `no_zeros_on_vertical_line_of_explicit_formula_converse_power_bound_sub_delta`,
+  and
+  `no_zeros_on_reflected_line_of_explicit_formula_converse_power_bound_sub_delta`
+  package the concrete `PsiPowerErrorBound (beta - delta)` input directly into
+  the same direct and reflected zero-free vertical-line conclusions, assuming
+  the corresponding future zero-exclusion route at `beta`.
 - `psiPowerErrorBelowLineExcludesZerosRightOf_of_explicit_formula_converse_power`
   and
   `explicitFormulaConversePowerTarget_of_psiPowerErrorBelowLineExcludesZerosRightOf`

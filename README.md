@@ -740,6 +740,9 @@ out the corresponding `psi` power-saving hypothesis.  The verified facades
 include the general `O(x^(beta-delta))` version from a zero on or to the right
 of `Re(s)=beta`, the reflected-line version from a zero on `Re(s)=1-beta`, and
 the concrete `O(x^(2/3-delta))` specialization from a zero on `Re(s)=1/3`.
+The same `O(x^(beta-delta))` input is also packaged in the forward direction:
+assuming the future zero-exclusion route at `beta`, it gives the direct line
+`Re(s)=beta` and reflected line `Re(s)=1-beta` zero-freeness consequences.
 
 The finite truncated-zero bookkeeping is proved as ordinary theorem-level
 infrastructure.  In particular,

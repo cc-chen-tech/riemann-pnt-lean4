@@ -3455,6 +3455,49 @@ theorem no_zeros_on_reflected_line_of_explicit_formula_converse_power
   PrimeNumberTheorem.no_zeros_on_reflected_line_of_explicit_formula_converse_power
     hβ_pos hβ_lt_one hbridge herror
 
+/-- Public direct power-saving version of the general `ψ`-error bridge. -/
+theorem no_zeros_on_vertical_line_of_psi_power_error_bound_sub_delta_bridge
+    {β delta : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hdelta_pos : 0 < delta) (hθ_nonneg : 0 ≤ β - delta)
+    (hbridge : PrimeNumberTheorem.PsiPowerErrorBelowLineExcludesZerosRightOf β)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBound (β - delta)) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine β :=
+  PrimeNumberTheorem.no_zeros_on_vertical_line_of_psi_power_error_bound_sub_delta_bridge
+    hβ_pos hβ_lt_one hdelta_pos hθ_nonneg hbridge herror
+
+/-- Public reflected-line power-saving version of the general `ψ`-error
+bridge. -/
+theorem no_zeros_on_reflected_line_of_psi_power_error_bound_sub_delta_bridge
+    {β delta : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hdelta_pos : 0 < delta) (hθ_nonneg : 0 ≤ β - delta)
+    (hbridge : PrimeNumberTheorem.PsiPowerErrorBelowLineExcludesZerosRightOf β)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBound (β - delta)) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (1 - β) :=
+  PrimeNumberTheorem.no_zeros_on_reflected_line_of_psi_power_error_bound_sub_delta_bridge
+    hβ_pos hβ_lt_one hdelta_pos hθ_nonneg hbridge herror
+
+/-- Public direct power-saving version with the explicit-formula converse
+route dependency named directly. -/
+theorem no_zeros_on_vertical_line_of_explicit_formula_converse_power_bound_sub_delta
+    {β delta : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hdelta_pos : 0 < delta) (hθ_nonneg : 0 ≤ β - delta)
+    (hbridge : PrimeNumberTheorem.ExplicitFormulaConversePowerTarget β)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBound (β - delta)) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine β :=
+  PrimeNumberTheorem.no_zeros_on_vertical_line_of_explicit_formula_converse_power_bound_sub_delta
+    hβ_pos hβ_lt_one hdelta_pos hθ_nonneg hbridge herror
+
+/-- Public reflected-line power-saving version with the explicit-formula
+converse route dependency named directly. -/
+theorem no_zeros_on_reflected_line_of_explicit_formula_converse_power_bound_sub_delta
+    {β delta : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hdelta_pos : 0 < delta) (hθ_nonneg : 0 ≤ β - delta)
+    (hbridge : PrimeNumberTheorem.ExplicitFormulaConversePowerTarget β)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBound (β - delta)) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (1 - β) :=
+  PrimeNumberTheorem.no_zeros_on_reflected_line_of_explicit_formula_converse_power_bound_sub_delta
+    hβ_pos hβ_lt_one hdelta_pos hθ_nonneg hbridge herror
+
 /-- Public vertical-line bridge where the supplied `ψ` error is below a
 smaller boundary, using the general zero-exclusion route interface. -/
 theorem no_zeros_on_vertical_line_of_psi_power_error_bridge_mono_error
