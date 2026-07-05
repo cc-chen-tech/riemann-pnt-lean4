@@ -1127,6 +1127,18 @@ Core verified declarations:
 - `exists_re_neg_deriv_div_vertical_log_bound_of_neg_affine_log_norm_add_three_bound_high_height`
   is the signed-norm version, consuming an affine growth estimate for
   `||-logDeriv zeta||` and producing the same real-part quotient output.
+- `logDerivVerticalLogBound_of_affine_log_norm_add_three_bound_high_height`
+  and `logDerivVerticalLogBound_of_log_norm_add_three_bound_high_height`
+  package the full-height `log(||sigma+it||+3)` normalizers directly into the
+  named `LogDerivVerticalLogBound` interface.
+- `negLogDerivVerticalLogBound_of_affine_log_norm_add_three_bound_high_height`
+  and `negLogDerivVerticalLogBound_of_log_norm_add_three_bound_high_height`
+  provide the same named-interface packaging in the signed `-logDeriv zeta`
+  convention.
+- `reNegDerivDivVerticalLogBound_of_affine_log_norm_add_three_bound_high_height`
+  and `reNegDerivDivVerticalLogBound_of_neg_affine_log_norm_add_three_bound_high_height`
+  package full-height norm-growth inputs into the named real-part quotient
+  interface consumed by the 3-4-1 route.
 - `classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_abs_add_three_bound_high_height`
   specializes the coordinate interface to estimates stated as
   `C * log(|t| + 3)` for both remaining zeta-specific bounds.

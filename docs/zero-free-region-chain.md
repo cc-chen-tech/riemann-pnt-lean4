@@ -1177,6 +1177,13 @@ comparison lemmas
 `ZeroFreeRegion.norm_sigma_add_I_mul_le_abs_add_two` and
 `ZeroFreeRegion.log_norm_sigma_add_I_mul_add_three_le_two_log_abs` normalize
 that scale to `log |t|` on the strip `1 <= sigma <= 2`.
+The named constructors
+`ZeroFreeRegion.logDerivVerticalLogBound_of_affine_log_norm_add_three_bound_high_height`,
+`ZeroFreeRegion.negLogDerivVerticalLogBound_of_affine_log_norm_add_three_bound_high_height`,
+and
+`ZeroFreeRegion.reNegDerivDivVerticalLogBound_of_affine_log_norm_add_three_bound_high_height`
+then package those full-height normalizers directly into the exact vertical
+interfaces used by the 3-4-1 route.
 The signed coordinate variants
 `ZeroFreeRegion.classical_zero_free_region_of_re_im_neg_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height`
 and

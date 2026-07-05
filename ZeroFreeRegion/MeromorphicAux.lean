@@ -5088,6 +5088,100 @@ lemma exists_re_neg_deriv_div_vertical_log_bound_of_neg_affine_log_norm_add_thre
     _ ≤ C * Real.log |t| := by
         simpa [z] using hnorm σ t hσ_left hσ_right ht
 
+/-- Named-interface constructor from an affine full-height vertical estimate
+in the natural Borel/Jensen scale `A + B * log(‖σ+it‖ + 3)`.
+
+The theorem only normalizes constants and height thresholds into the exact
+`LogDerivVerticalLogBound` interface; the zeta-specific estimate remains the
+input. -/
+lemma logDerivVerticalLogBound_of_affine_log_norm_add_three_bound_high_height
+    (T0 A B : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          A + B * Real.log (‖((σ : ℂ) + I * t)‖ + 3)) :
+    ∃ C T0' : ℝ, LogDerivVerticalLogBound C T0' := by
+  rcases
+      exists_re_im_logDeriv_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height
+        T0 A B hT0 hA hB hvertical with
+    ⟨C, T0', hC, hT0', hbound⟩
+  exact ⟨C, T0', hC, by linarith, hbound⟩
+
+/-- Multiplicative version of
+`logDerivVerticalLogBound_of_affine_log_norm_add_three_bound_high_height`. -/
+lemma logDerivVerticalLogBound_of_log_norm_add_three_bound_high_height
+    (T0 C : ℝ) (hT0 : 5 ≤ T0) (hC : 0 ≤ C)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          C * Real.log (‖((σ : ℂ) + I * t)‖ + 3)) :
+    ∃ C' T0' : ℝ, LogDerivVerticalLogBound C' T0' := by
+  rcases
+      exists_re_im_logDeriv_vertical_log_bound_of_log_norm_add_three_bound_high_height
+        T0 C hT0 hC hvertical with
+    ⟨C', T0', hC', hT0', hbound⟩
+  exact ⟨C', T0', hC', by linarith, hbound⟩
+
+/-- Signed named-interface constructor from an affine full-height vertical
+estimate for `-logDeriv ζ`. -/
+lemma negLogDerivVerticalLogBound_of_affine_log_norm_add_three_bound_high_height
+    (T0 A B : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          A + B * Real.log (‖((σ : ℂ) + I * t)‖ + 3)) :
+    ∃ C T0' : ℝ, NegLogDerivVerticalLogBound C T0' := by
+  rcases
+      exists_re_im_neg_logDeriv_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height
+        T0 A B hT0 hA hB hvertical with
+    ⟨C, T0', hC, hT0', hbound⟩
+  exact ⟨C, T0', hC, by linarith, hbound⟩
+
+/-- Multiplicative signed version of
+`negLogDerivVerticalLogBound_of_affine_log_norm_add_three_bound_high_height`. -/
+lemma negLogDerivVerticalLogBound_of_log_norm_add_three_bound_high_height
+    (T0 C : ℝ) (hT0 : 5 ≤ T0) (hC : 0 ≤ C)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          C * Real.log (‖((σ : ℂ) + I * t)‖ + 3)) :
+    ∃ C' T0' : ℝ, NegLogDerivVerticalLogBound C' T0' := by
+  rcases
+      exists_re_im_neg_logDeriv_vertical_log_bound_of_log_norm_add_three_bound_high_height
+        T0 C hT0 hC hvertical with
+    ⟨C', T0', hC', hT0', hbound⟩
+  exact ⟨C', T0', hC', by linarith, hbound⟩
+
+/-- Named real-part quotient constructor from an affine full-height vertical
+estimate for `logDeriv ζ`. -/
+lemma reNegDerivDivVerticalLogBound_of_affine_log_norm_add_three_bound_high_height
+    (T0 A B : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          A + B * Real.log (‖((σ : ℂ) + I * t)‖ + 3)) :
+    ∃ C T0' : ℝ, ReNegDerivDivVerticalLogBound C T0' := by
+  rcases
+      exists_re_neg_deriv_div_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height
+        T0 A B hT0 hA hB hvertical with
+    ⟨C, T0', hC, hT0', hbound⟩
+  exact ⟨C, T0', hC, by linarith, hbound⟩
+
+/-- Signed-norm variant of
+`reNegDerivDivVerticalLogBound_of_affine_log_norm_add_three_bound_high_height`. -/
+lemma reNegDerivDivVerticalLogBound_of_neg_affine_log_norm_add_three_bound_high_height
+    (T0 A B : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          A + B * Real.log (‖((σ : ℂ) + I * t)‖ + 3)) :
+    ∃ C T0' : ℝ, ReNegDerivDivVerticalLogBound C T0' := by
+  rcases
+      exists_re_neg_deriv_div_vertical_log_bound_of_neg_affine_log_norm_add_three_bound_high_height
+        T0 A B hT0 hA hB hvertical with
+    ⟨C, T0', hC, hT0', hbound⟩
+  exact ⟨C, T0', hC, by linarith, hbound⟩
+
 /-- Coordinate high-height closure from a single `C * log(|t| + 3)` bound.
 
 This shape is common in analytic estimates because it is harmless at small
