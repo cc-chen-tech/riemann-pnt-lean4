@@ -175,6 +175,12 @@ Core verified declarations:
   `sigma + it`.
 - `exists_norm_riemannZeta_sigma_two_it_pos_lower_bound_on_compact_vertical_band`
   is the shifted coordinate form at the 3-4-1 point `sigma + 2it`.
+- `exists_norm_riemannZeta_sigma_it_pos_lower_bound_of_high_height_pos_lower_bound`
+  patches a future high-height lower bound for `zeta(sigma+it)` with the
+  compact bounded-height lower bound, yielding an all-height positive lower
+  bound above any fixed `H > 0`.
+- `exists_norm_riemannZeta_sigma_two_it_pos_lower_bound_of_high_height_pos_lower_bound`
+  is the same compact patch for the shifted 3-4-1 point `sigma + 2it`.
 - `exists_norm_logDeriv_riemannZeta_bound_on_compact_vertical_band`
   proves that `logDeriv zeta` has a finite norm bound on every compact
   positive-height band `1 <= Re z <= 2`, `H <= |Im z| <= T`.

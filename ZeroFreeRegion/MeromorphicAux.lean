@@ -11430,6 +11430,45 @@ lemma exists_norm_riemannZeta_sigma_two_it_pos_lower_bound_on_compact_vertical_b
     η ≤ ‖riemannZeta ((σ : ℂ) + I * (((2 * t : ℝ) : ℂ)))‖ := hbound
     _ = ‖riemannZeta ((σ : ℂ) + 2 * I * t)‖ := by rw [hrewrite]
 
+/-- Patch a future high-height positive lower bound for `ζ(σ+it)` with the
+compact bounded-height lower bound, producing a positive lower bound for all
+`H <= |t|`. -/
+lemma exists_norm_riemannZeta_sigma_it_pos_lower_bound_of_high_height_pos_lower_bound
+    {H T0 η : ℝ} (hH : 0 < H) (hη : 0 < η)
+    (hhigh :
+      ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 → T0 ≤ |t| →
+        η ≤ ‖riemannZeta ((σ : ℂ) + I * t)‖) :
+    ∃ η' > 0, ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 →
+      H ≤ |t| →
+      η' ≤ ‖riemannZeta ((σ : ℂ) + I * t)‖ := by
+  rcases exists_norm_riemannZeta_sigma_it_pos_lower_bound_on_compact_vertical_band
+      (H := H) (T := T0) hH with ⟨η₀, hη₀_pos, hη₀⟩
+  refine ⟨min η₀ η, lt_min hη₀_pos hη, ?_⟩
+  intro σ t hσ htH
+  by_cases ht_low : |t| ≤ T0
+  · exact (min_le_left η₀ η).trans (hη₀ σ t hσ htH ht_low)
+  · have ht_high : T0 ≤ |t| := le_of_lt (lt_of_not_ge ht_low)
+    exact (min_le_right η₀ η).trans (hhigh σ t hσ ht_high)
+
+/-- Shifted `σ+2it` version of
+`exists_norm_riemannZeta_sigma_it_pos_lower_bound_of_high_height_pos_lower_bound`. -/
+lemma exists_norm_riemannZeta_sigma_two_it_pos_lower_bound_of_high_height_pos_lower_bound
+    {H T0 η : ℝ} (hH : 0 < H) (hη : 0 < η)
+    (hhigh :
+      ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 → T0 ≤ |t| →
+        η ≤ ‖riemannZeta ((σ : ℂ) + 2 * I * t)‖) :
+    ∃ η' > 0, ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 →
+      H ≤ |t| →
+      η' ≤ ‖riemannZeta ((σ : ℂ) + 2 * I * t)‖ := by
+  rcases exists_norm_riemannZeta_sigma_two_it_pos_lower_bound_on_compact_vertical_band
+      (H := H) (T := T0) hH with ⟨η₀, hη₀_pos, hη₀⟩
+  refine ⟨min η₀ η, lt_min hη₀_pos hη, ?_⟩
+  intro σ t hσ htH
+  by_cases ht_low : |t| ≤ T0
+  · exact (min_le_left η₀ η).trans (hη₀ σ t hσ htH ht_low)
+  · have ht_high : T0 ≤ |t| := le_of_lt (lt_of_not_ge ht_low)
+    exact (min_le_right η₀ η).trans (hhigh σ t hσ ht_high)
+
 /-- On any bounded positive-height vertical band in the right half-plane,
 `logDeriv ζ` has a finite norm bound.
 

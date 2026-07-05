@@ -1403,6 +1403,9 @@ The bounded-height version of that lower-bound input is now proved by
 `exists_norm_riemannZeta_pos_lower_bound_on_compact_vertical_band` and its
 coordinate `sigma+it` and shifted `sigma+2it` forms; the unbounded high-height
 lower bound remains a zeta-specific analytic input.
+The `..._of_high_height_pos_lower_bound` variants patch exactly such a future
+high-height lower bound with the compact theorem, so downstream all-height
+lower-bound obligations no longer need a separate bounded-height hypothesis.
 The sphere/lower-bound handoff composes that Cauchy step with the existing
 `zeta'`-plus-lower-bound bridge, so the primitive input can now be stated
 directly as boundary control for `zeta` on fixed-radius circles plus a center
