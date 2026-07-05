@@ -3927,6 +3927,21 @@ lemma nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive_
       rcases mem_nontrivialZerosFinset.mp hU with ⟨hzero, _hheight⟩
       exact ⟨le_of_lt hzero.2.1, le_of_lt hzero.2.2⟩)
 
+/-- Average paired contribution over newly included nontrivial zeros is
+nonnegative from center-one Laplace-pair positivity.  This packages the common
+critical-strip center used by Stechkin/Heath-Brown pair detectors. -/
+lemma nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_laplace_pair_positive_one
+    (T U : ℝ) (F : ℂ → ℂ)
+    (hF : LaplacePairPositive F 1) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        ((F ρ).re + (F (1 - ρ)).re)) /
+        (((nontrivialZerosFinset U \ nontrivialZerosFinset T).card : ℝ)) :=
+  div_nonneg
+    (nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive_one
+      T U F hF)
+    (Nat.cast_nonneg _)
+
 /-- Center-one Laplace-pair positivity makes the unpaired real-part sum over
 newly included nontrivial zeros nonnegative. -/
 lemma nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_laplace_pair_positive_one
@@ -4007,6 +4022,20 @@ lemma nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive_one
       intro ρ hρ
       rcases mem_nontrivialZerosFinset.mp hρ with ⟨hzero, _hheight⟩
       exact ⟨le_of_lt hzero.2.1, le_of_lt hzero.2.2⟩)
+
+/-- Average paired contribution over height-truncated nontrivial zeros is
+nonnegative from center-one Laplace-pair positivity. -/
+lemma nontrivialZerosFinset_pair_average_nonnegative_of_laplace_pair_positive_one
+    (T : ℝ) (F : ℂ → ℂ)
+    (hF : LaplacePairPositive F 1) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset T,
+        ((F ρ).re + (F (1 - ρ)).re)) /
+        (((nontrivialZerosFinset T).card : ℝ)) :=
+  div_nonneg
+    (nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive_one
+      T F hF)
+    (Nat.cast_nonneg _)
 
 /-- Center-one Laplace-pair positivity also makes the unpaired real-part sum
 nonnegative, after reindexing the reflected half of the paired sum by

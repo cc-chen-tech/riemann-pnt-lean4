@@ -2110,6 +2110,20 @@ theorem nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positiv
   PrimeNumberTheorem.nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive_one
     T U F hF
 
+/-- Public center-one paired-average nonnegativity over newly included zeros
+from strip-local Laplace-pair positivity. -/
+theorem nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_laplace_pair_positive_one
+    (T U : ℝ) (F : ℂ → ℂ)
+    (hF : PrimeNumberTheorem.LaplacePairPositive F 1) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T,
+        ((F ρ).re + (F (1 - ρ)).re)) /
+        (((PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ)) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_laplace_pair_positive_one
+    T U F hF
+
 /-- Public unpaired new-zero real-part nonnegativity from center-one
 Laplace-pair positivity. -/
 theorem nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_laplace_pair_positive_one
@@ -2262,6 +2276,18 @@ theorem nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive_one
     0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
       ((F ρ).re + (F (1 - ρ)).re) :=
   PrimeNumberTheorem.nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive_one
+    T F hF
+
+/-- Public center-one finite nontrivial-zero paired-average nonnegativity from
+strip-local Laplace-pair positivity. -/
+theorem nontrivialZerosFinset_pair_average_nonnegative_of_laplace_pair_positive_one
+    (T : ℝ) (F : ℂ → ℂ)
+    (hF : PrimeNumberTheorem.LaplacePairPositive F 1) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+        ((F ρ).re + (F (1 - ρ)).re)) /
+        ((PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_pair_average_nonnegative_of_laplace_pair_positive_one
     T F hF
 
 theorem nontrivialZerosFinset_sum_re_nonnegative_of_laplace_pair_positive_one
