@@ -1037,6 +1037,83 @@ lemma log_deriv_zeta_nonneg_finset_combination_auto_of_scaled_complex_exp_abs_sq
     (trigPolynomial_nonneg_of_scaled_complex_exp_abs_sq_certificate
       scale S K a c hscale hcert)
 
+/-- Conjugating the finite-detector unit exponential changes the sign of the
+phase. -/
+lemma star_complex_exp_nat_mul_I_mul_real (k : ℕ) (θ : ℝ) :
+    star (Complex.exp ((k : ℂ) * I * (θ : ℂ))) =
+      Complex.exp (-((k : ℂ) * I * (θ : ℂ))) := by
+  calc
+    star (Complex.exp ((k : ℂ) * I * (θ : ℂ)))
+        = Complex.exp (star ((k : ℂ) * I * (θ : ℂ))) := by
+            simpa using (Complex.exp_conj ((k : ℂ) * I * (θ : ℂ))).symm
+    _ = Complex.exp (-((k : ℂ) * I * (θ : ℂ))) := by
+      congr 1
+      simp
+
+/-- The real part of a paired finite-detector unit exponential is the cosine of
+the frequency difference. -/
+lemma complex_exp_nat_mul_I_mul_real_pair_re (i j : ℕ) (θ : ℝ) :
+    (Complex.exp ((i : ℂ) * I * (θ : ℂ)) *
+      star (Complex.exp ((j : ℂ) * I * (θ : ℂ)))).re =
+      Real.cos (((i : ℝ) - (j : ℝ)) * θ) := by
+  rw [show star (Complex.exp ((j : ℂ) * I * (θ : ℂ))) =
+      Complex.exp (star ((j : ℂ) * I * (θ : ℂ))) by
+        simpa using (Complex.exp_conj ((j : ℂ) * I * (θ : ℂ))).symm]
+  have harg :
+      (i : ℂ) * I * (θ : ℂ) + star ((j : ℂ) * I * (θ : ℂ)) =
+        (((i : ℝ) - (j : ℝ)) * θ : ℂ) * I := by
+    simp
+    ring
+  rw [← Complex.exp_add, harg]
+  simpa [sub_mul] using Complex.exp_ofReal_mul_I_re (((i : ℝ) - (j : ℝ)) * θ)
+
+/-- Square norm of a finite complex sum as a double sum of pairwise real
+parts. -/
+lemma norm_sq_sum_eq_double_sum_re (K : Finset ℕ) (z : ℕ → ℂ) :
+    ‖∑ k ∈ K, z k‖ ^ 2 =
+      ∑ j ∈ K, ∑ i ∈ K, (star (z i) * z j).re := by
+  rw [Complex.sq_norm]
+  have hnorm :
+      (Complex.normSq (∑ k ∈ K, z k) : ℂ) =
+        star (∑ k ∈ K, z k) * (∑ k ∈ K, z k) := by
+    simpa using (Complex.normSq_eq_conj_mul_self (z := ∑ k ∈ K, z k))
+  calc
+    Complex.normSq (∑ k ∈ K, z k)
+        = (star (∑ k ∈ K, z k) * (∑ k ∈ K, z k)).re := by
+          simpa using congrArg Complex.re hnorm
+    _ = (∑ j ∈ K, ∑ i ∈ K, star (z i) * z j).re := by
+      simp [Finset.sum_mul, Finset.mul_sum]
+    _ = ∑ j ∈ K, ∑ i ∈ K, (star (z i) * z j).re := by
+      simp
+
+/-- Square norm of a finite real-coefficient exponential sum as the standard
+double Fourier cosine sum. -/
+lemma norm_sq_sum_real_coeff_complex_exp_eq_double_sum
+    (K : Finset ℕ) (c : ℕ → ℝ) (θ : ℝ) :
+    ‖∑ k ∈ K, (c k : ℂ) * Complex.exp ((k : ℂ) * I * (θ : ℂ))‖ ^ 2 =
+      ∑ j ∈ K, ∑ i ∈ K,
+        c i * c j * Real.cos (((j : ℝ) - (i : ℝ)) * θ) := by
+  rw [norm_sq_sum_eq_double_sum_re K
+    (fun k => (c k : ℂ) * Complex.exp ((k : ℂ) * I * (θ : ℂ)))]
+  apply Finset.sum_congr rfl
+  intro j hj
+  apply Finset.sum_congr rfl
+  intro i hi
+  have hpair := complex_exp_nat_mul_I_mul_real_pair_re j i θ
+  calc
+    (star ((c i : ℂ) * Complex.exp ((i : ℂ) * I * (θ : ℂ))) *
+        ((c j : ℂ) * Complex.exp ((j : ℂ) * I * (θ : ℂ)))).re
+        = (((c i * c j : ℝ) : ℂ) *
+            (Complex.exp ((j : ℂ) * I * (θ : ℂ)) *
+              star (Complex.exp ((i : ℂ) * I * (θ : ℂ))))).re := by
+          simp [mul_assoc, mul_left_comm, mul_comm]
+    _ = (c i * c j) *
+          (Complex.exp ((j : ℂ) * I * (θ : ℂ)) *
+            star (Complex.exp ((i : ℂ) * I * (θ : ℂ)))).re := by
+          simp
+    _ = c i * c j * Real.cos (((j : ℝ) - (i : ℝ)) * θ) := by
+          rw [hpair]
+
 /-! ### Bellotti-Trudgian-Yang detector coefficient table
 
 The following constants encode the integer coefficient table for the
@@ -1117,6 +1194,71 @@ lemma btyDetectorCoeff_eq_zero_of_seventeen_le {k : ℕ} (hk : 17 ≤ k) :
   have hk_ne : k ≠ 0 := by omega
   have hsub : 17 - k = 0 := Nat.sub_eq_zero_of_le hk
   simp [btyDetectorCoeff, hk_ne, hsub]
+
+set_option maxHeartbeats 800000 in
+/-- The BTY cosine coefficients regroup the exponential-square double sum. -/
+lemma bty_scaled_detector_sum_eq_double_sum (θ : ℝ) :
+    btyDetectorScale *
+        (∑ k ∈ btyDetectorSupport,
+          btyDetectorCoeff k * Real.cos ((k : ℝ) * θ)) =
+      ∑ j ∈ btyExpSupport, ∑ i ∈ btyExpSupport,
+        (btyRawCoeff i : ℝ) *
+          (btyRawCoeff j : ℝ) *
+            Real.cos (((j : ℝ) - (i : ℝ)) * θ) := by
+  have hsupport :
+      btyDetectorSupport =
+        ({0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16} :
+          Finset ℕ) := by
+    decide
+  have hexp :
+      btyExpSupport =
+        ({0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16} :
+          Finset ℕ) := by
+    decide
+  rw [hsupport, hexp]
+  norm_num [btyDetectorScale, btyDetectorSupport, btyExpSupport,
+    btyDetectorCoeff, btyRawCoeff]
+  ring_nf
+
+/-- Full scaled complex-exponential absolute-square certificate for the BTY
+degree-16 detector. -/
+lemma btyScaledComplexExpAbsSqCertificate :
+    ScaledComplexExpAbsSqCertificate
+      btyDetectorScale btyDetectorSupport btyExpSupport
+      btyDetectorCoeff btyExpCoeff := by
+  intro θ
+  calc
+    btyDetectorScale *
+        (∑ k ∈ btyDetectorSupport,
+          btyDetectorCoeff k * Real.cos ((k : ℝ) * θ))
+        =
+      ∑ j ∈ btyExpSupport, ∑ i ∈ btyExpSupport,
+        (btyRawCoeff i : ℝ) *
+          (btyRawCoeff j : ℝ) *
+            Real.cos (((j : ℝ) - (i : ℝ)) * θ) :=
+      bty_scaled_detector_sum_eq_double_sum θ
+    _ = ‖∑ k ∈ btyExpSupport,
+          ((btyRawCoeff k : ℝ) : ℂ) *
+            Complex.exp ((k : ℂ) * I * (θ : ℂ))‖ ^ 2 :=
+      (norm_sq_sum_real_coeff_complex_exp_eq_double_sum
+        btyExpSupport (fun k => (btyRawCoeff k : ℝ)) θ).symm
+    _ = ‖∑ k ∈ btyExpSupport,
+          btyExpCoeff k *
+            Complex.exp ((k : ℂ) * I * (θ : ℂ))‖ ^ 2 := by
+      simp [btyExpCoeff]
+
+/-- Automatic logarithmic-derivative detector inequality from the full BTY
+scaled certificate. -/
+lemma log_deriv_zeta_nonneg_bty_detector_from_scaled_certificate
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ) :
+    0 ≤
+      ∑ k ∈ btyDetectorSupport, btyDetectorCoeff k *
+        (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+          riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re :=
+  log_deriv_zeta_nonneg_finset_combination_auto_of_scaled_complex_exp_abs_sq_certificate
+    σ hσ t btyDetectorScale btyDetectorSupport btyExpSupport
+    btyDetectorCoeff btyExpCoeff btyDetectorScale_pos
+    btyScaledComplexExpAbsSqCertificate
 
 /-- Minimal concrete complex-exponential absolute-square certificate:
 `1 = ‖exp(0)‖^2`.  This is a template for later finite coefficient-table

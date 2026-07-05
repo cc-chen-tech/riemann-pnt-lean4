@@ -4652,6 +4652,45 @@ theorem btyDetectorCoeff_eq_zero_of_seventeen_le {k : ℕ} (hk : 17 ≤ k) :
     btyDetectorCoeff k = 0 :=
   ZeroFreeRegion.btyDetectorCoeff_eq_zero_of_seventeen_le hk
 
+/-- Public finite real-coefficient exponential-square expansion as a double
+Fourier cosine sum. -/
+theorem norm_sq_sum_real_coeff_complex_exp_eq_double_sum
+    (K : Finset ℕ) (c : ℕ → ℝ) (θ : ℝ) :
+    ‖∑ k ∈ K, (c k : ℂ) * Complex.exp ((k : ℂ) * Complex.I * (θ : ℂ))‖ ^ 2 =
+      ∑ j ∈ K, ∑ i ∈ K,
+        c i * c j * Real.cos (((j : ℝ) - (i : ℝ)) * θ) :=
+  ZeroFreeRegion.norm_sq_sum_real_coeff_complex_exp_eq_double_sum K c θ
+
+/-- Public BTY coefficient regrouping identity. -/
+theorem bty_scaled_detector_sum_eq_double_sum (θ : ℝ) :
+    btyDetectorScale *
+        (∑ k ∈ btyDetectorSupport,
+          btyDetectorCoeff k * Real.cos ((k : ℝ) * θ)) =
+      ∑ j ∈ btyExpSupport, ∑ i ∈ btyExpSupport,
+        (btyRawCoeff i : ℝ) *
+          (btyRawCoeff j : ℝ) *
+            Real.cos (((j : ℝ) - (i : ℝ)) * θ) :=
+  ZeroFreeRegion.bty_scaled_detector_sum_eq_double_sum θ
+
+/-- Public full scaled complex-exponential absolute-square certificate for the
+BTY degree-16 detector. -/
+theorem btyScaledComplexExpAbsSqCertificate :
+    ScaledComplexExpAbsSqCertificate
+      btyDetectorScale btyDetectorSupport btyExpSupport
+      btyDetectorCoeff btyExpCoeff :=
+  ZeroFreeRegion.btyScaledComplexExpAbsSqCertificate
+
+/-- Public automatic logarithmic-derivative detector inequality from the full
+BTY scaled certificate. -/
+theorem log_deriv_zeta_nonneg_bty_detector_from_scaled_certificate
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ) :
+    0 ≤
+      ∑ k ∈ btyDetectorSupport, btyDetectorCoeff k *
+        (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t) /
+          riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re :=
+  ZeroFreeRegion.log_deriv_zeta_nonneg_bty_detector_from_scaled_certificate
+    σ hσ t
+
 /-- Public constant-one complex-exponential certificate. -/
 theorem complexExpAbsSqCertificate_const_one :
     ComplexExpAbsSqCertificate ({0} : Finset ℕ) ({0} : Finset ℕ)

@@ -70,8 +70,14 @@ Core verified declarations:
   Bellotti-Trudgian-Yang degree-16 detector coefficients, verify the quoted
   values `a_0 = 1`, `a_1 = 865534 / 497079`, and
   `sum_{1 <= k <= 16} a_k = 2919857 / 828465`, and prove support truncation
-  beyond degree `16`. The full scaled convolution identity remains a future
-  finite-sum target.
+  beyond degree `16`.
+- `norm_sq_sum_real_coeff_complex_exp_eq_double_sum`,
+  `bty_scaled_detector_sum_eq_double_sum`,
+  `btyScaledComplexExpAbsSqCertificate`, and
+  `log_deriv_zeta_nonneg_bty_detector_from_scaled_certificate` expand finite
+  real-coefficient exponential-square norms as double Fourier cosine sums,
+  prove the full scaled BTY detector certificate, and derive the corresponding
+  automatic logarithmic-derivative detector inequality.
 - `log_deriv_zeta_nonneg_three_four_one_from_finset`
   re-exposes the verified 3-4-1 theorem as the base detector instance.
 - `classical_zero_free_region_compact`
