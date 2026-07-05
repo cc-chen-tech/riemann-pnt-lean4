@@ -780,6 +780,13 @@ not be cited as completed proofs:
   `HardyTheorem.Details.approximate_functional_equation_target`,
   `KnownResults.conrey_40_percent_zeros_on_critical_line_target`.
 
+For the Hardy/AFE chain, the repository proves several target-management
+bridges around these statements, including threshold/bounded-height patching
+for the approximate functional equation and variants where large- and
+bounded-height constants are absorbed into a common positive constant.  These
+do not prove the AFE itself; they make the future analytic estimate easier to
+plug into the current target.
+
 The four missing analytic chains are:
 
 1. **Quantitative zero-free region**: upgrade the compact strip to

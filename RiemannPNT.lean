@@ -17105,6 +17105,32 @@ theorem approximate_functional_equation_target_of_threshold_bounds
   HardyTheorem.Details.approximate_functional_equation_target_of_threshold_bounds
     Clarge Csmall T hC hlarge hsmall
 
+/-- Public patching bridge for the approximate functional equation target
+when large- and bounded-height constants have already been absorbed into one
+positive constant. -/
+theorem approximate_functional_equation_target_of_threshold_bounds_le
+    (C Clarge Csmall T : ℝ) (hC : 0 < C)
+    (hlarge_le : Clarge ≤ C) (hsmall_le : Csmall ≤ C)
+    (hlarge : ∀ t : ℝ, T ≤ t → ∃ R : ℂ,
+      (riemannZeta (0.5 + Complex.I * (t : ℂ)) =
+        ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+          1/((n+1 : ℂ) ^ (0.5 + Complex.I * (t : ℂ)))
+        + Complex.exp (Complex.I * (HardyTheorem.thetaPhase t : ℂ)) *
+          ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+            1/((n+1 : ℂ) ^ (0.5 - Complex.I * (t : ℂ)))
+        + R) ∧ ‖R‖ ≤ Clarge * (t : ℝ)^(-1/4 : ℝ))
+    (hsmall : ∀ t : ℝ, 1 < t → t < T → ∃ R : ℂ,
+      (riemannZeta (0.5 + Complex.I * (t : ℂ)) =
+        ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+          1/((n+1 : ℂ) ^ (0.5 + Complex.I * (t : ℂ)))
+        + Complex.exp (Complex.I * (HardyTheorem.thetaPhase t : ℂ)) *
+          ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+            1/((n+1 : ℂ) ^ (0.5 - Complex.I * (t : ℂ)))
+        + R) ∧ ‖R‖ ≤ Csmall * (t : ℝ)^(-1/4 : ℝ)) :
+    HardyTheorem.Details.approximate_functional_equation_target :=
+  HardyTheorem.Details.approximate_functional_equation_target_of_threshold_bounds_le
+    C Clarge Csmall T hC hlarge_le hsmall_le hlarge hsmall
+
 /-- Public patching bridge for the approximate functional equation target from
 an eventually valid large-height estimate plus bounded-height patches. -/
 theorem approximate_functional_equation_target_of_eventually_and_bounded_patch
@@ -17128,6 +17154,31 @@ theorem approximate_functional_equation_target_of_eventually_and_bounded_patch
     HardyTheorem.Details.approximate_functional_equation_target :=
   HardyTheorem.Details.approximate_functional_equation_target_of_eventually_and_bounded_patch
     Clarge Csmall hC hlarge hsmall
+
+/-- Public eventually/bounded-height patching bridge with both constants
+absorbed into a common positive constant. -/
+theorem approximate_functional_equation_target_of_eventually_and_bounded_patch_le
+    (C Clarge Csmall : ℝ) (hC : 0 < C)
+    (hlarge_le : Clarge ≤ C) (hsmall_le : Csmall ≤ C)
+    (hlarge : Filter.Eventually (fun t : ℝ => ∃ R : ℂ,
+      (riemannZeta (0.5 + Complex.I * (t : ℂ)) =
+        ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+          1/((n+1 : ℂ) ^ (0.5 + Complex.I * (t : ℂ)))
+        + Complex.exp (Complex.I * (HardyTheorem.thetaPhase t : ℂ)) *
+          ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+            1/((n+1 : ℂ) ^ (0.5 - Complex.I * (t : ℂ)))
+        + R) ∧ ‖R‖ ≤ Clarge * (t : ℝ)^(-1/4 : ℝ)) atTop)
+    (hsmall : ∀ T t : ℝ, 1 < t → t < T → ∃ R : ℂ,
+      (riemannZeta (0.5 + Complex.I * (t : ℂ)) =
+        ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+          1/((n+1 : ℂ) ^ (0.5 + Complex.I * (t : ℂ)))
+        + Complex.exp (Complex.I * (HardyTheorem.thetaPhase t : ℂ)) *
+          ∑ n ∈ Finset.range (Nat.floor (Real.sqrt ((t : ℝ) / (2*Real.pi)))),
+            1/((n+1 : ℂ) ^ (0.5 - Complex.I * (t : ℂ)))
+        + R) ∧ ‖R‖ ≤ Csmall * (t : ℝ)^(-1/4 : ℝ)) :
+    HardyTheorem.Details.approximate_functional_equation_target :=
+  HardyTheorem.Details.approximate_functional_equation_target_of_eventually_and_bounded_patch_le
+    C Clarge Csmall hC hlarge_le hsmall_le hlarge hsmall
 
 /-- Public iff form of the approximate-functional-equation target: an
 eventually valid large-height estimate plus bounded-height patches is exactly

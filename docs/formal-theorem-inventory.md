@@ -2199,6 +2199,18 @@ hypothesis is needed.  The weighted-integral positivity/negativity bridge and
 the finite-zero contradiction under signed-moment and tail-dominance hypotheses
 are now proved lemmas, not target statements.
 
+For the approximate-functional-equation target, the proved wrappers include
+`approximate_functional_equation_target_of`,
+`eventually_approximate_functional_equation_of_target`,
+`approximate_functional_equation_target_of_threshold_bounds`,
+`approximate_functional_equation_target_of_threshold_bounds_le`,
+`approximate_functional_equation_target_of_eventually_and_bounded_patch`,
+`approximate_functional_equation_target_of_eventually_and_bounded_patch_le`,
+and `approximate_functional_equation_target_iff_eventually_and_bounded_patch`.
+The `_le` variants are constant-absorption bridges: they turn separate large-
+and bounded-height constants into one chosen positive constant before closing
+the global target.
+
 ### `KnownResults` in `RiemannExplorer.lean`
 
 - `conrey_40_percent_zeros_on_critical_line_target`
