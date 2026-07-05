@@ -1901,6 +1901,45 @@ lemma log_deriv_zeta_bty_detector_one_lower_bound_of_global_vertical_log_abs_add
     (btyDetector_uniform_vertical_log_bound_of_global_log_abs_add_three_bound
       σ t B L0 hB hglobal hlog)
 
+/-- Automatic finite height comparison for the BTY support.
+
+The support is contained in `{0, ..., 16}`, so every detector frequency is
+absorbed by the coarse common scale `log(17 * (|t| + 3))`. -/
+lemma btyDetector_log_abs_mul_add_three_le_log_seventeen_mul_abs_add_three
+    (t : ℝ) {k : ℕ} (hk : k ∈ btyDetectorSupport.erase 1) :
+    Real.log (|(k : ℝ) * t| + 3) ≤ Real.log (17 * (|t| + 3)) := by
+  have hk_mem : k ∈ btyDetectorSupport := Finset.mem_of_mem_erase hk
+  have hk_lt : k < 17 := by
+    simpa [btyDetectorSupport] using hk_mem
+  have hk_nonneg : 0 ≤ (k : ℝ) := Nat.cast_nonneg k
+  have hk_le : (k : ℝ) ≤ 16 := by
+    exact_mod_cast Nat.le_of_lt_succ hk_lt
+  have ht_nonneg : 0 ≤ |t| := abs_nonneg t
+  have hleft_pos : 0 < |(k : ℝ) * t| + 3 := by
+    nlinarith [abs_nonneg ((k : ℝ) * t)]
+  have hle : |(k : ℝ) * t| + 3 ≤ 17 * (|t| + 3) := by
+    rw [abs_mul, abs_of_nonneg hk_nonneg]
+    nlinarith
+  exact Real.log_le_log hleft_pos hle
+
+/-- BTY lower bound from a one-variable vertical logarithmic-derivative bound,
+with the finite detector-frequency height comparison discharged automatically.
+-/
+lemma log_deriv_zeta_bty_detector_one_lower_bound_of_global_vertical_log_abs_add_three_bound_auto
+    (σ : ℝ) (hσ : 1 < σ) (t B : ℝ) (hB : 0 ≤ B)
+    (hglobal : ∀ u : ℝ,
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * u)‖ ≤
+        B * Real.log (|u| + 3)) :
+    (-deriv riemannZeta ((σ : ℂ) + I * t) /
+      riemannZeta ((σ : ℂ) + I * t)).re ≥
+      - ((3458648 : ℝ) / 2163835) *
+        (B * Real.log (17 * (|t| + 3))) :=
+  log_deriv_zeta_bty_detector_one_lower_bound_of_global_vertical_log_abs_add_three_bound
+    σ hσ t B (Real.log (17 * (|t| + 3))) hB hglobal
+    (fun k hk =>
+      btyDetector_log_abs_mul_add_three_le_log_seventeen_mul_abs_add_three
+        t (k := k) hk)
+
 /-- Fixed-margin real-part bound for the shifted `σ + it` term in the
 3-4-1 inequality. -/
 lemma exists_re_neg_deriv_div_riemannZeta_sigma_it_le_log_abs_add_three_of_one_add_le

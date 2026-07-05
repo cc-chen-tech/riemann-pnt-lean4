@@ -5456,6 +5456,28 @@ theorem log_deriv_zeta_bty_detector_one_lower_bound_of_global_vertical_log_abs_a
   ZeroFreeRegion.log_deriv_zeta_bty_detector_one_lower_bound_of_global_vertical_log_abs_add_three_bound
     σ hσ t B L0 hB hglobal hlog
 
+/-- Public automatic finite BTY support height comparison. -/
+theorem btyDetector_log_abs_mul_add_three_le_log_seventeen_mul_abs_add_three
+    (t : ℝ) {k : ℕ} (hk : k ∈ btyDetectorSupport.erase 1) :
+    Real.log (|(k : ℝ) * t| + 3) ≤ Real.log (17 * (|t| + 3)) :=
+  ZeroFreeRegion.btyDetector_log_abs_mul_add_three_le_log_seventeen_mul_abs_add_three
+    t hk
+
+/-- Public BTY lower bound from a one-variable vertical logarithmic-derivative
+bound, with the finite detector-frequency height comparison discharged
+automatically. -/
+theorem log_deriv_zeta_bty_detector_one_lower_bound_of_global_vertical_log_abs_add_three_bound_auto
+    (σ : ℝ) (hσ : 1 < σ) (t B : ℝ) (hB : 0 ≤ B)
+    (hglobal : ∀ u : ℝ,
+      ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * u)‖ ≤
+        B * Real.log (|u| + 3)) :
+    (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+      riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+      - ((3458648 : ℝ) / 2163835) *
+        (B * Real.log (17 * (|t| + 3))) :=
+  ZeroFreeRegion.log_deriv_zeta_bty_detector_one_lower_bound_of_global_vertical_log_abs_add_three_bound_auto
+    σ hσ t B hB hglobal
+
 /-- Public constant-one complex-exponential certificate. -/
 theorem complexExpAbsSqCertificate_const_one :
     ComplexExpAbsSqCertificate ({0} : Finset ℕ) ({0} : Finset ℕ)
