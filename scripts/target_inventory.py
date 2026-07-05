@@ -86,7 +86,7 @@ class PropDef:
 def _project_lean_files(root: Path) -> list[Path]:
     out: list[Path] = []
     for path in root.rglob("*.lean"):
-        if any(part in IGNORED_DIRS for part in path.parts):
+        if any(part in IGNORED_DIRS for part in path.relative_to(root).parts):
             continue
         out.append(path)
     return sorted(out)

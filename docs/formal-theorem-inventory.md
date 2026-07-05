@@ -1156,6 +1156,18 @@ Core verified declarations:
   `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_neg_log_abs_add_three_bound_high_height_simplified`
   specialize that signed direct BTY bridge to multiplicative
   `C log(|t|+3)` high-height inputs.
+- `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_high_height_logDeriv_bound`
+  and
+  `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_high_height_logDeriv_bound_simplified`
+  feed an exact-scale future norm input
+  `||logDeriv zeta(sigma+it)|| <= B log |t|` directly into the fixed-margin
+  BTY handoff through the named `LogDerivVerticalLogBound` interface.
+- `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_high_height_negLogDeriv_bound`
+  and
+  `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_high_height_negLogDeriv_bound_simplified`
+  are the signed-norm exact-scale versions, accepting
+  `||-logDeriv zeta(sigma+it)|| <= B log |t|` before converting to the
+  unsigned vertical interface used by the BTY detector.
 - `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_re_high_height_log_abs_bound`
   and
   `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_re_high_height_log_abs_bound_simplified`
