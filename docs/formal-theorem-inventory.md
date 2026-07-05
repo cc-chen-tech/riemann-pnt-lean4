@@ -1315,6 +1315,10 @@ Core verified declarations:
 - `borelCaratheodory_neg_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`
   is the multiplicity-aware version with regular part
   `-logDeriv zeta(w) + n * (w-rho)^(-1)`.
+- `exists_re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center`
+  removes the separate center norm hypothesis from the multiplicity-aware
+  zero-repulsion handoff; the explicit center principal-part cost is
+  `(n : Real) / r`, and `n >= 1` still recovers the unit principal conclusion.
 - `re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius`
   converts that multiplicity-aware bound to the same unit-principal
   zero-repulsion estimate using `n >= 1`.
