@@ -12799,6 +12799,26 @@ theorem exists_re_im_logDeriv_vertical_log_bound_of_log_norm_add_three_bound_hig
   ZeroFreeRegion.exists_re_im_logDeriv_vertical_log_bound_of_log_norm_add_three_bound_high_height
     T0 C hT0 hC hvertical
 
+/-- Public bridge reducing the high-height `logDeriv ζ` target to a derivative
+growth estimate for `ζ'` plus a positive lower bound for `ζ` on the same
+vertical strip. -/
+theorem exists_re_im_logDeriv_vertical_log_bound_of_deriv_bound_and_zeta_lower_bound_high_height
+    (T0 A B eta : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (heta : 0 < eta)
+    (hderiv :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖deriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          A + B * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3))
+    (hzeta :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        eta ≤ ‖riemannZeta ((σ : ℂ) + Complex.I * t)‖) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 5 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_im_logDeriv_vertical_log_bound_of_deriv_bound_and_zeta_lower_bound_high_height
+    T0 A B eta hT0 hA hB heta hderiv hzeta
+
 /-- Public signed standalone normalization from an affine full-height vertical
 `-logDeriv ζ` estimate to the exact `C * log |t|` scale. -/
 theorem exists_re_im_neg_logDeriv_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height
@@ -12884,6 +12904,22 @@ theorem logDerivVerticalLogBound_of_log_norm_add_three_bound_high_height
     ∃ C' T0' : ℝ, LogDerivVerticalLogBound C' T0' :=
   ZeroFreeRegion.logDerivVerticalLogBound_of_log_norm_add_three_bound_high_height
     T0 C hT0 hC hvertical
+
+/-- Public named-interface version of
+`exists_re_im_logDeriv_vertical_log_bound_of_deriv_bound_and_zeta_lower_bound_high_height`. -/
+theorem logDerivVerticalLogBound_of_deriv_bound_and_zeta_lower_bound_high_height
+    (T0 A B eta : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (heta : 0 < eta)
+    (hderiv :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖deriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          A + B * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3))
+    (hzeta :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        eta ≤ ‖riemannZeta ((σ : ℂ) + Complex.I * t)‖) :
+    ∃ C T0' : ℝ, LogDerivVerticalLogBound C T0' :=
+  ZeroFreeRegion.logDerivVerticalLogBound_of_deriv_bound_and_zeta_lower_bound_high_height
+    T0 A B eta hT0 hA hB heta hderiv hzeta
 
 /-- Public signed named-interface constructor from an affine full-height
 vertical estimate for `-logDeriv ζ`. -/

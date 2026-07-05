@@ -5332,6 +5332,64 @@ lemma exists_re_im_logDeriv_vertical_log_bound_of_log_norm_add_three_bound_high_
   intro σ t ht hσ
   simpa using hvertical σ t ht hσ
 
+/-- Reduce the high-height `logDeriv ζ` target to two more primitive analytic
+inputs: an affine logarithmic bound for `ζ'` and a positive lower bound for
+`ζ` on the same vertical strip.
+
+This is still a conditional bridge, not the missing zeta-specific estimate.
+It packages the elementary identity `logDeriv ζ = ζ' / ζ` and the norm
+division estimate, then reuses
+`exists_re_im_logDeriv_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height`
+to normalize constants into the final `C * log |t|` scale. -/
+lemma exists_re_im_logDeriv_vertical_log_bound_of_deriv_bound_and_zeta_lower_bound_high_height
+    (T0 A B eta : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (heta : 0 < eta)
+    (hderiv :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖deriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          A + B * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (hzeta :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        eta ≤ ‖riemannZeta ((σ : ℂ) + I * t)‖) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 5 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          C * Real.log |t| := by
+  have hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          A / eta + (B / eta) *
+            Real.log (‖((σ : ℂ) + I * t)‖ + 3) := by
+    intro σ t ht hσ
+    let z : ℂ := (σ : ℂ) + I * t
+    let M : ℝ := A + B * Real.log (‖z‖ + 3)
+    have hlog_nonneg : 0 ≤ Real.log (‖z‖ + 3) := by
+      apply Real.log_nonneg
+      nlinarith [norm_nonneg z]
+    have hM_nonneg : 0 ≤ M := by
+      exact add_nonneg hA (mul_nonneg hB hlog_nonneg)
+    have hderiv_bound : ‖deriv riemannZeta z‖ ≤ M := by
+      simpa [z, M] using hderiv σ t ht hσ
+    have hzeta_lower : eta ≤ ‖riemannZeta z‖ := by
+      simpa [z] using hzeta σ t ht hσ
+    calc
+      ‖logDeriv riemannZeta z‖
+          = ‖deriv riemannZeta z / riemannZeta z‖ := by
+              rw [logDeriv_riemannZeta_eq_deriv_div]
+      _ = ‖deriv riemannZeta z‖ / ‖riemannZeta z‖ := by
+              rw [norm_div]
+      _ ≤ M / ‖riemannZeta z‖ := by
+              exact div_le_div_of_nonneg_right hderiv_bound (norm_nonneg _)
+      _ ≤ M / eta := by
+              exact div_le_div_of_nonneg_left hM_nonneg heta hzeta_lower
+      _ = A / eta + (B / eta) * Real.log (‖z‖ + 3) := by
+              field_simp [ne_of_gt heta]
+              ring
+  exact
+    exists_re_im_logDeriv_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height
+      T0 (A / eta) (B / eta) hT0 (div_nonneg hA heta.le) (div_nonneg hB heta.le)
+      hvertical
+
 /-- Signed standalone normalization of a future vertical-strip
 `-logDeriv ζ` estimate.
 
@@ -5482,6 +5540,28 @@ lemma logDerivVerticalLogBound_of_log_norm_add_three_bound_high_height
         T0 C hT0 hC hvertical with
     ⟨C', T0', hC', hT0', hbound⟩
   exact ⟨C', T0', hC', by linarith, hbound⟩
+
+/-- Named-interface version of
+`exists_re_im_logDeriv_vertical_log_bound_of_deriv_bound_and_zeta_lower_bound_high_height`.
+
+It reduces `LogDerivVerticalLogBound` to a high-height derivative bound for
+`ζ'` and a positive lower bound for `ζ` on the same strip. -/
+lemma logDerivVerticalLogBound_of_deriv_bound_and_zeta_lower_bound_high_height
+    (T0 A B eta : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (heta : 0 < eta)
+    (hderiv :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖deriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          A + B * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (hzeta :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        eta ≤ ‖riemannZeta ((σ : ℂ) + I * t)‖) :
+    ∃ C T0' : ℝ, LogDerivVerticalLogBound C T0' := by
+  rcases
+      exists_re_im_logDeriv_vertical_log_bound_of_deriv_bound_and_zeta_lower_bound_high_height
+        T0 A B eta hT0 hA hB heta hderiv hzeta with
+    ⟨C, T0', hC, hT0', hbound⟩
+  exact ⟨C, T0', hC, by linarith, hbound⟩
 
 /-- Signed named-interface constructor from an affine full-height vertical
 estimate for `-logDeriv ζ`. -/

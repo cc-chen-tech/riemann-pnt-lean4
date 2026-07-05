@@ -1183,6 +1183,10 @@ Core verified declarations:
 - `exists_re_im_logDeriv_vertical_log_bound_of_log_norm_add_three_bound_high_height`
   is the multiplicative version for inputs already stated as
   `C log(||sigma+it||+3)`.
+- `exists_re_im_logDeriv_vertical_log_bound_of_deriv_bound_and_zeta_lower_bound_high_height`
+  reduces the same vertical `logDeriv zeta` target to an affine logarithmic
+  bound for `||zeta'(sigma+it)||` plus a positive lower bound for
+  `||zeta(sigma+it)||` on the same high-height strip.
 - `exists_re_im_neg_logDeriv_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height`
   is the signed affine full-height normalizer for future estimates on
   `||-logDeriv zeta (sigma+it)||`.
@@ -1198,6 +1202,9 @@ Core verified declarations:
 - `logDerivVerticalLogBound_of_affine_log_norm_add_three_bound_high_height`
   and `logDerivVerticalLogBound_of_log_norm_add_three_bound_high_height`
   package the full-height `log(||sigma+it||+3)` normalizers directly into the
+  named `LogDerivVerticalLogBound` interface.
+- `logDerivVerticalLogBound_of_deriv_bound_and_zeta_lower_bound_high_height`
+  packages the derivative-growth plus zeta-lower-bound bridge into the same
   named `LogDerivVerticalLogBound` interface.
 - `negLogDerivVerticalLogBound_of_affine_log_norm_add_three_bound_high_height`
   and `negLogDerivVerticalLogBound_of_log_norm_add_three_bound_high_height`
