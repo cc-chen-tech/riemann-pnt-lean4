@@ -11958,6 +11958,34 @@ lemma jensen_circleAverage_log_norm_riemannZeta_sigma_it
             ((σ : ℂ) + I * t)‖ :=
   jensen_circleAverage_log_norm_riemannZeta_closedBall hR
 
+/-- Jensen local-divisor side bounded by a future polynomial-growth estimate
+for ζ.
+
+This is the Jensen-side form of
+`circleAverage_log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_radius_three_of_polynomial_growth`:
+the circle average has been rewritten into the divisor/trailing-coefficient
+expression that Jensen formula supplies. -/
+lemma jensen_localDivisor_riemannZeta_sigma_it_le_affine_log_abs_add_radius_three_of_polynomial_growth
+    {T0 A B R σ t : ℝ} (hR : R ≠ 0)
+    (hT0 : 5 ≤ T0) (hA : 1 ≤ A) (hB : 0 ≤ B)
+    (hleft : (1 : ℝ) + |R| ≤ σ) (hright : σ + |R| ≤ 2)
+    (hheight : T0 + |R| ≤ |t|)
+    (hpoly : ∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc (1 : ℝ) 3 →
+      ‖riemannZeta z‖ ≤ A * (‖z‖ + 3) ^ B) :
+    (∑ᶠ u,
+          divisor riemannZeta (closedBall ((σ : ℂ) + I * t) |R|) u *
+            Real.log (R * ‖((σ : ℂ) + I * t) - u‖⁻¹)
+        + divisor riemannZeta (closedBall ((σ : ℂ) + I * t) |R|)
+            ((σ : ℂ) + I * t) * Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt riemannZeta
+            ((σ : ℂ) + I * t)‖) ≤
+      Real.log A + (2 * B) * Real.log (|t| + |R| + 3) := by
+  have hcircle :=
+    circleAverage_log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_radius_three_of_polynomial_growth
+      (T0 := T0) (A := A) (B := B) (R := R) (σ := σ) (t := t)
+      hT0 hA hB hleft hright hheight hpoly
+  rwa [jensen_circleAverage_log_norm_riemannZeta_sigma_it hR] at hcircle
+
 /-- Positive-radius Jensen formula specialized directly to ζ on a
 `σ + I*t` disk. -/
 lemma jensen_circleAverage_log_norm_riemannZeta_sigma_it_of_pos_radius

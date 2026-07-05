@@ -1012,6 +1012,9 @@ Core verified declarations:
 - `circleAverage_log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_radius_three_of_polynomial_growth`
   lifts the same future polynomial-growth input to a circle-average
   `log ||zeta||` bound, with the center height enlarged by the radius.
+- `jensen_localDivisor_riemannZeta_sigma_it_le_affine_log_abs_add_radius_three_of_polynomial_growth`
+  rewrites that circle-average bound through Jensen's formula into the local
+  divisor plus trailing-coefficient side.
 - `exists_re_im_logDeriv_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height`
   converts a future boundary-strip estimate
   `||logDeriv zeta (sigma+it)|| <= A + B log(||sigma+it||+3)` into

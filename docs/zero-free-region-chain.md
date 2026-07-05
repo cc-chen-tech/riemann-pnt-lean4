@@ -1190,6 +1190,7 @@ ZeroFreeRegion.log_norm_riemannZeta_le_affine_log_norm_add_three_of_polynomial_g
 ZeroFreeRegion.log_norm_riemannZeta_sigma_it_le_affine_log_norm_add_three_of_polynomial_growth
 ZeroFreeRegion.log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_three_of_polynomial_growth
 ZeroFreeRegion.circleAverage_log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_radius_three_of_polynomial_growth
+ZeroFreeRegion.jensen_localDivisor_riemannZeta_sigma_it_le_affine_log_abs_add_radius_three_of_polynomial_growth
 ```
 
 These results convert an input of the form
@@ -1200,6 +1201,8 @@ These results convert an input of the form
 The circle-average theorem gives the matching Jensen-side input
 `circleAverage(log ||zeta||) <= log A + 2B * log (|t| + |R| + 3)`
 for circles that remain inside the same high strip.
+The local-divisor theorem then rewrites that average through Jensen's formula,
+so the divisor/trailing-coefficient expression is bounded by the same scale.
 They do not prove the polynomial growth bound itself.
 
 Suggested Lean statement:
