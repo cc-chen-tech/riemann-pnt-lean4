@@ -113,6 +113,9 @@ Verified assets now include:
 - direct conditional bridges from RH, a zero-free right half-plane
   `Re(s) >= 2/3`, a concrete `psi` power error below `2/3`, or the general
   explicit-formula converse target to no zeros on `Re(s)=1/3`;
+- direct `Re(s)=2/3` wrappers for the concrete `psi` power-error route and for
+  `ExplicitFormulaConversePowerTarget (2/3)`, plus concrete below-`2/3`
+  wrappers for both the direct and reflected line conclusions;
 - finite explicit-formula truncation increment identities;
 - new-zero norm/count tail bounds under RH;
 - eventual-no-new-zero tail convergence;

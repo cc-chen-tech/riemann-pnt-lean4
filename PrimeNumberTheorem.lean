@@ -2961,9 +2961,29 @@ theorem no_zeros_on_one_third_of_psi_power_error_below_two_thirds_bridge
   no_zeros_on_one_third_of_strong_pnt_error_bridge
     (StrongPNTError := PsiPowerErrorBelowTwoThirds) hbridge herror
 
+/-- The same concrete `ψ`-error route also directly excludes zeta zeros on
+the reflected line `Re(s)=2/3`. -/
+theorem no_zeros_on_two_thirds_of_psi_power_error_below_two_thirds_bridge
+    (hbridge : PsiPowerErrorBelowTwoThirdsExcludesLineTwoThirds)
+    (herror : PsiPowerErrorBelowTwoThirds) :
+    NoZerosOnVerticalLine (2 / 3) := by
+  intro s hs hzero
+  have hnt : RiemannHypothesis.IsNontrivialZero s := by
+    refine ⟨hzero, ?_, ?_⟩
+    · nlinarith [hs]
+    · nlinarith [hs]
+  exact hbridge herror s hnt hs
+
 /-- General power-saving `ψ` error below a real boundary line. -/
 abbrev PsiPowerErrorBelowLine (β : ℝ) : Prop :=
   ∃ θ : ℝ, 0 ≤ θ ∧ θ < β ∧ PsiPowerErrorBound θ
+
+/-- The concrete `θ < 2/3` `ψ`-error input is the specialization of the
+general below-line predicate at `β = 2/3`. -/
+theorem psiPowerErrorBelowLine_two_thirds_of_below_two_thirds
+    (herror : PsiPowerErrorBelowTwoThirds) :
+    PsiPowerErrorBelowLine (2 / 3) := by
+  simpa [PsiPowerErrorBelowTwoThirds, PsiPowerErrorBelowLine] using herror
 
 /-- Route interface for the converse explicit-formula principle: a `ψ` error
 with exponent below `β` excludes nontrivial zeros on or to the right of
@@ -3054,6 +3074,33 @@ theorem no_zeros_on_one_third_of_explicit_formula_converse_power
     (herror : PsiPowerErrorBelowLine (2 / 3)) :
     NoZerosOnVerticalLine (1 / 3) :=
   no_zeros_on_one_third_of_general_psi_power_error_bridge hbridge herror
+
+/-- Direct `Re(s)=2/3` specialization of the explicit-formula converse bridge.
+-/
+theorem no_zeros_on_two_thirds_of_explicit_formula_converse_power
+    (hbridge : ExplicitFormulaConversePowerTarget (2 / 3))
+    (herror : PsiPowerErrorBelowLine (2 / 3)) :
+    NoZerosOnVerticalLine (2 / 3) :=
+  no_zeros_on_vertical_line_of_explicit_formula_converse_power
+    (β := 2 / 3) (by norm_num) (by norm_num) hbridge herror
+
+/-- Concrete `ψ`-error version of the `Re(s)=1/3` explicit-formula converse
+bridge. -/
+theorem no_zeros_on_one_third_of_explicit_formula_converse_power_below_two_thirds
+    (hbridge : ExplicitFormulaConversePowerTarget (2 / 3))
+    (herror : PsiPowerErrorBelowTwoThirds) :
+    NoZerosOnVerticalLine (1 / 3) :=
+  no_zeros_on_one_third_of_explicit_formula_converse_power hbridge
+    (psiPowerErrorBelowLine_two_thirds_of_below_two_thirds herror)
+
+/-- Concrete `ψ`-error version of the `Re(s)=2/3` explicit-formula converse
+bridge. -/
+theorem no_zeros_on_two_thirds_of_explicit_formula_converse_power_below_two_thirds
+    (hbridge : ExplicitFormulaConversePowerTarget (2 / 3))
+    (herror : PsiPowerErrorBelowTwoThirds) :
+    NoZerosOnVerticalLine (2 / 3) :=
+  no_zeros_on_two_thirds_of_explicit_formula_converse_power hbridge
+    (psiPowerErrorBelowLine_two_thirds_of_below_two_thirds herror)
 
 /-! ## 平凡零点表征 -/
 

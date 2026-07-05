@@ -1960,6 +1960,14 @@ abbrev PsiPowerErrorBelowTwoThirdsExcludesLineTwoThirds : Prop :=
 abbrev PsiPowerErrorBelowLine (β : ℝ) : Prop :=
   PrimeNumberTheorem.PsiPowerErrorBelowLine β
 
+/-- Public bridge from the concrete `θ < 2/3` `ψ`-error input to the general
+below-line predicate at `β = 2/3`. -/
+theorem psiPowerErrorBelowLine_two_thirds_of_below_two_thirds
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowTwoThirds) :
+    PrimeNumberTheorem.PsiPowerErrorBelowLine (2 / 3) :=
+  PrimeNumberTheorem.psiPowerErrorBelowLine_two_thirds_of_below_two_thirds
+    herror
+
 /-- Public general converse interface: a `ψ` power saving below `β` excludes
 nontrivial zeros on or to the right of `Re(s)=β`. -/
 abbrev PsiPowerErrorBelowLineExcludesZerosRightOf (β : ℝ) : Prop :=
@@ -2090,6 +2098,15 @@ theorem no_zeros_on_one_third_of_psi_power_error_below_two_thirds_bridge
   PrimeNumberTheorem.no_zeros_on_one_third_of_psi_power_error_below_two_thirds_bridge
     hbridge herror
 
+/-- Public concrete `ψ`-error bridge: a power saving below `2/3` plus the
+converse line-exclusion interface excludes zeta zeros on `Re(s)=2/3`. -/
+theorem no_zeros_on_two_thirds_of_psi_power_error_below_two_thirds_bridge
+    (hbridge : PrimeNumberTheorem.PsiPowerErrorBelowTwoThirdsExcludesLineTwoThirds)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowTwoThirds) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (2 / 3) :=
+  PrimeNumberTheorem.no_zeros_on_two_thirds_of_psi_power_error_below_two_thirds_bridge
+    hbridge herror
+
 /-- Public specialization of the explicit-formula converse bridge to the
 reflected `2/3` line and hence the `1/3` line. -/
 theorem no_zeros_on_one_third_of_explicit_formula_converse_power
@@ -2097,6 +2114,33 @@ theorem no_zeros_on_one_third_of_explicit_formula_converse_power
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine (2 / 3)) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) :=
   PrimeNumberTheorem.no_zeros_on_one_third_of_explicit_formula_converse_power
+    hbridge herror
+
+/-- Public direct `Re(s)=2/3` specialization of the explicit-formula converse
+bridge. -/
+theorem no_zeros_on_two_thirds_of_explicit_formula_converse_power
+    (hbridge : PrimeNumberTheorem.ExplicitFormulaConversePowerTarget (2 / 3))
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine (2 / 3)) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (2 / 3) :=
+  PrimeNumberTheorem.no_zeros_on_two_thirds_of_explicit_formula_converse_power
+    hbridge herror
+
+/-- Public concrete `ψ`-error version of the `Re(s)=1/3` explicit-formula
+converse bridge. -/
+theorem no_zeros_on_one_third_of_explicit_formula_converse_power_below_two_thirds
+    (hbridge : PrimeNumberTheorem.ExplicitFormulaConversePowerTarget (2 / 3))
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowTwoThirds) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) :=
+  PrimeNumberTheorem.no_zeros_on_one_third_of_explicit_formula_converse_power_below_two_thirds
+    hbridge herror
+
+/-- Public concrete `ψ`-error version of the `Re(s)=2/3` explicit-formula
+converse bridge. -/
+theorem no_zeros_on_two_thirds_of_explicit_formula_converse_power_below_two_thirds
+    (hbridge : PrimeNumberTheorem.ExplicitFormulaConversePowerTarget (2 / 3))
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowTwoThirds) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (2 / 3) :=
+  PrimeNumberTheorem.no_zeros_on_two_thirds_of_explicit_formula_converse_power_below_two_thirds
     hbridge herror
 
 /-- Public critical-strip location theorem for nontrivial zeta zeros. -/

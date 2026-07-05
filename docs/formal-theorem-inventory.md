@@ -1639,12 +1639,16 @@ Core verified declarations:
   interface.
 - `PsiPowerErrorBelowLine`,
   `PsiPowerErrorBelowLineExcludesZerosRightOf`,
+  `psiPowerErrorBelowLine_two_thirds_of_below_two_thirds`,
   `no_zeros_on_vertical_line_of_psi_power_error_bridge`,
   `no_zeros_on_reflected_line_of_psi_power_error_bridge`, and
   `no_zeros_on_one_third_of_general_psi_power_error_bridge`
   generalize the `2/3` psi-power-error bridge to arbitrary vertical lines in
   the critical strip, with the explicit-formula converse still kept as an
   assumption.
+- `no_zeros_on_two_thirds_of_psi_power_error_below_two_thirds_bridge`
+  records the direct `Re(s)=2/3` consequence of the concrete `psi` power-error
+  converse, complementary to the reflected `Re(s)=1/3` wrapper.
 - `ExplicitFormulaConversePowerTarget`,
   `no_zeros_on_vertical_line_of_explicit_formula_converse_power`,
   `no_zeros_on_reflected_line_of_explicit_formula_converse_power`, and
@@ -1652,6 +1656,12 @@ Core verified declarations:
   name the explicit-formula converse dependency directly, including the general
   reflected-line route `Re(s)=1-beta`, and specialize it to the reflected
   `Re(s)=1/3` route.
+- `no_zeros_on_two_thirds_of_explicit_formula_converse_power`,
+  `no_zeros_on_one_third_of_explicit_formula_converse_power_below_two_thirds`,
+  and
+  `no_zeros_on_two_thirds_of_explicit_formula_converse_power_below_two_thirds`
+  add direct and concrete `2/3` / `1/3` wrappers for the same conditional
+  explicit-formula converse dependency.
 - `no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route`
   gives the direct right-side-line consequence of the same conditional
   truncated explicit-formula route at `beta = 2/3`, before applying the
