@@ -1218,6 +1218,10 @@ Core verified declarations:
   and its multiplicative, signed, and real-part variants accept estimates
   stated directly on `verticalRegion 1 2 T0`, then specialize them to the
   coordinate `sigma + i t` named vertical-bound interfaces.
+- `logDerivVerticalLogBound_of_deriv_bound_and_zeta_lower_bound_on_verticalRegion`
+  accepts the derivative-growth plus zeta-lower-bound pair directly on
+  `verticalRegion 1 2 T0`, matching the natural input shape of future
+  Cauchy/Borel/Jensen estimates.
 - `reNegDerivDivVerticalLogBound_of_affine_re_log_norm_add_three_bound_high_height`
   and `reNegDerivDivVerticalLogBound_of_re_log_norm_add_three_bound_high_height`
   normalize direct `Re(-zeta'/zeta)` estimates in the full-height

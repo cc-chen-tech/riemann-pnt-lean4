@@ -5715,6 +5715,37 @@ lemma logDerivVerticalLogBound_of_log_norm_add_three_bound_on_verticalRegion
       (show σ ∈ Set.Icc (1 : ℝ) 2 ∧ T0 ≤ |t| from ⟨hσ, ht⟩)
   simpa using hvertical ((σ : ℂ) + I * t) hz
 
+/-- Complex-variable vertical-region version of
+`logDerivVerticalLogBound_of_deriv_bound_and_zeta_lower_bound_high_height`.
+
+This is the natural input shape for future Cauchy/Borel/Jensen estimates:
+both the derivative-growth estimate and the positive zeta lower bound are
+stated on `verticalRegion 1 2 T0`, then specialized to the coordinate
+`sigma + i t` vertical-bound interface. -/
+lemma logDerivVerticalLogBound_of_deriv_bound_and_zeta_lower_bound_on_verticalRegion
+    (T0 A B eta : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (heta : 0 < eta)
+    (hderiv :
+      ∀ z : ℂ, z ∈ verticalRegion 1 2 T0 →
+        ‖deriv riemannZeta z‖ ≤ A + B * Real.log (‖z‖ + 3))
+    (hzeta :
+      ∀ z : ℂ, z ∈ verticalRegion 1 2 T0 →
+        eta ≤ ‖riemannZeta z‖) :
+    ∃ C T0' : ℝ, LogDerivVerticalLogBound C T0' := by
+  refine
+    logDerivVerticalLogBound_of_deriv_bound_and_zeta_lower_bound_high_height
+      T0 A B eta hT0 hA hB heta ?_ ?_
+  · intro σ t ht hσ
+    have hz : ((σ : ℂ) + I * t) ∈ verticalRegion 1 2 T0 := by
+      simpa [verticalRegion] using
+        (show σ ∈ Set.Icc (1 : ℝ) 2 ∧ T0 ≤ |t| from ⟨hσ, ht⟩)
+    simpa using hderiv ((σ : ℂ) + I * t) hz
+  · intro σ t ht hσ
+    have hz : ((σ : ℂ) + I * t) ∈ verticalRegion 1 2 T0 := by
+      simpa [verticalRegion] using
+        (show σ ∈ Set.Icc (1 : ℝ) 2 ∧ T0 ≤ |t| from ⟨hσ, ht⟩)
+    simpa using hzeta ((σ : ℂ) + I * t) hz
+
 /-- Signed complex-variable vertical-region version for `-logDeriv ζ`. -/
 lemma negLogDerivVerticalLogBound_of_affine_log_norm_add_three_bound_on_verticalRegion
     (T0 A B : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)

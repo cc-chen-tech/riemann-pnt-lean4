@@ -13016,6 +13016,21 @@ theorem logDerivVerticalLogBound_of_log_norm_add_three_bound_on_verticalRegion
   ZeroFreeRegion.logDerivVerticalLogBound_of_log_norm_add_three_bound_on_verticalRegion
     T0 C hT0 hC hvertical
 
+/-- Public complex-variable vertical-region version of
+`logDerivVerticalLogBound_of_deriv_bound_and_zeta_lower_bound_high_height`. -/
+theorem logDerivVerticalLogBound_of_deriv_bound_and_zeta_lower_bound_on_verticalRegion
+    (T0 A B eta : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (heta : 0 < eta)
+    (hderiv :
+      ∀ z : ℂ, z ∈ verticalRegion 1 2 T0 →
+        ‖deriv riemannZeta z‖ ≤ A + B * Real.log (‖z‖ + 3))
+    (hzeta :
+      ∀ z : ℂ, z ∈ verticalRegion 1 2 T0 →
+        eta ≤ ‖riemannZeta z‖) :
+    ∃ C T0' : ℝ, LogDerivVerticalLogBound C T0' :=
+  ZeroFreeRegion.logDerivVerticalLogBound_of_deriv_bound_and_zeta_lower_bound_on_verticalRegion
+    T0 A B eta hT0 hA hB heta hderiv hzeta
+
 /-- Public signed complex-variable vertical-region version for
 `-logDeriv ζ`. -/
 theorem negLogDerivVerticalLogBound_of_affine_log_norm_add_three_bound_on_verticalRegion
