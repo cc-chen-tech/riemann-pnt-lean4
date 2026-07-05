@@ -2523,6 +2523,31 @@ theorem nontrivialZerosFinset_average_re_nonnegative_of_dampedKernel_self
   PrimeNumberTheorem.nontrivialZerosFinset_average_re_nonnegative_of_dampedKernel_self
     T κ F hκ hF
 
+/-- Public finite-zero unpaired real-part sum nonnegativity for a self-damped
+detector kernel from pointwise critical-strip real-part nonnegativity. -/
+theorem nontrivialZerosFinset_sum_re_nonnegative_of_dampedKernel_self_re_nonnegative
+    (T κ : ℝ) (F : ℂ → ℂ)
+    (hκ : κ ≤ 1)
+    (hF : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 → 0 ≤ (F z).re) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+      (dampedKernel κ F F ρ).re :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sum_re_nonnegative_of_dampedKernel_self_re_nonnegative
+    T κ F hκ hF
+
+/-- Public finite-zero unpaired real-part average nonnegativity for a
+self-damped detector kernel from pointwise critical-strip real-part
+nonnegativity. -/
+theorem nontrivialZerosFinset_average_re_nonnegative_of_dampedKernel_self_re_nonnegative
+    (T κ : ℝ) (F : ℂ → ℂ)
+    (hκ : κ ≤ 1)
+    (hF : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 → 0 ≤ (F z).re) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+        (dampedKernel κ F F ρ).re) /
+        ((PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_average_re_nonnegative_of_dampedKernel_self_re_nonnegative
+    T κ F hκ hF
+
 /-- Public new-zero paired-sum nonnegativity for a damped detector kernel. -/
 theorem nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_dampedKernel
     (T U κ : ℝ) (F G : ℂ → ℂ)
@@ -2631,6 +2656,34 @@ theorem nontrivialZerosFinset_sdiff_average_re_nonnegative_of_dampedKernel_self
         (((PrimeNumberTheorem.nontrivialZerosFinset U \
           PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ)) :=
   PrimeNumberTheorem.nontrivialZerosFinset_sdiff_average_re_nonnegative_of_dampedKernel_self
+    T U κ F hκ hF
+
+/-- Public new-zero unpaired real-part sum nonnegativity for a self-damped
+detector kernel from pointwise critical-strip real-part nonnegativity. -/
+theorem nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_dampedKernel_self_re_nonnegative
+    (T U κ : ℝ) (F : ℂ → ℂ)
+    (hκ : κ ≤ 1)
+    (hF : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 → 0 ≤ (F z).re) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+        PrimeNumberTheorem.nontrivialZerosFinset T,
+      (dampedKernel κ F F ρ).re :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_dampedKernel_self_re_nonnegative
+    T U κ F hκ hF
+
+/-- Public new-zero unpaired real-part average nonnegativity for a
+self-damped detector kernel from pointwise critical-strip real-part
+nonnegativity. -/
+theorem nontrivialZerosFinset_sdiff_average_re_nonnegative_of_dampedKernel_self_re_nonnegative
+    (T U κ : ℝ) (F : ℂ → ℂ)
+    (hκ : κ ≤ 1)
+    (hF : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 → 0 ≤ (F z).re) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T,
+        (dampedKernel κ F F ρ).re) /
+        (((PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ)) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_average_re_nonnegative_of_dampedKernel_self_re_nonnegative
     T U κ F hκ hF
 
 /-- Public finite-zero paired-sum nonnegativity for finite nonnegative
@@ -2827,6 +2880,38 @@ theorem nontrivialZerosFinset_average_re_nonnegative_of_weightedDampedKernelComb
   PrimeNumberTheorem.nontrivialZerosFinset_average_re_nonnegative_of_weightedDampedKernelCombo_self
     T K w κ F hw hκ hF
 
+/-- Public finite-zero unpaired real-part sum nonnegativity for finite weighted
+self-damped detector kernels from pointwise critical-strip real-part
+nonnegativity. -/
+theorem nontrivialZerosFinset_sum_re_nonnegative_of_weightedDampedKernelCombo_self_re_nonnegative
+    (T : ℝ) (K : Finset ℕ) (w κ : ℕ → ℝ) (F : ℕ → ℂ → ℂ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (hF : ∀ k ∈ K, ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      0 ≤ (F k z).re) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+      (weightedKernelCombo K w
+        (fun k => dampedKernel (κ k) (F k) (F k)) ρ).re :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sum_re_nonnegative_of_weightedDampedKernelCombo_self_re_nonnegative
+    T K w κ F hw hκ hF
+
+/-- Public finite-zero unpaired real-part average nonnegativity for finite
+weighted self-damped detector kernels from pointwise critical-strip real-part
+nonnegativity. -/
+theorem nontrivialZerosFinset_average_re_nonnegative_of_weightedDampedKernelCombo_self_re_nonnegative
+    (T : ℝ) (K : Finset ℕ) (w κ : ℕ → ℝ) (F : ℕ → ℂ → ℂ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (hF : ∀ k ∈ K, ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      0 ≤ (F k z).re) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+        (weightedKernelCombo K w
+          (fun k => dampedKernel (κ k) (F k) (F k)) ρ).re) /
+        ((PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_average_re_nonnegative_of_weightedDampedKernelCombo_self_re_nonnegative
+    T K w κ F hw hκ hF
+
 /-- Public new-zero paired-sum nonnegativity for finite weighted self-damped
 detector kernels. -/
 theorem nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_weightedDampedKernelCombo_self
@@ -2891,6 +2976,41 @@ theorem nontrivialZerosFinset_sdiff_average_re_nonnegative_of_weightedDampedKern
         (((PrimeNumberTheorem.nontrivialZerosFinset U \
           PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ)) :=
   PrimeNumberTheorem.nontrivialZerosFinset_sdiff_average_re_nonnegative_of_weightedDampedKernelCombo_self
+    T U K w κ F hw hκ hF
+
+/-- Public new-zero unpaired real-part sum nonnegativity for finite weighted
+self-damped detector kernels from pointwise critical-strip real-part
+nonnegativity. -/
+theorem nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_weightedDampedKernelCombo_self_re_nonnegative
+    (T U : ℝ) (K : Finset ℕ) (w κ : ℕ → ℝ) (F : ℕ → ℂ → ℂ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (hF : ∀ k ∈ K, ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      0 ≤ (F k z).re) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+        PrimeNumberTheorem.nontrivialZerosFinset T,
+      (weightedKernelCombo K w
+        (fun k => dampedKernel (κ k) (F k) (F k)) ρ).re :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_weightedDampedKernelCombo_self_re_nonnegative
+    T U K w κ F hw hκ hF
+
+/-- Public new-zero unpaired real-part average nonnegativity for finite
+weighted self-damped detector kernels from pointwise critical-strip real-part
+nonnegativity. -/
+theorem nontrivialZerosFinset_sdiff_average_re_nonnegative_of_weightedDampedKernelCombo_self_re_nonnegative
+    (T U : ℝ) (K : Finset ℕ) (w κ : ℕ → ℝ) (F : ℕ → ℂ → ℂ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (hF : ∀ k ∈ K, ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      0 ≤ (F k z).re) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T,
+        (weightedKernelCombo K w
+          (fun k => dampedKernel (κ k) (F k) (F k)) ρ).re) /
+        (((PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ)) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_average_re_nonnegative_of_weightedDampedKernelCombo_self_re_nonnegative
     T U K w κ F hw hκ hF
 
 /-- Public finite nonnegative resolvent/Laplace kernel combination. -/

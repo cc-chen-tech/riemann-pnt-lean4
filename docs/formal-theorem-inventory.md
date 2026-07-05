@@ -1864,10 +1864,15 @@ Core verified declarations:
   `nontrivialZerosFinset_pair_average_nonnegative_of_dampedKernel_self`,
   `nontrivialZerosFinset_sum_re_nonnegative_of_dampedKernel_self`,
   `nontrivialZerosFinset_average_re_nonnegative_of_dampedKernel_self`,
+  `nontrivialZerosFinset_sum_re_nonnegative_of_dampedKernel_self_re_nonnegative`,
+  `nontrivialZerosFinset_average_re_nonnegative_of_dampedKernel_self_re_nonnegative`,
   `nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_dampedKernel_self`,
   `nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_dampedKernel_self`,
   `nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_dampedKernel_self`, and
-  `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_dampedKernel_self`
+  `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_dampedKernel_self`,
+  `nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_dampedKernel_self_re_nonnegative`,
+  and
+  `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_dampedKernel_self_re_nonnegative`
   specialize the same damped detector package to `F - kappa * F` under
   `kappa <= 1`, including both pointwise real-part nonnegativity and
   pair-positive finite-zero consequences.
@@ -1892,11 +1897,16 @@ Core verified declarations:
   `nontrivialZerosFinset_pair_average_nonnegative_of_weightedDampedKernelCombo_self`,
   `nontrivialZerosFinset_sum_re_nonnegative_of_weightedDampedKernelCombo_self`,
   `nontrivialZerosFinset_average_re_nonnegative_of_weightedDampedKernelCombo_self`,
+  `nontrivialZerosFinset_sum_re_nonnegative_of_weightedDampedKernelCombo_self_re_nonnegative`,
+  `nontrivialZerosFinset_average_re_nonnegative_of_weightedDampedKernelCombo_self_re_nonnegative`,
   `nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_weightedDampedKernelCombo_self`,
   `nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_weightedDampedKernelCombo_self`,
   `nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_weightedDampedKernelCombo_self`,
   and
-  `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_weightedDampedKernelCombo_self`
+  `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_weightedDampedKernelCombo_self`,
+  `nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_weightedDampedKernelCombo_self_re_nonnegative`,
+  and
+  `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_weightedDampedKernelCombo_self_re_nonnegative`
   specialize the finite weighted damped-kernel package to the self-damped case
   `F k - (kappa k) * F k` under `kappa k <= 1`.
 - `nontrivialZerosFinset_sum_re_nonnegative_of_symmetricResolventLaplaceKernelCombo`,
