@@ -2987,6 +2987,37 @@ lemma laplacePairPositive_one_dampedKernel_of_pair_le
   intro z hz_left hz_right
   simpa using hpair z hz_left hz_right
 
+/-- Finite nonnegative real-weighted combinations of damped kernels preserve
+strip-local pair positivity once each damped summand satisfies its
+Stechkin-style pair inequality. -/
+lemma laplacePairPositive_weightedDampedKernelCombo_of_pair_le
+    {K : Finset ℕ} {w κ : ℕ → ℝ} {F G : ℕ → ℂ → ℂ} {center : ℝ}
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hpair : ∀ k ∈ K, ∀ z : ℂ, 0 ≤ z.re → z.re ≤ center →
+      κ k * ((G k z).re + (G k ((center : ℂ) - z)).re) ≤
+        (F k z).re + (F k ((center : ℂ) - z)).re) :
+    LaplacePairPositive
+      (weightedKernelCombo K w (fun k => dampedKernel (κ k) (F k) (G k)))
+      center :=
+  laplacePairPositive_weightedKernelCombo hw
+    (fun k hk => laplacePairPositive_dampedKernel_of_pair_le
+      (fun z hz_left hz_right => hpair k hk z hz_left hz_right))
+
+/-- Center-one version of finite nonnegative damped-kernel combination
+pair positivity, matching the zeta symmetry `ρ ↦ 1 - ρ`. -/
+lemma laplacePairPositive_one_weightedDampedKernelCombo_of_pair_le
+    {K : Finset ℕ} {w κ : ℕ → ℝ} {F G : ℕ → ℂ → ℂ}
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hpair : ∀ k ∈ K, ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      κ k * ((G k z).re + (G k (1 - z)).re) ≤
+        (F k z).re + (F k (1 - z)).re) :
+    LaplacePairPositive
+      (weightedKernelCombo K w (fun k => dampedKernel (κ k) (F k) (G k)))
+      1 := by
+  refine laplacePairPositive_weightedDampedKernelCombo_of_pair_le hw ?_
+  intro k hk z hz_left hz_right
+  simpa using hpair k hk z hz_left hz_right
+
 /-- Finite nonnegative linear combinations of resolvent/Laplace prototype
 kernels.  This is a Lean-facing model for detector kernels built by summing
 elementary right-half-plane-positive pieces. -/
@@ -5229,6 +5260,149 @@ theorem nontrivialZerosFinset_sdiff_average_re_nonnegative_of_dampedKernel
   nontrivialZerosFinset_sdiff_average_re_nonnegative_of_laplace_pair_positive_one
     T U (dampedKernel κ F G)
     (laplacePairPositive_one_dampedKernel_of_pair_le hpair)
+
+/-- Finite nontrivial-zero paired-sum nonnegativity for a finite nonnegative
+combination of damped detector kernels. -/
+theorem nontrivialZerosFinset_pair_sum_nonnegative_of_weightedDampedKernelCombo
+    (T : ℝ) (K : Finset ℕ) (w κ : ℕ → ℝ) (F G : ℕ → ℂ → ℂ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hpair : ∀ k ∈ K, ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      κ k * ((G k z).re + (G k (1 - z)).re) ≤
+        (F k z).re + (F k (1 - z)).re) :
+    0 ≤ ∑ ρ ∈ nontrivialZerosFinset T,
+      ((weightedKernelCombo K w
+          (fun k => dampedKernel (κ k) (F k) (G k)) ρ).re +
+        (weightedKernelCombo K w
+          (fun k => dampedKernel (κ k) (F k) (G k)) (1 - ρ)).re) :=
+  nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive_one
+    T (weightedKernelCombo K w (fun k => dampedKernel (κ k) (F k) (G k)))
+    (laplacePairPositive_one_weightedDampedKernelCombo_of_pair_le hw hpair)
+
+/-- Finite nontrivial-zero paired-average nonnegativity for a finite
+nonnegative combination of damped detector kernels. -/
+theorem nontrivialZerosFinset_pair_average_nonnegative_of_weightedDampedKernelCombo
+    (T : ℝ) (K : Finset ℕ) (w κ : ℕ → ℝ) (F G : ℕ → ℂ → ℂ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hpair : ∀ k ∈ K, ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      κ k * ((G k z).re + (G k (1 - z)).re) ≤
+        (F k z).re + (F k (1 - z)).re) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset T,
+        ((weightedKernelCombo K w
+            (fun k => dampedKernel (κ k) (F k) (G k)) ρ).re +
+          (weightedKernelCombo K w
+            (fun k => dampedKernel (κ k) (F k) (G k)) (1 - ρ)).re)) /
+        ((nontrivialZerosFinset T).card : ℝ) :=
+  nontrivialZerosFinset_pair_average_nonnegative_of_laplace_pair_positive_one
+    T (weightedKernelCombo K w (fun k => dampedKernel (κ k) (F k) (G k)))
+    (laplacePairPositive_one_weightedDampedKernelCombo_of_pair_le hw hpair)
+
+/-- Finite nontrivial-zero unpaired real-part sum nonnegativity for a finite
+nonnegative combination of damped detector kernels. -/
+theorem nontrivialZerosFinset_sum_re_nonnegative_of_weightedDampedKernelCombo
+    (T : ℝ) (K : Finset ℕ) (w κ : ℕ → ℝ) (F G : ℕ → ℂ → ℂ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hpair : ∀ k ∈ K, ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      κ k * ((G k z).re + (G k (1 - z)).re) ≤
+        (F k z).re + (F k (1 - z)).re) :
+    0 ≤ ∑ ρ ∈ nontrivialZerosFinset T,
+      (weightedKernelCombo K w
+        (fun k => dampedKernel (κ k) (F k) (G k)) ρ).re := by
+  have hpaired :=
+    nontrivialZerosFinset_pair_sum_nonnegative_of_weightedDampedKernelCombo
+      T K w κ F G hw hpair
+  rw [nontrivialZerosFinset_pair_contribution_eq_two_sum_re] at hpaired
+  nlinarith
+
+/-- Finite nontrivial-zero unpaired real-part average nonnegativity for a
+finite nonnegative combination of damped detector kernels. -/
+theorem nontrivialZerosFinset_average_re_nonnegative_of_weightedDampedKernelCombo
+    (T : ℝ) (K : Finset ℕ) (w κ : ℕ → ℝ) (F G : ℕ → ℂ → ℂ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hpair : ∀ k ∈ K, ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      κ k * ((G k z).re + (G k (1 - z)).re) ≤
+        (F k z).re + (F k (1 - z)).re) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset T,
+        (weightedKernelCombo K w
+          (fun k => dampedKernel (κ k) (F k) (G k)) ρ).re) /
+        ((nontrivialZerosFinset T).card : ℝ) :=
+  div_nonneg
+    (nontrivialZerosFinset_sum_re_nonnegative_of_weightedDampedKernelCombo
+      T K w κ F G hw hpair)
+    (Nat.cast_nonneg _)
+
+/-- New-zero paired-sum nonnegativity for a finite nonnegative combination of
+damped detector kernels. -/
+theorem nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_weightedDampedKernelCombo
+    (T U : ℝ) (K : Finset ℕ) (w κ : ℕ → ℝ) (F G : ℕ → ℂ → ℂ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hpair : ∀ k ∈ K, ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      κ k * ((G k z).re + (G k (1 - z)).re) ≤
+        (F k z).re + (F k (1 - z)).re) :
+    0 ≤ ∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+      ((weightedKernelCombo K w
+          (fun k => dampedKernel (κ k) (F k) (G k)) ρ).re +
+        (weightedKernelCombo K w
+          (fun k => dampedKernel (κ k) (F k) (G k)) (1 - ρ)).re) :=
+  nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive_one
+    T U (weightedKernelCombo K w
+      (fun k => dampedKernel (κ k) (F k) (G k)))
+    (laplacePairPositive_one_weightedDampedKernelCombo_of_pair_le hw hpair)
+
+/-- New-zero paired-average nonnegativity for a finite nonnegative combination
+of damped detector kernels. -/
+theorem nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_weightedDampedKernelCombo
+    (T U : ℝ) (K : Finset ℕ) (w κ : ℕ → ℝ) (F G : ℕ → ℂ → ℂ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hpair : ∀ k ∈ K, ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      κ k * ((G k z).re + (G k (1 - z)).re) ≤
+        (F k z).re + (F k (1 - z)).re) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        ((weightedKernelCombo K w
+            (fun k => dampedKernel (κ k) (F k) (G k)) ρ).re +
+          (weightedKernelCombo K w
+            (fun k => dampedKernel (κ k) (F k) (G k)) (1 - ρ)).re)) /
+        (((nontrivialZerosFinset U \ nontrivialZerosFinset T).card : ℝ)) :=
+  nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_laplace_pair_positive_one
+    T U (weightedKernelCombo K w
+      (fun k => dampedKernel (κ k) (F k) (G k)))
+    (laplacePairPositive_one_weightedDampedKernelCombo_of_pair_le hw hpair)
+
+/-- New-zero unpaired real-part sum nonnegativity for a finite nonnegative
+combination of damped detector kernels. -/
+theorem nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_weightedDampedKernelCombo
+    (T U : ℝ) (K : Finset ℕ) (w κ : ℕ → ℝ) (F G : ℕ → ℂ → ℂ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hpair : ∀ k ∈ K, ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      κ k * ((G k z).re + (G k (1 - z)).re) ≤
+        (F k z).re + (F k (1 - z)).re) :
+    0 ≤ ∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+      (weightedKernelCombo K w
+        (fun k => dampedKernel (κ k) (F k) (G k)) ρ).re :=
+  nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_laplace_pair_positive_one
+    T U (weightedKernelCombo K w
+      (fun k => dampedKernel (κ k) (F k) (G k)))
+    (laplacePairPositive_one_weightedDampedKernelCombo_of_pair_le hw hpair)
+
+/-- New-zero unpaired real-part average nonnegativity for a finite nonnegative
+combination of damped detector kernels. -/
+theorem nontrivialZerosFinset_sdiff_average_re_nonnegative_of_weightedDampedKernelCombo
+    (T U : ℝ) (K : Finset ℕ) (w κ : ℕ → ℝ) (F G : ℕ → ℂ → ℂ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hpair : ∀ k ∈ K, ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      κ k * ((G k z).re + (G k (1 - z)).re) ≤
+        (F k z).re + (F k (1 - z)).re) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        (weightedKernelCombo K w
+          (fun k => dampedKernel (κ k) (F k) (G k)) ρ).re) /
+        (((nontrivialZerosFinset U \ nontrivialZerosFinset T).card : ℝ)) :=
+  nontrivialZerosFinset_sdiff_average_re_nonnegative_of_laplace_pair_positive_one
+    T U (weightedKernelCombo K w
+      (fun k => dampedKernel (κ k) (F k) (G k)))
+    (laplacePairPositive_one_weightedDampedKernelCombo_of_pair_le hw hpair)
 
 /-- Center-one Laplace-pair positivity also makes the unpaired real-part sum
 nonnegative, after reindexing the reflected half of the paired sum by

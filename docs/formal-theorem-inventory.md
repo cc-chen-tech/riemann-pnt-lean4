@@ -1849,6 +1849,19 @@ Core verified declarations:
   extend the damped detector bridge from paired full finite-zero sums to
   unpaired sums/averages and to new-zero blocks
   `nontrivialZerosFinset U \ nontrivialZerosFinset T`.
+- `laplacePairPositive_weightedDampedKernelCombo_of_pair_le`,
+  `laplacePairPositive_one_weightedDampedKernelCombo_of_pair_le`,
+  `nontrivialZerosFinset_pair_sum_nonnegative_of_weightedDampedKernelCombo`,
+  `nontrivialZerosFinset_pair_average_nonnegative_of_weightedDampedKernelCombo`,
+  `nontrivialZerosFinset_sum_re_nonnegative_of_weightedDampedKernelCombo`,
+  `nontrivialZerosFinset_average_re_nonnegative_of_weightedDampedKernelCombo`,
+  `nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_weightedDampedKernelCombo`,
+  `nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_weightedDampedKernelCombo`,
+  `nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_weightedDampedKernelCombo`,
+  and
+  `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_weightedDampedKernelCombo`
+  lift the signed detector bridge to finite nonnegative combinations of
+  damped kernels.
 - `nontrivialZerosFinset_sum_re_nonnegative_of_symmetricResolventLaplaceKernelCombo`,
   `nontrivialZerosFinset_average_re_nonnegative_of_symmetricResolventLaplaceKernelCombo`,
   `nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_symmetricResolventLaplaceKernelCombo`,
