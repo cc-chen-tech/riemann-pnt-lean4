@@ -123,6 +123,14 @@ one constant for the real-axis, `σ+it`, and `σ+2it` real-part terms together.
 `exists_three_four_one_combination_le_log_abs_add_three_of_one_add_le` then
 combines those bounds with the proved 3-4-1 nonnegativity, bounding the whole
 fixed-margin combination by `O(log(|t|+3))`.
+The exact high-height fixed-margin packages
+`exists_norm_logDeriv_riemannZeta_fixed_margin_shift_pair_le_log_abs` and
+`exists_re_neg_deriv_div_riemannZeta_fixed_margin_shift_pair_le_log_abs`
+upgrade the two shifted points to one shared `C * log |t|` coefficient above
+some `T0 >= 3`; `exists_three_four_one_combination_le_log_abs_of_fixed_margin`
+does the same for the full 3-4-1 expression.  These are verified analogues of
+the desired boundary-strip handoff, but they still require the fixed margin
+`1+epsilon <= sigma`.
 
 ## Verified Conditional Assembly
 
@@ -772,7 +780,9 @@ uniform boundary-strip input.
 The same limitation applies to the fixed-margin `sigma + 2it` real-part bound:
 it is a proved shifted-term estimate, but only under `1+epsilon <= sigma`.
 The single-constant fixed-margin 3-4-1 package has the same limitation.
-So does the fixed-margin full-combination upper bound.
+So does the fixed-margin full-combination upper bound, including its exact
+high-height `C * log |t|` version
+`ZeroFreeRegion.exists_three_four_one_combination_le_log_abs_of_fixed_margin`.
 For sign-convention compatibility, the weak moving-strip inventory now also
 contains signed `-logDeriv zeta` norm variants:
 `ZeroFreeRegion.exists_sigma_ge_sigmaOf_log_neg_logDeriv_norm_bound_const_mul_log_div`,

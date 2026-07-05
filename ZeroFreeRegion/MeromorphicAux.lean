@@ -4145,6 +4145,145 @@ lemma exists_norm_neg_logDeriv_riemannZeta_sigma_two_it_le_log_abs_of_fixed_marg
         = ‖logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖ := norm_neg _
     _ ≤ C * Real.log |t| := hbound σ t hσ hσ_le ht
 
+/-- Fixed-margin pair package in the exact `C * log |t|` scale.
+
+For each fixed `ε > 0`, the absolute-convergence half-plane gives one shared
+constant controlling both points used by the 3-4-1 chain, `σ+it` and
+`σ+2it`, as long as `1+ε <= σ <= 2`.  This is the proved fixed-margin
+analogue of the missing boundary-strip estimate. -/
+lemma exists_norm_logDeriv_riemannZeta_fixed_margin_shift_pair_le_log_abs
+    {ε : ℝ} (hε : 0 < ε) :
+    ∃ C T0 : ℝ, 0 ≤ C ∧ 3 ≤ T0 ∧
+      ∀ σ t : ℝ, 1 + ε ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤ C * Real.log |t| ∧
+        ‖logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖ ≤
+          C * Real.log |t| := by
+  rcases exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_of_fixed_margin
+      hε with ⟨C₁, T₁, hC₁, hT₁, hmain⟩
+  rcases exists_norm_logDeriv_riemannZeta_sigma_two_it_le_log_abs_of_fixed_margin
+      hε with ⟨C₂, T₂, hC₂, hT₂, hshift⟩
+  let C : ℝ := max C₁ C₂
+  let Tstar : ℝ := max T₁ T₂
+  refine ⟨C, Tstar, ?_, ?_, ?_⟩
+  · exact hC₁.trans (le_max_left C₁ C₂)
+  · exact hT₁.trans (le_max_left T₁ T₂)
+  · intro σ t hσ hσ_le ht
+    have hT₁_abs : T₁ ≤ |t| := (le_max_left T₁ T₂).trans ht
+    have hT₂_abs : T₂ ≤ |t| := (le_max_right T₁ T₂).trans ht
+    have hthree_abs : 3 ≤ |t| := hT₁.trans hT₁_abs
+    have hlog_nonneg : 0 ≤ Real.log |t| := by
+      exact Real.log_nonneg (by linarith : (1 : ℝ) ≤ |t|)
+    constructor
+    · calc
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖
+            ≤ C₁ * Real.log |t| := hmain σ t hσ hσ_le hT₁_abs
+        _ ≤ C * Real.log |t| :=
+            mul_le_mul_of_nonneg_right (le_max_left C₁ C₂) hlog_nonneg
+    · calc
+        ‖logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖
+            ≤ C₂ * Real.log |t| := hshift σ t hσ hσ_le hT₂_abs
+        _ ≤ C * Real.log |t| :=
+            mul_le_mul_of_nonneg_right (le_max_right C₁ C₂) hlog_nonneg
+
+/-- Signed fixed-margin pair package in the exact `C * log |t|` scale. -/
+lemma exists_norm_neg_logDeriv_riemannZeta_fixed_margin_shift_pair_le_log_abs
+    {ε : ℝ} (hε : 0 < ε) :
+    ∃ C T0 : ℝ, 0 ≤ C ∧ 3 ≤ T0 ∧
+      ∀ σ t : ℝ, 1 + ε ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤ C * Real.log |t| ∧
+        ‖-logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖ ≤
+          C * Real.log |t| := by
+  rcases exists_norm_logDeriv_riemannZeta_fixed_margin_shift_pair_le_log_abs
+      hε with ⟨C, T0, hC, hT0, hpair⟩
+  refine ⟨C, T0, hC, hT0, ?_⟩
+  intro σ t hσ hσ_le ht
+  rcases hpair σ t hσ hσ_le ht with ⟨hmain, hshift⟩
+  constructor
+  · calc
+      ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖
+          = ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ := norm_neg _
+      _ ≤ C * Real.log |t| := hmain
+  · calc
+      ‖-logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖
+          = ‖logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖ := norm_neg _
+      _ ≤ C * Real.log |t| := hshift
+
+/-- Fixed-margin real-part pair package in the exact `C * log |t|` scale.
+
+This is the fixed-margin version of the real-part handoff needed by the
+3-4-1 inequality.  It is still strictly weaker than the missing boundary-strip
+estimate because it assumes `1+ε <= σ`. -/
+lemma exists_re_neg_deriv_div_riemannZeta_fixed_margin_shift_pair_le_log_abs
+    {ε : ℝ} (hε : 0 < ε) :
+    ∃ C T0 : ℝ, 0 ≤ C ∧ 3 ≤ T0 ∧
+      ∀ σ t : ℝ, 1 + ε ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re ≤ C * Real.log |t| ∧
+        (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤ C * Real.log |t| := by
+  rcases exists_norm_logDeriv_riemannZeta_fixed_margin_shift_pair_le_log_abs
+      hε with ⟨C, T0, hC, hT0, hpair⟩
+  refine ⟨C, T0, hC, hT0, ?_⟩
+  intro σ t hσ hσ_le ht
+  rcases hpair σ t hσ hσ_le ht with ⟨hmain, hshift⟩
+  constructor
+  · let z : ℂ := (σ : ℂ) + I * t
+    calc
+      (-deriv riemannZeta z / riemannZeta z).re
+          ≤ ‖-deriv riemannZeta z / riemannZeta z‖ := Complex.re_le_norm _
+      _ = ‖logDeriv riemannZeta z‖ :=
+          norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv z
+      _ ≤ C * Real.log |t| := by simpa [z] using hmain
+  · let z : ℂ := (σ : ℂ) + 2 * I * t
+    calc
+      (-deriv riemannZeta z / riemannZeta z).re
+          ≤ ‖-deriv riemannZeta z / riemannZeta z‖ := Complex.re_le_norm _
+      _ = ‖logDeriv riemannZeta z‖ :=
+          norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv z
+      _ ≤ C * Real.log |t| := by simpa [z] using hshift
+
+/-- Fixed-margin high-height logarithmic upper bound for the full 3-4-1
+combination in the exact `C * log |t|` scale.
+
+This packages the proved 3-4-1 nonnegativity together with the strongest
+available fixed-margin growth bound.  It does not prove the moving
+`σ = 1 + a / log |t|` boundary-strip estimate. -/
+lemma exists_three_four_one_combination_le_log_abs_of_fixed_margin
+    {ε : ℝ} (hε : 0 < ε) :
+    ∃ C T0 : ℝ, 0 ≤ C ∧ 3 ≤ T0 ∧
+      ∀ σ t : ℝ, 1 + ε ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        0 ≤
+          3 * (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re
+          + 4 * (-deriv riemannZeta ((σ : ℂ) + I * t) /
+              riemannZeta ((σ : ℂ) + I * t)).re
+          + (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+              riemannZeta ((σ : ℂ) + 2 * I * t)).re ∧
+        3 * (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re
+          + 4 * (-deriv riemannZeta ((σ : ℂ) + I * t) /
+              riemannZeta ((σ : ℂ) + I * t)).re
+          + (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+              riemannZeta ((σ : ℂ) + 2 * I * t)).re
+            ≤ C * Real.log |t| := by
+  rcases exists_three_four_one_combination_le_log_abs_add_three_of_one_add_le
+      hε with ⟨C₀, hC₀, hbound⟩
+  refine ⟨2 * C₀, 3, mul_nonneg (by norm_num) hC₀, by norm_num, ?_⟩
+  intro σ t hσ _hσ_le ht
+  rcases hbound σ t hσ with ⟨hnonneg, hupper⟩
+  have hlog : Real.log (|t| + 3) ≤ 2 * Real.log |t| :=
+    log_abs_add_three_le_two_log_abs ht
+  constructor
+  · exact hnonneg
+  · calc
+      3 * (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re
+        + 4 * (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re
+        + (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re
+          ≤ C₀ * Real.log (|t| + 3) := hupper
+      _ ≤ C₀ * (2 * Real.log |t|) :=
+          mul_le_mul_of_nonneg_left hlog hC₀
+      _ = (2 * C₀) * Real.log |t| := by ring
+
 /-- On the strip `1 <= σ <= 2`, `‖σ + it‖` is bounded by `|t| + 2`. -/
 lemma norm_sigma_add_I_mul_le_abs_add_two {σ t : ℝ}
     (hσ : σ ∈ Set.Icc 1 2) :

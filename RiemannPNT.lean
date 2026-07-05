@@ -4423,6 +4423,66 @@ theorem exists_norm_neg_logDeriv_riemannZeta_sigma_two_it_le_log_abs_of_fixed_ma
   ZeroFreeRegion.exists_norm_neg_logDeriv_riemannZeta_sigma_two_it_le_log_abs_of_fixed_margin
     hε
 
+/-- Public fixed-margin pair package in the exact `C * log |t|` scale for the
+two shifted points `σ+it` and `σ+2it`. -/
+theorem exists_norm_logDeriv_riemannZeta_fixed_margin_shift_pair_le_log_abs
+    {ε : ℝ} (hε : 0 < ε) :
+    ∃ C T0 : ℝ, 0 ≤ C ∧ 3 ≤ T0 ∧
+      ∀ σ t : ℝ, 1 + ε ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+            C * Real.log |t| ∧
+        ‖logDeriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t)‖ ≤
+            C * Real.log |t| :=
+  ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_fixed_margin_shift_pair_le_log_abs hε
+
+/-- Public signed fixed-margin pair package in the exact `C * log |t|`
+scale. -/
+theorem exists_norm_neg_logDeriv_riemannZeta_fixed_margin_shift_pair_le_log_abs
+    {ε : ℝ} (hε : 0 < ε) :
+    ∃ C T0 : ℝ, 0 ≤ C ∧ 3 ≤ T0 ∧
+      ∀ σ t : ℝ, 1 + ε ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+            C * Real.log |t| ∧
+        ‖-logDeriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t)‖ ≤
+            C * Real.log |t| :=
+  ZeroFreeRegion.exists_norm_neg_logDeriv_riemannZeta_fixed_margin_shift_pair_le_log_abs
+    hε
+
+/-- Public fixed-margin real-part pair package in the exact `C * log |t|`
+scale for the two shifted 3-4-1 terms. -/
+theorem exists_re_neg_deriv_div_riemannZeta_fixed_margin_shift_pair_le_log_abs
+    {ε : ℝ} (hε : 0 < ε) :
+    ∃ C T0 : ℝ, 0 ≤ C ∧ 3 ≤ T0 ∧
+      ∀ σ t : ℝ, 1 + ε ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
+          C * Real.log |t| ∧
+        (-deriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t) /
+            riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re ≤
+          C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_fixed_margin_shift_pair_le_log_abs
+    hε
+
+/-- Public fixed-margin high-height upper bound for the full 3-4-1
+combination in the exact `C * log |t|` scale. -/
+theorem exists_three_four_one_combination_le_log_abs_of_fixed_margin
+    {ε : ℝ} (hε : 0 < ε) :
+    ∃ C T0 : ℝ, 0 ≤ C ∧ 3 ≤ T0 ∧
+      ∀ σ t : ℝ, 1 + ε ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        0 ≤
+          3 * (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re
+          + 4 * (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+              riemannZeta ((σ : ℂ) + Complex.I * t)).re
+          + (-deriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t) /
+              riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re ∧
+        3 * (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re
+          + 4 * (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+              riemannZeta ((σ : ℂ) + Complex.I * t)).re
+          + (-deriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t) /
+              riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re
+            ≤ C * Real.log |t| :=
+  ZeroFreeRegion.exists_three_four_one_combination_le_log_abs_of_fixed_margin hε
+
 /-- Public fixed-margin real-part bound for the shifted `σ+2it` third term in
 the 3-4-1 inequality. -/
 theorem exists_re_neg_deriv_div_riemannZeta_sigma_two_it_le_log_abs_add_three_of_one_add_le
