@@ -141,8 +141,14 @@ signed pair
 `ZeroFreeRegion.exists_negLogDeriv_affine_log_norm_add_three_bound_on_verticalRegion_of_compact_band_and_high_height`
 and
 `ZeroFreeRegion.negLogDerivVerticalLogBound_of_compact_band_and_high_height_affine_log_norm_add_three_bound`
-does the same for the `-logDeriv ζ` convention used by 3-4-1.  This keeps the
-next hard target precise: prove the high-height zeta-specific
+does the same for the `-logDeriv ζ` convention used by 3-4-1.  The direct
+real-part quotient pair
+`ZeroFreeRegion.exists_reNegDerivDiv_affine_log_norm_add_three_bound_on_verticalRegion_of_compact_band_and_high_height`
+and
+`ZeroFreeRegion.reNegDerivDivVerticalLogBound_of_compact_band_and_high_height_affine_log_norm_add_three_bound`
+feeds an estimate already stated as `Re(-ζ'/ζ)` into
+`ReNegDerivDivVerticalLogBound`.  This keeps the next hard target precise:
+prove the high-height zeta-specific
 affine/logarithmic estimate, not another compactness patch.
 
 The even more direct wrappers

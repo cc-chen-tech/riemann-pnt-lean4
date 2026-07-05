@@ -201,6 +201,12 @@ Core verified declarations:
 - `negLogDerivVerticalLogBound_of_compact_band_and_high_height_affine_log_norm_add_three_bound`
   feeds that signed affine patch into the named
   `NegLogDerivVerticalLogBound` interface.
+- `exists_reNegDerivDiv_affine_log_norm_add_three_bound_on_verticalRegion_of_compact_band_and_high_height`
+  is the direct real-part quotient `Re(-zeta'/zeta)` version of the same
+  compact-plus-high-height affine patch.
+- `reNegDerivDivVerticalLogBound_of_compact_band_and_high_height_affine_log_norm_add_three_bound`
+  feeds that direct real-part affine patch into the named
+  `ReNegDerivDivVerticalLogBound` interface.
 - `exists_norm_neg_logDeriv_riemannZeta_bound_on_compact_vertical_band`
   is the signed `-logDeriv zeta` version of the same compact bounded-height
   estimate.
