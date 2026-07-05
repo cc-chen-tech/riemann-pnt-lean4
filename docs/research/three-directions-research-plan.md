@@ -47,6 +47,9 @@ Verified assets now include:
   which controls all nonzero BTY detector frequencies from
   `LogDerivVerticalLogBound` and leaves only the real-axis `k=0` term as a
   separate upper-bound input;
+- the fixed-margin center-term closure
+  `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_LogDerivVerticalLogBound`,
+  which removes that `k=0` input when `1 + epsilon <= sigma`;
 - the fixed-margin closure
   `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_one_add_le`, which
   uses the existing `Re(s) >= 1 + epsilon` vertical `logDeriv` estimate;
@@ -60,15 +63,15 @@ Verified assets now include:
 Next useful step:
 
 ```lean
-log_deriv_zeta_bty_detector_one_lower_bound_of_center_bound_and_LogDerivVerticalLogBound
+logDeriv_riemannZeta_vertical_log_bound
 ```
 
 The formerly separate `hseries` step is now closed in Lean.  The next bridge is
 not the finite-support bookkeeping anymore: the new named handoff reduces the
 nonzero BTY frequencies to the single future bound
-`LogDerivVerticalLogBound`.  What remains is to provide a usable center-term
-upper bound for `Re(-ζ'/ζ(σ))` at `k=0`, and then to prove the actual
-zeta-specific high-height estimate
+`LogDerivVerticalLogBound`, and the fixed-margin variant discharges the center
+term when `1 + epsilon <= sigma`.  What remains for the boundary-scale route is
+the actual zeta-specific high-height estimate
 `‖logDeriv ζ(σ + i u)‖ <= B log |u|` on `1 <= σ <= 2`.
 The new polynomial-growth handoff removes one piece of height bookkeeping once
 a usable zeta polynomial-growth input is available, but it does not prove that

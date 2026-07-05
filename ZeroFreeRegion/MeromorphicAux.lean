@@ -11369,6 +11369,34 @@ lemma log_deriv_zeta_bty_detector_one_lower_bound_of_center_and_LogDerivVertical
       _ = (if k = 0 then B0 else C * Real.log (17 * (|t| + 3))) := by
           simp [hk_zero]
 
+/-- Mixed BTY handoff with the central `k = 0` term discharged by the proved
+fixed-margin logarithmic-derivative estimate.
+
+This remains a fixed-margin statement: the caller supplies `1 + ε ≤ σ`.
+The nonzero detector frequencies use the named high-height
+`LogDerivVerticalLogBound`; the central term is bounded at height `0` by the
+existing `Re(s) >= 1 + ε` estimate. -/
+lemma exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_LogDerivVerticalLogBound
+    {ε C T0 : ℝ} (hε : 0 < ε) (h : LogDerivVerticalLogBound C T0) :
+    ∃ A : ℝ, 0 ≤ A ∧ ∀ σ t : ℝ, 1 + ε ≤ σ → σ ≤ 2 →
+      T0 ≤ |t| →
+      (-deriv riemannZeta ((σ : ℂ) + I * t) /
+        riemannZeta ((σ : ℂ) + I * t)).re ≥
+        - (∑ k ∈ btyDetectorSupport.erase 1, btyDetectorCoeff k *
+            (if k = 0 then A else C * Real.log (17 * (|t| + 3)))) /
+          btyDetectorCoeff 1 := by
+  rcases exists_re_neg_deriv_div_riemannZeta_sigma_it_le_log_abs_add_three_of_one_add_le
+      hε with ⟨A0, hA0, hcenter_bound⟩
+  refine ⟨A0 * Real.log 3, ?_, ?_⟩
+  · exact mul_nonneg hA0 (Real.log_nonneg (by norm_num : (1 : ℝ) ≤ 3))
+  intro σ t hσ hσ_le ht
+  refine
+    log_deriv_zeta_bty_detector_one_lower_bound_of_center_and_LogDerivVerticalLogBound
+      (C := C) (T0 := T0) (B0 := A0 * Real.log 3)
+      h (by linarith) hσ_le ht ?_
+  have hcenter := hcenter_bound σ 0 hσ
+  simpa using hcenter
+
 /-- Real-part quotient version of
 `exists_norm_logDeriv_riemannZeta_shifted_vertical_log_bound_of_vertical_log_bound`. -/
 lemma exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_vertical_norm_log_bound

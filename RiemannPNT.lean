@@ -5742,6 +5742,20 @@ theorem log_deriv_zeta_bty_detector_one_lower_bound_of_center_and_LogDerivVertic
   ZeroFreeRegion.log_deriv_zeta_bty_detector_one_lower_bound_of_center_and_LogDerivVerticalLogBound
     h hσ hσ_le ht hcenter
 
+/-- Public mixed BTY handoff whose central `k = 0` term is discharged by the
+proved fixed-margin logarithmic-derivative estimate. -/
+theorem exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_LogDerivVerticalLogBound
+    {ε C T0 : ℝ} (hε : 0 < ε) (h : LogDerivVerticalLogBound C T0) :
+    ∃ A : ℝ, 0 ≤ A ∧ ∀ σ t : ℝ, 1 + ε ≤ σ → σ ≤ 2 →
+      T0 ≤ |t| →
+      (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+        riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+        - (∑ k ∈ btyDetectorSupport.erase 1, btyDetectorCoeff k *
+            (if k = 0 then A else C * Real.log (17 * (|t| + 3)))) /
+          btyDetectorCoeff 1 :=
+  ZeroFreeRegion.exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_LogDerivVerticalLogBound
+    hε h
+
 /-- Public fixed-margin BTY lower bound from the existing vertical
 logarithmic-derivative estimate for `Re(s) >= 1 + ε`. -/
 theorem exists_log_deriv_zeta_bty_detector_one_lower_bound_of_one_add_le
