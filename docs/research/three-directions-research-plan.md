@@ -97,6 +97,13 @@ Verified assets now include:
   `classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_and_NegLogDerivVerticalLogBound`;
   `classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_exists_NegLogDerivVerticalLogBound`;
   `classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_exists_NegLogDerivVerticalLogBound`.
+- direct final assemblies from an existential regular-part estimate plus a
+  future high-height `B * log |t|` estimate in the `logDeriv`, `-logDeriv`, or
+  `Re(-ζ'/ζ)` convention:
+  `classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_high_height_logDeriv_bound`;
+  `classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_high_height_negLogDeriv_bound`;
+  `classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_high_height_reNegDerivDiv_bound`,
+  together with their multiplicity-aware analogues.
 - the exact-scale real-part version of the same BTY bridge:
   `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_re_high_height_log_abs_bound`
   and
@@ -289,6 +296,9 @@ Verified assets now include:
 - eventual-no-new-zero tail convergence;
 - direct non-RH contribution-tail bridges:
   `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_tendsto_zero`;
+  `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_tendsto_zero`;
+  `explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution_norm_le`;
+  `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_isBigO_tendsto_zero`;
   `explicit_formula_von_mangoldt_of_base_and_eventually_no_new_zeros_via_contribution_tail`;
 - composed bridges:
   `explicit_formula_von_mangoldt_of_RH_base_and_eventually_no_new_zeros_via_sum_tail`;

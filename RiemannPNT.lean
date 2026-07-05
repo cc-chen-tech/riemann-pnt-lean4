@@ -7286,6 +7286,98 @@ theorem reNegDerivDivVerticalLogBound_of_high_height_log_abs_bound
   ZeroFreeRegion.reNegDerivDivVerticalLogBound_of_high_height_log_abs_bound
     hB hhigh
 
+/-- Public direct final assembly from an existential regular-part estimate and
+a future high-height `B * log |t|` estimate for `logDeriv ζ`. -/
+theorem classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_high_height_logDeriv_bound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        LogDerivRegularPartLogBound Bregular Tregular)
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          B * Real.log |t|) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_high_height_logDeriv_bound
+    hregular hB hhigh
+
+/-- Public multiplicity-aware direct final assembly from a future high-height
+`logDeriv ζ` estimate. -/
+theorem classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_high_height_logDeriv_bound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        MultiplicityLogDerivRegularPartLogBound Bregular Tregular)
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          B * Real.log |t|) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_high_height_logDeriv_bound
+    hregular hB hhigh
+
+/-- Public direct final assembly from an existential regular-part estimate and
+a future high-height `B * log |t|` estimate for `-logDeriv ζ`. -/
+theorem classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_high_height_negLogDeriv_bound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        LogDerivRegularPartLogBound Bregular Tregular)
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          B * Real.log |t|) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_high_height_negLogDeriv_bound
+    hregular hB hhigh
+
+/-- Public multiplicity-aware direct final assembly from a future high-height
+`-logDeriv ζ` estimate. -/
+theorem classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_high_height_negLogDeriv_bound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        MultiplicityLogDerivRegularPartLogBound Bregular Tregular)
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          B * Real.log |t|) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_high_height_negLogDeriv_bound
+    hregular hB hhigh
+
+/-- Public direct final assembly from an existential regular-part estimate and
+a future high-height `B * log |t|` estimate for `Re(-ζ'/ζ)`. -/
+theorem classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_high_height_reNegDerivDiv_bound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        LogDerivRegularPartLogBound Bregular Tregular)
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
+          B * Real.log |t|) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_high_height_reNegDerivDiv_bound
+    hregular hB hhigh
+
+/-- Public multiplicity-aware direct final assembly from a future high-height
+`Re(-ζ'/ζ)` estimate. -/
+theorem classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_high_height_reNegDerivDiv_bound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        MultiplicityLogDerivRegularPartLogBound Bregular Tregular)
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
+          B * Real.log |t|) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_high_height_reNegDerivDiv_bound
+    hregular hB hhigh
+
 /-- Public shifted norm bridge: a future high-height estimate at `sigma + iu`
 gives the `sigma + 2it` 3-4-1 input after absorbing `log |2t|`. -/
 theorem exists_norm_logDeriv_riemannZeta_shifted_vertical_log_bound_of_vertical_log_bound
@@ -18802,6 +18894,54 @@ theorem explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_tendsto_
     PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
   PrimeNumberTheorem.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_tendsto_zero
     hB htail
+
+/-- Public norm-tail version of the direct new-zero contribution bridge. -/
+theorem explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_tendsto_zero
+    {x B : ℝ} {hx : x ≥ 2}
+    (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
+      (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
+    (htail :
+      Tendsto
+        (fun T : ℝ =>
+          ‖∑ ρ ∈ (PrimeNumberTheorem.nontrivialZerosFinset T \
+              PrimeNumberTheorem.nontrivialZerosFinset B),
+            (x : ℂ) ^ ρ / ρ‖)
+        atTop (𝓝 0)) :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_tendsto_zero
+    hB htail
+
+/-- Public eventual norm-bound version of the direct new-zero contribution
+bridge. -/
+theorem explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution_norm_le
+    {x B : ℝ} {hx : x ≥ 2} {E : ℝ → ℝ}
+    (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
+      (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
+    (hE : Tendsto E atTop (𝓝 0))
+    (hbound :
+      ∀ᶠ T in atTop,
+        ‖∑ ρ ∈ (PrimeNumberTheorem.nontrivialZerosFinset T \
+            PrimeNumberTheorem.nontrivialZerosFinset B),
+          (x : ℂ) ^ ρ / ρ‖ ≤ E T) :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution_norm_le
+    hB hE hbound
+
+/-- Public Big-O norm-tail version of the direct new-zero contribution
+bridge. -/
+theorem explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_isBigO_tendsto_zero
+    {x B : ℝ} {hx : x ≥ 2} {E : ℝ → ℝ}
+    (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
+      (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
+    (hE : Tendsto E atTop (𝓝 0))
+    (hO :
+      (fun T : ℝ =>
+        ‖∑ ρ ∈ (PrimeNumberTheorem.nontrivialZerosFinset T \
+            PrimeNumberTheorem.nontrivialZerosFinset B),
+          (x : ℂ) ^ ρ / ρ‖) =O[atTop] E) :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_isBigO_tendsto_zero
+    hB hE hO
 
 /-- Public direct bridge from a base identity and eventual absence of new zero
 terms, routed through the contribution-tail interface. -/

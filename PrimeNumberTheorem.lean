@@ -7998,6 +7998,65 @@ lemma explicit_formula_von_mangoldt_of_base_and_eventually_no_new_zeros_via_cont
     (new_zero_contribution_sum_tendsto_zero_of_eventually_sdiff_eq_empty
       (x := x) hnew)
 
+/-- Norm-tail version of
+`explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_tendsto_zero`.
+
+This is often the natural output of contour estimates: once the norm of the
+new-zero contribution tends to zero, the complex contribution itself tends to
+zero. -/
+lemma explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_tendsto_zero
+    {x B : ℝ} {hx : x ≥ 2}
+    (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
+    (htail :
+      Tendsto
+        (fun T : ℝ =>
+          ‖∑ ρ ∈ (nontrivialZerosFinset T \ nontrivialZerosFinset B),
+            (x : ℂ) ^ ρ / ρ‖)
+        atTop (𝓝 0)) :
+  explicit_formula_von_mangoldt x hx :=
+  explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_tendsto_zero
+    hB (tendsto_zero_iff_norm_tendsto_zero.mpr htail)
+
+/-- A vanishing eventual norm bound for the new-zero contribution closes the
+corrected explicit-formula target from a stable base truncation. -/
+lemma explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution_norm_le
+    {x B : ℝ} {hx : x ≥ 2} {E : ℝ → ℝ}
+    (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
+    (hE : Tendsto E atTop (𝓝 0))
+    (hbound :
+      ∀ᶠ T in atTop,
+        ‖∑ ρ ∈ (nontrivialZerosFinset T \ nontrivialZerosFinset B),
+          (x : ℂ) ^ ρ / ρ‖ ≤ E T) :
+    explicit_formula_von_mangoldt x hx := by
+  refine explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_tendsto_zero
+    hB ?_
+  exact tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds hE
+    (Eventually.of_forall fun _T => norm_nonneg _) hbound
+
+/-- Big-O norm-tail version of the direct new-zero contribution bridge. -/
+lemma explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_isBigO_tendsto_zero
+    {x B : ℝ} {hx : x ≥ 2} {E : ℝ → ℝ}
+    (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
+    (hE : Tendsto E atTop (𝓝 0))
+    (hO :
+      (fun T : ℝ =>
+        ‖∑ ρ ∈ (nontrivialZerosFinset T \ nontrivialZerosFinset B),
+          (x : ℂ) ^ ρ / ρ‖) =O[atTop] E) :
+    explicit_formula_von_mangoldt x hx := by
+  rcases hO.exists_pos with ⟨C, _hCpos, hCO⟩
+  refine explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution_norm_le
+    hB (E := fun T : ℝ => C * ‖E T‖) ?_ ?_
+  · have hEnorm : Tendsto (fun T : ℝ => ‖E T‖) atTop (𝓝 0) :=
+      tendsto_zero_iff_norm_tendsto_zero.mp hE
+    simpa using
+      (tendsto_const_nhds.mul hEnorm :
+        Tendsto (fun T : ℝ => C * ‖E T‖) atTop (𝓝 (C * 0)))
+  · filter_upwards [hCO.bound] with T hT
+    have hnonneg :
+        0 ≤ ‖∑ ρ ∈ (nontrivialZerosFinset T \ nontrivialZerosFinset B),
+          (x : ℂ) ^ ρ / ρ‖ := norm_nonneg _
+    simpa [Real.norm_eq_abs, abs_of_nonneg hnonneg] using hT
+
 /-- If no new zeros appear eventually above the base cutoff, then the reciprocal
 norm tail used in the RH truncation bound tends to zero. -/
 lemma new_zero_inv_norm_tail_tendsto_zero_of_eventually_sdiff_eq_empty

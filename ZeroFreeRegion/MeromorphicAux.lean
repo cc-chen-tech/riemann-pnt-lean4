@@ -11945,6 +11945,104 @@ lemma reNegDerivDivVerticalLogBound_of_high_height_log_abs_bound
   exists_re_neg_deriv_div_riemannZeta_vertical_log_bound_of_high_height_log_abs_bound
     hB hhigh
 
+/-- Direct final assembly from an existential regular-part estimate and a
+future high-height `B * log |t|` estimate for `logDeriv ζ`. -/
+lemma classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_high_height_logDeriv_bound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        LogDerivRegularPartLogBound Bregular Tregular)
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          B * Real.log |t|) :
+    classical_zero_free_region :=
+  classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_exists_LogDerivVerticalLogBound
+    hregular
+    (logDerivVerticalLogBound_of_high_height_log_abs_bound hB hhigh)
+
+/-- Multiplicity-aware direct final assembly from a future high-height
+`logDeriv ζ` estimate. -/
+lemma classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_high_height_logDeriv_bound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        MultiplicityLogDerivRegularPartLogBound Bregular Tregular)
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          B * Real.log |t|) :
+    classical_zero_free_region :=
+  classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_exists_LogDerivVerticalLogBound
+    hregular
+    (logDerivVerticalLogBound_of_high_height_log_abs_bound hB hhigh)
+
+/-- Direct final assembly from an existential regular-part estimate and a
+future high-height `B * log |t|` estimate for `-logDeriv ζ`. -/
+lemma classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_high_height_negLogDeriv_bound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        LogDerivRegularPartLogBound Bregular Tregular)
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          B * Real.log |t|) :
+    classical_zero_free_region :=
+  classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_exists_NegLogDerivVerticalLogBound
+    hregular
+    (negLogDerivVerticalLogBound_of_high_height_log_abs_bound hB hhigh)
+
+/-- Multiplicity-aware direct final assembly from a future high-height
+`-logDeriv ζ` estimate. -/
+lemma classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_high_height_negLogDeriv_bound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        MultiplicityLogDerivRegularPartLogBound Bregular Tregular)
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          B * Real.log |t|) :
+    classical_zero_free_region :=
+  classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_exists_NegLogDerivVerticalLogBound
+    hregular
+    (negLogDerivVerticalLogBound_of_high_height_log_abs_bound hB hhigh)
+
+/-- Direct final assembly from an existential regular-part estimate and a
+future high-height `B * log |t|` estimate for `Re(-ζ'/ζ)`. -/
+lemma classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_high_height_reNegDerivDiv_bound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        LogDerivRegularPartLogBound Bregular Tregular)
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re ≤
+          B * Real.log |t|) :
+    classical_zero_free_region :=
+  classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_exists_ReNegDerivDivVerticalLogBound
+    hregular
+    (reNegDerivDivVerticalLogBound_of_high_height_log_abs_bound hB hhigh)
+
+/-- Multiplicity-aware direct final assembly from a future high-height
+`Re(-ζ'/ζ)` estimate. -/
+lemma classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_high_height_reNegDerivDiv_bound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        MultiplicityLogDerivRegularPartLogBound Bregular Tregular)
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re ≤
+          B * Real.log |t|) :
+    classical_zero_free_region :=
+  classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_exists_ReNegDerivDivVerticalLogBound
+    hregular
+    (reNegDerivDivVerticalLogBound_of_high_height_log_abs_bound hB hhigh)
+
 /-- Compact patch preserving the exact `C * log |t|` scale for the norm of
 `logDeriv ζ` at `σ + 2it`, provided `H >= 3`. -/
 lemma exists_norm_logDeriv_riemannZeta_sigma_two_it_log_abs_bound_of_high_height_log_abs_bound

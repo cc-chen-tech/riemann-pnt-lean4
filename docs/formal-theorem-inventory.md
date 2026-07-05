@@ -1613,6 +1613,12 @@ Core verified declarations:
   `RiemannPNT.API.classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_exists_NegLogDerivVerticalLogBound`
   expose the corresponding different-cutoff existential signed-vertical
   assemblies.
+- `RiemannPNT.API.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_high_height_logDeriv_bound`,
+  `RiemannPNT.API.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_high_height_negLogDeriv_bound`,
+  and
+  `RiemannPNT.API.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_high_height_reNegDerivDiv_bound`
+  expose the direct exact-scale high-height assemblies, together with their
+  multiplicity-aware analogues.
 - `re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_logDeriv_re_le_half_radius`
   and
   `re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_neg_logDeriv_re_le_half_radius`
@@ -2053,6 +2059,12 @@ Core verified declarations:
   turns a stable base truncation identity plus a vanishing new-zero
   contribution tail into the corrected height-truncated explicit-formula
   target.
+- `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_tendsto_zero`,
+  `explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution_norm_le`,
+  and
+  `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_isBigO_tendsto_zero`
+  expose the same direct contribution-tail bridge in the norm, eventual-bound,
+  and Big-O shapes normally produced by contour estimates.
 - `explicit_formula_von_mangoldt_of_base_and_eventually_no_new_zeros_via_contribution_tail`
   is the degenerate eventual-empty-new-zero specialization routed through the
   contribution-tail convergence theorem.  It is a finite-tail sanity bridge,

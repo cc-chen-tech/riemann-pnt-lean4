@@ -131,6 +131,16 @@ lower bound for `ζ`.  These theorems reduce the final target to standard
 complex-analysis-shaped zeta estimates; they still do not prove those
 primitive estimates.
 
+The even more direct wrappers
+`ZeroFreeRegion.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_high_height_logDeriv_bound`,
+`ZeroFreeRegion.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_high_height_negLogDeriv_bound`,
+and
+`ZeroFreeRegion.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_high_height_reNegDerivDiv_bound`,
+with their multiplicity-aware analogues, accept a future high-height
+`B log |t|` vertical estimate directly in the unsigned norm, signed norm, or
+exact real-part quotient convention.  These are proved bookkeeping bridges;
+the zeta-specific high-height estimates remain open analytic inputs.
+
 The same named interfaces are also monotone in the bound constant:
 `ZeroFreeRegion.logDerivVerticalLogBound_mono_const`,
 `ZeroFreeRegion.negLogDerivVerticalLogBound_mono_const`,

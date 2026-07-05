@@ -280,9 +280,16 @@ takes a base identity
 contribution
 `sum_{rho in nontrivialZerosFinset T \ nontrivialZerosFinset B} x^rho / rho`
 tends to zero, and returns `explicit_formula_von_mangoldt x hx`.  The wrapper
+`RiemannPNT.API.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_tendsto_zero`
+accepts the same tail convergence as a norm limit, and
+`RiemannPNT.API.explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution_norm_le`
+and
+`RiemannPNT.API.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_isBigO_tendsto_zero`
+accept the eventual-bound and Big-O forms expected from contour estimates.  The
+wrapper
 `RiemannPNT.API.explicit_formula_von_mangoldt_of_base_and_eventually_no_new_zeros_via_contribution_tail`
-is the degenerate eventual-empty-new-zero specialization.  Both remain
-conditional bridges around the finite truncation bookkeeping; neither supplies
+is the degenerate eventual-empty-new-zero specialization.  These remain
+conditional bridges around the finite truncation bookkeeping; none supplies
 Perron's formula or the true analytic tail estimate.
 
 The public facade also exposes
