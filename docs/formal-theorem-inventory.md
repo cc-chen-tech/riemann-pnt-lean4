@@ -1714,6 +1714,13 @@ Core verified declarations:
   `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_resolventLaplaceKernel`
   specialize that prototype kernel to the full finite-zero and new-zero
   contribution sums and averages.
+- `nontrivialZerosFinset_pair_sum_nonnegative_of_resolventLaplaceKernel`,
+  `nontrivialZerosFinset_pair_average_nonnegative_of_resolventLaplaceKernel`,
+  `nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_resolventLaplaceKernel`,
+  and
+  `nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_resolventLaplaceKernel`
+  expose the paired contribution versions for the single resolvent/Laplace
+  prototype.
 - `resolventLaplaceKernelCombo`,
   `resolventLaplaceKernelCombo_re_nonnegative_of_nonneg_re`,
   `resolventLaplaceKernelCombo_re_nonnegative_on_critical_strip`,
@@ -1749,6 +1756,13 @@ Core verified declarations:
   `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_affineResolventLaplaceKernel`
   specialize the single affine prototype kernel to the full finite-zero and
   new-zero contribution sums and averages.
+- `nontrivialZerosFinset_pair_sum_nonnegative_of_affineResolventLaplaceKernel`,
+  `nontrivialZerosFinset_pair_average_nonnegative_of_affineResolventLaplaceKernel`,
+  `nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_affineResolventLaplaceKernel`,
+  and
+  `nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_affineResolventLaplaceKernel`
+  expose the paired contribution versions for the single affine
+  resolvent/Laplace prototype.
 - `affineResolventLaplaceKernelCombo`,
   `affineResolventLaplaceKernelCombo_re_nonnegative_of_nonneg_re`,
   `affineResolventLaplaceKernelCombo_re_nonnegative_on_critical_strip`,
