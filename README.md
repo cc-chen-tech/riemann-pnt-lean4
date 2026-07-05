@@ -238,6 +238,8 @@ The project currently verifies several supporting statements, including:
   logarithmic-derivative detector inequality;
 - the algebraic lower-bound step that isolates one term from a nonnegative
   finite detector combination;
+- the BTY degree-16 detector lower bound for the first shifted
+  logarithmic-derivative term;
 - several zeta nonvanishing and pole-behavior wrappers from Mathlib;
 - the Gamma residue formula at negative integers and numerical special cases;
 - the compact zero-free region near `Re(s)=1` for each bounded height;
@@ -268,6 +270,7 @@ Lean declarations in `ZeroFreeRegion.lean` and
 | `ZeroFreeRegion.log_deriv_zeta_finset_series_identity` | `lemma` | Expands any finite logarithmic-derivative detector combination into one von Mangoldt Dirichlet series weighted by the corresponding finite cosine polynomial. | Removes the manual `hseries` input for finite detector combinations in the absolute-convergence half-plane. |
 | `ZeroFreeRegion.log_deriv_zeta_nonneg_finset_combination` / `...list_combination` | `lemma` | General finite trigonometric-detector skeleton: a finite logarithmic-derivative combination is nonnegative once it is identified with a von Mangoldt series weighted by a nonnegative trigonometric polynomial. | Abstracts the finite algebraic core behind possible Stechkin/Heath-Brown detector variants. |
 | `ZeroFreeRegion.finset_weighted_nonneg_term_lower_bound` | `lemma` | Isolates a selected term from a nonnegative finite weighted sum: if `0 ≤ ∑ a_k x_k` and `a_m > 0`, then `x_m ≥ -(∑_{k≠m} a_k x_k)/a_m`. | Algebraic step for turning finite detector nonnegativity into a lower bound for one chosen log-derivative term. |
+| `ZeroFreeRegion.log_deriv_zeta_term_lower_bound_of_finset_detector` / `log_deriv_zeta_bty_first_shift_lower_bound` | `lemma` | Turns a nonnegative finite trigonometric detector into a lower bound for a selected shifted log-derivative term, with a concrete BTY degree-16 specialization at `k=1`. | Higher-degree analogue of the classical 3-4-1 lower-bound rearrangement. |
 | `ZeroFreeRegion.log_deriv_zeta_nonneg_finset_combination_auto` / `...list_combination_auto` | `lemma` | Automatic finite detector versions: the series identity is discharged from `log_deriv_zeta_re_series`, leaving only the finite trigonometric-polynomial nonnegativity hypothesis. | First reusable Lean step toward higher-degree de la Vallee Poussin/Stechkin detector polynomials. |
 | `ZeroFreeRegion.trigPolynomial_nonneg_of_sq_certificate` / `...auto_of_sq_certificate` | `lemma` | Turns a finite cosine-square certificate for a detector polynomial into pointwise nonnegativity and then into the automatic finite detector inequality. | First certificate hook for detector nonnegativity. |
 | `ZeroFreeRegion.ComplexExpAbsSqCertificate` / `...complex_exp_abs_sq_certificate` | `abbrev` / `lemma` | Packages the certificate shape `P(θ)=‖∑ c_k exp(i k θ)‖²` and feeds it into the automatic finite detector theorem. | Matches the certificate style used by high-degree nonnegative trigonometric polynomials in Heath-Brown/Bellotti-Trudgian-Yang style arguments. |

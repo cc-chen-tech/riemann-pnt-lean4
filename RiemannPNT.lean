@@ -4521,6 +4521,20 @@ theorem finset_weighted_nonneg_term_lower_bound
   ZeroFreeRegion.finset_weighted_nonneg_term_lower_bound
     S a x hm ha hnonneg
 
+/-- Public lower bound for a selected shifted logarithmic-derivative term from
+any nonnegative finite trigonometric detector. -/
+theorem log_deriv_zeta_term_lower_bound_of_finset_detector
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ) (S : Finset ℕ) (a : ℕ → ℝ) {m : ℕ}
+    (hm : m ∈ S) (ha : 0 < a m)
+    (hpoly : ∀ θ : ℝ, 0 ≤ ∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ)) :
+    (-deriv riemannZeta ((σ : ℂ) + (m : ℂ) * Complex.I * t) /
+        riemannZeta ((σ : ℂ) + (m : ℂ) * Complex.I * t)).re ≥
+      - (∑ k ∈ S.erase m, a k *
+          (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t) /
+            riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re) / a m :=
+  ZeroFreeRegion.log_deriv_zeta_term_lower_bound_of_finset_detector
+    σ hσ t S a hm ha hpoly
+
 /-- Public automatic finite trigonometric-detector theorem: the required
 series identity is discharged from `log_deriv_zeta_re_series`. -/
 theorem log_deriv_zeta_nonneg_finset_combination_auto
@@ -4663,6 +4677,9 @@ theorem btyDetectorCoeff_zero : btyDetectorCoeff 0 = 1 :=
 theorem btyDetectorCoeff_one : btyDetectorCoeff 1 = (865534 : ℝ) / 497079 :=
   ZeroFreeRegion.btyDetectorCoeff_one
 
+theorem btyDetectorCoeff_one_pos : 0 < btyDetectorCoeff 1 :=
+  ZeroFreeRegion.btyDetectorCoeff_one_pos
+
 theorem btyDetectorCoeff_sum_one_to_K :
     (∑ k ∈ Finset.Icc 1 16, btyDetectorCoeff k) =
       (2919857 : ℝ) / 828465 :=
@@ -4671,6 +4688,9 @@ theorem btyDetectorCoeff_sum_one_to_K :
 theorem btyDetectorCoeff_eq_zero_of_seventeen_le {k : ℕ} (hk : 17 ≤ k) :
     btyDetectorCoeff k = 0 :=
   ZeroFreeRegion.btyDetectorCoeff_eq_zero_of_seventeen_le hk
+
+theorem one_mem_btyDetectorSupport : 1 ∈ btyDetectorSupport :=
+  ZeroFreeRegion.one_mem_btyDetectorSupport
 
 /-- Public finite real-coefficient exponential-square expansion as a double
 Fourier cosine sum. -/
@@ -4710,6 +4730,18 @@ theorem log_deriv_zeta_nonneg_bty_detector_from_scaled_certificate
           riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re :=
   ZeroFreeRegion.log_deriv_zeta_nonneg_bty_detector_from_scaled_certificate
     σ hσ t
+
+/-- Public lower bound for the first shifted logarithmic-derivative term
+obtained from the degree-16 BTY detector. -/
+theorem log_deriv_zeta_bty_first_shift_lower_bound
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ) :
+    (-deriv riemannZeta ((σ : ℂ) + (1 : ℂ) * Complex.I * t) /
+        riemannZeta ((σ : ℂ) + (1 : ℂ) * Complex.I * t)).re ≥
+      - (∑ k ∈ btyDetectorSupport.erase 1, btyDetectorCoeff k *
+          (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t) /
+            riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re) /
+        btyDetectorCoeff 1 :=
+  ZeroFreeRegion.log_deriv_zeta_bty_first_shift_lower_bound σ hσ t
 
 /-- Public constant-one complex-exponential certificate. -/
 theorem complexExpAbsSqCertificate_const_one :

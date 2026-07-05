@@ -46,6 +46,10 @@ Core verified declarations:
   isolates one selected term from any nonnegative finite weighted sum, the
   algebraic step used to turn detector nonnegativity into a lower bound for a
   chosen logarithmic-derivative term.
+- `log_deriv_zeta_term_lower_bound_of_finset_detector` and
+  `log_deriv_zeta_bty_first_shift_lower_bound`
+  apply that algebraic step to finite logarithmic-derivative detectors,
+  including a concrete BTY degree-16 lower bound for the first shifted term.
 - `log_deriv_zeta_nonneg_list_combination`
   is the list-indexed wrapper for the same detector skeleton.
 - `log_deriv_zeta_nonneg_finset_combination_auto` and

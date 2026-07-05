@@ -885,6 +885,25 @@ lemma finset_weighted_nonneg_term_lower_bound
     linarith
   exact (div_le_iff₀ ha).mpr (by simpa [mul_comm] using hmul)
 
+/-- Lower bound for a selected shifted logarithmic-derivative term from any
+nonnegative finite trigonometric detector. -/
+lemma log_deriv_zeta_term_lower_bound_of_finset_detector
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ) (S : Finset ℕ) (a : ℕ → ℝ) {m : ℕ}
+    (hm : m ∈ S) (ha : 0 < a m)
+    (hpoly : ∀ θ : ℝ, 0 ≤ ∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ)) :
+    (-deriv riemannZeta ((σ : ℂ) + (m : ℂ) * I * t) /
+        riemannZeta ((σ : ℂ) + (m : ℂ) * I * t)).re ≥
+      - (∑ k ∈ S.erase m, a k *
+          (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+            riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re) / a m := by
+  let x : ℕ → ℝ := fun k =>
+    (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+      riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re
+  change x m ≥ - (∑ k ∈ S.erase m, a k * x k) / a m
+  exact finset_weighted_nonneg_term_lower_bound S a x hm ha
+    (log_deriv_zeta_nonneg_finset_combination σ hσ t S a
+      (log_deriv_zeta_finset_series_identity σ hσ t S a) hpoly)
+
 /-- List-indexed wrapper for `log_deriv_zeta_nonneg_finset_combination`. -/
 lemma log_deriv_zeta_nonneg_list_combination
     (σ : ℝ) (hσ : 1 < σ) (t : ℝ) (ks : List ℕ) (a : ℕ → ℝ)
@@ -1194,6 +1213,11 @@ lemma btyDetectorCoeff_zero : btyDetectorCoeff 0 = 1 := by
 lemma btyDetectorCoeff_one : btyDetectorCoeff 1 = (865534 : ℝ) / 497079 := by
   norm_num [btyDetectorCoeff, btyRawCoeff, btyDetectorScale]
 
+/-- Positivity of the first BTY cosine coefficient. -/
+lemma btyDetectorCoeff_one_pos : 0 < btyDetectorCoeff 1 := by
+  rw [btyDetectorCoeff_one]
+  norm_num
+
 /-- BTY's quoted coefficient sum `sum_{1 <= k <= 16} a_k = 2919857 / 828465`. -/
 lemma btyDetectorCoeff_sum_one_to_K :
     (∑ k ∈ Finset.Icc 1 16, btyDetectorCoeff k) =
@@ -1212,6 +1236,10 @@ lemma btyDetectorCoeff_eq_zero_of_seventeen_le {k : ℕ} (hk : 17 ≤ k) :
   have hk_ne : k ≠ 0 := by omega
   have hsub : 17 - k = 0 := Nat.sub_eq_zero_of_le hk
   simp [btyDetectorCoeff, hk_ne, hsub]
+
+/-- The first shifted term belongs to the BTY detector support. -/
+lemma one_mem_btyDetectorSupport : 1 ∈ btyDetectorSupport := by
+  simp [btyDetectorSupport]
 
 set_option maxHeartbeats 800000 in
 /-- The BTY cosine coefficients regroup the exponential-square double sum. -/
@@ -1277,6 +1305,25 @@ lemma log_deriv_zeta_nonneg_bty_detector_from_scaled_certificate
     σ hσ t btyDetectorScale btyDetectorSupport btyExpSupport
     btyDetectorCoeff btyExpCoeff btyDetectorScale_pos
     btyScaledComplexExpAbsSqCertificate
+
+/-- Lower bound for the first shifted logarithmic-derivative term obtained from
+the degree-16 BTY detector. -/
+lemma log_deriv_zeta_bty_first_shift_lower_bound
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ) :
+    (-deriv riemannZeta ((σ : ℂ) + (1 : ℂ) * I * t) /
+        riemannZeta ((σ : ℂ) + (1 : ℂ) * I * t)).re ≥
+      - (∑ k ∈ btyDetectorSupport.erase 1, btyDetectorCoeff k *
+          (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+            riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re) /
+        btyDetectorCoeff 1 := by
+  let x : ℕ → ℝ := fun k =>
+    (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+      riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re
+  have hbound := finset_weighted_nonneg_term_lower_bound
+    btyDetectorSupport btyDetectorCoeff x one_mem_btyDetectorSupport
+    btyDetectorCoeff_one_pos
+    (log_deriv_zeta_nonneg_bty_detector_from_scaled_certificate σ hσ t)
+  simpa [x] using hbound
 
 /-- Minimal concrete complex-exponential absolute-square certificate:
 `1 = ‖exp(0)‖^2`.  This is a template for later finite coefficient-table
