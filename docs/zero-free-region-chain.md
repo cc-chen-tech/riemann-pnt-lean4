@@ -73,6 +73,17 @@ named regular-part estimates plus the named vertical estimate.  This is still
 conditional: those two zeta-specific high-height estimates are not proved in
 this checkout.
 
+The two hard inputs do not need to share the same cutoff.  The monotonicity
+lemmas `ZeroFreeRegion.logDerivVerticalLogBound_mono_height`,
+`ZeroFreeRegion.logDerivRegularPartLogBound_mono_height`, and
+`ZeroFreeRegion.multiplicityLogDerivRegularPartLogBound_mono_height` allow the
+cutoff to be raised, and the existential closures
+`ZeroFreeRegion.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_exists_LogDerivVerticalLogBound`
+and
+`ZeroFreeRegion.classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_exists_LogDerivVerticalLogBound`
+merge separately proved high-height regular-part and vertical estimates by
+taking the maximum cutoff.
+
 ## Verified Starting Points
 
 The following declarations are available in the current checkout:

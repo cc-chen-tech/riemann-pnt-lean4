@@ -3934,6 +3934,50 @@ lemma logDerivVerticalLogBound_of_negLogDerivVerticalLogBound
         = ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ := (norm_neg _).symm
     _ ≤ C * Real.log |t| := hbound σ t hσ_left hσ_right ht
 
+/-- A named vertical logarithmic-derivative bound remains valid after raising
+the high-height cutoff. -/
+lemma logDerivVerticalLogBound_mono_height
+    {C T0 T1 : ℝ} (h : LogDerivVerticalLogBound C T0)
+    (hT : T0 ≤ T1) :
+    LogDerivVerticalLogBound C T1 := by
+  rcases h with ⟨hC, hT0, hbound⟩
+  refine ⟨hC, le_trans hT0 hT, ?_⟩
+  intro σ t hσ_left hσ_right ht
+  exact hbound σ t hσ_left hσ_right (le_trans hT ht)
+
+/-- A named zero-candidate regular-part bound remains valid after raising the
+high-height cutoff. -/
+lemma logDerivRegularPartLogBound_mono_height
+    {C T0 T1 : ℝ} (h : LogDerivRegularPartLogBound C T0)
+    (hT : T0 ≤ T1) :
+    LogDerivRegularPartLogBound C T1 := by
+  rcases h with ⟨hC, hT0, hbound⟩
+  refine ⟨hC, le_trans hT0 hT, ?_⟩
+  intro σ β t hσ_left hσ_right ht hζ hβ hsub
+  exact hbound σ β t hσ_left hσ_right (le_trans hT ht) hζ hβ hsub
+
+/-- A simple-principal-part regular estimate is a multiplicity-aware estimate
+with multiplicity `1`. -/
+lemma multiplicityLogDerivRegularPartLogBound_of_logDerivRegularPartLogBound
+    {C T0 : ℝ} (h : LogDerivRegularPartLogBound C T0) :
+    MultiplicityLogDerivRegularPartLogBound C T0 := by
+  rcases h with ⟨hC, hT0, hbound⟩
+  refine ⟨hC, hT0, ?_⟩
+  intro σ β t hσ_left hσ_right ht hζ hβ hsub
+  refine ⟨1, by norm_num, ?_⟩
+  simpa using hbound σ β t hσ_left hσ_right ht hζ hβ hsub
+
+/-- A named multiplicity-aware zero-candidate regular-part bound remains valid
+after raising the high-height cutoff. -/
+lemma multiplicityLogDerivRegularPartLogBound_mono_height
+    {C T0 T1 : ℝ} (h : MultiplicityLogDerivRegularPartLogBound C T0)
+    (hT : T0 ≤ T1) :
+    MultiplicityLogDerivRegularPartLogBound C T1 := by
+  rcases h with ⟨hC, hT0, hbound⟩
+  refine ⟨hC, le_trans hT0 hT, ?_⟩
+  intro σ β t hσ_left hσ_right ht hζ hβ hsub
+  exact hbound σ β t hσ_left hσ_right (le_trans hT ht) hζ hβ hsub
+
 /-- Named-input assembly of the two remaining high-height analytic estimates
 into the classical zero-free-region target.
 
@@ -3972,6 +4016,52 @@ lemma classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_and_
     exact hregular σ β t hσ_mem.1 hσ_mem.2 ht hζ hβ hsub
   · intro σ t ht hσ_mem
     exact hvertical σ t hσ_mem.1 hσ_mem.2 ht
+
+/-- Existential named-input assembly when the regular-part and vertical
+estimates are proved above different high-height cutoffs. -/
+lemma classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_exists_LogDerivVerticalLogBound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        LogDerivRegularPartLogBound Bregular Tregular)
+    (hvertical :
+      ∃ Bvertical Tvertical : ℝ,
+        LogDerivVerticalLogBound Bvertical Tvertical) :
+    classical_zero_free_region := by
+  rcases hregular with ⟨Bregular, Tregular, hregular⟩
+  rcases hvertical with ⟨Bvertical, Tvertical, hvertical⟩
+  let T : ℝ := max Tregular Tvertical
+  have hregularT : LogDerivRegularPartLogBound Bregular T :=
+    logDerivRegularPartLogBound_mono_height hregular
+      (le_max_left Tregular Tvertical)
+  have hverticalT : LogDerivVerticalLogBound Bvertical T :=
+    logDerivVerticalLogBound_mono_height hvertical
+      (le_max_right Tregular Tvertical)
+  exact
+    classical_zero_free_region_of_LogDerivRegularPartLogBound_and_LogDerivVerticalLogBound
+      hregularT hverticalT
+
+/-- Multiplicity-aware existential named-input assembly when the regular-part
+and vertical estimates are proved above different high-height cutoffs. -/
+lemma classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_exists_LogDerivVerticalLogBound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        MultiplicityLogDerivRegularPartLogBound Bregular Tregular)
+    (hvertical :
+      ∃ Bvertical Tvertical : ℝ,
+        LogDerivVerticalLogBound Bvertical Tvertical) :
+    classical_zero_free_region := by
+  rcases hregular with ⟨Bregular, Tregular, hregular⟩
+  rcases hvertical with ⟨Bvertical, Tvertical, hvertical⟩
+  let T : ℝ := max Tregular Tvertical
+  have hregularT : MultiplicityLogDerivRegularPartLogBound Bregular T :=
+    multiplicityLogDerivRegularPartLogBound_mono_height hregular
+      (le_max_left Tregular Tvertical)
+  have hverticalT : LogDerivVerticalLogBound Bvertical T :=
+    logDerivVerticalLogBound_mono_height hvertical
+      (le_max_right Tregular Tvertical)
+  exact
+    classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_and_LogDerivVerticalLogBound
+      hregularT hverticalT
 
 /-- Standalone normalization of a future vertical-strip log-derivative
 estimate already stated in the safe height scale `A + B * log(|t| + 3)`.

@@ -47,6 +47,37 @@ theorem logDerivVerticalLogBound_of_negLogDerivVerticalLogBound
     LogDerivVerticalLogBound C T0 :=
   ZeroFreeRegion.logDerivVerticalLogBound_of_negLogDerivVerticalLogBound h
 
+/-- Public monotonicity in the high-height cutoff for the named vertical
+logarithmic-derivative bound. -/
+theorem logDerivVerticalLogBound_mono_height
+    {C T0 T1 : ℝ} (h : LogDerivVerticalLogBound C T0)
+    (hT : T0 ≤ T1) :
+    LogDerivVerticalLogBound C T1 :=
+  ZeroFreeRegion.logDerivVerticalLogBound_mono_height h hT
+
+/-- Public monotonicity in the high-height cutoff for the named regular-part
+bound. -/
+theorem logDerivRegularPartLogBound_mono_height
+    {C T0 T1 : ℝ} (h : LogDerivRegularPartLogBound C T0)
+    (hT : T0 ≤ T1) :
+    LogDerivRegularPartLogBound C T1 :=
+  ZeroFreeRegion.logDerivRegularPartLogBound_mono_height h hT
+
+/-- Public conversion from the simple-principal-part regular estimate to the
+multiplicity-aware regular estimate. -/
+theorem multiplicityLogDerivRegularPartLogBound_of_logDerivRegularPartLogBound
+    {C T0 : ℝ} (h : LogDerivRegularPartLogBound C T0) :
+    MultiplicityLogDerivRegularPartLogBound C T0 :=
+  ZeroFreeRegion.multiplicityLogDerivRegularPartLogBound_of_logDerivRegularPartLogBound h
+
+/-- Public monotonicity in the high-height cutoff for the multiplicity-aware
+regular-part bound. -/
+theorem multiplicityLogDerivRegularPartLogBound_mono_height
+    {C T0 T1 : ℝ} (h : MultiplicityLogDerivRegularPartLogBound C T0)
+    (hT : T0 ≤ T1) :
+    MultiplicityLogDerivRegularPartLogBound C T1 :=
+  ZeroFreeRegion.multiplicityLogDerivRegularPartLogBound_mono_height h hT
+
 /-- Public named-input assembly of the two remaining high-height analytic
 estimates into the classical zero-free-region target. -/
 theorem classical_zero_free_region_of_LogDerivRegularPartLogBound_and_LogDerivVerticalLogBound
@@ -65,6 +96,32 @@ theorem classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_an
     (hvertical : LogDerivVerticalLogBound Bvertical T0) :
     ZeroFreeRegion.classical_zero_free_region :=
   ZeroFreeRegion.classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_and_LogDerivVerticalLogBound
+    hregular hvertical
+
+/-- Public existential named-input assembly when the regular-part and vertical
+estimates have different high-height cutoffs. -/
+theorem classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_exists_LogDerivVerticalLogBound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        LogDerivRegularPartLogBound Bregular Tregular)
+    (hvertical :
+      ∃ Bvertical Tvertical : ℝ,
+        LogDerivVerticalLogBound Bvertical Tvertical) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_exists_LogDerivVerticalLogBound
+    hregular hvertical
+
+/-- Public multiplicity-aware existential named-input assembly when the
+regular-part and vertical estimates have different high-height cutoffs. -/
+theorem classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_exists_LogDerivVerticalLogBound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        MultiplicityLogDerivRegularPartLogBound Bregular Tregular)
+    (hvertical :
+      ∃ Bvertical Tvertical : ℝ,
+        LogDerivVerticalLogBound Bvertical Tvertical) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_exists_LogDerivVerticalLogBound
     hregular hvertical
 
 /-- Public compatibility bridge between the project's prime-counting

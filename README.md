@@ -127,7 +127,11 @@ without explicit zero multiplicity.  The verified conditional closures
 and
 `ZeroFreeRegion.classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_and_LogDerivVerticalLogBound`
 show that these named regular-part inputs plus the named vertical bound close
-the existing Lean target `classical_zero_free_region`.
+the existing Lean target `classical_zero_free_region`.  The existential
+wrappers
+`ZeroFreeRegion.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_exists_LogDerivVerticalLogBound`
+and the multiplicity-aware analogue also allow the two estimates to be proved
+above different height cutoffs, merging the cutoffs by `max`.
 
 Mathematically, that regular-part estimate has the shape:
 
@@ -440,6 +444,8 @@ Lean declarations in `ZeroFreeRegion.lean` and
 | `ZeroFreeRegion.classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height` | `lemma` | Existential wrapper for the unit-principal coordinate high-height closure. | Single-entry target when the regular-part and vertical estimates are produced together in real coordinates. |
 | `ZeroFreeRegion.LogDerivRegularPartLogBound` / `ZeroFreeRegion.MultiplicityLogDerivRegularPartLogBound` | `abbrev : Prop` | Names the high-height zero-candidate regular-part `O(log |t|)` estimate, in simple-principal-part and multiplicity-aware forms. | Makes the second remaining hard analytic input as explicit as the vertical `LogDerivVerticalLogBound` interface. |
 | `ZeroFreeRegion.classical_zero_free_region_of_LogDerivRegularPartLogBound_and_LogDerivVerticalLogBound` / multiplicity-aware variant | `lemma` | Assembles the named regular-part input and named vertical log-derivative input into `classical_zero_free_region`. | Proves the current Lean zero-free chain is closed modulo exactly those two zeta-specific high-height estimates. |
+| `ZeroFreeRegion.logDerivVerticalLogBound_mono_height` / `ZeroFreeRegion.logDerivRegularPartLogBound_mono_height` / multiplicity analogue | `lemma` | Shows the named high-height estimates remain valid after raising the cutoff. | Lets independently proved analytic estimates with different `T0` values be merged without changing their constants. |
+| `ZeroFreeRegion.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_exists_LogDerivVerticalLogBound` / multiplicity-aware variant | `lemma` | Takes separate existential regular-part and vertical log-derivative bounds, possibly with different cutoffs, and derives `classical_zero_free_region`. | The cleanest current conditional statement: the classical target follows from exactly the two named high-height estimates. |
 | `ZeroFreeRegion.classical_zero_free_region_of_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height` | `lemma` | High-height closure whose regular-part input may isolate `n/(s-ρ)` for a positive zero multiplicity, plus the vertical-strip `logDeriv` norm bound. | Aligns the final high-height conditional interface with the multiplicity-weighted local principal-part decomposition, avoiding a hidden simple-zero assumption. |
 | `ZeroFreeRegion.classical_zero_free_region_of_exists_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height` | `lemma` | Existential packaging of the multiplicity-aware high-height regular-part and vertical-strip norm inputs. | Single-entry high-height conditional interface for future multiplicity-aware Borel/Jensen estimates. |
 | `ZeroFreeRegion.classical_zero_free_region_of_re_im_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height` | `lemma` | Coordinate version of the multiplicity-aware high-height closure, with estimates stated in real variables `σ, β, t`. | Lets future estimates written directly for `σ+it` and same-height zero candidates `β+it` feed the multiplicity-aware bridge. |

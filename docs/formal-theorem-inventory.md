@@ -986,12 +986,26 @@ Core verified declarations:
   `Re(-zeta'/zeta)` interface.
 - `logDerivVerticalLogBound_of_negLogDerivVerticalLogBound`
   turns the named signed norm interface into the unsigned norm interface.
+- `logDerivVerticalLogBound_mono_height`,
+  `logDerivRegularPartLogBound_mono_height`, and
+  `multiplicityLogDerivRegularPartLogBound_mono_height`
+  show the named high-height estimates remain valid after raising the cutoff.
+- `multiplicityLogDerivRegularPartLogBound_of_logDerivRegularPartLogBound`
+  turns the simple-principal-part regular estimate into the
+  multiplicity-aware form with multiplicity `1`.
 - `classical_zero_free_region_of_LogDerivRegularPartLogBound_and_LogDerivVerticalLogBound`
   assembles the named regular-part interface and named vertical interface into
   the classical zero-free-region target.
 - `classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_and_LogDerivVerticalLogBound`
   is the same named-input assembly with zero multiplicity in the local
   principal part.
+- `classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_exists_LogDerivVerticalLogBound`
+  allows the regular-part and vertical estimates to be supplied
+  existentially with different high-height cutoffs, then merges the cutoffs by
+  taking their maximum.
+- `classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_exists_LogDerivVerticalLogBound`
+  is the multiplicity-aware version of that different-cutoff existential
+  assembly.
 - `exists_re_im_logDeriv_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height`
   converts a future boundary-strip estimate
   `||logDeriv zeta (sigma+it)|| <= A + B log(|t|+3)` into the exact
