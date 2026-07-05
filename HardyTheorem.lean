@@ -423,6 +423,16 @@ lemma hardyZ_zero_codiscrete_of_critical_line_zeta_zero_codiscrete
     {t : ℝ | hardyZ t = 0}ᶜ ∈ Filter.codiscrete ℝ :=
   hardyZ_zero_codiscrete_iff_critical_line_zeta_zero_codiscrete.mpr h
 
+lemma critical_line_zeta_zero_codiscrete_of_finite
+    (h : {t : ℝ | riemannZeta (0.5 + I * t) = 0}.Finite) :
+    {t : ℝ | riemannZeta (0.5 + I * t) = 0}ᶜ ∈ Filter.codiscrete ℝ :=
+  h.compl_mem_codiscrete
+
+lemma hardyZ_zero_codiscrete_of_finite
+    (h : {t : ℝ | hardyZ t = 0}.Finite) :
+    {t : ℝ | hardyZ t = 0}ᶜ ∈ Filter.codiscrete ℝ :=
+  h.compl_mem_codiscrete
+
 /-- Z(t) 是连续函数 -/
 theorem hardyZ_continuous : Continuous hardyZ := by
   have h_eq : ∀ t : ℝ, hardyZ t = (completedRiemannZeta ((0.5 : ℂ) + I * t)).re / ‖Gammaℝ ((0.5 : ℂ) + I * t)‖ := by

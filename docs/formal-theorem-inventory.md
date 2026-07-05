@@ -2078,6 +2078,8 @@ Core verified declarations:
 - `hardyZ_zero_codiscrete_iff_critical_line_zeta_zero_codiscrete`
 - `critical_line_zeta_zero_codiscrete_of_hardyZ_zero_codiscrete`
 - `hardyZ_zero_codiscrete_of_critical_line_zeta_zero_codiscrete`
+- `critical_line_zeta_zero_codiscrete_of_finite`
+- `hardyZ_zero_codiscrete_of_finite`
 - `hardy_theorem_target_iff_abs_unbounded_of_codiscrete`
 - `hardy_theorem_target_iff_unbounded_of_codiscrete`
 - `hardy_theorem_target_iff_hardyZ_abs_unbounded_of_hardyZ_codiscrete`
