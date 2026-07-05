@@ -60,6 +60,27 @@ Verified assets now include:
   `log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_right_shift_borel_family_simplified`;
 - the signed simplified Borel facade added on this branch:
   `log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_signed_right_shift_borel_family_simplified`;
+- the finite-family right-shifted Borel quotient bridges:
+  `re_neg_deriv_div_riemannZeta_finset_right_shift_le_log_norm_of_affine_logDeriv_re_le_half_radius`
+  and
+  `re_neg_deriv_div_riemannZeta_finset_right_shift_le_log_norm_of_affine_neg_logDeriv_re_le_half_radius`;
+- the finite detector/Borel-family bridges:
+  `log_deriv_zeta_finset_single_lower_bound_auto_of_right_shift_borel_family`
+  and
+  `log_deriv_zeta_finset_single_lower_bound_auto_of_signed_right_shift_borel_family`;
+- the uniform BTY finite-family Borel bridges:
+  `log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_right_shift_borel_family`
+  and
+  `log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_signed_right_shift_borel_family`;
+- the named-interface constructors from future high-height `B * log |t|`
+  estimates:
+  `logDerivVerticalLogBound_of_high_height_log_abs_bound`,
+  `negLogDerivVerticalLogBound_of_high_height_log_abs_bound`, and
+  `reNegDerivDivVerticalLogBound_of_high_height_log_abs_bound`;
+- the direct affine-high-height-to-BTY fixed-margin bridges:
+  `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_affine_log_abs_add_three_bound_high_height`
+  and
+  `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_affine_log_abs_add_three_bound_high_height_simplified`;
 - the polynomial-growth-to-`log |t|` zeta handoff:
   `log_norm_riemannZeta_sigma_it_le_affine_log_abs_of_polynomial_growth`.
 

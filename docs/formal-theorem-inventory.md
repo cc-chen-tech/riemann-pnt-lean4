@@ -1075,6 +1075,13 @@ Core verified declarations:
 - `reNegDerivDivVerticalLogBound_of_high_height_log_abs_bound`
   packages a future exact-scale real-part quotient estimate directly as the
   named `ReNegDerivDivVerticalLogBound` interface.
+- `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_affine_log_abs_add_three_bound_high_height`
+  composes that affine high-height normalizer directly with the fixed-margin
+  BTY detector handoff, preserving the normalized `LogDerivVerticalLogBound`
+  constants for downstream use.
+- `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_affine_log_abs_add_three_bound_high_height_simplified`
+  is the same direct affine-high-height-to-BTY bridge with the nonzero detector
+  coefficient sum evaluated explicitly.
 - `exists_re_im_logDeriv_vertical_log_bound_of_log_abs_add_three_bound_high_height`
   is the multiplicative `C log(|t|+3)` version of that normalizer.
 - `exists_re_im_neg_logDeriv_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height`
@@ -1480,8 +1487,20 @@ Core verified declarations:
   exposes the mixed BTY entrypoint that consumes a future named vertical
   logarithmic-derivative estimate plus a separate central-term bound.
 - `RiemannPNT.API.exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_LogDerivVerticalLogBound`
-  exposes the fixed-margin version with the central term discharged by the
-  existing `Re(s) >= 1 + epsilon` quotient estimate.
+  composes that mixed BTY handoff with the proved fixed-margin
+  `Re(s) >= 1 + epsilon` logarithmic-derivative estimate, using the height-zero
+  bound to discharge the central `k = 0` term automatically.  This is still a
+  fixed-margin result, not the classical shrinking-width zero-free-region
+  estimate.
+- `RiemannPNT.API.exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_LogDerivVerticalLogBound_simplified`
+  keeps the same fixed-margin hypotheses and central-term discharge, but
+  exposes the evaluated nonzero-frequency coefficient sum in the final lower
+  bound.
+- `RiemannPNT.API.exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_affine_log_abs_add_three_bound_high_height`
+  and
+  `RiemannPNT.API.exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_affine_log_abs_add_three_bound_high_height_simplified`
+  let future affine `A + B log(|t|+3)` high-height `logDeriv zeta` estimates
+  feed the same fixed-margin BTY lower-bound interface directly.
 - `re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_logDeriv_re_le_half_radius`
   and
   `re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_neg_logDeriv_re_le_half_radius`
