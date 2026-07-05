@@ -7279,6 +7279,106 @@ lemma borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs
       simp [A0, B0]
       ring
 
+/-- Right-shifted Borel transfer normalized to `log |t|`, with real-part and
+center inputs stated in the safer `log(|t|+3)` scale. -/
+lemma borelCaratheodory_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_log_abs_add_three_re_le_half_radius
+    {Are Bre Acenter Bcenter r H σ t : ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3)
+    (hHpos : 0 < H) (hH : H + 2 * r ≤ |t|) (ht : 6 ≤ |t|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hM : 0 < Are + Bre * Real.log (|t| + 3))
+    (hBre_nonneg : 0 ≤ Bre) (hBcenter_nonneg : 0 ≤ Bcenter)
+    (hlog : ∀ w : ℂ,
+      w ∈ ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r) →
+        (logDeriv riemannZeta w).re ≤
+          Are + Bre * Real.log (|t| + 3))
+    (hcenter :
+      ‖logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + I * t)‖ ≤
+        Acenter + Bcenter * Real.log (|t| + 3)) :
+    ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+      ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+        Real.log |t| := by
+  let ellAbs : ℝ := Real.log (|t| + 3)
+  let ellNorm : ℝ := Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3)
+  have hAbs_le_norm : ellAbs ≤ ellNorm := by
+    simpa [ellAbs, ellNorm] using
+      (log_abs_add_three_le_log_norm_sigma_add_I_mul_add_three
+        (σ := σ + r) (t := t))
+  have hM_full : 0 < Are + Bre * ellNorm := by
+    have hle : Are + Bre * ellAbs ≤ Are + Bre * ellNorm := by
+      nlinarith [mul_le_mul_of_nonneg_left hAbs_le_norm hBre_nonneg]
+    exact lt_of_lt_of_le (by simpa [ellAbs] using hM) hle
+  have hlog_full :
+      ∀ w : ℂ,
+        w ∈ ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r) →
+          (logDeriv riemannZeta w).re ≤ Are + Bre * ellNorm := by
+    intro w hw
+    have hle : Are + Bre * ellAbs ≤ Are + Bre * ellNorm := by
+      nlinarith [mul_le_mul_of_nonneg_left hAbs_le_norm hBre_nonneg]
+    exact le_trans (by simpa [ellAbs] using hlog w hw) hle
+  have hcenter_full :
+      ‖logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + I * t)‖ ≤
+        Acenter + Bcenter * ellNorm := by
+    have hle : Acenter + Bcenter * ellAbs ≤ Acenter + Bcenter * ellNorm := by
+      nlinarith [mul_le_mul_of_nonneg_left hAbs_le_norm hBcenter_nonneg]
+    exact le_trans (by simpa [ellAbs] using hcenter) hle
+  simpa [ellNorm] using
+    (borelCaratheodory_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius
+      (Are := Are) (Bre := Bre) (Acenter := Acenter)
+      (Bcenter := Bcenter) (r := r) (H := H) (σ := σ) (t := t)
+      hr hσ hσr hHpos hH ht hA hB hM_full hlog_full hcenter_full)
+
+/-- Signed right-shifted Borel transfer normalized to `log |t|`, with
+real-part and center inputs stated in the safer `log(|t|+3)` scale. -/
+lemma borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_log_abs_add_three_re_le_half_radius
+    {Are Bre Acenter Bcenter r H σ t : ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3)
+    (hHpos : 0 < H) (hH : H + 2 * r ≤ |t|) (ht : 6 ≤ |t|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hM : 0 < Are + Bre * Real.log (|t| + 3))
+    (hBre_nonneg : 0 ≤ Bre) (hBcenter_nonneg : 0 ≤ Bcenter)
+    (hlog : ∀ w : ℂ,
+      w ∈ ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r) →
+        (-logDeriv riemannZeta w).re ≤
+          Are + Bre * Real.log (|t| + 3))
+    (hcenter :
+      ‖-logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + I * t)‖ ≤
+        Acenter + Bcenter * Real.log (|t| + 3)) :
+    ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+      ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+        Real.log |t| := by
+  let ellAbs : ℝ := Real.log (|t| + 3)
+  let ellNorm : ℝ := Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3)
+  have hAbs_le_norm : ellAbs ≤ ellNorm := by
+    simpa [ellAbs, ellNorm] using
+      (log_abs_add_three_le_log_norm_sigma_add_I_mul_add_three
+        (σ := σ + r) (t := t))
+  have hM_full : 0 < Are + Bre * ellNorm := by
+    have hle : Are + Bre * ellAbs ≤ Are + Bre * ellNorm := by
+      nlinarith [mul_le_mul_of_nonneg_left hAbs_le_norm hBre_nonneg]
+    exact lt_of_lt_of_le (by simpa [ellAbs] using hM) hle
+  have hlog_full :
+      ∀ w : ℂ,
+        w ∈ ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r) →
+          (-logDeriv riemannZeta w).re ≤ Are + Bre * ellNorm := by
+    intro w hw
+    have hle : Are + Bre * ellAbs ≤ Are + Bre * ellNorm := by
+      nlinarith [mul_le_mul_of_nonneg_left hAbs_le_norm hBre_nonneg]
+    exact le_trans (by simpa [ellAbs] using hlog w hw) hle
+  have hcenter_full :
+      ‖-logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + I * t)‖ ≤
+        Acenter + Bcenter * ellNorm := by
+    have hle : Acenter + Bcenter * ellAbs ≤ Acenter + Bcenter * ellNorm := by
+      nlinarith [mul_le_mul_of_nonneg_left hAbs_le_norm hBcenter_nonneg]
+    exact le_trans (by simpa [ellAbs] using hcenter) hle
+  simpa [ellNorm] using
+    (borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius
+      (Are := Are) (Bre := Bre) (Acenter := Acenter)
+      (Bcenter := Bcenter) (r := r) (H := H) (σ := σ) (t := t)
+      hr hσ hσr hHpos hH ht hA hB hM_full hlog_full hcenter_full)
+
 /-- Right-shifted Borel transfer in the full complex-height logarithmic scale.
 This is a direct weakening of
 `borelCaratheodory_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`

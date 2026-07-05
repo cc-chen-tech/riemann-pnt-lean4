@@ -296,7 +296,12 @@ proved:
   and
   `ZeroFreeRegion.borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`
   convert those right-shifted outputs to the pure `C log |t|` scale once the
-  same local hypotheses are supplied.  The reverse comparison
+  same local hypotheses are supplied.  The variants
+  `ZeroFreeRegion.borelCaratheodory_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_log_abs_add_three_re_le_half_radius`
+  and
+  `ZeroFreeRegion.borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_log_abs_add_three_re_le_half_radius`
+  accept those local hypotheses directly in the safer `log(|t|+3)` height
+  scale.  The reverse comparison
   `ZeroFreeRegion.log_abs_le_log_norm_sigma_add_I_mul_add_three`, together with
   `ZeroFreeRegion.borelCaratheodory_logDeriv_riemannZeta_sigma_it_right_shift_le_log_norm_of_affine_re_le_half_radius`
   and

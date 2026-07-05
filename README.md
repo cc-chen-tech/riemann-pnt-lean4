@@ -131,9 +131,10 @@ turns the same input into
 stays in the high vertical strip.  The Borel-Caratheodory side now also has
 positive and signed `logDeriv ζ` half-radius bridges, including centered
 oscillation versions, whose real-part and center hypotheses are already stated
-in the `log(|t|+3)` height scale.  These handoff lemmas do not prove the
-missing polynomial growth or boundary-strip logarithmic-derivative estimate
-itself.  On the pole side, the local decomposition
+in the `log(|t|+3)` height scale; right-shifted versions convert such local
+inputs into pure `C log |t|` outputs at `σ+it`.  These handoff lemmas do not
+prove the missing polynomial growth or boundary-strip logarithmic-derivative
+estimate itself.  On the pole side, the local decomposition
 `logDeriv ζ(s) = -(s-1)^-1 + logDeriv(unit)(s)` is now proved near `s=1`,
 and the unit logarithmic derivative is locally bounded; this improves the
 real-axis bookkeeping but still does not supply the missing high-height

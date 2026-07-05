@@ -1283,6 +1283,11 @@ Core verified declarations:
   `borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`
   combine that right-shifted handoff with the wider logarithmic comparison,
   producing a pure `C log |t|` bound from the same local hypotheses.
+- `borelCaratheodory_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_log_abs_add_three_re_le_half_radius`
+  and
+  `borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_log_abs_add_three_re_le_half_radius`
+  are the same right-shifted pure `C log |t|` outputs, but with the local
+  real-part and center hypotheses already stated in the `log(|t|+3)` scale.
 - `borelCaratheodory_logDeriv_riemannZeta_sigma_it_right_shift_le_log_norm_of_affine_re_le_half_radius`
   and
   `borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_log_norm_of_affine_re_le_half_radius`

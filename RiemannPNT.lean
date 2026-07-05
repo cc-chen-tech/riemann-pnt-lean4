@@ -6993,6 +6993,52 @@ theorem borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_log_a
   ZeroFreeRegion.borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius
     hr hσ hσr hHpos hH ht hA hB hM hlog hcenter
 
+/-- Public right-shifted Borel transfer to the pure `log |t|` scale for
+`logDeriv ζ`, with local hypotheses stated in the `log(|t|+3)` scale. -/
+theorem borelCaratheodory_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_log_abs_add_three_re_le_half_radius
+    {Are Bre Acenter Bcenter r H σ t : ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3)
+    (hHpos : 0 < H) (hH : H + 2 * r ≤ |t|) (ht : 6 ≤ |t|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hM : 0 < Are + Bre * Real.log (|t| + 3))
+    (hBre_nonneg : 0 ≤ Bre) (hBcenter_nonneg : 0 ≤ Bcenter)
+    (hlog : ∀ w : ℂ,
+      w ∈ Metric.ball (((σ + r : ℝ) : ℂ) + Complex.I * t) (2 * r) →
+        (logDeriv riemannZeta w).re ≤
+          Are + Bre * Real.log (|t| + 3))
+    (hcenter :
+      ‖logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + Complex.I * t)‖ ≤
+        Acenter + Bcenter * Real.log (|t| + 3)) :
+    ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+      ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+        Real.log |t| :=
+  ZeroFreeRegion.borelCaratheodory_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_log_abs_add_three_re_le_half_radius
+    hr hσ hσr hHpos hH ht hA hB hM hBre_nonneg hBcenter_nonneg hlog hcenter
+
+/-- Public signed right-shifted Borel transfer to the pure `log |t|` scale
+for `-logDeriv ζ`, with local hypotheses stated in the `log(|t|+3)` scale. -/
+theorem borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_log_abs_add_three_re_le_half_radius
+    {Are Bre Acenter Bcenter r H σ t : ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3)
+    (hHpos : 0 < H) (hH : H + 2 * r ≤ |t|) (ht : 6 ≤ |t|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hM : 0 < Are + Bre * Real.log (|t| + 3))
+    (hBre_nonneg : 0 ≤ Bre) (hBcenter_nonneg : 0 ≤ Bcenter)
+    (hlog : ∀ w : ℂ,
+      w ∈ Metric.ball (((σ + r : ℝ) : ℂ) + Complex.I * t) (2 * r) →
+        (-logDeriv riemannZeta w).re ≤
+          Are + Bre * Real.log (|t| + 3))
+    (hcenter :
+      ‖-logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + Complex.I * t)‖ ≤
+        Acenter + Bcenter * Real.log (|t| + 3)) :
+    ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+      ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+        Real.log |t| :=
+  ZeroFreeRegion.borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_log_abs_add_three_re_le_half_radius
+    hr hσ hσr hHpos hH ht hA hB hM hBre_nonneg hBcenter_nonneg hlog hcenter
+
 /-- Public right-shifted Borel transfer in the full complex-height logarithmic
 scale for `logDeriv ζ`. -/
 theorem borelCaratheodory_logDeriv_riemannZeta_sigma_it_right_shift_le_log_norm_of_affine_re_le_half_radius
