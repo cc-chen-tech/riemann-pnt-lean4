@@ -1009,6 +1009,9 @@ Core verified declarations:
 - `log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_three_of_polynomial_growth`
   combines the zeta polynomial-growth handoff with the height comparison to
   produce the `log(|t|+3)` form on `1 <= sigma <= 2`.
+- `circleAverage_log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_radius_three_of_polynomial_growth`
+  lifts the same future polynomial-growth input to a circle-average
+  `log ||zeta||` bound, with the center height enlarged by the radius.
 - `exists_re_im_logDeriv_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height`
   converts a future boundary-strip estimate
   `||logDeriv zeta (sigma+it)|| <= A + B log(||sigma+it||+3)` into

@@ -125,7 +125,10 @@ zeta-specific coordinate forms convert
 `‖ζ(s)‖ <= A * (‖s‖ + 3)^B` into
 `log ‖ζ(s)‖ <= log A + B log(‖s‖ + 3)`, and on the standard strip
 `1 <= σ <= 2`, `|t| >= 5`, further into
-`log ‖ζ(σ+it)‖ <= log A + 2B log(|t|+3)`.  They do not prove the missing
+`log ‖ζ(σ+it)‖ <= log A + 2B log(|t|+3)`.  A circle-average version also
+turns the same input into
+`circleAverage(log ‖ζ‖) <= log A + 2B log(|t|+|R|+3)` whenever the circle
+stays in the high vertical strip.  They do not prove the missing
 polynomial growth estimate itself.  On the pole side, the local decomposition
 `logDeriv ζ(s) = -(s-1)^-1 + logDeriv(unit)(s)` is now proved near `s=1`,
 and the unit logarithmic derivative is locally bounded; this improves the

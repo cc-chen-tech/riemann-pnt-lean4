@@ -1189,6 +1189,7 @@ ZeroFreeRegion.log_norm_bound_of_polynomial_growth
 ZeroFreeRegion.log_norm_riemannZeta_le_affine_log_norm_add_three_of_polynomial_growth
 ZeroFreeRegion.log_norm_riemannZeta_sigma_it_le_affine_log_norm_add_three_of_polynomial_growth
 ZeroFreeRegion.log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_three_of_polynomial_growth
+ZeroFreeRegion.circleAverage_log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_radius_three_of_polynomial_growth
 ```
 
 These results convert an input of the form
@@ -1196,6 +1197,9 @@ These results convert an input of the form
 `log ||zeta z|| <= log A + B * log (||z|| + 3)`, and on
 `1 <= sigma <= 2`, `|t| >= 5`, into
 `log ||zeta (sigma + i t)|| <= log A + 2B * log (|t| + 3)`.
+The circle-average theorem gives the matching Jensen-side input
+`circleAverage(log ||zeta||) <= log A + 2B * log (|t| + |R| + 3)`
+for circles that remain inside the same high strip.
 They do not prove the polynomial growth bound itself.
 
 Suggested Lean statement:

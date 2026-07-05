@@ -4552,6 +4552,77 @@ lemma log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_three_of_polynomial_gr
             add_le_add_left hmul (Real.log A)
     _ = Real.log A + (2 * B) * Real.log (|t| + 3) := by ring
 
+/-- Circle-average form of the zeta polynomial-growth handoff.
+
+If the circle centered at `sigma + i t` with radius `|R|` stays in the
+standard strip `1 <= Re <= 2` and above height `T0`, then a future
+polynomial-growth estimate for `zeta` bounds the circle average of
+`log ||zeta||` by the same height-scale expression, with `|t|` enlarged by
+the radius. -/
+lemma circleAverage_log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_radius_three_of_polynomial_growth
+    {T0 A B R σ t : ℝ} (hT0 : 5 ≤ T0) (hA : 1 ≤ A) (hB : 0 ≤ B)
+    (hleft : (1 : ℝ) + |R| ≤ σ) (hright : σ + |R| ≤ 2)
+    (hheight : T0 + |R| ≤ |t|)
+    (hpoly : ∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc (1 : ℝ) 3 →
+      ‖riemannZeta z‖ ≤ A * (‖z‖ + 3) ^ B) :
+    circleAverage (Real.log ‖riemannZeta ·‖) ((σ : ℂ) + I * t) R ≤
+      Real.log A + (2 * B) * Real.log (|t| + |R| + 3) := by
+  let c : ℂ := (σ : ℂ) + I * t
+  have hmer_sphere : MeromorphicOn riemannZeta (Metric.sphere c |R|) := by
+    intro z _hz
+    by_cases hz1 : z = 1
+    · simpa [hz1] using meromorphicAt_riemannZeta_one
+    · exact meromorphicAt_riemannZeta_of_ne_one z hz1
+  refine circleAverage_mono_on_of_le_circle
+    (circleIntegrable_log_norm_meromorphicOn hmer_sphere) ?_
+  intro z hz
+  have hz_closed : z ∈ Metric.closedBall c |R| :=
+    Metric.sphere_subset_closedBall hz
+  have hz_re_12 : z.re ∈ Set.Icc (1 : ℝ) 2 :=
+    closedBall_sigma_it_re_mem_Icc
+      (z := z) (σ := σ) (t := t) (R := |R|) (a := 1) (b := 2)
+      (by simpa [c] using hz_closed) hleft hright
+  have hz_height : T0 ≤ |z.im| :=
+    closedBall_sigma_it_abs_im_ge_of_add_le
+      (z := z) (σ := σ) (t := t) (R := |R|) (H := T0)
+      (by simpa [c] using hz_closed) hheight
+  have hpoint :=
+    log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_three_of_polynomial_growth
+      (T0 := T0) (A := A) (B := B) hT0 hA hB hpoly
+      z.re z.im hz_height hz_re_12
+  have hz_decomp : ((z.re : ℂ) + I * (z.im : ℂ)) = z := by
+    apply Complex.ext <;> simp
+  have hz_point :
+      Real.log ‖riemannZeta z‖ ≤
+        Real.log A + (2 * B) * Real.log (|z.im| + 3) := by
+    simpa [hz_decomp] using hpoint
+  have hdist : ‖z - c‖ ≤ |R| := by
+    simpa [Metric.mem_closedBall, dist_eq_norm] using hz_closed
+  have him_sub : |z.im - t| ≤ |R| := by
+    have hbase := abs_im_sub_le_norm_sub z c
+    have hc_im : c.im = t := by simp [c]
+    simpa [hc_im] using le_trans hbase hdist
+  have him_upper : |z.im| ≤ |t| + |R| := by
+    have htri : |z.im| ≤ |t| + |z.im - t| := by
+      calc
+        |z.im| = |t + (z.im - t)| := by ring_nf
+        _ ≤ |t| + |z.im - t| := abs_add_le t (z.im - t)
+    linarith
+  have hlog_mono :
+      Real.log (|z.im| + 3) ≤ Real.log (|t| + |R| + 3) := by
+    have hpos : 0 < |z.im| + 3 := by positivity
+    exact Real.log_le_log hpos (by linarith)
+  have hmul :
+      (2 * B) * Real.log (|z.im| + 3) ≤
+        (2 * B) * Real.log (|t| + |R| + 3) :=
+    mul_le_mul_of_nonneg_left hlog_mono (by nlinarith [hB])
+  calc
+    Real.log ‖riemannZeta z‖
+        ≤ Real.log A + (2 * B) * Real.log (|z.im| + 3) := hz_point
+    _ ≤ Real.log A + (2 * B) * Real.log (|t| + |R| + 3) := by
+          simpa [add_comm, add_left_comm, add_assoc] using
+            add_le_add_left hmul (Real.log A)
+
 /-- Standalone normalization of a future vertical-strip log-derivative estimate.
 
 If a high-height estimate for `logDeriv ζ` on `1 <= σ <= 2` is available in
