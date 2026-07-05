@@ -303,8 +303,9 @@ does the same composition for arbitrary `0 < beta < 1`, yielding
    nontrivial-zero separation, the single-term bound
    `‖x^s / s‖ <= (1/2) * x^s.re`, the `x >= 1` specialization
    `‖x^s / s‖ <= (1/2) * x^(-2)`, the corresponding finite retained
-   trivial-zero contribution-sum bound, and the truncation cardinality bound
-   are also proved.  The truncated target predicate and conditional
+   trivial-zero contribution-sum bound, the coarser
+   `card * (1/2) * x^(-2)` finite-sum bound, and the truncation cardinality
+   bound are also proved.  The truncated target predicate and conditional
    repackaging lemma are public API, but still target infrastructure.  Future analytic
    multiplicity/order work can refine this API without changing the downstream
    target shape.

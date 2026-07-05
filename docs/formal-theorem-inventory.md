@@ -2533,6 +2533,9 @@ Support-level verified declarations:
   sums the preceding single-term estimate over the retained finite trivial-zero
   truncation.  This is still a finite-truncation estimate, not the infinite
   trivial-zero correction.
+- `norm_finiteTrivialZeroSum_contribution_le_card_mul_half_rpow_neg_two`
+  gives the coarser `x >= 1` finite-sum bound using only the truncation
+  cardinality and the first trivial-zero amplitude `x^(-2)`.
 - `RiemannPNT.API.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget`
   and `RiemannPNT.API.ExplicitFormulaTruncated.explicitFormulaTruncated_of`
   expose the typed truncated explicit-formula target and its conditional

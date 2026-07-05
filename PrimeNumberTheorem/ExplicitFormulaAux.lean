@@ -57,6 +57,8 @@ file or the parent.
   specialization using `Re(s) <= -2`.
 - `norm_finiteTrivialZeroSum_contribution_le_half_sum_rpow_re` — finite-sum
   norm bound for retained finite trivial-zero contributions.
+- `norm_finiteTrivialZeroSum_contribution_le_card_mul_half_rpow_neg_two` —
+  finite-sum `x >= 1` bound using only the truncation cardinality.
 - `chebyshevPsi0_eq_chebyshevPsi_off_primePowers` — at a non
   prime-power point, `psi0 = psi`.
 - `jumpVonMangoldt_eq_vonMangoldt_of_primePower` — at a prime power,
@@ -345,6 +347,23 @@ lemma norm_finiteTrivialZeroSum_contribution_le_half_sum_rpow_re
     _ ≤ ∑ s ∈ finiteTrivialZeroSum T, (1 / 2 : ℝ) * x ^ s.re := by
           exact Finset.sum_le_sum (fun s hs =>
             norm_trivial_zero_contribution_le_half_rpow_re hs hx)
+
+/-- For `x >= 1`, the finite retained trivial-zero contribution is bounded by
+the number of retained trivial zeros times the first trivial-zero amplitude. -/
+lemma norm_finiteTrivialZeroSum_contribution_le_card_mul_half_rpow_neg_two
+    (T x : ℝ) (hx : 1 ≤ x) :
+    ‖∑ s ∈ finiteTrivialZeroSum T, (x : ℂ) ^ s / s‖ ≤
+      ((finiteTrivialZeroSum T).card : ℝ) * ((1 / 2 : ℝ) * x ^ (-2 : ℝ)) := by
+  calc
+    ‖∑ s ∈ finiteTrivialZeroSum T, (x : ℂ) ^ s / s‖
+        ≤ ∑ s ∈ finiteTrivialZeroSum T, ‖(x : ℂ) ^ s / s‖ :=
+          norm_sum_le _ _
+    _ ≤ ∑ _s ∈ finiteTrivialZeroSum T, (1 / 2 : ℝ) * x ^ (-2 : ℝ) := by
+          exact Finset.sum_le_sum (fun s hs =>
+            norm_trivial_zero_contribution_le_half_rpow_neg_two hs hx)
+    _ = ((finiteTrivialZeroSum T).card : ℝ) *
+        ((1 / 2 : ℝ) * x ^ (-2 : ℝ)) := by
+          simp [mul_comm, mul_assoc]
 
 /-- Retained trivial zeros are disjoint from the nontrivial-zero strip
 predicate.  This records the separation between the finite trivial-zero
