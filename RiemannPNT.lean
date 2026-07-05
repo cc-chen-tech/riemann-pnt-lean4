@@ -2320,6 +2320,18 @@ theorem finiteNontrivialZeroSum_sub_eq_new_zeros {x T U : ℝ} (hTU : T ≤ U) :
         (x : ℂ) ^ ρ / ρ :=
   PrimeNumberTheorem.finiteNontrivialZeroSum_sub_eq_new_zeros hTU
 
+/-- Public norm bound for the newly included finite-zero contribution between
+two truncation heights. -/
+theorem norm_finiteNontrivialZeroSum_sub_le_new_zeros_sum_norm
+    {x T U : ℝ} (hTU : T ≤ U) :
+    ‖PrimeNumberTheorem.finiteNontrivialZeroSum x U -
+        PrimeNumberTheorem.finiteNontrivialZeroSum x T‖ ≤
+      ∑ ρ ∈
+        (PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T),
+        ‖(x : ℂ) ^ ρ / ρ‖ :=
+  PrimeNumberTheorem.norm_finiteNontrivialZeroSum_sub_le_new_zeros_sum_norm hTU
+
 /-- Public stability of finite zero sums when no new zeros enter between
 truncation heights. -/
 theorem finiteNontrivialZeroSum_eq_of_sdiff_eq_empty
