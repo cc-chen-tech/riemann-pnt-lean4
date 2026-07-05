@@ -123,10 +123,12 @@ Verified assets now include:
   `PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_two_le_norm_of_mem`;
   `PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_inv_norm_le_half_of_mem`;
   `PrimeNumberTheorem.ExplicitFormulaAux.norm_trivial_zero_contribution_le_half_rpow_re`;
+  `PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_rpow_re_le_rpow_neg_two_of_mem`;
   `PrimeNumberTheorem.ExplicitFormulaAux.norm_trivial_zero_contribution_le_half_rpow_neg_two`;
   `PrimeNumberTheorem.ExplicitFormulaAux.norm_finiteTrivialZeroSum_contribution_le_half_sum_rpow_re`;
   `PrimeNumberTheorem.ExplicitFormulaAux.norm_finiteTrivialZeroSum_contribution_le_card_mul_half_rpow_neg_two`;
   `PrimeNumberTheorem.ExplicitFormulaAux.norm_finiteTrivialZeroSum_contribution_le_floor_mul_half_rpow_neg_two`;
+  `PrimeNumberTheorem.ExplicitFormulaAux.norm_finiteTrivialZeroSum_contribution_le_height_mul_half_rpow_neg_two`;
   `PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_card_le`.
 
 Next useful step:
@@ -311,10 +313,12 @@ Verified assets now include:
   `ExplicitFormulaAux.finiteTrivialZeroSum_two_le_norm_of_mem`;
   `ExplicitFormulaAux.finiteTrivialZeroSum_inv_norm_le_half_of_mem`;
   `ExplicitFormulaAux.norm_trivial_zero_contribution_le_half_rpow_re`;
+  `ExplicitFormulaAux.finiteTrivialZeroSum_rpow_re_le_rpow_neg_two_of_mem`;
   `ExplicitFormulaAux.norm_trivial_zero_contribution_le_half_rpow_neg_two`;
   `ExplicitFormulaAux.norm_finiteTrivialZeroSum_contribution_le_half_sum_rpow_re`;
   `ExplicitFormulaAux.norm_finiteTrivialZeroSum_contribution_le_card_mul_half_rpow_neg_two`;
   `ExplicitFormulaAux.norm_finiteTrivialZeroSum_contribution_le_floor_mul_half_rpow_neg_two`;
+  `ExplicitFormulaAux.norm_finiteTrivialZeroSum_contribution_le_height_mul_half_rpow_neg_two`;
   `ExplicitFormulaAux.finiteTrivialZeroSum_card_le`;
   `ExplicitFormulaAux.chebyshevPsi0_eq_chebyshevPsi_off_primePowers`;
   `ExplicitFormulaAux.jumpVonMangoldt_eq_vonMangoldt_of_primePower`.

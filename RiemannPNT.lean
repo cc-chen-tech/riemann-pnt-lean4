@@ -17447,6 +17447,13 @@ theorem norm_trivial_zero_contribution_le_half_rpow_re {s : ℂ} {T x : ℝ}
   PrimeNumberTheorem.ExplicitFormulaAux.norm_trivial_zero_contribution_le_half_rpow_re
     hs hx
 
+/-- Public `x >= 1` power-decay bound for retained trivial zeros. -/
+theorem finiteTrivialZeroSum_rpow_re_le_rpow_neg_two_of_mem {s : ℂ}
+    {T x : ℝ} (hs : s ∈ finiteTrivialZeroSum T) (hx : 1 ≤ x) :
+    x ^ s.re ≤ x ^ (-2 : ℝ) :=
+  PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_rpow_re_le_rpow_neg_two_of_mem
+    hs hx
+
 /-- Public `x >= 1` single-term norm bound for retained trivial-zero
 contributions. -/
 theorem norm_trivial_zero_contribution_le_half_rpow_neg_two
@@ -17480,6 +17487,15 @@ theorem norm_finiteTrivialZeroSum_contribution_le_floor_mul_half_rpow_neg_two
       (Nat.floor (T / 2) : ℝ) * ((1 / 2 : ℝ) * x ^ (-2 : ℝ)) :=
   PrimeNumberTheorem.ExplicitFormulaAux.norm_finiteTrivialZeroSum_contribution_le_floor_mul_half_rpow_neg_two
     T x hx
+
+/-- Public continuous-height bound for retained finite trivial-zero
+contributions. -/
+theorem norm_finiteTrivialZeroSum_contribution_le_height_mul_half_rpow_neg_two
+    (T x : ℝ) (hT : 0 ≤ T) (hx : 1 ≤ x) :
+    ‖∑ s ∈ finiteTrivialZeroSum T, (x : ℂ) ^ s / s‖ ≤
+      (T / 2) * ((1 / 2 : ℝ) * x ^ (-2 : ℝ)) :=
+  PrimeNumberTheorem.ExplicitFormulaAux.norm_finiteTrivialZeroSum_contribution_le_height_mul_half_rpow_neg_two
+    T x hT hx
 
 /-- Public separation between retained trivial zeros and nontrivial zeros. -/
 theorem finiteTrivialZeroSum_not_isNontrivialZero_of_mem {s : ℂ} {T : ℝ}

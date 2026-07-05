@@ -741,11 +741,13 @@ axis with real part at most `-2`, their denominators have `2 ≤ ‖s‖` and
 `‖s‖⁻¹ ≤ 1/2`, their absolute imaginary height is normalized to `0`, they are
 separated from the nontrivial-zero predicate, the single contribution
 `x^s/s` is bounded by `(1/2) * x^Re(s)` and, for `x >= 1`, by
-`(1/2) * x^(-2)`, the finite retained trivial-zero contribution sum is bounded
-both by the corresponding finite amplitude sum and by
-`card * (1/2) * x^(-2)`, hence also by
-`Nat.floor (T / 2) * (1/2) * x^(-2)`.  This still does not prove the infinite
-trivial-zero correction term.
+`(1/2) * x^(-2)`, the underlying power comparison
+`x^Re(s) <= x^(-2)` is exposed separately, and the finite retained
+trivial-zero contribution sum is bounded both by the corresponding finite
+amplitude sum and by `card * (1/2) * x^(-2)`, hence also by
+`Nat.floor (T / 2) * (1/2) * x^(-2)` and, for `T >= 0`, by the continuous
+height cutoff `(T / 2) * (1/2) * x^(-2)`.  This still does not prove the
+infinite trivial-zero correction term.
 
 The explicit-formula side also contains route interfaces such as
 `PrimeNumberTheorem.ExplicitFormulaConversePowerTarget` and

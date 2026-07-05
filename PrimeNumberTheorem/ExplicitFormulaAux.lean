@@ -53,6 +53,8 @@ file or the parent.
   forms for retained finite trivial zeros.
 - `norm_trivial_zero_contribution_le_half_rpow_re` — single-term norm bound
   for retained finite trivial-zero contributions.
+- `finiteTrivialZeroSum_rpow_re_le_rpow_neg_two_of_mem` — for `x >= 1`,
+  each retained trivial zero has `x ^ Re(s) <= x ^ (-2)`.
 - `norm_trivial_zero_contribution_le_half_rpow_neg_two` — the `x >= 1`
   specialization using `Re(s) <= -2`.
 - `norm_finiteTrivialZeroSum_contribution_le_half_sum_rpow_re` — finite-sum
@@ -61,6 +63,8 @@ file or the parent.
   finite-sum `x >= 1` bound using only the truncation cardinality.
 - `norm_finiteTrivialZeroSum_contribution_le_floor_mul_half_rpow_neg_two` —
   finite-sum `x >= 1` bound using the explicit floor height cutoff.
+- `norm_finiteTrivialZeroSum_contribution_le_height_mul_half_rpow_neg_two` —
+  the same bound with a continuous nonnegative height cutoff.
 - `chebyshevPsi0_eq_chebyshevPsi_off_primePowers` — at a non
   prime-power point, `psi0 = psi`.
 - `jumpVonMangoldt_eq_vonMangoldt_of_primePower` — at a prime power,
@@ -321,6 +325,14 @@ lemma norm_trivial_zero_contribution_le_half_rpow_re {s : ℂ} {T x : ℝ}
       mul_le_mul_of_nonneg_left hinv hx_nonneg
     _ = (1 / 2 : ℝ) * x ^ s.re := by ring
 
+/-- For `x >= 1`, every retained trivial zero has `x ^ Re(s) <= x ^ (-2)`,
+since its real part is at most `-2`. -/
+lemma finiteTrivialZeroSum_rpow_re_le_rpow_neg_two_of_mem {s : ℂ} {T x : ℝ}
+    (hs : s ∈ finiteTrivialZeroSum T) (hx : 1 ≤ x) :
+    x ^ s.re ≤ x ^ (-2 : ℝ) := by
+  exact Real.rpow_le_rpow_of_exponent_le hx
+    (finiteTrivialZeroSum_re_le_neg_two_of_mem hs)
+
 /-- For `x >= 1`, each retained trivial-zero contribution is bounded by the
 first trivial-zero amplitude `x^(-2)` times the denominator factor `1/2`. -/
 lemma norm_trivial_zero_contribution_le_half_rpow_neg_two {s : ℂ} {T x : ℝ}
@@ -328,9 +340,8 @@ lemma norm_trivial_zero_contribution_le_half_rpow_neg_two {s : ℂ} {T x : ℝ}
     ‖(x : ℂ) ^ s / s‖ ≤ (1 / 2 : ℝ) * x ^ (-2 : ℝ) := by
   have hx_pos : 0 < x := lt_of_lt_of_le zero_lt_one hx
   have hterm := norm_trivial_zero_contribution_le_half_rpow_re hs hx_pos
-  have hre : s.re ≤ -2 := finiteTrivialZeroSum_re_le_neg_two_of_mem hs
   have hrpow : x ^ s.re ≤ x ^ (-2 : ℝ) :=
-    Real.rpow_le_rpow_of_exponent_le hx hre
+    finiteTrivialZeroSum_rpow_re_le_rpow_neg_two_of_mem hs hx
   have hmul : (1 / 2 : ℝ) * x ^ s.re ≤ (1 / 2 : ℝ) * x ^ (-2 : ℝ) :=
     mul_le_mul_of_nonneg_left hrpow (by norm_num)
   exact le_trans hterm hmul
@@ -382,6 +393,27 @@ lemma norm_finiteTrivialZeroSum_contribution_le_floor_mul_half_rpow_neg_two
   have hamp_nonneg : 0 ≤ (1 / 2 : ℝ) * x ^ (-2 : ℝ) := by
     exact mul_nonneg (by norm_num) (Real.rpow_nonneg (le_trans zero_le_one hx) _)
   exact le_trans hsum (mul_le_mul_of_nonneg_right hcard hamp_nonneg)
+
+/-- The finite retained trivial-zero contribution is bounded by a continuous
+height-scale version of the floor cutoff when `0 <= T`. -/
+lemma norm_finiteTrivialZeroSum_contribution_le_height_mul_half_rpow_neg_two
+    (T x : ℝ) (hT : 0 ≤ T) (hx : 1 ≤ x) :
+    ‖∑ s ∈ finiteTrivialZeroSum T, (x : ℂ) ^ s / s‖ ≤
+      (T / 2) * ((1 / 2 : ℝ) * x ^ (-2 : ℝ)) := by
+  have hT_half_nonneg : 0 ≤ T / 2 :=
+    div_nonneg hT (by norm_num : (0 : ℝ) ≤ 2)
+  have hfloor : (Nat.floor (T / 2) : ℝ) ≤ T / 2 :=
+    Nat.floor_le hT_half_nonneg
+  have hscale_nonneg : 0 ≤ (1 / 2 : ℝ) * x ^ (-2 : ℝ) :=
+    mul_nonneg (by norm_num : (0 : ℝ) ≤ 1 / 2)
+      (Real.rpow_nonneg (le_trans (by norm_num : (0 : ℝ) ≤ 1) hx) (-2 : ℝ))
+  calc
+    ‖∑ s ∈ finiteTrivialZeroSum T, (x : ℂ) ^ s / s‖
+        ≤ (Nat.floor (T / 2) : ℝ) * ((1 / 2 : ℝ) * x ^ (-2 : ℝ)) :=
+          norm_finiteTrivialZeroSum_contribution_le_floor_mul_half_rpow_neg_two
+            T x hx
+    _ ≤ (T / 2) * ((1 / 2 : ℝ) * x ^ (-2 : ℝ)) :=
+          mul_le_mul_of_nonneg_right hfloor hscale_nonneg
 
 /-- Retained trivial zeros are disjoint from the nontrivial-zero strip
 predicate.  This records the separation between the finite trivial-zero

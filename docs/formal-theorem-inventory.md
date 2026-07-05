@@ -2525,6 +2525,9 @@ Support-level verified declarations:
   bounds each retained trivial-zero contribution by
   `(1 / 2) * x ^ s.re` for `x > 0`.  This is a single-term estimate only, not
   the infinite trivial-zero correction.
+- `finiteTrivialZeroSum_rpow_re_le_rpow_neg_two_of_mem`
+  records the standalone `x >= 1` power decay comparison
+  `x ^ s.re <= x ^ (-2)` for every retained trivial zero.
 - `norm_trivial_zero_contribution_le_half_rpow_neg_two`
   specializes the same single-term estimate to `x >= 1`, using the retained
   trivial-zero fact `s.re <= -2` to bound the amplitude by
@@ -2540,6 +2543,10 @@ Support-level verified declarations:
   composes that cardinality bound with
   `finiteTrivialZeroSum_card_le`, replacing the finset cardinality by the
   explicit cutoff `Nat.floor (T / 2)`.
+- `norm_finiteTrivialZeroSum_contribution_le_height_mul_half_rpow_neg_two`
+  weakens the floor cutoff to the continuous nonnegative height scale
+  `(T / 2) * ((1 / 2) * x ^ (-2))`, which is easier to compose with later
+  contour-error estimates.
 - `RiemannPNT.API.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget`
   and `RiemannPNT.API.ExplicitFormulaTruncated.explicitFormulaTruncated_of`
   expose the typed truncated explicit-formula target and its conditional
