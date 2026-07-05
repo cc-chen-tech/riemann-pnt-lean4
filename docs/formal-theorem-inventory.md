@@ -1024,6 +1024,7 @@ Core verified declarations:
 - `logDerivVerticalLogBound_of_negLogDerivVerticalLogBound`
   turns the named signed norm interface into the unsigned norm interface.
 - `logDerivVerticalLogBound_mono_height`,
+  `reNegDerivDivVerticalLogBound_mono_height`,
   `logDerivRegularPartLogBound_mono_height`, and
   `multiplicityLogDerivRegularPartLogBound_mono_height`
   show the named high-height estimates remain valid after raising the cutoff.

@@ -91,6 +91,7 @@ this checkout.
 
 The two hard inputs do not need to share the same cutoff.  The monotonicity
 lemmas `ZeroFreeRegion.logDerivVerticalLogBound_mono_height`,
+`ZeroFreeRegion.reNegDerivDivVerticalLogBound_mono_height`,
 `ZeroFreeRegion.logDerivRegularPartLogBound_mono_height`, and
 `ZeroFreeRegion.multiplicityLogDerivRegularPartLogBound_mono_height` allow the
 cutoff to be raised, and the existential closures

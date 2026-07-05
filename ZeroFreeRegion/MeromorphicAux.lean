@@ -3945,6 +3945,17 @@ lemma logDerivVerticalLogBound_mono_height
   intro σ t hσ_left hσ_right ht
   exact hbound σ t hσ_left hσ_right (le_trans hT ht)
 
+/-- A named direct real-part quotient bound remains valid after raising the
+high-height cutoff. -/
+lemma reNegDerivDivVerticalLogBound_mono_height
+    {C T0 T1 : ℝ} (h : ReNegDerivDivVerticalLogBound C T0)
+    (hT : T0 ≤ T1) :
+    ReNegDerivDivVerticalLogBound C T1 := by
+  rcases h with ⟨hC, hT0, hbound⟩
+  refine ⟨hC, le_trans hT0 hT, ?_⟩
+  intro σ t hσ_left hσ_right ht
+  exact hbound σ t hσ_left hσ_right (le_trans hT ht)
+
 /-- A named zero-candidate regular-part bound remains valid after raising the
 high-height cutoff. -/
 lemma logDerivRegularPartLogBound_mono_height

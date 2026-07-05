@@ -55,6 +55,14 @@ theorem logDerivVerticalLogBound_mono_height
     LogDerivVerticalLogBound C T1 :=
   ZeroFreeRegion.logDerivVerticalLogBound_mono_height h hT
 
+/-- Public monotonicity in the high-height cutoff for the named direct
+real-part quotient bound. -/
+theorem reNegDerivDivVerticalLogBound_mono_height
+    {C T0 T1 : ℝ} (h : ReNegDerivDivVerticalLogBound C T0)
+    (hT : T0 ≤ T1) :
+    ReNegDerivDivVerticalLogBound C T1 :=
+  ZeroFreeRegion.reNegDerivDivVerticalLogBound_mono_height h hT
+
 /-- Public monotonicity in the high-height cutoff for the named regular-part
 bound. -/
 theorem logDerivRegularPartLogBound_mono_height
