@@ -14497,6 +14497,30 @@ theorem hardyZ_zero_set_finite_iff_critical_line_zeta_zero_set_finite :
       {t : ℝ | riemannZeta (0.5 + Complex.I * t) = 0}.Finite :=
   HardyTheorem.hardyZ_zero_set_finite_iff_critical_line_zeta_zero_set_finite
 
+/-- Public codiscrete-complement equivalence for Hardy-Z and zeta zeros on
+the critical line. -/
+theorem hardyZ_zero_codiscrete_iff_critical_line_zeta_zero_codiscrete :
+    {t : ℝ | HardyTheorem.hardyZ t = 0}ᶜ ∈ Filter.codiscrete ℝ ↔
+      {t : ℝ | riemannZeta (0.5 + Complex.I * t) = 0}ᶜ ∈
+        Filter.codiscrete ℝ :=
+  HardyTheorem.hardyZ_zero_codiscrete_iff_critical_line_zeta_zero_codiscrete
+
+/-- Public conversion from Hardy-Z zero-set codiscreteness to critical-line
+zeta-zero codiscreteness. -/
+theorem critical_line_zeta_zero_codiscrete_of_hardyZ_zero_codiscrete
+    (h : {t : ℝ | HardyTheorem.hardyZ t = 0}ᶜ ∈ Filter.codiscrete ℝ) :
+    {t : ℝ | riemannZeta (0.5 + Complex.I * t) = 0}ᶜ ∈
+      Filter.codiscrete ℝ :=
+  HardyTheorem.critical_line_zeta_zero_codiscrete_of_hardyZ_zero_codiscrete h
+
+/-- Public conversion from critical-line zeta-zero codiscreteness to Hardy-Z
+zero-set codiscreteness. -/
+theorem hardyZ_zero_codiscrete_of_critical_line_zeta_zero_codiscrete
+    (h : {t : ℝ | riemannZeta (0.5 + Complex.I * t) = 0}ᶜ ∈
+      Filter.codiscrete ℝ) :
+    {t : ℝ | HardyTheorem.hardyZ t = 0}ᶜ ∈ Filter.codiscrete ℝ :=
+  HardyTheorem.hardyZ_zero_codiscrete_of_critical_line_zeta_zero_codiscrete h
+
 /-- Public continuity theorem for Hardy's real `Z` function. -/
 theorem hardyZ_continuous : Continuous HardyTheorem.hardyZ :=
   HardyTheorem.hardyZ_continuous

@@ -406,6 +406,23 @@ lemma hardyZ_zero_set_finite_iff_critical_line_zeta_zero_set_finite :
       {t : ℝ | riemannZeta (0.5 + I * t) = 0}.Finite := by
   rw [hardyZ_zero_set_eq_critical_line_zeta_zero_set]
 
+lemma hardyZ_zero_codiscrete_iff_critical_line_zeta_zero_codiscrete :
+    {t : ℝ | hardyZ t = 0}ᶜ ∈ Filter.codiscrete ℝ ↔
+      {t : ℝ | riemannZeta (0.5 + I * t) = 0}ᶜ ∈
+        Filter.codiscrete ℝ := by
+  rw [hardyZ_zero_set_eq_critical_line_zeta_zero_set]
+
+lemma critical_line_zeta_zero_codiscrete_of_hardyZ_zero_codiscrete
+    (h : {t : ℝ | hardyZ t = 0}ᶜ ∈ Filter.codiscrete ℝ) :
+    {t : ℝ | riemannZeta (0.5 + I * t) = 0}ᶜ ∈ Filter.codiscrete ℝ :=
+  hardyZ_zero_codiscrete_iff_critical_line_zeta_zero_codiscrete.mp h
+
+lemma hardyZ_zero_codiscrete_of_critical_line_zeta_zero_codiscrete
+    (h : {t : ℝ | riemannZeta (0.5 + I * t) = 0}ᶜ ∈
+      Filter.codiscrete ℝ) :
+    {t : ℝ | hardyZ t = 0}ᶜ ∈ Filter.codiscrete ℝ :=
+  hardyZ_zero_codiscrete_iff_critical_line_zeta_zero_codiscrete.mpr h
+
 /-- Z(t) 是连续函数 -/
 theorem hardyZ_continuous : Continuous hardyZ := by
   have h_eq : ∀ t : ℝ, hardyZ t = (completedRiemannZeta ((0.5 : ℂ) + I * t)).re / ‖Gammaℝ ((0.5 : ℂ) + I * t)‖ := by

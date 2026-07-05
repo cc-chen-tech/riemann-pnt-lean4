@@ -2075,6 +2075,9 @@ Core verified declarations:
 - `finite_abs_le_inter_of_compl_mem_codiscrete`
 - `critical_line_zeta_zero_bounded_finite_of_codiscrete`
 - `hardyZ_zero_bounded_finite_of_codiscrete`
+- `hardyZ_zero_codiscrete_iff_critical_line_zeta_zero_codiscrete`
+- `critical_line_zeta_zero_codiscrete_of_hardyZ_zero_codiscrete`
+- `hardyZ_zero_codiscrete_of_critical_line_zeta_zero_codiscrete`
 - `hardy_theorem_target_iff_abs_unbounded_of_codiscrete`
 - `hardy_theorem_target_iff_unbounded_of_codiscrete`
 - `hardy_theorem_target_iff_hardyZ_abs_unbounded_of_hardyZ_codiscrete`
