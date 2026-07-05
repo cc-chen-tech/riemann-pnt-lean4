@@ -798,8 +798,8 @@ input into the corrected explicit-formula target.  The norm-tail variants
 `explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution_norm_le`,
 and
 `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_isBigO_tendsto_zero`
-accept the more common contour-estimate output where the contribution norm is
-shown to vanish.
+plus the `..._norm_isLittleO_one` variant accept the more common
+contour-estimate output where the contribution norm is shown to vanish.
 
 The finite zero-pair infrastructure also contains proved positivity suppliers
 for elementary detector kernels.  The public API includes the resolvent kernel

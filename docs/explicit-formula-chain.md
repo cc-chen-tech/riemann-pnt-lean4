@@ -286,7 +286,9 @@ accepts the same tail convergence as a norm limit, and
 and
 `RiemannPNT.API.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_isBigO_tendsto_zero`
 accept the eventual-bound and Big-O forms expected from contour estimates.  The
-wrapper
+little-o variant
+`RiemannPNT.API.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_isLittleO_one`
+accepts the same norm tail as `o(1)`.  The wrapper
 `RiemannPNT.API.explicit_formula_von_mangoldt_of_base_and_eventually_no_new_zeros_via_contribution_tail`
 is the degenerate eventual-empty-new-zero specialization.  These remain
 conditional bridges around the finite truncation bookkeeping; none supplies

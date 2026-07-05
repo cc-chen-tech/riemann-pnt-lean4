@@ -2065,6 +2065,8 @@ Core verified declarations:
   `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_isBigO_tendsto_zero`
   expose the same direct contribution-tail bridge in the norm, eventual-bound,
   and Big-O shapes normally produced by contour estimates.
+- `RiemannPNT.API.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_isLittleO_one`
+  exposes the public little-o wrapper by converting `o(1)` to norm convergence.
 - `explicit_formula_von_mangoldt_of_base_and_eventually_no_new_zeros_via_contribution_tail`
   is the degenerate eventual-empty-new-zero specialization routed through the
   contribution-tail convergence theorem.  It is a finite-tail sanity bridge,

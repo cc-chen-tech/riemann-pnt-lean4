@@ -299,6 +299,7 @@ Verified assets now include:
   `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_tendsto_zero`;
   `explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution_norm_le`;
   `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_isBigO_tendsto_zero`;
+  `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_isLittleO_one`;
   `explicit_formula_von_mangoldt_of_base_and_eventually_no_new_zeros_via_contribution_tail`;
 - composed bridges:
   `explicit_formula_von_mangoldt_of_RH_base_and_eventually_no_new_zeros_via_sum_tail`;
