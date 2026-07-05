@@ -209,6 +209,8 @@ Verified assets now include:
 - monotone-error explicit-formula converse wrappers:
   `no_zeros_on_vertical_line_of_psi_power_error_bridge_mono_error`;
   `no_zeros_on_reflected_line_of_psi_power_error_bridge_mono_error`;
+  `no_zeros_on_vertical_line_of_psi_power_error_below_two_thirds_mono_bridge`;
+  `no_zeros_on_reflected_line_of_psi_power_error_below_two_thirds_mono_bridge`;
   `no_zeros_on_vertical_line_of_explicit_formula_converse_power_mono_error`;
   `no_zeros_on_reflected_line_of_explicit_formula_converse_power_mono_error`.
 - route-interface conversion bridges:

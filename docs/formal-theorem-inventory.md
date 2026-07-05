@@ -1909,6 +1909,11 @@ Core verified declarations:
   provide the same monotone-error wrappers for the underlying
   `PsiPowerErrorBelowLineExcludesZerosRightOf` route interface, without first
   renaming it as an explicit-formula converse target.
+- `no_zeros_on_vertical_line_of_psi_power_error_below_two_thirds_mono_bridge`
+  and
+  `no_zeros_on_reflected_line_of_psi_power_error_below_two_thirds_mono_bridge`
+  specialize those route-interface wrappers to the concrete
+  `PsiPowerErrorBelowTwoThirds` input for any boundary `gamma >= 2/3`.
 - `no_zeros_on_two_thirds_of_explicit_formula_converse_power`,
   `no_zeros_on_one_third_of_explicit_formula_converse_power_below_two_thirds`,
   and

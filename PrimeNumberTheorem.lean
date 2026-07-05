@@ -3404,6 +3404,32 @@ theorem no_zeros_on_reflected_line_of_psi_power_error_bridge_mono_error
     hγ_pos hγ_lt_one hbridge
     (psiPowerErrorBelowLine_mono hβγ herror)
 
+/-- A concrete `θ < 2/3` `ψ`-error input can feed the general
+zero-exclusion route at any larger boundary `γ >= 2/3`. -/
+theorem no_zeros_on_vertical_line_of_psi_power_error_below_two_thirds_mono_bridge
+    {γ : ℝ} (hγ_two_thirds : (2 / 3 : ℝ) ≤ γ) (hγ_lt_one : γ < 1)
+    (hbridge : PsiPowerErrorBelowLineExcludesZerosRightOf γ)
+    (herror : PsiPowerErrorBelowTwoThirds) :
+    NoZerosOnVerticalLine γ :=
+  no_zeros_on_vertical_line_of_psi_power_error_bridge_mono_error
+    hγ_two_thirds
+    (lt_of_lt_of_le (by norm_num : (0 : ℝ) < 2 / 3) hγ_two_thirds)
+    hγ_lt_one hbridge
+    (psiPowerErrorBelowLine_two_thirds_of_below_two_thirds herror)
+
+/-- Reflected-line version of
+`no_zeros_on_vertical_line_of_psi_power_error_below_two_thirds_mono_bridge`. -/
+theorem no_zeros_on_reflected_line_of_psi_power_error_below_two_thirds_mono_bridge
+    {γ : ℝ} (hγ_two_thirds : (2 / 3 : ℝ) ≤ γ) (hγ_lt_one : γ < 1)
+    (hbridge : PsiPowerErrorBelowLineExcludesZerosRightOf γ)
+    (herror : PsiPowerErrorBelowTwoThirds) :
+    NoZerosOnVerticalLine (1 - γ) :=
+  no_zeros_on_reflected_line_of_psi_power_error_bridge_mono_error
+    hγ_two_thirds
+    (lt_of_lt_of_le (by norm_num : (0 : ℝ) < 2 / 3) hγ_two_thirds)
+    hγ_lt_one hbridge
+    (psiPowerErrorBelowLine_two_thirds_of_below_two_thirds herror)
+
 /-- If a power saving below a smaller boundary `β` is available, it can feed an
 explicit-formula converse target at any larger boundary `γ`. -/
 theorem no_zeros_on_vertical_line_of_explicit_formula_converse_power_mono_error
