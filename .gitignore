@@ -1,6 +1,7 @@
 /.lake/
 /build/
 /lake-packages/
+/.worktrees/
 /vendor/
 __pycache__/
 *.pyc
