@@ -3288,6 +3288,14 @@ theorem psiPowerErrorBelowLine_two_thirds_of_below_two_thirds
     PsiPowerErrorBelowLine (2 / 3) := by
   simpa [PsiPowerErrorBelowTwoThirds, PsiPowerErrorBelowLine] using herror
 
+/-- Monotonicity of the below-line `ψ`-power-error predicate in the boundary
+line. -/
+theorem psiPowerErrorBelowLine_mono {β γ : ℝ}
+    (hβγ : β ≤ γ) (herror : PsiPowerErrorBelowLine β) :
+    PsiPowerErrorBelowLine γ := by
+  rcases herror with ⟨θ, hθ_nonneg, hθ_lt, hθ_bound⟩
+  exact ⟨θ, hθ_nonneg, lt_of_lt_of_le hθ_lt hβγ, hθ_bound⟩
+
 /-- Route interface for the converse explicit-formula principle: a `ψ` error
 with exponent below `β` excludes nontrivial zeros on or to the right of
 `Re(s) = β`. -/
@@ -3373,6 +3381,50 @@ theorem no_zeros_on_reflected_line_of_explicit_formula_converse_power
     NoZerosOnVerticalLine (1 - β) :=
   no_zeros_on_reflected_line_of_psi_power_error_bridge
     hβ_pos hβ_lt_one hbridge herror
+
+/-- If a power saving below a smaller boundary `β` is available, it can feed
+the general `ψ`-error zero-exclusion interface at any larger boundary `γ`. -/
+theorem no_zeros_on_vertical_line_of_psi_power_error_bridge_mono_error
+    {β γ : ℝ} (hβγ : β ≤ γ) (hγ_pos : 0 < γ) (hγ_lt_one : γ < 1)
+    (hbridge : PsiPowerErrorBelowLineExcludesZerosRightOf γ)
+    (herror : PsiPowerErrorBelowLine β) :
+    NoZerosOnVerticalLine γ :=
+  no_zeros_on_vertical_line_of_psi_power_error_bridge
+    hγ_pos hγ_lt_one hbridge
+    (psiPowerErrorBelowLine_mono hβγ herror)
+
+/-- Reflected-line version of
+`no_zeros_on_vertical_line_of_psi_power_error_bridge_mono_error`. -/
+theorem no_zeros_on_reflected_line_of_psi_power_error_bridge_mono_error
+    {β γ : ℝ} (hβγ : β ≤ γ) (hγ_pos : 0 < γ) (hγ_lt_one : γ < 1)
+    (hbridge : PsiPowerErrorBelowLineExcludesZerosRightOf γ)
+    (herror : PsiPowerErrorBelowLine β) :
+    NoZerosOnVerticalLine (1 - γ) :=
+  no_zeros_on_reflected_line_of_psi_power_error_bridge
+    hγ_pos hγ_lt_one hbridge
+    (psiPowerErrorBelowLine_mono hβγ herror)
+
+/-- If a power saving below a smaller boundary `β` is available, it can feed an
+explicit-formula converse target at any larger boundary `γ`. -/
+theorem no_zeros_on_vertical_line_of_explicit_formula_converse_power_mono_error
+    {β γ : ℝ} (hβγ : β ≤ γ) (hγ_pos : 0 < γ) (hγ_lt_one : γ < 1)
+    (hbridge : ExplicitFormulaConversePowerTarget γ)
+    (herror : PsiPowerErrorBelowLine β) :
+    NoZerosOnVerticalLine γ :=
+  no_zeros_on_vertical_line_of_explicit_formula_converse_power
+    hγ_pos hγ_lt_one hbridge
+    (psiPowerErrorBelowLine_mono hβγ herror)
+
+/-- Reflected-line version of
+`no_zeros_on_vertical_line_of_explicit_formula_converse_power_mono_error`. -/
+theorem no_zeros_on_reflected_line_of_explicit_formula_converse_power_mono_error
+    {β γ : ℝ} (hβγ : β ≤ γ) (hγ_pos : 0 < γ) (hγ_lt_one : γ < 1)
+    (hbridge : ExplicitFormulaConversePowerTarget γ)
+    (herror : PsiPowerErrorBelowLine β) :
+    NoZerosOnVerticalLine (1 - γ) :=
+  no_zeros_on_reflected_line_of_explicit_formula_converse_power
+    hγ_pos hγ_lt_one hbridge
+    (psiPowerErrorBelowLine_mono hβγ herror)
 
 /-- Specialization of the general `ψ`-error bridge to the reflected
 `Re(s) = 2 / 3` line, hence to `Re(s) = 1 / 3` by zero symmetry. -/

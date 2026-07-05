@@ -2245,6 +2245,13 @@ theorem psiPowerErrorBelowLine_two_thirds_of_below_two_thirds
   PrimeNumberTheorem.psiPowerErrorBelowLine_two_thirds_of_below_two_thirds
     herror
 
+/-- Public monotonicity of the below-line `ψ`-power-error predicate. -/
+theorem psiPowerErrorBelowLine_mono {β γ : ℝ}
+    (hβγ : β ≤ γ)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
+    PrimeNumberTheorem.PsiPowerErrorBelowLine γ :=
+  PrimeNumberTheorem.psiPowerErrorBelowLine_mono hβγ herror
+
 /-- Public general converse interface: a `ψ` power saving below `β` excludes
 nontrivial zeros on or to the right of `Re(s)=β`. -/
 abbrev PsiPowerErrorBelowLineExcludesZerosRightOf (β : ℝ) : Prop :=
@@ -2324,6 +2331,46 @@ theorem no_zeros_on_reflected_line_of_explicit_formula_converse_power
     PrimeNumberTheorem.NoZerosOnVerticalLine (1 - β) :=
   PrimeNumberTheorem.no_zeros_on_reflected_line_of_explicit_formula_converse_power
     hβ_pos hβ_lt_one hbridge herror
+
+/-- Public vertical-line bridge where the supplied `ψ` error is below a
+smaller boundary, using the general zero-exclusion route interface. -/
+theorem no_zeros_on_vertical_line_of_psi_power_error_bridge_mono_error
+    {β γ : ℝ} (hβγ : β ≤ γ) (hγ_pos : 0 < γ) (hγ_lt_one : γ < 1)
+    (hbridge : PrimeNumberTheorem.PsiPowerErrorBelowLineExcludesZerosRightOf γ)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine γ :=
+  PrimeNumberTheorem.no_zeros_on_vertical_line_of_psi_power_error_bridge_mono_error
+    hβγ hγ_pos hγ_lt_one hbridge herror
+
+/-- Public reflected-line bridge where the supplied `ψ` error is below a
+smaller boundary, using the general zero-exclusion route interface. -/
+theorem no_zeros_on_reflected_line_of_psi_power_error_bridge_mono_error
+    {β γ : ℝ} (hβγ : β ≤ γ) (hγ_pos : 0 < γ) (hγ_lt_one : γ < 1)
+    (hbridge : PrimeNumberTheorem.PsiPowerErrorBelowLineExcludesZerosRightOf γ)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (1 - γ) :=
+  PrimeNumberTheorem.no_zeros_on_reflected_line_of_psi_power_error_bridge_mono_error
+    hβγ hγ_pos hγ_lt_one hbridge herror
+
+/-- Public vertical-line explicit-formula converse bridge where the supplied
+`ψ` error is below a smaller boundary. -/
+theorem no_zeros_on_vertical_line_of_explicit_formula_converse_power_mono_error
+    {β γ : ℝ} (hβγ : β ≤ γ) (hγ_pos : 0 < γ) (hγ_lt_one : γ < 1)
+    (hbridge : PrimeNumberTheorem.ExplicitFormulaConversePowerTarget γ)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine γ :=
+  PrimeNumberTheorem.no_zeros_on_vertical_line_of_explicit_formula_converse_power_mono_error
+    hβγ hγ_pos hγ_lt_one hbridge herror
+
+/-- Public reflected-line explicit-formula converse bridge where the supplied
+`ψ` error is below a smaller boundary. -/
+theorem no_zeros_on_reflected_line_of_explicit_formula_converse_power_mono_error
+    {β γ : ℝ} (hβγ : β ≤ γ) (hγ_pos : 0 < γ) (hγ_lt_one : γ < 1)
+    (hbridge : PrimeNumberTheorem.ExplicitFormulaConversePowerTarget γ)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (1 - γ) :=
+  PrimeNumberTheorem.no_zeros_on_reflected_line_of_explicit_formula_converse_power_mono_error
+    hβγ hγ_pos hγ_lt_one hbridge herror
 
 /-- Public bridge from right-half-plane zero-freeness to zero-freeness on the
 reflected vertical line. -/
