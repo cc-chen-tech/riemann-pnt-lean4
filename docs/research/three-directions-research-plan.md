@@ -88,6 +88,14 @@ work would only rename existing lemmas.
 
 Verified assets now include:
 
+- the public vertical-line and power-error route predicates:
+  `NoZerosOnVerticalLine`, `PsiPowerErrorBelowTwoThirds`,
+  `PsiPowerErrorBelowLine`, and `ExplicitFormulaConversePowerTarget`;
+- the `1/3`/`2/3` reflection equivalence
+  `exists_nontrivial_zero_on_one_third_iff_two_thirds`;
+- direct conditional bridges from RH, a zero-free right half-plane
+  `Re(s) >= 2/3`, a concrete `psi` power error below `2/3`, or the general
+  explicit-formula converse target to no zeros on `Re(s)=1/3`;
 - finite explicit-formula truncation increment identities;
 - new-zero norm/count tail bounds under RH;
 - eventual-no-new-zero tail convergence;
@@ -100,14 +108,20 @@ Verified assets now include:
   `new_zero_card_tail_tendsto_zero_of_global_height_bound`;
   `explicit_formula_von_mangoldt_of_RH_base_and_global_height_bound_via_sum_tail`;
   `explicit_formula_von_mangoldt_of_RH_base_and_global_height_bound_via_card_tail`.
+- truncated explicit-formula converse facades:
+  `no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route`;
+  `no_zeros_on_one_third_of_truncated_explicit_formula_converse_route`;
+  `no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route`.
 
 Important boundary:
 
 These theorems still assume the base explicit-formula identity at a stable
 truncation.  The global-height variants are route interfaces, not realistic
 unconditional inputs for zeta zeros.  They do not prove Perron's formula,
-contour shifting, or the converse theorem turning
-`psi(x) - x = O(x^(beta - delta))` into zero exclusion.
+contour shifting, or the converse/oscillation theorem turning
+`psi(x) - x = O(x^(beta - delta))` into zero exclusion.  The current Lean value
+is that the formal path from any such future input at `beta = 2/3` to the
+claimed `Re(s)=1/3` exclusion is now explicit and smoke-checked.
 
 ## Hard Gaps
 

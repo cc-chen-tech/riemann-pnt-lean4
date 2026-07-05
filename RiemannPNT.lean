@@ -1827,10 +1827,50 @@ theorem finite_zero_sum_nonnegative_of_laplace_pair_positive
   PrimeNumberTheorem.finite_zero_sum_nonnegative_of_laplace_pair_positive
     S F center hF hstrip
 
+/-- Public vertical-line zero-free predicate for zeta. -/
+abbrev NoZerosOnVerticalLine (σ : ℝ) : Prop :=
+  PrimeNumberTheorem.NoZerosOnVerticalLine σ
+
+/-- Public power-scale Chebyshev-`ψ` error predicate. -/
+abbrev PsiPowerErrorBound (θ : ℝ) : Prop :=
+  PrimeNumberTheorem.PsiPowerErrorBound θ
+
+/-- Public concrete `ψ` error input below the `2/3` barrier. -/
+abbrev PsiPowerErrorBelowTwoThirds : Prop :=
+  PrimeNumberTheorem.PsiPowerErrorBelowTwoThirds
+
+/-- Public concrete converse interface: the `ψ` error below `2/3` excludes
+nontrivial zeros on `Re(s)=2/3`. -/
+abbrev PsiPowerErrorBelowTwoThirdsExcludesLineTwoThirds : Prop :=
+  PrimeNumberTheorem.PsiPowerErrorBelowTwoThirdsExcludesLineTwoThirds
+
+/-- Public general power-saving `ψ` error below a boundary line. -/
+abbrev PsiPowerErrorBelowLine (β : ℝ) : Prop :=
+  PrimeNumberTheorem.PsiPowerErrorBelowLine β
+
+/-- Public general converse interface: a `ψ` power saving below `β` excludes
+nontrivial zeros on or to the right of `Re(s)=β`. -/
+abbrev PsiPowerErrorBelowLineExcludesZerosRightOf (β : ℝ) : Prop :=
+  PrimeNumberTheorem.PsiPowerErrorBelowLineExcludesZerosRightOf β
+
 /-- Public explicit-formula converse interface for excluding zeros from a
 power-scale Chebyshev-`ψ` error bound. -/
 abbrev ExplicitFormulaConversePowerTarget (β : ℝ) : Prop :=
   PrimeNumberTheorem.ExplicitFormulaConversePowerTarget β
+
+/-- Public bridge: RH excludes zeta zeros on `Re(s)=1/3`. -/
+theorem no_zeros_on_one_third_of_RH
+    (hRH : _root_.RiemannHypothesis.Statement) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) :=
+  PrimeNumberTheorem.no_zeros_on_one_third_of_RH hRH
+
+/-- Public specialized right-half-plane bridge: zero-freeness in
+`Re(s) >= 2/3` excludes zeros on the reflected line `Re(s)=1/3`. -/
+theorem no_zeros_on_one_third_of_right_halfplane_two_thirds
+    (hRight : ∀ s : ℂ, (2 / 3 : ℝ) ≤ s.re → riemannZeta s ≠ 0) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) :=
+  PrimeNumberTheorem.no_zeros_on_one_third_of_right_halfplane_two_thirds
+    hRight
 
 /-- Public conditional bridge from a general `ψ` power-saving error below a
 line to zero-freeness on that vertical line. -/
@@ -1888,6 +1928,15 @@ theorem exists_nontrivial_zero_on_line_iff_reflected (β : ℝ) :
         s.re = 1 - β) :=
   PrimeNumberTheorem.exists_nontrivial_zero_on_line_iff_reflected β
 
+/-- Public specialization: nontrivial zeros on `Re(s)=1/3` exist exactly when
+nontrivial zeros on the reflected line `Re(s)=2/3` exist. -/
+theorem exists_nontrivial_zero_on_one_third_iff_two_thirds :
+    (∃ s : ℂ, _root_.RiemannHypothesis.IsNontrivialZero s ∧
+      s.re = (1 / 3 : ℝ)) ↔
+      (∃ s : ℂ, _root_.RiemannHypothesis.IsNontrivialZero s ∧
+        s.re = (2 / 3 : ℝ)) :=
+  PrimeNumberTheorem.exists_nontrivial_zero_on_one_third_iff_two_thirds
+
 /-- Public reflected-line equivalence for zero-freeness in the critical strip. -/
 theorem no_zeros_on_vertical_line_iff_reflected
     {β : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1) :
@@ -1904,6 +1953,15 @@ theorem no_zeros_on_one_third_of_general_psi_power_error_bridge
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine (2 / 3)) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) :=
   PrimeNumberTheorem.no_zeros_on_one_third_of_general_psi_power_error_bridge
+    hbridge herror
+
+/-- Public concrete `ψ`-error bridge: a power saving below `2/3` plus the
+converse line-exclusion interface excludes zeta zeros on `Re(s)=1/3`. -/
+theorem no_zeros_on_one_third_of_psi_power_error_below_two_thirds_bridge
+    (hbridge : PrimeNumberTheorem.PsiPowerErrorBelowTwoThirdsExcludesLineTwoThirds)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowTwoThirds) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) :=
+  PrimeNumberTheorem.no_zeros_on_one_third_of_psi_power_error_below_two_thirds_bridge
     hbridge herror
 
 /-- Public specialization of the explicit-formula converse bridge to the
