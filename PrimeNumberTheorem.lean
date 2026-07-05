@@ -4215,6 +4215,16 @@ lemma explicitFormulaApprox_eq_of_global_height_bound {x B T : ℝ}
   explicitFormulaApprox_congr_zero_sum
     (finiteNontrivialZeroSum_eq_of_global_height_bound hBT hbound)
 
+/-- A global height bound on nontrivial zeros implies that, eventually, no new
+zeros appear above the base cutoff. -/
+lemma nontrivialZerosFinset_eventually_sdiff_eq_empty_of_global_height_bound
+    {B : ℝ}
+    (hbound : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → |ρ.im| ≤ B) :
+    ∀ᶠ T in atTop, nontrivialZerosFinset T \ nontrivialZerosFinset B = ∅ := by
+  filter_upwards [eventually_ge_atTop B] with T hBT
+  rw [nontrivialZerosFinset_eq_of_global_height_bound hBT hbound]
+  simp
+
 lemma explicitFormulaApprox_eventually_eq_of_global_height_bound {x B : ℝ}
     (hbound : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → |ρ.im| ≤ B) :
     (fun T : ℝ => explicitFormulaApprox x T) =ᶠ[atTop]
@@ -5153,6 +5163,43 @@ lemma new_zero_card_tail_tendsto_zero_of_eventually_sdiff_eq_empty
   filter_upwards [hnew] with T hT
   simp [hT]
 
+/-- Under a global height bound on nontrivial zeros, the new-zero contribution
+above the base cutoff is eventually zero. -/
+lemma new_zero_contribution_sum_eventually_zero_of_global_height_bound
+    {x B : ℝ}
+    (hbound : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → |ρ.im| ≤ B) :
+    (fun T : ℝ =>
+      ∑ ρ ∈ (nontrivialZerosFinset T \ nontrivialZerosFinset B),
+        (x : ℂ) ^ ρ / ρ) =ᶠ[atTop] fun _T : ℝ => 0 :=
+  new_zero_contribution_sum_eventually_zero_of_eventually_sdiff_eq_empty
+    (nontrivialZerosFinset_eventually_sdiff_eq_empty_of_global_height_bound hbound)
+
+/-- Under a global height bound on nontrivial zeros, the reciprocal-norm
+new-zero tail used in the RH truncation bound tends to zero. -/
+lemma new_zero_inv_norm_tail_tendsto_zero_of_global_height_bound
+    {x B : ℝ}
+    (hbound : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → |ρ.im| ≤ B) :
+    Tendsto
+      (fun T : ℝ =>
+        Real.sqrt x *
+          ∑ ρ ∈ (nontrivialZerosFinset T \ nontrivialZerosFinset B), ‖ρ‖⁻¹)
+      atTop (𝓝 0) :=
+  new_zero_inv_norm_tail_tendsto_zero_of_eventually_sdiff_eq_empty
+    (nontrivialZerosFinset_eventually_sdiff_eq_empty_of_global_height_bound hbound)
+
+/-- Under a global height bound on nontrivial zeros, the new-zero count tail
+used in the RH truncation bound tends to zero. -/
+lemma new_zero_card_tail_tendsto_zero_of_global_height_bound
+    {x B : ℝ}
+    (hbound : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → |ρ.im| ≤ B) :
+    Tendsto
+      (fun T : ℝ =>
+        Real.sqrt x *
+          ((2 : ℝ) * (nontrivialZerosFinset T \ nontrivialZerosFinset B).card))
+      atTop (𝓝 0) :=
+  new_zero_card_tail_tendsto_zero_of_eventually_sdiff_eq_empty
+    (nontrivialZerosFinset_eventually_sdiff_eq_empty_of_global_height_bound hbound)
+
 /-- Conditional explicit-formula bridge from an RH tail bound stated with the
 reciprocal-norm sum over newly included zeros.
 
@@ -5240,6 +5287,34 @@ lemma explicit_formula_von_mangoldt_of_RH_base_and_eventually_no_new_zeros_via_c
     hRH hB
     (new_zero_card_tail_tendsto_zero_of_eventually_sdiff_eq_empty
       (x := x) hnew)
+
+/-- RH-tail route from a global zero-height bound.  The stronger exact bridge
+`explicit_formula_von_mangoldt_of_global_height_bound_exact` already avoids the
+RH hypothesis; this lemma records the same stability through the explicit
+new-zero-tail interface. -/
+lemma explicit_formula_von_mangoldt_of_RH_base_and_global_height_bound_via_sum_tail
+    (hRH : RiemannHypothesis.Statement)
+    {x B : ℝ} {hx : x ≥ 2}
+    (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
+    (hbound : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → |ρ.im| ≤ B) :
+    explicit_formula_von_mangoldt x hx :=
+  explicit_formula_von_mangoldt_of_RH_base_and_new_zero_sum_tendsto_zero
+    hRH hB
+    (new_zero_inv_norm_tail_tendsto_zero_of_global_height_bound
+      (x := x) hbound)
+
+/-- Count-tail version of
+`explicit_formula_von_mangoldt_of_RH_base_and_global_height_bound_via_sum_tail`. -/
+lemma explicit_formula_von_mangoldt_of_RH_base_and_global_height_bound_via_card_tail
+    (hRH : RiemannHypothesis.Statement)
+    {x B : ℝ} {hx : x ≥ 2}
+    (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
+    (hbound : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → |ρ.im| ≤ B) :
+    explicit_formula_von_mangoldt x hx :=
+  explicit_formula_von_mangoldt_of_RH_base_and_new_zero_card_tendsto_zero
+    hRH hB
+    (new_zero_card_tail_tendsto_zero_of_global_height_bound
+      (x := x) hbound)
 
 /-- 零点对素数分布的贡献
 
