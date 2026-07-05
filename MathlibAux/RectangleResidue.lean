@@ -43,10 +43,10 @@ support:
 where `z_k` enumerates the poles (with multiplicity) of `f` strictly
 inside the rectangle.
 
-The companion lemma `rectangleIntegral_const_zero` records the trivial
-case that the constant-zero function gives a zero integral and a zero
-residue sum.  It is included as a sanity check that the predicate
-compiles and that the interface is non-vacuous (it can be satisfied).
+The companion lemmas `rectangleBoundaryIntegral_const` and
+`rectangleIntegral_const` record the holomorphic constant-function sanity
+case.  They are included as checks that the predicate compiles and that the
+interface is non-vacuous (it can be satisfied).
 
 ## References
 
@@ -149,28 +149,40 @@ def rectangleIntegral_meromorphic_eq_residue_sum
 
 /-! ## Trivial sanity-check lemma -/
 
+/-- The rectangle boundary integral of a complex constant function is zero. -/
+lemma rectangleBoundaryIntegral_const (a c : ℂ) (R : ℝ) :
+    rectangleBoundaryIntegral (fun _ : ℂ => a) c R = 0 := by
+  simp [rectangleBoundaryIntegral]
+
 /--
-**Sanity check**: the constant-zero function has zero contour integral
-around every rectangle and the residue sum at every finite support is
-trivially zero, so the interface predicate holds using the empty pole set.
+**Sanity check**: a constant complex function has zero contour integral around
+every rectangle and the residue sum at the empty pole set is trivially zero, so
+the interface predicate holds using the empty pole set.
 
 This does not prove the meromorphic residue theorem for arbitrary `f`;
 it only checks that the statement is satisfiable in the degenerate
-zero-function case and that the boundary-integral expression reduces as
-expected.
+holomorphic constant case and that the boundary-integral expression reduces
+as expected.
 -/
-lemma rectangleIntegral_const_zero {R : ℝ} (hpos : 0 < R) :
+lemma rectangleIntegral_const (a c : ℂ) {R : ℝ} (hpos : 0 < R) :
     rectangleIntegral_meromorphic_eq_residue_sum
-      (E := ℂ) (f := fun _ : ℂ => (0 : ℂ)) (c := 0) (R := R) hpos :=
+      (E := ℂ) (f := fun _ : ℂ => a) (c := c) (R := R) hpos :=
   by
     refine ⟨hpos, ∅, fun _ => 0, ?_, ?_, ?_, ?_⟩
     · intro z hz
-      exact MeromorphicAt.const (0 : ℂ) z
+      exact MeromorphicAt.const a z
     · intro z hz hzp
-      exact differentiableAt_const (0 : ℂ)
+      exact differentiableAt_const a
     · intro z hz
       simp at hz
-    · simp [rectangleBoundaryIntegral]
+    · simp [rectangleBoundaryIntegral_const]
+
+/-- Backwards-compatible zero-function specialization of
+`rectangleIntegral_const`. -/
+lemma rectangleIntegral_const_zero {R : ℝ} (hpos : 0 < R) :
+    rectangleIntegral_meromorphic_eq_residue_sum
+      (E := ℂ) (f := fun _ : ℂ => (0 : ℂ)) (c := 0) (R := R) hpos :=
+  rectangleIntegral_const 0 0 hpos
 
 /-
 ## Why we do NOT export a `of_meromorphicOn` wrapper

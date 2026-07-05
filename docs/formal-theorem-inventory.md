@@ -2184,6 +2184,13 @@ Route interfaces:
   alias interface to `KnownResults.conrey_40_percent_zeros_on_critical_line_target`.
 - `MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum`
   real-statement interface for missing rectangle contour/residue infrastructure.
+  The file also proves the constant-function sanity checks
+  `MathlibAux.rectangleBoundaryIntegral_const`,
+  `MathlibAux.rectangleIntegral_const`, and
+  `MathlibAux.rectangleIntegral_const_zero`, exposed through matching
+  `RiemannPNT.API` aliases.  These are ordinary theorem-level checks for the
+  holomorphic empty-pole case; they do not discharge the general meromorphic
+  residue theorem needed for Perron's formula.
 
 Reusable predicates:
 

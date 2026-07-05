@@ -190,6 +190,15 @@ be built from small-circle indentation, Cauchy integral formulas, and the
 existing rectangle Cauchy-Goursat theorem, but it is not currently a one-line
 Mathlib call.
 
+The current project does prove the constant-function sanity layer for this
+interface: `MathlibAux.rectangleBoundaryIntegral_const`,
+`MathlibAux.rectangleIntegral_const`, and
+`MathlibAux.rectangleIntegral_const_zero` show that constant holomorphic
+functions have zero rectangle boundary integral and satisfy the residue-sum
+predicate using the empty pole set.  This is useful API validation only; it is
+not the meromorphic rectangle residue theorem and does not supply Perron's
+formula.
+
 ### Boundary estimates and convergence
 
 For the truncated identity:
@@ -289,7 +298,8 @@ does the same composition for arbitrary `0 < beta < 1`, yielding
    `finite_nontrivial_zeros_bounded_height`.
 3. Formalize a generic Perron half-jump theorem for finitely supported or
    absolutely summable Dirichlet series.
-4. Formalize a rectangle meromorphic residue theorem as a reusable project
+4. Extend the existing constant-function rectangle sanity checks to a real
+   rectangle meromorphic residue theorem as a reusable project
    lemma, since Mathlib currently supplies the analytic pieces but not the exact
    residue-sum wrapper needed here.
 5. Prove the truncated explicit formula with an explicit contour-error term.

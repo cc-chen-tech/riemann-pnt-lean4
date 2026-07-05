@@ -6,6 +6,7 @@ import PrimeNumberTheorem
 import PrimeNumberTheorem.ExplicitFormulaTruncated
 import ZeroFreeRegion
 import ZeroFreeRegion.MeromorphicAux
+import MathlibAux.RectangleResidue
 
 open Complex Filter Topology Asymptotics ComplexConjugate
 open scoped ArithmeticFunction LSeries.notation
@@ -16738,5 +16739,25 @@ theorem approximate_functional_equation_target_iff_eventually_and_bounded_patch 
                 1/((n+1 : ℂ) ^ (0.5 - Complex.I * (t : ℂ)))
             + R) ∧ ‖R‖ ≤ Csmall * (t : ℝ)^(-1/4 : ℝ) :=
   HardyTheorem.Details.approximate_functional_equation_target_iff_eventually_and_bounded_patch
+
+/-- Public sanity check for the rectangle residue interface: the boundary
+integral of a complex constant function is zero. -/
+theorem rectangleBoundaryIntegral_const (a c : ℂ) (R : ℝ) :
+    MathlibAux.rectangleBoundaryIntegral (fun _ : ℂ => a) c R = 0 :=
+  MathlibAux.rectangleBoundaryIntegral_const a c R
+
+/-- Public sanity check for the rectangle residue interface: a complex
+constant function satisfies the residue-sum predicate with the empty pole
+set. -/
+theorem rectangleIntegral_const (a c : ℂ) {R : ℝ} (hpos : 0 < R) :
+    MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum
+      (E := ℂ) (f := fun _ : ℂ => a) (c := c) (R := R) hpos :=
+  MathlibAux.rectangleIntegral_const a c hpos
+
+/-- Public zero-function specialization of `rectangleIntegral_const`. -/
+theorem rectangleIntegral_const_zero {R : ℝ} (hpos : 0 < R) :
+    MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum
+      (E := ℂ) (f := fun _ : ℂ => (0 : ℂ)) (c := 0) (R := R) hpos :=
+  MathlibAux.rectangleIntegral_const_zero hpos
 
 end RiemannPNT.API
