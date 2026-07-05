@@ -2078,14 +2078,20 @@ Core verified declarations:
   with the underlying `psi`-power-error zero-exclusion interface.
 - `not_psi_power_error_bound_sub_delta_of_exists_zero_right_of_bridge`,
   `not_psi_power_error_bound_sub_delta_of_exists_zero_right_of_explicit_formula_converse`,
+  `not_psi_power_error_below_line_of_exists_zero_on_line_bridge`,
+  `not_psi_power_error_below_line_of_exists_zero_on_line_explicit_formula_converse`,
+  `not_psi_power_error_bound_sub_delta_of_exists_zero_on_line_bridge`,
+  `not_psi_power_error_bound_sub_delta_of_exists_zero_on_line_explicit_formula_converse`,
   `not_psi_power_error_bound_sub_delta_of_exists_zero_on_reflected_line_bridge`,
   and
   `not_psi_power_error_bound_sub_delta_of_exists_zero_on_reflected_line_explicit_formula_converse`
   record the general power-saving contrapositives: under the future
-  zero-exclusion route at boundary `beta`, a zero on or to the right of
-  `Re(s)=beta`, or equivalently on the reflected line `Re(s)=1-beta`, rules out
-  `PsiPowerErrorBound (beta - delta)` whenever `0 < delta` and
-  `0 <= beta - delta`.
+  zero-exclusion route at boundary `beta`, a nontrivial zero on or to the
+  right of `Re(s)=beta`, a zeta zero on the line `Re(s)=beta` inside the
+  critical strip, or a zeta zero on the reflected line `Re(s)=1-beta`, rules
+  out the corresponding below-line `psi` predicate or concrete
+  `PsiPowerErrorBound (beta - delta)` whenever the stated strip and exponent
+  hypotheses hold.
 - `no_zeros_on_vertical_line_of_explicit_formula_converse_power_mono_error`
   and
   `no_zeros_on_reflected_line_of_explicit_formula_converse_power_mono_error`

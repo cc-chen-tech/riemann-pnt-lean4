@@ -3322,6 +3322,26 @@ theorem not_psi_power_error_below_line_of_exists_zero_right_of_explicit_formula_
   PrimeNumberTheorem.not_psi_power_error_below_line_of_exists_zero_right_of_explicit_formula_converse
     hbridge hzero
 
+/-- Public same-line zeta-zero contrapositive for the below-line `ψ`-error
+predicate. -/
+theorem not_psi_power_error_below_line_of_exists_zero_on_line_bridge
+    {β : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hbridge : PrimeNumberTheorem.PsiPowerErrorBelowLineExcludesZerosRightOf β)
+    (hzero : ∃ s : ℂ, riemannZeta s = 0 ∧ s.re = β) :
+    ¬ PrimeNumberTheorem.PsiPowerErrorBelowLine β :=
+  PrimeNumberTheorem.not_psi_power_error_below_line_of_exists_zero_on_line_bridge
+    hβ_pos hβ_lt_one hbridge hzero
+
+/-- Public same-line zeta-zero contrapositive with the explicit-formula
+converse dependency named directly. -/
+theorem not_psi_power_error_below_line_of_exists_zero_on_line_explicit_formula_converse
+    {β : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hbridge : PrimeNumberTheorem.ExplicitFormulaConversePowerTarget β)
+    (hzero : ∃ s : ℂ, riemannZeta s = 0 ∧ s.re = β) :
+    ¬ PrimeNumberTheorem.PsiPowerErrorBelowLine β :=
+  PrimeNumberTheorem.not_psi_power_error_below_line_of_exists_zero_on_line_explicit_formula_converse
+    hβ_pos hβ_lt_one hbridge hzero
+
 /-- Public concrete power-saving contrapositive of the general right-of-line
 bridge. -/
 theorem not_psi_power_error_bound_sub_delta_of_exists_zero_right_of_bridge
@@ -3341,6 +3361,27 @@ theorem not_psi_power_error_bound_sub_delta_of_exists_zero_right_of_explicit_for
     ¬ PrimeNumberTheorem.PsiPowerErrorBound (β - delta) :=
   PrimeNumberTheorem.not_psi_power_error_bound_sub_delta_of_exists_zero_right_of_explicit_formula_converse
     hdelta_pos hθ_nonneg hbridge hzero
+
+/-- Public same-line zeta-zero power-saving contrapositive. -/
+theorem not_psi_power_error_bound_sub_delta_of_exists_zero_on_line_bridge
+    {β delta : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hdelta_pos : 0 < delta) (hθ_nonneg : 0 ≤ β - delta)
+    (hbridge : PrimeNumberTheorem.PsiPowerErrorBelowLineExcludesZerosRightOf β)
+    (hzero : ∃ s : ℂ, riemannZeta s = 0 ∧ s.re = β) :
+    ¬ PrimeNumberTheorem.PsiPowerErrorBound (β - delta) :=
+  PrimeNumberTheorem.not_psi_power_error_bound_sub_delta_of_exists_zero_on_line_bridge
+    hβ_pos hβ_lt_one hdelta_pos hθ_nonneg hbridge hzero
+
+/-- Public same-line zeta-zero power-saving contrapositive with the
+explicit-formula converse dependency named directly. -/
+theorem not_psi_power_error_bound_sub_delta_of_exists_zero_on_line_explicit_formula_converse
+    {β delta : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hdelta_pos : 0 < delta) (hθ_nonneg : 0 ≤ β - delta)
+    (hbridge : PrimeNumberTheorem.ExplicitFormulaConversePowerTarget β)
+    (hzero : ∃ s : ℂ, riemannZeta s = 0 ∧ s.re = β) :
+    ¬ PrimeNumberTheorem.PsiPowerErrorBound (β - delta) :=
+  PrimeNumberTheorem.not_psi_power_error_bound_sub_delta_of_exists_zero_on_line_explicit_formula_converse
+    hβ_pos hβ_lt_one hdelta_pos hθ_nonneg hbridge hzero
 
 /-- Public reflected-line power-saving contrapositive. -/
 theorem not_psi_power_error_bound_sub_delta_of_exists_zero_on_reflected_line_bridge

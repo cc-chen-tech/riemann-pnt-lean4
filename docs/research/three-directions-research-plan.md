@@ -219,6 +219,12 @@ Verified assets now include:
 - direct conditional `O(x^(2/3-delta))` wrappers:
   `no_zeros_on_one_third_of_explicit_formula_converse_power_saving` and
   `no_zeros_on_two_thirds_of_explicit_formula_converse_power_saving`;
+- general `O(x^(beta-delta))` direct/reflected wrappers and contrapositives,
+  including same-line and reflected-line zeta-zero inputs:
+  `no_zeros_on_vertical_line_of_psi_power_error_bound_sub_delta_bridge`,
+  `no_zeros_on_reflected_line_of_psi_power_error_bound_sub_delta_bridge`,
+  `not_psi_power_error_bound_sub_delta_of_exists_zero_on_line_bridge`, and
+  `not_psi_power_error_bound_sub_delta_of_exists_zero_on_reflected_line_bridge`;
 - finite explicit-formula truncation increment identities;
 - new-zero norm/count tail bounds under RH;
 - eventual-no-new-zero tail convergence;
@@ -263,7 +269,11 @@ contour shifting, or the converse/oscillation theorem turning
 is that both sides of the formal path are now explicit and smoke-checked: a
 future `|ψ(x)-x| <= C*x^theta` estimate can enter as a route predicate, and any
 future converse input at `beta = 2/3` then feeds the claimed `Re(s)=1/3`
-exclusion.
+exclusion.  The general contrapositive wrappers make the same dependency
+usable in the opposite direction: a hypothetical zeta zero on `Re(s)=beta`, on
+the reflected line, or to the right of the boundary is incompatible with a
+concrete `O(x^(beta-delta))` error once the corresponding converse route is
+assumed.
 
 ## Hard Gaps
 

@@ -3707,6 +3707,36 @@ theorem not_psi_power_error_below_line_of_exists_zero_right_of_explicit_formula_
       hbridge)
     hzero
 
+/-- Same-line zeta-zero contrapositive: a zeta zero on `Re(s)=β` in the
+critical strip is a nontrivial zero on the boundary, so the below-`β` `ψ`
+power saving cannot hold under the zero-exclusion route interface. -/
+theorem not_psi_power_error_below_line_of_exists_zero_on_line_bridge
+    {β : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hbridge : PsiPowerErrorBelowLineExcludesZerosRightOf β)
+    (hzero : ∃ s : ℂ, riemannZeta s = 0 ∧ s.re = β) :
+    ¬ PsiPowerErrorBelowLine β := by
+  rcases hzero with ⟨s, hs_zero, hs_re⟩
+  have hnt : RiemannHypothesis.IsNontrivialZero s := by
+    refine ⟨hs_zero, ?_, ?_⟩
+    · nlinarith [hs_re, hβ_pos]
+    · nlinarith [hs_re, hβ_lt_one]
+  exact
+    not_psi_power_error_below_line_of_exists_zero_right_of_bridge
+      hbridge ⟨s, hnt, le_of_eq hs_re.symm⟩
+
+/-- Same-line zeta-zero contrapositive with the explicit-formula converse
+dependency named directly. -/
+theorem not_psi_power_error_below_line_of_exists_zero_on_line_explicit_formula_converse
+    {β : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hbridge : ExplicitFormulaConversePowerTarget β)
+    (hzero : ∃ s : ℂ, riemannZeta s = 0 ∧ s.re = β) :
+    ¬ PsiPowerErrorBelowLine β :=
+  not_psi_power_error_below_line_of_exists_zero_on_line_bridge
+    hβ_pos hβ_lt_one
+    (psiPowerErrorBelowLineExcludesZerosRightOf_of_explicit_formula_converse_power
+      hbridge)
+    hzero
+
 /-- Concrete power-saving contrapositive of the general right-of-line bridge:
 if a nontrivial zero lies on or to the right of `Re(s)=β`, then no
 `O(x^(β-delta))` `ψ` error can hold once the below-`β` zero-exclusion route is
@@ -3732,6 +3762,36 @@ theorem not_psi_power_error_bound_sub_delta_of_exists_zero_right_of_explicit_for
     ¬ PsiPowerErrorBound (β - delta) :=
   not_psi_power_error_bound_sub_delta_of_exists_zero_right_of_bridge
     hdelta_pos hθ_nonneg
+    (psiPowerErrorBelowLineExcludesZerosRightOf_of_explicit_formula_converse_power
+      hbridge)
+    hzero
+
+/-- Same-line zeta-zero power-saving contrapositive: a zeta zero on
+`Re(s)=β` in the critical strip rules out the concrete `O(x^(β-delta))` `ψ`
+error under the route interface. -/
+theorem not_psi_power_error_bound_sub_delta_of_exists_zero_on_line_bridge
+    {β delta : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hdelta_pos : 0 < delta) (hθ_nonneg : 0 ≤ β - delta)
+    (hbridge : PsiPowerErrorBelowLineExcludesZerosRightOf β)
+    (hzero : ∃ s : ℂ, riemannZeta s = 0 ∧ s.re = β) :
+    ¬ PsiPowerErrorBound (β - delta) := by
+  intro herror
+  exact
+    not_psi_power_error_below_line_of_exists_zero_on_line_bridge
+      hβ_pos hβ_lt_one hbridge hzero
+      (psiPowerErrorBelowLine_of_power_saving
+        hdelta_pos hθ_nonneg herror)
+
+/-- Same-line zeta-zero power-saving contrapositive with the explicit-formula
+converse dependency named directly. -/
+theorem not_psi_power_error_bound_sub_delta_of_exists_zero_on_line_explicit_formula_converse
+    {β delta : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hdelta_pos : 0 < delta) (hθ_nonneg : 0 ≤ β - delta)
+    (hbridge : ExplicitFormulaConversePowerTarget β)
+    (hzero : ∃ s : ℂ, riemannZeta s = 0 ∧ s.re = β) :
+    ¬ PsiPowerErrorBound (β - delta) :=
+  not_psi_power_error_bound_sub_delta_of_exists_zero_on_line_bridge
+    hβ_pos hβ_lt_one hdelta_pos hθ_nonneg
     (psiPowerErrorBelowLineExcludesZerosRightOf_of_explicit_formula_converse_power
       hbridge)
     hzero
