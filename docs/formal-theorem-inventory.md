@@ -173,6 +173,8 @@ Core verified declarations:
 - `exists_norm_riemannZeta_sigma_it_pos_lower_bound_on_compact_vertical_band`
   is the coordinate form of the same compact lower bound on points
   `sigma + it`.
+- `exists_norm_riemannZeta_sigma_two_it_pos_lower_bound_on_compact_vertical_band`
+  is the shifted coordinate form at the 3-4-1 point `sigma + 2it`.
 - `exists_norm_logDeriv_riemannZeta_bound_on_compact_vertical_band`
   proves that `logDeriv zeta` has a finite norm bound on every compact
   positive-height band `1 <= Re z <= 2`, `H <= |Im z| <= T`.

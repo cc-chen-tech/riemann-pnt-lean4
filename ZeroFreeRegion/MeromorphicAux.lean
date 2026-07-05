@@ -11400,6 +11400,36 @@ lemma exists_norm_riemannZeta_sigma_it_pos_lower_bound_on_compact_vertical_band
   exact hη ((σ : ℂ) + I * t) (by simpa using hσ) (by simpa using htH)
     (by simpa using htT)
 
+/-- Coordinate compact positive lower bound for `ζ` at the shifted point
+`σ + 2it`. -/
+lemma exists_norm_riemannZeta_sigma_two_it_pos_lower_bound_on_compact_vertical_band
+    {H T : ℝ} (hH : 0 < H) :
+    ∃ η > 0, ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 →
+      H ≤ |t| → |t| ≤ T →
+      η ≤ ‖riemannZeta ((σ : ℂ) + 2 * I * t)‖ := by
+  have h2H : 0 < 2 * H := by positivity
+  rcases exists_norm_riemannZeta_sigma_it_pos_lower_bound_on_compact_vertical_band
+      (H := 2 * H) (T := 2 * T) h2H with ⟨η, hη_pos, hη⟩
+  refine ⟨η, hη_pos, ?_⟩
+  intro σ t hσ htH htT
+  have hheight_lower : 2 * H ≤ |2 * t| := by
+    calc
+      2 * H ≤ 2 * |t| := by nlinarith
+      _ = |2 * t| := by simp [abs_mul]
+  have hheight_upper : |2 * t| ≤ 2 * T := by
+    calc
+      |2 * t| = 2 * |t| := by simp [abs_mul]
+      _ ≤ 2 * T := by nlinarith
+  have hbound := hη σ (2 * t) hσ hheight_lower hheight_upper
+  have hrewrite :
+      ((σ : ℂ) + I * (((2 * t : ℝ) : ℂ))) =
+        ((σ : ℂ) + 2 * I * t) := by
+    norm_num [Complex.ofReal_mul]
+    ring
+  calc
+    η ≤ ‖riemannZeta ((σ : ℂ) + I * (((2 * t : ℝ) : ℂ)))‖ := hbound
+    _ = ‖riemannZeta ((σ : ℂ) + 2 * I * t)‖ := by rw [hrewrite]
+
 /-- On any bounded positive-height vertical band in the right half-plane,
 `logDeriv ζ` has a finite norm bound.
 

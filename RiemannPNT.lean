@@ -7137,6 +7137,15 @@ theorem exists_norm_riemannZeta_sigma_it_pos_lower_bound_on_compact_vertical_ban
   ZeroFreeRegion.exists_norm_riemannZeta_sigma_it_pos_lower_bound_on_compact_vertical_band
     hH
 
+/-- Public coordinate compact positive lower bound for `ζ(σ + 2it)`. -/
+theorem exists_norm_riemannZeta_sigma_two_it_pos_lower_bound_on_compact_vertical_band
+    {H T : ℝ} (hH : 0 < H) :
+    ∃ η > 0, ∀ σ t : ℝ, σ ∈ Set.Icc (1 : ℝ) 2 →
+      H ≤ |t| → |t| ≤ T →
+      η ≤ ‖riemannZeta ((σ : ℂ) + 2 * Complex.I * t)‖ :=
+  ZeroFreeRegion.exists_norm_riemannZeta_sigma_two_it_pos_lower_bound_on_compact_vertical_band
+    hH
+
 /-- Public compact bounded-height norm bound for `logDeriv ζ` in the right
 half-strip `1 <= Re(z) <= 2`, `H <= |Im(z)| <= T`. -/
 theorem exists_norm_logDeriv_riemannZeta_bound_on_compact_vertical_band
