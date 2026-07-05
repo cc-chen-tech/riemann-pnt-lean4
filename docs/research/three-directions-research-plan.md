@@ -94,6 +94,11 @@ Verified assets now include:
 - center-one paired-average convenience wrappers:
   `nontrivialZerosFinset_pair_average_nonnegative_of_laplace_pair_positive_one`;
   `nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_laplace_pair_positive_one`.
+- pointwise critical-strip positivity suppliers:
+  `laplacePairPositive_one_of_re_nonnegative_on_critical_strip`,
+  `nontrivialZerosFinset_sum_re_nonnegative_of_re_nonnegative_on_critical_strip`,
+  `nontrivialZerosFinset_average_re_nonnegative_of_re_nonnegative_on_critical_strip`,
+  and the corresponding new-zero `sdiff` sum/average wrappers.
 
 Important boundary:
 
@@ -102,10 +107,11 @@ it into an unpaired sum needs a proof that the chosen center-pair map preserves
 the relevant zero set.  For zeta this is available at center `1`, via
 `rho -> 1 - rho`, not for an arbitrary center.
 
-Next useful step is no longer another finset wrapper.  It needs a concrete
-Stechkin/Heath-Brown kernel positivity theorem that instantiates
-`LaplacePairPositive F 1`; without that analytic positivity input, the remaining
-work would only rename existing lemmas.
+Next useful step is no longer another abstract finset wrapper.  It needs a
+concrete Stechkin/Heath-Brown kernel positivity theorem, either directly as
+`LaplacePairPositive F 1` or via the stronger pointwise critical-strip supplier
+above.  Without that analytic positivity input, further work would mostly
+rename existing lemmas.
 
 ## Direction 3: explicit formula / PNT error bridge
 

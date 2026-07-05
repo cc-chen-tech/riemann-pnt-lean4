@@ -1672,6 +1672,15 @@ Core verified declarations:
 - `nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive`
   generalizes the paired new-zero Laplace bridge to any caller-supplied real
   pairing center, with the strip membership supplied as an explicit hypothesis.
+- `laplacePairPositive_of_re_nonnegative_on_strip`,
+  `laplacePairPositive_one_of_re_nonnegative_on_critical_strip`,
+  `nontrivialZerosFinset_sum_re_nonnegative_of_re_nonnegative_on_critical_strip`,
+  `nontrivialZerosFinset_average_re_nonnegative_of_re_nonnegative_on_critical_strip`,
+  and the corresponding `sdiff` new-zero sum/average wrappers turn a stronger
+  pointwise critical-strip real-part positivity certificate into the existing
+  center-one pair-positive finite-zero machinery.  This gives concrete
+  Stechkin/Heath-Brown-style kernels a direct supplier shape, but it does not
+  prove positivity for any such analytic kernel by itself.
 - `norm_finiteNontrivialZeroSum_sub_le_new_zeros_sum_norm`
   bounds the finite zero-sum change between two truncation heights by the
   summed norms of the newly included zero contributions, a direct finite

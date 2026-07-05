@@ -299,7 +299,8 @@ The project currently verifies several supporting statements, including:
 - center-one finite zero-pair positivity bridges, average finite-zero
   contribution nonnegativity, new-zero block reflection/reindexing/averages/norm
   bounds, eventually-zero/tendsto-zero tail collapses under empty new-zero
-  hypotheses, and
+  hypotheses, pointwise critical-strip positivity suppliers for candidate
+  zero-detector kernels, and
   reflected-line conditional bridges for explicit-formula/PNT-error routes;
 - several zeta nonvanishing and pole-behavior wrappers from Mathlib;
 - the Gamma residue formula at negative integers and numerical special cases;

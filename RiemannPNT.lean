@@ -1985,6 +1985,22 @@ theorem finite_zero_sum_nonnegative_of_pairing_condition
 abbrev LaplacePairPositive (F : ℂ → ℂ) (center : ℝ) : Prop :=
   PrimeNumberTheorem.LaplacePairPositive F center
 
+/-- Public supplier: pointwise real-part nonnegativity on a strip implies
+strip-local pair positivity. -/
+theorem laplacePairPositive_of_re_nonnegative_on_strip
+    {F : ℂ → ℂ} {center : ℝ}
+    (hF : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ center → 0 ≤ (F z).re) :
+    PrimeNumberTheorem.LaplacePairPositive F center :=
+  PrimeNumberTheorem.laplacePairPositive_of_re_nonnegative_on_strip hF
+
+/-- Public center-one supplier for the zeta critical-strip pairing. -/
+theorem laplacePairPositive_one_of_re_nonnegative_on_critical_strip
+    {F : ℂ → ℂ}
+    (hF : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 → 0 ≤ (F z).re) :
+    PrimeNumberTheorem.LaplacePairPositive F 1 :=
+  PrimeNumberTheorem.laplacePairPositive_one_of_re_nonnegative_on_critical_strip
+    hF
+
 /-- Public finite paired-zero nonnegativity from strip-local pair positivity. -/
 theorem finite_zero_sum_nonnegative_of_laplace_pair_positive
     (S : Finset ℂ) (F : ℂ → ℂ) (center : ℝ)
@@ -2443,6 +2459,29 @@ theorem nontrivialZerosFinset_sdiff_average_re_nonnegative_of_laplace_pair_posit
   PrimeNumberTheorem.nontrivialZerosFinset_sdiff_average_re_nonnegative_of_laplace_pair_positive_one
     T U F hF
 
+/-- Public new-zero real-part sum nonnegativity from pointwise critical-strip
+nonnegativity. -/
+theorem nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_re_nonnegative_on_critical_strip
+    (T U : ℝ) (F : ℂ → ℂ)
+    (hF : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 → 0 ≤ (F z).re) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+        PrimeNumberTheorem.nontrivialZerosFinset T, (F ρ).re :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_re_nonnegative_on_critical_strip
+    T U F hF
+
+/-- Public new-zero average real-part nonnegativity from pointwise
+critical-strip nonnegativity. -/
+theorem nontrivialZerosFinset_sdiff_average_re_nonnegative_of_re_nonnegative_on_critical_strip
+    (T U : ℝ) (F : ℂ → ℂ)
+    (hF : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 → 0 ≤ (F z).re) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T, (F ρ).re) /
+        (((PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ)) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_average_re_nonnegative_of_re_nonnegative_on_critical_strip
+    T U F hF
+
 /-- Public nonzero denominator fact for elements of the height-truncated
 nontrivial-zero finset. -/
 theorem ne_zero_of_mem_nontrivialZerosFinset {ρ : ℂ} {T : ℝ}
@@ -2606,6 +2645,26 @@ theorem nontrivialZerosFinset_average_re_nonnegative_of_laplace_pair_positive_on
     (PrimeNumberTheorem.nontrivialZerosFinset_sum_re_nonnegative_of_laplace_pair_positive_one
       T F hF)
     (Nat.cast_nonneg _)
+
+/-- Public finite-zero real-part sum nonnegativity from pointwise critical-strip
+nonnegativity. -/
+theorem nontrivialZerosFinset_sum_re_nonnegative_of_re_nonnegative_on_critical_strip
+    (T : ℝ) (F : ℂ → ℂ)
+    (hF : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 → 0 ≤ (F z).re) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T, (F ρ).re :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sum_re_nonnegative_of_re_nonnegative_on_critical_strip
+    T F hF
+
+/-- Public finite-zero average real-part nonnegativity from pointwise
+critical-strip nonnegativity. -/
+theorem nontrivialZerosFinset_average_re_nonnegative_of_re_nonnegative_on_critical_strip
+    (T : ℝ) (F : ℂ → ℂ)
+    (hF : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 → 0 ≤ (F z).re) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T, (F ρ).re) /
+        ((PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_average_re_nonnegative_of_re_nonnegative_on_critical_strip
+    T F hF
 
 /-- Public extensionality criterion for height-truncated nontrivial-zero
 finsets. -/

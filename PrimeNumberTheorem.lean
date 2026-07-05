@@ -2728,6 +2728,36 @@ abbrev LaplacePairPositive (F : ℂ → ℂ) (center : ℝ) : Prop :=
   ∀ z : ℂ, 0 ≤ z.re → z.re ≤ center →
     0 ≤ (F z).re + (F ((center : ℂ) - z)).re
 
+/-- A stronger pointwise positivity certificate on the strip supplies the
+Stechkin/Heath-Brown pair-positivity interface.
+
+This is useful for concrete kernels whose real part is known to be
+nonnegative throughout the critical strip: both `z` and `center - z` remain in
+the same strip, so their paired contribution is nonnegative. -/
+lemma laplacePairPositive_of_re_nonnegative_on_strip
+    {F : ℂ → ℂ} {center : ℝ}
+    (hF : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ center → 0 ≤ (F z).re) :
+    LaplacePairPositive F center := by
+  intro z hz_left hz_right
+  have hpair_left : 0 ≤ ((center : ℂ) - z).re := by
+    simp [Complex.sub_re]
+    exact hz_right
+  have hpair_right : ((center : ℂ) - z).re ≤ center := by
+    simp [Complex.sub_re]
+    linarith
+  exact add_nonneg (hF z hz_left hz_right)
+    (hF ((center : ℂ) - z) hpair_left hpair_right)
+
+/-- Center-one version of
+`laplacePairPositive_of_re_nonnegative_on_strip`, matching the zeta
+functional-equation pairing `ρ ↦ 1 - ρ`. -/
+lemma laplacePairPositive_one_of_re_nonnegative_on_critical_strip
+    {F : ℂ → ℂ}
+    (hF : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 → 0 ≤ (F z).re) :
+    LaplacePairPositive F 1 :=
+  laplacePairPositive_of_re_nonnegative_on_strip (F := F)
+    (center := 1) hF
+
 /-- Direct use of the zero-pair nonnegativity condition. -/
 lemma zero_pair_contribution_nonnegative_of_reflection_condition
     {F : ℂ → ℂ} {center z : ℂ}
@@ -4065,6 +4095,27 @@ lemma nontrivialZerosFinset_sdiff_average_re_nonnegative_of_laplace_pair_positiv
       T U F hF)
     (Nat.cast_nonneg _)
 
+/-- Pointwise real-part nonnegativity on the critical strip makes the unpaired
+real-part sum over newly included nontrivial zeros nonnegative. -/
+lemma nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_re_nonnegative_on_critical_strip
+    (T U : ℝ) (F : ℂ → ℂ)
+    (hF : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 → 0 ≤ (F z).re) :
+    0 ≤
+      ∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T, (F ρ).re :=
+  nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_laplace_pair_positive_one
+    T U F (laplacePairPositive_one_of_re_nonnegative_on_critical_strip hF)
+
+/-- Pointwise real-part nonnegativity on the critical strip makes the average
+real-part contribution over newly included nontrivial zeros nonnegative. -/
+lemma nontrivialZerosFinset_sdiff_average_re_nonnegative_of_re_nonnegative_on_critical_strip
+    (T U : ℝ) (F : ℂ → ℂ)
+    (hF : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 → 0 ≤ (F z).re) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T, (F ρ).re) /
+        (((nontrivialZerosFinset U \ nontrivialZerosFinset T).card : ℝ)) :=
+  nontrivialZerosFinset_sdiff_average_re_nonnegative_of_laplace_pair_positive_one
+    T U F (laplacePairPositive_one_of_re_nonnegative_on_critical_strip hF)
+
 /-- Specialize strip-local Stechkin/Heath-Brown pair positivity to the finite
 family of nontrivial zeros up to height `T`. -/
 lemma nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive
@@ -4131,6 +4182,28 @@ lemma nontrivialZerosFinset_sum_re_nonnegative_of_laplace_pair_positive_one
       T F hF
   rw [nontrivialZerosFinset_pair_contribution_eq_two_sum_re] at hpair
   nlinarith
+
+/-- Pointwise real-part nonnegativity on the critical strip makes the unpaired
+real-part sum over height-truncated nontrivial zeros nonnegative. -/
+lemma nontrivialZerosFinset_sum_re_nonnegative_of_re_nonnegative_on_critical_strip
+    (T : ℝ) (F : ℂ → ℂ)
+    (hF : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 → 0 ≤ (F z).re) :
+    0 ≤ ∑ ρ ∈ nontrivialZerosFinset T, (F ρ).re :=
+  nontrivialZerosFinset_sum_re_nonnegative_of_laplace_pair_positive_one
+    T F (laplacePairPositive_one_of_re_nonnegative_on_critical_strip hF)
+
+/-- Pointwise real-part nonnegativity on the critical strip makes the average
+real-part contribution over height-truncated nontrivial zeros nonnegative. -/
+lemma nontrivialZerosFinset_average_re_nonnegative_of_re_nonnegative_on_critical_strip
+    (T : ℝ) (F : ℂ → ℂ)
+    (hF : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 → 0 ≤ (F z).re) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset T, (F ρ).re) /
+        (((nontrivialZerosFinset T).card : ℝ)) :=
+  div_nonneg
+    (nontrivialZerosFinset_sum_re_nonnegative_of_re_nonnegative_on_critical_strip
+      T F hF)
+    (Nat.cast_nonneg _)
 
 lemma nontrivialZerosFinset_ext_of_height_iff {T U : ℝ}
     (h : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ →
