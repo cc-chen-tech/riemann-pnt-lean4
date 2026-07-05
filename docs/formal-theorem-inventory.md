@@ -2537,6 +2537,10 @@ Route interfaces:
 - `PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute`
   route interface from a future uniform truncated explicit formula plus
   oscillation/converse argument to `ExplicitFormulaConversePowerTarget`.
+- `PrimeNumberTheorem.ExplicitFormulaTruncated.psiPowerErrorBelowLineExcludesZerosRightOf_of_truncated_route`
+  repackages the truncated route and a future uniform truncated explicit
+  formula proof as the right-half zero-exclusion route interface
+  `PsiPowerErrorBelowLineExcludesZerosRightOf`.
 - `PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route`,
   `PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_below_two_thirds`,
   `PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_one_third_of_truncated_explicit_formula_converse_route`,
@@ -2553,6 +2557,11 @@ Route interfaces:
 - `RiemannPNT.API.no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route`
   public bridge from the same conditional route at `beta = 2/3` to no zeros on
   the right-side line `Re(s)=2/3`.
+- `RiemannPNT.API.ExplicitFormulaTruncated.psiPowerErrorBelowLineExcludesZerosRightOf_of_truncated_route`
+  and
+  `RiemannPNT.API.psiPowerErrorBelowLineExcludesZerosRightOf_of_truncated_route`
+  expose the same truncated-route-to-right-half-route conversion in the public
+  API.
 - `RiemannPNT.API.no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_below_two_thirds`
   and
   `RiemannPNT.API.no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_below_two_thirds`

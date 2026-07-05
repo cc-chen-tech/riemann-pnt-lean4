@@ -18099,6 +18099,18 @@ theorem explicitFormulaTruncated_of
   PrimeNumberTheorem.ExplicitFormulaTruncated.explicitFormulaTruncated_of
     T hT x hx h
 
+/-- Public repackaging of a truncated-explicit-formula converse route as the
+right-half zero-exclusion route interface used by the `ψ`-error bridges. -/
+theorem psiPowerErrorBelowLineExcludesZerosRightOf_of_truncated_route
+    {β : ℝ}
+    (hroute :
+      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute β)
+    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
+      ExplicitFormulaTruncatedTarget T hT x hx) :
+    PrimeNumberTheorem.PsiPowerErrorBelowLineExcludesZerosRightOf β :=
+  PrimeNumberTheorem.ExplicitFormulaTruncated.psiPowerErrorBelowLineExcludesZerosRightOf_of_truncated_route
+    hroute hexplicit
+
 /-- Public one-step conditional bridge from a future truncated explicit formula
 route and a `ψ` power saving below `2/3` to no zeros on `Re(s)=2/3`. -/
 theorem no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route
@@ -18400,6 +18412,20 @@ theorem explicitFormulaConversePower_of_truncated_route
         T hT x hx) :
     PrimeNumberTheorem.ExplicitFormulaConversePowerTarget β :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.explicitFormulaConversePower_of_truncated_route
+    hroute hexplicit
+
+/-- Public top-level repackaging of a truncated-explicit-formula converse route
+as the right-half zero-exclusion route interface used by the `ψ`-error
+bridges. -/
+theorem psiPowerErrorBelowLineExcludesZerosRightOf_of_truncated_route
+    {β : ℝ}
+    (hroute :
+      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute β)
+    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
+      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget
+        T hT x hx) :
+    PrimeNumberTheorem.PsiPowerErrorBelowLineExcludesZerosRightOf β :=
+  PrimeNumberTheorem.ExplicitFormulaTruncated.psiPowerErrorBelowLineExcludesZerosRightOf_of_truncated_route
     hroute hexplicit
 
 /-- Public one-step conditional bridge from a future truncated explicit formula

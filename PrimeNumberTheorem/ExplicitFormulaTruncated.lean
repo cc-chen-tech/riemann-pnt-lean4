@@ -172,6 +172,17 @@ lemma explicitFormulaConversePower_of_truncated_route
     PrimeNumberTheorem.ExplicitFormulaConversePowerTarget β :=
   hroute hexplicit
 
+/-- Repackage a truncated-explicit-formula converse route as the right-half
+zero-exclusion route interface used by the `ψ`-error bridges. -/
+lemma psiPowerErrorBelowLineExcludesZerosRightOf_of_truncated_route
+    {β : ℝ}
+    (hroute : ExplicitFormulaTruncatedConverseRoute β)
+    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
+      ExplicitFormulaTruncatedTarget T hT x hx) :
+    PrimeNumberTheorem.PsiPowerErrorBelowLineExcludesZerosRightOf β :=
+  PrimeNumberTheorem.psiPowerErrorBelowLineExcludesZerosRightOf_of_explicit_formula_converse_power
+    (explicitFormulaConversePower_of_truncated_route hroute hexplicit)
+
 /-- One-step conditional bridge from a future truncated explicit formula route
 and a `ψ` power saving below `2/3` to no zeros on `Re(s)=2/3`. -/
 theorem no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route

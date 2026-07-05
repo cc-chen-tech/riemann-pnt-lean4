@@ -780,7 +780,10 @@ and the reflected `Re(s)=1/3` consequence of this conditional route, including
 direct wrappers for the concrete `theta < 2/3` `psi`-error input; the same
 bridges are also exposed inside
 `PrimeNumberTheorem.ExplicitFormulaTruncated` and
-`RiemannPNT.API.ExplicitFormulaTruncated`.  It also
+`RiemannPNT.API.ExplicitFormulaTruncated`.  The truncated route is also
+repackaged directly as
+`PsiPowerErrorBelowLineExcludesZerosRightOf`, matching the right-half
+zero-exclusion route interface consumed by the general `psi`-error bridges.  It also
 exposes contrapositive facades saying that, under the same future
 zero-exclusion bridge, a zero at or to the right of the chosen boundary rules
 out the corresponding `psi` power-saving hypothesis.  The verified facades
