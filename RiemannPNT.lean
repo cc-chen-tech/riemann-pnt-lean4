@@ -17362,6 +17362,13 @@ theorem finiteTrivialZeroSum_re_lt_zero_of_mem {s : ℂ} {T : ℝ}
   PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_re_lt_zero_of_mem
     hs
 
+/-- Public stronger real-part bound for retained trivial zeros. -/
+theorem finiteTrivialZeroSum_re_le_neg_two_of_mem {s : ℂ} {T : ℝ}
+    (hs : s ∈ finiteTrivialZeroSum T) :
+    s.re ≤ -2 :=
+  PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_re_le_neg_two_of_mem
+    hs
+
 /-- Public cardinality bound for the finite trivial-zero truncation. -/
 theorem finiteTrivialZeroSum_card_le (T : ℝ) :
     (finiteTrivialZeroSum T).card ≤ Nat.floor (T / 2) :=
@@ -17379,6 +17386,20 @@ theorem finiteTrivialZeroSum_abs_im_eq_zero_of_mem {s : ℂ} {T : ℝ}
     (hs : s ∈ finiteTrivialZeroSum T) :
     |s.im| = 0 :=
   PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_abs_im_eq_zero_of_mem
+    hs
+
+/-- Public norm lower bound for retained trivial zeros. -/
+theorem finiteTrivialZeroSum_two_le_norm_of_mem {s : ℂ} {T : ℝ}
+    (hs : s ∈ finiteTrivialZeroSum T) :
+    2 ≤ ‖s‖ :=
+  PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_two_le_norm_of_mem
+    hs
+
+/-- Public reciprocal-norm bound for retained trivial zeros. -/
+theorem finiteTrivialZeroSum_inv_norm_le_half_of_mem {s : ℂ} {T : ℝ}
+    (hs : s ∈ finiteTrivialZeroSum T) :
+    ‖s‖⁻¹ ≤ (1 / 2 : ℝ) :=
+  PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_inv_norm_le_half_of_mem
     hs
 
 /-- Public separation between retained trivial zeros and nontrivial zeros. -/

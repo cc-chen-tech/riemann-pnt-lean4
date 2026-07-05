@@ -112,9 +112,12 @@ Verified assets now include:
   `PrimeNumberTheorem.ExplicitFormulaAux.mem_finiteTrivialZeroSum_iff`;
   `PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_im_eq_zero_of_mem`;
   `PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_re_lt_zero_of_mem`;
+  `PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_re_le_neg_two_of_mem`;
   `PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_ne_zero_of_mem`;
   `PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_abs_im_eq_zero_of_mem`;
   `PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_not_isNontrivialZero_of_mem`;
+  `PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_two_le_norm_of_mem`;
+  `PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_inv_norm_le_half_of_mem`;
   `PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_card_le`.
 
 Next useful step:
@@ -292,9 +295,12 @@ Verified assets now include:
   `ExplicitFormulaAux.mem_finiteTrivialZeroSum_iff`;
   `ExplicitFormulaAux.finiteTrivialZeroSum_im_eq_zero_of_mem`;
   `ExplicitFormulaAux.finiteTrivialZeroSum_re_lt_zero_of_mem`;
+  `ExplicitFormulaAux.finiteTrivialZeroSum_re_le_neg_two_of_mem`;
   `ExplicitFormulaAux.finiteTrivialZeroSum_ne_zero_of_mem`;
   `ExplicitFormulaAux.finiteTrivialZeroSum_abs_im_eq_zero_of_mem`;
   `ExplicitFormulaAux.finiteTrivialZeroSum_not_isNontrivialZero_of_mem`;
+  `ExplicitFormulaAux.finiteTrivialZeroSum_two_le_norm_of_mem`;
+  `ExplicitFormulaAux.finiteTrivialZeroSum_inv_norm_le_half_of_mem`;
   `ExplicitFormulaAux.finiteTrivialZeroSum_card_le`;
   `ExplicitFormulaAux.chebyshevPsi0_eq_chebyshevPsi_off_primePowers`;
   `ExplicitFormulaAux.jumpVonMangoldt_eq_vonMangoldt_of_primePower`.

@@ -2505,6 +2505,11 @@ Support-level verified declarations:
   `finiteTrivialZeroSum_not_isNontrivialZero_of_mem`
   add denominator safety, absolute-height normalization, and disjointness from
   the nontrivial-zero strip predicate for retained trivial zeros.
+- `finiteTrivialZeroSum_re_le_neg_two_of_mem`,
+  `finiteTrivialZeroSum_two_le_norm_of_mem`, and
+  `finiteTrivialZeroSum_inv_norm_le_half_of_mem`
+  package the retained trivial-zero support as the norm and reciprocal-norm
+  bounds needed for later `x^s / s` estimates.
 - `RiemannPNT.API.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget`
   and `RiemannPNT.API.ExplicitFormulaTruncated.explicitFormulaTruncated_of`
   expose the typed truncated explicit-formula target and its conditional

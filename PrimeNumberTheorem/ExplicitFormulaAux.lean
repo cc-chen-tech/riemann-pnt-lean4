@@ -43,10 +43,14 @@ file or the parent.
 - `mem_finiteTrivialZeroSum_iff`,
   `finiteTrivialZeroSum_im_eq_zero_of_mem`,
   `finiteTrivialZeroSum_re_lt_zero_of_mem`,
+  `finiteTrivialZeroSum_re_le_neg_two_of_mem`,
   `finiteTrivialZeroSum_ne_zero_of_mem`,
   `finiteTrivialZeroSum_abs_im_eq_zero_of_mem`,
   `finiteTrivialZeroSum_not_isNontrivialZero_of_mem`, and
   `finiteTrivialZeroSum_card_le` — finite trivial-zero support facts.
+- `finiteTrivialZeroSum_two_le_norm_of_mem` and
+  `finiteTrivialZeroSum_inv_norm_le_half_of_mem` — denominator-estimate
+  forms for retained finite trivial zeros.
 - `chebyshevPsi0_eq_chebyshevPsi_off_primePowers` — at a non
   prime-power point, `psi0 = psi`.
 - `jumpVonMangoldt_eq_vonMangoldt_of_primePower` — at a prime power,
@@ -235,6 +239,14 @@ lemma finiteTrivialZeroSum_re_lt_zero_of_mem {s : ℂ} {T : ℝ}
   norm_num
   exact_mod_cast Nat.succ_pos n
 
+/-- Retained trivial zeros have real part at most `-2`. -/
+lemma finiteTrivialZeroSum_re_le_neg_two_of_mem {s : ℂ} {T : ℝ}
+    (hs : s ∈ finiteTrivialZeroSum T) :
+    s.re ≤ -2 := by
+  rcases mem_finiteTrivialZeroSum_iff.mp hs with ⟨n, _hn, hns⟩
+  rw [← hns]
+  norm_num
+
 /-- The number of retained trivial zeros is at most the floor cutoff. -/
 lemma finiteTrivialZeroSum_card_le (T : ℝ) :
     (finiteTrivialZeroSum T).card ≤ Nat.floor (T / 2) := by
@@ -263,6 +275,24 @@ lemma finiteTrivialZeroSum_abs_im_eq_zero_of_mem {s : ℂ} {T : ℝ}
     |s.im| = 0 := by
   rw [finiteTrivialZeroSum_im_eq_zero_of_mem hs]
   simp
+
+/-- Retained trivial zeros have norm at least `2`. -/
+lemma finiteTrivialZeroSum_two_le_norm_of_mem {s : ℂ} {T : ℝ}
+    (hs : s ∈ finiteTrivialZeroSum T) :
+    2 ≤ ‖s‖ := by
+  have hre : s.re ≤ -2 := finiteTrivialZeroSum_re_le_neg_two_of_mem hs
+  have habs : 2 ≤ |s.re| := by
+    rw [abs_of_nonpos (by linarith : s.re ≤ 0)]
+    linarith
+  exact le_trans habs (Complex.abs_re_le_norm s)
+
+/-- The reciprocal norm of a retained trivial zero is at most `1/2`. -/
+lemma finiteTrivialZeroSum_inv_norm_le_half_of_mem {s : ℂ} {T : ℝ}
+    (hs : s ∈ finiteTrivialZeroSum T) :
+    ‖s‖⁻¹ ≤ (1 / 2 : ℝ) := by
+  have hnorm : (2 : ℝ) ≤ ‖s‖ := finiteTrivialZeroSum_two_le_norm_of_mem hs
+  have h := one_div_le_one_div_of_le (by norm_num : (0 : ℝ) < 2) hnorm
+  simpa [one_div] using h
 
 /-- Retained trivial zeros are disjoint from the nontrivial-zero strip
 predicate.  This records the separation between the finite trivial-zero
