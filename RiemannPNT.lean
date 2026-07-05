@@ -2070,6 +2070,16 @@ theorem nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive
   PrimeNumberTheorem.nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive
     T F center hF hstrip
 
+/-- Public center-one specialization of finite nontrivial-zero paired-sum
+nonnegativity from strip-local Laplace-pair positivity. -/
+theorem nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive_one
+    (T : ℝ) (F : ℂ → ℂ)
+    (hF : PrimeNumberTheorem.LaplacePairPositive F 1) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+      ((F ρ).re + (F (1 - ρ)).re) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive_one
+    T F hF
+
 /-- Public extensionality criterion for height-truncated nontrivial-zero
 finsets. -/
 theorem nontrivialZerosFinset_ext_of_height_iff {T U : ℝ}
@@ -4500,6 +4510,16 @@ theorem log_deriv_zeta_nonneg_finset_combination
           riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re :=
   ZeroFreeRegion.log_deriv_zeta_nonneg_finset_combination
     σ hσ t S a hseries hpoly
+
+/-- Public algebraic lower-bound step isolating one term from a nonnegative
+finite weighted sum. -/
+theorem finset_weighted_nonneg_term_lower_bound
+    (S : Finset ℕ) (a x : ℕ → ℝ) {m : ℕ}
+    (hm : m ∈ S) (ha : 0 < a m)
+    (hnonneg : 0 ≤ ∑ k ∈ S, a k * x k) :
+    x m ≥ - (∑ k ∈ S.erase m, a k * x k) / a m :=
+  ZeroFreeRegion.finset_weighted_nonneg_term_lower_bound
+    S a x hm ha hnonneg
 
 /-- Public automatic finite trigonometric-detector theorem: the required
 series identity is discharged from `log_deriv_zeta_re_series`. -/
@@ -11741,6 +11761,22 @@ theorem explicitFormulaConversePower_of_truncated_route
     PrimeNumberTheorem.ExplicitFormulaConversePowerTarget β :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.explicitFormulaConversePower_of_truncated_route
     hroute hexplicit
+
+/-- Public one-step conditional bridge from a future truncated explicit formula
+route and a `ψ` power saving below `2/3` to no zeros on `Re(s)=1/3`. -/
+theorem no_zeros_on_one_third_of_truncated_explicit_formula_converse_route
+    (hroute :
+      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute
+        (2 / 3))
+    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
+      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget
+        T hT x hx)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine (2 / 3)) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) :=
+  PrimeNumberTheorem.no_zeros_on_one_third_of_explicit_formula_converse_power
+    (PrimeNumberTheorem.ExplicitFormulaTruncated.explicitFormulaConversePower_of_truncated_route
+      hroute hexplicit)
+    herror
 
 /-- Public constructor for the corrected explicit-formula target from an
 eventually equal approximation family. -/

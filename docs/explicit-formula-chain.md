@@ -218,6 +218,28 @@ package the future step from a uniform truncated explicit formula plus an
 oscillation argument to zero-free vertical-line consequences.  These are route
 interfaces, not proved analytic theorems.
 
+The `Re(s)=1/3` specialization is represented as a conditional Lean bridge.
+`PrimeNumberTheorem.no_zeros_on_one_third_of_explicit_formula_converse_power`
+takes:
+
+1. the converse explicit-formula target
+   `ExplicitFormulaConversePowerTarget (2 / 3)`, saying a `ψ(x)-x = O(x^θ)`
+   bound with `θ < 2/3` excludes nontrivial zeros on or to the right of
+   `Re(s)=2/3`; and
+2. an actual `PsiPowerErrorBelowLine (2 / 3)` hypothesis;
+
+and returns `NoZerosOnVerticalLine (1 / 3)`.  The proved part is the symmetry
+and packaging: a zero on `Re(s)=1/3` reflects to one on `Re(s)=2/3`.  The
+unproved analytic part remains the explicit-formula converse/oscillation
+argument that would justify `ExplicitFormulaConversePowerTarget (2 / 3)`.
+
+The public facade also exposes
+`RiemannPNT.API.no_zeros_on_one_third_of_truncated_explicit_formula_converse_route`,
+which composes the truncated route
+`ExplicitFormulaTruncatedConverseRoute (2 / 3)`, a future proof of the
+truncated explicit formula for all admissible `T,x`, and the `ψ` power-saving
+hypothesis into the same `NoZerosOnVerticalLine (1 / 3)` conclusion.
+
 ## Recommended next formalization order
 
 1. Add definitions only: `jumpVonMangoldt`, `chebyshevPsi0`,

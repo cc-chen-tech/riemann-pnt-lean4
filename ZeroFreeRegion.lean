@@ -867,6 +867,24 @@ lemma log_deriv_zeta_nonneg_finset_combination
         (Real.rpow_pos_of_pos (Nat.cast_pos.mpr hn) σ).le
       exact div_nonneg (mul_nonneg hΛ htrig) hden)
 
+/-- Isolate one term from a nonnegative finite weighted sum.  This is the
+pure algebraic step used to turn a finite detector nonnegativity statement into
+a lower bound for one selected logarithmic-derivative term. -/
+lemma finset_weighted_nonneg_term_lower_bound
+    (S : Finset ℕ) (a x : ℕ → ℝ) {m : ℕ}
+    (hm : m ∈ S) (ha : 0 < a m)
+    (hnonneg : 0 ≤ ∑ k ∈ S, a k * x k) :
+    x m ≥ - (∑ k ∈ S.erase m, a k * x k) / a m := by
+  have hsum :
+      a m * x m + ∑ k ∈ S.erase m, a k * x k =
+        ∑ k ∈ S, a k * x k := by
+    exact Finset.add_sum_erase S (fun k => a k * x k) hm
+  have hnonneg' : 0 ≤ a m * x m + ∑ k ∈ S.erase m, a k * x k := by
+    simpa [hsum] using hnonneg
+  have hmul : -(∑ k ∈ S.erase m, a k * x k) ≤ a m * x m := by
+    linarith
+  exact (div_le_iff₀ ha).mpr (by simpa [mul_comm] using hmul)
+
 /-- List-indexed wrapper for `log_deriv_zeta_nonneg_finset_combination`. -/
 lemma log_deriv_zeta_nonneg_list_combination
     (σ : ℝ) (hσ : 1 < σ) (t : ℝ) (ks : List ℕ) (a : ℕ → ℝ)

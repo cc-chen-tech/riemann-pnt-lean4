@@ -3739,6 +3739,20 @@ lemma nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive
   finite_zero_sum_nonnegative_of_laplace_pair_positive
     (nontrivialZerosFinset T) F center hF hstrip
 
+/-- Center-one specialization of the Stechkin/Heath-Brown pair-positivity
+bridge for height-truncated nontrivial zeros.  The critical-strip bounds are
+discharged from membership in `nontrivialZerosFinset`. -/
+lemma nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive_one
+    (T : ℝ) (F : ℂ → ℂ)
+    (hF : LaplacePairPositive F 1) :
+    0 ≤ ∑ ρ ∈ nontrivialZerosFinset T,
+      ((F ρ).re + (F (1 - ρ)).re) :=
+  nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive
+    T F 1 hF (by
+      intro ρ hρ
+      rcases mem_nontrivialZerosFinset.mp hρ with ⟨hzero, _hheight⟩
+      exact ⟨le_of_lt hzero.2.1, le_of_lt hzero.2.2⟩)
+
 lemma nontrivialZerosFinset_ext_of_height_iff {T U : ℝ}
     (h : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ →
       (|ρ.im| ≤ T ↔ |ρ.im| ≤ U)) :

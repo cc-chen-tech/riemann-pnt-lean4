@@ -42,6 +42,10 @@ Core verified declarations:
   proves a finite trigonometric-detector skeleton: after supplying the
   Dirichlet-series identity and pointwise nonnegativity of the detector
   polynomial, the finite logarithmic-derivative combination is nonnegative.
+- `finset_weighted_nonneg_term_lower_bound`
+  isolates one selected term from any nonnegative finite weighted sum, the
+  algebraic step used to turn detector nonnegativity into a lower bound for a
+  chosen logarithmic-derivative term.
 - `log_deriv_zeta_nonneg_list_combination`
   is the list-indexed wrapper for the same detector skeleton.
 - `log_deriv_zeta_nonneg_finset_combination_auto` and
@@ -1345,6 +1349,10 @@ Core verified declarations:
   specialize the paired-zero skeleton to the finite family of nontrivial zeta
   zeros up to bounded height, including the symmetry `rho -> 1 - rho` and the
   strip-local pair-positivity interface.
+- `nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive_one`
+  specializes that finite paired-zero nonnegativity bridge to center `1`,
+  discharging the critical-strip side condition from membership in
+  `nontrivialZerosFinset`.
 - `NoZerosOnVerticalLine`
   is a reusable predicate for excluding zeta zeros on a fixed vertical line.
 - `no_zeros_on_one_third_of_RH`
