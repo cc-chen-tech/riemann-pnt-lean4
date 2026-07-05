@@ -2987,6 +2987,29 @@ lemma laplacePairPositive_one_dampedKernel_of_pair_le
   intro z hz_left hz_right
   simpa using hpair z hz_left hz_right
 
+/-- Self-damping preserves strip-local pair positivity when the damping
+coefficient is at most one. -/
+lemma laplacePairPositive_dampedKernel_self_of_le_one
+    {κ center : ℝ} {F : ℂ → ℂ}
+    (hκ : κ ≤ 1) (hF : LaplacePairPositive F center) :
+    LaplacePairPositive (dampedKernel κ F F) center := by
+  refine laplacePairPositive_dampedKernel_of_pair_le ?_
+  intro z hz_left hz_right
+  have hp : 0 ≤ (F z).re + (F ((center : ℂ) - z)).re :=
+    hF z hz_left hz_right
+  have hle :
+      κ * ((F z).re + (F ((center : ℂ) - z)).re) ≤
+        1 * ((F z).re + (F ((center : ℂ) - z)).re) :=
+    mul_le_mul_of_nonneg_right hκ hp
+  simpa using hle
+
+/-- Center-one self-damped pair-positivity bridge, matching zeta symmetry. -/
+lemma laplacePairPositive_one_dampedKernel_self_of_le_one
+    {κ : ℝ} {F : ℂ → ℂ}
+    (hκ : κ ≤ 1) (hF : LaplacePairPositive F 1) :
+    LaplacePairPositive (dampedKernel κ F F) 1 :=
+  laplacePairPositive_dampedKernel_self_of_le_one hκ hF
+
 /-- Finite nonnegative real-weighted combinations of damped kernels preserve
 strip-local pair positivity once each damped summand satisfies its
 Stechkin-style pair inequality. -/
@@ -5304,6 +5327,57 @@ theorem nontrivialZerosFinset_average_re_nonnegative_of_dampedKernel
       T κ F G hpair)
     (Nat.cast_nonneg _)
 
+/-- Finite nontrivial-zero paired-sum nonnegativity for a self-damped
+detector kernel. -/
+theorem nontrivialZerosFinset_pair_sum_nonnegative_of_dampedKernel_self
+    (T κ : ℝ) (F : ℂ → ℂ)
+    (hκ : κ ≤ 1) (hF : LaplacePairPositive F 1) :
+    0 ≤ ∑ ρ ∈ nontrivialZerosFinset T,
+      ((dampedKernel κ F F ρ).re +
+        (dampedKernel κ F F (1 - ρ)).re) :=
+  nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive_one
+    T (dampedKernel κ F F)
+    (laplacePairPositive_one_dampedKernel_self_of_le_one hκ hF)
+
+/-- Finite nontrivial-zero paired-average nonnegativity for a self-damped
+detector kernel. -/
+theorem nontrivialZerosFinset_pair_average_nonnegative_of_dampedKernel_self
+    (T κ : ℝ) (F : ℂ → ℂ)
+    (hκ : κ ≤ 1) (hF : LaplacePairPositive F 1) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset T,
+        ((dampedKernel κ F F ρ).re +
+          (dampedKernel κ F F (1 - ρ)).re)) /
+        ((nontrivialZerosFinset T).card : ℝ) :=
+  nontrivialZerosFinset_pair_average_nonnegative_of_laplace_pair_positive_one
+    T (dampedKernel κ F F)
+    (laplacePairPositive_one_dampedKernel_self_of_le_one hκ hF)
+
+/-- Finite nontrivial-zero unpaired real-part sum nonnegativity for a
+self-damped detector kernel. -/
+theorem nontrivialZerosFinset_sum_re_nonnegative_of_dampedKernel_self
+    (T κ : ℝ) (F : ℂ → ℂ)
+    (hκ : κ ≤ 1) (hF : LaplacePairPositive F 1) :
+    0 ≤ ∑ ρ ∈ nontrivialZerosFinset T, (dampedKernel κ F F ρ).re := by
+  have hpaired :=
+    nontrivialZerosFinset_pair_sum_nonnegative_of_dampedKernel_self
+      T κ F hκ hF
+  rw [nontrivialZerosFinset_pair_contribution_eq_two_sum_re] at hpaired
+  nlinarith
+
+/-- Finite nontrivial-zero unpaired real-part average nonnegativity for a
+self-damped detector kernel. -/
+theorem nontrivialZerosFinset_average_re_nonnegative_of_dampedKernel_self
+    (T κ : ℝ) (F : ℂ → ℂ)
+    (hκ : κ ≤ 1) (hF : LaplacePairPositive F 1) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset T, (dampedKernel κ F F ρ).re) /
+        ((nontrivialZerosFinset T).card : ℝ) :=
+  div_nonneg
+    (nontrivialZerosFinset_sum_re_nonnegative_of_dampedKernel_self
+      T κ F hκ hF)
+    (Nat.cast_nonneg _)
+
 /-- New-zero paired-sum nonnegativity for a damped detector kernel. -/
 theorem nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_dampedKernel
     (T U κ : ℝ) (F G : ℂ → ℂ)
@@ -5359,6 +5433,54 @@ theorem nontrivialZerosFinset_sdiff_average_re_nonnegative_of_dampedKernel
   nontrivialZerosFinset_sdiff_average_re_nonnegative_of_laplace_pair_positive_one
     T U (dampedKernel κ F G)
     (laplacePairPositive_one_dampedKernel_of_pair_le hpair)
+
+/-- New-zero paired-sum nonnegativity for a self-damped detector kernel. -/
+theorem nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_dampedKernel_self
+    (T U κ : ℝ) (F : ℂ → ℂ)
+    (hκ : κ ≤ 1) (hF : LaplacePairPositive F 1) :
+    0 ≤ ∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+      ((dampedKernel κ F F ρ).re +
+        (dampedKernel κ F F (1 - ρ)).re) :=
+  nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive_one
+    T U (dampedKernel κ F F)
+    (laplacePairPositive_one_dampedKernel_self_of_le_one hκ hF)
+
+/-- New-zero paired-average nonnegativity for a self-damped detector kernel. -/
+theorem nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_dampedKernel_self
+    (T U κ : ℝ) (F : ℂ → ℂ)
+    (hκ : κ ≤ 1) (hF : LaplacePairPositive F 1) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        ((dampedKernel κ F F ρ).re +
+          (dampedKernel κ F F (1 - ρ)).re)) /
+        (((nontrivialZerosFinset U \ nontrivialZerosFinset T).card : ℝ)) :=
+  nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_laplace_pair_positive_one
+    T U (dampedKernel κ F F)
+    (laplacePairPositive_one_dampedKernel_self_of_le_one hκ hF)
+
+/-- New-zero unpaired real-part sum nonnegativity for a self-damped detector
+kernel. -/
+theorem nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_dampedKernel_self
+    (T U κ : ℝ) (F : ℂ → ℂ)
+    (hκ : κ ≤ 1) (hF : LaplacePairPositive F 1) :
+    0 ≤ ∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+      (dampedKernel κ F F ρ).re :=
+  nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_laplace_pair_positive_one
+    T U (dampedKernel κ F F)
+    (laplacePairPositive_one_dampedKernel_self_of_le_one hκ hF)
+
+/-- New-zero unpaired real-part average nonnegativity for a self-damped detector
+kernel. -/
+theorem nontrivialZerosFinset_sdiff_average_re_nonnegative_of_dampedKernel_self
+    (T U κ : ℝ) (F : ℂ → ℂ)
+    (hκ : κ ≤ 1) (hF : LaplacePairPositive F 1) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        (dampedKernel κ F F ρ).re) /
+        (((nontrivialZerosFinset U \ nontrivialZerosFinset T).card : ℝ)) :=
+  nontrivialZerosFinset_sdiff_average_re_nonnegative_of_laplace_pair_positive_one
+    T U (dampedKernel κ F F)
+    (laplacePairPositive_one_dampedKernel_self_of_le_one hκ hF)
 
 /-- Finite nontrivial-zero paired-sum nonnegativity for a finite nonnegative
 combination of damped detector kernels. -/

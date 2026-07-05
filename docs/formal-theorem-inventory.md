@@ -1849,6 +1849,18 @@ Core verified declarations:
   extend the damped detector bridge from paired full finite-zero sums to
   unpaired sums/averages and to new-zero blocks
   `nontrivialZerosFinset U \ nontrivialZerosFinset T`.
+- `laplacePairPositive_dampedKernel_self_of_le_one`,
+  `laplacePairPositive_one_dampedKernel_self_of_le_one`,
+  `nontrivialZerosFinset_pair_sum_nonnegative_of_dampedKernel_self`,
+  `nontrivialZerosFinset_pair_average_nonnegative_of_dampedKernel_self`,
+  `nontrivialZerosFinset_sum_re_nonnegative_of_dampedKernel_self`,
+  `nontrivialZerosFinset_average_re_nonnegative_of_dampedKernel_self`,
+  `nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_dampedKernel_self`,
+  `nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_dampedKernel_self`,
+  `nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_dampedKernel_self`, and
+  `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_dampedKernel_self`
+  specialize the same damped detector package to `F - kappa * F` under
+  `kappa <= 1`.
 - `laplacePairPositive_weightedDampedKernelCombo_of_pair_le`,
   `laplacePairPositive_one_weightedDampedKernelCombo_of_pair_le`,
   `nontrivialZerosFinset_pair_sum_nonnegative_of_weightedDampedKernelCombo`,
