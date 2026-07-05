@@ -411,7 +411,12 @@ proved:
   `RiemannPNT.API.exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_LogDerivVerticalLogBound`
   removes that center input when `1 + epsilon <= sigma`.  The `_simplified`
   variants keep the same dependencies while exposing the evaluated coefficient
-  sum.  The shifted versions
+  sum.  The direct real-part counterparts
+  `RiemannPNT.API.log_deriv_zeta_bty_detector_one_lower_bound_of_center_and_ReNegDerivDivVerticalLogBound`
+  and
+  `RiemannPNT.API.exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_ReNegDerivDivVerticalLogBound`
+  provide the same BTY handoff when the future vertical estimate is already
+  stated as `Re(-zeta'/zeta)` rather than as a norm bound.  The shifted versions
   `ZeroFreeRegion.re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_logDeriv_re_le_half_radius`
   and
   `ZeroFreeRegion.re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_neg_logDeriv_re_le_half_radius`

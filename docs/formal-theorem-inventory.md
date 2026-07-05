@@ -255,6 +255,13 @@ Core verified declarations:
   supplies that real-axis quotient bound from the fixed-margin API when
   `1 + epsilon <= sigma`, leaving only the named vertical estimate for nonzero
   detector frequencies.
+- `log_deriv_zeta_bty_detector_one_lower_bound_of_center_and_ReNegDerivDivVerticalLogBound`
+  is the direct real-part version of the named BTY handoff, so the future
+  nonzero-frequency input can be `Re(-zeta'/zeta)` itself rather than a norm
+  estimate.
+- `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_ReNegDerivDivVerticalLogBound`
+  combines that direct real-part handoff with the same fixed-margin center
+  discharge.
 - The corresponding `_simplified` BTY handoff lemmas expose the same facts
   after evaluating the noncentral coefficient sum.
 - `exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_vertical_norm_log_bound`

@@ -5823,6 +5823,64 @@ theorem exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_cente
   ZeroFreeRegion.exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_LogDerivVerticalLogBound_simplified
     hε h
 
+/-- Public mixed BTY handoff from a named direct real-part vertical bound plus
+a separate central `k = 0` upper bound. -/
+theorem log_deriv_zeta_bty_detector_one_lower_bound_of_center_and_ReNegDerivDivVerticalLogBound
+    {C T0 σ t B0 : ℝ} (h : ReNegDerivDivVerticalLogBound C T0)
+    (hσ : 1 < σ) (hσ_le : σ ≤ 2) (ht : T0 ≤ |t|)
+    (hcenter :
+      (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re ≤ B0) :
+    (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+      riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+      - (∑ k ∈ btyDetectorSupport.erase 1, btyDetectorCoeff k *
+          (if k = 0 then B0 else C * Real.log (17 * (|t| + 3)))) /
+        btyDetectorCoeff 1 :=
+  ZeroFreeRegion.log_deriv_zeta_bty_detector_one_lower_bound_of_center_and_ReNegDerivDivVerticalLogBound
+    h hσ hσ_le ht hcenter
+
+/-- Public simplified mixed BTY handoff from a named direct real-part vertical
+bound. -/
+theorem log_deriv_zeta_bty_detector_one_lower_bound_of_center_and_ReNegDerivDivVerticalLogBound_simplified
+    {C T0 σ t B0 : ℝ} (h : ReNegDerivDivVerticalLogBound C T0)
+    (hσ : 1 < σ) (hσ_le : σ ≤ 2) (ht : T0 ≤ |t|)
+    (hcenter :
+      (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re ≤ B0) :
+    (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+      riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+      - (B0 + ((4431901 : ℝ) / 2485395) *
+          (C * Real.log (17 * (|t| + 3)))) /
+        btyDetectorCoeff 1 :=
+  ZeroFreeRegion.log_deriv_zeta_bty_detector_one_lower_bound_of_center_and_ReNegDerivDivVerticalLogBound_simplified
+    h hσ hσ_le ht hcenter
+
+/-- Public fixed-margin mixed BTY handoff from a named direct real-part
+vertical bound. -/
+theorem exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_ReNegDerivDivVerticalLogBound
+    {ε C T0 : ℝ} (hε : 0 < ε) (h : ReNegDerivDivVerticalLogBound C T0) :
+    ∃ A : ℝ, 0 ≤ A ∧ ∀ σ t : ℝ, 1 + ε ≤ σ → σ ≤ 2 →
+      T0 ≤ |t| →
+      (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+        riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+        - (∑ k ∈ btyDetectorSupport.erase 1, btyDetectorCoeff k *
+            (if k = 0 then A else C * Real.log (17 * (|t| + 3)))) /
+          btyDetectorCoeff 1 :=
+  ZeroFreeRegion.exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_ReNegDerivDivVerticalLogBound
+    hε h
+
+/-- Public fixed-margin simplified mixed BTY handoff from a named direct
+real-part vertical bound. -/
+theorem exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_ReNegDerivDivVerticalLogBound_simplified
+    {ε C T0 : ℝ} (hε : 0 < ε) (h : ReNegDerivDivVerticalLogBound C T0) :
+    ∃ A : ℝ, 0 ≤ A ∧ ∀ σ t : ℝ, 1 + ε ≤ σ → σ ≤ 2 →
+      T0 ≤ |t| →
+      (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+        riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+        - (A + ((4431901 : ℝ) / 2485395) *
+            (C * Real.log (17 * (|t| + 3)))) /
+          btyDetectorCoeff 1 :=
+  ZeroFreeRegion.exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_ReNegDerivDivVerticalLogBound_simplified
+    hε h
+
 /-- Public fixed-margin BTY lower bound from the existing vertical
 logarithmic-derivative estimate for `Re(s) >= 1 + ε`. -/
 theorem exists_log_deriv_zeta_bty_detector_one_lower_bound_of_one_add_le
