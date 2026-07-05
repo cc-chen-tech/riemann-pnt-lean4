@@ -11986,6 +11986,36 @@ lemma jensen_localDivisor_riemannZeta_sigma_it_le_affine_log_abs_add_radius_thre
       hT0 hA hB hleft hright hheight hpoly
   rwa [jensen_circleAverage_log_norm_riemannZeta_sigma_it hR] at hcircle
 
+/-- Positive-radius form of
+`jensen_localDivisor_riemannZeta_sigma_it_le_affine_log_abs_add_radius_three_of_polynomial_growth`,
+with all closed balls and height scales stated using `R` instead of `|R|`. -/
+lemma jensen_localDivisor_riemannZeta_sigma_it_le_affine_log_abs_add_radius_three_of_polynomial_growth_of_pos_radius
+    {T0 A B R σ t : ℝ} (hR : 0 < R)
+    (hT0 : 5 ≤ T0) (hA : 1 ≤ A) (hB : 0 ≤ B)
+    (hleft : (1 : ℝ) + R ≤ σ) (hright : σ + R ≤ 2)
+    (hheight : T0 + R ≤ |t|)
+    (hpoly : ∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc (1 : ℝ) 3 →
+      ‖riemannZeta z‖ ≤ A * (‖z‖ + 3) ^ B) :
+    (∑ᶠ u,
+          divisor riemannZeta (closedBall ((σ : ℂ) + I * t) R) u *
+            Real.log (R * ‖((σ : ℂ) + I * t) - u‖⁻¹)
+        + divisor riemannZeta (closedBall ((σ : ℂ) + I * t) R)
+            ((σ : ℂ) + I * t) * Real.log R
+        + Real.log ‖meromorphicTrailingCoeffAt riemannZeta
+            ((σ : ℂ) + I * t)‖) ≤
+      Real.log A + (2 * B) * Real.log (|t| + R + 3) := by
+  have hAbs : |R| = R := abs_of_pos hR
+  have hgen :=
+    jensen_localDivisor_riemannZeta_sigma_it_le_affine_log_abs_add_radius_three_of_polynomial_growth
+      (T0 := T0) (A := A) (B := B) (R := R) (σ := σ) (t := t)
+      hR.ne' hT0 hA hB
+      (by simpa [hAbs] using hleft)
+      (by simpa [hAbs] using hright)
+      (by simpa [hAbs] using hheight)
+      hpoly
+  rw [hAbs] at hgen
+  simpa using hgen
+
 /-- Positive-radius Jensen formula specialized directly to ζ on a
 `σ + I*t` disk. -/
 lemma jensen_circleAverage_log_norm_riemannZeta_sigma_it_of_pos_radius

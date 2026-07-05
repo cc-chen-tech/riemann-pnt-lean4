@@ -1015,6 +1015,9 @@ Core verified declarations:
 - `jensen_localDivisor_riemannZeta_sigma_it_le_affine_log_abs_add_radius_three_of_polynomial_growth`
   rewrites that circle-average bound through Jensen's formula into the local
   divisor plus trailing-coefficient side.
+- `jensen_localDivisor_riemannZeta_sigma_it_le_affine_log_abs_add_radius_three_of_polynomial_growth_of_pos_radius`
+  is the positive-radius form with all closed balls and height scales stated
+  using `R` rather than `|R|`.
 - `exists_re_im_logDeriv_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height`
   converts a future boundary-strip estimate
   `||logDeriv zeta (sigma+it)|| <= A + B log(||sigma+it||+3)` into
