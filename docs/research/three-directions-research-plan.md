@@ -139,6 +139,17 @@ Verified assets now include:
   real-part positivity, center-one pair positivity, and finite-zero/new-zero
   sum, average, paired-sum, and paired-average nonnegativity wrappers for every
   `a >= 0`.
+- a center-reflected symmetric resolvent/Laplace kernel
+  `symmetricResolventLaplaceKernel a center z = (a + z)⁻¹ + (a + center - z)⁻¹`,
+  and finite combinations `symmetricResolventLaplaceKernelCombo`, with
+  centered-strip positivity, center-one pair positivity, and full/new-zero
+  finite-zero sum, average, paired-sum, and paired-average nonnegativity
+  wrappers whenever the shifts and weights are nonnegative.
+- a signed/damped detector-kernel interface
+  `dampedKernel κ F G = F - κ • G`, with pair-positivity supplied by a
+  concrete inequality `κ * pair(G) <= pair(F)` on the strip.  The damped
+  interface is connected to full finite-zero and new-zero `sdiff` sums,
+  averages, paired-sums, and paired-averages over `nontrivialZerosFinset`.
 - finite nonnegative combinations of those prototype kernels,
   `resolventLaplaceKernelCombo`, with the same right-half-plane positivity,
   pair-positivity, and finite-zero/new-zero sum, average, paired-sum, and
@@ -158,13 +169,16 @@ it into an unpaired sum needs a proof that the chosen center-pair map preserves
 the relevant zero set.  For zeta this is available at center `1`, via
 `rho -> 1 - rho`, not for an arbitrary center.
 
-The generic weighted-combination closure, resolvent/Laplace prototype, and
+The generic weighted-combination closure, resolvent/Laplace prototype,
+symmetric resolvent/Laplace prototype, damped signed-kernel interface, and
 affine resolvent/Laplace prototype are real concrete suppliers for the
-finite-zero pairing API, and the combination wrappers match the algebraic shape
-of detectors built by summing positive elementary kernels. They are still not
-the full Stechkin/Heath-Brown kernel used in the latest zero-free-region
-arguments. The next useful step is to formalize a nontrivial detector kernel
-from that literature and prove either
+finite-zero pairing API.  The combination wrappers match detectors built by
+summing positive elementary kernels; the damped interface additionally matches
+Stechkin-style subtraction terms. They are still not the full
+Stechkin/Heath-Brown kernel used in the latest zero-free-region arguments. The
+next useful step is to formalize a nontrivial detector kernel from that
+literature and prove the concrete pair inequality needed by
+`laplacePairPositive_dampedKernel_of_pair_le`, or prove either
 `LaplacePairPositive F 1` or the stronger pointwise critical-strip positivity
 certificate for it.
 

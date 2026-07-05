@@ -2246,6 +2246,90 @@ theorem nontrivialZerosFinset_pair_average_nonnegative_of_dampedKernel
   PrimeNumberTheorem.nontrivialZerosFinset_pair_average_nonnegative_of_dampedKernel
     T κ F G hpair
 
+/-- Public finite-zero unpaired real-part sum nonnegativity for a damped
+detector kernel. -/
+theorem nontrivialZerosFinset_sum_re_nonnegative_of_dampedKernel
+    (T κ : ℝ) (F G : ℂ → ℂ)
+    (hpair : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      κ * ((G z).re + (G (1 - z)).re) ≤
+        (F z).re + (F (1 - z)).re) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+      (dampedKernel κ F G ρ).re :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sum_re_nonnegative_of_dampedKernel
+    T κ F G hpair
+
+/-- Public finite-zero unpaired real-part average nonnegativity for a damped
+detector kernel. -/
+theorem nontrivialZerosFinset_average_re_nonnegative_of_dampedKernel
+    (T κ : ℝ) (F G : ℂ → ℂ)
+    (hpair : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      κ * ((G z).re + (G (1 - z)).re) ≤
+        (F z).re + (F (1 - z)).re) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+        (dampedKernel κ F G ρ).re) /
+        ((PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_average_re_nonnegative_of_dampedKernel
+    T κ F G hpair
+
+/-- Public new-zero paired-sum nonnegativity for a damped detector kernel. -/
+theorem nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_dampedKernel
+    (T U κ : ℝ) (F G : ℂ → ℂ)
+    (hpair : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      κ * ((G z).re + (G (1 - z)).re) ≤
+        (F z).re + (F (1 - z)).re) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+        PrimeNumberTheorem.nontrivialZerosFinset T,
+      ((dampedKernel κ F G ρ).re +
+        (dampedKernel κ F G (1 - ρ)).re) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_dampedKernel
+    T U κ F G hpair
+
+/-- Public new-zero paired-average nonnegativity for a damped detector kernel. -/
+theorem nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_dampedKernel
+    (T U κ : ℝ) (F G : ℂ → ℂ)
+    (hpair : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      κ * ((G z).re + (G (1 - z)).re) ≤
+        (F z).re + (F (1 - z)).re) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T,
+        ((dampedKernel κ F G ρ).re +
+          (dampedKernel κ F G (1 - ρ)).re)) /
+        (((PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ)) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_dampedKernel
+    T U κ F G hpair
+
+/-- Public new-zero unpaired real-part sum nonnegativity for a damped detector
+kernel. -/
+theorem nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_dampedKernel
+    (T U κ : ℝ) (F G : ℂ → ℂ)
+    (hpair : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      κ * ((G z).re + (G (1 - z)).re) ≤
+        (F z).re + (F (1 - z)).re) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+        PrimeNumberTheorem.nontrivialZerosFinset T,
+      (dampedKernel κ F G ρ).re :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_dampedKernel
+    T U κ F G hpair
+
+/-- Public new-zero unpaired real-part average nonnegativity for a damped
+detector kernel. -/
+theorem nontrivialZerosFinset_sdiff_average_re_nonnegative_of_dampedKernel
+    (T U κ : ℝ) (F G : ℂ → ℂ)
+    (hpair : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      κ * ((G z).re + (G (1 - z)).re) ≤
+        (F z).re + (F (1 - z)).re) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T,
+        (dampedKernel κ F G ρ).re) /
+        (((PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ)) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_average_re_nonnegative_of_dampedKernel
+    T U κ F G hpair
+
 /-- Public finite nonnegative resolvent/Laplace kernel combination. -/
 noncomputable abbrev resolventLaplaceKernelCombo
     (K : Finset ℕ) (w a : ℕ → ℝ) : ℂ → ℂ :=

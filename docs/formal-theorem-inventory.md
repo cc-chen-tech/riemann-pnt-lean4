@@ -1840,6 +1840,15 @@ Core verified declarations:
   package the signed detector shape `F - kappa * G`: once the paired
   Stechkin-style inequality for `F` and `G` is supplied on the critical strip,
   the finite nontrivial-zero paired sum and average are nonnegative.
+- `nontrivialZerosFinset_sum_re_nonnegative_of_dampedKernel`,
+  `nontrivialZerosFinset_average_re_nonnegative_of_dampedKernel`,
+  `nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_dampedKernel`,
+  `nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_dampedKernel`,
+  `nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_dampedKernel`, and
+  `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_dampedKernel`
+  extend the damped detector bridge from paired full finite-zero sums to
+  unpaired sums/averages and to new-zero blocks
+  `nontrivialZerosFinset U \ nontrivialZerosFinset T`.
 - `nontrivialZerosFinset_sum_re_nonnegative_of_symmetricResolventLaplaceKernelCombo`,
   `nontrivialZerosFinset_average_re_nonnegative_of_symmetricResolventLaplaceKernelCombo`,
   `nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_symmetricResolventLaplaceKernelCombo`,

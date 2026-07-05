@@ -5145,6 +5145,91 @@ theorem nontrivialZerosFinset_pair_average_nonnegative_of_dampedKernel
     T (dampedKernel κ F G)
     (laplacePairPositive_one_dampedKernel_of_pair_le hpair)
 
+/-- Finite nontrivial-zero unpaired real-part sum nonnegativity for a damped
+detector kernel. -/
+theorem nontrivialZerosFinset_sum_re_nonnegative_of_dampedKernel
+    (T κ : ℝ) (F G : ℂ → ℂ)
+    (hpair : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      κ * ((G z).re + (G (1 - z)).re) ≤
+        (F z).re + (F (1 - z)).re) :
+    0 ≤ ∑ ρ ∈ nontrivialZerosFinset T, (dampedKernel κ F G ρ).re := by
+  have hpaired :=
+    nontrivialZerosFinset_pair_sum_nonnegative_of_dampedKernel
+      T κ F G hpair
+  rw [nontrivialZerosFinset_pair_contribution_eq_two_sum_re] at hpaired
+  nlinarith
+
+/-- Finite nontrivial-zero unpaired real-part average nonnegativity for a
+damped detector kernel. -/
+theorem nontrivialZerosFinset_average_re_nonnegative_of_dampedKernel
+    (T κ : ℝ) (F G : ℂ → ℂ)
+    (hpair : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      κ * ((G z).re + (G (1 - z)).re) ≤
+        (F z).re + (F (1 - z)).re) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset T, (dampedKernel κ F G ρ).re) /
+        ((nontrivialZerosFinset T).card : ℝ) :=
+  div_nonneg
+    (nontrivialZerosFinset_sum_re_nonnegative_of_dampedKernel
+      T κ F G hpair)
+    (Nat.cast_nonneg _)
+
+/-- New-zero paired-sum nonnegativity for a damped detector kernel. -/
+theorem nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_dampedKernel
+    (T U κ : ℝ) (F G : ℂ → ℂ)
+    (hpair : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      κ * ((G z).re + (G (1 - z)).re) ≤
+        (F z).re + (F (1 - z)).re) :
+    0 ≤ ∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+      ((dampedKernel κ F G ρ).re +
+        (dampedKernel κ F G (1 - ρ)).re) :=
+  nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive_one
+    T U (dampedKernel κ F G)
+    (laplacePairPositive_one_dampedKernel_of_pair_le hpair)
+
+/-- New-zero paired-average nonnegativity for a damped detector kernel. -/
+theorem nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_dampedKernel
+    (T U κ : ℝ) (F G : ℂ → ℂ)
+    (hpair : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      κ * ((G z).re + (G (1 - z)).re) ≤
+        (F z).re + (F (1 - z)).re) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        ((dampedKernel κ F G ρ).re +
+          (dampedKernel κ F G (1 - ρ)).re)) /
+        (((nontrivialZerosFinset U \ nontrivialZerosFinset T).card : ℝ)) :=
+  nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_laplace_pair_positive_one
+    T U (dampedKernel κ F G)
+    (laplacePairPositive_one_dampedKernel_of_pair_le hpair)
+
+/-- New-zero unpaired real-part sum nonnegativity for a damped detector
+kernel. -/
+theorem nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_dampedKernel
+    (T U κ : ℝ) (F G : ℂ → ℂ)
+    (hpair : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      κ * ((G z).re + (G (1 - z)).re) ≤
+        (F z).re + (F (1 - z)).re) :
+    0 ≤ ∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+      (dampedKernel κ F G ρ).re :=
+  nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_laplace_pair_positive_one
+    T U (dampedKernel κ F G)
+    (laplacePairPositive_one_dampedKernel_of_pair_le hpair)
+
+/-- New-zero unpaired real-part average nonnegativity for a damped detector
+kernel. -/
+theorem nontrivialZerosFinset_sdiff_average_re_nonnegative_of_dampedKernel
+    (T U κ : ℝ) (F G : ℂ → ℂ)
+    (hpair : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      κ * ((G z).re + (G (1 - z)).re) ≤
+        (F z).re + (F (1 - z)).re) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        (dampedKernel κ F G ρ).re) /
+        (((nontrivialZerosFinset U \ nontrivialZerosFinset T).card : ℝ)) :=
+  nontrivialZerosFinset_sdiff_average_re_nonnegative_of_laplace_pair_positive_one
+    T U (dampedKernel κ F G)
+    (laplacePairPositive_one_dampedKernel_of_pair_le hpair)
+
 /-- Center-one Laplace-pair positivity also makes the unpaired real-part sum
 nonnegative, after reindexing the reflected half of the paired sum by
 `ρ ↦ 1 - ρ`. -/
