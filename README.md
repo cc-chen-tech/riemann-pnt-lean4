@@ -221,7 +221,7 @@ Current code status:
 | File | `sorry` count | Unproved targets |
 |---|---:|---|
 | `GammaResidue.lean` | 0 | General Gamma residue formula completed |
-| `HardyTheorem.lean` | 0 | Hardy-Z phase facts proved; corrected integral asymptotic, positivity and zero-counting targets |
+| `HardyTheorem.lean` | 0 | Hardy-Z phase facts and codiscrete-to-bounded-window zero bridges proved; corrected integral asymptotic, positivity and zero-counting targets |
 | `PrimeNumberTheorem.lean` | 0 | Bounded-height zero finiteness and zero-symmetry bridges proved; RH error equivalence and von Mangoldt explicit formula targets |
 | `ZeroFreeRegion.lean` | 0 | 3-4-1 and compact zero-free region proved; quantitative zero-free-region targets |
 
@@ -786,6 +786,13 @@ for the approximate functional equation and variants where large- and
 bounded-height constants are absorbed into a common positive constant.  These
 do not prove the AFE itself; they make the future analytic estimate easier to
 plug into the current target.
+
+On the zero-counting side of the Hardy chain, the repository now also proves
+that if the critical-line zero set has codiscrete complement, then every
+absolute-height window contains only finitely many such zeros.  This discharges
+the bounded-strip finiteness input in the existing Hardy target bridges, but it
+is still conditional on the codiscrete zero-set hypothesis and does not prove
+Hardy's theorem unconditionally.
 
 The four missing analytic chains are:
 

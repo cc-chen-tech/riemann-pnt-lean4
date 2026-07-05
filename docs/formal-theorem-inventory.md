@@ -2072,18 +2072,31 @@ Core verified declarations:
 - `hardy_theorem_target_iff_abs_unbounded_of_bounded_strips`
 - `hardy_theorem_target_iff_unbounded_of_bounded_strips`
 - `hardy_zeros_abs_unbounded_of_two_signed_moments_of_bounded_strips`
+- `finite_abs_le_inter_of_compl_mem_codiscrete`
+- `critical_line_zeta_zero_bounded_finite_of_codiscrete`
+- `hardy_theorem_target_iff_abs_unbounded_of_codiscrete`
+- `hardy_theorem_target_iff_unbounded_of_codiscrete`
+- `hardy_zeros_abs_unbounded_of_hardy_theorem_target_of_codiscrete`
+- `hardy_zeros_unbounded_of_hardy_theorem_target_of_codiscrete`
+- `hardy_zeros_abs_unbounded_of_two_signed_moments_of_codiscrete`
+- `hardy_zeros_unbounded_of_two_signed_moments_of_codiscrete`
 - `exists_zero_on_critical_line_of_unbounded`
 - `exists_zero_on_critical_line_of_abs_unbounded`
 - `hardy_zeros_unbounded_of_two_signed_moments_of_bounded_strips`
 - `hardy_zeros_abs_unbounded_of_integral_asymptotic_one_two_of_bounded_strips`
 - `hardy_zeros_unbounded_of_integral_asymptotic_one_two_of_bounded_strips`
+- `hardy_zeros_abs_unbounded_of_integral_asymptotic_one_two_of_codiscrete`
+- `hardy_zeros_unbounded_of_integral_asymptotic_one_two_of_codiscrete`
 - `hardy_zeros_unbounded_iff_abs_unbounded`
 
 These prove the local Hardy-Z setup and the equivalence between zeros of
 `hardyZ` and zeros of `zeta` on the critical line, plus conditional bridges
 from the signed-moment targets to Hardy's infinite and unbounded-height zero
 interfaces.  They do not prove Hardy's theorem unconditionally; the moment
-estimates needed for Hardy's theorem remain targets.
+estimates needed for Hardy's theorem remain targets.  The codiscrete variants
+show that a codiscrete-complement hypothesis for the critical-line zero set is
+enough to supply the bounded-window finiteness input in these conditional
+bridges.
 
 ### `GammaResidue.lean`
 
@@ -2144,7 +2157,7 @@ metadata, not proof results.
 The following declarations are intentionally `def ... : Prop` targets.  They
 are not exported as theorems and should not be cited as proved.
 
-As of `2026-06-08`, there are **22** mathematical target declarations:
+As of `2026-07-05`, there are **22** mathematical target declarations:
 
 - `HardyTheorem` namespace: **7**
 - `HardyTheorem.Details` namespace: **3**

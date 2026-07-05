@@ -15132,6 +15132,104 @@ theorem hardy_zeros_unbounded_of_integral_asymptotic_one_two_of_bounded_strips
   HardyTheorem.hardy_zeros_unbounded_of_integral_asymptotic_one_two_of_bounded_strips
     hstrip h1 h2
 
+/-- Public codiscrete-zero-set bridge to bounded critical-line zero windows. -/
+theorem critical_line_zeta_zero_bounded_finite_of_codiscrete
+    (hcod :
+      {t : ℝ | riemannZeta (0.5 + Complex.I * t) = 0}ᶜ ∈
+        Filter.codiscrete ℝ)
+    (B : ℝ) :
+    {t : ℝ | |t| ≤ B ∧
+      riemannZeta (0.5 + Complex.I * t) = 0}.Finite :=
+  HardyTheorem.critical_line_zeta_zero_bounded_finite_of_codiscrete hcod B
+
+/-- Public codiscrete-zero-set version of the equivalence between Hardy's
+infinite-zero target and absolute-height unbounded critical-line zeros. -/
+theorem hardy_theorem_target_iff_abs_unbounded_of_codiscrete
+    (hcod :
+      {t : ℝ | riemannZeta (0.5 + Complex.I * t) = 0}ᶜ ∈
+        Filter.codiscrete ℝ) :
+    HardyTheorem.hardy_theorem_target ↔
+      HardyTheorem.hardy_zeros_abs_unbounded_target :=
+  HardyTheorem.hardy_theorem_target_iff_abs_unbounded_of_codiscrete hcod
+
+/-- Public codiscrete-zero-set version of the equivalence between Hardy's
+infinite-zero target and positive-height unbounded critical-line zeros. -/
+theorem hardy_theorem_target_iff_unbounded_of_codiscrete
+    (hcod :
+      {t : ℝ | riemannZeta (0.5 + Complex.I * t) = 0}ᶜ ∈
+        Filter.codiscrete ℝ) :
+    HardyTheorem.hardy_theorem_target ↔
+      HardyTheorem.hardy_zeros_unbounded_target :=
+  HardyTheorem.hardy_theorem_target_iff_unbounded_of_codiscrete hcod
+
+/-- Public codiscrete-zero-set bridge from Hardy's infinite-zero target to
+absolute-height unbounded critical-line zeros. -/
+theorem hardy_zeros_abs_unbounded_of_hardy_theorem_target_of_codiscrete
+    (hcod :
+      {t : ℝ | riemannZeta (0.5 + Complex.I * t) = 0}ᶜ ∈
+        Filter.codiscrete ℝ)
+    (h : HardyTheorem.hardy_theorem_target) :
+    HardyTheorem.hardy_zeros_abs_unbounded_target :=
+  HardyTheorem.hardy_zeros_abs_unbounded_of_hardy_theorem_target_of_codiscrete
+    hcod h
+
+/-- Public codiscrete-zero-set bridge from Hardy's infinite-zero target to
+positive-height unbounded critical-line zeros. -/
+theorem hardy_zeros_unbounded_of_hardy_theorem_target_of_codiscrete
+    (hcod :
+      {t : ℝ | riemannZeta (0.5 + Complex.I * t) = 0}ᶜ ∈
+        Filter.codiscrete ℝ)
+    (h : HardyTheorem.hardy_theorem_target) :
+    HardyTheorem.hardy_zeros_unbounded_target :=
+  HardyTheorem.hardy_zeros_unbounded_of_hardy_theorem_target_of_codiscrete
+    hcod h
+
+/-- Public codiscrete-zero-set bridge from the signed Hardy moment target to
+absolute-height unbounded critical-line zeros. -/
+theorem hardy_zeros_abs_unbounded_of_two_signed_moments_of_codiscrete
+    (hcod :
+      {t : ℝ | riemannZeta (0.5 + Complex.I * t) = 0}ᶜ ∈
+        Filter.codiscrete ℝ)
+    (hmom : HardyTheorem.hardy_two_signed_moments_target) :
+    HardyTheorem.hardy_zeros_abs_unbounded_target :=
+  HardyTheorem.hardy_zeros_abs_unbounded_of_two_signed_moments_of_codiscrete
+    hcod hmom
+
+/-- Public codiscrete-zero-set bridge from the signed Hardy moment target to
+positive-height unbounded critical-line zeros. -/
+theorem hardy_zeros_unbounded_of_two_signed_moments_of_codiscrete
+    (hcod :
+      {t : ℝ | riemannZeta (0.5 + Complex.I * t) = 0}ᶜ ∈
+        Filter.codiscrete ℝ)
+    (hmom : HardyTheorem.hardy_two_signed_moments_target) :
+    HardyTheorem.hardy_zeros_unbounded_target :=
+  HardyTheorem.hardy_zeros_unbounded_of_two_signed_moments_of_codiscrete
+    hcod hmom
+
+/-- Public codiscrete-zero-set bridge from the first two Hardy integral
+asymptotics to absolute-height unbounded critical-line zeros. -/
+theorem hardy_zeros_abs_unbounded_of_integral_asymptotic_one_two_of_codiscrete
+    (hcod :
+      {t : ℝ | riemannZeta (0.5 + Complex.I * t) = 0}ᶜ ∈
+        Filter.codiscrete ℝ)
+    (h1 : HardyTheorem.integral_asymptotic_target 1)
+    (h2 : HardyTheorem.integral_asymptotic_target 2) :
+    HardyTheorem.hardy_zeros_abs_unbounded_target :=
+  HardyTheorem.hardy_zeros_abs_unbounded_of_integral_asymptotic_one_two_of_codiscrete
+    hcod h1 h2
+
+/-- Public codiscrete-zero-set bridge from the first two Hardy integral
+asymptotics to positive-height unbounded critical-line zeros. -/
+theorem hardy_zeros_unbounded_of_integral_asymptotic_one_two_of_codiscrete
+    (hcod :
+      {t : ℝ | riemannZeta (0.5 + Complex.I * t) = 0}ᶜ ∈
+        Filter.codiscrete ℝ)
+    (h1 : HardyTheorem.integral_asymptotic_target 1)
+    (h2 : HardyTheorem.integral_asymptotic_target 2) :
+    HardyTheorem.hardy_zeros_unbounded_target :=
+  HardyTheorem.hardy_zeros_unbounded_of_integral_asymptotic_one_two_of_codiscrete
+    hcod h1 h2
+
 /-- Public bridge from Hardy's infinite-zero target to arbitrarily large
 absolute-height critical-line zeros. -/
 theorem hardy_zeros_abs_unbounded_of_hardy_theorem_target

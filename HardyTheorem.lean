@@ -1206,6 +1206,79 @@ lemma hardy_zeros_abs_unbounded_of_integral_asymptotic_one_two_of_bounded_strips
   (hardy_theorem_target_iff_abs_unbounded_of_bounded_strips hstrip).mp
     (hardy_theorem_target_of_integral_asymptotic_one_two h1 h2)
 
+/-- A codiscrete complement gives finite intersections with every absolute-height
+window.  This is the topological finiteness input needed by the Hardy target
+bridges below. -/
+lemma finite_abs_le_inter_of_compl_mem_codiscrete {S : Set ℝ}
+    (hS : Sᶜ ∈ Filter.codiscrete ℝ) (B : ℝ) :
+    {t : ℝ | |t| ≤ B ∧ t ∈ S}.Finite := by
+  by_cases hB : 0 ≤ B
+  · rcases compl_mem_codiscrete_iff.mp hS with ⟨hSclosed, hSdisc⟩
+    have hSdisc' : IsDiscrete S := isDiscrete_iff_discreteTopology.mpr hSdisc
+    have hcompact : IsCompact (Set.Icc (-B) B ∩ S) :=
+      isCompact_Icc.inter_right hSclosed
+    have hdisc : IsDiscrete (Set.Icc (-B) B ∩ S) :=
+      hSdisc'.mono Set.inter_subset_right
+    have hfinite : (Set.Icc (-B) B ∩ S).Finite :=
+      hcompact.finite hdisc
+    refine hfinite.subset ?_
+    intro t ht
+    rcases ht with ⟨habs, hSmem⟩
+    exact ⟨abs_le.mp habs, hSmem⟩
+  · have hempty : {t : ℝ | |t| ≤ B ∧ t ∈ S} = ∅ := by
+      ext t
+      constructor
+      · intro ht
+        have habs_nonneg : 0 ≤ |t| := abs_nonneg t
+        have hBlt : B < 0 := lt_of_not_ge hB
+        have hlt : |t| < 0 := lt_of_le_of_lt ht.1 hBlt
+        exact (not_lt_of_ge habs_nonneg hlt).elim
+      · intro h
+        cases h
+    rw [hempty]
+    exact Set.finite_empty
+
+/-- Codiscreteness of the critical-line zero set is a reusable way to discharge
+the bounded-strip finiteness hypothesis in the Hardy target bridges. -/
+lemma critical_line_zeta_zero_bounded_finite_of_codiscrete
+    (hcod :
+      {t : ℝ | riemannZeta (0.5 + I * t) = 0}ᶜ ∈ Filter.codiscrete ℝ)
+    (B : ℝ) :
+    {t : ℝ | |t| ≤ B ∧ riemannZeta (0.5 + I * t) = 0}.Finite :=
+  finite_abs_le_inter_of_compl_mem_codiscrete
+    (S := {t : ℝ | riemannZeta (0.5 + I * t) = 0}) hcod B
+
+lemma hardy_zeros_abs_unbounded_of_hardy_theorem_target_of_codiscrete
+    (hcod :
+      {t : ℝ | riemannZeta (0.5 + I * t) = 0}ᶜ ∈ Filter.codiscrete ℝ)
+    (h : hardy_theorem_target) : hardy_zeros_abs_unbounded_target :=
+  hardy_zeros_abs_unbounded_of_hardy_theorem_target_of_bounded_strips
+    (critical_line_zeta_zero_bounded_finite_of_codiscrete hcod) h
+
+lemma hardy_theorem_target_iff_abs_unbounded_of_codiscrete
+    (hcod :
+      {t : ℝ | riemannZeta (0.5 + I * t) = 0}ᶜ ∈ Filter.codiscrete ℝ) :
+    hardy_theorem_target ↔ hardy_zeros_abs_unbounded_target :=
+  hardy_theorem_target_iff_abs_unbounded_of_bounded_strips
+    (critical_line_zeta_zero_bounded_finite_of_codiscrete hcod)
+
+lemma hardy_zeros_abs_unbounded_of_two_signed_moments_of_codiscrete
+    (hcod :
+      {t : ℝ | riemannZeta (0.5 + I * t) = 0}ᶜ ∈ Filter.codiscrete ℝ)
+    (hmom : hardy_two_signed_moments_target) :
+    hardy_zeros_abs_unbounded_target :=
+  hardy_zeros_abs_unbounded_of_two_signed_moments_of_bounded_strips
+    (critical_line_zeta_zero_bounded_finite_of_codiscrete hcod) hmom
+
+lemma hardy_zeros_abs_unbounded_of_integral_asymptotic_one_two_of_codiscrete
+    (hcod :
+      {t : ℝ | riemannZeta (0.5 + I * t) = 0}ᶜ ∈ Filter.codiscrete ℝ)
+    (h1 : integral_asymptotic_target 1)
+    (h2 : integral_asymptotic_target 2) :
+    hardy_zeros_abs_unbounded_target :=
+  hardy_zeros_abs_unbounded_of_integral_asymptotic_one_two_of_bounded_strips
+    (critical_line_zeta_zero_bounded_finite_of_codiscrete hcod) h1 h2
+
 lemma critical_line_zeta_zero_neg_height (t : ℝ)
     (h : riemannZeta (0.5 + I * t) = 0) :
     riemannZeta (0.5 + I * (-t)) = 0 := by
@@ -1313,6 +1386,37 @@ lemma hardy_zeros_unbounded_of_integral_asymptotic_one_two_of_bounded_strips
   hardy_zeros_unbounded_iff_abs_unbounded.mpr
     (hardy_zeros_abs_unbounded_of_integral_asymptotic_one_two_of_bounded_strips
       hstrip h1 h2)
+
+lemma hardy_theorem_target_iff_unbounded_of_codiscrete
+    (hcod :
+      {t : ℝ | riemannZeta (0.5 + I * t) = 0}ᶜ ∈ Filter.codiscrete ℝ) :
+    hardy_theorem_target ↔ hardy_zeros_unbounded_target :=
+  hardy_theorem_target_iff_unbounded_of_bounded_strips
+    (critical_line_zeta_zero_bounded_finite_of_codiscrete hcod)
+
+lemma hardy_zeros_unbounded_of_hardy_theorem_target_of_codiscrete
+    (hcod :
+      {t : ℝ | riemannZeta (0.5 + I * t) = 0}ᶜ ∈ Filter.codiscrete ℝ)
+    (h : hardy_theorem_target) : hardy_zeros_unbounded_target :=
+  hardy_zeros_unbounded_of_hardy_theorem_target_of_bounded_strips
+    (critical_line_zeta_zero_bounded_finite_of_codiscrete hcod) h
+
+lemma hardy_zeros_unbounded_of_two_signed_moments_of_codiscrete
+    (hcod :
+      {t : ℝ | riemannZeta (0.5 + I * t) = 0}ᶜ ∈ Filter.codiscrete ℝ)
+    (hmom : hardy_two_signed_moments_target) :
+    hardy_zeros_unbounded_target :=
+  hardy_zeros_unbounded_of_two_signed_moments_of_bounded_strips
+    (critical_line_zeta_zero_bounded_finite_of_codiscrete hcod) hmom
+
+lemma hardy_zeros_unbounded_of_integral_asymptotic_one_two_of_codiscrete
+    (hcod :
+      {t : ℝ | riemannZeta (0.5 + I * t) = 0}ᶜ ∈ Filter.codiscrete ℝ)
+    (h1 : integral_asymptotic_target 1)
+    (h2 : integral_asymptotic_target 2) :
+    hardy_zeros_unbounded_target :=
+  hardy_zeros_unbounded_of_integral_asymptotic_one_two_of_bounded_strips
+    (critical_line_zeta_zero_bounded_finite_of_codiscrete hcod) h1 h2
 
 /-! ## 后续改进 -/
 
