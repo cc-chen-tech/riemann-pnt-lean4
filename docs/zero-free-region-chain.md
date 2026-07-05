@@ -408,7 +408,10 @@ proved:
   `ZeroFreeRegion.exists_re_neg_logDeriv_riemannZeta_sigma_it_add_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center`
   discharges that bridge's center norm hypothesis using the proved
   fixed-margin `-logDeriv zeta` estimate and the elementary same-height
-  principal-part distance bound; the local regular-part differentiability and
+  principal-part distance bound.  Its full-height companion
+  `ZeroFreeRegion.exists_re_neg_logDeriv_riemannZeta_sigma_it_add_inv_right_shift_le_log_norm_of_affine_regularPart_re_le_half_radius_fixed_margin_center`
+  keeps the center bound discharged while replacing the final `log |t|` scale
+  by `log(||sigma+it||+3)`; the local regular-part differentiability and
   real-part hypotheses remain the unresolved analytic input.  The
   multiplicity-aware pair
   `ZeroFreeRegion.borelCaratheodory_neg_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`
@@ -419,7 +422,10 @@ proved:
   companion
   `ZeroFreeRegion.exists_re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center`
   removes the multiplicity-aware center norm hypothesis at the explicit cost
-  `(n : Real) / r`.  The positive-sign
+  `(n : Real) / r`.  The full-height variant
+  `ZeroFreeRegion.exists_re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_shift_le_log_norm_of_affine_regularPart_re_le_half_radius_fixed_margin_center`
+  gives the same center-discharged multiplicity handoff in the
+  `log(||sigma+it||+3)` scale.  The positive-sign
   companion
   `ZeroFreeRegion.borelCaratheodory_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`
   handles `logDeriv zeta(w)-n(w-rho)^(-1)`, matching the direct output of

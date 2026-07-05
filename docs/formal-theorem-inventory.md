@@ -1338,6 +1338,9 @@ Core verified declarations:
   handoff by combining the fixed-margin `-logDeriv zeta` bound with the explicit
   same-height principal-part estimate
   `||((sigma+r+it)-(beta+it))^(-1)|| <= 1/r`.
+- `exists_re_neg_logDeriv_riemannZeta_sigma_it_add_inv_right_shift_le_log_norm_of_affine_regularPart_re_le_half_radius_fixed_margin_center`
+  is the same center-discharged simple-zero handoff in the full complex-height
+  `C log(||sigma+it|| + 3)` scale.
 - `borelCaratheodory_neg_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`
   is the multiplicity-aware version with regular part
   `-logDeriv zeta(w) + n * (w-rho)^(-1)`.
@@ -1345,6 +1348,9 @@ Core verified declarations:
   removes the separate center norm hypothesis from the multiplicity-aware
   zero-repulsion handoff; the explicit center principal-part cost is
   `(n : Real) / r`, and `n >= 1` still recovers the unit principal conclusion.
+- `exists_re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_shift_le_log_norm_of_affine_regularPart_re_le_half_radius_fixed_margin_center`
+  is the full-height version of that multiplicity-aware center-discharged
+  zero-repulsion handoff.
 - `exists_borelCaratheodory_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius_fixed_margin_center`
   provides the analogous center-discharged Borel handoff in the positive
   local-factorization sign convention `logDeriv zeta(w) - n*(w-rho)^(-1)`.
