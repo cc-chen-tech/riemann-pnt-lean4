@@ -1998,6 +1998,19 @@ Core verified declarations:
   `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_weightedSelfDampedResolventLaplaceKernelCombo`
   specialize the finite weighted self-damped package to concrete elementary
   resolvent/Laplace kernels `resolventLaplaceKernel (a k)`.
+- `laplacePairPositive_one_weightedSelfDampedAffineResolventLaplaceKernelCombo`,
+  `nontrivialZerosFinset_pair_sum_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo`,
+  `nontrivialZerosFinset_pair_average_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo`,
+  `nontrivialZerosFinset_sum_re_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo`,
+  `nontrivialZerosFinset_average_re_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo`,
+  `nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo`,
+  `nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo`,
+  `nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo`,
+  and
+  `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo`
+  specialize the finite weighted self-damped package to concrete elementary
+  affine resolvent/Laplace kernels
+  `affineResolventLaplaceKernel (a k) (b k) (c k)`.
 - `nontrivialZerosFinset_sum_re_nonnegative_of_symmetricResolventLaplaceKernelCombo`,
   `nontrivialZerosFinset_average_re_nonnegative_of_symmetricResolventLaplaceKernelCombo`,
   `nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_symmetricResolventLaplaceKernelCombo`,

@@ -216,6 +216,11 @@ Verified assets now include:
   and the corresponding full/new-zero sum, average, paired-sum, and
   paired-average nonnegativity wrappers whenever all weights and shifts are
   nonnegative and each damping coefficient is at most one.
+- finite weighted self-damped affine resolvent/Laplace combinations:
+  `laplacePairPositive_one_weightedSelfDampedAffineResolventLaplaceKernelCombo`
+  and the corresponding full/new-zero sum, average, paired-sum, and
+  paired-average nonnegativity wrappers whenever all weights, affine parameters,
+  and damping coefficients satisfy the same nonnegativity/`<= 1` hypotheses.
 - finite nonnegative combinations of those prototype kernels,
   `resolventLaplaceKernelCombo`, with the same right-half-plane positivity,
   pair-positivity, and finite-zero/new-zero sum, average, paired-sum, and
@@ -242,7 +247,8 @@ prototype are real concrete suppliers for the finite-zero pairing API.  The
 combination wrappers match detectors built by summing positive elementary
 kernels; the damped interfaces additionally match Stechkin-style subtraction
 terms, including finite nonnegative sums of such signed terms and concrete
-weighted self-damped resolvent/Laplace combinations. They are still not the full
+weighted self-damped resolvent/Laplace combinations and weighted self-damped
+affine resolvent/Laplace combinations. They are still not the full
 Stechkin/Heath-Brown kernel used in the latest zero-free-region arguments. The
 next useful step is to formalize a nontrivial detector kernel from that
 literature and prove the concrete pair inequality needed by

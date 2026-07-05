@@ -3324,6 +3324,26 @@ lemma laplacePairPositive_one_affineResolventLaplaceKernelCombo
   laplacePairPositive_affineResolventLaplaceKernelCombo
     (center := 1) hw ha hb hc
 
+/-- Center-one pair positivity for finite nonnegative combinations of
+self-damped affine resolvent/Laplace prototype kernels. -/
+lemma laplacePairPositive_one_weightedSelfDampedAffineResolventLaplaceKernelCombo
+    {K : Finset ℕ} {w κ a b c : ℕ → ℝ}
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k)
+    (hc : ∀ k ∈ K, 0 ≤ c k) :
+    LaplacePairPositive
+      (weightedKernelCombo K w
+        (fun k => dampedKernel (κ k)
+          (affineResolventLaplaceKernel (a k) (b k) (c k))
+          (affineResolventLaplaceKernel (a k) (b k) (c k))))
+      1 :=
+  laplacePairPositive_one_weightedDampedKernelCombo_self_of_le_one
+    hw hκ
+    (fun k hk => laplacePairPositive_one_affineResolventLaplaceKernel
+      (ha k hk) (hb k hk) (hc k hk))
+
 /-- Direct use of the zero-pair nonnegativity condition. -/
 lemma zero_pair_contribution_nonnegative_of_reflection_condition
     {F : ℂ → ℂ} {center z : ℂ}
@@ -6400,6 +6420,195 @@ theorem nontrivialZerosFinset_sdiff_average_re_nonnegative_of_weightedSelfDamped
   div_nonneg
     (nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_weightedSelfDampedResolventLaplaceKernelCombo
       T U K w κ a hw hκ ha)
+    (Nat.cast_nonneg _)
+
+/-- Finite nontrivial-zero paired-sum nonnegativity for finite nonnegative
+combinations of self-damped affine resolvent/Laplace prototype kernels. -/
+theorem nontrivialZerosFinset_pair_sum_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo
+    (T : ℝ) (K : Finset ℕ) (w κ a b c : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k)
+    (hc : ∀ k ∈ K, 0 ≤ c k) :
+    0 ≤ ∑ ρ ∈ nontrivialZerosFinset T,
+      ((weightedKernelCombo K w
+          (fun k => dampedKernel (κ k)
+            (affineResolventLaplaceKernel (a k) (b k) (c k))
+            (affineResolventLaplaceKernel (a k) (b k) (c k))) ρ).re +
+        (weightedKernelCombo K w
+          (fun k => dampedKernel (κ k)
+            (affineResolventLaplaceKernel (a k) (b k) (c k))
+            (affineResolventLaplaceKernel (a k) (b k) (c k)))
+            (1 - ρ)).re) :=
+  nontrivialZerosFinset_pair_sum_nonnegative_of_weightedDampedKernelCombo_self
+    T K w κ (fun k => affineResolventLaplaceKernel (a k) (b k) (c k))
+    hw hκ
+    (fun k hk => laplacePairPositive_one_affineResolventLaplaceKernel
+      (ha k hk) (hb k hk) (hc k hk))
+
+/-- Finite nontrivial-zero paired-average nonnegativity for finite nonnegative
+combinations of self-damped affine resolvent/Laplace prototype kernels. -/
+theorem nontrivialZerosFinset_pair_average_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo
+    (T : ℝ) (K : Finset ℕ) (w κ a b c : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k)
+    (hc : ∀ k ∈ K, 0 ≤ c k) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset T,
+        ((weightedKernelCombo K w
+            (fun k => dampedKernel (κ k)
+              (affineResolventLaplaceKernel (a k) (b k) (c k))
+              (affineResolventLaplaceKernel (a k) (b k) (c k))) ρ).re +
+          (weightedKernelCombo K w
+            (fun k => dampedKernel (κ k)
+              (affineResolventLaplaceKernel (a k) (b k) (c k))
+              (affineResolventLaplaceKernel (a k) (b k) (c k)))
+              (1 - ρ)).re)) /
+        ((nontrivialZerosFinset T).card : ℝ) :=
+  nontrivialZerosFinset_pair_average_nonnegative_of_weightedDampedKernelCombo_self
+    T K w κ (fun k => affineResolventLaplaceKernel (a k) (b k) (c k))
+    hw hκ
+    (fun k hk => laplacePairPositive_one_affineResolventLaplaceKernel
+      (ha k hk) (hb k hk) (hc k hk))
+
+/-- Finite nontrivial-zero unpaired real-part sum nonnegativity for finite
+nonnegative combinations of self-damped affine resolvent/Laplace prototype
+kernels. -/
+theorem nontrivialZerosFinset_sum_re_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo
+    (T : ℝ) (K : Finset ℕ) (w κ a b c : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k)
+    (hc : ∀ k ∈ K, 0 ≤ c k) :
+    0 ≤ ∑ ρ ∈ nontrivialZerosFinset T,
+      (weightedKernelCombo K w
+        (fun k => dampedKernel (κ k)
+          (affineResolventLaplaceKernel (a k) (b k) (c k))
+          (affineResolventLaplaceKernel (a k) (b k) (c k))) ρ).re :=
+  nontrivialZerosFinset_sum_re_nonnegative_of_weightedDampedKernelCombo_self
+    T K w κ (fun k => affineResolventLaplaceKernel (a k) (b k) (c k))
+    hw hκ
+    (fun k hk => laplacePairPositive_one_affineResolventLaplaceKernel
+      (ha k hk) (hb k hk) (hc k hk))
+
+/-- Finite nontrivial-zero unpaired real-part average nonnegativity for finite
+nonnegative combinations of self-damped affine resolvent/Laplace prototype
+kernels. -/
+theorem nontrivialZerosFinset_average_re_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo
+    (T : ℝ) (K : Finset ℕ) (w κ a b c : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k)
+    (hc : ∀ k ∈ K, 0 ≤ c k) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset T,
+        (weightedKernelCombo K w
+          (fun k => dampedKernel (κ k)
+            (affineResolventLaplaceKernel (a k) (b k) (c k))
+            (affineResolventLaplaceKernel (a k) (b k) (c k))) ρ).re) /
+        ((nontrivialZerosFinset T).card : ℝ) :=
+  nontrivialZerosFinset_average_re_nonnegative_of_weightedDampedKernelCombo_self
+    T K w κ (fun k => affineResolventLaplaceKernel (a k) (b k) (c k))
+    hw hκ
+    (fun k hk => laplacePairPositive_one_affineResolventLaplaceKernel
+      (ha k hk) (hb k hk) (hc k hk))
+
+/-- New-zero paired-sum nonnegativity for finite nonnegative combinations of
+self-damped affine resolvent/Laplace prototype kernels. -/
+theorem nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo
+    (T U : ℝ) (K : Finset ℕ) (w κ a b c : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k)
+    (hc : ∀ k ∈ K, 0 ≤ c k) :
+    0 ≤ ∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+      ((weightedKernelCombo K w
+          (fun k => dampedKernel (κ k)
+            (affineResolventLaplaceKernel (a k) (b k) (c k))
+            (affineResolventLaplaceKernel (a k) (b k) (c k))) ρ).re +
+        (weightedKernelCombo K w
+          (fun k => dampedKernel (κ k)
+            (affineResolventLaplaceKernel (a k) (b k) (c k))
+            (affineResolventLaplaceKernel (a k) (b k) (c k)))
+            (1 - ρ)).re) :=
+  nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_weightedDampedKernelCombo_self
+    T U K w κ (fun k => affineResolventLaplaceKernel (a k) (b k) (c k))
+    hw hκ
+    (fun k hk => laplacePairPositive_one_affineResolventLaplaceKernel
+      (ha k hk) (hb k hk) (hc k hk))
+
+/-- New-zero paired-average nonnegativity for finite nonnegative combinations
+of self-damped affine resolvent/Laplace prototype kernels. -/
+theorem nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo
+    (T U : ℝ) (K : Finset ℕ) (w κ a b c : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k)
+    (hc : ∀ k ∈ K, 0 ≤ c k) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        ((weightedKernelCombo K w
+            (fun k => dampedKernel (κ k)
+              (affineResolventLaplaceKernel (a k) (b k) (c k))
+              (affineResolventLaplaceKernel (a k) (b k) (c k))) ρ).re +
+          (weightedKernelCombo K w
+            (fun k => dampedKernel (κ k)
+              (affineResolventLaplaceKernel (a k) (b k) (c k))
+              (affineResolventLaplaceKernel (a k) (b k) (c k)))
+              (1 - ρ)).re)) /
+        (((nontrivialZerosFinset U \ nontrivialZerosFinset T).card : ℝ)) :=
+  nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_weightedDampedKernelCombo_self
+    T U K w κ (fun k => affineResolventLaplaceKernel (a k) (b k) (c k))
+    hw hκ
+    (fun k hk => laplacePairPositive_one_affineResolventLaplaceKernel
+      (ha k hk) (hb k hk) (hc k hk))
+
+/-- New-zero unpaired real-part sum nonnegativity for finite nonnegative
+combinations of self-damped affine resolvent/Laplace prototype kernels. -/
+theorem nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo
+    (T U : ℝ) (K : Finset ℕ) (w κ a b c : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k)
+    (hc : ∀ k ∈ K, 0 ≤ c k) :
+    0 ≤ ∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+      (weightedKernelCombo K w
+        (fun k => dampedKernel (κ k)
+          (affineResolventLaplaceKernel (a k) (b k) (c k))
+          (affineResolventLaplaceKernel (a k) (b k) (c k))) ρ).re :=
+  nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_weightedDampedKernelCombo_self
+    T U K w κ (fun k => affineResolventLaplaceKernel (a k) (b k) (c k))
+    hw hκ
+    (fun k hk => laplacePairPositive_one_affineResolventLaplaceKernel
+      (ha k hk) (hb k hk) (hc k hk))
+
+/-- New-zero unpaired real-part average nonnegativity for finite nonnegative
+combinations of self-damped affine resolvent/Laplace prototype kernels. -/
+theorem nontrivialZerosFinset_sdiff_average_re_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo
+    (T U : ℝ) (K : Finset ℕ) (w κ a b c : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k)
+    (hc : ∀ k ∈ K, 0 ≤ c k) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        (weightedKernelCombo K w
+          (fun k => dampedKernel (κ k)
+            (affineResolventLaplaceKernel (a k) (b k) (c k))
+            (affineResolventLaplaceKernel (a k) (b k) (c k))) ρ).re) /
+        (((nontrivialZerosFinset U \ nontrivialZerosFinset T).card : ℝ)) :=
+  div_nonneg
+    (nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo
+      T U K w κ a b c hw hκ ha hb hc)
     (Nat.cast_nonneg _)
 
 /-- New-zero unpaired real-part average nonnegativity for a finite nonnegative

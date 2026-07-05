@@ -316,7 +316,8 @@ The project currently verifies several supporting statements, including:
   `dampedKernel kappa (resolventLaplaceKernel a) (resolventLaplaceKernel a)`,
   finite nonnegative resolvent-kernel combinations and finite weighted
   self-damped resolvent-kernel combinations with the same wrappers, single and
-  finite affine resolvent-kernel variants with the same finite-zero/new-zero
+  finite affine resolvent-kernel variants plus finite weighted self-damped
+  affine resolvent-kernel combinations with the same finite-zero/new-zero
   wrappers, and
   reflected-line conditional bridges for explicit-formula/PNT-error routes;
 - several zeta nonvanishing and pole-behavior wrappers from Mathlib;
@@ -819,9 +820,11 @@ and paired-contribution nonnegativity wrappers from either pair-positivity or
 pointwise strip positivity.  The concrete self-damped resolvent instance
 `dampedKernel kappa (resolventLaplaceKernel a) (resolventLaplaceKernel a)` is
 also exposed for `kappa <= 1` and `0 <= a`, together with finite weighted
-nonnegative combinations of such self-damped resolvent instances.  These are
-concrete algebraic
-suppliers for later Stechkin/Heath-Brown-style detector arguments; they do not
+nonnegative combinations of such self-damped resolvent instances.  The affine
+variant `affineResolventLaplaceKernel a b c` is also exposed in finite weighted
+self-damped combinations when all affine parameters are nonnegative and
+`kappa <= 1`.  These are concrete algebraic suppliers for later
+Stechkin/Heath-Brown-style detector arguments; they do not
 prove the missing high-height zeta growth or logarithmic-derivative estimates.
 
 ### Target Statements, Not Proved Theorems
