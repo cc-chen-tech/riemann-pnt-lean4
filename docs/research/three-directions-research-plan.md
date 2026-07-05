@@ -255,6 +255,10 @@ Verified assets now include:
   `no_zeros_on_reflected_line_of_psi_power_error_below_two_thirds_mono_bridge`;
   `no_zeros_on_vertical_line_of_explicit_formula_converse_power_mono_error`;
   `no_zeros_on_reflected_line_of_explicit_formula_converse_power_mono_error`.
+- critical-strip zero-line/existence normalizers:
+  `not_exists_nontrivial_zero_on_line_of_no_zeros_on_vertical_line`;
+  `no_zeros_on_vertical_line_of_not_exists_nontrivial_zero_on_line`;
+  `no_zeros_on_vertical_line_iff_not_exists_nontrivial_zero_on_line`.
 - route-interface conversion bridges:
   `psiPowerErrorBelowLineExcludesZerosRightOf_of_explicit_formula_converse_power`;
   `explicitFormulaConversePowerTarget_of_psiPowerErrorBelowLineExcludesZerosRightOf`.

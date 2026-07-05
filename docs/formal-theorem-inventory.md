@@ -2009,6 +2009,11 @@ Core verified declarations:
 - `exists_nontrivial_zero_on_one_third_iff_two_thirds`
   proves the nontrivial-zero existence equivalence between the reflected
   lines `Re(s) = 1/3` and `Re(s) = 2/3`.
+- `not_exists_nontrivial_zero_on_line_of_no_zeros_on_vertical_line`,
+  `no_zeros_on_vertical_line_of_not_exists_nontrivial_zero_on_line`, and
+  `no_zeros_on_vertical_line_iff_not_exists_nontrivial_zero_on_line`
+  identify critical-strip line zero-freeness with nonexistence of nontrivial
+  zeros on that line.  The strip hypotheses exclude the trivial-zero lines.
 - `exists_nontrivial_zero_on_line_iff_reflected` and
   `no_zeros_on_vertical_line_iff_reflected`
   generalize the same functional-equation reflection to arbitrary vertical

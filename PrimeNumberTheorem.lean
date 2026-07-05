@@ -3335,6 +3335,38 @@ reductions needed to turn a future analytic input on the reflected
 abbrev NoZerosOnVerticalLine (σ : ℝ) : Prop :=
   ∀ s : ℂ, s.re = σ → riemannZeta s ≠ 0
 
+/-- A zero-free vertical line has no nontrivial zeros on that line. -/
+theorem not_exists_nontrivial_zero_on_line_of_no_zeros_on_vertical_line
+    {σ : ℝ} (hline : NoZerosOnVerticalLine σ) :
+    ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = σ := by
+  rintro ⟨s, hnt, hs⟩
+  exact (hline s hs) hnt.1
+
+/-- In the critical strip, excluding nontrivial zeros on a vertical line gives
+zero-freeness of that line.  The strip hypotheses are necessary: trivial zeros
+live outside `0 < Re(s) < 1`. -/
+theorem no_zeros_on_vertical_line_of_not_exists_nontrivial_zero_on_line
+    {σ : ℝ} (hσ_pos : 0 < σ) (hσ_lt_one : σ < 1)
+    (hnone : ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = σ) :
+    NoZerosOnVerticalLine σ := by
+  intro s hs hzero
+  have hnt : RiemannHypothesis.IsNontrivialZero s := by
+    refine ⟨hzero, ?_, ?_⟩
+    · linarith [hs, hσ_lt_one]
+    · linarith [hs, hσ_pos]
+  exact hnone ⟨s, hnt, hs⟩
+
+/-- In the critical strip, zero-freeness of a vertical line is equivalent to
+the nonexistence of nontrivial zeros on that line. -/
+theorem no_zeros_on_vertical_line_iff_not_exists_nontrivial_zero_on_line
+    {σ : ℝ} (hσ_pos : 0 < σ) (hσ_lt_one : σ < 1) :
+    NoZerosOnVerticalLine σ ↔
+      ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = σ := by
+  constructor
+  · exact not_exists_nontrivial_zero_on_line_of_no_zeros_on_vertical_line
+  · exact no_zeros_on_vertical_line_of_not_exists_nontrivial_zero_on_line
+      hσ_pos hσ_lt_one
+
 /-- A line-free statement at `Re(s) = 1 / 3` follows immediately from RH. -/
 theorem no_zeros_on_one_third_of_RH
     (hRH : RiemannHypothesis.Statement) :

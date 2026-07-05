@@ -3608,6 +3608,34 @@ theorem no_zeros_on_reflected_line_of_right_halfplane
   PrimeNumberTheorem.no_zeros_on_reflected_line_of_right_halfplane
     hβ_pos hβ_lt_one hRight
 
+/-- Public conversion from vertical-line zero-freeness to nonexistence of
+nontrivial zeros on that line. -/
+theorem not_exists_nontrivial_zero_on_line_of_no_zeros_on_vertical_line
+    {σ : ℝ} (hline : PrimeNumberTheorem.NoZerosOnVerticalLine σ) :
+    ¬ ∃ s : ℂ, _root_.RiemannHypothesis.IsNontrivialZero s ∧ s.re = σ :=
+  PrimeNumberTheorem.not_exists_nontrivial_zero_on_line_of_no_zeros_on_vertical_line
+    hline
+
+/-- Public critical-strip conversion from nonexistence of nontrivial zeros on
+a line to zero-freeness of that line. -/
+theorem no_zeros_on_vertical_line_of_not_exists_nontrivial_zero_on_line
+    {σ : ℝ} (hσ_pos : 0 < σ) (hσ_lt_one : σ < 1)
+    (hnone : ¬ ∃ s : ℂ,
+      _root_.RiemannHypothesis.IsNontrivialZero s ∧ s.re = σ) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine σ :=
+  PrimeNumberTheorem.no_zeros_on_vertical_line_of_not_exists_nontrivial_zero_on_line
+    hσ_pos hσ_lt_one hnone
+
+/-- Public critical-strip equivalence between line zero-freeness and
+nonexistence of nontrivial zeros on that line. -/
+theorem no_zeros_on_vertical_line_iff_not_exists_nontrivial_zero_on_line
+    {σ : ℝ} (hσ_pos : 0 < σ) (hσ_lt_one : σ < 1) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine σ ↔
+      ¬ ∃ s : ℂ, _root_.RiemannHypothesis.IsNontrivialZero s ∧
+        s.re = σ :=
+  PrimeNumberTheorem.no_zeros_on_vertical_line_iff_not_exists_nontrivial_zero_on_line
+    hσ_pos hσ_lt_one
+
 /-- Public reflected-line existence equivalence for nontrivial zeros. -/
 theorem exists_nontrivial_zero_on_line_iff_reflected (β : ℝ) :
     (∃ s : ℂ, _root_.RiemannHypothesis.IsNontrivialZero s ∧ s.re = β) ↔
