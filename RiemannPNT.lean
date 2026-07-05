@@ -1872,6 +1872,15 @@ theorem no_zeros_on_reflected_line_of_explicit_formula_converse_power
   PrimeNumberTheorem.no_zeros_on_reflected_line_of_explicit_formula_converse_power
     hβ_pos hβ_lt_one hbridge herror
 
+/-- Public bridge from right-half-plane zero-freeness to zero-freeness on the
+reflected vertical line. -/
+theorem no_zeros_on_reflected_line_of_right_halfplane
+    {β : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hRight : ∀ s : ℂ, β ≤ s.re → riemannZeta s ≠ 0) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (1 - β) :=
+  PrimeNumberTheorem.no_zeros_on_reflected_line_of_right_halfplane
+    hβ_pos hβ_lt_one hRight
+
 /-- Public reflected-line existence equivalence for nontrivial zeros. -/
 theorem exists_nontrivial_zero_on_line_iff_reflected (β : ℝ) :
     (∃ s : ℂ, _root_.RiemannHypothesis.IsNontrivialZero s ∧ s.re = β) ↔

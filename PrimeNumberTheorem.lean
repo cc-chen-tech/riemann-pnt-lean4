@@ -2793,6 +2793,24 @@ theorem no_zeros_on_one_third_of_right_halfplane_two_thirds
     simpa [Complex.sub_re, hs] using hcalc
   exact (hRight (1 - s) (le_of_eq hre.symm)) hsym.1
 
+/-- General right-half-plane bridge: if ζ has no zeros in `Re(s) ≥ β`, then
+the reflected vertical line `Re(s)=1-β` is zero-free. -/
+theorem no_zeros_on_reflected_line_of_right_halfplane
+    {β : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hRight : ∀ s : ℂ, β ≤ s.re → riemannZeta s ≠ 0) :
+    NoZerosOnVerticalLine (1 - β) := by
+  intro s hs hzero
+  have hnt : RiemannHypothesis.IsNontrivialZero s := by
+    refine ⟨hzero, ?_, ?_⟩
+    · linarith [hs, hβ_lt_one]
+    · linarith [hs, hβ_pos]
+  have hsym : RiemannHypothesis.IsNontrivialZero (1 - s) :=
+    nontrivial_zero_symmetric' hnt
+  have hre : (1 - s).re = β := by
+    have hcalc : (1 : ℝ) - (1 - β) = β := by ring
+    simp [Complex.sub_re, hs, hcalc]
+  exact (hRight (1 - s) (le_of_eq hre.symm)) hsym.1
+
 /-- Existence of a nontrivial zero on `Re(s) = 1 / 3` is equivalent to
 existence of a nontrivial zero on the reflected line `Re(s) = 2 / 3`. -/
 theorem exists_nontrivial_zero_on_one_third_iff_two_thirds :

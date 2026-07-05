@@ -1396,6 +1396,9 @@ Core verified declarations:
 - `no_zeros_on_one_third_of_right_halfplane_two_thirds`
   reflects a zero-free statement on `Re(s) >= 2/3` to exclude zeros on
   `Re(s) = 1/3`.
+- `no_zeros_on_reflected_line_of_right_halfplane`
+  generalizes that bridge: right-half-plane zero-freeness in `Re(s) >= beta`
+  excludes zeros on the reflected line `Re(s)=1-beta`.
 - `exists_nontrivial_zero_on_one_third_iff_two_thirds`
   proves the nontrivial-zero existence equivalence between the reflected
   lines `Re(s) = 1/3` and `Re(s) = 2/3`.
