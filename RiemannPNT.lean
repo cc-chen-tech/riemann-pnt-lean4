@@ -4354,6 +4354,25 @@ theorem exists_norm_logDeriv_riemannZeta_shift_pair_vertical_log_bound_of_vertic
   ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_shift_pair_vertical_log_bound_of_vertical_log_bound
     hB hhigh
 
+/-- Public signed-input pair package for the high-height logarithmic derivative
+estimate needed by the 3-4-1 inequality.  A future bound for
+`-logDeriv zeta` yields the same shared pair bound for the two shifted
+`logDeriv zeta` norms. -/
+theorem exists_norm_logDeriv_riemannZeta_shift_pair_vertical_log_bound_of_neg_vertical_log_bound
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ u : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |u| →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * u)‖ ≤
+          B * Real.log |u|) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          C * Real.log |t| ∧
+        ‖logDeriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t)‖ ≤
+          C * Real.log |t| :=
+  ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_shift_pair_vertical_log_bound_of_neg_vertical_log_bound
+    hB hhigh
+
 /-- Public real-part pair package for the 3-4-1 logarithmic derivative inputs.
 One future ordinary vertical norm estimate yields shared bounds for
 `Re(-zeta'/zeta)(sigma+it)` and `Re(-zeta'/zeta)(sigma+2it)`. -/
@@ -4372,6 +4391,26 @@ theorem exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_ver
             riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re ≤
           C * Real.log |t| :=
   ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_vertical_norm_log_bound
+    hB hhigh
+
+/-- Public signed-input real-part pair package for the 3-4-1 logarithmic
+derivative inputs.  This is the direct handoff from a future
+`-logDeriv zeta` norm estimate to the two shifted `Re(-zeta'/zeta)` bounds. -/
+theorem exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_neg_vertical_norm_log_bound
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ u : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |u| →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * u)‖ ≤
+          B * Real.log |u|) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
+          C * Real.log |t| ∧
+        (-deriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t) /
+            riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re ≤
+          C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_neg_vertical_norm_log_bound
     hB hhigh
 
 /-- Public shifted real-part quotient bridge from an ordinary vertical norm
