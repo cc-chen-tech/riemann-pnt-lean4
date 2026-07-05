@@ -10947,6 +10947,45 @@ lemma exists_norm_neg_logDeriv_riemannZeta_vertical_log_bound_of_high_height_log
   intro σ t hσ_left hσ_right ht
   exact hbound σ t ⟨hσ_left, hσ_right⟩ ht
 
+/-- Named-interface constructor from a future high-height `B * log |t|`
+estimate for `logDeriv ζ`.
+
+This is the `LogDerivVerticalLogBound` version of
+`exists_norm_logDeriv_riemannZeta_vertical_log_bound_of_high_height_log_abs_bound`;
+the compact low-height patching is still done by that theorem. -/
+lemma logDerivVerticalLogBound_of_high_height_log_abs_bound
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤ B * Real.log |t|) :
+    ∃ C T0' : ℝ, LogDerivVerticalLogBound C T0' :=
+  exists_norm_logDeriv_riemannZeta_vertical_log_bound_of_high_height_log_abs_bound
+    hB hhigh
+
+/-- Named signed-interface constructor from a future high-height
+`B * log |t|` estimate for `-logDeriv ζ`. -/
+lemma negLogDerivVerticalLogBound_of_high_height_log_abs_bound
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          B * Real.log |t|) :
+    ∃ C T0' : ℝ, NegLogDerivVerticalLogBound C T0' :=
+  exists_norm_neg_logDeriv_riemannZeta_vertical_log_bound_of_high_height_log_abs_bound
+    hB hhigh
+
+/-- Named real-part quotient constructor from a future high-height
+`B * log |t|` estimate for `Re(-ζ'/ζ)`. -/
+lemma reNegDerivDivVerticalLogBound_of_high_height_log_abs_bound
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re ≤ B * Real.log |t|) :
+    ∃ C T0' : ℝ, ReNegDerivDivVerticalLogBound C T0' :=
+  exists_re_neg_deriv_div_riemannZeta_vertical_log_bound_of_high_height_log_abs_bound
+    hB hhigh
+
 /-- Compact patch preserving the exact `C * log |t|` scale for the norm of
 `logDeriv ζ` at `σ + 2it`, provided `H >= 3`. -/
 lemma exists_norm_logDeriv_riemannZeta_sigma_two_it_log_abs_bound_of_high_height_log_abs_bound

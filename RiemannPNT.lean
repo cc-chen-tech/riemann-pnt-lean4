@@ -2057,6 +2057,29 @@ theorem no_zeros_on_vertical_line_iff_reflected
   PrimeNumberTheorem.no_zeros_on_vertical_line_iff_reflected
     hβ_pos hβ_lt_one
 
+/-- Public specialized reflection bridge from `Re(s)=2/3` zero-freeness to
+`Re(s)=1/3` zero-freeness. -/
+theorem no_zeros_on_one_third_of_no_zeros_on_two_thirds
+    (h : PrimeNumberTheorem.NoZerosOnVerticalLine (2 / 3)) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) := by
+  have hiff :=
+    PrimeNumberTheorem.no_zeros_on_vertical_line_iff_reflected
+      (β := (1 / 3 : ℝ)) (by norm_num) (by norm_num)
+  have hreflect : (1 - (1 / 3 : ℝ)) = (2 / 3 : ℝ) := by norm_num
+  exact hiff.mpr (hreflect.symm ▸ h)
+
+/-- Public converse specialized reflection bridge, keeping the two reflected
+line formulations interchangeable. -/
+theorem no_zeros_on_two_thirds_of_no_zeros_on_one_third
+    (h : PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3)) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (2 / 3) := by
+  have hiff :=
+    PrimeNumberTheorem.no_zeros_on_vertical_line_iff_reflected
+      (β := (1 / 3 : ℝ)) (by norm_num) (by norm_num)
+  have hreflect : (1 - (1 / 3 : ℝ)) = (2 / 3 : ℝ) := by norm_num
+  have hres := hiff.mp h
+  exact hreflect ▸ hres
+
 /-- Public specialization of the general `ψ` power-saving bridge to the
 reflected `2/3` line and hence the `1/3` line. -/
 theorem no_zeros_on_one_third_of_general_psi_power_error_bridge
@@ -4571,6 +4594,43 @@ theorem exists_norm_neg_logDeriv_riemannZeta_vertical_log_bound_of_high_height_l
       ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
         ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤ C * Real.log |t| :=
   ZeroFreeRegion.exists_norm_neg_logDeriv_riemannZeta_vertical_log_bound_of_high_height_log_abs_bound
+    hB hhigh
+
+/-- Public named-interface constructor from a future high-height
+`B * log |t|` estimate for `logDeriv ζ`. -/
+theorem logDerivVerticalLogBound_of_high_height_log_abs_bound
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          B * Real.log |t|) :
+    ∃ C T0' : ℝ, LogDerivVerticalLogBound C T0' :=
+  ZeroFreeRegion.logDerivVerticalLogBound_of_high_height_log_abs_bound
+    hB hhigh
+
+/-- Public named signed-interface constructor from a future high-height
+`B * log |t|` estimate for `-logDeriv ζ`. -/
+theorem negLogDerivVerticalLogBound_of_high_height_log_abs_bound
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          B * Real.log |t|) :
+    ∃ C T0' : ℝ, NegLogDerivVerticalLogBound C T0' :=
+  ZeroFreeRegion.negLogDerivVerticalLogBound_of_high_height_log_abs_bound
+    hB hhigh
+
+/-- Public named real-part quotient constructor from a future high-height
+`B * log |t|` estimate for `Re(-ζ'/ζ)`. -/
+theorem reNegDerivDivVerticalLogBound_of_high_height_log_abs_bound
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
+          B * Real.log |t|) :
+    ∃ C T0' : ℝ, ReNegDerivDivVerticalLogBound C T0' :=
+  ZeroFreeRegion.reNegDerivDivVerticalLogBound_of_high_height_log_abs_bound
     hB hhigh
 
 /-- Public shifted norm bridge: a future high-height estimate at `sigma + iu`

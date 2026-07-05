@@ -1013,6 +1013,14 @@ Core verified declarations:
 - `logDeriv_riemannZeta_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height`
   is the same conversion packaged against the named
   `LogDerivVerticalLogBound` interface.
+- `logDerivVerticalLogBound_of_high_height_log_abs_bound`
+  packages a future high-height `B * log |t|` estimate directly as the named
+  `LogDerivVerticalLogBound` interface.
+- `negLogDerivVerticalLogBound_of_high_height_log_abs_bound`
+  is the signed `-logDeriv zeta` version of the same exact-scale constructor.
+- `reNegDerivDivVerticalLogBound_of_high_height_log_abs_bound`
+  packages a future exact-scale real-part quotient estimate directly as the
+  named `ReNegDerivDivVerticalLogBound` interface.
 - `exists_re_im_logDeriv_vertical_log_bound_of_log_abs_add_three_bound_high_height`
   is the multiplicative `C log(|t|+3)` version of that normalizer.
 - `exists_re_im_neg_logDeriv_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height`
@@ -1602,6 +1610,10 @@ Core verified declarations:
   `no_zeros_on_vertical_line_iff_reflected`
   generalize the same functional-equation reflection to arbitrary vertical
   lines `Re(s)=beta` and `Re(s)=1-beta` in the critical strip.
+- `no_zeros_on_one_third_of_no_zeros_on_two_thirds` and
+  `no_zeros_on_two_thirds_of_no_zeros_on_one_third`
+  are the public specialized zero-free reflection wrappers for the two lines
+  `Re(s)=1/3` and `Re(s)=2/3`.
 - `NoZerosOnVerticalLineOneThirdOfStrongPNTError` and
   `no_zeros_on_one_third_of_strong_pnt_error_bridge`
   isolate the formal bridge from a future strong-PNT-error converse excluding

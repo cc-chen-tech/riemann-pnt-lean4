@@ -54,6 +54,12 @@ and
 convert future affine `A + B log(|t|+3)` high-height estimates into these
 interfaces.  They are proved normalization handoffs; they do not prove the
 zeta-specific estimate.
+If the future high-height theorem is already available in the exact
+`B log |t|` scale, the constructors
+`ZeroFreeRegion.logDerivVerticalLogBound_of_high_height_log_abs_bound`,
+`ZeroFreeRegion.negLogDerivVerticalLogBound_of_high_height_log_abs_bound`, and
+`ZeroFreeRegion.reNegDerivDivVerticalLogBound_of_high_height_log_abs_bound`
+package it directly as the named vertical interfaces.
 The named interfaces also feed the shifted 3-4-1 inputs directly via
 `ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_shift_pair_vertical_log_bound_of_LogDerivVerticalLogBound`,
 `ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_LogDerivVerticalLogBound`,
