@@ -7434,6 +7434,164 @@ lemma re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine
       simp [C]
       ring
 
+/-- Pair package for the right-shifted Borel quotient bridges.
+
+One set of local affine Borel hypotheses at height `t`, together with the
+corresponding hypotheses at height `2t`, gives one shared logarithmic
+coefficient for the two shifted real-part terms used by the 3-4-1 inequality.
+The theorem is a bookkeeping bridge; the zeta-specific local hypotheses remain
+explicit inputs. -/
+lemma re_neg_deriv_div_riemannZeta_shift_pair_right_shift_le_log_abs_of_affine_logDeriv_re_le_half_radius
+    {Are Bre Acenter Bcenter r H σ t : ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3)
+    (hHpos : 0 < H) (hH : H + 2 * r ≤ |t|) (ht : 6 ≤ |t|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hM :
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hlog : ∀ w : ℂ,
+      w ∈ ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r) →
+        (logDeriv riemannZeta w).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hcenter :
+      ‖logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + I * t)‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hM_two :
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) + I * ((2 * t : ℝ) : ℂ))‖ + 3))
+    (hlog_two : ∀ w : ℂ,
+      w ∈ ball (((σ + r : ℝ) : ℂ) + I * ((2 * t : ℝ) : ℂ)) (2 * r) →
+        (logDeriv riemannZeta w).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + I * ((2 * t : ℝ) : ℂ))‖ + 3))
+    (hcenter_two :
+      ‖logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + I * ((2 * t : ℝ) : ℂ))‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) + I * ((2 * t : ℝ) : ℂ))‖ + 3)) :
+    (-deriv riemannZeta ((σ : ℂ) + I * t) /
+        riemannZeta ((σ : ℂ) + I * t)).re ≤
+        2 * ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+          Real.log |t| ∧
+      (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+        riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤
+        2 * ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+          Real.log |t| := by
+  let C : ℝ := (2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)
+  have hC : 0 ≤ C := by
+    exact add_nonneg hA (mul_nonneg (by norm_num) hB)
+  have hlog_nonneg : 0 ≤ Real.log |t| :=
+    Real.log_nonneg (by linarith : (1 : ℝ) ≤ |t|)
+  have hH_two : H + 2 * r ≤ |2 * t| := by
+    have htwo_abs : |(2 : ℝ) * t| = 2 * |t| := by simp [abs_mul]
+    calc
+      H + 2 * r ≤ |t| := hH
+      _ ≤ |2 * t| := by
+        rw [htwo_abs]
+        nlinarith [abs_nonneg t]
+  constructor
+  · have hmain :
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re ≤ C * Real.log |t| := by
+      simpa [C] using
+        re_neg_deriv_div_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_logDeriv_re_le_half_radius
+          (Are := Are) (Bre := Bre) (Acenter := Acenter) (Bcenter := Bcenter)
+          (r := r) (H := H) (σ := σ) (t := t)
+          hr hσ hσr hHpos hH ht hA hB hM hlog hcenter
+    calc
+      (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re
+          ≤ C * Real.log |t| := hmain
+      _ ≤ (2 * C) * Real.log |t| :=
+          mul_le_mul_of_nonneg_right (by nlinarith : C ≤ 2 * C) hlog_nonneg
+      _ = 2 * ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+          Real.log |t| := by simp [C]
+  · simpa [C] using
+      re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_logDeriv_re_le_half_radius
+        (Are := Are) (Bre := Bre) (Acenter := Acenter) (Bcenter := Bcenter)
+        (r := r) (H := H) (σ := σ) (t := t)
+        hr hσ hσr hHpos hH_two (by linarith : 3 ≤ |t|)
+        hA hB hM_two hlog_two hcenter_two
+
+/-- Signed version of
+`re_neg_deriv_div_riemannZeta_shift_pair_right_shift_le_log_abs_of_affine_logDeriv_re_le_half_radius`,
+using local affine Borel hypotheses for `-logDeriv ζ`. -/
+lemma re_neg_deriv_div_riemannZeta_shift_pair_right_shift_le_log_abs_of_affine_neg_logDeriv_re_le_half_radius
+    {Are Bre Acenter Bcenter r H σ t : ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3)
+    (hHpos : 0 < H) (hH : H + 2 * r ≤ |t|) (ht : 6 ≤ |t|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hM :
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hlog : ∀ w : ℂ,
+      w ∈ ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r) →
+        (-logDeriv riemannZeta w).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hcenter :
+      ‖-logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + I * t)‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hM_two :
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) + I * ((2 * t : ℝ) : ℂ))‖ + 3))
+    (hlog_two : ∀ w : ℂ,
+      w ∈ ball (((σ + r : ℝ) : ℂ) + I * ((2 * t : ℝ) : ℂ)) (2 * r) →
+        (-logDeriv riemannZeta w).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + I * ((2 * t : ℝ) : ℂ))‖ + 3))
+    (hcenter_two :
+      ‖-logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + I * ((2 * t : ℝ) : ℂ))‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) + I * ((2 * t : ℝ) : ℂ))‖ + 3)) :
+    (-deriv riemannZeta ((σ : ℂ) + I * t) /
+        riemannZeta ((σ : ℂ) + I * t)).re ≤
+        2 * ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+          Real.log |t| ∧
+      (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+        riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤
+        2 * ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+          Real.log |t| := by
+  let C : ℝ := (2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)
+  have hC : 0 ≤ C := by
+    exact add_nonneg hA (mul_nonneg (by norm_num) hB)
+  have hlog_nonneg : 0 ≤ Real.log |t| :=
+    Real.log_nonneg (by linarith : (1 : ℝ) ≤ |t|)
+  have hH_two : H + 2 * r ≤ |2 * t| := by
+    have htwo_abs : |(2 : ℝ) * t| = 2 * |t| := by simp [abs_mul]
+    calc
+      H + 2 * r ≤ |t| := hH
+      _ ≤ |2 * t| := by
+        rw [htwo_abs]
+        nlinarith [abs_nonneg t]
+  constructor
+  · have hmain :
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re ≤ C * Real.log |t| := by
+      simpa [C] using
+        re_neg_deriv_div_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_neg_logDeriv_re_le_half_radius
+          (Are := Are) (Bre := Bre) (Acenter := Acenter) (Bcenter := Bcenter)
+          (r := r) (H := H) (σ := σ) (t := t)
+          hr hσ hσr hHpos hH ht hA hB hM hlog hcenter
+    calc
+      (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re
+          ≤ C * Real.log |t| := hmain
+      _ ≤ (2 * C) * Real.log |t| :=
+          mul_le_mul_of_nonneg_right (by nlinarith : C ≤ 2 * C) hlog_nonneg
+      _ = 2 * ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+          Real.log |t| := by simp [C]
+  · simpa [C] using
+      re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_neg_logDeriv_re_le_half_radius
+        (Are := Are) (Bre := Bre) (Acenter := Acenter) (Bcenter := Bcenter)
+        (r := r) (H := H) (σ := σ) (t := t)
+        hr hσ hσr hHpos hH_two (by linarith : 3 ≤ |t|)
+        hA hB hM_two hlog_two hcenter_two
+
 /-- Shifted third-term right-shifted Borel quotient bridge in the full
 complex-height logarithmic scale, using local `logDeriv ζ` hypotheses at
 height `2t`. -/
