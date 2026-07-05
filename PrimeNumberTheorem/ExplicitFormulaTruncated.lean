@@ -172,5 +172,84 @@ lemma explicitFormulaConversePower_of_truncated_route
     PrimeNumberTheorem.ExplicitFormulaConversePowerTarget β :=
   hroute hexplicit
 
+/-- One-step conditional bridge from a future truncated explicit formula route
+and a `ψ` power saving below `2/3` to no zeros on `Re(s)=2/3`. -/
+theorem no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route
+    (hroute : ExplicitFormulaTruncatedConverseRoute (2 / 3))
+    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
+      ExplicitFormulaTruncatedTarget T hT x hx)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine (2 / 3)) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (2 / 3) :=
+  PrimeNumberTheorem.no_zeros_on_vertical_line_of_explicit_formula_converse_power
+    (by norm_num) (by norm_num)
+    (explicitFormulaConversePower_of_truncated_route hroute hexplicit)
+    herror
+
+/-- Concrete `ψ`-error version of the truncated explicit-formula bridge to
+no zeros on `Re(s)=2/3`. -/
+theorem no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_below_two_thirds
+    (hroute : ExplicitFormulaTruncatedConverseRoute (2 / 3))
+    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
+      ExplicitFormulaTruncatedTarget T hT x hx)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowTwoThirds) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (2 / 3) :=
+  no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route
+    hroute hexplicit
+    (PrimeNumberTheorem.psiPowerErrorBelowLine_two_thirds_of_below_two_thirds
+      herror)
+
+/-- One-step conditional bridge from a future truncated explicit formula route
+and a `ψ` power saving below `2/3` to no zeros on `Re(s)=1/3`. -/
+theorem no_zeros_on_one_third_of_truncated_explicit_formula_converse_route
+    (hroute : ExplicitFormulaTruncatedConverseRoute (2 / 3))
+    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
+      ExplicitFormulaTruncatedTarget T hT x hx)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine (2 / 3)) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) :=
+  PrimeNumberTheorem.no_zeros_on_one_third_of_explicit_formula_converse_power
+    (explicitFormulaConversePower_of_truncated_route hroute hexplicit)
+    herror
+
+/-- Concrete `ψ`-error version of the truncated explicit-formula bridge to
+no zeros on `Re(s)=1/3`. -/
+theorem no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_below_two_thirds
+    (hroute : ExplicitFormulaTruncatedConverseRoute (2 / 3))
+    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
+      ExplicitFormulaTruncatedTarget T hT x hx)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowTwoThirds) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) :=
+  no_zeros_on_one_third_of_truncated_explicit_formula_converse_route
+    hroute hexplicit
+    (PrimeNumberTheorem.psiPowerErrorBelowLine_two_thirds_of_below_two_thirds
+      herror)
+
+/-- Reflected-line version of the truncated explicit-formula bridge. -/
+theorem no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route
+    {β : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hroute : ExplicitFormulaTruncatedConverseRoute β)
+    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
+      ExplicitFormulaTruncatedTarget T hT x hx)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (1 - β) :=
+  PrimeNumberTheorem.no_zeros_on_reflected_line_of_explicit_formula_converse_power
+    hβ_pos hβ_lt_one
+    (explicitFormulaConversePower_of_truncated_route hroute hexplicit)
+    herror
+
+/-- Concrete `θ < 2/3` reflected-line version of the truncated
+explicit-formula bridge for any boundary `β >= 2/3`. -/
+theorem no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_below_two_thirds
+    {β : ℝ} (hβ_two_thirds : (2 / 3 : ℝ) ≤ β) (hβ_lt_one : β < 1)
+    (hroute : ExplicitFormulaTruncatedConverseRoute β)
+    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
+      ExplicitFormulaTruncatedTarget T hT x hx)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowTwoThirds) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (1 - β) :=
+  no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route
+    (lt_of_lt_of_le (by norm_num : (0 : ℝ) < 2 / 3) hβ_two_thirds)
+    hβ_lt_one hroute hexplicit
+    (PrimeNumberTheorem.psiPowerErrorBelowLine_of_below_two_thirds_of_two_thirds_le
+      hβ_two_thirds herror)
+
 end ExplicitFormulaTruncated
 end PrimeNumberTheorem

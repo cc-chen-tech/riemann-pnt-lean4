@@ -774,7 +774,10 @@ These name the future oscillation/converse dependency from a truncated explicit
 formula to zero-free vertical lines; they are not unconditional proofs of those
 analytic inputs.  The public API exposes both the direct `Re(s)=2/3` consequence
 and the reflected `Re(s)=1/3` consequence of this conditional route, including
-direct wrappers for the concrete `theta < 2/3` `psi`-error input.  It also
+direct wrappers for the concrete `theta < 2/3` `psi`-error input; the same
+bridges are also exposed inside
+`PrimeNumberTheorem.ExplicitFormulaTruncated` and
+`RiemannPNT.API.ExplicitFormulaTruncated`.  It also
 exposes contrapositive facades saying that, under the same future
 zero-exclusion bridge, a zero at or to the right of the chosen boundary rules
 out the corresponding `psi` power-saving hypothesis.  The verified facades

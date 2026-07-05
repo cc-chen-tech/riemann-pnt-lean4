@@ -328,6 +328,8 @@ Verified assets now include:
   `no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_below_two_thirds`;
   `no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route`;
   `no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_below_two_thirds`.
+  These now live in the core `ExplicitFormulaTruncated` module as well as the
+  public `RiemannPNT.API.ExplicitFormulaTruncated` namespace.
 - explicit-formula auxiliary normalizers:
   `ExplicitFormulaAux.chebyshevPsi0`;
   `ExplicitFormulaAux.jumpVonMangoldt`;
