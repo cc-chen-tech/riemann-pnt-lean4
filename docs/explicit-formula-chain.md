@@ -301,9 +301,10 @@ does the same composition for arbitrary `0 < beta < 1`, yielding
    negative-real-part facts, denominator safety, `2 <= ‖s‖` and
    `‖s‖⁻¹ <= 1/2` denominator estimates, absolute-height normalization,
    nontrivial-zero separation, the single-term bound
-   `‖x^s / s‖ <= (1/2) * x^s.re`, and the truncation cardinality bound are
-   also proved.  The truncated target predicate and conditional repackaging
-   lemma are public API, but still target infrastructure.  Future analytic
+   `‖x^s / s‖ <= (1/2) * x^s.re`, the corresponding finite retained
+   trivial-zero contribution-sum bound, and the truncation cardinality bound
+   are also proved.  The truncated target predicate and conditional
+   repackaging lemma are public API, but still target infrastructure.  Future analytic
    multiplicity/order work can refine this API without changing the downstream
    target shape.
 3. Prove finite bounded-height support lemmas for the zero sums from

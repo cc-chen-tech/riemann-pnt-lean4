@@ -17447,6 +17447,14 @@ theorem norm_trivial_zero_contribution_le_half_rpow_re {s : ℂ} {T x : ℝ}
   PrimeNumberTheorem.ExplicitFormulaAux.norm_trivial_zero_contribution_le_half_rpow_re
     hs hx
 
+/-- Public finite-sum norm bound for retained trivial-zero contributions. -/
+theorem norm_finiteTrivialZeroSum_contribution_le_half_sum_rpow_re
+    (T x : ℝ) (hx : 0 < x) :
+    ‖∑ s ∈ finiteTrivialZeroSum T, (x : ℂ) ^ s / s‖ ≤
+      ∑ s ∈ finiteTrivialZeroSum T, (1 / 2 : ℝ) * x ^ s.re :=
+  PrimeNumberTheorem.ExplicitFormulaAux.norm_finiteTrivialZeroSum_contribution_le_half_sum_rpow_re
+    T x hx
+
 /-- Public separation between retained trivial zeros and nontrivial zeros. -/
 theorem finiteTrivialZeroSum_not_isNontrivialZero_of_mem {s : ℂ} {T : ℝ}
     (hs : s ∈ finiteTrivialZeroSum T) :
