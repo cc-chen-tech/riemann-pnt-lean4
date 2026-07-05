@@ -34,6 +34,10 @@ Verified assets now include:
   `log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_vertical_norm_bound`
   and
   `log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_vertical_log_bound`;
+- the global-vertical-to-finite-BTY handoff
+  `btyDetector_uniform_vertical_log_bound_of_global_log_abs_add_three_bound`
+  and the composed lower bound
+  `log_deriv_zeta_bty_detector_one_lower_bound_of_global_vertical_log_abs_add_three_bound`;
 - the unsigned simplified Borel facade
   `log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_right_shift_borel_family_simplified`;
 - the signed simplified Borel facade added on this branch:
@@ -52,9 +56,11 @@ not a purely formal wrapper: the existing shift-pair estimates cover the
 classical `t, 2t` shape, while the Borel facade accepts a finset-wide
 upper-bound hypothesis over `btyDetectorSupport.erase 1`.  Closing that bridge
 requires a uniform high-height/log bound for every BTY support index.  The new
-finite-family norm facades make the exact required input explicit:
-one common bound for
-`‖logDeriv ζ(σ + k i t)‖` over `k ∈ btyDetectorSupport.erase 1`.
+finite-family norm facades make the exact required input explicit, and the
+global-vertical handoff now reduces the finite-family part to a one-variable
+bound
+`‖logDeriv ζ(σ + i u)‖ <= B log(|u|+3)` plus finite log-scale comparisons for
+the detector frequencies.
 The new polynomial-growth handoff removes one piece of height bookkeeping once
 a usable zeta polynomial-growth input is available, but it does not prove that
 input or a log-derivative estimate.

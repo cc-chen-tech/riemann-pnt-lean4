@@ -5427,6 +5427,35 @@ theorem log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_vertical_log_boun
   ZeroFreeRegion.log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_vertical_log_bound
     σ hσ t B L0 hupper
 
+/-- Public handoff from a one-variable vertical logarithmic-derivative bound
+to the finite-family BTY detector bound. -/
+theorem btyDetector_uniform_vertical_log_bound_of_global_log_abs_add_three_bound
+    (σ t B L0 : ℝ) (hB : 0 ≤ B)
+    (hglobal : ∀ u : ℝ,
+      ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * u)‖ ≤
+        B * Real.log (|u| + 3))
+    (hlog : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      Real.log (|(k : ℝ) * t| + 3) ≤ L0) :
+    ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      ‖logDeriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)‖ ≤ B * L0 :=
+  ZeroFreeRegion.btyDetector_uniform_vertical_log_bound_of_global_log_abs_add_three_bound
+    σ t B L0 hB hglobal hlog
+
+/-- Public BTY lower bound from a one-variable vertical logarithmic-derivative
+bound and finite detector-frequency height comparison. -/
+theorem log_deriv_zeta_bty_detector_one_lower_bound_of_global_vertical_log_abs_add_three_bound
+    (σ : ℝ) (hσ : 1 < σ) (t B L0 : ℝ) (hB : 0 ≤ B)
+    (hglobal : ∀ u : ℝ,
+      ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * u)‖ ≤
+        B * Real.log (|u| + 3))
+    (hlog : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      Real.log (|(k : ℝ) * t| + 3) ≤ L0) :
+    (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+      riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+      - ((3458648 : ℝ) / 2163835) * (B * L0) :=
+  ZeroFreeRegion.log_deriv_zeta_bty_detector_one_lower_bound_of_global_vertical_log_abs_add_three_bound
+    σ hσ t B L0 hB hglobal hlog
+
 /-- Public constant-one complex-exponential certificate. -/
 theorem complexExpAbsSqCertificate_const_one :
     ComplexExpAbsSqCertificate ({0} : Finset ℕ) ({0} : Finset ℕ)

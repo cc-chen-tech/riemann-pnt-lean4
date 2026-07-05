@@ -1858,6 +1858,49 @@ lemma log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_vertical_log_bound
   log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_vertical_norm_bound
     σ hσ t (B * L0) hupper
 
+/-- Convert a one-variable vertical logarithmic-derivative bound into the
+finite-family bound required by the BTY detector.
+
+The only height bookkeeping left to the caller is the finite log-scale
+comparison `hlog` for the detector frequencies. -/
+lemma btyDetector_uniform_vertical_log_bound_of_global_log_abs_add_three_bound
+    (σ t B L0 : ℝ) (hB : 0 ≤ B)
+    (hglobal : ∀ u : ℝ,
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * u)‖ ≤
+        B * Real.log (|u| + 3))
+    (hlog : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      Real.log (|(k : ℝ) * t| + 3) ≤ L0) :
+    ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      ‖logDeriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)‖ ≤ B * L0 := by
+  intro k hk
+  have hglobal_k := hglobal ((k : ℝ) * t)
+  calc
+    ‖logDeriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)‖
+        ≤ B * Real.log (|(k : ℝ) * t| + 3) := by
+          simpa [Complex.ofReal_mul, mul_assoc, mul_comm, mul_left_comm]
+            using hglobal_k
+    _ ≤ B * L0 := mul_le_mul_of_nonneg_left (hlog k hk) hB
+
+/-- BTY lower bound from a one-variable vertical logarithmic-derivative bound.
+
+This packages the remaining high-height input in the classical form
+`‖logDeriv ζ(σ+iu)‖ <= B log(|u|+3)`, plus a finite detector-frequency
+height comparison. -/
+lemma log_deriv_zeta_bty_detector_one_lower_bound_of_global_vertical_log_abs_add_three_bound
+    (σ : ℝ) (hσ : 1 < σ) (t B L0 : ℝ) (hB : 0 ≤ B)
+    (hglobal : ∀ u : ℝ,
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * u)‖ ≤
+        B * Real.log (|u| + 3))
+    (hlog : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      Real.log (|(k : ℝ) * t| + 3) ≤ L0) :
+    (-deriv riemannZeta ((σ : ℂ) + I * t) /
+      riemannZeta ((σ : ℂ) + I * t)).re ≥
+      - ((3458648 : ℝ) / 2163835) * (B * L0) :=
+  log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_vertical_log_bound
+    σ hσ t B L0
+    (btyDetector_uniform_vertical_log_bound_of_global_log_abs_add_three_bound
+      σ t B L0 hB hglobal hlog)
+
 /-- Fixed-margin real-part bound for the shifted `σ + it` term in the
 3-4-1 inequality. -/
 lemma exists_re_neg_deriv_div_riemannZeta_sigma_it_le_log_abs_add_three_of_one_add_le
