@@ -14364,6 +14364,26 @@ theorem exists_re_im_logDeriv_vertical_log_bound_of_deriv_bound_and_zeta_lower_b
   ZeroFreeRegion.exists_re_im_logDeriv_vertical_log_bound_of_deriv_bound_and_zeta_lower_bound_high_height
     T0 A B eta hT0 hA hB heta hderiv hzeta
 
+/-- Public bridge from boundary `ζ` estimates on fixed-radius circles plus a
+positive center lower bound for `ζ` to the high-height `logDeriv ζ` target. -/
+theorem exists_re_im_logDeriv_vertical_log_bound_of_sphere_zeta_bound_and_zeta_lower_bound_high_height
+    (T0 R A B eta : ℝ) (hT0 : 5 ≤ T0) (hR : 0 < R) (hRlt : R < T0)
+    (hA : 0 ≤ A) (hB : 0 ≤ B) (heta : 0 < eta)
+    (hsphere :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ∀ z : ℂ, z ∈ Metric.sphere ((σ : ℂ) + Complex.I * t) R →
+          ‖riemannZeta z‖ ≤
+            A + B * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3))
+    (hzeta :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        eta ≤ ‖riemannZeta ((σ : ℂ) + Complex.I * t)‖) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 5 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_im_logDeriv_vertical_log_bound_of_sphere_zeta_bound_and_zeta_lower_bound_high_height
+    T0 R A B eta hT0 hR hRlt hA hB heta hsphere hzeta
+
 /-- Public signed standalone normalization from an affine full-height vertical
 `-logDeriv ζ` estimate to the exact `C * log |t|` scale. -/
 theorem exists_re_im_neg_logDeriv_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height
@@ -14466,6 +14486,23 @@ theorem logDerivVerticalLogBound_of_deriv_bound_and_zeta_lower_bound_high_height
   ZeroFreeRegion.logDerivVerticalLogBound_of_deriv_bound_and_zeta_lower_bound_high_height
     T0 A B eta hT0 hA hB heta hderiv hzeta
 
+/-- Public named-interface bridge from boundary `ζ` estimates on fixed-radius
+circles plus a positive lower bound for `ζ` at the centers. -/
+theorem logDerivVerticalLogBound_of_sphere_zeta_bound_and_zeta_lower_bound_high_height
+    (T0 R A B eta : ℝ) (hT0 : 5 ≤ T0) (hR : 0 < R) (hRlt : R < T0)
+    (hA : 0 ≤ A) (hB : 0 ≤ B) (heta : 0 < eta)
+    (hsphere :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ∀ z : ℂ, z ∈ Metric.sphere ((σ : ℂ) + Complex.I * t) R →
+          ‖riemannZeta z‖ ≤
+            A + B * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3))
+    (hzeta :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        eta ≤ ‖riemannZeta ((σ : ℂ) + Complex.I * t)‖) :
+    ∃ C T0' : ℝ, LogDerivVerticalLogBound C T0' :=
+  ZeroFreeRegion.logDerivVerticalLogBound_of_sphere_zeta_bound_and_zeta_lower_bound_high_height
+    T0 R A B eta hT0 hR hRlt hA hB heta hsphere hzeta
+
 /-- Public signed named-interface constructor from an affine full-height
 vertical estimate for `-logDeriv ζ`. -/
 theorem negLogDerivVerticalLogBound_of_affine_log_norm_add_three_bound_high_height
@@ -14517,6 +14554,23 @@ theorem reNegDerivDivVerticalLogBound_of_deriv_bound_and_zeta_lower_bound_high_h
     ∃ C T0' : ℝ, ReNegDerivDivVerticalLogBound C T0' :=
   ZeroFreeRegion.reNegDerivDivVerticalLogBound_of_deriv_bound_and_zeta_lower_bound_high_height
     T0 A B eta hT0 hA hB heta hderiv hzeta
+
+/-- Public real-part quotient bridge from boundary `ζ` estimates on
+fixed-radius circles plus a positive lower bound for `ζ` at the centers. -/
+theorem reNegDerivDivVerticalLogBound_of_sphere_zeta_bound_and_zeta_lower_bound_high_height
+    (T0 R A B eta : ℝ) (hT0 : 5 ≤ T0) (hR : 0 < R) (hRlt : R < T0)
+    (hA : 0 ≤ A) (hB : 0 ≤ B) (heta : 0 < eta)
+    (hsphere :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ∀ z : ℂ, z ∈ Metric.sphere ((σ : ℂ) + Complex.I * t) R →
+          ‖riemannZeta z‖ ≤
+            A + B * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3))
+    (hzeta :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        eta ≤ ‖riemannZeta ((σ : ℂ) + Complex.I * t)‖) :
+    ∃ C T0' : ℝ, ReNegDerivDivVerticalLogBound C T0' :=
+  ZeroFreeRegion.reNegDerivDivVerticalLogBound_of_sphere_zeta_bound_and_zeta_lower_bound_high_height
+    T0 R A B eta hT0 hR hRlt hA hB heta hsphere hzeta
 
 /-- Public signed-norm variant of
 `reNegDerivDivVerticalLogBound_of_affine_log_norm_add_three_bound_high_height`. -/

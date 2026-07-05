@@ -1226,6 +1226,13 @@ Core verified declarations:
   `norm_deriv_riemannZeta_sigma_it_le_of_sphere_norm_bound_height`
   are Cauchy derivative estimates converting a boundary `||zeta||` bound on a
   disk avoiding the pole into a center `||zeta'||` bound.
+- `exists_re_im_logDeriv_vertical_log_bound_of_sphere_zeta_bound_and_zeta_lower_bound_high_height`,
+  `logDerivVerticalLogBound_of_sphere_zeta_bound_and_zeta_lower_bound_high_height`,
+  and
+  `reNegDerivDivVerticalLogBound_of_sphere_zeta_bound_and_zeta_lower_bound_high_height`
+  compose the Cauchy derivative estimate with a positive center lower bound
+  for `zeta`, yielding the same high-height `logDeriv` and real-part quotient
+  interfaces from boundary `||zeta||` control on fixed-radius circles.
 - `exists_re_im_logDeriv_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height`
   converts a future boundary-strip estimate
   `||logDeriv zeta (sigma+it)|| <= A + B log(||sigma+it||+3)` into

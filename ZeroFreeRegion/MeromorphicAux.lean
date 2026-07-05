@@ -5504,6 +5504,51 @@ lemma exists_re_im_logDeriv_vertical_log_bound_of_deriv_bound_and_zeta_lower_bou
       T0 (A / eta) (B / eta) hT0 (div_nonneg hA heta.le) (div_nonneg hB heta.le)
       hvertical
 
+/-- Reduce the high-height `logDeriv ζ` target to a boundary norm estimate
+for `ζ` on fixed-radius circles plus a positive lower bound for `ζ` at the
+centers.
+
+This composes the Cauchy derivative estimate
+`norm_deriv_riemannZeta_sigma_it_le_of_sphere_norm_bound_height` with
+`exists_re_im_logDeriv_vertical_log_bound_of_deriv_bound_and_zeta_lower_bound_high_height`.
+It is still conditional: the zeta-specific boundary growth and lower-bound
+inputs remain the hard analytic estimates. -/
+lemma exists_re_im_logDeriv_vertical_log_bound_of_sphere_zeta_bound_and_zeta_lower_bound_high_height
+    (T0 R A B eta : ℝ) (hT0 : 5 ≤ T0) (hR : 0 < R) (hRlt : R < T0)
+    (hA : 0 ≤ A) (hB : 0 ≤ B) (heta : 0 < eta)
+    (hsphere :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ∀ z : ℂ, z ∈ Metric.sphere ((σ : ℂ) + I * t) R →
+          ‖riemannZeta z‖ ≤
+            A + B * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (hzeta :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        eta ≤ ‖riemannZeta ((σ : ℂ) + I * t)‖) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 5 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          C * Real.log |t| := by
+  have hderiv :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖deriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          A / R + (B / R) * Real.log (‖((σ : ℂ) + I * t)‖ + 3) := by
+    intro σ t ht hσ
+    have hheight : R < |t| := lt_of_lt_of_le hRlt ht
+    have hraw :=
+      norm_deriv_riemannZeta_sigma_it_le_of_sphere_norm_bound_height
+        (σ := σ) (t := t) (R := R)
+        (M := A + B * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+        hR hheight (hsphere σ t ht hσ)
+    calc
+      ‖deriv riemannZeta ((σ : ℂ) + I * t)‖
+          ≤ (A + B * Real.log (‖((σ : ℂ) + I * t)‖ + 3)) / R := hraw
+      _ = A / R + (B / R) * Real.log (‖((σ : ℂ) + I * t)‖ + 3) := by
+          field_simp [ne_of_gt hR]
+  exact
+    exists_re_im_logDeriv_vertical_log_bound_of_deriv_bound_and_zeta_lower_bound_high_height
+      T0 (A / R) (B / R) eta hT0 (div_nonneg hA hR.le) (div_nonneg hB hR.le)
+      heta hderiv hzeta
+
 /-- Signed standalone normalization of a future vertical-strip
 `-logDeriv ζ` estimate.
 
@@ -5677,6 +5722,29 @@ lemma logDerivVerticalLogBound_of_deriv_bound_and_zeta_lower_bound_high_height
     ⟨C, T0', hC, hT0', hbound⟩
   exact ⟨C, T0', hC, by linarith, hbound⟩
 
+/-- Named-interface version of
+`exists_re_im_logDeriv_vertical_log_bound_of_sphere_zeta_bound_and_zeta_lower_bound_high_height`.
+
+This is the direct Cauchy-to-`LogDerivVerticalLogBound` handoff from boundary
+`ζ` estimates on fixed-radius circles plus a center lower bound for `ζ`. -/
+lemma logDerivVerticalLogBound_of_sphere_zeta_bound_and_zeta_lower_bound_high_height
+    (T0 R A B eta : ℝ) (hT0 : 5 ≤ T0) (hR : 0 < R) (hRlt : R < T0)
+    (hA : 0 ≤ A) (hB : 0 ≤ B) (heta : 0 < eta)
+    (hsphere :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ∀ z : ℂ, z ∈ Metric.sphere ((σ : ℂ) + I * t) R →
+          ‖riemannZeta z‖ ≤
+            A + B * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (hzeta :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        eta ≤ ‖riemannZeta ((σ : ℂ) + I * t)‖) :
+    ∃ C T0' : ℝ, LogDerivVerticalLogBound C T0' := by
+  rcases
+      exists_re_im_logDeriv_vertical_log_bound_of_sphere_zeta_bound_and_zeta_lower_bound_high_height
+        T0 R A B eta hT0 hR hRlt hA hB heta hsphere hzeta with
+    ⟨C, T0', hC, hT0', hbound⟩
+  exact ⟨C, T0', hC, by linarith, hbound⟩
+
 /-- Signed named-interface constructor from an affine full-height vertical
 estimate for `-logDeriv ζ`. -/
 lemma negLogDerivVerticalLogBound_of_affine_log_norm_add_three_bound_high_height
@@ -5743,6 +5811,26 @@ lemma reNegDerivDivVerticalLogBound_of_deriv_bound_and_zeta_lower_bound_high_hei
   rcases
       logDerivVerticalLogBound_of_deriv_bound_and_zeta_lower_bound_high_height
         T0 A B eta hT0 hA hB heta hderiv hzeta with
+    ⟨C, T0', hlog⟩
+  exact ⟨C, T0', reNegDerivDivVerticalLogBound_of_logDerivVerticalLogBound hlog⟩
+
+/-- Direct real-part quotient bridge from boundary `ζ` estimates on
+fixed-radius circles plus a positive lower bound for `ζ` at the centers. -/
+lemma reNegDerivDivVerticalLogBound_of_sphere_zeta_bound_and_zeta_lower_bound_high_height
+    (T0 R A B eta : ℝ) (hT0 : 5 ≤ T0) (hR : 0 < R) (hRlt : R < T0)
+    (hA : 0 ≤ A) (hB : 0 ≤ B) (heta : 0 < eta)
+    (hsphere :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ∀ z : ℂ, z ∈ Metric.sphere ((σ : ℂ) + I * t) R →
+          ‖riemannZeta z‖ ≤
+            A + B * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (hzeta :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        eta ≤ ‖riemannZeta ((σ : ℂ) + I * t)‖) :
+    ∃ C T0' : ℝ, ReNegDerivDivVerticalLogBound C T0' := by
+  rcases
+      logDerivVerticalLogBound_of_sphere_zeta_bound_and_zeta_lower_bound_high_height
+        T0 R A B eta hT0 hR hRlt hA hB heta hsphere hzeta with
     ⟨C, T0', hlog⟩
   exact ⟨C, T0', reNegDerivDivVerticalLogBound_of_logDerivVerticalLogBound hlog⟩
 

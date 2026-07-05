@@ -1380,6 +1380,9 @@ ZeroFreeRegion.jensen_localDivisor_riemannZeta_sigma_it_le_affine_log_abs_add_ra
 ZeroFreeRegion.norm_deriv_riemannZeta_le_of_sphere_norm_bound_avoid_one
 ZeroFreeRegion.norm_deriv_riemannZeta_le_of_sphere_norm_bound_dist_one
 ZeroFreeRegion.norm_deriv_riemannZeta_sigma_it_le_of_sphere_norm_bound_height
+ZeroFreeRegion.exists_re_im_logDeriv_vertical_log_bound_of_sphere_zeta_bound_and_zeta_lower_bound_high_height
+ZeroFreeRegion.logDerivVerticalLogBound_of_sphere_zeta_bound_and_zeta_lower_bound_high_height
+ZeroFreeRegion.reNegDerivDivVerticalLogBound_of_sphere_zeta_bound_and_zeta_lower_bound_high_height
 ```
 
 These results convert an input of the form
@@ -1396,6 +1399,10 @@ There is also a positive-radius form with `R` in place of `|R|`.
 The three Cauchy derivative estimates then turn a boundary `||zeta||` bound on
 a disk avoiding the pole into a center `||zeta'||` bound; they still need a
 separate lower bound for `||zeta||` before they yield a `logDeriv zeta` bound.
+The sphere/lower-bound handoff composes that Cauchy step with the existing
+`zeta'`-plus-lower-bound bridge, so the primitive input can now be stated
+directly as boundary control for `zeta` on fixed-radius circles plus a center
+lower bound.
 They do not prove the polynomial growth bound itself.
 
 Suggested Lean statement:
