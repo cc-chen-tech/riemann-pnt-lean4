@@ -4623,6 +4623,40 @@ lemma circleAverage_log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_radius_t
           simpa [add_comm, add_left_comm, add_assoc] using
             add_le_add_left hmul (Real.log A)
 
+/-- Coordinate polynomial-growth-to-log-growth conversion in the classical
+high-height scale `log |t|`.
+
+This is the direct follow-up to
+`log_norm_riemannZeta_sigma_it_le_affine_log_norm_add_three_of_polynomial_growth`:
+on the wider `1 <= sigma <= 3` strip and above height `6`, the full complex
+height logarithm is bounded by `2 * log |t|`.  The zeta-specific polynomial
+growth estimate remains the input. -/
+lemma log_norm_riemannZeta_sigma_it_le_affine_log_abs_of_polynomial_growth
+    {T0 A B : ℝ} (hA : 1 ≤ A) (hB : 0 ≤ B)
+    (hpoly : ∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc (1 : ℝ) 3 →
+      ‖riemannZeta z‖ ≤ A * (‖z‖ + 3) ^ B) :
+    ∀ σ t : ℝ, T0 ≤ |t| → 6 ≤ |t| → σ ∈ Set.Icc (1 : ℝ) 3 →
+      Real.log ‖riemannZeta ((σ : ℂ) + I * t)‖ ≤
+        Real.log A + (2 * B) * Real.log |t| := by
+  intro σ t ht hheight hσ
+  have hfull :=
+    log_norm_riemannZeta_sigma_it_le_affine_log_norm_add_three_of_polynomial_growth
+      (T0 := T0) (A := A) (B := B) hA hB hpoly σ t ht hσ
+  have hlog :
+      Real.log (‖((σ : ℂ) + I * t)‖ + 3) ≤ 2 * Real.log |t| :=
+    log_norm_sigma_add_I_mul_add_three_le_two_log_abs_of_re_le_three
+      hσ hheight
+  have hscaled :
+      B * Real.log (‖((σ : ℂ) + I * t)‖ + 3) ≤
+        B * (2 * Real.log |t|) :=
+    mul_le_mul_of_nonneg_left hlog hB
+  calc
+    Real.log ‖riemannZeta ((σ : ℂ) + I * t)‖
+        ≤ Real.log A + B * Real.log (‖((σ : ℂ) + I * t)‖ + 3) := hfull
+    _ ≤ Real.log A + B * (2 * Real.log |t|) := by
+      exact add_le_add le_rfl hscaled
+    _ = Real.log A + (2 * B) * Real.log |t| := by ring
+
 /-- Standalone normalization of a future vertical-strip log-derivative estimate.
 
 If a high-height estimate for `logDeriv ζ` on `1 <= σ <= 2` is available in

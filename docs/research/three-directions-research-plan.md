@@ -8,11 +8,13 @@ interfaces and small lemmas without overstating any unresolved analytic theorem.
 
 - Worktree: `/Users/luicy/AI/Riemann/.worktrees/riemann-three-directions-research`
 - Branch: `research/three-directions`
-- Current base: `9266d36 feat(pnt): add simplified BTY Borel facade`
-- Research commits on this branch:
-  - `5279bc9 feat(research): extend three direction bridges`
-  - `5b91244 feat(research): add center-one paired average bridges`
-  - `cfcae71 feat(research): connect global height bounds to tail bridges`
+- Current base: `dc9452d feat(zero-free): add polynomial growth log handoff`
+- Research work on this branch currently covers:
+  - signed BTY detector/Borel facades;
+  - center-one and general-center zero-pair bridges;
+  - explicit-formula tail bridges from eventual/no-new-zero and global-height inputs;
+  - a zeta polynomial-growth handoff to the classical high-height
+    `log |t|` scale.
 - Rule: do not present route interfaces or `def ... : Prop` targets as proved
   mathematics.
 
@@ -26,7 +28,9 @@ Verified assets now include:
 - the unsigned simplified Borel facade
   `log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_right_shift_borel_family_simplified`;
 - the signed simplified Borel facade added on this branch:
-  `log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_signed_right_shift_borel_family_simplified`.
+  `log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_signed_right_shift_borel_family_simplified`;
+- the polynomial-growth-to-`log |t|` zeta handoff:
+  `log_norm_riemannZeta_sigma_it_le_affine_log_abs_of_polynomial_growth`.
 
 Next useful step:
 
@@ -38,6 +42,9 @@ This is not a purely formal wrapper yet.  The existing shift-pair estimates
 cover the classical `t, 2t` shape and the Borel facade accepts a finset-wide
 upper-bound hypothesis over `btyDetectorSupport.erase 1`; closing the next
 bridge requires a uniform high-height/log bound for every BTY support index.
+The new polynomial-growth handoff removes one piece of height bookkeeping once
+a usable zeta polynomial-growth input is available, but it does not prove that
+input or a log-derivative estimate.
 
 ## Direction 2: Stechkin/Heath-Brown pair positivity
 

@@ -10480,6 +10480,18 @@ theorem circleAverage_log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_radius
   ZeroFreeRegion.circleAverage_log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_radius_three_of_polynomial_growth
     hT0 hA hB hleft hright hheight hpoly
 
+/-- Public coordinate zeta polynomial-growth-to-log-growth conversion in the
+classical high-height scale `log |t|`. -/
+theorem log_norm_riemannZeta_sigma_it_le_affine_log_abs_of_polynomial_growth
+    {T0 A B : ℝ} (hA : 1 ≤ A) (hB : 0 ≤ B)
+    (hpoly : ∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc (1 : ℝ) 3 →
+      ‖riemannZeta z‖ ≤ A * (‖z‖ + 3) ^ B) :
+    ∀ σ t : ℝ, T0 ≤ |t| → 6 ≤ |t| → σ ∈ Set.Icc (1 : ℝ) 3 →
+      Real.log ‖riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+        Real.log A + (2 * B) * Real.log |t| :=
+  ZeroFreeRegion.log_norm_riemannZeta_sigma_it_le_affine_log_abs_of_polynomial_growth
+    hA hB hpoly
+
 /-- Public standalone normalization from an affine full-height vertical
 `logDeriv ζ` estimate to the exact `C * log |t|` scale. -/
 theorem exists_re_im_logDeriv_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height
