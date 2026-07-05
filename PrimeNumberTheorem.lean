@@ -7949,6 +7949,55 @@ lemma new_zero_contribution_sum_tendsto_zero_of_eventually_sdiff_eq_empty
   tendsto_nhds_of_eventually_eq
     (new_zero_contribution_sum_eventually_zero_of_eventually_sdiff_eq_empty hnew)
 
+/-- Direct explicit-formula bridge from a stable base truncation and a
+vanishing new-zero contribution tail.
+
+This is the non-RH version of the later tail interfaces: if future Perron or
+contour arguments identify one base truncation with `ψ₀(x)` and separately show
+that the newly added zero contribution tends to zero, then the corrected
+height-truncated explicit-formula target follows. -/
+lemma explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_tendsto_zero
+    {x B : ℝ} {hx : x ≥ 2}
+    (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
+    (htail :
+      Tendsto
+        (fun T : ℝ =>
+          ∑ ρ ∈ (nontrivialZerosFinset T \ nontrivialZerosFinset B),
+            (x : ℂ) ^ ρ / ρ)
+        atTop (𝓝 0)) :
+    explicit_formula_von_mangoldt x hx := by
+  refine explicit_formula_von_mangoldt_of_error_tendsto_zero ?_
+  have hdiff :
+      (fun T : ℝ => explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ))
+        =ᶠ[atTop]
+      fun T : ℝ =>
+        -∑ ρ ∈ (nontrivialZerosFinset T \ nontrivialZerosFinset B),
+          (x : ℂ) ^ ρ / ρ := by
+    filter_upwards [eventually_ge_atTop B] with T hBT
+    rw [explicitFormulaApprox_eq_sub_new_zeros (x := x) hBT, hB]
+    abel
+  have htail_neg :
+      Tendsto
+        (fun T : ℝ =>
+          -∑ ρ ∈ (nontrivialZerosFinset T \ nontrivialZerosFinset B),
+            (x : ℂ) ^ ρ / ρ)
+        atTop (𝓝 0) := by
+    simpa using htail.neg
+  exact Tendsto.congr' hdiff.symm htail_neg
+
+/-- Direct explicit-formula bridge from a base identity and eventual absence
+of new zero terms, routed through the vanishing contribution-tail interface. -/
+lemma explicit_formula_von_mangoldt_of_base_and_eventually_no_new_zeros_via_contribution_tail
+    {x B : ℝ} {hx : x ≥ 2}
+    (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
+    (hnew : ∀ᶠ T in atTop,
+      nontrivialZerosFinset T \ nontrivialZerosFinset B = ∅) :
+    explicit_formula_von_mangoldt x hx :=
+  explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_tendsto_zero
+    hB
+    (new_zero_contribution_sum_tendsto_zero_of_eventually_sdiff_eq_empty
+      (x := x) hnew)
+
 /-- If no new zeros appear eventually above the base cutoff, then the reciprocal
 norm tail used in the RH truncation bound tends to zero. -/
 lemma new_zero_inv_norm_tail_tendsto_zero_of_eventually_sdiff_eq_empty

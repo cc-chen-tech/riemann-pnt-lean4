@@ -1077,6 +1077,12 @@ Core verified declarations:
 - `classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_and_LogDerivVerticalLogBound`
   is the same named-input assembly with zero multiplicity in the local
   principal part.
+- `classical_zero_free_region_of_LogDerivRegularPartLogBound_and_NegLogDerivVerticalLogBound`
+  assembles the named regular-part interface with the signed
+  `-logDeriv zeta` vertical norm interface by converting it to the unsigned
+  `LogDerivVerticalLogBound` convention.
+- `classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_and_NegLogDerivVerticalLogBound`
+  is the multiplicity-aware signed-vertical version of that final assembly.
 - `classical_zero_free_region_of_LogDerivRegularPartLogBound_and_ReNegDerivDivVerticalLogBound`
   assembles the named regular-part interface and the named direct real-part
   `Re(-zeta'/zeta)` vertical interface into the classical zero-free-region
@@ -1093,6 +1099,9 @@ Core verified declarations:
 - `classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_exists_ReNegDerivDivVerticalLogBound`
   and its multiplicity-aware analogue provide the same different-cutoff
   assembly for the direct real-part vertical interface.
+- `classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_exists_NegLogDerivVerticalLogBound`
+  and its multiplicity-aware analogue provide the same different-cutoff
+  assembly for the signed vertical norm interface.
 - `classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_deriv_bound_zeta_lower_bound_high_height`
   and its multiplicity-aware / `verticalRegion` variants compose that final
   assembly with the primitive `ζ'` growth plus positive `ζ` lower-bound
@@ -1595,6 +1604,15 @@ Core verified declarations:
   `RiemannPNT.API.exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_re_high_height_log_abs_bound_simplified`
   expose the exact-scale real-part version, consuming a future
   `Re(-zeta'/zeta) <= B log |t|` high-height estimate directly.
+- `RiemannPNT.API.classical_zero_free_region_of_LogDerivRegularPartLogBound_and_NegLogDerivVerticalLogBound`
+  and
+  `RiemannPNT.API.classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_and_NegLogDerivVerticalLogBound`
+  expose the signed vertical norm final assemblies through the public facade.
+- `RiemannPNT.API.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_exists_NegLogDerivVerticalLogBound`
+  and
+  `RiemannPNT.API.classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_exists_NegLogDerivVerticalLogBound`
+  expose the corresponding different-cutoff existential signed-vertical
+  assemblies.
 - `re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_logDeriv_re_le_half_radius`
   and
   `re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_neg_logDeriv_re_le_half_radius`
@@ -2031,6 +2049,14 @@ Core verified declarations:
   turn an eventual empty new-zero block into eventual zero or convergence to
   zero for the finite zero contribution, reciprocal-norm tail, and zero-count
   tail used by truncated explicit-formula/RH-error bookkeeping.
+- `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_tendsto_zero`
+  turns a stable base truncation identity plus a vanishing new-zero
+  contribution tail into the corrected height-truncated explicit-formula
+  target.
+- `explicit_formula_von_mangoldt_of_base_and_eventually_no_new_zeros_via_contribution_tail`
+  is the degenerate eventual-empty-new-zero specialization routed through the
+  contribution-tail convergence theorem.  It is a finite-tail sanity bridge,
+  not a claim that zeta has only finitely many nontrivial zeros.
 - `NoZerosOnVerticalLine`
   is a reusable predicate for excluding zeta zeros on a fixed vertical line.
 - `no_zeros_on_one_third_of_RH`

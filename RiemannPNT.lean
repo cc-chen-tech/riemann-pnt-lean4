@@ -188,6 +188,50 @@ theorem classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogB
   ZeroFreeRegion.classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_exists_LogDerivVerticalLogBound
     hregular hvertical
 
+/-- Public named-input assembly from the regular-part estimate and a signed
+vertical norm bound for `-logDeriv ζ`. -/
+theorem classical_zero_free_region_of_LogDerivRegularPartLogBound_and_NegLogDerivVerticalLogBound
+    {Bregular Bvertical T0 : ℝ}
+    (hregular : LogDerivRegularPartLogBound Bregular T0)
+    (hvertical : NegLogDerivVerticalLogBound Bvertical T0) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_LogDerivRegularPartLogBound_and_NegLogDerivVerticalLogBound
+    hregular hvertical
+
+/-- Public multiplicity-aware signed-vertical named-input assembly. -/
+theorem classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_and_NegLogDerivVerticalLogBound
+    {Bregular Bvertical T0 : ℝ}
+    (hregular : MultiplicityLogDerivRegularPartLogBound Bregular T0)
+    (hvertical : NegLogDerivVerticalLogBound Bvertical T0) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_and_NegLogDerivVerticalLogBound
+    hregular hvertical
+
+/-- Public existential signed-vertical assembly when the regular-part and
+vertical estimates have different high-height cutoffs. -/
+theorem classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_exists_NegLogDerivVerticalLogBound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        LogDerivRegularPartLogBound Bregular Tregular)
+    (hvertical :
+      ∃ Bvertical Tvertical : ℝ,
+        NegLogDerivVerticalLogBound Bvertical Tvertical) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_exists_NegLogDerivVerticalLogBound
+    hregular hvertical
+
+/-- Public multiplicity-aware existential signed-vertical assembly. -/
+theorem classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_exists_NegLogDerivVerticalLogBound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        MultiplicityLogDerivRegularPartLogBound Bregular Tregular)
+    (hvertical :
+      ∃ Bvertical Tvertical : ℝ,
+        NegLogDerivVerticalLogBound Bvertical Tvertical) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_exists_NegLogDerivVerticalLogBound
+    hregular hvertical
+
 /-- Public named-input assembly from the regular-part estimate and a direct
 real-part vertical bound for `-ζ'/ζ`. -/
 theorem classical_zero_free_region_of_LogDerivRegularPartLogBound_and_ReNegDerivDivVerticalLogBound
@@ -18741,6 +18785,36 @@ theorem new_zero_contribution_sum_tendsto_zero_of_eventually_sdiff_eq_empty
       atTop (𝓝 0) :=
   PrimeNumberTheorem.new_zero_contribution_sum_tendsto_zero_of_eventually_sdiff_eq_empty
     hnew
+
+/-- Public direct explicit-formula bridge from a stable base truncation and a
+vanishing new-zero contribution tail. -/
+theorem explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_tendsto_zero
+    {x B : ℝ} {hx : x ≥ 2}
+    (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
+      (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
+    (htail :
+      Tendsto
+        (fun T : ℝ =>
+          ∑ ρ ∈ (PrimeNumberTheorem.nontrivialZerosFinset T \
+              PrimeNumberTheorem.nontrivialZerosFinset B),
+            (x : ℂ) ^ ρ / ρ)
+        atTop (𝓝 0)) :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_tendsto_zero
+    hB htail
+
+/-- Public direct bridge from a base identity and eventual absence of new zero
+terms, routed through the contribution-tail interface. -/
+theorem explicit_formula_von_mangoldt_of_base_and_eventually_no_new_zeros_via_contribution_tail
+    {x B : ℝ} {hx : x ≥ 2}
+    (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
+      (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
+    (hnew : ∀ᶠ T in atTop,
+      PrimeNumberTheorem.nontrivialZerosFinset T \
+          PrimeNumberTheorem.nontrivialZerosFinset B = ∅) :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_base_and_eventually_no_new_zeros_via_contribution_tail
+    hB hnew
 
 /-- Public convergence-to-zero statement for the reciprocal-norm tail when no
 new zeros appear eventually above a base cutoff. -/

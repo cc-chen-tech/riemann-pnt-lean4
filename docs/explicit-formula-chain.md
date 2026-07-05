@@ -272,6 +272,19 @@ and RH-tail controls.  These theorems are finite-tail handoffs and sanity
 checks; they do not assert that the actual zeta zero set eventually has no new
 zeros.
 
+The same finite-tail layer now exposes the direct bridge from a stable base
+truncation to the corrected explicit-formula target.  The public theorem
+`RiemannPNT.API.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_tendsto_zero`
+takes a base identity
+`explicitFormulaApprox x B = chebyshevPsi0 x` and a proof that the new-zero
+contribution
+`sum_{rho in nontrivialZerosFinset T \ nontrivialZerosFinset B} x^rho / rho`
+tends to zero, and returns `explicit_formula_von_mangoldt x hx`.  The wrapper
+`RiemannPNT.API.explicit_formula_von_mangoldt_of_base_and_eventually_no_new_zeros_via_contribution_tail`
+is the degenerate eventual-empty-new-zero specialization.  Both remain
+conditional bridges around the finite truncation bookkeeping; neither supplies
+Perron's formula or the true analytic tail estimate.
+
 The public facade also exposes
 `RiemannPNT.API.no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route`,
 which composes the truncated route

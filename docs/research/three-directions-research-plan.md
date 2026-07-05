@@ -92,6 +92,11 @@ Verified assets now include:
   `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_neg_affine_log_abs_add_three_bound_high_height_simplified`;
   `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_neg_log_abs_add_three_bound_high_height`;
   `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_neg_log_abs_add_three_bound_high_height_simplified`;
+- signed-vertical final assembly wrappers:
+  `classical_zero_free_region_of_LogDerivRegularPartLogBound_and_NegLogDerivVerticalLogBound`;
+  `classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_and_NegLogDerivVerticalLogBound`;
+  `classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_exists_NegLogDerivVerticalLogBound`;
+  `classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_exists_NegLogDerivVerticalLogBound`.
 - the exact-scale real-part version of the same BTY bridge:
   `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_re_high_height_log_abs_bound`
   and
@@ -282,6 +287,9 @@ Verified assets now include:
 - finite explicit-formula truncation increment identities;
 - new-zero norm/count tail bounds under RH;
 - eventual-no-new-zero tail convergence;
+- direct non-RH contribution-tail bridges:
+  `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_tendsto_zero`;
+  `explicit_formula_von_mangoldt_of_base_and_eventually_no_new_zeros_via_contribution_tail`;
 - composed bridges:
   `explicit_formula_von_mangoldt_of_RH_base_and_eventually_no_new_zeros_via_sum_tail`;
   `explicit_formula_von_mangoldt_of_RH_base_and_eventually_no_new_zeros_via_card_tail`.

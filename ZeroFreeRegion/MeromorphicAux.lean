@@ -4339,6 +4339,63 @@ lemma classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBou
     classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_and_LogDerivVerticalLogBound
       hregularT hverticalT
 
+/-- Named-input assembly from the regular-part estimate and a signed vertical
+norm bound for `-logDeriv ζ`.
+
+This is the same closure as
+`classical_zero_free_region_of_LogDerivRegularPartLogBound_and_LogDerivVerticalLogBound`,
+but accepts the sign convention produced by many Borel/Jensen estimates. -/
+lemma classical_zero_free_region_of_LogDerivRegularPartLogBound_and_NegLogDerivVerticalLogBound
+    {Bregular Bvertical T0 : ℝ}
+    (hregular : LogDerivRegularPartLogBound Bregular T0)
+    (hvertical : NegLogDerivVerticalLogBound Bvertical T0) :
+    classical_zero_free_region :=
+  classical_zero_free_region_of_LogDerivRegularPartLogBound_and_LogDerivVerticalLogBound
+    hregular (logDerivVerticalLogBound_of_negLogDerivVerticalLogBound hvertical)
+
+/-- Multiplicity-aware signed-vertical version of
+`classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_and_LogDerivVerticalLogBound`. -/
+lemma classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_and_NegLogDerivVerticalLogBound
+    {Bregular Bvertical T0 : ℝ}
+    (hregular : MultiplicityLogDerivRegularPartLogBound Bregular T0)
+    (hvertical : NegLogDerivVerticalLogBound Bvertical T0) :
+    classical_zero_free_region :=
+  classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_and_LogDerivVerticalLogBound
+    hregular (logDerivVerticalLogBound_of_negLogDerivVerticalLogBound hvertical)
+
+/-- Existential signed-vertical named-input assembly when the regular-part and
+vertical estimates have different high-height cutoffs. -/
+lemma classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_exists_NegLogDerivVerticalLogBound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        LogDerivRegularPartLogBound Bregular Tregular)
+    (hvertical :
+      ∃ Bvertical Tvertical : ℝ,
+        NegLogDerivVerticalLogBound Bvertical Tvertical) :
+    classical_zero_free_region := by
+  rcases hvertical with ⟨Bvertical, Tvertical, hvertical⟩
+  exact
+    classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_exists_LogDerivVerticalLogBound
+      hregular
+      ⟨Bvertical, Tvertical,
+        logDerivVerticalLogBound_of_negLogDerivVerticalLogBound hvertical⟩
+
+/-- Multiplicity-aware existential signed-vertical named-input assembly. -/
+lemma classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_exists_NegLogDerivVerticalLogBound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        MultiplicityLogDerivRegularPartLogBound Bregular Tregular)
+    (hvertical :
+      ∃ Bvertical Tvertical : ℝ,
+        NegLogDerivVerticalLogBound Bvertical Tvertical) :
+    classical_zero_free_region := by
+  rcases hvertical with ⟨Bvertical, Tvertical, hvertical⟩
+  exact
+    classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_exists_LogDerivVerticalLogBound
+      hregular
+      ⟨Bvertical, Tvertical,
+        logDerivVerticalLogBound_of_negLogDerivVerticalLogBound hvertical⟩
+
 /-- Named-input assembly from the regular-part estimate and a direct real-part
 vertical bound for `-ζ'/ζ`.
 

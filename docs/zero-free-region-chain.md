@@ -98,6 +98,13 @@ estimate used by the 3-4-1 inequality.  This avoids requiring a stronger
 vertical norm bound when future analysis proves the signed real-part estimate
 directly.
 
+The signed norm final assemblies
+`ZeroFreeRegion.classical_zero_free_region_of_LogDerivRegularPartLogBound_and_NegLogDerivVerticalLogBound`
+and
+`ZeroFreeRegion.classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_and_NegLogDerivVerticalLogBound`
+accept the natural `||-logDeriv zeta||` convention produced by many local
+Borel/Jensen estimates and convert it to the unsigned vertical norm interface.
+
 The two hard inputs do not need to share the same cutoff.  The monotonicity
 lemmas `ZeroFreeRegion.logDerivVerticalLogBound_mono_height`,
 `ZeroFreeRegion.negLogDerivVerticalLogBound_mono_height`,
@@ -108,8 +115,8 @@ cutoff to be raised, and the existential closures
 `ZeroFreeRegion.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_exists_LogDerivVerticalLogBound`
 and
 `ZeroFreeRegion.classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_exists_LogDerivVerticalLogBound`
-as well as the corresponding `...exists_ReNegDerivDivVerticalLogBound`
-variants
+as well as the corresponding `...exists_NegLogDerivVerticalLogBound` and
+`...exists_ReNegDerivDivVerticalLogBound` variants
 merge separately proved high-height regular-part and vertical estimates by
 taking the maximum cutoff.
 
