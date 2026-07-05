@@ -17367,6 +17367,27 @@ theorem finiteTrivialZeroSum_card_le (T : ℝ) :
     (finiteTrivialZeroSum T).card ≤ Nat.floor (T / 2) :=
   PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_card_le T
 
+/-- Public denominator-safety fact for retained trivial zeros. -/
+theorem finiteTrivialZeroSum_ne_zero_of_mem {s : ℂ} {T : ℝ}
+    (hs : s ∈ finiteTrivialZeroSum T) :
+    s ≠ 0 :=
+  PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_ne_zero_of_mem
+    hs
+
+/-- Public absolute-height normalization for retained trivial zeros. -/
+theorem finiteTrivialZeroSum_abs_im_eq_zero_of_mem {s : ℂ} {T : ℝ}
+    (hs : s ∈ finiteTrivialZeroSum T) :
+    |s.im| = 0 :=
+  PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_abs_im_eq_zero_of_mem
+    hs
+
+/-- Public separation between retained trivial zeros and nontrivial zeros. -/
+theorem finiteTrivialZeroSum_not_isNontrivialZero_of_mem {s : ℂ} {T : ℝ}
+    (hs : s ∈ finiteTrivialZeroSum T) :
+    ¬ _root_.RiemannHypothesis.IsNontrivialZero s :=
+  PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum_not_isNontrivialZero_of_mem
+    hs
+
 /-- Public good-height normalization: no nontrivial zero has boundary height
 `T`. -/
 theorem goodHeight_iff_no_zero_at_height (T : ℝ) :

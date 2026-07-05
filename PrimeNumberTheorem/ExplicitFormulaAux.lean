@@ -32,7 +32,21 @@ file or the parent.
 - `finiteTrivialZeroSum : ℝ → Finset ℂ` — Finset of trivial zeros
   `s = -2, -4, …, -2⌊T/2⌋` of size bounded by `T`.
 
-### 2 simple lemmas
+### Support lemmas
+- `goodHeight_iff_no_zero_at_height` and
+  `not_goodHeight_iff_exists_zero_at_height` — boundary-height
+  normalizations.
+- `nontrivial_zero_mem_self_height`,
+  `zeroMultiplicity_eq_one_of_mem`, and
+  `zeroMultiplicity_eq_zero_of_not_mem` — current finite-truncation
+  multiplicity bookkeeping.
+- `mem_finiteTrivialZeroSum_iff`,
+  `finiteTrivialZeroSum_im_eq_zero_of_mem`,
+  `finiteTrivialZeroSum_re_lt_zero_of_mem`,
+  `finiteTrivialZeroSum_ne_zero_of_mem`,
+  `finiteTrivialZeroSum_abs_im_eq_zero_of_mem`,
+  `finiteTrivialZeroSum_not_isNontrivialZero_of_mem`, and
+  `finiteTrivialZeroSum_card_le` — finite trivial-zero support facts.
 - `chebyshevPsi0_eq_chebyshevPsi_off_primePowers` — at a non
   prime-power point, `psi0 = psi`.
 - `jumpVonMangoldt_eq_vonMangoldt_of_primePower` — at a prime power,
@@ -230,6 +244,35 @@ lemma finiteTrivialZeroSum_card_le (T : ℝ) :
       ((Finset.range (Nat.floor (T / 2))).image
         (fun n : ℕ => (-2 * ((n : ℕ) + 1) : ℂ))).card ≤
           (Finset.range (Nat.floor (T / 2))).card)
+
+/-- Retained trivial zeros are never the origin.  This is the small
+denominator-safety fact needed before forming explicit-formula terms
+`x^s / s` over the trivial-zero truncation. -/
+lemma finiteTrivialZeroSum_ne_zero_of_mem {s : ℂ} {T : ℝ}
+    (hs : s ∈ finiteTrivialZeroSum T) :
+    s ≠ 0 := by
+  have hneg : s.re < 0 := finiteTrivialZeroSum_re_lt_zero_of_mem hs
+  intro hs0
+  rw [hs0] at hneg
+  norm_num at hneg
+
+/-- Absolute-height normalization for retained trivial zeros.  They all lie
+on the real axis, so their imaginary height is exactly zero. -/
+lemma finiteTrivialZeroSum_abs_im_eq_zero_of_mem {s : ℂ} {T : ℝ}
+    (hs : s ∈ finiteTrivialZeroSum T) :
+    |s.im| = 0 := by
+  rw [finiteTrivialZeroSum_im_eq_zero_of_mem hs]
+  simp
+
+/-- Retained trivial zeros are disjoint from the nontrivial-zero strip
+predicate.  This records the separation between the finite trivial-zero
+correction and the nontrivial-zero sum used in the explicit-formula chain. -/
+lemma finiteTrivialZeroSum_not_isNontrivialZero_of_mem {s : ℂ} {T : ℝ}
+    (hs : s ∈ finiteTrivialZeroSum T) :
+    ¬ RiemannHypothesis.IsNontrivialZero s := by
+  intro hnontrivial
+  exact (not_lt_of_ge (le_of_lt (finiteTrivialZeroSum_re_lt_zero_of_mem hs)))
+    hnontrivial.2.1
 
 /-! ## Simple lemmas -/
 

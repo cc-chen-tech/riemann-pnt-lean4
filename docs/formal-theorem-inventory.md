@@ -2500,6 +2500,11 @@ Support-level verified declarations:
   characterize the retained finite trivial zeros as the displayed negative
   even integers, show they lie on the real axis with negative real part, and
   bound the truncation size by `Nat.floor (T / 2)`.
+- `finiteTrivialZeroSum_ne_zero_of_mem`,
+  `finiteTrivialZeroSum_abs_im_eq_zero_of_mem`, and
+  `finiteTrivialZeroSum_not_isNontrivialZero_of_mem`
+  add denominator safety, absolute-height normalization, and disjointness from
+  the nontrivial-zero strip predicate for retained trivial zeros.
 - `RiemannPNT.API.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget`
   and `RiemannPNT.API.ExplicitFormulaTruncated.explicitFormulaTruncated_of`
   expose the typed truncated explicit-formula target and its conditional

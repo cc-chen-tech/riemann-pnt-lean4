@@ -298,7 +298,8 @@ does the same composition for arbitrary `0 < beta < 1`, yielding
    normalizers, self-height membership of nontrivial zeros, and the current
    finset-based `zeroMultiplicity` values `0`/`1` according to membership in
    the self-height truncation; finite trivial-zero membership, real-axis /
-   negative-real-part facts, and the truncation cardinality bound are also
+   negative-real-part facts, denominator safety, absolute-height normalization,
+   nontrivial-zero separation, and the truncation cardinality bound are also
    proved.  The truncated target predicate and conditional repackaging lemma
    are public API, but still target infrastructure.  Future analytic
    multiplicity/order work can refine this API without changing the downstream

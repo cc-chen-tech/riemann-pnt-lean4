@@ -736,8 +736,9 @@ truncation, and the current finset-based `zeroMultiplicity` is `1` or `0`
 according to membership in that truncation.  The finite trivial-zero
 truncation now also has theorem-level support: membership is characterized by
 the displayed negative even integers, retained trivial zeros lie on the real
-axis with negative real part, and the truncation cardinality is bounded by
-`Nat.floor (T / 2)`.
+axis with negative real part and nonzero denominator, their absolute imaginary
+height is normalized to `0`, they are separated from the nontrivial-zero
+predicate, and the truncation cardinality is bounded by `Nat.floor (T / 2)`.
 
 The explicit-formula side also contains route interfaces such as
 `PrimeNumberTheorem.ExplicitFormulaConversePowerTarget` and
