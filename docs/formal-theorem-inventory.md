@@ -268,6 +268,16 @@ Core verified declarations:
   gives the local simple-pole normal form for zeta.
 - `eventually_ne_zero_riemannZeta_nhdsNE_one`
   proves zeta is eventually nonzero in the punctured neighborhood of `1`.
+- `analyticAt_logDeriv_riemannZetaPoleUnitAtOne`
+  proves the logarithmic derivative of the analytic pole unit is analytic at
+  `1`.
+- `eventually_norm_logDeriv_riemannZetaPoleUnitAtOne_le_const`
+  proves that `norm (logDeriv riemannZetaPoleUnitAtOne s)` is locally bounded
+  near `1`.
+- `eventuallyEq_logDeriv_riemannZeta_simplePoleAtOne`
+  proves the additive simple-pole logarithmic-derivative decomposition
+  `logDeriv zeta s = -(s - 1)^-1 + logDeriv unit s` in the punctured
+  neighborhood of `1`.
 - `eventuallyEq_inv_riemannZeta_simpleZeroAtOne`
   identifies the local reciprocal of zeta with the analytic simple-zero model.
 - `analyticAt_riemannZetaReciprocalModelAtOne`
@@ -582,6 +592,10 @@ Core verified declarations:
   gives the corresponding concrete real-axis real-part bound.
 - `exists_rightNeighborhood_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_sub_one`
   gives the corresponding concrete real-axis one-sided upper bound.
+- `exists_rightNeighborhood_re_neg_deriv_riemannZeta_div_riemannZeta_le_inv_sub_one_add_const`
+  gives the additive real-axis principal-part bound
+  `Re(-zeta'/zeta)(sigma) <= 1 / (sigma - 1) + M` for real `sigma > 1`
+  sufficiently close to `1`.
 - `exists_rightNeighborhood_hreal_two_div_sub_one`
   packages the concrete real-axis bound in the exact `hreal` shape used by
   the 3-4-1 high-height assembly.

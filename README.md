@@ -80,6 +80,7 @@ The verified chain currently looks like:
 von Mangoldt series for -zeta'/zeta
         -> 3-4-1 inequality
         -> compact zero-free strip
+        -> local pole-side log-derivative principal-part package
         -> conditional closure interfaces
 ```
 
@@ -118,7 +119,11 @@ for `1 + ε <= Re(s)`, compact bounded-height norm bounds for
 `H <= |Im(s)| <= T`, and bridge lemmas that patch a future high-height
 `B * log |t|` estimate into an all-height affine logarithmic estimate.  Those
 bridges still do not provide the missing high-height boundary-strip estimate on
-`1 <= Re(s)`.
+`1 <= Re(s)`.  On the pole side, the local decomposition
+`logDeriv ζ(s) = -(s-1)^-1 + logDeriv(unit)(s)` is now proved near `s=1`,
+and the unit logarithmic derivative is locally bounded; this improves the
+real-axis bookkeeping but still does not supply the missing high-height
+zeta-specific estimates.
 
 ## Paper Positioning
 
@@ -274,6 +279,9 @@ Lean declarations in `ZeroFreeRegion.lean` and
 | `ZeroFreeRegion.meromorphicOrderAt_riemannZeta_one` | `lemma` | Proves `meromorphicOrderAt riemannZeta 1 = -1`. | Records that the pole at `1` is simple in Mathlib's meromorphic-order API. |
 | `ZeroFreeRegion.divisor_riemannZeta_pole_one` | `lemma` | Proves `(MeromorphicOn.divisor riemannZeta U) 1 = -1` for any meromorphic domain `U` containing `1`. | Enables divisor/residue bookkeeping for Jensen, rectangle-residue, and log-derivative work. |
 | `ZeroFreeRegion.eventually_ne_zero_riemannZeta_nhdsNE_one` | `lemma` | Proves ζ is eventually nonzero in the punctured neighborhood of its pole `1`. | Supplies the local denominator condition needed for `ζ'/ζ` manipulations near the pole. |
+| `ZeroFreeRegion.analyticAt_logDeriv_riemannZetaPoleUnitAtOne` | `lemma` | Proves the logarithmic derivative of the analytic pole unit is analytic at `1`. | Makes the regular term in the simple-pole decomposition available as an analytic object. |
+| `ZeroFreeRegion.eventually_norm_logDeriv_riemannZetaPoleUnitAtOne_le_const` | `lemma` | Proves `‖logDeriv(unit)(s)‖` is locally bounded near `1`. | Supplies the bounded regular part in the pole-side `ζ'/ζ` estimate. |
+| `ZeroFreeRegion.eventuallyEq_logDeriv_riemannZeta_simplePoleAtOne` | `lemma` | Proves near `1`, `logDeriv ζ(s) = -(s-1)⁻¹ + logDeriv(unit)(s)` on the punctured neighborhood. | Separates the simple-pole principal part from a bounded analytic-unit contribution. |
 | `ZeroFreeRegion.eventuallyEq_inv_riemannZeta_simpleZeroAtOne` | `lemma` | Rewrites `1/ζ(s)` near `1` as `(s-1)` times the inverse pole unit. | Converts the simple pole of ζ into a simple-zero model for reciprocal/log-derivative work. |
 | `ZeroFreeRegion.analyticAt_riemannZetaReciprocalModelAtOne` | `lemma` | Proves the reciprocal local model `(s-1) * unit(s)⁻¹` is analytic at `1`. | Gives an analytic replacement for Mathlib's global reciprocal at the pole value. |
 | `ZeroFreeRegion.deriv_riemannZetaReciprocalModelAtOne_one` | `lemma` | Proves the reciprocal local model has derivative `1` at `1`. | Records that `1/ζ` has the expected simple-zero local model. |
@@ -301,6 +309,7 @@ Lean declarations in `ZeroFreeRegion.lean` and
 | `ZeroFreeRegion.exists_rightNeighborhood_norm_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_sub_one` | `lemma` | Proves `‖-ζ'/ζ(σ)‖ ≤ 2 / (σ-1)` for real `σ > 1` sufficiently close to `1`. | Concrete real-axis norm input for local 3-4-1 estimates. |
 | `ZeroFreeRegion.exists_rightNeighborhood_abs_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_sub_one` | `lemma` | Proves `|Re(-ζ'/ζ)(σ)| ≤ 2 / (σ-1)` for real `σ > 1` sufficiently close to `1`. | Concrete real-axis real-part input for local 3-4-1 estimates. |
 | `ZeroFreeRegion.exists_rightNeighborhood_re_neg_deriv_riemannZeta_div_riemannZeta_le_two_div_sub_one` | `lemma` | Proves `Re(-ζ'/ζ)(σ) ≤ 2 / (σ-1)` for real `σ > 1` sufficiently close to `1`. | Concrete one-sided real-axis upper bound for local 3-4-1 estimates. |
+| `ZeroFreeRegion.exists_rightNeighborhood_re_neg_deriv_riemannZeta_div_riemannZeta_le_inv_sub_one_add_const` | `lemma` | Proves `Re(-ζ'/ζ)(σ) ≤ 1/(σ-1)+M` for real `σ > 1` sufficiently close to `1`. | Additive principal-part form of the pole-side real-axis input, closer to the classical de la Vallee Poussin bookkeeping than the coarser `C/(σ-1)` wrappers. |
 | `ZeroFreeRegion.exists_rightNeighborhood_hreal_two_div_sub_one` | `lemma` | Packages the concrete bound as the `hreal` input shape for any future `σOf t` staying in a right neighborhood of `1`. | Discharges the real-axis term of `three_four_one_zero_free_high_height_of_log_deriv_bounds` from local pole control. |
 | `ZeroFreeRegion.exists_sigmaOf_log_hreal_two_div_sub_one` | `lemma` | Specializes the concrete `hreal` bound to `σOf t = 1 + a / log |t|` for sufficiently small `a`. | Direct real-axis input for the standard high-height 3-4-1 setup. |
 | `ZeroFreeRegion.exists_sigmaOf_log_hreal_two_mul_log_div` | `lemma` | Rewrites that concrete bound as `≤ 2 * log |t| / a`. | Converts the pole denominator into the vertical-height scale used in the quantitative strip. |

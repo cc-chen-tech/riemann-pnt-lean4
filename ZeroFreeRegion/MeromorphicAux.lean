@@ -95,6 +95,29 @@ lemma eventually_ne_zero_riemannZetaPoleUnitAtOne :
   analyticAt_riemannZetaPoleUnitAtOne.continuousAt.eventually_ne
     (by rw [riemannZetaPoleUnitAtOne_one]; exact one_ne_zero)
 
+/-- The logarithmic derivative of the analytic pole unit is analytic at `1`. -/
+lemma analyticAt_logDeriv_riemannZetaPoleUnitAtOne :
+    AnalyticAt ℂ (logDeriv riemannZetaPoleUnitAtOne) 1 :=
+  analyticAt_riemannZetaPoleUnitAtOne.deriv.div
+    analyticAt_riemannZetaPoleUnitAtOne
+    (by rw [riemannZetaPoleUnitAtOne_one]; exact one_ne_zero)
+
+/-- The regular logarithmic derivative in the simple-pole decomposition of
+ζ is locally bounded at `1`. -/
+lemma eventually_norm_logDeriv_riemannZetaPoleUnitAtOne_le_const :
+    ∃ M : ℝ, 0 ≤ M ∧
+      ∀ᶠ s in 𝓝 (1 : ℂ), ‖logDeriv riemannZetaPoleUnitAtOne s‖ ≤ M := by
+  let M : ℝ := ‖logDeriv riemannZetaPoleUnitAtOne (1 : ℂ)‖ + 1
+  have hM_nonneg : 0 ≤ M := by positivity
+  have hlt :
+      ‖logDeriv riemannZetaPoleUnitAtOne (1 : ℂ)‖ < M := by
+    simp [M]
+  have hcont :
+      ContinuousAt (fun s : ℂ => ‖logDeriv riemannZetaPoleUnitAtOne s‖) 1 :=
+    analyticAt_logDeriv_riemannZetaPoleUnitAtOne.continuousAt.norm
+  refine ⟨M, hM_nonneg, ?_⟩
+  exact hcont.tendsto.eventually (eventually_le_nhds hlt)
+
 /-- Local decomposition of ζ at `1` as a regular analytic part plus a simple
 pole term. -/
 lemma eventuallyEq_riemannZeta_regular_add_poleAtOne :
@@ -157,6 +180,54 @@ lemma eventually_ne_zero_riemannZeta_nhdsNE_one :
   rw [← hζ]
   have hs1' : s ≠ 1 := Set.mem_compl_singleton_iff.mp hs1
   exact smul_ne_zero (zpow_ne_zero _ (sub_ne_zero.mpr hs1')) hunit
+
+/-- Logarithmic derivative form of the simple-pole decomposition of ζ at `1`.
+
+In a punctured neighborhood of `1`,
+`logDeriv ζ(s) = -(s - 1)⁻¹ + logDeriv riemannZetaPoleUnitAtOne(s)`.  This
+separates the principal pole from the locally bounded analytic unit term. -/
+lemma eventuallyEq_logDeriv_riemannZeta_simplePoleAtOne :
+    (fun s : ℂ => logDeriv riemannZeta s)
+      =ᶠ[𝓝[≠] (1 : ℂ)]
+    (fun s : ℂ => -(s - 1)⁻¹ + logDeriv riemannZetaPoleUnitAtOne s) := by
+  have hval :
+      (fun s : ℂ => (s - 1)⁻¹ * riemannZetaPoleUnitAtOne s)
+        =ᶠ[𝓝[≠] (1 : ℂ)] riemannZeta := by
+    filter_upwards [eventuallyEq_riemannZeta_simplePoleAtOne] with s hs
+    simpa [smul_eq_mul, zpow_neg, zpow_one] using hs
+  have hderiv := hval.nhdsNE_deriv
+  filter_upwards [hval, hderiv, self_mem_nhdsWithin,
+    eventually_ne_zero_riemannZetaPoleUnitAtOne.filter_mono nhdsWithin_le_nhds,
+    analyticAt_riemannZetaPoleUnitAtOne.eventually_analyticAt.filter_mono
+      nhdsWithin_le_nhds]
+    with s hζ hderiv hs1 hunit hunit_an
+  have hs_ne : s ≠ 1 := Set.mem_compl_singleton_iff.mp hs1
+  have hsub_ne : s - 1 ≠ 0 := sub_ne_zero.mpr hs_ne
+  have hpole_ne : (s - 1)⁻¹ ≠ 0 := inv_ne_zero hsub_ne
+  have hdiff_pole : DifferentiableAt ℂ (fun z : ℂ => (z - 1)⁻¹) s :=
+    (differentiableAt_id.sub (differentiableAt_const (1 : ℂ))).inv hsub_ne
+  have hdiff_unit : DifferentiableAt ℂ riemannZetaPoleUnitAtOne s :=
+    hunit_an.differentiableAt
+  have hmul :=
+    logDeriv_mul (𝕜 := ℂ) (𝕜' := ℂ)
+      (f := fun z : ℂ => (z - 1)⁻¹)
+      (g := riemannZetaPoleUnitAtOne) s hpole_ne hunit
+      hdiff_pole hdiff_unit
+  have hpole_log :
+      logDeriv (fun z : ℂ => (z - 1)⁻¹) s = -(s - 1)⁻¹ := by
+    have hpow :=
+      logDeriv_fun_zpow
+        (f := fun z : ℂ => z - 1) (x := s)
+        (differentiableAt_id.sub (differentiableAt_const (1 : ℂ))) (-1)
+    simpa [zpow_neg, zpow_one, logDeriv_apply, div_eq_mul_inv] using hpow
+  calc
+    logDeriv riemannZeta s
+        = logDeriv (fun z : ℂ => (z - 1)⁻¹ * riemannZetaPoleUnitAtOne z) s := by
+          simp [logDeriv_apply, hζ, hderiv]
+    _ = logDeriv (fun z : ℂ => (z - 1)⁻¹) s +
+          logDeriv riemannZetaPoleUnitAtOne s := hmul
+    _ = -(s - 1)⁻¹ + logDeriv riemannZetaPoleUnitAtOne s := by
+          rw [hpole_log]
 
 /-- Reciprocal local model: near the pole, `1 / ζ(s)` is `(s-1)` times
 the inverse pole unit. -/
@@ -694,6 +765,78 @@ lemma exists_rightNeighborhood_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const
   refine ⟨d, hd_pos, ?_⟩
   intro σ hσ_gt hσ_le
   exact lt_of_le_of_lt (le_abs_self _) (hbound σ hσ_gt hσ_le)
+
+/-- Real-axis additive principal-part bound near the pole.
+
+For real `σ > 1` sufficiently close to `1`, the real part of `-ζ'/ζ` is
+bounded by the simple-pole main term `1 / (σ - 1)` plus a constant coming from
+the locally bounded logarithmic derivative of the analytic pole unit.  This is
+closer to the classical de la Vallée Poussin bookkeeping than the coarser
+`C / (σ - 1)` wrappers above. -/
+lemma exists_rightNeighborhood_re_neg_deriv_riemannZeta_div_riemannZeta_le_inv_sub_one_add_const :
+    ∃ d M : ℝ, 0 < d ∧ 0 ≤ M ∧ ∀ σ : ℝ, 1 < σ → σ ≤ 1 + d →
+      (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re ≤
+        1 / (σ - 1) + M := by
+  rcases eventually_norm_logDeriv_riemannZetaPoleUnitAtOne_le_const with
+    ⟨M, hM_nonneg, hunit_bound⟩
+  have hlocal :
+      ∀ᶠ s in 𝓝[≠] (1 : ℂ),
+        (-deriv riemannZeta s / riemannZeta s).re ≤ ((s - 1)⁻¹).re + M := by
+    filter_upwards
+      [eventuallyEq_logDeriv_riemannZeta_simplePoleAtOne,
+        hunit_bound.filter_mono nhdsWithin_le_nhds]
+      with s heq hunit
+    have hunit_re :
+        -(logDeriv riemannZetaPoleUnitAtOne s).re ≤ M := by
+      exact le_trans
+        (le_trans (le_abs_self (-(logDeriv riemannZetaPoleUnitAtOne s).re))
+          (by rw [abs_neg]; exact abs_re_le_norm _))
+        hunit
+    calc
+      (-deriv riemannZeta s / riemannZeta s).re
+          = (-logDeriv riemannZeta s).re := by
+              simp [logDeriv_apply, neg_div]
+      _ = ((s - 1)⁻¹ - logDeriv riemannZetaPoleUnitAtOne s).re := by
+              rw [heq]
+              ring_nf
+      _ = ((s - 1)⁻¹).re - (logDeriv riemannZetaPoleUnitAtOne s).re := by
+              simp
+      _ ≤ ((s - 1)⁻¹).re + M := by
+              linarith
+  have hmem :
+      {s : ℂ |
+        (-deriv riemannZeta s / riemannZeta s).re ≤ ((s - 1)⁻¹).re + M}
+        ∈ 𝓝[{1}ᶜ] (1 : ℂ) :=
+    hlocal
+  rcases Metric.mem_nhdsWithin_iff.mp hmem with ⟨r, hr_pos, hr_sub⟩
+  refine ⟨r / 2, M, half_pos hr_pos, hM_nonneg, ?_⟩
+  intro σ hσ_gt hσ_le
+  have hσ_ne_one : σ ≠ 1 := ne_of_gt hσ_gt
+  have hs_ne : (σ : ℂ) ≠ 1 := by
+    intro hs
+    exact hσ_ne_one (by simpa using congrArg Complex.re hs)
+  have hdist_le : dist (σ : ℂ) (1 : ℂ) ≤ r / 2 := by
+    have hdist_eq : dist (σ : ℂ) (1 : ℂ) = |σ - 1| := by
+      simpa using Complex.isometry_ofReal.dist_eq σ 1
+    have habs_eq : |σ - 1| = σ - 1 :=
+      abs_of_nonneg (sub_nonneg.mpr hσ_gt.le)
+    rw [hdist_eq, habs_eq]
+    linarith
+  have hdist_lt : dist (σ : ℂ) (1 : ℂ) < r :=
+    lt_of_le_of_lt hdist_le (half_lt_self hr_pos)
+  have hcomplex :
+      (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re ≤
+        (((σ : ℂ) - 1)⁻¹).re + M :=
+    hr_sub ⟨hdist_lt, Set.mem_compl_singleton_iff.mpr hs_ne⟩
+  have hinv_re : (((σ : ℂ) - 1)⁻¹).re = 1 / (σ - 1) := by
+    have hsub_ne_real : σ - 1 ≠ 0 := sub_ne_zero.mpr hσ_ne_one
+    have hsub_cast : ((σ : ℂ) - 1) = ((σ - 1 : ℝ) : ℂ) := by
+      rw [← Complex.ofReal_one, ← Complex.ofReal_sub]
+    rw [hsub_cast]
+    rw [Complex.inv_re]
+    simp only [Complex.ofReal_re, Complex.normSq_ofReal]
+    field_simp [hsub_ne_real]
+  simpa [hinv_re] using hcomplex
 
 /-- Flexible real-axis local bound in the exact shape needed for the `hreal`
 input of the 3-4-1 high-height assembly.

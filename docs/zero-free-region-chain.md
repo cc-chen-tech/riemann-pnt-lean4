@@ -725,6 +725,19 @@ which yields `|Re(-zeta'/zeta)(sigma)| < C / (sigma - 1)` for
 `1 < sigma` sufficiently close to `1`.
 The direct one-sided real-axis form is
 `ZeroFreeRegion.exists_rightNeighborhood_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_sub_one`.
+The pole-side principal part has also been separated additively:
+`ZeroFreeRegion.eventuallyEq_logDeriv_riemannZeta_simplePoleAtOne` proves
+`logDeriv zeta(s) = -(s - 1)^-1 + logDeriv(unit)(s)` on a punctured
+neighborhood of `1`,
+`ZeroFreeRegion.analyticAt_logDeriv_riemannZetaPoleUnitAtOne` proves the unit
+logarithmic derivative is analytic at `1`, and
+`ZeroFreeRegion.eventually_norm_logDeriv_riemannZetaPoleUnitAtOne_le_const`
+proves this regular term is locally bounded.  Consequently
+`ZeroFreeRegion.exists_rightNeighborhood_re_neg_deriv_riemannZeta_div_riemannZeta_le_inv_sub_one_add_const`
+gives the sharper real-axis bookkeeping form
+`Re(-zeta'/zeta)(sigma) <= 1 / (sigma - 1) + M` for real `sigma > 1`
+sufficiently close to `1`.  This is a local pole-side theorem, not the missing
+high-height vertical-strip estimate.
 These estimates are also packaged in the exact real-axis input shape used by
 the 3-4-1 high-height assembly:
 `ZeroFreeRegion.exists_rightNeighborhood_hreal_two_div_sub_one` and

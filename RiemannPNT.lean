@@ -2332,11 +2332,34 @@ theorem eventually_ne_zero_riemannZetaPoleUnitAtOne :
     ∀ᶠ s in 𝓝 (1 : ℂ), ZeroFreeRegion.riemannZetaPoleUnitAtOne s ≠ 0 :=
   ZeroFreeRegion.eventually_ne_zero_riemannZetaPoleUnitAtOne
 
+/-- Public analyticity of the logarithmic derivative of the zeta pole unit at
+`1`. -/
+theorem analyticAt_logDeriv_riemannZetaPoleUnitAtOne :
+    AnalyticAt ℂ (logDeriv ZeroFreeRegion.riemannZetaPoleUnitAtOne) (1 : ℂ) :=
+  ZeroFreeRegion.analyticAt_logDeriv_riemannZetaPoleUnitAtOne
+
+/-- Public local boundedness of the logarithmic derivative of the zeta pole
+unit at `1`. -/
+theorem eventually_norm_logDeriv_riemannZetaPoleUnitAtOne_le_const :
+    ∃ M : ℝ, 0 ≤ M ∧
+      ∀ᶠ s in 𝓝 (1 : ℂ),
+        ‖logDeriv ZeroFreeRegion.riemannZetaPoleUnitAtOne s‖ ≤ M :=
+  ZeroFreeRegion.eventually_norm_logDeriv_riemannZetaPoleUnitAtOne_le_const
+
 /-- Public local nonvanishing of ζ in a punctured neighborhood of its pole
 `1`. -/
 theorem eventually_ne_zero_riemannZeta_nhdsNE_one :
     ∀ᶠ s in 𝓝[≠] (1 : ℂ), riemannZeta s ≠ 0 :=
   ZeroFreeRegion.eventually_ne_zero_riemannZeta_nhdsNE_one
+
+/-- Public logarithmic-derivative form of the simple-pole decomposition of ζ
+at `1`. -/
+theorem eventuallyEq_logDeriv_riemannZeta_simplePoleAtOne :
+    (fun s : ℂ => logDeriv riemannZeta s)
+      =ᶠ[𝓝[≠] (1 : ℂ)]
+    (fun s : ℂ =>
+      -(s - 1)⁻¹ + logDeriv ZeroFreeRegion.riemannZetaPoleUnitAtOne s) :=
+  ZeroFreeRegion.eventuallyEq_logDeriv_riemannZeta_simplePoleAtOne
 
 /-- Public reciprocal local model for ζ near its pole `1`. -/
 theorem eventuallyEq_inv_riemannZeta_simpleZeroAtOne :
@@ -2596,6 +2619,14 @@ theorem exists_rightNeighborhood_re_neg_deriv_riemannZeta_div_riemannZeta_lt_con
     ∃ d : ℝ, 0 < d ∧ ∀ σ : ℝ, 1 < σ → σ ≤ 1 + d →
       (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re < C / (σ - 1) :=
   ZeroFreeRegion.exists_rightNeighborhood_re_neg_deriv_riemannZeta_div_riemannZeta_lt_const_div_sub_one C hC
+
+/-- Public additive principal-part real-axis bound for `-ζ'/ζ` near the pole
+at `1`. -/
+theorem exists_rightNeighborhood_re_neg_deriv_riemannZeta_div_riemannZeta_le_inv_sub_one_add_const :
+    ∃ d M : ℝ, 0 < d ∧ 0 ≤ M ∧ ∀ σ : ℝ, 1 < σ → σ ≤ 1 + d →
+      (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re ≤
+        1 / (σ - 1) + M :=
+  ZeroFreeRegion.exists_rightNeighborhood_re_neg_deriv_riemannZeta_div_riemannZeta_le_inv_sub_one_add_const
 
 /-- Public flexible package of the real-axis local bound in the `hreal` shape
 used by the 3-4-1 high-height assembly. -/
