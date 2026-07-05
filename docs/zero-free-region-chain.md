@@ -390,7 +390,10 @@ proved:
   `ZeroFreeRegion.borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius`,
   plus
   `ZeroFreeRegion.borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_log_abs_add_three_re_le_half_radius`
-  for the same positive `logDeriv` bound in the `log(|t|+3)` height scale,
+  and
+  `ZeroFreeRegion.borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_log_abs_add_three_re_le_half_radius`
+  for the positive `logDeriv` bound and its centered oscillation in the
+  `log(|t|+3)` height scale,
   together with the signed specializations
   `ZeroFreeRegion.borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius`
   and
@@ -401,7 +404,9 @@ proved:
   `ZeroFreeRegion.borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius`,
   with
   `ZeroFreeRegion.borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_log_abs_add_three_re_le_half_radius`
-  giving the signed `log(|t|+3)` height-scale variant,
+  and
+  `ZeroFreeRegion.borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_log_abs_add_three_re_le_half_radius`
+  giving the signed `log(|t|+3)` height-scale variants,
   expose those fixed half-radius bounds in both logarithmic-derivative sign
   conventions.  The zero-candidate regular-part bridge
   `ZeroFreeRegion.borelCaratheodory_neg_logDeriv_regularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`

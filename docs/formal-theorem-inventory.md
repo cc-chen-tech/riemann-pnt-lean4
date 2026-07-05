@@ -1351,6 +1351,9 @@ Core verified declarations:
   converts the positive half-radius Borel output to the safer one-dimensional
   height scale `A + B log(|t| + 3)`, assuming `1 <= sigma <= 2`,
   `5 <= |t|`, and nonnegative affine slopes.
+- `borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_log_abs_add_three_re_le_half_radius`
+  gives the corresponding centered oscillation bound for
+  `logDeriv zeta(z) - logDeriv zeta(sigma+it)` in the same height scale.
 - `differentiableOn_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re`,
   `borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le`,
   and
@@ -1372,6 +1375,9 @@ Core verified declarations:
 - `borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_log_abs_add_three_re_le_half_radius`
   is the signed `log(|t| + 3)` version of the same half-radius Borel bridge,
   matching the sign convention used by the 3-4-1 inequality.
+- `borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_log_abs_add_three_re_le_half_radius`
+  gives the signed centered oscillation version for
+  `-logDeriv zeta(z) - (-logDeriv zeta(sigma+it))`.
 - `borelCaratheodory_neg_logDeriv_regularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`
   applies the right-shifted Borel normalization to the zero-candidate regular
   part `-logDeriv zeta(w) + (w-rho)^(-1)`.
