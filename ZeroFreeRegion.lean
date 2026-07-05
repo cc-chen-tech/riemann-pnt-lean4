@@ -995,6 +995,129 @@ lemma log_deriv_zeta_nonneg_finset_combination_auto_of_complex_exp_abs_sq_certif
   log_deriv_zeta_nonneg_finset_combination_auto_of_complex_exp_abs_sq_certificate
     σ hσ t S K a c hcert
 
+/-- Scaled complex-exponential absolute-square certificate.
+
+This avoids introducing square roots into detector tables written as
+`scale * P(theta) = ||sum c_k exp(i k theta)||^2`. -/
+abbrev ScaledComplexExpAbsSqCertificate
+    (scale : ℝ) (S K : Finset ℕ) (a : ℕ → ℝ) (c : ℕ → ℂ) : Prop :=
+  ∀ θ : ℝ,
+    scale * (∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ)) =
+      ‖∑ k ∈ K, c k * Complex.exp ((k : ℂ) * I * (θ : ℂ))‖ ^ 2
+
+/-- A positive scaled absolute-square certificate implies pointwise
+nonnegativity of the finite cosine polynomial. -/
+lemma trigPolynomial_nonneg_of_scaled_complex_exp_abs_sq_certificate
+    (scale : ℝ) (S K : Finset ℕ) (a : ℕ → ℝ) (c : ℕ → ℂ)
+    (hscale : 0 < scale)
+    (hcert : ScaledComplexExpAbsSqCertificate scale S K a c) :
+    ∀ θ : ℝ, 0 ≤ ∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ) := by
+  intro θ
+  have hnonneg :
+      0 ≤ scale * (∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ)) := by
+    rw [hcert θ]
+    exact sq_nonneg _
+  have hnonneg' :
+      0 ≤ (∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ)) * scale := by
+    simpa [mul_comm] using hnonneg
+  exact nonneg_of_mul_nonneg_left hnonneg' hscale
+
+/-- Automatic finite detector from a positive scaled complex-exponential
+absolute-square certificate. -/
+lemma log_deriv_zeta_nonneg_finset_combination_auto_of_scaled_complex_exp_abs_sq_certificate
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ)
+    (scale : ℝ) (S K : Finset ℕ) (a : ℕ → ℝ) (c : ℕ → ℂ)
+    (hscale : 0 < scale)
+    (hcert : ScaledComplexExpAbsSqCertificate scale S K a c) :
+    0 ≤
+      ∑ k ∈ S, a k *
+        (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * I * t) /
+          riemannZeta ((σ : ℂ) + (k : ℂ) * I * t)).re :=
+  log_deriv_zeta_nonneg_finset_combination_auto σ hσ t S a
+    (trigPolynomial_nonneg_of_scaled_complex_exp_abs_sq_certificate
+      scale S K a c hscale hcert)
+
+/-! ### Bellotti-Trudgian-Yang detector coefficient table
+
+The following constants encode the integer coefficient table for the
+Bellotti-Trudgian-Yang detector shape
+`scale * P(theta) = ||sum_{0 <= k <= 16} c_k exp(i k theta)||^2`.
+This records the table and checks the quoted low-degree and aggregate
+coefficients; the full convolution identity remains a later finite-sum step.
+-/
+
+/-- Denominator scale in the Bellotti-Trudgian-Yang trigonometric detector. -/
+def btyDetectorScale : ℝ := 14912370
+
+lemma btyDetectorScale_pos : 0 < btyDetectorScale := by
+  norm_num [btyDetectorScale]
+
+/-- Exponential coefficient support `{0, ..., 16}` for the BTY detector. -/
+def btyExpSupport : Finset ℕ := Finset.range 17
+
+/-- Cosine coefficient support `{0, ..., 16}` for the BTY detector. -/
+def btyDetectorSupport : Finset ℕ := Finset.range 17
+
+/-- Integer coefficients `c_k` in the BTY exponential square. -/
+def btyRawCoeff : ℕ → ℤ
+  | 0 => 4
+  | 1 => -8
+  | 2 => 2
+  | 3 => 20
+  | 4 => -9
+  | 5 => -34
+  | 6 => 27
+  | 7 => 91
+  | 8 => -27
+  | 9 => -201
+  | 10 => 32
+  | 11 => 895
+  | 12 => 1949
+  | 13 => 2389
+  | 14 => 1896
+  | 15 => 949
+  | 16 => 239
+  | _ => 0
+
+/-- Complex-valued version of the BTY exponential coefficients. -/
+def btyExpCoeff (k : ℕ) : ℂ :=
+  (btyRawCoeff k : ℂ)
+
+/-- Cosine coefficients obtained from the BTY exponential-square convolution. -/
+noncomputable def btyDetectorCoeff (k : ℕ) : ℝ :=
+  if k = 0 then
+    (∑ j ∈ Finset.range 17, ((btyRawCoeff j : ℝ) ^ 2)) / btyDetectorScale
+  else
+    (2 * ∑ j ∈ Finset.range (17 - k),
+      (btyRawCoeff j : ℝ) * (btyRawCoeff (j + k) : ℝ)) / btyDetectorScale
+
+/-- BTY's quoted constant coefficient `a_0 = 1`. -/
+lemma btyDetectorCoeff_zero : btyDetectorCoeff 0 = 1 := by
+  norm_num [btyDetectorCoeff, btyRawCoeff, btyDetectorScale]
+
+/-- BTY's quoted first cosine coefficient `a_1 = 865534 / 497079`. -/
+lemma btyDetectorCoeff_one : btyDetectorCoeff 1 = (865534 : ℝ) / 497079 := by
+  norm_num [btyDetectorCoeff, btyRawCoeff, btyDetectorScale]
+
+/-- BTY's quoted coefficient sum `sum_{1 <= k <= 16} a_k = 2919857 / 828465`. -/
+lemma btyDetectorCoeff_sum_one_to_K :
+    (∑ k ∈ Finset.Icc 1 16, btyDetectorCoeff k) =
+      (2919857 : ℝ) / 828465 := by
+  have hIcc :
+      Finset.Icc 1 16 =
+        ({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16} :
+          Finset ℕ) := by
+    decide
+  rw [hIcc]
+  norm_num [btyDetectorCoeff, btyRawCoeff, btyDetectorScale]
+
+/-- The BTY detector has no cosine coefficients beyond degree `16`. -/
+lemma btyDetectorCoeff_eq_zero_of_seventeen_le {k : ℕ} (hk : 17 ≤ k) :
+    btyDetectorCoeff k = 0 := by
+  have hk_ne : k ≠ 0 := by omega
+  have hsub : 17 - k = 0 := Nat.sub_eq_zero_of_le hk
+  simp [btyDetectorCoeff, hk_ne, hsub]
+
 /-- Minimal concrete complex-exponential absolute-square certificate:
 `1 = ‖exp(0)‖^2`.  This is a template for later finite coefficient-table
 certificates. -/

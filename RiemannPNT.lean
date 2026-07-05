@@ -4587,6 +4587,71 @@ theorem log_deriv_zeta_nonneg_finset_combination_auto_of_complex_exp_abs_sq_cert
   ZeroFreeRegion.log_deriv_zeta_nonneg_finset_combination_auto_of_complex_exp_abs_sq_certificate'
     σ hσ t S K a c hcert
 
+/-- Public scaled complex-exponential absolute-square certificate predicate. -/
+abbrev ScaledComplexExpAbsSqCertificate
+    (scale : ℝ) (S K : Finset ℕ) (a : ℕ → ℝ) (c : ℕ → ℂ) : Prop :=
+  ZeroFreeRegion.ScaledComplexExpAbsSqCertificate scale S K a c
+
+/-- Public nonnegativity theorem from a positive scaled complex-exponential
+absolute-square certificate. -/
+theorem trigPolynomial_nonneg_of_scaled_complex_exp_abs_sq_certificate
+    (scale : ℝ) (S K : Finset ℕ) (a : ℕ → ℝ) (c : ℕ → ℂ)
+    (hscale : 0 < scale)
+    (hcert : ScaledComplexExpAbsSqCertificate scale S K a c) :
+    ∀ θ : ℝ, 0 ≤ ∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ) :=
+  ZeroFreeRegion.trigPolynomial_nonneg_of_scaled_complex_exp_abs_sq_certificate
+    scale S K a c hscale hcert
+
+/-- Public automatic detector theorem from a positive scaled
+complex-exponential absolute-square certificate. -/
+theorem log_deriv_zeta_nonneg_finset_combination_auto_of_scaled_complex_exp_abs_sq_certificate
+    (σ : ℝ) (hσ : 1 < σ) (t : ℝ)
+    (scale : ℝ) (S K : Finset ℕ) (a : ℕ → ℝ) (c : ℕ → ℂ)
+    (hscale : 0 < scale)
+    (hcert : ScaledComplexExpAbsSqCertificate scale S K a c) :
+    0 ≤
+      ∑ k ∈ S, a k *
+        (-deriv riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t) /
+          riemannZeta ((σ : ℂ) + (k : ℂ) * Complex.I * t)).re :=
+  ZeroFreeRegion.log_deriv_zeta_nonneg_finset_combination_auto_of_scaled_complex_exp_abs_sq_certificate
+    σ hσ t scale S K a c hscale hcert
+
+/-- Public BTY detector scale `14912370`. -/
+abbrev btyDetectorScale : ℝ := ZeroFreeRegion.btyDetectorScale
+
+theorem btyDetectorScale_pos : 0 < btyDetectorScale :=
+  ZeroFreeRegion.btyDetectorScale_pos
+
+/-- Public BTY exponential support `{0, ..., 16}`. -/
+abbrev btyExpSupport : Finset ℕ := ZeroFreeRegion.btyExpSupport
+
+/-- Public BTY detector support `{0, ..., 16}`. -/
+abbrev btyDetectorSupport : Finset ℕ := ZeroFreeRegion.btyDetectorSupport
+
+/-- Public BTY integer coefficient table. -/
+abbrev btyRawCoeff : ℕ → ℤ := ZeroFreeRegion.btyRawCoeff
+
+/-- Public complex-valued BTY coefficient table. -/
+abbrev btyExpCoeff : ℕ → ℂ := ZeroFreeRegion.btyExpCoeff
+
+/-- Public BTY cosine coefficients from convolution. -/
+noncomputable abbrev btyDetectorCoeff : ℕ → ℝ := ZeroFreeRegion.btyDetectorCoeff
+
+theorem btyDetectorCoeff_zero : btyDetectorCoeff 0 = 1 :=
+  ZeroFreeRegion.btyDetectorCoeff_zero
+
+theorem btyDetectorCoeff_one : btyDetectorCoeff 1 = (865534 : ℝ) / 497079 :=
+  ZeroFreeRegion.btyDetectorCoeff_one
+
+theorem btyDetectorCoeff_sum_one_to_K :
+    (∑ k ∈ Finset.Icc 1 16, btyDetectorCoeff k) =
+      (2919857 : ℝ) / 828465 :=
+  ZeroFreeRegion.btyDetectorCoeff_sum_one_to_K
+
+theorem btyDetectorCoeff_eq_zero_of_seventeen_le {k : ℕ} (hk : 17 ≤ k) :
+    btyDetectorCoeff k = 0 :=
+  ZeroFreeRegion.btyDetectorCoeff_eq_zero_of_seventeen_le hk
+
 /-- Public constant-one complex-exponential certificate. -/
 theorem complexExpAbsSqCertificate_const_one :
     ComplexExpAbsSqCertificate ({0} : Finset ℕ) ({0} : Finset ℕ)

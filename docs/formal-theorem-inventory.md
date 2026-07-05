@@ -58,6 +58,20 @@ Core verified declarations:
   `log_deriv_zeta_nonneg_finset_combination_auto_of_complex_exp_abs_sq_certificate`,
   and their predicate-based wrappers provide the corresponding
   complex-exponential absolute-square certificate interface.
+- `ScaledComplexExpAbsSqCertificate`,
+  `trigPolynomial_nonneg_of_scaled_complex_exp_abs_sq_certificate`, and
+  `log_deriv_zeta_nonneg_finset_combination_auto_of_scaled_complex_exp_abs_sq_certificate`
+  provide the scaled certificate shape
+  `scale * P(theta) = ||sum c_k exp(i k theta)||^2`, avoiding square-root
+  coefficients in finite detector tables.
+- `btyRawCoeff`, `btyDetectorCoeff_zero`, `btyDetectorCoeff_one`,
+  `btyDetectorCoeff_sum_one_to_K`, and
+  `btyDetectorCoeff_eq_zero_of_seventeen_le` encode the
+  Bellotti-Trudgian-Yang degree-16 detector coefficients, verify the quoted
+  values `a_0 = 1`, `a_1 = 865534 / 497079`, and
+  `sum_{1 <= k <= 16} a_k = 2919857 / 828465`, and prove support truncation
+  beyond degree `16`. The full scaled convolution identity remains a future
+  finite-sum target.
 - `log_deriv_zeta_nonneg_three_four_one_from_finset`
   re-exposes the verified 3-4-1 theorem as the base detector instance.
 - `classical_zero_free_region_compact`

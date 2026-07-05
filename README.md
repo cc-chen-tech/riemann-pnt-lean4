@@ -229,6 +229,10 @@ The project currently verifies several supporting statements, including:
 - basic PNT-form equivalence scaffolding and asymptotic lemmas;
 - the trigonometric identity `3 + 4cos θ + cos 2θ = 2(1+cos θ)² ≥ 0`;
 - the full 3-4-1 logarithmic-derivative nonnegativity combination;
+- scaled complex-exponential certificate hooks for finite zero-detector
+  trigonometric polynomials, plus Lean-checked BTY detector coefficients
+  `a_0 = 1`, `a_1 = 865534 / 497079`, and
+  `sum_{1 <= k <= 16} a_k = 2919857 / 828465`;
 - several zeta nonvanishing and pole-behavior wrappers from Mathlib;
 - the Gamma residue formula at negative integers and numerical special cases;
 - the compact zero-free region near `Re(s)=1` for each bounded height;
@@ -261,6 +265,8 @@ Lean declarations in `ZeroFreeRegion.lean` and
 | `ZeroFreeRegion.log_deriv_zeta_nonneg_finset_combination_auto` / `...list_combination_auto` | `lemma` | Automatic finite detector versions: the series identity is discharged from `log_deriv_zeta_re_series`, leaving only the finite trigonometric-polynomial nonnegativity hypothesis. | First reusable Lean step toward higher-degree de la Vallee Poussin/Stechkin detector polynomials. |
 | `ZeroFreeRegion.trigPolynomial_nonneg_of_sq_certificate` / `...auto_of_sq_certificate` | `lemma` | Turns a finite cosine-square certificate for a detector polynomial into pointwise nonnegativity and then into the automatic finite detector inequality. | First certificate hook for detector nonnegativity. |
 | `ZeroFreeRegion.ComplexExpAbsSqCertificate` / `...complex_exp_abs_sq_certificate` | `abbrev` / `lemma` | Packages the certificate shape `P(θ)=‖∑ c_k exp(i k θ)‖²` and feeds it into the automatic finite detector theorem. | Matches the certificate style used by high-degree nonnegative trigonometric polynomials in Heath-Brown/Bellotti-Trudgian-Yang style arguments. |
+| `ZeroFreeRegion.ScaledComplexExpAbsSqCertificate` / `...scaled_complex_exp_abs_sq_certificate` | `abbrev` / `lemma` | Packages the scaled certificate shape `scale * P(θ)=‖∑ c_k exp(i k θ)‖²` and derives detector nonnegativity when `scale > 0`. | Avoids square-root coefficients and matches integer-coefficient detector tables. |
+| `ZeroFreeRegion.btyRawCoeff` / `btyDetectorCoeff_zero` / `btyDetectorCoeff_one` / `btyDetectorCoeff_sum_one_to_K` / `btyDetectorCoeff_eq_zero_of_seventeen_le` | `def` / `lemma` | Encodes the Bellotti-Trudgian-Yang degree-16 exponential-square detector coefficient table, checks `a_0 = 1`, `a_1 = 865534 / 497079`, `∑_{1≤k≤16} a_k = 2919857 / 828465`, and proves coefficients vanish above degree `16`. | Concrete high-degree detector data now sits behind the reusable finite-detector certificate API; the full convolution identity is still future work. |
 | `ZeroFreeRegion.log_deriv_zeta_nonneg_three_four_one_from_finset` | `lemma` | Re-exposes the existing 3-4-1 theorem as the base finite-detector instance. | Keeps the generalized detector API tied to the verified 3-4-1 result. |
 | `ZeroFreeRegion.log_deriv_zeta_lower_bound` | `lemma` | Rearranges the 3-4-1 inequality into the lower bound for `Re(-ζ'/ζ(σ+it))`. | Algebraic corollary used by the future quantitative zero-free-region chain. |
 | `ZeroFreeRegion.logDeriv_riemannZeta_eq_deriv_div` / `ZeroFreeRegion.neg_logDeriv_riemannZeta_re_eq_neg_deriv_div_re` | `lemma` | Bridges Mathlib's `logDeriv ζ` notation with the classical `ζ'/ζ` and `-ζ'/ζ` quotient notation, including real-part and norm forms. | Lets future Borel/Jensen `logDeriv` estimates rewrite directly into the 3-4-1 sign convention. |
