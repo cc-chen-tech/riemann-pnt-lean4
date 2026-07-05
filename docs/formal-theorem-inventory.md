@@ -2068,6 +2068,16 @@ Core verified declarations:
   `explicitFormulaConversePowerTarget_of_psiPowerErrorBelowLineExcludesZerosRightOf`
   keep the explicitly named explicit-formula converse target interchangeable
   with the underlying `psi`-power-error zero-exclusion interface.
+- `not_psi_power_error_bound_sub_delta_of_exists_zero_right_of_bridge`,
+  `not_psi_power_error_bound_sub_delta_of_exists_zero_right_of_explicit_formula_converse`,
+  `not_psi_power_error_bound_sub_delta_of_exists_zero_on_reflected_line_bridge`,
+  and
+  `not_psi_power_error_bound_sub_delta_of_exists_zero_on_reflected_line_explicit_formula_converse`
+  record the general power-saving contrapositives: under the future
+  zero-exclusion route at boundary `beta`, a zero on or to the right of
+  `Re(s)=beta`, or equivalently on the reflected line `Re(s)=1-beta`, rules out
+  `PsiPowerErrorBound (beta - delta)` whenever `0 < delta` and
+  `0 <= beta - delta`.
 - `no_zeros_on_vertical_line_of_explicit_formula_converse_power_mono_error`
   and
   `no_zeros_on_reflected_line_of_explicit_formula_converse_power_mono_error`
@@ -2378,9 +2388,10 @@ Route interfaces:
   public concrete reflected-line wrapper for any `beta >= 2/3`, using
   `PsiPowerErrorBelowTwoThirds` and the same conditional truncated route.
 - `RiemannPNT.API.not_psi_power_error_below_line_of_exists_zero_right_of_bridge`
-  and its explicit-formula / below-`2/3` variants are contrapositive facades:
-  under the same future zero-exclusion bridge, an actual zero at or to the
-  right of the boundary rules out the corresponding `psi` power saving.
+  and its explicit-formula, general `beta-delta`, reflected-line, and
+  below-`2/3` variants are contrapositive facades: under the same future
+  zero-exclusion bridge, an actual zero at or to the right of the boundary, or
+  on the reflected line, rules out the corresponding `psi` power saving.
 - `RiemannExplorer.Conrey40.conrey_40_percent_zeros_on_critical_line_target`
   alias interface to `KnownResults.conrey_40_percent_zeros_on_critical_line_target`.
 - `MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum`

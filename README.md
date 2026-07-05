@@ -736,8 +736,10 @@ and the reflected `Re(s)=1/3` consequence of this conditional route, including
 direct wrappers for the concrete `theta < 2/3` `psi`-error input.  It also
 exposes contrapositive facades saying that, under the same future
 zero-exclusion bridge, a zero at or to the right of the chosen boundary rules
-out the corresponding `psi` power-saving hypothesis, including the concrete
-`O(x^(2/3-delta))` consequence from a zero on `Re(s)=1/3`.
+out the corresponding `psi` power-saving hypothesis.  The verified facades
+include the general `O(x^(beta-delta))` version from a zero on or to the right
+of `Re(s)=beta`, the reflected-line version from a zero on `Re(s)=1-beta`, and
+the concrete `O(x^(2/3-delta))` specialization from a zero on `Re(s)=1/3`.
 
 The finite truncated-zero bookkeeping is proved as ordinary theorem-level
 infrastructure.  In particular,
