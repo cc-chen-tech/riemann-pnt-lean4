@@ -1307,6 +1307,11 @@ Core verified declarations:
 - `re_neg_logDeriv_riemannZeta_sigma_it_add_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius`
   turns that normalized regular-part norm bound into the real zero-repulsion
   estimate `Re(-zeta'/zeta)(sigma+it) + 1/(sigma-beta) <= C log |t|`.
+- `exists_re_neg_logDeriv_riemannZeta_sigma_it_add_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center`
+  removes the separate regular-part center norm hypothesis in the simple-zero
+  handoff by combining the fixed-margin `-logDeriv zeta` bound with the explicit
+  same-height principal-part estimate
+  `||((sigma+r+it)-(beta+it))^(-1)|| <= 1/r`.
 - `borelCaratheodory_neg_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`
   is the multiplicity-aware version with regular part
   `-logDeriv zeta(w) + n * (w-rho)^(-1)`.

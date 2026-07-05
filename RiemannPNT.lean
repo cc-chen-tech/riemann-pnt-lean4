@@ -7383,6 +7383,33 @@ theorem re_neg_logDeriv_riemannZeta_sigma_it_add_inv_right_shift_le_log_abs_of_a
   ZeroFreeRegion.re_neg_logDeriv_riemannZeta_sigma_it_add_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius
     hr hσ hσr ht hA hB hM hdiff hlog hcenter hsub
 
+/-- Public zero-repulsion real-part bridge whose right-shifted regular-part
+center estimate is discharged by the fixed-margin `-logDeriv ζ` bound and the
+explicit same-height principal-part distance estimate. -/
+theorem exists_re_neg_logDeriv_riemannZeta_sigma_it_add_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center
+    {Are Bre r σ β t : ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3) (ht : 6 ≤ |t|)
+    (hβ : β < 1) (hAre : 0 ≤ Are) (hBre : 0 ≤ Bre)
+    (hM :
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * t)‖ + 3))
+    (hdiff :
+      DifferentiableOn ℂ
+        (fun w : ℂ =>
+          -logDeriv riemannZeta w + (w - ((β : ℂ) + Complex.I * t))⁻¹)
+        (Metric.ball (((σ + r : ℝ) : ℂ) + Complex.I * t) (2 * r)))
+    (hlog : ∀ w : ℂ,
+      w ∈ Metric.ball (((σ + r : ℝ) : ℂ) + Complex.I * t) (2 * r) →
+        (-logDeriv riemannZeta w + (w - ((β : ℂ) + Complex.I * t))⁻¹).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * t)‖ + 3)) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+          riemannZeta ((σ : ℂ) + Complex.I * t)).re + 1 / (σ - β) ≤
+        C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_logDeriv_riemannZeta_sigma_it_add_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center
+    hr hσ hσr ht hβ hAre hBre hM hdiff hlog
+
 /-- Public multiplicity-aware right-shifted Borel transfer for the signed
 regular part `-logDeriv ζ(w) + n(w-ρ)⁻¹`. -/
 theorem borelCaratheodory_neg_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius

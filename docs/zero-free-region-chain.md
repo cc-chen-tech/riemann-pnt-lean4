@@ -379,7 +379,13 @@ proved:
   `ZeroFreeRegion.re_neg_logDeriv_riemannZeta_sigma_it_add_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius`
   converts it to the exact
   `Re(-zeta'/zeta)(sigma+it) + 1/(sigma-beta) <= C log |t|`
-  zero-repulsion input.  The multiplicity-aware pair
+  zero-repulsion input.  The follow-up wrapper
+  `ZeroFreeRegion.exists_re_neg_logDeriv_riemannZeta_sigma_it_add_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center`
+  discharges that bridge's center norm hypothesis using the proved
+  fixed-margin `-logDeriv zeta` estimate and the elementary same-height
+  principal-part distance bound; the local regular-part differentiability and
+  real-part hypotheses remain the unresolved analytic input.  The
+  multiplicity-aware pair
   `ZeroFreeRegion.borelCaratheodory_neg_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`
   and
   `ZeroFreeRegion.re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius`
