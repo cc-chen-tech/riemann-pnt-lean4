@@ -1940,6 +1940,28 @@ lemma log_deriv_zeta_bty_detector_one_lower_bound_of_global_vertical_log_abs_add
       btyDetector_log_abs_mul_add_three_le_log_seventeen_mul_abs_add_three
         t (k := k) hk)
 
+/-- Fixed-margin BTY lower bound from the existing vertical logarithmic
+derivative estimate for `Re(s) >= 1 + ε`.
+
+This is not the classical zero-free-region scale, but it closes the
+fixed-margin detector handoff without leaving any finite-support bookkeeping
+hypotheses. -/
+lemma exists_log_deriv_zeta_bty_detector_one_lower_bound_of_one_add_le
+    {ε : ℝ} (hε : 0 < ε) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ σ t : ℝ, 1 + ε ≤ σ →
+      (-deriv riemannZeta ((σ : ℂ) + I * t) /
+        riemannZeta ((σ : ℂ) + I * t)).re ≥
+        - ((3458648 : ℝ) / 2163835) *
+          (C * Real.log (17 * (|t| + 3))) := by
+  rcases exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_add_three_of_one_add_le
+      hε with ⟨C, hC, hbound⟩
+  refine ⟨C, hC, ?_⟩
+  intro σ t hσ
+  have hσ_gt : 1 < σ := by nlinarith [hε, hσ]
+  exact
+    log_deriv_zeta_bty_detector_one_lower_bound_of_global_vertical_log_abs_add_three_bound_auto
+      σ hσ_gt t C hC (fun u => hbound σ u hσ)
+
 /-- Fixed-margin real-part bound for the shifted `σ + it` term in the
 3-4-1 inequality. -/
 lemma exists_re_neg_deriv_div_riemannZeta_sigma_it_le_log_abs_add_three_of_one_add_le

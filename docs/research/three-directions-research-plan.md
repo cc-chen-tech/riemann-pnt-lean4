@@ -42,6 +42,9 @@ Verified assets now include:
   `btyDetector_log_abs_mul_add_three_le_log_seventeen_mul_abs_add_three`
   and its no-manual-`hlog` lower-bound wrapper
   `log_deriv_zeta_bty_detector_one_lower_bound_of_global_vertical_log_abs_add_three_bound_auto`;
+- the fixed-margin closure
+  `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_one_add_le`, which
+  uses the existing `Re(s) >= 1 + epsilon` vertical `logDeriv` estimate;
 - the unsigned simplified Borel facade
   `log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_right_shift_borel_family_simplified`;
 - the signed simplified Borel facade added on this branch:
@@ -67,7 +70,9 @@ bound
 now automatic at the conservative common scale `log(17 * (|t|+3))`.
 The new polynomial-growth handoff removes one piece of height bookkeeping once
 a usable zeta polynomial-growth input is available, but it does not prove that
-input or a log-derivative estimate.
+input or a log-derivative estimate.  The fixed-margin closure is useful
+infrastructure, not the classical shrinking-width estimate at
+`sigma = 1 + a / log |t|`.
 
 ## Direction 2: Stechkin/Heath-Brown pair positivity
 

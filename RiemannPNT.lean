@@ -5478,6 +5478,18 @@ theorem log_deriv_zeta_bty_detector_one_lower_bound_of_global_vertical_log_abs_a
   ZeroFreeRegion.log_deriv_zeta_bty_detector_one_lower_bound_of_global_vertical_log_abs_add_three_bound_auto
     σ hσ t B hB hglobal
 
+/-- Public fixed-margin BTY lower bound from the existing vertical
+logarithmic-derivative estimate for `Re(s) >= 1 + ε`. -/
+theorem exists_log_deriv_zeta_bty_detector_one_lower_bound_of_one_add_le
+    {ε : ℝ} (hε : 0 < ε) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ σ t : ℝ, 1 + ε ≤ σ →
+      (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+        riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+        - ((3458648 : ℝ) / 2163835) *
+          (C * Real.log (17 * (|t| + 3))) :=
+  ZeroFreeRegion.exists_log_deriv_zeta_bty_detector_one_lower_bound_of_one_add_le
+    hε
+
 /-- Public constant-one complex-exponential certificate. -/
 theorem complexExpAbsSqCertificate_const_one :
     ComplexExpAbsSqCertificate ({0} : Finset ℕ) ({0} : Finset ℕ)
