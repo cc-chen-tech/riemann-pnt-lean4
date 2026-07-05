@@ -15468,6 +15468,76 @@ theorem vinogradov_korobov_zero_free_region_high_height_mono_const_re_im
   ZeroFreeRegion.vinogradov_korobov_zero_free_region_high_height_mono_const_re_im
     hT0 hc hlarge
 
+/-- Public high-height cutoff-monotonicity for the Vinogradov-Korobov
+width. -/
+theorem vinogradov_korobov_zero_free_region_high_height_mono_cutoff
+    {T0 T1 c : ℝ} (hT : T0 ≤ T1)
+    (hregion : ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥
+        1 - c / (Real.log |s.im|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |s.im|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta s ≠ 0) :
+    ∀ s : ℂ, T1 ≤ |s.im| →
+      s.re ≥
+        1 - c / (Real.log |s.im|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |s.im|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta s ≠ 0 :=
+  ZeroFreeRegion.vinogradov_korobov_zero_free_region_high_height_mono_cutoff
+    hT hregion
+
+/-- Public coordinate high-height cutoff-monotonicity for the
+Vinogradov-Korobov width. -/
+theorem vinogradov_korobov_zero_free_region_high_height_mono_cutoff_re_im
+    {T0 T1 c : ℝ} (hT : T0 ≤ T1)
+    (hregion : ∀ β t : ℝ, T0 ≤ |t| →
+      β ≥
+        1 - c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0) :
+    ∀ β t : ℝ, T1 ≤ |t| →
+      β ≥
+        1 - c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0 :=
+  ZeroFreeRegion.vinogradov_korobov_zero_free_region_high_height_mono_cutoff_re_im
+    hT hregion
+
+/-- Public existential high-height cutoff-monotonicity for the
+Vinogradov-Korobov width. -/
+theorem vinogradov_korobov_zero_free_region_high_height_exists_mono_cutoff
+    {T0 T1 : ℝ} (hT : T0 ≤ T1)
+    (hregion :
+      ∃ c > 0, ∀ s : ℂ, T0 ≤ |s.im| →
+        s.re ≥
+          1 - c / (Real.log |s.im|) ^ (2 / 3 : ℝ) *
+            (Real.log (Real.log |s.im|)) ^ (-1 / 3 : ℝ) →
+        riemannZeta s ≠ 0) :
+    ∃ c > 0, ∀ s : ℂ, T1 ≤ |s.im| →
+      s.re ≥
+        1 - c / (Real.log |s.im|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |s.im|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta s ≠ 0 :=
+  ZeroFreeRegion.vinogradov_korobov_zero_free_region_high_height_exists_mono_cutoff
+    hT hregion
+
+/-- Public coordinate existential high-height cutoff-monotonicity for the
+Vinogradov-Korobov width. -/
+theorem vinogradov_korobov_zero_free_region_high_height_exists_mono_cutoff_re_im
+    {T0 T1 : ℝ} (hT : T0 ≤ T1)
+    (hregion :
+      ∃ c > 0, ∀ β t : ℝ, T0 ≤ |t| →
+        β ≥
+          1 - c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+            (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+        riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0) :
+    ∃ c > 0, ∀ β t : ℝ, T1 ≤ |t| →
+      β ≥
+        1 - c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta ((β : ℂ) + Complex.I * t) ≠ 0 :=
+  ZeroFreeRegion.vinogradov_korobov_zero_free_region_high_height_exists_mono_cutoff_re_im
+    hT hregion
+
 /-- Public positivity of the classical `c / log |t|` width above height `2`. -/
 theorem classical_width_pos_of_two_le {c t : ℝ} (hc : 0 < c) (ht : 2 ≤ |t|) :
     0 < c / Real.log |t| :=

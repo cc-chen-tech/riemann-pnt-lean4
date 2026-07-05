@@ -151,6 +151,10 @@ Core verified declarations:
   `classical_zero_free_region_high_height_mono_cutoff_re_im`, and the two
   existential variants restrict a high-height classical-width estimate from
   cutoff `T0` to any larger cutoff `T1`.
+- `vinogradov_korobov_zero_free_region_high_height_mono_cutoff`,
+  `vinogradov_korobov_zero_free_region_high_height_mono_cutoff_re_im`, and
+  the two existential variants provide the same cutoff restriction for the
+  Vinogradov-Korobov width.
 - `residue_bounds`
   proves `1 < (sigma - 1) * Re(zeta(sigma)) <= sigma` for `sigma > 1`.
 - `log_deriv_zeta_pos_real`

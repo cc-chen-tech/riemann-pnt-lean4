@@ -4111,6 +4111,71 @@ lemma vinogradov_korobov_zero_free_region_high_height_mono_const_re_im
     hlarge
     (fun _t ht => vinogradov_korobov_width_mono_const hc (hT0.trans ht))
 
+lemma vinogradov_korobov_zero_free_region_high_height_mono_cutoff
+    {T0 T1 c : ℝ} (hT : T0 ≤ T1)
+    (hregion : ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥
+        1 - c / (Real.log |s.im|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |s.im|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta s ≠ 0) :
+    ∀ s : ℂ, T1 ≤ |s.im| →
+      s.re ≥
+        1 - c / (Real.log |s.im|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |s.im|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta s ≠ 0 := by
+  intro s hsT hsre
+  exact hregion s (hT.trans hsT) hsre
+
+lemma vinogradov_korobov_zero_free_region_high_height_mono_cutoff_re_im
+    {T0 T1 c : ℝ} (hT : T0 ≤ T1)
+    (hregion : ∀ β t : ℝ, T0 ≤ |t| →
+      β ≥
+        1 - c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta ((β : ℂ) + I * t) ≠ 0) :
+    ∀ β t : ℝ, T1 ≤ |t| →
+      β ≥
+        1 - c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta ((β : ℂ) + I * t) ≠ 0 := by
+  intro β t ht hβ
+  exact hregion β t (hT.trans ht) hβ
+
+lemma vinogradov_korobov_zero_free_region_high_height_exists_mono_cutoff
+    {T0 T1 : ℝ} (hT : T0 ≤ T1)
+    (hregion :
+      ∃ c > 0, ∀ s : ℂ, T0 ≤ |s.im| →
+        s.re ≥
+          1 - c / (Real.log |s.im|) ^ (2 / 3 : ℝ) *
+            (Real.log (Real.log |s.im|)) ^ (-1 / 3 : ℝ) →
+        riemannZeta s ≠ 0) :
+    ∃ c > 0, ∀ s : ℂ, T1 ≤ |s.im| →
+      s.re ≥
+        1 - c / (Real.log |s.im|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |s.im|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta s ≠ 0 := by
+  rcases hregion with ⟨c, hc_pos, hregion⟩
+  exact ⟨c, hc_pos,
+    vinogradov_korobov_zero_free_region_high_height_mono_cutoff hT hregion⟩
+
+lemma vinogradov_korobov_zero_free_region_high_height_exists_mono_cutoff_re_im
+    {T0 T1 : ℝ} (hT : T0 ≤ T1)
+    (hregion :
+      ∃ c > 0, ∀ β t : ℝ, T0 ≤ |t| →
+        β ≥
+          1 - c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+            (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+        riemannZeta ((β : ℂ) + I * t) ≠ 0) :
+    ∃ c > 0, ∀ β t : ℝ, T1 ≤ |t| →
+      β ≥
+        1 - c / (Real.log |t|) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log |t|)) ^ (-1 / 3 : ℝ) →
+      riemannZeta ((β : ℂ) + I * t) ≠ 0 := by
+  rcases hregion with ⟨c, hc_pos, hregion⟩
+  exact ⟨c, hc_pos,
+    vinogradov_korobov_zero_free_region_high_height_mono_cutoff_re_im
+      hT hregion⟩
+
 lemma vinogradov_korobov_zero_free_region_high_height
     (T0 : ℝ) (hT0 : 3 ≤ T0)
     (hvk : vinogradov_korobov_zero_free_region) :
