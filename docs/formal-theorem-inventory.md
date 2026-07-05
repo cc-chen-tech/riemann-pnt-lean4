@@ -2536,6 +2536,10 @@ Support-level verified declarations:
 - `norm_finiteTrivialZeroSum_contribution_le_card_mul_half_rpow_neg_two`
   gives the coarser `x >= 1` finite-sum bound using only the truncation
   cardinality and the first trivial-zero amplitude `x^(-2)`.
+- `norm_finiteTrivialZeroSum_contribution_le_floor_mul_half_rpow_neg_two`
+  composes that cardinality bound with
+  `finiteTrivialZeroSum_card_le`, replacing the finset cardinality by the
+  explicit cutoff `Nat.floor (T / 2)`.
 - `RiemannPNT.API.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget`
   and `RiemannPNT.API.ExplicitFormulaTruncated.explicitFormulaTruncated_of`
   expose the typed truncated explicit-formula target and its conditional

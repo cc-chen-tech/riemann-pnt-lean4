@@ -59,6 +59,8 @@ file or the parent.
   norm bound for retained finite trivial-zero contributions.
 - `norm_finiteTrivialZeroSum_contribution_le_card_mul_half_rpow_neg_two` —
   finite-sum `x >= 1` bound using only the truncation cardinality.
+- `norm_finiteTrivialZeroSum_contribution_le_floor_mul_half_rpow_neg_two` —
+  finite-sum `x >= 1` bound using the explicit floor height cutoff.
 - `chebyshevPsi0_eq_chebyshevPsi_off_primePowers` — at a non
   prime-power point, `psi0 = psi`.
 - `jumpVonMangoldt_eq_vonMangoldt_of_primePower` — at a prime power,
@@ -364,6 +366,22 @@ lemma norm_finiteTrivialZeroSum_contribution_le_card_mul_half_rpow_neg_two
     _ = ((finiteTrivialZeroSum T).card : ℝ) *
         ((1 / 2 : ℝ) * x ^ (-2 : ℝ)) := by
           simp [mul_comm, mul_assoc]
+
+/-- For `x >= 1`, the finite retained trivial-zero contribution is bounded by
+the floor height cutoff times the first trivial-zero amplitude. -/
+lemma norm_finiteTrivialZeroSum_contribution_le_floor_mul_half_rpow_neg_two
+    (T x : ℝ) (hx : 1 ≤ x) :
+    ‖∑ s ∈ finiteTrivialZeroSum T, (x : ℂ) ^ s / s‖ ≤
+      (Nat.floor (T / 2) : ℝ) * ((1 / 2 : ℝ) * x ^ (-2 : ℝ)) := by
+  have hsum :=
+    norm_finiteTrivialZeroSum_contribution_le_card_mul_half_rpow_neg_two
+      T x hx
+  have hcard : ((finiteTrivialZeroSum T).card : ℝ) ≤
+      (Nat.floor (T / 2) : ℝ) := by
+    exact_mod_cast finiteTrivialZeroSum_card_le T
+  have hamp_nonneg : 0 ≤ (1 / 2 : ℝ) * x ^ (-2 : ℝ) := by
+    exact mul_nonneg (by norm_num) (Real.rpow_nonneg (le_trans zero_le_one hx) _)
+  exact le_trans hsum (mul_le_mul_of_nonneg_right hcard hamp_nonneg)
 
 /-- Retained trivial zeros are disjoint from the nontrivial-zero strip
 predicate.  This records the separation between the finite trivial-zero

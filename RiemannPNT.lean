@@ -17472,6 +17472,15 @@ theorem norm_finiteTrivialZeroSum_contribution_le_card_mul_half_rpow_neg_two
   PrimeNumberTheorem.ExplicitFormulaAux.norm_finiteTrivialZeroSum_contribution_le_card_mul_half_rpow_neg_two
     T x hx
 
+/-- Public finite-sum `x >= 1` bound for retained trivial-zero
+contributions using the explicit floor height cutoff. -/
+theorem norm_finiteTrivialZeroSum_contribution_le_floor_mul_half_rpow_neg_two
+    (T x : ℝ) (hx : 1 ≤ x) :
+    ‖∑ s ∈ finiteTrivialZeroSum T, (x : ℂ) ^ s / s‖ ≤
+      (Nat.floor (T / 2) : ℝ) * ((1 / 2 : ℝ) * x ^ (-2 : ℝ)) :=
+  PrimeNumberTheorem.ExplicitFormulaAux.norm_finiteTrivialZeroSum_contribution_le_floor_mul_half_rpow_neg_two
+    T x hx
+
 /-- Public separation between retained trivial zeros and nontrivial zeros. -/
 theorem finiteTrivialZeroSum_not_isNontrivialZero_of_mem {s : ℂ} {T : ℝ}
     (hs : s ∈ finiteTrivialZeroSum T) :

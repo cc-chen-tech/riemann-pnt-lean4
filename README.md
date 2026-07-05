@@ -743,9 +743,9 @@ separated from the nontrivial-zero predicate, the single contribution
 `x^s/s` is bounded by `(1/2) * x^Re(s)` and, for `x >= 1`, by
 `(1/2) * x^(-2)`, the finite retained trivial-zero contribution sum is bounded
 both by the corresponding finite amplitude sum and by
-`card * (1/2) * x^(-2)`, and the truncation cardinality is bounded by
-`Nat.floor (T / 2)`.  This still does not prove the infinite trivial-zero
-correction term.
+`card * (1/2) * x^(-2)`, hence also by
+`Nat.floor (T / 2) * (1/2) * x^(-2)`.  This still does not prove the infinite
+trivial-zero correction term.
 
 The explicit-formula side also contains route interfaces such as
 `PrimeNumberTheorem.ExplicitFormulaConversePowerTarget` and
