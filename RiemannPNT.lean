@@ -2343,6 +2343,16 @@ theorem laplacePairPositive_one_dampedKernel_self_of_le_one
     PrimeNumberTheorem.LaplacePairPositive (dampedKernel κ F F) 1 :=
   PrimeNumberTheorem.laplacePairPositive_one_dampedKernel_self_of_le_one hκ hF
 
+/-- Public concrete center-one pair positivity for the self-damped
+resolvent/Laplace prototype kernel. -/
+theorem laplacePairPositive_one_selfDampedResolventLaplaceKernel
+    {κ a : ℝ} (hκ : κ ≤ 1) (ha : 0 ≤ a) :
+    PrimeNumberTheorem.LaplacePairPositive
+      (dampedKernel κ (resolventLaplaceKernel a) (resolventLaplaceKernel a))
+      1 :=
+  PrimeNumberTheorem.laplacePairPositive_one_selfDampedResolventLaplaceKernel
+    hκ ha
+
 /-- Public pair positivity for finite nonnegative combinations of damped
 detector kernels. -/
 theorem laplacePairPositive_weightedDampedKernelCombo_of_pair_le
@@ -2511,6 +2521,15 @@ theorem nontrivialZerosFinset_sum_re_nonnegative_of_dampedKernel_self
   PrimeNumberTheorem.nontrivialZerosFinset_sum_re_nonnegative_of_dampedKernel_self
     T κ F hκ hF
 
+/-- Public finite-zero unpaired real-part sum nonnegativity for the concrete
+self-damped resolvent/Laplace prototype kernel. -/
+theorem nontrivialZerosFinset_sum_re_nonnegative_of_selfDampedResolventLaplaceKernel
+    (T κ a : ℝ) (hκ : κ ≤ 1) (ha : 0 ≤ a) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+      (dampedKernel κ (resolventLaplaceKernel a) (resolventLaplaceKernel a) ρ).re :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sum_re_nonnegative_of_selfDampedResolventLaplaceKernel
+    T κ a hκ ha
+
 /-- Public finite-zero unpaired real-part average nonnegativity for a
 self-damped detector kernel. -/
 theorem nontrivialZerosFinset_average_re_nonnegative_of_dampedKernel_self
@@ -2643,6 +2662,16 @@ theorem nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_dampedKernel_self
       (dampedKernel κ F F ρ).re :=
   PrimeNumberTheorem.nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_dampedKernel_self
     T U κ F hκ hF
+
+/-- Public new-zero unpaired real-part sum nonnegativity for the concrete
+self-damped resolvent/Laplace prototype kernel. -/
+theorem nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_selfDampedResolventLaplaceKernel
+    (T U κ a : ℝ) (hκ : κ ≤ 1) (ha : 0 ≤ a) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+        PrimeNumberTheorem.nontrivialZerosFinset T,
+      (dampedKernel κ (resolventLaplaceKernel a) (resolventLaplaceKernel a) ρ).re :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_selfDampedResolventLaplaceKernel
+    T U κ a hκ ha
 
 /-- Public new-zero unpaired real-part average nonnegativity for a self-damped
 detector kernel. -/

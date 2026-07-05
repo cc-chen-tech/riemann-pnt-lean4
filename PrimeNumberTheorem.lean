@@ -3038,6 +3038,16 @@ lemma laplacePairPositive_one_dampedKernel_self_of_le_one
     LaplacePairPositive (dampedKernel κ F F) 1 :=
   laplacePairPositive_dampedKernel_self_of_le_one hκ hF
 
+/-- Concrete center-one pair positivity for the self-damped
+resolvent/Laplace prototype kernel. -/
+lemma laplacePairPositive_one_selfDampedResolventLaplaceKernel
+    {κ a : ℝ} (hκ : κ ≤ 1) (ha : 0 ≤ a) :
+    LaplacePairPositive
+      (dampedKernel κ (resolventLaplaceKernel a) (resolventLaplaceKernel a))
+      1 :=
+  laplacePairPositive_one_dampedKernel_self_of_le_one hκ
+    (laplacePairPositive_one_resolventLaplaceKernel ha)
+
 /-- Finite nonnegative real-weighted combinations of damped kernels preserve
 strip-local pair positivity once each damped summand satisfies its
 Stechkin-style pair inequality. -/
@@ -5733,6 +5743,16 @@ theorem nontrivialZerosFinset_sum_re_nonnegative_of_dampedKernel_self
   rw [nontrivialZerosFinset_pair_contribution_eq_two_sum_re] at hpaired
   nlinarith
 
+/-- Finite nontrivial-zero unpaired real-part sum nonnegativity for the
+concrete self-damped resolvent/Laplace prototype kernel. -/
+theorem nontrivialZerosFinset_sum_re_nonnegative_of_selfDampedResolventLaplaceKernel
+    (T κ a : ℝ) (hκ : κ ≤ 1) (ha : 0 ≤ a) :
+    0 ≤ ∑ ρ ∈ nontrivialZerosFinset T,
+      (dampedKernel κ (resolventLaplaceKernel a) (resolventLaplaceKernel a) ρ).re :=
+  nontrivialZerosFinset_sum_re_nonnegative_of_dampedKernel_self
+    T κ (resolventLaplaceKernel a) hκ
+    (laplacePairPositive_one_resolventLaplaceKernel ha)
+
 /-- Finite nontrivial-zero unpaired real-part average nonnegativity for a
 self-damped detector kernel. -/
 theorem nontrivialZerosFinset_average_re_nonnegative_of_dampedKernel_self
@@ -5867,6 +5887,16 @@ theorem nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_dampedKernel_self
   nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_laplace_pair_positive_one
     T U (dampedKernel κ F F)
     (laplacePairPositive_one_dampedKernel_self_of_le_one hκ hF)
+
+/-- New-zero unpaired real-part sum nonnegativity for the concrete
+self-damped resolvent/Laplace prototype kernel. -/
+theorem nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_selfDampedResolventLaplaceKernel
+    (T U κ a : ℝ) (hκ : κ ≤ 1) (ha : 0 ≤ a) :
+    0 ≤ ∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+      (dampedKernel κ (resolventLaplaceKernel a) (resolventLaplaceKernel a) ρ).re :=
+  nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_dampedKernel_self
+    T U κ (resolventLaplaceKernel a) hκ
+    (laplacePairPositive_one_resolventLaplaceKernel ha)
 
 /-- New-zero unpaired real-part average nonnegativity for a self-damped detector
 kernel. -/
