@@ -4434,6 +4434,37 @@ lemma nontrivialZerosFinset_sdiff_average_re_nonnegative_of_weightedKernelCombo
     T U (weightedKernelCombo K w F)
     (laplacePairPositive_one_weightedKernelCombo hw hF)
 
+/-- Finite nonnegative weighted kernel combinations with center-one
+pair-positive summands give a nonnegative paired sum over newly included
+nontrivial zeros. -/
+lemma nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_weightedKernelCombo
+    (T U : ℝ) (K : Finset ℕ) (w : ℕ → ℝ) (F : ℕ → ℂ → ℂ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hF : ∀ k ∈ K, LaplacePairPositive (F k) 1) :
+    0 ≤
+      ∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        ((weightedKernelCombo K w F ρ).re +
+          (weightedKernelCombo K w F (1 - ρ)).re) :=
+  nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive_one
+    T U (weightedKernelCombo K w F)
+    (laplacePairPositive_one_weightedKernelCombo hw hF)
+
+/-- Finite nonnegative weighted kernel combinations with center-one
+pair-positive summands give a nonnegative paired average over newly included
+nontrivial zeros. -/
+lemma nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_weightedKernelCombo
+    (T U : ℝ) (K : Finset ℕ) (w : ℕ → ℝ) (F : ℕ → ℂ → ℂ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hF : ∀ k ∈ K, LaplacePairPositive (F k) 1) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        ((weightedKernelCombo K w F ρ).re +
+          (weightedKernelCombo K w F (1 - ρ)).re)) /
+        (((nontrivialZerosFinset U \ nontrivialZerosFinset T).card : ℝ)) :=
+  nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_laplace_pair_positive_one
+    T U (weightedKernelCombo K w F)
+    (laplacePairPositive_one_weightedKernelCombo hw hF)
+
 /-- The resolvent/Laplace prototype gives a nonnegative real-part sum over
 newly included nontrivial zeros. -/
 lemma nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_resolventLaplaceKernel
@@ -4507,6 +4538,33 @@ lemma nontrivialZerosFinset_sdiff_average_re_nonnegative_of_resolventLaplaceKern
     T U (resolventLaplaceKernelCombo K w a)
     (resolventLaplaceKernelCombo_re_nonnegative_on_critical_strip hw ha)
 
+/-- Finite nonnegative resolvent/Laplace combinations give a nonnegative
+paired sum over newly included nontrivial zeros. -/
+lemma nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_resolventLaplaceKernelCombo
+    (T U : ℝ) (K : Finset ℕ) (w a : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k) :
+    0 ≤
+      ∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        ((resolventLaplaceKernelCombo K w a ρ).re +
+          (resolventLaplaceKernelCombo K w a (1 - ρ)).re) :=
+  nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive_one
+    T U (resolventLaplaceKernelCombo K w a)
+    (laplacePairPositive_one_resolventLaplaceKernelCombo hw ha)
+
+/-- Finite nonnegative resolvent/Laplace combinations give a nonnegative
+paired average over newly included nontrivial zeros. -/
+lemma nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_resolventLaplaceKernelCombo
+    (T U : ℝ) (K : Finset ℕ) (w a : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        ((resolventLaplaceKernelCombo K w a ρ).re +
+          (resolventLaplaceKernelCombo K w a (1 - ρ)).re)) /
+        (((nontrivialZerosFinset U \ nontrivialZerosFinset T).card : ℝ)) :=
+  nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_laplace_pair_positive_one
+    T U (resolventLaplaceKernelCombo K w a)
+    (laplacePairPositive_one_resolventLaplaceKernelCombo hw ha)
+
 /-- Finite nonnegative affine resolvent/Laplace combinations give a
 nonnegative real-part sum over newly included nontrivial zeros. -/
 lemma nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_affineResolventLaplaceKernelCombo
@@ -4535,6 +4593,37 @@ lemma nontrivialZerosFinset_sdiff_average_re_nonnegative_of_affineResolventLapla
   nontrivialZerosFinset_sdiff_average_re_nonnegative_of_re_nonnegative_on_critical_strip
     T U (affineResolventLaplaceKernelCombo K w a b c)
     (affineResolventLaplaceKernelCombo_re_nonnegative_on_critical_strip
+      hw ha hb hc)
+
+/-- Finite nonnegative affine resolvent/Laplace combinations give a
+nonnegative paired sum over newly included nontrivial zeros. -/
+lemma nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_affineResolventLaplaceKernelCombo
+    (T U : ℝ) (K : Finset ℕ) (w a b c : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k) (hc : ∀ k ∈ K, 0 ≤ c k) :
+    0 ≤
+      ∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        ((affineResolventLaplaceKernelCombo K w a b c ρ).re +
+          (affineResolventLaplaceKernelCombo K w a b c (1 - ρ)).re) :=
+  nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive_one
+    T U (affineResolventLaplaceKernelCombo K w a b c)
+    (laplacePairPositive_one_affineResolventLaplaceKernelCombo
+      hw ha hb hc)
+
+/-- Finite nonnegative affine resolvent/Laplace combinations give a
+nonnegative paired average over newly included nontrivial zeros. -/
+lemma nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_affineResolventLaplaceKernelCombo
+    (T U : ℝ) (K : Finset ℕ) (w a b c : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k) (hc : ∀ k ∈ K, 0 ≤ c k) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        ((affineResolventLaplaceKernelCombo K w a b c ρ).re +
+          (affineResolventLaplaceKernelCombo K w a b c (1 - ρ)).re)) /
+        (((nontrivialZerosFinset U \ nontrivialZerosFinset T).card : ℝ)) :=
+  nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_laplace_pair_positive_one
+    T U (affineResolventLaplaceKernelCombo K w a b c)
+    (laplacePairPositive_one_affineResolventLaplaceKernelCombo
       hw ha hb hc)
 
 /-- Specialize strip-local Stechkin/Heath-Brown pair positivity to the finite
@@ -4656,6 +4745,37 @@ lemma nontrivialZerosFinset_average_re_nonnegative_of_weightedKernelCombo
       T K w F hw hF)
     (Nat.cast_nonneg _)
 
+/-- Finite nonnegative weighted kernel combinations with center-one
+pair-positive summands give a nonnegative paired sum over height-truncated
+nontrivial zeros. -/
+lemma nontrivialZerosFinset_pair_sum_nonnegative_of_weightedKernelCombo
+    (T : ℝ) (K : Finset ℕ) (w : ℕ → ℝ) (F : ℕ → ℂ → ℂ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hF : ∀ k ∈ K, LaplacePairPositive (F k) 1) :
+    0 ≤
+      ∑ ρ ∈ nontrivialZerosFinset T,
+        ((weightedKernelCombo K w F ρ).re +
+          (weightedKernelCombo K w F (1 - ρ)).re) :=
+  nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive_one
+    T (weightedKernelCombo K w F)
+    (laplacePairPositive_one_weightedKernelCombo hw hF)
+
+/-- Finite nonnegative weighted kernel combinations with center-one
+pair-positive summands give a nonnegative paired average over height-truncated
+nontrivial zeros. -/
+lemma nontrivialZerosFinset_pair_average_nonnegative_of_weightedKernelCombo
+    (T : ℝ) (K : Finset ℕ) (w : ℕ → ℝ) (F : ℕ → ℂ → ℂ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hF : ∀ k ∈ K, LaplacePairPositive (F k) 1) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset T,
+        ((weightedKernelCombo K w F ρ).re +
+          (weightedKernelCombo K w F (1 - ρ)).re)) /
+        (((nontrivialZerosFinset T).card : ℝ)) :=
+  nontrivialZerosFinset_pair_average_nonnegative_of_laplace_pair_positive_one
+    T (weightedKernelCombo K w F)
+    (laplacePairPositive_one_weightedKernelCombo hw hF)
+
 /-- The resolvent/Laplace prototype gives a nonnegative real-part sum over
 height-truncated nontrivial zeros. -/
 lemma nontrivialZerosFinset_sum_re_nonnegative_of_resolventLaplaceKernel
@@ -4726,6 +4846,33 @@ lemma nontrivialZerosFinset_average_re_nonnegative_of_resolventLaplaceKernelComb
     T (resolventLaplaceKernelCombo K w a)
     (resolventLaplaceKernelCombo_re_nonnegative_on_critical_strip hw ha)
 
+/-- Finite nonnegative resolvent/Laplace combinations give a nonnegative
+paired sum over height-truncated nontrivial zeros. -/
+lemma nontrivialZerosFinset_pair_sum_nonnegative_of_resolventLaplaceKernelCombo
+    (T : ℝ) (K : Finset ℕ) (w a : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k) :
+    0 ≤
+      ∑ ρ ∈ nontrivialZerosFinset T,
+        ((resolventLaplaceKernelCombo K w a ρ).re +
+          (resolventLaplaceKernelCombo K w a (1 - ρ)).re) :=
+  nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive_one
+    T (resolventLaplaceKernelCombo K w a)
+    (laplacePairPositive_one_resolventLaplaceKernelCombo hw ha)
+
+/-- Finite nonnegative resolvent/Laplace combinations give a nonnegative
+paired average over height-truncated nontrivial zeros. -/
+lemma nontrivialZerosFinset_pair_average_nonnegative_of_resolventLaplaceKernelCombo
+    (T : ℝ) (K : Finset ℕ) (w a : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset T,
+        ((resolventLaplaceKernelCombo K w a ρ).re +
+          (resolventLaplaceKernelCombo K w a (1 - ρ)).re)) /
+        (((nontrivialZerosFinset T).card : ℝ)) :=
+  nontrivialZerosFinset_pair_average_nonnegative_of_laplace_pair_positive_one
+    T (resolventLaplaceKernelCombo K w a)
+    (laplacePairPositive_one_resolventLaplaceKernelCombo hw ha)
+
 /-- Finite nonnegative affine resolvent/Laplace combinations give a
 nonnegative real-part sum over height-truncated nontrivial zeros. -/
 lemma nontrivialZerosFinset_sum_re_nonnegative_of_affineResolventLaplaceKernelCombo
@@ -4754,6 +4901,37 @@ lemma nontrivialZerosFinset_average_re_nonnegative_of_affineResolventLaplaceKern
   nontrivialZerosFinset_average_re_nonnegative_of_re_nonnegative_on_critical_strip
     T (affineResolventLaplaceKernelCombo K w a b c)
     (affineResolventLaplaceKernelCombo_re_nonnegative_on_critical_strip
+      hw ha hb hc)
+
+/-- Finite nonnegative affine resolvent/Laplace combinations give a
+nonnegative paired sum over height-truncated nontrivial zeros. -/
+lemma nontrivialZerosFinset_pair_sum_nonnegative_of_affineResolventLaplaceKernelCombo
+    (T : ℝ) (K : Finset ℕ) (w a b c : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k) (hc : ∀ k ∈ K, 0 ≤ c k) :
+    0 ≤
+      ∑ ρ ∈ nontrivialZerosFinset T,
+        ((affineResolventLaplaceKernelCombo K w a b c ρ).re +
+          (affineResolventLaplaceKernelCombo K w a b c (1 - ρ)).re) :=
+  nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive_one
+    T (affineResolventLaplaceKernelCombo K w a b c)
+    (laplacePairPositive_one_affineResolventLaplaceKernelCombo
+      hw ha hb hc)
+
+/-- Finite nonnegative affine resolvent/Laplace combinations give a
+nonnegative paired average over height-truncated nontrivial zeros. -/
+lemma nontrivialZerosFinset_pair_average_nonnegative_of_affineResolventLaplaceKernelCombo
+    (T : ℝ) (K : Finset ℕ) (w a b c : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k) (hc : ∀ k ∈ K, 0 ≤ c k) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset T,
+        ((affineResolventLaplaceKernelCombo K w a b c ρ).re +
+          (affineResolventLaplaceKernelCombo K w a b c (1 - ρ)).re)) /
+        (((nontrivialZerosFinset T).card : ℝ)) :=
+  nontrivialZerosFinset_pair_average_nonnegative_of_laplace_pair_positive_one
+    T (affineResolventLaplaceKernelCombo K w a b c)
+    (laplacePairPositive_one_affineResolventLaplaceKernelCombo
       hw ha hb hc)
 
 lemma nontrivialZerosFinset_ext_of_height_iff {T U : ℝ}

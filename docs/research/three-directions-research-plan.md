@@ -102,20 +102,20 @@ Verified assets now include:
 - generic finite nonnegative kernel-combination closure:
   `weightedKernelCombo`,
   `laplacePairPositive_weightedKernelCombo`, and the corresponding full/new-zero
-  sum and average nonnegativity wrappers.
+  sum, average, paired-sum, and paired-average nonnegativity wrappers.
 - a concrete resolvent/Laplace prototype kernel
   `resolventLaplaceKernel a z = ((a : Complex) + z)⁻¹`, with right-half-plane
   real-part positivity, center-one pair positivity, and finite-zero/new-zero
   sum and average nonnegativity wrappers for every `a >= 0`.
 - finite nonnegative combinations of those prototype kernels,
   `resolventLaplaceKernelCombo`, with the same right-half-plane positivity,
-  pair-positivity, and finite-zero/new-zero sum and average nonnegativity
-  wrappers.
+  pair-positivity, and finite-zero/new-zero sum, average, paired-sum, and
+  paired-average nonnegativity wrappers.
 - affine resolvent/Laplace prototype kernels
   `affineResolventLaplaceKernel a b c z = (a + (b + c * z))⁻¹` and finite
   combinations `affineResolventLaplaceKernelCombo`, with right-half-plane
-  positivity, center-one pair positivity, and full/new-zero sum and average
-  nonnegativity wrappers for both the single-kernel and finite-combination
+  positivity, center-one pair positivity, and full/new-zero sum, average,
+  paired-sum, and paired-average nonnegativity wrappers for finite-combination
   forms whenever the weights and affine parameters are nonnegative.
 
 Important boundary:

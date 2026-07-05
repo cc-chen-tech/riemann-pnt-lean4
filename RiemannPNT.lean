@@ -2731,6 +2731,35 @@ theorem nontrivialZerosFinset_sdiff_average_re_nonnegative_of_weightedKernelComb
   PrimeNumberTheorem.nontrivialZerosFinset_sdiff_average_re_nonnegative_of_weightedKernelCombo
     T U K w F hw hF
 
+/-- Public new-zero paired-sum nonnegativity for finite nonnegative
+real-weighted kernel combinations. -/
+theorem nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_weightedKernelCombo
+    (T U : ℝ) (K : Finset ℕ) (w : ℕ → ℝ) (F : ℕ → ℂ → ℂ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hF : ∀ k ∈ K, PrimeNumberTheorem.LaplacePairPositive (F k) 1) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+        PrimeNumberTheorem.nontrivialZerosFinset T,
+      ((weightedKernelCombo K w F ρ).re +
+        (weightedKernelCombo K w F (1 - ρ)).re) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_weightedKernelCombo
+    T U K w F hw hF
+
+/-- Public new-zero paired-average nonnegativity for finite nonnegative
+real-weighted kernel combinations. -/
+theorem nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_weightedKernelCombo
+    (T U : ℝ) (K : Finset ℕ) (w : ℕ → ℝ) (F : ℕ → ℂ → ℂ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hF : ∀ k ∈ K, PrimeNumberTheorem.LaplacePairPositive (F k) 1) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T,
+        ((weightedKernelCombo K w F ρ).re +
+          (weightedKernelCombo K w F (1 - ρ)).re)) /
+        (((PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ)) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_weightedKernelCombo
+    T U K w F hw hF
+
 /-- Public new-zero real-part sum nonnegativity for the resolvent/Laplace
 prototype kernel. -/
 theorem nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_resolventLaplaceKernel
@@ -2802,6 +2831,33 @@ theorem nontrivialZerosFinset_sdiff_average_re_nonnegative_of_resolventLaplaceKe
   PrimeNumberTheorem.nontrivialZerosFinset_sdiff_average_re_nonnegative_of_resolventLaplaceKernelCombo
     T U K w a hw ha
 
+/-- Public new-zero paired-sum nonnegativity for finite nonnegative
+resolvent/Laplace kernel combinations. -/
+theorem nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_resolventLaplaceKernelCombo
+    (T U : ℝ) (K : Finset ℕ) (w a : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+        PrimeNumberTheorem.nontrivialZerosFinset T,
+      ((resolventLaplaceKernelCombo K w a ρ).re +
+        (resolventLaplaceKernelCombo K w a (1 - ρ)).re) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_resolventLaplaceKernelCombo
+    T U K w a hw ha
+
+/-- Public new-zero paired-average nonnegativity for finite nonnegative
+resolvent/Laplace kernel combinations. -/
+theorem nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_resolventLaplaceKernelCombo
+    (T U : ℝ) (K : Finset ℕ) (w a : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T,
+        ((resolventLaplaceKernelCombo K w a ρ).re +
+          (resolventLaplaceKernelCombo K w a (1 - ρ)).re)) /
+        (((PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ)) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_resolventLaplaceKernelCombo
+    T U K w a hw ha
+
 /-- Public new-zero real-part sum nonnegativity for finite nonnegative affine
 resolvent/Laplace kernel combinations. -/
 theorem nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_affineResolventLaplaceKernelCombo
@@ -2827,6 +2883,35 @@ theorem nontrivialZerosFinset_sdiff_average_re_nonnegative_of_affineResolventLap
         (((PrimeNumberTheorem.nontrivialZerosFinset U \
           PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ)) :=
   PrimeNumberTheorem.nontrivialZerosFinset_sdiff_average_re_nonnegative_of_affineResolventLaplaceKernelCombo
+    T U K w a b c hw ha hb hc
+
+/-- Public new-zero paired-sum nonnegativity for finite nonnegative affine
+resolvent/Laplace kernel combinations. -/
+theorem nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_affineResolventLaplaceKernelCombo
+    (T U : ℝ) (K : Finset ℕ) (w a b c : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k) (hc : ∀ k ∈ K, 0 ≤ c k) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+        PrimeNumberTheorem.nontrivialZerosFinset T,
+      ((affineResolventLaplaceKernelCombo K w a b c ρ).re +
+        (affineResolventLaplaceKernelCombo K w a b c (1 - ρ)).re) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_affineResolventLaplaceKernelCombo
+    T U K w a b c hw ha hb hc
+
+/-- Public new-zero paired-average nonnegativity for finite nonnegative affine
+resolvent/Laplace kernel combinations. -/
+theorem nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_affineResolventLaplaceKernelCombo
+    (T U : ℝ) (K : Finset ℕ) (w a b c : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k) (hc : ∀ k ∈ K, 0 ≤ c k) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T,
+        ((affineResolventLaplaceKernelCombo K w a b c ρ).re +
+          (affineResolventLaplaceKernelCombo K w a b c (1 - ρ)).re)) /
+        (((PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ)) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_affineResolventLaplaceKernelCombo
     T U K w a b c hw ha hb hc
 
 /-- Public nonzero denominator fact for elements of the height-truncated
@@ -3037,6 +3122,32 @@ theorem nontrivialZerosFinset_average_re_nonnegative_of_weightedKernelCombo
   PrimeNumberTheorem.nontrivialZerosFinset_average_re_nonnegative_of_weightedKernelCombo
     T K w F hw hF
 
+/-- Public finite-zero paired-sum nonnegativity for finite nonnegative
+real-weighted kernel combinations. -/
+theorem nontrivialZerosFinset_pair_sum_nonnegative_of_weightedKernelCombo
+    (T : ℝ) (K : Finset ℕ) (w : ℕ → ℝ) (F : ℕ → ℂ → ℂ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hF : ∀ k ∈ K, PrimeNumberTheorem.LaplacePairPositive (F k) 1) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+      ((weightedKernelCombo K w F ρ).re +
+        (weightedKernelCombo K w F (1 - ρ)).re) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_pair_sum_nonnegative_of_weightedKernelCombo
+    T K w F hw hF
+
+/-- Public finite-zero paired-average nonnegativity for finite nonnegative
+real-weighted kernel combinations. -/
+theorem nontrivialZerosFinset_pair_average_nonnegative_of_weightedKernelCombo
+    (T : ℝ) (K : Finset ℕ) (w : ℕ → ℝ) (F : ℕ → ℂ → ℂ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hF : ∀ k ∈ K, PrimeNumberTheorem.LaplacePairPositive (F k) 1) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+        ((weightedKernelCombo K w F ρ).re +
+          (weightedKernelCombo K w F (1 - ρ)).re)) /
+        ((PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_pair_average_nonnegative_of_weightedKernelCombo
+    T K w F hw hF
+
 /-- Public finite-zero real-part sum nonnegativity for the resolvent/Laplace
 prototype kernel. -/
 theorem nontrivialZerosFinset_sum_re_nonnegative_of_resolventLaplaceKernel
@@ -3099,6 +3210,30 @@ theorem nontrivialZerosFinset_average_re_nonnegative_of_resolventLaplaceKernelCo
   PrimeNumberTheorem.nontrivialZerosFinset_average_re_nonnegative_of_resolventLaplaceKernelCombo
     T K w a hw ha
 
+/-- Public finite-zero paired-sum nonnegativity for finite nonnegative
+resolvent/Laplace kernel combinations. -/
+theorem nontrivialZerosFinset_pair_sum_nonnegative_of_resolventLaplaceKernelCombo
+    (T : ℝ) (K : Finset ℕ) (w a : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+      ((resolventLaplaceKernelCombo K w a ρ).re +
+        (resolventLaplaceKernelCombo K w a (1 - ρ)).re) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_pair_sum_nonnegative_of_resolventLaplaceKernelCombo
+    T K w a hw ha
+
+/-- Public finite-zero paired-average nonnegativity for finite nonnegative
+resolvent/Laplace kernel combinations. -/
+theorem nontrivialZerosFinset_pair_average_nonnegative_of_resolventLaplaceKernelCombo
+    (T : ℝ) (K : Finset ℕ) (w a : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+        ((resolventLaplaceKernelCombo K w a ρ).re +
+          (resolventLaplaceKernelCombo K w a (1 - ρ)).re)) /
+        ((PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_pair_average_nonnegative_of_resolventLaplaceKernelCombo
+    T K w a hw ha
+
 /-- Public finite-zero real-part sum nonnegativity for finite nonnegative
 affine resolvent/Laplace kernel combinations. -/
 theorem nontrivialZerosFinset_sum_re_nonnegative_of_affineResolventLaplaceKernelCombo
@@ -3121,6 +3256,32 @@ theorem nontrivialZerosFinset_average_re_nonnegative_of_affineResolventLaplaceKe
         (affineResolventLaplaceKernelCombo K w a b c ρ).re) /
         ((PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ) :=
   PrimeNumberTheorem.nontrivialZerosFinset_average_re_nonnegative_of_affineResolventLaplaceKernelCombo
+    T K w a b c hw ha hb hc
+
+/-- Public finite-zero paired-sum nonnegativity for finite nonnegative
+affine resolvent/Laplace kernel combinations. -/
+theorem nontrivialZerosFinset_pair_sum_nonnegative_of_affineResolventLaplaceKernelCombo
+    (T : ℝ) (K : Finset ℕ) (w a b c : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k) (hc : ∀ k ∈ K, 0 ≤ c k) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+      ((affineResolventLaplaceKernelCombo K w a b c ρ).re +
+        (affineResolventLaplaceKernelCombo K w a b c (1 - ρ)).re) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_pair_sum_nonnegative_of_affineResolventLaplaceKernelCombo
+    T K w a b c hw ha hb hc
+
+/-- Public finite-zero paired-average nonnegativity for finite nonnegative
+affine resolvent/Laplace kernel combinations. -/
+theorem nontrivialZerosFinset_pair_average_nonnegative_of_affineResolventLaplaceKernelCombo
+    (T : ℝ) (K : Finset ℕ) (w a b c : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k) (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k) (hc : ∀ k ∈ K, 0 ≤ c k) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+        ((affineResolventLaplaceKernelCombo K w a b c ρ).re +
+          (affineResolventLaplaceKernelCombo K w a b c (1 - ρ)).re)) /
+        ((PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_pair_average_nonnegative_of_affineResolventLaplaceKernelCombo
     T K w a b c hw ha hb hc
 
 /-- Public extensionality criterion for height-truncated nontrivial-zero

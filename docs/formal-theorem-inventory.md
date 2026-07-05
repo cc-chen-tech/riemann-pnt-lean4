@@ -1693,6 +1693,12 @@ Core verified declarations:
   `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_weightedKernelCombo`
   specialize that generic weighted-combination closure to full finite-zero and
   new-zero contribution sums and averages.
+- `nontrivialZerosFinset_pair_sum_nonnegative_of_weightedKernelCombo`,
+  `nontrivialZerosFinset_pair_average_nonnegative_of_weightedKernelCombo`,
+  `nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_weightedKernelCombo`, and
+  `nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_weightedKernelCombo`
+  expose the paired-sum and paired-average variants for the same finite
+  nonnegative weighted combinations.
 - `resolventLaplaceKernel`,
   `resolventLaplaceKernel_re_nonnegative_of_nonneg_re`,
   `resolventLaplaceKernel_re_nonnegative_on_critical_strip`,
@@ -1722,6 +1728,13 @@ Core verified declarations:
   `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_resolventLaplaceKernelCombo`
   specialize those finite nonnegative combinations to the full finite-zero and
   new-zero contribution sums and averages.
+- `nontrivialZerosFinset_pair_sum_nonnegative_of_resolventLaplaceKernelCombo`,
+  `nontrivialZerosFinset_pair_average_nonnegative_of_resolventLaplaceKernelCombo`,
+  `nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_resolventLaplaceKernelCombo`,
+  and
+  `nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_resolventLaplaceKernelCombo`
+  expose the paired contribution versions for those finite resolvent/Laplace
+  combinations.
 - `affineResolventLaplaceKernel`,
   `affineResolventLaplaceKernel_re_nonnegative_of_nonneg_re`,
   `affineResolventLaplaceKernel_re_nonnegative_on_critical_strip`,
@@ -1750,6 +1763,13 @@ Core verified declarations:
   `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_affineResolventLaplaceKernelCombo`
   specialize those affine finite nonnegative combinations to the full
   finite-zero and new-zero contribution sums and averages.
+- `nontrivialZerosFinset_pair_sum_nonnegative_of_affineResolventLaplaceKernelCombo`,
+  `nontrivialZerosFinset_pair_average_nonnegative_of_affineResolventLaplaceKernelCombo`,
+  `nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_affineResolventLaplaceKernelCombo`,
+  and
+  `nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_affineResolventLaplaceKernelCombo`
+  expose the paired contribution versions for those finite affine
+  resolvent/Laplace combinations.
 - `norm_finiteNontrivialZeroSum_sub_le_new_zeros_sum_norm`
   bounds the finite zero-sum change between two truncation heights by the
   summed norms of the newly included zero contributions, a direct finite
