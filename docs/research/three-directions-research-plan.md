@@ -197,6 +197,15 @@ Verified assets now include:
 - the public vertical-line and power-error route predicates:
   `NoZerosOnVerticalLine`, `PsiPowerErrorBelowTwoThirds`,
   `PsiPowerErrorBelowLine`, and `ExplicitFormulaConversePowerTarget`;
+- input constructors for power-scale `ψ` error hypotheses:
+  `psiPowerErrorBound_of_eventual_abs_bound`,
+  `psiPowerErrorBound_of_pointwise`,
+  `psiPowerErrorBelowLine_of_eventual_abs_bound`,
+  `psiPowerErrorBelowLine_of_pointwise`,
+  `psiPowerErrorBelowTwoThirds_of_eventual_abs_bound`, and
+  `psiPowerErrorBelowTwoThirds_of_pointwise`.  These let a future analytic
+  estimate of the form `|ψ(x)-x| <= C*x^theta` feed the route predicates
+  directly.
 - the `1/3`/`2/3` reflection equivalence
   `exists_nontrivial_zero_on_one_third_iff_two_thirds`;
 - direct conditional bridges from RH, a zero-free right half-plane
@@ -246,8 +255,10 @@ truncation.  The global-height variants are route interfaces, not realistic
 unconditional inputs for zeta zeros.  They do not prove Perron's formula,
 contour shifting, or the converse/oscillation theorem turning
 `psi(x) - x = O(x^(beta - delta))` into zero exclusion.  The current Lean value
-is that the formal path from any such future input at `beta = 2/3` to the
-claimed `Re(s)=1/3` exclusion is now explicit and smoke-checked.
+is that both sides of the formal path are now explicit and smoke-checked: a
+future `|ψ(x)-x| <= C*x^theta` estimate can enter as a route predicate, and any
+future converse input at `beta = 2/3` then feeds the claimed `Re(s)=1/3`
+exclusion.
 
 ## Hard Gaps
 

@@ -1978,6 +1978,15 @@ Core verified declarations:
   `PsiPowerErrorBelowTwoThirdsExcludesLineTwoThirds`
   package a concrete Chebyshev-`psi` power-error version of that future
   converse-explicit-formula input.
+- `psiPowerErrorBound_of_eventual_abs_bound`,
+  `psiPowerErrorBound_of_pointwise`,
+  `psiPowerErrorBelowLine_of_eventual_abs_bound`,
+  `psiPowerErrorBelowLine_of_pointwise`,
+  `psiPowerErrorBelowTwoThirds_of_eventual_abs_bound`, and
+  `psiPowerErrorBelowTwoThirds_of_pointwise`
+  turn eventual or pointwise estimates
+  `|chebyshevPsi x - x| <= C * x^theta` into the corresponding power-error
+  route predicates.
 - `no_zeros_on_one_third_of_psi_power_error_below_two_thirds_bridge`
   specializes the abstract strong-PNT-error bridge to the `psi` power-error
   interface.

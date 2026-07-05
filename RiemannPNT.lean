@@ -2654,9 +2654,45 @@ abbrev NoZerosOnVerticalLine (σ : ℝ) : Prop :=
 abbrev PsiPowerErrorBound (θ : ℝ) : Prop :=
   PrimeNumberTheorem.PsiPowerErrorBound θ
 
+/-- Public constructor from an eventual absolute-value estimate to the
+power-scale Chebyshev-`ψ` Big-O predicate. -/
+theorem psiPowerErrorBound_of_eventual_abs_bound {θ C : ℝ}
+    (h : ∀ᶠ x in atTop,
+      |PrimeNumberTheorem.chebyshevPsi x - x| ≤ C * x ^ θ) :
+    PrimeNumberTheorem.PsiPowerErrorBound θ :=
+  PrimeNumberTheorem.psiPowerErrorBound_of_eventual_abs_bound h
+
+/-- Public constructor from a pointwise tail estimate to the power-scale
+Chebyshev-`ψ` Big-O predicate. -/
+theorem psiPowerErrorBound_of_pointwise {θ C X : ℝ}
+    (h : ∀ x ≥ X,
+      |PrimeNumberTheorem.chebyshevPsi x - x| ≤ C * x ^ θ) :
+    PrimeNumberTheorem.PsiPowerErrorBound θ :=
+  PrimeNumberTheorem.psiPowerErrorBound_of_pointwise h
+
 /-- Public concrete `ψ` error input below the `2/3` barrier. -/
 abbrev PsiPowerErrorBelowTwoThirds : Prop :=
   PrimeNumberTheorem.PsiPowerErrorBelowTwoThirds
+
+/-- Public constructor for the concrete below-`2/3` `ψ`-power-error input
+from an eventual absolute-value estimate. -/
+theorem psiPowerErrorBelowTwoThirds_of_eventual_abs_bound
+    {θ C : ℝ} (hθ_nonneg : 0 ≤ θ) (hθ_lt : θ < (2 / 3 : ℝ))
+    (h : ∀ᶠ x in atTop,
+      |PrimeNumberTheorem.chebyshevPsi x - x| ≤ C * x ^ θ) :
+    PrimeNumberTheorem.PsiPowerErrorBelowTwoThirds :=
+  PrimeNumberTheorem.psiPowerErrorBelowTwoThirds_of_eventual_abs_bound
+    hθ_nonneg hθ_lt h
+
+/-- Public constructor for the concrete below-`2/3` `ψ`-power-error input
+from a pointwise tail estimate. -/
+theorem psiPowerErrorBelowTwoThirds_of_pointwise
+    {θ C X : ℝ} (hθ_nonneg : 0 ≤ θ) (hθ_lt : θ < (2 / 3 : ℝ))
+    (h : ∀ x ≥ X,
+      |PrimeNumberTheorem.chebyshevPsi x - x| ≤ C * x ^ θ) :
+    PrimeNumberTheorem.PsiPowerErrorBelowTwoThirds :=
+  PrimeNumberTheorem.psiPowerErrorBelowTwoThirds_of_pointwise
+    hθ_nonneg hθ_lt h
 
 /-- Public concrete converse interface: the `ψ` error below `2/3` excludes
 nontrivial zeros on `Re(s)=2/3`. -/
@@ -2666,6 +2702,25 @@ abbrev PsiPowerErrorBelowTwoThirdsExcludesLineTwoThirds : Prop :=
 /-- Public general power-saving `ψ` error below a boundary line. -/
 abbrev PsiPowerErrorBelowLine (β : ℝ) : Prop :=
   PrimeNumberTheorem.PsiPowerErrorBelowLine β
+
+/-- Public constructor for the general below-line `ψ`-power-error input from
+an eventual absolute-value estimate. -/
+theorem psiPowerErrorBelowLine_of_eventual_abs_bound
+    {β θ C : ℝ} (hθ_nonneg : 0 ≤ θ) (hθ_lt : θ < β)
+    (h : ∀ᶠ x in atTop,
+      |PrimeNumberTheorem.chebyshevPsi x - x| ≤ C * x ^ θ) :
+    PrimeNumberTheorem.PsiPowerErrorBelowLine β :=
+  PrimeNumberTheorem.psiPowerErrorBelowLine_of_eventual_abs_bound
+    hθ_nonneg hθ_lt h
+
+/-- Public constructor for the general below-line `ψ`-power-error input from
+a pointwise tail estimate. -/
+theorem psiPowerErrorBelowLine_of_pointwise
+    {β θ C X : ℝ} (hθ_nonneg : 0 ≤ θ) (hθ_lt : θ < β)
+    (h : ∀ x ≥ X,
+      |PrimeNumberTheorem.chebyshevPsi x - x| ≤ C * x ^ θ) :
+    PrimeNumberTheorem.PsiPowerErrorBelowLine β :=
+  PrimeNumberTheorem.psiPowerErrorBelowLine_of_pointwise hθ_nonneg hθ_lt h
 
 /-- Public bridge from the concrete `θ < 2/3` `ψ`-error input to the general
 below-line predicate at `β = 2/3`. -/

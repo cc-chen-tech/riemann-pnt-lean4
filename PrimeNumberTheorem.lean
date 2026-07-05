@@ -3403,10 +3403,51 @@ theorem no_zeros_on_one_third_of_strong_pnt_error_bridge
 abbrev PsiPowerErrorBound (θ : ℝ) : Prop :=
   (fun x : ℝ => chebyshevPsi x - x) =O[atTop] (fun x : ℝ => x ^ θ)
 
+/-- An eventual absolute-value estimate closes the power-scale
+Chebyshev-`ψ` Big-O predicate. -/
+theorem psiPowerErrorBound_of_eventual_abs_bound {θ C : ℝ}
+    (h : ∀ᶠ x in atTop,
+      |chebyshevPsi x - x| ≤ C * x ^ θ) :
+    PsiPowerErrorBound θ := by
+  rw [PsiPowerErrorBound]
+  refine Asymptotics.IsBigO.of_bound C ?_
+  filter_upwards [h, eventually_ge_atTop (0 : ℝ)] with x hx hx_nonneg
+  have hscale_nonneg : 0 ≤ x ^ θ := Real.rpow_nonneg hx_nonneg θ
+  simpa [Real.norm_eq_abs, abs_of_nonneg hscale_nonneg] using hx
+
+/-- A pointwise eventual-tail estimate closes the power-scale Chebyshev-`ψ`
+Big-O predicate. -/
+theorem psiPowerErrorBound_of_pointwise {θ C X : ℝ}
+    (h : ∀ x ≥ X, |chebyshevPsi x - x| ≤ C * x ^ θ) :
+    PsiPowerErrorBound θ :=
+  psiPowerErrorBound_of_eventual_abs_bound (by
+    filter_upwards [eventually_ge_atTop X] with x hx
+    exact h x hx)
+
 /-- A concrete form of the proposed strong PNT-error input: some power saving
 strictly below the `2 / 3` barrier for `ψ(x) - x`. -/
 abbrev PsiPowerErrorBelowTwoThirds : Prop :=
   ∃ θ : ℝ, 0 ≤ θ ∧ θ < (2 / 3 : ℝ) ∧ PsiPowerErrorBound θ
+
+/-- Build the concrete below-`2/3` `ψ`-power-error input from an eventual
+absolute-value estimate with exponent strictly below `2/3`. -/
+theorem psiPowerErrorBelowTwoThirds_of_eventual_abs_bound
+    {θ C : ℝ} (hθ_nonneg : 0 ≤ θ) (hθ_lt : θ < (2 / 3 : ℝ))
+    (h : ∀ᶠ x in atTop,
+      |chebyshevPsi x - x| ≤ C * x ^ θ) :
+    PsiPowerErrorBelowTwoThirds :=
+  ⟨θ, hθ_nonneg, hθ_lt, psiPowerErrorBound_of_eventual_abs_bound h⟩
+
+/-- Build the concrete below-`2/3` `ψ`-power-error input from a pointwise
+tail estimate with exponent strictly below `2/3`. -/
+theorem psiPowerErrorBelowTwoThirds_of_pointwise
+    {θ C X : ℝ} (hθ_nonneg : 0 ≤ θ) (hθ_lt : θ < (2 / 3 : ℝ))
+    (h : ∀ x ≥ X, |chebyshevPsi x - x| ≤ C * x ^ θ) :
+    PsiPowerErrorBelowTwoThirds :=
+  psiPowerErrorBelowTwoThirds_of_eventual_abs_bound hθ_nonneg hθ_lt
+    (by
+      filter_upwards [eventually_ge_atTop X] with x hx
+      exact h x hx)
 
 /-- Route interface for the converse explicit-formula step:
 `ψ(x) - x = O(x ^ θ)` for some `θ < 2 / 3` rules out nontrivial zeros on
@@ -3442,6 +3483,26 @@ theorem no_zeros_on_two_thirds_of_psi_power_error_below_two_thirds_bridge
 /-- General power-saving `ψ` error below a real boundary line. -/
 abbrev PsiPowerErrorBelowLine (β : ℝ) : Prop :=
   ∃ θ : ℝ, 0 ≤ θ ∧ θ < β ∧ PsiPowerErrorBound θ
+
+/-- Build the general below-line `ψ`-power-error input from an eventual
+absolute-value estimate. -/
+theorem psiPowerErrorBelowLine_of_eventual_abs_bound
+    {β θ C : ℝ} (hθ_nonneg : 0 ≤ θ) (hθ_lt : θ < β)
+    (h : ∀ᶠ x in atTop,
+      |chebyshevPsi x - x| ≤ C * x ^ θ) :
+    PsiPowerErrorBelowLine β :=
+  ⟨θ, hθ_nonneg, hθ_lt, psiPowerErrorBound_of_eventual_abs_bound h⟩
+
+/-- Build the general below-line `ψ`-power-error input from a pointwise
+tail estimate. -/
+theorem psiPowerErrorBelowLine_of_pointwise
+    {β θ C X : ℝ} (hθ_nonneg : 0 ≤ θ) (hθ_lt : θ < β)
+    (h : ∀ x ≥ X, |chebyshevPsi x - x| ≤ C * x ^ θ) :
+    PsiPowerErrorBelowLine β :=
+  psiPowerErrorBelowLine_of_eventual_abs_bound hθ_nonneg hθ_lt
+    (by
+      filter_upwards [eventually_ge_atTop X] with x hx
+      exact h x hx)
 
 /-- The concrete `θ < 2/3` `ψ`-error input is the specialization of the
 general below-line predicate at `β = 2/3`. -/

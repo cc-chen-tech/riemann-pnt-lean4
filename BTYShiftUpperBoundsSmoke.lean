@@ -429,9 +429,15 @@ import RiemannPNT
 #check RiemannPNT.API.nontrivialZerosFinset_sdiff_average_re_nonnegative_of_affineResolventLaplaceKernelCombo
 #check RiemannPNT.API.NoZerosOnVerticalLine
 #check RiemannPNT.API.PsiPowerErrorBound
+#check RiemannPNT.API.psiPowerErrorBound_of_eventual_abs_bound
+#check RiemannPNT.API.psiPowerErrorBound_of_pointwise
 #check RiemannPNT.API.PsiPowerErrorBelowTwoThirds
+#check RiemannPNT.API.psiPowerErrorBelowTwoThirds_of_eventual_abs_bound
+#check RiemannPNT.API.psiPowerErrorBelowTwoThirds_of_pointwise
 #check RiemannPNT.API.PsiPowerErrorBelowTwoThirdsExcludesLineTwoThirds
 #check RiemannPNT.API.PsiPowerErrorBelowLine
+#check RiemannPNT.API.psiPowerErrorBelowLine_of_eventual_abs_bound
+#check RiemannPNT.API.psiPowerErrorBelowLine_of_pointwise
 #check RiemannPNT.API.psiPowerErrorBelowLine_two_thirds_of_below_two_thirds
 #check RiemannPNT.API.psiPowerErrorBelowLine_mono
 #check RiemannPNT.API.psiPowerErrorBelowLine_of_below_two_thirds_of_two_thirds_le
