@@ -788,11 +788,12 @@ do not prove the AFE itself; they make the future analytic estimate easier to
 plug into the current target.
 
 On the zero-counting side of the Hardy chain, the repository now also proves
-that if the critical-line zero set has codiscrete complement, then every
-absolute-height window contains only finitely many such zeros.  This discharges
-the bounded-strip finiteness input in the existing Hardy target bridges, but it
-is still conditional on the codiscrete zero-set hypothesis and does not prove
-Hardy's theorem unconditionally.
+that if the critical-line zeta zero set, or equivalently the Hardy-Z zero set,
+has codiscrete complement, then every absolute-height window contains only
+finitely many such zeros.  This discharges the bounded-strip finiteness input
+in the existing Hardy target bridges, but it is still conditional on the
+codiscrete zero-set hypothesis and does not prove Hardy's theorem
+unconditionally.
 
 The four missing analytic chains are:
 

@@ -15142,6 +15142,14 @@ theorem critical_line_zeta_zero_bounded_finite_of_codiscrete
       riemannZeta (0.5 + Complex.I * t) = 0}.Finite :=
   HardyTheorem.critical_line_zeta_zero_bounded_finite_of_codiscrete hcod B
 
+/-- Public codiscrete-zero-set bridge to bounded Hardy-Z zero windows. -/
+theorem hardyZ_zero_bounded_finite_of_codiscrete
+    (hcod : {t : ℝ | HardyTheorem.hardyZ t = 0}ᶜ ∈
+      Filter.codiscrete ℝ)
+    (B : ℝ) :
+    {t : ℝ | |t| ≤ B ∧ HardyTheorem.hardyZ t = 0}.Finite :=
+  HardyTheorem.hardyZ_zero_bounded_finite_of_codiscrete hcod B
+
 /-- Public codiscrete-zero-set version of the equivalence between Hardy's
 infinite-zero target and absolute-height unbounded critical-line zeros. -/
 theorem hardy_theorem_target_iff_abs_unbounded_of_codiscrete
@@ -15229,6 +15237,16 @@ theorem hardy_zeros_unbounded_of_integral_asymptotic_one_two_of_codiscrete
     HardyTheorem.hardy_zeros_unbounded_target :=
   HardyTheorem.hardy_zeros_unbounded_of_integral_asymptotic_one_two_of_codiscrete
     hcod h1 h2
+
+/-- Public codiscrete Hardy-Z zero-set version of the absolute-height
+Hardy-Z unbounded equivalence. -/
+theorem hardy_theorem_target_iff_hardyZ_abs_unbounded_of_hardyZ_codiscrete
+    (hcod : {t : ℝ | HardyTheorem.hardyZ t = 0}ᶜ ∈
+      Filter.codiscrete ℝ) :
+    HardyTheorem.hardy_theorem_target ↔
+      ∀ T : ℝ, ∃ t : ℝ, T ≤ |t| ∧ HardyTheorem.hardyZ t = 0 :=
+  HardyTheorem.hardy_theorem_target_iff_hardyZ_abs_unbounded_of_hardyZ_codiscrete
+    hcod
 
 /-- Public bridge from Hardy's infinite-zero target to arbitrarily large
 absolute-height critical-line zeros. -/

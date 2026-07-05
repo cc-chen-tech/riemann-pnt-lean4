@@ -2074,8 +2074,10 @@ Core verified declarations:
 - `hardy_zeros_abs_unbounded_of_two_signed_moments_of_bounded_strips`
 - `finite_abs_le_inter_of_compl_mem_codiscrete`
 - `critical_line_zeta_zero_bounded_finite_of_codiscrete`
+- `hardyZ_zero_bounded_finite_of_codiscrete`
 - `hardy_theorem_target_iff_abs_unbounded_of_codiscrete`
 - `hardy_theorem_target_iff_unbounded_of_codiscrete`
+- `hardy_theorem_target_iff_hardyZ_abs_unbounded_of_hardyZ_codiscrete`
 - `hardy_zeros_abs_unbounded_of_hardy_theorem_target_of_codiscrete`
 - `hardy_zeros_unbounded_of_hardy_theorem_target_of_codiscrete`
 - `hardy_zeros_abs_unbounded_of_two_signed_moments_of_codiscrete`
@@ -2094,9 +2096,9 @@ These prove the local Hardy-Z setup and the equivalence between zeros of
 from the signed-moment targets to Hardy's infinite and unbounded-height zero
 interfaces.  They do not prove Hardy's theorem unconditionally; the moment
 estimates needed for Hardy's theorem remain targets.  The codiscrete variants
-show that a codiscrete-complement hypothesis for the critical-line zero set is
-enough to supply the bounded-window finiteness input in these conditional
-bridges.
+show that a codiscrete-complement hypothesis for either the critical-line zeta
+zero set or the Hardy-Z zero set is enough to supply the bounded-window
+finiteness input in these conditional bridges.
 
 ### `GammaResidue.lean`
 

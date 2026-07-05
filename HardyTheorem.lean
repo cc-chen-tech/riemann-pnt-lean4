@@ -1248,6 +1248,13 @@ lemma critical_line_zeta_zero_bounded_finite_of_codiscrete
   finite_abs_le_inter_of_compl_mem_codiscrete
     (S := {t : ℝ | riemannZeta (0.5 + I * t) = 0}) hcod B
 
+lemma hardyZ_zero_bounded_finite_of_codiscrete
+    (hcod : {t : ℝ | hardyZ t = 0}ᶜ ∈ Filter.codiscrete ℝ)
+    (B : ℝ) :
+    {t : ℝ | |t| ≤ B ∧ hardyZ t = 0}.Finite :=
+  finite_abs_le_inter_of_compl_mem_codiscrete
+    (S := {t : ℝ | hardyZ t = 0}) hcod B
+
 lemma hardy_zeros_abs_unbounded_of_hardy_theorem_target_of_codiscrete
     (hcod :
       {t : ℝ | riemannZeta (0.5 + I * t) = 0}ᶜ ∈ Filter.codiscrete ℝ)
@@ -1417,6 +1424,13 @@ lemma hardy_zeros_unbounded_of_integral_asymptotic_one_two_of_codiscrete
     hardy_zeros_unbounded_target :=
   hardy_zeros_unbounded_of_integral_asymptotic_one_two_of_bounded_strips
     (critical_line_zeta_zero_bounded_finite_of_codiscrete hcod) h1 h2
+
+lemma hardy_theorem_target_iff_hardyZ_abs_unbounded_of_hardyZ_codiscrete
+    (hcod : {t : ℝ | hardyZ t = 0}ᶜ ∈ Filter.codiscrete ℝ) :
+    hardy_theorem_target ↔
+      ∀ T : ℝ, ∃ t : ℝ, T ≤ |t| ∧ hardyZ t = 0 :=
+  hardy_theorem_target_iff_hardyZ_abs_unbounded_of_hardyZ_bounded_strips
+    (hardyZ_zero_bounded_finite_of_codiscrete hcod)
 
 /-! ## 后续改进 -/
 
