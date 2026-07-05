@@ -136,8 +136,13 @@ For the vertical `logDeriv ζ` side specifically,
 patches the proved compact bounded-height norm bound with a future high-height
 affine logarithmic estimate on `‖z‖ + 3`, and
 `ZeroFreeRegion.logDerivVerticalLogBound_of_compact_band_and_high_height_affine_log_norm_add_three_bound`
-feeds the result into the named `LogDerivVerticalLogBound` interface.  This
-keeps the next hard target precise: prove the high-height zeta-specific
+feeds the result into the named `LogDerivVerticalLogBound` interface.  The
+signed pair
+`ZeroFreeRegion.exists_negLogDeriv_affine_log_norm_add_three_bound_on_verticalRegion_of_compact_band_and_high_height`
+and
+`ZeroFreeRegion.negLogDerivVerticalLogBound_of_compact_band_and_high_height_affine_log_norm_add_three_bound`
+does the same for the `-logDeriv ζ` convention used by 3-4-1.  This keeps the
+next hard target precise: prove the high-height zeta-specific
 affine/logarithmic estimate, not another compactness patch.
 
 The even more direct wrappers
