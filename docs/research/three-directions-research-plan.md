@@ -8,7 +8,7 @@ interfaces and small lemmas without overstating any unresolved analytic theorem.
 
 - Worktree: `/Users/luicy/AI/Riemann/.worktrees/riemann-three-directions-research`
 - Branch: `research/three-directions`
-- Current base: `0946b01 feat(zero-free): lift zeta growth handoff to circle averages`
+- Current base: `93589d2 feat(kernels): complete weighted resolvent zero-sum API`
 - Research work on this branch currently covers:
   - signed BTY detector/Borel facades;
   - center-one and general-center zero-pair bridges;
@@ -193,6 +193,11 @@ Verified assets now include:
   corresponding full/new-zero sum, average, paired-sum, and paired-average
   wrappers.  This gives a direct Lean surface for multi-term signed detector
   assemblies once each summand's Stechkin-style pair inequality is available.
+- finite weighted self-damped resolvent/Laplace combinations:
+  `laplacePairPositive_one_weightedSelfDampedResolventLaplaceKernelCombo`
+  and the corresponding full/new-zero sum, average, paired-sum, and
+  paired-average nonnegativity wrappers whenever all weights and shifts are
+  nonnegative and each damping coefficient is at most one.
 - finite nonnegative combinations of those prototype kernels,
   `resolventLaplaceKernelCombo`, with the same right-half-plane positivity,
   pair-positivity, and finite-zero/new-zero sum, average, paired-sum, and
@@ -218,8 +223,8 @@ weighted damped-kernel combination interface, and affine resolvent/Laplace
 prototype are real concrete suppliers for the finite-zero pairing API.  The
 combination wrappers match detectors built by summing positive elementary
 kernels; the damped interfaces additionally match Stechkin-style subtraction
-terms, including finite nonnegative sums of such signed terms. They are still
-not the full
+terms, including finite nonnegative sums of such signed terms and concrete
+weighted self-damped resolvent/Laplace combinations. They are still not the full
 Stechkin/Heath-Brown kernel used in the latest zero-free-region arguments. The
 next useful step is to formalize a nontrivial detector kernel from that
 literature and prove the concrete pair inequality needed by

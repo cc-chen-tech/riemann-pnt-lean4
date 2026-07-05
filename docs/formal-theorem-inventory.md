@@ -1932,6 +1932,18 @@ Core verified declarations:
   `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_weightedDampedKernelCombo_self_re_nonnegative`
   specialize the finite weighted damped-kernel package to the self-damped case
   `F k - (kappa k) * F k` under `kappa k <= 1`.
+- `laplacePairPositive_one_weightedSelfDampedResolventLaplaceKernelCombo`,
+  `nontrivialZerosFinset_pair_sum_nonnegative_of_weightedSelfDampedResolventLaplaceKernelCombo`,
+  `nontrivialZerosFinset_pair_average_nonnegative_of_weightedSelfDampedResolventLaplaceKernelCombo`,
+  `nontrivialZerosFinset_sum_re_nonnegative_of_weightedSelfDampedResolventLaplaceKernelCombo`,
+  `nontrivialZerosFinset_average_re_nonnegative_of_weightedSelfDampedResolventLaplaceKernelCombo`,
+  `nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_weightedSelfDampedResolventLaplaceKernelCombo`,
+  `nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_weightedSelfDampedResolventLaplaceKernelCombo`,
+  `nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_weightedSelfDampedResolventLaplaceKernelCombo`,
+  and
+  `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_weightedSelfDampedResolventLaplaceKernelCombo`
+  specialize the finite weighted self-damped package to concrete elementary
+  resolvent/Laplace kernels `resolventLaplaceKernel (a k)`.
 - `nontrivialZerosFinset_sum_re_nonnegative_of_symmetricResolventLaplaceKernelCombo`,
   `nontrivialZerosFinset_average_re_nonnegative_of_symmetricResolventLaplaceKernelCombo`,
   `nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_symmetricResolventLaplaceKernelCombo`,
