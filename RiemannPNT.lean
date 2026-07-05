@@ -7480,6 +7480,51 @@ theorem log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_right_shift_borel
   rw [hheight] at hupper
   exact hupper.trans (hBupper k hk)
 
+/-- Simplified-constant version of
+`log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_right_shift_borel_family`. -/
+theorem log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_right_shift_borel_family_simplified
+    {Are Bre Acenter Bcenter r H σ t Bupper : ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3)
+    (hHpos : 0 < H)
+    (hH : ∀ k, k ∈ btyDetectorSupport.erase 1 → H + 2 * r ≤ |(k : ℝ) * t|)
+    (ht : ∀ k, k ∈ btyDetectorSupport.erase 1 → 6 ≤ |(k : ℝ) * t|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hM : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) +
+          Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hlog : ∀ k, k ∈ btyDetectorSupport.erase 1 → ∀ w : ℂ,
+      w ∈ Metric.ball
+          (((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ))) (2 * r) →
+        (logDeriv riemannZeta w).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) +
+              Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hcenter : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      ‖logDeriv riemannZeta
+          (((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hBupper : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+        Real.log (‖((σ : ℂ) + (k : ℂ) * Complex.I * t)‖ + 3) ≤ Bupper) :
+    (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+      riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+      - ((3458648 : ℝ) / 2163835) * Bupper := by
+  have h :=
+    log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_right_shift_borel_family
+      hr hσ hσr hHpos hH ht hA hB hM hlog hcenter hBupper
+  have hconst :
+      - (((6917296 : ℝ) / 2485395) * Bupper) / btyDetectorCoeff 1 =
+        - ((3458648 : ℝ) / 2163835) * Bupper := by
+    rw [btyDetectorCoeff_one]
+    ring_nf
+  simpa [hconst] using h
+
 /-- Public signed version of
 `log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_right_shift_borel_family`. -/
 theorem log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_signed_right_shift_borel_family

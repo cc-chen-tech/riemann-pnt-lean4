@@ -1293,13 +1293,15 @@ Core verified declarations:
   specialize that composition to the checked BTY degree-16 detector and the
   selected `k = 1` term, discharging the BTY certificate and coefficient
   nonnegativity side conditions.
-- `RiemannPNT.API.log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_right_shift_borel_family`
+- `RiemannPNT.API.log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_right_shift_borel_family`,
+  `RiemannPNT.API.log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_right_shift_borel_family_simplified`,
   and
   `RiemannPNT.API.log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_signed_right_shift_borel_family`
   add a final uniform-bound comparison for the remaining BTY frequencies and
   use the computed sum
   `sum_{k in btyDetectorSupport.erase 1} btyDetectorCoeff k =
-  6917296 / 2485395`.
+  6917296 / 2485395`; the unsigned simplified facade rewrites the resulting
+  penalty as `3458648 / 2163835`.
 - `re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_logDeriv_re_le_half_radius`
   and
   `re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_neg_logDeriv_re_le_half_radius`
