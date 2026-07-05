@@ -123,7 +123,9 @@ bridges still do not provide the missing high-height boundary-strip estimate on
 now proved: `ZeroFreeRegion.log_norm_bound_of_polynomial_growth` and its
 zeta-specific coordinate forms convert
 `‖ζ(s)‖ <= A * (‖s‖ + 3)^B` into
-`log ‖ζ(s)‖ <= log A + B log(‖s‖ + 3)`.  They do not prove the missing
+`log ‖ζ(s)‖ <= log A + B log(‖s‖ + 3)`, and on the standard strip
+`1 <= σ <= 2`, `|t| >= 5`, further into
+`log ‖ζ(σ+it)‖ <= log A + 2B log(|t|+3)`.  They do not prove the missing
 polynomial growth estimate itself.  On the pole side, the local decomposition
 `logDeriv ζ(s) = -(s-1)^-1 + logDeriv(unit)(s)` is now proved near `s=1`,
 and the unit logarithmic derivative is locally bounded; this improves the

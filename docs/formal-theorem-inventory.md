@@ -993,6 +993,9 @@ Core verified declarations:
 - `log_norm_add_three_le_two_log_abs_im`
   is the corresponding complex-variable comparison in terms of
   `s.re` and `s.im`.
+- `log_norm_sigma_add_I_mul_add_three_le_two_log_abs_add_three`
+  gives the same coordinate comparison in the `log(|t|+3)` scale consumed by
+  high-height handoff lemmas.
 - `log_norm_bound_of_polynomial_growth`
   converts a pointwise polynomial-growth estimate
   `||f z|| <= A * (||z|| + 3)^B`, with `A >= 1` and `B >= 0`, into the
@@ -1003,6 +1006,9 @@ Core verified declarations:
   the high vertical region `T0 <= |Im z|`, `1 <= Re z <= 3`.
 - `log_norm_riemannZeta_sigma_it_le_affine_log_norm_add_three_of_polynomial_growth`
   is the coordinate form at points `sigma + i t`.
+- `log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_three_of_polynomial_growth`
+  combines the zeta polynomial-growth handoff with the height comparison to
+  produce the `log(|t|+3)` form on `1 <= sigma <= 2`.
 - `exists_re_im_logDeriv_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height`
   converts a future boundary-strip estimate
   `||logDeriv zeta (sigma+it)|| <= A + B log(||sigma+it||+3)` into

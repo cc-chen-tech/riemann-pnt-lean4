@@ -4424,6 +4424,21 @@ lemma log_norm_add_three_le_two_log_abs_im {s : ℂ}
     log_norm_sigma_add_I_mul_add_three_le_two_log_abs
       (σ := s.re) (t := s.im) hs_re hs_height
 
+/-- Variant of `log_norm_sigma_add_I_mul_add_three_le_two_log_abs` in the
+`log(|t|+3)` scale used by several high-height handoff lemmas. -/
+lemma log_norm_sigma_add_I_mul_add_three_le_two_log_abs_add_three
+    {σ t : ℝ} (hσ : σ ∈ Set.Icc 1 2) (ht : 5 ≤ |t|) :
+    Real.log (‖((σ : ℂ) + I * (t : ℂ))‖ + 3) ≤
+      2 * Real.log (|t| + 3) := by
+  have hbase :=
+    log_norm_sigma_add_I_mul_add_three_le_two_log_abs (σ := σ) (t := t) hσ ht
+  have ht_pos : 0 < |t| := lt_of_lt_of_le (by norm_num) ht
+  have hlog_mono : Real.log |t| ≤ Real.log (|t| + 3) := by
+    exact Real.log_le_log ht_pos (by linarith)
+  have htwice : 2 * Real.log |t| ≤ 2 * Real.log (|t| + 3) :=
+    mul_le_mul_of_nonneg_left hlog_mono (by norm_num)
+  exact le_trans hbase htwice
+
 /-- Convert a pointwise polynomial-growth estimate into the logarithmic growth
 scale used by Jensen and Borel-Carathéodory estimates.
 
@@ -4501,6 +4516,41 @@ lemma log_norm_riemannZeta_sigma_it_le_affine_log_norm_add_three_of_polynomial_g
     log_norm_riemannZeta_le_affine_log_norm_add_three_of_polynomial_growth
       (T0 := T0) (A := A) (B := B) hA hB hpoly
       ((σ : ℂ) + I * t) (by simpa using ht) (by simpa using hσ)
+
+/-- Coordinate zeta handoff from a future polynomial-growth estimate into the
+`log(|t|+3)` height scale on the standard strip `1 <= σ <= 2`.
+
+The only analytic input is the `hpoly` hypothesis; the proof itself is the
+already verified polynomial-to-log conversion plus the elementary comparison
+`log(‖σ+it‖+3) <= 2 log(|t|+3)` for `|t| >= 5`. -/
+lemma log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_three_of_polynomial_growth
+    {T0 A B : ℝ} (hT0 : 5 ≤ T0) (hA : 1 ≤ A) (hB : 0 ≤ B)
+    (hpoly : ∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc (1 : ℝ) 3 →
+      ‖riemannZeta z‖ ≤ A * (‖z‖ + 3) ^ B) :
+    ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc (1 : ℝ) 2 →
+      Real.log ‖riemannZeta ((σ : ℂ) + I * t)‖ ≤
+        Real.log A + (2 * B) * Real.log (|t| + 3) := by
+  intro σ t ht hσ
+  have hσ_three : σ ∈ Set.Icc (1 : ℝ) 3 :=
+    ⟨hσ.1, le_trans hσ.2 (by norm_num)⟩
+  have hbase :=
+    log_norm_riemannZeta_sigma_it_le_affine_log_norm_add_three_of_polynomial_growth
+      (T0 := T0) (A := A) (B := B) hA hB hpoly σ t ht hσ_three
+  have hheight : 5 ≤ |t| := le_trans hT0 ht
+  have hgeom :=
+    log_norm_sigma_add_I_mul_add_three_le_two_log_abs_add_three
+      (σ := σ) (t := t) hσ hheight
+  have hmul :
+      B * Real.log (‖((σ : ℂ) + I * t)‖ + 3) ≤
+        B * (2 * Real.log (|t| + 3)) :=
+    mul_le_mul_of_nonneg_left hgeom hB
+  calc
+    Real.log ‖riemannZeta ((σ : ℂ) + I * t)‖
+        ≤ Real.log A + B * Real.log (‖((σ : ℂ) + I * t)‖ + 3) := hbase
+    _ ≤ Real.log A + B * (2 * Real.log (|t| + 3)) := by
+          simpa [add_comm, add_left_comm, add_assoc] using
+            add_le_add_left hmul (Real.log A)
+    _ = Real.log A + (2 * B) * Real.log (|t| + 3) := by ring
 
 /-- Standalone normalization of a future vertical-strip log-derivative estimate.
 
