@@ -3220,6 +3220,13 @@ nontrivial zeros on `Re(s)=2/3`. -/
 abbrev PsiPowerErrorBelowTwoThirdsExcludesLineTwoThirds : Prop :=
   PrimeNumberTheorem.PsiPowerErrorBelowTwoThirdsExcludesLineTwoThirds
 
+/-- Public route interface for the proposed strong-PNT-error bridge to the
+`Re(s)=1/3` zero-exclusion statement. -/
+abbrev NoZerosOnVerticalLineOneThirdOfStrongPNTError
+    (StrongPNTError : Prop) : Prop :=
+  PrimeNumberTheorem.NoZerosOnVerticalLineOneThirdOfStrongPNTError
+    StrongPNTError
+
 /-- Public general power-saving `ψ` error below a boundary line. -/
 abbrev PsiPowerErrorBelowLine (β : ℝ) : Prop :=
   PrimeNumberTheorem.PsiPowerErrorBelowLine β
@@ -17283,6 +17290,91 @@ theorem explicit_formula_von_mangoldt_iff
 power-scale explicit-formula converse target. -/
 abbrev ExplicitFormulaTruncatedConverseRoute (β : ℝ) : Prop :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute β
+
+namespace ExplicitFormulaAux
+
+/-- Public midpoint-convention Chebyshev-`ψ` used in the explicit-formula
+auxiliary chain. -/
+noncomputable def chebyshevPsi0 (x : ℝ) : ℝ :=
+  PrimeNumberTheorem.ExplicitFormulaAux.chebyshevPsi0 x
+
+/-- Public discrete von Mangoldt jump at a natural number. -/
+noncomputable def jumpVonMangoldt (n : ℕ) : ℝ :=
+  PrimeNumberTheorem.ExplicitFormulaAux.jumpVonMangoldt n
+
+/-- Public finset-based auxiliary multiplicity for nontrivial zeta zeros. -/
+noncomputable def zeroMultiplicity (s : ℂ) : ℕ :=
+  PrimeNumberTheorem.ExplicitFormulaAux.zeroMultiplicity s
+
+/-- Public good-height predicate for the truncated explicit-formula contour. -/
+abbrev goodHeight (T : ℝ) : Prop :=
+  PrimeNumberTheorem.ExplicitFormulaAux.goodHeight T
+
+/-- Public finite nontrivial-zero truncation used in the auxiliary explicit
+formula sums. -/
+noncomputable def finiteNontrivialZeroSum (T : ℝ) : Finset ℂ :=
+  PrimeNumberTheorem.ExplicitFormulaAux.finiteNontrivialZeroSum T
+
+/-- Public finite trivial-zero truncation used in the auxiliary explicit
+formula sums. -/
+noncomputable def finiteTrivialZeroSum (T : ℝ) : Finset ℂ :=
+  PrimeNumberTheorem.ExplicitFormulaAux.finiteTrivialZeroSum T
+
+/-- Public good-height normalization: no nontrivial zero has boundary height
+`T`. -/
+theorem goodHeight_iff_no_zero_at_height (T : ℝ) :
+    PrimeNumberTheorem.ExplicitFormulaAux.goodHeight T ↔
+      ¬ ∃ ρ : ℂ, _root_.RiemannHypothesis.IsNontrivialZero ρ ∧ |ρ.im| = T :=
+  PrimeNumberTheorem.ExplicitFormulaAux.goodHeight_iff_no_zero_at_height T
+
+/-- Public negated good-height normalization. -/
+theorem not_goodHeight_iff_exists_zero_at_height (T : ℝ) :
+    ¬ PrimeNumberTheorem.ExplicitFormulaAux.goodHeight T ↔
+      ∃ ρ : ℂ, _root_.RiemannHypothesis.IsNontrivialZero ρ ∧ |ρ.im| = T :=
+  PrimeNumberTheorem.ExplicitFormulaAux.not_goodHeight_iff_exists_zero_at_height
+    T
+
+/-- Public self-height membership of a nontrivial zero in the truncated
+zero finset used by the auxiliary multiplicity definition. -/
+theorem nontrivial_zero_mem_self_height {ρ : ℂ}
+    (hρ : _root_.RiemannHypothesis.IsNontrivialZero ρ) :
+    ρ ∈ PrimeNumberTheorem.ExplicitFormulaAux.finiteNontrivialZeroSum
+      (|ρ.im| + 1) :=
+  PrimeNumberTheorem.ExplicitFormulaAux.nontrivial_zero_mem_self_height hρ
+
+/-- Public `1` value of the finset-based auxiliary zero multiplicity for
+members of the self-height truncation. -/
+theorem zeroMultiplicity_eq_one_of_mem {s : ℂ}
+    (hs : s ∈ PrimeNumberTheorem.ExplicitFormulaAux.finiteNontrivialZeroSum
+      (|s.im| + 1)) :
+    PrimeNumberTheorem.ExplicitFormulaAux.zeroMultiplicity s = 1 :=
+  PrimeNumberTheorem.ExplicitFormulaAux.zeroMultiplicity_eq_one_of_mem hs
+
+/-- Public `0` value of the finset-based auxiliary zero multiplicity away
+from the self-height truncation. -/
+theorem zeroMultiplicity_eq_zero_of_not_mem {s : ℂ}
+    (hs : s ∉ PrimeNumberTheorem.ExplicitFormulaAux.finiteNontrivialZeroSum
+      (|s.im| + 1)) :
+    PrimeNumberTheorem.ExplicitFormulaAux.zeroMultiplicity s = 0 :=
+  PrimeNumberTheorem.ExplicitFormulaAux.zeroMultiplicity_eq_zero_of_not_mem
+    hs
+
+/-- Public off-prime-power normalization for the midpoint Chebyshev-`ψ`
+auxiliary definition. -/
+theorem chebyshevPsi0_eq_chebyshevPsi_off_primePowers (x : ℝ)
+    (hx : ¬ ∃ n : ℕ, IsPrimePow n ∧ (n : ℝ) = x) :
+    chebyshevPsi0 x = PrimeNumberTheorem.chebyshevPsi x :=
+  PrimeNumberTheorem.ExplicitFormulaAux.chebyshevPsi0_eq_chebyshevPsi_off_primePowers
+    x hx
+
+/-- Public prime-power normalization for the auxiliary von Mangoldt jump. -/
+theorem jumpVonMangoldt_eq_vonMangoldt_of_primePower (n : ℕ)
+    (hn : IsPrimePow n) :
+    jumpVonMangoldt n = PrimeNumberTheorem.vonMangoldt n :=
+  PrimeNumberTheorem.ExplicitFormulaAux.jumpVonMangoldt_eq_vonMangoldt_of_primePower
+    n hn
+
+end ExplicitFormulaAux
 
 /-- Public repackaging of a truncated-explicit-formula converse route as the
 power-scale explicit-formula converse interface. -/

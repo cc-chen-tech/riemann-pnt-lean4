@@ -2476,6 +2476,24 @@ real-part logarithmic-derivative series, the 3-4-1 combination, compact
 zero-free strip, and residue-scale inequalities.  Its external novelty should
 be assessed only after the separate SOTA comparison described in the README.
 
+### `PrimeNumberTheorem/ExplicitFormulaAux.lean`
+
+Support-level verified declarations:
+
+- `goodHeight_iff_no_zero_at_height`
+  proves that a truncation height is good exactly when no nontrivial zero has
+  `|Im rho| = T`.
+- `not_goodHeight_iff_exists_zero_at_height`
+  gives the negated form used when choosing or excluding bad contour heights.
+- `nontrivial_zero_mem_self_height`
+  places each nontrivial zero in the self-height truncation
+  `finiteNontrivialZeroSum (|rho.im| + 1)`.
+- `zeroMultiplicity_eq_one_of_mem` and `zeroMultiplicity_eq_zero_of_not_mem`
+  prove the current finset-based auxiliary multiplicity is `1` or `0`
+  according to membership in the self-height truncation.  This is support
+  bookkeeping for the truncated explicit-formula target, not a proof of the
+  analytic zero-order theory.
+
 ## Missing Chains for a Complete Analytic PNT
 
 To turn the current framework into a full de la Vallee Poussin proof with error

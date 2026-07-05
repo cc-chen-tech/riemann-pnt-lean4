@@ -291,16 +291,21 @@ does the same composition for arbitrary `0 < beta < 1`, yielding
 
 ## Recommended next formalization order
 
-1. Add definitions only: `jumpVonMangoldt`, `chebyshevPsi0`,
-   `zeroMultiplicity`, finite zero sums, finite trivial-zero sums, and
-   `goodHeight`.
-2. Prove finite bounded-height support lemmas for the zero sums from
+1. Already completed in the support layer: `jumpVonMangoldt`,
+   `chebyshevPsi0`, `zeroMultiplicity`, finite zero sums, finite trivial-zero
+   sums, and `goodHeight`.
+2. Already completed for the current support layer: `goodHeight` iff/negation
+   normalizers, self-height membership of nontrivial zeros, and the current
+   finset-based `zeroMultiplicity` values `0`/`1` according to membership in
+   the self-height truncation.  Future analytic multiplicity/order work can
+   refine this API without changing the downstream target shape.
+3. Prove finite bounded-height support lemmas for the zero sums from
    `finite_nontrivial_zeros_bounded_height`.
-3. Formalize a generic Perron half-jump theorem for finitely supported or
+4. Formalize a generic Perron half-jump theorem for finitely supported or
    absolutely summable Dirichlet series.
-4. Extend the existing constant-function rectangle sanity checks to a real
+5. Extend the existing constant-function rectangle sanity checks to a real
    rectangle meromorphic residue theorem as a reusable project
    lemma, since Mathlib currently supplies the analytic pieces but not the exact
    residue-sum wrapper needed here.
-5. Prove the truncated explicit formula with an explicit contour-error term.
-6. Only then state the principal-value or non-jump final formula as a limit.
+6. Prove the truncated explicit formula with an explicit contour-error term.
+7. Only then state the principal-value or non-jump final formula as a limit.

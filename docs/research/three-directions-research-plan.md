@@ -93,6 +93,22 @@ Verified assets now include:
   `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_neg_log_abs_add_three_bound_high_height_simplified`;
 - the polynomial-growth-to-`log |t|` zeta handoff:
   `log_norm_riemannZeta_sigma_it_le_affine_log_abs_of_polynomial_growth`.
+- cutoff-normalization wrappers for both classical and Vinogradov-Korobov
+  high-height zero-free-region targets:
+  `classical_zero_free_region_high_height_mono_cutoff`;
+  `classical_zero_free_region_high_height_mono_cutoff_re_im`;
+  `classical_zero_free_region_high_height_exists_mono_cutoff`;
+  `classical_zero_free_region_high_height_exists_mono_cutoff_re_im`;
+  `vinogradov_korobov_zero_free_region_high_height_mono_cutoff`;
+  `vinogradov_korobov_zero_free_region_high_height_mono_cutoff_re_im`;
+  `vinogradov_korobov_zero_free_region_high_height_exists_mono_cutoff`;
+  `vinogradov_korobov_zero_free_region_high_height_exists_mono_cutoff_re_im`.
+- explicit-formula support normalizers:
+  `PrimeNumberTheorem.ExplicitFormulaAux.goodHeight_iff_no_zero_at_height`;
+  `PrimeNumberTheorem.ExplicitFormulaAux.not_goodHeight_iff_exists_zero_at_height`;
+  `PrimeNumberTheorem.ExplicitFormulaAux.nontrivial_zero_mem_self_height`;
+  `PrimeNumberTheorem.ExplicitFormulaAux.zeroMultiplicity_eq_one_of_mem`;
+  `PrimeNumberTheorem.ExplicitFormulaAux.zeroMultiplicity_eq_zero_of_not_mem`.
 
 Next useful step:
 
@@ -196,7 +212,9 @@ Verified assets now include:
 
 - the public vertical-line and power-error route predicates:
   `NoZerosOnVerticalLine`, `PsiPowerErrorBelowTwoThirds`,
-  `PsiPowerErrorBelowLine`, and `ExplicitFormulaConversePowerTarget`;
+  `PsiPowerErrorBelowLine`,
+  `NoZerosOnVerticalLineOneThirdOfStrongPNTError`, and
+  `ExplicitFormulaConversePowerTarget`;
 - input constructors for power-scale `ψ` error hypotheses:
   `psiPowerErrorBound_of_eventual_abs_bound`,
   `psiPowerErrorBound_of_pointwise`,
@@ -253,6 +271,19 @@ Verified assets now include:
   `no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_below_two_thirds`;
   `no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route`;
   `no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_below_two_thirds`.
+- explicit-formula auxiliary normalizers:
+  `ExplicitFormulaAux.chebyshevPsi0`;
+  `ExplicitFormulaAux.jumpVonMangoldt`;
+  `ExplicitFormulaAux.zeroMultiplicity`;
+  `ExplicitFormulaAux.goodHeight_iff_no_zero_at_height`;
+  `ExplicitFormulaAux.not_goodHeight_iff_exists_zero_at_height`;
+  `ExplicitFormulaAux.finiteNontrivialZeroSum`;
+  `ExplicitFormulaAux.finiteTrivialZeroSum`;
+  `ExplicitFormulaAux.nontrivial_zero_mem_self_height`;
+  `ExplicitFormulaAux.zeroMultiplicity_eq_one_of_mem`;
+  `ExplicitFormulaAux.zeroMultiplicity_eq_zero_of_not_mem`;
+  `ExplicitFormulaAux.chebyshevPsi0_eq_chebyshevPsi_off_primePowers`;
+  `ExplicitFormulaAux.jumpVonMangoldt_eq_vonMangoldt_of_primePower`.
 - the monotonic `ψ`-error bridges `psiPowerErrorBelowLine_mono` and
   `psiPowerErrorBelowLine_of_below_two_thirds_of_two_thirds_le`, which let a
   stronger below-line error input feed any weaker boundary, including the

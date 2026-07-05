@@ -100,6 +100,29 @@ the call-sites. -/
 def goodHeight (T : ℝ) : Prop :=
   ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → |ρ.im| ≠ T
 
+/-! ## Boundary-height normalization -/
+
+/-- A good height is exactly a height that no nontrivial zero reaches on the
+horizontal contour boundary. -/
+lemma goodHeight_iff_no_zero_at_height (T : ℝ) :
+    goodHeight T ↔
+      ¬ ∃ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ ∧ |ρ.im| = T := by
+  constructor
+  · intro hgood hbad
+    rcases hbad with ⟨ρ, hρ, hheight⟩
+    exact (hgood ρ hρ) hheight
+  · intro hnone ρ hρ hheight
+    exact hnone ⟨ρ, hρ, hheight⟩
+
+/-- Failure of `goodHeight` is the existence of a nontrivial zero on the
+horizontal contour boundary. -/
+lemma not_goodHeight_iff_exists_zero_at_height (T : ℝ) :
+    ¬ goodHeight T ↔
+      ∃ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ ∧ |ρ.im| = T := by
+  classical
+  rw [goodHeight_iff_no_zero_at_height]
+  exact not_not
+
 /-! ## Sum definitions -/
 
 /-- Finset of nontrivial zeros with `|Im ρ| ≤ T`.
@@ -109,6 +132,51 @@ already proved in `PrimeNumberTheorem.lean`.  The name is re-exposed
 to follow the B-chain naming convention `finite*ZeroSum : ℝ → Finset ℂ`. -/
 noncomputable def finiteNontrivialZeroSum (T : ℝ) : Finset ℂ :=
   PrimeNumberTheorem.nontrivialZerosFinset T
+
+/-- A nontrivial zero belongs to the self-height truncation used by
+`zeroMultiplicity`. -/
+lemma nontrivial_zero_mem_self_height {ρ : ℂ}
+    (hρ : RiemannHypothesis.IsNontrivialZero ρ) :
+    ρ ∈ finiteNontrivialZeroSum (|ρ.im| + 1) := by
+  unfold finiteNontrivialZeroSum
+  exact PrimeNumberTheorem.nontrivial_zero_mem_nontrivialZerosFinset hρ
+    (by linarith)
+
+/-- The current finset-based multiplicity is `1` for members of its
+self-height truncation. -/
+lemma zeroMultiplicity_eq_one_of_mem {s : ℂ}
+    (hs : s ∈ finiteNontrivialZeroSum (|s.im| + 1)) :
+    zeroMultiplicity s = 1 := by
+  classical
+  change s ∈ PrimeNumberTheorem.nontrivialZerosFinset (|s.im| + 1) at hs
+  unfold zeroMultiplicity
+  let S : Finset ℂ :=
+    PrimeNumberTheorem.nontrivialZerosFinset (|s.im| + 1)
+  have hfilter : S.filter (fun ρ : ℂ => ρ = s) = {s} := by
+    ext ρ
+    by_cases hρs : ρ = s
+    · subst hρs
+      simp [S, hs]
+    · simp [hρs]
+  simp [S, hfilter]
+
+/-- The current finset-based multiplicity is `0` away from its self-height
+truncation. -/
+lemma zeroMultiplicity_eq_zero_of_not_mem {s : ℂ}
+    (hs : s ∉ finiteNontrivialZeroSum (|s.im| + 1)) :
+    zeroMultiplicity s = 0 := by
+  classical
+  change s ∉ PrimeNumberTheorem.nontrivialZerosFinset (|s.im| + 1) at hs
+  unfold zeroMultiplicity
+  let S : Finset ℂ :=
+    PrimeNumberTheorem.nontrivialZerosFinset (|s.im| + 1)
+  have hfilter : S.filter (fun ρ : ℂ => ρ = s) = ∅ := by
+    ext ρ
+    by_cases hρs : ρ = s
+    · subst hρs
+      simp [S, hs]
+    · simp [hρs]
+  simp [S, hfilter]
 
 /-- Finset of trivial zeros of ζ with size bounded by `T`.
 

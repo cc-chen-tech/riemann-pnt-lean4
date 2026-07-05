@@ -272,7 +272,7 @@ general rectangle residue theorem has been proved.
 | `HardyTheorem.lean` | Hardy Z-function setup with corrected target statements for critical-line zeros | sorry-free, targets unproved |
 | `PrimeNumberTheorem.lean` | PNT forms, equivalences, Li(x) asymptotics, zero symmetry, bounded-height zero finiteness, explicit formula target | sorry-free, targets unproved |
 | `ZeroFreeRegion.lean` | 3-4-1 setup, log derivative series, compact zero-free region, quantitative zero-free-region targets | sorry-free, quantitative targets unproved |
-| `PrimeNumberTheorem/ExplicitFormulaAux.lean` | `chebyshevPsi0`, `goodHeight`, finite zero-sum support helpers | sorry-free, support predicate only |
+| `PrimeNumberTheorem/ExplicitFormulaAux.lean` | `chebyshevPsi0`, `goodHeight`, finite zero-sum support helpers, boundary-height and auxiliary multiplicity normalizers | sorry-free, support predicate only |
 | `PrimeNumberTheorem/ExplicitFormulaTruncated.lean` | Truncated explicit-formula route interface with a real Prop body | sorry-free, route interface unproved |
 | `MathlibAux/RectangleResidue.lean` | Rectangle residue route interface for future Perron/explicit-formula work, plus constant-function sanity checks | sorry-free, route interface unproved |
 | `HardyTheorem/AFE.lean` | Corrected AFE route interface using an unwrapped theta wrapper | sorry-free, route interface unproved |
@@ -728,6 +728,12 @@ not as a proved theorem.  The Lean target now uses the midpoint convention
 `chebyshevPsi0` and a height-truncated zero contribution
 `finiteNontrivialZeroSum`, rather than an unconditional unordered `tsum` over
 all nontrivial zeros.
+The auxiliary layer also proves the support normalizers used by this
+truncated formulation: `goodHeight` is equivalent to saying that no
+nontrivial zero has boundary height `T`, failure of `goodHeight` is exactly
+such a boundary zero, every nontrivial zero belongs to its self-height
+truncation, and the current finset-based `zeroMultiplicity` is `1` or `0`
+according to membership in that truncation.
 
 The explicit-formula side also contains route interfaces such as
 `PrimeNumberTheorem.ExplicitFormulaConversePowerTarget` and
