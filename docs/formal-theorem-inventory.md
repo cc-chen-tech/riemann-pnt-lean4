@@ -1303,6 +1303,12 @@ Core verified declarations:
   right-edge input on `2 <= Re(s)`; the still-missing analytic input is the
   continuation of comparable control across the boundary strip
   `1 <= Re(s) <= 2` at high height.
+- `norm_deriv_riemannZeta_le_re_zeta_two_div_radius_of_closedBall_two_le_re`
+  uses Cauchy's derivative estimate plus the right-edge zeta bound to prove
+  `||zeta'(c)|| <= Re(zeta(2)) / R` whenever `closedBall c R` stays in
+  `2 <= Re(s)`.
+- `norm_deriv_riemannZeta_sigma_it_le_re_zeta_two_div_radius_of_two_add_radius_le`
+  is the coordinate version for centers `sigma + i t` with `2 + R <= sigma`.
 - `log_norm_riemannZeta_sigma_it_le_affine_log_norm_add_three_of_polynomial_growth`
   is the coordinate form at points `sigma + i t`.
 - `log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_three_of_polynomial_growth`

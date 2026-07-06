@@ -15182,6 +15182,24 @@ theorem norm_deriv_riemannZeta_sigma_it_le_of_sphere_norm_bound_height
   ZeroFreeRegion.norm_deriv_riemannZeta_sigma_it_le_of_sphere_norm_bound_height
     hR hheight hM
 
+/-- Public Cauchy derivative estimate for ζ on a disk contained in
+`2 <= Re(s)`, using the proved right-boundary estimate `‖ζ(s)‖ <= ζ(2)`. -/
+theorem norm_deriv_riemannZeta_le_re_zeta_two_div_radius_of_closedBall_two_le_re
+    {c : ℂ} {R : ℝ} (hR : 0 < R)
+    (hre : ∀ z : ℂ, z ∈ Metric.closedBall c R → 2 ≤ z.re) :
+    ‖deriv riemannZeta c‖ ≤ (riemannZeta (2 : ℂ)).re / R :=
+  ZeroFreeRegion.norm_deriv_riemannZeta_le_re_zeta_two_div_radius_of_closedBall_two_le_re
+    hR hre
+
+/-- Public coordinate form of the right-half-plane Cauchy derivative estimate
+for ζ. -/
+theorem norm_deriv_riemannZeta_sigma_it_le_re_zeta_two_div_radius_of_two_add_radius_le
+    {σ t R : ℝ} (hR : 0 < R) (hσ : 2 + R ≤ σ) :
+    ‖deriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+      (riemannZeta (2 : ℂ)).re / R :=
+  ZeroFreeRegion.norm_deriv_riemannZeta_sigma_it_le_re_zeta_two_div_radius_of_two_add_radius_le
+    hR hσ
+
 /-- Public standalone normalization from an affine full-height vertical
 `logDeriv ζ` estimate to the exact `C * log |t|` scale. -/
 theorem exists_re_im_logDeriv_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height

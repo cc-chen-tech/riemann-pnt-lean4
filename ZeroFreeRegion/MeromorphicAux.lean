@@ -5398,6 +5398,43 @@ lemma norm_deriv_riemannZeta_sigma_it_le_of_sphere_norm_bound_height
     simp
   exact lt_of_lt_of_le hheight (by simpa [him_eq] using him_le)
 
+/-- Cauchy derivative estimate for ζ on a disk contained in the half-plane
+`2 <= Re(s)`.
+
+This discharges the boundary `‖ζ‖` hypothesis in
+`norm_deriv_riemannZeta_le_of_sphere_norm_bound_avoid_one` using the proved
+Dirichlet-series estimate `‖ζ(s)‖ <= ζ(2)` on `2 <= Re(s)`. -/
+lemma norm_deriv_riemannZeta_le_re_zeta_two_div_radius_of_closedBall_two_le_re
+    {c : ℂ} {R : ℝ} (hR : 0 < R)
+    (hre : ∀ z : ℂ, z ∈ Metric.closedBall c R → 2 ≤ z.re) :
+    ‖deriv riemannZeta c‖ ≤ (riemannZeta (2 : ℂ)).re / R := by
+  refine norm_deriv_riemannZeta_le_of_sphere_norm_bound_avoid_one hR ?_ ?_
+  · intro z hz hz_one
+    have hz_re : 2 ≤ z.re := hre z hz
+    rw [hz_one] at hz_re
+    norm_num at hz_re
+  · intro z hz
+    exact norm_riemannZeta_le_re_zeta_two_of_two_le_re z
+      (hre z (Metric.sphere_subset_closedBall hz))
+
+/-- Coordinate form of
+`norm_deriv_riemannZeta_le_re_zeta_two_div_radius_of_closedBall_two_le_re`.
+
+If the disk of radius `R` centered at `σ+it` stays to the right of `Re=2`, then
+Cauchy's estimate and the right-boundary zeta bound give
+`‖ζ'(σ+it)‖ <= ζ(2)/R`. -/
+lemma norm_deriv_riemannZeta_sigma_it_le_re_zeta_two_div_radius_of_two_add_radius_le
+    {σ t R : ℝ} (hR : 0 < R) (hσ : 2 + R ≤ σ) :
+    ‖deriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+      (riemannZeta (2 : ℂ)).re / R := by
+  refine
+    norm_deriv_riemannZeta_le_re_zeta_two_div_radius_of_closedBall_two_le_re
+      (c := (σ : ℂ) + I * t) (R := R) hR ?_
+  intro z hz
+  have hre := closedBall_sigma_it_re_bounds
+    (z := z) (σ := σ) (t := t) (R := R) hz
+  linarith
+
 /-- Standalone normalization of a future vertical-strip log-derivative estimate.
 
 If a high-height estimate for `logDeriv ζ` on `1 <= σ <= 2` is available in
