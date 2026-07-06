@@ -2662,6 +2662,8 @@ Route interfaces:
   route before applying direct or reflected zero exclusion.
 - `PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_vertical_line_of_truncated_explicit_formula_converse_route_saving`,
   `PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_saving`,
+  `PrimeNumberTheorem.ExplicitFormulaTruncated.not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_converse_route_saving`,
+  `PrimeNumberTheorem.ExplicitFormulaTruncated.not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formula_converse_route_saving`,
   `PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_saving`,
   and
   `PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_saving`
@@ -2695,6 +2697,8 @@ Route interfaces:
   excluding zeros on `Re(s)=gamma` and on the reflected line `Re(s)=1-gamma`.
 - `RiemannPNT.API.no_zeros_on_vertical_line_of_truncated_explicit_formula_converse_route_saving`,
   `RiemannPNT.API.no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_saving`,
+  `RiemannPNT.API.not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_converse_route_saving`,
+  `RiemannPNT.API.not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formula_converse_route_saving`,
   `RiemannPNT.API.no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_saving`,
   and
   `RiemannPNT.API.no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_saving`
@@ -2713,9 +2717,11 @@ Route interfaces:
   `RiemannPNT.API.ExplicitFormulaTruncated.no_zeros_on_vertical_line_of_truncated_explicit_formula_converse_route_mono_error`
   and
   `RiemannPNT.API.ExplicitFormulaTruncated.no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error`,
-  plus the four direct power-saving wrappers
+  plus the six direct power-saving wrappers
   `RiemannPNT.API.ExplicitFormulaTruncated.no_zeros_on_vertical_line_of_truncated_explicit_formula_converse_route_saving`,
   `RiemannPNT.API.ExplicitFormulaTruncated.no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_saving`,
+  `RiemannPNT.API.ExplicitFormulaTruncated.not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_converse_route_saving`,
+  `RiemannPNT.API.ExplicitFormulaTruncated.not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formula_converse_route_saving`,
   `RiemannPNT.API.ExplicitFormulaTruncated.no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_saving`, and
   `RiemannPNT.API.ExplicitFormulaTruncated.no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_saving`.
 - `RiemannPNT.API.not_psi_power_error_below_line_of_exists_zero_right_of_bridge`
