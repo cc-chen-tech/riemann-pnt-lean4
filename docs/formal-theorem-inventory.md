@@ -426,6 +426,12 @@ Supporting declarations include:
 - `riemannZeta_sigmaOf_log_add_two_I_mul_ne_zero`
   proves `ζ(1 + a / log |t| + 2it) != 0` on the shifted line used by
   the 3-4-1 inequality.
+- `analyticAt_logDeriv_riemannZeta_sigmaOf_log`
+  proves `logDeriv ζ` is analytic at `1 + a / log |t|`.
+- `analyticAt_logDeriv_riemannZeta_sigmaOf_log_add_I_mul`
+  proves `logDeriv ζ` is analytic at `1 + a / log |t| + it`.
+- `analyticAt_logDeriv_riemannZeta_sigmaOf_log_add_two_I_mul`
+  proves `logDeriv ζ` is analytic at `1 + a / log |t| + 2it`.
 - `sigmaOf_log_le_two`
   proves this choice is at most `2` when `a <= log 2`.
 - `sigmaOf_log_sub_pos`

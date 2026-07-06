@@ -16952,6 +16952,29 @@ theorem riemannZeta_sigmaOf_log_add_two_I_mul_ne_zero {T0 a t : ℝ} (hT0 : 2 �
     riemannZeta ((1 + a / Real.log |t| : ℝ) + 2 * I * t) ≠ 0 :=
   ZeroFreeRegion.riemannZeta_sigmaOf_log_add_two_I_mul_ne_zero hT0 ha ht
 
+/-- Public analyticity of `logDeriv ζ` at `1 + a / log |t|`. -/
+theorem analyticAt_logDeriv_riemannZeta_sigmaOf_log {T0 a t : ℝ}
+    (hT0 : 2 ≤ T0) (ha : 0 < a) (ht : T0 ≤ |t|) :
+    AnalyticAt ℂ (logDeriv riemannZeta)
+      (((1 + a / Real.log |t| : ℝ) : ℂ)) :=
+  ZeroFreeRegion.analyticAt_logDeriv_riemannZeta_sigmaOf_log hT0 ha ht
+
+/-- Public analyticity of `logDeriv ζ` at `σ + it` for
+`σ = 1 + a / log |t|`. -/
+theorem analyticAt_logDeriv_riemannZeta_sigmaOf_log_add_I_mul {T0 a t : ℝ}
+    (hT0 : 2 ≤ T0) (ha : 0 < a) (ht : T0 ≤ |t|) :
+    AnalyticAt ℂ (logDeriv riemannZeta)
+      ((1 + a / Real.log |t| : ℝ) + I * t) :=
+  ZeroFreeRegion.analyticAt_logDeriv_riemannZeta_sigmaOf_log_add_I_mul hT0 ha ht
+
+/-- Public analyticity of `logDeriv ζ` at `σ + 2it` for
+`σ = 1 + a / log |t|`. -/
+theorem analyticAt_logDeriv_riemannZeta_sigmaOf_log_add_two_I_mul {T0 a t : ℝ}
+    (hT0 : 2 ≤ T0) (ha : 0 < a) (ht : T0 ≤ |t|) :
+    AnalyticAt ℂ (logDeriv riemannZeta)
+      ((1 + a / Real.log |t| : ℝ) + 2 * I * t) :=
+  ZeroFreeRegion.analyticAt_logDeriv_riemannZeta_sigmaOf_log_add_two_I_mul hT0 ha ht
+
 /-- Public upper bound `1 + a / log |t| ≤ 2` when `a ≤ log 2`. -/
 theorem sigmaOf_log_le_two {T0 a t : ℝ} (hT0 : 2 ≤ T0)
     (ha_le : a ≤ Real.log 2) (ht : T0 ≤ |t|) :

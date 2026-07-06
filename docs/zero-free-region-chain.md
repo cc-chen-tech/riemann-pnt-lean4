@@ -334,6 +334,10 @@ proved:
   `ζ(sigmaOf t + 2 i t)` using the already-known half-plane nonvanishing.
   These are right-of-line specializations for logarithmic-derivative estimates,
   not a proof of the classical left-of-line zero-free region.
+- `ZeroFreeRegion.analyticAt_logDeriv_riemannZeta_sigmaOf_log` and the
+  `...add_I_mul` / `...add_two_I_mul` variants feed those same moving-line
+  points into the local analytic hypotheses needed by the
+  Borel-Caratheodory/Jensen/log-counting wrappers.
 - `ZeroFreeRegion.sigmaOf_log_le_two`
   proves `sigmaOf t <= 2` above height `2` when `a <= log 2`.
 - `ZeroFreeRegion.sigmaOf_log_sub_pos`

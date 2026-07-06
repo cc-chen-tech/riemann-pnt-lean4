@@ -7998,6 +7998,51 @@ lemma analyticAt_logDeriv_riemannZeta_of_one_le_re_of_ne_one
   analyticAt_logDeriv_riemannZeta_of_ne_one_of_ne_zero z hz1
     (riemannZeta_ne_zero_of_one_le_re hre)
 
+/-- `logDeriv ζ` is analytic at the standard high-height real-axis point
+`σ = 1 + a / log |t|`. -/
+lemma analyticAt_logDeriv_riemannZeta_sigmaOf_log {T0 a t : ℝ}
+    (hT0 : 2 ≤ T0) (ha : 0 < a) (ht : T0 ≤ |t|) :
+    AnalyticAt ℂ (logDeriv riemannZeta)
+      (((1 + a / Real.log |t| : ℝ) : ℂ)) := by
+  have hσ_gt : 1 < 1 + a / Real.log |t| :=
+    sigmaOf_log_gt_one hT0 ha ht
+  refine analyticAt_logDeriv_riemannZeta_of_one_le_re_of_ne_one ?_ ?_
+  · exact hσ_gt.le
+  · intro h
+    have hre : (1 + a / Real.log |t| : ℝ) = 1 := by
+      simpa using congrArg Complex.re h
+    linarith
+
+/-- `logDeriv ζ` is analytic at `σ + it` for the standard high-height choice
+`σ = 1 + a / log |t|`. -/
+lemma analyticAt_logDeriv_riemannZeta_sigmaOf_log_add_I_mul {T0 a t : ℝ}
+    (hT0 : 2 ≤ T0) (ha : 0 < a) (ht : T0 ≤ |t|) :
+    AnalyticAt ℂ (logDeriv riemannZeta)
+      ((1 + a / Real.log |t| : ℝ) + I * t) := by
+  have hσ_gt : 1 < 1 + a / Real.log |t| :=
+    sigmaOf_log_gt_one hT0 ha ht
+  refine analyticAt_logDeriv_riemannZeta_of_one_le_re_of_ne_one ?_ ?_
+  · simpa using hσ_gt.le
+  · intro h
+    have hre : (1 + a / Real.log |t| : ℝ) = 1 := by
+      simpa using congrArg Complex.re h
+    linarith
+
+/-- `logDeriv ζ` is analytic at `σ + 2it` for the standard high-height choice
+`σ = 1 + a / log |t|`. -/
+lemma analyticAt_logDeriv_riemannZeta_sigmaOf_log_add_two_I_mul {T0 a t : ℝ}
+    (hT0 : 2 ≤ T0) (ha : 0 < a) (ht : T0 ≤ |t|) :
+    AnalyticAt ℂ (logDeriv riemannZeta)
+      ((1 + a / Real.log |t| : ℝ) + 2 * I * t) := by
+  have hσ_gt : 1 < 1 + a / Real.log |t| :=
+    sigmaOf_log_gt_one hT0 ha ht
+  refine analyticAt_logDeriv_riemannZeta_of_one_le_re_of_ne_one ?_ ?_
+  · simpa using hσ_gt.le
+  · intro h
+    have hre : (1 + a / Real.log |t| : ℝ) = 1 := by
+      simpa using congrArg Complex.re h
+    linarith
+
 /-- Pointwise closed-ball wrapper: if ζ is analytic and nonzero at every point
 of the ball, then `logDeriv ζ` is analytic at every point of the ball. -/
 lemma analyticAt_logDeriv_riemannZeta_closedBall_of_ne_one_of_ne_zero
