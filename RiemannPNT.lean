@@ -6433,6 +6433,16 @@ theorem sigmaOf_log_weak_shift_pair_margin_impossible
   ZeroFreeRegion.sigmaOf_log_weak_shift_pair_margin_impossible
     ha hc hCreal hCshift
 
+/-- Public log-scale obstruction for a shared shifted-term coefficient that is
+still at least the weak `1/a` scale. -/
+theorem sigmaOf_log_weak_shift_pair_log_scale_margin_impossible
+    {a c Creal B : ℝ}
+    (ha : 0 < a) (hc : 0 < c)
+    (hCreal : 1 ≤ Creal) (hB : 1 / a ≤ B) :
+    ¬ (3 * Creal / a + 5 * B < 4 / (a + c)) :=
+  ZeroFreeRegion.sigmaOf_log_weak_shift_pair_log_scale_margin_impossible
+    ha hc hCreal hB
+
 /-- Public existential obstruction for a shared weak shifted-term coefficient
 with `1/a` loss. -/
 theorem no_sigmaOf_log_margin_constants_with_weak_shift_pair

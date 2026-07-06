@@ -2,6 +2,9 @@ import ZeroFreeRegion
 import ZeroFreeRegion.MeromorphicAux
 import RiemannPNT
 
+#check ZeroFreeRegion.sigmaOf_log_weak_shift_pair_log_scale_margin_impossible
+#check RiemannPNT.API.sigmaOf_log_weak_shift_pair_log_scale_margin_impossible
+
 #check ZeroFreeRegion.finite_weighted_sum_single_lower_bound
 #check ZeroFreeRegion.finite_weighted_sum_single_lower_bound_of_upper_bounds
 #check ZeroFreeRegion.finite_weighted_sum_single_lower_bound_of_uniform_upper_bound

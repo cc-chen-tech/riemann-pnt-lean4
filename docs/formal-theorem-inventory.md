@@ -880,6 +880,9 @@ Core verified declarations:
 - `sigmaOf_log_weak_shift_pair_margin_impossible`
   proves the stronger obstruction when both shifted terms are controlled only
   by the same weak `Cshift/a` scale.
+- `sigmaOf_log_weak_shift_pair_log_scale_margin_impossible`
+  gives the same obstruction in the normalized `B log |t|` shape whenever
+  the shared shifted coefficient still satisfies `1/a <= B`.
 - `no_sigmaOf_log_margin_constants_with_weak_shift_pair`
   packages that shared-weak-shift obstruction as nonexistence of positive
   constants `a,c`.

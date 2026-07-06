@@ -2491,6 +2491,32 @@ lemma sigmaOf_log_weak_shift_pair_margin_impossible
     linarith
   linarith
 
+/-- Log-scale version of `sigmaOf_log_weak_shift_pair_margin_impossible`.
+
+This matches the output shape of the moving-strip `B * log |t|` wrappers:
+if the shared shifted coefficient `B` is still at least the weak `1/a` scale,
+then the standard 3-4-1 margin cannot close. -/
+lemma sigmaOf_log_weak_shift_pair_log_scale_margin_impossible
+    {a c Creal B : ℝ}
+    (ha : 0 < a) (hc : 0 < c)
+    (hCreal : 1 ≤ Creal) (hB : 1 / a ≤ B) :
+    ¬ (3 * Creal / a + 5 * B < 4 / (a + c)) := by
+  intro hmargin
+  have hright_lt : 4 / (a + c) < 4 / a := by
+    exact div_lt_div_of_pos_left (by norm_num : (0 : ℝ) < 4) ha
+      (by linarith)
+  have hleft_ge : 4 / a ≤ 3 * Creal / a + 5 * B := by
+    have h3 : 3 / a ≤ 3 * Creal / a := by
+      exact div_le_div_of_nonneg_right (by nlinarith : 3 ≤ 3 * Creal) ha.le
+    have hB_nonneg : 0 ≤ B := by
+      have hdiv_pos : 0 < 1 / a := one_div_pos.mpr ha
+      linarith
+    have hB_five : B ≤ 5 * B := by
+      nlinarith
+    have hsplit : 4 / a = 3 / a + 1 / a := by ring
+    linarith
+  linarith
+
 /-- Existential form of
 `sigmaOf_log_weak_shift_pair_margin_impossible`. -/
 lemma no_sigmaOf_log_margin_constants_with_weak_shift_pair
