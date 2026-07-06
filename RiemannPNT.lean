@@ -48,6 +48,13 @@ theorem logDerivVerticalLogBound_of_negLogDerivVerticalLogBound
     LogDerivVerticalLogBound C T0 :=
   ZeroFreeRegion.logDerivVerticalLogBound_of_negLogDerivVerticalLogBound h
 
+/-- Public conversion from the named unsigned norm bound to the signed norm
+bound. -/
+theorem negLogDerivVerticalLogBound_of_logDerivVerticalLogBound
+    {C T0 : ℝ} (h : LogDerivVerticalLogBound C T0) :
+    NegLogDerivVerticalLogBound C T0 :=
+  ZeroFreeRegion.negLogDerivVerticalLogBound_of_logDerivVerticalLogBound h
+
 /-- Public direct conversion from the named signed norm bound to the
 `Re(-zeta'/zeta)` bound. -/
 theorem reNegDerivDivVerticalLogBound_of_negLogDerivVerticalLogBound

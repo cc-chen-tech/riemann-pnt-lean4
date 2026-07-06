@@ -55,6 +55,10 @@ Verified assets now include:
   which controls all nonzero BTY detector frequencies from
   `LogDerivVerticalLogBound` and leaves only the real-axis `k=0` term as a
   separate upper-bound input;
+- the bidirectional conversion between the named `logDeriv ζ` and
+  `-logDeriv ζ` vertical norm-bound interfaces:
+  `logDerivVerticalLogBound_of_negLogDerivVerticalLogBound` and
+  `negLogDerivVerticalLogBound_of_logDerivVerticalLogBound`;
 - the fixed-margin center-term closure
   `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_fixed_margin_center_and_LogDerivVerticalLogBound`,
   which removes that `k=0` input when `1 + epsilon <= sigma`;

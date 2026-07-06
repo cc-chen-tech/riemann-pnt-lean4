@@ -4103,6 +4103,18 @@ lemma logDerivVerticalLogBound_of_negLogDerivVerticalLogBound
         = ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ := (norm_neg _).symm
     _ ≤ C * Real.log |t| := hbound σ t hσ_left hσ_right ht
 
+/-- A named unsigned norm bound supplies the signed norm bound. -/
+lemma negLogDerivVerticalLogBound_of_logDerivVerticalLogBound
+    {C T0 : ℝ} (h : LogDerivVerticalLogBound C T0) :
+    NegLogDerivVerticalLogBound C T0 := by
+  rcases h with ⟨hC, hT0, hbound⟩
+  refine ⟨hC, hT0, ?_⟩
+  intro σ t hσ_left hσ_right ht
+  calc
+    ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖
+        = ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ := norm_neg _
+    _ ≤ C * Real.log |t| := hbound σ t hσ_left hσ_right ht
+
 /-- A named signed norm bound directly supplies the corresponding real-part
 quotient bound. -/
 lemma reNegDerivDivVerticalLogBound_of_negLogDerivVerticalLogBound
