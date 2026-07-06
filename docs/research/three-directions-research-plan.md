@@ -194,11 +194,15 @@ Verified assets now include:
 
 - center-one zero-pair bridges over `nontrivialZerosFinset`;
 - a general-center finite paired-sum bridge over full and new-zero finsets;
-- paired-average bridges over full and new-zero finsets:
+- paired-sum and paired-average bridges over full and new-zero finsets:
+  `nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive`;
   `nontrivialZerosFinset_pair_average_nonnegative_of_laplace_pair_positive`;
+  `nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive`;
   `nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_laplace_pair_positive`.
-- center-one paired-average convenience wrappers:
+- center-one paired-sum and paired-average convenience wrappers:
+  `nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive_one`;
   `nontrivialZerosFinset_pair_average_nonnegative_of_laplace_pair_positive_one`;
+  `nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive_one`;
   `nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_laplace_pair_positive_one`.
 - pointwise critical-strip positivity suppliers:
   `laplacePairPositive_one_of_re_nonnegative_on_critical_strip`,
@@ -327,6 +331,18 @@ Verified assets now include:
   `¬ ∃ s, IsNontrivialZero s ∧ s.re = ...`, matching the way the
   `Re(s)=1/3` / reflected-line question is usually discussed.
 - finite explicit-formula truncation increment identities;
+- exact finite-height truncation identities:
+  `finiteNontrivialZeroSum_eq_add_new_zeros`,
+  `finiteNontrivialZeroSum_sub_eq_new_zeros`,
+  `explicitFormulaApprox_eq_sub_new_zeros`,
+  `explicitFormulaApprox_sub_eq_new_zeros`,
+  `explicitFormulaApprox_add_new_zeros`, and the corresponding empty-tail,
+  congruence, and global-height stability wrappers;
+- basic eventual-stability entrypoints
+  `explicit_formula_von_mangoldt_of_eventually_eq` and
+  `explicit_formula_von_mangoldt_of_eventually_exact`, which let a future
+  contour/Perron construction enter through eventual equality with the
+  corrected truncation, or through eventual exact equality with `ψ₀(x)`;
 - new-zero norm/count tail bounds under RH;
 - eventual-no-new-zero tail convergence;
 - direct non-RH contribution-tail bridges:

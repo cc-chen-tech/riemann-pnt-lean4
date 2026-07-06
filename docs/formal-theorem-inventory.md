@@ -2196,6 +2196,30 @@ Core verified declarations:
   `explicitFormulaApprox` change between two truncation heights by the summed
   norms of the newly included zero contributions, giving direct finite
   triangle-inequality handoffs for truncated explicit-formula bookkeeping.
+- `finiteNontrivialZeroSum_eq_add_new_zeros`,
+  `finiteNontrivialZeroSum_sub_eq_new_zeros`,
+  `finiteNontrivialZeroSum_eq_of_sdiff_eq_empty`,
+  `explicitFormulaApprox_eq_sub_new_zeros`,
+  `explicitFormulaApprox_sub_eq_new_zeros`,
+  `explicitFormulaApprox_sub_norm_eq_new_zeros`,
+  `explicitFormulaApprox_add_new_zeros`, and
+  `explicitFormulaApprox_eq_of_sdiff_eq_empty`
+  expose the exact finite-truncation identities behind the norm bounds and
+  eventual-empty-tail bridges.
+- `explicitFormulaApprox_congr_finset`,
+  `explicitFormulaApprox_congr_zero_sum`,
+  `explicitFormulaApprox_congr_height`,
+  `explicitFormulaApprox_eq_of_global_height_bound`,
+  `explicitFormulaApprox_eventually_eq_of_global_height_bound`, and
+  `explicitFormulaApprox_eq_of_neg`
+  are public stability and congruence wrappers for changing truncation heights
+  or degenerate negative-height truncations.
+- `explicit_formula_von_mangoldt_of_eventually_eq` and
+  `explicit_formula_von_mangoldt_of_eventually_exact`
+  expose the basic stability entrypoint for the corrected explicit-formula
+  target: once a future construction is eventually equal to the truncated
+  approximation and tends to `ψ₀(x)`, or once the truncated approximation itself
+  is eventually exactly `ψ₀(x)`, the target follows.
 - `new_zero_contribution_sum_eventually_zero_of_eventually_sdiff_eq_empty`,
   `new_zero_contribution_sum_tendsto_zero_of_eventually_sdiff_eq_empty`,
   `new_zero_contribution_sum_norm_eventually_zero_of_eventually_sdiff_eq_empty`,
@@ -2233,6 +2257,12 @@ Core verified declarations:
   `explicit_formula_von_mangoldt_of_base_and_global_height_bound_via_sum_norm_tail`
   specialize the same sum-of-norms tail bridge to a global nontrivial-zero
   height bound, again without adding a Perron-formula proof.
+- `explicit_formula_von_mangoldt_of_global_height_bound_exact`,
+  `explicitFormulaApprox_eq_chebyshevPsi0_of_global_height_bound`, and
+  `explicit_formula_von_mangoldt_iff_global_height_bound_exact`
+  record the stronger exact stability statement: under a global nontrivial-zero
+  height bound, the corrected explicit-formula target is equivalent to equality
+  at the stable base truncation.
 - `NoZerosOnVerticalLine`
   is a reusable predicate for excluding zeta zeros on a fixed vertical line.
 - `no_zeros_on_one_third_of_RH`
