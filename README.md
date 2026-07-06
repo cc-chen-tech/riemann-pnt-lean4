@@ -314,6 +314,8 @@ The project currently verifies several supporting statements, including:
   a concrete resolvent/Laplace prototype kernel with finite-zero and new-zero
   nonnegativity wrappers, a concrete self-damped resolvent/Laplace instance
   `dampedKernel kappa (resolventLaplaceKernel a) (resolventLaplaceKernel a)`,
+  pair-nonnegative dominated-kernel handoffs for damped pair positivity and
+  finite-zero real-part sums/averages,
   finite nonnegative resolvent-kernel combinations and finite weighted
   self-damped resolvent-kernel combinations with the same wrappers, single and
   finite affine resolvent-kernel variants plus finite weighted self-damped
@@ -831,8 +833,9 @@ kernel combinations, the signed `dampedKernel` bridge `F - kappa * G`, and
 the self-damped specialization `dampedKernel kappa F F` when `kappa <= 1`,
 including pointwise real-part positivity suppliers, finite weighted
 self-damped combinations, and direct height-truncated/new-zero sum, average,
-and paired-contribution nonnegativity wrappers from either pair-positivity or
-pointwise strip positivity.  The concrete self-damped resolvent instance
+and paired-contribution nonnegativity wrappers from either pair-positivity,
+pair-nonnegative domination, or pointwise strip positivity.  The concrete
+self-damped resolvent instance
 `dampedKernel kappa (resolventLaplaceKernel a) (resolventLaplaceKernel a)` is
 also exposed for `kappa <= 1` and `0 <= a`, together with finite weighted
 nonnegative combinations of such self-damped resolvent instances.  The affine

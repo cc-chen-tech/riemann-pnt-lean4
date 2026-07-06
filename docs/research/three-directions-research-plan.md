@@ -217,9 +217,11 @@ Verified assets now include:
   wrappers whenever the shifts and weights are nonnegative.
 - a signed/damped detector-kernel interface
   `dampedKernel κ F G = F - κ • G`, with pair-positivity supplied by a
-  concrete inequality `κ * pair(G) <= pair(F)` on the strip.  The damped
-  interface is connected to full finite-zero and new-zero `sdiff` sums,
-  averages, paired-sums, and paired-averages over `nontrivialZerosFinset`.
+  concrete inequality `κ * pair(G) <= pair(F)` on the strip, plus the
+  pair-nonnegative dominated input `0 <= pair(G) <= pair(F)` together with
+  `κ <= 1`.  The damped interface is connected to full finite-zero and new-zero
+  `sdiff` sums, averages, paired-sums, and paired-averages over
+  `nontrivialZerosFinset`.
 - finite nonnegative combinations of damped detector kernels:
   `laplacePairPositive_weightedDampedKernelCombo_of_pair_le`,
   `laplacePairPositive_one_weightedDampedKernelCombo_of_pair_le`, and the
@@ -267,7 +269,9 @@ affine resolvent/Laplace combinations. They are still not the full
 Stechkin/Heath-Brown kernel used in the latest zero-free-region arguments. The
 next useful step is to formalize a nontrivial detector kernel from that
 literature and prove the concrete pair inequality needed by
-`laplacePairPositive_dampedKernel_of_pair_le`, or prove either
+`laplacePairPositive_dampedKernel_of_pair_le`, use the split
+`laplacePairPositive_dampedKernel_of_pair_nonneg_le` input when it matches the
+detector, or prove either
 `LaplacePairPositive F 1` or the stronger pointwise critical-strip positivity
 certificate for it.
 

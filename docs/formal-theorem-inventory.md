@@ -1975,6 +1975,16 @@ Core verified declarations:
   package the signed detector shape `F - kappa * G`: once the paired
   Stechkin-style inequality for `F` and `G` is supplied on the critical strip,
   the finite nontrivial-zero paired sum and average are nonnegative.
+- `laplacePairPositive_dampedKernel_of_pair_nonneg_le`,
+  `laplacePairPositive_one_dampedKernel_of_pair_nonneg_le`,
+  `nontrivialZerosFinset_sum_re_nonnegative_of_dampedKernel_pair_nonneg_le`,
+  and
+  `nontrivialZerosFinset_average_re_nonnegative_of_dampedKernel_pair_nonneg_le`
+  cover the common split input where the paired `G` contribution is already
+  nonnegative and is bounded above by the paired `F` contribution.  Together
+  with `kappa <= 1`, this discharges the signed damped-kernel positivity
+  condition and yields full finite-zero real-part sum and average
+  nonnegativity.
 - `nontrivialZerosFinset_sum_re_nonnegative_of_dampedKernel`,
   `nontrivialZerosFinset_average_re_nonnegative_of_dampedKernel`,
   `nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_dampedKernel`,

@@ -3015,6 +3015,47 @@ lemma laplacePairPositive_one_dampedKernel_of_pair_le
   intro z hz_left hz_right
   simpa using hpair z hz_left hz_right
 
+/-- A pair-nonnegative dominated kernel supplies damped pair positivity when
+the damping coefficient is at most one.  This is often the easier
+Stechkin-facing input shape: prove the shifted kernel pair is nonnegative and
+is bounded by the positive kernel pair, then choose any `κ <= 1`. -/
+lemma laplacePairPositive_dampedKernel_of_pair_nonneg_le
+    {κ center : ℝ} {F G : ℂ → ℂ}
+    (hκ : κ ≤ 1)
+    (hG_nonneg : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ center →
+      0 ≤ (G z).re + (G ((center : ℂ) - z)).re)
+    (hGF : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ center →
+      (G z).re + (G ((center : ℂ) - z)).re ≤
+        (F z).re + (F ((center : ℂ) - z)).re) :
+    LaplacePairPositive (dampedKernel κ F G) center := by
+  refine laplacePairPositive_dampedKernel_of_pair_le ?_
+  intro z hz_left hz_right
+  have hG := hG_nonneg z hz_left hz_right
+  have hκG :
+      κ * ((G z).re + (G ((center : ℂ) - z)).re) ≤
+        1 * ((G z).re + (G ((center : ℂ) - z)).re) :=
+    mul_le_mul_of_nonneg_right hκ hG
+  have hGF' := hGF z hz_left hz_right
+  linarith
+
+/-- Center-one version of
+`laplacePairPositive_dampedKernel_of_pair_nonneg_le`, matching the zeta
+symmetry `ρ ↦ 1 - ρ`. -/
+lemma laplacePairPositive_one_dampedKernel_of_pair_nonneg_le
+    {κ : ℝ} {F G : ℂ → ℂ}
+    (hκ : κ ≤ 1)
+    (hG_nonneg : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      0 ≤ (G z).re + (G (1 - z)).re)
+    (hGF : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      (G z).re + (G (1 - z)).re ≤
+        (F z).re + (F (1 - z)).re) :
+    LaplacePairPositive (dampedKernel κ F G) 1 := by
+  refine laplacePairPositive_dampedKernel_of_pair_nonneg_le hκ ?_ ?_
+  · intro z hz_left hz_right
+    simpa using hG_nonneg z hz_left hz_right
+  · intro z hz_left hz_right
+    simpa using hGF z hz_left hz_right
+
 /-- Self-damping preserves strip-local pair positivity when the damping
 coefficient is at most one. -/
 lemma laplacePairPositive_dampedKernel_self_of_le_one
@@ -5738,6 +5779,49 @@ theorem nontrivialZerosFinset_average_re_nonnegative_of_dampedKernel
   div_nonneg
     (nontrivialZerosFinset_sum_re_nonnegative_of_dampedKernel
       T κ F G hpair)
+    (Nat.cast_nonneg _)
+
+/-- Finite nontrivial-zero unpaired real-part sum nonnegativity for a damped
+detector kernel from the pair-nonnegative dominated-kernel input shape. -/
+theorem nontrivialZerosFinset_sum_re_nonnegative_of_dampedKernel_pair_nonneg_le
+    (T κ : ℝ) (F G : ℂ → ℂ) (hκ : κ ≤ 1)
+    (hG_nonneg : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      0 ≤ (G z).re + (G (1 - z)).re)
+    (hGF : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      (G z).re + (G (1 - z)).re ≤
+        (F z).re + (F (1 - z)).re) :
+    0 ≤ ∑ ρ ∈ nontrivialZerosFinset T, (dampedKernel κ F G ρ).re := by
+  have hpair :
+      ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+        κ * ((G z).re + (G (1 - z)).re) ≤
+          (F z).re + (F (1 - z)).re := by
+    intro z hz_left hz_right
+    have hG := hG_nonneg z hz_left hz_right
+    have hκG :
+        κ * ((G z).re + (G (1 - z)).re) ≤
+          1 * ((G z).re + (G (1 - z)).re) :=
+      mul_le_mul_of_nonneg_right hκ hG
+    have hGF' := hGF z hz_left hz_right
+    linarith
+  exact nontrivialZerosFinset_sum_re_nonnegative_of_dampedKernel
+    T κ F G hpair
+
+/-- Finite nontrivial-zero unpaired real-part average nonnegativity for a
+damped detector kernel from the pair-nonnegative dominated-kernel input
+shape. -/
+theorem nontrivialZerosFinset_average_re_nonnegative_of_dampedKernel_pair_nonneg_le
+    (T κ : ℝ) (F G : ℂ → ℂ) (hκ : κ ≤ 1)
+    (hG_nonneg : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      0 ≤ (G z).re + (G (1 - z)).re)
+    (hGF : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      (G z).re + (G (1 - z)).re ≤
+        (F z).re + (F (1 - z)).re) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset T, (dampedKernel κ F G ρ).re) /
+        ((nontrivialZerosFinset T).card : ℝ) :=
+  div_nonneg
+    (nontrivialZerosFinset_sum_re_nonnegative_of_dampedKernel_pair_nonneg_le
+      T κ F G hκ hG_nonneg hGF)
     (Nat.cast_nonneg _)
 
 /-- Finite nontrivial-zero paired-sum nonnegativity for a self-damped

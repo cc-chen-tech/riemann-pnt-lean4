@@ -2372,6 +2372,35 @@ theorem laplacePairPositive_one_dampedKernel_of_pair_le
     PrimeNumberTheorem.LaplacePairPositive (dampedKernel κ F G) 1 :=
   PrimeNumberTheorem.laplacePairPositive_one_dampedKernel_of_pair_le hpair
 
+/-- Public damped pair-positivity bridge from the pair-nonnegative dominated
+kernel input shape. -/
+theorem laplacePairPositive_dampedKernel_of_pair_nonneg_le
+    {κ center : ℝ} {F G : ℂ → ℂ}
+    (hκ : κ ≤ 1)
+    (hG_nonneg : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ center →
+      0 ≤ (G z).re + (G ((center : ℂ) - z)).re)
+    (hGF : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ center →
+      (G z).re + (G ((center : ℂ) - z)).re ≤
+        (F z).re + (F ((center : ℂ) - z)).re) :
+    PrimeNumberTheorem.LaplacePairPositive
+      (dampedKernel κ F G) center :=
+  PrimeNumberTheorem.laplacePairPositive_dampedKernel_of_pair_nonneg_le
+    hκ hG_nonneg hGF
+
+/-- Public center-one damped pair-positivity bridge from the pair-nonnegative
+dominated-kernel input shape. -/
+theorem laplacePairPositive_one_dampedKernel_of_pair_nonneg_le
+    {κ : ℝ} {F G : ℂ → ℂ}
+    (hκ : κ ≤ 1)
+    (hG_nonneg : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      0 ≤ (G z).re + (G (1 - z)).re)
+    (hGF : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      (G z).re + (G (1 - z)).re ≤
+        (F z).re + (F (1 - z)).re) :
+    PrimeNumberTheorem.LaplacePairPositive (dampedKernel κ F G) 1 :=
+  PrimeNumberTheorem.laplacePairPositive_one_dampedKernel_of_pair_nonneg_le
+    hκ hG_nonneg hGF
+
 /-- Public self-damped pair-positivity bridge. -/
 theorem laplacePairPositive_dampedKernel_self_of_le_one
     {κ center : ℝ} {F : ℂ → ℂ}
@@ -2545,6 +2574,36 @@ theorem nontrivialZerosFinset_average_re_nonnegative_of_dampedKernel
         ((PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ) :=
   PrimeNumberTheorem.nontrivialZerosFinset_average_re_nonnegative_of_dampedKernel
     T κ F G hpair
+
+/-- Public finite-zero unpaired real-part sum nonnegativity for a damped
+detector kernel from the pair-nonnegative dominated-kernel input shape. -/
+theorem nontrivialZerosFinset_sum_re_nonnegative_of_dampedKernel_pair_nonneg_le
+    (T κ : ℝ) (F G : ℂ → ℂ) (hκ : κ ≤ 1)
+    (hG_nonneg : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      0 ≤ (G z).re + (G (1 - z)).re)
+    (hGF : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      (G z).re + (G (1 - z)).re ≤
+        (F z).re + (F (1 - z)).re) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+      (dampedKernel κ F G ρ).re :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sum_re_nonnegative_of_dampedKernel_pair_nonneg_le
+    T κ F G hκ hG_nonneg hGF
+
+/-- Public finite-zero unpaired real-part average nonnegativity for a damped
+detector kernel from the pair-nonnegative dominated-kernel input shape. -/
+theorem nontrivialZerosFinset_average_re_nonnegative_of_dampedKernel_pair_nonneg_le
+    (T κ : ℝ) (F G : ℂ → ℂ) (hκ : κ ≤ 1)
+    (hG_nonneg : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      0 ≤ (G z).re + (G (1 - z)).re)
+    (hGF : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      (G z).re + (G (1 - z)).re ≤
+        (F z).re + (F (1 - z)).re) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+        (dampedKernel κ F G ρ).re) /
+        ((PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_average_re_nonnegative_of_dampedKernel_pair_nonneg_le
+    T κ F G hκ hG_nonneg hGF
 
 /-- Public finite-zero paired-sum nonnegativity for a self-damped detector
 kernel. -/
