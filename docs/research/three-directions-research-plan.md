@@ -323,6 +323,11 @@ Verified assets now include:
   `¬ ∃ s, IsNontrivialZero s ∧ s.re = ...`, matching the way the
   `Re(s)=1/3` / reflected-line question is usually discussed.
 - finite explicit-formula truncation increment identities;
+- basic eventual-stability entrypoints
+  `explicit_formula_von_mangoldt_of_eventually_eq` and
+  `explicit_formula_von_mangoldt_of_eventually_exact`, which let a future
+  contour/Perron construction enter through eventual equality with the
+  corrected truncation, or through eventual exact equality with `ψ₀(x)`;
 - new-zero norm/count tail bounds under RH;
 - eventual-no-new-zero tail convergence;
 - direct non-RH contribution-tail bridges:

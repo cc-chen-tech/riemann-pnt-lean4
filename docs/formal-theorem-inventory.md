@@ -2167,6 +2167,12 @@ Core verified declarations:
   `explicitFormulaApprox` change between two truncation heights by the summed
   norms of the newly included zero contributions, giving direct finite
   triangle-inequality handoffs for truncated explicit-formula bookkeeping.
+- `explicit_formula_von_mangoldt_of_eventually_eq` and
+  `explicit_formula_von_mangoldt_of_eventually_exact`
+  expose the basic stability entrypoint for the corrected explicit-formula
+  target: once a future construction is eventually equal to the truncated
+  approximation and tends to `ψ₀(x)`, or once the truncated approximation itself
+  is eventually exactly `ψ₀(x)`, the target follows.
 - `new_zero_contribution_sum_eventually_zero_of_eventually_sdiff_eq_empty`,
   `new_zero_contribution_sum_tendsto_zero_of_eventually_sdiff_eq_empty`,
   `new_zero_contribution_sum_norm_eventually_zero_of_eventually_sdiff_eq_empty`,

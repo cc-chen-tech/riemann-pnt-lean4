@@ -837,6 +837,11 @@ The exact global-height wrappers
 `explicitFormulaApprox_eq_chebyshevPsi0_of_global_height_bound`, and
 `explicit_formula_von_mangoldt_iff_global_height_bound_exact` expose the
 stronger stability equivalence at the fixed base truncation.
+The more primitive entrypoints
+`explicit_formula_von_mangoldt_of_eventually_eq` and
+`explicit_formula_von_mangoldt_of_eventually_exact` are the direct handoff from
+future contour/Perron arguments that produce eventual equality with the
+corrected truncation or eventual exact equality with `ψ₀(x)`.
 
 The finite zero-pair infrastructure also contains proved positivity suppliers
 for elementary detector kernels.  The public API includes the resolvent kernel
