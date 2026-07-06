@@ -379,6 +379,80 @@ lemma riemannZeta_re_le_sigma_div_sub (σ : ℝ) (hσ : 1 < σ) :
     field_simp; ring
   linarith
 
+/-- In the half-plane `3 ≤ Re(s)`, the tail of the zeta Dirichlet series after
+the first term has norm at most `1/2`.
+
+This is the elementary estimate `ζ(s)=1+O(1/2)` on the far-right half-plane,
+proved by comparing the tail with `∑_{n>=2} n^{-3} <= 1/2`. -/
+lemma norm_riemannZeta_sub_one_le_half_of_three_le_re
+    (s : ℂ) (hs : 3 ≤ s.re) :
+    ‖riemannZeta s - 1‖ ≤ (1 / 2 : ℝ) := by
+  have hs1 : 1 < s.re := by linarith
+  have hsum_complex : Summable (fun n : ℕ => 1 / (↑n + 1 : ℂ) ^ s) := by
+    have h := (Complex.summable_one_div_nat_cpow (p := s)).mpr hs1
+    exact ((summable_nat_add_iff (f := fun n => 1 / (↑n : ℂ) ^ s) 1).mpr h).congr
+      (fun n => by push_cast; ring_nf)
+  have hzeta :
+      riemannZeta s =
+        1 + ∑' n : ℕ, 1 / (↑(n + 1) + 1 : ℂ) ^ s := by
+    rw [zeta_eq_tsum_one_div_nat_add_one_cpow hs1, hsum_complex.tsum_eq_zero_add]
+    simp
+  have hsum_tail_norm :
+      Summable (fun n : ℕ => ‖1 / (↑(n + 1) + 1 : ℂ) ^ s‖) := by
+    exact ((summable_nat_add_iff
+      (f := fun n : ℕ => ‖1 / (↑n + 1 : ℂ) ^ s‖) 1).mpr hsum_complex.norm)
+  have hsum_tail_three :
+      Summable (fun n : ℕ => 1 / (↑(n + 1) + 1 : ℝ) ^ (3 : ℝ)) := by
+    exact ((summable_nat_add_iff
+      (f := fun n : ℕ => 1 / (↑n + 1 : ℝ) ^ (3 : ℝ)) 1).mpr
+        (summable_one_div_rpow 3 (by norm_num)))
+  have htail_le :
+      ∑' n : ℕ, 1 / (↑(n + 1) + 1 : ℝ) ^ (3 : ℝ) ≤ (1 / 2 : ℝ) := by
+    have hsum3 : Summable (fun n : ℕ => 1 / (↑n + 1 : ℝ) ^ (3 : ℝ)) :=
+      summable_one_div_rpow 3 (by norm_num)
+    have hfull := riemannZeta_re_le_sigma_div_sub 3 (by norm_num)
+    rw [riemannZeta_re_eq_tsum_real 3 (by norm_num)] at hfull
+    rw [hsum3.tsum_eq_zero_add] at hfull
+    norm_num at hfull ⊢
+    linarith
+  calc
+    ‖riemannZeta s - 1‖
+        = ‖∑' n : ℕ, 1 / (↑(n + 1) + 1 : ℂ) ^ s‖ := by
+          rw [hzeta]
+          ring_nf
+    _ ≤ ∑' n : ℕ, ‖1 / (↑(n + 1) + 1 : ℂ) ^ s‖ :=
+        norm_tsum_le_tsum_norm hsum_tail_norm
+    _ ≤ ∑' n : ℕ, 1 / (↑(n + 1) + 1 : ℝ) ^ (3 : ℝ) :=
+        hsum_tail_norm.tsum_le_tsum (fun n => by
+          have hnpos : 0 < (↑(n + 1) + 1 : ℝ) := by positivity
+          have hnbase : 1 ≤ (↑(n + 1) + 1 : ℝ) := by
+            exact_mod_cast Nat.succ_le_succ (Nat.zero_le (n + 1))
+          have hnorm : ‖(↑(n + 1) + 1 : ℂ) ^ s‖ =
+              (↑(n + 1) + 1 : ℝ) ^ s.re := by
+            have h_cast : (↑(n + 1) + 1 : ℂ) =
+                (↑(↑(n + 1) + 1 : ℝ) : ℂ) := by push_cast; ring
+            rw [h_cast, Complex.norm_cpow_eq_rpow_re_of_pos hnpos]
+          rw [norm_div, norm_one, hnorm]
+          have hpow :
+              (↑(n + 1) + 1 : ℝ) ^ (3 : ℝ) ≤
+                (↑(n + 1) + 1 : ℝ) ^ s.re :=
+            Real.rpow_le_rpow_of_exponent_le hnbase hs
+          exact one_div_le_one_div_of_le (Real.rpow_pos_of_pos hnpos _) hpow)
+        hsum_tail_three
+    _ ≤ (1 / 2 : ℝ) := htail_le
+
+/-- Far-right lower bound for zeta: `‖ζ(s)‖ ≥ 1/2` when `3 ≤ Re(s)`. -/
+lemma half_le_norm_riemannZeta_of_three_le_re
+    (s : ℂ) (hs : 3 ≤ s.re) :
+    (1 / 2 : ℝ) ≤ ‖riemannZeta s‖ := by
+  have htail := norm_riemannZeta_sub_one_le_half_of_three_le_re s hs
+  have htri : ‖(1 : ℂ)‖ ≤ ‖riemannZeta s‖ + ‖riemannZeta s - 1‖ := by
+    calc
+      ‖(1 : ℂ)‖ = ‖riemannZeta s - (riemannZeta s - 1)‖ := by ring_nf
+      _ ≤ ‖riemannZeta s‖ + ‖riemannZeta s - 1‖ := norm_sub_le _ _
+  norm_num at htri
+  linarith
+
 /-- (σ-1)*ζ(σ) 有界：1 < (σ-1)*ζ(σ) ≤ σ。
     这证实了 ζ 在 s=1 处的留数为 1。 -/
 lemma residue_bounds (σ : ℝ) (hσ : 1 < σ) :

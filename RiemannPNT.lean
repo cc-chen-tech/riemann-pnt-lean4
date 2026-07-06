@@ -7351,6 +7351,18 @@ theorem riemannZeta_re_le_sigma_div_sub (σ : ℝ) (hσ : 1 < σ) :
     (riemannZeta (σ : ℂ)).re ≤ σ / (σ - 1) :=
   ZeroFreeRegion.riemannZeta_re_le_sigma_div_sub σ hσ
 
+/-- Public far-right tail bound `‖ζ(s)-1‖ <= 1/2` on `3 <= Re(s)`. -/
+theorem norm_riemannZeta_sub_one_le_half_of_three_le_re
+    (s : ℂ) (hs : 3 ≤ s.re) :
+    ‖riemannZeta s - 1‖ ≤ (1 / 2 : ℝ) :=
+  ZeroFreeRegion.norm_riemannZeta_sub_one_le_half_of_three_le_re s hs
+
+/-- Public far-right lower bound `1/2 <= ‖ζ(s)‖` on `3 <= Re(s)`. -/
+theorem half_le_norm_riemannZeta_of_three_le_re
+    (s : ℂ) (hs : 3 ≤ s.re) :
+    (1 / 2 : ℝ) ≤ ‖riemannZeta s‖ :=
+  ZeroFreeRegion.half_le_norm_riemannZeta_of_three_le_re s hs
+
 /-- Public residue sandwich at `s=1`: `1 < (σ-1)ζ(σ) ≤ σ`. -/
 theorem residue_bounds (σ : ℝ) (hσ : 1 < σ) :
     1 < (σ - 1) * (riemannZeta (σ : ℂ)).re ∧
@@ -15199,6 +15211,22 @@ theorem norm_deriv_riemannZeta_sigma_it_le_re_zeta_two_div_radius_of_two_add_rad
       (riemannZeta (2 : ℂ)).re / R :=
   ZeroFreeRegion.norm_deriv_riemannZeta_sigma_it_le_re_zeta_two_div_radius_of_two_add_radius_le
     hR hσ
+
+/-- Public far-right constant bound for `logDeriv ζ`: on `3 <= Re(s)`,
+`‖logDeriv ζ(s)‖ <= 2 * Re(ζ(2))`. -/
+theorem norm_logDeriv_riemannZeta_le_two_mul_re_zeta_two_of_three_le_re
+    (s : ℂ) (hs : 3 ≤ s.re) :
+    ‖logDeriv riemannZeta s‖ ≤ 2 * (riemannZeta (2 : ℂ)).re :=
+  ZeroFreeRegion.norm_logDeriv_riemannZeta_le_two_mul_re_zeta_two_of_three_le_re
+    s hs
+
+/-- Public coordinate form of the far-right constant `logDeriv ζ` bound. -/
+theorem norm_logDeriv_riemannZeta_sigma_it_le_two_mul_re_zeta_two_of_three_le_sigma
+    {σ t : ℝ} (hσ : 3 ≤ σ) :
+    ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+      2 * (riemannZeta (2 : ℂ)).re :=
+  ZeroFreeRegion.norm_logDeriv_riemannZeta_sigma_it_le_two_mul_re_zeta_two_of_three_le_sigma
+    hσ
 
 /-- Public standalone normalization from an affine full-height vertical
 `logDeriv ζ` estimate to the exact `C * log |t|` scale. -/

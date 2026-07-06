@@ -5435,6 +5435,47 @@ lemma norm_deriv_riemannZeta_sigma_it_le_re_zeta_two_div_radius_of_two_add_radiu
     (z := z) (σ := σ) (t := t) (R := R) hz
   linarith
 
+/-- Far-right constant bound for the logarithmic derivative of ζ.
+
+For `3 <= Re(s)`, the disk of radius `1` around `s` lies in `2 <= Re(z)`, so
+Cauchy's derivative estimate gives `‖ζ'(s)‖ <= ζ(2)`.  The Dirichlet-series
+tail estimate gives `‖ζ(s)‖ >= 1/2`, hence
+`‖logDeriv ζ(s)‖ <= 2 * ζ(2)`. -/
+lemma norm_logDeriv_riemannZeta_le_two_mul_re_zeta_two_of_three_le_re
+    (s : ℂ) (hs : 3 ≤ s.re) :
+    ‖logDeriv riemannZeta s‖ ≤ 2 * (riemannZeta (2 : ℂ)).re := by
+  have hderiv :
+      ‖deriv riemannZeta s‖ ≤ (riemannZeta (2 : ℂ)).re := by
+    have h :=
+      norm_deriv_riemannZeta_le_re_zeta_two_div_radius_of_closedBall_two_le_re
+        (c := s) (R := 1) (by norm_num) ?_
+    · simpa using h
+    · intro z hz
+      have hre := closedBall_re_bounds (z := z) (c := s) (R := 1) hz
+      linarith
+  have hzeta_lower : (1 / 2 : ℝ) ≤ ‖riemannZeta s‖ :=
+    half_le_norm_riemannZeta_of_three_le_re s hs
+  have hzeta_pos : 0 < ‖riemannZeta s‖ := by linarith
+  have hzeta_two_nonneg : 0 ≤ (riemannZeta (2 : ℂ)).re := by
+    exact le_trans zero_le_one (le_of_lt (riemannZeta_re_gt_one 2 (by norm_num)))
+  calc
+    ‖logDeriv riemannZeta s‖
+        = ‖deriv riemannZeta s‖ / ‖riemannZeta s‖ := by
+          rw [norm_logDeriv_riemannZeta_eq_norm_deriv_div, norm_div]
+    _ ≤ (riemannZeta (2 : ℂ)).re / ‖riemannZeta s‖ :=
+          div_le_div_of_nonneg_right hderiv (norm_nonneg _)
+    _ ≤ (riemannZeta (2 : ℂ)).re / (1 / 2 : ℝ) :=
+          div_le_div_of_nonneg_left hzeta_two_nonneg (by norm_num) hzeta_lower
+    _ = 2 * (riemannZeta (2 : ℂ)).re := by ring
+
+/-- Coordinate form of the far-right constant `logDeriv ζ` bound. -/
+lemma norm_logDeriv_riemannZeta_sigma_it_le_two_mul_re_zeta_two_of_three_le_sigma
+    {σ t : ℝ} (hσ : 3 ≤ σ) :
+    ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+      2 * (riemannZeta (2 : ℂ)).re := by
+  exact norm_logDeriv_riemannZeta_le_two_mul_re_zeta_two_of_three_le_re
+    ((σ : ℂ) + I * t) (by simpa using hσ)
+
 /-- Standalone normalization of a future vertical-strip log-derivative estimate.
 
 If a high-height estimate for `logDeriv ζ` on `1 <= σ <= 2` is available in

@@ -1309,6 +1309,13 @@ Core verified declarations:
   `2 <= Re(s)`.
 - `norm_deriv_riemannZeta_sigma_it_le_re_zeta_two_div_radius_of_two_add_radius_le`
   is the coordinate version for centers `sigma + i t` with `2 + R <= sigma`.
+- `norm_riemannZeta_sub_one_le_half_of_three_le_re` and
+  `half_le_norm_riemannZeta_of_three_le_re` prove the far-right tail estimate
+  `||zeta(s)-1|| <= 1/2` and lower bound `1/2 <= ||zeta(s)||` on
+  `3 <= Re(s)`.
+- `norm_logDeriv_riemannZeta_le_two_mul_re_zeta_two_of_three_le_re` and its
+  coordinate form combine the preceding lower bound with the Cauchy derivative
+  estimate to prove a constant `logDeriv zeta` bound on `3 <= Re(s)`.
 - `log_norm_riemannZeta_sigma_it_le_affine_log_norm_add_three_of_polynomial_growth`
   is the coordinate form at points `sigma + i t`.
 - `log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_three_of_polynomial_growth`
