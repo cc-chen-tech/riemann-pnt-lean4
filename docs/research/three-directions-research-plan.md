@@ -379,7 +379,9 @@ Verified assets now include:
   `no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_saving`;
   `no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_saving`;
   `no_zeros_on_vertical_line_of_truncated_explicit_formula_converse_route_mono_error`;
-  `no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error`.
+  `no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error`;
+  `not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_converse_route_mono_error`;
+  `not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error`.
   These now live in the core `ExplicitFormulaTruncated` module as well as the
   public `RiemannPNT.API.ExplicitFormulaTruncated` namespace; the route
   conversion, direct `O(x^(beta-delta))` zero-exclusion wrappers, and
@@ -435,7 +437,9 @@ Verified assets now include:
   `no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_saving`;
   `no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_saving`;
   `no_zeros_on_vertical_line_of_truncated_explicit_formula_converse_route_mono_error`;
-  `no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error`.
+  `no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error`;
+  `not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_converse_route_mono_error`;
+  `not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error`.
 - critical-strip zero-line/existence normalizers:
   `not_exists_nontrivial_zero_on_line_of_no_zeros_on_vertical_line`;
   `no_zeros_on_vertical_line_of_not_exists_nontrivial_zero_on_line`;

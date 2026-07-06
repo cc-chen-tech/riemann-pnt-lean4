@@ -320,6 +320,13 @@ The generalized facade
 `RiemannPNT.API.no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route`
 does the same composition for arbitrary `0 < beta < 1`, yielding
 `NoZerosOnVerticalLine (1 - beta)`.
+The monotone-error facades
+`RiemannPNT.API.no_zeros_on_vertical_line_of_truncated_explicit_formula_converse_route_mono_error`
+and
+`RiemannPNT.API.no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error`
+feed a `PsiPowerErrorBelowLine beta` input into a truncated route at a larger
+boundary `gamma`; their existence-form companions state the same exclusions as
+absence of a nontrivial zero on `Re(s)=gamma` and `Re(s)=1-gamma`.
 The power-saving facades
 `RiemannPNT.API.no_zeros_on_vertical_line_of_truncated_explicit_formula_converse_route_saving`
 and

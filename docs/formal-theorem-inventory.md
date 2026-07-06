@@ -2658,6 +2658,10 @@ Route interfaces:
   `PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_vertical_line_of_truncated_explicit_formula_converse_route_mono_error`
   and
   `PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error`,
+  together with the existence-form companions
+  `PrimeNumberTheorem.ExplicitFormulaTruncated.not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_converse_route_mono_error`
+  and
+  `PrimeNumberTheorem.ExplicitFormulaTruncated.not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error`,
   which feed a smaller-boundary `psi` error into a larger-boundary truncated
   route before applying direct or reflected zero exclusion.
 - `PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_vertical_line_of_truncated_explicit_formula_converse_route_saving`,
@@ -2692,9 +2696,13 @@ Route interfaces:
 - `RiemannPNT.API.no_zeros_on_vertical_line_of_truncated_explicit_formula_converse_route_mono_error`
   and
   `RiemannPNT.API.no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error`
-  public monotone-error wrappers for the conditional truncated route: a `psi`
-  power saving below `beta` with `beta <= gamma` feeds a route at `gamma`,
-  excluding zeros on `Re(s)=gamma` and on the reflected line `Re(s)=1-gamma`.
+  public monotone-error wrappers for the conditional truncated route, with
+  `RiemannPNT.API.not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_converse_route_mono_error`
+  and
+  `RiemannPNT.API.not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error`
+  as the existence-form companions: a `psi` power saving below `beta` with
+  `beta <= gamma` feeds a route at `gamma`, excluding zeros on
+  `Re(s)=gamma` and on the reflected line `Re(s)=1-gamma`.
 - `RiemannPNT.API.no_zeros_on_vertical_line_of_truncated_explicit_formula_converse_route_saving`,
   `RiemannPNT.API.no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_saving`,
   `RiemannPNT.API.not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_converse_route_saving`,
@@ -2712,11 +2720,15 @@ Route interfaces:
   and
   `RiemannPNT.API.ExplicitFormulaTruncated.no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_below_two_thirds`
   expose the same bridges in the nested public namespace next to the truncated
-  explicit-formula target.  The nested namespace also exposes the two monotone
-  wrappers
+  explicit-formula target.  The nested namespace also exposes the four
+  monotone wrappers
   `RiemannPNT.API.ExplicitFormulaTruncated.no_zeros_on_vertical_line_of_truncated_explicit_formula_converse_route_mono_error`
   and
   `RiemannPNT.API.ExplicitFormulaTruncated.no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error`,
+  plus their existence-form companions
+  `RiemannPNT.API.ExplicitFormulaTruncated.not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_converse_route_mono_error`
+  and
+  `RiemannPNT.API.ExplicitFormulaTruncated.not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error`,
   plus the six direct power-saving wrappers
   `RiemannPNT.API.ExplicitFormulaTruncated.no_zeros_on_vertical_line_of_truncated_explicit_formula_converse_route_saving`,
   `RiemannPNT.API.ExplicitFormulaTruncated.no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_saving`,
