@@ -7,9 +7,10 @@ any unresolved analytic theorem.
 
 ## Baseline
 
-- Former worktree: `/Users/luicy/AI/Riemann/riemann-pnt-lean4/.worktrees/riemann-three-directions-research`
+- Former worktree: `/Users/luicy/AI/Riemann/.worktrees/riemann-three-directions-research`
 - Branch snapshot: `research/three-directions`, now aligned with `main`
-- Current base: `95d4706 feat(zero-free): add compact real-part affine patch`
+- Current base before final worktree recovery:
+  `a330c51 feat(zero-free): add log-scale weak-shift obstruction`
 - Research work already carried into `main` covers:
   - signed BTY detector/Borel facades;
   - center-one and general-center zero-pair bridges;
@@ -327,6 +328,10 @@ Verified assets now include:
 - direct non-RH contribution-tail bridges:
   `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_tendsto_zero`;
   `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_tendsto_zero`;
+  `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_tendsto_zero`;
+  `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_isLittleO_one`;
+  `explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution_sum_norm_le`;
+  `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_isBigO_tendsto_zero`;
   `explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution_norm_le`;
   `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_isBigO_tendsto_zero`;
   `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_isLittleO_one`;

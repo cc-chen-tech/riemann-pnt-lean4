@@ -8358,6 +8358,33 @@ lemma new_zero_contribution_sum_tendsto_zero_of_eventually_sdiff_eq_empty
   tendsto_nhds_of_eventually_eq
     (new_zero_contribution_sum_eventually_zero_of_eventually_sdiff_eq_empty hnew)
 
+/-- If no new zeros appear eventually above the base cutoff, then the
+sum-of-norms new-zero tail is eventually zero. -/
+lemma new_zero_contribution_sum_norm_eventually_zero_of_eventually_sdiff_eq_empty
+    {x B : ℝ}
+    (hnew : ∀ᶠ T in atTop,
+      nontrivialZerosFinset T \ nontrivialZerosFinset B = ∅) :
+    (fun T : ℝ =>
+      ∑ ρ ∈ (nontrivialZerosFinset T \ nontrivialZerosFinset B),
+        ‖(x : ℂ) ^ ρ / ρ‖) =ᶠ[atTop] fun _T : ℝ => 0 := by
+  filter_upwards [hnew] with T hT
+  simp [hT]
+
+/-- If no new zeros appear eventually above the base cutoff, then the
+sum-of-norms new-zero tail tends to zero. -/
+lemma new_zero_contribution_sum_norm_tendsto_zero_of_eventually_sdiff_eq_empty
+    {x B : ℝ}
+    (hnew : ∀ᶠ T in atTop,
+      nontrivialZerosFinset T \ nontrivialZerosFinset B = ∅) :
+    Tendsto
+      (fun T : ℝ =>
+        ∑ ρ ∈ (nontrivialZerosFinset T \ nontrivialZerosFinset B),
+          ‖(x : ℂ) ^ ρ / ρ‖)
+      atTop (𝓝 0) :=
+  tendsto_nhds_of_eventually_eq
+    (new_zero_contribution_sum_norm_eventually_zero_of_eventually_sdiff_eq_empty
+      (x := x) hnew)
+
 /-- Direct explicit-formula bridge from a stable base truncation and a
 vanishing new-zero contribution tail.
 
@@ -8460,6 +8487,55 @@ lemma explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_i
   explicit_formula_von_mangoldt x hx :=
   explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_tendsto_zero
     hB ((isLittleO_one_iff ℝ).mp htail)
+
+/-- A vanishing eventual sum-of-norms bound for the new-zero contribution
+closes the corrected explicit-formula target from a stable base truncation. -/
+lemma explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution_sum_norm_le
+    {x B : ℝ} {hx : x ≥ 2} {E : ℝ → ℝ}
+    (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
+    (hE : Tendsto E atTop (𝓝 0))
+    (hbound :
+      ∀ᶠ T in atTop,
+        (∑ ρ ∈ (nontrivialZerosFinset T \ nontrivialZerosFinset B),
+          ‖(x : ℂ) ^ ρ / ρ‖) ≤ E T) :
+    explicit_formula_von_mangoldt x hx := by
+  refine explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_tendsto_zero
+    hB ?_
+  exact tendsto_of_tendsto_of_tendsto_of_le_of_le'
+    tendsto_const_nhds hE
+    (Eventually.of_forall fun _T =>
+      Finset.sum_nonneg fun _ρ _hρ => norm_nonneg _)
+    hbound
+
+/-- Big-O sum-of-norms tail version of the direct new-zero contribution
+bridge. -/
+lemma explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_isBigO_tendsto_zero
+    {x B : ℝ} {hx : x ≥ 2} {E : ℝ → ℝ}
+    (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
+    (hE : Tendsto E atTop (𝓝 0))
+    (hO :
+      (fun T : ℝ =>
+        ∑ ρ ∈ (nontrivialZerosFinset T \ nontrivialZerosFinset B),
+          ‖(x : ℂ) ^ ρ / ρ‖) =O[atTop] E) :
+    explicit_formula_von_mangoldt x hx := by
+  rcases hO.exists_pos with ⟨C, _hCpos, hCO⟩
+  refine explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution_sum_norm_le
+    hB (E := fun T : ℝ => C * ‖E T‖) ?_ ?_
+  · have hEnorm : Tendsto (fun T : ℝ => ‖E T‖) atTop (𝓝 0) :=
+      tendsto_zero_iff_norm_tendsto_zero.mp hE
+    simpa using
+      (tendsto_const_nhds.mul hEnorm :
+        Tendsto (fun T : ℝ => C * ‖E T‖) atTop (𝓝 (C * 0)))
+  · filter_upwards [hCO.bound] with T hT
+    have hnonneg :
+        0 ≤ ∑ ρ ∈ (nontrivialZerosFinset T \ nontrivialZerosFinset B),
+          ‖(x : ℂ) ^ ρ / ρ‖ :=
+      Finset.sum_nonneg fun _ρ _hρ => norm_nonneg _
+    have hnonneg' :
+        0 ≤ ∑ ρ ∈ (nontrivialZerosFinset T \ nontrivialZerosFinset B),
+          ‖(x : ℂ) ^ ρ‖ / ‖ρ‖ := by
+      simpa [norm_div] using hnonneg
+    simpa [Real.norm_eq_abs, abs_of_nonneg hnonneg', norm_div] using hT
 
 /-- A vanishing eventual norm bound for the new-zero contribution closes the
 corrected explicit-formula target from a stable base truncation. -/

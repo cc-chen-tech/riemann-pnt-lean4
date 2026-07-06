@@ -2169,17 +2169,22 @@ Core verified declarations:
   triangle-inequality handoffs for truncated explicit-formula bookkeeping.
 - `new_zero_contribution_sum_eventually_zero_of_eventually_sdiff_eq_empty`,
   `new_zero_contribution_sum_tendsto_zero_of_eventually_sdiff_eq_empty`,
+  `new_zero_contribution_sum_norm_eventually_zero_of_eventually_sdiff_eq_empty`,
+  `new_zero_contribution_sum_norm_tendsto_zero_of_eventually_sdiff_eq_empty`,
   `new_zero_inv_norm_tail_tendsto_zero_of_eventually_sdiff_eq_empty`, and
   `new_zero_card_tail_tendsto_zero_of_eventually_sdiff_eq_empty`
   turn an eventual empty new-zero block into eventual zero or convergence to
-  zero for the finite zero contribution, reciprocal-norm tail, and zero-count
-  tail used by truncated explicit-formula/RH-error bookkeeping.
+  zero for the finite zero contribution, sum-of-norms tail, reciprocal-norm
+  tail, and zero-count tail used by truncated explicit-formula/RH-error
+  bookkeeping.
 - `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_tendsto_zero`
   turns a stable base truncation identity plus a vanishing new-zero
   contribution tail into the corrected height-truncated explicit-formula
   target.
 - `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_tendsto_zero`,
   `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_tendsto_zero`,
+  `explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution_sum_norm_le`,
+  `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_isBigO_tendsto_zero`,
   `explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution_norm_le`,
   and
   `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_isBigO_tendsto_zero`

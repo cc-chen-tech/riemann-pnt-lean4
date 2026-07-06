@@ -810,13 +810,17 @@ The finite truncated-zero bookkeeping is proved as ordinary theorem-level
 infrastructure.  In particular,
 `new_zero_contribution_sum_eventually_zero_of_eventually_sdiff_eq_empty`,
 `new_zero_contribution_sum_tendsto_zero_of_eventually_sdiff_eq_empty`,
+`new_zero_contribution_sum_norm_eventually_zero_of_eventually_sdiff_eq_empty`,
+`new_zero_contribution_sum_norm_tendsto_zero_of_eventually_sdiff_eq_empty`,
 `new_zero_inv_norm_tail_tendsto_zero_of_eventually_sdiff_eq_empty`, and
 `new_zero_card_tail_tendsto_zero_of_eventually_sdiff_eq_empty` show that if no
 new bounded-height zeros appear eventually above a base cutoff, then the finite
-new-zero contribution and the two RH-tail controls collapse to zero.  These are
+new-zero contribution, its sum-of-norms tail, and the two RH-tail controls
+collapse to zero.  These are
 finite-combinatorial tail bridges, not substitutes for Perron's formula or the
 global explicit formula.  The direct bridges
-`explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_tendsto_zero`
+`explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_tendsto_zero`,
+`explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_isBigO_tendsto_zero`,
 and
 `explicit_formula_von_mangoldt_of_base_and_eventually_no_new_zeros_via_contribution_tail`
 package the corresponding base-truncation identity plus vanishing finite-tail

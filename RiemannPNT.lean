@@ -19922,6 +19922,36 @@ theorem new_zero_contribution_sum_tendsto_zero_of_eventually_sdiff_eq_empty
   PrimeNumberTheorem.new_zero_contribution_sum_tendsto_zero_of_eventually_sdiff_eq_empty
     hnew
 
+/-- Public eventual-zero statement for the sum-of-norms new-zero tail when no
+new zeros appear eventually above a base cutoff. -/
+theorem new_zero_contribution_sum_norm_eventually_zero_of_eventually_sdiff_eq_empty
+    {x B : ℝ}
+    (hnew : ∀ᶠ T in atTop,
+      PrimeNumberTheorem.nontrivialZerosFinset T \
+          PrimeNumberTheorem.nontrivialZerosFinset B = ∅) :
+    (fun T : ℝ =>
+      ∑ ρ ∈ (PrimeNumberTheorem.nontrivialZerosFinset T \
+          PrimeNumberTheorem.nontrivialZerosFinset B),
+        ‖(x : ℂ) ^ ρ / ρ‖) =ᶠ[atTop] fun _T : ℝ => 0 :=
+  PrimeNumberTheorem.new_zero_contribution_sum_norm_eventually_zero_of_eventually_sdiff_eq_empty
+    hnew
+
+/-- Public convergence-to-zero statement for the sum-of-norms new-zero tail
+when no new zeros appear eventually above a base cutoff. -/
+theorem new_zero_contribution_sum_norm_tendsto_zero_of_eventually_sdiff_eq_empty
+    {x B : ℝ}
+    (hnew : ∀ᶠ T in atTop,
+      PrimeNumberTheorem.nontrivialZerosFinset T \
+          PrimeNumberTheorem.nontrivialZerosFinset B = ∅) :
+    Tendsto
+      (fun T : ℝ =>
+        ∑ ρ ∈ (PrimeNumberTheorem.nontrivialZerosFinset T \
+            PrimeNumberTheorem.nontrivialZerosFinset B),
+          ‖(x : ℂ) ^ ρ / ρ‖)
+      atTop (𝓝 0) :=
+  PrimeNumberTheorem.new_zero_contribution_sum_norm_tendsto_zero_of_eventually_sdiff_eq_empty
+    hnew
+
 /-- Public direct explicit-formula bridge from a stable base truncation and a
 vanishing new-zero contribution tail. -/
 theorem explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_tendsto_zero
@@ -19986,6 +20016,38 @@ theorem explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm
     PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
   PrimeNumberTheorem.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_isLittleO_one
     hB htail
+
+/-- Public eventual sum-of-norms bound version of the direct new-zero
+contribution bridge. -/
+theorem explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution_sum_norm_le
+    {x B : ℝ} {hx : x ≥ 2} {E : ℝ → ℝ}
+    (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
+      (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
+    (hE : Tendsto E atTop (𝓝 0))
+    (hbound :
+      ∀ᶠ T in atTop,
+        (∑ ρ ∈ (PrimeNumberTheorem.nontrivialZerosFinset T \
+            PrimeNumberTheorem.nontrivialZerosFinset B),
+          ‖(x : ℂ) ^ ρ / ρ‖) ≤ E T) :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution_sum_norm_le
+    hB hE hbound
+
+/-- Public Big-O sum-of-norms tail version of the direct new-zero contribution
+bridge. -/
+theorem explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_isBigO_tendsto_zero
+    {x B : ℝ} {hx : x ≥ 2} {E : ℝ → ℝ}
+    (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
+      (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
+    (hE : Tendsto E atTop (𝓝 0))
+    (hO :
+      (fun T : ℝ =>
+        ∑ ρ ∈ (PrimeNumberTheorem.nontrivialZerosFinset T \
+            PrimeNumberTheorem.nontrivialZerosFinset B),
+          ‖(x : ℂ) ^ ρ / ρ‖) =O[atTop] E) :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_isBigO_tendsto_zero
+    hB hE hO
 
 /-- Public little-o norm-tail version of the direct new-zero contribution
 bridge. -/
