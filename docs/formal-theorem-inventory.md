@@ -1113,6 +1113,9 @@ Core verified declarations:
   `Re(-zeta'/zeta)` interface.
 - `logDerivVerticalLogBound_of_negLogDerivVerticalLogBound`
   turns the named signed norm interface into the unsigned norm interface.
+- `negLogDerivVerticalLogBound_of_logDerivVerticalLogBound`
+  gives the converse conversion, making the named `logDeriv zeta` and
+  `-logDeriv zeta` norm-bound interfaces interchangeable.
 - `reNegDerivDivVerticalLogBound_of_negLogDerivVerticalLogBound`
   turns the named signed norm interface directly into the named
   `Re(-zeta'/zeta)` interface.
@@ -2666,6 +2669,11 @@ Route interfaces:
   `PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_saving`
   are the direct truncated-route facades for an `O(x^(beta-delta))` input,
   including the concrete `2/3` and reflected `1/3` specializations.
+- `PrimeNumberTheorem.ExplicitFormulaTruncated.not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_converse_route_saving`
+  and
+  `PrimeNumberTheorem.ExplicitFormulaTruncated.not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formula_converse_route_saving`
+  are the corresponding existence-form facades for the direct power-saving
+  route, ruling out nontrivial zeros on `Re(s)=beta` and `Re(s)=1-beta`.
 - `RiemannPNT.API.no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route`
   public bridge from a truncated explicit-formula route at any `0 < beta < 1`
   and a `psi` power saving below `beta` to no zeros on the reflected line
@@ -2704,6 +2712,11 @@ Route interfaces:
   `RiemannPNT.API.no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_saving`
   expose the same direct `O(x^(beta-delta))` truncated-route wrappers at the
   top-level public API.
+- `RiemannPNT.API.not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_converse_route_saving`
+  and
+  `RiemannPNT.API.not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formula_converse_route_saving`
+  expose the direct power-saving route in existence form at the top-level
+  public API.
 - `RiemannPNT.API.ExplicitFormulaTruncated.no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route`,
   `RiemannPNT.API.ExplicitFormulaTruncated.no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_below_two_thirds`,
   `RiemannPNT.API.ExplicitFormulaTruncated.no_zeros_on_one_third_of_truncated_explicit_formula_converse_route`,
@@ -2726,6 +2739,10 @@ Route interfaces:
   `RiemannPNT.API.ExplicitFormulaTruncated.no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_saving`,
   `RiemannPNT.API.ExplicitFormulaTruncated.no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_saving`, and
   `RiemannPNT.API.ExplicitFormulaTruncated.no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_saving`.
+  It also exposes the two direct power-saving existence facades
+  `RiemannPNT.API.ExplicitFormulaTruncated.not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_converse_route_saving`
+  and
+  `RiemannPNT.API.ExplicitFormulaTruncated.not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formula_converse_route_saving`.
 - `RiemannPNT.API.not_psi_power_error_below_line_of_exists_zero_right_of_bridge`
   and its explicit-formula, general `beta-delta`, reflected-line, and
   below-`2/3` variants are contrapositive facades: under the same future

@@ -48,6 +48,13 @@ theorem logDerivVerticalLogBound_of_negLogDerivVerticalLogBound
     LogDerivVerticalLogBound C T0 :=
   ZeroFreeRegion.logDerivVerticalLogBound_of_negLogDerivVerticalLogBound h
 
+/-- Public conversion from the named unsigned norm bound to the signed norm
+bound. -/
+theorem negLogDerivVerticalLogBound_of_logDerivVerticalLogBound
+    {C T0 : ℝ} (h : LogDerivVerticalLogBound C T0) :
+    NegLogDerivVerticalLogBound C T0 :=
+  ZeroFreeRegion.negLogDerivVerticalLogBound_of_logDerivVerticalLogBound h
+
 /-- Public direct conversion from the named signed norm bound to the
 `Re(-zeta'/zeta)` bound. -/
 theorem reNegDerivDivVerticalLogBound_of_negLogDerivVerticalLogBound
@@ -18691,6 +18698,34 @@ theorem no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_
   PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_saving
     hβ_pos hβ_lt_one hdelta_pos hθ_nonneg hroute hexplicit herror
 
+/-- Public nested existence-form power-saving version of the truncated
+explicit-formula route. -/
+theorem not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_converse_route_saving
+    {β delta : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hdelta_pos : 0 < delta) (hθ_nonneg : 0 ≤ β - delta)
+    (hroute :
+      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute β)
+    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
+      ExplicitFormulaTruncatedTarget T hT x hx)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBound (β - delta)) :
+    ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = β :=
+  PrimeNumberTheorem.ExplicitFormulaTruncated.not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_converse_route_saving
+    hβ_pos hβ_lt_one hdelta_pos hθ_nonneg hroute hexplicit herror
+
+/-- Public nested reflected-line existence-form power-saving version of the
+truncated explicit-formula route. -/
+theorem not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formula_converse_route_saving
+    {β delta : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hdelta_pos : 0 < delta) (hθ_nonneg : 0 ≤ β - delta)
+    (hroute :
+      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute β)
+    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
+      ExplicitFormulaTruncatedTarget T hT x hx)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBound (β - delta)) :
+    ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = 1 - β :=
+  PrimeNumberTheorem.ExplicitFormulaTruncated.not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formula_converse_route_saving
+    hβ_pos hβ_lt_one hdelta_pos hθ_nonneg hroute hexplicit herror
+
 /-- Public nested concrete `O(x^(2/3 - δ))` truncated explicit-formula bridge
 to no zeros on `Re(s)=2/3`. -/
 theorem no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_saving
@@ -19143,6 +19178,36 @@ theorem no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_
     (herror : PrimeNumberTheorem.PsiPowerErrorBound (β - delta)) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (1 - β) :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_saving
+    hβ_pos hβ_lt_one hdelta_pos hθ_nonneg hroute hexplicit herror
+
+/-- Public top-level existence-form power-saving version of the truncated
+explicit-formula route. -/
+theorem not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_converse_route_saving
+    {β delta : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hdelta_pos : 0 < delta) (hθ_nonneg : 0 ≤ β - delta)
+    (hroute :
+      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute β)
+    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
+      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget
+        T hT x hx)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBound (β - delta)) :
+    ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = β :=
+  PrimeNumberTheorem.ExplicitFormulaTruncated.not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_converse_route_saving
+    hβ_pos hβ_lt_one hdelta_pos hθ_nonneg hroute hexplicit herror
+
+/-- Public top-level reflected-line existence-form power-saving version of the
+truncated explicit-formula route. -/
+theorem not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formula_converse_route_saving
+    {β delta : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hdelta_pos : 0 < delta) (hθ_nonneg : 0 ≤ β - delta)
+    (hroute :
+      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute β)
+    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
+      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget
+        T hT x hx)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBound (β - delta)) :
+    ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = 1 - β :=
+  PrimeNumberTheorem.ExplicitFormulaTruncated.not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formula_converse_route_saving
     hβ_pos hβ_lt_one hdelta_pos hθ_nonneg hroute hexplicit herror
 
 /-- Public top-level concrete `O(x^(2/3 - δ))` truncated explicit-formula

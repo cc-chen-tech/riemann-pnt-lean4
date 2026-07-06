@@ -61,6 +61,10 @@ Verified assets now include:
 - the fixed-margin closure
   `exists_log_deriv_zeta_bty_detector_one_lower_bound_of_one_add_le`, which
   uses the existing `Re(s) >= 1 + epsilon` vertical `logDeriv` estimate;
+- the bidirectional conversion between the named `logDeriv zeta` and
+  `-logDeriv zeta` vertical norm-bound interfaces:
+  `logDerivVerticalLogBound_of_negLogDerivVerticalLogBound` and
+  `negLogDerivVerticalLogBound_of_logDerivVerticalLogBound`;
 - the unsigned simplified Borel facade
   `log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_right_shift_borel_family_simplified`;
 - the signed simplified Borel facade added on this branch:
@@ -359,6 +363,8 @@ Verified assets now include:
   `no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_saving`;
   `no_zeros_on_vertical_line_of_truncated_explicit_formula_converse_route_mono_error`;
   `no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error`;
+  `not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_converse_route_saving`;
+  `not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formula_converse_route_saving`;
   `not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_converse_route_mono_error`;
   `not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error`.
   These now live in the core `ExplicitFormulaTruncated` module as well as the
@@ -415,7 +421,9 @@ Verified assets now include:
   `no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_saving`;
   `no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_saving`;
   `no_zeros_on_vertical_line_of_truncated_explicit_formula_converse_route_mono_error`;
-  `no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error`.
+  `no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error`;
+  `not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_converse_route_saving`;
+  `not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formula_converse_route_saving`.
 - critical-strip zero-line/existence normalizers:
   `not_exists_nontrivial_zero_on_line_of_no_zeros_on_vertical_line`;
   `no_zeros_on_vertical_line_of_not_exists_nontrivial_zero_on_line`;

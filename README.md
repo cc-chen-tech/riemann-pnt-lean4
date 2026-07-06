@@ -121,7 +121,10 @@ convert a future affine `A + B log(|t|+3)` high-height input into these exact
 `ZeroFreeRegion.negLogDerivVerticalLogBound_of_high_height_log_abs_bound`, and
 `ZeroFreeRegion.reNegDerivDivVerticalLogBound_of_high_height_log_abs_bound`
 package it directly as the named interfaces.  These are verified handoffs, not
-the missing zeta-specific high-height estimate itself.
+the missing zeta-specific high-height estimate itself.  The signed and unsigned
+norm-bound interfaces are interchangeable through
+`ZeroFreeRegion.logDerivVerticalLogBound_of_negLogDerivVerticalLogBound` and
+`ZeroFreeRegion.negLogDerivVerticalLogBound_of_logDerivVerticalLogBound`.
 
 The second missing high-height input is also named in Lean:
 `ZeroFreeRegion.LogDerivRegularPartLogBound` and
@@ -801,7 +804,9 @@ is also repackaged directly as
 zero-exclusion route interface consumed by the general `psi`-error bridges.
 It also has direct truncated-route wrappers for the sharper
 `O(x^(beta-delta))` input, including the `Re(s)=2/3` and reflected
-`Re(s)=1/3` concrete specializations.  It also
+`Re(s)=1/3` concrete specializations.  Their existence-form companions rule
+out nontrivial zeros on `Re(s)=beta` and `Re(s)=1-beta` under the same
+power-saving hypotheses.  It also
 exposes contrapositive facades saying that, under the same future
 zero-exclusion bridge, a zero at or to the right of the chosen boundary rules
 out the corresponding `psi` power-saving hypothesis.  The verified facades

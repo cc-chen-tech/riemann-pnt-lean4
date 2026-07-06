@@ -329,6 +329,12 @@ concrete `2/3` and reflected `1/3` specializations are exposed as
 `RiemannPNT.API.no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_saving`
 and
 `RiemannPNT.API.no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_saving`.
+Their existence-form companions
+`RiemannPNT.API.not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_converse_route_saving`
+and
+`RiemannPNT.API.not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formula_converse_route_saving`
+state the same direct power-saving exclusion as absence of a nontrivial zero on
+the corresponding line.
 
 ## Recommended next formalization order
 
