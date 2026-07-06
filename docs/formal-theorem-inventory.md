@@ -1977,13 +1977,15 @@ Core verified declarations:
   the finite nontrivial-zero paired sum and average are nonnegative.
 - `laplacePairPositive_dampedKernel_of_pair_nonneg_le`,
   `laplacePairPositive_one_dampedKernel_of_pair_nonneg_le`,
+  `nontrivialZerosFinset_pair_sum_nonnegative_of_dampedKernel_pair_nonneg_le`,
+  `nontrivialZerosFinset_pair_average_nonnegative_of_dampedKernel_pair_nonneg_le`,
   `nontrivialZerosFinset_sum_re_nonnegative_of_dampedKernel_pair_nonneg_le`,
   and
   `nontrivialZerosFinset_average_re_nonnegative_of_dampedKernel_pair_nonneg_le`
   cover the common split input where the paired `G` contribution is already
   nonnegative and is bounded above by the paired `F` contribution.  Together
   with `kappa <= 1`, this discharges the signed damped-kernel positivity
-  condition and yields full finite-zero real-part sum and average
+  condition and yields full finite-zero paired and unpaired sum/average
   nonnegativity.
 - `nontrivialZerosFinset_sum_re_nonnegative_of_dampedKernel`,
   `nontrivialZerosFinset_average_re_nonnegative_of_dampedKernel`,
@@ -1994,6 +1996,13 @@ Core verified declarations:
   extend the damped detector bridge from paired full finite-zero sums to
   unpaired sums/averages and to new-zero blocks
   `nontrivialZerosFinset U \ nontrivialZerosFinset T`.
+- `nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_dampedKernel_pair_nonneg_le`,
+  `nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_dampedKernel_pair_nonneg_le`,
+  `nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_dampedKernel_pair_nonneg_le`,
+  and
+  `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_dampedKernel_pair_nonneg_le`
+  provide the same pair-nonnegative dominated-kernel split input for new-zero
+  `sdiff` paired and unpaired sums/averages.
 - `laplacePairPositive_dampedKernel_self_of_le_one`,
   `laplacePairPositive_one_dampedKernel_self_of_le_one`,
   `dampedKernel_self_re_eq`,

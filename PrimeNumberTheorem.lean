@@ -5752,6 +5752,42 @@ theorem nontrivialZerosFinset_pair_average_nonnegative_of_dampedKernel
     T (dampedKernel κ F G)
     (laplacePairPositive_one_dampedKernel_of_pair_le hpair)
 
+/-- Finite nontrivial-zero paired-sum nonnegativity for a damped detector
+kernel from the pair-nonnegative dominated-kernel input shape. -/
+theorem nontrivialZerosFinset_pair_sum_nonnegative_of_dampedKernel_pair_nonneg_le
+    (T κ : ℝ) (F G : ℂ → ℂ) (hκ : κ ≤ 1)
+    (hG_nonneg : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      0 ≤ (G z).re + (G (1 - z)).re)
+    (hGF : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      (G z).re + (G (1 - z)).re ≤
+        (F z).re + (F (1 - z)).re) :
+    0 ≤ ∑ ρ ∈ nontrivialZerosFinset T,
+      ((dampedKernel κ F G ρ).re +
+        (dampedKernel κ F G (1 - ρ)).re) :=
+  nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive_one
+    T (dampedKernel κ F G)
+    (laplacePairPositive_one_dampedKernel_of_pair_nonneg_le
+      hκ hG_nonneg hGF)
+
+/-- Finite nontrivial-zero paired-average nonnegativity for a damped detector
+kernel from the pair-nonnegative dominated-kernel input shape. -/
+theorem nontrivialZerosFinset_pair_average_nonnegative_of_dampedKernel_pair_nonneg_le
+    (T κ : ℝ) (F G : ℂ → ℂ) (hκ : κ ≤ 1)
+    (hG_nonneg : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      0 ≤ (G z).re + (G (1 - z)).re)
+    (hGF : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      (G z).re + (G (1 - z)).re ≤
+        (F z).re + (F (1 - z)).re) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset T,
+        ((dampedKernel κ F G ρ).re +
+          (dampedKernel κ F G (1 - ρ)).re)) /
+        ((nontrivialZerosFinset T).card : ℝ) :=
+  nontrivialZerosFinset_pair_average_nonnegative_of_laplace_pair_positive_one
+    T (dampedKernel κ F G)
+    (laplacePairPositive_one_dampedKernel_of_pair_nonneg_le
+      hκ hG_nonneg hGF)
+
 /-- Finite nontrivial-zero unpaired real-part sum nonnegativity for a damped
 detector kernel. -/
 theorem nontrivialZerosFinset_sum_re_nonnegative_of_dampedKernel
@@ -5971,6 +6007,76 @@ theorem nontrivialZerosFinset_sdiff_average_re_nonnegative_of_dampedKernel
   nontrivialZerosFinset_sdiff_average_re_nonnegative_of_laplace_pair_positive_one
     T U (dampedKernel κ F G)
     (laplacePairPositive_one_dampedKernel_of_pair_le hpair)
+
+/-- New-zero paired-sum nonnegativity for a damped detector kernel from the
+pair-nonnegative dominated-kernel input shape. -/
+theorem nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_dampedKernel_pair_nonneg_le
+    (T U κ : ℝ) (F G : ℂ → ℂ) (hκ : κ ≤ 1)
+    (hG_nonneg : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      0 ≤ (G z).re + (G (1 - z)).re)
+    (hGF : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      (G z).re + (G (1 - z)).re ≤
+        (F z).re + (F (1 - z)).re) :
+    0 ≤ ∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+      ((dampedKernel κ F G ρ).re +
+        (dampedKernel κ F G (1 - ρ)).re) :=
+  nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive_one
+    T U (dampedKernel κ F G)
+    (laplacePairPositive_one_dampedKernel_of_pair_nonneg_le
+      hκ hG_nonneg hGF)
+
+/-- New-zero paired-average nonnegativity for a damped detector kernel from the
+pair-nonnegative dominated-kernel input shape. -/
+theorem nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_dampedKernel_pair_nonneg_le
+    (T U κ : ℝ) (F G : ℂ → ℂ) (hκ : κ ≤ 1)
+    (hG_nonneg : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      0 ≤ (G z).re + (G (1 - z)).re)
+    (hGF : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      (G z).re + (G (1 - z)).re ≤
+        (F z).re + (F (1 - z)).re) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        ((dampedKernel κ F G ρ).re +
+          (dampedKernel κ F G (1 - ρ)).re)) /
+        (((nontrivialZerosFinset U \ nontrivialZerosFinset T).card : ℝ)) :=
+  nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_laplace_pair_positive_one
+    T U (dampedKernel κ F G)
+    (laplacePairPositive_one_dampedKernel_of_pair_nonneg_le
+      hκ hG_nonneg hGF)
+
+/-- New-zero unpaired real-part sum nonnegativity for a damped detector kernel
+from the pair-nonnegative dominated-kernel input shape. -/
+theorem nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_dampedKernel_pair_nonneg_le
+    (T U κ : ℝ) (F G : ℂ → ℂ) (hκ : κ ≤ 1)
+    (hG_nonneg : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      0 ≤ (G z).re + (G (1 - z)).re)
+    (hGF : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      (G z).re + (G (1 - z)).re ≤
+        (F z).re + (F (1 - z)).re) :
+    0 ≤ ∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+      (dampedKernel κ F G ρ).re :=
+  nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_laplace_pair_positive_one
+    T U (dampedKernel κ F G)
+    (laplacePairPositive_one_dampedKernel_of_pair_nonneg_le
+      hκ hG_nonneg hGF)
+
+/-- New-zero unpaired real-part average nonnegativity for a damped detector
+kernel from the pair-nonnegative dominated-kernel input shape. -/
+theorem nontrivialZerosFinset_sdiff_average_re_nonnegative_of_dampedKernel_pair_nonneg_le
+    (T U κ : ℝ) (F G : ℂ → ℂ) (hκ : κ ≤ 1)
+    (hG_nonneg : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      0 ≤ (G z).re + (G (1 - z)).re)
+    (hGF : ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      (G z).re + (G (1 - z)).re ≤
+        (F z).re + (F (1 - z)).re) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        (dampedKernel κ F G ρ).re) /
+        (((nontrivialZerosFinset U \ nontrivialZerosFinset T).card : ℝ)) :=
+  nontrivialZerosFinset_sdiff_average_re_nonnegative_of_laplace_pair_positive_one
+    T U (dampedKernel κ F G)
+    (laplacePairPositive_one_dampedKernel_of_pair_nonneg_le
+      hκ hG_nonneg hGF)
 
 /-- New-zero paired-sum nonnegativity for a self-damped detector kernel. -/
 theorem nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_dampedKernel_self
