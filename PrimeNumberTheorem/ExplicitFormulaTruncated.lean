@@ -350,6 +350,35 @@ theorem no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_savin
       (by norm_num) (by norm_num) hdelta_pos (by linarith)
       hroute hexplicit herror
 
+/-- Concrete `O(x^(2/3 - δ))` existence-form bridge to no nontrivial zeros
+on `Re(s)=2/3`. -/
+theorem not_exists_nontrivial_zero_on_two_thirds_of_truncated_explicit_formula_converse_route_saving
+    {delta : ℝ} (hdelta_pos : 0 < delta) (hdelta_le : delta ≤ (2 / 3 : ℝ))
+    (hroute : ExplicitFormulaTruncatedConverseRoute (2 / 3))
+    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
+      ExplicitFormulaTruncatedTarget T hT x hx)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBound ((2 / 3 : ℝ) - delta)) :
+    ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = 2 / 3 :=
+  not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_converse_route_saving
+    (β := 2 / 3) (delta := delta)
+    (by norm_num) (by norm_num) hdelta_pos (by linarith)
+    hroute hexplicit herror
+
+/-- Concrete `O(x^(2/3 - δ))` existence-form bridge to no nontrivial zeros
+on `Re(s)=1/3`. -/
+theorem not_exists_nontrivial_zero_on_one_third_of_truncated_explicit_formula_converse_route_saving
+    {delta : ℝ} (hdelta_pos : 0 < delta) (hdelta_le : delta ≤ (2 / 3 : ℝ))
+    (hroute : ExplicitFormulaTruncatedConverseRoute (2 / 3))
+    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
+      ExplicitFormulaTruncatedTarget T hT x hx)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBound ((2 / 3 : ℝ) - delta)) :
+    ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = 1 / 3 := by
+  simpa [show (1 : ℝ) - 2 / 3 = 1 / 3 by norm_num] using
+    not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formula_converse_route_saving
+      (β := 2 / 3) (delta := delta)
+      (by norm_num) (by norm_num) hdelta_pos (by linarith)
+      hroute hexplicit herror
+
 /-- Monotone-error version of the truncated explicit-formula route: a `ψ`
 power saving below a smaller boundary `β` feeds a truncated route at any larger
 boundary `γ`. -/
