@@ -791,7 +791,10 @@ smaller boundary feeds a larger-boundary truncated route and yields direct or
 reflected zero exclusion at the larger boundary.  The truncated route is also
 repackaged directly as
 `PsiPowerErrorBelowLineExcludesZerosRightOf`, matching the right-half
-zero-exclusion route interface consumed by the general `psi`-error bridges.  It also
+zero-exclusion route interface consumed by the general `psi`-error bridges.
+It also has direct truncated-route wrappers for the sharper
+`O(x^(beta-delta))` input, including the `Re(s)=2/3` and reflected
+`Re(s)=1/3` concrete specializations.  It also
 exposes contrapositive facades saying that, under the same future
 zero-exclusion bridge, a zero at or to the right of the chosen boundary rules
 out the corresponding `psi` power-saving hypothesis.  The verified facades

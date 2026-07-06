@@ -310,6 +310,15 @@ The generalized facade
 `RiemannPNT.API.no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route`
 does the same composition for arbitrary `0 < beta < 1`, yielding
 `NoZerosOnVerticalLine (1 - beta)`.
+The power-saving facades
+`RiemannPNT.API.no_zeros_on_vertical_line_of_truncated_explicit_formula_converse_route_saving`
+and
+`RiemannPNT.API.no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_saving`
+use the sharper hypothesis `PsiPowerErrorBound (beta - delta)`.  Their
+concrete `2/3` and reflected `1/3` specializations are exposed as
+`RiemannPNT.API.no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_saving`
+and
+`RiemannPNT.API.no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_saving`.
 
 ## Recommended next formalization order
 
