@@ -239,9 +239,13 @@ Verified assets now include:
   assemblies once each summand's Stechkin-style pair inequality is available.
 - finite weighted self-damped resolvent/Laplace combinations:
   `laplacePairPositive_one_weightedSelfDampedResolventLaplaceKernelCombo`
+  and
+  `weightedSelfDampedResolventLaplaceKernelCombo_re_nonnegative_on_critical_strip`,
   and the corresponding full/new-zero sum, average, paired-sum, and
   paired-average nonnegativity wrappers whenever all weights and shifts are
-  nonnegative and each damping coefficient is at most one.
+  nonnegative and each damping coefficient is at most one.  The pointwise
+  real-part route is exposed by the `_re_nonnegative` full/new-zero sum and
+  average facades, matching the affine self-damped package below.
 - finite weighted self-damped affine resolvent/Laplace combinations:
   `laplacePairPositive_one_weightedSelfDampedAffineResolventLaplaceKernelCombo`
   and

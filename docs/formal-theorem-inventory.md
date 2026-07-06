@@ -2107,17 +2107,23 @@ Core verified declarations:
   specialize the finite weighted damped-kernel package to the self-damped case
   `F k - (kappa k) * F k` under `kappa k <= 1`.
 - `laplacePairPositive_one_weightedSelfDampedResolventLaplaceKernelCombo`,
+  `weightedSelfDampedResolventLaplaceKernelCombo_re_nonnegative_on_critical_strip`,
   `nontrivialZerosFinset_pair_sum_nonnegative_of_weightedSelfDampedResolventLaplaceKernelCombo`,
   `nontrivialZerosFinset_pair_average_nonnegative_of_weightedSelfDampedResolventLaplaceKernelCombo`,
   `nontrivialZerosFinset_sum_re_nonnegative_of_weightedSelfDampedResolventLaplaceKernelCombo`,
   `nontrivialZerosFinset_average_re_nonnegative_of_weightedSelfDampedResolventLaplaceKernelCombo`,
+  `nontrivialZerosFinset_sum_re_nonnegative_of_weightedSelfDampedResolventLaplaceKernelCombo_re_nonnegative`,
+  `nontrivialZerosFinset_average_re_nonnegative_of_weightedSelfDampedResolventLaplaceKernelCombo_re_nonnegative`,
   `nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_weightedSelfDampedResolventLaplaceKernelCombo`,
   `nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_weightedSelfDampedResolventLaplaceKernelCombo`,
   `nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_weightedSelfDampedResolventLaplaceKernelCombo`,
   and
-  `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_weightedSelfDampedResolventLaplaceKernelCombo`
-  specialize the finite weighted self-damped package to concrete elementary
-  resolvent/Laplace kernels `resolventLaplaceKernel (a k)`.
+  `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_weightedSelfDampedResolventLaplaceKernelCombo`,
+  together with the corresponding `_re_nonnegative` new-zero sum and average
+  facades, specialize the finite weighted self-damped package to concrete
+  elementary resolvent/Laplace kernels `resolventLaplaceKernel (a k)` through
+  either center-one pair positivity or pointwise critical-strip real-part
+  nonnegativity.
 - `laplacePairPositive_one_weightedSelfDampedAffineResolventLaplaceKernelCombo`,
   `weightedSelfDampedAffineResolventLaplaceKernelCombo_re_nonnegative_on_critical_strip`,
   `nontrivialZerosFinset_pair_sum_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo`,

@@ -3190,6 +3190,22 @@ lemma weightedDampedKernelCombo_self_re_nonnegative_on_critical_strip_of_le_one
   weightedDampedKernelCombo_self_re_nonnegative_on_strip_of_le_one
     hw hκ hF
 
+/-- Center-one pointwise real-part nonnegativity for finite nonnegative
+combinations of self-damped resolvent/Laplace prototype kernels. -/
+lemma weightedSelfDampedResolventLaplaceKernelCombo_re_nonnegative_on_critical_strip
+    {K : Finset ℕ} {w κ a : ℕ → ℝ}
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (ha : ∀ k ∈ K, 0 ≤ a k) :
+    ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      0 ≤ (weightedKernelCombo K w
+        (fun k => dampedKernel (κ k)
+          (resolventLaplaceKernel (a k)) (resolventLaplaceKernel (a k))) z).re :=
+  weightedDampedKernelCombo_self_re_nonnegative_on_critical_strip_of_le_one
+    hw hκ
+    (fun k hk =>
+      resolventLaplaceKernel_re_nonnegative_on_critical_strip (ha k hk))
+
 /-- Finite nonnegative linear combinations of resolvent/Laplace prototype
 kernels.  This is a Lean-facing model for detector kernels built by summing
 elementary right-half-plane-positive pieces. -/
@@ -6910,6 +6926,86 @@ lemma nontrivialZerosFinset_average_re_nonnegative_of_re_nonnegative_on_critical
     (nontrivialZerosFinset_sum_re_nonnegative_of_re_nonnegative_on_critical_strip
       T F hF)
     (Nat.cast_nonneg _)
+
+/-- Finite nontrivial-zero unpaired real-part sum nonnegativity for finite
+nonnegative combinations of self-damped resolvent/Laplace prototype kernels,
+using their pointwise critical-strip real-part nonnegativity. -/
+theorem nontrivialZerosFinset_sum_re_nonnegative_of_weightedSelfDampedResolventLaplaceKernelCombo_re_nonnegative
+    (T : ℝ) (K : Finset ℕ) (w κ a : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (ha : ∀ k ∈ K, 0 ≤ a k) :
+    0 ≤ ∑ ρ ∈ nontrivialZerosFinset T,
+      (weightedKernelCombo K w
+        (fun k => dampedKernel (κ k)
+          (resolventLaplaceKernel (a k)) (resolventLaplaceKernel (a k))) ρ).re :=
+  nontrivialZerosFinset_sum_re_nonnegative_of_re_nonnegative_on_critical_strip
+    T (weightedKernelCombo K w
+      (fun k => dampedKernel (κ k)
+        (resolventLaplaceKernel (a k)) (resolventLaplaceKernel (a k))))
+    (weightedSelfDampedResolventLaplaceKernelCombo_re_nonnegative_on_critical_strip
+      hw hκ ha)
+
+/-- Finite nontrivial-zero unpaired real-part average nonnegativity for finite
+nonnegative combinations of self-damped resolvent/Laplace prototype kernels,
+using their pointwise critical-strip real-part nonnegativity. -/
+theorem nontrivialZerosFinset_average_re_nonnegative_of_weightedSelfDampedResolventLaplaceKernelCombo_re_nonnegative
+    (T : ℝ) (K : Finset ℕ) (w κ a : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (ha : ∀ k ∈ K, 0 ≤ a k) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset T,
+        (weightedKernelCombo K w
+          (fun k => dampedKernel (κ k)
+            (resolventLaplaceKernel (a k)) (resolventLaplaceKernel (a k))) ρ).re) /
+        ((nontrivialZerosFinset T).card : ℝ) :=
+  nontrivialZerosFinset_average_re_nonnegative_of_re_nonnegative_on_critical_strip
+    T (weightedKernelCombo K w
+      (fun k => dampedKernel (κ k)
+        (resolventLaplaceKernel (a k)) (resolventLaplaceKernel (a k))))
+    (weightedSelfDampedResolventLaplaceKernelCombo_re_nonnegative_on_critical_strip
+      hw hκ ha)
+
+/-- New-zero unpaired real-part sum nonnegativity for finite nonnegative
+combinations of self-damped resolvent/Laplace prototype kernels, using their
+pointwise critical-strip real-part nonnegativity. -/
+theorem nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_weightedSelfDampedResolventLaplaceKernelCombo_re_nonnegative
+    (T U : ℝ) (K : Finset ℕ) (w κ a : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (ha : ∀ k ∈ K, 0 ≤ a k) :
+    0 ≤ ∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+      (weightedKernelCombo K w
+        (fun k => dampedKernel (κ k)
+          (resolventLaplaceKernel (a k)) (resolventLaplaceKernel (a k))) ρ).re :=
+  nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_re_nonnegative_on_critical_strip
+    T U (weightedKernelCombo K w
+      (fun k => dampedKernel (κ k)
+        (resolventLaplaceKernel (a k)) (resolventLaplaceKernel (a k))))
+    (weightedSelfDampedResolventLaplaceKernelCombo_re_nonnegative_on_critical_strip
+      hw hκ ha)
+
+/-- New-zero unpaired real-part average nonnegativity for finite nonnegative
+combinations of self-damped resolvent/Laplace prototype kernels, using their
+pointwise critical-strip real-part nonnegativity. -/
+theorem nontrivialZerosFinset_sdiff_average_re_nonnegative_of_weightedSelfDampedResolventLaplaceKernelCombo_re_nonnegative
+    (T U : ℝ) (K : Finset ℕ) (w κ a : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (ha : ∀ k ∈ K, 0 ≤ a k) :
+    0 ≤
+      (∑ ρ ∈ nontrivialZerosFinset U \ nontrivialZerosFinset T,
+        (weightedKernelCombo K w
+          (fun k => dampedKernel (κ k)
+            (resolventLaplaceKernel (a k)) (resolventLaplaceKernel (a k))) ρ).re) /
+        (((nontrivialZerosFinset U \ nontrivialZerosFinset T).card : ℝ)) :=
+  nontrivialZerosFinset_sdiff_average_re_nonnegative_of_re_nonnegative_on_critical_strip
+    T U (weightedKernelCombo K w
+      (fun k => dampedKernel (κ k)
+        (resolventLaplaceKernel (a k)) (resolventLaplaceKernel (a k))))
+    (weightedSelfDampedResolventLaplaceKernelCombo_re_nonnegative_on_critical_strip
+      hw hκ ha)
 
 /-- Finite nontrivial-zero unpaired real-part sum nonnegativity for finite
 nonnegative combinations of self-damped affine resolvent/Laplace prototype
