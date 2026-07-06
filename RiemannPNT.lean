@@ -12514,6 +12514,95 @@ theorem exists_re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_s
   ZeroFreeRegion.exists_re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center
     hr hσ hσr ht hβ hAre hBre hM hdiff hlog hn
 
+/-- Public differentiability discharge for the signed multiplicity-weighted
+right-shifted regular part on the Borel disk. -/
+theorem differentiableOn_neg_logDeriv_multiplicityRegularPart_sigma_it_right_shift_of_disk_right_half
+    {r σ β t : ℝ} {n : ℕ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3)
+    (ht : 6 ≤ |t|) (hβ : β < 1) :
+    DifferentiableOn ℂ
+      (fun w : ℂ =>
+        -logDeriv riemannZeta w +
+          (n : ℂ) * (w - ((β : ℂ) + Complex.I * t))⁻¹)
+      (Metric.ball (((σ + r : ℝ) : ℂ) + Complex.I * t) (2 * r)) :=
+  ZeroFreeRegion.differentiableOn_neg_logDeriv_multiplicityRegularPart_sigma_it_right_shift_of_disk_right_half
+    hr hσ hσr ht hβ
+
+/-- Public multiplicity-aware zero-repulsion bridge with differentiability
+discharged from the standard right-shift geometry. -/
+theorem exists_re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center_of_re_le
+    {Are Bre r σ β t : ℝ} {n : ℕ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3) (ht : 6 ≤ |t|)
+    (hβ : β < 1) (hAre : 0 ≤ Are) (hBre : 0 ≤ Bre)
+    (hM :
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * t)‖ + 3))
+    (hlog : ∀ w : ℂ,
+      w ∈ Metric.ball (((σ + r : ℝ) : ℂ) + Complex.I * t) (2 * r) →
+        (-logDeriv riemannZeta w +
+            (n : ℂ) * (w - ((β : ℂ) + Complex.I * t))⁻¹).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * t)‖ + 3))
+    (hn : 0 < n) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+          riemannZeta ((σ : ℂ) + Complex.I * t)).re + 1 / (σ - β) ≤
+        C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center_of_re_le
+    hr hσ hσr ht hβ hAre hBre hM hlog hn
+
+/-- Public multiplicity-aware right-shifted zero-repulsion bridge in the exact
+`F <= -1/(sigma-beta) + C log |t|` closure-input shape. -/
+theorem exists_re_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_neg_inv_add_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center
+    {Are Bre r σ β t : ℝ} {n : ℕ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3) (ht : 6 ≤ |t|)
+    (hβ : β < 1) (hAre : 0 ≤ Are) (hBre : 0 ≤ Bre)
+    (hM :
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * t)‖ + 3))
+    (hdiff :
+      DifferentiableOn ℂ
+        (fun w : ℂ =>
+          -logDeriv riemannZeta w +
+            (n : ℂ) * (w - ((β : ℂ) + Complex.I * t))⁻¹)
+        (Metric.ball (((σ + r : ℝ) : ℂ) + Complex.I * t) (2 * r)))
+    (hlog : ∀ w : ℂ,
+      w ∈ Metric.ball (((σ + r : ℝ) : ℂ) + Complex.I * t) (2 * r) →
+        (-logDeriv riemannZeta w +
+            (n : ℂ) * (w - ((β : ℂ) + Complex.I * t))⁻¹).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * t)‖ + 3))
+    (hn : 0 < n) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+          riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
+        -1 / (σ - β) + C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_neg_inv_add_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center
+    hr hσ hσr ht hβ hAre hBre hM hdiff hlog hn
+
+/-- Public closure-input zero-repulsion bridge with differentiability
+discharged from the standard right-shift geometry. -/
+theorem exists_re_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_neg_inv_add_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center_of_re_le
+    {Are Bre r σ β t : ℝ} {n : ℕ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3) (ht : 6 ≤ |t|)
+    (hβ : β < 1) (hAre : 0 ≤ Are) (hBre : 0 ≤ Bre)
+    (hM :
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * t)‖ + 3))
+    (hlog : ∀ w : ℂ,
+      w ∈ Metric.ball (((σ + r : ℝ) : ℂ) + Complex.I * t) (2 * r) →
+        (-logDeriv riemannZeta w +
+            (n : ℂ) * (w - ((β : ℂ) + Complex.I * t))⁻¹).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * t)‖ + 3))
+    (hn : 0 < n) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+          riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
+        -1 / (σ - β) + C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_neg_inv_add_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center_of_re_le
+    hr hσ hσr ht hβ hAre hBre hM hlog hn
+
 /-- Public multiplicity-aware full-height zero-repulsion bridge whose
 right-shifted regular-part center estimate is discharged by the fixed-margin
 `-logDeriv ζ` bound. -/
@@ -14162,6 +14251,28 @@ theorem classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_bo
     ZeroFreeRegion.classical_zero_free_region :=
   ZeroFreeRegion.classical_zero_free_region_of_exists_re_im_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height h
 
+/-- Public coordinate high-height closure for the usual unit-principal
+`logDeriv ζ` regular part and direct real-part vertical estimates. -/
+theorem classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_bound_and_vertical_reNegDerivDiv_bound_high_height
+    (T0 Bregular Bvertical : ℝ)
+    (hT0 : 2 ≤ T0) (hBregular : 0 ≤ Bregular)
+    (hBvertical : 0 ≤ Bvertical)
+    (hregular :
+      ∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < σ - β →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) -
+            (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+          Bregular * Real.log |t|)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+          riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
+          Bvertical * Real.log |t|) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_bound_and_vertical_reNegDerivDiv_bound_high_height
+    T0 Bregular Bvertical hT0 hBregular hBvertical hregular hvertical
+
 /-- Public coordinate high-height closure with a multiplicity-weighted positive
 `logDeriv ζ` regular part and vertical-strip norm estimates. -/
 theorem classical_zero_free_region_of_re_im_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height
@@ -14182,6 +14293,29 @@ theorem classical_zero_free_region_of_re_im_multiplicity_logDeriv_regular_part_n
           Bvertical * Real.log |t|) :
     ZeroFreeRegion.classical_zero_free_region :=
   ZeroFreeRegion.classical_zero_free_region_of_re_im_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height
+    T0 Bregular Bvertical hT0 hBregular hBvertical hregular hvertical
+
+/-- Public coordinate high-height closure with a multiplicity-weighted
+`logDeriv ζ` regular part and direct real-part vertical estimates. -/
+theorem classical_zero_free_region_of_re_im_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_reNegDerivDiv_bound_high_height
+    (T0 Bregular Bvertical : ℝ)
+    (hT0 : 2 ≤ T0) (hBregular : 0 ≤ Bregular)
+    (hBvertical : 0 ≤ Bvertical)
+    (hregular :
+      ∀ σ β t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < σ - β →
+        ∃ n : ℕ, 0 < n ∧
+          ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) -
+              (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+            Bregular * Real.log |t|)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+          riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
+          Bvertical * Real.log |t|) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_re_im_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_reNegDerivDiv_bound_high_height
     T0 Bregular Bvertical hT0 hBregular hBvertical hregular hvertical
 
 /-- Public existential coordinate high-height closure with a

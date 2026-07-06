@@ -1704,6 +1704,15 @@ Core verified declarations:
   `RiemannPNT.API.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_high_height_reNegDerivDiv_bound`
   expose the direct exact-scale high-height assemblies, together with their
   multiplicity-aware analogues.
+- `RiemannPNT.API.classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_bound_and_vertical_reNegDerivDiv_bound_high_height`
+  and
+  `RiemannPNT.API.classical_zero_free_region_of_re_im_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_reNegDerivDiv_bound_high_height`
+  expose the coordinate direct-real-part closures through the public facade.
+- `RiemannPNT.API.differentiableOn_neg_logDeriv_multiplicityRegularPart_sigma_it_right_shift_of_disk_right_half`
+  and the three public
+  `RiemannPNT.API.exists_re_neg_logDeriv_riemannZeta_sigma_it_...right_shift...`
+  aliases expose the newest right-shift differentiability discharge and
+  zero-repulsion handoffs to downstream users.
 - `re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_logDeriv_re_le_half_radius`
   and
   `re_neg_deriv_div_riemannZeta_sigma_two_it_right_shift_le_log_abs_of_affine_neg_logDeriv_re_le_half_radius`
@@ -1776,6 +1785,23 @@ Core verified declarations:
   removes the separate center norm hypothesis from the multiplicity-aware
   zero-repulsion handoff; the explicit center principal-part cost is
   `(n : Real) / r`, and `n >= 1` still recovers the unit principal conclusion.
+- `differentiableOn_neg_logDeriv_multiplicityRegularPart_sigma_it_right_shift_of_disk_right_half`
+  proves differentiability of
+  `-logDeriv zeta(w) + n * (w-(beta+it))^(-1)` on the right-shifted Borel
+  disk from the standard right-shift geometry.  This removes the former
+  explicit `hdiff` hypothesis using zeta nonvanishing on `Re(s) >= 1` and
+  the fact that the candidate zero `beta+it` lies outside the shifted disk.
+- `exists_re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center_of_re_le`
+  is the same multiplicity-aware additive zero-repulsion handoff with the
+  differentiability hypothesis discharged automatically.  The remaining input
+  is the local affine real-part bound for the regular part on the Borel disk.
+- `exists_re_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_neg_inv_add_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center`
+  rewrites the additive output as
+  `Re(-zeta'/zeta)(sigma+it) <= -1/(sigma-beta) + C log |t|`, matching the
+  exact input shape consumed by the high-height zero-free-region closures.
+- `exists_re_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_neg_inv_add_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center_of_re_le`
+  is the same closure-input zero-repulsion bridge with differentiability
+  discharged by the right-shift geometry.
 - `exists_re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_shift_le_log_norm_of_affine_regularPart_re_le_half_radius_fixed_margin_center`
   is the full-height version of that multiplicity-aware center-discharged
   zero-repulsion handoff.

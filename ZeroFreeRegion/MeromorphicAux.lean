@@ -9831,6 +9831,87 @@ lemma norm_inv_right_shift_center_sub_same_height_le_inv_radius
   rw [hdiff_center, norm_inv, Complex.norm_of_nonneg hden_pos.le]
   simpa [one_div] using one_div_le_one_div_of_le hr hden_ge
 
+/-- The candidate zero `β+it` lies outside the right-shifted Borel disk.
+
+This is the geometric fact behind differentiability of the regular part
+`-logDeriv ζ(w) + n(w-ρ)⁻¹` on that disk: the reciprocal singularity is not
+inside the local Borel-Carathéodory domain. -/
+lemma rho_sigma_it_not_mem_right_shift_ball
+    {r σ β t : ℝ} (hr : 0 < r) (hσ : 1 + r ≤ σ) (hβ : β < 1) :
+    ((β : ℂ) + I * t) ∉
+      ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r) := by
+  intro hmem
+  have hdist : dist ((β : ℂ) + I * t)
+      (((σ + r : ℝ) : ℂ) + I * t) < 2 * r := by
+    simpa [Metric.mem_ball] using hmem
+  have hsub :
+      ((β : ℂ) + I * t) - (((σ + r : ℝ) : ℂ) + I * t) =
+        ((β - (σ + r) : ℝ) : ℂ) := by
+    norm_num [Complex.ext_iff, Complex.ofReal_sub]
+  have hneg : β - (σ + r) < 0 := by nlinarith [hr, hσ, hβ]
+  have hnorm_ofReal :
+      ‖((β - (σ + r) : ℝ) : ℂ)‖ = |β - (σ + r)| := by
+    simpa using (RCLike.norm_ofReal (K := ℂ) (β - (σ + r)))
+  have hdist_eq :
+      dist ((β : ℂ) + I * t) (((σ + r : ℝ) : ℂ) + I * t) =
+        σ + r - β := by
+    rw [dist_eq_norm, hsub, hnorm_ofReal, abs_of_neg hneg]
+    ring
+  have hgt : 2 * r < σ + r - β := by nlinarith [hσ, hβ]
+  rw [hdist_eq] at hdist
+  linarith
+
+/-- Differentiability of the signed multiplicity-weighted regular part on the
+right-shifted Borel disk.
+
+The existing Borel transfer lemmas took this as an explicit `hdiff`
+hypothesis.  Under the standard right-shift geometry, it follows from
+Mathlib's zero-freeness of ζ on `Re(s) >= 1` plus the fact that the candidate
+zero `β+it` is outside the disk. -/
+lemma differentiableOn_neg_logDeriv_multiplicityRegularPart_sigma_it_right_shift_of_disk_right_half
+    {r σ β t : ℝ} {n : ℕ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3)
+    (ht : 6 ≤ |t|) (hβ : β < 1) :
+    DifferentiableOn ℂ
+      (fun w : ℂ =>
+        -logDeriv riemannZeta w + (n : ℂ) * (w - ((β : ℂ) + I * t))⁻¹)
+      (ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r)) := by
+  let center : ℂ := ((σ + r : ℝ) : ℂ) + I * t
+  let rho : ℂ := (β : ℂ) + I * t
+  have hRright : 1 + 2 * r ≤ σ + r := by nlinarith [hσ]
+  have hr_le_one : r ≤ 1 := by nlinarith [hσ, hσr]
+  have hheight : 3 + 2 * r ≤ |t| := by nlinarith [ht, hr_le_one]
+  have hbase_closed :
+      DifferentiableOn ℂ (fun z : ℂ => -logDeriv riemannZeta z)
+        (closedBall center (2 * r)) := by
+    simpa [center] using
+      (differentiableOn_neg_logDeriv_riemannZeta_closedBall_sigma_it_of_disk_right_half
+        (σ := σ + r) (t := t) (R := 2 * r) (H := 3)
+        hRright (by norm_num) hheight)
+  have hbase :
+      DifferentiableOn ℂ (fun z : ℂ => -logDeriv riemannZeta z)
+        (ball center (2 * r)) :=
+    hbase_closed.mono Metric.ball_subset_closedBall
+  have hrho_not : rho ∉ ball center (2 * r) := by
+    simpa [center, rho] using
+      (rho_sigma_it_not_mem_right_shift_ball
+        (r := r) (σ := σ) (β := β) (t := t) hr hσ hβ)
+  have hinv :
+      DifferentiableOn ℂ (fun w : ℂ => (w - rho)⁻¹)
+        (ball center (2 * r)) := by
+    intro w hw
+    have hw_ne : w - rho ≠ 0 := by
+      intro hzero
+      have hw_eq : w = rho := sub_eq_zero.mp hzero
+      exact hrho_not (by simpa [hw_eq] using hw)
+    exact ((differentiableAt_id.sub (differentiableAt_const rho)).inv
+      hw_ne).differentiableWithinAt
+  have hmul :
+      DifferentiableOn ℂ (fun w : ℂ => (n : ℂ) * (w - rho)⁻¹)
+        (ball center (2 * r)) :=
+    hinv.const_mul (n : ℂ)
+  simpa [center, rho] using hbase.add hmul
+
 /-- Right-shifted Borel-Carathéodory transfer for the signed regular part
 `-logDeriv ζ(w) + (w-ρ)⁻¹`, normalized to the pure `log |t|` scale.
 
@@ -10307,6 +10388,114 @@ lemma exists_re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_shi
       (r := r) (σ := σ) (β := β) (t := t) (n := n)
       hr hσ hσr ht hA hB hM hdiff hlog hcenter hn hsub
   exact ⟨C, hC, by simpa [C] using hmain⟩
+
+/-- Multiplicity-aware zero-repulsion bridge with the differentiability
+hypothesis discharged from the standard right-shift geometry.
+
+The only remaining local analytic input is the affine real-part bound for the
+regular part on the Borel disk. -/
+lemma exists_re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center_of_re_le
+    {Are Bre r σ β t : ℝ} {n : ℕ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3) (ht : 6 ≤ |t|)
+    (hβ : β < 1) (hAre : 0 ≤ Are) (hBre : 0 ≤ Bre)
+    (hM :
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hlog : ∀ w : ℂ,
+      w ∈ ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r) →
+        (-logDeriv riemannZeta w +
+            (n : ℂ) * (w - ((β : ℂ) + I * t))⁻¹).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hn : 0 < n) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re + 1 / (σ - β) ≤
+        C * Real.log |t| :=
+  exists_re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center
+    (Are := Are) (Bre := Bre) (r := r) (σ := σ) (β := β)
+    (t := t) (n := n)
+    hr hσ hσr ht hβ hAre hBre hM
+    (differentiableOn_neg_logDeriv_multiplicityRegularPart_sigma_it_right_shift_of_disk_right_half
+      (r := r) (σ := σ) (β := β) (t := t) (n := n)
+      hr hσ hσr ht hβ)
+    hlog hn
+
+/-- Multiplicity-aware right-shifted zero-repulsion bridge in the exact
+`F <= -1/(sigma-beta) + C log |t|` shape consumed by the high-height
+classical zero-free-region closures. -/
+lemma exists_re_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_neg_inv_add_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center
+    {Are Bre r σ β t : ℝ} {n : ℕ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3) (ht : 6 ≤ |t|)
+    (hβ : β < 1) (hAre : 0 ≤ Are) (hBre : 0 ≤ Bre)
+    (hM :
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hdiff :
+      DifferentiableOn ℂ
+        (fun w : ℂ =>
+          -logDeriv riemannZeta w +
+            (n : ℂ) * (w - ((β : ℂ) + I * t))⁻¹)
+        (ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r)))
+    (hlog : ∀ w : ℂ,
+      w ∈ ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r) →
+        (-logDeriv riemannZeta w +
+            (n : ℂ) * (w - ((β : ℂ) + I * t))⁻¹).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hn : 0 < n) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re ≤
+        -1 / (σ - β) + C * Real.log |t| := by
+  rcases
+      exists_re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center
+        (Are := Are) (Bre := Bre) (r := r) (σ := σ) (β := β)
+        (t := t) (n := n)
+        hr hσ hσr ht hβ hAre hBre hM hdiff hlog hn with
+    ⟨C, hC, hadd⟩
+  refine ⟨C, hC, ?_⟩
+  calc
+    (-deriv riemannZeta ((σ : ℂ) + I * t) /
+        riemannZeta ((σ : ℂ) + I * t)).re
+        =
+          ((-deriv riemannZeta ((σ : ℂ) + I * t) /
+              riemannZeta ((σ : ℂ) + I * t)).re + 1 / (σ - β))
+            - 1 / (σ - β) := by ring
+    _ ≤ C * Real.log |t| - 1 / (σ - β) := by
+          exact sub_le_sub_right hadd _
+    _ = -1 / (σ - β) + C * Real.log |t| := by ring
+
+/-- Version of
+`exists_re_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_neg_inv_add_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center`
+with the differentiability hypothesis discharged from the standard
+right-shift geometry. -/
+lemma exists_re_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_neg_inv_add_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center_of_re_le
+    {Are Bre r σ β t : ℝ} {n : ℕ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3) (ht : 6 ≤ |t|)
+    (hβ : β < 1) (hAre : 0 ≤ Are) (hBre : 0 ≤ Bre)
+    (hM :
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hlog : ∀ w : ℂ,
+      w ∈ ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r) →
+        (-logDeriv riemannZeta w +
+            (n : ℂ) * (w - ((β : ℂ) + I * t))⁻¹).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hn : 0 < n) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re ≤
+        -1 / (σ - β) + C * Real.log |t| :=
+  exists_re_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_neg_inv_add_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center
+    (Are := Are) (Bre := Bre) (r := r) (σ := σ) (β := β)
+    (t := t) (n := n)
+    hr hσ hσr ht hβ hAre hBre hM
+    (differentiableOn_neg_logDeriv_multiplicityRegularPart_sigma_it_right_shift_of_disk_right_half
+      (r := r) (σ := σ) (β := β) (t := t) (n := n)
+      hr hσ hσr ht hβ)
+    hlog hn
 
 /-- Full-height version of
 `exists_re_neg_logDeriv_riemannZeta_sigma_it_add_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center`.
