@@ -190,11 +190,15 @@ Verified assets now include:
 
 - center-one zero-pair bridges over `nontrivialZerosFinset`;
 - a general-center finite paired-sum bridge over full and new-zero finsets;
-- paired-average bridges over full and new-zero finsets:
+- paired-sum and paired-average bridges over full and new-zero finsets:
+  `nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive`;
   `nontrivialZerosFinset_pair_average_nonnegative_of_laplace_pair_positive`;
+  `nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive`;
   `nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_laplace_pair_positive`.
-- center-one paired-average convenience wrappers:
+- center-one paired-sum and paired-average convenience wrappers:
+  `nontrivialZerosFinset_pair_sum_nonnegative_of_laplace_pair_positive_one`;
   `nontrivialZerosFinset_pair_average_nonnegative_of_laplace_pair_positive_one`;
+  `nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_laplace_pair_positive_one`;
   `nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_laplace_pair_positive_one`.
 - pointwise critical-strip positivity suppliers:
   `laplacePairPositive_one_of_re_nonnegative_on_critical_strip`,
