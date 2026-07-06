@@ -7401,6 +7401,46 @@ theorem norm_logDeriv_riemannZeta_le_real_neg_deriv_div
       (-deriv riemannZeta (s.re : ℂ) / riemannZeta (s.re : ℂ)).re :=
   ZeroFreeRegion.norm_logDeriv_riemannZeta_le_real_neg_deriv_div s hs
 
+/-- Public Chebyshev linear partial-sum estimate for von Mangoldt
+coefficients. -/
+theorem vonMangoldt_partial_sums_isBigO_linear :
+    (fun n : ℕ => ∑ k ∈ Finset.Icc 1 n, Λ k) =O[atTop]
+      fun n : ℕ => (n : ℝ) ^ (1 : ℝ) :=
+  ZeroFreeRegion.vonMangoldt_partial_sums_isBigO_linear
+
+/-- Public Chebyshev pole-scale bound for the von Mangoldt L-series on the
+real half-line. -/
+theorem norm_LSeries_vonMangoldt_le_chebyshev_pole (σ : ℝ) (hσ : 1 < σ) :
+    ‖LSeries (fun n : ℕ => (Λ n : ℂ)) (σ : ℂ)‖ ≤
+      (Real.log 4 + 4) * σ / (σ - 1) :=
+  ZeroFreeRegion.norm_LSeries_vonMangoldt_le_chebyshev_pole σ hσ
+
+/-- Public Chebyshev pole-scale bound for `Re(-ζ'/ζ(σ))`. -/
+theorem real_neg_deriv_div_riemannZeta_le_chebyshev_pole
+    (σ : ℝ) (hσ : 1 < σ) :
+    (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re ≤
+      (Real.log 4 + 4) * σ / (σ - 1) :=
+  ZeroFreeRegion.real_neg_deriv_div_riemannZeta_le_chebyshev_pole σ hσ
+
+/-- Public Chebyshev pole-scale bound for the zeta logarithmic derivative in
+the absolute-convergence half-plane. -/
+theorem norm_logDeriv_riemannZeta_le_chebyshev_pole
+    (s : ℂ) (hs : 1 < s.re) :
+    ‖logDeriv riemannZeta s‖ ≤
+      (Real.log 4 + 4) * s.re / (s.re - 1) :=
+  ZeroFreeRegion.norm_logDeriv_riemannZeta_le_chebyshev_pole s hs
+
+/-- Public moving-line logarithmic derivative bound obtained from Chebyshev's
+pole-scale estimate. This stays in `Re(z)>1`; it is not the boundary-strip
+`LogDerivVerticalLogBound` target. -/
+theorem exists_norm_logDeriv_riemannZeta_le_log_abs_im_add_three_of_moving_line
+    {a : ℝ} (ha : 0 < a) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ z : ℂ,
+      1 + a / Real.log (|z.im| + 3) ≤ z.re →
+      ‖logDeriv riemannZeta z‖ ≤ C * Real.log (|z.im| + 3) :=
+  ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_le_log_abs_im_add_three_of_moving_line
+    ha
+
 /-- Public antitonicity of `-Re(ζ'/ζ)` on the real half-line `(1, ∞)`. -/
 theorem log_deriv_zeta_antitone
     {σ₁ σ₂ : ℝ} (hσ₁ : 1 < σ₁) (hσ₂ : σ₁ ≤ σ₂) :

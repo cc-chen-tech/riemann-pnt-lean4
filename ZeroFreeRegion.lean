@@ -573,6 +573,251 @@ lemma norm_logDeriv_riemannZeta_le_real_neg_deriv_div (s : ℂ) (hs : 1 < s.re) 
     _ ≤ ∑' n : ℕ, Λ n / (n : ℝ) ^ s.re :=
       norm_LSeries_vonMangoldt_le_real_series s hs
 
+/-- The Chebyshev function at an integer is the same finite sum over
+`1 ≤ k ≤ n`; the zero term has no von Mangoldt contribution. -/
+lemma chebyshev_psi_nat_eq_sum_Icc_one (n : ℕ) :
+    Chebyshev.psi (n : ℝ) = ∑ k ∈ Finset.Icc 1 n, Λ k := by
+  rw [Chebyshev.psi_eq_sum_Icc]
+  rw [Nat.floor_natCast]
+  rw [← Finset.insert_Icc_add_one_left_eq_Icc n.zero_le,
+    Finset.sum_insert (by aesop)]
+  simp [ArithmeticFunction.vonMangoldt]
+
+/-- Chebyshev's upper bound gives the linear partial-sum estimate for
+von Mangoldt coefficients. This is the zeta-specific input for Abel/L-series
+integral estimates near the pole line. -/
+lemma vonMangoldt_partial_sums_isBigO_linear :
+    (fun n : ℕ => ∑ k ∈ Finset.Icc 1 n, Λ k) =O[atTop]
+      fun n : ℕ => (n : ℝ) ^ (1 : ℝ) := by
+  refine (Asymptotics.isBigO_iff).mpr ⟨Real.log 4 + 4, Eventually.of_forall ?_⟩
+  intro n
+  have hpsi : Chebyshev.psi (n : ℝ) ≤ (Real.log 4 + 4) * (n : ℝ) :=
+    Chebyshev.psi_le_const_mul_self (Nat.cast_nonneg n)
+  have hsum_eq : ∑ k ∈ Finset.Icc 1 n, Λ k = Chebyshev.psi (n : ℝ) :=
+    (chebyshev_psi_nat_eq_sum_Icc_one n).symm
+  have hnonneg : 0 ≤ ∑ k ∈ Finset.Icc 1 n, Λ k :=
+    Finset.sum_nonneg fun k hk => ArithmeticFunction.vonMangoldt_nonneg
+  calc
+    ‖∑ k ∈ Finset.Icc 1 n, Λ k‖ = ∑ k ∈ Finset.Icc 1 n, Λ k :=
+      Real.norm_of_nonneg hnonneg
+    _ = Chebyshev.psi (n : ℝ) := hsum_eq
+    _ ≤ (Real.log 4 + 4) * (n : ℝ) := hpsi
+    _ = (Real.log 4 + 4) * ‖(n : ℝ) ^ (1 : ℝ)‖ := by
+      simp [Real.rpow_one]
+
+/-- Chebyshev's bound controls the Abel kernel appearing in the integral
+representation of the von Mangoldt L-series. -/
+lemma norm_vonMangoldt_lseries_integral_le_chebyshev_pole (σ : ℝ) (hσ : 1 < σ) :
+    ‖∫ t in Set.Ioi (1 : ℝ),
+        ((∑ k ∈ Finset.Icc 1 ⌊t⌋₊, (Λ k : ℂ)) *
+          (t : ℂ) ^ (-((σ : ℂ) + 1)))‖
+      ≤ ∫ t in Set.Ioi (1 : ℝ), (Real.log 4 + 4) * t ^ (-σ) := by
+  have hint : IntegrableOn (fun t : ℝ => (Real.log 4 + 4) * t ^ (-σ))
+      (Set.Ioi (1 : ℝ)) := by
+    exact (integrableOn_Ioi_rpow_of_lt (by linarith : -σ < -1) zero_lt_one).const_mul _
+  refine (MeasureTheory.norm_integral_le_of_norm_le (μ := volume.restrict (Set.Ioi (1 : ℝ)))
+      (g := fun t : ℝ => (Real.log 4 + 4) * t ^ (-σ)) ?_ ?_).trans_eq ?_
+  · simpa using hint
+  · refine MeasureTheory.ae_restrict_of_forall_mem measurableSet_Ioi ?_
+    intro t ht
+    have htpos : 0 < t := zero_lt_one.trans ht
+    have hpsi : Chebyshev.psi t ≤ (Real.log 4 + 4) * t :=
+      Chebyshev.psi_le_const_mul_self htpos.le
+    have hsum_eq : ∑ k ∈ Finset.Icc 1 ⌊t⌋₊, Λ k = Chebyshev.psi t := by
+      rw [Chebyshev.psi_eq_sum_Icc]
+      rw [← Finset.insert_Icc_add_one_left_eq_Icc (Nat.zero_le ⌊t⌋₊),
+        Finset.sum_insert (by aesop)]
+      simp [ArithmeticFunction.vonMangoldt]
+    have hsum_nonneg : 0 ≤ ∑ k ∈ Finset.Icc 1 ⌊t⌋₊, Λ k :=
+      Finset.sum_nonneg fun k hk => ArithmeticFunction.vonMangoldt_nonneg
+    have hnorm_sum :
+        ‖∑ k ∈ Finset.Icc 1 ⌊t⌋₊, (Λ k : ℂ)‖ =
+          ∑ k ∈ Finset.Icc 1 ⌊t⌋₊, Λ k := by
+      rw [← Complex.ofReal_sum, norm_real, Real.norm_of_nonneg hsum_nonneg]
+    have hcpow_norm : ‖(t : ℂ) ^ (-((σ : ℂ) + 1))‖ = t ^ (-(σ + 1)) := by
+      rw [Complex.norm_cpow_eq_rpow_re_of_pos htpos (-((σ : ℂ) + 1))]
+      simp
+    calc
+      ‖(∑ k ∈ Finset.Icc 1 ⌊t⌋₊, (Λ k : ℂ)) * (t : ℂ) ^ (-((σ : ℂ) + 1))‖
+          = ‖(∑ k ∈ Finset.Icc 1 ⌊t⌋₊, (Λ k : ℂ))‖ *
+              ‖(t : ℂ) ^ (-((σ : ℂ) + 1))‖ := norm_mul _ _
+      _ = (∑ k ∈ Finset.Icc 1 ⌊t⌋₊, Λ k) * t ^ (-(σ + 1)) := by
+        rw [hnorm_sum, hcpow_norm]
+      _ ≤ ((Real.log 4 + 4) * t) * t ^ (-(σ + 1)) := by
+        exact mul_le_mul_of_nonneg_right (by simpa [hsum_eq] using hpsi)
+          (Real.rpow_nonneg htpos.le _)
+      _ = (Real.log 4 + 4) * t ^ (-σ) := by
+        have ht_mul : t * t ^ (-(σ + 1)) = t ^ (-σ) := by
+          calc
+            t * t ^ (-(σ + 1)) = t ^ (1 : ℝ) * t ^ (-(σ + 1)) := by
+              rw [Real.rpow_one]
+            _ = t ^ ((1 : ℝ) + (-(σ + 1))) := by
+              rw [← Real.rpow_add htpos]
+            _ = t ^ (-σ) := by
+              ring_nf
+        rw [mul_assoc, ht_mul]
+  · rfl
+
+/-- Chebyshev's `ψ(x) ≪ x` bound gives the real-axis pole-scale estimate for
+the von Mangoldt L-series:
+`‖L(Λ, σ)‖ ≤ (log 4 + 4) σ/(σ-1)`.
+
+This is still a half-plane-of-absolute-convergence estimate; it is not the
+missing boundary-strip `O(log |t|)` estimate at `Re(s)=1`. -/
+lemma norm_LSeries_vonMangoldt_le_chebyshev_pole (σ : ℝ) (hσ : 1 < σ) :
+    ‖LSeries (fun n : ℕ => (Λ n : ℂ)) (σ : ℂ)‖ ≤
+      (Real.log 4 + 4) * σ / (σ - 1) := by
+  have hO := vonMangoldt_partial_sums_isBigO_linear
+  have hrepr :
+      LSeries (fun n : ℕ => (Λ n : ℂ)) (σ : ℂ) =
+        (σ : ℂ) * ∫ t in Set.Ioi (1 : ℝ),
+          ((∑ k ∈ Finset.Icc 1 ⌊t⌋₊, (Λ k : ℂ)) *
+            (t : ℂ) ^ (-((σ : ℂ) + 1))) := by
+    simpa using
+      (LSeries_eq_mul_integral_of_nonneg (fun n : ℕ => Λ n)
+        (r := (1 : ℝ)) (by norm_num) (s := (σ : ℂ))
+        (by simpa using hσ) hO (fun n => ArithmeticFunction.vonMangoldt_nonneg))
+  have hInt_le := norm_vonMangoldt_lseries_integral_le_chebyshev_pole σ hσ
+  have hσ_nonneg : 0 ≤ σ := le_of_lt (zero_lt_one.trans hσ)
+  have hInt_eval :
+      ∫ t in Set.Ioi (1 : ℝ), (Real.log 4 + 4) * t ^ (-σ) =
+        (Real.log 4 + 4) / (σ - 1) := by
+    rw [integral_const_mul]
+    rw [integral_Ioi_rpow_of_lt (by linarith : -σ < -1) zero_lt_one]
+    rw [Real.one_rpow]
+    have hden₁ : σ - 1 ≠ 0 := by linarith
+    have hden₂ : 1 - σ ≠ 0 := by linarith
+    field_simp [hden₁, hden₂]
+    have hden₃ : -σ + 1 ≠ 0 := by linarith
+    field_simp [hden₃]
+    ring
+  rw [hrepr]
+  calc
+    ‖(σ : ℂ) * ∫ t in Set.Ioi (1 : ℝ),
+        ((∑ k ∈ Finset.Icc 1 ⌊t⌋₊, (Λ k : ℂ)) *
+          (t : ℂ) ^ (-((σ : ℂ) + 1)))‖
+        = σ * ‖∫ t in Set.Ioi (1 : ℝ),
+            ((∑ k ∈ Finset.Icc 1 ⌊t⌋₊, (Λ k : ℂ)) *
+              (t : ℂ) ^ (-((σ : ℂ) + 1)))‖ := by
+          rw [norm_mul, norm_real, Real.norm_of_nonneg hσ_nonneg]
+    _ ≤ σ * ∫ t in Set.Ioi (1 : ℝ), (Real.log 4 + 4) * t ^ (-σ) :=
+          mul_le_mul_of_nonneg_left hInt_le hσ_nonneg
+    _ = (Real.log 4 + 4) * σ / (σ - 1) := by
+          rw [hInt_eval]
+          ring
+
+/-- Real-axis pole-scale estimate for `-ζ'/ζ`, obtained from Chebyshev's
+upper bound on `ψ`. -/
+lemma real_neg_deriv_div_riemannZeta_le_chebyshev_pole (σ : ℝ) (hσ : 1 < σ) :
+    (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re ≤
+      (Real.log 4 + 4) * σ / (σ - 1) := by
+  have h_lseries :=
+    ArithmeticFunction.LSeries_vonMangoldt_eq_deriv_riemannZeta_div
+      (by simpa using hσ : 1 < (σ : ℂ).re)
+  calc
+    (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re
+        ≤ ‖LSeries (fun n : ℕ => (Λ n : ℂ)) (σ : ℂ)‖ := by
+          rw [h_lseries]
+          exact Complex.re_le_norm _
+    _ ≤ (Real.log 4 + 4) * σ / (σ - 1) :=
+          norm_LSeries_vonMangoldt_le_chebyshev_pole σ hσ
+
+/-- Chebyshev-pole bound for the vertical logarithmic derivative in the
+absolute-convergence half-plane. It has the sharp pole scale `1/(Re(s)-1)`,
+and is the moving-line input available without the still-missing boundary-strip
+`O(log |t|)` theorem. -/
+lemma norm_logDeriv_riemannZeta_le_chebyshev_pole (s : ℂ) (hs : 1 < s.re) :
+    ‖logDeriv riemannZeta s‖ ≤
+      (Real.log 4 + 4) * s.re / (s.re - 1) := by
+  calc
+    ‖logDeriv riemannZeta s‖
+        ≤ (-deriv riemannZeta (s.re : ℂ) / riemannZeta (s.re : ℂ)).re :=
+          norm_logDeriv_riemannZeta_le_real_neg_deriv_div s hs
+    _ ≤ (Real.log 4 + 4) * s.re / (s.re - 1) :=
+          real_neg_deriv_div_riemannZeta_le_chebyshev_pole s.re hs
+
+/-- Moving-line logarithmic bound obtained from the Chebyshev pole-scale
+estimate. For any fixed `a > 0`, moving to the line
+`Re z ≥ 1 + a / log(|Im z| + 3)` gives an `O(log(|Im z|+3))` bound for
+`ζ'/ζ`.
+
+This is a real proved estimate in the absolute-convergence half-plane. It does
+not solve the harder target `LogDerivVerticalLogBound`, whose statement reaches
+the boundary line `Re z = 1`. -/
+lemma exists_norm_logDeriv_riemannZeta_le_log_abs_im_add_three_of_moving_line
+    {a : ℝ} (ha : 0 < a) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ z : ℂ,
+      1 + a / Real.log (|z.im| + 3) ≤ z.re →
+      ‖logDeriv riemannZeta z‖ ≤ C * Real.log (|z.im| + 3) := by
+  let K : ℝ := Real.log 4 + 4
+  let log3 : ℝ := Real.log (3 : ℝ)
+  let D : ℝ := 1 / log3 + 1 / a
+  have hK_nonneg : 0 ≤ K := by
+    dsimp [K]
+    have hlog_nonneg : 0 ≤ Real.log (4 : ℝ) := Real.log_nonneg (by norm_num)
+    linarith
+  have hlog3_pos : 0 < log3 := by
+    dsimp [log3]
+    exact Real.log_pos (by norm_num : (1 : ℝ) < 3)
+  have hD_nonneg : 0 ≤ D := by
+    dsimp [D]
+    exact add_nonneg (div_nonneg zero_le_one hlog3_pos.le) (div_nonneg zero_le_one ha.le)
+  refine ⟨K * D, mul_nonneg hK_nonneg hD_nonneg, ?_⟩
+  intro z hz
+  let heightLog : ℝ := Real.log (|z.im| + 3)
+  have harg3 : (3 : ℝ) ≤ |z.im| + 3 := by
+    linarith [abs_nonneg z.im]
+  have hheightLog_ge_log3 : log3 ≤ heightLog := by
+    dsimp [heightLog, log3]
+    exact Real.log_le_log (by norm_num : (0 : ℝ) < 3) harg3
+  have hheightLog_pos : 0 < heightLog := lt_of_lt_of_le hlog3_pos hheightLog_ge_log3
+  have hmargin_pos : 0 < a / heightLog := div_pos ha hheightLog_pos
+  have hz_gt : 1 < z.re := by
+    have : 1 < 1 + a / heightLog := by linarith
+    exact lt_of_lt_of_le this hz
+  have hden_pos : 0 < z.re - 1 := sub_pos.mpr hz_gt
+  have hden_lower : a / heightLog ≤ z.re - 1 := by linarith
+  have hinv_le : 1 / (z.re - 1) ≤ heightLog / a := by
+    have hden_ne : z.re - 1 ≠ 0 := ne_of_gt hden_pos
+    have ha_ne : a ≠ 0 := ne_of_gt ha
+    have hheightLog_ne : heightLog ≠ 0 := ne_of_gt hheightLog_pos
+    have hden_mul : a ≤ (z.re - 1) * heightLog := by
+      have h := mul_le_mul_of_nonneg_right hden_lower hheightLog_pos.le
+      field_simp [hheightLog_ne] at h
+      simpa [mul_comm] using h
+    field_simp [hden_ne, ha_ne, hheightLog_ne]
+    nlinarith [hden_mul, ha, hheightLog_pos]
+  have hratio_eq : z.re / (z.re - 1) = 1 + 1 / (z.re - 1) := by
+    field_simp [ne_of_gt hden_pos]
+    ring
+  have hratio_le : z.re / (z.re - 1) ≤ 1 + heightLog / a := by
+    rw [hratio_eq]
+    linarith
+  have hone_le : 1 ≤ (1 / log3) * heightLog := by
+    rw [one_div_mul_eq_div]
+    exact (le_div_iff₀ hlog3_pos).mpr (by simpa using hheightLog_ge_log3)
+  have hscale_le : 1 + heightLog / a ≤ D * heightLog := by
+    calc
+      1 + heightLog / a ≤ (1 / log3) * heightLog + (1 / a) * heightLog := by
+        have hLa : heightLog / a = (1 / a) * heightLog := by ring
+        rw [hLa]
+        exact add_le_add hone_le le_rfl
+      _ = D * heightLog := by
+        dsimp [D]
+        ring
+  calc
+    ‖logDeriv riemannZeta z‖
+        ≤ K * z.re / (z.re - 1) := by
+          dsimp [K]
+          exact norm_logDeriv_riemannZeta_le_chebyshev_pole z hz_gt
+    _ = K * (z.re / (z.re - 1)) := by
+          ring
+    _ ≤ K * (D * heightLog) := by
+          exact mul_le_mul_of_nonneg_left (le_trans hratio_le hscale_le) hK_nonneg
+    _ = (K * D) * Real.log (|z.im| + 3) := by
+          dsimp [heightLog]
+          ring
+
 /-- -ζ'/ζ(σ) 关于 σ 单调递减：若 σ₁ ≤ σ₂ 且 1 < σ₁，
     则 -Re(ζ'/ζ(σ₂)) ≤ -Re(ζ'/ζ(σ₁))。
     由 Dirichlet 级数逐项递减得出。 -/
