@@ -7901,6 +7901,32 @@ theorem exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_ReN
   ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_ReNegDerivDivVerticalLogBound
     h
 
+/-- Public pair package from separate high-height real-part estimates at
+`sigma + it` and `sigma + 2it`. -/
+theorem exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_high_height_log_abs_bounds
+    {Tmain Tshift Bmain Bshift : ℝ} (hBmain : 0 ≤ Bmain)
+    (hBshift : 0 ≤ Bshift)
+    (hmainHigh :
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → Tmain ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
+          Bmain * Real.log |t|)
+    (hshiftHigh :
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → Tshift ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t) /
+            riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re ≤
+          Bshift * Real.log |t|) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
+          C * Real.log |t| ∧
+        (-deriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t) /
+            riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re ≤
+          C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_high_height_log_abs_bounds
+    hBmain hBshift hmainHigh hshiftHigh
+
 /-- Public shifted real-part quotient bridge from an ordinary vertical norm
 estimate. -/
 theorem exists_re_neg_deriv_div_riemannZeta_shifted_vertical_log_bound_of_vertical_norm_log_bound

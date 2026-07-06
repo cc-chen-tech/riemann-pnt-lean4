@@ -307,6 +307,10 @@ Core verified declarations:
   extra caller-side conversion.
 - `exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_NegLogDerivVerticalLogBound`
   is the named-interface version of the signed real-part shifted-pair handoff.
+- `exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_high_height_log_abs_bounds`
+  combines separate future high-height real-part estimates at `sigma + it` and
+  `sigma + 2it` into one shared `C * log |t|` pair package, matching routes
+  that produce the two 3-4-1 inputs separately.
 - `log_deriv_zeta_bty_detector_one_lower_bound_of_center_and_LogDerivVerticalLogBound`
   is the named-interface BTY handoff: it uses `LogDerivVerticalLogBound` for
   every nonzero detector frequency and keeps the central `k = 0` term as a

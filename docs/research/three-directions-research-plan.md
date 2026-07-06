@@ -105,6 +105,10 @@ Verified assets now include:
   `classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_and_NegLogDerivVerticalLogBound`;
   `classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_exists_NegLogDerivVerticalLogBound`;
   `classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_exists_NegLogDerivVerticalLogBound`.
+- direct real-part shifted-pair packaging:
+  `exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_high_height_log_abs_bounds`
+  combines separate future high-height estimates at `sigma + it` and
+  `sigma + 2it` into the shared pair shape consumed by the 3-4-1 route.
 - direct final assemblies from an existential regular-part estimate plus a
   future high-height `B * log |t|` estimate in the `logDeriv`, `-logDeriv`, or
   `Re(-ζ'/ζ)` convention:
