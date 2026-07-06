@@ -2102,6 +2102,7 @@ Core verified declarations:
   specialize the finite weighted self-damped package to concrete elementary
   resolvent/Laplace kernels `resolventLaplaceKernel (a k)`.
 - `laplacePairPositive_one_weightedSelfDampedAffineResolventLaplaceKernelCombo`,
+  `weightedSelfDampedAffineResolventLaplaceKernelCombo_re_nonnegative_on_critical_strip`,
   `nontrivialZerosFinset_pair_sum_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo`,
   `nontrivialZerosFinset_pair_average_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo`,
   `nontrivialZerosFinset_sum_re_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo`,
