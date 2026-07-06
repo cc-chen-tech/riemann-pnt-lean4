@@ -5674,6 +5674,18 @@ theorem explicitFormulaApprox_sub_norm_eq_new_zeros {x T U : ℝ} (hTU : T ≤ U
         (x : ℂ) ^ ρ / ρ‖ :=
   PrimeNumberTheorem.explicitFormulaApprox_sub_norm_eq_new_zeros hTU
 
+/-- Public triangle-inequality bound for the change in explicit-formula
+truncations by the newly included zero contributions. -/
+theorem norm_explicitFormulaApprox_sub_le_new_zeros_sum_norm
+    {x T U : ℝ} (hTU : T ≤ U) :
+    ‖PrimeNumberTheorem.explicitFormulaApprox x T -
+        PrimeNumberTheorem.explicitFormulaApprox x U‖ ≤
+      ∑ ρ ∈
+        (PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T),
+        ‖(x : ℂ) ^ ρ / ρ‖ :=
+  PrimeNumberTheorem.norm_explicitFormulaApprox_sub_le_new_zeros_sum_norm hTU
+
 /-- Public add-back form of the new-zero contribution between truncation
 heights. -/
 theorem explicitFormulaApprox_add_new_zeros {x T U : ℝ} (hTU : T ≤ U) :

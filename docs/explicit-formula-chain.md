@@ -271,6 +271,11 @@ block into eventual zero or convergence to zero for the finite contribution
 and RH-tail controls.  These theorems are finite-tail handoffs and sanity
 checks; they do not assert that the actual zeta zero set eventually has no new
 zeros.
+The norm handoff
+`RiemannPNT.API.norm_explicitFormulaApprox_sub_le_new_zeros_sum_norm` gives the
+same layer a direct triangle-inequality estimate for the change in
+`explicitFormulaApprox` between two truncation heights from the summed norms of
+the newly included zero contributions.
 
 The same finite-tail layer now exposes the direct bridge from a stable base
 truncation to the corrected explicit-formula target.  The public theorem

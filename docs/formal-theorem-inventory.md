@@ -2158,10 +2158,12 @@ Core verified declarations:
   `nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_affineResolventLaplaceKernelCombo`
   expose the paired contribution versions for those finite affine
   resolvent/Laplace combinations.
-- `norm_finiteNontrivialZeroSum_sub_le_new_zeros_sum_norm`
-  bounds the finite zero-sum change between two truncation heights by the
-  summed norms of the newly included zero contributions, a direct finite
-  triangle-inequality handoff for truncated explicit-formula bookkeeping.
+- `norm_finiteNontrivialZeroSum_sub_le_new_zeros_sum_norm` and
+  `norm_explicitFormulaApprox_sub_le_new_zeros_sum_norm`
+  bound the finite zero-sum change and the corresponding
+  `explicitFormulaApprox` change between two truncation heights by the summed
+  norms of the newly included zero contributions, giving direct finite
+  triangle-inequality handoffs for truncated explicit-formula bookkeeping.
 - `new_zero_contribution_sum_eventually_zero_of_eventually_sdiff_eq_empty`,
   `new_zero_contribution_sum_tendsto_zero_of_eventually_sdiff_eq_empty`,
   `new_zero_inv_norm_tail_tendsto_zero_of_eventually_sdiff_eq_empty`, and

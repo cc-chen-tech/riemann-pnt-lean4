@@ -7415,6 +7415,16 @@ lemma explicitFormulaApprox_sub_norm_eq_new_zeros
         (x : ℂ) ^ ρ / ρ‖ := by
   rw [explicitFormulaApprox_sub_eq_new_zeros hTU]
 
+/-- Triangle-inequality bound for the change in explicit-formula truncations
+by the newly included zero contributions. -/
+lemma norm_explicitFormulaApprox_sub_le_new_zeros_sum_norm
+    {x T U : ℝ} (hTU : T ≤ U) :
+    ‖explicitFormulaApprox x T - explicitFormulaApprox x U‖ ≤
+      ∑ ρ ∈ (nontrivialZerosFinset U \ nontrivialZerosFinset T),
+        ‖(x : ℂ) ^ ρ / ρ‖ := by
+  rw [explicitFormulaApprox_sub_norm_eq_new_zeros hTU]
+  exact norm_sum_le _ _
+
 lemma explicitFormulaApprox_add_new_zeros {x T U : ℝ} (hTU : T ≤ U) :
     explicitFormulaApprox x U +
       ∑ ρ ∈ (nontrivialZerosFinset U \ nontrivialZerosFinset T),
