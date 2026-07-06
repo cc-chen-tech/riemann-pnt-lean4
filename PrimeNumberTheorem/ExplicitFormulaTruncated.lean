@@ -293,6 +293,34 @@ theorem no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_
     (explicitFormulaConversePower_of_truncated_route hroute hexplicit)
     herror
 
+/-- Existence-form power-saving version of the truncated explicit-formula
+route. -/
+theorem not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_converse_route_saving
+    {β delta : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hdelta_pos : 0 < delta) (hθ_nonneg : 0 ≤ β - delta)
+    (hroute : ExplicitFormulaTruncatedConverseRoute β)
+    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
+      ExplicitFormulaTruncatedTarget T hT x hx)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBound (β - delta)) :
+    ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = β :=
+  PrimeNumberTheorem.not_exists_nontrivial_zero_on_line_of_no_zeros_on_vertical_line
+    (no_zeros_on_vertical_line_of_truncated_explicit_formula_converse_route_saving
+      hβ_pos hβ_lt_one hdelta_pos hθ_nonneg hroute hexplicit herror)
+
+/-- Reflected-line existence-form power-saving version of the truncated
+explicit-formula route. -/
+theorem not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formula_converse_route_saving
+    {β delta : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
+    (hdelta_pos : 0 < delta) (hθ_nonneg : 0 ≤ β - delta)
+    (hroute : ExplicitFormulaTruncatedConverseRoute β)
+    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
+      ExplicitFormulaTruncatedTarget T hT x hx)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBound (β - delta)) :
+    ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = 1 - β :=
+  PrimeNumberTheorem.not_exists_nontrivial_zero_on_line_of_no_zeros_on_vertical_line
+    (no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_saving
+      hβ_pos hβ_lt_one hdelta_pos hθ_nonneg hroute hexplicit herror)
+
 /-- Concrete `O(x^(2/3 - δ))` version of the truncated explicit-formula bridge
 to no zeros on `Re(s)=2/3`. -/
 theorem no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_saving
@@ -318,6 +346,35 @@ theorem no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_savin
     PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) := by
   simpa [show (1 : ℝ) - 2 / 3 = 1 / 3 by norm_num] using
     no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_saving
+      (β := 2 / 3) (delta := delta)
+      (by norm_num) (by norm_num) hdelta_pos (by linarith)
+      hroute hexplicit herror
+
+/-- Concrete `O(x^(2/3 - δ))` existence-form bridge to no nontrivial zeros
+on `Re(s)=2/3`. -/
+theorem not_exists_nontrivial_zero_on_two_thirds_of_truncated_explicit_formula_converse_route_saving
+    {delta : ℝ} (hdelta_pos : 0 < delta) (hdelta_le : delta ≤ (2 / 3 : ℝ))
+    (hroute : ExplicitFormulaTruncatedConverseRoute (2 / 3))
+    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
+      ExplicitFormulaTruncatedTarget T hT x hx)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBound ((2 / 3 : ℝ) - delta)) :
+    ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = 2 / 3 :=
+  not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_converse_route_saving
+    (β := 2 / 3) (delta := delta)
+    (by norm_num) (by norm_num) hdelta_pos (by linarith)
+    hroute hexplicit herror
+
+/-- Concrete `O(x^(2/3 - δ))` existence-form bridge to no nontrivial zeros
+on `Re(s)=1/3`. -/
+theorem not_exists_nontrivial_zero_on_one_third_of_truncated_explicit_formula_converse_route_saving
+    {delta : ℝ} (hdelta_pos : 0 < delta) (hdelta_le : delta ≤ (2 / 3 : ℝ))
+    (hroute : ExplicitFormulaTruncatedConverseRoute (2 / 3))
+    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
+      ExplicitFormulaTruncatedTarget T hT x hx)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBound ((2 / 3 : ℝ) - delta)) :
+    ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = 1 / 3 := by
+  simpa [show (1 : ℝ) - 2 / 3 = 1 / 3 by norm_num] using
+    not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formula_converse_route_saving
       (β := 2 / 3) (delta := delta)
       (by norm_num) (by norm_num) hdelta_pos (by linarith)
       hroute hexplicit herror
