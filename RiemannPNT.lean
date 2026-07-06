@@ -15228,6 +15228,16 @@ theorem norm_logDeriv_riemannZeta_sigma_it_le_two_mul_re_zeta_two_of_three_le_si
   ZeroFreeRegion.norm_logDeriv_riemannZeta_sigma_it_le_two_mul_re_zeta_two_of_three_le_sigma
     hσ
 
+/-- Public far-right high-height logarithmic-scale bound for `logDeriv ζ`:
+there is `C >= 0` such that `‖logDeriv ζ(σ+it)‖ <= C log |t|`
+for `3 <= σ` and `2 <= |t|`. -/
+theorem exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_of_three_le_sigma :
+    ∃ C : ℝ, 0 ≤ C ∧
+      ∀ σ t : ℝ, 3 ≤ σ → 2 ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          C * Real.log |t| :=
+  ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_of_three_le_sigma
+
 /-- Public standalone normalization from an affine full-height vertical
 `logDeriv ζ` estimate to the exact `C * log |t|` scale. -/
 theorem exists_re_im_logDeriv_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height

@@ -5476,6 +5476,40 @@ lemma norm_logDeriv_riemannZeta_sigma_it_le_two_mul_re_zeta_two_of_three_le_sigm
   exact norm_logDeriv_riemannZeta_le_two_mul_re_zeta_two_of_three_le_re
     ((σ : ℂ) + I * t) (by simpa using hσ)
 
+/-- Far-right high-height logarithmic-scale bound for `logDeriv ζ`.
+
+This packages the constant bound on `3 <= Re(s)` into the same `C * log |t|`
+scale used by the classical zero-free-region interfaces.  It is a right-edge
+boundary input, not the missing estimate on `1 <= Re(s) <= 2`. -/
+lemma exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_of_three_le_sigma :
+    ∃ C : ℝ, 0 ≤ C ∧
+      ∀ σ t : ℝ, 3 ≤ σ → 2 ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          C * Real.log |t| := by
+  let C : ℝ := (2 * (riemannZeta (2 : ℂ)).re) / Real.log 2
+  have hlog_two_pos : 0 < Real.log 2 := Real.log_pos (by norm_num : (1 : ℝ) < 2)
+  have hzeta_two_pos : 0 < (riemannZeta (2 : ℂ)).re :=
+    riemannZeta_pos_of_real_gt_one 2 (by norm_num)
+  have hC_nonneg : 0 ≤ C := by
+    dsimp [C]
+    exact div_nonneg (mul_nonneg (by norm_num) hzeta_two_pos.le) hlog_two_pos.le
+  refine ⟨C, hC_nonneg, ?_⟩
+  intro σ t hσ ht
+  have hconst :=
+    norm_logDeriv_riemannZeta_sigma_it_le_two_mul_re_zeta_two_of_three_le_sigma
+      (σ := σ) (t := t) hσ
+  have hlog_two_le : Real.log 2 ≤ Real.log |t| :=
+    Real.log_le_log (by norm_num) ht
+  have hscale :
+      2 * (riemannZeta (2 : ℂ)).re ≤ C * Real.log |t| := by
+    calc
+      2 * (riemannZeta (2 : ℂ)).re = C * Real.log 2 := by
+        dsimp [C]
+        field_simp [ne_of_gt hlog_two_pos]
+      _ ≤ C * Real.log |t| :=
+        mul_le_mul_of_nonneg_left hlog_two_le hC_nonneg
+  exact le_trans hconst hscale
+
 /-- Standalone normalization of a future vertical-strip log-derivative estimate.
 
 If a high-height estimate for `logDeriv ζ` on `1 <= σ <= 2` is available in
