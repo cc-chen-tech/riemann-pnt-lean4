@@ -8448,6 +8448,19 @@ lemma explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_t
     (Eventually.of_forall fun _T => norm_nonneg _)
     (Eventually.of_forall fun _T => norm_sum_le _ _)
 
+/-- Little-o sum-of-norms tail version of the direct new-zero contribution
+bridge. -/
+lemma explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_isLittleO_one
+    {x B : ℝ} {hx : x ≥ 2}
+    (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
+    (htail :
+      (fun T : ℝ =>
+        ∑ ρ ∈ (nontrivialZerosFinset T \ nontrivialZerosFinset B),
+          ‖(x : ℂ) ^ ρ / ρ‖) =o[atTop] (fun _T : ℝ => (1 : ℝ))) :
+  explicit_formula_von_mangoldt x hx :=
+  explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_tendsto_zero
+    hB ((isLittleO_one_iff ℝ).mp htail)
+
 /-- A vanishing eventual norm bound for the new-zero contribution closes the
 corrected explicit-formula target from a stable base truncation. -/
 lemma explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution_norm_le

@@ -288,7 +288,10 @@ tends to zero, and returns `explicit_formula_von_mangoldt x hx`.  The wrapper
 `RiemannPNT.API.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_tendsto_zero`
 accepts the same tail convergence as a norm limit; the wrapper
 `RiemannPNT.API.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_tendsto_zero`
-accepts convergence of the summed individual contribution norms.  The wrappers
+accepts convergence of the summed individual contribution norms.  The little-o
+variant
+`RiemannPNT.API.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_isLittleO_one`
+accepts the same summed-norm tail as `o(1)`.  The wrappers
 `RiemannPNT.API.explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution_norm_le`
 and
 `RiemannPNT.API.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_isBigO_tendsto_zero`

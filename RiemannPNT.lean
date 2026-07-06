@@ -19962,6 +19962,21 @@ theorem explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm
   PrimeNumberTheorem.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_tendsto_zero
     hB htail
 
+/-- Public little-o sum-of-norms tail version of the direct new-zero
+contribution bridge. -/
+theorem explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_isLittleO_one
+    {x B : ℝ} {hx : x ≥ 2}
+    (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
+      (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
+    (htail :
+      (fun T : ℝ =>
+        ∑ ρ ∈ (PrimeNumberTheorem.nontrivialZerosFinset T \
+            PrimeNumberTheorem.nontrivialZerosFinset B),
+          ‖(x : ℂ) ^ ρ / ρ‖) =o[atTop] (fun _T : ℝ => (1 : ℝ))) :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_isLittleO_one
+    hB htail
+
 /-- Public little-o norm-tail version of the direct new-zero contribution
 bridge. -/
 theorem explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_isLittleO_one
