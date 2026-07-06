@@ -3563,6 +3563,24 @@ theorem laplacePairPositive_one_weightedSelfDampedAffineResolventLaplaceKernelCo
   PrimeNumberTheorem.laplacePairPositive_one_weightedSelfDampedAffineResolventLaplaceKernelCombo
     hw hκ ha hb hc
 
+/-- Public center-one pointwise real-part nonnegativity for finite
+nonnegative combinations of self-damped affine resolvent/Laplace prototype
+kernels. -/
+theorem weightedSelfDampedAffineResolventLaplaceKernelCombo_re_nonnegative_on_critical_strip
+    {K : Finset ℕ} {w κ a b c : ℕ → ℝ}
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k)
+    (hc : ∀ k ∈ K, 0 ≤ c k) :
+    ∀ z : ℂ, 0 ≤ z.re → z.re ≤ 1 →
+      0 ≤ (weightedKernelCombo K w
+        (fun k => dampedKernel (κ k)
+          (affineResolventLaplaceKernel (a k) (b k) (c k))
+          (affineResolventLaplaceKernel (a k) (b k) (c k))) z).re :=
+  PrimeNumberTheorem.weightedSelfDampedAffineResolventLaplaceKernelCombo_re_nonnegative_on_critical_strip
+    hw hκ ha hb hc
+
 /-- Public finite paired-zero nonnegativity from strip-local pair positivity. -/
 theorem finite_zero_sum_nonnegative_of_laplace_pair_positive
     (S : Finset ℂ) (F : ℂ → ℂ) (center : ℝ)

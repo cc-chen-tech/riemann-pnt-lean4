@@ -239,7 +239,8 @@ Verified assets now include:
   paired-average nonnegativity wrappers whenever all weights and shifts are
   nonnegative and each damping coefficient is at most one.
 - finite weighted self-damped affine resolvent/Laplace combinations:
-  `laplacePairPositive_one_weightedSelfDampedAffineResolventLaplaceKernelCombo`
+  `laplacePairPositive_one_weightedSelfDampedAffineResolventLaplaceKernelCombo`,
+  `weightedSelfDampedAffineResolventLaplaceKernelCombo_re_nonnegative_on_critical_strip`,
   and the corresponding full/new-zero sum, average, paired-sum, and
   paired-average nonnegativity wrappers whenever all weights, affine parameters,
   and damping coefficients satisfy the same nonnegativity/`<= 1` hypotheses.
