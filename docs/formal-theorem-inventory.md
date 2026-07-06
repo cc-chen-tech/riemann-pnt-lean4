@@ -2176,11 +2176,12 @@ Core verified declarations:
   contribution tail into the corrected height-truncated explicit-formula
   target.
 - `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_tendsto_zero`,
+  `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_tendsto_zero`,
   `explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution_norm_le`,
   and
   `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_isBigO_tendsto_zero`
-  expose the same direct contribution-tail bridge in the norm, eventual-bound,
-  and Big-O shapes normally produced by contour estimates.
+  expose the same direct contribution-tail bridge in the norm, sum-of-norms,
+  eventual-bound, and Big-O shapes normally produced by contour estimates.
 - `RiemannPNT.API.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_isLittleO_one`
   exposes the public little-o wrapper by converting `o(1)` to norm convergence.
 - `explicit_formula_von_mangoldt_of_base_and_eventually_no_new_zeros_via_contribution_tail`

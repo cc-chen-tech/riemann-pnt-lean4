@@ -286,7 +286,9 @@ contribution
 `sum_{rho in nontrivialZerosFinset T \ nontrivialZerosFinset B} x^rho / rho`
 tends to zero, and returns `explicit_formula_von_mangoldt x hx`.  The wrapper
 `RiemannPNT.API.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_tendsto_zero`
-accepts the same tail convergence as a norm limit, and
+accepts the same tail convergence as a norm limit; the wrapper
+`RiemannPNT.API.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_tendsto_zero`
+accepts convergence of the summed individual contribution norms.  The wrappers
 `RiemannPNT.API.explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution_norm_le`
 and
 `RiemannPNT.API.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_isBigO_tendsto_zero`

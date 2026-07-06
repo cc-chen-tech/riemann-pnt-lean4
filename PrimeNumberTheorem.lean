@@ -8426,6 +8426,28 @@ lemma explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_tends
   explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_tendsto_zero
     hB (tendsto_zero_iff_norm_tendsto_zero.mpr htail)
 
+/-- Sum-of-norms tail version of the direct new-zero contribution bridge.
+
+This is the most common finite-output shape for zero-contribution estimates:
+it is enough to show that the sum of the norms of the newly added terms tends
+to zero. -/
+lemma explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_tendsto_zero
+    {x B : ℝ} {hx : x ≥ 2}
+    (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
+    (htail :
+      Tendsto
+        (fun T : ℝ =>
+          ∑ ρ ∈ (nontrivialZerosFinset T \ nontrivialZerosFinset B),
+            ‖(x : ℂ) ^ ρ / ρ‖)
+        atTop (𝓝 0)) :
+  explicit_formula_von_mangoldt x hx := by
+  refine explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_tendsto_zero
+    hB ?_
+  exact tendsto_of_tendsto_of_tendsto_of_le_of_le'
+    tendsto_const_nhds htail
+    (Eventually.of_forall fun _T => norm_nonneg _)
+    (Eventually.of_forall fun _T => norm_sum_le _ _)
+
 /-- A vanishing eventual norm bound for the new-zero contribution closes the
 corrected explicit-formula target from a stable base truncation. -/
 lemma explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution_norm_le
