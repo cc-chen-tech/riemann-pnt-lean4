@@ -358,14 +358,17 @@ Verified assets now include:
   `no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_saving`;
   `no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_saving`;
   `no_zeros_on_vertical_line_of_truncated_explicit_formula_converse_route_mono_error`;
-  `no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error`.
+  `no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error`;
+  `not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_converse_route_mono_error`;
+  `not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error`.
   These now live in the core `ExplicitFormulaTruncated` module as well as the
   public `RiemannPNT.API.ExplicitFormulaTruncated` namespace; the route
   conversion, direct `O(x^(beta-delta))` zero-exclusion wrappers, and
   monotone-error zero-exclusion wrappers are also exposed as top-level
-  `RiemannPNT.API` theorems.  The monotone wrappers let a `psi` power saving
-  below a smaller boundary feed a larger-boundary truncated route, yielding
-  direct and reflected zero exclusion at that larger boundary.
+  `RiemannPNT.API` theorems, including the existence-form variants.  The
+  monotone wrappers let a `psi` power saving below a smaller boundary feed a
+  larger-boundary truncated route, yielding direct and reflected zero
+  exclusion at that larger boundary.
 - explicit-formula auxiliary normalizers:
   `ExplicitFormulaAux.chebyshevPsi0`;
   `ExplicitFormulaAux.jumpVonMangoldt`;

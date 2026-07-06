@@ -18745,6 +18745,32 @@ theorem no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_
   PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error
     hβγ hγ_pos hγ_lt_one hroute hexplicit herror
 
+/-- Public nested existence-form monotone-error version of the truncated
+explicit-formula route. -/
+theorem not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_converse_route_mono_error
+    {β γ : ℝ} (hβγ : β ≤ γ) (hγ_pos : 0 < γ) (hγ_lt_one : γ < 1)
+    (hroute :
+      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute γ)
+    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
+      ExplicitFormulaTruncatedTarget T hT x hx)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
+    ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = γ :=
+  PrimeNumberTheorem.ExplicitFormulaTruncated.not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_converse_route_mono_error
+    hβγ hγ_pos hγ_lt_one hroute hexplicit herror
+
+/-- Public nested reflected-line existence-form monotone-error version of the
+truncated explicit-formula route. -/
+theorem not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error
+    {β γ : ℝ} (hβγ : β ≤ γ) (hγ_pos : 0 < γ) (hγ_lt_one : γ < 1)
+    (hroute :
+      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute γ)
+    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
+      ExplicitFormulaTruncatedTarget T hT x hx)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
+    ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = 1 - γ :=
+  PrimeNumberTheorem.ExplicitFormulaTruncated.not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error
+    hβγ hγ_pos hγ_lt_one hroute hexplicit herror
+
 end ExplicitFormulaTruncated
 
 namespace ExplicitFormulaAux
@@ -19175,6 +19201,34 @@ theorem no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (1 - γ) :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error
+    hβγ hγ_pos hγ_lt_one hroute hexplicit herror
+
+/-- Public top-level existence-form monotone-error version of the truncated
+explicit-formula route. -/
+theorem not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_converse_route_mono_error
+    {β γ : ℝ} (hβγ : β ≤ γ) (hγ_pos : 0 < γ) (hγ_lt_one : γ < 1)
+    (hroute :
+      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute γ)
+    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
+      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget
+        T hT x hx)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
+    ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = γ :=
+  PrimeNumberTheorem.ExplicitFormulaTruncated.not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_converse_route_mono_error
+    hβγ hγ_pos hγ_lt_one hroute hexplicit herror
+
+/-- Public top-level reflected-line existence-form monotone-error version of
+the truncated explicit-formula route. -/
+theorem not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error
+    {β γ : ℝ} (hβγ : β ≤ γ) (hγ_pos : 0 < γ) (hγ_lt_one : γ < 1)
+    (hroute :
+      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute γ)
+    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
+      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget
+        T hT x hx)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
+    ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = 1 - γ :=
+  PrimeNumberTheorem.ExplicitFormulaTruncated.not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error
     hβγ hγ_pos hγ_lt_one hroute hexplicit herror
 
 /-- Public constructor for the corrected explicit-formula target from an
