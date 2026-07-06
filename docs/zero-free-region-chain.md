@@ -338,6 +338,12 @@ proved:
   `...add_I_mul` / `...add_two_I_mul` variants feed those same moving-line
   points into the local analytic hypotheses needed by the
   Borel-Caratheodory/Jensen/log-counting wrappers.
+- `ZeroFreeRegion.analyticAt_logDeriv_riemannZeta_closedBall_sigmaOf_log_add_I_mul_height_of_radius_le_width_of_height_add_le`
+  lifts the moving real part `sigmaOf t` to closed disks centered at
+  `sigmaOf t + i u` for an independent height `u`, assuming the disk radius
+  stays inside the right half-plane width and the height condition keeps the
+  disk away from the pole.  This is the reusable local regularity handoff for
+  shifted-frequency centers.
 - `ZeroFreeRegion.analyticAt_logDeriv_riemannZeta_closedBall_sigmaOf_log_add_I_mul_of_radius_le_width_of_height_add_le`
   lifts the `sigmaOf t + i t` point statement to every point of a closed disk
   centered there, assuming the disk radius stays within the right half-plane

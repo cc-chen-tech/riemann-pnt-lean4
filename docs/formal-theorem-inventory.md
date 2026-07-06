@@ -432,10 +432,14 @@ Supporting declarations include:
   proves `logDeriv ζ` is analytic at `1 + a / log |t| + it`.
 - `analyticAt_logDeriv_riemannZeta_sigmaOf_log_add_two_I_mul`
   proves `logDeriv ζ` is analytic at `1 + a / log |t| + 2it`.
-- `analyticAt_logDeriv_riemannZeta_closedBall_sigmaOf_log_add_I_mul_of_radius_le_width_of_height_add_le`
+- `analyticAt_logDeriv_riemannZeta_closedBall_sigmaOf_log_add_I_mul_height_of_radius_le_width_of_height_add_le`
   proves `logDeriv ζ` is analytic at every point of a closed ball centered at
-  `1 + a / log |t| + it`, provided the radius fits inside the width to
-  `Re(s) = 1` and the height bound keeps the ball away from the pole.
+  `1 + a / log |t| + iu`, provided the radius fits inside the width to
+  `Re(s) = 1` and the independent height `u` keeps the ball away from the
+  pole.
+- `analyticAt_logDeriv_riemannZeta_closedBall_sigmaOf_log_add_I_mul_of_radius_le_width_of_height_add_le`
+  specializes the independent-height closed-ball analyticity theorem to the
+  center `1 + a / log |t| + it`.
 - `sigmaOf_log_le_two`
   proves this choice is at most `2` when `a <= log 2`.
 - `sigmaOf_log_sub_pos`

@@ -16975,6 +16975,16 @@ theorem analyticAt_logDeriv_riemannZeta_sigmaOf_log_add_two_I_mul {T0 a t : ℝ}
       ((1 + a / Real.log |t| : ℝ) + 2 * I * t) :=
   ZeroFreeRegion.analyticAt_logDeriv_riemannZeta_sigmaOf_log_add_two_I_mul hT0 ha ht
 
+/-- Public closed-ball analyticity of `logDeriv ζ` around `σ + iu`, for
+`σ = 1 + a / log |t|`. -/
+theorem analyticAt_logDeriv_riemannZeta_closedBall_sigmaOf_log_add_I_mul_height_of_radius_le_width_of_height_add_le
+    {T0 a t u R H : ℝ} (hT0 : 2 ≤ T0) (ha : 0 < a) (ht : T0 ≤ |t|)
+    (hR : R ≤ a / Real.log |t|) (hHpos : 0 < H) (hH : H + R ≤ |u|) :
+    ∀ z ∈ Metric.closedBall ((1 + a / Real.log |t| : ℝ) + I * u) R,
+      AnalyticAt ℂ (logDeriv riemannZeta) z :=
+  ZeroFreeRegion.analyticAt_logDeriv_riemannZeta_closedBall_sigmaOf_log_add_I_mul_height_of_radius_le_width_of_height_add_le
+    hT0 ha ht hR hHpos hH
+
 /-- Public closed-ball analyticity of `logDeriv ζ` around `σ + it` for
 `σ = 1 + a / log |t|`. -/
 theorem analyticAt_logDeriv_riemannZeta_closedBall_sigmaOf_log_add_I_mul_of_radius_le_width_of_height_add_le
