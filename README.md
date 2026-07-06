@@ -832,6 +832,11 @@ and
 `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_isBigO_tendsto_zero`
 plus the `..._norm_isLittleO_one` variant accept the more common
 contour-estimate output where the contribution norm is shown to vanish.
+The exact global-height wrappers
+`explicit_formula_von_mangoldt_of_global_height_bound_exact`,
+`explicitFormulaApprox_eq_chebyshevPsi0_of_global_height_bound`, and
+`explicit_formula_von_mangoldt_iff_global_height_bound_exact` expose the
+stronger stability equivalence at the fixed base truncation.
 
 The finite zero-pair infrastructure also contains proved positivity suppliers
 for elementary detector kernels.  The public API includes the resolvent kernel

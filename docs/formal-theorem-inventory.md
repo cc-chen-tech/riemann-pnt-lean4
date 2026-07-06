@@ -2204,6 +2204,12 @@ Core verified declarations:
   `explicit_formula_von_mangoldt_of_base_and_global_height_bound_via_sum_norm_tail`
   specialize the same sum-of-norms tail bridge to a global nontrivial-zero
   height bound, again without adding a Perron-formula proof.
+- `explicit_formula_von_mangoldt_of_global_height_bound_exact`,
+  `explicitFormulaApprox_eq_chebyshevPsi0_of_global_height_bound`, and
+  `explicit_formula_von_mangoldt_iff_global_height_bound_exact`
+  record the stronger exact stability statement: under a global nontrivial-zero
+  height bound, the corrected explicit-formula target is equivalent to equality
+  at the stable base truncation.
 - `NoZerosOnVerticalLine`
   is a reusable predicate for excluding zeta zeros on a fixed vertical line.
 - `no_zeros_on_one_third_of_RH`
