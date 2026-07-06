@@ -20155,6 +20155,34 @@ theorem new_zero_contribution_sum_eventually_zero_of_global_height_bound
   PrimeNumberTheorem.new_zero_contribution_sum_eventually_zero_of_global_height_bound
     hbound
 
+/-- Public eventual-zero statement for the sum-of-norms new-zero tail under a
+global height bound. -/
+theorem new_zero_contribution_sum_norm_eventually_zero_of_global_height_bound
+    {x B : ℝ}
+    (hbound : ∀ ρ : ℂ, _root_.RiemannHypothesis.IsNontrivialZero ρ →
+      |ρ.im| ≤ B) :
+    (fun T : ℝ =>
+      ∑ ρ ∈ (PrimeNumberTheorem.nontrivialZerosFinset T \
+          PrimeNumberTheorem.nontrivialZerosFinset B),
+        ‖(x : ℂ) ^ ρ / ρ‖) =ᶠ[atTop] fun _T : ℝ => 0 :=
+  PrimeNumberTheorem.new_zero_contribution_sum_norm_eventually_zero_of_global_height_bound
+    hbound
+
+/-- Public convergence-to-zero statement for the sum-of-norms new-zero tail
+under a global height bound. -/
+theorem new_zero_contribution_sum_norm_tendsto_zero_of_global_height_bound
+    {x B : ℝ}
+    (hbound : ∀ ρ : ℂ, _root_.RiemannHypothesis.IsNontrivialZero ρ →
+      |ρ.im| ≤ B) :
+    Tendsto
+      (fun T : ℝ =>
+        ∑ ρ ∈ (PrimeNumberTheorem.nontrivialZerosFinset T \
+            PrimeNumberTheorem.nontrivialZerosFinset B),
+          ‖(x : ℂ) ^ ρ / ρ‖)
+      atTop (𝓝 0) :=
+  PrimeNumberTheorem.new_zero_contribution_sum_norm_tendsto_zero_of_global_height_bound
+    hbound
+
 /-- Public reciprocal-norm new-zero tail convergence under a global height
 bound. -/
 theorem new_zero_inv_norm_tail_tendsto_zero_of_global_height_bound
@@ -20250,6 +20278,18 @@ theorem explicit_formula_von_mangoldt_of_RH_base_and_eventually_no_new_zeros_via
     PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
   PrimeNumberTheorem.explicit_formula_von_mangoldt_of_RH_base_and_eventually_no_new_zeros_via_card_tail
     hRH hB hnew
+
+/-- Public non-RH route from a global zero-height bound through the
+sum-of-norms new-zero tail interface. -/
+theorem explicit_formula_von_mangoldt_of_base_and_global_height_bound_via_sum_norm_tail
+    {x B : ℝ} {hx : x ≥ 2}
+    (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
+      (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
+    (hbound : ∀ ρ : ℂ, _root_.RiemannHypothesis.IsNontrivialZero ρ →
+      |ρ.im| ≤ B) :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_base_and_global_height_bound_via_sum_norm_tail
+    hB hbound
 
 /-- Public RH-tail route from a global zero-height bound, using the
 reciprocal-norm tail interface.  The exact global-height bridge is stronger;

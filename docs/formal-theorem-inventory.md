@@ -2199,6 +2199,11 @@ Core verified declarations:
   is the degenerate eventual-empty-new-zero specialization routed through the
   contribution-tail convergence theorem.  It is a finite-tail sanity bridge,
   not a claim that zeta has only finitely many nontrivial zeros.
+- `new_zero_contribution_sum_norm_eventually_zero_of_global_height_bound`,
+  `new_zero_contribution_sum_norm_tendsto_zero_of_global_height_bound`, and
+  `explicit_formula_von_mangoldt_of_base_and_global_height_bound_via_sum_norm_tail`
+  specialize the same sum-of-norms tail bridge to a global nontrivial-zero
+  height bound, again without adding a Perron-formula proof.
 - `NoZerosOnVerticalLine`
   is a reusable predicate for excluding zeta zeros on a fixed vertical line.
 - `no_zeros_on_one_third_of_RH`

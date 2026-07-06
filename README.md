@@ -821,6 +821,7 @@ finite-combinatorial tail bridges, not substitutes for Perron's formula or the
 global explicit formula.  The direct bridges
 `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_tendsto_zero`,
 `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_isBigO_tendsto_zero`,
+`explicit_formula_von_mangoldt_of_base_and_global_height_bound_via_sum_norm_tail`,
 and
 `explicit_formula_von_mangoldt_of_base_and_eventually_no_new_zeros_via_contribution_tail`
 package the corresponding base-truncation identity plus vanishing finite-tail

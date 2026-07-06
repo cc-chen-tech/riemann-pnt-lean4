@@ -8618,6 +8618,30 @@ lemma new_zero_contribution_sum_eventually_zero_of_global_height_bound
   new_zero_contribution_sum_eventually_zero_of_eventually_sdiff_eq_empty
     (nontrivialZerosFinset_eventually_sdiff_eq_empty_of_global_height_bound hbound)
 
+/-- Under a global height bound on nontrivial zeros, the sum-of-norms
+new-zero tail is eventually zero. -/
+lemma new_zero_contribution_sum_norm_eventually_zero_of_global_height_bound
+    {x B : ℝ}
+    (hbound : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → |ρ.im| ≤ B) :
+    (fun T : ℝ =>
+      ∑ ρ ∈ (nontrivialZerosFinset T \ nontrivialZerosFinset B),
+        ‖(x : ℂ) ^ ρ / ρ‖) =ᶠ[atTop] fun _T : ℝ => 0 :=
+  new_zero_contribution_sum_norm_eventually_zero_of_eventually_sdiff_eq_empty
+    (nontrivialZerosFinset_eventually_sdiff_eq_empty_of_global_height_bound hbound)
+
+/-- Under a global height bound on nontrivial zeros, the sum-of-norms
+new-zero tail tends to zero. -/
+lemma new_zero_contribution_sum_norm_tendsto_zero_of_global_height_bound
+    {x B : ℝ}
+    (hbound : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → |ρ.im| ≤ B) :
+    Tendsto
+      (fun T : ℝ =>
+        ∑ ρ ∈ (nontrivialZerosFinset T \ nontrivialZerosFinset B),
+          ‖(x : ℂ) ^ ρ / ρ‖)
+      atTop (𝓝 0) :=
+  new_zero_contribution_sum_norm_tendsto_zero_of_eventually_sdiff_eq_empty
+    (nontrivialZerosFinset_eventually_sdiff_eq_empty_of_global_height_bound hbound)
+
 /-- Under a global height bound on nontrivial zeros, the reciprocal-norm
 new-zero tail used in the RH truncation bound tends to zero. -/
 lemma new_zero_inv_norm_tail_tendsto_zero_of_global_height_bound
@@ -8731,6 +8755,20 @@ lemma explicit_formula_von_mangoldt_of_RH_base_and_eventually_no_new_zeros_via_c
     hRH hB
     (new_zero_card_tail_tendsto_zero_of_eventually_sdiff_eq_empty
       (x := x) hnew)
+
+/-- Non-RH route from a global zero-height bound through the sum-of-norms
+new-zero tail interface.  The hard input remains the base identity `hB`; this
+lemma only packages the fact that a global height bound makes the finite tail
+eventually empty. -/
+lemma explicit_formula_von_mangoldt_of_base_and_global_height_bound_via_sum_norm_tail
+    {x B : ℝ} {hx : x ≥ 2}
+    (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
+    (hbound : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → |ρ.im| ≤ B) :
+    explicit_formula_von_mangoldt x hx :=
+  explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_tendsto_zero
+    hB
+    (new_zero_contribution_sum_norm_tendsto_zero_of_global_height_bound
+      (x := x) hbound)
 
 /-- RH-tail route from a global zero-height bound.  The stronger exact bridge
 `explicit_formula_von_mangoldt_of_global_height_bound_exact` already avoids the
