@@ -7901,6 +7901,54 @@ theorem exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_ReN
   ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_ReNegDerivDivVerticalLogBound
     h
 
+/-- Public primitive-input version of the 3-4-1 real-part shifted-pair
+handoff from `ζ'` growth plus a positive `ζ` lower bound. -/
+theorem exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_deriv_bound_and_zeta_lower_bound_high_height
+    (T0 A B eta : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (heta : 0 < eta)
+    (hderiv :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖deriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          A + B * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3))
+    (hzeta :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        eta ≤ ‖riemannZeta ((σ : ℂ) + Complex.I * t)‖) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
+          C * Real.log |t| ∧
+        (-deriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t) /
+            riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re ≤
+          C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_deriv_bound_and_zeta_lower_bound_high_height
+    T0 A B eta hT0 hA hB heta hderiv hzeta
+
+/-- Public Cauchy-bound primitive-input version of the 3-4-1 real-part
+shifted-pair handoff from boundary `ζ` estimates and a positive center
+lower bound. -/
+theorem exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_sphere_zeta_bound_and_zeta_lower_bound_high_height
+    (T0 R A B eta : ℝ) (hT0 : 5 ≤ T0) (hR : 0 < R) (hRlt : R < T0)
+    (hA : 0 ≤ A) (hB : 0 ≤ B) (heta : 0 < eta)
+    (hsphere :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ∀ z : ℂ, z ∈ Metric.sphere ((σ : ℂ) + Complex.I * t) R →
+          ‖riemannZeta z‖ ≤
+            A + B * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3))
+    (hzeta :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        eta ≤ ‖riemannZeta ((σ : ℂ) + Complex.I * t)‖) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
+          C * Real.log |t| ∧
+        (-deriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t) /
+            riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re ≤
+          C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_sphere_zeta_bound_and_zeta_lower_bound_high_height
+    T0 R A B eta hT0 hR hRlt hA hB heta hsphere hzeta
+
 /-- Public pair package from separate high-height real-part estimates at
 `sigma + it` and `sigma + 2it`. -/
 theorem exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_high_height_log_abs_bounds

@@ -143,6 +143,15 @@ the wrapper
 feeds primitive `ζ'` growth and positive `ζ` lower-bound inputs directly into
 `LogDerivVerticalLogBound`.
 
+For the 3-4-1 pair input specifically,
+`ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_deriv_bound_and_zeta_lower_bound_high_height`
+and
+`ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_sphere_zeta_bound_and_zeta_lower_bound_high_height`
+compose those primitive derivative/lower-bound or Cauchy sphere-growth inputs
+directly into the ordinary and shifted `Re(-ζ'/ζ)` bounds at `σ+it` and
+`σ+2it`.  These are handoff theorems, not the missing zeta-specific high-height
+estimates themselves.
+
 At the already-formed `logDeriv ζ` level,
 `ZeroFreeRegion.exists_logDeriv_affine_log_norm_add_three_bound_on_verticalRegion_of_compact_band_and_high_height`
 patches the proved compact bounded-height norm bound with a future high-height

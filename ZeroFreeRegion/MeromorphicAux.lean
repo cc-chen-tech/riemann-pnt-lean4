@@ -13097,6 +13097,71 @@ lemma exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_ReNeg
         _ ≤ C * Real.log |t| :=
             mul_le_mul_of_nonneg_right (le_max_right C₁ C₂) hlog_nonneg
 
+/-- Direct primitive-input version of the 3-4-1 real-part shifted-pair
+handoff.
+
+This composes the `ζ'` growth plus positive `ζ` lower-bound bridge into
+`ReNegDerivDivVerticalLogBound`, then packages the ordinary and `2t` shifted
+real-part estimates consumed by the 3-4-1 inequality. -/
+lemma exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_deriv_bound_and_zeta_lower_bound_high_height
+    (T0 A B eta : ℝ) (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (heta : 0 < eta)
+    (hderiv :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖deriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          A + B * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (hzeta :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        eta ≤ ‖riemannZeta ((σ : ℂ) + I * t)‖) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re ≤
+          C * Real.log |t| ∧
+        (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤
+          C * Real.log |t| := by
+  rcases
+      reNegDerivDivVerticalLogBound_of_deriv_bound_and_zeta_lower_bound_high_height
+        T0 A B eta hT0 hA hB heta hderiv hzeta with
+    ⟨C, T0', hre⟩
+  exact
+    exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_ReNegDerivDivVerticalLogBound
+      (B := C) (T0 := T0') hre
+
+/-- Cauchy-bound primitive-input version of the 3-4-1 real-part shifted-pair
+handoff.
+
+The inputs are a future fixed-radius boundary growth estimate for `ζ` and a
+positive lower bound for `ζ` at the centers.  The theorem packages those into
+the ordinary and shifted real-part bounds needed by the 3-4-1 route. -/
+lemma exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_sphere_zeta_bound_and_zeta_lower_bound_high_height
+    (T0 R A B eta : ℝ) (hT0 : 5 ≤ T0) (hR : 0 < R) (hRlt : R < T0)
+    (hA : 0 ≤ A) (hB : 0 ≤ B) (heta : 0 < eta)
+    (hsphere :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ∀ z : ℂ, z ∈ Metric.sphere ((σ : ℂ) + I * t) R →
+          ‖riemannZeta z‖ ≤
+            A + B * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (hzeta :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        eta ≤ ‖riemannZeta ((σ : ℂ) + I * t)‖) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re ≤
+          C * Real.log |t| ∧
+        (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤
+          C * Real.log |t| := by
+  rcases
+      reNegDerivDivVerticalLogBound_of_sphere_zeta_bound_and_zeta_lower_bound_high_height
+        T0 R A B eta hT0 hR hRlt hA hB heta hsphere hzeta with
+    ⟨C, T0', hre⟩
+  exact
+    exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_ReNegDerivDivVerticalLogBound
+      (B := C) (T0 := T0') hre
+
 /-- Pair package from separate high-height real-part estimates at `sigma + it`
 and `sigma + 2it`.
 
