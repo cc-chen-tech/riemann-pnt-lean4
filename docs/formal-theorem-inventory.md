@@ -2167,6 +2167,24 @@ Core verified declarations:
   `explicitFormulaApprox` change between two truncation heights by the summed
   norms of the newly included zero contributions, giving direct finite
   triangle-inequality handoffs for truncated explicit-formula bookkeeping.
+- `finiteNontrivialZeroSum_eq_add_new_zeros`,
+  `finiteNontrivialZeroSum_sub_eq_new_zeros`,
+  `finiteNontrivialZeroSum_eq_of_sdiff_eq_empty`,
+  `explicitFormulaApprox_eq_sub_new_zeros`,
+  `explicitFormulaApprox_sub_eq_new_zeros`,
+  `explicitFormulaApprox_sub_norm_eq_new_zeros`,
+  `explicitFormulaApprox_add_new_zeros`, and
+  `explicitFormulaApprox_eq_of_sdiff_eq_empty`
+  expose the exact finite-truncation identities behind the norm bounds and
+  eventual-empty-tail bridges.
+- `explicitFormulaApprox_congr_finset`,
+  `explicitFormulaApprox_congr_zero_sum`,
+  `explicitFormulaApprox_congr_height`,
+  `explicitFormulaApprox_eq_of_global_height_bound`,
+  `explicitFormulaApprox_eventually_eq_of_global_height_bound`, and
+  `explicitFormulaApprox_eq_of_neg`
+  are public stability and congruence wrappers for changing truncation heights
+  or degenerate negative-height truncations.
 - `explicit_formula_von_mangoldt_of_eventually_eq` and
   `explicit_formula_von_mangoldt_of_eventually_exact`
   expose the basic stability entrypoint for the corrected explicit-formula

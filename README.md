@@ -842,6 +842,12 @@ The more primitive entrypoints
 `explicit_formula_von_mangoldt_of_eventually_exact` are the direct handoff from
 future contour/Perron arguments that produce eventual equality with the
 corrected truncation or eventual exact equality with `ψ₀(x)`.
+The equality-level truncation wrappers such as
+`finiteNontrivialZeroSum_eq_add_new_zeros`,
+`explicitFormulaApprox_eq_sub_new_zeros`,
+`explicitFormulaApprox_add_new_zeros`, and
+`explicitFormulaApprox_eventually_eq_of_global_height_bound` expose the exact
+finite-height bookkeeping behind those convergence and tail interfaces.
 
 The finite zero-pair infrastructure also contains proved positivity suppliers
 for elementary detector kernels.  The public API includes the resolvent kernel

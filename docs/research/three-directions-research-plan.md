@@ -323,6 +323,12 @@ Verified assets now include:
   `¬ ∃ s, IsNontrivialZero s ∧ s.re = ...`, matching the way the
   `Re(s)=1/3` / reflected-line question is usually discussed.
 - finite explicit-formula truncation increment identities;
+  `finiteNontrivialZeroSum_eq_add_new_zeros`,
+  `finiteNontrivialZeroSum_sub_eq_new_zeros`,
+  `explicitFormulaApprox_eq_sub_new_zeros`,
+  `explicitFormulaApprox_sub_eq_new_zeros`,
+  `explicitFormulaApprox_add_new_zeros`, and the corresponding empty-tail,
+  congruence, and global-height stability wrappers;
 - basic eventual-stability entrypoints
   `explicit_formula_von_mangoldt_of_eventually_eq` and
   `explicit_formula_von_mangoldt_of_eventually_exact`, which let a future
