@@ -412,6 +412,12 @@ Supporting declarations include:
 - `log_riemannZeta_dirichlet_series`
 - `riemannZeta_re_eq_tsum_real`
 - `summable_one_div_rpow`
+- `norm_riemannZeta_le_re_zeta_two_of_two_le_re`
+  proves the right-boundary estimate `||zeta(s)|| <= Re(zeta(2))` on
+  `2 <= Re(s)` from the absolutely convergent Dirichlet series.
+- `norm_riemannZeta_le_const_polynomial_on_two_le_re`
+  packages that right-boundary estimate as constant-order polynomial growth,
+  giving the polynomial-growth chain a proved right-edge input.
 - `riemannZeta_re_gt_one`
 - `riemannZeta_gt_one_div_sub`
 - `riemannZeta_re_le_sigma_div_sub`
@@ -1292,6 +1298,11 @@ Core verified declarations:
 - `log_norm_riemannZeta_le_affine_log_norm_add_three_of_polynomial_growth`
   specializes that conversion to a future zeta polynomial-growth estimate on
   the high vertical region `T0 <= |Im z|`, `1 <= Re z <= 3`.
+- `norm_riemannZeta_le_re_zeta_two_of_two_le_re` and
+  `norm_riemannZeta_le_const_polynomial_on_two_le_re` now supply the proved
+  right-edge input on `2 <= Re(s)`; the still-missing analytic input is the
+  continuation of comparable control across the boundary strip
+  `1 <= Re(s) <= 2` at high height.
 - `log_norm_riemannZeta_sigma_it_le_affine_log_norm_add_three_of_polynomial_growth`
   is the coordinate form at points `sigma + i t`.
 - `log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_three_of_polynomial_growth`

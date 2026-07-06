@@ -7323,10 +7323,23 @@ theorem summable_one_div_rpow (σ : ℝ) (hσ : 1 < σ) :
     Summable (fun n : ℕ => 1 / (↑n + 1 : ℝ) ^ σ) :=
   ZeroFreeRegion.summable_one_div_rpow σ hσ
 
+/-- Public right-boundary zeta estimate from the absolutely convergent
+Dirichlet series: `‖ζ(s)‖ ≤ ζ(2)` for `2 ≤ Re(s)`. -/
+theorem norm_riemannZeta_le_re_zeta_two_of_two_le_re
+    (s : ℂ) (hs : 2 ≤ s.re) :
+    ‖riemannZeta s‖ ≤ (riemannZeta (2 : ℂ)).re :=
+  ZeroFreeRegion.norm_riemannZeta_le_re_zeta_two_of_two_le_re s hs
+
 /-- Public lower bound `ζ(σ)>1` on the real half-line `σ>1`. -/
 theorem riemannZeta_re_gt_one (σ : ℝ) (hσ : 1 < σ) :
     (riemannZeta (σ : ℂ)).re > 1 :=
   ZeroFreeRegion.riemannZeta_re_gt_one σ hσ
+
+/-- Public constant-order polynomial-growth package for ζ on `2 ≤ Re(s)`. -/
+theorem norm_riemannZeta_le_const_polynomial_on_two_le_re :
+    ∃ A B : ℝ, 1 ≤ A ∧ 0 ≤ B ∧
+      ∀ s : ℂ, 2 ≤ s.re → ‖riemannZeta s‖ ≤ A * (‖s‖ + 3) ^ B :=
+  ZeroFreeRegion.norm_riemannZeta_le_const_polynomial_on_two_le_re
 
 /-- Public integral-comparison lower bound for real zeta values. -/
 theorem riemannZeta_gt_one_div_sub (σ : ℝ) (hσ : 1 < σ) :

@@ -247,6 +247,44 @@ lemma summable_one_div_rpow (σ : ℝ) (hσ : 1 < σ) :
       rw [h_cast, ← Complex.ofReal_cpow h_pos σ]
     rw [h_cpow, ← Complex.ofReal_one, ← Complex.ofReal_div, Complex.ofReal_re])
 
+/-- On the half-plane `2 ≤ Re(s)`, the Dirichlet series gives the elementary
+uniform bound `‖ζ(s)‖ ≤ ζ(2)`.
+
+This is a genuine zeta-specific boundary estimate useful for later
+Phragmén-Lindelöf/Jensen arguments. It does not address the hard boundary
+strip `1 ≤ Re(s) ≤ 2`, where the project still needs vertical growth and
+log-derivative estimates. -/
+lemma norm_riemannZeta_le_re_zeta_two_of_two_le_re (s : ℂ) (hs : 2 ≤ s.re) :
+    ‖riemannZeta s‖ ≤ (riemannZeta (2 : ℂ)).re := by
+  have hs1 : 1 < s.re := by linarith
+  rw [zeta_eq_tsum_one_div_nat_add_one_cpow hs1]
+  have hsum_complex : Summable (fun n : ℕ => 1 / (↑n + 1 : ℂ) ^ s) := by
+    have h := (Complex.summable_one_div_nat_cpow (p := s)).mpr hs1
+    exact ((summable_nat_add_iff (f := fun n => 1 / (↑n : ℂ) ^ s) 1).mpr h).congr
+      (fun n => by push_cast; ring_nf)
+  have hsum_norm : Summable (fun n : ℕ => ‖1 / (↑n + 1 : ℂ) ^ s‖) := hsum_complex.norm
+  have hsum_two : Summable (fun n : ℕ => 1 / (↑n + 1 : ℝ) ^ (2 : ℝ)) :=
+    summable_one_div_rpow 2 (by norm_num)
+  calc
+    ‖∑' n : ℕ, 1 / (↑n + 1 : ℂ) ^ s‖
+        ≤ ∑' n : ℕ, ‖1 / (↑n + 1 : ℂ) ^ s‖ :=
+          norm_tsum_le_tsum_norm hsum_norm
+    _ ≤ ∑' n : ℕ, 1 / (↑n + 1 : ℝ) ^ (2 : ℝ) :=
+        hsum_norm.tsum_le_tsum (fun n => by
+          have hnpos : 0 < (↑n + 1 : ℝ) := by positivity
+          have hnbase : 1 ≤ (↑n + 1 : ℝ) := by
+            exact_mod_cast Nat.succ_le_succ (Nat.zero_le n)
+          have hnorm : ‖(↑n + 1 : ℂ) ^ s‖ = (↑n + 1 : ℝ) ^ s.re := by
+            have h_cast : (↑n + 1 : ℂ) = (↑(↑n + 1 : ℝ) : ℂ) := by push_cast; ring
+            rw [h_cast, Complex.norm_cpow_eq_rpow_re_of_pos hnpos]
+          rw [norm_div, norm_one, hnorm]
+          have hpow : (↑n + 1 : ℝ) ^ (2 : ℝ) ≤ (↑n + 1 : ℝ) ^ s.re :=
+            Real.rpow_le_rpow_of_exponent_le hnbase hs
+          exact one_div_le_one_div_of_le (Real.rpow_pos_of_pos hnpos _) hpow) hsum_two
+    _ = (riemannZeta (2 : ℂ)).re := by
+      rw [← riemannZeta_re_eq_tsum_real (2 : ℝ) (by norm_num)]
+      simp
+
 /-- 对于实数 σ > 1，ζ(σ).re > 1。
     从级数 ζ(σ) = 1 + 1/2^σ + ... > 1 推出。 -/
 lemma riemannZeta_re_gt_one (σ : ℝ) (hσ : 1 < σ) :
@@ -260,6 +298,24 @@ lemma riemannZeta_re_gt_one (σ : ℝ) (hσ : 1 < σ) :
     (summable_nat_add_iff (f := fun n => 1 / (↑n + 1 : ℝ) ^ σ) 1).mpr h_sum
   have h_pos_0 : (0 : ℝ) < 1 / (↑(0 + 1 : ℕ) + 1 : ℝ) ^ σ := by positivity
   linarith [h_shifted.tsum_pos (fun n => by positivity) 0 h_pos_0]
+
+/-- Constant-order polynomial-growth form of
+`norm_riemannZeta_le_re_zeta_two_of_two_le_re`.
+
+This packages the right boundary `Re(s) ≥ 2` as the same type of growth input
+used by the later zero-free-region infrastructure. The hard missing estimate
+remains the corresponding zeta/log-derivative control in the boundary strip
+near `Re(s) = 1`. -/
+lemma norm_riemannZeta_le_const_polynomial_on_two_le_re :
+    ∃ A B : ℝ, 1 ≤ A ∧ 0 ≤ B ∧
+      ∀ s : ℂ, 2 ≤ s.re → ‖riemannZeta s‖ ≤ A * (‖s‖ + 3) ^ B := by
+  refine ⟨(riemannZeta (2 : ℂ)).re, 0, ?_, le_rfl, ?_⟩
+  · have hgt : 1 < (riemannZeta (2 : ℂ)).re :=
+      riemannZeta_re_gt_one 2 (by norm_num)
+    exact le_of_lt hgt
+  · intro s hs
+    rw [Real.rpow_zero, mul_one]
+    exact norm_riemannZeta_le_re_zeta_two_of_two_le_re s hs
 
 /-- 对于实数 σ > 1，ζ(σ) > 1/(σ-1)。
     这从 Dirichlet 级数 ζ(σ) = Σ 1/n^σ > ∫₁^∞ x^{-σ} dx = 1/(σ-1) 导出。 -/
