@@ -8043,6 +8043,24 @@ lemma analyticAt_logDeriv_riemannZeta_sigmaOf_log_add_two_I_mul {T0 a t : ℝ}
       simpa using congrArg Complex.re h
     linarith
 
+/-- A closed disk around `σ + it`, with
+`σ = 1 + a / log |t|`, is a local analytic domain for `logDeriv ζ` when the
+radius stays inside the right half-plane and the height keeps the disk away
+from the pole. -/
+lemma analyticAt_logDeriv_riemannZeta_closedBall_sigmaOf_log_add_I_mul_of_radius_le_width_of_height_add_le
+    {T0 a t R H : ℝ} (_hT0 : 2 ≤ T0) (_ha : 0 < a) (_ht : T0 ≤ |t|)
+    (hR : R ≤ a / Real.log |t|) (hHpos : 0 < H) (hH : H + R ≤ |t|) :
+    ∀ u ∈ Metric.closedBall ((1 + a / Real.log |t| : ℝ) + I * t) R,
+      AnalyticAt ℂ (logDeriv riemannZeta) u := by
+  intro u hu
+  refine analyticAt_logDeriv_riemannZeta_of_one_le_re_of_ne_one ?_ ?_
+  · exact closedBall_sigma_it_one_le_re_of_add_le
+      (z := u) (σ := 1 + a / Real.log |t|) (t := t) (R := R) hu
+      (by linarith)
+  · exact closedBall_sigma_it_ne_one_of_height_add_le
+      (z := u) (σ := 1 + a / Real.log |t|) (t := t) (R := R) (H := H)
+      hu hHpos hH
+
 /-- Pointwise closed-ball wrapper: if ζ is analytic and nonzero at every point
 of the ball, then `logDeriv ζ` is analytic at every point of the ball. -/
 lemma analyticAt_logDeriv_riemannZeta_closedBall_of_ne_one_of_ne_zero

@@ -338,6 +338,12 @@ proved:
   `...add_I_mul` / `...add_two_I_mul` variants feed those same moving-line
   points into the local analytic hypotheses needed by the
   Borel-Caratheodory/Jensen/log-counting wrappers.
+- `ZeroFreeRegion.analyticAt_logDeriv_riemannZeta_closedBall_sigmaOf_log_add_I_mul_of_radius_le_width_of_height_add_le`
+  lifts the `sigmaOf t + i t` point statement to every point of a closed disk
+  centered there, assuming the disk radius stays within the right half-plane
+  width and the height condition keeps the disk away from the pole.  This is
+  a local regularity handoff for future Borel/Jensen estimates, not the
+  missing high-height `O(log |t|)` estimate.
 - `ZeroFreeRegion.sigmaOf_log_le_two`
   proves `sigmaOf t <= 2` above height `2` when `a <= log 2`.
 - `ZeroFreeRegion.sigmaOf_log_sub_pos`
