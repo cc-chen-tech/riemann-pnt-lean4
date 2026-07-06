@@ -249,6 +249,10 @@ Verified assets now include:
   and the corresponding full/new-zero sum, average, paired-sum, and
   paired-average nonnegativity wrappers whenever all weights, affine parameters,
   and damping coefficients satisfy the same nonnegativity/`<= 1` hypotheses.
+  The pointwise real-part route is now also exposed by the
+  `_re_nonnegative` full/new-zero sum and average facades, so later detector
+  kernels can choose either a Stechkin-style pair-positive proof or a direct
+  critical-strip real-part proof.
 - finite nonnegative combinations of those prototype kernels,
   `resolventLaplaceKernelCombo`, with the same right-half-plane positivity,
   pair-positivity, and finite-zero/new-zero sum, average, paired-sum, and

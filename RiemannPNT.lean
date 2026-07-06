@@ -5542,6 +5542,85 @@ theorem nontrivialZerosFinset_sdiff_average_re_nonnegative_of_weightedSelfDamped
   PrimeNumberTheorem.nontrivialZerosFinset_sdiff_average_re_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo
     T U K w κ a b c hw hκ ha hb hc
 
+/-- Public finite-zero real-part sum nonnegativity for finite nonnegative
+self-damped affine resolvent/Laplace combinations, via pointwise strip
+real-part nonnegativity. -/
+theorem nontrivialZerosFinset_sum_re_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo_re_nonnegative
+    (T : ℝ) (K : Finset ℕ) (w κ a b c : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k)
+    (hc : ∀ k ∈ K, 0 ≤ c k) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+      (weightedKernelCombo K w
+        (fun k => dampedKernel (κ k)
+          (affineResolventLaplaceKernel (a k) (b k) (c k))
+          (affineResolventLaplaceKernel (a k) (b k) (c k))) ρ).re :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sum_re_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo_re_nonnegative
+    T K w κ a b c hw hκ ha hb hc
+
+/-- Public finite-zero real-part average nonnegativity for finite nonnegative
+self-damped affine resolvent/Laplace combinations, via pointwise strip
+real-part nonnegativity. -/
+theorem nontrivialZerosFinset_average_re_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo_re_nonnegative
+    (T : ℝ) (K : Finset ℕ) (w κ a b c : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k)
+    (hc : ∀ k ∈ K, 0 ≤ c k) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+        (weightedKernelCombo K w
+          (fun k => dampedKernel (κ k)
+            (affineResolventLaplaceKernel (a k) (b k) (c k))
+            (affineResolventLaplaceKernel (a k) (b k) (c k))) ρ).re) /
+        ((PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_average_re_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo_re_nonnegative
+    T K w κ a b c hw hκ ha hb hc
+
+/-- Public new-zero real-part sum nonnegativity for finite nonnegative
+self-damped affine resolvent/Laplace combinations, via pointwise strip
+real-part nonnegativity. -/
+theorem nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo_re_nonnegative
+    (T U : ℝ) (K : Finset ℕ) (w κ a b c : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k)
+    (hc : ∀ k ∈ K, 0 ≤ c k) :
+    0 ≤ ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+        PrimeNumberTheorem.nontrivialZerosFinset T,
+      (weightedKernelCombo K w
+        (fun k => dampedKernel (κ k)
+          (affineResolventLaplaceKernel (a k) (b k) (c k))
+          (affineResolventLaplaceKernel (a k) (b k) (c k))) ρ).re :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo_re_nonnegative
+    T U K w κ a b c hw hκ ha hb hc
+
+/-- Public new-zero real-part average nonnegativity for finite nonnegative
+self-damped affine resolvent/Laplace combinations, via pointwise strip
+real-part nonnegativity. -/
+theorem nontrivialZerosFinset_sdiff_average_re_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo_re_nonnegative
+    (T U : ℝ) (K : Finset ℕ) (w κ a b c : ℕ → ℝ)
+    (hw : ∀ k ∈ K, 0 ≤ w k)
+    (hκ : ∀ k ∈ K, κ k ≤ 1)
+    (ha : ∀ k ∈ K, 0 ≤ a k)
+    (hb : ∀ k ∈ K, 0 ≤ b k)
+    (hc : ∀ k ∈ K, 0 ≤ c k) :
+    0 ≤
+      (∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T,
+        (weightedKernelCombo K w
+          (fun k => dampedKernel (κ k)
+            (affineResolventLaplaceKernel (a k) (b k) (c k))
+            (affineResolventLaplaceKernel (a k) (b k) (c k))) ρ).re) /
+        (((PrimeNumberTheorem.nontrivialZerosFinset U \
+          PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ)) :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_average_re_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo_re_nonnegative
+    T U K w κ a b c hw hκ ha hb hc
+
 /-- Public extensionality criterion for height-truncated nontrivial-zero
 finsets. -/
 theorem nontrivialZerosFinset_ext_of_height_iff {T U : ℝ}
@@ -16852,6 +16931,26 @@ theorem sigmaOf_log_gt_one {T0 a t : ℝ} (hT0 : 2 ≤ T0) (ha : 0 < a)
     (ht : T0 ≤ |t|) :
     1 < 1 + a / Real.log |t| :=
   ZeroFreeRegion.sigmaOf_log_gt_one hT0 ha ht
+
+/-- Public non-vanishing of `ζ(1 + a / log |t|)` in the known half-plane. -/
+theorem riemannZeta_sigmaOf_log_ne_zero {T0 a t : ℝ} (hT0 : 2 ≤ T0) (ha : 0 < a)
+    (ht : T0 ≤ |t|) :
+    riemannZeta (((1 + a / Real.log |t| : ℝ) : ℂ)) ≠ 0 :=
+  ZeroFreeRegion.riemannZeta_sigmaOf_log_ne_zero hT0 ha ht
+
+/-- Public non-vanishing of `ζ(σ + it)` for
+`σ = 1 + a / log |t|`. -/
+theorem riemannZeta_sigmaOf_log_add_I_mul_ne_zero {T0 a t : ℝ} (hT0 : 2 ≤ T0)
+    (ha : 0 < a) (ht : T0 ≤ |t|) :
+    riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t) ≠ 0 :=
+  ZeroFreeRegion.riemannZeta_sigmaOf_log_add_I_mul_ne_zero hT0 ha ht
+
+/-- Public non-vanishing of `ζ(σ + 2it)` for
+`σ = 1 + a / log |t|`. -/
+theorem riemannZeta_sigmaOf_log_add_two_I_mul_ne_zero {T0 a t : ℝ} (hT0 : 2 ≤ T0)
+    (ha : 0 < a) (ht : T0 ≤ |t|) :
+    riemannZeta ((1 + a / Real.log |t| : ℝ) + 2 * I * t) ≠ 0 :=
+  ZeroFreeRegion.riemannZeta_sigmaOf_log_add_two_I_mul_ne_zero hT0 ha ht
 
 /-- Public upper bound `1 + a / log |t| ≤ 2` when `a ≤ log 2`. -/
 theorem sigmaOf_log_le_two {T0 a t : ℝ} (hT0 : 2 ≤ T0)

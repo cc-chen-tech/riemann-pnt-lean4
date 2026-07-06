@@ -2301,6 +2301,34 @@ lemma sigmaOf_log_gt_one {T0 a t : ℝ} (hT0 : 2 ≤ T0) (ha : 0 < a)
   have hwidth_pos : 0 < a / Real.log |t| := div_pos ha hlog_pos
   linarith
 
+/-- The real-axis point `σ = 1 + a / log |t|` lies in the known
+zero-free half-plane.  This is the denominator non-vanishing input used when
+specializing logarithmic-derivative estimates to the moving high-height line. -/
+lemma riemannZeta_sigmaOf_log_ne_zero {T0 a t : ℝ} (hT0 : 2 ≤ T0) (ha : 0 < a)
+    (ht : T0 ≤ |t|) :
+    riemannZeta (((1 + a / Real.log |t| : ℝ) : ℂ)) ≠ 0 := by
+  have hσ : 1 ≤ (((1 + a / Real.log |t| : ℝ) : ℂ)).re := by
+    exact (sigmaOf_log_gt_one hT0 ha ht).le
+  exact riemannZeta_ne_zero_of_one_le_re hσ
+
+/-- The point `σ + it` with `σ = 1 + a / log |t|` lies in the known
+zero-free half-plane. -/
+lemma riemannZeta_sigmaOf_log_add_I_mul_ne_zero {T0 a t : ℝ} (hT0 : 2 ≤ T0)
+    (ha : 0 < a) (ht : T0 ≤ |t|) :
+    riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t) ≠ 0 := by
+  have hσ : 1 ≤ (((1 + a / Real.log |t| : ℝ) : ℂ) + I * (t : ℂ)).re := by
+    simpa using (sigmaOf_log_gt_one hT0 ha ht).le
+  exact riemannZeta_ne_zero_of_one_le_re hσ
+
+/-- The point `σ + 2it` with `σ = 1 + a / log |t|` lies in the known
+zero-free half-plane. -/
+lemma riemannZeta_sigmaOf_log_add_two_I_mul_ne_zero {T0 a t : ℝ} (hT0 : 2 ≤ T0)
+    (ha : 0 < a) (ht : T0 ≤ |t|) :
+    riemannZeta ((1 + a / Real.log |t| : ℝ) + 2 * I * t) ≠ 0 := by
+  have hσ : 1 ≤ (((1 + a / Real.log |t| : ℝ) : ℂ) + 2 * I * (t : ℂ)).re := by
+    simpa using (sigmaOf_log_gt_one hT0 ha ht).le
+  exact riemannZeta_ne_zero_of_one_le_re hσ
+
 /-- If `a ≤ log 2`, then the standard high-height choice
 `σ = 1 + a / log |t|` remains at most `2` throughout any range
 `T0 ≤ |t|` with `T0 ≥ 2`. -/

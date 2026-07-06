@@ -419,6 +419,13 @@ Supporting declarations include:
 - `sigmaOf_log_gt_one`
   proves the standard high-height choice `1 + a / log |t|` is greater than
   `1` when `a > 0`.
+- `riemannZeta_sigmaOf_log_ne_zero`
+  proves `ζ(1 + a / log |t|) != 0` above height `2` when `a > 0`.
+- `riemannZeta_sigmaOf_log_add_I_mul_ne_zero`
+  proves `ζ(1 + a / log |t| + it) != 0` on the same moving high-height line.
+- `riemannZeta_sigmaOf_log_add_two_I_mul_ne_zero`
+  proves `ζ(1 + a / log |t| + 2it) != 0` on the shifted line used by
+  the 3-4-1 inequality.
 - `sigmaOf_log_le_two`
   proves this choice is at most `2` when `a <= log 2`.
 - `sigmaOf_log_sub_pos`
@@ -2107,14 +2114,19 @@ Core verified declarations:
   `nontrivialZerosFinset_pair_average_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo`,
   `nontrivialZerosFinset_sum_re_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo`,
   `nontrivialZerosFinset_average_re_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo`,
+  `nontrivialZerosFinset_sum_re_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo_re_nonnegative`,
+  `nontrivialZerosFinset_average_re_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo_re_nonnegative`,
   `nontrivialZerosFinset_sdiff_pair_sum_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo`,
   `nontrivialZerosFinset_sdiff_pair_average_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo`,
   `nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo`,
   and
-  `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo`
-  specialize the finite weighted self-damped package to concrete elementary
-  affine resolvent/Laplace kernels
-  `affineResolventLaplaceKernel (a k) (b k) (c k)`.
+  `nontrivialZerosFinset_sdiff_average_re_nonnegative_of_weightedSelfDampedAffineResolventLaplaceKernelCombo`,
+  together with the corresponding `_re_nonnegative` new-zero sum and average
+  facades, specialize the finite weighted self-damped package to concrete
+  elementary affine resolvent/Laplace kernels
+  `affineResolventLaplaceKernel (a k) (b k) (c k)` through either
+  center-one pair positivity or pointwise critical-strip real-part
+  nonnegativity.
 - `nontrivialZerosFinset_sum_re_nonnegative_of_symmetricResolventLaplaceKernelCombo`,
   `nontrivialZerosFinset_average_re_nonnegative_of_symmetricResolventLaplaceKernelCombo`,
   `nontrivialZerosFinset_sdiff_sum_re_nonnegative_of_symmetricResolventLaplaceKernelCombo`,
