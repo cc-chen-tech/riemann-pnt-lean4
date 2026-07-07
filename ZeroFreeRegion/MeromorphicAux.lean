@@ -10482,6 +10482,96 @@ lemma exists_re_neg_logDeriv_riemannZeta_sigma_it_add_inv_right_shift_le_log_abs
       hr hσ hσr ht hA hB hM hdiff hlog hcenter hsub
   exact ⟨C, hC, by simpa [C] using hmain⟩
 
+/-- Right-shifted regular-part zero-repulsion bridge with the center estimate
+discharged by the Chebyshev moving-line bound.
+
+Compared with
+`exists_re_neg_logDeriv_riemannZeta_sigma_it_add_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center`,
+the center `-logDeriv ζ(σ+r+it)` is controlled by the proved moving-line
+estimate with parameter `a`, rather than by a fixed-margin estimate with
+margin `r`.  The disk geometry still needs `1+r ≤ σ`; the analytic input still
+is the real-part bound for the regular part on the Borel disk. -/
+lemma exists_re_neg_logDeriv_riemannZeta_sigma_it_add_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_moving_line_center
+    {a Are Bre r σ β t : ℝ}
+    (ha : 0 < a) (hr : 0 < r) (hσright : 1 + r ≤ σ)
+    (hσmove : 1 + a / Real.log |t| ≤ σ + r)
+    (hσr : σ + r ≤ 3) (ht : 6 ≤ |t|)
+    (hβ : β < 1) (hAre : 0 ≤ Are) (hBre : 0 ≤ Bre)
+    (hM :
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hdiff :
+      DifferentiableOn ℂ
+        (fun w : ℂ =>
+          -logDeriv riemannZeta w + (w - ((β : ℂ) + I * t))⁻¹)
+        (ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r)))
+    (hlog : ∀ w : ℂ,
+      w ∈ ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r) →
+        (-logDeriv riemannZeta w + (w - ((β : ℂ) + I * t))⁻¹).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3)) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re + 1 / (σ - β) ≤
+        C * Real.log |t| := by
+  rcases exists_norm_logDeriv_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_log_abs
+      ha with ⟨Bcenter, hBcenter, hcenter_pair⟩
+  let C : ℝ := (2 * Are + 3 * (1 / r)) + 2 * (2 * Bre + 3 * Bcenter)
+  have hA : 0 ≤ 2 * Are + 3 * (1 / r : ℝ) := by
+    have hinv_nonneg : 0 ≤ (1 / r : ℝ) := by positivity
+    nlinarith
+  have hB : 0 ≤ 2 * Bre + 3 * Bcenter := by nlinarith [hBre, hBcenter]
+  have hC : 0 ≤ C := by
+    have hbase : 0 ≤ (2 * Are + 3 * (1 / r : ℝ)) + 2 * (2 * Bre + 3 * Bcenter) :=
+      add_nonneg hA (mul_nonneg (by norm_num) hB)
+    simpa [C] using hbase
+  have ht3 : 3 ≤ |t| := by linarith
+  have hcenter_norm_abs :
+      ‖-logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + I * t)‖ ≤
+        Bcenter * Real.log |t| := by
+    have hpair := hcenter_pair (σ + r) t ht3 hσmove
+    calc
+      ‖-logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + I * t)‖
+          = ‖logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + I * t)‖ := norm_neg _
+      _ ≤ Bcenter * Real.log |t| := hpair.1
+  have hcenter_logDeriv :
+      ‖-logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + I * t)‖ ≤
+        Bcenter * Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3) := by
+    have hlog_le :
+        Real.log |t| ≤
+          Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3) :=
+      log_abs_le_log_norm_sigma_add_I_mul_add_three (σ := σ + r) (t := t)
+        (by linarith : 0 < |t|)
+    exact hcenter_norm_abs.trans (mul_le_mul_of_nonneg_left hlog_le hBcenter)
+  have hinv :
+      ‖(((((σ + r : ℝ) : ℂ) + I * t) - ((β : ℂ) + I * t))⁻¹)‖ ≤
+        1 / r :=
+    norm_inv_right_shift_center_sub_same_height_le_inv_radius
+      (r := r) (σ := σ) (β := β) (t := t) hr hσright hβ
+  have hcenter :
+      ‖-logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + I * t) +
+          ((((σ + r : ℝ) : ℂ) + I * t) - ((β : ℂ) + I * t))⁻¹‖ ≤
+        1 / r + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3) := by
+    calc
+      ‖-logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + I * t) +
+          ((((σ + r : ℝ) : ℂ) + I * t) - ((β : ℂ) + I * t))⁻¹‖
+          ≤ ‖-logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + I * t)‖ +
+              ‖(((((σ + r : ℝ) : ℂ) + I * t) - ((β : ℂ) + I * t))⁻¹)‖ :=
+            norm_add_le _ _
+      _ ≤ Bcenter *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3) + 1 / r :=
+            add_le_add hcenter_logDeriv hinv
+      _ = 1 / r + Bcenter *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3) := by ring
+  have hsub : 0 < σ - β := by nlinarith [hr, hσright, hβ]
+  have hmain :=
+    re_neg_logDeriv_riemannZeta_sigma_it_add_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius
+      (Are := Are) (Bre := Bre) (Acenter := 1 / r) (Bcenter := Bcenter)
+      (r := r) (σ := σ) (β := β) (t := t)
+      hr hσright hσr ht hA hB hM hdiff hlog hcenter hsub
+  exact ⟨C, hC, by simpa [C] using hmain⟩
+
 /-- Multiplicity-aware right-shifted Borel-Carathéodory transfer for the signed
 regular part `-logDeriv ζ(w) + n (w-ρ)⁻¹`, normalized to the pure `log |t|`
 scale.  The analytic estimates for this regular part remain explicit
