@@ -7203,6 +7203,112 @@ lemma classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBou
     classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_exists_ReNegDerivDivVerticalLogBound
       hregular ⟨C, Tvertical, hvertical⟩
 
+/-- Final conditional assembly from the regular-part input plus fixed-radius
+boundary `ζ` growth and a positive center lower bound for `ζ`.
+
+This removes `ζ'` from the primitive final handoff: Cauchy's derivative
+estimate supplies the vertical real-part quotient bound from the sphere
+control, and the existing de la Vallee Poussin bridge then closes the
+conditional classical zero-free-region target.  The zeta-specific boundary
+growth and lower-bound estimates remain future analytic inputs. -/
+lemma classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_sphere_zeta_bound_zeta_lower_bound_high_height
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        LogDerivRegularPartLogBound Bregular Tregular)
+    (T0 R A B eta : ℝ) (hT0 : 5 ≤ T0) (hR : 0 < R) (hRlt : R < T0)
+    (hA : 0 ≤ A) (hB : 0 ≤ B) (heta : 0 < eta)
+    (hsphere :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ∀ z : ℂ, z ∈ Metric.sphere ((σ : ℂ) + I * t) R →
+          ‖riemannZeta z‖ ≤
+            A + B * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (hzeta :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        eta ≤ ‖riemannZeta ((σ : ℂ) + I * t)‖) :
+    classical_zero_free_region := by
+  rcases
+      reNegDerivDivVerticalLogBound_of_sphere_zeta_bound_and_zeta_lower_bound_high_height
+        T0 R A B eta hT0 hR hRlt hA hB heta hsphere hzeta with
+    ⟨C, Tvertical, hvertical⟩
+  exact
+    classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_exists_ReNegDerivDivVerticalLogBound
+      hregular ⟨C, Tvertical, hvertical⟩
+
+/-- Multiplicity-aware final conditional assembly from regular-part input plus
+fixed-radius boundary `ζ` growth and a positive center lower bound for `ζ`. -/
+lemma classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_sphere_zeta_bound_zeta_lower_bound_high_height
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        MultiplicityLogDerivRegularPartLogBound Bregular Tregular)
+    (T0 R A B eta : ℝ) (hT0 : 5 ≤ T0) (hR : 0 < R) (hRlt : R < T0)
+    (hA : 0 ≤ A) (hB : 0 ≤ B) (heta : 0 < eta)
+    (hsphere :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ∀ z : ℂ, z ∈ Metric.sphere ((σ : ℂ) + I * t) R →
+          ‖riemannZeta z‖ ≤
+            A + B * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (hzeta :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        eta ≤ ‖riemannZeta ((σ : ℂ) + I * t)‖) :
+    classical_zero_free_region := by
+  rcases
+      reNegDerivDivVerticalLogBound_of_sphere_zeta_bound_and_zeta_lower_bound_high_height
+        T0 R A B eta hT0 hR hRlt hA hB heta hsphere hzeta with
+    ⟨C, Tvertical, hvertical⟩
+  exact
+    classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_exists_ReNegDerivDivVerticalLogBound
+      hregular ⟨C, Tvertical, hvertical⟩
+
+/-- Complex-variable vertical-region version of the final conditional assembly
+from regular-part input plus fixed-radius boundary `ζ` growth and a positive
+center lower bound for `ζ`. -/
+lemma classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_sphere_zeta_bound_zeta_lower_bound_on_verticalRegion
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        LogDerivRegularPartLogBound Bregular Tregular)
+    (T0 R A B eta : ℝ) (hT0 : 5 ≤ T0) (hR : 0 < R) (hRlt : R < T0)
+    (hA : 0 ≤ A) (hB : 0 ≤ B) (heta : 0 < eta)
+    (hsphere :
+      ∀ c : ℂ, c ∈ verticalRegion 1 2 T0 →
+        ∀ z : ℂ, z ∈ Metric.sphere c R →
+          ‖riemannZeta z‖ ≤ A + B * Real.log (‖c‖ + 3))
+    (hzeta :
+      ∀ c : ℂ, c ∈ verticalRegion 1 2 T0 →
+        eta ≤ ‖riemannZeta c‖) :
+    classical_zero_free_region := by
+  rcases
+      reNegDerivDivVerticalLogBound_of_sphere_zeta_bound_and_zeta_lower_bound_on_verticalRegion
+        T0 R A B eta hT0 hR hRlt hA hB heta hsphere hzeta with
+    ⟨C, Tvertical, hvertical⟩
+  exact
+    classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_exists_ReNegDerivDivVerticalLogBound
+      hregular ⟨C, Tvertical, hvertical⟩
+
+/-- Multiplicity-aware complex-variable vertical-region version of the final
+conditional assembly from regular-part input plus fixed-radius boundary `ζ`
+growth and a positive center lower bound for `ζ`. -/
+lemma classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_sphere_zeta_bound_zeta_lower_bound_on_verticalRegion
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        MultiplicityLogDerivRegularPartLogBound Bregular Tregular)
+    (T0 R A B eta : ℝ) (hT0 : 5 ≤ T0) (hR : 0 < R) (hRlt : R < T0)
+    (hA : 0 ≤ A) (hB : 0 ≤ B) (heta : 0 < eta)
+    (hsphere :
+      ∀ c : ℂ, c ∈ verticalRegion 1 2 T0 →
+        ∀ z : ℂ, z ∈ Metric.sphere c R →
+          ‖riemannZeta z‖ ≤ A + B * Real.log (‖c‖ + 3))
+    (hzeta :
+      ∀ c : ℂ, c ∈ verticalRegion 1 2 T0 →
+        eta ≤ ‖riemannZeta c‖) :
+    classical_zero_free_region := by
+  rcases
+      reNegDerivDivVerticalLogBound_of_sphere_zeta_bound_and_zeta_lower_bound_on_verticalRegion
+        T0 R A B eta hT0 hR hRlt hA hB heta hsphere hzeta with
+    ⟨C, Tvertical, hvertical⟩
+  exact
+    classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_exists_ReNegDerivDivVerticalLogBound
+      hregular ⟨C, Tvertical, hvertical⟩
+
 /-- Real-part quotient vertical-region bridge from a signed `-logDeriv ζ`
 norm estimate. -/
 lemma reNegDerivDivVerticalLogBound_of_neg_affine_log_norm_add_three_bound_on_verticalRegion

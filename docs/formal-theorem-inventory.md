@@ -1404,6 +1404,14 @@ Core verified declarations:
   `reNegDerivDivVerticalLogBound_of_sphere_zeta_bound_and_zeta_lower_bound_on_verticalRegion`
   are the same Cauchy/sphere handoff when the boundary growth and center
   lower-bound inputs are stated directly on `verticalRegion 1 2 T0`.
+- `classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_sphere_zeta_bound_zeta_lower_bound_high_height`
+  and its multiplicity-aware companion compose an existential regular-part
+  estimate with fixed-radius boundary `||zeta||` growth and a positive center
+  lower bound to close the conditional `classical_zero_free_region` target.
+- `classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_sphere_zeta_bound_zeta_lower_bound_on_verticalRegion`
+  and its multiplicity-aware companion provide the same final assembly when
+  the future boundary growth and lower-bound estimates are stated directly on
+  `verticalRegion 1 2 T0`.
 - `exists_re_im_logDeriv_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height`
   converts a future boundary-strip estimate
   `||logDeriv zeta (sigma+it)|| <= A + B log(||sigma+it||+3)` into
@@ -1814,6 +1822,11 @@ Core verified declarations:
   `RiemannPNT.API.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_high_height_reNegDerivDiv_bound`
   expose the direct exact-scale high-height assemblies, together with their
   multiplicity-aware analogues.
+- `RiemannPNT.API.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_sphere_zeta_bound_zeta_lower_bound_high_height`
+  and
+  `RiemannPNT.API.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_sphere_zeta_bound_zeta_lower_bound_on_verticalRegion`
+  expose the fixed-radius boundary-`zeta` final assemblies, together with
+  their multiplicity-aware analogues.
 - `RiemannPNT.API.classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_bound_and_vertical_reNegDerivDiv_bound_high_height`
   and
   `RiemannPNT.API.classical_zero_free_region_of_re_im_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_reNegDerivDiv_bound_high_height`

@@ -512,6 +512,87 @@ theorem classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogB
   ZeroFreeRegion.classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_deriv_bound_zeta_lower_bound_on_verticalRegion
     hregular T0 A B eta hT0 hA hB heta hderiv hzeta
 
+/-- Public final conditional assembly from regular-part input plus fixed-radius
+boundary `ζ` growth and a positive center lower bound for `ζ`. -/
+theorem classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_sphere_zeta_bound_zeta_lower_bound_high_height
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        LogDerivRegularPartLogBound Bregular Tregular)
+    (T0 R A B eta : ℝ) (hT0 : 5 ≤ T0) (hR : 0 < R) (hRlt : R < T0)
+    (hA : 0 ≤ A) (hB : 0 ≤ B) (heta : 0 < eta)
+    (hsphere :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ∀ z : ℂ, z ∈ Metric.sphere ((σ : ℂ) + Complex.I * t) R →
+          ‖riemannZeta z‖ ≤
+            A + B * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3))
+    (hzeta :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        eta ≤ ‖riemannZeta ((σ : ℂ) + Complex.I * t)‖) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_sphere_zeta_bound_zeta_lower_bound_high_height
+    hregular T0 R A B eta hT0 hR hRlt hA hB heta hsphere hzeta
+
+/-- Public multiplicity-aware final conditional assembly from regular-part
+input plus fixed-radius boundary `ζ` growth and a positive center lower bound
+for `ζ`. -/
+theorem classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_sphere_zeta_bound_zeta_lower_bound_high_height
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        MultiplicityLogDerivRegularPartLogBound Bregular Tregular)
+    (T0 R A B eta : ℝ) (hT0 : 5 ≤ T0) (hR : 0 < R) (hRlt : R < T0)
+    (hA : 0 ≤ A) (hB : 0 ≤ B) (heta : 0 < eta)
+    (hsphere :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ∀ z : ℂ, z ∈ Metric.sphere ((σ : ℂ) + Complex.I * t) R →
+          ‖riemannZeta z‖ ≤
+            A + B * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3))
+    (hzeta :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        eta ≤ ‖riemannZeta ((σ : ℂ) + Complex.I * t)‖) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_sphere_zeta_bound_zeta_lower_bound_high_height
+    hregular T0 R A B eta hT0 hR hRlt hA hB heta hsphere hzeta
+
+/-- Public vertical-region final conditional assembly from regular-part input
+plus fixed-radius boundary `ζ` growth and a positive center lower bound for
+`ζ`. -/
+theorem classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_sphere_zeta_bound_zeta_lower_bound_on_verticalRegion
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        LogDerivRegularPartLogBound Bregular Tregular)
+    (T0 R A B eta : ℝ) (hT0 : 5 ≤ T0) (hR : 0 < R) (hRlt : R < T0)
+    (hA : 0 ≤ A) (hB : 0 ≤ B) (heta : 0 < eta)
+    (hsphere :
+      ∀ c : ℂ, c ∈ ZeroFreeRegion.verticalRegion 1 2 T0 →
+        ∀ z : ℂ, z ∈ Metric.sphere c R →
+          ‖riemannZeta z‖ ≤ A + B * Real.log (‖c‖ + 3))
+    (hzeta :
+      ∀ c : ℂ, c ∈ ZeroFreeRegion.verticalRegion 1 2 T0 →
+        eta ≤ ‖riemannZeta c‖) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_sphere_zeta_bound_zeta_lower_bound_on_verticalRegion
+    hregular T0 R A B eta hT0 hR hRlt hA hB heta hsphere hzeta
+
+/-- Public multiplicity-aware vertical-region final conditional assembly from
+regular-part input plus fixed-radius boundary `ζ` growth and a positive center
+lower bound for `ζ`. -/
+theorem classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_sphere_zeta_bound_zeta_lower_bound_on_verticalRegion
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        MultiplicityLogDerivRegularPartLogBound Bregular Tregular)
+    (T0 R A B eta : ℝ) (hT0 : 5 ≤ T0) (hR : 0 < R) (hRlt : R < T0)
+    (hA : 0 ≤ A) (hB : 0 ≤ B) (heta : 0 < eta)
+    (hsphere :
+      ∀ c : ℂ, c ∈ ZeroFreeRegion.verticalRegion 1 2 T0 →
+        ∀ z : ℂ, z ∈ Metric.sphere c R →
+          ‖riemannZeta z‖ ≤ A + B * Real.log (‖c‖ + 3))
+    (hzeta :
+      ∀ c : ℂ, c ∈ ZeroFreeRegion.verticalRegion 1 2 T0 →
+        eta ≤ ‖riemannZeta c‖) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_sphere_zeta_bound_zeta_lower_bound_on_verticalRegion
+    hregular T0 R A B eta hT0 hR hRlt hA hB heta hsphere hzeta
+
 /-- Public compatibility bridge between the project's prime-counting
 normalization and Mathlib's `Nat.primeCounting`. -/
 theorem primeCounting_eq_mathlib (x : ℝ) (hx : 0 ≤ x) :
