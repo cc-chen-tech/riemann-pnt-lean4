@@ -1398,6 +1398,12 @@ Core verified declarations:
   compose the Cauchy derivative estimate with a positive center lower bound
   for `zeta`, yielding the same high-height `logDeriv` and real-part quotient
   interfaces from boundary `||zeta||` control on fixed-radius circles.
+- `exists_re_im_logDeriv_vertical_log_bound_of_sphere_zeta_bound_and_zeta_lower_bound_on_verticalRegion`,
+  `logDerivVerticalLogBound_of_sphere_zeta_bound_and_zeta_lower_bound_on_verticalRegion`,
+  and
+  `reNegDerivDivVerticalLogBound_of_sphere_zeta_bound_and_zeta_lower_bound_on_verticalRegion`
+  are the same Cauchy/sphere handoff when the boundary growth and center
+  lower-bound inputs are stated directly on `verticalRegion 1 2 T0`.
 - `exists_re_im_logDeriv_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height`
   converts a future boundary-strip estimate
   `||logDeriv zeta (sigma+it)|| <= A + B log(||sigma+it||+3)` into

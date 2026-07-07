@@ -6534,6 +6534,45 @@ lemma exists_re_im_logDeriv_vertical_log_bound_of_sphere_zeta_bound_and_zeta_low
       T0 (A / R) (B / R) eta hT0 (div_nonneg hA hR.le) (div_nonneg hB hR.le)
       heta hderiv hzeta
 
+/-- Vertical-region version of
+`exists_re_im_logDeriv_vertical_log_bound_of_sphere_zeta_bound_and_zeta_lower_bound_high_height`.
+
+Future zeta-growth estimates are often naturally stated for centers
+`c ∈ verticalRegion 1 2 T0`; this lemma specializes such a complex-variable
+input to the coordinate `sigma + i t` target used by
+`LogDerivVerticalLogBound`. -/
+lemma exists_re_im_logDeriv_vertical_log_bound_of_sphere_zeta_bound_and_zeta_lower_bound_on_verticalRegion
+    (T0 R A B eta : ℝ) (hT0 : 5 ≤ T0) (hR : 0 < R) (hRlt : R < T0)
+    (hA : 0 ≤ A) (hB : 0 ≤ B) (heta : 0 < eta)
+    (hsphere :
+      ∀ c : ℂ, c ∈ verticalRegion 1 2 T0 →
+        ∀ z : ℂ, z ∈ Metric.sphere c R →
+          ‖riemannZeta z‖ ≤ A + B * Real.log (‖c‖ + 3))
+    (hzeta :
+      ∀ c : ℂ, c ∈ verticalRegion 1 2 T0 →
+        eta ≤ ‖riemannZeta c‖) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 5 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          C * Real.log |t| := by
+  refine
+    exists_re_im_logDeriv_vertical_log_bound_of_sphere_zeta_bound_and_zeta_lower_bound_high_height
+      T0 R A B eta hT0 hR hRlt hA hB heta ?_ ?_
+  · intro σ t ht hσ z hz
+    have hc : ((σ : ℂ) + I * t) ∈ verticalRegion 1 2 T0 := by
+      simpa [verticalRegion] using
+        (show ((σ : ℂ) + I * t).re ∈ Set.Icc (1 : ℝ) 2 ∧
+            T0 ≤ |((σ : ℂ) + I * t).im| from
+          ⟨by simpa using hσ, by simpa using ht⟩)
+    exact hsphere ((σ : ℂ) + I * t) hc z hz
+  · intro σ t ht hσ
+    have hc : ((σ : ℂ) + I * t) ∈ verticalRegion 1 2 T0 := by
+      simpa [verticalRegion] using
+        (show ((σ : ℂ) + I * t).re ∈ Set.Icc (1 : ℝ) 2 ∧
+            T0 ≤ |((σ : ℂ) + I * t).im| from
+          ⟨by simpa using hσ, by simpa using ht⟩)
+    exact hzeta ((σ : ℂ) + I * t) hc
+
 /-- Signed standalone normalization of a future vertical-strip
 `-logDeriv ζ` estimate.
 
@@ -6730,6 +6769,25 @@ lemma logDerivVerticalLogBound_of_sphere_zeta_bound_and_zeta_lower_bound_high_he
     ⟨C, T0', hC, hT0', hbound⟩
   exact ⟨C, T0', hC, by linarith, hbound⟩
 
+/-- Vertical-region named-interface version of
+`exists_re_im_logDeriv_vertical_log_bound_of_sphere_zeta_bound_and_zeta_lower_bound_on_verticalRegion`. -/
+lemma logDerivVerticalLogBound_of_sphere_zeta_bound_and_zeta_lower_bound_on_verticalRegion
+    (T0 R A B eta : ℝ) (hT0 : 5 ≤ T0) (hR : 0 < R) (hRlt : R < T0)
+    (hA : 0 ≤ A) (hB : 0 ≤ B) (heta : 0 < eta)
+    (hsphere :
+      ∀ c : ℂ, c ∈ verticalRegion 1 2 T0 →
+        ∀ z : ℂ, z ∈ Metric.sphere c R →
+          ‖riemannZeta z‖ ≤ A + B * Real.log (‖c‖ + 3))
+    (hzeta :
+      ∀ c : ℂ, c ∈ verticalRegion 1 2 T0 →
+        eta ≤ ‖riemannZeta c‖) :
+    ∃ C T0' : ℝ, LogDerivVerticalLogBound C T0' := by
+  rcases
+      exists_re_im_logDeriv_vertical_log_bound_of_sphere_zeta_bound_and_zeta_lower_bound_on_verticalRegion
+        T0 R A B eta hT0 hR hRlt hA hB heta hsphere hzeta with
+    ⟨C, T0', hC, hT0', hbound⟩
+  exact ⟨C, T0', hC, by linarith, hbound⟩
+
 /-- Signed named-interface constructor from an affine full-height vertical
 estimate for `-logDeriv ζ`. -/
 lemma negLogDerivVerticalLogBound_of_affine_log_norm_add_three_bound_high_height
@@ -6815,6 +6873,25 @@ lemma reNegDerivDivVerticalLogBound_of_sphere_zeta_bound_and_zeta_lower_bound_hi
     ∃ C T0' : ℝ, ReNegDerivDivVerticalLogBound C T0' := by
   rcases
       logDerivVerticalLogBound_of_sphere_zeta_bound_and_zeta_lower_bound_high_height
+        T0 R A B eta hT0 hR hRlt hA hB heta hsphere hzeta with
+    ⟨C, T0', hlog⟩
+  exact ⟨C, T0', reNegDerivDivVerticalLogBound_of_logDerivVerticalLogBound hlog⟩
+
+/-- Vertical-region real-part quotient bridge from boundary `ζ` estimates on
+fixed-radius circles plus a positive lower bound for `ζ` at the centers. -/
+lemma reNegDerivDivVerticalLogBound_of_sphere_zeta_bound_and_zeta_lower_bound_on_verticalRegion
+    (T0 R A B eta : ℝ) (hT0 : 5 ≤ T0) (hR : 0 < R) (hRlt : R < T0)
+    (hA : 0 ≤ A) (hB : 0 ≤ B) (heta : 0 < eta)
+    (hsphere :
+      ∀ c : ℂ, c ∈ verticalRegion 1 2 T0 →
+        ∀ z : ℂ, z ∈ Metric.sphere c R →
+          ‖riemannZeta z‖ ≤ A + B * Real.log (‖c‖ + 3))
+    (hzeta :
+      ∀ c : ℂ, c ∈ verticalRegion 1 2 T0 →
+        eta ≤ ‖riemannZeta c‖) :
+    ∃ C T0' : ℝ, ReNegDerivDivVerticalLogBound C T0' := by
+  rcases
+      logDerivVerticalLogBound_of_sphere_zeta_bound_and_zeta_lower_bound_on_verticalRegion
         T0 R A B eta hT0 hR hRlt hA hB heta hsphere hzeta with
     ⟨C, T0', hlog⟩
   exact ⟨C, T0', reNegDerivDivVerticalLogBound_of_logDerivVerticalLogBound hlog⟩
