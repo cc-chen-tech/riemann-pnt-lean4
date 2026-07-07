@@ -1053,6 +1053,11 @@ Core verified declarations:
   specializes a standard vertical-strip `logDeriv zeta` norm bound to the
   shifted point and combines it with the multiplicity-aware moving-line
   regular-part estimate.
+- `classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_compact_band_deriv_bound_zeta_lower_bound_high_height`
+  feeds the moving-line regular-part closure from primitive high-height `zeta'`
+  growth and high-height positive lower bounds for `zeta`.
+- `classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_compact_band_deriv_bound_zeta_lower_bound_high_height`
+  is the multiplicity-aware version of the derivative-growth primitive route.
 - `classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_compact_band_sphere_zeta_bound_high_height_zeta_lower_bound`
   combines the moving-line regular-part input with the compact-patched
   Cauchy/sphere route from fixed-radius `zeta` boundary growth and high-height
@@ -1868,6 +1873,8 @@ Core verified declarations:
   `RiemannPNT.API.classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_two_t_bound`,
   `RiemannPNT.API.classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_two_t_logDeriv_norm_bound`,
   `RiemannPNT.API.classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_vertical_logDeriv_norm_bound`,
+  `RiemannPNT.API.classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_compact_band_deriv_bound_zeta_lower_bound_high_height`,
+  `RiemannPNT.API.classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_compact_band_deriv_bound_zeta_lower_bound_high_height`,
   `RiemannPNT.API.classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_compact_band_sphere_zeta_bound_high_height_zeta_lower_bound`,
   `RiemannPNT.API.classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_compact_band_sphere_zeta_bound_high_height_zeta_lower_bound`,
   and

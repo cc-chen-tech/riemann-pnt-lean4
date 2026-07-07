@@ -170,7 +170,13 @@ natural local-factorization shape with a positive integer coefficient
 vertical-strip version specializes a future
 `||logDeriv zeta z|| <= C log |Im z|` estimate at the shifted point
 `sigma+2it`, paying only the already-proved factor `log |2t| <= 2 log |t|`.
-The primitive Cauchy/sphere version
+The primitive derivative-growth versions
+`ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_compact_band_deriv_bound_zeta_lower_bound_high_height`
+and
+`ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_compact_band_deriv_bound_zeta_lower_bound_high_height`
+feed the moving-line closures from a high-height affine bound for `zeta'`
+together with a high-height positive lower bound for `zeta`; compactness supplies
+the bounded-height patch.  The primitive Cauchy/sphere versions
 `ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_compact_band_sphere_zeta_bound_high_height_zeta_lower_bound`
 and its multiplicity-aware analogue
 `ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_compact_band_sphere_zeta_bound_high_height_zeta_lower_bound`

@@ -1256,7 +1256,14 @@ the local factorization/Jensen shape with a positive integer coefficient
 without assuming that the zero is simple.  The vertical-strip variant consumes the
 future bound `||logDeriv zeta z|| <= B log |Im z|` directly and specializes it
 to `sigma+2it`, using `log |2t| <= 2 log |t|`; the zeta-specific vertical
-estimate itself remains an external analytic input.  The primitive-input
+estimate itself remains an external analytic input.  The primitive
+derivative-growth variants
+`ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_compact_band_deriv_bound_zeta_lower_bound_high_height`
+and
+`ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_compact_band_deriv_bound_zeta_lower_bound_high_height`
+produce that vertical input from high-height `zeta'` growth and a high-height
+positive lower bound for `zeta`, with bounded height supplied by compactness.
+The primitive-input sphere
 variant
 `ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_compact_band_sphere_zeta_bound_high_height_zeta_lower_bound`
 and its multiplicity-aware analogue

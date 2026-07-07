@@ -14825,6 +14825,56 @@ theorem classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm
   ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_vertical_logDeriv_norm_bound
     Bregular Bvertical T0 hBregular hBvertical hT0 hregular hvertical
 
+/-- Public moving-line regular-part assembly from primitive high-height `zeta'`
+and `zeta` controls. -/
+theorem classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_compact_band_deriv_bound_zeta_lower_bound_high_height
+    (Bregular Tregular H T A B η : ℝ)
+    (hBregular : 0 ≤ Bregular) (hTregular : 2 ≤ Tregular)
+    (hH : 5 ≤ H) (hB : 0 ≤ B) (hη : 0 < η)
+    (hregular :
+      ∀ a β t : ℝ, 0 < a → a ≤ Real.log 2 → Tregular ≤ |t| →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < (1 + a / Real.log |t|) - β →
+        ‖logDeriv riemannZeta
+            (((1 + a / Real.log |t| : ℝ) : ℂ) + Complex.I * t) -
+            ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+          Bregular * Real.log |t|)
+    (hderiv : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| →
+        ‖deriv riemannZeta z‖ ≤ A + B * Real.log (‖z‖ + 3))
+    (hzetaHigh : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| → η ≤ ‖riemannZeta z‖) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_compact_band_deriv_bound_zeta_lower_bound_high_height
+    Bregular Tregular H T A B η hBregular hTregular hH hB hη
+    hregular hderiv hzetaHigh
+
+/-- Public multiplicity-aware moving-line assembly from primitive high-height
+`zeta'` and `zeta` controls. -/
+theorem classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_compact_band_deriv_bound_zeta_lower_bound_high_height
+    (Bregular Tregular H T A B η : ℝ)
+    (hBregular : 0 ≤ Bregular) (hTregular : 2 ≤ Tregular)
+    (hH : 5 ≤ H) (hB : 0 ≤ B) (hη : 0 < η)
+    (hregular :
+      ∀ a β t : ℝ, 0 < a → a ≤ Real.log 2 → Tregular ≤ |t| →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < (1 + a / Real.log |t|) - β →
+        ∃ n : ℕ, 0 < n ∧
+          ‖logDeriv riemannZeta
+              (((1 + a / Real.log |t| : ℝ) : ℂ) + Complex.I * t) -
+              (n : ℂ) *
+                ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+            Bregular * Real.log |t|)
+    (hderiv : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| →
+        ‖deriv riemannZeta z‖ ≤ A + B * Real.log (‖z‖ + 3))
+    (hzetaHigh : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| → η ≤ ‖riemannZeta z‖) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_compact_band_deriv_bound_zeta_lower_bound_high_height
+    Bregular Tregular H T A B η hBregular hTregular hH hB hη
+    hregular hderiv hzetaHigh
+
 /-- Public moving-line regular-part assembly from primitive fixed-radius zeta
 controls: sphere growth plus a high-height lower bound for `zeta`. -/
 theorem classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_compact_band_sphere_zeta_bound_high_height_zeta_lower_bound

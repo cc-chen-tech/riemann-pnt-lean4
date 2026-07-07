@@ -14023,6 +14023,123 @@ lemma classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBou
     classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_exists_ReNegDerivDivVerticalLogBound
       hregular ⟨C, Tvertical, hvertical⟩
 
+/-- Moving-line regular-part assembly from primitive high-height `ζ'` and `ζ`
+controls.
+
+The bounded-height vertical patch is supplied by compactness.  The remaining
+primitive inputs are a high-height affine logarithmic bound for `ζ'`, a
+high-height positive lower bound for `ζ`, and the moving-line regular-part
+estimate. -/
+lemma classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_compact_band_deriv_bound_zeta_lower_bound_high_height
+    (Bregular Tregular H T A B η : ℝ)
+    (hBregular : 0 ≤ Bregular) (hTregular : 2 ≤ Tregular)
+    (hH : 5 ≤ H) (hB : 0 ≤ B) (hη : 0 < η)
+    (hregular :
+      ∀ a β t : ℝ, 0 < a → a ≤ Real.log 2 → Tregular ≤ |t| →
+        riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+        0 < (1 + a / Real.log |t|) - β →
+        ‖logDeriv riemannZeta
+            (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t) -
+            ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+          Bregular * Real.log |t|)
+    (hderiv : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| →
+        ‖deriv riemannZeta z‖ ≤ A + B * Real.log (‖z‖ + 3))
+    (hzetaHigh : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| → η ≤ ‖riemannZeta z‖) :
+    classical_zero_free_region := by
+  rcases
+      logDerivVerticalLogBound_of_compact_band_and_high_height_deriv_bound_zeta_lower_bound
+        H T A B η hH hB hη hderiv hzetaHigh with
+    ⟨Bvertical, Tvertical, hvertical⟩
+  rcases hvertical with ⟨hBvertical, hTvertical, hvertical_bound⟩
+  let Tstar : ℝ := max Tregular Tvertical
+  have hTstar : 2 ≤ Tstar :=
+    hTregular.trans (le_max_left Tregular Tvertical)
+  have hregular_star :
+      ∀ a β t : ℝ, 0 < a → a ≤ Real.log 2 → Tstar ≤ |t| →
+        riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+        0 < (1 + a / Real.log |t|) - β →
+        ‖logDeriv riemannZeta
+            (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t) -
+            ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+          Bregular * Real.log |t| := by
+    intro a β t ha_pos ha_le_log2 ht hzero hβ hsub
+    exact hregular a β t ha_pos ha_le_log2
+      ((le_max_left Tregular Tvertical).trans ht) hzero hβ hsub
+  have hvertical_star :
+      ∀ z : ℂ, 1 ≤ z.re → z.re ≤ 2 → Tstar ≤ |z.im| →
+        ‖logDeriv riemannZeta z‖ ≤ Bvertical * Real.log |z.im| := by
+    intro z hz_left hz_right hz_height
+    have hz_decomp : ((z.re : ℂ) + I * (z.im : ℂ)) = z := by
+      apply Complex.ext <;> simp
+    have hz_height_vertical : Tvertical ≤ |z.im| :=
+      (le_max_right Tregular Tvertical).trans hz_height
+    simpa [hz_decomp] using
+      hvertical_bound z.re z.im hz_left hz_right hz_height_vertical
+  exact
+    classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_vertical_logDeriv_norm_bound
+      Bregular Bvertical Tstar hBregular hBvertical hTstar
+      hregular_star hvertical_star
+
+/-- Multiplicity-aware moving-line assembly from primitive high-height `ζ'` and
+`ζ` controls. -/
+lemma classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_compact_band_deriv_bound_zeta_lower_bound_high_height
+    (Bregular Tregular H T A B η : ℝ)
+    (hBregular : 0 ≤ Bregular) (hTregular : 2 ≤ Tregular)
+    (hH : 5 ≤ H) (hB : 0 ≤ B) (hη : 0 < η)
+    (hregular :
+      ∀ a β t : ℝ, 0 < a → a ≤ Real.log 2 → Tregular ≤ |t| →
+        riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+        0 < (1 + a / Real.log |t|) - β →
+        ∃ n : ℕ, 0 < n ∧
+          ‖logDeriv riemannZeta
+              (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t) -
+              (n : ℂ) *
+                ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+            Bregular * Real.log |t|)
+    (hderiv : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| →
+        ‖deriv riemannZeta z‖ ≤ A + B * Real.log (‖z‖ + 3))
+    (hzetaHigh : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| → η ≤ ‖riemannZeta z‖) :
+    classical_zero_free_region := by
+  rcases
+      logDerivVerticalLogBound_of_compact_band_and_high_height_deriv_bound_zeta_lower_bound
+        H T A B η hH hB hη hderiv hzetaHigh with
+    ⟨Bvertical, Tvertical, hvertical⟩
+  rcases hvertical with ⟨hBvertical, hTvertical, hvertical_bound⟩
+  let Tstar : ℝ := max Tregular Tvertical
+  have hTstar : 2 ≤ Tstar :=
+    hTregular.trans (le_max_left Tregular Tvertical)
+  have hregular_star :
+      ∀ a β t : ℝ, 0 < a → a ≤ Real.log 2 → Tstar ≤ |t| →
+        riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+        0 < (1 + a / Real.log |t|) - β →
+        ∃ n : ℕ, 0 < n ∧
+          ‖logDeriv riemannZeta
+              (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t) -
+              (n : ℂ) *
+                ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+            Bregular * Real.log |t| := by
+    intro a β t ha_pos ha_le_log2 ht hzero hβ hsub
+    exact hregular a β t ha_pos ha_le_log2
+      ((le_max_left Tregular Tvertical).trans ht) hzero hβ hsub
+  have hvertical_star :
+      ∀ z : ℂ, 1 ≤ z.re → z.re ≤ 2 → Tstar ≤ |z.im| →
+        ‖logDeriv riemannZeta z‖ ≤ Bvertical * Real.log |z.im| := by
+    intro z hz_left hz_right hz_height
+    have hz_decomp : ((z.re : ℂ) + I * (z.im : ℂ)) = z := by
+      apply Complex.ext <;> simp
+    have hz_height_vertical : Tvertical ≤ |z.im| :=
+      (le_max_right Tregular Tvertical).trans hz_height
+    simpa [hz_decomp] using
+      hvertical_bound z.re z.im hz_left hz_right hz_height_vertical
+  exact
+    classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_vertical_logDeriv_norm_bound
+      Bregular Bvertical Tstar hBregular hBvertical hTstar
+      hregular_star hvertical_star
+
 /-- Moving-line regular-part assembly from primitive fixed-radius zeta controls.
 
 This is the current narrowest Cauchy/sphere route to the classical zero-free
