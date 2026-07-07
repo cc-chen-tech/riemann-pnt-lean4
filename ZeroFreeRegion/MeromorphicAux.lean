@@ -5581,6 +5581,53 @@ lemma norm_deriv_riemannZeta_sigma_it_le_re_zeta_two_div_radius_of_two_add_radiu
     (z := z) (σ := σ) (t := t) (R := R) hz
   linarith
 
+/-- Right-edge logarithmic-derivative bound from a disk contained in
+`2 <= Re(z)`.
+
+The Cauchy derivative estimate gives `‖ζ'(s)‖ <= ζ(2)/R` on such a disk, and
+`one_third_le_norm_riemannZeta_of_two_le_re` gives the denominator margin
+`‖ζ(s)‖ >= 1/3` already on the line `Re(s)=2`.  Thus
+`‖logDeriv ζ(s)‖ <= 3 ζ(2) / R`.
+
+This is a checked right-boundary input.  It still does not provide the missing
+uniform `O(log |t|)` estimate in the boundary strip `1 <= Re(s) <= 2`. -/
+lemma norm_logDeriv_riemannZeta_le_three_mul_re_zeta_two_div_radius_of_two_add_radius_le_re
+    {s : ℂ} {R : ℝ} (hR : 0 < R) (hs : 2 + R ≤ s.re) :
+    ‖logDeriv riemannZeta s‖ ≤ 3 * (riemannZeta (2 : ℂ)).re / R := by
+  have hderiv :
+      ‖deriv riemannZeta s‖ ≤ (riemannZeta (2 : ℂ)).re / R := by
+    refine
+      norm_deriv_riemannZeta_le_re_zeta_two_div_radius_of_closedBall_two_le_re
+        (c := s) (R := R) hR ?_
+    intro z hz
+    have hre := closedBall_re_bounds (z := z) (c := s) (R := R) hz
+    linarith
+  have hzeta_lower : (1 / 3 : ℝ) ≤ ‖riemannZeta s‖ :=
+    one_third_le_norm_riemannZeta_of_two_le_re s (by linarith)
+  have hzeta_two_nonneg : 0 ≤ (riemannZeta (2 : ℂ)).re := by
+    exact le_trans zero_le_one (le_of_lt (riemannZeta_re_gt_one 2 (by norm_num)))
+  have hnum_nonneg : 0 ≤ (riemannZeta (2 : ℂ)).re / R :=
+    div_nonneg hzeta_two_nonneg hR.le
+  calc
+    ‖logDeriv riemannZeta s‖
+        = ‖deriv riemannZeta s‖ / ‖riemannZeta s‖ := by
+          rw [norm_logDeriv_riemannZeta_eq_norm_deriv_div, norm_div]
+    _ ≤ ((riemannZeta (2 : ℂ)).re / R) / ‖riemannZeta s‖ :=
+          div_le_div_of_nonneg_right hderiv (norm_nonneg _)
+    _ ≤ ((riemannZeta (2 : ℂ)).re / R) / (1 / 3 : ℝ) :=
+          div_le_div_of_nonneg_left hnum_nonneg (by norm_num) hzeta_lower
+    _ = 3 * (riemannZeta (2 : ℂ)).re / R := by ring
+
+/-- Coordinate form of
+`norm_logDeriv_riemannZeta_le_three_mul_re_zeta_two_div_radius_of_two_add_radius_le_re`. -/
+lemma norm_logDeriv_riemannZeta_sigma_it_le_three_mul_re_zeta_two_div_radius_of_two_add_radius_le
+    {σ t R : ℝ} (hR : 0 < R) (hσ : 2 + R ≤ σ) :
+    ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+      3 * (riemannZeta (2 : ℂ)).re / R := by
+  exact
+    norm_logDeriv_riemannZeta_le_three_mul_re_zeta_two_div_radius_of_two_add_radius_le_re
+      (s := (σ : ℂ) + I * t) (R := R) hR (by simpa using hσ)
+
 /-- Far-right constant bound for the logarithmic derivative of ζ.
 
 For `3 <= Re(s)`, the disk of radius `1` around `s` lies in `2 <= Re(z)`, so

@@ -379,6 +379,108 @@ lemma riemannZeta_re_le_sigma_div_sub (σ : ℝ) (hσ : 1 < σ) :
     field_simp; ring
   linarith
 
+/-- Explicit numerical upper bound for `ζ(2)`.
+
+This turns the Basel formula `ζ(2)=π^2/6` and Mathlib's certified
+`π < 3.15` into the convenient rational bound `ζ(2) <= 5/3`. -/
+lemma riemannZeta_two_re_le_five_thirds :
+    (riemannZeta (2 : ℂ)).re ≤ (5 / 3 : ℝ) := by
+  have hz : (riemannZeta (2 : ℂ)).re = Real.pi ^ 2 / 6 := by
+    rw [riemannZeta_two]
+    simp [pow_two]
+  rw [hz]
+  have hpi : Real.pi < (3.15 : ℝ) := Real.pi_lt_d2
+  have hpi_nonneg : 0 ≤ Real.pi := Real.pi_pos.le
+  nlinarith
+
+/-- The zeta tail after the first term at exponent `2` is at most `2/3`.
+
+This is the quantitative improvement over the crude integral estimate
+`ζ(2) <= 2`: the Basel value gives a strict margin below `1`, which is the
+right-edge nonvanishing input used below. -/
+lemma zeta_two_tail_le_two_thirds :
+    ∑' n : ℕ, 1 / (↑(n + 1) + 1 : ℝ) ^ (2 : ℝ) ≤ (2 / 3 : ℝ) := by
+  have hsum2 : Summable (fun n : ℕ => 1 / (↑n + 1 : ℝ) ^ (2 : ℝ)) :=
+    summable_one_div_rpow 2 (by norm_num)
+  have hfull := riemannZeta_two_re_le_five_thirds
+  change (riemannZeta ((2 : ℝ) : ℂ)).re ≤ (5 / 3 : ℝ) at hfull
+  rw [riemannZeta_re_eq_tsum_real 2 (by norm_num)] at hfull
+  rw [hsum2.tsum_eq_zero_add] at hfull
+  norm_num at hfull ⊢
+  linarith
+
+/-- In the half-plane `2 <= Re(s)`, the tail of the zeta Dirichlet series after
+the first term has norm at most `2/3`.
+
+The proof compares the tail to the real exponent-`2` tail and then uses
+`ζ(2)=π^2/6 < 5/3`.  This gives a genuine right-boundary zero-repulsion margin
+already at `Re(s)=2`, rather than the older far-right `Re(s)=3` line. -/
+lemma norm_riemannZeta_sub_one_le_two_thirds_of_two_le_re
+    (s : ℂ) (hs : 2 ≤ s.re) :
+    ‖riemannZeta s - 1‖ ≤ (2 / 3 : ℝ) := by
+  have hs1 : 1 < s.re := by linarith
+  have hsum_complex : Summable (fun n : ℕ => 1 / (↑n + 1 : ℂ) ^ s) := by
+    have h := (Complex.summable_one_div_nat_cpow (p := s)).mpr hs1
+    exact ((summable_nat_add_iff (f := fun n => 1 / (↑n : ℂ) ^ s) 1).mpr h).congr
+      (fun n => by push_cast; ring_nf)
+  have hzeta :
+      riemannZeta s =
+        1 + ∑' n : ℕ, 1 / (↑(n + 1) + 1 : ℂ) ^ s := by
+    rw [zeta_eq_tsum_one_div_nat_add_one_cpow hs1, hsum_complex.tsum_eq_zero_add]
+    simp
+  have hsum_tail_norm :
+      Summable (fun n : ℕ => ‖1 / (↑(n + 1) + 1 : ℂ) ^ s‖) := by
+    exact ((summable_nat_add_iff
+      (f := fun n : ℕ => ‖1 / (↑n + 1 : ℂ) ^ s‖) 1).mpr hsum_complex.norm)
+  have hsum_tail_two :
+      Summable (fun n : ℕ => 1 / (↑(n + 1) + 1 : ℝ) ^ (2 : ℝ)) := by
+    exact ((summable_nat_add_iff
+      (f := fun n : ℕ => 1 / (↑n + 1 : ℝ) ^ (2 : ℝ)) 1).mpr
+        (summable_one_div_rpow 2 (by norm_num)))
+  calc
+    ‖riemannZeta s - 1‖
+        = ‖∑' n : ℕ, 1 / (↑(n + 1) + 1 : ℂ) ^ s‖ := by
+          rw [hzeta]
+          ring_nf
+    _ ≤ ∑' n : ℕ, ‖1 / (↑(n + 1) + 1 : ℂ) ^ s‖ :=
+        norm_tsum_le_tsum_norm hsum_tail_norm
+    _ ≤ ∑' n : ℕ, 1 / (↑(n + 1) + 1 : ℝ) ^ (2 : ℝ) :=
+        hsum_tail_norm.tsum_le_tsum (fun n => by
+          have hnpos : 0 < (↑(n + 1) + 1 : ℝ) := by positivity
+          have hnbase : 1 ≤ (↑(n + 1) + 1 : ℝ) := by
+            exact_mod_cast Nat.succ_le_succ (Nat.zero_le (n + 1))
+          have hnorm : ‖(↑(n + 1) + 1 : ℂ) ^ s‖ =
+              (↑(n + 1) + 1 : ℝ) ^ s.re := by
+            have h_cast : (↑(n + 1) + 1 : ℂ) =
+                (↑(↑(n + 1) + 1 : ℝ) : ℂ) := by push_cast; ring
+            rw [h_cast, Complex.norm_cpow_eq_rpow_re_of_pos hnpos]
+          rw [norm_div, norm_one, hnorm]
+          have hpow :
+              (↑(n + 1) + 1 : ℝ) ^ (2 : ℝ) ≤
+                (↑(n + 1) + 1 : ℝ) ^ s.re :=
+            Real.rpow_le_rpow_of_exponent_le hnbase hs
+          exact one_div_le_one_div_of_le (Real.rpow_pos_of_pos hnpos _) hpow)
+        hsum_tail_two
+    _ ≤ (2 / 3 : ℝ) := zeta_two_tail_le_two_thirds
+
+/-- Right-boundary lower bound for zeta: `‖ζ(s)‖ >= 1/3` when
+`2 <= Re(s)`.
+
+This is a proved zeta-specific nonvanishing margin on the whole half-plane
+`Re(s) >= 2`.  It is still far from the missing boundary-strip lower bound
+near `Re(s)=1`, but it strengthens the checked right-edge input for later
+Cauchy/Borel-Carathéodory arguments. -/
+lemma one_third_le_norm_riemannZeta_of_two_le_re
+    (s : ℂ) (hs : 2 ≤ s.re) :
+    (1 / 3 : ℝ) ≤ ‖riemannZeta s‖ := by
+  have htail := norm_riemannZeta_sub_one_le_two_thirds_of_two_le_re s hs
+  have htri : ‖(1 : ℂ)‖ ≤ ‖riemannZeta s‖ + ‖riemannZeta s - 1‖ := by
+    calc
+      ‖(1 : ℂ)‖ = ‖riemannZeta s - (riemannZeta s - 1)‖ := by ring_nf
+      _ ≤ ‖riemannZeta s‖ + ‖riemannZeta s - 1‖ := norm_sub_le _ _
+  norm_num at htri
+  linarith
+
 /-- In the half-plane `3 ≤ Re(s)`, the tail of the zeta Dirichlet series after
 the first term has norm at most `1/2`.
 

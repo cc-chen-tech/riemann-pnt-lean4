@@ -7351,6 +7351,28 @@ theorem riemannZeta_re_le_sigma_div_sub (σ : ℝ) (hσ : 1 < σ) :
     (riemannZeta (σ : ℂ)).re ≤ σ / (σ - 1) :=
   ZeroFreeRegion.riemannZeta_re_le_sigma_div_sub σ hσ
 
+/-- Public numerical upper bound `Re(ζ(2)) <= 5/3`. -/
+theorem riemannZeta_two_re_le_five_thirds :
+    (riemannZeta (2 : ℂ)).re ≤ (5 / 3 : ℝ) :=
+  ZeroFreeRegion.riemannZeta_two_re_le_five_thirds
+
+/-- Public exponent-2 zeta tail bound after the first term. -/
+theorem zeta_two_tail_le_two_thirds :
+    ∑' n : ℕ, 1 / (↑(n + 1) + 1 : ℝ) ^ (2 : ℝ) ≤ (2 / 3 : ℝ) :=
+  ZeroFreeRegion.zeta_two_tail_le_two_thirds
+
+/-- Public right-boundary tail bound `‖ζ(s)-1‖ <= 2/3` on `2 <= Re(s)`. -/
+theorem norm_riemannZeta_sub_one_le_two_thirds_of_two_le_re
+    (s : ℂ) (hs : 2 ≤ s.re) :
+    ‖riemannZeta s - 1‖ ≤ (2 / 3 : ℝ) :=
+  ZeroFreeRegion.norm_riemannZeta_sub_one_le_two_thirds_of_two_le_re s hs
+
+/-- Public right-boundary lower bound `1/3 <= ‖ζ(s)‖` on `2 <= Re(s)`. -/
+theorem one_third_le_norm_riemannZeta_of_two_le_re
+    (s : ℂ) (hs : 2 ≤ s.re) :
+    (1 / 3 : ℝ) ≤ ‖riemannZeta s‖ :=
+  ZeroFreeRegion.one_third_le_norm_riemannZeta_of_two_le_re s hs
+
 /-- Public far-right tail bound `‖ζ(s)-1‖ <= 1/2` on `3 <= Re(s)`. -/
 theorem norm_riemannZeta_sub_one_le_half_of_three_le_re
     (s : ℂ) (hs : 3 ≤ s.re) :
@@ -15452,6 +15474,23 @@ theorem norm_deriv_riemannZeta_sigma_it_le_re_zeta_two_div_radius_of_two_add_rad
     ‖deriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
       (riemannZeta (2 : ℂ)).re / R :=
   ZeroFreeRegion.norm_deriv_riemannZeta_sigma_it_le_re_zeta_two_div_radius_of_two_add_radius_le
+    hR hσ
+
+/-- Public right-edge logarithmic-derivative bound from a disk contained in
+`2 <= Re(z)`, using the proved `‖ζ(s)‖ >= 1/3` denominator margin. -/
+theorem norm_logDeriv_riemannZeta_le_three_mul_re_zeta_two_div_radius_of_two_add_radius_le_re
+    {s : ℂ} {R : ℝ} (hR : 0 < R) (hs : 2 + R ≤ s.re) :
+    ‖logDeriv riemannZeta s‖ ≤ 3 * (riemannZeta (2 : ℂ)).re / R :=
+  ZeroFreeRegion.norm_logDeriv_riemannZeta_le_three_mul_re_zeta_two_div_radius_of_two_add_radius_le_re
+    hR hs
+
+/-- Public coordinate form of the right-edge radius-dependent logarithmic
+derivative bound. -/
+theorem norm_logDeriv_riemannZeta_sigma_it_le_three_mul_re_zeta_two_div_radius_of_two_add_radius_le
+    {σ t R : ℝ} (hR : 0 < R) (hσ : 2 + R ≤ σ) :
+    ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+      3 * (riemannZeta (2 : ℂ)).re / R :=
+  ZeroFreeRegion.norm_logDeriv_riemannZeta_sigma_it_le_three_mul_re_zeta_two_div_radius_of_two_add_radius_le
     hR hσ
 
 /-- Public far-right constant bound for `logDeriv ζ`: on `3 <= Re(s)`,
