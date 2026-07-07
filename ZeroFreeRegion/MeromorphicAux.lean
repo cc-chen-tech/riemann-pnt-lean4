@@ -8501,6 +8501,56 @@ lemma differentiableOn_neg_logDeriv_riemannZeta_closedBall_sigma_it_of_disk_righ
     (differentiableOn_logDeriv_riemannZeta_closedBall_sigma_it_of_disk_right_half
       (σ := σ) (t := t) (R := R) (H := H) hσ hHpos hH).neg
 
+/-- Standard-radius differentiability of `logDeriv ζ` on the moving disk
+centered at `σ + it`, where `σ = 1 + a / log |t|`. -/
+lemma differentiableOn_logDeriv_riemannZeta_closedBall_sigmaOf_log_add_I_mul_borel_radius
+    {T0 a t : ℝ} (hT0 : 2 ≤ T0) (ha : 0 < a) (ha_le : a ≤ Real.log 2)
+    (ht : T0 ≤ |t|) :
+    DifferentiableOn ℂ (logDeriv riemannZeta)
+      (closedBall ((1 + a / Real.log |t| : ℝ) + I * t)
+        (a / (2 * Real.log |t|))) := by
+  intro z hz
+  exact
+    (analyticAt_logDeriv_riemannZeta_closedBall_sigmaOf_log_add_I_mul_borel_radius
+      hT0 ha ha_le ht z hz).differentiableWithinAt
+
+/-- Standard-radius differentiability of `-logDeriv ζ` on the moving disk
+centered at `σ + it`, where `σ = 1 + a / log |t|`. -/
+lemma differentiableOn_neg_logDeriv_riemannZeta_closedBall_sigmaOf_log_add_I_mul_borel_radius
+    {T0 a t : ℝ} (hT0 : 2 ≤ T0) (ha : 0 < a) (ha_le : a ≤ Real.log 2)
+    (ht : T0 ≤ |t|) :
+    DifferentiableOn ℂ (fun z : ℂ => -logDeriv riemannZeta z)
+      (closedBall ((1 + a / Real.log |t| : ℝ) + I * t)
+        (a / (2 * Real.log |t|))) := by
+  simpa only [Pi.neg_apply] using
+    (differentiableOn_logDeriv_riemannZeta_closedBall_sigmaOf_log_add_I_mul_borel_radius
+      hT0 ha ha_le ht).neg
+
+/-- Standard-radius differentiability of `logDeriv ζ` on the shifted moving
+disk centered at `σ + 2it`, where `σ = 1 + a / log |t|`. -/
+lemma differentiableOn_logDeriv_riemannZeta_closedBall_sigmaOf_log_add_two_I_mul_borel_radius
+    {T0 a t : ℝ} (hT0 : 2 ≤ T0) (ha : 0 < a) (ha_le : a ≤ Real.log 2)
+    (ht : T0 ≤ |t|) :
+    DifferentiableOn ℂ (logDeriv riemannZeta)
+      (closedBall ((1 + a / Real.log |t| : ℝ) + I * (2 * t))
+        (a / (2 * Real.log |t|))) := by
+  intro z hz
+  exact
+    (analyticAt_logDeriv_riemannZeta_closedBall_sigmaOf_log_add_two_I_mul_borel_radius
+      hT0 ha ha_le ht z hz).differentiableWithinAt
+
+/-- Standard-radius differentiability of `-logDeriv ζ` on the shifted moving
+disk centered at `σ + 2it`, where `σ = 1 + a / log |t|`. -/
+lemma differentiableOn_neg_logDeriv_riemannZeta_closedBall_sigmaOf_log_add_two_I_mul_borel_radius
+    {T0 a t : ℝ} (hT0 : 2 ≤ T0) (ha : 0 < a) (ha_le : a ≤ Real.log 2)
+    (ht : T0 ≤ |t|) :
+    DifferentiableOn ℂ (fun z : ℂ => -logDeriv riemannZeta z)
+      (closedBall ((1 + a / Real.log |t| : ℝ) + I * (2 * t))
+        (a / (2 * Real.log |t|))) := by
+  simpa only [Pi.neg_apply] using
+    (differentiableOn_logDeriv_riemannZeta_closedBall_sigmaOf_log_add_two_I_mul_borel_radius
+      hT0 ha ha_le ht).neg
+
 /-- Differentiability of the zero-centered translate
 `z ↦ logDeriv ζ (z + (σ + I*t))` on the local open disk used by centered
 Borel-Caratheodory wrappers. -/
