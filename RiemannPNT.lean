@@ -7441,6 +7441,35 @@ theorem exists_norm_logDeriv_riemannZeta_le_log_abs_im_add_three_of_moving_line
   ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_le_log_abs_im_add_three_of_moving_line
     ha
 
+/-- Public moving-line high-height norm package for the two shifted 3-4-1
+points. For fixed `a>0`, the bound holds on
+`σ ≥ 1 + a/log |t|`, with a constant depending on `a`. -/
+theorem exists_norm_logDeriv_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_log_abs
+    {a : ℝ} (ha : 0 < a) :
+    ∃ B : ℝ, 0 ≤ B ∧ ∀ σ t : ℝ, 3 ≤ |t| →
+      1 + a / Real.log |t| ≤ σ →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          B * Real.log |t| ∧
+        ‖logDeriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t)‖ ≤
+          B * Real.log |t| :=
+  ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_log_abs
+    ha
+
+/-- Public moving-line high-height real-part quotient package for the two
+shifted 3-4-1 points, in the `Re(-ζ'/ζ)` sign convention. -/
+theorem exists_re_neg_deriv_div_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_log_abs
+    {a : ℝ} (ha : 0 < a) :
+    ∃ B : ℝ, 0 ≤ B ∧ ∀ σ t : ℝ, 3 ≤ |t| →
+      1 + a / Real.log |t| ≤ σ →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
+          B * Real.log |t| ∧
+        (-deriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t) /
+            riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re ≤
+          B * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_log_abs
+    ha
+
 /-- Public antitonicity of `-Re(ζ'/ζ)` on the real half-line `(1, ∞)`. -/
 theorem log_deriv_zeta_antitone
     {σ₁ σ₂ : ℝ} (hσ₁ : 1 < σ₁) (hσ₂ : σ₁ ≤ σ₂) :

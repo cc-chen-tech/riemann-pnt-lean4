@@ -4014,6 +4014,152 @@ lemma log_abs_add_three_le_two_log_abs {t : ℝ} (ht : 3 ≤ |t|) :
     _ = Real.log 2 + Real.log |t| := hlog_mul
     _ ≤ 2 * Real.log |t| := by linarith
 
+/-- The `σ + it` point lies in the Chebyshev moving half-plane whenever
+`σ ≥ 1 + a / log |t|` and `|t| ≥ 2`.
+
+The conclusion is phrased exactly in the hypothesis shape of
+`exists_norm_logDeriv_riemannZeta_le_log_abs_im_add_three_of_moving_line`. -/
+lemma sigma_ge_sigmaOf_log_moving_line_sigma_it
+    {a σ t : ℝ} (ha : 0 < a) (ht : 2 ≤ |t|)
+    (hσ : 1 + a / Real.log |t| ≤ σ) :
+    1 + a / Real.log (|(((σ : ℂ) + I * t).im)| + 3) ≤
+      (((σ : ℂ) + I * t).re) := by
+  have ht_pos : 0 < |t| := lt_of_lt_of_le (by norm_num) ht
+  have hlog_pos : 0 < Real.log |t| := log_abs_pos_of_two_le ht
+  have hlog_add_pos : 0 < Real.log (|t| + 3) := by
+    exact Real.log_pos (by linarith [abs_nonneg t] : (1 : ℝ) < |t| + 3)
+  have hlog_le : Real.log |t| ≤ Real.log (|t| + 3) := by
+    exact Real.log_le_log ht_pos (by linarith [abs_nonneg t] : |t| ≤ |t| + 3)
+  have hdiv_le : a / Real.log (|t| + 3) ≤ a / Real.log |t| :=
+    div_le_div_of_nonneg_left ha.le hlog_pos hlog_le
+  have htarget : 1 + a / Real.log (|t| + 3) ≤ σ := by
+    have hsum :
+        1 + a / Real.log (|t| + 3) ≤ 1 + a / Real.log |t| := by
+      simpa [add_comm, add_left_comm, add_assoc] using add_le_add_left hdiv_le 1
+    exact le_trans hsum hσ
+  simpa using htarget
+
+/-- The shifted `σ + 2it` point lies in the same Chebyshev moving half-plane
+whenever `σ ≥ 1 + a / log |t|` and `|t| ≥ 2`. -/
+lemma sigma_ge_sigmaOf_log_moving_line_sigma_two_it
+    {a σ t : ℝ} (ha : 0 < a) (ht : 2 ≤ |t|)
+    (hσ : 1 + a / Real.log |t| ≤ σ) :
+    1 + a / Real.log (|(((σ : ℂ) + 2 * I * t).im)| + 3) ≤
+      (((σ : ℂ) + 2 * I * t).re) := by
+  have ht_pos : 0 < |t| := lt_of_lt_of_le (by norm_num) ht
+  have hlog_pos : 0 < Real.log |t| := log_abs_pos_of_two_le ht
+  have harg_pos : 0 < |2 * t| + 3 := by
+    linarith [abs_nonneg (2 * t)]
+  have h_abs_two : |(2 : ℝ) * t| = 2 * |t| := by
+    rw [abs_mul, abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 2)]
+  have harg_le : |t| ≤ |(2 : ℝ) * t| + 3 := by
+    rw [h_abs_two]
+    nlinarith [abs_nonneg t]
+  have hlog_le : Real.log |t| ≤ Real.log (|2 * t| + 3) :=
+    Real.log_le_log ht_pos harg_le
+  have hdiv_le : a / Real.log (|2 * t| + 3) ≤ a / Real.log |t| :=
+    div_le_div_of_nonneg_left ha.le hlog_pos hlog_le
+  have htarget : 1 + a / Real.log (|2 * t| + 3) ≤ σ := by
+    have hsum :
+        1 + a / Real.log (|2 * t| + 3) ≤ 1 + a / Real.log |t| := by
+      simpa [add_comm, add_left_comm, add_assoc] using add_le_add_left hdiv_le 1
+    exact le_trans hsum hσ
+  simpa [mul_assoc] using htarget
+
+/-- Chebyshev moving-line high-height norm package for the two shifted
+3-4-1 points.
+
+For every fixed `a > 0`, the proved moving-line estimate gives a constant
+`B(a)` such that both `σ + it` and `σ + 2it` satisfy
+`‖logDeriv ζ‖ ≤ B(a) log |t|` whenever
+`|t| ≥ 3` and `σ ≥ 1 + a / log |t|`.
+
+This is still an absolute-convergence-side estimate: the constant may depend
+on `a`, and the theorem does not prove the missing boundary-strip
+`LogDerivVerticalLogBound` on `1 ≤ σ ≤ 2`. -/
+lemma exists_norm_logDeriv_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_log_abs
+    {a : ℝ} (ha : 0 < a) :
+    ∃ B : ℝ, 0 ≤ B ∧ ∀ σ t : ℝ, 3 ≤ |t| →
+      1 + a / Real.log |t| ≤ σ →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          B * Real.log |t| ∧
+        ‖logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖ ≤
+          B * Real.log |t| := by
+  rcases exists_norm_logDeriv_riemannZeta_le_log_abs_im_add_three_of_moving_line
+      ha with ⟨C, hC, hbound⟩
+  refine ⟨4 * C, mul_nonneg (by norm_num) hC, ?_⟩
+  intro σ t ht hσ
+  have ht2 : 2 ≤ |t| := by linarith
+  have hlog_nonneg : 0 ≤ Real.log |t| :=
+    (log_abs_pos_of_two_le ht2).le
+  have hlog_add_le : Real.log (|t| + 3) ≤ 2 * Real.log |t| :=
+    log_abs_add_three_le_two_log_abs ht
+  have hlog_add_le_four : Real.log (|t| + 3) ≤ 4 * Real.log |t| := by
+    nlinarith [hlog_add_le, hlog_nonneg]
+  have htwo_log_le :
+      Real.log (|2 * t| + 3) ≤ 2 * Real.log (|t| + 3) :=
+    log_abs_two_mul_add_three_le_two_log_abs_add_three t
+  have htwo_log_le_four : Real.log (|2 * t| + 3) ≤ 4 * Real.log |t| := by
+    linarith [htwo_log_le, hlog_add_le]
+  have hordinary :=
+    hbound ((σ : ℂ) + I * t)
+      (sigma_ge_sigmaOf_log_moving_line_sigma_it ha ht2 hσ)
+  have hshifted :=
+    hbound ((σ : ℂ) + 2 * I * t)
+      (sigma_ge_sigmaOf_log_moving_line_sigma_two_it ha ht2 hσ)
+  constructor
+  · calc
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖
+          ≤ C * Real.log (|t| + 3) := by
+            simpa using hordinary
+      _ ≤ C * (4 * Real.log |t|) :=
+          mul_le_mul_of_nonneg_left hlog_add_le_four hC
+      _ = (4 * C) * Real.log |t| := by ring
+  · calc
+      ‖logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖
+          ≤ C * Real.log (|2 * t| + 3) := by
+            simpa [mul_assoc] using hshifted
+      _ ≤ C * (4 * Real.log |t|) :=
+          mul_le_mul_of_nonneg_left htwo_log_le_four hC
+      _ = (4 * C) * Real.log |t| := by ring
+
+/-- Real-part quotient version of
+`exists_norm_logDeriv_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_log_abs`.
+
+This is the sign convention used by the 3-4-1 inequality. -/
+lemma exists_re_neg_deriv_div_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_log_abs
+    {a : ℝ} (ha : 0 < a) :
+    ∃ B : ℝ, 0 ≤ B ∧ ∀ σ t : ℝ, 3 ≤ |t| →
+      1 + a / Real.log |t| ≤ σ →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re ≤
+          B * Real.log |t| ∧
+        (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤
+          B * Real.log |t| := by
+  rcases exists_norm_logDeriv_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_log_abs
+      ha with ⟨B, hB, hbound⟩
+  refine ⟨B, hB, ?_⟩
+  intro σ t ht hσ
+  rcases hbound σ t ht hσ with ⟨hit, htwoit⟩
+  constructor
+  · calc
+      (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re
+          ≤ ‖-deriv riemannZeta ((σ : ℂ) + I * t) /
+              riemannZeta ((σ : ℂ) + I * t)‖ := Complex.re_le_norm _
+      _ = ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ :=
+          norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv _
+      _ ≤ B * Real.log |t| := hit
+  · calc
+      (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+          riemannZeta ((σ : ℂ) + 2 * I * t)).re
+          ≤ ‖-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+              riemannZeta ((σ : ℂ) + 2 * I * t)‖ := Complex.re_le_norm _
+      _ = ‖logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖ :=
+          norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv _
+      _ ≤ B * Real.log |t| := htwoit
+
 /-- Standard high-height vertical logarithmic-derivative bound on
 `1 <= sigma <= 2`.
 
