@@ -17225,6 +17225,36 @@ theorem analyticAt_logDeriv_riemannZeta_sigmaOf_log_add_two_I_mul {T0 a t : ℝ}
       ((1 + a / Real.log |t| : ℝ) + 2 * I * t) :=
   ZeroFreeRegion.analyticAt_logDeriv_riemannZeta_sigmaOf_log_add_two_I_mul hT0 ha ht
 
+/-- Public closed-ball zero-freeness of ζ around `σ + iu`, for
+`σ = 1 + a / log |t|`, when the radius stays inside the right half-plane. -/
+theorem riemannZeta_closedBall_sigmaOf_log_add_I_mul_height_ne_zero_of_radius_le_width
+    {T0 a t u R : ℝ} (hT0 : 2 ≤ T0) (ha : 0 < a) (ht : T0 ≤ |t|)
+    (hR : R ≤ a / Real.log |t|) :
+    ∀ z ∈ Metric.closedBall ((1 + a / Real.log |t| : ℝ) + I * u) R,
+      riemannZeta z ≠ 0 :=
+  ZeroFreeRegion.riemannZeta_closedBall_sigmaOf_log_add_I_mul_height_ne_zero_of_radius_le_width
+    hT0 ha ht hR
+
+/-- Public standard-radius closed-ball zero-freeness of ζ around `σ + it`. -/
+theorem riemannZeta_closedBall_sigmaOf_log_add_I_mul_borel_radius_ne_zero
+    {T0 a t : ℝ} (hT0 : 2 ≤ T0) (ha : 0 < a) (ha_le : a ≤ Real.log 2)
+    (ht : T0 ≤ |t|) :
+    ∀ z ∈ Metric.closedBall ((1 + a / Real.log |t| : ℝ) + I * t)
+        (a / (2 * Real.log |t|)),
+      riemannZeta z ≠ 0 :=
+  ZeroFreeRegion.riemannZeta_closedBall_sigmaOf_log_add_I_mul_borel_radius_ne_zero
+    hT0 ha ha_le ht
+
+/-- Public standard-radius closed-ball zero-freeness of ζ around `σ + 2it`. -/
+theorem riemannZeta_closedBall_sigmaOf_log_add_two_I_mul_borel_radius_ne_zero
+    {T0 a t : ℝ} (hT0 : 2 ≤ T0) (ha : 0 < a) (ha_le : a ≤ Real.log 2)
+    (ht : T0 ≤ |t|) :
+    ∀ z ∈ Metric.closedBall ((1 + a / Real.log |t| : ℝ) + I * (2 * t))
+        (a / (2 * Real.log |t|)),
+      riemannZeta z ≠ 0 :=
+  ZeroFreeRegion.riemannZeta_closedBall_sigmaOf_log_add_two_I_mul_borel_radius_ne_zero
+    hT0 ha ha_le ht
+
 /-- Public closed-ball analyticity of `logDeriv ζ` around `σ + iu`, for
 `σ = 1 + a / log |t|`. -/
 theorem analyticAt_logDeriv_riemannZeta_closedBall_sigmaOf_log_add_I_mul_height_of_radius_le_width_of_height_add_le

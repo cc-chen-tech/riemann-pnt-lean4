@@ -8301,6 +8301,55 @@ lemma analyticAt_logDeriv_riemannZeta_sigmaOf_log_add_two_I_mul {T0 a t : ℝ}
       simpa using congrArg Complex.re h
     linarith
 
+/-- A closed disk around `σ + iu`, with `σ = 1 + a / log |t|`, is zero-free
+for ζ when its radius stays within the distance from `σ` to the line
+`Re = 1`. -/
+lemma riemannZeta_closedBall_sigmaOf_log_add_I_mul_height_ne_zero_of_radius_le_width
+    {T0 a t u R : ℝ} (_hT0 : 2 ≤ T0) (_ha : 0 < a) (_ht : T0 ≤ |t|)
+    (hR : R ≤ a / Real.log |t|) :
+    ∀ z ∈ Metric.closedBall ((1 + a / Real.log |t| : ℝ) + I * u) R,
+      riemannZeta z ≠ 0 := by
+  intro z hz
+  have hre : 1 ≤ z.re :=
+    closedBall_sigma_it_one_le_re_of_add_le
+      (z := z) (σ := 1 + a / Real.log |t|) (t := u) (R := R) hz
+      (by linarith)
+  exact riemannZeta_ne_zero_of_one_le_re hre
+
+/-- Standard Borel/Jensen closed-ball zero-freeness around `σ + it`, with
+`σ = 1 + a / log |t|` and radius `a/(2 log |t|)`. -/
+lemma riemannZeta_closedBall_sigmaOf_log_add_I_mul_borel_radius_ne_zero
+    {T0 a t : ℝ} (hT0 : 2 ≤ T0) (ha : 0 < a) (ha_le : a ≤ Real.log 2)
+    (ht : T0 ≤ |t|) :
+    ∀ z ∈ Metric.closedBall ((1 + a / Real.log |t| : ℝ) + I * t)
+        (a / (2 * Real.log |t|)),
+      riemannZeta z ≠ 0 := by
+  let R : ℝ := a / (2 * Real.log |t|)
+  have hgeom := sigmaOf_log_borel_radius_geometry hT0 ha ha_le ht
+  have hR : R ≤ a / Real.log |t| := by
+    dsimp [R]
+    linarith [hgeom.2.1]
+  simpa [R] using
+    riemannZeta_closedBall_sigmaOf_log_add_I_mul_height_ne_zero_of_radius_le_width
+      hT0 ha ht (u := t) (R := R) hR
+
+/-- Standard Borel/Jensen closed-ball zero-freeness around `σ + 2it`, with
+`σ = 1 + a / log |t|` and radius `a/(2 log |t|)`. -/
+lemma riemannZeta_closedBall_sigmaOf_log_add_two_I_mul_borel_radius_ne_zero
+    {T0 a t : ℝ} (hT0 : 2 ≤ T0) (ha : 0 < a) (ha_le : a ≤ Real.log 2)
+    (ht : T0 ≤ |t|) :
+    ∀ z ∈ Metric.closedBall ((1 + a / Real.log |t| : ℝ) + I * (2 * t))
+        (a / (2 * Real.log |t|)),
+      riemannZeta z ≠ 0 := by
+  let R : ℝ := a / (2 * Real.log |t|)
+  have hgeom := sigmaOf_log_borel_radius_geometry hT0 ha ha_le ht
+  have hR : R ≤ a / Real.log |t| := by
+    dsimp [R]
+    linarith [hgeom.2.1]
+  simpa [R] using
+    riemannZeta_closedBall_sigmaOf_log_add_I_mul_height_ne_zero_of_radius_le_width
+      hT0 ha ht (u := 2 * t) (R := R) hR
+
 /-- A closed disk around `σ + iu`, with
 `σ = 1 + a / log |t|`, is a local analytic domain for `logDeriv ζ` when the
 radius stays inside the right half-plane and the independent height `u` keeps
