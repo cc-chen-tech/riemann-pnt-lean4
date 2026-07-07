@@ -5774,6 +5774,129 @@ lemma exists_re_neg_deriv_div_riemannZeta_shift_pair_le_log_abs_of_two_add_radiu
       _ ≤ C * (2 * Real.log |t|) := hscaled
       _ = (2 * C) * Real.log |t| := by ring
 
+/-- A single right-edge logarithmic bound for all three real-part terms
+appearing in the 3-4-1 combination.
+
+This is the right-edge analogue of
+`exists_re_neg_deriv_div_riemannZeta_fixed_margin_three_four_one_bounds`: the
+hypothesis `2+R <= σ` keeps a radius-`R` disk in `2 <= Re(z)`, where the
+proved denominator margin `‖ζ(z)‖ >= 1/3` and Cauchy's derivative estimate are
+available.  It is not the missing vertical-strip estimate on `1 <= σ <= 2`. -/
+lemma exists_re_neg_deriv_div_riemannZeta_right_edge_three_four_one_bounds
+    {R H : ℝ} (hR : 0 < R) (hH : 2 ≤ H) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ σ t : ℝ, 2 + R ≤ σ → H ≤ |t| →
+      (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re ≤
+          C * Real.log |t| ∧
+      (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re ≤
+          C * Real.log |t| ∧
+      (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+          riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤
+          C * Real.log |t| := by
+  let K : ℝ := 3 * (riemannZeta (2 : ℂ)).re / R
+  let C₀ : ℝ := K / Real.log H
+  have hH_pos : 0 < H := by linarith
+  have hlogH_pos : 0 < Real.log H := Real.log_pos (by linarith : (1 : ℝ) < H)
+  have hzeta_two_nonneg : 0 ≤ (riemannZeta (2 : ℂ)).re := by
+    exact le_trans zero_le_one (le_of_lt (riemannZeta_re_gt_one 2 (by norm_num)))
+  have hK_nonneg : 0 ≤ K := by
+    dsimp [K]
+    exact div_nonneg (mul_nonneg (by norm_num) hzeta_two_nonneg) hR.le
+  have hC₀_nonneg : 0 ≤ C₀ :=
+    div_nonneg hK_nonneg hlogH_pos.le
+  rcases exists_re_neg_deriv_div_riemannZeta_shift_pair_le_log_abs_of_two_add_radius_le
+      (R := R) (H := H) hR hH with ⟨C₁, hC₁, hpair⟩
+  refine ⟨C₀ + C₁, add_nonneg hC₀_nonneg hC₁, ?_⟩
+  intro σ t hσ ht
+  have ht2 : 2 ≤ |t| := hH.trans ht
+  have hlog_nonneg : 0 ≤ Real.log |t| := (log_abs_pos_of_two_le ht2).le
+  have hlog_le : Real.log H ≤ Real.log |t| :=
+    Real.log_le_log hH_pos ht
+  have hcenter_const :
+      (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re ≤ K := by
+    calc
+      (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re
+          ≤ ‖-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)‖ :=
+            Complex.re_le_norm _
+      _ = ‖logDeriv riemannZeta (σ : ℂ)‖ :=
+            norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv (σ : ℂ)
+      _ ≤ K := by
+            simpa [K] using
+              norm_logDeriv_riemannZeta_le_three_mul_re_zeta_two_div_radius_of_two_add_radius_le_re
+                (s := (σ : ℂ)) (R := R) hR (by simpa using hσ)
+  have hcenter_scale : K ≤ C₀ * Real.log |t| := by
+    calc
+      K = C₀ * Real.log H := by
+        dsimp [C₀]
+        field_simp [ne_of_gt hlogH_pos]
+      _ ≤ C₀ * Real.log |t| :=
+        mul_le_mul_of_nonneg_left hlog_le hC₀_nonneg
+  have hC₀_le : C₀ ≤ C₀ + C₁ := by linarith
+  have hC₁_le : C₁ ≤ C₀ + C₁ := by linarith
+  have hC₀_log_le :
+      C₀ * Real.log |t| ≤ (C₀ + C₁) * Real.log |t| :=
+    mul_le_mul_of_nonneg_right hC₀_le hlog_nonneg
+  have hC₁_log_le :
+      C₁ * Real.log |t| ≤ (C₀ + C₁) * Real.log |t| :=
+    mul_le_mul_of_nonneg_right hC₁_le hlog_nonneg
+  rcases hpair σ t hσ ht with ⟨hfirst, hsecond⟩
+  constructor
+  · exact le_trans (le_trans hcenter_const hcenter_scale) hC₀_log_le
+  constructor
+  · exact le_trans hfirst hC₁_log_le
+  · exact le_trans hsecond hC₁_log_le
+
+/-- Right-edge logarithmic upper bound for the full 3-4-1 combination, paired
+with its proved nonnegativity.
+
+This packages the previously proved right-edge `Re(-ζ'/ζ)` estimates into the
+exact expression used by the 3-4-1 inequality.  It is a checked boundary input
+for later strip arguments, not a proof of the missing `1 <= Re(s) <= 2`
+vertical logarithmic estimate. -/
+lemma exists_three_four_one_combination_le_log_abs_of_two_add_radius_le
+    {R H : ℝ} (hR : 0 < R) (hH : 2 ≤ H) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ σ t : ℝ, 2 + R ≤ σ → H ≤ |t| →
+      0 ≤
+        3 * (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re
+        + 4 * (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re
+        + (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re ∧
+      3 * (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re
+        + 4 * (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re
+        + (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re
+          ≤ C * Real.log |t| := by
+  rcases exists_re_neg_deriv_div_riemannZeta_right_edge_three_four_one_bounds
+      (R := R) (H := H) hR hH with ⟨C₀, hC₀, hbounds⟩
+  refine ⟨8 * C₀, mul_nonneg (by norm_num) hC₀, ?_⟩
+  intro σ t hσ ht
+  have hσ_gt : 1 < σ := by linarith
+  rcases hbounds σ t hσ ht with ⟨h0, h1, h2⟩
+  constructor
+  · exact log_deriv_zeta_nonneg_combination σ hσ_gt t
+  · have hupper :
+        3 * (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re
+          + 4 * (-deriv riemannZeta ((σ : ℂ) + I * t) /
+              riemannZeta ((σ : ℂ) + I * t)).re
+          + (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+              riemannZeta ((σ : ℂ) + 2 * I * t)).re
+            ≤ 3 * (C₀ * Real.log |t|)
+              + 4 * (C₀ * Real.log |t|)
+              + C₀ * Real.log |t| := by
+      nlinarith
+    calc
+      3 * (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re
+          + 4 * (-deriv riemannZeta ((σ : ℂ) + I * t) /
+              riemannZeta ((σ : ℂ) + I * t)).re
+          + (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+              riemannZeta ((σ : ℂ) + 2 * I * t)).re
+          ≤ 3 * (C₀ * Real.log |t|)
+              + 4 * (C₀ * Real.log |t|)
+              + C₀ * Real.log |t| := hupper
+      _ = (8 * C₀) * Real.log |t| := by ring
+
 /-- Far-right constant bound for the logarithmic derivative of ζ.
 
 For `3 <= Re(s)`, the disk of radius `1` around `s` lies in `2 <= Re(z)`, so

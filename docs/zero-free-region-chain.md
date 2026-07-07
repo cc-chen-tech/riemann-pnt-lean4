@@ -1081,6 +1081,15 @@ The single-constant fixed-margin 3-4-1 package has the same limitation.
 So does the fixed-margin full-combination upper bound, including its exact
 high-height `C * log |t|` version
 `ZeroFreeRegion.exists_three_four_one_combination_le_log_abs_of_fixed_margin`.
+On the right edge, the new proved package
+`ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_right_edge_three_four_one_bounds`
+adds the real-axis center term to the right-edge shifted-pair estimate, and
+`ZeroFreeRegion.exists_three_four_one_combination_le_log_abs_of_two_add_radius_le`
+combines that three-term upper bound with 3-4-1 nonnegativity to give
+`0 <= combination <= C * log |t|` whenever `2 + R <= sigma`.  This is a useful
+boundary condition for Borel/Jensen strip arguments, but it still leaves the
+main analytic gap unchanged: the classical zero-free region needs comparable
+control inside the high boundary strip `1 <= sigma <= 2`.
 For sign-convention compatibility, the weak moving-strip inventory now also
 contains signed `-logDeriv zeta` norm variants:
 `ZeroFreeRegion.exists_sigma_ge_sigmaOf_log_neg_logDeriv_norm_bound_const_mul_log_div`,

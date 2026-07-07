@@ -15557,6 +15557,42 @@ theorem exists_re_neg_deriv_div_riemannZeta_shift_pair_le_log_abs_of_two_add_rad
   ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shift_pair_le_log_abs_of_two_add_radius_le
     hR hH
 
+/-- Public right-edge logarithmic bound for all three real-part terms in the
+3-4-1 combination. -/
+theorem exists_re_neg_deriv_div_riemannZeta_right_edge_three_four_one_bounds
+    {R H : ℝ} (hR : 0 < R) (hH : 2 ≤ H) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ σ t : ℝ, 2 + R ≤ σ → H ≤ |t| →
+      (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re ≤
+          C * Real.log |t| ∧
+      (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+          riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
+          C * Real.log |t| ∧
+      (-deriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t) /
+          riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re ≤
+          C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_right_edge_three_four_one_bounds
+    hR hH
+
+/-- Public right-edge logarithmic upper bound for the full 3-4-1 combination,
+paired with its proved nonnegativity. -/
+theorem exists_three_four_one_combination_le_log_abs_of_two_add_radius_le
+    {R H : ℝ} (hR : 0 < R) (hH : 2 ≤ H) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ σ t : ℝ, 2 + R ≤ σ → H ≤ |t| →
+      0 ≤
+        3 * (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re
+        + 4 * (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re
+        + (-deriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t) /
+            riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re ∧
+      3 * (-deriv riemannZeta (σ : ℂ) / riemannZeta (σ : ℂ)).re
+        + 4 * (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re
+        + (-deriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t) /
+            riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re
+          ≤ C * Real.log |t| :=
+  ZeroFreeRegion.exists_three_four_one_combination_le_log_abs_of_two_add_radius_le
+    hR hH
+
 /-- Public far-right constant bound for `logDeriv ζ`: on `3 <= Re(s)`,
 `‖logDeriv ζ(s)‖ <= 2 * Re(ζ(2))`. -/
 theorem norm_logDeriv_riemannZeta_le_two_mul_re_zeta_two_of_three_le_re
