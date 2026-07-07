@@ -8331,6 +8331,34 @@ lemma analyticAt_logDeriv_riemannZeta_closedBall_sigmaOf_log_add_I_mul_of_radius
   analyticAt_logDeriv_riemannZeta_closedBall_sigmaOf_log_add_I_mul_height_of_radius_le_width_of_height_add_le
     _hT0 _ha _ht hR hHpos hH
 
+/-- Standard Borel/Jensen closed-ball analyticity around the moving high-height
+center `σ + it`, with `σ = 1 + a / log |t|` and the canonical right-shift
+radius `a / (2 log |t|)`.
+
+The radius and height side conditions are discharged by
+`sigmaOf_log_borel_radius_geometry`, so future local estimates can use this
+directly as the analytic-domain input. -/
+lemma analyticAt_logDeriv_riemannZeta_closedBall_sigmaOf_log_add_I_mul_borel_radius
+    {T0 a t : ℝ} (hT0 : 2 ≤ T0) (ha : 0 < a) (ha_le : a ≤ Real.log 2)
+    (ht : T0 ≤ |t|) :
+    ∀ u ∈ Metric.closedBall ((1 + a / Real.log |t| : ℝ) + I * t)
+        (a / (2 * Real.log |t|)),
+      AnalyticAt ℂ (logDeriv riemannZeta) u := by
+  let R : ℝ := a / (2 * Real.log |t|)
+  have hgeom := sigmaOf_log_borel_radius_geometry hT0 ha ha_le ht
+  have hR : R ≤ a / Real.log |t| := by
+    dsimp [R]
+    linarith [hgeom.2.1]
+  have hH : (1 : ℝ) + R ≤ |t| := by
+    have hσ_le_two : 1 + a / Real.log |t| ≤ 2 :=
+      sigmaOf_log_le_two hT0 ha_le ht
+    have ht2 : 2 ≤ |t| := hT0.trans ht
+    dsimp [R]
+    linarith [hgeom.2.1, hσ_le_two, ht2]
+  simpa [R] using
+    analyticAt_logDeriv_riemannZeta_closedBall_sigmaOf_log_add_I_mul_of_radius_le_width_of_height_add_le
+      hT0 ha ht hR (by norm_num : (0 : ℝ) < 1) hH
+
 /-- Pointwise closed-ball wrapper: if ζ is analytic and nonzero at every point
 of the ball, then `logDeriv ζ` is analytic at every point of the ball. -/
 lemma analyticAt_logDeriv_riemannZeta_closedBall_of_ne_one_of_ne_zero

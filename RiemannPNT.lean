@@ -17245,6 +17245,17 @@ theorem analyticAt_logDeriv_riemannZeta_closedBall_sigmaOf_log_add_I_mul_of_radi
   ZeroFreeRegion.analyticAt_logDeriv_riemannZeta_closedBall_sigmaOf_log_add_I_mul_of_radius_le_width_of_height_add_le
     hT0 ha ht hR hHpos hH
 
+/-- Public standard Borel/Jensen closed-ball analyticity around `σ + it`, with
+`σ = 1 + a / log |t|` and radius `a/(2 log |t|)`. -/
+theorem analyticAt_logDeriv_riemannZeta_closedBall_sigmaOf_log_add_I_mul_borel_radius
+    {T0 a t : ℝ} (hT0 : 2 ≤ T0) (ha : 0 < a) (ha_le : a ≤ Real.log 2)
+    (ht : T0 ≤ |t|) :
+    ∀ u ∈ Metric.closedBall ((1 + a / Real.log |t| : ℝ) + I * t)
+        (a / (2 * Real.log |t|)),
+      AnalyticAt ℂ (logDeriv riemannZeta) u :=
+  ZeroFreeRegion.analyticAt_logDeriv_riemannZeta_closedBall_sigmaOf_log_add_I_mul_borel_radius
+    hT0 ha ha_le ht
+
 /-- Public upper bound `1 + a / log |t| ≤ 2` when `a ≤ log 2`. -/
 theorem sigmaOf_log_le_two {T0 a t : ℝ} (hT0 : 2 ≤ T0)
     (ha_le : a ≤ Real.log 2) (ht : T0 ≤ |t|) :
