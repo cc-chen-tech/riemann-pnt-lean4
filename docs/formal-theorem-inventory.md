@@ -1006,6 +1006,11 @@ Core verified declarations:
   perform the same named-interface handoff for complex-variable estimates of
   the form `A + B * log(||s|| + 3)`, using the proved comparison
   `log(||sigma + i t|| + 3) <= 2 log |t|` above height `5`.
+- `logDerivRegularPartLogBound_of_affine_log_norm_add_three_bound_on_verticalRegion`
+  and
+  `multiplicityLogDerivRegularPartLogBound_of_affine_log_norm_add_three_bound_on_verticalRegion`
+  are the corresponding constructors when the future estimate is stated on
+  `verticalRegion 1 2 T0`, matching the usual complex-analysis API shape.
 - `exists_eventually_norm_logDeriv_le_const_of_analyticAt_ne_zero` and
   `exists_eventually_norm_neg_logDeriv_le_const_of_analyticAt_ne_zero`
   prove local boundedness of `logDeriv g` and `-logDeriv g` for any analytic

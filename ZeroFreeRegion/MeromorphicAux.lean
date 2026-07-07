@@ -5491,6 +5491,53 @@ lemma multiplicityLogDerivRegularPartLogBound_of_affine_log_norm_add_three_bound
         exact add_le_add hA_le (mul_le_mul_of_nonneg_left hlog_norm hB)
     _ = (A + 2 * B) * Real.log |t| := by ring
 
+/-- Vertical-region version of
+`logDerivRegularPartLogBound_of_affine_log_norm_add_three_bound_high_height`.
+
+This is the natural input shape for future Borel/Jensen estimates: the
+regular-part bound is stated on `verticalRegion 1 2 T0` rather than in
+coordinate variables. -/
+lemma logDerivRegularPartLogBound_of_affine_log_norm_add_three_bound_on_verticalRegion
+    {T0 A B : ℝ} (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hregular :
+      ∀ s ρ : ℂ, s ∈ verticalRegion 1 2 T0 →
+        riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+        0 < s.re - ρ.re →
+          ‖logDeriv riemannZeta s - (s - ρ)⁻¹‖ ≤
+            A + B * Real.log (‖s‖ + 3)) :
+    ∃ C T0' : ℝ, LogDerivRegularPartLogBound C T0' := by
+  refine
+    logDerivRegularPartLogBound_of_affine_log_norm_add_three_bound_high_height
+      (T0 := T0) (A := A) (B := B) hT0 hA hB ?_
+  intro s ρ hs_height hs_re hζ hρ_im hρ_re hsub
+  have hs_region : s ∈ verticalRegion 1 2 T0 := by
+    simpa [verticalRegion] using
+      (show s.re ∈ Set.Icc (1 : ℝ) 2 ∧ T0 ≤ |s.im| from
+        ⟨hs_re, hs_height⟩)
+  exact hregular s ρ hs_region hζ hρ_im hρ_re hsub
+
+/-- Multiplicity-aware vertical-region version of
+`multiplicityLogDerivRegularPartLogBound_of_affine_log_norm_add_three_bound_high_height`. -/
+lemma multiplicityLogDerivRegularPartLogBound_of_affine_log_norm_add_three_bound_on_verticalRegion
+    {T0 A B : ℝ} (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hregular :
+      ∀ s ρ : ℂ, s ∈ verticalRegion 1 2 T0 →
+        riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+        0 < s.re - ρ.re →
+          ∃ n : ℕ, 0 < n ∧
+            ‖logDeriv riemannZeta s - (n : ℂ) * (s - ρ)⁻¹‖ ≤
+              A + B * Real.log (‖s‖ + 3)) :
+    ∃ C T0' : ℝ, MultiplicityLogDerivRegularPartLogBound C T0' := by
+  refine
+    multiplicityLogDerivRegularPartLogBound_of_affine_log_norm_add_three_bound_high_height
+      (T0 := T0) (A := A) (B := B) hT0 hA hB ?_
+  intro s ρ hs_height hs_re hζ hρ_im hρ_re hsub
+  have hs_region : s ∈ verticalRegion 1 2 T0 := by
+    simpa [verticalRegion] using
+      (show s.re ∈ Set.Icc (1 : ℝ) 2 ∧ T0 ≤ |s.im| from
+        ⟨hs_re, hs_height⟩)
+  exact hregular s ρ hs_region hζ hρ_im hρ_re hsub
+
 /-- Variant of `log_norm_sigma_add_I_mul_add_three_le_two_log_abs` for the
 right-shifted centers used by local Borel-Carathéodory disks.  The wider
 `1 <= σ <= 3` strip costs only raising the safe height from `5` to `6`. -/
