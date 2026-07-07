@@ -641,10 +641,13 @@ proved:
   `ZeroFreeRegion.logDerivRegularPartLogBound_of_affine_log_abs_add_three_bound_high_height`
   now also normalize future regular-part estimates directly into
   `LogDerivRegularPartLogBound`; their multiplicity-aware companions do the
-  same for local divisor estimates with a positive multiplicity.  These close
-  the API gap between Borel/Jensen-style regular-part outputs and the final
-  named zero-free-region closures, while leaving the zeta-specific analytic
-  estimates open.
+  same for local divisor estimates with a positive multiplicity.  The
+  complex-variable constructor
+  `ZeroFreeRegion.logDerivRegularPartLogBound_of_affine_log_norm_add_three_bound_high_height`
+  handles the natural `A + B log(||s||+3)` Borel/Jensen output shape before
+  specializing to `s=sigma+it`.  These close the API gap between
+  Borel/Jensen-style regular-part outputs and the final named zero-free-region
+  closures, while leaving the zeta-specific analytic estimates open.
   The
   multiplicity-aware pair
   `ZeroFreeRegion.borelCaratheodory_neg_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`

@@ -5379,6 +5379,118 @@ lemma log_norm_sigma_add_I_mul_add_three_le_two_log_abs {σ t : ℝ}
     _ = Real.log 2 + Real.log |t| := hlog_mul
     _ ≤ 2 * Real.log |t| := by linarith
 
+/-- Complex-variable named regular-part constructor from an affine full-height
+logarithmic estimate.
+
+This is the regular-part counterpart of
+`logDerivVerticalLogBound_of_affine_log_norm_add_three_bound_high_height`:
+future Borel/Jensen estimates stated as `A + B * log (‖s‖ + 3)` can be fed
+directly into the named `LogDerivRegularPartLogBound` interface. -/
+lemma logDerivRegularPartLogBound_of_affine_log_norm_add_three_bound_high_height
+    {T0 A B : ℝ} (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hregular :
+      ∀ s ρ : ℂ, T0 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+        riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+        0 < s.re - ρ.re →
+          ‖logDeriv riemannZeta s - (s - ρ)⁻¹‖ ≤
+            A + B * Real.log (‖s‖ + 3)) :
+    ∃ C T0' : ℝ, LogDerivRegularPartLogBound C T0' := by
+  refine ⟨A + 2 * B, T0,
+    add_nonneg hA (mul_nonneg (by norm_num : (0 : ℝ) ≤ 2) hB),
+    by linarith, ?_⟩
+  intro σ β t hσ_left hσ_right ht hζ hβ hsub
+  let s : ℂ := (σ : ℂ) + I * t
+  let ρ : ℂ := (β : ℂ) + I * t
+  have hσ_mem : σ ∈ Set.Icc (1 : ℝ) 2 := ⟨hσ_left, hσ_right⟩
+  have hs_height : T0 ≤ |s.im| := by simpa [s] using ht
+  have hs_re : s.re ∈ Set.Icc (1 : ℝ) 2 := by simpa [s] using hσ_mem
+  have hρ_im : ρ.im = s.im := by simp [ρ, s]
+  have hρ_re : ρ.re < 1 := by simpa [ρ] using hβ
+  have hsub' : 0 < s.re - ρ.re := by simpa [s, ρ] using hsub
+  have hinv :
+      (s - ρ)⁻¹ = (((σ - β : ℝ) : ℂ)⁻¹) := by
+    have hsub_eq : s - ρ = ((σ - β : ℝ) : ℂ) := by
+      apply Complex.ext <;> simp [s, ρ]
+    rw [hsub_eq]
+  have hbase :
+      ‖logDeriv riemannZeta s - (s - ρ)⁻¹‖ ≤
+        A + B * Real.log (‖s‖ + 3) :=
+    hregular s ρ hs_height hs_re (by simpa [ρ] using hζ) hρ_im hρ_re hsub'
+  have hlog_ge_one : 1 ≤ Real.log |t| :=
+    (log_abs_gt_one_of_three_le (by linarith : 3 ≤ |t|)).le
+  have hA_le : A ≤ A * Real.log |t| := by
+    calc
+      A = A * 1 := by ring
+      _ ≤ A * Real.log |t| :=
+          mul_le_mul_of_nonneg_left hlog_ge_one hA
+  have hlog_norm : Real.log (‖s‖ + 3) ≤ 2 * Real.log |t| := by
+    simpa [s] using
+      log_norm_sigma_add_I_mul_add_three_le_two_log_abs
+        (σ := σ) (t := t) hσ_mem (hT0.trans ht)
+  calc
+    ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+        (((σ - β : ℝ) : ℂ)⁻¹)‖
+        = ‖logDeriv riemannZeta s - (s - ρ)⁻¹‖ := by
+            rw [hinv]
+    _ ≤ A + B * Real.log (‖s‖ + 3) := hbase
+    _ ≤ A * Real.log |t| + B * (2 * Real.log |t|) := by
+        exact add_le_add hA_le (mul_le_mul_of_nonneg_left hlog_norm hB)
+    _ = (A + 2 * B) * Real.log |t| := by ring
+
+/-- Multiplicity-aware complex-variable named regular-part constructor from an
+affine full-height logarithmic estimate. -/
+lemma multiplicityLogDerivRegularPartLogBound_of_affine_log_norm_add_three_bound_high_height
+    {T0 A B : ℝ} (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hregular :
+      ∀ s ρ : ℂ, T0 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+        riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+        0 < s.re - ρ.re →
+          ∃ n : ℕ, 0 < n ∧
+            ‖logDeriv riemannZeta s - (n : ℂ) * (s - ρ)⁻¹‖ ≤
+              A + B * Real.log (‖s‖ + 3)) :
+    ∃ C T0' : ℝ, MultiplicityLogDerivRegularPartLogBound C T0' := by
+  refine ⟨A + 2 * B, T0,
+    add_nonneg hA (mul_nonneg (by norm_num : (0 : ℝ) ≤ 2) hB),
+    by linarith, ?_⟩
+  intro σ β t hσ_left hσ_right ht hζ hβ hsub
+  let s : ℂ := (σ : ℂ) + I * t
+  let ρ : ℂ := (β : ℂ) + I * t
+  have hσ_mem : σ ∈ Set.Icc (1 : ℝ) 2 := ⟨hσ_left, hσ_right⟩
+  have hs_height : T0 ≤ |s.im| := by simpa [s] using ht
+  have hs_re : s.re ∈ Set.Icc (1 : ℝ) 2 := by simpa [s] using hσ_mem
+  have hρ_im : ρ.im = s.im := by simp [ρ, s]
+  have hρ_re : ρ.re < 1 := by simpa [ρ] using hβ
+  have hsub' : 0 < s.re - ρ.re := by simpa [s, ρ] using hsub
+  have hinv :
+      (s - ρ)⁻¹ = (((σ - β : ℝ) : ℂ)⁻¹) := by
+    have hsub_eq : s - ρ = ((σ - β : ℝ) : ℂ) := by
+      apply Complex.ext <;> simp [s, ρ]
+    rw [hsub_eq]
+  rcases hregular s ρ hs_height hs_re (by simpa [ρ] using hζ)
+      hρ_im hρ_re hsub' with
+    ⟨n, hn_pos, hbase⟩
+  refine ⟨n, hn_pos, ?_⟩
+  have hlog_ge_one : 1 ≤ Real.log |t| :=
+    (log_abs_gt_one_of_three_le (by linarith : 3 ≤ |t|)).le
+  have hA_le : A ≤ A * Real.log |t| := by
+    calc
+      A = A * 1 := by ring
+      _ ≤ A * Real.log |t| :=
+          mul_le_mul_of_nonneg_left hlog_ge_one hA
+  have hlog_norm : Real.log (‖s‖ + 3) ≤ 2 * Real.log |t| := by
+    simpa [s] using
+      log_norm_sigma_add_I_mul_add_three_le_two_log_abs
+        (σ := σ) (t := t) hσ_mem (hT0.trans ht)
+  calc
+    ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+        (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖
+        = ‖logDeriv riemannZeta s - (n : ℂ) * (s - ρ)⁻¹‖ := by
+            rw [hinv]
+    _ ≤ A + B * Real.log (‖s‖ + 3) := hbase
+    _ ≤ A * Real.log |t| + B * (2 * Real.log |t|) := by
+        exact add_le_add hA_le (mul_le_mul_of_nonneg_left hlog_norm hB)
+    _ = (A + 2 * B) * Real.log |t| := by ring
+
 /-- Variant of `log_norm_sigma_add_I_mul_add_three_le_two_log_abs` for the
 right-shifted centers used by local Borel-Carathéodory disks.  The wider
 `1 <= σ <= 3` strip costs only raising the safe height from `5` to `6`. -/

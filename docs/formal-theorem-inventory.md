@@ -1000,6 +1000,12 @@ Core verified declarations:
   absorb affine `A + B * log(|t| + 3)` regular-part estimates into the named
   regular-part interfaces.  These are constructor theorems for future
   Borel/Jensen inputs, not proofs of the zeta-specific analytic estimate.
+- `logDerivRegularPartLogBound_of_affine_log_norm_add_three_bound_high_height`
+  and
+  `multiplicityLogDerivRegularPartLogBound_of_affine_log_norm_add_three_bound_high_height`
+  perform the same named-interface handoff for complex-variable estimates of
+  the form `A + B * log(||s|| + 3)`, using the proved comparison
+  `log(||sigma + i t|| + 3) <= 2 log |t|` above height `5`.
 - `exists_eventually_norm_logDeriv_le_const_of_analyticAt_ne_zero` and
   `exists_eventually_norm_neg_logDeriv_le_const_of_analyticAt_ne_zero`
   prove local boundedness of `logDeriv g` and `-logDeriv g` for any analytic

@@ -242,6 +242,36 @@ theorem multiplicityLogDerivRegularPartLogBound_of_affine_log_abs_add_three_boun
   ZeroFreeRegion.multiplicityLogDerivRegularPartLogBound_of_affine_log_abs_add_three_bound_high_height
     hA hB hhigh
 
+/-- Public complex-variable regular-part constructor from an affine
+high-height estimate in the full-height scale `A + B * log(‖s‖ + 3)`. -/
+theorem logDerivRegularPartLogBound_of_affine_log_norm_add_three_bound_high_height
+    {T0 A B : ℝ} (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hregular :
+      ∀ s ρ : ℂ, T0 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+        riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+        0 < s.re - ρ.re →
+          ‖logDeriv riemannZeta s - (s - ρ)⁻¹‖ ≤
+            A + B * Real.log (‖s‖ + 3)) :
+    ∃ C T0' : ℝ, LogDerivRegularPartLogBound C T0' :=
+  ZeroFreeRegion.logDerivRegularPartLogBound_of_affine_log_norm_add_three_bound_high_height
+    hT0 hA hB hregular
+
+/-- Public multiplicity-aware complex-variable regular-part constructor from
+an affine high-height estimate in the full-height scale
+`A + B * log(‖s‖ + 3)`. -/
+theorem multiplicityLogDerivRegularPartLogBound_of_affine_log_norm_add_three_bound_high_height
+    {T0 A B : ℝ} (hT0 : 5 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hregular :
+      ∀ s ρ : ℂ, T0 ≤ |s.im| → s.re ∈ Set.Icc 1 2 →
+        riemannZeta ρ = 0 → ρ.im = s.im → ρ.re < 1 →
+        0 < s.re - ρ.re →
+          ∃ n : ℕ, 0 < n ∧
+            ‖logDeriv riemannZeta s - (n : ℂ) * (s - ρ)⁻¹‖ ≤
+              A + B * Real.log (‖s‖ + 3)) :
+    ∃ C T0' : ℝ, MultiplicityLogDerivRegularPartLogBound C T0' :=
+  ZeroFreeRegion.multiplicityLogDerivRegularPartLogBound_of_affine_log_norm_add_three_bound_high_height
+    hT0 hA hB hregular
+
 /-- Public named-input assembly of the two remaining high-height analytic
 estimates into the classical zero-free-region target. -/
 theorem classical_zero_free_region_of_LogDerivRegularPartLogBound_and_LogDerivVerticalLogBound
