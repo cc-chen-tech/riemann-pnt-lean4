@@ -13586,6 +13586,96 @@ lemma logDerivVerticalLogBound_of_compact_band_and_high_height_deriv_bound_zeta_
     logDerivVerticalLogBound_of_deriv_bound_and_zeta_lower_bound_on_verticalRegion
       H A' B η' hH hA'_nonneg hB hη'_pos hderiv_all hzeta_all
 
+/-- Compact-plus-high-height zeta lower bounds feed the Cauchy/sphere bridge.
+
+The fixed-radius boundary growth input is stated on the whole vertical region;
+the center lower bound only has to be supplied at high height.  The missing
+bounded-height lower bound is supplied by compactness and zero-freeness on
+`Re(s) >= 1`. -/
+lemma logDerivVerticalLogBound_of_compact_band_and_sphere_zeta_bound_high_height_zeta_lower_bound
+    (H T R A B η : ℝ) (hH : 5 ≤ H) (hR : 0 < R) (hRlt : R < H)
+    (hA : 0 ≤ A) (hB : 0 ≤ B) (hη : 0 < η)
+    (hsphere :
+      ∀ c : ℂ, c ∈ verticalRegion 1 2 H →
+        ∀ z : ℂ, z ∈ Metric.sphere c R →
+          ‖riemannZeta z‖ ≤ A + B * Real.log (‖c‖ + 3))
+    (hzetaHigh : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| → η ≤ ‖riemannZeta z‖) :
+    ∃ C T0 : ℝ, LogDerivVerticalLogBound C T0 := by
+  have hHpos : 0 < H := lt_of_lt_of_le (by norm_num : (0 : ℝ) < 5) hH
+  rcases
+      exists_norm_riemannZeta_pos_lower_bound_on_verticalRegion_of_compact_band_and_high_height
+        (H := H) (T := T) (ηHigh := η) hHpos hη hzetaHigh with
+    ⟨η', hη'_pos, hzeta_all⟩
+  exact
+    logDerivVerticalLogBound_of_sphere_zeta_bound_and_zeta_lower_bound_on_verticalRegion
+      H R A B η' hH hR hRlt hA hB hη'_pos hsphere hzeta_all
+
+/-- Real-part quotient version of
+`logDerivVerticalLogBound_of_compact_band_and_sphere_zeta_bound_high_height_zeta_lower_bound`. -/
+lemma reNegDerivDivVerticalLogBound_of_compact_band_and_sphere_zeta_bound_high_height_zeta_lower_bound
+    (H T R A B η : ℝ) (hH : 5 ≤ H) (hR : 0 < R) (hRlt : R < H)
+    (hA : 0 ≤ A) (hB : 0 ≤ B) (hη : 0 < η)
+    (hsphere :
+      ∀ c : ℂ, c ∈ verticalRegion 1 2 H →
+        ∀ z : ℂ, z ∈ Metric.sphere c R →
+          ‖riemannZeta z‖ ≤ A + B * Real.log (‖c‖ + 3))
+    (hzetaHigh : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| → η ≤ ‖riemannZeta z‖) :
+    ∃ C T0 : ℝ, ReNegDerivDivVerticalLogBound C T0 := by
+  rcases
+      logDerivVerticalLogBound_of_compact_band_and_sphere_zeta_bound_high_height_zeta_lower_bound
+        H T R A B η hH hR hRlt hA hB hη hsphere hzetaHigh with
+    ⟨C, T0, hlog⟩
+  exact ⟨C, T0, reNegDerivDivVerticalLogBound_of_logDerivVerticalLogBound hlog⟩
+
+/-- Final conditional assembly from regular-part input, all-height boundary
+`ζ` growth on fixed-radius circles, and a high-height center lower bound for
+`ζ`.  Compactness supplies the bounded-height lower-bound patch. -/
+lemma classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_compact_band_sphere_zeta_bound_high_height_zeta_lower_bound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        LogDerivRegularPartLogBound Bregular Tregular)
+    (H T R A B η : ℝ) (hH : 5 ≤ H) (hR : 0 < R) (hRlt : R < H)
+    (hA : 0 ≤ A) (hB : 0 ≤ B) (hη : 0 < η)
+    (hsphere :
+      ∀ c : ℂ, c ∈ verticalRegion 1 2 H →
+        ∀ z : ℂ, z ∈ Metric.sphere c R →
+          ‖riemannZeta z‖ ≤ A + B * Real.log (‖c‖ + 3))
+    (hzetaHigh : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| → η ≤ ‖riemannZeta z‖) :
+    classical_zero_free_region := by
+  rcases
+      reNegDerivDivVerticalLogBound_of_compact_band_and_sphere_zeta_bound_high_height_zeta_lower_bound
+        H T R A B η hH hR hRlt hA hB hη hsphere hzetaHigh with
+    ⟨C, Tvertical, hvertical⟩
+  exact
+    classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_exists_ReNegDerivDivVerticalLogBound
+      hregular ⟨C, Tvertical, hvertical⟩
+
+/-- Multiplicity-aware version of
+`classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_compact_band_sphere_zeta_bound_high_height_zeta_lower_bound`. -/
+lemma classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_compact_band_sphere_zeta_bound_high_height_zeta_lower_bound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        MultiplicityLogDerivRegularPartLogBound Bregular Tregular)
+    (H T R A B η : ℝ) (hH : 5 ≤ H) (hR : 0 < R) (hRlt : R < H)
+    (hA : 0 ≤ A) (hB : 0 ≤ B) (hη : 0 < η)
+    (hsphere :
+      ∀ c : ℂ, c ∈ verticalRegion 1 2 H →
+        ∀ z : ℂ, z ∈ Metric.sphere c R →
+          ‖riemannZeta z‖ ≤ A + B * Real.log (‖c‖ + 3))
+    (hzetaHigh : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| → η ≤ ‖riemannZeta z‖) :
+    classical_zero_free_region := by
+  rcases
+      reNegDerivDivVerticalLogBound_of_compact_band_and_sphere_zeta_bound_high_height_zeta_lower_bound
+        H T R A B η hH hR hRlt hA hB hη hsphere hzetaHigh with
+    ⟨C, Tvertical, hvertical⟩
+  exact
+    classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_exists_ReNegDerivDivVerticalLogBound
+      hregular ⟨C, Tvertical, hvertical⟩
+
 /-- On any bounded positive-height vertical band in the right half-plane,
 `logDeriv ζ` has a finite norm bound.
 

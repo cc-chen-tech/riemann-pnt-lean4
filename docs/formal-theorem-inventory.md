@@ -1412,6 +1412,11 @@ Core verified declarations:
   and its multiplicity-aware companion provide the same final assembly when
   the future boundary growth and lower-bound estimates are stated directly on
   `verticalRegion 1 2 T0`.
+- `logDerivVerticalLogBound_of_compact_band_and_sphere_zeta_bound_high_height_zeta_lower_bound`,
+  `reNegDerivDivVerticalLogBound_of_compact_band_and_sphere_zeta_bound_high_height_zeta_lower_bound`,
+  and the corresponding final zero-free-region assemblies patch the center
+  `zeta` lower bound at bounded height by compactness, so only the high-height
+  center lower bound and boundary `||zeta||` growth remain as future inputs.
 - `exists_re_im_logDeriv_vertical_log_bound_of_affine_log_norm_add_three_bound_high_height`
   converts a future boundary-strip estimate
   `||logDeriv zeta (sigma+it)|| <= A + B log(||sigma+it||+3)` into
@@ -1827,6 +1832,9 @@ Core verified declarations:
   `RiemannPNT.API.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_sphere_zeta_bound_zeta_lower_bound_on_verticalRegion`
   expose the fixed-radius boundary-`zeta` final assemblies, together with
   their multiplicity-aware analogues.
+- `RiemannPNT.API.logDerivVerticalLogBound_of_compact_band_and_sphere_zeta_bound_high_height_zeta_lower_bound`
+  and the matching `ReNegDerivDivVerticalLogBound` / final-assembly aliases
+  expose the compact-patched sphere handoff through the public facade.
 - `RiemannPNT.API.classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_bound_and_vertical_reNegDerivDiv_bound_high_height`
   and
   `RiemannPNT.API.classical_zero_free_region_of_re_im_multiplicity_logDeriv_regular_part_norm_bound_and_vertical_reNegDerivDiv_bound_high_height`

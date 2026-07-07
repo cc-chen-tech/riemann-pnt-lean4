@@ -593,6 +593,75 @@ theorem classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogB
   ZeroFreeRegion.classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_sphere_zeta_bound_zeta_lower_bound_on_verticalRegion
     hregular T0 R A B eta hT0 hR hRlt hA hB heta hsphere hzeta
 
+/-- Public compact-patched Cauchy/sphere bridge: a high-height center lower
+bound for `ζ` plus all-height fixed-radius boundary `ζ` growth gives the named
+vertical `logDeriv ζ` bound. -/
+theorem logDerivVerticalLogBound_of_compact_band_and_sphere_zeta_bound_high_height_zeta_lower_bound
+    (H T R A B eta : ℝ) (hH : 5 ≤ H) (hR : 0 < R) (hRlt : R < H)
+    (hA : 0 ≤ A) (hB : 0 ≤ B) (heta : 0 < eta)
+    (hsphere :
+      ∀ c : ℂ, c ∈ ZeroFreeRegion.verticalRegion 1 2 H →
+        ∀ z : ℂ, z ∈ Metric.sphere c R →
+          ‖riemannZeta z‖ ≤ A + B * Real.log (‖c‖ + 3))
+    (hzetaHigh : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| → eta ≤ ‖riemannZeta z‖) :
+    ∃ C T0 : ℝ, LogDerivVerticalLogBound C T0 :=
+  ZeroFreeRegion.logDerivVerticalLogBound_of_compact_band_and_sphere_zeta_bound_high_height_zeta_lower_bound
+    H T R A B eta hH hR hRlt hA hB heta hsphere hzetaHigh
+
+/-- Public real-part quotient version of the compact-patched Cauchy/sphere
+bridge. -/
+theorem reNegDerivDivVerticalLogBound_of_compact_band_and_sphere_zeta_bound_high_height_zeta_lower_bound
+    (H T R A B eta : ℝ) (hH : 5 ≤ H) (hR : 0 < R) (hRlt : R < H)
+    (hA : 0 ≤ A) (hB : 0 ≤ B) (heta : 0 < eta)
+    (hsphere :
+      ∀ c : ℂ, c ∈ ZeroFreeRegion.verticalRegion 1 2 H →
+        ∀ z : ℂ, z ∈ Metric.sphere c R →
+          ‖riemannZeta z‖ ≤ A + B * Real.log (‖c‖ + 3))
+    (hzetaHigh : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| → eta ≤ ‖riemannZeta z‖) :
+    ∃ C T0 : ℝ, ReNegDerivDivVerticalLogBound C T0 :=
+  ZeroFreeRegion.reNegDerivDivVerticalLogBound_of_compact_band_and_sphere_zeta_bound_high_height_zeta_lower_bound
+    H T R A B eta hH hR hRlt hA hB heta hsphere hzetaHigh
+
+/-- Public final assembly from regular-part input, all-height fixed-radius
+boundary `ζ` growth, and a high-height center lower bound for `ζ`; bounded
+heights are patched by compactness. -/
+theorem classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_compact_band_sphere_zeta_bound_high_height_zeta_lower_bound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        LogDerivRegularPartLogBound Bregular Tregular)
+    (H T R A B eta : ℝ) (hH : 5 ≤ H) (hR : 0 < R) (hRlt : R < H)
+    (hA : 0 ≤ A) (hB : 0 ≤ B) (heta : 0 < eta)
+    (hsphere :
+      ∀ c : ℂ, c ∈ ZeroFreeRegion.verticalRegion 1 2 H →
+        ∀ z : ℂ, z ∈ Metric.sphere c R →
+          ‖riemannZeta z‖ ≤ A + B * Real.log (‖c‖ + 3))
+    (hzetaHigh : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| → eta ≤ ‖riemannZeta z‖) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_compact_band_sphere_zeta_bound_high_height_zeta_lower_bound
+    hregular H T R A B eta hH hR hRlt hA hB heta hsphere hzetaHigh
+
+/-- Public multiplicity-aware final assembly from regular-part input,
+all-height fixed-radius boundary `ζ` growth, and a high-height center lower
+bound for `ζ`; bounded heights are patched by compactness. -/
+theorem classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_compact_band_sphere_zeta_bound_high_height_zeta_lower_bound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        MultiplicityLogDerivRegularPartLogBound Bregular Tregular)
+    (H T R A B eta : ℝ) (hH : 5 ≤ H) (hR : 0 < R) (hRlt : R < H)
+    (hA : 0 ≤ A) (hB : 0 ≤ B) (heta : 0 < eta)
+    (hsphere :
+      ∀ c : ℂ, c ∈ ZeroFreeRegion.verticalRegion 1 2 H →
+        ∀ z : ℂ, z ∈ Metric.sphere c R →
+          ‖riemannZeta z‖ ≤ A + B * Real.log (‖c‖ + 3))
+    (hzetaHigh : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| → eta ≤ ‖riemannZeta z‖) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_compact_band_sphere_zeta_bound_high_height_zeta_lower_bound
+    hregular H T R A B eta hH hR hRlt hA hB heta hsphere hzetaHigh
+
 /-- Public compatibility bridge between the project's prime-counting
 normalization and Mathlib's `Nat.primeCounting`. -/
 theorem primeCounting_eq_mathlib (x : ℝ) (hx : 0 ≤ x) :
