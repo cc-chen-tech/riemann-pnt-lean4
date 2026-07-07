@@ -1090,6 +1090,11 @@ combines that three-term upper bound with 3-4-1 nonnegativity to give
 boundary condition for Borel/Jensen strip arguments, but it still leaves the
 main analytic gap unchanged: the classical zero-free region needs comparable
 control inside the high boundary strip `1 <= sigma <= 2`.
+The derived lower-bound form
+`ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_sigma_it_lower_bound_log_abs_of_two_add_radius_le`
+uses those right-edge upper bounds and the same 3-4-1 nonnegativity to prove
+`-C * log |t| <= Re(-zeta'/zeta(sigma+i t))` on the right edge, matching the
+sign and scale later zero-repulsion arguments consume.
 For sign-convention compatibility, the weak moving-strip inventory now also
 contains signed `-logDeriv zeta` norm variants:
 `ZeroFreeRegion.exists_sigma_ge_sigmaOf_log_neg_logDeriv_norm_bound_const_mul_log_div`,

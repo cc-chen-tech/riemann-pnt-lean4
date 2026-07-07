@@ -5897,6 +5897,29 @@ lemma exists_three_four_one_combination_le_log_abs_of_two_add_radius_le
               + C₀ * Real.log |t| := hupper
       _ = (8 * C₀) * Real.log |t| := by ring
 
+/-- Right-edge lower bound for the middle `σ+it` logarithmic-derivative term
+obtained from the 3-4-1 inequality.
+
+The input bounds only the real-axis term and the doubled-height term from
+above.  The 3-4-1 nonnegativity then forces the middle term not to be more
+negative than a constant multiple of `log |t|`.  This is the right-edge
+analogue of the lower-bound shape used in zero-repulsion arguments; it still
+does not supply the missing boundary-strip estimate. -/
+lemma exists_re_neg_deriv_div_riemannZeta_sigma_it_lower_bound_log_abs_of_two_add_radius_le
+    {R H : ℝ} (hR : 0 < R) (hH : 2 ≤ H) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ σ t : ℝ, 2 + R ≤ σ → H ≤ |t| →
+      -(C * Real.log |t|) ≤
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re := by
+  rcases exists_re_neg_deriv_div_riemannZeta_right_edge_three_four_one_bounds
+      (R := R) (H := H) hR hH with ⟨C₀, hC₀, hbounds⟩
+  refine ⟨C₀, hC₀, ?_⟩
+  intro σ t hσ ht
+  have hσ_gt : 1 < σ := by linarith
+  rcases hbounds σ t hσ ht with ⟨h0, _h1, h2⟩
+  have h341 := log_deriv_zeta_nonneg_combination σ hσ_gt t
+  nlinarith
+
 /-- Far-right constant bound for the logarithmic derivative of ζ.
 
 For `3 <= Re(s)`, the disk of radius `1` around `s` lies in `2 <= Re(z)`, so

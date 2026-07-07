@@ -1326,6 +1326,12 @@ Core verified declarations:
   nonnegativity, producing `0 <= combination <= C * log |t|` on the
   right edge.  This is still a right-boundary input, not the missing
   vertical-strip estimate on `1 <= Re(s) <= 2`.
+- `exists_re_neg_deriv_div_riemannZeta_sigma_it_lower_bound_log_abs_of_two_add_radius_le`
+  uses the same 3-4-1 nonnegativity together with the right-edge upper bounds
+  for the real-axis and doubled-height terms to force the middle term
+  `Re(-zeta'/zeta(sigma+i t))` to be bounded below by `-C * log |t|`.
+  This is the right-edge analogue of the lower-bound shape used in later
+  zero-repulsion arguments.
 - `norm_riemannZeta_sub_one_le_half_of_three_le_re` and
   `half_le_norm_riemannZeta_of_three_le_re` prove the far-right tail estimate
   `||zeta(s)-1|| <= 1/2` and lower bound `1/2 <= ||zeta(s)||` on
