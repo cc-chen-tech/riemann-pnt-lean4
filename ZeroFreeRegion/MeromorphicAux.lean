@@ -15219,6 +15219,38 @@ lemma exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_spher
     exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_ReNegDerivDivVerticalLogBound
       (B := C) (T0 := T0') hre
 
+/-- Compact-patched Cauchy/sphere primitive-input version of the 3-4-1
+real-part shifted-pair handoff.
+
+Compared with
+`exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_sphere_zeta_bound_and_zeta_lower_bound_high_height`,
+the center lower bound for `ζ` is only assumed at high height.  The bounded
+height part is supplied by compactness and zero-freeness on `Re(s) >= 1`. -/
+lemma exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_compact_band_sphere_zeta_bound_high_height_zeta_lower_bound
+    (H T R A B eta : ℝ) (hH : 5 ≤ H) (hR : 0 < R) (hRlt : R < H)
+    (hA : 0 ≤ A) (hB : 0 ≤ B) (heta : 0 < eta)
+    (hsphere :
+      ∀ c : ℂ, c ∈ verticalRegion 1 2 H →
+        ∀ z : ℂ, z ∈ Metric.sphere c R →
+          ‖riemannZeta z‖ ≤ A + B * Real.log (‖c‖ + 3))
+    (hzetaHigh : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| → eta ≤ ‖riemannZeta z‖) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re ≤
+          C * Real.log |t| ∧
+        (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤
+          C * Real.log |t| := by
+  rcases
+      reNegDerivDivVerticalLogBound_of_compact_band_and_sphere_zeta_bound_high_height_zeta_lower_bound
+        H T R A B eta hH hR hRlt hA hB heta hsphere hzetaHigh with
+    ⟨C, T0, hre⟩
+  exact
+    exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_ReNegDerivDivVerticalLogBound
+      (B := C) (T0 := T0) hre
+
 /-- Pair package from separate high-height real-part estimates at `sigma + it`
 and `sigma + 2it`.
 
