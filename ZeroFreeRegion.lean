@@ -2748,6 +2748,41 @@ lemma sigmaOf_log_le_one_add {T0 a d t : ℝ} (hT0 : 2 ≤ T0)
     exact (div_le_iff₀ hlog_pos).mpr ha_le_dlog
   linarith
 
+/-- Standard Borel/Jensen right-shift geometry for the moving high-height line.
+
+For `σ = 1 + a / log |t|` and radius `r = a / (2 log |t|)`, this proves:
+`r > 0`, the right-shifted disk starting at `1 + r` still lies left of `σ`,
+the moving-line center `σ` lies left of `σ + r`, and the shifted center remains
+in the fixed strip `Re ≤ 3` when `a ≤ log 2`.
+
+This is the real-variable package needed to feed local disk estimates into the
+moving-line zero-repulsion bridge. -/
+lemma sigmaOf_log_borel_radius_geometry {T0 a t : ℝ} (hT0 : 2 ≤ T0)
+    (ha : 0 < a) (ha_le : a ≤ Real.log 2) (ht : T0 ≤ |t|) :
+    0 < a / (2 * Real.log |t|) ∧
+    1 + a / (2 * Real.log |t|) ≤ 1 + a / Real.log |t| ∧
+    1 + a / Real.log |t| ≤
+      (1 + a / Real.log |t|) + a / (2 * Real.log |t|) ∧
+    (1 + a / Real.log |t|) + a / (2 * Real.log |t|) ≤ 3 := by
+  have ht2 : 2 ≤ |t| := hT0.trans ht
+  have hlog_pos : 0 < Real.log |t| := log_abs_pos_of_two_le ht2
+  have hden_pos : 0 < 2 * Real.log |t| := mul_pos (by norm_num) hlog_pos
+  have hr_pos : 0 < a / (2 * Real.log |t|) := div_pos ha hden_pos
+  have hwidth_pos : 0 < a / Real.log |t| := div_pos ha hlog_pos
+  have hr_eq : a / (2 * Real.log |t|) = (a / Real.log |t|) / 2 := by
+    field_simp [hlog_pos.ne']
+  have hr_le_width : a / (2 * Real.log |t|) ≤ a / Real.log |t| := by
+    rw [hr_eq]
+    nlinarith [hwidth_pos]
+  have hwidth_le_one : a / Real.log |t| ≤ 1 := by
+    have hσ_le_two : 1 + a / Real.log |t| ≤ 2 :=
+      sigmaOf_log_le_two hT0 ha_le ht
+    linarith
+  refine ⟨hr_pos, ?_, ?_, ?_⟩
+  · linarith
+  · linarith [hr_pos]
+  · nlinarith [hr_le_width, hwidth_le_one]
+
 /-- Pure real-variable negativity margin for the standard high-height choice
 `σ = 1 + a / log |t|`.
 

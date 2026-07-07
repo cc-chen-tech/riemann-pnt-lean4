@@ -17263,6 +17263,17 @@ theorem sigmaOf_log_le_one_add {T0 a d t : ℝ} (hT0 : 2 ≤ T0)
     1 + a / Real.log |t| ≤ 1 + d :=
   ZeroFreeRegion.sigmaOf_log_le_one_add hT0 ha_le hd ht
 
+/-- Public Borel/Jensen right-shift geometry for
+`σ = 1 + a / log |t|` and radius `a/(2 log |t|)`. -/
+theorem sigmaOf_log_borel_radius_geometry {T0 a t : ℝ} (hT0 : 2 ≤ T0)
+    (ha : 0 < a) (ha_le : a ≤ Real.log 2) (ht : T0 ≤ |t|) :
+    0 < a / (2 * Real.log |t|) ∧
+    1 + a / (2 * Real.log |t|) ≤ 1 + a / Real.log |t| ∧
+    1 + a / Real.log |t| ≤
+      (1 + a / Real.log |t|) + a / (2 * Real.log |t|) ∧
+    (1 + a / Real.log |t|) + a / (2 * Real.log |t|) ≤ 3 :=
+  ZeroFreeRegion.sigmaOf_log_borel_radius_geometry hT0 ha ha_le ht
+
 /-- Public real-variable negativity margin for the standard high-height choice
 `σ = 1 + a / log |t|`. -/
 theorem three_four_one_sigmaOf_log_margin
