@@ -5731,6 +5731,49 @@ lemma exists_re_neg_deriv_div_riemannZeta_sigma_it_le_log_abs_of_two_add_radius_
   intro σ t hσ ht
   simpa using hbound ((σ : ℂ) + I * t) (by simpa using hσ) (by simpa using ht)
 
+/-- Right-edge shifted pair bound in the direct `Re(-ζ'/ζ)` convention.
+
+This packages the two shifted points used by the 3-4-1 inequality:
+`σ+it` and `σ+2it`.  The second bound is returned in the same `log |t|`
+scale using `log |2t| <= 2 log |t|`. -/
+lemma exists_re_neg_deriv_div_riemannZeta_shift_pair_le_log_abs_of_two_add_radius_le
+    {R H : ℝ} (hR : 0 < R) (hH : 2 ≤ H) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ σ t : ℝ, 2 + R ≤ σ → H ≤ |t| →
+      (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re ≤ C * Real.log |t| ∧
+      (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+          riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤ C * Real.log |t| := by
+  rcases exists_re_neg_deriv_div_riemannZeta_sigma_it_le_log_abs_of_two_add_radius_le
+      (R := R) (H := H) hR hH with ⟨C, hC, hbound⟩
+  refine ⟨2 * C, by nlinarith, ?_⟩
+  intro σ t hσ ht
+  have ht2 : 2 ≤ |t| := hH.trans ht
+  have hlog_nonneg : 0 ≤ Real.log |t| := (log_abs_pos_of_two_le ht2).le
+  constructor
+  · have hbase := hbound σ t hσ ht
+    nlinarith
+  · have hheight_two : H ≤ |2 * t| := by
+      calc
+        H ≤ |t| := ht
+        _ ≤ 2 * |t| := by nlinarith [abs_nonneg t]
+        _ = |2 * t| := by simp [abs_mul]
+    have hbase := hbound σ (2 * t) hσ hheight_two
+    have hbase' :
+        (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤
+          C * Real.log |2 * t| := by
+      simpa [mul_assoc, mul_left_comm, mul_comm] using hbase
+    have hlog_two : Real.log |2 * t| ≤ 2 * Real.log |t| :=
+      log_abs_two_mul_le_two_log_abs ht2
+    have hscaled : C * Real.log |2 * t| ≤ C * (2 * Real.log |t|) :=
+      mul_le_mul_of_nonneg_left hlog_two hC
+    calc
+      (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+          riemannZeta ((σ : ℂ) + 2 * I * t)).re
+          ≤ C * Real.log |2 * t| := hbase'
+      _ ≤ C * (2 * Real.log |t|) := hscaled
+      _ = (2 * C) * Real.log |t| := by ring
+
 /-- Far-right constant bound for the logarithmic derivative of ζ.
 
 For `3 <= Re(s)`, the disk of radius `1` around `s` lies in `2 <= Re(z)`, so
