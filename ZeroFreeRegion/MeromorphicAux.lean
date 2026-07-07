@@ -5678,6 +5678,59 @@ lemma exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_of_two_add_radius_le
   intro σ t hσ ht
   simpa using hbound ((σ : ℂ) + I * t) (by simpa using hσ) (by simpa using ht)
 
+/-- Signed right-edge logarithmic-height bound for `-logDeriv ζ`. -/
+lemma exists_norm_neg_logDeriv_riemannZeta_le_log_abs_im_of_two_add_radius_le_re
+    {R H : ℝ} (hR : 0 < R) (hH : 2 ≤ H) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ z : ℂ, 2 + R ≤ z.re → H ≤ |z.im| →
+      ‖-logDeriv riemannZeta z‖ ≤ C * Real.log |z.im| := by
+  rcases exists_norm_logDeriv_riemannZeta_le_log_abs_im_of_two_add_radius_le_re
+      (R := R) (H := H) hR hH with ⟨C, hC, hbound⟩
+  refine ⟨C, hC, ?_⟩
+  intro z hzre hheight
+  calc
+    ‖-logDeriv riemannZeta z‖ = ‖logDeriv riemannZeta z‖ := norm_neg _
+    _ ≤ C * Real.log |z.im| := hbound z hzre hheight
+
+/-- Coordinate signed right-edge logarithmic-height bound for `-logDeriv ζ`. -/
+lemma exists_norm_neg_logDeriv_riemannZeta_sigma_it_le_log_abs_of_two_add_radius_le
+    {R H : ℝ} (hR : 0 < R) (hH : 2 ≤ H) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ σ t : ℝ, 2 + R ≤ σ → H ≤ |t| →
+      ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤ C * Real.log |t| := by
+  rcases exists_norm_neg_logDeriv_riemannZeta_le_log_abs_im_of_two_add_radius_le_re
+      (R := R) (H := H) hR hH with ⟨C, hC, hbound⟩
+  refine ⟨C, hC, ?_⟩
+  intro σ t hσ ht
+  simpa using hbound ((σ : ℂ) + I * t) (by simpa using hσ) (by simpa using ht)
+
+/-- Right-edge logarithmic-height bound in the direct `Re(-ζ'/ζ)` convention. -/
+lemma exists_re_neg_deriv_div_riemannZeta_le_log_abs_im_of_two_add_radius_le_re
+    {R H : ℝ} (hR : 0 < R) (hH : 2 ≤ H) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ z : ℂ, 2 + R ≤ z.re → H ≤ |z.im| →
+      (-deriv riemannZeta z / riemannZeta z).re ≤ C * Real.log |z.im| := by
+  rcases exists_norm_logDeriv_riemannZeta_le_log_abs_im_of_two_add_radius_le_re
+      (R := R) (H := H) hR hH with ⟨C, hC, hbound⟩
+  refine ⟨C, hC, ?_⟩
+  intro z hzre hheight
+  calc
+    (-deriv riemannZeta z / riemannZeta z).re
+        ≤ ‖-deriv riemannZeta z / riemannZeta z‖ := Complex.re_le_norm _
+    _ = ‖logDeriv riemannZeta z‖ :=
+        norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv z
+    _ ≤ C * Real.log |z.im| := hbound z hzre hheight
+
+/-- Coordinate right-edge logarithmic-height bound in the direct
+`Re(-ζ'/ζ)` convention. -/
+lemma exists_re_neg_deriv_div_riemannZeta_sigma_it_le_log_abs_of_two_add_radius_le
+    {R H : ℝ} (hR : 0 < R) (hH : 2 ≤ H) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ σ t : ℝ, 2 + R ≤ σ → H ≤ |t| →
+      (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re ≤ C * Real.log |t| := by
+  rcases exists_re_neg_deriv_div_riemannZeta_le_log_abs_im_of_two_add_radius_le_re
+      (R := R) (H := H) hR hH with ⟨C, hC, hbound⟩
+  refine ⟨C, hC, ?_⟩
+  intro σ t hσ ht
+  simpa using hbound ((σ : ℂ) + I * t) (by simpa using hσ) (by simpa using ht)
+
 /-- Far-right constant bound for the logarithmic derivative of ζ.
 
 For `3 <= Re(s)`, the disk of radius `1` around `s` lies in `2 <= Re(z)`, so

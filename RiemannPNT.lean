@@ -15510,6 +15510,41 @@ theorem exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_of_two_add_radius_l
   ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_of_two_add_radius_le
     hR hH
 
+/-- Public signed right-edge logarithmic-height bound for `-logDeriv ζ`. -/
+theorem exists_norm_neg_logDeriv_riemannZeta_le_log_abs_im_of_two_add_radius_le_re
+    {R H : ℝ} (hR : 0 < R) (hH : 2 ≤ H) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ z : ℂ, 2 + R ≤ z.re → H ≤ |z.im| →
+      ‖-logDeriv riemannZeta z‖ ≤ C * Real.log |z.im| :=
+  ZeroFreeRegion.exists_norm_neg_logDeriv_riemannZeta_le_log_abs_im_of_two_add_radius_le_re
+    hR hH
+
+/-- Public coordinate signed right-edge logarithmic-height bound. -/
+theorem exists_norm_neg_logDeriv_riemannZeta_sigma_it_le_log_abs_of_two_add_radius_le
+    {R H : ℝ} (hR : 0 < R) (hH : 2 ≤ H) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ σ t : ℝ, 2 + R ≤ σ → H ≤ |t| →
+      ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤ C * Real.log |t| :=
+  ZeroFreeRegion.exists_norm_neg_logDeriv_riemannZeta_sigma_it_le_log_abs_of_two_add_radius_le
+    hR hH
+
+/-- Public right-edge logarithmic-height bound in the direct
+`Re(-ζ'/ζ)` convention. -/
+theorem exists_re_neg_deriv_div_riemannZeta_le_log_abs_im_of_two_add_radius_le_re
+    {R H : ℝ} (hR : 0 < R) (hH : 2 ≤ H) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ z : ℂ, 2 + R ≤ z.re → H ≤ |z.im| →
+      (-deriv riemannZeta z / riemannZeta z).re ≤ C * Real.log |z.im| :=
+  ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_le_log_abs_im_of_two_add_radius_le_re
+    hR hH
+
+/-- Public coordinate right-edge logarithmic-height bound in the direct
+`Re(-ζ'/ζ)` convention. -/
+theorem exists_re_neg_deriv_div_riemannZeta_sigma_it_le_log_abs_of_two_add_radius_le
+    {R H : ℝ} (hR : 0 < R) (hH : 2 ≤ H) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ σ t : ℝ, 2 + R ≤ σ → H ≤ |t| →
+      (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+          riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤ C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_sigma_it_le_log_abs_of_two_add_radius_le
+    hR hH
+
 /-- Public far-right constant bound for `logDeriv ζ`: on `3 <= Re(s)`,
 `‖logDeriv ζ(s)‖ <= 2 * Re(ζ(2))`. -/
 theorem norm_logDeriv_riemannZeta_le_two_mul_re_zeta_two_of_three_le_re
