@@ -1259,7 +1259,9 @@ to `sigma+2it`, using `log |2t| <= 2 log |t|`; the zeta-specific vertical
 estimate itself remains an external analytic input.  The primitive-input
 variant
 `ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_compact_band_sphere_zeta_bound_high_height_zeta_lower_bound`
-then routes fixed-radius sphere growth for `zeta` and a high-height positive
+and its multiplicity-aware analogue
+`ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_compact_band_sphere_zeta_bound_high_height_zeta_lower_bound`
+then route fixed-radius sphere growth for `zeta` and a high-height positive
 lower bound for `zeta` through the Cauchy/sphere bridge before applying this
 same moving-line closure.
 One further wrapper removes the special `sigma+2it` input altogether:

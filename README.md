@@ -172,7 +172,9 @@ vertical-strip version specializes a future
 `sigma+2it`, paying only the already-proved factor `log |2t| <= 2 log |t|`.
 The primitive Cauchy/sphere version
 `ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_compact_band_sphere_zeta_bound_high_height_zeta_lower_bound`
-feeds the same moving-line closure from fixed-radius boundary growth for
+and its multiplicity-aware analogue
+`ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_compact_band_sphere_zeta_bound_high_height_zeta_lower_bound`
+feed the same moving-line closure from fixed-radius boundary growth for
 `zeta` plus a high-height positive lower bound for `zeta`.  This is a real
 reduction in the next Borel/Jensen regular-part target, but it still does not
 prove the missing zeta-specific high-height estimates.

@@ -1057,6 +1057,9 @@ Core verified declarations:
   combines the moving-line regular-part input with the compact-patched
   Cauchy/sphere route from fixed-radius `zeta` boundary growth and high-height
   `zeta` lower bounds.
+- `classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_compact_band_sphere_zeta_bound_high_height_zeta_lower_bound`
+  is the multiplicity-aware version of the same primitive Cauchy/sphere route:
+  the moving-line regular part may isolate `n * (s-rho)^{-1}` for positive `n`.
 - `classical_zero_free_region_of_exists_sigmaOf_log_regular_part_norm_bound_and_two_t_logDeriv_norm_bound`
   existentially packages the moving-line regular-part estimate and shifted
   norm logarithmic estimate under one nonnegative coefficient.
@@ -1866,6 +1869,7 @@ Core verified declarations:
   `RiemannPNT.API.classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_two_t_logDeriv_norm_bound`,
   `RiemannPNT.API.classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_vertical_logDeriv_norm_bound`,
   `RiemannPNT.API.classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_compact_band_sphere_zeta_bound_high_height_zeta_lower_bound`,
+  `RiemannPNT.API.classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_compact_band_sphere_zeta_bound_high_height_zeta_lower_bound`,
   and
   `RiemannPNT.API.classical_zero_free_region_of_exists_sigmaOf_log_regular_part_norm_bound_and_two_t_logDeriv_norm_bound`
   expose the moving-line regular-part closures through the public facade.

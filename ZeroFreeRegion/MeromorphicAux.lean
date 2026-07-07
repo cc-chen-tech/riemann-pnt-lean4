@@ -14085,6 +14085,73 @@ lemma classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_comp
       Bregular Bvertical Tstar hBregular hBvertical hTstar
       hregular_star hvertical_star
 
+/-- Multiplicity-aware moving-line regular-part assembly from primitive
+fixed-radius zeta controls.
+
+This is the multiple-zero analogue of
+`classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_compact_band_sphere_zeta_bound_high_height_zeta_lower_bound`.
+The local regular-part input may isolate `n * (s-rho)^{-1}` for any positive
+integer multiplicity; the vertical logarithmic-derivative input is still
+produced from fixed-radius boundary growth for `zeta` plus a high-height lower
+bound for `zeta`, with compactness supplying the bounded-height patch. -/
+lemma classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_compact_band_sphere_zeta_bound_high_height_zeta_lower_bound
+    (Bregular Tregular H T R A B η : ℝ)
+    (hBregular : 0 ≤ Bregular) (hTregular : 2 ≤ Tregular)
+    (hH : 5 ≤ H) (hR : 0 < R) (hRlt : R < H)
+    (hA : 0 ≤ A) (hB : 0 ≤ B) (hη : 0 < η)
+    (hregular :
+      ∀ a β t : ℝ, 0 < a → a ≤ Real.log 2 → Tregular ≤ |t| →
+        riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+        0 < (1 + a / Real.log |t|) - β →
+        ∃ n : ℕ, 0 < n ∧
+          ‖logDeriv riemannZeta
+              (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t) -
+              (n : ℂ) *
+                ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+            Bregular * Real.log |t|)
+    (hsphere :
+      ∀ c : ℂ, c ∈ verticalRegion 1 2 H →
+        ∀ z : ℂ, z ∈ Metric.sphere c R →
+          ‖riemannZeta z‖ ≤ A + B * Real.log (‖c‖ + 3))
+    (hzetaHigh : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| → η ≤ ‖riemannZeta z‖) :
+    classical_zero_free_region := by
+  rcases
+      logDerivVerticalLogBound_of_compact_band_and_sphere_zeta_bound_high_height_zeta_lower_bound
+        H T R A B η hH hR hRlt hA hB hη hsphere hzetaHigh with
+    ⟨Bvertical, Tvertical, hvertical⟩
+  rcases hvertical with ⟨hBvertical, hTvertical, hvertical_bound⟩
+  let Tstar : ℝ := max Tregular Tvertical
+  have hTstar : 2 ≤ Tstar :=
+    hTregular.trans (le_max_left Tregular Tvertical)
+  have hregular_star :
+      ∀ a β t : ℝ, 0 < a → a ≤ Real.log 2 → Tstar ≤ |t| →
+        riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+        0 < (1 + a / Real.log |t|) - β →
+        ∃ n : ℕ, 0 < n ∧
+          ‖logDeriv riemannZeta
+              (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t) -
+              (n : ℂ) *
+                ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+            Bregular * Real.log |t| := by
+    intro a β t ha_pos ha_le_log2 ht hzero hβ hsub
+    exact hregular a β t ha_pos ha_le_log2
+      ((le_max_left Tregular Tvertical).trans ht) hzero hβ hsub
+  have hvertical_star :
+      ∀ z : ℂ, 1 ≤ z.re → z.re ≤ 2 → Tstar ≤ |z.im| →
+        ‖logDeriv riemannZeta z‖ ≤ Bvertical * Real.log |z.im| := by
+    intro z hz_left hz_right hz_height
+    have hz_decomp : ((z.re : ℂ) + I * (z.im : ℂ)) = z := by
+      apply Complex.ext <;> simp
+    have hz_height_vertical : Tvertical ≤ |z.im| :=
+      (le_max_right Tregular Tvertical).trans hz_height
+    simpa [hz_decomp] using
+      hvertical_bound z.re z.im hz_left hz_right hz_height_vertical
+  exact
+    classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_vertical_logDeriv_norm_bound
+      Bregular Bvertical Tstar hBregular hBvertical hTstar
+      hregular_star hvertical_star
+
 /-- On any bounded positive-height vertical band in the right half-plane,
 `logDeriv ζ` has a finite norm bound.
 
