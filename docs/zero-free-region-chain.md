@@ -634,6 +634,18 @@ proved:
   keeps the center bound discharged while replacing the final `log |t|` scale
   by `log(||sigma+it||+3)`; the local regular-part differentiability and
   real-part hypotheses remain the unresolved analytic input.  The
+  named-interface constructors
+  `ZeroFreeRegion.logDerivRegularPartLogBound_of_high_height_log_abs_bound`,
+  `ZeroFreeRegion.logDerivRegularPartLogBound_of_high_height_log_abs_add_three_bound`,
+  and
+  `ZeroFreeRegion.logDerivRegularPartLogBound_of_affine_log_abs_add_three_bound_high_height`
+  now also normalize future regular-part estimates directly into
+  `LogDerivRegularPartLogBound`; their multiplicity-aware companions do the
+  same for local divisor estimates with a positive multiplicity.  These close
+  the API gap between Borel/Jensen-style regular-part outputs and the final
+  named zero-free-region closures, while leaving the zeta-specific analytic
+  estimates open.
+  The
   multiplicity-aware pair
   `ZeroFreeRegion.borelCaratheodory_neg_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`
   and

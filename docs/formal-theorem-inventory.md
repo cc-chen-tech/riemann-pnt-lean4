@@ -985,6 +985,21 @@ Core verified declarations:
   `re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_multiplicity_regular_part_norm_log_abs_add_three`
   turn coordinate `C * log(|t| + 3)` regular-part estimates at `|t| >= 3`
   into pure `2*C*log |t|` real-part singular estimates.
+- `logDerivRegularPartLogBound_of_high_height_log_abs_bound` and
+  `multiplicityLogDerivRegularPartLogBound_of_high_height_log_abs_bound`
+  turn future high-height regular-part estimates already stated as
+  `B * log |t|` into the named regular-part interfaces, normalizing the
+  cutoff to the standard `T0 >= 3` shape.
+- `logDerivRegularPartLogBound_of_high_height_log_abs_add_three_bound` and
+  `multiplicityLogDerivRegularPartLogBound_of_high_height_log_abs_add_three_bound`
+  convert future `B * log(|t| + 3)` regular-part estimates into the exact
+  `C * log |t|` named-interface form.
+- `logDerivRegularPartLogBound_of_affine_log_abs_add_three_bound_high_height`
+  and
+  `multiplicityLogDerivRegularPartLogBound_of_affine_log_abs_add_three_bound_high_height`
+  absorb affine `A + B * log(|t| + 3)` regular-part estimates into the named
+  regular-part interfaces.  These are constructor theorems for future
+  Borel/Jensen inputs, not proofs of the zeta-specific analytic estimate.
 - `exists_eventually_norm_logDeriv_le_const_of_analyticAt_ne_zero` and
   `exists_eventually_norm_neg_logDeriv_le_const_of_analyticAt_ne_zero`
   prove local boundedness of `logDeriv g` and `-logDeriv g` for any analytic

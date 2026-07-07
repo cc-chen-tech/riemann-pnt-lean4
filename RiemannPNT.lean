@@ -149,6 +149,99 @@ theorem multiplicityLogDerivRegularPartLogBound_mono_const
     MultiplicityLogDerivRegularPartLogBound D T0 :=
   ZeroFreeRegion.multiplicityLogDerivRegularPartLogBound_mono_const h hCD
 
+/-- Public named regular-part constructor from a future high-height estimate
+already stated in the exact `B * log |t|` scale. -/
+theorem logDerivRegularPartLogBound_of_high_height_log_abs_bound
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ β t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < σ - β →
+          ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) -
+              (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+            B * Real.log |t|) :
+    ∃ C T0' : ℝ, LogDerivRegularPartLogBound C T0' :=
+  ZeroFreeRegion.logDerivRegularPartLogBound_of_high_height_log_abs_bound
+    hB hhigh
+
+/-- Public multiplicity-aware regular-part constructor from a future
+high-height estimate already stated in the exact `B * log |t|` scale. -/
+theorem multiplicityLogDerivRegularPartLogBound_of_high_height_log_abs_bound
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ β t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < σ - β →
+          ∃ n : ℕ, 0 < n ∧
+            ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) -
+                (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+              B * Real.log |t|) :
+    ∃ C T0' : ℝ, MultiplicityLogDerivRegularPartLogBound C T0' :=
+  ZeroFreeRegion.multiplicityLogDerivRegularPartLogBound_of_high_height_log_abs_bound
+    hB hhigh
+
+/-- Public named regular-part constructor from a future high-height estimate
+in the safe scale `B * log(|t| + 3)`. -/
+theorem logDerivRegularPartLogBound_of_high_height_log_abs_add_three_bound
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ β t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < σ - β →
+          ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) -
+              (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+            B * Real.log (|t| + 3)) :
+    ∃ C T0' : ℝ, LogDerivRegularPartLogBound C T0' :=
+  ZeroFreeRegion.logDerivRegularPartLogBound_of_high_height_log_abs_add_three_bound
+    hB hhigh
+
+/-- Public multiplicity-aware regular-part constructor from a future
+high-height estimate in the safe scale `B * log(|t| + 3)`. -/
+theorem multiplicityLogDerivRegularPartLogBound_of_high_height_log_abs_add_three_bound
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ β t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < σ - β →
+          ∃ n : ℕ, 0 < n ∧
+            ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) -
+                (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+              B * Real.log (|t| + 3)) :
+    ∃ C T0' : ℝ, MultiplicityLogDerivRegularPartLogBound C T0' :=
+  ZeroFreeRegion.multiplicityLogDerivRegularPartLogBound_of_high_height_log_abs_add_three_bound
+    hB hhigh
+
+/-- Public named regular-part constructor from an affine high-height estimate
+in the safe scale `A + B * log(|t| + 3)`. -/
+theorem logDerivRegularPartLogBound_of_affine_log_abs_add_three_bound_high_height
+    {T0 A B : ℝ} (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ β t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < σ - β →
+          ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) -
+              (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+            A + B * Real.log (|t| + 3)) :
+    ∃ C T0' : ℝ, LogDerivRegularPartLogBound C T0' :=
+  ZeroFreeRegion.logDerivRegularPartLogBound_of_affine_log_abs_add_three_bound_high_height
+    hA hB hhigh
+
+/-- Public multiplicity-aware regular-part constructor from an affine
+high-height estimate in the safe scale `A + B * log(|t| + 3)`. -/
+theorem multiplicityLogDerivRegularPartLogBound_of_affine_log_abs_add_three_bound_high_height
+    {T0 A B : ℝ} (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ β t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < σ - β →
+          ∃ n : ℕ, 0 < n ∧
+            ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t) -
+                (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+              A + B * Real.log (|t| + 3)) :
+    ∃ C T0' : ℝ, MultiplicityLogDerivRegularPartLogBound C T0' :=
+  ZeroFreeRegion.multiplicityLogDerivRegularPartLogBound_of_affine_log_abs_add_three_bound_high_height
+    hA hB hhigh
+
 /-- Public named-input assembly of the two remaining high-height analytic
 estimates into the classical zero-free-region target. -/
 theorem classical_zero_free_region_of_LogDerivRegularPartLogBound_and_LogDerivVerticalLogBound

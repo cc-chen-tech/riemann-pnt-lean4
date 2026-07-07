@@ -4412,6 +4412,188 @@ lemma multiplicityLogDerivRegularPartLogBound_mono_const
     (log_abs_pos_of_two_le ht_two).le
   exact hnorm.trans (mul_le_mul_of_nonneg_right hCD hlog_nonneg)
 
+/-- Named regular-part constructor from a future high-height estimate already
+stated in the exact `B * log |t|` scale.
+
+The theorem only normalizes the height cutoff to the standard `T0 >= 3`
+interface used by the quantitative zero-free-region chain; the zeta-specific
+regular-part estimate remains the explicit input. -/
+lemma logDerivRegularPartLogBound_of_high_height_log_abs_bound
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ β t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+        0 < σ - β →
+          ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+              (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+            B * Real.log |t|) :
+    ∃ C T0' : ℝ, LogDerivRegularPartLogBound C T0' := by
+  refine ⟨B, max 3 T0, hB, le_max_left 3 T0, ?_⟩
+  intro σ β t hσ_left hσ_right ht hζ hβ hsub
+  exact hhigh σ β t hσ_left hσ_right
+    (le_trans (le_max_right 3 T0) ht) hζ hβ hsub
+
+/-- Multiplicity-aware named regular-part constructor from a future
+high-height estimate already stated in the exact `B * log |t|` scale. -/
+lemma multiplicityLogDerivRegularPartLogBound_of_high_height_log_abs_bound
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ β t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+        0 < σ - β →
+          ∃ n : ℕ, 0 < n ∧
+            ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+                (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+              B * Real.log |t|) :
+    ∃ C T0' : ℝ, MultiplicityLogDerivRegularPartLogBound C T0' := by
+  refine ⟨B, max 3 T0, hB, le_max_left 3 T0, ?_⟩
+  intro σ β t hσ_left hσ_right ht hζ hβ hsub
+  exact hhigh σ β t hσ_left hσ_right
+    (le_trans (le_max_right 3 T0) ht) hζ hβ hsub
+
+/-- Named regular-part constructor from the common safe-height scale
+`B * log(|t| + 3)`.
+
+This is the target-shaped handoff for a future Borel/Jensen regular-part
+estimate: once that estimate is proved in the safe logarithmic scale, this
+lemma converts it to the exact `LogDerivRegularPartLogBound` interface. -/
+lemma logDerivRegularPartLogBound_of_high_height_log_abs_add_three_bound
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ β t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+        0 < σ - β →
+          ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+              (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+            B * Real.log (|t| + 3)) :
+    ∃ C T0' : ℝ, LogDerivRegularPartLogBound C T0' := by
+  refine ⟨2 * B, max 3 T0,
+    mul_nonneg (by norm_num : (0 : ℝ) ≤ 2) hB, le_max_left 3 T0, ?_⟩
+  intro σ β t hσ_left hσ_right ht hζ hβ hsub
+  have ht3 : 3 ≤ |t| := le_trans (le_max_left 3 T0) ht
+  have hT0 : T0 ≤ |t| := le_trans (le_max_right 3 T0) ht
+  have hbase :=
+    hhigh σ β t hσ_left hσ_right hT0 hζ hβ hsub
+  have hlog : Real.log (|t| + 3) ≤ 2 * Real.log |t| :=
+    log_abs_add_three_le_two_log_abs ht3
+  calc
+    ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+        (((σ - β : ℝ) : ℂ)⁻¹)‖
+        ≤ B * Real.log (|t| + 3) := hbase
+    _ ≤ B * (2 * Real.log |t|) :=
+        mul_le_mul_of_nonneg_left hlog hB
+    _ = (2 * B) * Real.log |t| := by ring
+
+/-- Multiplicity-aware named regular-part constructor from the common
+safe-height scale `B * log(|t| + 3)`. -/
+lemma multiplicityLogDerivRegularPartLogBound_of_high_height_log_abs_add_three_bound
+    {T0 B : ℝ} (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ β t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+        0 < σ - β →
+          ∃ n : ℕ, 0 < n ∧
+            ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+                (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+              B * Real.log (|t| + 3)) :
+    ∃ C T0' : ℝ, MultiplicityLogDerivRegularPartLogBound C T0' := by
+  refine ⟨2 * B, max 3 T0,
+    mul_nonneg (by norm_num : (0 : ℝ) ≤ 2) hB, le_max_left 3 T0, ?_⟩
+  intro σ β t hσ_left hσ_right ht hζ hβ hsub
+  have ht3 : 3 ≤ |t| := le_trans (le_max_left 3 T0) ht
+  have hT0 : T0 ≤ |t| := le_trans (le_max_right 3 T0) ht
+  rcases hhigh σ β t hσ_left hσ_right hT0 hζ hβ hsub with
+    ⟨n, hn_pos, hnorm⟩
+  refine ⟨n, hn_pos, ?_⟩
+  have hlog : Real.log (|t| + 3) ≤ 2 * Real.log |t| :=
+    log_abs_add_three_le_two_log_abs ht3
+  calc
+    ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+        (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖
+        ≤ B * Real.log (|t| + 3) := hnorm
+    _ ≤ B * (2 * Real.log |t|) :=
+        mul_le_mul_of_nonneg_left hlog hB
+    _ = (2 * B) * Real.log |t| := by ring
+
+/-- Named regular-part constructor from an affine high-height estimate in the
+safe scale `A + B * log(|t| + 3)`.
+
+The constant term is absorbed by raising the cutoff to `|t| >= 3`, where
+`1 <= log |t|`. -/
+lemma logDerivRegularPartLogBound_of_affine_log_abs_add_three_bound_high_height
+    {T0 A B : ℝ} (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ β t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+        0 < σ - β →
+          ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+              (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+            A + B * Real.log (|t| + 3)) :
+    ∃ C T0' : ℝ, LogDerivRegularPartLogBound C T0' := by
+  refine ⟨A + 2 * B, max 3 T0,
+    add_nonneg hA (mul_nonneg (by norm_num : (0 : ℝ) ≤ 2) hB),
+    le_max_left 3 T0, ?_⟩
+  intro σ β t hσ_left hσ_right ht hζ hβ hsub
+  have ht3 : 3 ≤ |t| := le_trans (le_max_left 3 T0) ht
+  have hT0 : T0 ≤ |t| := le_trans (le_max_right 3 T0) ht
+  have hbase :=
+    hhigh σ β t hσ_left hσ_right hT0 hζ hβ hsub
+  have hlog_ge_one : 1 ≤ Real.log |t| :=
+    (log_abs_gt_one_of_three_le ht3).le
+  have hA_le : A ≤ A * Real.log |t| := by
+    calc
+      A = A * 1 := by ring
+      _ ≤ A * Real.log |t| :=
+          mul_le_mul_of_nonneg_left hlog_ge_one hA
+  have hlog : Real.log (|t| + 3) ≤ 2 * Real.log |t| :=
+    log_abs_add_three_le_two_log_abs ht3
+  calc
+    ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+        (((σ - β : ℝ) : ℂ)⁻¹)‖
+        ≤ A + B * Real.log (|t| + 3) := hbase
+    _ ≤ A * Real.log |t| + B * (2 * Real.log |t|) := by
+        exact add_le_add hA_le (mul_le_mul_of_nonneg_left hlog hB)
+    _ = (A + 2 * B) * Real.log |t| := by ring
+
+/-- Multiplicity-aware named regular-part constructor from an affine
+high-height estimate in the safe scale `A + B * log(|t| + 3)`. -/
+lemma multiplicityLogDerivRegularPartLogBound_of_affine_log_abs_add_three_bound_high_height
+    {T0 A B : ℝ} (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ β t : ℝ, 1 ≤ σ → σ ≤ 2 → T0 ≤ |t| →
+        riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+        0 < σ - β →
+          ∃ n : ℕ, 0 < n ∧
+            ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+                (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+              A + B * Real.log (|t| + 3)) :
+    ∃ C T0' : ℝ, MultiplicityLogDerivRegularPartLogBound C T0' := by
+  refine ⟨A + 2 * B, max 3 T0,
+    add_nonneg hA (mul_nonneg (by norm_num : (0 : ℝ) ≤ 2) hB),
+    le_max_left 3 T0, ?_⟩
+  intro σ β t hσ_left hσ_right ht hζ hβ hsub
+  have ht3 : 3 ≤ |t| := le_trans (le_max_left 3 T0) ht
+  have hT0 : T0 ≤ |t| := le_trans (le_max_right 3 T0) ht
+  rcases hhigh σ β t hσ_left hσ_right hT0 hζ hβ hsub with
+    ⟨n, hn_pos, hnorm⟩
+  refine ⟨n, hn_pos, ?_⟩
+  have hlog_ge_one : 1 ≤ Real.log |t| :=
+    (log_abs_gt_one_of_three_le ht3).le
+  have hA_le : A ≤ A * Real.log |t| := by
+    calc
+      A = A * 1 := by ring
+      _ ≤ A * Real.log |t| :=
+          mul_le_mul_of_nonneg_left hlog_ge_one hA
+  have hlog : Real.log (|t| + 3) ≤ 2 * Real.log |t| :=
+    log_abs_add_three_le_two_log_abs ht3
+  calc
+    ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+        (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖
+        ≤ A + B * Real.log (|t| + 3) := hnorm
+    _ ≤ A * Real.log |t| + B * (2 * Real.log |t|) := by
+        exact add_le_add hA_le (mul_le_mul_of_nonneg_left hlog hB)
+    _ = (A + 2 * B) * Real.log |t| := by ring
+
 /-- Named-input assembly of the two remaining high-height analytic estimates
 into the classical zero-free-region target.
 
