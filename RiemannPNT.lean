@@ -14753,6 +14753,78 @@ theorem classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_ve
   ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_vertical_logDeriv_norm_bound
     Bregular Bvertical T0 hBregular hBvertical hT0 hregular hvertical
 
+/-- Public multiplicity-aware moving-line regular-part closure at
+`sigma = 1 + a / log |t|`, with a separate real-part bound for the shifted
+`sigma + 2it` term. -/
+theorem classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_two_t_bound
+    (Bregular Btwo T0 : ℝ) (hBregular : 0 ≤ Bregular)
+    (hBtwo : 0 ≤ Btwo) (hT0 : 2 ≤ T0)
+    (hregular :
+      ∀ a β t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < (1 + a / Real.log |t|) - β →
+        ∃ n : ℕ, 0 < n ∧
+          ‖logDeriv riemannZeta
+              (((1 + a / Real.log |t| : ℝ) : ℂ) + Complex.I * t) -
+              (n : ℂ) *
+                ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+            Bregular * Real.log |t|)
+    (htwo :
+      ∀ a t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+        (-deriv riemannZeta
+            ((1 + a / Real.log |t| : ℝ) + 2 * Complex.I * t) /
+          riemannZeta ((1 + a / Real.log |t| : ℝ) + 2 * Complex.I * t)).re ≤
+            Btwo * Real.log |t|) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_two_t_bound
+    Bregular Btwo T0 hBregular hBtwo hT0 hregular htwo
+
+/-- Public multiplicity-aware moving-line closure whose shifted `sigma + 2it`
+input is a norm bound for `logDeriv zeta`. -/
+theorem classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_two_t_logDeriv_norm_bound
+    (Bregular Btwo T0 : ℝ) (hBregular : 0 ≤ Bregular)
+    (hBtwo : 0 ≤ Btwo) (hT0 : 2 ≤ T0)
+    (hregular :
+      ∀ a β t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < (1 + a / Real.log |t|) - β →
+        ∃ n : ℕ, 0 < n ∧
+          ‖logDeriv riemannZeta
+              (((1 + a / Real.log |t| : ℝ) : ℂ) + Complex.I * t) -
+              (n : ℂ) *
+                ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+            Bregular * Real.log |t|)
+    (htwo :
+      ∀ a t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+        ‖logDeriv riemannZeta
+          ((1 + a / Real.log |t| : ℝ) + 2 * Complex.I * t)‖ ≤
+            Btwo * Real.log |t|) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_two_t_logDeriv_norm_bound
+    Bregular Btwo T0 hBregular hBtwo hT0 hregular htwo
+
+/-- Public multiplicity-aware moving-line closure whose shifted `sigma + 2it`
+input is supplied by a standard vertical-strip bound for `logDeriv zeta`. -/
+theorem classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_vertical_logDeriv_norm_bound
+    (Bregular Bvertical T0 : ℝ) (hBregular : 0 ≤ Bregular)
+    (hBvertical : 0 ≤ Bvertical) (hT0 : 2 ≤ T0)
+    (hregular :
+      ∀ a β t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < (1 + a / Real.log |t|) - β →
+        ∃ n : ℕ, 0 < n ∧
+          ‖logDeriv riemannZeta
+              (((1 + a / Real.log |t| : ℝ) : ℂ) + Complex.I * t) -
+              (n : ℂ) *
+                ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+            Bregular * Real.log |t|)
+    (hvertical :
+      ∀ z : ℂ, 1 ≤ z.re → z.re ≤ 2 → T0 ≤ |z.im| →
+        ‖logDeriv riemannZeta z‖ ≤ Bvertical * Real.log |z.im|) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_vertical_logDeriv_norm_bound
+    Bregular Bvertical T0 hBregular hBvertical hT0 hregular hvertical
+
 /-- Public moving-line regular-part assembly from primitive fixed-radius zeta
 controls: sphere growth plus a high-height lower bound for `zeta`. -/
 theorem classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_compact_band_sphere_zeta_bound_high_height_zeta_lower_bound

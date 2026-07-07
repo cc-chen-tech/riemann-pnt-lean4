@@ -156,10 +156,18 @@ point `sigma = 1 + a / log |t|`.  The theorems
 `ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_two_t_bound`,
 `ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_two_t_logDeriv_norm_bound`,
 `ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_vertical_logDeriv_norm_bound`,
+and their multiplicity-aware analogues
+`ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_two_t_bound`,
+`ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_two_t_logDeriv_norm_bound`,
+and
+`ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_vertical_logDeriv_norm_bound`,
 and
 `ZeroFreeRegion.classical_zero_free_region_of_exists_sigmaOf_log_regular_part_norm_bound_and_two_t_logDeriv_norm_bound`
 show that the regular-part estimate only has to be supplied on that moving
-line, not on the whole strip.  The vertical-strip version specializes a future
+line, not on the whole strip.  The multiplicity-aware versions accept the
+natural local-factorization shape with a positive integer coefficient
+`n * (s-rho)^{-1}`, so the chain does not hide a simple-zero assumption.  The
+vertical-strip version specializes a future
 `||logDeriv zeta z|| <= C log |Im z|` estimate at the shifted point
 `sigma+2it`, paying only the already-proved factor `log |2t| <= 2 log |t|`.
 The primitive Cauchy/sphere version

@@ -2710,6 +2710,172 @@ lemma classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_vert
         (log_abs_two_mul_le_two_log_abs ht_two) hBvertical
     _ = (2 * Bvertical) * Real.log |t| := by ring
 
+/-- Multiplicity-aware moving-line regular-part closure at
+`sigma = 1 + a / log |t|`.
+
+Future local factorization/Jensen arguments naturally isolate
+`n * (s-rho)^{-1}` rather than the unit principal part.  Since `n >= 1` gives a
+stronger zero-repulsion contribution, this theorem feeds that multiplicity-aware
+regular-part estimate directly into the same 3-4-1 assembly. -/
+lemma classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_two_t_bound
+    (Bregular Btwo T0 : ℝ) (hBregular : 0 ≤ Bregular)
+    (hBtwo : 0 ≤ Btwo) (hT0 : 2 ≤ T0)
+    (hregular :
+      ∀ a β t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+        riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+        0 < (1 + a / Real.log |t|) - β →
+        ∃ n : ℕ, 0 < n ∧
+          ‖logDeriv riemannZeta
+              (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t) -
+              (n : ℂ) *
+                ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+            Bregular * Real.log |t|)
+    (htwo :
+      ∀ a t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+        (-deriv riemannZeta
+            ((1 + a / Real.log |t| : ℝ) + 2 * I * t) /
+          riemannZeta ((1 + a / Real.log |t| : ℝ) + 2 * I * t)).re ≤
+            Btwo * Real.log |t|) :
+    classical_zero_free_region := by
+  refine
+    classical_zero_free_region_of_sigma_log_shift_estimates_nonneg_constants
+      (5 / 4) Bregular Btwo T0 (by norm_num) (by norm_num)
+      hBregular hBtwo hT0 ?_ htwo
+  intro a c β t ha_pos _hc_pos ha_le_log2 ht hβ_lt _hβ hsub hζ
+  let σ : ℝ := 1 + a / Real.log |t|
+  let s : ℂ := (σ : ℂ) + I * t
+  rcases hregular a β t ha_pos ha_le_log2 ht hζ hβ_lt hsub with
+    ⟨n, hn_pos, hreg_pos⟩
+  have hreg_signed :
+      ‖-logDeriv riemannZeta s + (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+        Bregular * Real.log |t| := by
+    calc
+      ‖-logDeriv riemannZeta s + (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖
+          = ‖-(logDeriv riemannZeta s -
+              (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹))‖ := by
+              ring_nf
+      _ = ‖logDeriv riemannZeta s -
+              (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ := norm_neg _
+      _ ≤ Bregular * Real.log |t| := by
+            simpa [σ, s] using hreg_pos
+  have hreg_re :
+      (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re + 1 / (σ - β) ≤
+        Bregular * Real.log |t| :=
+    re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_multiplicity_regular_part_norm
+      (σ := σ) (β := β) (t := t) (n := n)
+      hreg_signed hn_pos hsub
+  have hrewrite :
+      (-deriv riemannZeta
+            ((1 + a / Real.log |t| : ℝ) + I * t) /
+          riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t)).re
+        + 1 / ((1 + a / Real.log |t|) - β) ≤
+          Bregular * Real.log |t| := by
+    simpa [σ, s] using hreg_re
+  calc
+    (-deriv riemannZeta
+          ((1 + a / Real.log |t| : ℝ) + I * t) /
+        riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t)).re
+        =
+          ((-deriv riemannZeta
+              ((1 + a / Real.log |t| : ℝ) + I * t) /
+            riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t)).re
+            + 1 / ((1 + a / Real.log |t|) - β))
+            - 1 / ((1 + a / Real.log |t|) - β) := by
+            ring
+    _ ≤ Bregular * Real.log |t| -
+          1 / ((1 + a / Real.log |t|) - β) := by
+            exact sub_le_sub_right hrewrite _
+    _ = -1 / ((1 + a / Real.log |t|) - β) +
+          Bregular * Real.log |t| := by ring
+
+/-- Multiplicity-aware moving-line regular-part closure whose shifted
+`sigma + 2it` input is supplied as a norm bound for `logDeriv zeta`. -/
+lemma classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_two_t_logDeriv_norm_bound
+    (Bregular Btwo T0 : ℝ) (hBregular : 0 ≤ Bregular)
+    (hBtwo : 0 ≤ Btwo) (hT0 : 2 ≤ T0)
+    (hregular :
+      ∀ a β t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+        riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+        0 < (1 + a / Real.log |t|) - β →
+        ∃ n : ℕ, 0 < n ∧
+          ‖logDeriv riemannZeta
+              (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t) -
+              (n : ℂ) *
+                ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+            Bregular * Real.log |t|)
+    (htwo :
+      ∀ a t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+        ‖logDeriv riemannZeta
+          ((1 + a / Real.log |t| : ℝ) + 2 * I * t)‖ ≤
+            Btwo * Real.log |t|) :
+    classical_zero_free_region := by
+  refine
+    classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_two_t_bound
+      Bregular Btwo T0 hBregular hBtwo hT0 hregular ?_
+  intro a t ha_pos ha_le_log2 ht
+  let z : ℂ := (1 + a / Real.log |t| : ℝ) + 2 * I * t
+  calc
+    (-deriv riemannZeta z / riemannZeta z).re
+        ≤ ‖-deriv riemannZeta z / riemannZeta z‖ := Complex.re_le_norm _
+    _ = ‖logDeriv riemannZeta z‖ :=
+        norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv z
+    _ ≤ Btwo * Real.log |t| := htwo a t ha_pos ha_le_log2 ht
+
+/-- Multiplicity-aware moving-line regular-part closure whose shifted
+`sigma + 2it` input is obtained from the standard vertical-strip
+logarithmic-derivative norm bound. -/
+lemma classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_vertical_logDeriv_norm_bound
+    (Bregular Bvertical T0 : ℝ) (hBregular : 0 ≤ Bregular)
+    (hBvertical : 0 ≤ Bvertical) (hT0 : 2 ≤ T0)
+    (hregular :
+      ∀ a β t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+        riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+        0 < (1 + a / Real.log |t|) - β →
+        ∃ n : ℕ, 0 < n ∧
+          ‖logDeriv riemannZeta
+              (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t) -
+              (n : ℂ) *
+                ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+            Bregular * Real.log |t|)
+    (hvertical :
+      ∀ z : ℂ, 1 ≤ z.re → z.re ≤ 2 → T0 ≤ |z.im| →
+        ‖logDeriv riemannZeta z‖ ≤ Bvertical * Real.log |z.im|) :
+    classical_zero_free_region := by
+  refine
+    classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_two_t_logDeriv_norm_bound
+      Bregular (2 * Bvertical) T0 hBregular (by positivity) hT0 hregular ?_
+  intro a t ha_pos ha_le_log2 ht
+  let σ : ℝ := 1 + a / Real.log |t|
+  let z : ℂ := (σ : ℂ) + 2 * I * t
+  have hz_re_left : 1 ≤ z.re := by
+    have hσ : 1 < σ := by
+      simpa [σ] using sigmaOf_log_gt_one hT0 ha_pos ht
+    simpa [z] using hσ.le
+  have hz_re_right : z.re ≤ 2 := by
+    have hσ : σ ≤ 2 := by
+      simpa [σ] using sigmaOf_log_le_two hT0 ha_le_log2 ht
+    simpa [z] using hσ
+  have hz_im : z.im = 2 * t := by
+    simp [z, mul_assoc]
+  have hz_height : T0 ≤ |z.im| := by
+    rw [hz_im, abs_mul]
+    have htwo_abs : |(2 : ℝ)| = 2 := by norm_num
+    rw [htwo_abs]
+    nlinarith [ht, abs_nonneg t]
+  have hbound := hvertical z hz_re_left hz_re_right hz_height
+  have ht_two : 2 ≤ |t| := le_trans hT0 ht
+  calc
+    ‖logDeriv riemannZeta
+        ((1 + a / Real.log |t| : ℝ) + 2 * I * t)‖
+        = ‖logDeriv riemannZeta z‖ := by simp [σ, z]
+    _ ≤ Bvertical * Real.log |z.im| := hbound
+    _ = Bvertical * Real.log |2 * t| := by simp [hz_im]
+    _ ≤ Bvertical * (2 * Real.log |t|) := by
+      exact mul_le_mul_of_nonneg_left
+        (log_abs_two_mul_le_two_log_abs ht_two) hBvertical
+    _ = (2 * Bvertical) * Real.log |t| := by ring
+
 /-- Closure from a zero-candidate regular-part norm estimate and a vertical-strip
 norm estimate for `-logDeriv ζ`.
 
