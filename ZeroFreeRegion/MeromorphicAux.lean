@@ -5920,6 +5920,41 @@ lemma exists_re_neg_deriv_div_riemannZeta_sigma_it_lower_bound_log_abs_of_two_ad
   have h341 := log_deriv_zeta_nonneg_combination σ hσ_gt t
   nlinarith
 
+/-- Two-sided right-edge real-part bound for the middle 3-4-1 term.
+
+This combines the direct right-edge upper bound for
+`Re(-ζ'/ζ(σ+it))` with the lower bound forced by 3-4-1 nonnegativity. -/
+lemma exists_abs_re_neg_deriv_div_riemannZeta_sigma_it_le_log_abs_of_two_add_radius_le
+    {R H : ℝ} (hR : 0 < R) (hH : 2 ≤ H) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ σ t : ℝ, 2 + R ≤ σ → H ≤ |t| →
+      |(-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re| ≤ C * Real.log |t| := by
+  rcases exists_re_neg_deriv_div_riemannZeta_right_edge_three_four_one_bounds
+      (R := R) (H := H) hR hH with ⟨C₁, hC₁, hupper_all⟩
+  rcases exists_re_neg_deriv_div_riemannZeta_sigma_it_lower_bound_log_abs_of_two_add_radius_le
+      (R := R) (H := H) hR hH with ⟨C₂, hC₂, hlower⟩
+  refine ⟨C₁ + C₂, add_nonneg hC₁ hC₂, ?_⟩
+  intro σ t hσ ht
+  have ht2 : 2 ≤ |t| := hH.trans ht
+  have hlog_nonneg : 0 ≤ Real.log |t| := (log_abs_pos_of_two_le ht2).le
+  rcases hupper_all σ t hσ ht with ⟨_h0, hupper, _h2⟩
+  have hlower_mid := hlower σ t hσ ht
+  have hC₁_le : C₁ ≤ C₁ + C₂ := by linarith
+  have hC₂_le : C₂ ≤ C₁ + C₂ := by linarith
+  have hC₁_log_le :
+      C₁ * Real.log |t| ≤ (C₁ + C₂) * Real.log |t| :=
+    mul_le_mul_of_nonneg_right hC₁_le hlog_nonneg
+  have hC₂_log_le :
+      C₂ * Real.log |t| ≤ (C₁ + C₂) * Real.log |t| :=
+    mul_le_mul_of_nonneg_right hC₂_le hlog_nonneg
+  apply abs_le.mpr
+  constructor
+  · have hneg :
+        -((C₁ + C₂) * Real.log |t|) ≤ -(C₂ * Real.log |t|) :=
+      neg_le_neg hC₂_log_le
+    exact le_trans hneg hlower_mid
+  · exact le_trans hupper hC₁_log_le
+
 /-- Far-right constant bound for the logarithmic derivative of ζ.
 
 For `3 <= Re(s)`, the disk of radius `1` around `s` lies in `2 <= Re(z)`, so

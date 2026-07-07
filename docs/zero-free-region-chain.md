@@ -1095,6 +1095,9 @@ The derived lower-bound form
 uses those right-edge upper bounds and the same 3-4-1 nonnegativity to prove
 `-C * log |t| <= Re(-zeta'/zeta(sigma+i t))` on the right edge, matching the
 sign and scale later zero-repulsion arguments consume.
+Together with the direct right-edge upper bound, this gives the two-sided
+real-part estimate
+`ZeroFreeRegion.exists_abs_re_neg_deriv_div_riemannZeta_sigma_it_le_log_abs_of_two_add_radius_le`.
 For sign-convention compatibility, the weak moving-strip inventory now also
 contains signed `-logDeriv zeta` norm variants:
 `ZeroFreeRegion.exists_sigma_ge_sigmaOf_log_neg_logDeriv_norm_bound_const_mul_log_div`,

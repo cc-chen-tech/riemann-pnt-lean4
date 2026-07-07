@@ -1332,6 +1332,10 @@ Core verified declarations:
   `Re(-zeta'/zeta(sigma+i t))` to be bounded below by `-C * log |t|`.
   This is the right-edge analogue of the lower-bound shape used in later
   zero-repulsion arguments.
+- `exists_abs_re_neg_deriv_div_riemannZeta_sigma_it_le_log_abs_of_two_add_radius_le`
+  combines the direct right-edge upper bound and the 3-4-1 lower bound into the
+  two-sided real-part estimate
+  `|Re(-zeta'/zeta(sigma+i t))| <= C * log |t|`.
 - `norm_riemannZeta_sub_one_le_half_of_three_le_re` and
   `half_le_norm_riemannZeta_of_three_le_re` prove the far-right tail estimate
   `||zeta(s)-1|| <= 1/2` and lower bound `1/2 <= ||zeta(s)||` on

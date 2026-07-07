@@ -15604,6 +15604,15 @@ theorem exists_re_neg_deriv_div_riemannZeta_sigma_it_lower_bound_log_abs_of_two_
   ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_sigma_it_lower_bound_log_abs_of_two_add_radius_le
     hR hH
 
+/-- Public two-sided right-edge real-part bound for the middle 3-4-1 term. -/
+theorem exists_abs_re_neg_deriv_div_riemannZeta_sigma_it_le_log_abs_of_two_add_radius_le
+    {R H : ℝ} (hR : 0 < R) (hH : 2 ≤ H) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ σ t : ℝ, 2 + R ≤ σ → H ≤ |t| →
+      |(-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+          riemannZeta ((σ : ℂ) + Complex.I * t)).re| ≤ C * Real.log |t| :=
+  ZeroFreeRegion.exists_abs_re_neg_deriv_div_riemannZeta_sigma_it_le_log_abs_of_two_add_radius_le
+    hR hH
+
 /-- Public far-right constant bound for `logDeriv ζ`: on `3 <= Re(s)`,
 `‖logDeriv ζ(s)‖ <= 2 * Re(ζ(2))`. -/
 theorem norm_logDeriv_riemannZeta_le_two_mul_re_zeta_two_of_three_le_re
