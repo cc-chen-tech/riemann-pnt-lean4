@@ -11127,6 +11127,55 @@ lemma exists_re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_shi
       hr hσright hσr ht hβ)
     hlog hn
 
+/-- Standard `σ = 1 + a/log|t|`, `r = a/(2 log|t|)` specialization of the
+multiplicity-aware moving-line zero-repulsion bridge.
+
+All right-shift geometry is discharged by
+`sigmaOf_log_borel_radius_geometry`; the remaining hard hypothesis is exactly
+the local affine real-part bound for the regular part on the canonical Borel
+disk. -/
+lemma exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_multiplicity_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_borel_radius
+    {a Are Bre β t : ℝ} {n : ℕ}
+    (ha : 0 < a) (ha_le : a ≤ Real.log 2) (ht : 6 ≤ |t|)
+    (hβ : β < 1) (hAre : 0 ≤ Are) (hBre : 0 ≤ Bre)
+    (hM :
+      0 < Are + Bre *
+        Real.log
+          (‖((((1 + a / Real.log |t|) +
+                a / (2 * Real.log |t|) : ℝ) : ℂ) + I * t)‖ + 3))
+    (hlog : ∀ w : ℂ,
+      w ∈ ball
+          ((((1 + a / Real.log |t|) +
+                a / (2 * Real.log |t|) : ℝ) : ℂ) + I * t)
+          (2 * (a / (2 * Real.log |t|))) →
+        (-logDeriv riemannZeta w +
+            (n : ℂ) * (w - ((β : ℂ) + I * t))⁻¹).re ≤
+          Are + Bre *
+            Real.log
+              (‖((((1 + a / Real.log |t|) +
+                    a / (2 * Real.log |t|) : ℝ) : ℂ) + I * t)‖ + 3))
+    (hn : 0 < n) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      (-deriv riemannZeta (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t) /
+          riemannZeta (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t)).re +
+          1 / ((1 + a / Real.log |t|) - β) ≤
+        C * Real.log |t| := by
+  let σ : ℝ := 1 + a / Real.log |t|
+  let r : ℝ := a / (2 * Real.log |t|)
+  have hgeom := sigmaOf_log_borel_radius_geometry
+    (T0 := 6) (a := a) (t := t) (by norm_num) ha ha_le ht
+  have hmain :=
+    exists_re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_moving_line_center_of_re_le
+      (a := a) (Are := Are) (Bre := Bre) (r := r) (σ := σ)
+      (β := β) (t := t) (n := n)
+      ha hgeom.1 hgeom.2.1 hgeom.2.2.1 hgeom.2.2.2 ht hβ hAre hBre
+      (by simpa [σ, r] using hM)
+      (by
+        intro w hw
+        exact hlog w (by simpa [σ, r] using hw))
+      hn
+  simpa [σ, r] using hmain
+
 /-- Multiplicity-aware zero-repulsion bridge with the differentiability
 hypothesis discharged from the standard right-shift geometry.
 

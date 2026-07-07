@@ -12799,6 +12799,37 @@ theorem exists_re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_s
   ZeroFreeRegion.exists_re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_moving_line_center_of_re_le
     ha hr hσright hσmove hσr ht hβ hAre hBre hM hlog hn
 
+/-- Public standard `σ = 1 + a/log|t|`, `r = a/(2 log|t|)`
+specialization of the multiplicity-aware moving-line zero-repulsion bridge. -/
+theorem exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_multiplicity_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_borel_radius
+    {a Are Bre β t : ℝ} {n : ℕ}
+    (ha : 0 < a) (ha_le : a ≤ Real.log 2) (ht : 6 ≤ |t|)
+    (hβ : β < 1) (hAre : 0 ≤ Are) (hBre : 0 ≤ Bre)
+    (hM :
+      0 < Are + Bre *
+        Real.log
+          (‖((((1 + a / Real.log |t|) +
+                a / (2 * Real.log |t|) : ℝ) : ℂ) + Complex.I * t)‖ + 3))
+    (hlog : ∀ w : ℂ,
+      w ∈ Metric.ball
+          ((((1 + a / Real.log |t|) +
+                a / (2 * Real.log |t|) : ℝ) : ℂ) + Complex.I * t)
+          (2 * (a / (2 * Real.log |t|))) →
+        (-logDeriv riemannZeta w +
+            (n : ℂ) * (w - ((β : ℂ) + Complex.I * t))⁻¹).re ≤
+          Are + Bre *
+            Real.log
+              (‖((((1 + a / Real.log |t|) +
+                    a / (2 * Real.log |t|) : ℝ) : ℂ) + Complex.I * t)‖ + 3))
+    (hn : 0 < n) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      (-deriv riemannZeta (((1 + a / Real.log |t| : ℝ) : ℂ) + Complex.I * t) /
+          riemannZeta (((1 + a / Real.log |t| : ℝ) : ℂ) + Complex.I * t)).re +
+          1 / ((1 + a / Real.log |t|) - β) ≤
+        C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_multiplicity_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_borel_radius
+    ha ha_le ht hβ hAre hBre hM hlog hn
+
 /-- Public differentiability discharge for the signed multiplicity-weighted
 right-shifted regular part on the Borel disk. -/
 theorem differentiableOn_neg_logDeriv_multiplicityRegularPart_sigma_it_right_shift_of_disk_right_half
