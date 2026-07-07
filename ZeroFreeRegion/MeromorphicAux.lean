@@ -11176,6 +11176,56 @@ lemma exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_multiplicity_inv_right_
       hn
   simpa [σ, r] using hmain
 
+/-- Standard `σ = 1 + a/log|t|`, `r = a/(2 log|t|)` specialization in the
+exact zero-repulsion shape consumed by the shifted-estimate closures:
+`Re(-ζ'/ζ)(σ+it) ≤ -1/(σ-β) + C log |t|`.
+
+The constant is still produced pointwise from the supplied local regular-part
+estimate; this theorem is a shape bridge, not the missing uniform high-height
+logarithmic estimate. -/
+lemma exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_right_shift_le_neg_inv_add_log_abs_of_affineRegularPart_re_le_half_radius_borel_radius
+    {a Are Bre β t : ℝ} {n : ℕ}
+    (ha : 0 < a) (ha_le : a ≤ Real.log 2) (ht : 6 ≤ |t|)
+    (hβ : β < 1) (hAre : 0 ≤ Are) (hBre : 0 ≤ Bre)
+    (hM :
+      0 < Are + Bre *
+        Real.log
+          (‖((((1 + a / Real.log |t|) +
+                a / (2 * Real.log |t|) : ℝ) : ℂ) + I * t)‖ + 3))
+    (hlog : ∀ w : ℂ,
+      w ∈ ball
+          ((((1 + a / Real.log |t|) +
+                a / (2 * Real.log |t|) : ℝ) : ℂ) + I * t)
+          (2 * (a / (2 * Real.log |t|))) →
+        (-logDeriv riemannZeta w +
+            (n : ℂ) * (w - ((β : ℂ) + I * t))⁻¹).re ≤
+          Are + Bre *
+            Real.log
+              (‖((((1 + a / Real.log |t|) +
+                    a / (2 * Real.log |t|) : ℝ) : ℂ) + I * t)‖ + 3))
+    (hn : 0 < n) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      (-deriv riemannZeta (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t) /
+          riemannZeta (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t)).re ≤
+        -1 / ((1 + a / Real.log |t|) - β) + C * Real.log |t| := by
+  rcases
+      exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_multiplicity_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_borel_radius
+        (a := a) (Are := Are) (Bre := Bre) (β := β) (t := t) (n := n)
+        ha ha_le ht hβ hAre hBre hM hlog hn with
+    ⟨C, hC, hadd⟩
+  refine ⟨C, hC, ?_⟩
+  calc
+    (-deriv riemannZeta (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t) /
+        riemannZeta (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t)).re
+        =
+          ((-deriv riemannZeta (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t) /
+              riemannZeta (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t)).re +
+              1 / ((1 + a / Real.log |t|) - β))
+            - 1 / ((1 + a / Real.log |t|) - β) := by ring
+    _ ≤ C * Real.log |t| - 1 / ((1 + a / Real.log |t|) - β) := by
+          exact sub_le_sub_right hadd _
+    _ = -1 / ((1 + a / Real.log |t|) - β) + C * Real.log |t| := by ring
+
 /-- Multiplicity-aware zero-repulsion bridge with the differentiability
 hypothesis discharged from the standard right-shift geometry.
 
