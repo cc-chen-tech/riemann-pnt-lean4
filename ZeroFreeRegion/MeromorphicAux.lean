@@ -2346,6 +2346,136 @@ lemma classical_zero_free_region_of_exists_regular_part_norm_bound_and_two_t_bou
   exact classical_zero_free_region_of_regular_part_norm_bound_and_two_t_bound
     B hB hregular htwo
 
+/-- Moving-line regular-part closure for the standard choice
+`sigma = 1 + a / log |t|`.
+
+This is sharper than the full-strip regular-part handoff above: the
+regular-part estimate is needed only at the actual de la Vallee Poussin
+comparison point, while the shifted `sigma + 2it` term remains the separate
+uniform logarithmic input. -/
+lemma classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_two_t_bound
+    (Bregular Btwo T0 : ℝ) (hBregular : 0 ≤ Bregular)
+    (hBtwo : 0 ≤ Btwo) (hT0 : 2 ≤ T0)
+    (hregular :
+      ∀ a β t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+        riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+        0 < (1 + a / Real.log |t|) - β →
+        ‖logDeriv riemannZeta
+            (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t) -
+            ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+          Bregular * Real.log |t|)
+    (htwo :
+      ∀ a t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+        (-deriv riemannZeta
+            ((1 + a / Real.log |t| : ℝ) + 2 * I * t) /
+          riemannZeta ((1 + a / Real.log |t| : ℝ) + 2 * I * t)).re ≤
+            Btwo * Real.log |t|) :
+    classical_zero_free_region := by
+  refine
+    classical_zero_free_region_of_sigma_log_shift_estimates_nonneg_constants
+      (5 / 4) Bregular Btwo T0 (by norm_num) (by norm_num)
+      hBregular hBtwo hT0 ?_ htwo
+  intro a c β t ha_pos _hc_pos ha_le_log2 ht hβ_lt _hβ hsub hζ
+  let σ : ℝ := 1 + a / Real.log |t|
+  let s : ℂ := (σ : ℂ) + I * t
+  have hreg_pos :
+      ‖logDeriv riemannZeta s - (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+        Bregular * Real.log |t| := by
+    simpa [σ, s] using
+      hregular a β t ha_pos ha_le_log2 ht hζ hβ_lt hsub
+  have hreg_signed :
+      ‖-logDeriv riemannZeta s + (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+        Bregular * Real.log |t| := by
+    calc
+      ‖-logDeriv riemannZeta s + (((σ - β : ℝ) : ℂ)⁻¹)‖
+          = ‖-(logDeriv riemannZeta s - (((σ - β : ℝ) : ℂ)⁻¹))‖ := by
+              ring_nf
+      _ = ‖logDeriv riemannZeta s - (((σ - β : ℝ) : ℂ)⁻¹)‖ := norm_neg _
+      _ ≤ Bregular * Real.log |t| := hreg_pos
+  have hreg_re :
+      (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re + 1 / (σ - β) ≤
+        Bregular * Real.log |t| :=
+    re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_regular_part_norm
+      (σ := σ) (β := β) (t := t) hreg_signed hsub
+  have hrewrite :
+      (-deriv riemannZeta
+            ((1 + a / Real.log |t| : ℝ) + I * t) /
+          riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t)).re
+        + 1 / ((1 + a / Real.log |t|) - β) ≤
+          Bregular * Real.log |t| := by
+    simpa [σ, s] using hreg_re
+  calc
+    (-deriv riemannZeta
+          ((1 + a / Real.log |t| : ℝ) + I * t) /
+        riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t)).re
+        =
+          ((-deriv riemannZeta
+              ((1 + a / Real.log |t| : ℝ) + I * t) /
+            riemannZeta ((1 + a / Real.log |t| : ℝ) + I * t)).re
+            + 1 / ((1 + a / Real.log |t|) - β))
+            - 1 / ((1 + a / Real.log |t|) - β) := by
+            ring
+    _ ≤ Bregular * Real.log |t| -
+          1 / ((1 + a / Real.log |t|) - β) := by
+            exact sub_le_sub_right hrewrite _
+    _ = -1 / ((1 + a / Real.log |t|) - β) +
+          Bregular * Real.log |t| := by ring
+
+/-- Moving-line regular-part closure where the `sigma + 2it` input is stated
+as a norm bound for `logDeriv zeta`. -/
+lemma classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_two_t_logDeriv_norm_bound
+    (Bregular Btwo T0 : ℝ) (hBregular : 0 ≤ Bregular)
+    (hBtwo : 0 ≤ Btwo) (hT0 : 2 ≤ T0)
+    (hregular :
+      ∀ a β t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+        riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+        0 < (1 + a / Real.log |t|) - β →
+        ‖logDeriv riemannZeta
+            (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t) -
+            ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+          Bregular * Real.log |t|)
+    (htwo :
+      ∀ a t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+        ‖logDeriv riemannZeta
+          ((1 + a / Real.log |t| : ℝ) + 2 * I * t)‖ ≤
+            Btwo * Real.log |t|) :
+    classical_zero_free_region := by
+  refine
+    classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_two_t_bound
+      Bregular Btwo T0 hBregular hBtwo hT0 hregular ?_
+  intro a t ha_pos ha_le_log2 ht
+  let z : ℂ := (1 + a / Real.log |t| : ℝ) + 2 * I * t
+  calc
+    (-deriv riemannZeta z / riemannZeta z).re
+        ≤ ‖-deriv riemannZeta z / riemannZeta z‖ := Complex.re_le_norm _
+    _ = ‖logDeriv riemannZeta z‖ :=
+        norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv z
+    _ ≤ Btwo * Real.log |t| := htwo a t ha_pos ha_le_log2 ht
+
+/-- Existential moving-line closure with separate regular-part and `sigma+2it`
+norm coefficients. -/
+lemma classical_zero_free_region_of_exists_sigmaOf_log_regular_part_norm_bound_and_two_t_logDeriv_norm_bound
+    (h :
+      ∃ Bregular Btwo T0 : ℝ, 0 ≤ Bregular ∧ 0 ≤ Btwo ∧ 2 ≤ T0 ∧
+        (∀ a β t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+          riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+          0 < (1 + a / Real.log |t|) - β →
+          ‖logDeriv riemannZeta
+              (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t) -
+              ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+            Bregular * Real.log |t|) ∧
+        (∀ a t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+          ‖logDeriv riemannZeta
+            ((1 + a / Real.log |t| : ℝ) + 2 * I * t)‖ ≤
+              Btwo * Real.log |t|)) :
+    classical_zero_free_region := by
+  rcases h with
+    ⟨Bregular, Btwo, T0, hBregular, hBtwo, hT0, hregular, htwo⟩
+  exact
+    classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_two_t_logDeriv_norm_bound
+      Bregular Btwo T0 hBregular hBtwo hT0 hregular htwo
+
 /-- Logarithmic-derivative notation form of the norm-bound regular-part
 closure.
 

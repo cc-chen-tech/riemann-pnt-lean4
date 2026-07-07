@@ -151,6 +151,18 @@ and the corresponding `...exists_NegLogDerivVerticalLogBound` /
 `...exists_ReNegDerivDivVerticalLogBound` analogues allow the two estimates to
 be proved above different height cutoffs, merging the cutoffs by `max`.
 
+The moving-line handoff has also been narrowed for the standard comparison
+point `sigma = 1 + a / log |t|`.  The theorems
+`ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_two_t_bound`,
+`ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_two_t_logDeriv_norm_bound`,
+and
+`ZeroFreeRegion.classical_zero_free_region_of_exists_sigmaOf_log_regular_part_norm_bound_and_two_t_logDeriv_norm_bound`
+show that the regular-part estimate only has to be supplied on that moving
+line, not on the whole strip, provided the separate uniform `sigma+2it`
+logarithmic estimate is also available.  This is a real reduction in the next
+Borel/Jensen regular-part target, but it still does not prove the missing
+zeta-specific high-height estimates.
+
 Mathematically, that regular-part estimate has the shape:
 
 ```text

@@ -1031,6 +1031,16 @@ Core verified declarations:
 - `classical_zero_free_region_of_exists_regular_part_norm_bound_and_two_t_bound`
   packages that norm-bound regular-part input under one nonnegative
   logarithmic coefficient.
+- `classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_two_t_bound`
+  narrows the regular-part norm input to the standard moving line
+  `sigma = 1 + a / log |t|`, still requiring the separate `sigma+2it`
+  real-part logarithmic bound.
+- `classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_two_t_logDeriv_norm_bound`
+  accepts the same moving-line regular-part input and supplies the `sigma+2it`
+  side from a norm bound for `logDeriv zeta` at the shifted point.
+- `classical_zero_free_region_of_exists_sigmaOf_log_regular_part_norm_bound_and_two_t_logDeriv_norm_bound`
+  existentially packages the moving-line regular-part estimate and shifted
+  norm logarithmic estimate under one nonnegative coefficient.
 - `classical_zero_free_region_of_neg_logDeriv_regular_part_norm_bound_and_two_t_bound`
   is the same norm-bound closure in Mathlib's natural `-logDeriv zeta`
   notation, rewriting through the verified quotient bridge.
@@ -1830,6 +1840,11 @@ Core verified declarations:
   `RiemannPNT.API.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_high_height_reNegDerivDiv_bound`
   expose the direct exact-scale high-height assemblies, together with their
   multiplicity-aware analogues.
+- `RiemannPNT.API.classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_two_t_bound`,
+  `RiemannPNT.API.classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_two_t_logDeriv_norm_bound`,
+  and
+  `RiemannPNT.API.classical_zero_free_region_of_exists_sigmaOf_log_regular_part_norm_bound_and_two_t_logDeriv_norm_bound`
+  expose the moving-line regular-part closures through the public facade.
 - `RiemannPNT.API.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_sphere_zeta_bound_zeta_lower_bound_high_height`
   and
   `RiemannPNT.API.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_sphere_zeta_bound_zeta_lower_bound_on_verticalRegion`

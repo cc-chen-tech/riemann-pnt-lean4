@@ -14687,6 +14687,72 @@ theorem classical_zero_free_region_of_exists_regular_part_norm_bound_and_two_t_b
     ZeroFreeRegion.classical_zero_free_region :=
   ZeroFreeRegion.classical_zero_free_region_of_exists_regular_part_norm_bound_and_two_t_bound h
 
+/-- Public moving-line regular-part closure at
+`sigma = 1 + a / log |t|`, with a separate real-part bound for the shifted
+`sigma + 2it` term. -/
+theorem classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_two_t_bound
+    (Bregular Btwo T0 : ℝ) (hBregular : 0 ≤ Bregular)
+    (hBtwo : 0 ≤ Btwo) (hT0 : 2 ≤ T0)
+    (hregular :
+      ∀ a β t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < (1 + a / Real.log |t|) - β →
+        ‖logDeriv riemannZeta
+            (((1 + a / Real.log |t| : ℝ) : ℂ) + Complex.I * t) -
+            ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+          Bregular * Real.log |t|)
+    (htwo :
+      ∀ a t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+        (-deriv riemannZeta
+            ((1 + a / Real.log |t| : ℝ) + 2 * Complex.I * t) /
+          riemannZeta ((1 + a / Real.log |t| : ℝ) + 2 * Complex.I * t)).re ≤
+            Btwo * Real.log |t|) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_two_t_bound
+    Bregular Btwo T0 hBregular hBtwo hT0 hregular htwo
+
+/-- Public moving-line regular-part closure whose shifted `sigma + 2it`
+input is a norm bound for `logDeriv zeta`. -/
+theorem classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_two_t_logDeriv_norm_bound
+    (Bregular Btwo T0 : ℝ) (hBregular : 0 ≤ Bregular)
+    (hBtwo : 0 ≤ Btwo) (hT0 : 2 ≤ T0)
+    (hregular :
+      ∀ a β t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < (1 + a / Real.log |t|) - β →
+        ‖logDeriv riemannZeta
+            (((1 + a / Real.log |t| : ℝ) : ℂ) + Complex.I * t) -
+            ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+          Bregular * Real.log |t|)
+    (htwo :
+      ∀ a t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+        ‖logDeriv riemannZeta
+          ((1 + a / Real.log |t| : ℝ) + 2 * Complex.I * t)‖ ≤
+            Btwo * Real.log |t|) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_two_t_logDeriv_norm_bound
+    Bregular Btwo T0 hBregular hBtwo hT0 hregular htwo
+
+/-- Public existential moving-line closure with separate regular-part and
+`sigma+2it` norm coefficients. -/
+theorem classical_zero_free_region_of_exists_sigmaOf_log_regular_part_norm_bound_and_two_t_logDeriv_norm_bound
+    (h :
+      ∃ Bregular Btwo T0 : ℝ, 0 ≤ Bregular ∧ 0 ≤ Btwo ∧ 2 ≤ T0 ∧
+        (∀ a β t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+          riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+          0 < (1 + a / Real.log |t|) - β →
+          ‖logDeriv riemannZeta
+              (((1 + a / Real.log |t| : ℝ) : ℂ) + Complex.I * t) -
+              ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+            Bregular * Real.log |t|) ∧
+        (∀ a t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+          ‖logDeriv riemannZeta
+            ((1 + a / Real.log |t| : ℝ) + 2 * Complex.I * t)‖ ≤
+              Btwo * Real.log |t|)) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_sigmaOf_log_regular_part_norm_bound_and_two_t_logDeriv_norm_bound
+    h
+
 /-- Public `-logDeriv ζ` notation form of the norm-bound regular-part closure. -/
 theorem classical_zero_free_region_of_neg_logDeriv_regular_part_norm_bound_and_two_t_bound
     (B : ℝ) (hB : 0 ≤ B)
