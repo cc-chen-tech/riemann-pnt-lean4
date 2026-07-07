@@ -14733,6 +14733,26 @@ theorem classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_tw
   ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_two_t_logDeriv_norm_bound
     Bregular Btwo T0 hBregular hBtwo hT0 hregular htwo
 
+/-- Public moving-line regular-part closure whose shifted `sigma + 2it`
+input is supplied by a standard vertical-strip bound for `logDeriv zeta`. -/
+theorem classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_vertical_logDeriv_norm_bound
+    (Bregular Bvertical T0 : ℝ) (hBregular : 0 ≤ Bregular)
+    (hBvertical : 0 ≤ Bvertical) (hT0 : 2 ≤ T0)
+    (hregular :
+      ∀ a β t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < (1 + a / Real.log |t|) - β →
+        ‖logDeriv riemannZeta
+            (((1 + a / Real.log |t| : ℝ) : ℂ) + Complex.I * t) -
+            ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+          Bregular * Real.log |t|)
+    (hvertical :
+      ∀ z : ℂ, 1 ≤ z.re → z.re ≤ 2 → T0 ≤ |z.im| →
+        ‖logDeriv riemannZeta z‖ ≤ Bvertical * Real.log |z.im|) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_vertical_logDeriv_norm_bound
+    Bregular Bvertical T0 hBregular hBvertical hT0 hregular hvertical
+
 /-- Public existential moving-line closure with separate regular-part and
 `sigma+2it` norm coefficients. -/
 theorem classical_zero_free_region_of_exists_sigmaOf_log_regular_part_norm_bound_and_two_t_logDeriv_norm_bound

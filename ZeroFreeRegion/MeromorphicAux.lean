@@ -2659,6 +2659,57 @@ lemma log_abs_two_mul_le_two_log_abs {t : ℝ} (ht : 2 ≤ |t|) :
     _ ≤ 2 * Real.log |t| := by
       linarith
 
+/-- Moving-line regular-part closure whose shifted `sigma + 2it` input is
+obtained from the standard vertical-strip logarithmic-derivative norm bound. -/
+lemma classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_vertical_logDeriv_norm_bound
+    (Bregular Bvertical T0 : ℝ) (hBregular : 0 ≤ Bregular)
+    (hBvertical : 0 ≤ Bvertical) (hT0 : 2 ≤ T0)
+    (hregular :
+      ∀ a β t : ℝ, 0 < a → a ≤ Real.log 2 → T0 ≤ |t| →
+        riemannZeta ((β : ℂ) + I * t) = 0 → β < 1 →
+        0 < (1 + a / Real.log |t|) - β →
+        ‖logDeriv riemannZeta
+            (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t) -
+            ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+          Bregular * Real.log |t|)
+    (hvertical :
+      ∀ z : ℂ, 1 ≤ z.re → z.re ≤ 2 → T0 ≤ |z.im| →
+        ‖logDeriv riemannZeta z‖ ≤ Bvertical * Real.log |z.im|) :
+    classical_zero_free_region := by
+  refine
+    classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_two_t_logDeriv_norm_bound
+      Bregular (2 * Bvertical) T0 hBregular (by positivity) hT0 hregular ?_
+  intro a t ha_pos ha_le_log2 ht
+  let σ : ℝ := 1 + a / Real.log |t|
+  let z : ℂ := (σ : ℂ) + 2 * I * t
+  have hz_re_left : 1 ≤ z.re := by
+    have hσ : 1 < σ := by
+      simpa [σ] using sigmaOf_log_gt_one hT0 ha_pos ht
+    simpa [z] using hσ.le
+  have hz_re_right : z.re ≤ 2 := by
+    have hσ : σ ≤ 2 := by
+      simpa [σ] using sigmaOf_log_le_two hT0 ha_le_log2 ht
+    simpa [z] using hσ
+  have hz_im : z.im = 2 * t := by
+    simp [z, mul_assoc]
+  have hz_height : T0 ≤ |z.im| := by
+    rw [hz_im, abs_mul]
+    have htwo_abs : |(2 : ℝ)| = 2 := by norm_num
+    rw [htwo_abs]
+    nlinarith [ht, abs_nonneg t]
+  have hbound := hvertical z hz_re_left hz_re_right hz_height
+  have ht_two : 2 ≤ |t| := le_trans hT0 ht
+  calc
+    ‖logDeriv riemannZeta
+        ((1 + a / Real.log |t| : ℝ) + 2 * I * t)‖
+        = ‖logDeriv riemannZeta z‖ := by simp [σ, z]
+    _ ≤ Bvertical * Real.log |z.im| := hbound
+    _ = Bvertical * Real.log |2 * t| := by simp [hz_im]
+    _ ≤ Bvertical * (2 * Real.log |t|) := by
+      exact mul_le_mul_of_nonneg_left
+        (log_abs_two_mul_le_two_log_abs ht_two) hBvertical
+    _ = (2 * Bvertical) * Real.log |t| := by ring
+
 /-- Closure from a zero-candidate regular-part norm estimate and a vertical-strip
 norm estimate for `-logDeriv ζ`.
 

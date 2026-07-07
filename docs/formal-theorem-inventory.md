@@ -1038,6 +1038,10 @@ Core verified declarations:
 - `classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_two_t_logDeriv_norm_bound`
   accepts the same moving-line regular-part input and supplies the `sigma+2it`
   side from a norm bound for `logDeriv zeta` at the shifted point.
+- `classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_vertical_logDeriv_norm_bound`
+  specializes a standard vertical-strip `logDeriv zeta` norm bound to the
+  shifted `sigma+2it` point while keeping the regular-part input on the
+  moving line only.
 - `classical_zero_free_region_of_exists_sigmaOf_log_regular_part_norm_bound_and_two_t_logDeriv_norm_bound`
   existentially packages the moving-line regular-part estimate and shifted
   norm logarithmic estimate under one nonnegative coefficient.
@@ -1842,6 +1846,7 @@ Core verified declarations:
   multiplicity-aware analogues.
 - `RiemannPNT.API.classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_two_t_bound`,
   `RiemannPNT.API.classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_two_t_logDeriv_norm_bound`,
+  `RiemannPNT.API.classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_vertical_logDeriv_norm_bound`,
   and
   `RiemannPNT.API.classical_zero_free_region_of_exists_sigmaOf_log_regular_part_norm_bound_and_two_t_logDeriv_norm_bound`
   expose the moving-line regular-part closures through the public facade.

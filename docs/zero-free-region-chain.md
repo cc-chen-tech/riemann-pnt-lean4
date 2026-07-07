@@ -1239,13 +1239,16 @@ available in the project.
 The moving-line variants
 `ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_two_t_bound`,
 `ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_two_t_logDeriv_norm_bound`,
+`ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_vertical_logDeriv_norm_bound`,
 and
 `ZeroFreeRegion.classical_zero_free_region_of_exists_sigmaOf_log_regular_part_norm_bound_and_two_t_logDeriv_norm_bound`
 specialize the regular-part input to the standard choice
 `sigma = 1 + a / log |t|`.  They are the preferred narrow handoff for the
 de la Vallee Poussin moving-line setup: the regular part no longer has to be
-estimated on the full vertical strip, while the separate uniform `sigma+2it`
-logarithmic bound remains an external analytic input.
+estimated on the full vertical strip.  The vertical-strip variant consumes the
+future bound `||logDeriv zeta z|| <= B log |Im z|` directly and specializes it
+to `sigma+2it`, using `log |2t| <= 2 log |t|`; the zeta-specific vertical
+estimate itself remains an external analytic input.
 One further wrapper removes the special `sigma+2it` input altogether:
 `ZeroFreeRegion.classical_zero_free_region_of_neg_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound`
 accepts a standard vertical-strip estimate
