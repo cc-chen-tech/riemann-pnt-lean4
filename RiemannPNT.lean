@@ -12742,6 +12742,38 @@ theorem exists_re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_s
   ZeroFreeRegion.exists_re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center
     hr hσ hσr ht hβ hAre hBre hM hdiff hlog hn
 
+/-- Public multiplicity-aware zero-repulsion bridge whose right-shifted
+regular-part center estimate is discharged by the proved Chebyshev moving-line
+bound. -/
+theorem exists_re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_moving_line_center
+    {a Are Bre r σ β t : ℝ} {n : ℕ}
+    (ha : 0 < a) (hr : 0 < r) (hσright : 1 + r ≤ σ)
+    (hσmove : 1 + a / Real.log |t| ≤ σ + r)
+    (hσr : σ + r ≤ 3) (ht : 6 ≤ |t|)
+    (hβ : β < 1) (hAre : 0 ≤ Are) (hBre : 0 ≤ Bre)
+    (hM :
+      0 < Are + Bre *
+        Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * t)‖ + 3))
+    (hdiff :
+      DifferentiableOn ℂ
+        (fun w : ℂ =>
+          -logDeriv riemannZeta w +
+            (n : ℂ) * (w - ((β : ℂ) + Complex.I * t))⁻¹)
+        (Metric.ball (((σ + r : ℝ) : ℂ) + Complex.I * t) (2 * r)))
+    (hlog : ∀ w : ℂ,
+      w ∈ Metric.ball (((σ + r : ℝ) : ℂ) + Complex.I * t) (2 * r) →
+        (-logDeriv riemannZeta w +
+            (n : ℂ) * (w - ((β : ℂ) + Complex.I * t))⁻¹).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * t)‖ + 3))
+    (hn : 0 < n) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+          riemannZeta ((σ : ℂ) + Complex.I * t)).re + 1 / (σ - β) ≤
+        C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_moving_line_center
+    ha hr hσright hσmove hσr ht hβ hAre hBre hM hdiff hlog hn
+
 /-- Public differentiability discharge for the signed multiplicity-weighted
 right-shifted regular part on the Borel disk. -/
 theorem differentiableOn_neg_logDeriv_multiplicityRegularPart_sigma_it_right_shift_of_disk_right_half
