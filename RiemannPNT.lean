@@ -15493,6 +15493,23 @@ theorem norm_logDeriv_riemannZeta_sigma_it_le_three_mul_re_zeta_two_div_radius_o
   ZeroFreeRegion.norm_logDeriv_riemannZeta_sigma_it_le_three_mul_re_zeta_two_div_radius_of_two_add_radius_le
     hR hσ
 
+/-- Public right-edge logarithmic-height bound on the half-plane
+`2+R <= Re(z)`. -/
+theorem exists_norm_logDeriv_riemannZeta_le_log_abs_im_of_two_add_radius_le_re
+    {R H : ℝ} (hR : 0 < R) (hH : 2 ≤ H) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ z : ℂ, 2 + R ≤ z.re → H ≤ |z.im| →
+      ‖logDeriv riemannZeta z‖ ≤ C * Real.log |z.im| :=
+  ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_le_log_abs_im_of_two_add_radius_le_re
+    hR hH
+
+/-- Public coordinate form of the right-edge logarithmic-height bound. -/
+theorem exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_of_two_add_radius_le
+    {R H : ℝ} (hR : 0 < R) (hH : 2 ≤ H) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ σ t : ℝ, 2 + R ≤ σ → H ≤ |t| →
+      ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤ C * Real.log |t| :=
+  ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_of_two_add_radius_le
+    hR hH
+
 /-- Public far-right constant bound for `logDeriv ζ`: on `3 <= Re(s)`,
 `‖logDeriv ζ(s)‖ <= 2 * Re(ζ(2))`. -/
 theorem norm_logDeriv_riemannZeta_le_two_mul_re_zeta_two_of_three_le_re

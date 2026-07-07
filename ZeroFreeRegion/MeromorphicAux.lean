@@ -5628,6 +5628,56 @@ lemma norm_logDeriv_riemannZeta_sigma_it_le_three_mul_re_zeta_two_div_radius_of_
     norm_logDeriv_riemannZeta_le_three_mul_re_zeta_two_div_radius_of_two_add_radius_le_re
       (s := (σ : ℂ) + I * t) (R := R) hR (by simpa using hσ)
 
+/-- Right-edge logarithmic-height bound for `logDeriv ζ`.
+
+For every fixed radius margin `R>0`, the half-plane `2+R <= Re(z)` has a
+constant `C` such that `‖logDeriv ζ(z)‖ <= C log |Im z|` above any height
+`H >= 2`.  This is the radius-dependent right-boundary analogue of the missing
+strip estimate; it is proved from Cauchy's derivative estimate and the
+`Re>=2` denominator margin. -/
+lemma exists_norm_logDeriv_riemannZeta_le_log_abs_im_of_two_add_radius_le_re
+    {R H : ℝ} (hR : 0 < R) (hH : 2 ≤ H) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ z : ℂ, 2 + R ≤ z.re → H ≤ |z.im| →
+      ‖logDeriv riemannZeta z‖ ≤ C * Real.log |z.im| := by
+  let K : ℝ := 3 * (riemannZeta (2 : ℂ)).re / R
+  let C : ℝ := K / Real.log H
+  have hH_pos : 0 < H := by linarith
+  have hlogH_pos : 0 < Real.log H := Real.log_pos (by linarith : (1 : ℝ) < H)
+  have hzeta_two_nonneg : 0 ≤ (riemannZeta (2 : ℂ)).re := by
+    exact le_trans zero_le_one (le_of_lt (riemannZeta_re_gt_one 2 (by norm_num)))
+  have hK_nonneg : 0 ≤ K := by
+    dsimp [K]
+    exact div_nonneg (mul_nonneg (by norm_num) hzeta_two_nonneg) hR.le
+  refine ⟨C, div_nonneg hK_nonneg hlogH_pos.le, ?_⟩
+  intro z hzre hheight
+  have hconst :
+      ‖logDeriv riemannZeta z‖ ≤ K := by
+    simpa [K] using
+      norm_logDeriv_riemannZeta_le_three_mul_re_zeta_two_div_radius_of_two_add_radius_le_re
+        (s := z) (R := R) hR hzre
+  have hlog_le : Real.log H ≤ Real.log |z.im| :=
+    Real.log_le_log hH_pos hheight
+  have hscale : K ≤ C * Real.log |z.im| := by
+    calc
+      K = C * Real.log H := by
+        dsimp [C]
+        field_simp [ne_of_gt hlogH_pos]
+      _ ≤ C * Real.log |z.im| :=
+        mul_le_mul_of_nonneg_left hlog_le (div_nonneg hK_nonneg hlogH_pos.le)
+  exact le_trans hconst hscale
+
+/-- Coordinate form of the right-edge logarithmic-height bound for
+`logDeriv ζ`. -/
+lemma exists_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_of_two_add_radius_le
+    {R H : ℝ} (hR : 0 < R) (hH : 2 ≤ H) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ σ t : ℝ, 2 + R ≤ σ → H ≤ |t| →
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤ C * Real.log |t| := by
+  rcases exists_norm_logDeriv_riemannZeta_le_log_abs_im_of_two_add_radius_le_re
+      (R := R) (H := H) hR hH with ⟨C, hC, hbound⟩
+  refine ⟨C, hC, ?_⟩
+  intro σ t hσ ht
+  simpa using hbound ((σ : ℂ) + I * t) (by simpa using hσ) (by simpa using ht)
+
 /-- Far-right constant bound for the logarithmic derivative of ζ.
 
 For `3 <= Re(s)`, the disk of radius `1` around `s` lies in `2 <= Re(z)`, so
