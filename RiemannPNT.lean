@@ -7794,6 +7794,34 @@ theorem exists_re_neg_deriv_div_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_l
   ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_log_abs
     ha
 
+/-- Public uniform moving-line high-height norm package for the two shifted
+3-4-1 points when the parameter satisfies `a >= a0 > 0`. -/
+theorem exists_norm_logDeriv_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_log_abs_uniform_of_le
+    {a0 : ℝ} (ha0 : 0 < a0) :
+    ∃ B : ℝ, 0 ≤ B ∧ ∀ a σ t : ℝ, a0 ≤ a → 3 ≤ |t| →
+      1 + a / Real.log |t| ≤ σ →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          B * Real.log |t| ∧
+        ‖logDeriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t)‖ ≤
+          B * Real.log |t| :=
+  ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_log_abs_uniform_of_le
+    ha0
+
+/-- Public real-part quotient form of the uniform moving-line shift-pair
+package. -/
+theorem exists_re_neg_deriv_div_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_log_abs_uniform_of_le
+    {a0 : ℝ} (ha0 : 0 < a0) :
+    ∃ B : ℝ, 0 ≤ B ∧ ∀ a σ t : ℝ, a0 ≤ a → 3 ≤ |t| →
+      1 + a / Real.log |t| ≤ σ →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
+          B * Real.log |t| ∧
+        (-deriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t) /
+            riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re ≤
+          B * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_log_abs_uniform_of_le
+    ha0
+
 /-- Public weak moving-line regular-part estimate from the absolutely
 convergent half-plane.
 

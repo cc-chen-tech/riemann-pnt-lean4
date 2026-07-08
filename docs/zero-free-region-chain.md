@@ -676,6 +676,11 @@ proved:
   `ZeroFreeRegion.exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_multiplicity_inv_le_of_absolute_convergence_uniform_of_le`
   do the same for each fixed `n`.  These isolate the remaining hard point as the
   limit `a0 -> 0`.
+  The shifted 3-4-1 term has the parallel uniform-away-from-zero package
+  `ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_log_abs_uniform_of_le`
+  and
+  `ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_log_abs_uniform_of_le`,
+  giving one constant for both `sigma+it` and `sigma+2it` whenever `a >= a0`.
   The
   multiplicity-aware pair
   `ZeroFreeRegion.borelCaratheodory_neg_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`

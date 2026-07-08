@@ -4507,6 +4507,70 @@ lemma exists_re_neg_deriv_div_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_log
           norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv _
       _ ≤ B * Real.log |t| := htwoit
 
+/-- Uniform version of
+`exists_norm_logDeriv_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_log_abs`
+for moving-line parameters bounded below by `a0`.
+
+This removes repeated bookkeeping when working away from the boundary limit
+`a -> 0`; the constant may still depend on the fixed lower margin `a0`. -/
+lemma exists_norm_logDeriv_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_log_abs_uniform_of_le
+    {a0 : ℝ} (ha0 : 0 < a0) :
+    ∃ B : ℝ, 0 ≤ B ∧ ∀ a σ t : ℝ, a0 ≤ a → 3 ≤ |t| →
+      1 + a / Real.log |t| ≤ σ →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          B * Real.log |t| ∧
+        ‖logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖ ≤
+          B * Real.log |t| := by
+  rcases exists_norm_logDeriv_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_log_abs
+      ha0 with ⟨B, hB, hbound⟩
+  refine ⟨B, hB, ?_⟩
+  intro a σ t ha0a ht hσ
+  have ht2 : 2 ≤ |t| := by linarith
+  have hlog_nonneg : 0 ≤ Real.log |t| := (log_abs_pos_of_two_le ht2).le
+  have hdiv : a0 / Real.log |t| ≤ a / Real.log |t| :=
+    div_le_div_of_nonneg_right ha0a hlog_nonneg
+  have hσ0 : 1 + a0 / Real.log |t| ≤ σ := by
+    calc
+      1 + a0 / Real.log |t| ≤ 1 + a / Real.log |t| :=
+        by simpa [add_comm, add_left_comm, add_assoc] using add_le_add_left hdiv 1
+      _ ≤ σ := hσ
+  exact hbound σ t ht hσ0
+
+/-- Real-part quotient version of
+`exists_norm_logDeriv_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_log_abs_uniform_of_le`. -/
+lemma exists_re_neg_deriv_div_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_log_abs_uniform_of_le
+    {a0 : ℝ} (ha0 : 0 < a0) :
+    ∃ B : ℝ, 0 ≤ B ∧ ∀ a σ t : ℝ, a0 ≤ a → 3 ≤ |t| →
+      1 + a / Real.log |t| ≤ σ →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re ≤
+          B * Real.log |t| ∧
+        (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤
+          B * Real.log |t| := by
+  rcases exists_norm_logDeriv_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_log_abs_uniform_of_le
+      ha0 with ⟨B, hB, hbound⟩
+  refine ⟨B, hB, ?_⟩
+  intro a σ t ha0a ht hσ
+  rcases hbound a σ t ha0a ht hσ with ⟨hit, htwoit⟩
+  constructor
+  · calc
+      (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re
+          ≤ ‖-deriv riemannZeta ((σ : ℂ) + I * t) /
+              riemannZeta ((σ : ℂ) + I * t)‖ := Complex.re_le_norm _
+      _ = ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ :=
+          norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv _
+      _ ≤ B * Real.log |t| := hit
+  · calc
+      (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+          riemannZeta ((σ : ℂ) + 2 * I * t)).re
+          ≤ ‖-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+              riemannZeta ((σ : ℂ) + 2 * I * t)‖ := Complex.re_le_norm _
+      _ = ‖logDeriv riemannZeta ((σ : ℂ) + 2 * I * t)‖ :=
+          norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv _
+      _ ≤ B * Real.log |t| := htwoit
+
 /-- Weak moving-line regular-part estimate from the absolutely convergent
 half-plane.
 

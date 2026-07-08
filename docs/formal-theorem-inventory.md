@@ -1892,6 +1892,10 @@ Core verified declarations:
   and
   `RiemannPNT.API.exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_inv_le_of_absolute_convergence_uniform_of_le`
   expose the version uniform over all moving-line parameters `a >= a0`.
+- `RiemannPNT.API.exists_norm_logDeriv_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_log_abs_uniform_of_le`
+  and
+  `RiemannPNT.API.exists_re_neg_deriv_div_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_log_abs_uniform_of_le`
+  expose the matching uniform-away-from-boundary shifted-pair estimates.
 - `RiemannPNT.API.exists_norm_multiplicity_neg_logDeriv_regular_part_sigmaOf_log_bound_of_absolute_convergence_uniform_of_le`
   and
   `RiemannPNT.API.exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_multiplicity_inv_le_of_absolute_convergence_uniform_of_le`
