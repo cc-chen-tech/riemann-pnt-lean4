@@ -4847,6 +4847,123 @@ lemma exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_multiplicity_inv_le_of_
       (σ := σ) (β := β) (t := t) (n := n) hregular hn hgap_pos
   simpa [σ] using hmain
 
+/-- Fixed-multiplicity weak moving-line regular-part estimate, uniform for
+all moving-line margins `a >= a0`.
+
+The constant depends on the fixed lower margin `a0` and multiplicity `n`; this
+still does not provide the uniform-in-`a -> 0` input needed for the classical
+zero-free region. -/
+lemma exists_norm_multiplicity_neg_logDeriv_regular_part_sigmaOf_log_bound_of_absolute_convergence_uniform_of_le
+    {a0 : ℝ} (ha0 : 0 < a0) (n : ℕ) :
+    ∃ B : ℝ, 0 ≤ B ∧ ∀ a β t : ℝ, a0 ≤ a → 3 ≤ |t| → β < 1 →
+      ‖-logDeriv riemannZeta
+          (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t) +
+          (n : ℂ) * ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+        B * Real.log |t| := by
+  rcases exists_norm_logDeriv_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_log_abs
+      ha0 with ⟨B₀, hB₀, hbound⟩
+  refine ⟨B₀ + (n : ℝ) * (1 / a0), ?_, ?_⟩
+  · exact add_nonneg hB₀ (mul_nonneg (by positivity) (by positivity))
+  intro a β t ha0a ht hβ
+  let σ : ℝ := 1 + a / Real.log |t|
+  have ht2 : 2 ≤ |t| := by linarith
+  have hlog_pos : 0 < Real.log |t| := log_abs_pos_of_two_le ht2
+  have hlog_nonneg : 0 ≤ Real.log |t| := hlog_pos.le
+  have ha_pos : 0 < a := lt_of_lt_of_le ha0 ha0a
+  have hσ_lower : 1 + a0 / Real.log |t| ≤ σ := by
+    have hdiv : a0 / Real.log |t| ≤ a / Real.log |t| :=
+      div_le_div_of_nonneg_right ha0a hlog_nonneg
+    change 1 + a0 / Real.log |t| ≤ 1 + a / Real.log |t|
+    linarith
+  have hlogDeriv :
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+        B₀ * Real.log |t| := by
+    exact (hbound σ t ht hσ_lower).1
+  have hnegLogDeriv :
+      ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+        B₀ * Real.log |t| := by
+    simpa using hlogDeriv
+  have hgap_pos : 0 < σ - β := by
+    have hσ_gt : 1 < σ := by
+      simpa [σ] using sigmaOf_log_gt_one (T0 := 2) (a := a) (t := t)
+        (by norm_num) ha_pos ht2
+    linarith
+  have hgap_ge : a0 / Real.log |t| ≤ σ - β := by
+    have hdiv : a0 / Real.log |t| ≤ a / Real.log |t| :=
+      div_le_div_of_nonneg_right ha0a hlog_nonneg
+    have ha_gap : a / Real.log |t| ≤ σ - β := by
+      change a / Real.log |t| ≤ (1 + a / Real.log |t|) - β
+      linarith
+    exact hdiv.trans ha_gap
+  have hprincipal_base :
+      ‖(((σ - β : ℝ) : ℂ)⁻¹)‖ ≤ (1 / a0) * Real.log |t| := by
+    have hsmall_pos : 0 < a0 / Real.log |t| := div_pos ha0 hlog_pos
+    have hinv_le : (σ - β)⁻¹ ≤ (a0 / Real.log |t|)⁻¹ := by
+      have h :
+          1 / (σ - β) ≤ 1 / (a0 / Real.log |t|) :=
+        one_div_le_one_div_of_le hsmall_pos hgap_ge
+      simpa [one_div] using h
+    calc
+      ‖(((σ - β : ℝ) : ℂ)⁻¹)‖ = (σ - β)⁻¹ := by
+        rw [← Complex.ofReal_inv]
+        exact Complex.norm_of_nonneg (inv_nonneg.mpr hgap_pos.le)
+      _ ≤ (a0 / Real.log |t|)⁻¹ := hinv_le
+      _ = (1 / a0) * Real.log |t| := by
+        field_simp [ne_of_gt ha0, ne_of_gt hlog_pos]
+  have hprincipal :
+      ‖(n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+        ((n : ℝ) * (1 / a0)) * Real.log |t| := by
+    calc
+      ‖(n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ =
+          (n : ℝ) * ‖(((σ - β : ℝ) : ℂ)⁻¹)‖ := by
+            rw [norm_mul, Complex.norm_natCast]
+      _ ≤ (n : ℝ) * ((1 / a0) * Real.log |t|) :=
+          mul_le_mul_of_nonneg_left hprincipal_base (by positivity)
+      _ = ((n : ℝ) * (1 / a0)) * Real.log |t| := by ring
+  calc
+    ‖-logDeriv riemannZeta
+        (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t) +
+        (n : ℂ) * ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖
+        = ‖-logDeriv riemannZeta ((σ : ℂ) + I * t) +
+            (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ := by simp [σ]
+    _ ≤ ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ +
+        ‖(n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ := norm_add_le _ _
+    _ ≤ B₀ * Real.log |t| + ((n : ℝ) * (1 / a0)) * Real.log |t| :=
+        add_le_add hnegLogDeriv hprincipal
+    _ = (B₀ + (n : ℝ) * (1 / a0)) * Real.log |t| := by ring
+
+/-- Real-part form of
+`exists_norm_multiplicity_neg_logDeriv_regular_part_sigmaOf_log_bound_of_absolute_convergence_uniform_of_le`. -/
+lemma exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_multiplicity_inv_le_of_absolute_convergence_uniform_of_le
+    {a0 : ℝ} (ha0 : 0 < a0) {n : ℕ} (hn : 0 < n) :
+    ∃ B : ℝ, 0 ≤ B ∧ ∀ a β t : ℝ, a0 ≤ a → 3 ≤ |t| → β < 1 →
+      (-deriv riemannZeta
+          (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t) /
+          riemannZeta (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t)).re +
+        1 / ((1 + a / Real.log |t|) - β) ≤
+      B * Real.log |t| := by
+  rcases exists_norm_multiplicity_neg_logDeriv_regular_part_sigmaOf_log_bound_of_absolute_convergence_uniform_of_le
+      ha0 n with ⟨B, hB, hbound⟩
+  refine ⟨B, hB, ?_⟩
+  intro a β t ha0a ht hβ
+  let σ : ℝ := 1 + a / Real.log |t|
+  have ht2 : 2 ≤ |t| := by linarith
+  have ha_pos : 0 < a := lt_of_lt_of_le ha0 ha0a
+  have hgap_pos : 0 < σ - β := by
+    have hσ_gt : 1 < σ := by
+      simpa [σ] using sigmaOf_log_gt_one (T0 := 2) (a := a) (t := t)
+        (by norm_num) ha_pos ht2
+    linarith
+  have hregular :
+      ‖-logDeriv riemannZeta ((σ : ℂ) + I * t) +
+          (n : ℂ) * (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+        B * Real.log |t| := by
+    simpa [σ] using hbound a β t ha0a ht hβ
+  have hmain :=
+    re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_multiplicity_regular_part_norm
+      (σ := σ) (β := β) (t := t) (n := n) hregular hn hgap_pos
+  simpa [σ] using hmain
+
 /-- Standard high-height vertical logarithmic-derivative bound on
 `1 <= sigma <= 2`.
 

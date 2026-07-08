@@ -670,8 +670,12 @@ proved:
   `ZeroFreeRegion.exists_logDeriv_regular_part_sigmaOf_log_bound_of_absolute_convergence_uniform_of_le`
   and
   `ZeroFreeRegion.exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_inv_le_of_absolute_convergence_uniform_of_le`
-  prove one constant for all `a >= a0`; this isolates the remaining hard point
-  as the limit `a0 -> 0`.
+  prove one constant for all `a >= a0`; the fixed-multiplicity versions
+  `ZeroFreeRegion.exists_norm_multiplicity_neg_logDeriv_regular_part_sigmaOf_log_bound_of_absolute_convergence_uniform_of_le`
+  and
+  `ZeroFreeRegion.exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_multiplicity_inv_le_of_absolute_convergence_uniform_of_le`
+  do the same for each fixed `n`.  These isolate the remaining hard point as the
+  limit `a0 -> 0`.
   The
   multiplicity-aware pair
   `ZeroFreeRegion.borelCaratheodory_neg_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`

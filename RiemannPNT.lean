@@ -7878,6 +7878,32 @@ theorem exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_multiplicity_inv_le_o
   ZeroFreeRegion.exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_multiplicity_inv_le_of_absolute_convergence
     ha hn
 
+/-- Public fixed-multiplicity weak moving-line regular-part estimate, uniform
+over margins `a >= a0 > 0`. -/
+theorem exists_norm_multiplicity_neg_logDeriv_regular_part_sigmaOf_log_bound_of_absolute_convergence_uniform_of_le
+    {a0 : ℝ} (ha0 : 0 < a0) (n : ℕ) :
+    ∃ B : ℝ, 0 ≤ B ∧ ∀ a β t : ℝ, a0 ≤ a → 3 ≤ |t| → β < 1 →
+      ‖-logDeriv riemannZeta
+          (((1 + a / Real.log |t| : ℝ) : ℂ) + Complex.I * t) +
+          (n : ℂ) * ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+        B * Real.log |t| :=
+  ZeroFreeRegion.exists_norm_multiplicity_neg_logDeriv_regular_part_sigmaOf_log_bound_of_absolute_convergence_uniform_of_le
+    ha0 n
+
+/-- Public fixed-multiplicity real-part form of the uniform-on-`a>=a0`
+weak moving-line regular-part estimate. -/
+theorem exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_multiplicity_inv_le_of_absolute_convergence_uniform_of_le
+    {a0 : ℝ} (ha0 : 0 < a0) {n : ℕ} (hn : 0 < n) :
+    ∃ B : ℝ, 0 ≤ B ∧ ∀ a β t : ℝ, a0 ≤ a → 3 ≤ |t| → β < 1 →
+      (-deriv riemannZeta
+          (((1 + a / Real.log |t| : ℝ) : ℂ) + Complex.I * t) /
+          riemannZeta
+            (((1 + a / Real.log |t| : ℝ) : ℂ) + Complex.I * t)).re +
+        1 / ((1 + a / Real.log |t|) - β) ≤
+      B * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_multiplicity_inv_le_of_absolute_convergence_uniform_of_le
+    ha0 hn
+
 /-- Public antitonicity of `-Re(ζ'/ζ)` on the real half-line `(1, ∞)`. -/
 theorem log_deriv_zeta_antitone
     {σ₁ σ₂ : ℝ} (hσ₁ : 1 < σ₁) (hσ₂ : σ₁ ≤ σ₂) :
