@@ -656,7 +656,11 @@ proved:
   `sigma = 1 + a/log |t|` from the Chebyshev half-plane bound and the elementary
   principal-part inequality `1/(sigma-beta) <= (log |t|)/a`.  Its constant still
   depends on the fixed margin `a`, so it documents the absolute-convergence
-  limit rather than closing the uniform Borel/Jensen regular-part input.
+  limit rather than closing the uniform Borel/Jensen regular-part input.  The
+  companion
+  `ZeroFreeRegion.exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_inv_le_of_absolute_convergence`
+  converts the same weak estimate into the real-part zero-repulsion shape used
+  by the 3-4-1 chain.
   The
   multiplicity-aware pair
   `ZeroFreeRegion.borelCaratheodory_neg_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`

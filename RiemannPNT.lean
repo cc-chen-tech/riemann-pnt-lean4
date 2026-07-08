@@ -7810,6 +7810,23 @@ theorem exists_logDeriv_regular_part_sigmaOf_log_bound_of_absolute_convergence
   ZeroFreeRegion.exists_logDeriv_regular_part_sigmaOf_log_bound_of_absolute_convergence
     ha
 
+/-- Public real-part form of the weak moving-line regular-part estimate.
+
+For fixed `a>0`, this proves the zero-repulsion shaped inequality
+`Re(-ζ'/ζ)(σ+it) + 1/(σ-β) <= B(a) log |t|` at
+`σ = 1 + a/log |t|`. -/
+theorem exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_inv_le_of_absolute_convergence
+    {a : ℝ} (ha : 0 < a) :
+    ∃ B : ℝ, 0 ≤ B ∧ ∀ β t : ℝ, 3 ≤ |t| → β < 1 →
+      (-deriv riemannZeta
+          (((1 + a / Real.log |t| : ℝ) : ℂ) + Complex.I * t) /
+          riemannZeta
+            (((1 + a / Real.log |t| : ℝ) : ℂ) + Complex.I * t)).re +
+        1 / ((1 + a / Real.log |t|) - β) ≤
+      B * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_inv_le_of_absolute_convergence
+    ha
+
 /-- Public antitonicity of `-Re(ζ'/ζ)` on the real half-line `(1, ∞)`. -/
 theorem log_deriv_zeta_antitone
     {σ₁ σ₂ : ℝ} (hσ₁ : 1 < σ₁) (hσ₂ : σ₁ ≤ σ₂) :

@@ -4571,6 +4571,56 @@ lemma exists_logDeriv_regular_part_sigmaOf_log_bound_of_absolute_convergence
         add_le_add hlogDeriv hprincipal
     _ = (B₀ + 1 / a) * Real.log |t| := by ring
 
+/-- Weak moving-line zero-repulsion real-part estimate from the absolutely
+convergent half-plane.
+
+This is the real-part form consumed by the 3-4-1/zero-free-region chain.  As in
+`exists_logDeriv_regular_part_sigmaOf_log_bound_of_absolute_convergence`, the
+constant depends on the fixed margin `a`, so this is not the missing uniform
+regular-part estimate. -/
+lemma exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_inv_le_of_absolute_convergence
+    {a : ℝ} (ha : 0 < a) :
+    ∃ B : ℝ, 0 ≤ B ∧ ∀ β t : ℝ, 3 ≤ |t| → β < 1 →
+      (-deriv riemannZeta
+          (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t) /
+          riemannZeta (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t)).re +
+        1 / ((1 + a / Real.log |t|) - β) ≤
+      B * Real.log |t| := by
+  rcases exists_logDeriv_regular_part_sigmaOf_log_bound_of_absolute_convergence
+      ha with ⟨B, hB, hbound⟩
+  refine ⟨B, hB, ?_⟩
+  intro β t ht hβ
+  let σ : ℝ := 1 + a / Real.log |t|
+  have ht2 : 2 ≤ |t| := by linarith
+  have hgap_pos : 0 < σ - β := by
+    have hσ_gt : 1 < σ := by
+      simpa [σ] using sigmaOf_log_gt_one (T0 := 2) (a := a) (t := t)
+        (by norm_num) ha ht2
+    linarith
+  have hnorm :
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+          (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+        B * Real.log |t| := by
+    simpa [σ] using hbound β t ht hβ
+  have hregular :
+      ‖-logDeriv riemannZeta ((σ : ℂ) + I * t) +
+          (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤
+        B * Real.log |t| := by
+    calc
+      ‖-logDeriv riemannZeta ((σ : ℂ) + I * t) +
+          (((σ - β : ℝ) : ℂ)⁻¹)‖
+          = ‖-(logDeriv riemannZeta ((σ : ℂ) + I * t) -
+              (((σ - β : ℝ) : ℂ)⁻¹))‖ := by
+              congr 1
+              ring
+      _ = ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+          (((σ - β : ℝ) : ℂ)⁻¹)‖ := norm_neg _
+      _ ≤ B * Real.log |t| := hnorm
+  have hmain :=
+    re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_regular_part_norm
+      (σ := σ) (β := β) (t := t) hregular hgap_pos
+  simpa [σ] using hmain
+
 /-- Standard high-height vertical logarithmic-derivative bound on
 `1 <= sigma <= 2`.
 

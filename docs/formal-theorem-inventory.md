@@ -1884,6 +1884,10 @@ Core verified declarations:
   exposes the proved weak moving-line regular-part estimate from absolute
   convergence; the constant depends on the fixed margin `a`, so this is a
   baseline theorem rather than the missing uniform Borel/Jensen input.
+- `RiemannPNT.API.exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_inv_le_of_absolute_convergence`
+  exposes the corresponding weak real-part zero-repulsion inequality
+  `Re(-zeta'/zeta)(sigma+it)+1/(sigma-beta) <= B(a) log |t|` at
+  `sigma = 1 + a/log |t|`.
 - `RiemannPNT.API.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_sphere_zeta_bound_zeta_lower_bound_high_height`
   and
   `RiemannPNT.API.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_sphere_zeta_bound_zeta_lower_bound_on_verticalRegion`
