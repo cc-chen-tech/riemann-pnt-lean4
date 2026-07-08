@@ -7794,6 +7794,22 @@ theorem exists_re_neg_deriv_div_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_l
   ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_log_abs
     ha
 
+/-- Public weak moving-line regular-part estimate from the absolutely
+convergent half-plane.
+
+For fixed `a>0`, the constant may depend on `a`; this is a checked baseline for
+the regular-part side, not the uniform Borel/Jensen input needed by the
+classical zero-free-region theorem. -/
+theorem exists_logDeriv_regular_part_sigmaOf_log_bound_of_absolute_convergence
+    {a : ℝ} (ha : 0 < a) :
+    ∃ B : ℝ, 0 ≤ B ∧ ∀ β t : ℝ, 3 ≤ |t| → β < 1 →
+      ‖logDeriv riemannZeta
+          (((1 + a / Real.log |t| : ℝ) : ℂ) + Complex.I * t) -
+          ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+        B * Real.log |t| :=
+  ZeroFreeRegion.exists_logDeriv_regular_part_sigmaOf_log_bound_of_absolute_convergence
+    ha
+
 /-- Public antitonicity of `-Re(ζ'/ζ)` on the real half-line `(1, ∞)`. -/
 theorem log_deriv_zeta_antitone
     {σ₁ σ₂ : ℝ} (hσ₁ : 1 < σ₁) (hσ₂ : σ₁ ≤ σ₂) :

@@ -4507,6 +4507,70 @@ lemma exists_re_neg_deriv_div_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_log
           norm_neg_deriv_div_riemannZeta_eq_norm_logDeriv _
       _ ≤ B * Real.log |t| := htwoit
 
+/-- Weak moving-line regular-part estimate from the absolutely convergent
+half-plane.
+
+For each fixed `a > 0`, current Mathlib already proves a logarithmic bound on
+`logDeriv ζ` to the right of `1 + a / log |t|`.  Combining that bound with the
+trivial estimate `||(σ-β)^{-1}|| <= (log |t|) / a` gives a regular-part bound on
+the standard moving line.  The constant depends on `a`, so this theorem is a
+baseline absolute-convergence estimate rather than the uniform Borel/Jensen
+regular-part input needed for the classical zero-free region. -/
+lemma exists_logDeriv_regular_part_sigmaOf_log_bound_of_absolute_convergence
+    {a : ℝ} (ha : 0 < a) :
+    ∃ B : ℝ, 0 ≤ B ∧ ∀ β t : ℝ, 3 ≤ |t| → β < 1 →
+      ‖logDeriv riemannZeta
+          (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t) -
+          ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+        B * Real.log |t| := by
+  rcases exists_norm_logDeriv_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_log_abs
+      ha with ⟨B₀, hB₀, hbound⟩
+  refine ⟨B₀ + 1 / a, add_nonneg hB₀ (by positivity), ?_⟩
+  intro β t ht hβ
+  let σ : ℝ := 1 + a / Real.log |t|
+  have ht2 : 2 ≤ |t| := by linarith
+  have hlog_pos : 0 < Real.log |t| := log_abs_pos_of_two_le ht2
+  have hlog_nonneg : 0 ≤ Real.log |t| := hlog_pos.le
+  have hσ_lower : 1 + a / Real.log |t| ≤ σ := by simp [σ]
+  have hlogDeriv :
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+        B₀ * Real.log |t| := by
+    exact (hbound σ t ht hσ_lower).1
+  have hgap_pos : 0 < σ - β := by
+    have hσ_gt : 1 < σ := by
+      simpa [σ] using sigmaOf_log_gt_one (T0 := 2) (a := a) (t := t)
+        (by norm_num) ha ht2
+    linarith
+  have hgap_ge : a / Real.log |t| ≤ σ - β := by
+    simp [σ]
+    linarith
+  have hprincipal :
+      ‖(((σ - β : ℝ) : ℂ)⁻¹)‖ ≤ (1 / a) * Real.log |t| := by
+    have hsmall_pos : 0 < a / Real.log |t| := div_pos ha hlog_pos
+    have hinv_le : (σ - β)⁻¹ ≤ (a / Real.log |t|)⁻¹ := by
+      have h :
+          1 / (σ - β) ≤ 1 / (a / Real.log |t|) :=
+        one_div_le_one_div_of_le hsmall_pos hgap_ge
+      simpa [one_div] using h
+    calc
+      ‖(((σ - β : ℝ) : ℂ)⁻¹)‖ = (σ - β)⁻¹ := by
+        rw [← Complex.ofReal_inv]
+        exact Complex.norm_of_nonneg (inv_nonneg.mpr hgap_pos.le)
+      _ ≤ (a / Real.log |t|)⁻¹ := hinv_le
+      _ = (1 / a) * Real.log |t| := by
+        field_simp [ne_of_gt ha, ne_of_gt hlog_pos]
+  calc
+    ‖logDeriv riemannZeta
+        (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t) -
+        ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖
+        = ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+            (((σ - β : ℝ) : ℂ)⁻¹)‖ := by simp [σ]
+    _ ≤ ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ +
+        ‖(((σ - β : ℝ) : ℂ)⁻¹)‖ := norm_sub_le _ _
+    _ ≤ B₀ * Real.log |t| + (1 / a) * Real.log |t| :=
+        add_le_add hlogDeriv hprincipal
+    _ = (B₀ + 1 / a) * Real.log |t| := by ring
+
 /-- Standard high-height vertical logarithmic-derivative bound on
 `1 <= sigma <= 2`.
 

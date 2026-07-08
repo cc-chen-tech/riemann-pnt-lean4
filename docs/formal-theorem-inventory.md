@@ -1880,6 +1880,10 @@ Core verified declarations:
   and
   `RiemannPNT.API.classical_zero_free_region_of_exists_sigmaOf_log_regular_part_norm_bound_and_two_t_logDeriv_norm_bound`
   expose the moving-line regular-part closures through the public facade.
+- `RiemannPNT.API.exists_logDeriv_regular_part_sigmaOf_log_bound_of_absolute_convergence`
+  exposes the proved weak moving-line regular-part estimate from absolute
+  convergence; the constant depends on the fixed margin `a`, so this is a
+  baseline theorem rather than the missing uniform Borel/Jensen input.
 - `RiemannPNT.API.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_sphere_zeta_bound_zeta_lower_bound_high_height`
   and
   `RiemannPNT.API.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_sphere_zeta_bound_zeta_lower_bound_on_verticalRegion`

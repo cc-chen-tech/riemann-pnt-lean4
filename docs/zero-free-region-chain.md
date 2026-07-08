@@ -650,6 +650,13 @@ proved:
   the API gap between Borel/Jensen-style regular-part outputs and the final
   named zero-free-region closures, while leaving the zeta-specific analytic
   estimates open.
+  The proved baseline
+  `ZeroFreeRegion.exists_logDeriv_regular_part_sigmaOf_log_bound_of_absolute_convergence`
+  gives an unconditional moving-line regular-part norm estimate at
+  `sigma = 1 + a/log |t|` from the Chebyshev half-plane bound and the elementary
+  principal-part inequality `1/(sigma-beta) <= (log |t|)/a`.  Its constant still
+  depends on the fixed margin `a`, so it documents the absolute-convergence
+  limit rather than closing the uniform Borel/Jensen regular-part input.
   The
   multiplicity-aware pair
   `ZeroFreeRegion.borelCaratheodory_neg_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`
