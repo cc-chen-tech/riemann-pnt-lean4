@@ -7827,6 +7827,31 @@ theorem exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_inv_le_of_absolute_co
   ZeroFreeRegion.exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_inv_le_of_absolute_convergence
     ha
 
+/-- Public uniform weak regular-part estimate on moving-line margins
+`a >= a0 > 0`. This still does not address the hard `a -> 0` regime. -/
+theorem exists_logDeriv_regular_part_sigmaOf_log_bound_of_absolute_convergence_uniform_of_le
+    {a0 : ℝ} (ha0 : 0 < a0) :
+    ∃ B : ℝ, 0 ≤ B ∧ ∀ a β t : ℝ, a0 ≤ a → 3 ≤ |t| → β < 1 →
+      ‖logDeriv riemannZeta
+          (((1 + a / Real.log |t| : ℝ) : ℂ) + Complex.I * t) -
+          ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+        B * Real.log |t| :=
+  ZeroFreeRegion.exists_logDeriv_regular_part_sigmaOf_log_bound_of_absolute_convergence_uniform_of_le
+    ha0
+
+/-- Public real-part form of the uniform-on-`a>=a0` weak regular-part estimate. -/
+theorem exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_inv_le_of_absolute_convergence_uniform_of_le
+    {a0 : ℝ} (ha0 : 0 < a0) :
+    ∃ B : ℝ, 0 ≤ B ∧ ∀ a β t : ℝ, a0 ≤ a → 3 ≤ |t| → β < 1 →
+      (-deriv riemannZeta
+          (((1 + a / Real.log |t| : ℝ) : ℂ) + Complex.I * t) /
+          riemannZeta
+            (((1 + a / Real.log |t| : ℝ) : ℂ) + Complex.I * t)).re +
+        1 / ((1 + a / Real.log |t|) - β) ≤
+      B * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_inv_le_of_absolute_convergence_uniform_of_le
+    ha0
+
 /-- Public fixed-multiplicity weak moving-line regular-part norm estimate from
 absolute convergence. The constant may depend on `a` and `n`. -/
 theorem exists_norm_multiplicity_neg_logDeriv_regular_part_sigmaOf_log_bound_of_absolute_convergence
