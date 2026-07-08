@@ -1888,6 +1888,11 @@ Core verified declarations:
   exposes the corresponding weak real-part zero-repulsion inequality
   `Re(-zeta'/zeta)(sigma+it)+1/(sigma-beta) <= B(a) log |t|` at
   `sigma = 1 + a/log |t|`.
+- `RiemannPNT.API.exists_norm_multiplicity_neg_logDeriv_regular_part_sigmaOf_log_bound_of_absolute_convergence`
+  and
+  `RiemannPNT.API.exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_multiplicity_inv_le_of_absolute_convergence`
+  expose the fixed-multiplicity versions of that weak moving-line
+  regular-part baseline.
 - `RiemannPNT.API.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_sphere_zeta_bound_zeta_lower_bound_high_height`
   and
   `RiemannPNT.API.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_sphere_zeta_bound_zeta_lower_bound_on_verticalRegion`

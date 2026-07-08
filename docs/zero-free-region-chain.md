@@ -660,7 +660,12 @@ proved:
   companion
   `ZeroFreeRegion.exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_inv_le_of_absolute_convergence`
   converts the same weak estimate into the real-part zero-repulsion shape used
-  by the 3-4-1 chain.
+  by the 3-4-1 chain.  The fixed-multiplicity companions
+  `ZeroFreeRegion.exists_norm_multiplicity_neg_logDeriv_regular_part_sigmaOf_log_bound_of_absolute_convergence`
+  and
+  `ZeroFreeRegion.exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_multiplicity_inv_le_of_absolute_convergence`
+  give the same absolute-convergence baseline for
+  `-logDeriv zeta + n/(s-rho)`; their constants may depend on `n`.
   The
   multiplicity-aware pair
   `ZeroFreeRegion.borelCaratheodory_neg_logDeriv_multiplicityRegularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`
