@@ -8433,6 +8433,54 @@ theorem classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm
   ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_high_height_affine_log_abs_add_three_logDeriv_bound
     Bregular Tregular T0 A B hBregular hTregular hT0 hA hB hregular hhigh
 
+/-- Public moving-line closure from the target-shaped high-height affine
+real-part estimate for `Re(-ζ'/ζ)`. -/
+theorem classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_high_height_affine_re_log_abs_add_three_bound
+    (Bregular Tregular T0 A B : ℝ)
+    (hBregular : 0 ≤ Bregular) (hTregular : 2 ≤ Tregular)
+    (hT0 : 3 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hregular :
+      ∀ a β t : ℝ, 0 < a → a ≤ Real.log 2 → Tregular ≤ |t| →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < (1 + a / Real.log |t|) - β →
+        ‖logDeriv riemannZeta
+            (((1 + a / Real.log |t| : ℝ) : ℂ) + Complex.I * t) -
+            ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+          Bregular * Real.log |t|)
+    (hhigh :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
+          A + B * Real.log (|t| + 3)) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_high_height_affine_re_log_abs_add_three_bound
+    Bregular Tregular T0 A B hBregular hTregular hT0 hA hB hregular hhigh
+
+/-- Public multiplicity-aware moving-line closure from the target-shaped
+high-height affine real-part estimate for `Re(-ζ'/ζ)`. -/
+theorem classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_high_height_affine_re_log_abs_add_three_bound
+    (Bregular Tregular T0 A B : ℝ)
+    (hBregular : 0 ≤ Bregular) (hTregular : 2 ≤ Tregular)
+    (hT0 : 3 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hregular :
+      ∀ a β t : ℝ, 0 < a → a ≤ Real.log 2 → Tregular ≤ |t| →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < (1 + a / Real.log |t|) - β →
+        ∃ n : ℕ, 0 < n ∧
+          ‖logDeriv riemannZeta
+              (((1 + a / Real.log |t| : ℝ) : ℂ) + Complex.I * t) -
+              (n : ℂ) *
+                ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+            Bregular * Real.log |t|)
+    (hhigh :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
+          A + B * Real.log (|t| + 3)) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_high_height_affine_re_log_abs_add_three_bound
+    Bregular Tregular T0 A B hBregular hTregular hT0 hA hB hregular hhigh
+
 /-- Public coordinate compact bounded-height norm bound for `logDeriv ζ` on
 `σ + i t`. -/
 theorem exists_norm_logDeriv_riemannZeta_sigma_it_bound_on_compact_vertical_band
@@ -15196,6 +15244,24 @@ theorem classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_ve
   ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_vertical_logDeriv_norm_bound
     Bregular Bvertical T0 hBregular hBvertical hT0 hregular hvertical
 
+/-- Public moving-line regular-part closure whose shifted input is supplied by
+the named direct real-part vertical-strip bound for `Re(-ζ'/ζ)`. -/
+theorem classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_ReNegDerivDivVerticalLogBound
+    (Bregular Tregular Bvertical Tvertical : ℝ)
+    (hBregular : 0 ≤ Bregular) (hTregular : 2 ≤ Tregular)
+    (hregular :
+      ∀ a β t : ℝ, 0 < a → a ≤ Real.log 2 → Tregular ≤ |t| →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < (1 + a / Real.log |t|) - β →
+        ‖logDeriv riemannZeta
+            (((1 + a / Real.log |t| : ℝ) : ℂ) + Complex.I * t) -
+            ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+          Bregular * Real.log |t|)
+    (hvertical : ReNegDerivDivVerticalLogBound Bvertical Tvertical) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_ReNegDerivDivVerticalLogBound
+    Bregular Tregular Bvertical Tvertical hBregular hTregular hregular hvertical
+
 /-- Public multiplicity-aware moving-line regular-part closure at
 `sigma = 1 + a / log |t|`, with a separate real-part bound for the shifted
 `sigma + 2it` term. -/
@@ -15267,6 +15333,27 @@ theorem classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm
     ZeroFreeRegion.classical_zero_free_region :=
   ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_vertical_logDeriv_norm_bound
     Bregular Bvertical T0 hBregular hBvertical hT0 hregular hvertical
+
+/-- Public multiplicity-aware moving-line closure whose shifted input is
+supplied by the named direct real-part vertical-strip bound for
+`Re(-ζ'/ζ)`. -/
+theorem classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_ReNegDerivDivVerticalLogBound
+    (Bregular Tregular Bvertical Tvertical : ℝ)
+    (hBregular : 0 ≤ Bregular) (hTregular : 2 ≤ Tregular)
+    (hregular :
+      ∀ a β t : ℝ, 0 < a → a ≤ Real.log 2 → Tregular ≤ |t| →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < (1 + a / Real.log |t|) - β →
+        ∃ n : ℕ, 0 < n ∧
+          ‖logDeriv riemannZeta
+              (((1 + a / Real.log |t| : ℝ) : ℂ) + Complex.I * t) -
+              (n : ℂ) *
+                ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+            Bregular * Real.log |t|)
+    (hvertical : ReNegDerivDivVerticalLogBound Bvertical Tvertical) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_ReNegDerivDivVerticalLogBound
+    Bregular Tregular Bvertical Tvertical hBregular hTregular hregular hvertical
 
 /-- Public moving-line regular-part assembly from primitive high-height `zeta'`
 and `zeta` controls. -/
