@@ -1812,7 +1812,10 @@ Core verified declarations:
   `RiemannPNT.API.log_deriv_zeta_finset_single_lower_bound_auto_of_signed_right_shift_borel_family`
   compose those finite-family Borel suppliers with the automatic finite
   detector lower-bound theorem, so the detector algebra now consumes
-  right-shifted local Borel hypotheses directly over `S.erase m`.
+  right-shifted local Borel hypotheses directly over `S.erase m`.  The
+  matching `_of_pos_A` variants remove the detector-facing `hM` function by
+  routing through the frequency-wise positivity-discharged finite-family
+  suppliers.
 - `RiemannPNT.API.log_deriv_zeta_bty_detector_one_lower_bound_of_right_shift_borel_family`
   and
   `RiemannPNT.API.log_deriv_zeta_bty_detector_one_lower_bound_of_signed_right_shift_borel_family`

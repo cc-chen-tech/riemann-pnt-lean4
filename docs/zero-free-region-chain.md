@@ -521,7 +521,9 @@ proved:
   `RiemannPNT.API.log_deriv_zeta_finset_single_lower_bound_auto_of_signed_right_shift_borel_family`
   now compose that finite-family Borel supplier with the automatic finite
   detector lower-bound theorem, eliminating the separate manual `hupper`
-  handoff.  Their BTY specializations
+  handoff.  Their `_of_pos_A` variants also eliminate the separate `hM`
+  function from the detector-facing API, leaving local real-part and center
+  bounds as the Borel inputs.  Their BTY specializations
   `RiemannPNT.API.log_deriv_zeta_bty_detector_one_lower_bound_of_right_shift_borel_family`
   and
   `RiemannPNT.API.log_deriv_zeta_bty_detector_one_lower_bound_of_signed_right_shift_borel_family`

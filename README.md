@@ -220,9 +220,11 @@ bridges for the two 3-4-1 shifted terms now also have `_of_pos_A` variants:
 heights `t` and `2t`, and the fixed-margin pair variants additionally
 discharge the two center norm estimates.  The finite-family supplier used by
 higher-degree detector routes has the same `_of_pos_A` positivity discharge for
-every frequency in the finite set.  These handoff lemmas do not prove the
-missing polynomial growth or boundary-strip logarithmic-derivative estimate
-itself.  On the pole side, the local decomposition
+every frequency in the finite set, and the finite-detector API now exposes
+matching `_of_pos_A` entrypoints so detector proofs no longer need a separate
+`hM` function.  These handoff lemmas do not prove the missing polynomial growth
+or boundary-strip logarithmic-derivative estimate itself.  On the pole side,
+the local decomposition
 `logDeriv ζ(s) = -(s-1)^-1 + logDeriv(unit)(s)` is now proved near `s=1`,
 and the unit logarithmic derivative is locally bounded; this improves the
 real-axis bookkeeping but still does not supply the missing high-height

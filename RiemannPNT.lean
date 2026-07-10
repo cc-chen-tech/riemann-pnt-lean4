@@ -12809,6 +12809,112 @@ theorem log_deriv_zeta_finset_single_lower_bound_auto_of_signed_right_shift_bore
   rw [hheight] at hupper
   simpa [C] using hupper
 
+/-- Public finite-detector/Borel-family bridge for `logDeriv ζ`, with the
+frequency-wise Borel positivity hypotheses discharged from `0 < Are` and
+`0 <= Bre`. -/
+theorem log_deriv_zeta_finset_single_lower_bound_auto_of_right_shift_borel_family_of_pos_A
+    {Are Bre Acenter Bcenter r H σ t : ℝ}
+    (S : Finset ℕ) (a : ℕ → ℝ) {m : ℕ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3)
+    (hHpos : 0 < H)
+    (hH : ∀ k, k ∈ S.erase m → H + 2 * r ≤ |(k : ℝ) * t|)
+    (ht : ∀ k, k ∈ S.erase m → 6 ≤ |(k : ℝ) * t|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hAre_pos : 0 < Are) (hBre_nonneg : 0 ≤ Bre)
+    (hlog : ∀ k, k ∈ S.erase m → ∀ w : ℂ,
+      w ∈ Metric.ball
+          (((σ + r : ℝ) : ℂ) + Complex.I * ((((k : ℝ) * t : ℝ) : ℂ))) (2 * r) →
+        (logDeriv riemannZeta w).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hcenter : ∀ k, k ∈ S.erase m →
+      ‖logDeriv riemannZeta
+          (((σ + r : ℝ) : ℂ) + Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hm : m ∈ S) (ha : 0 < a m)
+    (ha_nonneg : ∀ k, k ∈ S.erase m → 0 ≤ a k)
+    (hpoly : ∀ θ : ℝ, 0 ≤ ∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ)) :
+    (-deriv riemannZeta ((σ : ℂ) + (m : ℂ) * Complex.I * t) /
+      riemannZeta ((σ : ℂ) + (m : ℂ) * Complex.I * t)).re ≥
+      - (∑ k ∈ S.erase m, a k *
+          (((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+            Real.log (‖((σ : ℂ) + (k : ℂ) * Complex.I * t)‖ + 3))) / a m := by
+  let C : ℝ := (2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)
+  refine
+    log_deriv_zeta_finset_single_lower_bound_auto_of_shift_upper_bounds
+      σ (by linarith) t S a
+      (fun k => C * Real.log (‖((σ : ℂ) + (k : ℂ) * Complex.I * t)‖ + 3))
+      hm ha ha_nonneg ?_ hpoly
+  intro k hk
+  have hupper :=
+    re_neg_deriv_div_riemannZeta_finset_right_shift_le_log_norm_of_affine_logDeriv_re_le_half_radius_of_pos_A
+      (Are := Are) (Bre := Bre) (Acenter := Acenter) (Bcenter := Bcenter)
+      (r := r) (H := H) (σ := σ) (S := S.erase m)
+      (τ := fun k => (k : ℝ) * t)
+      hr hσ hσr hHpos hH ht hA hB hAre_pos hBre_nonneg hlog hcenter k hk
+  have hheight :
+      ((σ : ℂ) + Complex.I * (((k : ℝ) * t : ℝ) : ℂ)) =
+        ((σ : ℂ) + (k : ℂ) * Complex.I * t) := by
+    norm_num [Complex.ofReal_mul]
+    ring
+  rw [hheight] at hupper
+  simpa [C] using hupper
+
+/-- Public signed finite-detector/Borel-family bridge for `-logDeriv ζ`, with
+the frequency-wise Borel positivity hypotheses discharged from `0 < Are` and
+`0 <= Bre`. -/
+theorem log_deriv_zeta_finset_single_lower_bound_auto_of_signed_right_shift_borel_family_of_pos_A
+    {Are Bre Acenter Bcenter r H σ t : ℝ}
+    (S : Finset ℕ) (a : ℕ → ℝ) {m : ℕ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3)
+    (hHpos : 0 < H)
+    (hH : ∀ k, k ∈ S.erase m → H + 2 * r ≤ |(k : ℝ) * t|)
+    (ht : ∀ k, k ∈ S.erase m → 6 ≤ |(k : ℝ) * t|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hAre_pos : 0 < Are) (hBre_nonneg : 0 ≤ Bre)
+    (hlog : ∀ k, k ∈ S.erase m → ∀ w : ℂ,
+      w ∈ Metric.ball
+          (((σ + r : ℝ) : ℂ) + Complex.I * ((((k : ℝ) * t : ℝ) : ℂ))) (2 * r) →
+        (-logDeriv riemannZeta w).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hcenter : ∀ k, k ∈ S.erase m →
+      ‖-logDeriv riemannZeta
+          (((σ + r : ℝ) : ℂ) + Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) + Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hm : m ∈ S) (ha : 0 < a m)
+    (ha_nonneg : ∀ k, k ∈ S.erase m → 0 ≤ a k)
+    (hpoly : ∀ θ : ℝ, 0 ≤ ∑ k ∈ S, a k * Real.cos ((k : ℝ) * θ)) :
+    (-deriv riemannZeta ((σ : ℂ) + (m : ℂ) * Complex.I * t) /
+      riemannZeta ((σ : ℂ) + (m : ℂ) * Complex.I * t)).re ≥
+      - (∑ k ∈ S.erase m, a k *
+          (((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+            Real.log (‖((σ : ℂ) + (k : ℂ) * Complex.I * t)‖ + 3))) / a m := by
+  let C : ℝ := (2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)
+  refine
+    log_deriv_zeta_finset_single_lower_bound_auto_of_shift_upper_bounds
+      σ (by linarith) t S a
+      (fun k => C * Real.log (‖((σ : ℂ) + (k : ℂ) * Complex.I * t)‖ + 3))
+      hm ha ha_nonneg ?_ hpoly
+  intro k hk
+  have hupper :=
+    re_neg_deriv_div_riemannZeta_finset_right_shift_le_log_norm_of_affine_neg_logDeriv_re_le_half_radius_of_pos_A
+      (Are := Are) (Bre := Bre) (Acenter := Acenter) (Bcenter := Bcenter)
+      (r := r) (H := H) (σ := σ) (S := S.erase m)
+      (τ := fun k => (k : ℝ) * t)
+      hr hσ hσr hHpos hH ht hA hB hAre_pos hBre_nonneg hlog hcenter k hk
+  have hheight :
+      ((σ : ℂ) + Complex.I * (((k : ℝ) * t : ℝ) : ℂ)) =
+        ((σ : ℂ) + (k : ℂ) * Complex.I * t) := by
+    norm_num [Complex.ofReal_mul]
+    ring
+  rw [hheight] at hupper
+  simpa [C] using hupper
+
 /-- Public BTY degree-16 specialization of the finite detector/Borel-family
 bridge for `logDeriv ζ`.  This discharges the detector nonnegativity and BTY
 coefficient side conditions, leaving only the future right-shifted Borel
