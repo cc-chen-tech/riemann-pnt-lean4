@@ -1041,6 +1041,10 @@ Core verified declarations:
   `exists_eventually_norm_neg_logDeriv_le_const_of_analyticAt_ne_zero`
   prove local boundedness of `logDeriv g` and `-logDeriv g` for any analytic
   function nonzero at the center.
+- `exists_eventually_norm_logDeriv_riemannZeta_le_const_of_ne_one_of_ne_zero`,
+  its signed version, and the corresponding horizontal atRight variants
+  specialize the same local boundedness to ζ away from the pole at a nonzero
+  center.
 - The automatic `..._analyticAt_order_eq_nat_auto` lemmas, together with their
   zeta-specific variants, turn analytic-order principal-part decompositions
   into punctured-ball regular-part norm bounds with an internally chosen

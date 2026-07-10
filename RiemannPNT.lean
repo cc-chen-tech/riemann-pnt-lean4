@@ -7465,6 +7465,44 @@ theorem exists_eventually_norm_neg_logDeriv_le_const_of_analyticAt_ne_zero
   ZeroFreeRegion.exists_eventually_norm_neg_logDeriv_le_const_of_analyticAt_ne_zero
     hg hg_ne
 
+/-- Public zeta-specific local boundedness of `logDeriv ζ` at a nonzero point
+away from the pole. -/
+theorem exists_eventually_norm_logDeriv_riemannZeta_le_const_of_ne_one_of_ne_zero
+    {z : ℂ} (hz1 : z ≠ 1) (hzeta : riemannZeta z ≠ 0) :
+    ∃ M : ℝ, 0 ≤ M ∧ ∀ᶠ w in 𝓝 z, ‖logDeriv riemannZeta w‖ ≤ M :=
+  ZeroFreeRegion.exists_eventually_norm_logDeriv_riemannZeta_le_const_of_ne_one_of_ne_zero
+    hz1 hzeta
+
+/-- Public signed zeta-specific local boundedness of `logDeriv ζ` at a nonzero
+point away from the pole. -/
+theorem exists_eventually_norm_neg_logDeriv_riemannZeta_le_const_of_ne_one_of_ne_zero
+    {z : ℂ} (hz1 : z ≠ 1) (hzeta : riemannZeta z ≠ 0) :
+    ∃ M : ℝ, 0 ≤ M ∧ ∀ᶠ w in 𝓝 z, ‖-logDeriv riemannZeta w‖ ≤ M :=
+  ZeroFreeRegion.exists_eventually_norm_neg_logDeriv_riemannZeta_le_const_of_ne_one_of_ne_zero
+    hz1 hzeta
+
+/-- Public horizontal right-neighborhood local boundedness of `logDeriv ζ` at a
+nonzero point away from the pole. -/
+theorem exists_eventually_atRight_norm_logDeriv_riemannZeta_sigma_it_le_const_of_ne_one_of_ne_zero
+    {β t : ℝ}
+    (hρ1 : ((β : ℂ) + I * t) ≠ 1)
+    (hzeta : riemannZeta ((β : ℂ) + I * t) ≠ 0) :
+    ∃ M : ℝ, 0 ≤ M ∧ ∀ᶠ (σ : ℝ) in 𝓝[Set.Ioi β] β,
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤ M :=
+  ZeroFreeRegion.exists_eventually_atRight_norm_logDeriv_riemannZeta_sigma_it_le_const_of_ne_one_of_ne_zero
+    hρ1 hzeta
+
+/-- Public signed horizontal right-neighborhood local boundedness of
+`logDeriv ζ` at a nonzero point away from the pole. -/
+theorem exists_eventually_atRight_norm_neg_logDeriv_riemannZeta_sigma_it_le_const_of_ne_one_of_ne_zero
+    {β t : ℝ}
+    (hρ1 : ((β : ℂ) + I * t) ≠ 1)
+    (hzeta : riemannZeta ((β : ℂ) + I * t) ≠ 0) :
+    ∃ M : ℝ, 0 ≤ M ∧ ∀ᶠ (σ : ℝ) in 𝓝[Set.Ioi β] β,
+      ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤ M :=
+  ZeroFreeRegion.exists_eventually_atRight_norm_neg_logDeriv_riemannZeta_sigma_it_le_const_of_ne_one_of_ne_zero
+    hρ1 hzeta
+
 /-- Public automatic bridge from analytic order to a punctured-ball regular-part
 norm estimate. -/
 theorem exists_punctured_ball_norm_logDeriv_sub_order_mul_inv_le_of_analyticAt_order_eq_nat_auto

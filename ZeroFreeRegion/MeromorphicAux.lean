@@ -9985,6 +9985,62 @@ lemma exists_eventually_norm_neg_logDeriv_le_const_of_analyticAt_ne_zero
   filter_upwards [hbound] with z hz
   simpa using hz
 
+/-- Zeta-specific local boundedness of `logDeriv ζ` at a nonzero point away
+from the pole. -/
+lemma exists_eventually_norm_logDeriv_riemannZeta_le_const_of_ne_one_of_ne_zero
+    {z : ℂ} (hz1 : z ≠ 1) (hzeta : riemannZeta z ≠ 0) :
+    ∃ M : ℝ, 0 ≤ M ∧ ∀ᶠ w in 𝓝 z, ‖logDeriv riemannZeta w‖ ≤ M := by
+  exact exists_eventually_norm_logDeriv_le_const_of_analyticAt_ne_zero
+    (analyticOnNhd_riemannZeta_ne_one z hz1) hzeta
+
+/-- Signed zeta-specific local boundedness of `logDeriv ζ` at a nonzero point
+away from the pole. -/
+lemma exists_eventually_norm_neg_logDeriv_riemannZeta_le_const_of_ne_one_of_ne_zero
+    {z : ℂ} (hz1 : z ≠ 1) (hzeta : riemannZeta z ≠ 0) :
+    ∃ M : ℝ, 0 ≤ M ∧ ∀ᶠ w in 𝓝 z, ‖-logDeriv riemannZeta w‖ ≤ M := by
+  exact exists_eventually_norm_neg_logDeriv_le_const_of_analyticAt_ne_zero
+    (analyticOnNhd_riemannZeta_ne_one z hz1) hzeta
+
+/-- Horizontal right-neighborhood local boundedness of `logDeriv ζ` at a
+nonzero point away from the pole. -/
+lemma exists_eventually_atRight_norm_logDeriv_riemannZeta_sigma_it_le_const_of_ne_one_of_ne_zero
+    {β t : ℝ}
+    (hρ1 : ((β : ℂ) + I * t) ≠ 1)
+    (hzeta : riemannZeta ((β : ℂ) + I * t) ≠ 0) :
+    ∃ M : ℝ, 0 ≤ M ∧ ∀ᶠ (σ : ℝ) in 𝓝[Set.Ioi β] β,
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤ M := by
+  rcases exists_eventually_norm_logDeriv_riemannZeta_le_const_of_ne_one_of_ne_zero
+      hρ1 hzeta with
+    ⟨M, hM, hbound⟩
+  refine ⟨M, hM, ?_⟩
+  have hcont : ContinuousAt (fun σ : ℝ => ((σ : ℂ) + I * t)) β := by
+    exact Complex.continuous_ofReal.continuousAt.add continuousAt_const
+  have htendsto :
+      Tendsto (fun σ : ℝ => ((σ : ℂ) + I * t)) (𝓝[Set.Ioi β] β)
+        (𝓝 ((β : ℂ) + I * t)) :=
+    hcont.tendsto.mono_left nhdsWithin_le_nhds
+  exact htendsto.eventually hbound
+
+/-- Signed horizontal right-neighborhood local boundedness of `logDeriv ζ` at
+a nonzero point away from the pole. -/
+lemma exists_eventually_atRight_norm_neg_logDeriv_riemannZeta_sigma_it_le_const_of_ne_one_of_ne_zero
+    {β t : ℝ}
+    (hρ1 : ((β : ℂ) + I * t) ≠ 1)
+    (hzeta : riemannZeta ((β : ℂ) + I * t) ≠ 0) :
+    ∃ M : ℝ, 0 ≤ M ∧ ∀ᶠ (σ : ℝ) in 𝓝[Set.Ioi β] β,
+      ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤ M := by
+  rcases exists_eventually_norm_neg_logDeriv_riemannZeta_le_const_of_ne_one_of_ne_zero
+      hρ1 hzeta with
+    ⟨M, hM, hbound⟩
+  refine ⟨M, hM, ?_⟩
+  have hcont : ContinuousAt (fun σ : ℝ => ((σ : ℂ) + I * t)) β := by
+    exact Complex.continuous_ofReal.continuousAt.add continuousAt_const
+  have htendsto :
+      Tendsto (fun σ : ℝ => ((σ : ℂ) + I * t)) (𝓝[Set.Ioi β] β)
+        (𝓝 ((β : ℂ) + I * t)) :=
+    hcont.tendsto.mono_left nhdsWithin_le_nhds
+  exact htendsto.eventually hbound
+
 /-- Automatic punctured-ball regular-part bound from an analytic-order
 factorization.  The local bound on the analytic unit is proved internally. -/
 lemma exists_punctured_ball_norm_logDeriv_sub_order_mul_inv_le_of_analyticAt_order_eq_nat_auto

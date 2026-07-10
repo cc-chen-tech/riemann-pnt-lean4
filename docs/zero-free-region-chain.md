@@ -1351,9 +1351,12 @@ for estimates that are already available from height `2`.
 The local bounded-unit side of these principal-part decompositions is now
 automatic: `ZeroFreeRegion.exists_eventually_norm_logDeriv_le_const_of_analyticAt_ne_zero`
 and its signed version prove local boundedness of the logarithmic derivative
-for any analytic unit, and the `..._analyticAt_order_eq_nat_auto` lemmas
-package this into punctured-ball regular-part bounds, including zeta-specific
-auto wrappers.  For actual zeta zeros, the additional wrappers
+for any analytic unit.  The zeta-specific
+`ZeroFreeRegion.exists_eventually_norm_logDeriv_riemannZeta_le_const_of_ne_one_of_ne_zero`
+wrappers and their horizontal atRight forms supply the same local boundedness
+around nonzero shifted points away from the pole, and the
+`..._analyticAt_order_eq_nat_auto` lemmas package this into punctured-ball
+regular-part bounds, including zeta-specific auto wrappers.  For actual zeta zeros, the additional wrappers
 `ZeroFreeRegion.analyticOrderNatAt_riemannZeta_pos_of_zero`,
 `ZeroFreeRegion.exists_punctured_ball_norm_logDeriv_riemannZeta_sub_analyticOrderNatAt_mul_inv_le_of_zero_auto`,
 and the signed/closed-ball variants now choose the multiplicity internally as
