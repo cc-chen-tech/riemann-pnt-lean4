@@ -175,6 +175,9 @@ Core verified declarations:
   zero-repulsion inequality used by the 3-4-1 argument.  The
   `_le_log_abs_of_zero_auto` variants normalize this local constant as
   `C * log |t|` above height `3`, without making `C` uniform in the zero.
+  `exists_eventually_atRight_re_neg_deriv_div_riemannZeta_add_inv_le_log_abs_of_zero_auto`
+  packages the same estimate as an eventual statement on the right-neighborhood
+  of `beta`.
   These remove the need to supply an explicit
   `analyticOrderAt riemannZeta rho = n` hypothesis in local zero arguments.
 - `exists_norm_logDeriv_riemannZeta_le_log_abs_im_add_three_of_one_add_le_re`

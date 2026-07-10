@@ -7713,6 +7713,21 @@ theorem exists_real_punctured_closed_interval_re_neg_deriv_div_riemannZeta_add_i
   ZeroFreeRegion.exists_real_punctured_closed_interval_re_neg_deriv_div_riemannZeta_add_inv_le_log_abs_of_zero_auto
     ht hρ1 hzero
 
+/-- Public right-neighborhood form of the local logarithmic-scale real-part
+zero-repulsion inequality at an actual zeta zero.  The constant is local to the
+zero; this is not the uniform high-height logarithmic derivative estimate. -/
+theorem exists_eventually_atRight_re_neg_deriv_div_riemannZeta_add_inv_le_log_abs_of_zero_auto
+    {β t : ℝ}
+    (ht : 3 ≤ |t|)
+    (hρ1 : ((β : ℂ) + I * t) ≠ 1)
+    (hzero : riemannZeta ((β : ℂ) + I * t) = 0) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ (σ : ℝ) in 𝓝[Set.Ioi β] β,
+      (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re +
+        1 / (σ - β) ≤ C * Real.log |t| :=
+  ZeroFreeRegion.exists_eventually_atRight_re_neg_deriv_div_riemannZeta_add_inv_le_log_abs_of_zero_auto
+    ht hρ1 hzero
+
 /-- Public generic bridge: analytic nonvanishing implies analytic logarithmic
 derivative. -/
 theorem analyticAt_logDeriv_of_analyticAt_ne_zero

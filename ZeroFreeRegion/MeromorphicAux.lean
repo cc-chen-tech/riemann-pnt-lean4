@@ -10559,6 +10559,32 @@ lemma exists_real_punctured_closed_interval_re_neg_deriv_div_riemannZeta_add_inv
       _ ≤ M * Real.log |t| := mul_le_mul_of_nonneg_left hlog_ge_one hM
   exact (hbound σ hσ_ne hdist hsub).trans hM_le
 
+/-- Right-neighborhood form of the local logarithmic-scale real-part
+zero-repulsion inequality at an actual zeta zero.  The constant is still local
+to the zero; this is a caller-facing shape for local disk/Jensen inputs, not the
+missing uniform high-height estimate. -/
+lemma exists_eventually_atRight_re_neg_deriv_div_riemannZeta_add_inv_le_log_abs_of_zero_auto
+    {β t : ℝ} (ht : 3 ≤ |t|)
+    (hρ1 : ((β : ℂ) + I * t) ≠ 1)
+    (hzero : riemannZeta ((β : ℂ) + I * t) = 0) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ (σ : ℝ) in 𝓝[Set.Ioi β] β,
+      (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re +
+        1 / (σ - β) ≤ C * Real.log |t| := by
+  rcases exists_real_punctured_interval_re_neg_deriv_div_riemannZeta_add_inv_le_log_abs_of_zero_auto
+      ht hρ1 hzero with
+    ⟨r, C, hr, hC, hbound⟩
+  refine ⟨C, hC, ?_⟩
+  rw [eventually_nhdsWithin_iff]
+  rw [Metric.eventually_nhds_iff]
+  refine ⟨r, hr, ?_⟩
+  intro σ hdist hσgt
+  have hsub : 0 < σ - β := sub_pos.mpr hσgt
+  have hne : σ ≠ β := by linarith
+  have habs : |σ - β| < r := by
+    simpa [Real.dist_eq] using hdist
+  exact hbound σ hne habs hsub
+
 /-- If `f` is analytic and nonzero at `z`, then its logarithmic derivative is
 analytic at `z`. -/
 lemma analyticAt_logDeriv_of_analyticAt_ne_zero {f : ℂ → ℂ} {z : ℂ}
