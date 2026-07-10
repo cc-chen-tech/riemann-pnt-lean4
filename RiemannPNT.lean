@@ -13015,6 +13015,286 @@ theorem log_deriv_zeta_bty_detector_one_lower_bound_of_signed_right_shift_borel_
         btyDetectorScale_pos btyScaledComplexExpAbsSqCertificate)
   simpa using h
 
+/-- Public BTY degree-16 right-shifted Borel bridge for `logDeriv ζ`, with
+the frequency-wise Borel positivity hypotheses discharged from `0 < Are` and
+`0 <= Bre`. -/
+theorem log_deriv_zeta_bty_detector_one_lower_bound_of_right_shift_borel_family_of_pos_A
+    {Are Bre Acenter Bcenter r H σ t : ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3)
+    (hHpos : 0 < H)
+    (hH : ∀ k, k ∈ btyDetectorSupport.erase 1 → H + 2 * r ≤ |(k : ℝ) * t|)
+    (ht : ∀ k, k ∈ btyDetectorSupport.erase 1 → 6 ≤ |(k : ℝ) * t|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hAre_pos : 0 < Are) (hBre_nonneg : 0 ≤ Bre)
+    (hlog : ∀ k, k ∈ btyDetectorSupport.erase 1 → ∀ w : ℂ,
+      w ∈ Metric.ball
+          (((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ))) (2 * r) →
+        (logDeriv riemannZeta w).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) +
+              Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hcenter : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      ‖logDeriv riemannZeta
+          (((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3)) :
+    (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+      riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+      - (∑ k ∈ btyDetectorSupport.erase 1, btyDetectorCoeff k *
+          (((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+            Real.log (‖((σ : ℂ) + (k : ℂ) * Complex.I * t)‖ + 3))) /
+        btyDetectorCoeff 1 := by
+  have h :=
+    log_deriv_zeta_finset_single_lower_bound_auto_of_right_shift_borel_family_of_pos_A
+      (Are := Are) (Bre := Bre) (Acenter := Acenter) (Bcenter := Bcenter)
+      (r := r) (H := H) (σ := σ) (t := t)
+      btyDetectorSupport btyDetectorCoeff
+      hr hσ hσr hHpos hH ht hA hB hAre_pos hBre_nonneg hlog hcenter
+      one_mem_btyDetectorSupport btyDetectorCoeff_one_pos
+      (fun k hk => btyDetectorCoeff_nonneg_of_mem_support (Finset.mem_of_mem_erase hk))
+      (trigPolynomial_nonneg_of_scaled_complex_exp_abs_sq_certificate
+        btyDetectorScale btyDetectorSupport btyExpSupport
+        btyDetectorCoeff btyExpCoeff
+        btyDetectorScale_pos btyScaledComplexExpAbsSqCertificate)
+  simpa using h
+
+/-- Public signed BTY degree-16 right-shifted Borel bridge for `-logDeriv ζ`,
+with the frequency-wise Borel positivity hypotheses discharged from `0 < Are`
+and `0 <= Bre`. -/
+theorem log_deriv_zeta_bty_detector_one_lower_bound_of_signed_right_shift_borel_family_of_pos_A
+    {Are Bre Acenter Bcenter r H σ t : ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3)
+    (hHpos : 0 < H)
+    (hH : ∀ k, k ∈ btyDetectorSupport.erase 1 → H + 2 * r ≤ |(k : ℝ) * t|)
+    (ht : ∀ k, k ∈ btyDetectorSupport.erase 1 → 6 ≤ |(k : ℝ) * t|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hAre_pos : 0 < Are) (hBre_nonneg : 0 ≤ Bre)
+    (hlog : ∀ k, k ∈ btyDetectorSupport.erase 1 → ∀ w : ℂ,
+      w ∈ Metric.ball
+          (((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ))) (2 * r) →
+        (-logDeriv riemannZeta w).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) +
+              Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hcenter : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      ‖-logDeriv riemannZeta
+          (((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3)) :
+    (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+      riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+      - (∑ k ∈ btyDetectorSupport.erase 1, btyDetectorCoeff k *
+          (((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+            Real.log (‖((σ : ℂ) + (k : ℂ) * Complex.I * t)‖ + 3))) /
+        btyDetectorCoeff 1 := by
+  have h :=
+    log_deriv_zeta_finset_single_lower_bound_auto_of_signed_right_shift_borel_family_of_pos_A
+      (Are := Are) (Bre := Bre) (Acenter := Acenter) (Bcenter := Bcenter)
+      (r := r) (H := H) (σ := σ) (t := t)
+      btyDetectorSupport btyDetectorCoeff
+      hr hσ hσr hHpos hH ht hA hB hAre_pos hBre_nonneg hlog hcenter
+      one_mem_btyDetectorSupport btyDetectorCoeff_one_pos
+      (fun k hk => btyDetectorCoeff_nonneg_of_mem_support (Finset.mem_of_mem_erase hk))
+      (trigPolynomial_nonneg_of_scaled_complex_exp_abs_sq_certificate
+        btyDetectorScale btyDetectorSupport btyExpSupport
+        btyDetectorCoeff btyExpCoeff
+        btyDetectorScale_pos btyScaledComplexExpAbsSqCertificate)
+  simpa using h
+
+/-- Public BTY degree-16 right-shifted Borel bridge with a uniform final upper
+bound, with frequency-wise Borel positivity discharged from `0 < Are` and
+`0 <= Bre`. -/
+theorem log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_right_shift_borel_family_of_pos_A
+    {Are Bre Acenter Bcenter r H σ t Bupper : ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3)
+    (hHpos : 0 < H)
+    (hH : ∀ k, k ∈ btyDetectorSupport.erase 1 → H + 2 * r ≤ |(k : ℝ) * t|)
+    (ht : ∀ k, k ∈ btyDetectorSupport.erase 1 → 6 ≤ |(k : ℝ) * t|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hAre_pos : 0 < Are) (hBre_nonneg : 0 ≤ Bre)
+    (hlog : ∀ k, k ∈ btyDetectorSupport.erase 1 → ∀ w : ℂ,
+      w ∈ Metric.ball
+          (((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ))) (2 * r) →
+        (logDeriv riemannZeta w).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) +
+              Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hcenter : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      ‖logDeriv riemannZeta
+          (((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hBupper : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+        Real.log (‖((σ : ℂ) + (k : ℂ) * Complex.I * t)‖ + 3) ≤ Bupper) :
+    (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+      riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+      - (((6917296 : ℝ) / 2485395) * Bupper) / btyDetectorCoeff 1 := by
+  refine
+    log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_shift_upper_bound
+      σ (by linarith) t Bupper ?_
+  intro k hk
+  have hupper :=
+    re_neg_deriv_div_riemannZeta_finset_right_shift_le_log_norm_of_affine_logDeriv_re_le_half_radius_of_pos_A
+      (Are := Are) (Bre := Bre) (Acenter := Acenter) (Bcenter := Bcenter)
+      (r := r) (H := H) (σ := σ) (S := btyDetectorSupport.erase 1)
+      (τ := fun k => (k : ℝ) * t)
+      hr hσ hσr hHpos hH ht hA hB hAre_pos hBre_nonneg hlog hcenter k hk
+  have hheight :
+      ((σ : ℂ) + Complex.I * (((k : ℝ) * t : ℝ) : ℂ)) =
+        ((σ : ℂ) + (k : ℂ) * Complex.I * t) := by
+    norm_num [Complex.ofReal_mul]
+    ring
+  rw [hheight] at hupper
+  exact hupper.trans (hBupper k hk)
+
+/-- Simplified-constant version of
+`log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_right_shift_borel_family_of_pos_A`. -/
+theorem log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_right_shift_borel_family_simplified_of_pos_A
+    {Are Bre Acenter Bcenter r H σ t Bupper : ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3)
+    (hHpos : 0 < H)
+    (hH : ∀ k, k ∈ btyDetectorSupport.erase 1 → H + 2 * r ≤ |(k : ℝ) * t|)
+    (ht : ∀ k, k ∈ btyDetectorSupport.erase 1 → 6 ≤ |(k : ℝ) * t|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hAre_pos : 0 < Are) (hBre_nonneg : 0 ≤ Bre)
+    (hlog : ∀ k, k ∈ btyDetectorSupport.erase 1 → ∀ w : ℂ,
+      w ∈ Metric.ball
+          (((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ))) (2 * r) →
+        (logDeriv riemannZeta w).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) +
+              Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hcenter : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      ‖logDeriv riemannZeta
+          (((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hBupper : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+        Real.log (‖((σ : ℂ) + (k : ℂ) * Complex.I * t)‖ + 3) ≤ Bupper) :
+    (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+      riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+      - ((3458648 : ℝ) / 2163835) * Bupper := by
+  have h :=
+    log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_right_shift_borel_family_of_pos_A
+      hr hσ hσr hHpos hH ht hA hB hAre_pos hBre_nonneg hlog hcenter hBupper
+  have hconst :
+      - (((6917296 : ℝ) / 2485395) * Bupper) / btyDetectorCoeff 1 =
+        - ((3458648 : ℝ) / 2163835) * Bupper := by
+    rw [btyDetectorCoeff_one]
+    ring_nf
+  simpa [hconst] using h
+
+/-- Public signed BTY degree-16 right-shifted Borel bridge with a uniform
+final upper bound, with frequency-wise Borel positivity discharged from
+`0 < Are` and `0 <= Bre`. -/
+theorem log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_signed_right_shift_borel_family_of_pos_A
+    {Are Bre Acenter Bcenter r H σ t Bupper : ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3)
+    (hHpos : 0 < H)
+    (hH : ∀ k, k ∈ btyDetectorSupport.erase 1 → H + 2 * r ≤ |(k : ℝ) * t|)
+    (ht : ∀ k, k ∈ btyDetectorSupport.erase 1 → 6 ≤ |(k : ℝ) * t|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hAre_pos : 0 < Are) (hBre_nonneg : 0 ≤ Bre)
+    (hlog : ∀ k, k ∈ btyDetectorSupport.erase 1 → ∀ w : ℂ,
+      w ∈ Metric.ball
+          (((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ))) (2 * r) →
+        (-logDeriv riemannZeta w).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) +
+              Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hcenter : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      ‖-logDeriv riemannZeta
+          (((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hBupper : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+        Real.log (‖((σ : ℂ) + (k : ℂ) * Complex.I * t)‖ + 3) ≤ Bupper) :
+    (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+      riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+      - (((6917296 : ℝ) / 2485395) * Bupper) / btyDetectorCoeff 1 := by
+  refine
+    log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_shift_upper_bound
+      σ (by linarith) t Bupper ?_
+  intro k hk
+  have hupper :=
+    re_neg_deriv_div_riemannZeta_finset_right_shift_le_log_norm_of_affine_neg_logDeriv_re_le_half_radius_of_pos_A
+      (Are := Are) (Bre := Bre) (Acenter := Acenter) (Bcenter := Bcenter)
+      (r := r) (H := H) (σ := σ) (S := btyDetectorSupport.erase 1)
+      (τ := fun k => (k : ℝ) * t)
+      hr hσ hσr hHpos hH ht hA hB hAre_pos hBre_nonneg hlog hcenter k hk
+  have hheight :
+      ((σ : ℂ) + Complex.I * (((k : ℝ) * t : ℝ) : ℂ)) =
+        ((σ : ℂ) + (k : ℂ) * Complex.I * t) := by
+    norm_num [Complex.ofReal_mul]
+    ring
+  rw [hheight] at hupper
+  exact hupper.trans (hBupper k hk)
+
+/-- Simplified-constant signed version of
+`log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_signed_right_shift_borel_family_of_pos_A`. -/
+theorem log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_signed_right_shift_borel_family_simplified_of_pos_A
+    {Are Bre Acenter Bcenter r H σ t Bupper : ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3)
+    (hHpos : 0 < H)
+    (hH : ∀ k, k ∈ btyDetectorSupport.erase 1 → H + 2 * r ≤ |(k : ℝ) * t|)
+    (ht : ∀ k, k ∈ btyDetectorSupport.erase 1 → 6 ≤ |(k : ℝ) * t|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hAre_pos : 0 < Are) (hBre_nonneg : 0 ≤ Bre)
+    (hlog : ∀ k, k ∈ btyDetectorSupport.erase 1 → ∀ w : ℂ,
+      w ∈ Metric.ball
+          (((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ))) (2 * r) →
+        (-logDeriv riemannZeta w).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) +
+              Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hcenter : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      ‖-logDeriv riemannZeta
+          (((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) +
+            Complex.I * ((((k : ℝ) * t : ℝ) : ℂ)))‖ + 3))
+    (hBupper : ∀ k, k ∈ btyDetectorSupport.erase 1 →
+      ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+        Real.log (‖((σ : ℂ) + (k : ℂ) * Complex.I * t)‖ + 3) ≤ Bupper) :
+    (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+      riemannZeta ((σ : ℂ) + Complex.I * t)).re ≥
+      - ((3458648 : ℝ) / 2163835) * Bupper := by
+  have h :=
+    log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_signed_right_shift_borel_family_of_pos_A
+      hr hσ hσr hHpos hH ht hA hB hAre_pos hBre_nonneg hlog hcenter hBupper
+  have hconst :
+      - (((6917296 : ℝ) / 2485395) * Bupper) / btyDetectorCoeff 1 =
+        - ((3458648 : ℝ) / 2163835) * Bupper := by
+    rw [btyDetectorCoeff_one]
+    ring_nf
+  simpa [hconst] using h
+
 /-- Public BTY degree-16 right-shifted Borel bridge with a uniform final upper
 bound for the remaining frequencies.  The coefficient sum over
 `btyDetectorSupport.erase 1` is already evaluated. -/

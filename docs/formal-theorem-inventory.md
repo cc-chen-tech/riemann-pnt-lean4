@@ -1821,7 +1821,9 @@ Core verified declarations:
   `RiemannPNT.API.log_deriv_zeta_bty_detector_one_lower_bound_of_signed_right_shift_borel_family`
   specialize that composition to the checked BTY degree-16 detector and the
   selected `k = 1` term, discharging the BTY certificate and coefficient
-  nonnegativity side conditions.
+  nonnegativity side conditions.  Their `_of_pos_A` variants remove the
+  detector-facing `hM` function from the BTY entrypoint by routing through the
+  positivity-discharged finite-family suppliers.
 - `RiemannPNT.API.log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_right_shift_borel_family`,
   `RiemannPNT.API.log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_right_shift_borel_family_simplified`,
   and
@@ -1830,7 +1832,9 @@ Core verified declarations:
   use the computed sum
   `sum_{k in btyDetectorSupport.erase 1} btyDetectorCoeff k =
   6917296 / 2485395`; the unsigned simplified facade rewrites the resulting
-  penalty as `3458648 / 2163835`.
+  penalty as `3458648 / 2163835`.  The corresponding unsigned, signed, and
+  simplified `_of_pos_A` variants keep this one-constant interface while
+  deriving the Borel positivity side condition from `0 < Are` and `0 <= Bre`.
 - `RiemannPNT.API.log_deriv_zeta_bty_detector_one_lower_bound_of_center_and_LogDerivVerticalLogBound`
   exposes the mixed BTY entrypoint that consumes a future named vertical
   logarithmic-derivative estimate plus a separate central-term bound.

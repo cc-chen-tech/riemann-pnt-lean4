@@ -528,13 +528,19 @@ proved:
   and
   `RiemannPNT.API.log_deriv_zeta_bty_detector_one_lower_bound_of_signed_right_shift_borel_family`
   discharge the checked degree-16 detector certificate and coefficient
-  side-conditions for the selected `k=1` term.  The uniform variants
+  side-conditions for the selected `k=1` term.  Their `_of_pos_A` variants
+  inherit the finite-family positivity discharge, replacing the remaining
+  detector-facing `hM` input with `0 < Are` and `0 <= Bre`.  The uniform
+  variants
   `RiemannPNT.API.log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_right_shift_borel_family`
   and
   `RiemannPNT.API.log_deriv_zeta_bty_detector_one_lower_bound_of_uniform_signed_right_shift_borel_family`
   additionally use the computed remaining-coefficient sum
   `6917296 / 2485395`, yielding the one-constant upper-bound interface needed
-  after future global height comparisons.  The named-bound entrypoint
+  after future global height comparisons.  Their simplified and signed
+  `_of_pos_A` facades keep the same one-constant output while eliminating the
+  Borel positivity side condition in the BTY entrypoint.  The named-bound
+  entrypoint
   `RiemannPNT.API.log_deriv_zeta_bty_detector_one_lower_bound_of_center_and_LogDerivVerticalLogBound`
   gives the current exact handoff from a future `LogDerivVerticalLogBound` to
   the checked BTY detector, with the `k=0` center term still explicit; its
