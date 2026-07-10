@@ -7713,6 +7713,22 @@ theorem exists_real_punctured_closed_interval_re_neg_deriv_div_riemannZeta_add_i
   ZeroFreeRegion.exists_real_punctured_closed_interval_re_neg_deriv_div_riemannZeta_add_inv_le_log_abs_of_zero_auto
     ht hρ1 hzero
 
+/-- Public right-neighborhood logarithmic-scale signed norm regular-part bound
+at an actual zeta zero.  The multiplicity is chosen automatically; the constant
+is local to the zero, not uniform in height. -/
+theorem exists_eventually_atRight_norm_neg_logDeriv_riemannZeta_add_analyticOrderNatAt_mul_inv_le_log_abs_of_zero_auto
+    {β t : ℝ}
+    (ht : 3 ≤ |t|)
+    (hρ1 : ((β : ℂ) + I * t) ≠ 1)
+    (hzero : riemannZeta ((β : ℂ) + I * t) = 0) :
+    0 < analyticOrderNatAt riemannZeta ((β : ℂ) + I * t) ∧
+      ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ (σ : ℝ) in 𝓝[Set.Ioi β] β,
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t) +
+          (analyticOrderNatAt riemannZeta ((β : ℂ) + I * t) : ℂ) *
+            (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤ C * Real.log |t| :=
+  ZeroFreeRegion.exists_eventually_atRight_norm_neg_logDeriv_riemannZeta_add_analyticOrderNatAt_mul_inv_le_log_abs_of_zero_auto
+    ht hρ1 hzero
+
 /-- Public right-neighborhood form of the local logarithmic-scale real-part
 zero-repulsion inequality at an actual zeta zero.  The constant is local to the
 zero; this is not the uniform high-height logarithmic derivative estimate. -/

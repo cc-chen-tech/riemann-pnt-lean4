@@ -1361,8 +1361,9 @@ statements.  The corresponding `_le_log_abs_of_zero_auto` variants express the
 same local constant as `C * log |t|` once `3 <= |t|`; the remaining hard input is
 still a uniform high-height logarithmic coefficient, not local existence of some
 constant.  The `exists_eventually_atRight_...` wrapper gives the same local
-estimate in the right-neighborhood filter at `beta`, which is the shape most
-local disk/Jensen callers need.
+estimate in the right-neighborhood filter at `beta`; the signed norm atRight
+wrapper exposes the stronger regular-part form before taking real parts.  This
+is the shape most local disk/Jensen callers need.
 The high-height wrappers
 `ZeroFreeRegion.classical_zero_free_region_of_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height`
 and

@@ -10559,6 +10559,39 @@ lemma exists_real_punctured_closed_interval_re_neg_deriv_div_riemannZeta_add_inv
       _ ≤ M * Real.log |t| := mul_le_mul_of_nonneg_left hlog_ge_one hM
   exact (hbound σ hσ_ne hdist hsub).trans hM_le
 
+/-- Right-neighborhood logarithmic-scale signed norm regular-part bound at an
+actual zeta zero.  The multiplicity is chosen automatically as
+`analyticOrderNatAt riemannZeta (β + i t)`, and the constant remains local to
+the zero. -/
+lemma exists_eventually_atRight_norm_neg_logDeriv_riemannZeta_add_analyticOrderNatAt_mul_inv_le_log_abs_of_zero_auto
+    {β t : ℝ} (ht : 3 ≤ |t|)
+    (hρ1 : ((β : ℂ) + I * t) ≠ 1)
+    (hzero : riemannZeta ((β : ℂ) + I * t) = 0) :
+    0 < analyticOrderNatAt riemannZeta ((β : ℂ) + I * t) ∧
+      ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ (σ : ℝ) in 𝓝[Set.Ioi β] β,
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t) +
+          (analyticOrderNatAt riemannZeta ((β : ℂ) + I * t) : ℂ) *
+            (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤ C * Real.log |t| := by
+  rcases exists_real_punctured_interval_norm_neg_logDeriv_riemannZeta_add_analyticOrderNatAt_mul_inv_le_of_zero_auto
+      hρ1 hzero with
+    ⟨hn_pos, r, M, hr, hM, hbound⟩
+  refine ⟨hn_pos, M, hM, ?_⟩
+  rw [eventually_nhdsWithin_iff]
+  rw [Metric.eventually_nhds_iff]
+  refine ⟨r, hr, ?_⟩
+  intro σ hdist hσgt
+  have hne : σ ≠ β := ne_of_gt hσgt
+  have habs : |σ - β| < r := by
+    simpa [Real.dist_eq] using hdist
+  have hlocal := hbound σ hne habs
+  have hlog_ge_one : 1 ≤ Real.log |t| :=
+    (log_abs_gt_one_of_three_le ht).le
+  have hM_le : M ≤ M * Real.log |t| := by
+    calc
+      M = M * 1 := by ring
+      _ ≤ M * Real.log |t| := mul_le_mul_of_nonneg_left hlog_ge_one hM
+  exact hlocal.trans hM_le
+
 /-- Right-neighborhood form of the local logarithmic-scale real-part
 zero-repulsion inequality at an actual zeta zero.  The constant is still local
 to the zero; this is a caller-facing shape for local disk/Jensen inputs, not the
