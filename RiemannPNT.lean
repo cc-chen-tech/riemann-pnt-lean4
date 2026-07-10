@@ -12136,6 +12136,27 @@ theorem borelCaratheodory_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_af
   ZeroFreeRegion.borelCaratheodory_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_affine_re_le_half_radius
     hM hσ hHpos hH hlog hcenter hR hz_half
 
+/-- Public direct affine half-radius Borel-Carathéodory wrapper for
+`logDeriv ζ`, with `M > 0` discharged from `0 < Are`. -/
+theorem borelCaratheodory_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_affine_re_le_half_radius_of_pos_A
+    {Are Bre Acenter Bcenter R σ t H : ℝ} {z : ℂ}
+    (hAre : 0 < Are) (hBre_nonneg : 0 ≤ Bre)
+    (hσ : 1 + R ≤ σ) (hHpos : 0 < H) (hH : H + R ≤ |t|)
+    (hlog : ∀ w : ℂ, w ∈ Metric.ball ((σ : ℂ) + Complex.I * t) R →
+      (logDeriv riemannZeta w).re ≤
+        Are + Bre * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3))
+    (hcenter :
+      ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+        Acenter + Bcenter * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3))
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + Complex.I * t)‖ ≤ R / 2) :
+    ‖logDeriv riemannZeta z‖ ≤
+      (2 * Are + 3 * Acenter) +
+        (2 * Bre + 3 * Bcenter) *
+          Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3) :=
+  ZeroFreeRegion.borelCaratheodory_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_affine_re_le_half_radius_of_pos_A
+    hAre hBre_nonneg hσ hHpos hH hlog hcenter hR hz_half
+
 /-- Public direct affine half-radius oscillation Borel-Carathéodory wrapper
 for `logDeriv ζ` on a right-half `σ+it` disk. -/
 theorem borelCaratheodory_sub_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_affine_re_le_half_radius
@@ -12154,6 +12175,25 @@ theorem borelCaratheodory_sub_logDeriv_riemannZeta_sigma_it_of_disk_right_half_o
         Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3) :=
   ZeroFreeRegion.borelCaratheodory_sub_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_affine_re_le_half_radius
     hM hσ hHpos hH hlog hR hz_half
+
+/-- Public direct affine half-radius oscillation Borel-Carathéodory wrapper
+for `logDeriv ζ`, with `M > 0` discharged from `0 < Are`. -/
+theorem borelCaratheodory_sub_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_affine_re_le_half_radius_of_pos_A
+    {Are Bre R σ t H : ℝ} {z : ℂ}
+    (hAre : 0 < Are) (hBre_nonneg : 0 ≤ Bre)
+    (hσ : 1 + R ≤ σ) (hHpos : 0 < H) (hH : H + R ≤ |t|)
+    (hlog : ∀ w : ℂ, w ∈ Metric.ball ((σ : ℂ) + Complex.I * t) R →
+      (logDeriv riemannZeta w -
+        logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
+          Are + Bre * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3))
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + Complex.I * t)‖ ≤ R / 2) :
+    ‖logDeriv riemannZeta z -
+        logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+      2 * Are + 2 * Bre *
+        Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3) :=
+  ZeroFreeRegion.borelCaratheodory_sub_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_affine_re_le_half_radius_of_pos_A
+    hAre hBre_nonneg hσ hHpos hH hlog hR hz_half
 
 /-- Public direct affine half-radius Borel-Carathéodory wrapper for
 `-logDeriv ζ` on a right-half `σ+it` disk. -/
@@ -12176,6 +12216,27 @@ theorem borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_half_o
   ZeroFreeRegion.borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_affine_re_le_half_radius
     hM hσ hHpos hH hlog hcenter hR hz_half
 
+/-- Public direct affine half-radius Borel-Carathéodory wrapper for
+`-logDeriv ζ`, with `M > 0` discharged from `0 < Are`. -/
+theorem borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_affine_re_le_half_radius_of_pos_A
+    {Are Bre Acenter Bcenter R σ t H : ℝ} {z : ℂ}
+    (hAre : 0 < Are) (hBre_nonneg : 0 ≤ Bre)
+    (hσ : 1 + R ≤ σ) (hHpos : 0 < H) (hH : H + R ≤ |t|)
+    (hlog : ∀ w : ℂ, w ∈ Metric.ball ((σ : ℂ) + Complex.I * t) R →
+      (-logDeriv riemannZeta w).re ≤
+        Are + Bre * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3))
+    (hcenter :
+      ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+        Acenter + Bcenter * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3))
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + Complex.I * t)‖ ≤ R / 2) :
+    ‖-logDeriv riemannZeta z‖ ≤
+      (2 * Are + 3 * Acenter) +
+        (2 * Bre + 3 * Bcenter) *
+          Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3) :=
+  ZeroFreeRegion.borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_affine_re_le_half_radius_of_pos_A
+    hAre hBre_nonneg hσ hHpos hH hlog hcenter hR hz_half
+
 /-- Public direct affine half-radius oscillation Borel-Carathéodory wrapper
 for `-logDeriv ζ` on a right-half `σ+it` disk. -/
 theorem borelCaratheodory_sub_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_affine_re_le_half_radius
@@ -12194,6 +12255,25 @@ theorem borelCaratheodory_sub_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_ha
         Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3) :=
   ZeroFreeRegion.borelCaratheodory_sub_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_affine_re_le_half_radius
     hM hσ hHpos hH hlog hR hz_half
+
+/-- Public direct affine half-radius oscillation Borel-Carathéodory wrapper
+for `-logDeriv ζ`, with `M > 0` discharged from `0 < Are`. -/
+theorem borelCaratheodory_sub_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_affine_re_le_half_radius_of_pos_A
+    {Are Bre R σ t H : ℝ} {z : ℂ}
+    (hAre : 0 < Are) (hBre_nonneg : 0 ≤ Bre)
+    (hσ : 1 + R ≤ σ) (hHpos : 0 < H) (hH : H + R ≤ |t|)
+    (hlog : ∀ w : ℂ, w ∈ Metric.ball ((σ : ℂ) + Complex.I * t) R →
+      (-logDeriv riemannZeta w -
+        -logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
+          Are + Bre * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3))
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + Complex.I * t)‖ ≤ R / 2) :
+    ‖-logDeriv riemannZeta z -
+        -logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+      2 * Are + 2 * Bre *
+        Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3) :=
+  ZeroFreeRegion.borelCaratheodory_sub_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_affine_re_le_half_radius_of_pos_A
+    hAre hBre_nonneg hσ hHpos hH hlog hR hz_half
 
 /-- Public right-shifted half-radius Borel-Carathéodory transfer for
 `logDeriv ζ`: a disk centered at `(σ+r)+it` controls the point `σ+it`. -/
@@ -12320,6 +12400,29 @@ theorem borelCaratheodory_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_o
   ZeroFreeRegion.borelCaratheodory_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_log_abs_add_three_re_le_half_radius
     hr hσ hσr hHpos hH ht hA hB hM hBre_nonneg hBcenter_nonneg hlog hcenter
 
+/-- Public right-shifted Borel transfer to the pure `log |t|` scale for
+`logDeriv ζ`, with `M > 0` discharged from `0 < Are`. -/
+theorem borelCaratheodory_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_log_abs_add_three_re_le_half_radius_of_pos_A
+    {Are Bre Acenter Bcenter r H σ t : ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3)
+    (hHpos : 0 < H) (hH : H + 2 * r ≤ |t|) (ht : 6 ≤ |t|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hAre : 0 < Are) (hBre_nonneg : 0 ≤ Bre)
+    (hBcenter_nonneg : 0 ≤ Bcenter)
+    (hlog : ∀ w : ℂ,
+      w ∈ Metric.ball (((σ + r : ℝ) : ℂ) + Complex.I * t) (2 * r) →
+        (logDeriv riemannZeta w).re ≤
+          Are + Bre * Real.log (|t| + 3))
+    (hcenter :
+      ‖logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + Complex.I * t)‖ ≤
+        Acenter + Bcenter * Real.log (|t| + 3)) :
+    ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+      ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+        Real.log |t| :=
+  ZeroFreeRegion.borelCaratheodory_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_log_abs_add_three_re_le_half_radius_of_pos_A
+    hr hσ hσr hHpos hH ht hA hB hAre hBre_nonneg hBcenter_nonneg hlog hcenter
+
 /-- Public signed right-shifted Borel transfer to the pure `log |t|` scale
 for `-logDeriv ζ`, with local hypotheses stated in the `log(|t|+3)` scale. -/
 theorem borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_log_abs_add_three_re_le_half_radius
@@ -12342,6 +12445,29 @@ theorem borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_log_a
         Real.log |t| :=
   ZeroFreeRegion.borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_log_abs_add_three_re_le_half_radius
     hr hσ hσr hHpos hH ht hA hB hM hBre_nonneg hBcenter_nonneg hlog hcenter
+
+/-- Public signed right-shifted Borel transfer to the pure `log |t|` scale
+for `-logDeriv ζ`, with `M > 0` discharged from `0 < Are`. -/
+theorem borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_log_abs_add_three_re_le_half_radius_of_pos_A
+    {Are Bre Acenter Bcenter r H σ t : ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3)
+    (hHpos : 0 < H) (hH : H + 2 * r ≤ |t|) (ht : 6 ≤ |t|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hAre : 0 < Are) (hBre_nonneg : 0 ≤ Bre)
+    (hBcenter_nonneg : 0 ≤ Bcenter)
+    (hlog : ∀ w : ℂ,
+      w ∈ Metric.ball (((σ + r : ℝ) : ℂ) + Complex.I * t) (2 * r) →
+        (-logDeriv riemannZeta w).re ≤
+          Are + Bre * Real.log (|t| + 3))
+    (hcenter :
+      ‖-logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + Complex.I * t)‖ ≤
+        Acenter + Bcenter * Real.log (|t| + 3)) :
+    ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+      ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+        Real.log |t| :=
+  ZeroFreeRegion.borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_log_abs_add_three_re_le_half_radius_of_pos_A
+    hr hσ hσr hHpos hH ht hA hB hAre hBre_nonneg hBcenter_nonneg hlog hcenter
 
 /-- Public right-shifted Borel transfer in the full complex-height logarithmic
 scale for `logDeriv ζ`. -/

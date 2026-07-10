@@ -462,7 +462,9 @@ proved:
   and
   `ZeroFreeRegion.borelCaratheodory_sub_neg_logDeriv_riemannZeta_sigma_it_of_disk_right_half_of_affine_re_le_half_radius`
   accept `A + B log(||sigma+I*t||+3)` estimates directly and produce the
-  same scale of local norm/oscillation bounds.  The right-shifted affine
+  same scale of local norm/oscillation bounds.  The corresponding
+  `..._of_pos_A` wrappers remove the Borel `M > 0` premise when `0 < A` and
+  `0 <= B`.  The right-shifted affine
   transfers
   `ZeroFreeRegion.borelCaratheodory_logDeriv_riemannZeta_sigma_it_right_shift_of_affine_re_le_half_radius`
   and
@@ -481,7 +483,8 @@ proved:
   and
   `ZeroFreeRegion.borelCaratheodory_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_log_abs_of_affine_log_abs_add_three_re_le_half_radius`
   accept those local hypotheses directly in the safer `log(|t|+3)` height
-  scale.  The reverse comparison
+  scale, and their `..._of_pos_A` variants again discharge the positivity
+  side-condition from a positive affine constant term.  The reverse comparison
   `ZeroFreeRegion.log_abs_le_log_norm_sigma_add_I_mul_add_three`, together with
   `ZeroFreeRegion.borelCaratheodory_logDeriv_riemannZeta_sigma_it_right_shift_le_log_norm_of_affine_re_le_half_radius`
   and
