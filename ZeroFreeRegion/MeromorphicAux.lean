@@ -10220,6 +10220,29 @@ lemma riemannZeta_not_frequently_zero_nhdsNE_of_ne_one {x : ℂ} (hx : x ≠ 1) 
     simpa using heq h2mem
   exact riemannZeta_ne_zero_of_one_lt_re (s := (2 : ℂ)) (by norm_num) h2zero
 
+/-- Away from the pole, zeta is eventually nonzero in the punctured
+neighborhood of any point. -/
+lemma eventually_ne_zero_riemannZeta_nhdsNE_of_ne_one {ρ : ℂ} (hρ1 : ρ ≠ 1) :
+    ∀ᶠ z in 𝓝[≠] ρ, riemannZeta z ≠ 0 := by
+  exact Filter.not_frequently.mp
+    (riemannZeta_not_frequently_zero_nhdsNE_of_ne_one hρ1)
+
+/-- Punctured-ball form of the local isolation of zeta zeros away from the
+pole.  No zero hypothesis at the center is needed; this is the local
+non-accumulation statement supplied by the identity theorem. -/
+lemma exists_punctured_ball_riemannZeta_ne_zero_of_ne_one
+    {ρ : ℂ} (hρ1 : ρ ≠ 1) :
+    ∃ r : ℝ, 0 < r ∧ ∀ z : ℂ, z ≠ ρ → dist z ρ < r →
+      riemannZeta z ≠ 0 := by
+  have hevent :=
+    eventually_ne_zero_riemannZeta_nhdsNE_of_ne_one hρ1
+  rw [eventually_nhdsWithin_iff] at hevent
+  rw [Metric.eventually_nhds_iff] at hevent
+  rcases hevent with ⟨r, hr, hbound⟩
+  refine ⟨r, hr, ?_⟩
+  intro z hz_ne hdist
+  exact hbound hdist hz_ne
+
 /-- Away from the pole, the analytic order of ζ is finite.  This packages the
 identity theorem in the form needed to replace a manually supplied multiplicity
 by `analyticOrderNatAt`. -/
@@ -10342,6 +10365,27 @@ lemma dist_ofReal_add_I_mul_same_im (σ β t : ℝ) :
       ‖((σ - β : ℝ) : ℂ)‖ = |σ - β| := by
     simpa using (RCLike.norm_ofReal (K := ℂ) (σ - β))
   rw [dist_eq_norm, hsub, hnorm_ofReal]
+
+/-- Horizontal-coordinate form of the local isolation of zeta zeros away from
+the pole. -/
+lemma exists_real_punctured_interval_riemannZeta_ne_zero_of_ne_one
+    {β t : ℝ} (hρ1 : ((β : ℂ) + I * t) ≠ 1) :
+    ∃ r : ℝ, 0 < r ∧ ∀ σ : ℝ, σ ≠ β → |σ - β| < r →
+      riemannZeta ((σ : ℂ) + I * t) ≠ 0 := by
+  rcases exists_punctured_ball_riemannZeta_ne_zero_of_ne_one
+      (ρ := (β : ℂ) + I * t) hρ1 with
+    ⟨r, hr, hbound⟩
+  refine ⟨r, hr, ?_⟩
+  intro σ hσ_ne hdist
+  have hz_ne : ((σ : ℂ) + I * t) ≠ ((β : ℂ) + I * t) := by
+    intro h
+    have hre : σ = β := by
+      simpa using congrArg Complex.re h
+    exact hσ_ne hre
+  have hdist' : dist ((σ : ℂ) + I * t) ((β : ℂ) + I * t) < r := by
+    rw [dist_ofReal_add_I_mul_same_im]
+    exact hdist
+  exact hbound ((σ : ℂ) + I * t) hz_ne hdist'
 
 /-- Coordinate form of the automatic actual-zero regular-part bound on the
 horizontal line through the zero `β + i t`. -/

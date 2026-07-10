@@ -506,6 +506,11 @@ Core verified declarations:
   gives the local simple-pole normal form for zeta.
 - `eventually_ne_zero_riemannZeta_nhdsNE_one`
   proves zeta is eventually nonzero in the punctured neighborhood of `1`.
+- `eventually_ne_zero_riemannZeta_nhdsNE_of_ne_one`,
+  `exists_punctured_ball_riemannZeta_ne_zero_of_ne_one`, and
+  `exists_real_punctured_interval_riemannZeta_ne_zero_of_ne_one`
+  prove local isolation of zeta zeros away from the pole, in punctured-filter,
+  punctured-ball, and horizontal-coordinate forms.
 - `analyticAt_logDeriv_riemannZetaPoleUnitAtOne`
   proves the logarithmic derivative of the analytic pole unit is analytic at
   `1`.
@@ -2706,6 +2711,9 @@ Supporting declarations include:
 - `logIntegral_nonneg`
 - `logIntegral_pos`
 - `riemannZeta_not_frequently_zero_nhdsNE_of_ne_one`
+  gives the identity-theorem non-accumulation input for zeta zeros away from the
+  pole; the `eventually_ne_zero...` and punctured-ball wrappers expose this as
+  local denominator safety for later regular-part estimates.
 - `RH_PrimeCountingLiErrorBound_iff_RH_ErrorBound`
 - `rh_iff_optimal_error_of_pointwise_implications`
 - `RH_ErrorBound_of_rh_iff_optimal_error`

@@ -6311,6 +6311,21 @@ theorem eventually_ne_zero_riemannZeta_nhdsNE_one :
     ∀ᶠ s in 𝓝[≠] (1 : ℂ), riemannZeta s ≠ 0 :=
   ZeroFreeRegion.eventually_ne_zero_riemannZeta_nhdsNE_one
 
+/-- Public local nonvanishing of ζ in a punctured neighborhood of any point
+away from its pole. -/
+theorem eventually_ne_zero_riemannZeta_nhdsNE_of_ne_one
+    {ρ : ℂ} (hρ1 : ρ ≠ 1) :
+    ∀ᶠ z in 𝓝[≠] ρ, riemannZeta z ≠ 0 :=
+  ZeroFreeRegion.eventually_ne_zero_riemannZeta_nhdsNE_of_ne_one hρ1
+
+/-- Public punctured-ball form of local zeta-zero isolation away from the
+pole. -/
+theorem exists_punctured_ball_riemannZeta_ne_zero_of_ne_one
+    {ρ : ℂ} (hρ1 : ρ ≠ 1) :
+    ∃ r : ℝ, 0 < r ∧ ∀ z : ℂ, z ≠ ρ → dist z ρ < r →
+      riemannZeta z ≠ 0 :=
+  ZeroFreeRegion.exists_punctured_ball_riemannZeta_ne_zero_of_ne_one hρ1
+
 /-- Public logarithmic-derivative form of the simple-pole decomposition of ζ
 at `1`. -/
 theorem eventuallyEq_logDeriv_riemannZeta_simplePoleAtOne :
@@ -7595,6 +7610,14 @@ theorem exists_punctured_closedBall_norm_neg_logDeriv_riemannZeta_add_analyticOr
 theorem dist_ofReal_add_I_mul_same_im (σ β t : ℝ) :
     dist ((σ : ℂ) + I * t) ((β : ℂ) + I * t) = |σ - β| :=
   ZeroFreeRegion.dist_ofReal_add_I_mul_same_im σ β t
+
+/-- Public horizontal-coordinate form of local zeta-zero isolation away from
+the pole. -/
+theorem exists_real_punctured_interval_riemannZeta_ne_zero_of_ne_one
+    {β t : ℝ} (hρ1 : ((β : ℂ) + I * t) ≠ 1) :
+    ∃ r : ℝ, 0 < r ∧ ∀ σ : ℝ, σ ≠ β → |σ - β| < r →
+      riemannZeta ((σ : ℂ) + I * t) ≠ 0 :=
+  ZeroFreeRegion.exists_real_punctured_interval_riemannZeta_ne_zero_of_ne_one hρ1
 
 /-- Public coordinate form of the actual-zero regular-part bound on the
 horizontal line through `β + i t`. -/
