@@ -8249,6 +8249,80 @@ theorem reNegDerivDivVerticalLogBound_of_compact_band_and_high_height_affine_log
   ZeroFreeRegion.reNegDerivDivVerticalLogBound_of_compact_band_and_high_height_affine_log_norm_add_three_bound
     H T A B hH hB hhigh
 
+/-- Public final assembly from regular-part input plus a high-height affine
+logarithmic bound for `logDeriv ζ`; bounded heights are patched by
+compactness. -/
+theorem classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_compact_band_high_height_logDeriv_affine_bound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        LogDerivRegularPartLogBound Bregular Tregular)
+    (H T A B : ℝ) (hH : 5 ≤ H) (hB : 0 ≤ B)
+    (hhigh : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| →
+        ‖logDeriv riemannZeta z‖ ≤ A + B * Real.log (‖z‖ + 3)) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_compact_band_high_height_logDeriv_affine_bound
+    hregular H T A B hH hB hhigh
+
+/-- Public multiplicity-aware final assembly from regular-part input plus a
+high-height affine logarithmic bound for `logDeriv ζ`. -/
+theorem classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_compact_band_high_height_logDeriv_affine_bound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        MultiplicityLogDerivRegularPartLogBound Bregular Tregular)
+    (H T A B : ℝ) (hH : 5 ≤ H) (hB : 0 ≤ B)
+    (hhigh : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| →
+        ‖logDeriv riemannZeta z‖ ≤ A + B * Real.log (‖z‖ + 3)) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_compact_band_high_height_logDeriv_affine_bound
+    hregular H T A B hH hB hhigh
+
+/-- Public moving-line closure from a high-height affine logarithmic bound for
+`logDeriv ζ`.  This is the API entry closest to the desired uniform boundary
+strip estimate. -/
+theorem classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_compact_band_high_height_logDeriv_affine_bound
+    (Bregular Tregular H T A B : ℝ)
+    (hBregular : 0 ≤ Bregular) (hTregular : 2 ≤ Tregular)
+    (hH : 5 ≤ H) (hB : 0 ≤ B)
+    (hregular :
+      ∀ a β t : ℝ, 0 < a → a ≤ Real.log 2 → Tregular ≤ |t| →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < (1 + a / Real.log |t|) - β →
+        ‖logDeriv riemannZeta
+            (((1 + a / Real.log |t| : ℝ) : ℂ) + Complex.I * t) -
+            ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+          Bregular * Real.log |t|)
+    (hhigh : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| →
+        ‖logDeriv riemannZeta z‖ ≤ A + B * Real.log (‖z‖ + 3)) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_compact_band_high_height_logDeriv_affine_bound
+    Bregular Tregular H T A B hBregular hTregular hH hB hregular hhigh
+
+/-- Public multiplicity-aware moving-line closure from a high-height affine
+logarithmic bound for `logDeriv ζ`. -/
+theorem classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_compact_band_high_height_logDeriv_affine_bound
+    (Bregular Tregular H T A B : ℝ)
+    (hBregular : 0 ≤ Bregular) (hTregular : 2 ≤ Tregular)
+    (hH : 5 ≤ H) (hB : 0 ≤ B)
+    (hregular :
+      ∀ a β t : ℝ, 0 < a → a ≤ Real.log 2 → Tregular ≤ |t| →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < (1 + a / Real.log |t|) - β →
+        ∃ n : ℕ, 0 < n ∧
+          ‖logDeriv riemannZeta
+              (((1 + a / Real.log |t| : ℝ) : ℂ) + Complex.I * t) -
+              (n : ℂ) *
+                ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+            Bregular * Real.log |t|)
+    (hhigh : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| →
+        ‖logDeriv riemannZeta z‖ ≤ A + B * Real.log (‖z‖ + 3)) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_compact_band_high_height_logDeriv_affine_bound
+    Bregular Tregular H T A B hBregular hTregular hH hB hregular hhigh
+
 /-- Public coordinate compact bounded-height norm bound for `logDeriv ζ` on
 `σ + i t`. -/
 theorem exists_norm_logDeriv_riemannZeta_sigma_it_bound_on_compact_vertical_band
