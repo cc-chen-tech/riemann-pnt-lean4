@@ -13668,6 +13668,42 @@ theorem exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_multiplicity_inv_righ
   ZeroFreeRegion.exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_multiplicity_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_borel_radius
     ha ha_le ht hβ hAre hBre hM hlog hn
 
+/-- Public positivity discharge for the affine Borel majorant on the canonical
+moving-line disk. -/
+theorem sigmaOf_log_borel_radius_affine_majorant_pos
+    {a Are Bre t : ℝ} (hAre : 0 < Are) (hBre : 0 ≤ Bre) :
+    0 < Are + Bre *
+      Real.log
+        (‖((((1 + a / Real.log |t|) +
+              a / (2 * Real.log |t|) : ℝ) : ℂ) + Complex.I * t)‖ + 3) :=
+  ZeroFreeRegion.sigmaOf_log_borel_radius_affine_majorant_pos hAre hBre
+
+/-- Public Borel-radius zero-repulsion bridge with the positivity side
+condition discharged by `0 < Are`. -/
+theorem exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_multiplicity_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_borel_radius_of_pos_A
+    {a Are Bre β t : ℝ} {n : ℕ}
+    (ha : 0 < a) (ha_le : a ≤ Real.log 2) (ht : 6 ≤ |t|)
+    (hβ : β < 1) (hAre : 0 < Are) (hBre : 0 ≤ Bre)
+    (hlog : ∀ w : ℂ,
+      w ∈ Metric.ball
+          ((((1 + a / Real.log |t|) +
+                a / (2 * Real.log |t|) : ℝ) : ℂ) + Complex.I * t)
+          (2 * (a / (2 * Real.log |t|))) →
+        (-logDeriv riemannZeta w +
+            (n : ℂ) * (w - ((β : ℂ) + Complex.I * t))⁻¹).re ≤
+          Are + Bre *
+            Real.log
+              (‖((((1 + a / Real.log |t|) +
+                    a / (2 * Real.log |t|) : ℝ) : ℂ) + Complex.I * t)‖ + 3))
+    (hn : 0 < n) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      (-deriv riemannZeta (((1 + a / Real.log |t| : ℝ) : ℂ) + Complex.I * t) /
+          riemannZeta (((1 + a / Real.log |t| : ℝ) : ℂ) + Complex.I * t)).re +
+          1 / ((1 + a / Real.log |t|) - β) ≤
+        C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_multiplicity_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_borel_radius_of_pos_A
+    ha ha_le ht hβ hAre hBre hlog hn
+
 /-- Public exact-shape standard `sigmaOf_log` zero-repulsion bridge:
 `Re(-ζ'/ζ)(σ+it) <= -1/(σ-β) + C log |t|`. -/
 theorem exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_right_shift_le_neg_inv_add_log_abs_of_affineRegularPart_re_le_half_radius_borel_radius
@@ -13697,6 +13733,31 @@ theorem exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_right_shift_le_neg_inv_ad
         -1 / ((1 + a / Real.log |t|) - β) + C * Real.log |t| :=
   ZeroFreeRegion.exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_right_shift_le_neg_inv_add_log_abs_of_affineRegularPart_re_le_half_radius_borel_radius
     ha ha_le ht hβ hAre hBre hM hlog hn
+
+/-- Public exact-shape `sigmaOf_log` zero-repulsion bridge with the Borel
+positivity side-condition discharged by `0 < Are`. -/
+theorem exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_right_shift_le_neg_inv_add_log_abs_of_affineRegularPart_re_le_half_radius_borel_radius_of_pos_A
+    {a Are Bre β t : ℝ} {n : ℕ}
+    (ha : 0 < a) (ha_le : a ≤ Real.log 2) (ht : 6 ≤ |t|)
+    (hβ : β < 1) (hAre : 0 < Are) (hBre : 0 ≤ Bre)
+    (hlog : ∀ w : ℂ,
+      w ∈ Metric.ball
+          ((((1 + a / Real.log |t|) +
+                a / (2 * Real.log |t|) : ℝ) : ℂ) + Complex.I * t)
+          (2 * (a / (2 * Real.log |t|))) →
+        (-logDeriv riemannZeta w +
+            (n : ℂ) * (w - ((β : ℂ) + Complex.I * t))⁻¹).re ≤
+          Are + Bre *
+            Real.log
+              (‖((((1 + a / Real.log |t|) +
+                    a / (2 * Real.log |t|) : ℝ) : ℂ) + Complex.I * t)‖ + 3))
+    (hn : 0 < n) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      (-deriv riemannZeta (((1 + a / Real.log |t| : ℝ) : ℂ) + Complex.I * t) /
+          riemannZeta (((1 + a / Real.log |t| : ℝ) : ℂ) + Complex.I * t)).re ≤
+        -1 / ((1 + a / Real.log |t|) - β) + C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_right_shift_le_neg_inv_add_log_abs_of_affineRegularPart_re_le_half_radius_borel_radius_of_pos_A
+    ha ha_le ht hβ hAre hBre hlog hn
 
 /-- Public differentiability discharge for the signed multiplicity-weighted
 right-shifted regular part on the Borel disk. -/

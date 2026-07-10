@@ -13151,6 +13151,59 @@ lemma exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_multiplicity_inv_right_
       hn
   simpa [σ, r] using hmain
 
+/-- Positivity of the affine Borel majorant on the canonical moving-line
+disk when the constant term is strictly positive.
+
+This discharges the `M > 0` side condition in the Borel-Carathéodory wrapper
+from the natural hypotheses `0 < Are` and `0 <= Bre`. -/
+lemma sigmaOf_log_borel_radius_affine_majorant_pos
+    {a Are Bre t : ℝ} (hAre : 0 < Are) (hBre : 0 ≤ Bre) :
+    0 < Are + Bre *
+      Real.log
+        (‖((((1 + a / Real.log |t|) +
+              a / (2 * Real.log |t|) : ℝ) : ℂ) + I * t)‖ + 3) := by
+  let center : ℂ :=
+    (((1 + a / Real.log |t|) +
+      a / (2 * Real.log |t|) : ℝ) : ℂ) + I * t
+  have hlog_nonneg : 0 ≤ Real.log (‖center‖ + 3) := by
+    apply Real.log_nonneg
+    nlinarith [norm_nonneg center]
+  have hterm_nonneg : 0 ≤ Bre * Real.log (‖center‖ + 3) :=
+    mul_nonneg hBre hlog_nonneg
+  simpa [center] using add_pos_of_pos_of_nonneg hAre hterm_nonneg
+
+/-- Standard Borel-radius zero-repulsion bridge with the Borel positivity
+side-condition discharged by a positive affine constant term.
+
+The remaining hard input is still the local affine real-part estimate for the
+multiplicity-aware regular part on the canonical Borel disk. -/
+lemma exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_multiplicity_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_borel_radius_of_pos_A
+    {a Are Bre β t : ℝ} {n : ℕ}
+    (ha : 0 < a) (ha_le : a ≤ Real.log 2) (ht : 6 ≤ |t|)
+    (hβ : β < 1) (hAre : 0 < Are) (hBre : 0 ≤ Bre)
+    (hlog : ∀ w : ℂ,
+      w ∈ ball
+          ((((1 + a / Real.log |t|) +
+                a / (2 * Real.log |t|) : ℝ) : ℂ) + I * t)
+          (2 * (a / (2 * Real.log |t|))) →
+        (-logDeriv riemannZeta w +
+            (n : ℂ) * (w - ((β : ℂ) + I * t))⁻¹).re ≤
+          Are + Bre *
+            Real.log
+              (‖((((1 + a / Real.log |t|) +
+                    a / (2 * Real.log |t|) : ℝ) : ℂ) + I * t)‖ + 3))
+    (hn : 0 < n) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      (-deriv riemannZeta (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t) /
+          riemannZeta (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t)).re +
+          1 / ((1 + a / Real.log |t|) - β) ≤
+        C * Real.log |t| :=
+  exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_multiplicity_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_borel_radius
+    (a := a) (Are := Are) (Bre := Bre) (β := β) (t := t) (n := n)
+    ha ha_le ht hβ hAre.le hBre
+    (sigmaOf_log_borel_radius_affine_majorant_pos hAre hBre)
+    hlog hn
+
 /-- Standard `σ = 1 + a/log|t|`, `r = a/(2 log|t|)` specialization in the
 exact zero-repulsion shape consumed by the shifted-estimate closures:
 `Re(-ζ'/ζ)(σ+it) ≤ -1/(σ-β) + C log |t|`.
@@ -13187,6 +13240,47 @@ lemma exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_right_shift_le_neg_inv_add_
       exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_multiplicity_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_borel_radius
         (a := a) (Are := Are) (Bre := Bre) (β := β) (t := t) (n := n)
         ha ha_le ht hβ hAre hBre hM hlog hn with
+    ⟨C, hC, hadd⟩
+  refine ⟨C, hC, ?_⟩
+  calc
+    (-deriv riemannZeta (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t) /
+        riemannZeta (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t)).re
+        =
+          ((-deriv riemannZeta (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t) /
+              riemannZeta (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t)).re +
+              1 / ((1 + a / Real.log |t|) - β))
+            - 1 / ((1 + a / Real.log |t|) - β) := by ring
+    _ ≤ C * Real.log |t| - 1 / ((1 + a / Real.log |t|) - β) := by
+          exact sub_le_sub_right hadd _
+    _ = -1 / ((1 + a / Real.log |t|) - β) + C * Real.log |t| := by ring
+
+/-- Borel-radius zero-repulsion bridge in final shifted-estimate form, with
+the Borel positivity side-condition discharged by a positive affine constant
+term. -/
+lemma exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_right_shift_le_neg_inv_add_log_abs_of_affineRegularPart_re_le_half_radius_borel_radius_of_pos_A
+    {a Are Bre β t : ℝ} {n : ℕ}
+    (ha : 0 < a) (ha_le : a ≤ Real.log 2) (ht : 6 ≤ |t|)
+    (hβ : β < 1) (hAre : 0 < Are) (hBre : 0 ≤ Bre)
+    (hlog : ∀ w : ℂ,
+      w ∈ ball
+          ((((1 + a / Real.log |t|) +
+                a / (2 * Real.log |t|) : ℝ) : ℂ) + I * t)
+          (2 * (a / (2 * Real.log |t|))) →
+        (-logDeriv riemannZeta w +
+            (n : ℂ) * (w - ((β : ℂ) + I * t))⁻¹).re ≤
+          Are + Bre *
+            Real.log
+              (‖((((1 + a / Real.log |t|) +
+                    a / (2 * Real.log |t|) : ℝ) : ℂ) + I * t)‖ + 3))
+    (hn : 0 < n) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      (-deriv riemannZeta (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t) /
+          riemannZeta (((1 + a / Real.log |t| : ℝ) : ℂ) + I * t)).re ≤
+        -1 / ((1 + a / Real.log |t|) - β) + C * Real.log |t| := by
+  rcases
+      exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_multiplicity_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_borel_radius_of_pos_A
+        (a := a) (Are := Are) (Bre := Bre) (β := β) (t := t) (n := n)
+        ha ha_le ht hβ hAre hBre hlog hn with
     ⟨C, hC, hadd⟩
   refine ⟨C, hC, ?_⟩
   calc

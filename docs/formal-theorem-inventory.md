@@ -2011,6 +2011,12 @@ Core verified declarations:
   rewrites the additive output as
   `Re(-zeta'/zeta)(sigma+it) <= -1/(sigma-beta) + C log |t|`, matching the
   exact input shape consumed by the high-height zero-free-region closures.
+- `sigmaOf_log_borel_radius_affine_majorant_pos` and the corresponding
+  `..._borel_radius_of_pos_A` bridges discharge the Borel positivity
+  side-condition `M > 0` from `0 < Are` and `0 <= Bre` on the canonical
+  moving disk.  They do not prove the missing zeta-specific affine
+  real-part bound; they remove a bookkeeping hypothesis from that local
+  regular-part handoff.
 - `exists_re_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_neg_inv_add_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center_of_re_le`
   is the same closure-input zero-repulsion bridge with differentiability
   discharged by the right-shift geometry.
