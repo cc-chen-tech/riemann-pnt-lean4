@@ -2017,6 +2017,12 @@ Core verified declarations:
   and canonical moving disks.  They do not prove the missing zeta-specific
   affine real-part bound; they remove a bookkeeping hypothesis from that local
   regular-part handoff.
+- `affine_log_norm_add_three_pos`, `affine_log_abs_add_three_pos`, and the
+  vertical-region `..._of_pos_A` Borel wrappers do the same positivity discharge
+  for the half-radius Borel estimates on `logDeriv zeta`, `-logDeriv zeta`, and
+  their centered oscillation variants in both `log(||sigma+it||+3)` and
+  `log(|t|+3)` scales.  The required affine real-part bounds remain explicit
+  hypotheses.
 - `exists_re_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_neg_inv_add_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center_of_re_le`
   is the same closure-input zero-repulsion bridge with differentiability
   discharged by the right-shift geometry.

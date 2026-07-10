@@ -617,6 +617,8 @@ proved:
   and
   `ZeroFreeRegion.borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_log_abs_add_three_re_le_half_radius`
   giving the signed `log(|t|+3)` height-scale variants,
+  with the corresponding `..._of_pos_A` wrappers discharging `M > 0` from
+  `0 < Are` and `0 <= Bre`,
   expose those fixed half-radius bounds in both logarithmic-derivative sign
   conventions.  The zero-candidate regular-part bridge
   `ZeroFreeRegion.borelCaratheodory_neg_logDeriv_regularPart_sigma_it_right_shift_le_log_abs_of_affine_re_le_half_radius`

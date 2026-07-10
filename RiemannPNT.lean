@@ -14252,6 +14252,20 @@ theorem borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_o
   ZeroFreeRegion.borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_re_le_half_radius
     hM ha₀ hHpos hlog ha hb hH hR hz_half
 
+/-- Public positivity of an affine logarithmic majorant in the full
+complex-height scale. -/
+theorem affine_log_norm_add_three_pos (z : ℂ) {A B : ℝ}
+    (hA : 0 < A) (hB : 0 ≤ B) :
+    0 < A + B * Real.log (‖z‖ + 3) :=
+  ZeroFreeRegion.affine_log_norm_add_three_pos z hA hB
+
+/-- Public positivity of an affine logarithmic majorant in the safe
+`log(|t|+3)` height scale. -/
+theorem affine_log_abs_add_three_pos (t : ℝ) {A B : ℝ}
+    (hA : 0 < A) (hB : 0 ≤ B) :
+    0 < A + B * Real.log (|t| + 3) :=
+  ZeroFreeRegion.affine_log_abs_add_three_pos t hA hB
+
 /-- Public affine full-height half-radius Borel-Carathéodory bound for
 `logDeriv ζ` on a positive-height right half-strip. -/
 theorem borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius
@@ -14273,6 +14287,28 @@ theorem borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_af
           Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3) :=
   ZeroFreeRegion.borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius
     hM ha₀ hHpos hlog hcenter ha hb hH hR hz_half
+
+/-- Public affine full-height half-radius Borel-Carathéodory bound for
+`logDeriv ζ`, with `M > 0` discharged from `0 < Are`. -/
+theorem borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius_of_pos_A
+    {Are Bre Acenter Bcenter R σ t a b H : ℝ} {z : ℂ}
+    (hAre : 0 < Are) (hBre_nonneg : 0 ≤ Bre)
+    (ha₀ : 1 ≤ a) (hHpos : 0 < H)
+    (hlog : ∀ w : ℂ, w ∈ ZeroFreeRegion.verticalRegion a b H →
+      (logDeriv riemannZeta w).re ≤
+        Are + Bre * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3))
+    (hcenter :
+      ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+        Acenter + Bcenter * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3))
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + Complex.I * t)‖ ≤ R / 2) :
+    ‖logDeriv riemannZeta z‖ ≤
+      (2 * Are + 3 * Acenter) +
+        (2 * Bre + 3 * Bcenter) *
+          Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3) :=
+  ZeroFreeRegion.borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius_of_pos_A
+    hAre hBre_nonneg ha₀ hHpos hlog hcenter ha hb hH hR hz_half
 
 /-- Public `log(|t|+3)`-scale half-radius Borel-Carathéodory bound for
 `logDeriv ζ` on a positive-height right half-strip. -/
@@ -14297,6 +14333,29 @@ theorem borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_af
   ZeroFreeRegion.borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_log_abs_add_three_re_le_half_radius
     hσ ht hM hBre_nonneg hBcenter_nonneg ha₀ hHpos hlog hcenter ha hb hH hR hz_half
 
+/-- Public safe-height half-radius Borel-Carathéodory bound for `logDeriv ζ`,
+with `M > 0` discharged from `0 < Are`. -/
+theorem borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_log_abs_add_three_re_le_half_radius_of_pos_A
+    {Are Bre Acenter Bcenter R σ t a b H : ℝ} {z : ℂ}
+    (hσ : σ ∈ Set.Icc 1 2) (ht : 5 ≤ |t|)
+    (hAre : 0 < Are) (hBre_nonneg : 0 ≤ Bre)
+    (hBcenter_nonneg : 0 ≤ Bcenter)
+    (ha₀ : 1 ≤ a) (hHpos : 0 < H)
+    (hlog : ∀ w : ℂ, w ∈ ZeroFreeRegion.verticalRegion a b H →
+      (logDeriv riemannZeta w).re ≤
+        Are + Bre * Real.log (|t| + 3))
+    (hcenter :
+      ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+        Acenter + Bcenter * Real.log (|t| + 3))
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + Complex.I * t)‖ ≤ R / 2) :
+    ‖logDeriv riemannZeta z‖ ≤
+      (2 * Are + 3 * Acenter) +
+        (4 * Bre + 6 * Bcenter) * Real.log (|t| + 3) :=
+  ZeroFreeRegion.borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_log_abs_add_three_re_le_half_radius_of_pos_A
+    hσ ht hAre hBre_nonneg hBcenter_nonneg ha₀ hHpos hlog hcenter ha hb hH hR hz_half
+
 /-- Public affine full-height half-radius oscillation Borel-Carathéodory
 bound for `logDeriv ζ` on a positive-height right half-strip. -/
 theorem borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius
@@ -14316,6 +14375,26 @@ theorem borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_o
         Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3) :=
   ZeroFreeRegion.borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius
     hM ha₀ hHpos hlog ha hb hH hR hz_half
+
+/-- Public affine full-height half-radius oscillation Borel-Carathéodory
+bound for `logDeriv ζ`, with `M > 0` discharged from `0 < Are`. -/
+theorem borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius_of_pos_A
+    {Are Bre R σ t a b H : ℝ} {z : ℂ}
+    (hAre : 0 < Are) (hBre_nonneg : 0 ≤ Bre)
+    (ha₀ : 1 ≤ a) (hHpos : 0 < H)
+    (hlog : ∀ w : ℂ, w ∈ ZeroFreeRegion.verticalRegion a b H →
+      (logDeriv riemannZeta w -
+        logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
+          Are + Bre * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3))
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + Complex.I * t)‖ ≤ R / 2) :
+    ‖logDeriv riemannZeta z -
+        logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+      2 * Are + 2 * Bre *
+        Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3) :=
+  ZeroFreeRegion.borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius_of_pos_A
+    hAre hBre_nonneg ha₀ hHpos hlog ha hb hH hR hz_half
 
 /-- Public `log(|t|+3)`-scale half-radius oscillation Borel-Carathéodory
 bound for `logDeriv ζ` on a positive-height right half-strip. -/
@@ -14337,6 +14416,26 @@ theorem borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_o
       2 * Are + 4 * Bre * Real.log (|t| + 3) :=
   ZeroFreeRegion.borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_log_abs_add_three_re_le_half_radius
     hσ ht hM hBre_nonneg ha₀ hHpos hlog ha hb hH hR hz_half
+
+/-- Public safe-height half-radius oscillation Borel-Carathéodory bound for
+`logDeriv ζ`, with `M > 0` discharged from `0 < Are`. -/
+theorem borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_log_abs_add_three_re_le_half_radius_of_pos_A
+    {Are Bre R σ t a b H : ℝ} {z : ℂ}
+    (hσ : σ ∈ Set.Icc 1 2) (ht : 5 ≤ |t|)
+    (hAre : 0 < Are) (hBre_nonneg : 0 ≤ Bre)
+    (ha₀ : 1 ≤ a) (hHpos : 0 < H)
+    (hlog : ∀ w : ℂ, w ∈ ZeroFreeRegion.verticalRegion a b H →
+      (logDeriv riemannZeta w -
+        logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
+          Are + Bre * Real.log (|t| + 3))
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + Complex.I * t)‖ ≤ R / 2) :
+    ‖logDeriv riemannZeta z -
+        logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+      2 * Are + 4 * Bre * Real.log (|t| + 3) :=
+  ZeroFreeRegion.borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_log_abs_add_three_re_le_half_radius_of_pos_A
+    hσ ht hAre hBre_nonneg ha₀ hHpos hlog ha hb hH hR hz_half
 
 /-- Public differentiability of the signed logarithmic derivative `-logDeriv ζ`
 on positive-height right half-strips. -/
@@ -14435,6 +14534,28 @@ theorem borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_o
   ZeroFreeRegion.borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius
     hM ha₀ hHpos hlog hcenter ha hb hH hR hz_half
 
+/-- Public affine full-height half-radius Borel-Carathéodory bound for
+`-logDeriv ζ`, with `M > 0` discharged from `0 < Are`. -/
+theorem borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius_of_pos_A
+    {Are Bre Acenter Bcenter R σ t a b H : ℝ} {z : ℂ}
+    (hAre : 0 < Are) (hBre_nonneg : 0 ≤ Bre)
+    (ha₀ : 1 ≤ a) (hHpos : 0 < H)
+    (hlog : ∀ w : ℂ, w ∈ ZeroFreeRegion.verticalRegion a b H →
+      (-logDeriv riemannZeta w).re ≤
+        Are + Bre * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3))
+    (hcenter :
+      ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+        Acenter + Bcenter * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3))
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + Complex.I * t)‖ ≤ R / 2) :
+    ‖-logDeriv riemannZeta z‖ ≤
+      (2 * Are + 3 * Acenter) +
+        (2 * Bre + 3 * Bcenter) *
+          Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3) :=
+  ZeroFreeRegion.borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius_of_pos_A
+    hAre hBre_nonneg ha₀ hHpos hlog hcenter ha hb hH hR hz_half
+
 /-- Public `log(|t|+3)`-scale half-radius Borel-Carathéodory bound for
 `-logDeriv ζ` on a positive-height right half-strip. -/
 theorem borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_log_abs_add_three_re_le_half_radius
@@ -14458,6 +14579,29 @@ theorem borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_o
   ZeroFreeRegion.borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_log_abs_add_three_re_le_half_radius
     hσ ht hM hBre_nonneg hBcenter_nonneg ha₀ hHpos hlog hcenter ha hb hH hR hz_half
 
+/-- Public safe-height half-radius Borel-Carathéodory bound for
+`-logDeriv ζ`, with `M > 0` discharged from `0 < Are`. -/
+theorem borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_log_abs_add_three_re_le_half_radius_of_pos_A
+    {Are Bre Acenter Bcenter R σ t a b H : ℝ} {z : ℂ}
+    (hσ : σ ∈ Set.Icc 1 2) (ht : 5 ≤ |t|)
+    (hAre : 0 < Are) (hBre_nonneg : 0 ≤ Bre)
+    (hBcenter_nonneg : 0 ≤ Bcenter)
+    (ha₀ : 1 ≤ a) (hHpos : 0 < H)
+    (hlog : ∀ w : ℂ, w ∈ ZeroFreeRegion.verticalRegion a b H →
+      (-logDeriv riemannZeta w).re ≤
+        Are + Bre * Real.log (|t| + 3))
+    (hcenter :
+      ‖-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+        Acenter + Bcenter * Real.log (|t| + 3))
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + Complex.I * t)‖ ≤ R / 2) :
+    ‖-logDeriv riemannZeta z‖ ≤
+      (2 * Are + 3 * Acenter) +
+        (4 * Bre + 6 * Bcenter) * Real.log (|t| + 3) :=
+  ZeroFreeRegion.borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_log_abs_add_three_re_le_half_radius_of_pos_A
+    hσ ht hAre hBre_nonneg hBcenter_nonneg ha₀ hHpos hlog hcenter ha hb hH hR hz_half
+
 /-- Public affine full-height half-radius oscillation Borel-Carathéodory
 bound for `-logDeriv ζ` on a positive-height right half-strip. -/
 theorem borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius
@@ -14477,6 +14621,26 @@ theorem borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_
         Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3) :=
   ZeroFreeRegion.borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius
     hM ha₀ hHpos hlog ha hb hH hR hz_half
+
+/-- Public affine full-height half-radius oscillation Borel-Carathéodory
+bound for `-logDeriv ζ`, with `M > 0` discharged from `0 < Are`. -/
+theorem borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius_of_pos_A
+    {Are Bre R σ t a b H : ℝ} {z : ℂ}
+    (hAre : 0 < Are) (hBre_nonneg : 0 ≤ Bre)
+    (ha₀ : 1 ≤ a) (hHpos : 0 < H)
+    (hlog : ∀ w : ℂ, w ∈ ZeroFreeRegion.verticalRegion a b H →
+      ((-logDeriv riemannZeta w) -
+        (-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t))).re ≤
+          Are + Bre * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3))
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + Complex.I * t)‖ ≤ R / 2) :
+    ‖(-logDeriv riemannZeta z) -
+        (-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t))‖ ≤
+      2 * Are + 2 * Bre *
+        Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3) :=
+  ZeroFreeRegion.borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius_of_pos_A
+    hAre hBre_nonneg ha₀ hHpos hlog ha hb hH hR hz_half
 
 /-- Public `log(|t|+3)`-scale half-radius oscillation Borel-Carathéodory
 bound for `-logDeriv ζ` on a positive-height right half-strip. -/
@@ -14498,6 +14662,26 @@ theorem borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_
       2 * Are + 4 * Bre * Real.log (|t| + 3) :=
   ZeroFreeRegion.borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_log_abs_add_three_re_le_half_radius
     hσ ht hM hBre_nonneg ha₀ hHpos hlog ha hb hH hR hz_half
+
+/-- Public safe-height half-radius oscillation Borel-Carathéodory bound for
+`-logDeriv ζ`, with `M > 0` discharged from `0 < Are`. -/
+theorem borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_log_abs_add_three_re_le_half_radius_of_pos_A
+    {Are Bre R σ t a b H : ℝ} {z : ℂ}
+    (hσ : σ ∈ Set.Icc 1 2) (ht : 5 ≤ |t|)
+    (hAre : 0 < Are) (hBre_nonneg : 0 ≤ Bre)
+    (ha₀ : 1 ≤ a) (hHpos : 0 < H)
+    (hlog : ∀ w : ℂ, w ∈ ZeroFreeRegion.verticalRegion a b H →
+      ((-logDeriv riemannZeta w) -
+        (-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t))).re ≤
+          Are + Bre * Real.log (|t| + 3))
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + Complex.I * t)‖ ≤ R / 2) :
+    ‖(-logDeriv riemannZeta z) -
+        (-logDeriv riemannZeta ((σ : ℂ) + Complex.I * t))‖ ≤
+      2 * Are + 4 * Bre * Real.log (|t| + 3) :=
+  ZeroFreeRegion.borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_log_abs_add_three_re_le_half_radius_of_pos_A
+    hσ ht hAre hBre_nonneg ha₀ hHpos hlog ha hb hH hR hz_half
 
 section JensenWrapper
 

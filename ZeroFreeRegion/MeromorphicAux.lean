@@ -14240,6 +14240,29 @@ lemma borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_
   intro w hw
   exact hlog w hw
 
+/-- Positivity of an affine logarithmic majorant in the full complex-height
+scale.
+
+This is the small bookkeeping fact needed to turn Borel-Carathéodory inputs
+from `M > 0` into the natural assumptions `0 < A` and `0 <= B`. -/
+lemma affine_log_norm_add_three_pos (z : ℂ) {A B : ℝ}
+    (hA : 0 < A) (hB : 0 ≤ B) :
+    0 < A + B * Real.log (‖z‖ + 3) := by
+  have hlog_nonneg : 0 ≤ Real.log (‖z‖ + 3) := by
+    apply Real.log_nonneg
+    nlinarith [norm_nonneg z]
+  exact add_pos_of_pos_of_nonneg hA (mul_nonneg hB hlog_nonneg)
+
+/-- Positivity of an affine logarithmic majorant in the safe height scale
+`log(|t|+3)`. -/
+lemma affine_log_abs_add_three_pos (t : ℝ) {A B : ℝ}
+    (hA : 0 < A) (hB : 0 ≤ B) :
+    0 < A + B * Real.log (|t| + 3) := by
+  have hlog_nonneg : 0 ≤ Real.log (|t| + 3) := by
+    apply Real.log_nonneg
+    nlinarith [abs_nonneg t]
+  exact add_pos_of_pos_of_nonneg hA (mul_nonneg hB hlog_nonneg)
+
 /-- Half-radius Borel-Carathéodory bound for `logDeriv ζ` with an affine
 full-height logarithmic real-part input.
 
@@ -14291,6 +14314,33 @@ lemma borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affi
             Real.log (‖((σ : ℂ) + I * t)‖ + 3) := by
       simp [mBound, ell]
       ring
+
+/-- Half-radius Borel-Carathéodory bound for `logDeriv ζ` with affine
+full-height input, with the Borel positivity side-condition discharged by a
+positive affine constant term. -/
+lemma borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius_of_pos_A
+    {Are Bre Acenter Bcenter R σ t a b H : ℝ} {z : ℂ}
+    (hAre : 0 < Are) (hBre_nonneg : 0 ≤ Bre)
+    (ha₀ : 1 ≤ a) (hHpos : 0 < H)
+    (hlog : ∀ w : ℂ, w ∈ verticalRegion a b H →
+      (logDeriv riemannZeta w).re ≤
+        Are + Bre * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (hcenter :
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+        Acenter + Bcenter * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + I * t)‖ ≤ R / 2) :
+    ‖logDeriv riemannZeta z‖ ≤
+      (2 * Are + 3 * Acenter) +
+        (2 * Bre + 3 * Bcenter) *
+          Real.log (‖((σ : ℂ) + I * t)‖ + 3) :=
+  borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius
+    (Are := Are) (Bre := Bre) (Acenter := Acenter)
+    (Bcenter := Bcenter) (R := R) (σ := σ) (t := t) (a := a)
+    (b := b) (H := H) (z := z)
+    (affine_log_norm_add_three_pos (((σ : ℂ) + I * t)) hAre hBre_nonneg)
+    ha₀ hHpos hlog hcenter ha hb hH hR hz_half
 
 /-- Half-radius Borel-Carathéodory bound for `logDeriv ζ` with inputs already
 normalized to the safe height scale `log(|t|+3)`.
@@ -14377,6 +14427,33 @@ lemma borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affi
       simp [ellAbs]
       ring
 
+/-- Safe-height half-radius Borel-Carathéodory bound for `logDeriv ζ`, with
+the Borel positivity side-condition discharged by `0 < Are` and `0 <= Bre`. -/
+lemma borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_log_abs_add_three_re_le_half_radius_of_pos_A
+    {Are Bre Acenter Bcenter R σ t a b H : ℝ} {z : ℂ}
+    (hσ : σ ∈ Set.Icc 1 2) (ht : 5 ≤ |t|)
+    (hAre : 0 < Are) (hBre_nonneg : 0 ≤ Bre)
+    (hBcenter_nonneg : 0 ≤ Bcenter)
+    (ha₀ : 1 ≤ a) (hHpos : 0 < H)
+    (hlog : ∀ w : ℂ, w ∈ verticalRegion a b H →
+      (logDeriv riemannZeta w).re ≤
+        Are + Bre * Real.log (|t| + 3))
+    (hcenter :
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+        Acenter + Bcenter * Real.log (|t| + 3))
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + I * t)‖ ≤ R / 2) :
+    ‖logDeriv riemannZeta z‖ ≤
+      (2 * Are + 3 * Acenter) +
+        (4 * Bre + 6 * Bcenter) * Real.log (|t| + 3) :=
+  borelCaratheodory_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_log_abs_add_three_re_le_half_radius
+    (Are := Are) (Bre := Bre) (Acenter := Acenter)
+    (Bcenter := Bcenter) (R := R) (σ := σ) (t := t) (a := a)
+    (b := b) (H := H) (z := z)
+    hσ ht (affine_log_abs_add_three_pos t hAre hBre_nonneg)
+    hBre_nonneg hBcenter_nonneg ha₀ hHpos hlog hcenter ha hb hH hR hz_half
+
 /-- Half-radius oscillation Borel-Carathéodory bound for `logDeriv ζ` with an
 affine full-height logarithmic real-part input. -/
 lemma borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius
@@ -14413,6 +14490,28 @@ lemma borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_
           Real.log (‖((σ : ℂ) + I * t)‖ + 3) := by
       simp [mBound, ell]
       ring
+
+/-- Half-radius oscillation Borel-Carathéodory bound for `logDeriv ζ` with
+affine full-height input, with `M > 0` discharged from `0 < Are`. -/
+lemma borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius_of_pos_A
+    {Are Bre R σ t a b H : ℝ} {z : ℂ}
+    (hAre : 0 < Are) (hBre_nonneg : 0 ≤ Bre)
+    (ha₀ : 1 ≤ a) (hHpos : 0 < H)
+    (hlog : ∀ w : ℂ, w ∈ verticalRegion a b H →
+      (logDeriv riemannZeta w -
+        logDeriv riemannZeta ((σ : ℂ) + I * t)).re ≤
+          Are + Bre * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + I * t)‖ ≤ R / 2) :
+    ‖logDeriv riemannZeta z -
+        logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+      2 * Are + 2 * Bre * Real.log (‖((σ : ℂ) + I * t)‖ + 3) :=
+  borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius
+    (Are := Are) (Bre := Bre) (R := R) (σ := σ) (t := t)
+    (a := a) (b := b) (H := H) (z := z)
+    (affine_log_norm_add_three_pos (((σ : ℂ) + I * t)) hAre hBre_nonneg)
+    ha₀ hHpos hlog ha hb hH hR hz_half
 
 /-- Half-radius oscillation Borel-Carathéodory bound for `logDeriv ζ` with
 inputs normalized to `log(|t|+3)`. -/
@@ -14478,6 +14577,29 @@ lemma borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_
     _ = 2 * Are + 4 * Bre * Real.log (|t| + 3) := by
       simp [ellAbs]
       ring
+
+/-- Safe-height oscillation Borel-Carathéodory bound for `logDeriv ζ`, with
+the Borel positivity side-condition discharged by `0 < Are`. -/
+lemma borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_log_abs_add_three_re_le_half_radius_of_pos_A
+    {Are Bre R σ t a b H : ℝ} {z : ℂ}
+    (hσ : σ ∈ Set.Icc 1 2) (ht : 5 ≤ |t|)
+    (hAre : 0 < Are) (hBre_nonneg : 0 ≤ Bre)
+    (ha₀ : 1 ≤ a) (hHpos : 0 < H)
+    (hlog : ∀ w : ℂ, w ∈ verticalRegion a b H →
+      (logDeriv riemannZeta w -
+        logDeriv riemannZeta ((σ : ℂ) + I * t)).re ≤
+          Are + Bre * Real.log (|t| + 3))
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + I * t)‖ ≤ R / 2) :
+    ‖logDeriv riemannZeta z -
+        logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+      2 * Are + 4 * Bre * Real.log (|t| + 3) :=
+  borelCaratheodory_sub_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_log_abs_add_three_re_le_half_radius
+    (Are := Are) (Bre := Bre) (R := R) (σ := σ) (t := t)
+    (a := a) (b := b) (H := H) (z := z)
+    hσ ht (affine_log_abs_add_three_pos t hAre hBre_nonneg)
+    hBre_nonneg ha₀ hHpos hlog ha hb hH hR hz_half
 
 /-- On a positive-height right half-strip, the signed logarithmic derivative
 `-logDeriv ζ` is differentiable. -/
@@ -18633,6 +18755,59 @@ lemma borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_
       simp [ellAbs]
       ring
 
+/-- Signed half-radius Borel-Carathéodory bound for `-logDeriv ζ` with affine
+full-height input, with `M > 0` discharged from `0 < Are`. -/
+lemma borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius_of_pos_A
+    {Are Bre Acenter Bcenter R σ t a b H : ℝ} {z : ℂ}
+    (hAre : 0 < Are) (hBre_nonneg : 0 ≤ Bre)
+    (ha₀ : 1 ≤ a) (hHpos : 0 < H)
+    (hlog : ∀ w : ℂ, w ∈ verticalRegion a b H →
+      (-logDeriv riemannZeta w).re ≤
+        Are + Bre * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (hcenter :
+      ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+        Acenter + Bcenter * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + I * t)‖ ≤ R / 2) :
+    ‖-logDeriv riemannZeta z‖ ≤
+      (2 * Are + 3 * Acenter) +
+        (2 * Bre + 3 * Bcenter) *
+          Real.log (‖((σ : ℂ) + I * t)‖ + 3) :=
+  borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius
+    (Are := Are) (Bre := Bre) (Acenter := Acenter)
+    (Bcenter := Bcenter) (R := R) (σ := σ) (t := t) (a := a)
+    (b := b) (H := H) (z := z)
+    (affine_log_norm_add_three_pos (((σ : ℂ) + I * t)) hAre hBre_nonneg)
+    ha₀ hHpos hlog hcenter ha hb hH hR hz_half
+
+/-- Signed safe-height half-radius Borel-Carathéodory bound for `-logDeriv ζ`,
+with `M > 0` discharged from `0 < Are`. -/
+lemma borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_log_abs_add_three_re_le_half_radius_of_pos_A
+    {Are Bre Acenter Bcenter R σ t a b H : ℝ} {z : ℂ}
+    (hσ : σ ∈ Set.Icc 1 2) (ht : 5 ≤ |t|)
+    (hAre : 0 < Are) (hBre_nonneg : 0 ≤ Bre)
+    (hBcenter_nonneg : 0 ≤ Bcenter)
+    (ha₀ : 1 ≤ a) (hHpos : 0 < H)
+    (hlog : ∀ w : ℂ, w ∈ verticalRegion a b H →
+      (-logDeriv riemannZeta w).re ≤
+        Are + Bre * Real.log (|t| + 3))
+    (hcenter :
+      ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+        Acenter + Bcenter * Real.log (|t| + 3))
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + I * t)‖ ≤ R / 2) :
+    ‖-logDeriv riemannZeta z‖ ≤
+      (2 * Are + 3 * Acenter) +
+        (4 * Bre + 6 * Bcenter) * Real.log (|t| + 3) :=
+  borelCaratheodory_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_log_abs_add_three_re_le_half_radius
+    (Are := Are) (Bre := Bre) (Acenter := Acenter)
+    (Bcenter := Bcenter) (R := R) (σ := σ) (t := t) (a := a)
+    (b := b) (H := H) (z := z)
+    hσ ht (affine_log_abs_add_three_pos t hAre hBre_nonneg)
+    hBre_nonneg hBcenter_nonneg ha₀ hHpos hlog hcenter ha hb hH hR hz_half
+
 /-- Half-radius oscillation Borel-Carathéodory bound for the signed
 logarithmic derivative `-logDeriv ζ` with an affine full-height real-part
 input. -/
@@ -18670,6 +18845,28 @@ lemma borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re
           Real.log (‖((σ : ℂ) + I * t)‖ + 3) := by
       simp [mBound, ell]
       ring
+
+/-- Signed oscillation Borel-Carathéodory bound with affine full-height input,
+with `M > 0` discharged from `0 < Are`. -/
+lemma borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius_of_pos_A
+    {Are Bre R σ t a b H : ℝ} {z : ℂ}
+    (hAre : 0 < Are) (hBre_nonneg : 0 ≤ Bre)
+    (ha₀ : 1 ≤ a) (hHpos : 0 < H)
+    (hlog : ∀ w : ℂ, w ∈ verticalRegion a b H →
+      ((-logDeriv riemannZeta w) -
+        (-logDeriv riemannZeta ((σ : ℂ) + I * t))).re ≤
+          Are + Bre * Real.log (‖((σ : ℂ) + I * t)‖ + 3))
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + I * t)‖ ≤ R / 2) :
+    ‖(-logDeriv riemannZeta z) -
+        (-logDeriv riemannZeta ((σ : ℂ) + I * t))‖ ≤
+      2 * Are + 2 * Bre * Real.log (‖((σ : ℂ) + I * t)‖ + 3) :=
+  borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_re_le_half_radius
+    (Are := Are) (Bre := Bre) (R := R) (σ := σ) (t := t)
+    (a := a) (b := b) (H := H) (z := z)
+    (affine_log_norm_add_three_pos (((σ : ℂ) + I * t)) hAre hBre_nonneg)
+    ha₀ hHpos hlog ha hb hH hR hz_half
 
 /-- Half-radius oscillation Borel-Carathéodory bound for `-logDeriv ζ` with
 inputs normalized to `log(|t|+3)`. -/
@@ -18735,6 +18932,29 @@ lemma borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re
     _ = 2 * Are + 4 * Bre * Real.log (|t| + 3) := by
       simp [ellAbs]
       ring
+
+/-- Signed safe-height oscillation Borel-Carathéodory bound, with the Borel
+positivity side-condition discharged by `0 < Are`. -/
+lemma borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_log_abs_add_three_re_le_half_radius_of_pos_A
+    {Are Bre R σ t a b H : ℝ} {z : ℂ}
+    (hσ : σ ∈ Set.Icc 1 2) (ht : 5 ≤ |t|)
+    (hAre : 0 < Are) (hBre_nonneg : 0 ≤ Bre)
+    (ha₀ : 1 ≤ a) (hHpos : 0 < H)
+    (hlog : ∀ w : ℂ, w ∈ verticalRegion a b H →
+      ((-logDeriv riemannZeta w) -
+        (-logDeriv riemannZeta ((σ : ℂ) + I * t))).re ≤
+          Are + Bre * Real.log (|t| + 3))
+    (ha : a + R ≤ σ) (hb : σ + R ≤ b) (hH : H + R ≤ |t|)
+    (hR : 0 < R)
+    (hz_half : ‖z - ((σ : ℂ) + I * t)‖ ≤ R / 2) :
+    ‖(-logDeriv riemannZeta z) -
+        (-logDeriv riemannZeta ((σ : ℂ) + I * t))‖ ≤
+      2 * Are + 4 * Bre * Real.log (|t| + 3) :=
+  borelCaratheodory_sub_neg_logDeriv_riemannZeta_verticalRegion_of_one_le_re_of_affine_log_abs_add_three_re_le_half_radius
+    (Are := Are) (Bre := Bre) (R := R) (σ := σ) (t := t)
+    (a := a) (b := b) (H := H) (z := z)
+    hσ ht (affine_log_abs_add_three_pos t hAre hBre_nonneg)
+    hBre_nonneg ha₀ hHpos hlog ha hb hH hR hz_half
 
 /-- Jensen formula specialized to the logarithmic derivative of ζ on a closed
 ball. -/
