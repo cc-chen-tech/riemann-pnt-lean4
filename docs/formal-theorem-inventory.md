@@ -1796,7 +1796,9 @@ Core verified declarations:
   package the same right-shifted quotient conversion over a finite family of
   heights `tau k`, giving the Borel-side supplier shape needed before
   higher-degree finite detectors consume one shifted upper bound per
-  frequency.
+  frequency.  Their `_of_pos_A` variants remove the frequency-wise Borel
+  positivity hypotheses from the finite-family interface, replacing
+  `∀ k, M k > 0` with the uniform side conditions `0 < Are` and `0 <= Bre`.
 - `re_neg_deriv_div_riemannZeta_shift_pair_right_shift_le_log_abs_of_affine_logDeriv_re_le_half_radius_of_pos_A`
   / `...affine_neg_logDeriv..._of_pos_A` and their full-height `log_norm`
   analogues discharge the pair-level Borel positivity conditions at both

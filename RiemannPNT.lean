@@ -12689,6 +12689,13 @@ theorem re_neg_deriv_div_riemannZeta_finset_right_shift_le_log_norm_of_affine_ne
   ZeroFreeRegion.re_neg_deriv_div_riemannZeta_finset_right_shift_le_log_norm_of_affine_neg_logDeriv_re_le_half_radius
     hr hσ hσr hHpos hH ht hA hB hM hlog hcenter
 
+-- Public finite-family right-shifted Borel suppliers with all frequency-wise
+-- Borel positivity side conditions discharged from `0 < Are` and `0 <= Bre`.
+export ZeroFreeRegion (
+  re_neg_deriv_div_riemannZeta_finset_right_shift_le_log_norm_of_affine_logDeriv_re_le_half_radius_of_pos_A
+  re_neg_deriv_div_riemannZeta_finset_right_shift_le_log_norm_of_affine_neg_logDeriv_re_le_half_radius_of_pos_A
+)
+
 /-- Public bridge combining the automatic finite detector lower-bound theorem
 with a finite-family right-shifted Borel supplier for `logDeriv ζ`.
 

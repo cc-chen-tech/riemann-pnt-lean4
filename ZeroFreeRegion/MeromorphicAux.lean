@@ -11999,6 +11999,76 @@ private lemma affine_log_norm_add_three_pos_aux (z : ℂ) {A B : ℝ}
     nlinarith [norm_nonneg z]
   exact add_pos_of_pos_of_nonneg hA (mul_nonneg hB hlog_nonneg)
 
+/-- Finite-family right-shifted Borel quotient bridge for `logDeriv ζ`, with
+all frequency-wise Borel positivity side conditions discharged from `0 < Are`
+and `0 <= Bre`. -/
+lemma re_neg_deriv_div_riemannZeta_finset_right_shift_le_log_norm_of_affine_logDeriv_re_le_half_radius_of_pos_A
+    {Are Bre Acenter Bcenter r H σ : ℝ} {S : Finset ℕ} {τ : ℕ → ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3)
+    (hHpos : 0 < H)
+    (hH : ∀ k, k ∈ S → H + 2 * r ≤ |τ k|)
+    (ht : ∀ k, k ∈ S → 6 ≤ |τ k|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hAre_pos : 0 < Are) (hBre_nonneg : 0 ≤ Bre)
+    (hlog : ∀ k, k ∈ S → ∀ w : ℂ,
+      w ∈ ball (((σ + r : ℝ) : ℂ) + I * τ k) (2 * r) →
+        (logDeriv riemannZeta w).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + I * τ k)‖ + 3))
+    (hcenter : ∀ k, k ∈ S →
+      ‖logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + I * τ k)‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) + I * τ k)‖ + 3)) :
+    ∀ k, k ∈ S →
+      (-deriv riemannZeta ((σ : ℂ) + I * τ k) /
+          riemannZeta ((σ : ℂ) + I * τ k)).re ≤
+        ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+          Real.log (‖((σ : ℂ) + I * τ k)‖ + 3) :=
+  re_neg_deriv_div_riemannZeta_finset_right_shift_le_log_norm_of_affine_logDeriv_re_le_half_radius
+    (Are := Are) (Bre := Bre) (Acenter := Acenter) (Bcenter := Bcenter)
+    (r := r) (H := H) (σ := σ) (S := S) (τ := τ)
+    hr hσ hσr hHpos hH ht hA hB
+    (fun k _hk =>
+      affine_log_norm_add_three_pos_aux
+        (((σ + r : ℝ) : ℂ) + I * τ k) hAre_pos hBre_nonneg)
+    hlog hcenter
+
+/-- Signed finite-family right-shifted Borel quotient bridge for
+`-logDeriv ζ`, with all frequency-wise Borel positivity side conditions
+discharged from `0 < Are` and `0 <= Bre`. -/
+lemma re_neg_deriv_div_riemannZeta_finset_right_shift_le_log_norm_of_affine_neg_logDeriv_re_le_half_radius_of_pos_A
+    {Are Bre Acenter Bcenter r H σ : ℝ} {S : Finset ℕ} {τ : ℕ → ℝ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3)
+    (hHpos : 0 < H)
+    (hH : ∀ k, k ∈ S → H + 2 * r ≤ |τ k|)
+    (ht : ∀ k, k ∈ S → 6 ≤ |τ k|)
+    (hA : 0 ≤ 2 * Are + 3 * Acenter)
+    (hB : 0 ≤ 2 * Bre + 3 * Bcenter)
+    (hAre_pos : 0 < Are) (hBre_nonneg : 0 ≤ Bre)
+    (hlog : ∀ k, k ∈ S → ∀ w : ℂ,
+      w ∈ ball (((σ + r : ℝ) : ℂ) + I * τ k) (2 * r) →
+        (-logDeriv riemannZeta w).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + I * τ k)‖ + 3))
+    (hcenter : ∀ k, k ∈ S →
+      ‖-logDeriv riemannZeta (((σ + r : ℝ) : ℂ) + I * τ k)‖ ≤
+        Acenter + Bcenter *
+          Real.log (‖(((σ + r : ℝ) : ℂ) + I * τ k)‖ + 3)) :
+    ∀ k, k ∈ S →
+      (-deriv riemannZeta ((σ : ℂ) + I * τ k) /
+          riemannZeta ((σ : ℂ) + I * τ k)).re ≤
+        ((2 * Are + 3 * Acenter) + 2 * (2 * Bre + 3 * Bcenter)) *
+          Real.log (‖((σ : ℂ) + I * τ k)‖ + 3) :=
+  re_neg_deriv_div_riemannZeta_finset_right_shift_le_log_norm_of_affine_neg_logDeriv_re_le_half_radius
+    (Are := Are) (Bre := Bre) (Acenter := Acenter) (Bcenter := Bcenter)
+    (r := r) (H := H) (σ := σ) (S := S) (τ := τ)
+    hr hσ hσr hHpos hH ht hA hB
+    (fun k _hk =>
+      affine_log_norm_add_three_pos_aux
+        (((σ + r : ℝ) : ℂ) + I * τ k) hAre_pos hBre_nonneg)
+    hlog hcenter
+
 /-- Pair package for the right-shifted Borel quotient bridges for
 `logDeriv ζ`, with the two Borel positivity side conditions discharged from
 `0 < Are` and `0 <= Bre`. -/

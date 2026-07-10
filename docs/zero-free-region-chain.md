@@ -512,7 +512,10 @@ proved:
   package this single-height handoff over a finite family of heights `tau k`,
   which is the Borel-side supplier shape needed by higher-degree detector
   polynomials before the remaining height-comparison work specializes
-  `tau k` to shifted frequencies such as `k*t`.  The public API bridges
+  `tau k` to shifted frequencies such as `k*t`.  Their `_of_pos_A` variants
+  discharge the frequency-wise `M k > 0` hypotheses from the uniform conditions
+  `0 < Are` and `0 <= Bre`, leaving the local real-part and center bounds as
+  the remaining analytic inputs.  The public API bridges
   `RiemannPNT.API.log_deriv_zeta_finset_single_lower_bound_auto_of_right_shift_borel_family`
   and
   `RiemannPNT.API.log_deriv_zeta_finset_single_lower_bound_auto_of_signed_right_shift_borel_family`

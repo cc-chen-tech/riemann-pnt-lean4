@@ -218,7 +218,9 @@ inputs into pure `C log |t|` outputs at `σ+it`.  The paired right-shift
 bridges for the two 3-4-1 shifted terms now also have `_of_pos_A` variants:
 `0 < A` and `0 <= B` discharge the two Borel positivity side conditions at
 heights `t` and `2t`, and the fixed-margin pair variants additionally
-discharge the two center norm estimates.  These handoff lemmas do not prove the
+discharge the two center norm estimates.  The finite-family supplier used by
+higher-degree detector routes has the same `_of_pos_A` positivity discharge for
+every frequency in the finite set.  These handoff lemmas do not prove the
 missing polynomial growth or boundary-strip logarithmic-derivative estimate
 itself.  On the pole side, the local decomposition
 `logDeriv ζ(s) = -(s-1)^-1 + logDeriv(unit)(s)` is now proved near `s=1`,
