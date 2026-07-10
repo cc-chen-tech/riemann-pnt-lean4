@@ -7591,6 +7591,67 @@ theorem exists_punctured_closedBall_norm_neg_logDeriv_riemannZeta_add_analyticOr
   ZeroFreeRegion.exists_punctured_closedBall_norm_neg_logDeriv_riemannZeta_add_analyticOrderNatAt_mul_inv_le_of_zero_auto
     hρ1 hzero
 
+/-- Public horizontal-line distance identity in `ℂ`. -/
+theorem dist_ofReal_add_I_mul_same_im (σ β t : ℝ) :
+    dist ((σ : ℂ) + I * t) ((β : ℂ) + I * t) = |σ - β| :=
+  ZeroFreeRegion.dist_ofReal_add_I_mul_same_im σ β t
+
+/-- Public coordinate form of the actual-zero regular-part bound on the
+horizontal line through `β + i t`. -/
+theorem exists_real_punctured_interval_norm_logDeriv_riemannZeta_sub_analyticOrderNatAt_mul_inv_le_of_zero_auto
+    {β t : ℝ}
+    (hρ1 : ((β : ℂ) + I * t) ≠ 1)
+    (hzero : riemannZeta ((β : ℂ) + I * t) = 0) :
+    0 < analyticOrderNatAt riemannZeta ((β : ℂ) + I * t) ∧
+      ∃ r M : ℝ, 0 < r ∧ 0 ≤ M ∧ ∀ σ : ℝ, σ ≠ β → |σ - β| < r →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+          (analyticOrderNatAt riemannZeta ((β : ℂ) + I * t) : ℂ) *
+            (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤ M :=
+  ZeroFreeRegion.exists_real_punctured_interval_norm_logDeriv_riemannZeta_sub_analyticOrderNatAt_mul_inv_le_of_zero_auto
+    hρ1 hzero
+
+/-- Public closed-interval coordinate form of the actual-zero regular-part
+bound on the horizontal line through `β + i t`. -/
+theorem exists_real_punctured_closed_interval_norm_logDeriv_riemannZeta_sub_analyticOrderNatAt_mul_inv_le_of_zero_auto
+    {β t : ℝ}
+    (hρ1 : ((β : ℂ) + I * t) ≠ 1)
+    (hzero : riemannZeta ((β : ℂ) + I * t) = 0) :
+    0 < analyticOrderNatAt riemannZeta ((β : ℂ) + I * t) ∧
+      ∃ r M : ℝ, 0 < r ∧ 0 ≤ M ∧ ∀ σ : ℝ, σ ≠ β → |σ - β| ≤ r →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+          (analyticOrderNatAt riemannZeta ((β : ℂ) + I * t) : ℂ) *
+            (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤ M :=
+  ZeroFreeRegion.exists_real_punctured_closed_interval_norm_logDeriv_riemannZeta_sub_analyticOrderNatAt_mul_inv_le_of_zero_auto
+    hρ1 hzero
+
+/-- Public signed coordinate form of the actual-zero regular-part bound on the
+horizontal line through `β + i t`. -/
+theorem exists_real_punctured_interval_norm_neg_logDeriv_riemannZeta_add_analyticOrderNatAt_mul_inv_le_of_zero_auto
+    {β t : ℝ}
+    (hρ1 : ((β : ℂ) + I * t) ≠ 1)
+    (hzero : riemannZeta ((β : ℂ) + I * t) = 0) :
+    0 < analyticOrderNatAt riemannZeta ((β : ℂ) + I * t) ∧
+      ∃ r M : ℝ, 0 < r ∧ 0 ≤ M ∧ ∀ σ : ℝ, σ ≠ β → |σ - β| < r →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t) +
+          (analyticOrderNatAt riemannZeta ((β : ℂ) + I * t) : ℂ) *
+            (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤ M :=
+  ZeroFreeRegion.exists_real_punctured_interval_norm_neg_logDeriv_riemannZeta_add_analyticOrderNatAt_mul_inv_le_of_zero_auto
+    hρ1 hzero
+
+/-- Public signed closed-interval coordinate form of the actual-zero
+regular-part bound on the horizontal line through `β + i t`. -/
+theorem exists_real_punctured_closed_interval_norm_neg_logDeriv_riemannZeta_add_analyticOrderNatAt_mul_inv_le_of_zero_auto
+    {β t : ℝ}
+    (hρ1 : ((β : ℂ) + I * t) ≠ 1)
+    (hzero : riemannZeta ((β : ℂ) + I * t) = 0) :
+    0 < analyticOrderNatAt riemannZeta ((β : ℂ) + I * t) ∧
+      ∃ r M : ℝ, 0 < r ∧ 0 ≤ M ∧ ∀ σ : ℝ, σ ≠ β → |σ - β| ≤ r →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t) +
+          (analyticOrderNatAt riemannZeta ((β : ℂ) + I * t) : ℂ) *
+            (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤ M :=
+  ZeroFreeRegion.exists_real_punctured_closed_interval_norm_neg_logDeriv_riemannZeta_add_analyticOrderNatAt_mul_inv_le_of_zero_auto
+    hρ1 hzero
+
 /-- Public generic bridge: analytic nonvanishing implies analytic logarithmic
 derivative. -/
 theorem analyticAt_logDeriv_of_analyticAt_ne_zero

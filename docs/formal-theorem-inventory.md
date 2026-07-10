@@ -167,7 +167,9 @@ Core verified declarations:
   and the signed/closed-ball variants prove that any actual zeta zero away from
   the pole has finite positive natural analytic multiplicity and locally bounded
   logarithmic-derivative regular part after subtracting that multiplicity times
-  `(z - rho)^(-1)`.  These remove the need to supply an explicit
+  `(z - rho)^(-1)`.  The `exists_real_punctured_interval_...` coordinate
+  variants specialize the same result to `rho = beta + i t` and
+  `z = sigma + i t`.  These remove the need to supply an explicit
   `analyticOrderAt riemannZeta rho = n` hypothesis in local zero arguments.
 - `exists_norm_logDeriv_riemannZeta_le_log_abs_im_add_three_of_one_add_le_re`
   proves that for every fixed `epsilon > 0`, `logDeriv zeta` has a

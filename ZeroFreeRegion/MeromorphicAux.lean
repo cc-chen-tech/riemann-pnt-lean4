@@ -10331,6 +10331,142 @@ lemma exists_punctured_closedBall_norm_neg_logDeriv_riemannZeta_add_analyticOrde
     ⟨r, M, hr, hM, hbound⟩
   exact ⟨hpos, r, M, hr, hM, hbound⟩
 
+/-- Distance between two points on the same horizontal line in `ℂ`. -/
+lemma dist_ofReal_add_I_mul_same_im (σ β t : ℝ) :
+    dist ((σ : ℂ) + I * t) ((β : ℂ) + I * t) = |σ - β| := by
+  have hsub :
+      ((σ : ℂ) + I * t) - ((β : ℂ) + I * t) =
+        ((σ - β : ℝ) : ℂ) := by
+    norm_num [Complex.ext_iff, Complex.ofReal_sub]
+  have hnorm_ofReal :
+      ‖((σ - β : ℝ) : ℂ)‖ = |σ - β| := by
+    simpa using (RCLike.norm_ofReal (K := ℂ) (σ - β))
+  rw [dist_eq_norm, hsub, hnorm_ofReal]
+
+/-- Coordinate form of the automatic actual-zero regular-part bound on the
+horizontal line through the zero `β + i t`. -/
+lemma exists_real_punctured_interval_norm_logDeriv_riemannZeta_sub_analyticOrderNatAt_mul_inv_le_of_zero_auto
+    {β t : ℝ}
+    (hρ1 : ((β : ℂ) + I * t) ≠ 1)
+    (hzero : riemannZeta ((β : ℂ) + I * t) = 0) :
+    0 < analyticOrderNatAt riemannZeta ((β : ℂ) + I * t) ∧
+      ∃ r M : ℝ, 0 < r ∧ 0 ≤ M ∧ ∀ σ : ℝ, σ ≠ β → |σ - β| < r →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+          (analyticOrderNatAt riemannZeta ((β : ℂ) + I * t) : ℂ) *
+            (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤ M := by
+  rcases
+    exists_punctured_ball_norm_logDeriv_riemannZeta_sub_analyticOrderNatAt_mul_inv_le_of_zero_auto
+      (ρ := (β : ℂ) + I * t) hρ1 hzero with
+    ⟨hpos, r, M, hr, hM, hbound⟩
+  refine ⟨hpos, r, M, hr, hM, ?_⟩
+  intro σ hσ_ne hdist
+  have hz_ne : ((σ : ℂ) + I * t) ≠ ((β : ℂ) + I * t) := by
+    intro h
+    have hre : σ = β := by
+      simpa using congrArg Complex.re h
+    exact hσ_ne hre
+  have hdist' : dist ((σ : ℂ) + I * t) ((β : ℂ) + I * t) < r := by
+    rw [dist_ofReal_add_I_mul_same_im]
+    exact hdist
+  have hsub :
+      ((σ : ℂ) + I * t) - ((β : ℂ) + I * t) =
+        ((σ - β : ℝ) : ℂ) := by
+    norm_num [Complex.ext_iff, Complex.ofReal_sub]
+  simpa [hsub] using hbound ((σ : ℂ) + I * t) hz_ne hdist'
+
+/-- Closed-interval coordinate form of the automatic actual-zero regular-part
+bound on the horizontal line through `β + i t`. -/
+lemma exists_real_punctured_closed_interval_norm_logDeriv_riemannZeta_sub_analyticOrderNatAt_mul_inv_le_of_zero_auto
+    {β t : ℝ}
+    (hρ1 : ((β : ℂ) + I * t) ≠ 1)
+    (hzero : riemannZeta ((β : ℂ) + I * t) = 0) :
+    0 < analyticOrderNatAt riemannZeta ((β : ℂ) + I * t) ∧
+      ∃ r M : ℝ, 0 < r ∧ 0 ≤ M ∧ ∀ σ : ℝ, σ ≠ β → |σ - β| ≤ r →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t) -
+          (analyticOrderNatAt riemannZeta ((β : ℂ) + I * t) : ℂ) *
+            (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤ M := by
+  rcases
+    exists_punctured_closedBall_norm_logDeriv_riemannZeta_sub_analyticOrderNatAt_mul_inv_le_of_zero_auto
+      (ρ := (β : ℂ) + I * t) hρ1 hzero with
+    ⟨hpos, r, M, hr, hM, hbound⟩
+  refine ⟨hpos, r, M, hr, hM, ?_⟩
+  intro σ hσ_ne hdist
+  have hz_ne : ((σ : ℂ) + I * t) ≠ ((β : ℂ) + I * t) := by
+    intro h
+    have hre : σ = β := by
+      simpa using congrArg Complex.re h
+    exact hσ_ne hre
+  have hdist' : dist ((σ : ℂ) + I * t) ((β : ℂ) + I * t) ≤ r := by
+    rw [dist_ofReal_add_I_mul_same_im]
+    exact hdist
+  have hsub :
+      ((σ : ℂ) + I * t) - ((β : ℂ) + I * t) =
+        ((σ - β : ℝ) : ℂ) := by
+    norm_num [Complex.ext_iff, Complex.ofReal_sub]
+  simpa [hsub] using hbound ((σ : ℂ) + I * t) hz_ne hdist'
+
+/-- Signed coordinate form of the automatic actual-zero regular-part bound on
+the horizontal line through `β + i t`. -/
+lemma exists_real_punctured_interval_norm_neg_logDeriv_riemannZeta_add_analyticOrderNatAt_mul_inv_le_of_zero_auto
+    {β t : ℝ}
+    (hρ1 : ((β : ℂ) + I * t) ≠ 1)
+    (hzero : riemannZeta ((β : ℂ) + I * t) = 0) :
+    0 < analyticOrderNatAt riemannZeta ((β : ℂ) + I * t) ∧
+      ∃ r M : ℝ, 0 < r ∧ 0 ≤ M ∧ ∀ σ : ℝ, σ ≠ β → |σ - β| < r →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t) +
+          (analyticOrderNatAt riemannZeta ((β : ℂ) + I * t) : ℂ) *
+            (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤ M := by
+  rcases
+    exists_punctured_ball_norm_neg_logDeriv_riemannZeta_add_analyticOrderNatAt_mul_inv_le_of_zero_auto
+      (ρ := (β : ℂ) + I * t) hρ1 hzero with
+    ⟨hpos, r, M, hr, hM, hbound⟩
+  refine ⟨hpos, r, M, hr, hM, ?_⟩
+  intro σ hσ_ne hdist
+  have hz_ne : ((σ : ℂ) + I * t) ≠ ((β : ℂ) + I * t) := by
+    intro h
+    have hre : σ = β := by
+      simpa using congrArg Complex.re h
+    exact hσ_ne hre
+  have hdist' : dist ((σ : ℂ) + I * t) ((β : ℂ) + I * t) < r := by
+    rw [dist_ofReal_add_I_mul_same_im]
+    exact hdist
+  have hsub :
+      ((σ : ℂ) + I * t) - ((β : ℂ) + I * t) =
+        ((σ - β : ℝ) : ℂ) := by
+    norm_num [Complex.ext_iff, Complex.ofReal_sub]
+  simpa [hsub] using hbound ((σ : ℂ) + I * t) hz_ne hdist'
+
+/-- Signed closed-interval coordinate form of the automatic actual-zero
+regular-part bound on the horizontal line through `β + i t`. -/
+lemma exists_real_punctured_closed_interval_norm_neg_logDeriv_riemannZeta_add_analyticOrderNatAt_mul_inv_le_of_zero_auto
+    {β t : ℝ}
+    (hρ1 : ((β : ℂ) + I * t) ≠ 1)
+    (hzero : riemannZeta ((β : ℂ) + I * t) = 0) :
+    0 < analyticOrderNatAt riemannZeta ((β : ℂ) + I * t) ∧
+      ∃ r M : ℝ, 0 < r ∧ 0 ≤ M ∧ ∀ σ : ℝ, σ ≠ β → |σ - β| ≤ r →
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t) +
+          (analyticOrderNatAt riemannZeta ((β : ℂ) + I * t) : ℂ) *
+            (((σ - β : ℝ) : ℂ)⁻¹)‖ ≤ M := by
+  rcases
+    exists_punctured_closedBall_norm_neg_logDeriv_riemannZeta_add_analyticOrderNatAt_mul_inv_le_of_zero_auto
+      (ρ := (β : ℂ) + I * t) hρ1 hzero with
+    ⟨hpos, r, M, hr, hM, hbound⟩
+  refine ⟨hpos, r, M, hr, hM, ?_⟩
+  intro σ hσ_ne hdist
+  have hz_ne : ((σ : ℂ) + I * t) ≠ ((β : ℂ) + I * t) := by
+    intro h
+    have hre : σ = β := by
+      simpa using congrArg Complex.re h
+    exact hσ_ne hre
+  have hdist' : dist ((σ : ℂ) + I * t) ((β : ℂ) + I * t) ≤ r := by
+    rw [dist_ofReal_add_I_mul_same_im]
+    exact hdist
+  have hsub :
+      ((σ : ℂ) + I * t) - ((β : ℂ) + I * t) =
+        ((σ - β : ℝ) : ℂ) := by
+    norm_num [Complex.ext_iff, Complex.ofReal_sub]
+  simpa [hsub] using hbound ((σ : ℂ) + I * t) hz_ne hdist'
+
 /-- If `f` is analytic and nonzero at `z`, then its logarithmic derivative is
 analytic at `z`. -/
 lemma analyticAt_logDeriv_of_analyticAt_ne_zero {f : ℂ → ℂ} {z : ℂ}

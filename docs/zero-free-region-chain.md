@@ -1349,7 +1349,11 @@ auto wrappers.  For actual zeta zeros, the additional wrappers
 `ZeroFreeRegion.analyticOrderNatAt_riemannZeta_pos_of_zero`,
 `ZeroFreeRegion.exists_punctured_ball_norm_logDeriv_riemannZeta_sub_analyticOrderNatAt_mul_inv_le_of_zero_auto`,
 and the signed/closed-ball variants now choose the multiplicity internally as
-`analyticOrderNatAt riemannZeta rho` and prove it is positive.  These are local
+`analyticOrderNatAt riemannZeta rho` and prove it is positive.  The
+`exists_real_punctured_interval_...` variants specialize the same local
+principal-part control to horizontal-line coordinates `rho = beta + i t` and
+`z = sigma + i t`, using the checked identity
+`dist (sigma + i t) (beta + i t) = |sigma - beta|`.  These are local
 statements; the remaining hard input is still a uniform high-height logarithmic
 coefficient, not local existence of some constant.
 The high-height wrappers
