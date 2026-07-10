@@ -15188,6 +15188,61 @@ theorem classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm
     Bregular Tregular H T R A B η hBregular hTregular hH hR hRlt
     hA hB hη hregular hsphere hzetaHigh
 
+/-- Public moving-line regular-part assembly from high-height-only fixed-radius
+zeta controls.  Both the sphere growth and center lower-bound inputs are only
+assumed for large height; compactness supplies bounded heights. -/
+theorem classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_compact_band_high_height_sphere_zeta_bound_zeta_lower_bound
+    (Bregular Tregular H T R A B η : ℝ)
+    (hBregular : 0 ≤ Bregular) (hTregular : 2 ≤ Tregular)
+    (hH : 5 ≤ H) (hR : 0 < R) (hRlt : R < H)
+    (hB : 0 ≤ B) (hη : 0 < η)
+    (hregular :
+      ∀ a β t : ℝ, 0 < a → a ≤ Real.log 2 → Tregular ≤ |t| →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < (1 + a / Real.log |t|) - β →
+        ‖logDeriv riemannZeta
+            (((1 + a / Real.log |t| : ℝ) : ℂ) + Complex.I * t) -
+            ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+          Bregular * Real.log |t|)
+    (hsphereHigh :
+      ∀ c : ℂ, c.re ∈ Set.Icc (1 : ℝ) 2 → T ≤ |c.im| →
+        ∀ z : ℂ, z ∈ Metric.sphere c R →
+          ‖riemannZeta z‖ ≤ A + B * Real.log (‖c‖ + 3))
+    (hzetaHigh : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| → η ≤ ‖riemannZeta z‖) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_compact_band_high_height_sphere_zeta_bound_zeta_lower_bound
+    Bregular Tregular H T R A B η hBregular hTregular hH hR hRlt
+    hB hη hregular hsphereHigh hzetaHigh
+
+/-- Public multiplicity-aware moving-line regular-part assembly from
+high-height-only fixed-radius zeta controls. -/
+theorem classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_compact_band_high_height_sphere_zeta_bound_zeta_lower_bound
+    (Bregular Tregular H T R A B η : ℝ)
+    (hBregular : 0 ≤ Bregular) (hTregular : 2 ≤ Tregular)
+    (hH : 5 ≤ H) (hR : 0 < R) (hRlt : R < H)
+    (hB : 0 ≤ B) (hη : 0 < η)
+    (hregular :
+      ∀ a β t : ℝ, 0 < a → a ≤ Real.log 2 → Tregular ≤ |t| →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < (1 + a / Real.log |t|) - β →
+        ∃ n : ℕ, 0 < n ∧
+          ‖logDeriv riemannZeta
+              (((1 + a / Real.log |t| : ℝ) : ℂ) + Complex.I * t) -
+              (n : ℂ) *
+                ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+            Bregular * Real.log |t|)
+    (hsphereHigh :
+      ∀ c : ℂ, c.re ∈ Set.Icc (1 : ℝ) 2 → T ≤ |c.im| →
+        ∀ z : ℂ, z ∈ Metric.sphere c R →
+          ‖riemannZeta z‖ ≤ A + B * Real.log (‖c‖ + 3))
+    (hzetaHigh : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| → η ≤ ‖riemannZeta z‖) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_compact_band_high_height_sphere_zeta_bound_zeta_lower_bound
+    Bregular Tregular H T R A B η hBregular hTregular hH hR hRlt
+    hB hη hregular hsphereHigh hzetaHigh
+
 /-- Public existential moving-line closure with separate regular-part and
 `sigma+2it` norm coefficients. -/
 theorem classical_zero_free_region_of_exists_sigmaOf_log_regular_part_norm_bound_and_two_t_logDeriv_norm_bound
