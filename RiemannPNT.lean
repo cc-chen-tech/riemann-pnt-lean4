@@ -593,6 +593,77 @@ theorem classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogB
   ZeroFreeRegion.classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_sphere_zeta_bound_zeta_lower_bound_on_verticalRegion
     hregular T0 R A B eta hT0 hR hRlt hA hB heta hsphere hzeta
 
+/-- Public compact-patched Cauchy/sphere bridge with high-height-only boundary
+`ζ` growth and high-height-only center lower bound for `ζ`.
+
+Compactness supplies the bounded-height boundary circles and bounded-height
+center lower bound, so the remaining analytic inputs are only high-height
+estimates. -/
+theorem logDerivVerticalLogBound_of_compact_band_and_high_height_sphere_zeta_bound_zeta_lower_bound
+    (H T R A B eta : ℝ) (hH : 5 ≤ H) (hR : 0 < R) (hRlt : R < H)
+    (hB : 0 ≤ B) (heta : 0 < eta)
+    (hsphereHigh :
+      ∀ c : ℂ, c.re ∈ Set.Icc (1 : ℝ) 2 → T ≤ |c.im| →
+        ∀ z : ℂ, z ∈ Metric.sphere c R →
+          ‖riemannZeta z‖ ≤ A + B * Real.log (‖c‖ + 3))
+    (hzetaHigh : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| → eta ≤ ‖riemannZeta z‖) :
+    ∃ C T0 : ℝ, LogDerivVerticalLogBound C T0 :=
+  ZeroFreeRegion.logDerivVerticalLogBound_of_compact_band_and_high_height_sphere_zeta_bound_zeta_lower_bound
+    H T R A B eta hH hR hRlt hB heta hsphereHigh hzetaHigh
+
+/-- Public real-part quotient version of the high-height-only compact-patched
+Cauchy/sphere bridge. -/
+theorem reNegDerivDivVerticalLogBound_of_compact_band_and_high_height_sphere_zeta_bound_zeta_lower_bound
+    (H T R A B eta : ℝ) (hH : 5 ≤ H) (hR : 0 < R) (hRlt : R < H)
+    (hB : 0 ≤ B) (heta : 0 < eta)
+    (hsphereHigh :
+      ∀ c : ℂ, c.re ∈ Set.Icc (1 : ℝ) 2 → T ≤ |c.im| →
+        ∀ z : ℂ, z ∈ Metric.sphere c R →
+          ‖riemannZeta z‖ ≤ A + B * Real.log (‖c‖ + 3))
+    (hzetaHigh : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| → eta ≤ ‖riemannZeta z‖) :
+    ∃ C T0 : ℝ, ReNegDerivDivVerticalLogBound C T0 :=
+  ZeroFreeRegion.reNegDerivDivVerticalLogBound_of_compact_band_and_high_height_sphere_zeta_bound_zeta_lower_bound
+    H T R A B eta hH hR hRlt hB heta hsphereHigh hzetaHigh
+
+/-- Public final assembly from regular-part input, high-height-only fixed-radius
+boundary `ζ` growth, and a high-height center lower bound for `ζ`. -/
+theorem classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_compact_band_high_height_sphere_zeta_bound_zeta_lower_bound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        LogDerivRegularPartLogBound Bregular Tregular)
+    (H T R A B eta : ℝ) (hH : 5 ≤ H) (hR : 0 < R) (hRlt : R < H)
+    (hB : 0 ≤ B) (heta : 0 < eta)
+    (hsphereHigh :
+      ∀ c : ℂ, c.re ∈ Set.Icc (1 : ℝ) 2 → T ≤ |c.im| →
+        ∀ z : ℂ, z ∈ Metric.sphere c R →
+          ‖riemannZeta z‖ ≤ A + B * Real.log (‖c‖ + 3))
+    (hzetaHigh : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| → eta ≤ ‖riemannZeta z‖) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_compact_band_high_height_sphere_zeta_bound_zeta_lower_bound
+    hregular H T R A B eta hH hR hRlt hB heta hsphereHigh hzetaHigh
+
+/-- Public multiplicity-aware final assembly from regular-part input,
+high-height-only fixed-radius boundary `ζ` growth, and a high-height center lower
+bound for `ζ`. -/
+theorem classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_compact_band_high_height_sphere_zeta_bound_zeta_lower_bound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        MultiplicityLogDerivRegularPartLogBound Bregular Tregular)
+    (H T R A B eta : ℝ) (hH : 5 ≤ H) (hR : 0 < R) (hRlt : R < H)
+    (hB : 0 ≤ B) (heta : 0 < eta)
+    (hsphereHigh :
+      ∀ c : ℂ, c.re ∈ Set.Icc (1 : ℝ) 2 → T ≤ |c.im| →
+        ∀ z : ℂ, z ∈ Metric.sphere c R →
+          ‖riemannZeta z‖ ≤ A + B * Real.log (‖c‖ + 3))
+    (hzetaHigh : ∀ z : ℂ, z.re ∈ Set.Icc (1 : ℝ) 2 →
+      T ≤ |z.im| → eta ≤ ‖riemannZeta z‖) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_compact_band_high_height_sphere_zeta_bound_zeta_lower_bound
+    hregular H T R A B eta hH hR hRlt hB heta hsphereHigh hzetaHigh
+
 /-- Public compact-patched Cauchy/sphere bridge: a high-height center lower
 bound for `ζ` plus all-height fixed-radius boundary `ζ` growth gives the named
 vertical `logDeriv ζ` bound. -/
@@ -8023,6 +8094,32 @@ theorem exists_norm_riemannZeta_pos_lower_bound_on_verticalRegion_of_compact_ban
       η ≤ ‖riemannZeta z‖ :=
   ZeroFreeRegion.exists_norm_riemannZeta_pos_lower_bound_on_verticalRegion_of_compact_band_and_high_height
     hH hηHigh hhigh
+
+/-- Public compact bounded-height norm upper bound for `ζ` on any positive-height
+vertical band. -/
+theorem exists_norm_riemannZeta_bound_on_compact_vertical_band
+    {a b H T : ℝ} (hH : 0 < H) :
+    ∃ C ≥ 0, ∀ z : ℂ, z.re ∈ Set.Icc a b →
+      H ≤ |z.im| → |z.im| ≤ T →
+      ‖riemannZeta z‖ ≤ C :=
+  ZeroFreeRegion.exists_norm_riemannZeta_bound_on_compact_vertical_band hH
+
+/-- Public compact bounded-height patch for fixed-radius boundary `ζ` estimates.
+
+The input boundary-circle growth is required only once the center height is at
+least `T`; bounded-height circles are controlled by compactness on a larger
+positive-height band. -/
+theorem exists_sphere_riemannZeta_affine_log_norm_add_three_bound_on_verticalRegion_of_compact_band_and_high_height
+    {H T R A B : ℝ} (hRlt : R < H) (hB : 0 ≤ B)
+    (hhigh :
+      ∀ c : ℂ, c.re ∈ Set.Icc (1 : ℝ) 2 → T ≤ |c.im| →
+        ∀ z : ℂ, z ∈ Metric.sphere c R →
+          ‖riemannZeta z‖ ≤ A + B * Real.log (‖c‖ + 3)) :
+    ∃ A' ≥ 0, ∀ c : ℂ, c ∈ ZeroFreeRegion.verticalRegion 1 2 H →
+      ∀ z : ℂ, z ∈ Metric.sphere c R →
+        ‖riemannZeta z‖ ≤ A' + B * Real.log (‖c‖ + 3) :=
+  ZeroFreeRegion.exists_sphere_riemannZeta_affine_log_norm_add_three_bound_on_verticalRegion_of_compact_band_and_high_height
+    hRlt hB hhigh
 
 /-- Public compact bounded-height norm bound for `ζ'` in the right half-strip
 `1 <= Re(z) <= 2`, `H <= |Im(z)| <= T`. -/
