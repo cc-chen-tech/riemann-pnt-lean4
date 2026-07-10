@@ -10467,6 +10467,49 @@ lemma exists_real_punctured_closed_interval_norm_neg_logDeriv_riemannZeta_add_an
     norm_num [Complex.ext_iff, Complex.ofReal_sub]
   simpa [hsub] using hbound ((σ : ℂ) + I * t) hz_ne hdist'
 
+/-- Local real-part zero-repulsion inequality at an actual zero, in horizontal
+coordinates.  This packages the automatic multiplicity principal-part theorem
+in the exact `Re(-ζ'/ζ) + 1/(σ-β)` form used by the 3-4-1 argument. -/
+lemma exists_real_punctured_interval_re_neg_deriv_div_riemannZeta_add_inv_le_of_zero_auto
+    {β t : ℝ}
+    (hρ1 : ((β : ℂ) + I * t) ≠ 1)
+    (hzero : riemannZeta ((β : ℂ) + I * t) = 0) :
+    ∃ r M : ℝ, 0 < r ∧ 0 ≤ M ∧ ∀ σ : ℝ,
+      σ ≠ β → |σ - β| < r → 0 < σ - β →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re +
+          1 / (σ - β) ≤ M := by
+  rcases
+    exists_real_punctured_interval_norm_neg_logDeriv_riemannZeta_add_analyticOrderNatAt_mul_inv_le_of_zero_auto
+      hρ1 hzero with
+    ⟨hn_pos, r, M, hr, hM, hbound⟩
+  refine ⟨r, M, hr, hM, ?_⟩
+  intro σ hσ_ne hdist hsub
+  exact
+    re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_multiplicity_regular_part_norm
+      (hbound σ hσ_ne hdist) hn_pos hsub
+
+/-- Closed-interval version of
+`exists_real_punctured_interval_re_neg_deriv_div_riemannZeta_add_inv_le_of_zero_auto`. -/
+lemma exists_real_punctured_closed_interval_re_neg_deriv_div_riemannZeta_add_inv_le_of_zero_auto
+    {β t : ℝ}
+    (hρ1 : ((β : ℂ) + I * t) ≠ 1)
+    (hzero : riemannZeta ((β : ℂ) + I * t) = 0) :
+    ∃ r M : ℝ, 0 < r ∧ 0 ≤ M ∧ ∀ σ : ℝ,
+      σ ≠ β → |σ - β| ≤ r → 0 < σ - β →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re +
+          1 / (σ - β) ≤ M := by
+  rcases
+    exists_real_punctured_closed_interval_norm_neg_logDeriv_riemannZeta_add_analyticOrderNatAt_mul_inv_le_of_zero_auto
+      hρ1 hzero with
+    ⟨hn_pos, r, M, hr, hM, hbound⟩
+  refine ⟨r, M, hr, hM, ?_⟩
+  intro σ hσ_ne hdist hsub
+  exact
+    re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_multiplicity_regular_part_norm
+      (hbound σ hσ_ne hdist) hn_pos hsub
+
 /-- If `f` is analytic and nonzero at `z`, then its logarithmic derivative is
 analytic at `z`. -/
 lemma analyticAt_logDeriv_of_analyticAt_ne_zero {f : ℂ → ℂ} {z : ℂ}

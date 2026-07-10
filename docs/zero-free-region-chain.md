@@ -1353,7 +1353,10 @@ and the signed/closed-ball variants now choose the multiplicity internally as
 `exists_real_punctured_interval_...` variants specialize the same local
 principal-part control to horizontal-line coordinates `rho = beta + i t` and
 `z = sigma + i t`, using the checked identity
-`dist (sigma + i t) (beta + i t) = |sigma - beta|`.  These are local
+`dist (sigma + i t) (beta + i t) = |sigma - beta|`.  The local real-part
+wrappers `ZeroFreeRegion.exists_real_punctured_interval_re_neg_deriv_div_riemannZeta_add_inv_le_of_zero_auto`
+and its closed-interval variant then put this in the exact zero-repulsion form
+`Re(-zeta'/zeta)(sigma+i t) + 1/(sigma-beta) <= M`.  These are local
 statements; the remaining hard input is still a uniform high-height logarithmic
 coefficient, not local existence of some constant.
 The high-height wrappers

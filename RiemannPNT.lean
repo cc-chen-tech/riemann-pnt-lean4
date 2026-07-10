@@ -7652,6 +7652,34 @@ theorem exists_real_punctured_closed_interval_norm_neg_logDeriv_riemannZeta_add_
   ZeroFreeRegion.exists_real_punctured_closed_interval_norm_neg_logDeriv_riemannZeta_add_analyticOrderNatAt_mul_inv_le_of_zero_auto
     hρ1 hzero
 
+/-- Public local real-part zero-repulsion inequality at an actual zeta zero,
+in horizontal coordinates. -/
+theorem exists_real_punctured_interval_re_neg_deriv_div_riemannZeta_add_inv_le_of_zero_auto
+    {β t : ℝ}
+    (hρ1 : ((β : ℂ) + I * t) ≠ 1)
+    (hzero : riemannZeta ((β : ℂ) + I * t) = 0) :
+    ∃ r M : ℝ, 0 < r ∧ 0 ≤ M ∧ ∀ σ : ℝ,
+      σ ≠ β → |σ - β| < r → 0 < σ - β →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re +
+          1 / (σ - β) ≤ M :=
+  ZeroFreeRegion.exists_real_punctured_interval_re_neg_deriv_div_riemannZeta_add_inv_le_of_zero_auto
+    hρ1 hzero
+
+/-- Public closed-interval local real-part zero-repulsion inequality at an
+actual zeta zero, in horizontal coordinates. -/
+theorem exists_real_punctured_closed_interval_re_neg_deriv_div_riemannZeta_add_inv_le_of_zero_auto
+    {β t : ℝ}
+    (hρ1 : ((β : ℂ) + I * t) ≠ 1)
+    (hzero : riemannZeta ((β : ℂ) + I * t) = 0) :
+    ∃ r M : ℝ, 0 < r ∧ 0 ≤ M ∧ ∀ σ : ℝ,
+      σ ≠ β → |σ - β| ≤ r → 0 < σ - β →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re +
+          1 / (σ - β) ≤ M :=
+  ZeroFreeRegion.exists_real_punctured_closed_interval_re_neg_deriv_div_riemannZeta_add_inv_le_of_zero_auto
+    hρ1 hzero
+
 /-- Public generic bridge: analytic nonvanishing implies analytic logarithmic
 derivative. -/
 theorem analyticAt_logDeriv_of_analyticAt_ne_zero
