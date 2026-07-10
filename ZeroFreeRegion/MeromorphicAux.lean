@@ -10387,6 +10387,22 @@ lemma exists_real_punctured_interval_riemannZeta_ne_zero_of_ne_one
     exact hdist
   exact hbound ((σ : ℂ) + I * t) hz_ne hdist'
 
+/-- Right-neighborhood form of horizontal local zeta-zero isolation. -/
+lemma eventually_atRight_riemannZeta_ne_zero_of_ne_one
+    {β t : ℝ} (hρ1 : ((β : ℂ) + I * t) ≠ 1) :
+    ∀ᶠ (σ : ℝ) in 𝓝[Set.Ioi β] β,
+      riemannZeta ((σ : ℂ) + I * t) ≠ 0 := by
+  rcases exists_real_punctured_interval_riemannZeta_ne_zero_of_ne_one hρ1 with
+    ⟨r, hr, hbound⟩
+  rw [eventually_nhdsWithin_iff]
+  rw [Metric.eventually_nhds_iff]
+  refine ⟨r, hr, ?_⟩
+  intro σ hdist hσgt
+  have hne : σ ≠ β := ne_of_gt hσgt
+  have habs : |σ - β| < r := by
+    simpa [Real.dist_eq] using hdist
+  exact hbound σ hne habs
+
 /-- Coordinate form of the automatic actual-zero regular-part bound on the
 horizontal line through the zero `β + i t`. -/
 lemma exists_real_punctured_interval_norm_logDeriv_riemannZeta_sub_analyticOrderNatAt_mul_inv_le_of_zero_auto

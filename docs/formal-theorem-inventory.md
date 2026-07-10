@@ -508,9 +508,10 @@ Core verified declarations:
   proves zeta is eventually nonzero in the punctured neighborhood of `1`.
 - `eventually_ne_zero_riemannZeta_nhdsNE_of_ne_one`,
   `exists_punctured_ball_riemannZeta_ne_zero_of_ne_one`, and
-  `exists_real_punctured_interval_riemannZeta_ne_zero_of_ne_one`
+  `exists_real_punctured_interval_riemannZeta_ne_zero_of_ne_one` /
+  `eventually_atRight_riemannZeta_ne_zero_of_ne_one`
   prove local isolation of zeta zeros away from the pole, in punctured-filter,
-  punctured-ball, and horizontal-coordinate forms.
+  punctured-ball, horizontal-coordinate, and right-neighborhood forms.
 - `analyticAt_logDeriv_riemannZetaPoleUnitAtOne`
   proves the logarithmic derivative of the analytic pole unit is analytic at
   `1`.

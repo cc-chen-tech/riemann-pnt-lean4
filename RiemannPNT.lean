@@ -7619,6 +7619,13 @@ theorem exists_real_punctured_interval_riemannZeta_ne_zero_of_ne_one
       riemannZeta ((σ : ℂ) + I * t) ≠ 0 :=
   ZeroFreeRegion.exists_real_punctured_interval_riemannZeta_ne_zero_of_ne_one hρ1
 
+/-- Public right-neighborhood form of horizontal local zeta-zero isolation. -/
+theorem eventually_atRight_riemannZeta_ne_zero_of_ne_one
+    {β t : ℝ} (hρ1 : ((β : ℂ) + I * t) ≠ 1) :
+    ∀ᶠ (σ : ℝ) in 𝓝[Set.Ioi β] β,
+      riemannZeta ((σ : ℂ) + I * t) ≠ 0 :=
+  ZeroFreeRegion.eventually_atRight_riemannZeta_ne_zero_of_ne_one hρ1
+
 /-- Public coordinate form of the actual-zero regular-part bound on the
 horizontal line through `β + i t`. -/
 theorem exists_real_punctured_interval_norm_logDeriv_riemannZeta_sub_analyticOrderNatAt_mul_inv_le_of_zero_auto

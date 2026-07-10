@@ -1041,7 +1041,9 @@ the zeta-zero isolation input is now also exposed as
 `ZeroFreeRegion.eventually_ne_zero_riemannZeta_nhdsNE_of_ne_one`,
 `ZeroFreeRegion.exists_punctured_ball_riemannZeta_ne_zero_of_ne_one`, and the
 horizontal-coordinate
-`ZeroFreeRegion.exists_real_punctured_interval_riemannZeta_ne_zero_of_ne_one`.
+`ZeroFreeRegion.exists_real_punctured_interval_riemannZeta_ne_zero_of_ne_one`;
+`ZeroFreeRegion.eventually_atRight_riemannZeta_ne_zero_of_ne_one` gives the
+same horizontal denominator safety in the right-neighborhood filter.
 The local
 principal-part behavior is now also proved as
 `ZeroFreeRegion.tendsto_mul_logDeriv_riemannZeta_simplePoleAtOne`, namely
