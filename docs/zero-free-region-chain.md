@@ -1357,8 +1357,10 @@ principal-part control to horizontal-line coordinates `rho = beta + i t` and
 wrappers `ZeroFreeRegion.exists_real_punctured_interval_re_neg_deriv_div_riemannZeta_add_inv_le_of_zero_auto`
 and its closed-interval variant then put this in the exact zero-repulsion form
 `Re(-zeta'/zeta)(sigma+i t) + 1/(sigma-beta) <= M`.  These are local
-statements; the remaining hard input is still a uniform high-height logarithmic
-coefficient, not local existence of some constant.
+statements.  The corresponding `_le_log_abs_of_zero_auto` variants express the
+same local constant as `C * log |t|` once `3 <= |t|`; the remaining hard input is
+still a uniform high-height logarithmic coefficient, not local existence of some
+constant.
 The high-height wrappers
 `ZeroFreeRegion.classical_zero_free_region_of_logDeriv_regular_part_norm_bound_and_vertical_logDeriv_norm_bound_high_height`
 and

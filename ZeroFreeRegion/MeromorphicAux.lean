@@ -10510,6 +10510,55 @@ lemma exists_real_punctured_closed_interval_re_neg_deriv_div_riemannZeta_add_inv
     re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_multiplicity_regular_part_norm
       (hbound σ hσ_ne hdist) hn_pos hsub
 
+/-- Local logarithmic-scale real-part zero-repulsion inequality at an actual
+zero.  The constant is local to the zero; this is not the missing uniform
+high-height estimate. -/
+lemma exists_real_punctured_interval_re_neg_deriv_div_riemannZeta_add_inv_le_log_abs_of_zero_auto
+    {β t : ℝ} (ht : 3 ≤ |t|)
+    (hρ1 : ((β : ℂ) + I * t) ≠ 1)
+    (hzero : riemannZeta ((β : ℂ) + I * t) = 0) :
+    ∃ r C : ℝ, 0 < r ∧ 0 ≤ C ∧ ∀ σ : ℝ,
+      σ ≠ β → |σ - β| < r → 0 < σ - β →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re +
+          1 / (σ - β) ≤ C * Real.log |t| := by
+  rcases exists_real_punctured_interval_re_neg_deriv_div_riemannZeta_add_inv_le_of_zero_auto
+      hρ1 hzero with
+    ⟨r, M, hr, hM, hbound⟩
+  refine ⟨r, M, hr, hM, ?_⟩
+  intro σ hσ_ne hdist hsub
+  have hlog_ge_one : 1 ≤ Real.log |t| :=
+    (log_abs_gt_one_of_three_le ht).le
+  have hM_le : M ≤ M * Real.log |t| := by
+    calc
+      M = M * 1 := by ring
+      _ ≤ M * Real.log |t| := mul_le_mul_of_nonneg_left hlog_ge_one hM
+  exact (hbound σ hσ_ne hdist hsub).trans hM_le
+
+/-- Closed-interval version of
+`exists_real_punctured_interval_re_neg_deriv_div_riemannZeta_add_inv_le_log_abs_of_zero_auto`. -/
+lemma exists_real_punctured_closed_interval_re_neg_deriv_div_riemannZeta_add_inv_le_log_abs_of_zero_auto
+    {β t : ℝ} (ht : 3 ≤ |t|)
+    (hρ1 : ((β : ℂ) + I * t) ≠ 1)
+    (hzero : riemannZeta ((β : ℂ) + I * t) = 0) :
+    ∃ r C : ℝ, 0 < r ∧ 0 ≤ C ∧ ∀ σ : ℝ,
+      σ ≠ β → |σ - β| ≤ r → 0 < σ - β →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re +
+          1 / (σ - β) ≤ C * Real.log |t| := by
+  rcases exists_real_punctured_closed_interval_re_neg_deriv_div_riemannZeta_add_inv_le_of_zero_auto
+      hρ1 hzero with
+    ⟨r, M, hr, hM, hbound⟩
+  refine ⟨r, M, hr, hM, ?_⟩
+  intro σ hσ_ne hdist hsub
+  have hlog_ge_one : 1 ≤ Real.log |t| :=
+    (log_abs_gt_one_of_three_le ht).le
+  have hM_le : M ≤ M * Real.log |t| := by
+    calc
+      M = M * 1 := by ring
+      _ ≤ M * Real.log |t| := mul_le_mul_of_nonneg_left hlog_ge_one hM
+  exact (hbound σ hσ_ne hdist hsub).trans hM_le
+
 /-- If `f` is analytic and nonzero at `z`, then its logarithmic derivative is
 analytic at `z`. -/
 lemma analyticAt_logDeriv_of_analyticAt_ne_zero {f : ℂ → ℂ} {z : ℂ}

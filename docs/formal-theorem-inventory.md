@@ -172,7 +172,10 @@ Core verified declarations:
   `z = sigma + i t`, and
   `exists_real_punctured_interval_re_neg_deriv_div_riemannZeta_add_inv_le_of_zero_auto`
   converts the local multiplicity principal-part bound into the real-part
-  zero-repulsion inequality used by the 3-4-1 argument.  These remove the need to supply an explicit
+  zero-repulsion inequality used by the 3-4-1 argument.  The
+  `_le_log_abs_of_zero_auto` variants normalize this local constant as
+  `C * log |t|` above height `3`, without making `C` uniform in the zero.
+  These remove the need to supply an explicit
   `analyticOrderAt riemannZeta rho = n` hypothesis in local zero arguments.
 - `exists_norm_logDeriv_riemannZeta_le_log_abs_im_add_three_of_one_add_le_re`
   proves that for every fixed `epsilon > 0`, `logDeriv zeta` has a
