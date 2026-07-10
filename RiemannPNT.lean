@@ -8323,6 +8323,83 @@ theorem classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm
   ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_compact_band_high_height_logDeriv_affine_bound
     Bregular Tregular H T A B hBregular hTregular hH hB hregular hhigh
 
+/-- Public final assembly from regular-part input plus the target-shaped
+high-height affine estimate
+`‖logDeriv ζ(σ+it)‖ ≤ A + B * log(|t|+3)`. -/
+theorem classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_high_height_affine_log_abs_add_three_logDeriv_bound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        LogDerivRegularPartLogBound Bregular Tregular)
+    (T0 A B : ℝ) (hT0 : 3 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          A + B * Real.log (|t| + 3)) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_high_height_affine_log_abs_add_three_logDeriv_bound
+    hregular T0 A B hT0 hA hB hhigh
+
+/-- Public multiplicity-aware final assembly from regular-part input plus the
+target-shaped high-height affine estimate for `logDeriv ζ`. -/
+theorem classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_high_height_affine_log_abs_add_three_logDeriv_bound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        MultiplicityLogDerivRegularPartLogBound Bregular Tregular)
+    (T0 A B : ℝ) (hT0 : 3 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          A + B * Real.log (|t| + 3)) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_high_height_affine_log_abs_add_three_logDeriv_bound
+    hregular T0 A B hT0 hA hB hhigh
+
+/-- Public moving-line closure from the target-shaped high-height affine
+estimate for `logDeriv ζ`. -/
+theorem classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_high_height_affine_log_abs_add_three_logDeriv_bound
+    (Bregular Tregular T0 A B : ℝ)
+    (hBregular : 0 ≤ Bregular) (hTregular : 2 ≤ Tregular)
+    (hT0 : 3 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hregular :
+      ∀ a β t : ℝ, 0 < a → a ≤ Real.log 2 → Tregular ≤ |t| →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < (1 + a / Real.log |t|) - β →
+        ‖logDeriv riemannZeta
+            (((1 + a / Real.log |t| : ℝ) : ℂ) + Complex.I * t) -
+            ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+          Bregular * Real.log |t|)
+    (hhigh :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          A + B * Real.log (|t| + 3)) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_high_height_affine_log_abs_add_three_logDeriv_bound
+    Bregular Tregular T0 A B hBregular hTregular hT0 hA hB hregular hhigh
+
+/-- Public multiplicity-aware moving-line closure from the target-shaped
+high-height affine estimate for `logDeriv ζ`. -/
+theorem classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_high_height_affine_log_abs_add_three_logDeriv_bound
+    (Bregular Tregular T0 A B : ℝ)
+    (hBregular : 0 ≤ Bregular) (hTregular : 2 ≤ Tregular)
+    (hT0 : 3 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hregular :
+      ∀ a β t : ℝ, 0 < a → a ≤ Real.log 2 → Tregular ≤ |t| →
+        riemannZeta ((β : ℂ) + Complex.I * t) = 0 → β < 1 →
+        0 < (1 + a / Real.log |t|) - β →
+        ∃ n : ℕ, 0 < n ∧
+          ‖logDeriv riemannZeta
+              (((1 + a / Real.log |t| : ℝ) : ℂ) + Complex.I * t) -
+              (n : ℂ) *
+                ((((1 + a / Real.log |t|) - β : ℝ) : ℂ)⁻¹)‖ ≤
+            Bregular * Real.log |t|)
+    (hhigh :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          A + B * Real.log (|t| + 3)) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_sigmaOf_log_multiplicity_regular_part_norm_bound_and_high_height_affine_log_abs_add_three_logDeriv_bound
+    Bregular Tregular T0 A B hBregular hTregular hT0 hA hB hregular hhigh
+
 /-- Public coordinate compact bounded-height norm bound for `logDeriv ζ` on
 `σ + i t`. -/
 theorem exists_norm_logDeriv_riemannZeta_sigma_it_bound_on_compact_vertical_band
