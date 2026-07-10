@@ -10200,6 +10200,137 @@ lemma exists_punctured_closedBall_norm_neg_logDeriv_riemannZeta_add_order_mul_in
     (f := riemannZeta) (x := ρ) (n := n)
     (analyticOnNhd_riemannZeta_ne_one ρ hρ1) horder
 
+/-- Zeros of ζ do not accumulate at any point away from its pole. -/
+lemma riemannZeta_not_frequently_zero_nhdsNE_of_ne_one {x : ℂ} (hx : x ≠ 1) :
+    ¬ ∃ᶠ z in 𝓝[≠] x, riemannZeta z = 0 := by
+  intro hfreq
+  have hdiff : DifferentiableOn ℂ riemannZeta ({(1 : ℂ)}ᶜ : Set ℂ) := by
+    intro z hz
+    exact (differentiableAt_riemannZeta (by simpa using hz)).differentiableWithinAt
+  have han : AnalyticOnNhd ℂ riemannZeta ({(1 : ℂ)}ᶜ : Set ℂ) :=
+    hdiff.analyticOnNhd isOpen_compl_singleton
+  have hpre : IsPreconnected ({(1 : ℂ)}ᶜ : Set ℂ) := by
+    exact (isConnected_compl_singleton_of_one_lt_rank (E := ℂ)
+      (by rw [Complex.rank_real_complex]; norm_num) (1 : ℂ)).isPreconnected
+  have hxmem : x ∈ ({(1 : ℂ)}ᶜ : Set ℂ) := by
+    simpa using hx
+  have heq := han.eqOn_zero_of_preconnected_of_frequently_eq_zero hpre hxmem hfreq
+  have h2zero : riemannZeta (2 : ℂ) = 0 := by
+    have h2mem : (2 : ℂ) ∈ ({(1 : ℂ)}ᶜ : Set ℂ) := by norm_num
+    simpa using heq h2mem
+  exact riemannZeta_ne_zero_of_one_lt_re (s := (2 : ℂ)) (by norm_num) h2zero
+
+/-- Away from the pole, the analytic order of ζ is finite.  This packages the
+identity theorem in the form needed to replace a manually supplied multiplicity
+by `analyticOrderNatAt`. -/
+lemma analyticOrderAt_riemannZeta_ne_top_of_ne_one {ρ : ℂ} (hρ1 : ρ ≠ 1) :
+    analyticOrderAt riemannZeta ρ ≠ ⊤ := by
+  intro htop
+  have hzero_nhds : ∀ᶠ z in 𝓝 ρ, riemannZeta z = 0 :=
+    analyticOrderAt_eq_top.mp htop
+  have hzero_within : ∀ᶠ z in 𝓝[≠] ρ, riemannZeta z = 0 :=
+    hzero_nhds.filter_mono nhdsWithin_le_nhds
+  have hfreq : ∃ᶠ z in 𝓝[≠] ρ, riemannZeta z = 0 :=
+    hzero_within.frequently
+  exact riemannZeta_not_frequently_zero_nhdsNE_of_ne_one hρ1 hfreq
+
+/-- Natural-valued analytic order of ζ agrees with the finite analytic order
+away from the pole. -/
+lemma analyticOrderNatAt_riemannZeta_eq_analyticOrderAt_of_ne_one
+    {ρ : ℂ} (hρ1 : ρ ≠ 1) :
+    (analyticOrderNatAt riemannZeta ρ : ℕ∞) = analyticOrderAt riemannZeta ρ :=
+  Nat.cast_analyticOrderNatAt (analyticOrderAt_riemannZeta_ne_top_of_ne_one hρ1)
+
+/-- Any actual zero of ζ away from the pole has positive natural analytic
+multiplicity. -/
+lemma analyticOrderNatAt_riemannZeta_pos_of_zero {ρ : ℂ}
+    (hρ1 : ρ ≠ 1) (hzero : riemannZeta ρ = 0) :
+    0 < analyticOrderNatAt riemannZeta ρ := by
+  have han : AnalyticAt ℂ riemannZeta ρ :=
+    analyticOnNhd_riemannZeta_ne_one ρ hρ1
+  have horder_ne_zero : analyticOrderAt riemannZeta ρ ≠ 0 :=
+    (analyticOrderAt_ne_zero (𝕜 := ℂ) (f := riemannZeta) (z₀ := ρ)).mpr
+      ⟨han, hzero⟩
+  by_contra hnot
+  have hn0 : analyticOrderNatAt riemannZeta ρ = 0 :=
+    Nat.eq_zero_of_not_pos hnot
+  have hcast := analyticOrderNatAt_riemannZeta_eq_analyticOrderAt_of_ne_one hρ1
+  have horder_zero : analyticOrderAt riemannZeta ρ = 0 := by
+    rw [← hcast, hn0]
+    simp
+  exact horder_ne_zero horder_zero
+
+/-- Automatic zeta-specific regular-part bound at an actual zero.  The
+multiplicity is chosen as `analyticOrderNatAt riemannZeta ρ`, so callers no
+longer need to supply a separate `analyticOrderAt = n` hypothesis. -/
+lemma exists_punctured_ball_norm_logDeriv_riemannZeta_sub_analyticOrderNatAt_mul_inv_le_of_zero_auto
+    {ρ : ℂ} (hρ1 : ρ ≠ 1) (hzero : riemannZeta ρ = 0) :
+    0 < analyticOrderNatAt riemannZeta ρ ∧
+      ∃ r M : ℝ, 0 < r ∧ 0 ≤ M ∧ ∀ z : ℂ, z ≠ ρ → dist z ρ < r →
+        ‖logDeriv riemannZeta z -
+          (analyticOrderNatAt riemannZeta ρ : ℂ) * (z - ρ)⁻¹‖ ≤ M := by
+  have hpos := analyticOrderNatAt_riemannZeta_pos_of_zero hρ1 hzero
+  have horder :
+      analyticOrderAt riemannZeta ρ =
+        analyticOrderNatAt riemannZeta ρ := by
+    exact (analyticOrderNatAt_riemannZeta_eq_analyticOrderAt_of_ne_one hρ1).symm
+  rcases exists_punctured_ball_norm_logDeriv_riemannZeta_sub_order_mul_inv_le_of_order_eq_nat_auto
+      (ρ := ρ) (n := analyticOrderNatAt riemannZeta ρ) hρ1 horder with
+    ⟨r, M, hr, hM, hbound⟩
+  exact ⟨hpos, r, M, hr, hM, hbound⟩
+
+/-- Closed-ball version of
+`exists_punctured_ball_norm_logDeriv_riemannZeta_sub_analyticOrderNatAt_mul_inv_le_of_zero_auto`. -/
+lemma exists_punctured_closedBall_norm_logDeriv_riemannZeta_sub_analyticOrderNatAt_mul_inv_le_of_zero_auto
+    {ρ : ℂ} (hρ1 : ρ ≠ 1) (hzero : riemannZeta ρ = 0) :
+    0 < analyticOrderNatAt riemannZeta ρ ∧
+      ∃ r M : ℝ, 0 < r ∧ 0 ≤ M ∧ ∀ z : ℂ, z ≠ ρ → dist z ρ ≤ r →
+        ‖logDeriv riemannZeta z -
+          (analyticOrderNatAt riemannZeta ρ : ℂ) * (z - ρ)⁻¹‖ ≤ M := by
+  have hpos := analyticOrderNatAt_riemannZeta_pos_of_zero hρ1 hzero
+  have horder :
+      analyticOrderAt riemannZeta ρ =
+        analyticOrderNatAt riemannZeta ρ := by
+    exact (analyticOrderNatAt_riemannZeta_eq_analyticOrderAt_of_ne_one hρ1).symm
+  rcases exists_punctured_closedBall_norm_logDeriv_riemannZeta_sub_order_mul_inv_le_of_order_eq_nat_auto
+      (ρ := ρ) (n := analyticOrderNatAt riemannZeta ρ) hρ1 horder with
+    ⟨r, M, hr, hM, hbound⟩
+  exact ⟨hpos, r, M, hr, hM, hbound⟩
+
+/-- Signed automatic regular-part bound at an actual zero of ζ. -/
+lemma exists_punctured_ball_norm_neg_logDeriv_riemannZeta_add_analyticOrderNatAt_mul_inv_le_of_zero_auto
+    {ρ : ℂ} (hρ1 : ρ ≠ 1) (hzero : riemannZeta ρ = 0) :
+    0 < analyticOrderNatAt riemannZeta ρ ∧
+      ∃ r M : ℝ, 0 < r ∧ 0 ≤ M ∧ ∀ z : ℂ, z ≠ ρ → dist z ρ < r →
+        ‖-logDeriv riemannZeta z +
+          (analyticOrderNatAt riemannZeta ρ : ℂ) * (z - ρ)⁻¹‖ ≤ M := by
+  have hpos := analyticOrderNatAt_riemannZeta_pos_of_zero hρ1 hzero
+  have horder :
+      analyticOrderAt riemannZeta ρ =
+        analyticOrderNatAt riemannZeta ρ := by
+    exact (analyticOrderNatAt_riemannZeta_eq_analyticOrderAt_of_ne_one hρ1).symm
+  rcases exists_punctured_ball_norm_neg_logDeriv_riemannZeta_add_order_mul_inv_le_of_order_eq_nat_auto
+      (ρ := ρ) (n := analyticOrderNatAt riemannZeta ρ) hρ1 horder with
+    ⟨r, M, hr, hM, hbound⟩
+  exact ⟨hpos, r, M, hr, hM, hbound⟩
+
+/-- Signed closed-ball automatic regular-part bound at an actual zero of ζ. -/
+lemma exists_punctured_closedBall_norm_neg_logDeriv_riemannZeta_add_analyticOrderNatAt_mul_inv_le_of_zero_auto
+    {ρ : ℂ} (hρ1 : ρ ≠ 1) (hzero : riemannZeta ρ = 0) :
+    0 < analyticOrderNatAt riemannZeta ρ ∧
+      ∃ r M : ℝ, 0 < r ∧ 0 ≤ M ∧ ∀ z : ℂ, z ≠ ρ → dist z ρ ≤ r →
+        ‖-logDeriv riemannZeta z +
+          (analyticOrderNatAt riemannZeta ρ : ℂ) * (z - ρ)⁻¹‖ ≤ M := by
+  have hpos := analyticOrderNatAt_riemannZeta_pos_of_zero hρ1 hzero
+  have horder :
+      analyticOrderAt riemannZeta ρ =
+        analyticOrderNatAt riemannZeta ρ := by
+    exact (analyticOrderNatAt_riemannZeta_eq_analyticOrderAt_of_ne_one hρ1).symm
+  rcases exists_punctured_closedBall_norm_neg_logDeriv_riemannZeta_add_order_mul_inv_le_of_order_eq_nat_auto
+      (ρ := ρ) (n := analyticOrderNatAt riemannZeta ρ) hρ1 horder with
+    ⟨r, M, hr, hM, hbound⟩
+  exact ⟨hpos, r, M, hr, hM, hbound⟩
+
 /-- If `f` is analytic and nonzero at `z`, then its logarithmic derivative is
 analytic at `z`. -/
 lemma analyticAt_logDeriv_of_analyticAt_ne_zero {f : ℂ → ℂ} {z : ℂ}

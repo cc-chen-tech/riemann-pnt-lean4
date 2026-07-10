@@ -7528,6 +7528,69 @@ theorem exists_punctured_closedBall_norm_neg_logDeriv_riemannZeta_add_order_mul_
   ZeroFreeRegion.exists_punctured_closedBall_norm_neg_logDeriv_riemannZeta_add_order_mul_inv_le_of_order_eq_nat_auto
     hρ1 horder
 
+/-- Public identity-theorem bridge: away from the pole, the analytic order of
+ζ is finite. -/
+theorem analyticOrderAt_riemannZeta_ne_top_of_ne_one
+    {ρ : ℂ} (hρ1 : ρ ≠ 1) :
+    analyticOrderAt riemannZeta ρ ≠ ⊤ :=
+  ZeroFreeRegion.analyticOrderAt_riemannZeta_ne_top_of_ne_one hρ1
+
+/-- Public bridge from finite analytic order to the natural-valued analytic
+order of ζ away from the pole. -/
+theorem analyticOrderNatAt_riemannZeta_eq_analyticOrderAt_of_ne_one
+    {ρ : ℂ} (hρ1 : ρ ≠ 1) :
+    (analyticOrderNatAt riemannZeta ρ : ℕ∞) = analyticOrderAt riemannZeta ρ :=
+  ZeroFreeRegion.analyticOrderNatAt_riemannZeta_eq_analyticOrderAt_of_ne_one hρ1
+
+/-- Public theorem: any actual zero of ζ away from the pole has positive
+natural analytic multiplicity. -/
+theorem analyticOrderNatAt_riemannZeta_pos_of_zero
+    {ρ : ℂ} (hρ1 : ρ ≠ 1) (hzero : riemannZeta ρ = 0) :
+    0 < analyticOrderNatAt riemannZeta ρ :=
+  ZeroFreeRegion.analyticOrderNatAt_riemannZeta_pos_of_zero hρ1 hzero
+
+/-- Public automatic regular-part bound at an actual zero of ζ.  The
+multiplicity is chosen internally as `analyticOrderNatAt riemannZeta ρ`. -/
+theorem exists_punctured_ball_norm_logDeriv_riemannZeta_sub_analyticOrderNatAt_mul_inv_le_of_zero_auto
+    {ρ : ℂ} (hρ1 : ρ ≠ 1) (hzero : riemannZeta ρ = 0) :
+    0 < analyticOrderNatAt riemannZeta ρ ∧
+      ∃ r M : ℝ, 0 < r ∧ 0 ≤ M ∧ ∀ z : ℂ, z ≠ ρ → dist z ρ < r →
+        ‖logDeriv riemannZeta z -
+          (analyticOrderNatAt riemannZeta ρ : ℂ) * (z - ρ)⁻¹‖ ≤ M :=
+  ZeroFreeRegion.exists_punctured_ball_norm_logDeriv_riemannZeta_sub_analyticOrderNatAt_mul_inv_le_of_zero_auto
+    hρ1 hzero
+
+/-- Public closed-ball automatic regular-part bound at an actual zero of ζ. -/
+theorem exists_punctured_closedBall_norm_logDeriv_riemannZeta_sub_analyticOrderNatAt_mul_inv_le_of_zero_auto
+    {ρ : ℂ} (hρ1 : ρ ≠ 1) (hzero : riemannZeta ρ = 0) :
+    0 < analyticOrderNatAt riemannZeta ρ ∧
+      ∃ r M : ℝ, 0 < r ∧ 0 ≤ M ∧ ∀ z : ℂ, z ≠ ρ → dist z ρ ≤ r →
+        ‖logDeriv riemannZeta z -
+          (analyticOrderNatAt riemannZeta ρ : ℂ) * (z - ρ)⁻¹‖ ≤ M :=
+  ZeroFreeRegion.exists_punctured_closedBall_norm_logDeriv_riemannZeta_sub_analyticOrderNatAt_mul_inv_le_of_zero_auto
+    hρ1 hzero
+
+/-- Public signed automatic regular-part bound at an actual zero of ζ. -/
+theorem exists_punctured_ball_norm_neg_logDeriv_riemannZeta_add_analyticOrderNatAt_mul_inv_le_of_zero_auto
+    {ρ : ℂ} (hρ1 : ρ ≠ 1) (hzero : riemannZeta ρ = 0) :
+    0 < analyticOrderNatAt riemannZeta ρ ∧
+      ∃ r M : ℝ, 0 < r ∧ 0 ≤ M ∧ ∀ z : ℂ, z ≠ ρ → dist z ρ < r →
+        ‖-logDeriv riemannZeta z +
+          (analyticOrderNatAt riemannZeta ρ : ℂ) * (z - ρ)⁻¹‖ ≤ M :=
+  ZeroFreeRegion.exists_punctured_ball_norm_neg_logDeriv_riemannZeta_add_analyticOrderNatAt_mul_inv_le_of_zero_auto
+    hρ1 hzero
+
+/-- Public signed closed-ball automatic regular-part bound at an actual zero
+of ζ. -/
+theorem exists_punctured_closedBall_norm_neg_logDeriv_riemannZeta_add_analyticOrderNatAt_mul_inv_le_of_zero_auto
+    {ρ : ℂ} (hρ1 : ρ ≠ 1) (hzero : riemannZeta ρ = 0) :
+    0 < analyticOrderNatAt riemannZeta ρ ∧
+      ∃ r M : ℝ, 0 < r ∧ 0 ≤ M ∧ ∀ z : ℂ, z ≠ ρ → dist z ρ ≤ r →
+        ‖-logDeriv riemannZeta z +
+          (analyticOrderNatAt riemannZeta ρ : ℂ) * (z - ρ)⁻¹‖ ≤ M :=
+  ZeroFreeRegion.exists_punctured_closedBall_norm_neg_logDeriv_riemannZeta_add_analyticOrderNatAt_mul_inv_le_of_zero_auto
+    hρ1 hzero
+
 /-- Public generic bridge: analytic nonvanishing implies analytic logarithmic
 derivative. -/
 theorem analyticAt_logDeriv_of_analyticAt_ne_zero

@@ -161,6 +161,14 @@ Core verified declarations:
   proves positivity of the real-axis logarithmic derivative expression.
 - `log_deriv_zeta_antitone`
   proves the real-axis antitone property of the logarithmic derivative series.
+- `analyticOrderAt_riemannZeta_ne_top_of_ne_one`,
+  `analyticOrderNatAt_riemannZeta_pos_of_zero`,
+  `exists_punctured_ball_norm_logDeriv_riemannZeta_sub_analyticOrderNatAt_mul_inv_le_of_zero_auto`,
+  and the signed/closed-ball variants prove that any actual zeta zero away from
+  the pole has finite positive natural analytic multiplicity and locally bounded
+  logarithmic-derivative regular part after subtracting that multiplicity times
+  `(z - rho)^(-1)`.  These remove the need to supply an explicit
+  `analyticOrderAt riemannZeta rho = n` hypothesis in local zero arguments.
 - `exists_norm_logDeriv_riemannZeta_le_log_abs_im_add_three_of_one_add_le_re`
   proves that for every fixed `epsilon > 0`, `logDeriv zeta` has a
   `C * log (|Im z| + 3)` norm bound throughout the half-plane
