@@ -214,9 +214,13 @@ stays in the high vertical strip.  The Borel-Caratheodory side now also has
 positive and signed `logDeriv ζ` half-radius bridges, including centered
 oscillation versions, whose real-part and center hypotheses are already stated
 in the `log(|t|+3)` height scale; right-shifted versions convert such local
-inputs into pure `C log |t|` outputs at `σ+it`.  These handoff lemmas do not
-prove the missing polynomial growth or boundary-strip logarithmic-derivative
-estimate itself.  On the pole side, the local decomposition
+inputs into pure `C log |t|` outputs at `σ+it`.  The paired right-shift
+bridges for the two 3-4-1 shifted terms now also have `_of_pos_A` variants:
+`0 < A` and `0 <= B` discharge the two Borel positivity side conditions at
+heights `t` and `2t`, and the fixed-margin pair variants additionally
+discharge the two center norm estimates.  These handoff lemmas do not prove the
+missing polynomial growth or boundary-strip logarithmic-derivative estimate
+itself.  On the pole side, the local decomposition
 `logDeriv ζ(s) = -(s-1)^-1 + logDeriv(unit)(s)` is now proved near `s=1`,
 and the unit logarithmic derivative is locally bounded; this improves the
 real-axis bookkeeping but still does not supply the missing high-height

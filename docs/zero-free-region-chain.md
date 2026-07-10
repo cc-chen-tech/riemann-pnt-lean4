@@ -576,7 +576,10 @@ proved:
   `ZeroFreeRegion.re_neg_deriv_div_riemannZeta_shift_pair_right_shift_le_log_norm_of_affine_logDeriv_re_le_half_radius`
   and
   `ZeroFreeRegion.re_neg_deriv_div_riemannZeta_shift_pair_right_shift_le_log_norm_of_affine_neg_logDeriv_re_le_half_radius`
-  expose the same paired handoff in the `log(||sigma+it||+3)` scale.  The
+  expose the same paired handoff in the `log(||sigma+it||+3)` scale.  Their
+  `_of_pos_A` variants discharge the two Borel positivity side conditions from
+  `0 < Are` and `0 <= Bre`, so the pair-level theorem no longer requires
+  separate `M > 0` inputs at heights `t` and `2t`.  The
   existential variants
   `ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shift_pair_right_shift_le_log_norm_of_affine_logDeriv_re_le_half_radius_fixed_margin_center`
   and
@@ -584,7 +587,8 @@ proved:
   discharge the two center norm estimates automatically from the fixed-margin
   half-plane theorem; after this step, the right-shift pair bridge only needs
   local real-part Borel inputs on the disks centered at `(sigma+r)+it` and
-  `(sigma+r)+2it`.  The
+  `(sigma+r)+2it`.  Their `_of_pos_A` variants also remove the two residual
+  positivity hypotheses, leaving only those local real-part Borel inputs.  The
   general half-radius wrappers
   `ZeroFreeRegion.borelCaratheodory_centered_half_radius_bound` and
   `ZeroFreeRegion.borelCaratheodory_sub_centered_half_radius_bound`, plus the

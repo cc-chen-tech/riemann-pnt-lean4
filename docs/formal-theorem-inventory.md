@@ -1797,6 +1797,14 @@ Core verified declarations:
   heights `tau k`, giving the Borel-side supplier shape needed before
   higher-degree finite detectors consume one shifted upper bound per
   frequency.
+- `re_neg_deriv_div_riemannZeta_shift_pair_right_shift_le_log_abs_of_affine_logDeriv_re_le_half_radius_of_pos_A`
+  / `...affine_neg_logDeriv..._of_pos_A` and their full-height `log_norm`
+  analogues discharge the pair-level Borel positivity conditions at both
+  heights `t` and `2t` from `0 < Are` and `0 <= Bre`.  The
+  `exists_re_neg_deriv_div_riemannZeta_shift_pair_right_shift_le_log_norm_of_affine_logDeriv_re_le_half_radius_fixed_margin_center_of_pos_A`
+  / signed analogue also combine this with the fixed-margin center discharge,
+  leaving only the local real-part Borel hypotheses on the two right-shifted
+  disks as the remaining analytic input.
 - `RiemannPNT.API.log_deriv_zeta_finset_single_lower_bound_auto_of_right_shift_borel_family`
   and
   `RiemannPNT.API.log_deriv_zeta_finset_single_lower_bound_auto_of_signed_right_shift_borel_family`

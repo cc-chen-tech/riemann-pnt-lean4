@@ -13331,6 +13331,15 @@ theorem re_neg_deriv_div_riemannZeta_shift_pair_right_shift_le_log_norm_of_affin
   ZeroFreeRegion.re_neg_deriv_div_riemannZeta_shift_pair_right_shift_le_log_norm_of_affine_neg_logDeriv_re_le_half_radius
     hr hσ hσr hHpos hH ht hA hB hM hlog hcenter hM_two hlog_two hcenter_two
 
+-- Public pair packages with the two Borel positivity side conditions
+-- discharged from `0 < Are` and `0 <= Bre`.
+export ZeroFreeRegion (
+  re_neg_deriv_div_riemannZeta_shift_pair_right_shift_le_log_abs_of_affine_logDeriv_re_le_half_radius_of_pos_A
+  re_neg_deriv_div_riemannZeta_shift_pair_right_shift_le_log_abs_of_affine_neg_logDeriv_re_le_half_radius_of_pos_A
+  re_neg_deriv_div_riemannZeta_shift_pair_right_shift_le_log_norm_of_affine_logDeriv_re_le_half_radius_of_pos_A
+  re_neg_deriv_div_riemannZeta_shift_pair_right_shift_le_log_norm_of_affine_neg_logDeriv_re_le_half_radius_of_pos_A
+)
+
 /-- Public full-height right-shifted Borel pair package with the center
 estimates discharged by the proved fixed-margin half-plane bound. -/
 theorem exists_re_neg_deriv_div_riemannZeta_shift_pair_right_shift_le_log_norm_of_affine_logDeriv_re_le_half_radius_fixed_margin_center
@@ -13396,6 +13405,13 @@ theorem exists_re_neg_deriv_div_riemannZeta_shift_pair_right_shift_le_log_norm_o
           C * Real.log (‖((σ : ℂ) + Complex.I * t)‖ + 3) :=
   ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shift_pair_right_shift_le_log_norm_of_affine_neg_logDeriv_re_le_half_radius_fixed_margin_center
     hr hσ hσr hHpos hH ht hAre hBre hM hlog hM_two hlog_two
+
+-- Public fixed-margin center pair packages with the two Borel positivity side
+-- conditions discharged from `0 < Are` and `0 <= Bre`.
+export ZeroFreeRegion (
+  exists_re_neg_deriv_div_riemannZeta_shift_pair_right_shift_le_log_norm_of_affine_logDeriv_re_le_half_radius_fixed_margin_center_of_pos_A
+  exists_re_neg_deriv_div_riemannZeta_shift_pair_right_shift_le_log_norm_of_affine_neg_logDeriv_re_le_half_radius_fixed_margin_center_of_pos_A
+)
 
 /-- Public shifted third-term real-part quotient form in the full
 complex-height logarithmic scale for `logDeriv ζ`. -/
