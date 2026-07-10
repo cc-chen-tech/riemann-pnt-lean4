@@ -5890,6 +5890,59 @@ lemma reNegDerivDiv_riemannZeta_vertical_log_bound_of_affine_log_abs_add_three_b
   exists_re_neg_deriv_div_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height
     T0 A B hT0 hA hB hvertical
 
+/-- Direct real-part quotient normalizer from a high-height affine
+`log(|t| + 3)` estimate.
+
+This is the target-shaped version of
+`reNegDerivDivVerticalLogBound_of_affine_re_log_norm_add_three_bound_high_height`:
+the input is already a bound for `Re(-ζ'/ζ)`, so no norm estimate is required. -/
+lemma reNegDerivDivVerticalLogBound_of_affine_re_log_abs_add_three_bound_high_height
+    (T0 A B : ℝ) (hT0 : 3 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re ≤
+          A + B * Real.log (|t| + 3)) :
+    ∃ C T0' : ℝ, ReNegDerivDivVerticalLogBound C T0' := by
+  refine ⟨A + 2 * B, T0, add_nonneg hA (mul_nonneg (by norm_num) hB),
+    hT0, ?_⟩
+  intro σ t hσ_left hσ_right ht
+  have hσ_mem : σ ∈ Set.Icc 1 2 := ⟨hσ_left, hσ_right⟩
+  have ht3 : 3 ≤ |t| := hT0.trans ht
+  have hlog_ge_one : 1 ≤ Real.log |t| :=
+    (log_abs_gt_one_of_three_le ht3).le
+  have hA_le : A ≤ A * Real.log |t| := by
+    calc
+      A = A * 1 := by ring
+      _ ≤ A * Real.log |t| :=
+          mul_le_mul_of_nonneg_left hlog_ge_one hA
+  have hlog_abs : Real.log (|t| + 3) ≤ 2 * Real.log |t| :=
+    log_abs_add_three_le_two_log_abs ht3
+  calc
+    (-deriv riemannZeta ((σ : ℂ) + I * t) /
+        riemannZeta ((σ : ℂ) + I * t)).re
+        ≤ A + B * Real.log (|t| + 3) :=
+          hvertical σ t ht hσ_mem
+    _ ≤ A * Real.log |t| + B * (2 * Real.log |t|) := by
+          exact add_le_add hA_le (mul_le_mul_of_nonneg_left hlog_abs hB)
+    _ = (A + 2 * B) * Real.log |t| := by ring
+
+/-- Multiplicative direct real-part quotient normalizer from a high-height
+`log(|t| + 3)` estimate. -/
+lemma reNegDerivDivVerticalLogBound_of_re_log_abs_add_three_bound_high_height
+    (T0 C : ℝ) (hT0 : 3 ≤ T0) (hC : 0 ≤ C)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re ≤
+          C * Real.log (|t| + 3)) :
+    ∃ C' T0' : ℝ, ReNegDerivDivVerticalLogBound C' T0' := by
+  refine
+    reNegDerivDivVerticalLogBound_of_affine_re_log_abs_add_three_bound_high_height
+      T0 0 C hT0 (by norm_num) hC ?_
+  intro σ t ht hσ
+  simpa using hvertical σ t ht hσ
+
 /-- Coordinate bridge from a `C * log (|t| + 3)` local regular-part bound to a
 pure logarithmic real-part bound at heights `|t| >= 3`. -/
 lemma re_neg_logDeriv_riemannZeta_sigma_it_add_inv_le_of_regular_part_norm_log_abs_add_three
@@ -16503,6 +16556,42 @@ lemma classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBou
   classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_exists_ReNegDerivDivVerticalLogBound
     hregular
     (reNegDerivDivVerticalLogBound_of_high_height_log_abs_bound hB hhigh)
+
+/-- Direct final assembly from an existential regular-part estimate and a
+future high-height affine `log(|t|+3)` estimate for `Re(-ζ'/ζ)`. -/
+lemma classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_high_height_affine_re_log_abs_add_three_bound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        LogDerivRegularPartLogBound Bregular Tregular)
+    (T0 A B : ℝ) (hT0 : 3 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re ≤
+          A + B * Real.log (|t| + 3)) :
+    classical_zero_free_region :=
+  classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_exists_ReNegDerivDivVerticalLogBound
+    hregular
+    (reNegDerivDivVerticalLogBound_of_affine_re_log_abs_add_three_bound_high_height
+      T0 A B hT0 hA hB hhigh)
+
+/-- Multiplicity-aware direct final assembly from a future high-height affine
+`log(|t|+3)` estimate for `Re(-ζ'/ζ)`. -/
+lemma classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_high_height_affine_re_log_abs_add_three_bound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        MultiplicityLogDerivRegularPartLogBound Bregular Tregular)
+    (T0 A B : ℝ) (hT0 : 3 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re ≤
+          A + B * Real.log (|t| + 3)) :
+    classical_zero_free_region :=
+  classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_exists_ReNegDerivDivVerticalLogBound
+    hregular
+    (reNegDerivDivVerticalLogBound_of_affine_re_log_abs_add_three_bound_high_height
+      T0 A B hT0 hA hB hhigh)
 
 /-- Compact patch preserving the exact `C * log |t|` scale for the norm of
 `logDeriv ζ` at `σ + 2it`, provided `H >= 3`. -/

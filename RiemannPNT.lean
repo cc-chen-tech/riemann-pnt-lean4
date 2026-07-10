@@ -8354,6 +8354,39 @@ theorem classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogB
   ZeroFreeRegion.classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_high_height_affine_log_abs_add_three_logDeriv_bound
     hregular T0 A B hT0 hA hB hhigh
 
+/-- Public final assembly from regular-part input plus the target-shaped
+high-height affine estimate
+`Re(-ζ'/ζ(σ+it)) <= A + B * log(|t|+3)`. -/
+theorem classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_high_height_affine_re_log_abs_add_three_bound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        LogDerivRegularPartLogBound Bregular Tregular)
+    (T0 A B : ℝ) (hT0 : 3 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
+          A + B * Real.log (|t| + 3)) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_high_height_affine_re_log_abs_add_three_bound
+    hregular T0 A B hT0 hA hB hhigh
+
+/-- Public multiplicity-aware final assembly from regular-part input plus the
+target-shaped high-height affine estimate for `Re(-ζ'/ζ)`. -/
+theorem classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_high_height_affine_re_log_abs_add_three_bound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        MultiplicityLogDerivRegularPartLogBound Bregular Tregular)
+    (T0 A B : ℝ) (hT0 : 3 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
+          A + B * Real.log (|t| + 3)) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_high_height_affine_re_log_abs_add_three_bound
+    hregular T0 A B hT0 hA hB hhigh
+
 /-- Public moving-line closure from the target-shaped high-height affine
 estimate for `logDeriv ζ`. -/
 theorem classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_high_height_affine_log_abs_add_three_logDeriv_bound
@@ -16351,6 +16384,32 @@ theorem reNegDerivDiv_riemannZeta_vertical_log_bound_of_affine_log_abs_add_three
     ∃ C T0' : ℝ, ReNegDerivDivVerticalLogBound C T0' :=
   ZeroFreeRegion.reNegDerivDiv_riemannZeta_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height
     T0 A B hT0 hA hB hvertical
+
+/-- Public direct real-part quotient normalizer from a high-height affine
+`log(|t|+3)` estimate for `Re(-ζ'/ζ)`. -/
+theorem reNegDerivDivVerticalLogBound_of_affine_re_log_abs_add_three_bound_high_height
+    (T0 A B : ℝ) (hT0 : 3 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
+          A + B * Real.log (|t| + 3)) :
+    ∃ C T0' : ℝ, ReNegDerivDivVerticalLogBound C T0' :=
+  ZeroFreeRegion.reNegDerivDivVerticalLogBound_of_affine_re_log_abs_add_three_bound_high_height
+    T0 A B hT0 hA hB hvertical
+
+/-- Public multiplicative direct real-part quotient normalizer from a
+high-height `log(|t|+3)` estimate for `Re(-ζ'/ζ)`. -/
+theorem reNegDerivDivVerticalLogBound_of_re_log_abs_add_three_bound_high_height
+    (T0 C : ℝ) (hT0 : 3 ≤ T0) (hC : 0 ≤ C)
+    (hvertical :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
+          C * Real.log (|t| + 3)) :
+    ∃ C' T0' : ℝ, ReNegDerivDivVerticalLogBound C' T0' :=
+  ZeroFreeRegion.reNegDerivDivVerticalLogBound_of_re_log_abs_add_three_bound_high_height
+    T0 C hT0 hC hvertical
 
 /-- Public real-part quotient form of the signed affine `log(|t|+3)`
 `-logDeriv ζ` normalization. -/
