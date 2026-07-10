@@ -13300,6 +13300,18 @@ hypothesis discharged from the standard right-shift geometry.
 
 The only remaining local analytic input is the affine real-part bound for the
 regular part on the Borel disk. -/
+lemma right_shift_affine_majorant_pos
+    {Are Bre r σ t : ℝ} (hAre : 0 < Are) (hBre : 0 ≤ Bre) :
+    0 < Are + Bre *
+      Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3) := by
+  let center : ℂ := ((σ + r : ℝ) : ℂ) + I * t
+  have hlog_nonneg : 0 ≤ Real.log (‖center‖ + 3) := by
+    apply Real.log_nonneg
+    nlinarith [norm_nonneg center]
+  have hterm_nonneg : 0 ≤ Bre * Real.log (‖center‖ + 3) :=
+    mul_nonneg hBre hlog_nonneg
+  simpa [center] using add_pos_of_pos_of_nonneg hAre hterm_nonneg
+
 lemma exists_re_neg_logDeriv_riemannZeta_sigma_it_add_multiplicity_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center_of_re_le
     {Are Bre r σ β t : ℝ} {n : ℕ}
     (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3) (ht : 6 ≤ |t|)
@@ -13403,6 +13415,29 @@ lemma exists_re_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_neg_inv_add_log
       hr hσ hσr ht hβ)
     hlog hn
 
+/-- Fixed-margin right-shifted zero-repulsion bridge with the Borel
+positivity side-condition discharged by a positive affine constant term. -/
+lemma exists_re_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_neg_inv_add_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center_of_re_le_of_pos_A
+    {Are Bre r σ β t : ℝ} {n : ℕ}
+    (hr : 0 < r) (hσ : 1 + r ≤ σ) (hσr : σ + r ≤ 3) (ht : 6 ≤ |t|)
+    (hβ : β < 1) (hAre : 0 < Are) (hBre : 0 ≤ Bre)
+    (hlog : ∀ w : ℂ,
+      w ∈ ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r) →
+        (-logDeriv riemannZeta w +
+            (n : ℂ) * (w - ((β : ℂ) + I * t))⁻¹).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hn : 0 < n) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re ≤
+        -1 / (σ - β) + C * Real.log |t| :=
+  exists_re_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_neg_inv_add_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center_of_re_le
+    (Are := Are) (Bre := Bre) (r := r) (σ := σ) (β := β)
+    (t := t) (n := n)
+    hr hσ hσr ht hβ hAre.le hBre
+    (right_shift_affine_majorant_pos hAre hBre) hlog hn
+
 /-- Moving-line center version of the right-shifted zero-repulsion bridge in
 the exact `F <= -1/(sigma-beta) + C log |t|` closure-input shape.
 
@@ -13445,6 +13480,31 @@ lemma exists_re_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_neg_inv_add_log
     _ ≤ C * Real.log |t| - 1 / (σ - β) := by
           exact sub_le_sub_right hadd _
     _ = -1 / (σ - β) + C * Real.log |t| := by ring
+
+/-- Moving-line right-shifted zero-repulsion bridge with the Borel positivity
+side-condition discharged by a positive affine constant term. -/
+lemma exists_re_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_neg_inv_add_log_abs_of_affine_regularPart_re_le_half_radius_moving_line_center_of_re_le_of_pos_A
+    {a Are Bre r σ β t : ℝ} {n : ℕ}
+    (ha : 0 < a) (hr : 0 < r) (hσright : 1 + r ≤ σ)
+    (hσmove : 1 + a / Real.log |t| ≤ σ + r)
+    (hσr : σ + r ≤ 3) (ht : 6 ≤ |t|)
+    (hβ : β < 1) (hAre : 0 < Are) (hBre : 0 ≤ Bre)
+    (hlog : ∀ w : ℂ,
+      w ∈ ball (((σ + r : ℝ) : ℂ) + I * t) (2 * r) →
+        (-logDeriv riemannZeta w +
+            (n : ℂ) * (w - ((β : ℂ) + I * t))⁻¹).re ≤
+          Are + Bre *
+            Real.log (‖(((σ + r : ℝ) : ℂ) + I * t)‖ + 3))
+    (hn : 0 < n) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re ≤
+        -1 / (σ - β) + C * Real.log |t| :=
+  exists_re_neg_logDeriv_riemannZeta_sigma_it_right_shift_le_neg_inv_add_log_abs_of_affine_regularPart_re_le_half_radius_moving_line_center_of_re_le
+    (a := a) (Are := Are) (Bre := Bre) (r := r) (σ := σ)
+    (β := β) (t := t) (n := n)
+    ha hr hσright hσmove hσr ht hβ hAre.le hBre
+    (right_shift_affine_majorant_pos hAre hBre) hlog hn
 
 /-- Full-height version of
 `exists_re_neg_logDeriv_riemannZeta_sigma_it_add_inv_right_shift_le_log_abs_of_affine_regularPart_re_le_half_radius_fixed_margin_center`.
