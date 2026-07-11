@@ -1631,6 +1631,21 @@ for circles that remain inside the same high strip.
 The local-divisor theorem then rewrites that average through Jensen's formula,
 so the divisor/trailing-coefficient expression is bounded by the same scale.
 There is also a positive-radius form with `R` in place of `|R|`.
+For disks centered at `2+I*t`, two further unconditional handoff theorems are
+now proved:
+
+```lean
+ZeroFreeRegion.jensen_zero_mass_riemannZeta_two_add_I_mul_le_log_bound
+ZeroFreeRegion.jensen_inner_zero_multiplicity_count_riemannZeta_two_add_I_mul_le_log_bound
+```
+
+The first removes the center-value hypothesis by using
+`‖ζ(2+I*t)‖ ≥ 1/3`; a boundary estimate `‖ζ‖ ≤ M` therefore bounds the
+weighted Jensen zero mass by `log M + log 3`.  The second gives a quantitative
+total-multiplicity bound in every smaller concentric disk, with denominator
+`log (R/r)`.  These are real zero-counting results, but they still require a
+zeta-specific high-height boundary-growth estimate and do not yet prove the
+regular-part `O(log |t|)` estimate for `ζ'/ζ`.
 The three Cauchy derivative estimates then turn a boundary `||zeta||` bound on
 a disk avoiding the pole into a center `||zeta'||` bound; they still need a
 separate lower bound for `||zeta||` before they yield a `logDeriv zeta` bound.

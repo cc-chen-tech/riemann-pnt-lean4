@@ -21537,6 +21537,203 @@ lemma jensen_circleAverage_log_norm_riemannZeta_sigma_it_of_pos_radius
   rw [hAbs] at h
   exact h
 
+/-- Jensen's weighted local zero mass for `ζ` on a disk centered at
+`2 + I*t` is controlled solely by a boundary norm bound.
+
+The center is uniformly separated from zero by
+`one_third_le_norm_riemannZeta_of_two_le_re`, so Jensen's center term costs at
+most `log 3`.  This removes a separate center-value hypothesis from the
+high-height zero-counting route; the remaining analytic input is the boundary
+growth estimate `hsphere`. -/
+lemma jensen_zero_mass_riemannZeta_two_add_I_mul_le_log_bound
+    {R t M : ℝ} (hR : 0 < R) (hM : 1 ≤ M)
+    (hsphere : ∀ z : ℂ,
+      z ∈ sphere ((2 : ℂ) + I * t) R → ‖riemannZeta z‖ ≤ M) :
+    (∑ᶠ u,
+        divisor riemannZeta (closedBall ((2 : ℂ) + I * t) R) u *
+          Real.log (R * ‖((2 : ℂ) + I * t) - u‖⁻¹)) ≤
+      Real.log M + Real.log 3 := by
+  classical
+  let c : ℂ := (2 : ℂ) + I * t
+  have hc_re : c.re = 2 := by simp [c]
+  have hc_ne_one : c ≠ 1 := by
+    intro hc
+    have := congr_arg Complex.re hc
+    simp [hc_re] at this
+  have hc_analytic : AnalyticAt ℂ riemannZeta c :=
+    analyticOnNhd_riemannZeta_ne_one c hc_ne_one
+  have hc_ne_zero : riemannZeta c ≠ 0 :=
+    riemannZeta_ne_zero_of_one_le_re (by simp [hc_re])
+  have hcenter_lower : (1 / 3 : ℝ) ≤ ‖riemannZeta c‖ :=
+    one_third_le_norm_riemannZeta_of_two_le_re c (by simp [hc_re])
+  have hlog_center_lower : -Real.log 3 ≤ Real.log ‖riemannZeta c‖ := by
+    have hlog := Real.log_le_log (by norm_num : (0 : ℝ) < 1 / 3) hcenter_lower
+    simpa [one_div, Real.log_inv] using hlog
+  have hcircle_integrable :
+      CircleIntegrable (Real.log ‖riemannZeta ·‖) c R := by
+    apply circleIntegrable_log_norm_meromorphicOn
+    intro z hz
+    exact meromorphicOn_riemannZeta_closedBall c R z
+      (sphere_subset_closedBall (by simpa [abs_of_pos hR] using hz))
+  have hcircle_le :
+      circleAverage (Real.log ‖riemannZeta ·‖) c R ≤ Real.log M := by
+    refine circleAverage_mono_on_of_le_circle hcircle_integrable ?_
+    intro z hz
+    by_cases hzeta : riemannZeta z = 0
+    · simp [hzeta, Real.log_nonneg hM]
+    · exact Real.log_le_log (norm_pos_iff.mpr hzeta)
+        (hsphere z (by simpa [c, abs_of_pos hR] using hz))
+  have hdiv_center : divisor riemannZeta (closedBall c R) c = 0 := by
+    rw [MeromorphicOn.divisor_apply (meromorphicOn_riemannZeta_closedBall c R)
+      (by simp [hR.le])]
+    have hnormal := hc_analytic.meromorphicNFAt
+    rw [(hnormal.meromorphicOrderAt_eq_zero_iff).2 hc_ne_zero]
+    simp
+  have htrail : meromorphicTrailingCoeffAt riemannZeta c = riemannZeta c :=
+    hc_analytic.meromorphicTrailingCoeffAt_of_ne_zero hc_ne_zero
+  have hjensen :=
+    jensen_circleAverage_log_norm_riemannZeta_sigma_it_of_pos_radius
+      (R := R) (σ := 2) (t := t) hR
+  have hjensen' :
+      circleAverage (Real.log ‖riemannZeta ·‖) c R =
+        (∑ᶠ u,
+            divisor riemannZeta (closedBall c R) u *
+              Real.log (R * ‖c - u‖⁻¹)) +
+          divisor riemannZeta (closedBall c R) c * Real.log R +
+          Real.log ‖meromorphicTrailingCoeffAt riemannZeta c‖ := by
+    simpa [c] using hjensen
+  simp only [hdiv_center, Int.cast_zero, zero_mul, add_zero, htrail] at hjensen'
+  linarith
+
+/-- Jensen's weighted mass bound controls the total multiplicity of zeta
+zeros in every strictly smaller concentric disk.
+
+The factor `log (R / r)` is the minimum Jensen weight contributed by a zero
+in the inner disk.  The high-height condition keeps the outer disk away from
+the pole at `1`, hence its zeta divisor is nonnegative. -/
+lemma jensen_inner_zero_multiplicity_count_riemannZeta_two_add_I_mul_le_log_bound
+    {r R t M : ℝ} (hr : 0 < r) (hrR : r < R) (hheight : R < |t|)
+    (hM : 1 ≤ M)
+    (hsphere : ∀ z : ℂ,
+      z ∈ sphere ((2 : ℂ) + I * t) R → ‖riemannZeta z‖ ≤ M) :
+    Real.log (R / r) *
+        (∑ᶠ u ∈ (closedBall ((2 : ℂ) + I * t) r : Set ℂ),
+          (divisor riemannZeta
+            (closedBall ((2 : ℂ) + I * t) R) u : ℝ)) ≤
+      Real.log M + Real.log 3 := by
+  let c : ℂ := (2 : ℂ) + I * t
+  let D := divisor riemannZeta (closedBall c R)
+  have hR : 0 < R := hr.trans hrR
+  have havoid : ∀ z : ℂ, z ∈ closedBall c R → z ≠ 1 := by
+    intro z hz hz_one
+    subst z
+    have hdist : dist (1 : ℂ) c ≤ R := by
+      simpa using hz
+    have him_le : |(((1 : ℂ) - c).im)| ≤ ‖(1 : ℂ) - c‖ :=
+      Complex.abs_im_le_norm ((1 : ℂ) - c)
+    have him_eq : |(((1 : ℂ) - c).im)| = |t| := by simp [c]
+    have hnorm_le : ‖(1 : ℂ) - c‖ ≤ R := by
+      simpa [dist_eq_norm] using hdist
+    linarith
+  have hanalytic : AnalyticOnNhd ℂ riemannZeta (closedBall c R) := by
+    intro z hz
+    exact analyticOnNhd_riemannZeta_ne_one z (havoid z hz)
+  have hD_nonneg : 0 ≤ D := by
+    exact hanalytic.divisor_nonneg
+  have hD_finite : D.support.Finite :=
+    D.finiteSupport (isCompact_closedBall c R)
+  have hc_ne_one : c ≠ 1 := by
+    exact havoid c (by simp [hR.le])
+  have hc_analytic : AnalyticAt ℂ riemannZeta c :=
+    analyticOnNhd_riemannZeta_ne_one c hc_ne_one
+  have hc_ne_zero : riemannZeta c ≠ 0 :=
+    riemannZeta_ne_zero_of_one_le_re (by simp [c])
+  have hD_center : D c = 0 := by
+    dsimp [D]
+    rw [MeromorphicOn.divisor_apply (meromorphicOn_riemannZeta_closedBall c R)
+      (by simp [hR.le])]
+    rw [(hc_analytic.meromorphicNFAt.meromorphicOrderAt_eq_zero_iff).2 hc_ne_zero]
+    simp
+  have hpoint : ∀ u : ℂ,
+      (closedBall c r).indicator
+          (fun v : ℂ => Real.log (R / r) * (D v : ℝ)) u ≤
+        (D u : ℝ) * Real.log (R * ‖c - u‖⁻¹) := by
+    intro u
+    by_cases hDu : D u = 0
+    · by_cases hu_inner : u ∈ closedBall c r
+      · simp [Set.indicator_of_mem hu_inner, hDu]
+      · simp [hu_inner, hDu]
+    have hu_support : u ∈ D.support := by
+      simpa [Function.mem_support] using hDu
+    have hu_outer : u ∈ closedBall c R := D.supportWithinDomain hu_support
+    have hDu_nonneg : 0 ≤ (D u : ℝ) := by
+      exact_mod_cast hD_nonneg u
+    have hu_ne : u ≠ c := by
+      intro huc
+      subst u
+      exact hDu hD_center
+    have hnorm_pos : 0 < ‖c - u‖ :=
+      norm_pos_iff.mpr (sub_ne_zero.mpr hu_ne.symm)
+    have hnorm_outer : ‖c - u‖ ≤ R := by
+      simpa [mem_closedBall, dist_eq_norm, norm_sub_rev] using hu_outer
+    by_cases hu_inner : u ∈ closedBall c r
+    · have hnorm_inner : ‖c - u‖ ≤ r := by
+        simpa [mem_closedBall, dist_eq_norm, norm_sub_rev] using hu_inner
+      have hratio_pos : 0 < R / r := div_pos hR hr
+      have hratio_le : R / r ≤ R / ‖c - u‖ :=
+        div_le_div_of_nonneg_left hR.le hnorm_pos hnorm_inner
+      have hlog_le : Real.log (R / r) ≤ Real.log (R / ‖c - u‖) :=
+        Real.log_le_log hratio_pos hratio_le
+      simpa [Set.indicator_of_mem hu_inner, div_eq_mul_inv, mul_comm] using
+        (mul_le_mul_of_nonneg_left hlog_le hDu_nonneg)
+    · have hone_le : (1 : ℝ) ≤ R / ‖c - u‖ := by
+        apply (le_div_iff₀ hnorm_pos).2
+        simpa using hnorm_outer
+      have hlog_nonneg : 0 ≤ Real.log (R / ‖c - u‖) :=
+        Real.log_nonneg hone_le
+      simpa [hu_inner, div_eq_mul_inv] using
+        mul_nonneg hDu_nonneg hlog_nonneg
+  have hleft_support :
+      ((closedBall c r).indicator
+        (fun u : ℂ => Real.log (R / r) * (D u : ℝ))).support ⊆
+        hD_finite.toFinset := by
+    intro u hu
+    apply hD_finite.mem_toFinset.mpr
+    by_contra hDu
+    have hDu_zero : D u = 0 := by
+      simpa [Function.mem_support] using hDu
+    simp [hDu_zero] at hu
+  have hright_support :
+      (fun u : ℂ => (D u : ℝ) * Real.log (R * ‖c - u‖⁻¹)).support ⊆
+        hD_finite.toFinset := by
+    intro u hu
+    apply hD_finite.mem_toFinset.mpr
+    by_contra hDu
+    have hDu_zero : D u = 0 := by
+      simpa [Function.mem_support] using hDu
+    simp [hDu_zero] at hu
+  have hsum_le :
+      (∑ᶠ u ∈ (closedBall c r : Set ℂ),
+        Real.log (R / r) * (D u : ℝ)) ≤
+        ∑ᶠ u : ℂ, (D u : ℝ) * Real.log (R * ‖c - u‖⁻¹) := by
+    rw [finsum_mem_def]
+    rw [finsum_eq_sum_of_support_subset _ hleft_support]
+    rw [finsum_eq_sum_of_support_subset _ hright_support]
+    exact Finset.sum_le_sum fun u _hu => hpoint u
+  have hmass :=
+    jensen_zero_mass_riemannZeta_two_add_I_mul_le_log_bound
+      (R := R) (t := t) (M := M) hR hM hsphere
+  calc
+    Real.log (R / r) *
+        (∑ᶠ u ∈ (closedBall ((2 : ℂ) + I * t) r : Set ℂ),
+          (divisor riemannZeta
+            (closedBall ((2 : ℂ) + I * t) R) u : ℝ)) =
+        ∑ᶠ u ∈ (closedBall c r : Set ℂ),
+          Real.log (R / r) * (D u : ℝ) := by
+          rw [mul_finsum_mem]
+    _ ≤ ∑ᶠ u : ℂ, (D u : ℝ) * Real.log (R * ‖c - u‖⁻¹) := hsum_le
+    _ ≤ Real.log M + Real.log 3 := by simpa [c, D] using hmass
+
 /-- Jensen formula specialized directly to `logDeriv ζ` on a `σ + I*t`
 disk. -/
 lemma jensen_circleAverage_log_norm_logDeriv_riemannZeta_sigma_it

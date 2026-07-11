@@ -15976,6 +15976,39 @@ theorem jensen_circleAverage_log_norm_riemannZeta_sigma_it_of_pos_radius
             ((σ : ℂ) + Complex.I * t)‖ :=
   ZeroFreeRegion.jensen_circleAverage_log_norm_riemannZeta_sigma_it_of_pos_radius hR
 
+/-- Public Jensen weighted-zero-mass bound on disks centered at `2 + I*t`.
+The center contribution is discharged by the proved uniform lower bound
+`‖ζ(2+it)‖ ≥ 1/3`. -/
+theorem jensen_zero_mass_riemannZeta_two_add_I_mul_le_log_bound
+    {R t M : ℝ} (hR : 0 < R) (hM : 1 ≤ M)
+    (hsphere : ∀ z : ℂ,
+      z ∈ Metric.sphere ((2 : ℂ) + Complex.I * t) R →
+        ‖riemannZeta z‖ ≤ M) :
+    (∑ᶠ u,
+        divisor riemannZeta
+            (Metric.closedBall ((2 : ℂ) + Complex.I * t) R) u *
+          Real.log (R * ‖((2 : ℂ) + Complex.I * t) - u‖⁻¹)) ≤
+      Real.log M + Real.log 3 :=
+  ZeroFreeRegion.jensen_zero_mass_riemannZeta_two_add_I_mul_le_log_bound
+    hR hM hsphere
+
+/-- Public inner-disk zero-multiplicity consequence of the Jensen mass bound.
+The outer disk is kept away from the pole by `R < |t|`. -/
+theorem jensen_inner_zero_multiplicity_count_riemannZeta_two_add_I_mul_le_log_bound
+    {r R t M : ℝ} (hr : 0 < r) (hrR : r < R) (hheight : R < |t|)
+    (hM : 1 ≤ M)
+    (hsphere : ∀ z : ℂ,
+      z ∈ Metric.sphere ((2 : ℂ) + Complex.I * t) R →
+        ‖riemannZeta z‖ ≤ M) :
+    Real.log (R / r) *
+        (∑ᶠ u ∈
+          (Metric.closedBall ((2 : ℂ) + Complex.I * t) r : Set ℂ),
+          (divisor riemannZeta
+            (Metric.closedBall ((2 : ℂ) + Complex.I * t) R) u : ℝ)) ≤
+      Real.log M + Real.log 3 :=
+  ZeroFreeRegion.jensen_inner_zero_multiplicity_count_riemannZeta_two_add_I_mul_le_log_bound
+    hr hrR hheight hM hsphere
+
 /-- Public Jensen formula specialized directly to `logDeriv ζ` on a
 `σ + I*t` disk. -/
 theorem jensen_circleAverage_log_norm_logDeriv_riemannZeta_sigma_it
