@@ -2704,8 +2704,27 @@ Core verified declarations:
   proves the exact overlap identity
   `s * M(s) = -ζ'(s)/ζ(s) - s/(s-1)` on `Re(s) > 1`, using Abel summation,
   the linear Chebyshev bound, and Mathlib's von Mangoldt L-series identity.
-  The remaining core step is analytic-continuation uniqueness followed by
-  the pole contradiction at a hypothetical zero with `Re(s) > theta`.
+- `regularizedNegLogDerivModel`,
+  `differentiableAt_regularizedNegLogDerivModel_of_psi_power_error`,
+  `differentiableOn_regularizedNegLogDerivModel_of_psi_power_error`,
+  `regularizedNegLogDerivModel_eq_neg_deriv_div_sub_pole`, and
+  `eqOn_regularizedNegLogDerivModel_neg_deriv_div_sub_pole` package the same
+  Mellin/Landau route as a named model: under `PsiPowerErrorBound theta`, the
+  model is differentiable on `Re(s) > theta`, and it agrees with the
+  regularized zeta logarithmic derivative on `Re(s) > 1`.
+- `ZeroFreeRegion.analyticOnNhd_ne_zero_of_deriv_eq_mul_self`,
+  `ZeroFreeRegion.deriv_riemannZetaPoleUnitAtOne_eq_mellin_coefficient_mul`,
+  and `ZeroFreeRegion.psiPowerErrorBound_excludes_riemannZeta_zero_right`
+  complete the Landau/Mellin converse bridge from a `psi` power bound to
+  zero-exclusion: if `PsiPowerErrorBound theta` holds with `0 <= theta < 1`,
+  then `riemannZeta rho != 0` for every `theta < rho.re < 1`.
+- `ZeroFreeRegion.no_zeros_on_two_thirds_of_psi_power_error_bound_sub_delta`
+  and
+  `ZeroFreeRegion.no_zeros_on_one_third_of_psi_power_error_bound_sub_delta`,
+  exported through the same names in `RiemannPNT.API`, specialize the previous
+  theorem to an `O(x^(2/3-delta))` input and exclude zeros on `Re(s)=2/3` and
+  the reflected line `Re(s)=1/3`.  This does not prove such a `psi` power-saving
+  estimate; it proves the converse bridge once that estimate is supplied.
 - `no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route`
   gives the direct right-side-line consequence of the same conditional
   truncated explicit-formula route at `beta = 2/3`, before applying the

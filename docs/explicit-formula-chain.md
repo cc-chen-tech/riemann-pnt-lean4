@@ -281,12 +281,36 @@ then proves on `Re(s) > 1` the exact overlap identity
 
 `s * M(s) = -zeta'(s)/zeta(s) - s/(s-1)`.
 
+The named model `PrimeNumberTheorem.regularizedNegLogDerivModel` packages the
+left side.  Under `PsiPowerErrorBound theta`,
+`PrimeNumberTheorem.differentiableOn_regularizedNegLogDerivModel_of_psi_power_error`
+proves this model is differentiable on `Re(s) > theta`, and
+`PrimeNumberTheorem.eqOn_regularizedNegLogDerivModel_neg_deriv_div_sub_pole`
+records the overlap with the regularized zeta logarithmic derivative on
+`Re(s) > 1`.
+
 These steps are also exported through `RiemannPNT.API` as public entry points
 for downstream files.
 
-Thus the remaining Mellin converse gap is no longer the transform identity.
-It is the uniqueness-of-analytic-continuation step and the local pole
-contradiction at a hypothetical zeta zero in `Re(s) > theta`.
+The analytic continuation step is now theorem-level as well.  In
+`ZeroFreeRegion.MeromorphicAux`,
+`ZeroFreeRegion.psiPowerErrorBound_excludes_riemannZeta_zero_right` proves the
+Landau/Mellin converse:
+
+`PsiPowerErrorBound theta`, with `0 <= theta < 1`, excludes zeta zeros throughout
+`theta < Re(s) < 1`.
+
+It uses the named Mellin model to extend a first-order ODE for the pole unit
+`Q(s) = (s - 1) zeta(s)` from `Re(s) > 1` to `Re(s) > theta`, then applies the
+generic nonvanishing theorem
+`ZeroFreeRegion.analyticOnNhd_ne_zero_of_deriv_eq_mul_self`.  The public
+specializations
+`RiemannPNT.API.no_zeros_on_two_thirds_of_psi_power_error_bound_sub_delta` and
+`RiemannPNT.API.no_zeros_on_one_third_of_psi_power_error_bound_sub_delta`
+consume an `O(x^(2/3-delta))` `psi`-error input and exclude zeros on the
+`2/3` and reflected `1/3` lines.  The remaining analytic gap is proving such a
+power-saving `psi` estimate from an explicit formula, Tauberian theorem, or
+equivalent zero-free input.
 
 The finite truncated-zero layer also has a narrow tail-collapse API for the
 degenerate case where no new zeros appear eventually above a base cutoff.  The

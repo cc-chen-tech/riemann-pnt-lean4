@@ -922,9 +922,21 @@ complex `psi(x)-x` error on `Re(s) > theta` from `PsiPowerErrorBound theta`.
 The overlap identity is also proved on `Re(s) > 1` by
 `PrimeNumberTheorem.mul_mellin_psiErrorAboveOneComplex_neg_eq_neg_logDeriv_sub_pole`,
 which identifies
-`s * M(s) = -ζ'(s)/ζ(s) - s/(s-1)`.  The remaining Mellin converse gap is the
-uniqueness-of-analytic-continuation step and the local pole contradiction at a
-hypothetical zeta zero in `Re(s) > theta`.
+`s * M(s) = -ζ'(s)/ζ(s) - s/(s-1)`.  The wrapper
+`PrimeNumberTheorem.regularizedNegLogDerivModel` packages this as a named
+Mellin-side function; `differentiableOn_regularizedNegLogDerivModel_of_psi_power_error`
+proves it is differentiable on `Re(s) > theta`, and
+`regularizedNegLogDerivModel_eq_neg_deriv_div_sub_pole` / its `EqOn` form prove
+the overlap with the zeta logarithmic derivative on `Re(s) > 1`.  The
+Landau-style analytic continuation and pole contradiction are now also proved in
+`ZeroFreeRegion.psiPowerErrorBound_excludes_riemannZeta_zero_right`: if
+`PsiPowerErrorBound theta` holds with `0 <= theta < 1`, then zeta has no zeros in
+`theta < Re(s) < 1`.  The concrete wrappers
+`no_zeros_on_two_thirds_of_psi_power_error_bound_sub_delta` and
+`no_zeros_on_one_third_of_psi_power_error_bound_sub_delta` specialize this to an
+`O(x^(2/3-delta))` input.  The remaining gap is proving such a `psi`
+power-saving estimate from an explicit formula or Tauberian argument, not the
+Mellin converse bridge itself.
 
 The finite truncated-zero bookkeeping is proved as ordinary theorem-level
 infrastructure.  In particular,

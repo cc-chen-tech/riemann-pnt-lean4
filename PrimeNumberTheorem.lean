@@ -4004,6 +4004,48 @@ theorem mul_mellin_psiErrorAboveOneComplex_neg_eq_neg_logDeriv_sub_pole
     hP_eval]
   ring
 
+/-- The Mellin-side model for the regularized logarithmic derivative:
+`s * M(-s)` where `M` is the Mellin transform of the cutoff `ψ(x)-x` error. -/
+noncomputable def regularizedNegLogDerivModel (s : ℂ) : ℂ :=
+  s * mellin psiErrorAboveOneComplex (-s)
+
+/-- Under a `ψ(x)-x = O(x^θ)` input, the Mellin-side regularized
+logarithmic-derivative model is differentiable throughout `Re(s) > θ`. -/
+theorem differentiableAt_regularizedNegLogDerivModel_of_psi_power_error
+    {θ : ℝ} (herror : PsiPowerErrorBound θ) {s : ℂ} (hs : θ < s.re) :
+    DifferentiableAt ℂ regularizedNegLogDerivModel s := by
+  simpa [regularizedNegLogDerivModel] using
+    (differentiableAt_id : DifferentiableAt ℂ (fun z : ℂ => z) s).mul
+      (differentiableAt_mellin_psiErrorAboveOneComplex_neg_of_power_error
+        herror hs)
+
+/-- Set-level version of
+`differentiableAt_regularizedNegLogDerivModel_of_psi_power_error`. -/
+theorem differentiableOn_regularizedNegLogDerivModel_of_psi_power_error
+    {θ : ℝ} (herror : PsiPowerErrorBound θ) :
+    DifferentiableOn ℂ regularizedNegLogDerivModel {s : ℂ | θ < s.re} := by
+  intro s hs
+  exact (differentiableAt_regularizedNegLogDerivModel_of_psi_power_error
+    herror hs).differentiableWithinAt
+
+/-- On the original half-plane of absolute convergence, the Mellin-side model
+is the regularized logarithmic derivative of zeta. -/
+theorem regularizedNegLogDerivModel_eq_neg_deriv_div_sub_pole
+    {s : ℂ} (hs : 1 < s.re) :
+    regularizedNegLogDerivModel s =
+      -deriv riemannZeta s / riemannZeta s - s / (s - 1) := by
+  simpa [regularizedNegLogDerivModel] using
+    mul_mellin_psiErrorAboveOneComplex_neg_eq_neg_logDeriv_sub_pole hs
+
+/-- `EqOn` form of the overlap identity between the Mellin-side model and the
+regularized logarithmic derivative of zeta. -/
+theorem eqOn_regularizedNegLogDerivModel_neg_deriv_div_sub_pole :
+    Set.EqOn regularizedNegLogDerivModel
+      (fun s : ℂ => -deriv riemannZeta s / riemannZeta s - s / (s - 1))
+      {s : ℂ | 1 < s.re} := by
+  intro s hs
+  exact regularizedNegLogDerivModel_eq_neg_deriv_div_sub_pole hs
+
 /-- Eventually, the selected zero contribution has the expected
 `‖ρ‖⁻¹ * x^ρ.re` norm lower bound. -/
 lemma eventually_norm_zero_contribution_ge_inv_norm_mul_rpow_re (ρ : ℂ) :

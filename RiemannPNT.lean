@@ -4028,6 +4028,42 @@ theorem mul_mellin_psiErrorAboveOneComplex_neg_eq_neg_logDeriv_sub_pole
   PrimeNumberTheorem.mul_mellin_psiErrorAboveOneComplex_neg_eq_neg_logDeriv_sub_pole
     hs
 
+/-- Public Mellin-side model for the regularized logarithmic derivative:
+`s * M(-s)` where `M` is the cutoff `ψ(x)-x` Mellin transform. -/
+noncomputable abbrev regularizedNegLogDerivModel : ℂ → ℂ :=
+  PrimeNumberTheorem.regularizedNegLogDerivModel
+
+/-- Public pointwise differentiability of the Mellin-side regularized
+logarithmic-derivative model under a power-saving `ψ` error. -/
+theorem differentiableAt_regularizedNegLogDerivModel_of_psi_power_error
+    {θ : ℝ} (herror : PsiPowerErrorBound θ) {s : ℂ} (hs : θ < s.re) :
+    DifferentiableAt ℂ regularizedNegLogDerivModel s :=
+  PrimeNumberTheorem.differentiableAt_regularizedNegLogDerivModel_of_psi_power_error
+    herror hs
+
+/-- Public set-level differentiability of the Mellin-side model on
+`Re(s) > θ`, under `ψ(x)-x = O(x^θ)`. -/
+theorem differentiableOn_regularizedNegLogDerivModel_of_psi_power_error
+    {θ : ℝ} (herror : PsiPowerErrorBound θ) :
+    DifferentiableOn ℂ regularizedNegLogDerivModel {s : ℂ | θ < s.re} :=
+  PrimeNumberTheorem.differentiableOn_regularizedNegLogDerivModel_of_psi_power_error
+    herror
+
+/-- Public overlap identity for the Mellin-side model on the original
+absolute-convergence half-plane. -/
+theorem regularizedNegLogDerivModel_eq_neg_deriv_div_sub_pole
+    {s : ℂ} (hs : 1 < s.re) :
+    regularizedNegLogDerivModel s =
+      -deriv riemannZeta s / riemannZeta s - s / (s - 1) :=
+  PrimeNumberTheorem.regularizedNegLogDerivModel_eq_neg_deriv_div_sub_pole hs
+
+/-- Public `EqOn` form of the overlap identity for the Mellin-side model. -/
+theorem eqOn_regularizedNegLogDerivModel_neg_deriv_div_sub_pole :
+    Set.EqOn regularizedNegLogDerivModel
+      (fun s : ℂ => -deriv riemannZeta s / riemannZeta s - s / (s - 1))
+      {s : ℂ | 1 < s.re} :=
+  PrimeNumberTheorem.eqOn_regularizedNegLogDerivModel_neg_deriv_div_sub_pole
+
 /-- Public concrete `ψ` error input below the `2/3` barrier. -/
 abbrev PsiPowerErrorBelowTwoThirds : Prop :=
   PrimeNumberTheorem.PsiPowerErrorBelowTwoThirds
@@ -4599,6 +4635,37 @@ theorem no_zeros_on_two_thirds_of_psi_power_error_below_two_thirds_bridge
     PrimeNumberTheorem.NoZerosOnVerticalLine (2 / 3) :=
   PrimeNumberTheorem.no_zeros_on_two_thirds_of_psi_power_error_below_two_thirds_bridge
     hbridge herror
+
+/-- Public Landau/Mellin converse: a `ψ(x)-x = O(x^θ)` power bound excludes
+zeta zeros in the open strip `θ < Re(s) < 1`. -/
+theorem psiPowerErrorBound_excludes_riemannZeta_zero_right
+    {θ : ℝ} (hθ_nonneg : 0 ≤ θ) (hθ_lt_one : θ < 1)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBound θ) :
+    ∀ ρ : ℂ, θ < ρ.re → ρ.re < 1 → riemannZeta ρ ≠ 0 :=
+  ZeroFreeRegion.psiPowerErrorBound_excludes_riemannZeta_zero_right
+    hθ_nonneg hθ_lt_one herror
+
+/-- Public concrete Landau/Mellin bridge: an `O(x^(2/3-δ))` `ψ` error excludes
+zeta zeros on `Re(s)=2/3`. -/
+theorem no_zeros_on_two_thirds_of_psi_power_error_bound_sub_delta
+    {delta : ℝ} (hdelta_pos : 0 < delta)
+    (hdelta_le : delta ≤ (2 / 3 : ℝ))
+    (herror :
+      PrimeNumberTheorem.PsiPowerErrorBound ((2 / 3 : ℝ) - delta)) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (2 / 3) :=
+  ZeroFreeRegion.no_zeros_on_two_thirds_of_psi_power_error_bound_sub_delta
+    hdelta_pos hdelta_le herror
+
+/-- Public reflected concrete Landau/Mellin bridge: an `O(x^(2/3-δ))` `ψ`
+error excludes zeta zeros on `Re(s)=1/3`. -/
+theorem no_zeros_on_one_third_of_psi_power_error_bound_sub_delta
+    {delta : ℝ} (hdelta_pos : 0 < delta)
+    (hdelta_le : delta ≤ (2 / 3 : ℝ))
+    (herror :
+      PrimeNumberTheorem.PsiPowerErrorBound ((2 / 3 : ℝ) - delta)) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) :=
+  ZeroFreeRegion.no_zeros_on_one_third_of_psi_power_error_bound_sub_delta
+    hdelta_pos hdelta_le herror
 
 /-- Public specialization of the explicit-formula converse bridge to the
 reflected `2/3` line and hence the `1/3` line. -/

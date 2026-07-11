@@ -20,6 +20,7 @@ This file establishes basic meromorphic properties of `riemannZeta` needed by bo
 -/
 
 import Mathlib
+import PrimeNumberTheorem
 import RiemannExplorer
 import ZeroFreeRegion
 
@@ -28,6 +29,56 @@ open scoped ArithmeticFunction LSeries.notation
 open MeromorphicAt MeromorphicOn Metric Real
 
 namespace ZeroFreeRegion
+
+/-! ## Analytic first-order ODE nonvanishing -/
+
+/-- A nonzero analytic solution of the scalar linear equation `f' = g * f`
+has no zeros on a preconnected open domain.
+
+At a hypothetical zero of finite order `n + 1`, the derivative has order
+`n`, while `g * f` has order at least `n + 1`.  Preconnectedness propagates
+finiteness of the order from one known nonzero point. -/
+theorem analyticOnNhd_ne_zero_of_deriv_eq_mul_self
+    {U : Set ℂ} {f g : ℂ → ℂ}
+    (hU_open : IsOpen U) (hU_preconnected : IsPreconnected U)
+    (hf : AnalyticOnNhd ℂ f U) (hg : AnalyticOnNhd ℂ g U)
+    {x : ℂ} (hx : x ∈ U) (hfx : f x ≠ 0)
+    (hderiv : ∀ z ∈ U, deriv f z = g z * f z) :
+    ∀ z ∈ U, f z ≠ 0 := by
+  intro z hz hfz
+  have hx_order_ne_top : analyticOrderAt f x ≠ ⊤ := by
+    rw [(hf x hx).analyticOrderAt_eq_zero.mpr hfx]
+    exact ENat.coe_ne_top 0
+  have hz_order_ne_top : analyticOrderAt f z ≠ ⊤ :=
+    hf.analyticOrderAt_ne_top_of_isPreconnected
+      hU_preconnected hx hz hx_order_ne_top
+  obtain ⟨n, hn⟩ := ENat.ne_top_iff_exists.mp hz_order_ne_top
+  have hn_ne_zero : n ≠ 0 := by
+    intro hn0
+    subst n
+    have horder_zero : analyticOrderAt f z = 0 := by simpa using hn.symm
+    exact ((hf z hz).analyticOrderAt_ne_zero.mpr hfz) horder_zero
+  obtain ⟨n, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hn_ne_zero
+  have horder : analyticOrderAt f z = (n + 1 : ℕ) := hn.symm
+  have hderiv_order : analyticOrderAt (deriv f) z = n :=
+    analyticOrderAt_deriv_of_pos (hf z hz) horder
+  have hderiv_eventually : deriv f =ᶠ[𝓝 z] g * f := by
+    filter_upwards [hU_open.mem_nhds hz] with w hw
+    exact hderiv w hw
+  have horder_eq :
+      (n : ℕ∞) = analyticOrderAt g z + (n + 1 : ℕ) := by
+    calc
+      (n : ℕ∞) = analyticOrderAt (deriv f) z := hderiv_order.symm
+      _ = analyticOrderAt (g * f) z := analyticOrderAt_congr hderiv_eventually
+      _ = analyticOrderAt g z + analyticOrderAt f z :=
+        analyticOrderAt_mul (hg z hz) (hf z hz)
+      _ = analyticOrderAt g z + (n + 1 : ℕ) := by rw [horder]
+  have hlt : (n : ℕ∞) < (n + 1 : ℕ) :=
+    ENat.coe_lt_coe.mpr (Nat.lt_succ_self n)
+  have hle : ((n + 1 : ℕ) : ℕ∞) ≤
+      analyticOrderAt g z + (n + 1 : ℕ) :=
+    le_add_left le_rfl
+  exact (ne_of_lt (hlt.trans_le hle)) horder_eq
 
 /-- ζ is differentiable on the open set {z | z ≠ 1}. -/
 lemma differentiableOn_riemannZeta_ne_one :
@@ -88,6 +139,204 @@ lemma analyticAt_riemannZetaPoleUnitAtOne :
 lemma riemannZetaPoleUnitAtOne_one :
     riemannZetaPoleUnitAtOne 1 = 1 := by
   simp [riemannZetaPoleUnitAtOne]
+
+/-- Away from `0` and the pole `1`, the analytic pole unit is exactly the
+regularized zeta function `(s - 1) * ζ(s)`. -/
+lemma riemannZetaPoleUnitAtOne_eq_sub_one_mul_riemannZeta
+    {s : ℂ} (hs0 : s ≠ 0) (hs1 : s ≠ 1) :
+    riemannZetaPoleUnitAtOne s = (s - 1) * riemannZeta s := by
+  simp only [riemannZetaPoleUnitAtOne, riemannZetaRegularAtOne]
+  rw [riemannZeta_def_of_ne_zero hs0, completedRiemannZeta_eq,
+    div_eq_mul_inv]
+  have hs_sub : s - 1 ≠ 0 := sub_ne_zero.mpr hs1
+  have h_one_sub : 1 - s ≠ 0 := sub_ne_zero.mpr hs1.symm
+  field_simp [hs0, hs_sub, h_one_sub]
+  ring
+
+/-- The pole unit is analytic on every right half-plane contained in
+`Re(s) > 0`. -/
+lemma analyticOnNhd_riemannZetaPoleUnitAtOne_re_gt
+    {θ : ℝ} (hθ : 0 ≤ θ) :
+    AnalyticOnNhd ℂ riemannZetaPoleUnitAtOne
+      {s : ℂ | θ < s.re} := by
+  intro s hs
+  have hs0 : s ≠ 0 := by
+    intro hzero
+    subst s
+    change θ < (0 : ℂ).re at hs
+    norm_num at hs
+    linarith
+  have hcompleted : AnalyticAt ℂ completedRiemannZeta₀ s :=
+    differentiable_completedZeta₀.analyticAt s
+  have hone_div : AnalyticAt ℂ (fun z : ℂ => 1 / z) s :=
+    analyticAt_const.div analyticAt_id hs0
+  have hgamma_inv : AnalyticAt ℂ (fun z : ℂ => (Gammaℝ z)⁻¹) s :=
+    differentiable_Gammaℝ_inv.analyticAt s
+  unfold riemannZetaPoleUnitAtOne riemannZetaRegularAtOne
+  exact ((analyticAt_id.sub analyticAt_const).mul
+    ((hcompleted.sub hone_div).mul hgamma_inv)).add hgamma_inv
+
+/-- On `Re(s) > 1`, the Mellin overlap identity is equivalent to a regular
+first-order differential equation for the pole unit:
+
+`Q'(s) = -(1 + s M(s)) Q(s)`, where `Q(s) = (s - 1) ζ(s)`. -/
+lemma deriv_riemannZetaPoleUnitAtOne_eq_mellin_coefficient_mul
+    {s : ℂ} (hs : 1 < s.re) :
+    deriv riemannZetaPoleUnitAtOne s =
+      -(1 + s * mellin _root_.PrimeNumberTheorem.psiErrorAboveOneComplex (-s)) *
+        riemannZetaPoleUnitAtOne s := by
+  have hs0 : s ≠ 0 := by
+    exact ne_zero_of_re_pos (zero_lt_one.trans hs)
+  have hs1 : s ≠ 1 := by
+    intro h
+    subst s
+    norm_num at hs
+  have hsub : s - 1 ≠ 0 := sub_ne_zero.mpr hs1
+  have hzeta : riemannZeta s ≠ 0 :=
+    riemannZeta_ne_zero_of_one_lt_re hs
+  have hunit_value :
+      riemannZetaPoleUnitAtOne s = (s - 1) * riemannZeta s :=
+    riemannZetaPoleUnitAtOne_eq_sub_one_mul_riemannZeta hs0 hs1
+  have hunit_eventually :
+      riemannZetaPoleUnitAtOne =ᶠ[𝓝 s]
+        fun z : ℂ => (z - 1) * riemannZeta z := by
+    filter_upwards [eventually_ne_nhds hs0, eventually_ne_nhds hs1]
+      with z hz0 hz1
+    exact riemannZetaPoleUnitAtOne_eq_sub_one_mul_riemannZeta hz0 hz1
+  have hleft : DifferentiableAt ℂ (fun z : ℂ => z - 1) s :=
+    differentiableAt_id.sub (differentiableAt_const (1 : ℂ))
+  have hright : DifferentiableAt ℂ riemannZeta s :=
+    differentiableAt_riemannZeta hs1
+  have hunit_deriv :
+      deriv riemannZetaPoleUnitAtOne s =
+        riemannZeta s + (s - 1) * deriv riemannZeta s := by
+    calc
+      deriv riemannZetaPoleUnitAtOne s =
+          deriv (fun z : ℂ => (z - 1) * riemannZeta z) s :=
+        hunit_eventually.deriv_eq
+      _ = deriv ((fun z : ℂ => z - 1) * riemannZeta) s := by
+        rfl
+      _ = deriv (fun z : ℂ => z - 1) s * riemannZeta s +
+          (s - 1) * deriv riemannZeta s := by
+        rw [deriv_mul hleft hright]
+      _ = riemannZeta s + (s - 1) * deriv riemannZeta s := by
+        simp
+  have hmellin :=
+    _root_.PrimeNumberTheorem.mul_mellin_psiErrorAboveOneComplex_neg_eq_neg_logDeriv_sub_pole hs
+  rw [hunit_deriv, hunit_value, hmellin]
+  field_simp [hzeta, hsub]
+  ring
+
+/-- A power bound `ψ(x) - x = O(x^θ)` with `0 ≤ θ < 1` excludes zeta zeros
+throughout the open strip `θ < Re(s) < 1`.
+
+The proof is the Landau/Mellin converse in analytic-ODE form:
+
+1. the power bound makes the cutoff error Mellin transform holomorphic on
+   `Re(s) > θ`;
+2. on `Re(s) > 1`, Abel summation identifies it with the regularized
+   logarithmic derivative of zeta;
+3. the identity theorem extends the resulting ODE for
+   `Q(s) = (s - 1) ζ(s)` to the full right half-plane;
+4. a nonzero analytic solution of `Q' = G Q` has no zeros. -/
+theorem psiPowerErrorBound_excludes_riemannZeta_zero_right
+    {θ : ℝ} (hθ_nonneg : 0 ≤ θ) (hθ_lt_one : θ < 1)
+    (herror : PrimeNumberTheorem.PsiPowerErrorBound θ) :
+    ∀ ρ : ℂ, θ < ρ.re → ρ.re < 1 → riemannZeta ρ ≠ 0 := by
+  let U : Set ℂ := {s : ℂ | θ < s.re}
+  let M : ℂ → ℂ := fun s =>
+    mellin PrimeNumberTheorem.psiErrorAboveOneComplex (-s)
+  let G : ℂ → ℂ := fun s => -(1 + s * M s)
+  let Q : ℂ → ℂ := riemannZetaPoleUnitAtOne
+  have hU_open : IsOpen U := by
+    exact isOpen_lt continuous_const Complex.continuous_re
+  have hU_preconnected : IsPreconnected U := by
+    exact (convex_halfSpace_re_gt θ).isPreconnected
+  have hQ : AnalyticOnNhd ℂ Q U := by
+    exact analyticOnNhd_riemannZetaPoleUnitAtOne_re_gt hθ_nonneg
+  have hM_diff : DifferentiableOn ℂ M U := by
+    intro s hs
+    exact
+      (PrimeNumberTheorem.differentiableAt_mellin_psiErrorAboveOneComplex_neg_of_power_error
+        herror hs).differentiableWithinAt
+  have hM : AnalyticOnNhd ℂ M U :=
+    hM_diff.analyticOnNhd hU_open
+  have hG : AnalyticOnNhd ℂ G U := by
+    dsimp only [G]
+    exact (analyticOnNhd_const.add (analyticOnNhd_id.mul hM)).neg
+  have hoverlap :
+      ∀ s : ℂ, 1 < s.re → deriv Q s = G s * Q s := by
+    intro s hs
+    simpa [Q, G, M] using
+      deriv_riemannZetaPoleUnitAtOne_eq_mellin_coefficient_mul hs
+  let x : ℂ := (max θ 1 + 1 : ℝ)
+  have hxU : x ∈ U := by
+    change θ < (max θ 1 + 1 : ℝ)
+    linarith [le_max_left θ 1]
+  have hx_overlap : 1 < x.re := by
+    change 1 < (max θ 1 + 1 : ℝ)
+    linarith [le_max_right θ 1]
+  have hlocal : deriv Q =ᶠ[𝓝 x] G * Q := by
+    have hopen : IsOpen {s : ℂ | 1 < s.re} :=
+      isOpen_lt continuous_const Complex.continuous_re
+    filter_upwards [hopen.mem_nhds hx_overlap] with s hs
+    exact hoverlap s hs
+  have hODE : Set.EqOn (deriv Q) (G * Q) U :=
+    hQ.deriv.eqOn_of_preconnected_of_eventuallyEq
+      (hG.mul hQ) hU_preconnected hxU hlocal
+  have hOneU : (1 : ℂ) ∈ U := by
+    change θ < (1 : ℂ).re
+    simpa using hθ_lt_one
+  have hQ_one : Q 1 ≠ 0 := by
+    simp [Q, riemannZetaPoleUnitAtOne_one]
+  have hQ_ne : ∀ s ∈ U, Q s ≠ 0 :=
+    analyticOnNhd_ne_zero_of_deriv_eq_mul_self
+      hU_open hU_preconnected hQ hG hOneU hQ_one
+      (fun s hs => hODE hs)
+  intro ρ hθρ hρ_lt_one hzero
+  have hρU : ρ ∈ U := hθρ
+  have hρ0 : ρ ≠ 0 := by
+    intro h
+    subst ρ
+    norm_num at hθρ
+    linarith
+  have hρ1 : ρ ≠ 1 := by
+    intro h
+    subst ρ
+    norm_num at hρ_lt_one
+  have hQρ := hQ_ne ρ hρU
+  rw [show Q ρ = riemannZetaPoleUnitAtOne ρ by rfl,
+    riemannZetaPoleUnitAtOne_eq_sub_one_mul_riemannZeta hρ0 hρ1,
+    hzero, mul_zero] at hQρ
+  exact hQρ rfl
+
+/-- A concrete power saving below `2/3` excludes zeta zeros on the reflected
+line `Re(s) = 2/3`, with no assumed explicit-formula converse interface. -/
+theorem no_zeros_on_two_thirds_of_psi_power_error_bound_sub_delta
+    {delta : ℝ} (hdelta_pos : 0 < delta)
+    (hdelta_le : delta ≤ (2 / 3 : ℝ))
+    (herror :
+      PrimeNumberTheorem.PsiPowerErrorBound ((2 / 3 : ℝ) - delta)) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (2 / 3) := by
+  intro s hs hzero
+  have hθ_nonneg : 0 ≤ (2 / 3 : ℝ) - delta := by linarith
+  have hθ_lt_one : (2 / 3 : ℝ) - delta < 1 := by linarith
+  exact
+    (psiPowerErrorBound_excludes_riemannZeta_zero_right
+      hθ_nonneg hθ_lt_one herror s (by linarith) (by linarith)) hzero
+
+/-- A concrete power saving `ψ(x)-x = O(x^(2/3-δ))` excludes zeta zeros on
+`Re(s)=1/3`, by combining the proved Mellin/Landau converse with functional
+equation symmetry. -/
+theorem no_zeros_on_one_third_of_psi_power_error_bound_sub_delta
+    {delta : ℝ} (hdelta_pos : 0 < delta)
+    (hdelta_le : delta ≤ (2 / 3 : ℝ))
+    (herror :
+      PrimeNumberTheorem.PsiPowerErrorBound ((2 / 3 : ℝ) - delta)) :
+    PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) :=
+  PrimeNumberTheorem.no_zeros_on_one_third_of_no_zeros_on_two_thirds
+    (no_zeros_on_two_thirds_of_psi_power_error_bound_sub_delta
+      hdelta_pos hdelta_le herror)
 
 /-- The pole unit is nonzero near `1`. -/
 lemma eventually_ne_zero_riemannZetaPoleUnitAtOne :
