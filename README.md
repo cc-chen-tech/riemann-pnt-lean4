@@ -331,6 +331,14 @@ The repository also proves the constant-function sanity checks
 satisfiable in the holomorphic empty-pole case, not that Perron's formula or the
 general rectangle residue theorem has been proved.
 
+The concrete explicit-formula integrand is now defined in
+`PrimeNumberTheorem/ExplicitFormulaResidues.lean`.  The file proves its local
+residues at `s = 1`, `s = 0`, every nontrivial zeta zero, and every trivial
+zero, with zeta zeros weighted by the actual `analyticOrderNatAt`
+multiplicity.  These are local residue theorems; Perron inversion, assembly of
+the finite pole family inside a chosen rectangle, and contour errors remain
+open.
+
 ## File Overview
 
 | File | Description | Status |
@@ -343,6 +351,7 @@ general rectangle residue theorem has been proved.
 | `PrimeNumberTheorem.lean` | PNT forms, equivalences, Li(x) asymptotics, zero symmetry, bounded-height zero finiteness, explicit formula target | sorry-free, targets unproved |
 | `ZeroFreeRegion.lean` | 3-4-1 setup, log derivative series, compact zero-free region, quantitative zero-free-region targets | sorry-free, quantitative targets unproved |
 | `PrimeNumberTheorem/ExplicitFormulaAux.lean` | `chebyshevPsi0`, `goodHeight`, finite zero-sum support helpers, boundary-height and auxiliary multiplicity normalizers | sorry-free, support predicate only |
+| `PrimeNumberTheorem/ExplicitFormulaResidues.lean` | Concrete `-ζ'/ζ(s) * x^s/s` integrand and proved residues at `1`, `0`, nontrivial zeros, and trivial zeros with analytic multiplicity | sorry-free |
 | `PrimeNumberTheorem/ExplicitFormulaTruncated.lean` | Truncated explicit-formula route interface with a real Prop body | sorry-free, route interface unproved |
 | `MathlibAux/RectangleResidue.lean` | Rectangle residue route interface, proved circle and square finite simple-pole residue formulas, rectangular-annulus deformation, plus constant-function sanity checks | sorry-free, general meromorphic route interface unproved |
 | `HardyTheorem/AFE.lean` | Corrected AFE route interface using an unwrapped theta wrapper | sorry-free, route interface unproved |
@@ -817,6 +826,7 @@ Lean declarations in `ZeroFreeRegion.lean` and
 | `ZeroFreeRegion.jensen_circleAverage_log_norm_riemannZeta_sigma_it_of_pos_radius` / `ZeroFreeRegion.jensen_circleAverage_log_norm_logDeriv_riemannZeta_sigma_it_of_pos_radius` / signed analogues | `lemma` | Positive-radius direct Jensen formulas on `σ+it` disks. | Removes `|R|` radius bookkeeping in the Jensen local-divisor side when future estimates already assume `0<R`. |
 | `ZeroFreeRegion.jensen_zero_mass_riemannZeta_two_add_I_mul_le_log_bound` | `lemma` | Bounds Jensen's weighted local zero mass on a disk centered at `2+it` by `log M + log 3` from a boundary bound `‖ζ‖ ≤ M`. | Uses the proved uniform center estimate `‖ζ(2+it)‖ ≥ 1/3`; the remaining input is a genuine zeta boundary-growth estimate. |
 | `ZeroFreeRegion.jensen_inner_zero_multiplicity_count_riemannZeta_two_add_I_mul_le_log_bound` | `lemma` | Bounds the total zeta-zero multiplicity in an inner disk by the Jensen mass, with factor `log (R/r)`. | Converts boundary growth into a quantitative local zero count while keeping the outer disk away from the pole; it does not yet bound the regular part of `ζ'/ζ`. |
+| `ZeroFreeRegion.circleAverage_log_norm_riemannZeta_two_add_I_mul_le_affine_log_abs_add_radius_three_of_polynomial_growth` / `ZeroFreeRegion.jensen_zero_mass_riemannZeta_two_add_I_mul_le_affine_log_abs_add_radius_three_of_polynomial_growth` | `lemma` | Converts a polynomial ζ-growth hypothesis on `1 ≤ Re z ≤ 3` into an explicit `O(log (|t|+R+3))` circle-average and weighted Jensen zero-mass bound on disks centered at `2+it`. | Completes the growth-to-local-zero-mass handoff; proving the polynomial ζ-growth hypothesis and the regular-part estimate remains open. |
 | `ZeroFreeRegion.norm_deriv_riemannZeta_le_of_sphere_norm_bound_avoid_one` / `ZeroFreeRegion.norm_deriv_riemannZeta_le_of_sphere_norm_bound_dist_one` | `lemma` | Cauchy derivative estimates for `ζ'` from a boundary `‖ζ‖` bound on a disk avoiding the pole at `1`. | Real bridge from future zeta-growth bounds to derivative bounds; it does not supply the growth bound itself. |
 | `ZeroFreeRegion.norm_deriv_riemannZeta_sigma_it_le_of_sphere_norm_bound_height` | `lemma` | Coordinate high-imaginary-height version: if `R < |t|`, a disk centered at `σ+it` avoids the pole and Cauchy's estimate gives `‖ζ'(σ+it)‖ ≤ M/R`. | Next link toward `logDeriv ζ` high-height control, still requiring both a boundary `‖ζ‖` estimate and a lower bound for `‖ζ‖` to form `ζ'/ζ`. |
 | `ZeroFreeRegion.exists_norm_riemannZeta_pos_lower_bound_on_compact_vertical_band` / `...sigma_it_pos_lower_bound_on_compact_vertical_band` / `...sigma_two_it_pos_lower_bound_on_compact_vertical_band` | `lemma` | Proves a positive lower bound for `‖ζ‖` on every compact positive-height band `1 ≤ Re z ≤ 2`, `H ≤ |Im z| ≤ T`, plus the coordinate `σ+it` and shifted `σ+2it` forms. | Supplies the bounded-height version of the lower-bound input used by the derivative/lower-bound bridges; the high-height lower bound remains a genuine analytic gap. |

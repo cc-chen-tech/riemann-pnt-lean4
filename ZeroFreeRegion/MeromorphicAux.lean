@@ -7204,6 +7204,77 @@ lemma circleAverage_log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_radius_t
           simpa [add_comm, add_left_comm, add_assoc] using
             add_le_add_left hmul (Real.log A)
 
+/-- Polynomial growth on `1 ≤ Re z ≤ 3` controls the circle average on the
+high disk centered at `2 + I*t`.
+
+The radius bound keeps the disk in the required real strip, while the height
+margin keeps every point above `T0`.  This is the zeta-growth input in the
+geometry used by the quantitative Jensen zero-counting lemmas below. -/
+lemma circleAverage_log_norm_riemannZeta_two_add_I_mul_le_affine_log_abs_add_radius_three_of_polynomial_growth
+    {T0 A B R t : ℝ} (hT0 : 6 ≤ T0) (hA : 1 ≤ A) (hB : 0 ≤ B)
+    (hR : 0 < R) (hRone : R ≤ 1) (hheight : T0 + R ≤ |t|)
+    (hpoly : ∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc (1 : ℝ) 3 →
+      ‖riemannZeta z‖ ≤ A * (‖z‖ + 3) ^ B) :
+    circleAverage (Real.log ‖riemannZeta ·‖) ((2 : ℂ) + I * t) R ≤
+      Real.log A + (2 * B) * Real.log (|t| + R + 3) := by
+  let c : ℂ := (2 : ℂ) + I * t
+  have hmer_sphere : MeromorphicOn riemannZeta (Metric.sphere c R) := by
+    intro z _hz
+    by_cases hz1 : z = 1
+    · simpa [hz1] using meromorphicAt_riemannZeta_one
+    · exact meromorphicAt_riemannZeta_of_ne_one z hz1
+  refine circleAverage_mono_on_of_le_circle
+    (circleIntegrable_log_norm_meromorphicOn
+      (by simpa [c, abs_of_pos hR] using hmer_sphere)) ?_
+  intro z hz
+  have hz_closed : z ∈ Metric.closedBall c R :=
+    Metric.sphere_subset_closedBall (by simpa [abs_of_pos hR] using hz)
+  have hz_re : z.re ∈ Set.Icc (1 : ℝ) 3 :=
+    closedBall_sigma_it_re_mem_Icc
+      (z := z) (σ := 2) (t := t) (R := R) (a := 1) (b := 3)
+      (by simpa [c] using hz_closed) (by linarith) (by linarith)
+  have hz_height : T0 ≤ |z.im| :=
+    closedBall_sigma_it_abs_im_ge_of_add_le
+      (z := z) (σ := 2) (t := t) (R := R) (H := T0)
+      (by simpa [c] using hz_closed) hheight
+  have hbase :=
+    log_norm_riemannZeta_le_affine_log_norm_add_three_of_polynomial_growth
+      (T0 := T0) (A := A) (B := B) hA hB hpoly z hz_height hz_re
+  have hgeom :=
+    log_norm_sigma_add_I_mul_add_three_le_two_log_abs_of_re_le_three
+      (σ := z.re) (t := z.im) hz_re (le_trans hT0 hz_height)
+  have hz_decomp : ((z.re : ℂ) + I * (z.im : ℂ)) = z := by
+    apply Complex.ext <;> simp
+  have hgeom' : Real.log (‖z‖ + 3) ≤ 2 * Real.log |z.im| := by
+    simpa [hz_decomp] using hgeom
+  have hscale : B * Real.log (‖z‖ + 3) ≤ B * (2 * Real.log |z.im|) :=
+    mul_le_mul_of_nonneg_left hgeom' hB
+  have hdist : ‖z - c‖ ≤ R := by
+    simpa [Metric.mem_closedBall, dist_eq_norm] using hz_closed
+  have him_sub : |z.im - t| ≤ R := by
+    have hbase_im := abs_im_sub_le_norm_sub z c
+    have hc_im : c.im = t := by simp [c]
+    simpa [hc_im] using le_trans hbase_im hdist
+  have him_upper : |z.im| ≤ |t| + R := by
+    have htri : |z.im| ≤ |t| + |z.im - t| := by
+      calc
+        |z.im| = |t + (z.im - t)| := by ring_nf
+        _ ≤ |t| + |z.im - t| := abs_add_le t (z.im - t)
+    linarith
+  have him_pos : 0 < |z.im| := lt_of_lt_of_le (by norm_num) (le_trans hT0 hz_height)
+  have hlog_height : Real.log |z.im| ≤ Real.log (|t| + R + 3) :=
+    Real.log_le_log him_pos (by linarith)
+  have hscale_height :
+      (2 * B) * Real.log |z.im| ≤
+        (2 * B) * Real.log (|t| + R + 3) :=
+    mul_le_mul_of_nonneg_left hlog_height (by positivity)
+  calc
+    Real.log ‖riemannZeta z‖
+        ≤ Real.log A + B * Real.log (‖z‖ + 3) := hbase
+    _ ≤ Real.log A + B * (2 * Real.log |z.im|) := by linarith
+    _ = Real.log A + (2 * B) * Real.log |z.im| := by ring
+    _ ≤ Real.log A + (2 * B) * Real.log (|t| + R + 3) := by linarith
+
 /-- Coordinate polynomial-growth-to-log-growth conversion in the classical
 high-height scale `log |t|`.
 
@@ -21536,6 +21607,74 @@ lemma jensen_circleAverage_log_norm_riemannZeta_sigma_it_of_pos_radius
       (R := R) (σ := σ) (t := t) hR.ne'
   rw [hAbs] at h
   exact h
+
+/-- Jensen's weighted local zero mass on a disk centered at `2 + I*t` is at
+most the circle-average logarithmic norm plus `log 3`.
+
+This isolates the zeta-specific center estimate from the boundary-growth
+argument: later theorems only need to supply a circle-average upper bound. -/
+lemma jensen_zero_mass_riemannZeta_two_add_I_mul_le_of_circleAverage_le
+    {R t K : ℝ} (hR : 0 < R)
+    (hcircle :
+      circleAverage (Real.log ‖riemannZeta ·‖) ((2 : ℂ) + I * t) R ≤ K) :
+    (∑ᶠ u,
+        divisor riemannZeta (closedBall ((2 : ℂ) + I * t) R) u *
+          Real.log (R * ‖((2 : ℂ) + I * t) - u‖⁻¹)) ≤
+      K + Real.log 3 := by
+  let c : ℂ := (2 : ℂ) + I * t
+  have hc_ne_one : c ≠ 1 := by
+    intro hc
+    have := congr_arg Complex.re hc
+    simp [c] at this
+  have hc_analytic : AnalyticAt ℂ riemannZeta c :=
+    analyticOnNhd_riemannZeta_ne_one c hc_ne_one
+  have hc_ne_zero : riemannZeta c ≠ 0 :=
+    riemannZeta_ne_zero_of_one_le_re (by simp [c])
+  have hcenter_lower : (1 / 3 : ℝ) ≤ ‖riemannZeta c‖ :=
+    one_third_le_norm_riemannZeta_of_two_le_re c (by simp [c])
+  have hlog_center_lower : -Real.log 3 ≤ Real.log ‖riemannZeta c‖ := by
+    have hlog := Real.log_le_log (by norm_num : (0 : ℝ) < 1 / 3) hcenter_lower
+    simpa [one_div, Real.log_inv] using hlog
+  have hdiv_center : divisor riemannZeta (closedBall c R) c = 0 := by
+    rw [MeromorphicOn.divisor_apply (meromorphicOn_riemannZeta_closedBall c R)
+      (by simp [hR.le])]
+    rw [(hc_analytic.meromorphicNFAt.meromorphicOrderAt_eq_zero_iff).2 hc_ne_zero]
+    simp
+  have htrail : meromorphicTrailingCoeffAt riemannZeta c = riemannZeta c :=
+    hc_analytic.meromorphicTrailingCoeffAt_of_ne_zero hc_ne_zero
+  have hjensen :=
+    jensen_circleAverage_log_norm_riemannZeta_sigma_it_of_pos_radius
+      (R := R) (σ := 2) (t := t) hR
+  have hjensen' :
+      circleAverage (Real.log ‖riemannZeta ·‖) c R =
+        (∑ᶠ u,
+            divisor riemannZeta (closedBall c R) u *
+              Real.log (R * ‖c - u‖⁻¹)) +
+          divisor riemannZeta (closedBall c R) c * Real.log R +
+          Real.log ‖meromorphicTrailingCoeffAt riemannZeta c‖ := by
+    simpa [c] using hjensen
+  simp only [hdiv_center, Int.cast_zero, zero_mul, add_zero, htrail] at hjensen'
+  have hcircle' : circleAverage (Real.log ‖riemannZeta ·‖) c R ≤ K := by
+    simpa [c] using hcircle
+  linarith
+
+/-- Under polynomial vertical growth, Jensen's weighted zeta-zero mass on the
+high disk centered at `2 + I*t` is `O(log (|t| + R + 3))` with explicit
+constants.  The polynomial-growth hypothesis is still the missing analytic
+input. -/
+lemma jensen_zero_mass_riemannZeta_two_add_I_mul_le_affine_log_abs_add_radius_three_of_polynomial_growth
+    {T0 A B R t : ℝ} (hT0 : 6 ≤ T0) (hA : 1 ≤ A) (hB : 0 ≤ B)
+    (hR : 0 < R) (hRone : R ≤ 1) (hheight : T0 + R ≤ |t|)
+    (hpoly : ∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc (1 : ℝ) 3 →
+      ‖riemannZeta z‖ ≤ A * (‖z‖ + 3) ^ B) :
+    (∑ᶠ u,
+        divisor riemannZeta (closedBall ((2 : ℂ) + I * t) R) u *
+          Real.log (R * ‖((2 : ℂ) + I * t) - u‖⁻¹)) ≤
+      Real.log A + (2 * B) * Real.log (|t| + R + 3) + Real.log 3 := by
+  apply jensen_zero_mass_riemannZeta_two_add_I_mul_le_of_circleAverage_le hR
+  exact
+    circleAverage_log_norm_riemannZeta_two_add_I_mul_le_affine_log_abs_add_radius_three_of_polynomial_growth
+      hT0 hA hB hR hRone hheight hpoly
 
 /-- Jensen's weighted local zero mass for `ζ` on a disk centered at
 `2 + I*t` is controlled solely by a boundary norm bound.

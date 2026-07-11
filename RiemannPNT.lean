@@ -3,6 +3,7 @@ import GammaResidue
 import HardyTheorem
 import EulerAndLfunctions
 import PrimeNumberTheorem
+import PrimeNumberTheorem.ExplicitFormulaResidues
 import PrimeNumberTheorem.ExplicitFormulaTruncated
 import ZeroFreeRegion
 import ZeroFreeRegion.MeromorphicAux
@@ -15985,7 +15986,7 @@ theorem jensen_zero_mass_riemannZeta_two_add_I_mul_le_log_bound
       z ∈ Metric.sphere ((2 : ℂ) + Complex.I * t) R →
         ‖riemannZeta z‖ ≤ M) :
     (∑ᶠ u,
-        divisor riemannZeta
+        MeromorphicOn.divisor riemannZeta
             (Metric.closedBall ((2 : ℂ) + Complex.I * t) R) u *
           Real.log (R * ‖((2 : ℂ) + Complex.I * t) - u‖⁻¹)) ≤
       Real.log M + Real.log 3 :=
@@ -17998,6 +17999,48 @@ theorem circleAverage_log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_radius
       Real.log A + (2 * B) * Real.log (|t| + |R| + 3) :=
   ZeroFreeRegion.circleAverage_log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_radius_three_of_polynomial_growth
     hT0 hA hB hleft hright hheight hpoly
+
+/-- Public polynomial-growth circle-average bound in the Jensen geometry
+centered at `2 + I*t`. -/
+theorem circleAverage_log_norm_riemannZeta_two_add_I_mul_le_affine_log_abs_add_radius_three_of_polynomial_growth
+    {T0 A B R t : ℝ} (hT0 : 6 ≤ T0) (hA : 1 ≤ A) (hB : 0 ≤ B)
+    (hR : 0 < R) (hRone : R ≤ 1) (hheight : T0 + R ≤ |t|)
+    (hpoly : ∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc (1 : ℝ) 3 →
+      ‖riemannZeta z‖ ≤ A * (‖z‖ + 3) ^ B) :
+    Real.circleAverage (Real.log ‖riemannZeta ·‖)
+        ((2 : ℂ) + Complex.I * t) R ≤
+      Real.log A + (2 * B) * Real.log (|t| + R + 3) :=
+  ZeroFreeRegion.circleAverage_log_norm_riemannZeta_two_add_I_mul_le_affine_log_abs_add_radius_three_of_polynomial_growth
+    hT0 hA hB hR hRone hheight hpoly
+
+/-- Public conversion from a circle-average bound to Jensen weighted zeta-zero
+mass at `2 + I*t`. -/
+theorem jensen_zero_mass_riemannZeta_two_add_I_mul_le_of_circleAverage_le
+    {R t K : ℝ} (hR : 0 < R)
+    (hcircle : Real.circleAverage (Real.log ‖riemannZeta ·‖)
+      ((2 : ℂ) + Complex.I * t) R ≤ K) :
+    (∑ᶠ u,
+        MeromorphicOn.divisor riemannZeta
+            (Metric.closedBall ((2 : ℂ) + Complex.I * t) R) u *
+          Real.log (R * ‖((2 : ℂ) + Complex.I * t) - u‖⁻¹)) ≤
+      K + Real.log 3 :=
+  ZeroFreeRegion.jensen_zero_mass_riemannZeta_two_add_I_mul_le_of_circleAverage_le
+    hR hcircle
+
+/-- Public `O(log |t|)` Jensen mass consequence of a polynomial vertical
+growth estimate for zeta. -/
+theorem jensen_zero_mass_riemannZeta_two_add_I_mul_le_affine_log_abs_add_radius_three_of_polynomial_growth
+    {T0 A B R t : ℝ} (hT0 : 6 ≤ T0) (hA : 1 ≤ A) (hB : 0 ≤ B)
+    (hR : 0 < R) (hRone : R ≤ 1) (hheight : T0 + R ≤ |t|)
+    (hpoly : ∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc (1 : ℝ) 3 →
+      ‖riemannZeta z‖ ≤ A * (‖z‖ + 3) ^ B) :
+    (∑ᶠ u,
+        MeromorphicOn.divisor riemannZeta
+            (Metric.closedBall ((2 : ℂ) + Complex.I * t) R) u *
+          Real.log (R * ‖((2 : ℂ) + Complex.I * t) - u‖⁻¹)) ≤
+      Real.log A + (2 * B) * Real.log (|t| + R + 3) + Real.log 3 :=
+  ZeroFreeRegion.jensen_zero_mass_riemannZeta_two_add_I_mul_le_affine_log_abs_add_radius_three_of_polynomial_growth
+    hT0 hA hB hR hRone hheight hpoly
 
 /-- Public coordinate zeta polynomial-growth-to-log-growth conversion in the
 classical high-height scale `log |t|`. -/

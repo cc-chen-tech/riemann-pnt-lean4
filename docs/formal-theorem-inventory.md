@@ -2161,6 +2161,14 @@ Core verified declarations:
   zeta zeros in a strictly smaller concentric disk.  The factor
   `log (R/r)` is the minimum Jensen weight, and `R < |t|` keeps the outer
   disk away from the pole at `1`.
+- `circleAverage_log_norm_riemannZeta_two_add_I_mul_le_affine_log_abs_add_radius_three_of_polynomial_growth`
+  proves the circle-average growth handoff in the disk geometry centered at
+  `2+I*t`: radius at most one keeps the disk inside `1 <= Re z <= 3`.
+- `jensen_zero_mass_riemannZeta_two_add_I_mul_le_of_circleAverage_le` and
+  `jensen_zero_mass_riemannZeta_two_add_I_mul_le_affine_log_abs_add_radius_three_of_polynomial_growth`
+  turn that circle-average estimate into an explicit weighted zero-mass bound
+  `log A + 2*B*log (|t|+R+3) + log 3`.  The polynomial zeta-growth theorem
+  remains a hypothesis rather than a proved project result.
 
 ### `PrimeNumberTheorem.lean`
 
@@ -3187,6 +3195,12 @@ Route interfaces:
   `RiemannPNT.API` aliases.  These are ordinary theorem-level checks for the
   holomorphic empty-pole case; they do not discharge the general meromorphic
   residue theorem needed for Perron's formula.
+- `PrimeNumberTheorem.ExplicitFormulaResidues` proves the concrete local
+  residue limits for `-logDeriv riemannZeta s * x^s / s`: contribution `x` at
+  `s = 1`, `-deriv riemannZeta 0 / riemannZeta 0` at `s = 0`, and
+  `-analyticOrderNatAt(riemannZeta, rho) * x^rho / rho` at every nontrivial or
+  trivial zeta zero.  It does not prove Perron inversion or the contour-error
+  estimate.
 
 Reusable predicates:
 

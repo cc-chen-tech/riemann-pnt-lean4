@@ -1646,6 +1646,20 @@ total-multiplicity bound in every smaller concentric disk, with denominator
 `log (R/r)`.  These are real zero-counting results, but they still require a
 zeta-specific high-height boundary-growth estimate and do not yet prove the
 regular-part `O(log |t|)` estimate for `ζ'/ζ`.
+The polynomial-growth handoff is also now composed in this exact disk
+geometry:
+
+```lean
+ZeroFreeRegion.circleAverage_log_norm_riemannZeta_two_add_I_mul_le_affine_log_abs_add_radius_three_of_polynomial_growth
+ZeroFreeRegion.jensen_zero_mass_riemannZeta_two_add_I_mul_le_affine_log_abs_add_radius_three_of_polynomial_growth
+```
+
+For `0 < R ≤ 1` and `T0 + R ≤ |t|`, a polynomial bound on ζ throughout
+`1 ≤ Re z ≤ 3` yields weighted local zero mass at most
+`log A + 2 B log (|t|+R+3) + log 3`.  Thus the Jensen conversion itself is
+closed; the unresolved input is the zeta-specific polynomial vertical-growth
+theorem, followed by finite principal-part subtraction and regular-part
+control.
 The three Cauchy derivative estimates then turn a boundary `||zeta||` bound on
 a disk avoiding the pole into a center `||zeta'||` bound; they still need a
 separate lower bound for `||zeta||` before they yield a `logDeriv zeta` bound.
