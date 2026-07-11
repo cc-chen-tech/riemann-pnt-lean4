@@ -7417,6 +7417,28 @@ theorem analyticAt_toMeromorphicNFAt_logDeriv_sub_order_mul_inv_of_analyticAt_or
   ZeroFreeRegion.analyticAt_toMeromorphicNFAt_logDeriv_sub_order_mul_inv_of_analyticAt_order_eq_nat
     hf horder
 
+/-- Public gluing criterion: meromorphic normal-form conversion is analytic
+when every punctured germ has a local analytic representative. -/
+theorem analyticOnNhd_toMeromorphicNFOn_of_locally_eventuallyEq_analyticAt
+    {f : ℂ → ℂ} {U : Set ℂ} (hf : MeromorphicOn f U)
+    (hlocal : ∀ x ∈ U,
+      ∃ g : ℂ → ℂ, AnalyticAt ℂ g x ∧ f =ᶠ[𝓝[≠] x] g) :
+    AnalyticOnNhd ℂ (toMeromorphicNFOn f U) U :=
+  ZeroFreeRegion.analyticOnNhd_toMeromorphicNFOn_of_locally_eventuallyEq_analyticAt
+    hf hlocal
+
+/-- Public meromorphicity of a logarithmic derivative after subtracting a
+finite multiplicity-weighted principal-part sum. -/
+theorem meromorphicOn_logDeriv_sub_finset_principalParts
+    {f : ℂ → ℂ} {U : Set ℂ} (hf : MeromorphicOn f U)
+    (poles : Finset ℂ) (multiplicity : ℂ → ℕ) :
+    MeromorphicOn
+      (fun z : ℂ =>
+        logDeriv f z -
+          ∑ ρ ∈ poles, (multiplicity ρ : ℂ) * (z - ρ)⁻¹) U :=
+  ZeroFreeRegion.meromorphicOn_logDeriv_sub_finset_principalParts
+    hf poles multiplicity
+
 /-- Public zeta-specific analytic regularization at a finite-order point away
 from the pole. -/
 theorem analyticAt_toMeromorphicNFAt_logDeriv_riemannZeta_sub_order_mul_inv_of_order_eq_nat

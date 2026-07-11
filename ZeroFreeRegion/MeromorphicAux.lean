@@ -10307,6 +10307,57 @@ lemma analyticAt_toMeromorphicNFAt_logDeriv_sub_order_mul_inv_of_analyticAt_orde
   rw [horder_nf, horder_regular]
   exact hg_log.meromorphicOrderAt_nonneg
 
+/-- A meromorphic function whose punctured germ is analytic at every point of
+`U` becomes analytic on all of `U` after conversion to meromorphic normal
+form.
+
+This is the gluing principle used for simultaneous principal-part removal:
+the local analytic representatives may vary with the point, while
+`toMeromorphicNFOn` chooses the correct removable-singularity values globally. -/
+lemma analyticOnNhd_toMeromorphicNFOn_of_locally_eventuallyEq_analyticAt
+    {f : ℂ → ℂ} {U : Set ℂ} (hf : MeromorphicOn f U)
+    (hlocal : ∀ x ∈ U,
+      ∃ g : ℂ → ℂ, AnalyticAt ℂ g x ∧ f =ᶠ[𝓝[≠] x] g) :
+    AnalyticOnNhd ℂ (toMeromorphicNFOn f U) U := by
+  intro x hx
+  rcases hlocal x hx with ⟨g, hg, hfg⟩
+  have horder :
+      meromorphicOrderAt (toMeromorphicNFOn f U) x =
+        meromorphicOrderAt g x := by
+    rw [meromorphicOrderAt_toMeromorphicNFOn hf hx]
+    exact meromorphicOrderAt_congr hfg
+  have hnf : MeromorphicNFAt (toMeromorphicNFOn f U) x :=
+    meromorphicNFOn_toMeromorphicNFOn f U hx
+  apply hnf.meromorphicOrderAt_nonneg_iff_analyticAt.mp
+  rw [horder]
+  exact hg.meromorphicOrderAt_nonneg
+
+/-- Subtracting finitely many multiplicity-weighted simple principal parts
+from a logarithmic derivative preserves meromorphicity on the ambient set.
+
+This supplies the raw global function that will subsequently be normalized by
+`toMeromorphicNFOn`; analyticity then reduces to checking cancellation at the
+finitely many selected centers. -/
+lemma meromorphicOn_logDeriv_sub_finset_principalParts
+    {f : ℂ → ℂ} {U : Set ℂ} (hf : MeromorphicOn f U)
+    (poles : Finset ℂ) (multiplicity : ℂ → ℕ) :
+    MeromorphicOn
+      (fun z : ℂ =>
+        logDeriv f z -
+          ∑ ρ ∈ poles, (multiplicity ρ : ℂ) * (z - ρ)⁻¹) U := by
+  intro z hz
+  apply (hf.logDeriv z hz).sub
+  induction poles using Finset.induction_on with
+  | empty =>
+      simp
+  | @insert ρ poles hρ ih =>
+      have hlinear : MeromorphicAt (fun w : ℂ => w - ρ) z :=
+        (MeromorphicAt.id z).sub (MeromorphicAt.const ρ z)
+      have hterm :
+          MeromorphicAt (fun w : ℂ => (multiplicity ρ : ℂ) * (w - ρ)⁻¹) z :=
+        (MeromorphicAt.const (multiplicity ρ : ℂ) z).mul hlinear.inv
+      simpa only [Finset.sum_insert hρ] using hterm.add ih
+
 /-- Zeta-specific analytic regularization of the multiplicity-weighted local
 logarithmic derivative at any finite-order point away from the pole. -/
 lemma analyticAt_toMeromorphicNFAt_logDeriv_riemannZeta_sub_order_mul_inv_of_order_eq_nat

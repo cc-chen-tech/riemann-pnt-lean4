@@ -719,6 +719,13 @@ Core verified declarations:
   `analyticAt_toMeromorphicNFAt_logDeriv_riemannZeta_sub_analyticOrderNatAt_mul_inv_of_zero`
   specialize the extension to zeta, with the latter automatically selecting
   the positive natural analytic multiplicity of an actual zero.
+- `analyticOnNhd_toMeromorphicNFOn_of_locally_eventuallyEq_analyticAt`
+  glues pointwise analytic punctured germs into one analytic normal-form
+  function on an ambient set.
+- `meromorphicOn_logDeriv_sub_finset_principalParts` proves that subtracting a
+  finite multiplicity-weighted sum `Σ nρ/(z-ρ)` from a logarithmic derivative
+  preserves meromorphicity.  Together these two lemmas define the global
+  framework for simultaneous removal of finitely many zeta-zero poles.
 - `exists_punctured_ball_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq`
   and `exists_punctured_closedBall_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq`
   convert an eventually-equal multiplicity regular part and an eventual norm

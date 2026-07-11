@@ -1372,7 +1372,12 @@ and its zeta-specific automatic-multiplicity variants.  Thus the regular part
 can be treated as analytic at the zero itself, not merely controlled on a
 punctured neighborhood.  The next hard step is to remove all zeros in a finite
 high disk simultaneously and bound the resulting analytic regular part
-uniformly from zeta boundary growth.  The
+uniformly from zeta boundary growth.  The global normal-form ingredients for
+that step are now available as
+`analyticOnNhd_toMeromorphicNFOn_of_locally_eventuallyEq_analyticAt` and
+`meromorphicOn_logDeriv_sub_finset_principalParts`; what remains is the
+zeta-specific local-cancellation proof for the divisor-selected finite set
+and its quantitative boundary bound.  The
 `exists_real_punctured_interval_...` variants specialize the same local
 principal-part control to horizontal-line coordinates `rho = beta + i t` and
 `z = sigma + i t`, using the checked identity
