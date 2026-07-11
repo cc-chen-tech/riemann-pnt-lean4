@@ -245,7 +245,7 @@
       "name": "goodHeight",
       "qualified_name": "PrimeNumberTheorem.ExplicitFormulaAux.goodHeight",
       "file": "PrimeNumberTheorem/ExplicitFormulaAux.lean",
-      "line": 132
+      "line": 135
     },
     {
       "name": "ExplicitFormulaConversePowerTarget",

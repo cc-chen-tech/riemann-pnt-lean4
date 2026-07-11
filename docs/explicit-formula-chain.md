@@ -203,7 +203,11 @@ formula.
 
 For the truncated identity:
 
-1. Choose `T` avoiding zero ordinates using finite bounded-height zeros.
+1. Completed: `ExplicitFormulaAux.exists_goodHeight_Ioo` chooses `T` in every
+   unit interval while avoiding all nontrivial-zero ordinates, using finite
+   bounded-height zero support;
+   `ExplicitFormulaAux.exists_strictMono_goodHeight_tendsto` upgrades this to
+   a strictly increasing good-height sequence tending to `+∞`.
 2. Bound the right Perron truncation error from summability of the von Mangoldt
    Dirichlet series and the standard Perron kernel estimate.
 3. Bound horizontal and shifted-left vertical sides of the rectangle.
@@ -398,7 +402,9 @@ and
    `chebyshevPsi0`, `zeroMultiplicity`, finite zero sums, finite trivial-zero
    sums, and `goodHeight`.
 2. Already completed for the current support layer: `goodHeight` iff/negation
-   normalizers, self-height membership of nontrivial zeros, and the current
+   normalizers, `exists_goodHeight_Ioo` and
+   `exists_strictMono_goodHeight_tendsto` for an unbounded admissible contour
+   sequence, self-height membership of nontrivial zeros, and the current
    finset-based `zeroMultiplicity` values `0`/`1` according to membership in
    the self-height truncation; finite trivial-zero membership, real-axis /
    negative-real-part facts, denominator safety, `2 <= ‖s‖` and

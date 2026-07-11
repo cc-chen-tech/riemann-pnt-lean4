@@ -3187,6 +3187,11 @@ Support-level verified declarations:
   `|Im rho| = T`.
 - `not_goodHeight_iff_exists_zero_at_height`
   gives the negated form used when choosing or excluding bad contour heights.
+- `exists_goodHeight_Ioo` proves that every unit interval contains a good
+  height, using finite bounded-height nontrivial-zero support.
+- `exists_strictMono_goodHeight_tendsto` constructs a strictly increasing
+  sequence of good heights tending to `+∞`, supplying the contour sequence
+  needed for principal-value limits.
 - `nontrivial_zero_mem_self_height`
   places each nontrivial zero in the self-height truncation
   `finiteNontrivialZeroSum (|rho.im| + 1)`.

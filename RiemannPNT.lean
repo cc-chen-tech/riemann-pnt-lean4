@@ -22270,6 +22270,20 @@ theorem not_goodHeight_iff_exists_zero_at_height (T : ℝ) :
   PrimeNumberTheorem.ExplicitFormulaAux.not_goodHeight_iff_exists_zero_at_height
     T
 
+/-- Public existence of a good truncation height in every unit interval. -/
+theorem exists_goodHeight_Ioo (A : ℝ) :
+    ∃ T : ℝ, A < T ∧ T < A + 1 ∧
+      PrimeNumberTheorem.ExplicitFormulaAux.goodHeight T :=
+  PrimeNumberTheorem.ExplicitFormulaAux.exists_goodHeight_Ioo A
+
+/-- Public existence of a strictly increasing sequence of good truncation
+heights tending to infinity. -/
+theorem exists_strictMono_goodHeight_tendsto :
+    ∃ T : ℕ → ℝ, StrictMono T ∧
+      Filter.Tendsto T Filter.atTop Filter.atTop ∧
+        ∀ n, PrimeNumberTheorem.ExplicitFormulaAux.goodHeight (T n) :=
+  PrimeNumberTheorem.ExplicitFormulaAux.exists_strictMono_goodHeight_tendsto
+
 /-- Public self-height membership of a nontrivial zero in the truncated
 zero finset used by the auxiliary multiplicity definition. -/
 theorem nontrivial_zero_mem_self_height {ρ : ℂ}

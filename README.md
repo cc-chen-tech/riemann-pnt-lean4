@@ -859,13 +859,17 @@ The current repository contains this as a corrected `Prop` target statement,
 not as a proved theorem.  The Lean target now uses the midpoint convention
 `chebyshevPsi0` and a height-truncated zero contribution
 `finiteNontrivialZeroSum`, rather than an unconditional unordered `tsum` over
-all nontrivial zeros.
+all nontrivial zeros.  The support layer now proves that every unit interval
+contains a `goodHeight` and constructs a strictly increasing sequence of such
+heights tending to infinity.
 The auxiliary layer also proves the support normalizers used by this
 truncated formulation: `goodHeight` is equivalent to saying that no
 nontrivial zero has boundary height `T`, failure of `goodHeight` is exactly
-such a boundary zero, every nontrivial zero belongs to its self-height
-truncation, and the current finset-based `zeroMultiplicity` is `1` or `0`
-according to membership in that truncation.  The finite trivial-zero
+such a boundary zero, every unit interval contains a good height, and there is
+a strictly increasing sequence of good heights tending to infinity.  Every
+nontrivial zero belongs to its self-height truncation, and the current
+finset-based `zeroMultiplicity` is `1` or `0` according to membership in that
+truncation.  The finite trivial-zero
 truncation now also has theorem-level support: membership is characterized by
 the displayed negative even integers, retained trivial zeros lie on the real
 axis with real part at most `-2`, their denominators have `2 ≤ ‖s‖` and

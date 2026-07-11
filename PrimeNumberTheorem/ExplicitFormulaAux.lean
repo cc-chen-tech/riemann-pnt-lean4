@@ -23,8 +23,7 @@ file or the parent.
 - `zeroMultiplicity : ℂ → ℕ` — zero multiplicity extracted from
   `nontrivialZerosFinset` data family.
 - `goodHeight : ℝ → Prop` — predicate selecting heights that avoid
-  the contour boundary and balance the main term against the residue
-  sum.
+  nontrivial zeros on the horizontal contour boundary.
 
 ### 2 sum definitions
 - `finiteNontrivialZeroSum : ℝ → Finset ℂ` — Finset of nontrivial
@@ -36,6 +35,10 @@ file or the parent.
 - `goodHeight_iff_no_zero_at_height` and
   `not_goodHeight_iff_exists_zero_at_height` — boundary-height
   normalizations.
+- `exists_goodHeight_Ioo` — every unit interval contains a good height, so
+  admissible horizontal contours exist arbitrarily high.
+- `exists_strictMono_goodHeight_tendsto` — packages those choices into a
+  strictly increasing sequence tending to `+∞`, suitable for contour limits.
 - `nontrivial_zero_mem_self_height`,
   `zeroMultiplicity_eq_one_of_mem`, and
   `zeroMultiplicity_eq_zero_of_not_mem` — current finite-truncation
@@ -154,6 +157,60 @@ lemma not_goodHeight_iff_exists_zero_at_height (T : ℝ) :
   classical
   rw [goodHeight_iff_no_zero_at_height]
   exact not_not
+
+/-- Every unit interval contains a truncation height whose horizontal contour
+does not pass through a nontrivial zeta zero.  In particular, good truncation
+heights are available arbitrarily far up the critical strip. -/
+theorem exists_goodHeight_Ioo (A : ℝ) :
+    ∃ T : ℝ, A < T ∧ T < A + 1 ∧ goodHeight T := by
+  let Z : Set ℂ :=
+    {ρ : ℂ | RiemannHypothesis.IsNontrivialZero ρ ∧ |ρ.im| ≤ A + 1}
+  let H : Set ℝ := (fun ρ : ℂ => |ρ.im|) '' Z
+  have hZ_finite : Z.Finite := by
+    simpa [Z] using
+      PrimeNumberTheorem.finite_nontrivial_zeros_bounded_height (A + 1)
+  have hH_finite : H.Finite := hZ_finite.image _
+  have hIoo_infinite : (Set.Ioo A (A + 1)).Infinite :=
+    Set.Ioo_infinite (by linarith)
+  have hnot_subset : ¬ Set.Ioo A (A + 1) ⊆ H := by
+    intro hsubset
+    exact hIoo_infinite (hH_finite.subset hsubset)
+  rcases Set.not_subset.mp hnot_subset with ⟨T, hT_interval, hT_not_bad⟩
+  refine ⟨T, hT_interval.1, hT_interval.2, ?_⟩
+  rw [goodHeight_iff_no_zero_at_height]
+  rintro ⟨ρ, hρ, hρ_height⟩
+  apply hT_not_bad
+  refine ⟨ρ, ?_, hρ_height⟩
+  refine ⟨hρ, ?_⟩
+  rw [hρ_height]
+  exact hT_interval.2.le
+
+/-- There is a strictly increasing sequence of admissible contour heights
+tending to `+∞`.  This is the form needed to take truncated explicit-formula
+limits along horizontal edges that avoid all nontrivial zeros. -/
+theorem exists_strictMono_goodHeight_tendsto :
+    ∃ T : ℕ → ℝ, StrictMono T ∧
+      Filter.Tendsto T Filter.atTop Filter.atTop ∧ ∀ n, goodHeight (T n) := by
+  classical
+  let T : ℕ → ℝ := fun n =>
+    Classical.choose (exists_goodHeight_Ioo (n : ℝ))
+  have hT (n : ℕ) :
+      (n : ℝ) < T n ∧ T n < (n : ℝ) + 1 ∧ goodHeight (T n) := by
+    exact Classical.choose_spec (exists_goodHeight_Ioo (n : ℝ))
+  have hT_strict : StrictMono T := by
+    apply strictMono_nat_of_lt_succ
+    intro n
+    exact lt_trans (hT n).2.1 (by
+      simpa [Nat.cast_add, Nat.cast_one] using (hT (n + 1)).1)
+  have hT_tendsto : Filter.Tendsto T Filter.atTop Filter.atTop := by
+    rw [Filter.tendsto_atTop]
+    intro b
+    filter_upwards [Filter.eventually_ge_atTop (Nat.ceil b)] with n hn
+    have hbceil : b ≤ (Nat.ceil b : ℝ) := Nat.le_ceil b
+    have hceiln : (Nat.ceil b : ℝ) ≤ (n : ℝ) := by
+      exact_mod_cast hn
+    exact le_trans hbceil (le_trans hceiln (hT n).1.le)
+  exact ⟨T, hT_strict, hT_tendsto, fun n => (hT n).2.2⟩
 
 /-! ## Sum definitions -/
 
