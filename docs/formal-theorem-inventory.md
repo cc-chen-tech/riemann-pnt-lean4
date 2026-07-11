@@ -2601,8 +2601,9 @@ Core verified declarations:
   `no_zeros_on_reflected_line_of_psi_power_error_bridge`, and
   `no_zeros_on_one_third_of_general_psi_power_error_bridge`
   generalize the `2/3` psi-power-error bridge to arbitrary vertical lines in
-  the critical strip, with the explicit-formula converse still kept as an
-  assumption.
+  the critical strip.  The abstract right-half zero-exclusion interface is now
+  discharged by `ZeroFreeRegion.psiPowerErrorBelowLineExcludesZerosRightOf_of_mellin`;
+  the remaining hard input is the `PsiPowerErrorBelowLine beta` estimate itself.
 - `no_zeros_on_two_thirds_of_psi_power_error_below_two_thirds_bridge`
   records the direct `Re(s)=2/3` consequence of the concrete `psi` power-error
   converse, complementary to the reflected `Re(s)=1/3` wrapper.
@@ -2610,9 +2611,10 @@ Core verified declarations:
   `no_zeros_on_vertical_line_of_explicit_formula_converse_power`,
   `no_zeros_on_reflected_line_of_explicit_formula_converse_power`, and
   `no_zeros_on_one_third_of_explicit_formula_converse_power`
-  name the explicit-formula converse dependency directly, including the general
-  reflected-line route `Re(s)=1-beta`, and specialize it to the reflected
-  `Re(s)=1/3` route.
+  keep the older explicit-formula-converse Prop shape and wrappers available,
+  but `ZeroFreeRegion.explicitFormulaConversePowerTarget_of_mellin` now proves
+  that Prop for every boundary.  These wrappers are therefore reusable bridges
+  once a `psi` power-saving input is supplied.
 - `no_zeros_on_vertical_line_of_psi_power_error_bound_sub_delta_bridge`,
   `no_zeros_on_reflected_line_of_psi_power_error_bound_sub_delta_bridge`,
   `no_zeros_on_vertical_line_of_explicit_formula_converse_power_bound_sub_delta`,
@@ -2635,6 +2637,10 @@ Core verified declarations:
   `explicitFormulaConversePowerTarget_of_psiPowerErrorBelowLineExcludesZerosRightOf`
   keep the explicitly named explicit-formula converse target interchangeable
   with the underlying `psi`-power-error zero-exclusion interface.
+- `ZeroFreeRegion.psiPowerErrorBelowLineExcludesZerosRightOf_of_mellin` and
+  `ZeroFreeRegion.explicitFormulaConversePowerTarget_of_mellin`, exported through
+  `RiemannPNT.API`, prove the same interface from the Mellin/Landau converse
+  without assuming a future explicit-formula oscillation theorem.
 - `not_psi_power_error_bound_sub_delta_of_exists_zero_right_of_bridge`,
   `not_psi_power_error_bound_sub_delta_of_exists_zero_right_of_explicit_formula_converse`,
   `not_psi_power_error_below_line_of_exists_zero_on_line_bridge`,
@@ -2661,8 +2667,8 @@ Core verified declarations:
   and
   `no_zeros_on_reflected_line_of_psi_power_error_bridge_mono_error`
   provide the same monotone-error wrappers for the underlying
-  `PsiPowerErrorBelowLineExcludesZerosRightOf` route interface, without first
-  renaming it as an explicit-formula converse target.
+  `PsiPowerErrorBelowLineExcludesZerosRightOf` interface, without first renaming
+  it as an explicit-formula converse target.
 - `no_zeros_on_vertical_line_of_psi_power_error_below_two_thirds_mono_bridge`
   and
   `no_zeros_on_reflected_line_of_psi_power_error_below_two_thirds_mono_bridge`
@@ -2985,9 +2991,6 @@ Route interfaces:
 
 - `HardyTheorem.AFE.zeta_critical_afe_target`
   real-statement AFE interface for the Hardy chain.
-- `PrimeNumberTheorem.ExplicitFormulaConversePowerTarget`
-  route interface from a future power-scale `psi` error converse to exclusion
-  of nontrivial zeros on or to the right of a vertical line.
 - `PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget`
   real-statement truncated explicit-formula interface.
 - `PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute`
@@ -3134,6 +3137,9 @@ Reusable predicates:
 
 - `HardyTheorem.weightedIntegralOf_tail_dominates`
 - `PrimeNumberTheorem.ExplicitFormulaAux.goodHeight`
+- `PrimeNumberTheorem.ExplicitFormulaConversePowerTarget`, now proved by
+  `ZeroFreeRegion.explicitFormulaConversePowerTarget_of_mellin` and exported as
+  `RiemannPNT.API.explicitFormulaConversePowerTarget_of_mellin`.
 
 Current status in `HardyTheorem.lean` target list:
 

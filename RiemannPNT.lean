@@ -4645,6 +4645,18 @@ theorem psiPowerErrorBound_excludes_riemannZeta_zero_right
   ZeroFreeRegion.psiPowerErrorBound_excludes_riemannZeta_zero_right
     hθ_nonneg hθ_lt_one herror
 
+/-- Public theorem-level discharge of the general `ψ`-power-error
+zero-exclusion interface by the Mellin/Landau converse. -/
+theorem psiPowerErrorBelowLineExcludesZerosRightOf_of_mellin (β : ℝ) :
+    PrimeNumberTheorem.PsiPowerErrorBelowLineExcludesZerosRightOf β :=
+  ZeroFreeRegion.psiPowerErrorBelowLineExcludesZerosRightOf_of_mellin β
+
+/-- Public theorem-level discharge of the same Prop shape historically named
+`ExplicitFormulaConversePowerTarget`. -/
+theorem explicitFormulaConversePowerTarget_of_mellin (β : ℝ) :
+    PrimeNumberTheorem.ExplicitFormulaConversePowerTarget β :=
+  ZeroFreeRegion.explicitFormulaConversePowerTarget_of_mellin β
+
 /-- Public concrete Landau/Mellin bridge: an `O(x^(2/3-δ))` `ψ` error excludes
 zeta zeros on `Re(s)=2/3`. -/
 theorem no_zeros_on_two_thirds_of_psi_power_error_bound_sub_delta

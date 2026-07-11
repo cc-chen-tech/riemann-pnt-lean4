@@ -335,6 +335,17 @@ Verified assets now include:
   points rules out the corresponding stronger `psi` power error.  What remains
   is to get those good points from the actual explicit formula and zero-tail
   estimates.
+- the completed Mellin/Landau converse route:
+  `mellinConvergent_psiErrorAboveOneComplex_neg_of_power_error`,
+  `mul_mellin_psiErrorAboveOneComplex_neg_eq_neg_logDeriv_sub_pole`,
+  `ZeroFreeRegion.analyticOnNhd_ne_zero_of_deriv_eq_mul_self`, and
+  `ZeroFreeRegion.psiPowerErrorBound_excludes_riemannZeta_zero_right` prove
+  directly that `PsiPowerErrorBound theta`, with `0 <= theta < 1`, excludes
+  zeros in `theta < Re(s) < 1`.  The concrete specializations
+  `no_zeros_on_two_thirds_of_psi_power_error_bound_sub_delta` and
+  `no_zeros_on_one_third_of_psi_power_error_bound_sub_delta` close the named
+  conditional `O(x^(2/3-delta))` route without assuming an abstract converse
+  interface.
 - existence-form versions of the general `psi`-error and explicit-formula
   converse bridges:
   `not_exists_nontrivial_zero_on_line_of_psi_power_error_bridge`;
@@ -468,23 +479,20 @@ Verified assets now include:
 
 Important boundary:
 
-These theorems still assume the base explicit-formula identity at a stable
-truncation.  The global-height variants are route interfaces, not realistic
-unconditional inputs for zeta zeros.  They do not prove Perron's formula,
-contour shifting, or the converse/oscillation theorem turning
-`psi(x) - x = O(x^(beta - delta))` into zero exclusion.  The current Lean value
-is that both sides of the formal path are now explicit and smoke-checked: a
-future `|ψ(x)-x| <= C*x^theta` estimate can enter as a route predicate, and any
-future converse input at `beta = 2/3` then feeds the claimed `Re(s)=1/3`
-exclusion.  The general contrapositive wrappers make the same dependency
-usable in the opposite direction: a hypothetical zeta zero on `Re(s)=beta`, on
-the reflected line, or to the right of the boundary is incompatible with a
-concrete `O(x^(beta-delta))` error once the corresponding converse route is
-assumed.
+The finite-truncation theorems still assume the base explicit-formula identity
+at a stable truncation.  The global-height variants are route interfaces, not
+realistic unconditional inputs for zeta zeros.  They do not prove Perron's
+formula or contour shifting.  Separately, the Mellin/Landau route now proves
+the converse implication from an actual `psi(x)-x = O(x^theta)` hypothesis to
+zero exclusion, so no abstract converse route assumption is needed there.
+The remaining hard input is establishing a sufficiently strong `psi` power
+error such as `theta < 2/3`; the repository does not prove that estimate.
 
 ## Hard Gaps
 
 - No classical zero-free region `Re(s) >= 1 - c / log |t|` is proved here.
 - No Perron formula or contour-shift explicit formula is proved here.
-- No explicit-formula converse / oscillation theorem is proved here.
+- No finite-zero oscillation converse is proved; the alternative Mellin/Landau
+  converse is now proved.
+- No `psi(x)-x = O(x^(2/3-delta))` estimate is proved here.
 - No result here proves RH or an unconditional zero-free vertical line.

@@ -295,16 +295,16 @@ theorems): **22**.
 Full `def ... : Prop` inventory:
 
 - mathematical targets: 22;
-- route interfaces: 6
+- route interfaces: 5
   (`HardyTheorem.AFE.zeta_critical_afe_target`,
   `MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum`,
-  `PrimeNumberTheorem.ExplicitFormulaConversePowerTarget`,
   `PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute`,
   `PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget`,
   `RiemannExplorer.Conrey40.conrey_40_percent_zeros_on_critical_line_target`);
-- reusable predicates: 2
+- reusable predicates: 3
   (`HardyTheorem.weightedIntegralOf_tail_dominates`,
-  `PrimeNumberTheorem.ExplicitFormulaAux.goodHeight`);
+  `PrimeNumberTheorem.ExplicitFormulaAux.goodHeight`,
+  `PrimeNumberTheorem.ExplicitFormulaConversePowerTarget`);
 - unclassified Prop definitions: 0.
 
 No route interface currently has a body equal to `True`.  The rectangle
@@ -879,25 +879,27 @@ amplitude sum and by `card * (1/2) * x^(-2)`, hence also by
 height cutoff `(T / 2) * (1/2) * x^(-2)`.  This still does not prove the
 infinite trivial-zero correction term.
 
-The explicit-formula side also contains route interfaces such as
-`PrimeNumberTheorem.ExplicitFormulaConversePowerTarget` and
-`PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute`.
-These name the future oscillation/converse dependency from a truncated explicit
-formula to zero-free vertical lines; they are not unconditional proofs of those
-analytic inputs.  The public API exposes both the direct `Re(s)=2/3` consequence
-and the reflected `Re(s)=1/3` consequence of this conditional route, including
-direct wrappers for the concrete `theta < 2/3` `psi`-error input; the same
-bridges are also exposed inside
+The explicit-formula side still contains route interfaces such as
+`PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute`,
+which names the future dependency from a uniform truncated explicit formula plus
+finite-zero oscillation estimates to zero-free vertical-line consequences.  The
+abstract `PrimeNumberTheorem.ExplicitFormulaConversePowerTarget` Prop shape is
+now theorem-level reusable infrastructure:
+`ZeroFreeRegion.explicitFormulaConversePowerTarget_of_mellin` proves it for
+every boundary via the Mellin/Landau converse.  The public API exposes both the
+direct `Re(s)=2/3` consequence and the reflected `Re(s)=1/3` consequence of this
+power-error route, including direct wrappers for the concrete `theta < 2/3`
+`psi`-error input; the same bridges are also exposed inside
 `PrimeNumberTheorem.ExplicitFormulaTruncated` and
 `RiemannPNT.API.ExplicitFormulaTruncated`.  The public API also includes
 monotone-error truncated-route wrappers, where a `psi` power saving below a
 smaller boundary feeds a larger-boundary truncated route and yields direct or
 reflected zero exclusion at the larger boundary; the same monotone-error
 wrappers are exposed in existence form, ruling out nontrivial zeros on
-`Re(s)=gamma` and on the reflected line `Re(s)=1-gamma`.  The truncated route
-is also repackaged directly as
-`PsiPowerErrorBelowLineExcludesZerosRightOf`, matching the right-half
-zero-exclusion route interface consumed by the general `psi`-error bridges.
+`Re(s)=gamma` and on the reflected line `Re(s)=1-gamma`.  The remaining
+explicit-formula gap is proving the actual truncated explicit formula and the
+finite-zero oscillation estimates; the Mellin/Landau route no longer needs an
+abstract `PsiPowerErrorBelowLineExcludesZerosRightOf` assumption.
 It also has direct truncated-route wrappers for the sharper
 `O(x^(beta-delta))` input, including the `Re(s)=2/3` and reflected
 `Re(s)=1/3` concrete specializations.  Their existence-form companions rule

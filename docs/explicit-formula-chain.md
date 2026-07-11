@@ -229,35 +229,35 @@ show that newly included zeros between two truncation heights are closed under
 pair-positivity nonnegativity statement.  This is still finite combinatorics;
 the analytic zero-density and contour estimates remain separate.
 
-The current Lean API also names the converse route explicitly:
-`PrimeNumberTheorem.ExplicitFormulaConversePowerTarget` and
+The current Lean API keeps the finite truncated-explicit-formula route explicit:
 `PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute`
-package the future step from a uniform truncated explicit formula plus an
-oscillation argument to zero-free vertical-line consequences.  These are route
-interfaces, not proved analytic theorems.
+packages the future step from a uniform truncated explicit formula plus an
+oscillation argument to zero-free vertical-line consequences.  The older
+Prop shape `PrimeNumberTheorem.ExplicitFormulaConversePowerTarget` is no longer
+a missing route interface: `ZeroFreeRegion.explicitFormulaConversePowerTarget_of_mellin`
+proves it theorem-level from the Mellin/Landau converse.
 
 The `Re(s)=1/3` specialization is represented as a conditional Lean bridge.
 `PrimeNumberTheorem.no_zeros_on_one_third_of_explicit_formula_converse_power`
 takes:
 
-1. the converse explicit-formula target
-   `ExplicitFormulaConversePowerTarget (2 / 3)`, saying a `ψ(x)-x = O(x^θ)`
-   bound with `θ < 2/3` excludes nontrivial zeros on or to the right of
-   `Re(s)=2/3`; and
+1. the theorem-level `ExplicitFormulaConversePowerTarget (2 / 3)` bridge,
+   supplied by the Mellin/Landau converse, saying a `ψ(x)-x = O(x^θ)` bound
+   with `θ < 2/3` excludes nontrivial zeros on or to the right of `Re(s)=2/3`;
+   and
 2. an actual `PsiPowerErrorBelowLine (2 / 3)` hypothesis;
 
-and returns `NoZerosOnVerticalLine (1 / 3)`.  The proved part is the symmetry
-and packaging: a zero on `Re(s)=1/3` reflects to one on `Re(s)=2/3`.  The
-unproved analytic part remains the explicit-formula converse/oscillation
-argument that would justify `ExplicitFormulaConversePowerTarget (2 / 3)`.
+and returns `NoZerosOnVerticalLine (1 / 3)`.  The proved part is now both the
+Mellin/Landau converse and the symmetry packaging: a zero on `Re(s)=1/3`
+reflects to one on `Re(s)=2/3`.  The unproved analytic part is obtaining a
+strong enough `ψ` power-saving estimate, not the abstract zero-exclusion bridge.
 
 The same reflection step is now available without hard-coding `1/3`.
 `PrimeNumberTheorem.no_zeros_on_reflected_line_of_explicit_formula_converse_power`
-takes `0 < beta < 1`, an `ExplicitFormulaConversePowerTarget beta`, and a
-`PsiPowerErrorBelowLine beta` hypothesis, and returns
-`NoZerosOnVerticalLine (1 - beta)`.  This remains a formal bridge: the hard
-analytic content is still the converse explicit-formula theorem that would
-produce `ExplicitFormulaConversePowerTarget beta`.
+takes `0 < beta < 1`, the now-proved `ExplicitFormulaConversePowerTarget beta`,
+and a `PsiPowerErrorBelowLine beta` hypothesis, and returns
+`NoZerosOnVerticalLine (1 - beta)`.  The hard analytic content is now upstream:
+prove the `PsiPowerErrorBelowLine beta` estimate itself.
 
 The current mainline now also contains a genuine obstruction lemma behind that
 converse route.  The theorem

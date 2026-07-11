@@ -310,6 +310,30 @@ theorem psiPowerErrorBound_excludes_riemannZeta_zero_right
     hzero, mul_zero] at hQρ
   exact hQρ rfl
 
+/-- The Mellin/Landau converse discharges the general `ψ`-power-error
+zero-exclusion interface: if `ψ(x)-x = O(x^θ)` for some `θ < β`, then no
+nontrivial zero can satisfy `β <= Re(ρ)`. -/
+theorem psiPowerErrorBelowLineExcludesZerosRightOf_of_mellin (β : ℝ) :
+    PrimeNumberTheorem.PsiPowerErrorBelowLineExcludesZerosRightOf β := by
+  intro herror ρ hρ hβρ
+  by_cases hβ_lt_one : β < 1
+  · rcases herror with ⟨θ, hθ_nonneg, hθ_ltβ, hθ_bound⟩
+    exact
+      (psiPowerErrorBound_excludes_riemannZeta_zero_right
+        hθ_nonneg (lt_trans hθ_ltβ hβ_lt_one) hθ_bound ρ
+        (lt_of_lt_of_le hθ_ltβ hβρ) hρ.2.2) hρ.1
+  · have hβ_ge_one : 1 ≤ β := le_of_not_gt hβ_lt_one
+    linarith [hβ_ge_one, hβρ, hρ.2.2]
+
+/-- Same content as `ExplicitFormulaConversePowerTarget`, now supplied by the
+Mellin/Landau converse rather than by a future explicit-formula oscillation
+argument. -/
+theorem explicitFormulaConversePowerTarget_of_mellin (β : ℝ) :
+    PrimeNumberTheorem.ExplicitFormulaConversePowerTarget β := by
+  simpa [PrimeNumberTheorem.ExplicitFormulaConversePowerTarget,
+    PrimeNumberTheorem.PsiPowerErrorBelowLineExcludesZerosRightOf] using
+    psiPowerErrorBelowLineExcludesZerosRightOf_of_mellin β
+
 /-- A concrete power saving below `2/3` excludes zeta zeros on the reflected
 line `Re(s) = 2/3`, with no assumed explicit-formula converse interface. -/
 theorem no_zeros_on_two_thirds_of_psi_power_error_bound_sub_delta

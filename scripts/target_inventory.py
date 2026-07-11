@@ -57,7 +57,6 @@ MATH_TARGETS = {
 }
 
 ROUTE_INTERFACES = {
-    "PrimeNumberTheorem.ExplicitFormulaConversePowerTarget": "Explicit formula",
     "PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget": "Explicit formula",
     "PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute": "Explicit formula",
     "MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum": "Explicit formula",
@@ -68,6 +67,7 @@ ROUTE_INTERFACES = {
 REUSABLE_PREDICATES = {
     "HardyTheorem.weightedIntegralOf_tail_dominates",
     "PrimeNumberTheorem.ExplicitFormulaAux.goodHeight",
+    "PrimeNumberTheorem.ExplicitFormulaConversePowerTarget",
 }
 
 

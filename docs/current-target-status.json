@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-05",
+  "timestamp": "2026-07-11",
   "status": "not-yet-complete",
   "completed_without_sorry": true,
   "remaining_prop_targets": {
@@ -8,7 +8,7 @@
         "name": "integral_asymptotic_target",
         "qualified_name": "HardyTheorem.integral_asymptotic_target",
         "file": "HardyTheorem.lean",
-        "line": 562,
+        "line": 589,
         "shape": "n ≥ 1 ∧ ∃ A>0, weightedIntegral n ~[atTop] (fun T => ((-1)^n*A) * T ^ ((2*n)+1/4))",
         "depends_on": []
       },
@@ -16,7 +16,7 @@
         "name": "hardy_two_signed_moments_target",
         "qualified_name": "HardyTheorem.hardy_two_signed_moments_target",
         "file": "HardyTheorem.lean",
-        "line": 617,
+        "line": 644,
         "shape": "(∃A>0, weightedIntegral 1 ~ (-A*...)) ∧ (∃B>0, weightedIntegral 2 ~ (B*...))",
         "depends_on": []
       },
@@ -24,7 +24,7 @@
         "name": "hardy_theorem_target",
         "qualified_name": "HardyTheorem.hardy_theorem_target",
         "file": "HardyTheorem.lean",
-        "line": 976,
+        "line": 1003,
         "shape": "{t | riemannZeta (1/2 + I*t)=0}.Infinite",
         "depends_on": []
       },
@@ -32,7 +32,7 @@
         "name": "hardy_zeros_unbounded_target",
         "qualified_name": "HardyTheorem.hardy_zeros_unbounded_target",
         "file": "HardyTheorem.lean",
-        "line": 1056,
+        "line": 1083,
         "shape": "∀T, ∃t, T ≤ t ∧ riemannZeta (1/2 + I*t)=0",
         "depends_on": []
       },
@@ -40,7 +40,7 @@
         "name": "hardy_zeros_abs_unbounded_target",
         "qualified_name": "HardyTheorem.hardy_zeros_abs_unbounded_target",
         "file": "HardyTheorem.lean",
-        "line": 1062,
+        "line": 1089,
         "shape": "∀T, ∃t, T ≤ |t| ∧ riemannZeta (1/2 + I*t)=0",
         "depends_on": []
       },
@@ -48,7 +48,7 @@
         "name": "hardy_littlewood_lower_bound_target",
         "qualified_name": "HardyTheorem.hardy_littlewood_lower_bound_target",
         "file": "HardyTheorem.lean",
-        "line": 1482,
+        "line": 1627,
         "shape": "∃C>0, ∃T0, ∀T≥T0, (zeroCountOnCriticalLine T:ℝ) ≥ C*T",
         "depends_on": []
       },
@@ -56,7 +56,7 @@
         "name": "selberg_zero_proportion_target",
         "qualified_name": "HardyTheorem.selberg_zero_proportion_target",
         "file": "HardyTheorem.lean",
-        "line": 1485,
+        "line": 1630,
         "shape": "∃c>0,∃T0,∀T≥T0, (zeroCountOnCriticalLine T:ℝ) ≥ c*(T/(2π)*log T)",
         "depends_on": []
       }
@@ -66,7 +66,7 @@
         "name": "gamma_asymptotic_half_plus_it_target",
         "qualified_name": "HardyTheorem.Details.gamma_asymptotic_half_plus_it_target",
         "file": "HardyTheorem.lean",
-        "line": 1738,
+        "line": 1883,
         "shape": "(fun t => Gamma(1/2 + I*t)) ~ (sqrt(2π) * exp(I*t*log t - I*t) * exp(-π*t/2))",
         "depends_on": []
       },
@@ -74,7 +74,7 @@
         "name": "theta_asymptotic_target",
         "qualified_name": "HardyTheorem.Details.theta_asymptotic_target",
         "file": "HardyTheorem.lean",
-        "line": 1763,
+        "line": 1908,
         "shape": "∃θ, exp(I*θ t)=exp(I*thetaPhase t) ∧ (fun t => θ t) ~ (t/2*log(t/(2π))-t/2-π/8)",
         "depends_on": []
       },
@@ -82,7 +82,7 @@
         "name": "approximate_functional_equation_target",
         "qualified_name": "HardyTheorem.Details.approximate_functional_equation_target",
         "file": "HardyTheorem.lean",
-        "line": 1790,
+        "line": 1935,
         "shape": "∃C>0, ∀t>1, ∃R, zeta(1/2+It)=finite sums + R ∧ ‖R‖ ≤ C*t^(-1/4)",
         "depends_on": []
       }
@@ -156,7 +156,7 @@
         "name": "explicit_formula_von_mangoldt",
         "qualified_name": "PrimeNumberTheorem.explicit_formula_von_mangoldt",
         "file": "PrimeNumberTheorem.lean",
-        "line": 3918,
+        "line": 8084,
         "shape": "Tendsto (T ↦ explicitFormulaApprox x T) atTop (𝓝 (chebyshevPsi0 x))",
         "depends_on": []
       }
@@ -176,7 +176,7 @@
         "name": "classical_zero_free_region",
         "qualified_name": "ZeroFreeRegion.classical_zero_free_region",
         "file": "ZeroFreeRegion.lean",
-        "line": 1253,
+        "line": 2714,
         "shape": "∃c>0, ∀s, |s.im|≥2 → s.re ≥ 1 - c/log|s.im| → riemannZeta s ≠ 0",
         "depends_on": []
       }
@@ -186,7 +186,7 @@
         "name": "vinogradov_korobov_zero_free_region",
         "qualified_name": "vinogradov_korobov_zero_free_region",
         "file": "ZeroFreeRegion.lean",
-        "line": 2939,
+        "line": 4547,
         "shape": "∃c>0, ∀s, |s.im|≥3 → s.re ≥ 1 - c/(log|s.im|)^(2/3)* (log(log|s.im|))^(-1/3) → riemannZeta s ≠ 0",
         "depends_on": []
       }
@@ -226,14 +226,6 @@
       "body": "real_statement"
     },
     {
-      "name": "ExplicitFormulaConversePowerTarget",
-      "qualified_name": "PrimeNumberTheorem.ExplicitFormulaConversePowerTarget",
-      "file": "PrimeNumberTheorem.lean",
-      "line": 2886,
-      "chain": "Explicit formula",
-      "body": "real_statement"
-    },
-    {
       "name": "conrey_40_percent_zeros_on_critical_line_target",
       "qualified_name": "RiemannExplorer.Conrey40.conrey_40_percent_zeros_on_critical_line_target",
       "file": "RiemannExplorer/Conrey40.lean",
@@ -247,13 +239,19 @@
       "name": "weightedIntegralOf_tail_dominates",
       "qualified_name": "HardyTheorem.weightedIntegralOf_tail_dominates",
       "file": "HardyTheorem.lean",
-      "line": 745
+      "line": 772
     },
     {
       "name": "goodHeight",
       "qualified_name": "PrimeNumberTheorem.ExplicitFormulaAux.goodHeight",
       "file": "PrimeNumberTheorem/ExplicitFormulaAux.lean",
-      "line": 100
+      "line": 132
+    },
+    {
+      "name": "ExplicitFormulaConversePowerTarget",
+      "qualified_name": "PrimeNumberTheorem.ExplicitFormulaConversePowerTarget",
+      "file": "PrimeNumberTheorem.lean",
+      "line": 4298
     }
   ],
   "unclassified_prop_defs": [],
@@ -316,9 +314,9 @@
     ]
   },
   "mathematical_target_count": 22,
-  "route_interface_count": 6,
+  "route_interface_count": 5,
   "route_interface_true_body_count": 0,
-  "reusable_predicate_count": 2,
+  "reusable_predicate_count": 3,
   "unclassified_prop_def_count": 0,
   "all_scanned_prop_defs_count": 30
 }
