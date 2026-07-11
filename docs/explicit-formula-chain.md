@@ -148,7 +148,7 @@ Already available or partially available:
 5. `finite_nontrivial_zeros_bounded_height`.
 6. `riemannZeta_not_frequently_zero_nhdsNE_of_ne_one`.
 
-Needed:
+Current status:
 
 1. Meromorphicity of `riemannZeta` on rectangles, with the pole at `1`
    (proved as `ZeroFreeRegion.meromorphicOn_riemannZeta_closedBall`, with
@@ -157,12 +157,20 @@ Needed:
 2. Meromorphicity of
    `fun s => -deriv riemannZeta s / riemannZeta s * (x : Complex)^s / s`
    (the `logDeriv riemannZeta` factor is now meromorphic on closed balls).
-3. Residue at `s = 1`: contribution `x`.
-4. Residue at `s = 0`: contribution `-deriv riemannZeta 0 / riemannZeta 0`.
-5. Residue at a nontrivial zero `rho`: contribution
-   `- multiplicity(rho) * x^rho / rho`.
-6. Residues at trivial zeros `-2, -4, ...`, plus the finite-to-infinite limit
-   giving `-1/2 * log (1 - x^-2)`.
+3. Proved in
+   `PrimeNumberTheorem.ExplicitFormulaResidues.tendsto_sub_one_mul_explicitFormulaIntegrand_one`:
+   residue at `s = 1` is `x`.
+4. Proved in
+   `PrimeNumberTheorem.ExplicitFormulaResidues.tendsto_mul_explicitFormulaIntegrand_zero`:
+   residue at `s = 0` is `-deriv riemannZeta 0 / riemannZeta 0`.
+5. Proved with the actual `analyticOrderNatAt` multiplicity in
+   `PrimeNumberTheorem.ExplicitFormulaResidues.tendsto_sub_mul_explicitFormulaIntegrand_of_nontrivialZero`:
+   residue at a nontrivial zero `rho` is
+   `-multiplicity(rho) * x^rho / rho`.
+6. The corresponding local residue formula at every trivial zero is proved by
+   `PrimeNumberTheorem.ExplicitFormulaResidues.tendsto_sub_mul_explicitFormulaIntegrand_trivialZero`.
+   Still needed: trivial-zero simplicity, finite pole-set assembly, and the
+   finite-to-infinite limit giving `-1/2 * log (1 - x^-2)`.
 
 ### Contour and residue theorem
 
