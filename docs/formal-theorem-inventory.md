@@ -1569,6 +1569,11 @@ Core verified declarations:
   `exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_re_log_abs_add_three_bound_high_height`
   are the direct coordinate `log(|u| + 3)` real-part versions of that
   ordinary/shifted 3-4-1 handoff.
+- `classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_high_height_re_log_abs_add_three_bound`
+  and its multiplicity-aware variant are the direct final-assembly consumers for
+  a future multiplicative `Re(-zeta'/zeta)(sigma+it) <= B * log(|t| + 3)`
+  estimate, avoiding a dummy affine constant in the common safe-height input
+  shape.
 - `classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_abs_add_three_bound_high_height`
   specializes the coordinate interface to estimates stated as
   `C * log(|t| + 3)` for both remaining zeta-specific bounds.

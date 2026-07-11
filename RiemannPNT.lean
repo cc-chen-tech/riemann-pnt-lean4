@@ -8840,6 +8840,38 @@ theorem classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogB
   ZeroFreeRegion.classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_high_height_affine_re_log_abs_add_three_bound
     hregular T0 A B hT0 hA hB hhigh
 
+/-- Public multiplicative specialization of the target-shaped high-height
+estimate for `Re(-ζ'/ζ)`. -/
+theorem classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_high_height_re_log_abs_add_three_bound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        LogDerivRegularPartLogBound Bregular Tregular)
+    (T0 B : ℝ) (hT0 : 3 ≤ T0) (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
+          B * Real.log (|t| + 3)) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_high_height_re_log_abs_add_three_bound
+    hregular T0 B hT0 hB hhigh
+
+/-- Public multiplicity-aware multiplicative specialization of the
+target-shaped high-height estimate for `Re(-ζ'/ζ)`. -/
+theorem classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_high_height_re_log_abs_add_three_bound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        MultiplicityLogDerivRegularPartLogBound Bregular Tregular)
+    (T0 B : ℝ) (hT0 : 3 ≤ T0) (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤
+          B * Real.log (|t| + 3)) :
+    ZeroFreeRegion.classical_zero_free_region :=
+  ZeroFreeRegion.classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_high_height_re_log_abs_add_three_bound
+    hregular T0 B hT0 hB hhigh
+
 /-- Public moving-line closure from the target-shaped high-height affine
 estimate for `logDeriv ζ`. -/
 theorem classical_zero_free_region_of_sigmaOf_log_regular_part_norm_bound_and_high_height_affine_log_abs_add_three_logDeriv_bound

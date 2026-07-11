@@ -18561,6 +18561,44 @@ lemma classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBou
     (reNegDerivDivVerticalLogBound_of_affine_re_log_abs_add_three_bound_high_height
       T0 A B hT0 hA hB hhigh)
 
+/-- Multiplicative `log(|t|+3)` specialization of
+`classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_high_height_affine_re_log_abs_add_three_bound`.
+
+The zeta-specific direct real-part estimate remains a hypothesis. -/
+lemma classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_high_height_re_log_abs_add_three_bound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        LogDerivRegularPartLogBound Bregular Tregular)
+    (T0 B : ℝ) (hT0 : 3 ≤ T0) (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re ≤
+          B * Real.log (|t| + 3)) :
+    classical_zero_free_region :=
+  classical_zero_free_region_of_exists_LogDerivRegularPartLogBound_and_high_height_affine_re_log_abs_add_three_bound
+    hregular T0 0 B hT0 (by norm_num) hB (by
+      intro σ t ht hσ
+      simpa using hhigh σ t ht hσ)
+
+/-- Multiplicity-aware multiplicative `log(|t|+3)` specialization of the direct
+real-part final assembly. -/
+lemma classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_high_height_re_log_abs_add_three_bound
+    (hregular :
+      ∃ Bregular Tregular : ℝ,
+        MultiplicityLogDerivRegularPartLogBound Bregular Tregular)
+    (T0 B : ℝ) (hT0 : 3 ≤ T0) (hB : 0 ≤ B)
+    (hhigh :
+      ∀ σ t : ℝ, T0 ≤ |t| → σ ∈ Set.Icc 1 2 →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re ≤
+          B * Real.log (|t| + 3)) :
+    classical_zero_free_region :=
+  classical_zero_free_region_of_exists_MultiplicityLogDerivRegularPartLogBound_and_high_height_affine_re_log_abs_add_three_bound
+    hregular T0 0 B hT0 (by norm_num) hB (by
+      intro σ t ht hσ
+      simpa using hhigh σ t ht hσ)
+
 /-- Compact patch preserving the exact `C * log |t|` scale for the norm of
 `logDeriv ζ` at `σ + 2it`, provided `H >= 3`. -/
 lemma exists_norm_logDeriv_riemannZeta_sigma_two_it_log_abs_bound_of_high_height_log_abs_bound
