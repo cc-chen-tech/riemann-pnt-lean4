@@ -67,7 +67,7 @@ interfaces, not as the missing uniform `O(log |t|)` bound.
 | --- | --- | --- | --- | --- |
 | Quantitative zero-free region | `classical_zero_free_region` and `vinogradov_korobov_zero_free_region` are `def ... : Prop` targets | Add zeta-specific growth/log-derivative estimates; do not cite compact zero-free region as the classical `c / log |t|` result | Use the proved meromorphic `ζ'/ζ` API plus the positive-radius Jensen/log-counting and Borel disk wrappers to prove quantitative local logarithmic-derivative estimates; conditional 3-4-1 assembly and compact patching are already proved | 2 |
 | Explicit formula | `explicit_formula_von_mangoldt` is a `def ... : Prop` target | Replace the unconditional infinite `tsum` target with a truncated Perron/residue formula for `psi0`, then a principal-value limit | Define `psi0`, finite zero sums with multiplicity, good heights, and contour-error terms | 1 |
-| RH error equivalence | `rh_iff_optimal_error` is a `def ... : Prop` target | Stage the result through `=O[atTop]` predicates for `psi`, `theta`, and `primeCounting - logIntegral` | Prove the explicit-formula-to-`RH_PsiErrorBound` direction and the reverse error-to-RH direction | 8 |
+| RH error equivalence | `rh_iff_optimal_error` is a `def ... : Prop` target | Stage the result through `=O[atTop]` predicates for `psi`, `theta`, and `primeCounting - logIntegral` | Prove `RH -> RH_PsiErrorBound` via explicit formula estimates, and prove the prime-counting reverse endpoint back to `RH_PsiErrorBound`; the conditional bridge `RH_PsiErrorBound -> RiemannHypothesis` is now theorem-level | 8 |
 | Hardy theorem | `hardy_theorem_target` and related moment/asymptotic targets are `def ... : Prop` targets | Use an unbounded-height zero target as the main theorem; use signed moment targets, not merely nonzero constants | Prove bounded-zero eventual-sign control and generic asymptotic sign lemmas | 11 (7 in `HardyTheorem`, 3 in `HardyTheorem.Details`, 1 in `KnownResults`) |
 
 ## Target-to-Chain Mapping
@@ -276,6 +276,10 @@ The following proved declarations are the main entry points for future work:
 - `PrimeNumberTheorem.rh_iff_optimal_error_of_pointwise_implications`
 - `PrimeNumberTheorem.RH_ErrorBound_of_rh_iff_optimal_error`
 - `PrimeNumberTheorem.RiemannHypothesis_of_rh_iff_pointwise_error`
+- `PrimeNumberTheorem.psiPowerErrorBound_of_RH_PsiErrorBound_of_half_lt`
+- `ZeroFreeRegion.nontrivial_zero_re_le_half_of_RH_PsiErrorBound`
+- `ZeroFreeRegion.half_le_nontrivial_zero_re_of_RH_PsiErrorBound`
+- `ZeroFreeRegion.riemannHypothesis_of_RH_PsiErrorBound`
 - `PrimeNumberTheorem.primeCounting_logIntegral_finite_interval_bound`
 - `PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_error_tendsto_zero`
 - `PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_error_isLittleO_one`

@@ -148,7 +148,7 @@
         "name": "rh_iff_optimal_error",
         "qualified_name": "PrimeNumberTheorem.rh_iff_optimal_error",
         "file": "PrimeNumberTheorem.lean",
-        "line": 2565,
+        "line": 2634,
         "shape": "RiemannHypothesis.Statement ↔ RH_PrimeCountingLiErrorBound",
         "depends_on": []
       },
@@ -156,7 +156,7 @@
         "name": "explicit_formula_von_mangoldt",
         "qualified_name": "PrimeNumberTheorem.explicit_formula_von_mangoldt",
         "file": "PrimeNumberTheorem.lean",
-        "line": 8084,
+        "line": 8178,
         "shape": "Tendsto (T ↦ explicitFormulaApprox x T) atTop (𝓝 (chebyshevPsi0 x))",
         "depends_on": []
       }
@@ -251,7 +251,7 @@
       "name": "ExplicitFormulaConversePowerTarget",
       "qualified_name": "PrimeNumberTheorem.ExplicitFormulaConversePowerTarget",
       "file": "PrimeNumberTheorem.lean",
-      "line": 4298
+      "line": 4392
     }
   ],
   "unclassified_prop_defs": [],

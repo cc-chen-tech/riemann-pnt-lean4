@@ -2507,6 +2507,16 @@ theorem rh_iff_nontrivial_zeros_on_line :
       ∀ s : ℂ, _root_.RiemannHypothesis.IsNontrivialZero s → s.re = 1 / 2 :=
   PrimeNumberTheorem.rh_iff_nontrivial_zeros_on_line
 
+/-- Public conditional RH closure from the RH-scale Chebyshev-`ψ` error.
+
+This is the proved reverse implication in the RH/`ψ`-error direction supplied
+by the Mellin/Landau zero-exclusion bridge; it does not assert the
+`RH_PsiErrorBound` hypothesis unconditionally. -/
+theorem riemannHypothesis_of_RH_PsiErrorBound
+    (hψ : PrimeNumberTheorem.RH_PsiErrorBound) :
+    _root_.RiemannHypothesis :=
+  ZeroFreeRegion.riemannHypothesis_of_RH_PsiErrorBound hψ
+
 /-- Public functional-equation symmetry for nontrivial zeros. -/
 theorem nontrivial_zero_symmetric
     {ρ : ℂ} (hρ : riemannZeta ρ = 0)
@@ -4661,23 +4671,21 @@ theorem explicitFormulaConversePowerTarget_of_mellin (β : ℝ) :
 zeta zeros on `Re(s)=2/3`. -/
 theorem no_zeros_on_two_thirds_of_psi_power_error_bound_sub_delta
     {delta : ℝ} (hdelta_pos : 0 < delta)
-    (hdelta_le : delta ≤ (2 / 3 : ℝ))
     (herror :
       PrimeNumberTheorem.PsiPowerErrorBound ((2 / 3 : ℝ) - delta)) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (2 / 3) :=
   ZeroFreeRegion.no_zeros_on_two_thirds_of_psi_power_error_bound_sub_delta
-    hdelta_pos hdelta_le herror
+    hdelta_pos herror
 
 /-- Public reflected concrete Landau/Mellin bridge: an `O(x^(2/3-δ))` `ψ`
 error excludes zeta zeros on `Re(s)=1/3`. -/
 theorem no_zeros_on_one_third_of_psi_power_error_bound_sub_delta
     {delta : ℝ} (hdelta_pos : 0 < delta)
-    (hdelta_le : delta ≤ (2 / 3 : ℝ))
     (herror :
       PrimeNumberTheorem.PsiPowerErrorBound ((2 / 3 : ℝ) - delta)) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) :=
   ZeroFreeRegion.no_zeros_on_one_third_of_psi_power_error_bound_sub_delta
-    hdelta_pos hdelta_le herror
+    hdelta_pos herror
 
 /-- Public specialization of the explicit-formula converse bridge to the
 reflected `2/3` line and hence the `1/3` line. -/

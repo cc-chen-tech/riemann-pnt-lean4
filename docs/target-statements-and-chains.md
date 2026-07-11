@@ -155,6 +155,10 @@ For the chain accounting:
 - `PrimeNumberTheorem.RH_ErrorBound_of_rh_iff_optimal_error`
 - `PrimeNumberTheorem.RiemannHypothesis_of_rh_iff_pointwise_error`
 - `PrimeNumberTheorem.primeCounting_logIntegral_finite_interval_bound`
+- `PrimeNumberTheorem.psiPowerErrorBound_of_RH_PsiErrorBound_of_half_lt`
+- `ZeroFreeRegion.nontrivial_zero_re_le_half_of_RH_PsiErrorBound`
+- `ZeroFreeRegion.half_le_nontrivial_zero_re_of_RH_PsiErrorBound`
+- `ZeroFreeRegion.riemannHypothesis_of_RH_PsiErrorBound`
 
 ### Missing mathlib/analytic infrastructure
 
@@ -165,8 +169,9 @@ For the chain accounting:
 3. upstream proof of `RH_PsiErrorBound` / `RH_ThetaErrorBound`; the forward
    `Chebyshev` to `primeCounting` bridge under RH-quality errors is already
    proved by `RH_PrimeCountingLiErrorBound_of_RH_ThetaErrorBound`;
-4. reverse implication machinery (error bounds on `pi`/`Li` imply RH in
-   the required direction).
+4. the remaining reverse endpoint is quantitative partial summation from
+   `pi`/`Li` error bounds back to `RH_PsiErrorBound`; the conditional bridge
+   `RH_PsiErrorBound -> RiemannHypothesis` is already theorem-level.
 
 ---
 

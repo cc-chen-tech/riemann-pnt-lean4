@@ -27,6 +27,9 @@ The current project already provides these usable endpoints and support lemmas.
 | `RH_PrimeCountingLiErrorBound_of_RH_PsiErrorBound` | Same bridge after the local `psi`/`theta` error equivalence. |
 | `RH_ErrorBound_of_RH_ThetaErrorBound` | Converts the closed `theta` bridge to the pointwise textbook `RH_ErrorBound` target. |
 | `RH_ErrorBound_of_RH_PsiErrorBound` | Same pointwise endpoint after the local `psi`/`theta` error equivalence. |
+| `sqrt_mul_log_sq_isLittleO_rpow_of_half_lt` | Shows the RH-scale `sqrt x * log^2 x` model is smaller than every `x^theta` with `theta > 1/2`. |
+| `psiPowerErrorBound_of_RH_PsiErrorBound_of_half_lt` | Converts `RH_PsiErrorBound` into every power-scale `PsiPowerErrorBound theta` with `theta > 1/2`. |
+| `ZeroFreeRegion.riemannHypothesis_of_RH_PsiErrorBound` | Closes the reverse `RH_PsiErrorBound -> RiemannHypothesis` implication using the Mellin/Landau zero-exclusion bridge and zero symmetry. |
 | `explicit_formula_von_mangoldt` | Present only as a target `Prop`; its current infinite zero sum is not the final formal theorem shape needed for estimates. |
 
 ## Current Target Assessment
@@ -302,14 +305,16 @@ If `psi(x) - x = O(sqrt x * log^2 x)`, this integral converges and is analytic
 for `re s > 1 / 2`.  Therefore `-zeta'/zeta(s)` has no pole in that half-plane
 except at `s = 1`.
 
-Formalization dependencies:
+Current status:
 
-- Stieltjes/Mellin transform relation between `psi` and `-zeta'/zeta`.
-- Analyticity of parameter-dependent improper integrals.
-- A precise pole-subtraction lemma at `s = 1`.
-- Existing log-derivative Dirichlet series lemmas in `ZeroFreeRegion.lean` help
-  for `re s > 1`, but they do not yet provide continuation into
-  `re s > 1 / 2`.
+- The Mellin/Landau route is now proved for power-scale `psi` bounds:
+  `regularizedNegLogDerivModel`,
+  `differentiableOn_regularizedNegLogDerivModel_of_psi_power_error`, and
+  `regularizedNegLogDerivModel_eq_neg_deriv_div_sub_pole` package the analytic
+  continuation and overlap with `-zeta'/zeta - s/(s-1)`.
+- `ZeroFreeRegion.psiPowerErrorBound_excludes_riemannZeta_zero_right` proves the
+  resulting zero-exclusion theorem: `PsiPowerErrorBound theta`, with
+  `0 <= theta < 1`, excludes zeta zeros in `theta < re rho < 1`.
 
 ### R3. Exclude zeros with `re > 1 / 2`
 
@@ -317,18 +322,16 @@ If zeta had a zero at `rho` with `rho.re > 1 / 2` and `rho != 1`, then
 `-zeta'/zeta` would have a pole at `rho`.  R2 says the pole-subtracted
 logarithmic derivative is analytic in `re s > 1 / 2`, contradiction.
 
-Needed:
-
-- Local theorem that a zeta zero of multiplicity `m > 0` produces a pole of
-  `deriv zeta / zeta`.
-- Meromorphic function or punctured-neighborhood pole API.
-- Exclusion of the pole at `1` as a zeta pole, not a zero.
-
 Current status:
 
-- The project has residue/pole-at-one facts, including
-  `riemannZeta_pole_simple`.
-- It does not yet have the general "zero implies log-derivative pole" API.
+- The project no longer needs a separate general "zero implies log-derivative
+  pole" API for this route.  The proved analytic-ODE nonvanishing argument in
+  `ZeroFreeRegion.psiPowerErrorBound_excludes_riemannZeta_zero_right` gives the
+  contradiction directly for `theta < re rho < 1`.
+- `PrimeNumberTheorem.psiPowerErrorBound_of_RH_PsiErrorBound_of_half_lt`
+  supplies the needed `PsiPowerErrorBound theta` for every `theta > 1/2` from
+  `RH_PsiErrorBound`, so zeros with `re rho > 1/2` are excluded by choosing
+  `theta` between `1/2` and `re rho`.
 
 ### R4. Use symmetry to finish RH
 
@@ -344,6 +347,9 @@ Current status:
 - `nontrivial_zero_symmetric'` is available.
 - `RiemannHypothesis.Statement` is exactly the required endpoint.
 - `rh_statement_iff_mathlib` bridges back to Mathlib/root RH if needed.
+- `ZeroFreeRegion.riemannHypothesis_of_RH_PsiErrorBound` combines this symmetry
+  with the right-half exclusion and proves the conditional endpoint
+  `RH_PsiErrorBound -> RiemannHypothesis`.
 
 ## Minimal New Dependency Chain
 
@@ -360,13 +366,11 @@ The smallest coherent route to make
 5. Use the existing `psi - theta` Mathlib bound to get `RH_ThetaErrorBound`.
 6. Use the proved quantitative partial-summation bridge
    `RH_ThetaErrorBound -> RH_PrimeCountingLiErrorBound`.
-7. For the reverse direction, prove quantitative partial summation back to
-   `RH_PsiErrorBound`.
-8. Prove the Mellin/log-derivative continuation theorem from
-   `RH_PsiErrorBound`.
-9. Prove "zero off the half-plane boundary gives log-derivative pole", exclude
-   zeros with `re > 1 / 2`, then use existing zero symmetry to obtain
-   `RiemannHypothesis.Statement`.
+7. For the reverse direction from the prime-counting endpoint, prove
+   quantitative partial summation back to `RH_PsiErrorBound`.
+8. Use the already-proved
+   `ZeroFreeRegion.riemannHypothesis_of_RH_PsiErrorBound` to obtain Mathlib's
+   `RiemannHypothesis` from that `psi` endpoint.
 
 The already-proved PNT-form equivalence remains useful documentation and sanity
 checking, but it is too coarse for the RH error equivalence: it tracks limits,

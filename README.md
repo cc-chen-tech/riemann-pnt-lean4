@@ -247,9 +247,10 @@ This keeps the claims tight:
 2. **Secondary contribution:** correctly formulating the Riemann-von Mangoldt
    explicit formula target using `chebyshevPsi0`, finite-height truncations, and
    explicit error/remainder forms rather than an unordered infinite zero sum.
-3. **Supporting contribution:** proving PNT-form equivalences and RH-scale error
-   propagation lemmas that will compose with a future proof of `ψ(x) ~ x` or a
-   future explicit formula theorem.
+3. **Supporting contribution:** proving PNT-form equivalences, RH-scale error
+   propagation lemmas, and the conditional reverse bridge
+   `RH_PsiErrorBound -> RiemannHypothesis` that will compose with a future
+   proof of the RH-scale `ψ` estimate.
 4. **Framework contribution:** building a Hardy-Z/critical-line-zero framework
    with explicit target statements for Hardy, Hardy-Littlewood, Selberg, and
    Conrey-style zero-counting results.
@@ -930,15 +931,22 @@ Mellin-side function; `differentiableOn_regularizedNegLogDerivModel_of_psi_power
 proves it is differentiable on `Re(s) > theta`, and
 `regularizedNegLogDerivModel_eq_neg_deriv_div_sub_pole` / its `EqOn` form prove
 the overlap with the zeta logarithmic derivative on `Re(s) > 1`.  The
-Landau-style analytic continuation and pole contradiction are now also proved in
+Landau-style analytic continuation and analytic-ODE nonvanishing step are now
+also proved in
 `ZeroFreeRegion.psiPowerErrorBound_excludes_riemannZeta_zero_right`: if
 `PsiPowerErrorBound theta` holds with `0 <= theta < 1`, then zeta has no zeros in
 `theta < Re(s) < 1`.  The concrete wrappers
 `no_zeros_on_two_thirds_of_psi_power_error_bound_sub_delta` and
 `no_zeros_on_one_third_of_psi_power_error_bound_sub_delta` specialize this to an
-`O(x^(2/3-delta))` input.  The remaining gap is proving such a `psi`
-power-saving estimate from an explicit formula or Tauberian argument, not the
-Mellin converse bridge itself.
+`O(x^(2/3-delta))` input.  Combining this with the elementary comparison
+`sqrt x * log^2 x = o(x^theta)` for every `theta > 1/2` now gives the verified
+conditional closure
+`ZeroFreeRegion.riemannHypothesis_of_RH_PsiErrorBound`, re-exported as
+`RiemannPNT.API.riemannHypothesis_of_RH_PsiErrorBound`: an RH-scale `ψ` error
+implies Mathlib's `RiemannHypothesis`.  This still does not prove RH, because
+`RH_PsiErrorBound` remains a target.  The remaining gap is proving that
+RH-scale `psi` power-saving estimate from an explicit formula or Tauberian
+argument, not the Mellin converse bridge itself.
 
 The finite truncated-zero bookkeeping is proved as ordinary theorem-level
 infrastructure.  In particular,

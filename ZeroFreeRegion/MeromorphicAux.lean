@@ -334,33 +334,93 @@ theorem explicitFormulaConversePowerTarget_of_mellin (β : ℝ) :
     PrimeNumberTheorem.PsiPowerErrorBelowLineExcludesZerosRightOf] using
     psiPowerErrorBelowLineExcludesZerosRightOf_of_mellin β
 
+/-- RH-scale Chebyshev-`ψ` error excludes nontrivial zeros strictly to the
+right of the critical line.  This is the Landau/Mellin converse combined with
+the elementary comparison `sqrt x * log^2 x = o(x^θ)` for every `θ > 1/2`. -/
+theorem nontrivial_zero_re_le_half_of_RH_PsiErrorBound
+    (hψ : PrimeNumberTheorem.RH_PsiErrorBound) {ρ : ℂ}
+    (hρ : RiemannHypothesis.IsNontrivialZero ρ) :
+    ρ.re ≤ 1 / 2 := by
+  by_contra hle
+  have hgt : (1 / 2 : ℝ) < ρ.re := lt_of_not_ge hle
+  let θ : ℝ := (ρ.re + (1 / 2 : ℝ)) / 2
+  have hθ_half : (1 / 2 : ℝ) < θ := by
+    dsimp [θ]
+    linarith
+  have hθρ : θ < ρ.re := by
+    dsimp [θ]
+    linarith
+  have hθ_nonneg : 0 ≤ θ := by
+    linarith
+  have hθ_lt_one : θ < 1 := by
+    dsimp [θ]
+    linarith [hρ.2.2]
+  have hbound : PrimeNumberTheorem.PsiPowerErrorBound θ :=
+    PrimeNumberTheorem.psiPowerErrorBound_of_RH_PsiErrorBound_of_half_lt
+      hθ_half hψ
+  exact
+    (psiPowerErrorBound_excludes_riemannZeta_zero_right
+      hθ_nonneg hθ_lt_one hbound ρ hθρ hρ.2.2) hρ.1
+
+/-- RH-scale Chebyshev-`ψ` error excludes nontrivial zeros strictly to the
+left of the critical line, by applying the right-half exclusion to `1 - ρ`. -/
+theorem half_le_nontrivial_zero_re_of_RH_PsiErrorBound
+    (hψ : PrimeNumberTheorem.RH_PsiErrorBound) {ρ : ℂ}
+    (hρ : RiemannHypothesis.IsNontrivialZero ρ) :
+    (1 / 2 : ℝ) ≤ ρ.re := by
+  have hsym : RiemannHypothesis.IsNontrivialZero (1 - ρ) :=
+    PrimeNumberTheorem.nontrivial_zero_symmetric' hρ
+  have hle :=
+    nontrivial_zero_re_le_half_of_RH_PsiErrorBound hψ hsym
+  have hre : (1 - ρ).re = (1 : ℝ) - ρ.re := by
+    simp [Complex.sub_re]
+  linarith
+
+/-- Conditional RH closure from the RH-scale Chebyshev-`ψ` error.  This does
+not prove RH unconditionally; it proves the reverse implication in the
+classical RH/error equivalence using the proved Mellin/Landau zero-exclusion
+bridge. -/
+theorem riemannHypothesis_of_RH_PsiErrorBound
+    (hψ : PrimeNumberTheorem.RH_PsiErrorBound) :
+    _root_.RiemannHypothesis := by
+  refine PrimeNumberTheorem.rh_iff_nontrivial_zeros_on_line.mpr ?_
+  intro ρ hρ
+  exact le_antisymm
+    (nontrivial_zero_re_le_half_of_RH_PsiErrorBound hψ hρ)
+    (half_le_nontrivial_zero_re_of_RH_PsiErrorBound hψ hρ)
+
 /-- A concrete power saving below `2/3` excludes zeta zeros on the reflected
 line `Re(s) = 2/3`, with no assumed explicit-formula converse interface. -/
 theorem no_zeros_on_two_thirds_of_psi_power_error_bound_sub_delta
     {delta : ℝ} (hdelta_pos : 0 < delta)
-    (hdelta_le : delta ≤ (2 / 3 : ℝ))
     (herror :
       PrimeNumberTheorem.PsiPowerErrorBound ((2 / 3 : ℝ) - delta)) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (2 / 3) := by
   intro s hs hzero
-  have hθ_nonneg : 0 ≤ (2 / 3 : ℝ) - delta := by linarith
-  have hθ_lt_one : (2 / 3 : ℝ) - delta < 1 := by linarith
-  exact
-    (psiPowerErrorBound_excludes_riemannZeta_zero_right
-      hθ_nonneg hθ_lt_one herror s (by linarith) (by linarith)) hzero
+  by_cases hdelta_le : delta ≤ (2 / 3 : ℝ)
+  · have hθ_nonneg : 0 ≤ (2 / 3 : ℝ) - delta := by linarith
+    have hθ_lt_one : (2 / 3 : ℝ) - delta < 1 := by linarith
+    exact
+      (psiPowerErrorBound_excludes_riemannZeta_zero_right
+        hθ_nonneg hθ_lt_one herror s (by linarith) (by linarith)) hzero
+  · have herror_zero : PrimeNumberTheorem.PsiPowerErrorBound 0 :=
+      PrimeNumberTheorem.psiPowerErrorBound_mono (by linarith) herror
+    exact
+      (psiPowerErrorBound_excludes_riemannZeta_zero_right
+        (θ := 0) (by norm_num) (by norm_num) herror_zero s
+        (by nlinarith [hs]) (by nlinarith [hs])) hzero
 
 /-- A concrete power saving `ψ(x)-x = O(x^(2/3-δ))` excludes zeta zeros on
 `Re(s)=1/3`, by combining the proved Mellin/Landau converse with functional
 equation symmetry. -/
 theorem no_zeros_on_one_third_of_psi_power_error_bound_sub_delta
     {delta : ℝ} (hdelta_pos : 0 < delta)
-    (hdelta_le : delta ≤ (2 / 3 : ℝ))
     (herror :
       PrimeNumberTheorem.PsiPowerErrorBound ((2 / 3 : ℝ) - delta)) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) :=
   PrimeNumberTheorem.no_zeros_on_one_third_of_no_zeros_on_two_thirds
     (no_zeros_on_two_thirds_of_psi_power_error_bound_sub_delta
-      hdelta_pos hdelta_le herror)
+      hdelta_pos herror)
 
 /-- The pole unit is nonzero near `1`. -/
 lemma eventually_ne_zero_riemannZetaPoleUnitAtOne :

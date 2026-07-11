@@ -2144,6 +2144,75 @@ lemma sqrt_mul_log_sq_isLittleO_id :
   filter_upwards [eventually_gt_atTop (0 : ℝ)] with x hx hzero
   exact (hx.ne' hzero).elim
 
+/-- Any positive power dominates `(log x)^2`. -/
+lemma log_sq_div_rpow_tendsto_zero {a : ℝ} (ha : 0 < a) :
+    Tendsto (fun x : ℝ => (Real.log x)^2 / x ^ a) atTop (𝓝 0) := by
+  let b : ℝ := a / 2
+  have hb : 0 < b := by
+    dsimp [b]
+    linarith
+  have hq :
+      Tendsto (fun x : ℝ => Real.log x / x ^ b) atTop (𝓝 0) :=
+    (isLittleO_log_rpow_atTop hb).tendsto_div_nhds_zero
+  have hsq := hq.mul hq
+  have heq :
+      (fun x : ℝ => (Real.log x / x ^ b) *
+          (Real.log x / x ^ b))
+        =ᶠ[atTop] fun x : ℝ => (Real.log x)^2 / x ^ a := by
+    filter_upwards [eventually_gt_atTop (0 : ℝ)] with x hx
+    have hxpow_ne : x ^ b ≠ 0 :=
+      (Real.rpow_pos_of_pos hx b).ne'
+    calc
+      (Real.log x / x ^ b) * (Real.log x / x ^ b)
+          = (Real.log x)^2 / (x ^ b * x ^ b) := by
+            field_simp [hxpow_ne]
+      _ = (Real.log x)^2 / x ^ (b + b) := by
+            rw [Real.rpow_add hx]
+      _ = (Real.log x)^2 / x ^ a := by
+            rw [show b + b = a by dsimp [b]; ring]
+  simpa using hsq.congr' heq
+
+/-- The RH-scale `sqrt x * log^2 x` error is smaller than every power `x^θ`
+with `θ > 1/2`. -/
+lemma sqrt_mul_log_sq_isLittleO_rpow_of_half_lt {θ : ℝ}
+    (hθ : (1 / 2 : ℝ) < θ) :
+    (fun x : ℝ => Real.sqrt x * (Real.log x)^2)
+      =o[atTop] (fun x : ℝ => x ^ θ) := by
+  have ha : 0 < θ - (1 / 2 : ℝ) := by linarith
+  have hratio :
+      Tendsto
+        (fun x : ℝ => (Real.sqrt x * (Real.log x)^2) / x ^ θ)
+        atTop (𝓝 0) := by
+    have hlog := log_sq_div_rpow_tendsto_zero ha
+    have heq :
+        (fun x : ℝ => (Real.sqrt x * (Real.log x)^2) / x ^ θ)
+          =ᶠ[atTop]
+            fun x : ℝ => (Real.log x)^2 / x ^ (θ - (1 / 2 : ℝ)) := by
+      filter_upwards [eventually_gt_atTop (0 : ℝ)] with x hx
+      have hx_half_ne : x ^ (1 / 2 : ℝ) ≠ 0 :=
+        (Real.rpow_pos_of_pos hx (1 / 2 : ℝ)).ne'
+      have hx_gap_ne : x ^ (θ - (1 / 2 : ℝ)) ≠ 0 :=
+        (Real.rpow_pos_of_pos hx (θ - (1 / 2 : ℝ))).ne'
+      have hsqrt_eq : Real.sqrt x = x ^ (1 / 2 : ℝ) :=
+        Real.sqrt_eq_rpow x
+      have hpowθ :
+          x ^ θ = x ^ (1 / 2 : ℝ) * x ^ (θ - (1 / 2 : ℝ)) := by
+        rw [← Real.rpow_add hx]
+        ring_nf
+      calc
+        (Real.sqrt x * (Real.log x)^2) / x ^ θ =
+            (x ^ (1 / 2 : ℝ) * (Real.log x)^2) / x ^ θ := by
+              rw [hsqrt_eq]
+        _ = (x ^ (1 / 2 : ℝ) * (Real.log x)^2) /
+            (x ^ (1 / 2 : ℝ) * x ^ (θ - (1 / 2 : ℝ))) := by
+              rw [hpowθ]
+        _ = (Real.log x)^2 / x ^ (θ - (1 / 2 : ℝ)) := by
+              field_simp [hx_half_ne, hx_gap_ne]
+    exact hlog.congr' heq.symm
+  refine (isLittleO_iff_tendsto' ?_).2 hratio
+  filter_upwards [eventually_gt_atTop (0 : ℝ)] with x hx hzero
+  exact ((Real.rpow_pos_of_pos hx θ).ne' hzero).elim
+
 /-- The Chebyshev `ψ` and `θ` PNT-normalized forms differ by `o(1)`. -/
 lemma chebyshevPsi_sub_theta_div_id_tendsto_zero :
     Tendsto (fun x : ℝ =>
@@ -3647,6 +3716,30 @@ theorem no_zeros_on_one_third_of_strong_pnt_error_bridge
 abbrev PsiPowerErrorBound (θ : ℝ) : Prop :=
   (fun x : ℝ => chebyshevPsi x - x) =O[atTop] (fun x : ℝ => x ^ θ)
 
+/-- The RH-scale `ψ` error implies every power-scale `ψ` error with exponent
+strictly larger than `1/2`. -/
+theorem psiPowerErrorBound_of_RH_PsiErrorBound_of_half_lt {θ : ℝ}
+    (hθ : (1 / 2 : ℝ) < θ) (h : RH_PsiErrorBound) :
+    PsiPowerErrorBound θ := by
+  rw [RH_PsiErrorBound] at h
+  rw [PsiPowerErrorBound]
+  exact Asymptotics.IsLittleO.isBigO
+    (h.trans_isLittleO (sqrt_mul_log_sq_isLittleO_rpow_of_half_lt hθ))
+
+/-- A power-scale Chebyshev-`ψ` estimate remains valid after increasing its
+exponent. -/
+theorem psiPowerErrorBound_mono {a b : ℝ} (hab : a ≤ b)
+    (h : PsiPowerErrorBound a) : PsiPowerErrorBound b := by
+  apply h.trans
+  refine Asymptotics.IsBigO.of_bound 1 ?_
+  filter_upwards [eventually_ge_atTop (1 : ℝ)] with x hx
+  have hx_nonneg : 0 ≤ x := le_trans zero_le_one hx
+  have hxa_nonneg : 0 ≤ x ^ a := Real.rpow_nonneg hx_nonneg a
+  have hxb_nonneg : 0 ≤ x ^ b := Real.rpow_nonneg hx_nonneg b
+  simpa [Real.norm_eq_abs, abs_of_nonneg hxa_nonneg,
+    abs_of_nonneg hxb_nonneg] using
+    (Real.rpow_le_rpow_of_exponent_le hx hab)
+
 /-- An eventual absolute-value estimate closes the power-scale
 Chebyshev-`ψ` Big-O predicate. -/
 theorem psiPowerErrorBound_of_eventual_abs_bound {θ C : ℝ}
@@ -4292,9 +4385,10 @@ abbrev PsiPowerErrorBelowLineExcludesZerosRightOf (β : ℝ) : Prop :=
 /-- Explicit-formula converse target: a power saving below `β` for
 Chebyshev-`ψ` excludes nontrivial zeros on or to the right of `Re(s)=β`.
 
-This is intentionally a route interface.  The missing mathematics is the
-converse explicit-formula/oscillation theorem turning a zero term `x^ρ / ρ`
-into an obstruction to a smaller power-scale PNT error. -/
+This historical route-interface name remains for the finite-zero/oscillation
+path.  The alternative Mellin/Landau converse is proved in
+`ZeroFreeRegion.MeromorphicAux`; this proposition is not itself an
+unconditional explicit-formula theorem. -/
 def ExplicitFormulaConversePowerTarget (β : ℝ) : Prop :=
   PsiPowerErrorBelowLine β →
     ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → β ≤ ρ.re → False

@@ -2728,9 +2728,19 @@ Core verified declarations:
   and
   `ZeroFreeRegion.no_zeros_on_one_third_of_psi_power_error_bound_sub_delta`,
   exported through the same names in `RiemannPNT.API`, specialize the previous
-  theorem to an `O(x^(2/3-delta))` input and exclude zeros on `Re(s)=2/3` and
+  theorem to an `O(x^(2/3-delta))` input for any `delta > 0` and exclude zeros
+  on `Re(s)=2/3` and
   the reflected line `Re(s)=1/3`.  This does not prove such a `psi` power-saving
   estimate; it proves the converse bridge once that estimate is supplied.
+- `sqrt_mul_log_sq_isLittleO_rpow_of_half_lt`,
+  `psiPowerErrorBound_of_RH_PsiErrorBound_of_half_lt`,
+  `ZeroFreeRegion.nontrivial_zero_re_le_half_of_RH_PsiErrorBound`,
+  `ZeroFreeRegion.half_le_nontrivial_zero_re_of_RH_PsiErrorBound`, and
+  `ZeroFreeRegion.riemannHypothesis_of_RH_PsiErrorBound`, with the last theorem
+  exported through `RiemannPNT.API`, prove the conditional reverse implication
+  from the classical RH-scale Chebyshev-`psi` error estimate to RH.  The
+  Chebyshev estimate itself remains a target; this closes the converse bridge
+  once that estimate is supplied.
 - `no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route`
   gives the direct right-side-line consequence of the same conditional
   truncated explicit-formula route at `beta = 2/3`, before applying the
