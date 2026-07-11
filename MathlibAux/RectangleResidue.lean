@@ -20,11 +20,12 @@ shape we eventually need.  It locks the argument list and lets downstream
 code (`import MathlibAux.RectangleResidue`) use the name as a typed
 predicate without exporting a fake theorem.
 
-The actual residue theorem is **deliberately deferred** to a later
-phase: building it from scratch in Lean 4.29.1 / Mathlib 4.29.1 requires
-small-circle indentation + Cauchy integral formula + the existing
+The full rectangle residue theorem is **deliberately deferred**.  This file
+now proves the finite simple-pole residue formula on circles from Mathlib's
+Cauchy integral formula.  Passing from that local theorem to a rectangle still
+requires boundary deformation / small-circle indentation plus the existing
 `integral_boundary_rect_eq_zero_of_differentiableOn` Cauchy-Goursat
-lemma, which is far beyond the 15-minute window of this interface task.
+lemma.
 The intended future body is sketched in the doc-comment below; see
 `docs/explicit-formula-chain.md` §"Contour and residue theorem" for
 the full chain that this `def` is supposed to unblock.
@@ -100,6 +101,67 @@ noncomputable def rectangleBoundaryIntegral
       Complex.I • (∫ y : ℝ in (c.im - R)..(c.im + R), f ((c.re + R) + y * Complex.I)) -
         Complex.I • (∫ y : ℝ in (c.im - R)..(c.im + R), f ((c.re - R) + y * Complex.I))
 
+/-! ## Proved finite simple-pole residue formula on circles -/
+
+/-- A holomorphic term plus finitely many simple principal parts integrates to
+`2πi` times the sum of their residues on a circle containing every pole.
+
+This is a genuine finite residue theorem built from Mathlib's Cauchy integral
+formula.  It supplies the analytic local model needed by the future rectangle
+deformation: the remaining rectangle-specific gap is to deform its boundary
+to circles around the finitely many poles. -/
+theorem circleIntegral_eq_finite_simple_pole_residue_sum
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
+    {g : ℂ → E} {c : ℂ} {R : ℝ} (hR : 0 < R)
+    (poles : Finset ℂ) (residue : ℂ → E)
+    (hg : DifferentiableOn ℂ g (Metric.closedBall c R))
+    (hpoles : ∀ p ∈ poles, p ∈ Metric.ball c R) :
+    (∮ z in C(c, R),
+        g z + ∑ p ∈ poles, (z - p)⁻¹ • residue p) =
+      (2 * Real.pi * Complex.I) • ∑ p ∈ poles, residue p := by
+  have hg_integrable : CircleIntegrable g c R :=
+    (hg.continuousOn.mono Metric.sphere_subset_closedBall).circleIntegrable hR.le
+  have hkernel_integrable : ∀ p ∈ poles,
+      CircleIntegrable (fun z : ℂ => (z - p)⁻¹ • residue p) c R := by
+    intro p hp
+    have hne : ∀ z ∈ Metric.sphere c R, z ≠ p := by
+      intro z hz hzp
+      subst z
+      have hp_lt : ‖p - c‖ < R := by
+        simpa [Metric.mem_ball, dist_eq] using hpoles p hp
+      have hp_eq : ‖p - c‖ = R := by
+        simpa [Metric.mem_sphere, dist_eq] using hz
+      linarith
+    exact
+      (((continuousOn_id.sub continuousOn_const).inv₀ fun z hz =>
+          sub_ne_zero.mpr (hne z hz)).smul continuousOn_const).circleIntegrable hR.le
+  have hsum_integrable :
+      CircleIntegrable (fun z : ℂ => ∑ p ∈ poles, (z - p)⁻¹ • residue p) c R :=
+    (continuousOn_finset_sum poles fun p hp =>
+      (((continuousOn_id.sub continuousOn_const).inv₀ fun z hz => by
+          apply sub_ne_zero.mpr
+          intro hzp
+          change z = p at hzp
+          subst z
+          have hp_lt : ‖p - c‖ < R := by
+            simpa [Metric.mem_ball, dist_eq] using hpoles p hp
+          have hp_eq : ‖p - c‖ = R := by
+            simpa [Metric.mem_sphere, dist_eq] using hz
+          linarith).smul continuousOn_const)).circleIntegrable hR.le
+  rw [circleIntegral.integral_add hg_integrable hsum_integrable]
+  have hg_zero : (∮ z in C(c, R), g z) = 0 :=
+    (hg.mono Metric.closure_ball_subset_closedBall).diffContOnCl.circleIntegral_eq_zero hR.le
+  rw [hg_zero, zero_add, circleIntegral.integral_fun_sum hkernel_integrable]
+  calc
+    (∑ p ∈ poles, ∮ z in C(c, R), (z - p)⁻¹ • residue p) =
+        ∑ p ∈ poles, (2 * Real.pi * Complex.I) • residue p := by
+      apply Finset.sum_congr rfl
+      intro p hp
+      exact (differentiableOn_const (c := residue p)).circleIntegral_sub_inv_smul
+        (hpoles p hp)
+    _ = (2 * Real.pi * Complex.I) • ∑ p ∈ poles, residue p := by
+      exact Finset.smul_sum.symm
+
 /-! ## Rectangle meromorphic residue target (interface statement) -/
 
 /--
@@ -125,11 +187,11 @@ imports:
 - `hpos : 0 < R` — explicit witness that the rectangle is
   non-degenerate.
 
-The body is a real `Prop` statement: there is a finite pole set and a
+The body is an existential certificate shape: there is a finite pole set and a
 residue function for which the Mathlib rectangle-boundary integral equals
-`2πi` times the residue sum.  This is still **not a proof** of the residue
-theorem; it is the target shape that future Perron / explicit-formula work
-must discharge.
+`2πi` times the residue sum.  It is not a universal theorem derivable from
+`hpos` alone; the actual analytic input remains the rectangle deformation from
+the proved finite simple-pole circle formula above.
 
 **This is NOT a `theorem`** — it is a `def` returning `Prop`.  The
 Lean kernel accepts the proposition without requiring a proof, and

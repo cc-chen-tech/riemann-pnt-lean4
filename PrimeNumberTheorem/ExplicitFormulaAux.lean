@@ -39,7 +39,9 @@ file or the parent.
   admissible horizontal contours exist arbitrarily high.
 - `exists_strictMono_goodHeight_tendsto` — packages those choices into a
   strictly increasing sequence tending to `+∞`, suitable for contour limits.
-- `nontrivial_zero_mem_self_height`,
+- `nontrivial_zero_mem_self_height`, `mem_finiteNontrivialZeroSum`,
+  `finiteNontrivialZeroSum_mono`, `finiteNontrivialZeroSum_subset`,
+  `finiteNontrivialZeroSum_sdiff_eq_empty_of_le`,
   `zeroMultiplicity_eq_one_of_mem`, and
   `zeroMultiplicity_eq_zero_of_not_mem` — current finite-truncation
   multiplicity bookkeeping.
@@ -221,6 +223,31 @@ already proved in `PrimeNumberTheorem.lean`.  The name is re-exposed
 to follow the B-chain naming convention `finite*ZeroSum : ℝ → Finset ℂ`. -/
 noncomputable def finiteNontrivialZeroSum (T : ℝ) : Finset ℂ :=
   PrimeNumberTheorem.nontrivialZerosFinset T
+
+/-- Membership in the auxiliary finite nontrivial-zero truncation. -/
+lemma mem_finiteNontrivialZeroSum {ρ : ℂ} {T : ℝ} :
+    ρ ∈ finiteNontrivialZeroSum T ↔
+      RiemannHypothesis.IsNontrivialZero ρ ∧ |ρ.im| ≤ T := by
+  exact PrimeNumberTheorem.mem_nontrivialZerosFinset
+
+/-- Monotonicity of the auxiliary finite nontrivial-zero truncation. -/
+lemma finiteNontrivialZeroSum_mono {T U : ℝ} (hTU : T ≤ U) {ρ : ℂ}
+    (hρ : ρ ∈ finiteNontrivialZeroSum T) :
+    ρ ∈ finiteNontrivialZeroSum U :=
+  PrimeNumberTheorem.nontrivialZerosFinset_mono hTU hρ
+
+/-- Set-theoretic monotonicity of the auxiliary finite nontrivial-zero
+truncation. -/
+lemma finiteNontrivialZeroSum_subset {T U : ℝ} (hTU : T ≤ U) :
+    finiteNontrivialZeroSum T ⊆ finiteNontrivialZeroSum U :=
+  PrimeNumberTheorem.nontrivialZerosFinset_subset hTU
+
+/-- No new finite nontrivial zeros are added when the upper truncation is not
+larger than the lower truncation. -/
+lemma finiteNontrivialZeroSum_sdiff_eq_empty_of_le
+    {T U : ℝ} (hUT : U ≤ T) :
+    finiteNontrivialZeroSum U \ finiteNontrivialZeroSum T = ∅ :=
+  PrimeNumberTheorem.nontrivialZerosFinset_sdiff_eq_empty_of_le hUT
 
 /-- A nontrivial zero belongs to the self-height truncation used by
 `zeroMultiplicity`. -/

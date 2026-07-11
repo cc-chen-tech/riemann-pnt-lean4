@@ -3135,7 +3135,11 @@ Route interfaces:
   alias interface to `KnownResults.conrey_40_percent_zeros_on_critical_line_target`.
 - `MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum`
   real-statement interface for missing rectangle contour/residue infrastructure.
-  The file also proves the constant-function sanity checks
+  It is an existential certificate predicate, not a universal residue theorem
+  derivable from `0 < R`.  The file now proves the genuine local theorem
+  `MathlibAux.circleIntegral_eq_finite_simple_pole_residue_sum` for a
+  holomorphic remainder plus finitely many simple principal parts.  It also
+  proves the constant-function sanity checks
   `MathlibAux.rectangleBoundaryIntegral_const`,
   `MathlibAux.rectangleIntegral_const`, and
   `MathlibAux.rectangleIntegral_const_zero`, exposed through matching
@@ -3192,6 +3196,11 @@ Support-level verified declarations:
 - `exists_strictMono_goodHeight_tendsto` constructs a strictly increasing
   sequence of good heights tending to `+∞`, supplying the contour sequence
   needed for principal-value limits.
+- `mem_finiteNontrivialZeroSum`, `finiteNontrivialZeroSum_mono`,
+  `finiteNontrivialZeroSum_subset`, and
+  `finiteNontrivialZeroSum_sdiff_eq_empty_of_le` expose the parent
+  `nontrivialZerosFinset` membership and monotonicity API in the explicit
+  formula auxiliary namespace.
 - `nontrivial_zero_mem_self_height`
   places each nontrivial zero in the self-height truncation
   `finiteNontrivialZeroSum (|rho.im| + 1)`.

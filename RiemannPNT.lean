@@ -22125,6 +22125,34 @@ formula sums. -/
 noncomputable def finiteNontrivialZeroSum (T : ℝ) : Finset ℂ :=
   PrimeNumberTheorem.ExplicitFormulaAux.finiteNontrivialZeroSum T
 
+/-- Public membership characterization for the finite nontrivial-zero
+truncation. -/
+theorem mem_finiteNontrivialZeroSum {ρ : ℂ} {T : ℝ} :
+    ρ ∈ finiteNontrivialZeroSum T ↔
+      _root_.RiemannHypothesis.IsNontrivialZero ρ ∧ |ρ.im| ≤ T :=
+  PrimeNumberTheorem.ExplicitFormulaAux.mem_finiteNontrivialZeroSum
+
+/-- Public elementwise monotonicity for the finite nontrivial-zero
+truncation. -/
+theorem finiteNontrivialZeroSum_mono {T U : ℝ} (hTU : T ≤ U) {ρ : ℂ}
+    (hρ : ρ ∈ finiteNontrivialZeroSum T) :
+    ρ ∈ finiteNontrivialZeroSum U :=
+  PrimeNumberTheorem.ExplicitFormulaAux.finiteNontrivialZeroSum_mono hTU hρ
+
+/-- Public set-theoretic monotonicity for the finite nontrivial-zero
+truncation. -/
+theorem finiteNontrivialZeroSum_subset {T U : ℝ} (hTU : T ≤ U) :
+    finiteNontrivialZeroSum T ⊆ finiteNontrivialZeroSum U :=
+  PrimeNumberTheorem.ExplicitFormulaAux.finiteNontrivialZeroSum_subset hTU
+
+/-- Public empty-difference form when the upper finite nontrivial-zero
+truncation is not larger than the lower truncation. -/
+theorem finiteNontrivialZeroSum_sdiff_eq_empty_of_le
+    {T U : ℝ} (hUT : U ≤ T) :
+    finiteNontrivialZeroSum U \ finiteNontrivialZeroSum T = ∅ :=
+  PrimeNumberTheorem.ExplicitFormulaAux.finiteNontrivialZeroSum_sdiff_eq_empty_of_le
+    hUT
+
 /-- Public finite trivial-zero truncation used in the auxiliary explicit
 formula sums. -/
 noncomputable def finiteTrivialZeroSum (T : ℝ) : Finset ℂ :=
@@ -24122,6 +24150,19 @@ integral of a complex constant function is zero. -/
 theorem rectangleBoundaryIntegral_const (a c : ℂ) (R : ℝ) :
     MathlibAux.rectangleBoundaryIntegral (fun _ : ℂ => a) c R = 0 :=
   MathlibAux.rectangleBoundaryIntegral_const a c R
+
+/-- Public finite simple-pole residue formula on a circle. -/
+theorem circleIntegral_eq_finite_simple_pole_residue_sum
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
+    {g : ℂ → E} {c : ℂ} {R : ℝ} (hR : 0 < R)
+    (poles : Finset ℂ) (residue : ℂ → E)
+    (hg : DifferentiableOn ℂ g (Metric.closedBall c R))
+    (hpoles : ∀ p ∈ poles, p ∈ Metric.ball c R) :
+    (∮ z in C(c, R),
+        g z + ∑ p ∈ poles, (z - p)⁻¹ • residue p) =
+      (2 * Real.pi * Complex.I) • ∑ p ∈ poles, residue p :=
+  MathlibAux.circleIntegral_eq_finite_simple_pole_residue_sum
+    hR poles residue hg hpoles
 
 /-- Public sanity check for the rectangle residue interface: a complex
 constant function satisfies the residue-sum predicate with the empty pole

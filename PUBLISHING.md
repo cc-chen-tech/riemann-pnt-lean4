@@ -34,8 +34,10 @@ several deep results are recorded only as `def ... : Prop` targets.
 
 As of the current baseline, no route interface has a body equal to `True`.
 `MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum` is still an explicit
-marker for missing rectangle contour/residue infrastructure, but its body is now
-a real `Prop` statement rather than a trivially true placeholder.
+marker for missing rectangle deformation infrastructure.  Its body is an
+existential certificate, not a theorem derivable from the radius hypothesis.
+The local finite simple-pole circle residue formula is now theorem-level; the
+rectangle-to-circles deformation remains open.
 
 ## Required SOTA Check Before Public Claims
 

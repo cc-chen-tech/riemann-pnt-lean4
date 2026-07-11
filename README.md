@@ -309,9 +309,11 @@ Full `def ... : Prop` inventory:
 - unclassified Prop definitions: 0.
 
 No route interface currently has a body equal to `True`.  The rectangle
-contour/residue interface is a real `Prop` statement, but it is still not a
-proved general residue theorem.  The repository does prove the constant-function
-sanity checks `MathlibAux.rectangleBoundaryIntegral_const`,
+contour/residue interface is an existential certificate `Prop`, not a theorem
+derivable from its radius hypothesis.  The repository now proves the genuine
+local result `MathlibAux.circleIntegral_eq_finite_simple_pole_residue_sum` for
+a holomorphic remainder plus finitely many simple principal parts.  It also
+proves the constant-function sanity checks `MathlibAux.rectangleBoundaryIntegral_const`,
 `MathlibAux.rectangleIntegral_const`, and
 `MathlibAux.rectangleIntegral_const_zero`; these show that the interface is
 satisfiable in the holomorphic empty-pole case, not that Perron's formula or the
@@ -330,7 +332,7 @@ general rectangle residue theorem has been proved.
 | `ZeroFreeRegion.lean` | 3-4-1 setup, log derivative series, compact zero-free region, quantitative zero-free-region targets | sorry-free, quantitative targets unproved |
 | `PrimeNumberTheorem/ExplicitFormulaAux.lean` | `chebyshevPsi0`, `goodHeight`, finite zero-sum support helpers, boundary-height and auxiliary multiplicity normalizers | sorry-free, support predicate only |
 | `PrimeNumberTheorem/ExplicitFormulaTruncated.lean` | Truncated explicit-formula route interface with a real Prop body | sorry-free, route interface unproved |
-| `MathlibAux/RectangleResidue.lean` | Rectangle residue route interface for future Perron/explicit-formula work, plus constant-function sanity checks | sorry-free, route interface unproved |
+| `MathlibAux/RectangleResidue.lean` | Rectangle residue route interface for future Perron/explicit-formula work, circle finite simple-pole residue formula, plus constant-function sanity checks | sorry-free, route interface unproved |
 | `HardyTheorem/AFE.lean` | Corrected AFE route interface using an unwrapped theta wrapper | sorry-free, route interface unproved |
 | `RiemannExplorer/Conrey40.lean` | Conrey target alias to the upper-level `KnownResults` target | sorry-free, route interface alias |
 
@@ -867,7 +869,8 @@ truncated formulation: `goodHeight` is equivalent to saying that no
 nontrivial zero has boundary height `T`, failure of `goodHeight` is exactly
 such a boundary zero, every unit interval contains a good height, and there is
 a strictly increasing sequence of good heights tending to infinity.  Every
-nontrivial zero belongs to its self-height truncation, and the current
+nontrivial zero belongs to its self-height truncation; the finite nontrivial
+truncation also has membership and monotonicity wrappers.  The current
 finset-based `zeroMultiplicity` is `1` or `0` according to membership in that
 truncation.  The finite trivial-zero
 truncation now also has theorem-level support: membership is characterized by

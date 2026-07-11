@@ -177,21 +177,29 @@ Mathlib 4.29.1 has useful contour pieces:
    `meromorphicTrailingCoeffAt`.
 7. `MeromorphicOn.extract_zeros_poles` and Jensen-formula infrastructure.
 
-I did not find a directly callable general residue theorem of the form
+The project now proves
+`MathlibAux.circleIntegral_eq_finite_simple_pole_residue_sum`: a holomorphic
+remainder plus finitely many principal parts `residue p / (z-p)` integrates
+around a containing circle to `2*pi*I` times the finite residue sum.  This is
+the genuine local finite-residue step.
+
+There is still no directly callable general theorem of the form
 "rectangle contour integral equals `2*pi*I` times a finite residue sum".
-The project will likely need an intermediate local theorem:
+The remaining intermediate theorem is:
 
 ```lean
 rectangleIntegral_meromorphic_eq_residue_sum
 ```
 
-for a meromorphic function with finite divisor support in the rectangle.  It can
-be built from small-circle indentation, Cauchy integral formulas, and the
-existing rectangle Cauchy-Goursat theorem, but it is not currently a one-line
-Mathlib call.
+for a meromorphic function with finite divisor support in the rectangle.  The
+local circle residue calculation is now proved; the missing part is deforming
+the rectangle boundary to the finite family of pole circles using the existing
+rectangle Cauchy-Goursat theorem.
 
-The current project does prove the constant-function sanity layer for this
-interface: `MathlibAux.rectangleBoundaryIntegral_const`,
+The current `rectangleIntegral_meromorphic_eq_residue_sum` declaration remains
+an existential certificate interface, not a theorem following from its radius
+hypothesis.  The project also proves the constant-function sanity layer:
+`MathlibAux.rectangleBoundaryIntegral_const`,
 `MathlibAux.rectangleIntegral_const`, and
 `MathlibAux.rectangleIntegral_const_zero` show that constant holomorphic
 functions have zero rectangle boundary integral and satisfy the residue-sum
@@ -404,7 +412,8 @@ and
 2. Already completed for the current support layer: `goodHeight` iff/negation
    normalizers, `exists_goodHeight_Ioo` and
    `exists_strictMono_goodHeight_tendsto` for an unbounded admissible contour
-   sequence, self-height membership of nontrivial zeros, and the current
+   sequence, membership/monotonicity wrappers for the finite nontrivial-zero
+   truncation, self-height membership of nontrivial zeros, and the current
    finset-based `zeroMultiplicity` values `0`/`1` according to membership in
    the self-height truncation; finite trivial-zero membership, real-axis /
    negative-real-part facts, denominator safety, `2 <= ‖s‖` and
