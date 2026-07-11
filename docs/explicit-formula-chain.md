@@ -259,6 +259,15 @@ takes `0 < beta < 1`, an `ExplicitFormulaConversePowerTarget beta`, and a
 analytic content is still the converse explicit-formula theorem that would
 produce `ExplicitFormulaConversePowerTarget beta`.
 
+The current mainline now also contains a genuine obstruction lemma behind that
+converse route.  The theorem
+`PrimeNumberTheorem.not_psi_power_error_bound_sub_delta_of_frequently_negative_single_zero_complex_psi_decomposition`
+says that if a selected zero contribution `-x^rho/rho` dominates the retained
+tail on arbitrarily large good points, then
+`PsiPowerErrorBound (rho.re - delta)` is impossible.  This is not yet a full
+explicit-formula converse: the missing analytic step is still to produce those
+good points and the decomposition from Perron/contour estimates.
+
 The finite truncated-zero layer also has a narrow tail-collapse API for the
 degenerate case where no new zeros appear eventually above a base cutoff.  The
 public theorems

@@ -1354,7 +1354,9 @@ and its signed version prove local boundedness of the logarithmic derivative
 for any analytic unit.  The zeta-specific
 `ZeroFreeRegion.exists_eventually_norm_logDeriv_riemannZeta_le_const_of_ne_one_of_ne_zero`
 wrappers and their horizontal atRight forms supply the same local boundedness
-around nonzero shifted points away from the pole, and the
+around nonzero shifted points away from the pole.  Their `_le_log_abs...`
+variants put the same local bounds into the `C * log |t|` scale above height
+`3`, still with constants depending on the center.  The
 `..._analyticAt_order_eq_nat_auto` lemmas package this into punctured-ball
 regular-part bounds, including zeta-specific auto wrappers.  For actual zeta zeros, the additional wrappers
 `ZeroFreeRegion.analyticOrderNatAt_riemannZeta_pos_of_zero`,

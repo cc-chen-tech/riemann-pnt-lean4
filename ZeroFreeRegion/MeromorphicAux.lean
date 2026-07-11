@@ -10041,6 +10041,50 @@ lemma exists_eventually_atRight_norm_neg_logDeriv_riemannZeta_sigma_it_le_const_
     hcont.tendsto.mono_left nhdsWithin_le_nhds
   exact htendsto.eventually hbound
 
+/-- Horizontal right-neighborhood local boundedness of `logDeriv ζ`, normalized
+to the `C * log |t|` scale above height `3`.  The constant is still local to the
+center point. -/
+lemma exists_eventually_atRight_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_of_ne_one_of_ne_zero
+    {β t : ℝ} (ht : 3 ≤ |t|)
+    (hρ1 : ((β : ℂ) + I * t) ≠ 1)
+    (hzeta : riemannZeta ((β : ℂ) + I * t) ≠ 0) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ (σ : ℝ) in 𝓝[Set.Ioi β] β,
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤ C * Real.log |t| := by
+  rcases exists_eventually_atRight_norm_logDeriv_riemannZeta_sigma_it_le_const_of_ne_one_of_ne_zero
+      hρ1 hzeta with
+    ⟨M, hM, hbound⟩
+  refine ⟨M, hM, ?_⟩
+  filter_upwards [hbound] with σ hσ
+  have hlog_ge_one : 1 ≤ Real.log |t| :=
+    (log_abs_gt_one_of_three_le ht).le
+  have hM_le : M ≤ M * Real.log |t| := by
+    calc
+      M = M * 1 := by ring
+      _ ≤ M * Real.log |t| := mul_le_mul_of_nonneg_left hlog_ge_one hM
+  exact hσ.trans hM_le
+
+/-- Signed horizontal right-neighborhood local boundedness of `logDeriv ζ`,
+normalized to the `C * log |t|` scale above height `3`.  The constant is still
+local to the center point. -/
+lemma exists_eventually_atRight_norm_neg_logDeriv_riemannZeta_sigma_it_le_log_abs_of_ne_one_of_ne_zero
+    {β t : ℝ} (ht : 3 ≤ |t|)
+    (hρ1 : ((β : ℂ) + I * t) ≠ 1)
+    (hzeta : riemannZeta ((β : ℂ) + I * t) ≠ 0) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ (σ : ℝ) in 𝓝[Set.Ioi β] β,
+      ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤ C * Real.log |t| := by
+  rcases exists_eventually_atRight_norm_neg_logDeriv_riemannZeta_sigma_it_le_const_of_ne_one_of_ne_zero
+      hρ1 hzeta with
+    ⟨M, hM, hbound⟩
+  refine ⟨M, hM, ?_⟩
+  filter_upwards [hbound] with σ hσ
+  have hlog_ge_one : 1 ≤ Real.log |t| :=
+    (log_abs_gt_one_of_three_le ht).le
+  have hM_le : M ≤ M * Real.log |t| := by
+    calc
+      M = M * 1 := by ring
+      _ ≤ M * Real.log |t| := mul_le_mul_of_nonneg_left hlog_ge_one hM
+  exact hσ.trans hM_le
+
 /-- Automatic punctured-ball regular-part bound from an analytic-order
 factorization.  The local bound on the analytic unit is proved internally. -/
 lemma exists_punctured_ball_norm_logDeriv_sub_order_mul_inv_le_of_analyticAt_order_eq_nat_auto

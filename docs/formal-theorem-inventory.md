@@ -1044,7 +1044,8 @@ Core verified declarations:
 - `exists_eventually_norm_logDeriv_riemannZeta_le_const_of_ne_one_of_ne_zero`,
   its signed version, and the corresponding horizontal atRight variants
   specialize the same local boundedness to ζ away from the pole at a nonzero
-  center.
+  center; the `_le_log_abs...` variants normalize these local constants as
+  `C * log |t|` above height `3`, without making the constant uniform.
 - The automatic `..._analyticAt_order_eq_nat_auto` lemmas, together with their
   zeta-specific variants, turn analytic-order principal-part decompositions
   into punctured-ball regular-part norm bounds with an internally chosen
@@ -2676,6 +2677,15 @@ Core verified declarations:
   record the contrapositive form: assuming the future `2/3` zero-exclusion
   route, an actual zero on `Re(s)=1/3` rules out the concrete
   `PsiPowerErrorBound (2/3 - delta)` for `0 < delta <= 2/3`.
+- `rpow_sub_delta_isLittleO_rpow_atTop`,
+  `not_isBigO_of_frequently_norm_ge_const_mul_and_small_remainder`, and
+  `not_psi_power_error_bound_sub_delta_of_frequently_negative_single_zero_complex_psi_decomposition`
+  add the first local obstruction theorem behind the explicit-formula
+  converse route.  They prove that a global `psi(x)-x = O(x^(rho.re-delta))`
+  bound is incompatible with arbitrarily large good points where the actual
+  selected-zero term `-x^rho/rho` dominates the retained tail by a fixed
+  quarter-scale margin.  The hard future input is still the analytic
+  construction of those good points from a true explicit formula.
 - `no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route`
   gives the direct right-side-line consequence of the same conditional
   truncated explicit-formula route at `beta = 2/3`, before applying the

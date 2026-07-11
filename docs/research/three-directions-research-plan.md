@@ -327,6 +327,14 @@ Verified assets now include:
   `no_zeros_on_reflected_line_of_psi_power_error_bound_sub_delta_bridge`,
   `not_psi_power_error_bound_sub_delta_of_exists_zero_on_line_bridge`, and
   `not_psi_power_error_bound_sub_delta_of_exists_zero_on_reflected_line_bridge`;
+- the new frequent-good-points obstruction:
+  `not_isBigO_of_frequently_norm_ge_const_mul_and_small_remainder` and
+  `not_psi_power_error_bound_sub_delta_of_frequently_negative_single_zero_complex_psi_decomposition`.
+  This is the first non-wrapper Lean theorem in this direction: it proves that
+  a single retained zero term dominating the tail on arbitrarily large good
+  points rules out the corresponding stronger `psi` power error.  What remains
+  is to get those good points from the actual explicit formula and zero-tail
+  estimates.
 - existence-form versions of the general `psi`-error and explicit-formula
   converse bridges:
   `not_exists_nontrivial_zero_on_line_of_psi_power_error_bridge`;

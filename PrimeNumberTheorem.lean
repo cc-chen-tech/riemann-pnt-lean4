@@ -3668,6 +3668,152 @@ theorem psiPowerErrorBound_of_pointwise {θ C X : ℝ}
     filter_upwards [eventually_ge_atTop X] with x hx
     exact h x hx)
 
+/-- Power functions separated by a positive exponent gap are little-o at
+`+∞`.  This is the scale comparison used by the single-zero obstruction:
+`x^(β-δ)` is asymptotically smaller than `x^β` for `δ > 0`. -/
+lemma rpow_sub_delta_isLittleO_rpow_atTop {β delta : ℝ}
+    (hdelta_pos : 0 < delta) :
+    (fun x : ℝ => x ^ (β - delta)) =o[(atTop : Filter ℝ)]
+      (fun x : ℝ => x ^ β) := by
+  refine (isLittleO_iff_tendsto' ?_).2 ?_
+  · filter_upwards [Filter.eventually_gt_atTop (0 : ℝ)] with x hx hzero
+    exact False.elim ((Real.rpow_pos_of_pos hx β).ne' hzero)
+  · have hratio_eq :
+        (fun x : ℝ => x ^ (β - delta) / x ^ β) =ᶠ[atTop]
+          fun x : ℝ => x ^ (-delta) := by
+      filter_upwards [Filter.eventually_gt_atTop (0 : ℝ)] with x hx
+      rw [Real.rpow_sub hx β delta]
+      have hxβ_ne : x ^ β ≠ 0 := (Real.rpow_pos_of_pos hx β).ne'
+      have hxδ_ne : x ^ delta ≠ 0 :=
+        (Real.rpow_pos_of_pos hx delta).ne'
+      have hdiv : (x ^ β / x ^ delta) / x ^ β = (x ^ delta)⁻¹ := by
+        field_simp [hxβ_ne, hxδ_ne]
+      rw [hdiv, Real.rpow_neg hx.le]
+    exact (tendsto_rpow_neg_atTop hdelta_pos).congr' hratio_eq.symm
+
+/-- Big-O bounds for real-valued functions can be viewed as complex-valued
+bounds after coercing the left side to `ℂ`. -/
+lemma isBigO_complex_ofReal_of_isBigO {f g : ℝ → ℝ}
+    (h : f =O[(atTop : Filter ℝ)] g) :
+    (fun x : ℝ => (f x : ℂ)) =O[(atTop : Filter ℝ)] g := by
+  simpa using (Complex.isBigO_ofReal_left.mpr h)
+
+/-- Eventually, the selected zero contribution has the expected
+`‖ρ‖⁻¹ * x^ρ.re` norm lower bound. -/
+lemma eventually_norm_zero_contribution_ge_inv_norm_mul_rpow_re (ρ : ℂ) :
+    ∀ᶠ (x : ℝ) in (atTop : Filter ℝ),
+      ‖ρ‖⁻¹ * ‖(x : ℝ) ^ ρ.re‖ ≤ ‖-((x : ℂ) ^ ρ / ρ)‖ := by
+  filter_upwards [Filter.eventually_gt_atTop (0 : ℝ)] with x hx
+  rw [norm_neg, norm_div, Complex.norm_cpow_eq_rpow_re_of_pos hx]
+  have hpow_nonneg : 0 ≤ x ^ ρ.re :=
+    (Real.rpow_pos_of_pos hx ρ.re).le
+  simp [Real.norm_eq_abs, abs_of_nonneg hpow_nonneg, div_eq_mul_inv,
+    mul_comm]
+
+/-- Frequent-good-points version of the dominant-term obstruction.
+
+The remainder need not be globally `o(scale)`: it is enough that there are
+arbitrarily large good points where the main term has size at least
+`c * scale`, the remainder is at most `(c / 4) * scale`, and the decomposition
+holds.  A global `O(smaller)` bound with `smaller=o(scale)` would make `f`
+small eventually, contradicting one of those good points. -/
+theorem not_isBigO_of_frequently_norm_ge_const_mul_and_small_remainder
+    {E : Type*} [NormedAddCommGroup E]
+    {f main err : ℝ → E} {scale smaller : ℝ → ℝ} {c : ℝ}
+    (hc : 0 < c)
+    (hgood : ∃ᶠ x in (atTop : Filter ℝ),
+      0 < ‖scale x‖ ∧
+      c * ‖scale x‖ ≤ ‖main x‖ ∧
+      ‖err x‖ ≤ (c / 4) * ‖scale x‖ ∧
+      f x = main x + err x)
+    (hsmaller : smaller =o[(atTop : Filter ℝ)] scale) :
+    ¬ f =O[(atTop : Filter ℝ)] smaller := by
+  intro hf_smaller
+  have hf_scale : f =o[(atTop : Filter ℝ)] scale :=
+    hf_smaller.trans_isLittleO hsmaller
+  have hc_quarter : 0 < c / 4 := by positivity
+  have hf_small :
+      ∀ᶠ x in (atTop : Filter ℝ), ‖f x‖ ≤ (c / 4) * ‖scale x‖ :=
+    hf_scale.def hc_quarter
+  have hfreq_false : ∃ᶠ x in (atTop : Filter ℝ), False := by
+    refine (hgood.and_eventually hf_small).mono ?_
+    intro x hx
+    rcases hx with ⟨⟨hscale_pos, hmain_lower, herr_small, hdecomp⟩,
+      hf_small_x⟩
+    have hmain_eq : main x = f x - err x := by
+      rw [hdecomp]
+      abel
+    have hmain_upper_norm : ‖main x‖ ≤ ‖f x‖ + ‖err x‖ := by
+      simpa [hmain_eq] using norm_sub_le (f x) (err x)
+    have hmain_upper :
+        ‖main x‖ ≤ (c / 2) * ‖scale x‖ := by
+      calc
+        ‖main x‖ ≤ ‖f x‖ + ‖err x‖ := hmain_upper_norm
+        _ ≤ (c / 4) * ‖scale x‖ + (c / 4) * ‖scale x‖ :=
+          add_le_add hf_small_x herr_small
+        _ = (c / 2) * ‖scale x‖ := by ring
+    have hhalf_lt : c / 2 < c := by linarith
+    have hscale_gap : (c / 2) * ‖scale x‖ < c * ‖scale x‖ :=
+      mul_lt_mul_of_pos_right hhalf_lt hscale_pos
+    linarith
+  exact hfreq_false (Filter.Eventually.of_forall (fun _ => not_false))
+
+/-- Frequent-good-points version of the actual-sign single-zero obstruction.
+
+This weakens the global tail hypothesis expected from a full explicit-formula
+converse.  It is enough to have arbitrarily large good points where the
+retained tail is at most one quarter of the selected-zero main scale and the
+actual-sign complex `ψ` decomposition holds.  A global `ψ` power-saving bound
+would make the left side small eventually, contradicting those good points. -/
+theorem not_psi_power_error_bound_sub_delta_of_frequently_negative_single_zero_complex_psi_decomposition
+    {ρ : ℂ} {delta : ℝ} (hρ_ne : ρ ≠ 0) (hdelta_pos : 0 < delta)
+    {remainder : ℝ → ℂ}
+    (hgood :
+      ∃ᶠ x in (atTop : Filter ℝ),
+        ‖remainder x‖ ≤ (‖ρ‖⁻¹ / 4) * ‖(x : ℝ) ^ ρ.re‖ ∧
+        ((chebyshevPsi x - x : ℝ) : ℂ) =
+          -((x : ℂ) ^ ρ / ρ) + remainder x) :
+    ¬ PsiPowerErrorBound (ρ.re - delta) := by
+  intro herror
+  have hc : 0 < ‖ρ‖⁻¹ := inv_pos.mpr (norm_pos_iff.mpr hρ_ne)
+  have hscale_main :
+      ∀ᶠ (x : ℝ) in (atTop : Filter ℝ),
+        0 < ‖(x : ℝ) ^ ρ.re‖ ∧
+        ‖ρ‖⁻¹ * ‖(x : ℝ) ^ ρ.re‖ ≤ ‖-((x : ℂ) ^ ρ / ρ)‖ := by
+    filter_upwards
+      [Filter.eventually_gt_atTop (0 : ℝ),
+        eventually_norm_zero_contribution_ge_inv_norm_mul_rpow_re ρ] with
+      x hx_pos hx_lower
+    exact
+      ⟨norm_pos_iff.mpr (Real.rpow_pos_of_pos hx_pos ρ.re).ne',
+        by simpa using hx_lower⟩
+  have hgood_full : ∃ᶠ (x : ℝ) in (atTop : Filter ℝ),
+      0 < ‖(x : ℝ) ^ ρ.re‖ ∧
+      ‖ρ‖⁻¹ * ‖(x : ℝ) ^ ρ.re‖ ≤ ‖-((x : ℂ) ^ ρ / ρ)‖ ∧
+      ‖remainder x‖ ≤ (‖ρ‖⁻¹ / 4) * ‖(x : ℝ) ^ ρ.re‖ ∧
+      ((chebyshevPsi x - x : ℝ) : ℂ) =
+        -((x : ℂ) ^ ρ / ρ) + remainder x := by
+    refine (hgood.and_eventually hscale_main).mono ?_
+    intro x hx
+    rcases hx with ⟨⟨hrem_small, hdecomp⟩, hscale_pos, hmain_lower⟩
+    exact ⟨hscale_pos, hmain_lower, hrem_small, hdecomp⟩
+  have hcomplex :
+      (fun x : ℝ => ((chebyshevPsi x - x : ℝ) : ℂ))
+        =O[atTop] (fun x : ℝ => x ^ (ρ.re - delta)) :=
+    isBigO_complex_ofReal_of_isBigO herror
+  exact
+    not_isBigO_of_frequently_norm_ge_const_mul_and_small_remainder
+      (E := ℂ)
+      (f := fun x : ℝ => ((chebyshevPsi x - x : ℝ) : ℂ))
+      (main := fun x : ℝ => -((x : ℂ) ^ ρ / ρ))
+      (err := remainder)
+      (scale := fun x : ℝ => x ^ ρ.re)
+      (smaller := fun x : ℝ => x ^ (ρ.re - delta))
+      (c := ‖ρ‖⁻¹)
+      hc hgood_full
+      (rpow_sub_delta_isLittleO_rpow_atTop hdelta_pos)
+      hcomplex
+
 /-- A concrete form of the proposed strong PNT-error input: some power saving
 strictly below the `2 / 3` barrier for `ψ(x) - x`. -/
 abbrev PsiPowerErrorBelowTwoThirds : Prop :=

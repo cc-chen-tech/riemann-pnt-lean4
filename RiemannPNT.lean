@@ -7503,6 +7503,32 @@ theorem exists_eventually_atRight_norm_neg_logDeriv_riemannZeta_sigma_it_le_cons
   ZeroFreeRegion.exists_eventually_atRight_norm_neg_logDeriv_riemannZeta_sigma_it_le_const_of_ne_one_of_ne_zero
     hρ1 hzeta
 
+/-- Public horizontal right-neighborhood local boundedness of `logDeriv ζ`,
+normalized to the `C * log |t|` scale above height `3`.  The constant is local
+to the center point. -/
+theorem exists_eventually_atRight_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_of_ne_one_of_ne_zero
+    {β t : ℝ}
+    (ht : 3 ≤ |t|)
+    (hρ1 : ((β : ℂ) + I * t) ≠ 1)
+    (hzeta : riemannZeta ((β : ℂ) + I * t) ≠ 0) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ (σ : ℝ) in 𝓝[Set.Ioi β] β,
+      ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤ C * Real.log |t| :=
+  ZeroFreeRegion.exists_eventually_atRight_norm_logDeriv_riemannZeta_sigma_it_le_log_abs_of_ne_one_of_ne_zero
+    ht hρ1 hzeta
+
+/-- Public signed horizontal right-neighborhood local boundedness of
+`logDeriv ζ`, normalized to the `C * log |t|` scale above height `3`.  The
+constant is local to the center point. -/
+theorem exists_eventually_atRight_norm_neg_logDeriv_riemannZeta_sigma_it_le_log_abs_of_ne_one_of_ne_zero
+    {β t : ℝ}
+    (ht : 3 ≤ |t|)
+    (hρ1 : ((β : ℂ) + I * t) ≠ 1)
+    (hzeta : riemannZeta ((β : ℂ) + I * t) ≠ 0) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ (σ : ℝ) in 𝓝[Set.Ioi β] β,
+      ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤ C * Real.log |t| :=
+  ZeroFreeRegion.exists_eventually_atRight_norm_neg_logDeriv_riemannZeta_sigma_it_le_log_abs_of_ne_one_of_ne_zero
+    ht hρ1 hzeta
+
 /-- Public automatic bridge from analytic order to a punctured-ball regular-part
 norm estimate. -/
 theorem exists_punctured_ball_norm_logDeriv_sub_order_mul_inv_le_of_analyticAt_order_eq_nat_auto
