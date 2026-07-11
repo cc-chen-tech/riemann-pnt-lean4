@@ -1045,7 +1045,10 @@ Core verified declarations:
   its signed version, and the corresponding horizontal atRight variants
   specialize the same local boundedness to ζ away from the pole at a nonzero
   center; the `_le_log_abs...` variants normalize these local constants as
-  `C * log |t|` above height `3`, without making the constant uniform.
+  `C * log |t|` above height `3`, and
+  `exists_eventually_atRight_re_neg_deriv_div_riemannZeta_sigma_it_le_log_abs_of_ne_one_of_ne_zero`
+  records the same local control in the 3-4-1 real-part convention
+  `Re(-ζ'/ζ) <= C log |t|`, without making the constant uniform.
 - The automatic `..._analyticAt_order_eq_nat_auto` lemmas, together with their
   zeta-specific variants, turn analytic-order principal-part decompositions
   into punctured-ball regular-part norm bounds with an internally chosen
@@ -2686,6 +2689,23 @@ Core verified declarations:
   selected-zero term `-x^rho/rho` dominates the retained tail by a fixed
   quarter-scale margin.  The hard future input is still the analytic
   construction of those good points from a true explicit formula.
+- `psiErrorAboveOne`, `psiErrorAboveOneComplex`,
+  `locallyIntegrableOn_psiErrorAboveOneComplex`,
+  `psiErrorAboveOneComplex_isBigO_atTop`,
+  `psiErrorAboveOneComplex_isBigO_zero`, and
+  `mellinConvergent_psiErrorAboveOneComplex_neg_of_power_error`,
+  `mellin_psiErrorAboveOneComplex_neg_eq_integral`,
+  `differentiableAt_mellin_psiErrorAboveOneComplex_neg_of_power_error`
+  prove the convergence and Mellin-continuation half of the power-error
+  converse route: a `PsiPowerErrorBound theta` makes the transform of the
+  cutoff complex `psi(x)-x` error holomorphic on `Re(s) > theta` after
+  `z ↦ -z`.
+- `mul_mellin_psiErrorAboveOneComplex_neg_eq_neg_logDeriv_sub_pole`
+  proves the exact overlap identity
+  `s * M(s) = -ζ'(s)/ζ(s) - s/(s-1)` on `Re(s) > 1`, using Abel summation,
+  the linear Chebyshev bound, and Mathlib's von Mangoldt L-series identity.
+  The remaining core step is analytic-continuation uniqueness followed by
+  the pole contradiction at a hypothetical zero with `Re(s) > theta`.
 - `no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route`
   gives the direct right-side-line consequence of the same conditional
   truncated explicit-formula route at `beta = 2/3`, before applying the

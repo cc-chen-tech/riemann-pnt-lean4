@@ -268,6 +268,26 @@ tail on arbitrarily large good points, then
 explicit-formula converse: the missing analytic step is still to produce those
 good points and the decomposition from Perron/contour estimates.
 
+The Mellin/Landau alternative to the oscillation argument now has both sides
+of its overlap proved rather than merely named as route targets.
+`PrimeNumberTheorem.mellinConvergent_psiErrorAboveOneComplex_neg_of_power_error`
+and
+`PrimeNumberTheorem.differentiableAt_mellin_psiErrorAboveOneComplex_neg_of_power_error`
+show that `PsiPowerErrorBound theta` makes the Mellin transform of the cutoff
+complex `psi(x)-x` error converge and become holomorphic throughout
+`Re(s) > theta` after `z ↦ -z`.  The theorem
+`PrimeNumberTheorem.mul_mellin_psiErrorAboveOneComplex_neg_eq_neg_logDeriv_sub_pole`
+then proves on `Re(s) > 1` the exact overlap identity
+
+`s * M(s) = -zeta'(s)/zeta(s) - s/(s-1)`.
+
+These steps are also exported through `RiemannPNT.API` as public entry points
+for downstream files.
+
+Thus the remaining Mellin converse gap is no longer the transform identity.
+It is the uniqueness-of-analytic-continuation step and the local pole
+contradiction at a hypothetical zeta zero in `Re(s) > theta`.
+
 The finite truncated-zero layer also has a narrow tail-collapse API for the
 degenerate case where no new zeros appear eventually above a base cutoff.  The
 public theorems

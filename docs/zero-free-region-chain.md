@@ -1356,7 +1356,10 @@ for any analytic unit.  The zeta-specific
 wrappers and their horizontal atRight forms supply the same local boundedness
 around nonzero shifted points away from the pole.  Their `_le_log_abs...`
 variants put the same local bounds into the `C * log |t|` scale above height
-`3`, still with constants depending on the center.  The
+`3`, and the nonzero-center
+`exists_eventually_atRight_re_neg_deriv_div_riemannZeta_sigma_it_le_log_abs_of_ne_one_of_ne_zero`
+form converts this local norm control into the direct 3-4-1 real-part
+convention.  These constants still depend on the center.  The
 `..._analyticAt_order_eq_nat_auto` lemmas package this into punctured-ball
 regular-part bounds, including zeta-specific auto wrappers.  For actual zeta zeros, the additional wrappers
 `ZeroFreeRegion.analyticOrderNatAt_riemannZeta_pos_of_zero`,

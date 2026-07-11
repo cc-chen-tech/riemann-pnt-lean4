@@ -3698,6 +3698,312 @@ lemma isBigO_complex_ofReal_of_isBigO {f g : ℝ → ℝ}
     (fun x : ℝ => (f x : ℂ)) =O[(atTop : Filter ℝ)] g := by
   simpa using (Complex.isBigO_ofReal_left.mpr h)
 
+/-! ### Mellin continuation supplied by a power-saving `ψ` error -/
+
+/-- The Chebyshev-`ψ` error cut off below `1`.  The cutoff removes the
+irrelevant behavior at zero when taking its Mellin transform. -/
+noncomputable def psiErrorAboveOne (x : ℝ) : ℝ :=
+  Set.indicator (Set.Ici (1 : ℝ)) (fun y : ℝ => chebyshevPsi y - y) x
+
+/-- Complex-valued form of the cutoff Chebyshev-`ψ` error. -/
+noncomputable def psiErrorAboveOneComplex (x : ℝ) : ℂ :=
+  (psiErrorAboveOne x : ℂ)
+
+/-- `ψ` is locally integrable on the positive real axis. -/
+lemma locallyIntegrableOn_chebyshevPsi :
+    LocallyIntegrableOn chebyshevPsi (Set.Ioi (0 : ℝ)) := by
+  intro x hx
+  refine ⟨Set.Icc (0 : ℝ) (x + 1),
+    nhdsWithin_le_nhds (Icc_mem_nhds hx (lt_add_one x)), ?_⟩
+  change IntegrableOn (fun t : ℝ => chebyshevPsi t)
+    (Set.Icc (0 : ℝ) (x + 1))
+  simpa [chebyshevPsi_eq_mathlib, Chebyshev.psi_eq_sum_Icc] using
+    (integrableOn_mul_sum_Icc
+      (fun n : ℕ => (ArithmeticFunction.vonMangoldt n : ℝ))
+      (a := (0 : ℝ)) (b := x + 1) (m := 0) (g := fun _ : ℝ => (1 : ℝ))
+      (by norm_num)
+      (continuousOn_const.integrableOn_Icc))
+
+/-- The cutoff `ψ(x)-x` error is locally integrable on `(0,∞)`. -/
+lemma locallyIntegrableOn_psiErrorAboveOne :
+    LocallyIntegrableOn psiErrorAboveOne (Set.Ioi (0 : ℝ)) := by
+  have hid : LocallyIntegrableOn (fun x : ℝ => x) (Set.Ioi (0 : ℝ)) :=
+    continuous_id.locallyIntegrable.locallyIntegrableOn _
+  have herr :
+      LocallyIntegrableOn (fun x : ℝ => chebyshevPsi x - x)
+        (Set.Ioi (0 : ℝ)) :=
+    locallyIntegrableOn_chebyshevPsi.sub hid
+  intro x hx
+  rcases herr x hx with ⟨u, hu, hint⟩
+  exact ⟨u, hu, by
+    simpa [psiErrorAboveOne] using hint.indicator measurableSet_Ici⟩
+
+/-- Complex coercion preserves local integrability of the cutoff `ψ` error. -/
+lemma locallyIntegrableOn_psiErrorAboveOneComplex :
+    LocallyIntegrableOn psiErrorAboveOneComplex (Set.Ioi (0 : ℝ)) := by
+  simpa [psiErrorAboveOneComplex, Function.comp_def] using
+    Complex.ofRealCLM.locallyIntegrableOn_comp
+      locallyIntegrableOn_psiErrorAboveOne
+
+/-- A power-scale `ψ` error bound gives the same bound for the cutoff complex
+error at infinity. -/
+lemma psiErrorAboveOneComplex_isBigO_atTop {θ : ℝ}
+    (herror : PsiPowerErrorBound θ) :
+    psiErrorAboveOneComplex =O[(atTop : Filter ℝ)] (fun x : ℝ => x ^ θ) := by
+  have hcomplex :
+      (fun x : ℝ => ((chebyshevPsi x - x : ℝ) : ℂ))
+        =O[(atTop : Filter ℝ)] (fun x : ℝ => x ^ θ) :=
+    isBigO_complex_ofReal_of_isBigO herror
+  refine hcomplex.congr' ?_ (Filter.EventuallyEq.rfl)
+  filter_upwards [eventually_ge_atTop (1 : ℝ)] with x hx
+  change ((chebyshevPsi x - x : ℝ) : ℂ) = (psiErrorAboveOne x : ℂ)
+  norm_cast
+  simp [psiErrorAboveOne, hx]
+
+/-- The cutoff error vanishes near zero, hence satisfies every power bound
+there. -/
+lemma psiErrorAboveOneComplex_isBigO_zero (b : ℝ) :
+    psiErrorAboveOneComplex =O[𝓝[>] (0 : ℝ)]
+      (fun x : ℝ => x ^ (-b)) := by
+  refine Asymptotics.IsBigO.of_bound 0 ?_
+  filter_upwards [Ioo_mem_nhdsGT (show (0 : ℝ) < 1 by norm_num)] with x hx
+  have hxnot : ¬ (1 : ℝ) ≤ x := not_le.mpr hx.2
+  simp [psiErrorAboveOneComplex, psiErrorAboveOne, hxnot]
+
+/-- The cutoff error has a convergent Mellin transform at `-s` throughout
+`Re(s) > θ` under the power bound `ψ(x)-x = O(x^θ)`. -/
+theorem mellinConvergent_psiErrorAboveOneComplex_neg_of_power_error
+    {θ : ℝ} (herror : PsiPowerErrorBound θ) {s : ℂ} (hs : θ < s.re) :
+    MellinConvergent psiErrorAboveOneComplex (-s) := by
+  apply mellinConvergent_of_isBigO_rpow
+    locallyIntegrableOn_psiErrorAboveOneComplex
+    (a := -θ) (b := -s.re - 1)
+  · simpa using psiErrorAboveOneComplex_isBigO_atTop herror
+  · simp only [Complex.neg_re]
+    linarith
+  · exact psiErrorAboveOneComplex_isBigO_zero (-s.re - 1)
+  · simp only [Complex.neg_re]
+    linarith
+
+/-- Integral form of the cutoff Mellin transform. -/
+lemma mellin_psiErrorAboveOneComplex_neg_eq_integral (s : ℂ) :
+    mellin psiErrorAboveOneComplex (-s) =
+      ∫ t in Set.Ioi (1 : ℝ),
+        ((chebyshevPsi t - t : ℝ) : ℂ) * (t : ℂ) ^ (-(s + 1)) := by
+  let F : ℝ → ℂ := fun t =>
+    ((chebyshevPsi t - t : ℝ) : ℂ) * (t : ℂ) ^ (-(s + 1))
+  have hintegrand :
+      (fun t : ℝ => (t : ℂ) ^ ((-s) - 1) • psiErrorAboveOneComplex t) =
+        fun t : ℝ => Set.indicator (Set.Ici (1 : ℝ)) F t := by
+    funext t
+    by_cases ht : (1 : ℝ) ≤ t
+    · simp only [Set.indicator_apply, Set.mem_Ici, ht, if_true,
+        psiErrorAboveOneComplex, psiErrorAboveOne,
+        Complex.ofReal_sub, smul_eq_mul, F]
+      rw [show -s - 1 = -(s + 1) by ring]
+      ring
+    · simp only [Set.indicator_apply, Set.mem_Ici, ht, if_false,
+        psiErrorAboveOneComplex, psiErrorAboveOne]
+      norm_num
+  rw [mellin, hintegrand]
+  calc
+    (∫ t in Set.Ioi (0 : ℝ), Set.indicator (Set.Ici (1 : ℝ)) F t) =
+        ∫ t : ℝ, Set.indicator (Set.Ioi (0 : ℝ))
+          (Set.indicator (Set.Ici (1 : ℝ)) F) t := by
+            rw [integral_indicator measurableSet_Ioi]
+    _ = ∫ t : ℝ, Set.indicator (Set.Ici (1 : ℝ)) F t := by
+      apply integral_congr_ae
+      filter_upwards [] with t
+      by_cases ht : (1 : ℝ) ≤ t
+      · have ht0 : t ∈ Set.Ioi (0 : ℝ) := lt_of_lt_of_le zero_lt_one ht
+        simp only [Set.indicator_apply, Set.mem_Ici, ht, ht0, if_true]
+      · simp only [Set.indicator_apply, Set.mem_Ici, ht, if_false,
+          Set.mem_Ioi, ite_self]
+    _ = ∫ t in Set.Ici (1 : ℝ), F t :=
+      integral_indicator measurableSet_Ici
+    _ = ∫ t in Set.Ioi (1 : ℝ), F t := integral_Ici_eq_integral_Ioi
+    _ = ∫ t in Set.Ioi (1 : ℝ),
+        ((chebyshevPsi t - t : ℝ) : ℂ) * (t : ℂ) ^ (-(s + 1)) := rfl
+
+/-- A power-saving bound `ψ(x)-x = O(x^θ)` makes the Mellin transform of the
+cutoff error holomorphic after the change of variables `z ↦ -z` throughout
+the half-plane `Re(z) > θ`.
+
+This is the analytic-continuation half of the Landau/Mellin converse route:
+once the transform is identified with the logarithmic derivative of `ζ` on
+`Re(z) > 1`, uniqueness of analytic continuation can exclude a zeta zero in
+the larger half-plane. -/
+theorem differentiableAt_mellin_psiErrorAboveOneComplex_neg_of_power_error
+    {θ : ℝ} (herror : PsiPowerErrorBound θ) {s : ℂ} (hs : θ < s.re) :
+    DifferentiableAt ℂ
+      (fun z : ℂ => mellin psiErrorAboveOneComplex (-z)) s := by
+  have htop :
+      psiErrorAboveOneComplex =O[(atTop : Filter ℝ)]
+        (fun x : ℝ => x ^ (-(-θ))) := by
+    simpa using psiErrorAboveOneComplex_isBigO_atTop herror
+  have hMellin :
+      DifferentiableAt ℂ (mellin psiErrorAboveOneComplex) (-s) :=
+    mellin_differentiableAt_of_isBigO_rpow
+      locallyIntegrableOn_psiErrorAboveOneComplex
+      htop
+      (by simp only [Complex.neg_re]; linarith)
+      (psiErrorAboveOneComplex_isBigO_zero (-s.re - 1))
+      (by simp only [Complex.neg_re]; linarith)
+  simpa only [Function.comp_apply] using
+    hMellin.comp s
+      (differentiableAt_id.neg : DifferentiableAt ℂ (fun z : ℂ => -z) s)
+
+/-- On the half-plane of absolute convergence, the Mellin transform of the
+cutoff `ψ(x)-x` error is exactly the regularized logarithmic derivative
+
+`s * M(s) = -ζ'(s)/ζ(s) - s/(s-1)`.
+
+Together with
+`differentiableAt_mellin_psiErrorAboveOneComplex_neg_of_power_error`, this is
+the concrete overlap identity required by the Mellin/Landau zero-exclusion
+route. -/
+theorem mul_mellin_psiErrorAboveOneComplex_neg_eq_neg_logDeriv_sub_pole
+    {s : ℂ} (hs : 1 < s.re) :
+    s * mellin psiErrorAboveOneComplex (-s) =
+      -deriv riemannZeta s / riemannZeta s - s / (s - 1) := by
+  let E : ℝ → ℂ := fun t =>
+    ((chebyshevPsi t - t : ℝ) : ℂ) * (t : ℂ) ^ (-(s + 1))
+  let A : ℝ → ℂ := fun t =>
+    (chebyshevPsi t : ℂ) * (t : ℂ) ^ (-(s + 1))
+  let P : ℝ → ℂ := fun t => (t : ℂ) ^ (-s)
+  have herror_one : PsiPowerErrorBound 1 := by
+    simpa [PsiPowerErrorBound, Real.rpow_one] using chebyshevPsi_sub_id_isBigO_id
+  have hconv : MellinConvergent psiErrorAboveOneComplex (-s) :=
+    mellinConvergent_psiErrorAboveOneComplex_neg_of_power_error
+      (θ := 1) herror_one hs
+  have hE : IntegrableOn E (Set.Ioi (1 : ℝ)) := by
+    rw [MellinConvergent] at hconv
+    have hmono := hconv.mono_set (Set.Ioi_subset_Ioi (show (0 : ℝ) ≤ 1 by norm_num))
+    refine hmono.congr_fun ?_ measurableSet_Ioi
+    intro t ht
+    have ht_mem : (1 : ℝ) ≤ t := le_of_lt ht
+    simp only [psiErrorAboveOneComplex, psiErrorAboveOne,
+      Set.indicator_apply, Set.mem_Ici, ht_mem, if_true,
+      Complex.ofReal_sub, smul_eq_mul, E]
+    rw [show -s - 1 = -(s + 1) by ring]
+    ring
+  have hP : IntegrableOn P (Set.Ioi (1 : ℝ)) := by
+    exact integrableOn_Ioi_cpow_of_lt
+      (by simp only [Complex.neg_re]; linarith) zero_lt_one
+  have hA : IntegrableOn A (Set.Ioi (1 : ℝ)) := by
+    refine (hE.add hP).congr_fun ?_ measurableSet_Ioi
+    intro t ht
+    have htpos : 0 < t := zero_lt_one.trans ht
+    change E t + P t = A t
+    have htpower :
+        (t : ℂ) * (t : ℂ) ^ (-(s + 1)) = (t : ℂ) ^ (-s) := by
+      calc
+        (t : ℂ) * (t : ℂ) ^ (-(s + 1)) =
+            (t : ℂ) ^ (1 : ℂ) * (t : ℂ) ^ (-(s + 1)) := by
+          rw [Complex.cpow_one]
+        _ = (t : ℂ) ^ ((1 : ℂ) + (-(s + 1))) := by
+          rw [Complex.cpow_add _ _ (Complex.ofReal_ne_zero.mpr htpos.ne')]
+        _ = (t : ℂ) ^ (-s) := by
+          congr 1
+          ring
+    simp only [E, P, A, Complex.ofReal_sub]
+    rw [← htpower]
+    ring
+  have hsplit :
+      (∫ t in Set.Ioi (1 : ℝ), E t) =
+        (∫ t in Set.Ioi (1 : ℝ), A t) -
+          ∫ t in Set.Ioi (1 : ℝ), P t := by
+    rw [← integral_sub hA hP]
+    apply integral_congr_ae
+    refine ae_restrict_of_forall_mem measurableSet_Ioi ?_
+    intro t ht
+    have htpos : 0 < t := zero_lt_one.trans ht
+    have htpower :
+        (t : ℂ) * (t : ℂ) ^ (-(s + 1)) = (t : ℂ) ^ (-s) := by
+      calc
+        (t : ℂ) * (t : ℂ) ^ (-(s + 1)) =
+            (t : ℂ) ^ (1 : ℂ) * (t : ℂ) ^ (-(s + 1)) := by
+          rw [Complex.cpow_one]
+        _ = (t : ℂ) ^ ((1 : ℂ) + (-(s + 1))) := by
+          rw [Complex.cpow_add _ _ (Complex.ofReal_ne_zero.mpr htpos.ne')]
+        _ = (t : ℂ) ^ (-s) := by
+          congr 1
+          ring
+    simp only [E, P, A, Complex.ofReal_sub]
+    rw [← htpower]
+    ring
+  have hLseries :
+      LSeries (fun n : ℕ => (ArithmeticFunction.vonMangoldt n : ℂ)) s =
+        s * ∫ t in Set.Ioi (1 : ℝ), A t := by
+    have hO :
+        (fun n : ℕ => ∑ k ∈ Finset.Icc 1 n,
+          ArithmeticFunction.vonMangoldt k) =O[atTop]
+            fun n : ℕ => (n : ℝ) ^ (1 : ℝ) := by
+      refine (Asymptotics.isBigO_iff).mpr
+        ⟨Real.log 4 + 4, Filter.Eventually.of_forall ?_⟩
+      intro n
+      have hpsi : Chebyshev.psi (n : ℝ) ≤
+          (Real.log 4 + 4) * (n : ℝ) :=
+        Chebyshev.psi_le_const_mul_self (Nat.cast_nonneg n)
+      have hsum_eq :
+          ∑ k ∈ Finset.Icc 1 n, ArithmeticFunction.vonMangoldt k =
+            Chebyshev.psi (n : ℝ) := by
+        rw [Chebyshev.psi_eq_sum_Icc, Nat.floor_natCast]
+        rw [← Finset.insert_Icc_add_one_left_eq_Icc n.zero_le,
+          Finset.sum_insert (by aesop)]
+        simp [ArithmeticFunction.vonMangoldt]
+      have hnonneg :
+          0 ≤ ∑ k ∈ Finset.Icc 1 n, ArithmeticFunction.vonMangoldt k :=
+        Finset.sum_nonneg fun _ _ => ArithmeticFunction.vonMangoldt_nonneg
+      calc
+        ‖∑ k ∈ Finset.Icc 1 n, ArithmeticFunction.vonMangoldt k‖ =
+            ∑ k ∈ Finset.Icc 1 n, ArithmeticFunction.vonMangoldt k :=
+          Real.norm_of_nonneg hnonneg
+        _ = Chebyshev.psi (n : ℝ) := hsum_eq
+        _ ≤ (Real.log 4 + 4) * (n : ℝ) := hpsi
+        _ = (Real.log 4 + 4) * ‖(n : ℝ) ^ (1 : ℝ)‖ := by
+          simp [Real.rpow_one]
+    have hrepr :=
+      LSeries_eq_mul_integral_of_nonneg
+        (fun n : ℕ => ArithmeticFunction.vonMangoldt n)
+        (r := (1 : ℝ)) (by norm_num) (s := s) hs
+        hO
+        (fun _ => ArithmeticFunction.vonMangoldt_nonneg)
+    rw [hrepr]
+    congr 1
+    apply integral_congr_ae
+    refine ae_restrict_of_forall_mem measurableSet_Ioi ?_
+    intro t _ht
+    have hsum :
+        (∑ k ∈ Finset.Icc 1 ⌊t⌋₊,
+          (ArithmeticFunction.vonMangoldt k : ℂ)) =
+            (chebyshevPsi t : ℂ) := by
+      rw [chebyshevPsi_eq_mathlib, Chebyshev.psi_eq_sum_Icc]
+      rw [← Finset.insert_Icc_add_one_left_eq_Icc (Nat.zero_le ⌊t⌋₊),
+        Finset.sum_insert (by aesop)]
+      simp [ArithmeticFunction.vonMangoldt]
+    calc
+      (∑ k ∈ Finset.Icc 1 ⌊t⌋₊,
+          (ArithmeticFunction.vonMangoldt k : ℂ)) *
+          (t : ℂ) ^ (-(s + 1)) =
+          (chebyshevPsi t : ℂ) * (t : ℂ) ^ (-(s + 1)) := by
+        rw [hsum]
+      _ = A t := rfl
+  have hP_eval :
+      (∫ t in Set.Ioi (1 : ℝ), P t) = 1 / (s - 1) := by
+    rw [show (∫ t in Set.Ioi (1 : ℝ), P t) =
+        ∫ t in Set.Ioi (1 : ℝ), (t : ℂ) ^ (-s) by rfl]
+    rw [integral_Ioi_cpow_of_lt
+      (by simp only [Complex.neg_re]; linarith) zero_lt_one]
+    rw [Complex.ofReal_one, one_cpow]
+    rw [show -s + 1 = -(s - 1) by ring, neg_div_neg_eq]
+  rw [mellin_psiErrorAboveOneComplex_neg_eq_integral]
+  change s * (∫ t in Set.Ioi (1 : ℝ), E t) = _
+  rw [hsplit, mul_sub, ← hLseries,
+    ArithmeticFunction.LSeries_vonMangoldt_eq_deriv_riemannZeta_div hs,
+    hP_eval]
+  ring
+
 /-- Eventually, the selected zero contribution has the expected
 `‖ρ‖⁻¹ * x^ρ.re` norm lower bound. -/
 lemma eventually_norm_zero_contribution_ge_inv_norm_mul_rpow_re (ρ : ℂ) :

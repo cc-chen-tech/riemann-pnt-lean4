@@ -549,7 +549,7 @@ Lean declarations in `ZeroFreeRegion.lean` and
 | `ZeroFreeRegion.logDerivRegularPartLogBound_of_affine_log_abs_add_three_bound_high_height` / `...multiplicityLogDerivRegularPartLogBound...` | `lemma` | Absorbs a future affine `A + B log(|t|+3)` regular-part estimate into `C log |t|`. | Handles the usual Big-O output shape without pretending the analytic Borel/Jensen estimate itself has been proved. |
 | `ZeroFreeRegion.logDerivRegularPartLogBound_of_affine_log_norm_add_three_bound_high_height` / `...multiplicityLogDerivRegularPartLogBound...` | `lemma` | Converts future complex-variable regular-part estimates `A + B log(‖s‖+3)` into the named `LogDerivRegularPartLogBound` interface. | Matches the natural Borel/Jensen statement shape before specializing to `s=σ+it`; the zeta-specific estimate remains open. |
 | `ZeroFreeRegion.logDerivRegularPartLogBound_of_affine_log_norm_add_three_bound_on_verticalRegion` / `...multiplicityLogDerivRegularPartLogBound...` | `lemma` | Same named-interface handoff when the future regular-part estimate is stated on `verticalRegion 1 2 T0`. | Aligns the regular-part side with the existing vertical-bound `...on_verticalRegion` constructors. |
-| `ZeroFreeRegion.exists_eventually_norm_logDeriv_le_const_of_analyticAt_ne_zero` / `...riemannZeta...ne_one_of_ne_zero` / atRight and local log-scale variants | `lemma` | Proves local boundedness of `logDeriv g` and `-logDeriv g` for any analytic function nonzero at the center, then specializes this to ζ away from the pole and to horizontal right-neighborhoods, including local `C log |t|` normalization above height `3`. | Discharges the bounded-unit input used by local principal-part separation and gives local boundedness for shifted nonzero detector points; the constants remain local, not the missing uniform boundary-strip estimate. |
+| `ZeroFreeRegion.exists_eventually_norm_logDeriv_le_const_of_analyticAt_ne_zero` / `...riemannZeta...ne_one_of_ne_zero` / atRight and local log-scale variants | `lemma` | Proves local boundedness of `logDeriv g` and `-logDeriv g` for any analytic function nonzero at the center, then specializes this to ζ away from the pole and to horizontal right-neighborhoods, including local `C log |t|` normalization and the 3-4-1 real-part form `Re(-ζ'/ζ) <= C log |t|` above height `3`. | Discharges the bounded-unit input used by local principal-part separation and gives local boundedness for shifted nonzero detector points; the constants remain local, not the missing uniform boundary-strip estimate. |
 | `ZeroFreeRegion.exists_punctured_closedBall_norm_logDeriv_sub_order_mul_inv_le_of_analyticAt_order_eq_nat_auto` / signed and zeta-specific auto variants | `lemma` | Turns an analytic-order factorization directly into a punctured-ball regular-part norm bound with an internally chosen constant. | Removes the previous need to pass a manual `hregularBound` for local zeta-zero regular parts. |
 | `ZeroFreeRegion.classical_zero_free_region_of_regular_part_norm_bound_and_two_t_bound` | `lemma` | Replaces the regular-part real estimate by the norm estimate `‖-ζ'/ζ(s)+(s-ρ)⁻¹‖ ≤ B log |Im(s)|`, plus the `σ+2it` bound. | Current narrowest conditional interface matching Borel/Jensen norm estimates. |
 | `ZeroFreeRegion.classical_zero_free_region_of_exists_multiplicity_regular_part_norm_bound_and_two_t_bound` | `lemma` | Allows the future local estimate to isolate `-ζ'/ζ(s)+n(s-ρ)⁻¹` for some positive multiplicity `n`, then recovers the unit-principal real-part bound. | Avoids baking a simple-zero assumption into the conditional zero-free-region bridge. |
@@ -913,6 +913,18 @@ reflected-line version from a zero on `Re(s)=1-beta`, and the concrete
 The same `O(x^(beta-delta))` input is also packaged in the forward direction:
 assuming the future zero-exclusion route at `beta`, it gives the direct line
 `Re(s)=beta` and reflected line `Re(s)=1-beta` zero-freeness consequences.
+The Mellin/Landau half of the same converse route is now theorem-level:
+`PrimeNumberTheorem.mellinConvergent_psiErrorAboveOneComplex_neg_of_power_error`
+and
+`PrimeNumberTheorem.differentiableAt_mellin_psiErrorAboveOneComplex_neg_of_power_error`
+prove convergence and differentiability of the Mellin transform of the cutoff
+complex `psi(x)-x` error on `Re(s) > theta` from `PsiPowerErrorBound theta`.
+The overlap identity is also proved on `Re(s) > 1` by
+`PrimeNumberTheorem.mul_mellin_psiErrorAboveOneComplex_neg_eq_neg_logDeriv_sub_pole`,
+which identifies
+`s * M(s) = -ζ'(s)/ζ(s) - s/(s-1)`.  The remaining Mellin converse gap is the
+uniqueness-of-analytic-continuation step and the local pole contradiction at a
+hypothetical zeta zero in `Re(s) > theta`.
 
 The finite truncated-zero bookkeeping is proved as ordinary theorem-level
 infrastructure.  In particular,

@@ -10085,6 +10085,32 @@ lemma exists_eventually_atRight_norm_neg_logDeriv_riemannZeta_sigma_it_le_log_ab
       _ ≤ M * Real.log |t| := mul_le_mul_of_nonneg_left hlog_ge_one hM
   exact hσ.trans hM_le
 
+/-- Nonzero-center horizontal right-neighborhood local real-part bound for the
+signed logarithmic derivative.  This is the 3-4-1 convention
+`Re(-ζ'/ζ)`, obtained from the local signed norm bound above, with a
+center-dependent constant. -/
+lemma exists_eventually_atRight_re_neg_deriv_div_riemannZeta_sigma_it_le_log_abs_of_ne_one_of_ne_zero
+    {β t : ℝ} (ht : 3 ≤ |t|)
+    (hρ1 : ((β : ℂ) + I * t) ≠ 1)
+    (hzeta : riemannZeta ((β : ℂ) + I * t) ≠ 0) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ (σ : ℝ) in 𝓝[Set.Ioi β] β,
+      (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re ≤
+        C * Real.log |t| := by
+  rcases exists_eventually_atRight_norm_neg_logDeriv_riemannZeta_sigma_it_le_log_abs_of_ne_one_of_ne_zero
+      ht hρ1 hzeta with
+    ⟨C, hC, hbound⟩
+  refine ⟨C, hC, ?_⟩
+  filter_upwards [hbound] with σ hσ
+  let z : ℂ := (σ : ℂ) + I * t
+  calc
+    (-deriv riemannZeta ((σ : ℂ) + I * t) /
+        riemannZeta ((σ : ℂ) + I * t)).re
+        = (-logDeriv riemannZeta z).re := by
+          simp [z, neg_logDeriv_riemannZeta_eq_neg_deriv_div]
+    _ ≤ ‖-logDeriv riemannZeta z‖ := Complex.re_le_norm _
+    _ ≤ C * Real.log |t| := by simpa [z] using hσ
+
 /-- Automatic punctured-ball regular-part bound from an analytic-order
 factorization.  The local bound on the analytic unit is proved internally. -/
 lemma exists_punctured_ball_norm_logDeriv_sub_order_mul_inv_le_of_analyticAt_order_eq_nat_auto

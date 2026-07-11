@@ -3987,6 +3987,47 @@ theorem psiPowerErrorBound_of_pointwise {θ C X : ℝ}
     PrimeNumberTheorem.PsiPowerErrorBound θ :=
   PrimeNumberTheorem.psiPowerErrorBound_of_pointwise h
 
+/-- Public convergence half of the Mellin/Landau power-error converse route.
+
+Assuming `ψ(x)-x = O(x^θ)`, the cutoff complex `ψ`-error has a convergent
+Mellin transform at `-s` throughout `Re(s) > θ`. -/
+theorem mellinConvergent_psiErrorAboveOneComplex_neg_of_power_error
+    {θ : ℝ} (herror : PsiPowerErrorBound θ) {s : ℂ} (hs : θ < s.re) :
+    MellinConvergent PrimeNumberTheorem.psiErrorAboveOneComplex (-s) :=
+  PrimeNumberTheorem.mellinConvergent_psiErrorAboveOneComplex_neg_of_power_error
+    herror hs
+
+/-- Public integral expansion for the Mellin transform of the cutoff complex
+`ψ`-error. -/
+theorem mellin_psiErrorAboveOneComplex_neg_eq_integral (s : ℂ) :
+    mellin PrimeNumberTheorem.psiErrorAboveOneComplex (-s) =
+      ∫ t in Set.Ioi (1 : ℝ),
+        ((PrimeNumberTheorem.chebyshevPsi t - t : ℝ) : ℂ) *
+          (t : ℂ) ^ (-(s + 1)) :=
+  PrimeNumberTheorem.mellin_psiErrorAboveOneComplex_neg_eq_integral s
+
+/-- Public Mellin-continuation half of the power-error converse route.
+
+Assuming `ψ(x)-x = O(x^θ)`, the Mellin transform of the cutoff complex
+`ψ`-error, after the change of variables `z ↦ -z`, is differentiable
+throughout `Re(z) > θ`. -/
+theorem differentiableAt_mellin_psiErrorAboveOneComplex_neg_of_power_error
+    {θ : ℝ} (herror : PsiPowerErrorBound θ) {s : ℂ} (hs : θ < s.re) :
+    DifferentiableAt ℂ
+      (fun z : ℂ => mellin PrimeNumberTheorem.psiErrorAboveOneComplex (-z)) s :=
+  PrimeNumberTheorem.differentiableAt_mellin_psiErrorAboveOneComplex_neg_of_power_error
+    herror hs
+
+/-- Public overlap identity between the cutoff `ψ`-error Mellin transform and
+the regularized logarithmic derivative of zeta on the original half-plane
+`Re(s) > 1`. -/
+theorem mul_mellin_psiErrorAboveOneComplex_neg_eq_neg_logDeriv_sub_pole
+    {s : ℂ} (hs : 1 < s.re) :
+    s * mellin PrimeNumberTheorem.psiErrorAboveOneComplex (-s) =
+      -deriv riemannZeta s / riemannZeta s - s / (s - 1) :=
+  PrimeNumberTheorem.mul_mellin_psiErrorAboveOneComplex_neg_eq_neg_logDeriv_sub_pole
+    hs
+
 /-- Public concrete `ψ` error input below the `2/3` barrier. -/
 abbrev PsiPowerErrorBelowTwoThirds : Prop :=
   PrimeNumberTheorem.PsiPowerErrorBelowTwoThirds
@@ -7527,6 +7568,21 @@ theorem exists_eventually_atRight_norm_neg_logDeriv_riemannZeta_sigma_it_le_log_
     ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ (σ : ℝ) in 𝓝[Set.Ioi β] β,
       ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤ C * Real.log |t| :=
   ZeroFreeRegion.exists_eventually_atRight_norm_neg_logDeriv_riemannZeta_sigma_it_le_log_abs_of_ne_one_of_ne_zero
+    ht hρ1 hzeta
+
+/-- Public nonzero-center horizontal right-neighborhood local real-part bound
+for the signed logarithmic derivative in the 3-4-1 convention.  The constant is
+local to the center point. -/
+theorem exists_eventually_atRight_re_neg_deriv_div_riemannZeta_sigma_it_le_log_abs_of_ne_one_of_ne_zero
+    {β t : ℝ}
+    (ht : 3 ≤ |t|)
+    (hρ1 : ((β : ℂ) + I * t) ≠ 1)
+    (hzeta : riemannZeta ((β : ℂ) + I * t) ≠ 0) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ (σ : ℝ) in 𝓝[Set.Ioi β] β,
+      (-deriv riemannZeta ((σ : ℂ) + I * t) /
+          riemannZeta ((σ : ℂ) + I * t)).re ≤
+        C * Real.log |t| :=
+  ZeroFreeRegion.exists_eventually_atRight_re_neg_deriv_div_riemannZeta_sigma_it_le_log_abs_of_ne_one_of_ne_zero
     ht hρ1 hzeta
 
 /-- Public automatic bridge from analytic order to a punctured-ball regular-part
