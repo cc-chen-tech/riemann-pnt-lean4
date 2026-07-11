@@ -3155,7 +3155,11 @@ Route interfaces:
   It is an existential certificate predicate, not a universal residue theorem
   derivable from `0 < R`.  The file now proves the genuine local theorem
   `MathlibAux.circleIntegral_eq_finite_simple_pole_residue_sum` for a
-  holomorphic remainder plus finitely many simple principal parts.  It also
+  holomorphic remainder plus finitely many simple principal parts, together
+  with the square-kernel calculations
+  `MathlibAux.rectangleBoundaryIntegral_inv_zero` and
+  `MathlibAux.rectangleBoundaryIntegral_sub_inv_center` for `1/z` at the
+  origin and `1/(z-c)` at an arbitrary center.  It also
   proves the constant-function sanity checks
   `MathlibAux.rectangleBoundaryIntegral_const`,
   `MathlibAux.rectangleIntegral_const`, and

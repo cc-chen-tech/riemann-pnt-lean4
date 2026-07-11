@@ -269,6 +269,86 @@ theorem rectangleBoundaryIntegral_inv_zero {R : ℝ} (hR : 0 < R) :
   rw [hdecomp, hhorizontal0, hvertical]
   ring
 
+/-- The positively oriented boundary integral of the simple-pole kernel
+`1 / (z-c)` around a square centered at `c` is `2πi`. -/
+theorem rectangleBoundaryIntegral_sub_inv_center (c : ℂ) {R : ℝ} (hR : 0 < R) :
+    rectangleBoundaryIntegral (fun z : ℂ => (z - c)⁻¹) c R =
+      2 * Real.pi * I := by
+  have hbottom :
+      (∫ x : ℝ in (c.re - R)..(c.re + R),
+          (((x : ℂ) + (c.im - R) * I) - c)⁻¹) =
+        ∫ u : ℝ in -R..R, ((u : ℂ) - (R : ℂ) * I)⁻¹ := by
+    calc
+      (∫ x : ℝ in (c.re - R)..(c.re + R),
+          (((x : ℂ) + (c.im - R) * I) - c)⁻¹) =
+        ∫ x : ℝ in (c.re - R)..(c.re + R),
+          (((x - c.re : ℝ) : ℂ) - (R : ℂ) * I)⁻¹ := by
+          apply intervalIntegral.integral_congr
+          intro x _hx
+          change (((x : ℂ) + (c.im - R) * I) - c)⁻¹ =
+            (((x - c.re : ℝ) : ℂ) - (R : ℂ) * I)⁻¹
+          congr 1
+          apply Complex.ext <;> simp [Complex.sub_re, Complex.sub_im]
+      _ = ∫ u : ℝ in -R..R, ((u : ℂ) - (R : ℂ) * I)⁻¹ := by
+        convert intervalIntegral.integral_comp_add_right
+          (fun u : ℝ => ((u : ℂ) - (R : ℂ) * I)⁻¹) (-c.re) using 1 <;> ring_nf
+  have htop :
+      (∫ x : ℝ in (c.re - R)..(c.re + R),
+          (((x : ℂ) + (c.im + R) * I) - c)⁻¹) =
+        ∫ u : ℝ in -R..R, ((u : ℂ) + (R : ℂ) * I)⁻¹ := by
+    calc
+      (∫ x : ℝ in (c.re - R)..(c.re + R),
+          (((x : ℂ) + (c.im + R) * I) - c)⁻¹) =
+        ∫ x : ℝ in (c.re - R)..(c.re + R),
+          (((x - c.re : ℝ) : ℂ) + (R : ℂ) * I)⁻¹ := by
+          apply intervalIntegral.integral_congr
+          intro x _hx
+          change (((x : ℂ) + (c.im + R) * I) - c)⁻¹ =
+            (((x - c.re : ℝ) : ℂ) + (R : ℂ) * I)⁻¹
+          congr 1
+          apply Complex.ext <;> simp [Complex.sub_re, Complex.sub_im]
+      _ = ∫ u : ℝ in -R..R, ((u : ℂ) + (R : ℂ) * I)⁻¹ := by
+        convert intervalIntegral.integral_comp_add_right
+          (fun u : ℝ => ((u : ℂ) + (R : ℂ) * I)⁻¹) (-c.re) using 1 <;> ring_nf
+  have hright :
+      (∫ y : ℝ in (c.im - R)..(c.im + R),
+          ((c.re : ℂ) + (R : ℂ) + (y : ℂ) * I - c)⁻¹) =
+        ∫ v : ℝ in -R..R, ((R : ℂ) + (v : ℂ) * I)⁻¹ := by
+    calc
+      (∫ y : ℝ in (c.im - R)..(c.im + R),
+          ((c.re : ℂ) + (R : ℂ) + (y : ℂ) * I - c)⁻¹) =
+        ∫ y : ℝ in (c.im - R)..(c.im + R),
+          ((R : ℂ) + ((y - c.im : ℝ) : ℂ) * I)⁻¹ := by
+          apply intervalIntegral.integral_congr
+          intro y _hy
+          change ((c.re : ℂ) + (R : ℂ) + (y : ℂ) * I - c)⁻¹ =
+            ((R : ℂ) + ((y - c.im : ℝ) : ℂ) * I)⁻¹
+          congr 1
+          apply Complex.ext <;> simp [Complex.sub_re, Complex.sub_im]
+      _ = ∫ v : ℝ in -R..R, ((R : ℂ) + (v : ℂ) * I)⁻¹ := by
+        convert intervalIntegral.integral_comp_add_right
+          (fun v : ℝ => ((R : ℂ) + (v : ℂ) * I)⁻¹) (-c.im) using 1 <;> ring_nf
+  have hleft :
+      (∫ y : ℝ in (c.im - R)..(c.im + R),
+          ((c.re : ℂ) - (R : ℂ) + (y : ℂ) * I - c)⁻¹) =
+        ∫ v : ℝ in -R..R, (-(R : ℂ) + (v : ℂ) * I)⁻¹ := by
+    calc
+      (∫ y : ℝ in (c.im - R)..(c.im + R),
+          ((c.re : ℂ) - (R : ℂ) + (y : ℂ) * I - c)⁻¹) =
+        ∫ y : ℝ in (c.im - R)..(c.im + R),
+          (-(R : ℂ) + ((y - c.im : ℝ) : ℂ) * I)⁻¹ := by
+          apply intervalIntegral.integral_congr
+          intro y _hy
+          change ((c.re : ℂ) - (R : ℂ) + (y : ℂ) * I - c)⁻¹ =
+            (-(R : ℂ) + ((y - c.im : ℝ) : ℂ) * I)⁻¹
+          congr 1
+          apply Complex.ext <;> simp [Complex.sub_re, Complex.sub_im]
+      _ = ∫ v : ℝ in -R..R, (-(R : ℂ) + (v : ℂ) * I)⁻¹ := by
+        convert intervalIntegral.integral_comp_add_right
+          (fun v : ℝ => (-(R : ℂ) + (v : ℂ) * I)⁻¹) (-c.im) using 1 <;> ring_nf
+  rw [rectangleBoundaryIntegral, hbottom, htop, hright, hleft]
+  simpa [rectangleBoundaryIntegral] using rectangleBoundaryIntegral_inv_zero hR
+
 /-! ## Proved finite simple-pole residue formula on circles -/
 
 /-- A holomorphic term plus finitely many simple principal parts integrates to

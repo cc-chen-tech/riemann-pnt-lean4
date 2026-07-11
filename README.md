@@ -313,7 +313,13 @@ contour/residue interface is an existential certificate `Prop`, not a theorem
 derivable from its radius hypothesis.  The repository now proves the genuine
 local result `MathlibAux.circleIntegral_eq_finite_simple_pole_residue_sum` for
 a holomorphic remainder plus finitely many simple principal parts.  It also
-proves the constant-function sanity checks `MathlibAux.rectangleBoundaryIntegral_const`,
+proves `MathlibAux.rectangleBoundaryIntegral_inv_zero` and
+`MathlibAux.rectangleBoundaryIntegral_sub_inv_center`, the square boundary
+integrals of `1/z` at the origin and `1/(z-c)` at an arbitrary center.  These
+are the local pole kernels; the finite small-square deformation and
+internal-edge cancellation needed for the general rectangle residue theorem
+remain open.  The repository also proves the constant-function sanity checks
+`MathlibAux.rectangleBoundaryIntegral_const`,
 `MathlibAux.rectangleIntegral_const`, and
 `MathlibAux.rectangleIntegral_const_zero`; these show that the interface is
 satisfiable in the holomorphic empty-pole case, not that Perron's formula or the

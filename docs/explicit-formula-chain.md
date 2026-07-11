@@ -183,6 +183,13 @@ remainder plus finitely many principal parts `residue p / (z-p)` integrates
 around a containing circle to `2*pi*I` times the finite residue sum.  This is
 the genuine local finite-residue step.
 
+The rectangle development also proves the local square kernels
+`MathlibAux.rectangleBoundaryIntegral_inv_zero` and
+`MathlibAux.rectangleBoundaryIntegral_sub_inv_center`: for every `R > 0`, the
+positively oriented square centered at `0`, or at an arbitrary `c`, integrates
+`1 / z` or `1 / (z-c)` to `2*pi*I`.  The arbitrary-center theorem is the local
+calculation needed to excise a small square around each actual pole.
+
 There is still no directly callable general theorem of the form
 "rectangle contour integral equals `2*pi*I` times a finite residue sum".
 The remaining intermediate theorem is:
@@ -192,9 +199,9 @@ rectangleIntegral_meromorphic_eq_residue_sum
 ```
 
 for a meromorphic function with finite divisor support in the rectangle.  The
-local circle residue calculation is now proved; the missing part is deforming
-the rectangle boundary to the finite family of pole circles using the existing
-rectangle Cauchy-Goursat theorem.
+local circle and square simple-pole calculations are now proved; the missing
+part is deforming the outer rectangle boundary to a finite family of disjoint
+small pole boundaries and proving cancellation of all internal edges.
 
 The current `rectangleIntegral_meromorphic_eq_residue_sum` declaration remains
 an existential certificate interface, not a theorem following from its radius
