@@ -1496,6 +1496,14 @@ The named shifted-pair bridge
 `ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_ReNegDerivDivVerticalLogBound`
 then supplies both `sigma+it` and `sigma+2it` real-part inputs from that direct
 real-part interface, including the `u = 2t` logarithmic height rescaling.
+When a future boundary-band estimate is available directly in coordinates as
+`Re(-zeta'/zeta)(sigma+iu) <= A + B * log(|u| + 3)` (or without the affine
+constant), the direct handoffs
+`ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_affine_re_log_abs_add_three_bound_high_height`
+and
+`ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_re_log_abs_add_three_bound_high_height`
+feed that estimate into the same ordinary/shifted 3-4-1 pair without first
+building a named interface witness.
 The signed coordinate variants
 `ZeroFreeRegion.classical_zero_free_region_of_re_im_neg_logDeriv_regular_part_norm_log_norm_add_three_bounds_high_height`
 and

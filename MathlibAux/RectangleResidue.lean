@@ -101,6 +101,174 @@ noncomputable def rectangleBoundaryIntegral
       Complex.I • (∫ y : ℝ in (c.im - R)..(c.im + R), f ((c.re + R) + y * Complex.I)) -
         Complex.I • (∫ y : ℝ in (c.im - R)..(c.im + R), f ((c.re - R) + y * Complex.I))
 
+private lemma inv_horizontal_edge_sub {R x : ℝ} (hR : R ≠ 0) :
+    ((x : ℂ) - (R : ℂ) * I)⁻¹ - ((x : ℂ) + (R : ℂ) * I)⁻¹ =
+      (2 * (R : ℂ) / ((R : ℂ) ^ 2 + (x : ℂ) ^ 2)) * I := by
+  have hminus : (x : ℂ) - (R : ℂ) * I ≠ 0 := by
+    intro h
+    have hi := congrArg Complex.im h
+    simp at hi
+    exact hR hi
+  have hplus : (x : ℂ) + (R : ℂ) * I ≠ 0 := by
+    intro h
+    have hi := congrArg Complex.im h
+    simp at hi
+    exact hR hi
+  have hdenom : (R : ℂ) ^ 2 + (x : ℂ) ^ 2 ≠ 0 := by
+    rw [← Complex.ofReal_pow, ← Complex.ofReal_pow, ← Complex.ofReal_add,
+      Complex.ofReal_ne_zero]
+    nlinarith [sq_pos_of_ne_zero hR]
+  field_simp [hminus, hplus, hdenom]
+  ring_nf
+  have hI3 : I ^ 3 = -I := by
+    rw [pow_succ, I_sq]
+    ring
+  rw [hI3]
+  ring
+
+private lemma inv_vertical_edge_sub {R y : ℝ} (hR : R ≠ 0) :
+    ((R : ℂ) + (y : ℂ) * I)⁻¹ - (-(R : ℂ) + (y : ℂ) * I)⁻¹ =
+      2 * (R : ℂ) / ((R : ℂ) ^ 2 + (y : ℂ) ^ 2) := by
+  have hplus : (R : ℂ) + (y : ℂ) * I ≠ 0 := by
+    intro h
+    have hr := congrArg Complex.re h
+    simp at hr
+    exact hR hr
+  have hminus : -(R : ℂ) + (y : ℂ) * I ≠ 0 := by
+    intro h
+    have hr := congrArg Complex.re h
+    simp at hr
+    exact hR hr
+  have hdenom : (R : ℂ) ^ 2 + (y : ℂ) ^ 2 ≠ 0 := by
+    rw [← Complex.ofReal_pow, ← Complex.ofReal_pow, ← Complex.ofReal_add,
+      Complex.ofReal_ne_zero]
+    nlinarith [sq_pos_of_ne_zero hR]
+  field_simp [hplus, hminus, hdenom]
+  ring_nf
+  rw [I_sq]
+  ring
+
+/-- The positively oriented boundary integral of `1/z` around a square
+centered at the origin is `2πi`. -/
+theorem rectangleBoundaryIntegral_inv_zero {R : ℝ} (hR : 0 < R) :
+    rectangleBoundaryIntegral (fun z : ℂ => z⁻¹) 0 R =
+      2 * Real.pi * I := by
+  have hRne : R ≠ 0 := hR.ne'
+  have hreal :
+      (∫ x : ℝ in -R..R, 2 * R / (R ^ 2 + x ^ 2)) = Real.pi := by
+    calc
+      (∫ x : ℝ in -R..R, 2 * R / (R ^ 2 + x ^ 2)) =
+          2 * ∫ x : ℝ in -R..R, R / (R ^ 2 + x ^ 2) := by
+        rw [← intervalIntegral.integral_const_mul]
+        apply intervalIntegral.integral_congr
+        intro x _hx
+        ring
+      _ = 2 * (Real.arctan (R / R) - Real.arctan (-R / R)) := by
+        rw [integral_div_sq_add_sq]
+      _ = Real.pi := by
+        simp [hRne, Real.arctan_one, Real.arctan_neg]
+        ring
+  have hbottom_cont :
+      Continuous (fun x : ℝ => ((x : ℂ) - (R : ℂ) * I)⁻¹) := by
+    apply (Complex.continuous_ofReal.sub continuous_const).inv₀
+    intro x hx
+    have hi := congrArg Complex.im hx
+    simp at hi
+    exact hRne hi
+  have htop_cont :
+      Continuous (fun x : ℝ => ((x : ℂ) + (R : ℂ) * I)⁻¹) := by
+    apply (Complex.continuous_ofReal.add continuous_const).inv₀
+    intro x hx
+    have hi := congrArg Complex.im hx
+    simp at hi
+    exact hRne hi
+  have hright_cont :
+      Continuous (fun y : ℝ => ((R : ℂ) + (y : ℂ) * I)⁻¹) := by
+    apply (continuous_const.add (Complex.continuous_ofReal.mul continuous_const)).inv₀
+    intro y hy
+    have hr := congrArg Complex.re hy
+    simp at hr
+    exact hRne hr
+  have hleft_cont :
+      Continuous (fun y : ℝ => (-(R : ℂ) + (y : ℂ) * I)⁻¹) := by
+    apply (continuous_const.add (Complex.continuous_ofReal.mul continuous_const)).inv₀
+    intro y hy
+    have hr := congrArg Complex.re hy
+    simp at hr
+    exact hRne hr
+  have hhorizontal :
+      (∫ x : ℝ in -R..R, ((x : ℂ) - (R : ℂ) * I)⁻¹) -
+          (∫ x : ℝ in -R..R, ((x : ℂ) + (R : ℂ) * I)⁻¹) =
+        (Real.pi : ℂ) * I := by
+    rw [← intervalIntegral.integral_sub
+      (hbottom_cont.intervalIntegrable (-R) R)
+      (htop_cont.intervalIntegrable (-R) R)]
+    calc
+      (∫ x : ℝ in -R..R,
+          ((x : ℂ) - (R : ℂ) * I)⁻¹ - ((x : ℂ) + (R : ℂ) * I)⁻¹) =
+          ∫ x : ℝ in -R..R,
+            ((2 * R / (R ^ 2 + x ^ 2) : ℝ) : ℂ) * I := by
+        apply intervalIntegral.integral_congr
+        intro x _hx
+        simpa [Complex.ofReal_div, Complex.ofReal_mul, Complex.ofReal_add,
+          Complex.ofReal_pow] using inv_horizontal_edge_sub (R := R) (x := x) hRne
+      _ = (∫ x : ℝ in -R..R,
+          ((2 * R / (R ^ 2 + x ^ 2) : ℝ) : ℂ)) * I := by
+        exact intervalIntegral.integral_mul_const I
+          (fun x : ℝ => ((2 * R / (R ^ 2 + x ^ 2) : ℝ) : ℂ))
+      _ = ((∫ x : ℝ in -R..R, 2 * R / (R ^ 2 + x ^ 2) : ℝ) : ℂ) * I := by
+        rw [intervalIntegral.integral_ofReal]
+      _ = (Real.pi : ℂ) * I := by rw [hreal]
+  have hvertical :
+      I * (∫ y : ℝ in -R..R, ((R : ℂ) + (y : ℂ) * I)⁻¹) -
+          I * (∫ y : ℝ in -R..R, (-(R : ℂ) + (y : ℂ) * I)⁻¹) =
+        (Real.pi : ℂ) * I := by
+    rw [← mul_sub, ← intervalIntegral.integral_sub
+      (hright_cont.intervalIntegrable (-R) R)
+      (hleft_cont.intervalIntegrable (-R) R)]
+    have hdiff :
+        (∫ y : ℝ in -R..R,
+            ((R : ℂ) + (y : ℂ) * I)⁻¹ - (-(R : ℂ) + (y : ℂ) * I)⁻¹) =
+          (Real.pi : ℂ) := by
+      calc
+        (∫ y : ℝ in -R..R,
+            ((R : ℂ) + (y : ℂ) * I)⁻¹ - (-(R : ℂ) + (y : ℂ) * I)⁻¹) =
+            ∫ y : ℝ in -R..R,
+              ((2 * R / (R ^ 2 + y ^ 2) : ℝ) : ℂ) := by
+          apply intervalIntegral.integral_congr
+          intro y _hy
+          simpa [Complex.ofReal_div, Complex.ofReal_mul, Complex.ofReal_add,
+            Complex.ofReal_pow] using inv_vertical_edge_sub (R := R) (y := y) hRne
+        _ = ((∫ y : ℝ in -R..R, 2 * R / (R ^ 2 + y ^ 2) : ℝ) : ℂ) := by
+          rw [intervalIntegral.integral_ofReal]
+        _ = (Real.pi : ℂ) := by rw [hreal]
+    rw [hdiff]
+    ring
+  simp [rectangleBoundaryIntegral]
+  change
+    ((∫ x : ℝ in -R..R, ((x : ℂ) + -((R : ℂ) * I))⁻¹) -
+        (∫ x : ℝ in -R..R, ((x : ℂ) + (R : ℂ) * I)⁻¹) +
+      I * (∫ y : ℝ in -R..R, ((R : ℂ) + (y : ℂ) * I)⁻¹)) -
+      I * (∫ y : ℝ in -R..R, (-(R : ℂ) + (y : ℂ) * I)⁻¹) =
+    2 * Real.pi * I
+  have hhorizontal0 :
+      (∫ x : ℝ in -R..R, ((x : ℂ) + -((R : ℂ) * I))⁻¹) -
+          (∫ x : ℝ in -R..R, ((x : ℂ) + (R : ℂ) * I)⁻¹) =
+        (Real.pi : ℂ) * I := by
+    simpa [sub_eq_add_neg] using hhorizontal
+  have hdecomp :
+      (∫ x : ℝ in -R..R, ((x : ℂ) + -((R : ℂ) * I))⁻¹) -
+          (∫ x : ℝ in -R..R, ((x : ℂ) + (R : ℂ) * I)⁻¹) +
+        I * (∫ y : ℝ in -R..R, ((R : ℂ) + (y : ℂ) * I)⁻¹) -
+        I * (∫ y : ℝ in -R..R, (-(R : ℂ) + (y : ℂ) * I)⁻¹) =
+      ((∫ x : ℝ in -R..R, ((x : ℂ) + -((R : ℂ) * I))⁻¹) -
+          ∫ x : ℝ in -R..R, ((x : ℂ) + (R : ℂ) * I)⁻¹) +
+        (I * (∫ y : ℝ in -R..R, ((R : ℂ) + (y : ℂ) * I)⁻¹) -
+          I * (∫ y : ℝ in -R..R, (-(R : ℂ) + (y : ℂ) * I)⁻¹)) := by
+    ring
+  rw [hdecomp, hhorizontal0, hvertical]
+  ring
+
 /-! ## Proved finite simple-pole residue formula on circles -/
 
 /-- A holomorphic term plus finitely many simple principal parts integrates to

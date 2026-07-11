@@ -18975,6 +18975,55 @@ lemma exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_ReNeg
         _ ≤ C * Real.log |t| :=
             mul_le_mul_of_nonneg_right (le_max_right C₁ C₂) hlog_nonneg
 
+/-- Direct affine `log(|t|+3)` real-part input for the 3-4-1 shifted-pair
+handoff.
+
+This is the weakest common high-height input shape for the vertical term:
+it assumes only a bound for `Re(-ζ'/ζ)(σ+iu)`, not a norm bound, and it keeps
+the safe `log(|u|+3)` scale used by Borel/Jensen estimates.  The theorem
+normalizes that input into one exact `C * log |t|` bound for both `σ+it` and
+`σ+2it`; the zeta-specific high-height estimate itself remains a hypothesis.
+-/
+lemma exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_affine_re_log_abs_add_three_bound_high_height
+    (T0 A B : ℝ) (hT0 : 3 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ u : ℝ, T0 ≤ |u| → σ ∈ Set.Icc 1 2 →
+        (-deriv riemannZeta ((σ : ℂ) + I * u) /
+            riemannZeta ((σ : ℂ) + I * u)).re ≤
+          A + B * Real.log (|u| + 3)) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re ≤ C * Real.log |t| ∧
+        (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤ C * Real.log |t| := by
+  rcases reNegDerivDivVerticalLogBound_of_affine_re_log_abs_add_three_bound_high_height
+      T0 A B hT0 hA hB hvertical with
+    ⟨C, T0', hreal⟩
+  exact
+    exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_ReNegDerivDivVerticalLogBound
+      (B := C) (T0 := T0') hreal
+
+/-- Multiplicative `log(|t|+3)` real-part input for the 3-4-1 shifted-pair
+handoff. -/
+lemma exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_re_log_abs_add_three_bound_high_height
+    (T0 B : ℝ) (hT0 : 3 ≤ T0) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ u : ℝ, T0 ≤ |u| → σ ∈ Set.Icc 1 2 →
+        (-deriv riemannZeta ((σ : ℂ) + I * u) /
+            riemannZeta ((σ : ℂ) + I * u)).re ≤
+          B * Real.log (|u| + 3)) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + I * t) /
+            riemannZeta ((σ : ℂ) + I * t)).re ≤ C * Real.log |t| ∧
+        (-deriv riemannZeta ((σ : ℂ) + 2 * I * t) /
+            riemannZeta ((σ : ℂ) + 2 * I * t)).re ≤ C * Real.log |t| :=
+  exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_affine_re_log_abs_add_three_bound_high_height
+    T0 0 B hT0 (by norm_num) hB (by
+      intro σ u hu hσ
+      simpa using hvertical σ u hu hσ)
+
 /-- Direct primitive-input version of the 3-4-1 real-part shifted-pair
 handoff.
 

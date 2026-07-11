@@ -9524,6 +9524,42 @@ theorem exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_ReN
   ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_ReNegDerivDivVerticalLogBound
     h
 
+/-- Public direct affine `log(|t|+3)` real-part input for the 3-4-1 shifted-pair
+handoff. -/
+theorem exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_affine_re_log_abs_add_three_bound_high_height
+    (T0 A B : ℝ) (hT0 : 3 ≤ T0) (hA : 0 ≤ A) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ u : ℝ, T0 ≤ |u| → σ ∈ Set.Icc 1 2 →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * u) /
+            riemannZeta ((σ : ℂ) + Complex.I * u)).re ≤
+          A + B * Real.log (|u| + 3)) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤ C * Real.log |t| ∧
+        (-deriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t) /
+            riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re ≤ C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_affine_re_log_abs_add_three_bound_high_height
+    T0 A B hT0 hA hB hvertical
+
+/-- Public multiplicative `log(|t|+3)` real-part input for the 3-4-1 shifted-pair
+handoff. -/
+theorem exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_re_log_abs_add_three_bound_high_height
+    (T0 B : ℝ) (hT0 : 3 ≤ T0) (hB : 0 ≤ B)
+    (hvertical :
+      ∀ σ u : ℝ, T0 ≤ |u| → σ ∈ Set.Icc 1 2 →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * u) /
+            riemannZeta ((σ : ℂ) + Complex.I * u)).re ≤
+          B * Real.log (|u| + 3)) :
+    ∃ C T0' : ℝ, 0 ≤ C ∧ 3 ≤ T0' ∧
+      ∀ σ t : ℝ, 1 ≤ σ → σ ≤ 2 → T0' ≤ |t| →
+        (-deriv riemannZeta ((σ : ℂ) + Complex.I * t) /
+            riemannZeta ((σ : ℂ) + Complex.I * t)).re ≤ C * Real.log |t| ∧
+        (-deriv riemannZeta ((σ : ℂ) + 2 * Complex.I * t) /
+            riemannZeta ((σ : ℂ) + 2 * Complex.I * t)).re ≤ C * Real.log |t| :=
+  ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_re_log_abs_add_three_bound_high_height
+    T0 B hT0 hB hvertical
+
 /-- Public primitive-input version of the 3-4-1 real-part shifted-pair
 handoff from `ζ'` growth plus a positive `ζ` lower bound. -/
 theorem exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_deriv_bound_and_zeta_lower_bound_high_height

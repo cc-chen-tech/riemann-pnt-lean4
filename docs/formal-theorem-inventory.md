@@ -331,6 +331,13 @@ Core verified declarations:
   combines separate future high-height real-part estimates at `sigma + it` and
   `sigma + 2it` into one shared `C * log |t|` pair package, matching routes
   that produce the two 3-4-1 inputs separately.
+- `exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_affine_re_log_abs_add_three_bound_high_height`
+  and
+  `exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_re_log_abs_add_three_bound_high_height`
+  let a future direct real-part estimate in the safe coordinate scale
+  `A + B * log(|u| + 3)` or `B * log(|u| + 3)` feed the shared
+  ordinary/shifted `Re(-zeta'/zeta)` pair without first packaging a named
+  vertical-bound interface.
 - `exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_deriv_bound_and_zeta_lower_bound_high_height`
   and
   `exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_sphere_zeta_bound_and_zeta_lower_bound_high_height`
@@ -1557,6 +1564,11 @@ Core verified declarations:
 - `exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_ReNegDerivDivVerticalLogBound`
   packages the ordinary and shifted direct real-part estimates with one shared
   constant and cutoff.
+- `exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_affine_re_log_abs_add_three_bound_high_height`
+  and
+  `exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_re_log_abs_add_three_bound_high_height`
+  are the direct coordinate `log(|u| + 3)` real-part versions of that
+  ordinary/shifted 3-4-1 handoff.
 - `classical_zero_free_region_of_re_im_logDeriv_regular_part_norm_log_abs_add_three_bound_high_height`
   specializes the coordinate interface to estimates stated as
   `C * log(|t| + 3)` for both remaining zeta-specific bounds.

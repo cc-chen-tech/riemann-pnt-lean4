@@ -205,7 +205,7 @@
       "name": "rectangleIntegral_meromorphic_eq_residue_sum",
       "qualified_name": "MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum",
       "file": "MathlibAux/RectangleResidue.lean",
-      "line": 200,
+      "line": 368,
       "chain": "Explicit formula",
       "body": "real_statement"
     },
