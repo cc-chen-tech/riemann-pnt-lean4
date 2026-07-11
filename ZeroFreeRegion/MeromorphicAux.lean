@@ -10269,6 +10269,56 @@ lemma exists_eventuallyEq_neg_logDeriv_add_order_mul_inv_of_analyticAt_order_eq_
   rw [← hz]
   abel
 
+/-- Removing the multiplicity-weighted logarithmic pole and normalizing the
+value at the zero gives an analytic function at the zero.
+
+The raw expression `logDeriv f z - n * (z-x)⁻¹` has the correct analytic germ
+on the punctured neighborhood but generally the wrong value at `x` because
+Lean defines `0⁻¹ = 0`.  `toMeromorphicNFAt` performs exactly the required
+removable-singularity correction.  This is the local analytic regular part
+needed before Borel-Carathéodory can be applied across a zero. -/
+lemma analyticAt_toMeromorphicNFAt_logDeriv_sub_order_mul_inv_of_analyticAt_order_eq_nat
+    {f : ℂ → ℂ} {x : ℂ} {n : ℕ}
+    (hf : AnalyticAt ℂ f x) (horder : analyticOrderAt f x = n) :
+    AnalyticAt ℂ
+      (toMeromorphicNFAt
+        (fun z : ℂ => logDeriv f z - (n : ℂ) * (z - x)⁻¹) x) x := by
+  rcases exists_eventuallyEq_logDeriv_sub_order_mul_inv_of_analyticAt_order_eq_nat
+      hf horder with ⟨g, hg, hg_ne, hsep⟩
+  let regular : ℂ → ℂ :=
+    fun z => logDeriv f z - (n : ℂ) * (z - x)⁻¹
+  have hsep_eq : regular =ᶠ[𝓝[≠] x] logDeriv g := by
+    filter_upwards [hsep] with z hz
+    simpa [regular] using hz
+  have hg_log : AnalyticAt ℂ (logDeriv g) x :=
+    hg.deriv.div hg hg_ne
+  have hregular_mer : MeromorphicAt regular x :=
+    hg_log.meromorphicAt.congr hsep_eq.symm
+  have horder_regular :
+      meromorphicOrderAt regular x = meromorphicOrderAt (logDeriv g) x :=
+    meromorphicOrderAt_congr hsep_eq
+  have horder_nf :
+      meromorphicOrderAt (toMeromorphicNFAt regular x) x =
+        meromorphicOrderAt regular x := by
+    exact (meromorphicOrderAt_congr
+      hregular_mer.eq_nhdsNE_toMeromorphicNFAt).symm
+  have hnf := meromorphicNFAt_toMeromorphicNFAt (f := regular) (x := x)
+  apply hnf.meromorphicOrderAt_nonneg_iff_analyticAt.mp
+  rw [horder_nf, horder_regular]
+  exact hg_log.meromorphicOrderAt_nonneg
+
+/-- Zeta-specific analytic regularization of the multiplicity-weighted local
+logarithmic derivative at any finite-order point away from the pole. -/
+lemma analyticAt_toMeromorphicNFAt_logDeriv_riemannZeta_sub_order_mul_inv_of_order_eq_nat
+    {ρ : ℂ} {n : ℕ} (hρ1 : ρ ≠ 1)
+    (horder : analyticOrderAt riemannZeta ρ = n) :
+    AnalyticAt ℂ
+      (toMeromorphicNFAt
+        (fun z : ℂ =>
+          logDeriv riemannZeta z - (n : ℂ) * (z - ρ)⁻¹) ρ) ρ :=
+  analyticAt_toMeromorphicNFAt_logDeriv_sub_order_mul_inv_of_analyticAt_order_eq_nat
+    (analyticOnNhd_riemannZeta_ne_one ρ hρ1) horder
+
 /-- Zeta-specific multiplicity-weighted principal-part separation for
 `logDeriv ζ` at any finite-order point away from the pole. -/
 lemma exists_eventuallyEq_logDeriv_riemannZeta_sub_order_mul_inv_of_order_eq_nat
@@ -10812,6 +10862,26 @@ lemma analyticOrderNatAt_riemannZeta_pos_of_zero {ρ : ℂ}
     rw [← hcast, hn0]
     simp
   exact horder_ne_zero horder_zero
+
+/-- At an actual zeta zero away from the pole, the natural analytic
+multiplicity is positive and removing that principal part gives an analytic
+regularization at the zero. -/
+lemma analyticAt_toMeromorphicNFAt_logDeriv_riemannZeta_sub_analyticOrderNatAt_mul_inv_of_zero
+    {ρ : ℂ} (hρ1 : ρ ≠ 1) (hzero : riemannZeta ρ = 0) :
+    0 < analyticOrderNatAt riemannZeta ρ ∧
+      AnalyticAt ℂ
+        (toMeromorphicNFAt
+          (fun z : ℂ =>
+            logDeriv riemannZeta z -
+              (analyticOrderNatAt riemannZeta ρ : ℂ) * (z - ρ)⁻¹) ρ) ρ := by
+  have hpos := analyticOrderNatAt_riemannZeta_pos_of_zero hρ1 hzero
+  have horder :
+      analyticOrderAt riemannZeta ρ =
+        analyticOrderNatAt riemannZeta ρ :=
+    (analyticOrderNatAt_riemannZeta_eq_analyticOrderAt_of_ne_one hρ1).symm
+  exact ⟨hpos,
+    analyticAt_toMeromorphicNFAt_logDeriv_riemannZeta_sub_order_mul_inv_of_order_eq_nat
+      hρ1 horder⟩
 
 /-- Automatic zeta-specific regular-part bound at an actual zero.  The
 multiplicity is chosen as `analyticOrderNatAt riemannZeta ρ`, so callers no

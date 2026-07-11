@@ -1366,6 +1366,13 @@ regular-part bounds, including zeta-specific auto wrappers.  For actual zeta zer
 `ZeroFreeRegion.exists_punctured_ball_norm_logDeriv_riemannZeta_sub_analyticOrderNatAt_mul_inv_le_of_zero_auto`,
 and the signed/closed-ball variants now choose the multiplicity internally as
 `analyticOrderNatAt riemannZeta rho` and prove it is positive.  The
+removable-singularity step is also proved by
+`ZeroFreeRegion.analyticAt_toMeromorphicNFAt_logDeriv_sub_order_mul_inv_of_analyticAt_order_eq_nat`
+and its zeta-specific automatic-multiplicity variants.  Thus the regular part
+can be treated as analytic at the zero itself, not merely controlled on a
+punctured neighborhood.  The next hard step is to remove all zeros in a finite
+high disk simultaneously and bound the resulting analytic regular part
+uniformly from zeta boundary growth.  The
 `exists_real_punctured_interval_...` variants specialize the same local
 principal-part control to horizontal-line coordinates `rho = beta + i t` and
 `z = sigma + i t`, using the checked identity

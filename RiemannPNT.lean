@@ -7406,6 +7406,29 @@ theorem exists_eventuallyEq_neg_logDeriv_add_order_mul_inv_of_analyticAt_order_e
   ZeroFreeRegion.exists_eventuallyEq_neg_logDeriv_add_order_mul_inv_of_analyticAt_order_eq_nat
     hf horder
 
+/-- Public analytic removable-singularity regularization after subtracting the
+multiplicity-weighted logarithmic pole. -/
+theorem analyticAt_toMeromorphicNFAt_logDeriv_sub_order_mul_inv_of_analyticAt_order_eq_nat
+    {f : ℂ → ℂ} {x : ℂ} {n : ℕ}
+    (hf : AnalyticAt ℂ f x) (horder : analyticOrderAt f x = n) :
+    AnalyticAt ℂ
+      (toMeromorphicNFAt
+        (fun z : ℂ => logDeriv f z - (n : ℂ) * (z - x)⁻¹) x) x :=
+  ZeroFreeRegion.analyticAt_toMeromorphicNFAt_logDeriv_sub_order_mul_inv_of_analyticAt_order_eq_nat
+    hf horder
+
+/-- Public zeta-specific analytic regularization at a finite-order point away
+from the pole. -/
+theorem analyticAt_toMeromorphicNFAt_logDeriv_riemannZeta_sub_order_mul_inv_of_order_eq_nat
+    {ρ : ℂ} {n : ℕ} (hρ1 : ρ ≠ 1)
+    (horder : analyticOrderAt riemannZeta ρ = n) :
+    AnalyticAt ℂ
+      (toMeromorphicNFAt
+        (fun z : ℂ =>
+          logDeriv riemannZeta z - (n : ℂ) * (z - ρ)⁻¹) ρ) ρ :=
+  ZeroFreeRegion.analyticAt_toMeromorphicNFAt_logDeriv_riemannZeta_sub_order_mul_inv_of_order_eq_nat
+    hρ1 horder
+
 /-- Public zeta-specific multiplicity-weighted principal-part separation. -/
 theorem exists_eventuallyEq_logDeriv_riemannZeta_sub_order_mul_inv_of_order_eq_nat
     {ρ : ℂ} {n : ℕ} (hρ1 : ρ ≠ 1)
@@ -7771,6 +7794,19 @@ theorem analyticOrderNatAt_riemannZeta_pos_of_zero
     {ρ : ℂ} (hρ1 : ρ ≠ 1) (hzero : riemannZeta ρ = 0) :
     0 < analyticOrderNatAt riemannZeta ρ :=
   ZeroFreeRegion.analyticOrderNatAt_riemannZeta_pos_of_zero hρ1 hzero
+
+/-- Public automatic analytic regularization at an actual zeta zero, using
+its natural analytic multiplicity. -/
+theorem analyticAt_toMeromorphicNFAt_logDeriv_riemannZeta_sub_analyticOrderNatAt_mul_inv_of_zero
+    {ρ : ℂ} (hρ1 : ρ ≠ 1) (hzero : riemannZeta ρ = 0) :
+    0 < analyticOrderNatAt riemannZeta ρ ∧
+      AnalyticAt ℂ
+        (toMeromorphicNFAt
+          (fun z : ℂ =>
+            logDeriv riemannZeta z -
+              (analyticOrderNatAt riemannZeta ρ : ℂ) * (z - ρ)⁻¹) ρ) ρ :=
+  ZeroFreeRegion.analyticAt_toMeromorphicNFAt_logDeriv_riemannZeta_sub_analyticOrderNatAt_mul_inv_of_zero
+    hρ1 hzero
 
 /-- Public automatic regular-part bound at an actual zero of ζ.  The
 multiplicity is chosen internally as `analyticOrderNatAt riemannZeta ρ`. -/
