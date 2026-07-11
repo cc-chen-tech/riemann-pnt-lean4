@@ -199,6 +199,14 @@ set.  The deformation uses four pole-free rectangles and the proved internal
 edge-cancellation lemma
 `MathlibAux.boundaryRectIntegral_eq_inner_of_four_rectangles`.
 
+Finally,
+`MathlibAux.rectangleBoundaryIntegral_eq_zero_of_differentiableOn` and
+`MathlibAux.rectangleBoundaryIntegral_eq_finite_simple_pole_residue_sum_of_differentiableOn`
+prove the version with an arbitrary holomorphic remainder on the closed
+rectangle.  Thus the rectangle integral is complete once an integrand has
+actually been decomposed into that remainder and finitely many simple
+principal parts.
+
 There is still no directly callable general theorem of the form
 "rectangle contour integral equals `2*pi*I` times a finite residue sum".
 The remaining intermediate theorem is:
@@ -209,9 +217,10 @@ rectangleIntegral_meromorphic_eq_residue_sum
 
 for a general meromorphic function with finite divisor support in the
 rectangle.  Finite simple principal parts and the rectangle deformation are
-now proved.  The missing part is extracting those principal parts, including
-higher-order poles, from Mathlib's meromorphic divisor/residue data and proving
-that the remainder is holomorphic on the whole rectangle.
+now proved, including addition of a supplied holomorphic remainder.  The
+missing part is constructing this decomposition from Mathlib's meromorphic
+divisor/residue data, treating higher-order poles, and instantiating it for the
+explicit-formula integrand.
 
 The current `rectangleIntegral_meromorphic_eq_residue_sum` declaration remains
 an existential certificate interface, not a theorem following from its radius

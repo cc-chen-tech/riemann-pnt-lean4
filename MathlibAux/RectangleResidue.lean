@@ -25,7 +25,8 @@ This file now proves finite simple-pole residue formulas on both circles and
 squares.  The square proof includes the four-rectangle deformation and exact
 cancellation of internal edges.  What remains is extracting a finite family
 of principal parts from a general meromorphic function (including higher-order
-poles) and proving that the remainder is holomorphic on the rectangle.
+poles) and constructing the holomorphic remainder.  Once such a decomposition
+is supplied, its rectangle residue formula is proved below.
 The intended future body is sketched in the doc-comment below; see
 `docs/explicit-formula-chain.md` §"Contour and residue theorem" for
 the full chain that this `def` is supposed to unblock.
@@ -172,6 +173,72 @@ lemma rectangleBoundaryIntegral_finset_sum
     intervalIntegral.integral_finset_sum hleft]
   simp only [Finset.sum_sub_distrib, Finset.sum_add_distrib, Finset.smul_sum]
 
+lemma rectangleBoundaryIntegral_add
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+    (f g : ℂ → E) (c : ℂ) (R : ℝ)
+    (hfb : IntervalIntegrable (fun x : ℝ => f (x + (c.im - R) * I))
+      MeasureTheory.volume (c.re - R) (c.re + R))
+    (hgb : IntervalIntegrable (fun x : ℝ => g (x + (c.im - R) * I))
+      MeasureTheory.volume (c.re - R) (c.re + R))
+    (hft : IntervalIntegrable (fun x : ℝ => f (x + (c.im + R) * I))
+      MeasureTheory.volume (c.re - R) (c.re + R))
+    (hgt : IntervalIntegrable (fun x : ℝ => g (x + (c.im + R) * I))
+      MeasureTheory.volume (c.re - R) (c.re + R))
+    (hfr : IntervalIntegrable (fun y : ℝ => f ((c.re + R) + y * I))
+      MeasureTheory.volume (c.im - R) (c.im + R))
+    (hgr : IntervalIntegrable (fun y : ℝ => g ((c.re + R) + y * I))
+      MeasureTheory.volume (c.im - R) (c.im + R))
+    (hfl : IntervalIntegrable (fun y : ℝ => f ((c.re - R) + y * I))
+      MeasureTheory.volume (c.im - R) (c.im + R))
+    (hgl : IntervalIntegrable (fun y : ℝ => g ((c.re - R) + y * I))
+      MeasureTheory.volume (c.im - R) (c.im + R)) :
+    rectangleBoundaryIntegral (fun z => f z + g z) c R =
+      rectangleBoundaryIntegral f c R + rectangleBoundaryIntegral g c R := by
+  unfold rectangleBoundaryIntegral
+  dsimp only
+  rw [intervalIntegral.integral_add hfb hgb,
+    intervalIntegral.integral_add hft hgt,
+    intervalIntegral.integral_add hfr hgr,
+    intervalIntegral.integral_add hfl hgl]
+  module
+
+lemma rectangleBoundaryIntervalIntegrable_of_continuousOn
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+    {f : ℂ → E} {c : ℂ} {R : ℝ} (hf : ContinuousOn f (closedRectangle c R)) :
+    IntervalIntegrable (fun x : ℝ => f (x + (c.im - R) * I))
+        MeasureTheory.volume (c.re - R) (c.re + R) ∧
+      IntervalIntegrable (fun x : ℝ => f (x + (c.im + R) * I))
+        MeasureTheory.volume (c.re - R) (c.re + R) ∧
+      IntervalIntegrable (fun y : ℝ => f ((c.re + R) + y * I))
+        MeasureTheory.volume (c.im - R) (c.im + R) ∧
+      IntervalIntegrable (fun y : ℝ => f ((c.re - R) + y * I))
+        MeasureTheory.volume (c.im - R) (c.im + R) := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · apply (hf.comp
+      (Complex.continuous_ofReal.add
+        (continuous_const.mul continuous_const)).continuousOn ?_).intervalIntegrable
+    intro x hx
+    simpa [closedRectangle, mem_reProdIm] using
+      And.intro hx (left_mem_uIcc : c.im - R ∈ [[c.im - R, c.im + R]])
+  · apply (hf.comp
+      (Complex.continuous_ofReal.add
+        (continuous_const.mul continuous_const)).continuousOn ?_).intervalIntegrable
+    intro x hx
+    simpa [closedRectangle, mem_reProdIm] using
+      And.intro hx (right_mem_uIcc : c.im + R ∈ [[c.im - R, c.im + R]])
+  · apply (hf.comp
+      (continuous_const.add
+        (Complex.continuous_ofReal.mul continuous_const)).continuousOn ?_).intervalIntegrable
+    intro y hy
+    simpa [closedRectangle, mem_reProdIm] using
+      And.intro (right_mem_uIcc : c.re + R ∈ [[c.re - R, c.re + R]]) hy
+  · apply (hf.comp
+      (continuous_const.add
+        (Complex.continuous_ofReal.mul continuous_const)).continuousOn ?_).intervalIntegrable
+    intro y hy
+    simpa [closedRectangle, mem_reProdIm] using
+      And.intro (left_mem_uIcc : c.re - R ∈ [[c.re - R, c.re + R]]) hy
+
 /-- Cauchy-Goursat for the project rectangle-boundary notation. -/
 lemma boundaryRectIntegral_eq_zero_of_differentiableOn
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
@@ -181,6 +248,17 @@ lemma boundaryRectIntegral_eq_zero_of_differentiableOn
   simpa [boundaryRectIntegral] using
     Complex.integral_boundary_rect_eq_zero_of_differentiableOn f
       (x0 + y0 * Complex.I) (x1 + y1 * Complex.I) (by simpa using hf)
+
+/-- A function holomorphic on the closed square has zero boundary integral. -/
+theorem rectangleBoundaryIntegral_eq_zero_of_differentiableOn
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
+    {f : ℂ → E} {c : ℂ} {R : ℝ}
+    (hf : DifferentiableOn ℂ f (closedRectangle c R)) :
+    rectangleBoundaryIntegral f c R = 0 := by
+  rw [rectangleBoundaryIntegral_eq_boundaryRectIntegral]
+  exact boundaryRectIntegral_eq_zero_of_differentiableOn f
+    (c.re - R) (c.re + R) (c.im - R) (c.im + R) (by
+      simpa [closedRectangle] using hf)
 
 private lemma rectangular_annulus_boundary_algebra
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
@@ -652,6 +730,53 @@ theorem rectangleBoundaryIntegral_sub_inv_of_mem_openRectangle
   rw [houter, houter_inner, hinner]
   exact rectangleBoundaryIntegral_sub_inv_center p hr
 
+private lemma simplePoleTerm_boundaryIntervalIntegrable
+    (c p a : ℂ) {R : ℝ} (hp : p ∈ openRectangle c R) :
+    IntervalIntegrable (fun x : ℝ => ((x + (c.im - R) * I) - p)⁻¹ * a)
+        MeasureTheory.volume (c.re - R) (c.re + R) ∧
+      IntervalIntegrable (fun x : ℝ => ((x + (c.im + R) * I) - p)⁻¹ * a)
+        MeasureTheory.volume (c.re - R) (c.re + R) ∧
+      IntervalIntegrable (fun y : ℝ => (((c.re + R) + y * I) - p)⁻¹ * a)
+        MeasureTheory.volume (c.im - R) (c.im + R) ∧
+      IntervalIntegrable (fun y : ℝ => (((c.re - R) + y * I) - p)⁻¹ * a)
+        MeasureTheory.volume (c.im - R) (c.im + R) := by
+  have hp' : (c.re - R < p.re ∧ p.re < c.re + R) ∧
+      (c.im - R < p.im ∧ p.im < c.im + R) := by
+    simpa [openRectangle, mem_reProdIm] using hp
+  have horizontal_continuous : ∀ y : ℝ, y ≠ p.im →
+      Continuous (fun x : ℝ => ((x + y * I) - p)⁻¹ * a) := by
+    intro y hy
+    apply (((Complex.continuous_ofReal.add
+      (continuous_const.mul continuous_const)).sub continuous_const).inv₀ ?_).mul continuous_const
+    intro x hx
+    apply hy
+    have hi := congrArg Complex.im hx
+    simp at hi
+    linarith
+  have vertical_continuous : ∀ x : ℝ, x ≠ p.re →
+      Continuous (fun y : ℝ => ((x + y * I) - p)⁻¹ * a) := by
+    intro x hx
+    apply (((continuous_const.add
+      (Complex.continuous_ofReal.mul continuous_const)).sub continuous_const).inv₀ ?_).mul continuous_const
+    intro y hy
+    apply hx
+    have hr' := congrArg Complex.re hy
+    simp at hr'
+    linarith
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · simpa only [Complex.ofReal_sub] using
+      (horizontal_continuous (c.im - R) (by linarith [hp'.2.1])).intervalIntegrable
+        (c.re - R) (c.re + R)
+  · simpa only [Complex.ofReal_add] using
+      (horizontal_continuous (c.im + R) (by linarith [hp'.2.2])).intervalIntegrable
+        (c.re - R) (c.re + R)
+  · simpa only [Complex.ofReal_add] using
+      (vertical_continuous (c.re + R) (by linarith [hp'.1.2])).intervalIntegrable
+        (c.im - R) (c.im + R)
+  · simpa only [Complex.ofReal_sub] using
+      (vertical_continuous (c.re - R) (by linarith [hp'.1.1])).intervalIntegrable
+        (c.im - R) (c.im + R)
+
 /-- Finite simple principal parts satisfy the residue formula on a square
 containing all their poles. -/
 theorem rectangleBoundaryIntegral_eq_finite_simple_pole_residue_sum
@@ -730,6 +855,85 @@ theorem rectangleBoundaryIntegral_eq_finite_simple_pole_residue_sum
         rectangleBoundaryIntegral_sub_inv_of_mem_openRectangle c p hR (hpoles p hp)]
     _ = (2 * Real.pi * I) * ∑ p ∈ poles, residue p := by
       rw [Finset.mul_sum]
+
+/-- A holomorphic remainder plus finitely many simple principal parts satisfies
+the residue formula on a square containing every pole. -/
+theorem rectangleBoundaryIntegral_eq_finite_simple_pole_residue_sum_of_differentiableOn
+    {g : ℂ → ℂ} {c : ℂ} {R : ℝ} (hR : 0 < R)
+    (poles : Finset ℂ) (residue : ℂ → ℂ)
+    (hg : DifferentiableOn ℂ g (closedRectangle c R))
+    (hpoles : ∀ p ∈ poles, p ∈ openRectangle c R) :
+    rectangleBoundaryIntegral
+        (fun z : ℂ => g z + ∑ p ∈ poles, (z - p)⁻¹ * residue p) c R =
+      (2 * Real.pi * I) * ∑ p ∈ poles, residue p := by
+  let term : ℂ → ℂ → ℂ := fun p z => (z - p)⁻¹ * residue p
+  let principal : ℂ → ℂ := fun z => ∑ p ∈ poles, term p z
+  have hg_edges := rectangleBoundaryIntervalIntegrable_of_continuousOn hg.continuousOn
+  have hterm_edges : ∀ p ∈ poles,
+      IntervalIntegrable (fun x : ℝ => term p (x + (c.im - R) * I))
+          MeasureTheory.volume (c.re - R) (c.re + R) ∧
+        IntervalIntegrable (fun x : ℝ => term p (x + (c.im + R) * I))
+          MeasureTheory.volume (c.re - R) (c.re + R) ∧
+        IntervalIntegrable (fun y : ℝ => term p ((c.re + R) + y * I))
+          MeasureTheory.volume (c.im - R) (c.im + R) ∧
+        IntervalIntegrable (fun y : ℝ => term p ((c.re - R) + y * I))
+          MeasureTheory.volume (c.im - R) (c.im + R) := by
+    intro p hp
+    simpa [term] using
+      simplePoleTerm_boundaryIntervalIntegrable c p (residue p) (hpoles p hp)
+  have hprincipal_bottom : IntervalIntegrable
+      (fun x : ℝ => principal (x + (c.im - R) * I))
+      MeasureTheory.volume (c.re - R) (c.re + R) := by
+    have h := IntervalIntegrable.sum poles (fun p hp => (hterm_edges p hp).1)
+    have heq : (∑ p ∈ poles, fun x : ℝ => term p (x + (c.im - R) * I)) =
+        fun x : ℝ => principal (x + (c.im - R) * I) := by
+      funext x
+      simp [principal]
+    rw [← heq]
+    exact h
+  have hprincipal_top : IntervalIntegrable
+      (fun x : ℝ => principal (x + (c.im + R) * I))
+      MeasureTheory.volume (c.re - R) (c.re + R) := by
+    have h := IntervalIntegrable.sum poles (fun p hp => (hterm_edges p hp).2.1)
+    have heq : (∑ p ∈ poles, fun x : ℝ => term p (x + (c.im + R) * I)) =
+        fun x : ℝ => principal (x + (c.im + R) * I) := by
+      funext x
+      simp [principal]
+    rw [← heq]
+    exact h
+  have hprincipal_right : IntervalIntegrable
+      (fun y : ℝ => principal ((c.re + R) + y * I))
+      MeasureTheory.volume (c.im - R) (c.im + R) := by
+    have h := IntervalIntegrable.sum poles (fun p hp => (hterm_edges p hp).2.2.1)
+    have heq : (∑ p ∈ poles, fun y : ℝ => term p ((c.re + R) + y * I)) =
+        fun y : ℝ => principal ((c.re + R) + y * I) := by
+      funext y
+      simp [principal]
+    rw [← heq]
+    exact h
+  have hprincipal_left : IntervalIntegrable
+      (fun y : ℝ => principal ((c.re - R) + y * I))
+      MeasureTheory.volume (c.im - R) (c.im + R) := by
+    have h := IntervalIntegrable.sum poles (fun p hp => (hterm_edges p hp).2.2.2)
+    have heq : (∑ p ∈ poles, fun y : ℝ => term p ((c.re - R) + y * I)) =
+        fun y : ℝ => principal ((c.re - R) + y * I) := by
+      funext y
+      simp [principal]
+    rw [← heq]
+    exact h
+  have hadd : rectangleBoundaryIntegral (fun z => g z + principal z) c R =
+      rectangleBoundaryIntegral g c R + rectangleBoundaryIntegral principal c R :=
+    rectangleBoundaryIntegral_add g principal c R
+      hg_edges.1 hprincipal_bottom
+      hg_edges.2.1 hprincipal_top
+      hg_edges.2.2.1 hprincipal_right
+      hg_edges.2.2.2 hprincipal_left
+  have hg_zero : rectangleBoundaryIntegral g c R = 0 :=
+    rectangleBoundaryIntegral_eq_zero_of_differentiableOn hg
+  change rectangleBoundaryIntegral (fun z => g z + principal z) c R = _
+  rw [hadd, hg_zero, zero_add]
+  simpa [principal, term] using
+    rectangleBoundaryIntegral_eq_finite_simple_pole_residue_sum c hR poles residue hpoles
 
 /-! ## Proved finite simple-pole residue formula on circles -/
 

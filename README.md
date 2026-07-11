@@ -319,9 +319,12 @@ integrals of `1/z` at the origin and `1/(z-c)` at an arbitrary center.  It now
 also proves `MathlibAux.rectangleBoundaryIntegral_sub_inv_of_mem_openRectangle`
 and `MathlibAux.rectangleBoundaryIntegral_eq_finite_simple_pole_residue_sum`:
 the outer-square deformation, internal-edge cancellation, and finite simple
-principal-part residue formula.  The general meromorphic principal-part
-extraction, higher-order poles, Perron formula, and contour error estimates
-remain open.  The repository also proves the constant-function sanity checks
+principal-part residue formula.  The stronger
+`MathlibAux.rectangleBoundaryIntegral_eq_finite_simple_pole_residue_sum_of_differentiableOn`
+also includes an arbitrary holomorphic remainder on the closed rectangle.
+Constructing this decomposition from a general meromorphic function,
+higher-order poles, Perron formula, and contour error estimates remain open.
+The repository also proves the constant-function sanity checks
 `MathlibAux.rectangleBoundaryIntegral_const`,
 `MathlibAux.rectangleIntegral_const`, and
 `MathlibAux.rectangleIntegral_const_zero`; these show that the interface is
@@ -812,6 +815,8 @@ Lean declarations in `ZeroFreeRegion.lean` and
 | `ZeroFreeRegion.meromorphicOn_neg_logDeriv_riemannZeta_verticalRegion` / `ZeroFreeRegion.jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_verticalRegion` | `lemma` | Signed vertical-region meromorphicity and Jensen specialization for `-logDeriv ζ`. | Lets future high-height Jensen estimates stay in the signed convention used by 3-4-1. |
 | `ZeroFreeRegion.jensen_circleAverage_log_norm_riemannZeta_sigma_it` / `ZeroFreeRegion.jensen_circleAverage_log_norm_logDeriv_riemannZeta_sigma_it` / signed analogues | `lemma` | Direct Jensen formulas on `σ+it` disks, including a signed-left/unsigned-right version for `-logDeriv ζ`. | Avoids ambient vertical-region bookkeeping when the local Jensen disk is already the natural object. |
 | `ZeroFreeRegion.jensen_circleAverage_log_norm_riemannZeta_sigma_it_of_pos_radius` / `ZeroFreeRegion.jensen_circleAverage_log_norm_logDeriv_riemannZeta_sigma_it_of_pos_radius` / signed analogues | `lemma` | Positive-radius direct Jensen formulas on `σ+it` disks. | Removes `|R|` radius bookkeeping in the Jensen local-divisor side when future estimates already assume `0<R`. |
+| `ZeroFreeRegion.jensen_zero_mass_riemannZeta_two_add_I_mul_le_log_bound` | `lemma` | Bounds Jensen's weighted local zero mass on a disk centered at `2+it` by `log M + log 3` from a boundary bound `‖ζ‖ ≤ M`. | Uses the proved uniform center estimate `‖ζ(2+it)‖ ≥ 1/3`; the remaining input is a genuine zeta boundary-growth estimate. |
+| `ZeroFreeRegion.jensen_inner_zero_multiplicity_count_riemannZeta_two_add_I_mul_le_log_bound` | `lemma` | Bounds the total zeta-zero multiplicity in an inner disk by the Jensen mass, with factor `log (R/r)`. | Converts boundary growth into a quantitative local zero count while keeping the outer disk away from the pole; it does not yet bound the regular part of `ζ'/ζ`. |
 | `ZeroFreeRegion.norm_deriv_riemannZeta_le_of_sphere_norm_bound_avoid_one` / `ZeroFreeRegion.norm_deriv_riemannZeta_le_of_sphere_norm_bound_dist_one` | `lemma` | Cauchy derivative estimates for `ζ'` from a boundary `‖ζ‖` bound on a disk avoiding the pole at `1`. | Real bridge from future zeta-growth bounds to derivative bounds; it does not supply the growth bound itself. |
 | `ZeroFreeRegion.norm_deriv_riemannZeta_sigma_it_le_of_sphere_norm_bound_height` | `lemma` | Coordinate high-imaginary-height version: if `R < |t|`, a disk centered at `σ+it` avoids the pole and Cauchy's estimate gives `‖ζ'(σ+it)‖ ≤ M/R`. | Next link toward `logDeriv ζ` high-height control, still requiring both a boundary `‖ζ‖` estimate and a lower bound for `‖ζ‖` to form `ζ'/ζ`. |
 | `ZeroFreeRegion.exists_norm_riemannZeta_pos_lower_bound_on_compact_vertical_band` / `...sigma_it_pos_lower_bound_on_compact_vertical_band` / `...sigma_two_it_pos_lower_bound_on_compact_vertical_band` | `lemma` | Proves a positive lower bound for `‖ζ‖` on every compact positive-height band `1 ≤ Re z ≤ 2`, `H ≤ |Im z| ≤ T`, plus the coordinate `σ+it` and shifted `σ+2it` forms. | Supplies the bounded-height version of the lower-bound input used by the derivative/lower-bound bridges; the high-height lower bound remains a genuine analytic gap. |

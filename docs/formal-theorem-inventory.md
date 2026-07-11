@@ -2151,6 +2151,16 @@ Core verified declarations:
   `jensen_circleAverage_log_norm_neg_logDeriv_riemannZeta_sigma_it_unsigned_terms_of_pos_radius`
   are the positive-radius versions of the direct Jensen formulas, with
   closed balls stated using radius `R` instead of `|R|`.
+- `jensen_zero_mass_riemannZeta_two_add_I_mul_le_log_bound` bounds the
+  weighted Jensen zero mass on a disk centered at `2+I*t` by
+  `log M + log 3` whenever `‖ζ‖ ≤ M` on the boundary.  The additive
+  `log 3` is proved from the uniform center lower bound
+  `‖ζ(2+I*t)‖ ≥ 1/3`.
+- `jensen_inner_zero_multiplicity_count_riemannZeta_two_add_I_mul_le_log_bound`
+  converts that weighted estimate into a bound for the total multiplicity of
+  zeta zeros in a strictly smaller concentric disk.  The factor
+  `log (R/r)` is the minimum Jensen weight, and `R < |t|` keeps the outer
+  disk away from the pole at `1`.
 
 ### `PrimeNumberTheorem.lean`
 
@@ -3164,8 +3174,12 @@ Route interfaces:
   `MathlibAux.rectangleBoundaryIntegral_sub_inv_of_mem_openRectangle`, and
   `MathlibAux.rectangleBoundaryIntegral_eq_finite_simple_pole_residue_sum`,
   closing the outer-square deformation and finite simple-principal-part
-  residue sum.  General meromorphic principal-part extraction and
-  higher-order poles remain outside this theorem.  It also
+  residue sum.  The two theorems
+  `MathlibAux.rectangleBoundaryIntegral_eq_zero_of_differentiableOn` and
+  `MathlibAux.rectangleBoundaryIntegral_eq_finite_simple_pole_residue_sum_of_differentiableOn`
+  add an arbitrary holomorphic remainder.  Constructing that decomposition
+  from general meromorphic divisor data and treating higher-order poles remain
+  outside these theorems.  It also
   proves the constant-function sanity checks
   `MathlibAux.rectangleBoundaryIntegral_const`,
   `MathlibAux.rectangleIntegral_const`, and
