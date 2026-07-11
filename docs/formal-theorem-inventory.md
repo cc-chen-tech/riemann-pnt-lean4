@@ -709,6 +709,16 @@ Core verified declarations:
   gives the signed zeta-specific multiplicity-weighted form
   `-logDeriv ζ + n/(z-ρ)`, avoiding a simple-zero assumption in the local
   algebra layer.
+- `analyticAt_toMeromorphicNFAt_logDeriv_sub_order_mul_inv_of_analyticAt_order_eq_nat`
+  proves that this multiplicity-weighted regular part has a removable
+  singularity at the zero and that `toMeromorphicNFAt` supplies an analytic
+  extension there.  This corrects the raw expression at the center, where
+  Lean's `0⁻¹ = 0` convention otherwise leaves the wrong value.
+- `analyticAt_toMeromorphicNFAt_logDeriv_riemannZeta_sub_order_mul_inv_of_order_eq_nat`
+  and
+  `analyticAt_toMeromorphicNFAt_logDeriv_riemannZeta_sub_analyticOrderNatAt_mul_inv_of_zero`
+  specialize the extension to zeta, with the latter automatically selecting
+  the positive natural analytic multiplicity of an actual zero.
 - `exists_punctured_ball_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq`
   and `exists_punctured_closedBall_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq`
   convert an eventually-equal multiplicity regular part and an eventual norm
@@ -3199,8 +3209,13 @@ Route interfaces:
   residue limits for `-logDeriv riemannZeta s * x^s / s`: contribution `x` at
   `s = 1`, `-deriv riemannZeta 0 / riemannZeta 0` at `s = 0`, and
   `-analyticOrderNatAt(riemannZeta, rho) * x^rho / rho` at every nontrivial or
-  trivial zeta zero.  It does not prove Perron inversion or the contour-error
-  estimate.
+  trivial zeta zero.  `meromorphic_explicitFormulaIntegrand` proves global
+  meromorphicity, while
+  `exists_finite_explicitFormulaIntegrand_pole_candidates` proves that on any
+  compact set the integrand is analytic outside a finite set built from the
+  zeta divisor support and `0`.  It does not yet construct the single global
+  holomorphic remainder after subtracting all these principal parts, prove
+  Perron inversion, or prove the contour-error estimate.
 
 Reusable predicates:
 

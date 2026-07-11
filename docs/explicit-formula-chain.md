@@ -156,7 +156,12 @@ Current status:
    `ZeroFreeRegion.divisor_riemannZeta_pole_one`).
 2. Meromorphicity of
    `fun s => -deriv riemannZeta s / riemannZeta s * (x : Complex)^s / s`
-   (the `logDeriv riemannZeta` factor is now meromorphic on closed balls).
+   is proved globally as
+   `PrimeNumberTheorem.ExplicitFormulaResidues.meromorphic_explicitFormulaIntegrand`.
+   The theorem
+   `exists_finite_explicitFormulaIntegrand_pole_candidates` further proves
+   that on every compact set this concrete integrand is analytic outside a
+   finite set consisting of the zeta-divisor support together with `0`.
 3. Proved in
    `PrimeNumberTheorem.ExplicitFormulaResidues.tendsto_sub_one_mul_explicitFormulaIntegrand_one`:
    residue at `s = 1` is `x`.
@@ -169,7 +174,8 @@ Current status:
    `-multiplicity(rho) * x^rho / rho`.
 6. The corresponding local residue formula at every trivial zero is proved by
    `PrimeNumberTheorem.ExplicitFormulaResidues.tendsto_sub_mul_explicitFormulaIntegrand_trivialZero`.
-   Still needed: trivial-zero simplicity, finite pole-set assembly, and the
+   Still needed: trivial-zero simplicity, assembly of the finite local
+   principal parts into one holomorphic rectangle remainder, and the
    finite-to-infinite limit giving `-1/2 * log (1 - x^-2)`.
 
 ### Contour and residue theorem
@@ -225,10 +231,12 @@ rectangleIntegral_meromorphic_eq_residue_sum
 
 for a general meromorphic function with finite divisor support in the
 rectangle.  Finite simple principal parts and the rectangle deformation are
-now proved, including addition of a supplied holomorphic remainder.  The
-missing part is constructing this decomposition from Mathlib's meromorphic
-divisor/residue data, treating higher-order poles, and instantiating it for the
-explicit-formula integrand.
+now proved, including addition of a supplied holomorphic remainder.  For the
+explicit-formula integrand, global meromorphicity and finite compact-set pole
+candidates are now proved.  The missing part is constructing one holomorphic
+remainder after subtracting those candidates' principal parts and then
+instantiating the rectangle identity; the fully general theorem would also
+need to treat higher-order poles.
 
 The current `rectangleIntegral_meromorphic_eq_residue_sum` declaration remains
 an existential certificate interface, not a theorem following from its radius

@@ -336,8 +336,11 @@ The concrete explicit-formula integrand is now defined in
 residues at `s = 1`, `s = 0`, every nontrivial zeta zero, and every trivial
 zero, with zeta zeros weighted by the actual `analyticOrderNatAt`
 multiplicity.  These are local residue theorems; Perron inversion, assembly of
-the finite pole family inside a chosen rectangle, and contour errors remain
-open.
+the corresponding finite principal-part decomposition, and contour errors
+remain open.  The same file now proves the concrete integrand is globally
+meromorphic and, on every compact set, analytic outside an explicitly
+constructed finite candidate set (the zeta-divisor support together with the
+kernel pole at `0`).
 
 ## File Overview
 
@@ -351,7 +354,7 @@ open.
 | `PrimeNumberTheorem.lean` | PNT forms, equivalences, Li(x) asymptotics, zero symmetry, bounded-height zero finiteness, explicit formula target | sorry-free, targets unproved |
 | `ZeroFreeRegion.lean` | 3-4-1 setup, log derivative series, compact zero-free region, quantitative zero-free-region targets | sorry-free, quantitative targets unproved |
 | `PrimeNumberTheorem/ExplicitFormulaAux.lean` | `chebyshevPsi0`, `goodHeight`, finite zero-sum support helpers, boundary-height and auxiliary multiplicity normalizers | sorry-free, support predicate only |
-| `PrimeNumberTheorem/ExplicitFormulaResidues.lean` | Concrete `-ζ'/ζ(s) * x^s/s` integrand and proved residues at `1`, `0`, nontrivial zeros, and trivial zeros with analytic multiplicity | sorry-free |
+| `PrimeNumberTheorem/ExplicitFormulaResidues.lean` | Concrete `-ζ'/ζ(s) * x^s/s` integrand; global meromorphicity, finite compact-set pole candidates, and proved residues at `1`, `0`, nontrivial zeros, and trivial zeros with analytic multiplicity | sorry-free |
 | `PrimeNumberTheorem/ExplicitFormulaTruncated.lean` | Truncated explicit-formula route interface with a real Prop body | sorry-free, route interface unproved |
 | `MathlibAux/RectangleResidue.lean` | Rectangle residue route interface, proved circle and square finite simple-pole residue formulas, rectangular-annulus deformation, plus constant-function sanity checks | sorry-free, general meromorphic route interface unproved |
 | `HardyTheorem/AFE.lean` | Corrected AFE route interface using an unwrapped theta wrapper | sorry-free, route interface unproved |
@@ -640,6 +643,7 @@ Lean declarations in `ZeroFreeRegion.lean` and
 | `ZeroFreeRegion.exists_eventuallyEq_sub_mul_unit_of_analyticAt_zero_deriv_ne_zero` / `ZeroFreeRegion.exists_eventuallyEq_logDeriv_sub_inv_of_analyticAt_zero_deriv_ne_zero` | `lemma` | Factors a simple analytic zero locally as `f z = (z - x) * g z`, then proves `logDeriv f z - (z-x)⁻¹ = logDeriv g z` on the punctured neighborhood. | First hard local algebra input for later bounding the regular part of `logDeriv ζ` near simple zeros; the missing global height estimate is still separate. |
 | `ZeroFreeRegion.exists_eventuallyEq_neg_logDeriv_add_inv_of_analyticAt_zero_deriv_ne_zero` / `ZeroFreeRegion.exists_eventuallyEq_neg_logDeriv_riemannZeta_add_inv_of_simple_zero` | `lemma` | Gives the signed version `-logDeriv f z + (z-x)⁻¹ = -logDeriv g z`, with a ζ-specific simple-zero wrapper away from the pole. | Matches the `-ζ'/ζ + (s-ρ)⁻¹` regular-part shape consumed by the conditional zero-free-region bridge. |
 | `ZeroFreeRegion.exists_eventuallyEq_logDeriv_sub_order_mul_inv_of_analyticAt_order_eq_nat` / `ZeroFreeRegion.exists_eventuallyEq_neg_logDeriv_riemannZeta_add_order_mul_inv_of_order_eq_nat` | `lemma` | Generalizes the local principal-part separation to arbitrary finite natural order `n`, giving `logDeriv f - n/(z-x)` and the signed zeta-specific `-logDeriv ζ + n/(z-ρ)` forms. | Removes the unnecessary simple-zero restriction from the local algebra layer; global Borel/Jensen height bounds remain the missing analytic input. |
+| `ZeroFreeRegion.analyticAt_toMeromorphicNFAt_logDeriv_sub_order_mul_inv_of_analyticAt_order_eq_nat` / zeta-specific and automatic `analyticOrderNatAt` variants | `lemma` | Proves that after subtracting the multiplicity-weighted pole and correcting the value at the zero with `toMeromorphicNFAt`, the regular part is analytic at the zero itself. | Supplies the removable-singularity step required before applying Borel-Carathéodory across a zeta zero; uniform high-height growth and finite multi-zero subtraction remain open. |
 | `ZeroFreeRegion.exists_punctured_ball_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq` / `ZeroFreeRegion.exists_punctured_closedBall_norm_neg_logDeriv_add_order_mul_inv_le_of_eventuallyEq` | `lemma` | Converts an eventually-equal multiplicity regular part plus an eventual norm bound into an explicit punctured open/closed ball bound, in both signs. | Bridges local principal-part algebra to disk estimates without claiming the missing global height bound. |
 | `ZeroFreeRegion.exists_punctured_ball_norm_logDeriv_riemannZeta_sub_order_mul_inv_le_of_order_eq_nat` / `ZeroFreeRegion.exists_punctured_closedBall_norm_neg_logDeriv_riemannZeta_add_order_mul_inv_le_of_order_eq_nat` | `lemma` | Zeta-specific bridges from `analyticOrderAt ζ ρ = n` and a local-unit logarithmic-derivative bound to punctured open/closed ball regular-part bounds, in both signs. | Connects multiplicity factorization to usable disk estimates once the local unit is bounded. |
 | `ZeroFreeRegion.analyticAt_logDeriv_of_analyticAt_ne_zero` / `ZeroFreeRegion.analyticAt_logDeriv_riemannZeta_of_ne_one_of_ne_zero` | `lemma` | Proves the logarithmic derivative is analytic wherever the original function is analytic and nonzero, with zeta-specific away-from-pole wrappers. | Supplies the natural analytic regularity input for the local divisor/log-counting vanishing bridges. |

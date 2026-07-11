@@ -16,6 +16,109 @@ formula. -/
 noncomputable def explicitFormulaIntegrand (x : ℝ) (s : ℂ) : ℂ :=
   -logDeriv riemannZeta s * (x : ℂ) ^ s / s
 
+/-- For positive `x`, the concrete integrand used in the von Mangoldt
+explicit formula is meromorphic on the whole complex plane. -/
+theorem meromorphic_explicitFormulaIntegrand
+    {x : ℝ} (hx : 0 < x) :
+    Meromorphic (explicitFormulaIntegrand x) := by
+  have hx0 : (x : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr hx.ne'
+  intro s
+  have hlog :
+      MeromorphicAt (fun z : ℂ => -logDeriv riemannZeta z) s :=
+    ZeroFreeRegion.meromorphicOn_neg_logDeriv_riemannZeta_closedBall s 0 s (by simp)
+  have hpow_diff : Differentiable ℂ (fun z : ℂ => (x : ℂ) ^ z) :=
+    (differentiable_id : Differentiable ℂ (fun z : ℂ => z)).const_cpow
+      (Or.inl hx0)
+  have hpow : MeromorphicAt (fun z : ℂ => (x : ℂ) ^ z) s :=
+    (hpow_diff.analyticAt s).meromorphicAt
+  have hid : MeromorphicAt (fun z : ℂ => z) s :=
+    analyticAt_id.meromorphicAt
+  change MeromorphicAt
+    ((fun z : ℂ => -logDeriv riemannZeta z) *
+      (fun z : ℂ => (x : ℂ) ^ z) / fun z : ℂ => z) s
+  exact (hlog.mul hpow).div hid
+
+/-- Away from the kernel pole `0`, the zeta pole `1`, and the zeros of zeta,
+the concrete explicit-formula integrand is analytic. -/
+theorem analyticAt_explicitFormulaIntegrand_of_ne_zero_of_ne_one_of_zeta_ne_zero
+    {x : ℝ} (hx : 0 < x) {s : ℂ}
+    (hs0 : s ≠ 0) (hs1 : s ≠ 1) (hzeta : riemannZeta s ≠ 0) :
+    AnalyticAt ℂ (explicitFormulaIntegrand x) s := by
+  have hx0 : (x : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr hx.ne'
+  have hlog : AnalyticAt ℂ (fun z : ℂ => -logDeriv riemannZeta z) s :=
+    (ZeroFreeRegion.analyticAt_logDeriv_riemannZeta_of_ne_one_of_ne_zero
+      s hs1 hzeta).neg
+  have hpow_diff : Differentiable ℂ (fun z : ℂ => (x : ℂ) ^ z) :=
+    (differentiable_id : Differentiable ℂ (fun z : ℂ => z)).const_cpow
+      (Or.inl hx0)
+  have hpow : AnalyticAt ℂ (fun z : ℂ => (x : ℂ) ^ z) s :=
+    hpow_diff.analyticAt s
+  change AnalyticAt ℂ
+    ((fun z : ℂ => -logDeriv riemannZeta z) *
+      (fun z : ℂ => (x : ℂ) ^ z) / fun z : ℂ => z) s
+  exact (hlog.mul hpow).div analyticAt_id hs0
+
+/-- On every compact set, the concrete explicit-formula integrand is analytic
+away from a finite set of pole candidates.  The candidates are the kernel
+pole `0` together with the support of the zeta divisor on the compact set, so
+they include the zeta pole at `1` and every zeta zero in the set. -/
+theorem exists_finite_explicitFormulaIntegrand_pole_candidates
+    {x : ℝ} (hx : 0 < x) {K : Set ℂ} (hK : IsCompact K) :
+    ∃ poles : Finset ℂ,
+      ∀ s ∈ K, s ∉ poles → AnalyticAt ℂ (explicitFormulaIntegrand x) s := by
+  classical
+  have hzeta_meromorphic : MeromorphicOn riemannZeta K := by
+    intro s _hs
+    by_cases hs1 : s = 1
+    · subst s
+      exact ZeroFreeRegion.meromorphicAt_riemannZeta_one
+    · exact ZeroFreeRegion.meromorphicAt_riemannZeta_of_ne_one s hs1
+  let D := MeromorphicOn.divisor riemannZeta K
+  have hDfinite : D.support.Finite := D.finiteSupport hK
+  let poles : Finset ℂ := hDfinite.toFinset ∪ {0}
+  refine ⟨poles, ?_⟩
+  intro s hsK hs_not_mem
+  have hs0 : s ≠ 0 := by
+    intro hs
+    subst s
+    apply hs_not_mem
+    simp [poles]
+  have hs_not_support : s ∉ D.support := by
+    intro hs
+    apply hs_not_mem
+    simp [poles, hDfinite.mem_toFinset, hs]
+  have hDzero : D s = 0 := Function.notMem_support.mp hs_not_support
+  have hs1 : s ≠ 1 := by
+    intro hs
+    subst s
+    have hDone : D (1 : ℂ) = (-1 : ℤ) := by
+      simpa [D] using
+        ZeroFreeRegion.divisor_riemannZeta_pole_one hsK hzeta_meromorphic
+    rw [hDzero] at hDone
+    norm_num at hDone
+  have hzeta : riemannZeta s ≠ 0 := by
+    intro hzeta_zero
+    have han : AnalyticAt ℂ riemannZeta s :=
+      ZeroFreeRegion.analyticOnNhd_riemannZeta_ne_one s hs1
+    have hpos : 0 < analyticOrderNatAt riemannZeta s :=
+      ZeroFreeRegion.analyticOrderNatAt_riemannZeta_pos_of_zero hs1 hzeta_zero
+    have horder :
+        analyticOrderAt riemannZeta s =
+          (analyticOrderNatAt riemannZeta s : ℕ∞) :=
+      (ZeroFreeRegion.analyticOrderNatAt_riemannZeta_eq_analyticOrderAt_of_ne_one
+        hs1).symm
+    have hDvalue : D s = (analyticOrderNatAt riemannZeta s : ℤ) := by
+      rw [MeromorphicOn.divisor_apply hzeta_meromorphic hsK,
+        han.meromorphicOrderAt_eq, horder]
+      simp
+    rw [hDzero] at hDvalue
+    have hnat_zero : analyticOrderNatAt riemannZeta s = 0 := by
+      exact_mod_cast hDvalue.symm
+    exact (Nat.ne_of_gt hpos) hnat_zero
+  exact
+    analyticAt_explicitFormulaIntegrand_of_ne_zero_of_ne_one_of_zeta_ne_zero
+      hx hs0 hs1 hzeta
+
 /-- The signed logarithmic derivative of zeta has principal coefficient `1`
 at the pole of zeta at `s = 1`. -/
 theorem tendsto_sub_one_mul_neg_logDeriv_riemannZeta :
