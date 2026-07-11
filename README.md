@@ -315,9 +315,12 @@ local result `MathlibAux.circleIntegral_eq_finite_simple_pole_residue_sum` for
 a holomorphic remainder plus finitely many simple principal parts.  It also
 proves `MathlibAux.rectangleBoundaryIntegral_inv_zero` and
 `MathlibAux.rectangleBoundaryIntegral_sub_inv_center`, the square boundary
-integrals of `1/z` at the origin and `1/(z-c)` at an arbitrary center.  These
-are the local pole kernels; the finite small-square deformation and
-internal-edge cancellation needed for the general rectangle residue theorem
+integrals of `1/z` at the origin and `1/(z-c)` at an arbitrary center.  It now
+also proves `MathlibAux.rectangleBoundaryIntegral_sub_inv_of_mem_openRectangle`
+and `MathlibAux.rectangleBoundaryIntegral_eq_finite_simple_pole_residue_sum`:
+the outer-square deformation, internal-edge cancellation, and finite simple
+principal-part residue formula.  The general meromorphic principal-part
+extraction, higher-order poles, Perron formula, and contour error estimates
 remain open.  The repository also proves the constant-function sanity checks
 `MathlibAux.rectangleBoundaryIntegral_const`,
 `MathlibAux.rectangleIntegral_const`, and
@@ -338,7 +341,7 @@ general rectangle residue theorem has been proved.
 | `ZeroFreeRegion.lean` | 3-4-1 setup, log derivative series, compact zero-free region, quantitative zero-free-region targets | sorry-free, quantitative targets unproved |
 | `PrimeNumberTheorem/ExplicitFormulaAux.lean` | `chebyshevPsi0`, `goodHeight`, finite zero-sum support helpers, boundary-height and auxiliary multiplicity normalizers | sorry-free, support predicate only |
 | `PrimeNumberTheorem/ExplicitFormulaTruncated.lean` | Truncated explicit-formula route interface with a real Prop body | sorry-free, route interface unproved |
-| `MathlibAux/RectangleResidue.lean` | Rectangle residue route interface for future Perron/explicit-formula work, circle finite simple-pole residue formula, plus constant-function sanity checks | sorry-free, route interface unproved |
+| `MathlibAux/RectangleResidue.lean` | Rectangle residue route interface, proved circle and square finite simple-pole residue formulas, rectangular-annulus deformation, plus constant-function sanity checks | sorry-free, general meromorphic route interface unproved |
 | `HardyTheorem/AFE.lean` | Corrected AFE route interface using an unwrapped theta wrapper | sorry-free, route interface unproved |
 | `RiemannExplorer/Conrey40.lean` | Conrey target alias to the upper-level `KnownResults` target | sorry-free, route interface alias |
 

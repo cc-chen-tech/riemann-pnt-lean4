@@ -3159,7 +3159,13 @@ Route interfaces:
   with the square-kernel calculations
   `MathlibAux.rectangleBoundaryIntegral_inv_zero` and
   `MathlibAux.rectangleBoundaryIntegral_sub_inv_center` for `1/z` at the
-  origin and `1/(z-c)` at an arbitrary center.  It also
+  origin and `1/(z-c)` at an arbitrary center.  The file further proves
+  `MathlibAux.boundaryRectIntegral_eq_inner_of_four_rectangles`,
+  `MathlibAux.rectangleBoundaryIntegral_sub_inv_of_mem_openRectangle`, and
+  `MathlibAux.rectangleBoundaryIntegral_eq_finite_simple_pole_residue_sum`,
+  closing the outer-square deformation and finite simple-principal-part
+  residue sum.  General meromorphic principal-part extraction and
+  higher-order poles remain outside this theorem.  It also
   proves the constant-function sanity checks
   `MathlibAux.rectangleBoundaryIntegral_const`,
   `MathlibAux.rectangleIntegral_const`, and

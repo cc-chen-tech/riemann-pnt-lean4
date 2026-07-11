@@ -190,6 +190,15 @@ positively oriented square centered at `0`, or at an arbitrary `c`, integrates
 `1 / z` or `1 / (z-c)` to `2*pi*I`.  The arbitrary-center theorem is the local
 calculation needed to excise a small square around each actual pole.
 
+The project now also proves
+`MathlibAux.rectangleBoundaryIntegral_sub_inv_of_mem_openRectangle` and
+`MathlibAux.rectangleBoundaryIntegral_eq_finite_simple_pole_residue_sum`.
+The first deforms an outer square containing an arbitrary simple pole to a
+small square centered at that pole.  The second sums this over a finite pole
+set.  The deformation uses four pole-free rectangles and the proved internal
+edge-cancellation lemma
+`MathlibAux.boundaryRectIntegral_eq_inner_of_four_rectangles`.
+
 There is still no directly callable general theorem of the form
 "rectangle contour integral equals `2*pi*I` times a finite residue sum".
 The remaining intermediate theorem is:
@@ -198,10 +207,11 @@ The remaining intermediate theorem is:
 rectangleIntegral_meromorphic_eq_residue_sum
 ```
 
-for a meromorphic function with finite divisor support in the rectangle.  The
-local circle and square simple-pole calculations are now proved; the missing
-part is deforming the outer rectangle boundary to a finite family of disjoint
-small pole boundaries and proving cancellation of all internal edges.
+for a general meromorphic function with finite divisor support in the
+rectangle.  Finite simple principal parts and the rectangle deformation are
+now proved.  The missing part is extracting those principal parts, including
+higher-order poles, from Mathlib's meromorphic divisor/residue data and proving
+that the remainder is holomorphic on the whole rectangle.
 
 The current `rectangleIntegral_meromorphic_eq_residue_sum` declaration remains
 an existential certificate interface, not a theorem following from its radius
