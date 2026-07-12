@@ -14,6 +14,7 @@ lean_lib RiemannPNT where
     `HardyTheorem,
     `EulerAndLfunctions,
     `PrimeNumberTheorem,
+    `PrimeNumberTheorem.PerronTruncation,
     `PrimeNumberTheorem.ExplicitFormulaAux,
     `ZeroFreeRegion,
     `ZeroFreeRegion.MeromorphicAux,
