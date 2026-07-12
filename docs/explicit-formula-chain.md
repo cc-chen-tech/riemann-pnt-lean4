@@ -144,6 +144,14 @@ Already available or mostly available:
    finite-height error for the second-order kernel: truncating to `[-W,W]`
    costs at most `exp (c*u) / (2*pi^2*W)`.  This is an unconditional theorem,
    not a truncation target or route interface.
+8. `PrimeNumberTheorem.norm_truncated_vonMangoldt_secondOrderPerron_sub_smoothedPsi_le`
+   sums that error over the actual von Mangoldt coefficients and obtains the
+   explicit finite Dirichlet-polynomial remainder
+   `sum_{n <= x} Lambda(n) * (x/n)^c / (2*pi^2*W)`.
+9. `PrimeNumberTheorem.norm_truncated_vonMangoldt_secondOrderPerron_sub_smoothedPsi_le_explicit`
+   eliminates the coefficient sum using Chebyshev's bound, giving
+   `x^c * (log 4 + 4) * x / (2*pi^2*W)`.  The finite-height arithmetic starting
+   integral therefore has a closed-form unconditional error bound.
 
 Needed:
 
@@ -511,9 +519,12 @@ and
 4. Either prove the ordinary `1 / s` half-jump formula, or combine the proved
    finite-height `1 / s^2` formula and Riesz finite-difference squeeze with a
    quantitative choice of `y - x` in the contour-shift error argument.  The
-   second-order vertical truncation and exact finite-difference bridge are now
-   complete; the conditionally convergent half-jump and the zeta/Dirichlet-series
-   contour-edge estimates remain open.
+   second-order vertical truncation, its von Mangoldt specialization, its
+   closed-form coefficient bound, and the exact finite-difference bridge are
+   complete.  Replacing the finite Dirichlet polynomial by the `-zeta'/zeta`
+   series on the right line, and then estimating the shifted contour edges,
+   remain open; the ordinary conditionally convergent half-jump is the alternate
+   route.
 5. Extend the existing constant-function rectangle sanity checks to a real
    rectangle meromorphic residue theorem as a reusable project
    lemma, since Mathlib currently supplies the analytic pieces but not the exact
