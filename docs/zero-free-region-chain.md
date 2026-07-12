@@ -1784,26 +1784,26 @@ The generic Borel/Cauchy theorem accepts this lower bound directly.  The final
 selected-factor theorem therefore permits `a>2`, making its guaranteed
 interior region wide enough to include points with real part `1`.
 
-This closes the geometric radius obstruction only.  The bound still assumes
-inner/outer zeta growth, retains the explicit good-circle separation loss, and
-has not yet been identified with `logDeriv zeta` minus the finite local
-principal-part sum.
+This closes the geometric radius obstruction.  The bound still assumes
+inner/outer zeta growth and retains the explicit good-circle separation loss.
 
 The principal-part identity itself is now proved independently:
 
 ```lean
 ZeroFreeRegion.logDeriv_finprod_sub_zpow_eq_finsum_mul_inv
 ZeroFreeRegion.exists_logDeriv_factorization_riemannZeta_closedBall_pointwise_of_ne_zero
+ZeroFreeRegion.exists_good_radius_regularized_logDeriv_riemannZeta_le_jensen_bound
 ```
 
 The first theorem differentiates the finite-support divisor product.  The
 second uses the meromorphic identity principle to upgrade Mathlib's
 codiscrete factorization near every nonzero interior point and proves
-`logDeriv zeta = sum divisor/(z-u) + logDeriv g` pointwise.  The remaining
-formal issue is witness alignment: this factor and the factor produced by the
-current Jensen/Borel theorem are existentially chosen in separate calls.
-They must be unified before the factor norm bound can be advertised as a
-bound for the zeta principal-part regularization.
+`logDeriv zeta = sum divisor/(z-u) + logDeriv g` pointwise.  The third threads
+that same `g` through the good-radius, Jensen, and Borel/Cauchy estimates and
+therefore bounds `logDeriv zeta - sum divisor/(z-u)` directly.  The remaining
+hard issue is quantitative rather than existential: zeta-specific inner and
+outer growth estimates plus sharper control of the zero-count/separation loss
+are still needed to obtain a uniform `O(log |t|)` bound.
 The polynomial-growth handoff is also now composed in this exact disk
 geometry:
 

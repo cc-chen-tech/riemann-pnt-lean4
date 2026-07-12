@@ -825,8 +825,11 @@ Core verified declarations:
   upgrades Mathlib's codiscrete zeta factorization by a local meromorphic
   identity argument.  In the strict disk interior and away from zeta zeros it
   proves `logDeriv zeta = sum divisor/(z-u) + logDeriv g` pointwise.
-  This identity and the current Jensen/Borel bound are still separate
-  existential witnesses; a same-witness composition remains to be proved.
+- `exists_good_radius_regularized_logDeriv_riemannZeta_le_jensen_bound`
+  uses that exact factor witness in the Jensen/Borel estimate and directly
+  bounds `logDeriv zeta - sum divisor/(z-u)` at every admitted nonzero
+  interior point.  This closes witness alignment, but the estimate remains
+  conditional on zeta growth and retains the explicit separation loss.
 - `exists_punctured_ball_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq`
   and `exists_punctured_closedBall_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq`
   convert an eventually-equal multiplicity regular part and an eventual norm

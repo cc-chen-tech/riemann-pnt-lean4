@@ -16541,6 +16541,39 @@ theorem exists_good_radius_interior_logDeriv_riemannZeta_factor_le_jensen_bound
   ZeroFreeRegion.exists_good_radius_interior_logDeriv_riemannZeta_factor_le_jensen_bound
     ha haq hqb hb hbR hheight hwidth hM houter hinner
 
+/-- Public Jensen/Borel bound for zeta's logarithmic derivative after
+subtracting all local divisor principal parts. -/
+theorem exists_good_radius_regularized_logDeriv_riemannZeta_le_jensen_bound
+    {a q b R t M K : ℝ} (ha : 0 < a) (haq : a < q) (hqb : q < b)
+    (hb : 1 ≤ b) (hbR : b < R) (hheight : R < |t|)
+    (hwidth : q - a ≤ 4) (hM : 1 ≤ M)
+    (houter : ∀ z : ℂ,
+      z ∈ Metric.sphere ((2 : ℂ) + Complex.I * t) R →
+        ‖riemannZeta z‖ ≤ M)
+    (hinner : ∀ z ∈ Metric.closedBall ((2 : ℂ) + Complex.I * t) q,
+      Real.log ‖riemannZeta z‖ ≤ K) :
+    ∃ (zeros : Finset ℂ) (r : ℝ),
+      (∀ ρ : ℂ, ρ ∈ zeros ↔
+        ρ ∈ Metric.closedBall ((2 : ℂ) + Complex.I * t) b ∧
+          riemannZeta ρ = 0) ∧
+      0 < r ∧ r ∈ Set.Icc a q ∧
+      ∀ w ρ, 0 < ρ →
+        dist w ((2 : ℂ) + Complex.I * t) + ρ ≤ a / 2 →
+        riemannZeta w ≠ 0 →
+        ‖logDeriv riemannZeta w -
+            ∑ᶠ u, (MeromorphicOn.divisor riemannZeta
+              (Metric.closedBall ((2 : ℂ) + Complex.I * t) b) u : ℂ) *
+                (w - u)⁻¹‖ ≤
+          2 * max (K -
+            Real.log ((q - a) / ((4 : ℝ) *
+              (((zeros.image
+                (dist ((2 : ℂ) + Complex.I * t))).card : ℝ) + 1))) *
+                ((Real.log M + Real.log 3) / Real.log (R / b)) +
+            Real.log 3 + Real.log b *
+              ((Real.log M + Real.log 3) / Real.log (R / b))) 1 / ρ :=
+  ZeroFreeRegion.exists_good_radius_regularized_logDeriv_riemannZeta_le_jensen_bound
+    ha haq hqb hb hbR hheight hwidth hM houter hinner
+
 /-- Public quantitative good-circle theorem obtained by composing a zeta
 boundary norm bound, Jensen zero counting, and finite-radius avoidance. -/
 theorem exists_good_radius_riemannZeta_two_add_I_mul_of_boundary_norm_bound
