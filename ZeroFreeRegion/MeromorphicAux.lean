@@ -7615,6 +7615,55 @@ lemma norm_logDeriv_le_four_mul_div_of_analyticOnNhd_nonzero_re_log_bound
     ‖logDeriv g c‖ ≤ (2 * M) / (R / 2) := hcauchy
     _ = 4 * M / R := by field_simp [hR.ne']; ring
 
+/-- Interior Borel--Caratheodory/Cauchy estimate for a nonvanishing analytic
+function.
+
+The point `z` may move away from the normalization center `c`; the explicit
+radius `rho` records the Cauchy disk still available around `z`. -/
+lemma norm_logDeriv_le_two_mul_div_of_analyticOnNhd_nonzero_re_log_bound
+    {g : ℂ → ℂ} {c z : ℂ} {R M ρ : ℝ}
+    (hR : 0 < R) (hM : 0 < M) (hρ : 0 < ρ)
+    (hg : AnalyticOnNhd ℂ g (Metric.closedBall c R))
+    (hgne : ∀ w ∈ Metric.closedBall c R, g w ≠ 0)
+    (hre : ∀ w ∈ Metric.ball c R,
+      Real.log ‖g w‖ - Real.log ‖g c‖ ≤ M)
+    (hzρ : dist z c + ρ ≤ R / 2) :
+    ‖logDeriv g z‖ ≤ 2 * M / ρ := by
+  obtain ⟨h, hh, hhc, hhderiv, _hhexp, hhre⟩ :=
+    exists_normalized_analytic_log_primitive_on_ball hR hg hgne
+  have hmaps : Set.MapsTo h (Metric.ball c R) {w : ℂ | w.re ≤ M} := by
+    intro w hw
+    change (h w).re ≤ M
+    rw [hhre w hw]
+    exact hre w hw
+  have hhalf_lt : R / 2 < R := by linarith
+  have hclosed_subset : Metric.closedBall z ρ ⊆ Metric.ball c R := by
+    intro w hw
+    have hwz : dist w z ≤ ρ := Metric.mem_closedBall.mp hw
+    have hwc : dist w c ≤ dist w z + dist z c := dist_triangle _ _ _
+    apply Metric.mem_ball.mpr
+    linarith
+  have hdiff_closed : DifferentiableOn ℂ h (Metric.closedBall z ρ) :=
+    hh.differentiableOn.mono hclosed_subset
+  have hdiff : DiffContOnCl ℂ h (Metric.ball z ρ) :=
+    hdiff_closed.diffContOnCl_ball subset_rfl
+  have hnorm : ∀ w ∈ Metric.sphere z ρ, ‖h w‖ ≤ 2 * M := by
+    intro w hw
+    have hwz : dist w z = ρ := Metric.mem_sphere.mp hw
+    have hwc : dist w c ≤ dist w z + dist z c := dist_triangle _ _ _
+    have hwc_half : ‖w - c‖ ≤ R / 2 := by
+      rw [← dist_eq_norm]
+      linarith
+    have hbc := borelCaratheodory_centered_half_radius_bound
+      hM hh.differentiableOn hmaps hR hwc_half
+    simpa [hhc] using hbc
+  have hz_ball : z ∈ Metric.ball c R := by
+    apply Metric.mem_ball.mpr
+    linarith
+  have hcauchy : ‖deriv h z‖ ≤ (2 * M) / ρ :=
+    Complex.norm_deriv_le_of_forall_mem_sphere_norm_le hρ hdiff hnorm
+  simpa [hhderiv z hz_ball] using hcauchy
+
 /-- A boundary logarithmic norm bound controls the center logarithmic
 derivative once the nonvanishing analytic factor has the standard zeta-center
 margin `1/3`.
@@ -7669,6 +7718,58 @@ lemma norm_logDeriv_le_four_mul_max_add_log_three_div_of_sphere_log_norm_le
   simpa [M] using
     norm_logDeriv_le_four_mul_div_of_analyticOnNhd_nonzero_re_log_bound
       hR hM hg hgne hre
+
+/-- Moving-interior-point version of the boundary logarithmic norm estimate.
+
+The same maximum-modulus and center-margin argument supplies the real-part
+input for Borel--Caratheodory; a Cauchy disk of radius `rho` around `z` then
+gives the explicit derivative bound. -/
+lemma norm_logDeriv_le_two_mul_max_add_log_three_div_of_sphere_log_norm_le
+    {g : ℂ → ℂ} {c z : ℂ} {R B ρ : ℝ}
+    (hR : 0 < R) (hρ : 0 < ρ)
+    (hg : AnalyticOnNhd ℂ g (Metric.closedBall c R))
+    (hgne : ∀ w ∈ Metric.closedBall c R, g w ≠ 0)
+    (hcenter : (1 / 3 : ℝ) ≤ ‖g c‖)
+    (hsphere : ∀ w ∈ Metric.sphere c R, Real.log ‖g w‖ ≤ B)
+    (hzρ : dist z c + ρ ≤ R / 2) :
+    ‖logDeriv g z‖ ≤ 2 * max (B + Real.log 3) 1 / ρ := by
+  let M : ℝ := max (B + Real.log 3) 1
+  have hM : 0 < M := lt_of_lt_of_le zero_lt_one (le_max_right _ _)
+  have hdiff : DiffContOnCl ℂ g (Metric.ball c R) :=
+    hg.differentiableOn.diffContOnCl_ball subset_rfl
+  have hsphere_norm : ∀ w ∈ Metric.sphere c R, ‖g w‖ ≤ Real.exp B := by
+    intro w hw
+    have hexp := Real.exp_le_exp.mpr (hsphere w hw)
+    rw [Real.exp_log (norm_pos_iff.mpr
+      (hgne w (Metric.sphere_subset_closedBall hw)))] at hexp
+    exact hexp
+  have hclosed_norm : ∀ w ∈ Metric.closedBall c R, ‖g w‖ ≤ Real.exp B := by
+    intro w hw
+    apply Complex.norm_le_of_forall_mem_frontier_norm_le
+      Metric.isBounded_ball hdiff
+    · intro u hu
+      exact hsphere_norm u (Metric.frontier_ball_subset_sphere hu)
+    · rw [closure_ball c hR.ne']
+      exact hw
+  have hlog_center : -Real.log 3 ≤ Real.log ‖g c‖ := by
+    have hlog := Real.log_le_log (by norm_num : (0 : ℝ) < 1 / 3) hcenter
+    simpa [one_div, Real.log_inv] using hlog
+  have hre : ∀ w ∈ Metric.ball c R,
+      Real.log ‖g w‖ - Real.log ‖g c‖ ≤ M := by
+    intro w hw
+    have hw_closed : w ∈ Metric.closedBall c R :=
+      Metric.ball_subset_closedBall hw
+    have hlog_w : Real.log ‖g w‖ ≤ B := by
+      have hlog := Real.log_le_log
+        (norm_pos_iff.mpr (hgne w hw_closed)) (hclosed_norm w hw_closed)
+      simpa using hlog
+    have hsum : Real.log ‖g w‖ - Real.log ‖g c‖ ≤
+        B + Real.log 3 := by
+      linarith
+    exact hsum.trans (le_max_left _ _)
+  simpa [M] using
+    norm_logDeriv_le_two_mul_div_of_analyticOnNhd_nonzero_re_log_bound
+      hR hM hρ hg hgne hre hzρ
 
 /-- Cauchy derivative estimate for ζ on a disk whose closed ball avoids the
 pole at `1`.
@@ -23124,8 +23225,9 @@ lemma exists_good_radius_log_norm_riemannZeta_factor_le_jensen_bound
 /-- Jensen growth control produces a zero-removed zeta factor whose
 logarithmic derivative at the disk center has an explicit linear bound.
 
-This is the regular-part estimate supplied by Borel--Caratheodory: the random
-good radius is eliminated from the denominator using `r ≥ a`. -/
+This is a selected-factor estimate supplied by Borel--Caratheodory: the random
+good radius is eliminated from the denominator using `r ≥ a`, and the same
+factor is controlled at every point with a retained interior Cauchy radius. -/
 lemma exists_good_radius_log_norm_and_logDeriv_riemannZeta_factor_le_jensen_bound
     {a q b R t M K : ℝ} (ha : 0 < a) (haq : a < q) (hqb : q < b)
     (hb_one : b ≤ 1) (hbR : b < R) (hheight : R < |t|)
@@ -23151,11 +23253,17 @@ lemma exists_good_radius_log_norm_and_logDeriv_riemannZeta_factor_le_jensen_boun
           Real.log ((q - a) / ((4 : ℝ) *
             (((zeros.image (dist ((2 : ℂ) + I * t))).card : ℝ) + 1))) *
           ((Real.log M + Real.log 3) / Real.log (R / b))) ∧
-      ‖logDeriv g ((2 : ℂ) + I * t)‖ ≤
+      (‖logDeriv g ((2 : ℂ) + I * t)‖ ≤
         4 * max (K -
           Real.log ((q - a) / ((4 : ℝ) *
             (((zeros.image (dist ((2 : ℂ) + I * t))).card : ℝ) + 1))) *
-          ((Real.log M + Real.log 3) / Real.log (R / b)) + Real.log 3) 1 / a := by
+          ((Real.log M + Real.log 3) / Real.log (R / b)) + Real.log 3) 1 / a) ∧
+      ∀ w ρ, 0 < ρ → dist w ((2 : ℂ) + I * t) + ρ ≤ a / 2 →
+        ‖logDeriv g w‖ ≤
+          2 * max (K -
+            Real.log ((q - a) / ((4 : ℝ) *
+              (((zeros.image (dist ((2 : ℂ) + I * t))).card : ℝ) + 1))) *
+            ((Real.log M + Real.log 3) / Real.log (R / b)) + Real.log 3) 1 / ρ := by
   classical
   let c : ℂ := (2 : ℂ) + I * t
   rcases exists_good_radius_log_norm_riemannZeta_factor_le_jensen_bound
@@ -23196,8 +23304,16 @@ lemma exists_good_radius_log_norm_and_logDeriv_riemannZeta_factor_le_jensen_boun
   have hnum_nonneg : 0 ≤ 4 * max (B + Real.log 3) 1 := by positivity
   have hden := div_le_div_of_nonneg_left hnum_nonneg ha hr.1
   refine ⟨zeros, r, g, hzeros, hrpos, hr, hg, hgne, hfactor,
-    hsphere_ne, hgbound, ?_⟩
-  simpa [B, c] using hlogDeriv_r.trans hden
+    hsphere_ne, hgbound, ?_, ?_⟩
+  · simpa [B, c] using hlogDeriv_r.trans hden
+  · intro w ρ hρ hwρ
+    have hwρr : dist w c + ρ ≤ r / 2 := by
+      have har : a ≤ r := hr.1
+      linarith
+    have hinterior :=
+      norm_logDeriv_le_two_mul_max_add_log_three_div_of_sphere_log_norm_le
+        hrpos hρ hg_r hgne_r hcenter hsphere_g hwρr
+    simpa [B, c] using hinterior
 
 /-- A boundary norm bound for zeta on a high outer circle yields a smaller
 concentric circle avoiding every local zeta zero, together with an explicit

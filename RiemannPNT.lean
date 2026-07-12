@@ -8019,6 +8019,19 @@ theorem norm_logDeriv_le_four_mul_div_of_analyticOnNhd_nonzero_re_log_bound
   ZeroFreeRegion.norm_logDeriv_le_four_mul_div_of_analyticOnNhd_nonzero_re_log_bound
     hR hM hg hgne hre
 
+/-- Public moving-interior-point Borel--Caratheodory/Cauchy estimate. -/
+theorem norm_logDeriv_le_two_mul_div_of_analyticOnNhd_nonzero_re_log_bound
+    {g : ℂ → ℂ} {c z : ℂ} {R M ρ : ℝ}
+    (hR : 0 < R) (hM : 0 < M) (hρ : 0 < ρ)
+    (hg : AnalyticOnNhd ℂ g (Metric.closedBall c R))
+    (hgne : ∀ w ∈ Metric.closedBall c R, g w ≠ 0)
+    (hre : ∀ w ∈ Metric.ball c R,
+      Real.log ‖g w‖ - Real.log ‖g c‖ ≤ M)
+    (hzρ : dist z c + ρ ≤ R / 2) :
+    ‖logDeriv g z‖ ≤ 2 * M / ρ :=
+  ZeroFreeRegion.norm_logDeriv_le_two_mul_div_of_analyticOnNhd_nonzero_re_log_bound
+    hR hM hρ hg hgne hre hzρ
+
 /-- Public maximum-modulus/Borel center estimate from a boundary logarithmic
 norm bound and the zeta-factor center margin. -/
 theorem norm_logDeriv_le_four_mul_max_add_log_three_div_of_sphere_log_norm_le
@@ -8031,6 +8044,20 @@ theorem norm_logDeriv_le_four_mul_max_add_log_three_div_of_sphere_log_norm_le
     ‖logDeriv g c‖ ≤ 4 * max (B + Real.log 3) 1 / R :=
   ZeroFreeRegion.norm_logDeriv_le_four_mul_max_add_log_three_div_of_sphere_log_norm_le
     hR hg hgne hcenter hsphere
+
+/-- Public moving-interior-point estimate from a boundary logarithmic norm
+bound and the zeta-factor center margin. -/
+theorem norm_logDeriv_le_two_mul_max_add_log_three_div_of_sphere_log_norm_le
+    {g : ℂ → ℂ} {c z : ℂ} {R B ρ : ℝ}
+    (hR : 0 < R) (hρ : 0 < ρ)
+    (hg : AnalyticOnNhd ℂ g (Metric.closedBall c R))
+    (hgne : ∀ w ∈ Metric.closedBall c R, g w ≠ 0)
+    (hcenter : (1 / 3 : ℝ) ≤ ‖g c‖)
+    (hsphere : ∀ w ∈ Metric.sphere c R, Real.log ‖g w‖ ≤ B)
+    (hzρ : dist z c + ρ ≤ R / 2) :
+    ‖logDeriv g z‖ ≤ 2 * max (B + Real.log 3) 1 / ρ :=
+  ZeroFreeRegion.norm_logDeriv_le_two_mul_max_add_log_three_div_of_sphere_log_norm_le
+    hR hρ hg hgne hcenter hsphere hzρ
 
 /-- Public boundary-growth transfer from zeta to its zero-removed analytic
 factor on a quantitatively selected zero-free circle. -/
@@ -16390,12 +16417,20 @@ theorem exists_good_radius_log_norm_and_logDeriv_riemannZeta_factor_le_jensen_bo
             (((zeros.image
               (dist ((2 : ℂ) + Complex.I * t))).card : ℝ) + 1))) *
           ((Real.log M + Real.log 3) / Real.log (R / b))) ∧
-      ‖logDeriv g ((2 : ℂ) + Complex.I * t)‖ ≤
+      (‖logDeriv g ((2 : ℂ) + Complex.I * t)‖ ≤
         4 * max (K -
           Real.log ((q - a) / ((4 : ℝ) *
             (((zeros.image
               (dist ((2 : ℂ) + Complex.I * t))).card : ℝ) + 1))) *
-          ((Real.log M + Real.log 3) / Real.log (R / b)) + Real.log 3) 1 / a :=
+          ((Real.log M + Real.log 3) / Real.log (R / b)) + Real.log 3) 1 / a) ∧
+      ∀ w ρ, 0 < ρ →
+        dist w ((2 : ℂ) + Complex.I * t) + ρ ≤ a / 2 →
+        ‖logDeriv g w‖ ≤
+          2 * max (K -
+            Real.log ((q - a) / ((4 : ℝ) *
+              (((zeros.image
+                (dist ((2 : ℂ) + Complex.I * t))).card : ℝ) + 1))) *
+            ((Real.log M + Real.log 3) / Real.log (R / b)) + Real.log 3) 1 / ρ :=
   ZeroFreeRegion.exists_good_radius_log_norm_and_logDeriv_riemannZeta_factor_le_jensen_bound
     ha haq hqb hb_one hbR hheight hwidth hM houter hinner
 

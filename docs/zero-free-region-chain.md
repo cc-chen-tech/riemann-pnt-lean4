@@ -1736,20 +1736,27 @@ Borel/Cauchy conversion is now also proved:
 ```lean
 ZeroFreeRegion.exists_normalized_analytic_log_primitive_on_ball
 ZeroFreeRegion.norm_logDeriv_le_four_mul_div_of_analyticOnNhd_nonzero_re_log_bound
+ZeroFreeRegion.norm_logDeriv_le_two_mul_div_of_analyticOnNhd_nonzero_re_log_bound
 ZeroFreeRegion.norm_logDeriv_le_four_mul_max_add_log_three_div_of_sphere_log_norm_le
+ZeroFreeRegion.norm_logDeriv_le_two_mul_max_add_log_three_div_of_sphere_log_norm_le
 ZeroFreeRegion.exists_good_radius_log_norm_and_logDeriv_riemannZeta_factor_le_jensen_bound
 ```
 
 The first theorem constructs a branch-free normalized analytic logarithm of
 the nonvanishing factor, including the identity `exp(h(z))=g(z)/g(c)`.
-Borel-Caratheodory bounds that primitive on the
-half-radius disk, and Cauchy's estimate gives `‖g'/g(c)‖ <= 4M/R`.  Maximum
+Borel-Caratheodory bounds that primitive on the half-radius disk, and Cauchy's
+estimate gives `‖g'/g(c)‖ <= 4M/R`.  The moving-point variant centers the final
+Cauchy disk at any `z` satisfying
+`dist(z,c)+rho<=R/2`, giving `‖g'/g(z)‖<=2M/rho`.  Thus the generic analysis
+no longer forces evaluation at the normalization center.  Maximum
 modulus propagates the selected-circle bound through the disk, while the
 center factorization and `‖zeta(2+it)‖>=1/3` give `‖g(c)‖>=1/3`.  The final
 theorem applies these facts to the same Jensen witness and replaces the
-selected radius denominator by its fixed lower bound `a`.
+selected radius denominator by its fixed lower bound `a`.  It also retains the
+moving-point conclusion for every `w,rho` satisfying
+`dist(w,2+it)+rho<=a/2`.
 
-This is a genuine center estimate for the selected zero-removed factor,
+This is a genuine interior estimate for the selected zero-removed factor,
 conditional on the supplied inner and outer zeta growth bounds.  It is not yet
 the zero-candidate regular-part estimate at `sigma+it`, nor the uniform
 `O(log |t|)` estimate:
