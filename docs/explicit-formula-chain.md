@@ -181,6 +181,15 @@ Already available or mostly available:
     real part.  Thus arbitrarily high safe long rectangles, with fixed right
     edge `c > 1`, now feed the truncated formula unconditionally.  The main
     remaining analytic work is to estimate the three shifted edges.
+14. `PrimeNumberTheorem.ExplicitFormulaResidues.norm_horizontal_right_secondOrderContour_difference_le`
+    proves an actual, unconditional estimate for the portions of both
+    horizontal edges with `1+epsilon <= Re(s) <= c`.  Absolute convergence of
+    the von Mangoldt Dirichlet series gives a height-independent majorant for
+    `|zeta'/zeta|`, and the second-order kernel then makes the two-edge
+    difference `O(x^c * T^-2)`.  No future high-height zeta bound is assumed.
+    The unresolved contour pieces are now the horizontal segments
+    `a <= Re(s) <= 1+epsilon` and the left vertical edge `Re(s)=a`, where the
+    Dirichlet series is not absolutely convergent.
 
 Needed:
 

@@ -21,6 +21,7 @@ lean_lib RiemannPNT where
     `PrimeNumberTheorem.CompletePerron,
     `PrimeNumberTheorem.SecondOrderExplicitFormula,
     `PrimeNumberTheorem.SafeSecondOrderExplicitFormula,
+    `PrimeNumberTheorem.RightHorizontalEdge,
     `PrimeNumberTheorem.ExplicitFormulaAux,
     `ZeroFreeRegion,
     `ZeroFreeRegion.MeromorphicAux,
