@@ -15,6 +15,7 @@ lean_lib RiemannPNT where
     `EulerAndLfunctions,
     `PrimeNumberTheorem,
     `PrimeNumberTheorem.PerronTruncation,
+    `PrimeNumberTheorem.VonMangoldtPerronTruncated,
     `PrimeNumberTheorem.ExplicitFormulaAux,
     `ZeroFreeRegion,
     `ZeroFreeRegion.MeromorphicAux,
