@@ -62,6 +62,164 @@ noncomputable def remainingPolePart (poles : Finset ℂ) : Finset ℂ := by
   exact poles.filter fun p : ℂ =>
     ¬∃ n : ℕ, p = (-2 * ((n : ℕ) + 1) : ℂ)
 
+/-- The canonical remaining-pole finset at height `H`: the poles at
+`0`, `1`, and all nontrivial zeta zeros up to that height. -/
+noncomputable def explicitRemainingPolePart (H : ℝ) : Finset ℂ := by
+  classical
+  exact {0, 1} ∪ nontrivialZerosFinset H
+
+/-- Under the moving rectangle's completeness contract, the abstract
+remaining-pole finset is exactly `{0,1}` together with the height-truncated
+nontrivial zeros. -/
+theorem remainingPolePart_eq_explicit (poles : Finset ℂ) (N : ℕ) {c H : ℝ}
+    (hc : 1 < c) (hH : 0 < H)
+    (hpoles : ∀ p ∈ poles,
+      -(2 * (N : ℝ) + 1) < p.re ∧ p.re < c ∧ -H < p.im ∧ p.im < H)
+    (hclass : ∀ p ∈ poles, p = 0 ∨ p = 1 ∨ riemannZeta p = 0)
+    (hcomplete : ∀ p,
+      p ∈ ([[-(2 * (N : ℝ) + 1), c]] ×ℂ [[-H, H]] : Set ℂ) →
+      p = 0 ∨ p = 1 ∨ riemannZeta p = 0 → p ∈ poles) :
+    remainingPolePart poles = explicitRemainingPolePart H := by
+  classical
+  ext p
+  simp only [remainingPolePart, Finset.mem_filter, explicitRemainingPolePart,
+    Finset.mem_union, Finset.mem_insert, Finset.mem_singleton]
+  constructor
+  · rintro ⟨hpole, hnottriv⟩
+    rcases hclass p hpole with rfl | rfl | hpzero
+    · exact Or.inl (Or.inl rfl)
+    · exact Or.inl (Or.inr rfl)
+    · right
+      apply mem_nontrivialZerosFinset.mpr
+      have hre_pos : 0 < p.re := by
+        by_contra hnot
+        exact (riemannZeta_ne_zero_of_re_le_zero
+          (le_of_not_gt hnot) (by simpa [not_exists] using hnottriv)) hpzero
+      have hre_lt : p.re < 1 := by
+        by_contra hnot
+        exact (riemannZeta_ne_zero_of_one_le_re (le_of_not_gt hnot)) hpzero
+      have him := (hpoles p hpole).2.2
+      exact ⟨⟨hpzero, hre_pos, hre_lt⟩, abs_le.mpr ⟨him.1.le, him.2.le⟩⟩
+  · intro hp
+    rcases hp with (rfl | rfl) | hpzero
+    · refine ⟨hcomplete 0 ?_ (Or.inl rfl), ?_⟩
+      · have hN : 0 ≤ (N : ℝ) := Nat.cast_nonneg N
+        have ha_c : -(2 * (N : ℝ) + 1) ≤ c := by linarith
+        have hheight : -H ≤ H := by linarith
+        rw [Complex.mem_reProdIm, Set.uIcc_of_le ha_c,
+          Set.uIcc_of_le hheight]
+        norm_num
+        constructor
+        · constructor <;> linarith
+        · linarith
+      · simp only [not_exists]
+        intro n hn
+        have hre := congrArg Complex.re hn
+        norm_num at hre
+        have hn0 : 0 ≤ (n : ℝ) := Nat.cast_nonneg n
+        linarith
+    · refine ⟨hcomplete 1 ?_ (Or.inr (Or.inl rfl)), ?_⟩
+      · have hN : 0 ≤ (N : ℝ) := Nat.cast_nonneg N
+        have ha_c : -(2 * (N : ℝ) + 1) ≤ c := by linarith
+        have hheight : -H ≤ H := by linarith
+        rw [Complex.mem_reProdIm, Set.uIcc_of_le ha_c,
+          Set.uIcc_of_le hheight]
+        norm_num
+        constructor
+        · constructor <;> linarith
+        · linarith
+      · simp only [not_exists]
+        intro n hn
+        have hre := congrArg Complex.re hn
+        norm_num at hre
+        have hn0 : 0 ≤ (n : ℝ) := Nat.cast_nonneg n
+        linarith
+    · rcases mem_nontrivialZerosFinset.mp hpzero with ⟨hnt, hheight⟩
+      refine ⟨hcomplete p ?_ (Or.inr (Or.inr hnt.1)), ?_⟩
+      · have hN : 0 ≤ (N : ℝ) := Nat.cast_nonneg N
+        have ha_c : -(2 * (N : ℝ) + 1) ≤ c := by linarith
+        have hheightIcc : -H ≤ H := by linarith
+        rw [Complex.mem_reProdIm, Set.uIcc_of_le ha_c,
+          Set.uIcc_of_le hheightIcc]
+        exact ⟨⟨by linarith [hnt.2.1], by linarith [hnt.2.2]⟩,
+          abs_le.mp hheight⟩
+      · simp only [not_exists]
+        intro n hn
+        have hre := congrArg Complex.re hn
+        norm_num at hre
+        linarith [hnt.2.1]
+
+/-- The actual residue sum over the remaining contour poles is the classical
+pole-at-one term, the kernel-pole-at-zero term, and the multiplicity-weighted
+finite nontrivial-zero sum. -/
+theorem sum_remainingPolePart_residue_eq
+    (poles : Finset ℂ) (residue : ℂ → ℂ) (N : ℕ) {x c H : ℝ}
+    (hc : 1 < c) (hH : 0 < H)
+    (hpoles : ∀ p ∈ poles,
+      -(2 * (N : ℝ) + 1) < p.re ∧ p.re < c ∧ -H < p.im ∧ p.im < H)
+    (hclass : ∀ p ∈ poles, p = 0 ∨ p = 1 ∨ riemannZeta p = 0)
+    (hcomplete : ∀ p,
+      p ∈ ([[-(2 * (N : ℝ) + 1), c]] ×ℂ [[-H, H]] : Set ℂ) →
+      p = 0 ∨ p = 1 ∨ riemannZeta p = 0 → p ∈ poles)
+    (hresidue : ∀ p ∈ poles, residue p =
+      if p = 1 then (x : ℂ)
+      else if p = 0 then -deriv riemannZeta 0 / riemannZeta 0
+      else -(analyticOrderNatAt riemannZeta p : ℂ) * (x : ℂ) ^ p / p) :
+    (∑ p ∈ remainingPolePart poles, residue p) =
+      (x : ℂ) - deriv riemannZeta 0 / riemannZeta 0 +
+        ∑ ρ ∈ nontrivialZerosFinset H,
+          -(analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ := by
+  classical
+  have hpart : remainingPolePart poles = explicitRemainingPolePart H :=
+    remainingPolePart_eq_explicit poles N hc hH hpoles hclass hcomplete
+  rw [hpart, explicitRemainingPolePart]
+  have hdisjoint : Disjoint ({0, 1} : Finset ℂ) (nontrivialZerosFinset H) := by
+    rw [Finset.disjoint_left]
+    intro p hp01 hpnt
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hp01
+    have hnt := (mem_nontrivialZerosFinset.mp hpnt).1
+    rcases hp01 with rfl | rfl
+    · have hpos := hnt.2.1
+      norm_num at hpos
+    · have hlt := hnt.2.2
+      norm_num at hlt
+  rw [Finset.sum_union hdisjoint]
+  have hzeroRem : (0 : ℂ) ∈ remainingPolePart poles := by
+    rw [hpart]
+    simp [explicitRemainingPolePart]
+  have honeRem : (1 : ℂ) ∈ remainingPolePart poles := by
+    rw [hpart]
+    simp [explicitRemainingPolePart]
+  have hzeroPole := (Finset.mem_filter.mp hzeroRem).1
+  have honePole := (Finset.mem_filter.mp honeRem).1
+  have h01 : (∑ p ∈ ({0, 1} : Finset ℂ), residue p) =
+      (x : ℂ) - deriv riemannZeta 0 / riemannZeta 0 := by
+    rw [Finset.sum_insert (by norm_num : (0 : ℂ) ∉ ({1} : Finset ℂ)),
+      Finset.sum_singleton]
+    rw [hresidue 0 hzeroPole, hresidue 1 honePole]
+    simp
+    ring
+  rw [h01]
+  congr 1
+  apply Finset.sum_congr rfl
+  intro ρ hρ
+  have hnt := (mem_nontrivialZerosFinset.mp hρ).1
+  have hρ0 : ρ ≠ 0 := by
+    intro h
+    have hpos := hnt.2.1
+    rw [h] at hpos
+    norm_num at hpos
+  have hρ1 : ρ ≠ 1 := by
+    intro h
+    have hlt := hnt.2.2
+    rw [h] at hlt
+    norm_num at hlt
+  have hρrem : ρ ∈ remainingPolePart poles := by
+    rw [hpart]
+    simp [explicitRemainingPolePart, hρ]
+  have hρpole := (Finset.mem_filter.mp hρrem).1
+  rw [hresidue ρ hρpole, if_neg hρ1, if_neg hρ0]
+
 /-- For a rectangle whose left edge lies halfway between `-2N` and
 `-2(N+1)`, the trivial-zero part of its complete pole finset is exactly
 `{-2, -4, ..., -2N}`. -/
@@ -441,6 +599,30 @@ theorem
   rw [sum_contourPoleResidues_eq_finiteTrivial_add_remaining
     poles residue N hc hH hpoles hcomplete hresidue]
 
+/-- Concrete finite first-order explicit formula at a good height.  The
+abstract contour pole finset has been eliminated: the right Perron integral is
+the sum of the trivial-zero residues, the poles at `1` and `0`, and the
+multiplicity-weighted nontrivial-zero residues, minus the other three contour
+edges. -/
+theorem movingLeft_scaledRightIntegral_eq_truncatedExplicitFormula
+    {x c W : ℝ} (N : ℕ) (hx : 0 < x) (hc : 1 < c) (hW : 0 < W)
+    (hgood : goodHeight (2 * Real.pi * W)) :
+    (∫ w : ℝ in (-W)..W,
+        explicitFormulaIntegrand x ((c : ℂ) + 2 * Real.pi * w * I)) =
+      (∑ p ∈ finiteTrivialZeroSum (2 * (N : ℝ)), -((x : ℂ) ^ p) / p) +
+        ((x : ℂ) - deriv riemannZeta 0 / riemannZeta 0 +
+          ∑ ρ ∈ nontrivialZerosFinset (2 * Real.pi * W),
+            -(analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ) -
+        firstOrderContourRemainder x (-(2 * (N : ℝ) + 1)) c W := by
+  have hH : 0 < 2 * Real.pi * W := by positivity
+  rcases
+      exists_movingLeft_scaledRightIntegral_eq_trivial_add_remaining_sub_remainder
+        N hx hc hW hgood with
+    ⟨poles, residue, hpoles, hclass, hcomplete, hresidue, hcontour⟩
+  rw [hcontour]
+  rw [sum_remainingPolePart_residue_eq
+    poles residue N hc hH hpoles hclass hcomplete hresidue]
+
 /-- There is a joint cofinal sequence of moving-left Perron rectangles:
 the height and the number of enclosed trivial zeros both tend to infinity, every
 horizontal boundary is good, each finite-height identity has its trivial-zero
@@ -455,26 +637,15 @@ theorem exists_jointCofinal_movingLeft_firstOrderContours
         atTop
         (nhds (((-(1 / 2 : ℝ) * Real.log (1 - x ^ (-2 : ℝ)) : ℝ) : ℂ))) ∧
       ∀ n, 0 < W n ∧ goodHeight (2 * Real.pi * W n) ∧
-        ∃ (poles : Finset ℂ) (residue : ℂ → ℂ),
-          (∀ p ∈ poles,
-            -(2 * (n : ℝ) + 1) < p.re ∧ p.re < c ∧
-              -(2 * Real.pi * W n) < p.im ∧ p.im < 2 * Real.pi * W n) ∧
-          (∀ p ∈ poles, p = 0 ∨ p = 1 ∨ riemannZeta p = 0) ∧
-          (∀ p, p ∈
-              ([[-(2 * (n : ℝ) + 1), c]] ×ℂ
-                [[-(2 * Real.pi * W n), 2 * Real.pi * W n]] : Set ℂ) →
-            p = 0 ∨ p = 1 ∨ riemannZeta p = 0 → p ∈ poles) ∧
-          (∀ p ∈ poles, residue p =
-            if p = 1 then (x : ℂ)
-            else if p = 0 then -deriv riemannZeta 0 / riemannZeta 0
-            else -(analyticOrderNatAt riemannZeta p : ℂ) * (x : ℂ) ^ p / p) ∧
-          (∫ w : ℝ in (-(W n))..(W n),
-              explicitFormulaIntegrand x
-                ((c : ℂ) + 2 * Real.pi * w * I)) =
-            (∑ p ∈ finiteTrivialZeroSum (2 * (n : ℝ)),
-                -((x : ℂ) ^ p) / p) +
-              (∑ p ∈ remainingPolePart poles, residue p) -
-                firstOrderContourRemainder x (-(2 * (n : ℝ) + 1)) c (W n) := by
+        (∫ w : ℝ in (-(W n))..(W n),
+            explicitFormulaIntegrand x
+              ((c : ℂ) + 2 * Real.pi * w * I)) =
+          (∑ p ∈ finiteTrivialZeroSum (2 * (n : ℝ)),
+              -((x : ℂ) ^ p) / p) +
+            ((x : ℂ) - deriv riemannZeta 0 / riemannZeta 0 +
+              ∑ ρ ∈ nontrivialZerosFinset (2 * Real.pi * W n),
+                -(analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ) -
+              firstOrderContourRemainder x (-(2 * (n : ℝ) + 1)) c (W n) := by
   rcases exists_strictMono_goodHeight_gt_one_tendsto with
     ⟨T, hTmono, hTtend, hT⟩
   let W : ℕ → ℝ := fun n => T n / (2 * Real.pi)
@@ -493,7 +664,7 @@ theorem exists_jointCofinal_movingLeft_firstOrderContours
     · rw [hscale]
       exact (hT n).2
     · simpa only [hscale] using
-        exists_movingLeft_scaledRightIntegral_eq_trivial_add_remaining_sub_remainder
+        movingLeft_scaledRightIntegral_eq_truncatedExplicitFormula
           n (zero_lt_one.trans hx) hc hW
             (by rw [hscale]; exact (hT n).2)
 

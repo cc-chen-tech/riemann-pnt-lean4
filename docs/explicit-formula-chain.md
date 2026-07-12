@@ -251,10 +251,18 @@ Already available or mostly available:
 21. `ExplicitFormulaResidues.exists_jointCofinal_movingLeft_firstOrderContours`
     chooses one sequence with `W_n -> infinity`, strictly increasing `W_n`,
     `goodHeight (2*pi*W_n)`, and left edge `-(2n+1)`.  Every member satisfies
-    the split Perron identity from item 20, while its trivial-zero residue sum
-    converges to `-1/2 * log (1 - x^-2)`.  This closes the joint cofinal
-    selection problem, but does not prove that the remaining pole sum or the
+    the concrete truncated formula from item 22, while its trivial-zero residue
+    sum converges to `-1/2 * log (1 - x^-2)`.  This closes the joint cofinal
+    selection problem, but does not prove that the nontrivial-zero sum or the
     moving-left contour remainder converges.
+22. `ExplicitFormulaResidues.movingLeft_scaledRightIntegral_eq_truncatedExplicitFormula`
+    eliminates the abstract contour pole finset entirely.  At every good
+    height it gives the finite formula with the pole-at-one term `x`, the
+    kernel-pole term `-zeta'(0)/zeta(0)`, the first `N` trivial-zero residues,
+    and the multiplicity-weighted sum over
+    `nontrivialZerosFinset (2*pi*W)`, minus the three-edge contour remainder.
+    The exact identification of the remaining poles is proved by
+    `remainingPolePart_eq_explicit`.
 
 Remaining after the fixed-right-edge contour shift:
 
@@ -450,8 +458,8 @@ For the principal value final formula:
 3. Convergence of symmetric zero sums or a proof that the contour-error limit is
    zero along good heights.
 4. Along the now-constructed joint cofinal sequence, prove the moving-left-edge
-   remainder tends to zero and control the remaining pole sum after separating
-   the fixed `0`, `1`, and nontrivial-zero contributions.
+   remainder tends to zero and control the already-isolated
+   multiplicity-weighted nontrivial-zero sum.
 
 For a PNT proof, the truncated formula plus a zero-free region and boundary
 estimates may be more useful than the full principal-value exact formula.
