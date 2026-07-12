@@ -184,8 +184,9 @@ Current status:
    `exists_rectangleBoundaryIntegral_explicitFormulaIntegrand_eq_residue_sum`
    feeds this remainder into the rectangle identity and proves the concrete
    finite residue formula under an explicit pole-free-boundary hypothesis.
-   Still needed: constructing the required contour family from the good-height
-   machinery, and the finite-to-infinite trivial-zero limit giving
+   `exists_strictMono_tendsto_rectangleResidueContours` now constructs the
+   required cofinal contour family from `goodHeight`, using squares with real
+   sides `-1` and `2T-1`.  Still needed: the finite-to-infinite trivial-zero limit giving
    `-1/2 * log (1 - x^-2)`.
 
 ### Contour and residue theorem
@@ -248,9 +249,11 @@ their principal parts are now proved.  The concrete rectangle identity is also
 proved by
 `PrimeNumberTheorem.ExplicitFormulaResidues.exists_rectangleBoundaryIntegral_explicitFormulaIntegrand_eq_residue_sum`
 when all candidate poles lie in the open rectangle.  The remaining contour
-step is to construct a sequence satisfying this boundary hypothesis from the
-good-height machinery; the fully general abstract theorem would also need to
-treat higher-order poles.
+sequence is now supplied by
+`exists_strictMono_tendsto_rectangleResidueContours`: good heights `T > 1`
+give squares `[-1,2T-1] x [-T,T]` whose vertical sides are zero-free and whose
+horizontal sides avoid nontrivial zeros.  The fully general abstract theorem
+would also need to treat higher-order poles.
 
 The current `rectangleIntegral_meromorphic_eq_residue_sum` declaration remains
 an existential certificate interface, not a theorem following from its radius
@@ -271,7 +274,9 @@ For the truncated identity:
    unit interval while avoiding all nontrivial-zero ordinates, using finite
    bounded-height zero support;
    `ExplicitFormulaAux.exists_strictMono_goodHeight_tendsto` upgrades this to
-   a strictly increasing good-height sequence tending to `+∞`.
+   a strictly increasing good-height sequence tending to `+∞`;
+   `ExplicitFormulaResidues.exists_strictMono_tendsto_rectangleResidueContours`
+   converts a cofinal tail into concrete pole-free square residue contours.
 2. Bound the right Perron truncation error from summability of the von Mangoldt
    Dirichlet series and the standard Perron kernel estimate.
 3. Bound horizontal and shifted-left vertical sides of the rectangle.

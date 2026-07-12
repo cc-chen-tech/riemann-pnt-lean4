@@ -349,7 +349,9 @@ performs that assembly on every compact set: it chooses finitely many poles
 and residues and proves the normalized remainder analytic on the whole set.
 `PrimeNumberTheorem/ExplicitFormulaRectangle.lean` then proves the concrete
 rectangle residue identity whenever the rectangle boundary avoids `0`, `1`,
-and every zeta zero in the rectangle.
+and every zeta zero in the rectangle.  It also constructs a cofinal sequence
+of such contours from `goodHeight`: the square at height `T` has real sides
+`-1` and `2T-1`, so every good `T > 1` automatically has a zero-free boundary.
 
 ## File Overview
 

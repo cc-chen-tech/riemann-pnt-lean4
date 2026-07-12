@@ -3245,9 +3245,12 @@ Route interfaces:
 - `exists_rectangleBoundaryIntegral_explicitFormulaIntegrand_eq_residue_sum`
   proves the actual finite rectangle residue formula for the concrete
   explicit-formula integrand whenever `0`, `1`, and every enclosed zeta zero
-  avoid the rectangle boundary.  Perron inversion, construction of a contour
-  sequence satisfying that hypothesis, and contour-error estimates remain
-  unproved.
+  avoid the rectangle boundary.
+- `zeta_zero_mem_openRectangle_one_shift_of_goodHeight` proves that every good
+  height `T > 1` makes the square `[-1,2T-1] x [-T,T]` pole-free on its
+  boundary.  `exists_strictMono_tendsto_rectangleResidueContours` packages a
+  cofinal sequence of these squares and their concrete finite residue
+  identities.  Perron inversion and contour-error estimates remain unproved.
 
 Reusable predicates:
 
