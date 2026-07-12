@@ -8059,6 +8059,63 @@ theorem norm_logDeriv_canonicalNumeratorProduct_le_sum_div
   ZeroFreeRegion.norm_logDeriv_canonicalNumeratorProduct_le_sum_div
     hd hdR hu hz
 
+/-- Public conversion from a nonnegative finite integer divisor to natural
+multiplicities with the same real total mass. -/
+theorem sum_toNat_eq_finsum_cast_of_nonneg_finiteSupport
+    {D : ℂ → ℤ} (hfinite : D.support.Finite) (hD : ∀ u, 0 ≤ D u) :
+    (∑ u ∈ hfinite.toFinset, ((D u).toNat : ℝ)) = ∑ᶠ u, (D u : ℝ) :=
+  ZeroFreeRegion.sum_toNat_eq_finsum_cast_of_nonneg_finiteSupport hfinite hD
+
+/-- Public divisor-valued finite canonical correction bound. -/
+theorem norm_logDeriv_canonicalNumeratorProduct_divisor_le_finsum_div
+    {c z : ℂ} {d R : ℝ} {D : ℂ → ℤ}
+    (hfinite : D.support.Finite) (hD : ∀ u, 0 ≤ D u)
+    (hd : 0 ≤ d) (hdR : d < R)
+    (hu : ∀ u ∈ hfinite.toFinset, u ∈ Metric.ball c R)
+    (hz : z ∈ Metric.closedBall c d) :
+    ‖logDeriv
+        (canonicalNumeratorProduct c R hfinite.toFinset
+          (fun u => (D u).toNat)) z‖ ≤
+      (∑ᶠ u, (D u : ℝ)) / (R - d) :=
+  ZeroFreeRegion.norm_logDeriv_canonicalNumeratorProduct_divisor_le_finsum_div
+    hfinite hD hd hdR hu hz
+
+/-- Public strict-interior support property for a boundary-zero-free zeta
+disk divisor. -/
+theorem divisor_support_riemannZeta_closedBall_subset_ball_of_sphere_ne_zero
+    {c : ℂ} {R : ℝ}
+    (havoid : ∀ z : ℂ, z ∈ Metric.closedBall c R → z ≠ 1)
+    (hsphere : ∀ z ∈ Metric.sphere c R, riemannZeta z ≠ 0) :
+    (MeromorphicOn.divisor riemannZeta (Metric.closedBall c R)).support ⊆
+      Metric.ball c R :=
+  ZeroFreeRegion.divisor_support_riemannZeta_closedBall_subset_ball_of_sphere_ne_zero
+    havoid hsphere
+
+/-- Public finite support of zeta's disk divisor. -/
+noncomputable abbrev riemannZetaDivisorSupport (c : ℂ) (R : ℝ) : Finset ℂ :=
+  ZeroFreeRegion.riemannZetaDivisorSupport c R
+
+/-- Public natural multiplicity of zeta's disk divisor. -/
+noncomputable abbrev riemannZetaDivisorMultiplicity
+    (c : ℂ) (R : ℝ) (u : ℂ) : ℕ :=
+  ZeroFreeRegion.riemannZetaDivisorMultiplicity c R u
+
+/-- Public zeta-specific canonical correction bound in terms of Jensen's disk
+divisor mass. -/
+theorem norm_logDeriv_canonicalNumeratorProduct_riemannZetaDivisor_le_finsum_div
+    {c z : ℂ} {d R : ℝ}
+    (havoid : ∀ u : ℂ, u ∈ Metric.closedBall c R → u ≠ 1)
+    (hsphere : ∀ u ∈ Metric.sphere c R, riemannZeta u ≠ 0)
+    (hd : 0 ≤ d) (hdR : d < R) (hz : z ∈ Metric.closedBall c d) :
+    ‖logDeriv
+        (canonicalNumeratorProduct c R (riemannZetaDivisorSupport c R)
+          (riemannZetaDivisorMultiplicity c R)) z‖ ≤
+      (∑ᶠ u,
+        (MeromorphicOn.divisor riemannZeta (Metric.closedBall c R) u : ℝ)) /
+        (R - d) :=
+  ZeroFreeRegion.norm_logDeriv_canonicalNumeratorProduct_riemannZetaDivisor_le_finsum_div
+    havoid hsphere hd hdR hz
+
 /-- Public complete zero-factor extraction for zeta on a closed disk avoiding
 the pole. -/
 theorem exists_analytic_nonzero_factorization_riemannZeta_closedBall

@@ -181,6 +181,22 @@ lemma log_mul_finsum_le_finsum_mul_log_norm_sub_of_finiteSupport
   have hDreal : (0 : ℝ) ≤ (D u : ℝ) := by exact_mod_cast hD u
   simpa [mul_comm] using mul_le_mul_of_nonneg_left hlog hDreal
 
+/-- A nonnegative finite-support integer divisor can be summed through its
+natural multiplicities without changing its real-valued total mass. -/
+lemma sum_toNat_eq_finsum_cast_of_nonneg_finiteSupport
+    {D : ℂ → ℤ} (hfinite : D.support.Finite) (hD : ∀ u, 0 ≤ D u) :
+    (∑ u ∈ hfinite.toFinset, ((D u).toNat : ℝ)) =
+      ∑ᶠ u, (D u : ℝ) := by
+  classical
+  have hsupp : (fun u : ℂ => (D u : ℝ)).support ⊆ hfinite.toFinset := by
+    intro u hu
+    apply hfinite.mem_toFinset.mpr
+    simpa [Function.mem_support] using hu
+  rw [finsum_eq_sum_of_support_subset _ hsupp]
+  apply Finset.sum_congr rfl
+  intro u _hu
+  exact_mod_cast Int.toNat_of_nonneg (hD u)
+
 /-- The logarithmic derivative of a finite-support divisor product is its
 finite principal-part sum at every point outside the divisor support. -/
 lemma logDeriv_finprod_sub_zpow_eq_finsum_mul_inv
@@ -12418,6 +12434,100 @@ lemma norm_logDeriv_canonicalNumeratorProduct_le_sum_div
     _ = (∑ u ∈ zeros, (m u : ℝ)) / (R - d) := by
       rw [← Finset.sum_mul]
       ring
+
+/-- Divisor-valued version of the finite canonical correction bound. -/
+lemma norm_logDeriv_canonicalNumeratorProduct_divisor_le_finsum_div
+    {c z : ℂ} {d R : ℝ} {D : ℂ → ℤ}
+    (hfinite : D.support.Finite) (hD : ∀ u, 0 ≤ D u)
+    (hd : 0 ≤ d) (hdR : d < R)
+    (hu : ∀ u ∈ hfinite.toFinset, u ∈ ball c R)
+    (hz : z ∈ closedBall c d) :
+    ‖logDeriv
+        (canonicalNumeratorProduct c R hfinite.toFinset
+          (fun u => (D u).toNat)) z‖ ≤
+      (∑ᶠ u, (D u : ℝ)) / (R - d) := by
+  have hbase := norm_logDeriv_canonicalNumeratorProduct_le_sum_div
+    (zeros := hfinite.toFinset) (m := fun u => (D u).toNat)
+    hd hdR hu hz
+  rw [sum_toNat_eq_finsum_cast_of_nonneg_finiteSupport hfinite hD] at hbase
+  exact hbase
+
+/-- If zeta has no zero on the boundary circle of a pole-free closed disk,
+then every point in the disk divisor support lies in the open disk. -/
+lemma divisor_support_riemannZeta_closedBall_subset_ball_of_sphere_ne_zero
+    {c : ℂ} {R : ℝ}
+    (havoid : ∀ z : ℂ, z ∈ closedBall c R → z ≠ 1)
+    (hsphere : ∀ z ∈ sphere c R, riemannZeta z ≠ 0) :
+    (MeromorphicOn.divisor riemannZeta (closedBall c R)).support ⊆
+      ball c R := by
+  let D := MeromorphicOn.divisor riemannZeta (closedBall c R)
+  have hmer := meromorphicOn_riemannZeta_closedBall c R
+  intro u hu
+  have hu_closed : u ∈ closedBall c R := D.supportWithinDomain hu
+  have hu_le : dist u c ≤ R := by simpa [Metric.mem_closedBall] using hu_closed
+  have hu_ne_one : u ≠ 1 := havoid u hu_closed
+  have hua : AnalyticAt ℂ riemannZeta u :=
+    analyticOnNhd_riemannZeta_ne_one u hu_ne_one
+  have hu_zero : riemannZeta u = 0 := by
+    by_contra hne
+    have horder_zero : meromorphicOrderAt riemannZeta u = 0 :=
+      (hua.meromorphicNFAt.meromorphicOrderAt_eq_zero_iff).2 hne
+    have hDzero : D u = 0 := by
+      dsimp [D]
+      rw [MeromorphicOn.divisor_apply hmer hu_closed, horder_zero]
+      simp
+    have hDu : D u ≠ 0 := by simpa [Function.mem_support] using hu
+    exact hDu hDzero
+  by_contra hu_ball
+  have hu_ge : R ≤ dist u c := by
+    simpa [Metric.mem_ball, not_lt] using hu_ball
+  have hu_sphere : u ∈ sphere c R := by
+    rw [Metric.mem_sphere]
+    exact le_antisymm hu_le hu_ge
+  exact hsphere u hu_sphere hu_zero
+
+/-- Finite support of zeta's divisor on a closed disk. -/
+noncomputable def riemannZetaDivisorSupport (c : ℂ) (R : ℝ) : Finset ℂ :=
+  ((MeromorphicOn.divisor riemannZeta (closedBall c R)).finiteSupport
+    (isCompact_closedBall c R)).toFinset
+
+/-- Natural multiplicity attached to zeta's disk divisor.  On a disk avoiding
+the pole, divisor nonnegativity identifies this with the integer divisor. -/
+noncomputable def riemannZetaDivisorMultiplicity
+    (c : ℂ) (R : ℝ) (u : ℂ) : ℕ :=
+  (MeromorphicOn.divisor riemannZeta (closedBall c R) u).toNat
+
+/-- The zeta-specific finite canonical correction is bounded by the total
+disk-divisor mass divided by the retained radial margin. -/
+lemma norm_logDeriv_canonicalNumeratorProduct_riemannZetaDivisor_le_finsum_div
+    {c z : ℂ} {d R : ℝ}
+    (havoid : ∀ u : ℂ, u ∈ closedBall c R → u ≠ 1)
+    (hsphere : ∀ u ∈ sphere c R, riemannZeta u ≠ 0)
+    (hd : 0 ≤ d) (hdR : d < R) (hz : z ∈ closedBall c d) :
+    ‖logDeriv
+        (canonicalNumeratorProduct c R (riemannZetaDivisorSupport c R)
+          (riemannZetaDivisorMultiplicity c R)) z‖ ≤
+      (∑ᶠ u,
+        (MeromorphicOn.divisor riemannZeta (closedBall c R) u : ℝ)) /
+        (R - d) := by
+  let D := MeromorphicOn.divisor riemannZeta (closedBall c R)
+  have han : AnalyticOnNhd ℂ riemannZeta (closedBall c R) := by
+    intro u hu
+    exact analyticOnNhd_riemannZeta_ne_one u (havoid u hu)
+  have hD_nonneg : 0 ≤ D := han.divisor_nonneg
+  have hD_finite : D.support.Finite :=
+    D.finiteSupport (isCompact_closedBall c R)
+  have hu_ball : ∀ u ∈ hD_finite.toFinset, u ∈ ball c R := by
+    intro u hu
+    apply divisor_support_riemannZeta_closedBall_subset_ball_of_sphere_ne_zero
+      havoid hsphere
+    exact hD_finite.mem_toFinset.mp hu
+  change ‖logDeriv
+      (canonicalNumeratorProduct c R hD_finite.toFinset
+        (fun u => (D u).toNat)) z‖ ≤
+    (∑ᶠ u, (D u : ℝ)) / (R - d)
+  exact norm_logDeriv_canonicalNumeratorProduct_divisor_le_finsum_div
+    hD_finite (fun u => hD_nonneg u) hd hdR hu_ball hz
 
 /-- On a closed disk avoiding the pole, zeta factors into its complete local
 divisor product and an analytic nonvanishing unit.

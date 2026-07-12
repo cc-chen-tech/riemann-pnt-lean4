@@ -1667,14 +1667,18 @@ ZeroFreeRegion.canonicalNumeratorProduct_ne_zero
 ZeroFreeRegion.analyticOnNhd_canonicalNumeratorProduct
 ZeroFreeRegion.logDeriv_canonicalNumeratorProduct
 ZeroFreeRegion.norm_logDeriv_canonicalNumeratorProduct_le_sum_div
+ZeroFreeRegion.sum_toNat_eq_finsum_cast_of_nonneg_finiteSupport
+ZeroFreeRegion.divisor_support_riemannZeta_closedBall_subset_ball_of_sphere_ne_zero
+ZeroFreeRegion.norm_logDeriv_canonicalNumeratorProduct_riemannZetaDivisor_le_finsum_div
 ```
 
 The product theorem bounds the full reflected-zero correction by total
 multiplicity divided by `R-d`, independently of zero-to-boundary separation.
-What remains is to identify natural multiplicities with the nonnegative zeta
-divisor, partition inner and outer zeros, and combine the product with the
-extracted analytic unit and unconditional Jensen mass bound.  Until that
-zeta-specific composition is complete, the uniform regular-part target remains
+The nonnegative zeta divisor is now identified with those natural
+multiplicities, and a boundary-zero-free disk gives the correction bound
+directly in terms of Jensen's divisor `finsum`.  What remains is to partition
+inner and outer zeros and combine the product with the extracted analytic unit.
+Until that composition is complete, the uniform regular-part target remains
 open.
 
 These results convert an input of the form
@@ -1701,9 +1705,9 @@ The first removes the center-value hypothesis by using
 weighted Jensen zero mass by `log M + log 3`.  The second gives a quantitative
 total-multiplicity bound in every smaller concentric disk, with denominator
 `log (R/r)`.  Abel's bound now discharges their high-height zeta-growth input,
-and the finite canonical product is proved above.  Converting the nonnegative
-zeta divisor to its natural multiplicities and composing that product with the
-extracted regular unit remain open.
+the finite canonical product is proved, and the nonnegative zeta divisor is
+converted to natural multiplicities.  Composing the inner/outer product with
+the extracted regular unit remains open.
 
 The finite-radius step after Jensen is now also formalized:
 
