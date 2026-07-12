@@ -208,15 +208,27 @@ Already available or mostly available:
     series, proves a summable Tannery majorant for the conditionally convergent
     kernel, and includes the half weight at an integral jump.  This is the
     actual first-order L-series specialization, not a finite-sum wrapper.
+17. `PrimeNumberTheorem.ExplicitFormulaResidues.exists_scaledRightIntegral_eq_residue_sum_sub_firstOrderContourRemainder`
+    proves the exact finite-height first-order contour shift with a fixed
+    Perron right edge.  The normalized right-line integral equals the finite
+    residue sum, with the residues at `0`, `1`, and every enclosed zeta zero
+    identified explicitly, minus the normalized bottom, top, and left edges.
+    The theorem includes both directions of the pole-set specification: every
+    listed pole is a candidate singularity, and every candidate singularity
+    in the closed rectangle occurs in the finite pole set.
+    Its `..._of_goodHeight` specialization fixes the left edge at `Re(s)=-1`
+    and proves that every `goodHeight (2*pi*W)` gives a pole-free boundary for
+    arbitrary fixed `c>1`.  Thus the starting-line Perron theorem and the
+    finite rectangle residue theorem are now connected in one Lean formula.
 
-Remaining after the starting-line formula:
+Remaining after the fixed-right-edge contour shift:
 
-1. Shift the first-order right-line contour to a zero-free boundary and combine
-   it with the proved finite residue identity.
-2. Bound the two horizontal edges and the shifted-left vertical edge strongly
-   enough to pass to a cofinal good-height limit.
-3. Sum the finite trivial-zero residues and control the symmetric nontrivial-
-   zero contribution with multiplicity.
+1. Bound the two horizontal edges strongly enough to pass to a cofinal
+   good-height limit.
+2. Either evaluate the fixed `Re(s)=-1` left-line limit and identify it with
+   the classical trivial-zero term, or move the left edge through
+   `-2,-4,...` toward `-infinity` and control the resulting joint limit.
+3. Control the symmetric nontrivial-zero contribution with multiplicity.
 
 ### Analytic continuation and poles
 
@@ -369,13 +381,20 @@ For the truncated identity:
    a strictly increasing good-height sequence tending to `+∞`;
    `ExplicitFormulaResidues.exists_strictMono_tendsto_rectangleResidueContours`
    converts a cofinal tail into concrete pole-free square residue contours.
+   The first-order theorem
+   `exists_scaledRightIntegral_eq_residue_sum_sub_firstOrderContourRemainder_of_goodHeight`
+   now gives the corresponding safe rectangle with fixed right edge `c>1`
+   and fixed left edge `-1`, so it is directly compatible with Perron.
 2. Completed: the ordinary first-order right-line Perron integral converges to
    `psi0` by
    `tendsto_truncated_neg_logDeriv_firstOrderPerron_atTop`.  This is a limit
    theorem; it does not claim a closed-form uniform truncation rate for the
    full conditionally convergent series.
-3. Remaining: bound horizontal and shifted-left vertical sides of the
-   first-order rectangle and combine those bounds with the residue contours.
+3. Remaining: prove the horizontal terms vanish along a cofinal good-height
+   sequence and analyze the left-line term.  For the fixed edge `Re(s)=-1`,
+   the left-line integral is not assumed to vanish; it must be evaluated.
+   Alternatively, move the left boundary past the trivial zeros and prove the
+   corresponding residue and contour limits together.
 
 For the principal value final formula:
 

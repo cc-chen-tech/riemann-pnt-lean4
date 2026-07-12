@@ -511,6 +511,7 @@ theorem exists_finite_explicitFormulaIntegrand_analytic_regularized_remainder
     ∃ (poles : Finset ℂ) (residue : ℂ → ℂ),
       (∀ p ∈ poles, p = 0 ∨ p ∈ K) ∧
       (∀ p ∈ poles, p = 0 ∨ p = 1 ∨ riemannZeta p = 0) ∧
+      (∀ p, p ∈ K → p = 0 ∨ p = 1 ∨ riemannZeta p = 0 → p ∈ poles) ∧
       (∀ p, residue p =
         if p = 1 then (x : ℂ)
         else if p = 0 then -deriv riemannZeta 0 / riemannZeta 0
@@ -589,6 +590,47 @@ theorem exists_finite_explicitFormulaIntegrand_analytic_regularized_remainder
         han.meromorphicOrderAt_eq, horder_zero]
       simp
     exact hDne hDzero
+  have hpoles_complete :
+      ∀ p, p ∈ K → p = 0 ∨ p = 1 ∨ riemannZeta p = 0 → p ∈ poles := by
+    intro p hpK hpclass
+    simp only [poles, Finset.mem_union, hDfinite.mem_toFinset,
+      Finset.mem_singleton]
+    rcases hpclass with hp0 | hp1 | hpzero
+    · exact Or.inr hp0
+    · subst p
+      left
+      apply Function.mem_support.mpr
+      have hDone : D (1 : ℂ) = (-1 : ℤ) := by
+        simpa [D] using
+          ZeroFreeRegion.divisor_riemannZeta_pole_one hpK hzeta_meromorphic
+      rw [hDone]
+      norm_num
+    · by_cases hp1 : p = 1
+      · subst p
+        left
+        apply Function.mem_support.mpr
+        have hDone : D (1 : ℂ) = (-1 : ℤ) := by
+          simpa [D] using
+            ZeroFreeRegion.divisor_riemannZeta_pole_one hpK hzeta_meromorphic
+        rw [hDone]
+        norm_num
+      · left
+        have han : AnalyticAt ℂ riemannZeta p :=
+          ZeroFreeRegion.analyticOnNhd_riemannZeta_ne_one p hp1
+        have hpos : 0 < analyticOrderNatAt riemannZeta p :=
+          ZeroFreeRegion.analyticOrderNatAt_riemannZeta_pos_of_zero hp1 hpzero
+        have horder :
+            analyticOrderAt riemannZeta p =
+              (analyticOrderNatAt riemannZeta p : ℕ∞) :=
+          (ZeroFreeRegion.analyticOrderNatAt_riemannZeta_eq_analyticOrderAt_of_ne_one
+            hp1).symm
+        have hDvalue : D p = (analyticOrderNatAt riemannZeta p : ℤ) := by
+          rw [MeromorphicOn.divisor_apply hzeta_meromorphic hpK,
+            han.meromorphicOrderAt_eq, horder]
+          simp
+        apply Function.mem_support.mpr
+        rw [hDvalue]
+        exact_mod_cast (Nat.ne_of_gt hpos)
   have hraw_analytic_off :
       ∀ s, s ∈ K → s ∉ poles → AnalyticAt ℂ raw s := by
     intro s hsK hs_pole
@@ -715,7 +757,8 @@ theorem exists_finite_explicitFormulaIntegrand_analytic_regularized_remainder
     rw [toMeromorphicNFOn_eq_toMeromorphicNFAt hraw_meromorphic hzK]
     rw [toMeromorphicNFAt_eq_self.2
       (hraw_analytic_off z hzK hz_pole).meromorphicNFAt]
-  refine ⟨poles, residue, hpoles_mem, hpoles_classify, ?_, ?_, ?_⟩
+  refine ⟨poles, residue, hpoles_mem, hpoles_classify, hpoles_complete,
+    ?_, ?_, ?_⟩
   · intro p
     rfl
   · simpa [raw] using hoff_eq

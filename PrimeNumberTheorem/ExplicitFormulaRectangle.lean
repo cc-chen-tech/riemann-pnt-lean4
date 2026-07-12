@@ -32,7 +32,8 @@ theorem exists_rectangleBoundaryIntegral_explicitFormulaIntegrand_eq_residue_sum
   rcases
       exists_finite_explicitFormulaIntegrand_analytic_regularized_remainder
         hx hcompact with
-    ⟨poles, residue, hpoles_mem, hpoles_classify, _hresidue, hoff_eq, hregular⟩
+    ⟨poles, residue, hpoles_mem, hpoles_classify, _hpoles_complete,
+      _hresidue, hoff_eq, hregular⟩
   let raw : ℂ → ℂ := fun z =>
     explicitFormulaIntegrand x z -
       ∑ p ∈ poles, (z - p)⁻¹ * residue p
