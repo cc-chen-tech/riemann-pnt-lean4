@@ -180,6 +180,60 @@ lemma log_mul_finsum_le_finsum_mul_log_norm_sub_of_finiteSupport
   have hDreal : (0 : ℝ) ≤ (D u : ℝ) := by exact_mod_cast hD u
   simpa [mul_comm] using mul_le_mul_of_nonneg_left hlog hDreal
 
+/-- The logarithmic derivative of a finite-support divisor product is its
+finite principal-part sum at every point outside the divisor support. -/
+lemma logDeriv_finprod_sub_zpow_eq_finsum_mul_inv
+    {D : ℂ → ℤ} (hD : D.support.Finite) {z : ℂ}
+    (hz : ∀ u ∈ D.support, z ≠ u) :
+    logDeriv (∏ᶠ u, (· - u) ^ D u) z =
+      ∑ᶠ u, (D u : ℂ) * (z - u)⁻¹ := by
+  classical
+  let s : Finset ℂ := hD.toFinset
+  have hmulSupport :
+      Function.mulSupport (fun u : ℂ => (fun w : ℂ => (w - u) ^ D u)) ⊆ s := by
+    intro u hu
+    apply hD.mem_toFinset.mpr
+    by_contra hDu
+    have hDu0 : D u = 0 := by
+      simpa [Function.mem_support] using hDu
+    apply hu
+    funext w
+    simp [hDu0]
+  have hrightSupport :
+      (fun u : ℂ => (D u : ℂ) * (z - u)⁻¹).support ⊆ s := by
+    intro u hu
+    apply hD.mem_toFinset.mpr
+    by_contra hDu
+    have hDu0 : D u = 0 := by
+      simpa [Function.mem_support] using hDu
+    simp [hDu0] at hu
+  change logDeriv (∏ᶠ u, (fun w : ℂ => (w - u) ^ D u)) z = _
+  rw [finprod_eq_prod_of_mulSupport_subset _ hmulSupport]
+  rw [finsum_eq_sum_of_support_subset _ hrightSupport]
+  have hfun : (∏ i ∈ s, fun w : ℂ => (w - i) ^ D i) =
+      fun w : ℂ => ∏ i ∈ s, (w - i) ^ D i := by
+    funext w
+    simp
+  rw [hfun]
+  rw [logDeriv_prod]
+  · apply Finset.sum_congr rfl
+    intro u hu
+    calc
+      logDeriv (fun w : ℂ => (w - u) ^ D u) z =
+          (D u : ℂ) * logDeriv (fun w : ℂ => w - u) z := by
+            simpa using
+              logDeriv_fun_zpow (differentiableAt_id.sub_const u) (D u)
+      _ = (D u : ℂ) * (z - u)⁻¹ := by
+        simp [logDeriv_apply, div_eq_mul_inv]
+  · intro u hu
+    have huD : u ∈ D.support := hD.mem_toFinset.mp hu
+    exact zpow_ne_zero _ (sub_ne_zero.mpr (hz u huD))
+  · intro u hu
+    have huD : u ∈ D.support := hD.mem_toFinset.mp hu
+    exact (differentiableAt_zpow.2
+      (Or.inl (sub_ne_zero.mpr (hz u huD)))).comp z
+        (differentiableAt_id.sub_const u)
+
 /-! ## Analytic first-order ODE nonvanishing -/
 
 /-- A nonzero analytic solution of the scalar linear equation `f' = g * f`
@@ -11811,6 +11865,101 @@ lemma exists_analytic_nonzero_factorization_riemannZeta_closedBall
       (isCompact_closedBall c R)
   simpa [U, Pi.smul_apply', smul_eq_mul] using
     hmer.extract_zeros_poles hnotop hfinite
+
+/-- Pointwise logarithmic-derivative form of the complete zeta factorization.
+
+At every nonzero zeta value in the strict interior of the disk, the
+logarithmic derivative splits into the finite divisor principal-part sum and
+the logarithmic derivative of the same analytic nonvanishing factor. -/
+lemma exists_logDeriv_factorization_riemannZeta_closedBall_pointwise_of_ne_zero
+    {c : ℂ} {R : ℝ}
+    (havoid : ∀ z : ℂ, z ∈ closedBall c R → z ≠ 1) :
+    ∃ g : ℂ → ℂ,
+      AnalyticOnNhd ℂ g (closedBall c R) ∧
+      (∀ u : (closedBall c R : Set ℂ), g u ≠ 0) ∧
+      ∀ z ∈ ball c R, riemannZeta z ≠ 0 →
+        logDeriv riemannZeta z =
+          (∑ᶠ u,
+            (MeromorphicOn.divisor riemannZeta
+              (closedBall c R) u : ℂ) * (z - u)⁻¹) +
+            logDeriv g z := by
+  classical
+  let U : Set ℂ := closedBall c R
+  let D := MeromorphicOn.divisor riemannZeta U
+  let fac : ℂ → ℂ := ∏ᶠ u, fun w : ℂ => (w - u) ^ D u
+  rcases exists_analytic_nonzero_factorization_riemannZeta_closedBall havoid with
+    ⟨g, hg, hgne, hfactor⟩
+  have hmer : MeromorphicOn riemannZeta U := by
+    simpa [U] using meromorphicOn_riemannZeta_closedBall c R
+  have hDfinite : D.support.Finite :=
+    D.finiteSupport (isCompact_closedBall c R)
+  refine ⟨g, hg, hgne, ?_⟩
+  intro z hz hzeta
+  have hzU : z ∈ U := ball_subset_closedBall hz
+  have hza : AnalyticAt ℂ riemannZeta z :=
+    analyticOnNhd_riemannZeta_ne_one z (havoid z hzU)
+  have hDz : D z = 0 := by
+    rw [show D z = MeromorphicOn.divisor riemannZeta U z by rfl]
+    rw [MeromorphicOn.divisor_apply hmer hzU]
+    rw [(hza.meromorphicNFAt.meromorphicOrderAt_eq_zero_iff).2 hzeta]
+    simp
+  have hsep : ∀ u ∈ D.support, z ≠ u := by
+    intro u hu hzu
+    subst u
+    have : D z ≠ 0 := by simpa [Function.mem_support] using hu
+    exact this hDz
+  have hfacnf : MeromorphicNFAt fac z := by
+    exact Function.FactorizedRational.meromorphicNFOn D U hzU
+  have hfaca : AnalyticAt ℂ fac z := by
+    apply hfacnf.meromorphicOrderAt_nonneg_iff_analyticAt.mp
+    rw [show meromorphicOrderAt fac z = D z by
+      exact Function.FactorizedRational.meromorphicOrderAt_eq D hDfinite]
+    simp [hDz]
+  have hfacne : fac z ≠ 0 := by
+    rw [← hfacnf.meromorphicOrderAt_eq_zero_iff]
+    rw [show meromorphicOrderAt fac z = D z by
+      exact Function.FactorizedRational.meromorphicOrderAt_eq D hDfinite]
+    simp [hDz]
+  have hrhsa : AnalyticAt ℂ (fun w => fac w * g w) z :=
+    hfaca.mul (hg z hzU)
+  have hU_nhds : U ∈ nhds z := closedBall_mem_nhds_of_mem hz
+  have hacc : AccPt z (Filter.principal U) := by
+    rw [accPt_principal_iff_nhdsWithin]
+    have heq : nhdsWithin z (U \ {z}) = nhdsWithin z {z}ᶜ := by
+      rw [nhdsWithin_eq_iff_eventuallyEq]
+      filter_upwards [hU_nhds] with w hw
+      apply propext
+      constructor
+      · intro h
+        exact h.2
+      · intro h
+        exact ⟨hw, h⟩
+    rw [heq]
+    infer_instance
+  have hfactorNE : riemannZeta =ᶠ[nhdsWithin z {z}ᶜ] fun w => fac w * g w := by
+    apply hza.meromorphicAt.eventuallyEq_nhdsNE_of_eventuallyEq_codiscreteWithin
+      hrhsa.meromorphicAt hzU hacc
+    simpa [fac, D, U, Pi.smul_apply', smul_eq_mul] using hfactor
+  have hfactorN : riemannZeta =ᶠ[nhds z] fun w => fac w * g w :=
+    (hza.continuousAt.eventuallyEq_nhds_iff_eventuallyEq_nhdsNE
+      hrhsa.continuousAt).mp hfactorNE
+  have hlogeq : logDeriv riemannZeta z =
+      logDeriv (fun w => fac w * g w) z := by
+    simp only [logDeriv_apply]
+    rw [hfactorN.deriv_eq, hfactorN.eq_of_nhds]
+  have hmul := logDeriv_mul z hfacne (hgne ⟨z, hzU⟩)
+    hfaca.differentiableAt (hg z hzU).differentiableAt
+  have hfaclog : logDeriv fac z =
+      ∑ᶠ u, (D u : ℂ) * (z - u)⁻¹ := by
+    simpa [fac] using
+      logDeriv_finprod_sub_zpow_eq_finsum_mul_inv hDfinite hsep
+  calc
+    logDeriv riemannZeta z = logDeriv (fun w => fac w * g w) z := hlogeq
+    _ = logDeriv fac z + logDeriv g z := hmul
+    _ = (∑ᶠ u, (D u : ℂ) * (z - u)⁻¹) + logDeriv g z := by rw [hfaclog]
+    _ = (∑ᶠ u,
+          (MeromorphicOn.divisor riemannZeta (closedBall c R) u : ℂ) *
+            (z - u)⁻¹) + logDeriv g z := by rfl
 
 /-- Logarithmic-norm form of the complete zeta zero-factor extraction on a
 closed disk avoiding `1`.

@@ -818,6 +818,15 @@ Core verified declarations:
   controls the selected factor throughout `dist(w,2+it)+rho<=a/2`, without
   requiring `b<=1`.  Taking `a>2` makes this geometry reach `Re(w)=1`; the
   zeta growth inputs and zero-count/separation loss remain explicit.
+- `logDeriv_finprod_sub_zpow_eq_finsum_mul_inv` computes the logarithmic
+  derivative of a finite-support divisor product as the finite principal-part
+  sum at every point outside its support.
+- `exists_logDeriv_factorization_riemannZeta_closedBall_pointwise_of_ne_zero`
+  upgrades Mathlib's codiscrete zeta factorization by a local meromorphic
+  identity argument.  In the strict disk interior and away from zeta zeros it
+  proves `logDeriv zeta = sum divisor/(z-u) + logDeriv g` pointwise.
+  This identity and the current Jensen/Borel bound are still separate
+  existential witnesses; a same-witness composition remains to be proved.
 - `exists_punctured_ball_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq`
   and `exists_punctured_closedBall_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq`
   convert an eventually-equal multiplicity regular part and an eventual norm

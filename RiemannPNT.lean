@@ -7960,6 +7960,31 @@ theorem exists_analytic_nonzero_factorization_riemannZeta_closedBall
   ZeroFreeRegion.exists_analytic_nonzero_factorization_riemannZeta_closedBall
     havoid
 
+/-- Public principal-part formula for a finite-support divisor product. -/
+theorem logDeriv_finprod_sub_zpow_eq_finsum_mul_inv
+    {D : ℂ → ℤ} (hD : D.support.Finite) {z : ℂ}
+    (hz : ∀ u ∈ D.support, z ≠ u) :
+    logDeriv (∏ᶠ u, (· - u) ^ D u) z =
+      ∑ᶠ u, (D u : ℂ) * (z - u)⁻¹ :=
+  ZeroFreeRegion.logDeriv_finprod_sub_zpow_eq_finsum_mul_inv hD hz
+
+/-- Public pointwise logarithmic-derivative zeta factorization in the strict
+interior of a pole-free disk. -/
+theorem exists_logDeriv_factorization_riemannZeta_closedBall_pointwise_of_ne_zero
+    {c : ℂ} {R : ℝ}
+    (havoid : ∀ z : ℂ, z ∈ Metric.closedBall c R → z ≠ 1) :
+    ∃ g : ℂ → ℂ,
+      AnalyticOnNhd ℂ g (Metric.closedBall c R) ∧
+      (∀ u : (Metric.closedBall c R : Set ℂ), g u ≠ 0) ∧
+      ∀ z ∈ Metric.ball c R, riemannZeta z ≠ 0 →
+        logDeriv riemannZeta z =
+          (∑ᶠ u,
+            (MeromorphicOn.divisor riemannZeta
+              (Metric.closedBall c R) u : ℂ) * (z - u)⁻¹) +
+            logDeriv g z :=
+  ZeroFreeRegion.exists_logDeriv_factorization_riemannZeta_closedBall_pointwise_of_ne_zero
+    havoid
+
 /-- Public logarithmic-norm decomposition of zeta into its finite local
 divisor contribution and an analytic nonzero unit. -/
 theorem exists_log_norm_factorization_riemannZeta_closedBall
