@@ -7946,6 +7946,69 @@ theorem exists_good_radius_separated_from_riemannZeta_zeros_closedBall_strictly_
   ZeroFreeRegion.exists_good_radius_separated_from_riemannZeta_zeros_closedBall_strictly_inside
     ha haq hqb havoid
 
+/-- Public translated canonical factor on a disk. -/
+noncomputable abbrev translatedCanonicalFactor
+    (c : ℂ) (R : ℝ) (u : ℂ) : ℂ → ℂ :=
+  ZeroFreeRegion.translatedCanonicalFactor c R u
+
+/-- Public analytic numerator of a translated canonical factor. -/
+noncomputable abbrev translatedCanonicalNumerator
+    (c : ℂ) (R : ℝ) (u : ℂ) : ℂ → ℂ :=
+  ZeroFreeRegion.translatedCanonicalNumerator c R u
+
+/-- Public qualified bridge from an ordinary zero factor times a canonical
+factor to the analytic canonical numerator. -/
+theorem sub_mul_translatedCanonicalFactor_eq_translatedCanonicalNumerator
+    {c u z : ℂ} {R : ℝ} (hR : R ≠ 0) (hzu : z ≠ u) :
+    (z - u) * translatedCanonicalFactor c R u z =
+      translatedCanonicalNumerator c R u z :=
+  ZeroFreeRegion.sub_mul_translatedCanonicalFactor_eq_translatedCanonicalNumerator
+    hR hzu
+
+/-- Public boundary norm-one property of translated canonical factors. -/
+theorem norm_translatedCanonicalFactor_eq_one
+    {c u z : ℂ} {R : ℝ} (hu : u ∈ Metric.ball c R)
+    (hz : z ∈ Metric.sphere c R) :
+    ‖translatedCanonicalFactor c R u z‖ = 1 :=
+  ZeroFreeRegion.norm_translatedCanonicalFactor_eq_one hu hz
+
+/-- Public boundary norm-preservation property of canonical numerators. -/
+theorem norm_translatedCanonicalNumerator_eq_norm_sub
+    {c u z : ℂ} {R : ℝ} (hu : u ∈ Metric.ball c R)
+    (hz : z ∈ Metric.sphere c R) :
+    ‖translatedCanonicalNumerator c R u z‖ = ‖z - u‖ :=
+  ZeroFreeRegion.norm_translatedCanonicalNumerator_eq_norm_sub hu hz
+
+/-- Public analyticity of translated canonical numerators. -/
+theorem analyticOnNhd_translatedCanonicalNumerator
+    {c u : ℂ} {R : ℝ} :
+    AnalyticOnNhd ℂ (translatedCanonicalNumerator c R u) Set.univ :=
+  ZeroFreeRegion.analyticOnNhd_translatedCanonicalNumerator
+
+/-- Public nonvanishing of a translated canonical numerator on its disk. -/
+theorem translatedCanonicalNumerator_ne_zero
+    {c u z : ℂ} {R : ℝ} (hu : u ∈ Metric.ball c R)
+    (hz : z ∈ Metric.closedBall c R) :
+    translatedCanonicalNumerator c R u z ≠ 0 :=
+  ZeroFreeRegion.translatedCanonicalNumerator_ne_zero hu hz
+
+/-- Public logarithmic derivative formula for a translated canonical
+numerator. -/
+theorem logDeriv_translatedCanonicalNumerator
+    {c u z : ℂ} {R : ℝ} (hR : R ≠ 0) :
+    logDeriv (translatedCanonicalNumerator c R u) z =
+      -(starRingEnd ℂ) (u - c) /
+        ((R : ℂ) ^ 2 - (starRingEnd ℂ) (u - c) * (z - c)) :=
+  ZeroFreeRegion.logDeriv_translatedCanonicalNumerator hR
+
+/-- Public uniform inner-disk bound for the canonical correction term. -/
+theorem norm_logDeriv_translatedCanonicalNumerator_le_inv_sub
+    {c u z : ℂ} {d R : ℝ} (hd : 0 ≤ d) (hdR : d < R)
+    (hu : u ∈ Metric.ball c R) (hz : z ∈ Metric.closedBall c d) :
+    ‖logDeriv (translatedCanonicalNumerator c R u) z‖ ≤ 1 / (R - d) :=
+  ZeroFreeRegion.norm_logDeriv_translatedCanonicalNumerator_le_inv_sub
+    hd hdR hu hz
+
 /-- Public complete zero-factor extraction for zeta on a closed disk avoiding
 the pole. -/
 theorem exists_analytic_nonzero_factorization_riemannZeta_closedBall
@@ -18551,6 +18614,25 @@ theorem exists_riemannZeta_polynomial_growth_on_vertical_strip :
       ∀ s : ℂ, T0 ≤ |s.im| → s.re ∈ Set.Icc (1 : ℝ) 3 →
         ‖riemannZeta s‖ ≤ A * (‖s‖ + 3) ^ B :=
   ZeroFreeRegion.exists_riemannZeta_polynomial_growth_on_vertical_strip
+
+/-- Public explicit zeta norm bound on a small high disk centered at
+`2 + I*t`. -/
+theorem norm_riemannZeta_le_two_mul_abs_im_add_radius_add_two_on_closedBall
+    {R t : ℝ} (hRone : R ≤ 1) (hheight : 1 + R ≤ |t|) {z : ℂ}
+    (hz : z ∈ Metric.closedBall ((2 : ℂ) + Complex.I * t) R) :
+    ‖riemannZeta z‖ ≤ 2 * (|t| + R + 2) :=
+  ZeroFreeRegion.norm_riemannZeta_le_two_mul_abs_im_add_radius_add_two_on_closedBall
+    hRone hheight hz
+
+/-- Public logarithmic zeta norm bound on a small high disk centered at
+`2 + I*t`. -/
+theorem log_norm_riemannZeta_le_log_two_add_log_abs_im_add_radius_add_five_on_closedBall
+    {q t : ℝ} (hq : 0 ≤ q) (hqone : q ≤ 1)
+    (hheight : 1 + q ≤ |t|) {z : ℂ}
+    (hz : z ∈ Metric.closedBall ((2 : ℂ) + Complex.I * t) q) :
+    Real.log ‖riemannZeta z‖ ≤ Real.log 2 + Real.log (|t| + q + 5) :=
+  ZeroFreeRegion.log_norm_riemannZeta_le_log_two_add_log_abs_im_add_radius_add_five_on_closedBall
+    hq hqone hheight hz
 
 /-- Public conversion from pointwise polynomial growth to affine logarithmic
 norm growth. -/

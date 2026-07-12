@@ -1651,6 +1651,25 @@ ZeroFreeRegion.classical_zero_free_region_of_exists_MultiplicityLogDerivRegularP
 ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_compact_band_sphere_zeta_bound_high_height_zeta_lower_bound
 ```
 
+To prevent the good-radius construction from adding a `log log |t|` loss,
+the canonical-factor route now proves:
+
+```lean
+ZeroFreeRegion.norm_translatedCanonicalFactor_eq_one
+ZeroFreeRegion.norm_translatedCanonicalNumerator_eq_norm_sub
+ZeroFreeRegion.analyticOnNhd_translatedCanonicalNumerator
+ZeroFreeRegion.translatedCanonicalNumerator_ne_zero
+ZeroFreeRegion.logDeriv_translatedCanonicalNumerator
+ZeroFreeRegion.norm_logDeriv_translatedCanonicalNumerator_le_inv_sub
+```
+
+The last theorem bounds each reflected-zero correction by `1/(R-d)` on an
+inner disk, independently of its distance to the boundary.  What remains is
+to form the finite canonical product over the zeta divisor, partition inner
+and outer zeros, and sum these corrections using the unconditional Jensen
+mass bound.  Until that product theorem is complete, the uniform regular-part
+target remains open.
+
 These results convert an input of the form
 `||zeta z|| <= A * (||z|| + 3)^B` into
 `log ||zeta z|| <= log A + B * log (||z|| + 3)`, and on
@@ -1674,9 +1693,9 @@ The first removes the center-value hypothesis by using
 `‖ζ(2+I*t)‖ ≥ 1/3`; a boundary estimate `‖ζ‖ ≤ M` therefore bounds the
 weighted Jensen zero mass by `log M + log 3`.  The second gives a quantitative
 total-multiplicity bound in every smaller concentric disk, with denominator
-`log (R/r)`.  These are real zero-counting results, but they still require a
-zeta-specific high-height boundary-growth estimate and do not yet prove the
-regular-part `O(log |t|)` estimate for `ζ'/ζ`.
+`log (R/r)`.  Abel's bound now discharges their high-height zeta-growth input;
+the finite canonical product needed for the regular-part `O(log |t|)` estimate
+for `ζ'/ζ` remains open.
 
 The finite-radius step after Jensen is now also formalized:
 

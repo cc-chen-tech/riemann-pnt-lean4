@@ -25,6 +25,7 @@ import RiemannExplorer
 import ZeroFreeRegion
 
 open Complex BigOperators Filter Nat Topology MeasureTheory Asymptotics
+open ComplexConjugate
 open scoped ArithmeticFunction LSeries.notation
 open MeromorphicAt MeromorphicOn Metric Real
 
@@ -7447,6 +7448,70 @@ theorem exists_riemannZeta_polynomial_growth_on_vertical_strip :
   exact norm_riemannZeta_le_two_mul_norm_add_three_on_vertical_strip
     s hs_height hs_re
 
+/-- Explicit zeta norm bound on a small high disk centered at `2 + I*t`.
+This is the outer-bound supplier used by the same-witness Jensen/Borel
+factorization theorem. -/
+lemma norm_riemannZeta_le_two_mul_abs_im_add_radius_add_two_on_closedBall
+    {R t : ℝ} (hRone : R ≤ 1)
+    (hheight : 1 + R ≤ |t|) {z : ℂ}
+    (hz : z ∈ closedBall ((2 : ℂ) + I * t) R) :
+    ‖riemannZeta z‖ ≤ 2 * (|t| + R + 2) := by
+  let c : ℂ := (2 : ℂ) + I * t
+  have hz_re : z.re ∈ Set.Icc (1 : ℝ) 3 :=
+    closedBall_sigma_it_re_mem_Icc
+      (z := z) (σ := 2) (t := t) (R := R) (a := 1) (b := 3)
+      (by simpa [c] using hz) (by linarith) (by linarith)
+  have hz_height : 1 ≤ |z.im| :=
+    closedBall_sigma_it_abs_im_ge_of_add_le
+      (z := z) (σ := 2) (t := t) (R := R) (H := 1)
+      (by simpa [c] using hz) hheight
+  have hzeta :=
+    norm_riemannZeta_le_two_mul_norm_of_one_le_re_of_one_le_abs_im
+      z hz_re.1 hz_height
+  have hdist : ‖z - c‖ ≤ R := by
+    simpa [Metric.mem_closedBall, dist_eq_norm] using hz
+  have hc_norm : ‖c‖ ≤ |t| + 2 := by
+    simpa [c] using
+      (norm_sigma_add_I_mul_le_abs_add_two (σ := 2) (t := t)
+        (by constructor <;> norm_num))
+  have hz_norm : ‖z‖ ≤ |t| + R + 2 := by
+    calc
+      ‖z‖ = ‖c + (z - c)‖ := by congr 1; ring
+      _ ≤ ‖c‖ + ‖z - c‖ := norm_add_le _ _
+      _ ≤ |t| + R + 2 := by linarith
+  exact hzeta.trans (mul_le_mul_of_nonneg_left hz_norm (by norm_num))
+
+/-- Explicit logarithmic zeta norm bound on a small high disk centered at
+`2 + I*t`.  This supplies the inner closed-ball constant in the selected
+zero-removed-factor estimate. -/
+lemma log_norm_riemannZeta_le_log_two_add_log_abs_im_add_radius_add_five_on_closedBall
+    {q t : ℝ} (hq : 0 ≤ q) (hqone : q ≤ 1)
+    (hheight : 1 + q ≤ |t|) {z : ℂ}
+    (hz : z ∈ closedBall ((2 : ℂ) + I * t) q) :
+    Real.log ‖riemannZeta z‖ ≤ Real.log 2 + Real.log (|t| + q + 5) := by
+  have hnorm :=
+    norm_riemannZeta_le_two_mul_abs_im_add_radius_add_two_on_closedBall
+      hqone hheight hz
+  have harg_pos : 0 < |t| + q + 2 := by positivity
+  have harg_le : |t| + q + 2 ≤ |t| + q + 5 := by linarith
+  by_cases hzeta : riemannZeta z = 0
+  · have hlog_two : 0 ≤ Real.log 2 := Real.log_nonneg (by norm_num)
+    have hlog_arg : 0 ≤ Real.log (|t| + q + 5) := by
+      apply Real.log_nonneg
+      nlinarith [abs_nonneg t]
+    simp [hzeta]
+    linarith
+  · have hlog := Real.log_le_log (norm_pos_iff.mpr hzeta) hnorm
+    have hlog_mul :
+        Real.log (2 * (|t| + q + 2)) =
+          Real.log 2 + Real.log (|t| + q + 2) := by
+      rw [Real.log_mul (by norm_num : (2 : ℝ) ≠ 0) harg_pos.ne']
+    have hlog_arg_le :
+        Real.log (|t| + q + 2) ≤ Real.log (|t| + q + 5) :=
+      Real.log_le_log harg_pos harg_le
+    rw [hlog_mul] at hlog
+    linarith
+
 lemma log_norm_bound_of_polynomial_growth
     {f : ℂ → ℂ} {A B : ℝ} (hA : 1 ≤ A) (hB : 0 ≤ B) (z : ℂ)
     (hpoly : ‖f z‖ ≤ A * (‖z‖ + 3) ^ B) :
@@ -12082,6 +12147,179 @@ lemma exists_good_radius_separated_from_riemannZeta_zeros_closedBall_strictly_in
         ((4 : ℝ) * (((zeros.image (dist c)).card : ℝ) + 1)) := by
     exact div_pos (sub_pos.mpr haq) (mul_pos (by norm_num) (by positivity))
   simpa using hsep_pos.trans_le hsep
+
+/-- The translated canonical factor associated to a point `u` in a disk
+centered at `c`.  Its pole at `u` cancels the corresponding zero factor, while
+its norm is one on the boundary circle. -/
+noncomputable def translatedCanonicalFactor
+    (c : ℂ) (R : ℝ) (u : ℂ) : ℂ → ℂ :=
+  fun z => Complex.canonicalFactor R (u - c) (z - c)
+
+/-- The analytic numerator left after multiplying `(z-u)` by the translated
+canonical factor. -/
+noncomputable def translatedCanonicalNumerator
+    (c : ℂ) (R : ℝ) (u : ℂ) : ℂ → ℂ :=
+  fun z => ((R : ℂ) ^ 2 - (starRingEnd ℂ) (u - c) * (z - c)) / R
+
+/-- Away from its pole, multiplying a translated canonical factor by its
+ordinary zero factor gives the analytic canonical numerator.  The `z ≠ u`
+hypothesis is essential because division is totalized at the pole. -/
+lemma sub_mul_translatedCanonicalFactor_eq_translatedCanonicalNumerator
+    {c u z : ℂ} {R : ℝ} (hR : R ≠ 0) (hzu : z ≠ u) :
+    (z - u) * translatedCanonicalFactor c R u z =
+      translatedCanonicalNumerator c R u z := by
+  rw [translatedCanonicalFactor, Complex.canonicalFactor_apply,
+    translatedCanonicalNumerator]
+  have hsub : (z - c) - (u - c) = z - u := by ring
+  rw [hsub]
+  field_simp [hR, sub_ne_zero.mpr hzu]
+
+/-- A translated canonical factor has norm one on its boundary circle. -/
+lemma norm_translatedCanonicalFactor_eq_one
+    {c u z : ℂ} {R : ℝ} (hu : u ∈ ball c R) (hz : z ∈ sphere c R) :
+    ‖translatedCanonicalFactor c R u z‖ = 1 := by
+  apply Complex.norm_canonicalFactor_eval_circle_eq_one
+  · simpa [Metric.mem_ball, dist_eq_norm, norm_sub_rev] using hu
+  · simpa [Metric.mem_sphere, dist_eq_norm, norm_sub_rev] using hz
+
+/-- On the boundary circle, replacing the ordinary zero factor `(z-u)` by
+the translated canonical numerator preserves its norm exactly. -/
+lemma norm_translatedCanonicalNumerator_eq_norm_sub
+    {c u z : ℂ} {R : ℝ} (hu : u ∈ ball c R) (hz : z ∈ sphere c R) :
+    ‖translatedCanonicalNumerator c R u z‖ = ‖z - u‖ := by
+  have hR : 0 < R := pos_of_mem_ball hu
+  have hcanon : ‖translatedCanonicalFactor c R u z‖ = 1 :=
+    norm_translatedCanonicalFactor_eq_one hu hz
+  have hzu : z ≠ u := by
+    intro h
+    subst z
+    have hz' : ‖u - c‖ = R := by
+      simpa [Metric.mem_sphere, dist_eq_norm] using hz
+    have hu' : ‖u - c‖ < R := by
+      simpa [Metric.mem_ball, dist_eq_norm] using hu
+    linarith
+  rw [translatedCanonicalFactor, Complex.canonicalFactor_apply, norm_div,
+    norm_mul, norm_real, Real.norm_eq_abs, abs_of_pos hR] at hcanon
+  rw [translatedCanonicalNumerator, norm_div, norm_real, Real.norm_eq_abs,
+    abs_of_pos hR]
+  have hsub : ‖(z - c) - (u - c)‖ = ‖z - u‖ := by ring_nf
+  rw [hsub] at hcanon
+  have hden : 0 < R * ‖z - u‖ :=
+    mul_pos hR (norm_pos_iff.mpr (sub_ne_zero.mpr hzu))
+  apply (div_eq_iff hR.ne').2
+  apply (div_eq_iff hden.ne').mp at hcanon
+  nlinarith
+
+/-- A translated canonical numerator is entire. -/
+lemma analyticOnNhd_translatedCanonicalNumerator
+    {c u : ℂ} {R : ℝ} :
+    AnalyticOnNhd ℂ (translatedCanonicalNumerator c R u) Set.univ := by
+  intro z _hz
+  change AnalyticAt ℂ
+    (fun z => ((R : ℂ) ^ 2 - (starRingEnd ℂ) (u - c) * (z - c)) / R) z
+  fun_prop
+
+/-- The translated canonical numerator associated to an interior point has no
+zeros on the closed disk. -/
+lemma translatedCanonicalNumerator_ne_zero
+    {c u z : ℂ} {R : ℝ} (hu : u ∈ ball c R)
+    (hz : z ∈ closedBall c R) :
+    translatedCanonicalNumerator c R u z ≠ 0 := by
+  have hR : 0 < R := pos_of_mem_ball hu
+  have hu_norm : ‖u - c‖ < R := by
+    simpa [Metric.mem_ball, dist_eq_norm] using hu
+  have hz_norm : ‖z - c‖ ≤ R := by
+    simpa [Metric.mem_closedBall, dist_eq_norm] using hz
+  have hprod : ‖(starRingEnd ℂ) (u - c) * (z - c)‖ <
+      ‖((R : ℂ) ^ 2)‖ := by
+    change ‖conj (u - c) * (z - c)‖ < ‖((R : ℂ) ^ 2)‖
+    rw [norm_mul, RCLike.norm_conj, norm_pow, norm_real, Real.norm_eq_abs,
+      abs_of_pos hR]
+    calc
+      ‖u - c‖ * ‖z - c‖ ≤ ‖u - c‖ * R :=
+        mul_le_mul_of_nonneg_left hz_norm (norm_nonneg _)
+      _ < R * R := mul_lt_mul_of_pos_right hu_norm hR
+      _ = R ^ 2 := by ring
+  rw [translatedCanonicalNumerator]
+  apply div_ne_zero
+  · intro hzero
+    rw [sub_eq_zero] at hzero
+    have hnormeq := congrArg norm hzero
+    linarith
+  · exact_mod_cast hR.ne'
+
+/-- Exact logarithmic derivative of a translated canonical numerator. -/
+lemma logDeriv_translatedCanonicalNumerator
+    {c u z : ℂ} {R : ℝ} (hR : R ≠ 0) :
+    logDeriv (translatedCanonicalNumerator c R u) z =
+      -(starRingEnd ℂ) (u - c) /
+        ((R : ℂ) ^ 2 - (starRingEnd ℂ) (u - c) * (z - c)) := by
+  let a : ℂ := (starRingEnd ℂ) (u - c)
+  have hderiv : HasDerivAt (translatedCanonicalNumerator c R u)
+      (-a / R) z := by
+    change HasDerivAt (fun z => ((R : ℂ) ^ 2 - a * (z - c)) / R)
+      (-a / R) z
+    convert (((hasDerivAt_const z ((R : ℂ) ^ 2)).sub
+      ((hasDerivAt_const z a).mul ((hasDerivAt_id z).sub_const c))).div_const R)
+      using 1
+    all_goals ring
+  rw [logDeriv_apply, hderiv.deriv]
+  change (-a / R) / ((((R : ℂ) ^ 2 - a * (z - c)) / R)) =
+    -a / ((R : ℂ) ^ 2 - a * (z - c))
+  field_simp [hR]
+
+/-- The logarithmic derivative of a translated canonical numerator is
+uniformly bounded on every strictly smaller concentric disk.  Crucially, the
+bound is independent of the distance from `u` to the outer circle. -/
+lemma norm_logDeriv_translatedCanonicalNumerator_le_inv_sub
+    {c u z : ℂ} {d R : ℝ} (hd : 0 ≤ d) (hdR : d < R)
+    (hu : u ∈ ball c R) (hz : z ∈ closedBall c d) :
+    ‖logDeriv (translatedCanonicalNumerator c R u) z‖ ≤ 1 / (R - d) := by
+  have hR : 0 < R := hd.trans_lt hdR
+  have hgap : 0 < R - d := sub_pos.mpr hdR
+  by_cases huc : u = c
+  · subst u
+    rw [logDeriv_translatedCanonicalNumerator hR.ne']
+    simp [hdR.le]
+  · have hu_norm : ‖u - c‖ < R := by
+      simpa [Metric.mem_ball, dist_eq_norm] using hu
+    have hz_norm : ‖z - c‖ ≤ d := by
+      simpa [Metric.mem_closedBall, dist_eq_norm] using hz
+    have hua_pos : 0 < ‖u - c‖ := norm_pos_iff.mpr (sub_ne_zero.mpr huc)
+    let raw : ℂ := (R : ℂ) ^ 2 - (starRingEnd ℂ) (u - c) * (z - c)
+    have hstar_norm : ‖(starRingEnd ℂ) (u - c)‖ = ‖u - c‖ := by
+      change ‖conj (u - c)‖ = ‖u - c‖
+      exact RCLike.norm_conj _
+    have hRnorm : ‖((R : ℂ) ^ 2)‖ = R ^ 2 := by
+      rw [norm_pow, norm_real, Real.norm_eq_abs, abs_of_pos hR]
+    have hprod_norm :
+        ‖(starRingEnd ℂ) (u - c) * (z - c)‖ = ‖u - c‖ * ‖z - c‖ := by
+      rw [norm_mul, hstar_norm]
+    have hreverse := norm_sub_norm_le ((R : ℂ) ^ 2)
+      ((starRingEnd ℂ) (u - c) * (z - c))
+    have hreverse' : R ^ 2 - ‖u - c‖ * ‖z - c‖ ≤ ‖raw‖ := by
+      dsimp [raw]
+      rw [hRnorm, hprod_norm] at hreverse
+      linarith
+    have hlinear : ‖u - c‖ * (R - d) ≤
+        R ^ 2 - ‖u - c‖ * ‖z - c‖ := by
+      have hfirst : ‖u - c‖ * R ≤ R * R :=
+        mul_le_mul_of_nonneg_right hu_norm.le hR.le
+      have hsecond : ‖u - c‖ * ‖z - c‖ ≤ ‖u - c‖ * d :=
+        mul_le_mul_of_nonneg_left hz_norm (norm_nonneg _)
+      nlinarith
+    have hden : ‖u - c‖ * (R - d) ≤ ‖raw‖ := hlinear.trans hreverse'
+    have hden_pos : 0 < ‖raw‖ :=
+      lt_of_lt_of_le (mul_pos hua_pos hgap) hden
+    rw [logDeriv_translatedCanonicalNumerator hR.ne', norm_div, norm_neg,
+      hstar_norm]
+    change ‖u - c‖ / ‖raw‖ ≤ 1 / (R - d)
+    apply (div_le_iff₀ hden_pos).2
+    calc
+      ‖u - c‖ = (1 / (R - d)) * (‖u - c‖ * (R - d)) := by
+        field_simp
+      _ ≤ (1 / (R - d)) * ‖raw‖ :=
+        mul_le_mul_of_nonneg_left hden (by positivity)
 
 /-- On a closed disk avoiding the pole, zeta factors into its complete local
 divisor product and an analytic nonvanishing unit.

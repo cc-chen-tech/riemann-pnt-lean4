@@ -239,6 +239,15 @@ and the unit logarithmic derivative is locally bounded; this improves the
 real-axis bookkeeping but still does not supply the missing high-height
 zeta-specific estimates.
 
+The regular-part route now also has a canonical-factor replacement for the
+old quantitative circle-separation step.  The translated canonical numerator
+is proved entire and nonvanishing on its disk, preserves `‖z-u‖` exactly on
+the boundary circle, and satisfies
+`‖logDeriv numerator(z)‖ ≤ 1/(R-d)` on every concentric radius-`d<R` disk.
+This removes the per-zero boundary-separation loss at the single-factor level.
+The finite divisor product, inner/outer zero partition, and summed correction
+bound are still under construction; no uniform regular-part theorem is claimed.
+
 ## Paper Positioning
 
 The recommended paper framing is to make the `3-4-1 + compact zero-free strip`
@@ -447,6 +456,7 @@ Lean declarations in `ZeroFreeRegion.lean` and
 | `ZeroFreeRegion.norm_riemannZeta_le_const_polynomial_on_two_le_re` | `lemma` | Packages the preceding bound as constant-order polynomial growth on `2 ≤ Re(s)`. | Gives the later polynomial-growth infrastructure a simple constant right-edge input. |
 | `ZeroFreeRegion.norm_riemannZeta_le_two_mul_norm_of_one_le_re_of_one_le_abs_im` / `ZeroFreeRegion.norm_riemannZeta_le_two_mul_norm_add_three_on_vertical_strip` | `lemma` | Uses Abel's floor-integral formula and continuity from `Re(s)>1` to prove `‖ζ(s)‖≤2‖s‖` on `Re(s)≥1`, `|Im(s)|≥1`, and packages it as polynomial growth on `1≤Re(s)≤3`. | Closes the previously missing zeta-growth premise for the Jensen/Borel chain; this controls the numerator, not yet the logarithmic derivative near zeros. |
 | `ZeroFreeRegion.log_norm_riemannZeta_sigma_it_le_log_two_add_two_log_abs_add_three` / unconditional circle-average and Jensen zero-mass forms | `lemma` | Derives explicit logarithmic zeta growth and weighted local zero-mass bounds of order `log |t|` with no caller-supplied growth hypothesis. | Supplies the growth and zero-counting inputs for the regular-part route; divisor separation and uniform control of the zero-removed factor remain open. |
+| `ZeroFreeRegion.translatedCanonicalNumerator` / boundary norm, analyticity, nonvanishing, exact log-derivative, and inner-disk norm-bound lemmas | `def` + `lemma` | Replaces each ordinary zero factor by a disk-canonical numerator whose boundary norm is unchanged and whose logarithmic derivative is bounded by `1/(R-d)` on a smaller disk. | Establishes the local mechanism needed to remove the old `log(cardinality)` circle-separation loss. The finite canonical divisor product and final regular-part sum are not yet proved. |
 | `ZeroFreeRegion.norm_deriv_riemannZeta_le_re_zeta_two_div_radius_of_closedBall_two_le_re` / coordinate form | `lemma` | Uses Cauchy's derivative estimate plus the right-boundary ζ bound to prove `‖ζ'(c)‖ ≤ Re(ζ(2))/R` when `closedBall c R` stays in `2 ≤ Re(s)`. | A verified right-edge derivative-growth input; the hard task remains carrying comparable control into the boundary strip near `Re(s)=1`. |
 | `ZeroFreeRegion.norm_logDeriv_riemannZeta_le_three_mul_re_zeta_two_div_radius_of_two_add_radius_le_re` / coordinate form | `lemma` | Combines the Cauchy derivative estimate with the new `‖ζ(s)‖≥1/3` margin to prove `‖logDeriv ζ(s)‖≤3Re(ζ(2))/R` when the radius-`R` disk around `s` stays in `2≤Re(z)`. | Gives a reusable right-edge logarithmic-derivative input for later Borel/Jensen arguments; it is a boundary condition, not the missing uniform `O(log|t|)` estimate on `1≤Re(s)≤2`. |
 | `ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_le_log_abs_im_of_two_add_radius_le_re` / coordinate form | `lemma` | Normalizes the radius-dependent right-edge constant bound into `‖logDeriv ζ(z)‖≤C log|Im z|` on `2+R≤Re(z)` above any fixed height `H≥2`. | Puts the proved right-edge control into the same logarithmic-height scale used by the zero-free-region chain, while keeping the boundary-strip gap explicit. |
