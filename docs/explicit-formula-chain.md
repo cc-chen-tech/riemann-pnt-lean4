@@ -140,6 +140,10 @@ Already available or mostly available:
    `0 < x < y`, the normalized Riesz-mean difference lies between `psi x`
    and `psi y`.  Thus the second-order Perron output is no longer isolated
    from the unsmoothed arithmetic function.
+7. `PrimeNumberTheorem.norm_truncated_secondOrderPerron_sub_max_le` proves the
+   finite-height error for the second-order kernel: truncating to `[-W,W]`
+   costs at most `exp (c*u) / (2*pi^2*W)`.  This is an unconditional theorem,
+   not a truncation target or route interface.
 
 Needed:
 
@@ -505,10 +509,11 @@ and
 3. Prove finite bounded-height support lemmas for the zero sums from
    `finite_nontrivial_zeros_bounded_height`.
 4. Either prove the ordinary `1 / s` half-jump formula, or combine the proved
-   `1 / s^2` formula and Riesz finite-difference squeeze with a quantitative
-   choice of `y - x` in the contour-error argument.  The exact finite-difference
-   bridge is complete; the conditionally convergent half-jump and the finite
-   height truncation error remain open.
+   finite-height `1 / s^2` formula and Riesz finite-difference squeeze with a
+   quantitative choice of `y - x` in the contour-shift error argument.  The
+   second-order vertical truncation and exact finite-difference bridge are now
+   complete; the conditionally convergent half-jump and the zeta/Dirichlet-series
+   contour-edge estimates remain open.
 5. Extend the existing constant-function rectangle sanity checks to a real
    rectangle meromorphic residue theorem as a reusable project
    lemma, since Mathlib currently supplies the analytic pieces but not the exact
