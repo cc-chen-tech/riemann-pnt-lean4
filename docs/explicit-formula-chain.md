@@ -220,11 +220,20 @@ Already available or mostly available:
     and proves that every `goodHeight (2*pi*W)` gives a pole-free boundary for
     arbitrary fixed `c>1`.  Thus the starting-line Perron theorem and the
     finite rectangle residue theorem are now connected in one Lean formula.
+18. `PrimeNumberTheorem.ExplicitFormulaResidues.norm_horizontal_right_firstOrderContour_difference_le`
+    proves an explicit `O(1/T)` bound for the combined top and bottom portions
+    with `1+epsilon <= Re(s) <= c`.  Its companion
+    `tendsto_horizontal_right_firstOrderContour_difference_atTop` proves that
+    this contribution tends to zero.  This is the first-order analogue of the
+    previously proved second-order right-tail estimate.  The unresolved
+    horizontal interval is now `-1 <= Re(s) <= 1+epsilon`, where absolute
+    convergence of the von Mangoldt Dirichlet series is unavailable.
 
 Remaining after the fixed-right-edge contour shift:
 
-1. Bound the two horizontal edges strongly enough to pass to a cofinal
-   good-height limit.
+1. Bound the remaining horizontal portions
+   `-1 <= Re(s) <= 1+epsilon` strongly enough to pass to a cofinal good-height
+   limit; the right portions are now proved to vanish.
 2. Either evaluate the fixed `Re(s)=-1` left-line limit and identify it with
    the classical trivial-zero term, or move the left edge through
    `-2,-4,...` toward `-infinity` and control the resulting joint limit.
@@ -391,10 +400,13 @@ For the truncated identity:
    theorem; it does not claim a closed-form uniform truncation rate for the
    full conditionally convergent series.
 3. Remaining: prove the horizontal terms vanish along a cofinal good-height
-   sequence and analyze the left-line term.  For the fixed edge `Re(s)=-1`,
-   the left-line integral is not assumed to vanish; it must be evaluated.
-   Alternatively, move the left boundary past the trivial zeros and prove the
-   corresponding residue and contour limits together.
+   sequence and analyze the left-line term.  The portions with
+   `1+epsilon <= Re(s) <= c` already vanish by the first-order `O(1/T)` bound;
+   the interval `-1 <= Re(s) <= 1+epsilon` still needs a good-height
+   logarithmic-derivative estimate.  For the fixed edge `Re(s)=-1`, the
+   left-line integral is not assumed to vanish; it must be evaluated.
+   Alternatively, move the left boundary past the trivial zeros and prove
+   the corresponding residue and contour limits together.
 
 For the principal value final formula:
 
