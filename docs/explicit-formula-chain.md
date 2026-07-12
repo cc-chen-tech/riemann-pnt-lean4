@@ -228,6 +228,15 @@ Already available or mostly available:
     previously proved second-order right-tail estimate.  The unresolved
     horizontal interval is now `-1 <= Re(s) <= 1+epsilon`, where absolute
     convergence of the von Mangoldt Dirichlet series is unavailable.
+19. `PrimeNumberTheorem.ExplicitFormulaAux.tendsto_finiteTrivialZeroSum_residues`
+    proves that the finite simple-residue sums over
+    `-2,-4,...,-2N` converge to the classical term
+    `-1/2 * log (1 - x^-2)` for `x>1`.  The proof is connected to the
+    repository's actual `finiteTrivialZeroSum (2N)`, not merely a separate
+    sequence index.  Still needed is the zeta-specific simplicity theorem
+    `analyticOrderNatAt riemannZeta (-2*(n+1)) = 1`, which identifies these
+    simple-residue summands with the multiplicity-aware residues produced by
+    the contour theorem.
 
 Remaining after the fixed-right-edge contour shift:
 
@@ -236,7 +245,9 @@ Remaining after the fixed-right-edge contour shift:
    limit; the right portions are now proved to vanish.
 2. Either evaluate the fixed `Re(s)=-1` left-line limit and identify it with
    the classical trivial-zero term, or move the left edge through
-   `-2,-4,...` toward `-infinity` and control the resulting joint limit.
+   `-2,-4,...` toward `-infinity` and control the resulting joint limit.  The
+   corresponding simple-residue series limit is now proved; the remaining
+   local input is simplicity of every trivial zeta zero.
 3. Control the symmetric nontrivial-zero contribution with multiplicity.
 
 ### Analytic continuation and poles
@@ -288,8 +299,10 @@ Current status:
    finite residue formula under an explicit pole-free-boundary hypothesis.
    `exists_strictMono_tendsto_rectangleResidueContours` now constructs the
    required cofinal contour family from `goodHeight`, using squares with real
-   sides `-1` and `2T-1`.  Still needed: the finite-to-infinite trivial-zero limit giving
-   `-1/2 * log (1 - x^-2)`.
+   sides `-1` and `2T-1`.  The finite-to-infinite simple-residue limit giving
+   `-1/2 * log (1 - x^-2)` is now proved by
+   `tendsto_finiteTrivialZeroSum_residues`; connecting it to the actual contour
+   residues still requires trivial-zero simplicity.
 
 ### Contour and residue theorem
 
@@ -414,8 +427,9 @@ For the principal value final formula:
 2. Bounds for `zeta'/zeta` away from zeros and on selected good heights.
 3. Convergence of symmetric zero sums or a proof that the contour-error limit is
    zero along good heights.
-4. Geometric convergence of the trivial-zero contribution to
-   `-1/2 * log (1 - x^-2)`.
+4. Prove every trivial zeta zero is simple, so the now-proved convergence of
+   the simple-residue series to `-1/2 * log (1 - x^-2)` applies to the actual
+   multiplicity-aware contour residues.
 
 For a PNT proof, the truncated formula plus a zero-free region and boundary
 estimates may be more useful than the full principal-value exact formula.
