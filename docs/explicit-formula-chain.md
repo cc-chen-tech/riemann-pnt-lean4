@@ -170,10 +170,11 @@ Already available or mostly available:
     Perron formula with a finite zeta-pole residue sum and the normalized
     bottom, top, and left edge integrals.  The resulting unconditional theorem
     bounds the difference from the first Riesz mean by the same explicit
-    summable `1/W` remainder.  The residue witnesses are not yet rewritten as
-    the explicit values `x` at `1` and
-    `-multiplicity(rho) * x^rho / rho^2` at nontrivial zeros, and the three
-    shifted edges are not yet estimated.
+    summable `1/W` remainder.  Its residue witness is now accompanied by the
+    proved value formula: `x` at `1` and
+    `-multiplicity(rho) * x^rho / rho^2` at every nontrivial zero in the
+    rectangle.  The remaining analytic work is to supply convenient safe
+    rectangle heights and estimate the three shifted edges.
 
 Needed:
 

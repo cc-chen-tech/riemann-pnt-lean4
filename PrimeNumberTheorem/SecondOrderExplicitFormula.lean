@@ -41,6 +41,9 @@ theorem exists_boundaryRectIntegral_secondOrderExplicitFormulaIntegrand_eq_resid
       (∀ p ∈ poles,
         a < p.re ∧ p.re < c ∧ -W < p.im ∧ p.im < W) ∧
       (∀ p ∈ poles, p = 1 ∨ riemannZeta p = 0) ∧
+      (∀ p ∈ poles, residue p =
+        if p = 1 then (x : ℂ)
+        else -(analyticOrderNatAt riemannZeta p : ℂ) * (x : ℂ) ^ p / p ^ 2) ∧
       MathlibAux.boundaryRectIntegral
           (secondOrderExplicitFormulaIntegrand x) a c (-W) W =
         (2 * Real.pi * I) * ∑ p ∈ poles, residue p := by
@@ -51,7 +54,7 @@ theorem exists_boundaryRectIntegral_secondOrderExplicitFormulaIntegrand_eq_resid
     exact isCompact_uIcc.reProdIm isCompact_uIcc
   rcases exists_finite_explicitFormulaIntegrand_analytic_regularized_remainder
       hx hKcompact with
-    ⟨poles, residue, hpoles_mem, hpoles_classify, hoff_eq, hregular⟩
+    ⟨poles, residue, hpoles_mem, hpoles_classify, hresidue, hoff_eq, hregular⟩
   let P : Finset ℂ := poles.erase 0
   let residue2 : ℂ → ℂ := fun p => residue p / p
   let r0 : ℂ := if 0 ∈ poles then residue 0 else 0
@@ -94,6 +97,18 @@ theorem exists_boundaryRectIntegral_secondOrderExplicitFormulaIntegrand_eq_resid
     intro p hp
     have hp' := Finset.mem_erase.mp hp
     exact (hpoles_classify p hp'.2).resolve_left hp'.1
+  have hP_residue : ∀ p ∈ P, residue2 p =
+      if p = 1 then (x : ℂ)
+      else -(analyticOrderNatAt riemannZeta p : ℂ) * (x : ℂ) ^ p / p ^ 2 := by
+    intro p hp
+    have hp0 : p ≠ 0 := Finset.ne_of_mem_erase hp
+    dsimp [residue2]
+    rw [hresidue p]
+    by_cases hp1 : p = 1
+    · subst p
+      simp
+    · simp only [hp1, if_false, hp0]
+      field_simp [hp0]
   have hboundary_eq : ∀ z ∈ K,
       ¬(a < z.re ∧ z.re < c ∧ -W < z.im ∧ z.im < W) →
       secondOrderExplicitFormulaIntegrand x z =
@@ -148,7 +163,7 @@ theorem exists_boundaryRectIntegral_secondOrderExplicitFormulaIntegrand_eq_resid
           (∑ p ∈ P, (z - p)⁻¹ * residue p) / z by ring]
     rw [hsum_div]
     ring
-  refine ⟨P, residue2, hP_mem, hP_classify, ?_⟩
+  refine ⟨P, residue2, hP_mem, hP_classify, hP_residue, ?_⟩
   calc
     MathlibAux.boundaryRectIntegral
         (secondOrderExplicitFormulaIntegrand x) a c (-W) W =
@@ -217,6 +232,9 @@ theorem exists_scaledRightIntegral_eq_residue_sum_sub_secondOrderContourRemainde
         a < p.re ∧ p.re < c ∧
           -(2 * Real.pi * W) < p.im ∧ p.im < 2 * Real.pi * W) ∧
       (∀ p ∈ poles, p = 1 ∨ riemannZeta p = 0) ∧
+      (∀ p ∈ poles, residue p =
+        if p = 1 then (x : ℂ)
+        else -(analyticOrderNatAt riemannZeta p : ℂ) * (x : ℂ) ^ p / p ^ 2) ∧
       (∫ w : ℝ in (-W)..W,
           secondOrderExplicitFormulaIntegrand x
             ((c : ℂ) + 2 * Real.pi * w * I)) =
@@ -224,8 +242,8 @@ theorem exists_scaledRightIntegral_eq_residue_sum_sub_secondOrderContourRemainde
   rcases
       exists_boundaryRectIntegral_secondOrderExplicitFormulaIntegrand_eq_residue_sum
         hx ha hac hboundary with
-    ⟨poles, residue, hpoles, hclass, hrect⟩
-  refine ⟨poles, residue, hpoles, hclass, ?_⟩
+    ⟨poles, residue, hpoles, hclass, hresidue, hrect⟩
+  refine ⟨poles, residue, hpoles, hclass, hresidue, ?_⟩
   have hright := I_mul_verticalIntegral_eq_two_pi_I_mul_scaledIntegral
     (secondOrderExplicitFormulaIntegrand x) c W
   unfold MathlibAux.boundaryRectIntegral at hrect
@@ -270,6 +288,9 @@ theorem exists_norm_residue_sum_sub_contourRemainder_sub_smoothedPsi_le
         a < p.re ∧ p.re < c ∧
           -(2 * Real.pi * W) < p.im ∧ p.im < 2 * Real.pi * W) ∧
       (∀ p ∈ poles, p = 1 ∨ riemannZeta p = 0) ∧
+      (∀ p ∈ poles, residue p =
+        if p = 1 then (x : ℂ)
+        else -(analyticOrderNatAt riemannZeta p : ℂ) * (x : ℂ) ^ p / p ^ 2) ∧
       ‖((∑ p ∈ poles, residue p) - secondOrderContourRemainder x a c W) -
           (smoothedChebyshevPsi x : ℂ)‖ ≤
         ∑' n : ℕ,
@@ -277,8 +298,8 @@ theorem exists_norm_residue_sum_sub_contourRemainder_sub_smoothedPsi_le
   rcases
       exists_scaledRightIntegral_eq_residue_sum_sub_secondOrderContourRemainder
         hx ha hac hboundary with
-    ⟨poles, residue, hpoles, hclass, hshift⟩
-  refine ⟨poles, residue, hpoles, hclass, ?_⟩
+    ⟨poles, residue, hpoles, hclass, hresidue, hshift⟩
+  refine ⟨poles, residue, hpoles, hclass, hresidue, ?_⟩
   have hperron :=
     norm_truncated_neg_logDeriv_riemannZeta_sub_smoothedPsi_le hx hc hW
   have hintegral :

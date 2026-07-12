@@ -511,6 +511,10 @@ theorem exists_finite_explicitFormulaIntegrand_analytic_regularized_remainder
     ∃ (poles : Finset ℂ) (residue : ℂ → ℂ),
       (∀ p ∈ poles, p = 0 ∨ p ∈ K) ∧
       (∀ p ∈ poles, p = 0 ∨ p = 1 ∨ riemannZeta p = 0) ∧
+      (∀ p, residue p =
+        if p = 1 then (x : ℂ)
+        else if p = 0 then -deriv riemannZeta 0 / riemannZeta 0
+        else -(analyticOrderNatAt riemannZeta p : ℂ) * (x : ℂ) ^ p / p) ∧
       (∀ z, z ∈ K → z ∉ poles →
         toMeromorphicNFOn
           (fun w : ℂ => explicitFormulaIntegrand x w -
@@ -711,7 +715,9 @@ theorem exists_finite_explicitFormulaIntegrand_analytic_regularized_remainder
     rw [toMeromorphicNFOn_eq_toMeromorphicNFAt hraw_meromorphic hzK]
     rw [toMeromorphicNFAt_eq_self.2
       (hraw_analytic_off z hzK hz_pole).meromorphicNFAt]
-  refine ⟨poles, residue, hpoles_mem, hpoles_classify, ?_, ?_⟩
+  refine ⟨poles, residue, hpoles_mem, hpoles_classify, ?_, ?_, ?_⟩
+  · intro p
+    rfl
   · simpa [raw] using hoff_eq
   · simpa [raw] using hregular
 
