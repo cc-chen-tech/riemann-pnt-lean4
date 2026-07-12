@@ -233,10 +233,15 @@ Already available or mostly available:
     `-2,-4,...,-2N` converge to the classical term
     `-1/2 * log (1 - x^-2)` for `x>1`.  The proof is connected to the
     repository's actual `finiteTrivialZeroSum (2N)`, not merely a separate
-    sequence index.  Still needed is the zeta-specific simplicity theorem
-    `analyticOrderNatAt riemannZeta (-2*(n+1)) = 1`, which identifies these
-    simple-residue summands with the multiplicity-aware residues produced by
-    the contour theorem.
+    sequence index.  The new theorem
+    `ExplicitFormulaResidues.analyticOrderNatAt_riemannZeta_neg_even` proves
+    that every trivial zeta zero has analytic order exactly one, using the
+    completed-zeta functional equation and the simple zeros of reciprocal
+    Gamma.  Consequently
+    `tendsto_finiteTrivialZeroSum_multiplicity_residues` proves convergence of
+    the corresponding multiplicity-aware trivial-zero truncations to the same
+    logarithmic term.  Splitting these terms out of each moving contour's
+    abstract pole finset remains part of the contour-limit step.
 
 Remaining after the fixed-right-edge contour shift:
 
@@ -246,8 +251,9 @@ Remaining after the fixed-right-edge contour shift:
 2. Either evaluate the fixed `Re(s)=-1` left-line limit and identify it with
    the classical trivial-zero term, or move the left edge through
    `-2,-4,...` toward `-infinity` and control the resulting joint limit.  The
-   corresponding simple-residue series limit is now proved; the remaining
-   local input is simplicity of every trivial zeta zero.
+   complete multiplicity-aware trivial-residue series limit is now proved;
+   the remaining issues are extracting that subset from the moving contour's
+   pole finset and controlling the moving-left-edge remainder.
 3. Control the symmetric nontrivial-zero contribution with multiplicity.
 
 ### Analytic continuation and poles
@@ -299,10 +305,11 @@ Current status:
    finite residue formula under an explicit pole-free-boundary hypothesis.
    `exists_strictMono_tendsto_rectangleResidueContours` now constructs the
    required cofinal contour family from `goodHeight`, using squares with real
-   sides `-1` and `2T-1`.  The finite-to-infinite simple-residue limit giving
+   sides `-1` and `2T-1`.  The finite-to-infinite residue limit giving
    `-1/2 * log (1 - x^-2)` is now proved by
-   `tendsto_finiteTrivialZeroSum_residues`; connecting it to the actual contour
-   residues still requires trivial-zero simplicity.
+   `tendsto_finiteTrivialZeroSum_multiplicity_residues`, including the analytic
+   multiplicities used by the contour residue formula.  The pole-finset split
+   and moving-left-edge limit are not yet proved.
 
 ### Contour and residue theorem
 
@@ -427,9 +434,10 @@ For the principal value final formula:
 2. Bounds for `zeta'/zeta` away from zeros and on selected good heights.
 3. Convergence of symmetric zero sums or a proof that the contour-error limit is
    zero along good heights.
-4. Prove every trivial zeta zero is simple, so the now-proved convergence of
-   the simple-residue series to `-1/2 * log (1 - x^-2)` applies to the actual
-   multiplicity-aware contour residues.
+4. Split the moving contour's pole finset into its trivial and nontrivial
+   parts, then move the left boundary through the now-controlled simple
+   trivial zeros and prove the left-edge remainder tends to zero jointly with
+   the residue truncation.
 
 For a PNT proof, the truncated formula plus a zero-free region and boundary
 estimates may be more useful than the full principal-value exact formula.

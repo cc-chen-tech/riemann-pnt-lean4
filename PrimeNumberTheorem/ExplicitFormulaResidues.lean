@@ -395,6 +395,157 @@ theorem tendsto_sub_mul_explicitFormulaIntegrand_of_nontrivialZero
     norm_num at hre
   exact tendsto_sub_mul_explicitFormulaIntegrand_of_zero hx hρ1 hρ0 hρ.1
 
+/-- The reciprocal Gamma function has a simple zero at every nonpositive
+integer.  We record the nonvanishing derivative form needed for the trivial
+zeros of zeta. -/
+lemma deriv_invGamma_neg_nat_ne_zero (n : ℕ) :
+    deriv (fun z : ℂ => (Gamma z)⁻¹) (-(n : ℂ)) ≠ 0 := by
+  induction n with
+  | zero =>
+      have hG : DifferentiableAt ℂ (fun z : ℂ => (Gamma (z + 1))⁻¹) 0 :=
+        differentiable_one_div_Gamma.differentiableAt.comp 0
+          (differentiableAt_id.add_const 1)
+      rw [Nat.cast_zero, neg_zero]
+      rw [show (fun z : ℂ => (Gamma z)⁻¹) =
+          fun z => z * (Gamma (z + 1))⁻¹ by
+        funext z
+        exact one_div_Gamma_eq_self_mul_one_div_Gamma_add_one z]
+      rw [deriv_fun_mul (c := fun z : ℂ => z)
+        (d := fun z : ℂ => (Gamma (z + 1))⁻¹) differentiableAt_id hG]
+      simp
+  | succ n ih =>
+      have hG : DifferentiableAt ℂ
+          (fun z : ℂ => (Gamma (z + 1))⁻¹) (-(n + 1 : ℕ) : ℂ) :=
+        differentiable_one_div_Gamma.differentiableAt.comp _
+          (differentiableAt_id.add_const 1)
+      have hpoint : (-(n + 1 : ℕ) : ℂ) + 1 = -(n : ℂ) := by
+        push_cast
+        ring
+      rw [show (fun z : ℂ => (Gamma z)⁻¹) =
+          fun z => z * (Gamma (z + 1))⁻¹ by
+        funext z
+        exact one_div_Gamma_eq_self_mul_one_div_Gamma_add_one z]
+      rw [deriv_fun_mul (c := fun z : ℂ => z)
+        (d := fun z : ℂ => (Gamma (z + 1))⁻¹) differentiableAt_id hG]
+      rw [hpoint, Complex.Gamma_neg_nat_eq_zero, inv_zero, mul_zero, zero_add]
+      rw [deriv_comp_add_const (fun z : ℂ => (Gamma z)⁻¹) 1
+        (-(n + 1 : ℕ) : ℂ)]
+      rw [hpoint]
+      exact mul_ne_zero
+        (neg_ne_zero.mpr (Nat.cast_ne_zero.mpr (Nat.succ_ne_zero n))) ih
+
+/-- The reciprocal real archimedean Gamma factor has a simple zero at every
+negative even integer. -/
+lemma deriv_invGammaR_neg_even_ne_zero (n : ℕ) :
+    let ρ : ℂ := -2 * ((n : ℂ) + 1)
+    deriv (fun s : ℂ => (Gammaℝ s)⁻¹) ρ ≠ 0 := by
+  let ρ : ℂ := -2 * ((n : ℂ) + 1)
+  have hρhalf : ρ / 2 = -((n + 1 : ℕ) : ℂ) := by
+    simp [ρ]
+    ring
+  have hGammaZero : (Gamma (ρ / 2))⁻¹ = 0 := by
+    rw [hρhalf, Complex.Gamma_neg_nat_eq_zero, inv_zero]
+  have houter : DifferentiableAt ℂ (fun z : ℂ => (Gamma z)⁻¹) (ρ / 2) :=
+    differentiable_one_div_Gamma.differentiableAt
+  have hinner : HasDerivAt (fun s : ℂ => s / 2) (1 / 2) ρ :=
+    hasDerivAt_id ρ |>.div_const 2
+  have hcomp : HasDerivAt
+      ((fun z : ℂ => (Gamma z)⁻¹) ∘ (fun s : ℂ => s / 2))
+      (deriv (fun z : ℂ => (Gamma z)⁻¹) (ρ / 2) * (1 / 2)) ρ :=
+    houter.hasDerivAt.comp ρ hinner
+  have hA : DifferentiableAt ℂ
+      (fun s : ℂ => (Real.pi : ℂ) ^ (s / 2)) ρ :=
+    (differentiableAt_id.div_const 2).const_cpow
+      (Or.inl (ofReal_ne_zero.mpr Real.pi_ne_zero))
+  rw [show (fun s : ℂ => (Gammaℝ s)⁻¹) =
+      fun s => (Real.pi : ℂ) ^ (s / 2) * (Gamma (s / 2))⁻¹ by
+    funext s
+    rw [Gammaℝ_def, mul_inv, ← cpow_neg]
+    congr 2
+    ring]
+  change deriv
+    (fun s : ℂ => (Real.pi : ℂ) ^ (s / 2) * (Gamma (s / 2))⁻¹) ρ ≠ 0
+  rw [deriv_fun_mul (c := fun s : ℂ => (Real.pi : ℂ) ^ (s / 2))
+    (d := fun s : ℂ => (Gamma (s / 2))⁻¹) hA hcomp.differentiableAt]
+  rw [hGammaZero, mul_zero, zero_add]
+  rw [show deriv (fun s : ℂ => (Gamma (s / 2))⁻¹) ρ =
+      deriv (fun z : ℂ => (Gamma z)⁻¹) (ρ / 2) * (1 / 2) by
+    exact hcomp.deriv]
+  apply mul_ne_zero
+  · exact Complex.cpow_ne_zero_iff.mpr
+      (Or.inl (ofReal_ne_zero.mpr Real.pi_ne_zero))
+  apply mul_ne_zero
+  · rw [hρhalf]
+    exact deriv_invGamma_neg_nat_ne_zero (n + 1)
+  · norm_num
+
+/-- The completed zeta function is nonzero at every negative even integer.
+The functional equation moves the point to the Euler-product half-plane. -/
+lemma completedRiemannZeta_neg_even_ne_zero (n : ℕ) :
+    completedRiemannZeta (-2 * ((n : ℂ) + 1)) ≠ 0 := by
+  let ρ : ℂ := -2 * ((n : ℂ) + 1)
+  let t : ℂ := 1 - ρ
+  have ht_re : 1 ≤ t.re := by
+    simp [t, ρ]
+    positivity
+  have ht0 : t ≠ 0 := by
+    intro h
+    have hre := congrArg Complex.re h
+    simp [t, ρ] at hre
+    have hn : 0 ≤ (n : ℝ) := Nat.cast_nonneg n
+    linarith
+  have hz : riemannZeta t ≠ 0 :=
+    riemannZeta_ne_zero_of_one_le_re ht_re
+  have hΛt : completedRiemannZeta t ≠ 0 := by
+    intro hzero
+    apply hz
+    rw [riemannZeta_def_of_ne_zero ht0, hzero, zero_div]
+  have hsymm := completedRiemannZeta_one_sub ρ
+  change completedRiemannZeta ρ ≠ 0
+  change completedRiemannZeta (1 - ρ) ≠ 0 at hΛt
+  rwa [hsymm] at hΛt
+
+/-- Every trivial zero of the Riemann zeta function is simple. -/
+theorem analyticOrderNatAt_riemannZeta_neg_even (n : ℕ) :
+    analyticOrderNatAt riemannZeta (-2 * ((n : ℂ) + 1)) = 1 := by
+  let ρ : ℂ := -2 * ((n : ℂ) + 1)
+  have hρ0 : ρ ≠ 0 := by
+    intro h
+    have hre := congrArg Complex.re h
+    simp [ρ] at hre
+    have hn : 0 ≤ (n : ℝ) := Nat.cast_nonneg n
+    linarith
+  have hρ1 : ρ ≠ 1 := by
+    intro h
+    have hre := congrArg Complex.re h
+    simp [ρ] at hre
+    have hn : 0 ≤ (n : ℝ) := Nat.cast_nonneg n
+    linarith
+  have hGammaZero : (Gammaℝ ρ)⁻¹ = 0 := by
+    rw [Gammaℝ_eq_zero_iff.mpr ⟨n + 1, by simp [ρ]⟩, inv_zero]
+  have hΛdiff : DifferentiableAt ℂ completedRiemannZeta ρ :=
+    differentiableAt_completedZeta hρ0 hρ1
+  have hGdiff : DifferentiableAt ℂ (fun s : ℂ => (Gammaℝ s)⁻¹) ρ :=
+    differentiable_Gammaℝ_inv.differentiableAt
+  have heq : riemannZeta =ᶠ[𝓝 ρ]
+      fun s : ℂ => completedRiemannZeta s * (Gammaℝ s)⁻¹ := by
+    filter_upwards [eventually_ne_nhds hρ0] with s hs
+    rw [riemannZeta_def_of_ne_zero hs, div_eq_mul_inv]
+  have hderiv : deriv riemannZeta ρ ≠ 0 := by
+    rw [EventuallyEq.deriv_eq heq]
+    rw [deriv_fun_mul hΛdiff hGdiff]
+    rw [hGammaZero, mul_zero, zero_add]
+    exact mul_ne_zero (completedRiemannZeta_neg_even_ne_zero n)
+      (by simpa [ρ] using deriv_invGammaR_neg_even_ne_zero n)
+  have hzetaAnalytic : AnalyticAt ℂ riemannZeta ρ :=
+    ZeroFreeRegion.analyticOnNhd_riemannZeta_ne_one ρ hρ1
+  have hzetaZero : riemannZeta ρ = 0 := by
+    simpa [ρ] using riemannZeta_neg_two_mul_nat_add_one n
+  change analyticOrderNatAt riemannZeta ρ = 1
+  have horder : analyticOrderAt riemannZeta ρ = 1 :=
+    hzetaAnalytic.analyticOrderAt_eq_one_of_zero_deriv_ne_zero hzetaZero hderiv
+  simp [analyticOrderNatAt, horder]
+
 /-- Every trivial zero `-2(n+1)` contributes its actual analytic
 multiplicity times `-x^ρ/ρ`. -/
 theorem tendsto_sub_mul_explicitFormulaIntegrand_trivialZero
@@ -419,6 +570,25 @@ theorem tendsto_sub_mul_explicitFormulaIntegrand_trivialZero
   have hzero : riemannZeta ρ = 0 := by
     simpa [ρ] using riemannZeta_neg_two_mul_nat_add_one n
   exact tendsto_sub_mul_explicitFormulaIntegrand_of_zero hx hρ1 hρ0 hzero
+
+/-- Every trivial zeta zero contributes the simple residue `-x^ρ/ρ`; the
+multiplicity factor is exactly one. -/
+theorem tendsto_sub_mul_explicitFormulaIntegrand_trivialZero_simple
+    {x : ℝ} (hx : 0 < x) (n : ℕ) :
+    let ρ : ℂ := -2 * ((n : ℂ) + 1)
+    Tendsto (fun s : ℂ => (s - ρ) * explicitFormulaIntegrand x s)
+      (𝓝[≠] ρ) (𝓝 (-((x : ℂ) ^ ρ) / ρ)) := by
+  let ρ : ℂ := -2 * ((n : ℂ) + 1)
+  have horder : analyticOrderNatAt riemannZeta ρ = 1 := by
+    simpa [ρ] using analyticOrderNatAt_riemannZeta_neg_even n
+  have h := tendsto_sub_mul_explicitFormulaIntegrand_trivialZero hx n
+  change Tendsto (fun s : ℂ => (s - ρ) * explicitFormulaIntegrand x s)
+    (𝓝[≠] ρ)
+    (𝓝 (-(analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ)) at h
+  rw [horder] at h
+  change Tendsto (fun s : ℂ => (s - ρ) * explicitFormulaIntegrand x s)
+    (𝓝[≠] ρ) (𝓝 (-((x : ℂ) ^ ρ) / ρ))
+  simpa only [Nat.cast_one, neg_one_mul] using h
 
 /-- The explicit-formula integrand has residue
 `-ζ'(0) / ζ(0)` at the kernel pole `s = 0`. -/

@@ -10,6 +10,43 @@ open scoped BigOperators Interval
 namespace PrimeNumberTheorem
 namespace ExplicitFormulaResidues
 
+open ExplicitFormulaAux
+
+/-- Every member of the finite trivial-zero truncation is a simple zeta
+zero. -/
+theorem analyticOrderNatAt_riemannZeta_eq_one_of_mem_finiteTrivialZeroSum
+    {ρ : ℂ} {T : ℝ} (hρ : ρ ∈ finiteTrivialZeroSum T) :
+    analyticOrderNatAt riemannZeta ρ = 1 := by
+  rcases mem_finiteTrivialZeroSum_iff.mp hρ with ⟨n, _hn, hnρ⟩
+  rw [← hnρ]
+  simpa only [Nat.cast_add, Nat.cast_one] using
+    analyticOrderNatAt_riemannZeta_neg_even n
+
+/-- On the finite trivial-zero truncation, the multiplicity-aware contour
+residue sum is exactly the simple-residue sum. -/
+theorem sum_finiteTrivialZeroSum_multiplicity_residues_eq
+    {x T : ℝ} :
+    (∑ ρ ∈ finiteTrivialZeroSum T,
+        -(analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ) =
+      ∑ ρ ∈ finiteTrivialZeroSum T, -((x : ℂ) ^ ρ) / ρ := by
+  apply Finset.sum_congr rfl
+  intro ρ hρ
+  rw [analyticOrderNatAt_riemannZeta_eq_one_of_mem_finiteTrivialZeroSum hρ]
+  norm_num
+
+/-- The multiplicity-aware trivial-zero truncations dictated by the contour
+residue formula converge to the classical logarithmic correction. -/
+theorem tendsto_finiteTrivialZeroSum_multiplicity_residues
+    {x : ℝ} (hx : 1 < x) :
+    Tendsto
+      (fun N : ℕ => ∑ ρ ∈ finiteTrivialZeroSum (2 * (N : ℝ)),
+        -(analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ)
+      atTop
+      (nhds (((-(1 / 2 : ℝ) * Real.log (1 - x ^ (-2 : ℝ)) : ℝ) : ℂ))) := by
+  convert ExplicitFormulaAux.tendsto_finiteTrivialZeroSum_residues hx using 1
+  funext N
+  exact sum_finiteTrivialZeroSum_multiplicity_residues_eq
+
 /-- On an ordered rectangle containing `0` in its interior, the first-order
 explicit-formula integrand satisfies the finite residue formula.  The right
 edge can be fixed independently of the height, as required by Perron
