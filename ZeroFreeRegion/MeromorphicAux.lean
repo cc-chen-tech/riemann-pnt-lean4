@@ -11293,6 +11293,27 @@ lemma exists_finset_riemannZeta_zeros_closedBall_card_le_divisor_mass
   rw [finsum_mem_def]
   exact (finsum_eq_sum_of_support_subset G hG_support).symm
 
+/-- Locality of zeta's divisor mass on nested closed disks.
+
+The divisor computed on the inner disk has the same multiplicities as the
+outer-disk divisor restricted to the inner disk; outside its domain the inner
+locally-finite divisor is zero. -/
+lemma finsum_divisor_riemannZeta_closedBall_eq_finsum_mem_of_le
+    {c : ℂ} {b R : ℝ} (hbR : b ≤ R) :
+    (∑ᶠ u,
+        (MeromorphicOn.divisor riemannZeta (closedBall c b) u : ℝ)) =
+      ∑ᶠ u ∈ (closedBall c b : Set ℂ),
+        (MeromorphicOn.divisor riemannZeta (closedBall c R) u : ℝ) := by
+  rw [finsum_mem_def]
+  apply finsum_congr
+  intro u
+  by_cases hu : u ∈ closedBall c b
+  · rw [Set.indicator_of_mem hu,
+      MeromorphicOn.divisor_apply (meromorphicOn_riemannZeta_closedBall c b) hu,
+      MeromorphicOn.divisor_apply (meromorphicOn_riemannZeta_closedBall c R)
+        (closedBall_subset_closedBall hbR hu)]
+  · simp [hu, Function.locallyFinsuppWithin.apply_eq_zero_of_notMem]
+
 /-- A pole-free outer disk contains a concentric circle whose radius is
 quantitatively separated from every radial zeta-zero coordinate.
 
@@ -22670,6 +22691,128 @@ lemma jensen_inner_zero_multiplicity_count_riemannZeta_two_add_I_mul_le_log_boun
           rw [mul_finsum_mem]
     _ ≤ ∑ᶠ u : ℂ, (D u : ℝ) * Real.log (R * ‖c - u‖⁻¹) := hsum_le
     _ ≤ Real.log M + Real.log 3 := by simpa [c, D] using hmass
+
+/-- Jensen bound rewritten as a bound for the total divisor mass of zeta on
+the inner factorization disk itself. -/
+lemma log_mul_finsum_divisor_riemannZeta_closedBall_le_log_bound
+    {b R t M : ℝ} (hb : 0 < b) (hbR : b < R) (hheight : R < |t|)
+    (hM : 1 ≤ M)
+    (hsphere : ∀ z : ℂ,
+      z ∈ sphere ((2 : ℂ) + I * t) R → ‖riemannZeta z‖ ≤ M) :
+    Real.log (R / b) *
+        (∑ᶠ u,
+          (MeromorphicOn.divisor riemannZeta
+            (closedBall ((2 : ℂ) + I * t) b) u : ℝ)) ≤
+      Real.log M + Real.log 3 := by
+  rw [finsum_divisor_riemannZeta_closedBall_eq_finsum_mem_of_le hbR.le]
+  exact
+    jensen_inner_zero_multiplicity_count_riemannZeta_two_add_I_mul_le_log_bound
+      hb hbR hheight hM hsphere
+
+/-- Division form of the Jensen total-multiplicity bound on the inner
+factorization disk. -/
+lemma finsum_divisor_riemannZeta_closedBall_le_log_bound_div
+    {b R t M : ℝ} (hb : 0 < b) (hbR : b < R) (hheight : R < |t|)
+    (hM : 1 ≤ M)
+    (hsphere : ∀ z : ℂ,
+      z ∈ sphere ((2 : ℂ) + I * t) R → ‖riemannZeta z‖ ≤ M) :
+    (∑ᶠ u,
+        (MeromorphicOn.divisor riemannZeta
+          (closedBall ((2 : ℂ) + I * t) b) u : ℝ)) ≤
+      (Real.log M + Real.log 3) / Real.log (R / b) := by
+  have hlog : 0 < Real.log (R / b) :=
+    Real.log_pos ((one_lt_div hb).mpr hbR)
+  apply (le_div_iff₀ hlog).2
+  simpa [mul_comm] using
+    log_mul_finsum_divisor_riemannZeta_closedBall_le_log_bound
+      hb hbR hheight hM hsphere
+
+/-- Jensen-controlled boundary bound for the zero-removed analytic zeta
+factor on a quantitatively selected good circle.
+
+The inner closed-disk zeta bound supplies `K`; the outer circle bound supplies
+the divisor-mass estimate.  The width assumption makes the separation
+`delta ≤ 1`, so multiplication by `log delta ≤ 0` reverses the mass bound in
+the required direction. -/
+lemma exists_good_radius_log_norm_riemannZeta_factor_le_jensen_bound
+    {a q b R t M K : ℝ} (ha : 0 < a) (haq : a < q) (hqb : q < b)
+    (hbR : b < R) (hheight : R < |t|) (hwidth : q - a ≤ 4)
+    (hM : 1 ≤ M)
+    (houter : ∀ z : ℂ,
+      z ∈ sphere ((2 : ℂ) + I * t) R → ‖riemannZeta z‖ ≤ M)
+    (hinner : ∀ z ∈ closedBall ((2 : ℂ) + I * t) q,
+      Real.log ‖riemannZeta z‖ ≤ K) :
+    ∃ (zeros : Finset ℂ) (r : ℝ) (g : ℂ → ℂ),
+      (∀ ρ : ℂ,
+        ρ ∈ zeros ↔
+          ρ ∈ closedBall ((2 : ℂ) + I * t) b ∧ riemannZeta ρ = 0) ∧
+      0 < r ∧
+      r ∈ Set.Icc a q ∧
+      AnalyticOnNhd ℂ g (closedBall ((2 : ℂ) + I * t) b) ∧
+      (∀ u : (closedBall ((2 : ℂ) + I * t) b : Set ℂ), g u ≠ 0) ∧
+      (∀ z ∈ sphere ((2 : ℂ) + I * t) r, riemannZeta z ≠ 0) ∧
+      ∀ z ∈ sphere ((2 : ℂ) + I * t) r,
+        Real.log ‖g z‖ ≤ K -
+          Real.log
+              ((q - a) /
+                ((4 : ℝ) *
+                  (((zeros.image (dist ((2 : ℂ) + I * t))).card : ℝ) + 1))) *
+            ((Real.log M + Real.log 3) / Real.log (R / b)) := by
+  classical
+  let c : ℂ := (2 : ℂ) + I * t
+  have hb : 0 < b := ha.trans haq |>.trans hqb
+  have havoid : ∀ z : ℂ, z ∈ closedBall c b → z ≠ 1 := by
+    intro z hz
+    exact closedBall_sigma_it_ne_one_of_height_add_le
+      (z := z) (σ := 2) (t := t) (R := b) (H := |t| - b)
+        (by simpa [c] using hz) (by linarith) (by linarith)
+  rcases exists_good_radius_log_norm_riemannZeta_factor_le_of_closedBall_bound
+      (c := c) ha haq hqb havoid (by simpa [c] using hinner) with
+    ⟨zeros, r, g, hzeros, hrpos, hr, hg, hgne, hsphere_ne, hgbound⟩
+  let delta : ℝ :=
+    (q - a) /
+      ((4 : ℝ) * (((zeros.image (dist c)).card : ℝ) + 1))
+  have hdelta_pos : 0 < delta := by
+    dsimp [delta]
+    exact div_pos (sub_pos.mpr haq) (mul_pos (by norm_num) (by positivity))
+  have hden_pos : 0 <
+      (4 : ℝ) * (((zeros.image (dist c)).card : ℝ) + 1) := by
+    positivity
+  have hden_ge_four : (4 : ℝ) ≤
+      4 * (((zeros.image (dist c)).card : ℝ) + 1) := by
+    have hcard : (0 : ℝ) ≤ ((zeros.image (dist c)).card : ℝ) := by
+      positivity
+    nlinarith
+  have hdelta_le_one : delta ≤ 1 := by
+    apply (div_le_one hden_pos).2
+    exact hwidth.trans hden_ge_four
+  have hlog_delta_nonpos : Real.log delta ≤ 0 :=
+    Real.log_nonpos hdelta_pos.le hdelta_le_one
+  have hmass :=
+    finsum_divisor_riemannZeta_closedBall_le_log_bound_div
+      (b := b) (R := R) (t := t) (M := M) hb hbR hheight hM houter
+  refine ⟨zeros, r, g, by simpa [c] using hzeros, hrpos, hr,
+    by simpa [c] using hg, by simpa [c] using hgne,
+    by simpa [c] using hsphere_ne, ?_⟩
+  intro z hz
+  have hbase := hgbound z (by simpa [c] using hz)
+  change Real.log ‖g z‖ ≤ K - Real.log delta *
+    (∑ᶠ u,
+      (MeromorphicOn.divisor riemannZeta (closedBall c b) u : ℝ)) at hbase
+  have hmass' :
+      (∑ᶠ u,
+          (MeromorphicOn.divisor riemannZeta (closedBall c b) u : ℝ)) ≤
+        (Real.log M + Real.log 3) / Real.log (R / b) := by
+    simpa [c] using hmass
+  have hloss :=
+    mul_le_mul_of_nonneg_left hmass' (neg_nonneg.mpr hlog_delta_nonpos)
+  have hstep : K - Real.log delta *
+        (∑ᶠ u,
+          (MeromorphicOn.divisor riemannZeta (closedBall c b) u : ℝ)) ≤
+      K - Real.log delta *
+        ((Real.log M + Real.log 3) / Real.log (R / b)) := by
+    linarith
+  simpa [delta, c] using hbase.trans hstep
 
 /-- A boundary norm bound for zeta on a high outer circle yields a smaller
 concentric circle avoiding every local zeta zero, together with an explicit

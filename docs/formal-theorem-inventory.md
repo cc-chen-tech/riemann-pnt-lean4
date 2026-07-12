@@ -768,6 +768,15 @@ Core verified declarations:
   combines strict good-circle selection, the pointwise factorization, and the
   finite-divisor lower bound.  A bound `log‖ζ‖ <= K` on the inner closed disk
   becomes an explicit upper bound for `log‖g‖` on the selected zero-free circle.
+- `finsum_divisor_riemannZeta_closedBall_eq_finsum_mem_of_le` proves locality
+  of zeta divisor multiplicities on nested closed disks.
+- `finsum_divisor_riemannZeta_closedBall_le_log_bound_div` rewrites Jensen as
+  the explicit factorization-disk mass bound
+  `sum multiplicity <= (log M + log 3) / log(R/b)`.
+- `exists_good_radius_log_norm_riemannZeta_factor_le_jensen_bound` substitutes
+  that mass bound into the analytic-factor estimate.  Under `0<a<q<b<R`,
+  `R<|t|`, and `q-a<=4`, it returns a positive zero-free circle and an explicit
+  `log‖g‖` bound containing no unknown divisor mass.
 - `exists_punctured_ball_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq`
   and `exists_punctured_closedBall_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq`
   convert an eventually-equal multiplicity regular part and an eventual norm

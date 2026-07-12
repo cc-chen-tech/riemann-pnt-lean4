@@ -1711,6 +1711,29 @@ This is a real growth-transfer theorem, but it is not yet the desired uniform
 `O(log |t|)` estimate.  The remaining quantitative work is to prove the
 zeta-specific vertical-growth input and combine the Jensen multiplicity bound
 with the `log(delta)` loss sharply enough for the logarithmic derivative.
+
+The divisor-mass elimination is now formalized:
+
+```lean
+ZeroFreeRegion.finsum_divisor_riemannZeta_closedBall_eq_finsum_mem_of_le
+ZeroFreeRegion.finsum_divisor_riemannZeta_closedBall_le_log_bound_div
+ZeroFreeRegion.exists_good_radius_log_norm_riemannZeta_factor_le_jensen_bound
+```
+
+Divisor locality identifies the total multiplicity used by factorization on
+the disk of radius `b` with the outer divisor restricted to that disk.  Jensen
+then gives
+`sum multiplicity <= (log M + log 3) / log(R/b)`.  If `q-a<=4`, the selected
+separation satisfies `delta<=1`, so `log(delta)<=0`; the formal proof handles
+the resulting inequality reversal and substitutes the Jensen bound into the
+analytic-factor estimate.  The final circle bound now depends only on `K`,
+`M`, the radii, and the finite number of distinct zero radii, not on an
+unbounded divisor sum.
+
+This closes the local Jensen-to-factor boundary chain.  It still does not
+prove the required zeta-specific high-height bounds for `K` and `M`, nor the
+Borel/Cauchy step converting the boundary control of `g` into a uniform bound
+for `g'/g`.
 The polynomial-growth handoff is also now composed in this exact disk
 geometry:
 

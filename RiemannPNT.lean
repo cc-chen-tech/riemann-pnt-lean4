@@ -7898,6 +7898,15 @@ theorem exists_finset_riemannZeta_zeros_closedBall_card_le_divisor_mass
   ZeroFreeRegion.exists_finset_riemannZeta_zeros_closedBall_card_le_divisor_mass
     hrR havoid
 
+/-- Public locality identity for zeta divisor mass on nested closed disks. -/
+theorem finsum_divisor_riemannZeta_closedBall_eq_finsum_mem_of_le
+    {c : ℂ} {b R : ℝ} (hbR : b ≤ R) :
+    (∑ᶠ u,
+        (MeromorphicOn.divisor riemannZeta (Metric.closedBall c b) u : ℝ)) =
+      ∑ᶠ u ∈ (Metric.closedBall c b : Set ℂ),
+        (MeromorphicOn.divisor riemannZeta (Metric.closedBall c R) u : ℝ) :=
+  ZeroFreeRegion.finsum_divisor_riemannZeta_closedBall_eq_finsum_mem_of_le hbR
+
 /-- Public good-circle selection theorem for all zeta zeros in a pole-free
 closed disk. -/
 theorem exists_good_radius_separated_from_riemannZeta_zeros_closedBall
@@ -16246,6 +16255,56 @@ theorem jensen_inner_zero_multiplicity_count_riemannZeta_two_add_I_mul_le_log_bo
       Real.log M + Real.log 3 :=
   ZeroFreeRegion.jensen_inner_zero_multiplicity_count_riemannZeta_two_add_I_mul_le_log_bound
     hr hrR hheight hM hsphere
+
+/-- Public Jensen bound for the total zeta divisor mass on the inner
+factorization disk. -/
+theorem finsum_divisor_riemannZeta_closedBall_le_log_bound_div
+    {b R t M : ℝ} (hb : 0 < b) (hbR : b < R) (hheight : R < |t|)
+    (hM : 1 ≤ M)
+    (hsphere : ∀ z : ℂ,
+      z ∈ Metric.sphere ((2 : ℂ) + Complex.I * t) R →
+        ‖riemannZeta z‖ ≤ M) :
+    (∑ᶠ u,
+        (MeromorphicOn.divisor riemannZeta
+          (Metric.closedBall ((2 : ℂ) + Complex.I * t) b) u : ℝ)) ≤
+      (Real.log M + Real.log 3) / Real.log (R / b) :=
+  ZeroFreeRegion.finsum_divisor_riemannZeta_closedBall_le_log_bound_div
+    hb hbR hheight hM hsphere
+
+/-- Public Jensen-controlled bound for the zero-removed analytic zeta factor
+on a quantitatively selected positive-radius circle. -/
+theorem exists_good_radius_log_norm_riemannZeta_factor_le_jensen_bound
+    {a q b R t M K : ℝ} (ha : 0 < a) (haq : a < q) (hqb : q < b)
+    (hbR : b < R) (hheight : R < |t|) (hwidth : q - a ≤ 4)
+    (hM : 1 ≤ M)
+    (houter : ∀ z : ℂ,
+      z ∈ Metric.sphere ((2 : ℂ) + Complex.I * t) R →
+        ‖riemannZeta z‖ ≤ M)
+    (hinner : ∀ z ∈ Metric.closedBall ((2 : ℂ) + Complex.I * t) q,
+      Real.log ‖riemannZeta z‖ ≤ K) :
+    ∃ (zeros : Finset ℂ) (r : ℝ) (g : ℂ → ℂ),
+      (∀ ρ : ℂ,
+        ρ ∈ zeros ↔
+          ρ ∈ Metric.closedBall ((2 : ℂ) + Complex.I * t) b ∧
+            riemannZeta ρ = 0) ∧
+      0 < r ∧
+      r ∈ Set.Icc a q ∧
+      AnalyticOnNhd ℂ g
+        (Metric.closedBall ((2 : ℂ) + Complex.I * t) b) ∧
+      (∀ u : (Metric.closedBall ((2 : ℂ) + Complex.I * t) b : Set ℂ),
+        g u ≠ 0) ∧
+      (∀ z ∈ Metric.sphere ((2 : ℂ) + Complex.I * t) r,
+        riemannZeta z ≠ 0) ∧
+      ∀ z ∈ Metric.sphere ((2 : ℂ) + Complex.I * t) r,
+        Real.log ‖g z‖ ≤ K -
+          Real.log
+              ((q - a) /
+                ((4 : ℝ) *
+                  (((zeros.image
+                    (dist ((2 : ℂ) + Complex.I * t))).card : ℝ) + 1))) *
+            ((Real.log M + Real.log 3) / Real.log (R / b)) :=
+  ZeroFreeRegion.exists_good_radius_log_norm_riemannZeta_factor_le_jensen_bound
+    ha haq hqb hbR hheight hwidth hM houter hinner
 
 /-- Public quantitative good-circle theorem obtained by composing a zeta
 boundary norm bound, Jensen zero counting, and finite-radius avoidance. -/
