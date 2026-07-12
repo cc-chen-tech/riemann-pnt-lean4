@@ -2,8 +2,7 @@
 
 This note audits the current target
 `PrimeNumberTheorem.explicit_formula_von_mangoldt` and records a corrected
-Lean-facing dependency chain.  It is scoped to the current checkout and does
-not propose edits to any `.lean` file.
+Lean-facing dependency chain.  It is scoped to the current checkout.
 
 ## Current statement
 
@@ -198,14 +197,26 @@ Already available or mostly available:
     explicit `O(exp(c*u) / (|u|*W))` truncation error.  At the jump, the
     symmetric integral is computed as `atan(2*pi*W/c)/pi`, whose limit is
     `1/2`.  Thus the half-jump theorem for finite sums is no longer an input.
+16. `PrimeNumberTheorem.tendsto_truncated_neg_logDeriv_firstOrderPerron_atTop`
+    closes the full ordinary Perron starting-line formula.  For every `x > 0`
+    and `c > 1`, the normalized symmetric contour integral
+    `(2*pi*i)^(-1) integral x^s * (-zeta'(s)/zeta(s)) / s ds` on
+    `Re(s)=c` tends to `psi0(x)`.  In Lean this is parameterized by
+    `s = c + 2*pi*i*w` and integrated with respect to `dw`, so the
+    normalization is already included.
+    The proof exchanges the finite-height integral with the full von Mangoldt
+    series, proves a summable Tannery majorant for the conditionally convergent
+    kernel, and includes the half weight at an integral jump.  This is the
+    actual first-order L-series specialization, not a finite-sum wrapper.
 
-Needed:
+Remaining after the starting-line formula:
 
-1. Specialization of the proved first-order finite-sum half-jump theorem to
-   `F s = LSeries Lambda s`.  The corresponding second-order specialization
-   is now proved by the theorems above.  This still requires a legitimate
-   passage from finite coefficient sums to the conditionally convergent
-   first-order zeta line integral.
+1. Shift the first-order right-line contour to a zero-free boundary and combine
+   it with the proved finite residue identity.
+2. Bound the two horizontal edges and the shifted-left vertical edge strongly
+   enough to pass to a cofinal good-height limit.
+3. Sum the finite trivial-zero residues and control the symmetric nontrivial-
+   zero contribution with multiplicity.
 
 ### Analytic continuation and poles
 
@@ -358,9 +369,13 @@ For the truncated identity:
    a strictly increasing good-height sequence tending to `+∞`;
    `ExplicitFormulaResidues.exists_strictMono_tendsto_rectangleResidueContours`
    converts a cofinal tail into concrete pole-free square residue contours.
-2. Bound the right Perron truncation error from summability of the von Mangoldt
-   Dirichlet series and the standard Perron kernel estimate.
-3. Bound horizontal and shifted-left vertical sides of the rectangle.
+2. Completed: the ordinary first-order right-line Perron integral converges to
+   `psi0` by
+   `tendsto_truncated_neg_logDeriv_firstOrderPerron_atTop`.  This is a limit
+   theorem; it does not claim a closed-form uniform truncation rate for the
+   full conditionally convergent series.
+3. Remaining: bound horizontal and shifted-left vertical sides of the
+   first-order rectangle and combine those bounds with the residue contours.
 
 For the principal value final formula:
 

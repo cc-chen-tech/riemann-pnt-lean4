@@ -493,4 +493,105 @@ theorem tendsto_truncated_finset_firstOrderPerron_atTop
         Complex.exp (((c : ℂ) + 2 * Real.pi * w * Complex.I) * u i)).div₀
           (by fun_prop) hden)).intervalIntegrable _ _
 
+private lemma jumpVonMangoldt_natCast (m : ℕ) :
+    jumpVonMangoldt (m : ℝ) = vonMangoldt m := by
+  classical
+  let h : ∃ n : ℕ, (m : ℝ) = (n : ℝ) := ⟨m, rfl⟩
+  rw [jumpVonMangoldt, dif_pos h]
+  apply congrArg vonMangoldt
+  exact_mod_cast (Classical.choose_spec h).symm
+
+/-- The half-step center produced by first-order Perron inversion is exactly
+the midpoint Chebyshev function `psi0`. -/
+lemma sum_vonMangoldt_perronHalfStep_log_div_eq_chebyshevPsi0
+    (x : ℝ) (hx : 0 < x) :
+    (∑ n ∈ Finset.Ico 1 (Nat.floor x + 1),
+      (vonMangoldt n : ℂ) * perronHalfStep (Real.log (x / n))) =
+        (chebyshevPsi0 x : ℂ) := by
+  classical
+  by_cases hex : ∃ m : ℕ, x = (m : ℝ)
+  · obtain ⟨m, rfl⟩ := hex
+    have hm_pos : 0 < m := by exact_mod_cast hx
+    have hm_mem : m ∈ Finset.Ico 1 (Nat.floor (m : ℝ) + 1) := by
+      rw [Finset.mem_Ico, Nat.floor_natCast]
+      exact ⟨hm_pos, Nat.lt_succ_self m⟩
+    have hterm : ∀ n ∈ Finset.Ico 1 (Nat.floor (m : ℝ) + 1),
+        (vonMangoldt n : ℂ) *
+            perronHalfStep (Real.log ((m : ℝ) / n)) =
+          (vonMangoldt n : ℂ) -
+            if n = m then (vonMangoldt n : ℂ) / 2 else 0 := by
+      intro n hn
+      rcases Finset.mem_Ico.mp hn with ⟨hn_one, hn_upper⟩
+      have hn_pos : 0 < n := lt_of_lt_of_le Nat.zero_lt_one hn_one
+      have hn_le : n ≤ m := by
+        simpa using (Nat.lt_add_one_iff.mp (by simpa using hn_upper))
+      by_cases hnm : n = m
+      · subst n
+        simp [perronHalfStep, hm_pos.ne']
+        ring
+      · have hn_lt : n < m := lt_of_le_of_ne hn_le hnm
+        have hratio : (1 : ℝ) < (m : ℝ) / n := by
+          exact (one_lt_div (by exact_mod_cast hn_pos)).2 (by exact_mod_cast hn_lt)
+        have hlog : 0 < Real.log ((m : ℝ) / n) := Real.log_pos hratio
+        simp [perronHalfStep, hlog, hnm]
+    calc
+      (∑ n ∈ Finset.Ico 1 (Nat.floor (m : ℝ) + 1),
+          (vonMangoldt n : ℂ) *
+            perronHalfStep (Real.log ((m : ℝ) / n))) =
+          ∑ n ∈ Finset.Ico 1 (Nat.floor (m : ℝ) + 1),
+            ((vonMangoldt n : ℂ) -
+              if n = m then (vonMangoldt n : ℂ) / 2 else 0) := by
+        apply Finset.sum_congr rfl
+        intro n hn
+        exact hterm n hn
+      _ = (∑ n ∈ Finset.Ico 1 (Nat.floor (m : ℝ) + 1),
+            (vonMangoldt n : ℂ)) - (vonMangoldt m : ℂ) / 2 := by
+        rw [Finset.sum_sub_distrib]
+        simp [Nat.ne_of_gt hm_pos]
+      _ = (chebyshevPsi0 (m : ℝ) : ℂ) := by
+        rw [chebyshevPsi0, jumpVonMangoldt_natCast]
+        rw [chebyshevPsi, Complex.ofReal_sub, Complex.ofReal_sum,
+          Complex.ofReal_div]
+        norm_num
+  · have hjump : jumpVonMangoldt x = 0 := by
+      rw [jumpVonMangoldt, dif_neg hex]
+    rw [chebyshevPsi0, hjump, zero_div, sub_zero, chebyshevPsi,
+      Complex.ofReal_sum]
+    apply Finset.sum_congr rfl
+    intro n hn
+    rcases Finset.mem_Ico.mp hn with ⟨hn_one, hn_upper⟩
+    have hn_pos : 0 < (n : ℝ) := by
+      exact_mod_cast (lt_of_lt_of_le Nat.zero_lt_one hn_one)
+    have hn_floor : n ≤ Nat.floor x := by omega
+    have hn_floor_real : (n : ℝ) ≤ (Nat.floor x : ℝ) := by
+      exact_mod_cast hn_floor
+    have hnx_le : (n : ℝ) ≤ x :=
+      hn_floor_real.trans (Nat.floor_le hx.le)
+    have hnx_ne : (n : ℝ) ≠ x := by
+      intro h
+      exact hex ⟨n, h.symm⟩
+    have hnx : (n : ℝ) < x := lt_of_le_of_ne hnx_le hnx_ne
+    have hratio : (1 : ℝ) < x / n := (one_lt_div hn_pos).2 hnx
+    have hlog : 0 < Real.log (x / n) := Real.log_pos hratio
+    simp [perronHalfStep, hlog]
+
+/-- First-order Perron inversion specialized to the finite von Mangoldt sum.
+The symmetric limit recovers the midpoint Chebyshev function `psi0`, including
+the half contribution when `x` is a prime-power integer. -/
+theorem tendsto_truncated_vonMangoldt_firstOrderPerron_atTop
+    {x c : ℝ} (hx : 0 < x) (hc : 0 < c) :
+    Tendsto
+      (fun W : ℝ => ∫ w : ℝ in (-W)..W,
+        ∑ n ∈ Finset.Ico 1 (Nat.floor x + 1),
+          (vonMangoldt n : ℂ) *
+            (Complex.exp (((c : ℂ) + 2 * Real.pi * w * Complex.I) *
+              Real.log (x / n)) /
+                ((c : ℂ) + 2 * Real.pi * w * Complex.I)))
+      atTop (nhds (chebyshevPsi0 x : ℂ)) := by
+  have h := tendsto_truncated_finset_firstOrderPerron_atTop
+    (Finset.Ico 1 (Nat.floor x + 1))
+    (fun n => (vonMangoldt n : ℂ))
+    (fun n => Real.log (x / n)) c hc
+  simpa [sum_vonMangoldt_perronHalfStep_log_div_eq_chebyshevPsi0 x hx] using h
+
 end PrimeNumberTheorem
