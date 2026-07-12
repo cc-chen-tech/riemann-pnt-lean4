@@ -152,13 +152,27 @@ Already available or mostly available:
    eliminates the coefficient sum using Chebyshev's bound, giving
    `x^c * (log 4 + 4) * x / (2*pi^2*W)`.  The finite-height arithmetic starting
    integral therefore has a closed-form unconditional error bound.
+10. `PrimeNumberTheorem.intervalIntegral_vonMangoldt_LSeries_eq_tsum` proves
+    the uniform absolute convergence needed to exchange the full von Mangoldt
+    `tsum` with the finite vertical integral for every `c > 1`.  Its companion
+    `intervalIntegral_neg_logDeriv_riemannZeta_eq_vonMangoldt_tsum` rewrites
+    that complete right-line integrand as `-zeta'/zeta`.
+11. `PrimeNumberTheorem.norm_truncated_neg_logDeriv_riemannZeta_sub_smoothedPsi_le`
+    applies the `1/W` kernel error to every term of the full Dirichlet series,
+    including the `n > x` tail, and proves an unconditional finite-height
+    right-line formula for the Riesz mean with an explicit summable remainder.
+    This closes the second-order Perron/L-series starting-line gap; it does not
+    yet move the line across zeta zeros or prove the classical first-order
+    half-jump formula.
 
 Needed:
 
 1. A Perron kernel theorem for finite step sums:
    `(1 / (2*pi*I)) * integral_vertical (F s * x^s / s)` recovers the half-jump
    sum.
-2. Specialization to `F s = LSeries Lambda s`.
+2. Specialization of that first-order half-jump theorem to
+   `F s = LSeries Lambda s`.  The corresponding second-order specialization
+   is now proved by the theorems above.
 
 ### Analytic continuation and poles
 
