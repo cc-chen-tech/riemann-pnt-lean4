@@ -1766,6 +1766,28 @@ the current coarse Jensen count with logarithmic zeta growth can introduce an
 extra `log log |t|` loss.  The remaining hard work is therefore the
 zeta-specific vertical-growth input plus a sharper local zero/separation
 argument, not the generic Borel/Cauchy conversion.
+
+The radius-at-most-one restriction on that first specialization is now removed
+by a second large-disk theorem chain:
+
+```lean
+ZeroFreeRegion.finsum_divisor_riemannZeta_mul_log_norm_center_sub_le_log_mul_mass
+ZeroFreeRegion.neg_log_three_sub_log_mul_divisor_mass_le_log_norm_riemannZeta_factor_center
+ZeroFreeRegion.norm_logDeriv_le_two_mul_max_sub_div_of_sphere_log_norm_le_of_center_lower
+ZeroFreeRegion.exists_good_radius_interior_logDeriv_riemannZeta_factor_le_jensen_bound
+```
+
+For `b>=1`, the center divisor contribution is at most
+`log(b) * sum multiplicity`; Jensen controls that mass, so the analytic factor
+has an explicit center log-norm lower bound even on a disk wider than one.
+The generic Borel/Cauchy theorem accepts this lower bound directly.  The final
+selected-factor theorem therefore permits `a>2`, making its guaranteed
+interior region wide enough to include points with real part `1`.
+
+This closes the geometric radius obstruction only.  The bound still assumes
+inner/outer zeta growth, retains the explicit good-circle separation loss, and
+has not yet been identified with `logDeriv zeta` minus the finite local
+principal-part sum.
 The polynomial-growth handoff is also now composed in this exact disk
 geometry:
 

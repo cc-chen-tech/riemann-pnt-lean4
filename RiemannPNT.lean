@@ -8059,6 +8059,50 @@ theorem norm_logDeriv_le_two_mul_max_add_log_three_div_of_sphere_log_norm_le
   ZeroFreeRegion.norm_logDeriv_le_two_mul_max_add_log_three_div_of_sphere_log_norm_le
     hR hρ hg hgne hcenter hsphere hzρ
 
+/-- Public moving-point estimate from arbitrary center and boundary
+logarithmic norm bounds. -/
+theorem norm_logDeriv_le_two_mul_max_sub_div_of_sphere_log_norm_le_of_center_lower
+    {g : ℂ → ℂ} {c z : ℂ} {R B C0 ρ : ℝ}
+    (hR : 0 < R) (hρ : 0 < ρ)
+    (hg : AnalyticOnNhd ℂ g (Metric.closedBall c R))
+    (hgne : ∀ w ∈ Metric.closedBall c R, g w ≠ 0)
+    (hcenter : C0 ≤ Real.log ‖g c‖)
+    (hsphere : ∀ w ∈ Metric.sphere c R, Real.log ‖g w‖ ≤ B)
+    (hzρ : dist z c + ρ ≤ R / 2) :
+    ‖logDeriv g z‖ ≤ 2 * max (B - C0) 1 / ρ :=
+  ZeroFreeRegion.norm_logDeriv_le_two_mul_max_sub_div_of_sphere_log_norm_le_of_center_lower
+    hR hρ hg hgne hcenter hsphere hzρ
+
+/-- Public large-disk upper bound for the center divisor contribution. -/
+theorem finsum_divisor_riemannZeta_mul_log_norm_center_sub_le_log_mul_mass
+    {c : ℂ} {b : ℝ} (hb : 1 ≤ b)
+    (havoid : ∀ z : ℂ, z ∈ Metric.closedBall c b → z ≠ 1)
+    (hc : riemannZeta c ≠ 0) :
+    (∑ᶠ u,
+        (MeromorphicOn.divisor riemannZeta (Metric.closedBall c b) u : ℝ) *
+          Real.log ‖c - u‖) ≤
+      Real.log b *
+        (∑ᶠ u,
+          (MeromorphicOn.divisor riemannZeta (Metric.closedBall c b) u : ℝ)) :=
+  ZeroFreeRegion.finsum_divisor_riemannZeta_mul_log_norm_center_sub_le_log_mul_mass
+    hb havoid hc
+
+/-- Public large-disk center lower bound for the zero-removed zeta factor. -/
+theorem neg_log_three_sub_log_mul_divisor_mass_le_log_norm_riemannZeta_factor_center
+    {c : ℂ} {b : ℝ} {g : ℂ → ℂ} (hc_re : 2 ≤ c.re)
+    (hb : 1 ≤ b)
+    (havoid : ∀ z : ℂ, z ∈ Metric.closedBall c b → z ≠ 1)
+    (hfactor : Real.log ‖riemannZeta c‖ =
+      (∑ᶠ u,
+        (MeromorphicOn.divisor riemannZeta (Metric.closedBall c b) u : ℝ) *
+          Real.log ‖c - u‖) + Real.log ‖g c‖) :
+    -Real.log 3 - Real.log b *
+        (∑ᶠ u,
+          (MeromorphicOn.divisor riemannZeta (Metric.closedBall c b) u : ℝ)) ≤
+      Real.log ‖g c‖ :=
+  ZeroFreeRegion.neg_log_three_sub_log_mul_divisor_mass_le_log_norm_riemannZeta_factor_center
+    hc_re hb havoid hfactor
+
 /-- Public boundary-growth transfer from zeta to its zero-removed analytic
 factor on a quantitatively selected zero-free circle. -/
 theorem exists_good_radius_log_norm_riemannZeta_factor_le_of_closedBall_bound
@@ -16433,6 +16477,44 @@ theorem exists_good_radius_log_norm_and_logDeriv_riemannZeta_factor_le_jensen_bo
             ((Real.log M + Real.log 3) / Real.log (R / b)) + Real.log 3) 1 / ρ :=
   ZeroFreeRegion.exists_good_radius_log_norm_and_logDeriv_riemannZeta_factor_le_jensen_bound
     ha haq hqb hb_one hbR hheight hwidth hM houter hinner
+
+/-- Public large-disk Jensen/Borel moving-point bound for the selected
+zero-removed zeta factor. -/
+theorem exists_good_radius_interior_logDeriv_riemannZeta_factor_le_jensen_bound
+    {a q b R t M K : ℝ} (ha : 0 < a) (haq : a < q) (hqb : q < b)
+    (hb : 1 ≤ b) (hbR : b < R) (hheight : R < |t|)
+    (hwidth : q - a ≤ 4) (hM : 1 ≤ M)
+    (houter : ∀ z : ℂ,
+      z ∈ Metric.sphere ((2 : ℂ) + Complex.I * t) R →
+        ‖riemannZeta z‖ ≤ M)
+    (hinner : ∀ z ∈ Metric.closedBall ((2 : ℂ) + Complex.I * t) q,
+      Real.log ‖riemannZeta z‖ ≤ K) :
+    ∃ (zeros : Finset ℂ) (r : ℝ) (g : ℂ → ℂ),
+      (∀ ρ : ℂ, ρ ∈ zeros ↔
+        ρ ∈ Metric.closedBall ((2 : ℂ) + Complex.I * t) b ∧
+          riemannZeta ρ = 0) ∧
+      0 < r ∧ r ∈ Set.Icc a q ∧
+      AnalyticOnNhd ℂ g
+        (Metric.closedBall ((2 : ℂ) + Complex.I * t) b) ∧
+      (∀ u : (Metric.closedBall ((2 : ℂ) + Complex.I * t) b : Set ℂ),
+        g u ≠ 0) ∧
+      Real.log ‖riemannZeta ((2 : ℂ) + Complex.I * t)‖ =
+        (∑ᶠ u, (MeromorphicOn.divisor riemannZeta
+          (Metric.closedBall ((2 : ℂ) + Complex.I * t) b) u : ℝ) *
+            Real.log ‖((2 : ℂ) + Complex.I * t) - u‖) +
+          Real.log ‖g ((2 : ℂ) + Complex.I * t)‖ ∧
+      ∀ w ρ, 0 < ρ →
+        dist w ((2 : ℂ) + Complex.I * t) + ρ ≤ a / 2 →
+        ‖logDeriv g w‖ ≤
+          2 * max (K -
+            Real.log ((q - a) / ((4 : ℝ) *
+              (((zeros.image
+                (dist ((2 : ℂ) + Complex.I * t))).card : ℝ) + 1))) *
+                ((Real.log M + Real.log 3) / Real.log (R / b)) +
+            Real.log 3 + Real.log b *
+              ((Real.log M + Real.log 3) / Real.log (R / b))) 1 / ρ :=
+  ZeroFreeRegion.exists_good_radius_interior_logDeriv_riemannZeta_factor_le_jensen_bound
+    ha haq hqb hb hbR hheight hwidth hM houter hinner
 
 /-- Public quantitative good-circle theorem obtained by composing a zeta
 boundary norm bound, Jensen zero counting, and finite-radius avoidance. -/

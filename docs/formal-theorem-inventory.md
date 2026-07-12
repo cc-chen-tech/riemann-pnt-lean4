@@ -804,6 +804,20 @@ Core verified declarations:
   principal-part identity.  Obtaining a uniform
   `O(log |t|)` coefficient still requires zeta vertical growth, transfer to the
   required center, and sharper control of the explicit zero-count/separation loss.
+- `finsum_divisor_riemannZeta_mul_log_norm_center_sub_le_log_mul_mass` proves
+  `sum m(u) log‖c-u‖ <= log(b) sum m(u)` on a pole-free factorization disk
+  with `b>=1` and a nonzero zeta center.
+- `neg_log_three_sub_log_mul_divisor_mass_le_log_norm_riemannZeta_factor_center`
+  combines this with `‖zeta(c)‖>=1/3` to give the large-disk center lower
+  bound `-log 3-log(b) mass <= log‖g(c)‖`.
+- `norm_logDeriv_le_two_mul_max_sub_div_of_sphere_log_norm_le_of_center_lower`
+  is the generic moving-point Borel/Cauchy theorem with a supplied center
+  lower bound `C0<=log‖g(c)‖`.
+- `exists_good_radius_interior_logDeriv_riemannZeta_factor_le_jensen_bound`
+  substitutes Jensen's mass bound into the large-disk center estimate and
+  controls the selected factor throughout `dist(w,2+it)+rho<=a/2`, without
+  requiring `b<=1`.  Taking `a>2` makes this geometry reach `Re(w)=1`; the
+  zeta growth inputs and zero-count/separation loss remain explicit.
 - `exists_punctured_ball_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq`
   and `exists_punctured_closedBall_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq`
   convert an eventually-equal multiplicity regular part and an eventual norm
