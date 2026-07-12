@@ -263,6 +263,14 @@ Already available or mostly available:
     `nontrivialZerosFinset (2*pi*W)`, minus the three-edge contour remainder.
     The exact identification of the remaining poles is proved by
     `remainingPolePart_eq_explicit`.
+23. `ExplicitFormulaResidues.exists_jointCofinal_nontrivialZeroSum_sub_remainder_tendsto`
+    proves unconditionally that, along a joint cofinal sequence, the
+    multiplicity-weighted nontrivial-zero sum minus the moving contour
+    remainder converges to the exact value forced by `psi0`, the pole terms,
+    and the trivial-zero logarithmic correction.  If the remainder tends to
+    zero, the nontrivial-zero sum therefore has the corresponding limit along
+    this cofinal sequence.  Passing from that sequence to arbitrary truncation
+    heights remains necessary for the full principal-value target.
 
 Remaining after the fixed-right-edge contour shift:
 
@@ -276,7 +284,11 @@ Remaining after the fixed-right-edge contour shift:
    extraction from every `-(2N+1)` contour are now proved, and a joint cofinal
    sequence has been chosen.  The remaining issue is proving the
    moving-left-edge remainder tends to zero along that sequence.
-3. Control the symmetric nontrivial-zero contribution with multiplicity.
+3. Separate the now-proved limit of `nontrivial-zero sum - remainder` by
+   proving the remainder tends to zero; this then gives the symmetric
+   multiplicity-weighted nontrivial-zero limit along the chosen cofinal
+   sequence.  Then control the zero contributions between consecutive chosen
+   heights to obtain the full truncation-height limit.
 
 ### Analytic continuation and poles
 
@@ -459,7 +471,10 @@ For the principal value final formula:
    zero along good heights.
 4. Along the now-constructed joint cofinal sequence, prove the moving-left-edge
    remainder tends to zero and control the already-isolated
-   multiplicity-weighted nontrivial-zero sum.
+   multiplicity-weighted nontrivial-zero sum.  Their difference already has a
+   proved exact limit, so a remainder estimate gives the zero-sum limit on that
+   sequence.  A further interpolation argument between chosen heights is still
+   needed for the full principal-value formula.
 
 For a PNT proof, the truncated formula plus a zero-free region and boundary
 estimates may be more useful than the full principal-value exact formula.

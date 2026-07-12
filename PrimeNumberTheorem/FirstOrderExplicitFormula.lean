@@ -668,6 +668,47 @@ theorem exists_jointCofinal_movingLeft_firstOrderContours
           n (zero_lt_one.trans hx) hc hW
             (by rw [hscale]; exact (hT n).2)
 
+/-- Along a joint cofinal moving-left sequence, the
+multiplicity-weighted nontrivial-zero sum minus the contour remainder converges
+unconditionally.  If the remainder tends to zero, this gives the corresponding
+zero-sum limit along the same cofinal sequence; a full principal-value formula
+still requires passage from this sequence to arbitrary truncation heights. -/
+theorem exists_jointCofinal_nontrivialZeroSum_sub_remainder_tendsto
+    {x c : ℝ} (hx : 1 < x) (hc : 1 < c) :
+    ∃ W : ℕ → ℝ, StrictMono W ∧ Tendsto W atTop atTop ∧
+      (∀ n, goodHeight (2 * Real.pi * W n)) ∧
+      Tendsto
+        (fun n : ℕ =>
+          (∑ ρ ∈ nontrivialZerosFinset (2 * Real.pi * W n),
+              -(analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ) -
+            firstOrderContourRemainder x (-(2 * (n : ℝ) + 1)) c (W n))
+        atTop
+        (nhds ((chebyshevPsi0 x : ℂ) -
+          (((-(1 / 2 : ℝ) * Real.log (1 - x ^ (-2 : ℝ)) : ℝ) : ℂ)) -
+          ((x : ℂ) - deriv riemannZeta 0 / riemannZeta 0))) := by
+  rcases exists_jointCofinal_movingLeft_firstOrderContours hx hc with
+    ⟨W, hmono, hWtend, htriv, hformula⟩
+  have hright :=
+    (tendsto_scaledRightIntegral_explicitFormulaIntegrand_atTop
+      (zero_lt_one.trans hx) hc).comp hWtend
+  have hcombined := (hright.sub htriv).sub
+    (tendsto_const_nhds : Tendsto
+      (fun _n : ℕ => (x : ℂ) - deriv riemannZeta 0 / riemannZeta 0)
+      atTop (nhds ((x : ℂ) - deriv riemannZeta 0 / riemannZeta 0)))
+  refine ⟨W, hmono, hWtend, (fun n => (hformula n).2.1), ?_⟩
+  apply hcombined.congr'
+  filter_upwards [] with n
+  have heq := (hformula n).2.2
+  change
+    (∫ w : ℝ in (-(W n))..(W n),
+        explicitFormulaIntegrand x ((c : ℂ) + 2 * Real.pi * w * I)) -
+        (∑ p ∈ finiteTrivialZeroSum (2 * (n : ℝ)), -((x : ℂ) ^ p) / p) -
+        ((x : ℂ) - deriv riemannZeta 0 / riemannZeta 0) =
+      (∑ ρ ∈ nontrivialZerosFinset (2 * Real.pi * W n),
+          -(analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ) -
+        firstOrderContourRemainder x (-(2 * (n : ℝ) + 1)) c (W n)
+  linear_combination heq
+
 /-- A good height gives an unconditional fixed first-order rectangle with
 left edge `Re(s)=-1` and arbitrary fixed right edge `Re(s)=c>1`.  The left
 edge contains no trivial zero, the right edge is zero-free, and `goodHeight`
