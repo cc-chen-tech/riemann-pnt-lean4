@@ -144,6 +144,42 @@ lemma exists_radius_separated_from_finset_norm_sub
   intro ρ hρ
   simpa [radii] using hsep (dist c ρ) (Finset.mem_image.mpr ⟨ρ, hρ, rfl⟩)
 
+/-- A uniform positive distance from the finite support of a nonnegative
+integer divisor gives a lower bound for its logarithmic-distance sum. -/
+lemma log_mul_finsum_le_finsum_mul_log_norm_sub_of_finiteSupport
+    {D : ℂ → ℤ} {z : ℂ} {delta : ℝ}
+    (hfinite : D.support.Finite) (hD : ∀ u, 0 ≤ D u) (hdelta : 0 < delta)
+    (hsep : ∀ u ∈ D.support, delta ≤ ‖z - u‖) :
+    Real.log delta * (∑ᶠ u, (D u : ℝ)) ≤
+      ∑ᶠ u, (D u : ℝ) * Real.log ‖z - u‖ := by
+  classical
+  have hleft_support :
+      (fun u : ℂ => (D u : ℝ)).support ⊆ hfinite.toFinset := by
+    intro u hu
+    apply hfinite.mem_toFinset.mpr
+    simpa [Function.mem_support] using hu
+  have hright_support :
+      (fun u : ℂ => (D u : ℝ) * Real.log ‖z - u‖).support ⊆
+        hfinite.toFinset := by
+    intro u hu
+    apply hfinite.mem_toFinset.mpr
+    by_contra hDu
+    have hDu_zero : D u = 0 := by
+      simpa [Function.mem_support] using hDu
+    simp [hDu_zero] at hu
+  rw [finsum_eq_sum_of_support_subset _ hleft_support,
+    finsum_eq_sum_of_support_subset _ hright_support, Finset.mul_sum]
+  apply Finset.sum_le_sum
+  intro u hu
+  by_cases hDu : D u = 0
+  · simp [hDu]
+  have hu_support : u ∈ D.support := by
+    simpa [Function.mem_support] using hDu
+  have hlog : Real.log delta ≤ Real.log ‖z - u‖ :=
+    Real.log_le_log hdelta (hsep u hu_support)
+  have hDreal : (0 : ℝ) ≤ (D u : ℝ) := by exact_mod_cast hD u
+  simpa [mul_comm] using mul_le_mul_of_nonneg_left hlog hDreal
+
 /-! ## Analytic first-order ODE nonvanishing -/
 
 /-- A nonzero analytic solution of the scalar linear equation `f' = g * f`
@@ -11314,6 +11350,54 @@ lemma exists_good_radius_separated_from_riemannZeta_zeros_closedBall
     exact div_pos (sub_pos.mpr hab) (mul_pos (by norm_num) (by positivity))
   simpa using hsep_pos.trans_le hsep
 
+/-- Strict-interior good-circle selection.
+
+All zeta zeros are taken from the larger disk of radius `b`, while the circle
+radius is selected in `[a,q]` with `q < b`.  Thus every point of the selected
+circle lies in the interior of the disk used for zero factorization, and the
+circle remains quantitatively separated from every zero in that disk. -/
+lemma exists_good_radius_separated_from_riemannZeta_zeros_closedBall_strictly_inside
+    {c : ℂ} {a q b : ℝ} (ha : 0 < a) (haq : a < q) (hqb : q < b)
+    (havoid : ∀ z : ℂ, z ∈ closedBall c b → z ≠ 1) :
+    ∃ (zeros : Finset ℂ) (r : ℝ),
+      (∀ ρ : ℂ,
+        ρ ∈ zeros ↔ ρ ∈ closedBall c b ∧ riemannZeta ρ = 0) ∧
+      0 < r ∧
+      r ∈ Set.Icc a q ∧
+      (∀ z ∈ sphere c r, ∀ ρ ∈ zeros,
+        (q - a) /
+            ((4 : ℝ) * (((zeros.image (dist c)).card : ℝ) + 1)) ≤
+          dist z ρ) ∧
+      ∀ z ∈ sphere c r, riemannZeta z ≠ 0 := by
+  classical
+  rcases exists_finset_analyticOnNhd_regularizedLogDeriv_riemannZeta_closedBall
+      havoid with ⟨zeros, hzeros, _⟩
+  rcases exists_radius_separated_from_finset_norm_sub zeros c haq with
+    ⟨r, hr, hradial⟩
+  have hsphere_sep : ∀ z ∈ sphere c r, ∀ ρ ∈ zeros,
+      (q - a) /
+          ((4 : ℝ) * (((zeros.image (dist c)).card : ℝ) + 1)) ≤
+        dist z ρ := by
+    intro z hz ρ hρ
+    have hzrad : dist c z = r := mem_sphere'.mp hz
+    have hmetric : |dist c z - dist c ρ| ≤ dist z ρ := by
+      simpa [Real.dist_eq] using dist_dist_dist_le_right c z ρ
+    rw [hzrad] at hmetric
+    exact (hradial ρ hρ).trans hmetric
+  refine ⟨zeros, r, hzeros, ha.trans_le hr.1, hr, hsphere_sep, ?_⟩
+  intro z hz hzeta
+  have hzrad : dist c z = r := mem_sphere'.mp hz
+  have hzclosed : z ∈ closedBall c b := by
+    rw [mem_closedBall, _root_.dist_comm z c, hzrad]
+    exact hr.2.trans hqb.le
+  have hzmem : z ∈ zeros := (hzeros z).mpr ⟨hzclosed, hzeta⟩
+  have hsep := hsphere_sep z hz z hzmem
+  have hsep_pos : 0 <
+      (q - a) /
+        ((4 : ℝ) * (((zeros.image (dist c)).card : ℝ) + 1)) := by
+    exact div_pos (sub_pos.mpr haq) (mul_pos (by norm_num) (by positivity))
+  simpa using hsep_pos.trans_le hsep
+
 /-- On a closed disk avoiding the pole, zeta factors into its complete local
 divisor product and an analytic nonvanishing unit.
 
@@ -11382,6 +11466,150 @@ lemma exists_log_norm_factorization_riemannZeta_closedBall
   rcases hmer.extract_zeros_poles hnotop hfinite with ⟨g, hg, hgne, hfactor⟩
   refine ⟨g, by simpa [U] using hg, by simpa [U] using hgne, ?_⟩
   simpa [U] using MeromorphicOn.extract_zeros_poles_log hgne hfactor
+
+/-- Pointwise logarithmic-norm factorization on a strictly smaller disk at
+every nonzero zeta value.
+
+`extract_zeros_poles` initially supplies only a codiscrete equality.  At an
+interior point of the outer disk, Mathlib's trailing-coefficient identity
+upgrades that equality to a pointwise formula; nonvanishing of zeta then
+identifies its trailing coefficient with its actual value. -/
+lemma exists_log_norm_factorization_riemannZeta_closedBall_pointwise_of_ne_zero
+    {c : ℂ} {r R : ℝ} (hrR : r < R)
+    (havoid : ∀ z : ℂ, z ∈ closedBall c R → z ≠ 1) :
+    ∃ g : ℂ → ℂ,
+      AnalyticOnNhd ℂ g (closedBall c R) ∧
+      (∀ u : (closedBall c R : Set ℂ), g u ≠ 0) ∧
+      ∀ z ∈ closedBall c r, riemannZeta z ≠ 0 →
+        Real.log ‖riemannZeta z‖ =
+          (∑ᶠ u,
+            (MeromorphicOn.divisor riemannZeta (closedBall c R) u : ℝ) *
+              Real.log ‖z - u‖) + Real.log ‖g z‖ := by
+  let U : Set ℂ := closedBall c R
+  have hmer : MeromorphicOn riemannZeta U :=
+    meromorphicOn_riemannZeta_closedBall c R
+  have hnotop : ∀ u : U, meromorphicOrderAt riemannZeta u ≠ ⊤ := by
+    intro u
+    have han : AnalyticAt ℂ riemannZeta u :=
+      analyticOnNhd_riemannZeta_ne_one u (havoid u u.property)
+    rw [han.meromorphicOrderAt_eq]
+    intro hmap
+    apply analyticOrderAt_riemannZeta_ne_top_of_ne_one (havoid u u.property)
+    exact ENat.map_eq_top_iff.mp hmap
+  have hfinite :
+      (MeromorphicOn.divisor riemannZeta U).support.Finite :=
+    (MeromorphicOn.divisor riemannZeta U).finiteSupport
+      (isCompact_closedBall c R)
+  rcases hmer.extract_zeros_poles hnotop hfinite with ⟨g, hg, hgne, hfactor⟩
+  refine ⟨g, by simpa [U] using hg, by simpa [U] using hgne, ?_⟩
+  intro z hz hzeta
+  have hz_outer : z ∈ U := by
+    exact closedBall_subset_closedBall hrR.le hz
+  have hz_ball : z ∈ ball c R := by
+    rw [mem_ball]
+    have hzdist : dist z c ≤ r := by simpa [mem_closedBall] using hz
+    simpa [dist_comm] using hzdist.trans_lt hrR
+  have hacc_univ : AccPt z (Filter.principal (Set.univ : Set ℂ)) :=
+    PerfectSpace.univ_preperfect z (Set.mem_univ z)
+  have hacc : AccPt z (Filter.principal U) := by
+    have hnhds : U ∈ nhds z := by
+      exact closedBall_mem_nhds_of_mem hz_ball
+    simpa [U] using hacc_univ.nhds_inter hnhds
+  have hz_analytic : AnalyticAt ℂ riemannZeta z :=
+    analyticOnNhd_riemannZeta_ne_one z (havoid z hz_outer)
+  have hlog :=
+    MeromorphicOn.log_norm_meromorphicTrailingCoeffAt_extract_zeros_poles
+      hfinite hz_outer hacc (hmer z hz_outer) (hg z hz_outer)
+        (hgne ⟨z, hz_outer⟩) hfactor
+  rw [hz_analytic.meromorphicTrailingCoeffAt_of_ne_zero hzeta] at hlog
+  simpa [U] using hlog
+
+/-- Transfer a pointwise logarithmic zeta bound to the zero-removed analytic
+factor on a quantitatively selected zero-free circle.
+
+The loss is explicit: `log(delta)` times the total zeta-zero multiplicity in
+the factorization disk, where `delta` is the good-radius separation obtained
+from finite pigeonhole selection. -/
+lemma exists_good_radius_log_norm_riemannZeta_factor_le_of_closedBall_bound
+    {c : ℂ} {a q b K : ℝ} (ha : 0 < a) (haq : a < q) (hqb : q < b)
+    (havoid : ∀ z : ℂ, z ∈ closedBall c b → z ≠ 1)
+    (hzeta_bound : ∀ z ∈ closedBall c q, Real.log ‖riemannZeta z‖ ≤ K) :
+    ∃ (zeros : Finset ℂ) (r : ℝ) (g : ℂ → ℂ),
+      (∀ ρ : ℂ,
+        ρ ∈ zeros ↔ ρ ∈ closedBall c b ∧ riemannZeta ρ = 0) ∧
+      0 < r ∧
+      r ∈ Set.Icc a q ∧
+      AnalyticOnNhd ℂ g (closedBall c b) ∧
+      (∀ u : (closedBall c b : Set ℂ), g u ≠ 0) ∧
+      (∀ z ∈ sphere c r, riemannZeta z ≠ 0) ∧
+      ∀ z ∈ sphere c r,
+        Real.log ‖g z‖ ≤ K -
+          Real.log
+              ((q - a) /
+                ((4 : ℝ) * (((zeros.image (dist c)).card : ℝ) + 1))) *
+            (∑ᶠ u,
+              (MeromorphicOn.divisor riemannZeta (closedBall c b) u : ℝ)) := by
+  classical
+  rcases
+      exists_good_radius_separated_from_riemannZeta_zeros_closedBall_strictly_inside
+        ha haq hqb havoid with
+    ⟨zeros, r, hzeros, hrpos, hr, hsphere_sep, hsphere_ne⟩
+  rcases exists_log_norm_factorization_riemannZeta_closedBall_pointwise_of_ne_zero
+      (c := c) (r := q) (R := b) hqb havoid with
+    ⟨g, hg, hgne, hpoint⟩
+  let U : Set ℂ := closedBall c b
+  let D : ℂ → ℤ := fun u =>
+    MeromorphicOn.divisor riemannZeta U u
+  have han : AnalyticOnNhd ℂ riemannZeta U := by
+    intro z hz
+    exact analyticOnNhd_riemannZeta_ne_one z (havoid z hz)
+  have hD_nonneg : ∀ u, 0 ≤ D u := by
+    exact han.divisor_nonneg
+  have hD_finite : D.support.Finite := by
+    exact (MeromorphicOn.divisor riemannZeta U).finiteSupport
+      (isCompact_closedBall c b)
+  have hnotop : ∀ u : U, meromorphicOrderAt riemannZeta u ≠ ⊤ := by
+    intro u
+    rw [(han u u.property).meromorphicOrderAt_eq]
+    intro hmap
+    apply analyticOrderAt_riemannZeta_ne_top_of_ne_one (havoid u u.property)
+    exact ENat.map_eq_top_iff.mp hmap
+  have hzero_support := han.meromorphicNFOn.zero_set_eq_divisor_support hnotop
+  have hdelta : 0 <
+      (q - a) /
+        ((4 : ℝ) * (((zeros.image (dist c)).card : ℝ) + 1)) := by
+    exact div_pos (sub_pos.mpr haq) (mul_pos (by norm_num) (by positivity))
+  refine ⟨zeros, r, g, hzeros, hrpos, hr, by simpa [U] using hg,
+    by simpa [U] using hgne, hsphere_ne, ?_⟩
+  intro z hz
+  have hzrad : dist c z = r := mem_sphere'.mp hz
+  have hzq : z ∈ closedBall c q := by
+    rw [mem_closedBall, _root_.dist_comm z c, hzrad]
+    exact hr.2
+  have hsupport_sep : ∀ u ∈ D.support,
+      (q - a) /
+          ((4 : ℝ) * (((zeros.image (dist c)).card : ℝ) + 1)) ≤
+        ‖z - u‖ := by
+    intro u hu
+    have hmem := Set.ext_iff.mp hzero_support u
+    simp only [Set.mem_inter_iff, Set.mem_preimage, Set.mem_singleton_iff] at hmem
+    have hu_data : u ∈ U ∧ riemannZeta u = 0 := hmem.mpr hu
+    have hu_zero : u ∈ zeros := by
+      exact (hzeros u).mpr ⟨by simpa [U] using hu_data.1, hu_data.2⟩
+    simpa [dist_eq_norm] using hsphere_sep z hz u hu_zero
+  have hsum :=
+    log_mul_finsum_le_finsum_mul_log_norm_sub_of_finiteSupport
+      hD_finite hD_nonneg hdelta hsupport_sep
+  have hid := hpoint z hzq (hsphere_ne z hz)
+  have hzbound := hzeta_bound z hzq
+  dsimp [D] at hsum
+  simpa [U] using (show Real.log ‖g z‖ ≤ K -
+      Real.log
+          ((q - a) /
+            ((4 : ℝ) * (((zeros.image (dist c)).card : ℝ) + 1))) *
+        (∑ᶠ u,
+          (MeromorphicOn.divisor riemannZeta U u : ℝ)) by
+    linarith)
 
 /-- Automatic zeta-specific regular-part bound at an actual zero.  The
 multiplicity is chosen as `analyticOrderNatAt riemannZeta ρ`, so callers no

@@ -753,6 +753,21 @@ Core verified declarations:
   that cardinality bridge with the Jensen bound.  From `‖ζ‖ ≤ M` on the
   outer circle it constructs a zero-free intermediate circle and proves
   `log(R/b) * #distinct-radii ≤ log M + log 3`.
+- `exists_good_radius_separated_from_riemannZeta_zeros_closedBall_strictly_inside`
+  separates the positive circle-selection interval `[a,q]` from the larger
+  zero and factorization disk of radius `b`, with `0<a<q<b`; hence the selected
+  sphere is nonempty rather than a vacuous negative-radius sphere.
+- `exists_log_norm_factorization_riemannZeta_closedBall_pointwise_of_ne_zero`
+  uses Mathlib's trailing-coefficient extraction theorem to upgrade the
+  codiscrete zeta factorization to a pointwise identity at every nonzero point
+  of a strict inner disk.
+- `log_mul_finsum_le_finsum_mul_log_norm_sub_of_finiteSupport` converts a
+  uniform distance `delta` from a nonnegative finite divisor into the lower
+  bound `log(delta) * sum D <= sum D(u) log‖z-u‖`.
+- `exists_good_radius_log_norm_riemannZeta_factor_le_of_closedBall_bound`
+  combines strict good-circle selection, the pointwise factorization, and the
+  finite-divisor lower bound.  A bound `log‖ζ‖ <= K` on the inner closed disk
+  becomes an explicit upper bound for `log‖g‖` on the selected zero-free circle.
 - `exists_punctured_ball_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq`
   and `exists_punctured_closedBall_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq`
   convert an eventually-equal multiplicity regular part and an eventual norm

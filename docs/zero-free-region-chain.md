@@ -1686,6 +1686,31 @@ last theorem composes these facts with Jensen: an outer-circle bound
 separation is no longer missing.  The remaining hard analytic step is to turn
 zeta vertical growth on such circles into a uniform bound for the analytic
 nonzero factor, hence for the regular part of `ζ'/ζ`.
+
+The next factorization handoff is now formalized as well:
+
+```lean
+ZeroFreeRegion.exists_good_radius_separated_from_riemannZeta_zeros_closedBall_strictly_inside
+ZeroFreeRegion.exists_log_norm_factorization_riemannZeta_closedBall_pointwise_of_ne_zero
+ZeroFreeRegion.log_mul_finsum_le_finsum_mul_log_norm_sub_of_finiteSupport
+ZeroFreeRegion.exists_good_radius_log_norm_riemannZeta_factor_le_of_closedBall_bound
+```
+
+The strict-interior version selects the circle in `[a,q]` while collecting all
+zeros from a larger disk of radius `b`, where `0<a<q<b`.  Positivity prevents
+the sphere conclusions from becoming vacuous, and strict containment makes
+every circle point an interior point of the factorization disk.  Mathlib's
+`log_norm_meromorphicTrailingCoeffAt_extract_zeros_poles` then upgrades the
+codiscrete factorization equality to a pointwise `log‖ζ‖` identity wherever
+zeta is nonzero.  The finite-divisor lemma bounds the zero contribution from
+below using the circle's separation `delta`.  Consequently a closed-disk
+bound `log‖ζ‖ <= K` yields the explicit circle bound
+`log‖g‖ <= K - log(delta) * sum multiplicity` for the analytic nonzero factor.
+
+This is a real growth-transfer theorem, but it is not yet the desired uniform
+`O(log |t|)` estimate.  The remaining quantitative work is to prove the
+zeta-specific vertical-growth input and combine the Jensen multiplicity bound
+with the `log(delta)` loss sharply enough for the logarithmic derivative.
 The polynomial-growth handoff is also now composed in this exact disk
 geometry:
 

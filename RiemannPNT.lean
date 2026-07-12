@@ -7874,6 +7874,16 @@ theorem exists_radius_separated_from_finset
       (b - a) / ((4 : ℝ) * ((s.card : ℝ) + 1)) ≤ |r - x| :=
   ZeroFreeRegion.exists_radius_separated_from_finset s hab
 
+/-- Public finite-divisor logarithmic-distance lower bound. -/
+theorem log_mul_finsum_le_finsum_mul_log_norm_sub_of_finiteSupport
+    {D : ℂ → ℤ} {z : ℂ} {delta : ℝ}
+    (hfinite : D.support.Finite) (hD : ∀ u, 0 ≤ D u) (hdelta : 0 < delta)
+    (hsep : ∀ u ∈ D.support, delta ≤ ‖z - u‖) :
+    Real.log delta * (∑ᶠ u, (D u : ℝ)) ≤
+      ∑ᶠ u, (D u : ℝ) * Real.log ‖z - u‖ :=
+  ZeroFreeRegion.log_mul_finsum_le_finsum_mul_log_norm_sub_of_finiteSupport
+    hfinite hD hdelta hsep
+
 /-- Public cardinality bridge from distinct zeta zeros in an inner disk to
 the multiplicity mass of the divisor on a containing disk. -/
 theorem exists_finset_riemannZeta_zeros_closedBall_card_le_divisor_mass
@@ -7909,6 +7919,24 @@ theorem exists_good_radius_separated_from_riemannZeta_zeros_closedBall
   ZeroFreeRegion.exists_good_radius_separated_from_riemannZeta_zeros_closedBall
     hab havoid
 
+/-- Public strict-interior good-circle theorem: the selected circle lies
+strictly inside the disk containing every zero used in the factorization. -/
+theorem exists_good_radius_separated_from_riemannZeta_zeros_closedBall_strictly_inside
+    {c : ℂ} {a q b : ℝ} (ha : 0 < a) (haq : a < q) (hqb : q < b)
+    (havoid : ∀ z : ℂ, z ∈ Metric.closedBall c b → z ≠ 1) :
+    ∃ (zeros : Finset ℂ) (r : ℝ),
+      (∀ ρ : ℂ,
+        ρ ∈ zeros ↔ ρ ∈ Metric.closedBall c b ∧ riemannZeta ρ = 0) ∧
+      0 < r ∧
+      r ∈ Set.Icc a q ∧
+      (∀ z ∈ Metric.sphere c r, ∀ ρ ∈ zeros,
+        (q - a) /
+            ((4 : ℝ) * (((zeros.image (dist c)).card : ℝ) + 1)) ≤
+          dist z ρ) ∧
+      ∀ z ∈ Metric.sphere c r, riemannZeta z ≠ 0 :=
+  ZeroFreeRegion.exists_good_radius_separated_from_riemannZeta_zeros_closedBall_strictly_inside
+    ha haq hqb havoid
+
 /-- Public complete zero-factor extraction for zeta on a closed disk avoiding
 the pole. -/
 theorem exists_analytic_nonzero_factorization_riemannZeta_closedBall
@@ -7937,6 +7965,49 @@ theorem exists_log_norm_factorization_riemannZeta_closedBall
             Real.log ‖z - u‖) +
           fun z => Real.log ‖g z‖ :=
   ZeroFreeRegion.exists_log_norm_factorization_riemannZeta_closedBall havoid
+
+/-- Public pointwise logarithmic-norm factorization on a strictly smaller
+disk at every nonzero zeta value. -/
+theorem exists_log_norm_factorization_riemannZeta_closedBall_pointwise_of_ne_zero
+    {c : ℂ} {r R : ℝ} (hrR : r < R)
+    (havoid : ∀ z : ℂ, z ∈ Metric.closedBall c R → z ≠ 1) :
+    ∃ g : ℂ → ℂ,
+      AnalyticOnNhd ℂ g (Metric.closedBall c R) ∧
+      (∀ u : (Metric.closedBall c R : Set ℂ), g u ≠ 0) ∧
+      ∀ z ∈ Metric.closedBall c r, riemannZeta z ≠ 0 →
+        Real.log ‖riemannZeta z‖ =
+          (∑ᶠ u,
+            (MeromorphicOn.divisor riemannZeta
+              (Metric.closedBall c R) u : ℝ) * Real.log ‖z - u‖) +
+            Real.log ‖g z‖ :=
+  ZeroFreeRegion.exists_log_norm_factorization_riemannZeta_closedBall_pointwise_of_ne_zero
+    hrR havoid
+
+/-- Public boundary-growth transfer from zeta to its zero-removed analytic
+factor on a quantitatively selected zero-free circle. -/
+theorem exists_good_radius_log_norm_riemannZeta_factor_le_of_closedBall_bound
+    {c : ℂ} {a q b K : ℝ} (ha : 0 < a) (haq : a < q) (hqb : q < b)
+    (havoid : ∀ z : ℂ, z ∈ Metric.closedBall c b → z ≠ 1)
+    (hzeta_bound : ∀ z ∈ Metric.closedBall c q,
+      Real.log ‖riemannZeta z‖ ≤ K) :
+    ∃ (zeros : Finset ℂ) (r : ℝ) (g : ℂ → ℂ),
+      (∀ ρ : ℂ,
+        ρ ∈ zeros ↔ ρ ∈ Metric.closedBall c b ∧ riemannZeta ρ = 0) ∧
+      0 < r ∧
+      r ∈ Set.Icc a q ∧
+      AnalyticOnNhd ℂ g (Metric.closedBall c b) ∧
+      (∀ u : (Metric.closedBall c b : Set ℂ), g u ≠ 0) ∧
+      (∀ z ∈ Metric.sphere c r, riemannZeta z ≠ 0) ∧
+      ∀ z ∈ Metric.sphere c r,
+        Real.log ‖g z‖ ≤ K -
+          Real.log
+              ((q - a) /
+                ((4 : ℝ) * (((zeros.image (dist c)).card : ℝ) + 1))) *
+            (∑ᶠ u,
+              (MeromorphicOn.divisor riemannZeta
+                (Metric.closedBall c b) u : ℝ)) :=
+  ZeroFreeRegion.exists_good_radius_log_norm_riemannZeta_factor_le_of_closedBall_bound
+    ha haq hqb havoid hzeta_bound
 
 /-- Public automatic regular-part bound at an actual zero of ζ.  The
 multiplicity is chosen internally as `analyticOrderNatAt riemannZeta ρ`. -/
