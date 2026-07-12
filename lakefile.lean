@@ -19,12 +19,14 @@ lean_lib RiemannPNT where
     `PrimeNumberTheorem.PerronExplicitError,
     `PrimeNumberTheorem.LSeriesPerron,
     `PrimeNumberTheorem.CompletePerron,
+    `PrimeNumberTheorem.SecondOrderExplicitFormula,
     `PrimeNumberTheorem.ExplicitFormulaAux,
     `ZeroFreeRegion,
     `ZeroFreeRegion.MeromorphicAux,
     `HardyTheorem.Phase1Aux,
     `HardyTheorem.AFE,
     `MathlibAux.RectangleResidue,
+    `MathlibAux.BoundaryRectResidue,
     `PrimeNumberTheorem.ExplicitFormulaTruncated
   ]
 

@@ -164,6 +164,16 @@ Already available or mostly available:
     This closes the second-order Perron/L-series starting-line gap; it does not
     yet move the line across zeta zeros or prove the classical first-order
     half-jump formula.
+12. `PrimeNumberTheorem.ExplicitFormulaResidues.exists_norm_residue_sum_sub_contourRemainder_sub_smoothedPsi_le`
+    now performs that finite-height contour shift on an arbitrary tall
+    rectangle contained in `Re(s) > 0`.  It combines the complete right-line
+    Perron formula with a finite zeta-pole residue sum and the normalized
+    bottom, top, and left edge integrals.  The resulting unconditional theorem
+    bounds the difference from the first Riesz mean by the same explicit
+    summable `1/W` remainder.  The residue witnesses are not yet rewritten as
+    the explicit values `x` at `1` and
+    `-multiplicity(rho) * x^rho / rho^2` at nontrivial zeros, and the three
+    shifted edges are not yet estimated.
 
 Needed:
 
@@ -269,7 +279,18 @@ rectangle.  Thus the rectangle integral is complete once an integrand has
 actually been decomposed into that remainder and finitely many simple
 principal parts.
 
-There is still no directly callable general theorem of the form
+`MathlibAux.BoundaryRectResidue` removes the square-shape restriction.  It
+proves `boundaryRectIntegral_sub_inv_of_mem` and
+`boundaryRectIntegral_eq_finite_simple_pole_residue_sum_of_differentiableOn`
+for arbitrary ordered horizontal and vertical endpoints.  This matters for
+Perron inversion: the right edge `Re(s)=c>1` can now remain fixed while the
+height grows, instead of being forced to grow with a square's half-side.
+`PrimeNumberTheorem.SecondOrderExplicitFormula` applies this theorem after
+dividing the first-order integrand by `s`; keeping the left edge at `a>0`
+avoids the resulting double pole at `s=0`.
+
+There is still no directly callable theorem for an arbitrary meromorphic
+function of the form
 "rectangle contour integral equals `2*pi*I` times a finite residue sum".
 The remaining intermediate theorem is:
 
