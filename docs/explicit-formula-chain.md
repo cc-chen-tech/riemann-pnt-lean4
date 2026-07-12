@@ -190,15 +190,22 @@ Already available or mostly available:
     The unresolved contour pieces are now the horizontal segments
     `a <= Re(s) <= 1+epsilon` and the left vertical edge `Re(s)=a`, where the
     Dirichlet series is not absolutely convergent.
+15. `PrimeNumberTheorem.tendsto_truncated_firstOrderPerronKernel_atTop` and
+    `PrimeNumberTheorem.tendsto_truncated_finset_firstOrderPerron_atTop`
+    prove the conditionally convergent ordinary Perron kernel and its finite
+    step-sum form.  Away from the jump, integration by parts reduces the
+    first-order kernel to the already proved second-order kernel and gives an
+    explicit `O(exp(c*u) / (|u|*W))` truncation error.  At the jump, the
+    symmetric integral is computed as `atan(2*pi*W/c)/pi`, whose limit is
+    `1/2`.  Thus the half-jump theorem for finite sums is no longer an input.
 
 Needed:
 
-1. A Perron kernel theorem for finite step sums:
-   `(1 / (2*pi*I)) * integral_vertical (F s * x^s / s)` recovers the half-jump
-   sum.
-2. Specialization of that first-order half-jump theorem to
+1. Specialization of the proved first-order finite-sum half-jump theorem to
    `F s = LSeries Lambda s`.  The corresponding second-order specialization
-   is now proved by the theorems above.
+   is now proved by the theorems above.  This still requires a legitimate
+   passage from finite coefficient sums to the conditionally convergent
+   first-order zeta line integral.
 
 ### Analytic continuation and poles
 

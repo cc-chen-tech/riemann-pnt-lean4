@@ -14,6 +14,7 @@ lean_lib RiemannPNT where
     `HardyTheorem,
     `EulerAndLfunctions,
     `PrimeNumberTheorem,
+    `PrimeNumberTheorem.FirstOrderPerron,
     `PrimeNumberTheorem.PerronTruncation,
     `PrimeNumberTheorem.VonMangoldtPerronTruncated,
     `PrimeNumberTheorem.PerronExplicitError,
