@@ -135,6 +135,11 @@ Already available or mostly available:
    `PrimeNumberTheorem.integral_vonMangoldt_secondOrderPerron_eq`.  The last
    theorem recovers the first Riesz mean
    `sum_{n <= x} Lambda(n) * log (x / n)` from the vertical `1 / s^2` kernel.
+6. The finite-difference bridge back to `chebyshevPsi` is proved as
+   `PrimeNumberTheorem.chebyshevPsi_le_rieszDifference_div_log_le`: for
+   `0 < x < y`, the normalized Riesz-mean difference lies between `psi x`
+   and `psi y`.  Thus the second-order Perron output is no longer isolated
+   from the unsmoothed arithmetic function.
 
 Needed:
 
@@ -499,11 +504,11 @@ and
    target shape.
 3. Prove finite bounded-height support lemmas for the zero sums from
    `finite_nontrivial_zeros_bounded_height`.
-4. Pass from the proved absolutely convergent `1 / s^2` Perron formula to the
-   ordinary `1 / s` half-jump formula, or prove a finite-difference theorem
-   recovering `chebyshevPsi` from the first Riesz mean with a quantitative
-   error.  The conditionally convergent half-jump and the truncation error are
-   still open.
+4. Either prove the ordinary `1 / s` half-jump formula, or combine the proved
+   `1 / s^2` formula and Riesz finite-difference squeeze with a quantitative
+   choice of `y - x` in the contour-error argument.  The exact finite-difference
+   bridge is complete; the conditionally convergent half-jump and the finite
+   height truncation error remain open.
 5. Extend the existing constant-function rectangle sanity checks to a real
    rectangle meromorphic residue theorem as a reusable project
    lemma, since Mathlib currently supplies the analytic pieces but not the exact
