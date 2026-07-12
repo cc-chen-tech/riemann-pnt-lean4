@@ -20,6 +20,7 @@ lean_lib RiemannPNT where
     `PrimeNumberTheorem.LSeriesPerron,
     `PrimeNumberTheorem.CompletePerron,
     `PrimeNumberTheorem.SecondOrderExplicitFormula,
+    `PrimeNumberTheorem.SafeSecondOrderExplicitFormula,
     `PrimeNumberTheorem.ExplicitFormulaAux,
     `ZeroFreeRegion,
     `ZeroFreeRegion.MeromorphicAux,

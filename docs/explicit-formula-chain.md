@@ -173,8 +173,14 @@ Already available or mostly available:
     summable `1/W` remainder.  Its residue witness is now accompanied by the
     proved value formula: `x` at `1` and
     `-multiplicity(rho) * x^rho / rho^2` at every nontrivial zero in the
-    rectangle.  The remaining analytic work is to supply convenient safe
-    rectangle heights and estimate the three shifted edges.
+    rectangle.
+13. `PrimeNumberTheorem.ExplicitFormulaResidues.exists_safe_norm_residue_sum_sub_contourRemainder_sub_smoothedPsi_le`
+    removes the pole-free-boundary hypothesis.  Above every prescribed Perron
+    height it chooses a `goodHeight`, then uses bounded-height zero finiteness
+    to choose a left edge `a in (0,1/2)` distinct from every enclosed zero's
+    real part.  Thus arbitrarily high safe long rectangles, with fixed right
+    edge `c > 1`, now feed the truncated formula unconditionally.  The main
+    remaining analytic work is to estimate the three shifted edges.
 
 Needed:
 
