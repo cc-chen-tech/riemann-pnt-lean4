@@ -3,6 +3,7 @@ import GammaResidue
 import HardyTheorem
 import EulerAndLfunctions
 import PrimeNumberTheorem
+import PrimeNumberTheorem.Perron
 import PrimeNumberTheorem.ExplicitFormulaResidues
 import PrimeNumberTheorem.ExplicitFormulaRectangle
 import PrimeNumberTheorem.ExplicitFormulaTruncated
@@ -7863,6 +7864,49 @@ theorem exists_finset_analyticOnNhd_regularizedLogDeriv_riemannZeta_closedBall
           (Metric.closedBall c R)) (Metric.closedBall c R) :=
   ZeroFreeRegion.exists_finset_analyticOnNhd_regularizedLogDeriv_riemannZeta_closedBall
     havoid
+
+/-- Public quantitative pigeonhole lemma for avoiding a finite set of real
+radii inside a nondegenerate interval. -/
+theorem exists_radius_separated_from_finset
+    (s : Finset ℝ) {a b : ℝ} (hab : a < b) :
+    ∃ r ∈ Set.Icc a b, ∀ x ∈ s,
+      (b - a) / ((4 : ℝ) * ((s.card : ℝ) + 1)) ≤ |r - x| :=
+  ZeroFreeRegion.exists_radius_separated_from_finset s hab
+
+/-- Public cardinality bridge from distinct zeta zeros in an inner disk to
+the multiplicity mass of the divisor on a containing disk. -/
+theorem exists_finset_riemannZeta_zeros_closedBall_card_le_divisor_mass
+    {c : ℂ} {r R : ℝ} (hrR : r ≤ R)
+    (havoid : ∀ z : ℂ, z ∈ Metric.closedBall c R → z ≠ 1) :
+    ∃ zeros : Finset ℂ,
+      (∀ ρ : ℂ,
+        ρ ∈ zeros ↔ ρ ∈ Metric.closedBall c r ∧ riemannZeta ρ = 0) ∧
+      (zeros.card : ℝ) ≤
+        ∑ᶠ u ∈ (Metric.closedBall c r : Set ℂ),
+          (MeromorphicOn.divisor riemannZeta (Metric.closedBall c R) u : ℝ) :=
+  ZeroFreeRegion.exists_finset_riemannZeta_zeros_closedBall_card_le_divisor_mass
+    hrR havoid
+
+/-- Public good-circle selection theorem for all zeta zeros in a pole-free
+closed disk. -/
+theorem exists_good_radius_separated_from_riemannZeta_zeros_closedBall
+    {c : ℂ} {a b : ℝ} (hab : a < b)
+    (havoid : ∀ z : ℂ, z ∈ Metric.closedBall c b → z ≠ 1) :
+    ∃ (zeros : Finset ℂ) (r : ℝ),
+      (∀ ρ : ℂ,
+        ρ ∈ zeros ↔ ρ ∈ Metric.closedBall c b ∧ riemannZeta ρ = 0) ∧
+      r ∈ Set.Icc a b ∧
+      (∀ ρ ∈ zeros,
+        (b - a) /
+            ((4 : ℝ) * (((zeros.image (dist c)).card : ℝ) + 1)) ≤
+          |r - dist c ρ|) ∧
+      (∀ z ∈ Metric.sphere c r, ∀ ρ ∈ zeros,
+        (b - a) /
+            ((4 : ℝ) * (((zeros.image (dist c)).card : ℝ) + 1)) ≤
+          dist z ρ) ∧
+      ∀ z ∈ Metric.sphere c r, riemannZeta z ≠ 0 :=
+  ZeroFreeRegion.exists_good_radius_separated_from_riemannZeta_zeros_closedBall
+    hab havoid
 
 /-- Public complete zero-factor extraction for zeta on a closed disk avoiding
 the pole. -/
@@ -16130,6 +16174,28 @@ theorem jensen_inner_zero_multiplicity_count_riemannZeta_two_add_I_mul_le_log_bo
       Real.log M + Real.log 3 :=
   ZeroFreeRegion.jensen_inner_zero_multiplicity_count_riemannZeta_two_add_I_mul_le_log_bound
     hr hrR hheight hM hsphere
+
+/-- Public quantitative good-circle theorem obtained by composing a zeta
+boundary norm bound, Jensen zero counting, and finite-radius avoidance. -/
+theorem exists_good_radius_riemannZeta_two_add_I_mul_of_boundary_norm_bound
+    {a b R t M : ℝ} (ha : 0 ≤ a) (hab : a < b) (hbR : b < R)
+    (hheight : R < |t|) (hM : 1 ≤ M)
+    (hsphere : ∀ z : ℂ,
+      z ∈ Metric.sphere ((2 : ℂ) + Complex.I * t) R →
+        ‖riemannZeta z‖ ≤ M) :
+    ∃ (zeros : Finset ℂ) (r : ℝ),
+      (∀ ρ : ℂ,
+        ρ ∈ zeros ↔
+          ρ ∈ Metric.closedBall ((2 : ℂ) + Complex.I * t) b ∧
+            riemannZeta ρ = 0) ∧
+      r ∈ Set.Icc a b ∧
+      (∀ z ∈ Metric.sphere ((2 : ℂ) + Complex.I * t) r,
+        riemannZeta z ≠ 0) ∧
+      Real.log (R / b) *
+          ((zeros.image (dist ((2 : ℂ) + Complex.I * t))).card : ℝ) ≤
+        Real.log M + Real.log 3 :=
+  ZeroFreeRegion.exists_good_radius_riemannZeta_two_add_I_mul_of_boundary_norm_bound
+    ha hab hbR hheight hM hsphere
 
 /-- Public Jensen formula specialized directly to `logDeriv ζ` on a
 `σ + I*t` disk. -/

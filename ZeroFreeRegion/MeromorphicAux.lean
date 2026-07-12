@@ -30,6 +30,120 @@ open MeromorphicAt MeromorphicOn Metric Real
 
 namespace ZeroFreeRegion
 
+/-! ## Quantitative avoidance of finitely many radii -/
+
+/-- Among `N + 1` equally spaced candidate points in a nondegenerate real
+interval, one stays a controlled distance from every member of a finset of
+cardinality `N`.
+
+This is the quantitative pigeonhole step used to choose a circle that avoids
+all local zeta zeros after Jensen bounds their number. -/
+lemma exists_radius_separated_from_finset (s : Finset ℝ) {a b : ℝ} (hab : a < b) :
+    ∃ r ∈ Set.Icc a b, ∀ x ∈ s,
+      (b - a) / ((4 : ℝ) * ((s.card : ℝ) + 1)) ≤ |r - x| := by
+  classical
+  let m : ℕ := s.card + 1
+  let gap : ℝ := (b - a) / (m : ℝ)
+  let delta : ℝ := gap / 4
+  let candidate : Fin m → ℝ := fun k => a + ((k : ℕ) + 1 : ℝ) * gap
+  have hm_pos : 0 < m := by simp [m]
+  have hgap_pos : 0 < gap := div_pos (sub_pos.mpr hab) (by positivity)
+  have hcandidate_mem : ∀ k, candidate k ∈ Set.Icc a b := by
+    intro k
+    constructor
+    · dsimp [candidate]
+      exact le_add_of_nonneg_right (mul_nonneg (by positivity) hgap_pos.le)
+    · have hk : (k : ℕ) + 1 ≤ m := k.isLt
+      have hk_real : (k : ℝ) + 1 ≤ m := by exact_mod_cast hk
+      have hmul_le := mul_le_mul_of_nonneg_right hk_real hgap_pos.le
+      have hmgap : (m : ℝ) * gap = b - a := by
+        dsimp [gap]
+        field_simp
+      dsimp [candidate]
+      nlinarith
+  by_contra hgood
+  push Not at hgood
+  have hbad : ∀ k : Fin m, ∃ x ∈ s, |candidate k - x| < delta := by
+    intro k
+    simpa [delta, gap, m, div_eq_mul_inv, mul_assoc] using
+      hgood (candidate k) (hcandidate_mem k)
+  choose f hfmem hfclose using hbad
+  let F : Fin m → s := fun k => ⟨f k, hfmem k⟩
+  have hF_injective : Function.Injective F := by
+    intro k l hF
+    by_contra hkl
+    have hindices : (k : ℕ) < l ∨ (l : ℕ) < k := Nat.lt_or_gt_of_ne (by
+      intro h
+      apply hkl
+      exact Fin.ext h)
+    rcases hindices with hkl_lt | hlk_lt
+    · have hsep : gap ≤ candidate l - candidate k := by
+        have hcast : (1 : ℝ) ≤ (l : ℝ) - (k : ℝ) := by
+          have hcast' : (k : ℝ) + 1 ≤ (l : ℝ) := by
+            exact_mod_cast (Nat.succ_le_iff.mpr hkl_lt)
+          linarith
+        have hmul := mul_le_mul_of_nonneg_right hcast hgap_pos.le
+        dsimp [candidate]
+        nlinarith
+      have hsame : f k = f l := congrArg Subtype.val hF
+      have hnear : candidate l - candidate k < gap / 2 := by
+        have htri : |candidate l - candidate k| ≤
+            |candidate l - f l| + |candidate k - f k| := by
+          calc
+            |candidate l - candidate k| =
+                |(candidate l - f l) - (candidate k - f k)| := by
+                  congr 1
+                  rw [hsame]
+                  ring
+            _ ≤ |candidate l - f l| + |candidate k - f k| := abs_sub _ _
+        have hpos : 0 ≤ candidate l - candidate k := hgap_pos.le.trans hsep
+        rw [abs_of_nonneg hpos] at htri
+        dsimp [delta] at hfclose
+        linarith [hfclose k, hfclose l]
+      linarith
+    · have hsep : gap ≤ candidate k - candidate l := by
+        have hcast : (1 : ℝ) ≤ (k : ℝ) - (l : ℝ) := by
+          have hcast' : (l : ℝ) + 1 ≤ (k : ℝ) := by
+            exact_mod_cast (Nat.succ_le_iff.mpr hlk_lt)
+          linarith
+        have hmul := mul_le_mul_of_nonneg_right hcast hgap_pos.le
+        dsimp [candidate]
+        nlinarith
+      have hsame : f k = f l := congrArg Subtype.val hF
+      have hnear : candidate k - candidate l < gap / 2 := by
+        have htri : |candidate k - candidate l| ≤
+            |candidate k - f k| + |candidate l - f l| := by
+          calc
+            |candidate k - candidate l| =
+                |(candidate k - f k) - (candidate l - f l)| := by
+                  congr 1
+                  rw [hsame]
+                  ring
+            _ ≤ |candidate k - f k| + |candidate l - f l| := abs_sub _ _
+        have hpos : 0 ≤ candidate k - candidate l := hgap_pos.le.trans hsep
+        rw [abs_of_nonneg hpos] at htri
+        dsimp [delta] at hfclose
+        linarith [hfclose k, hfclose l]
+      linarith
+  have hcard := Fintype.card_le_of_injective F hF_injective
+  simp [m] at hcard
+
+/-- Complex-center specialization of `exists_radius_separated_from_finset`.
+The selected circle radius stays quantitatively separated from the radial
+coordinate of every point in `s`. -/
+lemma exists_radius_separated_from_finset_norm_sub
+    (s : Finset ℂ) (c : ℂ) {a b : ℝ} (hab : a < b) :
+    ∃ r ∈ Set.Icc a b, ∀ ρ ∈ s,
+      (b - a) /
+          ((4 : ℝ) * (((s.image (dist c)).card : ℝ) + 1)) ≤
+        |r - dist c ρ| := by
+  classical
+  let radii : Finset ℝ := s.image (dist c)
+  rcases exists_radius_separated_from_finset radii hab with ⟨r, hr, hsep⟩
+  refine ⟨r, hr, ?_⟩
+  intro ρ hρ
+  simpa [radii] using hsep (dist c ρ) (Finset.mem_image.mpr ⟨ρ, hρ, rfl⟩)
+
 /-! ## Analytic first-order ODE nonvanishing -/
 
 /-- A nonzero analytic solution of the scalar linear equation `f' = g * f`
@@ -11057,6 +11171,148 @@ lemma exists_finset_analyticOnNhd_regularizedLogDeriv_riemannZeta_closedBall
     have hρU : ρ ∈ U := (hpoles ρ).mp hρ |>.1
     exact (analyticOrderNatAt_riemannZeta_eq_analyticOrderAt_of_ne_one
       (havoid ρ hρU)).symm
+
+/-- The number of distinct zeta zeros in an inner closed disk is at most the
+sum of their multiplicities measured by the divisor on a containing disk.
+
+The result exposes the exact finite zero set, so subsequent good-radius
+arguments can combine its cardinality with Jensen's multiplicity bound. -/
+lemma exists_finset_riemannZeta_zeros_closedBall_card_le_divisor_mass
+    {c : ℂ} {r R : ℝ} (hrR : r ≤ R)
+    (havoid : ∀ z : ℂ, z ∈ closedBall c R → z ≠ 1) :
+    ∃ zeros : Finset ℂ,
+      (∀ ρ : ℂ,
+        ρ ∈ zeros ↔ ρ ∈ closedBall c r ∧ riemannZeta ρ = 0) ∧
+      (zeros.card : ℝ) ≤
+        ∑ᶠ u ∈ (closedBall c r : Set ℂ),
+          (MeromorphicOn.divisor riemannZeta (closedBall c R) u : ℝ) := by
+  classical
+  let U : Set ℂ := closedBall c R
+  let V : Set ℂ := closedBall c r
+  let D := MeromorphicOn.divisor riemannZeta U
+  have hVsub : V ⊆ U := by
+    intro z hz
+    exact closedBall_subset_closedBall hrR hz
+  have hanU : AnalyticOnNhd ℂ riemannZeta U := by
+    intro z hz
+    exact analyticOnNhd_riemannZeta_ne_one z (havoid z hz)
+  have hD_nonneg : 0 ≤ D := hanU.divisor_nonneg
+  have hD_finite : D.support.Finite :=
+    D.finiteSupport (isCompact_closedBall c R)
+  have hnotop : ∀ u : U, meromorphicOrderAt riemannZeta u ≠ ⊤ := by
+    intro u
+    rw [(hanU u u.property).meromorphicOrderAt_eq]
+    intro hmap
+    apply analyticOrderAt_riemannZeta_ne_top_of_ne_one
+      (havoid u u.property)
+    exact ENat.map_eq_top_iff.mp hmap
+  have hzero_support := hanU.meromorphicNFOn.zero_set_eq_divisor_support hnotop
+  have havoidV : ∀ z : ℂ, z ∈ closedBall c r → z ≠ 1 := by
+    intro z hz
+    exact havoid z (hVsub hz)
+  rcases exists_finset_analyticOnNhd_regularizedLogDeriv_riemannZeta_closedBall
+      havoidV with ⟨zeros, hzeros, _⟩
+  have hzeros_support : zeros ⊆ hD_finite.toFinset := by
+    intro ρ hρ
+    apply hD_finite.mem_toFinset.mpr
+    have hρ_data := (hzeros ρ).mp hρ
+    have hρU : ρ ∈ U := hVsub hρ_data.1
+    have hmem := Set.ext_iff.mp hzero_support ρ
+    simp only [Set.mem_inter_iff, Set.mem_preimage, Set.mem_singleton_iff] at hmem
+    exact hmem.mp ⟨hρU, hρ_data.2⟩
+  have hD_one_le : ∀ ρ ∈ zeros, (1 : ℝ) ≤ (D ρ : ℝ) := by
+    intro ρ hρ
+    have hsupport : ρ ∈ D.support :=
+      hD_finite.mem_toFinset.mp (hzeros_support hρ)
+    have hne : D ρ ≠ 0 := by
+      simpa [Function.mem_support] using hsupport
+    have hnonneg : 0 ≤ D ρ := hD_nonneg ρ
+    have hone : (1 : ℤ) ≤ D ρ := by omega
+    exact_mod_cast hone
+  let G : ℂ → ℝ := V.indicator (fun u => (D u : ℝ))
+  have hG_support : G.support ⊆ hD_finite.toFinset := by
+    intro u hu
+    apply hD_finite.mem_toFinset.mpr
+    by_contra hDu
+    have hDu_zero : D u = 0 := by
+      simpa [Function.mem_support] using hDu
+    simp [G, hDu_zero] at hu
+  have hcard_le_sum : (zeros.card : ℝ) ≤ ∑ ρ ∈ zeros, (D ρ : ℝ) := by
+    simpa using zeros.card_nsmul_le_sum (fun ρ => (D ρ : ℝ)) 1 hD_one_le
+  have hsum_le : (∑ ρ ∈ zeros, (D ρ : ℝ)) ≤
+      ∑ u ∈ hD_finite.toFinset, G u := by
+    calc
+      (∑ ρ ∈ zeros, (D ρ : ℝ)) = ∑ ρ ∈ zeros, G ρ := by
+        apply Finset.sum_congr rfl
+        intro ρ hρ
+        have hρV : ρ ∈ V := by simpa [V] using ((hzeros ρ).mp hρ).1
+        simp [G, hρV]
+      _ ≤ ∑ u ∈ hD_finite.toFinset, G u :=
+        Finset.sum_le_sum_of_subset_of_nonneg hzeros_support (by
+          intro u _hu _hu_zero
+          by_cases huV : u ∈ V
+          · simp [G, huV, show (0 : ℝ) ≤ (D u : ℝ) by exact_mod_cast hD_nonneg u]
+          · simp [G, huV])
+  refine ⟨zeros, hzeros, hcard_le_sum.trans hsum_le |>.trans_eq ?_⟩
+  rw [finsum_mem_def]
+  exact (finsum_eq_sum_of_support_subset G hG_support).symm
+
+/-- A pole-free outer disk contains a concentric circle whose radius is
+quantitatively separated from every radial zeta-zero coordinate.
+
+The returned finset is exactly the zeta-zero set in the outer disk.  The
+radial separation implies a pointwise distance lower bound on the selected
+circle and therefore proves that zeta has no zero on that circle. -/
+lemma exists_good_radius_separated_from_riemannZeta_zeros_closedBall
+    {c : ℂ} {a b : ℝ} (hab : a < b)
+    (havoid : ∀ z : ℂ, z ∈ closedBall c b → z ≠ 1) :
+    ∃ (zeros : Finset ℂ) (r : ℝ),
+      (∀ ρ : ℂ,
+        ρ ∈ zeros ↔ ρ ∈ closedBall c b ∧ riemannZeta ρ = 0) ∧
+      r ∈ Set.Icc a b ∧
+      (∀ ρ ∈ zeros,
+        (b - a) /
+            ((4 : ℝ) * (((zeros.image (dist c)).card : ℝ) + 1)) ≤
+          |r - dist c ρ|) ∧
+      (∀ z ∈ sphere c r, ∀ ρ ∈ zeros,
+        (b - a) /
+            ((4 : ℝ) * (((zeros.image (dist c)).card : ℝ) + 1)) ≤
+          dist z ρ) ∧
+      ∀ z ∈ sphere c r, riemannZeta z ≠ 0 := by
+  classical
+  rcases exists_finset_analyticOnNhd_regularizedLogDeriv_riemannZeta_closedBall
+      havoid with ⟨zeros, hzeros, _⟩
+  rcases exists_radius_separated_from_finset_norm_sub zeros c hab with
+    ⟨r, hr, hradial⟩
+  have hradial_dist : ∀ ρ ∈ zeros,
+      (b - a) /
+          ((4 : ℝ) * (((zeros.image (dist c)).card : ℝ) + 1)) ≤
+        |r - dist c ρ| := by
+    intro ρ hρ
+    exact hradial ρ hρ
+  have hsphere_sep : ∀ z ∈ sphere c r, ∀ ρ ∈ zeros,
+      (b - a) /
+          ((4 : ℝ) * (((zeros.image (dist c)).card : ℝ) + 1)) ≤
+        dist z ρ := by
+    intro z hz ρ hρ
+    have hzrad : dist c z = r := mem_sphere'.mp hz
+    have hmetric : |dist c z - dist c ρ| ≤ dist z ρ := by
+      simpa [Real.dist_eq] using dist_dist_dist_le_right c z ρ
+    rw [hzrad] at hmetric
+    exact (hradial_dist ρ hρ).trans hmetric
+  refine ⟨zeros, r, hzeros, hr, hradial_dist, hsphere_sep, ?_⟩
+  intro z hz hzeta
+  have hzrad : dist c z = r := mem_sphere'.mp hz
+  have hzclosed : z ∈ closedBall c b := by
+    rw [mem_closedBall, _root_.dist_comm z c, hzrad]
+    exact hr.2
+  have hzmem : z ∈ zeros := (hzeros z).mpr ⟨hzclosed, hzeta⟩
+  have hsep := hsphere_sep z hz z hzmem
+  have hsep_pos : 0 <
+      (b - a) /
+        ((4 : ℝ) * (((zeros.image (dist c)).card : ℝ) + 1)) := by
+    exact div_pos (sub_pos.mpr hab) (mul_pos (by norm_num) (by positivity))
+  simpa using hsep_pos.trans_le hsep
 
 /-- On a closed disk avoiding the pole, zeta factors into its complete local
 divisor product and an analytic nonvanishing unit.
@@ -22186,6 +22442,71 @@ lemma jensen_inner_zero_multiplicity_count_riemannZeta_two_add_I_mul_le_log_boun
           rw [mul_finsum_mem]
     _ ≤ ∑ᶠ u : ℂ, (D u : ℝ) * Real.log (R * ‖c - u‖⁻¹) := hsum_le
     _ ≤ Real.log M + Real.log 3 := by simpa [c, D] using hmass
+
+/-- A boundary norm bound for zeta on a high outer circle yields a smaller
+concentric circle avoiding every local zeta zero, together with an explicit
+Jensen bound on the number of distinct forbidden radii.
+
+This is the quantitative good-circle selection step between local Jensen
+zero counting and boundary estimates for the zero-removed analytic factor. -/
+lemma exists_good_radius_riemannZeta_two_add_I_mul_of_boundary_norm_bound
+    {a b R t M : ℝ} (ha : 0 ≤ a) (hab : a < b) (hbR : b < R)
+    (hheight : R < |t|) (hM : 1 ≤ M)
+    (hsphere : ∀ z : ℂ,
+      z ∈ sphere ((2 : ℂ) + I * t) R → ‖riemannZeta z‖ ≤ M) :
+    ∃ (zeros : Finset ℂ) (r : ℝ),
+      (∀ ρ : ℂ,
+        ρ ∈ zeros ↔
+          ρ ∈ closedBall ((2 : ℂ) + I * t) b ∧
+            riemannZeta ρ = 0) ∧
+      r ∈ Set.Icc a b ∧
+      (∀ z ∈ sphere ((2 : ℂ) + I * t) r, riemannZeta z ≠ 0) ∧
+      Real.log (R / b) *
+          ((zeros.image (dist ((2 : ℂ) + I * t))).card : ℝ) ≤
+        Real.log M + Real.log 3 := by
+  classical
+  let c : ℂ := (2 : ℂ) + I * t
+  have hb : 0 < b := ha.trans_lt hab
+  have hR : 0 < R := hb.trans hbR
+  have havoidR : ∀ z : ℂ, z ∈ closedBall c R → z ≠ 1 := by
+    intro z hz hz_one
+    subst z
+    have hdist : dist (1 : ℂ) c ≤ R := by simpa using hz
+    have him_le : |(((1 : ℂ) - c).im)| ≤ ‖(1 : ℂ) - c‖ :=
+      Complex.abs_im_le_norm ((1 : ℂ) - c)
+    have him_eq : |(((1 : ℂ) - c).im)| = |t| := by simp [c]
+    have hnorm_le : ‖(1 : ℂ) - c‖ ≤ R := by
+      simpa [dist_eq_norm] using hdist
+    linarith
+  have havoidb : ∀ z : ℂ, z ∈ closedBall c b → z ≠ 1 := by
+    intro z hz
+    exact havoidR z (closedBall_subset_closedBall hbR.le hz)
+  rcases exists_good_radius_separated_from_riemannZeta_zeros_closedBall
+      hab havoidb with
+    ⟨zeros, r, hzeros, hr, _hradial, _hsphere_sep, hsphere_ne⟩
+  rcases exists_finset_riemannZeta_zeros_closedBall_card_le_divisor_mass
+      (c := c) (r := b) (R := R) hbR.le havoidR with
+    ⟨zeros', hzeros', hcard_mass⟩
+  have hzero_sets : zeros' = zeros := by
+    ext ρ
+    rw [hzeros' ρ, hzeros ρ]
+  subst zeros'
+  have himage_card :
+      ((zeros.image (dist c)).card : ℝ) ≤ (zeros.card : ℝ) := by
+    exact_mod_cast Finset.card_image_le
+  have himage_mass :
+      ((zeros.image (dist c)).card : ℝ) ≤
+        ∑ᶠ u ∈ (closedBall c b : Set ℂ),
+          (MeromorphicOn.divisor riemannZeta (closedBall c R) u : ℝ) :=
+    himage_card.trans hcard_mass
+  have hlog_pos : 0 < Real.log (R / b) := by
+    exact Real.log_pos ((one_lt_div hb).mpr hbR)
+  have hcount :=
+    jensen_inner_zero_multiplicity_count_riemannZeta_two_add_I_mul_le_log_bound
+      (r := b) (R := R) (t := t) (M := M) hb hbR hheight hM hsphere
+  refine ⟨zeros, r, by simpa [c] using hzeros, hr, by simpa [c] using hsphere_ne, ?_⟩
+  have hmul := mul_le_mul_of_nonneg_left himage_mass hlog_pos.le
+  exact (by simpa [c] using hmul.trans hcount)
 
 /-- Jensen formula specialized directly to `logDeriv ζ` on a `σ + I*t`
 disk. -/

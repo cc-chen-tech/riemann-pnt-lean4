@@ -740,6 +740,19 @@ Core verified declarations:
 - `exists_log_norm_factorization_riemannZeta_closedBall` gives the associated
   codiscrete identity `log‖ζ‖ = Σ nρ log‖z-ρ‖ + log‖g‖`, which is the direct
   bridge from zeta boundary growth to the zero-removed unit.
+- `exists_radius_separated_from_finset` proves a quantitative finite-set
+  avoidance lemma with separation `(b-a)/(4(N+1))` inside `[a,b]`.
+- `exists_good_radius_separated_from_riemannZeta_zeros_closedBall` applies that
+  lemma to all distinct radial coordinates of the exact zeta-zero set in a
+  pole-free disk, upgrades radial separation to pointwise distance separation
+  on the selected circle, and proves zeta is nonzero on the circle.
+- `exists_finset_riemannZeta_zeros_closedBall_card_le_divisor_mass` proves that
+  the number of distinct inner-disk zeta zeros is bounded by the multiplicity
+  mass of the zeta divisor on a containing disk.
+- `exists_good_radius_riemannZeta_two_add_I_mul_of_boundary_norm_bound` composes
+  that cardinality bridge with the Jensen bound.  From `‖ζ‖ ≤ M` on the
+  outer circle it constructs a zero-free intermediate circle and proves
+  `log(R/b) * #distinct-radii ≤ log M + log 3`.
 - `exists_punctured_ball_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq`
   and `exists_punctured_closedBall_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq`
   convert an eventually-equal multiplicity regular part and an eventual norm

@@ -1666,6 +1666,26 @@ total-multiplicity bound in every smaller concentric disk, with denominator
 `log (R/r)`.  These are real zero-counting results, but they still require a
 zeta-specific high-height boundary-growth estimate and do not yet prove the
 regular-part `O(log |t|)` estimate for `ζ'/ζ`.
+
+The finite-radius step after Jensen is now also formalized:
+
+```lean
+ZeroFreeRegion.exists_radius_separated_from_finset
+ZeroFreeRegion.exists_good_radius_separated_from_riemannZeta_zeros_closedBall
+ZeroFreeRegion.exists_finset_riemannZeta_zeros_closedBall_card_le_divisor_mass
+ZeroFreeRegion.exists_good_radius_riemannZeta_two_add_I_mul_of_boundary_norm_bound
+```
+
+The first theorem is a quantitative pigeonhole argument using `N+1`
+equally-spaced candidate radii.  The next two identify the exact finite zeta
+zero set, bound its cardinality by divisor multiplicity mass, and upgrade
+radial separation to a pointwise distance bound on a zero-free circle.  The
+last theorem composes these facts with Jensen: an outer-circle bound
+`‖ζ‖ ≤ M` produces a zero-free intermediate circle and the explicit estimate
+`log(R/b) * #distinct-radii ≤ log M + log 3`.  Thus quantitative boundary
+separation is no longer missing.  The remaining hard analytic step is to turn
+zeta vertical growth on such circles into a uniform bound for the analytic
+nonzero factor, hence for the regular part of `ζ'/ζ`.
 The polynomial-growth handoff is also now composed in this exact disk
 geometry:
 
