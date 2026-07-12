@@ -1540,8 +1540,10 @@ Core verified declarations:
   boundary-norm, analyticity, nonvanishing, exact-log-derivative, and
   `1/(R-d)` inner-disk bound lemmas establish the single-zero canonical
   replacement needed to eliminate the old quantitative circle-separation
-  loss.  The finite divisor product and summed regular-part estimate remain
-  open, so these declarations do not yet prove `LogDerivRegularPartLogBound`.
+  loss.  `canonicalNumeratorProduct` lifts this to finite families and bounds
+  the correction by total multiplicity divided by the radial margin.  The
+  zeta-divisor conversion and summed regular-part composition remain open, so
+  these declarations do not yet prove `LogDerivRegularPartLogBound`.
 - `norm_deriv_riemannZeta_le_re_zeta_two_div_radius_of_closedBall_two_le_re`
   uses Cauchy's derivative estimate plus the right-edge zeta bound to prove
   `||zeta'(c)|| <= Re(zeta(2)) / R` whenever `closedBall c R` stays in

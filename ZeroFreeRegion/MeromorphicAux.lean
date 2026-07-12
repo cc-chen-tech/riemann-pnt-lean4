@@ -12321,6 +12321,104 @@ lemma norm_logDeriv_translatedCanonicalNumerator_le_inv_sub
       _ ≤ (1 / (R - d)) * ‖raw‖ :=
         mul_le_mul_of_nonneg_left hden (by positivity)
 
+/-- Finite product of translated canonical numerators with natural
+multiplicities. -/
+noncomputable def canonicalNumeratorProduct
+    (c : ℂ) (R : ℝ) (zeros : Finset ℂ) (m : ℂ → ℕ) : ℂ → ℂ :=
+  fun z => ∏ u ∈ zeros, translatedCanonicalNumerator c R u z ^ m u
+
+/-- Replacing a finite family of ordinary zero factors by canonical
+numerators preserves the product norm on the boundary circle. -/
+lemma norm_canonicalNumeratorProduct_eq_norm_prod_sub
+    {c z : ℂ} {R : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ}
+    (hu : ∀ u ∈ zeros, u ∈ ball c R) (hz : z ∈ sphere c R) :
+    ‖canonicalNumeratorProduct c R zeros m z‖ =
+      ‖∏ u ∈ zeros, (z - u) ^ m u‖ := by
+  rw [canonicalNumeratorProduct, norm_prod]
+  simp only [norm_pow]
+  rw [norm_prod]
+  apply Finset.prod_congr rfl
+  intro u hu_mem
+  rw [norm_translatedCanonicalNumerator_eq_norm_sub (hu u hu_mem) hz]
+  rw [norm_pow]
+
+/-- A finite canonical numerator product is nonzero throughout the closed
+disk when every indexed zero lies in the open disk. -/
+lemma canonicalNumeratorProduct_ne_zero
+    {c z : ℂ} {R : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ}
+    (hu : ∀ u ∈ zeros, u ∈ ball c R) (hz : z ∈ closedBall c R) :
+    canonicalNumeratorProduct c R zeros m z ≠ 0 := by
+  rw [canonicalNumeratorProduct]
+  rw [Finset.prod_ne_zero_iff]
+  intro u hu_mem
+  exact pow_ne_zero _ (translatedCanonicalNumerator_ne_zero (hu u hu_mem) hz)
+
+/-- A finite canonical numerator product is entire. -/
+lemma analyticOnNhd_canonicalNumeratorProduct
+    {c : ℂ} {R : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ} :
+    AnalyticOnNhd ℂ (canonicalNumeratorProduct c R zeros m) Set.univ := by
+  intro z _hz
+  change AnalyticAt ℂ
+    (fun z => ∏ u ∈ zeros,
+      (((R : ℂ) ^ 2 - (starRingEnd ℂ) (u - c) * (z - c)) / R) ^ m u) z
+  fun_prop
+
+/-- The logarithmic derivative of a finite canonical numerator product is the
+multiplicity-weighted sum of the single-factor logarithmic derivatives. -/
+lemma logDeriv_canonicalNumeratorProduct
+    {c z : ℂ} {R : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ}
+    (hu : ∀ u ∈ zeros, u ∈ ball c R) (hz : z ∈ closedBall c R) :
+    logDeriv (canonicalNumeratorProduct c R zeros m) z =
+      ∑ u ∈ zeros, (m u : ℂ) *
+        logDeriv (translatedCanonicalNumerator c R u) z := by
+  have hprod := logDeriv_prod
+    (s := zeros)
+    (f := fun u z => translatedCanonicalNumerator c R u z ^ m u)
+    (x := z)
+    (fun u hu_mem =>
+      pow_ne_zero _ (translatedCanonicalNumerator_ne_zero (hu u hu_mem) hz))
+    (fun u _hu_mem =>
+      ((analyticOnNhd_translatedCanonicalNumerator
+        (c := c) (u := u) (R := R) z (Set.mem_univ z)).differentiableAt.pow (m u)))
+  change logDeriv
+    (fun z => ∏ u ∈ zeros, translatedCanonicalNumerator c R u z ^ m u) z = _
+  rw [hprod]
+  apply Finset.sum_congr rfl
+  intro u hu_mem
+  exact logDeriv_fun_pow
+    (analyticOnNhd_translatedCanonicalNumerator
+      (c := c) (u := u) (R := R) z (Set.mem_univ z)).differentiableAt
+    (m u)
+
+/-- The canonical correction for a finite zero family is bounded by total
+multiplicity divided by the retained radial margin. -/
+lemma norm_logDeriv_canonicalNumeratorProduct_le_sum_div
+    {c z : ℂ} {d R : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ}
+    (hd : 0 ≤ d) (hdR : d < R)
+    (hu : ∀ u ∈ zeros, u ∈ ball c R) (hz : z ∈ closedBall c d) :
+    ‖logDeriv (canonicalNumeratorProduct c R zeros m) z‖ ≤
+      (∑ u ∈ zeros, (m u : ℝ)) / (R - d) := by
+  have hzR : z ∈ closedBall c R :=
+    Metric.closedBall_subset_closedBall hdR.le hz
+  rw [logDeriv_canonicalNumeratorProduct hu hzR]
+  calc
+    ‖∑ u ∈ zeros, (m u : ℂ) *
+        logDeriv (translatedCanonicalNumerator c R u) z‖
+        ≤ ∑ u ∈ zeros,
+            ‖(m u : ℂ) * logDeriv (translatedCanonicalNumerator c R u) z‖ :=
+      norm_sum_le _ _
+    _ ≤ ∑ u ∈ zeros, (m u : ℝ) * (1 / (R - d)) := by
+      apply Finset.sum_le_sum
+      intro u hu_mem
+      rw [norm_mul, Complex.norm_natCast]
+      exact mul_le_mul_of_nonneg_left
+        (norm_logDeriv_translatedCanonicalNumerator_le_inv_sub
+          hd hdR (hu u hu_mem) hz)
+        (Nat.cast_nonneg _)
+    _ = (∑ u ∈ zeros, (m u : ℝ)) / (R - d) := by
+      rw [← Finset.sum_mul]
+      ring
+
 /-- On a closed disk avoiding the pole, zeta factors into its complete local
 divisor product and an analytic nonvanishing unit.
 

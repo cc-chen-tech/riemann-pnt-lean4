@@ -8009,6 +8009,56 @@ theorem norm_logDeriv_translatedCanonicalNumerator_le_inv_sub
   ZeroFreeRegion.norm_logDeriv_translatedCanonicalNumerator_le_inv_sub
     hd hdR hu hz
 
+/-- Public finite product of canonical numerators with natural
+multiplicities. -/
+noncomputable abbrev canonicalNumeratorProduct
+    (c : ℂ) (R : ℝ) (zeros : Finset ℂ) (m : ℂ → ℕ) : ℂ → ℂ :=
+  ZeroFreeRegion.canonicalNumeratorProduct c R zeros m
+
+/-- Public boundary norm preservation for a finite canonical product. -/
+theorem norm_canonicalNumeratorProduct_eq_norm_prod_sub
+    {c z : ℂ} {R : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ}
+    (hu : ∀ u ∈ zeros, u ∈ Metric.ball c R)
+    (hz : z ∈ Metric.sphere c R) :
+    ‖canonicalNumeratorProduct c R zeros m z‖ =
+      ‖∏ u ∈ zeros, (z - u) ^ m u‖ :=
+  ZeroFreeRegion.norm_canonicalNumeratorProduct_eq_norm_prod_sub hu hz
+
+/-- Public closed-disk nonvanishing for a finite canonical product. -/
+theorem canonicalNumeratorProduct_ne_zero
+    {c z : ℂ} {R : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ}
+    (hu : ∀ u ∈ zeros, u ∈ Metric.ball c R)
+    (hz : z ∈ Metric.closedBall c R) :
+    canonicalNumeratorProduct c R zeros m z ≠ 0 :=
+  ZeroFreeRegion.canonicalNumeratorProduct_ne_zero hu hz
+
+/-- Public analyticity of a finite canonical numerator product. -/
+theorem analyticOnNhd_canonicalNumeratorProduct
+    {c : ℂ} {R : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ} :
+    AnalyticOnNhd ℂ (canonicalNumeratorProduct c R zeros m) Set.univ :=
+  ZeroFreeRegion.analyticOnNhd_canonicalNumeratorProduct
+
+/-- Public logarithmic-derivative sum for a finite canonical product. -/
+theorem logDeriv_canonicalNumeratorProduct
+    {c z : ℂ} {R : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ}
+    (hu : ∀ u ∈ zeros, u ∈ Metric.ball c R)
+    (hz : z ∈ Metric.closedBall c R) :
+    logDeriv (canonicalNumeratorProduct c R zeros m) z =
+      ∑ u ∈ zeros, (m u : ℂ) *
+        logDeriv (translatedCanonicalNumerator c R u) z :=
+  ZeroFreeRegion.logDeriv_canonicalNumeratorProduct hu hz
+
+/-- Public total-multiplicity bound for the finite canonical correction. -/
+theorem norm_logDeriv_canonicalNumeratorProduct_le_sum_div
+    {c z : ℂ} {d R : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ}
+    (hd : 0 ≤ d) (hdR : d < R)
+    (hu : ∀ u ∈ zeros, u ∈ Metric.ball c R)
+    (hz : z ∈ Metric.closedBall c d) :
+    ‖logDeriv (canonicalNumeratorProduct c R zeros m) z‖ ≤
+      (∑ u ∈ zeros, (m u : ℝ)) / (R - d) :=
+  ZeroFreeRegion.norm_logDeriv_canonicalNumeratorProduct_le_sum_div
+    hd hdR hu hz
+
 /-- Public complete zero-factor extraction for zeta on a closed disk avoiding
 the pole. -/
 theorem exists_analytic_nonzero_factorization_riemannZeta_closedBall
