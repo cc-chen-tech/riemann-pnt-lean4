@@ -129,6 +129,12 @@ Already available or mostly available:
 3. `ArithmeticFunction.LSeries_vonMangoldt_eq_deriv_riemannZeta_div`.
 4. A complex version of
    `sum Lambda(n) * n^(-s) = -zeta'(s) / zeta(s)` on `1 < s.re`.
+5. The absolutely convergent second-order Perron formula
+   `PrimeNumberTheorem.secondOrderPerron_eq_max`, its finite-sum form, and the
+   von Mangoldt specialization
+   `PrimeNumberTheorem.integral_vonMangoldt_secondOrderPerron_eq`.  The last
+   theorem recovers the first Riesz mean
+   `sum_{n <= x} Lambda(n) * log (x / n)` from the vertical `1 / s^2` kernel.
 
 Needed:
 
@@ -493,8 +499,11 @@ and
    target shape.
 3. Prove finite bounded-height support lemmas for the zero sums from
    `finite_nontrivial_zeros_bounded_height`.
-4. Formalize a generic Perron half-jump theorem for finitely supported or
-   absolutely summable Dirichlet series.
+4. Pass from the proved absolutely convergent `1 / s^2` Perron formula to the
+   ordinary `1 / s` half-jump formula, or prove a finite-difference theorem
+   recovering `chebyshevPsi` from the first Riesz mean with a quantitative
+   error.  The conditionally convergent half-jump and the truncation error are
+   still open.
 5. Extend the existing constant-function rectangle sanity checks to a real
    rectangle meromorphic residue theorem as a reusable project
    lemma, since Mathlib currently supplies the analytic pieces but not the exact
