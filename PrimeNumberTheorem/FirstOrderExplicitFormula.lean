@@ -47,6 +47,145 @@ theorem tendsto_finiteTrivialZeroSum_multiplicity_residues
   funext N
   exact sum_finiteTrivialZeroSum_multiplicity_residues_eq
 
+/-- The subset of a contour pole finset consisting of displayed negative
+even integers. -/
+noncomputable def trivialZeroPart (poles : Finset ℂ) : Finset ℂ := by
+  classical
+  exact poles.filter fun p : ℂ =>
+    ∃ n : ℕ, p = (-2 * ((n : ℕ) + 1) : ℂ)
+
+/-- The complementary part of a contour pole finset after removing the
+displayed negative even integers. -/
+noncomputable def remainingPolePart (poles : Finset ℂ) : Finset ℂ := by
+  classical
+  exact poles.filter fun p : ℂ =>
+    ¬∃ n : ℕ, p = (-2 * ((n : ℕ) + 1) : ℂ)
+
+/-- For a rectangle whose left edge lies halfway between `-2N` and
+`-2(N+1)`, the trivial-zero part of its complete pole finset is exactly
+`{-2, -4, ..., -2N}`. -/
+theorem trivialZeroPart_eq_finiteTrivialZeroSum
+    (poles : Finset ℂ) (N : ℕ) {c H : ℝ}
+    (hc : 1 < c) (hH : 0 < H)
+    (hpoles : ∀ p ∈ poles,
+      -(2 * (N : ℝ) + 1) < p.re ∧ p.re < c ∧ -H < p.im ∧ p.im < H)
+    (hcomplete : ∀ p,
+      p ∈ ([[-(2 * (N : ℝ) + 1), c]] ×ℂ [[-H, H]] : Set ℂ) →
+      p = 0 ∨ p = 1 ∨ riemannZeta p = 0 → p ∈ poles) :
+    trivialZeroPart poles = finiteTrivialZeroSum (2 * (N : ℝ)) := by
+  classical
+  ext p
+  simp only [trivialZeroPart, Finset.mem_filter]
+  constructor
+  · rintro ⟨hp, n, rfl⟩
+    apply mem_finiteTrivialZeroSum_iff.mpr
+    refine ⟨n, ?_, rfl⟩
+    rw [show 2 * (N : ℝ) / 2 = (N : ℝ) by ring, Nat.floor_natCast]
+    have hleft := (hpoles _ hp).1
+    have hre : (-2 * ((n : ℕ) + 1) : ℂ).re =
+        -2 * ((n : ℝ) + 1) := by norm_num
+    rw [hre] at hleft
+    have hnR : (n : ℝ) < N := by linarith
+    exact_mod_cast hnR
+  · intro hp
+    rcases mem_finiteTrivialZeroSum_iff.mp hp with ⟨n, hn, hnp⟩
+    rw [show 2 * (N : ℝ) / 2 = (N : ℝ) by ring, Nat.floor_natCast] at hn
+    rw [← hnp]
+    refine ⟨hcomplete _ ?_ (Or.inr (Or.inr ?_)), ⟨n, rfl⟩⟩
+    · have hnR : (n : ℝ) < N := by exact_mod_cast hn
+      have hnSuccR : ((n + 1 : ℕ) : ℝ) ≤ N := by
+        exact_mod_cast (Nat.succ_le_iff.mpr hn)
+      have hN : 0 ≤ (N : ℝ) := Nat.cast_nonneg N
+      have hre : (-2 * ((n : ℕ) + 1) : ℂ).re =
+          -2 * ((n : ℝ) + 1) := by norm_num
+      have him : (-2 * ((n : ℕ) + 1) : ℂ).im = 0 := by norm_num
+      have hre_lower : -(2 * (N : ℝ) + 1) ≤
+          (-2 * ((n : ℕ) + 1) : ℂ).re := by
+        rw [hre]
+        norm_num at hnSuccR ⊢
+        linarith
+      have hre_upper : (-2 * ((n : ℕ) + 1) : ℂ).re ≤ c := by
+        rw [hre]
+        linarith
+      have ha_c : -(2 * (N : ℝ) + 1) ≤ c := by linarith
+      have hheight : -H ≤ H := by linarith
+      rw [Complex.mem_reProdIm]
+      constructor
+      · rw [Set.uIcc_of_le ha_c]
+        exact ⟨hre_lower, hre_upper⟩
+      · rw [Set.uIcc_of_le hheight, him]
+        exact ⟨by linarith, hH.le⟩
+    · simpa only [Nat.cast_add, Nat.cast_one] using
+        riemannZeta_neg_two_mul_nat_add_one n
+
+/-- Every contour-pole sum is the sum over its trivial-zero part plus the
+remaining poles. -/
+theorem sum_contourPoleResidues_eq_trivial_add_remaining
+    (poles : Finset ℂ) (residue : ℂ → ℂ) :
+    (∑ p ∈ poles, residue p) =
+      (∑ p ∈ trivialZeroPart poles, residue p) +
+        ∑ p ∈ remainingPolePart poles, residue p := by
+  classical
+  symm
+  exact Finset.sum_filter_add_sum_filter_not poles
+    (fun p : ℂ => ∃ n : ℕ, p = (-2 * ((n : ℕ) + 1) : ℂ)) residue
+
+/-- Under the contour theorem's pole and residue contracts, the residue sum
+over the extracted trivial-zero part is the explicit finite simple-residue
+sum. -/
+theorem sum_trivialZeroPart_residue_eq
+    (poles : Finset ℂ) (residue : ℂ → ℂ) (N : ℕ) {x c H : ℝ}
+    (hc : 1 < c) (hH : 0 < H)
+    (hpoles : ∀ p ∈ poles,
+      -(2 * (N : ℝ) + 1) < p.re ∧ p.re < c ∧ -H < p.im ∧ p.im < H)
+    (hcomplete : ∀ p,
+      p ∈ ([[-(2 * (N : ℝ) + 1), c]] ×ℂ [[-H, H]] : Set ℂ) →
+      p = 0 ∨ p = 1 ∨ riemannZeta p = 0 → p ∈ poles)
+    (hresidue : ∀ p ∈ poles, residue p =
+      if p = 1 then (x : ℂ)
+      else if p = 0 then -deriv riemannZeta 0 / riemannZeta 0
+      else -(analyticOrderNatAt riemannZeta p : ℂ) * (x : ℂ) ^ p / p) :
+    (∑ p ∈ trivialZeroPart poles, residue p) =
+      ∑ p ∈ finiteTrivialZeroSum (2 * (N : ℝ)), -((x : ℂ) ^ p) / p := by
+  classical
+  have hpart :=
+    trivialZeroPart_eq_finiteTrivialZeroSum poles N hc hH hpoles hcomplete
+  rw [hpart]
+  apply Finset.sum_congr rfl
+  intro p hp
+  have hp0 : p ≠ 0 := finiteTrivialZeroSum_ne_zero_of_mem hp
+  have hp1 : p ≠ 1 := by
+    have hneg := finiteTrivialZeroSum_re_lt_zero_of_mem hp
+    intro h
+    rw [h] at hneg
+    norm_num at hneg
+  have hpole : p ∈ poles := by
+    rw [← hpart] at hp
+    exact (Finset.mem_filter.mp hp).1
+  rw [hresidue p hpole, if_neg hp1, if_neg hp0]
+  rw [analyticOrderNatAt_riemannZeta_eq_one_of_mem_finiteTrivialZeroSum hp]
+  norm_num
+
+/-- The complete residue sum returned by the moving rectangle splits into
+the explicit first `N` trivial-zero residues and the remaining pole sum. -/
+theorem sum_contourPoleResidues_eq_finiteTrivial_add_remaining
+    (poles : Finset ℂ) (residue : ℂ → ℂ) (N : ℕ) {x c H : ℝ}
+    (hc : 1 < c) (hH : 0 < H)
+    (hpoles : ∀ p ∈ poles,
+      -(2 * (N : ℝ) + 1) < p.re ∧ p.re < c ∧ -H < p.im ∧ p.im < H)
+    (hcomplete : ∀ p,
+      p ∈ ([[-(2 * (N : ℝ) + 1), c]] ×ℂ [[-H, H]] : Set ℂ) →
+      p = 0 ∨ p = 1 ∨ riemannZeta p = 0 → p ∈ poles)
+    (hresidue : ∀ p ∈ poles, residue p =
+      if p = 1 then (x : ℂ)
+      else if p = 0 then -deriv riemannZeta 0 / riemannZeta 0
+      else -(analyticOrderNatAt riemannZeta p : ℂ) * (x : ℂ) ^ p / p) :
+    (∑ p ∈ poles, residue p) =
+      (∑ p ∈ finiteTrivialZeroSum (2 * (N : ℝ)), -((x : ℂ) ^ p) / p) +
+        ∑ p ∈ remainingPolePart poles, residue p := by
+  rw [sum_contourPoleResidues_eq_trivial_add_remaining]
+  rw [sum_trivialZeroPart_residue_eq poles residue N hc hH hpoles hcomplete hresidue]
+
 /-- On an ordered rectangle containing `0` in its interior, the first-order
 explicit-formula integrand satisfies the finite residue formula.  The right
 edge can be fixed independently of the height, as required by Perron
@@ -209,6 +348,97 @@ theorem exists_scaledRightIntegral_eq_residue_sum_sub_firstOrderContourRemainder
   change R = S - (B - T - I * L) / (2 * Real.pi * I)
   field_simp [hden]
   linear_combination hrect'
+
+/-- A good-height rectangle in the moving-left family, with left edge between
+consecutive trivial zeros, has an exact first-order contour identity in which
+the abstract pole sum is split into the first `N` trivial-zero residues and
+the remaining poles. -/
+theorem
+    exists_movingLeft_scaledRightIntegral_eq_trivial_add_remaining_sub_remainder
+    {x c W : ℝ} (N : ℕ) (hx : 0 < x) (hc : 1 < c) (hW : 0 < W)
+    (hgood : goodHeight (2 * Real.pi * W)) :
+    ∃ (poles : Finset ℂ) (residue : ℂ → ℂ),
+      (∀ p ∈ poles,
+        -(2 * (N : ℝ) + 1) < p.re ∧ p.re < c ∧
+          -(2 * Real.pi * W) < p.im ∧ p.im < 2 * Real.pi * W) ∧
+      (∀ p ∈ poles, p = 0 ∨ p = 1 ∨ riemannZeta p = 0) ∧
+      (∀ p, p ∈
+          ([[-(2 * (N : ℝ) + 1), c]] ×ℂ
+            [[-(2 * Real.pi * W), 2 * Real.pi * W]] : Set ℂ) →
+        p = 0 ∨ p = 1 ∨ riemannZeta p = 0 → p ∈ poles) ∧
+      (∀ p ∈ poles, residue p =
+        if p = 1 then (x : ℂ)
+        else if p = 0 then -deriv riemannZeta 0 / riemannZeta 0
+        else -(analyticOrderNatAt riemannZeta p : ℂ) * (x : ℂ) ^ p / p) ∧
+      (∫ w : ℝ in (-W)..W,
+          explicitFormulaIntegrand x ((c : ℂ) + 2 * Real.pi * w * I)) =
+        (∑ p ∈ finiteTrivialZeroSum (2 * (N : ℝ)),
+            -((x : ℂ) ^ p) / p) +
+          (∑ p ∈ remainingPolePart poles, residue p) -
+            firstOrderContourRemainder x (-(2 * (N : ℝ) + 1)) c W := by
+  have hH : 0 < 2 * Real.pi * W := by positivity
+  have hN : 0 ≤ (N : ℝ) := Nat.cast_nonneg N
+  have ha : -(2 * (N : ℝ) + 1) < 0 := by linarith
+  have hboundary : ∀ p ∈
+      ([[-(2 * (N : ℝ) + 1), c]] ×ℂ
+        [[-(2 * Real.pi * W), 2 * Real.pi * W]] : Set ℂ),
+      p = 0 ∨ p = 1 ∨ riemannZeta p = 0 →
+        -(2 * (N : ℝ) + 1) < p.re ∧ p.re < c ∧
+          -(2 * Real.pi * W) < p.im ∧ p.im < 2 * Real.pi * W := by
+    intro p hp hclass
+    rcases hclass with rfl | rfl | hpzero
+    · simpa using And.intro ha (And.intro (one_pos.trans hc)
+        (And.intro (neg_lt_zero.mpr hH) hH))
+    · have hleft : -(2 * (N : ℝ) + 1) < (1 : ℝ) := by
+        have hN : 0 ≤ (N : ℝ) := Nat.cast_nonneg N
+        linarith
+      simpa using And.intro hleft (And.intro hc
+        (And.intro (neg_lt_zero.mpr hH) hH))
+    · have hp' := hp
+      simp only [Complex.mem_reProdIm] at hp'
+      have hre_bounds := hp'.1
+      have ha_le_c : -(2 * (N : ℝ) + 1) ≤ c := by
+        have hN : 0 ≤ (N : ℝ) := Nat.cast_nonneg N
+        linarith
+      rw [Set.uIcc_of_le ha_le_c] at hre_bounds
+      have him_bounds := hp'.2
+      rw [Set.uIcc_of_le (by linarith :
+        -(2 * Real.pi * W) ≤ 2 * Real.pi * W)] at him_bounds
+      by_cases htriv : ∃ n : ℕ, p = -2 * ((n : ℂ) + 1)
+      · rcases htriv with ⟨n, hn⟩
+        have hre := congrArg Complex.re hn
+        have him := congrArg Complex.im hn
+        norm_num at hre him
+        have hre_lower : -(2 * (N : ℝ) + 1) < p.re := by
+          by_contra hnot
+          have hre_eq : p.re = -(2 * (N : ℝ) + 1) := by
+            linarith [hre_bounds.1]
+          rw [hre_eq] at hre
+          have hnat : 2 * N + 1 = 2 * (n + 1) := by
+            exact_mod_cast (by linarith :
+              (2 * (N : ℝ) + 1) = 2 * ((n : ℝ) + 1))
+          omega
+        have hre_upper : p.re < c := by linarith
+        exact ⟨hre_lower, hre_upper, by linarith, by linarith⟩
+      · have hre_pos : 0 < p.re := by
+          by_contra hnot
+          exact (riemannZeta_ne_zero_of_re_le_zero
+            (le_of_not_gt hnot) (by simpa [not_exists] using htriv)) hpzero
+        have hre_lt_one : p.re < 1 := by
+          by_contra hnot
+          exact (riemannZeta_ne_zero_of_one_le_re (le_of_not_gt hnot)) hpzero
+        have habs_le : |p.im| ≤ 2 * Real.pi * W := abs_le.mpr him_bounds
+        have habs_ne : |p.im| ≠ 2 * Real.pi * W :=
+          hgood p ⟨hpzero, hre_pos, hre_lt_one⟩
+        have him_strict := abs_lt.mp (lt_of_le_of_ne habs_le habs_ne)
+        exact ⟨by linarith, by linarith, him_strict.1, him_strict.2⟩
+  rcases exists_scaledRightIntegral_eq_residue_sum_sub_firstOrderContourRemainder
+      hx ha (one_pos.trans hc) hW hboundary with
+    ⟨poles, residue, hpoles, hclass, hcomplete, hresidue, hcontour⟩
+  refine ⟨poles, residue, hpoles, hclass, hcomplete, hresidue, ?_⟩
+  rw [hcontour]
+  rw [sum_contourPoleResidues_eq_finiteTrivial_add_remaining
+    poles residue N hc hH hpoles hcomplete hresidue]
 
 /-- A good height gives an unconditional fixed first-order rectangle with
 left edge `Re(s)=-1` and arbitrary fixed right edge `Re(s)=c>1`.  The left

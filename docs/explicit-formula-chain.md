@@ -240,8 +240,14 @@ Already available or mostly available:
     Gamma.  Consequently
     `tendsto_finiteTrivialZeroSum_multiplicity_residues` proves convergence of
     the corresponding multiplicity-aware trivial-zero truncations to the same
-    logarithmic term.  Splitting these terms out of each moving contour's
-    abstract pole finset remains part of the contour-limit step.
+    logarithmic term.
+20. `ExplicitFormulaResidues.exists_movingLeft_scaledRightIntegral_eq_trivial_add_remaining_sub_remainder`
+    constructs, for every `N` and every good height, the rectangle with left
+    edge `-(2N+1)` and proves an exact Perron contour identity in which the
+    abstract pole sum has already been split into the explicit residues at
+    `-2,-4,...,-2N` and the remaining poles.  The underlying theorem
+    `trivialZeroPart_eq_finiteTrivialZeroSum` proves equality of the two
+    finsets, not merely one-sided containment.
 
 Remaining after the fixed-right-edge contour shift:
 
@@ -251,9 +257,9 @@ Remaining after the fixed-right-edge contour shift:
 2. Either evaluate the fixed `Re(s)=-1` left-line limit and identify it with
    the classical trivial-zero term, or move the left edge through
    `-2,-4,...` toward `-infinity` and control the resulting joint limit.  The
-   complete multiplicity-aware trivial-residue series limit is now proved;
-   the remaining issues are extracting that subset from the moving contour's
-   pole finset and controlling the moving-left-edge remainder.
+   complete multiplicity-aware trivial-residue series limit and its exact
+   extraction from every `-(2N+1)` contour are now proved; the remaining issue
+   is controlling the moving-left-edge remainder in a joint cofinal limit.
 3. Control the symmetric nontrivial-zero contribution with multiplicity.
 
 ### Analytic continuation and poles
@@ -309,7 +315,8 @@ Current status:
    `-1/2 * log (1 - x^-2)` is now proved by
    `tendsto_finiteTrivialZeroSum_multiplicity_residues`, including the analytic
    multiplicities used by the contour residue formula.  The pole-finset split
-   and moving-left-edge limit are not yet proved.
+   is now included in the moving-left exact identity; the moving-left-edge
+   limit is not yet proved.
 
 ### Contour and residue theorem
 
@@ -434,10 +441,9 @@ For the principal value final formula:
 2. Bounds for `zeta'/zeta` away from zeros and on selected good heights.
 3. Convergence of symmetric zero sums or a proof that the contour-error limit is
    zero along good heights.
-4. Split the moving contour's pole finset into its trivial and nontrivial
-   parts, then move the left boundary through the now-controlled simple
-   trivial zeros and prove the left-edge remainder tends to zero jointly with
-   the residue truncation.
+4. Choose a joint cofinal sequence of good heights and left cutoffs, then prove
+   the moving-left-edge remainder tends to zero and control the remaining
+   nontrivial-zero pole sum along that sequence.
 
 For a PNT proof, the truncated formula plus a zero-free region and boundary
 estimates may be more useful than the full principal-value exact formula.
