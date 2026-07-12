@@ -102,6 +102,52 @@ noncomputable def rectangleBoundaryIntegral
       Complex.I • (∫ y : ℝ in (c.im - R)..(c.im + R), f ((c.re + R) + y * Complex.I)) -
         Complex.I • (∫ y : ℝ in (c.im - R)..(c.im + R), f ((c.re - R) + y * Complex.I))
 
+/-- Rectangle boundary integrals agree when the integrands agree on the
+closed-rectangle boundary. -/
+lemma rectangleBoundaryIntegral_congr_of_eqOn_boundary
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+    {f g : ℂ → E} {c : ℂ} {R : ℝ} (hR : 0 < R)
+    (hfg : ∀ z ∈ closedRectangle c R, z ∉ openRectangle c R → f z = g z) :
+    rectangleBoundaryIntegral f c R = rectangleBoundaryIntegral g c R := by
+  have hbottom :
+      (∫ x : ℝ in (c.re - R)..(c.re + R), f (x + (c.im - R) * I)) =
+        ∫ x : ℝ in (c.re - R)..(c.re + R), g (x + (c.im - R) * I) := by
+    apply intervalIntegral.integral_congr
+    intro x hx
+    apply hfg
+    · simpa [closedRectangle, mem_reProdIm] using
+        And.intro hx (left_mem_uIcc : c.im - R ∈ [[c.im - R, c.im + R]])
+    · simp [openRectangle, mem_reProdIm]
+  have htop :
+      (∫ x : ℝ in (c.re - R)..(c.re + R), f (x + (c.im + R) * I)) =
+        ∫ x : ℝ in (c.re - R)..(c.re + R), g (x + (c.im + R) * I) := by
+    apply intervalIntegral.integral_congr
+    intro x hx
+    apply hfg
+    · simpa [closedRectangle, mem_reProdIm] using
+        And.intro hx (right_mem_uIcc : c.im + R ∈ [[c.im - R, c.im + R]])
+    · simp [openRectangle, mem_reProdIm]
+  have hright :
+      (∫ y : ℝ in (c.im - R)..(c.im + R), f ((c.re + R) + y * I)) =
+        ∫ y : ℝ in (c.im - R)..(c.im + R), g ((c.re + R) + y * I) := by
+    apply intervalIntegral.integral_congr
+    intro y hy
+    apply hfg
+    · simpa [closedRectangle, mem_reProdIm] using
+        And.intro (right_mem_uIcc : c.re + R ∈ [[c.re - R, c.re + R]]) hy
+    · simp [openRectangle, mem_reProdIm]
+  have hleft :
+      (∫ y : ℝ in (c.im - R)..(c.im + R), f ((c.re - R) + y * I)) =
+        ∫ y : ℝ in (c.im - R)..(c.im + R), g ((c.re - R) + y * I) := by
+    apply intervalIntegral.integral_congr
+    intro y hy
+    apply hfg
+    · simpa [closedRectangle, mem_reProdIm] using
+        And.intro (left_mem_uIcc : c.re - R ∈ [[c.re - R, c.re + R]]) hy
+    · simp [openRectangle, mem_reProdIm]
+  unfold rectangleBoundaryIntegral
+  rw [hbottom, htop, hright, hleft]
+
 /-- The positively oriented boundary integral of an axis-parallel rectangle
 with real endpoints `x0`, `x1` and imaginary endpoints `y0`, `y1`. -/
 noncomputable def boundaryRectIntegral

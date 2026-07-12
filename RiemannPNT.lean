@@ -4,6 +4,7 @@ import HardyTheorem
 import EulerAndLfunctions
 import PrimeNumberTheorem
 import PrimeNumberTheorem.ExplicitFormulaResidues
+import PrimeNumberTheorem.ExplicitFormulaRectangle
 import PrimeNumberTheorem.ExplicitFormulaTruncated
 import ZeroFreeRegion
 import ZeroFreeRegion.MeromorphicAux
@@ -7862,6 +7863,35 @@ theorem exists_finset_analyticOnNhd_regularizedLogDeriv_riemannZeta_closedBall
           (Metric.closedBall c R)) (Metric.closedBall c R) :=
   ZeroFreeRegion.exists_finset_analyticOnNhd_regularizedLogDeriv_riemannZeta_closedBall
     havoid
+
+/-- Public complete zero-factor extraction for zeta on a closed disk avoiding
+the pole. -/
+theorem exists_analytic_nonzero_factorization_riemannZeta_closedBall
+    {c : ℂ} {R : ℝ}
+    (havoid : ∀ z : ℂ, z ∈ Metric.closedBall c R → z ≠ 1) :
+    ∃ g : ℂ → ℂ,
+      AnalyticOnNhd ℂ g (Metric.closedBall c R) ∧
+      (∀ u : (Metric.closedBall c R : Set ℂ), g u ≠ 0) ∧
+      riemannZeta =ᶠ[codiscreteWithin (Metric.closedBall c R)]
+        (∏ᶠ u, (· - u) ^
+          MeromorphicOn.divisor riemannZeta (Metric.closedBall c R) u) * g :=
+  ZeroFreeRegion.exists_analytic_nonzero_factorization_riemannZeta_closedBall
+    havoid
+
+/-- Public logarithmic-norm decomposition of zeta into its finite local
+divisor contribution and an analytic nonzero unit. -/
+theorem exists_log_norm_factorization_riemannZeta_closedBall
+    {c : ℂ} {R : ℝ}
+    (havoid : ∀ z : ℂ, z ∈ Metric.closedBall c R → z ≠ 1) :
+    ∃ g : ℂ → ℂ,
+      AnalyticOnNhd ℂ g (Metric.closedBall c R) ∧
+      (∀ u : (Metric.closedBall c R : Set ℂ), g u ≠ 0) ∧
+      (Real.log ‖riemannZeta ·‖) =ᶠ[codiscreteWithin (Metric.closedBall c R)]
+        (∑ᶠ u, fun z =>
+          (MeromorphicOn.divisor riemannZeta (Metric.closedBall c R) u : ℝ) *
+            Real.log ‖z - u‖) +
+          fun z => Real.log ‖g z‖ :=
+  ZeroFreeRegion.exists_log_norm_factorization_riemannZeta_closedBall havoid
 
 /-- Public automatic regular-part bound at an actual zero of ζ.  The
 multiplicity is chosen internally as `analyticOrderNatAt riemannZeta ρ`. -/

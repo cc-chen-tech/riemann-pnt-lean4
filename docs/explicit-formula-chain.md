@@ -180,9 +180,12 @@ Current status:
    theorem family.
    `exists_finite_explicitFormulaIntegrand_analytic_regularized_remainder`
    now assembles all compact-set principal parts into one normalized remainder
-   analytic on the whole compact set.  Still needed: choosing contours with no
-   boundary poles, feeding this decomposition into the rectangle identity,
-   and the finite-to-infinite trivial-zero limit giving
+   analytic on the whole compact set.  The theorem
+   `exists_rectangleBoundaryIntegral_explicitFormulaIntegrand_eq_residue_sum`
+   feeds this remainder into the rectangle identity and proves the concrete
+   finite residue formula under an explicit pole-free-boundary hypothesis.
+   Still needed: constructing the required contour family from the good-height
+   machinery, and the finite-to-infinite trivial-zero limit giving
    `-1/2 * log (1 - x^-2)`.
 
 ### Contour and residue theorem
@@ -241,10 +244,13 @@ rectangle.  Finite simple principal parts and the rectangle deformation are
 now proved, including addition of a supplied holomorphic remainder.  For the
 explicit-formula integrand, global meromorphicity, finite compact-set pole
 candidates, and a single analytic normalized remainder after subtracting all
-their principal parts are now proved.  The missing part is choosing a
-pole-free rectangle boundary and instantiating the rectangle identity with
-this decomposition; the fully general theorem would also need to treat
-higher-order poles.
+their principal parts are now proved.  The concrete rectangle identity is also
+proved by
+`PrimeNumberTheorem.ExplicitFormulaResidues.exists_rectangleBoundaryIntegral_explicitFormulaIntegrand_eq_residue_sum`
+when all candidate poles lie in the open rectangle.  The remaining contour
+step is to construct a sequence satisfying this boundary hypothesis from the
+good-height machinery; the fully general abstract theorem would also need to
+treat higher-order poles.
 
 The current `rectangleIntegral_meromorphic_eq_residue_sum` declaration remains
 an existential certificate interface, not a theorem following from its radius

@@ -1378,7 +1378,14 @@ zeta specialization
 The latter uses the zeta divisor to select exactly the disk's zeros with their
 true multiplicities, and proves the normalized regular part analytic on the
 whole disk.  The remaining hard input is a quantitative uniform norm bound
-for this analytic regular part from high-height zeta boundary growth.  The
+for this analytic regular part from high-height zeta boundary growth.
+`exists_analytic_nonzero_factorization_riemannZeta_closedBall` and
+`exists_log_norm_factorization_riemannZeta_closedBall` now identify the same
+zero removal multiplicatively: ζ is its full divisor product times an
+analytic nonzero unit, and `log‖ζ‖` splits into the explicit zero-log sum plus
+the unit term.  This exposes the next quantitative task as choosing a boundary
+with controlled distance from the finitely many zeros and bounding the unit
+there.  The
 `exists_real_punctured_interval_...` variants specialize the same local
 principal-part control to horizontal-line coordinates `rho = beta + i t` and
 `z = sigma + i t`, using the checked identity

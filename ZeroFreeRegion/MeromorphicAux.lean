@@ -11058,6 +11058,75 @@ lemma exists_finset_analyticOnNhd_regularizedLogDeriv_riemannZeta_closedBall
     exact (analyticOrderNatAt_riemannZeta_eq_analyticOrderAt_of_ne_one
       (havoid ρ hρU)).symm
 
+/-- On a closed disk avoiding the pole, zeta factors into its complete local
+divisor product and an analytic nonvanishing unit.
+
+This is the multiplicative counterpart of the additive finite
+logarithmic-derivative regularization above and is the input needed to transfer
+boundary growth estimates from zeta to the regular unit. -/
+lemma exists_analytic_nonzero_factorization_riemannZeta_closedBall
+    {c : ℂ} {R : ℝ}
+    (havoid : ∀ z : ℂ, z ∈ closedBall c R → z ≠ 1) :
+    ∃ g : ℂ → ℂ,
+      AnalyticOnNhd ℂ g (closedBall c R) ∧
+      (∀ u : (closedBall c R : Set ℂ), g u ≠ 0) ∧
+      riemannZeta =ᶠ[codiscreteWithin (closedBall c R)]
+        (∏ᶠ u, (· - u) ^
+          MeromorphicOn.divisor riemannZeta (closedBall c R) u) * g := by
+  let U : Set ℂ := closedBall c R
+  have hmer : MeromorphicOn riemannZeta U :=
+    meromorphicOn_riemannZeta_closedBall c R
+  have hnotop : ∀ u : U, meromorphicOrderAt riemannZeta u ≠ ⊤ := by
+    intro u
+    have han : AnalyticAt ℂ riemannZeta u :=
+      analyticOnNhd_riemannZeta_ne_one u (havoid u u.property)
+    rw [han.meromorphicOrderAt_eq]
+    intro hmap
+    apply analyticOrderAt_riemannZeta_ne_top_of_ne_one (havoid u u.property)
+    exact ENat.map_eq_top_iff.mp hmap
+  have hfinite :
+      (MeromorphicOn.divisor riemannZeta U).support.Finite :=
+    (MeromorphicOn.divisor riemannZeta U).finiteSupport
+      (isCompact_closedBall c R)
+  simpa [U, Pi.smul_apply', smul_eq_mul] using
+    hmer.extract_zeros_poles hnotop hfinite
+
+/-- Logarithmic-norm form of the complete zeta zero-factor extraction on a
+closed disk avoiding `1`.
+
+The equality holds on the codiscrete subset supplied by meromorphic
+factorization and separates boundary zeta growth into the explicit zero
+logarithms and the analytic nonzero unit. -/
+lemma exists_log_norm_factorization_riemannZeta_closedBall
+    {c : ℂ} {R : ℝ}
+    (havoid : ∀ z : ℂ, z ∈ closedBall c R → z ≠ 1) :
+    ∃ g : ℂ → ℂ,
+      AnalyticOnNhd ℂ g (closedBall c R) ∧
+      (∀ u : (closedBall c R : Set ℂ), g u ≠ 0) ∧
+      (Real.log ‖riemannZeta ·‖) =ᶠ[codiscreteWithin (closedBall c R)]
+        (∑ᶠ u, fun z =>
+          (MeromorphicOn.divisor riemannZeta (closedBall c R) u : ℝ) *
+            Real.log ‖z - u‖) +
+          fun z => Real.log ‖g z‖ := by
+  let U : Set ℂ := closedBall c R
+  have hmer : MeromorphicOn riemannZeta U :=
+    meromorphicOn_riemannZeta_closedBall c R
+  have hnotop : ∀ u : U, meromorphicOrderAt riemannZeta u ≠ ⊤ := by
+    intro u
+    have han : AnalyticAt ℂ riemannZeta u :=
+      analyticOnNhd_riemannZeta_ne_one u (havoid u u.property)
+    rw [han.meromorphicOrderAt_eq]
+    intro hmap
+    apply analyticOrderAt_riemannZeta_ne_top_of_ne_one (havoid u u.property)
+    exact ENat.map_eq_top_iff.mp hmap
+  have hfinite :
+      (MeromorphicOn.divisor riemannZeta U).support.Finite :=
+    (MeromorphicOn.divisor riemannZeta U).finiteSupport
+      (isCompact_closedBall c R)
+  rcases hmer.extract_zeros_poles hnotop hfinite with ⟨g, hg, hgne, hfactor⟩
+  refine ⟨g, by simpa [U] using hg, by simpa [U] using hgne, ?_⟩
+  simpa [U] using MeromorphicOn.extract_zeros_poles_log hgne hfactor
+
 /-- Automatic zeta-specific regular-part bound at an actual zero.  The
 multiplicity is chosen as `analyticOrderNatAt riemannZeta ρ`, so callers no
 longer need to supply a separate `analyticOrderAt = n` hypothesis. -/

@@ -509,6 +509,14 @@ global remainder is analytic on the whole compact set. -/
 theorem exists_finite_explicitFormulaIntegrand_analytic_regularized_remainder
     {x : ℝ} (hx : 0 < x) {K : Set ℂ} (hK : IsCompact K) :
     ∃ (poles : Finset ℂ) (residue : ℂ → ℂ),
+      (∀ p ∈ poles, p = 0 ∨ p ∈ K) ∧
+      (∀ p ∈ poles, p = 0 ∨ p = 1 ∨ riemannZeta p = 0) ∧
+      (∀ z, z ∈ K → z ∉ poles →
+        toMeromorphicNFOn
+          (fun w : ℂ => explicitFormulaIntegrand x w -
+            ∑ p ∈ poles, (w - p)⁻¹ * residue p) K z =
+          explicitFormulaIntegrand x z -
+            ∑ p ∈ poles, (z - p)⁻¹ * residue p) ∧
       AnalyticOnNhd ℂ
         (toMeromorphicNFOn
           (fun z : ℂ => explicitFormulaIntegrand x z -
@@ -544,70 +552,43 @@ theorem exists_finite_explicitFormulaIntegrand_analytic_regularized_remainder
         (MeromorphicAt.const (residue p) z))
   have hraw_meromorphic : MeromorphicOn raw K := by
     simpa [raw] using hintegrand_meromorphic.sub hprincipal_meromorphic
-  refine ⟨poles, residue, ?_⟩
-  apply
-    ZeroFreeRegion.analyticOnNhd_toMeromorphicNFOn_of_locally_eventuallyEq_analyticAt
-      hraw_meromorphic
-  intro s hsK
-  by_cases hs_pole : s ∈ poles
-  · have hown :
-        ∃ G : ℂ → ℂ, AnalyticAt ℂ G s ∧
-          (fun z : ℂ => explicitFormulaIntegrand x z -
-            (z - s)⁻¹ * residue s) =ᶠ[𝓝[≠] s] G := by
-      by_cases hs1 : s = 1
-      · subst s
-        simpa [residue] using
-          exists_analyticAt_eventuallyEq_explicitFormulaIntegrand_sub_principalPart_one hx
-      · by_cases hs0 : s = 0
-        · subst s
-          simpa [residue] using
-            exists_analyticAt_eventuallyEq_explicitFormulaIntegrand_sub_principalPart_zero hx
-        · have hs_support : s ∈ D.support := by
-            have hs := hs_pole
-            simp only [poles, Finset.mem_union, hDfinite.mem_toFinset,
-              Finset.mem_singleton] at hs
-            exact hs.resolve_right hs0
-          have hDne : D s ≠ 0 := Function.mem_support.mp hs_support
-          have han : AnalyticAt ℂ riemannZeta s :=
-            ZeroFreeRegion.analyticOnNhd_riemannZeta_ne_one s hs1
-          have hzeta : riemannZeta s = 0 := by
-            by_contra hzeta_ne
-            have horder_zero : analyticOrderAt riemannZeta s = 0 :=
-              han.analyticOrderAt_eq_zero.mpr hzeta_ne
-            have hDzero : D s = 0 := by
-              rw [MeromorphicOn.divisor_apply hzeta_meromorphic hsK,
-                han.meromorphicOrderAt_eq, horder_zero]
-              simp
-            exact hDne hDzero
-          have horder :
-              analyticOrderAt riemannZeta s =
-                analyticOrderNatAt riemannZeta s :=
-            (ZeroFreeRegion.analyticOrderNatAt_riemannZeta_eq_analyticOrderAt_of_ne_one
-              hs1).symm
-          simpa [residue, hs1, hs0] using
-            exists_analyticAt_eventuallyEq_explicitFormulaIntegrand_sub_principalPart_of_order_eq_nat
-              hx hs1 hs0 horder
-    rcases hown with ⟨G, hG, hlocal⟩
-    let Gregular : ℂ → ℂ := fun z =>
-      G z - ∑ p ∈ poles.erase s, (z - p)⁻¹ * residue p
-    have hsum : AnalyticAt ℂ
-        (fun z : ℂ => ∑ p ∈ poles.erase s, (z - p)⁻¹ * residue p) s := by
-      apply Finset.analyticAt_fun_sum
-      intro p hp
-      have hps : p ≠ s := Finset.ne_of_mem_erase hp
-      exact
-        ((analyticAt_id.sub analyticAt_const).inv (sub_ne_zero.mpr hps.symm)).mul
-          analyticAt_const
-    refine ⟨Gregular, hG.sub hsum, ?_⟩
-    filter_upwards [hlocal] with z hz
-    dsimp [raw, Gregular]
-    rw [← Finset.sum_erase_add _ _ hs_pole]
-    have hz' : explicitFormulaIntegrand x z =
-        G z + (z - s)⁻¹ * residue s :=
-      sub_eq_iff_eq_add.mp hz
-    rw [hz']
-    ring
-  · have hs0 : s ≠ 0 := by
+  have hpoles_mem : ∀ p ∈ poles, p = 0 ∨ p ∈ K := by
+    intro p hp
+    simp only [poles, Finset.mem_union, hDfinite.mem_toFinset,
+      Finset.mem_singleton] at hp
+    rcases hp with hp | hp
+    · exact Or.inr (D.supportWithinDomain hp)
+    · exact Or.inl hp
+  have hpoles_classify :
+      ∀ p ∈ poles, p = 0 ∨ p = 1 ∨ riemannZeta p = 0 := by
+    intro p hp
+    by_cases hp0 : p = 0
+    · exact Or.inl hp0
+    right
+    by_cases hp1 : p = 1
+    · exact Or.inl hp1
+    right
+    have hp_support : p ∈ D.support := by
+      have hp' := hp
+      simp only [poles, Finset.mem_union, hDfinite.mem_toFinset,
+        Finset.mem_singleton] at hp'
+      exact hp'.resolve_right hp0
+    have hpK : p ∈ K := D.supportWithinDomain hp_support
+    have hDne : D p ≠ 0 := Function.mem_support.mp hp_support
+    have han : AnalyticAt ℂ riemannZeta p :=
+      ZeroFreeRegion.analyticOnNhd_riemannZeta_ne_one p hp1
+    by_contra hzeta_ne
+    have horder_zero : analyticOrderAt riemannZeta p = 0 :=
+      han.analyticOrderAt_eq_zero.mpr hzeta_ne
+    have hDzero : D p = 0 := by
+      rw [MeromorphicOn.divisor_apply hzeta_meromorphic hpK,
+        han.meromorphicOrderAt_eq, horder_zero]
+      simp
+    exact hDne hDzero
+  have hraw_analytic_off :
+      ∀ s, s ∈ K → s ∉ poles → AnalyticAt ℂ raw s := by
+    intro s hsK hs_pole
+    have hs0 : s ≠ 0 := by
       intro hs
       subst s
       apply hs_pole
@@ -658,8 +639,81 @@ theorem exists_finite_explicitFormulaIntegrand_analytic_regularized_remainder
       exact
         ((analyticAt_id.sub analyticAt_const).inv (sub_ne_zero.mpr hps.symm)).mul
           analyticAt_const
-    refine ⟨raw, ?_, Filter.EventuallyEq.rfl⟩
     simpa [raw] using hintegrand.sub hsum
+  have hregular :
+      AnalyticOnNhd ℂ (toMeromorphicNFOn raw K) K := by
+    apply
+      ZeroFreeRegion.analyticOnNhd_toMeromorphicNFOn_of_locally_eventuallyEq_analyticAt
+        hraw_meromorphic
+    intro s hsK
+    by_cases hs_pole : s ∈ poles
+    · have hown :
+          ∃ G : ℂ → ℂ, AnalyticAt ℂ G s ∧
+            (fun z : ℂ => explicitFormulaIntegrand x z -
+              (z - s)⁻¹ * residue s) =ᶠ[𝓝[≠] s] G := by
+        by_cases hs1 : s = 1
+        · subst s
+          simpa [residue] using
+            exists_analyticAt_eventuallyEq_explicitFormulaIntegrand_sub_principalPart_one hx
+        · by_cases hs0 : s = 0
+          · subst s
+            simpa [residue] using
+              exists_analyticAt_eventuallyEq_explicitFormulaIntegrand_sub_principalPart_zero hx
+          · have hs_support : s ∈ D.support := by
+              have hs := hs_pole
+              simp only [poles, Finset.mem_union, hDfinite.mem_toFinset,
+                Finset.mem_singleton] at hs
+              exact hs.resolve_right hs0
+            have hDne : D s ≠ 0 := Function.mem_support.mp hs_support
+            have han : AnalyticAt ℂ riemannZeta s :=
+              ZeroFreeRegion.analyticOnNhd_riemannZeta_ne_one s hs1
+            have hzeta : riemannZeta s = 0 := by
+              by_contra hzeta_ne
+              have horder_zero : analyticOrderAt riemannZeta s = 0 :=
+                han.analyticOrderAt_eq_zero.mpr hzeta_ne
+              have hDzero : D s = 0 := by
+                rw [MeromorphicOn.divisor_apply hzeta_meromorphic hsK,
+                  han.meromorphicOrderAt_eq, horder_zero]
+                simp
+              exact hDne hDzero
+            have horder :
+                analyticOrderAt riemannZeta s =
+                  analyticOrderNatAt riemannZeta s :=
+              (ZeroFreeRegion.analyticOrderNatAt_riemannZeta_eq_analyticOrderAt_of_ne_one
+                hs1).symm
+            simpa [residue, hs1, hs0] using
+              exists_analyticAt_eventuallyEq_explicitFormulaIntegrand_sub_principalPart_of_order_eq_nat
+                hx hs1 hs0 horder
+      rcases hown with ⟨G, hG, hlocal⟩
+      let Gregular : ℂ → ℂ := fun z =>
+        G z - ∑ p ∈ poles.erase s, (z - p)⁻¹ * residue p
+      have hsum : AnalyticAt ℂ
+          (fun z : ℂ => ∑ p ∈ poles.erase s, (z - p)⁻¹ * residue p) s := by
+        apply Finset.analyticAt_fun_sum
+        intro p hp
+        have hps : p ≠ s := Finset.ne_of_mem_erase hp
+        exact
+          ((analyticAt_id.sub analyticAt_const).inv (sub_ne_zero.mpr hps.symm)).mul
+            analyticAt_const
+      refine ⟨Gregular, hG.sub hsum, ?_⟩
+      filter_upwards [hlocal] with z hz
+      dsimp [raw, Gregular]
+      rw [← Finset.sum_erase_add _ _ hs_pole]
+      have hz' : explicitFormulaIntegrand x z =
+          G z + (z - s)⁻¹ * residue s :=
+        sub_eq_iff_eq_add.mp hz
+      rw [hz']
+      ring
+    · exact ⟨raw, hraw_analytic_off s hsK hs_pole, Filter.EventuallyEq.rfl⟩
+  have hoff_eq : ∀ z, z ∈ K → z ∉ poles →
+      toMeromorphicNFOn raw K z = raw z := by
+    intro z hzK hz_pole
+    rw [toMeromorphicNFOn_eq_toMeromorphicNFAt hraw_meromorphic hzK]
+    rw [toMeromorphicNFAt_eq_self.2
+      (hraw_analytic_off z hzK hz_pole).meromorphicNFAt]
+  refine ⟨poles, residue, hpoles_mem, hpoles_classify, ?_, ?_⟩
+  · simpa [raw] using hoff_eq
+  · simpa [raw] using hregular
 
 end ExplicitFormulaResidues
 end PrimeNumberTheorem

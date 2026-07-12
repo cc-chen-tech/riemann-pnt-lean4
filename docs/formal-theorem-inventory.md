@@ -734,6 +734,12 @@ Core verified declarations:
   constructs this finite set from the zeta divisor on any closed disk avoiding
   `1`, proves that it is exactly the disk's zeta-zero set, and obtains the
   analytic multiplicity-aware regular part without assuming simple zeros.
+- `exists_analytic_nonzero_factorization_riemannZeta_closedBall` extracts the
+  complete local zeta divisor as a factorized rational function and leaves an
+  analytic nonvanishing unit on the disk.
+- `exists_log_norm_factorization_riemannZeta_closedBall` gives the associated
+  codiscrete identity `log‖ζ‖ = Σ nρ log‖z-ρ‖ + log‖g‖`, which is the direct
+  bridge from zeta boundary growth to the zero-removed unit.
 - `exists_punctured_ball_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq`
   and `exists_punctured_closedBall_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq`
   convert an eventually-equal multiplicity regular part and an eventual norm
@@ -3235,8 +3241,12 @@ Route interfaces:
   stronger local statements than the corresponding residue limits.
 - `exists_finite_explicitFormulaIntegrand_analytic_regularized_remainder`
   subtracts all compact-set principal parts simultaneously and proves the
-  `toMeromorphicNFOn` remainder analytic on the whole compact set.  Perron
-  inversion, pole-free contour selection, and contour-error estimates remain
+  `toMeromorphicNFOn` remainder analytic on the whole compact set.
+- `exists_rectangleBoundaryIntegral_explicitFormulaIntegrand_eq_residue_sum`
+  proves the actual finite rectangle residue formula for the concrete
+  explicit-formula integrand whenever `0`, `1`, and every enclosed zeta zero
+  avoid the rectangle boundary.  Perron inversion, construction of a contour
+  sequence satisfying that hypothesis, and contour-error estimates remain
   unproved.
 
 Reusable predicates:
