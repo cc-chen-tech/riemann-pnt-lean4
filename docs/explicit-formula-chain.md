@@ -248,6 +248,13 @@ Already available or mostly available:
     `-2,-4,...,-2N` and the remaining poles.  The underlying theorem
     `trivialZeroPart_eq_finiteTrivialZeroSum` proves equality of the two
     finsets, not merely one-sided containment.
+21. `ExplicitFormulaResidues.exists_jointCofinal_movingLeft_firstOrderContours`
+    chooses one sequence with `W_n -> infinity`, strictly increasing `W_n`,
+    `goodHeight (2*pi*W_n)`, and left edge `-(2n+1)`.  Every member satisfies
+    the split Perron identity from item 20, while its trivial-zero residue sum
+    converges to `-1/2 * log (1 - x^-2)`.  This closes the joint cofinal
+    selection problem, but does not prove that the remaining pole sum or the
+    moving-left contour remainder converges.
 
 Remaining after the fixed-right-edge contour shift:
 
@@ -258,8 +265,9 @@ Remaining after the fixed-right-edge contour shift:
    the classical trivial-zero term, or move the left edge through
    `-2,-4,...` toward `-infinity` and control the resulting joint limit.  The
    complete multiplicity-aware trivial-residue series limit and its exact
-   extraction from every `-(2N+1)` contour are now proved; the remaining issue
-   is controlling the moving-left-edge remainder in a joint cofinal limit.
+   extraction from every `-(2N+1)` contour are now proved, and a joint cofinal
+   sequence has been chosen.  The remaining issue is proving the
+   moving-left-edge remainder tends to zero along that sequence.
 3. Control the symmetric nontrivial-zero contribution with multiplicity.
 
 ### Analytic continuation and poles
@@ -441,9 +449,9 @@ For the principal value final formula:
 2. Bounds for `zeta'/zeta` away from zeros and on selected good heights.
 3. Convergence of symmetric zero sums or a proof that the contour-error limit is
    zero along good heights.
-4. Choose a joint cofinal sequence of good heights and left cutoffs, then prove
-   the moving-left-edge remainder tends to zero and control the remaining
-   nontrivial-zero pole sum along that sequence.
+4. Along the now-constructed joint cofinal sequence, prove the moving-left-edge
+   remainder tends to zero and control the remaining pole sum after separating
+   the fixed `0`, `1`, and nontrivial-zero contributions.
 
 For a PNT proof, the truncated formula plus a zero-free region and boundary
 estimates may be more useful than the full principal-value exact formula.

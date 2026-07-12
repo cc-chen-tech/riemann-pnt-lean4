@@ -1,5 +1,6 @@
 import MathlibAux.BoundaryRectResidue
 import PrimeNumberTheorem.ExplicitFormulaResidues
+import PrimeNumberTheorem.ExplicitFormulaRectangle
 import PrimeNumberTheorem.ExplicitFormulaAux
 import PrimeNumberTheorem.FirstOrderLSeriesPerron
 import PrimeNumberTheorem.SecondOrderExplicitFormula
@@ -439,6 +440,62 @@ theorem
   rw [hcontour]
   rw [sum_contourPoleResidues_eq_finiteTrivial_add_remaining
     poles residue N hc hH hpoles hcomplete hresidue]
+
+/-- There is a joint cofinal sequence of moving-left Perron rectangles:
+the height and the number of enclosed trivial zeros both tend to infinity, every
+horizontal boundary is good, each finite-height identity has its trivial-zero
+part split out, and those trivial-zero sums converge to the classical
+logarithmic correction. -/
+theorem exists_jointCofinal_movingLeft_firstOrderContours
+    {x c : ℝ} (hx : 1 < x) (hc : 1 < c) :
+    ∃ W : ℕ → ℝ, StrictMono W ∧ Tendsto W atTop atTop ∧
+      Tendsto
+        (fun n : ℕ => ∑ p ∈ finiteTrivialZeroSum (2 * (n : ℝ)),
+          -((x : ℂ) ^ p) / p)
+        atTop
+        (nhds (((-(1 / 2 : ℝ) * Real.log (1 - x ^ (-2 : ℝ)) : ℝ) : ℂ))) ∧
+      ∀ n, 0 < W n ∧ goodHeight (2 * Real.pi * W n) ∧
+        ∃ (poles : Finset ℂ) (residue : ℂ → ℂ),
+          (∀ p ∈ poles,
+            -(2 * (n : ℝ) + 1) < p.re ∧ p.re < c ∧
+              -(2 * Real.pi * W n) < p.im ∧ p.im < 2 * Real.pi * W n) ∧
+          (∀ p ∈ poles, p = 0 ∨ p = 1 ∨ riemannZeta p = 0) ∧
+          (∀ p, p ∈
+              ([[-(2 * (n : ℝ) + 1), c]] ×ℂ
+                [[-(2 * Real.pi * W n), 2 * Real.pi * W n]] : Set ℂ) →
+            p = 0 ∨ p = 1 ∨ riemannZeta p = 0 → p ∈ poles) ∧
+          (∀ p ∈ poles, residue p =
+            if p = 1 then (x : ℂ)
+            else if p = 0 then -deriv riemannZeta 0 / riemannZeta 0
+            else -(analyticOrderNatAt riemannZeta p : ℂ) * (x : ℂ) ^ p / p) ∧
+          (∫ w : ℝ in (-(W n))..(W n),
+              explicitFormulaIntegrand x
+                ((c : ℂ) + 2 * Real.pi * w * I)) =
+            (∑ p ∈ finiteTrivialZeroSum (2 * (n : ℝ)),
+                -((x : ℂ) ^ p) / p) +
+              (∑ p ∈ remainingPolePart poles, residue p) -
+                firstOrderContourRemainder x (-(2 * (n : ℝ) + 1)) c (W n) := by
+  rcases exists_strictMono_goodHeight_gt_one_tendsto with
+    ⟨T, hTmono, hTtend, hT⟩
+  let W : ℕ → ℝ := fun n => T n / (2 * Real.pi)
+  have hden : 0 < 2 * Real.pi := by positivity
+  refine ⟨W, ?_, ?_, ?_, ?_⟩
+  · intro a b hab
+    exact div_lt_div_of_pos_right (hTmono hab) hden
+  · exact hTtend.atTop_div_const hden
+  · exact ExplicitFormulaAux.tendsto_finiteTrivialZeroSum_residues hx
+  · intro n
+    have hW : 0 < W n := div_pos (lt_trans zero_lt_one (hT n).1) hden
+    have hscale : 2 * Real.pi * W n = T n := by
+      dsimp [W]
+      field_simp
+    refine ⟨hW, ?_, ?_⟩
+    · rw [hscale]
+      exact (hT n).2
+    · simpa only [hscale] using
+        exists_movingLeft_scaledRightIntegral_eq_trivial_add_remaining_sub_remainder
+          n (zero_lt_one.trans hx) hc hW
+            (by rw [hscale]; exact (hT n).2)
 
 /-- A good height gives an unconditional fixed first-order rectangle with
 left edge `Re(s)=-1` and arbitrary fixed right edge `Re(s)=c>1`.  The left
