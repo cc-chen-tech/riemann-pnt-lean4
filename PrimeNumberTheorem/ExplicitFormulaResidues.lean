@@ -180,6 +180,66 @@ theorem tendsto_sub_one_mul_explicitFormulaIntegrand_one
     ring
   · ring_nf
 
+/-- Subtracting the principal part `x / (s - 1)` leaves an analytic germ at
+the zeta pole `s = 1`. -/
+theorem exists_analyticAt_eventuallyEq_explicitFormulaIntegrand_sub_principalPart_one
+    {x : ℝ} (hx : 0 < x) :
+    ∃ G : ℂ → ℂ, AnalyticAt ℂ G 1 ∧
+      (fun z : ℂ => explicitFormulaIntegrand x z - (z - 1)⁻¹ * (x : ℂ))
+        =ᶠ[𝓝[≠] (1 : ℂ)] G := by
+  have hx0 : (x : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr hx.ne'
+  let weight : ℂ → ℂ := fun z => (x : ℂ) ^ z / z
+  have hpow_diff : Differentiable ℂ (fun z : ℂ => (x : ℂ) ^ z) :=
+    (differentiable_id : Differentiable ℂ (fun z : ℂ => z)).const_cpow
+      (Or.inl hx0)
+  have hweight_diff : DifferentiableOn ℂ weight ({(0 : ℂ)}ᶜ : Set ℂ) := by
+    intro z hz
+    have hz0 : z ≠ 0 := by simpa using hz
+    exact ((hpow_diff z).div differentiableAt_id hz0).differentiableWithinAt
+  have hone_mem : (1 : ℂ) ∈ ({(0 : ℂ)}ᶜ : Set ℂ) := by norm_num
+  have hzero_nhds : ({(0 : ℂ)}ᶜ : Set ℂ) ∈ 𝓝 (1 : ℂ) :=
+    isOpen_compl_singleton.mem_nhds hone_mem
+  have hweight_analytic : AnalyticAt ℂ weight 1 :=
+    (hweight_diff.analyticOnNhd isOpen_compl_singleton) 1 hone_mem
+  have hdslope_diff :
+      DifferentiableOn ℂ (dslope weight 1) ({(0 : ℂ)}ᶜ : Set ℂ) :=
+    (Complex.differentiableOn_dslope hzero_nhds).2 hweight_diff
+  have hdslope_analytic : AnalyticAt ℂ (dslope weight 1) 1 :=
+    (hdslope_diff.analyticOnNhd isOpen_compl_singleton) 1 hone_mem
+  let G : ℂ → ℂ := fun z =>
+    dslope weight 1 z -
+      logDeriv ZeroFreeRegion.riemannZetaPoleUnitAtOne z * weight z
+  have hG : AnalyticAt ℂ G 1 :=
+    hdslope_analytic.sub
+      (ZeroFreeRegion.analyticAt_logDeriv_riemannZetaPoleUnitAtOne.mul
+        hweight_analytic)
+  refine ⟨G, hG, ?_⟩
+  filter_upwards
+    [ZeroFreeRegion.eventuallyEq_logDeriv_riemannZeta_simplePoleAtOne,
+      self_mem_nhdsWithin,
+      (eventually_ne_nhds (by norm_num : (1 : ℂ) ≠ 0)).filter_mono
+        nhdsWithin_le_nhds]
+    with z hlog hz1 hz0
+  have hz_ne_one : z ≠ 1 := Set.mem_compl_singleton_iff.mp hz1
+  have hsolve :
+      -logDeriv riemannZeta z =
+        (z - 1)⁻¹ - logDeriv ZeroFreeRegion.riemannZetaPoleUnitAtOne z := by
+    rw [hlog]
+    ring
+  have hweight_one : weight 1 = (x : ℂ) := by
+    simp [weight]
+  rw [show explicitFormulaIntegrand x z =
+      -logDeriv riemannZeta z * weight z by
+    simp only [explicitFormulaIntegrand, weight]
+    ring]
+  simp only [G]
+  change (-logDeriv riemannZeta z) * weight z -
+      (z - 1)⁻¹ * (x : ℂ) = _
+  rw [hsolve, dslope_of_ne weight hz_ne_one]
+  simp only [slope, vsub_eq_sub, smul_eq_mul]
+  rw [hweight_one]
+  ring
+
 /-- At a finite-order zeta zero `ρ` away from the pole, the principal
 coefficient of `-ζ'/ζ` is minus the zero multiplicity. -/
 theorem tendsto_sub_mul_neg_logDeriv_riemannZeta_of_order_eq_nat
@@ -221,6 +281,61 @@ theorem tendsto_sub_mul_neg_logDeriv_riemannZeta_of_order_eq_nat
     rw [hsolve]
     field_simp [hs_ne]
   exact hrhs.congr' heq.symm
+
+/-- At a finite-order zeta zero away from `0` and `1`, subtracting the actual
+simple principal part of the explicit-formula integrand leaves an analytic
+germ.  This is stronger than the residue limit: it is the local decomposition
+needed to assemble all poles inside one contour. -/
+theorem exists_analyticAt_eventuallyEq_explicitFormulaIntegrand_sub_principalPart_of_order_eq_nat
+    {x : ℝ} (hx : 0 < x) {ρ : ℂ} {n : ℕ}
+    (hρ1 : ρ ≠ 1) (hρ0 : ρ ≠ 0)
+    (horder : analyticOrderAt riemannZeta ρ = n) :
+    ∃ G : ℂ → ℂ, AnalyticAt ℂ G ρ ∧
+      (fun z : ℂ => explicitFormulaIntegrand x z -
+        (z - ρ)⁻¹ * (-(n : ℂ) * (x : ℂ) ^ ρ / ρ)) =ᶠ[𝓝[≠] ρ] G := by
+  rcases
+      ZeroFreeRegion.exists_eventuallyEq_neg_logDeriv_riemannZeta_add_order_mul_inv_of_order_eq_nat
+        hρ1 horder with ⟨g, hg, hg_ne, hsep⟩
+  have hx0 : (x : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr hx.ne'
+  let weight : ℂ → ℂ := fun z => (x : ℂ) ^ z / z
+  have hpow_diff : Differentiable ℂ (fun z : ℂ => (x : ℂ) ^ z) :=
+    (differentiable_id : Differentiable ℂ (fun z : ℂ => z)).const_cpow
+      (Or.inl hx0)
+  have hweight_diff : DifferentiableOn ℂ weight ({(0 : ℂ)}ᶜ : Set ℂ) := by
+    intro z hz
+    have hz0 : z ≠ 0 := by simpa using hz
+    exact ((hpow_diff z).div differentiableAt_id hz0).differentiableWithinAt
+  have hρmem : ρ ∈ ({(0 : ℂ)}ᶜ : Set ℂ) := by simpa using hρ0
+  have hzero_nhds : ({(0 : ℂ)}ᶜ : Set ℂ) ∈ 𝓝 ρ :=
+    isOpen_compl_singleton.mem_nhds hρmem
+  have hweight_analytic : AnalyticAt ℂ weight ρ :=
+    (hweight_diff.analyticOnNhd isOpen_compl_singleton) ρ hρmem
+  have hdslope_diff :
+      DifferentiableOn ℂ (dslope weight ρ) ({(0 : ℂ)}ᶜ : Set ℂ) :=
+    (Complex.differentiableOn_dslope hzero_nhds).2 hweight_diff
+  have hdslope_analytic : AnalyticAt ℂ (dslope weight ρ) ρ :=
+    (hdslope_diff.analyticOnNhd isOpen_compl_singleton) ρ hρmem
+  have hg_log : AnalyticAt ℂ (logDeriv g) ρ :=
+    hg.deriv.div hg hg_ne
+  let G : ℂ → ℂ := fun z =>
+    -logDeriv g z * weight z - (n : ℂ) * dslope weight ρ z
+  have hG : AnalyticAt ℂ G ρ := by
+    exact (hg_log.neg.mul hweight_analytic).sub
+      (analyticAt_const.mul hdslope_analytic)
+  refine ⟨G, hG, ?_⟩
+  filter_upwards [hsep, self_mem_nhdsWithin,
+      (eventually_ne_nhds hρ0).filter_mono nhdsWithin_le_nhds]
+    with z hz hzρ hz0
+  have hz_ne_ρ : z ≠ ρ := Set.mem_compl_singleton_iff.mp hzρ
+  have hsolve :
+      -logDeriv riemannZeta z =
+        -logDeriv g z - (n : ℂ) * (z - ρ)⁻¹ :=
+    eq_sub_of_add_eq hz
+  simp only [explicitFormulaIntegrand, G, weight]
+  rw [hsolve, dslope_of_ne weight hz_ne_ρ]
+  simp only [slope, vsub_eq_sub, smul_eq_mul, weight]
+  field_simp [hz0, hρ0, hz_ne_ρ]
+  ring
 
 /-- At a zeta zero of multiplicity `n`, the explicit-formula integrand has
 residue `-n * x^ρ / ρ`. -/
@@ -341,6 +456,210 @@ theorem tendsto_mul_explicitFormulaIntegrand_zero
   convert hmul.congr' heq.symm using 1
   simp only [logDeriv_apply, mul_one]
   rw [neg_div]
+
+/-- Subtracting the kernel principal part at `s = 0` leaves an analytic germ.
+The coefficient is the constant term `-ζ'(0) / ζ(0)` from the explicit
+formula. -/
+theorem exists_analyticAt_eventuallyEq_explicitFormulaIntegrand_sub_principalPart_zero
+    {x : ℝ} (hx : 0 < x) :
+    ∃ G : ℂ → ℂ, AnalyticAt ℂ G 0 ∧
+      (fun z : ℂ => explicitFormulaIntegrand x z - z⁻¹ *
+        (-deriv riemannZeta 0 / riemannZeta 0)) =ᶠ[𝓝[≠] (0 : ℂ)] G := by
+  have hx0 : (x : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr hx.ne'
+  have hzeta0 : riemannZeta (0 : ℂ) ≠ 0 := by
+    rw [riemannZeta_zero]
+    norm_num
+  let core : ℂ → ℂ := fun z => -logDeriv riemannZeta z * (x : ℂ) ^ z
+  have hpow_diff : Differentiable ℂ (fun z : ℂ => (x : ℂ) ^ z) :=
+    (differentiable_id : Differentiable ℂ (fun z : ℂ => z)).const_cpow
+      (Or.inl hx0)
+  have hcore_analytic : AnalyticAt ℂ core 0 := by
+    exact
+      (ZeroFreeRegion.analyticAt_logDeriv_riemannZeta_of_ne_one_of_ne_zero
+        0 (by norm_num) hzeta0).neg.mul (hpow_diff.analyticAt 0)
+  let U : Set ℂ := {z | AnalyticAt ℂ core z}
+  have hU_open : IsOpen U := by
+    simpa [U] using (isOpen_analyticAt ℂ core)
+  have hU_mem : U ∈ 𝓝 (0 : ℂ) := hU_open.mem_nhds hcore_analytic
+  have hcore_diff : DifferentiableOn ℂ core U := by
+    intro z hz
+    exact hz.differentiableAt.differentiableWithinAt
+  have hdslope_diff : DifferentiableOn ℂ (dslope core 0) U :=
+    (Complex.differentiableOn_dslope hU_mem).2 hcore_diff
+  have hdslope_analytic : AnalyticAt ℂ (dslope core 0) 0 :=
+    (hdslope_diff.analyticOnNhd hU_open) 0 hcore_analytic
+  have hcore_zero : core 0 = -deriv riemannZeta 0 / riemannZeta 0 := by
+    simp only [core, logDeriv_apply, cpow_zero, mul_one]
+    ring
+  refine ⟨dslope core 0, hdslope_analytic, ?_⟩
+  filter_upwards [self_mem_nhdsWithin] with z hz0
+  have hz_ne_zero : z ≠ 0 := Set.mem_compl_singleton_iff.mp hz0
+  simp only [explicitFormulaIntegrand]
+  change core z / z - z⁻¹ * (-deriv riemannZeta 0 / riemannZeta 0) = _
+  rw [dslope_of_ne core hz_ne_zero]
+  simp only [slope, vsub_eq_sub, smul_eq_mul]
+  rw [hcore_zero]
+  field_simp [hz_ne_zero]
+  ring
+
+/-- On every compact set, all principal parts of the concrete explicit-formula
+integrand can be subtracted simultaneously.  After correcting the finitely
+many removable center values with `toMeromorphicNFOn`, the resulting single
+global remainder is analytic on the whole compact set. -/
+theorem exists_finite_explicitFormulaIntegrand_analytic_regularized_remainder
+    {x : ℝ} (hx : 0 < x) {K : Set ℂ} (hK : IsCompact K) :
+    ∃ (poles : Finset ℂ) (residue : ℂ → ℂ),
+      AnalyticOnNhd ℂ
+        (toMeromorphicNFOn
+          (fun z : ℂ => explicitFormulaIntegrand x z -
+            ∑ p ∈ poles, (z - p)⁻¹ * residue p) K) K := by
+  classical
+  have hzeta_meromorphic : MeromorphicOn riemannZeta K := by
+    intro s _hs
+    by_cases hs1 : s = 1
+    · subst s
+      exact ZeroFreeRegion.meromorphicAt_riemannZeta_one
+    · exact ZeroFreeRegion.meromorphicAt_riemannZeta_of_ne_one s hs1
+  let D := MeromorphicOn.divisor riemannZeta K
+  have hDfinite : D.support.Finite := D.finiteSupport hK
+  let poles : Finset ℂ := hDfinite.toFinset ∪ {0}
+  let residue : ℂ → ℂ := fun p =>
+    if p = 1 then (x : ℂ)
+    else if p = 0 then -deriv riemannZeta 0 / riemannZeta 0
+    else -(analyticOrderNatAt riemannZeta p : ℂ) * (x : ℂ) ^ p / p
+  let raw : ℂ → ℂ := fun z =>
+    explicitFormulaIntegrand x z -
+      ∑ p ∈ poles, (z - p)⁻¹ * residue p
+  have hintegrand_meromorphic :
+      MeromorphicOn (explicitFormulaIntegrand x) K := by
+    intro z _hz
+    exact meromorphic_explicitFormulaIntegrand hx z
+  have hprincipal_meromorphic :
+      MeromorphicOn
+        (fun z : ℂ => ∑ p ∈ poles, (z - p)⁻¹ * residue p) K := by
+    apply MeromorphicOn.fun_sum
+    intro p z _hz
+    exact
+      (((MeromorphicAt.id z).sub (MeromorphicAt.const p z)).inv.mul
+        (MeromorphicAt.const (residue p) z))
+  have hraw_meromorphic : MeromorphicOn raw K := by
+    simpa [raw] using hintegrand_meromorphic.sub hprincipal_meromorphic
+  refine ⟨poles, residue, ?_⟩
+  apply
+    ZeroFreeRegion.analyticOnNhd_toMeromorphicNFOn_of_locally_eventuallyEq_analyticAt
+      hraw_meromorphic
+  intro s hsK
+  by_cases hs_pole : s ∈ poles
+  · have hown :
+        ∃ G : ℂ → ℂ, AnalyticAt ℂ G s ∧
+          (fun z : ℂ => explicitFormulaIntegrand x z -
+            (z - s)⁻¹ * residue s) =ᶠ[𝓝[≠] s] G := by
+      by_cases hs1 : s = 1
+      · subst s
+        simpa [residue] using
+          exists_analyticAt_eventuallyEq_explicitFormulaIntegrand_sub_principalPart_one hx
+      · by_cases hs0 : s = 0
+        · subst s
+          simpa [residue] using
+            exists_analyticAt_eventuallyEq_explicitFormulaIntegrand_sub_principalPart_zero hx
+        · have hs_support : s ∈ D.support := by
+            have hs := hs_pole
+            simp only [poles, Finset.mem_union, hDfinite.mem_toFinset,
+              Finset.mem_singleton] at hs
+            exact hs.resolve_right hs0
+          have hDne : D s ≠ 0 := Function.mem_support.mp hs_support
+          have han : AnalyticAt ℂ riemannZeta s :=
+            ZeroFreeRegion.analyticOnNhd_riemannZeta_ne_one s hs1
+          have hzeta : riemannZeta s = 0 := by
+            by_contra hzeta_ne
+            have horder_zero : analyticOrderAt riemannZeta s = 0 :=
+              han.analyticOrderAt_eq_zero.mpr hzeta_ne
+            have hDzero : D s = 0 := by
+              rw [MeromorphicOn.divisor_apply hzeta_meromorphic hsK,
+                han.meromorphicOrderAt_eq, horder_zero]
+              simp
+            exact hDne hDzero
+          have horder :
+              analyticOrderAt riemannZeta s =
+                analyticOrderNatAt riemannZeta s :=
+            (ZeroFreeRegion.analyticOrderNatAt_riemannZeta_eq_analyticOrderAt_of_ne_one
+              hs1).symm
+          simpa [residue, hs1, hs0] using
+            exists_analyticAt_eventuallyEq_explicitFormulaIntegrand_sub_principalPart_of_order_eq_nat
+              hx hs1 hs0 horder
+    rcases hown with ⟨G, hG, hlocal⟩
+    let Gregular : ℂ → ℂ := fun z =>
+      G z - ∑ p ∈ poles.erase s, (z - p)⁻¹ * residue p
+    have hsum : AnalyticAt ℂ
+        (fun z : ℂ => ∑ p ∈ poles.erase s, (z - p)⁻¹ * residue p) s := by
+      apply Finset.analyticAt_fun_sum
+      intro p hp
+      have hps : p ≠ s := Finset.ne_of_mem_erase hp
+      exact
+        ((analyticAt_id.sub analyticAt_const).inv (sub_ne_zero.mpr hps.symm)).mul
+          analyticAt_const
+    refine ⟨Gregular, hG.sub hsum, ?_⟩
+    filter_upwards [hlocal] with z hz
+    dsimp [raw, Gregular]
+    rw [← Finset.sum_erase_add _ _ hs_pole]
+    have hz' : explicitFormulaIntegrand x z =
+        G z + (z - s)⁻¹ * residue s :=
+      sub_eq_iff_eq_add.mp hz
+    rw [hz']
+    ring
+  · have hs0 : s ≠ 0 := by
+      intro hs
+      subst s
+      apply hs_pole
+      simp [poles]
+    have hs_not_support : s ∉ D.support := by
+      intro hs
+      apply hs_pole
+      simp [poles, hDfinite.mem_toFinset, hs]
+    have hDzero : D s = 0 := Function.notMem_support.mp hs_not_support
+    have hs1 : s ≠ 1 := by
+      intro hs
+      subst s
+      have hDone : D (1 : ℂ) = (-1 : ℤ) := by
+        simpa [D] using
+          ZeroFreeRegion.divisor_riemannZeta_pole_one hsK hzeta_meromorphic
+      rw [hDzero] at hDone
+      norm_num at hDone
+    have hzeta : riemannZeta s ≠ 0 := by
+      intro hzeta_zero
+      have han : AnalyticAt ℂ riemannZeta s :=
+        ZeroFreeRegion.analyticOnNhd_riemannZeta_ne_one s hs1
+      have hpos : 0 < analyticOrderNatAt riemannZeta s :=
+        ZeroFreeRegion.analyticOrderNatAt_riemannZeta_pos_of_zero hs1 hzeta_zero
+      have horder :
+          analyticOrderAt riemannZeta s =
+            (analyticOrderNatAt riemannZeta s : ℕ∞) :=
+        (ZeroFreeRegion.analyticOrderNatAt_riemannZeta_eq_analyticOrderAt_of_ne_one
+          hs1).symm
+      have hDvalue : D s = (analyticOrderNatAt riemannZeta s : ℤ) := by
+        rw [MeromorphicOn.divisor_apply hzeta_meromorphic hsK,
+          han.meromorphicOrderAt_eq, horder]
+        simp
+      rw [hDzero] at hDvalue
+      have hnat_zero : analyticOrderNatAt riemannZeta s = 0 := by
+        exact_mod_cast hDvalue.symm
+      exact (Nat.ne_of_gt hpos) hnat_zero
+    have hintegrand : AnalyticAt ℂ (explicitFormulaIntegrand x) s :=
+      analyticAt_explicitFormulaIntegrand_of_ne_zero_of_ne_one_of_zeta_ne_zero
+        hx hs0 hs1 hzeta
+    have hsum : AnalyticAt ℂ
+        (fun z : ℂ => ∑ p ∈ poles, (z - p)⁻¹ * residue p) s := by
+      apply Finset.analyticAt_fun_sum
+      intro p hp
+      have hps : p ≠ s := by
+        intro h
+        subst p
+        exact hs_pole hp
+      exact
+        ((analyticAt_id.sub analyticAt_const).inv (sub_ne_zero.mpr hps.symm)).mul
+          analyticAt_const
+    refine ⟨raw, ?_, Filter.EventuallyEq.rfl⟩
+    simpa [raw] using hintegrand.sub hsum
 
 end ExplicitFormulaResidues
 end PrimeNumberTheorem

@@ -341,6 +341,13 @@ remain open.  The same file now proves the concrete integrand is globally
 meromorphic and, on every compact set, analytic outside an explicitly
 constructed finite candidate set (the zeta-divisor support together with the
 kernel pole at `0`).
+The local statements now also prove that subtracting the corresponding
+principal part at `0`, `1`, or any finite-order zeta zero leaves an analytic
+germ.  This is stronger than a residue limit and is the local input needed to
+assemble a holomorphic contour remainder.
+`exists_finite_explicitFormulaIntegrand_analytic_regularized_remainder` now
+performs that assembly on every compact set: it chooses finitely many poles
+and residues and proves the normalized remainder analytic on the whole set.
 
 ## File Overview
 
@@ -354,7 +361,7 @@ kernel pole at `0`).
 | `PrimeNumberTheorem.lean` | PNT forms, equivalences, Li(x) asymptotics, zero symmetry, bounded-height zero finiteness, explicit formula target | sorry-free, targets unproved |
 | `ZeroFreeRegion.lean` | 3-4-1 setup, log derivative series, compact zero-free region, quantitative zero-free-region targets | sorry-free, quantitative targets unproved |
 | `PrimeNumberTheorem/ExplicitFormulaAux.lean` | `chebyshevPsi0`, `goodHeight`, finite zero-sum support helpers, boundary-height and auxiliary multiplicity normalizers | sorry-free, support predicate only |
-| `PrimeNumberTheorem/ExplicitFormulaResidues.lean` | Concrete `-ζ'/ζ(s) * x^s/s` integrand; global meromorphicity, finite compact-set pole candidates, and proved residues at `1`, `0`, nontrivial zeros, and trivial zeros with analytic multiplicity | sorry-free |
+| `PrimeNumberTheorem/ExplicitFormulaResidues.lean` | Concrete `-ζ'/ζ(s) * x^s/s` integrand; global meromorphicity, finite compact-set pole candidates, local principal-part germs, a compact-set analytic regularized remainder, and proved residues at all relevant poles | sorry-free |
 | `PrimeNumberTheorem/ExplicitFormulaTruncated.lean` | Truncated explicit-formula route interface with a real Prop body | sorry-free, route interface unproved |
 | `MathlibAux/RectangleResidue.lean` | Rectangle residue route interface, proved circle and square finite simple-pole residue formulas, rectangular-annulus deformation, plus constant-function sanity checks | sorry-free, general meromorphic route interface unproved |
 | `HardyTheorem/AFE.lean` | Corrected AFE route interface using an unwrapped theta wrapper | sorry-free, route interface unproved |

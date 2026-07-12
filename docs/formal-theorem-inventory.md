@@ -3228,9 +3228,16 @@ Route interfaces:
   meromorphicity, while
   `exists_finite_explicitFormulaIntegrand_pole_candidates` proves that on any
   compact set the integrand is analytic outside a finite set built from the
-  zeta divisor support and `0`.  It does not yet construct the single global
-  holomorphic remainder after subtracting all these principal parts, prove
-  Perron inversion, or prove the contour-error estimate.
+  zeta divisor support and `0`.
+- `exists_analyticAt_eventuallyEq_explicitFormulaIntegrand_sub_principalPart_one`,
+  `..._zero`, and `..._of_order_eq_nat` prove that subtracting the actual
+  principal part leaves an analytic germ at each pole candidate.  These are
+  stronger local statements than the corresponding residue limits.
+- `exists_finite_explicitFormulaIntegrand_analytic_regularized_remainder`
+  subtracts all compact-set principal parts simultaneously and proves the
+  `toMeromorphicNFOn` remainder analytic on the whole compact set.  Perron
+  inversion, pole-free contour selection, and contour-error estimates remain
+  unproved.
 
 Reusable predicates:
 
