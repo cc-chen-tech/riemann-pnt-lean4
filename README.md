@@ -224,9 +224,15 @@ every frequency in the finite set, and the finite-detector API now exposes
 matching `_of_pos_A` entrypoints so detector proofs no longer need a separate
 `hM` function.  The BTY degree-16 specializations and their uniform-bound
 facades have matching `_of_pos_A` entrypoints, so the checked detector route now
-inherits the same positivity discharge.  These handoff lemmas do not prove the
-missing polynomial growth or boundary-strip logarithmic-derivative estimate
-itself.  On the pole side,
+inherits the same positivity discharge.  Abel's floor-integral formula now
+discharges the polynomial-growth premise:
+`norm_riemannZeta_le_two_mul_norm_of_one_le_re_of_one_le_abs_im` proves
+`‖ζ(s)‖ ≤ 2‖s‖` for `Re(s) ≥ 1`, `|Im(s)| ≥ 1`, including the boundary by
+continuity from the right.  Consequently the logarithmic and circle-average
+bounds above, and an `O(log |t|)` Jensen weighted zero-mass bound, now have
+unconditional zeta-specific forms.  These results still do not prove either
+remaining logarithmic-derivative input: a uniform boundary-strip bound for
+`ζ'/ζ`, and a uniform bound for its zero-removed regular part.  On the pole side,
 the local decomposition
 `logDeriv ζ(s) = -(s-1)^-1 + logDeriv(unit)(s)` is now proved near `s=1`,
 and the unit logarithmic derivative is locally bounded; this improves the
@@ -254,8 +260,9 @@ This keeps the claims tight:
 4. **Framework contribution:** building a Hardy-Z/critical-line-zero framework
    with explicit target statements for Hardy, Hardy-Littlewood, Selberg, and
    Conrey-style zero-counting results.
-5. **Mathlib roadmap:** isolating the missing analytic inputs: zeta growth and
-   logarithmic-derivative estimates for quantitative zero-free regions, Perron
+5. **Mathlib roadmap:** isolating the missing analytic inputs: uniform
+   boundary-strip and zero-removed logarithmic-derivative estimates for
+   quantitative zero-free regions, Perron
    and residue-theorem machinery for the explicit formula, and special-function
    asymptotics for Hardy's theorem.
 
@@ -437,7 +444,9 @@ Lean declarations in `ZeroFreeRegion.lean` and
 | `ZeroFreeRegion.analyticOrderNatAt_riemannZeta_pos_of_zero` / `ZeroFreeRegion.exists_punctured_ball_norm_logDeriv_riemannZeta_sub_analyticOrderNatAt_mul_inv_le_of_zero_auto` / signed, closed-ball, real-coordinate, real-part, log-scale real-part, and atRight variants | `lemma` | For any actual zero `ρ ≠ 1`, proves the natural analytic multiplicity `analyticOrderNatAt riemannZeta ρ` is positive and automatically obtains a local punctured-ball bound for `logDeriv ζ - n/(z-ρ)` with `n` chosen as that multiplicity.  The `exists_real_punctured_interval_...` variants specialize this to horizontal-line points `ρ=β+it`, `z=σ+it`, and `exists_real_punctured_interval_re_neg_deriv_div_...` gives the local zero-repulsion inequality `Re(-ζ'/ζ)(σ+it)+1/(σ-β)≤M`.  The `_le_log_abs_of_zero_auto` variants normalize the same local constant as `C log |t|` when `3≤|t|`, and the `exists_eventually_atRight_...` wrappers package both the signed norm regular-part estimate and its real-part consequence on the right-neighborhood of `β`. | Removes a manual `analyticOrderAt ζ ρ = n` hypothesis from the zero-local principal-part API and from the real-coordinate zero-repulsion setup; this is a genuine local regular-part theorem, but it still supplies only a local constant depending on the zero, not the missing uniform boundary-strip `O(log |t|)` coefficient. |
 | `ZeroFreeRegion.norm_riemannZeta_le_re_zeta_two_of_two_le_re` | `lemma` | Proves the right-boundary estimate `‖ζ(s)‖ ≤ Re(ζ(2))` whenever `2 ≤ Re(s)`, directly from absolute convergence of the Dirichlet series. | A genuine zeta-specific boundary estimate for future Phragmén-Lindelöf/Jensen work; it does not solve the hard strip `1 ≤ Re(s) ≤ 2`. |
 | `ZeroFreeRegion.riemannZeta_two_re_le_five_thirds` / `ZeroFreeRegion.norm_riemannZeta_sub_one_le_two_thirds_of_two_le_re` / `ZeroFreeRegion.one_third_le_norm_riemannZeta_of_two_le_re` | `lemma` | Uses `ζ(2)=π²/6` plus Mathlib's certified `π<3.15` to prove the exponent-2 tail bound `‖ζ(s)-1‖≤2/3` and hence `‖ζ(s)‖≥1/3` on `2≤Re(s)`. | Strengthens the checked right-edge nonvanishing margin from the older `Re≥3` line to the natural boundary `Re=2`; this is still not a lower bound in the critical boundary strip. |
-| `ZeroFreeRegion.norm_riemannZeta_le_const_polynomial_on_two_le_re` | `lemma` | Packages the preceding bound as constant-order polynomial growth on `2 ≤ Re(s)`. | Gives the later polynomial-growth infrastructure a proved right-edge input while keeping the missing high-height strip estimate explicit. |
+| `ZeroFreeRegion.norm_riemannZeta_le_const_polynomial_on_two_le_re` | `lemma` | Packages the preceding bound as constant-order polynomial growth on `2 ≤ Re(s)`. | Gives the later polynomial-growth infrastructure a simple constant right-edge input. |
+| `ZeroFreeRegion.norm_riemannZeta_le_two_mul_norm_of_one_le_re_of_one_le_abs_im` / `ZeroFreeRegion.norm_riemannZeta_le_two_mul_norm_add_three_on_vertical_strip` | `lemma` | Uses Abel's floor-integral formula and continuity from `Re(s)>1` to prove `‖ζ(s)‖≤2‖s‖` on `Re(s)≥1`, `|Im(s)|≥1`, and packages it as polynomial growth on `1≤Re(s)≤3`. | Closes the previously missing zeta-growth premise for the Jensen/Borel chain; this controls the numerator, not yet the logarithmic derivative near zeros. |
+| `ZeroFreeRegion.log_norm_riemannZeta_sigma_it_le_log_two_add_two_log_abs_add_three` / unconditional circle-average and Jensen zero-mass forms | `lemma` | Derives explicit logarithmic zeta growth and weighted local zero-mass bounds of order `log |t|` with no caller-supplied growth hypothesis. | Supplies the growth and zero-counting inputs for the regular-part route; divisor separation and uniform control of the zero-removed factor remain open. |
 | `ZeroFreeRegion.norm_deriv_riemannZeta_le_re_zeta_two_div_radius_of_closedBall_two_le_re` / coordinate form | `lemma` | Uses Cauchy's derivative estimate plus the right-boundary ζ bound to prove `‖ζ'(c)‖ ≤ Re(ζ(2))/R` when `closedBall c R` stays in `2 ≤ Re(s)`. | A verified right-edge derivative-growth input; the hard task remains carrying comparable control into the boundary strip near `Re(s)=1`. |
 | `ZeroFreeRegion.norm_logDeriv_riemannZeta_le_three_mul_re_zeta_two_div_radius_of_two_add_radius_le_re` / coordinate form | `lemma` | Combines the Cauchy derivative estimate with the new `‖ζ(s)‖≥1/3` margin to prove `‖logDeriv ζ(s)‖≤3Re(ζ(2))/R` when the radius-`R` disk around `s` stays in `2≤Re(z)`. | Gives a reusable right-edge logarithmic-derivative input for later Borel/Jensen arguments; it is a boundary condition, not the missing uniform `O(log|t|)` estimate on `1≤Re(s)≤2`. |
 | `ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_le_log_abs_im_of_two_add_radius_le_re` / coordinate form | `lemma` | Normalizes the radius-dependent right-edge constant bound into `‖logDeriv ζ(z)‖≤C log|Im z|` on `2+R≤Re(z)` above any fixed height `H≥2`. | Puts the proved right-edge control into the same logarithmic-height scale used by the zero-free-region chain, while keeping the boundary-strip gap explicit. |

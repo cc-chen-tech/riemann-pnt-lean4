@@ -1525,9 +1525,17 @@ Core verified declarations:
   the high vertical region `T0 <= |Im z|`, `1 <= Re z <= 3`.
 - `norm_riemannZeta_le_re_zeta_two_of_two_le_re` and
   `norm_riemannZeta_le_const_polynomial_on_two_le_re` now supply the proved
-  right-edge input on `2 <= Re(s)`; the still-missing analytic input is the
-  continuation of comparable control across the boundary strip
-  `1 <= Re(s) <= 2` at high height.
+  right-edge input on `2 <= Re(s)`.
+- `norm_riemannZeta_le_two_mul_norm_of_one_le_re_of_one_le_abs_im` extends a
+  stronger linear-growth estimate across the full boundary strip
+  `Re(s) >= 1`, `|Im(s)| >= 1`, using Abel's floor-integral formula and
+  continuity from the right.  The packaged polynomial-growth, logarithmic,
+  circle-average, and Jensen zero-mass forms therefore no longer require a
+  future zeta-growth premise.
+- This does not close either logarithmic-derivative target: the remaining
+  analytic gaps are a uniform boundary-strip bound for `zeta'/zeta` and
+  uniform control of its zero-removed regular part, including the
+  divisor-separation loss.
 - `norm_deriv_riemannZeta_le_re_zeta_two_div_radius_of_closedBall_two_le_re`
   uses Cauchy's derivative estimate plus the right-edge zeta bound to prove
   `||zeta'(c)|| <= Re(zeta(2)) / R` whenever `closedBall c R` stays in

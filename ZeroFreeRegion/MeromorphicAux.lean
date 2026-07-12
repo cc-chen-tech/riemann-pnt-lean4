@@ -7230,8 +7230,223 @@ scale used by Jensen and Borel-Carathéodory estimates.
 This is only real-variable bookkeeping: if `‖f z‖ <= A * (‖z‖+3)^B` with
 `A >= 1` and `B >= 0`, then the logarithm of the norm is bounded by the
 corresponding affine logarithmic expression.  It is intended as the first
-handoff from a future zeta-specific polynomial-growth theorem into the
-existing zero-free-region infrastructure. -/
+handoff from a polynomial-growth theorem into the existing zero-free-region
+infrastructure. -/
+private noncomputable def riemannZetaFloorError (s : ℂ) (t : ℝ) : ℂ :=
+  (((⌊t⌋₊ : ℝ) - t : ℝ) : ℂ) * (t : ℂ) ^ (-(s + 1))
+
+/-- Abel summation expresses zeta in the half-plane of absolute convergence as
+an integral against the natural-number floor function. -/
+lemma riemannZeta_eq_mul_natFloor_integral_of_one_lt_re {s : ℂ}
+    (hs : 1 < s.re) :
+    riemannZeta s = s * ∫ t in Set.Ioi (1 : ℝ),
+      (⌊t⌋₊ : ℂ) * (t : ℂ) ^ (-(s + 1)) := by
+  have hO :
+      (fun n : ℕ => ∑ k ∈ Finset.Icc 1 n, (1 : ℝ))
+        =O[atTop] (fun n : ℕ => (n : ℝ) ^ (1 : ℝ)) := by
+    simpa [Real.rpow_one] using
+      (isBigO_refl (fun n : ℕ => (n : ℝ)) atTop)
+  have h := LSeries_eq_mul_integral_of_nonneg
+    (fun _ : ℕ => (1 : ℝ)) zero_le_one hs hO (fun _ => zero_le_one)
+  have hz : L (fun _ : ℕ => ((1 : ℝ) : ℂ)) s = riemannZeta s := by
+    simpa using LSeries_one_eq_riemannZeta hs
+  rw [hz] at h
+  simpa using h
+
+/-- The floor-error term in Abel's integral formula is integrable as soon as
+the real part of the exponent is positive. -/
+private lemma integrableOn_riemannZetaFloorError {s : ℂ} (hs : 0 < s.re) :
+    IntegrableOn (riemannZetaFloorError s) (Set.Ioi (1 : ℝ)) := by
+  let G : ℝ → ℂ := fun t => (t : ℂ) ^ (-(s + 1))
+  have hG : IntegrableOn G (Set.Ioi (1 : ℝ)) := by
+    exact integrableOn_Ioi_cpow_of_lt (by simp; linarith) zero_lt_one
+  have hF_meas : AEStronglyMeasurable (riemannZetaFloorError s)
+      (volume.restrict (Set.Ioi (1 : ℝ))) := by
+    apply AEStronglyMeasurable.mul
+    · have hfloor : Measurable fun t : ℝ => (⌊t⌋₊ : ℝ) := by fun_prop
+      exact (Complex.measurable_ofReal.comp
+        (hfloor.sub measurable_id)).aestronglyMeasurable
+    · exact hG.aestronglyMeasurable
+  change Integrable G (volume.restrict (Set.Ioi (1 : ℝ))) at hG
+  change Integrable (riemannZetaFloorError s)
+    (volume.restrict (Set.Ioi (1 : ℝ)))
+  apply hG.mono hF_meas
+  filter_upwards [ae_restrict_mem measurableSet_Ioi] with t ht
+  have ht0 : (0 : ℝ) ≤ t := le_trans zero_le_one ht.le
+  have hfloor := Nat.abs_floor_sub_le ht0
+  dsimp [riemannZetaFloorError, G]
+  rw [norm_mul, norm_real, Real.norm_eq_abs]
+  exact mul_le_of_le_one_left (norm_nonneg _) hfloor
+
+/-- The Abel floor-error integral has the elementary bound `1 / Re(s)`. -/
+private lemma norm_integral_riemannZetaFloorError_le {s : ℂ} (hs : 0 < s.re) :
+    ‖∫ t in Set.Ioi (1 : ℝ), riemannZetaFloorError s t‖ ≤ 1 / s.re := by
+  let G : ℝ → ℝ := fun t => t ^ (-(s.re + 1))
+  have hF : IntegrableOn (riemannZetaFloorError s) (Set.Ioi (1 : ℝ)) :=
+    integrableOn_riemannZetaFloorError hs
+  have hG : IntegrableOn G (Set.Ioi (1 : ℝ)) := by
+    change IntegrableOn (fun t : ℝ => t ^ (-(s.re + 1))) (Set.Ioi (1 : ℝ))
+    exact integrableOn_Ioi_rpow_of_lt (by linarith) zero_lt_one
+  calc
+    ‖∫ t in Set.Ioi (1 : ℝ), riemannZetaFloorError s t‖
+        ≤ ∫ t in Set.Ioi (1 : ℝ), ‖riemannZetaFloorError s t‖ :=
+      norm_integral_le_integral_norm (riemannZetaFloorError s)
+    _ ≤ ∫ t in Set.Ioi (1 : ℝ), G t := by
+      apply setIntegral_mono_on hF.norm hG measurableSet_Ioi
+      intro t ht
+      have ht0 : (0 : ℝ) ≤ t := le_trans zero_le_one ht.le
+      have htpos : (0 : ℝ) < t := zero_lt_one.trans ht
+      have hfloor := Nat.abs_floor_sub_le ht0
+      dsimp [riemannZetaFloorError, G]
+      rw [norm_mul, norm_real, Real.norm_eq_abs,
+        Complex.norm_cpow_eq_rpow_re_of_pos htpos]
+      simp only [neg_re, add_re, one_re]
+      exact mul_le_of_le_one_left (Real.rpow_nonneg ht0 _) hfloor
+    _ = 1 / s.re := by
+      change (∫ t : ℝ in Set.Ioi (1 : ℝ), t ^ (-(s.re + 1))) = 1 / s.re
+      rw [integral_Ioi_rpow_of_lt (by linarith) zero_lt_one]
+      rw [Real.one_rpow]
+      field_simp [hs.ne']
+      ring
+
+/-- Abel's formula with the pole term `s / (s - 1)` separated from an
+absolutely convergent floor-error integral. -/
+private lemma riemannZeta_eq_pole_add_floorError_integral_of_one_lt_re {s : ℂ}
+    (hs : 1 < s.re) :
+    riemannZeta s = s / (s - 1) +
+      s * ∫ t in Set.Ioi (1 : ℝ), riemannZetaFloorError s t := by
+  let P : ℝ → ℂ := fun t => (t : ℂ) ^ (-s)
+  have hzfloor := riemannZeta_eq_mul_natFloor_integral_of_one_lt_re hs
+  have hP : IntegrableOn P (Set.Ioi (1 : ℝ)) := by
+    exact integrableOn_Ioi_cpow_of_lt (by simp; linarith) zero_lt_one
+  have hE : IntegrableOn (riemannZetaFloorError s) (Set.Ioi (1 : ℝ)) :=
+    integrableOn_riemannZetaFloorError (zero_lt_one.trans hs)
+  have hpoint : ∀ t ∈ Set.Ioi (1 : ℝ),
+      (⌊t⌋₊ : ℂ) * (t : ℂ) ^ (-(s + 1)) =
+        P t + riemannZetaFloorError s t := by
+    intro t ht
+    have htne : (t : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr
+      (zero_lt_one.trans ht).ne'
+    have hpow : (t : ℂ) * (t : ℂ) ^ (-(s + 1)) = P t := by
+      dsimp [P]
+      calc
+        (t : ℂ) * (t : ℂ) ^ (-(s + 1)) =
+            (t : ℂ) ^ (1 : ℂ) * (t : ℂ) ^ (-(s + 1)) := by rw [cpow_one]
+        _ = (t : ℂ) ^ ((1 : ℂ) + (-(s + 1))) := by
+          rw [cpow_add _ _ htne]
+        _ = (t : ℂ) ^ (-s) := by congr 1; ring
+    dsimp [riemannZetaFloorError]
+    rw [← hpow]
+    push_cast
+    ring
+  have hsplit :
+      (∫ t in Set.Ioi (1 : ℝ),
+        (⌊t⌋₊ : ℂ) * (t : ℂ) ^ (-(s + 1))) =
+      (∫ t in Set.Ioi (1 : ℝ), P t) +
+        ∫ t in Set.Ioi (1 : ℝ), riemannZetaFloorError s t := by
+    rw [← integral_add hP hE]
+    exact setIntegral_congr_fun measurableSet_Ioi hpoint
+  have hPint : (∫ t in Set.Ioi (1 : ℝ), P t) = 1 / (s - 1) := by
+    dsimp [P]
+    rw [integral_Ioi_cpow_of_lt (by simp; linarith) zero_lt_one]
+    simp only [ofReal_one, one_cpow]
+    rw [show -s + 1 = -(s - 1) by ring, div_neg, neg_div, neg_neg]
+  rw [hzfloor, hsplit, hPint]
+  ring
+
+/-- In the half-plane of absolute convergence, and one unit away from the real
+axis, Abel's formula gives the linear vertical-growth bound `|zeta(s)| <= 2|s|`.
+Unlike the Dirichlet-series estimate, its constant is uniform as `Re(s) -> 1+`. -/
+lemma norm_riemannZeta_le_two_mul_norm_of_one_lt_re_of_one_le_abs_im
+    (s : ℂ) (hre : 1 < s.re) (him : 1 ≤ |s.im|) :
+    ‖riemannZeta s‖ ≤ 2 * ‖s‖ := by
+  have hformula := riemannZeta_eq_pole_add_floorError_integral_of_one_lt_re hre
+  have hEbound := norm_integral_riemannZetaFloorError_le (zero_lt_one.trans hre)
+  have hden : 1 ≤ ‖s - 1‖ := by
+    have himnorm := Complex.abs_im_le_norm (s - 1)
+    have him_eq : |(s - 1).im| = |s.im| := by simp
+    linarith
+  have hpole : ‖s / (s - 1)‖ ≤ ‖s‖ := by
+    rw [norm_div]
+    exact div_le_self (norm_nonneg s) hden
+  have hEone : ‖∫ t in Set.Ioi (1 : ℝ), riemannZetaFloorError s t‖ ≤ 1 := by
+    exact hEbound.trans ((div_le_one (zero_lt_one.trans hre)).2 hre.le)
+  have hrem :
+      ‖s * ∫ t in Set.Ioi (1 : ℝ), riemannZetaFloorError s t‖ ≤ ‖s‖ := by
+    rw [norm_mul]
+    exact mul_le_of_le_one_right (norm_nonneg s) hEone
+  rw [hformula]
+  exact (norm_add_le _ _).trans (by linarith)
+
+/-- The linear zeta-growth estimate extends to the boundary `Re(s) = 1` away
+from the pole.  The proof approaches the boundary from the half-plane
+`Re(s) > 1` and uses continuity of zeta at points with nonzero imaginary part. -/
+lemma norm_riemannZeta_le_two_mul_norm_of_one_le_re_of_one_le_abs_im
+    (s : ℂ) (hre : 1 ≤ s.re) (him : 1 ≤ |s.im|) :
+    ‖riemannZeta s‖ ≤ 2 * ‖s‖ := by
+  by_cases hstrict : 1 < s.re
+  · exact norm_riemannZeta_le_two_mul_norm_of_one_lt_re_of_one_le_abs_im
+      s hstrict him
+  · have hre_eq : s.re = 1 := le_antisymm (le_of_not_gt hstrict) hre
+    let u : ℕ → ℂ := fun n => s + 1 / ((n : ℂ) + 1)
+    have hu : Tendsto u atTop (𝓝 s) := by
+      simpa [u] using
+        (tendsto_const_nhds.add
+          (tendsto_one_div_add_atTop_nhds_zero_nat (𝕜 := ℂ)))
+    have hs_ne : s ≠ 1 := by
+      intro hs
+      subst s
+      norm_num at him
+    have hz : Tendsto (fun n => riemannZeta (u n)) atTop (𝓝 (riemannZeta s)) :=
+      (differentiableAt_riemannZeta hs_ne).continuousAt.tendsto.comp hu
+    have hdiff : Tendsto
+        (fun n => ‖riemannZeta (u n)‖ - 2 * ‖u n‖) atTop
+        (𝓝 (‖riemannZeta s‖ - 2 * ‖s‖)) :=
+      hz.norm.sub (hu.norm.const_mul 2)
+    have hnonpos : ∀ n, ‖riemannZeta (u n)‖ - 2 * ‖u n‖ ≤ 0 := by
+      intro n
+      have hu_re : 1 < (u n).re := by
+        simp [u, hre_eq]
+        exact div_pos (by positivity)
+          (Complex.normSq_pos.mpr (by
+            intro h
+            have hre_zero := congrArg Complex.re h
+            simp at hre_zero
+            have hre_pos : (0 : ℝ) < (n : ℝ) + 1 := by positivity
+            linarith))
+      have hu_im : 1 ≤ |(u n).im| := by simpa [u] using him
+      have hbound :=
+        norm_riemannZeta_le_two_mul_norm_of_one_lt_re_of_one_le_abs_im
+          (u n) hu_re hu_im
+      linarith
+    have hlimit_nonpos : ‖riemannZeta s‖ - 2 * ‖s‖ ≤ 0 :=
+      le_of_tendsto' hdiff hnonpos
+    linarith
+
+/-- A concrete zeta-specific polynomial growth input on the standard vertical
+strip.  This closes the formerly hypothetical `hpoly` premise used by the
+Jensen and Borel-Carathéodory handoff lemmas, with `A = 2`, `B = 1`, and
+height threshold `T0 = 1`. -/
+lemma norm_riemannZeta_le_two_mul_norm_add_three_on_vertical_strip
+    (s : ℂ) (hs_height : 1 ≤ |s.im|) (hs_re : s.re ∈ Set.Icc (1 : ℝ) 3) :
+    ‖riemannZeta s‖ ≤ 2 * (‖s‖ + 3) ^ (1 : ℝ) := by
+  have hbase :=
+    norm_riemannZeta_le_two_mul_norm_of_one_le_re_of_one_le_abs_im
+      s hs_re.1 hs_height
+  rw [Real.rpow_one]
+  nlinarith [norm_nonneg s]
+
+/-- Existential packaging of the explicit polynomial growth estimate in the
+shape consumed by the zero-free-region infrastructure. -/
+theorem exists_riemannZeta_polynomial_growth_on_vertical_strip :
+    ∃ A B T0 : ℝ, 1 ≤ A ∧ 0 ≤ B ∧
+      ∀ s : ℂ, T0 ≤ |s.im| → s.re ∈ Set.Icc (1 : ℝ) 3 →
+        ‖riemannZeta s‖ ≤ A * (‖s‖ + 3) ^ B := by
+  refine ⟨2, 1, 1, by norm_num, by norm_num, ?_⟩
+  intro s hs_height hs_re
+  exact norm_riemannZeta_le_two_mul_norm_add_three_on_vertical_strip
+    s hs_height hs_re
+
 lemma log_norm_bound_of_polynomial_growth
     {f : ℂ → ℂ} {A B : ℝ} (hA : 1 ≤ A) (hB : 0 ≤ B) (z : ℂ)
     (hpoly : ‖f z‖ ≤ A * (‖z‖ + 3) ^ B) :
@@ -7274,9 +7489,10 @@ lemma log_norm_bound_of_polynomial_growth
 /-- Zeta-specific high-height form of
 `log_norm_bound_of_polynomial_growth`.
 
-The hypothesis is still the missing analytic input: a polynomial-growth bound
-for `riemannZeta` on a high vertical region.  The conclusion is the
-logarithmic norm-growth statement consumed by Jensen/Borel-style wrappers. -/
+The hypothesis is a polynomial-growth bound for `riemannZeta` on a high
+vertical region.  The conclusion is the logarithmic norm-growth statement
+consumed by Jensen/Borel-style wrappers; an explicit zeta instance is proved
+above. -/
 lemma log_norm_riemannZeta_le_affine_log_norm_add_three_of_polynomial_growth
     {T0 A B : ℝ} (hA : 1 ≤ A) (hB : 0 ≤ B)
     (hpoly : ∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc (1 : ℝ) 3 →
@@ -7336,6 +7552,23 @@ lemma log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_three_of_polynomial_gr
           simpa [add_comm, add_left_comm, add_assoc] using
             add_le_add_left hmul (Real.log A)
     _ = Real.log A + (2 * B) * Real.log (|t| + 3) := by ring
+
+/-- Unconditional logarithmic vertical-growth estimate for zeta on the closed
+strip `1 <= sigma <= 2`. -/
+lemma log_norm_riemannZeta_sigma_it_le_log_two_add_two_log_abs_add_three
+    {σ t : ℝ} (hσ : σ ∈ Set.Icc (1 : ℝ) 2) (ht : 5 ≤ |t|) :
+    Real.log ‖riemannZeta ((σ : ℂ) + I * t)‖ ≤
+      Real.log 2 + 2 * Real.log (|t| + 3) := by
+  have hpoly : ∀ z : ℂ, (5 : ℝ) ≤ |z.im| →
+      z.re ∈ Set.Icc (1 : ℝ) 3 →
+      ‖riemannZeta z‖ ≤ 2 * (‖z‖ + 3) ^ (1 : ℝ) := by
+    intro z hz_height hz_re
+    exact norm_riemannZeta_le_two_mul_norm_add_three_on_vertical_strip
+      z (le_trans (by norm_num) hz_height) hz_re
+  simpa using
+    log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_three_of_polynomial_growth
+      (T0 := 5) (A := 2) (B := 1) (by norm_num) (by norm_num) (by norm_num)
+      hpoly σ t ht hσ
 
 /-- Circle-average form of the zeta polynomial-growth handoff.
 
@@ -7478,6 +7711,23 @@ lemma circleAverage_log_norm_riemannZeta_two_add_I_mul_le_affine_log_abs_add_rad
     _ ≤ Real.log A + B * (2 * Real.log |z.im|) := by linarith
     _ = Real.log A + (2 * B) * Real.log |z.im| := by ring
     _ ≤ Real.log A + (2 * B) * Real.log (|t| + R + 3) := by linarith
+
+/-- The circle-average zeta growth bound with the polynomial-growth premise
+discharged by Abel's integral formula. -/
+lemma circleAverage_log_norm_riemannZeta_two_add_I_mul_le_log_two_add_two_log_abs_add_radius_three
+    {R t : ℝ} (hR : 0 < R) (hRone : R ≤ 1) (hheight : 7 + R ≤ |t|) :
+    circleAverage (Real.log ‖riemannZeta ·‖) ((2 : ℂ) + I * t) R ≤
+      Real.log 2 + 2 * Real.log (|t| + R + 3) := by
+  have hpoly : ∀ z : ℂ, (7 : ℝ) ≤ |z.im| →
+      z.re ∈ Set.Icc (1 : ℝ) 3 →
+      ‖riemannZeta z‖ ≤ 2 * (‖z‖ + 3) ^ (1 : ℝ) := by
+    intro z hz_height hz_re
+    exact norm_riemannZeta_le_two_mul_norm_add_three_on_vertical_strip
+      z (le_trans (by norm_num) hz_height) hz_re
+  simpa using
+    circleAverage_log_norm_riemannZeta_two_add_I_mul_le_affine_log_abs_add_radius_three_of_polynomial_growth
+      (T0 := 7) (A := 2) (B := 1) (by norm_num) (by norm_num) (by norm_num)
+      hR hRone hheight hpoly
 
 /-- Coordinate polynomial-growth-to-log-growth conversion in the classical
 high-height scale `log |t|`.
@@ -23340,8 +23590,7 @@ lemma jensen_zero_mass_riemannZeta_two_add_I_mul_le_of_circleAverage_le
 
 /-- Under polynomial vertical growth, Jensen's weighted zeta-zero mass on the
 high disk centered at `2 + I*t` is `O(log (|t| + R + 3))` with explicit
-constants.  The polynomial-growth hypothesis is still the missing analytic
-input. -/
+constants. -/
 lemma jensen_zero_mass_riemannZeta_two_add_I_mul_le_affine_log_abs_add_radius_three_of_polynomial_growth
     {T0 A B R t : ℝ} (hT0 : 6 ≤ T0) (hA : 1 ≤ A) (hB : 0 ≤ B)
     (hR : 0 < R) (hRone : R ≤ 1) (hheight : T0 + R ≤ |t|)
@@ -23355,6 +23604,19 @@ lemma jensen_zero_mass_riemannZeta_two_add_I_mul_le_affine_log_abs_add_radius_th
   exact
     circleAverage_log_norm_riemannZeta_two_add_I_mul_le_affine_log_abs_add_radius_three_of_polynomial_growth
       hT0 hA hB hR hRone hheight hpoly
+
+/-- Unconditional `O(log |t|)` Jensen weighted zero-mass estimate, obtained by
+combining Abel's zeta-growth bound with the local Jensen formula. -/
+lemma jensen_zero_mass_riemannZeta_two_add_I_mul_le_log_two_add_two_log_abs_add_radius_three
+    {R t : ℝ} (hR : 0 < R) (hRone : R ≤ 1) (hheight : 7 + R ≤ |t|) :
+    (∑ᶠ u,
+        divisor riemannZeta (closedBall ((2 : ℂ) + I * t) R) u *
+          Real.log (R * ‖((2 : ℂ) + I * t) - u‖⁻¹)) ≤
+      Real.log 2 + 2 * Real.log (|t| + R + 3) + Real.log 3 := by
+  apply jensen_zero_mass_riemannZeta_two_add_I_mul_le_of_circleAverage_le hR
+  exact
+    circleAverage_log_norm_riemannZeta_two_add_I_mul_le_log_two_add_two_log_abs_add_radius_three
+      hR hRone hheight
 
 /-- Jensen's weighted local zero mass for `ζ` on a disk centered at
 `2 + I*t` is controlled solely by a boundary norm bound.

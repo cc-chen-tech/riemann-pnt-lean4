@@ -18529,6 +18529,29 @@ theorem log_norm_sigma_add_I_mul_add_three_le_two_log_abs_add_three
   ZeroFreeRegion.log_norm_sigma_add_I_mul_add_three_le_two_log_abs_add_three
     hσ ht
 
+/-- Public uniform linear growth bound for zeta on and to the right of the
+line `Re(s) = 1`, away from its pole. -/
+theorem norm_riemannZeta_le_two_mul_norm_of_one_le_re_of_one_le_abs_im
+    (s : ℂ) (hre : 1 ≤ s.re) (him : 1 ≤ |s.im|) :
+    ‖riemannZeta s‖ ≤ 2 * ‖s‖ :=
+  ZeroFreeRegion.norm_riemannZeta_le_two_mul_norm_of_one_le_re_of_one_le_abs_im
+    s hre him
+
+/-- Public concrete polynomial growth estimate on `1 <= Re(s) <= 3`. -/
+theorem norm_riemannZeta_le_two_mul_norm_add_three_on_vertical_strip
+    (s : ℂ) (hs_height : 1 ≤ |s.im|) (hs_re : s.re ∈ Set.Icc (1 : ℝ) 3) :
+    ‖riemannZeta s‖ ≤ 2 * (‖s‖ + 3) ^ (1 : ℝ) :=
+  ZeroFreeRegion.norm_riemannZeta_le_two_mul_norm_add_three_on_vertical_strip
+    s hs_height hs_re
+
+/-- Public existential packaging of the concrete zeta polynomial growth
+constants. -/
+theorem exists_riemannZeta_polynomial_growth_on_vertical_strip :
+    ∃ A B T0 : ℝ, 1 ≤ A ∧ 0 ≤ B ∧
+      ∀ s : ℂ, T0 ≤ |s.im| → s.re ∈ Set.Icc (1 : ℝ) 3 →
+        ‖riemannZeta s‖ ≤ A * (‖s‖ + 3) ^ B :=
+  ZeroFreeRegion.exists_riemannZeta_polynomial_growth_on_vertical_strip
+
 /-- Public conversion from pointwise polynomial growth to affine logarithmic
 norm growth. -/
 theorem log_norm_bound_of_polynomial_growth
@@ -18573,6 +18596,15 @@ theorem log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_three_of_polynomial_
   ZeroFreeRegion.log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_three_of_polynomial_growth
     hT0 hA hB hpoly
 
+/-- Public unconditional logarithmic zeta-growth estimate on the boundary
+strip `1 <= sigma <= 2`. -/
+theorem log_norm_riemannZeta_sigma_it_le_log_two_add_two_log_abs_add_three
+    {σ t : ℝ} (hσ : σ ∈ Set.Icc (1 : ℝ) 2) (ht : 5 ≤ |t|) :
+    Real.log ‖riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+      Real.log 2 + 2 * Real.log (|t| + 3) :=
+  ZeroFreeRegion.log_norm_riemannZeta_sigma_it_le_log_two_add_two_log_abs_add_three
+    hσ ht
+
 /-- Public circle-average zeta handoff from a future polynomial-growth
 estimate into the `log(|t|+|R|+3)` scale. -/
 theorem circleAverage_log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_radius_three_of_polynomial_growth
@@ -18598,6 +18630,16 @@ theorem circleAverage_log_norm_riemannZeta_two_add_I_mul_le_affine_log_abs_add_r
       Real.log A + (2 * B) * Real.log (|t| + R + 3) :=
   ZeroFreeRegion.circleAverage_log_norm_riemannZeta_two_add_I_mul_le_affine_log_abs_add_radius_three_of_polynomial_growth
     hT0 hA hB hR hRone hheight hpoly
+
+/-- Public unconditional circle-average zeta-growth estimate in the Jensen
+geometry centered at `2 + I*t`. -/
+theorem circleAverage_log_norm_riemannZeta_two_add_I_mul_le_log_two_add_two_log_abs_add_radius_three
+    {R t : ℝ} (hR : 0 < R) (hRone : R ≤ 1) (hheight : 7 + R ≤ |t|) :
+    Real.circleAverage (Real.log ‖riemannZeta ·‖)
+        ((2 : ℂ) + Complex.I * t) R ≤
+      Real.log 2 + 2 * Real.log (|t| + R + 3) :=
+  ZeroFreeRegion.circleAverage_log_norm_riemannZeta_two_add_I_mul_le_log_two_add_two_log_abs_add_radius_three
+    hR hRone hheight
 
 /-- Public conversion from a circle-average bound to Jensen weighted zeta-zero
 mass at `2 + I*t`. -/
@@ -18627,6 +18669,17 @@ theorem jensen_zero_mass_riemannZeta_two_add_I_mul_le_affine_log_abs_add_radius_
       Real.log A + (2 * B) * Real.log (|t| + R + 3) + Real.log 3 :=
   ZeroFreeRegion.jensen_zero_mass_riemannZeta_two_add_I_mul_le_affine_log_abs_add_radius_three_of_polynomial_growth
     hT0 hA hB hR hRone hheight hpoly
+
+/-- Public unconditional `O(log |t|)` Jensen weighted zeta-zero mass bound. -/
+theorem jensen_zero_mass_riemannZeta_two_add_I_mul_le_log_two_add_two_log_abs_add_radius_three
+    {R t : ℝ} (hR : 0 < R) (hRone : R ≤ 1) (hheight : 7 + R ≤ |t|) :
+    (∑ᶠ u,
+        MeromorphicOn.divisor riemannZeta
+            (Metric.closedBall ((2 : ℂ) + Complex.I * t) R) u *
+          Real.log (R * ‖((2 : ℂ) + Complex.I * t) - u‖⁻¹)) ≤
+      Real.log 2 + 2 * Real.log (|t| + R + 3) + Real.log 3 :=
+  ZeroFreeRegion.jensen_zero_mass_riemannZeta_two_add_I_mul_le_log_two_add_two_log_abs_add_radius_three
+    hR hRone hheight
 
 /-- Public coordinate zeta polynomial-growth-to-log-growth conversion in the
 classical high-height scale `log |t|`. -/

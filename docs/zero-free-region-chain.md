@@ -1608,12 +1608,23 @@ On fixed-radius disks or fixed-width strips near `Re(s) = 1`, `ζ(s)` has
 polynomial growth in `|Im(s)|`.
 
 Lean status:
-The zeta-specific polynomial growth theorem is still missing.  The bookkeeping
-handoff from such a theorem to the logarithmic scale used by Jensen and
-Borel-Caratheodory is now proved:
+The zeta-specific polynomial growth theorem is now proved by Abel's
+floor-integral formula.  In particular,
+`norm_riemannZeta_le_two_mul_norm_of_one_le_re_of_one_le_abs_im` gives
+`||zeta(s)|| <= 2 ||s||` for `Re(s) >= 1` and `|Im(s)| >= 1`; the boundary
+case follows by continuity from the right.  Its logarithmic, circle-average,
+and Jensen weighted-zero-mass consequences are also unconditional.  The two
+remaining hard inputs are the uniform boundary-strip logarithmic-derivative
+bound and the uniform zero-removed regular-part bound, not growth of zeta
+itself:
 
 ```lean
 ZeroFreeRegion.log_norm_bound_of_polynomial_growth
+ZeroFreeRegion.norm_riemannZeta_le_two_mul_norm_of_one_le_re_of_one_le_abs_im
+ZeroFreeRegion.norm_riemannZeta_le_two_mul_norm_add_three_on_vertical_strip
+ZeroFreeRegion.log_norm_riemannZeta_sigma_it_le_log_two_add_two_log_abs_add_three
+ZeroFreeRegion.circleAverage_log_norm_riemannZeta_two_add_I_mul_le_log_two_add_two_log_abs_add_radius_three
+ZeroFreeRegion.jensen_zero_mass_riemannZeta_two_add_I_mul_le_log_two_add_two_log_abs_add_radius_three
 ZeroFreeRegion.log_norm_riemannZeta_le_affine_log_norm_add_three_of_polynomial_growth
 ZeroFreeRegion.log_norm_riemannZeta_sigma_it_le_affine_log_norm_add_three_of_polynomial_growth
 ZeroFreeRegion.log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_three_of_polynomial_growth
