@@ -10358,6 +10358,75 @@ lemma meromorphicOn_logDeriv_sub_finset_principalParts
         (MeromorphicAt.const (multiplicity ρ : ℂ) z).mul hlinear.inv
       simpa only [Finset.sum_insert hρ] using hterm.add ih
 
+/-- If the zeros of an analytic function on `U` are exactly a finite set and
+their analytic multiplicities are supplied, subtracting all corresponding
+logarithmic principal parts and normalizing the removable values gives an
+analytic function on all of `U`.
+
+This is the simultaneous finite-zero cancellation theorem needed by the
+Jensen/Borel route.  It does not assume that any zero is simple. -/
+lemma analyticOnNhd_toMeromorphicNFOn_logDeriv_sub_finset_principalParts
+    {f : ℂ → ℂ} {U : Set ℂ} (hf : AnalyticOnNhd ℂ f U)
+    (poles : Finset ℂ) (multiplicity : ℂ → ℕ)
+    (hzero : ∀ x ∈ U, f x = 0 ↔ x ∈ poles)
+    (horder : ∀ ρ ∈ poles, analyticOrderAt f ρ = multiplicity ρ) :
+    AnalyticOnNhd ℂ
+      (toMeromorphicNFOn
+        (fun z : ℂ =>
+          logDeriv f z -
+            ∑ ρ ∈ poles, (multiplicity ρ : ℂ) * (z - ρ)⁻¹) U) U := by
+  let raw : ℂ → ℂ := fun z =>
+    logDeriv f z - ∑ ρ ∈ poles, (multiplicity ρ : ℂ) * (z - ρ)⁻¹
+  have hmer : MeromorphicOn raw U := by
+    simpa [raw] using
+      meromorphicOn_logDeriv_sub_finset_principalParts
+        hf.meromorphicOn poles multiplicity
+  apply analyticOnNhd_toMeromorphicNFOn_of_locally_eventuallyEq_analyticAt hmer
+  intro x hx
+  by_cases hxp : x ∈ poles
+  · rcases exists_eventuallyEq_logDeriv_sub_order_mul_inv_of_analyticAt_order_eq_nat
+      (hf x hx) (horder x hxp) with ⟨g, hg, hg_ne, hsep⟩
+    let G : ℂ → ℂ := fun z =>
+      logDeriv g z -
+        ∑ ρ ∈ poles.erase x, (multiplicity ρ : ℂ) * (z - ρ)⁻¹
+    have hglog : AnalyticAt ℂ (logDeriv g) x := hg.deriv.div hg hg_ne
+    have hsum : AnalyticAt ℂ
+        (fun z : ℂ =>
+          ∑ ρ ∈ poles.erase x, (multiplicity ρ : ℂ) * (z - ρ)⁻¹) x := by
+      apply Finset.analyticAt_fun_sum
+      intro ρ hρ
+      have hρx : ρ ≠ x := Finset.ne_of_mem_erase hρ
+      exact analyticAt_const.mul
+        ((analyticAt_id.sub analyticAt_const).inv (sub_ne_zero.mpr hρx.symm))
+    refine ⟨G, hglog.sub hsum, ?_⟩
+    filter_upwards [hsep] with z hz
+    dsimp [raw, G]
+    rw [← Finset.sum_erase_add _ _ hxp]
+    have hz' :
+        logDeriv f z =
+          logDeriv g z + (multiplicity x : ℂ) * (z - x)⁻¹ :=
+      sub_eq_iff_eq_add.mp hz
+    rw [hz']
+    ring
+  · have hfx : f x ≠ 0 := by
+      intro h
+      exact hxp ((hzero x hx).mp h)
+    have hlog : AnalyticAt ℂ (logDeriv f) x :=
+      (hf x hx).deriv.div (hf x hx) hfx
+    have hsum : AnalyticAt ℂ
+        (fun z : ℂ =>
+          ∑ ρ ∈ poles, (multiplicity ρ : ℂ) * (z - ρ)⁻¹) x := by
+      apply Finset.analyticAt_fun_sum
+      intro ρ hρ
+      have hρx : ρ ≠ x := by
+        intro heq
+        subst ρ
+        exact hxp hρ
+      exact analyticAt_const.mul
+        ((analyticAt_id.sub analyticAt_const).inv (sub_ne_zero.mpr hρx.symm))
+    refine ⟨raw, ?_, Filter.EventuallyEq.rfl⟩
+    simpa [raw] using hlog.sub hsum
+
 /-- Zeta-specific analytic regularization of the multiplicity-weighted local
 logarithmic derivative at any finite-order point away from the pole. -/
 lemma analyticAt_toMeromorphicNFAt_logDeriv_riemannZeta_sub_order_mul_inv_of_order_eq_nat
@@ -10933,6 +11002,61 @@ lemma analyticAt_toMeromorphicNFAt_logDeriv_riemannZeta_sub_analyticOrderNatAt_m
   exact ⟨hpos,
     analyticAt_toMeromorphicNFAt_logDeriv_riemannZeta_sub_order_mul_inv_of_order_eq_nat
       hρ1 horder⟩
+
+/-- On every closed disk avoiding zeta's pole, the disk's zeta zeros form a
+finite set and subtracting all their multiplicity-weighted logarithmic
+principal parts gives an analytic regular part on the whole disk.
+
+The selected finite set is exactly the zero set in the disk, not merely an
+arbitrary superset.  This closes the qualitative simultaneous-zero removal
+step needed before applying a quantitative Borel-Carathéodory estimate. -/
+lemma exists_finset_analyticOnNhd_regularizedLogDeriv_riemannZeta_closedBall
+    {c : ℂ} {R : ℝ}
+    (havoid : ∀ z : ℂ, z ∈ closedBall c R → z ≠ 1) :
+    ∃ poles : Finset ℂ,
+      (∀ ρ : ℂ, ρ ∈ poles ↔ ρ ∈ closedBall c R ∧ riemannZeta ρ = 0) ∧
+      AnalyticOnNhd ℂ
+        (toMeromorphicNFOn
+          (fun z : ℂ =>
+            logDeriv riemannZeta z -
+              ∑ ρ ∈ poles,
+                (analyticOrderNatAt riemannZeta ρ : ℂ) * (z - ρ)⁻¹)
+          (closedBall c R)) (closedBall c R) := by
+  classical
+  let U : Set ℂ := closedBall c R
+  have han : AnalyticOnNhd ℂ riemannZeta U := by
+    intro z hz
+    exact analyticOnNhd_riemannZeta_ne_one z (havoid z hz)
+  let D := MeromorphicOn.divisor riemannZeta U
+  have hDfinite : D.support.Finite :=
+    D.finiteSupport (isCompact_closedBall c R)
+  let poles : Finset ℂ := hDfinite.toFinset
+  have hnotop : ∀ u : U, meromorphicOrderAt riemannZeta u ≠ ⊤ := by
+    intro u
+    rw [(han u u.property).meromorphicOrderAt_eq]
+    intro hmap
+    apply analyticOrderAt_riemannZeta_ne_top_of_ne_one (havoid u u.property)
+    exact ENat.map_eq_top_iff.mp hmap
+  have hzeros := han.meromorphicNFOn.zero_set_eq_divisor_support hnotop
+  have hpoles : ∀ ρ : ℂ, ρ ∈ poles ↔ ρ ∈ U ∧ riemannZeta ρ = 0 := by
+    intro ρ
+    have hmem := Set.ext_iff.mp hzeros ρ
+    simp only [Set.mem_inter_iff, Set.mem_preimage, Set.mem_singleton_iff] at hmem
+    rw [show ρ ∈ poles ↔ ρ ∈ D.support by exact hDfinite.mem_toFinset]
+    exact hmem.symm
+  refine ⟨poles, by simpa [U] using hpoles, ?_⟩
+  apply analyticOnNhd_toMeromorphicNFOn_logDeriv_sub_finset_principalParts
+    han poles (analyticOrderNatAt riemannZeta)
+  · intro z hz
+    constructor
+    · intro hzero
+      exact (hpoles z).mpr ⟨hz, hzero⟩
+    · intro hp
+      exact ((hpoles z).mp hp).2
+  · intro ρ hρ
+    have hρU : ρ ∈ U := (hpoles ρ).mp hρ |>.1
+    exact (analyticOrderNatAt_riemannZeta_eq_analyticOrderAt_of_ne_one
+      (havoid ρ hρU)).symm
 
 /-- Automatic zeta-specific regular-part bound at an actual zero.  The
 multiplicity is chosen as `analyticOrderNatAt riemannZeta ρ`, so callers no

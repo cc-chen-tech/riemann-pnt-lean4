@@ -7439,6 +7439,21 @@ theorem meromorphicOn_logDeriv_sub_finset_principalParts
   ZeroFreeRegion.meromorphicOn_logDeriv_sub_finset_principalParts
     hf poles multiplicity
 
+/-- Public simultaneous finite-zero cancellation theorem for logarithmic
+derivatives of analytic functions. -/
+theorem analyticOnNhd_toMeromorphicNFOn_logDeriv_sub_finset_principalParts
+    {f : ℂ → ℂ} {U : Set ℂ} (hf : AnalyticOnNhd ℂ f U)
+    (poles : Finset ℂ) (multiplicity : ℂ → ℕ)
+    (hzero : ∀ x ∈ U, f x = 0 ↔ x ∈ poles)
+    (horder : ∀ ρ ∈ poles, analyticOrderAt f ρ = multiplicity ρ) :
+    AnalyticOnNhd ℂ
+      (toMeromorphicNFOn
+        (fun z : ℂ =>
+          logDeriv f z -
+            ∑ ρ ∈ poles, (multiplicity ρ : ℂ) * (z - ρ)⁻¹) U) U :=
+  ZeroFreeRegion.analyticOnNhd_toMeromorphicNFOn_logDeriv_sub_finset_principalParts
+    hf poles multiplicity hzero horder
+
 /-- Public zeta-specific analytic regularization at a finite-order point away
 from the pole. -/
 theorem analyticAt_toMeromorphicNFAt_logDeriv_riemannZeta_sub_order_mul_inv_of_order_eq_nat
@@ -7829,6 +7844,24 @@ theorem analyticAt_toMeromorphicNFAt_logDeriv_riemannZeta_sub_analyticOrderNatAt
               (analyticOrderNatAt riemannZeta ρ : ℂ) * (z - ρ)⁻¹) ρ) ρ :=
   ZeroFreeRegion.analyticAt_toMeromorphicNFAt_logDeriv_riemannZeta_sub_analyticOrderNatAt_mul_inv_of_zero
     hρ1 hzero
+
+/-- Public finite simultaneous-zero regularization for zeta on a closed disk
+avoiding the pole at `1`. -/
+theorem exists_finset_analyticOnNhd_regularizedLogDeriv_riemannZeta_closedBall
+    {c : ℂ} {R : ℝ}
+    (havoid : ∀ z : ℂ, z ∈ Metric.closedBall c R → z ≠ 1) :
+    ∃ poles : Finset ℂ,
+      (∀ ρ : ℂ,
+        ρ ∈ poles ↔ ρ ∈ Metric.closedBall c R ∧ riemannZeta ρ = 0) ∧
+      AnalyticOnNhd ℂ
+        (toMeromorphicNFOn
+          (fun z : ℂ =>
+            logDeriv riemannZeta z -
+              ∑ ρ ∈ poles,
+                (analyticOrderNatAt riemannZeta ρ : ℂ) * (z - ρ)⁻¹)
+          (Metric.closedBall c R)) (Metric.closedBall c R) :=
+  ZeroFreeRegion.exists_finset_analyticOnNhd_regularizedLogDeriv_riemannZeta_closedBall
+    havoid
 
 /-- Public automatic regular-part bound at an actual zero of ζ.  The
 multiplicity is chosen internally as `analyticOrderNatAt riemannZeta ρ`. -/

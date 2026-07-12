@@ -726,6 +726,14 @@ Core verified declarations:
   finite multiplicity-weighted sum `Σ nρ/(z-ρ)` from a logarithmic derivative
   preserves meromorphicity.  Together these two lemmas define the global
   framework for simultaneous removal of finitely many zeta-zero poles.
+- `analyticOnNhd_toMeromorphicNFOn_logDeriv_sub_finset_principalParts` proves
+  that if a finite set is exactly the zero set and carries the true analytic
+  multiplicities, all principal parts cancel simultaneously and the globally
+  normalized regular part is analytic on the ambient region.
+- `exists_finset_analyticOnNhd_regularizedLogDeriv_riemannZeta_closedBall`
+  constructs this finite set from the zeta divisor on any closed disk avoiding
+  `1`, proves that it is exactly the disk's zeta-zero set, and obtains the
+  analytic multiplicity-aware regular part without assuming simple zeros.
 - `exists_punctured_ball_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq`
   and `exists_punctured_closedBall_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq`
   convert an eventually-equal multiplicity regular part and an eventual norm

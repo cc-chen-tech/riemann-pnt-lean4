@@ -1370,14 +1370,15 @@ removable-singularity step is also proved by
 `ZeroFreeRegion.analyticAt_toMeromorphicNFAt_logDeriv_sub_order_mul_inv_of_analyticAt_order_eq_nat`
 and its zeta-specific automatic-multiplicity variants.  Thus the regular part
 can be treated as analytic at the zero itself, not merely controlled on a
-punctured neighborhood.  The next hard step is to remove all zeros in a finite
-high disk simultaneously and bound the resulting analytic regular part
-uniformly from zeta boundary growth.  The global normal-form ingredients for
-that step are now available as
-`analyticOnNhd_toMeromorphicNFOn_of_locally_eventuallyEq_analyticAt` and
-`meromorphicOn_logDeriv_sub_finset_principalParts`; what remains is the
-zeta-specific local-cancellation proof for the divisor-selected finite set
-and its quantitative boundary bound.  The
+punctured neighborhood.  Simultaneous removal of every zero in a finite disk
+is now proved by
+`analyticOnNhd_toMeromorphicNFOn_logDeriv_sub_finset_principalParts` and its
+zeta specialization
+`exists_finset_analyticOnNhd_regularizedLogDeriv_riemannZeta_closedBall`.
+The latter uses the zeta divisor to select exactly the disk's zeros with their
+true multiplicities, and proves the normalized regular part analytic on the
+whole disk.  The remaining hard input is a quantitative uniform norm bound
+for this analytic regular part from high-height zeta boundary growth.  The
 `exists_real_punctured_interval_...` variants specialize the same local
 principal-part control to horizontal-line coordinates `rho = beta + i t` and
 `z = sigma + i t`, using the checked identity
