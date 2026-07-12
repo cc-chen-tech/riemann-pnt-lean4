@@ -1730,10 +1730,35 @@ analytic-factor estimate.  The final circle bound now depends only on `K`,
 `M`, the radii, and the finite number of distinct zero radii, not on an
 unbounded divisor sum.
 
-This closes the local Jensen-to-factor boundary chain.  It still does not
-prove the required zeta-specific high-height bounds for `K` and `M`, nor the
-Borel/Cauchy step converting the boundary control of `g` into a uniform bound
-for `g'/g`.
+This closes the local Jensen-to-factor boundary chain.  The subsequent generic
+Borel/Cauchy conversion is now also proved:
+
+```lean
+ZeroFreeRegion.exists_normalized_analytic_log_primitive_on_ball
+ZeroFreeRegion.norm_logDeriv_le_four_mul_div_of_analyticOnNhd_nonzero_re_log_bound
+ZeroFreeRegion.norm_logDeriv_le_four_mul_max_add_log_three_div_of_sphere_log_norm_le
+ZeroFreeRegion.exists_good_radius_log_norm_and_logDeriv_riemannZeta_factor_le_jensen_bound
+```
+
+The first theorem constructs a branch-free normalized analytic logarithm of
+the nonvanishing factor, including the identity `exp(h(z))=g(z)/g(c)`.
+Borel-Caratheodory bounds that primitive on the
+half-radius disk, and Cauchy's estimate gives `‖g'/g(c)‖ <= 4M/R`.  Maximum
+modulus propagates the selected-circle bound through the disk, while the
+center factorization and `‖zeta(2+it)‖>=1/3` give `‖g(c)‖>=1/3`.  The final
+theorem applies these facts to the same Jensen witness and replaces the
+selected radius denominator by its fixed lower bound `a`.
+
+This is a genuine center estimate for the selected zero-removed factor,
+conditional on the supplied inner and outer zeta growth bounds.  It is not yet
+the zero-candidate regular-part estimate at `sigma+it`, nor the uniform
+`O(log |t|)` estimate:
+the explicit bound retains the good-circle separation term `log(delta)`, where
+`delta` depends on the number of distinct local zero radii.  Combining only
+the current coarse Jensen count with logarithmic zeta growth can introduce an
+extra `log log |t|` loss.  The remaining hard work is therefore the
+zeta-specific vertical-growth input plus a sharper local zero/separation
+argument, not the generic Borel/Cauchy conversion.
 The polynomial-growth handoff is also now composed in this exact disk
 geometry:
 

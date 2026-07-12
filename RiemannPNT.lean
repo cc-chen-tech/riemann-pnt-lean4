@@ -7992,6 +7992,46 @@ theorem exists_log_norm_factorization_riemannZeta_closedBall_pointwise_of_ne_zer
   ZeroFreeRegion.exists_log_norm_factorization_riemannZeta_closedBall_pointwise_of_ne_zero
     hrR havoid
 
+/-- Public normalized analytic logarithm on a nonvanishing disk. -/
+theorem exists_normalized_analytic_log_primitive_on_ball
+    {g : ℂ → ℂ} {c : ℂ} {R : ℝ} (hR : 0 < R)
+    (hg : AnalyticOnNhd ℂ g (Metric.closedBall c R))
+    (hgne : ∀ z ∈ Metric.closedBall c R, g z ≠ 0) :
+    ∃ h : ℂ → ℂ,
+      AnalyticOnNhd ℂ h (Metric.ball c R) ∧
+      h c = 0 ∧
+      (∀ z ∈ Metric.ball c R, deriv h z = logDeriv g z) ∧
+      (∀ z ∈ Metric.ball c R, Complex.exp (h z) = g z / g c) ∧
+      ∀ z ∈ Metric.ball c R,
+        (h z).re = Real.log ‖g z‖ - Real.log ‖g c‖ :=
+  ZeroFreeRegion.exists_normalized_analytic_log_primitive_on_ball hR hg hgne
+
+/-- Public Borel--Caratheodory/Cauchy center estimate for a nonvanishing
+analytic function, stated without choosing a logarithm branch. -/
+theorem norm_logDeriv_le_four_mul_div_of_analyticOnNhd_nonzero_re_log_bound
+    {g : ℂ → ℂ} {c : ℂ} {R M : ℝ}
+    (hR : 0 < R) (hM : 0 < M)
+    (hg : AnalyticOnNhd ℂ g (Metric.closedBall c R))
+    (hgne : ∀ z ∈ Metric.closedBall c R, g z ≠ 0)
+    (hre : ∀ z ∈ Metric.ball c R,
+      Real.log ‖g z‖ - Real.log ‖g c‖ ≤ M) :
+    ‖logDeriv g c‖ ≤ 4 * M / R :=
+  ZeroFreeRegion.norm_logDeriv_le_four_mul_div_of_analyticOnNhd_nonzero_re_log_bound
+    hR hM hg hgne hre
+
+/-- Public maximum-modulus/Borel center estimate from a boundary logarithmic
+norm bound and the zeta-factor center margin. -/
+theorem norm_logDeriv_le_four_mul_max_add_log_three_div_of_sphere_log_norm_le
+    {g : ℂ → ℂ} {c : ℂ} {R B : ℝ}
+    (hR : 0 < R)
+    (hg : AnalyticOnNhd ℂ g (Metric.closedBall c R))
+    (hgne : ∀ z ∈ Metric.closedBall c R, g z ≠ 0)
+    (hcenter : (1 / 3 : ℝ) ≤ ‖g c‖)
+    (hsphere : ∀ z ∈ Metric.sphere c R, Real.log ‖g z‖ ≤ B) :
+    ‖logDeriv g c‖ ≤ 4 * max (B + Real.log 3) 1 / R :=
+  ZeroFreeRegion.norm_logDeriv_le_four_mul_max_add_log_three_div_of_sphere_log_norm_le
+    hR hg hgne hcenter hsphere
+
 /-- Public boundary-growth transfer from zeta to its zero-removed analytic
 factor on a quantitatively selected zero-free circle. -/
 theorem exists_good_radius_log_norm_riemannZeta_factor_le_of_closedBall_bound
@@ -8006,6 +8046,12 @@ theorem exists_good_radius_log_norm_riemannZeta_factor_le_of_closedBall_bound
       r ∈ Set.Icc a q ∧
       AnalyticOnNhd ℂ g (Metric.closedBall c b) ∧
       (∀ u : (Metric.closedBall c b : Set ℂ), g u ≠ 0) ∧
+      (riemannZeta c ≠ 0 →
+        Real.log ‖riemannZeta c‖ =
+          (∑ᶠ u,
+            (MeromorphicOn.divisor riemannZeta
+              (Metric.closedBall c b) u : ℝ) * Real.log ‖c - u‖) +
+            Real.log ‖g c‖) ∧
       (∀ z ∈ Metric.sphere c r, riemannZeta z ≠ 0) ∧
       ∀ z ∈ Metric.sphere c r,
         Real.log ‖g z‖ ≤ K -
@@ -16293,6 +16339,12 @@ theorem exists_good_radius_log_norm_riemannZeta_factor_le_jensen_bound
         (Metric.closedBall ((2 : ℂ) + Complex.I * t) b) ∧
       (∀ u : (Metric.closedBall ((2 : ℂ) + Complex.I * t) b : Set ℂ),
         g u ≠ 0) ∧
+      Real.log ‖riemannZeta ((2 : ℂ) + Complex.I * t)‖ =
+        (∑ᶠ u,
+          (MeromorphicOn.divisor riemannZeta
+            (Metric.closedBall ((2 : ℂ) + Complex.I * t) b) u : ℝ) *
+              Real.log ‖((2 : ℂ) + Complex.I * t) - u‖) +
+          Real.log ‖g ((2 : ℂ) + Complex.I * t)‖ ∧
       (∀ z ∈ Metric.sphere ((2 : ℂ) + Complex.I * t) r,
         riemannZeta z ≠ 0) ∧
       ∀ z ∈ Metric.sphere ((2 : ℂ) + Complex.I * t) r,
@@ -16305,6 +16357,47 @@ theorem exists_good_radius_log_norm_riemannZeta_factor_le_jensen_bound
             ((Real.log M + Real.log 3) / Real.log (R / b)) :=
   ZeroFreeRegion.exists_good_radius_log_norm_riemannZeta_factor_le_jensen_bound
     ha haq hqb hbR hheight hwidth hM houter hinner
+
+/-- Public Jensen/Borel regular-part bound for the zero-removed zeta factor. -/
+theorem exists_good_radius_log_norm_and_logDeriv_riemannZeta_factor_le_jensen_bound
+    {a q b R t M K : ℝ} (ha : 0 < a) (haq : a < q) (hqb : q < b)
+    (hb_one : b ≤ 1) (hbR : b < R) (hheight : R < |t|)
+    (hwidth : q - a ≤ 4) (hM : 1 ≤ M)
+    (houter : ∀ z : ℂ,
+      z ∈ Metric.sphere ((2 : ℂ) + Complex.I * t) R →
+        ‖riemannZeta z‖ ≤ M)
+    (hinner : ∀ z ∈ Metric.closedBall ((2 : ℂ) + Complex.I * t) q,
+      Real.log ‖riemannZeta z‖ ≤ K) :
+    ∃ (zeros : Finset ℂ) (r : ℝ) (g : ℂ → ℂ),
+      (∀ ρ : ℂ, ρ ∈ zeros ↔
+        ρ ∈ Metric.closedBall ((2 : ℂ) + Complex.I * t) b ∧
+          riemannZeta ρ = 0) ∧
+      0 < r ∧ r ∈ Set.Icc a q ∧
+      AnalyticOnNhd ℂ g
+        (Metric.closedBall ((2 : ℂ) + Complex.I * t) b) ∧
+      (∀ u : (Metric.closedBall ((2 : ℂ) + Complex.I * t) b : Set ℂ),
+        g u ≠ 0) ∧
+      Real.log ‖riemannZeta ((2 : ℂ) + Complex.I * t)‖ =
+        (∑ᶠ u, (MeromorphicOn.divisor riemannZeta
+          (Metric.closedBall ((2 : ℂ) + Complex.I * t) b) u : ℝ) *
+            Real.log ‖((2 : ℂ) + Complex.I * t) - u‖) +
+          Real.log ‖g ((2 : ℂ) + Complex.I * t)‖ ∧
+      (∀ z ∈ Metric.sphere ((2 : ℂ) + Complex.I * t) r,
+        riemannZeta z ≠ 0) ∧
+      (∀ z ∈ Metric.sphere ((2 : ℂ) + Complex.I * t) r,
+        Real.log ‖g z‖ ≤ K -
+          Real.log ((q - a) / ((4 : ℝ) *
+            (((zeros.image
+              (dist ((2 : ℂ) + Complex.I * t))).card : ℝ) + 1))) *
+          ((Real.log M + Real.log 3) / Real.log (R / b))) ∧
+      ‖logDeriv g ((2 : ℂ) + Complex.I * t)‖ ≤
+        4 * max (K -
+          Real.log ((q - a) / ((4 : ℝ) *
+            (((zeros.image
+              (dist ((2 : ℂ) + Complex.I * t))).card : ℝ) + 1))) *
+          ((Real.log M + Real.log 3) / Real.log (R / b)) + Real.log 3) 1 / a :=
+  ZeroFreeRegion.exists_good_radius_log_norm_and_logDeriv_riemannZeta_factor_le_jensen_bound
+    ha haq hqb hb_one hbR hheight hwidth hM houter hinner
 
 /-- Public quantitative good-circle theorem obtained by composing a zeta
 boundary norm bound, Jensen zero counting, and finite-radius avoidance. -/

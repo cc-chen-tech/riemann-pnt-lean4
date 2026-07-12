@@ -777,6 +777,24 @@ Core verified declarations:
   that mass bound into the analytic-factor estimate.  Under `0<a<q<b<R`,
   `R<|t|`, and `q-a<=4`, it returns a positive zero-free circle and an explicit
   `log‖g‖` bound containing no unknown divisor mass.
+- `exists_normalized_analytic_log_primitive_on_ball` constructs a normalized
+  branch-free analytic logarithm `h` of a nonvanishing analytic factor, with
+  `h(c)=0`, `exp(h(z))=g(z)/g(c)`, `h'=g'/g`, and
+  `Re h(z)=log‖g(z)‖-log‖g(c)‖`.
+- `norm_logDeriv_le_four_mul_div_of_analyticOnNhd_nonzero_re_log_bound` combines
+  that primitive with centered Borel-Caratheodory and Cauchy's estimate to prove
+  the linear center bound `‖g'/g(c)‖ <= 4M/R`.
+- `norm_logDeriv_le_four_mul_max_add_log_three_div_of_sphere_log_norm_le`
+  first propagates a boundary `log‖g‖<=B` bound across the disk by maximum
+  modulus and uses `‖g(c)‖>=1/3`, yielding
+  `‖g'/g(c)‖ <= 4 max (B+log 3) 1/R`.
+- `exists_good_radius_log_norm_and_logDeriv_riemannZeta_factor_le_jensen_bound`
+  applies this to the same Jensen-selected zero-removed zeta factor and replaces
+  its selected radius denominator by the fixed lower radius `a`.  This proves a
+  Borel/Cauchy center bound for that factor at `2+it`; it does not yet prove the
+  zero-candidate regular-part estimate at `sigma+it`.  Obtaining a uniform
+  `O(log |t|)` coefficient still requires zeta vertical growth, transfer to the
+  required center, and sharper control of the explicit zero-count/separation loss.
 - `exists_punctured_ball_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq`
   and `exists_punctured_closedBall_norm_logDeriv_sub_order_mul_inv_le_of_eventuallyEq`
   convert an eventually-equal multiplicity regular part and an eventual norm

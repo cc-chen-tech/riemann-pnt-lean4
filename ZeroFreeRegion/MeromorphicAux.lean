@@ -7459,6 +7459,217 @@ lemma log_norm_riemannZeta_sigma_it_le_affine_log_abs_of_polynomial_growth
       exact add_le_add le_rfl hscaled
     _ = Real.log A + (2 * B) * Real.log |t| := by ring
 
+/-- Cauchy estimate derived from a logarithmic norm bound on a circle.
+
+The logarithmic bound gives `‖g‖ ≤ exp B` pointwise on the boundary, including
+at possible zeros of `g`; Cauchy's estimate then controls the derivative at
+the center. -/
+lemma norm_deriv_le_exp_div_of_analyticOnNhd_closedBall_log_norm_le
+    {g : ℂ → ℂ} {c : ℂ} {R B : ℝ} (hR : 0 < R)
+    (hg : AnalyticOnNhd ℂ g (Metric.closedBall c R))
+    (hlog : ∀ z ∈ Metric.sphere c R, Real.log ‖g z‖ ≤ B) :
+    ‖deriv g c‖ ≤ Real.exp B / R := by
+  have hdiff_closed :
+      DifferentiableOn ℂ g (Metric.closedBall c R) := by
+    intro z hz
+    exact (hg z hz).differentiableAt.differentiableWithinAt
+  have hdiff : DiffContOnCl ℂ g (Metric.ball c R) :=
+    hdiff_closed.diffContOnCl_ball subset_rfl
+  have hnorm : ∀ z ∈ Metric.sphere c R, ‖g z‖ ≤ Real.exp B := by
+    intro z hz
+    by_cases hgz : g z = 0
+    · simp [hgz, (Real.exp_pos B).le]
+    · have hexp := Real.exp_le_exp.mpr (hlog z hz)
+      rw [Real.exp_log (norm_pos_iff.mpr hgz)] at hexp
+      exact hexp
+  exact Complex.norm_deriv_le_of_forall_mem_sphere_norm_le hR hdiff hnorm
+
+/-- On a disk where `g` is analytic and nonvanishing, its logarithmic
+derivative has an analytic primitive.
+
+This is the branch-free analytic logarithm needed for applying
+Borel-Carathéodory to `g'/g`; it uses exactness on balls rather than the
+principal branch of `Complex.log`. -/
+lemma exists_analyticOnNhd_primitive_logDeriv_on_ball
+    {g : ℂ → ℂ} {c : ℂ} {R : ℝ}
+    (hg : AnalyticOnNhd ℂ g (Metric.closedBall c R))
+    (hgne : ∀ z ∈ Metric.closedBall c R, g z ≠ 0) :
+    ∃ h : ℂ → ℂ,
+      AnalyticOnNhd ℂ h (Metric.ball c R) ∧
+      ∀ z ∈ Metric.ball c R, deriv h z = logDeriv g z := by
+  have hexact : Complex.IsExactOn (logDeriv g) (Metric.ball c R) :=
+    DifferentiableOn.isExactOn_ball
+      (((hg.deriv.div hg hgne).mono Metric.ball_subset_closedBall).differentiableOn)
+  obtain ⟨h, hh⟩ := hexact
+  have hdiff : DifferentiableOn ℂ h (Metric.ball c R) :=
+    fun z hz => (hh z hz).differentiableAt.differentiableWithinAt
+  exact ⟨h, hdiff.analyticOnNhd Metric.isOpen_ball,
+    fun z hz => (hh z hz).deriv⟩
+
+/-- Normalized branch-free analytic logarithm on a disk.
+
+The primitive is normalized by `h c = 0`; comparing `exp ∘ h` with `g`
+through equality of logarithmic derivatives proves that its real part is
+exactly the logarithmic norm ratio. -/
+lemma exists_normalized_analytic_log_primitive_on_ball
+    {g : ℂ → ℂ} {c : ℂ} {R : ℝ} (hR : 0 < R)
+    (hg : AnalyticOnNhd ℂ g (Metric.closedBall c R))
+    (hgne : ∀ z ∈ Metric.closedBall c R, g z ≠ 0) :
+    ∃ h : ℂ → ℂ,
+      AnalyticOnNhd ℂ h (Metric.ball c R) ∧
+      h c = 0 ∧
+      (∀ z ∈ Metric.ball c R, deriv h z = logDeriv g z) ∧
+      (∀ z ∈ Metric.ball c R, Complex.exp (h z) = g z / g c) ∧
+      ∀ z ∈ Metric.ball c R,
+        (h z).re = Real.log ‖g z‖ - Real.log ‖g c‖ := by
+  have hexact : Complex.IsExactOn (logDeriv g) (Metric.ball c R) :=
+    DifferentiableOn.isExactOn_ball
+      (((hg.deriv.div hg hgne).mono Metric.ball_subset_closedBall).differentiableOn)
+  obtain ⟨h, hcenter, hh⟩ := hexact.with_val_at c 0
+  have hdiff : DifferentiableOn ℂ h (Metric.ball c R) :=
+    fun z hz => (hh z hz).differentiableAt.differentiableWithinAt
+  have hanalytic : AnalyticOnNhd ℂ h (Metric.ball c R) :=
+    hdiff.analyticOnNhd Metric.isOpen_ball
+  have hgdiff : DifferentiableOn ℂ g (Metric.ball c R) :=
+    ((hg.mono Metric.ball_subset_closedBall).differentiableOn)
+  have hgne_ball : ∀ z ∈ Metric.ball c R, g z ≠ 0 :=
+    fun z hz => hgne z (Metric.ball_subset_closedBall hz)
+  let F : ℂ → ℂ := Complex.exp ∘ h
+  have hFdiff : DifferentiableOn ℂ F (Metric.ball c R) :=
+    hanalytic.cexp.differentiableOn
+  have hF_ne : ∀ z ∈ Metric.ball c R, F z ≠ 0 :=
+    fun z _ => Complex.exp_ne_zero _
+  have hlog : Set.EqOn (logDeriv F) (logDeriv g) (Metric.ball c R) := by
+    intro z hz
+    rw [show F = Complex.exp ∘ h by rfl,
+      logDeriv_comp (by fun_prop) (hh z hz).differentiableAt]
+    simpa [logDeriv_apply] using (hh z hz).deriv
+  obtain ⟨a, _ha_ne, ha⟩ :=
+    (logDeriv_eqOn_iff hFdiff hgdiff Metric.isOpen_ball
+      (convex_ball c R).isPreconnected hgne_ball hF_ne).mp hlog
+  have hc_ball : c ∈ Metric.ball c R := Metric.mem_ball_self hR
+  have hac : (1 : ℂ) = a * g c := by
+    simpa [F, hcenter] using ha hc_ball
+  have ha_eq : a = 1 / g c :=
+    (eq_div_iff (hgne_ball c hc_ball)).2 hac.symm
+  have hexp : ∀ z ∈ Metric.ball c R, Complex.exp (h z) = g z / g c := by
+    intro z hz
+    have hz' := ha hz
+    rw [ha_eq] at hz'
+    simpa [F, div_eq_mul_inv, mul_comm] using hz'
+  refine ⟨h, hanalytic, hcenter, fun z hz => (hh z hz).deriv, hexp, ?_⟩
+  intro z hz
+  have hnorm : Real.exp (h z).re = ‖g z‖ / ‖g c‖ := by
+    simpa [Complex.norm_exp, norm_div] using congrArg norm (hexp z hz)
+  calc
+    (h z).re = Real.log (Real.exp (h z).re) := (Real.log_exp _).symm
+    _ = Real.log (‖g z‖ / ‖g c‖) := congrArg Real.log hnorm
+    _ = Real.log ‖g z‖ - Real.log ‖g c‖ :=
+      Real.log_div
+        (norm_ne_zero_iff.mpr (hgne_ball z hz))
+        (norm_ne_zero_iff.mpr (hgne_ball c hc_ball))
+
+/-- Borel--Caratheodory and Cauchy's estimate give a linear center bound for
+the logarithmic derivative of a nonvanishing analytic function.
+
+The hypothesis is deliberately stated in terms of logarithmic norm growth,
+so applications do not need to choose a branch of the complex logarithm. -/
+lemma norm_logDeriv_le_four_mul_div_of_analyticOnNhd_nonzero_re_log_bound
+    {g : ℂ → ℂ} {c : ℂ} {R M : ℝ}
+    (hR : 0 < R) (hM : 0 < M)
+    (hg : AnalyticOnNhd ℂ g (Metric.closedBall c R))
+    (hgne : ∀ z ∈ Metric.closedBall c R, g z ≠ 0)
+    (hre : ∀ z ∈ Metric.ball c R,
+      Real.log ‖g z‖ - Real.log ‖g c‖ ≤ M) :
+    ‖logDeriv g c‖ ≤ 4 * M / R := by
+  obtain ⟨h, hh, hhc, hhderiv, _hhexp, hhre⟩ :=
+    exists_normalized_analytic_log_primitive_on_ball hR hg hgne
+  have hmaps : Set.MapsTo h (Metric.ball c R) {w : ℂ | w.re ≤ M} := by
+    intro z hz
+    change (h z).re ≤ M
+    rw [hhre z hz]
+    exact hre z hz
+  have hhalf_pos : 0 < R / 2 := by linarith
+  have hhalf_lt : R / 2 < R := by linarith
+  have hclosed_half_subset :
+      Metric.closedBall c (R / 2) ⊆ Metric.ball c R :=
+    Metric.closedBall_subset_ball hhalf_lt
+  have hdiff_closed :
+      DifferentiableOn ℂ h (Metric.closedBall c (R / 2)) :=
+    hh.differentiableOn.mono hclosed_half_subset
+  have hdiff_half : DiffContOnCl ℂ h (Metric.ball c (R / 2)) :=
+    hdiff_closed.diffContOnCl_ball subset_rfl
+  have hnorm : ∀ z ∈ Metric.sphere c (R / 2), ‖h z‖ ≤ 2 * M := by
+    intro z hz
+    have hz_norm : ‖z - c‖ ≤ R / 2 := by
+      simpa [Metric.mem_sphere, dist_eq_norm] using hz.le
+    have hbc := borelCaratheodory_centered_half_radius_bound
+      hM hh.differentiableOn hmaps hR hz_norm
+    simpa [hhc] using hbc
+  have hc_ball : c ∈ Metric.ball c R := Metric.mem_ball_self hR
+  have hcauchy : ‖deriv h c‖ ≤ (2 * M) / (R / 2) :=
+    Complex.norm_deriv_le_of_forall_mem_sphere_norm_le
+      hhalf_pos hdiff_half hnorm
+  rw [hhderiv c hc_ball] at hcauchy
+  calc
+    ‖logDeriv g c‖ ≤ (2 * M) / (R / 2) := hcauchy
+    _ = 4 * M / R := by field_simp [hR.ne']; ring
+
+/-- A boundary logarithmic norm bound controls the center logarithmic
+derivative once the nonvanishing analytic factor has the standard zeta-center
+margin `1/3`.
+
+The maximum-modulus principle first propagates the circle bound through the
+disk.  The `max ... 1` keeps the Borel--Caratheodory parameter strictly
+positive without imposing a sign condition on the supplied boundary bound. -/
+lemma norm_logDeriv_le_four_mul_max_add_log_three_div_of_sphere_log_norm_le
+    {g : ℂ → ℂ} {c : ℂ} {R B : ℝ}
+    (hR : 0 < R)
+    (hg : AnalyticOnNhd ℂ g (Metric.closedBall c R))
+    (hgne : ∀ z ∈ Metric.closedBall c R, g z ≠ 0)
+    (hcenter : (1 / 3 : ℝ) ≤ ‖g c‖)
+    (hsphere : ∀ z ∈ Metric.sphere c R, Real.log ‖g z‖ ≤ B) :
+    ‖logDeriv g c‖ ≤ 4 * max (B + Real.log 3) 1 / R := by
+  let M : ℝ := max (B + Real.log 3) 1
+  have hM : 0 < M := lt_of_lt_of_le zero_lt_one (le_max_right _ _)
+  have hdiff_closed : DifferentiableOn ℂ g (Metric.closedBall c R) :=
+    hg.differentiableOn
+  have hdiff : DiffContOnCl ℂ g (Metric.ball c R) :=
+    hdiff_closed.diffContOnCl_ball subset_rfl
+  have hsphere_norm : ∀ z ∈ Metric.sphere c R, ‖g z‖ ≤ Real.exp B := by
+    intro z hz
+    have hexp := Real.exp_le_exp.mpr (hsphere z hz)
+    rw [Real.exp_log (norm_pos_iff.mpr (hgne z (Metric.sphere_subset_closedBall hz)))]
+      at hexp
+    exact hexp
+  have hclosed_norm : ∀ z ∈ Metric.closedBall c R, ‖g z‖ ≤ Real.exp B := by
+    intro z hz
+    apply Complex.norm_le_of_forall_mem_frontier_norm_le
+      Metric.isBounded_ball hdiff
+    · intro w hw
+      exact hsphere_norm w (Metric.frontier_ball_subset_sphere hw)
+    · rw [closure_ball c hR.ne']
+      exact hz
+  have hlog_center : -Real.log 3 ≤ Real.log ‖g c‖ := by
+    have hlog := Real.log_le_log (by norm_num : (0 : ℝ) < 1 / 3) hcenter
+    simpa [one_div, Real.log_inv] using hlog
+  have hre : ∀ z ∈ Metric.ball c R,
+      Real.log ‖g z‖ - Real.log ‖g c‖ ≤ M := by
+    intro z hz
+    have hz_closed : z ∈ Metric.closedBall c R :=
+      Metric.ball_subset_closedBall hz
+    have hlog_z : Real.log ‖g z‖ ≤ B := by
+      have hlog := Real.log_le_log
+        (norm_pos_iff.mpr (hgne z hz_closed)) (hclosed_norm z hz_closed)
+      simpa using hlog
+    have hsum : Real.log ‖g z‖ - Real.log ‖g c‖ ≤
+        B + Real.log 3 := by
+      linarith
+    exact hsum.trans (le_max_left _ _)
+  simpa [M] using
+    norm_logDeriv_le_four_mul_div_of_analyticOnNhd_nonzero_re_log_bound
+      hR hM hg hgne hre
+
 /-- Cauchy derivative estimate for ζ on a disk whose closed ball avoids the
 pole at `1`.
 
@@ -11545,6 +11756,78 @@ lemma exists_log_norm_factorization_riemannZeta_closedBall_pointwise_of_ne_zero
   rw [hz_analytic.meromorphicTrailingCoeffAt_of_ne_zero hzeta] at hlog
   simpa [U] using hlog
 
+/-- On a pole-free closed disk of radius at most `1`, the center-evaluated
+zeta divisor contribution to the logarithmic norm factorization is
+nonpositive. -/
+lemma finsum_divisor_riemannZeta_mul_log_norm_center_sub_nonpos
+    {c : ℂ} {b : ℝ} (hb : b ≤ 1)
+    (havoid : ∀ z : ℂ, z ∈ closedBall c b → z ≠ 1) :
+    (∑ᶠ u,
+        (MeromorphicOn.divisor riemannZeta (closedBall c b) u : ℝ) *
+          Real.log ‖c - u‖) ≤ 0 := by
+  classical
+  let U : Set ℂ := closedBall c b
+  let D := MeromorphicOn.divisor riemannZeta U
+  have han : AnalyticOnNhd ℂ riemannZeta U := by
+    intro z hz
+    exact analyticOnNhd_riemannZeta_ne_one z (havoid z hz)
+  have hD_nonneg : 0 ≤ D := han.divisor_nonneg
+  have hD_finite : D.support.Finite :=
+    D.finiteSupport (isCompact_closedBall c b)
+  have hsupport :
+      (fun u : ℂ => (D u : ℝ) * Real.log ‖c - u‖).support ⊆
+        hD_finite.toFinset := by
+    intro u hu
+    apply hD_finite.mem_toFinset.mpr
+    by_contra hDu
+    have hDu_zero : D u = 0 := by
+      simpa [Function.mem_support] using hDu
+    simp [hDu_zero] at hu
+  rw [show (∑ᶠ u,
+      (MeromorphicOn.divisor riemannZeta (closedBall c b) u : ℝ) *
+        Real.log ‖c - u‖) =
+      ∑ᶠ u, (D u : ℝ) * Real.log ‖c - u‖ by rfl]
+  rw [finsum_eq_sum_of_support_subset _ hsupport]
+  apply Finset.sum_nonpos
+  intro u hu
+  have hu_support : u ∈ D.support := hD_finite.mem_toFinset.mp hu
+  have huU : u ∈ U := D.supportWithinDomain hu_support
+  have hnorm_le_b : ‖c - u‖ ≤ b := by
+    simpa [U, mem_closedBall, dist_eq_norm, norm_sub_rev] using huU
+  have hlog_nonpos : Real.log ‖c - u‖ ≤ 0 :=
+    Real.log_nonpos (norm_nonneg _) (hnorm_le_b.trans hb)
+  have hDreal : (0 : ℝ) ≤ (D u : ℝ) := by
+    exact_mod_cast hD_nonneg u
+  exact mul_nonpos_of_nonneg_of_nonpos hDreal hlog_nonpos
+
+/-- The analytic nonzero factor in a pointwise zeta factorization has norm at
+least `1/3` at any center with real part at least `2`, provided the
+factorization disk has radius at most `1`. -/
+lemma one_third_le_norm_riemannZeta_factor_center_of_log_norm_factorization
+    {c : ℂ} {b : ℝ} {g : ℂ → ℂ} (hc : 2 ≤ c.re)
+    (hb : b ≤ 1) (havoid : ∀ z : ℂ, z ∈ closedBall c b → z ≠ 1)
+    (hgc : g c ≠ 0)
+    (hfactor : Real.log ‖riemannZeta c‖ =
+      (∑ᶠ u,
+        (MeromorphicOn.divisor riemannZeta (closedBall c b) u : ℝ) *
+          Real.log ‖c - u‖) + Real.log ‖g c‖) :
+    (1 / 3 : ℝ) ≤ ‖g c‖ := by
+  have hsum :=
+    finsum_divisor_riemannZeta_mul_log_norm_center_sub_nonpos hb havoid
+  have hzeta : (1 / 3 : ℝ) ≤ ‖riemannZeta c‖ :=
+    one_third_le_norm_riemannZeta_of_two_le_re c hc
+  have hlog_zeta : -Real.log 3 ≤ Real.log ‖riemannZeta c‖ := by
+    have hlog := Real.log_le_log (by norm_num : (0 : ℝ) < 1 / 3) hzeta
+    simpa [one_div, Real.log_inv] using hlog
+  have hlog_g : -Real.log 3 ≤ Real.log ‖g c‖ := by
+    linarith
+  calc
+    (1 / 3 : ℝ) = Real.exp (-Real.log 3) := by
+      rw [Real.exp_neg, Real.exp_log (by norm_num : (0 : ℝ) < 3)]
+      norm_num
+    _ ≤ Real.exp (Real.log ‖g c‖) := Real.exp_le_exp.mpr hlog_g
+    _ = ‖g c‖ := Real.exp_log (norm_pos_iff.mpr hgc)
+
 /-- Transfer a pointwise logarithmic zeta bound to the zero-removed analytic
 factor on a quantitatively selected zero-free circle.
 
@@ -11562,6 +11845,11 @@ lemma exists_good_radius_log_norm_riemannZeta_factor_le_of_closedBall_bound
       r ∈ Set.Icc a q ∧
       AnalyticOnNhd ℂ g (closedBall c b) ∧
       (∀ u : (closedBall c b : Set ℂ), g u ≠ 0) ∧
+      (riemannZeta c ≠ 0 →
+        Real.log ‖riemannZeta c‖ =
+          (∑ᶠ u,
+            (MeromorphicOn.divisor riemannZeta (closedBall c b) u : ℝ) *
+              Real.log ‖c - u‖) + Real.log ‖g c‖) ∧
       (∀ z ∈ sphere c r, riemannZeta z ≠ 0) ∧
       ∀ z ∈ sphere c r,
         Real.log ‖g z‖ ≤ K -
@@ -11600,8 +11888,18 @@ lemma exists_good_radius_log_norm_riemannZeta_factor_le_of_closedBall_bound
       (q - a) /
         ((4 : ℝ) * (((zeros.image (dist c)).card : ℝ) + 1)) := by
     exact div_pos (sub_pos.mpr haq) (mul_pos (by norm_num) (by positivity))
+  have hcq : c ∈ closedBall c q := by
+    have hq : 0 < q := ha.trans haq
+    simp [hq.le]
+  have hcenter : riemannZeta c ≠ 0 →
+      Real.log ‖riemannZeta c‖ =
+        (∑ᶠ u,
+          (MeromorphicOn.divisor riemannZeta (closedBall c b) u : ℝ) *
+            Real.log ‖c - u‖) + Real.log ‖g c‖ := by
+    intro hc
+    exact hpoint c hcq hc
   refine ⟨zeros, r, g, hzeros, hrpos, hr, by simpa [U] using hg,
-    by simpa [U] using hgne, hsphere_ne, ?_⟩
+    by simpa [U] using hgne, hcenter, hsphere_ne, ?_⟩
   intro z hz
   have hzrad : dist c z = r := mem_sphere'.mp hz
   have hzq : z ∈ closedBall c q := by
@@ -22750,6 +23048,12 @@ lemma exists_good_radius_log_norm_riemannZeta_factor_le_jensen_bound
       r ∈ Set.Icc a q ∧
       AnalyticOnNhd ℂ g (closedBall ((2 : ℂ) + I * t) b) ∧
       (∀ u : (closedBall ((2 : ℂ) + I * t) b : Set ℂ), g u ≠ 0) ∧
+      Real.log ‖riemannZeta ((2 : ℂ) + I * t)‖ =
+        (∑ᶠ u,
+          (MeromorphicOn.divisor riemannZeta
+            (closedBall ((2 : ℂ) + I * t) b) u : ℝ) *
+              Real.log ‖((2 : ℂ) + I * t) - u‖) +
+          Real.log ‖g ((2 : ℂ) + I * t)‖ ∧
       (∀ z ∈ sphere ((2 : ℂ) + I * t) r, riemannZeta z ≠ 0) ∧
       ∀ z ∈ sphere ((2 : ℂ) + I * t) r,
         Real.log ‖g z‖ ≤ K -
@@ -22768,7 +23072,7 @@ lemma exists_good_radius_log_norm_riemannZeta_factor_le_jensen_bound
         (by simpa [c] using hz) (by linarith) (by linarith)
   rcases exists_good_radius_log_norm_riemannZeta_factor_le_of_closedBall_bound
       (c := c) ha haq hqb havoid (by simpa [c] using hinner) with
-    ⟨zeros, r, g, hzeros, hrpos, hr, hg, hgne, hsphere_ne, hgbound⟩
+    ⟨zeros, r, g, hzeros, hrpos, hr, hg, hgne, hcenter, hsphere_ne, hgbound⟩
   let delta : ℝ :=
     (q - a) /
       ((4 : ℝ) * (((zeros.image (dist c)).card : ℝ) + 1))
@@ -22793,6 +23097,9 @@ lemma exists_good_radius_log_norm_riemannZeta_factor_le_jensen_bound
       (b := b) (R := R) (t := t) (M := M) hb hbR hheight hM houter
   refine ⟨zeros, r, g, by simpa [c] using hzeros, hrpos, hr,
     by simpa [c] using hg, by simpa [c] using hgne,
+    by
+      apply hcenter
+      exact riemannZeta_ne_zero_of_one_le_re (by simp [c]),
     by simpa [c] using hsphere_ne, ?_⟩
   intro z hz
   have hbase := hgbound z (by simpa [c] using hz)
@@ -22813,6 +23120,84 @@ lemma exists_good_radius_log_norm_riemannZeta_factor_le_jensen_bound
         ((Real.log M + Real.log 3) / Real.log (R / b)) := by
     linarith
   simpa [delta, c] using hbase.trans hstep
+
+/-- Jensen growth control produces a zero-removed zeta factor whose
+logarithmic derivative at the disk center has an explicit linear bound.
+
+This is the regular-part estimate supplied by Borel--Caratheodory: the random
+good radius is eliminated from the denominator using `r ≥ a`. -/
+lemma exists_good_radius_log_norm_and_logDeriv_riemannZeta_factor_le_jensen_bound
+    {a q b R t M K : ℝ} (ha : 0 < a) (haq : a < q) (hqb : q < b)
+    (hb_one : b ≤ 1) (hbR : b < R) (hheight : R < |t|)
+    (hwidth : q - a ≤ 4) (hM : 1 ≤ M)
+    (houter : ∀ z : ℂ,
+      z ∈ sphere ((2 : ℂ) + I * t) R → ‖riemannZeta z‖ ≤ M)
+    (hinner : ∀ z ∈ closedBall ((2 : ℂ) + I * t) q,
+      Real.log ‖riemannZeta z‖ ≤ K) :
+    ∃ (zeros : Finset ℂ) (r : ℝ) (g : ℂ → ℂ),
+      (∀ ρ : ℂ, ρ ∈ zeros ↔
+        ρ ∈ closedBall ((2 : ℂ) + I * t) b ∧ riemannZeta ρ = 0) ∧
+      0 < r ∧ r ∈ Set.Icc a q ∧
+      AnalyticOnNhd ℂ g (closedBall ((2 : ℂ) + I * t) b) ∧
+      (∀ u : (closedBall ((2 : ℂ) + I * t) b : Set ℂ), g u ≠ 0) ∧
+      Real.log ‖riemannZeta ((2 : ℂ) + I * t)‖ =
+        (∑ᶠ u, (MeromorphicOn.divisor riemannZeta
+          (closedBall ((2 : ℂ) + I * t) b) u : ℝ) *
+            Real.log ‖((2 : ℂ) + I * t) - u‖) +
+          Real.log ‖g ((2 : ℂ) + I * t)‖ ∧
+      (∀ z ∈ sphere ((2 : ℂ) + I * t) r, riemannZeta z ≠ 0) ∧
+      (∀ z ∈ sphere ((2 : ℂ) + I * t) r,
+        Real.log ‖g z‖ ≤ K -
+          Real.log ((q - a) / ((4 : ℝ) *
+            (((zeros.image (dist ((2 : ℂ) + I * t))).card : ℝ) + 1))) *
+          ((Real.log M + Real.log 3) / Real.log (R / b))) ∧
+      ‖logDeriv g ((2 : ℂ) + I * t)‖ ≤
+        4 * max (K -
+          Real.log ((q - a) / ((4 : ℝ) *
+            (((zeros.image (dist ((2 : ℂ) + I * t))).card : ℝ) + 1))) *
+          ((Real.log M + Real.log 3) / Real.log (R / b)) + Real.log 3) 1 / a := by
+  classical
+  let c : ℂ := (2 : ℂ) + I * t
+  rcases exists_good_radius_log_norm_riemannZeta_factor_le_jensen_bound
+      ha haq hqb hbR hheight hwidth hM houter hinner with
+    ⟨zeros, r, g, hzeros, hrpos, hr, hg, hgne, hfactor, hsphere_ne, hgbound⟩
+  let B : ℝ := K -
+    Real.log ((q - a) /
+      ((4 : ℝ) * (((zeros.image (dist c)).card : ℝ) + 1))) *
+      ((Real.log M + Real.log 3) / Real.log (R / b))
+  have hb_pos : 0 < b := ha.trans haq |>.trans hqb
+  have havoid : ∀ z : ℂ, z ∈ closedBall c b → z ≠ 1 := by
+    intro z hz
+    exact closedBall_sigma_it_ne_one_of_height_add_le
+      (z := z) (σ := 2) (t := t) (R := b) (H := |t| - b)
+        (by simpa [c] using hz) (by linarith) (by linarith)
+  have hc_mem : c ∈ closedBall c b := Metric.mem_closedBall_self hb_pos.le
+  have hgc : g c ≠ 0 := by
+    exact hgne ⟨c, by simpa [c] using hc_mem⟩
+  have hcenter : (1 / 3 : ℝ) ≤ ‖g c‖ := by
+    apply one_third_le_norm_riemannZeta_factor_center_of_log_norm_factorization
+      (c := c) (b := b) (g := g) (by simp [c]) hb_one havoid hgc
+    simpa [c] using hfactor
+  have hrb : r ≤ b := hr.2.trans hqb.le
+  have hg_r : AnalyticOnNhd ℂ g (closedBall c r) := by
+    have hg_b : AnalyticOnNhd ℂ g (closedBall c b) := by
+      simpa [c] using hg
+    exact hg_b.mono (Metric.closedBall_subset_closedBall hrb)
+  have hgne_r : ∀ z ∈ closedBall c r, g z ≠ 0 := by
+    intro z hz
+    exact hgne ⟨z, by
+      simpa [c] using Metric.closedBall_subset_closedBall hrb hz⟩
+  have hsphere_g : ∀ z ∈ sphere c r, Real.log ‖g z‖ ≤ B := by
+    intro z hz
+    simpa [B, c] using hgbound z (by simpa [c] using hz)
+  have hlogDeriv_r : ‖logDeriv g c‖ ≤ 4 * max (B + Real.log 3) 1 / r :=
+    norm_logDeriv_le_four_mul_max_add_log_three_div_of_sphere_log_norm_le
+      hrpos hg_r hgne_r hcenter hsphere_g
+  have hnum_nonneg : 0 ≤ 4 * max (B + Real.log 3) 1 := by positivity
+  have hden := div_le_div_of_nonneg_left hnum_nonneg ha hr.1
+  refine ⟨zeros, r, g, hzeros, hrpos, hr, hg, hgne, hfactor,
+    hsphere_ne, hgbound, ?_⟩
+  simpa [B, c] using hlogDeriv_r.trans hden
 
 /-- A boundary norm bound for zeta on a high outer circle yields a smaller
 concentric circle avoiding every local zeta zero, together with an explicit
