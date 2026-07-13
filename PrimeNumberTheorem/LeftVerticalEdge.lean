@@ -488,16 +488,68 @@ theorem norm_explicitFormulaIntegrand_odd_vertical_le
     _ ≤ Q * x ^ (-(2 * (N : ℝ) + 1)) :=
       div_le_self hnum hline
 
+/-- The explicit-formula integrand is genuinely integrable on every finite
+segment of a negative odd vertical line. -/
+theorem intervalIntegrable_explicitFormulaIntegrand_odd_vertical
+    {x T : ℝ} {N : ℕ} (hx : 1 < x) :
+    IntervalIntegrable
+      (fun t : ℝ => explicitFormulaIntegrand x
+        (((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * I))
+      MeasureTheory.volume (-T) T := by
+  apply ContinuousOn.intervalIntegrable
+  intro t _ht
+  let s : ℂ := ((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * I
+  have hs0 : s ≠ 0 := by
+    intro h
+    have hre := congrArg Complex.re h
+    simp [s] at hre
+    have hN : 0 ≤ (N : ℝ) := Nat.cast_nonneg N
+    linarith
+  have hs1 : s ≠ 1 := by
+    intro h
+    have hre := congrArg Complex.re h
+    simp [s] at hre
+    have hN : 0 ≤ (N : ℝ) := Nat.cast_nonneg N
+    linarith
+  have htrivial : ∀ n : ℕ, s ≠ -2 * ((n : ℂ) + 1) := by
+    intro n hn
+    have hre := congrArg Complex.re hn
+    simp [s] at hre
+    have heqR : 2 * (N : ℝ) + 1 = 2 * ((n : ℝ) + 1) := by linarith
+    have hparity : 2 * N + 1 = 2 * (n + 1) := by exact_mod_cast heqR
+    omega
+  have hzeta : riemannZeta s ≠ 0 :=
+    PrimeNumberTheorem.riemannZeta_ne_zero_of_re_le_zero
+      (by simp [s]; have hN : 0 ≤ (N : ℝ) := Nat.cast_nonneg N; linarith)
+      htrivial
+  have han : ContinuousAt (explicitFormulaIntegrand x) s :=
+    (analyticAt_explicitFormulaIntegrand_of_ne_zero_of_ne_one_of_zeta_ne_zero
+      (zero_lt_one.trans hx) hs0 hs1 hzeta).continuousAt
+  have hmap : ContinuousAt
+      (fun r : ℝ => ((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (r : ℂ) * I) t := by
+    fun_prop
+  change ContinuousWithinAt
+    (explicitFormulaIntegrand x ∘ fun r : ℝ =>
+      (((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (r : ℂ) * I)) _ t
+  exact (ContinuousAt.comp
+    (f := fun r : ℝ => (((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (r : ℂ) * I))
+    (x := t) (g := explicitFormulaIntegrand x) han hmap).continuousWithinAt
+
 /-- Explicit finite-height bound for the complete moving left vertical edge. -/
 theorem norm_integral_explicitFormulaIntegrand_odd_vertical_le
     {x T : ℝ} {N : ℕ} (hx : 1 < x) (hT : 0 ≤ T) :
-    ‖∫ t : ℝ in (-T)..T,
-        explicitFormulaIntegrand x
-          (((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * I)‖ ≤
-      ((vonMangoldtLSeriesNorm 1 + ‖Complex.log Real.pi‖ +
-        2 * (‖(Real.eulerMascheroniConstant : ℂ)‖ + 3 +
-          Real.log (2 * (N : ℝ) + T + 4)) + Real.pi) *
-        x ^ (-(2 * (N : ℝ) + 1))) * (2 * T) := by
+    IntervalIntegrable
+        (fun t : ℝ => explicitFormulaIntegrand x
+          (((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * I))
+        MeasureTheory.volume (-T) T ∧
+      ‖∫ t : ℝ in (-T)..T,
+          explicitFormulaIntegrand x
+            (((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * I)‖ ≤
+        ((vonMangoldtLSeriesNorm 1 + ‖Complex.log Real.pi‖ +
+          2 * (‖(Real.eulerMascheroniConstant : ℂ)‖ + 3 +
+            Real.log (2 * (N : ℝ) + T + 4)) + Real.pi) *
+          x ^ (-(2 * (N : ℝ) + 1))) * (2 * T) := by
+  refine ⟨intervalIntegrable_explicitFormulaIntegrand_odd_vertical hx, ?_⟩
   let C : ℝ := (vonMangoldtLSeriesNorm 1 + ‖Complex.log Real.pi‖ +
     2 * (‖(Real.eulerMascheroniConstant : ℂ)‖ + 3 +
       Real.log (2 * (N : ℝ) + T + 4)) + Real.pi) *
@@ -568,8 +620,8 @@ theorem tendsto_integral_explicitFormulaIntegrand_odd_vertical_atTop
   let M : ℝ := 2 * (n : ℝ) + T n + 4
   let Q : ℝ := vonMangoldtLSeriesNorm 1 + ‖Complex.log Real.pi‖ +
     2 * (‖(Real.eulerMascheroniConstant : ℂ)‖ + 3 + Real.log M) + Real.pi
-  have hmain := norm_integral_explicitFormulaIntegrand_odd_vertical_le
-    (N := n) hx (hT0 n)
+  have hmain := (norm_integral_explicitFormulaIntegrand_odd_vertical_le
+    (N := n) hx (hT0 n)).2
   change _ ≤ (Q * x ^ (-(2 * (n : ℝ) + 1))) * (2 * T n) at hmain
   have hn : 0 ≤ (n : ℝ) := Nat.cast_nonneg n
   have hK : 0 ≤ (K : ℝ) := Nat.cast_nonneg K

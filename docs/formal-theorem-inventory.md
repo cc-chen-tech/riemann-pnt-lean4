@@ -3443,7 +3443,8 @@ Support-level verified declarations:
   `exists_goodHeight_Icc_quantitatively_separated` strengthen the contour
   selection to an explicit `1/(4(N+1))` separation from every nontrivial-zero
   absolute ordinate, with `N` the number of distinct absolute ordinates in a
-  fixed local height window.  This is the finite pigeonhole half of the classical quantitative
+  fixed local height window.  This is the finite pigeonhole half of the
+  classical quantitative
   good-height argument; the Jensen `N = O(log T)` substitution remains to be
   connected.
 - `exists_strictMono_goodHeight_tendsto` constructs a strictly increasing
