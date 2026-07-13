@@ -110,6 +110,42 @@ function extractTagBodies(source, tag) {
   return bodies;
 }
 
+function maskJavaScriptStrings(source) {
+  let result = "";
+  let quote = null;
+
+  for (let index = 0; index < source.length; index += 1) {
+    const character = source[index];
+    if (quote) {
+      if (character === "\\") {
+        result += " ";
+        if (source[index + 1] !== undefined) {
+          result += source[index + 1] === "\n" ? "\n" : " ";
+          index += 1;
+        }
+      } else if (character === quote) {
+        result += quote === "`" ? " " : character;
+        quote = null;
+      } else {
+        result += character === "\n" ? "\n" : " ";
+      }
+      continue;
+    }
+
+    if (character === "\"" || character === "'") {
+      quote = character;
+      result += character;
+    } else if (character === "`") {
+      quote = character;
+      result += " ";
+    } else {
+      result += character;
+    }
+  }
+
+  return result;
+}
+
 function markupWithoutExecutableBodies(source) {
   return source.replace(/<(script|style)\b([^>]*)>[\s\S]*?<\/\1\s*>/gi, "<$1$2></$1>");
 }
@@ -144,10 +180,11 @@ function findMatching(source, start, open, close) {
 }
 
 function extractConceptObjects(source) {
-  const declaration = /\b(?:const|let|var)\s+CONCEPTS\s*=\s*(?:Object\.freeze\s*\(\s*)?\[/m.exec(source);
+  const code = maskJavaScriptStrings(source);
+  const declaration = /\b(?:const|let|var)\s+CONCEPTS\s*=\s*(?:Object\.freeze\s*\(\s*)?\[/m.exec(code);
   if (!declaration) return null;
 
-  const arrayStart = source.indexOf("[", declaration.index);
+  const arrayStart = code.indexOf("[", declaration.index);
   const arrayEnd = findMatching(source, arrayStart, "[", "]");
   if (arrayEnd === -1) return null;
 
@@ -267,6 +304,32 @@ function attributeValue(tagSource, attribute) {
   return match?.[1] ?? match?.[2] ?? match?.[3] ?? null;
 }
 
+function inlineEventHandlerBodies(source) {
+  const handlers = [];
+  for (const tagMatch of source.matchAll(/<[A-Za-z][\w:-]*\b[^>]*>/g)) {
+    const eventAttribute = /(?:^|\s)on[a-z][\w:-]*\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>\x60]+))/gi;
+    for (const attributeMatch of tagMatch[0].matchAll(eventAttribute)) {
+      handlers.push(attributeMatch[1] ?? attributeMatch[2] ?? attributeMatch[3] ?? "");
+    }
+  }
+  return handlers;
+}
+
+function resourceBearingAttributeMatches(source) {
+  const matches = [];
+  for (const tagMatch of source.matchAll(/<([A-Za-z][\w:-]*)\b[^>]*>/g)) {
+    const [, tagName] = tagMatch;
+    const resourceAttribute = /(?:^|\s)(src|href|data|poster|action|formaction)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>\x60]+))/gi;
+    for (const attributeMatch of tagMatch[0].matchAll(resourceAttribute)) {
+      const attribute = attributeMatch[1].toLowerCase();
+      const value = attributeMatch[2] ?? attributeMatch[3] ?? attributeMatch[4] ?? "";
+      const isInternalHashAnchor = tagName.toLowerCase() === "a" && attribute === "href" && /^#[^\s]*$/.test(value.trim());
+      if (!isInternalHashAnchor) matches.push({ tag: tagName, attribute, value });
+    }
+  }
+  return matches;
+}
+
 function elementContentById(source, id) {
   const openingTag = /<([A-Za-z][\w:-]*)\b[^>]*>/g;
   let match;
@@ -306,6 +369,19 @@ function staticMapNodeCount(source) {
   return count;
 }
 
+function staticMapNodeConceptIds(source) {
+  const mapContent = elementContentById(source, "atlas-map");
+  if (mapContent === null) return [];
+
+  const conceptIds = new Set();
+  for (const match of mapContent.matchAll(/<button\b[^>]*>/gi)) {
+    const classNames = attributeValue(match[0], "class")?.split(/\s+/) ?? [];
+    const conceptId = attributeValue(match[0], "data-concept-id")?.trim();
+    if (classNames.includes("map-node") && conceptId) conceptIds.add(conceptId);
+  }
+  return [...conceptIds];
+}
+
 function hasNonemptyArray(property) {
   const value = property?.value.trimStart() ?? "";
   if (!value.startsWith("[")) return false;
@@ -335,9 +411,30 @@ function hasVisibleOutline(declarations) {
   const style = /(?:^|;)\s*outline-style\s*:\s*([^;]+)/i.exec(declarations)?.[1] ?? shorthand;
   const color = /(?:^|;)\s*outline-color\s*:\s*([^;]+)/i.exec(declarations)?.[1] ?? "";
   const outlineValues = `${shorthand} ${width} ${style} ${color}`;
-  if (/\bnone\b|\btransparent\b/i.test(outlineValues)) return false;
-  if (!/(?:^|\s)(?:[1-9]\d*|0?\.\d+)px\b/i.test(width)) return false;
+  if (/\bnone\b|\btransparent\b/i.test(outlineValues) || hasAlphaZeroColor(outlineValues)) return false;
+  if (!hasNonzeroOutlineWidth(width)) return false;
   return /\b(?:solid|dashed|double)\b/i.test(style);
+}
+
+function hasNonzeroOutlineWidth(value) {
+  return (
+    /\b(?:thin|medium|thick)\b/i.test(value) ||
+    /(?:^|\s)(?:0*\.\d*[1-9]\d*|0*[1-9]\d*(?:\.\d+)?)(?:[a-z%]+)\b/i.test(value)
+  );
+}
+
+function hasAlphaZeroColor(value) {
+  if (/#(?:[0-9a-f]{3}0|[0-9a-f]{6}00)\b/i.test(value)) return true;
+  for (const match of value.matchAll(/\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\(([^)]*)\)/gi)) {
+    const components = match[1].trim();
+    const alpha = components.includes("/")
+      ? components.slice(components.lastIndexOf("/") + 1).trim()
+      : components.split(",").length === 4
+        ? components.split(",").at(-1).trim()
+        : null;
+    if (alpha && /^(?:0+(?:\.0+)?|\.0+)%?$/.test(alpha)) return true;
+  }
+  return false;
 }
 
 function normalizeStaticStringConcatenations(source) {
@@ -364,6 +461,7 @@ function appendComputedPropertyTokens(source) {
 
 function runtimeResourceErrors(scriptBodies) {
   const source = appendComputedPropertyTokens(normalizeStaticStringConcatenations(scriptBodies.join("\n")));
+  const code = maskJavaScriptStrings(scriptBodies.join("\n"));
   const errors = [];
   const forbiddenTokens = [
     ["SharedWorker", /\bSharedWorker\b/],
@@ -384,6 +482,12 @@ function runtimeResourceErrors(scriptBodies) {
   ];
   for (const [label, pattern] of forbiddenTokens) {
     if (pattern.test(source)) errors.push(`runtime resource: ${label}`);
+  }
+  if (
+    /\bimport\s+(?:(?:[\w$*{}\s,]+)\s+from\s+)?["']/m.test(code) ||
+    /\bexport\s+(?:\*|\{[^}]*\}|[\w$]+)\s+from\s+["']/m.test(code)
+  ) {
+    errors.push("runtime resource: static ES module import/export");
   }
   if (/\.\s*open\s*\(\s*["'](?:GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)["']\s*,/i.test(source)) {
     errors.push("runtime resource: XMLHttpRequest.open");
@@ -411,6 +515,7 @@ const stylelessHtml = commentStrippedHtml.replace(/<style\b[^>]*>[\s\S]*?<\/styl
 const scriptBodies = extractTagBodies(stylelessHtml, "script").map((body) => stripDelimitedComments(body, true));
 const styleBodies = extractTagBodies(scriptlessHtml, "style").map((body) => stripDelimitedComments(body, false));
 const documentMarkup = markupWithoutExecutableBodies(commentStrippedHtml);
+const inlineEventHandlers = inlineEventHandlerBodies(documentMarkup).map((body) => stripDelimitedComments(body, true));
 const errors = [];
 
 for (const [label, pattern] of [
@@ -444,6 +549,7 @@ if (!hasVisibleFocusRule(styleBodies, /\[data-action\s*=\s*(?:(["'])toggle-netwo
 }
 
 const staticFallbackCount = staticMapNodeCount(documentMarkup);
+const staticFallbackIds = staticMapNodeConceptIds(documentMarkup);
 if (staticFallbackCount < 6) {
   errors.push(`expected at least six static #atlas-map fallback buttons, found ${staticFallbackCount}`);
 }
@@ -452,7 +558,7 @@ if (/\b@import\b/i.test(source)) errors.push("external resource: @import");
 
 if (/(?:https?:)?\/\//i.test(source)) errors.push("external resource: http(s) or protocol-relative literal");
 
-errors.push(...runtimeResourceErrors(scriptBodies));
+errors.push(...runtimeResourceErrors([...scriptBodies, ...inlineEventHandlers]));
 
 for (const match of source.matchAll(/\burl\s*\(\s*(["']?)(.*?)\1\s*\)/gi)) {
   const prefix = source.slice(Math.max(0, match.index - 8), match.index);
@@ -463,6 +569,10 @@ for (const match of source.matchAll(/\burl\s*\(\s*(["']?)(.*?)\1\s*\)/gi)) {
 
 for (const match of source.matchAll(/\b(?:src|href|poster|data)\s*=\s*(["'])\s*(\/\/[^"']*)\1/gi)) {
   errors.push(`external resource: protocol-relative ${match[2]}`);
+}
+
+for (const match of resourceBearingAttributeMatches(documentMarkup)) {
+  errors.push(`external resource: <${match.tag}> ${match.attribute}=${match.value}`);
 }
 
 for (const match of attributeMatches(documentMarkup, "script", "src")) {
@@ -489,6 +599,21 @@ if (!conceptObjects) {
   }));
   const coreCount = concepts.filter(({ properties }) => /^true\b/.test(properties.get("core")?.value.trimStart() ?? "")).length;
   if (coreCount !== 6) errors.push(`expected exactly six core:true concept objects, found ${coreCount}`);
+  const coreConceptIds = concepts
+    .filter(({ properties }) => /^true\b/.test(properties.get("core")?.value.trimStart() ?? ""))
+    .map(({ properties }) => stringValue(properties.get("id")))
+    .filter(Boolean);
+  const distinctCoreConceptIds = new Set(coreConceptIds);
+  if (staticFallbackCount !== staticFallbackIds.length) {
+    errors.push("static #atlas-map fallback buttons must not duplicate data-concept-id values");
+  }
+  if (
+    coreConceptIds.length !== distinctCoreConceptIds.size ||
+    staticFallbackIds.length !== distinctCoreConceptIds.size ||
+    staticFallbackIds.some((id) => !distinctCoreConceptIds.has(id))
+  ) {
+    errors.push("static #atlas-map fallback IDs must exactly match core:true concept IDs");
+  }
 
   for (const { properties } of concepts) {
     const status = stringValue(properties.get("status"));
