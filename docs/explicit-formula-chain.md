@@ -6,41 +6,29 @@ Lean-facing dependency chain.  It is scoped to the current checkout.
 
 ## Current statement
 
-Current source:
+Current source is already a symmetric-height limit:
 
 ```lean
-def explicit_formula_von_mangoldt (x : Real) (_hx : x >= 2) : Prop :=
-  chebyshevPsi x = x
-    - sum' rho : {s : Complex // RiemannHypothesis.IsNontrivialZero s},
-        (x : Complex) ^ (rho : Complex) / (rho : Complex)
+def finiteNontrivialZeroSum (x T : Real) : Complex :=
+  ∑ rho in nontrivialZerosFinset T, x^rho / rho
+
+def explicitFormulaApprox (x T : Real) : Complex :=
+  x
+    - finiteNontrivialZeroSum x T
     - (deriv riemannZeta 0) / riemannZeta 0
     - (1 / 2) * Real.log (1 - x^(-2 : Real))
+
+def explicit_formula_von_mangoldt (x : Real) (_hx : x >= 2) : Prop :=
+  Tendsto (fun T => explicitFormulaApprox x T) atTop
+    (nhds (chebyshevPsi0 x : Complex))
 ```
 
-After elaboration, Lean treats this as a complex equality by coercing
-`chebyshevPsi x`, `x`, and the final real logarithm into `Complex`.
-
-This is not a mathematically suitable final target.
-
-1. The zero sum is an unordered `tsum` over all nontrivial zeros.  The classical
-   sum is not an absolutely convergent unordered sum of `x^rho / rho`; it needs
-   a symmetric principal value, a truncation parameter, or another explicit
-   summation convention.
-2. `chebyshevPsi` is the right-continuous step function.  The classical exact
-   formula is for the midpoint convention
-   `psi0(x) = (psi(x+) + psi(x-)) / 2`, equivalently
-   `psi(x) - Lambda(n) / 2` when `x = n` is a prime power and `psi(x)` otherwise.
-   Away from prime powers, `psi0 x = psi x`.
-3. Zeros must be counted with multiplicity.  The current subtype
-   `{s // IsNontrivialZero s}` counts each zero once and would silently assume
-   all nontrivial zeros are simple.
-4. The constant and trivial-zero terms are only meaningful after a summation
-   convention has been fixed.  The final term
-   `-1/2 * log (1 - x^-2)` is the infinite contribution of the trivial zeros;
-   it should arise as a limit from finite trivial-zero residues or be stated as
-   a separate convergent real series.
-5. A bare equality for every `x >= 2` hides boundary issues at prime powers and
-   at contour heights passing through zeros.
+This corrects the former unordered `tsum` and right-continuous `psi` problems,
+but it is still not the right final target: `finiteNontrivialZeroSum` counts
+each distinct zero once.  The contour theorem necessarily weights each zero by
+`analyticOrderNatAt riemannZeta rho`.  The final target must therefore be
+replaced by a multiplicity-aware symmetric-height approximation; proving all
+nontrivial zeros simple is not an acceptable hidden assumption.
 
 ## Corrected target
 
@@ -320,29 +308,26 @@ Already available or mostly available:
     the complete left edge tends to zero whenever the height grows at most
     linearly.  The joint contour theorem now uses exactly such a sequence and
     exposes this zero limit in its conclusion.
+29. `ExplicitFormulaResidues.exists_cofinal_nontrivialZeroSum_tendsto` selects
+    an even subsequence of the logarithmically separated central heights so the
+    heights are strictly increasing while remaining linearly controlled.  At
+    every selected height it proves the exact finite moving-rectangle identity
+    with left edge `-(4n+1)`.  It combines the far-left upper and lower limits,
+    both central horizontal limits, and the moving left-vertical limit to prove
+    that the complete `firstOrderContourRemainder` tends to zero.  Consequently
+    the multiplicity-weighted nontrivial-zero sum itself converges to the exact
+    `psi0` explicit-formula value along this cofinal sequence.  This closes the
+    global contour-limit assembly; it does not yet interpolate to arbitrary
+    symmetric truncation heights.
 
 Remaining after the fixed-right-edge contour shift:
 
-1. Bound the remaining horizontal portions
-   `-1 <= Re(s) <= 1+epsilon` strongly enough to pass to a cofinal good-height
-   limit; the right portions are now proved to vanish.
-2. Either evaluate the fixed `Re(s)=-1` left-line limit and identify it with
-   the classical trivial-zero term, or move the left edge through
-   `-2,-4,...` toward `-infinity` and control the resulting joint limit.  The
-   complete multiplicity-aware trivial-residue series limit and its exact
-   extraction from every `-(2N+1)` contour are now proved, and a joint cofinal
-   sequence has been chosen.  The complete far-left horizontal portions are
-   now proved to vanish uniformly in the moving left endpoint: this includes
-   the Euler-product, constant, tangent, cotangent-reflection, and right-shifted
-   digamma contributions.  The complete moving vertical left edge is also now
-   proved to vanish along the same linearly controlled good-height sequence.
-   Thus the remaining contour issue is concentrated in the horizontal central
-   band rather than the far-left or vertical pieces.
-3. Separate the now-proved limit of `nontrivial-zero sum - remainder` by
-   proving the remainder tends to zero; this then gives the symmetric
-   multiplicity-weighted nontrivial-zero limit along the chosen cofinal
-   sequence.  Then control the zero contributions between consecutive chosen
-   heights to obtain the full truncation-height limit.
+1. Control the multiplicity-weighted zero contributions between consecutive
+   selected good heights.  This is the remaining step needed to extend the
+   proved cofinal zero-sum limit to arbitrary symmetric truncation heights.
+2. Replace the existing unweighted `explicitFormulaApprox` by the documented
+   multiplicity-aware symmetric-height approximation, then use the increment
+   control to prove its full real-height `Tendsto` statement.
 
 ### Analytic continuation and poles
 
@@ -543,24 +528,25 @@ For the truncated identity:
    `exists_tendsto_horizontal_central_explicitFormulaIntegrand_both_zero`
    proves that both complete central horizontal integrals vanish along a
    cofinal good-height sequence.
-6. Remaining assembly step: combine the finite rectangle identity with the
-   now-proved far-left, moving-left, fixed-right, inner, and central boundary
-   limits.  Then identify the cofinal residue-sum limit and pass from the
-   selected good heights to the intended arbitrary-height principal-value
-   truncation.
+6. Completed global assembly:
+   `exists_cofinal_nontrivialZeroSum_tendsto` combines the finite rectangle
+   identity with the far-left, moving-left, and central boundary limits.  It
+   proves the complete remainder tends to zero and identifies the cofinal
+   multiplicity-weighted zero-sum limit.  Only passage from selected good
+   heights to arbitrary-height principal-value truncation remains.
 
 For the principal value final formula:
 
 1. Zero counting bound such as `N(T) = O(T log T)`.
 2. Bounds for `zeta'/zeta` away from zeros and on selected good heights.
-3. Convergence of symmetric zero sums or a proof that the contour-error limit is
-   zero along good heights.
-4. Along the now-constructed joint cofinal sequence, prove the moving-left-edge
-   remainder tends to zero and control the already-isolated
-   multiplicity-weighted nontrivial-zero sum.  Their difference already has a
-   proved exact limit, so a remainder estimate gives the zero-sum limit on that
-   sequence.  A further interpolation argument between chosen heights is still
-   needed for the full principal-value formula.
+3. Control of the zero-sum increments between consecutive selected heights.
+   The symmetric multiplicity-weighted zero sum and the zero contour-error
+   limit are now proved along one strictly increasing cofinal sequence; an
+   interpolation argument is still needed for the full principal-value formula.
+4. Align `explicitFormulaApprox` and `explicit_formula_von_mangoldt` with the
+   multiplicity-weighted zero sum.  Their current unweighted sum is not implied
+   by the contour theorem without the unknown assertion that every zero is
+   simple.
 
 For a PNT proof, the truncated formula plus a zero-free region and boundary
 estimates may be more useful than the full principal-value exact formula.

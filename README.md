@@ -116,9 +116,14 @@ separation into a full-norm `O(log^2 A)` bound for `zeta'/zeta` on
 `-1 <= Re(s) <= 2`, at both selected heights.  The resulting complete central
 horizontal integrals are interval-integrable, satisfy an explicit
 `O(log^2 A/T)` bound, and tend to zero along a cofinal good-height sequence.
-The remaining explicit-formula work is to combine all proved boundary limits
-with the finite rectangle identity, identify the cofinal residue-sum limit,
-and extend the selected-height result to the intended arbitrary truncations.
+`CofinalExplicitFormula` now combines those boundary limits with the finite
+rectangle identity: the complete remainder tends to zero and the
+multiplicity-weighted nontrivial-zero sums converge to the `psi0`
+explicit-formula value along one strictly increasing good-height sequence.
+The remaining gaps are to replace the legacy unweighted final approximation by
+the multiplicity-weighted sum used by the contour theorem, then control
+zero-sum increments between consecutive selected heights and obtain the
+corrected target's arbitrary-height limit.
 
 The repository now proves the real-part boundary-strip estimate actually used
 by the 3-4-1 argument:
@@ -449,9 +454,10 @@ of such contours from `goodHeight`: the square at height `T` has real sides
 | `PrimeNumberTheorem/RightHorizontalEdge.lean` | Absolutely convergent and inner zero-free horizontal estimates, including genuine interval integrability and both-side decay | sorry-free |
 | `ZeroFreeRegion/ShiftedJensen.lean` | Shifted `3/2+it` Jensen disk, enlarged divisor-mass control, and regularized logarithmic-derivative `O(log(|t|+5))` bound down to `Re(s)=1/2` | sorry-free |
 | `PrimeNumberTheorem/CentralHorizontalEdge.lean` | Full `O(log^2 A)` logarithmic-derivative bound on `-1<=Re(s)<=2` at logarithmically separated good heights, explicit `O(log^2 A/T)` contour bound, and both-side cofinal decay | sorry-free |
+| `PrimeNumberTheorem/CofinalExplicitFormula.lean` | Exact moving-rectangle identities on a strictly increasing good-height sequence, complete contour-remainder decay, and the resulting cofinal multiplicity-weighted zero-sum limit | sorry-free; final-target multiplicity alignment and arbitrary-height passage remain |
 | `PrimeNumberTheorem/LeftHorizontalEdge.lean` | Functional-equation decomposition and vanishing far-left horizontal pieces | sorry-free |
 | `PrimeNumberTheorem/LeftVerticalEdge.lean` | Negative-odd vertical-line log-derivative bound, genuine interval integrability, and moving-edge decay | sorry-free |
-| `PrimeNumberTheorem/FirstOrderExplicitFormula.lean` | Multiplicity-aware finite truncated formula and cofinal zero-sum-minus-remainder limit | sorry-free; boundary-limit assembly and arbitrary-height passage remain |
+| `PrimeNumberTheorem/FirstOrderExplicitFormula.lean` | Multiplicity-aware finite truncated formula and cofinal zero-sum-minus-remainder limit | sorry-free; the new cofinal assembly module closes the remainder limit, while arbitrary-height passage remains |
 | `PrimeNumberTheorem/QuantitativeGoodHeight.lean` | For `A >= 4`, quantitative unit-interval contour-height selection with a local absolute-ordinate count bounded by `B(1+log(A+6))` and separation at least `1/(4(B(1+log(A+6))+1))` from every absolute nontrivial-zero ordinate | sorry-free; consumed by the proved central-band bound |
 | `MathlibAux/RectangleResidue.lean` | Rectangle residue route interface, proved circle and square finite simple-pole residue formulas, rectangular-annulus deformation, plus constant-function sanity checks | sorry-free, general meromorphic route interface unproved |
 | `HardyTheorem/AFE.lean` | Corrected AFE route interface using an unwrapped theta wrapper | sorry-free, route interface unproved |
@@ -537,7 +543,8 @@ Lean declarations in `ZeroFreeRegion.lean` and
 | `PrimeNumberTheorem.ExplicitFormulaAux.exists_goodHeight_Icc_quantitatively_separated` | `theorem` | Selects `T in [A,A+1]` with `goodHeight T` and distance at least `1/(4(N+1))` from every absolute nontrivial-zero ordinate. | Completes the finite-set avoidance step; the next theorem substitutes the proved bound on `N`. |
 | `PrimeNumberTheorem.ExplicitFormulaAux.exists_goodHeight_Icc_logarithmically_separated` | `theorem` | For every `A >= 4`, selects `T in [A,A+1]` with distance at least `1/(4(B(1+log(A+6))+1))` from every absolute nontrivial-zero ordinate, for one uniform `B >= 0`. | Supplies the separation input now consumed by the proved central-band `zeta'/zeta` norm bound. |
 | `ZeroFreeRegion.exists_shifted_disk_regularized_logDeriv_riemannZeta_log_bound` | `theorem` | Controls the regularized logarithmic derivative by `B(1+log(|t|+5))` on the retained radius-one disk centered at `3/2+it`, using an enlarged center-`2+it` Jensen disk and shifted divisor mass. | Reaches `Re(s)=1/2`, the missing geometry for the central horizontal contour. |
-| `PrimeNumberTheorem.ExplicitFormulaResidues.exists_goodHeight_Icc_norm_logDeriv_central_band_le_log_sq` / `exists_tendsto_horizontal_central_explicitFormulaIntegrand_both_zero` | `theorem` | Gives one selected `T in [A,A+1]` controlling both signs and all `-1<=Re(s)<=2` by `C(1+log(A+6))^2`, then constructs a cofinal sequence on which both complete central horizontal integrals tend to zero. | Closes the previously missing central horizontal boundary estimate; the remaining task is global contour-limit assembly and arbitrary-height passage. |
+| `PrimeNumberTheorem.ExplicitFormulaResidues.exists_goodHeight_Icc_norm_logDeriv_central_band_le_log_sq` / `exists_tendsto_horizontal_central_explicitFormulaIntegrand_both_zero` | `theorem` | Gives one selected `T in [A,A+1]` controlling both signs and all `-1<=Re(s)<=2` by `C(1+log(A+6))^2`, then constructs a cofinal sequence on which both complete central horizontal integrals tend to zero. | Closes the previously missing central horizontal boundary estimate. |
+| `PrimeNumberTheorem.ExplicitFormulaResidues.exists_cofinal_nontrivialZeroSum_tendsto` | `theorem` | Extracts one strictly increasing cofinal good-height sequence from the logarithmically separated central selector, proves the exact finite moving-rectangle identity at every height, proves the complete three-edge contour remainder tends to zero, and identifies the limit of the multiplicity-weighted nontrivial-zero sums with the `psi0` explicit-formula value. | Closes the global cofinal contour-limit assembly. The legacy unweighted final target must be aligned with this multiplicity-aware sum, and passage from selected good heights to arbitrary symmetric truncation heights remains open. |
 | `ZeroFreeRegion.exists_ReNegDerivDivVerticalLogBound` | `theorem` | Proves the exact uniform boundary-strip estimate `Re(-ζ'/ζ(σ+it))≤C log|t|` for `1≤σ≤2` above a fixed height, using the favorable sign of every local zero principal part. | Discharges the real-part vertical input actually required by the 3-4-1 route without asserting the stronger full-norm bound. |
 | `ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_le_neg_inv_add_log_abs_bound` | `theorem` | Separates a same-height candidate zero and proves `Re(-ζ'/ζ(σ+it))≤-1/(σ-β)+C log|t|` uniformly when the candidate lies in the fixed Jensen disk. | Supplies the quantitative zero-repulsion term; candidates farther left are handled by a uniform constant absorption in the final proof. |
 | `ZeroFreeRegion.classical_zero_free_region_proved` | `theorem` | Proves the predicate `classical_zero_free_region`, i.e. existence of `c>0` with zeta nonzero for `|Im(s)|≥2` and `Re(s)≥1-c/log|Im(s)|`. | Completes the classical de la Vallee Poussin zero-free-region chain in Lean; it is not a proof of PNT or the stronger Vinogradov-Korobov region. |
@@ -1066,9 +1073,14 @@ monotone-error truncated-route wrappers, where a `psi` power saving below a
 smaller boundary feeds a larger-boundary truncated route and yields direct or
 reflected zero exclusion at the larger boundary; the same monotone-error
 wrappers are exposed in existence form, ruling out nontrivial zeros on
-`Re(s)=gamma` and on the reflected line `Re(s)=1-gamma`.  The remaining
-explicit-formula gap is proving the actual truncated explicit formula and the
-finite-zero oscillation estimates; the Mellin/Landau route no longer needs an
+`Re(s)=gamma` and on the reflected line `Re(s)=1-gamma`.  The exact finite
+moving-rectangle formula and its cofinal zero-remainder limit are now proved by
+`ExplicitFormulaResidues.exists_cofinal_nontrivialZeroSum_tendsto`.  The remaining
+explicit-formula gaps are replacing the legacy unweighted approximation by the
+multiplicity-aware zero sum proved by the contour theorem, and controlling zero
+contributions between consecutive selected heights so that the cofinal limit
+extends to arbitrary symmetric truncation heights; the Mellin/Landau route no
+longer needs an
 abstract `PsiPowerErrorBelowLineExcludesZerosRightOf` assumption.
 It also has direct truncated-route wrappers for the sharper
 `O(x^(beta-delta))` input, including the `Re(s)=2/3` and reflected

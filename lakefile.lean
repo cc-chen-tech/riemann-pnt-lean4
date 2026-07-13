@@ -19,6 +19,7 @@ lean_lib RiemannPNT where
     `PrimeNumberTheorem.FirstOrderExplicitFormula,
     `PrimeNumberTheorem.QuantitativeGoodHeight,
     `PrimeNumberTheorem.CentralHorizontalEdge,
+    `PrimeNumberTheorem.CofinalExplicitFormula,
     `PrimeNumberTheorem.PerronTruncation,
     `PrimeNumberTheorem.VonMangoldtPerronTruncated,
     `PrimeNumberTheorem.PerronExplicitError,
