@@ -293,6 +293,15 @@ Already available or mostly available:
     asymptotic to the right-half-plane terms
     `digamma(1-s) * x^s / s`.  This is a genuine reduction, not yet a proof
     that those remaining digamma integrals vanish.
+27. `DigammaBounds` proves Gauss' convergent series for complex digamma on
+    `Re(z)>0` from the canonical product for `1/Gamma`, including the required
+    locally uniform product convergence and logarithmic-derivative passage.
+    It obtains the quantitative bound
+    `norm (digamma z) <= norm gamma + 3 + log (norm z + 1)` for `Re(z)>=1`.
+    `LeftHorizontalEdge` integrates this bound and proves that both complete
+    moving far-left horizontal contour integrals tend to zero, uniformly in
+    every left endpoint satisfying `a(T)<=-epsilon`.  Thus no digamma or other
+    Gamma-factor remainder remains on these two far-left horizontal pieces.
 
 Remaining after the fixed-right-edge contour shift:
 
@@ -304,14 +313,10 @@ Remaining after the fixed-right-edge contour shift:
    `-2,-4,...` toward `-infinity` and control the resulting joint limit.  The
    complete multiplicity-aware trivial-residue series limit and its exact
    extraction from every `-(2N+1)` contour are now proved, and a joint cofinal
-   sequence has been chosen.  On the far-left horizontal portions, the
-   Euler-product, constant, and tangent contributions are now proved to vanish
-   uniformly in the moving left endpoint.  Gamma reflection additionally
-   removes the cotangent correction.  What remains on these horizontal
-   portions is the right-shifted digamma integral
-   `digamma(1-s) * x^s / s`, where `Re(1-s) > 1`, together with the moving
-   vertical left edge.  A quantitative right-half-plane digamma bound is still
-   required to make this remaining horizontal integral vanish.
+   sequence has been chosen.  The complete far-left horizontal portions are
+   now proved to vanish uniformly in the moving left endpoint: this includes
+   the Euler-product, constant, tangent, cotangent-reflection, and right-shifted
+   digamma contributions.  The moving vertical left edge remains open.
 3. Separate the now-proved limit of `nontrivial-zero sum - remainder` by
    proving the remainder tends to zero; this then gives the symmetric
    multiplicity-weighted nontrivial-zero limit along the chosen cofinal

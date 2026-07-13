@@ -1,4 +1,5 @@
 import PrimeNumberTheorem.RightHorizontalEdge
+import PrimeNumberTheorem.DigammaBounds
 import Mathlib.Analysis.SpecialFunctions.Gamma.Digamma
 
 open Complex Filter Topology
@@ -788,6 +789,76 @@ theorem norm_farLeft_cotCorrection_le {x T σ : ℝ}
     _ ≤ ((2 * Real.pi) * x ^ σ) / |T| :=
       div_le_div_of_nonneg_left hnum (lt_of_lt_of_le zero_lt_one hT) hline
 
+/-- Quantitative pointwise bound for the reflected digamma contribution.  It
+retains logarithmic height growth and only linear dependence on the far-left
+real coordinate, which remains integrable against `x^σ`. -/
+theorem norm_farLeft_rightShiftedDigamma_le {x T σ : ℝ}
+    (hx : 1 < x) (hσ : σ ≤ 0) (hT : T ≠ 0) :
+    ‖farLeftRightShiftedDigammaIntegrand x ((σ : ℂ) + T * I)‖ ≤
+      (‖(Real.eulerMascheroniConstant : ℂ)‖ + 4 +
+          Real.log (1 + |T|) - σ) * x ^ σ / |T| := by
+  have hxpos : 0 < x := zero_lt_one.trans hx
+  let s : ℂ := (σ : ℂ) + T * I
+  let z : ℂ := 1 - s
+  have hzre : z.re = 1 - σ := by simp [z, s]
+  have hzim : z.im = -T := by simp [z, s]
+  have hzre1 : 1 ≤ z.re := by rw [hzre]; linarith
+  have hnormz : ‖z‖ + 1 ≤ (1 + |T|) * (2 - σ) := by
+    have hreabs : |z.re| = 1 - σ := by
+      rw [hzre, abs_of_nonneg (by linarith)]
+    have himabs : |z.im| = |T| := by rw [hzim, abs_neg]
+    calc
+      ‖z‖ + 1 ≤ (|z.re| + |z.im|) + 1 :=
+        add_le_add (Complex.norm_le_abs_re_add_abs_im z) le_rfl
+      _ = |T| + (2 - σ) := by rw [hreabs, himabs]; ring
+      _ ≤ (1 + |T|) * (2 - σ) := by
+        nlinarith [abs_nonneg T]
+  have hlogHeight : 0 ≤ Real.log (1 + |T|) :=
+    Real.log_nonneg (by linarith [abs_nonneg T])
+  have hlogReal : Real.log (2 - σ) ≤ 1 - σ := by
+    have hpos : 0 < 2 - σ := by linarith
+    have := Real.log_le_sub_one_of_pos hpos
+    linarith
+  have hlog : Real.log (‖z‖ + 1) ≤ Real.log (1 + |T|) + (1 - σ) := by
+    have hpos1 : 0 < ‖z‖ + 1 := by positivity
+    have hposT : 0 < 1 + |T| := by positivity
+    have hposσ : 0 < 2 - σ := by linarith
+    calc
+      Real.log (‖z‖ + 1) ≤ Real.log ((1 + |T|) * (2 - σ)) :=
+        Real.log_le_log hpos1 hnormz
+      _ = Real.log (1 + |T|) + Real.log (2 - σ) :=
+        Real.log_mul hposT.ne' hposσ.ne'
+      _ ≤ Real.log (1 + |T|) + (1 - σ) :=
+        add_le_add le_rfl hlogReal
+  have hdig := PrimeNumberTheorem.norm_digamma_le_log hzre1
+  have hdig' : ‖Complex.digamma z‖ ≤
+      ‖(Real.eulerMascheroniConstant : ℂ)‖ + 4 +
+        Real.log (1 + |T|) - σ := by
+    exact hdig.trans (by linarith)
+  have hline : |T| ≤ ‖s‖ := by
+    simpa [s] using abs_im_le_norm s
+  have hC : 0 ≤ ‖(Real.eulerMascheroniConstant : ℂ)‖ + 4 +
+      Real.log (1 + |T|) - σ := by
+    linarith [norm_nonneg (Real.eulerMascheroniConstant : ℂ)]
+  have hnum : 0 ≤
+      (‖(Real.eulerMascheroniConstant : ℂ)‖ + 4 +
+        Real.log (1 + |T|) - σ) * x ^ σ :=
+    mul_nonneg hC (Real.rpow_nonneg hxpos.le σ)
+  simp only [farLeftRightShiftedDigammaIntegrand]
+  rw [norm_div, norm_mul, Complex.norm_cpow_eq_rpow_re_of_pos hxpos]
+  simp only [Complex.add_re, ofReal_re, mul_re, ofReal_im, I_re, I_im,
+    zero_mul, mul_zero, sub_zero, add_zero]
+  change ‖Complex.digamma z‖ * x ^ σ / ‖s‖ ≤ _
+  calc
+    ‖Complex.digamma z‖ * x ^ σ / ‖s‖ ≤
+        ((‖(Real.eulerMascheroniConstant : ℂ)‖ + 4 +
+          Real.log (1 + |T|) - σ) * x ^ σ) / ‖s‖ := by
+      apply div_le_div_of_nonneg_right _ (norm_nonneg _)
+      exact mul_le_mul_of_nonneg_right hdig' (Real.rpow_nonneg hxpos.le σ)
+    _ ≤ ((‖(Real.eulerMascheroniConstant : ℂ)‖ + 4 +
+          Real.log (1 + |T|) - σ) * x ^ σ) / |T| :=
+      div_le_div_of_nonneg_left hnum (abs_pos.mpr hT) hline
+
 private theorem intervalIntegral_const_rpow_exponent {x a b : ℝ}
     (hx : 1 < x) :
     (∫ σ : ℝ in a..b, x ^ σ) = (x ^ b - x ^ a) / Real.log x := by
@@ -811,6 +882,222 @@ private theorem intervalIntegral_const_rpow_exponent {x a b : ℝ}
     (∫ σ : ℝ in a..b, x ^ σ) = x ^ b / Real.log x - x ^ a / Real.log x := by
       simpa [F] using hfund
     _ = (x ^ b - x ^ a) / Real.log x := by ring
+
+private theorem intervalIntegral_neg_mul_rpow_exponent {x a b : ℝ}
+    (hx : 1 < x) :
+    (∫ σ : ℝ in a..b, (-σ) * x ^ σ) =
+      x ^ b * (1 / Real.log x ^ 2 - b / Real.log x) -
+        x ^ a * (1 / Real.log x ^ 2 - a / Real.log x) := by
+  have hxpos : 0 < x := zero_lt_one.trans hx
+  have hlog : Real.log x ≠ 0 := (Real.log_pos hx).ne'
+  let F : ℝ → ℝ := fun σ =>
+    x ^ σ * (1 / Real.log x ^ 2 - σ / Real.log x)
+  have hderiv : deriv F = fun σ : ℝ => (-σ) * x ^ σ := by
+    funext σ
+    have hp := (hasDerivAt_id σ).const_rpow hxpos
+    have hq : HasDerivAt
+        (fun u : ℝ => 1 / Real.log x ^ 2 - u / Real.log x)
+        (-1 / Real.log x) σ := by
+      convert (hasDerivAt_const σ (1 / Real.log x ^ 2)).sub
+        ((hasDerivAt_id σ).div_const (Real.log x)) using 1
+      all_goals ring
+    have hmul := hp.mul hq
+    change deriv F σ = (-σ) * x ^ σ
+    rw [show deriv F σ =
+        (Real.log x * 1 * x ^ σ) *
+            (1 / Real.log x ^ 2 - σ / Real.log x) +
+          x ^ σ * (-1 / Real.log x) by exact hmul.deriv]
+    field_simp [hlog]
+    ring
+  have hdiff : ∀ σ ∈ Set.uIcc a b, DifferentiableAt ℝ F σ := by
+    intro σ _hσ
+    apply DifferentiableAt.mul
+    · exact ((hasDerivAt_id σ).const_rpow hxpos).differentiableAt
+    · fun_prop
+  have hcont : ContinuousOn (fun σ : ℝ => (-σ) * x ^ σ) (Set.uIcc a b) := by
+    exact (continuous_neg.comp continuous_id).continuousOn.mul
+      (Real.continuous_const_rpow (ne_of_gt hxpos)).continuousOn
+  have hfund := intervalIntegral.integral_deriv_eq_sub' F hderiv hdiff hcont
+  simpa [F] using hfund
+
+/-- Uniform finite-segment bound for the reflected digamma contribution.  The
+right side is independent of the moving left endpoint. -/
+theorem norm_integral_farLeft_rightShiftedDigamma_le {x ε a T : ℝ}
+    (hx : 1 < x) (hε : 0 < ε) (ha : a ≤ -ε) (hT : T ≠ 0) :
+    ‖∫ σ : ℝ in a..(-ε),
+        farLeftRightShiftedDigammaIntegrand x ((σ : ℂ) + T * I)‖ ≤
+      (1 / |T|) *
+        ((‖(Real.eulerMascheroniConstant : ℂ)‖ + 4 +
+            Real.log (1 + |T|)) * x ^ (-ε) / Real.log x +
+          x ^ (-ε) *
+            (1 / Real.log x ^ 2 + ε / Real.log x)) := by
+  let C : ℝ := ‖(Real.eulerMascheroniConstant : ℂ)‖ + 4 +
+    Real.log (1 + |T|)
+  let g : ℝ → ℝ := fun σ => (1 / |T|) * ((C - σ) * x ^ σ)
+  have hbound := intervalIntegral.norm_integral_le_of_norm_le
+    (μ := MeasureTheory.volume)
+    (f := fun σ : ℝ =>
+      farLeftRightShiftedDigammaIntegrand x ((σ : ℂ) + T * I))
+    (g := g) ha
+    (Filter.Eventually.of_forall fun σ hσ => by
+      have hσ0 : σ ≤ 0 := by linarith [hσ.2]
+      have hpoint := norm_farLeft_rightShiftedDigamma_le
+        (x := x) (T := T) (σ := σ) hx hσ0 hT
+      convert hpoint using 1
+      all_goals (dsimp [g, C]; ring))
+    (by
+      apply Continuous.intervalIntegrable
+      apply Continuous.mul continuous_const
+      apply Continuous.mul
+      · fun_prop
+      · exact Real.continuous_const_rpow
+          (ne_of_gt (zero_lt_one.trans hx)))
+  have hrewrite : g = fun σ : ℝ =>
+      (C / |T|) * x ^ σ + (1 / |T|) * ((-σ) * x ^ σ) := by
+    funext σ
+    dsimp [g]
+    ring
+  rw [hrewrite, intervalIntegral.integral_add,
+    intervalIntegral.integral_const_mul,
+    intervalIntegral.integral_const_mul,
+    intervalIntegral_const_rpow_exponent hx,
+    intervalIntegral_neg_mul_rpow_exponent hx] at hbound
+  · refine hbound.trans ?_
+    have hxpos : 0 < x := zero_lt_one.trans hx
+    have hlog : 0 < Real.log x := Real.log_pos hx
+    have hTabs : 0 < |T| := abs_pos.mpr hT
+    have hC : 0 ≤ C := by
+      dsimp [C]
+      have hlogT : 0 ≤ Real.log (1 + |T|) :=
+        Real.log_nonneg (by linarith [abs_nonneg T])
+      positivity
+    have hxa : 0 ≤ x ^ a := Real.rpow_nonneg hxpos.le _
+    have hconstDiff : x ^ (-ε) - x ^ a ≤ x ^ (-ε) := by linarith
+    have ha0 : a ≤ 0 := by linarith
+    have hFa : 0 ≤ x ^ a *
+        (1 / Real.log x ^ 2 - a / Real.log x) := by
+      apply mul_nonneg (Real.rpow_nonneg hxpos.le _)
+      have : 0 ≤ -a / Real.log x := div_nonneg (neg_nonneg.mpr ha0) hlog.le
+      have hone : 0 ≤ 1 / Real.log x ^ 2 := one_div_nonneg.mpr (sq_nonneg _)
+      rw [show 1 / Real.log x ^ 2 - a / Real.log x =
+          1 / Real.log x ^ 2 + (-a) / Real.log x by ring]
+      exact add_nonneg hone this
+    dsimp [C] at hC ⊢
+    have hconst :
+        (C / |T|) * ((x ^ (-ε) - x ^ a) / Real.log x) ≤
+          (1 / |T|) * (C * x ^ (-ε) / Real.log x) := by
+      rw [show (C / |T|) * ((x ^ (-ε) - x ^ a) / Real.log x) =
+          (1 / |T|) * (C * (x ^ (-ε) - x ^ a) / Real.log x) by ring]
+      exact mul_le_mul_of_nonneg_left
+        (div_le_div_of_nonneg_right
+          (mul_le_mul_of_nonneg_left hconstDiff hC) hlog.le)
+        (one_div_nonneg.mpr hTabs.le)
+    have hlinear :
+        (1 / |T|) *
+            (x ^ (-ε) * (1 / Real.log x ^ 2 - (-ε) / Real.log x) -
+              x ^ a * (1 / Real.log x ^ 2 - a / Real.log x)) ≤
+          (1 / |T|) *
+            (x ^ (-ε) * (1 / Real.log x ^ 2 + ε / Real.log x)) := by
+      apply mul_le_mul_of_nonneg_left _ (one_div_nonneg.mpr hTabs.le)
+      have heq : 1 / Real.log x ^ 2 - (-ε) / Real.log x =
+          1 / Real.log x ^ 2 + ε / Real.log x := by ring
+      rw [heq]
+      linarith
+    linarith
+  · apply Continuous.intervalIntegrable
+    exact continuous_const.mul
+      (Real.continuous_const_rpow (ne_of_gt (zero_lt_one.trans hx)))
+  · apply Continuous.intervalIntegrable
+    exact continuous_const.mul ((continuous_neg.comp continuous_id).mul
+      (Real.continuous_const_rpow (ne_of_gt (zero_lt_one.trans hx))))
+
+private theorem tendsto_log_one_add_div_atTop :
+    Tendsto (fun T : ℝ => Real.log (1 + T) / T) atTop (𝓝 0) := by
+  have hshift : Tendsto (fun T : ℝ => T + 1) atTop atTop :=
+    tendsto_id.atTop_add tendsto_const_nhds
+  have h := (Real.tendsto_pow_log_div_mul_add_atTop
+    1 (-1) 1 one_ne_zero).comp hshift
+  convert h using 1
+  funext T
+  dsimp [Function.comp_def]
+  rw [pow_one]
+  congr 2 <;> ring
+
+/-- The remaining reflected-digamma integral vanishes on the moving upper
+far-left horizontal segment. -/
+theorem tendsto_integral_farLeft_rightShiftedDigamma_atTop
+    {x ε : ℝ} (hx : 1 < x) (hε : 0 < ε) (a : ℝ → ℝ)
+    (ha : ∀ᶠ T in atTop, a T ≤ -ε) :
+    Tendsto
+      (fun T : ℝ => ∫ σ : ℝ in a T..(-ε),
+        farLeftRightShiftedDigammaIntegrand x ((σ : ℂ) + T * I))
+      atTop (𝓝 0) := by
+  apply tendsto_iff_norm_sub_tendsto_zero.2
+  simp only [sub_zero]
+  let A : ℝ := x ^ (-ε) / Real.log x
+  let B : ℝ := x ^ (-ε) *
+    (1 / Real.log x ^ 2 + ε / Real.log x)
+  let K : ℝ :=
+    (‖(Real.eulerMascheroniConstant : ℂ)‖ + 4) * A + B
+  have hK : Tendsto (fun T : ℝ => K / T) atTop (𝓝 0) :=
+    tendsto_const_nhds.div_atTop tendsto_id
+  have hlog : Tendsto
+      (fun T : ℝ => A * (Real.log (1 + T) / T)) atTop (𝓝 0) := by
+    simpa using tendsto_log_one_add_div_atTop.const_mul A
+  have hupper := hK.add hlog
+  have hupper' : Tendsto
+      (fun T : ℝ => K / T + A * (Real.log (1 + T) / T))
+      atTop (𝓝 0) := by simpa only [add_zero] using hupper
+  apply squeeze_zero' (Eventually.of_forall fun T => norm_nonneg _) _ hupper'
+  filter_upwards [ha, eventually_gt_atTop (1 : ℝ)] with T haT hT
+  have hmain := norm_integral_farLeft_rightShiftedDigamma_le
+    hx hε haT (zero_lt_one.trans hT).ne'
+  rw [abs_of_pos (zero_lt_one.trans hT)] at hmain
+  refine hmain.trans_eq ?_
+  dsimp [A, B, K]
+  ring
+
+/-- The reflected-digamma integral also vanishes on the moving lower
+far-left horizontal segment. -/
+theorem tendsto_integral_farLeft_rightShiftedDigamma_neg_height_atTop
+    {x ε : ℝ} (hx : 1 < x) (hε : 0 < ε) (a : ℝ → ℝ)
+    (ha : ∀ᶠ T in atTop, a T ≤ -ε) :
+    Tendsto
+      (fun T : ℝ => ∫ σ : ℝ in a T..(-ε),
+        farLeftRightShiftedDigammaIntegrand x ((σ : ℂ) - T * I))
+      atTop (𝓝 0) := by
+  apply tendsto_iff_norm_sub_tendsto_zero.2
+  simp only [sub_zero]
+  let A : ℝ := x ^ (-ε) / Real.log x
+  let B : ℝ := x ^ (-ε) *
+    (1 / Real.log x ^ 2 + ε / Real.log x)
+  let K : ℝ :=
+    (‖(Real.eulerMascheroniConstant : ℂ)‖ + 4) * A + B
+  have hK : Tendsto (fun T : ℝ => K / T) atTop (𝓝 0) :=
+    tendsto_const_nhds.div_atTop tendsto_id
+  have hlog : Tendsto
+      (fun T : ℝ => A * (Real.log (1 + T) / T)) atTop (𝓝 0) := by
+    simpa using tendsto_log_one_add_div_atTop.const_mul A
+  have hupper := hK.add hlog
+  have hupper' : Tendsto
+      (fun T : ℝ => K / T + A * (Real.log (1 + T) / T))
+      atTop (𝓝 0) := by simpa only [add_zero] using hupper
+  apply squeeze_zero' (Eventually.of_forall fun T => norm_nonneg _) _ hupper'
+  filter_upwards [ha, eventually_gt_atTop (1 : ℝ)] with T haT hT
+  have hmain := norm_integral_farLeft_rightShiftedDigamma_le
+    (T := -T) hx hε haT (neg_ne_zero.mpr (zero_lt_one.trans hT).ne')
+  have hmain' :
+      ‖∫ σ : ℝ in a T..(-ε),
+          farLeftRightShiftedDigammaIntegrand x ((σ : ℂ) - T * I)‖ ≤
+        (1 / T) *
+          ((‖(Real.eulerMascheroniConstant : ℂ)‖ + 4 +
+              Real.log (1 + T)) * x ^ (-ε) / Real.log x +
+            x ^ (-ε) *
+              (1 / Real.log x ^ 2 + ε / Real.log x)) := by
+    simpa [sub_eq_add_neg, abs_of_pos (zero_lt_one.trans hT)] using hmain
+  refine hmain'.trans_eq ?_
+  dsimp [A, B, K]
+  ring
 
 /-- Uniform integral bound for the elementary Archimedean contribution on a
 far-left horizontal segment. -/
@@ -1252,6 +1539,40 @@ theorem tendsto_integral_farLeft_explicit_sub_rightShiftedDigamma_neg_height_atT
             farLeftCotCorrectionIntegrand x ((σ : ℂ) - T * I) := by
       simpa [sub_eq_add_neg] using hsplit
     linear_combination -hsplit')
+
+/-- The complete moving upper far-left horizontal contribution to the
+first-order explicit-formula contour tends to zero. -/
+theorem tendsto_integral_farLeft_explicit_atTop
+    {x ε : ℝ} (hx : 1 < x) (hε : 0 < ε) (a : ℝ → ℝ)
+    (ha : ∀ᶠ T in atTop, a T ≤ -ε) :
+    Tendsto
+      (fun T : ℝ => ∫ σ : ℝ in a T..(-ε),
+        explicitFormulaIntegrand x ((σ : ℂ) + T * I))
+      atTop (𝓝 0) := by
+  have hsub :=
+    tendsto_integral_farLeft_explicit_sub_rightShiftedDigamma_atTop
+      hx hε a ha
+  have hright :=
+    tendsto_integral_farLeft_rightShiftedDigamma_atTop hx hε a ha
+  have hsum := hsub.add hright
+  simpa only [add_zero] using hsum.congr' (Eventually.of_forall fun T => by ring)
+
+/-- The complete moving lower far-left horizontal contribution also tends to
+zero. -/
+theorem tendsto_integral_farLeft_explicit_neg_height_atTop
+    {x ε : ℝ} (hx : 1 < x) (hε : 0 < ε) (a : ℝ → ℝ)
+    (ha : ∀ᶠ T in atTop, a T ≤ -ε) :
+    Tendsto
+      (fun T : ℝ => ∫ σ : ℝ in a T..(-ε),
+        explicitFormulaIntegrand x ((σ : ℂ) - T * I))
+      atTop (𝓝 0) := by
+  have hsub :=
+    tendsto_integral_farLeft_explicit_sub_rightShiftedDigamma_neg_height_atTop
+      hx hε a ha
+  have hright :=
+    tendsto_integral_farLeft_rightShiftedDigamma_neg_height_atTop hx hε a ha
+  have hsum := hsub.add hright
+  simpa only [add_zero] using hsum.congr' (Eventually.of_forall fun T => by ring)
 
 end ExplicitFormulaResidues
 end PrimeNumberTheorem
