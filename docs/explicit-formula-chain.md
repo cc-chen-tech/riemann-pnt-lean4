@@ -271,6 +271,13 @@ Already available or mostly available:
     zero, the nontrivial-zero sum therefore has the corresponding limit along
     this cofinal sequence.  Passing from that sequence to arbitrary truncation
     heights remains necessary for the full principal-value target.
+24. `LeftHorizontalEdge` proves the logarithmic-derivative functional-equation
+    identity and uses it to split every nonreal far-left horizontal point into
+    an Euler-product term and an explicit Gamma/digamma term.  The Euler term
+    is bounded by `C*x^sigma/|T|`; after integration from an arbitrary moving
+    left endpoint to `-epsilon`, both the upper and lower Euler contributions
+    tend to zero.  Consequently the full far-left horizontal integrals differ
+    from the displayed Gamma-factor integrals by a quantity tending to zero.
 
 Remaining after the fixed-right-edge contour shift:
 
@@ -282,8 +289,10 @@ Remaining after the fixed-right-edge contour shift:
    `-2,-4,...` toward `-infinity` and control the resulting joint limit.  The
    complete multiplicity-aware trivial-residue series limit and its exact
    extraction from every `-(2N+1)` contour are now proved, and a joint cofinal
-   sequence has been chosen.  The remaining issue is proving the
-   moving-left-edge remainder tends to zero along that sequence.
+   sequence has been chosen.  On the far-left horizontal portions, the
+   Euler-product contribution is now proved to vanish uniformly in the moving
+   left endpoint.  What remains there is the explicit Gamma/digamma integral,
+   together with the moving vertical left edge.
 3. Separate the now-proved limit of `nontrivial-zero sum - remainder` by
    proving the remainder tends to zero; this then gives the symmetric
    multiplicity-weighted nontrivial-zero limit along the chosen cofinal
