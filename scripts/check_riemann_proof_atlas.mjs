@@ -394,15 +394,22 @@ function isHashAnchorExpression(expression) {
 }
 
 function hasVisibleFocusRule(styleBodies, selectorPattern) {
+  let foundVisibleOutline = false;
   for (const styleBody of styleBodies) {
     for (const match of styleBody.matchAll(/([^{}]+)\{([^{}]*)\}/gis)) {
-      if (!hasVisibleOutline(match[2])) continue;
       for (const selector of match[1].split(",")) {
-        if (/:focus-visible\b/i.test(selector) && selectorPattern.test(selector)) return true;
+        if (!/:focus-visible\b/i.test(selector) || !selectorPattern.test(selector)) continue;
+        if (!hasOutlineDeclaration(match[2])) continue;
+        if (!hasVisibleOutline(match[2])) return false;
+        foundVisibleOutline = true;
       }
     }
   }
-  return false;
+  return foundVisibleOutline;
+}
+
+function hasOutlineDeclaration(declarations) {
+  return /(?:^|;)\s*outline(?:-(?:width|style|color))?\s*:/i.test(declarations);
 }
 
 function hasVisibleOutline(declarations) {
