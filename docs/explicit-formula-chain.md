@@ -531,15 +531,23 @@ For the truncated identity:
    `1-c/(2log|t|) <= Re(s) <= 2`.  The signed theorem
    `ExplicitFormulaResidues.exists_tendsto_horizontal_inner_explicitFormulaIntegrand_signed_zero`
    then proves that this segment tends to zero on both horizontal sides.
-5. Remaining contour segment: along the same cofinal good-height sequence,
-   control both horizontal integrals on
-   `-delta <= Re(s) <= 1-c/(2log T)`.  The local absolute-ordinate count and
-   its exact logarithmic-scale separation bound are now proved for `A >= 4`;
-   the remaining analytic
-   step is to convert them into a uniform full-norm `zeta'/zeta` bound on this
-   band.  After the central band vanishes, combine
-   the contour identity and residue limits, then pass from the selected cofinal
-   sequence to arbitrary truncation heights.
+5. Completed on the central horizontal band:
+   `ZeroFreeRegion.exists_shifted_disk_regularized_logDeriv_riemannZeta_log_bound`
+   moves the Jensen/Borel disk to `3/2+it` and controls the regularized
+   logarithmic derivative down to `Re(s)=1/2`.  Combining its shifted divisor
+   mass with logarithmic good-height separation gives
+   `exists_goodHeight_Icc_norm_logDeriv_central_band_le_log_sq`, a full-norm
+   `O(log^2 A)` bound on `-1 <= Re(s) <= 2`, simultaneously at heights `+T`
+   and `-T`.  The resulting explicit contour bound is
+   `O(log^2 A / T)`, and
+   `exists_tendsto_horizontal_central_explicitFormulaIntegrand_both_zero`
+   proves that both complete central horizontal integrals vanish along a
+   cofinal good-height sequence.
+6. Remaining assembly step: combine the finite rectangle identity with the
+   now-proved far-left, moving-left, fixed-right, inner, and central boundary
+   limits.  Then identify the cofinal residue-sum limit and pass from the
+   selected good heights to the intended arbitrary-height principal-value
+   truncation.
 
 For the principal value final formula:
 
