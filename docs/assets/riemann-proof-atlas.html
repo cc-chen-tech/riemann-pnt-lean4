@@ -522,6 +522,7 @@
       padding: 42px 0 26px;
     }
 
+    .concept-heading h1,
     .concept-heading h2 {
       margin: 5px 0 0;
       font-family: var(--display);
@@ -784,6 +785,7 @@
         padding-top: 30px;
       }
 
+      .concept-heading h1,
       .concept-heading h2 {
         font-size: 2rem;
       }
@@ -1287,10 +1289,10 @@
       }
     ]);
 
-    const STATUS_TEXT = Object.freeze({
-      proved: "● 已证明组件",
-      route: "◆ 正在连接",
-      frontier: "○ 研究前沿"
+    const STATUS_MARKER = Object.freeze({
+      proved: "●",
+      route: "◆",
+      frontier: "○"
     });
 
     const overviewView = document.querySelector("#overview-view");
@@ -1302,100 +1304,115 @@
     const drawerSummary = document.querySelector("#drawer-summary");
     const drawerAction = document.querySelector('#selection-drawer [data-action="open-concept"]');
 
+    const byId = new Map(CONCEPTS.map((concept) => [concept.id, concept]));
     let expanded = false;
     let selectedId = "zero-free";
 
+    function visibleConcepts() {
+      return CONCEPTS.filter((concept) => expanded || concept.core);
+    }
+
+    function statusLabel(status) {
+      return { proved: "已证明", route: "正在连接", frontier: "研究前沿" }[status];
+    }
+
+    function conceptOrFallback(id) {
+      return byId.get(id) ?? byId.get("zero-free");
+    }
+
     function conceptById(id) {
-      return CONCEPTS.find((concept) => concept.id === id);
+      return byId.get(id);
+    }
+
+    function connectorClass(concept) {
+      return concept.status === "proved" ? "" : concept.status + "-line";
     }
 
     function renderDrawer(concept) {
       drawerTitle.textContent = concept.title;
-      drawerStatus.textContent = STATUS_TEXT[concept.status];
+      drawerStatus.textContent = STATUS_MARKER[concept.status] + " " + statusLabel(concept.status);
       drawerStatus.dataset.status = concept.status;
       drawerSummary.textContent = concept.summary;
       drawerAction.dataset.conceptId = concept.id;
     }
 
-    function renderMap() {
+    function renderMap(nextExpanded = expanded) {
+      expanded = nextExpanded;
+      const visible = visibleConcepts();
+      const visibleIds = new Set(visible.map((concept) => concept.id));
+      const connectors = visible.flatMap((concept) => {
+        const target = concept[expanded ? "expanded" : "compact"];
+        return concept.dependsOn
+          .filter((id) => visibleIds.has(id))
+          .map((id) => {
+            const dependency = conceptOrFallback(id);
+            const source = dependency[expanded ? "expanded" : "compact"];
+            return `<line class="${connectorClass(concept)}" x1="${source.x}" y1="${source.y}" x2="${target.x}" y2="${target.y}"></line>`;
+          });
+      }).join("");
+      const nodes = visible.map((concept) => {
+        const marker = concept[expanded ? "expanded" : "compact"];
+        const selected = concept.id === selectedId;
+        return `<button class="map-node${selected ? " is-selected" : ""}" type="button" data-concept-id="${concept.id}" data-status="${concept.status}" style="--x: ${marker.x}%; --y: ${marker.y}%;" aria-pressed="${String(selected)}"><span class="node-title">${concept.title}</span><span class="node-status">${STATUS_MARKER[concept.status]} ${statusLabel(concept.status)}</span></button>`;
+      }).join("");
+
       atlasMap.classList.toggle("is-expanded", expanded);
       atlasMap.dataset.layout = expanded ? "expanded" : "compact";
+      atlasMap.innerHTML = `
+        <div class="map-axis" aria-hidden="true"></div>
+        <div class="orbit orbit--one" aria-hidden="true"></div>
+        <div class="orbit orbit--two" aria-hidden="true"></div>
+        <div class="orbit orbit--three" aria-hidden="true"></div>
+        <svg class="connector-layer" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><defs><marker id="atlas-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M 0 0 L 8 4 L 0 8 z" fill="#1e405f"></path></marker></defs>${connectors}</svg>
+        ${nodes}`;
       networkToggle.setAttribute("aria-expanded", String(expanded));
       networkToggle.textContent = expanded ? "收起到核心路线" : "展开完整网络";
-
-      atlasMap.querySelectorAll("button[data-concept-id]").forEach((button) => {
-        const concept = conceptById(button.dataset.conceptId);
-        if (!concept) return;
-        const marker = expanded ? concept.expanded : concept.compact;
-        button.style.setProperty("--x", marker.x + "%");
-        button.style.setProperty("--y", marker.y + "%");
-        button.hidden = !concept.core && !expanded;
-        button.classList.toggle("is-selected", concept.id === selectedId);
-        button.setAttribute("aria-pressed", String(concept.id === selectedId));
-      });
     }
 
-    function renderOverview() {
-      const selected = conceptById(selectedId) || conceptById("zero-free");
-      selectedId = selected.id;
-      if (!selected.core) expanded = true;
-      conceptView.hidden = true;
-      overviewView.hidden = false;
-      renderDrawer(selected);
-      renderMap();
-      document.title = "Riemann Proof Atlas";
+    function selectConcept(id) {
+      const concept = conceptOrFallback(id);
+      selectedId = concept.id;
+      if (!concept.core) expanded = true;
+      renderDrawer(concept);
+      document.querySelectorAll(".map-node").forEach((node) => {
+        const selected = node.dataset.conceptId === selectedId;
+        node.classList.toggle("is-selected", selected);
+        node.setAttribute("aria-pressed", String(selected));
+      });
+      return concept;
+    }
+
+    function optionalSection(markup, value) {
+      return value ? markup : "";
     }
 
     function renderConceptPage(concept) {
       const index = CONCEPTS.findIndex((item) => item.id === concept.id);
       const previous = CONCEPTS[(index - 1 + CONCEPTS.length) % CONCEPTS.length];
       const next = CONCEPTS[(index + 1) % CONCEPTS.length];
-      const dependencies = concept.dependsOn
-        .map((id) => conceptById(id))
-        .filter(Boolean);
+      const dependencies = concept.dependsOn.map((id) => conceptById(id)).filter(Boolean);
       const dependencyMarkup = dependencies.length
         ? dependencies.map((item) => "<span>" + item.title + "</span>").join("")
         : "<span>基础对象，无前置节点</span>";
+      const intuition = optionalSection(`<section class="evidence-section"><p class="plate-label">01 / INTUITION</p><h3>直觉</h3><p>${concept.intuition}</p></section>`, concept.intuition);
+      const evidence = optionalSection(`<section class="evidence-section"><p class="plate-label">02 / LEAN EVIDENCE</p><h3>Lean 中真正可用的内容</h3><ul>${(concept.leanEvidence ?? []).map((item) => "<li>" + item + "</li>").join("")}</ul></section>`, concept.leanEvidence?.length);
+      const impact = optionalSection(`<section class="evidence-section"><p class="plate-label">03 / NEXT DEPENDENCY</p><h3>它解锁什么</h3><p>${concept.impact}</p><div class="dependency-list" aria-label="前置依赖">${dependencyMarkup}</div></section>`, concept.impact);
+      const warning = optionalSection(`<section class="evidence-section"><p class="plate-label">04 / CLAIM BOUNDARY</p><h3>不能混淆的边界</h3><p class="warning-copy">${concept.warning}</p></section>`, concept.warning);
 
       conceptView.innerHTML = `
         <nav class="concept-breadcrumb" aria-label="概念页导航">
           <button type="button" data-action="back-to-atlas">← 返回证明星图</button>
-          <span class="map-distance">${String(index + 1).padStart(2, "0")} / ${CONCEPTS.length} · ${STATUS_TEXT[concept.status]}</span>
+          <span class="map-distance">${String(index + 1).padStart(2, "0")} / ${CONCEPTS.length} · ${statusLabel(concept.status)}</span>
         </nav>
         <header class="concept-heading">
           <div>
-            <p class="concept-english">${concept.english}</p>
-            <h2>${concept.title}</h2>
+            ${optionalSection(`<p class="concept-english">${concept.english}</p>`, concept.english)}
+            <h1 tabindex="-1">${concept.title}</h1>
           </div>
           <p class="concept-summary">${concept.summary}</p>
         </header>
-        <section class="formula-field" aria-labelledby="formula-label">
-          <p id="formula-label" class="plate-label">MATHEMATICAL SHAPE<br>数学形状</p>
-          <p class="formula">${concept.formula}</p>
-        </section>
-        <div class="evidence-grid">
-          <section class="evidence-section">
-            <p class="plate-label">01 / INTUITION</p>
-            <h3>直觉</h3>
-            <p>${concept.intuition}</p>
-          </section>
-          <section class="evidence-section">
-            <p class="plate-label">02 / LEAN EVIDENCE</p>
-            <h3>Lean 中真正可用的内容</h3>
-            <ul>${concept.leanEvidence.map((item) => "<li>" + item + "</li>").join("")}</ul>
-          </section>
-          <section class="evidence-section">
-            <p class="plate-label">03 / NEXT DEPENDENCY</p>
-            <h3>它解锁什么</h3>
-            <p>${concept.impact}</p>
-            <div class="dependency-list" aria-label="前置依赖">${dependencyMarkup}</div>
-          </section>
-          <section class="evidence-section">
-            <p class="plate-label">04 / CLAIM BOUNDARY</p>
-            <h3>不能混淆的边界</h3>
-            <p class="warning-copy">${concept.warning}</p>
-          </section>
-        </div>
+        ${optionalSection(`<section class="formula-field" aria-labelledby="formula-label"><p id="formula-label" class="plate-label">MATHEMATICAL SHAPE<br>数学形状</p><p class="formula">${concept.formula}</p></section>`, concept.formula)}
+        <div class="evidence-grid">${intuition}${evidence}${impact}${warning}</div>
         <nav class="concept-nav" aria-label="相邻概念">
           <button type="button" data-action="locate-concept" data-concept-id="${concept.id}">在地图上定位</button>
           <div class="concept-nav__group">
@@ -1403,40 +1420,41 @@
             <button type="button" data-action="open-concept" data-concept-id="${next.id}">${next.title} →</button>
           </div>
         </nav>`;
-
-      overviewView.hidden = true;
-      conceptView.hidden = false;
       document.title = concept.title + " · Riemann Proof Atlas";
     }
 
+    function showConcept(id) {
+      const concept = selectConcept(id);
+      renderConceptPage(concept);
+      overviewView.hidden = true;
+      conceptView.hidden = false;
+      conceptView.querySelector("h1")?.focus();
+    }
+
+    function showOverview() {
+      conceptView.hidden = true;
+      overviewView.hidden = false;
+      renderMap(expanded);
+      selectConcept(selectedId);
+      document.title = "Riemann Proof Atlas";
+    }
+
     function routeFromHash() {
-      const rawHash = location.hash.slice(1);
-      if (rawHash.startsWith("concept/")) {
-        let id = "";
-        try {
-          id = decodeURIComponent(rawHash.slice("concept/".length));
-        } catch (error) {
-          renderOverview();
-          return;
-        }
-        const concept = conceptById(id);
-        if (concept) {
-          selectedId = concept.id;
-          renderConceptPage(concept);
-          return;
-        }
+      const match = location.hash.match(/^#concept\/([a-z0-9-]+)$/);
+      if (match && byId.has(match[1])) {
+        showConcept(match[1]);
+        return;
       }
-      renderOverview();
+      if (location.hash !== "#overview") {
+        history.replaceState(null, "", "#overview");
+      }
+      showOverview();
     }
 
     atlasMap.addEventListener("click", (event) => {
       const button = event.target.closest("button[data-concept-id]");
       if (!button || !atlasMap.contains(button)) return;
-      const concept = conceptById(button.dataset.conceptId);
-      if (!concept) return;
-      selectedId = concept.id;
-      renderDrawer(concept);
-      renderMap();
+      selectConcept(button.dataset.conceptId);
     });
 
     document.addEventListener("click", (event) => {
@@ -1445,27 +1463,26 @@
 
       if (action.dataset.action === "toggle-network") {
         expanded = !expanded;
-        renderMap();
+        renderMap(expanded);
         return;
       }
 
       if (action.dataset.action === "open-concept") {
-        const concept = conceptById(action.dataset.conceptId);
-        if (concept) location.hash = "#concept/" + concept.id;
+        const concept = conceptOrFallback(action.dataset.conceptId);
+        location.hash = "#concept/" + concept.id;
         return;
       }
 
       if (action.dataset.action === "back-to-atlas") {
-        location.hash = "#atlas";
+        location.hash = "#overview";
         return;
       }
 
       if (action.dataset.action === "locate-concept") {
-        const concept = conceptById(action.dataset.conceptId);
-        if (!concept) return;
+        const concept = conceptOrFallback(action.dataset.conceptId);
         selectedId = concept.id;
         if (!concept.core) expanded = true;
-        location.hash = "#atlas";
+        location.hash = "#overview";
       }
     });
 
