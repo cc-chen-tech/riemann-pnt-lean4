@@ -417,12 +417,14 @@ Expected: visible focus at every step, logical focus order, and no animated tran
 - [ ] **Step 4: Re-run source and claim audits**
 
 ```bash
+cmp docs/assets/riemann-proof-atlas.html /Users/luicy/.codex/visualizations/2026/05/23/019e55d5-94a4-7802-b7f0-8df5066f27b1/riemann-proof-atlas.html
+node scripts/check_riemann_proof_atlas.mjs docs/assets/riemann-proof-atlas.html
 node scripts/check_riemann_proof_atlas.mjs /Users/luicy/.codex/visualizations/2026/05/23/019e55d5-94a4-7802-b7f0-8df5066f27b1/riemann-proof-atlas.html
 rg -n "本项目已经证明素数定理|本项目已经证明黎曼猜想" /Users/luicy/.codex/visualizations/2026/05/23/019e55d5-94a4-7802-b7f0-8df5066f27b1/riemann-proof-atlas.html
 git status --short
 ```
 
-Expected: checker passes; prohibited-claim search returns no matches; Git status shows only intentional checker/plan changes plus the user's pre-existing unrelated changes.
+Expected: the canonical source and deployed artifact are byte-identical; both checker invocations pass; prohibited-claim search returns no matches; Git status shows only intentional checker/plan changes plus the user's pre-existing unrelated changes.
 
 - [ ] **Step 5: Commit repository-owned verification files**
 
