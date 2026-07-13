@@ -103,7 +103,10 @@ The first-order explicit-formula route is no longer at its starting point.  It
 now has a proved Perron starting-line limit, a multiplicity-aware finite
 rectangle residue identity, a cofinal good-height sequence, vanishing far-left
 horizontal pieces, a vanishing moving negative-odd vertical edge, and vanishing
-inner zero-free horizontal pieces.  The remaining contour estimate is the
+inner zero-free horizontal pieces.  It also has a quantitative good-height
+selection theorem: every unit interval contains a height separated from all
+nontrivial-zero ordinates by `1/(4(N+1))`, where `N` is the number of distinct
+local ordinates.  The remaining contour estimate is the
 central horizontal band
 `-delta <= Re(s) <= 1-c/(2log T)` at both selected heights.  After that, the
 cofinal zero-sum limit still has to be extended to arbitrary truncation heights.
@@ -438,6 +441,7 @@ of such contours from `goodHeight`: the square at height `T` has real sides
 | `PrimeNumberTheorem/LeftHorizontalEdge.lean` | Functional-equation decomposition and vanishing far-left horizontal pieces | sorry-free |
 | `PrimeNumberTheorem/LeftVerticalEdge.lean` | Negative-odd vertical-line log-derivative bound, genuine interval integrability, and moving-edge decay | sorry-free |
 | `PrimeNumberTheorem/FirstOrderExplicitFormula.lean` | Multiplicity-aware finite truncated formula and cofinal zero-sum-minus-remainder limit | sorry-free; central horizontal band and arbitrary-height passage remain |
+| `PrimeNumberTheorem/QuantitativeGoodHeight.lean` | Quantitative unit-interval contour-height selection with explicit separation from local zero ordinates | sorry-free; converting the local ordinate count to `O(log T)` remains |
 | `MathlibAux/RectangleResidue.lean` | Rectangle residue route interface, proved circle and square finite simple-pole residue formulas, rectangular-annulus deformation, plus constant-function sanity checks | sorry-free, general meromorphic route interface unproved |
 | `HardyTheorem/AFE.lean` | Corrected AFE route interface using an unwrapped theta wrapper | sorry-free, route interface unproved |
 | `RiemannExplorer/Conrey40.lean` | Conrey target alias to the upper-level `KnownResults` target | sorry-free, route interface alias |
@@ -518,6 +522,7 @@ Lean declarations in `ZeroFreeRegion.lean` and
 | `ZeroFreeRegion.exists_regularized_logDeriv_riemannZeta_log_bound` | `theorem` | Proves one constant `B≥0` uniformly bounds `||logDeriv ζ(z)-Σ D(u)/(z-u)||` by `B(1+log(|t|+5))` at every nonzero zeta value in the radius-one disk centered at `2+it`, for `|t|≥4`. | Closes the uniform high-height all-divisor regular-part estimate without claiming analytic extension at the divisor points themselves. |
 | `ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_le_log_sq_on_inner_zeroFreeRegion` | `theorem` | Proves `||logDeriv ζ(σ+it)|| ≤ C(log|t|)^2` uniformly for large height on `1-c/(2log|t|)≤σ≤2`. | Combines the classical zero-free region, local divisor separation, Jensen divisor mass, and the regular-part estimate into a full-norm shifted-contour bound. |
 | `PrimeNumberTheorem.ExplicitFormulaResidues.exists_norm_horizontal_inner_explicitFormulaContour_le` / signed and both-side limit theorems | `theorem` | Proves the horizontal integrand is interval-integrable, gives its explicit norm bound, and with one common `c` proves the segments from `1-c/(2log T)` to `2` tend to zero at heights `+T` and `-T`. | Connects the inner zero-free estimate non-degenerately to both horizontal sides; the remaining contour segments still require separate bounds. |
+| `PrimeNumberTheorem.ExplicitFormulaAux.exists_goodHeight_Icc_quantitatively_separated` | `theorem` | Selects `T in [A,A+1]` with `goodHeight T` and distance at least `1/(4(N+1))` from every nontrivial-zero ordinate, where `N` counts distinct absolute ordinates in a fixed local window. | Completes the finite pigeonhole half of quantitative good-height selection; the next hard step is deriving `N=O(log A)` from the proved Jensen divisor-mass bound. |
 | `ZeroFreeRegion.exists_ReNegDerivDivVerticalLogBound` | `theorem` | Proves the exact uniform boundary-strip estimate `Re(-ζ'/ζ(σ+it))≤C log|t|` for `1≤σ≤2` above a fixed height, using the favorable sign of every local zero principal part. | Discharges the real-part vertical input actually required by the 3-4-1 route without asserting the stronger full-norm bound. |
 | `ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_le_neg_inv_add_log_abs_bound` | `theorem` | Separates a same-height candidate zero and proves `Re(-ζ'/ζ(σ+it))≤-1/(σ-β)+C log|t|` uniformly when the candidate lies in the fixed Jensen disk. | Supplies the quantitative zero-repulsion term; candidates farther left are handled by a uniform constant absorption in the final proof. |
 | `ZeroFreeRegion.classical_zero_free_region_proved` | `theorem` | Proves the predicate `classical_zero_free_region`, i.e. existence of `c>0` with zeta nonzero for `|Im(s)|≥2` and `Re(s)≥1-c/log|Im(s)|`. | Completes the classical de la Vallee Poussin zero-free-region chain in Lean; it is not a proof of PNT or the stronger Vinogradov-Korobov region. |
