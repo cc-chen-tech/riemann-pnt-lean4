@@ -275,11 +275,18 @@ The next geometric barrier is explicit.  The functional equation has now been
 formalized far enough to prove the exact Gamma/trigonometric cancellation on
 `s=1-it`, the coefficient bound `‖C(t)‖²≤|t|`, and the new left-boundary
 estimate `‖ζ(it)‖≤4|t|²` for `|t|≥1`.  The right boundary `Re(s)≥1` already has
-the Abel bound.  What is not yet proved is interpolation through
-`0<Re(s)<1`: applying Phragmen-Lindelof to the entire carrier
-`s(s-1)ζ(s)` still requires its weak double-exponential growth hypothesis.
-Until that is supplied, the unconditional disk-growth theorem remains usable
-only in `1≤Re(s)≤3`. A half-radius Borel disk that both has a uniformly
+the Abel bound.  The interior growth input is now also proved pointwise:
+endpoint comparison for the modified-theta Mellin integral bounds
+`completedRiemannZeta₀` uniformly on `0≤Re(s)≤1`, Gamma reflection gives an
+exponential bound for `Gammaℝ⁻¹`, and their product gives a quadratic times
+single-exponential bound for the entire carrier `s(s-1)ζ(s)` at
+`|Im(s)|≥1`.  This is stronger than the high-height weak double-exponential
+Phragmen-Lindelof premise.  The remaining interpolation work is formal
+packaging into the theorem's `IsBigO` filter, polynomial normalization of both
+boundaries, a low-height compact patch, and application of the vertical-strip
+theorem.  Until that application is complete, the
+unconditional disk-growth theorem remains usable only in `1≤Re(s)≤3`. A
+half-radius Borel disk that both has a uniformly
 controlled center and reaches points arbitrarily close to `Re=1` therefore
 still lacks an interior wider-strip growth theorem (or a sharper
 non-half-radius local argument), not another factor wrapper.
@@ -1943,10 +1950,10 @@ Mathlib/project status:
 No direct zeta vertical-growth theorem was found.  The project now proves the
 functional-equation coefficient bound from Mathlib's Gamma reflection,
 recurrence, and conjugation theorems and obtains polynomial growth on
-`Re(s)=0`.  Mathlib also supplies `PhragmenLindelof.vertical_strip`, but its
-weak double-exponential interior-growth premise for the entire regularized
-zeta carrier is not an immediate consequence of the current completed-zeta
-API and remains open.
+`Re(s)=0`.  It also derives the needed interior carrier growth directly from
+the modified-theta Mellin representation and Gamma reflection.  Mathlib
+supplies `PhragmenLindelof.vertical_strip`; the remaining gap is now the
+`IsBigO`/normalization/application layer, not the former analytic growth input.
 
 Difficulty:
 High.  This is analytic-number-theory infrastructure rather than Lean algebra.

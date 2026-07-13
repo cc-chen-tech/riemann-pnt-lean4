@@ -442,6 +442,323 @@ lemma norm_Gamma_I_mul_mul_norm_Gamma_one_sub_I_mul (t : ℝ) (_ht : t ≠ 0) :
     abs_of_pos Real.pi_pos, norm_sin_pi_mul_I_mul] at h
   exact h
 
+/-- The complex Gamma norm is bounded by the real Gamma function at the real
+part throughout the Euler-integral half-plane. -/
+lemma norm_Gamma_le_real_Gamma_re {s : ℂ} (hs : 0 < s.re) :
+    ‖Complex.Gamma s‖ ≤ Real.Gamma s.re := by
+  rw [Complex.Gamma_eq_integral hs, Complex.GammaIntegral,
+    Real.Gamma_eq_integral hs]
+  calc
+    ‖∫ x in Set.Ioi (0 : ℝ), (Real.exp (-x) : ℂ) * (x : ℂ) ^ (s - 1)‖ ≤
+        ∫ x in Set.Ioi (0 : ℝ),
+          ‖(Real.exp (-x) : ℂ) * (x : ℂ) ^ (s - 1)‖ :=
+      norm_integral_le_integral_norm _
+    _ = ∫ x in Set.Ioi (0 : ℝ), Real.exp (-x) * x ^ (s.re - 1) := by
+      apply setIntegral_congr_fun measurableSet_Ioi
+      intro x hx
+      dsimp only
+      rw [norm_mul, Complex.norm_of_nonneg (Real.exp_pos _).le,
+        Complex.norm_cpow_eq_rpow_re_of_pos hx]
+      simp
+
+/-- Convexity bounds the real Gamma function by its endpoint value `1` on
+the interval `[1,2]`. -/
+lemma real_Gamma_le_one_of_one_le_of_le_two {x : ℝ} (hx1 : 1 ≤ x) (hx2 : x ≤ 2) :
+    Real.Gamma x ≤ 1 := by
+  have hxseg : x ∈ segment ℝ (1 : ℝ) 2 := by
+    rw [segment_eq_Icc (by norm_num : (1 : ℝ) ≤ 2)]
+    exact ⟨hx1, hx2⟩
+  have h := Real.convexOn_Gamma.le_max_of_mem_segment
+    (by norm_num : (1 : ℝ) ∈ Set.Ioi 0)
+    (by norm_num : (2 : ℝ) ∈ Set.Ioi 0) hxseg
+  simpa using h
+
+/-- A coarse uniform vertical bound for Gamma on `0 ≤ Re(s) ≤ 1`, away from
+the real axis.  Euler's integral controls `Gamma(s+1)` and recurrence divides
+by a factor of norm at least one. -/
+lemma norm_Gamma_le_one_of_re_mem_Icc_of_one_le_abs_im
+    {s : ℂ} (hsre : s.re ∈ Set.Icc (0 : ℝ) 1) (hsim : 1 ≤ |s.im|) :
+    ‖Complex.Gamma s‖ ≤ 1 := by
+  have hsp_re : 0 < (s + 1).re := by simp; linarith [hsre.1]
+  have hgamma_re : Real.Gamma (s + 1).re ≤ 1 := by
+    apply real_Gamma_le_one_of_one_le_of_le_two
+    · simp
+      exact hsre.1
+    · simp
+      linarith [hsre.2]
+  have hshift : ‖Complex.Gamma (s + 1)‖ ≤ 1 :=
+    (norm_Gamma_le_real_Gamma_re hsp_re).trans hgamma_re
+  have hs0 : s ≠ 0 := by
+    intro hs
+    subst s
+    norm_num at hsim
+  have hrec := congrArg norm (Complex.Gamma_add_one s hs0)
+  rw [norm_mul] at hrec
+  have hsnorm : 1 ≤ ‖s‖ := hsim.trans (Complex.abs_im_le_norm s)
+  calc
+    ‖Complex.Gamma s‖ ≤ ‖s‖ * ‖Complex.Gamma s‖ :=
+      le_mul_of_one_le_left (norm_nonneg _) hsnorm
+    _ = ‖Complex.Gamma (s + 1)‖ := hrec.symm
+    _ ≤ 1 := hshift
+
+/-- A coarse exponential norm bound for the complex cosine. -/
+lemma norm_cos_le_exp_abs_im (z : ℂ) :
+    ‖Complex.cos z‖ ≤ Real.exp |z.im| := by
+  rw [Complex.cos_eq]
+  calc
+    ‖Complex.cos z.re * Complex.cosh z.im -
+        Complex.sin z.re * Complex.sinh z.im * Complex.I‖ ≤
+        ‖Complex.cos z.re * Complex.cosh z.im‖ +
+          ‖Complex.sin z.re * Complex.sinh z.im * Complex.I‖ := norm_sub_le _ _
+    _ = |Real.cos z.re| * Real.cosh z.im +
+        |Real.sin z.re| * |Real.sinh z.im| := by
+      simp [← Complex.ofReal_cos, ← Complex.ofReal_sin, ← Complex.ofReal_cosh,
+        ← Complex.ofReal_sinh, Complex.norm_real, Real.norm_eq_abs,
+        abs_of_pos (Real.cosh_pos _)]
+    _ ≤ Real.cosh z.im + |Real.sinh z.im| := by
+      gcongr
+      · simpa using mul_le_mul_of_nonneg_right (Real.abs_cos_le_one z.re)
+          (Real.cosh_pos z.im).le
+      · simpa using mul_le_mul_of_nonneg_right (Real.abs_sin_le_one z.re)
+          (abs_nonneg (Real.sinh z.im))
+    _ = Real.exp |z.im| := by
+      rw [Real.abs_sinh, ← Real.cosh_abs, Real.cosh_add_sinh]
+
+/-- A coarse exponential norm bound for the complex sine. -/
+lemma norm_sin_le_exp_abs_im (z : ℂ) :
+    ‖Complex.sin z‖ ≤ Real.exp |z.im| := by
+  rw [← Complex.cos_pi_div_two_sub]
+  have h := norm_cos_le_exp_abs_im ((Real.pi : ℂ) / 2 - z)
+  simpa using h
+
+/-- Convexity and `Gamma(1/2)=sqrt(pi)` give a coarse bound on `[1/2,1]`. -/
+lemma real_Gamma_le_two_of_half_le_of_le_one
+    {x : ℝ} (hx1 : 1 / 2 ≤ x) (hx2 : x ≤ 1) :
+    Real.Gamma x ≤ 2 := by
+  have hxseg : x ∈ segment ℝ (1 / 2 : ℝ) 1 := by
+    rw [segment_eq_Icc (by norm_num : (1 / 2 : ℝ) ≤ 1)]
+    exact ⟨hx1, hx2⟩
+  have h := Real.convexOn_Gamma.le_max_of_mem_segment
+    (by norm_num : (1 / 2 : ℝ) ∈ Set.Ioi 0)
+    (by norm_num : (1 : ℝ) ∈ Set.Ioi 0) hxseg
+  rw [Real.Gamma_one_half_eq, Real.Gamma_one] at h
+  have hsqrt : Real.sqrt Real.pi < 2 := by
+    rw [← sq_lt_sq₀ (Real.sqrt_nonneg _) (by norm_num : (0 : ℝ) ≤ 2)]
+    rw [Real.sq_sqrt Real.pi_pos.le]
+    nlinarith [Real.pi_lt_four]
+  exact h.trans (max_le hsqrt.le (by norm_num))
+
+/-- Reflection bounds reciprocal Gamma on the half-strip
+`0 ≤ Re(u) ≤ 1/2`, away from the real axis. -/
+lemma norm_inv_Gamma_le_exp_of_re_mem_Icc_of_half_le_abs_im
+    {u : ℂ} (hure : u.re ∈ Set.Icc (0 : ℝ) (1 / 2))
+    (huim : 1 / 2 ≤ |u.im|) :
+    ‖(Complex.Gamma u)⁻¹‖ ≤
+      2 / Real.pi * Real.exp (Real.pi * |u.im|) := by
+  have hGamma0 : Complex.Gamma u ≠ 0 := by
+    apply Complex.Gamma_ne_zero
+    intro n hn
+    have him := congrArg Complex.im hn
+    simp at him
+    rw [him, abs_zero] at huim
+    norm_num at huim
+  have hGamma1 : Complex.Gamma (1 - u) ≠ 0 :=
+    Complex.Gamma_ne_zero_of_re_pos (by simp; linarith [hure.2])
+  have href := Complex.Gamma_mul_Gamma_one_sub u
+  have hsin0 : Complex.sin ((Real.pi : ℂ) * u) ≠ 0 := by
+    intro hsin
+    rw [hsin, div_zero] at href
+    exact (mul_ne_zero hGamma0 hGamma1) href
+  have hinv : (Complex.Gamma u)⁻¹ =
+      Complex.Gamma (1 - u) * Complex.sin ((Real.pi : ℂ) * u) / Real.pi := by
+    apply (mul_left_cancel₀ hGamma0)
+    rw [mul_inv_cancel₀ hGamma0]
+    calc
+      1 = (Complex.Gamma u * Complex.Gamma (1 - u)) *
+          (Complex.sin ((Real.pi : ℂ) * u) / Real.pi) := by
+            rw [href]
+            field_simp [Real.pi_ne_zero, hsin0]
+      _ = Complex.Gamma u *
+          (Complex.Gamma (1 - u) *
+            Complex.sin ((Real.pi : ℂ) * u) / Real.pi) := by ring
+  rw [hinv, norm_div, Complex.norm_real, Real.norm_eq_abs,
+    abs_of_pos Real.pi_pos, norm_mul]
+  have hgre : (1 - u).re ∈ Set.Icc (1 / 2 : ℝ) 1 := by
+    simp
+    constructor <;> linarith [hure.1, hure.2]
+  have hgamma : ‖Complex.Gamma (1 - u)‖ ≤ 2 :=
+    (norm_Gamma_le_real_Gamma_re (by simp; linarith [hure.2])).trans
+      (real_Gamma_le_two_of_half_le_of_le_one hgre.1 hgre.2)
+  have hsin : ‖Complex.sin ((Real.pi : ℂ) * u)‖ ≤
+      Real.exp (Real.pi * |u.im|) := by
+    calc
+      ‖Complex.sin ((Real.pi : ℂ) * u)‖ ≤
+          Real.exp |((Real.pi : ℂ) * u).im| := norm_sin_le_exp_abs_im _
+      _ = Real.exp (Real.pi * |u.im|) := by
+        congr 1
+        simp [abs_mul, abs_of_pos Real.pi_pos]
+  calc
+    ‖Complex.Gamma (1 - u)‖ * ‖Complex.sin ((Real.pi : ℂ) * u)‖ / Real.pi ≤
+        2 * Real.exp (Real.pi * |u.im|) / Real.pi := by
+      gcongr
+    _ = 2 / Real.pi * Real.exp (Real.pi * |u.im|) := by ring
+
+/-- The reciprocal Deligne real Gamma factor has at most exponential growth
+on the closed critical strip. -/
+lemma norm_inv_Gammaℝ_le_exp_of_re_mem_Icc_of_one_le_abs_im
+    {s : ℂ} (hsre : s.re ∈ Set.Icc (0 : ℝ) 1) (hsim : 1 ≤ |s.im|) :
+    ‖(Gammaℝ s)⁻¹‖ ≤ 2 * Real.exp (Real.pi * |s.im| / 2) := by
+  let u := s / 2
+  have hure : u.re ∈ Set.Icc (0 : ℝ) (1 / 2) := by
+    dsimp [u]
+    simp
+    constructor <;> linarith [hsre.1, hsre.2]
+  have huim : 1 / 2 ≤ |u.im| := by
+    dsimp [u]
+    simp [abs_div]
+    linarith
+  have huinv := norm_inv_Gamma_le_exp_of_re_mem_Icc_of_half_le_abs_im hure huim
+  rw [Gammaℝ_def, mul_inv, norm_mul]
+  have hpow_eq : ‖((Real.pi : ℂ) ^ (-s / 2))⁻¹‖ =
+      Real.pi ^ (s.re / 2) := by
+    rw [show -s / 2 = -(s / 2) by ring, Complex.cpow_neg,
+      inv_inv, Complex.norm_cpow_eq_rpow_re_of_pos Real.pi_pos]
+    simp
+  rw [hpow_eq]
+  have hpipow : Real.pi ^ (s.re / 2) ≤ Real.pi :=
+    Real.rpow_le_self_of_one_le (by linarith [Real.pi_gt_three])
+      (by linarith [hsre.2])
+  have hexpeq : Real.exp (Real.pi * |u.im|) =
+      Real.exp (Real.pi * |s.im| / 2) := by
+    congr 1
+    dsimp [u]
+    simp [abs_div]
+    ring
+  rw [hexpeq] at huinv
+  calc
+    Real.pi ^ (s.re / 2) * ‖(Complex.Gamma u)⁻¹‖ ≤
+        Real.pi * (2 / Real.pi * Real.exp (Real.pi * |s.im| / 2)) := by
+      gcongr
+    _ = 2 * Real.exp (Real.pi * |s.im| / 2) := by
+      field_simp [Real.pi_ne_zero]
+
+/-- A uniform exponential bound for the zeta functional-equation coefficient
+throughout `0 ≤ Re(s) ≤ 1`.  This coarse estimate is intended for the weak
+growth premise in Phragmen--Lindelof; the sharper imaginary-axis estimate
+below is used for the boundary value itself. -/
+lemma norm_riemannZeta_functionalEquationCoeff_le_exp
+    {s : ℂ} (hsre : s.re ∈ Set.Icc (0 : ℝ) 1) (hsim : 1 ≤ |s.im|) :
+    ‖2 * (2 * (Real.pi : ℂ)) ^ (-s) * Complex.Gamma s *
+        Complex.cos ((Real.pi : ℂ) * s / 2)‖ ≤
+      2 * Real.exp (Real.pi * |s.im| / 2) := by
+  have hbase : (1 : ℝ) ≤ 2 * Real.pi := by nlinarith [Real.pi_gt_three]
+  have hpow : ‖(2 * (Real.pi : ℂ)) ^ (-s)‖ ≤ 1 := by
+    have hcast : (2 : ℂ) * (Real.pi : ℂ) = ((2 * Real.pi : ℝ) : ℂ) := by
+      push_cast
+      exact Eq.refl _
+    rw [hcast, Complex.norm_cpow_eq_rpow_re_of_pos (by positivity)]
+    exact Real.rpow_le_one_of_one_le_of_nonpos hbase (by simp; exact hsre.1)
+  have hgamma := norm_Gamma_le_one_of_re_mem_Icc_of_one_le_abs_im hsre hsim
+  have hcos : ‖Complex.cos ((Real.pi : ℂ) * s / 2)‖ ≤
+      Real.exp (Real.pi * |s.im| / 2) := by
+    calc
+      ‖Complex.cos ((Real.pi : ℂ) * s / 2)‖ ≤
+          Real.exp |((Real.pi : ℂ) * s / 2).im| := norm_cos_le_exp_abs_im _
+      _ = Real.exp (Real.pi * |s.im| / 2) := by
+        congr 1
+        simp [abs_mul, abs_div, abs_of_pos Real.pi_pos]
+  rw [norm_mul, norm_mul, norm_mul, Complex.norm_ofNat]
+  calc
+    2 * ‖(2 * (Real.pi : ℂ)) ^ (-s)‖ * ‖Complex.Gamma s‖ *
+        ‖Complex.cos ((Real.pi : ℂ) * s / 2)‖ ≤
+        2 * 1 * 1 * ‖Complex.cos ((Real.pi : ℂ) * s / 2)‖ := by
+      gcongr
+    _ ≤ 2 * 1 * 1 * Real.exp (Real.pi * |s.im| / 2) := by
+      gcongr
+    _ = 2 * Real.exp (Real.pi * |s.im| / 2) := by ring
+
+/-! ## Uniform Mellin bounds on a closed vertical strip -/
+
+/-- A strong functional-equation pair's Mellin transform is uniformly bounded
+on `0 ≤ Re(w) ≤ 1/2` by two endpoint norm integrals.  The proof splits the
+Mellin integral at `1` and uses monotonicity of real powers in opposite
+directions on `(0,1]` and `[1,infinity)`. -/
+theorem norm_strongFEPair_Λ_le_endpoint_integrals
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+    (P : StrongFEPair E) (w : ℂ) (hw0 : 0 ≤ w.re) (hw1 : w.re ≤ 1 / 2) :
+    ‖P.Λ w‖ ≤
+      (∫ x : ℝ in Set.Ioc 0 1, ‖(x : ℂ) ^ ((0 : ℂ) - 1) • P.f x‖) +
+        ∫ x : ℝ in Set.Ioi 1, ‖(x : ℂ) ^ ((1 / 2 : ℂ) - 1) • P.f x‖ := by
+  let Fw : ℝ → E := fun x => (x : ℂ) ^ (w - 1) • P.f x
+  let F0 : ℝ → E := fun x => (x : ℂ) ^ ((0 : ℂ) - 1) • P.f x
+  let Fhalf : ℝ → E := fun x => (x : ℂ) ^ ((1 / 2 : ℂ) - 1) • P.f x
+  have hMw := P.hasMellin w
+  have hM0 := P.hasMellin (0 : ℂ)
+  have hMhalf := P.hasMellin (1 / 2 : ℂ)
+  have hFw : IntegrableOn Fw (Set.Ioi (0 : ℝ)) := by
+    simpa [MellinConvergent, Fw] using hMw.1
+  have hF0 : IntegrableOn F0 (Set.Ioi (0 : ℝ)) := by
+    simpa [MellinConvergent, F0] using hM0.1
+  have hFhalf : IntegrableOn Fhalf (Set.Ioi (0 : ℝ)) := by
+    simpa [MellinConvergent, Fhalf] using hMhalf.1
+  have hFw_small : IntegrableOn (fun x => ‖Fw x‖) (Set.Ioc (0 : ℝ) 1) :=
+    (hFw.mono_set Set.Ioc_subset_Ioi_self).norm
+  have hFw_large : IntegrableOn (fun x => ‖Fw x‖) (Set.Ioi (1 : ℝ)) :=
+    (hFw.mono_set (Set.Ioi_subset_Ioi zero_le_one)).norm
+  have hF0_small : IntegrableOn (fun x => ‖F0 x‖) (Set.Ioc (0 : ℝ) 1) :=
+    (hF0.mono_set Set.Ioc_subset_Ioi_self).norm
+  have hFhalf_large : IntegrableOn (fun x => ‖Fhalf x‖) (Set.Ioi (1 : ℝ)) :=
+    (hFhalf.mono_set (Set.Ioi_subset_Ioi zero_le_one)).norm
+  have hsmall : ∀ x ∈ Set.Ioc (0 : ℝ) 1, ‖Fw x‖ ≤ ‖F0 x‖ := by
+    intro x hx
+    have hxpos : 0 < x := hx.1
+    have hpow : x ^ (w.re - 1) ≤ x ^ ((0 : ℝ) - 1) :=
+      Real.rpow_le_rpow_of_exponent_ge hxpos hx.2 (by linarith)
+    simpa [Fw, F0, norm_smul, Complex.norm_cpow_eq_rpow_re_of_pos hxpos] using
+      mul_le_mul_of_nonneg_right hpow (norm_nonneg (P.f x))
+  have hlarge : ∀ x ∈ Set.Ioi (1 : ℝ), ‖Fw x‖ ≤ ‖Fhalf x‖ := by
+    intro x hx
+    have hxpos : 0 < x := zero_lt_one.trans hx
+    have hpow : x ^ (w.re - 1) ≤ x ^ ((1 / 2 : ℝ) - 1) :=
+      Real.rpow_le_rpow_of_exponent_le hx.le (by linarith)
+    simpa [Fw, Fhalf, norm_smul, Complex.norm_cpow_eq_rpow_re_of_pos hxpos] using
+      mul_le_mul_of_nonneg_right hpow (norm_nonneg (P.f x))
+  rw [← hMw.2]
+  change ‖∫ x : ℝ in Set.Ioi 0, Fw x‖ ≤ _
+  calc
+    ‖∫ x : ℝ in Set.Ioi 0, Fw x‖
+        ≤ ∫ x : ℝ in Set.Ioi 0, ‖Fw x‖ := norm_integral_le_integral_norm Fw
+    _ = (∫ x : ℝ in Set.Ioc 0 1, ‖Fw x‖) +
+        ∫ x : ℝ in Set.Ioi 1, ‖Fw x‖ := by
+      rw [← setIntegral_union Set.Ioc_disjoint_Ioi_same measurableSet_Ioi
+        hFw_small hFw_large, Set.Ioc_union_Ioi_eq_Ioi zero_le_one]
+    _ ≤ (∫ x : ℝ in Set.Ioc 0 1, ‖F0 x‖) +
+        ∫ x : ℝ in Set.Ioi 1, ‖Fhalf x‖ :=
+      add_le_add
+        (setIntegral_mono_on hFw_small hF0_small measurableSet_Ioc hsmall)
+        (setIntegral_mono_on hFw_large hFhalf_large measurableSet_Ioi hlarge)
+    _ = _ := by rfl
+
+/-- The entire completed zeta numerator is uniformly bounded on the closed
+critical strip.  This is the Mellin half-strip bound specialized at
+`w=s/2`. -/
+theorem exists_norm_completedRiemannZeta₀_le_on_zero_one :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ s : ℂ, 0 ≤ s.re → s.re ≤ 1 →
+      ‖completedRiemannZeta₀ s‖ ≤ C := by
+  let P := (HurwitzZeta.hurwitzEvenFEPair 0).toStrongFEPair
+  let C0 :=
+    (∫ x : ℝ in Set.Ioc 0 1, ‖(x : ℂ) ^ ((0 : ℂ) - 1) • P.f x‖) +
+      ∫ x : ℝ in Set.Ioi 1, ‖(x : ℂ) ^ ((1 / 2 : ℂ) - 1) • P.f x‖
+  refine ⟨max (C0 / 2) 0, le_max_right _ _, ?_⟩
+  intro s hs0 hs1
+  have h := norm_strongFEPair_Λ_le_endpoint_integrals P (s / 2)
+    (by simp; linarith) (by simp; linarith)
+  have hcompleted : ‖completedRiemannZeta₀ s‖ ≤ C0 / 2 := by
+    simpa [completedRiemannZeta₀, HurwitzZeta.completedHurwitzZetaEven₀,
+      WeakFEPair.Λ₀, StrongFEPair.Λ, P, C0, norm_div] using
+        (div_le_div_of_nonneg_right h (by norm_num : (0 : ℝ) ≤ 2))
+  exact hcompleted.trans (le_max_left _ _)
+
 /-- The square of `sinh x` is bounded by half of `sinh (2x)` for nonnegative
 `x`.  This is the elementary cancellation estimate needed below. -/
 lemma sinh_sq_le_sinh_two_mul_div_two {x : ℝ} (hx : 0 ≤ x) :
@@ -582,6 +899,57 @@ lemma riemannZetaEntireRegularization_eq_mul_riemannZeta
   have h_one_sub : 1 - s ≠ 0 := sub_ne_zero.mpr hs1.symm
   field_simp [hs0, hs_sub, h_one_sub]
   ring
+
+/-- Explicit exponential-times-polynomial growth of the entire zeta carrier
+on the closed critical strip.  In particular, this is much smaller than the
+double-exponential growth allowance used by Phragmen--Lindelof. -/
+theorem exists_norm_riemannZetaEntireRegularization_le_exp_on_zero_one :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ s : ℂ,
+      s.re ∈ Set.Icc (0 : ℝ) 1 → 1 ≤ |s.im| →
+      ‖riemannZetaEntireRegularization s‖ ≤
+        2 * (C * (|s.im| + 1) ^ 2 + 1) *
+          Real.exp (Real.pi * |s.im| / 2) := by
+  rcases exists_norm_completedRiemannZeta₀_le_on_zero_one with
+    ⟨C, hC, hcompleted⟩
+  refine ⟨C, hC, ?_⟩
+  intro s hsre hsim
+  have hs_norm : ‖s‖ ≤ |s.im| + 1 := by
+    calc
+      ‖s‖ ≤ |s.re| + |s.im| := Complex.norm_le_abs_re_add_abs_im s
+      _ ≤ 1 + |s.im| := by
+        rw [abs_of_nonneg hsre.1]
+        linarith [hsre.2]
+      _ = |s.im| + 1 := by ring
+  have hs_sub_norm : ‖s - 1‖ ≤ |s.im| + 1 := by
+    calc
+      ‖s - 1‖ ≤ |(s - 1).re| + |(s - 1).im| :=
+        Complex.norm_le_abs_re_add_abs_im (s - 1)
+      _ ≤ 1 + |s.im| := by
+        simp only [sub_re, one_re, sub_im, one_im, sub_zero]
+        rw [abs_of_nonpos (by linarith [hsre.2])]
+        linarith [hsre.1]
+      _ = |s.im| + 1 := by ring
+  have hcomp := hcompleted s hsre.1 hsre.2
+  have hinside : ‖s * (s - 1) * completedRiemannZeta₀ s + 1‖ ≤
+      C * (|s.im| + 1) ^ 2 + 1 := by
+    calc
+      ‖s * (s - 1) * completedRiemannZeta₀ s + 1‖ ≤
+          ‖s * (s - 1) * completedRiemannZeta₀ s‖ + ‖(1 : ℂ)‖ := norm_add_le _ _
+      _ = ‖s‖ * ‖s - 1‖ * ‖completedRiemannZeta₀ s‖ + 1 := by
+        rw [norm_mul, norm_mul, norm_one]
+      _ ≤ (|s.im| + 1) * (|s.im| + 1) * C + 1 := by
+        gcongr
+      _ = C * (|s.im| + 1) ^ 2 + 1 := by ring
+  have hgamma :=
+    norm_inv_Gammaℝ_le_exp_of_re_mem_Icc_of_one_le_abs_im hsre hsim
+  rw [riemannZetaEntireRegularization, norm_mul]
+  calc
+    ‖s * (s - 1) * completedRiemannZeta₀ s + 1‖ * ‖(Gammaℝ s)⁻¹‖ ≤
+        (C * (|s.im| + 1) ^ 2 + 1) *
+          (2 * Real.exp (Real.pi * |s.im| / 2)) := by
+      gcongr
+    _ = 2 * (C * (|s.im| + 1) ^ 2 + 1) *
+        Real.exp (Real.pi * |s.im| / 2) := by ring
 
 /-- The regular part in the local decomposition of ζ at `1` is analytic. -/
 lemma analyticAt_riemannZetaRegularAtOne :

@@ -240,8 +240,13 @@ reciprocal identity extends the center estimate `‖ζ(s)‖≥1/3` to
 the functional-equation module now additionally proves the exact
 Gamma/trigonometric cancellation and `‖ζ(it)‖≤4|t|²` on `Re(s)=0`.  This closes
 one boundary of the required wider strip, but does not yet provide the
-Phragmen-Lindelof interior growth theorem on `0<Re(s)<1` needed by disks that
-reach the boundary line `Re(s)=1`.
+final Phragmen-Lindelof interpolation theorem.  The analytic growth premise is
+now proved more strongly: a uniform Mellin bound for `completedRiemannZeta₀`
+and an exponential reciprocal-Gamma bound yield a quadratic times
+single-exponential estimate for the entire carrier on `0≤Re(s)≤1` when
+`|Im(s)|≥1`.  What remains is `IsBigO` packaging, polynomial normalization, a
+low-height compact patch, and the actual vertical-strip application needed by
+disks that reach the boundary line `Re(s)=1`.
 
 ## What This Does and Does Not Prove
 

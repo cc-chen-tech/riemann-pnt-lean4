@@ -1537,8 +1537,20 @@ Core verified declarations:
   `norm_riemannZeta_I_mul_le_four_mul_abs_sq` formalize the exact cancellation
   of the Gamma and trigonometric exponential factors and prove
   `||zeta(it)|| <= 4|t|^2` for `|t|>=1`.  This is a genuine polynomial-growth
-  theorem on the left boundary `Re(s)=0`; the Phragmen-Lindelof interior-growth
-  premise on `0<Re(s)<1` remains open.
+  theorem on the left boundary `Re(s)=0`; the following carrier theorem now
+  supplies a stronger pointwise interior-growth estimate.
+- `norm_strongFEPair_Λ_le_endpoint_integrals` and
+  `exists_norm_completedRiemannZeta₀_le_on_zero_one` prove a uniform closed-strip
+  bound for the completed-zeta entire numerator by splitting its modified
+  Mellin integral at `1` and comparing against endpoint exponents.
+- `norm_inv_Gammaℝ_le_exp_of_re_mem_Icc_of_one_le_abs_im` and
+  `exists_norm_riemannZetaEntireRegularization_le_exp_on_zero_one` combine
+  Gamma reflection with that Mellin estimate to bound the entire carrier by a
+  quadratic polynomial times `exp(pi*|Im(s)|/2)` on `0<=Re(s)<=1` at
+  `|Im(s)|>=1`.  This is stronger than the high-height weak double-exponential
+  Phragmen-Lindelof premise; the remaining tasks are its `IsBigO` packaging,
+  polynomial normalization, a low-height compact patch, and the vertical-strip
+  application.
 - This does not close either logarithmic-derivative target: the remaining
   analytic gaps are a uniform boundary-strip bound for `zeta'/zeta` and
   uniform control of its zero-removed regular part through the remaining
