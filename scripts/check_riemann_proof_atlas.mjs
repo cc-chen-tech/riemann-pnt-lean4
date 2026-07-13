@@ -406,12 +406,12 @@ function hasVisibleFocusRule(styleBodies, selectorPattern) {
 }
 
 function hasVisibleOutline(declarations) {
+  if (/(?:^|;)\s*outline-(?:width|style|color)\s*:/i.test(declarations)) return false;
   const shorthand = /(?:^|;)\s*outline\s*:\s*([^;]+)/i.exec(declarations)?.[1] ?? "";
-  const width = /(?:^|;)\s*outline-width\s*:\s*([^;]+)/i.exec(declarations)?.[1] ?? shorthand;
-  const style = /(?:^|;)\s*outline-style\s*:\s*([^;]+)/i.exec(declarations)?.[1] ?? shorthand;
-  const color = /(?:^|;)\s*outline-color\s*:\s*([^;]+)/i.exec(declarations)?.[1] ?? "";
-  const colorValues = [shorthand, color].filter(Boolean).join(" ");
-  const outlineValues = `${shorthand} ${width} ${style} ${color}`;
+  const width = shorthand;
+  const style = shorthand;
+  const colorValues = shorthand;
+  const outlineValues = shorthand;
   if (
     !hasLiteralOutlineColor(colorValues) ||
     /\bnone\b|\btransparent\b/i.test(outlineValues) ||
