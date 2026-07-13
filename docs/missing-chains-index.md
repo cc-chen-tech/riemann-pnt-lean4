@@ -63,7 +63,7 @@ technology rather than more local Jensen/Borel wrappers.
 | Chain | Current Lean target status | Main correction before proof work | Smallest useful next step | Open target count |
 | --- | --- | --- | --- | --- |
 | Quantitative zero-free region | `classical_zero_free_region` is proved; `vinogradov_korobov_zero_free_region` remains a target | Develop exponential-sum estimates for the stronger width | Formalize the Vinogradov-Korobov exponential-sum input without weakening the proved classical theorem | 1 |
-| Explicit formula | `explicit_formula_von_mangoldt` is a `def ... : Prop` target | Complete a truncated Perron/residue formula for `psi0`, then justify the principal-value limit | The first-order Perron limit, multiplicity-aware truncated formula, and every horizontal/vertical boundary decay piece, including the full central horizontal band along a cofinal logarithmically separated good-height sequence, are theorem-level. Combine these limits with the finite rectangle identity, identify the cofinal residue-sum limit, then pass to arbitrary truncation heights | 1 |
+| Explicit formula | `explicit_formula_von_mangoldt` is a multiplicity-aware symmetric-height `Tendsto` target | Promote the proved selected-sequence approximation limit to all truncation heights | The exact finite moving-rectangle identity, all boundary decay, complete contour-remainder decay, and multiplicity-aware approximation limit are theorem-level along `T n in [2n+4,2n+5]`. Fixed-width weighted zero contributions are now `O_x(log A/A)` and tend to zero. Cover the selected-height gaps by those windows and formalize the floor/ceiling interpolation; the selected-sequence theorem is not yet a full principal-value limit | 1 |
 | RH error equivalence | `rh_iff_optimal_error` is a `def ... : Prop` target | Stage the result through `=O[atTop]` predicates for `psi`, `theta`, and `primeCounting - logIntegral` | Prove `RH -> RH_PsiErrorBound` via explicit formula estimates, and prove the prime-counting reverse endpoint back to `RH_PsiErrorBound`; the conditional bridge `RH_PsiErrorBound -> RiemannHypothesis` is now theorem-level | 8 |
 | Hardy theorem | `hardy_theorem_target` and related moment/asymptotic targets are `def ... : Prop` targets | Use an unbounded-height zero target as the main theorem; use signed moment targets, not merely nonzero constants | Prove bounded-zero eventual-sign control and generic asymptotic sign lemmas | 11 (7 in `HardyTheorem`, 3 in `HardyTheorem.Details`, 1 in `KnownResults`) |
 
@@ -277,11 +277,11 @@ The following proved declarations are the main entry points for future work:
 - `ZeroFreeRegion.half_le_nontrivial_zero_re_of_RH_PsiErrorBound`
 - `ZeroFreeRegion.riemannHypothesis_of_RH_PsiErrorBound`
 - `PrimeNumberTheorem.primeCounting_logIntegral_finite_interval_bound`
-- `PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_error_tendsto_zero`
-- `PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_error_isLittleO_one`
-- `PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_re_im_tendsto`
-- `PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_re_im_error_tendsto_zero`
-- `PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_re_im_error_isLittleO_one`
+- `PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_iff_error_tendsto_zero`
+- `PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_iff_error_isLittleO_one`
+- `PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_iff_re_im_tendsto`
+- `PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_iff_re_im_error_tendsto_zero`
+- `PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_iff_re_im_error_isLittleO_one`
 - `HardyTheorem.hardyZ_zero_iff_zeta_zero`
 - `HardyTheorem.hardyZ_continuous`
 - `HardyTheorem.critical_line_zeta_zero_neg_height`

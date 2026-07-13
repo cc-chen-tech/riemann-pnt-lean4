@@ -19,6 +19,8 @@ lean_lib RiemannPNT where
     `PrimeNumberTheorem.FirstOrderExplicitFormula,
     `PrimeNumberTheorem.QuantitativeGoodHeight,
     `PrimeNumberTheorem.CentralHorizontalEdge,
+    `PrimeNumberTheorem.CofinalExplicitFormula,
+    `PrimeNumberTheorem.NontrivialZeroMultiplicity,
     `PrimeNumberTheorem.PerronTruncation,
     `PrimeNumberTheorem.VonMangoldtPerronTruncated,
     `PrimeNumberTheorem.PerronExplicitError,
@@ -36,7 +38,18 @@ lean_lib RiemannPNT where
     `HardyTheorem.AFE,
     `MathlibAux.RectangleResidue,
     `MathlibAux.BoundaryRectResidue,
-    `PrimeNumberTheorem.ExplicitFormulaTruncated
+    `PrimeNumberTheorem.ExplicitFormulaTruncated,
+    `Test.CofinalExplicitFormulaContract,
+    `Test.CofinalWeightedApproxContract,
+    `Test.ExplicitFormulaMultiplicityContract,
+    `Test.ExplicitFormulaTruncatedUniformContract,
+    `Test.FiniteZeroMultiplicityMassContract,
+    `Test.LocalZeroContributionBoundContract,
+    `Test.LocalZeroMultiplicityBoundContract,
+    `Test.MultiplicityAxiomAudit,
+    `Test.NontrivialZeroContributionBoundContract,
+    `Test.NontrivialZeroDivisorMultiplicityContract,
+    `Test.NontrivialZeroMultiplicitySymmetryContract
   ]
 
 require mathlib from "./vendor/mathlib"

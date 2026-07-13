@@ -6,41 +6,35 @@ Lean-facing dependency chain.  It is scoped to the current checkout.
 
 ## Current statement
 
-Current source:
+Current source is a multiplicity-aware symmetric-height limit:
 
 ```lean
-def explicit_formula_von_mangoldt (x : Real) (_hx : x >= 2) : Prop :=
-  chebyshevPsi x = x
-    - sum' rho : {s : Complex // RiemannHypothesis.IsNontrivialZero s},
-        (x : Complex) ^ (rho : Complex) / (rho : Complex)
+def finiteNontrivialZeroSumWithMultiplicity (x T : Real) : Complex :=
+  ∑ rho in nontrivialZerosFinset T,
+    analyticOrderNatAt riemannZeta rho * x^rho / rho
+
+def explicitFormulaApproxWithMultiplicity (x T : Real) : Complex :=
+  x
+    - finiteNontrivialZeroSumWithMultiplicity x T
     - (deriv riemannZeta 0) / riemannZeta 0
     - (1 / 2) * Real.log (1 - x^(-2 : Real))
+
+def explicit_formula_von_mangoldt (x : Real) (_hx : x >= 2) : Prop :=
+  Tendsto (fun T => explicitFormulaApproxWithMultiplicity x T) atTop
+    (nhds (chebyshevPsi0 x : Complex))
 ```
 
-After elaboration, Lean treats this as a complex equality by coercing
-`chebyshevPsi x`, `x`, and the final real logarithm into `Complex`.
+This corrects the former unordered `tsum`, right-continuous `psi`, and
+distinct-zero-only problems.  The retained `explicitFormulaApprox` and
+`explicit_formula_von_mangoldt_unweighted` declarations are compatibility
+infrastructure and are not the tracked mathematical target.
 
-This is not a mathematically suitable final target.
-
-1. The zero sum is an unordered `tsum` over all nontrivial zeros.  The classical
-   sum is not an absolutely convergent unordered sum of `x^rho / rho`; it needs
-   a symmetric principal value, a truncation parameter, or another explicit
-   summation convention.
-2. `chebyshevPsi` is the right-continuous step function.  The classical exact
-   formula is for the midpoint convention
-   `psi0(x) = (psi(x+) + psi(x-)) / 2`, equivalently
-   `psi(x) - Lambda(n) / 2` when `x = n` is a prime power and `psi(x)` otherwise.
-   Away from prime powers, `psi0 x = psi x`.
-3. Zeros must be counted with multiplicity.  The current subtype
-   `{s // IsNontrivialZero s}` counts each zero once and would silently assume
-   all nontrivial zeros are simple.
-4. The constant and trivial-zero terms are only meaningful after a summation
-   convention has been fixed.  The final term
-   `-1/2 * log (1 - x^-2)` is the infinite contribution of the trivial zeros;
-   it should arise as a limit from finite trivial-zero residues or be stated as
-   a separate convergent real series.
-5. A bare equality for every `x >= 2` hides boundary issues at prime powers and
-   at contour heights passing through zeros.
+The weighted target has direct theorem-level unfolding and error interfaces:
+`explicit_formula_von_mangoldt_iff`,
+`explicit_formula_von_mangoldt_of_eventually_eq`,
+`explicit_formula_von_mangoldt_of_eventually_exact`, and
+`explicit_formula_von_mangoldt_iff_error_tendsto_zero`.  The older, broader
+finite-tail helper family is explicitly suffixed `_unweighted_`.
 
 ## Corrected target
 
@@ -57,7 +51,7 @@ def explicitFormulaTruncatedTarget : Prop :=
   forall x >= 2, forall T >= 2, goodHeight T ->
     ((chebyshevPsi0 x : Complex)
       = x
-        - finiteNontrivialZeroSum x T
+        - finiteNontrivialZeroSumWithMultiplicity x T
         - finiteTrivialZeroSum x T
         - deriv riemannZeta 0 / riemannZeta 0
         + contourError x T)
@@ -67,7 +61,7 @@ Here:
 
 * `jumpVonMangoldt x` is `vonMangoldt n` if `x = n` for some natural `n`, and
   `0` otherwise.
-* `finiteNontrivialZeroSum x T` should sum over
+* `finiteNontrivialZeroSumWithMultiplicity x T` sums over
   `rho` with `IsNontrivialZero rho` and `abs rho.im <= T`, weighted by the
   order/multiplicity of the zero of `riemannZeta` at `rho`.
 * `finiteTrivialZeroSum x T` should sum over trivial zeros `-2 * (n + 1)` inside
@@ -320,29 +314,31 @@ Already available or mostly available:
     the complete left edge tends to zero whenever the height grows at most
     linearly.  The joint contour theorem now uses exactly such a sequence and
     exposes this zero limit in its conclusion.
+29. `ExplicitFormulaResidues.exists_cofinal_nontrivialZeroSum_tendsto` selects
+    an even subsequence of the logarithmically separated central heights so the
+    heights are strictly increasing while remaining linearly controlled.  At
+    every selected height it proves the exact finite moving-rectangle identity
+    with left edge `-(4n+1)`.  It combines the far-left upper and lower limits,
+    both central horizontal limits, and the moving left-vertical limit to prove
+    that the complete `firstOrderContourRemainder` tends to zero.  Consequently
+    the multiplicity-weighted nontrivial-zero sum itself converges to the exact
+    `psi0` explicit-formula value along this cofinal sequence.  This closes the
+    global contour-limit assembly; it does not yet interpolate to arbitrary
+    symmetric truncation heights.
 
 Remaining after the fixed-right-edge contour shift:
 
-1. Bound the remaining horizontal portions
-   `-1 <= Re(s) <= 1+epsilon` strongly enough to pass to a cofinal good-height
-   limit; the right portions are now proved to vanish.
-2. Either evaluate the fixed `Re(s)=-1` left-line limit and identify it with
-   the classical trivial-zero term, or move the left edge through
-   `-2,-4,...` toward `-infinity` and control the resulting joint limit.  The
-   complete multiplicity-aware trivial-residue series limit and its exact
-   extraction from every `-(2N+1)` contour are now proved, and a joint cofinal
-   sequence has been chosen.  The complete far-left horizontal portions are
-   now proved to vanish uniformly in the moving left endpoint: this includes
-   the Euler-product, constant, tangent, cotangent-reflection, and right-shifted
-   digamma contributions.  The complete moving vertical left edge is also now
-   proved to vanish along the same linearly controlled good-height sequence.
-   Thus the remaining contour issue is concentrated in the horizontal central
-   band rather than the far-left or vertical pieces.
-3. Separate the now-proved limit of `nontrivial-zero sum - remainder` by
-   proving the remainder tends to zero; this then gives the symmetric
-   multiplicity-weighted nontrivial-zero limit along the chosen cofinal
-   sequence.  Then control the zero contributions between consecutive chosen
-   heights to obtain the full truncation-height limit.
+1. Control the multiplicity-weighted zero contributions between consecutive
+   selected good heights.  This is the remaining step needed to extend the
+   proved cofinal zero-sum limit to arbitrary symmetric truncation heights.
+   `NontrivialZeroMultiplicity.lean` now supplies multiplicity symmetry, a
+   one-zero `m(rho) * x / T` bound, and finite multiplicity-mass control by the
+   zeta divisor on a containing disk.  `QuantitativeGoodHeight.lean` upgrades
+   this to total local multiplicity `O(log A)`, a fixed-window weighted bound
+   `O_x(log A/A)`, and convergence of that window contribution to zero.
+2. Cover the bounded gaps around the selected heights by these fixed windows,
+   then use a floor/ceiling index to prove the full real-height `Tendsto`
+   statement from the proved cofinal approximation limit.
 
 ### Analytic continuation and poles
 
@@ -543,24 +539,23 @@ For the truncated identity:
    `exists_tendsto_horizontal_central_explicitFormulaIntegrand_both_zero`
    proves that both complete central horizontal integrals vanish along a
    cofinal good-height sequence.
-6. Remaining assembly step: combine the finite rectangle identity with the
-   now-proved far-left, moving-left, fixed-right, inner, and central boundary
-   limits.  Then identify the cofinal residue-sum limit and pass from the
-   selected good heights to the intended arbitrary-height principal-value
-   truncation.
+6. Completed global assembly:
+   `exists_cofinal_nontrivialZeroSum_tendsto` combines the finite rectangle
+   identity with the far-left, moving-left, and central boundary limits.  It
+   proves the complete remainder tends to zero and identifies the cofinal
+   multiplicity-weighted zero-sum limit.  Only passage from selected good
+   heights to arbitrary-height principal-value truncation remains.
 
 For the principal value final formula:
 
 1. Zero counting bound such as `N(T) = O(T log T)`.
 2. Bounds for `zeta'/zeta` away from zeros and on selected good heights.
-3. Convergence of symmetric zero sums or a proof that the contour-error limit is
-   zero along good heights.
-4. Along the now-constructed joint cofinal sequence, prove the moving-left-edge
-   remainder tends to zero and control the already-isolated
-   multiplicity-weighted nontrivial-zero sum.  Their difference already has a
-   proved exact limit, so a remainder estimate gives the zero-sum limit on that
-   sequence.  A further interpolation argument between chosen heights is still
-   needed for the full principal-value formula.
+3. The fixed-window zero-sum contribution is now proved to tend to zero.  The
+   symmetric multiplicity-weighted zero sum and contour-error limit are proved
+   along one strictly increasing cofinal sequence; only the bounded-gap cover
+   and floor/ceiling interpolation remain for the full principal-value formula.
+4. The final target is already aligned with analytic multiplicities.  The old
+   unweighted approximation remains explicitly named legacy infrastructure.
 
 For a PNT proof, the truncated formula plus a zero-free region and boundary
 estimates may be more useful than the full principal-value exact formula.
@@ -576,8 +571,9 @@ the analytic zero-density and contour estimates remain separate.
 
 The current Lean API keeps the finite truncated-explicit-formula route explicit:
 `PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute`
-packages the future step from a uniform truncated explicit formula plus an
-oscillation argument to zero-free vertical-line consequences.  The older
+packages the future step from one globally uniform truncated bound for all
+`T ≥ 2` and `x ≥ 2`, plus an oscillation argument, to zero-free vertical-line
+consequences.  The older
 Prop shape `PrimeNumberTheorem.ExplicitFormulaConversePowerTarget` is no longer
 a missing route interface: `ZeroFreeRegion.explicitFormulaConversePowerTarget_of_mellin`
 proves it theorem-level from the Mellin/Landau converse.
@@ -675,29 +671,30 @@ same layer a direct triangle-inequality estimate for the change in
 `explicitFormulaApprox` between two truncation heights from the summed norms of
 the newly included zero contributions.
 
-The same finite-tail layer now exposes the direct bridge from a stable base
-truncation to the corrected explicit-formula target.  The public theorem
-`RiemannPNT.API.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_tendsto_zero`
+The same finite-tail layer also preserves the direct bridge from a stable base
+truncation to the legacy unweighted compatibility predicate. The public theorem
+`RiemannPNT.API.explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_tendsto_zero`
 takes a base identity
 `explicitFormulaApprox x B = chebyshevPsi0 x` and a proof that the new-zero
 contribution
 `sum_{rho in nontrivialZerosFinset T \ nontrivialZerosFinset B} x^rho / rho`
-tends to zero, and returns `explicit_formula_von_mangoldt x hx`.  The wrapper
-`RiemannPNT.API.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_tendsto_zero`
+tends to zero, and returns
+`explicit_formula_von_mangoldt_unweighted x hx`.  The wrapper
+`RiemannPNT.API.explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_norm_tendsto_zero`
 accepts the same tail convergence as a norm limit; the wrapper
-`RiemannPNT.API.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_tendsto_zero`
+`RiemannPNT.API.explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_sum_norm_tendsto_zero`
 accepts convergence of the summed individual contribution norms.  The little-o
 variant
-`RiemannPNT.API.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_isLittleO_one`
+`RiemannPNT.API.explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_sum_norm_isLittleO_one`
 accepts the same summed-norm tail as `o(1)`.  The wrappers
-`RiemannPNT.API.explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution_norm_le`
+`RiemannPNT.API.explicit_formula_von_mangoldt_unweighted_of_base_and_eventually_new_zero_contribution_norm_le`
 and
-`RiemannPNT.API.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_isBigO_tendsto_zero`
+`RiemannPNT.API.explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_norm_isBigO_tendsto_zero`
 accept the eventual-bound and Big-O forms expected from contour estimates.  The
 little-o variant
-`RiemannPNT.API.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_isLittleO_one`
+`RiemannPNT.API.explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_norm_isLittleO_one`
 accepts the same norm tail as `o(1)`.  The wrapper
-`RiemannPNT.API.explicit_formula_von_mangoldt_of_base_and_eventually_no_new_zeros_via_contribution_tail`
+`RiemannPNT.API.explicit_formula_von_mangoldt_unweighted_of_base_and_eventually_no_new_zeros_via_contribution_tail`
 is the degenerate eventual-empty-new-zero specialization.  These remain
 conditional bridges around the finite truncation bookkeeping; none supplies
 Perron's formula or the true analytic tail estimate.

@@ -68,6 +68,7 @@ REUSABLE_PREDICATES = {
     "HardyTheorem.weightedIntegralOf_tail_dominates",
     "PrimeNumberTheorem.ExplicitFormulaAux.goodHeight",
     "PrimeNumberTheorem.ExplicitFormulaConversePowerTarget",
+    "PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted",
 }
 
 

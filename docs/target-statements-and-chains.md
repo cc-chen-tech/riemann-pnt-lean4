@@ -1,7 +1,7 @@
 # Unproved Target Statements and Missing Chains
 
 This file is the authoritative checklist of the remaining `def ... : Prop`
-statements (as of `2026-06-08`) in this Lean checkout.
+statements (as of `2026-07-14`) in this Lean checkout.
 
 All entries are intentionally **not** exported as theorems.  They are explicit
 `Prop` targets used as roadmap checkpoints.
@@ -71,13 +71,9 @@ For the chain accounting:
 
 ### Missing mathlib/analytic infrastructure
 
-1. zeta-specific log-derivative growth bound near `Re(s)=1` for bounded-height
-   high strips;
-2. Borel–Carathéodory or equivalent zero-repulsion machinery;
-3. explicit control of the pole-side term (`-zeta'/zeta` near `1`) and
-   the `σ+2it` regular part;
-4. real-variable bridge from a quantitative strip at large height to the bounded-
-   height compact strip.
+1. Vinogradov-Korobov exponential-sum estimates;
+2. the corresponding stronger zeta growth and logarithmic-derivative bounds;
+3. assembly of those bounds into the `2/3`-power logarithmic zero-free width.
 
 ---
 
@@ -93,23 +89,25 @@ For the chain accounting:
 - `PrimeNumberTheorem.zero_contribution`
 - `PrimeNumberTheorem.chebyshevPsi_eq_mathlib`
 - `PrimeNumberTheorem.vonMangoldt_eq_mathlib`
-- `PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_error_tendsto_zero`
-- `PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_error_isLittleO_one`
-- `PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_re_im_tendsto`
-- `PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_re_im_error_tendsto_zero`
-- `PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_re_im_error_isLittleO_one`
+
+The following declarations are legacy unweighted compatibility bridges. They
+remain useful bookkeeping references but do not prove or unfold the current
+multiplicity-aware target:
+
+- `PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_iff_error_tendsto_zero`
+- `PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_iff_error_isLittleO_one`
+- `PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_iff_re_im_tendsto`
+- `PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_iff_re_im_error_tendsto_zero`
+- `PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_iff_re_im_error_isLittleO_one`
 
 ### Missing mathlib/analytic infrastructure
 
-1. Perron's formula / contour-integral identity in a form usable for
-   von Mangoldt sums;
-2. residue-theorem-level contour argument for:
-   - pole at `s=1`,
-   - pole at `s=0`,
-   - nontrivial zeros with multiplicity,
-   - trivial-zero contribution;
-3. corrected summation convention (truncated/symmetric principal value / midpoint
-   `psi0`) and explicit edge-error estimates.
+1. cover the bounded gap between each two selected cofinal good heights by the
+   proved fixed-width multiplicity-weighted zero-contribution estimate;
+2. formalize floor/ceiling interpolation from the selected sequence to every
+   sufficiently large real truncation height;
+3. combine that interpolation with the proved cofinal `psi0` limit to close the
+   all-height symmetric principal-value target.
 
 ---
 

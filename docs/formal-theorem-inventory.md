@@ -2702,10 +2702,10 @@ Core verified declarations:
   `explicitFormulaApprox_eq_of_neg`
   are public stability and congruence wrappers for changing truncation heights
   or degenerate negative-height truncations.
-- `explicit_formula_von_mangoldt_of_eventually_eq` and
-  `explicit_formula_von_mangoldt_of_eventually_exact`
-  expose the basic stability entrypoint for the corrected explicit-formula
-  target: once a future construction is eventually equal to the truncated
+- `explicit_formula_von_mangoldt_unweighted_of_eventually_eq` and
+  `explicit_formula_von_mangoldt_unweighted_of_eventually_exact`
+  expose the basic stability entrypoint for the legacy unweighted compatibility
+  predicate: once a future construction is eventually equal to the unweighted truncated
   approximation and tends to `ψ₀(x)`, or once the truncated approximation itself
   is eventually exactly `ψ₀(x)`, the target follows.
 - `new_zero_contribution_sum_eventually_zero_of_eventually_sdiff_eq_empty`,
@@ -2718,38 +2718,38 @@ Core verified declarations:
   zero for the finite zero contribution, sum-of-norms tail, reciprocal-norm
   tail, and zero-count tail used by truncated explicit-formula/RH-error
   bookkeeping.
-- `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_tendsto_zero`
+- `explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_tendsto_zero`
   turns a stable base truncation identity plus a vanishing new-zero
-  contribution tail into the corrected height-truncated explicit-formula
-  target.
-- `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_tendsto_zero`,
-  `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_tendsto_zero`,
-  `explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution_sum_norm_le`,
-  `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_isBigO_tendsto_zero`,
-  `explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution_norm_le`,
+  contribution tail into the legacy unweighted compatibility predicate. It
+  does not imply the multiplicity-aware target.
+- `explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_norm_tendsto_zero`,
+  `explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_sum_norm_tendsto_zero`,
+  `explicit_formula_von_mangoldt_unweighted_of_base_and_eventually_new_zero_contribution_sum_norm_le`,
+  `explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_sum_norm_isBigO_tendsto_zero`,
+  `explicit_formula_von_mangoldt_unweighted_of_base_and_eventually_new_zero_contribution_norm_le`,
   and
-  `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_isBigO_tendsto_zero`
+  `explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_norm_isBigO_tendsto_zero`
   expose the same direct contribution-tail bridge in the norm, sum-of-norms,
   eventual-bound, and Big-O shapes normally produced by contour estimates.
-- `RiemannPNT.API.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_isLittleO_one`
+- `RiemannPNT.API.explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_norm_isLittleO_one`
   and
-  `RiemannPNT.API.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_isLittleO_one`
+  `RiemannPNT.API.explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_sum_norm_isLittleO_one`
   expose the public little-o wrappers by converting `o(1)` to norm or
   sum-of-norms convergence.
-- `explicit_formula_von_mangoldt_of_base_and_eventually_no_new_zeros_via_contribution_tail`
+- `explicit_formula_von_mangoldt_unweighted_of_base_and_eventually_no_new_zeros_via_contribution_tail`
   is the degenerate eventual-empty-new-zero specialization routed through the
   contribution-tail convergence theorem.  It is a finite-tail sanity bridge,
   not a claim that zeta has only finitely many nontrivial zeros.
 - `new_zero_contribution_sum_norm_eventually_zero_of_global_height_bound`,
   `new_zero_contribution_sum_norm_tendsto_zero_of_global_height_bound`, and
-  `explicit_formula_von_mangoldt_of_base_and_global_height_bound_via_sum_norm_tail`
+  `explicit_formula_von_mangoldt_unweighted_of_base_and_global_height_bound_via_sum_norm_tail`
   specialize the same sum-of-norms tail bridge to a global nontrivial-zero
   height bound, again without adding a Perron-formula proof.
-- `explicit_formula_von_mangoldt_of_global_height_bound_exact`,
+- `explicit_formula_von_mangoldt_unweighted_of_global_height_bound_exact`,
   `explicitFormulaApprox_eq_chebyshevPsi0_of_global_height_bound`, and
-  `explicit_formula_von_mangoldt_iff_global_height_bound_exact`
+  `explicit_formula_von_mangoldt_unweighted_iff_global_height_bound_exact`
   record the stronger exact stability statement: under a global nontrivial-zero
-  height bound, the corrected explicit-formula target is equivalent to equality
+  height bound, the legacy unweighted compatibility predicate is equivalent to equality
   at the stable base truncation.
 - `NoZerosOnVerticalLine`
   is a reusable predicate for excluding zeta zeros on a fixed vertical line.
@@ -2998,8 +2998,8 @@ Supporting declarations include:
 - `rh_iff_optimal_error_of_pointwise_implications`
 - `RH_ErrorBound_of_rh_iff_optimal_error`
 - `RiemannHypothesis_of_rh_iff_pointwise_error`
-- `explicit_formula_von_mangoldt_iff_re_im_error_tendsto_zero`
-- `explicit_formula_von_mangoldt_iff_re_im_error_isLittleO_one`
+- `explicit_formula_von_mangoldt_unweighted_iff_re_im_error_tendsto_zero`
+- `explicit_formula_von_mangoldt_unweighted_iff_re_im_error_isLittleO_one`
 - `hardy_zeros_abs_unbounded_of_two_signed_moments`
 - `hardy_zeros_unbounded_of_two_signed_moments`
 - `hardy_zeros_abs_unbounded_of_integral_asymptotic_one_two`
@@ -3151,7 +3151,8 @@ As of `2026-07-13`, there are **21** mathematical target declarations:
   target: equivalence between RH and a prime-counting error term.
 - `explicit_formula_von_mangoldt`
   target: a von Mangoldt explicit formula in midpoint/truncated-limit form,
-  using `chebyshevPsi0` and `finiteNontrivialZeroSum`.
+  using `chebyshevPsi0` and
+  `finiteNontrivialZeroSumWithMultiplicity`.
 - `PNTForm1`, `PNTForm2`, `PNTForm3`
   local PNT-format targets:
   `pi(x) ~ x / log x`, `pi(x) ~ Li(x)`, and `psi(x) ~ x`. These are
@@ -3209,12 +3210,13 @@ Route interfaces:
 - `HardyTheorem.AFE.zeta_critical_afe_target`
   real-statement AFE interface for the Hardy chain.
 - `PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget`
-  real-statement truncated explicit-formula interface.
+  globally uniform truncated explicit-formula interface: one positive constant
+  controls every `T ≥ 2` and `x ≥ 2`.
 - `PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute`
-  route interface from a future uniform truncated explicit formula plus
+  route interface from a future pointwise-in-`x`, uniform-in-height truncated explicit formula plus
   oscillation/converse argument to `ExplicitFormulaConversePowerTarget`.
 - `PrimeNumberTheorem.ExplicitFormulaTruncated.psiPowerErrorBelowLineExcludesZerosRightOf_of_truncated_route`
-  repackages the truncated route and a future uniform truncated explicit
+  repackages the truncated route and a future pointwise-in-`x`, uniform-in-height truncated explicit
   formula proof as the right-half zero-exclusion route interface
   `PsiPowerErrorBelowLineExcludesZerosRightOf`.
 - `PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route`,

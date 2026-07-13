@@ -19,6 +19,8 @@ around the Prime Number Theorem, built on top of Mathlib.
    - `ZeroFreeRegion.zeta_no_zeros_on_line_one`: ζ(s) ≠ 0 on Re(s) = 1
    - `ZeroFreeRegion.classical_zero_free_region_compact`:
      Verified compact zero-free region for each bounded height
+   - `ZeroFreeRegion.classical_zero_free_region_proved`:
+     Verified existence of a de la Vallée Poussin region of width `c / log |t|`
    - `riemannZeta_ne_zero_of_re_le_zero`: No zeros for Re(s) ≤ 0
      (except trivial zeros), proved via functional equation
 
@@ -43,23 +45,24 @@ around the Prime Number Theorem, built on top of Mathlib.
 
 ## Remaining unproved target statements in this file
 
-- `explicit_formula_von_mangoldt` — requires Perron's formula
+- `explicit_formula_von_mangoldt` — the multiplicity-weighted explicit formula;
+  requires the remaining Perron/contour and all-height convergence arguments
 - `rh_iff_optimal_error` — standard RH equivalence with prime-counting error terms
 
 ## Infrastructure gap analysis
 
-Some target theorems require analytic infrastructure that is not yet connected
-in this project. Missing or unfinished components include:
-- Hadamard factorization theorem for entire functions of finite order
-- argument-principle / residue-theorem contour applications
-- Borel-Carathéodory/Jensen-style estimates specialized to `ζ'/ζ`
-- Growth bounds for ζ in the critical strip
-- Partial fraction expansion of ζ'/ζ in terms of zeros
+The remaining explicit-formula and RH-equivalence targets still require analytic
+infrastructure that is not yet connected end to end in this project, including:
+- Perron inversion and the required contour-shift error estimates
+- global convergence control for the multiplicity-weighted zero sum
+- the forward RH-to-prime-error implication
+- stronger zero-density or Vinogradov-Korobov estimates for the corresponding targets
 
 ## File structure
 
-This file is currently about 1,000 lines. Earlier notes describing a
-21,000-line infrastructure library do not match this checkout.
+This file is currently about 9,700 lines. Earlier notes describing a
+21,000-line single-file infrastructure library do not match this checkout;
+substantial supporting infrastructure now lives in dedicated modules.
 -/
 
 import Mathlib
@@ -5518,17 +5521,25 @@ theorem rh_zero_symmetric_self_consistent {ρ : ℂ}
 
 /-! ## 显式公式 -/
 
-/-- Finset of nontrivial zeros up to height `T`.
+/-- Finset of distinct nontrivial zeros up to height `T`.
 
-This uses the already-proved local finiteness theorem.  A future exact
-explicit formula should replace the unweighted sum below by a multiplicity-
-weighted sum once the relevant meromorphic-order API is connected. -/
+This uses the already-proved local finiteness theorem.  Exact contour formulas
+must additionally weight each member by its analytic order. -/
 noncomputable def nontrivialZerosFinset (T : ℝ) : Finset ℂ :=
   (finite_nontrivial_zeros_bounded_height T).toFinset
 
-/-- Height-truncated nontrivial-zero contribution. -/
+/-- Legacy unweighted height-truncated nontrivial-zero contribution.
+
+This is retained for compatibility with the pre-contour helper API.  It is not
+the zero sum used by the exact explicit-formula target. -/
 noncomputable def finiteNontrivialZeroSum (x T : ℝ) : ℂ :=
   ∑ ρ ∈ nontrivialZerosFinset T, (x : ℂ) ^ ρ / ρ
+
+/-- Height-truncated nontrivial-zero contribution, counted with analytic
+multiplicity as required by the residue theorem. -/
+noncomputable def finiteNontrivialZeroSumWithMultiplicity (x T : ℝ) : ℂ :=
+  ∑ ρ ∈ nontrivialZerosFinset T,
+    (analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ
 
 lemma mem_nontrivialZerosFinset {ρ : ℂ} {T : ℝ} :
     ρ ∈ nontrivialZerosFinset T ↔
@@ -8168,54 +8179,168 @@ lemma explicitFormulaApprox_eq_of_neg (x : ℝ) {T : ℝ} (hT : T < 0) :
         - (1 / 2 : ℂ) * (Real.log (1 - x^(-2 : ℝ)) : ℂ) := by
   simp [explicitFormulaApprox, finiteNontrivialZeroSum_eq_zero_of_neg x hT]
 
-/-- Corrected target shape for the von Mangoldt explicit formula.
+/-- Legacy symmetric-height target whose zero sum omits multiplicity.
 
-The old unordered `tsum` over all zeros is not a safe formal statement.  This
-target uses the midpoint function `ψ₀` and a height-truncated symmetric limit.
-It is still a target statement, not a proved theorem; completing it requires
-Perron's formula, contour shifting, residue calculus, zero multiplicities, and
-edge estimates. -/
-def explicit_formula_von_mangoldt (x : ℝ) (_hx : x ≥ 2) : Prop :=
+This predicate is retained only for the existing conditional helper API.  It
+is not the mathematically correct final explicit formula unless every
+nontrivial zeta zero is simple, which is unknown. -/
+def explicit_formula_von_mangoldt_unweighted (x : ℝ) (_hx : x ≥ 2) : Prop :=
   Tendsto
     (fun T : ℝ => explicitFormulaApprox x T)
     atTop
     (𝓝 (chebyshevPsi0 x : ℂ))
 
+/-- Multiplicity-aware symmetric-height approximation in the von Mangoldt
+explicit formula. -/
+noncomputable def explicitFormulaApproxWithMultiplicity (x T : ℝ) : ℂ :=
+  (x : ℂ)
+    - finiteNontrivialZeroSumWithMultiplicity x T
+    - deriv riemannZeta 0 / riemannZeta 0
+    - (1 / 2 : ℂ) * (Real.log (1 - x^(-2 : ℝ)) : ℂ)
+
+/-- Correct target shape for the von Mangoldt explicit formula.
+
+The midpoint function `ψ₀` handles prime-power discontinuities, the height
+cutoff gives the symmetric summation convention, and `analyticOrderNatAt`
+counts every nontrivial zero with its analytic multiplicity.  This remains a
+target statement until the proved cofinal contour limit is promoted to all
+real truncation heights. -/
+def explicit_formula_von_mangoldt (x : ℝ) (_hx : x ≥ 2) : Prop :=
+  Tendsto
+    (fun T : ℝ => explicitFormulaApproxWithMultiplicity x T)
+    atTop
+    (𝓝 (chebyshevPsi0 x : ℂ))
+
+lemma finiteNontrivialZeroSumWithMultiplicity_eq_add_new_zeros
+    {x T U : ℝ} (hTU : T ≤ U) :
+    finiteNontrivialZeroSumWithMultiplicity x U =
+      finiteNontrivialZeroSumWithMultiplicity x T +
+        ∑ ρ ∈ (nontrivialZerosFinset U \ nontrivialZerosFinset T),
+          (analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ := by
+  classical
+  have hsubset : nontrivialZerosFinset T ⊆ nontrivialZerosFinset U := by
+    intro ρ hρ
+    exact nontrivialZerosFinset_mono hTU hρ
+  rw [finiteNontrivialZeroSumWithMultiplicity,
+    finiteNontrivialZeroSumWithMultiplicity]
+  have hsum :
+      (∑ ρ ∈ (nontrivialZerosFinset U \ nontrivialZerosFinset T),
+          (analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ) +
+        (∑ ρ ∈ nontrivialZerosFinset T,
+          (analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ) =
+      ∑ ρ ∈ nontrivialZerosFinset U,
+        (analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ :=
+    Finset.sum_sdiff (s₁ := nontrivialZerosFinset T)
+      (s₂ := nontrivialZerosFinset U)
+      (f := fun ρ : ℂ =>
+        (analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ) hsubset
+  rw [← hsum]
+  abel
+
+lemma explicitFormulaApproxWithMultiplicity_sub_eq_new_zeros
+    {x T U : ℝ} (hTU : T ≤ U) :
+    explicitFormulaApproxWithMultiplicity x T -
+        explicitFormulaApproxWithMultiplicity x U =
+      ∑ ρ ∈ (nontrivialZerosFinset U \ nontrivialZerosFinset T),
+        (analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ := by
+  simp only [explicitFormulaApproxWithMultiplicity]
+  rw [finiteNontrivialZeroSumWithMultiplicity_eq_add_new_zeros hTU]
+  abel
+
+lemma norm_explicitFormulaApproxWithMultiplicity_sub_le_new_zeros_sum_norm
+    {x T U : ℝ} (hTU : T ≤ U) :
+    ‖explicitFormulaApproxWithMultiplicity x T -
+        explicitFormulaApproxWithMultiplicity x U‖ ≤
+      ∑ ρ ∈ (nontrivialZerosFinset U \ nontrivialZerosFinset T),
+        ‖(analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ‖ := by
+  rw [explicitFormulaApproxWithMultiplicity_sub_eq_new_zeros hTU]
+  exact norm_sum_le _ _
+
 lemma explicit_formula_von_mangoldt_iff {x : ℝ} {hx : x ≥ 2} :
     explicit_formula_von_mangoldt x hx ↔
-      Tendsto (fun T : ℝ => explicitFormulaApprox x T) atTop
-        (𝓝 (chebyshevPsi0 x : ℂ)) := by
+      Tendsto (fun T : ℝ => explicitFormulaApproxWithMultiplicity x T)
+        atTop (𝓝 (chebyshevPsi0 x : ℂ)) := by
   rfl
 
 lemma explicit_formula_von_mangoldt_of_eventually_eq {x : ℝ} {hx : x ≥ 2}
     {F : ℝ → ℂ}
-    (hF : F =ᶠ[atTop] fun T : ℝ => explicitFormulaApprox x T)
+    (hF : F =ᶠ[atTop]
+      fun T : ℝ => explicitFormulaApproxWithMultiplicity x T)
     (h : Tendsto F atTop (𝓝 (chebyshevPsi0 x : ℂ))) :
     explicit_formula_von_mangoldt x hx := by
   exact Tendsto.congr' hF h
 
 lemma explicit_formula_von_mangoldt_of_eventually_exact {x : ℝ} {hx : x ≥ 2}
-    (h : ∀ᶠ T in atTop, explicitFormulaApprox x T = (chebyshevPsi0 x : ℂ)) :
+    (h : ∀ᶠ T in atTop,
+      explicitFormulaApproxWithMultiplicity x T = (chebyshevPsi0 x : ℂ)) :
     explicit_formula_von_mangoldt x hx := by
   exact tendsto_nhds_of_eventually_eq h
 
-lemma explicit_formula_von_mangoldt_of_global_height_bound_exact
+lemma explicit_formula_von_mangoldt_error_tendsto_zero
+    {x : ℝ} {hx : x ≥ 2} (h : explicit_formula_von_mangoldt x hx) :
+    Tendsto (fun T : ℝ =>
+      explicitFormulaApproxWithMultiplicity x T - (chebyshevPsi0 x : ℂ))
+      atTop (𝓝 0) := by
+  simpa [explicit_formula_von_mangoldt] using
+    h.sub (tendsto_const_nhds : Tendsto
+      (fun _T : ℝ => (chebyshevPsi0 x : ℂ)) atTop
+      (𝓝 (chebyshevPsi0 x : ℂ)))
+
+lemma explicit_formula_von_mangoldt_of_error_tendsto_zero
+    {x : ℝ} {hx : x ≥ 2}
+    (h : Tendsto (fun T : ℝ =>
+      explicitFormulaApproxWithMultiplicity x T - (chebyshevPsi0 x : ℂ))
+      atTop (𝓝 0)) :
+    explicit_formula_von_mangoldt x hx := by
+  have hsum := h.add (tendsto_const_nhds : Tendsto
+    (fun _T : ℝ => (chebyshevPsi0 x : ℂ)) atTop
+    (𝓝 (chebyshevPsi0 x : ℂ)))
+  simpa only [sub_add_cancel, zero_add] using hsum
+
+lemma explicit_formula_von_mangoldt_iff_error_tendsto_zero
+    {x : ℝ} {hx : x ≥ 2} :
+    explicit_formula_von_mangoldt x hx ↔
+      Tendsto (fun T : ℝ =>
+        explicitFormulaApproxWithMultiplicity x T - (chebyshevPsi0 x : ℂ))
+        atTop (𝓝 0) :=
+  ⟨explicit_formula_von_mangoldt_error_tendsto_zero,
+    explicit_formula_von_mangoldt_of_error_tendsto_zero⟩
+
+lemma explicit_formula_von_mangoldt_unweighted_iff {x : ℝ} {hx : x ≥ 2} :
+    explicit_formula_von_mangoldt_unweighted x hx ↔
+      Tendsto (fun T : ℝ => explicitFormulaApprox x T) atTop
+        (𝓝 (chebyshevPsi0 x : ℂ)) := by
+  rfl
+
+lemma explicit_formula_von_mangoldt_unweighted_of_eventually_eq {x : ℝ} {hx : x ≥ 2}
+    {F : ℝ → ℂ}
+    (hF : F =ᶠ[atTop] fun T : ℝ => explicitFormulaApprox x T)
+    (h : Tendsto F atTop (𝓝 (chebyshevPsi0 x : ℂ))) :
+    explicit_formula_von_mangoldt_unweighted x hx := by
+  exact Tendsto.congr' hF h
+
+lemma explicit_formula_von_mangoldt_unweighted_of_eventually_exact {x : ℝ} {hx : x ≥ 2}
+    (h : ∀ᶠ T in atTop, explicitFormulaApprox x T = (chebyshevPsi0 x : ℂ)) :
+    explicit_formula_von_mangoldt_unweighted x hx := by
+  exact tendsto_nhds_of_eventually_eq h
+
+lemma explicit_formula_von_mangoldt_unweighted_of_global_height_bound_exact
     {x B : ℝ} {hx : x ≥ 2}
     (hbound : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → |ρ.im| ≤ B)
     (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ)) :
-    explicit_formula_von_mangoldt x hx := by
-  refine explicit_formula_von_mangoldt_of_eventually_exact ?_
+    explicit_formula_von_mangoldt_unweighted x hx := by
+  refine explicit_formula_von_mangoldt_unweighted_of_eventually_exact ?_
   exact (explicitFormulaApprox_eventually_eq_of_global_height_bound
     (x := x) (B := B) hbound).mono fun _T hT => by
       simpa using hT.trans hB
 
-lemma explicit_formula_von_mangoldt_of_eventually_no_new_zeros
+lemma explicit_formula_von_mangoldt_unweighted_of_eventually_no_new_zeros
     {x B : ℝ} {hx : x ≥ 2}
     (hnew : ∀ᶠ T in atTop,
       B ≤ T ∧ nontrivialZerosFinset T \ nontrivialZerosFinset B = ∅)
     (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ)) :
-    explicit_formula_von_mangoldt x hx := by
-  refine explicit_formula_von_mangoldt_of_eventually_exact ?_
+    explicit_formula_von_mangoldt_unweighted x hx := by
+  refine explicit_formula_von_mangoldt_unweighted_of_eventually_exact ?_
   filter_upwards [hnew] with T hT
   exact (explicitFormulaApprox_eq_of_sdiff_eq_empty
     (x := x) hT.1 hT.2).trans hB
@@ -8223,7 +8348,7 @@ lemma explicit_formula_von_mangoldt_of_eventually_no_new_zeros
 lemma explicitFormulaApprox_eq_chebyshevPsi0_of_global_height_bound
     {x B : ℝ} {hx : x ≥ 2}
     (hbound : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → |ρ.im| ≤ B)
-    (h : explicit_formula_von_mangoldt x hx) :
+    (h : explicit_formula_von_mangoldt_unweighted x hx) :
     explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ) := by
   have hconst :
       Tendsto (fun _T : ℝ => explicitFormulaApprox x B) atTop
@@ -8233,18 +8358,18 @@ lemma explicitFormulaApprox_eq_chebyshevPsi0_of_global_height_bound
         (x := x) (B := B) hbound) h
   exact tendsto_nhds_unique tendsto_const_nhds hconst
 
-lemma explicit_formula_von_mangoldt_iff_global_height_bound_exact
+lemma explicit_formula_von_mangoldt_unweighted_iff_global_height_bound_exact
     {x B : ℝ} {hx : x ≥ 2}
     (hbound : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → |ρ.im| ≤ B) :
-    explicit_formula_von_mangoldt x hx ↔
+    explicit_formula_von_mangoldt_unweighted x hx ↔
       explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ) :=
   ⟨explicitFormulaApprox_eq_chebyshevPsi0_of_global_height_bound hbound,
-    explicit_formula_von_mangoldt_of_global_height_bound_exact hbound⟩
+    explicit_formula_von_mangoldt_unweighted_of_global_height_bound_exact hbound⟩
 
-lemma explicit_formula_von_mangoldt_of_error_tendsto_zero {x : ℝ} {hx : x ≥ 2}
+lemma explicit_formula_von_mangoldt_unweighted_of_error_tendsto_zero {x : ℝ} {hx : x ≥ 2}
     (h : Tendsto (fun T : ℝ =>
       explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)) atTop (𝓝 0)) :
-    explicit_formula_von_mangoldt x hx := by
+    explicit_formula_von_mangoldt_unweighted x hx := by
   have hconst : Tendsto (fun _T : ℝ => (chebyshevPsi0 x : ℂ)) atTop
       (𝓝 (chebyshevPsi0 x : ℂ)) :=
     tendsto_const_nhds
@@ -8260,31 +8385,31 @@ lemma explicit_formula_von_mangoldt_of_error_tendsto_zero {x : ℝ} {hx : x ≥ 
     simp
   exact hsum.congr' (Filter.EventuallyEq.of_eq h_eq) |>.mono_right (by simp [hlim])
 
-lemma explicit_formula_von_mangoldt_error_tendsto_zero {x : ℝ} {hx : x ≥ 2}
-    (h : explicit_formula_von_mangoldt x hx) :
+lemma explicit_formula_von_mangoldt_unweighted_error_tendsto_zero {x : ℝ} {hx : x ≥ 2}
+    (h : explicit_formula_von_mangoldt_unweighted x hx) :
     Tendsto (fun T : ℝ =>
       explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)) atTop (𝓝 0) := by
   have hconst : Tendsto (fun _T : ℝ => (chebyshevPsi0 x : ℂ)) atTop
       (𝓝 (chebyshevPsi0 x : ℂ)) :=
     tendsto_const_nhds
-  simpa [explicit_formula_von_mangoldt] using h.sub hconst
+  simpa [explicit_formula_von_mangoldt_unweighted] using h.sub hconst
 
-lemma explicit_formula_von_mangoldt_iff_error_tendsto_zero
+lemma explicit_formula_von_mangoldt_unweighted_iff_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2} :
-    explicit_formula_von_mangoldt x hx ↔
+    explicit_formula_von_mangoldt_unweighted x hx ↔
       Tendsto (fun T : ℝ =>
         explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)) atTop (𝓝 0) :=
-  ⟨explicit_formula_von_mangoldt_error_tendsto_zero,
-    explicit_formula_von_mangoldt_of_error_tendsto_zero⟩
+  ⟨explicit_formula_von_mangoldt_unweighted_error_tendsto_zero,
+    explicit_formula_von_mangoldt_unweighted_of_error_tendsto_zero⟩
 
-lemma explicit_formula_von_mangoldt_iff_reverse_error_tendsto_zero
+lemma explicit_formula_von_mangoldt_unweighted_iff_reverse_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2} :
-    explicit_formula_von_mangoldt x hx ↔
+    explicit_formula_von_mangoldt_unweighted x hx ↔
       Tendsto (fun T : ℝ =>
         (chebyshevPsi0 x : ℂ) - explicitFormulaApprox x T) atTop (𝓝 0) := by
   constructor
   · intro h
-    have hz := explicit_formula_von_mangoldt_error_tendsto_zero h
+    have hz := explicit_formula_von_mangoldt_unweighted_error_tendsto_zero h
     have hneg := hz.neg
     simpa [sub_eq_add_neg, add_comm] using hneg
   · intro h
@@ -8293,93 +8418,93 @@ lemma explicit_formula_von_mangoldt_iff_reverse_error_tendsto_zero
         Tendsto (fun T : ℝ =>
           explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)) atTop (𝓝 0) := by
       simpa [sub_eq_add_neg, add_comm] using hneg
-    exact explicit_formula_von_mangoldt_of_error_tendsto_zero hz
+    exact explicit_formula_von_mangoldt_unweighted_of_error_tendsto_zero hz
 
-lemma explicit_formula_von_mangoldt_reverse_error_isLittleO_one
+lemma explicit_formula_von_mangoldt_unweighted_reverse_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2}
-    (h : explicit_formula_von_mangoldt x hx) :
+    (h : explicit_formula_von_mangoldt_unweighted x hx) :
     (fun T : ℝ => (chebyshevPsi0 x : ℂ) - explicitFormulaApprox x T)
         =o[atTop] (fun _T : ℝ => (1 : ℂ)) :=
   (isLittleO_one_iff ℂ).mpr
-    ((explicit_formula_von_mangoldt_iff_reverse_error_tendsto_zero).mp h)
+    ((explicit_formula_von_mangoldt_unweighted_iff_reverse_error_tendsto_zero).mp h)
 
-lemma explicit_formula_von_mangoldt_of_reverse_error_isLittleO_one
+lemma explicit_formula_von_mangoldt_unweighted_of_reverse_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2}
     (h : (fun T : ℝ => (chebyshevPsi0 x : ℂ) - explicitFormulaApprox x T)
         =o[atTop] (fun _T : ℝ => (1 : ℂ))) :
-    explicit_formula_von_mangoldt x hx :=
-  (explicit_formula_von_mangoldt_iff_reverse_error_tendsto_zero).mpr
+    explicit_formula_von_mangoldt_unweighted x hx :=
+  (explicit_formula_von_mangoldt_unweighted_iff_reverse_error_tendsto_zero).mpr
     ((isLittleO_one_iff ℂ).mp h)
 
-lemma explicit_formula_von_mangoldt_iff_reverse_error_isLittleO_one
+lemma explicit_formula_von_mangoldt_unweighted_iff_reverse_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2} :
-    explicit_formula_von_mangoldt x hx ↔
+    explicit_formula_von_mangoldt_unweighted x hx ↔
       (fun T : ℝ => (chebyshevPsi0 x : ℂ) - explicitFormulaApprox x T)
         =o[atTop] (fun _T : ℝ => (1 : ℂ)) :=
-  ⟨explicit_formula_von_mangoldt_reverse_error_isLittleO_one,
-    explicit_formula_von_mangoldt_of_reverse_error_isLittleO_one⟩
+  ⟨explicit_formula_von_mangoldt_unweighted_reverse_error_isLittleO_one,
+    explicit_formula_von_mangoldt_unweighted_of_reverse_error_isLittleO_one⟩
 
-lemma explicit_formula_von_mangoldt_of_error_isLittleO_one
+lemma explicit_formula_von_mangoldt_unweighted_of_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2}
     (h : (fun T : ℝ => explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ))
         =o[atTop] (fun _T : ℝ => (1 : ℂ))) :
-    explicit_formula_von_mangoldt x hx :=
-  explicit_formula_von_mangoldt_of_error_tendsto_zero
+    explicit_formula_von_mangoldt_unweighted x hx :=
+  explicit_formula_von_mangoldt_unweighted_of_error_tendsto_zero
     ((isLittleO_one_iff ℂ).mp h)
 
-lemma explicit_formula_von_mangoldt_error_isLittleO_one
+lemma explicit_formula_von_mangoldt_unweighted_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2}
-    (h : explicit_formula_von_mangoldt x hx) :
+    (h : explicit_formula_von_mangoldt_unweighted x hx) :
     (fun T : ℝ => explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ))
         =o[atTop] (fun _T : ℝ => (1 : ℂ)) :=
   (isLittleO_one_iff ℂ).mpr
-    (explicit_formula_von_mangoldt_error_tendsto_zero h)
+    (explicit_formula_von_mangoldt_unweighted_error_tendsto_zero h)
 
-lemma explicit_formula_von_mangoldt_iff_error_isLittleO_one
+lemma explicit_formula_von_mangoldt_unweighted_iff_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2} :
-    explicit_formula_von_mangoldt x hx ↔
+    explicit_formula_von_mangoldt_unweighted x hx ↔
       (fun T : ℝ => explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ))
         =o[atTop] (fun _T : ℝ => (1 : ℂ)) :=
-  ⟨explicit_formula_von_mangoldt_error_isLittleO_one,
-    explicit_formula_von_mangoldt_of_error_isLittleO_one⟩
+  ⟨explicit_formula_von_mangoldt_unweighted_error_isLittleO_one,
+    explicit_formula_von_mangoldt_unweighted_of_error_isLittleO_one⟩
 
-lemma explicit_formula_von_mangoldt_re_tendsto
+lemma explicit_formula_von_mangoldt_unweighted_re_tendsto
     {x : ℝ} {hx : x ≥ 2}
-    (h : explicit_formula_von_mangoldt x hx) :
+    (h : explicit_formula_von_mangoldt_unweighted x hx) :
     Tendsto (fun T : ℝ => (explicitFormulaApprox x T).re) atTop
       (𝓝 (chebyshevPsi0 x)) := by
-  simpa [explicit_formula_von_mangoldt] using
+  simpa [explicit_formula_von_mangoldt_unweighted] using
     (Complex.continuous_re.tendsto (chebyshevPsi0 x : ℂ)).comp h
 
-lemma explicit_formula_von_mangoldt_im_tendsto_zero
+lemma explicit_formula_von_mangoldt_unweighted_im_tendsto_zero
     {x : ℝ} {hx : x ≥ 2}
-    (h : explicit_formula_von_mangoldt x hx) :
+    (h : explicit_formula_von_mangoldt_unweighted x hx) :
     Tendsto (fun T : ℝ => (explicitFormulaApprox x T).im) atTop (𝓝 0) := by
-  simpa [explicit_formula_von_mangoldt] using
+  simpa [explicit_formula_von_mangoldt_unweighted] using
     (Complex.continuous_im.tendsto (chebyshevPsi0 x : ℂ)).comp h
 
-lemma explicit_formula_von_mangoldt_re_error_tendsto_zero
+lemma explicit_formula_von_mangoldt_unweighted_re_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2}
-    (h : explicit_formula_von_mangoldt x hx) :
+    (h : explicit_formula_von_mangoldt_unweighted x hx) :
     Tendsto (fun T : ℝ => (explicitFormulaApprox x T).re - chebyshevPsi0 x)
       atTop (𝓝 0) := by
   simpa using
     (Complex.continuous_re.tendsto (0 : ℂ)).comp
-      (explicit_formula_von_mangoldt_error_tendsto_zero h)
+      (explicit_formula_von_mangoldt_unweighted_error_tendsto_zero h)
 
-lemma explicit_formula_von_mangoldt_im_error_tendsto_zero
+lemma explicit_formula_von_mangoldt_unweighted_im_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2}
-    (h : explicit_formula_von_mangoldt x hx) :
+    (h : explicit_formula_von_mangoldt_unweighted x hx) :
     Tendsto (fun T : ℝ => (explicitFormulaApprox x T).im) atTop (𝓝 0) :=
-  explicit_formula_von_mangoldt_im_tendsto_zero h
+  explicit_formula_von_mangoldt_unweighted_im_tendsto_zero h
 
-lemma explicit_formula_von_mangoldt_of_re_im_tendsto
+lemma explicit_formula_von_mangoldt_unweighted_of_re_im_tendsto
     {x : ℝ} {hx : x ≥ 2}
     (hre : Tendsto (fun T : ℝ => (explicitFormulaApprox x T).re) atTop
       (𝓝 (chebyshevPsi0 x)))
     (him : Tendsto (fun T : ℝ => (explicitFormulaApprox x T).im) atTop
       (𝓝 0)) :
-    explicit_formula_von_mangoldt x hx := by
+    explicit_formula_von_mangoldt_unweighted x hx := by
   have hreC :
       Tendsto (fun T : ℝ => ((explicitFormulaApprox x T).re : ℂ)) atTop
         (𝓝 (chebyshevPsi0 x : ℂ)) := by
@@ -8400,17 +8525,17 @@ lemma explicit_formula_von_mangoldt_of_re_im_tendsto
         = fun T : ℝ => explicitFormulaApprox x T := by
     funext T
     exact Complex.re_add_im (explicitFormulaApprox x T)
-  simpa [explicit_formula_von_mangoldt] using
+  simpa [explicit_formula_von_mangoldt_unweighted] using
     hsum.congr' (Filter.EventuallyEq.of_eq h_eq)
 
-lemma explicit_formula_von_mangoldt_of_re_im_error_tendsto_zero
+lemma explicit_formula_von_mangoldt_unweighted_of_re_im_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2}
     (hre : Tendsto
       (fun T : ℝ => (explicitFormulaApprox x T).re - chebyshevPsi0 x)
       atTop (𝓝 0))
     (him : Tendsto (fun T : ℝ => (explicitFormulaApprox x T).im)
       atTop (𝓝 0)) :
-    explicit_formula_von_mangoldt x hx := by
+    explicit_formula_von_mangoldt_unweighted x hx := by
   have hconst :
       Tendsto (fun _T : ℝ => chebyshevPsi0 x) atTop
         (𝓝 (chebyshevPsi0 x)) :=
@@ -8423,83 +8548,83 @@ lemma explicit_formula_von_mangoldt_of_re_im_error_tendsto_zero
         = fun T : ℝ => (explicitFormulaApprox x T).re := by
     funext T
     ring
-  exact explicit_formula_von_mangoldt_of_re_im_tendsto
+  exact explicit_formula_von_mangoldt_unweighted_of_re_im_tendsto
     (by simpa using hsum.congr' (Filter.EventuallyEq.of_eq h_eq)) him
 
-lemma explicit_formula_von_mangoldt_iff_re_im_tendsto
+lemma explicit_formula_von_mangoldt_unweighted_iff_re_im_tendsto
     {x : ℝ} {hx : x ≥ 2} :
-    explicit_formula_von_mangoldt x hx ↔
+    explicit_formula_von_mangoldt_unweighted x hx ↔
       Tendsto (fun T : ℝ => (explicitFormulaApprox x T).re) atTop
         (𝓝 (chebyshevPsi0 x)) ∧
       Tendsto (fun T : ℝ => (explicitFormulaApprox x T).im) atTop (𝓝 0) :=
-  ⟨fun h => ⟨explicit_formula_von_mangoldt_re_tendsto h,
-      explicit_formula_von_mangoldt_im_tendsto_zero h⟩,
-    fun h => explicit_formula_von_mangoldt_of_re_im_tendsto h.1 h.2⟩
+  ⟨fun h => ⟨explicit_formula_von_mangoldt_unweighted_re_tendsto h,
+      explicit_formula_von_mangoldt_unweighted_im_tendsto_zero h⟩,
+    fun h => explicit_formula_von_mangoldt_unweighted_of_re_im_tendsto h.1 h.2⟩
 
-lemma explicit_formula_von_mangoldt_iff_re_im_error_tendsto_zero
+lemma explicit_formula_von_mangoldt_unweighted_iff_re_im_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2} :
-    explicit_formula_von_mangoldt x hx ↔
+    explicit_formula_von_mangoldt_unweighted x hx ↔
       Tendsto
         (fun T : ℝ => (explicitFormulaApprox x T).re - chebyshevPsi0 x)
         atTop (𝓝 0) ∧
       Tendsto (fun T : ℝ => (explicitFormulaApprox x T).im) atTop (𝓝 0) :=
-  ⟨fun h => ⟨explicit_formula_von_mangoldt_re_error_tendsto_zero h,
-      explicit_formula_von_mangoldt_im_error_tendsto_zero h⟩,
-    fun h => explicit_formula_von_mangoldt_of_re_im_error_tendsto_zero h.1 h.2⟩
+  ⟨fun h => ⟨explicit_formula_von_mangoldt_unweighted_re_error_tendsto_zero h,
+      explicit_formula_von_mangoldt_unweighted_im_error_tendsto_zero h⟩,
+    fun h => explicit_formula_von_mangoldt_unweighted_of_re_im_error_tendsto_zero h.1 h.2⟩
 
-lemma explicit_formula_von_mangoldt_re_error_isLittleO_one
+lemma explicit_formula_von_mangoldt_unweighted_re_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2}
-    (h : explicit_formula_von_mangoldt x hx) :
+    (h : explicit_formula_von_mangoldt_unweighted x hx) :
     (fun T : ℝ => (explicitFormulaApprox x T).re - chebyshevPsi0 x)
         =o[atTop] (fun _T : ℝ => (1 : ℝ)) :=
   (isLittleO_one_iff ℝ).mpr
-    (explicit_formula_von_mangoldt_re_error_tendsto_zero h)
+    (explicit_formula_von_mangoldt_unweighted_re_error_tendsto_zero h)
 
-lemma explicit_formula_von_mangoldt_im_error_isLittleO_one
+lemma explicit_formula_von_mangoldt_unweighted_im_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2}
-    (h : explicit_formula_von_mangoldt x hx) :
+    (h : explicit_formula_von_mangoldt_unweighted x hx) :
     (fun T : ℝ => (explicitFormulaApprox x T).im)
         =o[atTop] (fun _T : ℝ => (1 : ℝ)) :=
   (isLittleO_one_iff ℝ).mpr
-    (explicit_formula_von_mangoldt_im_error_tendsto_zero h)
+    (explicit_formula_von_mangoldt_unweighted_im_error_tendsto_zero h)
 
-lemma explicit_formula_von_mangoldt_of_re_im_error_isLittleO_one
+lemma explicit_formula_von_mangoldt_unweighted_of_re_im_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2}
     (hre :
       (fun T : ℝ => (explicitFormulaApprox x T).re - chebyshevPsi0 x)
         =o[atTop] (fun _T : ℝ => (1 : ℝ)))
     (him : (fun T : ℝ => (explicitFormulaApprox x T).im)
         =o[atTop] (fun _T : ℝ => (1 : ℝ))) :
-    explicit_formula_von_mangoldt x hx :=
-  explicit_formula_von_mangoldt_of_re_im_error_tendsto_zero
+    explicit_formula_von_mangoldt_unweighted x hx :=
+  explicit_formula_von_mangoldt_unweighted_of_re_im_error_tendsto_zero
     ((isLittleO_one_iff ℝ).mp hre)
     ((isLittleO_one_iff ℝ).mp him)
 
-lemma explicit_formula_von_mangoldt_iff_re_im_error_isLittleO_one
+lemma explicit_formula_von_mangoldt_unweighted_iff_re_im_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2} :
-    explicit_formula_von_mangoldt x hx ↔
+    explicit_formula_von_mangoldt_unweighted x hx ↔
       (fun T : ℝ => (explicitFormulaApprox x T).re - chebyshevPsi0 x)
         =o[atTop] (fun _T : ℝ => (1 : ℝ)) ∧
       (fun T : ℝ => (explicitFormulaApprox x T).im)
         =o[atTop] (fun _T : ℝ => (1 : ℝ)) :=
-  ⟨fun h => ⟨explicit_formula_von_mangoldt_re_error_isLittleO_one h,
-      explicit_formula_von_mangoldt_im_error_isLittleO_one h⟩,
-    fun h => explicit_formula_von_mangoldt_of_re_im_error_isLittleO_one h.1 h.2⟩
+  ⟨fun h => ⟨explicit_formula_von_mangoldt_unweighted_re_error_isLittleO_one h,
+      explicit_formula_von_mangoldt_unweighted_im_error_isLittleO_one h⟩,
+    fun h => explicit_formula_von_mangoldt_unweighted_of_re_im_error_isLittleO_one h.1 h.2⟩
 
-lemma explicit_formula_von_mangoldt_norm_error_tendsto_zero
+lemma explicit_formula_von_mangoldt_unweighted_norm_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2}
-    (h : explicit_formula_von_mangoldt x hx) :
+    (h : explicit_formula_von_mangoldt_unweighted x hx) :
     Tendsto (fun T : ℝ =>
       ‖explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)‖) atTop (𝓝 0) :=
   tendsto_zero_iff_norm_tendsto_zero.mp
-    (explicit_formula_von_mangoldt_error_tendsto_zero h)
+    (explicit_formula_von_mangoldt_unweighted_error_tendsto_zero h)
 
-lemma explicit_formula_von_mangoldt_reverse_norm_error_tendsto_zero
+lemma explicit_formula_von_mangoldt_unweighted_reverse_norm_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2}
-    (h : explicit_formula_von_mangoldt x hx) :
+    (h : explicit_formula_von_mangoldt_unweighted x hx) :
     Tendsto (fun T : ℝ =>
       ‖(chebyshevPsi0 x : ℂ) - explicitFormulaApprox x T‖) atTop (𝓝 0) := by
-  have hnorm := explicit_formula_von_mangoldt_norm_error_tendsto_zero h
+  have hnorm := explicit_formula_von_mangoldt_unweighted_norm_error_tendsto_zero h
   have h_eq :
       (fun T : ℝ => ‖(chebyshevPsi0 x : ℂ) - explicitFormulaApprox x T‖) =
         fun T : ℝ => ‖explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)‖ := by
@@ -8507,20 +8632,20 @@ lemma explicit_formula_von_mangoldt_reverse_norm_error_tendsto_zero
     rw [norm_sub_rev]
   simpa [h_eq] using hnorm
 
-lemma explicit_formula_von_mangoldt_of_norm_error_tendsto_zero
+lemma explicit_formula_von_mangoldt_unweighted_of_norm_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2}
     (h : Tendsto (fun T : ℝ =>
       ‖explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)‖) atTop (𝓝 0)) :
-    explicit_formula_von_mangoldt x hx :=
-  explicit_formula_von_mangoldt_of_error_tendsto_zero
+    explicit_formula_von_mangoldt_unweighted x hx :=
+  explicit_formula_von_mangoldt_unweighted_of_error_tendsto_zero
     (tendsto_zero_iff_norm_tendsto_zero.mpr h)
 
-lemma explicit_formula_von_mangoldt_of_reverse_norm_error_tendsto_zero
+lemma explicit_formula_von_mangoldt_unweighted_of_reverse_norm_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2}
     (h : Tendsto (fun T : ℝ =>
       ‖(chebyshevPsi0 x : ℂ) - explicitFormulaApprox x T‖) atTop (𝓝 0)) :
-    explicit_formula_von_mangoldt x hx := by
-  refine explicit_formula_von_mangoldt_of_norm_error_tendsto_zero ?_
+    explicit_formula_von_mangoldt_unweighted x hx := by
+  refine explicit_formula_von_mangoldt_unweighted_of_norm_error_tendsto_zero ?_
   have h_eq :
       (fun T : ℝ => ‖explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)‖) =
         fun T : ℝ => ‖(chebyshevPsi0 x : ℂ) - explicitFormulaApprox x T‖ := by
@@ -8528,73 +8653,73 @@ lemma explicit_formula_von_mangoldt_of_reverse_norm_error_tendsto_zero
     rw [norm_sub_rev]
   simpa [h_eq] using h
 
-lemma explicit_formula_von_mangoldt_iff_reverse_norm_error_tendsto_zero
+lemma explicit_formula_von_mangoldt_unweighted_iff_reverse_norm_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2} :
-    explicit_formula_von_mangoldt x hx ↔
+    explicit_formula_von_mangoldt_unweighted x hx ↔
       Tendsto (fun T : ℝ =>
         ‖(chebyshevPsi0 x : ℂ) - explicitFormulaApprox x T‖) atTop (𝓝 0) :=
-  ⟨explicit_formula_von_mangoldt_reverse_norm_error_tendsto_zero,
-    explicit_formula_von_mangoldt_of_reverse_norm_error_tendsto_zero⟩
+  ⟨explicit_formula_von_mangoldt_unweighted_reverse_norm_error_tendsto_zero,
+    explicit_formula_von_mangoldt_unweighted_of_reverse_norm_error_tendsto_zero⟩
 
-lemma explicit_formula_von_mangoldt_reverse_norm_error_isLittleO_one
+lemma explicit_formula_von_mangoldt_unweighted_reverse_norm_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2}
-    (h : explicit_formula_von_mangoldt x hx) :
+    (h : explicit_formula_von_mangoldt_unweighted x hx) :
     (fun T : ℝ =>
       ‖(chebyshevPsi0 x : ℂ) - explicitFormulaApprox x T‖)
         =o[atTop] (fun _T : ℝ => (1 : ℝ)) :=
   (isLittleO_one_iff ℝ).mpr
-    (explicit_formula_von_mangoldt_reverse_norm_error_tendsto_zero h)
+    (explicit_formula_von_mangoldt_unweighted_reverse_norm_error_tendsto_zero h)
 
-lemma explicit_formula_von_mangoldt_of_reverse_norm_error_isLittleO_one
+lemma explicit_formula_von_mangoldt_unweighted_of_reverse_norm_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2}
     (h : (fun T : ℝ =>
       ‖(chebyshevPsi0 x : ℂ) - explicitFormulaApprox x T‖)
         =o[atTop] (fun _T : ℝ => (1 : ℝ))) :
-    explicit_formula_von_mangoldt x hx :=
-  explicit_formula_von_mangoldt_of_reverse_norm_error_tendsto_zero
+    explicit_formula_von_mangoldt_unweighted x hx :=
+  explicit_formula_von_mangoldt_unweighted_of_reverse_norm_error_tendsto_zero
     ((isLittleO_one_iff ℝ).mp h)
 
-lemma explicit_formula_von_mangoldt_iff_reverse_norm_error_isLittleO_one
+lemma explicit_formula_von_mangoldt_unweighted_iff_reverse_norm_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2} :
-    explicit_formula_von_mangoldt x hx ↔
+    explicit_formula_von_mangoldt_unweighted x hx ↔
       (fun T : ℝ =>
         ‖(chebyshevPsi0 x : ℂ) - explicitFormulaApprox x T‖)
           =o[atTop] (fun _T : ℝ => (1 : ℝ)) :=
-  ⟨explicit_formula_von_mangoldt_reverse_norm_error_isLittleO_one,
-    explicit_formula_von_mangoldt_of_reverse_norm_error_isLittleO_one⟩
+  ⟨explicit_formula_von_mangoldt_unweighted_reverse_norm_error_isLittleO_one,
+    explicit_formula_von_mangoldt_unweighted_of_reverse_norm_error_isLittleO_one⟩
 
-lemma explicit_formula_von_mangoldt_of_eventually_norm_le
+lemma explicit_formula_von_mangoldt_unweighted_of_eventually_norm_le
     {x : ℝ} {hx : x ≥ 2} {E : ℝ → ℝ}
     (hE : Tendsto E atTop (𝓝 0))
     (hbound : ∀ᶠ T in atTop,
       ‖explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)‖ ≤ E T) :
-    explicit_formula_von_mangoldt x hx := by
-  refine explicit_formula_von_mangoldt_of_norm_error_tendsto_zero ?_
+    explicit_formula_von_mangoldt_unweighted x hx := by
+  refine explicit_formula_von_mangoldt_unweighted_of_norm_error_tendsto_zero ?_
   refine tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds hE ?_ hbound
   exact Eventually.of_forall fun T =>
     norm_nonneg (explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ))
 
-lemma explicit_formula_von_mangoldt_of_eventually_reverse_norm_le
+lemma explicit_formula_von_mangoldt_unweighted_of_eventually_reverse_norm_le
     {x : ℝ} {hx : x ≥ 2} {E : ℝ → ℝ}
     (hE : Tendsto E atTop (𝓝 0))
     (hbound : ∀ᶠ T in atTop,
       ‖(chebyshevPsi0 x : ℂ) - explicitFormulaApprox x T‖ ≤ E T) :
-    explicit_formula_von_mangoldt x hx := by
-  refine explicit_formula_von_mangoldt_of_eventually_norm_le hE ?_
+    explicit_formula_von_mangoldt_unweighted x hx := by
+  refine explicit_formula_von_mangoldt_unweighted_of_eventually_norm_le hE ?_
   filter_upwards [hbound] with T hT
   rwa [norm_sub_rev]
 
 /-- A Big-O norm error estimate against any function tending to zero closes the
-corrected explicit-formula target. -/
-lemma explicit_formula_von_mangoldt_of_norm_error_isBigO_tendsto_zero
+legacy unweighted compatibility predicate. -/
+lemma explicit_formula_von_mangoldt_unweighted_of_norm_error_isBigO_tendsto_zero
     {x : ℝ} {hx : x ≥ 2} {E : ℝ → ℝ}
     (hE : Tendsto E atTop (𝓝 0))
     (hO :
       (fun T : ℝ => ‖explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)‖)
         =O[atTop] E) :
-    explicit_formula_von_mangoldt x hx := by
+    explicit_formula_von_mangoldt_unweighted x hx := by
   rcases hO.exists_pos with ⟨C, _hCpos, hCO⟩
-  refine explicit_formula_von_mangoldt_of_eventually_norm_le
+  refine explicit_formula_von_mangoldt_unweighted_of_eventually_norm_le
     (E := fun T : ℝ => C * ‖E T‖) ?_ ?_
   · have hEnorm :
         Tendsto (fun T : ℝ => ‖E T‖) atTop (𝓝 0) :=
@@ -8608,14 +8733,14 @@ lemma explicit_formula_von_mangoldt_of_norm_error_isBigO_tendsto_zero
       norm_nonneg _
     simpa [Real.norm_eq_abs, abs_of_nonneg hnorm_nonneg] using hT
 
-lemma explicit_formula_von_mangoldt_of_reverse_norm_error_isBigO_tendsto_zero
+lemma explicit_formula_von_mangoldt_unweighted_of_reverse_norm_error_isBigO_tendsto_zero
     {x : ℝ} {hx : x ≥ 2} {E : ℝ → ℝ}
     (hE : Tendsto E atTop (𝓝 0))
     (hO :
       (fun T : ℝ => ‖(chebyshevPsi0 x : ℂ) - explicitFormulaApprox x T‖)
         =O[atTop] E) :
-    explicit_formula_von_mangoldt x hx := by
-  refine explicit_formula_von_mangoldt_of_norm_error_isBigO_tendsto_zero hE ?_
+    explicit_formula_von_mangoldt_unweighted x hx := by
+  refine explicit_formula_von_mangoldt_unweighted_of_norm_error_isBigO_tendsto_zero hE ?_
   have h_eq :
       (fun T : ℝ => ‖explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)‖) =
         fun T : ℝ => ‖(chebyshevPsi0 x : ℂ) - explicitFormulaApprox x T‖ := by
@@ -8623,30 +8748,30 @@ lemma explicit_formula_von_mangoldt_of_reverse_norm_error_isBigO_tendsto_zero
     rw [norm_sub_rev]
   simpa [h_eq] using hO
 
-lemma explicit_formula_von_mangoldt_of_eventually_norm_le_const_mul_inv
+lemma explicit_formula_von_mangoldt_unweighted_of_eventually_norm_le_const_mul_inv
     {x C : ℝ} {hx : x ≥ 2}
     (hbound : ∀ᶠ T in atTop,
       ‖explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)‖ ≤ C * T⁻¹) :
-    explicit_formula_von_mangoldt x hx := by
-  refine explicit_formula_von_mangoldt_of_eventually_norm_le ?_ hbound
+    explicit_formula_von_mangoldt_unweighted x hx := by
+  refine explicit_formula_von_mangoldt_unweighted_of_eventually_norm_le ?_ hbound
   simpa using
     (tendsto_const_nhds.mul tendsto_inv_atTop_zero :
       Tendsto (fun T : ℝ => C * T⁻¹) atTop (𝓝 (C * 0)))
 
-lemma explicit_formula_von_mangoldt_of_eventually_reverse_norm_le_const_mul_inv
+lemma explicit_formula_von_mangoldt_unweighted_of_eventually_reverse_norm_le_const_mul_inv
     {x C : ℝ} {hx : x ≥ 2}
     (hbound : ∀ᶠ T in atTop,
       ‖(chebyshevPsi0 x : ℂ) - explicitFormulaApprox x T‖ ≤ C * T⁻¹) :
-    explicit_formula_von_mangoldt x hx := by
-  refine explicit_formula_von_mangoldt_of_eventually_reverse_norm_le ?_ hbound
+    explicit_formula_von_mangoldt_unweighted x hx := by
+  refine explicit_formula_von_mangoldt_unweighted_of_eventually_reverse_norm_le ?_ hbound
   simpa using
     (tendsto_const_nhds.mul tendsto_inv_atTop_zero :
       Tendsto (fun T : ℝ => C * T⁻¹) atTop (𝓝 (C * 0)))
 
 /-- Coordinate estimates for the real and imaginary errors are enough to close
-the explicit-formula target.  This is the shape naturally produced by many
+the legacy unweighted compatibility predicate. This is the shape naturally produced by many
 contour estimates before they are repackaged as a complex norm bound. -/
-lemma explicit_formula_von_mangoldt_of_eventually_re_im_abs_le
+lemma explicit_formula_von_mangoldt_unweighted_of_eventually_re_im_abs_le
     {x : ℝ} {hx : x ≥ 2} {Ere Eim : ℝ → ℝ}
     (hEre : Tendsto Ere atTop (𝓝 0))
     (hEim : Tendsto Eim atTop (𝓝 0))
@@ -8654,8 +8779,8 @@ lemma explicit_formula_von_mangoldt_of_eventually_re_im_abs_le
       |(explicitFormulaApprox x T).re - chebyshevPsi0 x| ≤ Ere T)
     (him_bound : ∀ᶠ T in atTop,
       |(explicitFormulaApprox x T).im| ≤ Eim T) :
-    explicit_formula_von_mangoldt x hx := by
-  refine explicit_formula_von_mangoldt_of_re_im_error_tendsto_zero ?_ ?_
+    explicit_formula_von_mangoldt_unweighted x hx := by
+  refine explicit_formula_von_mangoldt_unweighted_of_re_im_error_tendsto_zero ?_ ?_
   · rw [tendsto_zero_iff_abs_tendsto_zero]
     exact tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds
       hEre
@@ -8668,11 +8793,11 @@ lemma explicit_formula_von_mangoldt_of_eventually_re_im_abs_le
       him_bound
 
 /-- Big-O estimates for the real and imaginary explicit-formula errors,
-against functions tending to zero, close the corrected explicit-formula target.
+against functions tending to zero, close the legacy unweighted compatibility predicate.
 
 This is the natural interface for contour-error estimates that are proved in
 separate real and imaginary parts rather than as one complex norm estimate. -/
-lemma explicit_formula_von_mangoldt_of_re_im_abs_error_isBigO_tendsto_zero
+lemma explicit_formula_von_mangoldt_unweighted_of_re_im_abs_error_isBigO_tendsto_zero
     {x : ℝ} {hx : x ≥ 2} {Ere Eim : ℝ → ℝ}
     (hEre : Tendsto Ere atTop (𝓝 0))
     (hEim : Tendsto Eim atTop (𝓝 0))
@@ -8682,10 +8807,10 @@ lemma explicit_formula_von_mangoldt_of_re_im_abs_error_isBigO_tendsto_zero
     (himO :
       (fun T : ℝ => |(explicitFormulaApprox x T).im|)
         =O[atTop] Eim) :
-    explicit_formula_von_mangoldt x hx := by
+    explicit_formula_von_mangoldt_unweighted x hx := by
   rcases hreO.exists_pos with ⟨Cre, _hCre_pos, hCreO⟩
   rcases himO.exists_pos with ⟨Cim, _hCim_pos, hCimO⟩
-  refine explicit_formula_von_mangoldt_of_eventually_re_im_abs_le
+  refine explicit_formula_von_mangoldt_unweighted_of_eventually_re_im_abs_le
     (Ere := fun T : ℝ => Cre * ‖Ere T‖)
     (Eim := fun T : ℝ => Cim * ‖Eim T‖) ?_ ?_ ?_ ?_
   · have hnorm :
@@ -8711,14 +8836,14 @@ lemma explicit_formula_von_mangoldt_of_re_im_abs_error_isBigO_tendsto_zero
       abs_nonneg _
     simpa [Real.norm_eq_abs, abs_of_nonneg hnonneg] using hT
 
-lemma explicit_formula_von_mangoldt_of_eventually_re_im_abs_le_const_mul_inv
+lemma explicit_formula_von_mangoldt_unweighted_of_eventually_re_im_abs_le_const_mul_inv
     {x Cre Cim : ℝ} {hx : x ≥ 2}
     (hre_bound : ∀ᶠ T in atTop,
       |(explicitFormulaApprox x T).re - chebyshevPsi0 x| ≤ Cre * T⁻¹)
     (him_bound : ∀ᶠ T in atTop,
       |(explicitFormulaApprox x T).im| ≤ Cim * T⁻¹) :
-    explicit_formula_von_mangoldt x hx := by
-  refine explicit_formula_von_mangoldt_of_eventually_re_im_abs_le ?_ ?_
+    explicit_formula_von_mangoldt_unweighted x hx := by
+  refine explicit_formula_von_mangoldt_unweighted_of_eventually_re_im_abs_le ?_ ?_
     hre_bound him_bound
   · simpa using
       (tendsto_const_nhds.mul tendsto_inv_atTop_zero :
@@ -8727,52 +8852,52 @@ lemma explicit_formula_von_mangoldt_of_eventually_re_im_abs_le_const_mul_inv
       (tendsto_const_nhds.mul tendsto_inv_atTop_zero :
         Tendsto (fun T : ℝ => Cim * T⁻¹) atTop (𝓝 (Cim * 0)))
 
-lemma explicit_formula_von_mangoldt_re_abs_error_tendsto_zero
+lemma explicit_formula_von_mangoldt_unweighted_re_abs_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2}
-    (h : explicit_formula_von_mangoldt x hx) :
+    (h : explicit_formula_von_mangoldt_unweighted x hx) :
     Tendsto (fun T : ℝ =>
       |(explicitFormulaApprox x T).re - chebyshevPsi0 x|) atTop (𝓝 0) := by
-  simpa using (explicit_formula_von_mangoldt_re_error_tendsto_zero h).abs
+  simpa using (explicit_formula_von_mangoldt_unweighted_re_error_tendsto_zero h).abs
 
-lemma explicit_formula_von_mangoldt_im_abs_error_tendsto_zero
+lemma explicit_formula_von_mangoldt_unweighted_im_abs_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2}
-    (h : explicit_formula_von_mangoldt x hx) :
+    (h : explicit_formula_von_mangoldt_unweighted x hx) :
     Tendsto (fun T : ℝ => |(explicitFormulaApprox x T).im|) atTop (𝓝 0) := by
-  simpa using (explicit_formula_von_mangoldt_im_error_tendsto_zero h).abs
+  simpa using (explicit_formula_von_mangoldt_unweighted_im_error_tendsto_zero h).abs
 
-lemma explicit_formula_von_mangoldt_iff_re_im_abs_error_tendsto_zero
+lemma explicit_formula_von_mangoldt_unweighted_iff_re_im_abs_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2} :
-    explicit_formula_von_mangoldt x hx ↔
+    explicit_formula_von_mangoldt_unweighted x hx ↔
       Tendsto (fun T : ℝ =>
         |(explicitFormulaApprox x T).re - chebyshevPsi0 x|) atTop (𝓝 0) ∧
       Tendsto (fun T : ℝ => |(explicitFormulaApprox x T).im|) atTop (𝓝 0) := by
   constructor
   · intro h
-    exact ⟨explicit_formula_von_mangoldt_re_abs_error_tendsto_zero h,
-      explicit_formula_von_mangoldt_im_abs_error_tendsto_zero h⟩
+    exact ⟨explicit_formula_von_mangoldt_unweighted_re_abs_error_tendsto_zero h,
+      explicit_formula_von_mangoldt_unweighted_im_abs_error_tendsto_zero h⟩
   · intro h
-    exact explicit_formula_von_mangoldt_of_re_im_error_tendsto_zero
+    exact explicit_formula_von_mangoldt_unweighted_of_re_im_error_tendsto_zero
       ((tendsto_zero_iff_abs_tendsto_zero _).mpr h.1)
       ((tendsto_zero_iff_abs_tendsto_zero _).mpr h.2)
 
-lemma explicit_formula_von_mangoldt_re_abs_error_isLittleO_one
+lemma explicit_formula_von_mangoldt_unweighted_re_abs_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2}
-    (h : explicit_formula_von_mangoldt x hx) :
+    (h : explicit_formula_von_mangoldt_unweighted x hx) :
     (fun T : ℝ =>
       |(explicitFormulaApprox x T).re - chebyshevPsi0 x|)
         =o[atTop] (fun _T : ℝ => (1 : ℝ)) :=
   (isLittleO_one_iff ℝ).mpr
-    (explicit_formula_von_mangoldt_re_abs_error_tendsto_zero h)
+    (explicit_formula_von_mangoldt_unweighted_re_abs_error_tendsto_zero h)
 
-lemma explicit_formula_von_mangoldt_im_abs_error_isLittleO_one
+lemma explicit_formula_von_mangoldt_unweighted_im_abs_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2}
-    (h : explicit_formula_von_mangoldt x hx) :
+    (h : explicit_formula_von_mangoldt_unweighted x hx) :
     (fun T : ℝ => |(explicitFormulaApprox x T).im|)
         =o[atTop] (fun _T : ℝ => (1 : ℝ)) :=
   (isLittleO_one_iff ℝ).mpr
-    (explicit_formula_von_mangoldt_im_abs_error_tendsto_zero h)
+    (explicit_formula_von_mangoldt_unweighted_im_abs_error_tendsto_zero h)
 
-lemma explicit_formula_von_mangoldt_of_re_im_abs_error_isLittleO_one
+lemma explicit_formula_von_mangoldt_unweighted_of_re_im_abs_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2}
     (hre :
       (fun T : ℝ =>
@@ -8780,55 +8905,55 @@ lemma explicit_formula_von_mangoldt_of_re_im_abs_error_isLittleO_one
           =o[atTop] (fun _T : ℝ => (1 : ℝ)))
     (him : (fun T : ℝ => |(explicitFormulaApprox x T).im|)
         =o[atTop] (fun _T : ℝ => (1 : ℝ))) :
-    explicit_formula_von_mangoldt x hx :=
-  (explicit_formula_von_mangoldt_iff_re_im_abs_error_tendsto_zero).mpr
+    explicit_formula_von_mangoldt_unweighted x hx :=
+  (explicit_formula_von_mangoldt_unweighted_iff_re_im_abs_error_tendsto_zero).mpr
     ⟨(isLittleO_one_iff ℝ).mp hre,
       (isLittleO_one_iff ℝ).mp him⟩
 
-lemma explicit_formula_von_mangoldt_iff_re_im_abs_error_isLittleO_one
+lemma explicit_formula_von_mangoldt_unweighted_iff_re_im_abs_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2} :
-    explicit_formula_von_mangoldt x hx ↔
+    explicit_formula_von_mangoldt_unweighted x hx ↔
       (fun T : ℝ =>
         |(explicitFormulaApprox x T).re - chebyshevPsi0 x|)
           =o[atTop] (fun _T : ℝ => (1 : ℝ)) ∧
       (fun T : ℝ => |(explicitFormulaApprox x T).im|)
           =o[atTop] (fun _T : ℝ => (1 : ℝ)) :=
-  ⟨fun h => ⟨explicit_formula_von_mangoldt_re_abs_error_isLittleO_one h,
-      explicit_formula_von_mangoldt_im_abs_error_isLittleO_one h⟩,
-    fun h => explicit_formula_von_mangoldt_of_re_im_abs_error_isLittleO_one
+  ⟨fun h => ⟨explicit_formula_von_mangoldt_unweighted_re_abs_error_isLittleO_one h,
+      explicit_formula_von_mangoldt_unweighted_im_abs_error_isLittleO_one h⟩,
+    fun h => explicit_formula_von_mangoldt_unweighted_of_re_im_abs_error_isLittleO_one
       h.1 h.2⟩
 
-lemma explicit_formula_von_mangoldt_iff_norm_error_tendsto_zero
+lemma explicit_formula_von_mangoldt_unweighted_iff_norm_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2} :
-    explicit_formula_von_mangoldt x hx ↔
+    explicit_formula_von_mangoldt_unweighted x hx ↔
       Tendsto (fun T : ℝ =>
         ‖explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)‖) atTop (𝓝 0) :=
-  ⟨explicit_formula_von_mangoldt_norm_error_tendsto_zero,
-    explicit_formula_von_mangoldt_of_norm_error_tendsto_zero⟩
+  ⟨explicit_formula_von_mangoldt_unweighted_norm_error_tendsto_zero,
+    explicit_formula_von_mangoldt_unweighted_of_norm_error_tendsto_zero⟩
 
-lemma explicit_formula_von_mangoldt_norm_error_isLittleO_one
+lemma explicit_formula_von_mangoldt_unweighted_norm_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2}
-    (h : explicit_formula_von_mangoldt x hx) :
+    (h : explicit_formula_von_mangoldt_unweighted x hx) :
     (fun T : ℝ => ‖explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)‖)
       =o[atTop] (fun _T : ℝ => (1 : ℝ)) :=
   (isLittleO_one_iff ℝ).mpr
-    (explicit_formula_von_mangoldt_norm_error_tendsto_zero h)
+    (explicit_formula_von_mangoldt_unweighted_norm_error_tendsto_zero h)
 
-lemma explicit_formula_von_mangoldt_of_norm_error_isLittleO_one
+lemma explicit_formula_von_mangoldt_unweighted_of_norm_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2}
     (h : (fun T : ℝ => ‖explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)‖)
       =o[atTop] (fun _T : ℝ => (1 : ℝ))) :
-    explicit_formula_von_mangoldt x hx :=
-  explicit_formula_von_mangoldt_of_norm_error_tendsto_zero
+    explicit_formula_von_mangoldt_unweighted x hx :=
+  explicit_formula_von_mangoldt_unweighted_of_norm_error_tendsto_zero
     ((isLittleO_one_iff ℝ).mp h)
 
-lemma explicit_formula_von_mangoldt_iff_norm_error_isLittleO_one
+lemma explicit_formula_von_mangoldt_unweighted_iff_norm_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2} :
-    explicit_formula_von_mangoldt x hx ↔
+    explicit_formula_von_mangoldt_unweighted x hx ↔
       (fun T : ℝ => ‖explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ)‖)
         =o[atTop] (fun _T : ℝ => (1 : ℝ)) :=
-  ⟨explicit_formula_von_mangoldt_norm_error_isLittleO_one,
-    explicit_formula_von_mangoldt_of_norm_error_isLittleO_one⟩
+  ⟨explicit_formula_von_mangoldt_unweighted_norm_error_isLittleO_one,
+    explicit_formula_von_mangoldt_unweighted_of_norm_error_isLittleO_one⟩
 
 /-- Norm of a single nontrivial-zero contribution in the explicit formula. -/
 lemma norm_zero_contribution_eq (ρ : ℂ) {x : ℝ} (hx : 0 < x) :
@@ -9094,9 +9219,9 @@ vanishing new-zero contribution tail.
 
 This is the non-RH version of the later tail interfaces: if future Perron or
 contour arguments identify one base truncation with `ψ₀(x)` and separately show
-that the newly added zero contribution tends to zero, then the corrected
-height-truncated explicit-formula target follows. -/
-lemma explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_tendsto_zero
+that the newly added zero contribution tends to zero, then the legacy
+unweighted compatibility predicate follows. -/
+lemma explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_tendsto_zero
     {x B : ℝ} {hx : x ≥ 2}
     (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
     (htail :
@@ -9105,8 +9230,8 @@ lemma explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_tendsto_ze
           ∑ ρ ∈ (nontrivialZerosFinset T \ nontrivialZerosFinset B),
             (x : ℂ) ^ ρ / ρ)
         atTop (𝓝 0)) :
-    explicit_formula_von_mangoldt x hx := by
-  refine explicit_formula_von_mangoldt_of_error_tendsto_zero ?_
+    explicit_formula_von_mangoldt_unweighted x hx := by
+  refine explicit_formula_von_mangoldt_unweighted_of_error_tendsto_zero ?_
   have hdiff :
       (fun T : ℝ => explicitFormulaApprox x T - (chebyshevPsi0 x : ℂ))
         =ᶠ[atTop]
@@ -9127,24 +9252,24 @@ lemma explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_tendsto_ze
 
 /-- Direct explicit-formula bridge from a base identity and eventual absence
 of new zero terms, routed through the vanishing contribution-tail interface. -/
-lemma explicit_formula_von_mangoldt_of_base_and_eventually_no_new_zeros_via_contribution_tail
+lemma explicit_formula_von_mangoldt_unweighted_of_base_and_eventually_no_new_zeros_via_contribution_tail
     {x B : ℝ} {hx : x ≥ 2}
     (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
     (hnew : ∀ᶠ T in atTop,
       nontrivialZerosFinset T \ nontrivialZerosFinset B = ∅) :
-    explicit_formula_von_mangoldt x hx :=
-  explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_tendsto_zero
+    explicit_formula_von_mangoldt_unweighted x hx :=
+  explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_tendsto_zero
     hB
     (new_zero_contribution_sum_tendsto_zero_of_eventually_sdiff_eq_empty
       (x := x) hnew)
 
 /-- Norm-tail version of
-`explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_tendsto_zero`.
+`explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_tendsto_zero`.
 
 This is often the natural output of contour estimates: once the norm of the
 new-zero contribution tends to zero, the complex contribution itself tends to
 zero. -/
-lemma explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_tendsto_zero
+lemma explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_norm_tendsto_zero
     {x B : ℝ} {hx : x ≥ 2}
     (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
     (htail :
@@ -9153,8 +9278,8 @@ lemma explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_tends
           ‖∑ ρ ∈ (nontrivialZerosFinset T \ nontrivialZerosFinset B),
             (x : ℂ) ^ ρ / ρ‖)
         atTop (𝓝 0)) :
-  explicit_formula_von_mangoldt x hx :=
-  explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_tendsto_zero
+  explicit_formula_von_mangoldt_unweighted x hx :=
+  explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_tendsto_zero
     hB (tendsto_zero_iff_norm_tendsto_zero.mpr htail)
 
 /-- Sum-of-norms tail version of the direct new-zero contribution bridge.
@@ -9162,7 +9287,7 @@ lemma explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_tends
 This is the most common finite-output shape for zero-contribution estimates:
 it is enough to show that the sum of the norms of the newly added terms tends
 to zero. -/
-lemma explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_tendsto_zero
+lemma explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_sum_norm_tendsto_zero
     {x B : ℝ} {hx : x ≥ 2}
     (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
     (htail :
@@ -9171,8 +9296,8 @@ lemma explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_t
           ∑ ρ ∈ (nontrivialZerosFinset T \ nontrivialZerosFinset B),
             ‖(x : ℂ) ^ ρ / ρ‖)
         atTop (𝓝 0)) :
-  explicit_formula_von_mangoldt x hx := by
-  refine explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_tendsto_zero
+  explicit_formula_von_mangoldt_unweighted x hx := by
+  refine explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_norm_tendsto_zero
     hB ?_
   exact tendsto_of_tendsto_of_tendsto_of_le_of_le'
     tendsto_const_nhds htail
@@ -9181,20 +9306,20 @@ lemma explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_t
 
 /-- Little-o sum-of-norms tail version of the direct new-zero contribution
 bridge. -/
-lemma explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_isLittleO_one
+lemma explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_sum_norm_isLittleO_one
     {x B : ℝ} {hx : x ≥ 2}
     (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
     (htail :
       (fun T : ℝ =>
         ∑ ρ ∈ (nontrivialZerosFinset T \ nontrivialZerosFinset B),
           ‖(x : ℂ) ^ ρ / ρ‖) =o[atTop] (fun _T : ℝ => (1 : ℝ))) :
-  explicit_formula_von_mangoldt x hx :=
-  explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_tendsto_zero
+  explicit_formula_von_mangoldt_unweighted x hx :=
+  explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_sum_norm_tendsto_zero
     hB ((isLittleO_one_iff ℝ).mp htail)
 
 /-- A vanishing eventual sum-of-norms bound for the new-zero contribution
-closes the corrected explicit-formula target from a stable base truncation. -/
-lemma explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution_sum_norm_le
+closes the legacy unweighted compatibility predicate from a stable base truncation. -/
+lemma explicit_formula_von_mangoldt_unweighted_of_base_and_eventually_new_zero_contribution_sum_norm_le
     {x B : ℝ} {hx : x ≥ 2} {E : ℝ → ℝ}
     (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
     (hE : Tendsto E atTop (𝓝 0))
@@ -9202,8 +9327,8 @@ lemma explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution
       ∀ᶠ T in atTop,
         (∑ ρ ∈ (nontrivialZerosFinset T \ nontrivialZerosFinset B),
           ‖(x : ℂ) ^ ρ / ρ‖) ≤ E T) :
-    explicit_formula_von_mangoldt x hx := by
-  refine explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_tendsto_zero
+    explicit_formula_von_mangoldt_unweighted x hx := by
+  refine explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_sum_norm_tendsto_zero
     hB ?_
   exact tendsto_of_tendsto_of_tendsto_of_le_of_le'
     tendsto_const_nhds hE
@@ -9213,7 +9338,7 @@ lemma explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution
 
 /-- Big-O sum-of-norms tail version of the direct new-zero contribution
 bridge. -/
-lemma explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_isBigO_tendsto_zero
+lemma explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_sum_norm_isBigO_tendsto_zero
     {x B : ℝ} {hx : x ≥ 2} {E : ℝ → ℝ}
     (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
     (hE : Tendsto E atTop (𝓝 0))
@@ -9221,9 +9346,9 @@ lemma explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_i
       (fun T : ℝ =>
         ∑ ρ ∈ (nontrivialZerosFinset T \ nontrivialZerosFinset B),
           ‖(x : ℂ) ^ ρ / ρ‖) =O[atTop] E) :
-    explicit_formula_von_mangoldt x hx := by
+    explicit_formula_von_mangoldt_unweighted x hx := by
   rcases hO.exists_pos with ⟨C, _hCpos, hCO⟩
-  refine explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution_sum_norm_le
+  refine explicit_formula_von_mangoldt_unweighted_of_base_and_eventually_new_zero_contribution_sum_norm_le
     hB (E := fun T : ℝ => C * ‖E T‖) ?_ ?_
   · have hEnorm : Tendsto (fun T : ℝ => ‖E T‖) atTop (𝓝 0) :=
       tendsto_zero_iff_norm_tendsto_zero.mp hE
@@ -9242,8 +9367,8 @@ lemma explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_i
     simpa [Real.norm_eq_abs, abs_of_nonneg hnonneg', norm_div] using hT
 
 /-- A vanishing eventual norm bound for the new-zero contribution closes the
-corrected explicit-formula target from a stable base truncation. -/
-lemma explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution_norm_le
+legacy unweighted compatibility predicate from a stable base truncation. -/
+lemma explicit_formula_von_mangoldt_unweighted_of_base_and_eventually_new_zero_contribution_norm_le
     {x B : ℝ} {hx : x ≥ 2} {E : ℝ → ℝ}
     (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
     (hE : Tendsto E atTop (𝓝 0))
@@ -9251,14 +9376,14 @@ lemma explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution
       ∀ᶠ T in atTop,
         ‖∑ ρ ∈ (nontrivialZerosFinset T \ nontrivialZerosFinset B),
           (x : ℂ) ^ ρ / ρ‖ ≤ E T) :
-    explicit_formula_von_mangoldt x hx := by
-  refine explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_tendsto_zero
+    explicit_formula_von_mangoldt_unweighted x hx := by
+  refine explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_norm_tendsto_zero
     hB ?_
   exact tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds hE
     (Eventually.of_forall fun _T => norm_nonneg _) hbound
 
 /-- Big-O norm-tail version of the direct new-zero contribution bridge. -/
-lemma explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_isBigO_tendsto_zero
+lemma explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_norm_isBigO_tendsto_zero
     {x B : ℝ} {hx : x ≥ 2} {E : ℝ → ℝ}
     (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
     (hE : Tendsto E atTop (𝓝 0))
@@ -9266,9 +9391,9 @@ lemma explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_isBig
       (fun T : ℝ =>
         ‖∑ ρ ∈ (nontrivialZerosFinset T \ nontrivialZerosFinset B),
           (x : ℂ) ^ ρ / ρ‖) =O[atTop] E) :
-    explicit_formula_von_mangoldt x hx := by
+    explicit_formula_von_mangoldt_unweighted x hx := by
   rcases hO.exists_pos with ⟨C, _hCpos, hCO⟩
-  refine explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution_norm_le
+  refine explicit_formula_von_mangoldt_unweighted_of_base_and_eventually_new_zero_contribution_norm_le
     hB (E := fun T : ℝ => C * ‖E T‖) ?_ ?_
   · have hEnorm : Tendsto (fun T : ℝ => ‖E T‖) atTop (𝓝 0) :=
       tendsto_zero_iff_norm_tendsto_zero.mp hE
@@ -9377,8 +9502,8 @@ reciprocal-norm sum over newly included zeros.
 
 The hard analytic input remains the base identity `hB` and the tail estimate
 `htail`; this lemma only packages the already-proved RH truncation-gap bound
-into the `explicit_formula_von_mangoldt` convergence target. -/
-lemma explicit_formula_von_mangoldt_of_RH_base_and_new_zero_sum_tendsto_zero
+into the `explicit_formula_von_mangoldt_unweighted` convergence target. -/
+lemma explicit_formula_von_mangoldt_unweighted_of_RH_base_and_new_zero_sum_tendsto_zero
     (hRH : RiemannHypothesis.Statement)
     {x B : ℝ} {hx : x ≥ 2}
     (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
@@ -9388,9 +9513,9 @@ lemma explicit_formula_von_mangoldt_of_RH_base_and_new_zero_sum_tendsto_zero
           Real.sqrt x *
             ∑ ρ ∈ (nontrivialZerosFinset T \ nontrivialZerosFinset B), ‖ρ‖⁻¹)
         atTop (𝓝 0)) :
-    explicit_formula_von_mangoldt x hx := by
+    explicit_formula_von_mangoldt_unweighted x hx := by
   have hxpos : 0 < x := by linarith
-  refine explicit_formula_von_mangoldt_of_eventually_norm_le htail ?_
+  refine explicit_formula_von_mangoldt_unweighted_of_eventually_norm_le htail ?_
   filter_upwards [eventually_ge_atTop B] with T hBT
   have hgap :=
     norm_explicitFormulaApprox_sub_le_sqrt_mul_sum_inv_norm_of_RH
@@ -9405,7 +9530,7 @@ lemma explicit_formula_von_mangoldt_of_RH_base_and_new_zero_sum_tendsto_zero
 
 /-- Conditional explicit-formula bridge from an RH tail bound stated with the
 count of newly included zeros. -/
-lemma explicit_formula_von_mangoldt_of_RH_base_and_new_zero_card_tendsto_zero
+lemma explicit_formula_von_mangoldt_unweighted_of_RH_base_and_new_zero_card_tendsto_zero
     (hRH : RiemannHypothesis.Statement)
     {x B : ℝ} {hx : x ≥ 2}
     (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
@@ -9415,9 +9540,9 @@ lemma explicit_formula_von_mangoldt_of_RH_base_and_new_zero_card_tendsto_zero
           Real.sqrt x *
             ((2 : ℝ) * (nontrivialZerosFinset T \ nontrivialZerosFinset B).card))
         atTop (𝓝 0)) :
-    explicit_formula_von_mangoldt x hx := by
+    explicit_formula_von_mangoldt_unweighted x hx := by
   have hxpos : 0 < x := by linarith
-  refine explicit_formula_von_mangoldt_of_eventually_norm_le htail ?_
+  refine explicit_formula_von_mangoldt_unweighted_of_eventually_norm_le htail ?_
   filter_upwards [eventually_ge_atTop B] with T hBT
   have hgap :=
     norm_explicitFormulaApprox_sub_le_sqrt_mul_two_card_of_RH
@@ -9434,28 +9559,28 @@ lemma explicit_formula_von_mangoldt_of_RH_base_and_new_zero_card_tendsto_zero
 reciprocal-norm tail bound with eventual absence of new zero terms.  This keeps
 the hard input as the base identity `hB`; the tail convergence is discharged
 from `hnew`. -/
-lemma explicit_formula_von_mangoldt_of_RH_base_and_eventually_no_new_zeros_via_sum_tail
+lemma explicit_formula_von_mangoldt_unweighted_of_RH_base_and_eventually_no_new_zeros_via_sum_tail
     (hRH : RiemannHypothesis.Statement)
     {x B : ℝ} {hx : x ≥ 2}
     (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
     (hnew : ∀ᶠ T in atTop,
       nontrivialZerosFinset T \ nontrivialZerosFinset B = ∅) :
-    explicit_formula_von_mangoldt x hx :=
-  explicit_formula_von_mangoldt_of_RH_base_and_new_zero_sum_tendsto_zero
+    explicit_formula_von_mangoldt_unweighted x hx :=
+  explicit_formula_von_mangoldt_unweighted_of_RH_base_and_new_zero_sum_tendsto_zero
     hRH hB
     (new_zero_inv_norm_tail_tendsto_zero_of_eventually_sdiff_eq_empty
       (x := x) hnew)
 
 /-- Count-tail version of
-`explicit_formula_von_mangoldt_of_RH_base_and_eventually_no_new_zeros_via_sum_tail`. -/
-lemma explicit_formula_von_mangoldt_of_RH_base_and_eventually_no_new_zeros_via_card_tail
+`explicit_formula_von_mangoldt_unweighted_of_RH_base_and_eventually_no_new_zeros_via_sum_tail`. -/
+lemma explicit_formula_von_mangoldt_unweighted_of_RH_base_and_eventually_no_new_zeros_via_card_tail
     (hRH : RiemannHypothesis.Statement)
     {x B : ℝ} {hx : x ≥ 2}
     (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
     (hnew : ∀ᶠ T in atTop,
       nontrivialZerosFinset T \ nontrivialZerosFinset B = ∅) :
-    explicit_formula_von_mangoldt x hx :=
-  explicit_formula_von_mangoldt_of_RH_base_and_new_zero_card_tendsto_zero
+    explicit_formula_von_mangoldt_unweighted x hx :=
+  explicit_formula_von_mangoldt_unweighted_of_RH_base_and_new_zero_card_tendsto_zero
     hRH hB
     (new_zero_card_tail_tendsto_zero_of_eventually_sdiff_eq_empty
       (x := x) hnew)
@@ -9464,40 +9589,40 @@ lemma explicit_formula_von_mangoldt_of_RH_base_and_eventually_no_new_zeros_via_c
 new-zero tail interface.  The hard input remains the base identity `hB`; this
 lemma only packages the fact that a global height bound makes the finite tail
 eventually empty. -/
-lemma explicit_formula_von_mangoldt_of_base_and_global_height_bound_via_sum_norm_tail
+lemma explicit_formula_von_mangoldt_unweighted_of_base_and_global_height_bound_via_sum_norm_tail
     {x B : ℝ} {hx : x ≥ 2}
     (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
     (hbound : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → |ρ.im| ≤ B) :
-    explicit_formula_von_mangoldt x hx :=
-  explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_tendsto_zero
+    explicit_formula_von_mangoldt_unweighted x hx :=
+  explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_sum_norm_tendsto_zero
     hB
     (new_zero_contribution_sum_norm_tendsto_zero_of_global_height_bound
       (x := x) hbound)
 
 /-- RH-tail route from a global zero-height bound.  The stronger exact bridge
-`explicit_formula_von_mangoldt_of_global_height_bound_exact` already avoids the
+`explicit_formula_von_mangoldt_unweighted_of_global_height_bound_exact` already avoids the
 RH hypothesis; this lemma records the same stability through the explicit
 new-zero-tail interface. -/
-lemma explicit_formula_von_mangoldt_of_RH_base_and_global_height_bound_via_sum_tail
+lemma explicit_formula_von_mangoldt_unweighted_of_RH_base_and_global_height_bound_via_sum_tail
     (hRH : RiemannHypothesis.Statement)
     {x B : ℝ} {hx : x ≥ 2}
     (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
     (hbound : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → |ρ.im| ≤ B) :
-    explicit_formula_von_mangoldt x hx :=
-  explicit_formula_von_mangoldt_of_RH_base_and_new_zero_sum_tendsto_zero
+    explicit_formula_von_mangoldt_unweighted x hx :=
+  explicit_formula_von_mangoldt_unweighted_of_RH_base_and_new_zero_sum_tendsto_zero
     hRH hB
     (new_zero_inv_norm_tail_tendsto_zero_of_global_height_bound
       (x := x) hbound)
 
 /-- Count-tail version of
-`explicit_formula_von_mangoldt_of_RH_base_and_global_height_bound_via_sum_tail`. -/
-lemma explicit_formula_von_mangoldt_of_RH_base_and_global_height_bound_via_card_tail
+`explicit_formula_von_mangoldt_unweighted_of_RH_base_and_global_height_bound_via_sum_tail`. -/
+lemma explicit_formula_von_mangoldt_unweighted_of_RH_base_and_global_height_bound_via_card_tail
     (hRH : RiemannHypothesis.Statement)
     {x B : ℝ} {hx : x ≥ 2}
     (hB : explicitFormulaApprox x B = (chebyshevPsi0 x : ℂ))
     (hbound : ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ → |ρ.im| ≤ B) :
-    explicit_formula_von_mangoldt x hx :=
-  explicit_formula_von_mangoldt_of_RH_base_and_new_zero_card_tendsto_zero
+    explicit_formula_von_mangoldt_unweighted x hx :=
+  explicit_formula_von_mangoldt_unweighted_of_RH_base_and_new_zero_card_tendsto_zero
     hRH hB
     (new_zero_card_tail_tendsto_zero_of_global_height_bound
       (x := x) hbound)

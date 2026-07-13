@@ -11,21 +11,22 @@ This file declares the project-internal target statement for the
 locks the signature of the asymptotic identity
 
 ```
-  ψ₀(x) = x − ∑_{|ρ| ≤ T} x^ρ / ρ − log(2π) − (1/2) log(1 − 1/x²)
-          + O(x / T · log²(x))
+  ψ₀(x) = x − ∑_{|Im ρ| ≤ T} m(ρ)x^ρ / ρ − log(2π) − (1/2) log(1 − 1/x²)
+          + O_x(log²(xT) / T)
 ```
 
-where `ψ₀` is the midpoint-convention Chebyshev-`ψ` (declared as
+where `m(ρ)` is the analytic multiplicity of the zero and `ψ₀` is the
+midpoint-convention Chebyshev-`ψ` (declared as
 `PrimeNumberTheorem.ExplicitFormulaAux.chebyshevPsi0`), `ρ` ranges
 over the nontrivial zeros of `ζ` with `|Im ρ| ≤ T`, and the trailing
-`O(x / T · log²(x))` is the error term.
+`O_x(log²(xT) / T)` is the pointwise-in-`x` error term.
 
 ## Why a `def ... : Prop` target
 
 The current declaration is intentionally a **target**, not a theorem:
 a `def ... : Prop` with a real mathematical body.  Its purpose is to
-(a) lock the argument list (`T`, `hT`, `x`, `hx`), (b) let downstream
-code (`import PrimeNumberTheorem.ExplicitFormulaTruncated`) use the
+(a) lock the pointwise-in-`x`, uniform-in-height quantifier order, (b) let
+downstream code (`import PrimeNumberTheorem.ExplicitFormulaTruncated`) use the
 name as a typed predicate, and (c) avoid exporting an unproved theorem.
 
 The actual explicit-formula proof is **deliberately deferred** to a
@@ -54,8 +55,7 @@ main target" for the intended future body.
   `PrimeNumberTheorem.ExplicitFormulaAux.chebyshevPsi0`
   (re-exposed in the prior `ExplicitFormulaAux` module).
 - `PrimeNumberTheorem.ExplicitFormulaAux.jumpVonMangoldt`.
-- `PrimeNumberTheorem.ExplicitFormulaAux.zeroMultiplicity`.
-- `PrimeNumberTheorem.ExplicitFormulaAux.finiteNontrivialZeroSum`.
+- `PrimeNumberTheorem.finiteNontrivialZeroSumWithMultiplicity`.
 - `PrimeNumberTheorem.ExplicitFormulaAux.chebyshevPsi0_eq_chebyshevPsi_off_primePowers`.
 - `PrimeNumberTheorem.finite_nontrivial_zeros_bounded_height`.
 - `MathlibAux.RectangleResidue.rectangleIntegral_meromorphic_eq_residue_sum`
@@ -71,10 +71,7 @@ open Complex
 open scoped ArithmeticFunction BigOperators
 
 -- This file declares a `def ... : Prop` target rather than an exported theorem.
--- The parameter list is the public contract the rest of the project imports.
--- Disable the unused-variable linter because the proof witnesses `hT` and `hx`
--- exist to lock that contract even when the Prop body only needs `T` and `x`.
-set_option linter.unusedVariables false
+-- For each fixed `x`, one constant must control every admissible height `T`.
 
 namespace PrimeNumberTheorem
 namespace ExplicitFormulaTruncated
@@ -88,9 +85,9 @@ This is the central "explicit formula" target of the B chain.  In
 asymptotic form it states
 
 ```
-  ψ₀(x) = x − ∑_{|Im ρ| ≤ T} x^ρ / ρ
+  ψ₀(x) = x − ∑_{|Im ρ| ≤ T} m(ρ)x^ρ / ρ
           − log(2π) − (1/2) log(1 − 1/x²)
-          + O(x / T · log²(x))
+          + O_x(log²(xT) / T)
 ```
 
 where:
@@ -98,40 +95,30 @@ where:
 * `ψ₀` is the midpoint-convention Chebyshev-`ψ`
   (`PrimeNumberTheorem.ExplicitFormulaAux.chebyshevPsi0`,
   re-exposed from the parent `PrimeNumberTheorem.chebyshevPsi0`);
-* the sum ranges over nontrivial zeros of `ζ` with
-  `|Im ρ| ≤ T`, i.e. the Finset
-  `PrimeNumberTheorem.ExplicitFormulaAux.finiteNontrivialZeroSum T`
-  (an alias for `PrimeNumberTheorem.nontrivialZerosFinset T`, the
-  output of `PrimeNumberTheorem.finite_nontrivial_zeros_bounded_height`);
-* the trailing `O(x / T · log²(x))` is the contour-shift error
+* the sum ranges over nontrivial zeros of `ζ` with `|Im ρ| ≤ T` and
+  weights each distinct zero by `analyticOrderNatAt riemannZeta ρ`;
+* the trailing pointwise `O_x(log²(xT) / T)` is the contour-shift error
   estimate obtained from
   `MathlibAux.RectangleResidue.rectangleIntegral_meromorphic_eq_residue_sum`
   (the upstream interface) by balancing the main term against the
   residue sum on a rectangle of half-height `T`.
 
-**Parameters**:
-- `T : ℝ` — truncation height bounding the imaginary parts of
-  the zeros that contribute to the residue sum.
-- `hT : 0 < T` — explicit witness that the truncation height is
-  positive (so the rectangle is non-degenerate and the residue
-  sum is well-defined).
-- `x : ℝ` — the argument at which the asymptotic identity is
-  evaluated.
-- `hx : 0 < x` — explicit witness that `x` is positive
-  (so `x^ρ` is well-defined and the log-terms are real).
+The quantifier order is essential: for each fixed `x`, one constant `C` controls
+all `T ≥ 2`.  A constant uniform in both `x` and `T` with only an
+`x * log²(x) / T` error would contradict the jump discontinuities of `ψ₀`,
+while putting `∃ C` after fixed `T,x` would make the estimate vacuous.
 
 **This is NOT a `theorem`** — it is a `def` returning `Prop`.  The
 repository tracks it as an unproved target whose eventual proof should
 combine Perron's formula with the rectangle residue interface. -/
-def ExplicitFormulaTruncatedTarget (T : ℝ) (hT : 0 < T) (x : ℝ) (hx : 0 < x) : Prop :=
-  ∃ C > (0 : ℝ),
+def ExplicitFormulaTruncatedTarget : Prop :=
+  ∀ x : ℝ, 2 ≤ x → ∃ C > (0 : ℝ), ∀ T : ℝ, 2 ≤ T →
     ‖((ExplicitFormulaAux.chebyshevPsi0 x : ℂ) -
       ((x : ℂ)
-        - (∑ ρ ∈ ExplicitFormulaAux.finiteNontrivialZeroSum T,
-            (x : ℂ) ^ ρ / ρ)
+        - PrimeNumberTheorem.finiteNontrivialZeroSumWithMultiplicity x T
         - (Real.log (2 * Real.pi) : ℂ)
         - (1 / 2 : ℂ) * (Real.log (1 - x ^ (-2 : ℝ)) : ℂ)))‖
-      ≤ C * x / T * (Real.log x) ^ 2
+      ≤ C * x / T * (Real.log (x * T)) ^ 2
 
 /-! ## Assumption-repackaging lemma -/
 
@@ -139,9 +126,8 @@ def ExplicitFormulaTruncatedTarget (T : ℝ) (hT : 0 < T) (x : ℝ) (hx : 0 < x)
 
 This lemma is intentionally conditional: the file records the target shape but
 does not prove Perron's formula or the rectangle residue chain. -/
-lemma explicitFormulaTruncated_of (T : ℝ) (hT : 0 < T) (x : ℝ) (hx : 0 < x)
-    (h : ExplicitFormulaTruncatedTarget T hT x hx) :
-    ExplicitFormulaTruncatedTarget T hT x hx :=
+lemma explicitFormulaTruncated_of (h : ExplicitFormulaTruncatedTarget) :
+    ExplicitFormulaTruncatedTarget :=
   h
 
 /-! ## Converse route toward power-scale PNT error barriers -/
@@ -150,16 +136,15 @@ lemma explicitFormulaTruncated_of (T : ℝ) (hT : 0 < T) (x : ℝ) (hx : 0 < x)
 power-scale converse used by the `Re(s)=1/3` bridge.
 
 This keeps two dependencies explicit:
-1. the future proof of the truncated explicit formula for all admissible
-   heights and positive `x`;
+1. the future proof of a pointwise-in-`x`, uniform-in-height truncated
+   explicit-formula bound;
 2. the future oscillation/converse argument extracting a zero-free half-plane
    from a `ψ(x)-x = O(x^θ)` bound with `θ < β`.
 
 It is intentionally a `Prop` interface, not a theorem asserting either
 dependency unconditionally. -/
 def ExplicitFormulaTruncatedConverseRoute (β : ℝ) : Prop :=
-  (∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx) →
+  ExplicitFormulaTruncatedTarget →
     PrimeNumberTheorem.ExplicitFormulaConversePowerTarget β
 
 /-- Repackage a truncated-explicit-formula converse route as the power
@@ -167,8 +152,7 @@ converse target used by the main PNT bridge. -/
 lemma explicitFormulaConversePower_of_truncated_route
     {β : ℝ}
     (hroute : ExplicitFormulaTruncatedConverseRoute β)
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx) :
+    (hexplicit : ExplicitFormulaTruncatedTarget) :
     PrimeNumberTheorem.ExplicitFormulaConversePowerTarget β :=
   hroute hexplicit
 
@@ -177,8 +161,7 @@ zero-exclusion route interface used by the `ψ`-error bridges. -/
 lemma psiPowerErrorBelowLineExcludesZerosRightOf_of_truncated_route
     {β : ℝ}
     (hroute : ExplicitFormulaTruncatedConverseRoute β)
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx) :
+    (hexplicit : ExplicitFormulaTruncatedTarget) :
     PrimeNumberTheorem.PsiPowerErrorBelowLineExcludesZerosRightOf β :=
   PrimeNumberTheorem.psiPowerErrorBelowLineExcludesZerosRightOf_of_explicit_formula_converse_power
     (explicitFormulaConversePower_of_truncated_route hroute hexplicit)
@@ -187,8 +170,7 @@ lemma psiPowerErrorBelowLineExcludesZerosRightOf_of_truncated_route
 and a `ψ` power saving below `2/3` to no zeros on `Re(s)=2/3`. -/
 theorem no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route
     (hroute : ExplicitFormulaTruncatedConverseRoute (2 / 3))
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine (2 / 3)) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (2 / 3) :=
   PrimeNumberTheorem.no_zeros_on_vertical_line_of_explicit_formula_converse_power
@@ -200,8 +182,7 @@ theorem no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route
 no zeros on `Re(s)=2/3`. -/
 theorem no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_below_two_thirds
     (hroute : ExplicitFormulaTruncatedConverseRoute (2 / 3))
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowTwoThirds) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (2 / 3) :=
   no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route
@@ -213,8 +194,7 @@ theorem no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_belo
 and a `ψ` power saving below `2/3` to no zeros on `Re(s)=1/3`. -/
 theorem no_zeros_on_one_third_of_truncated_explicit_formula_converse_route
     (hroute : ExplicitFormulaTruncatedConverseRoute (2 / 3))
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine (2 / 3)) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) :=
   PrimeNumberTheorem.no_zeros_on_one_third_of_explicit_formula_converse_power
@@ -225,8 +205,7 @@ theorem no_zeros_on_one_third_of_truncated_explicit_formula_converse_route
 no zeros on `Re(s)=1/3`. -/
 theorem no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_below_two_thirds
     (hroute : ExplicitFormulaTruncatedConverseRoute (2 / 3))
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowTwoThirds) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) :=
   no_zeros_on_one_third_of_truncated_explicit_formula_converse_route
@@ -238,8 +217,7 @@ theorem no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_below
 theorem no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route
     {β : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
     (hroute : ExplicitFormulaTruncatedConverseRoute β)
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (1 - β) :=
   PrimeNumberTheorem.no_zeros_on_reflected_line_of_explicit_formula_converse_power
@@ -252,8 +230,7 @@ explicit-formula bridge for any boundary `β >= 2/3`. -/
 theorem no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_below_two_thirds
     {β : ℝ} (hβ_two_thirds : (2 / 3 : ℝ) ≤ β) (hβ_lt_one : β < 1)
     (hroute : ExplicitFormulaTruncatedConverseRoute β)
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowTwoThirds) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (1 - β) :=
   no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route
@@ -269,8 +246,7 @@ theorem no_zeros_on_vertical_line_of_truncated_explicit_formula_converse_route_s
     {β delta : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
     (hdelta_pos : 0 < delta) (hθ_nonneg : 0 ≤ β - delta)
     (hroute : ExplicitFormulaTruncatedConverseRoute β)
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBound (β - delta)) :
     PrimeNumberTheorem.NoZerosOnVerticalLine β :=
   PrimeNumberTheorem.no_zeros_on_vertical_line_of_explicit_formula_converse_power_bound_sub_delta
@@ -284,8 +260,7 @@ theorem no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_
     {β delta : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
     (hdelta_pos : 0 < delta) (hθ_nonneg : 0 ≤ β - delta)
     (hroute : ExplicitFormulaTruncatedConverseRoute β)
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBound (β - delta)) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (1 - β) :=
   PrimeNumberTheorem.no_zeros_on_reflected_line_of_explicit_formula_converse_power_bound_sub_delta
@@ -299,8 +274,7 @@ theorem not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_convers
     {β delta : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
     (hdelta_pos : 0 < delta) (hθ_nonneg : 0 ≤ β - delta)
     (hroute : ExplicitFormulaTruncatedConverseRoute β)
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBound (β - delta)) :
     ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = β :=
   PrimeNumberTheorem.not_exists_nontrivial_zero_on_line_of_no_zeros_on_vertical_line
@@ -313,8 +287,7 @@ theorem not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formu
     {β delta : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
     (hdelta_pos : 0 < delta) (hθ_nonneg : 0 ≤ β - delta)
     (hroute : ExplicitFormulaTruncatedConverseRoute β)
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBound (β - delta)) :
     ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = 1 - β :=
   PrimeNumberTheorem.not_exists_nontrivial_zero_on_line_of_no_zeros_on_vertical_line
@@ -326,8 +299,7 @@ to no zeros on `Re(s)=2/3`. -/
 theorem no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_saving
     {delta : ℝ} (hdelta_pos : 0 < delta) (hdelta_le : delta ≤ (2 / 3 : ℝ))
     (hroute : ExplicitFormulaTruncatedConverseRoute (2 / 3))
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBound ((2 / 3 : ℝ) - delta)) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (2 / 3) :=
   no_zeros_on_vertical_line_of_truncated_explicit_formula_converse_route_saving
@@ -340,8 +312,7 @@ to no zeros on `Re(s)=1/3`. -/
 theorem no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_saving
     {delta : ℝ} (hdelta_pos : 0 < delta) (hdelta_le : delta ≤ (2 / 3 : ℝ))
     (hroute : ExplicitFormulaTruncatedConverseRoute (2 / 3))
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBound ((2 / 3 : ℝ) - delta)) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) := by
   simpa [show (1 : ℝ) - 2 / 3 = 1 / 3 by norm_num] using
@@ -355,8 +326,7 @@ on `Re(s)=2/3`. -/
 theorem not_exists_nontrivial_zero_on_two_thirds_of_truncated_explicit_formula_converse_route_saving
     {delta : ℝ} (hdelta_pos : 0 < delta) (hdelta_le : delta ≤ (2 / 3 : ℝ))
     (hroute : ExplicitFormulaTruncatedConverseRoute (2 / 3))
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBound ((2 / 3 : ℝ) - delta)) :
     ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = 2 / 3 :=
   not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_converse_route_saving
@@ -369,8 +339,7 @@ on `Re(s)=1/3`. -/
 theorem not_exists_nontrivial_zero_on_one_third_of_truncated_explicit_formula_converse_route_saving
     {delta : ℝ} (hdelta_pos : 0 < delta) (hdelta_le : delta ≤ (2 / 3 : ℝ))
     (hroute : ExplicitFormulaTruncatedConverseRoute (2 / 3))
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBound ((2 / 3 : ℝ) - delta)) :
     ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = 1 / 3 := by
   simpa [show (1 : ℝ) - 2 / 3 = 1 / 3 by norm_num] using
@@ -385,8 +354,7 @@ boundary `γ`. -/
 theorem no_zeros_on_vertical_line_of_truncated_explicit_formula_converse_route_mono_error
     {β γ : ℝ} (hβγ : β ≤ γ) (hγ_pos : 0 < γ) (hγ_lt_one : γ < 1)
     (hroute : ExplicitFormulaTruncatedConverseRoute γ)
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
     PrimeNumberTheorem.NoZerosOnVerticalLine γ :=
   PrimeNumberTheorem.no_zeros_on_vertical_line_of_psi_power_error_bridge_mono_error
@@ -400,8 +368,7 @@ route. -/
 theorem no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error
     {β γ : ℝ} (hβγ : β ≤ γ) (hγ_pos : 0 < γ) (hγ_lt_one : γ < 1)
     (hroute : ExplicitFormulaTruncatedConverseRoute γ)
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (1 - γ) :=
   PrimeNumberTheorem.no_zeros_on_reflected_line_of_psi_power_error_bridge_mono_error
@@ -415,8 +382,7 @@ route. -/
 theorem not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_converse_route_mono_error
     {β γ : ℝ} (hβγ : β ≤ γ) (hγ_pos : 0 < γ) (hγ_lt_one : γ < 1)
     (hroute : ExplicitFormulaTruncatedConverseRoute γ)
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
     ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = γ :=
   PrimeNumberTheorem.not_exists_nontrivial_zero_on_line_of_no_zeros_on_vertical_line
@@ -428,8 +394,7 @@ explicit-formula route. -/
 theorem not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error
     {β γ : ℝ} (hβγ : β ≤ γ) (hγ_pos : 0 < γ) (hγ_lt_one : γ < 1)
     (hroute : ExplicitFormulaTruncatedConverseRoute γ)
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
     ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = 1 - γ :=
   PrimeNumberTheorem.not_exists_nontrivial_zero_on_line_of_no_zeros_on_vertical_line
