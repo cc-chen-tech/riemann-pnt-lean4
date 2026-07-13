@@ -931,21 +931,22 @@
               <line class="frontier-line" x1="450" y1="322" x2="792" y2="508"></line>
             </g>
             <g class="expanded-connectors">
-              <line x1="450" y1="322" x2="243" y2="180"></line>
-              <line x1="243" y1="180" x2="342" y2="136"></line>
-              <line x1="243" y1="180" x2="594" y2="112"></line>
-              <line x1="342" y1="136" x2="594" y2="112"></line>
-              <line class="route-line" x1="594" y1="112" x2="702" y2="242"></line>
-              <line class="route-line" x1="702" y1="242" x2="657" y2="378"></line>
-              <line class="route-line" x1="657" y1="378" x2="576" y2="434"></line>
-              <line class="route-line" x1="594" y1="112" x2="576" y2="434"></line>
-              <line class="route-line" x1="576" y1="434" x2="477" y2="527"></line>
-              <line class="frontier-line" x1="477" y1="527" x2="306" y2="533"></line>
-              <line class="frontier-line" x1="477" y1="527" x2="180" y2="446"></line>
-              <line class="frontier-line" x1="594" y1="112" x2="774" y2="81"></line>
-              <line class="frontier-line" x1="450" y1="322" x2="783" y2="521"></line>
-              <line class="frontier-line" x1="657" y1="378" x2="819" y2="378"></line>
-              <line class="frontier-line" x1="783" y1="521" x2="819" y2="378"></line>
+              <line x1="117" y1="304" x2="342" y2="161"></line>
+              <line x1="342" y1="161" x2="567" y2="87"></line>
+              <line x1="342" y1="161" x2="567" y2="229"></line>
+              <line x1="567" y1="87" x2="567" y2="229"></line>
+              <line class="route-line" x1="567" y1="229" x2="792" y2="304"></line>
+              <line class="route-line" x1="792" y1="304" x2="567" y2="378"></line>
+              <line class="route-line" x1="567" y1="378" x2="342" y2="453"></line>
+              <line class="route-line" x1="567" y1="229" x2="342" y2="453"></line>
+              <line class="route-line" x1="342" y1="453" x2="567" y2="527"></line>
+              <line class="route-line" x1="792" y1="304" x2="567" y2="527"></line>
+              <line class="frontier-line" x1="567" y1="527" x2="342" y2="558"></line>
+              <line class="frontier-line" x1="567" y1="527" x2="117" y2="465"></line>
+              <line class="frontier-line" x1="567" y1="229" x2="792" y2="87"></line>
+              <line class="frontier-line" x1="117" y1="304" x2="792" y2="546"></line>
+              <line class="frontier-line" x1="567" y1="378" x2="792" y2="428"></line>
+              <line class="frontier-line" x1="792" y1="546" x2="792" y2="428"></line>
             </g>
           </svg>
 
@@ -1042,7 +1043,7 @@
         warning: "形式化 ζ 的基础性质不等于证明 PNT，更不等于证明 RH。",
         dependsOn: [],
         compact: { x: 50, y: 52 },
-        expanded: { x: 50, y: 52 }
+        expanded: { x: 13, y: 49 }
       },
       {
         id: "zeta-tools",
@@ -1062,7 +1063,7 @@
         warning: "这些工具建立局部解析控制；它们尚未自行完成 Perron 路径移动或 PNT。",
         dependsOn: ["zeta"],
         compact: { x: 27, y: 29 },
-        expanded: { x: 27, y: 29 }
+        expanded: { x: 38, y: 26 }
       },
       {
         id: "three-four-one",
@@ -1082,7 +1083,7 @@
         warning: "3-4-1 是经典零自由区域的方法组件，不是 RH 级别的零点定位。",
         dependsOn: ["zeta-tools"],
         compact: { x: 38, y: 22 },
-        expanded: { x: 38, y: 22 }
+        expanded: { x: 63, y: 14 }
       },
       {
         id: "zero-free",
@@ -1102,7 +1103,7 @@
         warning: "这不是 RH；它只控制 Re(s)=1 附近的一条区域。",
         dependsOn: ["zeta-tools", "three-four-one"],
         compact: { x: 68, y: 22 },
-        expanded: { x: 66, y: 18 }
+        expanded: { x: 63, y: 37 }
       },
       {
         id: "perron",
@@ -1122,7 +1123,7 @@
         warning: "已有 Perron 组件不代表整条 PNT 围道论证已经闭合。",
         dependsOn: ["zero-free"],
         compact: { x: 79, y: 49 },
-        expanded: { x: 78, y: 39 }
+        expanded: { x: 88, y: 49 }
       },
       {
         id: "explicit-formula",
@@ -1142,7 +1143,7 @@
         warning: "当前项目尚无完成的全局显式公式定理，不能把接口当作结论。",
         dependsOn: ["perron", "zeta-tools"],
         compact: { x: 73, y: 61 },
-        expanded: { x: 73, y: 61 }
+        expanded: { x: 63, y: 61 }
       },
       {
         id: "psi-error",
@@ -1162,7 +1163,7 @@
         warning: "目标与若干条件式桥梁已形式化，但当前项目尚未证明 ψ(x)=x+o(x)。",
         dependsOn: ["zero-free", "explicit-formula"],
         compact: { x: 64, y: 70 },
-        expanded: { x: 64, y: 70 }
+        expanded: { x: 38, y: 73 }
       },
       {
         id: "pnt",
@@ -1182,7 +1183,7 @@
         warning: "本项目尚未证明素数定理；当前状态是路线目标而非已证结论。",
         dependsOn: ["psi-error", "perron"],
         compact: { x: 67, y: 82 },
-        expanded: { x: 53, y: 85 }
+        expanded: { x: 63, y: 85 }
       },
       {
         id: "pnt-error",
@@ -1202,7 +1203,7 @@
         warning: "展示的是经典目标形状，不是当前仓库已经证明的误差定理。",
         dependsOn: ["pnt", "zero-free"],
         compact: { x: 34, y: 86 },
-        expanded: { x: 34, y: 86 }
+        expanded: { x: 38, y: 90 }
       },
       {
         id: "existing-pnt",
@@ -1222,7 +1223,7 @@
         warning: "其他 Lean 项目已经形式化 PNT，但这不会使 PNT 自动成为当前仓库的证明结果。",
         dependsOn: ["pnt"],
         compact: { x: 20, y: 72 },
-        expanded: { x: 20, y: 72 }
+        expanded: { x: 13, y: 75 }
       },
       {
         id: "zero-density",
@@ -1242,7 +1243,7 @@
         warning: "这是独立的高难度研究方向，不能由现有零自由区域直接推出。",
         dependsOn: ["zeta-tools", "zero-free"],
         compact: { x: 86, y: 13 },
-        expanded: { x: 86, y: 13 }
+        expanded: { x: 88, y: 14 }
       },
       {
         id: "rh-error",
@@ -1262,7 +1263,7 @@
         warning: "条件式蕴含和接口不是 RH 本身的证明，也不是 RH 尺度误差的无条件证明。",
         dependsOn: ["rh", "explicit-formula"],
         compact: { x: 91, y: 61 },
-        expanded: { x: 91, y: 61 }
+        expanded: { x: 88, y: 69 }
       },
       {
         id: "rh",
@@ -1282,7 +1283,7 @@
         warning: "本项目尚未证明黎曼猜想；该节点是远期研究前沿，不是当前结论。",
         dependsOn: ["zeta"],
         compact: { x: 88, y: 82 },
-        expanded: { x: 87, y: 84 }
+        expanded: { x: 88, y: 88 }
       }
     ]);
 
