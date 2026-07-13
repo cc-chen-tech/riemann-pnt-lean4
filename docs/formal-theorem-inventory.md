@@ -3443,10 +3443,17 @@ Support-level verified declarations:
   `exists_goodHeight_Icc_quantitatively_separated` strengthen the contour
   selection to an explicit `1/(4(N+1))` separation from every nontrivial-zero
   absolute ordinate, with `N` the number of distinct absolute ordinates in a
-  fixed local height window.  This is the finite pigeonhole half of the
-  classical quantitative
-  good-height argument; the Jensen `N = O(log T)` substitution remains to be
-  connected.
+  fixed local height window.
+- `exists_card_localZeroHeights_le_log_bound` proves that for `A >= 4` this `N`
+  is at most `B(1+log(A+6))` for one uniform `B >= 0`.  It reflects every
+  low-real-part zero into `Re rho >= 1/2`, covers
+  both signs with the disks centered at `2 +/- i(A+1/2)`, and bounds both finite
+  zero sets by the proved Jensen divisor mass.  Together with the preceding
+  selector this gives contour-height separation of order `1/log A`.
+- `exists_goodHeight_Icc_logarithmically_separated` packages that consequence
+  explicitly: for every `A >= 4`, it selects `T in [A,A+1]` whose distance from
+  every absolute nontrivial-zero ordinate is at least
+  `1/(4(B(1+log(A+6))+1))` for one uniform nonnegative constant `B`.
 - `exists_strictMono_goodHeight_tendsto` constructs a strictly increasing
   sequence of good heights tending to `+∞`, supplying the contour sequence
   needed for principal-value limits.

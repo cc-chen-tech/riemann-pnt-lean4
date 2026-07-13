@@ -213,5 +213,33 @@ theorem exists_goodHeight_Icc_quantitatively_separated (A : ℝ) :
     exact (not_lt_of_ge h) hdelta_pos
   · simpa [H] using hall
 
+/-- Every sufficiently high unit interval contains a contour height whose
+distance from every nontrivial-zero ordinate has an explicit logarithmic lower
+bound.  This packages the local Jensen zero count with the quantitative
+finite-set avoidance theorem. -/
+theorem exists_goodHeight_Icc_logarithmically_separated :
+    ∃ B : ℝ, 0 ≤ B ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        goodHeight T ∧
+          ∀ ρ : ℂ, RiemannHypothesis.IsNontrivialZero ρ →
+            1 / ((4 : ℝ) * (B * (1 + Real.log (A + 6)) + 1)) ≤
+              |T - abs ρ.im| := by
+  rcases exists_card_localZeroHeights_le_log_bound with ⟨B, hB, hcard⟩
+  refine ⟨B, hB, ?_⟩
+  intro A hA
+  rcases exists_goodHeight_Icc_quantitatively_separated A with
+    ⟨T, hT, hgood, hsep⟩
+  refine ⟨T, hT, hgood, ?_⟩
+  have hcardA := hcard A hA
+  have hden :
+      (4 : ℝ) * (((localZeroHeights A).card : ℝ) + 1) ≤
+        4 * (B * (1 + Real.log (A + 6)) + 1) := by
+    nlinarith
+  have hden_pos :
+      0 < (4 : ℝ) * (((localZeroHeights A).card : ℝ) + 1) := by
+    positivity
+  intro ρ hρ
+  exact (one_div_le_one_div_of_le hden_pos hden).trans (hsep ρ hρ)
+
 end ExplicitFormulaAux
 end PrimeNumberTheorem

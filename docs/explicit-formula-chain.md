@@ -498,9 +498,14 @@ For the truncated identity:
    `ExplicitFormulaAux.exists_goodHeight_Icc_quantitatively_separated`
    strengthens this to a height whose distance from every nontrivial-zero
    absolute ordinate is at least `1/(4(N+1))`, where `N` counts distinct
-   absolute zero ordinates in a fixed-width local window.  The remaining
-   quantitative step is to feed
-   the Jensen divisor-mass estimate into `N = O(log T)`;
+   absolute zero ordinates in a fixed-width local window;
+   for `A >= 4`,
+   `ExplicitFormulaAux.exists_card_localZeroHeights_le_log_bound` now combines
+   functional-equation symmetry, two fixed Jensen disks, and the divisor-mass
+   estimate to prove `N <= B(1+log(A+6))`; the combined theorem
+   `ExplicitFormulaAux.exists_goodHeight_Icc_logarithmically_separated` selects
+   `T in [A,A+1]` at distance at least
+   `1/(4(B(1+log(A+6))+1))` from every absolute zero ordinate;
    `ExplicitFormulaAux.exists_strictMono_goodHeight_tendsto` upgrades this to
    a strictly increasing good-height sequence tending to `+∞`;
    `ExplicitFormulaResidues.exists_strictMono_tendsto_rectangleResidueContours`
@@ -528,9 +533,11 @@ For the truncated identity:
    then proves that this segment tends to zero on both horizontal sides.
 5. Remaining contour segment: along the same cofinal good-height sequence,
    control both horizontal integrals on
-   `-delta <= Re(s) <= 1-c/(2log T)`.  This requires the quantitative
-   `zeta'/zeta` estimate obtained by combining separated heights with a local
-   `N(T)=O(log T)` zero-count bound.  After this central band vanishes, combine
+   `-delta <= Re(s) <= 1-c/(2log T)`.  The local absolute-ordinate count and
+   its exact logarithmic-scale separation bound are now proved for `A >= 4`;
+   the remaining analytic
+   step is to convert them into a uniform full-norm `zeta'/zeta` bound on this
+   band.  After the central band vanishes, combine
    the contour identity and residue limits, then pass from the selected cofinal
    sequence to arbitrary truncation heights.
 
