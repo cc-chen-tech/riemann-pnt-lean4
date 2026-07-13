@@ -3,7 +3,7 @@ import PrimeNumberTheorem.ExplicitFormulaResidues
 import PrimeNumberTheorem.ExplicitFormulaRectangle
 import PrimeNumberTheorem.ExplicitFormulaAux
 import PrimeNumberTheorem.FirstOrderLSeriesPerron
-import PrimeNumberTheorem.LeftHorizontalEdge
+import PrimeNumberTheorem.LeftVerticalEdge
 import PrimeNumberTheorem.SecondOrderExplicitFormula
 
 open Complex Filter Topology Set
@@ -631,7 +631,9 @@ part split out, and those trivial-zero sums converge to the classical
 logarithmic correction. -/
 theorem exists_jointCofinal_movingLeft_firstOrderContours
     {x c : ℝ} (hx : 1 < x) (hc : 1 < c) :
-    ∃ W : ℕ → ℝ, StrictMono W ∧ Tendsto W atTop atTop ∧
+    ∃ (K : ℕ) (W : ℕ → ℝ), StrictMono W ∧ Tendsto W atTop atTop ∧
+      (∀ n, ((n + K : ℕ) : ℝ) < 2 * Real.pi * W n ∧
+        2 * Real.pi * W n < ((n + K : ℕ) : ℝ) + 1) ∧
       Tendsto
         (fun n : ℕ => ∑ p ∈ finiteTrivialZeroSum (2 * (n : ℝ)),
           -((x : ℂ) ^ p) / p)
@@ -647,27 +649,35 @@ theorem exists_jointCofinal_movingLeft_firstOrderContours
               ∑ ρ ∈ nontrivialZerosFinset (2 * Real.pi * W n),
                 -(analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ) -
               firstOrderContourRemainder x (-(2 * (n : ℝ) + 1)) c (W n) := by
-  rcases exists_strictMono_goodHeight_gt_one_tendsto with
-    ⟨T, hTmono, hTtend, hT⟩
+  rcases exists_linearlyControlled_goodHeight_gt_one with
+    ⟨K, T, hTmono, hTtend, hT⟩
   let W : ℕ → ℝ := fun n => T n / (2 * Real.pi)
   have hden : 0 < 2 * Real.pi := by positivity
-  refine ⟨W, ?_, ?_, ?_, ?_⟩
+  refine ⟨K, W, ?_, ?_, ?_, ?_, ?_⟩
   · intro a b hab
     exact div_lt_div_of_pos_right (hTmono hab) hden
   · exact hTtend.atTop_div_const hden
+  · intro n
+    have hscale : 2 * Real.pi * W n = T n := by
+      dsimp [W]
+      field_simp
+    rw [hscale]
+    exact ⟨(hT n).1, (hT n).2.1⟩
   · exact ExplicitFormulaAux.tendsto_finiteTrivialZeroSum_residues hx
   · intro n
-    have hW : 0 < W n := div_pos (lt_trans zero_lt_one (hT n).1) hden
+    have hTgt : 1 < T n := (hT n).2.2.1
+    have hTgood : goodHeight (T n) := (hT n).2.2.2
+    have hW : 0 < W n := div_pos (lt_trans zero_lt_one hTgt) hden
     have hscale : 2 * Real.pi * W n = T n := by
       dsimp [W]
       field_simp
     refine ⟨hW, ?_, ?_⟩
     · rw [hscale]
-      exact (hT n).2
+      exact hTgood
     · simpa only [hscale] using
         movingLeft_scaledRightIntegral_eq_truncatedExplicitFormula
           n (zero_lt_one.trans hx) hc hW
-            (by rw [hscale]; exact (hT n).2)
+            (by rw [hscale]; exact hTgood)
 
 /-- Along a joint cofinal moving-left sequence, the
 multiplicity-weighted nontrivial-zero sum minus the contour remainder converges
@@ -688,7 +698,7 @@ theorem exists_jointCofinal_nontrivialZeroSum_sub_remainder_tendsto
           (((-(1 / 2 : ℝ) * Real.log (1 - x ^ (-2 : ℝ)) : ℝ) : ℂ)) -
           ((x : ℂ) - deriv riemannZeta 0 / riemannZeta 0))) := by
   rcases exists_jointCofinal_movingLeft_firstOrderContours hx hc with
-    ⟨W, hmono, hWtend, htriv, hformula⟩
+    ⟨_K, W, hmono, hWtend, _hlinear, htriv, hformula⟩
   have hright :=
     (tendsto_scaledRightIntegral_explicitFormulaIntegrand_atTop
       (zero_lt_one.trans hx) hc).comp hWtend
