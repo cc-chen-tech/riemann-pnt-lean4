@@ -3439,6 +3439,13 @@ Support-level verified declarations:
   gives the negated form used when choosing or excluding bad contour heights.
 - `exists_goodHeight_Ioo` proves that every unit interval contains a good
   height, using finite bounded-height nontrivial-zero support.
+- `localZeroHeights`, `mem_localZeroHeights_of_nontrivialZero`, and
+  `exists_goodHeight_Icc_quantitatively_separated` strengthen the contour
+  selection to an explicit `1/(4(N+1))` separation from every nontrivial-zero
+  ordinate, with `N` the number of distinct ordinates in a fixed local height
+  window.  This is the finite pigeonhole half of the classical quantitative
+  good-height argument; the Jensen `N = O(log T)` substitution remains to be
+  connected.
 - `exists_strictMono_goodHeight_tendsto` constructs a strictly increasing
   sequence of good heights tending to `+∞`, supplying the contour sequence
   needed for principal-value limits.
