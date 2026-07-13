@@ -11,7 +11,6 @@
 ## Global Constraints
 
 - Final artifact: `/Users/luicy/.codex/visualizations/2026/05/23/019e55d5-94a4-7802-b7f0-8df5066f27b1/riemann-proof-atlas.html`.
-- Auditable source: `docs/assets/riemann-proof-atlas.html`; verification copies this byte-for-byte to the final artifact path.
 - The artifact must work directly through `file://` without a server, framework, build tool, external JavaScript library, font download, or network resource.
 - The compact view contains six core concepts and expands to the full network on demand.
 - Every concept page contains plain-language intuition, a representative formula, Lean evidence, downstream impact, and an overclaim warning when applicable.
@@ -126,8 +125,7 @@ git commit -m "test: define proof atlas artifact contract"
 ### Task 2: Build the Standalone Atlas and Content Model
 
 **Files:**
-- Create: `docs/assets/riemann-proof-atlas.html`
-- Copy after verification: `/Users/luicy/.codex/visualizations/2026/05/23/019e55d5-94a4-7802-b7f0-8df5066f27b1/riemann-proof-atlas.html`
+- Modify: `/Users/luicy/.codex/visualizations/2026/05/23/019e55d5-94a4-7802-b7f0-8df5066f27b1/riemann-proof-atlas.html`
 - Test: `scripts/check_riemann_proof_atlas.mjs`
 
 **Interfaces:**
@@ -286,8 +284,7 @@ Open the artifact with its `file://` URL. Expected: the scientific-map theme, si
 ### Task 3: Implement Map, Concept, and History Interaction
 
 **Files:**
-- Modify: `docs/assets/riemann-proof-atlas.html`
-- Copy after verification: `/Users/luicy/.codex/visualizations/2026/05/23/019e55d5-94a4-7802-b7f0-8df5066f27b1/riemann-proof-atlas.html`
+- Modify: `/Users/luicy/.codex/visualizations/2026/05/23/019e55d5-94a4-7802-b7f0-8df5066f27b1/riemann-proof-atlas.html`
 - Test: `scripts/check_riemann_proof_atlas.mjs`
 
 **Interfaces:**
@@ -388,8 +385,7 @@ Expected: all checks pass without console errors.
 ### Task 4: Visual, Responsive, and Claim-Boundary Verification
 
 **Files:**
-- Modify if defects are found: `docs/assets/riemann-proof-atlas.html`
-- Deploy verified source to: `/Users/luicy/.codex/visualizations/2026/05/23/019e55d5-94a4-7802-b7f0-8df5066f27b1/riemann-proof-atlas.html`
+- Modify if defects are found: `/Users/luicy/.codex/visualizations/2026/05/23/019e55d5-94a4-7802-b7f0-8df5066f27b1/riemann-proof-atlas.html`
 - Test: `scripts/check_riemann_proof_atlas.mjs`
 
 **Interfaces:**
@@ -417,14 +413,12 @@ Expected: visible focus at every step, logical focus order, and no animated tran
 - [ ] **Step 4: Re-run source and claim audits**
 
 ```bash
-cmp docs/assets/riemann-proof-atlas.html /Users/luicy/.codex/visualizations/2026/05/23/019e55d5-94a4-7802-b7f0-8df5066f27b1/riemann-proof-atlas.html
-node scripts/check_riemann_proof_atlas.mjs docs/assets/riemann-proof-atlas.html
 node scripts/check_riemann_proof_atlas.mjs /Users/luicy/.codex/visualizations/2026/05/23/019e55d5-94a4-7802-b7f0-8df5066f27b1/riemann-proof-atlas.html
 rg -n "本项目已经证明素数定理|本项目已经证明黎曼猜想" /Users/luicy/.codex/visualizations/2026/05/23/019e55d5-94a4-7802-b7f0-8df5066f27b1/riemann-proof-atlas.html
 git status --short
 ```
 
-Expected: the canonical source and deployed artifact are byte-identical; both checker invocations pass; prohibited-claim search returns no matches; Git status shows only intentional checker/plan changes plus the user's pre-existing unrelated changes.
+Expected: checker passes; prohibited-claim search returns no matches; Git status shows only intentional checker/plan changes plus the user's pre-existing unrelated changes.
 
 - [ ] **Step 5: Commit repository-owned verification files**
 
