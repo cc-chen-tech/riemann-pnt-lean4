@@ -203,6 +203,34 @@ For the lower bound:
 Multiplying both inequalities by the positive number `sigma - 1` gives the
 stated result.
 
+## 5. Local Zero-Removed Regular-Part Estimate
+
+The quantitative zero-free-region branch now contains a proved local theorem
+that removes the previous dependence on the distance to the nearest zero.
+For a pole-free outer disk and a zeta-zero-free intermediate circle, the
+divisor factors inside that circle are replaced by canonical numerators and
+the outer factors are retained. The resulting `mixedCanonicalRegularUnit` is
+analytic and nonzero on the retained closed disk, agrees with zeta in norm on
+its boundary, and has center norm at least that of zeta. The zero-free-circle
+assumption is qualitative; no quantitative distance from that circle to each
+zero enters the estimate.
+
+Combining Borel--Caratheodory/Cauchy control of this unit with the finite
+canonical correction gives
+
+```text
+‖logDeriv ζ(z) - sum_u D(u)/(z-u)‖
+  <= boundaryGrowthTerm + divisorMass/(r-d).
+```
+
+This is formalized as
+`norm_regularized_logDeriv_riemannZeta_le_mixedCanonical_bound`. The estimate
+is local and conditional on the displayed disk data, but its coefficient is
+independent of the nearest zero distance. The next unresolved step is a
+uniform high-height specialization using the already proved zeta growth and
+Jensen divisor-mass bounds, followed by isolation of the selected
+zero-candidate principal term.
+
 ## What This Does and Does Not Prove
 
 The project-local contribution is not a complete proof of the Prime Number

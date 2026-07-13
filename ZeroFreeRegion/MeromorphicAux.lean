@@ -197,6 +197,51 @@ lemma sum_toNat_eq_finsum_cast_of_nonneg_finiteSupport
   intro u _hu
   exact_mod_cast Int.toNat_of_nonneg (hD u)
 
+/-- A nonnegative finite-support integer divisor can be converted to natural
+multiplicities inside any complex-valued weighted finite sum. -/
+lemma sum_toNat_cast_mul_eq_finsum_cast_mul_of_nonneg_finiteSupport
+    {D : ℂ → ℤ} (hfinite : D.support.Finite)
+    (hD : ∀ u, 0 ≤ D u) (F : ℂ → ℂ) :
+    (∑ u ∈ hfinite.toFinset, ((D u).toNat : ℂ) * F u) =
+      ∑ᶠ u, (D u : ℂ) * F u := by
+  classical
+  have hsupp : (fun u : ℂ => (D u : ℂ) * F u).support ⊆
+      hfinite.toFinset := by
+    intro u hu
+    apply hfinite.mem_toFinset.mpr
+    by_contra hDu
+    have hDu0 : D u = 0 := by simpa [Function.mem_support] using hDu
+    simp [hDu0] at hu
+  rw [finsum_eq_sum_of_support_subset _ hsupp]
+  apply Finset.sum_congr rfl
+  intro u _hu
+  congr 1
+  exact_mod_cast Int.toNat_of_nonneg (hD u)
+
+/-- A nonnegative integer divisor product is the ordinary finite product with
+natural multiplicities over its support. -/
+lemma finprod_sub_zpow_eq_prod_toNat_of_nonneg_finiteSupport
+    {D : ℂ → ℤ} (hfinite : D.support.Finite) (hD : ∀ u, 0 ≤ D u)
+    (z : ℂ) :
+    (∏ᶠ u, (z - u) ^ D u) =
+      ∏ u ∈ hfinite.toFinset, (z - u) ^ (D u).toNat := by
+  classical
+  have hmulSupport :
+      Function.mulSupport (fun u : ℂ => (z - u) ^ D u) ⊆
+        hfinite.toFinset := by
+    intro u hu
+    apply hfinite.mem_toFinset.mpr
+    by_contra hDu
+    have hDu0 : D u = 0 := by simpa [Function.mem_support] using hDu
+    simp [hDu0] at hu
+  rw [finprod_eq_prod_of_mulSupport_subset _ hmulSupport]
+  apply Finset.prod_congr rfl
+  intro u _hu
+  have hnat : D u = ((D u).toNat : ℤ) :=
+    (Int.toNat_of_nonneg (hD u)).symm
+  rw [hnat]
+  exact zpow_natCast _ _
+
 /-- The logarithmic derivative of a finite-support divisor product is its
 finite principal-part sum at every point outside the divisor support. -/
 lemma logDeriv_finprod_sub_zpow_eq_finsum_mul_inv
@@ -12529,6 +12574,250 @@ lemma norm_logDeriv_canonicalNumeratorProduct_riemannZetaDivisor_le_finsum_div
   exact norm_logDeriv_canonicalNumeratorProduct_divisor_le_finsum_div
     hD_finite (fun u => hD_nonneg u) hd hdR hu_ball hz
 
+/-- Mixed zero product: zeros inside radius `r` are replaced by canonical
+numerators, while outer zeros retain their ordinary factors. -/
+noncomputable def mixedCanonicalZeroProduct
+    (c : ℂ) (r : ℝ) (zeros : Finset ℂ) (m : ℂ → ℕ) : ℂ → ℂ :=
+  fun z => ∏ u ∈ zeros,
+    if dist u c < r then
+      translatedCanonicalNumerator c r u z ^ m u
+    else
+      (z - u) ^ m u
+
+/-- The mixed product has the same boundary norm as the complete ordinary
+zero product. -/
+lemma norm_mixedCanonicalZeroProduct_eq_norm_prod_sub
+    {c z : ℂ} {r : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ}
+    (hz : z ∈ sphere c r) :
+    ‖mixedCanonicalZeroProduct c r zeros m z‖ =
+      ‖∏ u ∈ zeros, (z - u) ^ m u‖ := by
+  rw [mixedCanonicalZeroProduct, norm_prod, norm_prod]
+  apply Finset.prod_congr rfl
+  intro u hu
+  by_cases hinner : dist u c < r
+  · have hu_ball : u ∈ ball c r := by
+      simpa [Metric.mem_ball] using hinner
+    simp only [hinner, if_true, norm_pow]
+    rw [norm_translatedCanonicalNumerator_eq_norm_sub hu_ball hz]
+  · simp [hinner, norm_pow]
+
+/-- At the center of the canonicalizing disk, replacing every inner raw zero
+factor by its canonical numerator can only increase the product norm. -/
+lemma norm_prod_sub_le_norm_mixedCanonicalZeroProduct_center
+    {c : ℂ} {r : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ}
+    (hr : 0 < r) :
+    ‖∏ u ∈ zeros, (c - u) ^ m u‖ ≤
+      ‖mixedCanonicalZeroProduct c r zeros m c‖ := by
+  rw [mixedCanonicalZeroProduct, norm_prod, norm_prod]
+  apply Finset.prod_le_prod
+  · intro u hu
+    positivity
+  · intro u hu
+    by_cases hinner : dist u c < r
+    · simp only [hinner, if_true, norm_pow]
+      have hcanon : ‖translatedCanonicalNumerator c r u c‖ = r := by
+        have hval : translatedCanonicalNumerator c r u c = (r : ℂ) := by
+          rw [translatedCanonicalNumerator]
+          simp only [sub_self, mul_zero, sub_zero]
+          field_simp
+        rw [hval, norm_real, Real.norm_eq_abs, abs_of_pos hr]
+      rw [hcanon]
+      apply pow_le_pow_left₀ (norm_nonneg _) ?_
+      simpa [dist_eq_norm, norm_sub_rev] using hinner.le
+    · simp [hinner]
+
+/-- The mixed product is nonzero on every strictly smaller closed disk. -/
+lemma mixedCanonicalZeroProduct_ne_zero
+    {c z : ℂ} {d r : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ}
+    (hdr : d < r) (hz : z ∈ closedBall c d) :
+    mixedCanonicalZeroProduct c r zeros m z ≠ 0 := by
+  have hz_r : z ∈ closedBall c r :=
+    Metric.closedBall_subset_closedBall hdr.le hz
+  rw [mixedCanonicalZeroProduct, Finset.prod_ne_zero_iff]
+  intro u hu
+  by_cases hinner : dist u c < r
+  · simp only [hinner, if_true]
+    exact pow_ne_zero _ (translatedCanonicalNumerator_ne_zero
+      (by simpa [Metric.mem_ball] using hinner) hz_r)
+  · simp only [hinner, if_false]
+    apply pow_ne_zero
+    apply sub_ne_zero.mpr
+    intro hzu
+    subst u
+    have hzdist : dist z c ≤ d := by
+      simpa [Metric.mem_closedBall] using hz
+    exact hinner (hzdist.trans_lt hdr)
+
+/-- The mixed canonical/ordinary zero product is entire. -/
+lemma analyticOnNhd_mixedCanonicalZeroProduct
+    {c : ℂ} {r : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ} :
+    AnalyticOnNhd ℂ (mixedCanonicalZeroProduct c r zeros m) Set.univ := by
+  change AnalyticOnNhd ℂ (fun z => ∏ u ∈ zeros,
+    if dist u c < r then
+      (((r : ℂ) ^ 2 - (starRingEnd ℂ) (u - c) * (z - c)) / r) ^ m u
+    else (z - u) ^ m u) Set.univ
+  apply zeros.analyticOnNhd_fun_prod
+  intro u hu
+  by_cases hinner : dist u c < r
+  · simp only [hinner, if_true]
+    exact (analyticOnNhd_translatedCanonicalNumerator
+      (c := c) (u := u) (R := r)).pow (m u)
+  · simp only [hinner, if_false]
+    intro z _hz
+    exact (analyticAt_id.sub analyticAt_const).pow (m u)
+
+/-- Logarithmic derivative of the mixed canonical/ordinary zero product on a
+strictly smaller disk. -/
+lemma logDeriv_mixedCanonicalZeroProduct
+    {c z : ℂ} {d r : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ}
+    (hdr : d < r) (hz : z ∈ closedBall c d) :
+    logDeriv (mixedCanonicalZeroProduct c r zeros m) z =
+      ∑ u ∈ zeros, (m u : ℂ) *
+        (if dist u c < r then
+          logDeriv (translatedCanonicalNumerator c r u) z
+        else (z - u)⁻¹) := by
+  classical
+  have hne := mixedCanonicalZeroProduct_ne_zero
+    (zeros := zeros) (m := m) hdr hz
+  rw [mixedCanonicalZeroProduct, Finset.prod_ne_zero_iff] at hne
+  have hprod := logDeriv_prod
+    (s := zeros)
+    (f := fun u w =>
+      if dist u c < r then
+        translatedCanonicalNumerator c r u w ^ m u
+      else (w - u) ^ m u)
+    (x := z) hne (by
+      intro u hu
+      by_cases hinner : dist u c < r
+      · simp only [hinner, if_true]
+        exact ((analyticOnNhd_translatedCanonicalNumerator
+          (c := c) (u := u) (R := r) z (Set.mem_univ z)).differentiableAt.pow (m u))
+      · simp only [hinner, if_false]
+        exact (differentiableAt_id.sub_const u).pow (m u))
+  change logDeriv (fun w => ∏ u ∈ zeros,
+    if dist u c < r then
+      translatedCanonicalNumerator c r u w ^ m u
+    else (w - u) ^ m u) z = _
+  rw [hprod]
+  apply Finset.sum_congr rfl
+  intro u hu
+  by_cases hinner : dist u c < r
+  · simp only [hinner, if_true]
+    exact logDeriv_fun_pow
+      (analyticOnNhd_translatedCanonicalNumerator
+        (c := c) (u := u) (R := r) z (Set.mem_univ z)).differentiableAt
+      (m u)
+  · simp only [hinner, if_false]
+    rw [logDeriv_fun_pow]
+    · simp [logDeriv_apply]
+    · exact differentiableAt_id.sub_const u
+
+/-- A raw zero factor outside radius `r` has uniformly bounded logarithmic
+derivative on every smaller radius `d`. -/
+lemma norm_inv_sub_le_inv_sub_of_radial_ge
+    {c u z : ℂ} {d r : ℝ}
+    (hdr : d < r) (hu : r ≤ dist u c) (hz : dist z c ≤ d) :
+    ‖(z - u)⁻¹‖ ≤ (r - d)⁻¹ := by
+  have hgap : 0 < r - d := sub_pos.mpr hdr
+  have hsep : r - d ≤ dist z u := by
+    have htri : dist u c ≤ dist u z + dist z c := dist_triangle u z c
+    rw [dist_comm z u]
+    linarith
+  rw [norm_inv, ← dist_eq_norm]
+  simpa [one_div] using one_div_le_one_div_of_le hgap hsep
+
+/-- The complete mixed canonical correction is bounded only by total
+multiplicity and the retained radial margin.  The estimate is uniform as an
+inner zero approaches the canonicalizing circle. -/
+lemma norm_logDeriv_mixedCanonicalZeroProduct_le_sum_div
+    {c z : ℂ} {d r : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ}
+    (hd : 0 ≤ d) (hdr : d < r) (hz : z ∈ closedBall c d) :
+    ‖logDeriv (mixedCanonicalZeroProduct c r zeros m) z‖ ≤
+      (∑ u ∈ zeros, (m u : ℝ)) / (r - d) := by
+  have hzdist : dist z c ≤ d := by
+    simpa [Metric.mem_closedBall] using hz
+  rw [logDeriv_mixedCanonicalZeroProduct hdr hz]
+  calc
+    ‖∑ u ∈ zeros, (m u : ℂ) *
+        (if dist u c < r then
+          logDeriv (translatedCanonicalNumerator c r u) z
+        else (z - u)⁻¹)‖
+        ≤ ∑ u ∈ zeros, ‖(m u : ℂ) *
+            (if dist u c < r then
+              logDeriv (translatedCanonicalNumerator c r u) z
+            else (z - u)⁻¹)‖ := norm_sum_le _ _
+    _ ≤ ∑ u ∈ zeros, (m u : ℝ) * (1 / (r - d)) := by
+      apply Finset.sum_le_sum
+      intro u hu_mem
+      rw [norm_mul, Complex.norm_natCast]
+      apply mul_le_mul_of_nonneg_left _ (Nat.cast_nonneg _)
+      by_cases hinner : dist u c < r
+      · simp only [hinner, if_true]
+        exact norm_logDeriv_translatedCanonicalNumerator_le_inv_sub
+          hd hdr (by simpa [Metric.mem_ball] using hinner) hz
+      · simp only [hinner, if_false]
+        simpa [one_div] using
+          norm_inv_sub_le_inv_sub_of_radial_ge hdr (not_lt.mp hinner) hzdist
+    _ = (∑ u ∈ zeros, (m u : ℝ)) / (r - d) := by
+      rw [← Finset.sum_mul]
+      ring
+
+/-- Product of a mixed canonical zero factor with an extracted regular unit. -/
+noncomputable def mixedCanonicalRegularUnit
+    (c : ℂ) (r : ℝ) (zeros : Finset ℂ) (m : ℂ → ℕ)
+    (g : ℂ → ℂ) : ℂ → ℂ :=
+  fun z => mixedCanonicalZeroProduct c r zeros m z * g z
+
+/-- The mixed canonical regular unit is analytic wherever the extracted unit
+is analytic. -/
+lemma analyticOnNhd_mixedCanonicalRegularUnit
+    {c : ℂ} {r b : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ} {g : ℂ → ℂ}
+    (hrb : r ≤ b) (hg : AnalyticOnNhd ℂ g (closedBall c b)) :
+    AnalyticOnNhd ℂ (mixedCanonicalRegularUnit c r zeros m g)
+      (closedBall c r) := by
+  intro z hz
+  exact
+    (analyticOnNhd_mixedCanonicalZeroProduct
+      (c := c) (r := r) (zeros := zeros) (m := m) z (Set.mem_univ z)).mul
+    (hg z (Metric.closedBall_subset_closedBall hrb hz))
+
+/-- The mixed canonical regular unit is nonzero on every strictly smaller
+disk when the extracted unit is nonzero on the outer disk. -/
+lemma mixedCanonicalRegularUnit_ne_zero
+    {c z : ℂ} {d r b : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ} {g : ℂ → ℂ}
+    (hdr : d < r) (hdb : d ≤ b)
+    (hgne : ∀ u : (closedBall c b : Set ℂ), g u ≠ 0)
+    (hz : z ∈ closedBall c d) :
+    mixedCanonicalRegularUnit c r zeros m g z ≠ 0 := by
+  rw [mixedCanonicalRegularUnit]
+  exact mul_ne_zero
+    (mixedCanonicalZeroProduct_ne_zero hdr hz)
+    (hgne ⟨z, Metric.closedBall_subset_closedBall hdb hz⟩)
+
+/-- The logarithmic derivative of the mixed regular unit is the sum of its
+finite zero correction and the logarithmic derivative of the extracted unit. -/
+lemma logDeriv_mixedCanonicalRegularUnit
+    {c z : ℂ} {d r b : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ} {g : ℂ → ℂ}
+    (hdr : d < r) (hdb : d ≤ b)
+    (hg : AnalyticOnNhd ℂ g (closedBall c b))
+    (hgne : ∀ u : (closedBall c b : Set ℂ), g u ≠ 0)
+    (hz : z ∈ closedBall c d) :
+    logDeriv (mixedCanonicalRegularUnit c r zeros m g) z =
+      (∑ u ∈ zeros, (m u : ℂ) *
+        (if dist u c < r then
+          logDeriv (translatedCanonicalNumerator c r u) z
+        else (z - u)⁻¹)) + logDeriv g z := by
+  change logDeriv
+    (fun w => mixedCanonicalZeroProduct c r zeros m w * g w) z = _
+  rw [logDeriv_mul z
+    (mixedCanonicalZeroProduct_ne_zero hdr hz)
+    (hgne ⟨z, Metric.closedBall_subset_closedBall hdb hz⟩)
+    (analyticOnNhd_mixedCanonicalZeroProduct
+      (c := c) (r := r) (zeros := zeros) (m := m)
+      z (Set.mem_univ z)).differentiableAt
+    (hg z (Metric.closedBall_subset_closedBall hdb hz)).differentiableAt]
+  rw [logDeriv_mixedCanonicalZeroProduct hdr hz]
+
 /-- On a closed disk avoiding the pole, zeta factors into its complete local
 divisor product and an analytic nonvanishing unit.
 
@@ -12561,6 +12850,239 @@ lemma exists_analytic_nonzero_factorization_riemannZeta_closedBall
       (isCompact_closedBall c R)
   simpa [U, Pi.smul_apply', smul_eq_mul] using
     hmer.extract_zeros_poles hnotop hfinite
+
+/-- The codiscrete zeta factorization upgrades to a pointwise identity at
+every strict-interior point, including zeta zeros.  Divisor nonnegativity makes
+the complete raw zero product analytic at those zeros. -/
+lemma factorization_riemannZeta_closedBall_pointwise_of_eventuallyEq
+    {c : ℂ} {R : ℝ} {g : ℂ → ℂ}
+    (havoid : ∀ z : ℂ, z ∈ closedBall c R → z ≠ 1)
+    (hg : AnalyticOnNhd ℂ g (closedBall c R))
+    (_hgne : ∀ u : (closedBall c R : Set ℂ), g u ≠ 0)
+    (hfactor : riemannZeta =ᶠ[codiscreteWithin (closedBall c R)]
+      (∏ᶠ u, (· - u) ^
+        MeromorphicOn.divisor riemannZeta (closedBall c R) u) * g) :
+    ∀ z ∈ ball c R,
+      riemannZeta z =
+        (∏ᶠ u, (z - u) ^
+          MeromorphicOn.divisor riemannZeta (closedBall c R) u) * g z := by
+  classical
+  let U : Set ℂ := closedBall c R
+  let D := MeromorphicOn.divisor riemannZeta U
+  let fac : ℂ → ℂ := ∏ᶠ u, fun w : ℂ => (w - u) ^ D u
+  have hanU : AnalyticOnNhd ℂ riemannZeta U := by
+    intro z hz
+    exact analyticOnNhd_riemannZeta_ne_one z (havoid z hz)
+  have hD_nonneg : 0 ≤ D := hanU.divisor_nonneg
+  have hDfinite : D.support.Finite :=
+    D.finiteSupport (isCompact_closedBall c R)
+  intro z hz
+  have hzU : z ∈ U := ball_subset_closedBall hz
+  have hza : AnalyticAt ℂ riemannZeta z := hanU z hzU
+  have hfacnf : MeromorphicNFAt fac z :=
+    Function.FactorizedRational.meromorphicNFOn D U hzU
+  have hfaca : AnalyticAt ℂ fac z := by
+    apply hfacnf.meromorphicOrderAt_nonneg_iff_analyticAt.mp
+    rw [show meromorphicOrderAt fac z = D z by
+      exact Function.FactorizedRational.meromorphicOrderAt_eq D hDfinite]
+    exact_mod_cast hD_nonneg z
+  have hrhsa : AnalyticAt ℂ (fun w => fac w * g w) z :=
+    hfaca.mul (hg z hzU)
+  have hU_nhds : U ∈ nhds z := closedBall_mem_nhds_of_mem hz
+  have hacc : AccPt z (Filter.principal U) := by
+    rw [accPt_principal_iff_nhdsWithin]
+    have heq : nhdsWithin z (U \ {z}) = nhdsWithin z {z}ᶜ := by
+      rw [nhdsWithin_eq_iff_eventuallyEq]
+      filter_upwards [hU_nhds] with w hw
+      apply propext
+      constructor
+      · intro h
+        exact h.2
+      · intro h
+        exact ⟨hw, h⟩
+    rw [heq]
+    infer_instance
+  have hfactorNE : riemannZeta =ᶠ[nhdsWithin z {z}ᶜ]
+      fun w => fac w * g w := by
+    apply hza.meromorphicAt.eventuallyEq_nhdsNE_of_eventuallyEq_codiscreteWithin
+      hrhsa.meromorphicAt hzU hacc
+    simpa [fac, D, U, Pi.smul_apply', smul_eq_mul] using hfactor
+  have hfactorN : riemannZeta =ᶠ[nhds z] fun w => fac w * g w :=
+    (hza.continuousAt.eventuallyEq_nhds_iff_eventuallyEq_nhdsNE
+      hrhsa.continuousAt).mp hfactorNE
+  have hmulSupport :
+      Function.mulSupport (fun u : ℂ => fun w : ℂ => (w - u) ^ D u) ⊆
+        D.support := by
+    intro u hu
+    by_contra hDu
+    have hDu0 : D u = 0 := by simpa [Function.mem_support] using hDu
+    apply hu
+    funext w
+    simp [hDu0]
+  have hfacfinite : Function.HasFiniteMulSupport
+      (fun u : ℂ => fun w : ℂ => (w - u) ^ D u) :=
+    hDfinite.subset hmulSupport
+  have hpoint := hfactorN.eq_of_nhds
+  rw [show fac z = ∏ᶠ u, (z - u) ^ D u by
+    exact finprod_apply hfacfinite z] at hpoint
+  simpa [D, U] using hpoint
+
+/-- On an interior circle, the zeta-divisor mixed canonical regular unit has
+exactly the same norm as zeta.  Inner zero factors are replaced by canonical
+numerators of the same boundary norm, while outer zero factors are unchanged. -/
+lemma norm_mixedCanonicalRegularUnit_riemannZetaDivisor_eq_norm_riemannZeta_on_sphere
+    {c z : ℂ} {r b : ℝ} {g : ℂ → ℂ}
+    (hrb : r < b)
+    (havoid : ∀ w : ℂ, w ∈ closedBall c b → w ≠ 1)
+    (hg : AnalyticOnNhd ℂ g (closedBall c b))
+    (hgne : ∀ u : (closedBall c b : Set ℂ), g u ≠ 0)
+    (hfactor : riemannZeta =ᶠ[codiscreteWithin (closedBall c b)]
+      (∏ᶠ u, (· - u) ^
+        MeromorphicOn.divisor riemannZeta (closedBall c b) u) * g)
+    (hz : z ∈ sphere c r) :
+    ‖mixedCanonicalRegularUnit c r
+        (riemannZetaDivisorSupport c b)
+        (riemannZetaDivisorMultiplicity c b) g z‖ =
+      ‖riemannZeta z‖ := by
+  classical
+  let D := MeromorphicOn.divisor riemannZeta (closedBall c b)
+  have han : AnalyticOnNhd ℂ riemannZeta (closedBall c b) := by
+    intro w hw
+    exact analyticOnNhd_riemannZeta_ne_one w (havoid w hw)
+  have hD_nonneg : 0 ≤ D := han.divisor_nonneg
+  have hD_finite : D.support.Finite :=
+    D.finiteSupport (isCompact_closedBall c b)
+  have hzdist : dist z c = r := by
+    simpa [Metric.mem_sphere, dist_eq_norm, norm_sub_rev] using hz
+  have hz_ball : z ∈ ball c b := by
+    rw [Metric.mem_ball]
+    linarith
+  have hpoint :=
+    factorization_riemannZeta_closedBall_pointwise_of_eventuallyEq
+      (c := c) (R := b) havoid hg hgne hfactor z hz_ball
+  have hraw :=
+    finprod_sub_zpow_eq_prod_toNat_of_nonneg_finiteSupport
+      hD_finite (fun u => hD_nonneg u) z
+  change ‖mixedCanonicalRegularUnit c r hD_finite.toFinset
+      (fun u => (D u).toNat) g z‖ = ‖riemannZeta z‖
+  rw [hraw] at hpoint
+  rw [mixedCanonicalRegularUnit, norm_mul,
+    norm_mixedCanonicalZeroProduct_eq_norm_prod_sub hz, hpoint, norm_mul]
+
+/-- At the disk center, the zeta-divisor mixed canonical regular unit has norm
+at least that of zeta.  This preserves the standard zeta center lower bound
+without a loss depending on the nearest zero radius. -/
+lemma norm_riemannZeta_le_norm_mixedCanonicalRegularUnit_riemannZetaDivisor_center
+    {c : ℂ} {r b : ℝ} {g : ℂ → ℂ}
+    (hr : 0 < r) (hrb : r < b)
+    (havoid : ∀ w : ℂ, w ∈ closedBall c b → w ≠ 1)
+    (hg : AnalyticOnNhd ℂ g (closedBall c b))
+    (hgne : ∀ u : (closedBall c b : Set ℂ), g u ≠ 0)
+    (hfactor : riemannZeta =ᶠ[codiscreteWithin (closedBall c b)]
+      (∏ᶠ u, (· - u) ^
+        MeromorphicOn.divisor riemannZeta (closedBall c b) u) * g) :
+    ‖riemannZeta c‖ ≤
+      ‖mixedCanonicalRegularUnit c r
+        (riemannZetaDivisorSupport c b)
+        (riemannZetaDivisorMultiplicity c b) g c‖ := by
+  classical
+  let D := MeromorphicOn.divisor riemannZeta (closedBall c b)
+  have han : AnalyticOnNhd ℂ riemannZeta (closedBall c b) := by
+    intro w hw
+    exact analyticOnNhd_riemannZeta_ne_one w (havoid w hw)
+  have hD_nonneg : 0 ≤ D := han.divisor_nonneg
+  have hD_finite : D.support.Finite :=
+    D.finiteSupport (isCompact_closedBall c b)
+  have hc_ball : c ∈ ball c b := Metric.mem_ball_self (hr.trans hrb)
+  have hpoint :=
+    factorization_riemannZeta_closedBall_pointwise_of_eventuallyEq
+      (c := c) (R := b) havoid hg hgne hfactor c hc_ball
+  have hraw :=
+    finprod_sub_zpow_eq_prod_toNat_of_nonneg_finiteSupport
+      hD_finite (fun u => hD_nonneg u) c
+  change ‖riemannZeta c‖ ≤
+    ‖mixedCanonicalRegularUnit c r hD_finite.toFinset
+      (fun u => (D u).toNat) g c‖
+  rw [hraw] at hpoint
+  rw [hpoint, mixedCanonicalRegularUnit, norm_mul, norm_mul]
+  exact mul_le_mul_of_nonneg_right
+    (norm_prod_sub_le_norm_mixedCanonicalZeroProduct_center hr)
+    (norm_nonneg _)
+
+/-- If zeta is nonzero on the canonicalizing circle, the zeta-divisor mixed
+regular unit is nonzero on the entire closed disk, including its boundary. -/
+lemma mixedCanonicalRegularUnit_riemannZetaDivisor_ne_zero_closedBall
+    {c z : ℂ} {r b : ℝ} {g : ℂ → ℂ}
+    (hrb : r < b)
+    (havoid : ∀ w : ℂ, w ∈ closedBall c b → w ≠ 1)
+    (hg : AnalyticOnNhd ℂ g (closedBall c b))
+    (hgne : ∀ u : (closedBall c b : Set ℂ), g u ≠ 0)
+    (hfactor : riemannZeta =ᶠ[codiscreteWithin (closedBall c b)]
+      (∏ᶠ u, (· - u) ^
+        MeromorphicOn.divisor riemannZeta (closedBall c b) u) * g)
+    (hsphere : ∀ w ∈ sphere c r, riemannZeta w ≠ 0)
+    (hz : z ∈ closedBall c r) :
+    mixedCanonicalRegularUnit c r
+      (riemannZetaDivisorSupport c b)
+      (riemannZetaDivisorMultiplicity c b) g z ≠ 0 := by
+  have hzdist : dist z c ≤ r := by
+    simpa [Metric.mem_closedBall] using hz
+  rcases lt_or_eq_of_le hzdist with hlt | heq
+  · exact mixedCanonicalRegularUnit_ne_zero
+      (d := dist z c) hlt (hzdist.trans hrb.le) hgne
+      (by simp [Metric.mem_closedBall])
+  · have hzsphere : z ∈ sphere c r := by
+      simpa [Metric.mem_sphere, dist_eq_norm, norm_sub_rev] using heq
+    intro hzero
+    have hnorm :=
+      norm_mixedCanonicalRegularUnit_riemannZetaDivisor_eq_norm_riemannZeta_on_sphere
+        hrb havoid hg hgne hfactor hzsphere
+    have hzeta_norm : ‖riemannZeta z‖ = 0 := by
+      rw [← hnorm, hzero, norm_zero]
+    exact hsphere z hzsphere (norm_eq_zero.mp hzeta_norm)
+
+/-- Borel--Caratheodory/Cauchy bound for the mixed zero-removed zeta unit.
+Canonicalization preserves zeta's boundary norm and improves its center norm,
+so the estimate has no loss depending on the nearest zero radius. -/
+lemma norm_logDeriv_mixedCanonicalRegularUnit_riemannZetaDivisor_le
+    {c z : ℂ} {r b B ρ : ℝ} {g : ℂ → ℂ}
+    (hc : 2 ≤ c.re) (hr : 0 < r) (hrb : r < b) (hρ : 0 < ρ)
+    (havoid : ∀ w : ℂ, w ∈ closedBall c b → w ≠ 1)
+    (hg : AnalyticOnNhd ℂ g (closedBall c b))
+    (hgne : ∀ u : (closedBall c b : Set ℂ), g u ≠ 0)
+    (hfactor : riemannZeta =ᶠ[codiscreteWithin (closedBall c b)]
+      (∏ᶠ u, (· - u) ^
+        MeromorphicOn.divisor riemannZeta (closedBall c b) u) * g)
+    (hsphere_ne : ∀ w ∈ sphere c r, riemannZeta w ≠ 0)
+    (hsphere_log : ∀ w ∈ sphere c r, Real.log ‖riemannZeta w‖ ≤ B)
+    (hzρ : dist z c + ρ ≤ r / 2) :
+    ‖logDeriv
+        (mixedCanonicalRegularUnit c r
+          (riemannZetaDivisorSupport c b)
+          (riemannZetaDivisorMultiplicity c b) g) z‖ ≤
+      2 * max (B + Real.log 3) 1 / ρ := by
+  let h := mixedCanonicalRegularUnit c r
+    (riemannZetaDivisorSupport c b)
+    (riemannZetaDivisorMultiplicity c b) g
+  have hh : AnalyticOnNhd ℂ h (closedBall c r) :=
+    analyticOnNhd_mixedCanonicalRegularUnit hrb.le hg
+  have hhne : ∀ w ∈ closedBall c r, h w ≠ 0 := by
+    intro w hw
+    exact mixedCanonicalRegularUnit_riemannZetaDivisor_ne_zero_closedBall
+      hrb havoid hg hgne hfactor hsphere_ne hw
+  have hcenter : (1 / 3 : ℝ) ≤ ‖h c‖ :=
+    (one_third_le_norm_riemannZeta_of_two_le_re c hc).trans
+      (norm_riemannZeta_le_norm_mixedCanonicalRegularUnit_riemannZetaDivisor_center
+        hr hrb havoid hg hgne hfactor)
+  have hsphere_h : ∀ w ∈ sphere c r, Real.log ‖h w‖ ≤ B := by
+    intro w hw
+    rw [show ‖h w‖ = ‖riemannZeta w‖ by
+      exact
+        norm_mixedCanonicalRegularUnit_riemannZetaDivisor_eq_norm_riemannZeta_on_sphere
+          hrb havoid hg hgne hfactor hw]
+    exact hsphere_log w hw
+  exact norm_logDeriv_le_two_mul_max_add_log_three_div_of_sphere_log_norm_le
+    hr hρ hh hhne hcenter hsphere_h hzρ
 
 /-- A fixed extracted zeta factor carries the pointwise logarithmic-derivative
 principal-part identity at every nonzero strict-interior point. -/
@@ -12652,6 +13174,93 @@ lemma logDeriv_factorization_riemannZeta_closedBall_pointwise_of_eventuallyEq
     _ = (∑ᶠ u,
           (MeromorphicOn.divisor riemannZeta (closedBall c R) u : ℂ) *
             (z - u)⁻¹) + logDeriv g z := by rfl
+
+/-- Complete zeta principal-part regularization through the mixed canonical
+unit.  Both sides equal the logarithmic derivative of the extracted analytic
+unit, but the right side is expressed as a Borel-controlled mixed unit minus
+a uniformly bounded finite correction. -/
+lemma regularized_logDeriv_riemannZeta_eq_mixedCanonicalRegularUnit_sub_correction
+    {c z : ℂ} {d r b : ℝ} {g : ℂ → ℂ}
+    (hdr : d < r) (hrb : r < b)
+    (havoid : ∀ w : ℂ, w ∈ closedBall c b → w ≠ 1)
+    (hg : AnalyticOnNhd ℂ g (closedBall c b))
+    (hgne : ∀ u : (closedBall c b : Set ℂ), g u ≠ 0)
+    (hfactor : riemannZeta =ᶠ[codiscreteWithin (closedBall c b)]
+      (∏ᶠ u, (· - u) ^
+        MeromorphicOn.divisor riemannZeta (closedBall c b) u) * g)
+    (hz : z ∈ closedBall c d) (hzeta : riemannZeta z ≠ 0) :
+    logDeriv riemannZeta z -
+        ∑ᶠ u, (MeromorphicOn.divisor riemannZeta
+          (closedBall c b) u : ℂ) * (z - u)⁻¹ =
+      logDeriv
+          (mixedCanonicalRegularUnit c r
+            (riemannZetaDivisorSupport c b)
+            (riemannZetaDivisorMultiplicity c b) g) z -
+        ∑ u ∈ riemannZetaDivisorSupport c b,
+          (riemannZetaDivisorMultiplicity c b u : ℂ) *
+            (if dist u c < r then
+              logDeriv (translatedCanonicalNumerator c r u) z
+            else (z - u)⁻¹) := by
+  have hzdist : dist z c ≤ d := by
+    simpa [Metric.mem_closedBall] using hz
+  have hz_ball : z ∈ ball c b := by
+    rw [Metric.mem_ball]
+    linarith
+  have hzeta_ld :=
+    logDeriv_factorization_riemannZeta_closedBall_pointwise_of_eventuallyEq
+      havoid hg hgne hfactor z hz_ball hzeta
+  have hmixed_ld := logDeriv_mixedCanonicalRegularUnit
+    (zeros := riemannZetaDivisorSupport c b)
+    (m := riemannZetaDivisorMultiplicity c b)
+    hdr (hdr.le.trans hrb.le) hg hgne hz
+  rw [hzeta_ld, hmixed_ld]
+  abel
+
+/-- Uniform local regular-part estimate for zeta after removing every divisor
+principal part in the outer disk.  The bound depends on boundary growth and
+total divisor mass, but not on the distance to the nearest zero. -/
+lemma norm_regularized_logDeriv_riemannZeta_le_mixedCanonical_bound
+    {c z : ℂ} {d r b B ρ : ℝ} {g : ℂ → ℂ}
+    (hc : 2 ≤ c.re) (hd : 0 ≤ d) (hdr : d < r) (hrb : r < b)
+    (hρ : 0 < ρ)
+    (havoid : ∀ w : ℂ, w ∈ closedBall c b → w ≠ 1)
+    (hg : AnalyticOnNhd ℂ g (closedBall c b))
+    (hgne : ∀ u : (closedBall c b : Set ℂ), g u ≠ 0)
+    (hfactor : riemannZeta =ᶠ[codiscreteWithin (closedBall c b)]
+      (∏ᶠ u, (· - u) ^
+        MeromorphicOn.divisor riemannZeta (closedBall c b) u) * g)
+    (hsphere_ne : ∀ w ∈ sphere c r, riemannZeta w ≠ 0)
+    (hsphere_log : ∀ w ∈ sphere c r, Real.log ‖riemannZeta w‖ ≤ B)
+    (hz : z ∈ closedBall c d) (hzeta : riemannZeta z ≠ 0)
+    (hzρ : dist z c + ρ ≤ r / 2) :
+    ‖logDeriv riemannZeta z -
+        ∑ᶠ u, (MeromorphicOn.divisor riemannZeta
+          (closedBall c b) u : ℂ) * (z - u)⁻¹‖ ≤
+      2 * max (B + Real.log 3) 1 / ρ +
+        (∑ᶠ u, (MeromorphicOn.divisor riemannZeta
+          (closedBall c b) u : ℝ)) / (r - d) := by
+  let D := MeromorphicOn.divisor riemannZeta (closedBall c b)
+  have han : AnalyticOnNhd ℂ riemannZeta (closedBall c b) := by
+    intro w hw
+    exact analyticOnNhd_riemannZeta_ne_one w (havoid w hw)
+  have hD_nonneg : 0 ≤ D := han.divisor_nonneg
+  have hD_finite : D.support.Finite :=
+    D.finiteSupport (isCompact_closedBall c b)
+  have hunit :=
+    norm_logDeriv_mixedCanonicalRegularUnit_riemannZetaDivisor_le
+      hc (hd.trans_lt hdr) hrb hρ havoid hg hgne hfactor
+        hsphere_ne hsphere_log hzρ
+  have hcorr := norm_logDeriv_mixedCanonicalZeroProduct_le_sum_div
+    (zeros := hD_finite.toFinset) (m := fun u => (D u).toNat)
+    hd hdr hz
+  rw [logDeriv_mixedCanonicalZeroProduct hdr hz] at hcorr
+  rw [sum_toNat_eq_finsum_cast_of_nonneg_finiteSupport
+    hD_finite (fun u => hD_nonneg u)] at hcorr
+  have hidentity :=
+    regularized_logDeriv_riemannZeta_eq_mixedCanonicalRegularUnit_sub_correction
+      hdr hrb havoid hg hgne hfactor hz hzeta
+  rw [hidentity]
+  exact (norm_sub_le _ _).trans (add_le_add hunit hcorr)
 
 /-- Pointwise logarithmic-derivative form of the complete zeta factorization.
 

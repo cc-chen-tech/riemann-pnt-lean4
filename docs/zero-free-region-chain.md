@@ -239,9 +239,27 @@ standard de la Vallee Poussin contradiction:
 
 The `σ + 2it` term now has a proved half-plane reduction:
 `norm_logDeriv_riemannZeta_le_real_neg_deriv_div` bounds it by the real-axis
-value at the same real part whenever `σ > 1`. The remaining work is therefore
-to turn the real-axis value at `σ = 1 + a / log |t|` into the required
-`O(log |t|)` bound and to prove the local zero-candidate regular-part estimate.
+value at the same real part whenever `σ > 1`. The raw boundary-strip estimate
+is still open. On the regular-part side, the mixed canonical construction now
+proves a local estimate without a nearest-zero-radius loss. For an outer zeta
+divisor disk, an interior canonical radius `r`, and a retained radius `d<r`,
+`norm_regularized_logDeriv_riemannZeta_le_mixedCanonical_bound` controls
+
+```text
+‖logDeriv ζ(z) - sum_u D(u)/(z-u)‖
+```
+
+by a Borel boundary-log-norm term plus `divisorMass/(r-d)`. The mixed unit is
+analytic and nonzero on the closed radius-`r` disk when that circle is
+zeta-zero-free, has exactly the zeta norm on its boundary, and inherits the
+center lower bound `1/3`. Thus the old quantitative loss from requiring a
+positive distance to every zero has been removed, while the qualitative
+zero-free-circle premise remains explicit.
+
+The remaining regular-part task is now narrower: choose radii with fixed
+positive margins at high height, insert the unconditional zeta boundary-growth
+and Jensen divisor-mass bounds, and project the full divisor regularization to
+the zero-candidate principal part consumed by the 3-4-1 contradiction.
 
 A fixed-margin version of this logarithmic control is already proved:
 `exists_norm_logDeriv_riemannZeta_le_log_abs_im_add_three_of_one_add_le_re`
@@ -319,8 +337,10 @@ Consequences:
   zero-free-region target by the proved real-variable width comparison.
 
 The remaining work for the classical zero-free region is therefore not the
-algebraic 3-4-1 contradiction or bounded-height patching; it is the
-zeta-specific logarithmic-derivative estimates described below.
+algebraic 3-4-1 contradiction, bounded-height patching, or construction of a
+nearest-zero-uniform local regular unit. It is the high-height specialization
+of that local estimate, the zero-candidate projection, and the remaining raw
+shifted logarithmic-derivative estimate described below.
 
 The standard real-variable choice
 `sigmaOf t = 1 + a / Real.log |t|` now has its elementary side conditions
