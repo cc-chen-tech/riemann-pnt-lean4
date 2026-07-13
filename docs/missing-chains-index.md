@@ -47,10 +47,11 @@ Two questions must stay separate:
   zeta/L-function library, and any newer Lean repositories current at
   submission time.
 
-The safe publication claim is a local one: this repository develops verified
-Lean 4 infrastructure for the de la Vallee Poussin 3-4-1 machinery and a
-compact zero-free strip.  It is not a first PNT formalization, not a completed
-classical analytic PNT proof, and not a proof of RH.
+The safe publication claim is a focused one: this repository develops verified
+Lean 4 infrastructure for the de la Vallee Poussin 3-4-1 machinery and proves
+the classical `c/log |t|` zero-free region.  It is not a first PNT
+formalization, not a completed classical analytic PNT proof, and not a proof
+of RH.
 
 For the zero-free-region route, the classical `c/log |t|` milestone is now
 proved by `classical_zero_free_region_proved`.  The remaining target in this
@@ -62,7 +63,7 @@ technology rather than more local Jensen/Borel wrappers.
 | Chain | Current Lean target status | Main correction before proof work | Smallest useful next step | Open target count |
 | --- | --- | --- | --- | --- |
 | Quantitative zero-free region | `classical_zero_free_region` is proved; `vinogradov_korobov_zero_free_region` remains a target | Develop exponential-sum estimates for the stronger width | Formalize the Vinogradov-Korobov exponential-sum input without weakening the proved classical theorem | 1 |
-| Explicit formula | `explicit_formula_von_mangoldt` is a `def ... : Prop` target | Replace the unconditional infinite `tsum` target with a truncated Perron/residue formula for `psi0`, then a principal-value limit | The first-order Perron limit, multiplicity-aware truncated formula, far-left horizontal decay, moving left-edge decay, and inner zero-free horizontal decay are theorem-level. Control the remaining central band `-delta <= Re(s) <= 1-c/(2log T)` along the same good-height sequence, then pass to arbitrary truncation heights | 1 |
+| Explicit formula | `explicit_formula_von_mangoldt` is a `def ... : Prop` target | Complete a truncated Perron/residue formula for `psi0`, then justify the principal-value limit | The first-order Perron limit, multiplicity-aware truncated formula, far-left horizontal decay, moving left-edge decay, fixed right horizontal decay, and inner zero-free horizontal decay are theorem-level. Prove a quantitative good-height `zeta'/zeta` bound on `-delta <= Re(s) <= 1-c/(2log T)`, combine all edge limits, then pass to arbitrary truncation heights | 1 |
 | RH error equivalence | `rh_iff_optimal_error` is a `def ... : Prop` target | Stage the result through `=O[atTop]` predicates for `psi`, `theta`, and `primeCounting - logIntegral` | Prove `RH -> RH_PsiErrorBound` via explicit formula estimates, and prove the prime-counting reverse endpoint back to `RH_PsiErrorBound`; the conditional bridge `RH_PsiErrorBound -> RiemannHypothesis` is now theorem-level | 8 |
 | Hardy theorem | `hardy_theorem_target` and related moment/asymptotic targets are `def ... : Prop` targets | Use an unbounded-height zero target as the main theorem; use signed moment targets, not merely nonzero constants | Prove bounded-zero eventual-sign control and generic asymptotic sign lemmas | 11 (7 in `HardyTheorem`, 3 in `HardyTheorem.Details`, 1 in `KnownResults`) |
 

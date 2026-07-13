@@ -518,7 +518,9 @@ For the truncated identity:
    controlled good-height construction makes the horizontal pieces from
    `-(2N+1)` to `-delta` vanish at both heights, and the complete moving left
    vertical edge tends to zero.
-4. Completed on the inner zero-free segment:
+4. Completed on the fixed right and inner zero-free segments: the portions
+   `1+epsilon <= Re(s) <= c` vanish by the first-order `O(1/T)` bound, with
+   interval integrability proved explicitly.  In addition,
    `ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_le_log_sq_on_inner_zeroFreeRegion`
    proves a full-norm `O((log |t|)^2)` estimate on
    `1-c/(2log|t|) <= Re(s) <= 2`.  The signed theorem
@@ -526,9 +528,11 @@ For the truncated identity:
    then proves that this segment tends to zero on both horizontal sides.
 5. Remaining contour segment: along the same cofinal good-height sequence,
    control both horizontal integrals on
-   `-delta <= Re(s) <= 1-c/(2log T)`.  After this central band vanishes, combine
-   the contour identity and residue limits, then pass from the selected
-   cofinal sequence to arbitrary truncation heights.
+   `-delta <= Re(s) <= 1-c/(2log T)`.  This requires the quantitative
+   `zeta'/zeta` estimate obtained by combining separated heights with a local
+   `N(T)=O(log T)` zero-count bound.  After this central band vanishes, combine
+   the contour identity and residue limits, then pass from the selected cofinal
+   sequence to arbitrary truncation heights.
 
 For the principal value final formula:
 
