@@ -284,6 +284,15 @@ Already available or mostly available:
     moving upper and lower far-left edges.  The full far-left horizontal
     integrals are therefore now proved asymptotic to the pure digamma
     integrals `digamma(s) * x^s / s`.
+26. `LeftHorizontalEdge` now also derives the logarithmic derivative of
+    Euler's Gamma reflection formula
+    `digamma(s) = digamma(1-s) - pi*cot(pi*s)` off the real axis.  It proves
+    `norm (cot z) <= 2` for `1 <= |Im z|` and shows that the resulting cotangent
+    correction tends to zero on both moving far-left horizontal edges,
+    uniformly in the left endpoint.  Thus the full far-left integrals are
+    asymptotic to the right-half-plane terms
+    `digamma(1-s) * x^s / s`.  This is a genuine reduction, not yet a proof
+    that those remaining digamma integrals vanish.
 
 Remaining after the fixed-right-edge contour shift:
 
@@ -297,9 +306,12 @@ Remaining after the fixed-right-edge contour shift:
    extraction from every `-(2N+1)` contour are now proved, and a joint cofinal
    sequence has been chosen.  On the far-left horizontal portions, the
    Euler-product, constant, and tangent contributions are now proved to vanish
-   uniformly in the moving left endpoint.  What remains on these horizontal
-   portions is only the pure digamma integral, together with the moving
-   vertical left edge.
+   uniformly in the moving left endpoint.  Gamma reflection additionally
+   removes the cotangent correction.  What remains on these horizontal
+   portions is the right-shifted digamma integral
+   `digamma(1-s) * x^s / s`, where `Re(1-s) > 1`, together with the moving
+   vertical left edge.  A quantitative right-half-plane digamma bound is still
+   required to make this remaining horizontal integral vanish.
 3. Separate the now-proved limit of `nontrivial-zero sum - remainder` by
    proving the remainder tends to zero; this then gives the symmetric
    multiplicity-weighted nontrivial-zero limit along the chosen cofinal

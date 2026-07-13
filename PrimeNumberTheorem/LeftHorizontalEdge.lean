@@ -53,6 +53,109 @@ theorem norm_tan_le_two_of_one_le_abs_im {z : ℂ} (hz : 1 ≤ |z.im|) :
   rw [div_le_iff₀ hden]
   nlinarith
 
+/-- Complex cotangent has the same coarse high-imaginary-part bound. -/
+theorem norm_cot_le_two_of_one_le_abs_im {z : ℂ} (hz : 1 ≤ |z.im|) :
+    ‖Complex.cot z‖ ≤ 2 := by
+  let x : ℝ := z.re
+  let y : ℝ := z.im
+  have hzxy : z = (x : ℂ) + (y : ℂ) * I := by
+    exact (Complex.re_add_im z).symm
+  have hsinh1 : 1 ≤ |Real.sinh y| := by
+    rw [Real.abs_sinh]
+    exact (Real.self_lt_sinh_iff.mpr zero_lt_one).le.trans
+      (Real.sinh_le_sinh.mpr hz)
+  have hsinhSq : 1 ≤ Real.sinh y ^ 2 := by
+    rw [← sq_abs]
+    have hsquare := (sq_le_sq₀ zero_le_one (abs_nonneg _)).2 hsinh1
+    norm_num at hsquare ⊢
+    exact hsquare
+  have hsinSq := normSq_sin_ofReal_add_mul_I x y
+  have hcosSq := normSq_cos_ofReal_add_mul_I x y
+  rw [Complex.cot_eq_cos_div_sin, norm_div]
+  apply (sq_le_sq₀ (div_nonneg (norm_nonneg _) (norm_nonneg _)) (by norm_num)).1
+  rw [div_pow, Complex.sq_norm, Complex.sq_norm]
+  rw [hzxy, hsinSq, hcosSq]
+  have hcos : Real.cos x ^ 2 ≤ 1 := by
+    nlinarith [Real.sin_sq_add_cos_sq x, sq_nonneg (Real.sin x)]
+  have hsin : 0 ≤ Real.sin x ^ 2 := sq_nonneg _
+  have hden : 0 < Real.sin x ^ 2 + Real.sinh y ^ 2 := by nlinarith
+  rw [div_le_iff₀ hden]
+  nlinarith
+
+/-- Logarithmic-derivative form of Euler's Gamma reflection formula, valid
+off the real axis. -/
+theorem digamma_eq_one_sub_sub_pi_mul_cot {s : ℂ} (hs : s.im ≠ 0) :
+    Complex.digamma s = Complex.digamma (1 - s) -
+      Real.pi * Complex.cot (Real.pi * s) := by
+  have hsGamma : ∀ n : ℕ, s ≠ -(n : ℂ) := by
+    intro n hn
+    apply hs
+    have him := congrArg Complex.im hn
+    simpa using him
+  have h1sGamma : ∀ n : ℕ, 1 - s ≠ -(n : ℂ) := by
+    intro n hn
+    apply hs
+    have him := congrArg Complex.im hn
+    simp at him
+    exact him
+  have hGamma : Complex.Gamma s ≠ 0 := Complex.Gamma_ne_zero hsGamma
+  have hGamma1 : Complex.Gamma (1 - s) ≠ 0 := Complex.Gamma_ne_zero h1sGamma
+  have hsin : Complex.sin (Real.pi * s) ≠ 0 := by
+    rw [Complex.sin_ne_zero_iff]
+    intro k hk
+    apply hs
+    have him := congrArg Complex.im hk
+    simp at him
+    exact him
+  have hGdiff : DifferentiableAt ℂ Complex.Gamma s :=
+    Complex.differentiableAt_Gamma s hsGamma
+  have hG1diff : DifferentiableAt ℂ (fun z : ℂ => Complex.Gamma (1 - z)) s := by
+    exact (Complex.differentiableAt_Gamma (1 - s) h1sGamma).comp s (by fun_prop)
+  have hsinDiff : DifferentiableAt ℂ
+      (fun z : ℂ => Complex.sin (Real.pi * z)) s := by fun_prop
+  have hlhs :
+      logDeriv (fun z : ℂ => Complex.Gamma z * Complex.Gamma (1 - z)) s =
+        Complex.digamma s - Complex.digamma (1 - s) := by
+    rw [logDeriv_mul s hGamma hGamma1 hGdiff hG1diff]
+    have hcomp :
+        logDeriv (fun z : ℂ => Complex.Gamma (1 - z)) s =
+          -logDeriv Complex.Gamma (1 - s) := by
+      change logDeriv (Complex.Gamma ∘ fun z : ℂ => 1 - z) s = _
+      rw [logDeriv_comp (Complex.differentiableAt_Gamma (1 - s) h1sGamma)
+        (by fun_prop)]
+      rw [show deriv (fun z : ℂ => 1 - z) s = -1 by
+        convert ((hasDerivAt_const s 1).sub (hasDerivAt_id s)).deriv using 1
+        all_goals simp]
+      ring
+    rw [hcomp]
+    rfl
+  have hrhs :
+      logDeriv (fun z : ℂ => (Real.pi : ℂ) /
+          Complex.sin (Real.pi * z)) s =
+        -(Real.pi : ℂ) * Complex.cot (Real.pi * s) := by
+    rw [logDeriv_div s (ofReal_ne_zero.mpr Real.pi_ne_zero) hsin
+      (differentiableAt_const _) hsinDiff]
+    rw [logDeriv_const]
+    have hcomp :
+        logDeriv (fun z : ℂ => Complex.sin (Real.pi * z)) s =
+          (Real.pi : ℂ) * Complex.cot (Real.pi * s) := by
+      change logDeriv (Complex.sin ∘ fun z : ℂ => Real.pi * z) s = _
+      rw [logDeriv_comp Complex.differentiableAt_sin (by fun_prop),
+        Complex.logDeriv_sin]
+      rw [show deriv (fun z : ℂ => Real.pi * z) s = (Real.pi : ℂ) by
+        convert ((hasDerivAt_id s).const_mul (Real.pi : ℂ)).deriv using 1
+        all_goals simp]
+      ring
+    rw [hcomp]
+    simp
+  have hreflection :
+      (fun z : ℂ => Complex.Gamma z * Complex.Gamma (1 - z)) =
+        fun z : ℂ => (Real.pi : ℂ) / Complex.sin (Real.pi * z) := by
+    funext z
+    exact Complex.Gamma_mul_Gamma_one_sub z
+  rw [hreflection, hrhs] at hlhs
+  linear_combination -hlhs
+
 /-- Logarithmic derivative form of the zeta functional equation, oriented so
 that a point on the left is related to `1 - s` in the Euler-product
 half-plane. -/
@@ -158,6 +261,24 @@ noncomputable def farLeftGammaFactorIntegrand (x : ℝ) (s : ℂ) : ℂ :=
 /-- The genuinely non-elementary part of the far-left Archimedean factor. -/
 noncomputable def farLeftDigammaIntegrand (x : ℝ) (s : ℂ) : ℂ :=
   Complex.digamma s * (x : ℂ) ^ s / s
+
+/-- The digamma term after reflection into the right half-plane. -/
+noncomputable def farLeftRightShiftedDigammaIntegrand (x : ℝ) (s : ℂ) : ℂ :=
+  Complex.digamma (1 - s) * (x : ℂ) ^ s / s
+
+/-- The cotangent correction introduced by the digamma reflection formula. -/
+noncomputable def farLeftCotCorrectionIntegrand (x : ℝ) (s : ℂ) : ℂ :=
+  (-(Real.pi : ℂ) * Complex.cot (Real.pi * s)) * (x : ℂ) ^ s / s
+
+theorem farLeftDigammaIntegrand_eq_rightShifted_add_cot
+    {x : ℝ} {s : ℂ} (hs : s.im ≠ 0) :
+    farLeftDigammaIntegrand x s =
+      farLeftRightShiftedDigammaIntegrand x s +
+        farLeftCotCorrectionIntegrand x s := by
+  simp only [farLeftDigammaIntegrand, farLeftRightShiftedDigammaIntegrand,
+    farLeftCotCorrectionIntegrand]
+  rw [digamma_eq_one_sub_sub_pi_mul_cot hs]
+  ring
 
 /-- The elementary constant and tangent terms in the far-left Archimedean
 factor. -/
@@ -414,6 +535,97 @@ private theorem intervalIntegrable_farLeft_digamma
     x ((σ : ℂ) + T * I)
   linear_combination hsplit
 
+private theorem intervalIntegrable_farLeft_cotCorrection
+    {x ε a T : ℝ} (hx : 1 < x) (hT : T ≠ 0) :
+    IntervalIntegrable
+      (fun σ : ℝ => farLeftCotCorrectionIntegrand x ((σ : ℂ) + T * I))
+      MeasureTheory.volume a (-ε) := by
+  apply ContinuousOn.intervalIntegrable
+  intro σ _hσ
+  let s : ℂ := (σ : ℂ) + T * I
+  let q : ℂ := Real.pi * s
+  have hs0 : s ≠ 0 := by
+    intro hs
+    apply hT
+    have him := congrArg Complex.im hs
+    simpa [s] using him
+  have hqim : q.im ≠ 0 := by
+    dsimp [q, s]
+    simp [Real.pi_ne_zero, hT]
+  have hsin : Complex.sin q ≠ 0 := by
+    rw [Complex.sin_ne_zero_iff]
+    intro k hk
+    apply hqim
+    have him := congrArg Complex.im hk
+    simpa using him
+  have hmap : ContinuousAt (fun u : ℝ => (u : ℂ) + T * I) σ := by fun_prop
+  have hqmap : ContinuousAt
+      (fun u : ℝ => Real.pi * ((u : ℂ) + T * I)) σ := by fun_prop
+  have hcot : ContinuousAt
+      (fun u : ℝ => Complex.cot (Real.pi * ((u : ℂ) + T * I))) σ := by
+    rw [show (fun u : ℝ => Complex.cot (Real.pi * ((u : ℂ) + T * I))) =
+        fun u : ℝ => Complex.cos (Real.pi * ((u : ℂ) + T * I)) /
+          Complex.sin (Real.pi * ((u : ℂ) + T * I)) by
+      funext u
+      rw [Complex.cot_eq_cos_div_sin]]
+    simpa [Function.comp_def] using
+      (Complex.differentiableAt_cos.continuousAt.comp hqmap).div
+        (Complex.differentiableAt_sin.continuousAt.comp hqmap)
+        (by simpa [q, s] using hsin)
+  have hpowBase : ContinuousAt (fun z : ℂ => (x : ℂ) ^ z) s :=
+    (((differentiableAt_id : DifferentiableAt ℂ (fun z : ℂ => z) s).const_cpow
+      (Or.inl (ofReal_ne_zero.mpr (ne_of_gt (zero_lt_one.trans hx))))).continuousAt)
+  have hpow : ContinuousAt
+      (fun u : ℝ => (x : ℂ) ^ ((u : ℂ) + T * I)) σ := by
+    simpa [s, Function.comp_def] using hpowBase.comp_of_eq hmap (by simp [s])
+  have hcoeff : ContinuousAt
+      (fun u : ℝ => -(Real.pi : ℂ) *
+        Complex.cot (Real.pi * ((u : ℂ) + T * I))) σ := by fun_prop
+  have hquot := (hcoeff.mul hpow).div hmap hs0
+  exact hquot.continuousWithinAt
+
+private theorem intervalIntegrable_farLeft_rightShiftedDigamma
+    {x ε a T : ℝ} (hx : 1 < x) (hε : 0 < ε)
+    (ha : a ≤ -ε) (hT : T ≠ 0) :
+    IntervalIntegrable
+      (fun σ : ℝ =>
+        farLeftRightShiftedDigammaIntegrand x ((σ : ℂ) + T * I))
+      MeasureTheory.volume a (-ε) := by
+  have hdig := intervalIntegrable_farLeft_digamma hx hε ha hT
+  have hcot := intervalIntegrable_farLeft_cotCorrection
+    (a := a) (ε := ε) hx hT
+  apply (hdig.sub hcot).congr
+  intro σ _hσ
+  have hsplit := farLeftDigammaIntegrand_eq_rightShifted_add_cot
+    (x := x) (s := (σ : ℂ) + T * I) (by simpa using hT)
+  linear_combination hsplit
+
+/-- Reflection of digamma gives an exact finite-segment integral identity. -/
+theorem integral_farLeft_digamma_sub_rightShifted_eq_cot
+    {x ε a T : ℝ} (hx : 1 < x) (hε : 0 < ε)
+    (ha : a ≤ -ε) (hT : T ≠ 0) :
+    (∫ σ : ℝ in a..(-ε),
+        farLeftDigammaIntegrand x ((σ : ℂ) + T * I)) -
+      (∫ σ : ℝ in a..(-ε),
+        farLeftRightShiftedDigammaIntegrand x ((σ : ℂ) + T * I)) =
+      ∫ σ : ℝ in a..(-ε),
+        farLeftCotCorrectionIntegrand x ((σ : ℂ) + T * I) := by
+  have hright := intervalIntegrable_farLeft_rightShiftedDigamma hx hε ha hT
+  have hcot := intervalIntegrable_farLeft_cotCorrection
+    (a := a) (ε := ε) hx hT
+  have hsplit : Set.EqOn
+      (fun σ : ℝ => farLeftDigammaIntegrand x ((σ : ℂ) + T * I))
+      (fun σ : ℝ =>
+        farLeftRightShiftedDigammaIntegrand x ((σ : ℂ) + T * I) +
+          farLeftCotCorrectionIntegrand x ((σ : ℂ) + T * I))
+      (Set.uIcc a (-ε)) := by
+    intro σ _hσ
+    exact farLeftDigammaIntegrand_eq_rightShifted_add_cot
+      (x := x) (s := (σ : ℂ) + T * I) (by simpa using hT)
+  have hcongr := intervalIntegral.integral_congr (μ := MeasureTheory.volume) hsplit
+  rw [intervalIntegral.integral_add hright hcot] at hcongr
+  linear_combination hcongr
+
 /-- On a finite far-left segment, the Gamma-factor integral differs from the
 pure digamma integral by exactly the elementary constant-and-tangent
 integral. -/
@@ -539,6 +751,43 @@ theorem norm_farLeft_elementaryGamma_le {x T σ : ℝ}
     _ ≤ ((‖Complex.log (2 * Real.pi)‖ + Real.pi) * x ^ σ) / |T| :=
       div_le_div_of_nonneg_left hnum (lt_of_lt_of_le zero_lt_one hT) hline
 
+/-- The cotangent correction from digamma reflection is
+`O(x^σ / |T|)` on high horizontal lines. -/
+theorem norm_farLeft_cotCorrection_le {x T σ : ℝ}
+    (hx : 1 < x) (hT : 1 ≤ |T|) :
+    ‖farLeftCotCorrectionIntegrand x ((σ : ℂ) + T * I)‖ ≤
+      (2 * Real.pi) * x ^ σ / |T| := by
+  have hxpos : 0 < x := zero_lt_one.trans hx
+  let s : ℂ := (σ : ℂ) + T * I
+  have harg : 1 ≤ |(Real.pi * s).im| := by
+    have him : (Real.pi * s).im = Real.pi * T := by simp [s]
+    rw [him, abs_mul, abs_of_pos Real.pi_pos]
+    nlinarith [Real.two_le_pi]
+  have hcot := norm_cot_le_two_of_one_le_abs_im harg
+  have hcoeff :
+      ‖-(Real.pi : ℂ) * Complex.cot (Real.pi * s)‖ ≤ 2 * Real.pi := by
+    rw [norm_mul, norm_neg, Complex.norm_real, Real.norm_eq_abs,
+      abs_of_pos Real.pi_pos]
+    calc
+      Real.pi * ‖Complex.cot (Real.pi * s)‖ ≤ Real.pi * 2 :=
+        mul_le_mul_of_nonneg_left hcot Real.pi_pos.le
+      _ = 2 * Real.pi := by ring
+  have hline : |T| ≤ ‖s‖ := by
+    simpa [s] using abs_im_le_norm s
+  have hnum : 0 ≤ (2 * Real.pi) * x ^ σ :=
+    mul_nonneg (by positivity) (Real.rpow_nonneg hxpos.le σ)
+  simp only [farLeftCotCorrectionIntegrand]
+  rw [norm_div, norm_mul, Complex.norm_cpow_eq_rpow_re_of_pos hxpos]
+  simp only [Complex.add_re, ofReal_re, mul_re, ofReal_im, I_re, I_im,
+    zero_mul, mul_zero, sub_zero, add_zero]
+  calc
+    ‖-(Real.pi : ℂ) * Complex.cot (Real.pi * s)‖ * x ^ σ / ‖s‖ ≤
+        ((2 * Real.pi) * x ^ σ) / ‖s‖ := by
+      apply div_le_div_of_nonneg_right _ (norm_nonneg _)
+      exact mul_le_mul_of_nonneg_right hcoeff (Real.rpow_nonneg hxpos.le σ)
+    _ ≤ ((2 * Real.pi) * x ^ σ) / |T| :=
+      div_le_div_of_nonneg_left hnum (lt_of_lt_of_le zero_lt_one hT) hline
+
 private theorem intervalIntegral_const_rpow_exponent {x a b : ℝ}
     (hx : 1 < x) :
     (∫ σ : ℝ in a..b, x ^ σ) = (x ^ b - x ^ a) / Real.log x := by
@@ -661,6 +910,99 @@ theorem tendsto_integral_farLeft_elementaryGamma_neg_height_atTop
   exact div_le_div_of_nonneg_right
     (mul_le_mul_of_nonneg_left hdiff
       (div_nonneg hC (zero_lt_one.trans hT).le)) hlog.le
+
+/-- Uniform integral bound for the cotangent correction introduced by
+digamma reflection. -/
+theorem norm_integral_farLeft_cotCorrection_le {x ε a T : ℝ}
+    (hx : 1 < x) (ha : a ≤ -ε) (hT : 1 ≤ |T|) :
+    ‖∫ σ : ℝ in a..(-ε),
+        farLeftCotCorrectionIntegrand x ((σ : ℂ) + T * I)‖ ≤
+      ((2 * Real.pi) / |T|) *
+        (x ^ (-ε) - x ^ a) / Real.log x := by
+  let C : ℝ := (2 * Real.pi) / |T|
+  have hbound := intervalIntegral.norm_integral_le_of_norm_le
+    (μ := MeasureTheory.volume)
+    (f := fun σ : ℝ =>
+      farLeftCotCorrectionIntegrand x ((σ : ℂ) + T * I))
+    (g := fun σ : ℝ => C * x ^ σ) ha
+    (Filter.Eventually.of_forall fun σ hσ => by
+      have hpoint := norm_farLeft_cotCorrection_le (σ := σ) hx hT
+      convert hpoint using 1
+      all_goals (dsimp [C]; ring))
+    ((continuous_const.mul (Real.continuous_const_rpow
+      (ne_of_gt (zero_lt_one.trans hx)))).intervalIntegrable
+        (μ := MeasureTheory.volume) _ _)
+  rw [intervalIntegral.integral_const_mul,
+    intervalIntegral_const_rpow_exponent hx] at hbound
+  convert hbound using 1
+  all_goals (dsimp [C]; ring)
+
+/-- The cotangent correction vanishes on the moving upper far-left
+horizontal segment. -/
+theorem tendsto_integral_farLeft_cotCorrection_atTop {x ε : ℝ}
+    (hx : 1 < x) (a : ℝ → ℝ)
+    (ha : ∀ᶠ T in atTop, a T ≤ -ε) :
+    Tendsto
+      (fun T : ℝ => ∫ σ : ℝ in a T..(-ε),
+        farLeftCotCorrectionIntegrand x ((σ : ℂ) + T * I))
+      atTop (𝓝 0) := by
+  apply tendsto_iff_norm_sub_tendsto_zero.2
+  simp only [sub_zero]
+  let K : ℝ := (2 * Real.pi) * x ^ (-ε) / Real.log x
+  have hKdiv : Tendsto (fun T : ℝ => K / T) atTop (𝓝 0) :=
+    tendsto_const_nhds.div_atTop tendsto_id
+  apply squeeze_zero' (Eventually.of_forall fun T => norm_nonneg _) _ hKdiv
+  filter_upwards [ha, eventually_gt_atTop (1 : ℝ)] with T haT hT
+  have hmain := norm_integral_farLeft_cotCorrection_le
+    hx haT (by rw [abs_of_pos (zero_lt_one.trans hT)]; exact hT.le)
+  rw [abs_of_pos (zero_lt_one.trans hT)] at hmain
+  refine hmain.trans ?_
+  have hxa : 0 ≤ x ^ a T := Real.rpow_nonneg (zero_lt_one.trans hx).le _
+  have hdiff : x ^ (-ε) - x ^ a T ≤ x ^ (-ε) := by linarith
+  have hlog : 0 < Real.log x := Real.log_pos hx
+  dsimp [K]
+  rw [show
+    ((2 * Real.pi) * x ^ (-ε) / Real.log x) / T =
+      ((2 * Real.pi) / T) * x ^ (-ε) / Real.log x by ring]
+  exact div_le_div_of_nonneg_right
+    (mul_le_mul_of_nonneg_left hdiff
+      (div_nonneg (by positivity) (zero_lt_one.trans hT).le)) hlog.le
+
+/-- The cotangent correction also vanishes on the moving lower far-left
+horizontal segment. -/
+theorem tendsto_integral_farLeft_cotCorrection_neg_height_atTop
+    {x ε : ℝ} (hx : 1 < x) (a : ℝ → ℝ)
+    (ha : ∀ᶠ T in atTop, a T ≤ -ε) :
+    Tendsto
+      (fun T : ℝ => ∫ σ : ℝ in a T..(-ε),
+        farLeftCotCorrectionIntegrand x ((σ : ℂ) - T * I))
+      atTop (𝓝 0) := by
+  apply tendsto_iff_norm_sub_tendsto_zero.2
+  simp only [sub_zero]
+  let K : ℝ := (2 * Real.pi) * x ^ (-ε) / Real.log x
+  have hKdiv : Tendsto (fun T : ℝ => K / T) atTop (𝓝 0) :=
+    tendsto_const_nhds.div_atTop tendsto_id
+  apply squeeze_zero' (Eventually.of_forall fun T => norm_nonneg _) _ hKdiv
+  filter_upwards [ha, eventually_gt_atTop (1 : ℝ)] with T haT hT
+  have hmain := norm_integral_farLeft_cotCorrection_le
+    (T := -T) hx haT (by simpa [abs_of_pos (zero_lt_one.trans hT)] using hT.le)
+  have hmain' :
+      ‖∫ σ : ℝ in a T..(-ε),
+          farLeftCotCorrectionIntegrand x ((σ : ℂ) - T * I)‖ ≤
+        ((2 * Real.pi) / T) *
+          (x ^ (-ε) - x ^ a T) / Real.log x := by
+    simpa [sub_eq_add_neg, abs_of_pos (zero_lt_one.trans hT)] using hmain
+  refine hmain'.trans ?_
+  have hxa : 0 ≤ x ^ a T := Real.rpow_nonneg (zero_lt_one.trans hx).le _
+  have hdiff : x ^ (-ε) - x ^ a T ≤ x ^ (-ε) := by linarith
+  have hlog : 0 < Real.log x := Real.log_pos hx
+  dsimp [K]
+  rw [show
+    ((2 * Real.pi) * x ^ (-ε) / Real.log x) / T =
+      ((2 * Real.pi) / T) * x ^ (-ε) / Real.log x by ring]
+  exact div_le_div_of_nonneg_right
+    (mul_le_mul_of_nonneg_left hdiff
+      (div_nonneg (by positivity) (zero_lt_one.trans hT).le)) hlog.le
 
 /-- The Euler-product part of the functional-equation decomposition makes a
 uniformly vanishing contribution on the whole far-left horizontal segment.
@@ -855,6 +1197,59 @@ theorem tendsto_integral_farLeft_explicit_sub_digamma_neg_height_atTop
             farLeftDigammaIntegrand x ((σ : ℂ) - T * I)) =
           ∫ σ : ℝ in a T..(-ε),
             farLeftElementaryGammaIntegrand x ((σ : ℂ) - T * I) := by
+      simpa [sub_eq_add_neg] using hsplit
+    linear_combination -hsplit')
+
+/-- Digamma reflection moves the only remaining upper far-left contribution
+to `digamma (1 - s)` in the right half-plane; its cotangent correction
+vanishes uniformly in the moving left endpoint. -/
+theorem tendsto_integral_farLeft_explicit_sub_rightShiftedDigamma_atTop
+    {x ε : ℝ} (hx : 1 < x) (hε : 0 < ε) (a : ℝ → ℝ)
+    (ha : ∀ᶠ T in atTop, a T ≤ -ε) :
+    Tendsto
+      (fun T : ℝ =>
+        (∫ σ : ℝ in a T..(-ε),
+          explicitFormulaIntegrand x ((σ : ℂ) + T * I)) -
+        ∫ σ : ℝ in a T..(-ε),
+          farLeftRightShiftedDigammaIntegrand x ((σ : ℂ) + T * I))
+      atTop (𝓝 0) := by
+  have hdig := tendsto_integral_farLeft_explicit_sub_digamma_atTop
+    hx hε a ha
+  have hcot := tendsto_integral_farLeft_cotCorrection_atTop hx a ha
+  have hsum := hdig.add hcot
+  simpa only [add_zero] using hsum.congr' (by
+    filter_upwards [ha, eventually_gt_atTop (1 : ℝ)] with T haT hT
+    have hsplit := integral_farLeft_digamma_sub_rightShifted_eq_cot
+      hx hε haT (zero_lt_one.trans hT).ne'
+    linear_combination -hsplit)
+
+/-- The same right-half-plane digamma reduction holds on the lower far-left
+horizontal segment. -/
+theorem tendsto_integral_farLeft_explicit_sub_rightShiftedDigamma_neg_height_atTop
+    {x ε : ℝ} (hx : 1 < x) (hε : 0 < ε) (a : ℝ → ℝ)
+    (ha : ∀ᶠ T in atTop, a T ≤ -ε) :
+    Tendsto
+      (fun T : ℝ =>
+        (∫ σ : ℝ in a T..(-ε),
+          explicitFormulaIntegrand x ((σ : ℂ) - T * I)) -
+        ∫ σ : ℝ in a T..(-ε),
+          farLeftRightShiftedDigammaIntegrand x ((σ : ℂ) - T * I))
+      atTop (𝓝 0) := by
+  have hdig := tendsto_integral_farLeft_explicit_sub_digamma_neg_height_atTop
+    hx hε a ha
+  have hcot := tendsto_integral_farLeft_cotCorrection_neg_height_atTop hx a ha
+  have hsum := hdig.add hcot
+  simpa only [add_zero] using hsum.congr' (by
+    filter_upwards [ha, eventually_gt_atTop (1 : ℝ)] with T haT hT
+    have hsplit := integral_farLeft_digamma_sub_rightShifted_eq_cot
+      (T := -T) hx hε haT (neg_ne_zero.mpr (zero_lt_one.trans hT).ne')
+    have hsplit' :
+        (∫ σ : ℝ in a T..(-ε),
+            farLeftDigammaIntegrand x ((σ : ℂ) - T * I)) -
+          (∫ σ : ℝ in a T..(-ε),
+            farLeftRightShiftedDigammaIntegrand x ((σ : ℂ) - T * I)) =
+          ∫ σ : ℝ in a T..(-ε),
+            farLeftCotCorrectionIntegrand x ((σ : ℂ) - T * I) := by
       simpa [sub_eq_add_neg] using hsplit
     linear_combination -hsplit')
 
