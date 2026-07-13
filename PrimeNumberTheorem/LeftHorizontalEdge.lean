@@ -6,6 +6,53 @@ open Complex Filter Topology
 namespace PrimeNumberTheorem
 namespace ExplicitFormulaResidues
 
+private theorem normSq_sin_ofReal_add_mul_I (x y : ℝ) :
+    Complex.normSq (Complex.sin ((x : ℂ) + (y : ℂ) * I)) =
+      Real.sin x ^ 2 + Real.sinh y ^ 2 := by
+  rw [Complex.sin_add_mul_I]
+  simp [Complex.normSq_apply, Complex.sin_ofReal_re, Complex.sin_ofReal_im,
+    Complex.cos_ofReal_re, Complex.cos_ofReal_im, Complex.sinh_ofReal_re,
+    Complex.sinh_ofReal_im, Complex.cosh_ofReal_re, Complex.cosh_ofReal_im, sq]
+  nlinarith [Real.sin_sq_add_cos_sq x, Real.cosh_sq_sub_sinh_sq y]
+
+private theorem normSq_cos_ofReal_add_mul_I (x y : ℝ) :
+    Complex.normSq (Complex.cos ((x : ℂ) + (y : ℂ) * I)) =
+      Real.cos x ^ 2 + Real.sinh y ^ 2 := by
+  rw [Complex.cos_add_mul_I]
+  simp [Complex.normSq_apply, Complex.sin_ofReal_re, Complex.sin_ofReal_im,
+    Complex.cos_ofReal_re, Complex.cos_ofReal_im, Complex.sinh_ofReal_re,
+    Complex.sinh_ofReal_im, Complex.cosh_ofReal_re, Complex.cosh_ofReal_im, sq]
+  nlinarith [Real.sin_sq_add_cos_sq x, Real.cosh_sq_sub_sinh_sq y]
+
+/-- Complex tangent is uniformly bounded away from the real axis.  The
+constant `2` is deliberately coarse but sufficient for contour decay. -/
+theorem norm_tan_le_two_of_one_le_abs_im {z : ℂ} (hz : 1 ≤ |z.im|) :
+    ‖Complex.tan z‖ ≤ 2 := by
+  let x : ℝ := z.re
+  let y : ℝ := z.im
+  have hzxy : z = (x : ℂ) + (y : ℂ) * I := by
+    exact (Complex.re_add_im z).symm
+  have hsinh1 : 1 ≤ |Real.sinh y| := by
+    rw [Real.abs_sinh]
+    exact (Real.self_lt_sinh_iff.mpr zero_lt_one).le.trans
+      (Real.sinh_le_sinh.mpr hz)
+  have hsinhSq : 1 ≤ Real.sinh y ^ 2 := by
+    rw [← sq_abs]
+    have hsquare := (sq_le_sq₀ zero_le_one (abs_nonneg _)).2 hsinh1
+    norm_num at hsquare ⊢
+    exact hsquare
+  have hsinSq := normSq_sin_ofReal_add_mul_I x y
+  have hcosSq := normSq_cos_ofReal_add_mul_I x y
+  rw [Complex.tan_eq_sin_div_cos, norm_div]
+  apply (sq_le_sq₀ (div_nonneg (norm_nonneg _) (norm_nonneg _)) (by norm_num)).1
+  rw [div_pow, Complex.sq_norm, Complex.sq_norm]
+  rw [hzxy, hsinSq, hcosSq]
+  have hsin : Real.sin x ^ 2 ≤ 1 := Real.sin_sq_le_one x
+  have hcos : 0 ≤ Real.cos x ^ 2 := sq_nonneg _
+  have hden : 0 < Real.cos x ^ 2 + Real.sinh y ^ 2 := by nlinarith
+  rw [div_le_iff₀ hden]
+  nlinarith
+
 /-- Logarithmic derivative form of the zeta functional equation, oriented so
 that a point on the left is related to `1 - s` in the Euler-product
 half-plane. -/
@@ -107,6 +154,25 @@ noncomputable def farLeftGammaFactorIntegrand (x : ℝ) (s : ℂ) : ℂ :=
   (Complex.digamma s - Complex.log (2 * Real.pi) -
       (Real.pi / 2 : ℂ) * Complex.tan (Real.pi * s / 2)) *
     (x : ℂ) ^ s / s
+
+/-- The genuinely non-elementary part of the far-left Archimedean factor. -/
+noncomputable def farLeftDigammaIntegrand (x : ℝ) (s : ℂ) : ℂ :=
+  Complex.digamma s * (x : ℂ) ^ s / s
+
+/-- The elementary constant and tangent terms in the far-left Archimedean
+factor. -/
+noncomputable def farLeftElementaryGammaIntegrand (x : ℝ) (s : ℂ) : ℂ :=
+  (-Complex.log (2 * Real.pi) -
+      (Real.pi / 2 : ℂ) * Complex.tan (Real.pi * s / 2)) *
+    (x : ℂ) ^ s / s
+
+theorem farLeftGammaFactorIntegrand_eq_digamma_add_elementary
+    (x : ℝ) (s : ℂ) :
+    farLeftGammaFactorIntegrand x s =
+      farLeftDigammaIntegrand x s + farLeftElementaryGammaIntegrand x s := by
+  simp only [farLeftGammaFactorIntegrand, farLeftDigammaIntegrand,
+    farLeftElementaryGammaIntegrand]
+  ring
 
 /-- On a nonreal point in the far-left half-plane, the complete first-order
 integrand is exactly the sum of an Euler-product term and the Archimedean
@@ -264,6 +330,117 @@ theorem integral_farLeft_explicit_sub_gamma_eq_euler
   dsimp [full, euler, gamma] at hcongr ⊢
   linear_combination hcongr
 
+private theorem intervalIntegrable_farLeft_gammaFactor
+    {x ε a T : ℝ} (hx : 1 < x) (hε : 0 < ε)
+    (ha : a ≤ -ε) (hT : T ≠ 0) :
+    IntervalIntegrable
+      (fun σ : ℝ => farLeftGammaFactorIntegrand x ((σ : ℂ) + T * I))
+      MeasureTheory.volume a (-ε) := by
+  have hfull := intervalIntegrable_farLeft_explicit hx hε ha hT
+  have heuler := intervalIntegrable_farLeft_eulerFactor hx hε ha hT
+  apply (hfull.sub heuler).congr
+  intro σ hσ
+  have hσ' := Set.uIoc_subset_uIcc hσ
+  rw [Set.uIcc_of_le ha] at hσ'
+  have hsplit := explicitFormulaIntegrand_eq_farLeft_euler_add_gamma
+    (x := x) hε hσ'.2 hT
+  linear_combination hsplit
+
+private theorem intervalIntegrable_farLeft_elementaryGamma
+    {x ε a T : ℝ} (hx : 1 < x) (hT : T ≠ 0) :
+    IntervalIntegrable
+      (fun σ : ℝ => farLeftElementaryGammaIntegrand x ((σ : ℂ) + T * I))
+      MeasureTheory.volume a (-ε) := by
+  apply ContinuousOn.intervalIntegrable
+  intro σ _hσ
+  let s : ℂ := (σ : ℂ) + T * I
+  let q : ℂ := Real.pi * s / 2
+  have hs0 : s ≠ 0 := by
+    intro hs
+    apply hT
+    have him := congrArg Complex.im hs
+    simpa [s] using him
+  have hqim : q.im ≠ 0 := by
+    intro hzero
+    apply hT
+    have him : q.im = Real.pi * T / 2 := by
+      dsimp [q]
+      rw [show (Real.pi : ℂ) * s / 2 = ((Real.pi / 2 : ℝ) : ℂ) * s by
+        push_cast
+        ring]
+      simp [s]
+      ring
+    rw [him] at hzero
+    norm_num at hzero
+    exact hzero
+  have hcos : Complex.cos q ≠ 0 := by
+    intro hzero
+    rcases Complex.cos_eq_zero_iff.mp hzero with ⟨k, hk⟩
+    apply hqim
+    have him := congrArg Complex.im hk
+    simpa using him
+  have hmap : ContinuousAt (fun u : ℝ => (u : ℂ) + T * I) σ := by fun_prop
+  have hqmap : ContinuousAt
+      (fun u : ℝ => Real.pi * ((u : ℂ) + T * I) / 2) σ := by fun_prop
+  have htan : ContinuousAt
+      (fun u : ℝ => Complex.tan (Real.pi * ((u : ℂ) + T * I) / 2)) σ := by
+    simpa [q, s, Function.comp_def] using
+      (Complex.continuousAt_tan.mpr hcos).comp_of_eq hqmap (by simp [q, s])
+  have hpowBase : ContinuousAt (fun z : ℂ => (x : ℂ) ^ z) s :=
+    (((differentiableAt_id : DifferentiableAt ℂ (fun z : ℂ => z) s).const_cpow
+      (Or.inl (ofReal_ne_zero.mpr (ne_of_gt (zero_lt_one.trans hx))))).continuousAt)
+  have hpow : ContinuousAt
+      (fun u : ℝ => (x : ℂ) ^ ((u : ℂ) + T * I)) σ := by
+    simpa [s, Function.comp_def] using hpowBase.comp_of_eq hmap (by simp [s])
+  have hcoeff : ContinuousAt
+      (fun u : ℝ => -Complex.log (2 * Real.pi) -
+        (Real.pi / 2 : ℂ) *
+          Complex.tan (Real.pi * ((u : ℂ) + T * I) / 2)) σ := by fun_prop
+  have hquot := (hcoeff.mul hpow).div hmap hs0
+  simpa [farLeftElementaryGammaIntegrand, s] using hquot.continuousWithinAt
+
+private theorem intervalIntegrable_farLeft_digamma
+    {x ε a T : ℝ} (hx : 1 < x) (hε : 0 < ε)
+    (ha : a ≤ -ε) (hT : T ≠ 0) :
+    IntervalIntegrable
+      (fun σ : ℝ => farLeftDigammaIntegrand x ((σ : ℂ) + T * I))
+      MeasureTheory.volume a (-ε) := by
+  have hgamma := intervalIntegrable_farLeft_gammaFactor hx hε ha hT
+  have helem := intervalIntegrable_farLeft_elementaryGamma
+    (a := a) (ε := ε) hx hT
+  apply (hgamma.sub helem).congr
+  intro σ _hσ
+  have hsplit := farLeftGammaFactorIntegrand_eq_digamma_add_elementary
+    x ((σ : ℂ) + T * I)
+  linear_combination hsplit
+
+/-- On a finite far-left segment, the Gamma-factor integral differs from the
+pure digamma integral by exactly the elementary constant-and-tangent
+integral. -/
+theorem integral_farLeft_gamma_sub_digamma_eq_elementary
+    {x ε a T : ℝ} (hx : 1 < x) (hε : 0 < ε)
+    (ha : a ≤ -ε) (hT : T ≠ 0) :
+    (∫ σ : ℝ in a..(-ε),
+        farLeftGammaFactorIntegrand x ((σ : ℂ) + T * I)) -
+      (∫ σ : ℝ in a..(-ε),
+        farLeftDigammaIntegrand x ((σ : ℂ) + T * I)) =
+      ∫ σ : ℝ in a..(-ε),
+        farLeftElementaryGammaIntegrand x ((σ : ℂ) + T * I) := by
+  have hdig := intervalIntegrable_farLeft_digamma hx hε ha hT
+  have helem := intervalIntegrable_farLeft_elementaryGamma
+    (a := a) (ε := ε) hx hT
+  have hsplit : Set.EqOn
+      (fun σ : ℝ => farLeftGammaFactorIntegrand x ((σ : ℂ) + T * I))
+      (fun σ : ℝ => farLeftDigammaIntegrand x ((σ : ℂ) + T * I) +
+        farLeftElementaryGammaIntegrand x ((σ : ℂ) + T * I))
+      (Set.uIcc a (-ε)) := by
+    intro σ _hσ
+    exact farLeftGammaFactorIntegrand_eq_digamma_add_elementary
+      x ((σ : ℂ) + T * I)
+  have hcongr := intervalIntegral.integral_congr (μ := MeasureTheory.volume) hsplit
+  rw [intervalIntegral.integral_add hdig helem] at hcongr
+  linear_combination hcongr
+
 /-- On the far-left horizontal part of a contour, the factor transferred by
 the functional equation to the Euler-product half-plane has size
 `O(x^σ / |T|)`. -/
@@ -299,6 +476,69 @@ theorem norm_farLeft_eulerFactor_le {x ε T σ : ℝ}
     _ ≤ (vonMangoldtLSeriesNorm ε * x ^ σ) / |T| :=
       div_le_div_of_nonneg_left hnum (abs_pos.mpr hT) hline
 
+/-- The elementary part of the Archimedean factor is also
+`O(x^σ / |T|)` on high horizontal lines. -/
+theorem norm_farLeft_elementaryGamma_le {x T σ : ℝ}
+    (hx : 1 < x) (hT : 1 ≤ |T|) :
+    ‖farLeftElementaryGammaIntegrand x ((σ : ℂ) + T * I)‖ ≤
+      (‖Complex.log (2 * Real.pi)‖ + Real.pi) * x ^ σ / |T| := by
+  have hxpos : 0 < x := zero_lt_one.trans hx
+  let s : ℂ := (σ : ℂ) + T * I
+  have harg : 1 ≤ |(Real.pi * s / 2).im| := by
+    have him : (Real.pi * s / 2).im = Real.pi * T / 2 := by
+      rw [show (Real.pi : ℂ) * s / 2 = ((Real.pi / 2 : ℝ) : ℂ) * s by
+        push_cast
+        ring]
+      simp [s]
+      ring
+    rw [him]
+    rw [abs_div, abs_mul, abs_of_pos Real.pi_pos]
+    norm_num
+    nlinarith [Real.two_le_pi]
+  have htan := norm_tan_le_two_of_one_le_abs_im harg
+  have htanTerm :
+      ‖(Real.pi / 2 : ℂ) * Complex.tan (Real.pi * s / 2)‖ ≤ Real.pi := by
+    rw [norm_mul]
+    have hnorm : ‖(Real.pi / 2 : ℂ)‖ = Real.pi / 2 := by
+      rw [show (Real.pi / 2 : ℂ) = ((Real.pi / 2 : ℝ) : ℂ) by
+        push_cast
+        ring]
+      rw [Complex.norm_real, Real.norm_eq_abs, abs_of_pos (half_pos Real.pi_pos)]
+    rw [hnorm]
+    calc
+      Real.pi / 2 * ‖Complex.tan (Real.pi * s / 2)‖ ≤ Real.pi / 2 * 2 :=
+        mul_le_mul_of_nonneg_left htan (half_pos Real.pi_pos).le
+      _ = Real.pi := by ring
+  have hcoeff :
+      ‖-Complex.log (2 * Real.pi) -
+          (Real.pi / 2 : ℂ) * Complex.tan (Real.pi * s / 2)‖ ≤
+        ‖Complex.log (2 * Real.pi)‖ + Real.pi := by
+    calc
+      _ ≤ ‖Complex.log (2 * Real.pi)‖ +
+          ‖(Real.pi / 2 : ℂ) * Complex.tan (Real.pi * s / 2)‖ := by
+        simpa only [norm_neg] using
+          norm_sub_le (-Complex.log (2 * Real.pi))
+            ((Real.pi / 2 : ℂ) * Complex.tan (Real.pi * s / 2))
+      _ ≤ _ := add_le_add le_rfl htanTerm
+  have hline : |T| ≤ ‖s‖ := by
+    simpa [s] using abs_im_le_norm s
+  have hC : 0 ≤ ‖Complex.log (2 * Real.pi)‖ + Real.pi := by positivity
+  have hnum :
+      0 ≤ (‖Complex.log (2 * Real.pi)‖ + Real.pi) * x ^ σ :=
+    mul_nonneg hC (Real.rpow_nonneg hxpos.le σ)
+  simp only [farLeftElementaryGammaIntegrand]
+  rw [norm_div, norm_mul, Complex.norm_cpow_eq_rpow_re_of_pos hxpos]
+  simp only [Complex.add_re, ofReal_re, mul_re, ofReal_im, I_re, I_im,
+    zero_mul, mul_zero, sub_zero, add_zero]
+  calc
+    ‖-Complex.log (2 * Real.pi) -
+          (Real.pi / 2 : ℂ) * Complex.tan (Real.pi * s / 2)‖ * x ^ σ / ‖s‖ ≤
+      ((‖Complex.log (2 * Real.pi)‖ + Real.pi) * x ^ σ) / ‖s‖ := by
+        apply div_le_div_of_nonneg_right _ (norm_nonneg _)
+        exact mul_le_mul_of_nonneg_right hcoeff (Real.rpow_nonneg hxpos.le σ)
+    _ ≤ ((‖Complex.log (2 * Real.pi)‖ + Real.pi) * x ^ σ) / |T| :=
+      div_le_div_of_nonneg_left hnum (lt_of_lt_of_le zero_lt_one hT) hline
+
 private theorem intervalIntegral_const_rpow_exponent {x a b : ℝ}
     (hx : 1 < x) :
     (∫ σ : ℝ in a..b, x ^ σ) = (x ^ b - x ^ a) / Real.log x := by
@@ -322,6 +562,105 @@ private theorem intervalIntegral_const_rpow_exponent {x a b : ℝ}
     (∫ σ : ℝ in a..b, x ^ σ) = x ^ b / Real.log x - x ^ a / Real.log x := by
       simpa [F] using hfund
     _ = (x ^ b - x ^ a) / Real.log x := by ring
+
+/-- Uniform integral bound for the elementary Archimedean contribution on a
+far-left horizontal segment. -/
+theorem norm_integral_farLeft_elementaryGamma_le {x ε a T : ℝ}
+    (hx : 1 < x) (ha : a ≤ -ε) (hT : 1 ≤ |T|) :
+    ‖∫ σ : ℝ in a..(-ε),
+        farLeftElementaryGammaIntegrand x ((σ : ℂ) + T * I)‖ ≤
+      ((‖Complex.log (2 * Real.pi)‖ + Real.pi) / |T|) *
+        (x ^ (-ε) - x ^ a) / Real.log x := by
+  let C : ℝ := (‖Complex.log (2 * Real.pi)‖ + Real.pi) / |T|
+  have hbound := intervalIntegral.norm_integral_le_of_norm_le
+    (μ := MeasureTheory.volume)
+    (f := fun σ : ℝ =>
+      farLeftElementaryGammaIntegrand x ((σ : ℂ) + T * I))
+    (g := fun σ : ℝ => C * x ^ σ) ha
+    (Filter.Eventually.of_forall fun σ hσ => by
+      have hpoint := norm_farLeft_elementaryGamma_le (σ := σ) hx hT
+      convert hpoint using 1
+      all_goals (dsimp [C]; ring))
+    ((continuous_const.mul (Real.continuous_const_rpow
+      (ne_of_gt (zero_lt_one.trans hx)))).intervalIntegrable
+        (μ := MeasureTheory.volume) _ _)
+  rw [intervalIntegral.integral_const_mul,
+    intervalIntegral_const_rpow_exponent hx] at hbound
+  convert hbound using 1
+  all_goals (dsimp [C]; ring)
+
+/-- The elementary constant and tangent terms vanish on the moving upper
+far-left horizontal segment. -/
+theorem tendsto_integral_farLeft_elementaryGamma_atTop {x ε : ℝ}
+    (hx : 1 < x) (a : ℝ → ℝ)
+    (ha : ∀ᶠ T in atTop, a T ≤ -ε) :
+    Tendsto
+      (fun T : ℝ => ∫ σ : ℝ in a T..(-ε),
+        farLeftElementaryGammaIntegrand x ((σ : ℂ) + T * I))
+      atTop (𝓝 0) := by
+  apply tendsto_iff_norm_sub_tendsto_zero.2
+  simp only [sub_zero]
+  let K : ℝ :=
+    (‖Complex.log (2 * Real.pi)‖ + Real.pi) * x ^ (-ε) / Real.log x
+  have hKdiv : Tendsto (fun T : ℝ => K / T) atTop (𝓝 0) :=
+    tendsto_const_nhds.div_atTop tendsto_id
+  apply squeeze_zero' (Eventually.of_forall fun T => norm_nonneg _) _ hKdiv
+  filter_upwards [ha, eventually_gt_atTop (1 : ℝ)] with T haT hT
+  have hmain := norm_integral_farLeft_elementaryGamma_le
+    hx haT (by rw [abs_of_pos (zero_lt_one.trans hT)]; exact hT.le)
+  rw [abs_of_pos (zero_lt_one.trans hT)] at hmain
+  refine hmain.trans ?_
+  have hC : 0 ≤ ‖Complex.log (2 * Real.pi)‖ + Real.pi := by positivity
+  have hxa : 0 ≤ x ^ a T := Real.rpow_nonneg (zero_lt_one.trans hx).le _
+  have hdiff : x ^ (-ε) - x ^ a T ≤ x ^ (-ε) := by linarith
+  have hlog : 0 < Real.log x := Real.log_pos hx
+  dsimp [K]
+  rw [show
+    ((‖Complex.log (2 * Real.pi)‖ + Real.pi) * x ^ (-ε) / Real.log x) / T =
+      ((‖Complex.log (2 * Real.pi)‖ + Real.pi) / T) * x ^ (-ε) /
+        Real.log x by ring]
+  exact div_le_div_of_nonneg_right
+    (mul_le_mul_of_nonneg_left hdiff
+      (div_nonneg hC (zero_lt_one.trans hT).le)) hlog.le
+
+/-- The elementary constant and tangent terms also vanish on the moving lower
+far-left horizontal segment. -/
+theorem tendsto_integral_farLeft_elementaryGamma_neg_height_atTop
+    {x ε : ℝ} (hx : 1 < x) (a : ℝ → ℝ)
+    (ha : ∀ᶠ T in atTop, a T ≤ -ε) :
+    Tendsto
+      (fun T : ℝ => ∫ σ : ℝ in a T..(-ε),
+        farLeftElementaryGammaIntegrand x ((σ : ℂ) - T * I))
+      atTop (𝓝 0) := by
+  apply tendsto_iff_norm_sub_tendsto_zero.2
+  simp only [sub_zero]
+  let K : ℝ :=
+    (‖Complex.log (2 * Real.pi)‖ + Real.pi) * x ^ (-ε) / Real.log x
+  have hKdiv : Tendsto (fun T : ℝ => K / T) atTop (𝓝 0) :=
+    tendsto_const_nhds.div_atTop tendsto_id
+  apply squeeze_zero' (Eventually.of_forall fun T => norm_nonneg _) _ hKdiv
+  filter_upwards [ha, eventually_gt_atTop (1 : ℝ)] with T haT hT
+  have hmain := norm_integral_farLeft_elementaryGamma_le
+    (T := -T) hx haT (by simpa [abs_of_pos (zero_lt_one.trans hT)] using hT.le)
+  have hmain' :
+      ‖∫ σ : ℝ in a T..(-ε),
+          farLeftElementaryGammaIntegrand x ((σ : ℂ) - T * I)‖ ≤
+        ((‖Complex.log (2 * Real.pi)‖ + Real.pi) / T) *
+          (x ^ (-ε) - x ^ a T) / Real.log x := by
+    simpa [sub_eq_add_neg, abs_of_pos (zero_lt_one.trans hT)] using hmain
+  refine hmain'.trans ?_
+  have hC : 0 ≤ ‖Complex.log (2 * Real.pi)‖ + Real.pi := by positivity
+  have hxa : 0 ≤ x ^ a T := Real.rpow_nonneg (zero_lt_one.trans hx).le _
+  have hdiff : x ^ (-ε) - x ^ a T ≤ x ^ (-ε) := by linarith
+  have hlog : 0 < Real.log x := Real.log_pos hx
+  dsimp [K]
+  rw [show
+    ((‖Complex.log (2 * Real.pi)‖ + Real.pi) * x ^ (-ε) / Real.log x) / T =
+      ((‖Complex.log (2 * Real.pi)‖ + Real.pi) / T) * x ^ (-ε) /
+        Real.log x by ring]
+  exact div_le_div_of_nonneg_right
+    (mul_le_mul_of_nonneg_left hdiff
+      (div_nonneg hC (zero_lt_one.trans hT).le)) hlog.le
 
 /-- The Euler-product part of the functional-equation decomposition makes a
 uniformly vanishing contribution on the whole far-left horizontal segment.
@@ -466,6 +805,58 @@ theorem tendsto_integral_farLeft_explicit_sub_gamma_neg_height_atTop
   have heq := integral_farLeft_explicit_sub_gamma_eq_euler
     (T := -T) hx hε haT (neg_ne_zero.mpr hT.ne')
   simpa [sub_eq_add_neg] using heq.symm
+
+/-- On the upper far-left horizontal segment, the full contour integral is
+asymptotic to the pure digamma integral.  Thus all zeta and elementary
+Archimedean terms on this segment have been eliminated. -/
+theorem tendsto_integral_farLeft_explicit_sub_digamma_atTop
+    {x ε : ℝ} (hx : 1 < x) (hε : 0 < ε) (a : ℝ → ℝ)
+    (ha : ∀ᶠ T in atTop, a T ≤ -ε) :
+    Tendsto
+      (fun T : ℝ =>
+        (∫ σ : ℝ in a T..(-ε),
+          explicitFormulaIntegrand x ((σ : ℂ) + T * I)) -
+        ∫ σ : ℝ in a T..(-ε),
+          farLeftDigammaIntegrand x ((σ : ℂ) + T * I))
+      atTop (𝓝 0) := by
+  have hgamma := tendsto_integral_farLeft_explicit_sub_gamma_atTop hx hε a ha
+  have helem := tendsto_integral_farLeft_elementaryGamma_atTop hx a ha
+  have hsum := hgamma.add helem
+  simpa only [add_zero] using hsum.congr' (by
+    filter_upwards [ha, eventually_gt_atTop (1 : ℝ)] with T haT hT
+    have hsplit := integral_farLeft_gamma_sub_digamma_eq_elementary
+      hx hε haT (zero_lt_one.trans hT).ne'
+    linear_combination -hsplit)
+
+/-- The corresponding lower far-left horizontal integral is also asymptotic
+to its pure digamma contribution. -/
+theorem tendsto_integral_farLeft_explicit_sub_digamma_neg_height_atTop
+    {x ε : ℝ} (hx : 1 < x) (hε : 0 < ε) (a : ℝ → ℝ)
+    (ha : ∀ᶠ T in atTop, a T ≤ -ε) :
+    Tendsto
+      (fun T : ℝ =>
+        (∫ σ : ℝ in a T..(-ε),
+          explicitFormulaIntegrand x ((σ : ℂ) - T * I)) -
+        ∫ σ : ℝ in a T..(-ε),
+          farLeftDigammaIntegrand x ((σ : ℂ) - T * I))
+      atTop (𝓝 0) := by
+  have hgamma :=
+    tendsto_integral_farLeft_explicit_sub_gamma_neg_height_atTop hx hε a ha
+  have helem := tendsto_integral_farLeft_elementaryGamma_neg_height_atTop hx a ha
+  have hsum := hgamma.add helem
+  simpa only [add_zero] using hsum.congr' (by
+    filter_upwards [ha, eventually_gt_atTop (1 : ℝ)] with T haT hT
+    have hsplit := integral_farLeft_gamma_sub_digamma_eq_elementary
+      (T := -T) hx hε haT (neg_ne_zero.mpr (zero_lt_one.trans hT).ne')
+    have hsplit' :
+        (∫ σ : ℝ in a T..(-ε),
+            farLeftGammaFactorIntegrand x ((σ : ℂ) - T * I)) -
+          (∫ σ : ℝ in a T..(-ε),
+            farLeftDigammaIntegrand x ((σ : ℂ) - T * I)) =
+          ∫ σ : ℝ in a T..(-ε),
+            farLeftElementaryGammaIntegrand x ((σ : ℂ) - T * I) := by
+      simpa [sub_eq_add_neg] using hsplit
+    linear_combination -hsplit')
 
 end ExplicitFormulaResidues
 end PrimeNumberTheorem

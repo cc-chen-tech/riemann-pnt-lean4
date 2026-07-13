@@ -278,6 +278,12 @@ Already available or mostly available:
     left endpoint to `-epsilon`, both the upper and lower Euler contributions
     tend to zero.  Consequently the full far-left horizontal integrals differ
     from the displayed Gamma-factor integrals by a quantity tending to zero.
+25. The same module proves the uniform complex-tangent bound
+    `norm (tan z) <= 2` for `1 <= |Im z|`.  It uses this to show that both the
+    `log(2*pi)` and tangent parts of the Gamma-factor integral vanish on the
+    moving upper and lower far-left edges.  The full far-left horizontal
+    integrals are therefore now proved asymptotic to the pure digamma
+    integrals `digamma(s) * x^s / s`.
 
 Remaining after the fixed-right-edge contour shift:
 
@@ -290,9 +296,10 @@ Remaining after the fixed-right-edge contour shift:
    complete multiplicity-aware trivial-residue series limit and its exact
    extraction from every `-(2N+1)` contour are now proved, and a joint cofinal
    sequence has been chosen.  On the far-left horizontal portions, the
-   Euler-product contribution is now proved to vanish uniformly in the moving
-   left endpoint.  What remains there is the explicit Gamma/digamma integral,
-   together with the moving vertical left edge.
+   Euler-product, constant, and tangent contributions are now proved to vanish
+   uniformly in the moving left endpoint.  What remains on these horizontal
+   portions is only the pure digamma integral, together with the moving
+   vertical left edge.
 3. Separate the now-proved limit of `nontrivial-zero sum - remainder` by
    proving the remainder tends to zero; this then gives the symmetric
    multiplicity-weighted nontrivial-zero limit along the chosen cofinal
