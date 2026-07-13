@@ -191,15 +191,22 @@ feed the same moving-line closure from fixed-radius boundary growth for
 reduction in the next Borel/Jensen regular-part target, but it still does not
 prove the missing zeta-specific high-height estimates.
 
-Mathematically, that regular-part estimate has the shape:
+Mathematically, the candidate-zero regular-part estimate used to close the
+zero-free region has the shape:
 
 ```text
 Re(-ζ'/ζ(σ + i t)) <= -1 / (σ - β) + O(log |t|).
 ```
 
-These are the current hard wall.  They normally require zeta growth estimates
-together with Borel-Caratheodory, Jensen/Hadamard factorization, or equivalent
-zero-repulsion machinery.  The repository already has fixed-margin estimates
+This hard wall is now crossed for the real-part estimate needed by 3-4-1.
+Inside a strictly narrower zero-free strip, the repository also proves the
+full-norm consequence `||logDeriv zeta(s)|| = O((log |t|)^2)`: Jensen gives
+`O(log |t|)` local divisor mass, while the classical region supplies
+`Omega(1/log |t|)` separation from every divisor.  This estimate makes the
+first-order explicit-formula horizontal segments from
+`1-c/(2 log |t|)` to `2` tend to zero at both heights `+T` and `-T`.
+
+The repository also retains fixed-margin estimates
 for `1 + ε <= Re(s)`, compact bounded-height bounds for `logDeriv ζ`, compact
 bounded-height positive lower bounds for `ζ`, and bridge lemmas that patch a
 future high-height `B * log |t|` estimate into an all-height affine logarithmic
@@ -279,20 +286,21 @@ Borel disk from `R/2` to `3R/4`, and proves
 `exists_regularized_logDeriv_riemannZeta_log_bound`.  The resulting bound is
 uniform in height and controls `logDeriv zeta` after subtracting every local
 divisor principal part by `B * (1 + log (|t| + 5))`.  It is not yet a bound
-for the unregularized norm `||logDeriv zeta||`; the next step is to isolate the
-candidate-zero principal term in real part and feed it into the 3-4-1 closure.
+for the unregularized norm on the whole boundary strip; the theorem
+`exists_norm_logDeriv_riemannZeta_le_log_sq_on_inner_zeroFreeRegion` now gives
+that norm bound on the narrower strip guaranteed to be zero-free.
 
 ## Paper Positioning
 
-The recommended paper framing is to make the `3-4-1 + compact zero-free strip`
+The recommended paper framing is to make the `3-4-1 + classical zero-free region`
 module the main contribution, after explicitly locating the project relative to
 the existing PNT and zeta/L-function formalization landscape.  The remaining
 infrastructure should be presented as secondary contributions and future work.
 This keeps the claims tight:
 
 1. **Primary contribution:** formalizing the real-part logarithmic-derivative
-   Dirichlet series, the de la Vallee Poussin 3-4-1 inequality, and the compact
-   zero-free strip.
+   Dirichlet series, the de la Vallee Poussin 3-4-1 inequality, and the
+   classical `c/log |t|` zero-free region.
 2. **Secondary contribution:** correctly formulating the Riemann-von Mangoldt
    explicit formula target using `chebyshevPsi0`, finite-height truncations, and
    explicit error/remainder forms rather than an unordered infinite zero sum.
@@ -383,8 +391,8 @@ The concrete explicit-formula integrand is now defined in
 `PrimeNumberTheorem/ExplicitFormulaResidues.lean`.  The file proves its local
 residues at `s = 1`, `s = 0`, every nontrivial zeta zero, and every trivial
 zero, with zeta zeros weighted by the actual `analyticOrderNatAt`
-multiplicity.  Perron inversion, the Perron starting integral, and contour
-errors remain open.  The same file now proves the concrete integrand is globally
+multiplicity.  The ordinary first-order Perron starting-line limit is proved;
+closure of all shifted contour errors remains open.  The same file now proves the concrete integrand is globally
 meromorphic and, on every compact set, analytic outside an explicitly
 constructed finite candidate set (the zeta-divisor support together with the
 kernel pole at `0`).
@@ -494,6 +502,8 @@ Lean declarations in `ZeroFreeRegion.lean` and
 | `ZeroFreeRegion.exists_norm_normalizedRiemannZetaCarrier_le_on_zero_one` / `ZeroFreeRegion.exists_norm_riemannZeta_le_polynomial_on_zero_four` | `theorem` | Applies Mathlib's vertical-strip Phragmen-Lindelof theorem to a normalized entire zeta carrier, patches low heights by compactness, and derives uniform fourth-degree polynomial zeta growth on `0≤Re(s)≤4`. | Completes the fixed-strip growth input required by the Jensen disks, rather than assuming it. |
 | `ZeroFreeRegion.norm_logDeriv_le_six_mul_div_of_analyticOnNhd_nonzero_re_log_bound` / three-quarter mixed-canonical and Jensen variants | `lemma` | Strengthens the retained Borel-Caratheodory disk from `R/2` to `3R/4` and propagates this geometry through the mixed canonical zeta factor and Jensen divisor-mass estimate. | Lets a disk centered at `2+it` reach `Re(s)=1` while keeping its outer circle inside the proved fixed growth strip. |
 | `ZeroFreeRegion.exists_regularized_logDeriv_riemannZeta_log_bound` | `theorem` | Proves one constant `B≥0` uniformly bounds `||logDeriv ζ(z)-Σ D(u)/(z-u)||` by `B(1+log(|t|+5))` at every nonzero zeta value in the radius-one disk centered at `2+it`, for `|t|≥4`. | Closes the uniform high-height all-divisor regular-part estimate without claiming analytic extension at the divisor points themselves. |
+| `ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_le_log_sq_on_inner_zeroFreeRegion` | `theorem` | Proves `||logDeriv ζ(σ+it)|| ≤ C(log|t|)^2` uniformly for large height on `1-c/(2log|t|)≤σ≤2`. | Combines the classical zero-free region, local divisor separation, Jensen divisor mass, and the regular-part estimate into a full-norm shifted-contour bound. |
+| `PrimeNumberTheorem.ExplicitFormulaResidues.exists_norm_horizontal_inner_explicitFormulaContour_le` / signed and both-side limit theorems | `theorem` | Proves the horizontal integrand is interval-integrable, gives its explicit norm bound, and with one common `c` proves the segments from `1-c/(2log T)` to `2` tend to zero at heights `+T` and `-T`. | Connects the inner zero-free estimate non-degenerately to both horizontal sides; the remaining contour segments still require separate bounds. |
 | `ZeroFreeRegion.exists_ReNegDerivDivVerticalLogBound` | `theorem` | Proves the exact uniform boundary-strip estimate `Re(-ζ'/ζ(σ+it))≤C log|t|` for `1≤σ≤2` above a fixed height, using the favorable sign of every local zero principal part. | Discharges the real-part vertical input actually required by the 3-4-1 route without asserting the stronger full-norm bound. |
 | `ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_le_neg_inv_add_log_abs_bound` | `theorem` | Separates a same-height candidate zero and proves `Re(-ζ'/ζ(σ+it))≤-1/(σ-β)+C log|t|` uniformly when the candidate lies in the fixed Jensen disk. | Supplies the quantitative zero-repulsion term; candidates farther left are handled by a uniform constant absorption in the final proof. |
 | `ZeroFreeRegion.classical_zero_free_region_proved` | `theorem` | Proves the predicate `classical_zero_free_region`, i.e. existence of `c>0` with zeta nonzero for `|Im(s)|≥2` and `Re(s)≥1-c/log|Im(s)|`. | Completes the classical de la Vallee Poussin zero-free-region chain in Lean; it is not a proof of PNT or the stronger Vinogradov-Korobov region. |

@@ -508,14 +508,22 @@ For the truncated identity:
    `tendsto_truncated_neg_logDeriv_firstOrderPerron_atTop`.  This is a limit
    theorem; it does not claim a closed-form uniform truncation rate for the
    full conditionally convergent series.
-3. Remaining: prove the horizontal terms vanish along a cofinal good-height
-   sequence and analyze the left-line term.  The portions with
-   `1+epsilon <= Re(s) <= c` already vanish by the first-order `O(1/T)` bound;
-   the interval `-1 <= Re(s) <= 1+epsilon` still needs a good-height
-   logarithmic-derivative estimate.  For the fixed edge `Re(s)=-1`, the
-   left-line integral is not assumed to vanish; it must be evaluated.
-   Alternatively, move the left boundary past the trivial zeros and prove
-   the corresponding residue and contour limits together.
+3. Completed on the moving left side: both far-left horizontal pieces and the
+   moving left vertical edge tend to zero along the linearly controlled
+   good-height family.
+4. Completed on the horizontal right and inner-right segments: the fixed
+   `1+epsilon <= Re(s) <= c` portions vanish by the first-order `O(1/T)`
+   bound.  In addition,
+   `ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_le_log_sq_on_inner_zeroFreeRegion`
+   proves a full-norm `O((log |t|)^2)` estimate on
+   `1-c/(2log|t|) <= Re(s) <= 2`.  The signed theorem
+   `ExplicitFormulaResidues.exists_tendsto_horizontal_inner_explicitFormulaIntegrand_signed_zero`
+   then proves that this segment tends to zero on both horizontal sides.
+5. Remaining: control the central horizontal segment between the far-left
+   estimate and the moving zero-free boundary.  This requires a quantitative
+   good-height estimate for `zeta'/zeta`, not merely exclusion of zeros exactly
+   on the horizontal line.  After that, combine all edge limits with the finite
+   residue identity and justify passage beyond the selected cofinal sequence.
 
 For the principal value final formula:
 
