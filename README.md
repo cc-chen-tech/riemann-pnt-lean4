@@ -231,10 +231,8 @@ discharges the polynomial-growth premise:
 continuity from the right.  Consequently the logarithmic and circle-average
 bounds above, and an `O(log |t|)` Jensen weighted zero-mass bound, now have
 unconditional zeta-specific forms.  These results still do not prove the raw
-uniform boundary-strip bound for `ζ'/ζ`.  The zero-removed regular-part route
-now has the local canonical/Borel estimate described below, but its uniform
-high-height specialization and connection to the final zero-candidate form
-remain to be completed.  The functional-equation side now also proves the
+uniform boundary-strip norm bound for `ζ'/ζ`; they now feed the uniform
+zero-removed regular-part theorem described below.  The functional-equation side also proves the
 exact Gamma/trigonometric cancellation on `s=1-it`: the full coefficient has
 squared norm at most `|t|`, and hence
 `‖ζ(it)‖ ≤ 4|t|²` for `|t|≥1`.  Thus polynomial growth is verified on the new
@@ -243,9 +241,9 @@ now has a stronger-than-required growth input: endpoint comparison for the
 Mellin representation bounds `completedRiemannZeta₀` uniformly on the closed
 strip, while Gamma reflection bounds `Gammaℝ⁻¹` exponentially.  Consequently
 the entire regularized carrier has an explicit quadratic-polynomial times
-single-exponential bound.  The remaining Phragmen-Lindelof work is to package
-that estimate in Mathlib's `IsBigO` filter form, normalize the polynomial
-boundary growth, and apply the vertical-strip theorem.  On the pole side,
+single-exponential bound.  `ZeroFreeRegion/PhragmenLindelofZeta.lean` packages
+this estimate in Mathlib's `IsBigO` filter form, normalizes the boundary
+growth, and applies the vertical-strip theorem.  On the pole side,
 the local decomposition
 `logDeriv ζ(s) = -(s-1)^-1 + logDeriv(unit)(s)` is now proved near `s=1`,
 and the unit logarithmic derivative is locally bounded; this improves the
@@ -270,8 +268,15 @@ Borel-Caratheodory without a quantitative nearest-zero separation loss.  The the
 `norm_regularized_logDeriv_riemannZeta_le_mixedCanonical_bound` combines this
 with the finite correction bound to control the complete local regular part by
 the boundary logarithmic norm plus Jensen divisor mass.  This is a genuine
-local regular-part theorem; the remaining work is to choose the radii and
-specialize the already proved zeta growth/zero-mass bounds uniformly in height.
+local regular-part theorem.  `ZeroFreeRegion/PhragmenLindelofZeta.lean` now
+completes that formerly missing high-height specialization: it proves fixed-strip
+polynomial growth for zeta by Phragmen-Lindelof, strengthens the retained
+Borel disk from `R/2` to `3R/4`, and proves
+`exists_regularized_logDeriv_riemannZeta_log_bound`.  The resulting bound is
+uniform in height and controls `logDeriv zeta` after subtracting every local
+divisor principal part by `B * (1 + log (|t| + 5))`.  It is not yet a bound
+for the unregularized norm `||logDeriv zeta||`; the next step is to isolate the
+candidate-zero principal term in real part and feed it into the 3-4-1 closure.
 
 ## Paper Positioning
 
@@ -483,7 +488,10 @@ Lean declarations in `ZeroFreeRegion.lean` and
 | `ZeroFreeRegion.norm_riemannZeta_le_two_mul_norm_of_one_le_re_of_one_le_abs_im` / `ZeroFreeRegion.norm_riemannZeta_le_two_mul_norm_add_three_on_vertical_strip` | `lemma` | Uses Abel's floor-integral formula and continuity from `Re(s)>1` to prove `‖ζ(s)‖≤2‖s‖` on `Re(s)≥1`, `|Im(s)|≥1`, and packages it as polynomial growth on `1≤Re(s)≤3`. | Closes the previously missing zeta-growth premise for the Jensen/Borel chain; this controls the numerator, not yet the logarithmic derivative near zeros. |
 | `ZeroFreeRegion.norm_Gamma_mul_cos_functionalEquation_sq_le` / `ZeroFreeRegion.norm_riemannZeta_functionalEquationCoeff_sq_le` / `ZeroFreeRegion.norm_riemannZeta_I_mul_le_four_mul_abs_sq` | `lemma` | Uses Gamma reflection, recurrence, conjugation, and exact hyperbolic norms to cancel the functional-equation exponential factors and prove `‖ζ(it)‖≤4|t|²` for `|t|≥1`. | Supplies an unconditional polynomial-growth estimate on the left boundary `Re(s)=0`; the separately proved carrier-growth theorem supplies the interior PL growth input. |
 | `ZeroFreeRegion.norm_strongFEPair_Λ_le_endpoint_integrals` / `ZeroFreeRegion.exists_norm_completedRiemannZeta₀_le_on_zero_one` | `theorem` | Splits the Mellin integral at `1` and compares real powers with the two endpoint exponents, giving a uniform norm bound for `completedRiemannZeta₀` on `0≤Re(s)≤1`. | Supplies the completed-zeta half of the interior Phragmen-Lindelof growth estimate without assuming a vertical Stirling theorem. |
-| `ZeroFreeRegion.norm_inv_Gammaℝ_le_exp_of_re_mem_Icc_of_one_le_abs_im` / `ZeroFreeRegion.exists_norm_riemannZetaEntireRegularization_le_exp_on_zero_one` | `lemma` + `theorem` | Uses Gamma reflection and the Mellin bound to prove that the entire carrier `s(s-1)ζ(s)` is bounded by a quadratic polynomial in `|Im(s)|` times `exp(π|Im(s)|/2)` on `0≤Re(s)≤1`, `|Im(s)|≥1`. | Proves a high-height pointwise growth estimate stronger than the weak double-exponential PL premise; only `IsBigO` packaging, polynomial normalization, the low-height compact patch, and the PL application remain. |
+| `ZeroFreeRegion.norm_inv_Gammaℝ_le_exp_of_re_mem_Icc_of_one_le_abs_im` / `ZeroFreeRegion.exists_norm_riemannZetaEntireRegularization_le_exp_on_zero_one` | `lemma` + `theorem` | Uses Gamma reflection and the Mellin bound to prove that the entire carrier `s(s-1)ζ(s)` is bounded by a quadratic polynomial in `|Im(s)|` times `exp(π|Im(s)|/2)` on `0≤Re(s)≤1`, `|Im(s)|≥1`. | Supplies the pointwise growth input used by the completed Phragmen-Lindelof argument. |
+| `ZeroFreeRegion.exists_norm_normalizedRiemannZetaCarrier_le_on_zero_one` / `ZeroFreeRegion.exists_norm_riemannZeta_le_polynomial_on_zero_four` | `theorem` | Applies Mathlib's vertical-strip Phragmen-Lindelof theorem to a normalized entire zeta carrier, patches low heights by compactness, and derives uniform fourth-degree polynomial zeta growth on `0≤Re(s)≤4`. | Completes the fixed-strip growth input required by the Jensen disks, rather than assuming it. |
+| `ZeroFreeRegion.norm_logDeriv_le_six_mul_div_of_analyticOnNhd_nonzero_re_log_bound` / three-quarter mixed-canonical and Jensen variants | `lemma` | Strengthens the retained Borel-Caratheodory disk from `R/2` to `3R/4` and propagates this geometry through the mixed canonical zeta factor and Jensen divisor-mass estimate. | Lets a disk centered at `2+it` reach `Re(s)=1` while keeping its outer circle inside the proved fixed growth strip. |
+| `ZeroFreeRegion.exists_regularized_logDeriv_riemannZeta_log_bound` | `theorem` | Proves one constant `B≥0` uniformly bounds `||logDeriv ζ(z)-Σ D(u)/(z-u)||` by `B(1+log(|t|+5))` throughout the radius-one disk centered at `2+it`, for `|t|≥4`. | Closes the previously missing uniform high-height all-divisor regular-part estimate. It does not claim a raw norm bound for `logDeriv ζ`; candidate-principal-part real separation remains the next step. |
 | `ZeroFreeRegion.log_norm_riemannZeta_sigma_it_le_log_two_add_two_log_abs_add_three` / unconditional circle-average and Jensen zero-mass forms | `lemma` | Derives explicit logarithmic zeta growth and weighted local zero-mass bounds of order `log |t|` with no caller-supplied growth hypothesis. | Supplies the growth and zero-counting inputs consumed by the mixed canonical regular-part theorem; the uniform high-height specialization remains open. |
 | `ZeroFreeRegion.translatedCanonicalNumerator` / `canonicalNumeratorProduct` / `mixedCanonicalRegularUnit` | `def` + `lemma` | Canonicalizes inner divisor factors while retaining outer raw factors, preserves zeta's boundary norm, improves its center norm, proves closed-disk nonvanishing when the canonicalizing circle is zeta-zero-free, and bounds the mixed logarithmic-derivative correction by total divisor mass divided by `r-d`. | Removes both the old quantitative per-zero separation loss and the inner/outer composition gap; a qualitative zero-free-circle premise remains explicit. |
 | `ZeroFreeRegion.norm_regularized_logDeriv_riemannZeta_le_mixedCanonical_bound` | `lemma` | Bounds `‖logDeriv ζ(z) - Σ D(u)/(z-u)‖` by a Borel boundary-growth term plus `divisorMass/(r-d)` on a retained disk. | First zeta-specific local regular-part estimate in this route whose coefficient is independent of the nearest zero distance; fixed-radius high-height specialization is the next step, not yet the classical zero-free region. |

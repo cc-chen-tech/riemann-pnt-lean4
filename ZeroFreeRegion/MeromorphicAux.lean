@@ -951,6 +951,102 @@ theorem exists_norm_riemannZetaEntireRegularization_le_exp_on_zero_one :
     _ = 2 * (C * (|s.im| + 1) ^ 2 + 1) *
         Real.exp (Real.pi * |s.im| / 2) := by ring
 
+/-- The entire zeta carrier satisfies the weak double-exponential growth
+hypothesis required by Phragmen--Lindelof on `0 < Re z < 1`. -/
+theorem riemannZetaEntireRegularization_isBigO_exp_exp_on_zero_one :
+    ∃ c < Real.pi, ∃ B : ℝ,
+      riemannZetaEntireRegularization
+        =O[comap (_root_.abs ∘ Complex.im) atTop ⊓
+            𝓟 (Complex.re ⁻¹' Set.Ioo (0 : ℝ) 1)]
+          fun z : ℂ => Real.exp (B * Real.exp (c * |z.im|)) := by
+  rcases exists_norm_riemannZetaEntireRegularization_le_exp_on_zero_one with
+    ⟨C, hC, hcarrier⟩
+  let p : ℝ → ℝ := fun t => 2 * (C * (t + 1) ^ 2 + 1)
+  have hp_nonneg : ∀ t, 0 ≤ p t := by
+    intro t
+    dsimp [p]
+    positivity
+  have hp : p =O[atTop] fun t : ℝ => t ^ (2 : ℝ) := by
+    rw [Asymptotics.isBigO_iff]
+    refine ⟨8 * C + 2, ?_⟩
+    filter_upwards [eventually_ge_atTop (1 : ℝ)] with t ht
+    have ht0 : 0 ≤ t := zero_le_one.trans ht
+    have hsq : (t + 1) ^ 2 ≤ 4 * t ^ 2 := by nlinarith
+    have hone : 1 ≤ t ^ 2 := by nlinarith
+    have hC_sq : C * (t + 1) ^ 2 ≤ C * (4 * t ^ 2) :=
+      mul_le_mul_of_nonneg_left hsq hC
+    rw [Real.norm_of_nonneg (hp_nonneg t),
+      Real.norm_of_nonneg (Real.rpow_nonneg ht0 2), Real.rpow_two]
+    dsimp [p]
+    nlinarith
+  have hexp :
+      (fun t : ℝ => Real.exp (Real.pi * t / 2)) =O[atTop]
+        fun t : ℝ => Real.exp (2 * t) := by
+    apply Asymptotics.IsBigO.of_norm_eventuallyLE
+    filter_upwards [eventually_ge_atTop (0 : ℝ)] with t ht
+    simp only [Real.norm_eq_abs, Real.abs_exp]
+    apply Real.exp_le_exp.mpr
+    nlinarith [Real.pi_div_two_le_two]
+  have hsingle :
+      (fun t : ℝ => p t * Real.exp (Real.pi * t / 2)) =O[atTop]
+        fun t : ℝ => Real.exp (3 * t) := by
+    have hprod := hp.mul hexp
+    have hpolyexp :
+        (fun t : ℝ => t ^ (2 : ℝ) * Real.exp (2 * t)) =O[atTop]
+          fun t : ℝ => Real.exp (3 * t) := by
+      simpa [mul_comm] using
+        (isLittleO_exp_mul_rpow_of_lt (2 : ℝ) (a := 2) (b := 3)
+          (by norm_num)).isBigO
+    exact hprod.trans hpolyexp
+  have hratio0 :
+      Tendsto (fun x : ℝ => Real.exp x / x) atTop atTop := by
+    simpa [Real.rpow_one] using tendsto_exp_div_rpow_atTop (1 : ℝ)
+  have hratio :
+      Tendsto (fun t : ℝ => Real.exp (2 * t) / (2 * t)) atTop atTop :=
+    hratio0.comp (tendsto_id.const_mul_atTop (by norm_num : (0 : ℝ) < 2))
+  have hdiff :
+      Tendsto (fun t : ℝ => Real.exp (2 * t) - 3 * t) atTop atTop := by
+    apply tendsto_atTop_mono' atTop _ tendsto_id
+    filter_upwards [hratio.eventually (eventually_ge_atTop (4 : ℝ)),
+      eventually_gt_atTop (0 : ℝ)] with t hratio_t ht
+    have hden : 0 < 2 * t := mul_pos (by norm_num) ht
+    have hlarge : 8 * t ≤ Real.exp (2 * t) := by
+      have := (le_div_iff₀ hden).mp hratio_t
+      nlinarith
+    change t ≤ Real.exp (2 * t) - 3 * t
+    linarith
+  have hsingle_double :
+      (fun t : ℝ => Real.exp (3 * t)) =O[atTop]
+        fun t : ℝ => Real.exp (Real.exp (2 * t)) := by
+    exact (Real.isLittleO_exp_comp_exp_comp.mpr hdiff).isBigO
+  have hreal :
+      (fun t : ℝ => p t * Real.exp (Real.pi * t / 2)) =O[atTop]
+        fun t : ℝ => Real.exp (Real.exp (2 * t)) :=
+    hsingle.trans hsingle_double
+  rcases Asymptotics.isBigO_iff.mp hreal with ⟨K, hK⟩
+  refine ⟨2, by linarith [Real.pi_gt_three], 1, ?_⟩
+  rw [Asymptotics.isBigO_iff]
+  refine ⟨K, ?_⟩
+  rw [eventually_inf_principal, eventually_comap]
+  filter_upwards [eventually_ge_atTop (1 : ℝ), hK] with t ht hKt
+  intro z hzt hzstrip
+  have hzt' : |z.im| = t := by simpa [Function.comp_apply] using hzt
+  have hzim : 1 ≤ |z.im| := by rw [hzt']; exact ht
+  have hzclosed : z.re ∈ Set.Icc (0 : ℝ) 1 := ⟨hzstrip.1.le, hzstrip.2.le⟩
+  have hQ := hcarrier z hzclosed hzim
+  have hKt' :
+      p t * Real.exp (Real.pi * t / 2) ≤
+        K * Real.exp (Real.exp (2 * t)) := by
+    simpa [Real.norm_eq_abs, abs_of_nonneg (hp_nonneg t), Real.abs_exp] using hKt
+  calc
+    ‖riemannZetaEntireRegularization z‖
+        ≤ p |z.im| * Real.exp (Real.pi * |z.im| / 2) := by simpa [p] using hQ
+    _ = p t * Real.exp (Real.pi * t / 2) := by rw [hzt']
+    _ ≤ K * Real.exp (Real.exp (2 * t)) := hKt'
+    _ = K * ‖Real.exp ((1 : ℝ) * Real.exp ((2 : ℝ) * |z.im|))‖ := by
+      rw [hzt']
+      simp
+
 /-- The regular part in the local decomposition of ζ at `1` is analytic. -/
 lemma analyticAt_riemannZetaRegularAtOne :
     AnalyticAt ℂ riemannZetaRegularAtOne 1 := by
@@ -11699,6 +11795,17 @@ lemma meromorphicOn_riemannZeta_closedBall (c : ℂ) (R : ℝ) :
   · subst hs
     exact meromorphicAt_riemannZeta_one
   · exact meromorphicAt_riemannZeta_of_ne_one s hs
+
+/-- On a closed ball avoiding the pole at `1`, zeta is analytic and hence its
+divisor is pointwise nonnegative.  This exported zeta-specific form keeps
+downstream Jensen modules independent of the underlying divisor import. -/
+lemma divisor_riemannZeta_closedBall_nonneg {c : ℂ} {R : ℝ}
+    (havoid : ∀ z : ℂ, z ∈ closedBall c R → z ≠ 1) :
+    0 ≤ MeromorphicOn.divisor riemannZeta (closedBall c R) := by
+  have han : AnalyticOnNhd ℂ riemannZeta (closedBall c R) := by
+    intro z hz
+    exact analyticOnNhd_riemannZeta_ne_one z (havoid z hz)
+  exact han.divisor_nonneg
 
 /-- Jensen formula specialized to ζ on a closed ball. -/
 lemma jensen_circleAverage_log_norm_riemannZeta_closedBall

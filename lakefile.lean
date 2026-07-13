@@ -27,6 +27,7 @@ lean_lib RiemannPNT where
     `PrimeNumberTheorem.ExplicitFormulaAux,
     `ZeroFreeRegion,
     `ZeroFreeRegion.MeromorphicAux,
+    `ZeroFreeRegion.PhragmenLindelofZeta,
     `HardyTheorem.Phase1Aux,
     `HardyTheorem.AFE,
     `MathlibAux.RectangleResidue,
