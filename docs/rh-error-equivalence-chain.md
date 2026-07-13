@@ -30,7 +30,7 @@ The current project already provides these usable endpoints and support lemmas.
 | `sqrt_mul_log_sq_isLittleO_rpow_of_half_lt` | Shows the RH-scale `sqrt x * log^2 x` model is smaller than every `x^theta` with `theta > 1/2`. |
 | `psiPowerErrorBound_of_RH_PsiErrorBound_of_half_lt` | Converts `RH_PsiErrorBound` into every power-scale `PsiPowerErrorBound theta` with `theta > 1/2`. |
 | `ZeroFreeRegion.riemannHypothesis_of_RH_PsiErrorBound` | Closes the reverse `RH_PsiErrorBound -> RiemannHypothesis` implication using the Mellin/Landau zero-exclusion bridge and zero symmetry. |
-| `explicit_formula_von_mangoldt` | Present only as a target `Prop`; its current infinite zero sum is not the final formal theorem shape needed for estimates. |
+| `explicit_formula_von_mangoldt` | Present only as a target `Prop`; it uses a finite symmetric-height zero sum weighted by `analyticOrderNatAt`, followed by an `atTop` limit. |
 
 ## Current Target Assessment
 
@@ -154,9 +154,9 @@ statement must specify:
 Current status:
 
 - `explicit_formula_von_mangoldt` is only a `Prop` target.
-- Its infinite `tsum` over zeros is not the right first formal theorem for
-  estimates, because convergence and principal-value conventions are not
-  encoded.
+- Its finite symmetric-height truncations encode the principal-value convention
+  and analytic multiplicities, but the all-height convergence proof is still
+  missing; only a cofinal good-height convergence theorem is currently proved.
 
 Formalization dependencies:
 

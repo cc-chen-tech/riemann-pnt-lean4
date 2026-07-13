@@ -11,6 +11,7 @@ import PrimeNumberTheorem.FirstOrderExplicitFormula
 import PrimeNumberTheorem.QuantitativeGoodHeight
 import PrimeNumberTheorem.CentralHorizontalEdge
 import PrimeNumberTheorem.CofinalExplicitFormula
+import PrimeNumberTheorem.NontrivialZeroMultiplicity
 import PrimeNumberTheorem.ExplicitFormulaTruncated
 import ZeroFreeRegion
 import ZeroFreeRegion.MeromorphicAux
@@ -22792,12 +22793,22 @@ theorem exists_nontrivial_zero_on_critical_line_of_conrey_target
       s ∈ _root_.RiemannHypothesis.criticalLine :=
   KnownResults.exists_nontrivial_zero_on_critical_line_of_conrey_target h
 
-/-- Public definitional unfolding of the corrected height-truncated von
-Mangoldt explicit-formula target. -/
+/-- Public definitional unfolding of the legacy unweighted height-truncated
+von Mangoldt explicit-formula predicate. -/
+theorem explicit_formula_von_mangoldt_unweighted_iff
+    {x : ℝ} {hx : x ≥ 2} :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx ↔
+      Tendsto (fun T : ℝ => PrimeNumberTheorem.explicitFormulaApprox x T)
+        atTop (𝓝 (PrimeNumberTheorem.chebyshevPsi0 x : ℂ)) :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_iff
+
+/-- Public definitional unfolding of the multiplicity-aware symmetric-height
+von Mangoldt explicit-formula target. -/
 theorem explicit_formula_von_mangoldt_iff
     {x : ℝ} {hx : x ≥ 2} :
     PrimeNumberTheorem.explicit_formula_von_mangoldt x hx ↔
-      Tendsto (fun T : ℝ => PrimeNumberTheorem.explicitFormulaApprox x T)
+      Tendsto (fun T : ℝ =>
+        PrimeNumberTheorem.explicitFormulaApproxWithMultiplicity x T)
         atTop (𝓝 (PrimeNumberTheorem.chebyshevPsi0 x : ℂ)) :=
   PrimeNumberTheorem.explicit_formula_von_mangoldt_iff
 
@@ -22810,19 +22821,16 @@ namespace ExplicitFormulaTruncated
 
 /-- Public truncated von Mangoldt explicit-formula target predicate.  This is
 still a target statement, not an unconditional theorem. -/
-abbrev ExplicitFormulaTruncatedTarget
-    (T : ℝ) (hT : 0 < T) (x : ℝ) (hx : 0 < x) : Prop :=
+abbrev ExplicitFormulaTruncatedTarget : Prop :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget
-    T hT x hx
 
 /-- Public conditional repackaging of an assumed truncated explicit-formula
 target. -/
 theorem explicitFormulaTruncated_of
-    (T : ℝ) (hT : 0 < T) (x : ℝ) (hx : 0 < x)
-    (h : ExplicitFormulaTruncatedTarget T hT x hx) :
-    ExplicitFormulaTruncatedTarget T hT x hx :=
+    (h : ExplicitFormulaTruncatedTarget) :
+    ExplicitFormulaTruncatedTarget :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.explicitFormulaTruncated_of
-    T hT x hx h
+    h
 
 /-- Public repackaging of a truncated-explicit-formula converse route as the
 right-half zero-exclusion route interface used by the `ψ`-error bridges. -/
@@ -22830,8 +22838,7 @@ theorem psiPowerErrorBelowLineExcludesZerosRightOf_of_truncated_route
     {β : ℝ}
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute β)
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx) :
+    (hexplicit : ExplicitFormulaTruncatedTarget) :
     PrimeNumberTheorem.PsiPowerErrorBelowLineExcludesZerosRightOf β :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.psiPowerErrorBelowLineExcludesZerosRightOf_of_truncated_route
     hroute hexplicit
@@ -22842,8 +22849,7 @@ theorem no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute
         (2 / 3))
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine (2 / 3)) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (2 / 3) :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route
@@ -22855,8 +22861,7 @@ theorem no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_belo
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute
         (2 / 3))
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowTwoThirds) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (2 / 3) :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_below_two_thirds
@@ -22868,8 +22873,7 @@ theorem no_zeros_on_one_third_of_truncated_explicit_formula_converse_route
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute
         (2 / 3))
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine (2 / 3)) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_one_third_of_truncated_explicit_formula_converse_route
@@ -22881,8 +22885,7 @@ theorem no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_below
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute
         (2 / 3))
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowTwoThirds) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_below_two_thirds
@@ -22893,8 +22896,7 @@ theorem no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route
     {β : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute β)
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (1 - β) :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route
@@ -22906,8 +22908,7 @@ theorem no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_
     {β : ℝ} (hβ_two_thirds : (2 / 3 : ℝ) ≤ β) (hβ_lt_one : β < 1)
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute β)
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowTwoThirds) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (1 - β) :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_below_two_thirds
@@ -22920,8 +22921,7 @@ theorem no_zeros_on_vertical_line_of_truncated_explicit_formula_converse_route_s
     (hdelta_pos : 0 < delta) (hθ_nonneg : 0 ≤ β - delta)
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute β)
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBound (β - delta)) :
     PrimeNumberTheorem.NoZerosOnVerticalLine β :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_vertical_line_of_truncated_explicit_formula_converse_route_saving
@@ -22934,8 +22934,7 @@ theorem no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_
     (hdelta_pos : 0 < delta) (hθ_nonneg : 0 ≤ β - delta)
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute β)
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBound (β - delta)) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (1 - β) :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_saving
@@ -22948,8 +22947,7 @@ theorem not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_convers
     (hdelta_pos : 0 < delta) (hθ_nonneg : 0 ≤ β - delta)
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute β)
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBound (β - delta)) :
     ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = β :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_converse_route_saving
@@ -22962,8 +22960,7 @@ theorem not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formu
     (hdelta_pos : 0 < delta) (hθ_nonneg : 0 ≤ β - delta)
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute β)
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBound (β - delta)) :
     ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = 1 - β :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formula_converse_route_saving
@@ -22976,8 +22973,7 @@ theorem no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_savi
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute
         (2 / 3))
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBound ((2 / 3 : ℝ) - delta)) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (2 / 3) :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_saving
@@ -22990,8 +22986,7 @@ theorem no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_savin
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute
         (2 / 3))
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBound ((2 / 3 : ℝ) - delta)) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_saving
@@ -23004,8 +22999,7 @@ theorem not_exists_nontrivial_zero_on_two_thirds_of_truncated_explicit_formula_c
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute
         (2 / 3))
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBound ((2 / 3 : ℝ) - delta)) :
     ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = 2 / 3 :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.not_exists_nontrivial_zero_on_two_thirds_of_truncated_explicit_formula_converse_route_saving
@@ -23018,8 +23012,7 @@ theorem not_exists_nontrivial_zero_on_one_third_of_truncated_explicit_formula_co
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute
         (2 / 3))
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBound ((2 / 3 : ℝ) - delta)) :
     ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = 1 / 3 :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.not_exists_nontrivial_zero_on_one_third_of_truncated_explicit_formula_converse_route_saving
@@ -23031,8 +23024,7 @@ theorem no_zeros_on_vertical_line_of_truncated_explicit_formula_converse_route_m
     {β γ : ℝ} (hβγ : β ≤ γ) (hγ_pos : 0 < γ) (hγ_lt_one : γ < 1)
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute γ)
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
     PrimeNumberTheorem.NoZerosOnVerticalLine γ :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_vertical_line_of_truncated_explicit_formula_converse_route_mono_error
@@ -23044,8 +23036,7 @@ theorem no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_
     {β γ : ℝ} (hβγ : β ≤ γ) (hγ_pos : 0 < γ) (hγ_lt_one : γ < 1)
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute γ)
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (1 - γ) :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error
@@ -23057,8 +23048,7 @@ theorem not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_convers
     {β γ : ℝ} (hβγ : β ≤ γ) (hγ_pos : 0 < γ) (hγ_lt_one : γ < 1)
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute γ)
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
     ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = γ :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_converse_route_mono_error
@@ -23070,8 +23060,7 @@ theorem not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formu
     {β γ : ℝ} (hβγ : β ≤ γ) (hγ_pos : 0 < γ) (hγ_lt_one : γ < 1)
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute γ)
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      ExplicitFormulaTruncatedTarget T hT x hx)
+    (hexplicit : ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
     ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = 1 - γ :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error
@@ -23338,9 +23327,7 @@ theorem explicitFormulaConversePower_of_truncated_route
     {β : ℝ}
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute β)
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget
-        T hT x hx) :
+    (hexplicit : PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget) :
     PrimeNumberTheorem.ExplicitFormulaConversePowerTarget β :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.explicitFormulaConversePower_of_truncated_route
     hroute hexplicit
@@ -23352,9 +23339,7 @@ theorem psiPowerErrorBelowLineExcludesZerosRightOf_of_truncated_route
     {β : ℝ}
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute β)
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget
-        T hT x hx) :
+    (hexplicit : PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget) :
     PrimeNumberTheorem.PsiPowerErrorBelowLineExcludesZerosRightOf β :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.psiPowerErrorBelowLineExcludesZerosRightOf_of_truncated_route
     hroute hexplicit
@@ -23366,9 +23351,7 @@ theorem no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute
         (2 / 3))
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget
-        T hT x hx)
+    (hexplicit : PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine (2 / 3)) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (2 / 3) :=
   PrimeNumberTheorem.no_zeros_on_vertical_line_of_explicit_formula_converse_power
@@ -23383,9 +23366,7 @@ theorem no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_belo
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute
         (2 / 3))
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget
-        T hT x hx)
+    (hexplicit : PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowTwoThirds) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (2 / 3) :=
   no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route
@@ -23399,9 +23380,7 @@ theorem no_zeros_on_one_third_of_truncated_explicit_formula_converse_route
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute
         (2 / 3))
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget
-        T hT x hx)
+    (hexplicit : PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine (2 / 3)) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) :=
   PrimeNumberTheorem.no_zeros_on_one_third_of_explicit_formula_converse_power
@@ -23415,9 +23394,7 @@ theorem no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_below
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute
         (2 / 3))
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget
-        T hT x hx)
+    (hexplicit : PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowTwoThirds) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) :=
   no_zeros_on_one_third_of_truncated_explicit_formula_converse_route
@@ -23435,9 +23412,7 @@ theorem no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route
     {β : ℝ} (hβ_pos : 0 < β) (hβ_lt_one : β < 1)
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute β)
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget
-        T hT x hx)
+    (hexplicit : PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (1 - β) :=
   PrimeNumberTheorem.no_zeros_on_reflected_line_of_explicit_formula_converse_power
@@ -23452,9 +23427,7 @@ theorem no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_
     {β : ℝ} (hβ_two_thirds : (2 / 3 : ℝ) ≤ β) (hβ_lt_one : β < 1)
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute β)
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget
-        T hT x hx)
+    (hexplicit : PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowTwoThirds) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (1 - β) :=
   no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route
@@ -23470,9 +23443,7 @@ theorem no_zeros_on_vertical_line_of_truncated_explicit_formula_converse_route_s
     (hdelta_pos : 0 < delta) (hθ_nonneg : 0 ≤ β - delta)
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute β)
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget
-        T hT x hx)
+    (hexplicit : PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBound (β - delta)) :
     PrimeNumberTheorem.NoZerosOnVerticalLine β :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_vertical_line_of_truncated_explicit_formula_converse_route_saving
@@ -23485,9 +23456,7 @@ theorem no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_
     (hdelta_pos : 0 < delta) (hθ_nonneg : 0 ≤ β - delta)
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute β)
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget
-        T hT x hx)
+    (hexplicit : PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBound (β - delta)) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (1 - β) :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_saving
@@ -23500,9 +23469,7 @@ theorem not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_convers
     (hdelta_pos : 0 < delta) (hθ_nonneg : 0 ≤ β - delta)
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute β)
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget
-        T hT x hx)
+    (hexplicit : PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBound (β - delta)) :
     ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = β :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_converse_route_saving
@@ -23515,9 +23482,7 @@ theorem not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formu
     (hdelta_pos : 0 < delta) (hθ_nonneg : 0 ≤ β - delta)
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute β)
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget
-        T hT x hx)
+    (hexplicit : PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBound (β - delta)) :
     ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = 1 - β :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formula_converse_route_saving
@@ -23530,9 +23495,7 @@ theorem no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_savi
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute
         (2 / 3))
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget
-        T hT x hx)
+    (hexplicit : PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBound ((2 / 3 : ℝ) - delta)) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (2 / 3) :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_saving
@@ -23545,9 +23508,7 @@ theorem no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_savin
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute
         (2 / 3))
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget
-        T hT x hx)
+    (hexplicit : PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBound ((2 / 3 : ℝ) - delta)) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (1 / 3) :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_saving
@@ -23560,9 +23521,7 @@ theorem not_exists_nontrivial_zero_on_two_thirds_of_truncated_explicit_formula_c
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute
         (2 / 3))
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget
-        T hT x hx)
+    (hexplicit : PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBound ((2 / 3 : ℝ) - delta)) :
     ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = 2 / 3 :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.not_exists_nontrivial_zero_on_two_thirds_of_truncated_explicit_formula_converse_route_saving
@@ -23575,9 +23534,7 @@ theorem not_exists_nontrivial_zero_on_one_third_of_truncated_explicit_formula_co
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute
         (2 / 3))
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget
-        T hT x hx)
+    (hexplicit : PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBound ((2 / 3 : ℝ) - delta)) :
     ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = 1 / 3 :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.not_exists_nontrivial_zero_on_one_third_of_truncated_explicit_formula_converse_route_saving
@@ -23589,9 +23546,7 @@ theorem no_zeros_on_vertical_line_of_truncated_explicit_formula_converse_route_m
     {β γ : ℝ} (hβγ : β ≤ γ) (hγ_pos : 0 < γ) (hγ_lt_one : γ < 1)
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute γ)
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget
-        T hT x hx)
+    (hexplicit : PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
     PrimeNumberTheorem.NoZerosOnVerticalLine γ :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_vertical_line_of_truncated_explicit_formula_converse_route_mono_error
@@ -23603,9 +23558,7 @@ theorem no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_
     {β γ : ℝ} (hβγ : β ≤ γ) (hγ_pos : 0 < γ) (hγ_lt_one : γ < 1)
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute γ)
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget
-        T hT x hx)
+    (hexplicit : PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
     PrimeNumberTheorem.NoZerosOnVerticalLine (1 - γ) :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error
@@ -23617,9 +23570,7 @@ theorem not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_convers
     {β γ : ℝ} (hβγ : β ≤ γ) (hγ_pos : 0 < γ) (hγ_lt_one : γ < 1)
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute γ)
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget
-        T hT x hx)
+    (hexplicit : PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
     ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = γ :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.not_exists_nontrivial_zero_on_line_of_truncated_explicit_formula_converse_route_mono_error
@@ -23631,171 +23582,169 @@ theorem not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formu
     {β γ : ℝ} (hβγ : β ≤ γ) (hγ_pos : 0 < γ) (hγ_lt_one : γ < 1)
     (hroute :
       PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute γ)
-    (hexplicit : ∀ T : ℝ, ∀ hT : 0 < T, ∀ x : ℝ, ∀ hx : 0 < x,
-      PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget
-        T hT x hx)
+    (hexplicit : PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget)
     (herror : PrimeNumberTheorem.PsiPowerErrorBelowLine β) :
     ¬ ∃ s : ℂ, RiemannHypothesis.IsNontrivialZero s ∧ s.re = 1 - γ :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.not_exists_nontrivial_zero_on_reflected_line_of_truncated_explicit_formula_converse_route_mono_error
     hβγ hγ_pos hγ_lt_one hroute hexplicit herror
 
-/-- Public constructor for the corrected explicit-formula target from an
+/-- Public constructor for the legacy unweighted compatibility predicate from an
 eventually equal approximation family. -/
-theorem explicit_formula_von_mangoldt_of_eventually_eq
+theorem explicit_formula_von_mangoldt_unweighted_of_eventually_eq
     {x : ℝ} {hx : x ≥ 2} {F : ℝ → ℂ}
     (hF : F =ᶠ[atTop]
       fun T : ℝ => PrimeNumberTheorem.explicitFormulaApprox x T)
     (h : Tendsto F atTop (𝓝 (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_eventually_eq hF h
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_eventually_eq hF h
 
-/-- Public constructor for the corrected explicit-formula target from eventual
+/-- Public constructor for the legacy unweighted compatibility predicate from eventual
 exact equality to `ψ₀`. -/
-theorem explicit_formula_von_mangoldt_of_eventually_exact
+theorem explicit_formula_von_mangoldt_unweighted_of_eventually_exact
     {x : ℝ} {hx : x ≥ 2}
     (h : ∀ᶠ T in atTop,
       PrimeNumberTheorem.explicitFormulaApprox x T =
         (PrimeNumberTheorem.chebyshevPsi0 x : ℂ)) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_eventually_exact h
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_eventually_exact h
 
-/-- Public constructor for the corrected explicit-formula target from complex
+/-- Public constructor for the legacy unweighted compatibility predicate from complex
 error convergence to zero. -/
-theorem explicit_formula_von_mangoldt_of_error_tendsto_zero
+theorem explicit_formula_von_mangoldt_unweighted_of_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2}
     (h : Tendsto
       (fun T : ℝ =>
         PrimeNumberTheorem.explicitFormulaApprox x T -
           (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
       atTop (𝓝 0)) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_error_tendsto_zero h
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_error_tendsto_zero h
 
-/-- Public elimination from the corrected explicit-formula target to complex
+/-- Public elimination from the legacy unweighted compatibility predicate to complex
 error convergence to zero. -/
-theorem explicit_formula_von_mangoldt_error_tendsto_zero
+theorem explicit_formula_von_mangoldt_unweighted_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2}
-    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt x hx) :
+    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx) :
     Tendsto
       (fun T : ℝ =>
         PrimeNumberTheorem.explicitFormulaApprox x T -
           (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
       atTop (𝓝 0) :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_error_tendsto_zero h
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_error_tendsto_zero h
 
-/-- Public constructor for the corrected explicit-formula target from norm
+/-- Public constructor for the legacy unweighted compatibility predicate from norm
 error convergence to zero. -/
-theorem explicit_formula_von_mangoldt_of_norm_error_tendsto_zero
+theorem explicit_formula_von_mangoldt_unweighted_of_norm_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2}
     (h : Tendsto
       (fun T : ℝ =>
         ‖PrimeNumberTheorem.explicitFormulaApprox x T -
           (PrimeNumberTheorem.chebyshevPsi0 x : ℂ)‖)
       atTop (𝓝 0)) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_norm_error_tendsto_zero h
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_norm_error_tendsto_zero h
 
-/-- Public constructor for the corrected explicit-formula target from an
+/-- Public constructor for the legacy unweighted compatibility predicate from an
 eventual reverse-norm error bound by a function tending to zero. -/
-theorem explicit_formula_von_mangoldt_of_eventually_reverse_norm_le
+theorem explicit_formula_von_mangoldt_unweighted_of_eventually_reverse_norm_le
     {x : ℝ} {hx : x ≥ 2} {E : ℝ → ℝ}
     (hE : Tendsto E atTop (𝓝 0))
     (hbound : ∀ᶠ T in atTop,
       ‖(PrimeNumberTheorem.chebyshevPsi0 x : ℂ) -
         PrimeNumberTheorem.explicitFormulaApprox x T‖ ≤ E T) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_eventually_reverse_norm_le
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_eventually_reverse_norm_le
     hE hbound
 
-/-- Public entry point for the norm-error formulation of the corrected
-height-truncated von Mangoldt explicit-formula target. -/
-theorem explicit_formula_von_mangoldt_iff_norm_error_tendsto_zero
+/-- Public entry point for the norm-error formulation of the legacy unweighted
+compatibility predicate. -/
+theorem explicit_formula_von_mangoldt_unweighted_iff_norm_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2} :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx ↔
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx ↔
       Tendsto (fun T : ℝ =>
         ‖PrimeNumberTheorem.explicitFormulaApprox x T -
           (PrimeNumberTheorem.chebyshevPsi0 x : ℂ)‖) atTop (𝓝 0) :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_norm_error_tendsto_zero
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_iff_norm_error_tendsto_zero
 
-/-- Public reverse-norm error formulation of the corrected explicit-formula
-target. -/
-theorem explicit_formula_von_mangoldt_iff_reverse_norm_error_tendsto_zero
+/-- Public reverse-norm error formulation of the legacy unweighted compatibility
+predicate. -/
+theorem explicit_formula_von_mangoldt_unweighted_iff_reverse_norm_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2} :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx ↔
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx ↔
       Tendsto (fun T : ℝ =>
         ‖(PrimeNumberTheorem.chebyshevPsi0 x : ℂ) -
           PrimeNumberTheorem.explicitFormulaApprox x T‖) atTop (𝓝 0) :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_reverse_norm_error_tendsto_zero
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_iff_reverse_norm_error_tendsto_zero
 
-/-- Public complex error formulation of the corrected explicit-formula target. -/
-theorem explicit_formula_von_mangoldt_iff_error_tendsto_zero
+/-- Public complex error formulation of the legacy unweighted compatibility predicate. -/
+theorem explicit_formula_von_mangoldt_unweighted_iff_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2} :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx ↔
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx ↔
       Tendsto (fun T : ℝ =>
         PrimeNumberTheorem.explicitFormulaApprox x T -
           (PrimeNumberTheorem.chebyshevPsi0 x : ℂ)) atTop (𝓝 0) :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_error_tendsto_zero
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_iff_error_tendsto_zero
 
-/-- Public reverse complex error formulation of the corrected explicit-formula
-target. -/
-theorem explicit_formula_von_mangoldt_iff_reverse_error_tendsto_zero
+/-- Public reverse complex error formulation of the legacy unweighted compatibility
+predicate. -/
+theorem explicit_formula_von_mangoldt_unweighted_iff_reverse_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2} :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx ↔
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx ↔
       Tendsto (fun T : ℝ =>
         (PrimeNumberTheorem.chebyshevPsi0 x : ℂ) -
           PrimeNumberTheorem.explicitFormulaApprox x T) atTop (𝓝 0) :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_reverse_error_tendsto_zero
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_iff_reverse_error_tendsto_zero
 
-/-- Public norm-small-o formulation of the corrected explicit-formula target. -/
-theorem explicit_formula_von_mangoldt_iff_norm_error_isLittleO_one
+/-- Public norm-small-o formulation of the legacy unweighted compatibility predicate. -/
+theorem explicit_formula_von_mangoldt_unweighted_iff_norm_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2} :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx ↔
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx ↔
       (fun T : ℝ =>
         ‖PrimeNumberTheorem.explicitFormulaApprox x T -
           (PrimeNumberTheorem.chebyshevPsi0 x : ℂ)‖)
         =o[atTop] (fun _T : ℝ => (1 : ℝ)) :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_norm_error_isLittleO_one
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_iff_norm_error_isLittleO_one
 
-/-- Public complex-small-o formulation of the corrected explicit-formula
-target. -/
-theorem explicit_formula_von_mangoldt_iff_error_isLittleO_one
+/-- Public complex-small-o formulation of the legacy unweighted compatibility
+predicate. -/
+theorem explicit_formula_von_mangoldt_unweighted_iff_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2} :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx ↔
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx ↔
       (fun T : ℝ =>
         PrimeNumberTheorem.explicitFormulaApprox x T -
           (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
         =o[atTop] (fun _T : ℝ => (1 : ℂ)) :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_error_isLittleO_one
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_iff_error_isLittleO_one
 
-/-- Public reverse-complex-small-o formulation of the corrected
-explicit-formula target. -/
-theorem explicit_formula_von_mangoldt_iff_reverse_error_isLittleO_one
+/-- Public reverse-complex-small-o formulation of the legacy unweighted
+compatibility predicate. -/
+theorem explicit_formula_von_mangoldt_unweighted_iff_reverse_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2} :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx ↔
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx ↔
       (fun T : ℝ =>
         (PrimeNumberTheorem.chebyshevPsi0 x : ℂ) -
           PrimeNumberTheorem.explicitFormulaApprox x T)
         =o[atTop] (fun _T : ℝ => (1 : ℂ)) :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_reverse_error_isLittleO_one
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_iff_reverse_error_isLittleO_one
 
-/-- Public coordinate convergence formulation of the corrected explicit-formula
-target. -/
-theorem explicit_formula_von_mangoldt_iff_re_im_tendsto
+/-- Public coordinate convergence formulation of the legacy unweighted compatibility
+predicate. -/
+theorem explicit_formula_von_mangoldt_unweighted_iff_re_im_tendsto
     {x : ℝ} {hx : x ≥ 2} :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx ↔
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx ↔
       Tendsto
         (fun T : ℝ => (PrimeNumberTheorem.explicitFormulaApprox x T).re)
         atTop (𝓝 (PrimeNumberTheorem.chebyshevPsi0 x)) ∧
       Tendsto
         (fun T : ℝ => (PrimeNumberTheorem.explicitFormulaApprox x T).im)
         atTop (𝓝 0) :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_re_im_tendsto
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_iff_re_im_tendsto
 
-/-- Public real/imaginary error formulation of the corrected explicit-formula
-target. -/
-theorem explicit_formula_von_mangoldt_iff_re_im_error_tendsto_zero
+/-- Public real/imaginary error formulation of the legacy unweighted compatibility
+predicate. -/
+theorem explicit_formula_von_mangoldt_unweighted_iff_re_im_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2} :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx ↔
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx ↔
       Tendsto
         (fun T : ℝ =>
           (PrimeNumberTheorem.explicitFormulaApprox x T).re -
@@ -23804,26 +23753,26 @@ theorem explicit_formula_von_mangoldt_iff_re_im_error_tendsto_zero
       Tendsto
         (fun T : ℝ => (PrimeNumberTheorem.explicitFormulaApprox x T).im)
         atTop (𝓝 0) :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_re_im_error_tendsto_zero
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_iff_re_im_error_tendsto_zero
 
-/-- Public coordinate-small-o formulation of the corrected explicit-formula
-target. -/
-theorem explicit_formula_von_mangoldt_iff_re_im_error_isLittleO_one
+/-- Public coordinate-small-o formulation of the legacy unweighted compatibility
+predicate. -/
+theorem explicit_formula_von_mangoldt_unweighted_iff_re_im_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2} :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx ↔
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx ↔
       (fun T : ℝ =>
         (PrimeNumberTheorem.explicitFormulaApprox x T).re -
           PrimeNumberTheorem.chebyshevPsi0 x)
         =o[atTop] (fun _T : ℝ => (1 : ℝ)) ∧
       (fun T : ℝ => (PrimeNumberTheorem.explicitFormulaApprox x T).im)
         =o[atTop] (fun _T : ℝ => (1 : ℝ)) :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_re_im_error_isLittleO_one
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_iff_re_im_error_isLittleO_one
 
-/-- Public absolute real/imaginary error formulation of the corrected
-explicit-formula target. -/
-theorem explicit_formula_von_mangoldt_iff_re_im_abs_error_tendsto_zero
+/-- Public absolute real/imaginary error formulation of the legacy unweighted
+compatibility predicate. -/
+theorem explicit_formula_von_mangoldt_unweighted_iff_re_im_abs_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2} :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx ↔
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx ↔
       Tendsto
         (fun T : ℝ =>
           |(PrimeNumberTheorem.explicitFormulaApprox x T).re -
@@ -23832,50 +23781,50 @@ theorem explicit_formula_von_mangoldt_iff_re_im_abs_error_tendsto_zero
       Tendsto
         (fun T : ℝ => |(PrimeNumberTheorem.explicitFormulaApprox x T).im|)
         atTop (𝓝 0) :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_re_im_abs_error_tendsto_zero
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_iff_re_im_abs_error_tendsto_zero
 
-/-- Public elimination from the corrected explicit-formula target to real-part
+/-- Public elimination from the legacy unweighted compatibility predicate to real-part
 convergence. -/
-theorem explicit_formula_von_mangoldt_re_tendsto
+theorem explicit_formula_von_mangoldt_unweighted_re_tendsto
     {x : ℝ} {hx : x ≥ 2}
-    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt x hx) :
+    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx) :
     Tendsto
       (fun T : ℝ => (PrimeNumberTheorem.explicitFormulaApprox x T).re)
       atTop (𝓝 (PrimeNumberTheorem.chebyshevPsi0 x)) :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_re_tendsto h
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_re_tendsto h
 
-/-- Public elimination from the corrected explicit-formula target to
+/-- Public elimination from the legacy unweighted compatibility predicate to
 imaginary-part convergence to zero. -/
-theorem explicit_formula_von_mangoldt_im_tendsto_zero
+theorem explicit_formula_von_mangoldt_unweighted_im_tendsto_zero
     {x : ℝ} {hx : x ≥ 2}
-    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt x hx) :
+    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx) :
     Tendsto
       (fun T : ℝ => (PrimeNumberTheorem.explicitFormulaApprox x T).im)
       atTop (𝓝 0) :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_im_tendsto_zero h
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_im_tendsto_zero h
 
 /-- Public elimination to real-part error convergence. -/
-theorem explicit_formula_von_mangoldt_re_error_tendsto_zero
+theorem explicit_formula_von_mangoldt_unweighted_re_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2}
-    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt x hx) :
+    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx) :
     Tendsto
       (fun T : ℝ =>
         (PrimeNumberTheorem.explicitFormulaApprox x T).re -
           PrimeNumberTheorem.chebyshevPsi0 x)
       atTop (𝓝 0) :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_re_error_tendsto_zero h
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_re_error_tendsto_zero h
 
 /-- Public elimination to imaginary-part error convergence. -/
-theorem explicit_formula_von_mangoldt_im_error_tendsto_zero
+theorem explicit_formula_von_mangoldt_unweighted_im_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2}
-    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt x hx) :
+    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx) :
     Tendsto
       (fun T : ℝ => (PrimeNumberTheorem.explicitFormulaApprox x T).im)
       atTop (𝓝 0) :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_im_error_tendsto_zero h
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_im_error_tendsto_zero h
 
 /-- Public constructor from separate real and imaginary convergence. -/
-theorem explicit_formula_von_mangoldt_of_re_im_tendsto
+theorem explicit_formula_von_mangoldt_unweighted_of_re_im_tendsto
     {x : ℝ} {hx : x ≥ 2}
     (hre : Tendsto
       (fun T : ℝ => (PrimeNumberTheorem.explicitFormulaApprox x T).re)
@@ -23883,12 +23832,12 @@ theorem explicit_formula_von_mangoldt_of_re_im_tendsto
     (him : Tendsto
       (fun T : ℝ => (PrimeNumberTheorem.explicitFormulaApprox x T).im)
       atTop (𝓝 0)) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_re_im_tendsto
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_re_im_tendsto
     hre him
 
 /-- Public constructor from separate real and imaginary error convergence. -/
-theorem explicit_formula_von_mangoldt_of_re_im_error_tendsto_zero
+theorem explicit_formula_von_mangoldt_unweighted_of_re_im_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2}
     (hre : Tendsto
       (fun T : ℝ =>
@@ -23898,105 +23847,105 @@ theorem explicit_formula_von_mangoldt_of_re_im_error_tendsto_zero
     (him : Tendsto
       (fun T : ℝ => (PrimeNumberTheorem.explicitFormulaApprox x T).im)
       atTop (𝓝 0)) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_re_im_error_tendsto_zero
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_re_im_error_tendsto_zero
     hre him
 
 /-- Public elimination to norm-error convergence. -/
-theorem explicit_formula_von_mangoldt_norm_error_tendsto_zero
+theorem explicit_formula_von_mangoldt_unweighted_norm_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2}
-    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt x hx) :
+    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx) :
     Tendsto
       (fun T : ℝ =>
         ‖PrimeNumberTheorem.explicitFormulaApprox x T -
           (PrimeNumberTheorem.chebyshevPsi0 x : ℂ)‖)
       atTop (𝓝 0) :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_norm_error_tendsto_zero h
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_norm_error_tendsto_zero h
 
 /-- Public elimination to reverse norm-error convergence. -/
-theorem explicit_formula_von_mangoldt_reverse_norm_error_tendsto_zero
+theorem explicit_formula_von_mangoldt_unweighted_reverse_norm_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2}
-    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt x hx) :
+    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx) :
     Tendsto
       (fun T : ℝ =>
         ‖(PrimeNumberTheorem.chebyshevPsi0 x : ℂ) -
           PrimeNumberTheorem.explicitFormulaApprox x T‖)
       atTop (𝓝 0) :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_reverse_norm_error_tendsto_zero h
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_reverse_norm_error_tendsto_zero h
 
 /-- Public constructor from reverse norm-error convergence. -/
-theorem explicit_formula_von_mangoldt_of_reverse_norm_error_tendsto_zero
+theorem explicit_formula_von_mangoldt_unweighted_of_reverse_norm_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2}
     (h : Tendsto
       (fun T : ℝ =>
         ‖(PrimeNumberTheorem.chebyshevPsi0 x : ℂ) -
           PrimeNumberTheorem.explicitFormulaApprox x T‖)
       atTop (𝓝 0)) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_reverse_norm_error_tendsto_zero h
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_reverse_norm_error_tendsto_zero h
 
 /-- Public elimination to reverse complex-error small-o. -/
-theorem explicit_formula_von_mangoldt_reverse_error_isLittleO_one
+theorem explicit_formula_von_mangoldt_unweighted_reverse_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2}
-    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt x hx) :
+    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx) :
     (fun T : ℝ =>
       (PrimeNumberTheorem.chebyshevPsi0 x : ℂ) -
         PrimeNumberTheorem.explicitFormulaApprox x T)
       =o[atTop] (fun _T : ℝ => (1 : ℂ)) :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_reverse_error_isLittleO_one h
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_reverse_error_isLittleO_one h
 
 /-- Public constructor from reverse complex-error small-o. -/
-theorem explicit_formula_von_mangoldt_of_reverse_error_isLittleO_one
+theorem explicit_formula_von_mangoldt_unweighted_of_reverse_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2}
     (h :
       (fun T : ℝ =>
         (PrimeNumberTheorem.chebyshevPsi0 x : ℂ) -
           PrimeNumberTheorem.explicitFormulaApprox x T)
         =o[atTop] (fun _T : ℝ => (1 : ℂ))) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_reverse_error_isLittleO_one h
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_reverse_error_isLittleO_one h
 
 /-- Public elimination to complex-error small-o. -/
-theorem explicit_formula_von_mangoldt_error_isLittleO_one
+theorem explicit_formula_von_mangoldt_unweighted_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2}
-    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt x hx) :
+    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx) :
     (fun T : ℝ =>
       PrimeNumberTheorem.explicitFormulaApprox x T -
         (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
       =o[atTop] (fun _T : ℝ => (1 : ℂ)) :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_error_isLittleO_one h
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_error_isLittleO_one h
 
 /-- Public constructor from complex-error small-o. -/
-theorem explicit_formula_von_mangoldt_of_error_isLittleO_one
+theorem explicit_formula_von_mangoldt_unweighted_of_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2}
     (h :
       (fun T : ℝ =>
         PrimeNumberTheorem.explicitFormulaApprox x T -
           (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
         =o[atTop] (fun _T : ℝ => (1 : ℂ))) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_error_isLittleO_one h
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_error_isLittleO_one h
 
 /-- Public elimination to real-part error small-o. -/
-theorem explicit_formula_von_mangoldt_re_error_isLittleO_one
+theorem explicit_formula_von_mangoldt_unweighted_re_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2}
-    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt x hx) :
+    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx) :
     (fun T : ℝ =>
       (PrimeNumberTheorem.explicitFormulaApprox x T).re -
         PrimeNumberTheorem.chebyshevPsi0 x)
       =o[atTop] (fun _T : ℝ => (1 : ℝ)) :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_re_error_isLittleO_one h
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_re_error_isLittleO_one h
 
 /-- Public elimination to imaginary-part error small-o. -/
-theorem explicit_formula_von_mangoldt_im_error_isLittleO_one
+theorem explicit_formula_von_mangoldt_unweighted_im_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2}
-    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt x hx) :
+    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx) :
     (fun T : ℝ => (PrimeNumberTheorem.explicitFormulaApprox x T).im)
       =o[atTop] (fun _T : ℝ => (1 : ℝ)) :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_im_error_isLittleO_one h
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_im_error_isLittleO_one h
 
 /-- Public constructor from real/imaginary error small-o. -/
-theorem explicit_formula_von_mangoldt_of_re_im_error_isLittleO_one
+theorem explicit_formula_von_mangoldt_unweighted_of_re_im_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2}
     (hre :
       (fun T : ℝ =>
@@ -24006,50 +23955,50 @@ theorem explicit_formula_von_mangoldt_of_re_im_error_isLittleO_one
     (him :
       (fun T : ℝ => (PrimeNumberTheorem.explicitFormulaApprox x T).im)
         =o[atTop] (fun _T : ℝ => (1 : ℝ))) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_re_im_error_isLittleO_one
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_re_im_error_isLittleO_one
     hre him
 
 /-- Public elimination to absolute real-part error convergence. -/
-theorem explicit_formula_von_mangoldt_re_abs_error_tendsto_zero
+theorem explicit_formula_von_mangoldt_unweighted_re_abs_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2}
-    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt x hx) :
+    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx) :
     Tendsto
       (fun T : ℝ =>
         |(PrimeNumberTheorem.explicitFormulaApprox x T).re -
           PrimeNumberTheorem.chebyshevPsi0 x|)
       atTop (𝓝 0) :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_re_abs_error_tendsto_zero h
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_re_abs_error_tendsto_zero h
 
 /-- Public elimination to absolute imaginary-part error convergence. -/
-theorem explicit_formula_von_mangoldt_im_abs_error_tendsto_zero
+theorem explicit_formula_von_mangoldt_unweighted_im_abs_error_tendsto_zero
     {x : ℝ} {hx : x ≥ 2}
-    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt x hx) :
+    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx) :
     Tendsto
       (fun T : ℝ => |(PrimeNumberTheorem.explicitFormulaApprox x T).im|)
       atTop (𝓝 0) :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_im_abs_error_tendsto_zero h
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_im_abs_error_tendsto_zero h
 
 /-- Public elimination to absolute real-part error small-o. -/
-theorem explicit_formula_von_mangoldt_re_abs_error_isLittleO_one
+theorem explicit_formula_von_mangoldt_unweighted_re_abs_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2}
-    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt x hx) :
+    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx) :
     (fun T : ℝ =>
       |(PrimeNumberTheorem.explicitFormulaApprox x T).re -
         PrimeNumberTheorem.chebyshevPsi0 x|)
       =o[atTop] (fun _T : ℝ => (1 : ℝ)) :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_re_abs_error_isLittleO_one h
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_re_abs_error_isLittleO_one h
 
 /-- Public elimination to absolute imaginary-part error small-o. -/
-theorem explicit_formula_von_mangoldt_im_abs_error_isLittleO_one
+theorem explicit_formula_von_mangoldt_unweighted_im_abs_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2}
-    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt x hx) :
+    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx) :
     (fun T : ℝ => |(PrimeNumberTheorem.explicitFormulaApprox x T).im|)
       =o[atTop] (fun _T : ℝ => (1 : ℝ)) :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_im_abs_error_isLittleO_one h
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_im_abs_error_isLittleO_one h
 
 /-- Public constructor from absolute real/imaginary error small-o. -/
-theorem explicit_formula_von_mangoldt_of_re_im_abs_error_isLittleO_one
+theorem explicit_formula_von_mangoldt_unweighted_of_re_im_abs_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2}
     (hre :
       (fun T : ℝ =>
@@ -24059,129 +24008,129 @@ theorem explicit_formula_von_mangoldt_of_re_im_abs_error_isLittleO_one
     (him :
       (fun T : ℝ => |(PrimeNumberTheorem.explicitFormulaApprox x T).im|)
         =o[atTop] (fun _T : ℝ => (1 : ℝ))) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_re_im_abs_error_isLittleO_one
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_re_im_abs_error_isLittleO_one
     hre him
 
 /-- Public elimination to norm-error small-o. -/
-theorem explicit_formula_von_mangoldt_norm_error_isLittleO_one
+theorem explicit_formula_von_mangoldt_unweighted_norm_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2}
-    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt x hx) :
+    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx) :
     (fun T : ℝ =>
       ‖PrimeNumberTheorem.explicitFormulaApprox x T -
         (PrimeNumberTheorem.chebyshevPsi0 x : ℂ)‖)
       =o[atTop] (fun _T : ℝ => (1 : ℝ)) :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_norm_error_isLittleO_one h
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_norm_error_isLittleO_one h
 
 /-- Public constructor from norm-error small-o. -/
-theorem explicit_formula_von_mangoldt_of_norm_error_isLittleO_one
+theorem explicit_formula_von_mangoldt_unweighted_of_norm_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2}
     (h :
       (fun T : ℝ =>
         ‖PrimeNumberTheorem.explicitFormulaApprox x T -
           (PrimeNumberTheorem.chebyshevPsi0 x : ℂ)‖)
         =o[atTop] (fun _T : ℝ => (1 : ℝ))) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_norm_error_isLittleO_one h
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_norm_error_isLittleO_one h
 
 /-- Public elimination to reverse norm-error small-o. -/
-theorem explicit_formula_von_mangoldt_reverse_norm_error_isLittleO_one
+theorem explicit_formula_von_mangoldt_unweighted_reverse_norm_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2}
-    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt x hx) :
+    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx) :
     (fun T : ℝ =>
       ‖(PrimeNumberTheorem.chebyshevPsi0 x : ℂ) -
         PrimeNumberTheorem.explicitFormulaApprox x T‖)
       =o[atTop] (fun _T : ℝ => (1 : ℝ)) :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_reverse_norm_error_isLittleO_one h
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_reverse_norm_error_isLittleO_one h
 
 /-- Public constructor from reverse norm-error small-o. -/
-theorem explicit_formula_von_mangoldt_of_reverse_norm_error_isLittleO_one
+theorem explicit_formula_von_mangoldt_unweighted_of_reverse_norm_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2}
     (h :
       (fun T : ℝ =>
         ‖(PrimeNumberTheorem.chebyshevPsi0 x : ℂ) -
           PrimeNumberTheorem.explicitFormulaApprox x T‖)
         =o[atTop] (fun _T : ℝ => (1 : ℝ))) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_reverse_norm_error_isLittleO_one
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_reverse_norm_error_isLittleO_one
     h
 
-/-- Public reverse-norm-small-o formulation of the corrected explicit-formula
-target. -/
-theorem explicit_formula_von_mangoldt_iff_reverse_norm_error_isLittleO_one
+/-- Public reverse-norm-small-o formulation of the legacy unweighted compatibility
+predicate. -/
+theorem explicit_formula_von_mangoldt_unweighted_iff_reverse_norm_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2} :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx ↔
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx ↔
       (fun T : ℝ =>
         ‖(PrimeNumberTheorem.chebyshevPsi0 x : ℂ) -
           PrimeNumberTheorem.explicitFormulaApprox x T‖)
         =o[atTop] (fun _T : ℝ => (1 : ℝ)) :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_reverse_norm_error_isLittleO_one
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_iff_reverse_norm_error_isLittleO_one
 
-/-- Public absolute-coordinate-small-o formulation of the corrected
-explicit-formula target. -/
-theorem explicit_formula_von_mangoldt_iff_re_im_abs_error_isLittleO_one
+/-- Public absolute-coordinate-small-o formulation of the legacy unweighted
+compatibility predicate. -/
+theorem explicit_formula_von_mangoldt_unweighted_iff_re_im_abs_error_isLittleO_one
     {x : ℝ} {hx : x ≥ 2} :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx ↔
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx ↔
       (fun T : ℝ =>
         |(PrimeNumberTheorem.explicitFormulaApprox x T).re -
           PrimeNumberTheorem.chebyshevPsi0 x|)
         =o[atTop] (fun _T : ℝ => (1 : ℝ)) ∧
       (fun T : ℝ => |(PrimeNumberTheorem.explicitFormulaApprox x T).im|)
         =o[atTop] (fun _T : ℝ => (1 : ℝ)) :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_re_im_abs_error_isLittleO_one
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_iff_re_im_abs_error_isLittleO_one
 
 /-- Public exact bridge: if all nontrivial zeros are bounded in height and one
-stable truncation equals `ψ₀`, the corrected explicit formula target closes. -/
-theorem explicit_formula_von_mangoldt_of_global_height_bound_exact
+stable truncation equals `ψ₀`, the legacy unweighted compatibility predicate closes. -/
+theorem explicit_formula_von_mangoldt_unweighted_of_global_height_bound_exact
     {x B : ℝ} {hx : x ≥ 2}
     (hbound : ∀ ρ : ℂ, _root_.RiemannHypothesis.IsNontrivialZero ρ →
       |ρ.im| ≤ B)
     (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
       (PrimeNumberTheorem.chebyshevPsi0 x : ℂ)) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_global_height_bound_exact
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_global_height_bound_exact
     hbound hB
 
-/-- Public exact bridge: under a global zero-height bound, the corrected
-explicit formula target is equivalent to equality at the stable truncation. -/
-theorem explicit_formula_von_mangoldt_iff_global_height_bound_exact
+/-- Public exact bridge: under a global zero-height bound, the legacy unweighted
+compatibility predicate is equivalent to equality at the stable truncation. -/
+theorem explicit_formula_von_mangoldt_unweighted_iff_global_height_bound_exact
     {x B : ℝ} {hx : x ≥ 2}
     (hbound : ∀ ρ : ℂ, _root_.RiemannHypothesis.IsNontrivialZero ρ →
       |ρ.im| ≤ B) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx ↔
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx ↔
       PrimeNumberTheorem.explicitFormulaApprox x B =
         (PrimeNumberTheorem.chebyshevPsi0 x : ℂ) :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_iff_global_height_bound_exact
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_iff_global_height_bound_exact
     hbound
 
-/-- Public reverse exact bridge: if the corrected explicit formula target holds
+/-- Public reverse exact bridge: if the legacy unweighted compatibility predicate holds
 and all nontrivial zeros are globally height-bounded, the stable truncation
 equals `ψ₀`. -/
 theorem explicitFormulaApprox_eq_chebyshevPsi0_of_global_height_bound
     {x B : ℝ} {hx : x ≥ 2}
     (hbound : ∀ ρ : ℂ, _root_.RiemannHypothesis.IsNontrivialZero ρ →
       |ρ.im| ≤ B)
-    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt x hx) :
+    (h : PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx) :
     PrimeNumberTheorem.explicitFormulaApprox x B =
       (PrimeNumberTheorem.chebyshevPsi0 x : ℂ) :=
   PrimeNumberTheorem.explicitFormulaApprox_eq_chebyshevPsi0_of_global_height_bound
     hbound h
 
 /-- Public bridge: any eventual norm error bound by a function tending to zero
-closes the corrected explicit-formula target. -/
-theorem explicit_formula_von_mangoldt_of_eventually_norm_le
+closes the legacy unweighted compatibility predicate. -/
+theorem explicit_formula_von_mangoldt_unweighted_of_eventually_norm_le
     {x : ℝ} {hx : x ≥ 2} {E : ℝ → ℝ}
     (hE : Tendsto E atTop (𝓝 0))
     (hbound : ∀ᶠ T in atTop,
       ‖PrimeNumberTheorem.explicitFormulaApprox x T -
         (PrimeNumberTheorem.chebyshevPsi0 x : ℂ)‖ ≤ E T) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_eventually_norm_le
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_eventually_norm_le
     hE hbound
 
 /-- Public bridge: a Big-O norm error estimate against any function tending to
-zero closes the corrected explicit-formula target. -/
-theorem explicit_formula_von_mangoldt_of_norm_error_isBigO_tendsto_zero
+zero closes the legacy unweighted compatibility predicate. -/
+theorem explicit_formula_von_mangoldt_unweighted_of_norm_error_isBigO_tendsto_zero
     {x : ℝ} {hx : x ≥ 2} {E : ℝ → ℝ}
     (hE : Tendsto E atTop (𝓝 0))
     (hO :
@@ -24189,13 +24138,13 @@ theorem explicit_formula_von_mangoldt_of_norm_error_isBigO_tendsto_zero
         ‖PrimeNumberTheorem.explicitFormulaApprox x T -
           (PrimeNumberTheorem.chebyshevPsi0 x : ℂ)‖)
         =O[atTop] E) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_norm_error_isBigO_tendsto_zero
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_norm_error_isBigO_tendsto_zero
     hE hO
 
 /-- Public bridge: a reverse-norm Big-O error estimate against any function
-tending to zero closes the corrected explicit-formula target. -/
-theorem explicit_formula_von_mangoldt_of_reverse_norm_error_isBigO_tendsto_zero
+tending to zero closes the legacy unweighted compatibility predicate. -/
+theorem explicit_formula_von_mangoldt_unweighted_of_reverse_norm_error_isBigO_tendsto_zero
     {x : ℝ} {hx : x ≥ 2} {E : ℝ → ℝ}
     (hE : Tendsto E atTop (𝓝 0))
     (hO :
@@ -24203,35 +24152,35 @@ theorem explicit_formula_von_mangoldt_of_reverse_norm_error_isBigO_tendsto_zero
         ‖(PrimeNumberTheorem.chebyshevPsi0 x : ℂ) -
           PrimeNumberTheorem.explicitFormulaApprox x T‖)
         =O[atTop] E) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_reverse_norm_error_isBigO_tendsto_zero
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_reverse_norm_error_isBigO_tendsto_zero
     hE hO
 
-/-- Public bridge: an eventual `C/T` norm error estimate closes the corrected
-explicit-formula target. -/
-theorem explicit_formula_von_mangoldt_of_eventually_norm_le_const_mul_inv
+/-- Public bridge: an eventual `C/T` norm error estimate closes the legacy
+unweighted compatibility predicate. -/
+theorem explicit_formula_von_mangoldt_unweighted_of_eventually_norm_le_const_mul_inv
     {x C : ℝ} {hx : x ≥ 2}
     (hbound : ∀ᶠ T in atTop,
       ‖PrimeNumberTheorem.explicitFormulaApprox x T -
         (PrimeNumberTheorem.chebyshevPsi0 x : ℂ)‖ ≤ C * T⁻¹) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_eventually_norm_le_const_mul_inv
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_eventually_norm_le_const_mul_inv
     hbound
 
 /-- Public bridge: an eventual reverse `C/T` norm error estimate closes the
-corrected explicit-formula target. -/
-theorem explicit_formula_von_mangoldt_of_eventually_reverse_norm_le_const_mul_inv
+legacy unweighted compatibility predicate. -/
+theorem explicit_formula_von_mangoldt_unweighted_of_eventually_reverse_norm_le_const_mul_inv
     {x C : ℝ} {hx : x ≥ 2}
     (hbound : ∀ᶠ T in atTop,
       ‖(PrimeNumberTheorem.chebyshevPsi0 x : ℂ) -
         PrimeNumberTheorem.explicitFormulaApprox x T‖ ≤ C * T⁻¹) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_eventually_reverse_norm_le_const_mul_inv
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_eventually_reverse_norm_le_const_mul_inv
     hbound
 
 /-- Public bridge: eventual real and imaginary error bounds by functions
-tending to zero close the corrected explicit-formula target. -/
-theorem explicit_formula_von_mangoldt_of_eventually_re_im_abs_le
+tending to zero close the legacy unweighted compatibility predicate. -/
+theorem explicit_formula_von_mangoldt_unweighted_of_eventually_re_im_abs_le
     {x : ℝ} {hx : x ≥ 2} {Ere Eim : ℝ → ℝ}
     (hEre : Tendsto Ere atTop (𝓝 0))
     (hEim : Tendsto Eim atTop (𝓝 0))
@@ -24240,13 +24189,13 @@ theorem explicit_formula_von_mangoldt_of_eventually_re_im_abs_le
         PrimeNumberTheorem.chebyshevPsi0 x| ≤ Ere T)
     (him_bound : ∀ᶠ T in atTop,
       |(PrimeNumberTheorem.explicitFormulaApprox x T).im| ≤ Eim T) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_eventually_re_im_abs_le
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_eventually_re_im_abs_le
     hEre hEim hre_bound him_bound
 
 /-- Public bridge: Big-O real and imaginary error estimates against functions
-tending to zero close the corrected explicit-formula target. -/
-theorem explicit_formula_von_mangoldt_of_re_im_abs_error_isBigO_tendsto_zero
+tending to zero close the legacy unweighted compatibility predicate. -/
+theorem explicit_formula_von_mangoldt_unweighted_of_re_im_abs_error_isBigO_tendsto_zero
     {x : ℝ} {hx : x ≥ 2} {Ere Eim : ℝ → ℝ}
     (hEre : Tendsto Ere atTop (𝓝 0))
     (hEim : Tendsto Eim atTop (𝓝 0))
@@ -24259,21 +24208,21 @@ theorem explicit_formula_von_mangoldt_of_re_im_abs_error_isBigO_tendsto_zero
       (fun T : ℝ =>
         |(PrimeNumberTheorem.explicitFormulaApprox x T).im|)
         =O[atTop] Eim) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_re_im_abs_error_isBigO_tendsto_zero
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_re_im_abs_error_isBigO_tendsto_zero
     hEre hEim hreO himO
 
 /-- Public bridge: eventual `C/T` real and imaginary error estimates close the
-corrected explicit-formula target. -/
-theorem explicit_formula_von_mangoldt_of_eventually_re_im_abs_le_const_mul_inv
+legacy unweighted compatibility predicate. -/
+theorem explicit_formula_von_mangoldt_unweighted_of_eventually_re_im_abs_le_const_mul_inv
     {x Cre Cim : ℝ} {hx : x ≥ 2}
     (hre_bound : ∀ᶠ T in atTop,
       |(PrimeNumberTheorem.explicitFormulaApprox x T).re -
         PrimeNumberTheorem.chebyshevPsi0 x| ≤ Cre * T⁻¹)
     (him_bound : ∀ᶠ T in atTop,
       |(PrimeNumberTheorem.explicitFormulaApprox x T).im| ≤ Cim * T⁻¹) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_eventually_re_im_abs_le_const_mul_inv
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_eventually_re_im_abs_le_const_mul_inv
     hre_bound him_bound
 
 /-- Public norm identity for a single nontrivial-zero contribution. -/
@@ -24550,7 +24499,7 @@ theorem new_zero_contribution_sum_norm_tendsto_zero_of_eventually_sdiff_eq_empty
 
 /-- Public direct explicit-formula bridge from a stable base truncation and a
 vanishing new-zero contribution tail. -/
-theorem explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_tendsto_zero
+theorem explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_tendsto_zero
     {x B : ℝ} {hx : x ≥ 2}
     (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
       (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
@@ -24561,12 +24510,12 @@ theorem explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_tendsto_
               PrimeNumberTheorem.nontrivialZerosFinset B),
             (x : ℂ) ^ ρ / ρ)
         atTop (𝓝 0)) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_tendsto_zero
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_tendsto_zero
     hB htail
 
 /-- Public norm-tail version of the direct new-zero contribution bridge. -/
-theorem explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_tendsto_zero
+theorem explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_norm_tendsto_zero
     {x B : ℝ} {hx : x ≥ 2}
     (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
       (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
@@ -24577,13 +24526,13 @@ theorem explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_ten
               PrimeNumberTheorem.nontrivialZerosFinset B),
             (x : ℂ) ^ ρ / ρ‖)
         atTop (𝓝 0)) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_tendsto_zero
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_norm_tendsto_zero
     hB htail
 
 /-- Public sum-of-norms tail version of the direct new-zero contribution
 bridge. -/
-theorem explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_tendsto_zero
+theorem explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_sum_norm_tendsto_zero
     {x B : ℝ} {hx : x ≥ 2}
     (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
       (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
@@ -24594,13 +24543,13 @@ theorem explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm
               PrimeNumberTheorem.nontrivialZerosFinset B),
             ‖(x : ℂ) ^ ρ / ρ‖)
         atTop (𝓝 0)) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_tendsto_zero
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_sum_norm_tendsto_zero
     hB htail
 
 /-- Public little-o sum-of-norms tail version of the direct new-zero
 contribution bridge. -/
-theorem explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_isLittleO_one
+theorem explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_sum_norm_isLittleO_one
     {x B : ℝ} {hx : x ≥ 2}
     (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
       (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
@@ -24609,13 +24558,13 @@ theorem explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm
         ∑ ρ ∈ (PrimeNumberTheorem.nontrivialZerosFinset T \
             PrimeNumberTheorem.nontrivialZerosFinset B),
           ‖(x : ℂ) ^ ρ / ρ‖) =o[atTop] (fun _T : ℝ => (1 : ℝ))) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_isLittleO_one
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_sum_norm_isLittleO_one
     hB htail
 
 /-- Public eventual sum-of-norms bound version of the direct new-zero
 contribution bridge. -/
-theorem explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution_sum_norm_le
+theorem explicit_formula_von_mangoldt_unweighted_of_base_and_eventually_new_zero_contribution_sum_norm_le
     {x B : ℝ} {hx : x ≥ 2} {E : ℝ → ℝ}
     (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
       (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
@@ -24625,13 +24574,13 @@ theorem explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contributi
         (∑ ρ ∈ (PrimeNumberTheorem.nontrivialZerosFinset T \
             PrimeNumberTheorem.nontrivialZerosFinset B),
           ‖(x : ℂ) ^ ρ / ρ‖) ≤ E T) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution_sum_norm_le
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_base_and_eventually_new_zero_contribution_sum_norm_le
     hB hE hbound
 
 /-- Public Big-O sum-of-norms tail version of the direct new-zero contribution
 bridge. -/
-theorem explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_isBigO_tendsto_zero
+theorem explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_sum_norm_isBigO_tendsto_zero
     {x B : ℝ} {hx : x ≥ 2} {E : ℝ → ℝ}
     (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
       (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
@@ -24641,13 +24590,13 @@ theorem explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm
         ∑ ρ ∈ (PrimeNumberTheorem.nontrivialZerosFinset T \
             PrimeNumberTheorem.nontrivialZerosFinset B),
           ‖(x : ℂ) ^ ρ / ρ‖) =O[atTop] E) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_isBigO_tendsto_zero
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_sum_norm_isBigO_tendsto_zero
     hB hE hO
 
 /-- Public little-o norm-tail version of the direct new-zero contribution
 bridge. -/
-theorem explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_isLittleO_one
+theorem explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_norm_isLittleO_one
     {x B : ℝ} {hx : x ≥ 2}
     (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
       (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
@@ -24656,13 +24605,13 @@ theorem explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_isL
         ‖∑ ρ ∈ (PrimeNumberTheorem.nontrivialZerosFinset T \
             PrimeNumberTheorem.nontrivialZerosFinset B),
           (x : ℂ) ^ ρ / ρ‖) =o[atTop] (fun _T : ℝ => (1 : ℝ))) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_tendsto_zero
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_norm_tendsto_zero
     hB ((isLittleO_one_iff ℝ).mp htail)
 
 /-- Public eventual norm-bound version of the direct new-zero contribution
 bridge. -/
-theorem explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution_norm_le
+theorem explicit_formula_von_mangoldt_unweighted_of_base_and_eventually_new_zero_contribution_norm_le
     {x B : ℝ} {hx : x ≥ 2} {E : ℝ → ℝ}
     (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
       (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
@@ -24672,13 +24621,13 @@ theorem explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contributi
         ‖∑ ρ ∈ (PrimeNumberTheorem.nontrivialZerosFinset T \
             PrimeNumberTheorem.nontrivialZerosFinset B),
           (x : ℂ) ^ ρ / ρ‖ ≤ E T) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution_norm_le
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_base_and_eventually_new_zero_contribution_norm_le
     hB hE hbound
 
 /-- Public Big-O norm-tail version of the direct new-zero contribution
 bridge. -/
-theorem explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_isBigO_tendsto_zero
+theorem explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_norm_isBigO_tendsto_zero
     {x B : ℝ} {hx : x ≥ 2} {E : ℝ → ℝ}
     (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
       (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
@@ -24688,21 +24637,21 @@ theorem explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_isB
         ‖∑ ρ ∈ (PrimeNumberTheorem.nontrivialZerosFinset T \
             PrimeNumberTheorem.nontrivialZerosFinset B),
           (x : ℂ) ^ ρ / ρ‖) =O[atTop] E) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_isBigO_tendsto_zero
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_norm_isBigO_tendsto_zero
     hB hE hO
 
 /-- Public direct bridge from a base identity and eventual absence of new zero
 terms, routed through the contribution-tail interface. -/
-theorem explicit_formula_von_mangoldt_of_base_and_eventually_no_new_zeros_via_contribution_tail
+theorem explicit_formula_von_mangoldt_unweighted_of_base_and_eventually_no_new_zeros_via_contribution_tail
     {x B : ℝ} {hx : x ≥ 2}
     (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
       (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
     (hnew : ∀ᶠ T in atTop,
       PrimeNumberTheorem.nontrivialZerosFinset T \
           PrimeNumberTheorem.nontrivialZerosFinset B = ∅) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_base_and_eventually_no_new_zeros_via_contribution_tail
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_base_and_eventually_no_new_zeros_via_contribution_tail
     hB hnew
 
 /-- Public convergence-to-zero statement for the reciprocal-norm tail when no
@@ -24811,7 +24760,7 @@ theorem new_zero_card_tail_tendsto_zero_of_global_height_bound
 
 /-- Public conditional explicit-formula bridge from an RH reciprocal-norm tail
 bound over newly included zeros. -/
-theorem explicit_formula_von_mangoldt_of_RH_base_and_new_zero_sum_tendsto_zero
+theorem explicit_formula_von_mangoldt_unweighted_of_RH_base_and_new_zero_sum_tendsto_zero
     (hRH : _root_.RiemannHypothesis.Statement)
     {x B : ℝ} {hx : x ≥ 2}
     (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
@@ -24824,13 +24773,13 @@ theorem explicit_formula_von_mangoldt_of_RH_base_and_new_zero_sum_tendsto_zero
               (PrimeNumberTheorem.nontrivialZerosFinset T \
                 PrimeNumberTheorem.nontrivialZerosFinset B), ‖ρ‖⁻¹)
         atTop (𝓝 0)) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_RH_base_and_new_zero_sum_tendsto_zero
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_RH_base_and_new_zero_sum_tendsto_zero
     hRH hB htail
 
 /-- Public conditional explicit-formula bridge from an RH zero-count tail bound
 over newly included zeros. -/
-theorem explicit_formula_von_mangoldt_of_RH_base_and_new_zero_card_tendsto_zero
+theorem explicit_formula_von_mangoldt_unweighted_of_RH_base_and_new_zero_card_tendsto_zero
     (hRH : _root_.RiemannHypothesis.Statement)
     {x B : ℝ} {hx : x ≥ 2}
     (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
@@ -24843,13 +24792,13 @@ theorem explicit_formula_von_mangoldt_of_RH_base_and_new_zero_card_tendsto_zero
               (PrimeNumberTheorem.nontrivialZerosFinset T \
                 PrimeNumberTheorem.nontrivialZerosFinset B).card))
         atTop (𝓝 0)) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_RH_base_and_new_zero_card_tendsto_zero
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_RH_base_and_new_zero_card_tendsto_zero
     hRH hB htail
 
 /-- Public composed bridge from RH, a base explicit-formula identity, and
 eventual absence of new zero terms, using the reciprocal-norm tail route. -/
-theorem explicit_formula_von_mangoldt_of_RH_base_and_eventually_no_new_zeros_via_sum_tail
+theorem explicit_formula_von_mangoldt_unweighted_of_RH_base_and_eventually_no_new_zeros_via_sum_tail
     (hRH : _root_.RiemannHypothesis.Statement)
     {x B : ℝ} {hx : x ≥ 2}
     (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
@@ -24857,13 +24806,13 @@ theorem explicit_formula_von_mangoldt_of_RH_base_and_eventually_no_new_zeros_via
     (hnew : ∀ᶠ T in atTop,
       PrimeNumberTheorem.nontrivialZerosFinset T \
         PrimeNumberTheorem.nontrivialZerosFinset B = ∅) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_RH_base_and_eventually_no_new_zeros_via_sum_tail
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_RH_base_and_eventually_no_new_zeros_via_sum_tail
     hRH hB hnew
 
 /-- Public composed bridge from RH, a base explicit-formula identity, and
 eventual absence of new zero terms, using the zero-count tail route. -/
-theorem explicit_formula_von_mangoldt_of_RH_base_and_eventually_no_new_zeros_via_card_tail
+theorem explicit_formula_von_mangoldt_unweighted_of_RH_base_and_eventually_no_new_zeros_via_card_tail
     (hRH : _root_.RiemannHypothesis.Statement)
     {x B : ℝ} {hx : x ≥ 2}
     (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
@@ -24871,52 +24820,52 @@ theorem explicit_formula_von_mangoldt_of_RH_base_and_eventually_no_new_zeros_via
     (hnew : ∀ᶠ T in atTop,
       PrimeNumberTheorem.nontrivialZerosFinset T \
         PrimeNumberTheorem.nontrivialZerosFinset B = ∅) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_RH_base_and_eventually_no_new_zeros_via_card_tail
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_RH_base_and_eventually_no_new_zeros_via_card_tail
     hRH hB hnew
 
 /-- Public non-RH route from a global zero-height bound through the
 sum-of-norms new-zero tail interface. -/
-theorem explicit_formula_von_mangoldt_of_base_and_global_height_bound_via_sum_norm_tail
+theorem explicit_formula_von_mangoldt_unweighted_of_base_and_global_height_bound_via_sum_norm_tail
     {x B : ℝ} {hx : x ≥ 2}
     (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
       (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
     (hbound : ∀ ρ : ℂ, _root_.RiemannHypothesis.IsNontrivialZero ρ →
       |ρ.im| ≤ B) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_base_and_global_height_bound_via_sum_norm_tail
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_base_and_global_height_bound_via_sum_norm_tail
     hB hbound
 
 /-- Public RH-tail route from a global zero-height bound, using the
 reciprocal-norm tail interface.  The exact global-height bridge is stronger;
 this wrapper keeps the tail-route API explicit. -/
-theorem explicit_formula_von_mangoldt_of_RH_base_and_global_height_bound_via_sum_tail
+theorem explicit_formula_von_mangoldt_unweighted_of_RH_base_and_global_height_bound_via_sum_tail
     (hRH : _root_.RiemannHypothesis.Statement)
     {x B : ℝ} {hx : x ≥ 2}
     (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
       (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
     (hbound : ∀ ρ : ℂ, _root_.RiemannHypothesis.IsNontrivialZero ρ →
       |ρ.im| ≤ B) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_RH_base_and_global_height_bound_via_sum_tail
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_RH_base_and_global_height_bound_via_sum_tail
     hRH hB hbound
 
 /-- Public RH-tail route from a global zero-height bound, using the zero-count
 tail interface. -/
-theorem explicit_formula_von_mangoldt_of_RH_base_and_global_height_bound_via_card_tail
+theorem explicit_formula_von_mangoldt_unweighted_of_RH_base_and_global_height_bound_via_card_tail
     (hRH : _root_.RiemannHypothesis.Statement)
     {x B : ℝ} {hx : x ≥ 2}
     (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
       (PrimeNumberTheorem.chebyshevPsi0 x : ℂ))
     (hbound : ∀ ρ : ℂ, _root_.RiemannHypothesis.IsNontrivialZero ρ →
       |ρ.im| ≤ B) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_RH_base_and_global_height_bound_via_card_tail
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_RH_base_and_global_height_bound_via_card_tail
     hRH hB hbound
 
-/-- Public stability bridge: if the zero sum has no new terms eventually and
-the stable truncation equals `ψ₀(x)`, then the explicit-formula target follows. -/
-theorem explicit_formula_von_mangoldt_of_eventually_no_new_zeros
+/-- Public stability bridge: if the unweighted zero sum has no new terms eventually and
+the stable truncation equals `ψ₀(x)`, then the legacy compatibility predicate follows. -/
+theorem explicit_formula_von_mangoldt_unweighted_of_eventually_no_new_zeros
     {x B : ℝ} {hx : x ≥ 2}
     (hnew : ∀ᶠ T in atTop,
       B ≤ T ∧
@@ -24924,8 +24873,8 @@ theorem explicit_formula_von_mangoldt_of_eventually_no_new_zeros
             PrimeNumberTheorem.nontrivialZerosFinset B = ∅)
     (hB : PrimeNumberTheorem.explicitFormulaApprox x B =
       (PrimeNumberTheorem.chebyshevPsi0 x : ℂ)) :
-    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
-  PrimeNumberTheorem.explicit_formula_von_mangoldt_of_eventually_no_new_zeros
+    PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted x hx :=
+  PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_of_eventually_no_new_zeros
     hnew hB
 
 /-- Public Gamma-asymptotic target in its unfolded asymptotic form. -/

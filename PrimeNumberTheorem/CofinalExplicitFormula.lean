@@ -1,6 +1,7 @@
 import PrimeNumberTheorem.CentralHorizontalEdge
 import PrimeNumberTheorem.FirstOrderExplicitFormula
 import PrimeNumberTheorem.LeftHorizontalEdge
+import PrimeNumberTheorem.NontrivialZeroMultiplicity
 
 open Complex Filter MeasureTheory Set Topology
 open scoped BigOperators Interval
@@ -55,7 +56,9 @@ classical `psi0` explicit-formula value. -/
 theorem exists_cofinal_nontrivialZeroSum_tendsto
     {x : ℝ} (hx : 1 < x) :
     ∃ T : ℕ → ℝ, StrictMono T ∧ Tendsto T atTop atTop ∧
-      (∀ n, 0 < T n ∧ ExplicitFormulaAux.goodHeight (T n)) ∧
+      (∀ n : ℕ,
+        T n ∈ Set.Icc (2 * (n : ℝ) + 4) (2 * (n : ℝ) + 5) ∧
+          0 < T n ∧ ExplicitFormulaAux.goodHeight (T n)) ∧
       (∀ n,
         (∫ w : ℝ in (-(T n / (2 * Real.pi)))..(T n / (2 * Real.pi)),
             explicitFormulaIntegrand x ((2 : ℂ) + 2 * Real.pi * w * I)) =
@@ -268,7 +271,10 @@ theorem exists_cofinal_nontrivialZeroSum_tendsto
   have hzeroSum := ((hright.sub htrivial).sub
     (tendsto_const_nhds : Tendsto (fun _n : ℕ => mainTerm) atTop (nhds mainTerm))).add
       hremainder
-  refine ⟨T, hTmono, hTtop, (fun n => ⟨hTpos n, (hTspec n).2⟩), ?_, ?_, ?_⟩
+  refine ⟨T, hTmono, hTtop, (fun n => ?_), ?_, ?_, ?_⟩
+  · have hIcc : T n ∈ Set.Icc (2 * (n : ℝ) + 4) (2 * (n : ℝ) + 5) := by
+      simpa [e, Nat.cast_mul] using (hTspec n).1
+    exact ⟨hIcc, hTpos n, (hTspec n).2⟩
   · intro n
     simpa [A, e] using hformula' n
   · simpa [A, e] using hremainder
@@ -277,6 +283,57 @@ theorem exists_cofinal_nontrivialZeroSum_tendsto
       have heq := hformula' n
       dsimp [mainTerm]
       linear_combination heq)
+
+/-- The complete cofinal contour theorem, expressed directly through the
+multiplicity-aware approximation used by the final explicit-formula target.
+
+This is deliberately a sequential cofinal result.  It does not claim the
+full real-height `atTop` limit; that still requires control of the weighted
+zero contributions between consecutive selected heights. -/
+theorem exists_cofinal_explicitFormulaApproxWithMultiplicity_tendsto
+    {x : ℝ} (hx : 1 < x) :
+    ∃ T : ℕ → ℝ, StrictMono T ∧ Tendsto T atTop atTop ∧
+      (∀ n : ℕ,
+        T n ∈ Set.Icc (2 * (n : ℝ) + 4) (2 * (n : ℝ) + 5) ∧
+          ExplicitFormulaAux.goodHeight (T n)) ∧
+      Tendsto
+        (fun n : ℕ => explicitFormulaApproxWithMultiplicity x (T n))
+        atTop (nhds (chebyshevPsi0 x : ℂ)) := by
+  rcases exists_cofinal_nontrivialZeroSum_tendsto hx with
+    ⟨T, hTmono, hTtop, hTspec, _hformula, _hremainder, hzeroSum⟩
+  refine ⟨T, hTmono, hTtop, (fun n => ⟨(hTspec n).1, (hTspec n).2.2⟩), ?_⟩
+  let mainTerm : ℂ := (x : ℂ) - deriv riemannZeta 0 / riemannZeta 0
+  let trivialTerm : ℂ :=
+    (((-(1 / 2 : ℝ) * Real.log (1 - x ^ (-2 : ℝ)) : ℝ) : ℂ))
+  have hsum := ((tendsto_const_nhds : Tendsto
+      (fun _n : ℕ => mainTerm) atTop (nhds mainTerm)).add hzeroSum).add
+    (tendsto_const_nhds : Tendsto
+      (fun _n : ℕ => trivialTerm) atTop (nhds trivialTerm))
+  have hlim :
+      mainTerm +
+          ((chebyshevPsi0 x : ℂ) -
+            (((-(1 / 2 : ℝ) * Real.log (1 - x ^ (-2 : ℝ)) : ℝ) : ℂ)) -
+            ((x : ℂ) - deriv riemannZeta 0 / riemannZeta 0)) +
+        trivialTerm = (chebyshevPsi0 x : ℂ) := by
+    dsimp [mainTerm, trivialTerm]
+    ring
+  rw [hlim] at hsum
+  apply hsum.congr'
+  filter_upwards [] with n
+  dsimp [mainTerm, trivialTerm, explicitFormulaApproxWithMultiplicity,
+    finiteNontrivialZeroSumWithMultiplicity]
+  push_cast
+  have hneg :
+      (∑ ρ ∈ nontrivialZerosFinset (T n),
+          -(analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ) =
+        -(∑ ρ ∈ nontrivialZerosFinset (T n),
+          (analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ) := by
+    rw [← Finset.sum_neg_distrib]
+    apply Finset.sum_congr rfl
+    intro ρ _hρ
+    ring
+  rw [hneg]
+  ring
 
 end ExplicitFormulaResidues
 end PrimeNumberTheorem

@@ -22,7 +22,7 @@ CHAIN_SUMMARY = [
         "name": "Explicit formula",
         "target": "explicit_formula_von_mangoldt",
         "status": "not proved in Lean",
-        "next_step": "finish Perron-to-residue finite-height chain, then pass from contour sum to truncated/ψ0 limit",
+        "next_step": "cover bounded gaps by the proved fixed-window weighted estimate and formalize floor/ceiling interpolation from the cofinal psi0 limit to all truncation heights",
     },
     {
         "name": "RH error equivalence",

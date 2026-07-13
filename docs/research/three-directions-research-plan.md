@@ -364,32 +364,32 @@ Verified assets now include:
   `explicitFormulaApprox_add_new_zeros`, and the corresponding empty-tail,
   congruence, and global-height stability wrappers;
 - basic eventual-stability entrypoints
-  `explicit_formula_von_mangoldt_of_eventually_eq` and
-  `explicit_formula_von_mangoldt_of_eventually_exact`, which let a future
-  contour/Perron construction enter through eventual equality with the
-  corrected truncation, or through eventual exact equality with `ψ₀(x)`;
+  `explicit_formula_von_mangoldt_unweighted_of_eventually_eq` and
+  `explicit_formula_von_mangoldt_unweighted_of_eventually_exact`, which let a future
+  contour/Perron construction enter through eventual equality with the legacy
+  unweighted truncation, or through eventual exact equality with `ψ₀(x)`;
 - new-zero norm/count tail bounds under RH;
 - eventual-no-new-zero tail convergence;
 - direct non-RH contribution-tail bridges:
-  `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_tendsto_zero`;
-  `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_tendsto_zero`;
-  `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_tendsto_zero`;
-  `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_isLittleO_one`;
-  `explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution_sum_norm_le`;
-  `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_sum_norm_isBigO_tendsto_zero`;
-  `explicit_formula_von_mangoldt_of_base_and_eventually_new_zero_contribution_norm_le`;
-  `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_isBigO_tendsto_zero`;
-  `explicit_formula_von_mangoldt_of_base_and_new_zero_contribution_norm_isLittleO_one`;
-  `explicit_formula_von_mangoldt_of_base_and_eventually_no_new_zeros_via_contribution_tail`;
+  `explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_tendsto_zero`;
+  `explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_norm_tendsto_zero`;
+  `explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_sum_norm_tendsto_zero`;
+  `explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_sum_norm_isLittleO_one`;
+  `explicit_formula_von_mangoldt_unweighted_of_base_and_eventually_new_zero_contribution_sum_norm_le`;
+  `explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_sum_norm_isBigO_tendsto_zero`;
+  `explicit_formula_von_mangoldt_unweighted_of_base_and_eventually_new_zero_contribution_norm_le`;
+  `explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_norm_isBigO_tendsto_zero`;
+  `explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_norm_isLittleO_one`;
+  `explicit_formula_von_mangoldt_unweighted_of_base_and_eventually_no_new_zeros_via_contribution_tail`;
 - composed bridges:
-  `explicit_formula_von_mangoldt_of_RH_base_and_eventually_no_new_zeros_via_sum_tail`;
-  `explicit_formula_von_mangoldt_of_RH_base_and_eventually_no_new_zeros_via_card_tail`.
+  `explicit_formula_von_mangoldt_unweighted_of_RH_base_and_eventually_no_new_zeros_via_sum_tail`;
+  `explicit_formula_von_mangoldt_unweighted_of_RH_base_and_eventually_no_new_zeros_via_card_tail`.
 - global-height-bound-to-tail bridges:
   `nontrivialZerosFinset_eventually_sdiff_eq_empty_of_global_height_bound`;
   `new_zero_inv_norm_tail_tendsto_zero_of_global_height_bound`;
   `new_zero_card_tail_tendsto_zero_of_global_height_bound`;
-  `explicit_formula_von_mangoldt_of_RH_base_and_global_height_bound_via_sum_tail`;
-  `explicit_formula_von_mangoldt_of_RH_base_and_global_height_bound_via_card_tail`.
+  `explicit_formula_von_mangoldt_unweighted_of_RH_base_and_global_height_bound_via_sum_tail`;
+  `explicit_formula_von_mangoldt_unweighted_of_RH_base_and_global_height_bound_via_card_tail`.
 - truncated explicit-formula converse facades:
   `psiPowerErrorBelowLineExcludesZerosRightOf_of_truncated_route`;
   `no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route`;
