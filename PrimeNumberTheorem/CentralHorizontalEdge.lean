@@ -644,7 +644,13 @@ theorem exists_tendsto_horizontal_central_explicitFormulaIntegrand_both_zero
     ∃ T : ℕ → ℝ,
       (∀ n : ℕ,
         T n ∈ Set.Icc ((n : ℝ) + 4) ((n : ℝ) + 5) ∧
-          ExplicitFormulaAux.goodHeight (T n)) ∧
+          ExplicitFormulaAux.goodHeight (T n) ∧
+          IntervalIntegrable
+            (fun σ : ℝ => explicitFormulaIntegrand x ((σ : ℂ) + I * T n))
+            volume (-1) 2 ∧
+          IntervalIntegrable
+            (fun σ : ℝ => explicitFormulaIntegrand x ((σ : ℂ) + I * (-(T n))))
+            volume (-1) 2) ∧
       Tendsto T atTop atTop ∧
       Tendsto
         (fun n : ℕ => ∫ σ : ℝ in (-1)..2,
@@ -742,7 +748,17 @@ theorem exists_tendsto_horizontal_central_explicitFormulaIntegrand_both_zero
     exact hfinal
   refine ⟨T, ?_, hTtop, ?_, ?_⟩
   · intro n
-    exact ⟨(hspec n).1, (hspec n).2.1⟩
+    have hTpos : 0 < T n := by linarith [(hspec n).1.1]
+    have htop_abs : |T n| = T n := abs_of_pos hTpos
+    have hbottom_abs : |-(T n)| = T n := by simp [abs_of_pos hTpos]
+    have hbottom_integrable : IntervalIntegrable
+        (fun σ : ℝ => explicitFormulaIntegrand x
+          ((σ : ℂ) + I * (-(T n)))) volume (-1) 2 := by
+      simpa only [ofReal_neg] using
+        ((hspec n).2.2 (-(T n)) hbottom_abs).1
+    exact ⟨(hspec n).1, (hspec n).2.1,
+      ((hspec n).2.2 (T n) htop_abs).1,
+      hbottom_integrable⟩
   · simpa using hsigned 1 (by norm_num)
   · simpa using hsigned (-1) (by norm_num)
 
