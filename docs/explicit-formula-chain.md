@@ -302,8 +302,8 @@ Already available or mostly available:
     moving far-left horizontal contour integrals tend to zero, uniformly in
     every left endpoint satisfying `a(T)<=-epsilon`.  Thus no digamma or other
     Gamma-factor remainder remains on these two far-left horizontal pieces.
-28. `LeftVerticalEdge` removes two technical obstructions to treating the
-    moving left edge.  It proves the uniform bound `norm (cot z) <= 1` on the
+28. `LeftVerticalEdge` treats the complete moving left edge.  It first proves
+    the uniform bound `norm (cot z) <= 1` on the
     entire vertical line obtained from `Re(s)=-(2N+1)` after halving and
     multiplying by `pi`; unlike the horizontal high-imaginary bound, this
     includes height zero.  It also proves
@@ -311,10 +311,15 @@ Already available or mostly available:
     Gamma factor is regular.  This is the nonsingular completed-factor
     decomposition needed at negative odd real points.  Finally,
     `exists_linearlyControlled_goodHeight_gt_one` strengthens the cofinal
-    height construction by retaining `n+K < T_n < n+K+1`, so vertical segment
-    length cannot grow faster than the exponential `x^(-(2n+1))` decay.  The
-    zeta/Gammaℝ logarithmic functional equation and its integrated vertical
-    bound are still open.
+    height construction by retaining `n+K < T_n < n+K+1`.  Using the completed
+    zeta functional equation, it then proves a nonsingular logarithmic-
+    derivative identity on `Re(s)=-(2N+1)`, reflects both digamma factors to
+    `Re>=1`, and obtains the finite-height bound
+    `O(T * x^(-(2N+1)) * (1 + log(2N+T+4)))`.  Consequently
+    `tendsto_integral_explicitFormulaIntegrand_odd_vertical_atTop` proves that
+    the complete left edge tends to zero whenever the height grows at most
+    linearly.  The joint contour theorem now uses exactly such a sequence and
+    exposes this zero limit in its conclusion.
 
 Remaining after the fixed-right-edge contour shift:
 
@@ -329,11 +334,10 @@ Remaining after the fixed-right-edge contour shift:
    sequence has been chosen.  The complete far-left horizontal portions are
    now proved to vanish uniformly in the moving left endpoint: this includes
    the Euler-product, constant, tangent, cotangent-reflection, and right-shifted
-   digamma contributions.  For the moving vertical left edge, the completed
-   Gamma-factor logarithmic derivative, the odd-line cotangent bound, and a
-   linearly controlled good-height sequence are now proved.  Combining them
-   into a pointwise zeta logarithmic-derivative bound and then integrating it
-   remains open.
+   digamma contributions.  The complete moving vertical left edge is also now
+   proved to vanish along the same linearly controlled good-height sequence.
+   Thus the remaining contour issue is concentrated in the horizontal central
+   band rather than the far-left or vertical pieces.
 3. Separate the now-proved limit of `nontrivial-zero sum - remainder` by
    proving the remainder tends to zero; this then gives the symmetric
    multiplicity-weighted nontrivial-zero limit along the chosen cofinal

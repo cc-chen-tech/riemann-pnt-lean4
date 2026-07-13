@@ -639,6 +639,11 @@ theorem exists_jointCofinal_movingLeft_firstOrderContours
           -((x : ℂ) ^ p) / p)
         atTop
         (nhds (((-(1 / 2 : ℝ) * Real.log (1 - x ^ (-2 : ℝ)) : ℝ) : ℂ))) ∧
+      Tendsto
+        (fun n : ℕ => ∫ t : ℝ in (-(2 * Real.pi * W n))..(2 * Real.pi * W n),
+          explicitFormulaIntegrand x
+            (((-(2 * (n : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * I))
+        atTop (nhds 0) ∧
       ∀ n, 0 < W n ∧ goodHeight (2 * Real.pi * W n) ∧
         (∫ w : ℝ in (-(W n))..(W n),
             explicitFormulaIntegrand x
@@ -653,7 +658,7 @@ theorem exists_jointCofinal_movingLeft_firstOrderContours
     ⟨K, T, hTmono, hTtend, hT⟩
   let W : ℕ → ℝ := fun n => T n / (2 * Real.pi)
   have hden : 0 < 2 * Real.pi := by positivity
-  refine ⟨K, W, ?_, ?_, ?_, ?_, ?_⟩
+  refine ⟨K, W, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · intro a b hab
     exact div_lt_div_of_pos_right (hTmono hab) hden
   · exact hTtend.atTop_div_const hden
@@ -664,6 +669,21 @@ theorem exists_jointCofinal_movingLeft_firstOrderContours
     rw [hscale]
     exact ⟨(hT n).1, (hT n).2.1⟩
   · exact ExplicitFormulaAux.tendsto_finiteTrivialZeroSum_residues hx
+  · apply tendsto_integral_explicitFormulaIntegrand_odd_vertical_atTop
+      (K := K) (T := fun n => 2 * Real.pi * W n) hx
+    · intro n
+      have hscale : 2 * Real.pi * W n = T n := by
+        dsimp [W]
+        field_simp
+      rw [hscale]
+      have hbase : 0 ≤ ((n + K : ℕ) : ℝ) := Nat.cast_nonneg _
+      exact hbase.trans (hT n).1.le
+    · intro n
+      have hscale : 2 * Real.pi * W n = T n := by
+        dsimp [W]
+        field_simp
+      rw [hscale]
+      simpa [Nat.cast_add] using (hT n).2.1.le
   · intro n
     have hTgt : 1 < T n := (hT n).2.2.1
     have hTgood : goodHeight (T n) := (hT n).2.2.2
@@ -698,7 +718,7 @@ theorem exists_jointCofinal_nontrivialZeroSum_sub_remainder_tendsto
           (((-(1 / 2 : ℝ) * Real.log (1 - x ^ (-2 : ℝ)) : ℝ) : ℂ)) -
           ((x : ℂ) - deriv riemannZeta 0 / riemannZeta 0))) := by
   rcases exists_jointCofinal_movingLeft_firstOrderContours hx hc with
-    ⟨_K, W, hmono, hWtend, _hlinear, htriv, hformula⟩
+    ⟨_K, W, hmono, hWtend, _hlinear, htriv, _hleft, hformula⟩
   have hright :=
     (tendsto_scaledRightIntegral_explicitFormulaIntegrand_atTop
       (zero_lt_one.trans hx) hc).comp hWtend

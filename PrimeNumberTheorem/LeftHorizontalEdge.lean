@@ -83,31 +83,16 @@ theorem norm_cot_le_two_of_one_le_abs_im {z : ℂ} (hz : 1 ≤ |z.im|) :
   rw [div_le_iff₀ hden]
   nlinarith
 
-/-- Logarithmic-derivative form of Euler's Gamma reflection formula, valid
-off the real axis. -/
-theorem digamma_eq_one_sub_sub_pi_mul_cot {s : ℂ} (hs : s.im ≠ 0) :
+/-- Logarithmic-derivative form of Euler's Gamma reflection formula at every
+point where both Gamma factors and the sine denominator are regular. -/
+theorem digamma_eq_one_sub_sub_pi_mul_cot_of_regular {s : ℂ}
+    (hsGamma : ∀ n : ℕ, s ≠ -(n : ℂ))
+    (h1sGamma : ∀ n : ℕ, 1 - s ≠ -(n : ℂ))
+    (hsin : Complex.sin (Real.pi * s) ≠ 0) :
     Complex.digamma s = Complex.digamma (1 - s) -
       Real.pi * Complex.cot (Real.pi * s) := by
-  have hsGamma : ∀ n : ℕ, s ≠ -(n : ℂ) := by
-    intro n hn
-    apply hs
-    have him := congrArg Complex.im hn
-    simpa using him
-  have h1sGamma : ∀ n : ℕ, 1 - s ≠ -(n : ℂ) := by
-    intro n hn
-    apply hs
-    have him := congrArg Complex.im hn
-    simp at him
-    exact him
   have hGamma : Complex.Gamma s ≠ 0 := Complex.Gamma_ne_zero hsGamma
   have hGamma1 : Complex.Gamma (1 - s) ≠ 0 := Complex.Gamma_ne_zero h1sGamma
-  have hsin : Complex.sin (Real.pi * s) ≠ 0 := by
-    rw [Complex.sin_ne_zero_iff]
-    intro k hk
-    apply hs
-    have him := congrArg Complex.im hk
-    simp at him
-    exact him
   have hGdiff : DifferentiableAt ℂ Complex.Gamma s :=
     Complex.differentiableAt_Gamma s hsGamma
   have hG1diff : DifferentiableAt ℂ (fun z : ℂ => Complex.Gamma (1 - z)) s := by
@@ -156,6 +141,28 @@ theorem digamma_eq_one_sub_sub_pi_mul_cot {s : ℂ} (hs : s.im ≠ 0) :
     exact Complex.Gamma_mul_Gamma_one_sub z
   rw [hreflection, hrhs] at hlhs
   linear_combination -hlhs
+
+/-- Logarithmic-derivative form of Euler's Gamma reflection formula, valid
+off the real axis. -/
+theorem digamma_eq_one_sub_sub_pi_mul_cot {s : ℂ} (hs : s.im ≠ 0) :
+    Complex.digamma s = Complex.digamma (1 - s) -
+      Real.pi * Complex.cot (Real.pi * s) := by
+  apply digamma_eq_one_sub_sub_pi_mul_cot_of_regular
+  · intro n hn
+    apply hs
+    have him := congrArg Complex.im hn
+    simpa using him
+  · intro n hn
+    apply hs
+    have him := congrArg Complex.im hn
+    simp at him
+    exact him
+  · rw [Complex.sin_ne_zero_iff]
+    intro k hk
+    apply hs
+    have him := congrArg Complex.im hk
+    simp at him
+    exact him
 
 /-- Logarithmic derivative form of the zeta functional equation, oriented so
 that a point on the left is related to `1 - s` in the Euler-product
