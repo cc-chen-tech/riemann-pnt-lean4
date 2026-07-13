@@ -103,6 +103,17 @@ function stripComments(source) {
   );
 }
 
+function extractTagBodies(source, tag) {
+  const bodies = [];
+  const pattern = new RegExp(`<${tag}\\b[^>]*>([\\s\\S]*?)<\\/${tag}\\s*>`, "gi");
+  for (const match of source.matchAll(pattern)) bodies.push(match[1]);
+  return bodies;
+}
+
+function markupWithoutExecutableBodies(source) {
+  return source.replace(/<(script|style)\b([^>]*)>[\s\S]*?<\/\1\s*>/gi, "<$1$2></$1>");
+}
+
 function findMatching(source, start, open, close) {
   let depth = 0;
   let quote = null;
@@ -231,13 +242,29 @@ function hasNonemptyString(property) {
 }
 
 function attributeMatches(source, tag, attribute, allowHashAnchor = false) {
-  const matches = source.matchAll(new RegExp(`<${tag}\\b[^>]*\\b${attribute}\\s*=\\s*(["'])(.*?)\\1`, "gi"));
-  return [...matches].filter((match) => !(allowHashAnchor && match[2].trim().startsWith("#")));
+  const tagPattern = new RegExp(`<${tag}\\b[^>]*>`, "gi");
+  const attributePattern = new RegExp(
+    `\\b${attribute}\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s"'=<>\\x60]+))`,
+    "i"
+  );
+  const matches = [];
+  for (const tagMatch of source.matchAll(tagPattern)) {
+    const attributeMatch = attributePattern.exec(tagMatch[0]);
+    if (!attributeMatch) continue;
+    const value = attributeMatch[1] ?? attributeMatch[2] ?? attributeMatch[3] ?? "";
+    if (!(allowHashAnchor && value.trim().startsWith("#"))) {
+      matches.push({ tag: tagMatch[0], value });
+    }
+  }
+  return matches;
 }
 
 function attributeValue(tagSource, attribute) {
-  const match = new RegExp(`\\b${attribute}\\s*=\\s*(["'])(.*?)\\1`, "i").exec(tagSource);
-  return match?.[2] ?? null;
+  const match = new RegExp(
+    `\\b${attribute}\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s"'=<>\\x60]+))`,
+    "i"
+  ).exec(tagSource);
+  return match?.[1] ?? match?.[2] ?? match?.[3] ?? null;
 }
 
 function elementContentById(source, id) {
@@ -267,9 +294,7 @@ function elementContentById(source, id) {
 }
 
 function staticMapNodeCount(source) {
-  // Ignore executable/style text so only no-JS HTML fallback nodes count.
-  const markup = source.replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1\s*>/gi, " ");
-  const mapContent = elementContentById(markup, "atlas-map");
+  const mapContent = elementContentById(source, "atlas-map");
   if (mapContent === null) return 0;
 
   let count = 0;
@@ -292,45 +317,82 @@ function isHashAnchorExpression(expression) {
   return /^\s*(["'])#.*\1\s*$/.test(expression);
 }
 
-function hasVisibleFocusRule(source, selectorPattern) {
-  for (const match of source.matchAll(/([^{}]+)\{([^{}]*)\}/gis)) {
-    if (!/\boutline\s*:/i.test(match[2])) continue;
-    for (const selector of match[1].split(",")) {
-      if (/:focus-visible\b/i.test(selector) && selectorPattern.test(selector)) return true;
+function hasVisibleFocusRule(styleBodies, selectorPattern) {
+  for (const styleBody of styleBodies) {
+    for (const match of styleBody.matchAll(/([^{}]+)\{([^{}]*)\}/gis)) {
+      if (!hasVisibleOutline(match[2])) continue;
+      for (const selector of match[1].split(",")) {
+        if (/:focus-visible\b/i.test(selector) && selectorPattern.test(selector)) return true;
+      }
     }
   }
   return false;
 }
 
-function runtimeResourceErrors(source) {
+function hasVisibleOutline(declarations) {
+  const shorthand = /(?:^|;)\s*outline\s*:\s*([^;]+)/i.exec(declarations)?.[1] ?? "";
+  const width = /(?:^|;)\s*outline-width\s*:\s*([^;]+)/i.exec(declarations)?.[1] ?? shorthand;
+  const style = /(?:^|;)\s*outline-style\s*:\s*([^;]+)/i.exec(declarations)?.[1] ?? shorthand;
+  const color = /(?:^|;)\s*outline-color\s*:\s*([^;]+)/i.exec(declarations)?.[1] ?? "";
+  const outlineValues = `${shorthand} ${width} ${style} ${color}`;
+  if (/\bnone\b|\btransparent\b/i.test(outlineValues)) return false;
+  if (!/(?:^|\s)(?:[1-9]\d*|0?\.\d+)px\b/i.test(width)) return false;
+  return /\b(?:solid|dashed|double)\b/i.test(style);
+}
+
+function normalizeStaticStringConcatenations(source) {
+  let normalized = source;
+  for (let pass = 0; pass < 4; pass += 1) {
+    const next = normalized.replace(
+      /(["'`])([^\\\n]*?)\1\s*\+\s*(["'`])([^\\\n]*?)\3/g,
+      (_, quote, left, _rightQuote, right) => `${quote}${left}${right}${quote}`
+    );
+    if (next === normalized) break;
+    normalized = next;
+  }
+  return normalized;
+}
+
+function appendComputedPropertyTokens(source) {
+  let computedTokens = "";
+  for (const match of source.matchAll(/\b(?:window|globalThis|document)\s*\[([^\]]*)\]/gi)) {
+    const literals = [...match[1].matchAll(/(["'`])([^\\\n]*?)\1/g)].map((literal) => literal[2]);
+    if (literals.length > 0) computedTokens += ` ${literals.join("")} `;
+  }
+  return `${source} ${computedTokens}`;
+}
+
+function runtimeResourceErrors(scriptBodies) {
+  const source = appendComputedPropertyTokens(normalizeStaticStringConcatenations(scriptBodies.join("\n")));
   const errors = [];
-  const forbiddenCalls = [
-    ["Worker", /\b(?:new\s+)?(?:window\s*\.\s*)?Worker\s*\(/i],
-    ["SharedWorker", /\b(?:new\s+)?(?:window\s*\.\s*)?SharedWorker\s*\(/i],
-    ["serviceWorker.register", /\b(?:navigator\s*\.\s*)?serviceWorker\s*\.\s*register\s*\(/i],
-    ["importScripts", /\bimportScripts\s*\(/i],
-    ["navigator.sendBeacon", /\bnavigator\s*\.\s*sendBeacon\s*\(/i],
-    ["fetch", /\b(?:window\s*\.\s*)?fetch\s*\(/i],
-    ["XMLHttpRequest", /\b(?:new\s+)?(?:window\s*\.\s*)?XMLHttpRequest\s*\(/i],
-    ["XMLHttpRequest.open", /\.\s*open\s*\(\s*["'](?:GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)["']\s*,/i],
-    ["WebSocket", /\bnew\s+(?:window\s*\.\s*)?WebSocket\s*\(/i],
-    ["EventSource", /\bnew\s+(?:window\s*\.\s*)?EventSource\s*\(/i],
-    ["dynamic import", /\bimport\s*\(/i],
-    ["new URL", /\bnew\s+(?:window\s*\.\s*)?URL\s*\(/i],
-    ["URL.createObjectURL", /\b(?:window\s*\.\s*)?URL\s*\.\s*createObjectURL\s*\(/i],
-    ["constructed resource element", /\b(?:document|window|globalThis)\s*\.\s*createElement\s*\(\s*["'](?:script|link|img|iframe|embed|object|audio|video|source|track)["']/i],
-    ["constructed resource element", /\b(?:document|window|globalThis)\s*\.\s*createElementNS\s*\([^,]+,\s*["'](?:script|image|foreignObject)["']/i],
-    ["constructed Image", /\bnew\s+(?:window\s*\.\s*)?Image\s*\(/i],
-    ["constructed Audio", /\bnew\s+(?:window\s*\.\s*)?Audio\s*\(/i]
+  const forbiddenTokens = [
+    ["SharedWorker", /\bSharedWorker\b/],
+    ["Worker", /\bWorker\b/],
+    ["serviceWorker.register", /\bserviceWorker\b/],
+    ["importScripts", /\bimportScripts\b/],
+    ["navigator.sendBeacon", /\bsendBeacon\b/],
+    ["fetch", /\bfetch\b/],
+    ["XMLHttpRequest", /\bXMLHttpRequest\b/],
+    ["WebSocket", /\bWebSocket\b/],
+    ["EventSource", /\bEventSource\b/],
+    ["dynamic import", /\bimport\s*\(/],
+    ["URL construction/object URL", /\b(?:URL|createObjectURL)\b/],
+    ["document.write", /\bwrite\b/],
+    ["constructed resource element", /\bcreateElement(?:NS)?\b/],
+    ["constructed Image", /\bImage\b/],
+    ["constructed Audio", /\bAudio\b/]
   ];
-  for (const [label, pattern] of forbiddenCalls) {
+  for (const [label, pattern] of forbiddenTokens) {
     if (pattern.test(source)) errors.push(`runtime resource: ${label}`);
+  }
+  if (/\.\s*open\s*\(\s*["'](?:GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)["']\s*,/i.test(source)) {
+    errors.push("runtime resource: XMLHttpRequest.open");
   }
 
   for (const match of source.matchAll(/\.\s*(?:src|href)\s*=\s*([^;\n]+)/gi)) {
     if (!isHashAnchorExpression(match[1])) errors.push("runtime resource: dynamic src/href assignment");
   }
-  for (const match of source.matchAll(/\[\s*(["'])(?:src|href)\1\s*\]\s*=\s*([^;\n]+)/gi)) {
+  for (const match of source.matchAll(/\[\s*(?:(["'])(?:src|href)\1|[^\]]*(?:src|href)[^\]]*)\s*\]\s*=\s*([^;\n]+)/gi)) {
     if (!isHashAnchorExpression(match[2])) errors.push("runtime resource: dynamic src/href assignment");
   }
   for (const match of source.matchAll(/\.\s*setAttribute\s*\(\s*(["'])(?:src|href)\1\s*,\s*([^)]*)\)/gi)) {
@@ -342,7 +404,13 @@ function runtimeResourceErrors(source) {
 
 const resolvedTarget = path.resolve(target);
 const html = fs.readFileSync(resolvedTarget, "utf8");
+const commentStrippedHtml = html.replace(/<!--[\s\S]*?-->/g, " ");
 const source = stripComments(html);
+const scriptlessHtml = commentStrippedHtml.replace(/<script\b[^>]*>[\s\S]*?<\/script\s*>/gi, " ");
+const stylelessHtml = commentStrippedHtml.replace(/<style\b[^>]*>[\s\S]*?<\/style\s*>/gi, " ");
+const scriptBodies = extractTagBodies(stylelessHtml, "script").map((body) => stripDelimitedComments(body, true));
+const styleBodies = extractTagBodies(scriptlessHtml, "style").map((body) => stripDelimitedComments(body, false));
+const documentMarkup = markupWithoutExecutableBodies(commentStrippedHtml);
 const errors = [];
 
 for (const [label, pattern] of [
@@ -362,17 +430,20 @@ for (const [label, pattern] of [
   if (!pattern.test(source)) errors.push(`missing: ${label}`);
 }
 
-if (!/<button\b[^>]*\bdata-action\s*=\s*(["'])toggle-network\1[^>]*>/i.test(source)) {
+const hasNetworkToggle = [...documentMarkup.matchAll(/<button\b[^>]*>/gi)].some(([tagSource]) => {
+  return attributeValue(tagSource, "data-action") === "toggle-network";
+});
+if (!hasNetworkToggle) {
   errors.push("missing: button[data-action=\"toggle-network\"]");
 }
-if (!hasVisibleFocusRule(source, /(?:^|[\s>+~])(?:button|\.map-node)[^\s>+~]*:focus-visible\b/i)) {
+if (!hasVisibleFocusRule(styleBodies, /(?:^|[\s>+~])(?:button|\.map-node)[^\s>+~]*:focus-visible\b/i)) {
   errors.push("missing: visible focus for button or map-node controls");
 }
-if (!hasVisibleFocusRule(source, /(?:^|[\s>+~])(?:button)?\[data-action\s*=\s*(["'])toggle-network\1\][^\s>+~]*:focus-visible\b/i)) {
+if (!hasVisibleFocusRule(styleBodies, /\[data-action\s*=\s*(?:(["'])toggle-network\1|toggle-network)\s*\][^\s>+~]*:focus-visible\b/i)) {
   errors.push("missing: visible focus for network toggle");
 }
 
-const staticFallbackCount = staticMapNodeCount(source);
+const staticFallbackCount = staticMapNodeCount(documentMarkup);
 if (staticFallbackCount < 6) {
   errors.push(`expected at least six static #atlas-map fallback buttons, found ${staticFallbackCount}`);
 }
@@ -381,7 +452,7 @@ if (/\b@import\b/i.test(source)) errors.push("external resource: @import");
 
 if (/(?:https?:)?\/\//i.test(source)) errors.push("external resource: http(s) or protocol-relative literal");
 
-errors.push(...runtimeResourceErrors(source));
+errors.push(...runtimeResourceErrors(scriptBodies));
 
 for (const match of source.matchAll(/\burl\s*\(\s*(["']?)(.*?)\1\s*\)/gi)) {
   const prefix = source.slice(Math.max(0, match.index - 8), match.index);
@@ -394,16 +465,16 @@ for (const match of source.matchAll(/\b(?:src|href|poster|data)\s*=\s*(["'])\s*(
   errors.push(`external resource: protocol-relative ${match[2]}`);
 }
 
-for (const match of attributeMatches(source, "script", "src")) {
-  errors.push(`external resource: script src=${match[2]}`);
+for (const match of attributeMatches(documentMarkup, "script", "src")) {
+  errors.push(`external resource: script src=${match.value}`);
 }
-for (const match of attributeMatches(source, "link", "href", true)) {
-  errors.push(`external resource: link href=${match[2]}`);
+for (const match of attributeMatches(documentMarkup, "link", "href")) {
+  errors.push(`external resource: link href=${match.value}`);
 }
 for (const tag of ["img", "embed", "object", "iframe", "audio", "video", "source", "track"]) {
   for (const attribute of ["src", "href", "data", "poster"]) {
-    for (const match of attributeMatches(source, tag, attribute, true)) {
-      errors.push(`external resource: <${tag}> ${attribute}=${match[2]}`);
+    for (const match of attributeMatches(documentMarkup, tag, attribute)) {
+      errors.push(`external resource: <${tag}> ${attribute}=${match.value}`);
     }
   }
 }
