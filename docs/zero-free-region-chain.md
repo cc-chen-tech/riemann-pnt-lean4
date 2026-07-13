@@ -1,47 +1,44 @@
 # Zero-Free Region Chain
 
-This note audits the remaining Lean work needed to turn the current
-zero-free-region infrastructure into the target
-`ZeroFreeRegion.classical_zero_free_region : Prop`.
+This note records the completed Lean chain proving
+`ZeroFreeRegion.classical_zero_free_region : Prop` and the remaining stronger
+Vinogradov-Korobov target.
 
-Current Lean status: `ZeroFreeRegion.lean` checks with
-`lake env lean -R . ZeroFreeRegion.lean`.  The quantitative target is still a
-`def ... : Prop`, not a proved theorem.
+Current Lean status: `ZeroFreeRegion.classical_zero_free_region_proved`
+inhabits the classical predicate.  The proof is in
+`ZeroFreeRegion/PhragmenLindelofZeta.lean`.
 
 ## Current Distance Boundary
 
-The repository has formalized the front half of the de la Vallee Poussin
-machinery:
+The repository has formalized the classical de la Vallee Poussin chain:
 
 ```text
 von Mangoldt series for -zeta'/zeta
         -> 3-4-1 inequality
-        -> compact zero-free strip
-        -> conditional high-height closure interfaces
+        -> Phragmen-Lindelof fixed-strip zeta growth
+        -> Jensen/Borel all-divisor regular part O(log |t|)
+        -> candidate-zero principal-part separation
+        -> classical c/log |t| zero-free region
 ```
 
-It has not yet crossed the analytic boundary needed for the classical
-zero-free region.  The next hard input is not a wrapper or documentation item;
-it is a boundary-strip logarithmic-derivative estimate, for example:
+The proved boundary-strip estimate is the real-part form needed by 3-4-1:
 
 ```lean
 ∃ B T0, ∀ z : ℂ,
   1 ≤ z.re → z.re ≤ 2 → T0 ≤ |z.im| →
-  ‖logDeriv riemannZeta z‖ ≤ B * Real.log |z.im|
+  (-deriv riemannZeta z / riemannZeta z).re ≤ B * Real.log |z.im|
 ```
 
-The existing fixed-margin theorem proves this only in half-planes
-`1 + ε ≤ Re(z)`.  That follows from absolute convergence and does not imply the
-uniform boundary-strip estimate above.  A second missing input is the
-zero-candidate regular-part estimate
+This is proved by `exists_ReNegDerivDivVerticalLogBound`.  The matching
+zero-candidate estimate is also proved:
 
 ```text
 Re(-ζ'/ζ(σ + i t)) <= -1 / (σ - β) + O(log |t|)
 ```
 
-when `ρ = β + i t` is a zero.  These are the hard analytic estimates usually
-supplied by zeta growth plus Borel-Caratheodory, Jensen/Hadamard, or equivalent
-zero-repulsion machinery.
+when `ρ = β + i t` is a zero.  The implementation obtains both from
+fixed-strip zeta growth, Borel-Caratheodory, Jensen zero counting, and mixed
+canonical zero removal.
 
 The boundary-strip estimate now has named Lean interfaces:
 `ZeroFreeRegion.LogDerivVerticalLogBound`,
@@ -51,10 +48,10 @@ The boundary-strip estimate now has named Lean interfaces:
 `ZeroFreeRegion.negLogDeriv_riemannZeta_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height`,
 and
 `ZeroFreeRegion.reNegDerivDiv_riemannZeta_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height`
-convert future affine `A + B log(|t|+3)` high-height estimates into these
-interfaces.  They are proved normalization handoffs; they do not prove the
-zeta-specific estimate.
-If the future high-height theorem is already available in the exact
+convert affine `A + B log(|t|+3)` high-height estimates into these interfaces.
+The zeta-specific real-part instance is now supplied by
+`exists_ReNegDerivDivVerticalLogBound`.
+If a high-height theorem is already available in the exact
 `B log |t|` scale, the constructors
 `ZeroFreeRegion.logDerivVerticalLogBound_of_high_height_log_abs_bound`,
 `ZeroFreeRegion.negLogDerivVerticalLogBound_of_high_height_log_abs_bound`, and
@@ -84,10 +81,10 @@ horizontal line.  The proved closures
 `ZeroFreeRegion.classical_zero_free_region_of_LogDerivRegularPartLogBound_and_LogDerivVerticalLogBound`
 and
 `ZeroFreeRegion.classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_and_LogDerivVerticalLogBound`
-show that the remaining classical zero-free-region target reduces to these
-named regular-part estimates plus the named vertical estimate.  This is still
-conditional: those two zeta-specific high-height estimates are not proved in
-this checkout.
+show that the classical zero-free-region target reduces to these named
+regular-part estimates plus the named vertical estimate.  The final proof now
+uses a stronger all-divisor regularization theorem instead of assuming either
+candidate-local interface.
 
 The direct real-part final assemblies
 `ZeroFreeRegion.classical_zero_free_region_of_LogDerivRegularPartLogBound_and_ReNegDerivDivVerticalLogBound`

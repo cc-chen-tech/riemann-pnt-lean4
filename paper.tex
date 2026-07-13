@@ -18,7 +18,7 @@
 \theoremstyle{remark}
 \newtheorem{remark}[theorem]{Remark}
 
-\title{\bfseries Formalizing the 3-4-1 Inequality and a Compact Zero-Free Strip\\
+\title{\bfseries Formalizing the 3-4-1 Inequality and the Classical Zero-Free Region\\
 for the Riemann Zeta Function in Lean~4\\
 {\large Explicit-Formula Targets and Prime Number Theorem Infrastructure}}
 
@@ -35,12 +35,13 @@ for the Riemann Zeta Function in Lean~4\\
 \begin{abstract}
 We report on a buildable Lean~4 project whose main verified contribution is
 the formalization of de~la~Vall\'ee~Poussin's 3-4-1 logarithmic-derivative
-machinery for the Riemann zeta function, together with a compact zero-free
-strip at bounded height.  The development works directly with Mathlib's
+machinery for the Riemann zeta function, together with the classical
+zero-free region \(\Re(s)\geq1-c/\log|\Im(s)|\).  The development works directly with Mathlib's
 \texttt{riemannZeta} API and proves the real-part Dirichlet-series expansion
 for \(-\zeta'/\zeta\), the full 3-4-1 nonnegativity combination, residue-scale
-bounds near \(s=1\), and a nonconstructive positive-width zero-free strip for
-each fixed height bound.
+bounds near \(s=1\), fixed-strip polynomial growth via Phragm\'en--Lindel\"of,
+a Jensen/Borel all-divisor regular-part estimate of order \(\log|t|\), and the
+candidate-zero repulsion estimate that closes the classical region.
 
 The present development should be read as a verified framework with explicit
 unproved target statements, not as a first or completed PNT formalization.
@@ -77,16 +78,17 @@ long-standing challenge. Previous formalizations have taken different routes:
 
 These external baselines fix the claim boundary for this paper.  We do not
 claim a first formalization of the PNT, nor a completed formalization of the
-classical analytic proof.  Instead, we isolate a local Lean~4 module for the
-de~la~Vall\'ee~Poussin 3-4-1 mechanism and its compact zero-free-strip
-consequence, built on Mathlib.
+classical analytic PNT proof.  Instead, we isolate a Lean~4 module for the
+de~la~Vall\'ee~Poussin 3-4-1/Jensen/Borel mechanism and its classical
+quantitative zero-free-region consequence, built on Mathlib.
 
 Our contributions are deliberately stratified:
 
 \begin{enumerate}[noitemsep]
   \item \textbf{Primary verified module:} the real-part logarithmic-derivative
-    Dirichlet series, the de~la~Vall\'ee~Poussin 3-4-1 inequality, and the
-    compact zero-free strip.  This is the core paper contribution.
+    Dirichlet series, the de~la~Vall\'ee~Poussin 3-4-1 inequality, fixed-strip
+    zeta growth, the all-divisor regular-part estimate, and the classical
+    \(c/\log|t|\) zero-free region.  This is the core paper contribution.
   \item \textbf{Explicit-formula target correction:} a Lean-facing
     Riemann--von Mangoldt target using the midpoint Chebyshev function
     \(\psi_0\), finite-height zero sums, and explicit truncation/error
@@ -262,13 +264,13 @@ the lower bound $\gamma>1/2$ for the Euler--Mascheroni constant.
 \midrule
 Von Mangoldt L-series identity &
 Real-part series for $-\zeta'/\zeta$ &
-Quantitative log-derivative estimates \\
+Uniform all-divisor regular-part estimate \\
 $\zeta(s)\ne0$ for $\Re(s)\ge1$ &
 Compact zero-free strip at bounded height &
-Uniform width $c/\log|t|$ \\
+Classical width $c/\log|t|$ \\
 Residue of $\zeta$ at $1$ &
 Bounds on $(\sigma-1)\zeta(\sigma)$ &
-Growth estimates near the pole \\
+Candidate-zero repulsion \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -283,9 +285,10 @@ The dependency pattern toward the classical zero-free region is:
 \quad\text{combined with}\quad
 \text{residue-scale bounds}.
 \]
-The remaining analytic input is a global growth/logarithmic-derivative bound,
-usually obtained through Hadamard factorization or a Borel--Carath\'eodory
-route.
+The formal proof completes this dependency by applying Phragm\'en--Lindel\"of
+to a normalized entire zeta carrier, using Jensen zero counting and a
+three-quarter-radius Borel--Carath\'eodory/Cauchy estimate, and separating the
+candidate-zero principal term in real part.
 
 \subsection{Prime Number Theorem Equivalences}
 
@@ -387,8 +390,6 @@ Table~\ref{tab:gaps} summarizes the main blockers.
   & Contour integration \& residue theorem & High \\
 \texttt{rh\_iff\_optimal\_error}
   & Standard RH/PNT error-term theory & High \\
-\texttt{classical\_zero\_free\_region}
-  & Hadamard factorization \emph{or} Borel--Carath\'eodory & Medium \\
 \texttt{vinogradov\_korobov\_zero\_free\_region}
   & Exponential sum estimates & Very High \\
 Hardy's integral asymptotics
@@ -406,13 +407,13 @@ de~la~Vall\'ee~Poussin mechanism:
   \quad\Longrightarrow\quad
   \text{3-4-1 inequality}
   \quad\Longrightarrow\quad
-  \text{compact zero-free strip}.
+  \text{classical }c/\log|t|\text{ zero-free region}.
 \]
-This is still far from a complete PNT proof along the classical route.  The
-remaining zero-free-region step requires a boundary-strip logarithmic-derivative
-estimate, schematically
+This is still not a complete PNT proof along the classical route.  The proof
+establishes the boundary-strip real-part estimate needed by 3-4-1,
+schematically
 \[
-  \|\operatorname{logDeriv}\zeta(z)\|
+  \operatorname{Re}(-\zeta'/\zeta)(z)
     \leq B \log |\Im z|
   \quad
   (1 \leq \Re z \leq 2,\ |\Im z|\geq T_0),
@@ -422,22 +423,16 @@ together with a zero-candidate regular-part estimate of the form
   \operatorname{Re}\!\left(-\frac{\zeta'}{\zeta}(\sigma+it)\right)
     \leq -\frac{1}{\sigma-\beta} + O(\log |t|)
 \]
-when \(\rho=\beta+it\) is a zero.  The project proves fixed-margin
-logarithmic-derivative bounds in half-planes \(1+\varepsilon\leq \Re z\),
-but those are consequences of absolute convergence and do not reach the
-boundary strip \(1\leq \Re z\leq 2\).  This is the main analytic wall before
-the classical zero-free region, and it is separate from the later
-Perron/explicit-formula or Tauberian step needed to derive PNT.
+when \(\rho=\beta+it\) is a zero.  Both estimates are now proved.  The
+remaining wall before PNT is the later Perron/explicit-formula or Tauberian
+step.
 
 \subsection{The Borel--Carath\'eodory Shortcut}
 
-The quantitative zero-free region $\sigma \geq 1-c/\log|t|$ typically
-requires Hadamard factorization theory. However, there is a lighter route
-via the Borel--Carath\'eodory theorem (which bounds an analytic function by
-its real part). Adding Borel--Carath\'eodory to Mathlib would remove one
-major infrastructure obstacle, but the present repository would still need
-additional zeta growth and logarithmic-derivative estimates before the full
-classical PNT proof could be closed.
+The formalization takes the lighter Borel--Carath\'eodory route rather than
+Hadamard factorization.  A normalized entire zeta carrier supplies fixed-strip
+growth by Phragm\'en--Lindel\"of; Jensen controls local divisor mass; and mixed
+canonical zero removal gives the uniform regular part.
 
 \subsection{The Explicit Formula}
 
@@ -484,10 +479,9 @@ $L$-functions~\cite{mathlib}. Our work directly extends this foundation.
 \paragraph{Our contribution.}
 Our contribution is narrower and complementary: in Lean~4, we verify a
 project-local module for the 3-4-1 inequality, related logarithmic-derivative
-series manipulations, and a compact zero-free strip.  We do not claim the first
-PNT formalization, a completed classical analytic PNT proof, or the
-quantitative de~la~Vall\'ee~Poussin zero-free region
-\(\sigma \geq 1-c/\log|t|\).
+series manipulations, and the classical quantitative zero-free region.  We do
+not claim the first PNT formalization, a completed classical analytic PNT
+proof, or a proof of RH.
 
 %=====================================================================
 \section{Conclusion and Future Work}
@@ -497,25 +491,22 @@ We have organized a Lean~4 project that builds against Mathlib~4.29.1 and
 collects infrastructure toward de~la~Vall\'ee~Poussin's analytic proof of the
 Prime Number Theorem.  The current development is not yet a completed formal
 proof of the PNT: it contains no explicit \texttt{sorry} occurrences, but it
-still has unproved target statements for quantitative zero-free regions,
+still has unproved target statements for the stronger Vinogradov--Korobov region,
 Hardy-theorem moment estimates, and explicit-formula machinery.
 
 The intended publication claim is therefore relative to existing PNT
-formalizations by other routes: this work contributes a local Lean~4
-formalization of de~la~Vall\'ee~Poussin-style 3-4-1 infrastructure, not a new
-completion of PNT or RH.
+formalizations by other routes: this work contributes a Lean~4 formalization
+of de~la~Vall\'ee~Poussin-style 3-4-1/Jensen infrastructure and the classical
+zero-free region, not a new completion of PNT or RH.
 
 The immediate path to a publishable artifact is therefore twofold.  First,
 keep the repository reproducible and its claims aligned with the checked Lean
-source.  Second, prove the project-local target statements before advertising any
-zero-free-region or PNT result as \texttt{sorry}-free.  The larger remaining
-goals point to useful Mathlib extensions, particularly contour integration,
-residue calculus, Borel--Carath\'eodory, and growth estimates for $\zeta$.
+source.  Second, complete the Perron/explicit-formula chain before advertising
+a classical analytic PNT result.  The larger remaining goals point to useful
+Mathlib extensions, particularly contour integration and residue calculus.
 
 Future directions include:
 \begin{itemize}[noitemsep]
-  \item Completing the Borel--Carath\'eodory route to the classical zero-free
-    region $\sigma \geq 1-c/\log|t|$.
   \item Formalizing Perron's formula for the explicit formula.
   \item Extending the framework to Dirichlet $L$-functions for the Prime
     Number Theorem in arithmetic progressions.

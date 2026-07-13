@@ -32,7 +32,6 @@ TRUE_BODY_RE = re.compile(r":=\s*True\b")
 
 
 MATH_TARGETS = {
-    "ZeroFreeRegion.classical_zero_free_region": "Quantitative zero-free region",
     "vinogradov_korobov_zero_free_region": "Quantitative zero-free region",
     "PrimeNumberTheorem.PNTForm1": "RH error equivalence",
     "PrimeNumberTheorem.PNTForm2": "RH error equivalence",
@@ -65,6 +64,7 @@ ROUTE_INTERFACES = {
 }
 
 REUSABLE_PREDICATES = {
+    "ZeroFreeRegion.classical_zero_free_region",
     "HardyTheorem.weightedIntegralOf_tail_dominates",
     "PrimeNumberTheorem.ExplicitFormulaAux.goodHeight",
     "PrimeNumberTheorem.ExplicitFormulaConversePowerTarget",

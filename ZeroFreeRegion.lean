@@ -2708,9 +2708,10 @@ lemma classical_zero_free_region_compact_band_re_im (T : ℝ) (hT : T ≥ 2) :
   intro β t _ht_lower ht_upper hβ
   exact hcompact β t ht_upper hβ
 
-/-- 经典零点自由区域：ζ(s) ≠ 0 对于 Re(s) ≥ 1 - c/log|t| (|t| ≥ 2)。
-    这还需要把 Hadamard 因子分解或 Borel-Carathéodory 等复分析工具
-    专门应用到 ζ 的增长估计和对数导数估计上。 -/
+/-- 经典零点自由区域谓词：ζ(s) ≠ 0 对于
+`Re(s) ≥ 1 - c/log|t|`, `|t| ≥ 2`。  The predicate is inhabited by
+`ZeroFreeRegion.classical_zero_free_region_proved` in
+`ZeroFreeRegion/PhragmenLindelofZeta.lean`. -/
 def classical_zero_free_region : Prop :=
     ∃ c > 0, ∀ s : ℂ, |s.im| ≥ 2 → s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0
 

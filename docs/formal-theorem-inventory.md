@@ -19,7 +19,7 @@ python3 -m pytest
 
 At the time of writing, `lake build` succeeds, the recursive placeholder scan
 has no project Lean-source matches, the scanner classifies every project
-`def ... : Prop`, the mathematical target inventory is stable at 22
+`def ... : Prop`, the mathematical target inventory is stable at 21
 declarations, and the Python experiment tests pass.
 
 ## Proved Project-Local Results
@@ -497,6 +497,23 @@ Private technical lemma:
 
 - `natCast_cpow_neg_re`
   computes `Re ((n : C)^(-s))` for positive natural `n`.
+
+### `ZeroFreeRegion/PhragmenLindelofZeta.lean`
+
+- `exists_norm_normalizedRiemannZetaCarrier_le_on_zero_one` and
+  `exists_norm_riemannZeta_le_polynomial_on_zero_four` prove fixed-strip zeta
+  growth via Mathlib's Phragmen-Lindelof theorem.
+- `norm_regularized_logDeriv_riemannZeta_le_of_good_radius_and_jensen_three_quarters`
+  propagates the strengthened `3R/4` Borel geometry through mixed canonical
+  zero removal and Jensen divisor counting.
+- `exists_regularized_logDeriv_riemannZeta_log_bound` proves the uniform
+  all-divisor regular-part `O(log |t|)` estimate.
+- `exists_ReNegDerivDivVerticalLogBound` proves the exact boundary-strip
+  real-part estimate used by the 3-4-1 argument.
+- `exists_re_neg_deriv_div_riemannZeta_le_neg_inv_add_log_abs_bound` isolates
+  the candidate-zero principal term.
+- `classical_zero_free_region_proved` proves the classical `c/log |t|`
+  zero-free-region predicate.
 
 ### `ZeroFreeRegion/MeromorphicAux.lean`
 
@@ -3112,20 +3129,17 @@ metadata, not proof results.
 The following declarations are intentionally `def ... : Prop` targets.  They
 are not exported as theorems and should not be cited as proved.
 
-As of `2026-07-05`, there are **22** mathematical target declarations:
+As of `2026-07-13`, there are **21** mathematical target declarations:
 
 - `HardyTheorem` namespace: **7**
 - `HardyTheorem.Details` namespace: **3**
 - `PrimeNumberTheorem` namespace: **9**
 - `KnownResults` namespace: **1**
-- `ZeroFreeRegion` namespace: **1**
+- `ZeroFreeRegion` namespace: **0**
 - global namespace: **1** (`vinogradov_korobov_zero_free_region`)
 
 ### `ZeroFreeRegion.lean`
 
-- `classical_zero_free_region`
-  target: a uniform zero-free region
-  `Re(s) >= 1 - c / log |Im(s)|`.
 - `vinogradov_korobov_zero_free_region`
   target: the stronger Vinogradov-Korobov zero-free region.  This declaration
   currently lives in the global namespace even though it is in

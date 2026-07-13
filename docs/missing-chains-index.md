@@ -5,9 +5,9 @@ current Lean checkout.  The project currently builds and contains no
 `sorry`/`admit`/`axiom` placeholders in Lean source, but several deep goals are
 intentionally recorded as `def ... : Prop` target statements.
 
-At present there are **22** unresolved mathematical `def ... : Prop` targets,
+At present there are **21** unresolved mathematical `def ... : Prop` targets,
 partitioned into exactly **4** analytic chains.  The recursive scanner also
-tracks 5 route interfaces and 3 reusable Prop predicates so subdirectory
+tracks 5 route interfaces and 4 reusable Prop predicates so subdirectory
 interfaces cannot be hidden by the target count:
 
 1. Quantitative zero-free region
@@ -52,20 +52,16 @@ Lean 4 infrastructure for the de la Vallee Poussin 3-4-1 machinery and a
 compact zero-free strip.  It is not a first PNT formalization, not a completed
 classical analytic PNT proof, and not a proof of RH.
 
-For the zero-free-region route specifically, the next meaningful mathematical
-milestone is a boundary-strip estimate for `logDeriv riemannZeta` and the
-corresponding zero-candidate regular-part estimate.  Reducing the target count
-or adding more wrappers does not by itself move the project across that wall.
-The signed weak moving-strip `-logDeriv` norm wrappers expose the right public
-API shape for this future estimate, but they still come from absolute
-convergence and retain the `1/a` loss; they should be cited as comparison
-interfaces, not as the missing uniform `O(log |t|)` bound.
+For the zero-free-region route, the classical `c/log |t|` milestone is now
+proved by `classical_zero_free_region_proved`.  The remaining target in this
+chain is the stronger Vinogradov-Korobov region, which requires exponential-sum
+technology rather than more local Jensen/Borel wrappers.
 
 ## Chain Status Summary
 
 | Chain | Current Lean target status | Main correction before proof work | Smallest useful next step | Open target count |
 | --- | --- | --- | --- | --- |
-| Quantitative zero-free region | `classical_zero_free_region` and `vinogradov_korobov_zero_free_region` are `def ... : Prop` targets | Add zeta-specific growth/log-derivative estimates; do not cite compact zero-free region as the classical `c / log |t|` result | Use the proved meromorphic `ζ'/ζ` API plus the positive-radius Jensen/log-counting and Borel disk wrappers to prove quantitative local logarithmic-derivative estimates; conditional 3-4-1 assembly and compact patching are already proved | 2 |
+| Quantitative zero-free region | `classical_zero_free_region` is proved; `vinogradov_korobov_zero_free_region` remains a target | Develop exponential-sum estimates for the stronger width | Formalize the Vinogradov-Korobov exponential-sum input without weakening the proved classical theorem | 1 |
 | Explicit formula | `explicit_formula_von_mangoldt` is a `def ... : Prop` target | Replace the unconditional infinite `tsum` target with a truncated Perron/residue formula for `psi0`, then a principal-value limit | The full first-order `-zeta'/zeta` Perron starting-line limit to `psi0` is theorem-level; next prove the shifted rectangle's horizontal and left-edge bounds and combine them with the finite residue identity | 1 |
 | RH error equivalence | `rh_iff_optimal_error` is a `def ... : Prop` target | Stage the result through `=O[atTop]` predicates for `psi`, `theta`, and `primeCounting - logIntegral` | Prove `RH -> RH_PsiErrorBound` via explicit formula estimates, and prove the prime-counting reverse endpoint back to `RH_PsiErrorBound`; the conditional bridge `RH_PsiErrorBound -> RiemannHypothesis` is now theorem-level | 8 |
 | Hardy theorem | `hardy_theorem_target` and related moment/asymptotic targets are `def ... : Prop` targets | Use an unbounded-height zero target as the main theorem; use signed moment targets, not merely nonzero constants | Prove bounded-zero eventual-sign control and generic asymptotic sign lemmas | 11 (7 in `HardyTheorem`, 3 in `HardyTheorem.Details`, 1 in `KnownResults`) |
@@ -74,7 +70,6 @@ interfaces, not as the missing uniform `O(log |t|)` bound.
 
 | File | Target | Chain | Why it is still open |
 | --- | --- | --- | --- |
-| `ZeroFreeRegion.lean` | `classical_zero_free_region` | Quantitative zero-free region | Requires analytic growth and derivative estimates beyond compactness |
 | `ZeroFreeRegion.lean` | `vinogradov_korobov_zero_free_region` (global namespace) | Quantitative zero-free region | Requires Vinogradov–Korobov exponential-sum technology |
 | `PrimeNumberTheorem.lean` | `PNTForm1` | RH error equivalence | Formal statement of one classical asymptotic shape, kept as an interface |
 | `PrimeNumberTheorem.lean` | `PNTForm2` | RH error equivalence | Equivalent to `PNTForm1` once one form is proved; no additional chain input yet |
