@@ -88,7 +88,7 @@ Already-proved prerequisites (from `PrimeNumberTheorem.lean`):
 import Mathlib
 import PrimeNumberTheorem
 
-open Complex
+open Complex Filter Topology
 open scoped ArithmeticFunction
 
 namespace PrimeNumberTheorem
@@ -563,6 +563,92 @@ the `noncomputable def`. -/
 lemma jumpVonMangoldt_eq_vonMangoldt_of_primePower (n : ℕ)
     (_hn : IsPrimePow n) :
     jumpVonMangoldt n = vonMangoldt n := rfl
+
+/-- The simple-residue contributions of the trivial zeros have the classical
+logarithmic sum.  This is the real series underlying
+`-1/2 * log (1 - x⁻²)` in the explicit formula. -/
+theorem hasSum_trivialZeroResidueSeries {x : ℝ} (hx : 1 < x) :
+    HasSum
+      (fun n : ℕ =>
+        x ^ (-2 * ((n : ℝ) + 1)) / (2 * ((n : ℝ) + 1)))
+      (-(1 / 2 : ℝ) * Real.log (1 - x ^ (-2 : ℝ))) := by
+  have hxpos : 0 < x := zero_lt_one.trans hx
+  have hypos : 0 < x ^ (-2 : ℝ) := Real.rpow_pos_of_pos hxpos _
+  have hylt : x ^ (-2 : ℝ) < 1 :=
+    Real.rpow_lt_one_of_one_lt_of_neg hx (by norm_num)
+  have hlog := Real.hasSum_pow_div_log_of_abs_lt_one
+    (show |x ^ (-2 : ℝ)| < 1 by rw [abs_of_pos hypos]; exact hylt)
+  have hhalf := hlog.mul_left (1 / 2 : ℝ)
+  convert hhalf using 1
+  · funext n
+    rw [← Real.rpow_natCast]
+    rw [← Real.rpow_mul hxpos.le]
+    norm_num
+    field_simp
+  · ring
+
+/-- Complex form of the trivial-zero residue series.  The summand is exactly
+`-x^ρ/ρ` for `ρ = -2(n+1)`. -/
+theorem hasSum_complex_trivialZeroResidueSeries {x : ℝ} (hx : 1 < x) :
+    HasSum
+      (fun n : ℕ =>
+        -((x : ℂ) ^ (-2 * ((n : ℂ) + 1))) /
+          (-2 * ((n : ℂ) + 1)))
+      ((-(1 / 2 : ℝ) * Real.log (1 - x ^ (-2 : ℝ)) : ℝ) : ℂ) := by
+  have hreal := (Complex.hasSum_ofReal.mpr (hasSum_trivialZeroResidueSeries hx))
+  convert hreal using 1
+  funext n
+  have hxpos : 0 < x := zero_lt_one.trans hx
+  have hexp : (-2 * ((n : ℂ) + 1)) =
+      ((-2 * ((n : ℝ) + 1) : ℝ) : ℂ) := by
+    push_cast
+    ring
+  rw [hexp]
+  rw [← Complex.ofReal_cpow hxpos.le]
+  push_cast
+  field_simp
+
+/-- Finite sums of the first `N` trivial-zero residues converge to the
+classical logarithmic term. -/
+theorem tendsto_sum_range_complex_trivialZeroResidues {x : ℝ} (hx : 1 < x) :
+    Tendsto
+      (fun N : ℕ => ∑ n ∈ Finset.range N,
+        -((x : ℂ) ^ (-2 * ((n : ℂ) + 1))) /
+          (-2 * ((n : ℂ) + 1)))
+      atTop
+      (nhds (((-(1 / 2 : ℝ) * Real.log (1 - x ^ (-2 : ℝ)) : ℝ) : ℂ))) := by
+  exact (hasSum_complex_trivialZeroResidueSeries hx).tendsto_sum_nat
+
+/-- The repository's finite trivial-zero truncations converge to the same
+classical logarithmic term when the cutoff runs through the even heights
+`2N`. -/
+theorem tendsto_finiteTrivialZeroSum_residues {x : ℝ} (hx : 1 < x) :
+    Tendsto
+      (fun N : ℕ => ∑ ρ ∈ finiteTrivialZeroSum (2 * (N : ℝ)),
+        -((x : ℂ) ^ ρ) / ρ)
+      atTop
+      (nhds (((-(1 / 2 : ℝ) * Real.log (1 - x ^ (-2 : ℝ)) : ℝ) : ℂ))) := by
+  have hfin (N : ℕ) :
+      finiteTrivialZeroSum (2 * (N : ℝ)) =
+        (Finset.range N).image
+          (fun n : ℕ => (-2 * ((n : ℕ) + 1) : ℂ)) := by
+    unfold finiteTrivialZeroSum
+    congr 2
+    rw [show 2 * (N : ℝ) / 2 = (N : ℝ) by ring, Nat.floor_natCast]
+  have heq :
+      (fun N : ℕ => ∑ ρ ∈ finiteTrivialZeroSum (2 * (N : ℝ)),
+        -((x : ℂ) ^ ρ) / ρ) =
+      (fun N : ℕ => ∑ n ∈ Finset.range N,
+        -((x : ℂ) ^ (-2 * ((n : ℂ) + 1))) /
+          (-2 * ((n : ℂ) + 1))) := by
+    funext N
+    rw [hfin N, Finset.sum_image]
+    intro a _ha b _hb hab
+    have hre := congrArg Complex.re hab
+    norm_num at hre
+    exact_mod_cast (by linarith : (a : ℤ) = b)
+  rw [heq]
+  exact tendsto_sum_range_complex_trivialZeroResidues hx
 
 end ExplicitFormulaAux
 end PrimeNumberTheorem

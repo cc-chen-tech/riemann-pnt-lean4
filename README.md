@@ -99,6 +99,15 @@ From the zero-free region to PNT:
    pi(x) ~ x / log x
 ```
 
+The first-order explicit-formula route is no longer at its starting point.  It
+now has a proved Perron starting-line limit, a multiplicity-aware finite
+rectangle residue identity, a cofinal good-height sequence, vanishing far-left
+horizontal pieces, a vanishing moving negative-odd vertical edge, and vanishing
+inner zero-free horizontal pieces.  The remaining contour estimate is the
+central horizontal band
+`-delta <= Re(s) <= 1-c/(2log T)` at both selected heights.  After that, the
+cofinal zero-sum limit still has to be extended to arbitrary truncation heights.
+
 The repository now proves the real-part boundary-strip estimate actually used
 by the 3-4-1 argument:
 
@@ -419,11 +428,16 @@ of such contours from `goodHeight`: the square at height `T` has real sides
 | `GammaResidue.lean` | Gamma residue facts and numerical special cases | sorry-free |
 | `HardyTheorem.lean` | Hardy Z-function setup with corrected target statements for critical-line zeros | sorry-free, targets unproved |
 | `PrimeNumberTheorem.lean` | PNT forms, equivalences, Li(x) asymptotics, zero symmetry, bounded-height zero finiteness, explicit formula target | sorry-free, targets unproved |
-| `ZeroFreeRegion.lean` | 3-4-1 setup, log derivative series, compact zero-free region, quantitative zero-free-region targets | sorry-free, quantitative targets unproved |
+| `ZeroFreeRegion.lean` | 3-4-1 setup, log derivative series, compact strip, and classical `c/log|t|` zero-free region | sorry-free; Vinogradov-Korobov target unproved |
 | `PrimeNumberTheorem/ExplicitFormulaAux.lean` | `chebyshevPsi0`, `goodHeight`, finite zero-sum support helpers, boundary-height and auxiliary multiplicity normalizers | sorry-free, support predicate only |
 | `PrimeNumberTheorem/ExplicitFormulaResidues.lean` | Concrete `-ζ'/ζ(s) * x^s/s` integrand; global meromorphicity, finite compact-set pole candidates, local principal-part germs, a compact-set analytic regularized remainder, and proved residues at all relevant poles | sorry-free |
 | `PrimeNumberTheorem/ExplicitFormulaRectangle.lean` | Concrete finite rectangle residue identity for the explicit-formula integrand under a pole-free-boundary hypothesis | sorry-free |
 | `PrimeNumberTheorem/ExplicitFormulaTruncated.lean` | Truncated explicit-formula route interface with a real Prop body | sorry-free, route interface unproved |
+| `PrimeNumberTheorem/DigammaBounds.lean` | Digamma, cotangent, and reflected Gamma-factor bounds used on far-left contours | sorry-free |
+| `PrimeNumberTheorem/RightHorizontalEdge.lean` | Absolutely convergent and inner zero-free horizontal estimates, including genuine interval integrability and both-side decay | sorry-free |
+| `PrimeNumberTheorem/LeftHorizontalEdge.lean` | Functional-equation decomposition and vanishing far-left horizontal pieces | sorry-free |
+| `PrimeNumberTheorem/LeftVerticalEdge.lean` | Negative-odd vertical-line log-derivative bound, genuine interval integrability, and moving-edge decay | sorry-free |
+| `PrimeNumberTheorem/FirstOrderExplicitFormula.lean` | Multiplicity-aware finite truncated formula and cofinal zero-sum-minus-remainder limit | sorry-free; central horizontal band and arbitrary-height passage remain |
 | `MathlibAux/RectangleResidue.lean` | Rectangle residue route interface, proved circle and square finite simple-pole residue formulas, rectangular-annulus deformation, plus constant-function sanity checks | sorry-free, general meromorphic route interface unproved |
 | `HardyTheorem/AFE.lean` | Corrected AFE route interface using an unwrapped theta wrapper | sorry-free, route interface unproved |
 | `RiemannExplorer/Conrey40.lean` | Conrey target alias to the upper-level `KnownResults` target | sorry-free, route interface alias |

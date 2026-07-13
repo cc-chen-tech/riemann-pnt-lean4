@@ -208,15 +208,141 @@ Already available or mostly available:
     series, proves a summable Tannery majorant for the conditionally convergent
     kernel, and includes the half weight at an integral jump.  This is the
     actual first-order L-series specialization, not a finite-sum wrapper.
+17. `PrimeNumberTheorem.ExplicitFormulaResidues.exists_scaledRightIntegral_eq_residue_sum_sub_firstOrderContourRemainder`
+    proves the exact finite-height first-order contour shift with a fixed
+    Perron right edge.  The normalized right-line integral equals the finite
+    residue sum, with the residues at `0`, `1`, and every enclosed zeta zero
+    identified explicitly, minus the normalized bottom, top, and left edges.
+    The theorem includes both directions of the pole-set specification: every
+    listed pole is a candidate singularity, and every candidate singularity
+    in the closed rectangle occurs in the finite pole set.
+    Its `..._of_goodHeight` specialization fixes the left edge at `Re(s)=-1`
+    and proves that every `goodHeight (2*pi*W)` gives a pole-free boundary for
+    arbitrary fixed `c>1`.  Thus the starting-line Perron theorem and the
+    finite rectangle residue theorem are now connected in one Lean formula.
+18. `PrimeNumberTheorem.ExplicitFormulaResidues.norm_horizontal_right_firstOrderContour_difference_le`
+    proves an explicit `O(1/T)` bound for the combined top and bottom portions
+    with `1+epsilon <= Re(s) <= c`.  Its companion
+    `tendsto_horizontal_right_firstOrderContour_difference_atTop` proves that
+    this contribution tends to zero.  This is the first-order analogue of the
+    previously proved second-order right-tail estimate.  The unresolved
+    horizontal interval is now `-1 <= Re(s) <= 1+epsilon`, where absolute
+    convergence of the von Mangoldt Dirichlet series is unavailable.
+19. `PrimeNumberTheorem.ExplicitFormulaAux.tendsto_finiteTrivialZeroSum_residues`
+    proves that the finite simple-residue sums over
+    `-2,-4,...,-2N` converge to the classical term
+    `-1/2 * log (1 - x^-2)` for `x>1`.  The proof is connected to the
+    repository's actual `finiteTrivialZeroSum (2N)`, not merely a separate
+    sequence index.  The new theorem
+    `ExplicitFormulaResidues.analyticOrderNatAt_riemannZeta_neg_even` proves
+    that every trivial zeta zero has analytic order exactly one, using the
+    completed-zeta functional equation and the simple zeros of reciprocal
+    Gamma.  Consequently
+    `tendsto_finiteTrivialZeroSum_multiplicity_residues` proves convergence of
+    the corresponding multiplicity-aware trivial-zero truncations to the same
+    logarithmic term.
+20. `ExplicitFormulaResidues.exists_movingLeft_scaledRightIntegral_eq_trivial_add_remaining_sub_remainder`
+    constructs, for every `N` and every good height, the rectangle with left
+    edge `-(2N+1)` and proves an exact Perron contour identity in which the
+    abstract pole sum has already been split into the explicit residues at
+    `-2,-4,...,-2N` and the remaining poles.  The underlying theorem
+    `trivialZeroPart_eq_finiteTrivialZeroSum` proves equality of the two
+    finsets, not merely one-sided containment.
+21. `ExplicitFormulaResidues.exists_jointCofinal_movingLeft_firstOrderContours`
+    chooses one sequence with `W_n -> infinity`, strictly increasing `W_n`,
+    `goodHeight (2*pi*W_n)`, and left edge `-(2n+1)`.  Every member satisfies
+    the concrete truncated formula from item 22, while its trivial-zero residue
+    sum converges to `-1/2 * log (1 - x^-2)`.  This closes the joint cofinal
+    selection problem, but does not prove that the nontrivial-zero sum or the
+    moving-left contour remainder converges.
+22. `ExplicitFormulaResidues.movingLeft_scaledRightIntegral_eq_truncatedExplicitFormula`
+    eliminates the abstract contour pole finset entirely.  At every good
+    height it gives the finite formula with the pole-at-one term `x`, the
+    kernel-pole term `-zeta'(0)/zeta(0)`, the first `N` trivial-zero residues,
+    and the multiplicity-weighted sum over
+    `nontrivialZerosFinset (2*pi*W)`, minus the three-edge contour remainder.
+    The exact identification of the remaining poles is proved by
+    `remainingPolePart_eq_explicit`.
+23. `ExplicitFormulaResidues.exists_jointCofinal_nontrivialZeroSum_sub_remainder_tendsto`
+    proves unconditionally that, along a joint cofinal sequence, the
+    multiplicity-weighted nontrivial-zero sum minus the moving contour
+    remainder converges to the exact value forced by `psi0`, the pole terms,
+    and the trivial-zero logarithmic correction.  If the remainder tends to
+    zero, the nontrivial-zero sum therefore has the corresponding limit along
+    this cofinal sequence.  Passing from that sequence to arbitrary truncation
+    heights remains necessary for the full principal-value target.
+24. `LeftHorizontalEdge` proves the logarithmic-derivative functional-equation
+    identity and uses it to split every nonreal far-left horizontal point into
+    an Euler-product term and an explicit Gamma/digamma term.  The Euler term
+    is bounded by `C*x^sigma/|T|`; after integration from an arbitrary moving
+    left endpoint to `-epsilon`, both the upper and lower Euler contributions
+    tend to zero.  Consequently the full far-left horizontal integrals differ
+    from the displayed Gamma-factor integrals by a quantity tending to zero.
+25. The same module proves the uniform complex-tangent bound
+    `norm (tan z) <= 2` for `1 <= |Im z|`.  It uses this to show that both the
+    `log(2*pi)` and tangent parts of the Gamma-factor integral vanish on the
+    moving upper and lower far-left edges.  The full far-left horizontal
+    integrals are therefore now proved asymptotic to the pure digamma
+    integrals `digamma(s) * x^s / s`.
+26. `LeftHorizontalEdge` now also derives the logarithmic derivative of
+    Euler's Gamma reflection formula
+    `digamma(s) = digamma(1-s) - pi*cot(pi*s)` off the real axis.  It proves
+    `norm (cot z) <= 2` for `1 <= |Im z|` and shows that the resulting cotangent
+    correction tends to zero on both moving far-left horizontal edges,
+    uniformly in the left endpoint.  Thus the full far-left integrals are
+    asymptotic to the right-half-plane terms
+    `digamma(1-s) * x^s / s`.  This is a genuine reduction, not yet a proof
+    that those remaining digamma integrals vanish.
+27. `DigammaBounds` proves Gauss' convergent series for complex digamma on
+    `Re(z)>0` from the canonical product for `1/Gamma`, including the required
+    locally uniform product convergence and logarithmic-derivative passage.
+    It obtains the quantitative bound
+    `norm (digamma z) <= norm gamma + 3 + log (norm z + 1)` for `Re(z)>=1`.
+    `LeftHorizontalEdge` integrates this bound and proves that both complete
+    moving far-left horizontal contour integrals tend to zero, uniformly in
+    every left endpoint satisfying `a(T)<=-epsilon`.  Thus no digamma or other
+    Gamma-factor remainder remains on these two far-left horizontal pieces.
+28. `LeftVerticalEdge` treats the complete moving left edge.  It first proves
+    the uniform bound `norm (cot z) <= 1` on the
+    entire vertical line obtained from `Re(s)=-(2N+1)` after halving and
+    multiplying by `pi`; unlike the horizontal high-imaginary bound, this
+    includes height zero.  It also proves
+    `logDeriv Gammaℝ(s) = -log(pi)/2 + digamma(s/2)/2` whenever the ordinary
+    Gamma factor is regular.  This is the nonsingular completed-factor
+    decomposition needed at negative odd real points.  Finally,
+    `exists_linearlyControlled_goodHeight_gt_one` strengthens the cofinal
+    height construction by retaining `n+K < T_n < n+K+1`.  Using the completed
+    zeta functional equation, it then proves a nonsingular logarithmic-
+    derivative identity on `Re(s)=-(2N+1)`, reflects both digamma factors to
+    `Re>=1`, and obtains the finite-height bound
+    `O(T * x^(-(2N+1)) * (1 + log(2N+T+4)))`.  Consequently
+    `tendsto_integral_explicitFormulaIntegrand_odd_vertical_atTop` proves that
+    the complete left edge tends to zero whenever the height grows at most
+    linearly.  The joint contour theorem now uses exactly such a sequence and
+    exposes this zero limit in its conclusion.
 
-Remaining after the starting-line formula:
+Remaining after the fixed-right-edge contour shift:
 
-1. Shift the first-order right-line contour to a zero-free boundary and combine
-   it with the proved finite residue identity.
-2. Bound the two horizontal edges and the shifted-left vertical edge strongly
-   enough to pass to a cofinal good-height limit.
-3. Sum the finite trivial-zero residues and control the symmetric nontrivial-
-   zero contribution with multiplicity.
+1. Bound the remaining horizontal portions
+   `-1 <= Re(s) <= 1+epsilon` strongly enough to pass to a cofinal good-height
+   limit; the right portions are now proved to vanish.
+2. Either evaluate the fixed `Re(s)=-1` left-line limit and identify it with
+   the classical trivial-zero term, or move the left edge through
+   `-2,-4,...` toward `-infinity` and control the resulting joint limit.  The
+   complete multiplicity-aware trivial-residue series limit and its exact
+   extraction from every `-(2N+1)` contour are now proved, and a joint cofinal
+   sequence has been chosen.  The complete far-left horizontal portions are
+   now proved to vanish uniformly in the moving left endpoint: this includes
+   the Euler-product, constant, tangent, cotangent-reflection, and right-shifted
+   digamma contributions.  The complete moving vertical left edge is also now
+   proved to vanish along the same linearly controlled good-height sequence.
+   Thus the remaining contour issue is concentrated in the horizontal central
+   band rather than the far-left or vertical pieces.
+3. Separate the now-proved limit of `nontrivial-zero sum - remainder` by
+   proving the remainder tends to zero; this then gives the symmetric
+   multiplicity-weighted nontrivial-zero limit along the chosen cofinal
+   sequence.  Then control the zero contributions between consecutive chosen
+   heights to obtain the full truncation-height limit.
 
 ### Analytic continuation and poles
 
@@ -267,8 +393,12 @@ Current status:
    finite residue formula under an explicit pole-free-boundary hypothesis.
    `exists_strictMono_tendsto_rectangleResidueContours` now constructs the
    required cofinal contour family from `goodHeight`, using squares with real
-   sides `-1` and `2T-1`.  Still needed: the finite-to-infinite trivial-zero limit giving
-   `-1/2 * log (1 - x^-2)`.
+   sides `-1` and `2T-1`.  The finite-to-infinite residue limit giving
+   `-1/2 * log (1 - x^-2)` is now proved by
+   `tendsto_finiteTrivialZeroSum_multiplicity_residues`, including the analytic
+   multiplicities used by the contour residue formula.  The pole-finset split
+   is now included in the moving-left exact identity; the moving-left-edge
+   limit is not yet proved.
 
 ### Contour and residue theorem
 
@@ -369,21 +499,30 @@ For the truncated identity:
    a strictly increasing good-height sequence tending to `+∞`;
    `ExplicitFormulaResidues.exists_strictMono_tendsto_rectangleResidueContours`
    converts a cofinal tail into concrete pole-free square residue contours.
+   The first-order theorem
+   `exists_scaledRightIntegral_eq_residue_sum_sub_firstOrderContourRemainder_of_goodHeight`
+   now gives the corresponding safe rectangle with fixed right edge `c>1`
+   and fixed left edge `-1`, so it is directly compatible with Perron.
 2. Completed: the ordinary first-order right-line Perron integral converges to
    `psi0` by
    `tendsto_truncated_neg_logDeriv_firstOrderPerron_atTop`.  This is a limit
    theorem; it does not claim a closed-form uniform truncation rate for the
    full conditionally convergent series.
-3. Remaining: bound horizontal and shifted-left vertical sides of the
-   first-order rectangle and combine those bounds with the residue contours.
-4. Completed on the inner right segment:
+3. Completed on the far-left pieces and moving left edge: the linearly
+   controlled good-height construction makes the horizontal pieces from
+   `-(2N+1)` to `-delta` vanish at both heights, and the complete moving left
+   vertical edge tends to zero.
+4. Completed on the inner zero-free segment:
    `ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_le_log_sq_on_inner_zeroFreeRegion`
    proves a full-norm `O((log |t|)^2)` estimate on
    `1-c/(2log|t|) <= Re(s) <= 2`.  The signed theorem
    `ExplicitFormulaResidues.exists_tendsto_horizontal_inner_explicitFormulaIntegrand_signed_zero`
    then proves that this segment tends to zero on both horizontal sides.
-   This does not yet control the remaining horizontal segment to the left of
-   the moving zero-free boundary.
+5. Remaining contour segment: along the same cofinal good-height sequence,
+   control both horizontal integrals on
+   `-delta <= Re(s) <= 1-c/(2log T)`.  After this central band vanishes, combine
+   the contour identity and residue limits, then pass from the selected
+   cofinal sequence to arbitrary truncation heights.
 
 For the principal value final formula:
 
@@ -391,8 +530,12 @@ For the principal value final formula:
 2. Bounds for `zeta'/zeta` away from zeros and on selected good heights.
 3. Convergence of symmetric zero sums or a proof that the contour-error limit is
    zero along good heights.
-4. Geometric convergence of the trivial-zero contribution to
-   `-1/2 * log (1 - x^-2)`.
+4. Along the now-constructed joint cofinal sequence, prove the moving-left-edge
+   remainder tends to zero and control the already-isolated
+   multiplicity-weighted nontrivial-zero sum.  Their difference already has a
+   proved exact limit, so a remainder estimate gives the zero-sum limit on that
+   sequence.  A further interpolation argument between chosen heights is still
+   needed for the full principal-value formula.
 
 For a PNT proof, the truncated formula plus a zero-free region and boundary
 estimates may be more useful than the full principal-value exact formula.

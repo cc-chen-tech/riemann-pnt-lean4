@@ -54,7 +54,8 @@ theorem exists_boundaryRectIntegral_secondOrderExplicitFormulaIntegrand_eq_resid
     exact isCompact_uIcc.reProdIm isCompact_uIcc
   rcases exists_finite_explicitFormulaIntegrand_analytic_regularized_remainder
       hx hKcompact with
-    ⟨poles, residue, hpoles_mem, hpoles_classify, hresidue, hoff_eq, hregular⟩
+    ⟨poles, residue, hpoles_mem, hpoles_classify, _hpoles_complete,
+      hresidue, hoff_eq, hregular⟩
   let P : Finset ℂ := poles.erase 0
   let residue2 : ℂ → ℂ := fun p => residue p / p
   let r0 : ℂ := if 0 ∈ poles then residue 0 else 0
