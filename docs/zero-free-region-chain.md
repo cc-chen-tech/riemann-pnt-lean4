@@ -261,6 +261,22 @@ positive margins at high height, insert the unconditional zeta boundary-growth
 and Jensen divisor-mass bounds, and project the full divisor regularization to
 the zero-candidate principal part consumed by the 3-4-1 contradiction.
 
+The first two operations are now combined abstractly in
+`norm_regularized_logDeriv_riemannZeta_le_of_good_radius_and_jensen`. Given
+fixed margins `d<a<q<b<R`, an outer circle norm bound, and an inner closed-disk
+logarithmic norm bound, it selects a zero-free circle internally and returns a
+regular-part estimate whose denominator is the deterministic `a-d`; the random
+radius no longer appears in the conclusion. In addition,
+`one_third_le_norm_riemannZeta_of_three_halves_le_re` uses the Mobius reciprocal
+series to extend the uniform zeta center margin `1/3` from `Re≥2` to
+`Re≥3/2`, and the mixed-unit Borel theorem now accepts that wider half-plane.
+
+The next geometric barrier is explicit: the currently unconditional disk
+growth theorem stays in `1≤Re(s)≤3`. A half-radius Borel disk that both has a
+uniformly controlled center and reaches points arbitrarily close to `Re=1`
+must extend farther left. This requires a zeta growth bound in a wider strip
+(or a sharper non-half-radius local argument), not another factor wrapper.
+
 A fixed-margin version of this logarithmic control is already proved:
 `exists_norm_logDeriv_riemannZeta_le_log_abs_im_add_three_of_one_add_le_re`
 shows that for every `ε > 0` there is `C >= 0` with

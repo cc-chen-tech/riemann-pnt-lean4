@@ -26,7 +26,8 @@ import ZeroFreeRegion
 
 open Complex BigOperators Filter Nat Topology MeasureTheory Asymptotics
 open ComplexConjugate
-open scoped ArithmeticFunction LSeries.notation
+open scoped ArithmeticFunction ArithmeticFunction.Moebius ArithmeticFunction.zeta
+  LSeries.notation
 open MeromorphicAt MeromorphicOn Metric Real
 
 namespace ZeroFreeRegion
@@ -7509,6 +7510,76 @@ theorem exists_riemannZeta_polynomial_growth_on_vertical_strip :
   exact norm_riemannZeta_le_two_mul_norm_add_three_on_vertical_strip
     s hs_height hs_re
 
+/-- The absolutely convergent Mobius L-series is uniformly bounded by `3` on
+the half-plane `Re(s) >= 3/2`. -/
+lemma norm_LSeries_moebius_le_three_of_three_halves_le_re
+    (s : ℂ) (hs : (3 / 2 : ℝ) ≤ s.re) :
+    ‖L ↗μ s‖ ≤ 3 := by
+  have hs1 : 1 < s.re := by linarith
+  have hmu : LSeriesSummable ↗μ s :=
+    ArithmeticFunction.LSeriesSummable_moebius_iff.mpr hs1
+  have hzeta : LSeriesSummable ↗ζ s :=
+    ArithmeticFunction.LSeriesSummable_zeta_iff.mpr hs1
+  have hterm : ∀ n, ‖LSeries.term ↗μ s n‖ ≤ ‖LSeries.term ↗ζ s n‖ := by
+    intro n
+    apply LSeries.norm_term_le
+    rcases eq_or_ne n 0 with rfl | hn
+    · simp
+    · simp only [hn, ArithmeticFunction.zeta_apply, if_false,
+        Complex.norm_intCast]
+      exact_mod_cast ArithmeticFunction.abs_moebius_le_one (n := n)
+  have hsreal : 1 < ((s.re : ℂ)).re := by simpa using hs1
+  have hzetareal : LSeriesSummable ↗ζ (s.re : ℂ) :=
+    ArithmeticFunction.LSeriesSummable_zeta_iff.mpr hsreal
+  calc
+    ‖L ↗μ s‖ ≤ ∑' n, ‖LSeries.term ↗μ s n‖ :=
+      norm_tsum_le_tsum_norm hmu.norm
+    _ ≤ ∑' n, ‖LSeries.term ↗ζ s n‖ :=
+      hmu.norm.tsum_le_tsum hterm hzeta.norm
+    _ = (L ↗ζ (s.re : ℂ)).re := by
+      rw [LSeries, re_tsum hzetareal]
+      apply tsum_congr
+      intro n
+      calc
+        ‖LSeries.term ↗ζ s n‖ =
+            ‖LSeries.term ↗ζ (s.re : ℂ) n‖ := by
+          simp [LSeries.norm_term_eq]
+        _ = (LSeries.term ↗ζ (s.re : ℂ) n).re := by
+          rcases eq_or_ne n 0 with rfl | hn
+          · simp [LSeries.term]
+          · rw [LSeries.term_of_ne_zero hn]
+            simp only [hn, ArithmeticFunction.zeta_apply, if_false]
+            have hpow : (n : ℂ) ^ (s.re : ℂ) =
+                (((n : ℝ) ^ s.re : ℝ) : ℂ) := by
+              exact (Complex.ofReal_cpow (Nat.cast_nonneg n) s.re).symm
+            rw [hpow]
+            simp
+            positivity
+    _ = (riemannZeta (s.re : ℂ)).re := by
+      rw [ArithmeticFunction.LSeries_zeta_eq_riemannZeta hsreal]
+    _ ≤ s.re / (s.re - 1) :=
+      riemannZeta_re_le_sigma_div_sub s.re hs1
+    _ ≤ 3 := by
+      apply (div_le_iff₀ (sub_pos.mpr hs1)).2
+      nlinarith
+
+/-- Uniform nonvanishing margin for zeta on `Re(s) >= 3/2`, obtained from the
+Mobius reciprocal Dirichlet series. -/
+lemma one_third_le_norm_riemannZeta_of_three_halves_le_re
+    (s : ℂ) (hs : (3 / 2 : ℝ) ≤ s.re) :
+    (1 / 3 : ℝ) ≤ ‖riemannZeta s‖ := by
+  have hs1 : 1 < s.re := by linarith
+  have hproduct := ArithmeticFunction.LSeries_zeta_mul_Lseries_moebius hs1
+  rw [ArithmeticFunction.LSeries_zeta_eq_riemannZeta hs1] at hproduct
+  have hmu := norm_LSeries_moebius_le_three_of_three_halves_le_re s hs
+  have hone : (1 : ℝ) ≤ ‖riemannZeta s‖ * 3 := by
+    calc
+      (1 : ℝ) = ‖riemannZeta s * L ↗μ s‖ := by rw [hproduct, norm_one]
+      _ = ‖riemannZeta s‖ * ‖L ↗μ s‖ := norm_mul _ _
+      _ ≤ ‖riemannZeta s‖ * 3 :=
+        mul_le_mul_of_nonneg_left hmu (norm_nonneg _)
+  linarith
+
 /-- Explicit zeta norm bound on a small high disk centered at `2 + I*t`.
 This is the outer-bound supplier used by the same-witness Jensen/Borel
 factorization theorem. -/
@@ -13046,7 +13117,7 @@ Canonicalization preserves zeta's boundary norm and improves its center norm,
 so the estimate has no loss depending on the nearest zero radius. -/
 lemma norm_logDeriv_mixedCanonicalRegularUnit_riemannZetaDivisor_le
     {c z : ℂ} {r b B ρ : ℝ} {g : ℂ → ℂ}
-    (hc : 2 ≤ c.re) (hr : 0 < r) (hrb : r < b) (hρ : 0 < ρ)
+    (hc : (3 / 2 : ℝ) ≤ c.re) (hr : 0 < r) (hrb : r < b) (hρ : 0 < ρ)
     (havoid : ∀ w : ℂ, w ∈ closedBall c b → w ≠ 1)
     (hg : AnalyticOnNhd ℂ g (closedBall c b))
     (hgne : ∀ u : (closedBall c b : Set ℂ), g u ≠ 0)
@@ -13071,7 +13142,7 @@ lemma norm_logDeriv_mixedCanonicalRegularUnit_riemannZetaDivisor_le
     exact mixedCanonicalRegularUnit_riemannZetaDivisor_ne_zero_closedBall
       hrb havoid hg hgne hfactor hsphere_ne hw
   have hcenter : (1 / 3 : ℝ) ≤ ‖h c‖ :=
-    (one_third_le_norm_riemannZeta_of_two_le_re c hc).trans
+    (one_third_le_norm_riemannZeta_of_three_halves_le_re c hc).trans
       (norm_riemannZeta_le_norm_mixedCanonicalRegularUnit_riemannZetaDivisor_center
         hr hrb havoid hg hgne hfactor)
   have hsphere_h : ∀ w ∈ sphere c r, Real.log ‖h w‖ ≤ B := by
@@ -13221,7 +13292,7 @@ principal part in the outer disk.  The bound depends on boundary growth and
 total divisor mass, but not on the distance to the nearest zero. -/
 lemma norm_regularized_logDeriv_riemannZeta_le_mixedCanonical_bound
     {c z : ℂ} {d r b B ρ : ℝ} {g : ℂ → ℂ}
-    (hc : 2 ≤ c.re) (hd : 0 ≤ d) (hdr : d < r) (hrb : r < b)
+    (hc : (3 / 2 : ℝ) ≤ c.re) (hd : 0 ≤ d) (hdr : d < r) (hrb : r < b)
     (hρ : 0 < ρ)
     (havoid : ∀ w : ℂ, w ∈ closedBall c b → w ≠ 1)
     (hg : AnalyticOnNhd ℂ g (closedBall c b))
@@ -24904,6 +24975,82 @@ lemma finsum_divisor_riemannZeta_closedBall_le_log_bound_div
   simpa [mul_comm] using
     log_mul_finsum_divisor_riemannZeta_closedBall_le_log_bound
       hb hbR hheight hM hsphere
+
+/-- Good-circle selection and Jensen zero counting remove every random-radius
+quantity from the mixed canonical regular-part estimate.
+
+The result is uniform on a fixed retained disk: its right-hand side depends
+only on the supplied boundary/inner growth bounds and the deterministic
+margins `rho` and `a - d`, not on the selected circle or nearest zero. -/
+lemma norm_regularized_logDeriv_riemannZeta_le_of_good_radius_and_jensen
+    {d a q b R t M K rho : ℝ}
+    (hd : 0 ≤ d) (hda : d < a) (haq : a < q) (hqb : q < b)
+    (hbR : b < R) (hheight : R < |t|) (hM : 1 ≤ M)
+    (hrho : 0 < rho) (hgeom : d + rho ≤ a / 2)
+    (houter : ∀ z : ℂ,
+      z ∈ sphere ((2 : ℂ) + I * t) R → ‖riemannZeta z‖ ≤ M)
+    (hinner : ∀ z ∈ closedBall ((2 : ℂ) + I * t) q,
+      Real.log ‖riemannZeta z‖ ≤ K) :
+    ∀ z ∈ closedBall ((2 : ℂ) + I * t) d,
+      riemannZeta z ≠ 0 →
+      ‖logDeriv riemannZeta z -
+          ∑ᶠ u, (MeromorphicOn.divisor riemannZeta
+            (closedBall ((2 : ℂ) + I * t) b) u : ℂ) * (z - u)⁻¹‖ ≤
+        2 * max (K + Real.log 3) 1 / rho +
+          ((Real.log M + Real.log 3) / Real.log (R / b)) / (a - d) := by
+  classical
+  let c : ℂ := (2 : ℂ) + I * t
+  let D := MeromorphicOn.divisor riemannZeta (closedBall c b)
+  have ha : 0 < a := hd.trans_lt hda
+  have hb : 0 < b := ha.trans haq |>.trans hqb
+  have havoid : ∀ w : ℂ, w ∈ closedBall c b → w ≠ 1 := by
+    intro w hw
+    exact closedBall_sigma_it_ne_one_of_height_add_le
+      (z := w) (σ := 2) (t := t) (R := b) (H := |t| - b)
+        (by simpa [c] using hw) (by linarith) (by linarith)
+  rcases exists_good_radius_separated_from_riemannZeta_zeros_closedBall_strictly_inside
+      ha haq hqb havoid with
+    ⟨_zeros, r, _hzeros, hrpos, hr, _hsep, hsphere_ne⟩
+  rcases exists_analytic_nonzero_factorization_riemannZeta_closedBall havoid with
+    ⟨g, hg, hgne, hfactor⟩
+  have hsphere_log : ∀ w ∈ sphere c r, Real.log ‖riemannZeta w‖ ≤ K := by
+    intro w hw
+    apply hinner w
+    have hw_closed : w ∈ closedBall c r := sphere_subset_closedBall hw
+    simpa [c] using Metric.closedBall_subset_closedBall hr.2 hw_closed
+  have han : AnalyticOnNhd ℂ riemannZeta (closedBall c b) := by
+    intro w hw
+    exact analyticOnNhd_riemannZeta_ne_one w (havoid w hw)
+  have hD_nonneg : 0 ≤ D := han.divisor_nonneg
+  have hmass_nonneg : 0 ≤ ∑ᶠ u, (D u : ℝ) := by
+    apply finsum_nonneg
+    intro u
+    exact_mod_cast hD_nonneg u
+  have hmass : (∑ᶠ u, (D u : ℝ)) ≤
+      (Real.log M + Real.log 3) / Real.log (R / b) := by
+    simpa [c, D] using
+      finsum_divisor_riemannZeta_closedBall_le_log_bound_div
+        hb hbR hheight hM houter
+  intro z hz hzeta
+  have hdr : d < r := hda.trans_le hr.1
+  have hrb : r < b := hr.2.trans_lt hqb
+  have hzdist : dist z c ≤ d := by
+    simpa [c, Metric.mem_closedBall] using hz
+  have hzrho : dist z c + rho ≤ r / 2 := by
+    nlinarith [hr.1]
+  have hlocal := norm_regularized_logDeriv_riemannZeta_le_mixedCanonical_bound
+    (c := c) (d := d) (r := r) (b := b) (B := K) (ρ := rho)
+    (by norm_num [c]) hd hdr hrb hrho havoid hg hgne hfactor
+      hsphere_ne hsphere_log (by simpa [c] using hz) hzeta hzrho
+  have had : 0 < a - d := sub_pos.mpr hda
+  have hradial : (∑ᶠ u, (D u : ℝ)) / (r - d) ≤
+      (∑ᶠ u, (D u : ℝ)) / (a - d) :=
+    div_le_div_of_nonneg_left hmass_nonneg had (sub_le_sub_right hr.1 d)
+  have hmass_div : (∑ᶠ u, (D u : ℝ)) / (a - d) ≤
+      ((Real.log M + Real.log 3) / Real.log (R / b)) / (a - d) :=
+    div_le_div_of_nonneg_right hmass had.le
+  simpa [c, D] using
+    hlocal.trans (add_le_add_right (hradial.trans hmass_div) _)
 
 /-- Jensen-controlled boundary bound for the zero-removed analytic zeta
 factor on a quantitatively selected good circle.

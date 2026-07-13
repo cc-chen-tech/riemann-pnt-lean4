@@ -231,6 +231,15 @@ uniform high-height specialization using the already proved zeta growth and
 Jensen divisor-mass bounds, followed by isolation of the selected
 zero-candidate principal term.
 
+The follow-up theorem
+`norm_regularized_logDeriv_riemannZeta_le_of_good_radius_and_jensen` performs
+the good-circle selection and Jensen mass substitution internally, replacing
+the selected denominator by the fixed margin `a-d`. Separately, the Mobius
+reciprocal identity extends the center estimate `‖ζ(s)‖≥1/3` to
+`Re(s)≥3/2`. These are genuine reductions of the remaining uniformity problem;
+they do not yet provide zeta growth on the wider disks needed to reach the
+boundary line `Re(s)=1`.
+
 ## What This Does and Does Not Prove
 
 The project-local contribution is not a complete proof of the Prime Number
