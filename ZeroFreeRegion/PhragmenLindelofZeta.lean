@@ -1214,4 +1214,468 @@ theorem classical_zero_free_region_proved : classical_zero_free_region := by
       _ ≤ B * Real.log |t| :=
         mul_le_mul_of_nonneg_right hCtwo hlog_nonneg
 
+/-- The fixed regular-part estimate on a slightly enlarged retained disk.
+The radius `11/10` is large enough to cover the inner classical zero-free
+region once the height is large, while still satisfying the three-quarter
+geometry required by the Borel/Jensen estimate. -/
+theorem exists_expanded_disk_regularized_logDeriv_riemannZeta_bound :
+    ∃ A : ℝ, 1 ≤ A ∧ ∀ t : ℝ, 4 ≤ |t| →
+      ∀ z ∈ Metric.closedBall ((2 : ℂ) + I * t) (11 / 10 : ℝ),
+        riemannZeta z ≠ 0 →
+        ‖logDeriv riemannZeta z -
+            ∑ᶠ u, (MeromorphicOn.divisor riemannZeta
+              (Metric.closedBall ((2 : ℂ) + I * t) (17 / 10 : ℝ)) u : ℂ) *
+                (z - u)⁻¹‖ ≤
+          6 * max
+              (Real.log A + 4 * Real.log (|t| + 5) + Real.log 3) 1 /
+                (1 / 64 : ℝ) +
+            ((Real.log (A * (|t| + 5) ^ 4) + Real.log 3) /
+                Real.log ((7 / 4 : ℝ) / (17 / 10 : ℝ))) /
+              ((3 / 2 : ℝ) - (11 / 10 : ℝ)) := by
+  rcases exists_norm_riemannZeta_le_polynomial_on_zero_four with
+    ⟨C, hC, hpoly⟩
+  let A : ℝ := max C 1
+  have hA : 1 ≤ A := le_max_right _ _
+  refine ⟨A, hA, ?_⟩
+  intro t ht z hz hzeta
+  let M : ℝ := A * (|t| + 5) ^ 4
+  let K : ℝ := Real.log A + 4 * Real.log (|t| + 5)
+  have hM : 1 ≤ M := by
+    have hx : 1 ≤ |t| + 5 := by linarith [abs_nonneg t]
+    have hxpow : 1 ≤ (|t| + 5) ^ 4 := one_le_pow₀ hx
+    exact one_le_mul_of_one_le_of_one_le hA hxpow
+  have houter : ∀ w : ℂ,
+      w ∈ Metric.sphere ((2 : ℂ) + I * t) (7 / 4 : ℝ) →
+        ‖riemannZeta w‖ ≤ M := by
+    intro w hw
+    have hwc : w ∈ Metric.closedBall ((2 : ℂ) + I * t) (7 / 4 : ℝ) :=
+      Metric.sphere_subset_closedBall hw
+    simpa [A, M] using
+      norm_riemannZeta_le_fixed_jensen_closedBall hC hpoly (by norm_num) ht hwc
+  have hinner : ∀ w ∈ Metric.closedBall
+      ((2 : ℂ) + I * t) (8 / 5 : ℝ), Real.log ‖riemannZeta w‖ ≤ K := by
+    intro w hw
+    simpa [A, K] using
+      log_norm_riemannZeta_le_fixed_jensen_closedBall hC hpoly (by norm_num) ht hw
+  have hbound :=
+    norm_regularized_logDeriv_riemannZeta_le_of_good_radius_and_jensen_three_quarters
+      (d := (11 / 10 : ℝ)) (a := (3 / 2 : ℝ)) (q := (8 / 5 : ℝ))
+      (b := (17 / 10 : ℝ)) (R := (7 / 4 : ℝ)) (t := t)
+      (M := M) (K := K) (rho := (1 / 64 : ℝ))
+      (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+      (by norm_num) (by linarith) hM (by norm_num) (by norm_num)
+      houter hinner z hz hzeta
+  simpa [A, M, K] using hbound
+
+/-- Uniform `O(1 + log (|t|+5))` regular-part estimate on the enlarged
+retained disk. -/
+theorem exists_expanded_disk_regularized_logDeriv_riemannZeta_log_bound :
+    ∃ B : ℝ, 0 ≤ B ∧ ∀ t : ℝ, 4 ≤ |t| →
+      ∀ z ∈ Metric.closedBall ((2 : ℂ) + I * t) (11 / 10 : ℝ),
+        riemannZeta z ≠ 0 →
+        ‖logDeriv riemannZeta z -
+            ∑ᶠ u, (MeromorphicOn.divisor riemannZeta
+              (Metric.closedBall ((2 : ℂ) + I * t) (17 / 10 : ℝ)) u : ℂ) *
+                (z - u)⁻¹‖ ≤
+          B * (1 + Real.log (|t| + 5)) := by
+  rcases exists_expanded_disk_regularized_logDeriv_riemannZeta_bound with
+    ⟨A, hA, hfixed⟩
+  let c0 : ℝ := Real.log A + Real.log 3
+  let D : ℝ := Real.log ((7 / 4 : ℝ) / (17 / 10 : ℝ))
+  let E : ℝ := D⁻¹
+  let m : ℝ := max c0 1
+  let b0 : ℝ := 384 * m + (5 / 2 : ℝ) * c0 * E
+  let b1 : ℝ := 1536 + 10 * E
+  let B : ℝ := b0 + b1
+  have hApos : 0 < A := zero_lt_one.trans_le hA
+  have hc0 : 0 ≤ c0 := by
+    dsimp [c0]
+    exact add_nonneg (Real.log_nonneg hA) (Real.log_nonneg (by norm_num))
+  have hD : 0 < D := by
+    dsimp [D]
+    apply Real.log_pos
+    norm_num
+  have hE : 0 < E := by simp [E, hD]
+  have hm : 0 ≤ m := hc0.trans (le_max_left _ _)
+  have hb0 : 0 ≤ b0 := by dsimp [b0]; positivity
+  have hb1 : 0 ≤ b1 := by dsimp [b1]; positivity
+  have hB : 0 ≤ B := add_nonneg hb0 hb1
+  refine ⟨B, hB, ?_⟩
+  intro t ht z hz hzeta
+  have hbound := hfixed t ht z hz hzeta
+  let L : ℝ := Real.log (|t| + 5)
+  have hx : 1 ≤ |t| + 5 := by linarith [abs_nonneg t]
+  have hxpos : 0 < |t| + 5 := zero_lt_one.trans_le hx
+  have hL : 0 ≤ L := Real.log_nonneg hx
+  have hlogM : Real.log (A * (|t| + 5) ^ 4) = Real.log A + 4 * L := by
+    rw [Real.log_mul hApos.ne' (pow_ne_zero 4 hxpos.ne'), Real.log_pow]
+    simp [L]
+  rw [hlogM] at hbound
+  have hmax : max (c0 + 4 * L) 1 ≤ m + 4 * L := by
+    apply max_le
+    · simpa [m, add_comm] using
+        (add_le_add_right (le_max_left c0 (1 : ℝ)) (4 * L))
+    · have : 1 ≤ m := le_max_right c0 (1 : ℝ)
+      linarith
+  have hrewrite :
+      6 * max (Real.log A + 4 * L + Real.log 3) 1 / (1 / 64 : ℝ) +
+          ((Real.log A + 4 * L + Real.log 3) / D) /
+            ((3 / 2 : ℝ) - (11 / 10 : ℝ)) =
+        384 * max (c0 + 4 * L) 1 +
+          (5 / 2 : ℝ) * (c0 + 4 * L) * E := by
+    dsimp [c0, E]
+    rw [div_eq_mul_inv, div_eq_mul_inv, div_eq_mul_inv]
+    norm_num
+    ring
+  rw [hrewrite] at hbound
+  apply hbound.trans
+  have hmain :
+      384 * max (c0 + 4 * L) 1 + (5 / 2 : ℝ) * (c0 + 4 * L) * E ≤
+        b0 + b1 * L := by
+    dsimp [b0, b1]
+    nlinarith
+  apply hmain.trans
+  dsimp [B]
+  nlinarith
+
+/-- Jensen's fixed-disk divisor mass is uniformly `O(1 + log (|t|+5))`. -/
+theorem exists_finsum_divisor_riemannZeta_fixed_disk_log_bound :
+    ∃ B : ℝ, 0 ≤ B ∧ ∀ t : ℝ, 4 ≤ |t| →
+      (∑ᶠ u, (MeromorphicOn.divisor riemannZeta
+        (Metric.closedBall ((2 : ℂ) + I * t) (17 / 10 : ℝ)) u : ℝ)) ≤
+          B * (1 + Real.log (|t| + 5)) := by
+  rcases exists_norm_riemannZeta_le_polynomial_on_zero_four with
+    ⟨C, hC, hpoly⟩
+  let A : ℝ := max C 1
+  let c0 : ℝ := Real.log A + Real.log 3
+  let D : ℝ := Real.log ((7 / 4 : ℝ) / (17 / 10 : ℝ))
+  let E : ℝ := D⁻¹
+  let B : ℝ := (c0 + 4) * E
+  have hA : 1 ≤ A := le_max_right _ _
+  have hApos : 0 < A := zero_lt_one.trans_le hA
+  have hc0 : 0 ≤ c0 := by
+    dsimp [c0]
+    exact add_nonneg (Real.log_nonneg hA) (Real.log_nonneg (by norm_num))
+  have hD : 0 < D := by
+    dsimp [D]
+    apply Real.log_pos
+    norm_num
+  have hE : 0 < E := by simp [E, hD]
+  have hB : 0 ≤ B := by dsimp [B]; positivity
+  refine ⟨B, hB, ?_⟩
+  intro t ht
+  let M : ℝ := A * (|t| + 5) ^ 4
+  let L : ℝ := Real.log (|t| + 5)
+  have hx : 1 ≤ |t| + 5 := by linarith [abs_nonneg t]
+  have hxpos : 0 < |t| + 5 := zero_lt_one.trans_le hx
+  have hL : 0 ≤ L := Real.log_nonneg hx
+  have hM : 1 ≤ M := by
+    have hxpow : 1 ≤ (|t| + 5) ^ 4 := one_le_pow₀ hx
+    exact one_le_mul_of_one_le_of_one_le hA hxpow
+  have houter : ∀ w : ℂ,
+      w ∈ Metric.sphere ((2 : ℂ) + I * t) (7 / 4 : ℝ) →
+        ‖riemannZeta w‖ ≤ M := by
+    intro w hw
+    have hwc : w ∈ Metric.closedBall ((2 : ℂ) + I * t) (7 / 4 : ℝ) :=
+      Metric.sphere_subset_closedBall hw
+    simpa [A, M] using
+      norm_riemannZeta_le_fixed_jensen_closedBall hC hpoly (by norm_num) ht hwc
+  have hmass := finsum_divisor_riemannZeta_closedBall_le_log_bound_div
+    (b := (17 / 10 : ℝ)) (R := (7 / 4 : ℝ)) (t := t) (M := M)
+    (by norm_num) (by norm_num) (by linarith) hM houter
+  have hlogM : Real.log M + Real.log 3 = c0 + 4 * L := by
+    dsimp [M, c0]
+    rw [Real.log_mul hApos.ne' (pow_ne_zero 4 hxpos.ne'), Real.log_pow]
+    simp [L]
+    ring
+  rw [hlogM] at hmass
+  have hdiv : (c0 + 4 * L) / D = (c0 + 4 * L) * E := by
+    simp [E, div_eq_mul_inv]
+  rw [hdiv] at hmass
+  apply hmass.trans
+  dsimp [B]
+  calc
+    (c0 + 4 * L) * E ≤
+        (c0 + 4 * L) * E + E * (4 + c0 * L) :=
+      le_add_of_nonneg_right (mul_nonneg hE.le
+        (add_nonneg (by norm_num) (mul_nonneg hc0 hL)))
+    _ = (c0 + 4) * E * (1 + Real.log (|t| + 5)) := by
+      dsimp [L]
+      ring
+
+/-- A finite nonnegative divisor whose support stays `delta` away from `z`
+has principal-part norm at most its total mass divided by `delta`. -/
+lemma norm_finsum_divisor_mul_inv_le_mass_div
+    {D : ℂ → ℤ} {z : ℂ} {delta : ℝ}
+    (hfinite : D.support.Finite) (hD : ∀ u, 0 ≤ D u)
+    (hdelta : 0 < delta)
+    (hsep : ∀ u ∈ D.support, delta ≤ ‖z - u‖) :
+    ‖∑ᶠ u, (D u : ℂ) * (z - u)⁻¹‖ ≤
+      (∑ᶠ u, (D u : ℝ)) / delta := by
+  classical
+  rw [← sum_toNat_cast_mul_eq_finsum_cast_mul_of_nonneg_finiteSupport
+    hfinite hD (fun u => (z - u)⁻¹)]
+  calc
+    ‖∑ u ∈ hfinite.toFinset, ((D u).toNat : ℂ) * (z - u)⁻¹‖ ≤
+        ∑ u ∈ hfinite.toFinset, ‖((D u).toNat : ℂ) * (z - u)⁻¹‖ :=
+      norm_sum_le _ _
+    _ ≤ ∑ u ∈ hfinite.toFinset, ((D u).toNat : ℝ) / delta := by
+      apply Finset.sum_le_sum
+      intro u hu
+      have hu_support : u ∈ D.support := hfinite.mem_toFinset.mp hu
+      have hdist := hsep u hu_support
+      have hinv : ‖(z - u)⁻¹‖ ≤ delta⁻¹ := by
+        rw [norm_inv]
+        simpa [one_div] using one_div_le_one_div_of_le hdelta hdist
+      rw [norm_mul, Complex.norm_natCast]
+      simpa [div_eq_mul_inv] using
+        mul_le_mul_of_nonneg_left hinv (Nat.cast_nonneg (D u).toNat)
+    _ = (∑ u ∈ hfinite.toFinset, ((D u).toNat : ℝ)) / delta := by
+      rw [Finset.sum_div]
+    _ = (∑ᶠ u, (D u : ℝ)) / delta := by
+      rw [sum_toNat_eq_finsum_cast_of_nonneg_finiteSupport hfinite hD]
+
+/-- Zeros in the fixed Jensen disk stay a horizontal distance
+`c / (4 log |t|)` from a point in a narrower substrip of a classical zero-free
+region. -/
+lemma fixed_disk_zero_separation_of_classical_zero_free_region
+    {c σ t : ℝ} (hc : 0 < c)
+    (hregion : ∀ s : ℂ, |s.im| ≥ 2 →
+      s.re ≥ 1 - c / Real.log |s.im| → riemannZeta s ≠ 0)
+    (ht : 4 ≤ |t|)
+    (hσ : 1 - c / (4 * Real.log |t|) ≤ σ) :
+    ∀ u ∈ (MeromorphicOn.divisor riemannZeta
+      (Metric.closedBall ((2 : ℂ) + I * t) (17 / 10 : ℝ))).support,
+      c / (4 * Real.log |t|) ≤
+        ‖((σ : ℂ) + I * t) - u‖ := by
+  intro u hu
+  let center : ℂ := (2 : ℂ) + I * t
+  let D := MeromorphicOn.divisor riemannZeta
+    (Metric.closedBall center (17 / 10 : ℝ))
+  have hu_closed : u ∈ Metric.closedBall center (17 / 10 : ℝ) := by
+    exact D.supportWithinDomain (by simpa [D, center] using hu)
+  have hdist : ‖u - center‖ ≤ (17 / 10 : ℝ) := by
+    simpa [Metric.mem_closedBall, dist_eq_norm] using hu_closed
+  have him_abs : |u.im - t| ≤ (17 / 10 : ℝ) := by
+    have := Complex.abs_im_le_norm (u - center)
+    simpa [center] using this.trans hdist
+  have hu_im_lower : 2 ≤ |u.im| := by
+    have htri : |t| ≤ |u.im - t| + |u.im| := by
+      calc
+        |t| = |(t - u.im) + u.im| := by ring_nf
+        _ ≤ |t - u.im| + |u.im| := abs_add_le _ _
+        _ = |u.im - t| + |u.im| := by rw [abs_sub_comm]
+    linarith
+  have hu_im_upper : |u.im| ≤ |2 * t| := by
+    have htri : |u.im| ≤ |u.im - t| + |t| := by
+      calc
+        |u.im| = |(u.im - t) + t| := by ring_nf
+        _ ≤ |u.im - t| + |t| := abs_add_le _ _
+    rw [abs_mul]
+    norm_num
+    linarith
+  have hlogt_pos : 0 < Real.log |t| :=
+    log_abs_pos_of_two_le (by linarith)
+  have hlogu_pos : 0 < Real.log |u.im| :=
+    log_abs_pos_of_two_le hu_im_lower
+  have hlogu_le : Real.log |u.im| ≤ 2 * Real.log |t| := by
+    have hlog_compare := Real.log_le_log (abs_pos.mpr (by
+      intro hzero
+      rw [hzero, abs_zero] at hu_im_lower
+      norm_num at hu_im_lower)) hu_im_upper
+    exact hlog_compare.trans (log_abs_two_mul_le_two_log_abs (by linarith))
+  have havoid : ∀ w : ℂ,
+      w ∈ Metric.closedBall center (17 / 10 : ℝ) → w ≠ 1 := by
+    intro w hw
+    exact closedBall_sigma_it_ne_one_of_height_add_le
+      (z := w) (σ := 2) (t := t) (R := (17 / 10 : ℝ))
+      (H := |t| - (17 / 10 : ℝ)) (by simpa [center] using hw)
+      (by linarith) (by linarith)
+  have hu_analytic : AnalyticAt ℂ riemannZeta u :=
+    analyticOnNhd_riemannZeta_ne_one u (havoid u hu_closed)
+  have hu_zero : riemannZeta u = 0 := by
+    by_contra hne
+    have horder : meromorphicOrderAt riemannZeta u = 0 :=
+      (hu_analytic.meromorphicNFAt.meromorphicOrderAt_eq_zero_iff).2 hne
+    have hDu0 : D u = 0 := by
+      dsimp [D]
+      rw [MeromorphicOn.divisor_apply
+        (meromorphicOn_riemannZeta_closedBall center (17 / 10 : ℝ)) hu_closed,
+        horder]
+      simp
+    have hDne : D u ≠ 0 := by
+      simpa [D, center, Function.mem_support] using hu
+    exact hDne hDu0
+  have hure : u.re < 1 - c / Real.log |u.im| := by
+    by_contra h
+    exact (hregion u hu_im_lower (le_of_not_gt h)) hu_zero
+  have hhalf : c / (2 * Real.log |t|) ≤ c / Real.log |u.im| :=
+    div_le_div_of_nonneg_left hc.le hlogu_pos hlogu_le
+  have hquarter :
+      2 * (c / (4 * Real.log |t|)) = c / (2 * Real.log |t|) := by
+    field_simp [hlogt_pos.ne']
+    ring
+  have hreal_sep : c / (4 * Real.log |t|) ≤ σ - u.re := by
+    nlinarith
+  have hreal_nonneg : 0 ≤ σ - u.re :=
+    (div_pos hc (mul_pos (by norm_num) hlogt_pos)).le.trans hreal_sep
+  calc
+    c / (4 * Real.log |t|) ≤ |σ - u.re| := by
+      rw [abs_of_nonneg hreal_nonneg]
+      exact hreal_sep
+    _ = |((((σ : ℂ) + I * t) - u).re)| := by simp
+    _ ≤ ‖((σ : ℂ) + I * t) - u‖ := Complex.abs_re_le_norm _
+
+/-- Inside a fixed narrower substrip of the classical zero-free region, zeta is
+nonzero and its full logarithmic derivative has the `O((log |t|)^2)` norm
+bound required for first-order contour estimates. -/
+theorem exists_riemannZeta_ne_zero_and_norm_logDeriv_le_log_sq_on_inner_zeroFreeRegion :
+    ∃ c C T0 : ℝ, 0 < c ∧ 0 ≤ C ∧ 2 ≤ T0 ∧
+      ∀ σ t : ℝ, T0 ≤ |t| →
+        1 - c / (2 * Real.log |t|) ≤ σ →
+        σ ≤ 2 →
+        riemannZeta ((σ : ℂ) + I * t) ≠ 0 ∧
+          ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+            C * (Real.log |t|) ^ 2 := by
+  rcases classical_zero_free_region_proved with ⟨c0, hc0, hregion⟩
+  rcases exists_expanded_disk_regularized_logDeriv_riemannZeta_log_bound with
+    ⟨Breg, hBreg, hregular⟩
+  rcases exists_finsum_divisor_riemannZeta_fixed_disk_log_bound with
+    ⟨Bmass, hBmass, hmass⟩
+  let c : ℝ := c0 / 2
+  let T0 : ℝ := max 4 (Real.exp (3 * c0))
+  let C : ℝ := 3 * Breg + 12 * Bmass / c0
+  have hc : 0 < c := by dsimp [c]; positivity
+  have hT0 : 2 ≤ T0 :=
+    (by norm_num : (2 : ℝ) ≤ 4).trans (le_max_left _ _)
+  have hC : 0 ≤ C := by dsimp [C]; positivity
+  refine ⟨c, C, T0, hc, hC, hT0, ?_⟩
+  intro σ t ht hσ_inner hσ2
+  let L : ℝ := Real.log |t|
+  let z : ℂ := (σ : ℂ) + I * t
+  let center : ℂ := (2 : ℂ) + I * t
+  let D := MeromorphicOn.divisor riemannZeta
+    (Metric.closedBall center (17 / 10 : ℝ))
+  let S : ℂ := ∑ᶠ u, (D u : ℂ) * (z - u)⁻¹
+  have ht4 : 4 ≤ |t| := (le_max_left 4 (Real.exp (3 * c0))).trans ht
+  have ht2 : 2 ≤ |t| := (by norm_num : (2 : ℝ) ≤ 4).trans ht4
+  have hLpos : 0 < L := by
+    dsimp [L]
+    exact log_abs_pos_of_two_le ht2
+  have hLone : 1 ≤ L := by
+    dsimp [L]
+    exact (log_abs_gt_one_of_three_le (by linarith)).le
+  have hexp_le : Real.exp (3 * c0) ≤ |t| :=
+    (le_max_right 4 (Real.exp (3 * c0))).trans ht
+  have hlog_lower : 3 * c0 ≤ L := by
+    have hlog := Real.log_le_log (Real.exp_pos _) hexp_le
+    simpa [L] using hlog
+  have hcscale : c / (2 * L) = c0 / (4 * L) := by
+    dsimp [c]
+    field_simp [hLpos.ne']
+    ring
+  have hσ : 1 - c0 / (4 * L) ≤ σ := by
+    have h := hσ_inner
+    change 1 - c / (2 * L) ≤ σ at h
+    rw [hcscale] at h
+    exact h
+  have hsmall : c0 / (4 * L) ≤ (1 / 10 : ℝ) := by
+    apply (div_le_iff₀ (mul_pos (by norm_num) hLpos)).2
+    nlinarith
+  have hσlower : (9 / 10 : ℝ) ≤ σ := by linarith
+  have hz : z ∈ Metric.closedBall center (11 / 10 : ℝ) := by
+    rw [Metric.mem_closedBall, dist_eq_norm]
+    have heq : z - center = ((σ - 2 : ℝ) : ℂ) := by
+      apply Complex.ext <;> simp [z, center]
+    rw [heq, Complex.norm_real, Real.norm_eq_abs,
+      abs_of_nonpos (by linarith)]
+    linarith
+  have hquarter_full : c0 / (4 * L) ≤ c0 / L := by
+    exact div_le_div_of_nonneg_left hc0.le hLpos (by nlinarith [hLpos])
+  have hσ_full : 1 - c0 / L ≤ σ := by linarith
+  have hzeta : riemannZeta z ≠ 0 := by
+    apply hregion z
+    · simpa [z] using ht2
+    · simpa [z, L] using hσ_full
+  have hreg : ‖logDeriv riemannZeta z - S‖ ≤
+      Breg * (1 + Real.log (|t| + 5)) := by
+    simpa [z, center, D, S] using hregular t ht4 z hz hzeta
+  have havoid : ∀ u : ℂ,
+      u ∈ Metric.closedBall center (17 / 10 : ℝ) → u ≠ 1 := by
+    intro u hu
+    exact closedBall_sigma_it_ne_one_of_height_add_le
+      (z := u) (σ := 2) (t := t) (R := (17 / 10 : ℝ))
+      (H := |t| - (17 / 10 : ℝ)) (by simpa [center] using hu)
+      (by linarith) (by linarith)
+  have hD : ∀ u, 0 ≤ D u := by
+    exact divisor_riemannZeta_closedBall_nonneg havoid
+  have hfinite : D.support.Finite :=
+    D.finiteSupport (isCompact_closedBall center (17 / 10 : ℝ))
+  let delta : ℝ := c0 / (4 * L)
+  have hdelta : 0 < delta := by dsimp [delta]; positivity
+  have hsep : ∀ u ∈ D.support, delta ≤ ‖z - u‖ := by
+    intro u hu
+    have h := fixed_disk_zero_separation_of_classical_zero_free_region
+      hc0 hregion ht4 hσ u
+    simpa [delta, L, z, center, D] using h hu
+  have hprincipal : ‖S‖ ≤ (∑ᶠ u, (D u : ℝ)) / delta := by
+    simpa [S] using
+      norm_finsum_divisor_mul_inv_le_mass_div hfinite hD hdelta hsep
+  have hsafe : 1 + Real.log (|t| + 5) ≤ 3 * L := by
+    simpa [L] using one_add_log_abs_add_five_le_three_log_abs ht4
+  have hregL : ‖logDeriv riemannZeta z - S‖ ≤ 3 * Breg * L := by
+    calc
+      ‖logDeriv riemannZeta z - S‖ ≤
+          Breg * (1 + Real.log (|t| + 5)) := hreg
+      _ ≤ Breg * (3 * L) := mul_le_mul_of_nonneg_left hsafe hBreg
+      _ = 3 * Breg * L := by ring
+  have hregSq : ‖logDeriv riemannZeta z - S‖ ≤
+      (3 * Breg) * L ^ 2 := by
+    apply hregL.trans
+    exact mul_le_mul_of_nonneg_left (by nlinarith [sq_nonneg (L - 1)])
+      (mul_nonneg (by norm_num) hBreg)
+  have hmassSafe : (∑ᶠ u, (D u : ℝ)) ≤ 3 * Bmass * L := by
+    have hmass0 := hmass t ht4
+    calc
+      (∑ᶠ u, (D u : ℝ)) ≤ Bmass * (1 + Real.log (|t| + 5)) := by
+        simpa [D, center] using hmass0
+      _ ≤ Bmass * (3 * L) := mul_le_mul_of_nonneg_left hsafe hBmass
+      _ = 3 * Bmass * L := by ring
+  have hprincipalSq : ‖S‖ ≤ (12 * Bmass / c0) * L ^ 2 := by
+    apply hprincipal.trans
+    apply (div_le_iff₀ hdelta).2
+    apply hmassSafe.trans_eq
+    dsimp [delta]
+    field_simp [hc0.ne', hLpos.ne']
+    ring
+  have htri : ‖logDeriv riemannZeta z‖ ≤
+      ‖logDeriv riemannZeta z - S‖ + ‖S‖ := by
+    calc
+      ‖logDeriv riemannZeta z‖ = ‖(logDeriv riemannZeta z - S) + S‖ := by ring_nf
+      _ ≤ ‖logDeriv riemannZeta z - S‖ + ‖S‖ := norm_add_le _ _
+  refine ⟨by simpa [z] using hzeta, ?_⟩
+  calc
+    ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ =
+        ‖logDeriv riemannZeta z‖ := by rfl
+    _ ≤ ‖logDeriv riemannZeta z - S‖ + ‖S‖ := htri
+    _ ≤ (3 * Breg) * L ^ 2 + (12 * Bmass / c0) * L ^ 2 :=
+      add_le_add hregSq hprincipalSq
+    _ = C * (Real.log |t|) ^ 2 := by
+      dsimp [C, L]
+      ring
+
+/-- Full-norm logarithmic-derivative bound on the inner zero-free strip. -/
+theorem exists_norm_logDeriv_riemannZeta_le_log_sq_on_inner_zeroFreeRegion :
+    ∃ c C T0 : ℝ, 0 < c ∧ 0 ≤ C ∧ 2 ≤ T0 ∧
+      ∀ σ t : ℝ, T0 ≤ |t| →
+        1 - c / (2 * Real.log |t|) ≤ σ →
+        σ ≤ 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+          C * (Real.log |t|) ^ 2 := by
+  rcases
+      exists_riemannZeta_ne_zero_and_norm_logDeriv_le_log_sq_on_inner_zeroFreeRegion
+    with ⟨c, C, T0, hc, hC, hT0, h⟩
+  exact ⟨c, C, T0, hc, hC, hT0, fun σ t ht hσ hσ2 =>
+    (h σ t ht hσ hσ2).2⟩
+
 end ZeroFreeRegion

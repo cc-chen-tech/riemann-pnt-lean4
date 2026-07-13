@@ -376,6 +376,14 @@ For the truncated identity:
    full conditionally convergent series.
 3. Remaining: bound horizontal and shifted-left vertical sides of the
    first-order rectangle and combine those bounds with the residue contours.
+4. Completed on the inner right segment:
+   `ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_le_log_sq_on_inner_zeroFreeRegion`
+   proves a full-norm `O((log |t|)^2)` estimate on
+   `1-c/(2log|t|) <= Re(s) <= 2`.  The signed theorem
+   `ExplicitFormulaResidues.exists_tendsto_horizontal_inner_explicitFormulaIntegrand_signed_zero`
+   then proves that this segment tends to zero on both horizontal sides.
+   This does not yet control the remaining horizontal segment to the left of
+   the moving zero-free boundary.
 
 For the principal value final formula:
 
