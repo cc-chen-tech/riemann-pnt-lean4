@@ -1532,6 +1532,13 @@ Core verified declarations:
   continuity from the right.  The packaged polynomial-growth, logarithmic,
   circle-average, and Jensen zero-mass forms therefore no longer require a
   future zeta-growth premise.
+- `norm_Gamma_mul_cos_functionalEquation_sq_le`,
+  `norm_riemannZeta_functionalEquationCoeff_sq_le`, and
+  `norm_riemannZeta_I_mul_le_four_mul_abs_sq` formalize the exact cancellation
+  of the Gamma and trigonometric exponential factors and prove
+  `||zeta(it)|| <= 4|t|^2` for `|t|>=1`.  This is a genuine polynomial-growth
+  theorem on the left boundary `Re(s)=0`; the Phragmen-Lindelof interior-growth
+  premise on `0<Re(s)<1` remains open.
 - This does not close either logarithmic-derivative target: the remaining
   analytic gaps are a uniform boundary-strip bound for `zeta'/zeta` and
   uniform control of its zero-removed regular part through the remaining

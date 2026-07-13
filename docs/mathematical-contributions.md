@@ -237,8 +237,11 @@ the good-circle selection and Jensen mass substitution internally, replacing
 the selected denominator by the fixed margin `a-d`. Separately, the Mobius
 reciprocal identity extends the center estimate `‖ζ(s)‖≥1/3` to
 `Re(s)≥3/2`. These are genuine reductions of the remaining uniformity problem;
-they do not yet provide zeta growth on the wider disks needed to reach the
-boundary line `Re(s)=1`.
+the functional-equation module now additionally proves the exact
+Gamma/trigonometric cancellation and `‖ζ(it)‖≤4|t|²` on `Re(s)=0`.  This closes
+one boundary of the required wider strip, but does not yet provide the
+Phragmen-Lindelof interior growth theorem on `0<Re(s)<1` needed by disks that
+reach the boundary line `Re(s)=1`.
 
 ## What This Does and Does Not Prove
 

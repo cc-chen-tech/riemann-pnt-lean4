@@ -383,6 +383,206 @@ The model has the correct value at the center, unlike Mathlib's global
 noncomputable def riemannZetaReciprocalModelAtOne (s : ℂ) : ℂ :=
   (s - 1) * (riemannZetaPoleUnitAtOne s)⁻¹
 
+/-! ## Exact trigonometric norms on the functional-equation boundary -/
+
+/-- Exact norm of the sine factor on the imaginary axis. -/
+lemma norm_sin_pi_mul_I_mul (t : ℝ) :
+    ‖Complex.sin ((Real.pi : ℂ) * (Complex.I * t))‖ =
+      |Real.sinh (Real.pi * t)| := by
+  have harg : (Real.pi : ℂ) * (Complex.I * t) =
+      ((Real.pi * t : ℝ) : ℂ) * Complex.I := by push_cast; ring
+  rw [harg, Complex.sin_mul_I]
+  rw [norm_mul, norm_I, mul_one, ← Complex.ofReal_sinh, Complex.norm_real,
+    Real.norm_eq_abs]
+
+/-- Exact norm of the cosine factor occurring in the zeta functional equation
+on the line `s = 1 - I*t`. -/
+lemma norm_cos_pi_mul_one_sub_I_mul_div_two (t : ℝ) :
+    ‖Complex.cos ((Real.pi : ℂ) * (1 - Complex.I * t) / 2)‖ =
+      |Real.sinh (Real.pi * t / 2)| := by
+  have harg : (Real.pi : ℂ) * (1 - Complex.I * t) / 2 =
+      (Real.pi / 2 : ℝ) + ((-(Real.pi * t / 2) : ℝ) : ℂ) * Complex.I := by
+    push_cast
+    ring
+  rw [harg, Complex.cos_add, Complex.cos_mul_I, Complex.sin_mul_I]
+  have hcos : Complex.cos ((Real.pi / 2 : ℝ) : ℂ) = 0 := by
+    rw [← Complex.ofReal_cos, Real.cos_pi_div_two]
+    rfl
+  have hsin : Complex.sin ((Real.pi / 2 : ℝ) : ℂ) = 1 := by
+    rw [← Complex.ofReal_sin, Real.sin_pi_div_two]
+    rfl
+  rw [hcos, hsin, zero_mul, one_mul, zero_sub, norm_neg, norm_mul, norm_I, mul_one]
+  have hcast : ((-(Real.pi * t / 2) : ℝ) : ℂ) =
+      -((Real.pi * t / 2 : ℝ) : ℂ) := by
+    push_cast
+    exact Eq.refl _
+  rw [hcast, Complex.sinh_neg, norm_neg, ← Complex.ofReal_sinh]
+  rw [Complex.norm_real, Real.norm_eq_abs]
+
+/-- Gamma recurrence and conjugation on the line `1 - I*t`. -/
+lemma norm_Gamma_one_sub_I_mul (t : ℝ) (ht : t ≠ 0) :
+    ‖Complex.Gamma (1 - Complex.I * t)‖ =
+      |t| * ‖Complex.Gamma (Complex.I * t)‖ := by
+  have harg : (1 : ℂ) - Complex.I * t = (-Complex.I * t) + 1 := by ring
+  have hne : (-Complex.I * (t : ℂ)) ≠ 0 := by
+    exact mul_ne_zero (neg_ne_zero.mpr Complex.I_ne_zero) (ofReal_ne_zero.mpr ht)
+  rw [harg, Complex.Gamma_add_one _ hne, norm_mul]
+  have hconj : conj (Complex.I * (t : ℂ)) = -Complex.I * t := by simp
+  rw [← hconj, Complex.Gamma_conj]
+  simp [Complex.norm_real, Real.norm_eq_abs]
+
+/-- Norm form of Euler's reflection formula on the imaginary axis. -/
+lemma norm_Gamma_I_mul_mul_norm_Gamma_one_sub_I_mul (t : ℝ) (_ht : t ≠ 0) :
+    ‖Complex.Gamma (Complex.I * t)‖ *
+        ‖Complex.Gamma (1 - Complex.I * t)‖ =
+      Real.pi / |Real.sinh (Real.pi * t)| := by
+  have h := congrArg norm
+    (Complex.Gamma_mul_Gamma_one_sub (Complex.I * (t : ℂ)))
+  rw [norm_mul, norm_div, Complex.norm_real, Real.norm_eq_abs,
+    abs_of_pos Real.pi_pos, norm_sin_pi_mul_I_mul] at h
+  exact h
+
+/-- The square of `sinh x` is bounded by half of `sinh (2x)` for nonnegative
+`x`.  This is the elementary cancellation estimate needed below. -/
+lemma sinh_sq_le_sinh_two_mul_div_two {x : ℝ} (hx : 0 ≤ x) :
+    Real.sinh x ^ 2 ≤ Real.sinh (2 * x) / 2 := by
+  rw [Real.sinh_two_mul]
+  have hs : 0 ≤ Real.sinh x := Real.sinh_nonneg_iff.mpr hx
+  have hsc : Real.sinh x ≤ Real.cosh x := by
+    have hexp := Real.exp_pos (-x)
+    rw [← Real.cosh_sub_sinh] at hexp
+    linarith
+  nlinarith
+
+/-- The half-height hyperbolic factor is controlled by the full-height one. -/
+lemma abs_sinh_pi_mul_div_two_sq_le (t : ℝ) :
+    |Real.sinh (Real.pi * t / 2)| ^ 2 ≤
+      |Real.sinh (Real.pi * t)| / 2 := by
+  let x := Real.pi * |t| / 2
+  have hx : 0 ≤ x := by positivity
+  calc
+    |Real.sinh (Real.pi * t / 2)| ^ 2 = Real.sinh x ^ 2 := by
+      rw [Real.abs_sinh]
+      congr 2
+      dsimp [x]
+      rw [abs_div, abs_mul, abs_of_pos Real.pi_pos,
+        abs_of_pos (by norm_num : (0 : ℝ) < 2)]
+    _ ≤ Real.sinh (2 * x) / 2 := sinh_sq_le_sinh_two_mul_div_two hx
+    _ = |Real.sinh (Real.pi * t)| / 2 := by
+      rw [Real.abs_sinh]
+      congr 2
+      dsimp [x]
+      rw [abs_mul, abs_of_pos Real.pi_pos]
+      ring
+
+/-- Exact Gamma reflection cancels the exponential growth of the trigonometric
+factor in the zeta functional equation.  The square of the remaining norm is
+only linear in the height. -/
+lemma norm_Gamma_mul_cos_functionalEquation_sq_le (t : ℝ) :
+    ‖Complex.Gamma (1 - Complex.I * t) *
+        Complex.cos ((Real.pi : ℂ) * (1 - Complex.I * t) / 2)‖ ^ 2 ≤
+      Real.pi * |t| / 2 := by
+  rw [norm_mul, norm_cos_pi_mul_one_sub_I_mul_div_two]
+  by_cases ht : t = 0
+  · subst t
+    simp
+  · have hS2pos : 0 < |Real.sinh (Real.pi * t)| := by
+      rw [abs_pos, Real.sinh_ne_zero]
+      exact mul_ne_zero Real.pi_ne_zero ht
+    have hgamma_sq : ‖Complex.Gamma (1 - Complex.I * t)‖ ^ 2 =
+        Real.pi * |t| / |Real.sinh (Real.pi * t)| := by
+      calc
+        ‖Complex.Gamma (1 - Complex.I * t)‖ ^ 2 =
+            |t| * (‖Complex.Gamma (Complex.I * t)‖ *
+              ‖Complex.Gamma (1 - Complex.I * t)‖) := by
+                rw [norm_Gamma_one_sub_I_mul t ht]
+                ring
+        _ = |t| * (Real.pi / |Real.sinh (Real.pi * t)|) := by
+              rw [norm_Gamma_I_mul_mul_norm_Gamma_one_sub_I_mul t ht]
+        _ = Real.pi * |t| / |Real.sinh (Real.pi * t)| := by ring
+    calc
+      (‖Complex.Gamma (1 - Complex.I * t)‖ *
+          |Real.sinh (Real.pi * t / 2)|) ^ 2 =
+          ‖Complex.Gamma (1 - Complex.I * t)‖ ^ 2 *
+            |Real.sinh (Real.pi * t / 2)| ^ 2 := by ring
+      _ ≤ ‖Complex.Gamma (1 - Complex.I * t)‖ ^ 2 *
+          (|Real.sinh (Real.pi * t)| / 2) :=
+        mul_le_mul_of_nonneg_left (abs_sinh_pi_mul_div_two_sq_le t) (sq_nonneg _)
+      _ = Real.pi * |t| / 2 := by
+        rw [hgamma_sq]
+        field_simp [hS2pos.ne']
+
+/-- The positive real base in the functional equation contributes exactly the
+constant reciprocal norm on `s = 1 - I*t`. -/
+lemma norm_two_pi_cpow_neg_one_sub_I_mul (t : ℝ) :
+    ‖(2 * (Real.pi : ℂ)) ^ (-(1 - Complex.I * t))‖ =
+      (2 * Real.pi)⁻¹ := by
+  have hbase : (2 : ℂ) * (Real.pi : ℂ) = ((2 * Real.pi : ℝ) : ℂ) := by
+    push_cast
+    exact Eq.refl _
+  rw [hbase]
+  rw [Complex.norm_cpow_eq_rpow_re_of_pos (by positivity)]
+  simp [Real.rpow_neg_one]
+
+/-- The complete functional-equation coefficient on `s = 1 - I*t` has
+square norm at most `|t|`.  This is a polynomial bound obtained without a
+general vertical Stirling theorem. -/
+lemma norm_riemannZeta_functionalEquationCoeff_sq_le (t : ℝ) :
+    ‖2 * (2 * (Real.pi : ℂ)) ^ (-(1 - Complex.I * t)) *
+        Complex.Gamma (1 - Complex.I * t) *
+        Complex.cos ((Real.pi : ℂ) * (1 - Complex.I * t) / 2)‖ ^ 2 ≤
+      |t| := by
+  have hpow := norm_two_pi_cpow_neg_one_sub_I_mul t
+  have hgamma := norm_Gamma_mul_cos_functionalEquation_sq_le t
+  have hrewrite :
+      (2 : ℂ) * (2 * (Real.pi : ℂ)) ^ (-(1 - Complex.I * t)) *
+          Complex.Gamma (1 - Complex.I * t) *
+          Complex.cos ((Real.pi : ℂ) * (1 - Complex.I * t) / 2) =
+        (2 * (2 * (Real.pi : ℂ)) ^ (-(1 - Complex.I * t))) *
+          (Complex.Gamma (1 - Complex.I * t) *
+            Complex.cos ((Real.pi : ℂ) * (1 - Complex.I * t) / 2)) := by ring
+  rw [hrewrite, norm_mul, norm_mul, Complex.norm_ofNat, hpow]
+  have hpi : 1 ≤ 2 * Real.pi := by nlinarith [Real.pi_gt_three]
+  calc
+    (2 * (2 * Real.pi)⁻¹ *
+        ‖Complex.Gamma (1 - Complex.I * t) *
+          Complex.cos ((Real.pi : ℂ) * (1 - Complex.I * t) / 2)‖) ^ 2 =
+        Real.pi⁻¹ ^ 2 *
+          ‖Complex.Gamma (1 - Complex.I * t) *
+            Complex.cos ((Real.pi : ℂ) * (1 - Complex.I * t) / 2)‖ ^ 2 := by
+              field_simp [Real.pi_ne_zero]
+    _ ≤ Real.pi⁻¹ ^ 2 * (Real.pi * |t| / 2) :=
+      mul_le_mul_of_nonneg_left hgamma (sq_nonneg _)
+    _ = |t| / (2 * Real.pi) := by
+      field_simp [Real.pi_ne_zero]
+    _ ≤ |t| := div_le_self (abs_nonneg t) hpi
+
+/-- Entire regularization of zeta used for vertical-strip
+Phragmen--Lindelof arguments.  The polynomial cancels both poles of the
+completed zeta expression, while `Gammaℝ⁻¹` is entire. -/
+noncomputable def riemannZetaEntireRegularization (s : ℂ) : ℂ :=
+  (s * (s - 1) * completedRiemannZeta₀ s + 1) * (Gammaℝ s)⁻¹
+
+/-- The regularized zeta carrier is entire. -/
+lemma differentiable_riemannZetaEntireRegularization :
+    Differentiable ℂ riemannZetaEntireRegularization := by
+  unfold riemannZetaEntireRegularization
+  exact (((differentiable_id.mul (differentiable_id.sub_const 1)).mul
+    differentiable_completedZeta₀).add_const 1).mul differentiable_Gammaℝ_inv
+
+/-- Away from the removable points `0` and `1`, the entire regularization is
+exactly `s(s-1)ζ(s)`. -/
+lemma riemannZetaEntireRegularization_eq_mul_riemannZeta
+    {s : ℂ} (hs0 : s ≠ 0) (hs1 : s ≠ 1) :
+    riemannZetaEntireRegularization s = s * (s - 1) * riemannZeta s := by
+  unfold riemannZetaEntireRegularization
+  rw [riemannZeta_def_of_ne_zero hs0, completedRiemannZeta_eq,
+    div_eq_mul_inv]
+  have hs_sub : s - 1 ≠ 0 := sub_ne_zero.mpr hs1
+  have h_one_sub : 1 - s ≠ 0 := sub_ne_zero.mpr hs1.symm
+  field_simp [hs0, hs_sub, h_one_sub]
+  ring
+
 /-- The regular part in the local decomposition of ζ at `1` is analytic. -/
 lemma analyticAt_riemannZetaRegularAtOne :
     AnalyticAt ℂ riemannZetaRegularAtOne 1 := by
@@ -7485,6 +7685,62 @@ lemma norm_riemannZeta_le_two_mul_norm_of_one_le_re_of_one_le_abs_im
     have hlimit_nonpos : ‖riemannZeta s‖ - 2 * ‖s‖ ≤ 0 :=
       le_of_tendsto' hdiff hnonpos
     linarith
+
+/-- Polynomial zeta growth on the left boundary `Re(s) = 0`.  The proof uses
+the functional equation, the exact Gamma/trigonometric cancellation above,
+and the Abel-type linear estimate already available on `Re(s) = 1`.
+
+This is the first unconditional growth estimate extending the local
+zero-free-region infrastructure to the left of the line of absolute
+convergence. -/
+lemma norm_riemannZeta_I_mul_le_four_mul_abs_sq (t : ℝ) (ht : 1 ≤ |t|) :
+    ‖riemannZeta (Complex.I * t)‖ ≤ 4 * |t| ^ 2 := by
+  let s : ℂ := 1 - Complex.I * t
+  have hsneg : ∀ n : ℕ, s ≠ -n := by
+    intro n h
+    have him := congrArg Complex.im h
+    dsimp [s] at him
+    simp at him
+    subst t
+    norm_num at ht
+  have hs1 : s ≠ 1 := by
+    intro h
+    have him := congrArg Complex.im h
+    dsimp [s] at him
+    simp at him
+    subst t
+    norm_num at ht
+  have hfe := riemannZeta_one_sub hsneg hs1
+  have hone_sub : 1 - s = Complex.I * t := by dsimp [s]; ring
+  rw [hone_sub] at hfe
+  have hcoeff :
+      ‖2 * (2 * (Real.pi : ℂ)) ^ (-s) * Complex.Gamma s *
+          Complex.cos ((Real.pi : ℂ) * s / 2)‖ ≤ |t| := by
+    have hsquare := norm_riemannZeta_functionalEquationCoeff_sq_le t
+    have hs_def : s = 1 - Complex.I * t := rfl
+    rw [← hs_def] at hsquare
+    have hnonneg : 0 ≤ ‖2 * (2 * (Real.pi : ℂ)) ^ (-s) *
+        Complex.Gamma s * Complex.cos ((Real.pi : ℂ) * s / 2)‖ := norm_nonneg _
+    nlinarith [sq_nonneg
+      (‖2 * (2 * (Real.pi : ℂ)) ^ (-s) * Complex.Gamma s *
+        Complex.cos ((Real.pi : ℂ) * s / 2)‖ - |t|)]
+  have hs_re : 1 ≤ s.re := by simp [s]
+  have hs_im : 1 ≤ |s.im| := by simpa [s] using ht
+  have hzeta :=
+    norm_riemannZeta_le_two_mul_norm_of_one_le_re_of_one_le_abs_im s hs_re hs_im
+  have hsnorm : ‖s‖ ≤ 2 * |t| := by
+    calc
+      ‖s‖ ≤ |s.re| + |s.im| := Complex.norm_le_abs_re_add_abs_im s
+      _ = 1 + |t| := by simp [s]
+      _ ≤ 2 * |t| := by linarith
+  have hzeta' : ‖riemannZeta s‖ ≤ 4 * |t| := by linarith
+  rw [hfe, norm_mul]
+  calc
+    ‖2 * (2 * (Real.pi : ℂ)) ^ (-s) * Complex.Gamma s *
+        Complex.cos ((Real.pi : ℂ) * s / 2)‖ * ‖riemannZeta s‖ ≤
+        |t| * (4 * |t|) :=
+      mul_le_mul hcoeff hzeta' (norm_nonneg _) (abs_nonneg _)
+    _ = 4 * |t| ^ 2 := by ring
 
 /-- A concrete zeta-specific polynomial growth input on the standard vertical
 strip.  This closes the formerly hypothetical `hpoly` premise used by the

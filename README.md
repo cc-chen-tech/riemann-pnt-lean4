@@ -234,7 +234,13 @@ unconditional zeta-specific forms.  These results still do not prove the raw
 uniform boundary-strip bound for `ζ'/ζ`.  The zero-removed regular-part route
 now has the local canonical/Borel estimate described below, but its uniform
 high-height specialization and connection to the final zero-candidate form
-remain to be completed.  On the pole side,
+remain to be completed.  The functional-equation side now also proves the
+exact Gamma/trigonometric cancellation on `s=1-it`: the full coefficient has
+squared norm at most `|t|`, and hence
+`‖ζ(it)‖ ≤ 4|t|²` for `|t|≥1`.  Thus polynomial growth is verified on the new
+left boundary `Re(s)=0`; extending that boundary control through `0<Re(s)<1`
+still needs a Phragmen-Lindelof weak-growth input for the entire regularized
+zeta carrier.  On the pole side,
 the local decomposition
 `logDeriv ζ(s) = -(s-1)^-1 + logDeriv(unit)(s)` is now proved near `s=1`,
 and the unit logarithmic derivative is locally bounded; this improves the
@@ -470,6 +476,7 @@ Lean declarations in `ZeroFreeRegion.lean` and
 | `ZeroFreeRegion.norm_LSeries_moebius_le_three_of_three_halves_le_re` / `ZeroFreeRegion.one_third_le_norm_riemannZeta_of_three_halves_le_re` | `lemma` | Bounds the absolutely convergent Mobius L-series by `3` on `Re(s)≥3/2` and uses `ζ(s)L(μ,s)=1` to prove `‖ζ(s)‖≥1/3` there. | Moves the uniform Borel center margin from `Re=2` to `Re=3/2`; reaching disks that cross `Re=1` still requires zeta growth farther into the critical strip. |
 | `ZeroFreeRegion.norm_riemannZeta_le_const_polynomial_on_two_le_re` | `lemma` | Packages the preceding bound as constant-order polynomial growth on `2 ≤ Re(s)`. | Gives the later polynomial-growth infrastructure a simple constant right-edge input. |
 | `ZeroFreeRegion.norm_riemannZeta_le_two_mul_norm_of_one_le_re_of_one_le_abs_im` / `ZeroFreeRegion.norm_riemannZeta_le_two_mul_norm_add_three_on_vertical_strip` | `lemma` | Uses Abel's floor-integral formula and continuity from `Re(s)>1` to prove `‖ζ(s)‖≤2‖s‖` on `Re(s)≥1`, `|Im(s)|≥1`, and packages it as polynomial growth on `1≤Re(s)≤3`. | Closes the previously missing zeta-growth premise for the Jensen/Borel chain; this controls the numerator, not yet the logarithmic derivative near zeros. |
+| `ZeroFreeRegion.norm_Gamma_mul_cos_functionalEquation_sq_le` / `ZeroFreeRegion.norm_riemannZeta_functionalEquationCoeff_sq_le` / `ZeroFreeRegion.norm_riemannZeta_I_mul_le_four_mul_abs_sq` | `lemma` | Uses Gamma reflection, recurrence, conjugation, and exact hyperbolic norms to cancel the functional-equation exponential factors and prove `‖ζ(it)‖≤4|t|²` for `|t|≥1`. | Supplies an unconditional polynomial-growth estimate on the left boundary `Re(s)=0`; interpolation through the open strip still requires a verified Phragmen-Lindelof growth hypothesis. |
 | `ZeroFreeRegion.log_norm_riemannZeta_sigma_it_le_log_two_add_two_log_abs_add_three` / unconditional circle-average and Jensen zero-mass forms | `lemma` | Derives explicit logarithmic zeta growth and weighted local zero-mass bounds of order `log |t|` with no caller-supplied growth hypothesis. | Supplies the growth and zero-counting inputs consumed by the mixed canonical regular-part theorem; the uniform high-height specialization remains open. |
 | `ZeroFreeRegion.translatedCanonicalNumerator` / `canonicalNumeratorProduct` / `mixedCanonicalRegularUnit` | `def` + `lemma` | Canonicalizes inner divisor factors while retaining outer raw factors, preserves zeta's boundary norm, improves its center norm, proves closed-disk nonvanishing when the canonicalizing circle is zeta-zero-free, and bounds the mixed logarithmic-derivative correction by total divisor mass divided by `r-d`. | Removes both the old quantitative per-zero separation loss and the inner/outer composition gap; a qualitative zero-free-circle premise remains explicit. |
 | `ZeroFreeRegion.norm_regularized_logDeriv_riemannZeta_le_mixedCanonical_bound` | `lemma` | Bounds `‖logDeriv ζ(z) - Σ D(u)/(z-u)‖` by a Borel boundary-growth term plus `divisorMass/(r-d)` on a retained disk. | First zeta-specific local regular-part estimate in this route whose coefficient is independent of the nearest zero distance; fixed-radius high-height specialization is the next step, not yet the classical zero-free region. |

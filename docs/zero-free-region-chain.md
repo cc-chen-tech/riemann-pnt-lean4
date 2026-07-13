@@ -271,11 +271,18 @@ radius no longer appears in the conclusion. In addition,
 series to extend the uniform zeta center margin `1/3` from `Re≥2` to
 `Re≥3/2`, and the mixed-unit Borel theorem now accepts that wider half-plane.
 
-The next geometric barrier is explicit: the currently unconditional disk
-growth theorem stays in `1≤Re(s)≤3`. A half-radius Borel disk that both has a
-uniformly controlled center and reaches points arbitrarily close to `Re=1`
-must extend farther left. This requires a zeta growth bound in a wider strip
-(or a sharper non-half-radius local argument), not another factor wrapper.
+The next geometric barrier is explicit.  The functional equation has now been
+formalized far enough to prove the exact Gamma/trigonometric cancellation on
+`s=1-it`, the coefficient bound `‖C(t)‖²≤|t|`, and the new left-boundary
+estimate `‖ζ(it)‖≤4|t|²` for `|t|≥1`.  The right boundary `Re(s)≥1` already has
+the Abel bound.  What is not yet proved is interpolation through
+`0<Re(s)<1`: applying Phragmen-Lindelof to the entire carrier
+`s(s-1)ζ(s)` still requires its weak double-exponential growth hypothesis.
+Until that is supplied, the unconditional disk-growth theorem remains usable
+only in `1≤Re(s)≤3`. A half-radius Borel disk that both has a uniformly
+controlled center and reaches points arbitrarily close to `Re=1` therefore
+still lacks an interior wider-strip growth theorem (or a sharper
+non-half-radius local argument), not another factor wrapper.
 
 A fixed-margin version of this logarithmic control is already proved:
 `exists_norm_logDeriv_riemannZeta_le_log_abs_im_add_three_of_one_add_le_re`
@@ -1932,11 +1939,14 @@ lemma exists_riemannZeta_poly_bound_vertical :
         ‖riemannZeta z‖ ≤ A * |z.im| ^ B
 ```
 
-Mathlib status:
-No direct zeta vertical-growth theorem found.  Mathlib has the functional
-equation and differentiability/completed-zeta infrastructure, so this should be
-proved from existing zeta continuation and Gamma estimates, but it is not an
-immediate API call.
+Mathlib/project status:
+No direct zeta vertical-growth theorem was found.  The project now proves the
+functional-equation coefficient bound from Mathlib's Gamma reflection,
+recurrence, and conjugation theorems and obtains polynomial growth on
+`Re(s)=0`.  Mathlib also supplies `PhragmenLindelof.vertical_strip`, but its
+weak double-exponential interior-growth premise for the entire regularized
+zeta carrier is not an immediate consequence of the current completed-zeta
+API and remains open.
 
 Difficulty:
 High.  This is analytic-number-theory infrastructure rather than Lean algebra.
