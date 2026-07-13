@@ -11,6 +11,7 @@ import PrimeNumberTheorem.FirstOrderExplicitFormula
 import PrimeNumberTheorem.ExplicitFormulaTruncated
 import ZeroFreeRegion
 import ZeroFreeRegion.MeromorphicAux
+import ZeroFreeRegion.PhragmenLindelofZeta
 import MathlibAux.RectangleResidue
 
 open Complex Filter Topology Asymptotics ComplexConjugate
@@ -7946,6 +7947,176 @@ theorem exists_good_radius_separated_from_riemannZeta_zeros_closedBall_strictly_
       ∀ z ∈ Metric.sphere c r, riemannZeta z ≠ 0 :=
   ZeroFreeRegion.exists_good_radius_separated_from_riemannZeta_zeros_closedBall_strictly_inside
     ha haq hqb havoid
+
+/-- Public translated canonical factor on a disk. -/
+noncomputable abbrev translatedCanonicalFactor
+    (c : ℂ) (R : ℝ) (u : ℂ) : ℂ → ℂ :=
+  ZeroFreeRegion.translatedCanonicalFactor c R u
+
+/-- Public analytic numerator of a translated canonical factor. -/
+noncomputable abbrev translatedCanonicalNumerator
+    (c : ℂ) (R : ℝ) (u : ℂ) : ℂ → ℂ :=
+  ZeroFreeRegion.translatedCanonicalNumerator c R u
+
+/-- Public qualified bridge from an ordinary zero factor times a canonical
+factor to the analytic canonical numerator. -/
+theorem sub_mul_translatedCanonicalFactor_eq_translatedCanonicalNumerator
+    {c u z : ℂ} {R : ℝ} (hR : R ≠ 0) (hzu : z ≠ u) :
+    (z - u) * translatedCanonicalFactor c R u z =
+      translatedCanonicalNumerator c R u z :=
+  ZeroFreeRegion.sub_mul_translatedCanonicalFactor_eq_translatedCanonicalNumerator
+    hR hzu
+
+/-- Public boundary norm-one property of translated canonical factors. -/
+theorem norm_translatedCanonicalFactor_eq_one
+    {c u z : ℂ} {R : ℝ} (hu : u ∈ Metric.ball c R)
+    (hz : z ∈ Metric.sphere c R) :
+    ‖translatedCanonicalFactor c R u z‖ = 1 :=
+  ZeroFreeRegion.norm_translatedCanonicalFactor_eq_one hu hz
+
+/-- Public boundary norm-preservation property of canonical numerators. -/
+theorem norm_translatedCanonicalNumerator_eq_norm_sub
+    {c u z : ℂ} {R : ℝ} (hu : u ∈ Metric.ball c R)
+    (hz : z ∈ Metric.sphere c R) :
+    ‖translatedCanonicalNumerator c R u z‖ = ‖z - u‖ :=
+  ZeroFreeRegion.norm_translatedCanonicalNumerator_eq_norm_sub hu hz
+
+/-- Public analyticity of translated canonical numerators. -/
+theorem analyticOnNhd_translatedCanonicalNumerator
+    {c u : ℂ} {R : ℝ} :
+    AnalyticOnNhd ℂ (translatedCanonicalNumerator c R u) Set.univ :=
+  ZeroFreeRegion.analyticOnNhd_translatedCanonicalNumerator
+
+/-- Public nonvanishing of a translated canonical numerator on its disk. -/
+theorem translatedCanonicalNumerator_ne_zero
+    {c u z : ℂ} {R : ℝ} (hu : u ∈ Metric.ball c R)
+    (hz : z ∈ Metric.closedBall c R) :
+    translatedCanonicalNumerator c R u z ≠ 0 :=
+  ZeroFreeRegion.translatedCanonicalNumerator_ne_zero hu hz
+
+/-- Public logarithmic derivative formula for a translated canonical
+numerator. -/
+theorem logDeriv_translatedCanonicalNumerator
+    {c u z : ℂ} {R : ℝ} (hR : R ≠ 0) :
+    logDeriv (translatedCanonicalNumerator c R u) z =
+      -(starRingEnd ℂ) (u - c) /
+        ((R : ℂ) ^ 2 - (starRingEnd ℂ) (u - c) * (z - c)) :=
+  ZeroFreeRegion.logDeriv_translatedCanonicalNumerator hR
+
+/-- Public uniform inner-disk bound for the canonical correction term. -/
+theorem norm_logDeriv_translatedCanonicalNumerator_le_inv_sub
+    {c u z : ℂ} {d R : ℝ} (hd : 0 ≤ d) (hdR : d < R)
+    (hu : u ∈ Metric.ball c R) (hz : z ∈ Metric.closedBall c d) :
+    ‖logDeriv (translatedCanonicalNumerator c R u) z‖ ≤ 1 / (R - d) :=
+  ZeroFreeRegion.norm_logDeriv_translatedCanonicalNumerator_le_inv_sub
+    hd hdR hu hz
+
+/-- Public finite product of canonical numerators with natural
+multiplicities. -/
+noncomputable abbrev canonicalNumeratorProduct
+    (c : ℂ) (R : ℝ) (zeros : Finset ℂ) (m : ℂ → ℕ) : ℂ → ℂ :=
+  ZeroFreeRegion.canonicalNumeratorProduct c R zeros m
+
+/-- Public boundary norm preservation for a finite canonical product. -/
+theorem norm_canonicalNumeratorProduct_eq_norm_prod_sub
+    {c z : ℂ} {R : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ}
+    (hu : ∀ u ∈ zeros, u ∈ Metric.ball c R)
+    (hz : z ∈ Metric.sphere c R) :
+    ‖canonicalNumeratorProduct c R zeros m z‖ =
+      ‖∏ u ∈ zeros, (z - u) ^ m u‖ :=
+  ZeroFreeRegion.norm_canonicalNumeratorProduct_eq_norm_prod_sub hu hz
+
+/-- Public closed-disk nonvanishing for a finite canonical product. -/
+theorem canonicalNumeratorProduct_ne_zero
+    {c z : ℂ} {R : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ}
+    (hu : ∀ u ∈ zeros, u ∈ Metric.ball c R)
+    (hz : z ∈ Metric.closedBall c R) :
+    canonicalNumeratorProduct c R zeros m z ≠ 0 :=
+  ZeroFreeRegion.canonicalNumeratorProduct_ne_zero hu hz
+
+/-- Public analyticity of a finite canonical numerator product. -/
+theorem analyticOnNhd_canonicalNumeratorProduct
+    {c : ℂ} {R : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ} :
+    AnalyticOnNhd ℂ (canonicalNumeratorProduct c R zeros m) Set.univ :=
+  ZeroFreeRegion.analyticOnNhd_canonicalNumeratorProduct
+
+/-- Public logarithmic-derivative sum for a finite canonical product. -/
+theorem logDeriv_canonicalNumeratorProduct
+    {c z : ℂ} {R : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ}
+    (hu : ∀ u ∈ zeros, u ∈ Metric.ball c R)
+    (hz : z ∈ Metric.closedBall c R) :
+    logDeriv (canonicalNumeratorProduct c R zeros m) z =
+      ∑ u ∈ zeros, (m u : ℂ) *
+        logDeriv (translatedCanonicalNumerator c R u) z :=
+  ZeroFreeRegion.logDeriv_canonicalNumeratorProduct hu hz
+
+/-- Public total-multiplicity bound for the finite canonical correction. -/
+theorem norm_logDeriv_canonicalNumeratorProduct_le_sum_div
+    {c z : ℂ} {d R : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ}
+    (hd : 0 ≤ d) (hdR : d < R)
+    (hu : ∀ u ∈ zeros, u ∈ Metric.ball c R)
+    (hz : z ∈ Metric.closedBall c d) :
+    ‖logDeriv (canonicalNumeratorProduct c R zeros m) z‖ ≤
+      (∑ u ∈ zeros, (m u : ℝ)) / (R - d) :=
+  ZeroFreeRegion.norm_logDeriv_canonicalNumeratorProduct_le_sum_div
+    hd hdR hu hz
+
+/-- Public conversion from a nonnegative finite integer divisor to natural
+multiplicities with the same real total mass. -/
+theorem sum_toNat_eq_finsum_cast_of_nonneg_finiteSupport
+    {D : ℂ → ℤ} (hfinite : D.support.Finite) (hD : ∀ u, 0 ≤ D u) :
+    (∑ u ∈ hfinite.toFinset, ((D u).toNat : ℝ)) = ∑ᶠ u, (D u : ℝ) :=
+  ZeroFreeRegion.sum_toNat_eq_finsum_cast_of_nonneg_finiteSupport hfinite hD
+
+/-- Public divisor-valued finite canonical correction bound. -/
+theorem norm_logDeriv_canonicalNumeratorProduct_divisor_le_finsum_div
+    {c z : ℂ} {d R : ℝ} {D : ℂ → ℤ}
+    (hfinite : D.support.Finite) (hD : ∀ u, 0 ≤ D u)
+    (hd : 0 ≤ d) (hdR : d < R)
+    (hu : ∀ u ∈ hfinite.toFinset, u ∈ Metric.ball c R)
+    (hz : z ∈ Metric.closedBall c d) :
+    ‖logDeriv
+        (canonicalNumeratorProduct c R hfinite.toFinset
+          (fun u => (D u).toNat)) z‖ ≤
+      (∑ᶠ u, (D u : ℝ)) / (R - d) :=
+  ZeroFreeRegion.norm_logDeriv_canonicalNumeratorProduct_divisor_le_finsum_div
+    hfinite hD hd hdR hu hz
+
+/-- Public strict-interior support property for a boundary-zero-free zeta
+disk divisor. -/
+theorem divisor_support_riemannZeta_closedBall_subset_ball_of_sphere_ne_zero
+    {c : ℂ} {R : ℝ}
+    (havoid : ∀ z : ℂ, z ∈ Metric.closedBall c R → z ≠ 1)
+    (hsphere : ∀ z ∈ Metric.sphere c R, riemannZeta z ≠ 0) :
+    (MeromorphicOn.divisor riemannZeta (Metric.closedBall c R)).support ⊆
+      Metric.ball c R :=
+  ZeroFreeRegion.divisor_support_riemannZeta_closedBall_subset_ball_of_sphere_ne_zero
+    havoid hsphere
+
+/-- Public finite support of zeta's disk divisor. -/
+noncomputable abbrev riemannZetaDivisorSupport (c : ℂ) (R : ℝ) : Finset ℂ :=
+  ZeroFreeRegion.riemannZetaDivisorSupport c R
+
+/-- Public natural multiplicity of zeta's disk divisor. -/
+noncomputable abbrev riemannZetaDivisorMultiplicity
+    (c : ℂ) (R : ℝ) (u : ℂ) : ℕ :=
+  ZeroFreeRegion.riemannZetaDivisorMultiplicity c R u
+
+/-- Public zeta-specific canonical correction bound in terms of Jensen's disk
+divisor mass. -/
+theorem norm_logDeriv_canonicalNumeratorProduct_riemannZetaDivisor_le_finsum_div
+    {c z : ℂ} {d R : ℝ}
+    (havoid : ∀ u : ℂ, u ∈ Metric.closedBall c R → u ≠ 1)
+    (hsphere : ∀ u ∈ Metric.sphere c R, riemannZeta u ≠ 0)
+    (hd : 0 ≤ d) (hdR : d < R) (hz : z ∈ Metric.closedBall c d) :
+    ‖logDeriv
+        (canonicalNumeratorProduct c R (riemannZetaDivisorSupport c R)
+          (riemannZetaDivisorMultiplicity c R)) z‖ ≤
+      (∑ᶠ u,
+        (MeromorphicOn.divisor riemannZeta (Metric.closedBall c R) u : ℝ)) /
+        (R - d) :=
+  ZeroFreeRegion.norm_logDeriv_canonicalNumeratorProduct_riemannZetaDivisor_le_finsum_div
+    havoid hsphere hd hdR hz
 
 /-- Public complete zero-factor extraction for zeta on a closed disk avoiding
 the pole. -/
@@ -18530,6 +18701,48 @@ theorem log_norm_sigma_add_I_mul_add_three_le_two_log_abs_add_three
   ZeroFreeRegion.log_norm_sigma_add_I_mul_add_three_le_two_log_abs_add_three
     hσ ht
 
+/-- Public uniform linear growth bound for zeta on and to the right of the
+line `Re(s) = 1`, away from its pole. -/
+theorem norm_riemannZeta_le_two_mul_norm_of_one_le_re_of_one_le_abs_im
+    (s : ℂ) (hre : 1 ≤ s.re) (him : 1 ≤ |s.im|) :
+    ‖riemannZeta s‖ ≤ 2 * ‖s‖ :=
+  ZeroFreeRegion.norm_riemannZeta_le_two_mul_norm_of_one_le_re_of_one_le_abs_im
+    s hre him
+
+/-- Public concrete polynomial growth estimate on `1 <= Re(s) <= 3`. -/
+theorem norm_riemannZeta_le_two_mul_norm_add_three_on_vertical_strip
+    (s : ℂ) (hs_height : 1 ≤ |s.im|) (hs_re : s.re ∈ Set.Icc (1 : ℝ) 3) :
+    ‖riemannZeta s‖ ≤ 2 * (‖s‖ + 3) ^ (1 : ℝ) :=
+  ZeroFreeRegion.norm_riemannZeta_le_two_mul_norm_add_three_on_vertical_strip
+    s hs_height hs_re
+
+/-- Public existential packaging of the concrete zeta polynomial growth
+constants. -/
+theorem exists_riemannZeta_polynomial_growth_on_vertical_strip :
+    ∃ A B T0 : ℝ, 1 ≤ A ∧ 0 ≤ B ∧
+      ∀ s : ℂ, T0 ≤ |s.im| → s.re ∈ Set.Icc (1 : ℝ) 3 →
+        ‖riemannZeta s‖ ≤ A * (‖s‖ + 3) ^ B :=
+  ZeroFreeRegion.exists_riemannZeta_polynomial_growth_on_vertical_strip
+
+/-- Public explicit zeta norm bound on a small high disk centered at
+`2 + I*t`. -/
+theorem norm_riemannZeta_le_two_mul_abs_im_add_radius_add_two_on_closedBall
+    {R t : ℝ} (hRone : R ≤ 1) (hheight : 1 + R ≤ |t|) {z : ℂ}
+    (hz : z ∈ Metric.closedBall ((2 : ℂ) + Complex.I * t) R) :
+    ‖riemannZeta z‖ ≤ 2 * (|t| + R + 2) :=
+  ZeroFreeRegion.norm_riemannZeta_le_two_mul_abs_im_add_radius_add_two_on_closedBall
+    hRone hheight hz
+
+/-- Public logarithmic zeta norm bound on a small high disk centered at
+`2 + I*t`. -/
+theorem log_norm_riemannZeta_le_log_two_add_log_abs_im_add_radius_add_five_on_closedBall
+    {q t : ℝ} (hq : 0 ≤ q) (hqone : q ≤ 1)
+    (hheight : 1 + q ≤ |t|) {z : ℂ}
+    (hz : z ∈ Metric.closedBall ((2 : ℂ) + Complex.I * t) q) :
+    Real.log ‖riemannZeta z‖ ≤ Real.log 2 + Real.log (|t| + q + 5) :=
+  ZeroFreeRegion.log_norm_riemannZeta_le_log_two_add_log_abs_im_add_radius_add_five_on_closedBall
+    hq hqone hheight hz
+
 /-- Public conversion from pointwise polynomial growth to affine logarithmic
 norm growth. -/
 theorem log_norm_bound_of_polynomial_growth
@@ -18574,6 +18787,15 @@ theorem log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_three_of_polynomial_
   ZeroFreeRegion.log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_three_of_polynomial_growth
     hT0 hA hB hpoly
 
+/-- Public unconditional logarithmic zeta-growth estimate on the boundary
+strip `1 <= sigma <= 2`. -/
+theorem log_norm_riemannZeta_sigma_it_le_log_two_add_two_log_abs_add_three
+    {σ t : ℝ} (hσ : σ ∈ Set.Icc (1 : ℝ) 2) (ht : 5 ≤ |t|) :
+    Real.log ‖riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+      Real.log 2 + 2 * Real.log (|t| + 3) :=
+  ZeroFreeRegion.log_norm_riemannZeta_sigma_it_le_log_two_add_two_log_abs_add_three
+    hσ ht
+
 /-- Public circle-average zeta handoff from a future polynomial-growth
 estimate into the `log(|t|+|R|+3)` scale. -/
 theorem circleAverage_log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_radius_three_of_polynomial_growth
@@ -18599,6 +18821,16 @@ theorem circleAverage_log_norm_riemannZeta_two_add_I_mul_le_affine_log_abs_add_r
       Real.log A + (2 * B) * Real.log (|t| + R + 3) :=
   ZeroFreeRegion.circleAverage_log_norm_riemannZeta_two_add_I_mul_le_affine_log_abs_add_radius_three_of_polynomial_growth
     hT0 hA hB hR hRone hheight hpoly
+
+/-- Public unconditional circle-average zeta-growth estimate in the Jensen
+geometry centered at `2 + I*t`. -/
+theorem circleAverage_log_norm_riemannZeta_two_add_I_mul_le_log_two_add_two_log_abs_add_radius_three
+    {R t : ℝ} (hR : 0 < R) (hRone : R ≤ 1) (hheight : 7 + R ≤ |t|) :
+    Real.circleAverage (Real.log ‖riemannZeta ·‖)
+        ((2 : ℂ) + Complex.I * t) R ≤
+      Real.log 2 + 2 * Real.log (|t| + R + 3) :=
+  ZeroFreeRegion.circleAverage_log_norm_riemannZeta_two_add_I_mul_le_log_two_add_two_log_abs_add_radius_three
+    hR hRone hheight
 
 /-- Public conversion from a circle-average bound to Jensen weighted zeta-zero
 mass at `2 + I*t`. -/
@@ -18628,6 +18860,17 @@ theorem jensen_zero_mass_riemannZeta_two_add_I_mul_le_affine_log_abs_add_radius_
       Real.log A + (2 * B) * Real.log (|t| + R + 3) + Real.log 3 :=
   ZeroFreeRegion.jensen_zero_mass_riemannZeta_two_add_I_mul_le_affine_log_abs_add_radius_three_of_polynomial_growth
     hT0 hA hB hR hRone hheight hpoly
+
+/-- Public unconditional `O(log |t|)` Jensen weighted zeta-zero mass bound. -/
+theorem jensen_zero_mass_riemannZeta_two_add_I_mul_le_log_two_add_two_log_abs_add_radius_three
+    {R t : ℝ} (hR : 0 < R) (hRone : R ≤ 1) (hheight : 7 + R ≤ |t|) :
+    (∑ᶠ u,
+        MeromorphicOn.divisor riemannZeta
+            (Metric.closedBall ((2 : ℂ) + Complex.I * t) R) u *
+          Real.log (R * ‖((2 : ℂ) + Complex.I * t) - u‖⁻¹)) ≤
+      Real.log 2 + 2 * Real.log (|t| + R + 3) + Real.log 3 :=
+  ZeroFreeRegion.jensen_zero_mass_riemannZeta_two_add_I_mul_le_log_two_add_two_log_abs_add_radius_three
+    hR hRone hheight
 
 /-- Public coordinate zeta polynomial-growth-to-log-growth conversion in the
 classical high-height scale `log |t|`. -/

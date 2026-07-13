@@ -24,8 +24,8 @@ Lean repositories at the time of submission.
 The safe project positioning is:
 
 ```text
-local Lean 4 formalization of de la Vallee Poussin 3-4-1 machinery
-and a compact zero-free strip
+Lean 4 formalization of de la Vallee Poussin 3-4-1/Jensen machinery
+and the classical c/log zero-free region
 ```
 
 ## Target count
@@ -34,14 +34,14 @@ and a compact zero-free strip
 - `HardyTheorem.Details` namespace: 3
 - `PrimeNumberTheorem` namespace: 9
 - `KnownResults` namespace: 1
-- `ZeroFreeRegion` namespace: 1
+- `ZeroFreeRegion` namespace: 0
 - global namespace: 1
 
-Total: **22**.
+Total: **21**.
 
 For the chain accounting:
 
-- Quantitative zero-free region chain: 2
+- Quantitative zero-free region chain: 1
 - Explicit formula chain: 1
 - RH/prime-counting error chain: 8
 - Hardy theorem chain: 11 (7 in `HardyTheorem`, 3 in `HardyTheorem.Details`,
@@ -51,7 +51,6 @@ For the chain accounting:
 
 ### Target declarations
 
-- `ZeroFreeRegion.classical_zero_free_region`
 - `vinogradov_korobov_zero_free_region`
 
 ### Current verified anchor theorems
@@ -60,6 +59,7 @@ For the chain accounting:
 - `ZeroFreeRegion.log_deriv_zeta_nonneg_combination`
 - `ZeroFreeRegion.residue_bounds`
 - `ZeroFreeRegion.classical_zero_free_region_compact`
+- `ZeroFreeRegion.classical_zero_free_region_proved`
 - `ZeroFreeRegion.log_deriv_zeta_pos_real`
 - `ZeroFreeRegion.log_deriv_zeta_antitone`
 - `ZeroFreeRegion.compact_patch_classical_zero_free_region_at_three`

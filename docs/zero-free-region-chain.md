@@ -1,47 +1,44 @@
 # Zero-Free Region Chain
 
-This note audits the remaining Lean work needed to turn the current
-zero-free-region infrastructure into the target
-`ZeroFreeRegion.classical_zero_free_region : Prop`.
+This note records the completed Lean chain proving
+`ZeroFreeRegion.classical_zero_free_region : Prop` and the remaining stronger
+Vinogradov-Korobov target.
 
-Current Lean status: `ZeroFreeRegion.lean` checks with
-`lake env lean -R . ZeroFreeRegion.lean`.  The quantitative target is still a
-`def ... : Prop`, not a proved theorem.
+Current Lean status: `ZeroFreeRegion.classical_zero_free_region_proved`
+inhabits the classical predicate.  The proof is in
+`ZeroFreeRegion/PhragmenLindelofZeta.lean`.
 
 ## Current Distance Boundary
 
-The repository has formalized the front half of the de la Vallee Poussin
-machinery:
+The repository has formalized the classical de la Vallee Poussin chain:
 
 ```text
 von Mangoldt series for -zeta'/zeta
         -> 3-4-1 inequality
-        -> compact zero-free strip
-        -> conditional high-height closure interfaces
+        -> Phragmen-Lindelof fixed-strip zeta growth
+        -> Jensen/Borel all-divisor regular part O(log |t|)
+        -> candidate-zero principal-part separation
+        -> classical c/log |t| zero-free region
 ```
 
-It has not yet crossed the analytic boundary needed for the classical
-zero-free region.  The next hard input is not a wrapper or documentation item;
-it is a boundary-strip logarithmic-derivative estimate, for example:
+The proved boundary-strip estimate is the real-part form needed by 3-4-1:
 
 ```lean
 ∃ B T0, ∀ z : ℂ,
   1 ≤ z.re → z.re ≤ 2 → T0 ≤ |z.im| →
-  ‖logDeriv riemannZeta z‖ ≤ B * Real.log |z.im|
+  (-deriv riemannZeta z / riemannZeta z).re ≤ B * Real.log |z.im|
 ```
 
-The existing fixed-margin theorem proves this only in half-planes
-`1 + ε ≤ Re(z)`.  That follows from absolute convergence and does not imply the
-uniform boundary-strip estimate above.  A second missing input is the
-zero-candidate regular-part estimate
+This is proved by `exists_ReNegDerivDivVerticalLogBound`.  The matching
+zero-candidate estimate is also proved:
 
 ```text
 Re(-ζ'/ζ(σ + i t)) <= -1 / (σ - β) + O(log |t|)
 ```
 
-when `ρ = β + i t` is a zero.  These are the hard analytic estimates usually
-supplied by zeta growth plus Borel-Caratheodory, Jensen/Hadamard, or equivalent
-zero-repulsion machinery.
+when `ρ = β + i t` is a zero.  The implementation obtains both from
+fixed-strip zeta growth, Borel-Caratheodory, Jensen zero counting, and mixed
+canonical zero removal.
 
 The boundary-strip estimate now has named Lean interfaces:
 `ZeroFreeRegion.LogDerivVerticalLogBound`,
@@ -51,10 +48,10 @@ The boundary-strip estimate now has named Lean interfaces:
 `ZeroFreeRegion.negLogDeriv_riemannZeta_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height`,
 and
 `ZeroFreeRegion.reNegDerivDiv_riemannZeta_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height`
-convert future affine `A + B log(|t|+3)` high-height estimates into these
-interfaces.  They are proved normalization handoffs; they do not prove the
-zeta-specific estimate.
-If the future high-height theorem is already available in the exact
+convert affine `A + B log(|t|+3)` high-height estimates into these interfaces.
+The zeta-specific real-part instance is now supplied by
+`exists_ReNegDerivDivVerticalLogBound`.
+If a high-height theorem is already available in the exact
 `B log |t|` scale, the constructors
 `ZeroFreeRegion.logDerivVerticalLogBound_of_high_height_log_abs_bound`,
 `ZeroFreeRegion.negLogDerivVerticalLogBound_of_high_height_log_abs_bound`, and
@@ -84,10 +81,10 @@ horizontal line.  The proved closures
 `ZeroFreeRegion.classical_zero_free_region_of_LogDerivRegularPartLogBound_and_LogDerivVerticalLogBound`
 and
 `ZeroFreeRegion.classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_and_LogDerivVerticalLogBound`
-show that the remaining classical zero-free-region target reduces to these
-named regular-part estimates plus the named vertical estimate.  This is still
-conditional: those two zeta-specific high-height estimates are not proved in
-this checkout.
+show that the classical zero-free-region target reduces to these named
+regular-part estimates plus the named vertical estimate.  The final proof now
+uses a stronger all-divisor regularization theorem instead of assuming either
+candidate-local interface.
 
 The direct real-part final assemblies
 `ZeroFreeRegion.classical_zero_free_region_of_LogDerivRegularPartLogBound_and_ReNegDerivDivVerticalLogBound`
@@ -239,9 +236,57 @@ standard de la Vallee Poussin contradiction:
 
 The `σ + 2it` term now has a proved half-plane reduction:
 `norm_logDeriv_riemannZeta_le_real_neg_deriv_div` bounds it by the real-axis
-value at the same real part whenever `σ > 1`. The remaining work is therefore
-to turn the real-axis value at `σ = 1 + a / log |t|` into the required
-`O(log |t|)` bound and to prove the local zero-candidate regular-part estimate.
+value at the same real part whenever `σ > 1`. The raw boundary-strip estimate
+is still open. On the regular-part side, the mixed canonical construction now
+proves a local estimate without a nearest-zero-radius loss. For an outer zeta
+divisor disk, an interior canonical radius `r`, and a retained radius `d<r`,
+`norm_regularized_logDeriv_riemannZeta_le_mixedCanonical_bound` controls
+
+```text
+‖logDeriv ζ(z) - sum_u D(u)/(z-u)‖
+```
+
+by a Borel boundary-log-norm term plus `divisorMass/(r-d)`. The mixed unit is
+analytic and nonzero on the closed radius-`r` disk when that circle is
+zeta-zero-free, has exactly the zeta norm on its boundary, and inherits the
+center lower bound `1/3`. Thus the old quantitative loss from requiring a
+positive distance to every zero has been removed, while the qualitative
+zero-free-circle premise remains explicit.
+
+The remaining regular-part task is now narrower: choose radii with fixed
+positive margins at high height, insert the unconditional zeta boundary-growth
+and Jensen divisor-mass bounds, and project the full divisor regularization to
+the zero-candidate principal part consumed by the 3-4-1 contradiction.
+
+The first two operations are now combined abstractly in
+`norm_regularized_logDeriv_riemannZeta_le_of_good_radius_and_jensen`. Given
+fixed margins `d<a<q<b<R`, an outer circle norm bound, and an inner closed-disk
+logarithmic norm bound, it selects a zero-free circle internally and returns a
+regular-part estimate whose denominator is the deterministic `a-d`; the random
+radius no longer appears in the conclusion. In addition,
+`one_third_le_norm_riemannZeta_of_three_halves_le_re` uses the Mobius reciprocal
+series to extend the uniform zeta center margin `1/3` from `Re≥2` to
+`Re≥3/2`, and the mixed-unit Borel theorem now accepts that wider half-plane.
+
+The next geometric barrier is explicit.  The functional equation has now been
+formalized far enough to prove the exact Gamma/trigonometric cancellation on
+`s=1-it`, the coefficient bound `‖C(t)‖²≤|t|`, and the new left-boundary
+estimate `‖ζ(it)‖≤4|t|²` for `|t|≥1`.  The right boundary `Re(s)≥1` already has
+the Abel bound.  The interior growth input is now also proved pointwise:
+endpoint comparison for the modified-theta Mellin integral bounds
+`completedRiemannZeta₀` uniformly on `0≤Re(s)≤1`, Gamma reflection gives an
+exponential bound for `Gammaℝ⁻¹`, and their product gives a quadratic times
+single-exponential bound for the entire carrier `s(s-1)ζ(s)` at
+`|Im(s)|≥1`.  This is stronger than the high-height weak double-exponential
+Phragmen-Lindelof premise.  The remaining interpolation work is formal
+packaging into the theorem's `IsBigO` filter, polynomial normalization of both
+boundaries, a low-height compact patch, and application of the vertical-strip
+theorem.  Until that application is complete, the
+unconditional disk-growth theorem remains usable only in `1≤Re(s)≤3`. A
+half-radius Borel disk that both has a uniformly
+controlled center and reaches points arbitrarily close to `Re=1` therefore
+still lacks an interior wider-strip growth theorem (or a sharper
+non-half-radius local argument), not another factor wrapper.
 
 A fixed-margin version of this logarithmic control is already proved:
 `exists_norm_logDeriv_riemannZeta_le_log_abs_im_add_three_of_one_add_le_re`
@@ -319,8 +364,10 @@ Consequences:
   zero-free-region target by the proved real-variable width comparison.
 
 The remaining work for the classical zero-free region is therefore not the
-algebraic 3-4-1 contradiction or bounded-height patching; it is the
-zeta-specific logarithmic-derivative estimates described below.
+algebraic 3-4-1 contradiction, bounded-height patching, or construction of a
+nearest-zero-uniform local regular unit. It is the high-height specialization
+of that local estimate, the zero-candidate projection, and the remaining raw
+shifted logarithmic-derivative estimate described below.
 
 The standard real-variable choice
 `sigmaOf t = 1 + a / Real.log |t|` now has its elementary side conditions
@@ -1608,12 +1655,23 @@ On fixed-radius disks or fixed-width strips near `Re(s) = 1`, `ζ(s)` has
 polynomial growth in `|Im(s)|`.
 
 Lean status:
-The zeta-specific polynomial growth theorem is still missing.  The bookkeeping
-handoff from such a theorem to the logarithmic scale used by Jensen and
-Borel-Caratheodory is now proved:
+The zeta-specific polynomial growth theorem is now proved by Abel's
+floor-integral formula.  In particular,
+`norm_riemannZeta_le_two_mul_norm_of_one_le_re_of_one_le_abs_im` gives
+`||zeta(s)|| <= 2 ||s||` for `Re(s) >= 1` and `|Im(s)| >= 1`; the boundary
+case follows by continuity from the right.  Its logarithmic, circle-average,
+and Jensen weighted-zero-mass consequences are also unconditional.  The two
+remaining hard inputs are the uniform boundary-strip logarithmic-derivative
+bound and the uniform zero-removed regular-part bound, not growth of zeta
+itself:
 
 ```lean
 ZeroFreeRegion.log_norm_bound_of_polynomial_growth
+ZeroFreeRegion.norm_riemannZeta_le_two_mul_norm_of_one_le_re_of_one_le_abs_im
+ZeroFreeRegion.norm_riemannZeta_le_two_mul_norm_add_three_on_vertical_strip
+ZeroFreeRegion.log_norm_riemannZeta_sigma_it_le_log_two_add_two_log_abs_add_three
+ZeroFreeRegion.circleAverage_log_norm_riemannZeta_two_add_I_mul_le_log_two_add_two_log_abs_add_radius_three
+ZeroFreeRegion.jensen_zero_mass_riemannZeta_two_add_I_mul_le_log_two_add_two_log_abs_add_radius_three
 ZeroFreeRegion.log_norm_riemannZeta_le_affine_log_norm_add_three_of_polynomial_growth
 ZeroFreeRegion.log_norm_riemannZeta_sigma_it_le_affine_log_norm_add_three_of_polynomial_growth
 ZeroFreeRegion.log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_three_of_polynomial_growth
@@ -1640,6 +1698,36 @@ ZeroFreeRegion.classical_zero_free_region_of_exists_MultiplicityLogDerivRegularP
 ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_shift_pair_vertical_log_bound_of_compact_band_sphere_zeta_bound_high_height_zeta_lower_bound
 ```
 
+To prevent the good-radius construction from adding a `log log |t|` loss,
+the canonical-factor route now proves:
+
+```lean
+ZeroFreeRegion.norm_translatedCanonicalFactor_eq_one
+ZeroFreeRegion.norm_translatedCanonicalNumerator_eq_norm_sub
+ZeroFreeRegion.analyticOnNhd_translatedCanonicalNumerator
+ZeroFreeRegion.translatedCanonicalNumerator_ne_zero
+ZeroFreeRegion.logDeriv_translatedCanonicalNumerator
+ZeroFreeRegion.norm_logDeriv_translatedCanonicalNumerator_le_inv_sub
+ZeroFreeRegion.canonicalNumeratorProduct
+ZeroFreeRegion.norm_canonicalNumeratorProduct_eq_norm_prod_sub
+ZeroFreeRegion.canonicalNumeratorProduct_ne_zero
+ZeroFreeRegion.analyticOnNhd_canonicalNumeratorProduct
+ZeroFreeRegion.logDeriv_canonicalNumeratorProduct
+ZeroFreeRegion.norm_logDeriv_canonicalNumeratorProduct_le_sum_div
+ZeroFreeRegion.sum_toNat_eq_finsum_cast_of_nonneg_finiteSupport
+ZeroFreeRegion.divisor_support_riemannZeta_closedBall_subset_ball_of_sphere_ne_zero
+ZeroFreeRegion.norm_logDeriv_canonicalNumeratorProduct_riemannZetaDivisor_le_finsum_div
+```
+
+The product theorem bounds the full reflected-zero correction by total
+multiplicity divided by `R-d`, independently of zero-to-boundary separation.
+The nonnegative zeta divisor is now identified with those natural
+multiplicities, and a boundary-zero-free disk gives the correction bound
+directly in terms of Jensen's divisor `finsum`.  What remains is to partition
+inner and outer zeros and combine the product with the extracted analytic unit.
+Until that composition is complete, the uniform regular-part target remains
+open.
+
 These results convert an input of the form
 `||zeta z|| <= A * (||z|| + 3)^B` into
 `log ||zeta z|| <= log A + B * log (||z|| + 3)`, and on
@@ -1663,9 +1751,10 @@ The first removes the center-value hypothesis by using
 `‖ζ(2+I*t)‖ ≥ 1/3`; a boundary estimate `‖ζ‖ ≤ M` therefore bounds the
 weighted Jensen zero mass by `log M + log 3`.  The second gives a quantitative
 total-multiplicity bound in every smaller concentric disk, with denominator
-`log (R/r)`.  These are real zero-counting results, but they still require a
-zeta-specific high-height boundary-growth estimate and do not yet prove the
-regular-part `O(log |t|)` estimate for `ζ'/ζ`.
+`log (R/r)`.  Abel's bound now discharges their high-height zeta-growth input,
+the finite canonical product is proved, and the nonnegative zeta divisor is
+converted to natural multiplicities.  Composing the inner/outer product with
+the extracted regular unit remains open.
 
 The finite-radius step after Jensen is now also formalized:
 
@@ -1854,11 +1943,14 @@ lemma exists_riemannZeta_poly_bound_vertical :
         ‖riemannZeta z‖ ≤ A * |z.im| ^ B
 ```
 
-Mathlib status:
-No direct zeta vertical-growth theorem found.  Mathlib has the functional
-equation and differentiability/completed-zeta infrastructure, so this should be
-proved from existing zeta continuation and Gamma estimates, but it is not an
-immediate API call.
+Mathlib/project status:
+No direct zeta vertical-growth theorem was found.  The project now proves the
+functional-equation coefficient bound from Mathlib's Gamma reflection,
+recurrence, and conjugation theorems and obtains polynomial growth on
+`Re(s)=0`.  It also derives the needed interior carrier growth directly from
+the modified-theta Mellin representation and Gamma reflection.  Mathlib
+supplies `PhragmenLindelof.vertical_strip`; the remaining gap is now the
+`IsBigO`/normalization/application layer, not the former analytic growth input.
 
 Difficulty:
 High.  This is analytic-number-theory infrastructure rather than Lean algebra.

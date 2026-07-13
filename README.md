@@ -5,9 +5,10 @@ function, Hardy's theorem, zero-free regions, and Prime Number Theorem statement
 It is built on Mathlib and currently serves as a buildable proof framework with
 explicitly isolated unproved target statements.
 
-The publishable core of the current repository is:
+The strongest verified zero-free-region module in the current repository is:
 
-> **de la Vallee Poussin 3-4-1 machinery and a compact zero-free strip in Lean 4**
+> **de la Vallee Poussin 3-4-1 machinery and the classical quantitative
+> zero-free region in Lean 4**
 
 This means the project verifies the local analytic mechanism
 
@@ -15,11 +16,15 @@ This means the project verifies the local analytic mechanism
    Mangoldt function;
 2. the 3-4-1 logarithmic-derivative inequality using
    `3 + 4*cos θ + cos (2*θ) >= 0`;
-3. the compactness argument turning Mathlib's nonvanishing on `Re(s) >= 1` into
-   a positive-width zero-free strip for each fixed height bound.
+3. Phragmen-Lindelof polynomial growth for zeta on the fixed strip used by
+   Jensen disks;
+4. a uniform all-divisor regular-part `O(log |t|)` estimate from
+   Borel-Caratheodory, Cauchy, Jensen, and canonical zero removal;
+5. candidate-zero principal-part separation and the resulting classical
+   zero-free region `Re(s) >= 1 - c / log |Im(s)|`.
 
-The repository does **not** claim the classical quantitative zero-free region
-`σ >= 1 - c / log |t|`, the full PNT, or RH.
+The repository does **not** claim a full PNT proof, a PNT error term, the
+Vinogradov-Korobov zero-free region, or RH.
 
 ## Evaluation Framework
 
@@ -54,23 +59,22 @@ includes:
 
 Therefore the stable claim for this repository is narrower:
 
-> A local Lean 4 formalization of the de la Vallee Poussin 3-4-1 machinery and
-> compact zero-free strip, complementary to existing PNT formalizations by other
-> routes.
+> A Lean 4 formalization of the de la Vallee Poussin 3-4-1/Jensen machinery and
+> the classical `c/log |t|` zero-free region, complementary to existing PNT
+> formalizations by other routes.
 
 Do not describe this repository as a first formalization of PNT, a completed
-classical analytic PNT proof, a proof of RH, or a completed quantitative
-zero-free-region formalization.
+classical analytic PNT proof or a proof of RH.
 
 ## Distance to PNT
 
-The current project is best viewed as the front half of the classical
-de la Vallee Poussin engine, not as a near-complete PNT proof.
+The zero-free-region half of the classical de la Vallee Poussin engine is now
+proved, but the project is not yet a complete PNT proof.
 
 | Goal | Current distance |
 |---|---|
-| Publish a Lean 4 formalization module around `3-4-1 + compact strip` | comparatively close |
-| Prove the classical zero-free region `1 - c / log |t|` | still far; needs core analytic estimates |
+| Publish a Lean 4 formalization module around `3-4-1 + classical zero-free region` | proof core complete; paper review remains |
+| Prove the classical zero-free region `1 - c / log |t|` | completed by `classical_zero_free_region_proved` |
 | Derive a full PNT proof along this route | very far |
 | Derive a PNT with classical error term | farther still |
 
@@ -79,54 +83,52 @@ The verified chain currently looks like:
 ```text
 von Mangoldt series for -zeta'/zeta
         -> 3-4-1 inequality
-        -> compact zero-free strip
-        -> local pole-side log-derivative principal-part package
-        -> conditional closure interfaces
+        -> Phragmen-Lindelof zeta growth
+        -> Jensen/Borel all-divisor regular part O(log |t|)
+        -> candidate-zero repulsion
+        -> classical c/log |t| zero-free region
 ```
 
-To reach classical PNT through this route, at least two major analytic segments
-are still missing:
+To reach classical PNT through this route, the remaining major analytic segment
+is:
 
 ```text
-A. Quantitative zero-free region:
-   zeta(s) != 0 for Re(s) >= 1 - c / log |Im(s)|
-
-B. From the zero-free region to PNT:
+From the zero-free region to PNT:
    explicit formula / Perron or Tauberian input,
    psi(x) ~ x,
    pi(x) ~ x / log x
 ```
 
-The next genuinely hard lemma is not another target inventory update.  It is a
-boundary-strip logarithmic-derivative estimate of the following shape:
+The repository now proves the real-part boundary-strip estimate actually used
+by the 3-4-1 argument:
 
 ```lean
 ∃ B T0, ∀ z : ℂ,
   1 ≤ z.re → z.re ≤ 2 → T0 ≤ |z.im| →
-  ‖logDeriv riemannZeta z‖ ≤ B * Real.log |z.im|
+  (-deriv riemannZeta z / riemannZeta z).re ≤ B * Real.log |z.im|
 ```
 
-The checkout now names this objective-shaped interface as
-`ZeroFreeRegion.LogDerivVerticalLogBound`, with signed
-`ZeroFreeRegion.NegLogDerivVerticalLogBound` and real-part quotient
-`ZeroFreeRegion.ReNegDerivDivVerticalLogBound` variants.  The constructors
+This is packaged by `ZeroFreeRegion.exists_ReNegDerivDivVerticalLogBound` as
+the named `ZeroFreeRegion.ReNegDerivDivVerticalLogBound` interface.  The
+stronger full-norm interfaces `ZeroFreeRegion.LogDerivVerticalLogBound` and
+`ZeroFreeRegion.NegLogDerivVerticalLogBound` remain useful optional targets,
+but they are no longer required for the proved classical region.  The constructors
 `ZeroFreeRegion.logDeriv_riemannZeta_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height`,
 `ZeroFreeRegion.negLogDeriv_riemannZeta_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height`,
 and
 `ZeroFreeRegion.reNegDerivDiv_riemannZeta_vertical_log_bound_of_affine_log_abs_add_three_bound_high_height`
 convert a future affine `A + B log(|t|+3)` high-height input into these exact
-`C log |t|` interfaces.  If a future estimate is already stated in the exact
+`C log |t|` interfaces.  If an estimate is already stated in the exact
 `B log |t|` scale, the constructors
 `ZeroFreeRegion.logDerivVerticalLogBound_of_high_height_log_abs_bound`,
 `ZeroFreeRegion.negLogDerivVerticalLogBound_of_high_height_log_abs_bound`, and
 `ZeroFreeRegion.reNegDerivDivVerticalLogBound_of_high_height_log_abs_bound`
-package it directly as the named interfaces.  These are verified handoffs, not
-the missing zeta-specific high-height estimate itself.  The signed and unsigned
+package it directly as the named interfaces.  The signed and unsigned
 norm-bound interfaces are interchangeable through
 `ZeroFreeRegion.logDerivVerticalLogBound_of_negLogDerivVerticalLogBound` and
 `ZeroFreeRegion.negLogDerivVerticalLogBound_of_logDerivVerticalLogBound`.
 
-The second missing high-height input is also named in Lean:
+The older candidate-local interfaces are also retained in Lean:
 `ZeroFreeRegion.LogDerivRegularPartLogBound` and
 `ZeroFreeRegion.MultiplicityLogDerivRegularPartLogBound` state the expected
 local regular-part estimate near a zero candidate `ρ = β + i t`, with and
@@ -135,7 +137,9 @@ without explicit zero multiplicity.  The verified conditional closures
 and
 `ZeroFreeRegion.classical_zero_free_region_of_MultiplicityLogDerivRegularPartLogBound_and_LogDerivVerticalLogBound`
 show that these named regular-part inputs plus the named vertical bound close
-the existing Lean target `classical_zero_free_region`.  The direct real-part
+`classical_zero_free_region`.  The new proof instead removes all local divisor
+principal parts uniformly and then isolates the favorable candidate term in
+real part.  The direct real-part
 variants
 `ZeroFreeRegion.classical_zero_free_region_of_LogDerivRegularPartLogBound_and_ReNegDerivDivVerticalLogBound`
 and its multiplicity-aware analogue prove the same final conditional closure
@@ -224,14 +228,59 @@ every frequency in the finite set, and the finite-detector API now exposes
 matching `_of_pos_A` entrypoints so detector proofs no longer need a separate
 `hM` function.  The BTY degree-16 specializations and their uniform-bound
 facades have matching `_of_pos_A` entrypoints, so the checked detector route now
-inherits the same positivity discharge.  These handoff lemmas do not prove the
-missing polynomial growth or boundary-strip logarithmic-derivative estimate
-itself.  On the pole side,
+inherits the same positivity discharge.  Abel's floor-integral formula now
+discharges the polynomial-growth premise:
+`norm_riemannZeta_le_two_mul_norm_of_one_le_re_of_one_le_abs_im` proves
+`‖ζ(s)‖ ≤ 2‖s‖` for `Re(s) ≥ 1`, `|Im(s)| ≥ 1`, including the boundary by
+continuity from the right.  Consequently the logarithmic and circle-average
+bounds above, and an `O(log |t|)` Jensen weighted zero-mass bound, now have
+unconditional zeta-specific forms.  These results still do not prove the raw
+uniform boundary-strip norm bound for `ζ'/ζ`; they now feed the uniform
+zero-removed regular-part theorem described below.  The functional-equation side also proves the
+exact Gamma/trigonometric cancellation on `s=1-it`: the full coefficient has
+squared norm at most `|t|`, and hence
+`‖ζ(it)‖ ≤ 4|t|²` for `|t|≥1`.  Thus polynomial growth is verified on the new
+left boundary `Re(s)=0`; extending that boundary control through `0<Re(s)<1`
+now has a stronger-than-required growth input: endpoint comparison for the
+Mellin representation bounds `completedRiemannZeta₀` uniformly on the closed
+strip, while Gamma reflection bounds `Gammaℝ⁻¹` exponentially.  Consequently
+the entire regularized carrier has an explicit quadratic-polynomial times
+single-exponential bound.  `ZeroFreeRegion/PhragmenLindelofZeta.lean` packages
+this estimate in Mathlib's `IsBigO` filter form, normalizes the boundary
+growth, and applies the vertical-strip theorem.  On the pole side,
 the local decomposition
 `logDeriv ζ(s) = -(s-1)^-1 + logDeriv(unit)(s)` is now proved near `s=1`,
 and the unit logarithmic derivative is locally bounded; this improves the
 real-axis bookkeeping but still does not supply the missing high-height
 zeta-specific estimates.
+
+The regular-part route now also has a canonical-factor replacement for the
+old quantitative circle-separation step.  The translated canonical numerator
+is proved entire and nonvanishing on its disk, preserves `‖z-u‖` exactly on
+the boundary circle, and satisfies
+`‖logDeriv numerator(z)‖ ≤ 1/(R-d)` on every concentric radius-`d<R` disk.
+This removes the per-zero boundary-separation loss.  The finite canonical
+numerator product is also proved entire and nonvanishing, preserves the full
+boundary product norm, and has logarithmic derivative bounded by total
+multiplicity divided by `R-d`.  Zeta's nonnegative integer divisor is now
+converted to these natural multiplicities.  The inner canonical and outer raw
+factors are now composed into `mixedCanonicalRegularUnit`: it is analytic and
+nonvanishing on the retained closed disk when the canonicalizing circle is
+zeta-zero-free, has exactly the zeta boundary norm, inherits the center lower
+bound `1/3`, and its logarithmic derivative is controlled by
+Borel-Caratheodory without a quantitative nearest-zero separation loss.  The theorem
+`norm_regularized_logDeriv_riemannZeta_le_mixedCanonical_bound` combines this
+with the finite correction bound to control the complete local regular part by
+the boundary logarithmic norm plus Jensen divisor mass.  This is a genuine
+local regular-part theorem.  `ZeroFreeRegion/PhragmenLindelofZeta.lean` now
+completes that formerly missing high-height specialization: it proves fixed-strip
+polynomial growth for zeta by Phragmen-Lindelof, strengthens the retained
+Borel disk from `R/2` to `3R/4`, and proves
+`exists_regularized_logDeriv_riemannZeta_log_bound`.  The resulting bound is
+uniform in height and controls `logDeriv zeta` after subtracting every local
+divisor principal part by `B * (1 + log (|t| + 5))`.  It is not yet a bound
+for the unregularized norm `||logDeriv zeta||`; the next step is to isolate the
+candidate-zero principal term in real part and feed it into the 3-4-1 closure.
 
 ## Paper Positioning
 
@@ -254,14 +303,13 @@ This keeps the claims tight:
 4. **Framework contribution:** building a Hardy-Z/critical-line-zero framework
    with explicit target statements for Hardy, Hardy-Littlewood, Selberg, and
    Conrey-style zero-counting results.
-5. **Mathlib roadmap:** isolating the missing analytic inputs: zeta growth and
-   logarithmic-derivative estimates for quantitative zero-free regions, Perron
+5. **Mathlib roadmap:** isolating the remaining analytic inputs: Perron
    and residue-theorem machinery for the explicit formula, and special-function
    asymptotics for Hardy's theorem.
 
 The strongest current title direction is:
 
-> **Formalizing the 3-4-1 Inequality and a Compact Zero-Free Strip for the
+> **Formalizing the 3-4-1 Inequality and the Classical Zero-Free Region for the
 > Riemann Zeta Function in Lean 4**
 
 Broader PNT/RH/Hardy titles should be used only if the title clearly says this
@@ -279,12 +327,12 @@ Current code status:
 | `GammaResidue.lean` | 0 | General Gamma residue formula completed |
 | `HardyTheorem.lean` | 0 | Hardy-Z phase facts and codiscrete-to-bounded-window zero bridges proved; corrected integral asymptotic, positivity and zero-counting targets |
 | `PrimeNumberTheorem.lean` | 0 | Bounded-height zero finiteness and zero-symmetry bridges proved; RH error equivalence and von Mangoldt explicit formula targets |
-| `ZeroFreeRegion.lean` | 0 | 3-4-1 and compact zero-free region proved; quantitative zero-free-region targets |
+| `ZeroFreeRegion.lean` | 0 | 3-4-1, compact strip, and classical `c/log|t|` zero-free region proved; Vinogradov-Korobov target open |
 
 Total: 0 syntactic `sorry` occurrences in Lean source files.
 
 Unresolved mathematical target declarations (currently not promoted to
-theorems): **22**.
+theorems): **21**.
 
  - `HardyTheorem` namespace: 7
  - `HardyTheorem.Details` namespace: 3
@@ -295,7 +343,7 @@ theorems): **22**.
 
 Full `def ... : Prop` inventory:
 
-- mathematical targets: 22;
+- mathematical targets: 21;
 - route interfaces: 5
   (`HardyTheorem.AFE.zeta_critical_afe_target`,
   `MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum`,
@@ -430,14 +478,29 @@ Lean declarations in `ZeroFreeRegion.lean` and
 | `ZeroFreeRegion.vonMangoldt_partial_sums_isBigO_linear` / `ZeroFreeRegion.norm_LSeries_vonMangoldt_le_chebyshev_pole` | `lemma` | Uses Chebyshev's bound `ψ(x) ≤ (log 4 + 4)x` plus Mathlib's Abel/L-series integral formula to prove `‖L(Λ, σ)‖ ≤ (log 4 + 4)σ/(σ-1)` for `σ > 1`. | A genuine zeta-specific pole-scale estimate; it supplies the moving-line input available from current Mathlib, while still stopping short of the boundary-strip `O(log |t|)` theorem. |
 | `ZeroFreeRegion.real_neg_deriv_div_riemannZeta_le_chebyshev_pole` / `ZeroFreeRegion.norm_logDeriv_riemannZeta_le_chebyshev_pole` | `lemma` | Transfers the Chebyshev pole-scale estimate to `Re(-ζ'/ζ(σ))` and then to `‖logDeriv ζ(s)‖` for `Re(s)>1`, with bound `(log 4 + 4)Re(s)/(Re(s)-1)`. | Bridges the real Chebyshev estimate to the analytic object used by the 3-4-1 chain. |
 | `ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_le_log_abs_im_add_three_of_moving_line` | `lemma` | For every `a>0`, proves `‖logDeriv ζ(z)‖ ≤ C(a) log(|Im z|+3)` on the moving half-plane `Re(z) ≥ 1 + a/log(|Im z|+3)`. | First proved moving-line logarithmic derivative estimate in this repository; it does not solve `LogDerivVerticalLogBound` because that target includes the boundary line `Re(z)=1`. |
-| `ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_log_abs` / `ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_log_abs` | `lemma` | Specializes the Chebyshev moving-line estimate to the two 3-4-1 shifted points `σ+it` and `σ+2it`, proving a shared `B(a) log |t|` bound when `|t|≥3` and `σ ≥ 1 + a/log |t|`. | Gives the strongest currently proved moving-line shift-pair package in the exact high-height scale; the constant still depends on `a`, so this is not the missing boundary-strip estimate. |
+| `ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_log_abs` / `ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_log_abs` | `lemma` | Specializes the Chebyshev moving-line estimate to the two 3-4-1 shifted points `σ+it` and `σ+2it`, proving a shared `B(a) log |t|` bound when `|t|≥3` and `σ ≥ 1 + a/log |t|`. | Historical absolute-convergence precursor to the now-proved uniform real-part boundary estimate. |
 | `ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_sigma_ge_sigmaOf_log_shift_pair_le_log_abs_uniform_of_le` / real-part form | `lemma` | Uniformizes the shifted-pair package for all `a≥a0>0`, with one constant `B(a0)` controlling both `σ+it` and `σ+2it`. | Removes repeated away-from-boundary bookkeeping and isolates the hard remaining limit as `a0→0`. |
-| `ZeroFreeRegion.exists_logDeriv_regular_part_sigmaOf_log_bound_of_absolute_convergence` / `ZeroFreeRegion.exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_inv_le_of_absolute_convergence` / multiplicity variants | `lemma` | For fixed `a>0`, proves both `‖logDeriv ζ(1+a/log|t|+it) - (1+a/log|t|-β)⁻¹‖ ≤ B(a) log |t|` and the zero-repulsion shaped real-part inequality `Re(-ζ'/ζ)(σ+it)+1/(σ-β)≤B(a)log|t|` at `σ=1+a/log|t|`; fixed-multiplicity versions bound `-logDeriv ζ+n/(s-ρ)` with constants depending on `n`. | Provides real theorems on the regular-part side using only absolute convergence plus the principal-part estimate `1/(σ-β)≤(log|t|)/a`; the `B(a,n)` dependence is exactly why the uniform Borel/Jensen regular-part bound remains open. |
-| `ZeroFreeRegion.exists_logDeriv_regular_part_sigmaOf_log_bound_of_absolute_convergence_uniform_of_le` / real-part and multiplicity forms | `lemma` | For every fixed lower margin `a0>0`, proves one constant `B(a0)` works for all moving-line parameters `a≥a0`; fixed-multiplicity variants allow constants depending on `n`. | Shows the absolute-convergence argument can be uniform away from the boundary limit; the unresolved analytic problem is precisely the missing uniformity as `a→0`. |
+| `ZeroFreeRegion.exists_logDeriv_regular_part_sigmaOf_log_bound_of_absolute_convergence` / `ZeroFreeRegion.exists_re_neg_logDeriv_riemannZeta_sigmaOf_log_add_inv_le_of_absolute_convergence` / multiplicity variants | `lemma` | For fixed `a>0`, proves both `‖logDeriv ζ(1+a/log|t|+it) - (1+a/log|t|-β)⁻¹‖ ≤ B(a) log |t|` and the zero-repulsion shaped real-part inequality `Re(-ζ'/ζ)(σ+it)+1/(σ-β)≤B(a)log|t|` at `σ=1+a/log|t|`; fixed-multiplicity versions bound `-logDeriv ζ+n/(s-ρ)` with constants depending on `n`. | Absolute-convergence precursor; the uniform Borel/Jensen replacement is now proved in `PhragmenLindelofZeta.lean`. |
+| `ZeroFreeRegion.exists_logDeriv_regular_part_sigmaOf_log_bound_of_absolute_convergence_uniform_of_le` / real-part and multiplicity forms | `lemma` | For every fixed lower margin `a0>0`, proves one constant `B(a0)` works for all moving-line parameters `a≥a0`; fixed-multiplicity variants allow constants depending on `n`. | Records the earlier away-from-boundary result; the `a→0` real-part uniformity is now supplied by the all-divisor proof. |
 | `ZeroFreeRegion.analyticOrderNatAt_riemannZeta_pos_of_zero` / `ZeroFreeRegion.exists_punctured_ball_norm_logDeriv_riemannZeta_sub_analyticOrderNatAt_mul_inv_le_of_zero_auto` / signed, closed-ball, real-coordinate, real-part, log-scale real-part, and atRight variants | `lemma` | For any actual zero `ρ ≠ 1`, proves the natural analytic multiplicity `analyticOrderNatAt riemannZeta ρ` is positive and automatically obtains a local punctured-ball bound for `logDeriv ζ - n/(z-ρ)` with `n` chosen as that multiplicity.  The `exists_real_punctured_interval_...` variants specialize this to horizontal-line points `ρ=β+it`, `z=σ+it`, and `exists_real_punctured_interval_re_neg_deriv_div_...` gives the local zero-repulsion inequality `Re(-ζ'/ζ)(σ+it)+1/(σ-β)≤M`.  The `_le_log_abs_of_zero_auto` variants normalize the same local constant as `C log |t|` when `3≤|t|`, and the `exists_eventually_atRight_...` wrappers package both the signed norm regular-part estimate and its real-part consequence on the right-neighborhood of `β`. | Removes a manual `analyticOrderAt ζ ρ = n` hypothesis from the zero-local principal-part API and from the real-coordinate zero-repulsion setup; this is a genuine local regular-part theorem, but it still supplies only a local constant depending on the zero, not the missing uniform boundary-strip `O(log |t|)` coefficient. |
-| `ZeroFreeRegion.norm_riemannZeta_le_re_zeta_two_of_two_le_re` | `lemma` | Proves the right-boundary estimate `‖ζ(s)‖ ≤ Re(ζ(2))` whenever `2 ≤ Re(s)`, directly from absolute convergence of the Dirichlet series. | A genuine zeta-specific boundary estimate for future Phragmén-Lindelöf/Jensen work; it does not solve the hard strip `1 ≤ Re(s) ≤ 2`. |
+| `ZeroFreeRegion.norm_riemannZeta_le_re_zeta_two_of_two_le_re` | `lemma` | Proves the right-boundary estimate `‖ζ(s)‖ ≤ Re(ζ(2))` whenever `2 ≤ Re(s)`, directly from absolute convergence of the Dirichlet series. | Right-boundary input used by the completed Phragmen-Lindelof/Jensen chain. |
 | `ZeroFreeRegion.riemannZeta_two_re_le_five_thirds` / `ZeroFreeRegion.norm_riemannZeta_sub_one_le_two_thirds_of_two_le_re` / `ZeroFreeRegion.one_third_le_norm_riemannZeta_of_two_le_re` | `lemma` | Uses `ζ(2)=π²/6` plus Mathlib's certified `π<3.15` to prove the exponent-2 tail bound `‖ζ(s)-1‖≤2/3` and hence `‖ζ(s)‖≥1/3` on `2≤Re(s)`. | Strengthens the checked right-edge nonvanishing margin from the older `Re≥3` line to the natural boundary `Re=2`; this is still not a lower bound in the critical boundary strip. |
-| `ZeroFreeRegion.norm_riemannZeta_le_const_polynomial_on_two_le_re` | `lemma` | Packages the preceding bound as constant-order polynomial growth on `2 ≤ Re(s)`. | Gives the later polynomial-growth infrastructure a proved right-edge input while keeping the missing high-height strip estimate explicit. |
+| `ZeroFreeRegion.norm_LSeries_moebius_le_three_of_three_halves_le_re` / `ZeroFreeRegion.one_third_le_norm_riemannZeta_of_three_halves_le_re` | `lemma` | Bounds the absolutely convergent Mobius L-series by `3` on `Re(s)≥3/2` and uses `ζ(s)L(μ,s)=1` to prove `‖ζ(s)‖≥1/3` there. | Moves the uniform Borel center margin from `Re=2` to `Re=3/2`; reaching disks that cross `Re=1` still requires zeta growth farther into the critical strip. |
+| `ZeroFreeRegion.norm_riemannZeta_le_const_polynomial_on_two_le_re` | `lemma` | Packages the preceding bound as constant-order polynomial growth on `2 ≤ Re(s)`. | Gives the later polynomial-growth infrastructure a simple constant right-edge input. |
+| `ZeroFreeRegion.norm_riemannZeta_le_two_mul_norm_of_one_le_re_of_one_le_abs_im` / `ZeroFreeRegion.norm_riemannZeta_le_two_mul_norm_add_three_on_vertical_strip` | `lemma` | Uses Abel's floor-integral formula and continuity from `Re(s)>1` to prove `‖ζ(s)‖≤2‖s‖` on `Re(s)≥1`, `|Im(s)|≥1`, and packages it as polynomial growth on `1≤Re(s)≤3`. | Closes the previously missing zeta-growth premise for the Jensen/Borel chain; this controls the numerator, not yet the logarithmic derivative near zeros. |
+| `ZeroFreeRegion.norm_Gamma_mul_cos_functionalEquation_sq_le` / `ZeroFreeRegion.norm_riemannZeta_functionalEquationCoeff_sq_le` / `ZeroFreeRegion.norm_riemannZeta_I_mul_le_four_mul_abs_sq` | `lemma` | Uses Gamma reflection, recurrence, conjugation, and exact hyperbolic norms to cancel the functional-equation exponential factors and prove `‖ζ(it)‖≤4|t|²` for `|t|≥1`. | Supplies an unconditional polynomial-growth estimate on the left boundary `Re(s)=0`; the separately proved carrier-growth theorem supplies the interior PL growth input. |
+| `ZeroFreeRegion.norm_strongFEPair_Λ_le_endpoint_integrals` / `ZeroFreeRegion.exists_norm_completedRiemannZeta₀_le_on_zero_one` | `theorem` | Splits the Mellin integral at `1` and compares real powers with the two endpoint exponents, giving a uniform norm bound for `completedRiemannZeta₀` on `0≤Re(s)≤1`. | Supplies the completed-zeta half of the interior Phragmen-Lindelof growth estimate without assuming a vertical Stirling theorem. |
+| `ZeroFreeRegion.norm_inv_Gammaℝ_le_exp_of_re_mem_Icc_of_one_le_abs_im` / `ZeroFreeRegion.exists_norm_riemannZetaEntireRegularization_le_exp_on_zero_one` | `lemma` + `theorem` | Uses Gamma reflection and the Mellin bound to prove that the entire carrier `s(s-1)ζ(s)` is bounded by a quadratic polynomial in `|Im(s)|` times `exp(π|Im(s)|/2)` on `0≤Re(s)≤1`, `|Im(s)|≥1`. | Supplies the pointwise growth input used by the completed Phragmen-Lindelof argument. |
+| `ZeroFreeRegion.exists_norm_normalizedRiemannZetaCarrier_le_on_zero_one` / `ZeroFreeRegion.exists_norm_riemannZeta_le_polynomial_on_zero_four` | `theorem` | Applies Mathlib's vertical-strip Phragmen-Lindelof theorem to a normalized entire zeta carrier, patches low heights by compactness, and derives uniform fourth-degree polynomial zeta growth on `0≤Re(s)≤4`. | Completes the fixed-strip growth input required by the Jensen disks, rather than assuming it. |
+| `ZeroFreeRegion.norm_logDeriv_le_six_mul_div_of_analyticOnNhd_nonzero_re_log_bound` / three-quarter mixed-canonical and Jensen variants | `lemma` | Strengthens the retained Borel-Caratheodory disk from `R/2` to `3R/4` and propagates this geometry through the mixed canonical zeta factor and Jensen divisor-mass estimate. | Lets a disk centered at `2+it` reach `Re(s)=1` while keeping its outer circle inside the proved fixed growth strip. |
+| `ZeroFreeRegion.exists_regularized_logDeriv_riemannZeta_log_bound` | `theorem` | Proves one constant `B≥0` uniformly bounds `||logDeriv ζ(z)-Σ D(u)/(z-u)||` by `B(1+log(|t|+5))` at every nonzero zeta value in the radius-one disk centered at `2+it`, for `|t|≥4`. | Closes the uniform high-height all-divisor regular-part estimate without claiming analytic extension at the divisor points themselves. |
+| `ZeroFreeRegion.exists_ReNegDerivDivVerticalLogBound` | `theorem` | Proves the exact uniform boundary-strip estimate `Re(-ζ'/ζ(σ+it))≤C log|t|` for `1≤σ≤2` above a fixed height, using the favorable sign of every local zero principal part. | Discharges the real-part vertical input actually required by the 3-4-1 route without asserting the stronger full-norm bound. |
+| `ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_le_neg_inv_add_log_abs_bound` | `theorem` | Separates a same-height candidate zero and proves `Re(-ζ'/ζ(σ+it))≤-1/(σ-β)+C log|t|` uniformly when the candidate lies in the fixed Jensen disk. | Supplies the quantitative zero-repulsion term; candidates farther left are handled by a uniform constant absorption in the final proof. |
+| `ZeroFreeRegion.classical_zero_free_region_proved` | `theorem` | Proves the predicate `classical_zero_free_region`, i.e. existence of `c>0` with zeta nonzero for `|Im(s)|≥2` and `Re(s)≥1-c/log|Im(s)|`. | Completes the classical de la Vallee Poussin zero-free-region chain in Lean; it is not a proof of PNT or the stronger Vinogradov-Korobov region. |
+| `ZeroFreeRegion.log_norm_riemannZeta_sigma_it_le_log_two_add_two_log_abs_add_three` / unconditional circle-average and Jensen zero-mass forms | `lemma` | Derives explicit logarithmic zeta growth and weighted local zero-mass bounds of order `log |t|` with no caller-supplied growth hypothesis. | Supplies the growth and zero-counting inputs consumed by the completed uniform mixed-canonical theorem. |
+| `ZeroFreeRegion.translatedCanonicalNumerator` / `canonicalNumeratorProduct` / `mixedCanonicalRegularUnit` | `def` + `lemma` | Canonicalizes inner divisor factors while retaining outer raw factors, preserves zeta's boundary norm, improves its center norm, proves closed-disk nonvanishing when the canonicalizing circle is zeta-zero-free, and bounds the mixed logarithmic-derivative correction by total divisor mass divided by `r-d`. | Removes both the old quantitative per-zero separation loss and the inner/outer composition gap; a qualitative zero-free-circle premise remains explicit. |
+| `ZeroFreeRegion.norm_regularized_logDeriv_riemannZeta_le_mixedCanonical_bound` | `lemma` | Bounds `‖logDeriv ζ(z) - Σ D(u)/(z-u)‖` by a Borel boundary-growth term plus `divisorMass/(r-d)` on a retained disk. | Local precursor whose fixed-radius high-height specialization is now proved by the three-quarter-radius sibling. |
+| `ZeroFreeRegion.norm_regularized_logDeriv_riemannZeta_le_of_good_radius_and_jensen` | `lemma` | Combines qualitative zero-free-circle selection, mixed canonical factorization, Borel control, and Jensen divisor mass into one bound with deterministic denominator `a-d`; the selected radius does not occur in the conclusion. | Half-radius precursor; the three-quarter-radius variant now supplies the geometry reaching `Re=1`. |
 | `ZeroFreeRegion.norm_deriv_riemannZeta_le_re_zeta_two_div_radius_of_closedBall_two_le_re` / coordinate form | `lemma` | Uses Cauchy's derivative estimate plus the right-boundary ζ bound to prove `‖ζ'(c)‖ ≤ Re(ζ(2))/R` when `closedBall c R` stays in `2 ≤ Re(s)`. | A verified right-edge derivative-growth input; the hard task remains carrying comparable control into the boundary strip near `Re(s)=1`. |
 | `ZeroFreeRegion.norm_logDeriv_riemannZeta_le_three_mul_re_zeta_two_div_radius_of_two_add_radius_le_re` / coordinate form | `lemma` | Combines the Cauchy derivative estimate with the new `‖ζ(s)‖≥1/3` margin to prove `‖logDeriv ζ(s)‖≤3Re(ζ(2))/R` when the radius-`R` disk around `s` stays in `2≤Re(z)`. | Gives a reusable right-edge logarithmic-derivative input for later Borel/Jensen arguments; it is a boundary condition, not the missing uniform `O(log|t|)` estimate on `1≤Re(s)≤2`. |
 | `ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_le_log_abs_im_of_two_add_radius_le_re` / coordinate form | `lemma` | Normalizes the radius-dependent right-edge constant bound into `‖logDeriv ζ(z)‖≤C log|Im z|` on `2+R≤Re(z)` above any fixed height `H≥2`. | Puts the proved right-edge control into the same logarithmic-height scale used by the zero-free-region chain, while keeping the boundary-strip gap explicit. |
@@ -1075,7 +1138,7 @@ prove the missing high-height zeta growth or logarithmic-derivative estimates.
 
 ### Target Statements, Not Proved Theorems
 
-The remaining 22 target declarations are intentionally `def ... : Prop` rather
+The remaining 21 target declarations are intentionally `def ... : Prop` rather
 than theorem declarations. They are tracked as future proof obligations and must
 not be cited as completed proofs:
 

@@ -14,9 +14,9 @@ STATUS_PATH = ROOT / "docs" / "current-target-status.json"
 CHAIN_SUMMARY = [
     {
         "name": "Quantitative zero-free region",
-        "target": "classical_zero_free_region",
-        "status": "not proved in Lean",
-        "next_step": "supply high-height zero-free/derivative estimates and keep compact patching lemmas already formalized",
+        "target": "vinogradov_korobov_zero_free_region",
+        "status": "classical c/log region proved; stronger Vinogradov-Korobov target remains",
+        "next_step": "develop exponential-sum estimates for the stronger Vinogradov-Korobov width",
     },
     {
         "name": "Explicit formula",

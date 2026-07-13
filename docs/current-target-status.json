@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-12",
+  "timestamp": "2026-07-13",
   "status": "not-yet-complete",
   "completed_without_sorry": true,
   "remaining_prop_targets": {
@@ -171,22 +171,12 @@
         "depends_on": []
       }
     ],
-    "ZeroFreeRegion": [
-      {
-        "name": "classical_zero_free_region",
-        "qualified_name": "ZeroFreeRegion.classical_zero_free_region",
-        "file": "ZeroFreeRegion.lean",
-        "line": 2714,
-        "shape": "∃c>0, ∀s, |s.im|≥2 → s.re ≥ 1 - c/log|s.im| → riemannZeta s ≠ 0",
-        "depends_on": []
-      }
-    ],
     "Global": [
       {
         "name": "vinogradov_korobov_zero_free_region",
         "qualified_name": "vinogradov_korobov_zero_free_region",
         "file": "ZeroFreeRegion.lean",
-        "line": 4547,
+        "line": 4548,
         "shape": "∃c>0, ∀s, |s.im|≥3 → s.re ≥ 1 - c/(log|s.im|)^(2/3)* (log(log|s.im|))^(-1/3) → riemannZeta s ≠ 0",
         "depends_on": []
       }
@@ -252,15 +242,21 @@
       "qualified_name": "PrimeNumberTheorem.ExplicitFormulaConversePowerTarget",
       "file": "PrimeNumberTheorem.lean",
       "line": 4392
+    },
+    {
+      "name": "classical_zero_free_region",
+      "qualified_name": "ZeroFreeRegion.classical_zero_free_region",
+      "file": "ZeroFreeRegion.lean",
+      "line": 2715
     }
   ],
   "unclassified_prop_defs": [],
   "chain_summary": [
     {
       "name": "Quantitative zero-free region",
-      "target": "classical_zero_free_region",
-      "status": "not proved in Lean",
-      "next_step": "supply high-height zero-free/derivative estimates and keep compact patching lemmas already formalized"
+      "target": "vinogradov_korobov_zero_free_region",
+      "status": "classical c/log region proved; stronger Vinogradov-Korobov target remains",
+      "next_step": "develop exponential-sum estimates for the stronger Vinogradov-Korobov width"
     },
     {
       "name": "Explicit formula",
@@ -299,7 +295,6 @@
       "conrey_40_percent_zeros_on_critical_line_target"
     ],
     "Quantitative zero-free region": [
-      "classical_zero_free_region",
       "vinogradov_korobov_zero_free_region"
     ],
     "RH error equivalence": [
@@ -313,10 +308,10 @@
       "rh_iff_optimal_error"
     ]
   },
-  "mathematical_target_count": 22,
+  "mathematical_target_count": 21,
   "route_interface_count": 5,
   "route_interface_true_body_count": 0,
-  "reusable_predicate_count": 3,
+  "reusable_predicate_count": 4,
   "unclassified_prop_def_count": 0,
   "all_scanned_prop_defs_count": 30
 }

@@ -25,7 +25,9 @@ import RiemannExplorer
 import ZeroFreeRegion
 
 open Complex BigOperators Filter Nat Topology MeasureTheory Asymptotics
-open scoped ArithmeticFunction LSeries.notation
+open ComplexConjugate
+open scoped ArithmeticFunction ArithmeticFunction.Moebius ArithmeticFunction.zeta
+  LSeries.notation
 open MeromorphicAt MeromorphicOn Metric Real
 
 namespace ZeroFreeRegion
@@ -180,6 +182,67 @@ lemma log_mul_finsum_le_finsum_mul_log_norm_sub_of_finiteSupport
   have hDreal : (0 : ℝ) ≤ (D u : ℝ) := by exact_mod_cast hD u
   simpa [mul_comm] using mul_le_mul_of_nonneg_left hlog hDreal
 
+/-- A nonnegative finite-support integer divisor can be summed through its
+natural multiplicities without changing its real-valued total mass. -/
+lemma sum_toNat_eq_finsum_cast_of_nonneg_finiteSupport
+    {D : ℂ → ℤ} (hfinite : D.support.Finite) (hD : ∀ u, 0 ≤ D u) :
+    (∑ u ∈ hfinite.toFinset, ((D u).toNat : ℝ)) =
+      ∑ᶠ u, (D u : ℝ) := by
+  classical
+  have hsupp : (fun u : ℂ => (D u : ℝ)).support ⊆ hfinite.toFinset := by
+    intro u hu
+    apply hfinite.mem_toFinset.mpr
+    simpa [Function.mem_support] using hu
+  rw [finsum_eq_sum_of_support_subset _ hsupp]
+  apply Finset.sum_congr rfl
+  intro u _hu
+  exact_mod_cast Int.toNat_of_nonneg (hD u)
+
+/-- A nonnegative finite-support integer divisor can be converted to natural
+multiplicities inside any complex-valued weighted finite sum. -/
+lemma sum_toNat_cast_mul_eq_finsum_cast_mul_of_nonneg_finiteSupport
+    {D : ℂ → ℤ} (hfinite : D.support.Finite)
+    (hD : ∀ u, 0 ≤ D u) (F : ℂ → ℂ) :
+    (∑ u ∈ hfinite.toFinset, ((D u).toNat : ℂ) * F u) =
+      ∑ᶠ u, (D u : ℂ) * F u := by
+  classical
+  have hsupp : (fun u : ℂ => (D u : ℂ) * F u).support ⊆
+      hfinite.toFinset := by
+    intro u hu
+    apply hfinite.mem_toFinset.mpr
+    by_contra hDu
+    have hDu0 : D u = 0 := by simpa [Function.mem_support] using hDu
+    simp [hDu0] at hu
+  rw [finsum_eq_sum_of_support_subset _ hsupp]
+  apply Finset.sum_congr rfl
+  intro u _hu
+  congr 1
+  exact_mod_cast Int.toNat_of_nonneg (hD u)
+
+/-- A nonnegative integer divisor product is the ordinary finite product with
+natural multiplicities over its support. -/
+lemma finprod_sub_zpow_eq_prod_toNat_of_nonneg_finiteSupport
+    {D : ℂ → ℤ} (hfinite : D.support.Finite) (hD : ∀ u, 0 ≤ D u)
+    (z : ℂ) :
+    (∏ᶠ u, (z - u) ^ D u) =
+      ∏ u ∈ hfinite.toFinset, (z - u) ^ (D u).toNat := by
+  classical
+  have hmulSupport :
+      Function.mulSupport (fun u : ℂ => (z - u) ^ D u) ⊆
+        hfinite.toFinset := by
+    intro u hu
+    apply hfinite.mem_toFinset.mpr
+    by_contra hDu
+    have hDu0 : D u = 0 := by simpa [Function.mem_support] using hDu
+    simp [hDu0] at hu
+  rw [finprod_eq_prod_of_mulSupport_subset _ hmulSupport]
+  apply Finset.prod_congr rfl
+  intro u _hu
+  have hnat : D u = ((D u).toNat : ℤ) :=
+    (Int.toNat_of_nonneg (hD u)).symm
+  rw [hnat]
+  exact zpow_natCast _ _
+
 /-- The logarithmic derivative of a finite-support divisor product is its
 finite principal-part sum at every point outside the divisor support. -/
 lemma logDeriv_finprod_sub_zpow_eq_finsum_mul_inv
@@ -319,6 +382,670 @@ The model has the correct value at the center, unlike Mathlib's global
 `riemannZeta` value at the pole. -/
 noncomputable def riemannZetaReciprocalModelAtOne (s : ℂ) : ℂ :=
   (s - 1) * (riemannZetaPoleUnitAtOne s)⁻¹
+
+/-! ## Exact trigonometric norms on the functional-equation boundary -/
+
+/-- Exact norm of the sine factor on the imaginary axis. -/
+lemma norm_sin_pi_mul_I_mul (t : ℝ) :
+    ‖Complex.sin ((Real.pi : ℂ) * (Complex.I * t))‖ =
+      |Real.sinh (Real.pi * t)| := by
+  have harg : (Real.pi : ℂ) * (Complex.I * t) =
+      ((Real.pi * t : ℝ) : ℂ) * Complex.I := by push_cast; ring
+  rw [harg, Complex.sin_mul_I]
+  rw [norm_mul, norm_I, mul_one, ← Complex.ofReal_sinh, Complex.norm_real,
+    Real.norm_eq_abs]
+
+/-- Exact norm of the cosine factor occurring in the zeta functional equation
+on the line `s = 1 - I*t`. -/
+lemma norm_cos_pi_mul_one_sub_I_mul_div_two (t : ℝ) :
+    ‖Complex.cos ((Real.pi : ℂ) * (1 - Complex.I * t) / 2)‖ =
+      |Real.sinh (Real.pi * t / 2)| := by
+  have harg : (Real.pi : ℂ) * (1 - Complex.I * t) / 2 =
+      (Real.pi / 2 : ℝ) + ((-(Real.pi * t / 2) : ℝ) : ℂ) * Complex.I := by
+    push_cast
+    ring
+  rw [harg, Complex.cos_add, Complex.cos_mul_I, Complex.sin_mul_I]
+  have hcos : Complex.cos ((Real.pi / 2 : ℝ) : ℂ) = 0 := by
+    rw [← Complex.ofReal_cos, Real.cos_pi_div_two]
+    rfl
+  have hsin : Complex.sin ((Real.pi / 2 : ℝ) : ℂ) = 1 := by
+    rw [← Complex.ofReal_sin, Real.sin_pi_div_two]
+    rfl
+  rw [hcos, hsin, zero_mul, one_mul, zero_sub, norm_neg, norm_mul, norm_I, mul_one]
+  have hcast : ((-(Real.pi * t / 2) : ℝ) : ℂ) =
+      -((Real.pi * t / 2 : ℝ) : ℂ) := by
+    push_cast
+    exact Eq.refl _
+  rw [hcast, Complex.sinh_neg, norm_neg, ← Complex.ofReal_sinh]
+  rw [Complex.norm_real, Real.norm_eq_abs]
+
+/-- Gamma recurrence and conjugation on the line `1 - I*t`. -/
+lemma norm_Gamma_one_sub_I_mul (t : ℝ) (ht : t ≠ 0) :
+    ‖Complex.Gamma (1 - Complex.I * t)‖ =
+      |t| * ‖Complex.Gamma (Complex.I * t)‖ := by
+  have harg : (1 : ℂ) - Complex.I * t = (-Complex.I * t) + 1 := by ring
+  have hne : (-Complex.I * (t : ℂ)) ≠ 0 := by
+    exact mul_ne_zero (neg_ne_zero.mpr Complex.I_ne_zero) (ofReal_ne_zero.mpr ht)
+  rw [harg, Complex.Gamma_add_one _ hne, norm_mul]
+  have hconj : conj (Complex.I * (t : ℂ)) = -Complex.I * t := by simp
+  rw [← hconj, Complex.Gamma_conj]
+  simp [Complex.norm_real, Real.norm_eq_abs]
+
+/-- Norm form of Euler's reflection formula on the imaginary axis. -/
+lemma norm_Gamma_I_mul_mul_norm_Gamma_one_sub_I_mul (t : ℝ) (_ht : t ≠ 0) :
+    ‖Complex.Gamma (Complex.I * t)‖ *
+        ‖Complex.Gamma (1 - Complex.I * t)‖ =
+      Real.pi / |Real.sinh (Real.pi * t)| := by
+  have h := congrArg norm
+    (Complex.Gamma_mul_Gamma_one_sub (Complex.I * (t : ℂ)))
+  rw [norm_mul, norm_div, Complex.norm_real, Real.norm_eq_abs,
+    abs_of_pos Real.pi_pos, norm_sin_pi_mul_I_mul] at h
+  exact h
+
+/-- The complex Gamma norm is bounded by the real Gamma function at the real
+part throughout the Euler-integral half-plane. -/
+lemma norm_Gamma_le_real_Gamma_re {s : ℂ} (hs : 0 < s.re) :
+    ‖Complex.Gamma s‖ ≤ Real.Gamma s.re := by
+  rw [Complex.Gamma_eq_integral hs, Complex.GammaIntegral,
+    Real.Gamma_eq_integral hs]
+  calc
+    ‖∫ x in Set.Ioi (0 : ℝ), (Real.exp (-x) : ℂ) * (x : ℂ) ^ (s - 1)‖ ≤
+        ∫ x in Set.Ioi (0 : ℝ),
+          ‖(Real.exp (-x) : ℂ) * (x : ℂ) ^ (s - 1)‖ :=
+      norm_integral_le_integral_norm _
+    _ = ∫ x in Set.Ioi (0 : ℝ), Real.exp (-x) * x ^ (s.re - 1) := by
+      apply setIntegral_congr_fun measurableSet_Ioi
+      intro x hx
+      dsimp only
+      rw [norm_mul, Complex.norm_of_nonneg (Real.exp_pos _).le,
+        Complex.norm_cpow_eq_rpow_re_of_pos hx]
+      simp
+
+/-- Convexity bounds the real Gamma function by its endpoint value `1` on
+the interval `[1,2]`. -/
+lemma real_Gamma_le_one_of_one_le_of_le_two {x : ℝ} (hx1 : 1 ≤ x) (hx2 : x ≤ 2) :
+    Real.Gamma x ≤ 1 := by
+  have hxseg : x ∈ segment ℝ (1 : ℝ) 2 := by
+    rw [segment_eq_Icc (by norm_num : (1 : ℝ) ≤ 2)]
+    exact ⟨hx1, hx2⟩
+  have h := Real.convexOn_Gamma.le_max_of_mem_segment
+    (by norm_num : (1 : ℝ) ∈ Set.Ioi 0)
+    (by norm_num : (2 : ℝ) ∈ Set.Ioi 0) hxseg
+  simpa using h
+
+/-- A coarse uniform vertical bound for Gamma on `0 ≤ Re(s) ≤ 1`, away from
+the real axis.  Euler's integral controls `Gamma(s+1)` and recurrence divides
+by a factor of norm at least one. -/
+lemma norm_Gamma_le_one_of_re_mem_Icc_of_one_le_abs_im
+    {s : ℂ} (hsre : s.re ∈ Set.Icc (0 : ℝ) 1) (hsim : 1 ≤ |s.im|) :
+    ‖Complex.Gamma s‖ ≤ 1 := by
+  have hsp_re : 0 < (s + 1).re := by simp; linarith [hsre.1]
+  have hgamma_re : Real.Gamma (s + 1).re ≤ 1 := by
+    apply real_Gamma_le_one_of_one_le_of_le_two
+    · simp
+      exact hsre.1
+    · simp
+      linarith [hsre.2]
+  have hshift : ‖Complex.Gamma (s + 1)‖ ≤ 1 :=
+    (norm_Gamma_le_real_Gamma_re hsp_re).trans hgamma_re
+  have hs0 : s ≠ 0 := by
+    intro hs
+    subst s
+    norm_num at hsim
+  have hrec := congrArg norm (Complex.Gamma_add_one s hs0)
+  rw [norm_mul] at hrec
+  have hsnorm : 1 ≤ ‖s‖ := hsim.trans (Complex.abs_im_le_norm s)
+  calc
+    ‖Complex.Gamma s‖ ≤ ‖s‖ * ‖Complex.Gamma s‖ :=
+      le_mul_of_one_le_left (norm_nonneg _) hsnorm
+    _ = ‖Complex.Gamma (s + 1)‖ := hrec.symm
+    _ ≤ 1 := hshift
+
+/-- A coarse exponential norm bound for the complex cosine. -/
+lemma norm_cos_le_exp_abs_im (z : ℂ) :
+    ‖Complex.cos z‖ ≤ Real.exp |z.im| := by
+  rw [Complex.cos_eq]
+  calc
+    ‖Complex.cos z.re * Complex.cosh z.im -
+        Complex.sin z.re * Complex.sinh z.im * Complex.I‖ ≤
+        ‖Complex.cos z.re * Complex.cosh z.im‖ +
+          ‖Complex.sin z.re * Complex.sinh z.im * Complex.I‖ := norm_sub_le _ _
+    _ = |Real.cos z.re| * Real.cosh z.im +
+        |Real.sin z.re| * |Real.sinh z.im| := by
+      simp [← Complex.ofReal_cos, ← Complex.ofReal_sin, ← Complex.ofReal_cosh,
+        ← Complex.ofReal_sinh, Complex.norm_real, Real.norm_eq_abs,
+        abs_of_pos (Real.cosh_pos _)]
+    _ ≤ Real.cosh z.im + |Real.sinh z.im| := by
+      gcongr
+      · simpa using mul_le_mul_of_nonneg_right (Real.abs_cos_le_one z.re)
+          (Real.cosh_pos z.im).le
+      · simpa using mul_le_mul_of_nonneg_right (Real.abs_sin_le_one z.re)
+          (abs_nonneg (Real.sinh z.im))
+    _ = Real.exp |z.im| := by
+      rw [Real.abs_sinh, ← Real.cosh_abs, Real.cosh_add_sinh]
+
+/-- A coarse exponential norm bound for the complex sine. -/
+lemma norm_sin_le_exp_abs_im (z : ℂ) :
+    ‖Complex.sin z‖ ≤ Real.exp |z.im| := by
+  rw [← Complex.cos_pi_div_two_sub]
+  have h := norm_cos_le_exp_abs_im ((Real.pi : ℂ) / 2 - z)
+  simpa using h
+
+/-- Convexity and `Gamma(1/2)=sqrt(pi)` give a coarse bound on `[1/2,1]`. -/
+lemma real_Gamma_le_two_of_half_le_of_le_one
+    {x : ℝ} (hx1 : 1 / 2 ≤ x) (hx2 : x ≤ 1) :
+    Real.Gamma x ≤ 2 := by
+  have hxseg : x ∈ segment ℝ (1 / 2 : ℝ) 1 := by
+    rw [segment_eq_Icc (by norm_num : (1 / 2 : ℝ) ≤ 1)]
+    exact ⟨hx1, hx2⟩
+  have h := Real.convexOn_Gamma.le_max_of_mem_segment
+    (by norm_num : (1 / 2 : ℝ) ∈ Set.Ioi 0)
+    (by norm_num : (1 : ℝ) ∈ Set.Ioi 0) hxseg
+  rw [Real.Gamma_one_half_eq, Real.Gamma_one] at h
+  have hsqrt : Real.sqrt Real.pi < 2 := by
+    rw [← sq_lt_sq₀ (Real.sqrt_nonneg _) (by norm_num : (0 : ℝ) ≤ 2)]
+    rw [Real.sq_sqrt Real.pi_pos.le]
+    nlinarith [Real.pi_lt_four]
+  exact h.trans (max_le hsqrt.le (by norm_num))
+
+/-- Reflection bounds reciprocal Gamma on the half-strip
+`0 ≤ Re(u) ≤ 1/2`, away from the real axis. -/
+lemma norm_inv_Gamma_le_exp_of_re_mem_Icc_of_half_le_abs_im
+    {u : ℂ} (hure : u.re ∈ Set.Icc (0 : ℝ) (1 / 2))
+    (huim : 1 / 2 ≤ |u.im|) :
+    ‖(Complex.Gamma u)⁻¹‖ ≤
+      2 / Real.pi * Real.exp (Real.pi * |u.im|) := by
+  have hGamma0 : Complex.Gamma u ≠ 0 := by
+    apply Complex.Gamma_ne_zero
+    intro n hn
+    have him := congrArg Complex.im hn
+    simp at him
+    rw [him, abs_zero] at huim
+    norm_num at huim
+  have hGamma1 : Complex.Gamma (1 - u) ≠ 0 :=
+    Complex.Gamma_ne_zero_of_re_pos (by simp; linarith [hure.2])
+  have href := Complex.Gamma_mul_Gamma_one_sub u
+  have hsin0 : Complex.sin ((Real.pi : ℂ) * u) ≠ 0 := by
+    intro hsin
+    rw [hsin, div_zero] at href
+    exact (mul_ne_zero hGamma0 hGamma1) href
+  have hinv : (Complex.Gamma u)⁻¹ =
+      Complex.Gamma (1 - u) * Complex.sin ((Real.pi : ℂ) * u) / Real.pi := by
+    apply (mul_left_cancel₀ hGamma0)
+    rw [mul_inv_cancel₀ hGamma0]
+    calc
+      1 = (Complex.Gamma u * Complex.Gamma (1 - u)) *
+          (Complex.sin ((Real.pi : ℂ) * u) / Real.pi) := by
+            rw [href]
+            field_simp [Real.pi_ne_zero, hsin0]
+      _ = Complex.Gamma u *
+          (Complex.Gamma (1 - u) *
+            Complex.sin ((Real.pi : ℂ) * u) / Real.pi) := by ring
+  rw [hinv, norm_div, Complex.norm_real, Real.norm_eq_abs,
+    abs_of_pos Real.pi_pos, norm_mul]
+  have hgre : (1 - u).re ∈ Set.Icc (1 / 2 : ℝ) 1 := by
+    simp
+    constructor <;> linarith [hure.1, hure.2]
+  have hgamma : ‖Complex.Gamma (1 - u)‖ ≤ 2 :=
+    (norm_Gamma_le_real_Gamma_re (by simp; linarith [hure.2])).trans
+      (real_Gamma_le_two_of_half_le_of_le_one hgre.1 hgre.2)
+  have hsin : ‖Complex.sin ((Real.pi : ℂ) * u)‖ ≤
+      Real.exp (Real.pi * |u.im|) := by
+    calc
+      ‖Complex.sin ((Real.pi : ℂ) * u)‖ ≤
+          Real.exp |((Real.pi : ℂ) * u).im| := norm_sin_le_exp_abs_im _
+      _ = Real.exp (Real.pi * |u.im|) := by
+        congr 1
+        simp [abs_mul, abs_of_pos Real.pi_pos]
+  calc
+    ‖Complex.Gamma (1 - u)‖ * ‖Complex.sin ((Real.pi : ℂ) * u)‖ / Real.pi ≤
+        2 * Real.exp (Real.pi * |u.im|) / Real.pi := by
+      gcongr
+    _ = 2 / Real.pi * Real.exp (Real.pi * |u.im|) := by ring
+
+/-- The reciprocal Deligne real Gamma factor has at most exponential growth
+on the closed critical strip. -/
+lemma norm_inv_Gammaℝ_le_exp_of_re_mem_Icc_of_one_le_abs_im
+    {s : ℂ} (hsre : s.re ∈ Set.Icc (0 : ℝ) 1) (hsim : 1 ≤ |s.im|) :
+    ‖(Gammaℝ s)⁻¹‖ ≤ 2 * Real.exp (Real.pi * |s.im| / 2) := by
+  let u := s / 2
+  have hure : u.re ∈ Set.Icc (0 : ℝ) (1 / 2) := by
+    dsimp [u]
+    simp
+    constructor <;> linarith [hsre.1, hsre.2]
+  have huim : 1 / 2 ≤ |u.im| := by
+    dsimp [u]
+    simp [abs_div]
+    linarith
+  have huinv := norm_inv_Gamma_le_exp_of_re_mem_Icc_of_half_le_abs_im hure huim
+  rw [Gammaℝ_def, mul_inv, norm_mul]
+  have hpow_eq : ‖((Real.pi : ℂ) ^ (-s / 2))⁻¹‖ =
+      Real.pi ^ (s.re / 2) := by
+    rw [show -s / 2 = -(s / 2) by ring, Complex.cpow_neg,
+      inv_inv, Complex.norm_cpow_eq_rpow_re_of_pos Real.pi_pos]
+    simp
+  rw [hpow_eq]
+  have hpipow : Real.pi ^ (s.re / 2) ≤ Real.pi :=
+    Real.rpow_le_self_of_one_le (by linarith [Real.pi_gt_three])
+      (by linarith [hsre.2])
+  have hexpeq : Real.exp (Real.pi * |u.im|) =
+      Real.exp (Real.pi * |s.im| / 2) := by
+    congr 1
+    dsimp [u]
+    simp [abs_div]
+    ring
+  rw [hexpeq] at huinv
+  calc
+    Real.pi ^ (s.re / 2) * ‖(Complex.Gamma u)⁻¹‖ ≤
+        Real.pi * (2 / Real.pi * Real.exp (Real.pi * |s.im| / 2)) := by
+      gcongr
+    _ = 2 * Real.exp (Real.pi * |s.im| / 2) := by
+      field_simp [Real.pi_ne_zero]
+
+/-- A uniform exponential bound for the zeta functional-equation coefficient
+throughout `0 ≤ Re(s) ≤ 1`.  This coarse estimate is intended for the weak
+growth premise in Phragmen--Lindelof; the sharper imaginary-axis estimate
+below is used for the boundary value itself. -/
+lemma norm_riemannZeta_functionalEquationCoeff_le_exp
+    {s : ℂ} (hsre : s.re ∈ Set.Icc (0 : ℝ) 1) (hsim : 1 ≤ |s.im|) :
+    ‖2 * (2 * (Real.pi : ℂ)) ^ (-s) * Complex.Gamma s *
+        Complex.cos ((Real.pi : ℂ) * s / 2)‖ ≤
+      2 * Real.exp (Real.pi * |s.im| / 2) := by
+  have hbase : (1 : ℝ) ≤ 2 * Real.pi := by nlinarith [Real.pi_gt_three]
+  have hpow : ‖(2 * (Real.pi : ℂ)) ^ (-s)‖ ≤ 1 := by
+    have hcast : (2 : ℂ) * (Real.pi : ℂ) = ((2 * Real.pi : ℝ) : ℂ) := by
+      push_cast
+      exact Eq.refl _
+    rw [hcast, Complex.norm_cpow_eq_rpow_re_of_pos (by positivity)]
+    exact Real.rpow_le_one_of_one_le_of_nonpos hbase (by simp; exact hsre.1)
+  have hgamma := norm_Gamma_le_one_of_re_mem_Icc_of_one_le_abs_im hsre hsim
+  have hcos : ‖Complex.cos ((Real.pi : ℂ) * s / 2)‖ ≤
+      Real.exp (Real.pi * |s.im| / 2) := by
+    calc
+      ‖Complex.cos ((Real.pi : ℂ) * s / 2)‖ ≤
+          Real.exp |((Real.pi : ℂ) * s / 2).im| := norm_cos_le_exp_abs_im _
+      _ = Real.exp (Real.pi * |s.im| / 2) := by
+        congr 1
+        simp [abs_mul, abs_div, abs_of_pos Real.pi_pos]
+  rw [norm_mul, norm_mul, norm_mul, Complex.norm_ofNat]
+  calc
+    2 * ‖(2 * (Real.pi : ℂ)) ^ (-s)‖ * ‖Complex.Gamma s‖ *
+        ‖Complex.cos ((Real.pi : ℂ) * s / 2)‖ ≤
+        2 * 1 * 1 * ‖Complex.cos ((Real.pi : ℂ) * s / 2)‖ := by
+      gcongr
+    _ ≤ 2 * 1 * 1 * Real.exp (Real.pi * |s.im| / 2) := by
+      gcongr
+    _ = 2 * Real.exp (Real.pi * |s.im| / 2) := by ring
+
+/-! ## Uniform Mellin bounds on a closed vertical strip -/
+
+/-- A strong functional-equation pair's Mellin transform is uniformly bounded
+on `0 ≤ Re(w) ≤ 1/2` by two endpoint norm integrals.  The proof splits the
+Mellin integral at `1` and uses monotonicity of real powers in opposite
+directions on `(0,1]` and `[1,infinity)`. -/
+theorem norm_strongFEPair_Λ_le_endpoint_integrals
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+    (P : StrongFEPair E) (w : ℂ) (hw0 : 0 ≤ w.re) (hw1 : w.re ≤ 1 / 2) :
+    ‖P.Λ w‖ ≤
+      (∫ x : ℝ in Set.Ioc 0 1, ‖(x : ℂ) ^ ((0 : ℂ) - 1) • P.f x‖) +
+        ∫ x : ℝ in Set.Ioi 1, ‖(x : ℂ) ^ ((1 / 2 : ℂ) - 1) • P.f x‖ := by
+  let Fw : ℝ → E := fun x => (x : ℂ) ^ (w - 1) • P.f x
+  let F0 : ℝ → E := fun x => (x : ℂ) ^ ((0 : ℂ) - 1) • P.f x
+  let Fhalf : ℝ → E := fun x => (x : ℂ) ^ ((1 / 2 : ℂ) - 1) • P.f x
+  have hMw := P.hasMellin w
+  have hM0 := P.hasMellin (0 : ℂ)
+  have hMhalf := P.hasMellin (1 / 2 : ℂ)
+  have hFw : IntegrableOn Fw (Set.Ioi (0 : ℝ)) := by
+    simpa [MellinConvergent, Fw] using hMw.1
+  have hF0 : IntegrableOn F0 (Set.Ioi (0 : ℝ)) := by
+    simpa [MellinConvergent, F0] using hM0.1
+  have hFhalf : IntegrableOn Fhalf (Set.Ioi (0 : ℝ)) := by
+    simpa [MellinConvergent, Fhalf] using hMhalf.1
+  have hFw_small : IntegrableOn (fun x => ‖Fw x‖) (Set.Ioc (0 : ℝ) 1) :=
+    (hFw.mono_set Set.Ioc_subset_Ioi_self).norm
+  have hFw_large : IntegrableOn (fun x => ‖Fw x‖) (Set.Ioi (1 : ℝ)) :=
+    (hFw.mono_set (Set.Ioi_subset_Ioi zero_le_one)).norm
+  have hF0_small : IntegrableOn (fun x => ‖F0 x‖) (Set.Ioc (0 : ℝ) 1) :=
+    (hF0.mono_set Set.Ioc_subset_Ioi_self).norm
+  have hFhalf_large : IntegrableOn (fun x => ‖Fhalf x‖) (Set.Ioi (1 : ℝ)) :=
+    (hFhalf.mono_set (Set.Ioi_subset_Ioi zero_le_one)).norm
+  have hsmall : ∀ x ∈ Set.Ioc (0 : ℝ) 1, ‖Fw x‖ ≤ ‖F0 x‖ := by
+    intro x hx
+    have hxpos : 0 < x := hx.1
+    have hpow : x ^ (w.re - 1) ≤ x ^ ((0 : ℝ) - 1) :=
+      Real.rpow_le_rpow_of_exponent_ge hxpos hx.2 (by linarith)
+    simpa [Fw, F0, norm_smul, Complex.norm_cpow_eq_rpow_re_of_pos hxpos] using
+      mul_le_mul_of_nonneg_right hpow (norm_nonneg (P.f x))
+  have hlarge : ∀ x ∈ Set.Ioi (1 : ℝ), ‖Fw x‖ ≤ ‖Fhalf x‖ := by
+    intro x hx
+    have hxpos : 0 < x := zero_lt_one.trans hx
+    have hpow : x ^ (w.re - 1) ≤ x ^ ((1 / 2 : ℝ) - 1) :=
+      Real.rpow_le_rpow_of_exponent_le hx.le (by linarith)
+    simpa [Fw, Fhalf, norm_smul, Complex.norm_cpow_eq_rpow_re_of_pos hxpos] using
+      mul_le_mul_of_nonneg_right hpow (norm_nonneg (P.f x))
+  rw [← hMw.2]
+  change ‖∫ x : ℝ in Set.Ioi 0, Fw x‖ ≤ _
+  calc
+    ‖∫ x : ℝ in Set.Ioi 0, Fw x‖
+        ≤ ∫ x : ℝ in Set.Ioi 0, ‖Fw x‖ := norm_integral_le_integral_norm Fw
+    _ = (∫ x : ℝ in Set.Ioc 0 1, ‖Fw x‖) +
+        ∫ x : ℝ in Set.Ioi 1, ‖Fw x‖ := by
+      rw [← setIntegral_union Set.Ioc_disjoint_Ioi_same measurableSet_Ioi
+        hFw_small hFw_large, Set.Ioc_union_Ioi_eq_Ioi zero_le_one]
+    _ ≤ (∫ x : ℝ in Set.Ioc 0 1, ‖F0 x‖) +
+        ∫ x : ℝ in Set.Ioi 1, ‖Fhalf x‖ :=
+      add_le_add
+        (setIntegral_mono_on hFw_small hF0_small measurableSet_Ioc hsmall)
+        (setIntegral_mono_on hFw_large hFhalf_large measurableSet_Ioi hlarge)
+    _ = _ := by rfl
+
+/-- The entire completed zeta numerator is uniformly bounded on the closed
+critical strip.  This is the Mellin half-strip bound specialized at
+`w=s/2`. -/
+theorem exists_norm_completedRiemannZeta₀_le_on_zero_one :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ s : ℂ, 0 ≤ s.re → s.re ≤ 1 →
+      ‖completedRiemannZeta₀ s‖ ≤ C := by
+  let P := (HurwitzZeta.hurwitzEvenFEPair 0).toStrongFEPair
+  let C0 :=
+    (∫ x : ℝ in Set.Ioc 0 1, ‖(x : ℂ) ^ ((0 : ℂ) - 1) • P.f x‖) +
+      ∫ x : ℝ in Set.Ioi 1, ‖(x : ℂ) ^ ((1 / 2 : ℂ) - 1) • P.f x‖
+  refine ⟨max (C0 / 2) 0, le_max_right _ _, ?_⟩
+  intro s hs0 hs1
+  have h := norm_strongFEPair_Λ_le_endpoint_integrals P (s / 2)
+    (by simp; linarith) (by simp; linarith)
+  have hcompleted : ‖completedRiemannZeta₀ s‖ ≤ C0 / 2 := by
+    simpa [completedRiemannZeta₀, HurwitzZeta.completedHurwitzZetaEven₀,
+      WeakFEPair.Λ₀, StrongFEPair.Λ, P, C0, norm_div] using
+        (div_le_div_of_nonneg_right h (by norm_num : (0 : ℝ) ≤ 2))
+  exact hcompleted.trans (le_max_left _ _)
+
+/-- The square of `sinh x` is bounded by half of `sinh (2x)` for nonnegative
+`x`.  This is the elementary cancellation estimate needed below. -/
+lemma sinh_sq_le_sinh_two_mul_div_two {x : ℝ} (hx : 0 ≤ x) :
+    Real.sinh x ^ 2 ≤ Real.sinh (2 * x) / 2 := by
+  rw [Real.sinh_two_mul]
+  have hs : 0 ≤ Real.sinh x := Real.sinh_nonneg_iff.mpr hx
+  have hsc : Real.sinh x ≤ Real.cosh x := by
+    have hexp := Real.exp_pos (-x)
+    rw [← Real.cosh_sub_sinh] at hexp
+    linarith
+  nlinarith
+
+/-- The half-height hyperbolic factor is controlled by the full-height one. -/
+lemma abs_sinh_pi_mul_div_two_sq_le (t : ℝ) :
+    |Real.sinh (Real.pi * t / 2)| ^ 2 ≤
+      |Real.sinh (Real.pi * t)| / 2 := by
+  let x := Real.pi * |t| / 2
+  have hx : 0 ≤ x := by positivity
+  calc
+    |Real.sinh (Real.pi * t / 2)| ^ 2 = Real.sinh x ^ 2 := by
+      rw [Real.abs_sinh]
+      congr 2
+      dsimp [x]
+      rw [abs_div, abs_mul, abs_of_pos Real.pi_pos,
+        abs_of_pos (by norm_num : (0 : ℝ) < 2)]
+    _ ≤ Real.sinh (2 * x) / 2 := sinh_sq_le_sinh_two_mul_div_two hx
+    _ = |Real.sinh (Real.pi * t)| / 2 := by
+      rw [Real.abs_sinh]
+      congr 2
+      dsimp [x]
+      rw [abs_mul, abs_of_pos Real.pi_pos]
+      ring
+
+/-- Exact Gamma reflection cancels the exponential growth of the trigonometric
+factor in the zeta functional equation.  The square of the remaining norm is
+only linear in the height. -/
+lemma norm_Gamma_mul_cos_functionalEquation_sq_le (t : ℝ) :
+    ‖Complex.Gamma (1 - Complex.I * t) *
+        Complex.cos ((Real.pi : ℂ) * (1 - Complex.I * t) / 2)‖ ^ 2 ≤
+      Real.pi * |t| / 2 := by
+  rw [norm_mul, norm_cos_pi_mul_one_sub_I_mul_div_two]
+  by_cases ht : t = 0
+  · subst t
+    simp
+  · have hS2pos : 0 < |Real.sinh (Real.pi * t)| := by
+      rw [abs_pos, Real.sinh_ne_zero]
+      exact mul_ne_zero Real.pi_ne_zero ht
+    have hgamma_sq : ‖Complex.Gamma (1 - Complex.I * t)‖ ^ 2 =
+        Real.pi * |t| / |Real.sinh (Real.pi * t)| := by
+      calc
+        ‖Complex.Gamma (1 - Complex.I * t)‖ ^ 2 =
+            |t| * (‖Complex.Gamma (Complex.I * t)‖ *
+              ‖Complex.Gamma (1 - Complex.I * t)‖) := by
+                rw [norm_Gamma_one_sub_I_mul t ht]
+                ring
+        _ = |t| * (Real.pi / |Real.sinh (Real.pi * t)|) := by
+              rw [norm_Gamma_I_mul_mul_norm_Gamma_one_sub_I_mul t ht]
+        _ = Real.pi * |t| / |Real.sinh (Real.pi * t)| := by ring
+    calc
+      (‖Complex.Gamma (1 - Complex.I * t)‖ *
+          |Real.sinh (Real.pi * t / 2)|) ^ 2 =
+          ‖Complex.Gamma (1 - Complex.I * t)‖ ^ 2 *
+            |Real.sinh (Real.pi * t / 2)| ^ 2 := by ring
+      _ ≤ ‖Complex.Gamma (1 - Complex.I * t)‖ ^ 2 *
+          (|Real.sinh (Real.pi * t)| / 2) :=
+        mul_le_mul_of_nonneg_left (abs_sinh_pi_mul_div_two_sq_le t) (sq_nonneg _)
+      _ = Real.pi * |t| / 2 := by
+        rw [hgamma_sq]
+        field_simp [hS2pos.ne']
+
+/-- The positive real base in the functional equation contributes exactly the
+constant reciprocal norm on `s = 1 - I*t`. -/
+lemma norm_two_pi_cpow_neg_one_sub_I_mul (t : ℝ) :
+    ‖(2 * (Real.pi : ℂ)) ^ (-(1 - Complex.I * t))‖ =
+      (2 * Real.pi)⁻¹ := by
+  have hbase : (2 : ℂ) * (Real.pi : ℂ) = ((2 * Real.pi : ℝ) : ℂ) := by
+    push_cast
+    exact Eq.refl _
+  rw [hbase]
+  rw [Complex.norm_cpow_eq_rpow_re_of_pos (by positivity)]
+  simp [Real.rpow_neg_one]
+
+/-- The complete functional-equation coefficient on `s = 1 - I*t` has
+square norm at most `|t|`.  This is a polynomial bound obtained without a
+general vertical Stirling theorem. -/
+lemma norm_riemannZeta_functionalEquationCoeff_sq_le (t : ℝ) :
+    ‖2 * (2 * (Real.pi : ℂ)) ^ (-(1 - Complex.I * t)) *
+        Complex.Gamma (1 - Complex.I * t) *
+        Complex.cos ((Real.pi : ℂ) * (1 - Complex.I * t) / 2)‖ ^ 2 ≤
+      |t| := by
+  have hpow := norm_two_pi_cpow_neg_one_sub_I_mul t
+  have hgamma := norm_Gamma_mul_cos_functionalEquation_sq_le t
+  have hrewrite :
+      (2 : ℂ) * (2 * (Real.pi : ℂ)) ^ (-(1 - Complex.I * t)) *
+          Complex.Gamma (1 - Complex.I * t) *
+          Complex.cos ((Real.pi : ℂ) * (1 - Complex.I * t) / 2) =
+        (2 * (2 * (Real.pi : ℂ)) ^ (-(1 - Complex.I * t))) *
+          (Complex.Gamma (1 - Complex.I * t) *
+            Complex.cos ((Real.pi : ℂ) * (1 - Complex.I * t) / 2)) := by ring
+  rw [hrewrite, norm_mul, norm_mul, Complex.norm_ofNat, hpow]
+  have hpi : 1 ≤ 2 * Real.pi := by nlinarith [Real.pi_gt_three]
+  calc
+    (2 * (2 * Real.pi)⁻¹ *
+        ‖Complex.Gamma (1 - Complex.I * t) *
+          Complex.cos ((Real.pi : ℂ) * (1 - Complex.I * t) / 2)‖) ^ 2 =
+        Real.pi⁻¹ ^ 2 *
+          ‖Complex.Gamma (1 - Complex.I * t) *
+            Complex.cos ((Real.pi : ℂ) * (1 - Complex.I * t) / 2)‖ ^ 2 := by
+              field_simp [Real.pi_ne_zero]
+    _ ≤ Real.pi⁻¹ ^ 2 * (Real.pi * |t| / 2) :=
+      mul_le_mul_of_nonneg_left hgamma (sq_nonneg _)
+    _ = |t| / (2 * Real.pi) := by
+      field_simp [Real.pi_ne_zero]
+    _ ≤ |t| := div_le_self (abs_nonneg t) hpi
+
+/-- Entire regularization of zeta used for vertical-strip
+Phragmen--Lindelof arguments.  The polynomial cancels both poles of the
+completed zeta expression, while `Gammaℝ⁻¹` is entire. -/
+noncomputable def riemannZetaEntireRegularization (s : ℂ) : ℂ :=
+  (s * (s - 1) * completedRiemannZeta₀ s + 1) * (Gammaℝ s)⁻¹
+
+/-- The regularized zeta carrier is entire. -/
+lemma differentiable_riemannZetaEntireRegularization :
+    Differentiable ℂ riemannZetaEntireRegularization := by
+  unfold riemannZetaEntireRegularization
+  exact (((differentiable_id.mul (differentiable_id.sub_const 1)).mul
+    differentiable_completedZeta₀).add_const 1).mul differentiable_Gammaℝ_inv
+
+/-- Away from the removable points `0` and `1`, the entire regularization is
+exactly `s(s-1)ζ(s)`. -/
+lemma riemannZetaEntireRegularization_eq_mul_riemannZeta
+    {s : ℂ} (hs0 : s ≠ 0) (hs1 : s ≠ 1) :
+    riemannZetaEntireRegularization s = s * (s - 1) * riemannZeta s := by
+  unfold riemannZetaEntireRegularization
+  rw [riemannZeta_def_of_ne_zero hs0, completedRiemannZeta_eq,
+    div_eq_mul_inv]
+  have hs_sub : s - 1 ≠ 0 := sub_ne_zero.mpr hs1
+  have h_one_sub : 1 - s ≠ 0 := sub_ne_zero.mpr hs1.symm
+  field_simp [hs0, hs_sub, h_one_sub]
+  ring
+
+/-- Explicit exponential-times-polynomial growth of the entire zeta carrier
+on the closed critical strip.  In particular, this is much smaller than the
+double-exponential growth allowance used by Phragmen--Lindelof. -/
+theorem exists_norm_riemannZetaEntireRegularization_le_exp_on_zero_one :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ s : ℂ,
+      s.re ∈ Set.Icc (0 : ℝ) 1 → 1 ≤ |s.im| →
+      ‖riemannZetaEntireRegularization s‖ ≤
+        2 * (C * (|s.im| + 1) ^ 2 + 1) *
+          Real.exp (Real.pi * |s.im| / 2) := by
+  rcases exists_norm_completedRiemannZeta₀_le_on_zero_one with
+    ⟨C, hC, hcompleted⟩
+  refine ⟨C, hC, ?_⟩
+  intro s hsre hsim
+  have hs_norm : ‖s‖ ≤ |s.im| + 1 := by
+    calc
+      ‖s‖ ≤ |s.re| + |s.im| := Complex.norm_le_abs_re_add_abs_im s
+      _ ≤ 1 + |s.im| := by
+        rw [abs_of_nonneg hsre.1]
+        linarith [hsre.2]
+      _ = |s.im| + 1 := by ring
+  have hs_sub_norm : ‖s - 1‖ ≤ |s.im| + 1 := by
+    calc
+      ‖s - 1‖ ≤ |(s - 1).re| + |(s - 1).im| :=
+        Complex.norm_le_abs_re_add_abs_im (s - 1)
+      _ ≤ 1 + |s.im| := by
+        simp only [sub_re, one_re, sub_im, one_im, sub_zero]
+        rw [abs_of_nonpos (by linarith [hsre.2])]
+        linarith [hsre.1]
+      _ = |s.im| + 1 := by ring
+  have hcomp := hcompleted s hsre.1 hsre.2
+  have hinside : ‖s * (s - 1) * completedRiemannZeta₀ s + 1‖ ≤
+      C * (|s.im| + 1) ^ 2 + 1 := by
+    calc
+      ‖s * (s - 1) * completedRiemannZeta₀ s + 1‖ ≤
+          ‖s * (s - 1) * completedRiemannZeta₀ s‖ + ‖(1 : ℂ)‖ := norm_add_le _ _
+      _ = ‖s‖ * ‖s - 1‖ * ‖completedRiemannZeta₀ s‖ + 1 := by
+        rw [norm_mul, norm_mul, norm_one]
+      _ ≤ (|s.im| + 1) * (|s.im| + 1) * C + 1 := by
+        gcongr
+      _ = C * (|s.im| + 1) ^ 2 + 1 := by ring
+  have hgamma :=
+    norm_inv_Gammaℝ_le_exp_of_re_mem_Icc_of_one_le_abs_im hsre hsim
+  rw [riemannZetaEntireRegularization, norm_mul]
+  calc
+    ‖s * (s - 1) * completedRiemannZeta₀ s + 1‖ * ‖(Gammaℝ s)⁻¹‖ ≤
+        (C * (|s.im| + 1) ^ 2 + 1) *
+          (2 * Real.exp (Real.pi * |s.im| / 2)) := by
+      gcongr
+    _ = 2 * (C * (|s.im| + 1) ^ 2 + 1) *
+        Real.exp (Real.pi * |s.im| / 2) := by ring
+
+/-- The entire zeta carrier satisfies the weak double-exponential growth
+hypothesis required by Phragmen--Lindelof on `0 < Re z < 1`. -/
+theorem riemannZetaEntireRegularization_isBigO_exp_exp_on_zero_one :
+    ∃ c < Real.pi, ∃ B : ℝ,
+      riemannZetaEntireRegularization
+        =O[comap (_root_.abs ∘ Complex.im) atTop ⊓
+            𝓟 (Complex.re ⁻¹' Set.Ioo (0 : ℝ) 1)]
+          fun z : ℂ => Real.exp (B * Real.exp (c * |z.im|)) := by
+  rcases exists_norm_riemannZetaEntireRegularization_le_exp_on_zero_one with
+    ⟨C, hC, hcarrier⟩
+  let p : ℝ → ℝ := fun t => 2 * (C * (t + 1) ^ 2 + 1)
+  have hp_nonneg : ∀ t, 0 ≤ p t := by
+    intro t
+    dsimp [p]
+    positivity
+  have hp : p =O[atTop] fun t : ℝ => t ^ (2 : ℝ) := by
+    rw [Asymptotics.isBigO_iff]
+    refine ⟨8 * C + 2, ?_⟩
+    filter_upwards [eventually_ge_atTop (1 : ℝ)] with t ht
+    have ht0 : 0 ≤ t := zero_le_one.trans ht
+    have hsq : (t + 1) ^ 2 ≤ 4 * t ^ 2 := by nlinarith
+    have hone : 1 ≤ t ^ 2 := by nlinarith
+    have hC_sq : C * (t + 1) ^ 2 ≤ C * (4 * t ^ 2) :=
+      mul_le_mul_of_nonneg_left hsq hC
+    rw [Real.norm_of_nonneg (hp_nonneg t),
+      Real.norm_of_nonneg (Real.rpow_nonneg ht0 2), Real.rpow_two]
+    dsimp [p]
+    nlinarith
+  have hexp :
+      (fun t : ℝ => Real.exp (Real.pi * t / 2)) =O[atTop]
+        fun t : ℝ => Real.exp (2 * t) := by
+    apply Asymptotics.IsBigO.of_norm_eventuallyLE
+    filter_upwards [eventually_ge_atTop (0 : ℝ)] with t ht
+    simp only [Real.norm_eq_abs, Real.abs_exp]
+    apply Real.exp_le_exp.mpr
+    nlinarith [Real.pi_div_two_le_two]
+  have hsingle :
+      (fun t : ℝ => p t * Real.exp (Real.pi * t / 2)) =O[atTop]
+        fun t : ℝ => Real.exp (3 * t) := by
+    have hprod := hp.mul hexp
+    have hpolyexp :
+        (fun t : ℝ => t ^ (2 : ℝ) * Real.exp (2 * t)) =O[atTop]
+          fun t : ℝ => Real.exp (3 * t) := by
+      simpa [mul_comm] using
+        (isLittleO_exp_mul_rpow_of_lt (2 : ℝ) (a := 2) (b := 3)
+          (by norm_num)).isBigO
+    exact hprod.trans hpolyexp
+  have hratio0 :
+      Tendsto (fun x : ℝ => Real.exp x / x) atTop atTop := by
+    simpa [Real.rpow_one] using tendsto_exp_div_rpow_atTop (1 : ℝ)
+  have hratio :
+      Tendsto (fun t : ℝ => Real.exp (2 * t) / (2 * t)) atTop atTop :=
+    hratio0.comp (tendsto_id.const_mul_atTop (by norm_num : (0 : ℝ) < 2))
+  have hdiff :
+      Tendsto (fun t : ℝ => Real.exp (2 * t) - 3 * t) atTop atTop := by
+    apply tendsto_atTop_mono' atTop _ tendsto_id
+    filter_upwards [hratio.eventually (eventually_ge_atTop (4 : ℝ)),
+      eventually_gt_atTop (0 : ℝ)] with t hratio_t ht
+    have hden : 0 < 2 * t := mul_pos (by norm_num) ht
+    have hlarge : 8 * t ≤ Real.exp (2 * t) := by
+      have := (le_div_iff₀ hden).mp hratio_t
+      nlinarith
+    change t ≤ Real.exp (2 * t) - 3 * t
+    linarith
+  have hsingle_double :
+      (fun t : ℝ => Real.exp (3 * t)) =O[atTop]
+        fun t : ℝ => Real.exp (Real.exp (2 * t)) := by
+    exact (Real.isLittleO_exp_comp_exp_comp.mpr hdiff).isBigO
+  have hreal :
+      (fun t : ℝ => p t * Real.exp (Real.pi * t / 2)) =O[atTop]
+        fun t : ℝ => Real.exp (Real.exp (2 * t)) :=
+    hsingle.trans hsingle_double
+  rcases Asymptotics.isBigO_iff.mp hreal with ⟨K, hK⟩
+  refine ⟨2, by linarith [Real.pi_gt_three], 1, ?_⟩
+  rw [Asymptotics.isBigO_iff]
+  refine ⟨K, ?_⟩
+  rw [eventually_inf_principal, eventually_comap]
+  filter_upwards [eventually_ge_atTop (1 : ℝ), hK] with t ht hKt
+  intro z hzt hzstrip
+  have hzt' : |z.im| = t := by simpa [Function.comp_apply] using hzt
+  have hzim : 1 ≤ |z.im| := by rw [hzt']; exact ht
+  have hzclosed : z.re ∈ Set.Icc (0 : ℝ) 1 := ⟨hzstrip.1.le, hzstrip.2.le⟩
+  have hQ := hcarrier z hzclosed hzim
+  have hKt' :
+      p t * Real.exp (Real.pi * t / 2) ≤
+        K * Real.exp (Real.exp (2 * t)) := by
+    simpa [Real.norm_eq_abs, abs_of_nonneg (hp_nonneg t), Real.abs_exp] using hKt
+  calc
+    ‖riemannZetaEntireRegularization z‖
+        ≤ p |z.im| * Real.exp (Real.pi * |z.im| / 2) := by simpa [p] using hQ
+    _ = p t * Real.exp (Real.pi * t / 2) := by rw [hzt']
+    _ ≤ K * Real.exp (Real.exp (2 * t)) := hKt'
+    _ = K * ‖Real.exp ((1 : ℝ) * Real.exp ((2 : ℝ) * |z.im|))‖ := by
+      rw [hzt']
+      simp
 
 /-- The regular part in the local decomposition of ζ at `1` is analytic. -/
 lemma analyticAt_riemannZetaRegularAtOne :
@@ -7230,8 +7957,413 @@ scale used by Jensen and Borel-Carathéodory estimates.
 This is only real-variable bookkeeping: if `‖f z‖ <= A * (‖z‖+3)^B` with
 `A >= 1` and `B >= 0`, then the logarithm of the norm is bounded by the
 corresponding affine logarithmic expression.  It is intended as the first
-handoff from a future zeta-specific polynomial-growth theorem into the
-existing zero-free-region infrastructure. -/
+handoff from a polynomial-growth theorem into the existing zero-free-region
+infrastructure. -/
+private noncomputable def riemannZetaFloorError (s : ℂ) (t : ℝ) : ℂ :=
+  (((⌊t⌋₊ : ℝ) - t : ℝ) : ℂ) * (t : ℂ) ^ (-(s + 1))
+
+/-- Abel summation expresses zeta in the half-plane of absolute convergence as
+an integral against the natural-number floor function. -/
+lemma riemannZeta_eq_mul_natFloor_integral_of_one_lt_re {s : ℂ}
+    (hs : 1 < s.re) :
+    riemannZeta s = s * ∫ t in Set.Ioi (1 : ℝ),
+      (⌊t⌋₊ : ℂ) * (t : ℂ) ^ (-(s + 1)) := by
+  have hO :
+      (fun n : ℕ => ∑ k ∈ Finset.Icc 1 n, (1 : ℝ))
+        =O[atTop] (fun n : ℕ => (n : ℝ) ^ (1 : ℝ)) := by
+    simpa [Real.rpow_one] using
+      (isBigO_refl (fun n : ℕ => (n : ℝ)) atTop)
+  have h := LSeries_eq_mul_integral_of_nonneg
+    (fun _ : ℕ => (1 : ℝ)) zero_le_one hs hO (fun _ => zero_le_one)
+  have hz : L (fun _ : ℕ => ((1 : ℝ) : ℂ)) s = riemannZeta s := by
+    simpa using LSeries_one_eq_riemannZeta hs
+  rw [hz] at h
+  simpa using h
+
+/-- The floor-error term in Abel's integral formula is integrable as soon as
+the real part of the exponent is positive. -/
+private lemma integrableOn_riemannZetaFloorError {s : ℂ} (hs : 0 < s.re) :
+    IntegrableOn (riemannZetaFloorError s) (Set.Ioi (1 : ℝ)) := by
+  let G : ℝ → ℂ := fun t => (t : ℂ) ^ (-(s + 1))
+  have hG : IntegrableOn G (Set.Ioi (1 : ℝ)) := by
+    exact integrableOn_Ioi_cpow_of_lt (by simp; linarith) zero_lt_one
+  have hF_meas : AEStronglyMeasurable (riemannZetaFloorError s)
+      (volume.restrict (Set.Ioi (1 : ℝ))) := by
+    apply AEStronglyMeasurable.mul
+    · have hfloor : Measurable fun t : ℝ => (⌊t⌋₊ : ℝ) := by fun_prop
+      exact (Complex.measurable_ofReal.comp
+        (hfloor.sub measurable_id)).aestronglyMeasurable
+    · exact hG.aestronglyMeasurable
+  change Integrable G (volume.restrict (Set.Ioi (1 : ℝ))) at hG
+  change Integrable (riemannZetaFloorError s)
+    (volume.restrict (Set.Ioi (1 : ℝ)))
+  apply hG.mono hF_meas
+  filter_upwards [ae_restrict_mem measurableSet_Ioi] with t ht
+  have ht0 : (0 : ℝ) ≤ t := le_trans zero_le_one ht.le
+  have hfloor := Nat.abs_floor_sub_le ht0
+  dsimp [riemannZetaFloorError, G]
+  rw [norm_mul, norm_real, Real.norm_eq_abs]
+  exact mul_le_of_le_one_left (norm_nonneg _) hfloor
+
+/-- The Abel floor-error integral has the elementary bound `1 / Re(s)`. -/
+private lemma norm_integral_riemannZetaFloorError_le {s : ℂ} (hs : 0 < s.re) :
+    ‖∫ t in Set.Ioi (1 : ℝ), riemannZetaFloorError s t‖ ≤ 1 / s.re := by
+  let G : ℝ → ℝ := fun t => t ^ (-(s.re + 1))
+  have hF : IntegrableOn (riemannZetaFloorError s) (Set.Ioi (1 : ℝ)) :=
+    integrableOn_riemannZetaFloorError hs
+  have hG : IntegrableOn G (Set.Ioi (1 : ℝ)) := by
+    change IntegrableOn (fun t : ℝ => t ^ (-(s.re + 1))) (Set.Ioi (1 : ℝ))
+    exact integrableOn_Ioi_rpow_of_lt (by linarith) zero_lt_one
+  calc
+    ‖∫ t in Set.Ioi (1 : ℝ), riemannZetaFloorError s t‖
+        ≤ ∫ t in Set.Ioi (1 : ℝ), ‖riemannZetaFloorError s t‖ :=
+      norm_integral_le_integral_norm (riemannZetaFloorError s)
+    _ ≤ ∫ t in Set.Ioi (1 : ℝ), G t := by
+      apply setIntegral_mono_on hF.norm hG measurableSet_Ioi
+      intro t ht
+      have ht0 : (0 : ℝ) ≤ t := le_trans zero_le_one ht.le
+      have htpos : (0 : ℝ) < t := zero_lt_one.trans ht
+      have hfloor := Nat.abs_floor_sub_le ht0
+      dsimp [riemannZetaFloorError, G]
+      rw [norm_mul, norm_real, Real.norm_eq_abs,
+        Complex.norm_cpow_eq_rpow_re_of_pos htpos]
+      simp only [neg_re, add_re, one_re]
+      exact mul_le_of_le_one_left (Real.rpow_nonneg ht0 _) hfloor
+    _ = 1 / s.re := by
+      change (∫ t : ℝ in Set.Ioi (1 : ℝ), t ^ (-(s.re + 1))) = 1 / s.re
+      rw [integral_Ioi_rpow_of_lt (by linarith) zero_lt_one]
+      rw [Real.one_rpow]
+      field_simp [hs.ne']
+      ring
+
+/-- Abel's formula with the pole term `s / (s - 1)` separated from an
+absolutely convergent floor-error integral. -/
+private lemma riemannZeta_eq_pole_add_floorError_integral_of_one_lt_re {s : ℂ}
+    (hs : 1 < s.re) :
+    riemannZeta s = s / (s - 1) +
+      s * ∫ t in Set.Ioi (1 : ℝ), riemannZetaFloorError s t := by
+  let P : ℝ → ℂ := fun t => (t : ℂ) ^ (-s)
+  have hzfloor := riemannZeta_eq_mul_natFloor_integral_of_one_lt_re hs
+  have hP : IntegrableOn P (Set.Ioi (1 : ℝ)) := by
+    exact integrableOn_Ioi_cpow_of_lt (by simp; linarith) zero_lt_one
+  have hE : IntegrableOn (riemannZetaFloorError s) (Set.Ioi (1 : ℝ)) :=
+    integrableOn_riemannZetaFloorError (zero_lt_one.trans hs)
+  have hpoint : ∀ t ∈ Set.Ioi (1 : ℝ),
+      (⌊t⌋₊ : ℂ) * (t : ℂ) ^ (-(s + 1)) =
+        P t + riemannZetaFloorError s t := by
+    intro t ht
+    have htne : (t : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr
+      (zero_lt_one.trans ht).ne'
+    have hpow : (t : ℂ) * (t : ℂ) ^ (-(s + 1)) = P t := by
+      dsimp [P]
+      calc
+        (t : ℂ) * (t : ℂ) ^ (-(s + 1)) =
+            (t : ℂ) ^ (1 : ℂ) * (t : ℂ) ^ (-(s + 1)) := by rw [cpow_one]
+        _ = (t : ℂ) ^ ((1 : ℂ) + (-(s + 1))) := by
+          rw [cpow_add _ _ htne]
+        _ = (t : ℂ) ^ (-s) := by congr 1; ring
+    dsimp [riemannZetaFloorError]
+    rw [← hpow]
+    push_cast
+    ring
+  have hsplit :
+      (∫ t in Set.Ioi (1 : ℝ),
+        (⌊t⌋₊ : ℂ) * (t : ℂ) ^ (-(s + 1))) =
+      (∫ t in Set.Ioi (1 : ℝ), P t) +
+        ∫ t in Set.Ioi (1 : ℝ), riemannZetaFloorError s t := by
+    rw [← integral_add hP hE]
+    exact setIntegral_congr_fun measurableSet_Ioi hpoint
+  have hPint : (∫ t in Set.Ioi (1 : ℝ), P t) = 1 / (s - 1) := by
+    dsimp [P]
+    rw [integral_Ioi_cpow_of_lt (by simp; linarith) zero_lt_one]
+    simp only [ofReal_one, one_cpow]
+    rw [show -s + 1 = -(s - 1) by ring, div_neg, neg_div, neg_neg]
+  rw [hzfloor, hsplit, hPint]
+  ring
+
+/-- In the half-plane of absolute convergence, and one unit away from the real
+axis, Abel's formula gives the linear vertical-growth bound `|zeta(s)| <= 2|s|`.
+Unlike the Dirichlet-series estimate, its constant is uniform as `Re(s) -> 1+`. -/
+lemma norm_riemannZeta_le_two_mul_norm_of_one_lt_re_of_one_le_abs_im
+    (s : ℂ) (hre : 1 < s.re) (him : 1 ≤ |s.im|) :
+    ‖riemannZeta s‖ ≤ 2 * ‖s‖ := by
+  have hformula := riemannZeta_eq_pole_add_floorError_integral_of_one_lt_re hre
+  have hEbound := norm_integral_riemannZetaFloorError_le (zero_lt_one.trans hre)
+  have hden : 1 ≤ ‖s - 1‖ := by
+    have himnorm := Complex.abs_im_le_norm (s - 1)
+    have him_eq : |(s - 1).im| = |s.im| := by simp
+    linarith
+  have hpole : ‖s / (s - 1)‖ ≤ ‖s‖ := by
+    rw [norm_div]
+    exact div_le_self (norm_nonneg s) hden
+  have hEone : ‖∫ t in Set.Ioi (1 : ℝ), riemannZetaFloorError s t‖ ≤ 1 := by
+    exact hEbound.trans ((div_le_one (zero_lt_one.trans hre)).2 hre.le)
+  have hrem :
+      ‖s * ∫ t in Set.Ioi (1 : ℝ), riemannZetaFloorError s t‖ ≤ ‖s‖ := by
+    rw [norm_mul]
+    exact mul_le_of_le_one_right (norm_nonneg s) hEone
+  rw [hformula]
+  exact (norm_add_le _ _).trans (by linarith)
+
+/-- The linear zeta-growth estimate extends to the boundary `Re(s) = 1` away
+from the pole.  The proof approaches the boundary from the half-plane
+`Re(s) > 1` and uses continuity of zeta at points with nonzero imaginary part. -/
+lemma norm_riemannZeta_le_two_mul_norm_of_one_le_re_of_one_le_abs_im
+    (s : ℂ) (hre : 1 ≤ s.re) (him : 1 ≤ |s.im|) :
+    ‖riemannZeta s‖ ≤ 2 * ‖s‖ := by
+  by_cases hstrict : 1 < s.re
+  · exact norm_riemannZeta_le_two_mul_norm_of_one_lt_re_of_one_le_abs_im
+      s hstrict him
+  · have hre_eq : s.re = 1 := le_antisymm (le_of_not_gt hstrict) hre
+    let u : ℕ → ℂ := fun n => s + 1 / ((n : ℂ) + 1)
+    have hu : Tendsto u atTop (𝓝 s) := by
+      simpa [u] using
+        (tendsto_const_nhds.add
+          (tendsto_one_div_add_atTop_nhds_zero_nat (𝕜 := ℂ)))
+    have hs_ne : s ≠ 1 := by
+      intro hs
+      subst s
+      norm_num at him
+    have hz : Tendsto (fun n => riemannZeta (u n)) atTop (𝓝 (riemannZeta s)) :=
+      (differentiableAt_riemannZeta hs_ne).continuousAt.tendsto.comp hu
+    have hdiff : Tendsto
+        (fun n => ‖riemannZeta (u n)‖ - 2 * ‖u n‖) atTop
+        (𝓝 (‖riemannZeta s‖ - 2 * ‖s‖)) :=
+      hz.norm.sub (hu.norm.const_mul 2)
+    have hnonpos : ∀ n, ‖riemannZeta (u n)‖ - 2 * ‖u n‖ ≤ 0 := by
+      intro n
+      have hu_re : 1 < (u n).re := by
+        simp [u, hre_eq]
+        exact div_pos (by positivity)
+          (Complex.normSq_pos.mpr (by
+            intro h
+            have hre_zero := congrArg Complex.re h
+            simp at hre_zero
+            have hre_pos : (0 : ℝ) < (n : ℝ) + 1 := by positivity
+            linarith))
+      have hu_im : 1 ≤ |(u n).im| := by simpa [u] using him
+      have hbound :=
+        norm_riemannZeta_le_two_mul_norm_of_one_lt_re_of_one_le_abs_im
+          (u n) hu_re hu_im
+      linarith
+    have hlimit_nonpos : ‖riemannZeta s‖ - 2 * ‖s‖ ≤ 0 :=
+      le_of_tendsto' hdiff hnonpos
+    linarith
+
+/-- Polynomial zeta growth on the left boundary `Re(s) = 0`.  The proof uses
+the functional equation, the exact Gamma/trigonometric cancellation above,
+and the Abel-type linear estimate already available on `Re(s) = 1`.
+
+This is the first unconditional growth estimate extending the local
+zero-free-region infrastructure to the left of the line of absolute
+convergence. -/
+lemma norm_riemannZeta_I_mul_le_four_mul_abs_sq (t : ℝ) (ht : 1 ≤ |t|) :
+    ‖riemannZeta (Complex.I * t)‖ ≤ 4 * |t| ^ 2 := by
+  let s : ℂ := 1 - Complex.I * t
+  have hsneg : ∀ n : ℕ, s ≠ -n := by
+    intro n h
+    have him := congrArg Complex.im h
+    dsimp [s] at him
+    simp at him
+    subst t
+    norm_num at ht
+  have hs1 : s ≠ 1 := by
+    intro h
+    have him := congrArg Complex.im h
+    dsimp [s] at him
+    simp at him
+    subst t
+    norm_num at ht
+  have hfe := riemannZeta_one_sub hsneg hs1
+  have hone_sub : 1 - s = Complex.I * t := by dsimp [s]; ring
+  rw [hone_sub] at hfe
+  have hcoeff :
+      ‖2 * (2 * (Real.pi : ℂ)) ^ (-s) * Complex.Gamma s *
+          Complex.cos ((Real.pi : ℂ) * s / 2)‖ ≤ |t| := by
+    have hsquare := norm_riemannZeta_functionalEquationCoeff_sq_le t
+    have hs_def : s = 1 - Complex.I * t := rfl
+    rw [← hs_def] at hsquare
+    have hnonneg : 0 ≤ ‖2 * (2 * (Real.pi : ℂ)) ^ (-s) *
+        Complex.Gamma s * Complex.cos ((Real.pi : ℂ) * s / 2)‖ := norm_nonneg _
+    nlinarith [sq_nonneg
+      (‖2 * (2 * (Real.pi : ℂ)) ^ (-s) * Complex.Gamma s *
+        Complex.cos ((Real.pi : ℂ) * s / 2)‖ - |t|)]
+  have hs_re : 1 ≤ s.re := by simp [s]
+  have hs_im : 1 ≤ |s.im| := by simpa [s] using ht
+  have hzeta :=
+    norm_riemannZeta_le_two_mul_norm_of_one_le_re_of_one_le_abs_im s hs_re hs_im
+  have hsnorm : ‖s‖ ≤ 2 * |t| := by
+    calc
+      ‖s‖ ≤ |s.re| + |s.im| := Complex.norm_le_abs_re_add_abs_im s
+      _ = 1 + |t| := by simp [s]
+      _ ≤ 2 * |t| := by linarith
+  have hzeta' : ‖riemannZeta s‖ ≤ 4 * |t| := by linarith
+  rw [hfe, norm_mul]
+  calc
+    ‖2 * (2 * (Real.pi : ℂ)) ^ (-s) * Complex.Gamma s *
+        Complex.cos ((Real.pi : ℂ) * s / 2)‖ * ‖riemannZeta s‖ ≤
+        |t| * (4 * |t|) :=
+      mul_le_mul hcoeff hzeta' (norm_nonneg _) (abs_nonneg _)
+    _ = 4 * |t| ^ 2 := by ring
+
+/-- A concrete zeta-specific polynomial growth input on the standard vertical
+strip.  This closes the formerly hypothetical `hpoly` premise used by the
+Jensen and Borel-Carathéodory handoff lemmas, with `A = 2`, `B = 1`, and
+height threshold `T0 = 1`. -/
+lemma norm_riemannZeta_le_two_mul_norm_add_three_on_vertical_strip
+    (s : ℂ) (hs_height : 1 ≤ |s.im|) (hs_re : s.re ∈ Set.Icc (1 : ℝ) 3) :
+    ‖riemannZeta s‖ ≤ 2 * (‖s‖ + 3) ^ (1 : ℝ) := by
+  have hbase :=
+    norm_riemannZeta_le_two_mul_norm_of_one_le_re_of_one_le_abs_im
+      s hs_re.1 hs_height
+  rw [Real.rpow_one]
+  nlinarith [norm_nonneg s]
+
+/-- Existential packaging of the explicit polynomial growth estimate in the
+shape consumed by the zero-free-region infrastructure. -/
+theorem exists_riemannZeta_polynomial_growth_on_vertical_strip :
+    ∃ A B T0 : ℝ, 1 ≤ A ∧ 0 ≤ B ∧
+      ∀ s : ℂ, T0 ≤ |s.im| → s.re ∈ Set.Icc (1 : ℝ) 3 →
+        ‖riemannZeta s‖ ≤ A * (‖s‖ + 3) ^ B := by
+  refine ⟨2, 1, 1, by norm_num, by norm_num, ?_⟩
+  intro s hs_height hs_re
+  exact norm_riemannZeta_le_two_mul_norm_add_three_on_vertical_strip
+    s hs_height hs_re
+
+/-- The absolutely convergent Mobius L-series is uniformly bounded by `3` on
+the half-plane `Re(s) >= 3/2`. -/
+lemma norm_LSeries_moebius_le_three_of_three_halves_le_re
+    (s : ℂ) (hs : (3 / 2 : ℝ) ≤ s.re) :
+    ‖L ↗μ s‖ ≤ 3 := by
+  have hs1 : 1 < s.re := by linarith
+  have hmu : LSeriesSummable ↗μ s :=
+    ArithmeticFunction.LSeriesSummable_moebius_iff.mpr hs1
+  have hzeta : LSeriesSummable ↗ζ s :=
+    ArithmeticFunction.LSeriesSummable_zeta_iff.mpr hs1
+  have hterm : ∀ n, ‖LSeries.term ↗μ s n‖ ≤ ‖LSeries.term ↗ζ s n‖ := by
+    intro n
+    apply LSeries.norm_term_le
+    rcases eq_or_ne n 0 with rfl | hn
+    · simp
+    · simp only [hn, ArithmeticFunction.zeta_apply, if_false,
+        Complex.norm_intCast]
+      exact_mod_cast ArithmeticFunction.abs_moebius_le_one (n := n)
+  have hsreal : 1 < ((s.re : ℂ)).re := by simpa using hs1
+  have hzetareal : LSeriesSummable ↗ζ (s.re : ℂ) :=
+    ArithmeticFunction.LSeriesSummable_zeta_iff.mpr hsreal
+  calc
+    ‖L ↗μ s‖ ≤ ∑' n, ‖LSeries.term ↗μ s n‖ :=
+      norm_tsum_le_tsum_norm hmu.norm
+    _ ≤ ∑' n, ‖LSeries.term ↗ζ s n‖ :=
+      hmu.norm.tsum_le_tsum hterm hzeta.norm
+    _ = (L ↗ζ (s.re : ℂ)).re := by
+      rw [LSeries, re_tsum hzetareal]
+      apply tsum_congr
+      intro n
+      calc
+        ‖LSeries.term ↗ζ s n‖ =
+            ‖LSeries.term ↗ζ (s.re : ℂ) n‖ := by
+          simp [LSeries.norm_term_eq]
+        _ = (LSeries.term ↗ζ (s.re : ℂ) n).re := by
+          rcases eq_or_ne n 0 with rfl | hn
+          · simp [LSeries.term]
+          · rw [LSeries.term_of_ne_zero hn]
+            simp only [hn, ArithmeticFunction.zeta_apply, if_false]
+            have hpow : (n : ℂ) ^ (s.re : ℂ) =
+                (((n : ℝ) ^ s.re : ℝ) : ℂ) := by
+              exact (Complex.ofReal_cpow (Nat.cast_nonneg n) s.re).symm
+            rw [hpow]
+            simp
+            positivity
+    _ = (riemannZeta (s.re : ℂ)).re := by
+      rw [ArithmeticFunction.LSeries_zeta_eq_riemannZeta hsreal]
+    _ ≤ s.re / (s.re - 1) :=
+      riemannZeta_re_le_sigma_div_sub s.re hs1
+    _ ≤ 3 := by
+      apply (div_le_iff₀ (sub_pos.mpr hs1)).2
+      nlinarith
+
+/-- Uniform nonvanishing margin for zeta on `Re(s) >= 3/2`, obtained from the
+Mobius reciprocal Dirichlet series. -/
+lemma one_third_le_norm_riemannZeta_of_three_halves_le_re
+    (s : ℂ) (hs : (3 / 2 : ℝ) ≤ s.re) :
+    (1 / 3 : ℝ) ≤ ‖riemannZeta s‖ := by
+  have hs1 : 1 < s.re := by linarith
+  have hproduct := ArithmeticFunction.LSeries_zeta_mul_Lseries_moebius hs1
+  rw [ArithmeticFunction.LSeries_zeta_eq_riemannZeta hs1] at hproduct
+  have hmu := norm_LSeries_moebius_le_three_of_three_halves_le_re s hs
+  have hone : (1 : ℝ) ≤ ‖riemannZeta s‖ * 3 := by
+    calc
+      (1 : ℝ) = ‖riemannZeta s * L ↗μ s‖ := by rw [hproduct, norm_one]
+      _ = ‖riemannZeta s‖ * ‖L ↗μ s‖ := norm_mul _ _
+      _ ≤ ‖riemannZeta s‖ * 3 :=
+        mul_le_mul_of_nonneg_left hmu (norm_nonneg _)
+  linarith
+
+/-- Explicit zeta norm bound on a small high disk centered at `2 + I*t`.
+This is the outer-bound supplier used by the same-witness Jensen/Borel
+factorization theorem. -/
+lemma norm_riemannZeta_le_two_mul_abs_im_add_radius_add_two_on_closedBall
+    {R t : ℝ} (hRone : R ≤ 1)
+    (hheight : 1 + R ≤ |t|) {z : ℂ}
+    (hz : z ∈ closedBall ((2 : ℂ) + I * t) R) :
+    ‖riemannZeta z‖ ≤ 2 * (|t| + R + 2) := by
+  let c : ℂ := (2 : ℂ) + I * t
+  have hz_re : z.re ∈ Set.Icc (1 : ℝ) 3 :=
+    closedBall_sigma_it_re_mem_Icc
+      (z := z) (σ := 2) (t := t) (R := R) (a := 1) (b := 3)
+      (by simpa [c] using hz) (by linarith) (by linarith)
+  have hz_height : 1 ≤ |z.im| :=
+    closedBall_sigma_it_abs_im_ge_of_add_le
+      (z := z) (σ := 2) (t := t) (R := R) (H := 1)
+      (by simpa [c] using hz) hheight
+  have hzeta :=
+    norm_riemannZeta_le_two_mul_norm_of_one_le_re_of_one_le_abs_im
+      z hz_re.1 hz_height
+  have hdist : ‖z - c‖ ≤ R := by
+    simpa [Metric.mem_closedBall, dist_eq_norm] using hz
+  have hc_norm : ‖c‖ ≤ |t| + 2 := by
+    simpa [c] using
+      (norm_sigma_add_I_mul_le_abs_add_two (σ := 2) (t := t)
+        (by constructor <;> norm_num))
+  have hz_norm : ‖z‖ ≤ |t| + R + 2 := by
+    calc
+      ‖z‖ = ‖c + (z - c)‖ := by congr 1; ring
+      _ ≤ ‖c‖ + ‖z - c‖ := norm_add_le _ _
+      _ ≤ |t| + R + 2 := by linarith
+  exact hzeta.trans (mul_le_mul_of_nonneg_left hz_norm (by norm_num))
+
+/-- Explicit logarithmic zeta norm bound on a small high disk centered at
+`2 + I*t`.  This supplies the inner closed-ball constant in the selected
+zero-removed-factor estimate. -/
+lemma log_norm_riemannZeta_le_log_two_add_log_abs_im_add_radius_add_five_on_closedBall
+    {q t : ℝ} (hq : 0 ≤ q) (hqone : q ≤ 1)
+    (hheight : 1 + q ≤ |t|) {z : ℂ}
+    (hz : z ∈ closedBall ((2 : ℂ) + I * t) q) :
+    Real.log ‖riemannZeta z‖ ≤ Real.log 2 + Real.log (|t| + q + 5) := by
+  have hnorm :=
+    norm_riemannZeta_le_two_mul_abs_im_add_radius_add_two_on_closedBall
+      hqone hheight hz
+  have harg_pos : 0 < |t| + q + 2 := by positivity
+  have harg_le : |t| + q + 2 ≤ |t| + q + 5 := by linarith
+  by_cases hzeta : riemannZeta z = 0
+  · have hlog_two : 0 ≤ Real.log 2 := Real.log_nonneg (by norm_num)
+    have hlog_arg : 0 ≤ Real.log (|t| + q + 5) := by
+      apply Real.log_nonneg
+      nlinarith [abs_nonneg t]
+    simp [hzeta]
+    linarith
+  · have hlog := Real.log_le_log (norm_pos_iff.mpr hzeta) hnorm
+    have hlog_mul :
+        Real.log (2 * (|t| + q + 2)) =
+          Real.log 2 + Real.log (|t| + q + 2) := by
+      rw [Real.log_mul (by norm_num : (2 : ℝ) ≠ 0) harg_pos.ne']
+    have hlog_arg_le :
+        Real.log (|t| + q + 2) ≤ Real.log (|t| + q + 5) :=
+      Real.log_le_log harg_pos harg_le
+    rw [hlog_mul] at hlog
+    linarith
+
 lemma log_norm_bound_of_polynomial_growth
     {f : ℂ → ℂ} {A B : ℝ} (hA : 1 ≤ A) (hB : 0 ≤ B) (z : ℂ)
     (hpoly : ‖f z‖ ≤ A * (‖z‖ + 3) ^ B) :
@@ -7274,9 +8406,10 @@ lemma log_norm_bound_of_polynomial_growth
 /-- Zeta-specific high-height form of
 `log_norm_bound_of_polynomial_growth`.
 
-The hypothesis is still the missing analytic input: a polynomial-growth bound
-for `riemannZeta` on a high vertical region.  The conclusion is the
-logarithmic norm-growth statement consumed by Jensen/Borel-style wrappers. -/
+The hypothesis is a polynomial-growth bound for `riemannZeta` on a high
+vertical region.  The conclusion is the logarithmic norm-growth statement
+consumed by Jensen/Borel-style wrappers; an explicit zeta instance is proved
+above. -/
 lemma log_norm_riemannZeta_le_affine_log_norm_add_three_of_polynomial_growth
     {T0 A B : ℝ} (hA : 1 ≤ A) (hB : 0 ≤ B)
     (hpoly : ∀ z : ℂ, T0 ≤ |z.im| → z.re ∈ Set.Icc (1 : ℝ) 3 →
@@ -7336,6 +8469,23 @@ lemma log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_three_of_polynomial_gr
           simpa [add_comm, add_left_comm, add_assoc] using
             add_le_add_left hmul (Real.log A)
     _ = Real.log A + (2 * B) * Real.log (|t| + 3) := by ring
+
+/-- Unconditional logarithmic vertical-growth estimate for zeta on the closed
+strip `1 <= sigma <= 2`. -/
+lemma log_norm_riemannZeta_sigma_it_le_log_two_add_two_log_abs_add_three
+    {σ t : ℝ} (hσ : σ ∈ Set.Icc (1 : ℝ) 2) (ht : 5 ≤ |t|) :
+    Real.log ‖riemannZeta ((σ : ℂ) + I * t)‖ ≤
+      Real.log 2 + 2 * Real.log (|t| + 3) := by
+  have hpoly : ∀ z : ℂ, (5 : ℝ) ≤ |z.im| →
+      z.re ∈ Set.Icc (1 : ℝ) 3 →
+      ‖riemannZeta z‖ ≤ 2 * (‖z‖ + 3) ^ (1 : ℝ) := by
+    intro z hz_height hz_re
+    exact norm_riemannZeta_le_two_mul_norm_add_three_on_vertical_strip
+      z (le_trans (by norm_num) hz_height) hz_re
+  simpa using
+    log_norm_riemannZeta_sigma_it_le_affine_log_abs_add_three_of_polynomial_growth
+      (T0 := 5) (A := 2) (B := 1) (by norm_num) (by norm_num) (by norm_num)
+      hpoly σ t ht hσ
 
 /-- Circle-average form of the zeta polynomial-growth handoff.
 
@@ -7478,6 +8628,23 @@ lemma circleAverage_log_norm_riemannZeta_two_add_I_mul_le_affine_log_abs_add_rad
     _ ≤ Real.log A + B * (2 * Real.log |z.im|) := by linarith
     _ = Real.log A + (2 * B) * Real.log |z.im| := by ring
     _ ≤ Real.log A + (2 * B) * Real.log (|t| + R + 3) := by linarith
+
+/-- The circle-average zeta growth bound with the polynomial-growth premise
+discharged by Abel's integral formula. -/
+lemma circleAverage_log_norm_riemannZeta_two_add_I_mul_le_log_two_add_two_log_abs_add_radius_three
+    {R t : ℝ} (hR : 0 < R) (hRone : R ≤ 1) (hheight : 7 + R ≤ |t|) :
+    circleAverage (Real.log ‖riemannZeta ·‖) ((2 : ℂ) + I * t) R ≤
+      Real.log 2 + 2 * Real.log (|t| + R + 3) := by
+  have hpoly : ∀ z : ℂ, (7 : ℝ) ≤ |z.im| →
+      z.re ∈ Set.Icc (1 : ℝ) 3 →
+      ‖riemannZeta z‖ ≤ 2 * (‖z‖ + 3) ^ (1 : ℝ) := by
+    intro z hz_height hz_re
+    exact norm_riemannZeta_le_two_mul_norm_add_three_on_vertical_strip
+      z (le_trans (by norm_num) hz_height) hz_re
+  simpa using
+    circleAverage_log_norm_riemannZeta_two_add_I_mul_le_affine_log_abs_add_radius_three_of_polynomial_growth
+      (T0 := 7) (A := 2) (B := 1) (by norm_num) (by norm_num) (by norm_num)
+      hR hRone hheight hpoly
 
 /-- Coordinate polynomial-growth-to-log-growth conversion in the classical
 high-height scale `log |t|`.
@@ -10629,6 +11796,17 @@ lemma meromorphicOn_riemannZeta_closedBall (c : ℂ) (R : ℝ) :
     exact meromorphicAt_riemannZeta_one
   · exact meromorphicAt_riemannZeta_of_ne_one s hs
 
+/-- On a closed ball avoiding the pole at `1`, zeta is analytic and hence its
+divisor is pointwise nonnegative.  This exported zeta-specific form keeps
+downstream Jensen modules independent of the underlying divisor import. -/
+lemma divisor_riemannZeta_closedBall_nonneg {c : ℂ} {R : ℝ}
+    (havoid : ∀ z : ℂ, z ∈ closedBall c R → z ≠ 1) :
+    0 ≤ MeromorphicOn.divisor riemannZeta (closedBall c R) := by
+  have han : AnalyticOnNhd ℂ riemannZeta (closedBall c R) := by
+    intro z hz
+    exact analyticOnNhd_riemannZeta_ne_one z (havoid z hz)
+  exact han.divisor_nonneg
+
 /-- Jensen formula specialized to ζ on a closed ball. -/
 lemma jensen_circleAverage_log_norm_riemannZeta_closedBall
     {c : ℂ} {R : ℝ} (hR : R ≠ 0) :
@@ -11833,6 +13011,615 @@ lemma exists_good_radius_separated_from_riemannZeta_zeros_closedBall_strictly_in
     exact div_pos (sub_pos.mpr haq) (mul_pos (by norm_num) (by positivity))
   simpa using hsep_pos.trans_le hsep
 
+/-- The translated canonical factor associated to a point `u` in a disk
+centered at `c`.  Its pole at `u` cancels the corresponding zero factor, while
+its norm is one on the boundary circle. -/
+noncomputable def translatedCanonicalFactor
+    (c : ℂ) (R : ℝ) (u : ℂ) : ℂ → ℂ :=
+  fun z => Complex.canonicalFactor R (u - c) (z - c)
+
+/-- The analytic numerator left after multiplying `(z-u)` by the translated
+canonical factor. -/
+noncomputable def translatedCanonicalNumerator
+    (c : ℂ) (R : ℝ) (u : ℂ) : ℂ → ℂ :=
+  fun z => ((R : ℂ) ^ 2 - (starRingEnd ℂ) (u - c) * (z - c)) / R
+
+/-- Away from its pole, multiplying a translated canonical factor by its
+ordinary zero factor gives the analytic canonical numerator.  The `z ≠ u`
+hypothesis is essential because division is totalized at the pole. -/
+lemma sub_mul_translatedCanonicalFactor_eq_translatedCanonicalNumerator
+    {c u z : ℂ} {R : ℝ} (hR : R ≠ 0) (hzu : z ≠ u) :
+    (z - u) * translatedCanonicalFactor c R u z =
+      translatedCanonicalNumerator c R u z := by
+  rw [translatedCanonicalFactor, Complex.canonicalFactor_apply,
+    translatedCanonicalNumerator]
+  have hsub : (z - c) - (u - c) = z - u := by ring
+  rw [hsub]
+  field_simp [hR, sub_ne_zero.mpr hzu]
+
+/-- A translated canonical factor has norm one on its boundary circle. -/
+lemma norm_translatedCanonicalFactor_eq_one
+    {c u z : ℂ} {R : ℝ} (hu : u ∈ ball c R) (hz : z ∈ sphere c R) :
+    ‖translatedCanonicalFactor c R u z‖ = 1 := by
+  apply Complex.norm_canonicalFactor_eval_circle_eq_one
+  · simpa [Metric.mem_ball, dist_eq_norm, norm_sub_rev] using hu
+  · simpa [Metric.mem_sphere, dist_eq_norm, norm_sub_rev] using hz
+
+/-- On the boundary circle, replacing the ordinary zero factor `(z-u)` by
+the translated canonical numerator preserves its norm exactly. -/
+lemma norm_translatedCanonicalNumerator_eq_norm_sub
+    {c u z : ℂ} {R : ℝ} (hu : u ∈ ball c R) (hz : z ∈ sphere c R) :
+    ‖translatedCanonicalNumerator c R u z‖ = ‖z - u‖ := by
+  have hR : 0 < R := pos_of_mem_ball hu
+  have hcanon : ‖translatedCanonicalFactor c R u z‖ = 1 :=
+    norm_translatedCanonicalFactor_eq_one hu hz
+  have hzu : z ≠ u := by
+    intro h
+    subst z
+    have hz' : ‖u - c‖ = R := by
+      simpa [Metric.mem_sphere, dist_eq_norm] using hz
+    have hu' : ‖u - c‖ < R := by
+      simpa [Metric.mem_ball, dist_eq_norm] using hu
+    linarith
+  rw [translatedCanonicalFactor, Complex.canonicalFactor_apply, norm_div,
+    norm_mul, norm_real, Real.norm_eq_abs, abs_of_pos hR] at hcanon
+  rw [translatedCanonicalNumerator, norm_div, norm_real, Real.norm_eq_abs,
+    abs_of_pos hR]
+  have hsub : ‖(z - c) - (u - c)‖ = ‖z - u‖ := by ring_nf
+  rw [hsub] at hcanon
+  have hden : 0 < R * ‖z - u‖ :=
+    mul_pos hR (norm_pos_iff.mpr (sub_ne_zero.mpr hzu))
+  apply (div_eq_iff hR.ne').2
+  apply (div_eq_iff hden.ne').mp at hcanon
+  nlinarith
+
+/-- A translated canonical numerator is entire. -/
+lemma analyticOnNhd_translatedCanonicalNumerator
+    {c u : ℂ} {R : ℝ} :
+    AnalyticOnNhd ℂ (translatedCanonicalNumerator c R u) Set.univ := by
+  intro z _hz
+  change AnalyticAt ℂ
+    (fun z => ((R : ℂ) ^ 2 - (starRingEnd ℂ) (u - c) * (z - c)) / R) z
+  fun_prop
+
+/-- The translated canonical numerator associated to an interior point has no
+zeros on the closed disk. -/
+lemma translatedCanonicalNumerator_ne_zero
+    {c u z : ℂ} {R : ℝ} (hu : u ∈ ball c R)
+    (hz : z ∈ closedBall c R) :
+    translatedCanonicalNumerator c R u z ≠ 0 := by
+  have hR : 0 < R := pos_of_mem_ball hu
+  have hu_norm : ‖u - c‖ < R := by
+    simpa [Metric.mem_ball, dist_eq_norm] using hu
+  have hz_norm : ‖z - c‖ ≤ R := by
+    simpa [Metric.mem_closedBall, dist_eq_norm] using hz
+  have hprod : ‖(starRingEnd ℂ) (u - c) * (z - c)‖ <
+      ‖((R : ℂ) ^ 2)‖ := by
+    change ‖conj (u - c) * (z - c)‖ < ‖((R : ℂ) ^ 2)‖
+    rw [norm_mul, RCLike.norm_conj, norm_pow, norm_real, Real.norm_eq_abs,
+      abs_of_pos hR]
+    calc
+      ‖u - c‖ * ‖z - c‖ ≤ ‖u - c‖ * R :=
+        mul_le_mul_of_nonneg_left hz_norm (norm_nonneg _)
+      _ < R * R := mul_lt_mul_of_pos_right hu_norm hR
+      _ = R ^ 2 := by ring
+  rw [translatedCanonicalNumerator]
+  apply div_ne_zero
+  · intro hzero
+    rw [sub_eq_zero] at hzero
+    have hnormeq := congrArg norm hzero
+    linarith
+  · exact_mod_cast hR.ne'
+
+/-- Exact logarithmic derivative of a translated canonical numerator. -/
+lemma logDeriv_translatedCanonicalNumerator
+    {c u z : ℂ} {R : ℝ} (hR : R ≠ 0) :
+    logDeriv (translatedCanonicalNumerator c R u) z =
+      -(starRingEnd ℂ) (u - c) /
+        ((R : ℂ) ^ 2 - (starRingEnd ℂ) (u - c) * (z - c)) := by
+  let a : ℂ := (starRingEnd ℂ) (u - c)
+  have hderiv : HasDerivAt (translatedCanonicalNumerator c R u)
+      (-a / R) z := by
+    change HasDerivAt (fun z => ((R : ℂ) ^ 2 - a * (z - c)) / R)
+      (-a / R) z
+    convert (((hasDerivAt_const z ((R : ℂ) ^ 2)).sub
+      ((hasDerivAt_const z a).mul ((hasDerivAt_id z).sub_const c))).div_const R)
+      using 1
+    all_goals ring
+  rw [logDeriv_apply, hderiv.deriv]
+  change (-a / R) / ((((R : ℂ) ^ 2 - a * (z - c)) / R)) =
+    -a / ((R : ℂ) ^ 2 - a * (z - c))
+  field_simp [hR]
+
+/-- The logarithmic derivative of a translated canonical numerator is
+uniformly bounded on every strictly smaller concentric disk.  Crucially, the
+bound is independent of the distance from `u` to the outer circle. -/
+lemma norm_logDeriv_translatedCanonicalNumerator_le_inv_sub
+    {c u z : ℂ} {d R : ℝ} (hd : 0 ≤ d) (hdR : d < R)
+    (hu : u ∈ ball c R) (hz : z ∈ closedBall c d) :
+    ‖logDeriv (translatedCanonicalNumerator c R u) z‖ ≤ 1 / (R - d) := by
+  have hR : 0 < R := hd.trans_lt hdR
+  have hgap : 0 < R - d := sub_pos.mpr hdR
+  by_cases huc : u = c
+  · subst u
+    rw [logDeriv_translatedCanonicalNumerator hR.ne']
+    simp [hdR.le]
+  · have hu_norm : ‖u - c‖ < R := by
+      simpa [Metric.mem_ball, dist_eq_norm] using hu
+    have hz_norm : ‖z - c‖ ≤ d := by
+      simpa [Metric.mem_closedBall, dist_eq_norm] using hz
+    have hua_pos : 0 < ‖u - c‖ := norm_pos_iff.mpr (sub_ne_zero.mpr huc)
+    let raw : ℂ := (R : ℂ) ^ 2 - (starRingEnd ℂ) (u - c) * (z - c)
+    have hstar_norm : ‖(starRingEnd ℂ) (u - c)‖ = ‖u - c‖ := by
+      change ‖conj (u - c)‖ = ‖u - c‖
+      exact RCLike.norm_conj _
+    have hRnorm : ‖((R : ℂ) ^ 2)‖ = R ^ 2 := by
+      rw [norm_pow, norm_real, Real.norm_eq_abs, abs_of_pos hR]
+    have hprod_norm :
+        ‖(starRingEnd ℂ) (u - c) * (z - c)‖ = ‖u - c‖ * ‖z - c‖ := by
+      rw [norm_mul, hstar_norm]
+    have hreverse := norm_sub_norm_le ((R : ℂ) ^ 2)
+      ((starRingEnd ℂ) (u - c) * (z - c))
+    have hreverse' : R ^ 2 - ‖u - c‖ * ‖z - c‖ ≤ ‖raw‖ := by
+      dsimp [raw]
+      rw [hRnorm, hprod_norm] at hreverse
+      linarith
+    have hlinear : ‖u - c‖ * (R - d) ≤
+        R ^ 2 - ‖u - c‖ * ‖z - c‖ := by
+      have hfirst : ‖u - c‖ * R ≤ R * R :=
+        mul_le_mul_of_nonneg_right hu_norm.le hR.le
+      have hsecond : ‖u - c‖ * ‖z - c‖ ≤ ‖u - c‖ * d :=
+        mul_le_mul_of_nonneg_left hz_norm (norm_nonneg _)
+      nlinarith
+    have hden : ‖u - c‖ * (R - d) ≤ ‖raw‖ := hlinear.trans hreverse'
+    have hden_pos : 0 < ‖raw‖ :=
+      lt_of_lt_of_le (mul_pos hua_pos hgap) hden
+    rw [logDeriv_translatedCanonicalNumerator hR.ne', norm_div, norm_neg,
+      hstar_norm]
+    change ‖u - c‖ / ‖raw‖ ≤ 1 / (R - d)
+    apply (div_le_iff₀ hden_pos).2
+    calc
+      ‖u - c‖ = (1 / (R - d)) * (‖u - c‖ * (R - d)) := by
+        field_simp
+      _ ≤ (1 / (R - d)) * ‖raw‖ :=
+        mul_le_mul_of_nonneg_left hden (by positivity)
+
+/-- Finite product of translated canonical numerators with natural
+multiplicities. -/
+noncomputable def canonicalNumeratorProduct
+    (c : ℂ) (R : ℝ) (zeros : Finset ℂ) (m : ℂ → ℕ) : ℂ → ℂ :=
+  fun z => ∏ u ∈ zeros, translatedCanonicalNumerator c R u z ^ m u
+
+/-- Replacing a finite family of ordinary zero factors by canonical
+numerators preserves the product norm on the boundary circle. -/
+lemma norm_canonicalNumeratorProduct_eq_norm_prod_sub
+    {c z : ℂ} {R : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ}
+    (hu : ∀ u ∈ zeros, u ∈ ball c R) (hz : z ∈ sphere c R) :
+    ‖canonicalNumeratorProduct c R zeros m z‖ =
+      ‖∏ u ∈ zeros, (z - u) ^ m u‖ := by
+  rw [canonicalNumeratorProduct, norm_prod]
+  simp only [norm_pow]
+  rw [norm_prod]
+  apply Finset.prod_congr rfl
+  intro u hu_mem
+  rw [norm_translatedCanonicalNumerator_eq_norm_sub (hu u hu_mem) hz]
+  rw [norm_pow]
+
+/-- A finite canonical numerator product is nonzero throughout the closed
+disk when every indexed zero lies in the open disk. -/
+lemma canonicalNumeratorProduct_ne_zero
+    {c z : ℂ} {R : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ}
+    (hu : ∀ u ∈ zeros, u ∈ ball c R) (hz : z ∈ closedBall c R) :
+    canonicalNumeratorProduct c R zeros m z ≠ 0 := by
+  rw [canonicalNumeratorProduct]
+  rw [Finset.prod_ne_zero_iff]
+  intro u hu_mem
+  exact pow_ne_zero _ (translatedCanonicalNumerator_ne_zero (hu u hu_mem) hz)
+
+/-- A finite canonical numerator product is entire. -/
+lemma analyticOnNhd_canonicalNumeratorProduct
+    {c : ℂ} {R : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ} :
+    AnalyticOnNhd ℂ (canonicalNumeratorProduct c R zeros m) Set.univ := by
+  intro z _hz
+  change AnalyticAt ℂ
+    (fun z => ∏ u ∈ zeros,
+      (((R : ℂ) ^ 2 - (starRingEnd ℂ) (u - c) * (z - c)) / R) ^ m u) z
+  fun_prop
+
+/-- The logarithmic derivative of a finite canonical numerator product is the
+multiplicity-weighted sum of the single-factor logarithmic derivatives. -/
+lemma logDeriv_canonicalNumeratorProduct
+    {c z : ℂ} {R : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ}
+    (hu : ∀ u ∈ zeros, u ∈ ball c R) (hz : z ∈ closedBall c R) :
+    logDeriv (canonicalNumeratorProduct c R zeros m) z =
+      ∑ u ∈ zeros, (m u : ℂ) *
+        logDeriv (translatedCanonicalNumerator c R u) z := by
+  have hprod := logDeriv_prod
+    (s := zeros)
+    (f := fun u z => translatedCanonicalNumerator c R u z ^ m u)
+    (x := z)
+    (fun u hu_mem =>
+      pow_ne_zero _ (translatedCanonicalNumerator_ne_zero (hu u hu_mem) hz))
+    (fun u _hu_mem =>
+      ((analyticOnNhd_translatedCanonicalNumerator
+        (c := c) (u := u) (R := R) z (Set.mem_univ z)).differentiableAt.pow (m u)))
+  change logDeriv
+    (fun z => ∏ u ∈ zeros, translatedCanonicalNumerator c R u z ^ m u) z = _
+  rw [hprod]
+  apply Finset.sum_congr rfl
+  intro u hu_mem
+  exact logDeriv_fun_pow
+    (analyticOnNhd_translatedCanonicalNumerator
+      (c := c) (u := u) (R := R) z (Set.mem_univ z)).differentiableAt
+    (m u)
+
+/-- The canonical correction for a finite zero family is bounded by total
+multiplicity divided by the retained radial margin. -/
+lemma norm_logDeriv_canonicalNumeratorProduct_le_sum_div
+    {c z : ℂ} {d R : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ}
+    (hd : 0 ≤ d) (hdR : d < R)
+    (hu : ∀ u ∈ zeros, u ∈ ball c R) (hz : z ∈ closedBall c d) :
+    ‖logDeriv (canonicalNumeratorProduct c R zeros m) z‖ ≤
+      (∑ u ∈ zeros, (m u : ℝ)) / (R - d) := by
+  have hzR : z ∈ closedBall c R :=
+    Metric.closedBall_subset_closedBall hdR.le hz
+  rw [logDeriv_canonicalNumeratorProduct hu hzR]
+  calc
+    ‖∑ u ∈ zeros, (m u : ℂ) *
+        logDeriv (translatedCanonicalNumerator c R u) z‖
+        ≤ ∑ u ∈ zeros,
+            ‖(m u : ℂ) * logDeriv (translatedCanonicalNumerator c R u) z‖ :=
+      norm_sum_le _ _
+    _ ≤ ∑ u ∈ zeros, (m u : ℝ) * (1 / (R - d)) := by
+      apply Finset.sum_le_sum
+      intro u hu_mem
+      rw [norm_mul, Complex.norm_natCast]
+      exact mul_le_mul_of_nonneg_left
+        (norm_logDeriv_translatedCanonicalNumerator_le_inv_sub
+          hd hdR (hu u hu_mem) hz)
+        (Nat.cast_nonneg _)
+    _ = (∑ u ∈ zeros, (m u : ℝ)) / (R - d) := by
+      rw [← Finset.sum_mul]
+      ring
+
+/-- Divisor-valued version of the finite canonical correction bound. -/
+lemma norm_logDeriv_canonicalNumeratorProduct_divisor_le_finsum_div
+    {c z : ℂ} {d R : ℝ} {D : ℂ → ℤ}
+    (hfinite : D.support.Finite) (hD : ∀ u, 0 ≤ D u)
+    (hd : 0 ≤ d) (hdR : d < R)
+    (hu : ∀ u ∈ hfinite.toFinset, u ∈ ball c R)
+    (hz : z ∈ closedBall c d) :
+    ‖logDeriv
+        (canonicalNumeratorProduct c R hfinite.toFinset
+          (fun u => (D u).toNat)) z‖ ≤
+      (∑ᶠ u, (D u : ℝ)) / (R - d) := by
+  have hbase := norm_logDeriv_canonicalNumeratorProduct_le_sum_div
+    (zeros := hfinite.toFinset) (m := fun u => (D u).toNat)
+    hd hdR hu hz
+  rw [sum_toNat_eq_finsum_cast_of_nonneg_finiteSupport hfinite hD] at hbase
+  exact hbase
+
+/-- If zeta has no zero on the boundary circle of a pole-free closed disk,
+then every point in the disk divisor support lies in the open disk. -/
+lemma divisor_support_riemannZeta_closedBall_subset_ball_of_sphere_ne_zero
+    {c : ℂ} {R : ℝ}
+    (havoid : ∀ z : ℂ, z ∈ closedBall c R → z ≠ 1)
+    (hsphere : ∀ z ∈ sphere c R, riemannZeta z ≠ 0) :
+    (MeromorphicOn.divisor riemannZeta (closedBall c R)).support ⊆
+      ball c R := by
+  let D := MeromorphicOn.divisor riemannZeta (closedBall c R)
+  have hmer := meromorphicOn_riemannZeta_closedBall c R
+  intro u hu
+  have hu_closed : u ∈ closedBall c R := D.supportWithinDomain hu
+  have hu_le : dist u c ≤ R := by simpa [Metric.mem_closedBall] using hu_closed
+  have hu_ne_one : u ≠ 1 := havoid u hu_closed
+  have hua : AnalyticAt ℂ riemannZeta u :=
+    analyticOnNhd_riemannZeta_ne_one u hu_ne_one
+  have hu_zero : riemannZeta u = 0 := by
+    by_contra hne
+    have horder_zero : meromorphicOrderAt riemannZeta u = 0 :=
+      (hua.meromorphicNFAt.meromorphicOrderAt_eq_zero_iff).2 hne
+    have hDzero : D u = 0 := by
+      dsimp [D]
+      rw [MeromorphicOn.divisor_apply hmer hu_closed, horder_zero]
+      simp
+    have hDu : D u ≠ 0 := by simpa [Function.mem_support] using hu
+    exact hDu hDzero
+  by_contra hu_ball
+  have hu_ge : R ≤ dist u c := by
+    simpa [Metric.mem_ball, not_lt] using hu_ball
+  have hu_sphere : u ∈ sphere c R := by
+    rw [Metric.mem_sphere]
+    exact le_antisymm hu_le hu_ge
+  exact hsphere u hu_sphere hu_zero
+
+/-- Finite support of zeta's divisor on a closed disk. -/
+noncomputable def riemannZetaDivisorSupport (c : ℂ) (R : ℝ) : Finset ℂ :=
+  ((MeromorphicOn.divisor riemannZeta (closedBall c R)).finiteSupport
+    (isCompact_closedBall c R)).toFinset
+
+/-- Natural multiplicity attached to zeta's disk divisor.  On a disk avoiding
+the pole, divisor nonnegativity identifies this with the integer divisor. -/
+noncomputable def riemannZetaDivisorMultiplicity
+    (c : ℂ) (R : ℝ) (u : ℂ) : ℕ :=
+  (MeromorphicOn.divisor riemannZeta (closedBall c R) u).toNat
+
+/-- The zeta-specific finite canonical correction is bounded by the total
+disk-divisor mass divided by the retained radial margin. -/
+lemma norm_logDeriv_canonicalNumeratorProduct_riemannZetaDivisor_le_finsum_div
+    {c z : ℂ} {d R : ℝ}
+    (havoid : ∀ u : ℂ, u ∈ closedBall c R → u ≠ 1)
+    (hsphere : ∀ u ∈ sphere c R, riemannZeta u ≠ 0)
+    (hd : 0 ≤ d) (hdR : d < R) (hz : z ∈ closedBall c d) :
+    ‖logDeriv
+        (canonicalNumeratorProduct c R (riemannZetaDivisorSupport c R)
+          (riemannZetaDivisorMultiplicity c R)) z‖ ≤
+      (∑ᶠ u,
+        (MeromorphicOn.divisor riemannZeta (closedBall c R) u : ℝ)) /
+        (R - d) := by
+  let D := MeromorphicOn.divisor riemannZeta (closedBall c R)
+  have han : AnalyticOnNhd ℂ riemannZeta (closedBall c R) := by
+    intro u hu
+    exact analyticOnNhd_riemannZeta_ne_one u (havoid u hu)
+  have hD_nonneg : 0 ≤ D := han.divisor_nonneg
+  have hD_finite : D.support.Finite :=
+    D.finiteSupport (isCompact_closedBall c R)
+  have hu_ball : ∀ u ∈ hD_finite.toFinset, u ∈ ball c R := by
+    intro u hu
+    apply divisor_support_riemannZeta_closedBall_subset_ball_of_sphere_ne_zero
+      havoid hsphere
+    exact hD_finite.mem_toFinset.mp hu
+  change ‖logDeriv
+      (canonicalNumeratorProduct c R hD_finite.toFinset
+        (fun u => (D u).toNat)) z‖ ≤
+    (∑ᶠ u, (D u : ℝ)) / (R - d)
+  exact norm_logDeriv_canonicalNumeratorProduct_divisor_le_finsum_div
+    hD_finite (fun u => hD_nonneg u) hd hdR hu_ball hz
+
+/-- Mixed zero product: zeros inside radius `r` are replaced by canonical
+numerators, while outer zeros retain their ordinary factors. -/
+noncomputable def mixedCanonicalZeroProduct
+    (c : ℂ) (r : ℝ) (zeros : Finset ℂ) (m : ℂ → ℕ) : ℂ → ℂ :=
+  fun z => ∏ u ∈ zeros,
+    if dist u c < r then
+      translatedCanonicalNumerator c r u z ^ m u
+    else
+      (z - u) ^ m u
+
+/-- The mixed product has the same boundary norm as the complete ordinary
+zero product. -/
+lemma norm_mixedCanonicalZeroProduct_eq_norm_prod_sub
+    {c z : ℂ} {r : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ}
+    (hz : z ∈ sphere c r) :
+    ‖mixedCanonicalZeroProduct c r zeros m z‖ =
+      ‖∏ u ∈ zeros, (z - u) ^ m u‖ := by
+  rw [mixedCanonicalZeroProduct, norm_prod, norm_prod]
+  apply Finset.prod_congr rfl
+  intro u hu
+  by_cases hinner : dist u c < r
+  · have hu_ball : u ∈ ball c r := by
+      simpa [Metric.mem_ball] using hinner
+    simp only [hinner, if_true, norm_pow]
+    rw [norm_translatedCanonicalNumerator_eq_norm_sub hu_ball hz]
+  · simp [hinner, norm_pow]
+
+/-- At the center of the canonicalizing disk, replacing every inner raw zero
+factor by its canonical numerator can only increase the product norm. -/
+lemma norm_prod_sub_le_norm_mixedCanonicalZeroProduct_center
+    {c : ℂ} {r : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ}
+    (hr : 0 < r) :
+    ‖∏ u ∈ zeros, (c - u) ^ m u‖ ≤
+      ‖mixedCanonicalZeroProduct c r zeros m c‖ := by
+  rw [mixedCanonicalZeroProduct, norm_prod, norm_prod]
+  apply Finset.prod_le_prod
+  · intro u hu
+    positivity
+  · intro u hu
+    by_cases hinner : dist u c < r
+    · simp only [hinner, if_true, norm_pow]
+      have hcanon : ‖translatedCanonicalNumerator c r u c‖ = r := by
+        have hval : translatedCanonicalNumerator c r u c = (r : ℂ) := by
+          rw [translatedCanonicalNumerator]
+          simp only [sub_self, mul_zero, sub_zero]
+          field_simp
+        rw [hval, norm_real, Real.norm_eq_abs, abs_of_pos hr]
+      rw [hcanon]
+      apply pow_le_pow_left₀ (norm_nonneg _) ?_
+      simpa [dist_eq_norm, norm_sub_rev] using hinner.le
+    · simp [hinner]
+
+/-- The mixed product is nonzero on every strictly smaller closed disk. -/
+lemma mixedCanonicalZeroProduct_ne_zero
+    {c z : ℂ} {d r : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ}
+    (hdr : d < r) (hz : z ∈ closedBall c d) :
+    mixedCanonicalZeroProduct c r zeros m z ≠ 0 := by
+  have hz_r : z ∈ closedBall c r :=
+    Metric.closedBall_subset_closedBall hdr.le hz
+  rw [mixedCanonicalZeroProduct, Finset.prod_ne_zero_iff]
+  intro u hu
+  by_cases hinner : dist u c < r
+  · simp only [hinner, if_true]
+    exact pow_ne_zero _ (translatedCanonicalNumerator_ne_zero
+      (by simpa [Metric.mem_ball] using hinner) hz_r)
+  · simp only [hinner, if_false]
+    apply pow_ne_zero
+    apply sub_ne_zero.mpr
+    intro hzu
+    subst u
+    have hzdist : dist z c ≤ d := by
+      simpa [Metric.mem_closedBall] using hz
+    exact hinner (hzdist.trans_lt hdr)
+
+/-- The mixed canonical/ordinary zero product is entire. -/
+lemma analyticOnNhd_mixedCanonicalZeroProduct
+    {c : ℂ} {r : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ} :
+    AnalyticOnNhd ℂ (mixedCanonicalZeroProduct c r zeros m) Set.univ := by
+  change AnalyticOnNhd ℂ (fun z => ∏ u ∈ zeros,
+    if dist u c < r then
+      (((r : ℂ) ^ 2 - (starRingEnd ℂ) (u - c) * (z - c)) / r) ^ m u
+    else (z - u) ^ m u) Set.univ
+  apply zeros.analyticOnNhd_fun_prod
+  intro u hu
+  by_cases hinner : dist u c < r
+  · simp only [hinner, if_true]
+    exact (analyticOnNhd_translatedCanonicalNumerator
+      (c := c) (u := u) (R := r)).pow (m u)
+  · simp only [hinner, if_false]
+    intro z _hz
+    exact (analyticAt_id.sub analyticAt_const).pow (m u)
+
+/-- Logarithmic derivative of the mixed canonical/ordinary zero product on a
+strictly smaller disk. -/
+lemma logDeriv_mixedCanonicalZeroProduct
+    {c z : ℂ} {d r : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ}
+    (hdr : d < r) (hz : z ∈ closedBall c d) :
+    logDeriv (mixedCanonicalZeroProduct c r zeros m) z =
+      ∑ u ∈ zeros, (m u : ℂ) *
+        (if dist u c < r then
+          logDeriv (translatedCanonicalNumerator c r u) z
+        else (z - u)⁻¹) := by
+  classical
+  have hne := mixedCanonicalZeroProduct_ne_zero
+    (zeros := zeros) (m := m) hdr hz
+  rw [mixedCanonicalZeroProduct, Finset.prod_ne_zero_iff] at hne
+  have hprod := logDeriv_prod
+    (s := zeros)
+    (f := fun u w =>
+      if dist u c < r then
+        translatedCanonicalNumerator c r u w ^ m u
+      else (w - u) ^ m u)
+    (x := z) hne (by
+      intro u hu
+      by_cases hinner : dist u c < r
+      · simp only [hinner, if_true]
+        exact ((analyticOnNhd_translatedCanonicalNumerator
+          (c := c) (u := u) (R := r) z (Set.mem_univ z)).differentiableAt.pow (m u))
+      · simp only [hinner, if_false]
+        exact (differentiableAt_id.sub_const u).pow (m u))
+  change logDeriv (fun w => ∏ u ∈ zeros,
+    if dist u c < r then
+      translatedCanonicalNumerator c r u w ^ m u
+    else (w - u) ^ m u) z = _
+  rw [hprod]
+  apply Finset.sum_congr rfl
+  intro u hu
+  by_cases hinner : dist u c < r
+  · simp only [hinner, if_true]
+    exact logDeriv_fun_pow
+      (analyticOnNhd_translatedCanonicalNumerator
+        (c := c) (u := u) (R := r) z (Set.mem_univ z)).differentiableAt
+      (m u)
+  · simp only [hinner, if_false]
+    rw [logDeriv_fun_pow]
+    · simp [logDeriv_apply]
+    · exact differentiableAt_id.sub_const u
+
+/-- A raw zero factor outside radius `r` has uniformly bounded logarithmic
+derivative on every smaller radius `d`. -/
+lemma norm_inv_sub_le_inv_sub_of_radial_ge
+    {c u z : ℂ} {d r : ℝ}
+    (hdr : d < r) (hu : r ≤ dist u c) (hz : dist z c ≤ d) :
+    ‖(z - u)⁻¹‖ ≤ (r - d)⁻¹ := by
+  have hgap : 0 < r - d := sub_pos.mpr hdr
+  have hsep : r - d ≤ dist z u := by
+    have htri : dist u c ≤ dist u z + dist z c := dist_triangle u z c
+    rw [dist_comm z u]
+    linarith
+  rw [norm_inv, ← dist_eq_norm]
+  simpa [one_div] using one_div_le_one_div_of_le hgap hsep
+
+/-- The complete mixed canonical correction is bounded only by total
+multiplicity and the retained radial margin.  The estimate is uniform as an
+inner zero approaches the canonicalizing circle. -/
+lemma norm_logDeriv_mixedCanonicalZeroProduct_le_sum_div
+    {c z : ℂ} {d r : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ}
+    (hd : 0 ≤ d) (hdr : d < r) (hz : z ∈ closedBall c d) :
+    ‖logDeriv (mixedCanonicalZeroProduct c r zeros m) z‖ ≤
+      (∑ u ∈ zeros, (m u : ℝ)) / (r - d) := by
+  have hzdist : dist z c ≤ d := by
+    simpa [Metric.mem_closedBall] using hz
+  rw [logDeriv_mixedCanonicalZeroProduct hdr hz]
+  calc
+    ‖∑ u ∈ zeros, (m u : ℂ) *
+        (if dist u c < r then
+          logDeriv (translatedCanonicalNumerator c r u) z
+        else (z - u)⁻¹)‖
+        ≤ ∑ u ∈ zeros, ‖(m u : ℂ) *
+            (if dist u c < r then
+              logDeriv (translatedCanonicalNumerator c r u) z
+            else (z - u)⁻¹)‖ := norm_sum_le _ _
+    _ ≤ ∑ u ∈ zeros, (m u : ℝ) * (1 / (r - d)) := by
+      apply Finset.sum_le_sum
+      intro u hu_mem
+      rw [norm_mul, Complex.norm_natCast]
+      apply mul_le_mul_of_nonneg_left _ (Nat.cast_nonneg _)
+      by_cases hinner : dist u c < r
+      · simp only [hinner, if_true]
+        exact norm_logDeriv_translatedCanonicalNumerator_le_inv_sub
+          hd hdr (by simpa [Metric.mem_ball] using hinner) hz
+      · simp only [hinner, if_false]
+        simpa [one_div] using
+          norm_inv_sub_le_inv_sub_of_radial_ge hdr (not_lt.mp hinner) hzdist
+    _ = (∑ u ∈ zeros, (m u : ℝ)) / (r - d) := by
+      rw [← Finset.sum_mul]
+      ring
+
+/-- Product of a mixed canonical zero factor with an extracted regular unit. -/
+noncomputable def mixedCanonicalRegularUnit
+    (c : ℂ) (r : ℝ) (zeros : Finset ℂ) (m : ℂ → ℕ)
+    (g : ℂ → ℂ) : ℂ → ℂ :=
+  fun z => mixedCanonicalZeroProduct c r zeros m z * g z
+
+/-- The mixed canonical regular unit is analytic wherever the extracted unit
+is analytic. -/
+lemma analyticOnNhd_mixedCanonicalRegularUnit
+    {c : ℂ} {r b : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ} {g : ℂ → ℂ}
+    (hrb : r ≤ b) (hg : AnalyticOnNhd ℂ g (closedBall c b)) :
+    AnalyticOnNhd ℂ (mixedCanonicalRegularUnit c r zeros m g)
+      (closedBall c r) := by
+  intro z hz
+  exact
+    (analyticOnNhd_mixedCanonicalZeroProduct
+      (c := c) (r := r) (zeros := zeros) (m := m) z (Set.mem_univ z)).mul
+    (hg z (Metric.closedBall_subset_closedBall hrb hz))
+
+/-- The mixed canonical regular unit is nonzero on every strictly smaller
+disk when the extracted unit is nonzero on the outer disk. -/
+lemma mixedCanonicalRegularUnit_ne_zero
+    {c z : ℂ} {d r b : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ} {g : ℂ → ℂ}
+    (hdr : d < r) (hdb : d ≤ b)
+    (hgne : ∀ u : (closedBall c b : Set ℂ), g u ≠ 0)
+    (hz : z ∈ closedBall c d) :
+    mixedCanonicalRegularUnit c r zeros m g z ≠ 0 := by
+  rw [mixedCanonicalRegularUnit]
+  exact mul_ne_zero
+    (mixedCanonicalZeroProduct_ne_zero hdr hz)
+    (hgne ⟨z, Metric.closedBall_subset_closedBall hdb hz⟩)
+
+/-- The logarithmic derivative of the mixed regular unit is the sum of its
+finite zero correction and the logarithmic derivative of the extracted unit. -/
+lemma logDeriv_mixedCanonicalRegularUnit
+    {c z : ℂ} {d r b : ℝ} {zeros : Finset ℂ} {m : ℂ → ℕ} {g : ℂ → ℂ}
+    (hdr : d < r) (hdb : d ≤ b)
+    (hg : AnalyticOnNhd ℂ g (closedBall c b))
+    (hgne : ∀ u : (closedBall c b : Set ℂ), g u ≠ 0)
+    (hz : z ∈ closedBall c d) :
+    logDeriv (mixedCanonicalRegularUnit c r zeros m g) z =
+      (∑ u ∈ zeros, (m u : ℂ) *
+        (if dist u c < r then
+          logDeriv (translatedCanonicalNumerator c r u) z
+        else (z - u)⁻¹)) + logDeriv g z := by
+  change logDeriv
+    (fun w => mixedCanonicalZeroProduct c r zeros m w * g w) z = _
+  rw [logDeriv_mul z
+    (mixedCanonicalZeroProduct_ne_zero hdr hz)
+    (hgne ⟨z, Metric.closedBall_subset_closedBall hdb hz⟩)
+    (analyticOnNhd_mixedCanonicalZeroProduct
+      (c := c) (r := r) (zeros := zeros) (m := m)
+      z (Set.mem_univ z)).differentiableAt
+    (hg z (Metric.closedBall_subset_closedBall hdb hz)).differentiableAt]
+  rw [logDeriv_mixedCanonicalZeroProduct hdr hz]
+
 /-- On a closed disk avoiding the pole, zeta factors into its complete local
 divisor product and an analytic nonvanishing unit.
 
@@ -11865,6 +13652,239 @@ lemma exists_analytic_nonzero_factorization_riemannZeta_closedBall
       (isCompact_closedBall c R)
   simpa [U, Pi.smul_apply', smul_eq_mul] using
     hmer.extract_zeros_poles hnotop hfinite
+
+/-- The codiscrete zeta factorization upgrades to a pointwise identity at
+every strict-interior point, including zeta zeros.  Divisor nonnegativity makes
+the complete raw zero product analytic at those zeros. -/
+lemma factorization_riemannZeta_closedBall_pointwise_of_eventuallyEq
+    {c : ℂ} {R : ℝ} {g : ℂ → ℂ}
+    (havoid : ∀ z : ℂ, z ∈ closedBall c R → z ≠ 1)
+    (hg : AnalyticOnNhd ℂ g (closedBall c R))
+    (_hgne : ∀ u : (closedBall c R : Set ℂ), g u ≠ 0)
+    (hfactor : riemannZeta =ᶠ[codiscreteWithin (closedBall c R)]
+      (∏ᶠ u, (· - u) ^
+        MeromorphicOn.divisor riemannZeta (closedBall c R) u) * g) :
+    ∀ z ∈ ball c R,
+      riemannZeta z =
+        (∏ᶠ u, (z - u) ^
+          MeromorphicOn.divisor riemannZeta (closedBall c R) u) * g z := by
+  classical
+  let U : Set ℂ := closedBall c R
+  let D := MeromorphicOn.divisor riemannZeta U
+  let fac : ℂ → ℂ := ∏ᶠ u, fun w : ℂ => (w - u) ^ D u
+  have hanU : AnalyticOnNhd ℂ riemannZeta U := by
+    intro z hz
+    exact analyticOnNhd_riemannZeta_ne_one z (havoid z hz)
+  have hD_nonneg : 0 ≤ D := hanU.divisor_nonneg
+  have hDfinite : D.support.Finite :=
+    D.finiteSupport (isCompact_closedBall c R)
+  intro z hz
+  have hzU : z ∈ U := ball_subset_closedBall hz
+  have hza : AnalyticAt ℂ riemannZeta z := hanU z hzU
+  have hfacnf : MeromorphicNFAt fac z :=
+    Function.FactorizedRational.meromorphicNFOn D U hzU
+  have hfaca : AnalyticAt ℂ fac z := by
+    apply hfacnf.meromorphicOrderAt_nonneg_iff_analyticAt.mp
+    rw [show meromorphicOrderAt fac z = D z by
+      exact Function.FactorizedRational.meromorphicOrderAt_eq D hDfinite]
+    exact_mod_cast hD_nonneg z
+  have hrhsa : AnalyticAt ℂ (fun w => fac w * g w) z :=
+    hfaca.mul (hg z hzU)
+  have hU_nhds : U ∈ nhds z := closedBall_mem_nhds_of_mem hz
+  have hacc : AccPt z (Filter.principal U) := by
+    rw [accPt_principal_iff_nhdsWithin]
+    have heq : nhdsWithin z (U \ {z}) = nhdsWithin z {z}ᶜ := by
+      rw [nhdsWithin_eq_iff_eventuallyEq]
+      filter_upwards [hU_nhds] with w hw
+      apply propext
+      constructor
+      · intro h
+        exact h.2
+      · intro h
+        exact ⟨hw, h⟩
+    rw [heq]
+    infer_instance
+  have hfactorNE : riemannZeta =ᶠ[nhdsWithin z {z}ᶜ]
+      fun w => fac w * g w := by
+    apply hza.meromorphicAt.eventuallyEq_nhdsNE_of_eventuallyEq_codiscreteWithin
+      hrhsa.meromorphicAt hzU hacc
+    simpa [fac, D, U, Pi.smul_apply', smul_eq_mul] using hfactor
+  have hfactorN : riemannZeta =ᶠ[nhds z] fun w => fac w * g w :=
+    (hza.continuousAt.eventuallyEq_nhds_iff_eventuallyEq_nhdsNE
+      hrhsa.continuousAt).mp hfactorNE
+  have hmulSupport :
+      Function.mulSupport (fun u : ℂ => fun w : ℂ => (w - u) ^ D u) ⊆
+        D.support := by
+    intro u hu
+    by_contra hDu
+    have hDu0 : D u = 0 := by simpa [Function.mem_support] using hDu
+    apply hu
+    funext w
+    simp [hDu0]
+  have hfacfinite : Function.HasFiniteMulSupport
+      (fun u : ℂ => fun w : ℂ => (w - u) ^ D u) :=
+    hDfinite.subset hmulSupport
+  have hpoint := hfactorN.eq_of_nhds
+  rw [show fac z = ∏ᶠ u, (z - u) ^ D u by
+    exact finprod_apply hfacfinite z] at hpoint
+  simpa [D, U] using hpoint
+
+/-- On an interior circle, the zeta-divisor mixed canonical regular unit has
+exactly the same norm as zeta.  Inner zero factors are replaced by canonical
+numerators of the same boundary norm, while outer zero factors are unchanged. -/
+lemma norm_mixedCanonicalRegularUnit_riemannZetaDivisor_eq_norm_riemannZeta_on_sphere
+    {c z : ℂ} {r b : ℝ} {g : ℂ → ℂ}
+    (hrb : r < b)
+    (havoid : ∀ w : ℂ, w ∈ closedBall c b → w ≠ 1)
+    (hg : AnalyticOnNhd ℂ g (closedBall c b))
+    (hgne : ∀ u : (closedBall c b : Set ℂ), g u ≠ 0)
+    (hfactor : riemannZeta =ᶠ[codiscreteWithin (closedBall c b)]
+      (∏ᶠ u, (· - u) ^
+        MeromorphicOn.divisor riemannZeta (closedBall c b) u) * g)
+    (hz : z ∈ sphere c r) :
+    ‖mixedCanonicalRegularUnit c r
+        (riemannZetaDivisorSupport c b)
+        (riemannZetaDivisorMultiplicity c b) g z‖ =
+      ‖riemannZeta z‖ := by
+  classical
+  let D := MeromorphicOn.divisor riemannZeta (closedBall c b)
+  have han : AnalyticOnNhd ℂ riemannZeta (closedBall c b) := by
+    intro w hw
+    exact analyticOnNhd_riemannZeta_ne_one w (havoid w hw)
+  have hD_nonneg : 0 ≤ D := han.divisor_nonneg
+  have hD_finite : D.support.Finite :=
+    D.finiteSupport (isCompact_closedBall c b)
+  have hzdist : dist z c = r := by
+    simpa [Metric.mem_sphere, dist_eq_norm, norm_sub_rev] using hz
+  have hz_ball : z ∈ ball c b := by
+    rw [Metric.mem_ball]
+    linarith
+  have hpoint :=
+    factorization_riemannZeta_closedBall_pointwise_of_eventuallyEq
+      (c := c) (R := b) havoid hg hgne hfactor z hz_ball
+  have hraw :=
+    finprod_sub_zpow_eq_prod_toNat_of_nonneg_finiteSupport
+      hD_finite (fun u => hD_nonneg u) z
+  change ‖mixedCanonicalRegularUnit c r hD_finite.toFinset
+      (fun u => (D u).toNat) g z‖ = ‖riemannZeta z‖
+  rw [hraw] at hpoint
+  rw [mixedCanonicalRegularUnit, norm_mul,
+    norm_mixedCanonicalZeroProduct_eq_norm_prod_sub hz, hpoint, norm_mul]
+
+/-- At the disk center, the zeta-divisor mixed canonical regular unit has norm
+at least that of zeta.  This preserves the standard zeta center lower bound
+without a loss depending on the nearest zero radius. -/
+lemma norm_riemannZeta_le_norm_mixedCanonicalRegularUnit_riemannZetaDivisor_center
+    {c : ℂ} {r b : ℝ} {g : ℂ → ℂ}
+    (hr : 0 < r) (hrb : r < b)
+    (havoid : ∀ w : ℂ, w ∈ closedBall c b → w ≠ 1)
+    (hg : AnalyticOnNhd ℂ g (closedBall c b))
+    (hgne : ∀ u : (closedBall c b : Set ℂ), g u ≠ 0)
+    (hfactor : riemannZeta =ᶠ[codiscreteWithin (closedBall c b)]
+      (∏ᶠ u, (· - u) ^
+        MeromorphicOn.divisor riemannZeta (closedBall c b) u) * g) :
+    ‖riemannZeta c‖ ≤
+      ‖mixedCanonicalRegularUnit c r
+        (riemannZetaDivisorSupport c b)
+        (riemannZetaDivisorMultiplicity c b) g c‖ := by
+  classical
+  let D := MeromorphicOn.divisor riemannZeta (closedBall c b)
+  have han : AnalyticOnNhd ℂ riemannZeta (closedBall c b) := by
+    intro w hw
+    exact analyticOnNhd_riemannZeta_ne_one w (havoid w hw)
+  have hD_nonneg : 0 ≤ D := han.divisor_nonneg
+  have hD_finite : D.support.Finite :=
+    D.finiteSupport (isCompact_closedBall c b)
+  have hc_ball : c ∈ ball c b := Metric.mem_ball_self (hr.trans hrb)
+  have hpoint :=
+    factorization_riemannZeta_closedBall_pointwise_of_eventuallyEq
+      (c := c) (R := b) havoid hg hgne hfactor c hc_ball
+  have hraw :=
+    finprod_sub_zpow_eq_prod_toNat_of_nonneg_finiteSupport
+      hD_finite (fun u => hD_nonneg u) c
+  change ‖riemannZeta c‖ ≤
+    ‖mixedCanonicalRegularUnit c r hD_finite.toFinset
+      (fun u => (D u).toNat) g c‖
+  rw [hraw] at hpoint
+  rw [hpoint, mixedCanonicalRegularUnit, norm_mul, norm_mul]
+  exact mul_le_mul_of_nonneg_right
+    (norm_prod_sub_le_norm_mixedCanonicalZeroProduct_center hr)
+    (norm_nonneg _)
+
+/-- If zeta is nonzero on the canonicalizing circle, the zeta-divisor mixed
+regular unit is nonzero on the entire closed disk, including its boundary. -/
+lemma mixedCanonicalRegularUnit_riemannZetaDivisor_ne_zero_closedBall
+    {c z : ℂ} {r b : ℝ} {g : ℂ → ℂ}
+    (hrb : r < b)
+    (havoid : ∀ w : ℂ, w ∈ closedBall c b → w ≠ 1)
+    (hg : AnalyticOnNhd ℂ g (closedBall c b))
+    (hgne : ∀ u : (closedBall c b : Set ℂ), g u ≠ 0)
+    (hfactor : riemannZeta =ᶠ[codiscreteWithin (closedBall c b)]
+      (∏ᶠ u, (· - u) ^
+        MeromorphicOn.divisor riemannZeta (closedBall c b) u) * g)
+    (hsphere : ∀ w ∈ sphere c r, riemannZeta w ≠ 0)
+    (hz : z ∈ closedBall c r) :
+    mixedCanonicalRegularUnit c r
+      (riemannZetaDivisorSupport c b)
+      (riemannZetaDivisorMultiplicity c b) g z ≠ 0 := by
+  have hzdist : dist z c ≤ r := by
+    simpa [Metric.mem_closedBall] using hz
+  rcases lt_or_eq_of_le hzdist with hlt | heq
+  · exact mixedCanonicalRegularUnit_ne_zero
+      (d := dist z c) hlt (hzdist.trans hrb.le) hgne
+      (by simp [Metric.mem_closedBall])
+  · have hzsphere : z ∈ sphere c r := by
+      simpa [Metric.mem_sphere, dist_eq_norm, norm_sub_rev] using heq
+    intro hzero
+    have hnorm :=
+      norm_mixedCanonicalRegularUnit_riemannZetaDivisor_eq_norm_riemannZeta_on_sphere
+        hrb havoid hg hgne hfactor hzsphere
+    have hzeta_norm : ‖riemannZeta z‖ = 0 := by
+      rw [← hnorm, hzero, norm_zero]
+    exact hsphere z hzsphere (norm_eq_zero.mp hzeta_norm)
+
+/-- Borel--Caratheodory/Cauchy bound for the mixed zero-removed zeta unit.
+Canonicalization preserves zeta's boundary norm and improves its center norm,
+so the estimate has no loss depending on the nearest zero radius. -/
+lemma norm_logDeriv_mixedCanonicalRegularUnit_riemannZetaDivisor_le
+    {c z : ℂ} {r b B ρ : ℝ} {g : ℂ → ℂ}
+    (hc : (3 / 2 : ℝ) ≤ c.re) (hr : 0 < r) (hrb : r < b) (hρ : 0 < ρ)
+    (havoid : ∀ w : ℂ, w ∈ closedBall c b → w ≠ 1)
+    (hg : AnalyticOnNhd ℂ g (closedBall c b))
+    (hgne : ∀ u : (closedBall c b : Set ℂ), g u ≠ 0)
+    (hfactor : riemannZeta =ᶠ[codiscreteWithin (closedBall c b)]
+      (∏ᶠ u, (· - u) ^
+        MeromorphicOn.divisor riemannZeta (closedBall c b) u) * g)
+    (hsphere_ne : ∀ w ∈ sphere c r, riemannZeta w ≠ 0)
+    (hsphere_log : ∀ w ∈ sphere c r, Real.log ‖riemannZeta w‖ ≤ B)
+    (hzρ : dist z c + ρ ≤ r / 2) :
+    ‖logDeriv
+        (mixedCanonicalRegularUnit c r
+          (riemannZetaDivisorSupport c b)
+          (riemannZetaDivisorMultiplicity c b) g) z‖ ≤
+      2 * max (B + Real.log 3) 1 / ρ := by
+  let h := mixedCanonicalRegularUnit c r
+    (riemannZetaDivisorSupport c b)
+    (riemannZetaDivisorMultiplicity c b) g
+  have hh : AnalyticOnNhd ℂ h (closedBall c r) :=
+    analyticOnNhd_mixedCanonicalRegularUnit hrb.le hg
+  have hhne : ∀ w ∈ closedBall c r, h w ≠ 0 := by
+    intro w hw
+    exact mixedCanonicalRegularUnit_riemannZetaDivisor_ne_zero_closedBall
+      hrb havoid hg hgne hfactor hsphere_ne hw
+  have hcenter : (1 / 3 : ℝ) ≤ ‖h c‖ :=
+    (one_third_le_norm_riemannZeta_of_three_halves_le_re c hc).trans
+      (norm_riemannZeta_le_norm_mixedCanonicalRegularUnit_riemannZetaDivisor_center
+        hr hrb havoid hg hgne hfactor)
+  have hsphere_h : ∀ w ∈ sphere c r, Real.log ‖h w‖ ≤ B := by
+    intro w hw
+    rw [show ‖h w‖ = ‖riemannZeta w‖ by
+      exact
+        norm_mixedCanonicalRegularUnit_riemannZetaDivisor_eq_norm_riemannZeta_on_sphere
+          hrb havoid hg hgne hfactor hw]
+    exact hsphere_log w hw
+  exact norm_logDeriv_le_two_mul_max_add_log_three_div_of_sphere_log_norm_le
+    hr hρ hh hhne hcenter hsphere_h hzρ
 
 /-- A fixed extracted zeta factor carries the pointwise logarithmic-derivative
 principal-part identity at every nonzero strict-interior point. -/
@@ -11956,6 +13976,93 @@ lemma logDeriv_factorization_riemannZeta_closedBall_pointwise_of_eventuallyEq
     _ = (∑ᶠ u,
           (MeromorphicOn.divisor riemannZeta (closedBall c R) u : ℂ) *
             (z - u)⁻¹) + logDeriv g z := by rfl
+
+/-- Complete zeta principal-part regularization through the mixed canonical
+unit.  Both sides equal the logarithmic derivative of the extracted analytic
+unit, but the right side is expressed as a Borel-controlled mixed unit minus
+a uniformly bounded finite correction. -/
+lemma regularized_logDeriv_riemannZeta_eq_mixedCanonicalRegularUnit_sub_correction
+    {c z : ℂ} {d r b : ℝ} {g : ℂ → ℂ}
+    (hdr : d < r) (hrb : r < b)
+    (havoid : ∀ w : ℂ, w ∈ closedBall c b → w ≠ 1)
+    (hg : AnalyticOnNhd ℂ g (closedBall c b))
+    (hgne : ∀ u : (closedBall c b : Set ℂ), g u ≠ 0)
+    (hfactor : riemannZeta =ᶠ[codiscreteWithin (closedBall c b)]
+      (∏ᶠ u, (· - u) ^
+        MeromorphicOn.divisor riemannZeta (closedBall c b) u) * g)
+    (hz : z ∈ closedBall c d) (hzeta : riemannZeta z ≠ 0) :
+    logDeriv riemannZeta z -
+        ∑ᶠ u, (MeromorphicOn.divisor riemannZeta
+          (closedBall c b) u : ℂ) * (z - u)⁻¹ =
+      logDeriv
+          (mixedCanonicalRegularUnit c r
+            (riemannZetaDivisorSupport c b)
+            (riemannZetaDivisorMultiplicity c b) g) z -
+        ∑ u ∈ riemannZetaDivisorSupport c b,
+          (riemannZetaDivisorMultiplicity c b u : ℂ) *
+            (if dist u c < r then
+              logDeriv (translatedCanonicalNumerator c r u) z
+            else (z - u)⁻¹) := by
+  have hzdist : dist z c ≤ d := by
+    simpa [Metric.mem_closedBall] using hz
+  have hz_ball : z ∈ ball c b := by
+    rw [Metric.mem_ball]
+    linarith
+  have hzeta_ld :=
+    logDeriv_factorization_riemannZeta_closedBall_pointwise_of_eventuallyEq
+      havoid hg hgne hfactor z hz_ball hzeta
+  have hmixed_ld := logDeriv_mixedCanonicalRegularUnit
+    (zeros := riemannZetaDivisorSupport c b)
+    (m := riemannZetaDivisorMultiplicity c b)
+    hdr (hdr.le.trans hrb.le) hg hgne hz
+  rw [hzeta_ld, hmixed_ld]
+  abel
+
+/-- Uniform local regular-part estimate for zeta after removing every divisor
+principal part in the outer disk.  The bound depends on boundary growth and
+total divisor mass, but not on the distance to the nearest zero. -/
+lemma norm_regularized_logDeriv_riemannZeta_le_mixedCanonical_bound
+    {c z : ℂ} {d r b B ρ : ℝ} {g : ℂ → ℂ}
+    (hc : (3 / 2 : ℝ) ≤ c.re) (hd : 0 ≤ d) (hdr : d < r) (hrb : r < b)
+    (hρ : 0 < ρ)
+    (havoid : ∀ w : ℂ, w ∈ closedBall c b → w ≠ 1)
+    (hg : AnalyticOnNhd ℂ g (closedBall c b))
+    (hgne : ∀ u : (closedBall c b : Set ℂ), g u ≠ 0)
+    (hfactor : riemannZeta =ᶠ[codiscreteWithin (closedBall c b)]
+      (∏ᶠ u, (· - u) ^
+        MeromorphicOn.divisor riemannZeta (closedBall c b) u) * g)
+    (hsphere_ne : ∀ w ∈ sphere c r, riemannZeta w ≠ 0)
+    (hsphere_log : ∀ w ∈ sphere c r, Real.log ‖riemannZeta w‖ ≤ B)
+    (hz : z ∈ closedBall c d) (hzeta : riemannZeta z ≠ 0)
+    (hzρ : dist z c + ρ ≤ r / 2) :
+    ‖logDeriv riemannZeta z -
+        ∑ᶠ u, (MeromorphicOn.divisor riemannZeta
+          (closedBall c b) u : ℂ) * (z - u)⁻¹‖ ≤
+      2 * max (B + Real.log 3) 1 / ρ +
+        (∑ᶠ u, (MeromorphicOn.divisor riemannZeta
+          (closedBall c b) u : ℝ)) / (r - d) := by
+  let D := MeromorphicOn.divisor riemannZeta (closedBall c b)
+  have han : AnalyticOnNhd ℂ riemannZeta (closedBall c b) := by
+    intro w hw
+    exact analyticOnNhd_riemannZeta_ne_one w (havoid w hw)
+  have hD_nonneg : 0 ≤ D := han.divisor_nonneg
+  have hD_finite : D.support.Finite :=
+    D.finiteSupport (isCompact_closedBall c b)
+  have hunit :=
+    norm_logDeriv_mixedCanonicalRegularUnit_riemannZetaDivisor_le
+      hc (hd.trans_lt hdr) hrb hρ havoid hg hgne hfactor
+        hsphere_ne hsphere_log hzρ
+  have hcorr := norm_logDeriv_mixedCanonicalZeroProduct_le_sum_div
+    (zeros := hD_finite.toFinset) (m := fun u => (D u).toNat)
+    hd hdr hz
+  rw [logDeriv_mixedCanonicalZeroProduct hdr hz] at hcorr
+  rw [sum_toNat_eq_finsum_cast_of_nonneg_finiteSupport
+    hD_finite (fun u => hD_nonneg u)] at hcorr
+  have hidentity :=
+    regularized_logDeriv_riemannZeta_eq_mixedCanonicalRegularUnit_sub_correction
+      hdr hrb havoid hg hgne hfactor hz hzeta
+  rw [hidentity]
+  exact (norm_sub_le _ _).trans (add_le_add hunit hcorr)
 
 /-- Pointwise logarithmic-derivative form of the complete zeta factorization.
 
@@ -23340,8 +25447,7 @@ lemma jensen_zero_mass_riemannZeta_two_add_I_mul_le_of_circleAverage_le
 
 /-- Under polynomial vertical growth, Jensen's weighted zeta-zero mass on the
 high disk centered at `2 + I*t` is `O(log (|t| + R + 3))` with explicit
-constants.  The polynomial-growth hypothesis is still the missing analytic
-input. -/
+constants. -/
 lemma jensen_zero_mass_riemannZeta_two_add_I_mul_le_affine_log_abs_add_radius_three_of_polynomial_growth
     {T0 A B R t : ℝ} (hT0 : 6 ≤ T0) (hA : 1 ≤ A) (hB : 0 ≤ B)
     (hR : 0 < R) (hRone : R ≤ 1) (hheight : T0 + R ≤ |t|)
@@ -23355,6 +25461,19 @@ lemma jensen_zero_mass_riemannZeta_two_add_I_mul_le_affine_log_abs_add_radius_th
   exact
     circleAverage_log_norm_riemannZeta_two_add_I_mul_le_affine_log_abs_add_radius_three_of_polynomial_growth
       hT0 hA hB hR hRone hheight hpoly
+
+/-- Unconditional `O(log |t|)` Jensen weighted zero-mass estimate, obtained by
+combining Abel's zeta-growth bound with the local Jensen formula. -/
+lemma jensen_zero_mass_riemannZeta_two_add_I_mul_le_log_two_add_two_log_abs_add_radius_three
+    {R t : ℝ} (hR : 0 < R) (hRone : R ≤ 1) (hheight : 7 + R ≤ |t|) :
+    (∑ᶠ u,
+        divisor riemannZeta (closedBall ((2 : ℂ) + I * t) R) u *
+          Real.log (R * ‖((2 : ℂ) + I * t) - u‖⁻¹)) ≤
+      Real.log 2 + 2 * Real.log (|t| + R + 3) + Real.log 3 := by
+  apply jensen_zero_mass_riemannZeta_two_add_I_mul_le_of_circleAverage_le hR
+  exact
+    circleAverage_log_norm_riemannZeta_two_add_I_mul_le_log_two_add_two_log_abs_add_radius_three
+      hR hRone hheight
 
 /-- Jensen's weighted local zero mass for `ζ` on a disk centered at
 `2 + I*t` is controlled solely by a boundary norm bound.
@@ -23587,6 +25706,82 @@ lemma finsum_divisor_riemannZeta_closedBall_le_log_bound_div
   simpa [mul_comm] using
     log_mul_finsum_divisor_riemannZeta_closedBall_le_log_bound
       hb hbR hheight hM hsphere
+
+/-- Good-circle selection and Jensen zero counting remove every random-radius
+quantity from the mixed canonical regular-part estimate.
+
+The result is uniform on a fixed retained disk: its right-hand side depends
+only on the supplied boundary/inner growth bounds and the deterministic
+margins `rho` and `a - d`, not on the selected circle or nearest zero. -/
+lemma norm_regularized_logDeriv_riemannZeta_le_of_good_radius_and_jensen
+    {d a q b R t M K rho : ℝ}
+    (hd : 0 ≤ d) (hda : d < a) (haq : a < q) (hqb : q < b)
+    (hbR : b < R) (hheight : R < |t|) (hM : 1 ≤ M)
+    (hrho : 0 < rho) (hgeom : d + rho ≤ a / 2)
+    (houter : ∀ z : ℂ,
+      z ∈ sphere ((2 : ℂ) + I * t) R → ‖riemannZeta z‖ ≤ M)
+    (hinner : ∀ z ∈ closedBall ((2 : ℂ) + I * t) q,
+      Real.log ‖riemannZeta z‖ ≤ K) :
+    ∀ z ∈ closedBall ((2 : ℂ) + I * t) d,
+      riemannZeta z ≠ 0 →
+      ‖logDeriv riemannZeta z -
+          ∑ᶠ u, (MeromorphicOn.divisor riemannZeta
+            (closedBall ((2 : ℂ) + I * t) b) u : ℂ) * (z - u)⁻¹‖ ≤
+        2 * max (K + Real.log 3) 1 / rho +
+          ((Real.log M + Real.log 3) / Real.log (R / b)) / (a - d) := by
+  classical
+  let c : ℂ := (2 : ℂ) + I * t
+  let D := MeromorphicOn.divisor riemannZeta (closedBall c b)
+  have ha : 0 < a := hd.trans_lt hda
+  have hb : 0 < b := ha.trans haq |>.trans hqb
+  have havoid : ∀ w : ℂ, w ∈ closedBall c b → w ≠ 1 := by
+    intro w hw
+    exact closedBall_sigma_it_ne_one_of_height_add_le
+      (z := w) (σ := 2) (t := t) (R := b) (H := |t| - b)
+        (by simpa [c] using hw) (by linarith) (by linarith)
+  rcases exists_good_radius_separated_from_riemannZeta_zeros_closedBall_strictly_inside
+      ha haq hqb havoid with
+    ⟨_zeros, r, _hzeros, hrpos, hr, _hsep, hsphere_ne⟩
+  rcases exists_analytic_nonzero_factorization_riemannZeta_closedBall havoid with
+    ⟨g, hg, hgne, hfactor⟩
+  have hsphere_log : ∀ w ∈ sphere c r, Real.log ‖riemannZeta w‖ ≤ K := by
+    intro w hw
+    apply hinner w
+    have hw_closed : w ∈ closedBall c r := sphere_subset_closedBall hw
+    simpa [c] using Metric.closedBall_subset_closedBall hr.2 hw_closed
+  have han : AnalyticOnNhd ℂ riemannZeta (closedBall c b) := by
+    intro w hw
+    exact analyticOnNhd_riemannZeta_ne_one w (havoid w hw)
+  have hD_nonneg : 0 ≤ D := han.divisor_nonneg
+  have hmass_nonneg : 0 ≤ ∑ᶠ u, (D u : ℝ) := by
+    apply finsum_nonneg
+    intro u
+    exact_mod_cast hD_nonneg u
+  have hmass : (∑ᶠ u, (D u : ℝ)) ≤
+      (Real.log M + Real.log 3) / Real.log (R / b) := by
+    simpa [c, D] using
+      finsum_divisor_riemannZeta_closedBall_le_log_bound_div
+        hb hbR hheight hM houter
+  intro z hz hzeta
+  have hdr : d < r := hda.trans_le hr.1
+  have hrb : r < b := hr.2.trans_lt hqb
+  have hzdist : dist z c ≤ d := by
+    simpa [c, Metric.mem_closedBall] using hz
+  have hzrho : dist z c + rho ≤ r / 2 := by
+    nlinarith [hr.1]
+  have hlocal := norm_regularized_logDeriv_riemannZeta_le_mixedCanonical_bound
+    (c := c) (d := d) (r := r) (b := b) (B := K) (ρ := rho)
+    (by norm_num [c]) hd hdr hrb hrho havoid hg hgne hfactor
+      hsphere_ne hsphere_log (by simpa [c] using hz) hzeta hzrho
+  have had : 0 < a - d := sub_pos.mpr hda
+  have hradial : (∑ᶠ u, (D u : ℝ)) / (r - d) ≤
+      (∑ᶠ u, (D u : ℝ)) / (a - d) :=
+    div_le_div_of_nonneg_left hmass_nonneg had (sub_le_sub_right hr.1 d)
+  have hmass_div : (∑ᶠ u, (D u : ℝ)) / (a - d) ≤
+      ((Real.log M + Real.log 3) / Real.log (R / b)) / (a - d) :=
+    div_le_div_of_nonneg_right hmass had.le
+  simpa [c, D] using
+    hlocal.trans (add_le_add_right (hradial.trans hmass_div) _)
 
 /-- Jensen-controlled boundary bound for the zero-removed analytic zeta
 factor on a quantitatively selected good circle.

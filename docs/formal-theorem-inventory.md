@@ -19,7 +19,7 @@ python3 -m pytest
 
 At the time of writing, `lake build` succeeds, the recursive placeholder scan
 has no project Lean-source matches, the scanner classifies every project
-`def ... : Prop`, the mathematical target inventory is stable at 22
+`def ... : Prop`, the mathematical target inventory is stable at 21
 declarations, and the Python experiment tests pass.
 
 ## Proved Project-Local Results
@@ -497,6 +497,23 @@ Private technical lemma:
 
 - `natCast_cpow_neg_re`
   computes `Re ((n : C)^(-s))` for positive natural `n`.
+
+### `ZeroFreeRegion/PhragmenLindelofZeta.lean`
+
+- `exists_norm_normalizedRiemannZetaCarrier_le_on_zero_one` and
+  `exists_norm_riemannZeta_le_polynomial_on_zero_four` prove fixed-strip zeta
+  growth via Mathlib's Phragmen-Lindelof theorem.
+- `norm_regularized_logDeriv_riemannZeta_le_of_good_radius_and_jensen_three_quarters`
+  propagates the strengthened `3R/4` Borel geometry through mixed canonical
+  zero removal and Jensen divisor counting.
+- `exists_regularized_logDeriv_riemannZeta_log_bound` proves the uniform
+  all-divisor regular-part `O(log |t|)` estimate.
+- `exists_ReNegDerivDivVerticalLogBound` proves the exact boundary-strip
+  real-part estimate used by the 3-4-1 argument.
+- `exists_re_neg_deriv_div_riemannZeta_le_neg_inv_add_log_abs_bound` isolates
+  the candidate-zero principal term.
+- `classical_zero_free_region_proved` proves the classical `c/log |t|`
+  zero-free-region predicate.
 
 ### `ZeroFreeRegion/MeromorphicAux.lean`
 
@@ -1525,9 +1542,46 @@ Core verified declarations:
   the high vertical region `T0 <= |Im z|`, `1 <= Re z <= 3`.
 - `norm_riemannZeta_le_re_zeta_two_of_two_le_re` and
   `norm_riemannZeta_le_const_polynomial_on_two_le_re` now supply the proved
-  right-edge input on `2 <= Re(s)`; the still-missing analytic input is the
-  continuation of comparable control across the boundary strip
-  `1 <= Re(s) <= 2` at high height.
+  right-edge input on `2 <= Re(s)`.
+- `norm_riemannZeta_le_two_mul_norm_of_one_le_re_of_one_le_abs_im` extends a
+  stronger linear-growth estimate across the full boundary strip
+  `Re(s) >= 1`, `|Im(s)| >= 1`, using Abel's floor-integral formula and
+  continuity from the right.  The packaged polynomial-growth, logarithmic,
+  circle-average, and Jensen zero-mass forms therefore no longer require a
+  future zeta-growth premise.
+- `norm_Gamma_mul_cos_functionalEquation_sq_le`,
+  `norm_riemannZeta_functionalEquationCoeff_sq_le`, and
+  `norm_riemannZeta_I_mul_le_four_mul_abs_sq` formalize the exact cancellation
+  of the Gamma and trigonometric exponential factors and prove
+  `||zeta(it)|| <= 4|t|^2` for `|t|>=1`.  This is a genuine polynomial-growth
+  theorem on the left boundary `Re(s)=0`; the following carrier theorem now
+  supplies a stronger pointwise interior-growth estimate.
+- `norm_strongFEPair_Λ_le_endpoint_integrals` and
+  `exists_norm_completedRiemannZeta₀_le_on_zero_one` prove a uniform closed-strip
+  bound for the completed-zeta entire numerator by splitting its modified
+  Mellin integral at `1` and comparing against endpoint exponents.
+- `norm_inv_Gammaℝ_le_exp_of_re_mem_Icc_of_one_le_abs_im` and
+  `exists_norm_riemannZetaEntireRegularization_le_exp_on_zero_one` combine
+  Gamma reflection with that Mellin estimate to bound the entire carrier by a
+  quadratic polynomial times `exp(pi*|Im(s)|/2)` on `0<=Re(s)<=1` at
+  `|Im(s)|>=1`.  This is stronger than the high-height weak double-exponential
+  Phragmen-Lindelof premise; the remaining tasks are its `IsBigO` packaging,
+  polynomial normalization, a low-height compact patch, and the vertical-strip
+  application.
+- This does not close either logarithmic-derivative target: the remaining
+  analytic gaps are a uniform boundary-strip bound for `zeta'/zeta` and
+  uniform control of its zero-removed regular part through the remaining
+  inner/outer regular-unit composition.
+- `translatedCanonicalFactor`, `translatedCanonicalNumerator`, and their
+  boundary-norm, analyticity, nonvanishing, exact-log-derivative, and
+  `1/(R-d)` inner-disk bound lemmas establish the single-zero canonical
+  replacement needed to eliminate the old quantitative circle-separation
+  loss.  `canonicalNumeratorProduct` lifts this to finite families and bounds
+  the correction by total multiplicity divided by the radial margin.  The
+  zeta-divisor variants convert the nonnegative integer divisor to natural
+  multiplicities and bound the correction directly by Jensen divisor mass.
+  The inner/outer regular-unit composition remains open, so these declarations
+  do not yet prove `LogDerivRegularPartLogBound`.
 - `norm_deriv_riemannZeta_le_re_zeta_two_div_radius_of_closedBall_two_le_re`
   uses Cauchy's derivative estimate plus the right-edge zeta bound to prove
   `||zeta'(c)|| <= Re(zeta(2)) / R` whenever `closedBall c R` stays in
@@ -3075,20 +3129,17 @@ metadata, not proof results.
 The following declarations are intentionally `def ... : Prop` targets.  They
 are not exported as theorems and should not be cited as proved.
 
-As of `2026-07-05`, there are **22** mathematical target declarations:
+As of `2026-07-13`, there are **21** mathematical target declarations:
 
 - `HardyTheorem` namespace: **7**
 - `HardyTheorem.Details` namespace: **3**
 - `PrimeNumberTheorem` namespace: **9**
 - `KnownResults` namespace: **1**
-- `ZeroFreeRegion` namespace: **1**
+- `ZeroFreeRegion` namespace: **0**
 - global namespace: **1** (`vinogradov_korobov_zero_free_region`)
 
 ### `ZeroFreeRegion.lean`
 
-- `classical_zero_free_region`
-  target: a uniform zero-free region
-  `Re(s) >= 1 - c / log |Im(s)|`.
 - `vinogradov_korobov_zero_free_region`
   target: the stronger Vinogradov-Korobov zero-free region.  This declaration
   currently lives in the global namespace even though it is in

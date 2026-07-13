@@ -203,6 +203,51 @@ For the lower bound:
 Multiplying both inequalities by the positive number `sigma - 1` gives the
 stated result.
 
+## 5. Local Zero-Removed Regular-Part Estimate
+
+The quantitative zero-free-region branch now contains a proved local theorem
+that removes the previous dependence on the distance to the nearest zero.
+For a pole-free outer disk and a zeta-zero-free intermediate circle, the
+divisor factors inside that circle are replaced by canonical numerators and
+the outer factors are retained. The resulting `mixedCanonicalRegularUnit` is
+analytic and nonzero on the retained closed disk, agrees with zeta in norm on
+its boundary, and has center norm at least that of zeta. The zero-free-circle
+assumption is qualitative; no quantitative distance from that circle to each
+zero enters the estimate.
+
+Combining Borel--Caratheodory/Cauchy control of this unit with the finite
+canonical correction gives
+
+```text
+‖logDeriv ζ(z) - sum_u D(u)/(z-u)‖
+  <= boundaryGrowthTerm + divisorMass/(r-d).
+```
+
+This is formalized as
+`norm_regularized_logDeriv_riemannZeta_le_mixedCanonical_bound`. The estimate
+is local and conditional on the displayed disk data, but its coefficient is
+independent of the nearest zero distance. The next unresolved step is a
+uniform high-height specialization using the already proved zeta growth and
+Jensen divisor-mass bounds, followed by isolation of the selected
+zero-candidate principal term.
+
+The follow-up theorem
+`norm_regularized_logDeriv_riemannZeta_le_of_good_radius_and_jensen` performs
+the good-circle selection and Jensen mass substitution internally, replacing
+the selected denominator by the fixed margin `a-d`. Separately, the Mobius
+reciprocal identity extends the center estimate `‖ζ(s)‖≥1/3` to
+`Re(s)≥3/2`. These are genuine reductions of the remaining uniformity problem;
+the functional-equation module now additionally proves the exact
+Gamma/trigonometric cancellation and `‖ζ(it)‖≤4|t|²` on `Re(s)=0`.  This closes
+one boundary of the required wider strip, but does not yet provide the
+final Phragmen-Lindelof interpolation theorem.  The analytic growth premise is
+now proved more strongly: a uniform Mellin bound for `completedRiemannZeta₀`
+and an exponential reciprocal-Gamma bound yield a quadratic times
+single-exponential estimate for the entire carrier on `0≤Re(s)≤1` when
+`|Im(s)|≥1`.  What remains is `IsBigO` packaging, polynomial normalization, a
+low-height compact patch, and the actual vertical-strip application needed by
+disks that reach the boundary line `Re(s)=1`.
+
 ## What This Does and Does Not Prove
 
 The project-local contribution is not a complete proof of the Prime Number
