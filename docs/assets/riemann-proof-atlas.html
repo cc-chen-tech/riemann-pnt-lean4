@@ -1,0 +1,1475 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Riemann Proof Atlas</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #e7edf2;
+      --paper-strong: #f7f8f6;
+      --ink: #132236;
+      --ink-soft: #536476;
+      --navy: #1e405f;
+      --verified: #2f765f;
+      --route: #a86a2d;
+      --frontier: #934d55;
+      --rule: #9aa8b7;
+      --focus: #166c9b;
+      --display: "Iowan Old Style", Baskerville, "Songti SC", serif;
+      --body: -apple-system, BlinkMacSystemFont, "PingFang SC", "Noto Sans CJK SC", sans-serif;
+      --utility: SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      letter-spacing: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--body);
+      line-height: 1.65;
+    }
+
+    button,
+    a {
+      color: inherit;
+      font: inherit;
+    }
+
+    button:focus-visible,
+    a:focus-visible {
+      outline: 3px solid #166c9b;
+      outline-offset: 3px;
+    }
+
+    [data-action="toggle-network"]:focus-visible {
+      outline: 3px solid #166c9b;
+      outline-offset: 3px;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    .skip-link {
+      position: fixed;
+      left: 14px;
+      top: -80px;
+      z-index: 20;
+      padding: 8px 12px;
+      background: var(--paper-strong);
+      border: 1px solid var(--navy);
+    }
+
+    .skip-link:focus {
+      top: 14px;
+    }
+
+    .site-header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 420px);
+      gap: 32px;
+      align-items: end;
+      width: min(1320px, calc(100% - 48px));
+      margin: 0 auto;
+      padding: 42px 0 28px;
+      border-bottom: 1px solid var(--navy);
+    }
+
+    .site-header__index,
+    .eyebrow,
+    .status-label,
+    .node-status,
+    .concept-english,
+    .map-distance,
+    .plate-label {
+      margin: 0;
+      font-family: var(--utility);
+      font-size: 0.73rem;
+      line-height: 1.35;
+      text-transform: uppercase;
+    }
+
+    .site-header__index {
+      color: var(--navy);
+    }
+
+    .site-header h1 {
+      margin: 7px 0 0;
+      font-family: var(--display);
+      font-size: 3rem;
+      font-weight: 500;
+      line-height: 1.04;
+    }
+
+    .site-header__intro {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 1rem;
+    }
+
+    main {
+      width: min(1320px, calc(100% - 48px));
+      margin: 0 auto 54px;
+      background: var(--paper-strong);
+      border-bottom: 1px solid var(--navy);
+    }
+
+    .atlas-toolbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      align-items: center;
+      min-height: 64px;
+      padding: 10px 18px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .atlas-toolbar p {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 0.86rem;
+    }
+
+    .quiet-button,
+    .action-button,
+    .concept-nav button {
+      min-height: 38px;
+      padding: 7px 12px;
+      border: 1px solid var(--navy);
+      border-radius: 2px;
+      background: transparent;
+      color: var(--navy);
+      cursor: pointer;
+    }
+
+    .quiet-button:hover,
+    .concept-nav button:hover {
+      background: #e4eaf0;
+    }
+
+    .action-button {
+      background: var(--navy);
+      color: var(--paper-strong);
+    }
+
+    .action-button:hover {
+      background: #2b5274;
+    }
+
+    .atlas-layout {
+      display: grid;
+      grid-template-columns: 218px minmax(0, 1fr);
+      min-height: 650px;
+    }
+
+    .map-legend {
+      padding: 30px 24px;
+      border-right: 1px solid var(--rule);
+    }
+
+    .map-legend h2 {
+      margin: 4px 0 24px;
+      font-family: var(--display);
+      font-size: 1.35rem;
+      font-weight: 500;
+      line-height: 1.2;
+    }
+
+    .legend-item {
+      display: grid;
+      grid-template-columns: 18px 1fr;
+      gap: 9px;
+      margin: 0 0 18px;
+      color: var(--ink-soft);
+      font-size: 0.83rem;
+      line-height: 1.5;
+    }
+
+    .legend-marker {
+      color: var(--navy);
+      font-family: var(--utility);
+      font-size: 0.86rem;
+    }
+
+    .legend-marker--proved {
+      color: var(--verified);
+    }
+
+    .legend-marker--route {
+      color: var(--route);
+    }
+
+    .legend-marker--frontier {
+      color: var(--frontier);
+    }
+
+    .map-note {
+      margin: 34px 0 0;
+      padding-top: 18px;
+      border-top: 1px solid var(--rule);
+      color: var(--ink-soft);
+      font-size: 0.78rem;
+      line-height: 1.55;
+    }
+
+    .map-stage {
+      position: relative;
+      min-height: 650px;
+      overflow: hidden;
+      background: #f1f4f5;
+    }
+
+    .map-stage::before,
+    .map-stage::after {
+      position: absolute;
+      z-index: 0;
+      color: #6e7d8c;
+      font-family: var(--utility);
+      font-size: 0.65rem;
+      pointer-events: none;
+    }
+
+    .map-stage::before {
+      content: "DEPENDENCY DISTANCE / 依赖距离";
+      left: 18px;
+      top: 16px;
+    }
+
+    .map-stage::after {
+      content: "SOURCE-LEVEL LEAN  →  ROUTE INTERFACE  →  RESEARCH FRONTIER";
+      left: 18px;
+      bottom: 13px;
+    }
+
+    .map-axis {
+      position: absolute;
+      z-index: 0;
+      left: 6%;
+      right: 6%;
+      top: 52%;
+      border-top: 1px solid #c6ced5;
+      pointer-events: none;
+    }
+
+    .orbit {
+      position: absolute;
+      z-index: 0;
+      left: 50%;
+      top: 52%;
+      border: 1px solid #b8c2cb;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .orbit::after {
+      position: absolute;
+      right: 5%;
+      top: -13px;
+      padding: 0 4px;
+      background: #f1f4f5;
+      color: #72808e;
+      font-family: var(--utility);
+      font-size: 0.61rem;
+    }
+
+    .orbit--one {
+      width: 34%;
+      height: 33%;
+    }
+
+    .orbit--one::after {
+      content: "01 / LOCAL TOOLS";
+    }
+
+    .orbit--two {
+      width: 61%;
+      height: 61%;
+    }
+
+    .orbit--two::after {
+      content: "02 / CLASSICAL ROUTE";
+    }
+
+    .orbit--three {
+      width: 88%;
+      height: 87%;
+    }
+
+    .orbit--three::after {
+      content: "03 / FRONTIER";
+    }
+
+    .connector-layer {
+      position: absolute;
+      z-index: 1;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .connector-layer path,
+    .connector-layer line,
+    .connector-layer polyline {
+      fill: none;
+      stroke: var(--navy);
+      stroke-width: 1.35;
+      vector-effect: non-scaling-stroke;
+      marker-end: url(#atlas-arrow);
+    }
+
+    .connector-layer .route-line {
+      stroke: var(--route);
+      stroke-dasharray: 7 5;
+    }
+
+    .connector-layer .frontier-line {
+      stroke: var(--frontier);
+      stroke-dasharray: 3 6;
+    }
+
+    .compact-connectors,
+    .expanded-connectors {
+      transition: opacity 180ms ease;
+    }
+
+    .expanded-connectors {
+      opacity: 0;
+    }
+
+    .map-stage.is-expanded .compact-connectors {
+      opacity: 0;
+    }
+
+    .map-stage.is-expanded .expanded-connectors {
+      opacity: 1;
+    }
+
+    .map-node,
+    .network-node {
+      position: absolute;
+      z-index: 3;
+      left: var(--x);
+      top: var(--y);
+      width: min(176px, 22%);
+      min-height: 64px;
+      padding: 9px 11px 8px 28px;
+      transform: translate(-50%, -50%);
+      border: 1px solid currentColor;
+      border-radius: 2px;
+      background: #f7f8f6;
+      color: var(--navy);
+      text-align: left;
+      cursor: pointer;
+      transition: left 180ms ease, top 180ms ease, background 140ms ease;
+    }
+
+    .map-node::before,
+    .network-node::before {
+      content: "";
+      position: absolute;
+      left: 10px;
+      top: 15px;
+      width: 8px;
+      height: 8px;
+      border: 2px solid currentColor;
+      border-radius: 50%;
+      background: #f7f8f6;
+    }
+
+    .map-node[data-status="proved"],
+    .network-node[data-status="proved"] {
+      color: var(--verified);
+    }
+
+    .map-node[data-status="proved"]::before,
+    .network-node[data-status="proved"]::before {
+      background: var(--verified);
+    }
+
+    .map-node[data-status="route"],
+    .network-node[data-status="route"] {
+      color: var(--route);
+    }
+
+    .map-node[data-status="route"]::before,
+    .network-node[data-status="route"]::before {
+      border-radius: 0;
+      background: var(--route);
+      transform: rotate(45deg);
+    }
+
+    .map-node[data-status="frontier"],
+    .network-node[data-status="frontier"] {
+      color: var(--frontier);
+    }
+
+    .map-node:hover,
+    .network-node:hover,
+    .map-node.is-selected,
+    .network-node.is-selected {
+      background: #e6ebed;
+    }
+
+    .node-title {
+      display: block;
+      color: var(--ink);
+      font-family: var(--display);
+      font-size: 1rem;
+      font-weight: 600;
+      line-height: 1.15;
+    }
+
+    .node-status {
+      display: block;
+      margin-top: 5px;
+      color: currentColor;
+      font-size: 0.61rem;
+    }
+
+    #zeta {
+      box-shadow: 0 0 0 5px #d8e0e5;
+    }
+
+    .selection-drawer {
+      display: grid;
+      grid-template-columns: 160px minmax(180px, 0.8fr) minmax(260px, 1.5fr) auto;
+      gap: 22px;
+      align-items: center;
+      padding: 22px 24px;
+      border-top: 1px solid var(--navy);
+      background: #eef2f3;
+    }
+
+    .selection-drawer p,
+    .selection-drawer h2 {
+      margin: 0;
+    }
+
+    .selection-drawer h2 {
+      font-family: var(--display);
+      font-size: 1.35rem;
+      font-weight: 500;
+      line-height: 1.2;
+    }
+
+    .selection-summary {
+      color: var(--ink-soft);
+      font-size: 0.9rem;
+    }
+
+    .status-label {
+      display: inline-block;
+      margin-top: 5px;
+      color: var(--verified);
+    }
+
+    .status-label[data-status="route"] {
+      color: var(--route);
+    }
+
+    .status-label[data-status="frontier"] {
+      color: var(--frontier);
+    }
+
+    noscript {
+      display: block;
+      padding: 16px 24px;
+      border-top: 1px solid var(--rule);
+      color: var(--ink-soft);
+      font-size: 0.88rem;
+    }
+
+    .concept-view {
+      min-height: 680px;
+      padding: 34px 42px 46px;
+    }
+
+    .concept-breadcrumb {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: center;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .concept-breadcrumb button {
+      border: 0;
+      padding: 4px 0;
+      background: transparent;
+      color: var(--navy);
+      cursor: pointer;
+    }
+
+    .concept-heading {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 170px;
+      gap: 30px;
+      align-items: end;
+      padding: 42px 0 26px;
+    }
+
+    .concept-heading h2 {
+      margin: 5px 0 0;
+      font-family: var(--display);
+      font-size: 2.75rem;
+      font-weight: 500;
+      line-height: 1.08;
+    }
+
+    .concept-english {
+      color: var(--ink-soft);
+    }
+
+    .concept-summary {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 1rem;
+    }
+
+    .formula-field {
+      display: grid;
+      grid-template-columns: 160px minmax(0, 1fr);
+      gap: 22px;
+      align-items: center;
+      min-height: 150px;
+      padding: 28px 0;
+      border-top: 1px solid var(--navy);
+      border-bottom: 1px solid var(--navy);
+    }
+
+    .formula {
+      margin: 0;
+      overflow-wrap: anywhere;
+      color: var(--navy);
+      font-family: var(--display);
+      font-size: 1.9rem;
+      line-height: 1.35;
+    }
+
+    .evidence-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .evidence-section {
+      min-height: 210px;
+      padding: 28px 30px 30px 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .evidence-section:nth-child(even) {
+      padding-left: 30px;
+      border-left: 1px solid var(--rule);
+    }
+
+    .evidence-section:nth-last-child(-n + 2) {
+      border-bottom: 0;
+    }
+
+    .evidence-section h3 {
+      margin: 7px 0 12px;
+      font-family: var(--display);
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    .evidence-section p,
+    .evidence-section ul {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 0.92rem;
+    }
+
+    .evidence-section ul {
+      padding-left: 1.2em;
+    }
+
+    .evidence-section li + li {
+      margin-top: 7px;
+    }
+
+    .warning-copy {
+      color: var(--frontier) !important;
+    }
+
+    .dependency-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 16px;
+    }
+
+    .dependency-list span {
+      padding: 3px 7px;
+      border: 1px solid var(--rule);
+      font-family: var(--utility);
+      font-size: 0.68rem;
+    }
+
+    .concept-nav {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      padding-top: 28px;
+    }
+
+    .concept-nav__group {
+      display: flex;
+      gap: 10px;
+    }
+
+    @media (max-width: 980px) {
+      .site-header {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+
+      .selection-drawer {
+        grid-template-columns: 140px 1fr;
+      }
+
+      .selection-summary,
+      .selection-drawer .action-button {
+        grid-column: 2;
+      }
+
+      .selection-drawer .action-button {
+        justify-self: start;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .site-header,
+      main {
+        width: min(100% - 24px, 680px);
+      }
+
+      .site-header {
+        padding-top: 28px;
+      }
+
+      .site-header h1 {
+        font-size: 2.15rem;
+      }
+
+      .atlas-toolbar {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 14px;
+      }
+
+      .atlas-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .map-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0 16px;
+        padding: 18px 16px 7px;
+        border-right: 0;
+        border-bottom: 1px solid var(--rule);
+      }
+
+      .map-legend h2,
+      .map-legend .eyebrow,
+      .map-note {
+        width: 100%;
+      }
+
+      .map-legend h2 {
+        margin-bottom: 14px;
+      }
+
+      .legend-item {
+        flex: 1 1 150px;
+        margin-bottom: 12px;
+      }
+
+      .map-note {
+        margin-top: 4px;
+        padding: 12px 0 8px;
+      }
+
+      .map-stage {
+        min-height: auto;
+        display: grid;
+        gap: 12px;
+        padding: 24px 14px 42px;
+        overflow: visible;
+      }
+
+      .map-stage::before {
+        position: relative;
+        left: auto;
+        top: auto;
+        margin-bottom: 2px;
+      }
+
+      .map-stage::after {
+        left: 14px;
+        bottom: 12px;
+        max-width: calc(100% - 28px);
+      }
+
+      .connector-layer,
+      .orbit {
+        display: none;
+      }
+
+      .map-axis {
+        display: none;
+      }
+
+      .map-node {
+        position: relative;
+        inset: auto !important;
+        transform: none;
+        width: 100%;
+      }
+
+      .map-node[hidden] {
+        display: none;
+      }
+
+      .network-node {
+        position: relative;
+        inset: auto !important;
+        transform: none;
+        width: 100%;
+      }
+
+      .network-node[hidden] {
+        display: none;
+      }
+
+      .selection-drawer {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 18px 16px;
+      }
+
+      .selection-summary,
+      .selection-drawer .action-button {
+        grid-column: auto;
+      }
+
+      .concept-view {
+        padding: 24px 18px 34px;
+      }
+
+      .concept-heading,
+      .formula-field,
+      .evidence-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .concept-heading {
+        gap: 14px;
+        padding-top: 30px;
+      }
+
+      .concept-heading h2 {
+        font-size: 2rem;
+      }
+
+      .formula-field {
+        gap: 12px;
+      }
+
+      .formula {
+        font-size: 1.45rem;
+      }
+
+      .evidence-section,
+      .evidence-section:nth-child(even) {
+        min-height: 0;
+        padding: 23px 0;
+        border-left: 0;
+        border-bottom: 1px solid var(--rule);
+      }
+
+      .evidence-section:nth-last-child(-n + 2) {
+        border-bottom: 1px solid var(--rule);
+      }
+
+      .evidence-section:last-child {
+        border-bottom: 0;
+      }
+
+      .concept-nav {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .concept-nav__group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .site-header,
+      main {
+        width: calc(100% - 16px);
+      }
+
+      .site-header h1 {
+        font-size: 1.85rem;
+      }
+
+      .atlas-toolbar,
+      .map-legend,
+      .selection-drawer {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      .legend-item {
+        flex-basis: 100%;
+      }
+
+      .map-stage {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .map-node,
+      .network-node {
+        padding-right: 8px;
+      }
+
+      .concept-view {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      .concept-breadcrumb {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .formula {
+        font-size: 1.25rem;
+      }
+
+      .concept-nav__group {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#atlas-map">跳到证明星图</a>
+  <header class="site-header">
+    <div>
+      <p class="site-header__index">LEAN 4 · ANALYTIC NUMBER THEORY</p>
+      <h1 id="atlas-title">The Riemann Proof Atlas</h1>
+    </div>
+    <p class="site-header__intro">一张区分已证明组件、待连接路线与远期目标的研究地图。距离表示依赖深度，不表示完成百分比。</p>
+  </header>
+
+  <main>
+    <section id="overview-view" aria-labelledby="atlas-title">
+      <div class="atlas-toolbar">
+        <p>核心路线显示 6 个概念；完整网络补充方法、接口与外部参照。</p>
+        <button class="quiet-button" type="button" data-action="toggle-network" aria-expanded="false" aria-controls="atlas-map">展开完整网络</button>
+      </div>
+
+      <div class="atlas-layout">
+        <aside class="map-legend" aria-label="证明状态图例">
+          <p class="eyebrow">MAP KEY / 图例</p>
+          <h2>如何阅读地图</h2>
+          <p class="legend-item"><span class="legend-marker legend-marker--proved" aria-hidden="true">●</span><span><strong>已证明</strong><br>当前项目中有可审计的 Lean 组件</span></p>
+          <p class="legend-item"><span class="legend-marker legend-marker--route" aria-hidden="true">◆</span><span><strong>正在连接</strong><br>路线接口或尚未闭合的证明链</span></p>
+          <p class="legend-item"><span class="legend-marker legend-marker--frontier" aria-hidden="true">○</span><span><strong>研究前沿</strong><br>不能当作当前项目结论</span></p>
+          <p class="map-note">箭头从依赖项指向后续结论。外圈不是时间轴，而是从已核验源代码到开放数学目标的证明距离。</p>
+        </aside>
+
+        <div id="atlas-map" class="map-stage" aria-label="证明依赖关系图" data-layout="compact">
+          <div class="map-axis" aria-hidden="true"></div>
+          <div class="orbit orbit--one" aria-hidden="true"></div>
+          <div class="orbit orbit--two" aria-hidden="true"></div>
+          <div class="orbit orbit--three" aria-hidden="true"></div>
+
+          <svg class="connector-layer" viewBox="0 0 900 620" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <marker id="atlas-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth">
+                <path d="M 0 0 L 8 4 L 0 8 z" fill="#1e405f"></path>
+              </marker>
+            </defs>
+            <g class="compact-connectors">
+              <line x1="450" y1="322" x2="243" y2="180"></line>
+              <polyline points="243,180 430,112 594,136"></polyline>
+              <line class="route-line" x1="594" y1="136" x2="711" y2="304"></line>
+              <line class="route-line" x1="711" y1="304" x2="603" y2="508"></line>
+              <line class="frontier-line" x1="450" y1="322" x2="792" y2="508"></line>
+            </g>
+            <g class="expanded-connectors">
+              <line x1="450" y1="322" x2="243" y2="180"></line>
+              <line x1="243" y1="180" x2="342" y2="136"></line>
+              <line x1="243" y1="180" x2="594" y2="112"></line>
+              <line x1="342" y1="136" x2="594" y2="112"></line>
+              <line class="route-line" x1="594" y1="112" x2="702" y2="242"></line>
+              <line class="route-line" x1="702" y1="242" x2="657" y2="378"></line>
+              <line class="route-line" x1="657" y1="378" x2="576" y2="434"></line>
+              <line class="route-line" x1="594" y1="112" x2="576" y2="434"></line>
+              <line class="route-line" x1="576" y1="434" x2="477" y2="527"></line>
+              <line class="frontier-line" x1="477" y1="527" x2="306" y2="533"></line>
+              <line class="frontier-line" x1="477" y1="527" x2="180" y2="446"></line>
+              <line class="frontier-line" x1="594" y1="112" x2="774" y2="81"></line>
+              <line class="frontier-line" x1="450" y1="322" x2="783" y2="521"></line>
+              <line class="frontier-line" x1="657" y1="378" x2="819" y2="378"></line>
+              <line class="frontier-line" x1="783" y1="521" x2="819" y2="378"></line>
+            </g>
+          </svg>
+
+          <button id="zeta" class="map-node" type="button" data-concept-id="zeta" data-status="proved" style="--x: 50%; --y: 52%;" aria-pressed="false">
+            <span class="node-title">Riemann zeta 函数</span>
+            <span class="node-status">● 已证明组件</span>
+          </button>
+          <button id="zeta-tools" class="map-node" type="button" data-concept-id="zeta-tools" data-status="proved" style="--x: 27%; --y: 29%;" aria-pressed="false">
+            <span class="node-title">zeta 与对数导数工具</span>
+            <span class="node-status">● 已证明组件</span>
+          </button>
+          <button class="network-node" type="button" data-concept-id="three-four-one" data-status="proved" style="--x: 38%; --y: 22%;" aria-pressed="false" hidden>
+            <span class="node-title">3-4-1 非负方法</span>
+            <span class="node-status">● 已证明组件</span>
+          </button>
+          <button id="zero-free" class="map-node" type="button" data-concept-id="zero-free" data-status="proved" style="--x: 68%; --y: 22%;" aria-pressed="true">
+            <span class="node-title">经典零自由区域</span>
+            <span class="node-status">● 已证明组件</span>
+          </button>
+          <button id="perron" class="map-node" type="button" data-concept-id="perron" data-status="route" style="--x: 79%; --y: 49%;" aria-pressed="false">
+            <span class="node-title">Perron 与围道桥梁</span>
+            <span class="node-status">◆ 正在连接</span>
+          </button>
+          <button class="network-node" type="button" data-concept-id="explicit-formula" data-status="route" style="--x: 73%; --y: 61%;" aria-pressed="false" hidden>
+            <span class="node-title">显式公式</span>
+            <span class="node-status">◆ 正在连接</span>
+          </button>
+          <button class="network-node" type="button" data-concept-id="psi-error" data-status="route" style="--x: 64%; --y: 70%;" aria-pressed="false" hidden>
+            <span class="node-title">ψ 误差控制</span>
+            <span class="node-status">◆ 正在连接</span>
+          </button>
+          <button id="pnt" class="map-node" type="button" data-concept-id="pnt" data-status="route" style="--x: 67%; --y: 82%;" aria-pressed="false">
+            <span class="node-title">素数定理</span>
+            <span class="node-status">◆ 路线目标</span>
+          </button>
+          <button class="network-node" type="button" data-concept-id="pnt-error" data-status="frontier" style="--x: 34%; --y: 86%;" aria-pressed="false" hidden>
+            <span class="node-title">带余项的 PNT</span>
+            <span class="node-status">○ 研究前沿</span>
+          </button>
+          <button class="network-node" type="button" data-concept-id="existing-pnt" data-status="frontier" style="--x: 20%; --y: 72%;" aria-pressed="false" hidden>
+            <span class="node-title">其他形式化 PNT</span>
+            <span class="node-status">○ 外部参照</span>
+          </button>
+          <button class="network-node" type="button" data-concept-id="zero-density" data-status="frontier" style="--x: 86%; --y: 13%;" aria-pressed="false" hidden>
+            <span class="node-title">零点密度估计</span>
+            <span class="node-status">○ 研究前沿</span>
+          </button>
+          <button class="network-node" type="button" data-concept-id="rh-error" data-status="frontier" style="--x: 91%; --y: 61%;" aria-pressed="false" hidden>
+            <span class="node-title">RH 误差等价链</span>
+            <span class="node-status">○ 研究前沿</span>
+          </button>
+          <button id="rh" class="map-node" type="button" data-concept-id="rh" data-status="frontier" style="--x: 88%; --y: 82%;" aria-pressed="false">
+            <span class="node-title">黎曼猜想</span>
+            <span class="node-status">○ 远期目标</span>
+          </button>
+        </div>
+      </div>
+
+      <section id="selection-drawer" class="selection-drawer" aria-live="polite">
+        <div>
+          <p class="eyebrow">CURRENT SELECTION</p>
+          <p id="drawer-status" class="status-label" data-status="proved">● 已证明组件</p>
+        </div>
+        <h2 id="drawer-title">经典零自由区域</h2>
+        <p id="drawer-summary" class="selection-summary">把 zeta 零点从 Re(s)=1 附近推开一段可定量的距离。</p>
+        <button class="action-button" type="button" data-action="open-concept" data-concept-id="zero-free">进入概念页</button>
+      </section>
+
+      <noscript>本页面的核心路线是：Riemann zeta 函数 → zeta 工具 → 经典零自由区域 → Perron/显式公式 → PNT。RH 位于更远的研究前沿；本仓库没有证明 PNT 或 RH。启用 JavaScript 后可查看全部 13 个概念的证据与边界说明。</noscript>
+    </section>
+
+    <article id="concept-view" class="concept-view" hidden aria-live="polite"></article>
+  </main>
+
+  <script>
+    document.documentElement.classList.add("js");
+
+    const CONCEPTS = Object.freeze([
+      {
+        id: "zeta",
+        title: "Riemann zeta 函数",
+        english: "Riemann zeta function",
+        status: "proved",
+        core: true,
+        summary: "把素数的乘法结构编码进一个复变量函数，是整张地图的中心对象。",
+        formula: "ζ(s) = Σ n⁻ˢ = ∏ₚ (1 − p⁻ˢ)⁻¹  （Re(s) > 1）",
+        intuition: "Euler 乘积把每个素数汇入同一个解析对象；研究 ζ 的零点，就能读取素数分布的全局信息。",
+        leanEvidence: [
+          "Mathlib 中的 riemannZeta 定义、解析延拓与基本恒等式",
+          "本项目已验证 Re(s) > 1 区域的 Dirichlet 级数工具",
+          "本项目已接通 zeta 在 Re(s)=1 上非零等基础接口"
+        ],
+        impact: "为对数导数、零点排除、Perron 反演和显式公式提供共同解析对象。",
+        warning: "形式化 ζ 的基础性质不等于证明 PNT，更不等于证明 RH。",
+        dependsOn: [],
+        compact: { x: 50, y: 52 },
+        expanded: { x: 50, y: 52 }
+      },
+      {
+        id: "zeta-tools",
+        title: "zeta 与对数导数工具",
+        english: "Zeta and logarithmic-derivative tools",
+        status: "proved",
+        core: true,
+        summary: "把 −ζ′/ζ 写成 von Mangoldt 系数的 Dirichlet 级数，并控制其实部与范数。",
+        formula: "−ζ′(s) / ζ(s) = Σ Λ(n) n⁻ˢ  （Re(s) > 1）",
+        intuition: "对数导数把 Euler 乘积变成素数幂的加法信号，是从复分析返回素数计数的主通道。",
+        leanEvidence: [
+          "log_deriv_zeta_re_series",
+          "log_deriv_zeta_real_eq_series",
+          "norm_logDeriv_riemannZeta_le_chebyshev_pole"
+        ],
+        impact: "向 3-4-1 非负组合和经典零自由区域提供可估计的解析量。",
+        warning: "这些工具建立局部解析控制；它们尚未自行完成 Perron 路径移动或 PNT。",
+        dependsOn: ["zeta"],
+        compact: { x: 27, y: 29 },
+        expanded: { x: 27, y: 29 }
+      },
+      {
+        id: "three-four-one",
+        title: "3-4-1 非负方法",
+        english: "de la Vallée Poussin 3-4-1 method",
+        status: "proved",
+        core: false,
+        summary: "用一个逐点非负的三角多项式组合三个频率上的对数导数。",
+        formula: "3 + 4 cos θ + cos 2θ = 2(1 + cos θ)² ≥ 0",
+        intuition: "固定系数 3、4、1 让振荡项不能任意抵消，从而把假设零点造成的负贡献孤立出来。",
+        leanEvidence: [
+          "trig_identity_nonneg",
+          "log_deriv_zeta_nonneg_combination",
+          "有限频率 detector 的自动非负证书接口"
+        ],
+        impact: "把 zeta 对数导数估计组织成可用于排除 Re(s)=1 附近零点的不等式。",
+        warning: "3-4-1 是经典零自由区域的方法组件，不是 RH 级别的零点定位。",
+        dependsOn: ["zeta-tools"],
+        compact: { x: 38, y: 22 },
+        expanded: { x: 38, y: 22 }
+      },
+      {
+        id: "zero-free",
+        title: "经典零自由区域",
+        english: "Classical zero-free region",
+        status: "proved",
+        core: true,
+        summary: "把 zeta 零点从 Re(s)=1 附近推开一段可定量的距离。",
+        formula: "Re(s) ≥ 1 − c / log |Im(s)|  ⟹  ζ(s) ≠ 0",
+        intuition: "零点越靠右，素数计数误差越大；先排除最危险的右边缘。",
+        leanEvidence: [
+          "对数导数 Dirichlet 级数实部公式",
+          "de la Vallée Poussin 3-4-1 非负组合",
+          "classical_zero_free_region_proved 的分支对应公理审计"
+        ],
+        impact: "为 Perron 路径移动和经典 PNT 误差路线提供解析输入。",
+        warning: "这不是 RH；它只控制 Re(s)=1 附近的一条区域。",
+        dependsOn: ["zeta-tools", "three-four-one"],
+        compact: { x: 68, y: 22 },
+        expanded: { x: 66, y: 18 }
+      },
+      {
+        id: "perron",
+        title: "Perron 与围道桥梁",
+        english: "Perron inversion and contour bridge",
+        status: "route",
+        core: true,
+        summary: "用竖直积分恢复 von Mangoldt 部分和，再把积分线移向零自由区域。",
+        formula: "Σₙ≤x Λ(n)  ←  (1 / 2πi) ∫ −ζ′(s)/ζ(s) · xˢ/s ds",
+        intuition: "Perron 公式像解析滤镜：复积分把 Dirichlet 级数重新截成 x 以下的算术总和。",
+        leanEvidence: [
+          "已形式化一阶和二阶 Perron 核的截断极限",
+          "已形式化有限 von Mangoldt 和的 Perron 专门化组件",
+          "全局围道移动、横边控制与所需残数汇总仍是路线接口"
+        ],
+        impact: "连接已证明的零自由区域与显式公式、ψ 渐近式以及最终 PNT。",
+        warning: "已有 Perron 组件不代表整条 PNT 围道论证已经闭合。",
+        dependsOn: ["zero-free"],
+        compact: { x: 79, y: 49 },
+        expanded: { x: 78, y: 39 }
+      },
+      {
+        id: "explicit-formula",
+        title: "显式公式",
+        english: "Explicit formula",
+        status: "route",
+        core: false,
+        summary: "把 ψ(x) 写成主项 x、zeta 零点贡献与可控余项的组合。",
+        formula: "ψ₀(x) = x − Σρ x^ρ/ρ + 边界项与截断误差",
+        intuition: "显式公式直接显示每个零点怎样扰动素数计数，因此是零点信息转成误差界的总账。",
+        leanEvidence: [
+          "显式公式的目标接口与截断路线已在项目文档和 API 中标明",
+          "Perron 核、有限和及部分围道工具已经存在",
+          "完整的截断显式公式及统一误差估计仍待证明"
+        ],
+        impact: "向 ψ 误差控制、带余项的 PNT 和 RH 误差方向输送零点贡献。",
+        warning: "当前项目尚无完成的全局显式公式定理，不能把接口当作结论。",
+        dependsOn: ["perron", "zeta-tools"],
+        compact: { x: 73, y: 61 },
+        expanded: { x: 73, y: 61 }
+      },
+      {
+        id: "psi-error",
+        title: "Chebyshev ψ 误差控制",
+        english: "Chebyshev psi error control",
+        status: "route",
+        core: false,
+        summary: "从零自由区域和显式公式导出 ψ(x) − x 相对主项更小的定量估计。",
+        formula: "ψ(x) = x + o(x) ；更强路线追求 |ψ(x) − x| 的显式上界",
+        intuition: "ψ 把素数幂按 log p 加权；只要它的主项是 x，就已经足以推出素数的正确平均密度。",
+        leanEvidence: [
+          "项目中已有 ψ、θ、π 三种 PNT 表述的等价桥梁",
+          "已有从假设的 ψ 幂误差推出右半平面无零点的反向接口",
+          "由当前零自由区域正向推出所需 ψ 误差仍未闭合"
+        ],
+        impact: "提供从解析零点控制到 PNT 的直接算术端点。",
+        warning: "目标与若干条件式桥梁已形式化，但当前项目尚未证明 ψ(x)=x+o(x)。",
+        dependsOn: ["zero-free", "explicit-formula"],
+        compact: { x: 64, y: 70 },
+        expanded: { x: 64, y: 70 }
+      },
+      {
+        id: "pnt",
+        title: "素数定理",
+        english: "Prime Number Theorem",
+        status: "route",
+        core: true,
+        summary: "素数计数函数满足 π(x) 与 x / log x 渐近等价。",
+        formula: "π(x) ~ x / log x  ⇔  θ(x) ~ x  ⇔  ψ(x) ~ x",
+        intuition: "素数越来越稀，但其平均密度仍有精确的一阶规律。",
+        leanEvidence: [
+          "PNTForm1、PNTForm2、PNTForm3 目标已定义",
+          "pnt_forms_equivalent 已连接三种渐近表述",
+          "完整解析输入仍需 Perron、显式公式和 ψ 误差链"
+        ],
+        impact: "完成本地图的经典主路线，并为定量余项研究建立基线。",
+        warning: "本项目尚未证明素数定理；当前状态是路线目标而非已证结论。",
+        dependsOn: ["psi-error", "perron"],
+        compact: { x: 67, y: 82 },
+        expanded: { x: 53, y: 85 }
+      },
+      {
+        id: "pnt-error",
+        title: "带余项的素数定理",
+        english: "Prime Number Theorem with remainder",
+        status: "frontier",
+        core: false,
+        summary: "在一阶渐近之外，量化 π(x)、θ(x) 或 ψ(x) 偏离主项的速度。",
+        formula: "ψ(x) = x + O(x · exp(−a√log x))  （经典形状）",
+        intuition: "PNT 只说相对误差趋零；余项告诉我们趋零有多快，以及零自由区域实际换来了什么。",
+        leanEvidence: [
+          "项目已有若干误差谓词和条件式转换接口",
+          "经典零自由区域为此方向提供已审计解析输入",
+          "完整围道估计与最终定量余项尚未形式化完成"
+        ],
+        impact: "衡量经典零自由区域对素数分布产生的定量收益。",
+        warning: "展示的是经典目标形状，不是当前仓库已经证明的误差定理。",
+        dependsOn: ["pnt", "zero-free"],
+        compact: { x: 34, y: 86 },
+        expanded: { x: 34, y: 86 }
+      },
+      {
+        id: "existing-pnt",
+        title: "其他形式化 PNT",
+        english: "PNT in other formal developments",
+        status: "frontier",
+        core: false,
+        summary: "其他 Lean 项目已经形式化 PNT，Isabelle/HOL 与 HOL Light 也有不同路线的相关成果。",
+        formula: "外部已证 PNT  ≠  本仓库的经典零自由区域路线已闭合",
+        intuition: "外部形式化证明说明终点可以机器核验，但每个项目采用的定义、库和证明路线并不相同。",
+        leanEvidence: [
+          "Lean 社区中存在已完成的 PNT 形式化工作",
+          "Isabelle/HOL 有初等 PNT 形式化，HOL Light 有 Newman 路线",
+          "本仓库把这些工作作为比较基线，而不是导入后的本地结论"
+        ],
+        impact: "为接口设计、定理表述和复用可能性提供外部参照。",
+        warning: "其他 Lean 项目已经形式化 PNT，但这不会使 PNT 自动成为当前仓库的证明结果。",
+        dependsOn: ["pnt"],
+        compact: { x: 20, y: 72 },
+        expanded: { x: 20, y: 72 }
+      },
+      {
+        id: "zero-density",
+        title: "零点密度估计",
+        english: "Zero-density estimates",
+        status: "frontier",
+        core: false,
+        summary: "不要求逐个排除所有零点，而是控制靠近 Re(s)=1 的零点数量。",
+        formula: "N(σ, T) ≤ T^{A(1−σ)} (log T)^B",
+        intuition: "即使无法确定每个零点的位置，只要危险区域中的零点足够稀，也能改进素数分布估计。",
+        leanEvidence: [
+          "本项目已有 zeta 零点与局部解析工具可作为未来底层接口",
+          "当前仓库没有完成零点密度主定理",
+          "该方向需要新的均值估计、零点计数与全局解析基础设施"
+        ],
+        impact: "可能通向更强的平均型素数分布结论，但不是当前经典 PNT 主链的必要最短路径。",
+        warning: "这是独立的高难度研究方向，不能由现有零自由区域直接推出。",
+        dependsOn: ["zeta-tools", "zero-free"],
+        compact: { x: 86, y: 13 },
+        expanded: { x: 86, y: 13 }
+      },
+      {
+        id: "rh-error",
+        title: "RH 误差等价链",
+        english: "RH-scale error equivalence chain",
+        status: "frontier",
+        core: false,
+        summary: "把 RH 与 ψ、θ、π 在平方根尺度附近的误差控制连接起来。",
+        formula: "RH  ⇒  ψ(x) − x = O(√x · log²x)",
+        intuition: "若所有非平凡零点都在临界线上，显式公式中的振荡项自然落到平方根量级。",
+        leanEvidence: [
+          "项目已有 RH_PsiErrorBound 等目标谓词",
+          "已有从 RH 尺度 ψ 误差到若干结论的条件式桥梁",
+          "RH 到该误差界所需的截断显式公式与零点和估计仍开放"
+        ],
+        impact: "明确 RH 与素数计数精细误差之间的双向研究接口。",
+        warning: "条件式蕴含和接口不是 RH 本身的证明，也不是 RH 尺度误差的无条件证明。",
+        dependsOn: ["rh", "explicit-formula"],
+        compact: { x: 91, y: 61 },
+        expanded: { x: 91, y: 61 }
+      },
+      {
+        id: "rh",
+        title: "黎曼猜想",
+        english: "Riemann Hypothesis",
+        status: "frontier",
+        core: true,
+        summary: "断言 zeta 的每个非平凡零点都位于 Re(s)=1/2 的临界线上。",
+        formula: "ζ(ρ) = 0 且 0 < Re(ρ) < 1  ⟹  Re(ρ) = 1/2",
+        intuition: "RH 要精确定位整个临界带中的所有非平凡零点，远强于只排除 Re(s)=1 附近零点。",
+        leanEvidence: [
+          "项目已定义 RiemannHypothesis 与相关条件式接口",
+          "现有经典零自由区域仅覆盖临界带右边缘的一小条区域",
+          "没有本地定理把全部非平凡零点压到临界线"
+        ],
+        impact: "若未来得到证明，将显著强化素数计数误差并统一多条零点路线。",
+        warning: "本项目尚未证明黎曼猜想；该节点是远期研究前沿，不是当前结论。",
+        dependsOn: ["zeta"],
+        compact: { x: 88, y: 82 },
+        expanded: { x: 87, y: 84 }
+      }
+    ]);
+
+    const STATUS_TEXT = Object.freeze({
+      proved: "● 已证明组件",
+      route: "◆ 正在连接",
+      frontier: "○ 研究前沿"
+    });
+
+    const overviewView = document.querySelector("#overview-view");
+    const conceptView = document.querySelector("#concept-view");
+    const atlasMap = document.querySelector("#atlas-map");
+    const networkToggle = document.querySelector('[data-action="toggle-network"]');
+    const drawerTitle = document.querySelector("#drawer-title");
+    const drawerStatus = document.querySelector("#drawer-status");
+    const drawerSummary = document.querySelector("#drawer-summary");
+    const drawerAction = document.querySelector('#selection-drawer [data-action="open-concept"]');
+
+    let expanded = false;
+    let selectedId = "zero-free";
+
+    function conceptById(id) {
+      return CONCEPTS.find((concept) => concept.id === id);
+    }
+
+    function renderDrawer(concept) {
+      drawerTitle.textContent = concept.title;
+      drawerStatus.textContent = STATUS_TEXT[concept.status];
+      drawerStatus.dataset.status = concept.status;
+      drawerSummary.textContent = concept.summary;
+      drawerAction.dataset.conceptId = concept.id;
+    }
+
+    function renderMap() {
+      atlasMap.classList.toggle("is-expanded", expanded);
+      atlasMap.dataset.layout = expanded ? "expanded" : "compact";
+      networkToggle.setAttribute("aria-expanded", String(expanded));
+      networkToggle.textContent = expanded ? "收起到核心路线" : "展开完整网络";
+
+      atlasMap.querySelectorAll("button[data-concept-id]").forEach((button) => {
+        const concept = conceptById(button.dataset.conceptId);
+        if (!concept) return;
+        const marker = expanded ? concept.expanded : concept.compact;
+        button.style.setProperty("--x", marker.x + "%");
+        button.style.setProperty("--y", marker.y + "%");
+        button.hidden = !concept.core && !expanded;
+        button.classList.toggle("is-selected", concept.id === selectedId);
+        button.setAttribute("aria-pressed", String(concept.id === selectedId));
+      });
+    }
+
+    function renderOverview() {
+      const selected = conceptById(selectedId) || conceptById("zero-free");
+      selectedId = selected.id;
+      if (!selected.core) expanded = true;
+      conceptView.hidden = true;
+      overviewView.hidden = false;
+      renderDrawer(selected);
+      renderMap();
+      document.title = "Riemann Proof Atlas";
+    }
+
+    function renderConceptPage(concept) {
+      const index = CONCEPTS.findIndex((item) => item.id === concept.id);
+      const previous = CONCEPTS[(index - 1 + CONCEPTS.length) % CONCEPTS.length];
+      const next = CONCEPTS[(index + 1) % CONCEPTS.length];
+      const dependencies = concept.dependsOn
+        .map((id) => conceptById(id))
+        .filter(Boolean);
+      const dependencyMarkup = dependencies.length
+        ? dependencies.map((item) => "<span>" + item.title + "</span>").join("")
+        : "<span>基础对象，无前置节点</span>";
+
+      conceptView.innerHTML = `
+        <nav class="concept-breadcrumb" aria-label="概念页导航">
+          <button type="button" data-action="back-to-atlas">← 返回证明星图</button>
+          <span class="map-distance">${String(index + 1).padStart(2, "0")} / ${CONCEPTS.length} · ${STATUS_TEXT[concept.status]}</span>
+        </nav>
+        <header class="concept-heading">
+          <div>
+            <p class="concept-english">${concept.english}</p>
+            <h2>${concept.title}</h2>
+          </div>
+          <p class="concept-summary">${concept.summary}</p>
+        </header>
+        <section class="formula-field" aria-labelledby="formula-label">
+          <p id="formula-label" class="plate-label">MATHEMATICAL SHAPE<br>数学形状</p>
+          <p class="formula">${concept.formula}</p>
+        </section>
+        <div class="evidence-grid">
+          <section class="evidence-section">
+            <p class="plate-label">01 / INTUITION</p>
+            <h3>直觉</h3>
+            <p>${concept.intuition}</p>
+          </section>
+          <section class="evidence-section">
+            <p class="plate-label">02 / LEAN EVIDENCE</p>
+            <h3>Lean 中真正可用的内容</h3>
+            <ul>${concept.leanEvidence.map((item) => "<li>" + item + "</li>").join("")}</ul>
+          </section>
+          <section class="evidence-section">
+            <p class="plate-label">03 / NEXT DEPENDENCY</p>
+            <h3>它解锁什么</h3>
+            <p>${concept.impact}</p>
+            <div class="dependency-list" aria-label="前置依赖">${dependencyMarkup}</div>
+          </section>
+          <section class="evidence-section">
+            <p class="plate-label">04 / CLAIM BOUNDARY</p>
+            <h3>不能混淆的边界</h3>
+            <p class="warning-copy">${concept.warning}</p>
+          </section>
+        </div>
+        <nav class="concept-nav" aria-label="相邻概念">
+          <button type="button" data-action="locate-concept" data-concept-id="${concept.id}">在地图上定位</button>
+          <div class="concept-nav__group">
+            <button type="button" data-action="open-concept" data-concept-id="${previous.id}">← ${previous.title}</button>
+            <button type="button" data-action="open-concept" data-concept-id="${next.id}">${next.title} →</button>
+          </div>
+        </nav>`;
+
+      overviewView.hidden = true;
+      conceptView.hidden = false;
+      document.title = concept.title + " · Riemann Proof Atlas";
+    }
+
+    function routeFromHash() {
+      const rawHash = location.hash.slice(1);
+      if (rawHash.startsWith("concept/")) {
+        let id = "";
+        try {
+          id = decodeURIComponent(rawHash.slice("concept/".length));
+        } catch (error) {
+          renderOverview();
+          return;
+        }
+        const concept = conceptById(id);
+        if (concept) {
+          selectedId = concept.id;
+          renderConceptPage(concept);
+          return;
+        }
+      }
+      renderOverview();
+    }
+
+    atlasMap.addEventListener("click", (event) => {
+      const button = event.target.closest("button[data-concept-id]");
+      if (!button || !atlasMap.contains(button)) return;
+      const concept = conceptById(button.dataset.conceptId);
+      if (!concept) return;
+      selectedId = concept.id;
+      renderDrawer(concept);
+      renderMap();
+    });
+
+    document.addEventListener("click", (event) => {
+      const action = event.target.closest("[data-action]");
+      if (!action) return;
+
+      if (action.dataset.action === "toggle-network") {
+        expanded = !expanded;
+        renderMap();
+        return;
+      }
+
+      if (action.dataset.action === "open-concept") {
+        const concept = conceptById(action.dataset.conceptId);
+        if (concept) location.hash = "#concept/" + concept.id;
+        return;
+      }
+
+      if (action.dataset.action === "back-to-atlas") {
+        location.hash = "#atlas";
+        return;
+      }
+
+      if (action.dataset.action === "locate-concept") {
+        const concept = conceptById(action.dataset.conceptId);
+        if (!concept) return;
+        selectedId = concept.id;
+        if (!concept.core) expanded = true;
+        location.hash = "#atlas";
+      }
+    });
+
+    window.addEventListener("hashchange", routeFromHash);
+    routeFromHash();
+  </script>
+</body>
+</html>
