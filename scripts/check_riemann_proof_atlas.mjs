@@ -410,10 +410,52 @@ function hasVisibleOutline(declarations) {
   const width = /(?:^|;)\s*outline-width\s*:\s*([^;]+)/i.exec(declarations)?.[1] ?? shorthand;
   const style = /(?:^|;)\s*outline-style\s*:\s*([^;]+)/i.exec(declarations)?.[1] ?? shorthand;
   const color = /(?:^|;)\s*outline-color\s*:\s*([^;]+)/i.exec(declarations)?.[1] ?? "";
+  const colorValues = [shorthand, color].filter(Boolean).join(" ");
   const outlineValues = `${shorthand} ${width} ${style} ${color}`;
-  if (/\bnone\b|\btransparent\b/i.test(outlineValues) || hasAlphaZeroColor(outlineValues)) return false;
+  if (
+    !hasLiteralOutlineColor(colorValues) ||
+    /\bnone\b|\btransparent\b/i.test(outlineValues) ||
+    hasAlphaZeroColor(outlineValues)
+  ) return false;
   if (!hasNonzeroOutlineWidth(width)) return false;
   return /\b(?:solid|dashed|double)\b/i.test(style);
+}
+
+const CSS_LITERAL_COLOR_FUNCTIONS = /\b(?:rgb|rgba|hsl|hsla|hwb|lab|lch|oklab|oklch|color)\([^)]*\)/i;
+const CSS_NAMED_COLORS = new Set([
+  "aliceblue", "antiquewhite", "aqua", "aquamarine", "azure", "beige", "bisque", "black",
+  "blanchedalmond", "blue", "blueviolet", "brown", "burlywood", "cadetblue", "chartreuse",
+  "chocolate", "coral", "cornflowerblue", "cornsilk", "crimson", "cyan", "darkblue",
+  "darkcyan", "darkgoldenrod", "darkgray", "darkgreen", "darkgrey", "darkkhaki", "darkmagenta",
+  "darkolivegreen", "darkorange", "darkorchid", "darkred", "darksalmon", "darkseagreen",
+  "darkslateblue", "darkslategray", "darkslategrey", "darkturquoise", "darkviolet", "deeppink",
+  "deepskyblue", "dimgray", "dimgrey", "dodgerblue", "firebrick", "floralwhite", "forestgreen",
+  "fuchsia", "gainsboro", "ghostwhite", "gold", "goldenrod", "gray", "green", "greenyellow",
+  "grey", "honeydew", "hotpink", "indianred", "indigo", "ivory", "khaki", "lavender",
+  "lavenderblush", "lawngreen", "lemonchiffon", "lightblue", "lightcoral", "lightcyan",
+  "lightgoldenrodyellow", "lightgray", "lightgreen", "lightgrey", "lightpink", "lightsalmon",
+  "lightseagreen", "lightskyblue", "lightslategray", "lightslategrey", "lightsteelblue",
+  "lightyellow", "lime", "limegreen", "linen", "magenta", "maroon", "mediumaquamarine",
+  "mediumblue", "mediumorchid", "mediumpurple", "mediumseagreen", "mediumslateblue",
+  "mediumspringgreen", "mediumturquoise", "mediumvioletred", "midnightblue", "mintcream",
+  "mistyrose", "moccasin", "navajowhite", "navy", "oldlace", "olive", "olivedrab", "orange",
+  "orangered", "orchid", "palegoldenrod", "palegreen", "paleturquoise", "palevioletred",
+  "papayawhip", "peachpuff", "peru", "pink", "plum", "powderblue", "purple", "rebeccapurple",
+  "red", "rosybrown", "royalblue", "saddlebrown", "salmon", "sandybrown", "seagreen", "seashell",
+  "sienna", "silver", "skyblue", "slateblue", "slategray", "slategrey", "snow", "springgreen",
+  "steelblue", "tan", "teal", "thistle", "tomato", "turquoise", "violet", "wheat", "white",
+  "whitesmoke", "yellow", "yellowgreen"
+]);
+
+function hasLiteralOutlineColor(value) {
+  if (
+    !value ||
+    /\b(?:var|env|attr|calc|color-mix)\s*\(/i.test(value) ||
+    /\b(?:currentcolor|inherit|initial|unset|revert(?:-layer)?)\b/i.test(value)
+  ) return false;
+  if (/#(?:[0-9a-f]{3,4}|[0-9a-f]{6}(?:[0-9a-f]{2})?)\b/i.test(value)) return true;
+  if (CSS_LITERAL_COLOR_FUNCTIONS.test(value)) return true;
+  return [...value.matchAll(/\b[a-z]+\b/gi)].some(([token]) => CSS_NAMED_COLORS.has(token.toLowerCase()));
 }
 
 function hasNonzeroOutlineWidth(value) {
