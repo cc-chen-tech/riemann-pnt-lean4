@@ -12,9 +12,7 @@ const REQUIRED_STATUS_BY_ID = Object.freeze({
   zeta: "proved",
   "zeta-tools": "proved",
   "three-four-one": "proved",
-  // The current worktree's PhragmenLindelof source differs from the main
-  // checkout used for the axiom audit, so its zero-free claim is not auditable.
-  "zero-free": "route",
+  "zero-free": "proved",
   perron: "route",
   "explicit-formula": "route",
   "psi-error": "route",
