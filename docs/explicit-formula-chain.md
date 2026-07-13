@@ -495,6 +495,11 @@ For the truncated identity:
 1. Completed: `ExplicitFormulaAux.exists_goodHeight_Ioo` chooses `T` in every
    unit interval while avoiding all nontrivial-zero ordinates, using finite
    bounded-height zero support;
+   `ExplicitFormulaAux.exists_goodHeight_Icc_quantitatively_separated`
+   strengthens this to a height whose distance from every nontrivial-zero
+   ordinate is at least `1/(4(N+1))`, where `N` counts distinct zero ordinates
+   in a fixed-width local window.  The remaining quantitative step is to feed
+   the Jensen divisor-mass estimate into `N = O(log T)`;
    `ExplicitFormulaAux.exists_strictMono_goodHeight_tendsto` upgrades this to
    a strictly increasing good-height sequence tending to `+∞`;
    `ExplicitFormulaResidues.exists_strictMono_tendsto_rectangleResidueContours`
