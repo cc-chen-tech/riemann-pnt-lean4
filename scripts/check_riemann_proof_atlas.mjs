@@ -292,15 +292,36 @@ function isHashAnchorExpression(expression) {
   return /^\s*(["'])#.*\1\s*$/.test(expression);
 }
 
+function hasVisibleFocusRule(source, selectorPattern) {
+  for (const match of source.matchAll(/([^{}]+)\{([^{}]*)\}/gis)) {
+    if (!/\boutline\s*:/i.test(match[2])) continue;
+    for (const selector of match[1].split(",")) {
+      if (/:focus-visible\b/i.test(selector) && selectorPattern.test(selector)) return true;
+    }
+  }
+  return false;
+}
+
 function runtimeResourceErrors(source) {
   const errors = [];
   const forbiddenCalls = [
+    ["Worker", /\b(?:new\s+)?(?:window\s*\.\s*)?Worker\s*\(/i],
+    ["SharedWorker", /\b(?:new\s+)?(?:window\s*\.\s*)?SharedWorker\s*\(/i],
+    ["serviceWorker.register", /\b(?:navigator\s*\.\s*)?serviceWorker\s*\.\s*register\s*\(/i],
+    ["importScripts", /\bimportScripts\s*\(/i],
+    ["navigator.sendBeacon", /\bnavigator\s*\.\s*sendBeacon\s*\(/i],
     ["fetch", /\b(?:window\s*\.\s*)?fetch\s*\(/i],
     ["XMLHttpRequest", /\b(?:new\s+)?(?:window\s*\.\s*)?XMLHttpRequest\s*\(/i],
     ["XMLHttpRequest.open", /\.\s*open\s*\(\s*["'](?:GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)["']\s*,/i],
     ["WebSocket", /\bnew\s+(?:window\s*\.\s*)?WebSocket\s*\(/i],
     ["EventSource", /\bnew\s+(?:window\s*\.\s*)?EventSource\s*\(/i],
-    ["dynamic import", /\bimport\s*\(/i]
+    ["dynamic import", /\bimport\s*\(/i],
+    ["new URL", /\bnew\s+(?:window\s*\.\s*)?URL\s*\(/i],
+    ["URL.createObjectURL", /\b(?:window\s*\.\s*)?URL\s*\.\s*createObjectURL\s*\(/i],
+    ["constructed resource element", /\b(?:document|window|globalThis)\s*\.\s*createElement\s*\(\s*["'](?:script|link|img|iframe|embed|object|audio|video|source|track)["']/i],
+    ["constructed resource element", /\b(?:document|window|globalThis)\s*\.\s*createElementNS\s*\([^,]+,\s*["'](?:script|image|foreignObject)["']/i],
+    ["constructed Image", /\bnew\s+(?:window\s*\.\s*)?Image\s*\(/i],
+    ["constructed Audio", /\bnew\s+(?:window\s*\.\s*)?Audio\s*\(/i]
   ];
   for (const [label, pattern] of forbiddenCalls) {
     if (pattern.test(source)) errors.push(`runtime resource: ${label}`);
@@ -329,11 +350,9 @@ for (const [label, pattern] of [
   ["<html lang=\"zh-CN\">", /<html\b[^>]*\blang\s*=\s*(["'])zh-CN\1/i],
   ["id=\"atlas-map\"", /\bid\s*=\s*(["'])atlas-map\1/i],
   ["id=\"concept-view\"", /\bid\s*=\s*(["'])concept-view\1/i],
-  ["data-action=\"toggle-network\"", /\bdata-action\s*=\s*(["'])toggle-network\1/i],
   ["prefers-reduced-motion", /@media\s*\(\s*prefers-reduced-motion\s*:\s*reduce\s*\)/i],
   ["@media (max-width: 720px)", /@media\s*\(\s*max-width\s*:\s*720px\s*\)/i],
   ["@media (max-width: 360px)", /@media\s*\(\s*max-width\s*:\s*360px\s*\)/i],
-  ["visible focus", /:focus-visible\s*\{[^}]*\boutline\s*:/is],
   ["hash routing", /\brouteFromHash\s*\(/],
   ["hashchange listener", /\bhashchange\b/],
   ["location.hash", /\blocation\.hash\b/],
@@ -341,6 +360,16 @@ for (const [label, pattern] of [
   ["concept rendering", /\brenderConceptPage\s*\(/]
 ]) {
   if (!pattern.test(source)) errors.push(`missing: ${label}`);
+}
+
+if (!/<button\b[^>]*\bdata-action\s*=\s*(["'])toggle-network\1[^>]*>/i.test(source)) {
+  errors.push("missing: button[data-action=\"toggle-network\"]");
+}
+if (!hasVisibleFocusRule(source, /(?:^|[\s>+~])(?:button|\.map-node)[^\s>+~]*:focus-visible\b/i)) {
+  errors.push("missing: visible focus for button or map-node controls");
+}
+if (!hasVisibleFocusRule(source, /(?:^|[\s>+~])(?:button)?\[data-action\s*=\s*(["'])toggle-network\1\][^\s>+~]*:focus-visible\b/i)) {
+  errors.push("missing: visible focus for network toggle");
 }
 
 const staticFallbackCount = staticMapNodeCount(source);
@@ -355,6 +384,8 @@ if (/(?:https?:)?\/\//i.test(source)) errors.push("external resource: http(s) or
 errors.push(...runtimeResourceErrors(source));
 
 for (const match of source.matchAll(/\burl\s*\(\s*(["']?)(.*?)\1\s*\)/gi)) {
+  const prefix = source.slice(Math.max(0, match.index - 8), match.index);
+  if (/new\s*$/i.test(prefix)) continue;
   const resource = match[2].trim();
   if (resource && !resource.startsWith("#")) errors.push(`external resource: CSS url(${resource})`);
 }
