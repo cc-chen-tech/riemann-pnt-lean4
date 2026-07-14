@@ -20,9 +20,9 @@ CHAIN_SUMMARY = [
     },
     {
         "name": "Explicit formula",
-        "target": "explicit_formula_von_mangoldt",
-        "status": "proved in Lean with analytic multiplicities and symmetric real-height truncation",
-        "next_step": "develop the separate quantitative truncated-error route needed for RH-to-prime-error estimates",
+        "target": "ExplicitFormulaTruncatedTarget",
+        "status": "proved in Lean pointwise in x, uniformly for every real height T >= 2",
+        "next_step": "track the contour constant uniformly as x varies for RH-to-prime-error estimates",
     },
     {
         "name": "RH error equivalence",
@@ -37,6 +37,11 @@ CHAIN_SUMMARY = [
         "next_step": "prove Hardy signed moment asymptotics; the main signed-moment bridge no longer needs tail-dominance",
     },
 ]
+
+PROVED_ROUTE_INTERFACES = {
+    "PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget":
+        "PrimeNumberTheorem.ExplicitFormulaTruncated.explicitFormulaTruncatedTarget_proved",
+}
 
 
 def load_previous_shapes() -> dict[str, str]:
@@ -90,14 +95,15 @@ def build_status() -> dict[str, object]:
         "completed_without_sorry": True,
         "remaining_prop_targets": grouped,
         "route_interface_targets": [
-            {
+            ({
                 "name": r.name,
                 "qualified_name": r.qualified_name,
                 "file": str(r.file.relative_to(ROOT)),
                 "line": r.line_no,
                 "chain": r.chain,
                 "body": "True" if r.body_is_true else "real_statement",
-            }
+            } | ({"proved_by": PROVED_ROUTE_INTERFACES[r.qualified_name]}
+                 if r.qualified_name in PROVED_ROUTE_INTERFACES else {}))
             for r in route_interfaces
         ],
         "reusable_predicates": [

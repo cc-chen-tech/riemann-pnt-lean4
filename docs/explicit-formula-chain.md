@@ -573,12 +573,13 @@ For the truncated identity:
    multiplicity-weighted zero-sum limit.  The all-height interpolation module
    now promotes this to arbitrary-height principal-value truncation.
 
-The quantitative contour/truncation step is therefore closed in the native
-`explicitFormulaApproxWithMultiplicity` normalization.  The separate public
-`ExplicitFormulaTruncatedTarget` still uses `log(2*pi)` in place of
-`deriv riemannZeta 0 / riemannZeta 0` and starts at `T=2`; discharging that
-exact target requires the constant identity and a bounded-height patch, not a
-new large-height contour estimate.
+The quantitative contour/truncation step is closed in the native
+`explicitFormulaApproxWithMultiplicity` normalization.  It is also closed in
+the public classical normalization: `deriv_riemannZeta_zero` proves
+`zeta'(0) = -log(2*pi)/2`, and the resulting logarithmic-derivative identity
+converts the constant term.  A finite zero-sum bound absorbs `2 <= T < 8`.
+Thus `explicitFormulaTruncatedTarget_proved` proves the exact public target for
+every fixed `x >= 2` and every real `T >= 2`.
 
 For the principal value final formula:
 
@@ -707,10 +708,10 @@ the newly included zero contributions.
 The global finite-zero layer now also proves both multiplicity-counted
 `N(T) = O(T log T)` and the exact reciprocal-norm estimate
 `sum_{|Im rho| <= T} m(rho) / ‖rho‖ = O(log^2 T)`.  These are quantitative
-inputs for the truncated formula.  The fixed-`x` contour remainder is now
-proved in the native normalization for every `T >= 8`; the exact
-`ExplicitFormulaTruncatedTarget` still requires its alternate constant
-normalization and low-height patch.
+inputs for the truncated formula.  The fixed-`x` contour remainder is proved
+in the native normalization for every `T >= 8`, and the exact
+`ExplicitFormulaTruncatedTarget` is proved after constant normalization and
+the low-height patch.
 
 Under RH, the same module now bounds the actual multiplicity-aware finite zero
 sum by `O(sqrt(x) log^2 T)`.  This closes the zero-sum side of the RH estimate;
@@ -802,10 +803,9 @@ and
    `card * (1/2) * x^(-2)` finite-sum bound, and the explicit
    `floor(T/2) * (1/2) * x^(-2)` cutoff bound, with a further nonnegative
    height-scale bound `(T/2) * (1/2) * x^(-2)`, are also proved.  The truncated
-   target predicate and conditional
-   repackaging lemma are public API, but still target infrastructure.  Future analytic
-   multiplicity/order work can refine this API without changing the downstream
-   target shape.
+   target predicate, its unconditional theorem, and the compatibility
+   repackaging lemma are public API.  Future analytic multiplicity/order work
+   can refine this API without changing the downstream target shape.
 3. Prove finite bounded-height support lemmas for the zero sums from
    `finite_nontrivial_zeros_bounded_height`.
 4. Completed: the ordinary `1 / s` half-jump Perron formula, its
@@ -815,8 +815,9 @@ and
    rectangle meromorphic residue theorem as a reusable project
    lemma, since Mathlib currently supplies the analytic pieces but not the exact
    residue-sum wrapper needed here.
-6. Completed for fixed `x` and every `T >= 8`: the truncated explicit formula
-   has an explicit `O_x(log^2 T/T)` error in the native normalization.
+6. Completed for fixed `x` and every `T >= 2`: the truncated explicit formula
+   has the classical `log(2*pi)` constant and an explicit
+   `O_x(log^2(xT)/T)` error.
 7. Completed: the principal-value formula is also proved as an all-height
    limit.  The next analytic task is uniform control of the `x` dependence for
    RH/PNT error applications.

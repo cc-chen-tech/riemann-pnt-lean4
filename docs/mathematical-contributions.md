@@ -24,9 +24,10 @@ and the multiplicity-aware principal-value explicit formula in Lean 4
 ```
 
 In particular, the theorem inventory below should be read as verified support
-for those local modules, not as evidence that PNT, RH, the stronger
-Vinogradov-Korobov region, or a quantitative truncated explicit-formula error
-estimate has been proved.
+for those local modules, not as evidence that PNT, RH, or the stronger
+Vinogradov-Korobov region has been proved.  The pointwise-in-`x` quantitative
+truncated explicit formula is now theorem-level; the uniform dependence on
+`x` needed for RH-scale prime-error estimates is not.
 
 ## 1. Real Part of the Logarithmic Derivative Series
 

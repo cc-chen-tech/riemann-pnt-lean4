@@ -63,7 +63,7 @@ technology rather than more local Jensen/Borel wrappers.
 | Chain | Current Lean target status | Main correction before proof work | Smallest useful next step | Open target count |
 | --- | --- | --- | --- | --- |
 | Quantitative zero-free region | `classical_zero_free_region` is proved; `vinogradov_korobov_zero_free_region` remains a target | Develop exponential-sum estimates for the stronger width | Formalize the Vinogradov-Korobov exponential-sum input without weakening the proved classical theorem | 1 |
-| Explicit formula | The multiplicity-aware all-height limit and the fixed-`x` `O_x(log^2 T/T)` error for every `T >= 8` are proved | Track the contour constant as `x` varies for RH-scale estimates; separately normalize `zeta'(0)/zeta(0)` and patch `2 <= T < 8` | The exact moving rectangle, all boundary estimates, truncation selection, geometric trivial-zero tail, and bounded-gap interpolation are theorem-level. `ExplicitFormulaTruncatedTarget` remains only as an alternately normalized route interface | 0 |
+| Explicit formula | `ExplicitFormulaTruncatedTarget` is proved: for each fixed `x >= 2`, one constant controls every real `T >= 2` with the classical `log(2*pi)` normalization | Track the contour constant as `x` varies for RH-scale estimates | The exact moving rectangle, boundary estimates, truncation selection, geometric trivial-zero tail, bounded-gap interpolation, zeta-at-zero normalization, and low-height patch are theorem-level | 0 |
 | RH error equivalence | `rh_iff_optimal_error` is a `def ... : Prop` target | Stage the result through `=O[atTop]` predicates for `psi`, `theta`, and `primeCounting - logIntegral` | Prove `RH -> RH_PsiErrorBound` via explicit formula estimates, and prove the prime-counting reverse endpoint back to `RH_PsiErrorBound`; the conditional bridge `RH_PsiErrorBound -> RiemannHypothesis` is now theorem-level | 8 |
 | Hardy theorem | `hardy_theorem_target` and related moment/asymptotic targets are `def ... : Prop` targets | Use an unbounded-height zero target as the main theorem; use signed moment targets, not merely nonzero constants | Prove bounded-zero eventual-sign control and generic asymptotic sign lemmas | 11 (7 in `HardyTheorem`, 3 in `HardyTheorem.Details`, 1 in `KnownResults`) |
 
@@ -357,7 +357,8 @@ Additional non-target Prop declarations:
 - `PrimeNumberTheorem.ExplicitFormulaAux.goodHeight` is a reusable contour
   height predicate.
 - `HardyTheorem.AFE.zeta_critical_afe_target`,
-  `PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget`,
+  `PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget`
+  (proved by `explicitFormulaTruncatedTarget_proved`),
   `MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum`, and
   `RiemannExplorer.Conrey40.conrey_40_percent_zeros_on_critical_line_target`
   are route interfaces with real statement bodies or aliases.

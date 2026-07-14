@@ -46,9 +46,9 @@ candidate-zero repulsion estimate that closes the classical region.
 The present development should be read as a verified framework with explicit
 unproved target statements, not as a first or completed PNT formalization.
 With Lean~4.29.1 and Mathlib~4.29.1 the project builds successfully and
-contains no syntactic \texttt{sorry} occurrences.  Secondary infrastructure includes
-corrected target statements for the Riemann--von Mangoldt explicit formula
-using midpoint Chebyshev functions and finite-height truncations, proved
+contains no syntactic \texttt{sorry} occurrences.  Secondary verified results
+include a pointwise-in-$x$ quantitative Riemann--von Mangoldt formula using the
+midpoint Chebyshev function and finite-height truncations, proved
 PNT-form equivalence wrappers, RH-scale error-propagation interfaces, and a
 Hardy \(Z\)-function framework.  We give a precise inventory of what is
 verified, what remains conjectural within the code, and which Mathlib
@@ -89,14 +89,16 @@ Our contributions are deliberately stratified:
     Dirichlet series, the de~la~Vall\'ee~Poussin 3-4-1 inequality, fixed-strip
     zeta growth, the all-divisor regular-part estimate, and the classical
     \(c/\log|t|\) zero-free region.  This is the core paper contribution.
-  \item \textbf{Explicit-formula target correction:} a Lean-facing
-    Riemann--von Mangoldt target using the midpoint Chebyshev function
-    \(\psi_0\), finite-height zero sums, and explicit truncation/error
-    conventions rather than an unordered infinite zero sum.
+  \item \textbf{Quantitative explicit formula:} a Lean proof of the
+    Riemann--von Mangoldt formula using the midpoint Chebyshev function
+    \(\psi_0\), analytic zero multiplicities, and finite-height zero sums.  For
+    each fixed \(x\ge2\), one constant controls every real \(T\ge2\) with an
+    \(O_x(x\log^2(xT)/T)\) remainder.
   \item \textbf{PNT infrastructure:} proved equivalence wrappers for the
     standard PNT forms and RH-scale error-propagation interfaces that will
-    compose with a future proof of \(\psi(x)\sim x\) or a future explicit
-    formula theorem.
+    compose with a future proof of \(\psi(x)\sim x\); RH-scale use of the
+    explicit formula still requires uniform control of its constant as
+    \(x\) varies.
   \item \textbf{Hardy framework:} a Hardy \(Z\)-function and critical-line-zero
     framework, with target statements for Hardy, Hardy--Littlewood, Selberg,
     and Conrey-style zero-counting results.  These are treated as future work
@@ -436,14 +438,21 @@ canonical zero removal gives the uniform regular part.
 
 \subsection{The Explicit Formula}
 
-The von Mangoldt explicit formula
+The formalized finite-height von Mangoldt formula is stated with the midpoint
+Chebyshev function.  For each fixed \(x\ge2\), there is \(C_x>0\) such that
+for every real \(T\ge2\),
 \[
-\psi(x) = x - \sum_{\rho} \frac{x^{\rho}}{\rho}
-  - \frac{\zeta'(0)}{\zeta(0)} - \frac{1}{2}\log(1-x^{-2})
+\left|\psi_0(x)-\left(x-\sum_{|\Im\rho|\le T}
+  m(\rho)\frac{x^\rho}{\rho}-\log(2\pi)
+  -\frac12\log(1-x^{-2})\right)\right|
+\le C_x\frac{x}{T}\log^2(xT).
 \]
-requires contour integration and the residue theorem---both absent from
-Mathlib as of writing. This is a larger undertaking but would unlock many
-results beyond the PNT.
+Here \(m(\rho)\) is the analytic multiplicity.  The Lean proof includes the
+rectangle contour calculation, selected safe heights, the trivial-zero tail,
+bounded-gap interpolation, the identity
+\(\zeta'(0)/\zeta(0)=\log(2\pi)\), and a finite low-height patch.  This estimate
+is pointwise in \(x\); it does not yet provide the uniform \(x\)-dependence
+needed to derive RH-scale prime-counting errors.
 
 %=====================================================================
 \section{Related Work}

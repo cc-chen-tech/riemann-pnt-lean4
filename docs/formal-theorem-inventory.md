@@ -3206,14 +3206,16 @@ Route interfaces:
 - `HardyTheorem.AFE.zeta_critical_afe_target`
   real-statement AFE interface for the Hardy chain.
 - `PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget`
-  globally uniform truncated explicit-formula interface: one positive constant
-  controls every `T ≥ 2` and `x ≥ 2`.
+  pointwise-in-`x`, uniform-in-height truncated explicit-formula interface: for
+  each `x ≥ 2`, one positive constant controls every `T ≥ 2`.  The interface
+  is discharged by `explicitFormulaTruncatedTarget_proved`.
 - `PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute`
-  route interface from a future pointwise-in-`x`, uniform-in-height truncated explicit formula plus
-  oscillation/converse argument to `ExplicitFormulaConversePowerTarget`.
+  route interface from the proved pointwise-in-`x`, uniform-in-height truncated
+  explicit formula plus a future oscillation/converse argument to
+  `ExplicitFormulaConversePowerTarget`.
 - `PrimeNumberTheorem.ExplicitFormulaTruncated.psiPowerErrorBelowLineExcludesZerosRightOf_of_truncated_route`
-  repackages the truncated route and a future pointwise-in-`x`, uniform-in-height truncated explicit
-  formula proof as the right-half zero-exclusion route interface
+  repackages the truncated route and the proved pointwise-in-`x`,
+  uniform-in-height formula as the right-half zero-exclusion route interface
   `PsiPowerErrorBelowLineExcludesZerosRightOf`.
 - `PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route`,
   `PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_below_two_thirds`,
@@ -3583,8 +3585,13 @@ Support-level verified declarations:
   height in every unit interval.
 - `ExplicitFormulaResidues.exists_norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_log_sq_div`
   uses the two-window bounded-gap estimate to promote that rate to every real
-  height `T >= 8`.  The public `ExplicitFormulaTruncatedTarget` still requires
-  its alternate `log(2*pi)` normalization and the bounded range `2 <= T < 8`.
+  height `T >= 8`.
+- `PrimeNumberTheorem.deriv_riemannZeta_zero` and
+  `deriv_riemannZeta_zero_div_riemannZeta_zero` compute the classical zeta
+  constant at the origin from completed-zeta symmetry and the Gamma factor.
+- `PrimeNumberTheorem.ExplicitFormulaTruncated.explicitFormulaTruncatedTarget_proved`
+  combines that normalization with a finite-zero low-height patch and proves
+  the public target for every real `T >= 2`.
 
 ## Missing Chains for a Complete Analytic PNT
 

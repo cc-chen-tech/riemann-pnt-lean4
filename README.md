@@ -127,10 +127,13 @@ multiplicity `O(log A)`, their weighted contribution is
 `ExplicitFormulaAllHeights` uses two such windows and the floor index
 `floor((U-5)/2)` to promote the selected-height limit to every real truncation
 height.  Thus the multiplicity-aware principal-value explicit formula is now a
-proved theorem.  The same module now also proves the uniform fixed-`x` rate
-`O_x((1+log(T+8))^2/T)` for every `T >= 8`; the separately normalized public
-truncated target still needs the identity at `zeta'(0)/zeta(0)` and a bounded
-height patch for `2 <= T < 8`.
+proved theorem.  The same module proves the fixed-`x` rate
+`O_x((1+log(T+8))^2/T)` for every `T >= 8`.  The theorem
+`deriv_riemannZeta_zero_div_riemannZeta_zero` supplies the classical
+`zeta'(0)/zeta(0) = log(2*pi)` normalization, and
+`explicitFormulaTruncatedTarget_proved` absorbs `2 <= T < 8` by a finite
+zero-sum bound.  Consequently the public pointwise-in-`x` truncated formula
+holds uniformly for every real `T >= 2`.
 
 The repository now proves the real-part boundary-strip estimate actually used
 by the 3-4-1 argument:
@@ -402,6 +405,10 @@ Full `def ... : Prop` inventory:
   `PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted`,
   `PrimeNumberTheorem.explicit_formula_von_mangoldt`);
 - unclassified Prop definitions: 0.
+
+`ExplicitFormulaTruncatedTarget` remains in this syntactic route-interface
+inventory because it is a named `def ... : Prop`, but it is theorem-backed by
+`explicitFormulaTruncatedTarget_proved` and is no longer an open obligation.
 
 No route interface currently has a body equal to `True`.  The rectangle
 contour/residue interface is an existential certificate `Prop`, not a theorem
@@ -1094,8 +1101,8 @@ identified with `-(1/2)log(1-x^(-2))`, and the finite truncation at height
 
 The explicit-formula side still contains route interfaces such as
 `PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute`,
-which names the future dependency from one globally uniform truncated explicit
-formula bound for every `T ≥ 2` and `x ≥ 2`, plus finite-zero oscillation estimates, to zero-free
+which names the future dependency from the now-proved pointwise-in-`x`,
+uniform-in-`T` truncated explicit formula, plus finite-zero oscillation estimates, to zero-free
 vertical-line consequences.  The
 abstract `PrimeNumberTheorem.ExplicitFormulaConversePowerTarget` Prop shape is
 now theorem-level reusable infrastructure:
@@ -1333,18 +1340,18 @@ parallel work breakdown of the remaining analytic chains.
 
 | Theorem | Missing Mathlib Component | Difficulty |
 |---|---|---|
-| Public truncated-target normalization | Prove `zeta'(0)/zeta(0) = log(2*pi)` in the chosen convention and patch `2 <= T < 8` | Medium |
+| RH-scale use of the truncated formula | Track the fixed-`x` contour constant uniformly as `x` varies | High |
 | Vinogradov-Korobov zero-free region | Exponential sum estimates | Very High |
 | Hardy's theorem targets | Corrected moment estimates and asymptotic expansions of special functions | Medium–High |
 
 ### Easiest Path Forward
 
-The quantitative truncated error is now proved in the repository's native
-normalization for every `T >= 8`.  The next PNT-facing step is to consume this
-bound together with the classical zero-free region in a finite zero-sum/error
-estimate, while the public target's alternate constant normalization and low
-heights can be closed separately.  Strengthening the zero-free region beyond
-the classical scale still requires substantially deeper exponential-sum input.
+The quantitative truncated error is now proved in the classical normalization
+for every `T >= 2`, with a constant depending on fixed `x`.  The next
+PNT-facing step is to track that constant uniformly as `x` varies and combine
+the result with the classical zero-free region in a finite zero-sum/error
+estimate.  Strengthening the zero-free region beyond the classical scale still
+requires substantially deeper exponential-sum input.
 
 ## Related Work
 

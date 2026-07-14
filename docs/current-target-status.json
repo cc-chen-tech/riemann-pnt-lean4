@@ -92,7 +92,7 @@
         "name": "PNTForm1",
         "qualified_name": "PrimeNumberTheorem.PNTForm1",
         "file": "PrimeNumberTheorem.lean",
-        "line": 86,
+        "line": 89,
         "shape": "Tendsto (fun x => (primeCounting x:ℝ)*log x / x) atTop (𝓝 1)",
         "depends_on": []
       },
@@ -100,7 +100,7 @@
         "name": "PNTForm2",
         "qualified_name": "PrimeNumberTheorem.PNTForm2",
         "file": "PrimeNumberTheorem.lean",
-        "line": 90,
+        "line": 93,
         "shape": "Tendsto (fun x => (primeCounting x:ℝ)/logIntegral x) atTop (𝓝 1)",
         "depends_on": []
       },
@@ -108,7 +108,7 @@
         "name": "PNTForm3",
         "qualified_name": "PrimeNumberTheorem.PNTForm3",
         "file": "PrimeNumberTheorem.lean",
-        "line": 113,
+        "line": 116,
         "shape": "Tendsto (fun x => chebyshevPsi x / x) atTop (𝓝 1)",
         "depends_on": []
       },
@@ -116,7 +116,7 @@
         "name": "RH_PsiErrorBound",
         "qualified_name": "PrimeNumberTheorem.RH_PsiErrorBound",
         "file": "PrimeNumberTheorem.lean",
-        "line": 1061,
+        "line": 1064,
         "shape": "(fun x => chebyshevPsi x - x) =O[atTop] (fun x => sqrt x * (log x)^2)",
         "depends_on": []
       },
@@ -124,7 +124,7 @@
         "name": "RH_ThetaErrorBound",
         "qualified_name": "PrimeNumberTheorem.RH_ThetaErrorBound",
         "file": "PrimeNumberTheorem.lean",
-        "line": 1066,
+        "line": 1069,
         "shape": "(fun x => Chebyshev.theta x - x) =O[atTop] (fun x => sqrt x * (log x)^2)",
         "depends_on": []
       },
@@ -132,7 +132,7 @@
         "name": "RH_PrimeCountingLiErrorBound",
         "qualified_name": "PrimeNumberTheorem.RH_PrimeCountingLiErrorBound",
         "file": "PrimeNumberTheorem.lean",
-        "line": 1337,
+        "line": 1340,
         "shape": "(fun x => (primeCounting x:ℝ)-logIntegral x) =O[atTop] (fun x => sqrt x * log x)",
         "depends_on": []
       },
@@ -140,7 +140,7 @@
         "name": "RH_ErrorBound",
         "qualified_name": "PrimeNumberTheorem.RH_ErrorBound",
         "file": "PrimeNumberTheorem.lean",
-        "line": 1345,
+        "line": 1348,
         "shape": "∃C>0, ∀x≥2, |(primeCounting x:ℝ)-logIntegral x| ≤ C*sqrt x*log x",
         "depends_on": []
       },
@@ -148,7 +148,7 @@
         "name": "rh_iff_optimal_error",
         "qualified_name": "PrimeNumberTheorem.rh_iff_optimal_error",
         "file": "PrimeNumberTheorem.lean",
-        "line": 2633,
+        "line": 2636,
         "shape": "RiemannHypothesis.Statement ↔ RH_PrimeCountingLiErrorBound",
         "depends_on": []
       }
@@ -195,15 +195,16 @@
       "name": "ExplicitFormulaTruncatedTarget",
       "qualified_name": "PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget",
       "file": "PrimeNumberTheorem/ExplicitFormulaTruncated.lean",
-      "line": 114,
+      "line": 106,
       "chain": "Explicit formula",
-      "body": "real_statement"
+      "body": "real_statement",
+      "proved_by": "PrimeNumberTheorem.ExplicitFormulaTruncated.explicitFormulaTruncatedTarget_proved"
     },
     {
       "name": "ExplicitFormulaTruncatedConverseRoute",
       "qualified_name": "PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute",
       "file": "PrimeNumberTheorem/ExplicitFormulaTruncated.lean",
-      "line": 146,
+      "line": 281,
       "chain": "Explicit formula",
       "body": "real_statement"
     },
@@ -233,19 +234,19 @@
       "name": "ExplicitFormulaConversePowerTarget",
       "qualified_name": "PrimeNumberTheorem.ExplicitFormulaConversePowerTarget",
       "file": "PrimeNumberTheorem.lean",
-      "line": 4391
+      "line": 4394
     },
     {
       "name": "explicit_formula_von_mangoldt_unweighted",
       "qualified_name": "PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted",
       "file": "PrimeNumberTheorem.lean",
-      "line": 8183
+      "line": 8186
     },
     {
       "name": "explicit_formula_von_mangoldt",
       "qualified_name": "PrimeNumberTheorem.explicit_formula_von_mangoldt",
       "file": "PrimeNumberTheorem.lean",
-      "line": 8205
+      "line": 8208
     },
     {
       "name": "classical_zero_free_region",
@@ -264,9 +265,9 @@
     },
     {
       "name": "Explicit formula",
-      "target": "explicit_formula_von_mangoldt",
-      "status": "proved in Lean with analytic multiplicities and symmetric real-height truncation",
-      "next_step": "develop the separate quantitative truncated-error route needed for RH-to-prime-error estimates"
+      "target": "ExplicitFormulaTruncatedTarget",
+      "status": "proved in Lean pointwise in x, uniformly for every real height T >= 2",
+      "next_step": "track the contour constant uniformly as x varies for RH-to-prime-error estimates"
     },
     {
       "name": "RH error equivalence",
