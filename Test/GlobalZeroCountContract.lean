@@ -18,6 +18,21 @@ example :
         C * (1 + Real.log (T + 6)) ^ 2 :=
   exists_globalReciprocalZeroMultiplicity_le_log_sq
 
+example
+    (hRH : RiemannHypothesis.Statement)
+    {x T : ℝ} (hx : 0 < x) :
+    ‖finiteNontrivialZeroSumWithMultiplicity x T‖ ≤
+      Real.sqrt x * globalReciprocalZeroMultiplicity T :=
+  norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_globalReciprocal_of_RH
+    hRH hx
+
+example
+    (hRH : RiemannHypothesis.Statement) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ x T : ℝ, 0 < x → 4 ≤ T →
+      ‖finiteNontrivialZeroSumWithMultiplicity x T‖ ≤
+        C * Real.sqrt x * (1 + Real.log (T + 6)) ^ 2 :=
+  exists_norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_log_sq_of_RH hRH
+
 example :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ T : ℝ, 4 ≤ T →
       globalZeroMultiplicity T ≤ C * T * (1 + Real.log (T + 6)) :=

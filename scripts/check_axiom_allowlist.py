@@ -21,6 +21,8 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.ExplicitFormulaAux.exists_globalZeroMultiplicity_le_mul_log",
     "PrimeNumberTheorem.ExplicitFormulaAux.exists_card_nontrivialZerosFinset_le_mul_log",
     "PrimeNumberTheorem.ExplicitFormulaAux.exists_globalReciprocalZeroMultiplicity_le_log_sq",
+    "PrimeNumberTheorem.ExplicitFormulaAux.norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_globalReciprocal_of_RH",
+    "PrimeNumberTheorem.ExplicitFormulaAux.exists_norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_log_sq_of_RH",
 }
 
 REPORT_RE = re.compile(

@@ -309,6 +309,62 @@ theorem exists_globalReciprocalZeroMultiplicity_le_log_sq :
   dsimp [M₀] at hlow ⊢
   nlinarith [globalReciprocalZeroMultiplicity_nonneg 4]
 
+/-- Under RH, the multiplicity-aware zero sum in the truncated explicit formula
+is controlled by `sqrt x` times the reciprocal zero-multiplicity sum. -/
+theorem norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_globalReciprocal_of_RH
+    (hRH : RiemannHypothesis.Statement)
+    {x T : ℝ} (hx : 0 < x) :
+    ‖finiteNontrivialZeroSumWithMultiplicity x T‖ ≤
+      Real.sqrt x * globalReciprocalZeroMultiplicity T := by
+  classical
+  unfold finiteNontrivialZeroSumWithMultiplicity
+  calc
+    ‖∑ ρ ∈ nontrivialZerosFinset T,
+        (analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ‖ ≤
+        ∑ ρ ∈ nontrivialZerosFinset T,
+          ‖(analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ‖ :=
+      norm_sum_le _ _
+    _ = ∑ ρ ∈ nontrivialZerosFinset T,
+          Real.sqrt x * ((analyticOrderNatAt riemannZeta ρ : ℝ) / ‖ρ‖) := by
+      refine Finset.sum_congr rfl ?_
+      intro ρ hρ
+      have hzero := (mem_nontrivialZerosFinset.mp hρ).1
+      calc
+        ‖(analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ‖ =
+            ‖(analyticOrderNatAt riemannZeta ρ : ℂ)‖ *
+              ‖(x : ℂ) ^ ρ / ρ‖ := by
+          rw [mul_div_assoc, norm_mul]
+        _ = (analyticOrderNatAt riemannZeta ρ : ℝ) *
+              (Real.sqrt x / ‖ρ‖) := by
+          rw [norm_zero_contribution_eq_sqrt_of_RH hRH hzero hx]
+          simp
+        _ = Real.sqrt x *
+              ((analyticOrderNatAt riemannZeta ρ : ℝ) / ‖ρ‖) := by
+          ring
+    _ = Real.sqrt x * globalReciprocalZeroMultiplicity T := by
+      unfold globalReciprocalZeroMultiplicity
+      rw [Finset.mul_sum]
+
+/-- Under RH, the complete multiplicity-aware finite zero sum is
+`O(sqrt x log² T)`, uniformly for `T ≥ 4`. -/
+theorem exists_norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_log_sq_of_RH
+    (hRH : RiemannHypothesis.Statement) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ x T : ℝ, 0 < x → 4 ≤ T →
+      ‖finiteNontrivialZeroSumWithMultiplicity x T‖ ≤
+        C * Real.sqrt x * (1 + Real.log (T + 6)) ^ 2 := by
+  rcases exists_globalReciprocalZeroMultiplicity_le_log_sq with
+    ⟨C, hC, hreciprocal⟩
+  refine ⟨C, hC, ?_⟩
+  intro x T hx hT
+  calc
+    ‖finiteNontrivialZeroSumWithMultiplicity x T‖ ≤
+        Real.sqrt x * globalReciprocalZeroMultiplicity T :=
+      norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_globalReciprocal_of_RH
+        hRH hx
+    _ ≤ Real.sqrt x * (C * (1 + Real.log (T + 6)) ^ 2) :=
+      mul_le_mul_of_nonneg_left (hreciprocal T hT) (Real.sqrt_nonneg x)
+    _ = C * Real.sqrt x * (1 + Real.log (T + 6)) ^ 2 := by ring
+
 /-- The number of distinct nontrivial zeros up to height `T` also satisfies
 the global `O(T log T)` bound. -/
 theorem exists_card_nontrivialZerosFinset_le_mul_log :

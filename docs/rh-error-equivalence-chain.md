@@ -31,6 +31,9 @@ The current project already provides these usable endpoints and support lemmas.
 | `psiPowerErrorBound_of_RH_PsiErrorBound_of_half_lt` | Converts `RH_PsiErrorBound` into every power-scale `PsiPowerErrorBound theta` with `theta > 1/2`. |
 | `ZeroFreeRegion.riemannHypothesis_of_RH_PsiErrorBound` | Closes the reverse `RH_PsiErrorBound -> RiemannHypothesis` implication using the Mellin/Landau zero-exclusion bridge and zero symmetry. |
 | `ExplicitFormulaResidues.explicit_formula_von_mangoldt_proved` | Proves the finite symmetric-height zero sum weighted by `analyticOrderNatAt` converges to `psi0` over every real truncation height. |
+| `ExplicitFormulaAux.exists_globalZeroMultiplicity_le_mul_log` | Proves the global analytic-multiplicity count `N(T) = O(T log T)` from fixed-width Jensen windows. |
+| `ExplicitFormulaAux.exists_globalReciprocalZeroMultiplicity_le_log_sq` | Proves `sum_{|Im rho| <= T} m(rho) / norm(rho) = O(log^2 T)`. |
+| `ExplicitFormulaAux.exists_norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_log_sq_of_RH` | Under RH, bounds the actual multiplicity-aware finite zero sum by `O(sqrt(x) log^2 T)`. |
 
 ## Current Target Assessment
 
@@ -191,10 +194,13 @@ psi(x) - x = O(sqrt x * log^2 x).
 
 Current status:
 
-- `zero_contribution` rewrites a single zero contribution into oscillatory
-  form.  It is explanatory and may help local algebra, but it is not a
-  zero-sum estimate.
-- `finite_nontrivial_zeros_bounded_height` lets the truncated sum be finite.
+- `norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_globalReciprocal_of_RH`
+  proves the exact finite-sum reduction under RH.
+- `exists_norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_log_sq_of_RH`
+  combines it with F2 and proves the required `O(sqrt(x) log^2 T)` finite-zero
+  contribution.
+- What remains is the quantitative truncated explicit-formula remainder that
+  permits a useful choice of `T` as a function of `x`.
 
 ### F5. Convert `psi` to `theta`
 

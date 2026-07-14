@@ -167,7 +167,9 @@ multiplicity-aware target:
    including truncation parameter handling;
 2. insertion of the now-proved zero-counting and reciprocal-zero sum controls
    (`N(T) = O(T log T)` and `sum m(rho)/|rho| = O(log^2 T)`) into the
-   quantitative truncated explicit-formula remainder analysis;
+   quantitative truncated explicit-formula remainder analysis; under RH the
+   finite multiplicity-aware zero sum is already bounded by
+   `O(sqrt(x) log^2 T)`;
 3. upstream proof of `RH_PsiErrorBound` / `RH_ThetaErrorBound`; the forward
    `Chebyshev` to `primeCounting` bridge under RH-quality errors is already
    proved by `RH_PrimeCountingLiErrorBound_of_RH_ThetaErrorBound`;

@@ -3408,6 +3408,12 @@ Route interfaces:
   `O((1 + log (T + 6))^2)`.  These theorems provide quantitative zero-counting
   input; they do not by themselves discharge the still-open truncated
   explicit-formula error target.
+- `norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_globalReciprocal_of_RH`
+  and
+  `exists_norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_log_sq_of_RH`
+  consume RH only through `Re(rho) = 1/2` and prove the actual finite,
+  multiplicity-aware zero contribution is `O(sqrt(x) log^2 T)`.  The
+  quantitative contour remainder remains open.
 
 Reusable predicates:
 

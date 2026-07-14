@@ -22845,6 +22845,27 @@ theorem exists_globalReciprocalZeroMultiplicity_le_log_sq :
         C * (1 + Real.log (T + 6)) ^ 2 :=
   PrimeNumberTheorem.ExplicitFormulaAux.exists_globalReciprocalZeroMultiplicity_le_log_sq
 
+/-- Public RH-conditional reduction of the finite multiplicity-aware zero sum
+to the global reciprocal-zero mass. -/
+theorem norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_globalReciprocal_of_RH
+    (hRH : RiemannHypothesis.Statement)
+    {x T : ℝ} (hx : 0 < x) :
+    ‖PrimeNumberTheorem.finiteNontrivialZeroSumWithMultiplicity x T‖ ≤
+      Real.sqrt x *
+        PrimeNumberTheorem.ExplicitFormulaAux.globalReciprocalZeroMultiplicity T :=
+  PrimeNumberTheorem.ExplicitFormulaAux.norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_globalReciprocal_of_RH
+    hRH hx
+
+/-- Public RH-conditional `O(sqrt x log^2 T)` bound for the complete finite
+multiplicity-aware zero sum. -/
+theorem exists_norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_log_sq_of_RH
+    (hRH : RiemannHypothesis.Statement) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ x T : ℝ, 0 < x → 4 ≤ T →
+      ‖PrimeNumberTheorem.finiteNontrivialZeroSumWithMultiplicity x T‖ ≤
+        C * Real.sqrt x * (1 + Real.log (T + 6)) ^ 2 :=
+  PrimeNumberTheorem.ExplicitFormulaAux.exists_norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_log_sq_of_RH
+    hRH
+
 /-- Public route interface from a future truncated explicit formula to the
 power-scale explicit-formula converse target. -/
 abbrev ExplicitFormulaTruncatedConverseRoute (β : ℝ) : Prop :=

@@ -677,6 +677,10 @@ The global finite-zero layer now also proves both multiplicity-counted
 inputs for a truncated formula; the uniform contour remainder required by
 `ExplicitFormulaTruncatedTarget` is still open.
 
+Under RH, the same module now bounds the actual multiplicity-aware finite zero
+sum by `O(sqrt(x) log^2 T)`.  This closes the zero-sum side of the RH estimate;
+it does not replace the missing uniform truncated contour remainder.
+
 The same finite-tail layer also preserves the direct bridge from a stable base
 truncation to the legacy unweighted compatibility predicate. The public theorem
 `RiemannPNT.API.explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_tendsto_zero`
