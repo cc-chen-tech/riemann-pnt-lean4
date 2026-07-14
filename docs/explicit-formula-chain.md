@@ -323,22 +323,23 @@ Already available or mostly available:
     that the complete `firstOrderContourRemainder` tends to zero.  Consequently
     the multiplicity-weighted nontrivial-zero sum itself converges to the exact
     `psi0` explicit-formula value along this cofinal sequence.  This closes the
-    global contour-limit assembly; it does not yet interpolate to arbitrary
-    symmetric truncation heights.
+    global contour-limit assembly.  `explicit_formula_von_mangoldt_proved`
+    now promotes it to arbitrary symmetric real truncation heights.
 
-Remaining after the fixed-right-edge contour shift:
+Completed after the fixed-right-edge contour shift:
 
 1. Control the multiplicity-weighted zero contributions between consecutive
-   selected good heights.  This is the remaining step needed to extend the
-   proved cofinal zero-sum limit to arbitrary symmetric truncation heights.
+   selected good heights.
    `NontrivialZeroMultiplicity.lean` now supplies multiplicity symmetry, a
    one-zero `m(rho) * x / T` bound, and finite multiplicity-mass control by the
    zeta divisor on a containing disk.  `QuantitativeGoodHeight.lean` upgrades
    this to total local multiplicity `O(log A)`, a fixed-window weighted bound
    `O_x(log A/A)`, and convergence of that window contribution to zero.
-2. Cover the bounded gaps around the selected heights by these fixed windows,
-   then use a floor/ceiling index to prove the full real-height `Tendsto`
-   statement from the proved cofinal approximation limit.
+2. `norm_explicitFormulaApproxWithMultiplicity_sub_le_two_localWindows` covers
+   each gap of length at most three by two fixed windows.  The floor index
+   `floor((U-5)/2)` selects a cofinal height below every sufficiently large
+   `U`, and `explicit_formula_von_mangoldt_proved` combines this with the
+   cofinal approximation limit to prove the full real-height `Tendsto`.
 
 ### Analytic continuation and poles
 
@@ -543,17 +544,16 @@ For the truncated identity:
    `exists_cofinal_nontrivialZeroSum_tendsto` combines the finite rectangle
    identity with the far-left, moving-left, and central boundary limits.  It
    proves the complete remainder tends to zero and identifies the cofinal
-   multiplicity-weighted zero-sum limit.  Only passage from selected good
-   heights to arbitrary-height principal-value truncation remains.
+   multiplicity-weighted zero-sum limit.  The all-height interpolation module
+   now promotes this to arbitrary-height principal-value truncation.
 
 For the principal value final formula:
 
 1. Zero counting bound such as `N(T) = O(T log T)`.
 2. Bounds for `zeta'/zeta` away from zeros and on selected good heights.
-3. The fixed-window zero-sum contribution is now proved to tend to zero.  The
-   symmetric multiplicity-weighted zero sum and contour-error limit are proved
-   along one strictly increasing cofinal sequence; only the bounded-gap cover
-   and floor/ceiling interpolation remain for the full principal-value formula.
+3. The fixed-window zero-sum contribution tends to zero.  Two windows cover
+   every selected-height gap, and the floor-index argument now proves the full
+   principal-value formula from the cofinal contour limit.
 4. The final target is already aligned with analytic multiplicities.  The old
    unweighted approximation remains explicitly named legacy infrastructure.
 

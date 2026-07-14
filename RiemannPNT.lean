@@ -11,6 +11,7 @@ import PrimeNumberTheorem.FirstOrderExplicitFormula
 import PrimeNumberTheorem.QuantitativeGoodHeight
 import PrimeNumberTheorem.CentralHorizontalEdge
 import PrimeNumberTheorem.CofinalExplicitFormula
+import PrimeNumberTheorem.ExplicitFormulaAllHeights
 import PrimeNumberTheorem.NontrivialZeroMultiplicity
 import PrimeNumberTheorem.ExplicitFormulaTruncated
 import ZeroFreeRegion
@@ -22811,6 +22812,13 @@ theorem explicit_formula_von_mangoldt_iff
         PrimeNumberTheorem.explicitFormulaApproxWithMultiplicity x T)
         atTop (𝓝 (PrimeNumberTheorem.chebyshevPsi0 x : ℂ)) :=
   PrimeNumberTheorem.explicit_formula_von_mangoldt_iff
+
+/-- Public theorem closing the multiplicity-aware symmetric-height von
+Mangoldt explicit formula for every `x ≥ 2`. -/
+theorem explicit_formula_von_mangoldt_proved
+    {x : ℝ} (hx : 2 ≤ x) :
+    PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.explicit_formula_von_mangoldt_proved hx
 
 /-- Public route interface from a future truncated explicit formula to the
 power-scale explicit-formula converse target. -/

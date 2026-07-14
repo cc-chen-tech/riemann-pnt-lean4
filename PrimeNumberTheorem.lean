@@ -45,16 +45,15 @@ around the Prime Number Theorem, built on top of Mathlib.
 
 ## Remaining unproved target statements in this file
 
-- `explicit_formula_von_mangoldt` — the multiplicity-weighted explicit formula;
-  requires the remaining Perron/contour and all-height convergence arguments
+- `PNTForm1`, `PNTForm2`, `PNTForm3` — the three asymptotic PNT statements
+- `RH_PsiErrorBound`, `RH_ThetaErrorBound`,
+  `RH_PrimeCountingLiErrorBound`, `RH_ErrorBound` — RH-scale error statements
 - `rh_iff_optimal_error` — standard RH equivalence with prime-counting error terms
 
 ## Infrastructure gap analysis
 
-The remaining explicit-formula and RH-equivalence targets still require analytic
-infrastructure that is not yet connected end to end in this project, including:
-- Perron inversion and the required contour-shift error estimates
-- global convergence control for the multiplicity-weighted zero sum
+The remaining RH-equivalence targets still require analytic infrastructure that
+is not yet connected end to end in this project, including:
 - the forward RH-to-prime-error implication
 - stronger zero-density or Vinogradov-Korobov estimates for the corresponding targets
 
@@ -8202,9 +8201,10 @@ noncomputable def explicitFormulaApproxWithMultiplicity (x T : ℝ) : ℂ :=
 
 The midpoint function `ψ₀` handles prime-power discontinuities, the height
 cutoff gives the symmetric summation convention, and `analyticOrderNatAt`
-counts every nontrivial zero with its analytic multiplicity.  This remains a
-target statement until the proved cofinal contour limit is promoted to all
-real truncation heights. -/
+counts every nontrivial zero with its analytic multiplicity.  The predicate is
+discharged by
+`ExplicitFormulaResidues.explicit_formula_von_mangoldt_proved`, which promotes
+the proved cofinal contour limit to every real truncation height. -/
 def explicit_formula_von_mangoldt (x : ℝ) (_hx : x ≥ 2) : Prop :=
   Tendsto
     (fun T : ℝ => explicitFormulaApproxWithMultiplicity x T)

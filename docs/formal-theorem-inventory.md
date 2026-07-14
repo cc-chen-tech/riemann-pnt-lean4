@@ -19,7 +19,7 @@ python3 -m pytest
 
 At the time of writing, `lake build` succeeds, the recursive placeholder scan
 has no project Lean-source matches, the scanner classifies every project
-`def ... : Prop`, the mathematical target inventory is stable at 21
+`def ... : Prop`, the mathematical target inventory is stable at 20
 declarations, and the Python experiment tests pass.
 
 ## Proved Project-Local Results
@@ -3129,11 +3129,11 @@ metadata, not proof results.
 The following declarations are intentionally `def ... : Prop` targets.  They
 are not exported as theorems and should not be cited as proved.
 
-As of `2026-07-13`, there are **21** mathematical target declarations:
+As of `2026-07-14`, there are **20** mathematical target declarations:
 
 - `HardyTheorem` namespace: **7**
 - `HardyTheorem.Details` namespace: **3**
-- `PrimeNumberTheorem` namespace: **9**
+- `PrimeNumberTheorem` namespace: **8**
 - `KnownResults` namespace: **1**
 - `ZeroFreeRegion` namespace: **0**
 - global namespace: **1** (`vinogradov_korobov_zero_free_region`)
@@ -3149,10 +3149,6 @@ As of `2026-07-13`, there are **21** mathematical target declarations:
 
 - `rh_iff_optimal_error`
   target: equivalence between RH and a prime-counting error term.
-- `explicit_formula_von_mangoldt`
-  target: a von Mangoldt explicit formula in midpoint/truncated-limit form,
-  using `chebyshevPsi0` and
-  `finiteNontrivialZeroSumWithMultiplicity`.
 - `PNTForm1`, `PNTForm2`, `PNTForm3`
   local PNT-format targets:
   `pi(x) ~ x / log x`, `pi(x) ~ Li(x)`, and `psi(x) ~ x`. These are
@@ -3393,7 +3389,9 @@ Route interfaces:
   height `T > 1` makes the square `[-1,2T-1] x [-T,T]` pole-free on its
   boundary.  `exists_strictMono_tendsto_rectangleResidueContours` packages a
   cofinal sequence of these squares and their concrete finite residue
-  identities.  Perron inversion and contour-error estimates remain unproved.
+  identities.  The downstream Perron inversion, complete contour-remainder
+  decay, cofinal limit, and all-real-height interpolation are now proved in the
+  dedicated explicit-formula modules.
 
 Reusable predicates:
 
@@ -3402,6 +3400,11 @@ Reusable predicates:
 - `PrimeNumberTheorem.ExplicitFormulaConversePowerTarget`, now proved by
   `ZeroFreeRegion.explicitFormulaConversePowerTarget_of_mellin` and exported as
   `RiemannPNT.API.explicitFormulaConversePowerTarget_of_mellin`.
+- `PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted`
+- `PrimeNumberTheorem.explicit_formula_von_mangoldt`, now proved by
+  `PrimeNumberTheorem.ExplicitFormulaResidues.explicit_formula_von_mangoldt_proved`
+- `ZeroFreeRegion.classical_zero_free_region`, now proved by
+  `ZeroFreeRegion.classical_zero_free_region_proved`
 
 Current status in `HardyTheorem.lean` target list:
 
@@ -3526,13 +3529,13 @@ Support-level verified declarations:
 To turn the current framework into a full de la Vallee Poussin proof with error
 term, the following chains remain:
 
-1. **Quantitative zero-free region.**
-   Need zeta growth and logarithmic-derivative estimates, likely through
-   Hadamard factorization or Borel-Caratheodory, to upgrade the compact strip to
-   `c / log |t|`.
-2. **Explicit formula.**
-   Need Perron's formula, contour integration, residue calculus, edge estimates,
-   and a correct truncated/principal-value zero sum.
+1. **Stronger zero-free region.**
+   The classical `c / log |t|` region is proved.  The remaining target is the
+   Vinogradov-Korobov region and its exponential-sum input.
+2. **Quantitative explicit formula.**
+   The multiplicity-aware symmetric principal-value formula is proved.  The
+   remaining route interface asks for a uniform finite-height truncation error
+   suitable for RH-scale estimates.
 3. **RH error equivalence.**
    Need zero-counting estimates, explicit formula bounds under RH, and partial
    summation from Chebyshev functions to prime counting.

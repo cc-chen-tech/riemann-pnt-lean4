@@ -90,11 +90,11 @@ von Mangoldt series for -zeta'/zeta
 ```
 
 To reach classical PNT through this route, the remaining major analytic segment
-is:
+starts after the now-proved principal-value formula:
 
 ```text
 From the zero-free region to PNT:
-   explicit formula / Perron or Tauberian input,
+   quantitative truncation and zero-sum error control,
    psi(x) ~ x,
    pi(x) ~ x / log x
 ```
@@ -123,9 +123,12 @@ explicit-formula value along one strictly increasing good-height sequence.
 The public target and truncated target now use the same analytic-multiplicity
 weights as the contour theorem.  Fixed-width zero windows now have total
 multiplicity `O(log A)`, their weighted contribution is
-`O_x(log A / A)`, and that contribution tends to zero.  The remaining gap is
-to apply these window estimates to a floor/ceiling interpolation between the
-selected sequence and every real truncation height.
+`O_x(log A / A)`, and that contribution tends to zero.
+`ExplicitFormulaAllHeights` uses two such windows and the floor index
+`floor((U-5)/2)` to promote the selected-height limit to every real truncation
+height.  Thus the multiplicity-aware principal-value explicit formula is now a
+proved theorem; the separate quantitative truncated-error interface remains
+open.
 
 The repository now proves the real-part boundary-strip estimate actually used
 by the 3-4-1 argument:
@@ -329,9 +332,10 @@ This keeps the claims tight:
 1. **Primary contribution:** formalizing the real-part logarithmic-derivative
    Dirichlet series, the de la Vallee Poussin 3-4-1 inequality, and the
    classical `c/log |t|` zero-free region.
-2. **Secondary contribution:** correctly formulating the Riemann-von Mangoldt
-   explicit formula target using `chebyshevPsi0`, finite-height truncations, and
-   explicit error/remainder forms rather than an unordered infinite zero sum.
+2. **Secondary contribution:** proving the multiplicity-aware principal-value
+   Riemann-von Mangoldt formula for `chebyshevPsi0` with symmetric truncation at
+   every real height.  This does not yet include the quantitative truncated
+   error bound needed for RH-scale prime-counting estimates.
 3. **Supporting contribution:** proving PNT-form equivalences, RH-scale error
    propagation lemmas, and the conditional reverse bridge
    `RH_PsiErrorBound -> RiemannHypothesis` that will compose with a future
@@ -339,9 +343,9 @@ This keeps the claims tight:
 4. **Framework contribution:** building a Hardy-Z/critical-line-zero framework
    with explicit target statements for Hardy, Hardy-Littlewood, Selberg, and
    Conrey-style zero-counting results.
-5. **Mathlib roadmap:** isolating the remaining analytic inputs: Perron
-   and residue-theorem machinery for the explicit formula, and special-function
-   asymptotics for Hardy's theorem.
+5. **Mathlib roadmap:** isolating the remaining analytic inputs: quantitative
+   finite-height explicit-formula error bounds for RH-scale estimates, and
+   special-function asymptotics for Hardy's theorem.
 
 The strongest current title direction is:
 
@@ -362,36 +366,37 @@ Current code status:
 |---|---:|---|
 | `GammaResidue.lean` | 0 | General Gamma residue formula completed |
 | `HardyTheorem.lean` | 0 | Hardy-Z phase facts and codiscrete-to-bounded-window zero bridges proved; corrected integral asymptotic, positivity and zero-counting targets |
-| `PrimeNumberTheorem.lean` | 0 | Bounded-height zero finiteness and zero-symmetry bridges proved; RH error equivalence and von Mangoldt explicit formula targets |
+| `PrimeNumberTheorem.lean` | 0 | Bounded-height zero finiteness, zero-symmetry bridges, and the principal-value von Mangoldt explicit formula proved; RH error equivalence targets remain |
 | `ZeroFreeRegion.lean` | 0 | 3-4-1, compact strip, and classical `c/log|t|` zero-free region proved; Vinogradov-Korobov target open |
 
 Total: 0 syntactic `sorry` occurrences in Lean source files.
 
 Unresolved mathematical target declarations (currently not promoted to
-theorems): **21**.
+theorems): **20**.
 
  - `HardyTheorem` namespace: 7
  - `HardyTheorem.Details` namespace: 3
- - `PrimeNumberTheorem` namespace: 9
+ - `PrimeNumberTheorem` namespace: 8
  - `KnownResults` namespace: 1
- - `ZeroFreeRegion` namespace: 1
+ - `ZeroFreeRegion` namespace: 0
  - global namespace: 1 (`vinogradov_korobov_zero_free_region`)
 
 Full `def ... : Prop` inventory:
 
-- mathematical targets: 21;
+- mathematical targets: 20;
 - route interfaces: 5
   (`HardyTheorem.AFE.zeta_critical_afe_target`,
   `MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum`,
   `PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute`,
   `PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget`,
   `RiemannExplorer.Conrey40.conrey_40_percent_zeros_on_critical_line_target`);
-- reusable predicates: 5
+- reusable predicates: 6
   (`ZeroFreeRegion.classical_zero_free_region`,
   `HardyTheorem.weightedIntegralOf_tail_dominates`,
   `PrimeNumberTheorem.ExplicitFormulaAux.goodHeight`,
   `PrimeNumberTheorem.ExplicitFormulaConversePowerTarget`,
-  `PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted`);
+  `PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted`,
+  `PrimeNumberTheorem.explicit_formula_von_mangoldt`);
 - unclassified Prop definitions: 0.
 
 No route interface currently has a body equal to `True`.  The rectangle
@@ -408,8 +413,9 @@ the outer-square deformation, internal-edge cancellation, and finite simple
 principal-part residue formula.  The stronger
 `MathlibAux.rectangleBoundaryIntegral_eq_finite_simple_pole_residue_sum_of_differentiableOn`
 also includes an arbitrary holomorphic remainder on the closed rectangle.
-Constructing this decomposition from a general meromorphic function,
-higher-order poles, Perron formula, and contour error estimates remain open.
+Constructing this decomposition from a completely general meromorphic function
+with higher-order poles remains open; the concrete zeta integrand is handled by
+the specialized modules below.
 The repository also proves the constant-function sanity checks
 `MathlibAux.rectangleBoundaryIntegral_const`,
 `MathlibAux.rectangleIntegral_const`, and
@@ -421,8 +427,9 @@ The concrete explicit-formula integrand is now defined in
 `PrimeNumberTheorem/ExplicitFormulaResidues.lean`.  The file proves its local
 residues at `s = 1`, `s = 0`, every nontrivial zeta zero, and every trivial
 zero, with zeta zeros weighted by the actual `analyticOrderNatAt`
-multiplicity.  The ordinary first-order Perron starting-line limit is proved;
-closure of all shifted contour errors remains open.  The same file now proves the concrete integrand is globally
+multiplicity.  The ordinary first-order Perron starting-line limit is proved,
+and the downstream edge modules close every shifted contour remainder needed
+for the principal-value limit.  The same file proves the concrete integrand is globally
 meromorphic and, on every compact set, analytic outside an explicitly
 constructed finite candidate set (the zeta-divisor support together with the
 kernel pole at `0`).
@@ -448,7 +455,7 @@ of such contours from `goodHeight`: the square at height `T` has real sides
 | `EulerAndLfunctions.lean` | Thin wrappers around Mathlib zeta/Euler product/L-function facts | sorry-free |
 | `GammaResidue.lean` | Gamma residue facts and numerical special cases | sorry-free |
 | `HardyTheorem.lean` | Hardy Z-function setup with corrected target statements for critical-line zeros | sorry-free, targets unproved |
-| `PrimeNumberTheorem.lean` | PNT forms, equivalences, Li(x) asymptotics, zero symmetry, bounded-height zero finiteness, explicit formula target | sorry-free, targets unproved |
+| `PrimeNumberTheorem.lean` | PNT forms, equivalences, Li(x) asymptotics, zero symmetry, bounded-height zero finiteness, and the multiplicity-aware explicit-formula predicate | sorry-free; the explicit-formula predicate is proved, RH/PNT error targets remain |
 | `ZeroFreeRegion.lean` | 3-4-1 setup, log derivative series, compact strip, and classical `c/log|t|` zero-free region | sorry-free; Vinogradov-Korobov target unproved |
 | `PrimeNumberTheorem/ExplicitFormulaAux.lean` | `chebyshevPsi0`, `goodHeight`, finite zero-sum support helpers, boundary-height and auxiliary multiplicity normalizers | sorry-free, support predicate only |
 | `PrimeNumberTheorem/ExplicitFormulaResidues.lean` | Concrete `-ζ'/ζ(s) * x^s/s` integrand; global meromorphicity, finite compact-set pole candidates, local principal-part germs, a compact-set analytic regularized remainder, and proved residues at all relevant poles | sorry-free |
@@ -458,12 +465,13 @@ of such contours from `goodHeight`: the square at height `T` has real sides
 | `PrimeNumberTheorem/RightHorizontalEdge.lean` | Absolutely convergent and inner zero-free horizontal estimates, including genuine interval integrability and both-side decay | sorry-free |
 | `ZeroFreeRegion/ShiftedJensen.lean` | Shifted `3/2+it` Jensen disk, enlarged divisor-mass control, and regularized logarithmic-derivative `O(log(|t|+5))` bound down to `Re(s)=1/2` | sorry-free |
 | `PrimeNumberTheorem/CentralHorizontalEdge.lean` | Full `O(log^2 A)` logarithmic-derivative bound on `-1<=Re(s)<=2` at logarithmically separated good heights, explicit `O(log^2 A/T)` contour bound, and both-side cofinal decay | sorry-free |
-| `PrimeNumberTheorem/CofinalExplicitFormula.lean` | Exact moving-rectangle identities on a strictly increasing good-height sequence, complete contour-remainder decay, and the resulting cofinal multiplicity-aware approximation limit | sorry-free; arbitrary-height passage remains |
-| `PrimeNumberTheorem/NontrivialZeroMultiplicity.lean` | Functional-equation invariance of analytic zero multiplicity, single weighted-zero contribution bounds, and finite multiplicity-mass control by the zeta divisor on a closed disk | sorry-free; supports arbitrary-height interpolation |
+| `PrimeNumberTheorem/CofinalExplicitFormula.lean` | Exact moving-rectangle identities on a strictly increasing good-height sequence, complete contour-remainder decay, and the resulting cofinal multiplicity-aware approximation limit | sorry-free; consumed by the all-height module |
+| `PrimeNumberTheorem/ExplicitFormulaAllHeights.lean` | Floor-index geometry, two-window bounded-gap estimates, and the completed all-real-height multiplicity-aware explicit formula | sorry-free |
+| `PrimeNumberTheorem/NontrivialZeroMultiplicity.lean` | Functional-equation invariance of analytic zero multiplicity, single weighted-zero contribution bounds, and finite multiplicity-mass control by the zeta divisor on a closed disk | sorry-free; consumed by the completed interpolation |
 | `PrimeNumberTheorem/LeftHorizontalEdge.lean` | Functional-equation decomposition and vanishing far-left horizontal pieces | sorry-free |
 | `PrimeNumberTheorem/LeftVerticalEdge.lean` | Negative-odd vertical-line log-derivative bound, genuine interval integrability, and moving-edge decay | sorry-free |
-| `PrimeNumberTheorem/FirstOrderExplicitFormula.lean` | Multiplicity-aware finite truncated formula and cofinal zero-sum-minus-remainder limit | sorry-free; the new cofinal assembly module closes the remainder limit, while arbitrary-height passage remains |
-| `PrimeNumberTheorem/QuantitativeGoodHeight.lean` | Quantitative good-height selection, total local zero multiplicity `O(log A)`, and a multiplicity-weighted fixed-window contribution bound `O_x(log A/A)` tending to zero | sorry-free; the remaining explicit-formula step is all-height interpolation |
+| `PrimeNumberTheorem/FirstOrderExplicitFormula.lean` | Multiplicity-aware finite truncated formula and cofinal zero-sum-minus-remainder limit | sorry-free; consumed by the completed all-height explicit formula |
+| `PrimeNumberTheorem/QuantitativeGoodHeight.lean` | Quantitative good-height selection, total local zero multiplicity `O(log A)`, and a multiplicity-weighted fixed-window contribution bound `O_x(log A/A)` tending to zero | sorry-free; consumed by the completed all-height interpolation |
 | `MathlibAux/RectangleResidue.lean` | Rectangle residue route interface, proved circle and square finite simple-pole residue formulas, rectangular-annulus deformation, plus constant-function sanity checks | sorry-free, general meromorphic route interface unproved |
 | `HardyTheorem/AFE.lean` | Corrected AFE route interface using an unwrapped theta wrapper | sorry-free, route interface unproved |
 | `RiemannExplorer/Conrey40.lean` | Conrey target alias to the upper-level `KnownResults` target | sorry-free, route interface alias |
@@ -549,9 +557,10 @@ Lean declarations in `ZeroFreeRegion.lean` and
 | `PrimeNumberTheorem.ExplicitFormulaAux.exists_goodHeight_Icc_logarithmically_separated` | `theorem` | For every `A >= 4`, selects `T in [A,A+1]` with distance at least `1/(4(B(1+log(A+6))+1))` from every absolute nontrivial-zero ordinate, for one uniform `B >= 0`. | Supplies the separation input now consumed by the proved central-band `zeta'/zeta` norm bound. |
 | `ZeroFreeRegion.exists_shifted_disk_regularized_logDeriv_riemannZeta_log_bound` | `theorem` | Controls the regularized logarithmic derivative by `B(1+log(|t|+5))` on the retained radius-one disk centered at `3/2+it`, using an enlarged center-`2+it` Jensen disk and shifted divisor mass. | Reaches `Re(s)=1/2`, the missing geometry for the central horizontal contour. |
 | `PrimeNumberTheorem.ExplicitFormulaResidues.exists_goodHeight_Icc_norm_logDeriv_central_band_le_log_sq` / `exists_tendsto_horizontal_central_explicitFormulaIntegrand_both_zero` | `theorem` | Gives one selected `T in [A,A+1]` controlling both signs and all `-1<=Re(s)<=2` by `C(1+log(A+6))^2`, then constructs a cofinal sequence on which both complete central horizontal integrals tend to zero. | Closes the previously missing central horizontal boundary estimate. |
-| `PrimeNumberTheorem.ExplicitFormulaResidues.exists_cofinal_nontrivialZeroSum_tendsto` / `exists_cofinal_explicitFormulaApproxWithMultiplicity_tendsto` | `theorem` | Extracts one strictly increasing cofinal good-height sequence with `T n in [2n+4,2n+5]`, proves the exact finite moving-rectangle identity and complete remainder decay, and identifies the limit of both the multiplicity-weighted zero sum and the final multiplicity-aware approximation. | Closes the global cofinal contour-limit assembly and aligns it with the public target. Passage from selected good heights to arbitrary symmetric truncation heights remains open. |
+| `PrimeNumberTheorem.ExplicitFormulaResidues.exists_cofinal_nontrivialZeroSum_tendsto` / `exists_cofinal_explicitFormulaApproxWithMultiplicity_tendsto` | `theorem` | Extracts one strictly increasing cofinal good-height sequence with `T n in [2n+4,2n+5]`, proves the exact finite moving-rectangle identity and complete remainder decay, and identifies the limit of both the multiplicity-weighted zero sum and the final multiplicity-aware approximation. | Closes the global cofinal contour-limit assembly used by the all-height theorem. |
 | `PrimeNumberTheorem.analyticOrderNatAt_riemannZeta_one_sub_of_nontrivialZero` / `norm_multiplicity_zero_contribution_le_div_height` / `sum_analyticOrderNatAt_riemannZeta_le_finsum_divisor_closedBall` | `theorem` | Proves multiplicity symmetry under `rho -> 1-rho`, bounds one weighted contribution above a height cutoff, and controls a finite family's total analytic multiplicity by local divisor mass. | Supplies the multiplicity-aware inputs needed to bound zero-sum increments between selected heights. |
-| `PrimeNumberTheorem.ExplicitFormulaAux.exists_localZeroMultiplicity_le_log_bound` / `exists_localZeroContributionNorm_le_log_div` / `tendsto_localZeroContributionNorm_atTop` | `theorem` | Bounds total analytic multiplicity in the fixed-width window by `B(1+log(A+6))`, bounds its weighted zero contribution by `C*x*(1+log(A+6))/(A-1/2)`, and proves that contribution tends to zero. | Closes the local weighted-increment estimate; only the floor/ceiling interpolation from selected heights to every real height remains. |
+| `PrimeNumberTheorem.ExplicitFormulaAux.exists_localZeroMultiplicity_le_log_bound` / `exists_localZeroContributionNorm_le_log_div` / `tendsto_localZeroContributionNorm_atTop` | `theorem` | Bounds total analytic multiplicity in the fixed-width window by `B(1+log(A+6))`, bounds its weighted zero contribution by `C*x*(1+log(A+6))/(A-1/2)`, and proves that contribution tends to zero. | Supplies the local weighted-increment estimate consumed by the completed interpolation. |
+| `PrimeNumberTheorem.ExplicitFormulaResidues.norm_explicitFormulaApproxWithMultiplicity_sub_le_two_localWindows` / `explicit_formula_von_mangoldt_proved` | `theorem` | Covers every gap of length at most three by two fixed-width zero windows and promotes the cofinal limit to the full real-height symmetric limit. | Proves the tracked multiplicity-aware von Mangoldt explicit-formula predicate for every `x >= 2`. |
 | `ZeroFreeRegion.exists_ReNegDerivDivVerticalLogBound` | `theorem` | Proves the exact uniform boundary-strip estimate `Re(-ζ'/ζ(σ+it))≤C log|t|` for `1≤σ≤2` above a fixed height, using the favorable sign of every local zero principal part. | Discharges the real-part vertical input actually required by the 3-4-1 route without asserting the stronger full-norm bound. |
 | `ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_le_neg_inv_add_log_abs_bound` | `theorem` | Separates a same-height candidate zero and proves `Re(-ζ'/ζ(σ+it))≤-1/(σ-β)+C log|t|` uniformly when the candidate lies in the fixed Jensen disk. | Supplies the quantitative zero-repulsion term; candidates farther left are handled by a uniform constant absorption in the final proof. |
 | `ZeroFreeRegion.classical_zero_free_region_proved` | `theorem` | Proves the predicate `classical_zero_free_region`, i.e. existence of `c>0` with zeta nonzero for `|Im(s)|≥2` and `Re(s)≥1-c/log|Im(s)|`. | Completes the classical de la Vallee Poussin zero-free-region chain in Lean; it is not a proof of PNT or the stronger Vinogradov-Korobov region. |
@@ -987,9 +996,9 @@ Lean declarations in `ZeroFreeRegion.lean` and
 
 Two important boundaries:
 
-- `ZeroFreeRegion.classical_zero_free_region_compact` is not the classical
-  quantitative region `Re(s) ≥ 1 - c / log |Im(s)|`; that remains the target
-  `ZeroFreeRegion.classical_zero_free_region`.
+- `ZeroFreeRegion.classical_zero_free_region_compact` alone is not the
+  quantitative region `Re(s) ≥ 1 - c / log |Im(s)|`; that stronger predicate
+  is proved separately by `ZeroFreeRegion.classical_zero_free_region_proved`.
 - `ZeroFreeRegion.residue_bounds` and
   `ZeroFreeRegion.tendsto_mul_logDeriv_riemannZeta_simplePoleAtOne` give
   local pole/principal-part control.  The derived local norm bound
@@ -1033,8 +1042,9 @@ repository.
 
 ### Von Mangoldt Explicit Formula
 
-The current repository contains this as a corrected `Prop` target statement,
-not as a proved theorem.  The Lean target now uses the midpoint convention
+The repository retains a corrected `Prop` predicate and proves it with
+`ExplicitFormulaResidues.explicit_formula_von_mangoldt_proved`.  The predicate
+uses the midpoint convention
 `chebyshevPsi0` and a height-truncated zero contribution
 `finiteNontrivialZeroSumWithMultiplicity`, rather than an unconditional
 unordered `tsum` or a distinct-zero-only sum.  Every zero is weighted by
@@ -1087,10 +1097,10 @@ wrappers are exposed in existence form, ruling out nontrivial zeros on
 moving-rectangle formula and its cofinal zero-remainder limit are now proved by
 `ExplicitFormulaResidues.exists_cofinal_nontrivialZeroSum_tendsto` and its
 target-facing corollary
-`exists_cofinal_explicitFormulaApproxWithMultiplicity_tendsto`.  The remaining
-explicit-formula gap is to cover each bounded gap between consecutive selected
-heights by the proved fixed-width contribution estimate and formalize the
-floor/ceiling interpolation to arbitrary symmetric truncation heights; the
+`exists_cofinal_explicitFormulaApproxWithMultiplicity_tendsto`.  The theorem
+`ExplicitFormulaResidues.explicit_formula_von_mangoldt_proved` now covers each
+bounded gap by two fixed-width contribution windows and completes the
+floor-index interpolation to arbitrary symmetric truncation heights.  The
 Mellin/Landau route no longer needs an
 abstract `PsiPowerErrorBelowLineExcludesZerosRightOf` assumption.
 It also has direct truncated-route wrappers for the sharper
@@ -1150,9 +1160,9 @@ infrastructure.  In particular,
 `new_zero_card_tail_tendsto_zero_of_eventually_sdiff_eq_empty` show that if no
 new bounded-height zeros appear eventually above a base cutoff, then the finite
 new-zero contribution, its sum-of-norms tail, and the two RH-tail controls
-collapse to zero.  These are
-finite-combinatorial tail bridges, not substitutes for Perron's formula or the
-global explicit formula.  The following direct bridges belong to the retained
+collapse to zero.  These are legacy finite-combinatorial tail bridges, not the
+proof of the multiplicity-aware principal-value formula.  The following direct
+bridges belong to the retained
 legacy unweighted API:
 `explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_tendsto_zero`,
 `explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_sum_norm_isBigO_tendsto_zero`,
@@ -1208,7 +1218,7 @@ prove the missing high-height zeta growth or logarithmic-derivative estimates.
 
 ### Target Statements, Not Proved Theorems
 
-The remaining 21 target declarations are intentionally `def ... : Prop` rather
+The remaining 20 target declarations are intentionally `def ... : Prop` rather
 than theorem declarations. They are tracked as future proof obligations and must
 not be cited as completed proofs:
 
@@ -1216,10 +1226,8 @@ not be cited as completed proofs:
   `PNTForm1`, `PNTForm2`, `PNTForm3`, `RH_PsiErrorBound`,
   `RH_ThetaErrorBound`, `RH_PrimeCountingLiErrorBound`, `RH_ErrorBound`,
   `rh_iff_optimal_error`;
-- explicit formula target:
-  `explicit_formula_von_mangoldt`;
-- quantitative zero-free-region targets:
-  `classical_zero_free_region`, `vinogradov_korobov_zero_free_region`;
+- quantitative zero-free-region target:
+  `vinogradov_korobov_zero_free_region`;
 - Hardy/critical-line targets:
   `integral_asymptotic_target`, `hardy_two_signed_moments_target`,
   `hardy_theorem_target`, `hardy_zeros_unbounded_target`,
@@ -1245,13 +1253,13 @@ in the existing Hardy target bridges, but it is still conditional on the
 codiscrete zero-set hypothesis and does not prove Hardy's theorem
 unconditionally.
 
-The four missing analytic chains are:
+The four remaining analytic directions are:
 
-1. **Quantitative zero-free region**: upgrade the compact strip to
-   `1 - c / log |t|` using zeta growth and logarithmic-derivative estimates
-   together with Borel-Caratheodory or Hadamard/Jensen machinery.
-2. **Explicit formula**: prove the Perron/residue-theorem chain that yields the
-   finite-height Riemann-von Mangoldt formula for `chebyshevPsi0`.
+1. **Stronger zero-free region**: prove the Vinogradov-Korobov region using
+   exponential-sum estimates beyond the completed classical `c/log |t|` region.
+2. **Quantitative explicit formula**: prove a uniform finite-height truncation
+   error strong enough for RH-scale prime-counting estimates; the symmetric
+   principal-value formula itself is complete.
 3. **RH error equivalence**: connect the explicit formula under RH to the
    `sqrt x * log x` prime-counting error and prove the reverse implication.
 4. **Hardy theorem**: prove the signed moment/asymptotic inputs for Hardy's
@@ -1296,8 +1304,8 @@ for a reviewer-oriented inventory separating proved declarations from target
 statements.
 
 See [`docs/target-statements-and-chains.md`](docs/target-statements-and-chains.md)
-for a compact checklist of all `def ... : Prop` targets and the four missing
-analytic chains they belong to.
+for a compact classification of unproved `def ... : Prop` targets and proved
+reusable predicates.
 
 See [`docs/implementation-standards.md`](docs/implementation-standards.md)
 for the standard that prevents target statements from being reported as proved
@@ -1308,16 +1316,16 @@ parallel work breakdown of the remaining analytic chains.
 
 | Theorem | Missing Mathlib Component | Difficulty |
 |---|---|---|
-| Explicit formula (Perron) | Contour integration / Residue theorem | High |
-| Classical zero-free region (σ ≥ 1-c/log|t|) | Hadamard factorization or Borel-Carathéodory | Medium |
+| Quantitative truncated explicit-formula error | Uniform contour and zero-sum error estimates | High |
 | Vinogradov-Korobov zero-free region | Exponential sum estimates | Very High |
 | Hardy's theorem targets | Corrected moment estimates and asymptotic expansions of special functions | Medium–High |
 
 ### Easiest Path Forward
 
-The **Borel-Carathéodory** route is lighter than full Hadamard factorization,
-but this repository still needs additional zeta growth and logarithmic-derivative
-estimates before the quantitative zero-free region can be closed.
+The next PNT-facing step is a uniform quantitative truncated-error theorem for
+the completed principal-value explicit formula.  In parallel, strengthening
+the zero-free region beyond the classical scale requires substantially deeper
+exponential-sum input.
 
 ## Related Work
 

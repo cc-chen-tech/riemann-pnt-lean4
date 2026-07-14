@@ -1,4 +1,4 @@
-import PrimeNumberTheorem.CofinalExplicitFormula
+import PrimeNumberTheorem.ExplicitFormulaAllHeights
 import PrimeNumberTheorem.QuantitativeGoodHeight
 
 #print axioms PrimeNumberTheorem.analyticOrderNatAt_riemannZeta_one_sub_of_nontrivialZero
@@ -6,3 +6,4 @@ import PrimeNumberTheorem.QuantitativeGoodHeight
 #print axioms PrimeNumberTheorem.sum_analyticOrderNatAt_riemannZeta_le_finsum_divisor_closedBall
 #print axioms PrimeNumberTheorem.ExplicitFormulaAux.exists_localZeroMultiplicity_le_log_bound
 #print axioms PrimeNumberTheorem.ExplicitFormulaResidues.exists_cofinal_explicitFormulaApproxWithMultiplicity_tendsto
+#print axioms PrimeNumberTheorem.ExplicitFormulaResidues.explicit_formula_von_mangoldt_proved

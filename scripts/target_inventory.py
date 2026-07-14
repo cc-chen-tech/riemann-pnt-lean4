@@ -41,7 +41,6 @@ MATH_TARGETS = {
     "PrimeNumberTheorem.RH_PrimeCountingLiErrorBound": "RH error equivalence",
     "PrimeNumberTheorem.RH_ErrorBound": "RH error equivalence",
     "PrimeNumberTheorem.rh_iff_optimal_error": "RH error equivalence",
-    "PrimeNumberTheorem.explicit_formula_von_mangoldt": "Explicit formula",
     "HardyTheorem.integral_asymptotic_target": "Hardy theorem",
     "HardyTheorem.hardy_two_signed_moments_target": "Hardy theorem",
     "HardyTheorem.hardy_theorem_target": "Hardy theorem",
@@ -68,6 +67,7 @@ REUSABLE_PREDICATES = {
     "HardyTheorem.weightedIntegralOf_tail_dominates",
     "PrimeNumberTheorem.ExplicitFormulaAux.goodHeight",
     "PrimeNumberTheorem.ExplicitFormulaConversePowerTarget",
+    "PrimeNumberTheorem.explicit_formula_von_mangoldt",
     "PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted",
 }
 
