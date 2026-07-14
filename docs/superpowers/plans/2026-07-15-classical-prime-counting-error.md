@@ -93,7 +93,7 @@ git commit -m "test the classical prime-counting error contract"
 - Produces:
   `exists_eventually_abs_chebyshevTheta_sub_id_le_exp_neg_sqrt_log`
 
-- [ ] **Step 1: Add the exact intermediate theorem statement**
+- [x] **Step 1: Add the exact intermediate theorem statement**
 
 ```lean
 import PrimeNumberTheorem.ClassicalPNTError
@@ -112,7 +112,7 @@ end PrimeNumberTheorem
 
 Attach a `by` proof using the following exact inequalities in one theorem body.
 
-- [ ] **Step 2: Extract the proved `psi` constants and weaken the decay**
+- [x] **Step 2: Extract the proved `psi` constants and weaken the decay**
 
 Use
 
@@ -125,7 +125,7 @@ let a : ℝ := c / 2
 Prove `0 < a`.  Work eventually above `max X (Real.exp 1)` and above a
 threshold satisfying `4*a <= sqrt(log x)`.
 
-- [ ] **Step 3: Absorb the prime-power correction**
+- [x] **Step 3: Absorb the prime-power correction**
 
 For each sufficiently large `x`, obtain
 
@@ -157,7 +157,7 @@ The final pointwise calculation must be
 
 Return constants `a` and `C+8` with a nonnegativity proof.
 
-- [ ] **Step 4: Verify GREEN for the module**
+- [x] **Step 4: Verify GREEN for the module**
 
 Run:
 
@@ -167,7 +167,7 @@ lake env lean PrimeNumberTheorem/ClassicalPrimeCountingError.lean
 
 Expected: exit code `0` with no placeholder declarations.
 
-- [ ] **Step 5: Commit the theta transfer**
+- [x] **Step 5: Commit the theta transfer**
 
 ```bash
 git add PrimeNumberTheorem/ClassicalPrimeCountingError.lean
