@@ -16,16 +16,17 @@ HOL Light formalizations of Newman's analytic PNT proof, Lean PNT work such as
 `PrimeNumberTheoremAnd`, Mathlib's zeta and Dirichlet `L`-function
 infrastructure, and any newer Lean repositories current at submission time.
 
-The stable project-local contribution is narrower:
+The stable project-local contribution is:
 
 ```text
-de la Vallee Poussin 3-4-1 machinery and compact zero-free strip in Lean 4
+de la Vallee Poussin 3-4-1 machinery, the classical c/log zero-free region,
+and the multiplicity-aware principal-value explicit formula in Lean 4
 ```
 
 In particular, the theorem inventory below should be read as verified support
-for that local module, not as evidence that PNT, RH, the quantitative
-`1 - c / log |t|` zero-free region, or the full explicit formula has been
-proved.
+for those local modules, not as evidence that PNT, RH, the stronger
+Vinogradov-Korobov region, or a quantitative truncated explicit-formula error
+estimate has been proved.
 
 ## 1. Real Part of the Logarithmic Derivative Series
 
@@ -226,52 +227,46 @@ canonical correction gives
 This is formalized as
 `norm_regularized_logDeriv_riemannZeta_le_mixedCanonical_bound`. The estimate
 is local and conditional on the displayed disk data, but its coefficient is
-independent of the nearest zero distance. The next unresolved step is a
-uniform high-height specialization using the already proved zeta growth and
-Jensen divisor-mass bounds, followed by isolation of the selected
-zero-candidate principal term.
+independent of the nearest zero distance.
 
 The follow-up theorem
 `norm_regularized_logDeriv_riemannZeta_le_of_good_radius_and_jensen` performs
 the good-circle selection and Jensen mass substitution internally, replacing
 the selected denominator by the fixed margin `a-d`. Separately, the Mobius
 reciprocal identity extends the center estimate `‖ζ(s)‖≥1/3` to
-`Re(s)≥3/2`. These are genuine reductions of the remaining uniformity problem;
-the functional-equation module now additionally proves the exact
-Gamma/trigonometric cancellation and `‖ζ(it)‖≤4|t|²` on `Re(s)=0`.  This closes
-one boundary of the required wider strip, but does not yet provide the
-final Phragmen-Lindelof interpolation theorem.  The analytic growth premise is
-now proved more strongly: a uniform Mellin bound for `completedRiemannZeta₀`
-and an exponential reciprocal-Gamma bound yield a quadratic times
-single-exponential estimate for the entire carrier on `0≤Re(s)≤1` when
-`|Im(s)|≥1`.  What remains is `IsBigO` packaging, polynomial normalization, a
-low-height compact patch, and the actual vertical-strip application needed by
-disks that reach the boundary line `Re(s)=1`.
+`Re(s)≥3/2`.  The later Phragmen--Lindelof and Jensen specializations close the
+required high-height input.  In particular,
+`exists_norm_logDeriv_riemannZeta_le_log_sq_on_inner_zeroFreeRegion` proves a
+uniform `O((log |t|)^2)` norm bound on the inner zero-free strip, and
+`classical_zero_free_region_proved` closes the classical `c/log |t|` region.
+The same interior norm estimate is used by the proved horizontal contour-edge
+decay in the principal-value explicit-formula chain.
 
 ## What This Does and Does Not Prove
 
 The project-local contribution is not a complete proof of the Prime Number
 Theorem or the Riemann Hypothesis, and it is not a claim to be the first PNT
-formalization.  The verified contribution is the Lean formalization of
-supporting infrastructure for one classical local route:
+formalization.  The verified contribution includes:
 
 - the real-part Dirichlet-series representation of `-zeta'/zeta`;
 - the full 3-4-1 logarithmic-derivative nonnegativity argument;
-- a compact zero-free strip at every bounded height;
+- a compact zero-free strip at every bounded height and the classical
+  `c / log |t|` zero-free region;
 - real-axis residue-scale bounds for zeta near `1`.
+- the multiplicity-aware Riemann-von Mangoldt principal-value formula for
+  `chebyshevPsi0`, using symmetric truncation at every real height.
 
 Mathlib already provides the qualitative nonvanishing theorem
-`riemannZeta_ne_zero_of_one_le_re`.  The new compact zero-free theorem upgrades
-this to a positive-width strip at each fixed height by a topological
-compactness argument.
-
-The 3-4-1 inequality is separate infrastructure for the later quantitative
-zero-free region
+`riemannZeta_ne_zero_of_one_le_re`.  The compact theorem first upgrades this to
+a positive-width strip at each fixed height.  The later theorem
+`ZeroFreeRegion.classical_zero_free_region_proved` combines the 3-4-1,
+Jensen, growth, and regular-part machinery to prove
 
 ```text
 Re s >= 1 - c / log |Im s|.
 ```
 
-That quantitative theorem is still recorded only as a target statement in this
-checkout.  Closing it requires zeta-specific growth and logarithmic-derivative
-estimates in addition to the 3-4-1 mechanism.
+The remaining zero-free-region target is the stronger Vinogradov-Korobov
+region.  On the explicit-formula side, the principal-value identity is proved;
+the open task is a uniform finite-height truncation error strong enough for the
+forward RH-to-prime-error implication.
