@@ -261,6 +261,10 @@ formalization. The verified contribution includes:
 - the de la Vallee Poussin-form real-variable estimate
   `|chebyshevPsi x - x| <= C*x*exp(-c*sqrt(log x))` for all sufficiently large
   `x`, including midpoint-jump removal and the floor-scale comparison.
+- the matching prime-counting estimate
+  `|primeCounting x - logIntegral x| <= C*x*exp(-c*sqrt(log x))`, obtained by
+  a proved `psi -> theta` transfer and a direct split estimate for the Abel
+  error integral.
 
 Mathlib already provides the qualitative nonvanishing theorem
 `riemannZeta_ne_zero_of_one_le_re`.  The compact theorem first upgrades this to
@@ -274,6 +278,7 @@ Re s >= 1 - c / log |Im s|.
 
 The remaining zero-free-region target is the stronger Vinogradov-Korobov
 region.  On the explicit-formula side, the principal-value identity, the
-moving-height ordinary-PNT estimate, de la Vallee Poussin-form Chebyshev `psi` remainder, and
-the forward RH-to-prime-error implication are proved.  Further work concerns
-the corresponding `pi-Li` Abel transfer and stronger zero-free regions.
+moving-height ordinary-PNT estimate, de la Vallee Poussin-form `psi` and
+`pi-Li` remainders, and the forward RH-to-prime-error implication are proved.
+Further work concerns power-saving estimates, stronger zero-free regions, and
+numerically explicit constants.

@@ -33,6 +33,8 @@ EXPECTED_DECLARATIONS = {
     "RiemannPNT.API.pnt_forms_proved",
     "PrimeNumberTheorem.exists_abs_chebyshevPsi_sub_id_le_exp_neg_sqrt_log",
     "RiemannPNT.API.exists_abs_chebyshevPsi_sub_id_le_exp_neg_sqrt_log",
+    "PrimeNumberTheorem.exists_abs_primeCounting_sub_logIntegral_le_exp_neg_sqrt_log",
+    "RiemannPNT.API.exists_abs_primeCounting_sub_logIntegral_le_exp_neg_sqrt_log",
     "ZeroFreeRegion.exists_riemannZeta_ne_zero_and_norm_logDeriv_le_log_sq_on_inner_zeroFreeRegion",
     "ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_le_log_sq_on_inner_zeroFreeRegion",
     "PrimeNumberTheorem.ExplicitFormulaResidues.exists_norm_horizontal_inner_explicitFormulaContour_le",

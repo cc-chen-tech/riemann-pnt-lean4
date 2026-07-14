@@ -383,7 +383,7 @@ git commit -m "prove the classical prime-counting error term"
 - Consumes: final Task 4 theorem
 - Produces: an audited and accurately scoped repository claim
 
-- [ ] **Step 1: Extend the axiom audit**
+- [x] **Step 1: Extend the axiom audit**
 
 Append:
 
@@ -395,14 +395,14 @@ Append:
 Add the same fully-qualified names to `EXPECTED_DECLARATIONS` in
 `scripts/check_axiom_allowlist.py`.
 
-- [ ] **Step 2: Update the publication boundary**
+- [x] **Step 2: Update the publication boundary**
 
 State the exact `pi-Li` remainder shape and that constants are existential.
 Remove only claims that the quantitative Abel endpoint is open.  Preserve
 explicit statements that `O(x^(2/3-delta))`, `Re(s)=1/3` exclusion, RH,
 Hardy, Vinogradov-Korobov, and numerically explicit constants remain open.
 
-- [ ] **Step 3: Run focused and inventory checks**
+- [x] **Step 3: Run focused and inventory checks**
 
 ```bash
 lake build Test.ClassicalPrimeCountingErrorContract
@@ -415,7 +415,7 @@ git diff --check
 
 Expected: all commands exit `0`; inventory remains fully classified.
 
-- [ ] **Step 4: Run full verification**
+- [x] **Step 4: Run full verification**
 
 ```bash
 lake build
@@ -425,14 +425,14 @@ lake build
 Run these sequentially.  Expected: both exit `0`, no placeholder scan
 failures, and only the standard allowed axioms.
 
-- [ ] **Step 5: Obtain independent proof review**
+- [x] **Step 5: Obtain independent proof review**
 
 Review must inspect the `psi`-to-`theta` absorption, both Abel subinterval
 bounds, the common decay-constant comparison, and every public claim.  Treat
 any high-severity finding as blocking and rerun the focused and baseline
 checks after fixes.
 
-- [ ] **Step 6: Commit the audit and documentation**
+- [x] **Step 6: Commit the audit and documentation**
 
 ```bash
 git add Test/MultiplicityAxiomAudit.lean scripts/check_axiom_allowlist.py \

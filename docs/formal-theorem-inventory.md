@@ -5,7 +5,7 @@ intended for reviewers and for future work planning.
 
 It records internal proof status only.  It should not be read as a standalone
 SOTA comparison or as a claim that this repository is the first PNT
-formalization, proves the corresponding prime-counting `pi-Li` remainder, or proves RH.
+formalization, supplies numerically explicit remainder constants, or proves RH.
 External academic value must be judged separately against Isabelle/HOL PNT,
 HOL Light PNT, Lean `PrimeNumberTheoremAnd`, Mathlib zeta/L-function
 infrastructure, and current Lean PNT repositories at submission time.
@@ -3161,7 +3161,17 @@ As of `2026-07-15`, there are **16** mathematical target declarations:
   `|psi(x)-x| <= C*x*exp(-c*sqrt(log x))` for every real `x >= X`.
 - The proof is in `PrimeNumberTheorem/ClassicalPNTError.lean`; it removes the
   midpoint convention and transfers the natural-sample estimate through
-  `floor`.  The corresponding `pi-Li` Abel transfer is not yet included.
+  `floor`.
+
+### Completed de la Vallee Poussin-form prime-counting error
+
+- `PrimeNumberTheorem.exists_abs_primeCounting_sub_logIntegral_le_exp_neg_sqrt_log`
+  proves that some `c > 0`, `C >= 0`, and threshold `X` satisfy
+  `|pi(x)-Li(x)| <= C*x*exp(-c*sqrt(log x))` for every real `x >= X`.
+- The proof is in `PrimeNumberTheorem/ClassicalPrimeCountingError.lean`; it
+  transfers the estimate to `theta`, proves the quantitative Abel integral
+  bound by splitting at `sqrt x`, and assembles the exact partial-summation
+  identity.  It does not provide numerical values for `c`, `C`, or `X`.
 
 ### Remaining `PrimeNumberTheorem.lean` targets
 

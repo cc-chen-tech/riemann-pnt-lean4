@@ -51,9 +51,9 @@ The safe publication claim is a focused one: this repository develops verified
 Lean 4 infrastructure for the de la Vallee Poussin 3-4-1 machinery, proves the
 classical `c/log |t|` zero-free region, and derives the ordinary PNT through a
 multiplicity-aware moving-height explicit formula, including the de la Vallee
-Poussin-form Chebyshev `psi` remainder.  It is not the first PNT formalization,
-does not yet prove the corresponding prime-counting `pi-Li` result, and is not
-a proof of RH.
+Poussin-form `psi` and `pi-Li` remainders.  It is not the first PNT
+formalization, does not supply numerically explicit remainder constants, and
+is not a proof of RH.
 
 For the zero-free-region route, the classical `c/log |t|` milestone is now
 proved by `classical_zero_free_region_proved`.  The remaining target in this
@@ -65,7 +65,7 @@ technology rather than more local Jensen/Borel wrappers.
 | Chain | Current Lean target status | Main correction before proof work | Smallest useful next step | Open target count |
 | --- | --- | --- | --- | --- |
 | Quantitative zero-free region | `classical_zero_free_region` is proved; `vinogradov_korobov_zero_free_region` remains a target | Develop exponential-sum estimates for the stronger width | Formalize the Vinogradov-Korobov exponential-sum input without weakening the proved classical theorem | 1 |
-| Explicit formula | `ExplicitFormulaTruncatedTarget`, the moving-height formula, ordinary PNT, and the de la Vallee Poussin-form `psi` remainder are proved | Preserve the natural-sample jump convention and multiplicities in stronger reusable variants | Prove the quantitative Abel-integral estimate needed for the corresponding `pi-Li` remainder | 0 |
+| Explicit formula | `ExplicitFormulaTruncatedTarget`, the moving-height formula, ordinary PNT, and the de la Vallee Poussin-form `psi` and `pi-Li` remainders are proved | Preserve the natural-sample jump convention and multiplicities in stronger reusable variants | Pursue genuinely stronger power-saving or explicit-constant inputs rather than more endpoint wrappers | 0 |
 | RH error equivalence | Ordinary PNT is proved; `rh_iff_optimal_error` is proved in both directions by `rh_iff_optimal_error_proved` | No remaining implication gap; RH itself and its equivalent error predicates remain unproved unconditionally | Reuse the completed equivalence when another endpoint supplies either RH or the error bound | 4 |
 | Hardy theorem | `hardy_theorem_target` and related moment/asymptotic targets are `def ... : Prop` targets | Use an unbounded-height zero target as the main theorem; use signed moment targets, not merely nonzero constants | Prove bounded-zero eventual-sign control and generic asymptotic sign lemmas | 11 (7 in `HardyTheorem`, 3 in `HardyTheorem.Details`, 1 in `KnownResults`) |
 
