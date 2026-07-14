@@ -26,6 +26,30 @@ open scoped ArithmeticFunction LSeries.notation
 
 namespace RiemannPNT.API
 
+/-- Public combined high-height theorem: zeta is nonzero and its logarithmic
+derivative is `O((log |t|)^2)` on a fixed inner substrip of the classical
+zero-free region. -/
+theorem exists_riemannZeta_ne_zero_and_norm_logDeriv_le_log_sq_on_inner_zeroFreeRegion :
+    ∃ c C T0 : ℝ, 0 < c ∧ 0 ≤ C ∧ 2 ≤ T0 ∧
+      ∀ σ t : ℝ, T0 ≤ |t| →
+        1 - c / (2 * Real.log |t|) ≤ σ →
+        σ ≤ 2 →
+        riemannZeta ((σ : ℂ) + Complex.I * t) ≠ 0 ∧
+          ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+            C * (Real.log |t|) ^ 2 :=
+  ZeroFreeRegion.exists_riemannZeta_ne_zero_and_norm_logDeriv_le_log_sq_on_inner_zeroFreeRegion
+
+/-- Public full-norm logarithmic-derivative estimate on the inner classical
+zero-free substrip. -/
+theorem exists_norm_logDeriv_riemannZeta_le_log_sq_on_inner_zeroFreeRegion :
+    ∃ c C T0 : ℝ, 0 < c ∧ 0 ≤ C ∧ 2 ≤ T0 ∧
+      ∀ σ t : ℝ, T0 ≤ |t| →
+        1 - c / (2 * Real.log |t|) ≤ σ →
+        σ ≤ 2 →
+        ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤
+          C * (Real.log |t|) ^ 2 :=
+  ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_le_log_sq_on_inner_zeroFreeRegion
+
 /-- Public standard high-height vertical logarithmic-derivative bound on
 `1 <= sigma <= 2`. -/
 abbrev LogDerivVerticalLogBound (C T0 : ℝ) : Prop :=

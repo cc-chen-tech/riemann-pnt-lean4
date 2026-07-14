@@ -319,7 +319,9 @@ uniform in height and controls `logDeriv zeta` after subtracting every local
 divisor principal part by `B * (1 + log (|t| + 5))`.  It is not yet a bound
 for the unregularized norm on the whole boundary strip; the theorem
 `exists_norm_logDeriv_riemannZeta_le_log_sq_on_inner_zeroFreeRegion` now gives
-that norm bound on the narrower strip guaranteed to be zero-free.
+that norm bound on the narrower strip guaranteed to be zero-free.  Both the
+combined nonvanishing-and-bound theorem and its norm-only projection are
+exported through `RiemannPNT.API` and enforced by the axiom allowlist.
 
 ## Paper Positioning
 
