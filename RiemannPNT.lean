@@ -15,6 +15,7 @@ import PrimeNumberTheorem.CofinalExplicitFormula
 import PrimeNumberTheorem.ExplicitFormulaAllHeights
 import PrimeNumberTheorem.PNTFromDynamicPerron
 import PrimeNumberTheorem.ClassicalPNTError
+import PrimeNumberTheorem.ClassicalPrimeCountingError
 import PrimeNumberTheorem.RHNaturalPsiError
 import PrimeNumberTheorem.RHPrimeCountingConverse
 import PrimeNumberTheorem.NontrivialZeroMultiplicity
@@ -36,6 +37,14 @@ theorem exists_abs_chebyshevPsi_sub_id_le_exp_neg_sqrt_log :
       |PrimeNumberTheorem.chebyshevPsi x - x| ≤
         C * x * Real.exp (-c * Real.sqrt (Real.log x)) :=
   PrimeNumberTheorem.exists_abs_chebyshevPsi_sub_id_le_exp_neg_sqrt_log
+
+/-- Public de la Vallee Poussin-form remainder for prime counting. -/
+theorem exists_abs_primeCounting_sub_logIntegral_le_exp_neg_sqrt_log :
+    ∃ c C X : ℝ, 0 < c ∧ 0 ≤ C ∧ ∀ x : ℝ, X ≤ x →
+      |(PrimeNumberTheorem.primeCounting x : ℝ) -
+          PrimeNumberTheorem.logIntegral x| ≤
+        C * x * Real.exp (-c * Real.sqrt (Real.log x)) :=
+  PrimeNumberTheorem.exists_abs_primeCounting_sub_logIntegral_le_exp_neg_sqrt_log
 
 /-- Public unconditional Prime Number Theorem in all three project forms. -/
 theorem pnt_forms_proved :

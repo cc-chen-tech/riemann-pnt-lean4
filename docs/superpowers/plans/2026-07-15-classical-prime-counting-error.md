@@ -298,7 +298,7 @@ git commit -m "bound the classical Abel error integral"
   `exists_abs_primeCounting_sub_logIntegral_le_exp_neg_sqrt_log` in both
   `PrimeNumberTheorem` and `RiemannPNT.API`
 
-- [ ] **Step 1: Prove the eventual final estimate**
+- [x] **Step 1: Prove the eventual final estimate**
 
 Add:
 
@@ -316,7 +316,7 @@ Bound the endpoint by the theta estimate divided by `log x >= 1`, use Task 3
 for the integral, and absorb `2/log 2` after proving the common scale is at
 least `1`.
 
-- [ ] **Step 2: Package explicit existential constants**
+- [x] **Step 2: Package explicit existential constants**
 
 Add:
 
@@ -331,7 +331,7 @@ theorem exists_abs_primeCounting_sub_logIntegral_le_exp_neg_sqrt_log :
   exact ⟨c, C, X, hc, hC, hX⟩
 ```
 
-- [ ] **Step 3: Export through the public API**
+- [x] **Step 3: Export through the public API**
 
 Import `PrimeNumberTheorem.ClassicalPrimeCountingError` in `RiemannPNT.lean`
 and add:
@@ -345,7 +345,7 @@ theorem exists_abs_primeCounting_sub_logIntegral_le_exp_neg_sqrt_log :
   PrimeNumberTheorem.exists_abs_primeCounting_sub_logIntegral_le_exp_neg_sqrt_log
 ```
 
-- [ ] **Step 4: Verify the original RED contract is GREEN**
+- [x] **Step 4: Verify the original RED contract is GREEN**
 
 Run:
 
@@ -355,7 +355,7 @@ lake build Test.ClassicalPrimeCountingErrorContract
 
 Expected: successful build of the final theorem and both contract examples.
 
-- [ ] **Step 5: Commit the endpoint**
+- [x] **Step 5: Commit the endpoint**
 
 ```bash
 git add PrimeNumberTheorem/ClassicalPrimeCountingError.lean RiemannPNT.lean
