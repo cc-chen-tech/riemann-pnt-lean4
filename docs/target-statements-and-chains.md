@@ -165,12 +165,14 @@ multiplicity-aware target:
 
 1. a usable explicit-formula endpoint from Chain 2 with quantified error terms,
    including truncation parameter handling;
-2. zero-counting and reciprocal-zero sum control (e.g. `N(T)` and `sum 1/|rho|`)
-   for converting explicit-formula sums to `sqrt(x) log^2 x`-type bounds;
-3. upstream proof of `RH_PsiErrorBound` / `RH_ThetaErrorBound`; the forward
-   `Chebyshev` to `primeCounting` bridge under RH-quality errors is already
-   proved by `RH_PrimeCountingLiErrorBound_of_RH_ThetaErrorBound`;
-4. the remaining reverse endpoint is quantitative partial summation from
+2. upstream proof of `RH_PsiErrorBound` / `RH_ThetaErrorBound`; the global
+   multiplicity count and reciprocal-zero sum needed to estimate the RH zero
+   contribution are now proved in `PrimeNumberTheorem.GlobalZeroCount`, as is
+   the resulting `O(sqrt(x) log^2 T)` bound for the actual finite
+   multiplicity-aware zero sum; the forward `Chebyshev` to `primeCounting`
+   bridge under RH-quality errors is already proved by
+   `RH_PrimeCountingLiErrorBound_of_RH_ThetaErrorBound`;
+3. the remaining reverse endpoint is quantitative partial summation from
    `pi`/`Li` error bounds back to `RH_PsiErrorBound`; the conditional bridge
    `RH_PsiErrorBound -> RiemannHypothesis` is already theorem-level.
 

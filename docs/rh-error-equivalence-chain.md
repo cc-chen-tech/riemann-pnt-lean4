@@ -31,6 +31,9 @@ The current project already provides these usable endpoints and support lemmas.
 | `psiPowerErrorBound_of_RH_PsiErrorBound_of_half_lt` | Converts `RH_PsiErrorBound` into every power-scale `PsiPowerErrorBound theta` with `theta > 1/2`. |
 | `ZeroFreeRegion.riemannHypothesis_of_RH_PsiErrorBound` | Closes the reverse `RH_PsiErrorBound -> RiemannHypothesis` implication using the Mellin/Landau zero-exclusion bridge and zero symmetry. |
 | `ExplicitFormulaResidues.explicit_formula_von_mangoldt_proved` | Proves the finite symmetric-height zero sum weighted by `analyticOrderNatAt` converges to `psi0` over every real truncation height. |
+| `ExplicitFormulaAux.exists_globalZeroMultiplicity_le_mul_log` | Proves the global analytic-multiplicity count `N(T) = O(T log T)` by summing the fixed-width Jensen window bounds. |
+| `ExplicitFormulaAux.exists_globalReciprocalZeroMultiplicity_le_log_sq` | Proves `sum_{|Im rho| <= T} m(rho) / norm(rho) = O(log^2 T)`, the zero-sum estimate needed under RH. |
+| `ExplicitFormulaAux.exists_norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_log_sq_of_RH` | Under RH, bounds the actual multiplicity-aware finite zero sum in the explicit formula by `O(sqrt(x) log^2 T)`. |
 
 ## Current Target Assessment
 
@@ -119,18 +122,16 @@ sum_{|gamma| <= T} 1 / |rho| = O(log^2 T)
 
 Current status:
 
-- `finite_nontrivial_zeros_bounded_height T` gives finiteness in every bounded
-  height box.
-- It does not provide cardinal bounds, asymptotics for `N(T)`, or estimates for
-  reciprocal zero sums.
+- `exists_globalZeroMultiplicity_le_mul_log` proves the first estimate with
+  analytic multiplicity, and
+  `exists_card_nontrivialZerosFinset_le_mul_log` gives the distinct-zero
+  cardinal corollary.
+- `exists_globalReciprocalZeroMultiplicity_le_log_sq` proves the second
+  estimate with analytic multiplicity and the exact denominator `norm rho`.
 
-Formalization dependencies:
-
-- Argument principle or Jensen-style zero counting.
-- Zeta growth bounds in vertical strips.
-- Control near the pole at `1` and away from trivial zeros.
-- A finite-set API converting bounded-height zeros into sums indexed by a
-  finite set.
+This stage is complete.  The proof uses the existing local Jensen divisor-mass
+bound, integer floor fibers, and Mathlib's harmonic-number estimate; it does
+not assume RH or a Riemann-von Mangoldt asymptotic.
 
 ### F3. Strengthen the proved principal-value formula quantitatively
 
@@ -188,10 +189,14 @@ psi(x) - x = O(sqrt x * log^2 x).
 
 Current status:
 
-- `zero_contribution` rewrites a single zero contribution into oscillatory
-  form.  It is explanatory and may help local algebra, but it is not a
-  zero-sum estimate.
-- `finite_nontrivial_zeros_bounded_height` lets the truncated sum be finite.
+- `norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_globalReciprocal_of_RH`
+  proves the pointwise finite-sum reduction under RH, with analytic
+  multiplicity and the exact denominator `norm rho`.
+- `exists_norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_log_sq_of_RH`
+  combines it with F2 and proves the required `O(sqrt(x) log^2 T)` finite-zero
+  contribution.
+- What remains is a quantitative truncated explicit formula whose remainder
+  permits a useful choice of `T` as a function of `x`.
 
 ### F5. Convert `psi` to `theta`
 
@@ -361,8 +366,8 @@ The smallest coherent route to make
    and `primeCounting - logIntegral`.
 2. Prove or import a truncated explicit formula for `psi` with precise jump and
    truncation conventions.
-3. Prove zero-counting and reciprocal-zero-sum estimates:
-   `N(T) = O(T log T)` and `sum 1 / |rho| = O(log^2 T)`.
+3. Use the proved zero-counting and reciprocal-zero-sum estimates
+   `N(T) = O(T log T)` and `sum m(rho) / norm(rho) = O(log^2 T)`.
 4. Prove `RH -> RH_PsiErrorBound` by bounding the truncated explicit formula.
 5. Use the existing `psi - theta` Mathlib bound to get `RH_ThetaErrorBound`.
 6. Use the proved quantitative partial-summation bridge

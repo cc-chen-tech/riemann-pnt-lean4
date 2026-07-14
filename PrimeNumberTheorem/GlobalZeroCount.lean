@@ -1,4 +1,5 @@
 import PrimeNumberTheorem.QuantitativeGoodHeight
+import Mathlib.NumberTheory.Harmonic.Bounds
 
 open Complex Filter Set Topology
 open scoped BigOperators
@@ -154,6 +155,215 @@ theorem exists_globalZeroMultiplicity_le_mul_log :
   rw [hsplit]
   dsimp [M₀] at hlow ⊢
   nlinarith [globalZeroMultiplicity_nonneg 4]
+
+/-- Multiplicity-weighted reciprocal norm sum over the nontrivial zeros of
+absolute ordinate at most `T`.  This is the zero sum that controls the
+truncated explicit formula under RH. -/
+noncomputable def globalReciprocalZeroMultiplicity (T : ℝ) : ℝ :=
+  ∑ ρ ∈ nontrivialZerosFinset T,
+    (analyticOrderNatAt riemannZeta ρ : ℝ) / ‖ρ‖
+
+lemma globalReciprocalZeroMultiplicity_nonneg (T : ℝ) :
+    0 ≤ globalReciprocalZeroMultiplicity T := by
+  unfold globalReciprocalZeroMultiplicity
+  exact Finset.sum_nonneg fun _ _ => div_nonneg (Nat.cast_nonneg _) (norm_nonneg _)
+
+/-- The multiplicity-weighted reciprocal zero sum up to height `T` is
+`O(log² T)`. -/
+theorem exists_globalReciprocalZeroMultiplicity_le_log_sq :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ T : ℝ, 4 ≤ T →
+      globalReciprocalZeroMultiplicity T ≤
+        C * (1 + Real.log (T + 6)) ^ 2 := by
+  classical
+  rcases exists_localZeroMultiplicity_le_log_bound with ⟨B, hB, hlocal⟩
+  let R₀ : ℝ := globalReciprocalZeroMultiplicity 4
+  refine ⟨R₀ + B, add_nonneg (globalReciprocalZeroMultiplicity_nonneg 4) hB, ?_⟩
+  intro T hT
+  let S := nontrivialZerosFinset T
+  let Slow := S.filter fun ρ : ℂ => |ρ.im| ≤ 4
+  let Shigh := S.filter fun ρ : ℂ => ¬|ρ.im| ≤ 4
+  let I := Finset.Icc 4 (Nat.floor T)
+  let g : ℂ → ℝ := fun ρ => (analyticOrderNatAt riemannZeta ρ : ℝ) / ‖ρ‖
+  have hTnonneg : 0 ≤ T := by linarith
+  have hsplit : (∑ ρ ∈ S, g ρ) =
+      (∑ ρ ∈ Slow, g ρ) + ∑ ρ ∈ Shigh, g ρ := by
+    symm
+    exact Finset.sum_filter_add_sum_filter_not S (fun ρ : ℂ => |ρ.im| ≤ 4) g
+  have hlow_subset : Slow ⊆ nontrivialZerosFinset 4 := by
+    intro ρ hρ
+    rcases Finset.mem_filter.mp hρ with ⟨hρS, him⟩
+    exact mem_nontrivialZerosFinset.mpr
+      ⟨(mem_nontrivialZerosFinset.mp hρS).1, him⟩
+  have hlow : (∑ ρ ∈ Slow, g ρ) ≤ R₀ := by
+    dsimp [R₀, globalReciprocalZeroMultiplicity]
+    exact Finset.sum_le_sum_of_subset_of_nonneg hlow_subset
+      (fun ρ _hρ _hnot => div_nonneg (Nat.cast_nonneg _) (norm_nonneg _))
+  have hmaps (ρ : ℂ) (hρ : ρ ∈ Shigh) : Nat.floor |ρ.im| ∈ I := by
+    rcases Finset.mem_filter.mp hρ with ⟨hρS, hnotlow⟩
+    have himT := (mem_nontrivialZerosFinset.mp hρS).2
+    apply Finset.mem_Icc.mpr
+    constructor
+    · apply Nat.le_floor
+      exact (lt_of_not_ge hnotlow).le
+    · exact Nat.floor_mono himT
+  have hfiber : (∑ ρ ∈ Shigh, g ρ) =
+      ∑ n ∈ I, ∑ ρ ∈ Shigh.filter (fun ρ : ℂ => Nat.floor |ρ.im| = n), g ρ := by
+    symm
+    exact Finset.sum_fiberwise_of_maps_to hmaps g
+  have hfiber_le (n : ℕ) (hn : n ∈ I) :
+      (∑ ρ ∈ Shigh.filter (fun ρ : ℂ => Nat.floor |ρ.im| = n), g ρ) ≤
+        B * (1 + Real.log (T + 6)) / (n : ℝ) := by
+    have hn4 : 4 ≤ n := (Finset.mem_Icc.mp hn).1
+    have hnpos : 0 < (n : ℝ) := by exact_mod_cast (lt_of_lt_of_le (by norm_num) hn4)
+    have hnTfloor : n ≤ Nat.floor T := (Finset.mem_Icc.mp hn).2
+    have hnT : (n : ℝ) ≤ T := by
+      exact (Nat.cast_le.mpr hnTfloor).trans (Nat.floor_le hTnonneg)
+    let F := Shigh.filter (fun ρ : ℂ => Nat.floor |ρ.im| = n)
+    have hsubset : F ⊆ integerZeroWindow n := by
+      intro ρ hρ
+      rcases Finset.mem_filter.mp hρ with ⟨hρhigh, hfloor⟩
+      rcases Finset.mem_filter.mp hρhigh with ⟨hρS, hnotlow⟩
+      apply floorFiber_subset_integerZeroWindow
+      exact Finset.mem_filter.mpr ⟨hρS, hnotlow, hfloor⟩
+    have hpoint (ρ : ℂ) (hρ : ρ ∈ F) :
+        g ρ ≤ (analyticOrderNatAt riemannZeta ρ : ℝ) / (n : ℝ) := by
+      rcases Finset.mem_filter.mp hρ with ⟨_hρhigh, hfloor⟩
+      have him_nonneg : 0 ≤ |ρ.im| := abs_nonneg _
+      have hn_le_im : (n : ℝ) ≤ |ρ.im| := by
+        rw [← hfloor]
+        exact Nat.floor_le him_nonneg
+      have hn_le_norm : (n : ℝ) ≤ ‖ρ‖ := hn_le_im.trans (Complex.abs_im_le_norm ρ)
+      dsimp [g]
+      exact div_le_div_of_nonneg_left (Nat.cast_nonneg _) hnpos hn_le_norm
+    have hsum_div : (∑ ρ ∈ F, g ρ) ≤
+        localZeroMultiplicity (n : ℝ) / (n : ℝ) := by
+      calc
+        (∑ ρ ∈ F, g ρ) ≤
+            ∑ ρ ∈ F, (analyticOrderNatAt riemannZeta ρ : ℝ) / (n : ℝ) :=
+          Finset.sum_le_sum fun ρ hρ => hpoint ρ hρ
+        _ = (∑ ρ ∈ F, (analyticOrderNatAt riemannZeta ρ : ℝ)) / (n : ℝ) := by
+          rw [Finset.sum_div]
+        _ ≤ (∑ ρ ∈ integerZeroWindow n,
+              (analyticOrderNatAt riemannZeta ρ : ℝ)) / (n : ℝ) := by
+          apply div_le_div_of_nonneg_right _ hnpos.le
+          exact Finset.sum_le_sum_of_subset_of_nonneg hsubset
+            (fun ρ _hρ _hnot => Nat.cast_nonneg _)
+        _ = localZeroMultiplicity (n : ℝ) / (n : ℝ) := by
+          rw [localZeroMultiplicity_nat]
+    have hlocaln := hlocal (n : ℝ) (by exact_mod_cast hn4)
+    have hlog : Real.log ((n : ℝ) + 6) ≤ Real.log (T + 6) := by
+      apply Real.log_le_log
+      · positivity
+      · linarith
+    have hscale : B * (1 + Real.log ((n : ℝ) + 6)) ≤
+        B * (1 + Real.log (T + 6)) :=
+      mul_le_mul_of_nonneg_left (by linarith) hB
+    exact hsum_div.trans
+      (div_le_div_of_nonneg_right (hlocaln.trans hscale) hnpos.le)
+  have hI_subset : I ⊆ Finset.Icc 1 (Nat.floor T) := by
+    intro n hn
+    rcases Finset.mem_Icc.mp hn with ⟨hn4, hnT⟩
+    exact Finset.mem_Icc.mpr ⟨by omega, hnT⟩
+  have hrecip_I : (∑ n ∈ I, ((n : ℝ)⁻¹)) ≤
+      (harmonic (Nat.floor T) : ℝ) := by
+    have hsum : (∑ n ∈ I, ((n : ℝ)⁻¹)) ≤
+        ∑ n ∈ Finset.Icc 1 (Nat.floor T), ((n : ℝ)⁻¹) :=
+      Finset.sum_le_sum_of_subset_of_nonneg hI_subset
+        (fun n _hn _hnot => inv_nonneg.mpr (Nat.cast_nonneg _))
+    simpa only [harmonic_eq_sum_Icc, Rat.cast_sum, Rat.cast_inv,
+      Rat.cast_natCast] using hsum
+  have hharmonic : (harmonic (Nat.floor T) : ℝ) ≤ 1 + Real.log T :=
+    harmonic_floor_le_one_add_log T (by linarith)
+  have hlogT : Real.log T ≤ Real.log (T + 6) := by
+    apply Real.log_le_log
+    · linarith
+    · linarith
+  have hrecip_bound : (∑ n ∈ I, ((n : ℝ)⁻¹)) ≤
+      1 + Real.log (T + 6) := by
+    linarith [hrecip_I.trans hharmonic]
+  have hLnonneg : 0 ≤ 1 + Real.log (T + 6) := by
+    have hlog_nonneg : 0 ≤ Real.log (T + 6) := Real.log_nonneg (by linarith)
+    linarith
+  have hLone : 1 ≤ 1 + Real.log (T + 6) := by
+    have hlog_nonneg : 0 ≤ Real.log (T + 6) := Real.log_nonneg (by linarith)
+    linarith
+  have hLsq : 1 ≤ (1 + Real.log (T + 6)) ^ 2 := by nlinarith
+  have hhigh : (∑ ρ ∈ Shigh, g ρ) ≤
+      B * (1 + Real.log (T + 6)) ^ 2 := by
+    rw [hfiber]
+    calc
+      (∑ n ∈ I, ∑ ρ ∈ Shigh.filter
+          (fun ρ : ℂ => Nat.floor |ρ.im| = n), g ρ) ≤
+          ∑ n ∈ I, B * (1 + Real.log (T + 6)) / (n : ℝ) :=
+        Finset.sum_le_sum fun n hn => hfiber_le n hn
+      _ = B * (1 + Real.log (T + 6)) *
+          ∑ n ∈ I, ((n : ℝ)⁻¹) := by
+        simp_rw [div_eq_mul_inv]
+        rw [Finset.mul_sum]
+      _ ≤ B * (1 + Real.log (T + 6)) *
+          (1 + Real.log (T + 6)) := by
+        exact mul_le_mul_of_nonneg_left hrecip_bound (mul_nonneg hB hLnonneg)
+      _ = B * (1 + Real.log (T + 6)) ^ 2 := by ring
+  change (∑ ρ ∈ S, g ρ) ≤ _
+  rw [hsplit]
+  dsimp [R₀] at hlow ⊢
+  nlinarith [globalReciprocalZeroMultiplicity_nonneg 4]
+
+/-- Under RH, the multiplicity-aware zero sum in the truncated explicit formula
+is controlled by `sqrt x` times the reciprocal zero-multiplicity sum. -/
+theorem norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_globalReciprocal_of_RH
+    (hRH : RiemannHypothesis.Statement)
+    {x T : ℝ} (hx : 0 < x) :
+    ‖finiteNontrivialZeroSumWithMultiplicity x T‖ ≤
+      Real.sqrt x * globalReciprocalZeroMultiplicity T := by
+  classical
+  unfold finiteNontrivialZeroSumWithMultiplicity
+  calc
+    ‖∑ ρ ∈ nontrivialZerosFinset T,
+        (analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ‖ ≤
+        ∑ ρ ∈ nontrivialZerosFinset T,
+          ‖(analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ‖ :=
+      norm_sum_le _ _
+    _ = ∑ ρ ∈ nontrivialZerosFinset T,
+          Real.sqrt x * ((analyticOrderNatAt riemannZeta ρ : ℝ) / ‖ρ‖) := by
+      refine Finset.sum_congr rfl ?_
+      intro ρ hρ
+      have hzero := (mem_nontrivialZerosFinset.mp hρ).1
+      calc
+        ‖(analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ‖ =
+            ‖(analyticOrderNatAt riemannZeta ρ : ℂ)‖ *
+              ‖(x : ℂ) ^ ρ / ρ‖ := by
+          rw [mul_div_assoc, norm_mul]
+        _ = (analyticOrderNatAt riemannZeta ρ : ℝ) *
+              (Real.sqrt x / ‖ρ‖) := by
+          rw [norm_zero_contribution_eq_sqrt_of_RH hRH hzero hx]
+          simp
+        _ = Real.sqrt x *
+              ((analyticOrderNatAt riemannZeta ρ : ℝ) / ‖ρ‖) := by
+          ring
+    _ = Real.sqrt x * globalReciprocalZeroMultiplicity T := by
+      unfold globalReciprocalZeroMultiplicity
+      rw [Finset.mul_sum]
+
+/-- Under RH, the complete multiplicity-aware finite zero sum is
+`O(sqrt x log² T)`, uniformly for `T ≥ 4`. -/
+theorem exists_norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_log_sq_of_RH
+    (hRH : RiemannHypothesis.Statement) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ x T : ℝ, 0 < x → 4 ≤ T →
+      ‖finiteNontrivialZeroSumWithMultiplicity x T‖ ≤
+        C * Real.sqrt x * (1 + Real.log (T + 6)) ^ 2 := by
+  rcases exists_globalReciprocalZeroMultiplicity_le_log_sq with
+    ⟨C, hC, hreciprocal⟩
+  refine ⟨C, hC, ?_⟩
+  intro x T hx hT
+  calc
+    ‖finiteNontrivialZeroSumWithMultiplicity x T‖ ≤
+        Real.sqrt x * globalReciprocalZeroMultiplicity T :=
+      norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_globalReciprocal_of_RH
+        hRH hx
+    _ ≤ Real.sqrt x * (C * (1 + Real.log (T + 6)) ^ 2) :=
+      mul_le_mul_of_nonneg_left (hreciprocal T hT) (Real.sqrt_nonneg x)
+    _ = C * Real.sqrt x * (1 + Real.log (T + 6)) ^ 2 := by ring
 
 /-- The number of distinct nontrivial zeros up to height `T` also satisfies
 the global `O(T log T)` bound. -/

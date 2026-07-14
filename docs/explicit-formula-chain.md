@@ -547,11 +547,17 @@ For the truncated identity:
    multiplicity-weighted zero-sum limit.  The all-height interpolation module
    now promotes this to arbitrary-height principal-value truncation.
 
-For the principal value final formula:
+For RH-scale use of the principal-value formula:
 
-1. Zero counting bound such as `N(T) = O(T log T)`.
+1. Completed: `exists_globalZeroMultiplicity_le_mul_log` proves the
+   multiplicity count `N(T) = O(T log T)`, and
+   `exists_globalReciprocalZeroMultiplicity_le_log_sq` proves the corresponding
+   reciprocal zero sum is `O(log^2 T)`.  Under RH,
+   `exists_norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_log_sq_of_RH`
+   now applies this directly to the multiplicity-aware zero term and gives
+   `O(sqrt(x) log^2 T)`.
 2. Bounds for `zeta'/zeta` away from zeros and on selected good heights.
-3. The fixed-window zero-sum contribution tends to zero.  Two windows cover
+3. Completed for the principal value: the fixed-window zero-sum contribution tends to zero.  Two windows cover
    every selected-height gap, and the floor-index argument now proves the full
    principal-value formula from the cofinal contour limit.
 4. The final target is already aligned with analytic multiplicities.  The old
