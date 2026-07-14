@@ -1,4 +1,4 @@
-import HardyTheorem
+import HardyTheorem.HardyIntegralBasics
 
 open Complex Filter Set Topology
 open scoped Interval

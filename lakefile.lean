@@ -41,6 +41,7 @@ lean_lib RiemannPNT where
     `ZeroFreeRegion.ShiftedJensen,
     `HardyTheorem.Phase1Aux,
     `HardyTheorem.AFE,
+    `HardyTheorem.HardyIntegralBasics,
     `Test.HardyFirstApproximationContract,
     `Test.HardyIntegralBasicsContract,
     `MathlibAux.RectangleResidue,
