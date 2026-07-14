@@ -1,0 +1,8 @@
+import HardyTheorem.HardyIntegralBasics
+import HardyTheorem.OscillatoryIntegral
+
+#print axioms HardyTheorem.abs_hardyZ_eq_norm_riemannZeta
+#print axioms HardyTheorem.eventually_abs_integral_hardyZ_eq_integral_norm_zeta_of_bounded_zeros
+#print axioms HardyTheorem.OscillatoryIntegral.norm_integral_cexp_phase_le_of_monotone_deriv
+#print axioms HardyTheorem.OscillatoryIntegral.deriv_hardyPhase
+#print axioms HardyTheorem.OscillatoryIntegral.iteratedDeriv_two_hardyPhase
