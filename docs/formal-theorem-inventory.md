@@ -3545,6 +3545,16 @@ Support-level verified declarations:
   expose the typed truncated explicit-formula target and its conditional
   repackaging lemma through the public API.  They remain target infrastructure,
   not an unconditional proof of the explicit formula.
+- `exists_norm_truncated_neg_logDeriv_firstOrderPerron_sub_chebyshevPsi0_le_div`
+  proves that the complete finite-height first-order Perron integral for
+  `-zeta'/zeta` differs from `psi0` by at most `C(x,c)/W` for `W >= 1`.  The
+  proof includes the prime-power half-jump through an explicit arctangent
+  estimate, rather than only extracting a qualitative limit.
+- `ExplicitFormulaResidues.exists_norm_truncatedExplicitFormula_sub_contourRemainder_sub_chebyshevPsi0_le_div`
+  substitutes that rate into the exact finite multiplicity-aware rectangle
+  residue identity.  The named contour remainder still contains the top,
+  bottom, and moving-left edges; bounding those uniformly is the next open
+  quantitative step.
 
 ## Missing Chains for a Complete Analytic PNT
 
