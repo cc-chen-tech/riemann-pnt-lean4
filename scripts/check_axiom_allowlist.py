@@ -23,6 +23,8 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.ExplicitFormulaAux.exists_globalReciprocalZeroMultiplicity_le_log_sq",
     "PrimeNumberTheorem.ExplicitFormulaAux.norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_globalReciprocal_of_RH",
     "PrimeNumberTheorem.ExplicitFormulaAux.exists_norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_log_sq_of_RH",
+    "PrimeNumberTheorem.exists_norm_truncated_neg_logDeriv_firstOrderPerron_sub_chebyshevPsi0_le_div",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.exists_norm_truncatedExplicitFormula_sub_contourRemainder_sub_chebyshevPsi0_le_div",
 }
 
 REPORT_RE = re.compile(

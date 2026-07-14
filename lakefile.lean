@@ -48,6 +48,8 @@ lean_lib RiemannPNT where
     `Test.ExplicitFormulaMultiplicityContract,
     `Test.ExplicitFormulaTruncatedUniformContract,
     `Test.FiniteZeroMultiplicityMassContract,
+    `Test.FirstOrderExplicitFormulaRateContract,
+    `Test.FirstOrderPerronRateContract,
     `Test.GlobalZeroCountContract,
     `Test.LocalZeroContributionBoundContract,
     `Test.LocalZeroMultiplicityBoundContract,

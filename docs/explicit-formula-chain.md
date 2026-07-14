@@ -511,11 +511,16 @@ For the truncated identity:
    `exists_scaledRightIntegral_eq_residue_sum_sub_firstOrderContourRemainder_of_goodHeight`
    now gives the corresponding safe rectangle with fixed right edge `c>1`
    and fixed left edge `-1`, so it is directly compatible with Perron.
-2. Completed: the ordinary first-order right-line Perron integral converges to
-   `psi0` by
-   `tendsto_truncated_neg_logDeriv_firstOrderPerron_atTop`.  This is a limit
-   theorem; it does not claim a closed-form uniform truncation rate for the
-   full conditionally convergent series.
+2. Completed quantitatively: the ordinary first-order right-line Perron
+   integral differs from `psi0` by at most `C(x,c)/W` for `W >= 1`, by
+   `exists_norm_truncated_neg_logDeriv_firstOrderPerron_sub_chebyshevPsi0_le_div`.
+   The proof treats the prime-power half-jump explicitly through an arctangent
+   estimate rather than hiding it in the earlier convergence theorem.  The
+   contour consumer
+   `exists_norm_truncatedExplicitFormula_sub_contourRemainder_sub_chebyshevPsi0_le_div`
+   inserts this rate into the finite multiplicity-aware residue identity.  Its
+   remaining `firstOrderContourRemainder` is exactly the top, bottom, and moving
+   left edges, so this is not yet the full uniform truncated explicit formula.
 3. Completed on the far-left pieces and moving left edge: the linearly
    controlled good-height construction makes the horizontal pieces from
    `-(2N+1)` to `-delta` vanish at both heights, and the complete moving left

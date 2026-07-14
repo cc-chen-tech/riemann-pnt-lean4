@@ -345,6 +345,71 @@ private lemma summable_firstOrderPerronTanneryError
   rw [Real.norm_eq_abs, abs_of_nonneg hE_nonneg, hEeq, hGeq]
   exact div_le_div_of_nonneg_left hQ_nonneg hlog_two_pos habs
 
+/-- At a jump of `psi`, the first-order Perron kernel has an explicit
+`O(1 / W)` approach to its half-weight. -/
+private lemma norm_intervalIntegral_firstOrderPerronTerm_sub_halfStep_le_of_log_eq_zero
+    {x c W : ℝ} (hx : 0 < x) (hc : 0 < c) (hW : 0 < W)
+    {n : ℕ} (hn : n ≠ 0) (hu : Real.log (x / n) = 0) :
+    ‖(∫ w : ℝ in (-W)..W,
+        (x : ℂ) ^ perronLine c w *
+          LSeries.term (fun n => (ArithmeticFunction.vonMangoldt n : ℂ))
+            (perronLine c w) n /
+              perronLine c w) -
+        (vonMangoldt n : ℂ) * perronHalfStep (Real.log (x / n))‖ ≤
+      c * vonMangoldt n / (2 * Real.pi ^ 2 * W) := by
+  have hv_nonneg : 0 ≤ vonMangoldt n := by
+    rw [vonMangoldt_eq_mathlib]
+    exact ArithmeticFunction.vonMangoldt_nonneg
+  let y : ℝ := 2 * Real.pi * W / c
+  have hy : 0 < y := by dsimp [y]; positivity
+  have hatan_nonneg : 0 ≤ Real.arctan y := Real.arctan_nonneg.mpr hy.le
+  have hatan_lt : Real.arctan y < Real.pi / 2 := Real.arctan_lt_pi_div_two y
+  have hratio_le : Real.arctan y / Real.pi ≤ 1 / 2 := by
+    apply (div_le_iff₀ Real.pi_pos).2
+    linarith
+  have hatan_inv_le : Real.arctan y⁻¹ ≤ y⁻¹ := by
+    have hnonneg : 0 ≤ Real.arctan y⁻¹ :=
+      Real.arctan_nonneg.mpr (inv_nonneg.mpr hy.le)
+    have htan := Real.le_tan hnonneg (Real.arctan_lt_pi_div_two y⁻¹)
+    simpa using htan
+  have hscalar :
+      1 / 2 - Real.arctan y / Real.pi ≤
+        c / (2 * Real.pi ^ 2 * W) := by
+    calc
+      1 / 2 - Real.arctan y / Real.pi =
+          (Real.pi / 2 - Real.arctan y) / Real.pi := by
+        field_simp [Real.pi_ne_zero]
+      _ = Real.arctan y⁻¹ / Real.pi := by
+        rw [Real.arctan_inv_of_pos hy]
+      _ ≤ y⁻¹ / Real.pi :=
+        div_le_div_of_nonneg_right hatan_inv_le Real.pi_pos.le
+      _ = c / (2 * Real.pi ^ 2 * W) := by
+        dsimp [y]
+        field_simp [Real.pi_ne_zero, hc.ne', hW.ne']
+  rw [intervalIntegral_firstOrderPerronTerm_eq_vonMangoldt_kernel hx hn, hu]
+  simp only [Complex.ofReal_zero, mul_zero, Complex.exp_zero]
+  have hzero :
+      (∫ w : ℝ in (-W)..W,
+        (1 : ℂ) / perronLine c w) =
+          (Real.arctan (2 * Real.pi * W / c) / Real.pi : ℝ) := by
+    simpa [perronLine] using intervalIntegral_firstOrderPerron_zero_eq (W := W) hc
+  rw [hzero]
+  simp only [perronHalfStep, lt_self_iff_false, ↓reduceIte, one_div]
+  rw [← mul_sub, norm_mul, norm_real, Real.norm_eq_abs,
+    abs_of_nonneg hv_nonneg]
+  have hcast :
+      ((Real.arctan (2 * Real.pi * W / c) / Real.pi : ℝ) : ℂ) - (2 : ℂ)⁻¹ =
+        ((Real.arctan (2 * Real.pi * W / c) / Real.pi - 1 / 2 : ℝ) : ℂ) := by
+    push_cast
+    norm_num
+  rw [hcast, norm_real, Real.norm_eq_abs,
+    abs_of_nonpos (by simpa [y] using sub_nonpos.mpr hratio_le)]
+  have hscalar' :
+      1 / 2 - Real.arctan (2 * Real.pi * W / c) / Real.pi ≤
+        c / (2 * Real.pi ^ 2 * W) := by
+    simpa [y] using hscalar
+  convert mul_le_mul_of_nonneg_left hscalar' hv_nonneg using 1 <;> ring
+
 /-- The full von Mangoldt Dirichlet series satisfies ordinary first-order
 Perron inversion.  The symmetric truncation converges to the midpoint value
 `psi0`, with half weight at an integral jump. -/
@@ -468,5 +533,128 @@ theorem tendsto_truncated_neg_logDeriv_firstOrderPerron_atTop
   funext W
   exact intervalIntegral_neg_logDeriv_riemannZeta_firstOrder_eq_vonMangoldt_tsum
     hx hc
+
+/-- Quantitative first-order Perron inversion for the von Mangoldt series.
+For fixed `x` and any vertical line `Re(s) = c > 1`, the finite-height
+logarithmic-derivative integral approaches `psi0 x` at rate `O(1 / W)`. -/
+theorem exists_norm_truncated_neg_logDeriv_firstOrderPerron_sub_chebyshevPsi0_le_div
+    {x c : ℝ} (hx : 0 < x) (hc : 1 < c) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ W : ℝ, 1 ≤ W →
+      ‖(∫ w : ℝ in (-W)..W,
+          (x : ℂ) ^ perronLine c w *
+            (-deriv riemannZeta (perronLine c w) /
+              riemannZeta (perronLine c w)) /
+                perronLine c w) -
+          (chebyshevPsi0 x : ℂ)‖ ≤ C / W := by
+  let A : ℝ → ℕ → ℂ := fun W n => ∫ w : ℝ in (-W)..W,
+    (x : ℂ) ^ perronLine c w *
+      LSeries.term (fun n => (ArithmeticFunction.vonMangoldt n : ℂ))
+        (perronLine c w) n /
+          perronLine c w
+  let M : ℕ → ℂ := fun n =>
+    (vonMangoldt n : ℂ) * perronHalfStep (Real.log (x / n))
+  let E : ℕ → ℝ := firstOrderPerronTanneryError x c
+  let R : ℕ → ℝ := fun n => E n + c * ‖M n‖
+  have hc_pos : 0 < c := one_pos.trans hc
+  have hM_zero : ∀ n ∉ Finset.Ico 1 (Nat.floor x + 1), M n = 0 := by
+    intro n hn
+    exact firstOrderPerronLimit_zero_outside hx hn
+  have hM_summable : Summable M := summable_of_ne_finset_zero hM_zero
+  have hM_tsum : (∑' n, M n) = (chebyshevPsi0 x : ℂ) := by
+    rw [tsum_eq_sum hM_zero]
+    exact sum_vonMangoldt_perronHalfStep_log_div_eq_chebyshevPsi0 x hx
+  have hE_summable : Summable E := summable_firstOrderPerronTanneryError hx hc
+  have hE_nonneg (n : ℕ) : 0 ≤ E n := by
+    dsimp [E]
+    rw [firstOrderPerronTanneryError]
+    split_ifs with hn hu
+    · exact le_rfl
+    · rw [vonMangoldt_eq_mathlib]
+      exact ArithmeticFunction.vonMangoldt_nonneg
+    · have hn_pos : 0 < (n : ℝ) := by exact_mod_cast Nat.pos_of_ne_zero hn
+      have hv_nonneg : 0 ≤ vonMangoldt n := by
+        rw [vonMangoldt_eq_mathlib]
+        exact ArithmeticFunction.vonMangoldt_nonneg
+      exact div_nonneg
+        (mul_nonneg hv_nonneg (Real.rpow_nonneg (div_nonneg hx.le hn_pos.le) c))
+        (mul_nonneg (sq_nonneg Real.pi) (abs_nonneg _))
+  have hR_nonneg (n : ℕ) : 0 ≤ R n := by
+    dsimp [R]
+    exact add_nonneg (hE_nonneg n) (mul_nonneg hc_pos.le (norm_nonneg _))
+  have hR_summable : Summable R := by
+    exact hE_summable.add (hM_summable.norm.mul_left c)
+  refine ⟨∑' n, R n, tsum_nonneg hR_nonneg, ?_⟩
+  intro W hW
+  have hW_pos : 0 < W := zero_lt_one.trans_le hW
+  have hpoint (n : ℕ) : ‖A W n - M n‖ ≤ R n / W := by
+    by_cases hn : n = 0
+    · subst n
+      simp [A, M, E, R, firstOrderPerronTanneryError, LSeries.term,
+        vonMangoldt_eq_mathlib]
+    · by_cases hu : Real.log (x / n) = 0
+      · have hjump :=
+          norm_intervalIntegral_firstOrderPerronTerm_sub_halfStep_le_of_log_eq_zero
+            hx hc_pos hW_pos hn hu
+        have hv_nonneg : 0 ≤ vonMangoldt n := by
+          rw [vonMangoldt_eq_mathlib]
+          exact ArithmeticFunction.vonMangoldt_nonneg
+        have hpi_sq : 1 ≤ Real.pi ^ 2 := by nlinarith [Real.pi_gt_three]
+        have hMnorm : ‖M n‖ = vonMangoldt n / 2 := by
+          dsimp [M]
+          rw [hu]
+          simp [perronHalfStep, abs_of_nonneg hv_nonneg, div_eq_mul_inv]
+        calc
+          ‖A W n - M n‖ ≤ c * vonMangoldt n / (2 * Real.pi ^ 2 * W) := by
+            simpa [A, M] using hjump
+          _ ≤ (c * ‖M n‖) / W := by
+            rw [hMnorm]
+            have hcv : 0 ≤ c * vonMangoldt n := mul_nonneg hc_pos.le hv_nonneg
+            calc
+              c * vonMangoldt n / (2 * Real.pi ^ 2 * W) ≤
+                  c * vonMangoldt n / (2 * W) := by
+                apply div_le_div_of_nonneg_left hcv (by positivity)
+                nlinarith
+              _ = c * (vonMangoldt n / 2) / W := by ring
+          _ ≤ R n / W := by
+            apply div_le_div_of_nonneg_right _ hW_pos.le
+            dsimp [R]
+            exact le_add_of_nonneg_left (hE_nonneg n)
+      · have herr :=
+          norm_intervalIntegral_firstOrderPerronTerm_sub_halfStep_le_of_log_ne_zero
+            hx hc_pos hW_pos hn hu
+        have hEeq :
+            vonMangoldt n * (x / n) ^ c /
+                (Real.pi ^ 2 * |Real.log (x / n)| * W) = E n / W := by
+          dsimp [E]
+          rw [firstOrderPerronTanneryError, if_neg hn, if_neg hu]
+          field_simp
+        calc
+          ‖A W n - M n‖ ≤
+              vonMangoldt n * (x / n) ^ c /
+                (Real.pi ^ 2 * |Real.log (x / n)| * W) := by
+            simpa [A, M] using herr
+          _ = E n / W := hEeq
+          _ ≤ R n / W := by
+            apply div_le_div_of_nonneg_right _ hW_pos.le
+            dsimp [R]
+            exact le_add_of_nonneg_right
+              (mul_nonneg hc_pos.le (norm_nonneg _))
+  have hR_div_summable : Summable (fun n => R n / W) :=
+    hR_summable.div_const W
+  have hdiff_summable : Summable (fun n => A W n - M n) :=
+    Summable.of_norm_bounded hR_div_summable hpoint
+  have hA_summable : Summable (A W) := by
+    have hadd := hdiff_summable.add hM_summable
+    simpa only [sub_add_cancel] using hadd
+  rw [intervalIntegral_neg_logDeriv_riemannZeta_firstOrder_eq_vonMangoldt_tsum hx hc,
+    ← hM_tsum, ← hA_summable.tsum_sub hM_summable]
+  calc
+    ‖∑' n, (A W n - M n)‖ ≤ ∑' n, ‖A W n - M n‖ :=
+      norm_tsum_le_tsum_norm hdiff_summable.norm
+    _ ≤ ∑' n, R n / W :=
+      Summable.tsum_le_tsum hpoint hdiff_summable.norm hR_div_summable
+    _ = (∑' n, R n) / W := by
+      simp_rw [div_eq_mul_inv]
+      rw [tsum_mul_right]
 
 end PrimeNumberTheorem

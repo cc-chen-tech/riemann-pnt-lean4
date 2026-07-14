@@ -624,6 +624,44 @@ theorem movingLeft_scaledRightIntegral_eq_truncatedExplicitFormula
   rw [sum_remainingPolePart_residue_eq
     poles residue N hc hH hpoles hclass hcomplete hresidue]
 
+/-- Quantitative finite-height explicit formula with the three non-right
+rectangle edges kept as an explicit contour remainder.  The only error in this
+identity is the `O(1 / W)` first-order Perron truncation on the right edge. -/
+theorem
+    exists_norm_truncatedExplicitFormula_sub_contourRemainder_sub_chebyshevPsi0_le_div
+    {x c : ℝ} (hx : 1 < x) (hc : 1 < c) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ (N : ℕ) (W : ℝ), 1 ≤ W →
+      ExplicitFormulaAux.goodHeight (2 * Real.pi * W) →
+      ‖((∑ p ∈ finiteTrivialZeroSum (2 * (N : ℝ)), -((x : ℂ) ^ p) / p) +
+          ((x : ℂ) - deriv riemannZeta 0 / riemannZeta 0 +
+            ∑ ρ ∈ nontrivialZerosFinset (2 * Real.pi * W),
+              -(analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ) -
+          firstOrderContourRemainder x (-(2 * (N : ℝ) + 1)) c W) -
+        (chebyshevPsi0 x : ℂ)‖ ≤ C / W := by
+  rcases
+      exists_norm_truncated_neg_logDeriv_firstOrderPerron_sub_chebyshevPsi0_le_div
+        (zero_lt_one.trans hx) hc with
+    ⟨C, hC, hperron⟩
+  refine ⟨C, hC, ?_⟩
+  intro N W hW hgood
+  have hidentity := movingLeft_scaledRightIntegral_eq_truncatedExplicitFormula
+    N (zero_lt_one.trans hx) hc (zero_lt_one.trans_le hW) hgood
+  rw [← hidentity]
+  have hintegral :
+      (∫ w : ℝ in (-W)..W,
+          explicitFormulaIntegrand x ((c : ℂ) + 2 * Real.pi * w * I)) =
+        ∫ w : ℝ in (-W)..W,
+          (x : ℂ) ^ perronLine c w *
+            (-deriv riemannZeta (perronLine c w) /
+              riemannZeta (perronLine c w)) /
+                perronLine c w := by
+    apply intervalIntegral.integral_congr
+    intro w _hw
+    simp only [explicitFormulaIntegrand, perronLine, logDeriv_apply]
+    ring
+  rw [hintegral]
+  exact hperron W hW
+
 /-- There is a joint cofinal sequence of moving-left Perron rectangles:
 the height and the number of enclosed trivial zeros both tend to infinity, every
 horizontal boundary is good, each finite-height identity has its trivial-zero

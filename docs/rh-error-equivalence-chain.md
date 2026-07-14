@@ -164,6 +164,15 @@ Current status:
 - Its finite symmetric-height truncations encode the principal-value convention
   and analytic multiplicities; the cofinal contour limit and the all-height
   floor-index interpolation are both theorem-level.
+- The full finite-height right Perron edge now has the explicit bound
+  `C(x,c)/W`, including the prime-power half-jump, by
+  `exists_norm_truncated_neg_logDeriv_firstOrderPerron_sub_chebyshevPsi0_le_div`.
+  This rate is inserted into the exact finite multiplicity-aware rectangle
+  identity by
+  `exists_norm_truncatedExplicitFormula_sub_contourRemainder_sub_chebyshevPsi0_le_div`.
+- What remains for the displayed quantitative formula is a uniform bound for
+  the top, bottom, and moving-left contour remainder, followed by an
+  interpolation from selected good heights to every truncation height.
 
 Formalization dependencies:
 
