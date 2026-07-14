@@ -357,7 +357,9 @@ private lemma natCast_rpow_inv_log_eq_exp_one
   congr 1
   field_simp [hlogpos.ne']
 
-private lemma natCast_rpow_movingPerron_eq_exp_mul
+/-- At the moving Perron abscissa, the power of the integral sample is exactly
+`exp 1` times that sample. -/
+lemma natCast_rpow_movingPerron_eq_exp_mul
     {m : ℕ} (hm : 2 ≤ m) :
     (m : ℝ) ^ (1 + 1 / Real.log (m : ℝ)) =
       Real.exp 1 * (m : ℝ) := by

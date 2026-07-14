@@ -50,11 +50,11 @@
 - Modify: `PrimeNumberTheorem/CofinalExplicitFormula.lean`
 - Create: `Test/DynamicHorizontalContourContract.lean`
 
-- [ ] Add a failing contract whose horizontal factor is `m * polylog(m,T)`, not `m ^ 2`.
-- [ ] Generalize the right endpoint from `2` to `c(m)` while retaining `x ^ sigma <= x ^ c(m)`.
-- [ ] Apply Task 1 on the short right-of-one segment.
-- [ ] Reassemble central and far-left horizontal pieces at a selected good height.
-- [ ] Prove the dynamic truncated explicit formula and commit.
+- [x] Add a failing contract whose horizontal factor is `m * polylog(m,T)`, not `m ^ 2`.
+- [x] Generalize the right endpoint from `2` to `c(m)` while retaining `x ^ sigma <= x ^ c(m)`.
+- [x] Apply Task 1 on the short right-of-one segment.
+- [x] Reassemble central and far-left horizontal pieces at a selected good height.
+- [x] Prove the dynamic truncated explicit formula and commit.
 
 ### Task 4: Zero-free-region finite zero sum
 
