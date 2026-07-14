@@ -85,6 +85,62 @@ theorem norm_explicitFormulaApproxWithMultiplicity_sub_le_two_localWindows
       simp only [ExplicitFormulaAux.localZeroContributionNorm]
       rfl
 
+/-- Quantitative bounded-gap form of the all-height promotion estimate.  For
+fixed `x`, changing the truncation height by at most three changes the
+multiplicity-aware approximation by `O_x(log T / T)`. -/
+theorem exists_norm_explicitFormulaApproxWithMultiplicity_sub_le_log_div_of_le_add_three
+    {x : ℝ} (hx : 1 < x) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ {T U : ℝ}, 4 ≤ T → T ≤ U → U ≤ T + 3 →
+      ‖explicitFormulaApproxWithMultiplicity x T -
+          explicitFormulaApproxWithMultiplicity x U‖ ≤
+        2 * C * x * (1 + Real.log (T + 8)) / (T - 1 / 2) := by
+  rcases ExplicitFormulaAux.exists_localZeroContributionNorm_le_log_div hx with
+    ⟨C, hC, hlocal⟩
+  refine ⟨C, hC, ?_⟩
+  intro T U hT hTU hUT
+  have hx0 : 0 ≤ x := (zero_lt_one.trans hx).le
+  have hCx : 0 ≤ C * x := mul_nonneg hC hx0
+  have hden : 0 < T - 1 / 2 := by linarith
+  have hlog0 : 0 ≤ Real.log (T + 8) :=
+    Real.log_nonneg (by linarith)
+  have hnum : 0 ≤ C * x * (1 + Real.log (T + 8)) := by positivity
+  have hwindow1 := hlocal (T + 1 / 4) (by linarith)
+  have hwindow2 := hlocal (T + 7 / 4) (by linarith)
+  have hlog1 : Real.log ((T + 1 / 4) + 6) ≤ Real.log (T + 8) := by
+    exact Real.log_le_log (by linarith) (by linarith)
+  have hlog2 : Real.log ((T + 7 / 4) + 6) ≤ Real.log (T + 8) := by
+    exact Real.log_le_log (by linarith) (by linarith)
+  have hterm1 : ExplicitFormulaAux.localZeroContributionNorm x (T + 1 / 4) ≤
+      C * x * (1 + Real.log (T + 8)) / (T - 1 / 2) := by
+    apply hwindow1.trans
+    calc
+      C * x * (1 + Real.log ((T + 1 / 4) + 6)) / ((T + 1 / 4) - 1 / 2)
+          ≤ C * x * (1 + Real.log (T + 8)) / ((T + 1 / 4) - 1 / 2) := by
+            apply div_le_div_of_nonneg_right _ (by linarith)
+            exact mul_le_mul_of_nonneg_left (by linarith) hCx
+      _ ≤ C * x * (1 + Real.log (T + 8)) / (T - 1 / 2) :=
+        div_le_div_of_nonneg_left hnum hden (by linarith)
+  have hterm2 : ExplicitFormulaAux.localZeroContributionNorm x (T + 7 / 4) ≤
+      C * x * (1 + Real.log (T + 8)) / (T - 1 / 2) := by
+    apply hwindow2.trans
+    calc
+      C * x * (1 + Real.log ((T + 7 / 4) + 6)) / ((T + 7 / 4) - 1 / 2)
+          ≤ C * x * (1 + Real.log (T + 8)) / ((T + 7 / 4) - 1 / 2) := by
+            apply div_le_div_of_nonneg_right _ (by linarith)
+            exact mul_le_mul_of_nonneg_left (by linarith) hCx
+      _ ≤ C * x * (1 + Real.log (T + 8)) / (T - 1 / 2) :=
+        div_le_div_of_nonneg_left hnum hden (by linarith)
+  calc
+    ‖explicitFormulaApproxWithMultiplicity x T -
+        explicitFormulaApproxWithMultiplicity x U‖ ≤
+      ExplicitFormulaAux.localZeroContributionNorm x (T + 1 / 4) +
+        ExplicitFormulaAux.localZeroContributionNorm x (T + 7 / 4) :=
+      norm_explicitFormulaApproxWithMultiplicity_sub_le_two_localWindows hTU hUT
+    _ ≤ C * x * (1 + Real.log (T + 8)) / (T - 1 / 2) +
+        C * x * (1 + Real.log (T + 8)) / (T - 1 / 2) :=
+      add_le_add hterm1 hterm2
+    _ = 2 * C * x * (1 + Real.log (T + 8)) / (T - 1 / 2) := by ring
+
 /-- The multiplicity-aware von Mangoldt explicit formula, with symmetric
 truncation by every real height.  The proof promotes the cofinal good-height
 limit using the two-window bounded-gap estimate above. -/

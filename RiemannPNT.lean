@@ -50,6 +50,17 @@ theorem exists_norm_logDeriv_riemannZeta_le_log_sq_on_inner_zeroFreeRegion :
           C * (Real.log |t|) ^ 2 :=
   ZeroFreeRegion.exists_norm_logDeriv_riemannZeta_le_log_sq_on_inner_zeroFreeRegion
 
+/-- Public quantitative bounded-gap estimate for the multiplicity-aware
+explicit-formula approximation. -/
+theorem exists_norm_explicitFormulaApproxWithMultiplicity_sub_le_log_div_of_le_add_three
+    {x : ℝ} (hx : 1 < x) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ {T U : ℝ}, 4 ≤ T → T ≤ U → U ≤ T + 3 →
+      ‖PrimeNumberTheorem.explicitFormulaApproxWithMultiplicity x T -
+          PrimeNumberTheorem.explicitFormulaApproxWithMultiplicity x U‖ ≤
+        2 * C * x * (1 + Real.log (T + 8)) / (T - 1 / 2) :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.exists_norm_explicitFormulaApproxWithMultiplicity_sub_le_log_div_of_le_add_three
+    hx
+
 /-- Public standard high-height vertical logarithmic-derivative bound on
 `1 <= sigma <= 2`. -/
 abbrev LogDerivVerticalLogBound (C T0 : ℝ) : Prop :=
