@@ -3401,9 +3401,13 @@ Route interfaces:
   of absolute ordinate at most `T`, counted with analytic multiplicity, are
   bounded by `C * T * (1 + log (T + 6))` for `T >= 4`.
 - `exists_card_nontrivialZerosFinset_le_mul_log` derives the same global
-  `O(T log T)` scale for the number of distinct zeros.  These theorems provide
-  quantitative zero-counting input; they do not by themselves discharge the
-  still-open truncated explicit-formula error target.
+  `O(T log T)` scale for the number of distinct zeros.
+- `exists_globalReciprocalZeroMultiplicity_le_log_sq` proves that the exact
+  multiplicity-weighted reciprocal-norm sum
+  `sum_{|Im rho| <= T} analyticOrderNatAt(zeta,rho) / ‖rho‖` is
+  `O((1 + log (T + 6))^2)`.  These theorems provide quantitative zero-counting
+  input; they do not by themselves discharge the still-open truncated
+  explicit-formula error target.
 
 Reusable predicates:
 

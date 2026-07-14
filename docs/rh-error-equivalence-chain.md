@@ -119,10 +119,13 @@ sum_{|gamma| <= T} 1 / |rho| = O(log^2 T)
 
 Current status:
 
-- `finite_nontrivial_zeros_bounded_height T` gives finiteness in every bounded
-  height box.
-- It does not provide cardinal bounds, asymptotics for `N(T)`, or estimates for
-  reciprocal zero sums.
+- `exists_globalZeroMultiplicity_le_mul_log` proves the multiplicity-counted
+  `O(T log T)` bound, and `exists_card_nontrivialZerosFinset_le_mul_log` gives
+  the distinct-zero corollary.
+- `exists_globalReciprocalZeroMultiplicity_le_log_sq` proves the exact
+  analytic-multiplicity weighted reciprocal-norm sum is `O(log^2 T)`.
+- What remains in this chain is using these inputs in a quantitative truncated
+  explicit formula with a uniform remainder, not zero-counting itself.
 
 Formalization dependencies:
 
@@ -361,8 +364,9 @@ The smallest coherent route to make
    and `primeCounting - logIntegral`.
 2. Prove or import a truncated explicit formula for `psi` with precise jump and
    truncation conventions.
-3. Prove zero-counting and reciprocal-zero-sum estimates:
-   `N(T) = O(T log T)` and `sum 1 / |rho| = O(log^2 T)`.
+3. Use the proved zero-counting and reciprocal-zero-sum estimates
+   `N(T) = O(T log T)` and `sum m(rho) / |rho| = O(log^2 T)` in the
+   truncated explicit-formula remainder analysis.
 4. Prove `RH -> RH_PsiErrorBound` by bounding the truncated explicit formula.
 5. Use the existing `psi - theta` Mathlib bound to get `RH_ThetaErrorBound`.
 6. Use the proved quantitative partial-summation bridge

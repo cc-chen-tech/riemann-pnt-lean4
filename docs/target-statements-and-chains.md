@@ -165,8 +165,9 @@ multiplicity-aware target:
 
 1. a usable explicit-formula endpoint from Chain 2 with quantified error terms,
    including truncation parameter handling;
-2. zero-counting and reciprocal-zero sum control (e.g. `N(T)` and `sum 1/|rho|`)
-   for converting explicit-formula sums to `sqrt(x) log^2 x`-type bounds;
+2. insertion of the now-proved zero-counting and reciprocal-zero sum controls
+   (`N(T) = O(T log T)` and `sum m(rho)/|rho| = O(log^2 T)`) into the
+   quantitative truncated explicit-formula remainder analysis;
 3. upstream proof of `RH_PsiErrorBound` / `RH_ThetaErrorBound`; the forward
    `Chebyshev` to `primeCounting` bridge under RH-quality errors is already
    proved by `RH_PrimeCountingLiErrorBound_of_RH_ThetaErrorBound`;

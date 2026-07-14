@@ -22837,6 +22837,14 @@ theorem exists_card_nontrivialZerosFinset_le_mul_log :
         C * T * (1 + Real.log (T + 6)) :=
   PrimeNumberTheorem.ExplicitFormulaAux.exists_card_nontrivialZerosFinset_le_mul_log
 
+/-- Public global `O(log^2 T)` bound for the analytic-multiplicity weighted
+reciprocal norms of nontrivial zeta zeros. -/
+theorem exists_globalReciprocalZeroMultiplicity_le_log_sq :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ T : ℝ, 4 ≤ T →
+      PrimeNumberTheorem.ExplicitFormulaAux.globalReciprocalZeroMultiplicity T ≤
+        C * (1 + Real.log (T + 6)) ^ 2 :=
+  PrimeNumberTheorem.ExplicitFormulaAux.exists_globalReciprocalZeroMultiplicity_le_log_sq
+
 /-- Public route interface from a future truncated explicit formula to the
 power-scale explicit-formula converse target. -/
 abbrev ExplicitFormulaTruncatedConverseRoute (β : ℝ) : Prop :=

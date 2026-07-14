@@ -671,6 +671,12 @@ same layer a direct triangle-inequality estimate for the change in
 `explicitFormulaApprox` between two truncation heights from the summed norms of
 the newly included zero contributions.
 
+The global finite-zero layer now also proves both multiplicity-counted
+`N(T) = O(T log T)` and the exact reciprocal-norm estimate
+`sum_{|Im rho| <= T} m(rho) / ‖rho‖ = O(log^2 T)`.  These are quantitative
+inputs for a truncated formula; the uniform contour remainder required by
+`ExplicitFormulaTruncatedTarget` is still open.
+
 The same finite-tail layer also preserves the direct bridge from a stable base
 truncation to the legacy unweighted compatibility predicate. The public theorem
 `RiemannPNT.API.explicit_formula_von_mangoldt_unweighted_of_base_and_new_zero_contribution_tendsto_zero`
