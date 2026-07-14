@@ -1,5 +1,7 @@
 import PrimeNumberTheorem.FirstOrderPerron
 import PrimeNumberTheorem.LSeriesPerron
+import PrimeNumberTheorem.VonMangoldtLSeriesNorm
+import Mathlib.NumberTheory.Harmonic.Bounds
 
 set_option maxHeartbeats 800000
 
@@ -344,6 +346,582 @@ private lemma summable_firstOrderPerronTanneryError
     field_simp
   rw [Real.norm_eq_abs, abs_of_nonneg hE_nonneg, hEeq, hGeq]
   exact div_le_div_of_nonneg_left hQ_nonneg hlog_two_pos habs
+
+private lemma natCast_rpow_inv_log_eq_exp_one
+    {m : ℕ} (hm : 2 ≤ m) :
+    (m : ℝ) ^ (1 / Real.log (m : ℝ)) = Real.exp 1 := by
+  have hmpos : 0 < (m : ℝ) := by positivity
+  have hlogpos : 0 < Real.log (m : ℝ) :=
+    Real.log_pos (by exact_mod_cast hm)
+  rw [Real.rpow_def_of_pos hmpos]
+  congr 1
+  field_simp [hlogpos.ne']
+
+private lemma natCast_rpow_movingPerron_eq_exp_mul
+    {m : ℕ} (hm : 2 ≤ m) :
+    (m : ℝ) ^ (1 + 1 / Real.log (m : ℝ)) =
+      Real.exp 1 * (m : ℝ) := by
+  have hmpos : 0 < (m : ℝ) := by positivity
+  rw [Real.rpow_add hmpos, Real.rpow_one,
+    natCast_rpow_inv_log_eq_exp_one hm]
+  ring
+
+private lemma one_div_abs_log_natCast_div_le_div_sub_of_lt
+    {m n : ℕ} (hn : 0 < n) (hnm : n < m) :
+    1 / |Real.log ((m : ℝ) / (n : ℝ))| ≤
+      (m : ℝ) / ((m : ℝ) - (n : ℝ)) := by
+  have hmpos : 0 < (m : ℝ) := by exact_mod_cast hn.trans hnm
+  have hnpos : 0 < (n : ℝ) := by exact_mod_cast hn
+  have hratio : 1 < (m : ℝ) / (n : ℝ) :=
+    (one_lt_div hnpos).2 (by exact_mod_cast hnm)
+  have hlogpos : 0 < Real.log ((m : ℝ) / (n : ℝ)) :=
+    Real.log_pos hratio
+  have hnm_cast : (n : ℝ) < (m : ℝ) := by exact_mod_cast hnm
+  have hdiff : 0 < (m : ℝ) - (n : ℝ) := by linarith
+  have hbase := Real.one_sub_inv_le_log_of_pos
+    (show 0 < (m : ℝ) / (n : ℝ) by positivity)
+  have hbase' :
+      ((m : ℝ) - (n : ℝ)) / (m : ℝ) ≤
+        Real.log ((m : ℝ) / (n : ℝ)) := by
+    convert hbase using 1 <;> field_simp
+  rw [abs_of_pos hlogpos]
+  apply (div_le_div_iff₀ hlogpos hdiff).2
+  have hmul := mul_le_mul_of_nonneg_left hbase' hmpos.le
+  field_simp [hmpos.ne'] at hmul
+  simpa [mul_comm] using hmul
+
+private lemma one_div_abs_log_natCast_div_le_div_sub_of_gt
+    {m n : ℕ} (hm : 0 < m) (hmn : m < n) :
+    1 / |Real.log ((m : ℝ) / (n : ℝ))| ≤
+      (n : ℝ) / ((n : ℝ) - (m : ℝ)) := by
+  have hmpos : 0 < (m : ℝ) := by exact_mod_cast hm
+  have hnpos : 0 < (n : ℝ) := by exact_mod_cast hm.trans hmn
+  have hratio : 1 < (n : ℝ) / (m : ℝ) :=
+    (one_lt_div hmpos).2 (by exact_mod_cast hmn)
+  have hlogpos : 0 < Real.log ((n : ℝ) / (m : ℝ)) :=
+    Real.log_pos hratio
+  have hmn_cast : (m : ℝ) < (n : ℝ) := by exact_mod_cast hmn
+  have hdiff : 0 < (n : ℝ) - (m : ℝ) := by linarith
+  have hlogswap : Real.log ((m : ℝ) / (n : ℝ)) =
+      -Real.log ((n : ℝ) / (m : ℝ)) := by
+    rw [Real.log_div hmpos.ne' hnpos.ne',
+      Real.log_div hnpos.ne' hmpos.ne']
+    ring
+  have hbase := Real.one_sub_inv_le_log_of_pos
+    (show 0 < (n : ℝ) / (m : ℝ) by positivity)
+  have hbase' :
+      ((n : ℝ) - (m : ℝ)) / (n : ℝ) ≤
+        Real.log ((n : ℝ) / (m : ℝ)) := by
+    convert hbase using 1 <;> field_simp
+  rw [hlogswap, abs_neg, abs_of_pos hlogpos]
+  apply (div_le_div_iff₀ hlogpos hdiff).2
+  have hmul := mul_le_mul_of_nonneg_left hbase' hnpos.le
+  field_simp [hnpos.ne'] at hmul
+  simpa [mul_comm] using hmul
+
+private lemma firstOrderPerronTanneryError_movingPerron_below_le
+    {m n : ℕ} (hm : 2 ≤ m) (hn : 0 < n) (hnm : n < m) :
+    firstOrderPerronTanneryError (m : ℝ)
+        (1 + 1 / Real.log (m : ℝ)) n ≤
+      Real.exp 1 * (m : ℝ) * Real.log (m : ℝ) *
+        (1 / (n : ℝ) + 1 / ((m : ℝ) - (n : ℝ))) := by
+  have hmpos : 0 < (m : ℝ) := by positivity
+  have hnpos : 0 < (n : ℝ) := by exact_mod_cast hn
+  have hlogmpos : 0 < Real.log (m : ℝ) :=
+    Real.log_pos (by exact_mod_cast hm)
+  have hratio_pos : 0 < (m : ℝ) / (n : ℝ) := by positivity
+  have hratio_gt : 1 < (m : ℝ) / (n : ℝ) :=
+    (one_lt_div hnpos).2 (by exact_mod_cast hnm)
+  have hlogpos : 0 < Real.log ((m : ℝ) / (n : ℝ)) :=
+    Real.log_pos hratio_gt
+  have hn0 : n ≠ 0 := hn.ne'
+  have hlogne : Real.log ((m : ℝ) / (n : ℝ)) ≠ 0 := hlogpos.ne'
+  have hvnonneg : 0 ≤ vonMangoldt n := by
+    rw [vonMangoldt_eq_mathlib]
+    exact ArithmeticFunction.vonMangoldt_nonneg
+  have hvle : vonMangoldt n ≤ Real.log (m : ℝ) := by
+    rw [vonMangoldt_eq_mathlib]
+    have hnm_cast : (n : ℝ) < (m : ℝ) := by exact_mod_cast hnm
+    exact ArithmeticFunction.vonMangoldt_le_log.trans
+      (Real.strictMonoOn_log hnpos hmpos hnm_cast).le
+  have hratio_le_m : (m : ℝ) / (n : ℝ) ≤ (m : ℝ) := by
+    apply (div_le_iff₀ hnpos).2
+    have hn_one : (1 : ℝ) ≤ (n : ℝ) := by exact_mod_cast hn
+    nlinarith
+  have hsmallpow :
+      ((m : ℝ) / (n : ℝ)) ^ (1 / Real.log (m : ℝ)) ≤
+        Real.exp 1 := by
+    rw [← natCast_rpow_inv_log_eq_exp_one hm]
+    exact Real.rpow_le_rpow hratio_pos.le hratio_le_m
+      (by positivity)
+  have hrpow :
+      ((m : ℝ) / (n : ℝ)) ^
+          (1 + 1 / Real.log (m : ℝ)) ≤
+        Real.exp 1 * ((m : ℝ) / (n : ℝ)) := by
+    rw [Real.rpow_add hratio_pos, Real.rpow_one]
+    nlinarith [mul_le_mul_of_nonneg_left hsmallpow hratio_pos.le]
+  have hrecip := one_div_abs_log_natCast_div_le_div_sub_of_lt hn hnm
+  have hpi : 1 ≤ Real.pi ^ 2 := by nlinarith [Real.pi_gt_three]
+  rw [firstOrderPerronTanneryError, if_neg hn0, if_neg hlogne]
+  calc
+    vonMangoldt n * ((m : ℝ) / (n : ℝ)) ^
+          (1 + 1 / Real.log (m : ℝ)) /
+          (Real.pi ^ 2 * |Real.log ((m : ℝ) / (n : ℝ))|) ≤
+        vonMangoldt n * ((m : ℝ) / (n : ℝ)) ^
+          (1 + 1 / Real.log (m : ℝ)) /
+          |Real.log ((m : ℝ) / (n : ℝ))| := by
+      apply div_le_div_of_nonneg_left
+        (mul_nonneg hvnonneg (Real.rpow_nonneg hratio_pos.le _))
+        (abs_pos.mpr hlogne)
+      nlinarith [mul_nonneg (sub_nonneg.mpr hpi)
+        (abs_nonneg (Real.log ((m : ℝ) / (n : ℝ))))]
+    _ = (vonMangoldt n * ((m : ℝ) / (n : ℝ)) ^
+          (1 + 1 / Real.log (m : ℝ))) *
+          (1 / |Real.log ((m : ℝ) / (n : ℝ))|) := by ring
+    _ ≤ (Real.log (m : ℝ) *
+          (Real.exp 1 * ((m : ℝ) / (n : ℝ)))) *
+          ((m : ℝ) / ((m : ℝ) - (n : ℝ))) := by
+      gcongr
+    _ = Real.exp 1 * (m : ℝ) * Real.log (m : ℝ) *
+          (1 / (n : ℝ) + 1 / ((m : ℝ) - (n : ℝ))) := by
+      have hdiff : (m : ℝ) - (n : ℝ) ≠ 0 := by
+        have : (n : ℝ) < (m : ℝ) := by exact_mod_cast hnm
+        linarith
+      field_simp [hnpos.ne', hdiff]
+      ring
+
+private lemma firstOrderPerronTanneryError_movingPerron_above_le
+    {m n : ℕ} (hm : 2 ≤ m) (hmn : m < n) (hnlt : n < 2 * m) :
+    firstOrderPerronTanneryError (m : ℝ)
+        (1 + 1 / Real.log (m : ℝ)) n ≤
+      (m : ℝ) * (1 + Real.log (m : ℝ)) /
+        ((n : ℝ) - (m : ℝ)) := by
+  have hmpos_nat : 0 < m := by omega
+  have hnpos_nat : 0 < n := hmpos_nat.trans hmn
+  have hmpos : 0 < (m : ℝ) := by exact_mod_cast hmpos_nat
+  have hnpos : 0 < (n : ℝ) := by exact_mod_cast hnpos_nat
+  have hlogmpos : 0 < Real.log (m : ℝ) :=
+    Real.log_pos (by exact_mod_cast hm)
+  have hratio_pos : 0 < (m : ℝ) / (n : ℝ) := by positivity
+  have hratio_lt : (m : ℝ) / (n : ℝ) < 1 :=
+    (div_lt_one hnpos).2 (by exact_mod_cast hmn)
+  have hlogneg : Real.log ((m : ℝ) / (n : ℝ)) < 0 :=
+    Real.log_neg hratio_pos hratio_lt
+  have hn0 : n ≠ 0 := hnpos_nat.ne'
+  have hlogne : Real.log ((m : ℝ) / (n : ℝ)) ≠ 0 := hlogneg.ne
+  have hvnonneg : 0 ≤ vonMangoldt n := by
+    rw [vonMangoldt_eq_mathlib]
+    exact ArithmeticFunction.vonMangoldt_nonneg
+  have hvle : vonMangoldt n ≤ 1 + Real.log (m : ℝ) := by
+    rw [vonMangoldt_eq_mathlib]
+    calc
+      ArithmeticFunction.vonMangoldt n ≤ Real.log (n : ℝ) :=
+        ArithmeticFunction.vonMangoldt_le_log
+      _ ≤ Real.log (2 * (m : ℝ)) := by
+        apply Real.log_le_log hnpos
+        exact_mod_cast (Nat.le_of_lt hnlt)
+      _ = Real.log 2 + Real.log (m : ℝ) := by
+        rw [Real.log_mul (by norm_num : (2 : ℝ) ≠ 0) hmpos.ne']
+      _ ≤ 1 + Real.log (m : ℝ) := by
+        have := Real.log_le_sub_one_of_pos (by norm_num : (0 : ℝ) < 2)
+        linarith
+  have hc : 1 ≤ 1 + 1 / Real.log (m : ℝ) := by
+    have : 0 < 1 / Real.log (m : ℝ) := one_div_pos.mpr hlogmpos
+    linarith
+  have hrpow :
+      ((m : ℝ) / (n : ℝ)) ^
+          (1 + 1 / Real.log (m : ℝ)) ≤
+        (m : ℝ) / (n : ℝ) :=
+    Real.rpow_le_self_of_le_one hratio_pos.le hratio_lt.le hc
+  have hrecip := one_div_abs_log_natCast_div_le_div_sub_of_gt hmpos_nat hmn
+  have hpi : 1 ≤ Real.pi ^ 2 := by nlinarith [Real.pi_gt_three]
+  rw [firstOrderPerronTanneryError, if_neg hn0, if_neg hlogne]
+  calc
+    vonMangoldt n * ((m : ℝ) / (n : ℝ)) ^
+          (1 + 1 / Real.log (m : ℝ)) /
+          (Real.pi ^ 2 * |Real.log ((m : ℝ) / (n : ℝ))|) ≤
+        vonMangoldt n * ((m : ℝ) / (n : ℝ)) ^
+          (1 + 1 / Real.log (m : ℝ)) /
+          |Real.log ((m : ℝ) / (n : ℝ))| := by
+      apply div_le_div_of_nonneg_left
+        (mul_nonneg hvnonneg (Real.rpow_nonneg hratio_pos.le _))
+        (abs_pos.mpr hlogne)
+      nlinarith [mul_nonneg (sub_nonneg.mpr hpi)
+        (abs_nonneg (Real.log ((m : ℝ) / (n : ℝ))))]
+    _ = (vonMangoldt n * ((m : ℝ) / (n : ℝ)) ^
+          (1 + 1 / Real.log (m : ℝ))) *
+          (1 / |Real.log ((m : ℝ) / (n : ℝ))|) := by ring
+    _ ≤ ((1 + Real.log (m : ℝ)) * ((m : ℝ) / (n : ℝ))) *
+          ((n : ℝ) / ((n : ℝ) - (m : ℝ))) := by
+      gcongr
+    _ = (m : ℝ) * (1 + Real.log (m : ℝ)) /
+          ((n : ℝ) - (m : ℝ)) := by
+      have hdiff : (n : ℝ) - (m : ℝ) ≠ 0 := by
+        have : (m : ℝ) < (n : ℝ) := by exact_mod_cast hmn
+        linarith
+      field_simp [hnpos.ne', hdiff]
+
+private lemma sum_Ico_one_div_natCast_le_one_add_log
+    (m : ℕ) :
+    (∑ n ∈ Finset.Ico 1 m, 1 / (n : ℝ)) ≤
+      1 + Real.log (m : ℝ) := by
+  have hsubset : Finset.Ico 1 m ⊆ Finset.Icc 1 m := by
+    intro n hn
+    simp only [Finset.mem_Ico, Finset.mem_Icc] at hn ⊢
+    omega
+  calc
+    (∑ n ∈ Finset.Ico 1 m, 1 / (n : ℝ)) ≤
+        ∑ n ∈ Finset.Icc 1 m, 1 / (n : ℝ) := by
+      exact Finset.sum_le_sum_of_subset_of_nonneg hsubset
+        (fun n _hn _hnot => by positivity)
+    _ = (harmonic m : ℝ) := by
+      rw [harmonic_eq_sum_Icc]
+      simp only [Rat.cast_sum, Rat.cast_inv, Rat.cast_natCast, one_div]
+    _ ≤ 1 + Real.log (m : ℝ) := harmonic_le_one_add_log m
+
+private theorem
+    sum_firstOrderPerronTanneryError_movingPerron_range_two_mul_le
+    {m : ℕ} (hm : 2 ≤ m) :
+    (∑ n ∈ Finset.range (2 * m),
+        firstOrderPerronTanneryError (m : ℝ)
+          (1 + 1 / Real.log (m : ℝ)) n) ≤
+      (2 * Real.exp 1 + 2) * (m : ℝ) *
+        (1 + Real.log (m : ℝ)) ^ 2 := by
+  let E : ℕ → ℝ := fun n =>
+    firstOrderPerronTanneryError (m : ℝ)
+      (1 + 1 / Real.log (m : ℝ)) n
+  let ell : ℝ := Real.log (m : ℝ)
+  let S : ℝ := ∑ n ∈ Finset.Ico 1 m, 1 / (n : ℝ)
+  have hmpos_nat : 0 < m := by omega
+  have hmpos : 0 < (m : ℝ) := by exact_mod_cast hmpos_nat
+  have hellpos : 0 < ell := by
+    dsimp [ell]
+    exact Real.log_pos (by exact_mod_cast hm)
+  have hSnonneg : 0 ≤ S := by
+    dsimp [S]
+    exact Finset.sum_nonneg fun n _hn => by positivity
+  have hS : S ≤ 1 + ell := by
+    simpa [S, ell] using sum_Ico_one_div_natCast_le_one_add_log m
+  have hreflect :
+      (∑ n ∈ Finset.Ico 1 m,
+          1 / ((m : ℝ) - (n : ℝ))) = S := by
+    calc
+      (∑ n ∈ Finset.Ico 1 m,
+          1 / ((m : ℝ) - (n : ℝ))) =
+          ∑ n ∈ Finset.Ico 1 m, 1 / ((m - n : ℕ) : ℝ) := by
+        apply Finset.sum_congr rfl
+        intro n hnmem
+        rw [Nat.cast_sub (Finset.mem_Ico.mp hnmem).2.le]
+      _ = S := by
+        have h := Finset.sum_Ico_reflect
+          (fun n : ℕ => 1 / (n : ℝ)) 1 (m := m) (n := m) (by omega)
+        simpa [S] using h
+  have hbelow :
+      (∑ n ∈ Finset.Ico 1 m, E n) ≤
+        2 * Real.exp 1 * (m : ℝ) * (1 + ell) ^ 2 := by
+    calc
+      (∑ n ∈ Finset.Ico 1 m, E n) ≤
+          ∑ n ∈ Finset.Ico 1 m,
+            Real.exp 1 * (m : ℝ) * ell *
+              (1 / (n : ℝ) + 1 / ((m : ℝ) - (n : ℝ))) := by
+        apply Finset.sum_le_sum
+        intro n hnmem
+        exact firstOrderPerronTanneryError_movingPerron_below_le hm
+          (Finset.mem_Ico.mp hnmem).1 (Finset.mem_Ico.mp hnmem).2
+      _ = Real.exp 1 * (m : ℝ) * ell * (S + S) := by
+        rw [← Finset.mul_sum, Finset.sum_add_distrib, hreflect]
+      _ ≤ 2 * Real.exp 1 * (m : ℝ) * (1 + ell) ^ 2 := by
+        have hell : ell ≤ 1 + ell := by linarith
+        have hSS : S + S ≤ 2 * (1 + ell) := by linarith
+        have hprod : ell * (S + S) ≤
+            (1 + ell) * (2 * (1 + ell)) :=
+          mul_le_mul hell hSS (add_nonneg hSnonneg hSnonneg)
+            (by linarith : 0 ≤ 1 + ell)
+        calc
+          Real.exp 1 * (m : ℝ) * ell * (S + S) =
+              (Real.exp 1 * (m : ℝ)) * (ell * (S + S)) := by ring
+          _ ≤ (Real.exp 1 * (m : ℝ)) *
+              ((1 + ell) * (2 * (1 + ell))) :=
+            mul_le_mul_of_nonneg_left hprod (by positivity)
+          _ = 2 * Real.exp 1 * (m : ℝ) * (1 + ell) ^ 2 := by ring
+  have haboveShift :
+      (∑ n ∈ Finset.Ico (m + 1) (2 * m),
+          1 / ((n : ℝ) - (m : ℝ))) = S := by
+    let f : ℕ → ℝ := fun n => 1 / ((n : ℝ) - (m : ℝ))
+    calc
+      (∑ n ∈ Finset.Ico (m + 1) (2 * m),
+          1 / ((n : ℝ) - (m : ℝ))) =
+          ∑ n ∈ Finset.Ico 1 m, f (m + n) := by
+        simpa only [Nat.add_comm, Nat.two_mul] using
+          (Finset.sum_Ico_add f 1 m m).symm
+      _ = S := by
+        apply Finset.sum_congr rfl
+        intro n hnmem
+        dsimp [f, S]
+        push_cast
+        have hn0nat : n ≠ 0 := by
+          exact Nat.ne_of_gt <|
+            Nat.zero_lt_one.trans_le (Finset.mem_Ico.mp hnmem).1
+        have hn0 : (n : ℝ) ≠ 0 := by exact_mod_cast hn0nat
+        field_simp [hn0]
+        ring
+  have habove :
+      (∑ n ∈ Finset.Ico (m + 1) (2 * m), E n) ≤
+        (m : ℝ) * (1 + ell) ^ 2 := by
+    calc
+      (∑ n ∈ Finset.Ico (m + 1) (2 * m), E n) ≤
+          ∑ n ∈ Finset.Ico (m + 1) (2 * m),
+            (m : ℝ) * (1 + ell) /
+              ((n : ℝ) - (m : ℝ)) := by
+        apply Finset.sum_le_sum
+        intro n hnmem
+        have hn := Finset.mem_Ico.mp hnmem
+        simpa [E, ell] using
+          firstOrderPerronTanneryError_movingPerron_above_le hm
+            (by omega : m < n) hn.2
+      _ = (m : ℝ) * (1 + ell) * S := by
+        simp_rw [div_eq_mul_inv]
+        rw [← Finset.mul_sum]
+        have hshiftInv :
+            (∑ n ∈ Finset.Ico (m + 1) (2 * m),
+              ((n : ℝ) - (m : ℝ))⁻¹) = S := by
+          simpa [one_div] using haboveShift
+        rw [hshiftInv]
+      _ ≤ (m : ℝ) * (1 + ell) ^ 2 := by
+        have hone : 0 ≤ 1 + ell := by linarith
+        have hinner := mul_le_mul_of_nonneg_left hS hone
+        calc
+          (m : ℝ) * (1 + ell) * S =
+              (m : ℝ) * ((1 + ell) * S) := by ring
+          _ ≤ (m : ℝ) * ((1 + ell) * (1 + ell)) :=
+            mul_le_mul_of_nonneg_left hinner hmpos.le
+          _ = (m : ℝ) * (1 + ell) ^ 2 := by ring
+  have hjump : E m ≤ (m : ℝ) * (1 + ell) ^ 2 := by
+    have hvle : vonMangoldt m ≤ ell := by
+      dsimp [ell]
+      rw [vonMangoldt_eq_mathlib]
+      exact ArithmeticFunction.vonMangoldt_le_log
+    have hE : E m = vonMangoldt m := by
+      dsimp [E]
+      simp [firstOrderPerronTanneryError, hmpos_nat.ne', hmpos.ne']
+    rw [hE]
+    have hscale : ell ≤ (m : ℝ) * (1 + ell) ^ 2 := by
+      have hellsq : ell ≤ (1 + ell) ^ 2 := by
+        nlinarith [sq_nonneg ell]
+      have hmone : (1 : ℝ) ≤ (m : ℝ) := by exact_mod_cast (show 1 ≤ m by omega)
+      calc
+        ell ≤ (1 + ell) ^ 2 := hellsq
+        _ ≤ (m : ℝ) * (1 + ell) ^ 2 := by
+          exact le_mul_of_one_le_left (sq_nonneg _) hmone
+    exact hvle.trans hscale
+  have hsplit := Finset.sum_range_add_sum_Ico E
+    (show m ≤ 2 * m by omega)
+  calc
+    (∑ n ∈ Finset.range (2 * m),
+        firstOrderPerronTanneryError (m : ℝ)
+          (1 + 1 / Real.log (m : ℝ)) n) =
+        (∑ n ∈ Finset.Ico 1 m, E n) +
+          (E m + ∑ n ∈ Finset.Ico (m + 1) (2 * m), E n) := by
+      change (∑ n ∈ Finset.range (2 * m), E n) = _
+      rw [← hsplit, Finset.range_eq_Ico,
+        Finset.sum_eq_sum_Ico_succ_bot (by omega : 0 < m) E,
+        Finset.sum_eq_sum_Ico_succ_bot (by omega : m < 2 * m) E]
+      simp [E, firstOrderPerronTanneryError]
+    _ ≤ 2 * Real.exp 1 * (m : ℝ) * (1 + ell) ^ 2 +
+          ((m : ℝ) * (1 + ell) ^ 2 +
+            (m : ℝ) * (1 + ell) ^ 2) :=
+      add_le_add hbelow (add_le_add hjump habove)
+    _ = (2 * Real.exp 1 + 2) * (m : ℝ) *
+          (1 + Real.log (m : ℝ)) ^ 2 := by
+      dsimp [ell]
+      ring
+
+/-- Beyond `2m`, the moving Perron Tannery majorant is controlled by the
+von Mangoldt L-series on the same moving line. -/
+private lemma firstOrderPerronTanneryError_movingPerron_tail_le
+    {m n : ℕ} (hm : 2 ≤ m) (hn : 2 * m ≤ n) :
+    firstOrderPerronTanneryError (m : ℝ)
+        (1 + 1 / Real.log (m : ℝ)) n ≤
+      (Real.exp 1 * (m : ℝ) / Real.log 2) *
+        ‖LSeries.term (fun n => (ArithmeticFunction.vonMangoldt n : ℂ))
+          ((1 + 1 / Real.log (m : ℝ) : ℝ) : ℂ) n‖ := by
+  let c : ℝ := 1 + 1 / Real.log (m : ℝ)
+  have hmpos_nat : 0 < m := by omega
+  have hnpos_nat : 0 < n := by omega
+  have hmpos : 0 < (m : ℝ) := by exact_mod_cast hmpos_nat
+  have hnpos : 0 < (n : ℝ) := by exact_mod_cast hnpos_nat
+  have hn0 : n ≠ 0 := hnpos_nat.ne'
+  have hratio_pos : 0 < (m : ℝ) / (n : ℝ) := div_pos hmpos hnpos
+  have hratio_half : (m : ℝ) / (n : ℝ) ≤ (1 / 2 : ℝ) := by
+    apply (div_le_iff₀ hnpos).2
+    have hn_cast : 2 * (m : ℝ) ≤ (n : ℝ) := by exact_mod_cast hn
+    nlinarith
+  have hratio_one : (m : ℝ) / (n : ℝ) < 1 := by linarith
+  have hlogneg : Real.log ((m : ℝ) / (n : ℝ)) < 0 :=
+    Real.log_neg hratio_pos hratio_one
+  have hlogne : Real.log ((m : ℝ) / (n : ℝ)) ≠ 0 := hlogneg.ne
+  have hlog_two_pos : 0 < Real.log 2 := Real.log_pos (by norm_num)
+  have hlog_half : Real.log (1 / 2 : ℝ) = -Real.log 2 := by
+    rw [Real.log_div (by norm_num) (by norm_num), Real.log_one]
+    ring
+  have habs : Real.log 2 ≤ |Real.log ((m : ℝ) / (n : ℝ))| := by
+    have hlog_le := Real.log_le_log hratio_pos hratio_half
+    rw [hlog_half] at hlog_le
+    rw [abs_of_neg hlogneg]
+    linarith
+  have hv_nonneg : 0 ≤ vonMangoldt n := by
+    rw [vonMangoldt_eq_mathlib]
+    exact ArithmeticFunction.vonMangoldt_nonneg
+  have htermnorm :
+      ‖LSeries.term (fun n => (ArithmeticFunction.vonMangoldt n : ℂ))
+          (c : ℂ) n‖ = vonMangoldt n / (n : ℝ) ^ c := by
+    rw [LSeries.norm_term_eq]
+    simp only [hn0, if_false, Complex.ofReal_re]
+    rw [norm_real, Real.norm_eq_abs, ← vonMangoldt_eq_mathlib,
+      abs_of_nonneg hv_nonneg]
+  have hmc : (m : ℝ) ^ c = Real.exp 1 * (m : ℝ) := by
+    simpa [c] using natCast_rpow_movingPerron_eq_exp_mul hm
+  rw [show (1 + 1 / Real.log (m : ℝ) : ℝ) = c by rfl,
+    firstOrderPerronTanneryError, if_neg hn0, if_neg hlogne, htermnorm]
+  have hpi_sq : 1 ≤ Real.pi ^ 2 := by nlinarith [Real.pi_gt_three]
+  have habs_pos : 0 < |Real.log ((m : ℝ) / (n : ℝ))| := abs_pos.mpr hlogne
+  calc
+    vonMangoldt n * ((m : ℝ) / (n : ℝ)) ^ c /
+          (Real.pi ^ 2 * |Real.log ((m : ℝ) / (n : ℝ))|) ≤
+        vonMangoldt n * ((m : ℝ) / (n : ℝ)) ^ c /
+          |Real.log ((m : ℝ) / (n : ℝ))| := by
+      apply div_le_div_of_nonneg_left
+        (mul_nonneg hv_nonneg (Real.rpow_nonneg hratio_pos.le c)) habs_pos
+      nlinarith
+    _ ≤ vonMangoldt n * ((m : ℝ) / (n : ℝ)) ^ c / Real.log 2 := by
+      exact div_le_div_of_nonneg_left
+        (mul_nonneg hv_nonneg (Real.rpow_nonneg hratio_pos.le c))
+        hlog_two_pos habs
+    _ = (Real.exp 1 * (m : ℝ) / Real.log 2) *
+          (vonMangoldt n / (n : ℝ) ^ c) := by
+      rw [Real.div_rpow hmpos.le hnpos.le, hmc]
+      field_simp
+
+/-- The complete Tannery majorant on `c(m)=1+1/log m` is uniformly
+`O(m (1+log m)^2)`. -/
+private theorem
+    exists_tsum_firstOrderPerronTanneryError_movingPerron_le :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ m : ℕ, 2 ≤ m →
+      (∑' n : ℕ, firstOrderPerronTanneryError (m : ℝ)
+        (1 + 1 / Real.log (m : ℝ)) n) ≤
+        C * (m : ℝ) * (1 + Real.log (m : ℝ)) ^ 2 := by
+  let C : ℝ := 2 * Real.exp 1 + 2 + 4 * Real.exp 1 / Real.log 2
+  have hlog2 : 0 < Real.log 2 := Real.log_pos (by norm_num)
+  have hC : 0 ≤ C := by dsimp [C]; positivity
+  refine ⟨C, hC, ?_⟩
+  intro m hm
+  let ell : ℝ := Real.log (m : ℝ)
+  let eps : ℝ := 1 / ell
+  let c : ℝ := 1 + eps
+  let coeff : ℕ → ℂ := fun n => (ArithmeticFunction.vonMangoldt n : ℂ)
+  have hmpos_nat : 0 < m := by omega
+  have hmpos : 0 < (m : ℝ) := by exact_mod_cast hmpos_nat
+  have hell : 0 < ell := by
+    dsimp [ell]
+    exact Real.log_pos (by exact_mod_cast hm)
+  have heps : 0 < eps := by dsimp [eps]; positivity
+  have hc : 1 < c := by dsimp [c]; linarith
+  have hE := summable_firstOrderPerronTanneryError
+    (x := (m : ℝ)) (c := c) hmpos hc
+  have hsplit := hE.sum_add_tsum_nat_add (2 * m)
+  have hfinite :
+      (∑ n ∈ Finset.range (2 * m),
+          firstOrderPerronTanneryError (m : ℝ) c n) ≤
+        (2 * Real.exp 1 + 2) * (m : ℝ) * (1 + ell) ^ 2 := by
+    simpa [c, eps, ell] using
+      sum_firstOrderPerronTanneryError_movingPerron_range_two_mul_le hm
+  have hseries : Summable fun n : ℕ =>
+      ‖LSeries.term coeff (c : ℂ) n‖ := by
+    have hs := ArithmeticFunction.LSeriesSummable_vonMangoldt
+      (s := (c : ℂ)) (by simpa using hc)
+    rw [LSeriesSummable, ← summable_norm_iff] at hs
+    simpa [coeff] using hs
+  have hseriesSplit := hseries.sum_add_tsum_nat_add (2 * m)
+  have hseriesTail :
+      (∑' n : ℕ, ‖LSeries.term coeff (c : ℂ) (n + 2 * m)‖) ≤
+        ExplicitFormulaResidues.vonMangoldtLSeriesNorm eps := by
+    have hfinite_nonneg : 0 ≤
+        ∑ n ∈ Finset.range (2 * m), ‖LSeries.term coeff (c : ℂ) n‖ :=
+      Finset.sum_nonneg fun n _ => norm_nonneg _
+    rw [show ExplicitFormulaResidues.vonMangoldtLSeriesNorm eps =
+        ∑' n : ℕ, ‖LSeries.term coeff (c : ℂ) n‖ by rfl,
+      ← hseriesSplit]
+    linarith
+  have hseriesNorm :
+      ExplicitFormulaResidues.vonMangoldtLSeriesNorm eps ≤
+        (2 / eps) * (1 + 2 / eps) :=
+    ExplicitFormulaResidues.vonMangoldtLSeriesNorm_le_two_div_mul_one_add_two_div
+      heps
+  have hEtailSum : Summable fun n : ℕ =>
+      firstOrderPerronTanneryError (m : ℝ) c (n + 2 * m) :=
+    (summable_nat_add_iff (2 * m)).mpr hE
+  have hmajorTail : Summable fun n : ℕ =>
+      (Real.exp 1 * (m : ℝ) / Real.log 2) *
+        ‖LSeries.term coeff (c : ℂ) (n + 2 * m)‖ :=
+    ((summable_nat_add_iff (2 * m)).mpr hseries).mul_left _
+  have htail :
+      (∑' n : ℕ,
+          firstOrderPerronTanneryError (m : ℝ) c (n + 2 * m)) ≤
+        (4 * Real.exp 1 / Real.log 2) * (m : ℝ) * (1 + ell) ^ 2 := by
+    calc
+      _ ≤ ∑' n : ℕ, (Real.exp 1 * (m : ℝ) / Real.log 2) *
+          ‖LSeries.term coeff (c : ℂ) (n + 2 * m)‖ := by
+        apply Summable.tsum_le_tsum _ hEtailSum hmajorTail
+        intro n
+        change firstOrderPerronTanneryError (m : ℝ) c (n + 2 * m) ≤
+          (Real.exp 1 * (m : ℝ) / Real.log 2) *
+            ‖LSeries.term coeff (c : ℂ) (n + 2 * m)‖
+        simpa only [c, eps, ell, coeff] using
+          firstOrderPerronTanneryError_movingPerron_tail_le hm
+            (show 2 * m ≤ n + 2 * m by omega)
+      _ = (Real.exp 1 * (m : ℝ) / Real.log 2) *
+          (∑' n : ℕ, ‖LSeries.term coeff (c : ℂ) (n + 2 * m)‖) :=
+        tsum_mul_left
+      _ ≤ (Real.exp 1 * (m : ℝ) / Real.log 2) *
+          ExplicitFormulaResidues.vonMangoldtLSeriesNorm eps := by
+        exact mul_le_mul_of_nonneg_left hseriesTail (by positivity)
+      _ ≤ (Real.exp 1 * (m : ℝ) / Real.log 2) *
+          ((2 / eps) * (1 + 2 / eps)) := by
+        exact mul_le_mul_of_nonneg_left hseriesNorm (by positivity)
+      _ ≤ (4 * Real.exp 1 / Real.log 2) * (m : ℝ) *
+          (1 + ell) ^ 2 := by
+        have hell_le : ell ≤ 1 + ell := by linarith
+        have htwoell_le : 1 + 2 * ell ≤ 2 * (1 + ell) := by linarith
+        have hprod : ell * (1 + 2 * ell) ≤ 2 * (1 + ell) ^ 2 := by
+          nlinarith [sq_nonneg ell]
+        have htwo_eps : 2 / eps = 2 * ell := by
+          dsimp [eps]
+          field_simp [hell.ne']
+        rw [htwo_eps]
+        have hfactor : 0 ≤ Real.exp 1 * (m : ℝ) / Real.log 2 := by
+          positivity
+        calc
+          (Real.exp 1 * (m : ℝ) / Real.log 2) *
+              ((2 * ell) * (1 + 2 * ell)) ≤
+            (Real.exp 1 * (m : ℝ) / Real.log 2) *
+              (4 * (1 + ell) ^ 2) := by
+            apply mul_le_mul_of_nonneg_left _ hfactor
+            nlinarith
+          _ = (4 * Real.exp 1 / Real.log 2) * (m : ℝ) *
+              (1 + ell) ^ 2 := by ring
+  calc
+    (∑' n : ℕ, firstOrderPerronTanneryError (m : ℝ)
+        (1 + 1 / Real.log (m : ℝ)) n) =
+        (∑ n ∈ Finset.range (2 * m),
+          firstOrderPerronTanneryError (m : ℝ) c n) +
+        ∑' n : ℕ, firstOrderPerronTanneryError (m : ℝ) c (n + 2 * m) := by
+      simpa [c, eps, ell] using hsplit.symm
+    _ ≤ (2 * Real.exp 1 + 2) * (m : ℝ) * (1 + ell) ^ 2 +
+          (4 * Real.exp 1 / Real.log 2) * (m : ℝ) * (1 + ell) ^ 2 :=
+      add_le_add hfinite htail
+    _ = C * (m : ℝ) * (1 + Real.log (m : ℝ)) ^ 2 := by
+      dsimp [C, ell]
+      ring
 
 /-- Distinct positive integers below `2m` stay a polynomial distance apart
 after taking the logarithm of their ratio. -/
@@ -950,6 +1528,221 @@ theorem exists_norm_truncated_neg_logDeriv_firstOrderPerron_sub_chebyshevPsi0_le
     _ = (∑' n, R n) / W := by
       simp_rw [div_eq_mul_inv]
       rw [tsum_mul_right]
+
+/-- On the moving line `Re(s)=1+1/log m`, first-order Perron inversion has a
+single `O(m (1+log m)^2 / W)` error constant for all integral samples. -/
+theorem
+    exists_uniform_nat_norm_movingRight_truncated_neg_logDeriv_firstOrderPerron_sub_chebyshevPsi0_le :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ (m : ℕ) (W : ℝ), 2 ≤ m → 1 ≤ W →
+      ‖(∫ w : ℝ in (-W)..W,
+          ((m : ℝ) : ℂ) ^
+              perronLine (1 + 1 / Real.log (m : ℝ)) w *
+            (-deriv riemannZeta
+                (perronLine (1 + 1 / Real.log (m : ℝ)) w) /
+              riemannZeta
+                (perronLine (1 + 1 / Real.log (m : ℝ)) w)) /
+              perronLine (1 + 1 / Real.log (m : ℝ)) w) -
+          (chebyshevPsi0 (m : ℝ) : ℂ)‖ ≤
+        C * (m : ℝ) * (1 + Real.log (m : ℝ)) ^ 2 / W := by
+  rcases exists_tsum_firstOrderPerronTanneryError_movingPerron_le with
+    ⟨CE, hCE, hEbound⟩
+  let K : ℝ := Real.log 4 + 4
+  let Kc : ℝ := 1 + 1 / Real.log 2
+  let C : ℝ := CE + Kc * K
+  have hlog2 : 0 < Real.log 2 := Real.log_pos (by norm_num)
+  have hK : 0 ≤ K := by
+    dsimp [K]
+    have := Real.log_nonneg (by norm_num : (1 : ℝ) ≤ 4)
+    linarith
+  have hKc : 0 ≤ Kc := by dsimp [Kc]; positivity
+  have hC : 0 ≤ C := by dsimp [C]; positivity
+  refine ⟨C, hC, ?_⟩
+  intro m W hm hW
+  let x : ℝ := m
+  let c : ℝ := 1 + 1 / Real.log (m : ℝ)
+  let A : ℝ → ℕ → ℂ := fun W n => ∫ w : ℝ in (-W)..W,
+    (x : ℂ) ^ perronLine c w *
+      LSeries.term (fun n => (ArithmeticFunction.vonMangoldt n : ℂ))
+        (perronLine c w) n /
+          perronLine c w
+  let M : ℕ → ℂ := fun n =>
+    (vonMangoldt n : ℂ) * perronHalfStep (Real.log (x / n))
+  let E : ℕ → ℝ := firstOrderPerronTanneryError x c
+  let R : ℕ → ℝ := fun n => E n + c * ‖M n‖
+  have hx : 0 < x := by dsimp [x]; positivity
+  have hlogm : 0 < Real.log (m : ℝ) :=
+    Real.log_pos (by exact_mod_cast hm)
+  have hc : 1 < c := by
+    dsimp [c]
+    linarith [one_div_pos.mpr hlogm]
+  have hc_pos : 0 < c := one_pos.trans hc
+  have hc_le : c ≤ Kc := by
+    have hlog_le : Real.log 2 ≤ Real.log (m : ℝ) :=
+      Real.log_le_log (by norm_num) (by exact_mod_cast hm)
+    have hinv : 1 / Real.log (m : ℝ) ≤ 1 / Real.log 2 :=
+      one_div_le_one_div_of_le hlog2 hlog_le
+    dsimp [c, Kc]
+    linarith
+  have hM_zero : ∀ n ∉ Finset.Ico 1 (Nat.floor x + 1), M n = 0 := by
+    intro n hn
+    exact firstOrderPerronLimit_zero_outside hx hn
+  have hM_summable : Summable M := summable_of_ne_finset_zero hM_zero
+  have hM_tsum : (∑' n, M n) = (chebyshevPsi0 x : ℂ) := by
+    rw [tsum_eq_sum hM_zero]
+    exact sum_vonMangoldt_perronHalfStep_log_div_eq_chebyshevPsi0 x hx
+  have hMnorm_point (n : ℕ) : ‖M n‖ ≤ vonMangoldt n := by
+    have hv : 0 ≤ vonMangoldt n := by
+      rw [vonMangoldt_eq_mathlib]
+      exact ArithmeticFunction.vonMangoldt_nonneg
+    have hstep : ‖perronHalfStep (Real.log (x / n))‖ ≤ 1 := by
+      unfold perronHalfStep
+      split_ifs <;> norm_num
+    dsimp [M]
+    rw [norm_mul, norm_real, Real.norm_eq_abs, abs_of_nonneg hv]
+    exact mul_le_of_le_one_right hv hstep
+  have hMnorm_zero : ∀ n ∉ Finset.Ico 1 (Nat.floor x + 1), ‖M n‖ = 0 := by
+    intro n hn
+    rw [hM_zero n hn, norm_zero]
+  have hMnorm_bound : (∑' n : ℕ, ‖M n‖) ≤ K * x := by
+    rw [tsum_eq_sum hMnorm_zero]
+    calc
+      (∑ n ∈ Finset.Ico 1 (Nat.floor x + 1), ‖M n‖) ≤
+          ∑ n ∈ Finset.Ico 1 (Nat.floor x + 1), vonMangoldt n :=
+        Finset.sum_le_sum fun n _hn => hMnorm_point n
+      _ = chebyshevPsi x := rfl
+      _ ≤ K * x := by
+        dsimp [K]
+        rw [chebyshevPsi_eq_mathlib]
+        exact Chebyshev.psi_le_const_mul_self hx.le
+  have hE_summable : Summable E :=
+    summable_firstOrderPerronTanneryError hx hc
+  have hE_nonneg (n : ℕ) : 0 ≤ E n := by
+    dsimp [E]
+    rw [firstOrderPerronTanneryError]
+    split_ifs with hn hu
+    · exact le_rfl
+    · rw [vonMangoldt_eq_mathlib]
+      exact ArithmeticFunction.vonMangoldt_nonneg
+    · have hn_pos : 0 < (n : ℝ) := by exact_mod_cast Nat.pos_of_ne_zero hn
+      have hv_nonneg : 0 ≤ vonMangoldt n := by
+        rw [vonMangoldt_eq_mathlib]
+        exact ArithmeticFunction.vonMangoldt_nonneg
+      exact div_nonneg
+        (mul_nonneg hv_nonneg
+          (Real.rpow_nonneg (div_nonneg hx.le hn_pos.le) c))
+        (mul_nonneg (sq_nonneg Real.pi) (abs_nonneg _))
+  have hR_summable : Summable R := by
+    exact hE_summable.add (hM_summable.norm.mul_left c)
+  have hEpoly : (∑' n : ℕ, E n) ≤
+      CE * x * (1 + Real.log x) ^ 2 := by
+    simpa [E, x, c] using hEbound m hm
+  have hone_sq : (1 : ℝ) ≤ (1 + Real.log x) ^ 2 := by
+    have : 0 < Real.log x := by simpa [x] using hlogm
+    nlinarith [sq_nonneg (Real.log x)]
+  have hRpoly : (∑' n : ℕ, R n) ≤
+      C * x * (1 + Real.log x) ^ 2 := by
+    have hMnorm_summable := hM_summable.norm
+    have hRsum : (∑' n : ℕ, R n) =
+        (∑' n : ℕ, E n) + c * (∑' n : ℕ, ‖M n‖) := by
+      simp_rw [R]
+      rw [hE_summable.tsum_add (hMnorm_summable.mul_left c), tsum_mul_left]
+    rw [hRsum]
+    calc
+      _ ≤ CE * x * (1 + Real.log x) ^ 2 + c * (K * x) :=
+        add_le_add hEpoly (mul_le_mul_of_nonneg_left hMnorm_bound hc_pos.le)
+      _ ≤ CE * x * (1 + Real.log x) ^ 2 + Kc * (K * x) := by
+        gcongr
+      _ ≤ CE * x * (1 + Real.log x) ^ 2 +
+          Kc * (K * x * (1 + Real.log x) ^ 2) := by
+        have hKx : 0 ≤ K * x := mul_nonneg hK hx.le
+        have hKxscale : K * x ≤ K * x * (1 + Real.log x) ^ 2 := by
+          simpa only [mul_one] using mul_le_mul_of_nonneg_left hone_sq hKx
+        exact add_le_add le_rfl (mul_le_mul_of_nonneg_left hKxscale hKc)
+      _ = C * x * (1 + Real.log x) ^ 2 := by
+        dsimp [C]
+        ring
+  have hW_pos : 0 < W := zero_lt_one.trans_le hW
+  have hpoint (n : ℕ) : ‖A W n - M n‖ ≤ R n / W := by
+    by_cases hn : n = 0
+    · subst n
+      simp [A, M, E, R, firstOrderPerronTanneryError, LSeries.term,
+        vonMangoldt_eq_mathlib]
+    · by_cases hu : Real.log (x / n) = 0
+      · have hjump :=
+          norm_intervalIntegral_firstOrderPerronTerm_sub_halfStep_le_of_log_eq_zero
+            hx hc_pos hW_pos hn hu
+        have hv_nonneg : 0 ≤ vonMangoldt n := by
+          rw [vonMangoldt_eq_mathlib]
+          exact ArithmeticFunction.vonMangoldt_nonneg
+        have hpi_sq : 1 ≤ Real.pi ^ 2 := by nlinarith [Real.pi_gt_three]
+        have hMnorm : ‖M n‖ = vonMangoldt n / 2 := by
+          dsimp [M]
+          rw [hu]
+          simp [perronHalfStep, abs_of_nonneg hv_nonneg, div_eq_mul_inv]
+        calc
+          ‖A W n - M n‖ ≤ c * vonMangoldt n /
+              (2 * Real.pi ^ 2 * W) := by
+            simpa [A, M] using hjump
+          _ ≤ (c * ‖M n‖) / W := by
+            rw [hMnorm]
+            have hcv : 0 ≤ c * vonMangoldt n :=
+              mul_nonneg hc_pos.le hv_nonneg
+            calc
+              c * vonMangoldt n / (2 * Real.pi ^ 2 * W) ≤
+                  c * vonMangoldt n / (2 * W) := by
+                apply div_le_div_of_nonneg_left hcv (by positivity)
+                nlinarith
+              _ = c * (vonMangoldt n / 2) / W := by ring
+          _ ≤ R n / W := by
+            apply div_le_div_of_nonneg_right _ hW_pos.le
+            dsimp [R]
+            exact le_add_of_nonneg_left (hE_nonneg n)
+      · have herr :=
+          norm_intervalIntegral_firstOrderPerronTerm_sub_halfStep_le_of_log_ne_zero
+            hx hc_pos hW_pos hn hu
+        have hEeq :
+            vonMangoldt n * (x / n) ^ c /
+                (Real.pi ^ 2 * |Real.log (x / n)| * W) = E n / W := by
+          dsimp [E]
+          rw [firstOrderPerronTanneryError, if_neg hn, if_neg hu]
+          field_simp
+        calc
+          ‖A W n - M n‖ ≤
+              vonMangoldt n * (x / n) ^ c /
+                (Real.pi ^ 2 * |Real.log (x / n)| * W) := by
+            simpa [A, M] using herr
+          _ = E n / W := hEeq
+          _ ≤ R n / W := by
+            apply div_le_div_of_nonneg_right _ hW_pos.le
+            dsimp [R]
+            exact le_add_of_nonneg_right
+              (mul_nonneg hc_pos.le (norm_nonneg _))
+  have hR_div_summable : Summable (fun n => R n / W) :=
+    hR_summable.div_const W
+  have hdiff_summable : Summable (fun n => A W n - M n) :=
+    Summable.of_norm_bounded hR_div_summable hpoint
+  have hA_summable : Summable (A W) := by
+    have hadd := hdiff_summable.add hM_summable
+    simpa only [sub_add_cancel] using hadd
+  change ‖(∫ w : ℝ in (-W)..W,
+      (x : ℂ) ^ perronLine c w *
+        (-deriv riemannZeta (perronLine c w) /
+          riemannZeta (perronLine c w)) /
+            perronLine c w) -
+      (chebyshevPsi0 x : ℂ)‖ ≤
+        C * x * (1 + Real.log x) ^ 2 / W
+  rw [intervalIntegral_neg_logDeriv_riemannZeta_firstOrder_eq_vonMangoldt_tsum
+      hx hc, ← hM_tsum, ← hA_summable.tsum_sub hM_summable]
+  calc
+    ‖∑' n, (A W n - M n)‖ ≤ ∑' n, ‖A W n - M n‖ :=
+      norm_tsum_le_tsum_norm hdiff_summable.norm
+    _ ≤ ∑' n, R n / W :=
+      Summable.tsum_le_tsum hpoint hdiff_summable.norm hR_div_summable
+    _ = (∑' n, R n) / W := by
+      simp_rw [div_eq_mul_inv]
+      rw [tsum_mul_right]
+    _ ≤ C * x * (1 + Real.log x) ^ 2 / W :=
+      div_le_div_of_nonneg_right hRpoly hW_pos.le
 
 /-- On the fixed line `Re(s)=2`, first-order Perron inversion has one
 polynomial error constant for every positive integral sampling point.  The

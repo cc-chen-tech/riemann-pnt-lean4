@@ -1,4 +1,5 @@
 import PrimeNumberTheorem.SafeSecondOrderExplicitFormula
+import PrimeNumberTheorem.VonMangoldtLSeriesNorm
 import ZeroFreeRegion.PhragmenLindelofZeta
 
 open Complex MeasureTheory Set Filter Topology
@@ -6,12 +7,6 @@ open scoped ArithmeticFunction BigOperators LSeries.notation Interval
 
 namespace PrimeNumberTheorem
 namespace ExplicitFormulaResidues
-
-/-- Absolute von Mangoldt Dirichlet-series majorant on the real line
-`Re(s) = 1 + ε`. -/
-noncomputable def vonMangoldtLSeriesNorm (ε : ℝ) : ℝ :=
-  ∑' n : ℕ, ‖LSeries.term
-    (fun n => (ArithmeticFunction.vonMangoldt n : ℂ)) ((1 + ε : ℝ) : ℂ) n‖
 
 theorem norm_neg_logDeriv_riemannZeta_le_vonMangoldtLSeriesNorm
     {ε σ t : ℝ} (hε : 0 < ε) (hσ : 1 + ε ≤ σ) :
