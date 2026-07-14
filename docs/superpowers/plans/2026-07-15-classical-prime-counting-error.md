@@ -38,7 +38,7 @@ Chebyshev functions, real logarithm/exponential/rpow estimates.
   `PrimeNumberTheorem.logIntegral`
 - Produces: compile-time contracts for the namespace theorem and public API
 
-- [ ] **Step 1: Add the contract before production code**
+- [x] **Step 1: Add the contract before production code**
 
 ```lean
 import RiemannPNT
@@ -61,7 +61,7 @@ example :
 Register `Test.ClassicalPrimeCountingErrorContract` immediately after
 `Test.ClassicalPNTErrorContract` in the `roots` array.
 
-- [ ] **Step 2: Verify RED**
+- [x] **Step 2: Verify RED**
 
 Run:
 
@@ -74,7 +74,7 @@ Expected: failure reporting that
 export are unknown.  Fix import or syntax errors until these missing
 declarations are the only cause.
 
-- [ ] **Step 3: Commit the contract**
+- [x] **Step 3: Commit the contract**
 
 ```bash
 git add Test/ClassicalPrimeCountingErrorContract.lean lakefile.lean
