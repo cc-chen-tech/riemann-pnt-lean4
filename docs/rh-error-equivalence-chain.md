@@ -176,9 +176,18 @@ Current status:
   `exists_goodHeight_Icc_norm_truncatedExplicitFormula_sub_chebyshevPsi0_le_horizontal_add_left`
   therefore gives a genuine finite quantitative explicit formula with no
   abstract contour remainder.
-- What remains for the displayed classical shape is choosing `N=N(T)` to
-  absorb that explicit left-edge term and the finite trivial-zero tail, then
-  promoting the rate from selected good heights to every truncation height.
+- `tendsto_oddVerticalExplicitBound_atTop` and
+  `norm_finiteTrivialZeroSum_residues_sub_logTerm_le_geometric` now absorb the
+  moving-left and finite trivial-zero truncations.  The resulting selected-
+  height standard approximation has `O_x(log^2 A/T)` error.
+- `exists_norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_log_sq_div`
+  combines that selected-height theorem with the bounded-gap zero-window
+  estimate and proves `O_x((1+log(T+8))^2/T)` for every `T >= 8`.
+- What remains for the separately displayed public target is the normalization
+  `deriv riemannZeta 0 / riemannZeta 0 = log(2*pi)` in the repository's
+  conventions and a bounded-height patch for `2 <= T < 8`.  For the RH-to-
+  prime-error direction, the next substantive work is estimating the finite
+  zero sum under RH and choosing the truncation height as a function of `x`.
 
 Formalization dependencies:
 
@@ -214,8 +223,10 @@ Current status:
 - `exists_norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_log_sq_of_RH`
   combines it with F2 and proves the required `O(sqrt(x) log^2 T)` finite-zero
   contribution.
-- What remains is the quantitative truncated explicit-formula remainder that
-  permits a useful choice of `T` as a function of `x`.
+- The fixed-`x` quantitative truncated explicit-formula remainder is now
+  proved for every `T >= 8`.  What remains for an RH-scale asymptotic in `x`
+  is to track the contour constant uniformly as `x` varies, choose `T=T(x)`,
+  and combine that dependence with the finite-zero estimate above.
 
 ### F5. Convert `psi` to `theta`
 
@@ -383,11 +394,12 @@ The smallest coherent route to make
 
 1. Define quantitative error predicates with `=O[atTop]` for `psi`, `theta`,
    and `primeCounting - logIntegral`.
-2. Prove or import a truncated explicit formula for `psi` with precise jump and
-   truncation conventions.
+2. Use the proved fixed-`x` truncated explicit formula with precise jump and
+   truncation conventions, and strengthen its constant bookkeeping uniformly
+   in `x`.
 3. Use the proved zero-counting and reciprocal-zero-sum estimates
    `N(T) = O(T log T)` and `sum m(rho) / |rho| = O(log^2 T)` in the
-   truncated explicit-formula remainder analysis.
+   together with that uniform-in-`x` contour analysis.
 4. Prove `RH -> RH_PsiErrorBound` by bounding the truncated explicit formula.
 5. Use the existing `psi - theta` Mathlib bound to get `RH_ThetaErrorBound`.
 6. Use the proved quantitative partial-summation bridge

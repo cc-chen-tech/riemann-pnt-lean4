@@ -556,19 +556,29 @@ For the truncated identity:
    height finite formula has no abstract contour remainder: its error is an
    `O_x(log^2 A/T)` term plus the displayed exponentially decaying left-edge
    term.
-7. Completed qualitative global assembly:
+7. Completed quantitative truncation and all-height assembly:
+   `tendsto_oddVerticalExplicitBound_atTop` proves the displayed moving-left
+   majorant tends to zero after the height is fixed, while
+   `norm_finiteTrivialZeroSum_residues_sub_logTerm_le_geometric` gives the
+   omitted trivial-zero correction an explicit geometric tail.  The theorem
+   `exists_goodHeight_Icc_norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_log_sq_div`
+   absorbs both truncations at one good height in each unit interval.  Finally,
+   `exists_norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_log_sq_div`
+   combines that result with the bounded-gap zero-window estimate and proves
+   `O_x((1+log(T+8))^2/T)` at every real `T >= 8`.
+8. Completed qualitative global assembly:
    `exists_cofinal_nontrivialZeroSum_tendsto` combines the finite rectangle
    identity with the far-left, moving-left, and central boundary limits.  It
    proves the complete remainder tends to zero and identifies the cofinal
    multiplicity-weighted zero-sum limit.  The all-height interpolation module
    now promotes this to arbitrary-height principal-value truncation.
 
-The remaining quantitative step is not another contour identity.  One must
-choose `N` as a function of `T`, absorb the explicit left-edge term and the
-tail of the finite trivial-zero correction, and promote the selected-height
-rate to every real truncation height.  The existing bounded-gap zero-sum
-estimate supplies the last interpolation input but has not yet been assembled
-with this new selected-height rate.
+The quantitative contour/truncation step is therefore closed in the native
+`explicitFormulaApproxWithMultiplicity` normalization.  The separate public
+`ExplicitFormulaTruncatedTarget` still uses `log(2*pi)` in place of
+`deriv riemannZeta 0 / riemannZeta 0` and starts at `T=2`; discharging that
+exact target requires the constant identity and a bounded-height patch, not a
+new large-height contour estimate.
 
 For the principal value final formula:
 
@@ -697,12 +707,15 @@ the newly included zero contributions.
 The global finite-zero layer now also proves both multiplicity-counted
 `N(T) = O(T log T)` and the exact reciprocal-norm estimate
 `sum_{|Im rho| <= T} m(rho) / ‖rho‖ = O(log^2 T)`.  These are quantitative
-inputs for a truncated formula; the uniform contour remainder required by
-`ExplicitFormulaTruncatedTarget` is still open.
+inputs for the truncated formula.  The fixed-`x` contour remainder is now
+proved in the native normalization for every `T >= 8`; the exact
+`ExplicitFormulaTruncatedTarget` still requires its alternate constant
+normalization and low-height patch.
 
 Under RH, the same module now bounds the actual multiplicity-aware finite zero
 sum by `O(sqrt(x) log^2 T)`.  This closes the zero-sum side of the RH estimate;
-it does not replace the missing uniform truncated contour remainder.
+an RH-scale asymptotic still requires controlling the new contour constant as
+`x` varies and then choosing `T=T(x)`.
 
 The same finite-tail layer also preserves the direct bridge from a stable base
 truncation to the legacy unweighted compatibility predicate. The public theorem
@@ -795,18 +808,15 @@ and
    target shape.
 3. Prove finite bounded-height support lemmas for the zero sums from
    `finite_nontrivial_zeros_bounded_height`.
-4. Either prove the ordinary `1 / s` half-jump formula, or combine the proved
-   finite-height `1 / s^2` formula and Riesz finite-difference squeeze with a
-   quantitative choice of `y - x` in the contour-shift error argument.  The
-   second-order vertical truncation, its von Mangoldt specialization, its
-   closed-form coefficient bound, and the exact finite-difference bridge are
-   complete.  Replacing the finite Dirichlet polynomial by the `-zeta'/zeta`
-   series on the right line, and then estimating the shifted contour edges,
-   remain open; the ordinary conditionally convergent half-jump is the alternate
-   route.
+4. Completed: the ordinary `1 / s` half-jump Perron formula, its
+   `-zeta'/zeta` specialization, and the quantitative right-edge bound are now
+   theorem-level.
 5. Extend the existing constant-function rectangle sanity checks to a real
    rectangle meromorphic residue theorem as a reusable project
    lemma, since Mathlib currently supplies the analytic pieces but not the exact
    residue-sum wrapper needed here.
-6. Prove the truncated explicit formula with an explicit contour-error term.
-7. Only then state the principal-value or non-jump final formula as a limit.
+6. Completed for fixed `x` and every `T >= 8`: the truncated explicit formula
+   has an explicit `O_x(log^2 T/T)` error in the native normalization.
+7. Completed: the principal-value formula is also proved as an all-height
+   limit.  The next analytic task is uniform control of the `x` dependence for
+   RH/PNT error applications.

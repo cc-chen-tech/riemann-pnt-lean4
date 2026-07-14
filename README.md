@@ -127,8 +127,10 @@ multiplicity `O(log A)`, their weighted contribution is
 `ExplicitFormulaAllHeights` uses two such windows and the floor index
 `floor((U-5)/2)` to promote the selected-height limit to every real truncation
 height.  Thus the multiplicity-aware principal-value explicit formula is now a
-proved theorem; the separate quantitative truncated-error interface remains
-open.
+proved theorem.  The same module now also proves the uniform fixed-`x` rate
+`O_x((1+log(T+8))^2/T)` for every `T >= 8`; the separately normalized public
+truncated target still needs the identity at `zeta'(0)/zeta(0)` and a bounded
+height patch for `2 <= T < 8`.
 
 The repository now proves the real-part boundary-strip estimate actually used
 by the 3-4-1 argument:
@@ -336,8 +338,8 @@ This keeps the claims tight:
    classical `c/log |t|` zero-free region.
 2. **Secondary contribution:** proving the multiplicity-aware principal-value
    Riemann-von Mangoldt formula for `chebyshevPsi0` with symmetric truncation at
-   every real height.  This does not yet include the quantitative truncated
-   error bound needed for RH-scale prime-counting estimates.
+   every real height, together with a uniform fixed-`x`
+   `O_x((1+log(T+8))^2/T)` truncation error for `T >= 8`.
 3. **Supporting contribution:** proving PNT-form equivalences, RH-scale error
    propagation lemmas, and the conditional reverse bridge
    `RH_PsiErrorBound -> RiemannHypothesis` that will compose with a future
@@ -467,12 +469,12 @@ of such contours from `goodHeight`: the square at height `T` has real sides
 | `PrimeNumberTheorem/RightHorizontalEdge.lean` | Absolutely convergent and inner zero-free horizontal estimates, including genuine interval integrability and both-side decay | sorry-free |
 | `ZeroFreeRegion/ShiftedJensen.lean` | Shifted `3/2+it` Jensen disk, enlarged divisor-mass control, and regularized logarithmic-derivative `O(log(|t|+5))` bound down to `Re(s)=1/2` | sorry-free |
 | `PrimeNumberTheorem/CentralHorizontalEdge.lean` | Full `O(log^2 A)` logarithmic-derivative bound on `-1<=Re(s)<=2` at logarithmically separated good heights, explicit `O(log^2 A/T)` contour bound, and both-side cofinal decay | sorry-free |
-| `PrimeNumberTheorem/CofinalExplicitFormula.lean` | Exact moving-rectangle identities on a strictly increasing good-height sequence, complete contour-remainder decay, and the resulting cofinal multiplicity-aware approximation limit | sorry-free; consumed by the all-height module |
-| `PrimeNumberTheorem/ExplicitFormulaAllHeights.lean` | Floor-index geometry, two-window bounded-gap estimates, and the completed all-real-height multiplicity-aware explicit formula | sorry-free |
+| `PrimeNumberTheorem/CofinalExplicitFormula.lean` | Exact moving-rectangle identities, selected-height quantitative contour bounds, absorbed moving-left and trivial-zero truncations, and the cofinal multiplicity-aware approximation limit | sorry-free; consumed by the all-height module |
+| `PrimeNumberTheorem/ExplicitFormulaAllHeights.lean` | Floor-index geometry, two-window bounded-gap estimates, the completed all-real-height multiplicity-aware explicit formula, and its `O_x(log^2 T/T)` rate for `T >= 8` | sorry-free |
 | `PrimeNumberTheorem/GlobalZeroCount.lean` | Global `O(T log T)` bounds for nontrivial zeta zeros and an analytic-multiplicity weighted reciprocal-norm sum bounded by `O(log^2 T)` | sorry-free; quantitative input for future truncated-error estimates |
 | `PrimeNumberTheorem/NontrivialZeroMultiplicity.lean` | Functional-equation invariance of analytic zero multiplicity, single weighted-zero contribution bounds, and finite multiplicity-mass control by the zeta divisor on a closed disk | sorry-free; consumed by the completed interpolation |
 | `PrimeNumberTheorem/LeftHorizontalEdge.lean` | Functional-equation decomposition and vanishing far-left horizontal pieces | sorry-free |
-| `PrimeNumberTheorem/LeftVerticalEdge.lean` | Negative-odd vertical-line log-derivative bound, genuine interval integrability, and moving-edge decay | sorry-free |
+| `PrimeNumberTheorem/LeftVerticalEdge.lean` | Negative-odd vertical-line log-derivative bound, genuine interval integrability, moving-edge decay, and decay of its explicit numerical majorant for fixed height | sorry-free |
 | `PrimeNumberTheorem/FirstOrderExplicitFormula.lean` | Multiplicity-aware finite truncated formula and cofinal zero-sum-minus-remainder limit | sorry-free; consumed by the completed all-height explicit formula |
 | `PrimeNumberTheorem/QuantitativeGoodHeight.lean` | Quantitative good-height selection, total local zero multiplicity `O(log A)`, and a multiplicity-weighted fixed-window contribution bound `O_x(log A/A)` tending to zero | sorry-free; consumed by the completed all-height interpolation |
 | `MathlibAux/RectangleResidue.lean` | Rectangle residue route interface, proved circle and square finite simple-pole residue formulas, rectangular-annulus deformation, plus constant-function sanity checks | sorry-free, general meromorphic route interface unproved |
@@ -561,16 +563,19 @@ Lean declarations in `ZeroFreeRegion.lean` and
 | `ZeroFreeRegion.exists_shifted_disk_regularized_logDeriv_riemannZeta_log_bound` | `theorem` | Controls the regularized logarithmic derivative by `B(1+log(|t|+5))` on the retained radius-one disk centered at `3/2+it`, using an enlarged center-`2+it` Jensen disk and shifted divisor mass. | Reaches `Re(s)=1/2`, the missing geometry for the central horizontal contour. |
 | `PrimeNumberTheorem.ExplicitFormulaResidues.exists_goodHeight_Icc_norm_logDeriv_central_band_le_log_sq` / `exists_tendsto_horizontal_central_explicitFormulaIntegrand_both_zero` | `theorem` | Gives one selected `T in [A,A+1]` controlling both signs and all `-1<=Re(s)<=2` by `C(1+log(A+6))^2`, then constructs a cofinal sequence on which both complete central horizontal integrals tend to zero. | Closes the previously missing central horizontal boundary estimate. |
 | `PrimeNumberTheorem.ExplicitFormulaResidues.exists_cofinal_nontrivialZeroSum_tendsto` / `exists_cofinal_explicitFormulaApproxWithMultiplicity_tendsto` | `theorem` | Extracts one strictly increasing cofinal good-height sequence with `T n in [2n+4,2n+5]`, proves the exact finite moving-rectangle identity and complete remainder decay, and identifies the limit of both the multiplicity-weighted zero sum and the final multiplicity-aware approximation. | Closes the global cofinal contour-limit assembly used by the all-height theorem. |
-| `PrimeNumberTheorem.ExplicitFormulaResidues.exists_norm_explicitFormulaApproxWithMultiplicity_sub_le_log_div_of_le_add_three` | `theorem` | For fixed `x>1` and `4<=T<=U<=T+3`, bounds the change of the multiplicity-aware approximation by `2 C x (1+log(T+8))/(T-1/2)`. | Upgrades the two-local-window comparison to an explicit `O_x(log T/T)` bounded-gap modulus; the separate uniform truncated-contour error remains open. |
+| `PrimeNumberTheorem.ExplicitFormulaResidues.exists_norm_explicitFormulaApproxWithMultiplicity_sub_le_log_div_of_le_add_three` | `theorem` | For fixed `x>1` and `4<=T<=U<=T+3`, bounds the change of the multiplicity-aware approximation by `2 C x (1+log(T+8))/(T-1/2)`. | Supplies the explicit `O_x(log T/T)` bounded-gap modulus consumed by the all-height rate theorem. |
 | `PrimeNumberTheorem.analyticOrderNatAt_riemannZeta_one_sub_of_nontrivialZero` / `norm_multiplicity_zero_contribution_le_div_height` / `sum_analyticOrderNatAt_riemannZeta_le_finsum_divisor_closedBall` | `theorem` | Proves multiplicity symmetry under `rho -> 1-rho`, bounds one weighted contribution above a height cutoff, and controls a finite family's total analytic multiplicity by local divisor mass. | Supplies the multiplicity-aware inputs needed to bound zero-sum increments between selected heights. |
 | `PrimeNumberTheorem.ExplicitFormulaAux.exists_localZeroMultiplicity_le_log_bound` / `exists_localZeroContributionNorm_le_log_div` / `tendsto_localZeroContributionNorm_atTop` | `theorem` | Bounds total analytic multiplicity in the fixed-width window by `B(1+log(A+6))`, bounds its weighted zero contribution by `C*x*(1+log(A+6))/(A-1/2)`, and proves that contribution tends to zero. | Supplies the local weighted-increment estimate consumed by the completed interpolation. |
 | `PrimeNumberTheorem.ExplicitFormulaResidues.norm_explicitFormulaApproxWithMultiplicity_sub_le_two_localWindows` / `explicit_formula_von_mangoldt_proved` | `theorem` | Covers every gap of length at most three by two fixed-width zero windows and promotes the cofinal limit to the full real-height symmetric limit. | Proves the tracked multiplicity-aware von Mangoldt explicit-formula predicate for every `x >= 2`. |
-| `PrimeNumberTheorem.ExplicitFormulaAux.exists_globalZeroMultiplicity_le_mul_log` / `exists_card_nontrivialZerosFinset_le_mul_log` | `theorem` | Partitions high zeros by `floor |Im rho|`, controls each fixed-width fiber using the proved Jensen local-multiplicity bound, and absorbs the bounded low-height contribution. | Proves global `O(T log T)` zero counting with analytic multiplicity and for distinct zeros; this is an input, not yet a quantitative truncated explicit-formula error theorem. |
-| `PrimeNumberTheorem.ExplicitFormulaAux.exists_globalReciprocalZeroMultiplicity_le_log_sq` | `theorem` | Applies the same floor-fiber decomposition with the exact weight `analyticOrderNatAt ζ rho / ‖rho‖`, then sums `1/n` using the harmonic bound. | Proves the global reciprocal-zero input `O(log^2 T)` without assuming simple zeros or RH; the quantitative truncated explicit-formula error remains separate. |
+| `PrimeNumberTheorem.ExplicitFormulaAux.exists_globalZeroMultiplicity_le_mul_log` / `exists_card_nontrivialZerosFinset_le_mul_log` | `theorem` | Partitions high zeros by `floor |Im rho|`, controls each fixed-width fiber using the proved Jensen local-multiplicity bound, and absorbs the bounded low-height contribution. | Proves global `O(T log T)` zero counting with analytic multiplicity and for distinct zeros; it also feeds the finite-zero estimates used with the quantitative formula. |
+| `PrimeNumberTheorem.ExplicitFormulaAux.exists_globalReciprocalZeroMultiplicity_le_log_sq` | `theorem` | Applies the same floor-fiber decomposition with the exact weight `analyticOrderNatAt ζ rho / ‖rho‖`, then sums `1/n` using the harmonic bound. | Proves the global reciprocal-zero input `O(log^2 T)` without assuming simple zeros or RH; under RH it controls the finite zero contribution separately from the contour rate. |
 | `PrimeNumberTheorem.ExplicitFormulaAux.norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_globalReciprocal_of_RH` / `exists_norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_log_sq_of_RH` | `theorem` | Under RH, uses `Re(rho)=1/2` termwise and the reciprocal-zero estimate to bound the complete multiplicity-aware finite zero sum. | Proves the zero contribution is `O(sqrt(x) log^2 T)`; it does not bound the separate truncated contour remainder. |
 | `PrimeNumberTheorem.exists_norm_truncated_neg_logDeriv_firstOrderPerron_sub_chebyshevPsi0_le_div` / `ExplicitFormulaResidues.exists_norm_truncatedExplicitFormula_sub_contourRemainder_sub_chebyshevPsi0_le_div` | `theorem` | Quantifies the full conditionally convergent first-order Perron integral by `C(x,c)/W`, including the prime-power half-jump, and inserts it into the finite multiplicity-aware rectangle identity. | Closes the right Perron edge; the following theorems now quantify the remaining contour at selected heights. |
 | `ExplicitFormulaResidues.exists_norm_integral_farLeft_explicit_le_log_div` / `exists_goodHeight_Icc_norm_horizontal_complete_explicitFormulaContour_difference_le` | `theorem` | Bounds the complete far-left horizontal edge uniformly in its moving endpoint and combines it with the central band into an `O_x(log²A/T)` top-bottom estimate at one good `T∈[A,A+1]`. | Quantitatively closes both horizontal edges at selected heights. |
-| `ExplicitFormulaResidues.exists_goodHeight_Icc_norm_firstOrderContourRemainder_le_horizontal_add_left` / `exists_goodHeight_Icc_norm_truncatedExplicitFormula_sub_chebyshevPsi0_le_horizontal_add_left` | `theorem` | Adds the explicit exponentially decaying negative-odd left edge and quantitative Perron inversion to obtain a selected-height finite explicit formula with no abstract contour remainder. | Choosing `N=N(T)`, controlling the finite trivial-zero tail, and quantitative all-height interpolation remain open. |
+| `ExplicitFormulaResidues.exists_goodHeight_Icc_norm_firstOrderContourRemainder_le_horizontal_add_left` / `exists_goodHeight_Icc_norm_truncatedExplicitFormula_sub_chebyshevPsi0_le_horizontal_add_left` | `theorem` | Adds the explicit exponentially decaying negative-odd left edge and quantitative Perron inversion to obtain a selected-height finite explicit formula with no abstract contour remainder. | Upstream estimate consumed by the following truncation-selection theorems. |
+| `ExplicitFormulaResidues.tendsto_oddVerticalExplicitBound_atTop` / `ExplicitFormulaAux.norm_finiteTrivialZeroSum_residues_sub_logTerm_le_geometric` | `theorem` | Proves the displayed moving-left majorant tends to zero as `N -> infinity` at fixed height and bounds the omitted trivial-zero correction by a geometric tail. | Supplies the two quantitative truncation inputs that were previously open. |
+| `ExplicitFormulaResidues.exists_goodHeight_Icc_exists_truncation_norm_truncatedExplicitFormula_sub_chebyshevPsi0_le_log_sq_div` / `exists_goodHeight_Icc_norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_log_sq_div` | `theorem` | Chooses a common truncation depth after the good height is fixed, absorbs both the moving-left edge and finite trivial-zero tail, and obtains the standard multiplicity-aware approximation with `O_x(log^2 A/T)` error. | Closes the selected-height quantitative formula in the repository's native normalization. |
+| `ExplicitFormulaResidues.exists_norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_log_sq_div` | `theorem` | Uses a good `U in [T,T+1]` and the two-window bounded-gap modulus to prove `O_x((1+log(T+8))^2/T)` for every real `T >= 8`. | Upgrades the qualitative all-height limit to a uniform quantitative truncated formula. |
 | `ZeroFreeRegion.exists_ReNegDerivDivVerticalLogBound` | `theorem` | Proves the exact uniform boundary-strip estimate `Re(-ζ'/ζ(σ+it))≤C log|t|` for `1≤σ≤2` above a fixed height, using the favorable sign of every local zero principal part. | Discharges the real-part vertical input actually required by the 3-4-1 route without asserting the stronger full-norm bound. |
 | `ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_le_neg_inv_add_log_abs_bound` | `theorem` | Separates a same-height candidate zero and proves `Re(-ζ'/ζ(σ+it))≤-1/(σ-β)+C log|t|` uniformly when the candidate lies in the fixed Jensen disk. | Supplies the quantitative zero-repulsion term; candidates farther left are handled by a uniform constant absorption in the final proof. |
 | `ZeroFreeRegion.classical_zero_free_region_proved` | `theorem` | Proves the predicate `classical_zero_free_region`, i.e. existence of `c>0` with zeta nonzero for `|Im(s)|≥2` and `Re(s)≥1-c/log|Im(s)|`. | Completes the classical de la Vallee Poussin zero-free-region chain in Lean; it is not a proof of PNT or the stronger Vinogradov-Korobov region. |
@@ -1082,8 +1087,10 @@ separated from the nontrivial-zero predicate, the single contribution
 trivial-zero contribution sum is bounded both by the corresponding finite
 amplitude sum and by `card * (1/2) * x^(-2)`, hence also by
 `Nat.floor (T / 2) * (1/2) * x^(-2)` and, for `T >= 0`, by the continuous
-height cutoff `(T / 2) * (1/2) * x^(-2)`.  This still does not prove the
-infinite trivial-zero correction term.
+height cutoff `(T / 2) * (1/2) * x^(-2)`.  The infinite correction is now
+identified with `-(1/2)log(1-x^(-2))`, and the finite truncation at height
+`2N` differs from it by the proved geometric tail
+`(x^(-2)/2) * (x^(-2))^N / (1-x^(-2))`.
 
 The explicit-formula side still contains route interfaces such as
 `PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute`,
@@ -1326,16 +1333,18 @@ parallel work breakdown of the remaining analytic chains.
 
 | Theorem | Missing Mathlib Component | Difficulty |
 |---|---|---|
-| Quantitative truncated explicit-formula error | Uniform contour and zero-sum error estimates | High |
+| Public truncated-target normalization | Prove `zeta'(0)/zeta(0) = log(2*pi)` in the chosen convention and patch `2 <= T < 8` | Medium |
 | Vinogradov-Korobov zero-free region | Exponential sum estimates | Very High |
 | Hardy's theorem targets | Corrected moment estimates and asymptotic expansions of special functions | Medium–High |
 
 ### Easiest Path Forward
 
-The next PNT-facing step is a uniform quantitative truncated-error theorem for
-the completed principal-value explicit formula.  In parallel, strengthening
-the zero-free region beyond the classical scale requires substantially deeper
-exponential-sum input.
+The quantitative truncated error is now proved in the repository's native
+normalization for every `T >= 8`.  The next PNT-facing step is to consume this
+bound together with the classical zero-free region in a finite zero-sum/error
+estimate, while the public target's alternate constant normalization and low
+heights can be closed separately.  Strengthening the zero-free region beyond
+the classical scale still requires substantially deeper exponential-sum input.
 
 ## Related Work
 

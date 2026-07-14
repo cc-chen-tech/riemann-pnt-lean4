@@ -3406,14 +3406,15 @@ Route interfaces:
   multiplicity-weighted reciprocal-norm sum
   `sum_{|Im rho| <= T} analyticOrderNatAt(zeta,rho) / ‖rho‖` is
   `O((1 + log (T + 6))^2)`.  These theorems provide quantitative zero-counting
-  input; they do not by themselves discharge the still-open truncated
-  explicit-formula error target.
+  input used both by the RH finite-zero estimate and by the quantitative
+  explicit-formula chain.
 - `norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_globalReciprocal_of_RH`
   and
   `exists_norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_log_sq_of_RH`
   consume RH only through `Re(rho) = 1/2` and prove the actual finite,
-  multiplicity-aware zero contribution is `O(sqrt(x) log^2 T)`.  The
-  quantitative contour remainder remains open.
+  multiplicity-aware zero contribution is `O(sqrt(x) log^2 T)`.  The fixed-`x`
+  quantitative contour remainder is now proved; an RH-scale asymptotic in `x`
+  still requires uniform control of its `x`-dependent constant.
 
 Reusable predicates:
 
@@ -3566,8 +3567,24 @@ Support-level verified declarations:
 - `ExplicitFormulaResidues.exists_goodHeight_Icc_norm_truncatedExplicitFormula_sub_chebyshevPsi0_le_horizontal_add_left`
   combines the complete contour bound with quantitative Perron inversion.  It
   is a finite, multiplicity-aware, selected-height truncated explicit formula
-  with no abstract contour remainder.  Choosing `N=N(T)`, absorbing the finite
-  trivial-zero tail, and proving a quantitative all-height version remain open.
+  with no abstract contour remainder.
+- `ExplicitFormulaResidues.tendsto_oddVerticalExplicitBound_atTop` proves the
+  complete displayed moving-left majorant tends to zero as the negative-odd
+  truncation depth tends to infinity at fixed height.
+- `ExplicitFormulaAux.norm_finiteTrivialZeroSum_residues_sub_logTerm_le_geometric`
+  upgrades the finite trivial-zero correction from qualitative convergence to
+  an explicit geometric tail bound.
+- `ExplicitFormulaResidues.exists_goodHeight_Icc_exists_truncation_norm_truncatedExplicitFormula_sub_chebyshevPsi0_le_log_sq_div`
+  chooses a truncation depth at each selected good height and removes the
+  moving-left term from the finite explicit-formula bound.
+- `ExplicitFormulaResidues.exists_goodHeight_Icc_norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_log_sq_div`
+  also absorbs the finite trivial-zero tail, yielding the standard
+  multiplicity-aware approximation with `O_x(log^2 A/T)` error at one good
+  height in every unit interval.
+- `ExplicitFormulaResidues.exists_norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_log_sq_div`
+  uses the two-window bounded-gap estimate to promote that rate to every real
+  height `T >= 8`.  The public `ExplicitFormulaTruncatedTarget` still requires
+  its alternate `log(2*pi)` normalization and the bounded range `2 <= T < 8`.
 
 ## Missing Chains for a Complete Analytic PNT
 
