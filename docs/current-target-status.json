@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-14",
+  "timestamp": "2026-07-15",
   "status": "not-yet-complete",
   "completed_without_sorry": true,
   "remaining_prop_targets": {
@@ -143,14 +143,6 @@
         "line": 1348,
         "shape": "∃C>0, ∀x≥2, |(primeCounting x:ℝ)-logIntegral x| ≤ C*sqrt x*log x",
         "depends_on": []
-      },
-      {
-        "name": "rh_iff_optimal_error",
-        "qualified_name": "PrimeNumberTheorem.rh_iff_optimal_error",
-        "file": "PrimeNumberTheorem.lean",
-        "line": 2636,
-        "shape": "RiemannHypothesis.Statement ↔ RH_PrimeCountingLiErrorBound",
-        "depends_on": []
       }
     ],
     "KnownResults": [
@@ -231,6 +223,13 @@
       "line": 137
     },
     {
+      "name": "rh_iff_optimal_error",
+      "qualified_name": "PrimeNumberTheorem.rh_iff_optimal_error",
+      "file": "PrimeNumberTheorem.lean",
+      "line": 2636,
+      "proved_by": "PrimeNumberTheorem.rh_iff_optimal_error_proved"
+    },
+    {
       "name": "ExplicitFormulaConversePowerTarget",
       "qualified_name": "PrimeNumberTheorem.ExplicitFormulaConversePowerTarget",
       "file": "PrimeNumberTheorem.lean",
@@ -266,14 +265,14 @@
     {
       "name": "Explicit formula",
       "target": "ExplicitFormulaTruncatedTarget",
-      "status": "proved for every real height T >= 2; the polynomial-height natural-sample form now also proves the forward RH-to-psi error implication",
+      "status": "proved for every real height T >= 2; the polynomial-height natural-sample form also supplies the forward RH-to-psi implication",
       "next_step": "develop stronger reusable uniform real-x finite-height forms only when required by another endpoint"
     },
     {
       "name": "RH error equivalence",
       "target": "rh_iff_optimal_error",
-      "status": "RH iff RH_PsiErrorBound and RH implies the prime-counting Li error are proved; the final prime-counting equivalence remains open in reverse",
-      "next_step": "prove reverse quantitative partial summation from RH_PrimeCountingLiErrorBound to RH_ThetaErrorBound or RH_PsiErrorBound"
+      "status": "proved in Lean in both directions; neither RH nor the equivalent error predicate is proved unconditionally",
+      "next_step": "no remaining implication gap; retain the individual RH-scale predicates as conditional theorem interfaces"
     },
     {
       "name": "Hardy theorem",
@@ -306,14 +305,13 @@
       "RH_PsiErrorBound",
       "RH_ThetaErrorBound",
       "RH_PrimeCountingLiErrorBound",
-      "RH_ErrorBound",
-      "rh_iff_optimal_error"
+      "RH_ErrorBound"
     ]
   },
-  "mathematical_target_count": 20,
+  "mathematical_target_count": 19,
   "route_interface_count": 5,
   "route_interface_true_body_count": 0,
-  "reusable_predicate_count": 6,
+  "reusable_predicate_count": 7,
   "unclassified_prop_def_count": 0,
   "all_scanned_prop_defs_count": 31
 }

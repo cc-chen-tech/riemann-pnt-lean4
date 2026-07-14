@@ -2,9 +2,9 @@
 
 This document scopes the formalization path around
 `PrimeNumberTheorem.RH_ErrorBound` and
-`PrimeNumberTheorem.rh_iff_optimal_error`.  The RH/Chebyshev-`psi` equivalence
-and the forward RH-to-prime-counting implication are now proved.  The final
-prime-counting equivalence remains open in the reverse direction.
+`PrimeNumberTheorem.rh_iff_optimal_error`.  Both the RH/Chebyshev-`psi`
+equivalence and the final RH/prime-counting equivalence are now proved.
+Neither side is established unconditionally.
 
 ## Current Lean Anchors
 
@@ -38,6 +38,11 @@ The current project already provides these usable endpoints and support lemmas.
 | `ExplicitFormulaResidues.RH_PsiErrorBound_of_RiemannHypothesis` | Combines the selected polynomial-height formula with the RH finite-zero bound and extends the natural-sample estimate to all large real `x`. |
 | `ExplicitFormulaResidues.RH_PrimeCountingLiErrorBound_of_RiemannHypothesis` | Closes the forward von Koch implication using the proved `psi -> theta -> pi-Li` chain. |
 | `ExplicitFormulaResidues.riemannHypothesis_iff_RH_PsiErrorBound` | Packages the completed forward explicit-formula argument with the Mellin/Landau reverse bridge. |
+| `chebyshevTheta_sub_id_eq_primeCountingLi_error` | Exact reverse Abel decomposition of `theta(x)-x` into the `pi-Li` endpoint and integral errors. |
+| `RH_ThetaErrorBound_of_RH_PrimeCountingLiErrorBound` | Proves the reverse quantitative partial-summation implication. |
+| `RH_PsiErrorBound_of_RH_PrimeCountingLiErrorBound` | Composes the reverse `pi-Li -> theta` estimate with the proved `theta -> psi` bridge. |
+| `riemannHypothesis_of_RH_PrimeCountingLiErrorBound` | Closes the reverse prime-counting-error-to-RH implication. |
+| `rh_iff_optimal_error_proved` | Packages both directions as a proof of the tracked `rh_iff_optimal_error` predicate. |
 
 ## Current Target Assessment
 
@@ -68,7 +73,7 @@ The main correction is therefore not the final `sqrt x * log x` order, but the
 formal target shape and naming.  `RH_ErrorBound` is better treated as a
 prime-counting/Li endpoint, not as the first theorem to prove from zeros.
 
-Recommended staged targets:
+Implemented staged declarations:
 
 ```lean
 def RH_PsiErrorBound : Prop :=
@@ -83,14 +88,13 @@ def RH_PrimeCountingLiErrorBound : Prop :=
   (fun x : R => (primeCounting x : R) - logIntegral x)
     =O[atTop] (fun x : R => Real.sqrt x * Real.log x)
 
-theorem rh_iff_primeCounting_li_error :
+theorem rh_iff_optimal_error_proved :
   RiemannHypothesis.Statement <-> RH_PrimeCountingLiErrorBound := ...
 ```
 
-After that, prove a compatibility lemma from the asymptotic `IsBigO` statement
-to the current `exists C, forall x >= 2, ...` shape if the all-`x >= 2`
-form is still desired.  The `atTop` target is usually easier to compose with
-explicit formula and partial summation estimates.
+The compatibility bridge from the asymptotic `IsBigO` statement to the
+`exists C, forall x >= 2, ...` shape is also proved by
+`RH_ErrorBound_of_RH_PrimeCountingLiErrorBound`.
 
 Also rename or document `rh_iff_optimal_error`: the bound is standard and sharp
 as an RH-scale prime-counting target, but "optimal" is not the most precise
@@ -343,14 +347,14 @@ Substituting `pi(t) = Li(t) + E(t)` with
 
 Current status:
 
-- This reverse quantitative partial-summation implication is not yet proved.
-- It is now the only missing mathematical implication for
-  `rh_iff_optimal_error`: once it yields `RH_PsiErrorBound`, the proved
-  `ZeroFreeRegion.riemannHypothesis_of_RH_PsiErrorBound` finishes RH.
-- The weak PNT-form equivalences do not provide this quantitative reverse
-  estimate.
-- The existing `psi - theta` Mathlib bound is enough for the final
-  `theta -> psi` step.
+- `chebyshevTheta_sub_id_eq_primeCountingLi_error` proves the exact reverse
+  Abel decomposition.
+- `RH_ThetaErrorBound_of_RH_PrimeCountingLiErrorBound` controls its integral
+  by integrating `C log(x) / sqrt(t)` and proves the required
+  `sqrt(x) log^2(x)` estimate.
+- The existing `psi - theta` bound supplies the final `theta -> psi` step.
+- `riemannHypothesis_of_RH_PrimeCountingLiErrorBound` and
+  `rh_iff_optimal_error_proved` close the reverse implication and equivalence.
 
 ### R2. Turn the `psi` error into analytic continuation of `-zeta'/zeta`
 
@@ -419,15 +423,13 @@ Current status:
 
 ## Minimal New Dependency Chain
 
-The forward chain through `RH_PsiErrorBound`, `RH_ThetaErrorBound`, and
-`RH_PrimeCountingLiErrorBound` is complete.  The smallest remaining route to
-make `rh_iff_primeCounting_li_error` a theorem is:
+The forward and reverse implication chains are complete.  The reverse route is:
 
-1. Prove the reverse quantitative partial-summation estimate
-   `RH_PrimeCountingLiErrorBound -> RH_ThetaErrorBound`.
-2. Use `RH_ThetaErrorBound_iff_RH_PsiErrorBound`.
-3. Apply the already-proved
-   `ZeroFreeRegion.riemannHypothesis_of_RH_PsiErrorBound`.
+1. `RH_PrimeCountingLiErrorBound -> RH_ThetaErrorBound` by quantitative
+   reverse partial summation.
+2. `RH_ThetaErrorBound -> RH_PsiErrorBound` by the proved Chebyshev comparison.
+3. `RH_PsiErrorBound -> RiemannHypothesis.Statement` by the Mellin/Landau
+   zero-exclusion bridge and zero symmetry.
 
 The already-proved PNT-form equivalence remains useful documentation and sanity
 checking, but it is too coarse for the RH error equivalence: it tracks limits,

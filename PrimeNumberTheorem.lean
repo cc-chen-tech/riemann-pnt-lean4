@@ -2627,11 +2627,13 @@ lemma chebyshevTheta_asymptotic_of_RH_PsiErrorBound
   PNTForm3_iff_chebyshevTheta_asymptotic.mp
     (PNTForm3_of_RH_PsiErrorBound hψ)
 
-/-- Target statement: RH iff the RH-scale prime-counting error bound.
+/-- Named proposition asserting the standard von Koch equivalence between RH
+and the RH-scale prime-counting error bound.
 
-This is a standard deep equivalence, but the current project does not provide
-the analytic machinery needed to prove it.  Keeping it as a `Prop` records the
-target without claiming a proof.
+The downstream theorem `PrimeNumberTheorem.rh_iff_optimal_error_proved` in
+`RHPrimeCountingConverse.lean` proves this proposition.  It remains a named
+`Prop` so the forward and reverse implication APIs can share one endpoint; the
+equivalence does not prove either side unconditionally.
 -/
 def rh_iff_optimal_error : Prop :=
   RiemannHypothesis.Statement ↔ RH_PrimeCountingLiErrorBound

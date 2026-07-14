@@ -846,6 +846,7 @@ and
    selected formula has one absolute `O((1+log m)^2)` contour error.
 7. Completed: the principal-value formula is also proved as an all-height
    limit.  The selected-`m^5` finite-zero-sum combination and integer-to-real
-   extension are also completed in `RHNaturalPsiError.lean`.  The remaining RH
-   error-equivalence task is the reverse quantitative partial-summation route
-   from the prime-counting endpoint, not another contour estimate.
+   extension are also completed in `RHNaturalPsiError.lean`.  Reverse
+   quantitative partial summation is completed in
+   `RHPrimeCountingConverse.lean`, so the RH/prime-counting error equivalence
+   has no remaining implication gap.

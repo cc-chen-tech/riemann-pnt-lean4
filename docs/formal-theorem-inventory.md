@@ -19,7 +19,7 @@ python3 -m pytest
 
 At the time of writing, `lake build` succeeds, the recursive placeholder scan
 has no project Lean-source matches, the scanner classifies every project
-`def ... : Prop`, the mathematical target inventory is stable at 20
+`def ... : Prop`, the mathematical target inventory is stable at 19
 declarations, and the Python experiment tests pass.
 
 ## Proved Project-Local Results
@@ -3129,11 +3129,11 @@ metadata, not proof results.
 The following declarations are intentionally `def ... : Prop` targets.  They
 are not exported as theorems and should not be cited as proved.
 
-As of `2026-07-14`, there are **20** mathematical target declarations:
+As of `2026-07-15`, there are **19** mathematical target declarations:
 
 - `HardyTheorem` namespace: **7**
 - `HardyTheorem.Details` namespace: **3**
-- `PrimeNumberTheorem` namespace: **8**
+- `PrimeNumberTheorem` namespace: **7**
 - `KnownResults` namespace: **1**
 - `ZeroFreeRegion` namespace: **0**
 - global namespace: **1** (`vinogradov_korobov_zero_free_region`)
@@ -3147,8 +3147,6 @@ As of `2026-07-14`, there are **20** mathematical target declarations:
 
 ### `PrimeNumberTheorem.lean`
 
-- `rh_iff_optimal_error`
-  target: equivalence between RH and a prime-counting error term.
 - `PNTForm1`, `PNTForm2`, `PNTForm3`
   local PNT-format targets:
   `pi(x) ~ x / log x`, `pi(x) ~ Li(x)`, and `psi(x) ~ x`. These are
@@ -3629,6 +3627,14 @@ Support-level verified declarations:
 - `ExplicitFormulaResidues.riemannHypothesis_iff_RH_PsiErrorBound` combines
   the new forward theorem with the existing Mellin/Landau converse.  This is
   an equivalence of propositions, not an unconditional proof of either side.
+- `PrimeNumberTheorem.chebyshevTheta_sub_id_eq_primeCountingLi_error` proves
+  the exact reverse Abel decomposition for `theta(x)-x`.
+- `PrimeNumberTheorem.RH_ThetaErrorBound_of_RH_PrimeCountingLiErrorBound`
+  controls the endpoint and integral errors and proves reverse quantitative
+  partial summation at the RH scale.
+- `PrimeNumberTheorem.riemannHypothesis_of_RH_PrimeCountingLiErrorBound` and
+  `PrimeNumberTheorem.rh_iff_optimal_error_proved` close the reverse implication
+  and the final RH/prime-counting error equivalence.  They do not prove RH.
 
 ## Missing Chains for a Complete Analytic PNT
 
@@ -3645,9 +3651,9 @@ term, the following chains remain:
    real `x` are now also proved; further work concerns stronger reusable
    finite-height forms, not the RH-to-`psi` implication.
 3. **RH error equivalence.**
-   The forward chain from RH to `psi`, `theta`, and `pi-Li` error bounds is
-   proved, as is `RH <-> RH_PsiErrorBound`.  The remaining endpoint is reverse
-   quantitative partial summation from `pi-Li` error back to `psi`/RH.
+   Both directions are proved, including reverse quantitative partial
+   summation from `pi-Li` error back to `theta`, `psi`, and RH.  This closes an
+   equivalence theorem but does not prove RH or an equivalent error predicate.
 4. **Hardy theorem.**
    Need corrected moment asymptotics for Hardy's Z-function and supporting
    special-function asymptotics.

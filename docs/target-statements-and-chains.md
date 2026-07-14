@@ -1,7 +1,7 @@
 # Unproved Target Statements and Missing Chains
 
 This file is the authoritative classification of `def ... : Prop` statements
-(as of `2026-07-14`) in this Lean checkout.  It separates genuinely unproved
+(as of `2026-07-15`) in this Lean checkout.  It separates genuinely unproved
 mathematical targets from reusable predicates that already have theorem-level
 proofs.
 
@@ -31,19 +31,19 @@ and the classical c/log zero-free region
 
 - `HardyTheorem` namespace: 7
 - `HardyTheorem.Details` namespace: 3
-- `PrimeNumberTheorem` namespace: 8
+- `PrimeNumberTheorem` namespace: 7
 - `KnownResults` namespace: 1
 - `ZeroFreeRegion` namespace: 0
 - global namespace: 1
 
-Total: **20**.
+Total: **19**.
 
 For the chain accounting:
 
 - Quantitative zero-free region chain: 1
 - Explicit formula chain: 0 (the principal-value target is proved; the separate
   quantitative truncated-error statement remains a route interface)
-- RH/prime-counting error chain: 8
+- RH/prime-counting error chain: 7
 - Hardy theorem chain: 11 (7 in `HardyTheorem`, 3 in `HardyTheorem.Details`,
   1 in `KnownResults`)
 
@@ -125,7 +125,6 @@ multiplicity-aware target:
 - `PrimeNumberTheorem.RH_ThetaErrorBound`
 - `PrimeNumberTheorem.RH_PrimeCountingLiErrorBound`
 - `PrimeNumberTheorem.RH_ErrorBound`
-- `PrimeNumberTheorem.rh_iff_optimal_error`
 
 ### Current verified anchor theorems
 
@@ -165,17 +164,25 @@ multiplicity-aware target:
 - `PrimeNumberTheorem.ExplicitFormulaResidues.RH_PrimeCountingLiErrorBound_of_RiemannHypothesis`
 - `PrimeNumberTheorem.ExplicitFormulaResidues.RH_ErrorBound_of_RiemannHypothesis`
 - `PrimeNumberTheorem.ExplicitFormulaResidues.riemannHypothesis_iff_RH_PsiErrorBound`
+- `PrimeNumberTheorem.logIntegral_mul_log_sub_integral_div_eq_sub_two`
+- `PrimeNumberTheorem.chebyshevTheta_sub_id_eq_primeCountingLi_error`
+- `PrimeNumberTheorem.RH_ThetaErrorBound_of_RH_PrimeCountingLiErrorBound`
+- `PrimeNumberTheorem.RH_PsiErrorBound_of_RH_PrimeCountingLiErrorBound`
+- `PrimeNumberTheorem.riemannHypothesis_of_RH_PrimeCountingLiErrorBound`
+- `PrimeNumberTheorem.rh_iff_optimal_error_proved`
 
-### Missing mathlib/analytic infrastructure
+### Current boundary
 
-1. The explicit-formula, zero-counting, RH finite-zero-sum, natural-sample,
-   and integer-to-real steps are complete.  They prove
-   `RH -> RH_PsiErrorBound -> RH_ThetaErrorBound ->
-   RH_PrimeCountingLiErrorBound`.
-2. The remaining reverse endpoint is quantitative partial summation from
-   `pi`/`Li` error bounds back to `RH_ThetaErrorBound` or
-   `RH_PsiErrorBound`.  The latter is already equivalent to RH by
-   `riemannHypothesis_iff_RH_PsiErrorBound`.
+The implication chain is complete in both directions:
+
+```text
+RH -> RH_PsiErrorBound -> RH_ThetaErrorBound -> RH_PrimeCountingLiErrorBound
+RH_PrimeCountingLiErrorBound -> RH_ThetaErrorBound -> RH_PsiErrorBound -> RH
+```
+
+Thus `rh_iff_optimal_error` is a proved reusable predicate.  This is an
+equivalence theorem, not an unconditional proof of RH or any equivalent error
+predicate; those individual propositions remain mathematical targets.
 
 ---
 

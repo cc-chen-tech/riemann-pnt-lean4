@@ -21,14 +21,14 @@ CHAIN_SUMMARY = [
     {
         "name": "Explicit formula",
         "target": "ExplicitFormulaTruncatedTarget",
-        "status": "proved in Lean pointwise in x, uniformly for every real height T >= 2",
-        "next_step": "track the contour constant uniformly as x varies for RH-to-prime-error estimates",
+        "status": "proved for every real height T >= 2; the polynomial-height natural-sample form also supplies the forward RH-to-psi implication",
+        "next_step": "develop stronger reusable uniform real-x finite-height forms only when required by another endpoint",
     },
     {
         "name": "RH error equivalence",
         "target": "rh_iff_optimal_error",
-        "status": "not proved in Lean",
-        "next_step": "bridge explicit formula through RH-scale psi/theta error and convert to prime-counting Li error",
+        "status": "proved in Lean in both directions; neither RH nor the equivalent error predicate is proved unconditionally",
+        "next_step": "no remaining implication gap; retain the individual RH-scale predicates as conditional theorem interfaces",
     },
     {
         "name": "Hardy theorem",
@@ -41,6 +41,11 @@ CHAIN_SUMMARY = [
 PROVED_ROUTE_INTERFACES = {
     "PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget":
         "PrimeNumberTheorem.ExplicitFormulaTruncated.explicitFormulaTruncatedTarget_proved",
+}
+
+PROVED_REUSABLE_PREDICATES = {
+    "PrimeNumberTheorem.rh_iff_optimal_error":
+        "PrimeNumberTheorem.rh_iff_optimal_error_proved",
 }
 
 
@@ -107,12 +112,13 @@ def build_status() -> dict[str, object]:
             for r in route_interfaces
         ],
         "reusable_predicates": [
-            {
+            ({
                 "name": r.name,
                 "qualified_name": r.qualified_name,
                 "file": str(r.file.relative_to(ROOT)),
                 "line": r.line_no,
-            }
+            } | ({"proved_by": PROVED_REUSABLE_PREDICATES[r.qualified_name]}
+                 if r.qualified_name in PROVED_REUSABLE_PREDICATES else {}))
             for r in reusable_predicates
         ],
         "unclassified_prop_defs": [
