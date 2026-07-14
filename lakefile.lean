@@ -43,7 +43,6 @@ lean_lib RiemannPNT where
     `HardyTheorem.AFE,
     `HardyTheorem.HardyIntegralBasics,
     `HardyTheorem.OscillatoryIntegral,
-    `Test.HardyFirstApproximationContract,
     `Test.HardyFirstApproximationAxiomAudit,
     `Test.HardyIntegralBasicsContract,
     `Test.HardyPhaseContract,
