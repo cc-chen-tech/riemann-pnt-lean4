@@ -650,5 +650,91 @@ theorem tendsto_finiteTrivialZeroSum_residues {x : ℝ} (hx : 1 < x) :
   rw [heq]
   exact tendsto_sum_range_complex_trivialZeroResidues hx
 
+/-- The finite trivial-zero correction has an explicit geometric tail.  This
+upgrades its qualitative convergence to the rate needed by the quantitative
+explicit formula. -/
+theorem norm_finiteTrivialZeroSum_residues_sub_logTerm_le_geometric
+    {x : ℝ} (hx : 1 < x) (N : ℕ) :
+    ‖(∑ ρ ∈ finiteTrivialZeroSum (2 * (N : ℝ)), -((x : ℂ) ^ ρ) / ρ) -
+        (((-(1 / 2 : ℝ) * Real.log (1 - x ^ (-2 : ℝ)) : ℝ) : ℂ))‖ ≤
+      (x ^ (-2 : ℝ) / 2) * (x ^ (-2 : ℝ)) ^ N /
+        (1 - x ^ (-2 : ℝ)) := by
+  let q : ℝ := x ^ (-2 : ℝ)
+  let f : ℕ → ℂ := fun M => ∑ n ∈ Finset.range M,
+    -((x : ℂ) ^ (-2 * ((n : ℂ) + 1))) /
+      (-2 * ((n : ℂ) + 1))
+  let L : ℂ :=
+    ((-(1 / 2 : ℝ) * Real.log (1 - x ^ (-2 : ℝ)) : ℝ) : ℂ)
+  have hxpos : 0 < x := zero_lt_one.trans hx
+  have hq0 : 0 ≤ q := by dsimp [q]; positivity
+  have hq1 : q < 1 := by
+    dsimp [q]
+    exact Real.rpow_lt_one_of_one_lt_of_neg hx (by norm_num)
+  have hterm (n : ℕ) :
+      ‖-((x : ℂ) ^ (-2 * ((n : ℂ) + 1))) /
+          (-2 * ((n : ℂ) + 1))‖ ≤
+        (q / 2) * q ^ n := by
+    have hexp : (-2 * ((n : ℂ) + 1)) =
+        ((-2 * ((n : ℝ) + 1) : ℝ) : ℂ) := by
+      push_cast
+      ring
+    have htermEq :
+        -((x : ℂ) ^ (-2 * ((n : ℂ) + 1))) /
+            (-2 * ((n : ℂ) + 1)) =
+          ((x ^ (-2 * ((n : ℝ) + 1)) /
+            (2 * ((n : ℝ) + 1)) : ℝ) : ℂ) := by
+      rw [hexp, ← Complex.ofReal_cpow hxpos.le]
+      push_cast
+      field_simp
+    have hpow : x ^ (-2 * ((n : ℝ) + 1)) = q * q ^ n := by
+      dsimp [q]
+      rw [show -2 * ((n : ℝ) + 1) =
+          (-2 : ℝ) + (-2 : ℝ) * (n : ℝ) by ring,
+        Real.rpow_add hxpos, Real.rpow_mul_natCast hxpos.le]
+    rw [htermEq, Complex.norm_real, Real.norm_eq_abs,
+      abs_of_nonneg (by positivity), hpow]
+    have hnum : 0 ≤ q * q ^ n := mul_nonneg hq0 (pow_nonneg hq0 n)
+    have hden : (2 : ℝ) ≤ 2 * ((n : ℝ) + 1) := by
+      have hn : 0 ≤ (n : ℝ) := Nat.cast_nonneg n
+      nlinarith
+    calc
+      q * q ^ n / (2 * ((n : ℝ) + 1)) ≤ q * q ^ n / 2 :=
+        div_le_div_of_nonneg_left hnum (by norm_num) hden
+      _ = (q / 2) * q ^ n := by ring
+  have hstep : ∀ n : ℕ, dist (f n) (f (n + 1)) ≤ (q / 2) * q ^ n := by
+    intro n
+    let term : ℂ := -((x : ℂ) ^ (-2 * ((n : ℂ) + 1))) /
+      (-2 * ((n : ℂ) + 1))
+    have hsum : f (n + 1) = f n + term := by
+      dsimp [f, term]
+      rw [Finset.sum_range_succ]
+    rw [hsum, dist_eq_norm]
+    have hdiff : f n - (f n + term) = -term := by ring
+    rw [hdiff, norm_neg]
+    exact hterm n
+  have htend : Tendsto f atTop (nhds L) := by
+    dsimp [f, L]
+    exact tendsto_sum_range_complex_trivialZeroResidues hx
+  have hrate := dist_le_of_le_geometric_of_tendsto
+    (f := f) (r := q) (C := q / 2) hq1 hstep htend N
+  have hfinite :
+      (∑ ρ ∈ finiteTrivialZeroSum (2 * (N : ℝ)), -((x : ℂ) ^ ρ) / ρ) =
+        f N := by
+    have hfin :
+        finiteTrivialZeroSum (2 * (N : ℝ)) =
+          (Finset.range N).image
+            (fun n : ℕ => (-2 * ((n : ℕ) + 1) : ℂ)) := by
+      unfold finiteTrivialZeroSum
+      congr 2
+      rw [show 2 * (N : ℝ) / 2 = (N : ℝ) by ring, Nat.floor_natCast]
+    dsimp [f]
+    rw [hfin, Finset.sum_image]
+    intro a _ha b _hb hab
+    have hre := congrArg Complex.re hab
+    norm_num at hre
+    exact_mod_cast (by linarith : (a : ℤ) = b)
+  rw [hfinite]
+  simpa [q, L, dist_eq_norm] using hrate
+
 end ExplicitFormulaAux
 end PrimeNumberTheorem

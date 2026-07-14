@@ -566,6 +566,104 @@ theorem norm_integral_explicitFormulaIntegrand_odd_vertical_le
   rw [abs_of_nonneg (by linarith : 0 ≤ T - -T)]
   ring
 
+/-- For fixed vertical height, the explicit numerical upper bound for the
+moving negative-odd edge tends to zero as the number of enclosed trivial
+zeros grows.  This is the quantitative input needed to choose the contour's
+left endpoint after its horizontal height has been fixed. -/
+theorem tendsto_oddVerticalExplicitBound_atTop
+    {x T : ℝ} (hx : 1 < x) (hT : 0 ≤ T) :
+    Tendsto
+      (fun N : ℕ =>
+        (((vonMangoldtLSeriesNorm 1 + ‖Complex.log Real.pi‖ +
+          2 * (‖(Real.eulerMascheroniConstant : ℂ)‖ + 3 +
+            Real.log (2 * (N : ℝ) + T + 4)) + Real.pi) *
+          x ^ (-(2 * (N : ℝ) + 1))) * (2 * T)) /
+          (2 * Real.pi))
+      atTop (nhds 0) := by
+  let A : ℝ := vonMangoldtLSeriesNorm 1 + ‖Complex.log Real.pi‖ +
+    2 * (‖(Real.eulerMascheroniConstant : ℂ)‖ + 3) + Real.pi
+  let D : ℝ := A + 2 * T + 8
+  let q : ℝ := x ^ (-2 : ℝ)
+  let C : ℝ := D * x ^ (-1 : ℝ) * (2 * T) / (2 * Real.pi)
+  have hxpos : 0 < x := zero_lt_one.trans hx
+  have hA : 0 ≤ A := by
+    have hseries : 0 ≤ vonMangoldtLSeriesNorm 1 :=
+      tsum_nonneg fun n => norm_nonneg _
+    dsimp [A]
+    positivity
+  have hD : 0 ≤ D := by
+    dsimp [D]
+    positivity
+  have hq0 : 0 ≤ q := by dsimp [q]; positivity
+  have hq1 : q < 1 := by
+    dsimp [q]
+    exact Real.rpow_lt_one_of_one_lt_of_neg hx (by norm_num)
+  have hxsplit (n : ℕ) :
+      x ^ (-(2 * (n : ℝ) + 1)) = x ^ (-1 : ℝ) * q ^ n := by
+    rw [show -(2 * (n : ℝ) + 1) = (-1 : ℝ) + (-2 : ℝ) * (n : ℝ) by ring,
+      Real.rpow_add hxpos, Real.rpow_mul_natCast hxpos.le]
+  have hpoly : Tendsto (fun n : ℕ => ((n : ℝ) + 1) * q ^ n)
+      atTop (nhds 0) := by
+    have h1 := tendsto_pow_const_mul_const_pow_of_lt_one 1 hq0 hq1
+    have h0 := tendsto_pow_const_mul_const_pow_of_lt_one 0 hq0 hq1
+    have hsum := h1.add h0
+    convert hsum using 1
+    · funext n
+      norm_num
+      ring
+    · ring
+  have hupper : Tendsto
+      (fun n : ℕ => C * (((n : ℝ) + 1) * q ^ n))
+      atTop (nhds 0) := by simpa using hpoly.const_mul C
+  apply squeeze_zero' (Eventually.of_forall fun n => by
+    have hM : 1 ≤ 2 * (n : ℝ) + T + 4 := by
+      have hn : 0 ≤ (n : ℝ) := Nat.cast_nonneg n
+      linarith
+    have hQ : 0 ≤ vonMangoldtLSeriesNorm 1 + ‖Complex.log Real.pi‖ +
+        2 * (‖(Real.eulerMascheroniConstant : ℂ)‖ + 3 +
+          Real.log (2 * (n : ℝ) + T + 4)) + Real.pi := by
+      have hseries : 0 ≤ vonMangoldtLSeriesNorm 1 :=
+        tsum_nonneg fun m => norm_nonneg _
+      have hlog : 0 ≤ Real.log (2 * (n : ℝ) + T + 4) := Real.log_nonneg hM
+      positivity
+    exact div_nonneg
+      (mul_nonneg
+        (mul_nonneg hQ (Real.rpow_nonneg hxpos.le _))
+        (mul_nonneg (by norm_num) hT))
+      (by positivity)) _ hupper
+  filter_upwards with n
+  let M : ℝ := 2 * (n : ℝ) + T + 4
+  let Q : ℝ := vonMangoldtLSeriesNorm 1 + ‖Complex.log Real.pi‖ +
+    2 * (‖(Real.eulerMascheroniConstant : ℂ)‖ + 3 + Real.log M) + Real.pi
+  have hn : 0 ≤ (n : ℝ) := Nat.cast_nonneg n
+  have hMpos : 0 < M := by dsimp [M]; linarith
+  have hlogM : Real.log M ≤ M := Real.log_le_self hMpos.le
+  have hQupper : Q ≤ D * ((n : ℝ) + 1) := by
+    dsimp [Q, D, A, M]
+    nlinarith
+  have hQ : 0 ≤ Q := by
+    have hseries : 0 ≤ vonMangoldtLSeriesNorm 1 :=
+      tsum_nonneg fun m => norm_nonneg _
+    have hlogM0 : 0 ≤ Real.log M := Real.log_nonneg (by
+      dsimp [M]
+      linarith)
+    dsimp [Q]
+    positivity
+  have hpow0 : 0 ≤ x ^ (-(2 * (n : ℝ) + 1)) :=
+    Real.rpow_nonneg hxpos.le _
+  have hTtwo : 0 ≤ 2 * T := mul_nonneg (by norm_num) hT
+  change ((Q * x ^ (-(2 * (n : ℝ) + 1))) * (2 * T)) /
+      (2 * Real.pi) ≤ C * (((n : ℝ) + 1) * q ^ n)
+  calc
+    ((Q * x ^ (-(2 * (n : ℝ) + 1))) * (2 * T)) / (2 * Real.pi) ≤
+        ((D * ((n : ℝ) + 1) * x ^ (-(2 * (n : ℝ) + 1))) * (2 * T)) /
+          (2 * Real.pi) := by
+      gcongr
+    _ = C * (((n : ℝ) + 1) * q ^ n) := by
+      rw [hxsplit]
+      dsimp [C]
+      ring
+
 /-- If the vertical height grows at most linearly with the number of enclosed
 trivial zeros, the complete moving left vertical edge tends to zero. -/
 theorem tendsto_integral_explicitFormulaIntegrand_odd_vertical_atTop

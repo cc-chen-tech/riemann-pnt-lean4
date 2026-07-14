@@ -299,6 +299,176 @@ theorem
           x ^ (-(2 * (N : ℝ) + 1))) * (2 * T)) /
           (2 * Real.pi) := by rfl
 
+/-- At one good height in every unit interval, the left truncation depth can
+be chosen so that the complete finite explicit-formula error is
+`O_x(log^2 A / T)`.  In contrast with the preceding theorem, no moving-left
+contour term remains in the conclusion. -/
+theorem
+    exists_goodHeight_Icc_exists_truncation_norm_truncatedExplicitFormula_sub_chebyshevPsi0_le_log_sq_div
+    {x : ℝ} (hx : 1 < x) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 8 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1), goodHeight T ∧ ∃ N : ℕ,
+        ‖(∑ p ∈ finiteTrivialZeroSum (2 * (N : ℝ)), -((x : ℂ) ^ p) / p) +
+            ((x : ℂ) - deriv riemannZeta 0 / riemannZeta 0 +
+              ∑ ρ ∈ nontrivialZerosFinset T,
+                -(analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ) -
+            (chebyshevPsi0 x : ℂ)‖ ≤
+          C * (1 + Real.log (A + 6)) ^ 2 / T := by
+  rcases
+      exists_goodHeight_Icc_norm_truncatedExplicitFormula_sub_chebyshevPsi0_le_horizontal_add_left
+        hx with ⟨C, hC, hselect⟩
+  refine ⟨C + 1, by positivity, ?_⟩
+  intro A hA
+  rcases hselect A hA with ⟨T, hTmem, hgood, hbound⟩
+  have hTpos : 0 < T := by linarith [hTmem.1]
+  let L : ℝ := 1 + Real.log (A + 6)
+  have hlog : 0 ≤ Real.log (A + 6) :=
+    Real.log_nonneg (by linarith)
+  have hLpos : 0 < L := by dsimp [L]; linarith
+  have heps : 0 < L ^ 2 / T := div_pos (sq_pos_of_pos hLpos) hTpos
+  have hleft := tendsto_oddVerticalExplicitBound_atTop hx hTpos.le
+  rcases (Metric.tendsto_atTop.mp hleft) (L ^ 2 / T) heps with ⟨N, hN⟩
+  have hleftN := hN N le_rfl
+  have hleftNonneg :
+      0 ≤ (((vonMangoldtLSeriesNorm 1 + ‖Complex.log Real.pi‖ +
+        2 * (‖(Real.eulerMascheroniConstant : ℂ)‖ + 3 +
+          Real.log (2 * (N : ℝ) + T + 4)) + Real.pi) *
+        x ^ (-(2 * (N : ℝ) + 1))) * (2 * T)) /
+        (2 * Real.pi) := by
+    have hseries : 0 ≤ vonMangoldtLSeriesNorm 1 :=
+      tsum_nonneg fun n => norm_nonneg _
+    have hlogN : 0 ≤ Real.log (2 * (N : ℝ) + T + 4) :=
+      Real.log_nonneg (by
+        have hN0 : 0 ≤ (N : ℝ) := Nat.cast_nonneg N
+        linarith)
+    positivity
+  have hleftRate :
+      (((vonMangoldtLSeriesNorm 1 + ‖Complex.log Real.pi‖ +
+        2 * (‖(Real.eulerMascheroniConstant : ℂ)‖ + 3 +
+          Real.log (2 * (N : ℝ) + T + 4)) + Real.pi) *
+        x ^ (-(2 * (N : ℝ) + 1))) * (2 * T)) /
+        (2 * Real.pi) ≤ L ^ 2 / T := by
+    change dist
+      ((((vonMangoldtLSeriesNorm 1 + ‖Complex.log Real.pi‖ +
+        2 * (‖(Real.eulerMascheroniConstant : ℂ)‖ + 3 +
+          Real.log (2 * (N : ℝ) + T + 4)) + Real.pi) *
+        x ^ (-(2 * (N : ℝ) + 1))) * (2 * T)) /
+        (2 * Real.pi)) 0 < L ^ 2 / T at hleftN
+    rw [Real.dist_eq, sub_zero, abs_of_nonneg hleftNonneg] at hleftN
+    exact hleftN.le
+  refine ⟨T, hTmem, hgood, N, ?_⟩
+  apply (hbound N).trans
+  change C * L ^ 2 / T +
+      (((vonMangoldtLSeriesNorm 1 + ‖Complex.log Real.pi‖ +
+        2 * (‖(Real.eulerMascheroniConstant : ℂ)‖ + 3 +
+          Real.log (2 * (N : ℝ) + T + 4)) + Real.pi) *
+        x ^ (-(2 * (N : ℝ) + 1))) * (2 * T)) /
+        (2 * Real.pi) ≤ (C + 1) * L ^ 2 / T
+  calc
+    _ ≤ C * L ^ 2 / T + L ^ 2 / T := add_le_add_right hleftRate _
+    _ = (C + 1) * L ^ 2 / T := by ring
+
+/-- At a good height in every unit interval, the standard
+multiplicity-aware explicit-formula approximation has quantitative
+`O_x(log^2 A / T)` error.  Both the moving-left edge and the finite
+trivial-zero truncation have been removed from the statement. -/
+theorem
+    exists_goodHeight_Icc_norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_log_sq_div
+    {x : ℝ} (hx : 1 < x) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 8 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1), goodHeight T ∧
+        ‖explicitFormulaApproxWithMultiplicity x T -
+            (chebyshevPsi0 x : ℂ)‖ ≤
+          C * (1 + Real.log (A + 6)) ^ 2 / T := by
+  rcases
+      exists_goodHeight_Icc_norm_truncatedExplicitFormula_sub_chebyshevPsi0_le_horizontal_add_left
+        hx with ⟨C, hC, hselect⟩
+  refine ⟨C + 2, by positivity, ?_⟩
+  intro A hA
+  rcases hselect A hA with ⟨T, hTmem, hgood, hbound⟩
+  have hTpos : 0 < T := by linarith [hTmem.1]
+  let L : ℝ := 1 + Real.log (A + 6)
+  have hlog : 0 ≤ Real.log (A + 6) :=
+    Real.log_nonneg (by linarith)
+  have hLpos : 0 < L := by dsimp [L]; linarith
+  have heps : 0 < L ^ 2 / T := div_pos (sq_pos_of_pos hLpos) hTpos
+  have hleft := tendsto_oddVerticalExplicitBound_atTop hx hTpos.le
+  rcases (Metric.tendsto_atTop.mp hleft) (L ^ 2 / T) heps with
+    ⟨Nleft, hNleft⟩
+  have htrivial := ExplicitFormulaAux.tendsto_finiteTrivialZeroSum_residues hx
+  rcases (Metric.tendsto_atTop.mp htrivial) (L ^ 2 / T) heps with
+    ⟨Ntrivial, hNtrivial⟩
+  let N : ℕ := max Nleft Ntrivial
+  let finite : ℂ :=
+    ∑ p ∈ finiteTrivialZeroSum (2 * (N : ℝ)), -((x : ℂ) ^ p) / p
+  let zeroSum : ℂ :=
+    ∑ ρ ∈ nontrivialZerosFinset T,
+      -(analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ
+  let mainTerm : ℂ :=
+    (x : ℂ) - deriv riemannZeta 0 / riemannZeta 0 + zeroSum
+  let logTerm : ℂ :=
+    ((-(1 / 2 : ℝ) * Real.log (1 - x ^ (-2 : ℝ)) : ℝ) : ℂ)
+  let left : ℝ :=
+    (((vonMangoldtLSeriesNorm 1 + ‖Complex.log Real.pi‖ +
+      2 * (‖(Real.eulerMascheroniConstant : ℂ)‖ + 3 +
+        Real.log (2 * (N : ℝ) + T + 4)) + Real.pi) *
+      x ^ (-(2 * (N : ℝ) + 1))) * (2 * T)) /
+      (2 * Real.pi)
+  have hleftDist := hNleft N (le_max_left _ _)
+  have hleftNonneg : 0 ≤ left := by
+    have hseries : 0 ≤ vonMangoldtLSeriesNorm 1 :=
+      tsum_nonneg fun n => norm_nonneg _
+    have hlogN : 0 ≤ Real.log (2 * (N : ℝ) + T + 4) :=
+      Real.log_nonneg (by
+        have hN0 : 0 ≤ (N : ℝ) := Nat.cast_nonneg N
+        linarith)
+    dsimp [left]
+    positivity
+  have hleftRate : left ≤ L ^ 2 / T := by
+    change dist left 0 < L ^ 2 / T at hleftDist
+    rw [Real.dist_eq, sub_zero, abs_of_nonneg hleftNonneg] at hleftDist
+    exact hleftDist.le
+  have htrivialDist := hNtrivial N (le_max_right _ _)
+  have htrivialRate : ‖logTerm - finite‖ ≤ L ^ 2 / T := by
+    have hforward : ‖finite - logTerm‖ < L ^ 2 / T := by
+      change dist finite logTerm < L ^ 2 / T at htrivialDist
+      simpa [dist_eq_norm] using htrivialDist
+    rw [norm_sub_rev]
+    exact hforward.le
+  have hfinite :
+      ‖finite + mainTerm - (chebyshevPsi0 x : ℂ)‖ ≤
+        C * L ^ 2 / T + left := by
+    simpa [finite, mainTerm, zeroSum, left, L] using hbound N
+  have hzeroSum :
+      zeroSum = -finiteNontrivialZeroSumWithMultiplicity x T := by
+    dsimp [zeroSum, finiteNontrivialZeroSumWithMultiplicity]
+    rw [← Finset.sum_neg_distrib]
+    apply Finset.sum_congr rfl
+    intro ρ _hρ
+    ring
+  have happ :
+      explicitFormulaApproxWithMultiplicity x T = mainTerm + logTerm := by
+    dsimp [explicitFormulaApproxWithMultiplicity, mainTerm, logTerm]
+    rw [hzeroSum]
+    push_cast
+    ring
+  refine ⟨T, hTmem, hgood, ?_⟩
+  have hsplit :
+      explicitFormulaApproxWithMultiplicity x T - (chebyshevPsi0 x : ℂ) =
+        (finite + mainTerm - (chebyshevPsi0 x : ℂ)) +
+          (logTerm - finite) := by
+    rw [happ]
+    ring
+  rw [hsplit]
+  calc
+    _ ≤ ‖finite + mainTerm - (chebyshevPsi0 x : ℂ)‖ +
+        ‖logTerm - finite‖ := norm_add_le _ _
+    _ ≤ (C * L ^ 2 / T + left) + L ^ 2 / T :=
+      add_le_add hfinite htrivialRate
+    _ ≤ (C * L ^ 2 / T + L ^ 2 / T) + L ^ 2 / T := by
+      gcongr
+    _ = (C + 2) * L ^ 2 / T := by ring
+
 /-- A single cofinal family closes the moving-rectangle assembly gap.  Along
 strictly increasing good heights, the complete first-order contour remainder
 vanishes and the multiplicity-weighted nontrivial-zero sums converge to the

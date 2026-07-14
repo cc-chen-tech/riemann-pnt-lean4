@@ -42,6 +42,7 @@ lean_lib RiemannPNT where
     `MathlibAux.BoundaryRectResidue,
     `PrimeNumberTheorem.ExplicitFormulaTruncated,
     `Test.ExplicitFormulaAllHeightsContract,
+    `Test.ExplicitFormulaAllHeightsRateContract,
     `Test.ExplicitFormulaBoundedGapContract,
     `Test.CofinalExplicitFormulaContract,
     `Test.CofinalWeightedApproxContract,
@@ -60,7 +61,10 @@ lean_lib RiemannPNT where
     `Test.NontrivialZeroContributionBoundContract,
     `Test.NontrivialZeroDivisorMultiplicityContract,
     `Test.NontrivialZeroMultiplicitySymmetryContract,
-    `Test.SelectedHeightTruncatedExplicitFormulaRateContract
+    `Test.SelectedHeightAbsorbedLeftEdgeContract,
+    `Test.SelectedHeightExplicitFormulaApproxRateContract,
+    `Test.SelectedHeightTruncatedExplicitFormulaRateContract,
+    `Test.TrivialZeroTailRateContract
   ]
 
 require mathlib from "./vendor/mathlib"

@@ -141,6 +141,92 @@ theorem exists_norm_explicitFormulaApproxWithMultiplicity_sub_le_log_div_of_le_a
       add_le_add hterm1 hterm2
     _ = 2 * C * x * (1 + Real.log (T + 8)) / (T - 1 / 2) := by ring
 
+/-- Quantitative multiplicity-aware explicit formula at every sufficiently
+large real truncation height.  A good height in `[T,T+1]` supplies the contour
+estimate, and the bounded-gap zero-window bound transfers it back to `T`. -/
+theorem
+    exists_norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_log_sq_div
+    {x : ℝ} (hx : 1 < x) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ T : ℝ, 8 ≤ T →
+      ‖explicitFormulaApproxWithMultiplicity x T -
+          (chebyshevPsi0 x : ℂ)‖ ≤
+        C * (1 + Real.log (T + 8)) ^ 2 / T := by
+  rcases
+      exists_goodHeight_Icc_norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_log_sq_div
+        hx with ⟨Cs, hCs, hselected⟩
+  rcases
+      exists_norm_explicitFormulaApproxWithMultiplicity_sub_le_log_div_of_le_add_three
+        hx with ⟨Cg, hCg, hgap⟩
+  let C : ℝ := Cs + 4 * Cg * x
+  have hx0 : 0 ≤ x := (zero_lt_one.trans hx).le
+  have hC : 0 ≤ C := by dsimp [C]; positivity
+  refine ⟨C, hC, ?_⟩
+  intro T hT
+  rcases hselected T hT with ⟨U, hUmem, _hgood, hUbound⟩
+  have hTpos : 0 < T := by linarith
+  have hTU : T ≤ U := hUmem.1
+  have hUT3 : U ≤ T + 3 := by linarith [hUmem.2]
+  let L : ℝ := 1 + Real.log (T + 8)
+  let L6 : ℝ := 1 + Real.log (T + 6)
+  have hlog : 0 ≤ Real.log (T + 8) :=
+    Real.log_nonneg (by linarith)
+  have hlog6 : 0 ≤ Real.log (T + 6) :=
+    Real.log_nonneg (by linarith)
+  have hL : 1 ≤ L := by dsimp [L]; linarith
+  have hL6 : 0 ≤ L6 := by dsimp [L6]; linarith
+  have hlog_le : Real.log (T + 6) ≤ Real.log (T + 8) :=
+    Real.log_le_log (by linarith) (by linarith)
+  have hL6sq : L6 ^ 2 ≤ L ^ 2 := by
+    have hL6le : L6 ≤ L := by dsimp [L6, L]; linarith
+    nlinarith
+  have hselectedRate :
+      ‖explicitFormulaApproxWithMultiplicity x U -
+          (chebyshevPsi0 x : ℂ)‖ ≤ Cs * L ^ 2 / T := by
+    apply hUbound.trans
+    have hnum6 : 0 ≤ Cs * L6 ^ 2 := mul_nonneg hCs (sq_nonneg L6)
+    calc
+      Cs * (1 + Real.log (T + 6)) ^ 2 / U = Cs * L6 ^ 2 / U := by rfl
+      _ ≤ Cs * L6 ^ 2 / T :=
+        div_le_div_of_nonneg_left hnum6 hTpos hTU
+      _ ≤ Cs * L ^ 2 / T := by
+        apply div_le_div_of_nonneg_right _ hTpos.le
+        exact mul_le_mul_of_nonneg_left hL6sq hCs
+  have hincrement := hgap (by linarith) hTU hUT3
+  have hden : 0 < T - 1 / 2 := by linarith
+  have hLleSq : L ≤ L ^ 2 := by nlinarith [sq_nonneg (L - 1)]
+  have hK : 0 ≤ 2 * Cg * x * L := by positivity
+  have hincrementRate :
+      ‖explicitFormulaApproxWithMultiplicity x T -
+          explicitFormulaApproxWithMultiplicity x U‖ ≤
+        4 * Cg * x * L ^ 2 / T := by
+    apply hincrement.trans
+    calc
+      2 * Cg * x * (1 + Real.log (T + 8)) / (T - 1 / 2) =
+          (2 * Cg * x * L) / (T - 1 / 2) := by rfl
+      _ ≤ (4 * Cg * x * L) / T := by
+        apply (div_le_div_iff₀ hden hTpos).2
+        nlinarith
+      _ ≤ (4 * Cg * x * L ^ 2) / T := by
+        apply div_le_div_of_nonneg_right _ hTpos.le
+        exact mul_le_mul_of_nonneg_left hLleSq (by positivity)
+  have hsplit :
+      explicitFormulaApproxWithMultiplicity x T - (chebyshevPsi0 x : ℂ) =
+        (explicitFormulaApproxWithMultiplicity x T -
+          explicitFormulaApproxWithMultiplicity x U) +
+        (explicitFormulaApproxWithMultiplicity x U -
+          (chebyshevPsi0 x : ℂ)) := by ring
+  rw [hsplit]
+  calc
+    _ ≤ ‖explicitFormulaApproxWithMultiplicity x T -
+            explicitFormulaApproxWithMultiplicity x U‖ +
+          ‖explicitFormulaApproxWithMultiplicity x U -
+            (chebyshevPsi0 x : ℂ)‖ := norm_add_le _ _
+    _ ≤ 4 * Cg * x * L ^ 2 / T + Cs * L ^ 2 / T :=
+      add_le_add hincrementRate hselectedRate
+    _ = C * L ^ 2 / T := by
+      dsimp [C]
+      ring
+
 /-- The multiplicity-aware von Mangoldt explicit formula, with symmetric
 truncation by every real height.  The proof promotes the cofinal good-height
 limit using the two-window bounded-gap estimate above. -/

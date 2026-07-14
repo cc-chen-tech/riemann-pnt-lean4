@@ -33,6 +33,11 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.ExplicitFormulaResidues.exists_goodHeight_Icc_norm_horizontal_complete_explicitFormulaContour_difference_le",
     "PrimeNumberTheorem.ExplicitFormulaResidues.exists_goodHeight_Icc_norm_firstOrderContourRemainder_le_horizontal_add_left",
     "PrimeNumberTheorem.ExplicitFormulaResidues.exists_goodHeight_Icc_norm_truncatedExplicitFormula_sub_chebyshevPsi0_le_horizontal_add_left",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.tendsto_oddVerticalExplicitBound_atTop",
+    "PrimeNumberTheorem.ExplicitFormulaAux.norm_finiteTrivialZeroSum_residues_sub_logTerm_le_geometric",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.exists_goodHeight_Icc_exists_truncation_norm_truncatedExplicitFormula_sub_chebyshevPsi0_le_log_sq_div",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.exists_goodHeight_Icc_norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_log_sq_div",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.exists_norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_log_sq_div",
 }
 
 REPORT_RE = re.compile(
