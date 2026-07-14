@@ -5,7 +5,7 @@ intended for reviewers and for future work planning.
 
 It records internal proof status only.  It should not be read as a standalone
 SOTA comparison or as a claim that this repository is the first PNT
-formalization, a completed classical analytic PNT proof, or a proof of RH.
+formalization, proves an effective PNT error term, or proves RH.
 External academic value must be judged separately against Isabelle/HOL PNT,
 HOL Light PNT, Lean `PrimeNumberTheoremAnd`, Mathlib zeta/L-function
 infrastructure, and current Lean PNT repositories at submission time.
@@ -19,7 +19,7 @@ python3 -m pytest
 
 At the time of writing, `lake build` succeeds, the recursive placeholder scan
 has no project Lean-source matches, the scanner classifies every project
-`def ... : Prop`, the mathematical target inventory is stable at 19
+`def ... : Prop`, the mathematical target inventory is stable at 16
 declarations, and the Python experiment tests pass.
 
 ## Proved Project-Local Results
@@ -3129,11 +3129,11 @@ metadata, not proof results.
 The following declarations are intentionally `def ... : Prop` targets.  They
 are not exported as theorems and should not be cited as proved.
 
-As of `2026-07-15`, there are **19** mathematical target declarations:
+As of `2026-07-15`, there are **16** mathematical target declarations:
 
 - `HardyTheorem` namespace: **7**
 - `HardyTheorem.Details` namespace: **3**
-- `PrimeNumberTheorem` namespace: **7**
+- `PrimeNumberTheorem` namespace: **4**
 - `KnownResults` namespace: **1**
 - `ZeroFreeRegion` namespace: **0**
 - global namespace: **1** (`vinogradov_korobov_zero_free_region`)
@@ -3145,13 +3145,21 @@ As of `2026-07-15`, there are **19** mathematical target declarations:
   currently lives in the global namespace even though it is in
   `ZeroFreeRegion.lean`.
 
-### `PrimeNumberTheorem.lean`
+### Completed ordinary PNT predicates
 
-- `PNTForm1`, `PNTForm2`, `PNTForm3`
-  local PNT-format targets:
-  `pi(x) ~ x / log x`, `pi(x) ~ Li(x)`, and `psi(x) ~ x`. These are
-  intentionally target placeholders because the bridge to a full analytic proof
-  runs through explicit-formula machinery.
+- `PNTForm1`, `PNTForm2`, `PNTForm3` remain named `def ... : Prop`
+  predicates, but they are no longer unresolved targets. They are proved by
+  `PrimeNumberTheorem.PNTForm1_proved`,
+  `PrimeNumberTheorem.PNTForm2_proved`, and
+  `PrimeNumberTheorem.PNTForm3_proved` in
+  `PrimeNumberTheorem/PNTFromDynamicPerron.lean`.
+
+### Remaining `PrimeNumberTheorem.lean` targets
+
+- `RH_PsiErrorBound`
+- `RH_ThetaErrorBound`
+- `RH_PrimeCountingLiErrorBound`
+- `RH_ErrorBound`
 
 ### `HardyTheorem.lean`
 
@@ -3636,10 +3644,10 @@ Support-level verified declarations:
   `PrimeNumberTheorem.rh_iff_optimal_error_proved` close the reverse implication
   and the final RH/prime-counting error equivalence.  They do not prove RH.
 
-## Missing Chains for a Complete Analytic PNT
+## Remaining Chains Beyond Ordinary PNT
 
-To turn the current framework into a full de la Vallee Poussin proof with error
-term, the following chains remain:
+Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
+`PNTForm3_proved`.  The following stronger chains remain:
 
 1. **Stronger zero-free region.**
    The classical `c / log |t|` region is proved.  The remaining target is the

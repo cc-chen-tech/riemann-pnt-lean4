@@ -57,6 +57,7 @@ lean_lib RiemannPNT where
     `Test.DynamicTruncatedExplicitFormulaContract,
     `Test.PNTAsymptoticsContract,
     `Test.PNTFiniteZeroSumContract,
+    `Test.PNTFromDynamicPerronContract,
     `Test.VonMangoldtLSeriesNormContract,
     `Test.UniformNaturalContourContract,
     `Test.RHNaturalPsiErrorContract,

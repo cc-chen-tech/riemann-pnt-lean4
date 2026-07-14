@@ -7,8 +7,8 @@ declarations, rather than with earlier draft descriptions.
 ## Scope Relative to Existing Formalizations
 
 This file is an internal theorem inventory, not a claim that this repository is
-the first formalization of the Prime Number Theorem or a completed classical
-analytic PNT proof.
+the first formalization of the Prime Number Theorem. The ordinary PNT is now
+proved locally through the classical de la Vallee Poussin route.
 
 External SOTA has to be checked separately before making publication claims.
 Relevant baselines include Isabelle/HOL formalizations of elementary PNT,
@@ -20,14 +20,12 @@ The stable project-local contribution is:
 
 ```text
 de la Vallee Poussin 3-4-1 machinery, the classical c/log zero-free region,
-and the multiplicity-aware principal-value explicit formula in Lean 4
+the multiplicity-aware moving-height explicit formula, and the resulting
+ordinary PNT in Lean 4
 ```
 
-In particular, the theorem inventory below should be read as verified support
-for those local modules, not as evidence that PNT, RH, or the stronger
-Vinogradov-Korobov region has been proved.  The pointwise-in-`x` quantitative
-truncated explicit formula is now theorem-level; the uniform dependence on
-`x` needed for RH-scale prime-error estimates is not.
+In particular, the theorem inventory below proves ordinary PNT but not RH, an
+RH-scale prime-error estimate, or the stronger Vinogradov-Korobov region.
 
 ## 1. Real Part of the Logarithmic Derivative Series
 
@@ -245,9 +243,9 @@ decay in the principal-value explicit-formula chain.
 
 ## What This Does and Does Not Prove
 
-The project-local contribution is not a complete proof of the Prime Number
-Theorem or the Riemann Hypothesis, and it is not a claim to be the first PNT
-formalization.  The verified contribution includes:
+The project-local contribution proves the ordinary Prime Number Theorem but
+not the Riemann Hypothesis, and it is not a claim to be the first PNT
+formalization. The verified contribution includes:
 
 - the real-part Dirichlet-series representation of `-zeta'/zeta`;
 - the full 3-4-1 logarithmic-derivative nonnegativity argument;
@@ -256,6 +254,10 @@ formalization.  The verified contribution includes:
 - real-axis residue-scale bounds for zeta near `1`.
 - the multiplicity-aware Riemann-von Mangoldt principal-value formula for
   `chebyshevPsi0`, using symmetric truncation at every real height.
+- the dynamic-height de la Vallee Poussin estimate
+  `chebyshevPsi0(m)-m=o(m)` on natural samples;
+- the floor transfer to all real arguments and theorem-level proofs of
+  `PNTForm1`, `PNTForm2`, and `PNTForm3`.
 
 Mathlib already provides the qualitative nonvanishing theorem
 `riemannZeta_ne_zero_of_one_le_re`.  The compact theorem first upgrades this to
@@ -268,6 +270,7 @@ Re s >= 1 - c / log |Im s|.
 ```
 
 The remaining zero-free-region target is the stronger Vinogradov-Korobov
-region.  On the explicit-formula side, the principal-value identity is proved;
-the open task is a uniform finite-height truncation error strong enough for the
-forward RH-to-prime-error implication.
+region.  On the explicit-formula side, the principal-value identity, the
+moving-height ordinary-PNT estimate, and the forward RH-to-prime-error
+implication are proved.  Further work concerns effective unconditional PNT
+remainders and stronger reusable finite-height estimates.

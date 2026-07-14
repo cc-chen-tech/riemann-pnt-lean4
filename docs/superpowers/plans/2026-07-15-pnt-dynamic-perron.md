@@ -75,8 +75,8 @@
 - Modify: `PrimeNumberTheorem.lean`
 - Create: `Test/PNTFromDynamicPerronContract.lean`
 
-- [ ] Add a failing contract for unconditional `PNTForm3`.
-- [ ] Transfer the natural-sample estimate to real inputs using the floor identities.
-- [ ] Prove `PNTForm3`, then invoke existing bridges for `PNTForm1` and `PNTForm2`.
-- [ ] Update inventory, proof-chain documents, and the axiom audit.
-- [ ] Run full build and all repository verification gates before integration.
+- [x] Add a failing contract for unconditional `PNTForm3`.
+- [x] Transfer the natural-sample estimate to real inputs using the floor identities.
+- [x] Prove `PNTForm3`, then invoke existing bridges for `PNTForm1` and `PNTForm2`.
+- [x] Update inventory, proof-chain documents, and the axiom audit.
+- [x] Run full build and all repository verification gates before integration.

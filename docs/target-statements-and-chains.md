@@ -14,17 +14,18 @@ This file measures **internal proof progress** only.  It answers questions like:
 - which analytic inputs would let a target be promoted to a proved theorem.
 
 It does **not** answer the external SOTA question.  A smaller target count does
-not imply that this repository is close to proving RH, completing PNT, or
-becoming the first PNT formalization.  External academic positioning must be
-checked separately against Isabelle/HOL PNT, HOL Light PNT, Lean
+not imply that this repository is close to proving RH or an effective PNT
+error term.  The ordinary PNT status instead rests on the checked declarations
+`PNTForm1_proved`, `PNTForm2_proved`, and `PNTForm3_proved`.  External academic
+positioning must be checked separately against Isabelle/HOL PNT, HOL Light PNT, Lean
 `PrimeNumberTheoremAnd`, Mathlib's zeta/L-function infrastructure, and current
 Lean repositories at the time of submission.
 
 The safe project positioning is:
 
 ```text
-Lean 4 formalization of de la Vallee Poussin 3-4-1/Jensen machinery
-and the classical c/log zero-free region
+Lean 4 formalization of de la Vallee Poussin 3-4-1/Jensen machinery,
+the classical c/log zero-free region, and an ordinary PNT derivation
 ```
 
 ## Target count
@@ -116,11 +117,8 @@ multiplicity-aware target:
 
 ## Chain 3: RH ⇔ prime-counting error
 
-### Target declarations
+### Remaining target declarations
 
-- `PrimeNumberTheorem.PNTForm1`
-- `PrimeNumberTheorem.PNTForm2`
-- `PrimeNumberTheorem.PNTForm3`
 - `PrimeNumberTheorem.RH_PsiErrorBound`
 - `PrimeNumberTheorem.RH_ThetaErrorBound`
 - `PrimeNumberTheorem.RH_PrimeCountingLiErrorBound`
@@ -128,6 +126,10 @@ multiplicity-aware target:
 
 ### Current verified anchor theorems
 
+- `PrimeNumberTheorem.PNTForm3_proved`
+- `PrimeNumberTheorem.PNTForm2_proved`
+- `PrimeNumberTheorem.PNTForm1_proved`
+- `PrimeNumberTheorem.pnt_forms_proved`
 - `PrimeNumberTheorem.pnt_forms_equivalent`
 - `PrimeNumberTheorem.PNTForm1_iff_PNTForm2`
 - `PrimeNumberTheorem.PNTForm2_iff_PNTForm1`

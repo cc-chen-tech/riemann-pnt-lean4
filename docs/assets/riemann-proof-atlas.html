@@ -934,8 +934,8 @@
             <g class="compact-connectors">
               <line x1="450" y1="322" x2="243" y2="180"></line>
               <polyline points="243,180 430,112 594,136"></polyline>
-              <line class="route-line" x1="594" y1="136" x2="711" y2="304"></line>
-              <line class="route-line" x1="711" y1="304" x2="603" y2="508"></line>
+              <line x1="594" y1="136" x2="711" y2="304"></line>
+              <line x1="711" y1="304" x2="603" y2="508"></line>
               <line class="frontier-line" x1="450" y1="322" x2="792" y2="508"></line>
             </g>
             <g class="expanded-connectors">
@@ -943,12 +943,12 @@
               <line x1="342" y1="161" x2="567" y2="87"></line>
               <line x1="342" y1="161" x2="567" y2="229"></line>
               <line x1="567" y1="87" x2="567" y2="229"></line>
-              <line class="route-line" x1="567" y1="229" x2="792" y2="304"></line>
-              <line class="route-line" x1="792" y1="304" x2="567" y2="378"></line>
-              <line class="route-line" x1="567" y1="378" x2="342" y2="453"></line>
-              <line class="route-line" x1="567" y1="229" x2="342" y2="453"></line>
-              <line class="route-line" x1="342" y1="453" x2="567" y2="527"></line>
-              <line class="route-line" x1="792" y1="304" x2="567" y2="527"></line>
+              <line x1="567" y1="229" x2="792" y2="304"></line>
+              <line x1="792" y1="304" x2="567" y2="378"></line>
+              <line x1="567" y1="378" x2="342" y2="453"></line>
+              <line x1="567" y1="229" x2="342" y2="453"></line>
+              <line x1="342" y1="453" x2="567" y2="527"></line>
+              <line x1="792" y1="304" x2="567" y2="527"></line>
               <line class="frontier-line" x1="567" y1="527" x2="342" y2="558"></line>
               <line class="frontier-line" x1="567" y1="527" x2="117" y2="465"></line>
               <line class="frontier-line" x1="567" y1="229" x2="792" y2="87"></line>
@@ -974,21 +974,21 @@
             <span class="node-title">经典零自由区域</span>
             <span class="node-status">● 已证明组件</span>
           </button>
-          <button id="perron" class="map-node" type="button" data-concept-id="perron" data-status="route" style="--x: 79%; --y: 49%;" aria-pressed="false">
+          <button id="perron" class="map-node" type="button" data-concept-id="perron" data-status="proved" style="--x: 79%; --y: 49%;" aria-pressed="false">
             <span class="node-title">Perron 与围道桥梁</span>
-            <span class="node-status">◆ 正在连接</span>
+            <span class="node-status">● 已证明组件</span>
           </button>
-          <button class="network-node" type="button" data-concept-id="explicit-formula" data-status="route" style="--x: 73%; --y: 61%;" aria-pressed="false" hidden>
+          <button class="network-node" type="button" data-concept-id="explicit-formula" data-status="proved" style="--x: 73%; --y: 61%;" aria-pressed="false" hidden>
             <span class="node-title">显式公式</span>
-            <span class="node-status">◆ 正在连接</span>
+            <span class="node-status">● 已证明组件</span>
           </button>
-          <button class="network-node" type="button" data-concept-id="psi-error" data-status="route" style="--x: 64%; --y: 70%;" aria-pressed="false" hidden>
+          <button class="network-node" type="button" data-concept-id="psi-error" data-status="proved" style="--x: 64%; --y: 70%;" aria-pressed="false" hidden>
             <span class="node-title">ψ 误差控制</span>
-            <span class="node-status">◆ 正在连接</span>
+            <span class="node-status">● 已证明组件</span>
           </button>
-          <button id="pnt" class="map-node" type="button" data-concept-id="pnt" data-status="route" style="--x: 67%; --y: 82%;" aria-pressed="false">
+          <button id="pnt" class="map-node" type="button" data-concept-id="pnt" data-status="proved" style="--x: 67%; --y: 82%;" aria-pressed="false">
             <span class="node-title">素数定理</span>
-            <span class="node-status">◆ 路线目标</span>
+            <span class="node-status">● 已证明结论</span>
           </button>
           <button class="network-node" type="button" data-concept-id="pnt-error" data-status="frontier" style="--x: 34%; --y: 86%;" aria-pressed="false" hidden>
             <span class="node-title">带余项的 PNT</span>
@@ -1023,7 +1023,7 @@
         <button class="action-button" type="button" data-action="open-concept" data-concept-id="zero-free">进入概念页</button>
       </section>
 
-      <noscript>本页面的核心路线是：Riemann zeta 函数 → zeta 工具 → 经典零自由区域 → Perron/显式公式 → PNT。RH 位于更远的研究前沿；本仓库没有证明 PNT 或 RH。启用 JavaScript 后可查看全部 13 个概念的证据与边界说明。</noscript>
+      <noscript>本页面的核心路线是：Riemann zeta 函数 → zeta 工具 → 经典零自由区域 → Perron/显式公式 → PNT。普通 PNT 已证明；有效余项与 RH 位于更远的研究前沿。启用 JavaScript 后可查看全部 13 个概念的证据与边界说明。</noscript>
     </section>
 
     <article id="concept-view" class="concept-view" hidden aria-live="polite"></article>
@@ -1117,18 +1117,18 @@
         id: "perron",
         title: "Perron 与围道桥梁",
         english: "Perron inversion and contour bridge",
-        status: "route",
+        status: "proved",
         core: true,
         summary: "用竖直积分恢复 von Mangoldt 部分和，再把积分线移向零自由区域。",
         formula: "Σₙ≤x Λ(n)  ←  (1 / 2πi) ∫ −ζ′(s)/ζ(s) · xˢ/s ds",
         intuition: "Perron 公式像解析滤镜：复积分把 Dirichlet 级数重新截成 x 以下的算术总和。",
         leanEvidence: [
-          "已形式化一阶和二阶 Perron 核的截断极限",
-          "已形式化有限 von Mangoldt 和的 Perron 专门化组件",
-          "全局围道移动、横边控制与所需残数汇总仍是路线接口"
+          "一阶 von Mangoldt Perron 反演及动态右边界误差已证明",
+          "选定好高度上的水平边与移动左边界估计已证明",
+          "围道残数汇总已闭合到重数显式公式"
         ],
-        impact: "连接已证明的零自由区域与显式公式、ψ 渐近式以及最终 PNT。",
-        warning: "已有 Perron 组件不代表整条 PNT 围道论证已经闭合。",
+        impact: "把已证明的零自由区域连接到显式公式、ψ 渐近式和普通 PNT。",
+        warning: "这条围道链已足够证明普通 PNT，但尚未给出经典有效余项。",
         dependsOn: ["zero-free"],
         compact: { x: 79, y: 49 },
         expanded: { x: 88, y: 49 }
@@ -1137,18 +1137,18 @@
         id: "explicit-formula",
         title: "显式公式",
         english: "Explicit formula",
-        status: "route",
+        status: "proved",
         core: false,
         summary: "把 ψ(x) 写成主项 x、zeta 零点贡献与可控余项的组合。",
         formula: "ψ₀(x) = x − Σρ x^ρ/ρ + 边界项与截断误差",
         intuition: "显式公式直接显示每个零点怎样扰动素数计数，因此是零点信息转成误差界的总账。",
         leanEvidence: [
-          "固定 x、全部 T≥2 的截断显式公式及 O_x(x log²(xT)/T) 误差已证明",
-          "证明包含 Perron 围道、重数零点和、平凡零点尾项与低高度补丁",
-          "RH 误差应用仍缺随 x 一致的围道常数控制"
+          "固定 x、全部 T≥2 的截断显式公式及 O_x(log²(xT)/T) 型误差已证明",
+          "动态自然数样本版本选择随 x 增长的 Perron 边界和截断高度",
+          "证明包含重数零点和、平凡零点尾项与低高度补丁"
         ],
-        impact: "向 ψ 误差控制、带余项的 PNT 和 RH 误差方向输送零点贡献。",
-        warning: "这是逐点依赖 x 的定量定理；不能据此声称已得到 PNT 或 RH 级误差。",
+        impact: "已向 ψ=o(x)、普通 PNT 和条件式 RH 误差方向输送零点贡献。",
+        warning: "普通 PNT 所需的移动高度估计已闭合；经典有效余项和 RH 本身仍未证明。",
         dependsOn: ["perron", "zeta-tools"],
         compact: { x: 73, y: 61 },
         expanded: { x: 63, y: 61 }
@@ -1157,18 +1157,18 @@
         id: "psi-error",
         title: "Chebyshev ψ 误差控制",
         english: "Chebyshev psi error control",
-        status: "route",
+        status: "proved",
         core: false,
         summary: "从零自由区域和显式公式导出 ψ(x) − x 相对主项更小的定量估计。",
         formula: "ψ(x) = x + o(x) ；更强路线追求 |ψ(x) − x| 的显式上界",
         intuition: "ψ 把素数幂按 log p 加权；只要它的主项是 x，就已经足以推出素数的正确平均密度。",
         leanEvidence: [
-          "项目中已有 ψ、θ、π 三种 PNT 表述的等价桥梁",
-          "已有从假设的 ψ 幂误差推出右半平面无零点的反向接口",
-          "由当前零自由区域正向推出所需 ψ 误差仍未闭合"
+          "chebyshevPsi0_sub_id_nat_isLittleO 已证明自然数中点样本误差",
+          "chebyshevPsi_sub_id_nat_isLittleO 已吸收 von Mangoldt 半跳跃",
+          "PNTForm3_proved 已用 floor 恒等式推广到全部实数输入"
         ],
-        impact: "提供从解析零点控制到 PNT 的直接算术端点。",
-        warning: "目标与若干条件式桥梁已形式化，但当前项目尚未证明 ψ(x)=x+o(x)。",
+        impact: "给出从解析零点控制到普通 PNT 的直接算术端点。",
+        warning: "已证明的是 ψ(x)=x+o(x)；更强的无条件显式误差仍开放。",
         dependsOn: ["zero-free", "explicit-formula"],
         compact: { x: 64, y: 70 },
         expanded: { x: 38, y: 73 }
@@ -1177,18 +1177,18 @@
         id: "pnt",
         title: "素数定理",
         english: "Prime Number Theorem",
-        status: "route",
+        status: "proved",
         core: true,
         summary: "素数计数函数满足 π(x) 与 x / log x 渐近等价。",
         formula: "π(x) ~ x / log x  ⇔  θ(x) ~ x  ⇔  ψ(x) ~ x",
         intuition: "素数越来越稀，但其平均密度仍有精确的一阶规律。",
         leanEvidence: [
-          "PNTForm1、PNTForm2、PNTForm3 目标已定义",
-          "pnt_forms_equivalent 已连接三种渐近表述",
-          "完整解析输入仍需 Perron、显式公式和 ψ 误差链"
+          "PNTForm3_proved 证明 ψ(x)/x → 1",
+          "PNTForm1_proved 证明 π(x) log(x)/x → 1",
+          "PNTForm2_proved 证明 π(x)/Li(x) → 1"
         ],
         impact: "完成本地图的经典主路线，并为定量余项研究建立基线。",
-        warning: "本项目尚未证明素数定理；当前状态是路线目标而非已证结论。",
+        warning: "普通 PNT 已证明；这不等于有效余项、RH 或首次 PNT 形式化。",
         dependsOn: ["psi-error", "perron"],
         compact: { x: 67, y: 82 },
         expanded: { x: 63, y: 85 }
@@ -1220,15 +1220,15 @@
         status: "frontier",
         core: false,
         summary: "其他 Lean 项目已经形式化 PNT，Isabelle/HOL 与 HOL Light 也有不同路线的相关成果。",
-        formula: "外部已证 PNT  ≠  本仓库的经典零自由区域路线已闭合",
+        formula: "外部 PNT 路线  ≠  本仓库的 de la Vallée Poussin 路线",
         intuition: "外部形式化证明说明终点可以机器核验，但每个项目采用的定义、库和证明路线并不相同。",
         leanEvidence: [
           "Lean 社区中存在已完成的 PNT 形式化工作",
           "Isabelle/HOL 有初等 PNT 形式化，HOL Light 有 Newman 路线",
-          "本仓库把这些工作作为比较基线，而不是导入后的本地结论"
+          "本仓库现在也有独立的普通 PNT 定理，但必须按路线和贡献边界比较"
         ],
         impact: "为接口设计、定理表述和复用可能性提供外部参照。",
-        warning: "其他 Lean 项目已经形式化 PNT，但这不会使 PNT 自动成为当前仓库的证明结果。",
+        warning: "本地普通 PNT 已证明，但不能因此声称首次形式化 PNT。",
         dependsOn: ["pnt"],
         compact: { x: 20, y: 72 },
         expanded: { x: 13, y: 75 }

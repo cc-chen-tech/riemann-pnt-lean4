@@ -4,7 +4,9 @@ This document scopes the formalization path around
 `PrimeNumberTheorem.RH_ErrorBound` and
 `PrimeNumberTheorem.rh_iff_optimal_error`.  Both the RH/Chebyshev-`psi`
 equivalence and the final RH/prime-counting equivalence are now proved.
-Neither side is established unconditionally.
+Neither side of that RH-scale equivalence is established unconditionally.
+The weaker ordinary PNT is proved independently by the classical zero-free
+region and moving-height explicit-formula route.
 
 ## Current Lean Anchors
 
@@ -21,6 +23,8 @@ The current project already provides these usable endpoints and support lemmas.
 | `primeCounting_eq_mathlib` | Connects project `primeCounting` to `Nat.primeCounting` for `x >= 0`. |
 | `chebyshevPsi_eq_mathlib` | Connects project `chebyshevPsi` to Mathlib's `Chebyshev.psi`. |
 | `pnt_forms_equivalent` | Proves asymptotic equivalence of `PNTForm1`, `PNTForm2`, and `PNTForm3`. |
+| `PNTForm3_proved` | Proves `psi(x) / x -> 1` unconditionally from the classical zero-free region and dynamic explicit formula. |
+| `PNTForm1_proved`, `PNTForm2_proved` | Close the two prime-counting PNT forms through the existing equivalence bridges. |
 | `Chebyshev.abs_psi_sub_theta_le_sqrt_mul_log` | Already used locally to show `psi(x) - theta(x) = o(x)`; can also absorb the `psi` to `theta` error under RH. |
 | `Chebyshev.primeCounting_sub_theta_div_log_isBigO` | Current weak unconditional bridge for PNT equivalence; not strong enough for RH error terms. |
 | `theta_error_integral_isBigO_sqrt_mul_log` | Bounds the Abel integral error from `RH_ThetaErrorBound`. |

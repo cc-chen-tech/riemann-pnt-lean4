@@ -13,6 +13,7 @@ import PrimeNumberTheorem.GlobalZeroCount
 import PrimeNumberTheorem.CentralHorizontalEdge
 import PrimeNumberTheorem.CofinalExplicitFormula
 import PrimeNumberTheorem.ExplicitFormulaAllHeights
+import PrimeNumberTheorem.PNTFromDynamicPerron
 import PrimeNumberTheorem.RHNaturalPsiError
 import PrimeNumberTheorem.RHPrimeCountingConverse
 import PrimeNumberTheorem.NontrivialZeroMultiplicity
@@ -27,6 +28,16 @@ open Complex Filter Topology Asymptotics ComplexConjugate
 open scoped ArithmeticFunction LSeries.notation
 
 namespace RiemannPNT.API
+
+/-- Public unconditional Prime Number Theorem in all three project forms. -/
+theorem pnt_forms_proved :
+    PrimeNumberTheorem.PNTForm1 ∧ PrimeNumberTheorem.PNTForm2 ∧
+      PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.pnt_forms_proved
+
+/-- Public Chebyshev form of the unconditional Prime Number Theorem. -/
+theorem PNTForm3_proved : PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForm3_proved
 
 /-- Public combined high-height theorem: zeta is nonzero and its logarithmic
 derivative is `O((log |t|)^2)` on a fixed inner substrip of the classical

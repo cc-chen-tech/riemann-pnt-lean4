@@ -21,13 +21,13 @@ CHAIN_SUMMARY = [
     {
         "name": "Explicit formula",
         "target": "ExplicitFormulaTruncatedTarget",
-        "status": "proved for every real height T >= 2; the polynomial-height natural-sample form also supplies the forward RH-to-psi implication",
-        "next_step": "develop stronger reusable uniform real-x finite-height forms only when required by another endpoint",
+        "status": "proved for every real height T >= 2; a subpolynomial height T(m) = exp(a sqrt(log m)) closes ordinary PNT, while the separate polynomial-height natural-sample form supplies the forward RH-to-psi implication",
+        "next_step": "develop stronger effective uniform real-x finite-height forms only when required by an explicit error-term endpoint",
     },
     {
         "name": "RH error equivalence",
         "target": "rh_iff_optimal_error",
-        "status": "proved in Lean in both directions; neither RH nor the equivalent error predicate is proved unconditionally",
+        "status": "ordinary PNT is proved; the RH-scale equivalence is proved in both directions, but neither RH nor its equivalent error predicate is proved unconditionally",
         "next_step": "no remaining implication gap; retain the individual RH-scale predicates as conditional theorem interfaces",
     },
     {
@@ -44,6 +44,12 @@ PROVED_ROUTE_INTERFACES = {
 }
 
 PROVED_REUSABLE_PREDICATES = {
+    "PrimeNumberTheorem.PNTForm1":
+        "PrimeNumberTheorem.PNTForm1_proved",
+    "PrimeNumberTheorem.PNTForm2":
+        "PrimeNumberTheorem.PNTForm2_proved",
+    "PrimeNumberTheorem.PNTForm3":
+        "PrimeNumberTheorem.PNTForm3_proved",
     "PrimeNumberTheorem.rh_iff_optimal_error":
         "PrimeNumberTheorem.rh_iff_optimal_error_proved",
 }
