@@ -44,6 +44,7 @@ lean_lib RiemannPNT where
     `HardyTheorem.HardyIntegralBasics,
     `Test.HardyFirstApproximationContract,
     `Test.HardyIntegralBasicsContract,
+    `Test.HardyPhaseContract,
     `MathlibAux.RectangleResidue,
     `MathlibAux.BoundaryRectResidue,
     `PrimeNumberTheorem.ExplicitFormulaTruncated,
