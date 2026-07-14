@@ -63,8 +63,8 @@ technology rather than more local Jensen/Borel wrappers.
 | Chain | Current Lean target status | Main correction before proof work | Smallest useful next step | Open target count |
 | --- | --- | --- | --- | --- |
 | Quantitative zero-free region | `classical_zero_free_region` is proved; `vinogradov_korobov_zero_free_region` remains a target | Develop exponential-sum estimates for the stronger width | Formalize the Vinogradov-Korobov exponential-sum input without weakening the proved classical theorem | 1 |
-| Explicit formula | `ExplicitFormulaTruncatedTarget` is proved for fixed `x`; at every natural `m>=2`, a good `T in [m^5,m^5+1]` now gives the standard multiplicity-aware approximation with one uniform `C(1+log m)^2` contour error | Combine the proved RH finite-zero-sum bound at this selected height; unrestricted real-`x` first-order Perron still needs a distance-to-integer term | Prove the RH-scale integer-point `psi0(m)-m` bound, then use monotonicity and jump control to cover real `x` | 0 |
-| RH error equivalence | `rh_iff_optimal_error` is a `def ... : Prop` target | Stage the result through `=O[atTop]` predicates for `psi`, `theta`, and `primeCounting - logIntegral` | Prove `RH -> RH_PsiErrorBound` via explicit formula estimates, and prove the prime-counting reverse endpoint back to `RH_PsiErrorBound`; the conditional bridge `RH_PsiErrorBound -> RiemannHypothesis` is now theorem-level | 8 |
+| Explicit formula | `ExplicitFormulaTruncatedTarget` is proved; the uniform natural-point formula is now combined with the RH finite-zero sum and extended to all real `x` | Preserve the natural-sample jump convention and multiplicities in stronger reusable variants | Improve uniform real-`x` finite-height bounds only where another theorem needs them; the RH-to-`psi` use case is closed | 0 |
+| RH error equivalence | `RH <-> RH_PsiErrorBound` and the forward `RH -> RH_PrimeCountingLiErrorBound` implication are proved; `rh_iff_optimal_error` remains a `def ... : Prop` target | Reverse quantitative partial summation from `pi-Li` error to `theta`/`psi` | Prove `RH_PrimeCountingLiErrorBound -> RH_ThetaErrorBound`; existing equivalences and the Mellin/Landau bridge then finish the target | 8 |
 | Hardy theorem | `hardy_theorem_target` and related moment/asymptotic targets are `def ... : Prop` targets | Use an unbounded-height zero target as the main theorem; use signed moment targets, not merely nonzero constants | Prove bounded-zero eventual-sign control and generic asymptotic sign lemmas | 11 (7 in `HardyTheorem`, 3 in `HardyTheorem.Details`, 1 in `KnownResults`) |
 
 ## Target-to-Chain Mapping
@@ -75,11 +75,11 @@ technology rather than more local Jensen/Borel wrappers.
 | `PrimeNumberTheorem.lean` | `PNTForm1` | RH error equivalence | Formal statement of one classical asymptotic shape, kept as an interface |
 | `PrimeNumberTheorem.lean` | `PNTForm2` | RH error equivalence | Equivalent to `PNTForm1` once one form is proved; no additional chain input yet |
 | `PrimeNumberTheorem.lean` | `PNTForm3` | RH error equivalence | Equivalent to `PNTForm1`/`PNTForm2`; included as a target interface |
-| `PrimeNumberTheorem.lean` | `RH_PsiErrorBound` | RH error equivalence | Needs explicit-formula error control under RH |
-| `PrimeNumberTheorem.lean` | `RH_ThetaErrorBound` | RH error equivalence | Needs the same Hardy–Littlewood style input as `RH_PsiErrorBound` |
-| `PrimeNumberTheorem.lean` | `RH_PrimeCountingLiErrorBound` | RH error equivalence | Now follows from `RH_ThetaErrorBound`; target remains open because the upstream RH-scale Chebyshev bound is still a target |
-| `PrimeNumberTheorem.lean` | `RH_ErrorBound` | RH error equivalence | Textbook pointwise reformulation of `RH_PrimeCountingLiErrorBound` |
-| `PrimeNumberTheorem.lean` | `rh_iff_optimal_error` | RH error equivalence | Final RH ↔ prime-counting error equivalence statement |
+| `PrimeNumberTheorem.lean` | `RH_PsiErrorBound` | RH error equivalence | Equivalent to RH by a proved theorem; neither proposition is proved unconditionally |
+| `PrimeNumberTheorem.lean` | `RH_ThetaErrorBound` | RH error equivalence | Equivalent to `RH_PsiErrorBound`; RH implies it, but it remains unresolved without assuming RH |
+| `PrimeNumberTheorem.lean` | `RH_PrimeCountingLiErrorBound` | RH error equivalence | RH implies it; the reverse implication to `theta`/`psi` is still missing |
+| `PrimeNumberTheorem.lean` | `RH_ErrorBound` | RH error equivalence | Pointwise reformulation of `RH_PrimeCountingLiErrorBound`; RH implies it |
+| `PrimeNumberTheorem.lean` | `rh_iff_optimal_error` | RH error equivalence | Forward implication proved; reverse `pi-Li` error to RH remains open |
 | `HardyTheorem.lean` | `integral_asymptotic_target` | Hardy theorem | Signed-moment asymptotic input |
 | `HardyTheorem.lean` | `hardy_two_signed_moments_target` | Hardy theorem | Asymptotics for the first two weighted moments |
 | `HardyTheorem.lean` | `hardy_theorem_target` | Hardy theorem | Combined target of Hardy theorem output |
@@ -275,6 +275,11 @@ The following proved declarations are the main entry points for future work:
 - `ZeroFreeRegion.nontrivial_zero_re_le_half_of_RH_PsiErrorBound`
 - `ZeroFreeRegion.half_le_nontrivial_zero_re_of_RH_PsiErrorBound`
 - `ZeroFreeRegion.riemannHypothesis_of_RH_PsiErrorBound`
+- `PrimeNumberTheorem.ExplicitFormulaResidues.RH_PsiErrorBound_of_RiemannHypothesis`
+- `PrimeNumberTheorem.ExplicitFormulaResidues.RH_ThetaErrorBound_of_RiemannHypothesis`
+- `PrimeNumberTheorem.ExplicitFormulaResidues.RH_PrimeCountingLiErrorBound_of_RiemannHypothesis`
+- `PrimeNumberTheorem.ExplicitFormulaResidues.RH_ErrorBound_of_RiemannHypothesis`
+- `PrimeNumberTheorem.ExplicitFormulaResidues.riemannHypothesis_iff_RH_PsiErrorBound`
 - `PrimeNumberTheorem.primeCounting_logIntegral_finite_interval_bound`
 - `PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_iff_error_tendsto_zero`
 - `PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_iff_error_isLittleO_one`

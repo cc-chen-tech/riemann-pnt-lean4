@@ -13,6 +13,7 @@ import PrimeNumberTheorem.GlobalZeroCount
 import PrimeNumberTheorem.CentralHorizontalEdge
 import PrimeNumberTheorem.CofinalExplicitFormula
 import PrimeNumberTheorem.ExplicitFormulaAllHeights
+import PrimeNumberTheorem.RHNaturalPsiError
 import PrimeNumberTheorem.NontrivialZeroMultiplicity
 import PrimeNumberTheorem.ExplicitFormulaTruncated
 import ZeroFreeRegion
@@ -2564,6 +2565,24 @@ theorem riemannHypothesis_of_RH_PsiErrorBound
     (hψ : PrimeNumberTheorem.RH_PsiErrorBound) :
     _root_.RiemannHypothesis :=
   ZeroFreeRegion.riemannHypothesis_of_RH_PsiErrorBound hψ
+
+/-- Public forward RH implication for the Chebyshev-`psi` error target. -/
+theorem RH_PsiErrorBound_of_riemannHypothesis
+    (hRH : _root_.RiemannHypothesis.Statement) :
+    PrimeNumberTheorem.RH_PsiErrorBound :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.RH_PsiErrorBound_of_RiemannHypothesis hRH
+
+/-- Public forward RH implication for the prime-counting `Li` error target. -/
+theorem RH_PrimeCountingLiErrorBound_of_riemannHypothesis
+    (hRH : _root_.RiemannHypothesis.Statement) :
+    PrimeNumberTheorem.RH_PrimeCountingLiErrorBound :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.RH_PrimeCountingLiErrorBound_of_RiemannHypothesis hRH
+
+/-- Public equivalence between local RH and the RH-scale Chebyshev-`psi`
+error target. -/
+theorem riemannHypothesis_iff_RH_PsiErrorBound :
+    _root_.RiemannHypothesis.Statement ↔ PrimeNumberTheorem.RH_PsiErrorBound :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.riemannHypothesis_iff_RH_PsiErrorBound
 
 /-- Public functional-equation symmetry for nontrivial zeros. -/
 theorem nontrivial_zero_symmetric

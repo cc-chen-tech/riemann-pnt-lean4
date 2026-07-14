@@ -340,18 +340,20 @@ This keeps the claims tight:
    Dirichlet series, the de la Vallee Poussin 3-4-1 inequality, and the
    classical `c/log |t|` zero-free region.
 2. **Secondary contribution:** proving the multiplicity-aware principal-value
-   Riemann-von Mangoldt formula for `chebyshevPsi0` with symmetric truncation at
-   every real height, together with a uniform fixed-`x`
-   `O_x((1+log(T+8))^2/T)` truncation error for `T >= 8`.
-3. **Supporting contribution:** proving PNT-form equivalences, RH-scale error
-   propagation lemmas, and the conditional reverse bridge
-   `RH_PsiErrorBound -> RiemannHypothesis` that will compose with a future
-   proof of the RH-scale `ψ` estimate.
+   Riemann-von Mangoldt formula for `chebyshevPsi0`, a uniform fixed-`x`
+   `O_x((1+log(T+8))^2/T)` truncation error, and a polynomial-height formula
+   whose constant is uniform over natural samples.
+3. **Supporting contribution:** combining that formula with multiplicity-aware
+   zero counting to prove the full forward chain
+   `RiemannHypothesis.Statement -> RH_PsiErrorBound ->
+   RH_PrimeCountingLiErrorBound`, together with the reverse equivalence
+   `RiemannHypothesis.Statement <-> RH_PsiErrorBound`.
 4. **Framework contribution:** building a Hardy-Z/critical-line-zero framework
    with explicit target statements for Hardy, Hardy-Littlewood, Selberg, and
    Conrey-style zero-counting results.
-5. **Mathlib roadmap:** isolating the remaining analytic inputs: quantitative
-   finite-height explicit-formula error bounds for RH-scale estimates, and
+5. **Mathlib roadmap:** isolating the remaining analytic inputs: reverse
+   quantitative partial summation from prime-counting error to Chebyshev
+   error, stronger reusable finite-height estimates where needed, and
    special-function asymptotics for Hardy's theorem.
 
 The strongest current title direction is:
@@ -373,7 +375,7 @@ Current code status:
 |---|---:|---|
 | `GammaResidue.lean` | 0 | General Gamma residue formula completed |
 | `HardyTheorem.lean` | 0 | Hardy-Z phase facts and codiscrete-to-bounded-window zero bridges proved; corrected integral asymptotic, positivity and zero-counting targets |
-| `PrimeNumberTheorem.lean` | 0 | Bounded-height zero finiteness, zero-symmetry bridges, and the principal-value von Mangoldt explicit formula proved; RH error equivalence targets remain |
+| `PrimeNumberTheorem.lean` | 0 | Principal-value and quantitative explicit formula proved; `RH <-> RH_PsiErrorBound` and the forward prime-counting error implication proved; reverse `pi-Li` error to RH remains |
 | `ZeroFreeRegion.lean` | 0 | 3-4-1, compact strip, and classical `c/log|t|` zero-free region proved; Vinogradov-Korobov target open |
 
 Total: 0 syntactic `sorry` occurrences in Lean source files.
@@ -478,6 +480,7 @@ of such contours from `goodHeight`: the square at height `T` has real sides
 | `PrimeNumberTheorem/CentralHorizontalEdge.lean` | Full `O(log^2 A)` logarithmic-derivative bound on `-1<=Re(s)<=2` at logarithmically separated good heights, explicit `O(log^2 A/T)` contour bound, and both-side cofinal decay | sorry-free |
 | `PrimeNumberTheorem/CofinalExplicitFormula.lean` | Exact moving-rectangle identities, selected-height quantitative contour bounds, absorbed moving-left and trivial-zero truncations, and the cofinal multiplicity-aware approximation limit | sorry-free; consumed by the all-height module |
 | `PrimeNumberTheorem/ExplicitFormulaAllHeights.lean` | Floor-index geometry, two-window bounded-gap estimates, the completed all-real-height multiplicity-aware explicit formula, and its `O_x(log^2 T/T)` rate for `T >= 8` | sorry-free |
+| `PrimeNumberTheorem/RHNaturalPsiError.lean` | Under RH, combines the polynomial-height contour formula and finite-zero estimate, extends the natural-sample bound to real `x`, and proves `RH <-> RH_PsiErrorBound` plus the forward prime-counting error implication | sorry-free; conditional on RH where stated, not a proof of RH |
 | `PrimeNumberTheorem/GlobalZeroCount.lean` | Global `O(T log T)` bounds for nontrivial zeta zeros and an analytic-multiplicity weighted reciprocal-norm sum bounded by `O(log^2 T)` | sorry-free; quantitative input for future truncated-error estimates |
 | `PrimeNumberTheorem/NontrivialZeroMultiplicity.lean` | Functional-equation invariance of analytic zero multiplicity, single weighted-zero contribution bounds, and finite multiplicity-mass control by the zeta divisor on a closed disk | sorry-free; consumed by the completed interpolation |
 | `PrimeNumberTheorem/LeftHorizontalEdge.lean` | Functional-equation decomposition and vanishing far-left horizontal pieces | sorry-free |
@@ -580,6 +583,7 @@ Lean declarations in `ZeroFreeRegion.lean` and
 | `PrimeNumberTheorem.exists_norm_truncated_neg_logDeriv_firstOrderPerron_sub_chebyshevPsi0_le_div` / `exists_uniform_nat_norm_truncated_neg_logDeriv_firstOrderPerron_sub_chebyshevPsi0_le` / `ExplicitFormulaResidues.exists_norm_truncatedExplicitFormula_sub_contourRemainder_sub_chebyshevPsi0_le_div` | `theorem` | Quantifies the full conditionally convergent first-order Perron integral by `C(x,c)/W`, including the prime-power half-jump; on `Re(s)=2`, one absolute constant gives the coarse uniform bound `C*m^5/W` for every natural `m>=2`. | Removes the first fixed-`x` obstruction at integral sampling points and supplies the right-edge rate consumed by the uniform natural-point contour assembly. |
 | `ExplicitFormulaResidues.exists_uniform_norm_integral_farLeft_explicit_le_log_div` / `exists_uniform_goodHeight_Icc_norm_horizontal_complete_explicitFormulaContour_difference_le` | `theorem` | For every `x>=2`, one absolute constant controls the far-left edge at `Re(s)=-1`; the complete top-bottom contribution is then bounded by `C*x^2*(1+log(A+6))^2/T`. The good height is selected before `x`, so the same `T` works for all samples. | Removes the remaining fixed-`x` horizontal-contour constant. |
 | `ExplicitFormulaResidues.exists_uniform_goodHeight_Icc_norm_nat_truncatedExplicitFormula_sub_chebyshevPsi0_le` / `exists_nat_goodHeight_pow_five_norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_log_nat_sq` | `theorem` | Assembles uniform Perron, horizontal, and moving-left bounds for every natural `m>=2`; choosing `T in [m^5,m^5+1]` and retaining two trivial zeros absorbs all contour terms, after which the geometric trivial-zero tail gives `‖explicitFormulaApproxWithMultiplicity m T-psi0(m)‖ <= C(1+log m)^2`. | Gives a polynomial-height natural-point explicit formula with one constant independent of `m`; this is the contour input needed for the forward RH error direction, not a proof of RH. |
+| `ExplicitFormulaResidues.RH_PsiErrorBound_of_RiemannHypothesis` / `RH_PrimeCountingLiErrorBound_of_RiemannHypothesis` / `riemannHypothesis_iff_RH_PsiErrorBound` | `theorem` | At `T in [m^5,m^5+1]`, combines the uniform contour error with the RH finite-zero estimate, absorbs the midpoint jump, extends from `m=floor x` to all large real `x`, and uses the proved partial-summation and Mellin/Landau bridges. | Closes `RH -> psi`, `RH -> pi-Li`, and `RH <-> RH_PsiErrorBound`; it does not prove RH or the unconditional error predicates. |
 | `ExplicitFormulaResidues.exists_goodHeight_Icc_norm_firstOrderContourRemainder_le_horizontal_add_left` / `exists_goodHeight_Icc_norm_truncatedExplicitFormula_sub_chebyshevPsi0_le_horizontal_add_left` | `theorem` | Adds the explicit exponentially decaying negative-odd left edge and quantitative Perron inversion to obtain a selected-height finite explicit formula with no abstract contour remainder. | Upstream estimate consumed by the following truncation-selection theorems. |
 | `ExplicitFormulaResidues.tendsto_oddVerticalExplicitBound_atTop` / `ExplicitFormulaAux.norm_finiteTrivialZeroSum_residues_sub_logTerm_le_geometric` | `theorem` | Proves the displayed moving-left majorant tends to zero as `N -> infinity` at fixed height and bounds the omitted trivial-zero correction by a geometric tail. | Supplies the two quantitative truncation inputs that were previously open. |
 | `ExplicitFormulaResidues.exists_goodHeight_Icc_exists_truncation_norm_truncatedExplicitFormula_sub_chebyshevPsi0_le_log_sq_div` / `exists_goodHeight_Icc_norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_log_sq_div` | `theorem` | Chooses a common truncation depth after the good height is fixed, absorbs both the moving-left edge and finite trivial-zero tail, and obtains the standard multiplicity-aware approximation with `O_x(log^2 A/T)` error. | Closes the selected-height quantitative formula in the repository's native normalization. |
@@ -1167,13 +1171,15 @@ also proved in
 `no_zeros_on_one_third_of_psi_power_error_bound_sub_delta` specialize this to an
 `O(x^(2/3-delta))` input.  Combining this with the elementary comparison
 `sqrt x * log^2 x = o(x^theta)` for every `theta > 1/2` now gives the verified
-conditional closure
-`ZeroFreeRegion.riemannHypothesis_of_RH_PsiErrorBound`, re-exported as
+closure `ZeroFreeRegion.riemannHypothesis_of_RH_PsiErrorBound`, re-exported as
 `RiemannPNT.API.riemannHypothesis_of_RH_PsiErrorBound`: an RH-scale `ψ` error
-implies Mathlib's `RiemannHypothesis`.  This still does not prove RH, because
-`RH_PsiErrorBound` remains a target.  The remaining gap is proving that
-RH-scale `psi` power-saving estimate from an explicit formula or Tauberian
-argument, not the Mellin converse bridge itself.
+implies Mathlib's `RiemannHypothesis`.  The converse is now proved in
+`ExplicitFormulaResidues.RH_PsiErrorBound_of_RiemannHypothesis`, and
+`riemannHypothesis_iff_RH_PsiErrorBound` packages the equivalence.  This still
+does not prove RH: `RH_PsiErrorBound` is an unresolved proposition equivalent
+to RH, not an unconditional theorem.  For the prime-counting endpoint, the
+remaining gap is the reverse quantitative partial-summation implication from
+`RH_PrimeCountingLiErrorBound` back to `RH_PsiErrorBound` or directly to RH.
 
 The finite truncated-zero bookkeeping is proved as ordinary theorem-level
 infrastructure.  In particular,
@@ -1282,11 +1288,13 @@ The four remaining analytic directions are:
 
 1. **Stronger zero-free region**: prove the Vinogradov-Korobov region using
    exponential-sum estimates beyond the completed classical `c/log |t|` region.
-2. **Quantitative explicit formula**: prove a uniform finite-height truncation
-   error strong enough for RH-scale prime-counting estimates; the symmetric
-   principal-value formula itself is complete.
-3. **RH error equivalence**: connect the explicit formula under RH to the
-   `sqrt x * log x` prime-counting error and prove the reverse implication.
+2. **Quantitative explicit formula**: the uniform natural-point truncation is
+   now strong enough to prove the RH-scale Chebyshev and forward prime-counting
+   errors.  Further work should improve uniform real-`x` finite-height forms or
+   reuse them outside the RH implication.
+3. **RH error equivalence**: the forward implication to the
+   `sqrt x * log x` prime-counting error is proved.  Prove the reverse
+   quantitative partial-summation endpoint from `pi-Li` back to `psi`/RH.
 4. **Hardy theorem**: prove the signed moment/asymptotic inputs for Hardy's
    theorem and the stronger critical-line zero-counting targets.
 
@@ -1341,20 +1349,18 @@ parallel work breakdown of the remaining analytic chains.
 
 | Theorem | Missing Mathlib Component | Difficulty |
 |---|---|---|
-| RH-scale use of the truncated formula | Combine the uniform natural-point Perron bound with uniform horizontal-edge constants at a polynomial truncation height, then extend from integer samples to real `x` | High |
+| Reverse RH error endpoint | Derive the RH-scale `theta`/`psi` error from the `pi-Li` error by quantitative partial summation | High |
 | Vinogradov-Korobov zero-free region | Exponential sum estimates | Very High |
 | Hardy's theorem targets | Corrected moment estimates and asymptotic expansions of special functions | Medium–High |
 
 ### Easiest Path Forward
 
-The quantitative truncated error is now proved in the classical normalization
-for every `T >= 2`, with a constant depending on fixed `x`.  In addition, the
-right Perron edge has one coarse uniform `C*m^5/W` bound at every natural
-sampling point `m>=2`; this avoids the unavoidable near-integer denominator in
-the unrestricted real-`x` first-order Perron estimate.  The next PNT-facing
-step is to make the selected-height horizontal contour estimate uniform for
-`x>=2`, choose a sufficiently high polynomial truncation height, and assemble
-the resulting bound at integer samples before extending it to all real `x`.
+The quantitative truncated error is proved for every `T >= 2`, and the
+polynomial-height natural-sample form has now been combined with the RH finite
+zero sum and extended to all large real `x`.  This closes the forward chain
+from RH to the `psi`, `theta`, and `pi-Li` error bounds.  The nearest PNT-facing
+task is now the reverse quantitative partial-summation estimate from `pi-Li`
+error back to `theta`/`psi`, which would complete `rh_iff_optimal_error`.
 Strengthening the zero-free region beyond the classical scale still requires
 substantially deeper exponential-sum input.
 

@@ -2,8 +2,9 @@
 
 This document scopes the formalization path around
 `PrimeNumberTheorem.RH_ErrorBound` and
-`PrimeNumberTheorem.rh_iff_optimal_error`.  It is a dependency map, not a claim
-that the equivalence is already proved.
+`PrimeNumberTheorem.rh_iff_optimal_error`.  The RH/Chebyshev-`psi` equivalence
+and the forward RH-to-prime-counting implication are now proved.  The final
+prime-counting equivalence remains open in the reverse direction.
 
 ## Current Lean Anchors
 
@@ -34,6 +35,9 @@ The current project already provides these usable endpoints and support lemmas.
 | `ExplicitFormulaAux.exists_globalZeroMultiplicity_le_mul_log` | Proves the global analytic-multiplicity count `N(T) = O(T log T)` from fixed-width Jensen windows. |
 | `ExplicitFormulaAux.exists_globalReciprocalZeroMultiplicity_le_log_sq` | Proves `sum_{|Im rho| <= T} m(rho) / norm(rho) = O(log^2 T)`. |
 | `ExplicitFormulaAux.exists_norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_log_sq_of_RH` | Under RH, bounds the actual multiplicity-aware finite zero sum by `O(sqrt(x) log^2 T)`. |
+| `ExplicitFormulaResidues.RH_PsiErrorBound_of_RiemannHypothesis` | Combines the selected polynomial-height formula with the RH finite-zero bound and extends the natural-sample estimate to all large real `x`. |
+| `ExplicitFormulaResidues.RH_PrimeCountingLiErrorBound_of_RiemannHypothesis` | Closes the forward von Koch implication using the proved `psi -> theta -> pi-Li` chain. |
+| `ExplicitFormulaResidues.riemannHypothesis_iff_RH_PsiErrorBound` | Packages the completed forward explicit-formula argument with the Mellin/Landau reverse bridge. |
 
 ## Current Target Assessment
 
@@ -196,11 +200,11 @@ Current status:
 - `exists_norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_log_sq_div`
   combines that selected-height theorem with the bounded-gap zero-window
   estimate and proves `O_x((1+log(T+8))^2/T)` for every `T >= 8`.
-- What remains for the separately displayed public target is the normalization
-  `deriv riemannZeta 0 / riemannZeta 0 = log(2*pi)` in the repository's
-  conventions and a bounded-height patch for `2 <= T < 8`.  For the RH-to-
-  prime-error direction, the next substantive work is estimating the finite
-  zero sum under RH and choosing the truncation height as a function of `x`.
+- The separately displayed public target, including the normalization
+  `deriv riemannZeta 0 / riemannZeta 0 = log(2*pi)` and the bounded-height
+  patch for `2 <= T < 8`, is also theorem-level.  For the RH error direction,
+  the polynomial-height natural-sample form below is the quantitative input
+  actually consumed.
 
 Formalization dependencies:
 
@@ -237,10 +241,16 @@ Current status:
   combines it with F2 and proves the required `O(sqrt(x) log^2 T)` finite-zero
   contribution.
 - The fixed-`x` all-height rate and the uniform natural-point polynomial-height
-  rate are both proved.  At `T in [m^5,m^5+1]`, the contour part is only
-  `O(log^2 m)`.  What remains for an RH-scale asymptotic is to combine this with
-  the finite-zero estimate above, normalize `log(T+6)` to `log m`, and extend
-  the resulting integer-point bound to real `x`.
+  rate are both proved.  At `T in [m^5,m^5+1]`, the contour part is
+  `O(log^2 m)`.
+- `exists_nat_abs_chebyshevPsi0_sub_id_le_sqrt_mul_log_sq_of_RH` combines that
+  contour theorem with the finite-zero estimate and proves the midpoint bound
+  at every natural `m>=2`.
+- `exists_nat_abs_chebyshevPsi_sub_id_le_sqrt_mul_log_sq_of_RH` absorbs the
+  half-jump using `Lambda(m) <= log m`.
+- `RH_PsiErrorBound_of_RiemannHypothesis` extends the bound to every large real
+  `x` with `m=floor x` and `psi(x)=psi(m)`.
+- Consequently the forward F4 endpoint is complete.
 
 ### F5. Convert `psi` to `theta`
 
@@ -258,7 +268,8 @@ Current status:
   `psi(x) - x = O(sqrt x * log^2 x)` to
   `theta(x) - x = O(sqrt x * log^2 x)`.
 
-This step is essentially connectable now once the `psi` RH error is available.
+This step is complete: `RH_ThetaErrorBound_of_RiemannHypothesis` composes the
+new `psi` theorem with the existing `psi`/`theta` equivalence.
 
 ### F6. Convert `theta` to `pi - Li`
 
@@ -297,8 +308,9 @@ Formalization dependencies:
 
 - No remaining dependency for the forward
   `RH_ThetaErrorBound -> RH_PrimeCountingLiErrorBound` bridge.
-- The open work is upstream: prove `RH_PsiErrorBound` / `RH_ThetaErrorBound`
-  from an explicit formula under RH.
+- `RH_PrimeCountingLiErrorBound_of_RiemannHypothesis` now composes the completed
+  F4/F5 results with this partial-summation theorem.  The entire forward chain
+  from RH to the `pi-Li` error endpoint is complete.
 
 ## Reverse Chain: `primeCounting - Li` to RH
 
@@ -331,6 +343,10 @@ Substituting `pi(t) = Li(t) + E(t)` with
 
 Current status:
 
+- This reverse quantitative partial-summation implication is not yet proved.
+- It is now the only missing mathematical implication for
+  `rh_iff_optimal_error`: once it yields `RH_PsiErrorBound`, the proved
+  `ZeroFreeRegion.riemannHypothesis_of_RH_PsiErrorBound` finishes RH.
 - The weak PNT-form equivalences do not provide this quantitative reverse
   estimate.
 - The existing `psi - theta` Mathlib bound is enough for the final
@@ -403,26 +419,15 @@ Current status:
 
 ## Minimal New Dependency Chain
 
-The smallest coherent route to make
-`rh_iff_primeCounting_li_error` a theorem is:
+The forward chain through `RH_PsiErrorBound`, `RH_ThetaErrorBound`, and
+`RH_PrimeCountingLiErrorBound` is complete.  The smallest remaining route to
+make `rh_iff_primeCounting_li_error` a theorem is:
 
-1. Define quantitative error predicates with `=O[atTop]` for `psi`, `theta`,
-   and `primeCounting - logIntegral`.
-2. Use the proved fixed-`x` truncated explicit formula with precise jump and
-   truncation conventions, and strengthen its constant bookkeeping uniformly
-   in `x`.
-3. Use the proved zero-counting and reciprocal-zero-sum estimates
-   `N(T) = O(T log T)` and `sum m(rho) / |rho| = O(log^2 T)` in the
-   together with that uniform-in-`x` contour analysis.
-4. Prove `RH -> RH_PsiErrorBound` by bounding the truncated explicit formula.
-5. Use the existing `psi - theta` Mathlib bound to get `RH_ThetaErrorBound`.
-6. Use the proved quantitative partial-summation bridge
-   `RH_ThetaErrorBound -> RH_PrimeCountingLiErrorBound`.
-7. For the reverse direction from the prime-counting endpoint, prove
-   quantitative partial summation back to `RH_PsiErrorBound`.
-8. Use the already-proved
-   `ZeroFreeRegion.riemannHypothesis_of_RH_PsiErrorBound` to obtain Mathlib's
-   `RiemannHypothesis` from that `psi` endpoint.
+1. Prove the reverse quantitative partial-summation estimate
+   `RH_PrimeCountingLiErrorBound -> RH_ThetaErrorBound`.
+2. Use `RH_ThetaErrorBound_iff_RH_PsiErrorBound`.
+3. Apply the already-proved
+   `ZeroFreeRegion.riemannHypothesis_of_RH_PsiErrorBound`.
 
 The already-proved PNT-form equivalence remains useful documentation and sanity
 checking, but it is too coarse for the RH error equivalence: it tracks limits,

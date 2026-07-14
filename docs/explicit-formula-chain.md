@@ -737,9 +737,11 @@ the low-height patch.
 
 Under RH, the same module bounds the actual multiplicity-aware finite zero sum
 by `O(sqrt(x) log^2 T)`.  The contour constant is now also uniform at natural
-samples with `T` near `m^5`.  The next step is to combine these two proved
-estimates into an RH-scale integer-point bound and extend it to real `x` using
-monotonicity and the jump convention.
+samples with `T` near `m^5`.  `PrimeNumberTheorem/RHNaturalPsiError.lean` now
+combines these two estimates, proves the RH-scale midpoint and right-continuous
+`psi` bounds at natural samples, and extends them to all large real `x` using
+the floor identity.  This closes the explicit-formula input for the forward RH
+error implication.
 
 The same finite-tail layer also preserves the direct bridge from a stable base
 truncation to the legacy unweighted compatibility predicate. The public theorem
@@ -843,5 +845,7 @@ and
    `O_x(log^2(xT)/T)` error.  At natural `m>=2`, the stronger polynomial-height
    selected formula has one absolute `O((1+log m)^2)` contour error.
 7. Completed: the principal-value formula is also proved as an all-height
-   limit.  The next analytic task for RH is the finite-zero-sum combination at
-   the selected `m^5` height and the integer-to-real monotonicity extension.
+   limit.  The selected-`m^5` finite-zero-sum combination and integer-to-real
+   extension are also completed in `RHNaturalPsiError.lean`.  The remaining RH
+   error-equivalence task is the reverse quantitative partial-summation route
+   from the prime-counting endpoint, not another contour estimate.

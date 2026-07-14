@@ -47,6 +47,16 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.ExplicitFormulaResidues.exists_norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_log_sq_div",
     "PrimeNumberTheorem.deriv_riemannZeta_zero_div_riemannZeta_zero",
     "PrimeNumberTheorem.ExplicitFormulaTruncated.explicitFormulaTruncatedTarget_proved",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.exists_nat_abs_chebyshevPsi0_sub_id_le_sqrt_mul_log_sq_of_RH",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.exists_nat_abs_chebyshevPsi_sub_id_le_sqrt_mul_log_sq_of_RH",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.RH_PsiErrorBound_of_RiemannHypothesis",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.RH_ThetaErrorBound_of_RiemannHypothesis",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.RH_PrimeCountingLiErrorBound_of_RiemannHypothesis",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.RH_ErrorBound_of_RiemannHypothesis",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.riemannHypothesis_iff_RH_PsiErrorBound",
+    "RiemannPNT.API.RH_PsiErrorBound_of_riemannHypothesis",
+    "RiemannPNT.API.RH_PrimeCountingLiErrorBound_of_riemannHypothesis",
+    "RiemannPNT.API.riemannHypothesis_iff_RH_PsiErrorBound",
 }
 
 REPORT_RE = re.compile(

@@ -3616,6 +3616,19 @@ Support-level verified declarations:
 - `PrimeNumberTheorem.ExplicitFormulaTruncated.explicitFormulaTruncatedTarget_proved`
   combines that normalization with a finite-zero low-height patch and proves
   the public target for every real `T >= 2`.
+- `ExplicitFormulaResidues.exists_nat_abs_chebyshevPsi0_sub_id_le_sqrt_mul_log_sq_of_RH`
+  combines the polynomial-height formula with the multiplicity-aware RH zero
+  sum and proves the expected `sqrt(m) log^2(m)` midpoint error uniformly for
+  natural `m>=2`.
+- `ExplicitFormulaResidues.RH_PsiErrorBound_of_RiemannHypothesis` absorbs the
+  von Mangoldt half-jump and extends from natural samples to all large real
+  `x` using `psi(x)=psi(floor x)`.
+- `ExplicitFormulaResidues.RH_PrimeCountingLiErrorBound_of_RiemannHypothesis`
+  composes the new `psi` estimate with the closed `psi -> theta -> pi-Li`
+  partial-summation chain.
+- `ExplicitFormulaResidues.riemannHypothesis_iff_RH_PsiErrorBound` combines
+  the new forward theorem with the existing Mellin/Landau converse.  This is
+  an equivalence of propositions, not an unconditional proof of either side.
 
 ## Missing Chains for a Complete Analytic PNT
 
@@ -3627,12 +3640,14 @@ term, the following chains remain:
    Vinogradov-Korobov region and its exponential-sum input.
 2. **Quantitative explicit formula.**
    The multiplicity-aware symmetric principal-value formula and a uniform
-   natural-point polynomial-height truncation error are proved.  The remaining
-   work is the RH finite-zero-sum combination and extension from integer samples
-   to all real `x`.
+   natural-point polynomial-height truncation error are proved.  Their RH
+   finite-zero-sum combination and the extension from integer samples to all
+   real `x` are now also proved; further work concerns stronger reusable
+   finite-height forms, not the RH-to-`psi` implication.
 3. **RH error equivalence.**
-   Need zero-counting estimates, explicit formula bounds under RH, and partial
-   summation from Chebyshev functions to prime counting.
+   The forward chain from RH to `psi`, `theta`, and `pi-Li` error bounds is
+   proved, as is `RH <-> RH_PsiErrorBound`.  The remaining endpoint is reverse
+   quantitative partial summation from `pi-Li` error back to `psi`/RH.
 4. **Hardy theorem.**
    Need corrected moment asymptotics for Hardy's Z-function and supporting
    special-function asymptotics.

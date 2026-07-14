@@ -160,22 +160,22 @@ multiplicity-aware target:
 - `ZeroFreeRegion.nontrivial_zero_re_le_half_of_RH_PsiErrorBound`
 - `ZeroFreeRegion.half_le_nontrivial_zero_re_of_RH_PsiErrorBound`
 - `ZeroFreeRegion.riemannHypothesis_of_RH_PsiErrorBound`
+- `PrimeNumberTheorem.ExplicitFormulaResidues.RH_PsiErrorBound_of_RiemannHypothesis`
+- `PrimeNumberTheorem.ExplicitFormulaResidues.RH_ThetaErrorBound_of_RiemannHypothesis`
+- `PrimeNumberTheorem.ExplicitFormulaResidues.RH_PrimeCountingLiErrorBound_of_RiemannHypothesis`
+- `PrimeNumberTheorem.ExplicitFormulaResidues.RH_ErrorBound_of_RiemannHypothesis`
+- `PrimeNumberTheorem.ExplicitFormulaResidues.riemannHypothesis_iff_RH_PsiErrorBound`
 
 ### Missing mathlib/analytic infrastructure
 
-1. a usable explicit-formula endpoint from Chain 2 with quantified error terms,
-   including truncation parameter handling;
-2. insertion of the now-proved zero-counting and reciprocal-zero sum controls
-   (`N(T) = O(T log T)` and `sum m(rho)/|rho| = O(log^2 T)`) into the
-   quantitative truncated explicit-formula remainder analysis; under RH the
-   finite multiplicity-aware zero sum is already bounded by
-   `O(sqrt(x) log^2 T)`;
-3. upstream proof of `RH_PsiErrorBound` / `RH_ThetaErrorBound`; the forward
-   `Chebyshev` to `primeCounting` bridge under RH-quality errors is already
-   proved by `RH_PrimeCountingLiErrorBound_of_RH_ThetaErrorBound`;
-4. the remaining reverse endpoint is quantitative partial summation from
-   `pi`/`Li` error bounds back to `RH_PsiErrorBound`; the conditional bridge
-   `RH_PsiErrorBound -> RiemannHypothesis` is already theorem-level.
+1. The explicit-formula, zero-counting, RH finite-zero-sum, natural-sample,
+   and integer-to-real steps are complete.  They prove
+   `RH -> RH_PsiErrorBound -> RH_ThetaErrorBound ->
+   RH_PrimeCountingLiErrorBound`.
+2. The remaining reverse endpoint is quantitative partial summation from
+   `pi`/`Li` error bounds back to `RH_ThetaErrorBound` or
+   `RH_PsiErrorBound`.  The latter is already equivalent to RH by
+   `riemannHypothesis_iff_RH_PsiErrorBound`.
 
 ---
 
