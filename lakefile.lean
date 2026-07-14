@@ -45,8 +45,11 @@ lean_lib RiemannPNT where
     `Test.ExplicitFormulaBoundedGapContract,
     `Test.CofinalExplicitFormulaContract,
     `Test.CofinalWeightedApproxContract,
+    `Test.CompleteHorizontalRateContract,
+    `Test.ContourRemainderRateContract,
     `Test.ExplicitFormulaMultiplicityContract,
     `Test.ExplicitFormulaTruncatedUniformContract,
+    `Test.FarLeftHorizontalRateContract,
     `Test.FiniteZeroMultiplicityMassContract,
     `Test.FirstOrderExplicitFormulaRateContract,
     `Test.FirstOrderPerronRateContract,
@@ -56,7 +59,8 @@ lean_lib RiemannPNT where
     `Test.MultiplicityAxiomAudit,
     `Test.NontrivialZeroContributionBoundContract,
     `Test.NontrivialZeroDivisorMultiplicityContract,
-    `Test.NontrivialZeroMultiplicitySymmetryContract
+    `Test.NontrivialZeroMultiplicitySymmetryContract,
+    `Test.SelectedHeightTruncatedExplicitFormulaRateContract
   ]
 
 require mathlib from "./vendor/mathlib"

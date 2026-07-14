@@ -1408,6 +1408,170 @@ theorem tendsto_integral_farLeft_eulerFactor_neg_height_atTop {x ε : ℝ}
   exact div_le_div_of_nonneg_right
     (mul_le_mul_of_nonneg_left hdiff (div_nonneg hM hT.le)) hlog.le
 
+/-- Uniform finite-height estimate for the complete far-left horizontal edge.
+The constant is independent of the moving left endpoint.  Since the statement
+uses `|T|`, it controls the upper and lower horizontal edges simultaneously. -/
+theorem exists_norm_integral_farLeft_explicit_le_log_div
+    {x ε : ℝ} (hx : 1 < x) (hε : 0 < ε) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ {a T : ℝ}, a ≤ -ε → 1 ≤ |T| →
+      IntervalIntegrable
+          (fun σ : ℝ => explicitFormulaIntegrand x ((σ : ℂ) + T * I))
+          MeasureTheory.volume a (-ε) ∧
+        ‖∫ σ : ℝ in a..(-ε),
+            explicitFormulaIntegrand x ((σ : ℂ) + T * I)‖ ≤
+          C * (1 + Real.log (1 + |T|)) / |T| := by
+  let X : ℝ := x ^ (-ε)
+  let L : ℝ := Real.log x
+  let M : ℝ := vonMangoldtLSeriesNorm ε
+  let E : ℝ := ‖(Real.eulerMascheroniConstant : ℂ)‖ + 5
+  let A : ℝ := ‖Complex.log (2 * Real.pi)‖ + 3 * Real.pi
+  let B : ℝ := X * (1 / L ^ 2 + ε / L)
+  let C : ℝ := (M + A + E) * X / L + B
+  have hxpos : 0 < x := zero_lt_one.trans hx
+  have hL : 0 < L := by simpa [L] using Real.log_pos hx
+  have hX : 0 ≤ X := by dsimp [X]; positivity
+  have hM : 0 ≤ M := by
+    dsimp [M]
+    exact tsum_nonneg fun n => norm_nonneg _
+  have hE : 0 ≤ E := by dsimp [E]; positivity
+  have hA : 0 ≤ A := by dsimp [A]; positivity
+  have hB : 0 ≤ B := by dsimp [B]; positivity
+  have hC : 0 ≤ C := by dsimp [C]; positivity
+  refine ⟨C, hC, ?_⟩
+  intro a T ha hT
+  have hTabs : 0 < |T| := zero_lt_one.trans_le hT
+  have hTne : T ≠ 0 := abs_pos.mp hTabs
+  refine ⟨intervalIntegrable_farLeft_explicit hx hε ha hTne, ?_⟩
+  let H : ℝ := 1 + Real.log (1 + |T|)
+  have hlogT : 0 ≤ Real.log (1 + |T|) :=
+    Real.log_nonneg (by linarith [abs_nonneg T])
+  have hH : 1 ≤ H := by dsimp [H]; linarith
+  have hXa : 0 ≤ x ^ a := Real.rpow_nonneg hxpos.le _
+  have hpow : x ^ a ≤ X := by
+    dsimp [X]
+    exact Real.rpow_le_rpow_of_exponent_le hx.le ha
+  have hdiff0 : 0 ≤ X - x ^ a := by linarith
+  have hdiff : X - x ^ a ≤ X := by linarith
+  let full : ℂ := ∫ σ : ℝ in a..(-ε),
+    explicitFormulaIntegrand x ((σ : ℂ) + T * I)
+  let gamma : ℂ := ∫ σ : ℝ in a..(-ε),
+    farLeftGammaFactorIntegrand x ((σ : ℂ) + T * I)
+  let digamma : ℂ := ∫ σ : ℝ in a..(-ε),
+    farLeftDigammaIntegrand x ((σ : ℂ) + T * I)
+  let right : ℂ := ∫ σ : ℝ in a..(-ε),
+    farLeftRightShiftedDigammaIntegrand x ((σ : ℂ) + T * I)
+  let cot : ℂ := ∫ σ : ℝ in a..(-ε),
+    farLeftCotCorrectionIntegrand x ((σ : ℂ) + T * I)
+  let elementary : ℂ := ∫ σ : ℝ in a..(-ε),
+    farLeftElementaryGammaIntegrand x ((σ : ℂ) + T * I)
+  let euler : ℂ := ∫ σ : ℝ in a..(-ε),
+    logDeriv riemannZeta (1 - ((σ : ℂ) + T * I)) *
+      (x : ℂ) ^ ((σ : ℂ) + T * I) / ((σ : ℂ) + T * I)
+  have hfullGamma : full - gamma = euler := by
+    simpa [full, gamma, euler] using
+      integral_farLeft_explicit_sub_gamma_eq_euler hx hε ha hTne
+  have hgammaDigamma : gamma - digamma = elementary := by
+    simpa [gamma, digamma, elementary] using
+      integral_farLeft_gamma_sub_digamma_eq_elementary hx hε ha hTne
+  have hdigammaRight : digamma - right = cot := by
+    simpa [digamma, right, cot] using
+      integral_farLeft_digamma_sub_rightShifted_eq_cot hx hε ha hTne
+  have hdecomp : full = euler + elementary + cot + right := by
+    linear_combination hfullGamma + hgammaDigamma + hdigammaRight
+  have heuler0 := norm_integral_farLeft_eulerFactor_le hx hε ha hTne
+  have heuler : ‖euler‖ ≤ (M * X / L) * H / |T| := by
+    have hK : 0 ≤ M * X / L := by positivity
+    calc
+      ‖euler‖ ≤ (M / |T|) * (X - x ^ a) / L := by
+        simpa [euler, M, X, L] using heuler0
+      (M / |T|) * (X - x ^ a) / L ≤
+          (M / |T|) * X / L := by gcongr
+      _ = (M * X / L) / |T| := by ring
+      _ ≤ (M * X / L) * H / |T| := by
+        apply div_le_div_of_nonneg_right _ hTabs.le
+        nlinarith [mul_nonneg hK (sub_nonneg.mpr hH)]
+  have helementary0 := norm_integral_farLeft_elementaryGamma_le hx ha hT
+  have helementary : ‖elementary‖ ≤
+      ((‖Complex.log (2 * Real.pi)‖ + Real.pi) * X / L) * H / |T| := by
+    let K : ℝ := (‖Complex.log (2 * Real.pi)‖ + Real.pi) * X / L
+    have hK : 0 ≤ K := by dsimp [K]; positivity
+    calc
+      ‖elementary‖ ≤
+          ((‖Complex.log (2 * Real.pi)‖ + Real.pi) / |T|) *
+            (X - x ^ a) / L := by
+        simpa [elementary, X, L] using helementary0
+      ((‖Complex.log (2 * Real.pi)‖ + Real.pi) / |T|) *
+            (X - x ^ a) / L ≤
+          ((‖Complex.log (2 * Real.pi)‖ + Real.pi) / |T|) * X / L := by
+            gcongr
+      _ = K / |T| := by dsimp [K]; ring
+      _ ≤ K * H / |T| := by
+        apply div_le_div_of_nonneg_right _ hTabs.le
+        nlinarith [mul_nonneg hK (sub_nonneg.mpr hH)]
+  have hcot0 := norm_integral_farLeft_cotCorrection_le hx ha hT
+  have hcot : ‖cot‖ ≤ ((2 * Real.pi) * X / L) * H / |T| := by
+    let K : ℝ := (2 * Real.pi) * X / L
+    have hK : 0 ≤ K := by dsimp [K]; positivity
+    calc
+      ‖cot‖ ≤ ((2 * Real.pi) / |T|) * (X - x ^ a) / L := by
+        simpa [cot, X, L] using hcot0
+      ((2 * Real.pi) / |T|) * (X - x ^ a) / L ≤
+          ((2 * Real.pi) / |T|) * X / L := by gcongr
+      _ = K / |T| := by dsimp [K]; ring
+      _ ≤ K * H / |T| := by
+        apply div_le_div_of_nonneg_right _ hTabs.le
+        nlinarith [mul_nonneg hK (sub_nonneg.mpr hH)]
+  have hright0 := norm_integral_farLeft_rightShiftedDigamma_le hx hε ha hTne
+  have hcoeff :
+      ‖(Real.eulerMascheroniConstant : ℂ)‖ + 4 + Real.log (1 + |T|) ≤
+        E * H := by
+    dsimp [E, H]
+    nlinarith [mul_nonneg
+      (show 0 ≤ ‖(Real.eulerMascheroniConstant : ℂ)‖ + 4 by positivity) hlogT]
+  have hrightBase :
+      (‖(Real.eulerMascheroniConstant : ℂ)‖ + 4 + Real.log (1 + |T|)) *
+            X / L + B ≤
+        (E * X / L + B) * H := by
+    have hEXL : 0 ≤ E * X / L := by positivity
+    have hBmul : B ≤ B * H := by
+      nlinarith [mul_nonneg hB (sub_nonneg.mpr hH)]
+    calc
+      (‖(Real.eulerMascheroniConstant : ℂ)‖ + 4 + Real.log (1 + |T|)) *
+            X / L + B ≤
+          (E * H) * X / L + B := by gcongr
+      _ ≤ (E * H) * X / L + B * H := by linarith
+      _ = (E * X / L + B) * H := by ring
+  have hright : ‖right‖ ≤ (E * X / L + B) * H / |T| := by
+    calc
+      ‖right‖ ≤
+          (1 / |T|) *
+            ((‖(Real.eulerMascheroniConstant : ℂ)‖ + 4 + Real.log (1 + |T|)) *
+              X / L + B) := by
+        simpa [right, X, L, B] using hright0
+      (1 / |T|) *
+          ((‖(Real.eulerMascheroniConstant : ℂ)‖ + 4 + Real.log (1 + |T|)) *
+              X / L + B) ≤
+          (1 / |T|) * ((E * X / L + B) * H) := by
+            exact mul_le_mul_of_nonneg_left hrightBase (one_div_nonneg.mpr hTabs.le)
+      _ = (E * X / L + B) * H / |T| := by ring
+  change ‖full‖ ≤ C * H / |T|
+  rw [hdecomp]
+  calc
+    ‖euler + elementary + cot + right‖ ≤
+        ‖euler‖ + ‖elementary‖ + ‖cot‖ + ‖right‖ := by
+      calc
+        _ ≤ ‖euler + elementary + cot‖ + ‖right‖ := norm_add_le _ _
+        _ ≤ (‖euler + elementary‖ + ‖cot‖) + ‖right‖ := by gcongr; exact norm_add_le _ _
+        _ ≤ ((‖euler‖ + ‖elementary‖) + ‖cot‖) + ‖right‖ := by
+          gcongr
+          exact norm_add_le _ _
+        _ = _ := by ring
+    _ ≤ (M * X / L) * H / |T| +
+          ((‖Complex.log (2 * Real.pi)‖ + Real.pi) * X / L) * H / |T| +
+          ((2 * Real.pi) * X / L) * H / |T| +
+          (E * X / L + B) * H / |T| := by gcongr
+    _ = C * H / |T| := by dsimp [C, A]; ring
+
 /-- On the moving upper far-left horizontal segment, the full contour
 integral is asymptotic to the explicit Archimedean Gamma-factor integral. -/
 theorem tendsto_integral_farLeft_explicit_sub_gamma_atTop {x ε : ℝ}

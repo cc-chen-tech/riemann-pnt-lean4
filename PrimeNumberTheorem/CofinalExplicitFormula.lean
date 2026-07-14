@@ -49,6 +49,256 @@ theorem intervalIntegrable_explicitFormulaIntegrand_goodHeight_horizontal
     (f := fun r : ℝ => ((r : ℂ) + I * t))
     (x := σ) (g := explicitFormulaIntegrand x) han hmap).continuousWithinAt
 
+/-- Quantitative finite moving-rectangle remainder at one good height in each
+unit interval.  The horizontal contribution is `O_x(log^2 A / A)` uniformly
+in the left endpoint, while the displayed second term is the exponentially
+small moving-left vertical contribution. -/
+theorem
+    exists_goodHeight_Icc_norm_firstOrderContourRemainder_le_horizontal_add_left
+    {x : ℝ} (hx : 1 < x) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1), ExplicitFormulaAux.goodHeight T ∧
+        ∀ N : ℕ,
+          ‖firstOrderContourRemainder x (-(2 * (N : ℝ) + 1)) 2
+              (T / (2 * Real.pi))‖ ≤
+            (C * (1 + Real.log (A + 6)) ^ 2 / T +
+              ((vonMangoldtLSeriesNorm 1 + ‖Complex.log Real.pi‖ +
+                2 * (‖(Real.eulerMascheroniConstant : ℂ)‖ + 3 +
+                  Real.log (2 * (N : ℝ) + T + 4)) + Real.pi) *
+                x ^ (-(2 * (N : ℝ) + 1))) * (2 * T)) /
+              (2 * Real.pi) := by
+  rcases
+      exists_goodHeight_Icc_norm_horizontal_complete_explicitFormulaContour_difference_le
+        hx with ⟨C, hC, hchoose⟩
+  refine ⟨C, hC, ?_⟩
+  intro A hA
+  rcases hchoose A hA with ⟨T, hTmem, hgood, hhorizontal⟩
+  have hTpos : 0 < T := by linarith [hTmem.1]
+  refine ⟨T, hTmem, hgood, ?_⟩
+  intro N
+  let a : ℝ := -(2 * (N : ℝ) + 1)
+  have ha : a ≤ -1 := by
+    dsimp [a]
+    have hN : 0 ≤ (N : ℝ) := Nat.cast_nonneg N
+    linarith
+  have hh := hhorizontal ha
+  have hleft :=
+    (norm_integral_explicitFormulaIntegrand_odd_vertical_le
+      (N := N) hx hTpos.le).2
+  have hscale : 2 * Real.pi * (T / (2 * Real.pi)) = T := by
+    field_simp
+  have hhorizontal' :
+      ‖(∫ σ : ℝ in a..2,
+            explicitFormulaIntegrand x
+              ((σ : ℂ) + (((-T : ℝ) : ℂ) * I))) -
+        (∫ σ : ℝ in a..2,
+            explicitFormulaIntegrand x
+              ((σ : ℂ) + (((T : ℝ) : ℂ) * I)))‖ ≤
+        C * (1 + Real.log (A + 6)) ^ 2 / T := by
+    simpa [mul_comm] using hh
+  have hden : ‖(2 * Real.pi : ℂ) * I‖ = 2 * Real.pi := by
+    simp [Real.norm_eq_abs, abs_of_pos Real.pi_pos]
+  change ‖firstOrderContourRemainder x a 2 (T / (2 * Real.pi))‖ ≤ _
+  rw [firstOrderContourRemainder, hscale, norm_div, hden]
+  apply div_le_div_of_nonneg_right _ (by positivity : 0 ≤ 2 * Real.pi)
+  calc
+    ‖(∫ σ : ℝ in a..2,
+          explicitFormulaIntegrand x
+            ((σ : ℂ) + (((-T : ℝ) : ℂ) * I))) -
+        (∫ σ : ℝ in a..2,
+          explicitFormulaIntegrand x
+            ((σ : ℂ) + (((T : ℝ) : ℂ) * I))) -
+        I * (∫ t : ℝ in (-T)..T,
+          explicitFormulaIntegrand x ((a : ℂ) + t * I))‖ ≤
+      ‖(∫ σ : ℝ in a..2,
+          explicitFormulaIntegrand x
+            ((σ : ℂ) + (((-T : ℝ) : ℂ) * I))) -
+        (∫ σ : ℝ in a..2,
+          explicitFormulaIntegrand x
+            ((σ : ℂ) + (((T : ℝ) : ℂ) * I)))‖ +
+        ‖∫ t : ℝ in (-T)..T,
+          explicitFormulaIntegrand x ((a : ℂ) + t * I)‖ := by
+            calc
+              _ ≤ ‖(∫ σ : ℝ in a..2,
+                    explicitFormulaIntegrand x
+                      ((σ : ℂ) + (((-T : ℝ) : ℂ) * I))) -
+                  (∫ σ : ℝ in a..2,
+                    explicitFormulaIntegrand x
+                      ((σ : ℂ) + (((T : ℝ) : ℂ) * I)))‖ +
+                  ‖I * (∫ t : ℝ in (-T)..T,
+                    explicitFormulaIntegrand x ((a : ℂ) + t * I))‖ :=
+                norm_sub_le _ _
+              _ = _ := by rw [norm_mul, norm_I, one_mul]
+    _ ≤ C * (1 + Real.log (A + 6)) ^ 2 / T +
+        ((vonMangoldtLSeriesNorm 1 + ‖Complex.log Real.pi‖ +
+          2 * (‖(Real.eulerMascheroniConstant : ℂ)‖ + 3 +
+            Real.log (2 * (N : ℝ) + T + 4)) + Real.pi) *
+          x ^ (-(2 * (N : ℝ) + 1))) * (2 * T) := by
+      apply add_le_add hhorizontal'
+      simpa [a] using hleft
+
+/-- Quantitative first-order truncated explicit formula at one good height in
+every unit interval.  The abstract contour remainder has disappeared: the
+first term combines Perron truncation with both horizontal edges, and the
+second displayed term is the complete moving-left edge. -/
+theorem
+    exists_goodHeight_Icc_norm_truncatedExplicitFormula_sub_chebyshevPsi0_le_horizontal_add_left
+    {x : ℝ} (hx : 1 < x) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 8 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1), goodHeight T ∧ ∀ N : ℕ,
+        ‖(∑ p ∈ finiteTrivialZeroSum (2 * (N : ℝ)), -((x : ℂ) ^ p) / p) +
+            ((x : ℂ) - deriv riemannZeta 0 / riemannZeta 0 +
+              ∑ ρ ∈ nontrivialZerosFinset T,
+                -(analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ) -
+            (chebyshevPsi0 x : ℂ)‖ ≤
+          C * (1 + Real.log (A + 6)) ^ 2 / T +
+            (((vonMangoldtLSeriesNorm 1 + ‖Complex.log Real.pi‖ +
+              2 * (‖(Real.eulerMascheroniConstant : ℂ)‖ + 3 +
+                Real.log (2 * (N : ℝ) + T + 4)) + Real.pi) *
+              x ^ (-(2 * (N : ℝ) + 1))) * (2 * T)) /
+              (2 * Real.pi) := by
+  rcases
+      exists_norm_truncated_neg_logDeriv_firstOrderPerron_sub_chebyshevPsi0_le_div
+        (zero_lt_one.trans hx) (by norm_num : (1 : ℝ) < 2) with
+    ⟨Cp, hCp, hperron⟩
+  rcases exists_goodHeight_Icc_norm_firstOrderContourRemainder_le_horizontal_add_left
+      hx with ⟨Cr, hCr, hremainder⟩
+  let C : ℝ := Cr + 2 * Real.pi * Cp
+  have hC : 0 ≤ C := by dsimp [C]; positivity
+  refine ⟨C, hC, ?_⟩
+  intro A hA
+  rcases hremainder A (by linarith) with ⟨T, hTmem, hgood, hrem⟩
+  have hTpos : 0 < T := by linarith [hTmem.1]
+  have htwoPi : 2 * Real.pi ≤ T := by
+    nlinarith [Real.pi_lt_four, hTmem.1]
+  have hW : 1 ≤ T / (2 * Real.pi) := by
+    rw [le_div_iff₀ (by positivity : 0 < 2 * Real.pi)]
+    simpa using htwoPi
+  have hscale : 2 * Real.pi * (T / (2 * Real.pi)) = T := by
+    field_simp
+  let L : ℝ := 1 + Real.log (A + 6)
+  have hlog : 0 ≤ Real.log (A + 6) :=
+    Real.log_nonneg (by linarith)
+  have hLsq : 1 ≤ L ^ 2 := by
+    have hL : 1 ≤ L := by dsimp [L]; linarith
+    nlinarith [sq_nonneg (L - 1)]
+  refine ⟨T, hTmem, hgood, ?_⟩
+  intro N
+  let approx : ℂ :=
+    (∑ p ∈ finiteTrivialZeroSum (2 * (N : ℝ)), -((x : ℂ) ^ p) / p) +
+      ((x : ℂ) - deriv riemannZeta 0 / riemannZeta 0 +
+        ∑ ρ ∈ nontrivialZerosFinset T,
+          -(analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ)
+  let rem : ℂ := firstOrderContourRemainder x (-(2 * (N : ℝ) + 1)) 2
+    (T / (2 * Real.pi))
+  let left : ℝ :=
+    ((vonMangoldtLSeriesNorm 1 + ‖Complex.log Real.pi‖ +
+      2 * (‖(Real.eulerMascheroniConstant : ℂ)‖ + 3 +
+        Real.log (2 * (N : ℝ) + T + 4)) + Real.pi) *
+      x ^ (-(2 * (N : ℝ) + 1))) * (2 * T)
+  have hWpos : 0 < T / (2 * Real.pi) := by positivity
+  have hgoodW : goodHeight (2 * Real.pi * (T / (2 * Real.pi))) := by
+    simpa [hscale] using hgood
+  have hidentity := movingLeft_scaledRightIntegral_eq_truncatedExplicitFormula
+    (x := x) (c := 2) (W := T / (2 * Real.pi)) N
+    (zero_lt_one.trans hx) (by norm_num) hWpos hgoodW
+  have hintegral :
+      (∫ w : ℝ in (-(T / (2 * Real.pi)))..(T / (2 * Real.pi)),
+          explicitFormulaIntegrand x ((2 : ℂ) + 2 * Real.pi * w * I)) =
+        ∫ w : ℝ in (-(T / (2 * Real.pi)))..(T / (2 * Real.pi)),
+          (x : ℂ) ^ perronLine 2 w *
+            (-deriv riemannZeta (perronLine 2 w) /
+              riemannZeta (perronLine 2 w)) /
+                perronLine 2 w := by
+    apply intervalIntegral.integral_congr
+    intro w _hw
+    change explicitFormulaIntegrand x
+        ((2 : ℂ) + 2 * Real.pi * w * I) =
+      (x : ℂ) ^ perronLine 2 w *
+        (-deriv riemannZeta (perronLine 2 w) /
+          riemannZeta (perronLine 2 w)) /
+            perronLine 2 w
+    have hs : (2 : ℂ) + 2 * Real.pi * w * I = perronLine 2 w := by
+      simp only [perronLine]
+      push_cast
+      ring
+    rw [hs]
+    simp only [explicitFormulaIntegrand, perronLine, logDeriv_apply]
+    ring
+  have hpBound0 := hperron (T / (2 * Real.pi)) hW
+  have hrightEq :
+      (∫ w : ℝ in (-(T / (2 * Real.pi)))..(T / (2 * Real.pi)),
+          (x : ℂ) ^ perronLine 2 w *
+            (-deriv riemannZeta (perronLine 2 w) /
+              riemannZeta (perronLine 2 w)) /
+                perronLine 2 w) = approx - rem := by
+    calc
+      _ = ∫ w : ℝ in (-(T / (2 * Real.pi)))..(T / (2 * Real.pi)),
+          explicitFormulaIntegrand x ((2 : ℂ) + 2 * Real.pi * w * I) :=
+        hintegral.symm
+      _ = (∑ p ∈ finiteTrivialZeroSum (2 * (N : ℝ)), -((x : ℂ) ^ p) / p) +
+          ((x : ℂ) - deriv riemannZeta 0 / riemannZeta 0 +
+            ∑ ρ ∈ nontrivialZerosFinset (2 * Real.pi * (T / (2 * Real.pi))),
+              -(analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ) -
+          firstOrderContourRemainder x (-(2 * (N : ℝ) + 1)) 2
+            (T / (2 * Real.pi)) := hidentity
+      _ = approx - rem := by simp [approx, rem, hscale]
+  have hpBound' : ‖(approx - rem) - (chebyshevPsi0 x : ℂ)‖ ≤ Cp /
+      (T / (2 * Real.pi)) := by
+    rw [hrightEq] at hpBound0
+    exact hpBound0
+  have hrem := hrem N
+  have hrem' : ‖rem‖ ≤ Cr * L ^ 2 / T + left / (2 * Real.pi) := by
+    have hbase : ‖rem‖ ≤ (Cr * L ^ 2 / T + left) / (2 * Real.pi) := by
+      simpa [rem, left, L] using hrem
+    apply hbase.trans
+    rw [add_div]
+    have hhoriz : 0 ≤ Cr * L ^ 2 / T := by positivity
+    have hfirst := div_le_self hhoriz (by nlinarith [Real.pi_gt_three] :
+      1 ≤ 2 * Real.pi)
+    linarith
+  change ‖approx - (chebyshevPsi0 x : ℂ)‖ ≤ _
+  have hsplit :
+      approx - (chebyshevPsi0 x : ℂ) =
+        ((approx - rem) - (chebyshevPsi0 x : ℂ)) + rem := by ring
+  rw [hsplit]
+  calc
+    _ ≤ ‖(approx - rem) - (chebyshevPsi0 x : ℂ)‖ + ‖rem‖ := norm_add_le _ _
+    _ ≤ Cp / (T / (2 * Real.pi)) +
+        (Cr * L ^ 2 / T + left / (2 * Real.pi)) :=
+      add_le_add hpBound' hrem'
+    _ ≤ C * L ^ 2 / T +
+        (((vonMangoldtLSeriesNorm 1 + ‖Complex.log Real.pi‖ +
+          2 * (‖(Real.eulerMascheroniConstant : ℂ)‖ + 3 +
+            Real.log (2 * (N : ℝ) + T + 4)) + Real.pi) *
+          x ^ (-(2 * (N : ℝ) + 1))) * (2 * T)) /
+          (2 * Real.pi) := by
+      have hpRate : Cp / (T / (2 * Real.pi)) ≤
+          (2 * Real.pi * Cp) * L ^ 2 / T := by
+        have heq : Cp / (T / (2 * Real.pi)) = (2 * Real.pi * Cp) / T := by
+          field_simp [hTpos.ne']
+        rw [heq]
+        apply div_le_div_of_nonneg_right _ hTpos.le
+        nlinarith [mul_nonneg (mul_nonneg (by positivity : 0 ≤ 2 * Real.pi) hCp)
+          (sub_nonneg.mpr hLsq)]
+      calc
+        Cp / (T / (2 * Real.pi)) +
+            (Cr * L ^ 2 / T + left / (2 * Real.pi)) ≤
+          (2 * Real.pi * Cp) * L ^ 2 / T +
+            (Cr * L ^ 2 / T + left / (2 * Real.pi)) :=
+          by
+            simpa [add_comm] using
+              add_le_add_right hpRate (Cr * L ^ 2 / T + left / (2 * Real.pi))
+        _ = C * L ^ 2 / T + left / (2 * Real.pi) := by
+          dsimp [C]
+          ring
+    _ = C * (1 + Real.log (A + 6)) ^ 2 / T +
+        (((vonMangoldtLSeriesNorm 1 + ‖Complex.log Real.pi‖ +
+          2 * (‖(Real.eulerMascheroniConstant : ℂ)‖ + 3 +
+            Real.log (2 * (N : ℝ) + T + 4)) + Real.pi) *
+          x ^ (-(2 * (N : ℝ) + 1))) * (2 * T)) /
+          (2 * Real.pi) := by rfl
+
 /-- A single cofinal family closes the moving-rectangle assembly gap.  Along
 strictly increasing good heights, the complete first-order contour remainder
 vanishes and the multiplicity-weighted nontrivial-zero sums converge to the
