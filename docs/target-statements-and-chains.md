@@ -1,10 +1,9 @@
 # Unproved Target Statements and Missing Chains
 
-This file is the authoritative checklist of the remaining `def ... : Prop`
-statements (as of `2026-07-14`) in this Lean checkout.
-
-All entries are intentionally **not** exported as theorems.  They are explicit
-`Prop` targets used as roadmap checkpoints.
+This file is the authoritative classification of `def ... : Prop` statements
+(as of `2026-07-14`) in this Lean checkout.  It separates genuinely unproved
+mathematical targets from reusable predicates that already have theorem-level
+proofs.
 
 ## How to Read This Inventory
 
@@ -32,17 +31,18 @@ and the classical c/log zero-free region
 
 - `HardyTheorem` namespace: 7
 - `HardyTheorem.Details` namespace: 3
-- `PrimeNumberTheorem` namespace: 9
+- `PrimeNumberTheorem` namespace: 8
 - `KnownResults` namespace: 1
 - `ZeroFreeRegion` namespace: 0
 - global namespace: 1
 
-Total: **21**.
+Total: **20**.
 
 For the chain accounting:
 
 - Quantitative zero-free region chain: 1
-- Explicit formula chain: 1
+- Explicit formula chain: 0 (the principal-value target is proved; the separate
+  quantitative truncated-error statement remains a route interface)
 - RH/prime-counting error chain: 8
 - Hardy theorem chain: 11 (7 in `HardyTheorem`, 3 in `HardyTheorem.Details`,
   1 in `KnownResults`)
@@ -79,9 +79,11 @@ For the chain accounting:
 
 ## Chain 2: Explicit formula
 
-### Target declarations
+### Unproved target declarations
 
-- `PrimeNumberTheorem.explicit_formula_von_mangoldt`
+None.  `PrimeNumberTheorem.explicit_formula_von_mangoldt` remains a reusable
+predicate, but `ExplicitFormulaResidues.explicit_formula_von_mangoldt_proved`
+discharges it for every `x >= 2`.
 
 ### Current verified anchor theorems
 
@@ -100,14 +102,15 @@ multiplicity-aware target:
 - `PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_iff_re_im_error_tendsto_zero`
 - `PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted_iff_re_im_error_isLittleO_one`
 
-### Missing mathlib/analytic infrastructure
+### Completed principal-value chain
 
-1. cover the bounded gap between each two selected cofinal good heights by the
-   proved fixed-width multiplicity-weighted zero-contribution estimate;
-2. formalize floor/ceiling interpolation from the selected sequence to every
-   sufficiently large real truncation height;
-3. combine that interpolation with the proved cofinal `psi0` limit to close the
-   all-height symmetric principal-value target.
+1. `norm_explicitFormulaApproxWithMultiplicity_sub_le_two_localWindows` covers
+   each bounded gap by two fixed-width multiplicity-weighted windows;
+2. the proof uses `floor ((t - 5) / 2)` to associate every sufficiently large
+   real height with a selected cofinal height;
+3. `explicit_formula_von_mangoldt_proved` combines those estimates with the
+   cofinal `psi0` limit and closes the all-height symmetric principal-value
+   predicate.  The quantitative truncated-error route remains separate.
 
 ---
 
@@ -270,5 +273,9 @@ multiplicity-aware target:
   contour/residue theorem and is not counted as a mathematical target.
 - `PrimeNumberTheorem.ExplicitFormulaAux.goodHeight` is a reusable contour
   height predicate, not a proof target.
+- `PrimeNumberTheorem.explicit_formula_von_mangoldt` is a reusable theorem
+  predicate, proved by
+  `ExplicitFormulaResidues.explicit_formula_von_mangoldt_proved`; only the
+  separate quantitative truncated-error route remains open.
 
 All of the above is meant to be consumed as a roadmap, not a claim of completion.

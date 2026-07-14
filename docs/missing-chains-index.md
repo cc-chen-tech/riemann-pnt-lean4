@@ -5,9 +5,9 @@ current Lean checkout.  The project currently builds and contains no
 `sorry`/`admit`/`axiom` placeholders in Lean source, but several deep goals are
 intentionally recorded as `def ... : Prop` target statements.
 
-At present there are **21** unresolved mathematical `def ... : Prop` targets,
+At present there are **20** unresolved mathematical `def ... : Prop` targets,
 partitioned into exactly **4** analytic chains.  The recursive scanner also
-tracks 5 route interfaces and 4 reusable Prop predicates so subdirectory
+tracks 5 route interfaces and 6 reusable Prop predicates so subdirectory
 interfaces cannot be hidden by the target count:
 
 1. Quantitative zero-free region
@@ -25,8 +25,8 @@ parallel:
   quantitative zero-free region, from the verified 3-4-1 infrastructure to
   `Re(s) >= 1 - c / log |Im(s)|`;
 - `docs/explicit-formula-chain.md`
-  Perron's formula, contour shifting, residues, and a corrected von Mangoldt
-  explicit formula target;
+  the proved principal-value von Mangoldt formula and the remaining separate
+  quantitative truncated-error route;
 - `docs/rh-error-equivalence-chain.md`
   equivalence between RH and prime-counting error terms;
 - `docs/hardy-theorem-chain.md`
@@ -63,7 +63,7 @@ technology rather than more local Jensen/Borel wrappers.
 | Chain | Current Lean target status | Main correction before proof work | Smallest useful next step | Open target count |
 | --- | --- | --- | --- | --- |
 | Quantitative zero-free region | `classical_zero_free_region` is proved; `vinogradov_korobov_zero_free_region` remains a target | Develop exponential-sum estimates for the stronger width | Formalize the Vinogradov-Korobov exponential-sum input without weakening the proved classical theorem | 1 |
-| Explicit formula | `explicit_formula_von_mangoldt` is a multiplicity-aware symmetric-height `Tendsto` target | Promote the proved selected-sequence approximation limit to all truncation heights | The exact finite moving-rectangle identity, all boundary decay, complete contour-remainder decay, and multiplicity-aware approximation limit are theorem-level along `T n in [2n+4,2n+5]`. Fixed-width weighted zero contributions are now `O_x(log A/A)` and tend to zero. Cover the selected-height gaps by those windows and formalize the floor/ceiling interpolation; the selected-sequence theorem is not yet a full principal-value limit | 1 |
+| Explicit formula | `explicit_formula_von_mangoldt` is proved with analytic multiplicities and symmetric real-height truncation | Develop the separate quantitative truncated-error theorem needed for RH-scale error estimates | The exact moving-rectangle identity, all boundary decay, cofinal approximation limit, two-window bounded-gap estimate, and floor-index interpolation are theorem-level. `explicit_formula_von_mangoldt_proved` closes the full principal-value target; `ExplicitFormulaTruncatedTarget` remains a separate route interface | 0 |
 | RH error equivalence | `rh_iff_optimal_error` is a `def ... : Prop` target | Stage the result through `=O[atTop]` predicates for `psi`, `theta`, and `primeCounting - logIntegral` | Prove `RH -> RH_PsiErrorBound` via explicit formula estimates, and prove the prime-counting reverse endpoint back to `RH_PsiErrorBound`; the conditional bridge `RH_PsiErrorBound -> RiemannHypothesis` is now theorem-level | 8 |
 | Hardy theorem | `hardy_theorem_target` and related moment/asymptotic targets are `def ... : Prop` targets | Use an unbounded-height zero target as the main theorem; use signed moment targets, not merely nonzero constants | Prove bounded-zero eventual-sign control and generic asymptotic sign lemmas | 11 (7 in `HardyTheorem`, 3 in `HardyTheorem.Details`, 1 in `KnownResults`) |
 
@@ -80,7 +80,6 @@ technology rather than more local Jensen/Borel wrappers.
 | `PrimeNumberTheorem.lean` | `RH_PrimeCountingLiErrorBound` | RH error equivalence | Now follows from `RH_ThetaErrorBound`; target remains open because the upstream RH-scale Chebyshev bound is still a target |
 | `PrimeNumberTheorem.lean` | `RH_ErrorBound` | RH error equivalence | Textbook pointwise reformulation of `RH_PrimeCountingLiErrorBound` |
 | `PrimeNumberTheorem.lean` | `rh_iff_optimal_error` | RH error equivalence | Final RH ↔ prime-counting error equivalence statement |
-| `PrimeNumberTheorem.lean` | `explicit_formula_von_mangoldt` | Explicit formula | Main missing explicit-formula pipeline target |
 | `HardyTheorem.lean` | `integral_asymptotic_target` | Hardy theorem | Signed-moment asymptotic input |
 | `HardyTheorem.lean` | `hardy_two_signed_moments_target` | Hardy theorem | Asymptotics for the first two weighted moments |
 | `HardyTheorem.lean` | `hardy_theorem_target` | Hardy theorem | Combined target of Hardy theorem output |

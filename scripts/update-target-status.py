@@ -21,8 +21,8 @@ CHAIN_SUMMARY = [
     {
         "name": "Explicit formula",
         "target": "explicit_formula_von_mangoldt",
-        "status": "not proved in Lean",
-        "next_step": "cover bounded gaps by the proved fixed-window weighted estimate and formalize floor/ceiling interpolation from the cofinal psi0 limit to all truncation heights",
+        "status": "proved in Lean with analytic multiplicities and symmetric real-height truncation",
+        "next_step": "develop the separate quantitative truncated-error route needed for RH-to-prime-error estimates",
     },
     {
         "name": "RH error equivalence",
