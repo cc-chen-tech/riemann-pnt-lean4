@@ -49,6 +49,8 @@ lean_lib RiemannPNT where
     `Test.CofinalWeightedApproxContract,
     `Test.CompleteHorizontalRateContract,
     `Test.UniformNaturalPerronContract,
+    `Test.UniformNaturalContourContract,
+    `Test.UniformNaturalTruncatedExplicitFormulaContract,
     `Test.ContourRemainderRateContract,
     `Test.ExplicitFormulaMultiplicityContract,
     `Test.ExplicitFormulaTruncatedUniformContract,

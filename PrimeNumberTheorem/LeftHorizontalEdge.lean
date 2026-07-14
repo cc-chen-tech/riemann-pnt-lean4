@@ -1408,12 +1408,19 @@ theorem tendsto_integral_farLeft_eulerFactor_neg_height_atTop {x ε : ℝ}
   exact div_le_div_of_nonneg_right
     (mul_le_mul_of_nonneg_left hdiff (div_nonneg hM hT.le)) hlog.le
 
-/-- Uniform finite-height estimate for the complete far-left horizontal edge.
-The constant is independent of the moving left endpoint.  Since the statement
-uses `|T|`, it controls the upper and lower horizontal edges simultaneously. -/
-theorem exists_norm_integral_farLeft_explicit_le_log_div
+/-- The complete far-left horizontal estimate with the constant used by the
+functional-equation proof displayed explicitly.  This quantitative form makes
+it possible to control the constant uniformly when `x` ranges away from one. -/
+theorem exists_norm_integral_farLeft_explicit_le_log_div_with_explicit_constant
     {x ε : ℝ} (hx : 1 < x) (hε : 0 < ε) :
-    ∃ C : ℝ, 0 ≤ C ∧ ∀ {a T : ℝ}, a ≤ -ε → 1 ≤ |T| →
+    ∃ C : ℝ,
+      C =
+        (vonMangoldtLSeriesNorm ε +
+            (‖Complex.log (2 * Real.pi)‖ + 3 * Real.pi) +
+            (‖(Real.eulerMascheroniConstant : ℂ)‖ + 5)) *
+              x ^ (-ε) / Real.log x +
+          x ^ (-ε) * (1 / Real.log x ^ 2 + ε / Real.log x) ∧
+      0 ≤ C ∧ ∀ {a T : ℝ}, a ≤ -ε → 1 ≤ |T| →
       IntervalIntegrable
           (fun σ : ℝ => explicitFormulaIntegrand x ((σ : ℂ) + T * I))
           MeasureTheory.volume a (-ε) ∧
@@ -1437,7 +1444,8 @@ theorem exists_norm_integral_farLeft_explicit_le_log_div
   have hA : 0 ≤ A := by dsimp [A]; positivity
   have hB : 0 ≤ B := by dsimp [B]; positivity
   have hC : 0 ≤ C := by dsimp [C]; positivity
-  refine ⟨C, hC, ?_⟩
+  refine ⟨C, ?_, hC, ?_⟩
+  · dsimp [C, M, A, E, X, L, B]
   intro a T ha hT
   have hTabs : 0 < |T| := zero_lt_one.trans_le hT
   have hTne : T ≠ 0 := abs_pos.mp hTabs
@@ -1571,6 +1579,94 @@ theorem exists_norm_integral_farLeft_explicit_le_log_div
           ((2 * Real.pi) * X / L) * H / |T| +
           (E * X / L + B) * H / |T| := by gcongr
     _ = C * H / |T| := by dsimp [C, A]; ring
+
+/-- Finite-height estimate for the complete far-left horizontal edge.  The
+constant is independent of the moving left endpoint.  Since the statement
+uses `|T|`, it controls the upper and lower horizontal edges simultaneously. -/
+theorem exists_norm_integral_farLeft_explicit_le_log_div
+    {x ε : ℝ} (hx : 1 < x) (hε : 0 < ε) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ {a T : ℝ}, a ≤ -ε → 1 ≤ |T| →
+      IntervalIntegrable
+          (fun σ : ℝ => explicitFormulaIntegrand x ((σ : ℂ) + T * I))
+          MeasureTheory.volume a (-ε) ∧
+        ‖∫ σ : ℝ in a..(-ε),
+            explicitFormulaIntegrand x ((σ : ℂ) + T * I)‖ ≤
+          C * (1 + Real.log (1 + |T|)) / |T| := by
+  rcases exists_norm_integral_farLeft_explicit_le_log_div_with_explicit_constant
+      hx hε with ⟨C, _hCeq, hC, hbound⟩
+  exact ⟨C, hC, hbound⟩
+
+/-- For every `x ≥ 2`, the complete far-left horizontal edge at `Re(s) = -1`
+has one absolute finite-height constant.  This removes the fixed-`x` constant
+from the far-left part of the selected-height explicit formula. -/
+theorem exists_uniform_norm_integral_farLeft_explicit_le_log_div :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ {x a T : ℝ}, 2 ≤ x → a ≤ -1 → 1 ≤ |T| →
+      IntervalIntegrable
+          (fun σ : ℝ => explicitFormulaIntegrand x ((σ : ℂ) + T * I))
+          MeasureTheory.volume a (-1) ∧
+        ‖∫ σ : ℝ in a..(-1),
+            explicitFormulaIntegrand x ((σ : ℂ) + T * I)‖ ≤
+          C * (1 + Real.log (1 + |T|)) / |T| := by
+  let D : ℝ := vonMangoldtLSeriesNorm 1 +
+    (‖Complex.log (2 * Real.pi)‖ + 3 * Real.pi) +
+    (‖(Real.eulerMascheroniConstant : ℂ)‖ + 5)
+  let L2 : ℝ := Real.log 2
+  let C : ℝ := D / L2 + (1 / L2 ^ 2 + 1 / L2)
+  have hD : 0 ≤ D := by
+    dsimp [D]
+    have hseries : 0 ≤ vonMangoldtLSeriesNorm 1 :=
+      tsum_nonneg fun n => norm_nonneg _
+    positivity
+  have hL2 : 0 < L2 := by
+    dsimp [L2]
+    exact Real.log_pos (by norm_num)
+  have hC : 0 ≤ C := by dsimp [C]; positivity
+  refine ⟨C, hC, ?_⟩
+  intro x a T hx ha hT
+  have hx1 : 1 < x := by linarith
+  rcases exists_norm_integral_farLeft_explicit_le_log_div_with_explicit_constant
+      hx1 one_pos with ⟨Cx, hCxEq, _hCx, hfar⟩
+  have hfarT := hfar ha hT
+  refine ⟨hfarT.1, hfarT.2.trans ?_⟩
+  have hxbase : 1 ≤ x := by linarith
+  have hX : 0 ≤ x ^ (-1 : ℝ) := Real.rpow_nonneg (by positivity) _
+  have hXle : x ^ (-1 : ℝ) ≤ 1 :=
+    Real.rpow_le_one_of_one_le_of_nonpos hxbase (by norm_num)
+  have hL : 0 < Real.log x := Real.log_pos hx1
+  have hL2le : L2 ≤ Real.log x := by
+    dsimp [L2]
+    exact Real.log_le_log (by norm_num) hx
+  have hinvL : 1 / Real.log x ≤ 1 / L2 :=
+    one_div_le_one_div_of_le hL2 hL2le
+  have hsq : L2 ^ 2 ≤ Real.log x ^ 2 := by nlinarith
+  have hinvLsq : 1 / Real.log x ^ 2 ≤ 1 / L2 ^ 2 :=
+    one_div_le_one_div_of_le (sq_pos_of_pos hL2) hsq
+  have hmain : D * x ^ (-1 : ℝ) / Real.log x ≤ D / L2 := by
+    rw [div_eq_mul_inv, div_eq_mul_inv]
+    calc
+      D * x ^ (-1 : ℝ) * (Real.log x)⁻¹ ≤ D * 1 * L2⁻¹ := by
+        gcongr
+      _ = D * L2⁻¹ := by ring
+  have hsecondary :
+      x ^ (-1 : ℝ) * (1 / Real.log x ^ 2 + 1 / Real.log x) ≤
+        1 / L2 ^ 2 + 1 / L2 := by
+    calc
+      x ^ (-1 : ℝ) * (1 / Real.log x ^ 2 + 1 / Real.log x) ≤
+          1 * (1 / L2 ^ 2 + 1 / L2) := by gcongr
+      _ = 1 / L2 ^ 2 + 1 / L2 := one_mul _
+  have hCxle : Cx ≤ C := by
+    rw [hCxEq]
+    dsimp [D, C]
+    change D * x ^ (-1 : ℝ) / Real.log x +
+        x ^ (-1 : ℝ) * (1 / Real.log x ^ 2 + 1 / Real.log x) ≤
+      D / L2 + (1 / L2 ^ 2 + 1 / L2)
+    exact add_le_add hmain hsecondary
+  have hheight : 0 ≤ 1 + Real.log (1 + |T|) := by
+    have : 0 ≤ Real.log (1 + |T|) :=
+      Real.log_nonneg (by linarith [abs_nonneg T])
+    linarith
+  exact div_le_div_of_nonneg_right
+    (mul_le_mul_of_nonneg_right hCxle hheight) (abs_nonneg T)
 
 /-- On the moving upper far-left horizontal segment, the full contour
 integral is asymptotic to the explicit Archimedean Gamma-factor integral. -/

@@ -208,8 +208,8 @@ Already available or mostly available:
     `Re(s)=2` by `C*m^5/W`.  The deliberately coarse polynomial comes from
     splitting the Tannery majorant at `2m`: integer spacing controls the
     finitely many `1/|log(m/n)|` terms, and absolute convergence on
-    `Re(s)=2` controls the tail.  This is uniform in `m`, but is not yet a
-    uniform complete contour estimate.
+    `Re(s)=2` controls the tail.  This uniform right-edge estimate is consumed
+    below by the polynomial-height natural-point contour assembly.
 17. `PrimeNumberTheorem.ExplicitFormulaResidues.exists_scaledRightIntegral_eq_residue_sum_sub_firstOrderContourRemainder`
     proves the exact finite-height first-order contour shift with a fixed
     Perron right edge.  The normalized right-line integral equals the finite
@@ -533,6 +533,9 @@ For the truncated identity:
    in every moving left endpoint.  The existing negative-odd vertical estimate
    gives its full finite-height bound as a logarithmic factor times
    `x^(-(2N+1)) * 2T`.
+   The stronger theorem
+   `exists_uniform_norm_integral_farLeft_explicit_le_log_div` proves that one
+   absolute constant works for every `x>=2` when the edge ends at `Re(s)=-1`.
 4. Completed on the fixed right and inner zero-free segments: the portions
    `1+epsilon <= Re(s) <= c` vanish by the first-order `O(1/T)` bound, with
    interval integrability proved explicitly.  In addition,
@@ -564,6 +567,16 @@ For the truncated identity:
    height finite formula has no abstract contour remainder: its error is an
    `O_x(log^2 A/T)` term plus the displayed exponentially decaying left-edge
    term.
+   The uniform versions select the good height before the sample `x`, bound
+   the full horizontal contribution by
+   `C*x^2*(1+log(A+6))^2/T`, and assemble one natural-point finite formula with
+   Perron term `C*m^5/T` and a completely explicit moving-left term.
+   Setting `A=m^5` and `N=2` absorbs both terms.  After the geometric
+   trivial-zero tail is inserted,
+   `exists_nat_goodHeight_pow_five_norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_log_nat_sq`
+   proves the standard multiplicity-aware approximation differs from
+   `psi0(m)` by `C*(1+log m)^2` at some `T in [m^5,m^5+1]`, with one constant
+   for all natural `m>=2`.
 7. Completed quantitative truncation and all-height assembly:
    `tendsto_oddVerticalExplicitBound_atTop` proves the displayed moving-left
    majorant tends to zero after the height is fixed, while
@@ -716,15 +729,17 @@ the newly included zero contributions.
 The global finite-zero layer now also proves both multiplicity-counted
 `N(T) = O(T log T)` and the exact reciprocal-norm estimate
 `sum_{|Im rho| <= T} m(rho) / ‖rho‖ = O(log^2 T)`.  These are quantitative
-inputs for the truncated formula.  The fixed-`x` contour remainder is proved
-in the native normalization for every `T >= 8`, and the exact
+inputs for the truncated formula.  In addition to the fixed-`x` all-height
+rate, the natural-point contour remainder is now uniform at polynomial height,
+and the exact
 `ExplicitFormulaTruncatedTarget` is proved after constant normalization and
 the low-height patch.
 
-Under RH, the same module now bounds the actual multiplicity-aware finite zero
-sum by `O(sqrt(x) log^2 T)`.  This closes the zero-sum side of the RH estimate;
-an RH-scale asymptotic still requires controlling the new contour constant as
-`x` varies and then choosing `T=T(x)`.
+Under RH, the same module bounds the actual multiplicity-aware finite zero sum
+by `O(sqrt(x) log^2 T)`.  The contour constant is now also uniform at natural
+samples with `T` near `m^5`.  The next step is to combine these two proved
+estimates into an RH-scale integer-point bound and extend it to real `x` using
+monotonicity and the jump convention.
 
 The same finite-tail layer also preserves the direct bridge from a stable base
 truncation to the legacy unweighted compatibility predicate. The public theorem
@@ -825,7 +840,8 @@ and
    residue-sum wrapper needed here.
 6. Completed for fixed `x` and every `T >= 2`: the truncated explicit formula
    has the classical `log(2*pi)` constant and an explicit
-   `O_x(log^2(xT)/T)` error.
+   `O_x(log^2(xT)/T)` error.  At natural `m>=2`, the stronger polynomial-height
+   selected formula has one absolute `O((1+log m)^2)` contour error.
 7. Completed: the principal-value formula is also proved as an all-height
-   limit.  The next analytic task is uniform control of the `x` dependence for
-   RH/PNT error applications.
+   limit.  The next analytic task for RH is the finite-zero-sum combination at
+   the selected `m^5` height and the integer-to-real monotonicity extension.

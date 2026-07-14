@@ -182,6 +182,13 @@ Current status:
   `exists_goodHeight_Icc_norm_truncatedExplicitFormula_sub_chebyshevPsi0_le_horizontal_add_left`
   therefore gives a genuine finite quantitative explicit formula with no
   abstract contour remainder.
+- The selected-height constants are now uniform at natural samples.  The good
+  height is chosen before `m`, the full horizontal contribution is
+  `C*m^2*log^2(A)/T`, and the Perron term is `C*m^5/T`.
+  Choosing `A=m^5` and two trivial zeros yields
+  `exists_nat_goodHeight_pow_five_norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_log_nat_sq`:
+  the standard approximation differs from `psi0(m)` by
+  `C*(1+log m)^2`, uniformly for all `m>=2`.
 - `tendsto_oddVerticalExplicitBound_atTop` and
   `norm_finiteTrivialZeroSum_residues_sub_logTerm_le_geometric` now absorb the
   moving-left and finite trivial-zero truncations.  The resulting selected-
@@ -229,13 +236,11 @@ Current status:
 - `exists_norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_log_sq_of_RH`
   combines it with F2 and proves the required `O(sqrt(x) log^2 T)` finite-zero
   contribution.
-- The fixed-`x` quantitative truncated explicit-formula remainder is now
-  proved for every `T >= 8`, and its Perron component is polynomially uniform
-  at integer samples.  What remains for an RH-scale asymptotic is to make the
-  selected-height horizontal contour bound uniform for `x>=2`, assemble the
-  formula at a sufficiently high polynomial `T=T(m)`, combine it with the
-  finite-zero estimate above, and extend the resulting integer-point bound to
-  real `x`.
+- The fixed-`x` all-height rate and the uniform natural-point polynomial-height
+  rate are both proved.  At `T in [m^5,m^5+1]`, the contour part is only
+  `O(log^2 m)`.  What remains for an RH-scale asymptotic is to combine this with
+  the finite-zero estimate above, normalize `log(T+6)` to `log m`, and extend
+  the resulting integer-point bound to real `x`.
 
 ### F5. Convert `psi` to `theta`
 

@@ -3568,6 +3568,12 @@ Support-level verified declarations:
   `exists_goodHeight_Icc_norm_horizontal_complete_explicitFormulaContour_difference_le`
   combines it with the central Jensen/Borel estimate to bound both complete
   horizontal edges by `O_x(log^2 A/T)` at one good height in each unit interval.
+- `ExplicitFormulaResidues.exists_uniform_norm_integral_farLeft_explicit_le_log_div`
+  uses the displayed functional-equation constant, `x^(-1)<=1`, and
+  `log x>=log 2` to prove one absolute far-left constant for every `x>=2`.
+  `exists_uniform_goodHeight_Icc_norm_horizontal_complete_explicitFormulaContour_difference_le`
+  then selects `T` before `x` and bounds the complete horizontal difference by
+  `C*x^2*(1+log(A+6))^2/T` for all `x>=2` and all left endpoints.
 - `ExplicitFormulaResidues.exists_goodHeight_Icc_norm_firstOrderContourRemainder_le_horizontal_add_left`
   adds the complete finite negative-odd left vertical edge.  The bound consists
   of the horizontal `O_x(log^2 A/T)` term and an explicit logarithmic factor
@@ -3576,6 +3582,18 @@ Support-level verified declarations:
   combines the complete contour bound with quantitative Perron inversion.  It
   is a finite, multiplicity-aware, selected-height truncated explicit formula
   with no abstract contour remainder.
+- `ExplicitFormulaResidues.exists_uniform_goodHeight_Icc_norm_nat_firstOrderContourRemainder_le_horizontal_add_left`
+  and
+  `exists_uniform_goodHeight_Icc_norm_nat_truncatedExplicitFormula_sub_chebyshevPsi0_le`
+  combine the uniform horizontal theorem with the natural-point Perron bound.
+  One selected height and one constant work for every `m>=2`; the displayed
+  terms are `m^5/T`, `m^2 log^2(A)/T`, and the explicit moving-left bound.
+- `ExplicitFormulaResidues.exists_nat_goodHeight_pow_five_norm_truncatedExplicitFormula_sub_chebyshevPsi0_le_log_nat_sq`
+  sets `A=m^5` and `N=2`, absorbing every contour term into
+  `C*(1+log m)^2`.
+  `exists_nat_goodHeight_pow_five_norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_log_nat_sq`
+  additionally absorbs the geometric trivial-zero tail and proves the same
+  bound for the standard multiplicity-aware approximation.
 - `ExplicitFormulaResidues.tendsto_oddVerticalExplicitBound_atTop` proves the
   complete displayed moving-left majorant tends to zero as the negative-odd
   truncation depth tends to infinity at fixed height.
@@ -3608,9 +3626,10 @@ term, the following chains remain:
    The classical `c / log |t|` region is proved.  The remaining target is the
    Vinogradov-Korobov region and its exponential-sum input.
 2. **Quantitative explicit formula.**
-   The multiplicity-aware symmetric principal-value formula is proved.  The
-   remaining route interface asks for a uniform finite-height truncation error
-   suitable for RH-scale estimates.
+   The multiplicity-aware symmetric principal-value formula and a uniform
+   natural-point polynomial-height truncation error are proved.  The remaining
+   work is the RH finite-zero-sum combination and extension from integer samples
+   to all real `x`.
 3. **RH error equivalence.**
    Need zero-counting estimates, explicit formula bounds under RH, and partial
    summation from Chebyshev functions to prime counting.
