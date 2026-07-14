@@ -6,7 +6,7 @@ namespace HardyTheorem.OscillatoryIntegral
 
 private theorem uniform_sign_of_continuous_abs_ge
     {f : ℝ → ℝ} {a b m : ℝ} (hab : a ≤ b) (hm : 0 < m)
-    (hf : Continuous f) (haway : ∀ x ∈ Icc a b, m ≤ |f x|) :
+    (hf : ContinuousOn f (Icc a b)) (haway : ∀ x ∈ Icc a b, m ≤ |f x|) :
     (∀ x ∈ Icc a b, m ≤ f x) ∨
       (∀ x ∈ Icc a b, f x ≤ -m) := by
   have ha : a ∈ Icc a b := ⟨le_rfl, hab⟩
@@ -18,7 +18,9 @@ private theorem uniform_sign_of_continuous_abs_ge
       rcases le_abs.mp (haway x hx) with h | h
       · exact False.elim (hx_pos h)
       · linarith
-    have h_cont : ContinuousOn f (uIcc a x) := hf.continuousOn
+    have h_cont : ContinuousOn f (uIcc a x) := by
+      rw [uIcc_of_le hx.1]
+      exact hf.mono (Icc_subset_Icc le_rfl hx.2)
     have h_zero_mem : 0 ∈ uIcc (f a) (f x) := by
       rw [mem_uIcc]
       exact Or.inr ⟨by linarith, by linarith⟩
@@ -40,7 +42,9 @@ private theorem uniform_sign_of_continuous_abs_ge
       rcases le_abs.mp (haway x hx) with h | h
       · exact h
       · exact False.elim (hx_neg (by linarith))
-    have h_cont : ContinuousOn f (uIcc a x) := hf.continuousOn
+    have h_cont : ContinuousOn f (uIcc a x) := by
+      rw [uIcc_of_le hx.1]
+      exact hf.mono (Icc_subset_Icc le_rfl hx.2)
     have h_zero_mem : 0 ∈ uIcc (f a) (f x) := by
       rw [mem_uIcc]
       exact Or.inl ⟨by linarith, by linarith⟩
@@ -93,10 +97,10 @@ private theorem integral_abs_deriv_eq_abs_sub_of_monotone
       sub_nonpos.mpr (hanti ⟨le_rfl, hab⟩ ⟨hab, le_rfl⟩ hab)
     rw [abs_of_nonpos hsub]
 
-theorem norm_integral_cexp_phase_le_of_monotone_deriv
+private theorem norm_integral_cexp_phase_le_of_monotone_deriv_local
     {F : ℝ → ℝ} {a b m : ℝ}
     (hab : a ≤ b) (hm : 0 < m)
-    (hF : ContDiff ℝ 2 F)
+    (hF : ∀ x ∈ Icc a b, ContDiffAt ℝ 2 F x)
     (hmono : MonotoneOn (deriv F) (Icc a b) ∨
       AntitoneOn (deriv F) (Icc a b))
     (haway : ∀ x ∈ Icc a b, m ≤ |deriv F x|) :
@@ -104,7 +108,9 @@ theorem norm_integral_cexp_phase_le_of_monotone_deriv
   let q : ℝ → ℝ := fun x => (deriv F x)⁻¹
   let E : ℝ → ℂ := fun x => Complex.exp (I * F x)
   let E' : ℝ → ℂ := fun x => E x * (I * ((deriv F x : ℝ) : ℂ))
-  have hderiv_cont : Continuous (deriv F) := hF.continuous_deriv (by norm_num)
+  have hderiv_cont : ContinuousOn (deriv F) (Icc a b) := by
+    intro x hx
+    exact ((hF x hx).derivWithin (m := 0) (by norm_num)).continuousAt.continuousWithinAt
   have hsign := uniform_sign_of_continuous_abs_ge hab hm hderiv_cont haway
   have hp_ne {x : ℝ} (hx : x ∈ Icc a b) : deriv F x ≠ 0 := by
     intro hz
@@ -113,7 +119,9 @@ theorem norm_integral_cexp_phase_le_of_monotone_deriv
     linarith
   have hq_diff : ∀ x ∈ Icc a b, DifferentiableAt ℝ q x := by
     intro x hx
-    simpa [q] using (hF.differentiable_deriv_two x).inv (hp_ne hx)
+    have hp_diff : DifferentiableAt ℝ (deriv F) x :=
+      ((hF x hx).derivWithin (m := 1) (by norm_num)).differentiableAt (by norm_num)
+    simpa [q] using hp_diff.inv (hp_ne hx)
   have hq_mono : MonotoneOn q (Icc a b) ∨ AntitoneOn q (Icc a b) := by
     rcases hsign with hpos | hneg
     · rcases hmono with hpmono | hpanti
@@ -163,26 +171,27 @@ theorem norm_integral_cexp_phase_le_of_monotone_deriv
       |q b - q a| ≤ |q b| + |q a| := abs_sub _ _
       _ = |q a| + |q b| := add_comm _ _
       _ ≤ 2 / m := hq_endpoints
-  have hE_deriv : ∀ x, HasDerivAt E (E' x) x := by
-    intro x
+  have hE_deriv : ∀ x ∈ Icc a b, HasDerivAt E (E' x) x := by
+    intro x hx
     have hreal : HasDerivAt (fun y : ℝ => (F y : ℂ))
         ((deriv F x : ℝ) : ℂ) x :=
-      (hF.differentiable (by norm_num) x).hasDerivAt.ofReal_comp
+      ((hF x hx).differentiableAt (by norm_num)).hasDerivAt.ofReal_comp
     have harg : HasDerivAt (fun y : ℝ => I * (F y : ℂ))
         (I * ((deriv F x : ℝ) : ℂ)) x := hreal.const_mul I
     simpa [E, E', mul_comm, mul_left_comm, mul_assoc] using harg.cexp
-  have hE'_cont : Continuous E' := by
-    have hE_cont : Continuous E := by
-      exact continuous_iff_continuousAt.mpr fun x => (hE_deriv x).continuousAt
-    have hp_complex : Continuous (fun x : ℝ => ((deriv F x : ℝ) : ℂ)) :=
-      Complex.continuous_ofReal.comp (show Continuous (fun x : ℝ => deriv F x) from hderiv_cont)
-    exact hE_cont.mul (continuous_const.mul hp_complex)
+  have hE'_cont : ContinuousOn E' (Icc a b) := by
+    have hE_cont : ContinuousOn E (Icc a b) := by
+      intro x hx
+      exact (hE_deriv x hx).continuousAt.continuousWithinAt
+    have hp_complex : ContinuousOn (fun x : ℝ => ((deriv F x : ℝ) : ℂ)) (Icc a b) :=
+      Complex.continuous_ofReal.continuousOn.comp hderiv_cont (fun _ _ => mem_univ _)
+    exact hE_cont.mul (continuous_const.continuousOn.mul hp_complex)
   have hE'_int : IntervalIntegrable E' MeasureTheory.volume a b :=
-    hE'_cont.intervalIntegrable a b
+    hE'_cont.intervalIntegrable_of_Icc hab
   have hparts := intervalIntegral.integral_smul_deriv_eq_deriv_smul
     (a := a) (b := b) (u := q) (u' := deriv q) (v := E) (v' := E')
     (fun x hx => (hq_diff x (by simpa [uIcc_of_le hab] using hx)).hasDerivAt)
-    (fun x _ => hE_deriv x) hq_int hE'_int
+    (fun x hx => hE_deriv x (by simpa [uIcc_of_le hab] using hx)) hq_int hE'_int
   have hleft : (∫ x in a..b, q x • E' x) = I * ∫ x in a..b, E x := by
     calc
       (∫ x in a..b, q x • E' x) = ∫ x in a..b, I * E x := by
@@ -220,6 +229,341 @@ theorem norm_integral_cexp_phase_le_of_monotone_deriv
     _ = (|q a| + |q b|) + |q b - q a| := by rw [hvariation]; ring
     _ ≤ 2 / m + 2 / m := add_le_add hq_endpoints hq_variation_le
     _ = 4 / m := by ring
+
+theorem norm_integral_cexp_phase_le_of_monotone_deriv
+    {F : ℝ → ℝ} {a b m : ℝ}
+    (hab : a ≤ b) (hm : 0 < m)
+    (hF : ContDiff ℝ 2 F)
+    (hmono : MonotoneOn (deriv F) (Icc a b) ∨
+      AntitoneOn (deriv F) (Icc a b))
+    (haway : ∀ x ∈ Icc a b, m ≤ |deriv F x|) :
+    ‖∫ x in a..b, Complex.exp (I * F x)‖ ≤ 4 / m :=
+  norm_integral_cexp_phase_le_of_monotone_deriv_local hab hm
+    (fun _ _ => hF.contDiffAt) hmono haway
+
+private theorem deriv_growth_of_second_deriv_lower
+    {F : ℝ → ℝ} {a b r : ℝ}
+    (hF : ∀ x ∈ Icc a b, ContDiffAt ℝ 2 F x)
+    (hsecond : ∀ x ∈ Icc a b, r ≤ iteratedDeriv 2 F x)
+    {x y : ℝ} (hx : x ∈ Icc a b) (hy : y ∈ Icc a b) (hxy : x ≤ y) :
+    r * (y - x) ≤ deriv F y - deriv F x := by
+  have hsecond' : ∀ z ∈ interior (Icc a b), r ≤ deriv (deriv F) z := by
+    intro z hz
+    have hz' : z ∈ Icc a b := interior_subset hz
+    simpa [show 2 = 1 + 1 by omega, iteratedDeriv_succ, iteratedDeriv_one] using
+      hsecond z hz'
+  exact Convex.mul_sub_le_image_sub_of_le_deriv (convex_Icc a b)
+    (by
+      intro z hz
+      exact ((hF z hz).derivWithin (m := 0) (by norm_num)).continuousAt.continuousWithinAt)
+    (by
+      intro z hz
+      exact (((hF z (interior_subset hz)).derivWithin (m := 1) (by norm_num)).differentiableAt
+        (by norm_num)).differentiableWithinAt)
+    hsecond' x hx y hy hxy
+
+private theorem monotoneOn_deriv_of_second_deriv_lower
+    {F : ℝ → ℝ} {a b r : ℝ} (hr : 0 ≤ r)
+    (hF : ∀ x ∈ Icc a b, ContDiffAt ℝ 2 F x)
+    (hsecond : ∀ x ∈ Icc a b, r ≤ iteratedDeriv 2 F x) :
+    MonotoneOn (deriv F) (Icc a b) := by
+  intro x hx y hy hxy
+  have hgrowth := deriv_growth_of_second_deriv_lower hF hsecond hx hy hxy
+  have : 0 ≤ r * (y - x) := mul_nonneg hr (sub_nonneg.mpr hxy)
+  linarith
+
+private theorem norm_integral_cexp_phase_le_length
+    {F : ℝ → ℝ} {a b : ℝ} (hab : a ≤ b) :
+    ‖∫ x in a..b, Complex.exp (I * F x)‖ ≤ b - a := by
+  calc
+    ‖∫ x in a..b, Complex.exp (I * F x)‖ ≤
+        ∫ x in a..b, ‖Complex.exp (I * F x)‖ :=
+      intervalIntegral.norm_integral_le_integral_norm hab
+    _ = ∫ _x in a..b, (1 : ℝ) := by
+      apply intervalIntegral.integral_congr
+      intro x _
+      simp
+    _ = b - a := by simp
+
+private theorem norm_intervalIntegral_le_three_parts
+    {f : ℝ → ℂ} {a l u b : ℝ}
+    (hal : a ≤ l) (hlu : l ≤ u) (hub : u ≤ b)
+    (hf : ContinuousOn f (Icc a b)) :
+    ‖∫ x in a..b, f x‖ ≤
+      ‖∫ x in a..l, f x‖ + ‖∫ x in l..u, f x‖ + ‖∫ x in u..b, f x‖ := by
+  have hal_int : IntervalIntegrable f MeasureTheory.volume a l :=
+    (hf.mono (Icc_subset_Icc le_rfl (hlu.trans hub))).intervalIntegrable_of_Icc hal
+  have hlu_int : IntervalIntegrable f MeasureTheory.volume l u :=
+    (hf.mono (Icc_subset_Icc hal hub)).intervalIntegrable_of_Icc hlu
+  have hub_int : IntervalIntegrable f MeasureTheory.volume u b :=
+    (hf.mono (Icc_subset_Icc (hal.trans hlu) le_rfl)).intervalIntegrable_of_Icc hub
+  have hsplit₁ : (∫ x in a..l, f x) + ∫ x in l..u, f x = ∫ x in a..u, f x :=
+    intervalIntegral.integral_add_adjacent_intervals hal_int hlu_int
+  have hsplit₂ : (∫ x in a..u, f x) + ∫ x in u..b, f x = ∫ x in a..b, f x :=
+    intervalIntegral.integral_add_adjacent_intervals (hal_int.trans hlu_int) hub_int
+  rw [← hsplit₂, ← hsplit₁]
+  exact (norm_add_le _ _).trans (add_le_add (norm_add_le _ _) le_rfl)
+
+private theorem norm_integral_cexp_phase_le_of_second_deriv_lower
+    {F : ℝ → ℝ} {a b r : ℝ}
+    (hab : a ≤ b) (hr : 0 < r)
+    (hF : ∀ x ∈ Icc a b, ContDiffAt ℝ 2 F x)
+    (hsecond : ∀ x ∈ Icc a b, r ≤ iteratedDeriv 2 F x) :
+    ‖∫ x in a..b, Complex.exp (I * F x)‖ ≤ 12 / Real.sqrt r := by
+  let s := Real.sqrt r
+  let d := 1 / s
+  have hs : 0 < s := by simpa [s] using Real.sqrt_pos.2 hr
+  have hs_ne : s ≠ 0 := ne_of_gt hs
+  have hs_sq : s ^ 2 = r := by
+    simpa [s] using Real.sq_sqrt (le_of_lt hr)
+  have hrd : r * d = s := by
+    dsimp [d]
+    rw [← hs_sq]
+    field_simp [hs_ne]
+  have hd : 0 < d := one_div_pos.mpr hs
+  have hmono : MonotoneOn (deriv F) (Icc a b) :=
+    monotoneOn_deriv_of_second_deriv_lower (le_of_lt hr) hF hsecond
+  have hderiv_cont : ContinuousOn (deriv F) (Icc a b) := by
+    intro x hx
+    exact ((hF x hx).derivWithin (m := 0) (by norm_num)).continuousAt.continuousWithinAt
+  have hE_cont : ContinuousOn (fun x : ℝ => Complex.exp (I * F x)) (Icc a b) := by
+    have hF_cont : ContinuousOn F (Icc a b) := fun x hx => (hF x hx).continuousAt.continuousWithinAt
+    exact (continuous_const.continuousOn.mul
+      (Complex.continuous_ofReal.continuousOn.comp hF_cont (fun _ _ => mem_univ _))).cexp
+  have htotal_bound : d + 4 / s ≤ 12 / s := by
+    calc
+      d + 4 / s = 5 / s := by dsimp [d]; ring
+      _ ≤ 12 / s := (div_le_div_iff_of_pos_right hs).2 (by norm_num)
+  have htotal_two_bound : 4 / s + 2 * d + 4 / s ≤ 12 / s := by
+    calc
+      4 / s + 2 * d + 4 / s = 10 / s := by dsimp [d]; ring
+      _ ≤ 12 / s := (div_le_div_iff_of_pos_right hs).2 (by norm_num)
+  by_cases ha_nonneg : 0 ≤ deriv F a
+  · let u := min b (a + d)
+    have hau : a ≤ u := by
+      dsimp [u]
+      exact le_min hab (by linarith)
+    have hub : u ≤ b := by exact min_le_left _ _
+    have hmiddle : ‖∫ x in a..u, Complex.exp (I * F x)‖ ≤ d := by
+      exact (norm_integral_cexp_phase_le_length hau).trans (by
+        dsimp [u]
+        have := min_le_right b (a + d)
+        linarith)
+    have hright : ‖∫ x in u..b, Complex.exp (I * F x)‖ ≤ 4 / s := by
+      by_cases hub_eq : u = b
+      · rw [hub_eq, intervalIntegral.integral_same, norm_zero]
+        positivity
+      · have hu_eq : u = a + d := by
+          dsimp [u]
+          rcases le_total b (a + d) with h | h
+          · have : u = b := by dsimp [u]; exact min_eq_left h
+            exact False.elim (hub_eq this)
+          · exact min_eq_right h
+        have hu_mem : u ∈ Icc a b := ⟨hau, hub⟩
+        have ha_mem : a ∈ Icc a b := ⟨le_rfl, hab⟩
+        have hgrowth := deriv_growth_of_second_deriv_lower hF hsecond ha_mem hu_mem hau
+        have hpu : s ≤ deriv F u := by
+          rw [hu_eq] at hgrowth ⊢
+          nlinarith [hrd]
+        apply norm_integral_cexp_phase_le_of_monotone_deriv_local hub hs
+          (fun x hx => hF x ⟨hau.trans hx.1, hx.2⟩)
+          (Or.inl (hmono.mono (by
+            intro x hx
+            exact ⟨hau.trans hx.1, hx.2⟩)))
+        intro x hx
+        have hx' : x ∈ Icc a b := ⟨hau.trans hx.1, hx.2⟩
+        have hp : s ≤ deriv F x := hpu.trans (hmono hu_mem hx' hx.1)
+        exact le_abs.mpr (Or.inl hp)
+    calc
+      ‖∫ x in a..b, Complex.exp (I * F x)‖ ≤
+          ‖∫ x in a..a, Complex.exp (I * F x)‖ +
+            ‖∫ x in a..u, Complex.exp (I * F x)‖ +
+              ‖∫ x in u..b, Complex.exp (I * F x)‖ :=
+        norm_intervalIntegral_le_three_parts le_rfl hau hub hE_cont
+      _ ≤ 0 + d + 4 / s := add_le_add (add_le_add (by simp) hmiddle) hright
+      _ = d + 4 / s := by ring
+      _ ≤ 12 / s := htotal_bound
+  · have ha_neg : deriv F a < 0 := lt_of_not_ge ha_nonneg
+    by_cases hb_nonpos : deriv F b ≤ 0
+    · let l := max a (b - d)
+      have hal : a ≤ l := by exact le_max_left _ _
+      have hlb : l ≤ b := by
+        dsimp [l]
+        exact max_le hab (by linarith)
+      have hmiddle : ‖∫ x in l..b, Complex.exp (I * F x)‖ ≤ d := by
+        exact (norm_integral_cexp_phase_le_length hlb).trans (by
+          dsimp [l]
+          have := le_max_right a (b - d)
+          linarith)
+      have hleft : ‖∫ x in a..l, Complex.exp (I * F x)‖ ≤ 4 / s := by
+        by_cases hal_eq : l = a
+        · rw [hal_eq, intervalIntegral.integral_same, norm_zero]
+          positivity
+        · have hl_eq : l = b - d := by
+            dsimp [l]
+            rcases le_total (b - d) a with h | h
+            · have : l = a := by dsimp [l]; exact max_eq_left h
+              exact False.elim (hal_eq this)
+            · exact max_eq_right h
+          have hl_mem : l ∈ Icc a b := ⟨hal, hlb⟩
+          have hb_mem : b ∈ Icc a b := ⟨hab, le_rfl⟩
+          have hgrowth := deriv_growth_of_second_deriv_lower hF hsecond hl_mem hb_mem hlb
+          have hpl : deriv F l ≤ -s := by
+            rw [hl_eq] at hgrowth ⊢
+            nlinarith [hrd]
+          apply norm_integral_cexp_phase_le_of_monotone_deriv_local hal hs
+            (fun x hx => hF x ⟨hx.1, hx.2.trans hlb⟩)
+            (Or.inl (hmono.mono (by
+              intro x hx
+              exact ⟨hx.1, hx.2.trans hlb⟩)))
+          intro x hx
+          have hx' : x ∈ Icc a b := ⟨hx.1, hx.2.trans hlb⟩
+          have hp : deriv F x ≤ -s := (hmono hx' hl_mem hx.2).trans hpl
+          exact le_abs.mpr (Or.inr (by linarith))
+      calc
+        ‖∫ x in a..b, Complex.exp (I * F x)‖ ≤
+            ‖∫ x in a..l, Complex.exp (I * F x)‖ +
+              ‖∫ x in l..b, Complex.exp (I * F x)‖ +
+                ‖∫ x in b..b, Complex.exp (I * F x)‖ :=
+          norm_intervalIntegral_le_three_parts hal hlb le_rfl hE_cont
+        _ ≤ 4 / s + d + 0 := add_le_add (add_le_add hleft hmiddle) (by simp)
+        _ = d + 4 / s := by ring
+        _ ≤ 12 / s := htotal_bound
+    · have hb_pos : 0 < deriv F b := lt_of_not_ge hb_nonpos
+      have hzero_mem : 0 ∈ Icc (deriv F a) (deriv F b) :=
+        ⟨le_of_lt ha_neg, le_of_lt hb_pos⟩
+      obtain ⟨c, hc, hc_zero⟩ :=
+        (intermediate_value_Icc hab hderiv_cont) hzero_mem
+      let l := max a (c - d)
+      let u := min b (c + d)
+      have hal : a ≤ l := le_max_left _ _
+      have hlc : l ≤ c := by
+        dsimp [l]
+        exact max_le hc.1 (by linarith)
+      have hcu : c ≤ u := by
+        dsimp [u]
+        exact le_min hc.2 (by linarith)
+      have hub : u ≤ b := min_le_left _ _
+      have hmiddle : ‖∫ x in l..u, Complex.exp (I * F x)‖ ≤ 2 * d := by
+        exact (norm_integral_cexp_phase_le_length (hlc.trans hcu)).trans (by
+          dsimp [l, u]
+          have hlower := le_max_right a (c - d)
+          have hupper := min_le_right b (c + d)
+          linarith)
+      have hleft : ‖∫ x in a..l, Complex.exp (I * F x)‖ ≤ 4 / s := by
+        by_cases hal_eq : l = a
+        · rw [hal_eq, intervalIntegral.integral_same, norm_zero]
+          positivity
+        · have hl_eq : l = c - d := by
+            dsimp [l]
+            rcases le_total (c - d) a with h | h
+            · have : l = a := by dsimp [l]; exact max_eq_left h
+              exact False.elim (hal_eq this)
+            · exact max_eq_right h
+          have hl_mem : l ∈ Icc a b := ⟨hal, hlc.trans hc.2⟩
+          have hgrowth := deriv_growth_of_second_deriv_lower hF hsecond hl_mem hc hlc
+          have hpl : deriv F l ≤ -s := by
+            rw [hl_eq] at hgrowth ⊢
+            rw [hc_zero] at hgrowth
+            nlinarith [hrd]
+          apply norm_integral_cexp_phase_le_of_monotone_deriv_local hal hs
+            (fun x hx => hF x ⟨hx.1, hx.2.trans (hlc.trans hc.2)⟩)
+            (Or.inl (hmono.mono (by
+              intro x hx
+              exact ⟨hx.1, hx.2.trans (hlc.trans hc.2)⟩)))
+          intro x hx
+          have hx' : x ∈ Icc a b := ⟨hx.1, hx.2.trans (hlc.trans hc.2)⟩
+          have hp : deriv F x ≤ -s := (hmono hx' hl_mem hx.2).trans hpl
+          exact le_abs.mpr (Or.inr (by linarith))
+      have hright : ‖∫ x in u..b, Complex.exp (I * F x)‖ ≤ 4 / s := by
+        by_cases hub_eq : u = b
+        · rw [hub_eq, intervalIntegral.integral_same, norm_zero]
+          positivity
+        · have hu_eq : u = c + d := by
+            dsimp [u]
+            rcases le_total b (c + d) with h | h
+            · have : u = b := by dsimp [u]; exact min_eq_left h
+              exact False.elim (hub_eq this)
+            · exact min_eq_right h
+          have hu_mem : u ∈ Icc a b := ⟨hc.1.trans hcu, hub⟩
+          have hgrowth := deriv_growth_of_second_deriv_lower hF hsecond hc hu_mem hcu
+          have hpu : s ≤ deriv F u := by
+            rw [hu_eq] at hgrowth ⊢
+            rw [hc_zero] at hgrowth
+            nlinarith [hrd]
+          apply norm_integral_cexp_phase_le_of_monotone_deriv_local hub hs
+            (fun x hx => hF x ⟨(hc.1.trans hcu).trans hx.1, hx.2⟩)
+            (Or.inl (hmono.mono (by
+              intro x hx
+              exact ⟨(hc.1.trans hcu).trans hx.1, hx.2⟩)))
+          intro x hx
+          have hx' : x ∈ Icc a b := ⟨(hc.1.trans hcu).trans hx.1, hx.2⟩
+          have hp : s ≤ deriv F x := hpu.trans (hmono hu_mem hx' hx.1)
+          exact le_abs.mpr (Or.inl hp)
+      calc
+        ‖∫ x in a..b, Complex.exp (I * F x)‖ ≤
+            ‖∫ x in a..l, Complex.exp (I * F x)‖ +
+              ‖∫ x in l..u, Complex.exp (I * F x)‖ +
+                ‖∫ x in u..b, Complex.exp (I * F x)‖ :=
+          norm_intervalIntegral_le_three_parts hal (hlc.trans hcu) hub hE_cont
+        _ ≤ 4 / s + 2 * d + 4 / s := add_le_add (add_le_add hleft hmiddle) hright
+        _ ≤ 12 / s := htotal_two_bound
+
+private theorem norm_integral_cexp_phase_le_of_second_deriv_local
+    {F : ℝ → ℝ} {a b r : ℝ}
+    (hab : a ≤ b) (hr : 0 < r)
+    (hF : ∀ x ∈ Icc a b, ContDiffAt ℝ 2 F x)
+    (hsecond : (∀ x ∈ Icc a b, r ≤ iteratedDeriv 2 F x) ∨
+      (∀ x ∈ Icc a b, iteratedDeriv 2 F x ≤ -r)) :
+    ‖∫ x in a..b, Complex.exp (I * F x)‖ ≤ 12 / Real.sqrt r := by
+  rcases hsecond with hpositive | hnegative
+  · exact norm_integral_cexp_phase_le_of_second_deriv_lower hab hr hF hpositive
+  · let G : ℝ → ℝ := fun x => -F x
+    have hG : ∀ x ∈ Icc a b, ContDiffAt ℝ 2 G x := by
+      intro x hx
+      exact (hF x hx).neg
+    have hGsecond : ∀ x ∈ Icc a b, r ≤ iteratedDeriv 2 G x := by
+      intro x hx
+      rw [show G = fun y => -F y by rfl, iteratedDeriv_fun_neg]
+      linarith [hnegative x hx]
+    have hbound :=
+      norm_integral_cexp_phase_le_of_second_deriv_lower hab hr hG hGsecond
+    have hE_cont : ContinuousOn (fun x : ℝ => Complex.exp (I * F x)) (Icc a b) := by
+      have hF_cont : ContinuousOn F (Icc a b) :=
+        fun x hx => (hF x hx).continuousAt.continuousWithinAt
+      exact (continuous_const.continuousOn.mul
+        (Complex.continuous_ofReal.continuousOn.comp hF_cont (fun _ _ => mem_univ _))).cexp
+    have hE_int : IntervalIntegrable (fun x : ℝ => Complex.exp (I * F x))
+        MeasureTheory.volume a b := hE_cont.intervalIntegrable_of_Icc hab
+    have hconj_integral :
+        (∫ x in a..b, Complex.exp (I * G x)) =
+          star (∫ x in a..b, Complex.exp (I * F x)) := by
+      calc
+        (∫ x in a..b, Complex.exp (I * G x)) =
+            ∫ x in a..b, star (Complex.exp (I * F x)) := by
+          apply intervalIntegral.integral_congr
+          intro x _
+          change Complex.exp (I * (-(F x) : ℝ)) =
+            (starRingEnd ℂ) (Complex.exp (I * F x))
+          rw [← Complex.exp_conj]
+          congr 1
+          simp
+        _ = star (∫ x in a..b, Complex.exp (I * F x)) := by
+          exact Complex.conjCLE.toContinuousLinearMap.intervalIntegral_comp_comm hE_int
+    rw [hconj_integral, norm_star] at hbound
+    exact hbound
+
+/-- A second-derivative oscillatory integral estimate with an explicit absolute constant.
+The second derivative may have either sign, but its sign is fixed on the interval. -/
+theorem norm_integral_cexp_phase_le_of_second_deriv
+    {F : ℝ → ℝ} {a b r : ℝ}
+    (hab : a ≤ b) (hr : 0 < r)
+    (hF : ContDiff ℝ 2 F)
+    (hsecond : (∀ x ∈ Icc a b, r ≤ iteratedDeriv 2 F x) ∨
+      (∀ x ∈ Icc a b, iteratedDeriv 2 F x ≤ -r)) :
+    ‖∫ x in a..b, Complex.exp (I * F x)‖ ≤ 12 / Real.sqrt r :=
+  norm_integral_cexp_phase_le_of_second_deriv_local hab hr
+    (fun _ _ => hF.contDiffAt) hsecond
 
 /-- The phase appearing after inserting the first zeta approximation into Hardy's integral. -/
 noncomputable def hardyPhase (n : ℕ) (t : ℝ) : ℝ :=
@@ -281,5 +625,49 @@ theorem iteratedDeriv_two_hardyPhase
     convert (h_arg.log harg_ne).const_mul (1 / 2) using 1
   rw [h_g.deriv]
   field_simp [ne_of_gt ht, hc]
+
+private theorem contDiffAt_hardyPhase_two
+    {n : ℕ} (hn : n ≠ 0) {t : ℝ} (ht : 0 < t) :
+    ContDiffAt ℝ 2 (hardyPhase n) t := by
+  have hn_real : (n : ℝ) ≠ 0 := by exact_mod_cast hn
+  have hc : 2 * Real.pi * ((n : ℝ) ^ 2) ≠ 0 := by
+    positivity
+  have harg_ne : t / (2 * Real.pi * ((n : ℝ) ^ 2)) ≠ 0 :=
+    div_ne_zero (ne_of_gt ht) hc
+  have harg : ContDiffAt ℝ 2
+      (fun x : ℝ => x / (2 * Real.pi * ((n : ℝ) ^ 2))) t :=
+    contDiffAt_id.div_const _
+  have hlinear : ContDiffAt ℝ 2 (fun x : ℝ => x / 2) t :=
+    contDiffAt_id.div_const 2
+  simpa [hardyPhase] using
+    (hlinear.mul ((harg.log harg_ne).sub contDiffAt_const)).sub contDiffAt_const
+
+/-- The Hardy first-approximation phase satisfies a uniform second-derivative estimate
+on every dyadic interval `[T, 2T]` with `T ≥ 1`. -/
+theorem norm_integral_cexp_hardyPhase_le
+    {n : ℕ} (hn : n ≠ 0) {T : ℝ} (hT : 1 ≤ T) :
+    ‖∫ t in T..(2 * T), Complex.exp (I * hardyPhase n t)‖ ≤
+      12 * Real.sqrt (4 * T) := by
+  have hT_pos : 0 < T := lt_of_lt_of_le zero_lt_one hT
+  have hab : T ≤ 2 * T := by linarith
+  have hr : 0 < 1 / (4 * T) := one_div_pos.mpr (by positivity)
+  have hlocal : ∀ x ∈ Icc T (2 * T), ContDiffAt ℝ 2 (hardyPhase n) x := by
+    intro x hx
+    exact contDiffAt_hardyPhase_two hn (lt_of_lt_of_le hT_pos hx.1)
+  have hsecond : ∀ x ∈ Icc T (2 * T),
+      1 / (4 * T) ≤ iteratedDeriv 2 (hardyPhase n) x := by
+    intro x hx
+    have hx_pos : 0 < x := lt_of_lt_of_le hT_pos hx.1
+    rw [iteratedDeriv_two_hardyPhase hn hx_pos]
+    apply (div_le_div_iff₀ (by positivity : 0 < 4 * T) (by positivity : 0 < 2 * x)).2
+    nlinarith [hx.2]
+  have hbound := norm_integral_cexp_phase_le_of_second_deriv_local hab hr hlocal
+    (Or.inl hsecond)
+  calc
+    ‖∫ t in T..(2 * T), Complex.exp (I * hardyPhase n t)‖ ≤
+        12 / Real.sqrt (1 / (4 * T)) := hbound
+    _ = 12 * Real.sqrt (4 * T) := by
+      rw [one_div, Real.sqrt_inv]
+      simp [div_eq_mul_inv]
 
 end HardyTheorem.OscillatoryIntegral
