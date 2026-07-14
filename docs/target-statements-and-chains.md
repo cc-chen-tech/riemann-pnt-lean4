@@ -14,8 +14,8 @@ This file measures **internal proof progress** only.  It answers questions like:
 - which analytic inputs would let a target be promoted to a proved theorem.
 
 It does **not** answer the external SOTA question.  A smaller target count does
-not imply that this repository is close to proving RH or an effective PNT
-error term.  The ordinary PNT status instead rests on the checked declarations
+not imply that this repository is close to proving RH or the corresponding
+prime-counting `pi-Li` error term.  The ordinary PNT status instead rests on the checked declarations
 `PNTForm1_proved`, `PNTForm2_proved`, and `PNTForm3_proved`.  External academic
 positioning must be checked separately against Isabelle/HOL PNT, HOL Light PNT, Lean
 `PrimeNumberTheoremAnd`, Mathlib's zeta/L-function infrastructure, and current

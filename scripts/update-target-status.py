@@ -21,8 +21,8 @@ CHAIN_SUMMARY = [
     {
         "name": "Explicit formula",
         "target": "ExplicitFormulaTruncatedTarget",
-        "status": "proved for every real height T >= 2; a subpolynomial height T(m) = exp(a sqrt(log m)) closes ordinary PNT, while the separate polynomial-height natural-sample form supplies the forward RH-to-psi implication",
-        "next_step": "develop stronger effective uniform real-x finite-height forms only when required by an explicit error-term endpoint",
+        "status": "proved for every real height T >= 2; a subpolynomial height T(m) = exp(a sqrt(log m)) closes ordinary PNT and the effective Chebyshev psi remainder, while the separate polynomial-height natural-sample form supplies the forward RH-to-psi implication",
+        "next_step": "prove the effective Abel-integral estimate transferring the classical psi remainder to the prime-counting pi-Li endpoint",
     },
     {
         "name": "RH error equivalence",

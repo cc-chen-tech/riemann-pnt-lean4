@@ -949,7 +949,7 @@
               <line x1="567" y1="229" x2="342" y2="453"></line>
               <line x1="342" y1="453" x2="567" y2="527"></line>
               <line x1="792" y1="304" x2="567" y2="527"></line>
-              <line class="frontier-line" x1="567" y1="527" x2="342" y2="558"></line>
+              <line x1="567" y1="527" x2="342" y2="558"></line>
               <line class="frontier-line" x1="567" y1="527" x2="117" y2="465"></line>
               <line class="frontier-line" x1="567" y1="229" x2="792" y2="87"></line>
               <line class="frontier-line" x1="117" y1="304" x2="792" y2="546"></line>
@@ -990,9 +990,9 @@
             <span class="node-title">素数定理</span>
             <span class="node-status">● 已证明结论</span>
           </button>
-          <button class="network-node" type="button" data-concept-id="pnt-error" data-status="frontier" style="--x: 34%; --y: 86%;" aria-pressed="false" hidden>
-            <span class="node-title">带余项的 PNT</span>
-            <span class="node-status">○ 研究前沿</span>
+          <button class="network-node" type="button" data-concept-id="pnt-error" data-status="proved" style="--x: 34%; --y: 86%;" aria-pressed="false" hidden>
+            <span class="node-title">Chebyshev ψ 经典余项</span>
+            <span class="node-status">● 已证明组件</span>
           </button>
           <button class="network-node" type="button" data-concept-id="existing-pnt" data-status="frontier" style="--x: 20%; --y: 72%;" aria-pressed="false" hidden>
             <span class="node-title">其他形式化 PNT</span>
@@ -1023,7 +1023,7 @@
         <button class="action-button" type="button" data-action="open-concept" data-concept-id="zero-free">进入概念页</button>
       </section>
 
-      <noscript>本页面的核心路线是：Riemann zeta 函数 → zeta 工具 → 经典零自由区域 → Perron/显式公式 → PNT。普通 PNT 已证明；有效余项与 RH 位于更远的研究前沿。启用 JavaScript 后可查看全部 13 个概念的证据与边界说明。</noscript>
+      <noscript>本页面的核心路线是：Riemann zeta 函数 → zeta 工具 → 经典零自由区域 → Perron/显式公式 → PNT。普通 PNT 与 Chebyshev ψ 经典余项已证明；π−Li 有效余项与 RH 仍开放。启用 JavaScript 后可查看全部 13 个概念的证据与边界说明。</noscript>
     </section>
 
     <article id="concept-view" class="concept-view" hidden aria-live="polite"></article>
@@ -1128,7 +1128,7 @@
           "围道残数汇总已闭合到重数显式公式"
         ],
         impact: "把已证明的零自由区域连接到显式公式、ψ 渐近式和普通 PNT。",
-        warning: "这条围道链已足够证明普通 PNT，但尚未给出经典有效余项。",
+        warning: "这条围道链已给出普通 PNT 与经典 ψ 余项，但尚未给出 π−Li 有效余项。",
         dependsOn: ["zero-free"],
         compact: { x: 79, y: 49 },
         expanded: { x: 88, y: 49 }
@@ -1148,7 +1148,7 @@
           "证明包含重数零点和、平凡零点尾项与低高度补丁"
         ],
         impact: "已向 ψ=o(x)、普通 PNT 和条件式 RH 误差方向输送零点贡献。",
-        warning: "普通 PNT 所需的移动高度估计已闭合；经典有效余项和 RH 本身仍未证明。",
+        warning: "移动高度估计已闭合经典 ψ 余项；π−Li 有效余项和 RH 本身仍未证明。",
         dependsOn: ["perron", "zeta-tools"],
         compact: { x: 73, y: 61 },
         expanded: { x: 63, y: 61 }
@@ -1188,27 +1188,27 @@
           "PNTForm2_proved 证明 π(x)/Li(x) → 1"
         ],
         impact: "完成本地图的经典主路线，并为定量余项研究建立基线。",
-        warning: "普通 PNT 已证明；这不等于有效余项、RH 或首次 PNT 形式化。",
+        warning: "普通 PNT 已证明；Chebyshev ψ 有效余项另有定理，但 RH 与首次形式化主张均不成立。",
         dependsOn: ["psi-error", "perron"],
         compact: { x: 67, y: 82 },
         expanded: { x: 63, y: 85 }
       },
       {
         id: "pnt-error",
-        title: "带余项的素数定理",
-        english: "Prime Number Theorem with remainder",
-        status: "frontier",
+        title: "Chebyshev ψ 经典余项",
+        english: "Classical Chebyshev psi remainder",
+        status: "proved",
         core: false,
-        summary: "在一阶渐近之外，量化 π(x)、θ(x) 或 ψ(x) 偏离主项的速度。",
-        formula: "ψ(x) = x + O(x · exp(−a√log x))  （经典形状）",
+        summary: "在一阶渐近之外，以经典指数衰减率量化 ψ(x) 偏离主项的速度。",
+        formula: "ψ(x) = x + O(x · exp(−a√log x))",
         intuition: "PNT 只说相对误差趋零；余项告诉我们趋零有多快，以及零自由区域实际换来了什么。",
         leanEvidence: [
-          "项目已有若干误差谓词和条件式转换接口",
-          "经典零自由区域为此方向提供已审计解析输入",
-          "完整围道估计与最终定量余项尚未形式化完成"
+          "exists_abs_chebyshevPsi_sub_id_le_exp_neg_sqrt_log 已证明",
+          "证明吸收动态高度公式中的多项式因子与 von Mangoldt 半跳跃",
+          "floor 尺度比较把自然数样本推广到全部充分大的实数"
         ],
-        impact: "衡量经典零自由区域对素数分布产生的定量收益。",
-        warning: "展示的是经典目标形状，不是当前仓库已经证明的误差定理。",
+        impact: "正式量化经典零自由区域对 Chebyshev 素数权重分布的收益。",
+        warning: "已证明的是 ψ 余项；π(x)−Li(x) 的有效 Abel 转换仍未形式化完成。",
         dependsOn: ["pnt", "zero-free"],
         compact: { x: 34, y: 86 },
         expanded: { x: 38, y: 90 }

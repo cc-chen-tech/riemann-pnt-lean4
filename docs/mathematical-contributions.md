@@ -258,6 +258,9 @@ formalization. The verified contribution includes:
   `chebyshevPsi0(m)-m=o(m)` on natural samples;
 - the floor transfer to all real arguments and theorem-level proofs of
   `PNTForm1`, `PNTForm2`, and `PNTForm3`.
+- the de la Vallee Poussin-form real-variable estimate
+  `|chebyshevPsi x - x| <= C*x*exp(-c*sqrt(log x))` for all sufficiently large
+  `x`, including midpoint-jump removal and the floor-scale comparison.
 
 Mathlib already provides the qualitative nonvanishing theorem
 `riemannZeta_ne_zero_of_one_le_re`.  The compact theorem first upgrades this to
@@ -271,6 +274,6 @@ Re s >= 1 - c / log |Im s|.
 
 The remaining zero-free-region target is the stronger Vinogradov-Korobov
 region.  On the explicit-formula side, the principal-value identity, the
-moving-height ordinary-PNT estimate, and the forward RH-to-prime-error
-implication are proved.  Further work concerns effective unconditional PNT
-remainders and stronger reusable finite-height estimates.
+moving-height ordinary-PNT estimate, de la Vallee Poussin-form Chebyshev `psi` remainder, and
+the forward RH-to-prime-error implication are proved.  Further work concerns
+the corresponding `pi-Li` Abel transfer and stronger zero-free regions.

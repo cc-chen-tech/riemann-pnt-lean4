@@ -25,9 +25,11 @@ This means the project verifies the local analytic mechanism
 
 The repository now proves the ordinary Prime Number Theorem in all three local
 forms (`PNTForm1`, `PNTForm2`, and `PNTForm3`) through the classical
-zero-free-region and moving-height explicit-formula route.  It does **not**
-claim a classical PNT error term, the Vinogradov-Korobov zero-free region, RH,
-or Hardy's theorem.
+zero-free-region and moving-height explicit-formula route.  It also proves the
+classical de la Vallee Poussin-form estimate
+`psi(x)-x = O(x exp(-c sqrt(log x)))`.  It does **not** yet claim the
+corresponding `pi(x)-Li(x)` remainder of the same shape, the
+Vinogradov-Korobov zero-free region, RH, or Hardy's theorem.
 
 ## Evaluation Framework
 
@@ -64,10 +66,11 @@ Therefore the stable claim for this repository is narrower:
 
 > A Lean 4 formalization of the de la Vallee Poussin 3-4-1/Jensen machinery,
 > the classical `c/log |t|` zero-free region, and the resulting ordinary PNT
-> through a multiplicity-aware moving-height explicit formula.
+> and de la Vallee Poussin-form Chebyshev `psi` remainder through a multiplicity-aware
+> moving-height explicit formula.
 
 Do not describe this repository as the first formalization of PNT, a proof of
-an effective PNT error term, or a proof of RH.
+the corresponding prime-counting `pi-Li` remainder, or a proof of RH.
 
 ## Distance to PNT
 
@@ -78,7 +81,8 @@ The classical de la Vallee Poussin route to the ordinary PNT is now proved.
 | Publish a Lean 4 formalization module around `3-4-1 + classical zero-free region` | proof core complete; paper review remains |
 | Prove the classical zero-free region `1 - c / log |t|` | completed by `classical_zero_free_region_proved` |
 | Derive a full ordinary PNT proof along this route | completed by `PNTForm3_proved`, then the existing equivalence bridges |
-| Derive a PNT with classical error term | farther still |
+| Derive `psi(x)-x = O(x exp(-c sqrt(log x)))` | completed by `exists_abs_chebyshevPsi_sub_id_le_exp_neg_sqrt_log` |
+| Transfer the classical error to `pi(x)-Li(x)` | open: requires the matching quantitative Abel-integral estimate |
 
 The verified chain currently looks like:
 
@@ -91,7 +95,7 @@ von Mangoldt series for -zeta'/zeta
         -> classical c/log |t| zero-free region
         -> moving first-order Perron formula at T = exp(a*sqrt(log x))
         -> multiplicity-aware finite-zero bound
-        -> psi(x) ~ x
+        -> psi(x) = x + O(x*exp(-c*sqrt(log x)))
         -> pi(x) ~ x/log x and pi(x) ~ Li(x)
 ```
 
@@ -374,8 +378,9 @@ routes must still be cited; this project does not claim priority for PNT.
 ## Status
 
 `lake build` succeeds with Lean 4.29.1 / Mathlib 4.29.1. The repository proves
-the ordinary Prime Number Theorem, but not the Riemann Hypothesis or a
-classical effective PNT error term.
+the ordinary Prime Number Theorem and the classical de la Vallee Poussin-form
+Chebyshev `psi` error, but not the Riemann Hypothesis or the corresponding
+prime-counting `pi-Li` remainder.
 
 Current code status:
 
@@ -383,7 +388,7 @@ Current code status:
 |---|---:|---|
 | `GammaResidue.lean` | 0 | General Gamma residue formula completed |
 | `HardyTheorem.lean` | 0 | Hardy-Z phase facts and codiscrete-to-bounded-window zero bridges proved; corrected integral asymptotic, positivity and zero-counting targets |
-| `PrimeNumberTheorem.lean` and `PrimeNumberTheorem/PNTFromDynamicPerron.lean` | 0 | Ordinary PNT proved in all three local forms; `RH <-> RH_PsiErrorBound` and `RH <-> RH_PrimeCountingLiErrorBound` proved, but neither RH-scale proposition is proved unconditionally |
+| `PrimeNumberTheorem.lean`, `PrimeNumberTheorem/PNTFromDynamicPerron.lean`, and `PrimeNumberTheorem/ClassicalPNTError.lean` | 0 | Ordinary PNT and the classical de la Vallee Poussin-form `psi` remainder proved; the corresponding `pi-Li` transfer and unconditional RH-scale predicates remain open |
 | `ZeroFreeRegion.lean` | 0 | 3-4-1, compact strip, and classical `c/log|t|` zero-free region proved; Vinogradov-Korobov target open |
 
 Total: 0 syntactic `sorry` occurrences in Lean source files.
@@ -479,6 +484,7 @@ of such contours from `goodHeight`: the square at height `T` has real sides
 | `HardyTheorem.lean` | Hardy Z-function setup with corrected target statements for critical-line zeros | sorry-free, targets unproved |
 | `PrimeNumberTheorem.lean` | PNT forms, equivalences, Li(x) asymptotics, zero symmetry, bounded-height zero finiteness, and the multiplicity-aware explicit-formula predicate | sorry-free; ordinary PNT and the explicit-formula predicate are proved, RH-scale error targets remain |
 | `PrimeNumberTheorem/PNTFromDynamicPerron.lean` | Transfers the natural-sample de la Vallee Poussin estimate through the floor identity and proves `PNTForm1`, `PNTForm2`, and `PNTForm3` | sorry-free; ordinary PNT proved |
+| `PrimeNumberTheorem/ClassicalPNTError.lean` | Absorbs the moving-height polynomial factors and von Mangoldt half-jump, then transfers the quantitative estimate from natural samples to all large real inputs | sorry-free; `psi(x)-x = O(x exp(-c sqrt(log x)))` proved |
 | `ZeroFreeRegion.lean` | 3-4-1 setup, log derivative series, compact strip, and classical `c/log|t|` zero-free region | sorry-free; Vinogradov-Korobov target unproved |
 | `PrimeNumberTheorem/ExplicitFormulaAux.lean` | `chebyshevPsi0`, `goodHeight`, finite zero-sum support helpers, boundary-height and auxiliary multiplicity normalizers | sorry-free, support predicate only |
 | `PrimeNumberTheorem/ExplicitFormulaResidues.lean` | Concrete `-ζ'/ζ(s) * x^s/s` integrand; global meromorphicity, finite compact-set pole candidates, local principal-part germs, a compact-set analytic regularized remainder, and proved residues at all relevant poles | sorry-free |
@@ -602,7 +608,8 @@ Lean declarations in `ZeroFreeRegion.lean` and
 | `ZeroFreeRegion.exists_ReNegDerivDivVerticalLogBound` | `theorem` | Proves the exact uniform boundary-strip estimate `Re(-ζ'/ζ(σ+it))≤C log|t|` for `1≤σ≤2` above a fixed height, using the favorable sign of every local zero principal part. | Discharges the real-part vertical input actually required by the 3-4-1 route without asserting the stronger full-norm bound. |
 | `ZeroFreeRegion.exists_re_neg_deriv_div_riemannZeta_le_neg_inv_add_log_abs_bound` | `theorem` | Separates a same-height candidate zero and proves `Re(-ζ'/ζ(σ+it))≤-1/(σ-β)+C log|t|` uniformly when the candidate lies in the fixed Jensen disk. | Supplies the quantitative zero-repulsion term; candidates farther left are handled by a uniform constant absorption in the final proof. |
 | `ZeroFreeRegion.classical_zero_free_region_proved` | `theorem` | Proves the predicate `classical_zero_free_region`, i.e. existence of `c>0` with zeta nonzero for `|Im(s)|≥2` and `Re(s)≥1-c/log|Im(s)|`. | Completes the classical de la Vallee Poussin zero-free-region chain in Lean; it is a key input to the now-proved ordinary PNT, but does not by itself prove PNT or the stronger Vinogradov-Korobov region. |
-| `PrimeNumberTheorem.PNTForm3_proved` / `PNTForm2_proved` / `PNTForm1_proved` | `theorem` | Combines the moving-height explicit formula, the classical zero-free region, finite-zero control, midpoint-jump removal, and the floor transfer from natural samples to real `x`. | Proves the ordinary prime number theorem in the repository's three equivalent forms; it does not provide an effective PNT remainder or prove RH. |
+| `PrimeNumberTheorem.PNTForm3_proved` / `PNTForm2_proved` / `PNTForm1_proved` | `theorem` | Combines the moving-height explicit formula, the classical zero-free region, finite-zero control, midpoint-jump removal, and the floor transfer from natural samples to real `x`. | Proves the ordinary prime number theorem in the repository's three equivalent forms. |
+| `PrimeNumberTheorem.exists_abs_chebyshevPsi_sub_id_le_exp_neg_sqrt_log` | `theorem` | Absorbs the square-root-log polynomial factors into weaker exponential decay, controls the von Mangoldt half-jump, and compares the floor sample with every sufficiently large real `x`. | Proves the classical de la Vallee Poussin-form Chebyshev estimate `|psi(x)-x| <= C*x*exp(-c*sqrt(log x))`; the corresponding `pi-Li` endpoint remains separate. |
 | `ZeroFreeRegion.log_norm_riemannZeta_sigma_it_le_log_two_add_two_log_abs_add_three` / unconditional circle-average and Jensen zero-mass forms | `lemma` | Derives explicit logarithmic zeta growth and weighted local zero-mass bounds of order `log |t|` with no caller-supplied growth hypothesis. | Supplies the growth and zero-counting inputs consumed by the completed uniform mixed-canonical theorem. |
 | `ZeroFreeRegion.translatedCanonicalNumerator` / `canonicalNumeratorProduct` / `mixedCanonicalRegularUnit` | `def` + `lemma` | Canonicalizes inner divisor factors while retaining outer raw factors, preserves zeta's boundary norm, improves its center norm, proves closed-disk nonvanishing when the canonicalizing circle is zeta-zero-free, and bounds the mixed logarithmic-derivative correction by total divisor mass divided by `r-d`. | Removes both the old quantitative per-zero separation loss and the inner/outer composition gap; a qualitative zero-free-circle premise remains explicit. |
 | `ZeroFreeRegion.norm_regularized_logDeriv_riemannZeta_le_mixedCanonical_bound` | `lemma` | Bounds `‖logDeriv ζ(z) - Σ D(u)/(z-u)‖` by a Borel boundary-growth term plus `divisorMass/(r-d)` on a retained disk. | Local precursor whose fixed-radius high-height specialization is now proved by the three-quarter-radius sibling. |
@@ -1370,11 +1377,10 @@ parallel work breakdown of the remaining analytic chains.
 ### Easiest Path Forward
 
 The moving-height natural-sample formula, classical zero-free region, and
-finite-zero estimate now close the ordinary PNT.  The nearest open work is no
-longer ordinary PNT: it is either an effective PNT error term, the stronger
-Vinogradov-Korobov zero-free region, or the Hardy moment chain.  Strengthening
-the zero-free region beyond the classical scale still requires substantially
-deeper exponential-sum input.
+finite-zero estimate now close both ordinary PNT and the de la Vallee
+Poussin-form Chebyshev `psi` remainder.  The nearest arithmetic endpoint is the quantitative Abel
+transfer to `pi(x)-Li(x)`; the deeper alternatives are the stronger
+Vinogradov-Korobov zero-free region or the Hardy moment chain.
 
 ## Related Work
 

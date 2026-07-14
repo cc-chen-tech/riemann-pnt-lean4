@@ -5,7 +5,7 @@ intended for reviewers and for future work planning.
 
 It records internal proof status only.  It should not be read as a standalone
 SOTA comparison or as a claim that this repository is the first PNT
-formalization, proves an effective PNT error term, or proves RH.
+formalization, proves the corresponding prime-counting `pi-Li` remainder, or proves RH.
 External academic value must be judged separately against Isabelle/HOL PNT,
 HOL Light PNT, Lean `PrimeNumberTheoremAnd`, Mathlib zeta/L-function
 infrastructure, and current Lean PNT repositories at submission time.
@@ -3153,6 +3153,15 @@ As of `2026-07-15`, there are **16** mathematical target declarations:
   `PrimeNumberTheorem.PNTForm2_proved`, and
   `PrimeNumberTheorem.PNTForm3_proved` in
   `PrimeNumberTheorem/PNTFromDynamicPerron.lean`.
+
+### Completed de la Vallee Poussin-form Chebyshev error
+
+- `PrimeNumberTheorem.exists_abs_chebyshevPsi_sub_id_le_exp_neg_sqrt_log`
+  proves that some `c > 0`, `C >= 0`, and threshold `X` satisfy
+  `|psi(x)-x| <= C*x*exp(-c*sqrt(log x))` for every real `x >= X`.
+- The proof is in `PrimeNumberTheorem/ClassicalPNTError.lean`; it removes the
+  midpoint convention and transfers the natural-sample estimate through
+  `floor`.  The corresponding `pi-Li` Abel transfer is not yet included.
 
 ### Remaining `PrimeNumberTheorem.lean` targets
 
