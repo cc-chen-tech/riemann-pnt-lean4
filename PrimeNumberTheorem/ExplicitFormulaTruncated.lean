@@ -38,7 +38,7 @@ is absorbed by a finite zero-sum bound.
 
 ### 1 simple lemma (identity check)
 - `explicitFormulaTruncated_of` — repackages an assumption of the target,
-  making clear that this file does not prove the target unconditionally.
+  retained as a compatibility helper.
 
 ## Dependencies (already proved / already declared)
 
@@ -49,9 +49,9 @@ is absorbed by a finite zero-sum bound.
 - `PrimeNumberTheorem.finiteNontrivialZeroSumWithMultiplicity`.
 - `PrimeNumberTheorem.ExplicitFormulaAux.chebyshevPsi0_eq_chebyshevPsi_off_primePowers`.
 - `PrimeNumberTheorem.finite_nontrivial_zeros_bounded_height`.
-- `MathlibAux.RectangleResidue.rectangleIntegral_meromorphic_eq_residue_sum`
-  (upstream interface — used by the future residue / contour glue;
-  not imported here, only cross-referenced in this doc-comment).
+- `PrimeNumberTheorem.ExplicitFormulaResidues.
+  exists_norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_log_sq_div`.
+- `PrimeNumberTheorem.deriv_riemannZeta_zero_div_riemannZeta_zero`.
 -/
 
 import Mathlib
@@ -63,13 +63,13 @@ import PrimeNumberTheorem.ZetaDerivativeZero
 open Complex
 open scoped ArithmeticFunction BigOperators
 
--- This file declares a `def ... : Prop` target rather than an exported theorem.
--- For each fixed `x`, one constant must control every admissible height `T`.
+-- The named Prop fixes the public signature; the theorem below discharges it.
+-- For each fixed `x`, one constant controls every admissible height `T`.
 
 namespace PrimeNumberTheorem
 namespace ExplicitFormulaTruncated
 
-/-! ## Truncated explicit formula main target (interface placeholder) -/
+/-! ## Truncated explicit formula public predicate -/
 
 /-- Truncated von Mangoldt explicit formula — main asymptotic-identity
 predicate.
