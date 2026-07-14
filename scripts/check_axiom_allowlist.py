@@ -28,6 +28,7 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.ExplicitFormulaResidues.exists_norm_horizontal_inner_explicitFormulaContour_le",
     "PrimeNumberTheorem.ExplicitFormulaResidues.exists_norm_explicitFormulaApproxWithMultiplicity_sub_le_log_div_of_le_add_three",
     "PrimeNumberTheorem.exists_norm_truncated_neg_logDeriv_firstOrderPerron_sub_chebyshevPsi0_le_div",
+    "PrimeNumberTheorem.exists_uniform_nat_norm_truncated_neg_logDeriv_firstOrderPerron_sub_chebyshevPsi0_le",
     "PrimeNumberTheorem.ExplicitFormulaResidues.exists_norm_truncatedExplicitFormula_sub_contourRemainder_sub_chebyshevPsi0_le_div",
     "PrimeNumberTheorem.ExplicitFormulaResidues.exists_norm_integral_farLeft_explicit_le_log_div",
     "PrimeNumberTheorem.ExplicitFormulaResidues.exists_goodHeight_Icc_norm_horizontal_complete_explicitFormulaContour_difference_le",

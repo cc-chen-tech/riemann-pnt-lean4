@@ -3553,6 +3553,12 @@ Support-level verified declarations:
   `-zeta'/zeta` differs from `psi0` by at most `C(x,c)/W` for `W >= 1`.  The
   proof includes the prime-power half-jump through an explicit arctangent
   estimate, rather than only extracting a qualitative limit.
+- `exists_uniform_nat_norm_truncated_neg_logDeriv_firstOrderPerron_sub_chebyshevPsi0_le`
+  proves one constant works for every natural `m>=2` on `Re(s)=2`, with the
+  coarse bound `C*m^5/W`.  Its proof controls the near terms by integer
+  spacing in `|log(m/n)|` and the tail by absolute convergence of the von
+  Mangoldt L-series at real part two.  The restriction to integral samples
+  avoids claiming a false uniform bound as real `x` approaches a jump.
 - `ExplicitFormulaResidues.exists_norm_truncatedExplicitFormula_sub_contourRemainder_sub_chebyshevPsi0_le_div`
   substitutes that rate into the exact finite multiplicity-aware rectangle
   residue identity.

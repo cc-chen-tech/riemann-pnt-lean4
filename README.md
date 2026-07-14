@@ -577,7 +577,7 @@ Lean declarations in `ZeroFreeRegion.lean` and
 | `PrimeNumberTheorem.ExplicitFormulaAux.exists_globalZeroMultiplicity_le_mul_log` / `exists_card_nontrivialZerosFinset_le_mul_log` | `theorem` | Partitions high zeros by `floor |Im rho|`, controls each fixed-width fiber using the proved Jensen local-multiplicity bound, and absorbs the bounded low-height contribution. | Proves global `O(T log T)` zero counting with analytic multiplicity and for distinct zeros; it also feeds the finite-zero estimates used with the quantitative formula. |
 | `PrimeNumberTheorem.ExplicitFormulaAux.exists_globalReciprocalZeroMultiplicity_le_log_sq` | `theorem` | Applies the same floor-fiber decomposition with the exact weight `analyticOrderNatAt ζ rho / ‖rho‖`, then sums `1/n` using the harmonic bound. | Proves the global reciprocal-zero input `O(log^2 T)` without assuming simple zeros or RH; under RH it controls the finite zero contribution separately from the contour rate. |
 | `PrimeNumberTheorem.ExplicitFormulaAux.norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_globalReciprocal_of_RH` / `exists_norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_log_sq_of_RH` | `theorem` | Under RH, uses `Re(rho)=1/2` termwise and the reciprocal-zero estimate to bound the complete multiplicity-aware finite zero sum. | Proves the zero contribution is `O(sqrt(x) log^2 T)`; it does not bound the separate truncated contour remainder. |
-| `PrimeNumberTheorem.exists_norm_truncated_neg_logDeriv_firstOrderPerron_sub_chebyshevPsi0_le_div` / `ExplicitFormulaResidues.exists_norm_truncatedExplicitFormula_sub_contourRemainder_sub_chebyshevPsi0_le_div` | `theorem` | Quantifies the full conditionally convergent first-order Perron integral by `C(x,c)/W`, including the prime-power half-jump, and inserts it into the finite multiplicity-aware rectangle identity. | Closes the right Perron edge; the following theorems now quantify the remaining contour at selected heights. |
+| `PrimeNumberTheorem.exists_norm_truncated_neg_logDeriv_firstOrderPerron_sub_chebyshevPsi0_le_div` / `exists_uniform_nat_norm_truncated_neg_logDeriv_firstOrderPerron_sub_chebyshevPsi0_le` / `ExplicitFormulaResidues.exists_norm_truncatedExplicitFormula_sub_contourRemainder_sub_chebyshevPsi0_le_div` | `theorem` | Quantifies the full conditionally convergent first-order Perron integral by `C(x,c)/W`, including the prime-power half-jump; on `Re(s)=2`, one absolute constant now gives the coarse uniform bound `C*m^5/W` for every natural `m>=2`. | Removes the first fixed-`x` obstruction at integral sampling points and inserts the pointwise rate into the finite rectangle identity; a uniform contour assembly is still needed. |
 | `ExplicitFormulaResidues.exists_norm_integral_farLeft_explicit_le_log_div` / `exists_goodHeight_Icc_norm_horizontal_complete_explicitFormulaContour_difference_le` | `theorem` | Bounds the complete far-left horizontal edge uniformly in its moving endpoint and combines it with the central band into an `O_x(log²A/T)` top-bottom estimate at one good `T∈[A,A+1]`. | Quantitatively closes both horizontal edges at selected heights. |
 | `ExplicitFormulaResidues.exists_goodHeight_Icc_norm_firstOrderContourRemainder_le_horizontal_add_left` / `exists_goodHeight_Icc_norm_truncatedExplicitFormula_sub_chebyshevPsi0_le_horizontal_add_left` | `theorem` | Adds the explicit exponentially decaying negative-odd left edge and quantitative Perron inversion to obtain a selected-height finite explicit formula with no abstract contour remainder. | Upstream estimate consumed by the following truncation-selection theorems. |
 | `ExplicitFormulaResidues.tendsto_oddVerticalExplicitBound_atTop` / `ExplicitFormulaAux.norm_finiteTrivialZeroSum_residues_sub_logTerm_le_geometric` | `theorem` | Proves the displayed moving-left majorant tends to zero as `N -> infinity` at fixed height and bounds the omitted trivial-zero correction by a geometric tail. | Supplies the two quantitative truncation inputs that were previously open. |
@@ -1340,18 +1340,22 @@ parallel work breakdown of the remaining analytic chains.
 
 | Theorem | Missing Mathlib Component | Difficulty |
 |---|---|---|
-| RH-scale use of the truncated formula | Track the fixed-`x` contour constant uniformly as `x` varies | High |
+| RH-scale use of the truncated formula | Combine the uniform natural-point Perron bound with uniform horizontal-edge constants at a polynomial truncation height, then extend from integer samples to real `x` | High |
 | Vinogradov-Korobov zero-free region | Exponential sum estimates | Very High |
 | Hardy's theorem targets | Corrected moment estimates and asymptotic expansions of special functions | Medium–High |
 
 ### Easiest Path Forward
 
 The quantitative truncated error is now proved in the classical normalization
-for every `T >= 2`, with a constant depending on fixed `x`.  The next
-PNT-facing step is to track that constant uniformly as `x` varies and combine
-the result with the classical zero-free region in a finite zero-sum/error
-estimate.  Strengthening the zero-free region beyond the classical scale still
-requires substantially deeper exponential-sum input.
+for every `T >= 2`, with a constant depending on fixed `x`.  In addition, the
+right Perron edge has one coarse uniform `C*m^5/W` bound at every natural
+sampling point `m>=2`; this avoids the unavoidable near-integer denominator in
+the unrestricted real-`x` first-order Perron estimate.  The next PNT-facing
+step is to make the selected-height horizontal contour estimate uniform for
+`x>=2`, choose a sufficiently high polynomial truncation height, and assemble
+the resulting bound at integer samples before extending it to all real `x`.
+Strengthening the zero-free region beyond the classical scale still requires
+substantially deeper exponential-sum input.
 
 ## Related Work
 

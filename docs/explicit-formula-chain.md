@@ -202,6 +202,14 @@ Already available or mostly available:
     series, proves a summable Tannery majorant for the conditionally convergent
     kernel, and includes the half weight at an integral jump.  This is the
     actual first-order L-series specialization, not a finite-sum wrapper.
+    The quantitative refinement
+    `exists_uniform_nat_norm_truncated_neg_logDeriv_firstOrderPerron_sub_chebyshevPsi0_le`
+    proves that one constant controls every natural sample `m>=2` on
+    `Re(s)=2` by `C*m^5/W`.  The deliberately coarse polynomial comes from
+    splitting the Tannery majorant at `2m`: integer spacing controls the
+    finitely many `1/|log(m/n)|` terms, and absolute convergence on
+    `Re(s)=2` controls the tail.  This is uniform in `m`, but is not yet a
+    uniform complete contour estimate.
 17. `PrimeNumberTheorem.ExplicitFormulaResidues.exists_scaledRightIntegral_eq_residue_sum_sub_firstOrderContourRemainder`
     proves the exact finite-height first-order contour shift with a fixed
     Perron right edge.  The normalized right-line integral equals the finite

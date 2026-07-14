@@ -167,6 +167,12 @@ Current status:
 - The full finite-height right Perron edge now has the explicit bound
   `C(x,c)/W`, including the prime-power half-jump, by
   `exists_norm_truncated_neg_logDeriv_firstOrderPerron_sub_chebyshevPsi0_le_div`.
+  On the fixed line `Re(s)=2`, the theorem
+  `exists_uniform_nat_norm_truncated_neg_logDeriv_firstOrderPerron_sub_chebyshevPsi0_le`
+  strengthens this to one coarse `C*m^5/W` bound for every natural `m>=2`.
+  Restricting to integer samples is substantive: for arbitrary real `x`, the
+  first-order Tannery majorant contains `1/|log(x/n)|` and cannot be uniform
+  as `x` approaches an integer without an additional distance term.
   This rate is inserted into the exact finite multiplicity-aware rectangle
   identity by
   `exists_norm_truncatedExplicitFormula_sub_contourRemainder_sub_chebyshevPsi0_le_div`.
@@ -224,9 +230,12 @@ Current status:
   combines it with F2 and proves the required `O(sqrt(x) log^2 T)` finite-zero
   contribution.
 - The fixed-`x` quantitative truncated explicit-formula remainder is now
-  proved for every `T >= 8`.  What remains for an RH-scale asymptotic in `x`
-  is to track the contour constant uniformly as `x` varies, choose `T=T(x)`,
-  and combine that dependence with the finite-zero estimate above.
+  proved for every `T >= 8`, and its Perron component is polynomially uniform
+  at integer samples.  What remains for an RH-scale asymptotic is to make the
+  selected-height horizontal contour bound uniform for `x>=2`, assemble the
+  formula at a sufficiently high polynomial `T=T(m)`, combine it with the
+  finite-zero estimate above, and extend the resulting integer-point bound to
+  real `x`.
 
 ### F5. Convert `psi` to `theta`
 
