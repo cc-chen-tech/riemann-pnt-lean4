@@ -3393,6 +3393,18 @@ Route interfaces:
   decay, cofinal limit, and all-real-height interpolation are now proved in the
   dedicated explicit-formula modules.
 
+### `PrimeNumberTheorem/GlobalZeroCount.lean`
+
+- `globalZeroMultiplicity_nonneg` proves nonnegativity of the symmetric
+  finite-height analytic-multiplicity sum.
+- `exists_globalZeroMultiplicity_le_mul_log` proves that nontrivial zeta zeros
+  of absolute ordinate at most `T`, counted with analytic multiplicity, are
+  bounded by `C * T * (1 + log (T + 6))` for `T >= 4`.
+- `exists_card_nontrivialZerosFinset_le_mul_log` derives the same global
+  `O(T log T)` scale for the number of distinct zeros.  These theorems provide
+  quantitative zero-counting input; they do not by themselves discharge the
+  still-open truncated explicit-formula error target.
+
 Reusable predicates:
 
 - `HardyTheorem.weightedIntegralOf_tail_dominates`

@@ -18,6 +18,8 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.ExplicitFormulaAux.exists_localZeroMultiplicity_le_log_bound",
     "PrimeNumberTheorem.ExplicitFormulaResidues.exists_cofinal_explicitFormulaApproxWithMultiplicity_tendsto",
     "PrimeNumberTheorem.ExplicitFormulaResidues.explicit_formula_von_mangoldt_proved",
+    "PrimeNumberTheorem.ExplicitFormulaAux.exists_globalZeroMultiplicity_le_mul_log",
+    "PrimeNumberTheorem.ExplicitFormulaAux.exists_card_nontrivialZerosFinset_le_mul_log",
 }
 
 REPORT_RE = re.compile(

@@ -9,6 +9,7 @@ import PrimeNumberTheorem.ExplicitFormulaResidues
 import PrimeNumberTheorem.ExplicitFormulaRectangle
 import PrimeNumberTheorem.FirstOrderExplicitFormula
 import PrimeNumberTheorem.QuantitativeGoodHeight
+import PrimeNumberTheorem.GlobalZeroCount
 import PrimeNumberTheorem.CentralHorizontalEdge
 import PrimeNumberTheorem.CofinalExplicitFormula
 import PrimeNumberTheorem.ExplicitFormulaAllHeights
@@ -22819,6 +22820,22 @@ theorem explicit_formula_von_mangoldt_proved
     {x : ℝ} (hx : 2 ≤ x) :
     PrimeNumberTheorem.explicit_formula_von_mangoldt x hx :=
   PrimeNumberTheorem.ExplicitFormulaResidues.explicit_formula_von_mangoldt_proved hx
+
+/-- Public global `O(T log T)` bound for nontrivial zeta zeros counted with
+analytic multiplicity. -/
+theorem exists_globalZeroMultiplicity_le_mul_log :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ T : ℝ, 4 ≤ T →
+      PrimeNumberTheorem.ExplicitFormulaAux.globalZeroMultiplicity T ≤
+        C * T * (1 + Real.log (T + 6)) :=
+  PrimeNumberTheorem.ExplicitFormulaAux.exists_globalZeroMultiplicity_le_mul_log
+
+/-- Public global `O(T log T)` bound for the number of distinct nontrivial
+zeta zeros in a symmetric height truncation. -/
+theorem exists_card_nontrivialZerosFinset_le_mul_log :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ T : ℝ, 4 ≤ T →
+      ((PrimeNumberTheorem.nontrivialZerosFinset T).card : ℝ) ≤
+        C * T * (1 + Real.log (T + 6)) :=
+  PrimeNumberTheorem.ExplicitFormulaAux.exists_card_nontrivialZerosFinset_le_mul_log
 
 /-- Public route interface from a future truncated explicit formula to the
 power-scale explicit-formula converse target. -/
