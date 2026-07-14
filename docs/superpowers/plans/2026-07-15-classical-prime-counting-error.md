@@ -186,7 +186,7 @@ git commit -m "prove the classical theta error term"
 - Produces:
   `exists_eventually_abs_theta_error_integral_le_exp_neg_sqrt_log`
 
-- [ ] **Step 1: Add the integral theorem statement**
+- [x] **Step 1: Add the integral theorem statement**
 
 ```lean
 theorem exists_eventually_abs_theta_error_integral_le_exp_neg_sqrt_log :
@@ -196,7 +196,7 @@ theorem exists_eventually_abs_theta_error_integral_le_exp_neg_sqrt_log :
         C * x * Real.exp (-c * Real.sqrt (Real.log x)) := by
 ```
 
-- [ ] **Step 2: Fix the threshold and split the interval**
+- [x] **Step 2: Fix the threshold and split the interval**
 
 Extract `a`, `D`, and an eventual threshold `A0` from Task 2.  Define
 
@@ -219,7 +219,7 @@ Use `intervalIntegrable_theta_error_div_id_log_sq_of_le` and
 integral 2 x K = I0 + integral A (sqrt x) K + integral (sqrt x) x K.
 ```
 
-- [ ] **Step 3: Bound `[A, sqrt x]`**
+- [x] **Step 3: Bound `[A, sqrt x]`**
 
 Apply `intervalIntegral.abs_integral_le_integral_abs` and
 `intervalIntegral.integral_mono_on`.  For `A <= t <= sqrt x`, use the Task 2
@@ -232,7 +232,7 @@ Pull out the constant with `intervalIntegral.integral_const` and derive
 |integral A (sqrt x) K| <= D*sqrt x.
 ```
 
-- [ ] **Step 4: Bound `[sqrt x, x]`**
+- [x] **Step 4: Bound `[sqrt x, x]`**
 
 For `sqrt x <= t <= x`, prove
 
@@ -256,7 +256,7 @@ obtain
   <= D*x*exp(-(a/2)*sqrt(log x)).
 ```
 
-- [ ] **Step 5: Absorb the initial and short-interval terms**
+- [x] **Step 5: Absorb the initial and short-interval terms**
 
 With `b=a/4`, prove eventually
 
@@ -270,7 +270,7 @@ The first two follow from `2*b <= sqrt(log x)` after rewriting `x` as
 `exp(log x)`.  Combine the three interval estimates with `abs_add_le` and use
 a nonnegative constant such as `|I0| + 2*D`.
 
-- [ ] **Step 6: Verify GREEN and commit**
+- [x] **Step 6: Verify GREEN and commit**
 
 Run:
 
