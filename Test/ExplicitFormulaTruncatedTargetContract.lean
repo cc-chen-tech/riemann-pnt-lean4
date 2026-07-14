@@ -1,0 +1,10 @@
+import PrimeNumberTheorem.ExplicitFormulaTruncated
+
+namespace PrimeNumberTheorem
+namespace ExplicitFormulaTruncated
+
+example : ExplicitFormulaTruncatedTarget :=
+  explicitFormulaTruncatedTarget_proved
+
+end ExplicitFormulaTruncated
+end PrimeNumberTheorem

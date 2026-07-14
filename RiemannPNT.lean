@@ -22901,17 +22901,21 @@ theorem exists_norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_log_sq_o
   PrimeNumberTheorem.ExplicitFormulaAux.exists_norm_finiteNontrivialZeroSumWithMultiplicity_le_sqrt_mul_log_sq_of_RH
     hRH
 
-/-- Public route interface from a future truncated explicit formula to the
-power-scale explicit-formula converse target. -/
+/-- Public route interface from the proved truncated explicit formula plus a
+future oscillation argument to the power-scale converse target. -/
 abbrev ExplicitFormulaTruncatedConverseRoute (β : ℝ) : Prop :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute β
 
 namespace ExplicitFormulaTruncated
 
-/-- Public truncated von Mangoldt explicit-formula target predicate.  This is
-still a target statement, not an unconditional theorem. -/
+/-- Public truncated von Mangoldt explicit-formula predicate. -/
 abbrev ExplicitFormulaTruncatedTarget : Prop :=
   PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget
+
+/-- Public proof of the pointwise-in-`x`, uniform-in-height truncated explicit
+formula, including the classical `log(2π)` normalization. -/
+theorem explicitFormulaTruncatedTarget_proved : ExplicitFormulaTruncatedTarget :=
+  PrimeNumberTheorem.ExplicitFormulaTruncated.explicitFormulaTruncatedTarget_proved
 
 /-- Public conditional repackaging of an assumed truncated explicit-formula
 target. -/
@@ -22932,7 +22936,7 @@ theorem psiPowerErrorBelowLineExcludesZerosRightOf_of_truncated_route
   PrimeNumberTheorem.ExplicitFormulaTruncated.psiPowerErrorBelowLineExcludesZerosRightOf_of_truncated_route
     hroute hexplicit
 
-/-- Public one-step conditional bridge from a future truncated explicit formula
+/-- Public one-step conditional bridge from a future truncated-formula converse
 route and a `ψ` power saving below `2/3` to no zeros on `Re(s)=2/3`. -/
 theorem no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route
     (hroute :
@@ -22956,7 +22960,7 @@ theorem no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_belo
   PrimeNumberTheorem.ExplicitFormulaTruncated.no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_below_two_thirds
     hroute hexplicit herror
 
-/-- Public one-step conditional bridge from a future truncated explicit formula
+/-- Public one-step conditional bridge from a future truncated-formula converse
 route and a `ψ` power saving below `2/3` to no zeros on `Re(s)=1/3`. -/
 theorem no_zeros_on_one_third_of_truncated_explicit_formula_converse_route
     (hroute :
@@ -23433,7 +23437,7 @@ theorem psiPowerErrorBelowLineExcludesZerosRightOf_of_truncated_route
   PrimeNumberTheorem.ExplicitFormulaTruncated.psiPowerErrorBelowLineExcludesZerosRightOf_of_truncated_route
     hroute hexplicit
 
-/-- Public one-step conditional bridge from a future truncated explicit formula
+/-- Public one-step conditional bridge from a future truncated-formula converse
 route and a `ψ` power saving below `2/3` to no zeros on the right-side line
 `Re(s)=2/3`. -/
 theorem no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route
@@ -23463,7 +23467,7 @@ theorem no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_belo
     (PrimeNumberTheorem.psiPowerErrorBelowLine_two_thirds_of_below_two_thirds
       herror)
 
-/-- Public one-step conditional bridge from a future truncated explicit formula
+/-- Public one-step conditional bridge from a future truncated-formula converse
 route and a `ψ` power saving below `2/3` to no zeros on `Re(s)=1/3`. -/
 theorem no_zeros_on_one_third_of_truncated_explicit_formula_converse_route
     (hroute :
@@ -23493,7 +23497,7 @@ theorem no_zeros_on_one_third_of_truncated_explicit_formula_converse_route_below
 
 /-- Public reflected-line version of the truncated explicit-formula bridge.
 
-For any `0 < β < 1`, a future truncated explicit formula route at the boundary
+For any `0 < β < 1`, a future truncated-formula converse route at the boundary
 `β`, together with a `ψ` power saving below `β`, excludes zeros on the reflected
 line `Re(s)=1-β`.  The hard analytic dependencies are still exactly the
 truncated formula and the converse/oscillation route. -/

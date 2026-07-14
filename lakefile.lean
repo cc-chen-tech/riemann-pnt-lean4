@@ -22,6 +22,7 @@ lean_lib RiemannPNT where
     `PrimeNumberTheorem.CentralHorizontalEdge,
     `PrimeNumberTheorem.CofinalExplicitFormula,
     `PrimeNumberTheorem.ExplicitFormulaAllHeights,
+    `PrimeNumberTheorem.ZetaDerivativeZero,
     `PrimeNumberTheorem.NontrivialZeroMultiplicity,
     `PrimeNumberTheorem.PerronTruncation,
     `PrimeNumberTheorem.VonMangoldtPerronTruncated,
@@ -64,7 +65,9 @@ lean_lib RiemannPNT where
     `Test.SelectedHeightAbsorbedLeftEdgeContract,
     `Test.SelectedHeightExplicitFormulaApproxRateContract,
     `Test.SelectedHeightTruncatedExplicitFormulaRateContract,
-    `Test.TrivialZeroTailRateContract
+    `Test.TrivialZeroTailRateContract,
+    `Test.ZetaDerivativeZeroContract,
+    `Test.ExplicitFormulaTruncatedTargetContract
   ]
 
 require mathlib from "./vendor/mathlib"

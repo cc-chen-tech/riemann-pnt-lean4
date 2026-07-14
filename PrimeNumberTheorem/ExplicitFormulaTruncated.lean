@@ -21,29 +21,20 @@ midpoint-convention Chebyshev-`ψ` (declared as
 over the nontrivial zeros of `ζ` with `|Im ρ| ≤ T`, and the trailing
 `O_x(log²(xT) / T)` is the pointwise-in-`x` error term.
 
-## Why a `def ... : Prop` target
+## Target predicate and proof
 
-The current declaration is intentionally a **target**, not a theorem:
-a `def ... : Prop` with a real mathematical body.  Its purpose is to
-(a) lock the pointwise-in-`x`, uniform-in-height quantifier order, (b) let
-downstream code (`import PrimeNumberTheorem.ExplicitFormulaTruncated`) use the
-name as a typed predicate, and (c) avoid exporting an unproved theorem.
-
-The actual explicit-formula proof is **deliberately deferred** to a
-later phase: building it from scratch in Lean 4.29.1 / Mathlib 4.29.1
-requires Perron's formula on a vertical contour + the rectangle
-contour integral ↔ residue-sum gluing
-(`MathlibAux.RectangleResidue.rectangleIntegral_meromorphic_eq_residue_sum`
-in the upstream interface), both of which are far beyond the
-15-minute window of this interface task.  See
-`docs/explicit-formula-chain.md` §"Truncated explicit formula
-main target" for the intended future body.
+The `def ... : Prop` declaration locks the pointwise-in-`x`, uniform-in-height
+quantifier order.  The theorem `explicitFormulaTruncatedTarget_proved` below
+now proves this predicate unconditionally.  Its large-height input is the
+completed quantitative contour calculation; the bounded interval `2 ≤ T < 8`
+is absorbed by a finite zero-sum bound.
 
 ## Inventory
 
-### 1 core def (Prop target)
+### 1 core def and its theorem
 - `ExplicitFormulaTruncatedTarget` — the main asymptotic-identity
   predicate.
+- `explicitFormulaTruncatedTarget_proved` — its unconditional proof.
 
 ### 1 simple lemma (identity check)
 - `explicitFormulaTruncated_of` — repackages an assumption of the target,
@@ -66,6 +57,8 @@ main target" for the intended future body.
 import Mathlib
 import PrimeNumberTheorem
 import PrimeNumberTheorem.ExplicitFormulaAux
+import PrimeNumberTheorem.ExplicitFormulaAllHeights
+import PrimeNumberTheorem.ZetaDerivativeZero
 
 open Complex
 open scoped ArithmeticFunction BigOperators
@@ -108,9 +101,8 @@ all `T ≥ 2`.  A constant uniform in both `x` and `T` with only an
 `x * log²(x) / T` error would contradict the jump discontinuities of `ψ₀`,
 while putting `∃ C` after fixed `T,x` would make the estimate vacuous.
 
-**This is NOT a `theorem`** — it is a `def` returning `Prop`.  The
-repository tracks it as an unproved target whose eventual proof should
-combine Perron's formula with the rectangle residue interface. -/
+The predicate is kept as a named interface; it is discharged below by
+`explicitFormulaTruncatedTarget_proved`. -/
 def ExplicitFormulaTruncatedTarget : Prop :=
   ∀ x : ℝ, 2 ≤ x → ∃ C > (0 : ℝ), ∀ T : ℝ, 2 ≤ T →
     ‖((ExplicitFormulaAux.chebyshevPsi0 x : ℂ) -
@@ -120,15 +112,158 @@ def ExplicitFormulaTruncatedTarget : Prop :=
         - (1 / 2 : ℂ) * (Real.log (1 - x ^ (-2 : ℝ)) : ℂ)))‖
       ≤ C * x / T * (Real.log (x * T)) ^ 2
 
-/-! ## Assumption-repackaging lemma -/
+/-! ## Compatibility repackaging lemma -/
 
-/-- Repackage an assumed truncated explicit formula target.
-
-This lemma is intentionally conditional: the file records the target shape but
-does not prove Perron's formula or the rectangle residue chain. -/
+/-- Repackage a supplied truncated explicit formula target. -/
 lemma explicitFormulaTruncated_of (h : ExplicitFormulaTruncatedTarget) :
     ExplicitFormulaTruncatedTarget :=
   h
+
+/-! ## Proof of the target -/
+
+/-- The multiplicity-aware approximation has the classical `log(2π)`
+normalization. -/
+lemma explicitFormulaApproxWithMultiplicity_eq_log_two_pi (x T : ℝ) :
+    explicitFormulaApproxWithMultiplicity x T =
+      (x : ℂ) - finiteNontrivialZeroSumWithMultiplicity x T -
+        (Real.log (2 * Real.pi) : ℂ) -
+        (1 / 2 : ℂ) * (Real.log (1 - x ^ (-2 : ℝ)) : ℂ) := by
+  simp only [explicitFormulaApproxWithMultiplicity,
+    deriv_riemannZeta_zero_div_riemannZeta_zero]
+
+/-- On the compact initial height interval, the explicit-formula
+approximation is bounded by a fixed finite zero sum. -/
+lemma exists_norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_of_le_eight
+    (x : ℝ) :
+    ∃ K : ℝ, 0 ≤ K ∧ ∀ T : ℝ, T ≤ 8 →
+      ‖explicitFormulaApproxWithMultiplicity x T - (chebyshevPsi0 x : ℂ)‖ ≤ K := by
+  classical
+  let Z : ℝ := ∑ ρ ∈ nontrivialZerosFinset 8,
+    ‖(analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ‖
+  let K : ℝ := Z +
+    ‖explicitFormulaApproxWithMultiplicity x 8 - (chebyshevPsi0 x : ℂ)‖
+  have hZ : 0 ≤ Z := by
+    dsimp [Z]
+    positivity
+  have hK : 0 ≤ K := by
+    dsimp [K]
+    positivity
+  refine ⟨K, hK, ?_⟩
+  intro T hT8
+  have hnew :=
+    norm_explicitFormulaApproxWithMultiplicity_sub_le_new_zeros_sum_norm
+      (x := x) hT8
+  have hsum :
+      (∑ ρ ∈ (nontrivialZerosFinset 8 \ nontrivialZerosFinset T),
+          ‖(analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ‖) ≤ Z := by
+    dsimp [Z]
+    exact Finset.sum_le_sum_of_subset_of_nonneg Finset.sdiff_subset
+      (fun ρ _hρ8 _hρdiff => norm_nonneg _)
+  calc
+    ‖explicitFormulaApproxWithMultiplicity x T - (chebyshevPsi0 x : ℂ)‖ =
+        ‖(explicitFormulaApproxWithMultiplicity x T -
+            explicitFormulaApproxWithMultiplicity x 8) +
+          (explicitFormulaApproxWithMultiplicity x 8 -
+            (chebyshevPsi0 x : ℂ))‖ := by congr 1 <;> ring
+    _ ≤ ‖explicitFormulaApproxWithMultiplicity x T -
+          explicitFormulaApproxWithMultiplicity x 8‖ +
+        ‖explicitFormulaApproxWithMultiplicity x 8 -
+          (chebyshevPsi0 x : ℂ)‖ := norm_add_le _ _
+    _ ≤ Z + ‖explicitFormulaApproxWithMultiplicity x 8 -
+          (chebyshevPsi0 x : ℂ)‖ := add_le_add (hnew.trans hsum) le_rfl
+    _ = K := rfl
+
+/-- The project target for the pointwise truncated explicit formula.  The
+large-height estimate is the quantitative all-height contour theorem; the
+compact interval `2 ≤ T < 8` is absorbed into the fixed constant. -/
+theorem explicitFormulaTruncatedTarget_proved : ExplicitFormulaTruncatedTarget := by
+  classical
+  intro x hx
+  have hx1 : 1 < x := by linarith
+  rcases
+      _root_.PrimeNumberTheorem.ExplicitFormulaResidues.exists_norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_log_sq_div
+        hx1 with
+    ⟨C₀, hC₀, hlarge⟩
+  rcases
+      exists_norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_of_le_eight x with
+    ⟨K, hK, hsmall⟩
+  let ℓ : ℝ := Real.log 4
+  let C : ℝ := 1 + 4 * C₀ + 4 * K / ℓ ^ 2
+  have hℓ : 0 < ℓ := by
+    dsimp [ℓ]
+    exact Real.log_pos (by norm_num)
+  have hC : 0 < C := by
+    dsimp [C]
+    have : 0 ≤ 4 * K / ℓ ^ 2 := by positivity
+    positivity
+  refine ⟨C, hC, ?_⟩
+  intro T hT
+  have hTpos : 0 < T := by linarith
+  rw [show
+      (x : ℂ) - finiteNontrivialZeroSumWithMultiplicity x T -
+          (Real.log (2 * Real.pi) : ℂ) -
+          (1 / 2 : ℂ) * (Real.log (1 - x ^ (-2 : ℝ)) : ℂ) =
+        explicitFormulaApproxWithMultiplicity x T by
+    exact (explicitFormulaApproxWithMultiplicity_eq_log_two_pi x T).symm]
+  rw [norm_sub_rev]
+  by_cases hT8 : 8 ≤ T
+  · have hxt : T + 8 ≤ x * T := by nlinarith
+    have hxtpos : 0 < x * T := mul_pos (by linarith) hTpos
+    have hlogle : Real.log (T + 8) ≤ Real.log (x * T) :=
+      Real.log_le_log (by linarith) hxt
+    have honele : 1 ≤ Real.log (x * T) := by
+      apply (Real.le_log_iff_exp_le hxtpos).2
+      exact Real.exp_one_lt_three.le.trans (by nlinarith)
+    have hL : 0 ≤ 1 + Real.log (T + 8) := by
+      have : 0 ≤ Real.log (T + 8) := Real.log_nonneg (by linarith)
+      linarith
+    have hlog0 : 0 ≤ Real.log (x * T) := by linarith
+    have hLsq : (1 + Real.log (T + 8)) ^ 2 ≤
+        4 * (Real.log (x * T)) ^ 2 := by
+      have hLle : 1 + Real.log (T + 8) ≤ 2 * Real.log (x * T) := by linarith
+      nlinarith
+    have hCge : 4 * C₀ ≤ C := by
+      dsimp [C]
+      have : 0 ≤ 4 * K / ℓ ^ 2 := by positivity
+      linarith
+    have hCx : 4 * C₀ ≤ C * x := by
+      apply hCge.trans
+      have hxone : 1 ≤ x := by linarith
+      simpa using mul_le_mul_of_nonneg_left hxone hC.le
+    calc
+      ‖explicitFormulaApproxWithMultiplicity x T - (chebyshevPsi0 x : ℂ)‖ ≤
+          C₀ * (1 + Real.log (T + 8)) ^ 2 / T := hlarge T hT8
+      _ ≤ (4 * C₀) * (Real.log (x * T)) ^ 2 / T := by
+        apply div_le_div_of_nonneg_right _ hTpos.le
+        have := mul_le_mul_of_nonneg_left hLsq hC₀
+        nlinarith
+      _ ≤ (C * x) * (Real.log (x * T)) ^ 2 / T := by
+        apply div_le_div_of_nonneg_right _ hTpos.le
+        exact mul_le_mul_of_nonneg_right hCx (sq_nonneg _)
+      _ = C * x / T * (Real.log (x * T)) ^ 2 := by ring
+  · have hT8' : T ≤ 8 := le_of_not_ge hT8
+    have hbound := hsmall T hT8'
+    have hxt4 : 4 ≤ x * T := by nlinarith
+    have hxtpos : 0 < x * T := mul_pos (by linarith) hTpos
+    have hlog4le : ℓ ≤ Real.log (x * T) := by
+      dsimp [ℓ]
+      exact Real.log_le_log (by norm_num) hxt4
+    have hlog0 : 0 ≤ Real.log (x * T) := Real.log_nonneg (by linarith)
+    have hlogsq : ℓ ^ 2 ≤ (Real.log (x * T)) ^ 2 := by nlinarith
+    have hratio : (1 / 4 : ℝ) ≤ x / T := by
+      apply (le_div_iff₀ hTpos).2
+      nlinarith
+    have hClow : 4 * K / ℓ ^ 2 ≤ C := by
+      dsimp [C]
+      nlinarith
+    calc
+      ‖explicitFormulaApproxWithMultiplicity x T - (chebyshevPsi0 x : ℂ)‖ ≤ K :=
+        hbound
+      _ = (4 * K / ℓ ^ 2) * (1 / 4) * ℓ ^ 2 := by
+        field_simp [ne_of_gt hℓ]
+      _ ≤ C * (x / T) * (Real.log (x * T)) ^ 2 := by
+        gcongr
+      _ = C * x / T * (Real.log (x * T)) ^ 2 := by ring
 
 /-! ## Converse route toward power-scale PNT error barriers -/
 
@@ -166,7 +301,7 @@ lemma psiPowerErrorBelowLineExcludesZerosRightOf_of_truncated_route
   PrimeNumberTheorem.psiPowerErrorBelowLineExcludesZerosRightOf_of_explicit_formula_converse_power
     (explicitFormulaConversePower_of_truncated_route hroute hexplicit)
 
-/-- One-step conditional bridge from a future truncated explicit formula route
+/-- One-step conditional bridge from a future truncated-formula converse route
 and a `ψ` power saving below `2/3` to no zeros on `Re(s)=2/3`. -/
 theorem no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route
     (hroute : ExplicitFormulaTruncatedConverseRoute (2 / 3))
@@ -190,7 +325,7 @@ theorem no_zeros_on_two_thirds_of_truncated_explicit_formula_converse_route_belo
     (PrimeNumberTheorem.psiPowerErrorBelowLine_two_thirds_of_below_two_thirds
       herror)
 
-/-- One-step conditional bridge from a future truncated explicit formula route
+/-- One-step conditional bridge from a future truncated-formula converse route
 and a `ψ` power saving below `2/3` to no zeros on `Re(s)=1/3`. -/
 theorem no_zeros_on_one_third_of_truncated_explicit_formula_converse_route
     (hroute : ExplicitFormulaTruncatedConverseRoute (2 / 3))
