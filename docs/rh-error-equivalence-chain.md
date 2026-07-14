@@ -170,9 +170,15 @@ Current status:
   This rate is inserted into the exact finite multiplicity-aware rectangle
   identity by
   `exists_norm_truncatedExplicitFormula_sub_contourRemainder_sub_chebyshevPsi0_le_div`.
-- What remains for the displayed quantitative formula is a uniform bound for
-  the top, bottom, and moving-left contour remainder, followed by an
-  interpolation from selected good heights to every truncation height.
+- At one good height `T in [A,A+1]`, the top and bottom edges now have a joint
+  `O_x(log^2 A/T)` bound, and the complete moving-left edge is retained as an
+  explicit logarithmic factor times `x^(-(2N+1))*2T`.  The theorem
+  `exists_goodHeight_Icc_norm_truncatedExplicitFormula_sub_chebyshevPsi0_le_horizontal_add_left`
+  therefore gives a genuine finite quantitative explicit formula with no
+  abstract contour remainder.
+- What remains for the displayed classical shape is choosing `N=N(T)` to
+  absorb that explicit left-edge term and the finite trivial-zero tail, then
+  promoting the rate from selected good heights to every truncation height.
 
 Formalization dependencies:
 

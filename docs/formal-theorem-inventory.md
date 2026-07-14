@@ -3552,9 +3552,22 @@ Support-level verified declarations:
   estimate, rather than only extracting a qualitative limit.
 - `ExplicitFormulaResidues.exists_norm_truncatedExplicitFormula_sub_contourRemainder_sub_chebyshevPsi0_le_div`
   substitutes that rate into the exact finite multiplicity-aware rectangle
-  residue identity.  The named contour remainder still contains the top,
-  bottom, and moving-left edges; bounding those uniformly is the next open
-  quantitative step.
+  residue identity.
+- `ExplicitFormulaResidues.exists_norm_integral_farLeft_explicit_le_log_div`
+  bounds the complete far-left horizontal integral by
+  `C(x,epsilon)(1+log(1+|T|))/|T|`, independently of the moving left endpoint.
+  `exists_goodHeight_Icc_norm_horizontal_complete_explicitFormulaContour_difference_le`
+  combines it with the central Jensen/Borel estimate to bound both complete
+  horizontal edges by `O_x(log^2 A/T)` at one good height in each unit interval.
+- `ExplicitFormulaResidues.exists_goodHeight_Icc_norm_firstOrderContourRemainder_le_horizontal_add_left`
+  adds the complete finite negative-odd left vertical edge.  The bound consists
+  of the horizontal `O_x(log^2 A/T)` term and an explicit logarithmic factor
+  times `x^(-(2N+1))*2T`.
+- `ExplicitFormulaResidues.exists_goodHeight_Icc_norm_truncatedExplicitFormula_sub_chebyshevPsi0_le_horizontal_add_left`
+  combines the complete contour bound with quantitative Perron inversion.  It
+  is a finite, multiplicity-aware, selected-height truncated explicit formula
+  with no abstract contour remainder.  Choosing `N=N(T)`, absorbing the finite
+  trivial-zero tail, and proving a quantitative all-height version remain open.
 
 ## Missing Chains for a Complete Analytic PNT
 

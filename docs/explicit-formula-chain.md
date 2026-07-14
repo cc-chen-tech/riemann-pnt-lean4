@@ -518,13 +518,13 @@ For the truncated identity:
    estimate rather than hiding it in the earlier convergence theorem.  The
    contour consumer
    `exists_norm_truncatedExplicitFormula_sub_contourRemainder_sub_chebyshevPsi0_le_div`
-   inserts this rate into the finite multiplicity-aware residue identity.  Its
-   remaining `firstOrderContourRemainder` is exactly the top, bottom, and moving
-   left edges, so this is not yet the full uniform truncated explicit formula.
-3. Completed on the far-left pieces and moving left edge: the linearly
-   controlled good-height construction makes the horizontal pieces from
-   `-(2N+1)` to `-delta` vanish at both heights, and the complete moving left
-   vertical edge tends to zero.
+   inserts this rate into the finite multiplicity-aware residue identity.
+3. Completed quantitatively on the far-left pieces and moving left edge:
+   `exists_norm_integral_farLeft_explicit_le_log_div` bounds the complete
+   far-left horizontal integral by `C(x,epsilon)(1+log(1+|T|))/|T|`, uniformly
+   in every moving left endpoint.  The existing negative-odd vertical estimate
+   gives its full finite-height bound as a logarithmic factor times
+   `x^(-(2N+1)) * 2T`.
 4. Completed on the fixed right and inner zero-free segments: the portions
    `1+epsilon <= Re(s) <= c` vanish by the first-order `O(1/T)` bound, with
    interval integrability proved explicitly.  In addition,
@@ -545,12 +545,30 @@ For the truncated identity:
    `exists_tendsto_horizontal_central_explicitFormulaIntegrand_both_zero`
    proves that both complete central horizontal integrals vanish along a
    cofinal good-height sequence.
-6. Completed global assembly:
+6. Completed at selected heights with a finite quantitative remainder:
+   `exists_goodHeight_Icc_norm_horizontal_complete_explicitFormulaContour_difference_le`
+   combines the central and far-left segments into one
+   `O_x(log^2 A/T)` bottom-minus-top bound, uniformly in the left endpoint.
+   `exists_goodHeight_Icc_norm_firstOrderContourRemainder_le_horizontal_add_left`
+   adds the complete moving-left edge, and
+   `exists_goodHeight_Icc_norm_truncatedExplicitFormula_sub_chebyshevPsi0_le_horizontal_add_left`
+   combines this with quantitative Perron inversion.  The resulting selected-
+   height finite formula has no abstract contour remainder: its error is an
+   `O_x(log^2 A/T)` term plus the displayed exponentially decaying left-edge
+   term.
+7. Completed qualitative global assembly:
    `exists_cofinal_nontrivialZeroSum_tendsto` combines the finite rectangle
    identity with the far-left, moving-left, and central boundary limits.  It
    proves the complete remainder tends to zero and identifies the cofinal
    multiplicity-weighted zero-sum limit.  The all-height interpolation module
    now promotes this to arbitrary-height principal-value truncation.
+
+The remaining quantitative step is not another contour identity.  One must
+choose `N` as a function of `T`, absorb the explicit left-edge term and the
+tail of the finite trivial-zero correction, and promote the selected-height
+rate to every real truncation height.  The existing bounded-gap zero-sum
+estimate supplies the last interpolation input but has not yet been assembled
+with this new selected-height rate.
 
 For the principal value final formula:
 
