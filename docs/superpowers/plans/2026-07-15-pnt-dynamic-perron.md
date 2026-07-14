@@ -62,11 +62,11 @@
 - Create: `PrimeNumberTheorem/PNTFiniteZeroSum.lean`
 - Create: `Test/PNTFiniteZeroSumContract.lean`
 
-- [ ] Add a failing contract for the unconditional finite zero-sum bound.
-- [ ] Combine the high-height classical zero-free region with a compact low-height width.
-- [ ] Apply the reciprocal multiplicity bound from `GlobalZeroCount`.
-- [ ] Choose height `exp (sqrt (b * log m))` and prove every explicit-formula error is `o(m)`.
-- [ ] Commit the zero-sum and natural-sample asymptotic.
+- [x] Add a failing contract for the unconditional finite zero-sum bound.
+- [x] Combine the high-height classical zero-free region with a compact low-height width.
+- [x] Apply the reciprocal multiplicity bound from `GlobalZeroCount`.
+- [x] Choose height `exp (sqrt (b * log m))` and prove every explicit-formula error is `o(m)`.
+- [x] Commit the zero-sum and natural-sample asymptotic.
 
 ### Task 5: Unconditional PNT
 
