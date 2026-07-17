@@ -1,5 +1,6 @@
 import HardyTheorem.HardyIntegralBasics
 import HardyTheorem.OscillatoryIntegral
+import HardyTheorem.FirstZetaApproximation
 
 #print axioms HardyTheorem.abs_hardyZ_eq_norm_riemannZeta
 #print axioms HardyTheorem.eventually_abs_integral_hardyZ_eq_integral_norm_zeta_of_bounded_zeros
@@ -8,3 +9,5 @@ import HardyTheorem.OscillatoryIntegral
 #print axioms HardyTheorem.OscillatoryIntegral.deriv_hardyPhase
 #print axioms HardyTheorem.OscillatoryIntegral.iteratedDeriv_two_hardyPhase
 #print axioms HardyTheorem.OscillatoryIntegral.norm_integral_cexp_hardyPhase_le
+#print axioms HardyTheorem.norm_integral_inv_nat_cpow_criticalLine_le
+#print axioms HardyTheorem.norm_integral_criticalLineDirichletTail_le
