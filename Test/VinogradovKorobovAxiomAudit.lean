@@ -1,3 +1,5 @@
-import ZeroFreeRegion.VinogradovKorobov.VanDerCorput
+import ZeroFreeRegion.VinogradovKorobov.ExponentialSum
 
 #print axioms ZeroFreeRegion.VinogradovKorobov.vanDerCorputFundamentalInequality
+#print axioms ZeroFreeRegion.VinogradovKorobov.phaseTerm_mul_conj_shift
+#print axioms ZeroFreeRegion.VinogradovKorobov.norm_linearPhaseSum_le_min

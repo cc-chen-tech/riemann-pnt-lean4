@@ -48,12 +48,12 @@
 - Consumes: Task 1's fundamental inequality and Mathlib complex-exponential identities.
 - Produces: an interval exponential sum, a phase-difference correlation identity, the trivial length bound, and the geometric linear-phase cancellation bound.
 
-- [ ] **Step 1: Write failing contract examples for the phase-difference identity and geometric bound.**
-- [ ] **Step 2: Verify the contract fails before the new module exists.**
-- [ ] **Step 3: Implement the definitions and exact identities using `Complex.norm_exp_ofReal_mul_I`, `Complex.exp_add`, and geometric-sum lemmas.**
-- [ ] **Step 4: Prove the minimum of the trivial and geometric bounds.**
-- [ ] **Step 5: Build the contract and rerun the placeholder scan.**
-- [ ] **Step 6: Commit as `feat(vk): add finite phase-sum identities`.**
+- [x] **Step 1: Write failing contract examples for the phase-difference identity and geometric bound.**
+- [x] **Step 2: Verify the contract fails before the new module exists.**
+- [x] **Step 3: Implement the definitions and exact identities using `Complex.norm_exp_ofReal_mul_I`, `Complex.exp_add`, and geometric-sum lemmas.**
+- [x] **Step 4: Prove the minimum of the trivial and geometric bounds.**
+- [x] **Step 5: Build the contract and rerun the placeholder scan.**
+- [x] **Step 6: Commit as `feat(vk): add finite phase-sum identities`.**
 
 ### Task 3: Discrete Kusmin-Landau Estimate
 

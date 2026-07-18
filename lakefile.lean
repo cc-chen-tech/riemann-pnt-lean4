@@ -105,7 +105,8 @@ lean_lib RiemannPNT where
     `Test.ZetaDerivativeZeroContract,
     `Test.ExplicitFormulaTruncatedTargetContract,
     `Test.VinogradovKorobovVanDerCorputContract,
-    `Test.VinogradovKorobovAxiomAudit
+    `Test.VinogradovKorobovAxiomAudit,
+    `Test.VinogradovKorobovExponentialSumContract
   ]
 
 require mathlib from "./vendor/mathlib"
