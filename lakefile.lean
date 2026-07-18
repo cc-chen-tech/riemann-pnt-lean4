@@ -122,6 +122,9 @@ lean_lib RiemannPNT where
     `Test.VinogradovKorobovSignedFirstDerivativeContract,
     `Test.VinogradovKorobovSecondDifferenceSumContract,
     `Test.VinogradovKorobovTwoAProcessLogSumContract,
+    `Test.VinogradovKorobovThirdDifferenceScaleContract,
+    `Test.VinogradovKorobovScaledSecondDifferenceSumContract,
+    `Test.VinogradovKorobovScaledTwoAProcessLogSumContract,
     `Test.VinogradovKorobovVanDerCorputRangeContract,
     `Test.VinogradovKorobovLogVanDerCorputContract
   ]

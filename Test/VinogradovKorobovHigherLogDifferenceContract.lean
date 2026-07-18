@@ -45,6 +45,12 @@ example {h k x : ℝ} (hx : 0 < x) (hh : 0 < h) (hk : 0 < k) :
       logSecondDifferenceDecrementFraction h k x :=
   logSecondDifferenceDecrement_le_fraction hx hh hk
 
+example {h k x : ℝ} (hx : 0 < x) (hh : 0 < h) (hk : 0 < k) :
+    logSecondDifferenceDecrementFraction h k x /
+        (1 + logSecondDifferenceDecrementFraction h k x) ≤
+      logSecondDifferenceDecrement h k x :=
+  fraction_div_one_add_le_logSecondDifferenceDecrement hx hh hk
+
 example {h k : ℝ} (hh : 0 < h) (hk : 0 < k) :
     AntitoneOn (logSecondDifferenceDecrement h k) (Set.Ioi 0) :=
   antitoneOn_logSecondDifferenceDecrement hh hk

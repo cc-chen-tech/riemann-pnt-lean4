@@ -141,6 +141,28 @@ lemma logSecondDifferenceDecrement_le_fraction
     0 < 1 + logSecondDifferenceDecrementFraction h k x by positivity)
   linarith
 
+/-- Lower logarithmic bound for the third finite-difference magnitude. -/
+lemma fraction_div_one_add_le_logSecondDifferenceDecrement
+    {h k x : ℝ} (hx : 0 < x) (hh : 0 < h) (hk : 0 < k) :
+    logSecondDifferenceDecrementFraction h k x /
+        (1 + logSecondDifferenceDecrementFraction h k x) ≤
+      logSecondDifferenceDecrement h k x := by
+  rw [logSecondDifferenceDecrement_eq hx hh hk]
+  have hfrac : 0 < logSecondDifferenceDecrementFraction h k x := by
+    unfold logSecondDifferenceDecrementFraction
+    positivity
+  have harg :
+      0 < 1 + logSecondDifferenceDecrementFraction h k x := by
+    positivity
+  calc
+    logSecondDifferenceDecrementFraction h k x /
+          (1 + logSecondDifferenceDecrementFraction h k x) =
+        1 - (1 + logSecondDifferenceDecrementFraction h k x)⁻¹ := by
+      field_simp
+      ring
+    _ ≤ Real.log (1 + logSecondDifferenceDecrementFraction h k x) :=
+      Real.one_sub_inv_le_log_of_pos harg
+
 private lemma logSecondDifferenceDecrementFraction_factor
     {h k x : ℝ} (hx : 0 < x) (hh : 0 < h) (hk : 0 < k) :
     logSecondDifferenceDecrementFraction h k x =
