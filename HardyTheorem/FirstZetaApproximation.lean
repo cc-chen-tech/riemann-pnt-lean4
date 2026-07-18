@@ -1211,6 +1211,62 @@ theorem sum_inv_sqrt_Icc_two_le (N : ℕ) :
       exact mul_le_mul (Real.sqrt_le_sqrt hcard) (Real.sqrt_le_sqrt hrecip)
         (Real.sqrt_nonneg _) (Real.sqrt_nonneg _)
 
+/-- The elementary square-root sum has its sharp integral-comparison scale. -/
+theorem sum_inv_sqrt_Icc_one_le_two_sqrt (N : ℕ) :
+    ∑ n ∈ Finset.Icc 1 N, (Real.sqrt n)⁻¹ ≤ 2 * Real.sqrt N := by
+  induction N with
+  | zero => simp
+  | succ N ih =>
+      have hset : Finset.Icc 1 (N + 1) = insert (N + 1) (Finset.Icc 1 N) := by
+        ext n
+        simp only [Finset.mem_Icc, Finset.mem_insert]
+        omega
+      rw [hset, Finset.sum_insert (by simp)]
+      by_cases hN : N = 0
+      · subst N
+        norm_num
+      · have hNpos : 0 < (N : ℝ) := by exact_mod_cast Nat.pos_of_ne_zero hN
+        have hSpos : 0 < ((N + 1 : ℕ) : ℝ) := by positivity
+        have hsqrtN : 0 < Real.sqrt N := Real.sqrt_pos.2 hNpos
+        have hsqrtS : 0 < Real.sqrt ((N + 1 : ℕ) : ℝ) := Real.sqrt_pos.2 hSpos
+        have hsqrt_le : Real.sqrt N ≤ Real.sqrt ((N + 1 : ℕ) : ℝ) := by
+          apply Real.sqrt_le_sqrt
+          norm_num
+        have hsqN : (Real.sqrt N) ^ 2 = N := Real.sq_sqrt hNpos.le
+        have hsqS : (Real.sqrt ((N + 1 : ℕ) : ℝ)) ^ 2 = (N + 1 : ℕ) :=
+          Real.sq_sqrt hSpos.le
+        have hcross :
+            1 ≤ 2 * (Real.sqrt ((N + 1 : ℕ) : ℝ) - Real.sqrt N) *
+              Real.sqrt ((N + 1 : ℕ) : ℝ) := by
+          have hdiff : 0 ≤ Real.sqrt ((N + 1 : ℕ) : ℝ) - Real.sqrt N :=
+            sub_nonneg.mpr hsqrt_le
+          have hsum :
+              Real.sqrt ((N + 1 : ℕ) : ℝ) + Real.sqrt N ≤
+                2 * Real.sqrt ((N + 1 : ℕ) : ℝ) := by linarith
+          calc
+            1 = (Real.sqrt ((N + 1 : ℕ) : ℝ) - Real.sqrt N) *
+                (Real.sqrt ((N + 1 : ℕ) : ℝ) + Real.sqrt N) := by
+              norm_num [Nat.cast_add, Nat.cast_one] at hsqS ⊢
+              nlinarith [hsqN]
+            _ ≤ (Real.sqrt ((N + 1 : ℕ) : ℝ) - Real.sqrt N) *
+                (2 * Real.sqrt ((N + 1 : ℕ) : ℝ)) :=
+              mul_le_mul_of_nonneg_left hsum hdiff
+            _ = _ := by ring
+        have hinv :
+            (Real.sqrt ((N + 1 : ℕ) : ℝ))⁻¹ ≤
+              2 * (Real.sqrt ((N + 1 : ℕ) : ℝ) - Real.sqrt N) := by
+          rw [show (Real.sqrt ((N + 1 : ℕ) : ℝ))⁻¹ =
+            1 / Real.sqrt ((N + 1 : ℕ) : ℝ) by ring,
+            div_le_iff₀ hsqrtS]
+          exact hcross
+        calc
+          (Real.sqrt ((N + 1 : ℕ) : ℝ))⁻¹ +
+              ∑ n ∈ Finset.Icc 1 N, (Real.sqrt n)⁻¹ ≤
+              (Real.sqrt ((N + 1 : ℕ) : ℝ))⁻¹ + 2 * Real.sqrt N := by
+            simpa only [add_comm] using
+              add_le_add_left ih (Real.sqrt ((N + 1 : ℕ) : ℝ))⁻¹
+          _ ≤ 2 * Real.sqrt ((N + 1 : ℕ) : ℝ) := by linarith
+
 /-- The nonconstant part of a finite critical-line Dirichlet polynomial has
 sublinear-size interval integral.  The bound is uniform in the endpoints. -/
 theorem norm_integral_criticalLineDirichletTail_le
@@ -1363,6 +1419,66 @@ theorem criticalLineZetaFirstApprox :
       ‖P + R₀‖ ≤ ‖P‖ + ‖R₀‖ := norm_add_le _ _
       _ ≤ 2 / Real.sqrt T + A / Real.sqrt T := add_le_add hP hR₀'
       _ = (A + 2) / Real.sqrt T := by ring
+
+/-- On a dyadic critical-line interval, zeta has the elementary pointwise
+bound `O(sqrt T)`, uniformly in the height variable. -/
+theorem exists_norm_riemannZeta_critical_line_le_sqrt :
+    ∃ C T0 : ℝ, 0 < C ∧ 1 ≤ T0 ∧
+      ∀ T t : ℝ, T0 ≤ T → t ∈ Set.Icc T (2 * T) →
+        ‖riemannZeta ((1 / 2 : ℂ) + I * t)‖ ≤ C * Real.sqrt T := by
+  obtain ⟨A, T0, hA, hT0, happ⟩ := criticalLineZetaFirstApprox
+  refine ⟨A + 4, T0, by linarith, hT0, ?_⟩
+  intro T t hT ht
+  have hT1 : 1 ≤ T := hT0.trans hT
+  have hTpos : 0 < T := zero_lt_one.trans_le hT1
+  let N := firstZetaApproximationCutoff T
+  obtain ⟨R, hzeta, hR⟩ := happ T t hT ht
+  have hN : (N : ℝ) ≤ 4 * T := by
+    exact Nat.floor_le (by positivity)
+  have hsqrtN : Real.sqrt N ≤ 2 * Real.sqrt T := by
+    have hsquare : (Real.sqrt N) ^ 2 = N := Real.sq_sqrt (by positivity)
+    have hTsquare : (Real.sqrt T) ^ 2 = T := Real.sq_sqrt hTpos.le
+    nlinarith [Real.sqrt_nonneg (N : ℝ), Real.sqrt_nonneg T]
+  have hpoly :
+      ‖∑ n ∈ Finset.Icc 1 N,
+          1 / (n : ℂ) ^ ((1 / 2 : ℂ) + I * t)‖ ≤
+        4 * Real.sqrt T := by
+    calc
+      ‖∑ n ∈ Finset.Icc 1 N,
+          1 / (n : ℂ) ^ ((1 / 2 : ℂ) + I * t)‖ ≤
+          ∑ n ∈ Finset.Icc 1 N,
+            ‖1 / (n : ℂ) ^ ((1 / 2 : ℂ) + I * t)‖ := norm_sum_le _ _
+      _ = ∑ n ∈ Finset.Icc 1 N, (Real.sqrt n)⁻¹ := by
+        apply Finset.sum_congr rfl
+        intro n hnmem
+        have hnpos : 0 < n := by
+          have := (Finset.mem_Icc.mp hnmem).1
+          omega
+        rw [norm_div, norm_one, Complex.norm_natCast_cpow_of_pos hnpos]
+        norm_num
+        rw [← Real.sqrt_eq_rpow]
+      _ ≤ 2 * Real.sqrt N := sum_inv_sqrt_Icc_one_le_two_sqrt N
+      _ ≤ 4 * Real.sqrt T := by linarith
+  have hRlarge : ‖R‖ ≤ A * Real.sqrt T := by
+    calc
+      ‖R‖ ≤ A / Real.sqrt T := hR
+      _ ≤ A * Real.sqrt T := by
+        have hsqrt1 : 1 ≤ Real.sqrt T := Real.one_le_sqrt.mpr hT1
+        have hinv : (Real.sqrt T)⁻¹ ≤ Real.sqrt T :=
+          (inv_le_one_of_one_le₀ hsqrt1).trans hsqrt1
+        rw [div_eq_mul_inv]
+        exact mul_le_mul_of_nonneg_left hinv hA
+  rw [hzeta]
+  change ‖(∑ n ∈ Finset.Icc 1 N,
+      1 / (n : ℂ) ^ ((1 / 2 : ℂ) + I * t)) + R‖ ≤
+    (A + 4) * Real.sqrt T
+  calc
+    ‖(∑ n ∈ Finset.Icc 1 N,
+        1 / (n : ℂ) ^ ((1 / 2 : ℂ) + I * t)) + R‖ ≤
+        ‖∑ n ∈ Finset.Icc 1 N,
+          1 / (n : ℂ) ^ ((1 / 2 : ℂ) + I * t)‖ + ‖R‖ := norm_add_le _ _
+    _ ≤ 4 * Real.sqrt T + A * Real.sqrt T := add_le_add hpoly hRlarge
+    _ = (A + 4) * Real.sqrt T := by ring
 
 /-- At the Hardy cutoff, the integrated nonconstant Dirichlet polynomial is
 controlled by a square-root times logarithmic square-root majorant. -/

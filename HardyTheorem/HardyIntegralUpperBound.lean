@@ -121,61 +121,6 @@ theorem sum_inv_sqrt_Icc_one_le (N : ℕ) :
     norm_num
     exact sum_inv_sqrt_Icc_two_le N
 
-theorem sum_inv_sqrt_Icc_one_le_two_sqrt (N : ℕ) :
-    ∑ n ∈ Finset.Icc 1 N, (Real.sqrt n)⁻¹ ≤ 2 * Real.sqrt N := by
-  induction N with
-  | zero => simp
-  | succ N ih =>
-      have hset : Finset.Icc 1 (N + 1) = insert (N + 1) (Finset.Icc 1 N) := by
-        ext n
-        simp only [Finset.mem_Icc, Finset.mem_insert]
-        omega
-      rw [hset, Finset.sum_insert (by simp)]
-      by_cases hN : N = 0
-      · subst N
-        norm_num
-      · have hNpos : 0 < (N : ℝ) := by exact_mod_cast Nat.pos_of_ne_zero hN
-        have hSpos : 0 < ((N + 1 : ℕ) : ℝ) := by positivity
-        have hsqrtN : 0 < Real.sqrt N := Real.sqrt_pos.2 hNpos
-        have hsqrtS : 0 < Real.sqrt ((N + 1 : ℕ) : ℝ) := Real.sqrt_pos.2 hSpos
-        have hsqrt_le : Real.sqrt N ≤ Real.sqrt ((N + 1 : ℕ) : ℝ) := by
-          apply Real.sqrt_le_sqrt
-          norm_num
-        have hsqN : (Real.sqrt N) ^ 2 = N := Real.sq_sqrt hNpos.le
-        have hsqS : (Real.sqrt ((N + 1 : ℕ) : ℝ)) ^ 2 = (N + 1 : ℕ) :=
-          Real.sq_sqrt hSpos.le
-        have hcross :
-            1 ≤ 2 * (Real.sqrt ((N + 1 : ℕ) : ℝ) - Real.sqrt N) *
-              Real.sqrt ((N + 1 : ℕ) : ℝ) := by
-          have hdiff : 0 ≤ Real.sqrt ((N + 1 : ℕ) : ℝ) - Real.sqrt N :=
-            sub_nonneg.mpr hsqrt_le
-          have hsum :
-              Real.sqrt ((N + 1 : ℕ) : ℝ) + Real.sqrt N ≤
-                2 * Real.sqrt ((N + 1 : ℕ) : ℝ) := by linarith
-          calc
-            1 = (Real.sqrt ((N + 1 : ℕ) : ℝ) - Real.sqrt N) *
-                (Real.sqrt ((N + 1 : ℕ) : ℝ) + Real.sqrt N) := by
-              norm_num [Nat.cast_add, Nat.cast_one] at hsqS ⊢
-              nlinarith [hsqN]
-            _ ≤ (Real.sqrt ((N + 1 : ℕ) : ℝ) - Real.sqrt N) *
-                (2 * Real.sqrt ((N + 1 : ℕ) : ℝ)) :=
-              mul_le_mul_of_nonneg_left hsum hdiff
-            _ = _ := by ring
-        have hinv :
-            (Real.sqrt ((N + 1 : ℕ) : ℝ))⁻¹ ≤
-              2 * (Real.sqrt ((N + 1 : ℕ) : ℝ) - Real.sqrt N) := by
-          rw [show (Real.sqrt ((N + 1 : ℕ) : ℝ))⁻¹ =
-            1 / Real.sqrt ((N + 1 : ℕ) : ℝ) by ring,
-            div_le_iff₀ hsqrtS]
-          exact hcross
-        calc
-          (Real.sqrt ((N + 1 : ℕ) : ℝ))⁻¹ +
-              ∑ n ∈ Finset.Icc 1 N, (Real.sqrt n)⁻¹ ≤
-              (Real.sqrt ((N + 1 : ℕ) : ℝ))⁻¹ + 2 * Real.sqrt N := by
-            simpa only [add_comm] using
-              add_le_add_left ih (Real.sqrt ((N + 1 : ℕ) : ℝ))⁻¹
-          _ ≤ 2 * Real.sqrt ((N + 1 : ℕ) : ℝ) := by linarith
-
 /-- The elementary-phase Dirichlet polynomial is bounded by a near-stationary
 piece and a uniformly nonstationary piece. -/
 theorem norm_integral_thetaModel_dirichletPolynomial_le
