@@ -50,6 +50,7 @@ lean_lib RiemannPNT where
     `Test.HardyBernoulliFourierRemainderContract,
     `Test.HardyFirstZetaApproximationContract,
     `Test.HardyVerticalGammaAsymptoticContract,
+    `Test.HardyDigammaStirlingContract,
     `Test.HardyWeightedOscillatoryContract,
     `Test.HardyIntegralBasicsContract,
     `Test.HardyPhaseContract,
