@@ -166,7 +166,21 @@ def _format_matrix(matrix: Matrix) -> list[list[str]]:
 
 
 def _canonical_json(value: Mapping[str, Any]) -> str:
-    return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
+    return json.dumps(
+        value,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=True,
+        allow_nan=False,
+    )
+
+
+def _reject_nonfinite_json_constant(value: str) -> None:
+    raise ValueError(f"non-finite JSON constant is not permitted: {value}")
+
+
+def _load_strict_json(data: bytes) -> Any:
+    return json.loads(data, parse_constant=_reject_nonfinite_json_constant)
 
 
 def _payload_digest(payload: Mapping[str, Any]) -> str:
@@ -211,12 +225,12 @@ def write_experiment_artifact(
     record = {**payload, "payload_sha256": _payload_digest(payload)}
     output_path = Path(path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(_canonical_json(record) + "\n", encoding="utf-8")
+    output_path.write_bytes((_canonical_json(record) + "\n").encode("utf-8"))
     return record
 
 
 def load_experiment_artifact(path: str | Path) -> dict[str, Any]:
-    record = json.loads(Path(path).read_text(encoding="utf-8"))
+    record = _load_strict_json(Path(path).read_bytes())
     if not isinstance(record, dict):
         raise ValueError("experiment artifact must be a JSON object")
     return record
@@ -259,7 +273,22 @@ def verify_experiment_artifact(record: Any) -> bool:
         return False
 
     payload = {key: value for key, value in record.items() if key != "payload_sha256"}
-    if _payload_digest(payload) != record["payload_sha256"]:
+    try:
+        payload_digest = _payload_digest(payload)
+    except (TypeError, ValueError):
+        return False
+    if payload_digest != record["payload_sha256"]:
+        return False
+
+    result = record["result"]
+    result_keys = {
+        "certified_psd",
+        "exact_reconstruction",
+        "nonnegative_diagonal",
+    }
+    if not isinstance(result, dict) or set(result) != result_keys:
+        return False
+    if any(type(result[key]) is not bool for key in result_keys):
         return False
 
     certificate_record = record["certificate"]
@@ -296,11 +325,21 @@ def verify_experiment_artifact(record: Any) -> bool:
         "exact_reconstruction": exact_reconstruction,
         "nonnegative_diagonal": nonnegative_diagonal,
     }
-    return record["result"] == expected_result
+    return result == expected_result
+
+
+def verify_experiment_artifact_file(path: str | Path) -> bool:
+    try:
+        artifact_bytes = Path(path).read_bytes()
+        record = _load_strict_json(artifact_bytes)
+        canonical_bytes = (_canonical_json(record) + "\n").encode("utf-8")
+    except (OSError, TypeError, UnicodeError, ValueError):
+        return False
+    return artifact_bytes == canonical_bytes and verify_experiment_artifact(record)
 
 
 def _certify(input_path: Path, output_path: Path) -> int:
-    input_record = json.loads(input_path.read_text(encoding="utf-8"))
+    input_record = _load_strict_json(input_path.read_bytes())
     if not isinstance(input_record, dict) or "matrix" not in input_record:
         raise ValueError("input must be a JSON object containing matrix")
     parameters = input_record.get("parameters", {})
@@ -317,7 +356,7 @@ def _certify(input_path: Path, output_path: Path) -> int:
 
 
 def _verify(path: Path) -> int:
-    valid = verify_experiment_artifact(load_experiment_artifact(path))
+    valid = verify_experiment_artifact_file(path)
     print(f"valid exact LDL^T artifact: {str(valid).lower()}")
     return 0 if valid else 1
 
