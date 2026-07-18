@@ -1,5 +1,6 @@
 import HardyTheorem.FirstZetaApproximation
 import MathlibAux.DirichletPolynomialMeanSquare
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 
 open Complex MeasureTheory
 
@@ -11,6 +12,82 @@ noncomputable def criticalLineShortDirichletCoeff (δ : ℝ) (n : ℕ) : ℂ :=
   ((n : ℂ) ^ (1 / 2 : ℂ))⁻¹ *
     ((Complex.exp ((-I * (Real.log n : ℂ)) * δ) - 1) /
       (-I * (Real.log n : ℂ)))
+
+/-- The integrated critical-line coefficient has the usual inverse-frequency
+bound coming from cancellation of a nonconstant exponential. -/
+theorem norm_criticalLineShortDirichletCoeff_le_two_div
+    {δ : ℝ} {n : ℕ} (hn : 2 ≤ n) :
+    ‖criticalLineShortDirichletCoeff δ n‖ ≤
+      2 / (Real.sqrt n * Real.log n) := by
+  have hn0 : n ≠ 0 := by omega
+  have hnpos : 0 < n := Nat.zero_lt_of_lt hn
+  have hlog : 0 < Real.log n := Real.log_pos (by exact_mod_cast hn)
+  have hhalf : ‖(n : ℂ) ^ (1 / 2 : ℂ)‖ = Real.sqrt n := by
+    rw [Complex.norm_natCast_cpow_of_pos hnpos]
+    simp [Real.sqrt_eq_rpow]
+  have hden : ‖-I * (Real.log n : ℂ)‖ = Real.log n := by
+    rw [norm_mul, norm_neg, norm_I, one_mul, norm_real,
+      Real.norm_eq_abs, abs_of_pos hlog]
+  have hnum :
+      ‖Complex.exp ((-I * (Real.log n : ℂ)) * δ) - 1‖ ≤ 2 := by
+    calc
+      ‖Complex.exp ((-I * (Real.log n : ℂ)) * δ) - 1‖ ≤
+      ‖Complex.exp ((-I * (Real.log n : ℂ)) * δ)‖ + ‖(1 : ℂ)‖ :=
+        norm_sub_le _ _
+      _ = 2 := by
+        have harg :
+            (-I * (Real.log n : ℂ)) * δ =
+              I * (-(Real.log n * δ) : ℝ) := by
+          push_cast
+          ring
+        rw [harg, Complex.norm_exp_I_mul_ofReal]
+        norm_num
+  dsimp only [criticalLineShortDirichletCoeff]
+  rw [norm_mul, norm_inv, hhalf, norm_div, hden]
+  have hsqrt : 0 < Real.sqrt n := Real.sqrt_pos.2 (by exact_mod_cast hnpos)
+  calc
+    (Real.sqrt n)⁻¹ *
+          (‖Complex.exp ((-I * (Real.log n : ℂ)) * δ) - 1‖ /
+            Real.log n) ≤
+        (Real.sqrt n)⁻¹ * (2 / Real.log n) := by
+      gcongr
+    _ = 2 / (Real.sqrt n * Real.log n) := by field_simp
+
+/-- Without using oscillation, the same coefficient is bounded by the interval
+length divided by the square-root Dirichlet weight. -/
+theorem norm_criticalLineShortDirichletCoeff_le_abs_delta
+    {δ : ℝ} {n : ℕ} (hn : 2 ≤ n) :
+    ‖criticalLineShortDirichletCoeff δ n‖ ≤
+      |δ| / Real.sqrt n := by
+  have hnpos : 0 < n := Nat.zero_lt_of_lt hn
+  have hlog : 0 < Real.log n := Real.log_pos (by exact_mod_cast hn)
+  have hhalf : ‖(n : ℂ) ^ (1 / 2 : ℂ)‖ = Real.sqrt n := by
+    rw [Complex.norm_natCast_cpow_of_pos hnpos]
+    simp [Real.sqrt_eq_rpow]
+  have hden : ‖-I * (Real.log n : ℂ)‖ = Real.log n := by
+    rw [norm_mul, norm_neg, norm_I, one_mul, norm_real,
+      Real.norm_eq_abs, abs_of_pos hlog]
+  have hnum :
+      ‖Complex.exp ((-I * (Real.log n : ℂ)) * δ) - 1‖ ≤
+        |Real.log n * δ| := by
+    convert (Real.norm_exp_I_mul_ofReal_sub_one_le
+      (x := -(Real.log n * δ))) using 1
+    · congr 2
+      push_cast
+      ring
+    · rw [Real.norm_eq_abs, abs_neg]
+  dsimp only [criticalLineShortDirichletCoeff]
+  rw [norm_mul, norm_inv, hhalf, norm_div, hden]
+  have hsqrt : 0 < Real.sqrt n := Real.sqrt_pos.2 (by exact_mod_cast hnpos)
+  calc
+    (Real.sqrt n)⁻¹ *
+          (‖Complex.exp ((-I * (Real.log n : ℂ)) * δ) - 1‖ /
+            Real.log n) ≤
+        (Real.sqrt n)⁻¹ * (|Real.log n * δ| / Real.log n) := by
+      gcongr
+    _ = |δ| / Real.sqrt n := by
+      rw [abs_mul, abs_of_pos hlog]
+      field_simp
 
 /-- The finite exponential polynomial representing a short integral of the
 nonconstant part of the critical-line Dirichlet polynomial. -/
