@@ -36,6 +36,7 @@ lean_lib RiemannPNT where
     `PrimeNumberTheorem.VonMangoldtLSeriesNorm,
     `PrimeNumberTheorem.RightHorizontalEdge,
     `PrimeNumberTheorem.ExplicitFormulaAux,
+    `PrimeNumberTheorem.RiemannVonMangoldt,
     `ZeroFreeRegion,
     `ZeroFreeRegion.MeromorphicAux,
     `ZeroFreeRegion.PhragmenLindelofZeta,
@@ -104,7 +105,8 @@ lean_lib RiemannPNT where
     `Test.TrivialZeroTailRateContract,
     `Test.ZetaDerivativeZeroContract,
     `Test.ExplicitFormulaTruncatedTargetContract,
-    `Test.RiemannVonMangoldtContract
+    `Test.RiemannVonMangoldtContract,
+    `Test.RiemannVonMangoldtAxiomAudit
   ]
 
 require mathlib from "./vendor/mathlib"

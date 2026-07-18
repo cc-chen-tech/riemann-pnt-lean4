@@ -53,7 +53,7 @@ private lemma logDeriv_completedZeta_eq_elementary_add_completed
   have hFlog : logDeriv F s = 1 / s := by
     dsimp [F]
     rw [logDeriv_const_mul s (1 / 2) (by norm_num)]
-    simpa using logDeriv_id' s
+    simp [logDeriv_id']
   have hGlog : logDeriv G s = 1 / (s - 1) := by
     simp [G, logDeriv_apply]
   rw [hlogeq,
@@ -75,7 +75,6 @@ theorem logDeriv_completedZeta_eq_zeta_add_gamma
     obtain ⟨n, hn⟩ := Gammaℝ_eq_zero_iff.mp hzero
     exact hsGamma n (by
       rw [hn]
-      push_cast
       ring)
   have hcompleted : completedRiemannZeta s ≠ 0 := by
     intro hzero
