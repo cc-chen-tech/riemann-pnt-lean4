@@ -77,10 +77,10 @@ The baseline is frozen to the versions available on 2026-07-19.
    (2023), 93--148, give concrete semilocal finite matrices and numerical
    investigations of their very small eigenvalues:
    <https://doi.org/10.4171/LEM/1049>.
-3. Suzuki, *Weil's quadratic form via the screw function*, version dated
-   2026-06-10, gives a continuous-function framework for the distributional
-   Weil form and explicitly states that its results do not assume RH:
-   <https://arxiv.org/abs/2606.09096>.
+3. Suzuki, *Weil's quadratic form via the screw function*,
+   arXiv:2606.09096v1, gives a continuous-function framework for the
+   distributional Weil form and explicitly states that its results do not
+   assume RH: <https://arxiv.org/abs/2606.09096v1>.
 4. Groskin, *A finite Guinand--Weil dictionary and archimedean tail order for
    the truncated Weil quadratic form*, arXiv:2607.02828v1, proves the exact
    finite dictionary, the pole-neutral family, and the archimedean tail order.
@@ -88,10 +88,9 @@ The baseline is frozen to the versions available on 2026-07-19.
    `(c, N) = (100, 200)` and explicitly make no RH claim:
    <https://arxiv.org/abs/2607.02828v1>.
 5. Groskin, *High-Precision Approximation of Riemann Zeros via the Truncated
-   Weil Form*, arXiv:2605.20224, reports computations through `N = 250` and
+   Weil Form*, arXiv:2605.20224v2, reports computations through `N = 250` and
    warns that raw negative signs in deep spectra do not establish continuum
-   negativity:
-   <https://arxiv.org/abs/2605.20224>.
+   negativity: <https://arxiv.org/abs/2605.20224v2>.
 
 The registered novelty question is therefore not whether finite Weil matrices,
 the finite dictionary, pole-neutrality, tail ordering, or interval LDL exist.
