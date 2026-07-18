@@ -375,16 +375,16 @@ Current code status:
 | File | `sorry` count | Unproved targets |
 |---|---:|---|
 | `GammaResidue.lean` | 0 | General Gamma residue formula completed |
-| `HardyTheorem.lean` | 0 | Hardy-Z phase facts and codiscrete-to-bounded-window zero bridges proved; corrected integral asymptotic, positivity and zero-counting targets |
+| `HardyTheorem.lean` | 0 | Hardy's theorem is proved in the stronger unbounded-positive-height form; Hardy-Littlewood, Selberg, Conrey-percentage, and auxiliary AFE targets remain open |
 | `PrimeNumberTheorem.lean` | 0 | Principal-value and quantitative explicit formula proved; `RH <-> RH_PsiErrorBound` and `RH <-> RH_PrimeCountingLiErrorBound` proved; neither equivalent proposition is proved unconditionally |
 | `ZeroFreeRegion.lean` | 0 | 3-4-1, compact strip, and classical `c/log|t|` zero-free region proved; Vinogradov-Korobov target open |
 
 Total: 0 syntactic `sorry` occurrences in Lean source files.
 
 Unresolved mathematical target declarations (currently not promoted to
-theorems): **19**.
+theorems): **16**.
 
- - `HardyTheorem` namespace: 7
+ - `HardyTheorem` namespace: 4
  - `HardyTheorem.Details` namespace: 3
  - `PrimeNumberTheorem` namespace: 7
  - `KnownResults` namespace: 1
@@ -393,16 +393,19 @@ theorems): **19**.
 
 Full `def ... : Prop` inventory:
 
-- mathematical targets: 19;
+- mathematical targets: 16;
 - route interfaces: 5
   (`HardyTheorem.AFE.zeta_critical_afe_target`,
   `MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum`,
   `PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute`,
   `PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget`,
   `RiemannExplorer.Conrey40.conrey_40_percent_zeros_on_critical_line_target`);
-- reusable predicates: 7
+- reusable predicates: 10
   (`ZeroFreeRegion.classical_zero_free_region`,
   `HardyTheorem.weightedIntegralOf_tail_dominates`,
+  `HardyTheorem.hardy_theorem_target`,
+  `HardyTheorem.hardy_zeros_unbounded_target`,
+  `HardyTheorem.hardy_zeros_abs_unbounded_target`,
   `PrimeNumberTheorem.ExplicitFormulaAux.goodHeight`,
   `PrimeNumberTheorem.ExplicitFormulaConversePowerTarget`,
   `PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted`,
@@ -1254,7 +1257,7 @@ prove the missing high-height zeta growth or logarithmic-derivative estimates.
 
 ### Target Statements, Not Proved Theorems
 
-The remaining 19 target declarations are intentionally `def ... : Prop` rather
+The remaining 16 target declarations are intentionally `def ... : Prop` rather
 than theorem declarations. They are tracked as future proof obligations and must
 not be cited as completed proofs:
 
@@ -1265,9 +1268,7 @@ not be cited as completed proofs:
   `vinogradov_korobov_zero_free_region`;
 - Hardy/critical-line targets:
   `integral_asymptotic_target`, `hardy_two_signed_moments_target`,
-  `hardy_theorem_target`, `hardy_zeros_unbounded_target`,
-  `hardy_zeros_abs_unbounded_target`, `hardy_littlewood_lower_bound_target`,
-  `selberg_zero_proportion_target`,
+  `hardy_littlewood_lower_bound_target`, `selberg_zero_proportion_target`,
   `HardyTheorem.Details.gamma_asymptotic_half_plus_it_target`,
   `HardyTheorem.Details.theta_asymptotic_target`,
   `HardyTheorem.Details.approximate_functional_equation_target`,
@@ -1280,13 +1281,13 @@ bounded-height constants are absorbed into a common positive constant.  These
 do not prove the AFE itself; they make the future analytic estimate easier to
 plug into the current target.
 
-On the zero-counting side of the Hardy chain, the repository now also proves
-that if the critical-line zeta zero set, or equivalently the Hardy-Z zero set,
-has codiscrete complement, then every absolute-height window contains only
-finitely many such zeros.  This discharges the bounded-strip finiteness input
-in the existing Hardy target bridges, but it is still conditional on the
-codiscrete zero-set hypothesis and does not prove Hardy's theorem
-unconditionally.
+On the Hardy side, the repository proves a linear lower bound for the dyadic
+critical-line `L¹` norm of zeta from a first Dirichlet approximation and a
+`T^(3/4)` upper bound for the dyadic Hardy-Z integral from an exact Gamma-phase
+bridge and nonstationary-phase estimates.  A bounded Hardy-Z zero set would
+make these two integrals equal at large height, giving a contradiction.  Thus
+critical-line zeros occur at arbitrarily large positive heights, and the
+classical infinite-zero statement follows unconditionally.
 
 The four remaining analytic directions are:
 
@@ -1300,8 +1301,9 @@ The four remaining analytic directions are:
    quantitative partial summation from `pi-Li` back to `theta`, `psi`, and RH.
    The remaining RH-scale predicates are unproved only because they are
    equivalent to the still-open RH itself.
-4. **Hardy theorem**: prove the signed moment/asymptotic inputs for Hardy's
-   theorem and the stronger critical-line zero-counting targets.
+4. **Hardy theorem**: the classical theorem is proved.  The remaining work is
+   quantitative: Hardy-Littlewood lower bounds, Selberg proportions, Conrey's
+   percentage theorem, and independent AFE/asymptotic targets.
 
 ## Quick Start
 

@@ -1097,7 +1097,7 @@ theorem exists_riemannZeta_first_approximation :
         add_le_add hEx hD
       _ = (4 * A + 4) * x ^ (-s.re) := by ring
 
-private lemma inv_nat_cpow_criticalLine_eq_exp
+theorem inv_nat_cpow_criticalLine_eq_exp
     {n : ℕ} (hn : n ≠ 0) (t : ℝ) :
     1 / (n : ℂ) ^ ((1 / 2 : ℂ) + I * t) =
       ((n : ℂ) ^ (1 / 2 : ℂ))⁻¹ *
@@ -1171,7 +1171,7 @@ theorem norm_integral_inv_nat_cpow_criticalLine_le
       mul_le_mul_of_nonneg_left hosc (by positivity)
     _ = 2 / (Real.sqrt n * Real.log n) := by field_simp
 
-private lemma sum_inv_sqrt_Icc_two_le (N : ℕ) :
+theorem sum_inv_sqrt_Icc_two_le (N : ℕ) :
     ∑ n ∈ Finset.Icc 2 N, (Real.sqrt n)⁻¹ ≤
       Real.sqrt N * Real.sqrt (harmonic N : ℝ) := by
   let S := Finset.Icc 2 N

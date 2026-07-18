@@ -1,4 +1,5 @@
 import HardyTheorem.FirstZetaApproximation
+import Mathlib.Analysis.Complex.CauchyIntegral
 import Mathlib.MeasureTheory.Integral.IntegralEqImproper
 import PrimeNumberTheorem.DigammaBounds
 
@@ -324,11 +325,228 @@ private theorem tendsto_log_const_add_natCast_sub_log (z : ℂ) (hz : 0 < z.re) 
 noncomputable def thetaModel (t : ℝ) : ℝ :=
   t / 2 * Real.log (t / (2 * Real.pi)) - t / 2 - Real.pi / 8
 
+/-- The derivative of the smooth vertical `Gammaℝ` phase, written in terms of
+the real part of the digamma function. -/
+noncomputable def verticalGammaPhaseVelocity (t : ℝ) : ℝ :=
+  (Complex.digamma ((1 / 4 : ℂ) + I * t / 2)).re / 2 - Real.log Real.pi / 2
+
+private lemma analyticAt_Gamma_of_pos_re {z : ℂ} (hz : 0 < z.re) :
+    AnalyticAt ℂ Complex.Gamma z := by
+  rw [analyticAt_iff_eventually_differentiableAt]
+  have hopen : IsOpen {w : ℂ | 0 < w.re} :=
+    isOpen_lt continuous_const Complex.continuous_re
+  filter_upwards [hopen.mem_nhds hz] with w hw
+  apply Complex.differentiableAt_Gamma
+  intro m hzero
+  have hre := congrArg Complex.re hzero
+  simp at hre
+  linarith
+
+private lemma continuousAt_digamma_of_pos_re {z : ℂ} (hz : 0 < z.re) :
+    ContinuousAt Complex.digamma z := by
+  have hGamma := analyticAt_Gamma_of_pos_re hz
+  rw [Complex.digamma_def]
+  change ContinuousAt (fun w => deriv Complex.Gamma w / Complex.Gamma w) z
+  exact (hGamma.deriv.div hGamma (Complex.Gamma_ne_zero_of_re_pos hz)).continuousAt
+
+private theorem continuous_verticalGammaPhaseVelocity :
+    Continuous verticalGammaPhaseVelocity := by
+  rw [continuous_iff_continuousAt]
+  intro t
+  let z : ℝ → ℂ := fun x => (1 / 4 : ℂ) + I * x / 2
+  have hzre : 0 < (z t).re := by
+    dsimp [z]
+    norm_num
+  have hzcont : ContinuousAt z t := by
+    dsimp [z]
+    fun_prop
+  have hdig := (continuousAt_digamma_of_pos_re hzre).comp hzcont
+  change ContinuousAt
+    (fun x : ℝ => (Complex.digamma (z x)).re / 2 - Real.log Real.pi / 2) t
+  exact ((Complex.continuous_re.continuousAt.comp hdig).div_const 2).sub_const _
+
+private noncomputable def gammaQuarterVertical (t : ℝ) : ℂ :=
+  Complex.Gamma ((1 / 4 : ℂ) + I * t / 2)
+
+private noncomputable def gammaQuarterLogDerivative (t : ℝ) : ℂ :=
+  I * Complex.digamma ((1 / 4 : ℂ) + I * t / 2) / 2
+
+private noncomputable def gammaQuarterLogIntegral (t : ℝ) : ℂ :=
+  ∫ x in (1 : ℝ)..t, gammaQuarterLogDerivative x
+
+private theorem continuous_gammaQuarterLogDerivative :
+    Continuous gammaQuarterLogDerivative := by
+  rw [continuous_iff_continuousAt]
+  intro t
+  let z : ℝ → ℂ := fun x => (1 / 4 : ℂ) + I * x / 2
+  have hzre : 0 < (z t).re := by
+    dsimp [z]
+    norm_num
+  have hzcont : ContinuousAt z t := by
+    dsimp [z]
+    fun_prop
+  have hdig := (continuousAt_digamma_of_pos_re hzre).comp hzcont
+  change ContinuousAt (fun x : ℝ => I * Complex.digamma (z x) / 2) t
+  exact (continuousAt_const.mul hdig).div_const 2
+
+private theorem hasDerivAt_gammaQuarterVertical (t : ℝ) :
+    HasDerivAt gammaQuarterVertical
+      (gammaQuarterLogDerivative t * gammaQuarterVertical t) t := by
+  let W : ℂ → ℂ := fun w => (1 / 4 : ℂ) + I * w / 2
+  have hW : HasDerivAt W (I / 2) (t : ℂ) := by
+    simpa [W] using
+      (((hasDerivAt_id (t : ℂ)).const_mul I).div_const 2).const_add (1 / 4 : ℂ)
+  have hWre : 0 < (W (t : ℂ)).re := by
+    dsimp [W]
+    norm_num
+  have hGamma : HasDerivAt Complex.Gamma
+      (deriv Complex.Gamma (W (t : ℂ))) (W (t : ℂ)) :=
+    (Complex.differentiableAt_Gamma _ (fun m hzero => by
+      have hre := congrArg Complex.re hzero
+      simp [W] at hre
+      have hm : (0 : ℝ) ≤ m := Nat.cast_nonneg m
+      norm_num at hre
+      linarith)).hasDerivAt
+  have hlogDeriv :
+      deriv Complex.Gamma (W (t : ℂ)) =
+        Complex.digamma (W (t : ℂ)) * Complex.Gamma (W (t : ℂ)) := by
+    rw [Complex.digamma_def, logDeriv_apply]
+    field_simp [Complex.Gamma_ne_zero_of_re_pos hWre]
+  rw [hlogDeriv] at hGamma
+  have hcomp := (hGamma.comp (t : ℂ) hW).comp_ofReal
+  convert hcomp using 1 <;>
+    simp [gammaQuarterLogDerivative, gammaQuarterVertical, W] <;> ring
+
+private theorem hasDerivAt_gammaQuarterLogIntegral (t : ℝ) :
+    HasDerivAt gammaQuarterLogIntegral (gammaQuarterLogDerivative t) t := by
+  have hcont := continuous_gammaQuarterLogDerivative
+  exact intervalIntegral.integral_hasDerivAt_right
+    (hcont.intervalIntegrable (1 : ℝ) t)
+    hcont.stronglyMeasurable.stronglyMeasurableAtFilter hcont.continuousAt
+
+private theorem gammaQuarterVertical_eq_base_mul_exp_logIntegral
+    {t : ℝ} (ht : 1 ≤ t) :
+    gammaQuarterVertical t =
+      gammaQuarterVertical 1 * Complex.exp (gammaQuarterLogIntegral t) := by
+  let Q : ℝ → ℂ := fun x =>
+    gammaQuarterVertical x * Complex.exp (-gammaQuarterLogIntegral x)
+  have hQ : ∀ x ∈ Set.uIcc (1 : ℝ) t, HasDerivAt Q 0 x := by
+    intro x _hx
+    have hG := hasDerivAt_gammaQuarterVertical x
+    have hA := hasDerivAt_gammaQuarterLogIntegral x
+    dsimp only [Q]
+    convert hG.mul hA.neg.cexp using 1
+    ring
+  have hzeroInt : IntervalIntegrable (fun _ : ℝ => (0 : ℂ)) volume 1 t :=
+    (continuous_const : Continuous (fun _ : ℝ => (0 : ℂ))).intervalIntegrable _ _
+  have hconst := intervalIntegral.integral_eq_sub_of_hasDerivAt hQ hzeroInt
+  simp only [intervalIntegral.integral_zero] at hconst
+  have hA1 : gammaQuarterLogIntegral 1 = 0 := by
+    simp [gammaQuarterLogIntegral]
+  dsimp only [Q] at hconst
+  rw [hA1, neg_zero, Complex.exp_zero, mul_one] at hconst
+  have hconst' :
+      gammaQuarterVertical t * Complex.exp (-gammaQuarterLogIntegral t) =
+        gammaQuarterVertical 1 := sub_eq_zero.mp hconst.symm
+  calc
+    gammaQuarterVertical t =
+        (gammaQuarterVertical t * Complex.exp (-gammaQuarterLogIntegral t)) *
+          Complex.exp (gammaQuarterLogIntegral t) := by
+      rw [mul_assoc, ← Complex.exp_add]
+      simp
+    _ = gammaQuarterVertical 1 * Complex.exp (gammaQuarterLogIntegral t) := by
+      rw [hconst']
+
+private theorem gammaQuarterVertical_unit_eq_base_mul_exp_im_logIntegral
+    {t : ℝ} (ht : 1 ≤ t) :
+    gammaQuarterVertical t / ‖gammaQuarterVertical t‖ =
+      (gammaQuarterVertical 1 / ‖gammaQuarterVertical 1‖) *
+        Complex.exp (I * (gammaQuarterLogIntegral t).im) := by
+  have hGamma := gammaQuarterVertical_eq_base_mul_exp_logIntegral ht
+  have hbase : gammaQuarterVertical 1 ≠ 0 := by
+    apply Complex.Gamma_ne_zero_of_re_pos
+    norm_num [gammaQuarterVertical]
+  have hbaseNorm : ‖gammaQuarterVertical 1‖ ≠ 0 := norm_ne_zero_iff.mpr hbase
+  have hExp :
+      Complex.exp (gammaQuarterLogIntegral t) =
+        (Real.exp (gammaQuarterLogIntegral t).re : ℂ) *
+          Complex.exp (I * (gammaQuarterLogIntegral t).im) := by
+    rw [Complex.exp_eq_exp_re_mul_sin_add_cos]
+    rw [← Complex.exp_mul_I]
+    rw [← Complex.ofReal_exp]
+    congr 1
+    ring
+  rw [hGamma, norm_mul, Complex.norm_exp, hExp]
+  field_simp [hbaseNorm, Real.exp_ne_zero]
+  norm_cast
+  ring
+
+private theorem gammaQuarterLogIntegral_im (t : ℝ) :
+    (gammaQuarterLogIntegral t).im =
+      ∫ x in (1 : ℝ)..t,
+        (Complex.digamma ((1 / 4 : ℂ) + I * x / 2)).re / 2 := by
+  have hint : IntervalIntegrable gammaQuarterLogDerivative volume 1 t :=
+    continuous_gammaQuarterLogDerivative.intervalIntegrable _ _
+  have hmap := Complex.imCLM.intervalIntegral_comp_comm hint
+  have hmap' :
+      (∫ x in (1 : ℝ)..t, (gammaQuarterLogDerivative x).im) =
+        (∫ x in (1 : ℝ)..t, gammaQuarterLogDerivative x).im := by
+    simpa using hmap
+  rw [gammaQuarterLogIntegral, ← hmap']
+  apply intervalIntegral.integral_congr
+  intro x _hx
+  simp [gammaQuarterLogDerivative, Complex.mul_im]
+
+private theorem exp_I_arg_gammaQuarterVertical (t : ℝ) :
+    Complex.exp (I * Complex.arg (gammaQuarterVertical t)) =
+      gammaQuarterVertical t / ‖gammaQuarterVertical t‖ := by
+  have hGamma : gammaQuarterVertical t ≠ 0 := by
+    apply Complex.Gamma_ne_zero_of_re_pos
+    norm_num [gammaQuarterVertical]
+  have hnorm : (‖gammaQuarterVertical t‖ : ℂ) ≠ 0 := by
+    exact_mod_cast norm_ne_zero_iff.mpr hGamma
+  rw [eq_div_iff hnorm]
+  rw [show I * (Complex.arg (gammaQuarterVertical t) : ℂ) =
+      (Complex.arg (gammaQuarterVertical t) : ℂ) * I by ring]
+  rw [mul_comm]
+  exact Complex.norm_mul_exp_arg_mul_I (gammaQuarterVertical t)
+
+private theorem exp_I_arg_gammaQuarterVertical_eq_base_add_integral
+    {t : ℝ} (ht : 1 ≤ t) :
+    Complex.exp (I * Complex.arg (gammaQuarterVertical t)) =
+      Complex.exp
+        (I * (Complex.arg (gammaQuarterVertical 1) +
+          (gammaQuarterLogIntegral t).im)) := by
+  rw [exp_I_arg_gammaQuarterVertical,
+    gammaQuarterVertical_unit_eq_base_mul_exp_im_logIntegral ht,
+    ← exp_I_arg_gammaQuarterVertical]
+  rw [← Complex.exp_add]
+  congr 1
+  push_cast
+  ring
+
+theorem deriv_thetaModel {t : ℝ} (ht : 0 < t) :
+    deriv thetaModel t = (1 / 2 : ℝ) * Real.log (t / (2 * Real.pi)) := by
+  have hfun : thetaModel = HardyTheorem.OscillatoryIntegral.hardyPhase 1 := by
+    funext x
+    simp [thetaModel, HardyTheorem.OscillatoryIntegral.hardyPhase]
+    ring
+  rw [hfun]
+  simpa using
+    (HardyTheorem.OscillatoryIntegral.deriv_hardyPhase
+      (n := 1) (by norm_num) ht)
+
 /-- The periodic Bernoulli remainder kernel in the first neglected term of
 the logarithmic Stirling expansion at `1 / 4 + I * t / 2`. -/
 noncomputable def verticalStirlingBernoulliKernel (t u : ℝ) : ℂ :=
   ((periodizedBernoulli 2 (u : AddCircle (1 : ℝ)) : ℝ) : ℂ) /
     (((1 / 4 : ℂ) + I * t / 2 + u) ^ 2)
+
+/-- The periodic Bernoulli remainder kernel in the differentiated vertical
+Stirling formula. -/
+noncomputable def verticalDigammaBernoulliKernel (t u : ℝ) : ℂ :=
+  ((periodizedBernoulli 2 (u : AddCircle (1 : ℝ)) : ℝ) : ℂ) /
+    (((1 / 4 : ℂ) + I * t / 2 + u) ^ 3)
 
 private lemma exists_periodizedBernoulli_two_norm_bound :
     ∃ A : ℝ, 0 ≤ A ∧ ∀ u : ℝ,
@@ -346,6 +564,218 @@ private lemma exists_periodizedBernoulli_two_norm_bound :
   intro u
   exact (hM _ ⟨(u : AddCircle (1 : ℝ)), Set.mem_univ _, rfl⟩).trans
     (le_max_left _ _)
+
+private lemma norm_verticalDigammaBernoulliKernel_le
+    {A t u : ℝ} (hA : 0 ≤ A) (ht : 0 < t) (htu : t ≤ u)
+    (hbern :
+      ‖((periodizedBernoulli 2 (u : AddCircle (1 : ℝ)) : ℝ) : ℂ)‖ ≤ A) :
+    ‖verticalDigammaBernoulliKernel t u‖ ≤ A * u ^ (-3 : ℝ) := by
+  have hu : 0 < u := ht.trans_le htu
+  let z : ℂ := (1 / 4 : ℂ) + I * t / 2 + u
+  have hre : u ≤ z.re := by
+    dsimp [z]
+    norm_num
+  have huz : u ≤ ‖z‖ :=
+    hre.trans (le_abs_self z.re |>.trans (Complex.abs_re_le_norm z))
+  have hzpos : 0 < ‖z‖ := hu.trans_le huz
+  rw [verticalDigammaBernoulliKernel, norm_div, norm_pow]
+  change
+    ‖((periodizedBernoulli 2 (u : AddCircle (1 : ℝ)) : ℝ) : ℂ)‖ / ‖z‖ ^ 3 ≤
+      A * u ^ (-3 : ℝ)
+  rw [Real.rpow_neg hu.le]
+  rw [show u ^ (3 : ℝ) = u ^ (3 : ℕ) by norm_num [Real.rpow_natCast]]
+  have hu3 : 0 < u ^ 3 := pow_pos hu _
+  have hden3 : u ^ 3 ≤ ‖z‖ ^ 3 := pow_le_pow_left₀ hu.le huz 3
+  rw [div_eq_mul_inv]
+  exact mul_le_mul hbern (inv_anti₀ hu3 hden3)
+    (inv_nonneg.mpr (pow_nonneg (norm_nonneg _) 3)) hA
+
+private lemma norm_verticalDigammaBernoulliKernel_le_low
+    {A t u : ℝ} (hA : 0 ≤ A) (ht : 0 < t)
+    (hbern :
+      ‖((periodizedBernoulli 2 (u : AddCircle (1 : ℝ)) : ℝ) : ℂ)‖ ≤ A) :
+    ‖verticalDigammaBernoulliKernel t u‖ ≤ 8 * A / t ^ 3 := by
+  let z : ℂ := (1 / 4 : ℂ) + I * t / 2 + u
+  have him_eq : z.im = t / 2 := by
+    dsimp [z]
+    simp
+  have him : t / 2 ≤ ‖z‖ := by
+    rw [← him_eq]
+    exact (le_abs_self z.im).trans (Complex.abs_im_le_norm z)
+  have him0 : 0 < t / 2 := half_pos ht
+  have hpow : (t / 2) ^ 3 ≤ ‖z‖ ^ 3 :=
+    pow_le_pow_left₀ him0.le him 3
+  rw [verticalDigammaBernoulliKernel, norm_div, norm_pow]
+  change
+    ‖((periodizedBernoulli 2 (u : AddCircle (1 : ℝ)) : ℝ) : ℂ)‖ / ‖z‖ ^ 3 ≤
+      8 * A / t ^ 3
+  calc
+    _ ≤ A / ‖z‖ ^ 3 :=
+      div_le_div_of_nonneg_right hbern (pow_nonneg (norm_nonneg _) 3)
+    _ ≤ A / (t / 2) ^ 3 :=
+      div_le_div_of_nonneg_left hA (pow_pos him0 3) hpow
+    _ = 8 * A / t ^ 3 := by field_simp [ht.ne']; ring
+
+/-- The differentiated periodic-Bernoulli remainder on the vertical line is
+`O(1/t²)`. -/
+theorem exists_norm_integral_Ioi_verticalDigammaBernoulliKernel_le_inv_sq :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ t : ℝ, 1 ≤ t →
+      ‖∫ u in Set.Ioi (0 : ℝ), verticalDigammaBernoulliKernel t u‖ ≤
+        C / t ^ 2 := by
+  obtain ⟨A, hA, hbern⟩ := exists_periodizedBernoulli_two_norm_bound
+  refine ⟨9 * A, mul_nonneg (by norm_num) hA, ?_⟩
+  intro t ht
+  have ht0 : 0 < t := lt_of_lt_of_le zero_lt_one ht
+  let F : ℝ → ℂ := verticalDigammaBernoulliKernel t
+  let g : ℝ → ℝ := fun u => A * u ^ (-3 : ℝ)
+  have hFcont : Continuous F := by
+    dsimp [F, verticalDigammaBernoulliKernel]
+    apply Continuous.div
+    · exact Complex.continuous_ofReal.comp
+        ((periodizedBernoulli.continuous (by norm_num : 2 ≠ 1)).comp
+          continuous_quotient_mk')
+    · fun_prop
+    · intro u
+      apply pow_ne_zero
+      intro hzero
+      have him := congrArg Complex.im hzero
+      simp at him
+      linarith
+  have hinterval : IntervalIntegrable F volume 0 t := hFcont.intervalIntegrable _ _
+  have hg : IntegrableOn g (Set.Ioi t) :=
+    (integrableOn_Ioi_rpow_of_lt (by norm_num) ht0).const_mul A
+  have hpoint : ∀ᵐ u ∂volume.restrict (Set.Ioi t), ‖F u‖ ≤ g u := by
+    filter_upwards [ae_restrict_mem measurableSet_Ioi] with u hu
+    exact norm_verticalDigammaBernoulliKernel_le hA ht0 hu.le (hbern u)
+  have hFtail : IntegrableOn F (Set.Ioi t) := by
+    change Integrable F (volume.restrict (Set.Ioi t))
+    change Integrable g (volume.restrict (Set.Ioi t)) at hg
+    exact hg.mono' hFcont.aestronglyMeasurable.restrict hpoint
+  have htail : ‖∫ u in Set.Ioi t, F u‖ ≤ A / (2 * t ^ 2) := by
+    calc
+      ‖∫ u in Set.Ioi t, F u‖ ≤ ∫ u in Set.Ioi t, g u :=
+        MeasureTheory.norm_integral_le_of_norm_le hg hpoint
+      _ = A * (∫ u in Set.Ioi t, u ^ (-3 : ℝ)) := by
+        dsimp [g]
+        rw [MeasureTheory.integral_const_mul]
+      _ = A / (2 * t ^ 2) := by
+        rw [integral_Ioi_rpow_of_lt (by norm_num) ht0]
+        rw [show (-3 : ℝ) + 1 = -2 by norm_num, Real.rpow_neg ht0.le,
+          show t ^ (2 : ℝ) = t ^ (2 : ℕ) by norm_num [Real.rpow_natCast]]
+        field_simp [ht0.ne']
+  have hlow : ‖∫ u in (0 : ℝ)..t, F u‖ ≤ 8 * A / t ^ 2 := by
+    have hconst := intervalIntegral.norm_integral_le_of_norm_le_const
+      (f := F) (a := 0) (b := t) (C := 8 * A / t ^ 3)
+      (fun u _hu => norm_verticalDigammaBernoulliKernel_le_low hA ht0 (hbern u))
+    rw [sub_zero, abs_of_pos ht0] at hconst
+    calc
+      _ ≤ (8 * A / t ^ 3) * t := hconst
+      _ = 8 * A / t ^ 2 := by field_simp [ht0.ne']
+  have hsplit :
+      (∫ u in (0 : ℝ)..t, F u) + ∫ u in Set.Ioi t, F u =
+        ∫ u in Set.Ioi (0 : ℝ), F u :=
+    intervalIntegral.integral_interval_add_Ioi' hinterval hFtail
+  rw [← hsplit]
+  calc
+    ‖(∫ u in (0 : ℝ)..t, F u) + ∫ u in Set.Ioi t, F u‖ ≤
+        ‖∫ u in (0 : ℝ)..t, F u‖ + ‖∫ u in Set.Ioi t, F u‖ := norm_add_le _ _
+    _ ≤ 8 * A / t ^ 2 + A / (2 * t ^ 2) := add_le_add hlow htail
+    _ ≤ 9 * A / t ^ 2 := by
+      field_simp [ht0.ne']
+      nlinarith
+
+private lemma log_norm_quarter_add_I_mul_half_sub_log_half_eq
+    {t : ℝ} (ht : 0 < t) :
+    Real.log ‖(1 / 4 : ℂ) + I * t / 2‖ - Real.log (t / 2) =
+      Real.log (1 + 1 / (4 * t ^ 2)) / 2 := by
+  let z : ℂ := (1 / 4 : ℂ) + I * t / 2
+  let q : ℝ := 1 + 1 / (4 * t ^ 2)
+  have ht2 : 0 < t / 2 := half_pos ht
+  have hq : 0 < q := by
+    dsimp [q]
+    positivity
+  have hnormSq : Complex.normSq z = (t / 2) ^ 2 * q := by
+    dsimp [z, q]
+    norm_num [Complex.normSq_apply]
+    field_simp [ht.ne']
+    ring
+  rw [Complex.norm_def, Real.log_sqrt (Complex.normSq_nonneg z), hnormSq,
+    Real.log_mul (pow_ne_zero 2 ht2.ne') hq.ne', Real.log_pow]
+  dsimp only [q]
+  ring
+
+private lemma abs_log_norm_quarter_add_I_mul_half_sub_log_half_le_inv_sq
+    {t : ℝ} (ht : 1 ≤ t) :
+    |Real.log ‖(1 / 4 : ℂ) + I * t / 2‖ - Real.log (t / 2)| ≤
+      1 / (8 * t ^ 2) := by
+  have ht0 : 0 < t := lt_of_lt_of_le zero_lt_one ht
+  let q : ℝ := 1 + 1 / (4 * t ^ 2)
+  have hq1 : 1 ≤ q := by
+    dsimp [q]
+    exact le_add_of_nonneg_right (by positivity)
+  have hq0 : 0 < q := zero_lt_one.trans_le hq1
+  rw [log_norm_quarter_add_I_mul_half_sub_log_half_eq ht0]
+  rw [abs_of_nonneg (div_nonneg (Real.log_nonneg hq1) (by norm_num))]
+  calc
+    Real.log q / 2 ≤ (q - 1) / 2 :=
+      div_le_div_of_nonneg_right (Real.log_le_sub_one_of_pos hq0) (by norm_num)
+    _ = 1 / (8 * t ^ 2) := by
+      dsimp [q]
+      field_simp [ht0.ne']
+      ring
+
+private lemma half_le_norm_quarter_add_I_mul_half {t : ℝ} :
+    t / 2 ≤ ‖(1 / 4 : ℂ) + I * t / 2‖ := by
+  have him : ((1 / 4 : ℂ) + I * t / 2).im = t / 2 := by simp
+  rw [← him]
+  exact (le_abs_self _).trans (Complex.abs_im_le_norm _)
+
+private lemma abs_inv_two_mul_quarter_add_I_mul_half_re_div_two_le_inv_sq
+    {t : ℝ} (ht : 1 ≤ t) :
+    |(((2 : ℂ) * ((1 / 4 : ℂ) + I * t / 2))⁻¹).re / 2| ≤ 1 / t ^ 2 := by
+  have ht0 : 0 < t := lt_of_lt_of_le zero_lt_one ht
+  have hden : 0 < t ^ 2 + 1 / 4 := by positivity
+  have hvalue :
+      (((2 : ℂ) * ((1 / 4 : ℂ) + I * t / 2))⁻¹).re / 2 =
+        1 / (4 * (t ^ 2 + 1 / 4)) := by
+    rw [Complex.inv_re]
+    norm_num [Complex.normSq_apply]
+    field_simp [hden.ne']
+    ring
+  rw [hvalue, abs_of_nonneg (by positivity)]
+  apply (div_le_div_iff₀ (by positivity : 0 < 4 * (t ^ 2 + 1 / 4))
+    (sq_pos_of_pos ht0)).2
+  nlinarith [sq_nonneg t]
+
+private lemma abs_inv_twelve_mul_quarter_add_I_mul_half_sq_re_div_two_le_inv_sq
+    {t : ℝ} (ht : 1 ≤ t) :
+    |(((12 : ℂ) * ((1 / 4 : ℂ) + I * t / 2) ^ 2)⁻¹).re / 2| ≤
+      1 / t ^ 2 := by
+  have ht0 : 0 < t := lt_of_lt_of_le zero_lt_one ht
+  let z : ℂ := (1 / 4 : ℂ) + I * t / 2
+  have hz : t / 2 ≤ ‖z‖ := half_le_norm_quarter_add_I_mul_half
+  have hz0 : 0 < ‖z‖ := (half_pos ht0).trans_le hz
+  calc
+    |(((12 : ℂ) * z ^ 2)⁻¹).re / 2| =
+        |(((12 : ℂ) * z ^ 2)⁻¹).re| / 2 := by
+      conv_lhs => rw [abs_div]
+      norm_num
+    _ ≤ ‖((12 : ℂ) * z ^ 2)⁻¹‖ / 2 :=
+      div_le_div_of_nonneg_right (Complex.abs_re_le_norm _) (by norm_num)
+    _ = 1 / (24 * ‖z‖ ^ 2) := by
+      rw [norm_inv, norm_mul, norm_pow]
+      norm_num
+      field_simp [hz0.ne']
+      ring
+    _ ≤ 1 / (6 * t ^ 2) := by
+      have hsq : (t / 2) ^ 2 ≤ ‖z‖ ^ 2 :=
+        pow_le_pow_left₀ (half_pos ht0).le hz 2
+      apply (div_le_div_iff₀ (by positivity : 0 < 24 * ‖z‖ ^ 2)
+        (by positivity : 0 < 6 * t ^ 2)).2
+      nlinarith
+    _ ≤ 1 / t ^ 2 := by
+      field_simp [ht0.ne']
+      norm_num
 
 private lemma integrableOn_Ioi_periodizedBernoulli_div_const_add_cube
     {z : ℂ} (hz : 0 < z.re) :
@@ -515,6 +945,332 @@ theorem digamma_eq_stirling_with_periodizedBernoulli {z : ℂ} (hz : 0 < z.re) :
   rw [show (2 * z)⁻¹ = z⁻¹ / 2 by field_simp [hz0],
     show (12 * z ^ 2)⁻¹ = (z⁻¹) ^ 2 / 12 by field_simp [hz0]]
   exact hmain
+
+/-- The smooth vertical `Gammaℝ` phase velocity differs from the elementary
+Stirling phase velocity by `O(1/t²)`. -/
+theorem exists_abs_verticalGammaPhaseVelocity_sub_deriv_thetaModel_le_inv_sq :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ t : ℝ, 1 ≤ t →
+      |verticalGammaPhaseVelocity t - deriv thetaModel t| ≤ C / t ^ 2 := by
+  obtain ⟨C, hC, hrem⟩ :=
+    exists_norm_integral_Ioi_verticalDigammaBernoulliKernel_le_inv_sq
+  refine ⟨3 + C, add_nonneg (by norm_num) hC, ?_⟩
+  intro t ht
+  have ht0 : 0 < t := lt_of_lt_of_le zero_lt_one ht
+  let z : ℂ := (1 / 4 : ℂ) + I * t / 2
+  let R : ℂ := ∫ u in Set.Ioi (0 : ℝ), verticalDigammaBernoulliKernel t u
+  have hz : 0 < z.re := by
+    dsimp [z]
+    norm_num
+  have hdig := digamma_eq_stirling_with_periodizedBernoulli hz
+  have hR : ‖R‖ ≤ C / t ^ 2 := hrem t ht
+  have hlogdiv :
+      Real.log (t / (2 * Real.pi)) = Real.log (t / 2) - Real.log Real.pi := by
+    rw [show t / (2 * Real.pi) = (t / 2) / Real.pi by ring,
+      Real.log_div (half_pos ht0).ne' Real.pi_ne_zero]
+  have hdecomp :
+      verticalGammaPhaseVelocity t - deriv thetaModel t =
+        (Real.log ‖z‖ - Real.log (t / 2)) / 2 -
+          (((2 : ℂ) * z)⁻¹).re / 2 -
+          (((12 : ℂ) * z ^ 2)⁻¹).re / 2 + R.re / 2 := by
+    rw [verticalGammaPhaseVelocity, deriv_thetaModel ht0]
+    rw [show (1 / 4 : ℂ) + I * t / 2 = z by rfl, hdig]
+    simp only [Complex.sub_re, Complex.add_re, Complex.log_re, Complex.ofReal_re]
+    rw [hlogdiv]
+    change
+      (Real.log ‖z‖ - ((2 * z)⁻¹).re - ((12 * z ^ 2)⁻¹).re + R.re) / 2 -
+          Real.log Real.pi / 2 -
+          (1 / 2 * (Real.log (t / 2) - Real.log Real.pi)) = _
+    ring
+  have hlogTerm :
+      |(Real.log ‖z‖ - Real.log (t / 2)) / 2| ≤ 1 / t ^ 2 := by
+    have hlog := abs_log_norm_quarter_add_I_mul_half_sub_log_half_le_inv_sq ht
+    change |Real.log ‖z‖ - Real.log (t / 2)| ≤ 1 / (8 * t ^ 2) at hlog
+    calc
+      |(Real.log ‖z‖ - Real.log (t / 2)) / 2| =
+          |Real.log ‖z‖ - Real.log (t / 2)| / 2 := by
+        conv_lhs => rw [abs_div]
+        norm_num
+      _ ≤ (1 / (8 * t ^ 2)) / 2 :=
+        div_le_div_of_nonneg_right hlog (by norm_num)
+      _ ≤ 1 / t ^ 2 := by
+        field_simp [ht0.ne']
+        norm_num
+  have hfirst : |(((2 : ℂ) * z)⁻¹).re / 2| ≤ 1 / t ^ 2 := by
+    exact abs_inv_two_mul_quarter_add_I_mul_half_re_div_two_le_inv_sq ht
+  have hsecond : |(((12 : ℂ) * z ^ 2)⁻¹).re / 2| ≤ 1 / t ^ 2 := by
+    exact abs_inv_twelve_mul_quarter_add_I_mul_half_sq_re_div_two_le_inv_sq ht
+  have hremTerm : |R.re / 2| ≤ C / t ^ 2 := by
+    calc
+      |R.re / 2| = |R.re| / 2 := by
+        conv_lhs => rw [abs_div]
+        norm_num
+      _ ≤ ‖R‖ / 2 :=
+        div_le_div_of_nonneg_right (Complex.abs_re_le_norm R) (by norm_num)
+      _ ≤ (C / t ^ 2) / 2 :=
+        div_le_div_of_nonneg_right hR (by norm_num)
+      _ ≤ C / t ^ 2 := by
+        have hCt : 0 ≤ C / t ^ 2 := div_nonneg hC (sq_nonneg t)
+        linarith
+  rw [hdecomp]
+  calc
+    |(Real.log ‖z‖ - Real.log (t / 2)) / 2 -
+        ((2 * z)⁻¹).re / 2 - ((12 * z ^ 2)⁻¹).re / 2 + R.re / 2| ≤
+        |(Real.log ‖z‖ - Real.log (t / 2)) / 2| +
+          |((2 * z)⁻¹).re / 2| + |((12 * z ^ 2)⁻¹).re / 2| + |R.re / 2| := by
+      calc
+        _ ≤ |(Real.log ‖z‖ - Real.log (t / 2)) / 2 -
+              ((2 * z)⁻¹).re / 2 - ((12 * z ^ 2)⁻¹).re / 2| + |R.re / 2| :=
+          abs_add_le _ _
+        _ ≤ (|(Real.log ‖z‖ - Real.log (t / 2)) / 2 -
+              ((2 * z)⁻¹).re / 2| + |((12 * z ^ 2)⁻¹).re / 2|) + |R.re / 2| :=
+          by
+            gcongr
+            exact abs_sub _ _
+        _ ≤ (|(Real.log ‖z‖ - Real.log (t / 2)) / 2| +
+              |((2 * z)⁻¹).re / 2| + |((12 * z ^ 2)⁻¹).re / 2|) + |R.re / 2| :=
+          by
+            gcongr
+            exact abs_sub _ _
+        _ = _ := by ring
+    _ ≤ 1 / t ^ 2 + 1 / t ^ 2 + 1 / t ^ 2 + C / t ^ 2 :=
+      add_le_add (add_le_add (add_le_add hlogTerm hfirst) hsecond) hremTerm
+    _ = (3 + C) / t ^ 2 := by ring
+
+/-- A smooth lift of the vertical `Gammaℝ` phase, anchored at `t = 1`. -/
+noncomputable def verticalGammaUnwrappedPhase (t : ℝ) : ℝ :=
+  thetaPhase 1 + ∫ x in (1 : ℝ)..t, verticalGammaPhaseVelocity x
+
+theorem continuous_verticalGammaUnwrappedPhase :
+    Continuous verticalGammaUnwrappedPhase := by
+  change Continuous (fun t : ℝ =>
+    thetaPhase 1 + ∫ x in (1 : ℝ)..t, verticalGammaPhaseVelocity x)
+  exact continuous_const.add
+    (intervalIntegral.differentiable_integral_of_continuous
+      continuous_verticalGammaPhaseVelocity).continuous
+
+/-- The smooth phase is an actual lift of the principal `Gammaℝ` phase: their
+complex unit phases agree exactly. -/
+theorem exp_I_verticalGammaUnwrappedPhase_eq_exp_I_thetaPhase
+    {t : ℝ} (ht : 1 ≤ t) :
+    Complex.exp (I * verticalGammaUnwrappedPhase t) =
+      Complex.exp (I * thetaPhase t) := by
+  let D : ℝ → ℝ := fun x =>
+    (Complex.digamma ((1 / 4 : ℂ) + I * x / 2)).re / 2
+  have hDCont : Continuous D := by
+    have him := Complex.continuous_im.comp continuous_gammaQuarterLogDerivative
+    convert him using 1
+    funext x
+    simp [D, gammaQuarterLogDerivative, Complex.mul_im]
+  have hDInt : IntervalIntegrable D volume 1 t := hDCont.intervalIntegrable _ _
+  have hconstInt : IntervalIntegrable (fun _ : ℝ => Real.log Real.pi / 2) volume 1 t :=
+    continuous_const.intervalIntegrable _ _
+  have hvelIntegral :
+      (∫ x in (1 : ℝ)..t, verticalGammaPhaseVelocity x) =
+        (gammaQuarterLogIntegral t).im - (t - 1) * (Real.log Real.pi / 2) := by
+    rw [show verticalGammaPhaseVelocity =
+        fun x => D x - Real.log Real.pi / 2 by rfl]
+    rw [intervalIntegral.integral_sub hDInt hconstInt,
+      intervalIntegral.integral_const, ← gammaQuarterLogIntegral_im]
+    simp only [smul_eq_mul]
+  have harg := exp_I_arg_gammaQuarterVertical_eq_base_add_integral ht
+  rw [verticalGammaUnwrappedPhase, hvelIntegral]
+  have hleft :
+      I * (thetaPhase 1 +
+        ((gammaQuarterLogIntegral t).im -
+          (t - 1) * (Real.log Real.pi / 2)) : ℂ) =
+        I * (Complex.arg (gammaQuarterVertical 1) +
+          (gammaQuarterLogIntegral t).im) +
+        (-I * (t / 2 * Real.log Real.pi)) := by
+    simp only [thetaPhase, gammaQuarterVertical]
+    push_cast
+    ring
+  have hright :
+      I * (thetaPhase t : ℂ) =
+        I * Complex.arg (gammaQuarterVertical t) +
+          (-I * (t / 2 * Real.log Real.pi)) := by
+    simp only [thetaPhase, gammaQuarterVertical]
+    push_cast
+    ring
+  push_cast
+  rw [hleft, Complex.exp_add, ← harg, ← Complex.exp_add, ← hright]
+
+theorem continuousOn_exp_I_thetaPhase_Ici_one :
+    ContinuousOn (fun t : ℝ => Complex.exp (I * thetaPhase t)) (Set.Ici 1) := by
+  have hlift : Continuous (fun t : ℝ =>
+      Complex.exp (I * verticalGammaUnwrappedPhase t)) :=
+    (continuous_const.mul
+      (Complex.continuous_ofReal.comp continuous_verticalGammaUnwrappedPhase)).cexp
+  apply hlift.continuousOn.congr
+  intro t ht
+  exact (exp_I_verticalGammaUnwrappedPhase_eq_exp_I_thetaPhase ht).symm
+
+/-- The smooth vertical Gamma phase differs from the elementary Stirling phase
+by a fixed constant and an `O(1/t)` tail. -/
+theorem exists_verticalGammaUnwrappedPhase_sub_thetaModel_tendsto_const_inv :
+    ∃ κ C : ℝ, 0 ≤ C ∧ ∀ t : ℝ, 1 ≤ t →
+      |verticalGammaUnwrappedPhase t - thetaModel t - κ| ≤ C / t := by
+  obtain ⟨C, hC, herr⟩ :=
+    exists_abs_verticalGammaPhaseVelocity_sub_deriv_thetaModel_le_inv_sq
+  let modelVelocity : ℝ → ℝ := fun x =>
+    (1 / 2 : ℝ) * Real.log (x / (2 * Real.pi))
+  let e : ℝ → ℝ := fun x => verticalGammaPhaseVelocity x - modelVelocity x
+  let g : ℝ → ℝ := fun x => C * x ^ (-2 : ℝ)
+  have hmodelCont : ContinuousOn modelVelocity (Set.Ici (1 : ℝ)) := by
+    intro x hx
+    apply ContinuousAt.continuousWithinAt
+    dsimp only [modelVelocity]
+    apply ContinuousAt.const_mul
+    apply ContinuousAt.log
+    · fun_prop
+    · have hxpos : 0 < x := zero_lt_one.trans_le hx
+      exact div_ne_zero hxpos.ne' (by positivity)
+  have heCont : ContinuousOn e (Set.Ici (1 : ℝ)) := by
+    exact continuous_verticalGammaPhaseVelocity.continuousOn.sub hmodelCont
+  have hg1 : IntegrableOn g (Set.Ioi (1 : ℝ)) :=
+    (integrableOn_Ioi_rpow_of_lt (by norm_num) zero_lt_one).const_mul C
+  have hpoint1 : ∀ᵐ x ∂volume.restrict (Set.Ioi (1 : ℝ)), ‖e x‖ ≤ g x := by
+    filter_upwards [ae_restrict_mem measurableSet_Ioi] with x hx
+    have hx1 : 1 ≤ x := hx.le
+    have hx0 : 0 < x := zero_lt_one.trans hx
+    have h := herr x hx1
+    rw [deriv_thetaModel hx0] at h
+    change |e x| ≤ C / x ^ 2 at h
+    rw [Real.norm_eq_abs]
+    dsimp only [g]
+    rw [Real.rpow_neg hx0.le,
+      show x ^ (2 : ℝ) = x ^ (2 : ℕ) by norm_num [Real.rpow_natCast]]
+    simpa [div_eq_mul_inv] using h
+  have heInt1 : IntegrableOn e (Set.Ioi (1 : ℝ)) := by
+    change Integrable e (volume.restrict (Set.Ioi (1 : ℝ)))
+    change Integrable g (volume.restrict (Set.Ioi (1 : ℝ))) at hg1
+    exact hg1.mono'
+      ((heCont.mono Set.Ioi_subset_Ici_self).aestronglyMeasurable measurableSet_Ioi)
+      hpoint1
+  refine ⟨thetaPhase 1 - thetaModel 1 + ∫ x in Set.Ioi (1 : ℝ), e x, C, hC, ?_⟩
+  intro t ht
+  have ht0 : 0 < t := zero_lt_one.trans_le ht
+  have hIcc : Set.uIcc (1 : ℝ) t = Set.Icc 1 t := Set.uIcc_of_le ht
+  have hvelInt : IntervalIntegrable verticalGammaPhaseVelocity volume 1 t :=
+    continuous_verticalGammaPhaseVelocity.intervalIntegrable _ _
+  have hmodelIcc : ContinuousOn modelVelocity (Set.Icc (1 : ℝ) t) :=
+    hmodelCont.mono (Set.Icc_subset_Ici_self)
+  have hmodelInt : IntervalIntegrable modelVelocity volume 1 t :=
+    ContinuousOn.intervalIntegrable_of_Icc ht hmodelIcc
+  have hmodelDeriv : ∀ x ∈ Set.uIcc (1 : ℝ) t,
+      HasDerivAt thetaModel (modelVelocity x) x := by
+    intro x hx
+    rw [hIcc] at hx
+    have hx0 : 0 < x := zero_lt_one.trans_le hx.1
+    have hdiff : DifferentiableAt ℝ thetaModel x := by
+      change DifferentiableAt ℝ
+        (fun y : ℝ =>
+          y / 2 * Real.log (y / (2 * Real.pi)) - y / 2 - Real.pi / 8) x
+      fun_prop (disch := positivity)
+    have hder := hdiff.hasDerivAt
+    rw [deriv_thetaModel hx0] at hder
+    exact hder
+  have hmodelIntegral :
+      (∫ x in (1 : ℝ)..t, modelVelocity x) = thetaModel t - thetaModel 1 :=
+    intervalIntegral.integral_eq_sub_of_hasDerivAt hmodelDeriv hmodelInt
+  have heInterval : IntervalIntegrable e volume 1 t := by
+    exact hvelInt.sub hmodelInt
+  have heIntegral :
+      (∫ x in (1 : ℝ)..t, e x) =
+        (∫ x in (1 : ℝ)..t, verticalGammaPhaseVelocity x) -
+          ∫ x in (1 : ℝ)..t, modelVelocity x := by
+    exact intervalIntegral.integral_sub hvelInt hmodelInt
+  have hcorrection :
+      verticalGammaUnwrappedPhase t - thetaModel t =
+        thetaPhase 1 - thetaModel 1 + ∫ x in (1 : ℝ)..t, e x := by
+    rw [verticalGammaUnwrappedPhase, heIntegral, hmodelIntegral]
+    ring
+  have hgTail : IntegrableOn g (Set.Ioi t) :=
+    (integrableOn_Ioi_rpow_of_lt (by norm_num) ht0).const_mul C
+  have hpointTail : ∀ᵐ x ∂volume.restrict (Set.Ioi t), ‖e x‖ ≤ g x := by
+    filter_upwards [ae_restrict_mem measurableSet_Ioi] with x hx
+    have hx1 : 1 ≤ x := ht.trans hx.le
+    have hx0 : 0 < x := ht0.trans hx
+    have h := herr x hx1
+    rw [deriv_thetaModel hx0] at h
+    change |e x| ≤ C / x ^ 2 at h
+    rw [Real.norm_eq_abs]
+    dsimp only [g]
+    rw [Real.rpow_neg hx0.le,
+      show x ^ (2 : ℝ) = x ^ (2 : ℕ) by norm_num [Real.rpow_natCast]]
+    simpa [div_eq_mul_inv] using h
+  have heIntTail : IntegrableOn e (Set.Ioi t) := heInt1.mono_set (Set.Ioi_subset_Ioi ht)
+  have htail : |∫ x in Set.Ioi t, e x| ≤ C / t := by
+    calc
+      |∫ x in Set.Ioi t, e x| = ‖∫ x in Set.Ioi t, e x‖ := by rw [Real.norm_eq_abs]
+      _ ≤ ∫ x in Set.Ioi t, g x :=
+        MeasureTheory.norm_integral_le_of_norm_le hgTail hpointTail
+      _ = C * (∫ x in Set.Ioi t, x ^ (-2 : ℝ)) := by
+        dsimp [g]
+        rw [MeasureTheory.integral_const_mul]
+      _ = C / t := by
+        rw [integral_Ioi_rpow_of_lt (by norm_num) ht0]
+        rw [show (-2 : ℝ) + 1 = -1 by norm_num, Real.rpow_neg_one]
+        ring
+  have hsplit :
+      (∫ x in (1 : ℝ)..t, e x) + ∫ x in Set.Ioi t, e x =
+        ∫ x in Set.Ioi (1 : ℝ), e x :=
+    intervalIntegral.integral_interval_add_Ioi' heInterval heIntTail
+  rw [hcorrection]
+  have heq :
+      thetaPhase 1 - thetaModel 1 + (∫ x in (1 : ℝ)..t, e x) -
+          (thetaPhase 1 - thetaModel 1 + ∫ x in Set.Ioi (1 : ℝ), e x) =
+        -(∫ x in Set.Ioi t, e x) := by
+    rw [← hsplit]
+    ring
+  rw [heq, abs_neg]
+  exact htail
+
+/-- The actual `Gammaℝ` unit phase has the elementary Stirling phase as its
+leading term, up to one fixed unit phase and an `O(1/t)` error. -/
+theorem exists_norm_exp_I_thetaPhase_sub_const_mul_exp_I_thetaModel_le_inv :
+    ∃ κ C : ℝ, 0 ≤ C ∧ ∀ t : ℝ, 1 ≤ t →
+      ‖Complex.exp (I * thetaPhase t) -
+          Complex.exp (I * κ) * Complex.exp (I * thetaModel t)‖ ≤ C / t := by
+  obtain ⟨κ, C, hC, hphase⟩ :=
+    exists_verticalGammaUnwrappedPhase_sub_thetaModel_tendsto_const_inv
+  refine ⟨κ, C, hC, ?_⟩
+  intro t ht
+  have hactual := exp_I_verticalGammaUnwrappedPhase_eq_exp_I_thetaPhase ht
+  have hmodel :
+      Complex.exp (I * κ) * Complex.exp (I * thetaModel t) =
+        Complex.exp (I * (thetaModel t + κ)) := by
+    rw [← Complex.exp_add]
+    congr 1
+    push_cast
+    ring
+  have hfactor :
+      Complex.exp (I * verticalGammaUnwrappedPhase t) -
+          Complex.exp (I * (thetaModel t + κ)) =
+        Complex.exp (I * (thetaModel t + κ)) *
+          (Complex.exp
+            (I * (verticalGammaUnwrappedPhase t - thetaModel t - κ)) - 1) := by
+    rw [mul_sub, mul_one, ← Complex.exp_add]
+    congr 1
+    push_cast
+    ring
+  have hunit :
+      ‖Complex.exp (I * (thetaModel t + κ))‖ = 1 :=
+    by
+      convert Complex.norm_exp_I_mul_ofReal (thetaModel t + κ) using 1
+      all_goals push_cast
+      all_goals rfl
+  rw [← hactual, hmodel, hfactor, norm_mul, hunit, one_mul]
+  calc
+    ‖Complex.exp
+          (I * (verticalGammaUnwrappedPhase t - thetaModel t - κ)) - 1‖ ≤
+        ‖verticalGammaUnwrappedPhase t - thetaModel t - κ‖ :=
+      by
+        convert (Real.norm_exp_I_mul_ofReal_sub_one_le
+          (x := verticalGammaUnwrappedPhase t - thetaModel t - κ)) using 1
+        all_goals push_cast
+        all_goals rfl
+    _ = |verticalGammaUnwrappedPhase t - thetaModel t - κ| := Real.norm_eq_abs _
+    _ ≤ C / t := hphase t ht
 
 private lemma norm_verticalStirlingBernoulliKernel_le
     {A t u : ℝ} (hA : 0 ≤ A) (ht : 0 < t) (htu : t ≤ u)

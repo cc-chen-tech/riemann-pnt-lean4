@@ -33,8 +33,8 @@ CHAIN_SUMMARY = [
     {
         "name": "Hardy theorem",
         "target": "hardy_theorem_target",
-        "status": "not proved in Lean",
-        "next_step": "prove Hardy signed moment asymptotics; the main signed-moment bridge no longer needs tail-dominance",
+        "status": "proved in Lean via the first zeta approximation and a T^(3/4) oscillatory-integral upper bound",
+        "next_step": "develop the stronger Hardy-Littlewood, Selberg, and Conrey quantitative zero-counting targets",
     },
 ]
 
@@ -46,6 +46,12 @@ PROVED_ROUTE_INTERFACES = {
 PROVED_REUSABLE_PREDICATES = {
     "PrimeNumberTheorem.rh_iff_optimal_error":
         "PrimeNumberTheorem.rh_iff_optimal_error_proved",
+    "HardyTheorem.hardy_theorem_target":
+        "HardyTheorem.hardy_theorem_target_proved",
+    "HardyTheorem.hardy_zeros_unbounded_target":
+        "HardyTheorem.hardy_zeros_unbounded_target_proved",
+    "HardyTheorem.hardy_zeros_abs_unbounded_target":
+        "HardyTheorem.hardy_zeros_abs_unbounded_target_proved",
 }
 
 

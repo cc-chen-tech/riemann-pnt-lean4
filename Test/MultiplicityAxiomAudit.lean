@@ -68,6 +68,11 @@ import RiemannPNT
 #print axioms HardyTheorem.exists_riemannZeta_first_approximation
 #print axioms HardyTheorem.criticalLineZetaFirstApprox
 #print axioms HardyTheorem.exists_integral_norm_riemannZeta_critical_line_ge_mul
+#print axioms HardyTheorem.exists_abs_integral_hardyZ_le_rpow_three_quarters
+#print axioms HardyTheorem.hardyZ_zero_set_not_isBounded
+#print axioms HardyTheorem.hardy_zeros_unbounded_target_proved
+#print axioms HardyTheorem.hardy_theorem_target_proved
+#print axioms RiemannPNT.API.hardy_zeros_unbounded_target_proved
 #print axioms HardyTheorem.norm_integral_inv_nat_cpow_criticalLine_le
 #print axioms HardyTheorem.norm_integral_criticalLineDirichletTail_le
 #print axioms HardyTheorem.norm_integral_criticalLineDirichletTail_cutoff_le

@@ -97,7 +97,7 @@ private theorem integral_abs_deriv_eq_abs_sub_of_monotone
       sub_nonpos.mpr (hanti ⟨le_rfl, hab⟩ ⟨hab, le_rfl⟩ hab)
     rw [abs_of_nonpos hsub]
 
-private theorem norm_integral_cexp_phase_le_of_monotone_deriv_local
+theorem norm_integral_cexp_phase_le_of_monotone_deriv_local
     {F : ℝ → ℝ} {a b m : ℝ}
     (hab : a ≤ b) (hm : 0 < m)
     (hF : ∀ x ∈ Icc a b, ContDiffAt ℝ 2 F x)
@@ -861,7 +861,7 @@ theorem iteratedDeriv_two_hardyPhase
   rw [h_g.deriv]
   field_simp [ne_of_gt ht, hc]
 
-private theorem contDiffAt_hardyPhase_two
+theorem contDiffAt_hardyPhase_two
     {n : ℕ} (hn : n ≠ 0) {t : ℝ} (ht : 0 < t) :
     ContDiffAt ℝ 2 (hardyPhase n) t := by
   have hn_real : (n : ℝ) ≠ 0 := by exact_mod_cast hn

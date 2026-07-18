@@ -1,8 +1,33 @@
 # Hardy Theorem Chain
 
-This note records the remaining chain from the verified Hardy Z-function setup
-in `HardyTheorem.lean` to Hardy's theorem.  It is a planning artifact only:
-the `*_target` declarations in Lean are not proved theorems.
+This note records the completed Lean route to Hardy's theorem and the stronger
+quantitative critical-line targets that remain open.  The classical theorem is
+now proved by `HardyTheorem.hardy_zeros_unbounded_target_proved`; the mere fact
+that its statement is still represented by a `def ... : Prop` does not make it
+an unresolved target.
+
+## Completed Route
+
+The proof uses the first Dirichlet approximation rather than the older signed
+weighted-moment plan:
+
+1. `exists_integral_norm_riemannZeta_critical_line_ge_mul` gives a positive
+   linear lower bound for the dyadic critical-line `L¹` norm of zeta.
+2. `exists_abs_integral_hardyZ_le_rpow_three_quarters` proves
+   `|integral Z| = O(T^(3/4))`.  Its inputs include the exact Gamma unit-phase
+   bridge and a near/far nonstationary-phase split of the finite Dirichlet sum.
+3. `hardyZ_zero_set_not_isBounded` shows that bounded zeros would force Hardy Z
+   to have a constant sign eventually, making the two integrals equal and
+   contradicting the incompatible growth rates.
+4. `hardy_zeros_abs_unbounded_target_proved` and zeta's height symmetry yield
+   `hardy_zeros_unbounded_target_proved`, so critical-line zeros occur at
+   arbitrarily large positive heights.
+5. `hardy_theorem_target_proved` derives the classical infinite-zero statement.
+
+The remaining targets in this chain are stronger or independent statements:
+the signed moment asymptotics, the auxiliary AFE and Gamma/theta asymptotics,
+Hardy-Littlewood zero counts, Selberg proportions, and Conrey's percentage
+theorem.
 
 ## Verified Lean Starting Point
 
@@ -25,12 +50,13 @@ infrastructure:
 - `weightedIntegralOf_neg` proves the basic sign relation for negating the
   integrand.
 
-These results are enough for the elementary end of Hardy's argument, but they
-do not supply the analytic asymptotics.
+These results supply the elementary end of Hardy's argument.  The completed
+first-approximation route supplies the analytic bounds without proving the
+separate signed weighted-moment targets below.
 
-## Current Target Audit
+## Legacy Alternative Route
 
-### Final theorem target
+### Final theorem statement
 
 Current Lean target:
 
@@ -39,7 +65,7 @@ def hardy_theorem_target : Prop :=
     {t : ℝ | riemannZeta (0.5 + I * t) = 0}.Infinite
 ```
 
-This statement is mathematically true, but it is weaker than the usual Hardy
+This statement is now proved, but it is weaker than the usual Hardy
 theorem formulation used by the analytic proof.  Hardy proves zeros with
 arbitrarily large positive ordinates, not merely an infinite subset of `ℝ`.
 In a purely topological setting, an infinite zero set could still be bounded.
@@ -61,8 +87,8 @@ def hardy_positive_zeros_unbounded_target : Prop :=
       riemannZeta ((1 / 2 : ℂ) + I * t) = 0
 ```
 
-The existing `hardy_theorem_target` should become a corollary of this stronger
-unbounded target, not the main target.
+The existing `hardy_theorem_target` is a corollary of the proved stronger
+unbounded target.
 
 ### Moment asymptotic target
 
