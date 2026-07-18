@@ -31,6 +31,15 @@ lemma logIncrementDifference_pos {h x : ℝ} (hx : 0 < x) (hh : 0 < h) :
   have hden : 0 < x * (x + h + 1) := by positivity
   exact lt_add_of_pos_right 1 (div_pos hh hden)
 
+lemma logIncrementDifference_le_fraction {h x : ℝ} (hx : 0 < x) (hh : 0 < h) :
+    logIncrementDifference h x ≤ h / (x * (x + h + 1)) := by
+  rw [logIncrementDifference_eq hx hh]
+  have hden : 0 < x * (x + h + 1) := by positivity
+  have harg : 0 < 1 + h / (x * (x + h + 1)) :=
+    add_pos_of_pos_of_nonneg zero_lt_one (div_nonneg hh.le hden.le)
+  have hlog := Real.log_le_sub_one_of_pos harg
+  linarith
+
 /-- The logarithmic increment difference decreases as the base point moves to
 the right. -/
 lemma antitoneOn_logIncrementDifference {h : ℝ} (hh : 0 < h) :
@@ -70,6 +79,17 @@ lemma logarithmicCorrelationPhase_forwardDifference_pos
   rw [logarithmicCorrelationPhase_forwardDifference]
   exact mul_pos ht (logIncrementDifference_pos (Nat.cast_pos.mpr hn) (Nat.cast_pos.mpr hh))
 
+lemma logarithmicCorrelationPhase_forwardDifference_le_fraction
+    {t : ℝ} {h n : ℕ} (ht : 0 ≤ t) (hh : 0 < h) (hn : 0 < n) :
+    logarithmicCorrelationPhase t h (n + 1) -
+        logarithmicCorrelationPhase t h n ≤
+      t * (h : ℝ) / ((n : ℝ) * ((n : ℝ) + h + 1)) := by
+  rw [logarithmicCorrelationPhase_forwardDifference]
+  have hcore := logIncrementDifference_le_fraction
+    (Nat.cast_pos.mpr hn) (Nat.cast_pos.mpr hh)
+  apply (mul_le_mul_of_nonneg_left hcore ht).trans_eq
+  ring
+
 lemma logarithmicCorrelationPhase_forwardDifference_antitone
     {t : ℝ} {h n : ℕ} (ht : 0 ≤ t) (hh : 0 < h) (hn : 0 < n) :
     logarithmicCorrelationPhase t h (n + 2) -
@@ -91,6 +111,26 @@ lemma logarithmicCorrelationPhase_forwardDifference_antitone
         positivity)
       (by norm_cast; omega)
   exact hresult
+
+/-- Every later logarithmic correlation increment is bounded by the increment
+at the start of the block. -/
+lemma logarithmicCorrelationPhase_forwardDifference_le_start
+    {t : ℝ} {h m : ℕ} (k : ℕ) (ht : 0 ≤ t) (hh : 0 < h) (hm : 0 < m) :
+    logarithmicCorrelationPhase t h (m + (k + 1)) -
+        logarithmicCorrelationPhase t h (m + k) ≤
+      logarithmicCorrelationPhase t h (m + 1) -
+        logarithmicCorrelationPhase t h m := by
+  rw [show m + (k + 1) = (m + k) + 1 by omega,
+    logarithmicCorrelationPhase_forwardDifference,
+    logarithmicCorrelationPhase_forwardDifference]
+  apply mul_le_mul_of_nonneg_left _ ht
+  have hanti := antitoneOn_logIncrementDifference (Nat.cast_pos.mpr hh)
+  exact hanti
+    (by simpa only [Set.mem_Ioi] using Nat.cast_pos.mpr hm)
+    (by
+      simp only [Set.mem_Ioi]
+      positivity)
+    (by norm_cast; omega)
 
 /-- Kusmin--Landau applied to a shifted logarithmic correlation phase.  The
 upper-turn hypothesis is the remaining nonresonance condition used when this

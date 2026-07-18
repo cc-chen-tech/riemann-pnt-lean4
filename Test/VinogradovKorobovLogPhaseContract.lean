@@ -11,6 +11,10 @@ example (h : ℝ) (hh : 0 < h) :
     AntitoneOn (logIncrementDifference h) (Set.Ioi 0) :=
   antitoneOn_logIncrementDifference hh
 
+example (h x : ℝ) (hx : 0 < x) (hh : 0 < h) :
+    logIncrementDifference h x ≤ h / (x * (x + h + 1)) :=
+  logIncrementDifference_le_fraction hx hh
+
 example (t : ℝ) (h n : ℕ) :
     logarithmicCorrelationPhase t h (n + 1) -
         logarithmicCorrelationPhase t h n =
@@ -23,11 +27,24 @@ example (t : ℝ) (h n : ℕ) (ht : 0 < t) (hh : 0 < h) (hn : 0 < n) :
   logarithmicCorrelationPhase_forwardDifference_pos ht hh hn
 
 example (t : ℝ) (h n : ℕ) (ht : 0 ≤ t) (hh : 0 < h) (hn : 0 < n) :
+    logarithmicCorrelationPhase t h (n + 1) -
+        logarithmicCorrelationPhase t h n ≤
+      t * (h : ℝ) / ((n : ℝ) * ((n : ℝ) + h + 1)) :=
+  logarithmicCorrelationPhase_forwardDifference_le_fraction ht hh hn
+
+example (t : ℝ) (h n : ℕ) (ht : 0 ≤ t) (hh : 0 < h) (hn : 0 < n) :
     logarithmicCorrelationPhase t h (n + 2) -
         logarithmicCorrelationPhase t h (n + 1) ≤
       logarithmicCorrelationPhase t h (n + 1) -
         logarithmicCorrelationPhase t h n :=
   logarithmicCorrelationPhase_forwardDifference_antitone ht hh hn
+
+example (t : ℝ) (h m k : ℕ) (ht : 0 ≤ t) (hh : 0 < h) (hm : 0 < m) :
+    logarithmicCorrelationPhase t h (m + (k + 1)) -
+        logarithmicCorrelationPhase t h (m + k) ≤
+      logarithmicCorrelationPhase t h (m + 1) -
+        logarithmicCorrelationPhase t h m :=
+  logarithmicCorrelationPhase_forwardDifference_le_start k ht hh hm
 
 example (t : ℝ) (h m N : ℕ) (ht : 0 < t) (hh : 0 < h) (hm : 0 < m)
     (hlt : ∀ k ≤ N,

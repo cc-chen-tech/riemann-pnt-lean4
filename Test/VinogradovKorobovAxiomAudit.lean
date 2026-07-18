@@ -1,5 +1,4 @@
-import ZeroFreeRegion.VinogradovKorobov.LogSum
-import ZeroFreeRegion.VinogradovKorobov.VanDerCorputRange
+import ZeroFreeRegion.VinogradovKorobov.LogVanDerCorput
 
 #print axioms ZeroFreeRegion.VinogradovKorobov.vanDerCorputFundamentalInequality
 #print axioms ZeroFreeRegion.VinogradovKorobov.phaseTerm_mul_conj_shift
@@ -11,3 +10,5 @@ import ZeroFreeRegion.VinogradovKorobov.VanDerCorputRange
 #print axioms ZeroFreeRegion.VinogradovKorobov.logarithmicCorrelation_kusminLandau_endpoint_bound
 #print axioms ZeroFreeRegion.VinogradovKorobov.norm_zetaOscillation_correlationSum_le_endpoint
 #print axioms ZeroFreeRegion.VinogradovKorobov.vanDerCorputRangeInequality
+#print axioms ZeroFreeRegion.VinogradovKorobov.vanDerCorputRangeOfCorrelationBounds
+#print axioms ZeroFreeRegion.VinogradovKorobov.vanDerCorputZetaOscillationWithKusminLandauOfFractionTurn
