@@ -9,6 +9,7 @@ import HardyTheorem.AnalyticSignChange
 import HardyTheorem.ShortIntervalMeanValue
 import HardyTheorem.HardyModelApproximation
 import HardyTheorem.CriticalLineShortDirichlet
+import HardyTheorem.HardyShortSignedMeanSquare
 import MathlibAux.DirichletPolynomialMeanSquare
 
 #print axioms HardyTheorem.abs_hardyZ_eq_norm_riemannZeta
@@ -44,6 +45,8 @@ import MathlibAux.DirichletPolynomialMeanSquare
 #print axioms HardyTheorem.norm_criticalLineShortDirichletCoeff_le_two_div
 #print axioms HardyTheorem.norm_criticalLineShortDirichletCoeff_le_abs_delta
 #print axioms HardyTheorem.integral_normSq_criticalLineShortDirichletPolynomial_le
+#print axioms MathlibAux.integral_normSq_intervalIntegral_exponentialPolynomial_le
+#print axioms HardyTheorem.exists_abs_hardyShortIntegral_sub_hardyFirstModelShortIntegral_le
 #print axioms MathlibAux.norm_integral_cexp_linear_le
 #print axioms MathlibAux.integral_normSq_exponentialPolynomial_le
 #print axioms HardyTheorem.norm_integral_inv_nat_cpow_criticalLine_le

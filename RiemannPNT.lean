@@ -7,6 +7,7 @@ import HardyTheorem.AnalyticSignChange
 import HardyTheorem.ShortIntervalMeanValue
 import HardyTheorem.HardyModelApproximation
 import HardyTheorem.CriticalLineShortDirichlet
+import HardyTheorem.HardyShortSignedMeanSquare
 import EulerAndLfunctions
 import PrimeNumberTheorem
 import PrimeNumberTheorem.Perron
