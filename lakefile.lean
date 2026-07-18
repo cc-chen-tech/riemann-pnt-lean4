@@ -35,6 +35,8 @@ lean_lib RiemannPNT where
     `PrimeNumberTheorem.SafeSecondOrderExplicitFormula,
     `PrimeNumberTheorem.SmoothedErrorTransfer,
     `PrimeNumberTheorem.VonMangoldtLSeriesNorm,
+    `Test.ZeroForcedOscillationContract,
+    `Test.ZeroForcedOscillationAxiomAudit,
     `PrimeNumberTheorem.RightHorizontalEdge,
     `PrimeNumberTheorem.ExplicitFormulaAux,
     `PrimeNumberTheorem.LFunction.CompletedContourData,

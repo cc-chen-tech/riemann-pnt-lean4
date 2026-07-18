@@ -1,0 +1,4 @@
+import PrimeNumberTheorem.ZeroForcedOscillation
+
+#print axioms PrimeNumberTheorem.ZeroForcedOscillation.intervalIntegral_offDiagonal_eq
+#print axioms PrimeNumberTheorem.ZeroForcedOscillation.norm_intervalIntegral_offDiagonal_le
