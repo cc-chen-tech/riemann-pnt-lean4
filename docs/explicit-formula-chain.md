@@ -612,8 +612,9 @@ For the principal value final formula:
 4. The final target is already aligned with analytic multiplicities.  The old
    unweighted approximation remains explicitly named legacy infrastructure.
 
-For a PNT proof, the truncated formula plus a zero-free region and boundary
-estimates may be more useful than the full principal-value exact formula.
+The ordinary PNT proof now uses the truncated formula together with the
+zero-free region and moving-height boundary estimates; the full
+principal-value exact formula remains useful as a separate canonical result.
 
 The finite-zero increment layer now has a matching symmetry API.  The public
 theorems `RiemannPNT.API.one_sub_mem_nontrivialZerosFinset_sdiff`,

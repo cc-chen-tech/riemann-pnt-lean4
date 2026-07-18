@@ -65,30 +65,6 @@
     ],
     "PrimeNumberTheorem": [
       {
-        "name": "PNTForm1",
-        "qualified_name": "PrimeNumberTheorem.PNTForm1",
-        "file": "PrimeNumberTheorem.lean",
-        "line": 89,
-        "shape": "Tendsto (fun x => (primeCounting x:ℝ)*log x / x) atTop (𝓝 1)",
-        "depends_on": []
-      },
-      {
-        "name": "PNTForm2",
-        "qualified_name": "PrimeNumberTheorem.PNTForm2",
-        "file": "PrimeNumberTheorem.lean",
-        "line": 93,
-        "shape": "Tendsto (fun x => (primeCounting x:ℝ)/logIntegral x) atTop (𝓝 1)",
-        "depends_on": []
-      },
-      {
-        "name": "PNTForm3",
-        "qualified_name": "PrimeNumberTheorem.PNTForm3",
-        "file": "PrimeNumberTheorem.lean",
-        "line": 116,
-        "shape": "Tendsto (fun x => chebyshevPsi x / x) atTop (𝓝 1)",
-        "depends_on": []
-      },
-      {
         "name": "RH_PsiErrorBound",
         "qualified_name": "PrimeNumberTheorem.RH_PsiErrorBound",
         "file": "PrimeNumberTheorem.lean",
@@ -220,6 +196,27 @@
       "line": 137
     },
     {
+      "name": "PNTForm1",
+      "qualified_name": "PrimeNumberTheorem.PNTForm1",
+      "file": "PrimeNumberTheorem.lean",
+      "line": 89,
+      "proved_by": "PrimeNumberTheorem.PNTForm1_proved"
+    },
+    {
+      "name": "PNTForm2",
+      "qualified_name": "PrimeNumberTheorem.PNTForm2",
+      "file": "PrimeNumberTheorem.lean",
+      "line": 93,
+      "proved_by": "PrimeNumberTheorem.PNTForm2_proved"
+    },
+    {
+      "name": "PNTForm3",
+      "qualified_name": "PrimeNumberTheorem.PNTForm3",
+      "file": "PrimeNumberTheorem.lean",
+      "line": 116,
+      "proved_by": "PrimeNumberTheorem.PNTForm3_proved"
+    },
+    {
       "name": "rh_iff_optimal_error",
       "qualified_name": "PrimeNumberTheorem.rh_iff_optimal_error",
       "file": "PrimeNumberTheorem.lean",
@@ -262,13 +259,13 @@
     {
       "name": "Explicit formula",
       "target": "ExplicitFormulaTruncatedTarget",
-      "status": "proved for every real height T >= 2; the polynomial-height natural-sample form also supplies the forward RH-to-psi implication",
-      "next_step": "develop stronger reusable uniform real-x finite-height forms only when required by another endpoint"
+      "status": "proved for every real height T >= 2; a subpolynomial height T(m) = exp(a sqrt(log m)) closes ordinary PNT and the de la Vallee Poussin-form psi and pi-Li remainders, while the separate polynomial-height natural-sample form supplies the forward RH-to-psi implication",
+      "next_step": "pursue genuinely stronger power-saving or numerically explicit inputs rather than another endpoint wrapper"
     },
     {
       "name": "RH error equivalence",
       "target": "rh_iff_optimal_error",
-      "status": "proved in Lean in both directions; neither RH nor the equivalent error predicate is proved unconditionally",
+      "status": "ordinary PNT is proved; the RH-scale equivalence is proved in both directions, but neither RH nor its equivalent error predicate is proved unconditionally",
       "next_step": "no remaining implication gap; retain the individual RH-scale predicates as conditional theorem interfaces"
     },
     {
@@ -293,19 +290,16 @@
       "vinogradov_korobov_zero_free_region"
     ],
     "RH error equivalence": [
-      "PNTForm1",
-      "PNTForm2",
-      "PNTForm3",
       "RH_PsiErrorBound",
       "RH_ThetaErrorBound",
       "RH_PrimeCountingLiErrorBound",
       "RH_ErrorBound"
     ]
   },
-  "mathematical_target_count": 16,
+  "mathematical_target_count": 13,
   "route_interface_count": 5,
   "route_interface_true_body_count": 0,
-  "reusable_predicate_count": 10,
+  "reusable_predicate_count": 13,
   "unclassified_prop_def_count": 0,
   "all_scanned_prop_defs_count": 31
 }

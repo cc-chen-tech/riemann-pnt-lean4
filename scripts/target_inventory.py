@@ -33,9 +33,6 @@ TRUE_BODY_RE = re.compile(r":=\s*True\b")
 
 MATH_TARGETS = {
     "vinogradov_korobov_zero_free_region": "Quantitative zero-free region",
-    "PrimeNumberTheorem.PNTForm1": "RH error equivalence",
-    "PrimeNumberTheorem.PNTForm2": "RH error equivalence",
-    "PrimeNumberTheorem.PNTForm3": "RH error equivalence",
     "PrimeNumberTheorem.RH_PsiErrorBound": "RH error equivalence",
     "PrimeNumberTheorem.RH_ThetaErrorBound": "RH error equivalence",
     "PrimeNumberTheorem.RH_PrimeCountingLiErrorBound": "RH error equivalence",
@@ -64,6 +61,9 @@ REUSABLE_PREDICATES = {
     "HardyTheorem.hardy_theorem_target",
     "HardyTheorem.hardy_zeros_unbounded_target",
     "HardyTheorem.hardy_zeros_abs_unbounded_target",
+    "PrimeNumberTheorem.PNTForm1",
+    "PrimeNumberTheorem.PNTForm2",
+    "PrimeNumberTheorem.PNTForm3",
     "PrimeNumberTheorem.ExplicitFormulaAux.goodHeight",
     "PrimeNumberTheorem.ExplicitFormulaConversePowerTarget",
     "PrimeNumberTheorem.explicit_formula_von_mangoldt",
