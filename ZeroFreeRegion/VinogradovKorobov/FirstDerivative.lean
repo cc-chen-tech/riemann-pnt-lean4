@@ -157,4 +157,62 @@ theorem kusminLandau_endpoint_bound_antitone (f : ℕ → ℝ) (N : ℕ)
   rw [hvariation] at hbound
   simpa using hbound
 
+/-- Uniform antitone Kusmin--Landau bound when every phase increment stays at
+least `delta` away from the resonant endpoints `0` and `2π`. -/
+theorem kusminLandau_antitone_two_pi_div (f : ℕ → ℝ) (N : ℕ)
+    {delta : ℝ} (hdelta : 0 < delta)
+    (hlower : ∀ k ≤ N, delta ≤ f (k + 1) - f k)
+    (hupper : ∀ k ≤ N, f (k + 1) - f k ≤ 2 * Real.pi - delta)
+    (hanti : ∀ k < N,
+      f (k + 2) - f (k + 1) ≤ f (k + 1) - f k) :
+    ‖∑ k ∈ Finset.range (N + 1), phaseTerm f k‖ ≤
+      2 * Real.pi / delta := by
+  have hpos : ∀ k ≤ N, 0 < f (k + 1) - f k := fun k hk ↦
+    hdelta.trans_le (hlower k hk)
+  have hlt : ∀ k ≤ N, f (k + 1) - f k < 2 * Real.pi := fun k hk ↦
+    (hupper k hk).trans_lt (by linarith)
+  have hprefix : ∀ M, M ≤ N →
+      f (M + 1) - f M ≤ f 1 - f 0 := by
+    intro M
+    induction M with
+    | zero => intro _; exact le_rfl
+    | succ M ih =>
+        intro hMN
+        exact (hanti M (Nat.lt_of_succ_le hMN)).trans
+          (ih (Nat.le_trans (Nat.le_succ M) hMN))
+  have hends : f (N + 1) - f N ≤ f 1 - f 0 := hprefix N le_rfl
+  have hfirst := norm_reciprocal_chord_inv_le hdelta
+    (hlower 0 (Nat.zero_le N)) (hupper 0 (Nat.zero_le N))
+  have hfirst' :
+      ‖(Complex.exp (Complex.I * ((f 1 - f 0 : ℝ) : ℂ)) - 1)⁻¹‖ ≤
+        Real.pi / (2 * delta) := by
+    simpa using hfirst
+  have hlast := norm_reciprocal_chord_inv_le hdelta
+    (hlower N le_rfl) (hupper N le_rfl)
+  have hvariation :
+      (Real.cot ((f (N + 1) - f N) / 2) -
+          Real.cot ((f 1 - f 0) / 2)) / 2 ≤
+        ‖(Complex.exp (Complex.I * ((f 1 - f 0 : ℝ) : ℂ)) - 1)⁻¹‖ +
+        ‖(Complex.exp (Complex.I * ((f (N + 1) - f N : ℝ) : ℂ)) - 1)⁻¹‖ := by
+    rw [← norm_reciprocal_exp_sub_one_sub_eq_of_ge
+      (hpos N le_rfl) (hlt 0 (Nat.zero_le N)) hends]
+    exact norm_sub_le _ _
+  calc
+    ‖∑ k ∈ Finset.range (N + 1), phaseTerm f k‖ ≤
+        ‖(Complex.exp (Complex.I * ((f 1 - f 0 : ℝ) : ℂ)) - 1)⁻¹‖ +
+        ‖(Complex.exp (Complex.I * ((f (N + 1) - f N : ℝ) : ℂ)) - 1)⁻¹‖ +
+        (Real.cot ((f (N + 1) - f N) / 2) -
+          Real.cot ((f 1 - f 0) / 2)) / 2 :=
+      kusminLandau_endpoint_bound_antitone f N hpos hlt hanti
+    _ ≤
+        (‖(Complex.exp (Complex.I * ((f 1 - f 0 : ℝ) : ℂ)) - 1)⁻¹‖ +
+          ‖(Complex.exp (Complex.I * ((f (N + 1) - f N : ℝ) : ℂ)) - 1)⁻¹‖) +
+        (‖(Complex.exp (Complex.I * ((f 1 - f 0 : ℝ) : ℂ)) - 1)⁻¹‖ +
+          ‖(Complex.exp (Complex.I * ((f (N + 1) - f N : ℝ) : ℂ)) - 1)⁻¹‖) :=
+      add_le_add le_rfl hvariation
+    _ ≤ (Real.pi / (2 * delta) + Real.pi / (2 * delta)) +
+        (Real.pi / (2 * delta) + Real.pi / (2 * delta)) :=
+      add_le_add (add_le_add hfirst' hlast) (add_le_add hfirst' hlast)
+    _ = 2 * Real.pi / delta := by field_simp; ring
+
 end ZeroFreeRegion.VinogradovKorobov

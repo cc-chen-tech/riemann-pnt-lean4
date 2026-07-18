@@ -114,4 +114,38 @@ theorem vanDerCorputZetaOscillationWithKusminLandauOfFractionTurn
   exact (logarithmicCorrelationPhase_forwardDifference_le_fraction
     ht.le hell.1 hm).trans_lt (hfrac ell (by simpa using hell))
 
+/-- Van der Corput with every logarithmic autocorrelation replaced by the
+explicit `1 / ell` Kusmin--Landau estimate. -/
+theorem vanDerCorputZetaOscillationExplicit
+    (t : ℝ) (m N L : ℕ) (ht : 0 < t) (hm : 0 < m)
+    (hL : 1 ≤ L) (hLN : L ≤ N)
+    (hmargin : ∀ ell ∈ Finset.Icc 1 (L - 1),
+      t * (ell : ℝ) / ((m : ℝ) * ((m : ℝ) + ell + 1)) +
+        t * (ell : ℝ) /
+          (((m + (N - ell - 1) : ℕ) : ℝ) *
+              (((m + (N - ell - 1) : ℕ) : ℝ) + ell + 1) + ell) ≤
+        2 * Real.pi) :
+    (L : ℝ) ^ 2 *
+        ‖∑ n ∈ Finset.range N, zetaOscillation t (m + n)‖ ^ 2 ≤
+      (L : ℝ) * ((N : ℝ) + ((L : ℝ) - 1)) * N
+      + 2 * ((N : ℝ) + ((L : ℝ) - 1)) *
+        ∑ ell ∈ Finset.Icc 1 (L - 1),
+          ((L : ℝ) - (ell : ℝ)) *
+            (2 * Real.pi *
+                (((m + (N - ell - 1) : ℕ) : ℝ) *
+                    (((m + (N - ell - 1) : ℕ) : ℝ) + ell + 1) + ell) /
+              (t * (ell : ℝ))) := by
+  apply vanDerCorputZetaOscillationOfCorrelationBounds t m
+    (fun ell ↦ 2 * Real.pi *
+      (((m + (N - ell - 1) : ℕ) : ℝ) *
+          (((m + (N - ell - 1) : ℕ) : ℝ) + ell + 1) + ell) /
+        (t * (ell : ℝ))) N L hL hLN
+  intro ell hell
+  rw [Finset.mem_Icc] at hell
+  have hNell : 0 < N - ell := by omega
+  have hlength : N - ell = (N - ell - 1) + 1 := by omega
+  rw [hlength]
+  exact norm_zetaOscillation_correlationSum_le_explicit
+    t ell m (N - ell - 1) ht hell.1 hm (hmargin ell (by simpa using hell))
+
 end ZeroFreeRegion.VinogradovKorobov

@@ -19,6 +19,12 @@ example {x y : ℝ} (hx : 0 < x) (hy : y < 2 * Real.pi) (hxy : x ≤ y) :
       (Real.cot (x / 2) - Real.cot (y / 2)) / 2 :=
   norm_reciprocal_exp_sub_one_sub_eq hx hy hxy
 
+example {delta x : ℝ} (hdelta : 0 < delta) (hlower : delta ≤ x)
+    (hupper : x ≤ 2 * Real.pi - delta) :
+    ‖(Complex.exp (Complex.I * (x : ℂ)) - 1)⁻¹‖ ≤
+      Real.pi / (2 * delta) :=
+  norm_reciprocal_chord_inv_le hdelta hlower hupper
+
 example (theta : ℕ → ℝ) (N : ℕ)
     (hpos : ∀ k ≤ N, 0 < theta k)
     (hlt : ∀ k ≤ N, theta k < 2 * Real.pi)
@@ -96,5 +102,14 @@ example (f : ℕ → ℝ) (N : ℕ)
       (Real.cot ((f (N + 1) - f N) / 2) -
         Real.cot ((f 1 - f 0) / 2)) / 2 :=
   kusminLandau_endpoint_bound_antitone f N hpos hlt hanti
+
+example (f : ℕ → ℝ) (N : ℕ) {delta : ℝ} (hdelta : 0 < delta)
+    (hlower : ∀ k ≤ N, delta ≤ f (k + 1) - f k)
+    (hupper : ∀ k ≤ N, f (k + 1) - f k ≤ 2 * Real.pi - delta)
+    (hanti : ∀ k < N,
+      f (k + 2) - f (k + 1) ≤ f (k + 1) - f k) :
+    ‖∑ k ∈ Finset.range (N + 1), phaseTerm f k‖ ≤
+      2 * Real.pi / delta :=
+  kusminLandau_antitone_two_pi_div f N hdelta hlower hupper hanti
 
 end ZeroFreeRegion.VinogradovKorobov

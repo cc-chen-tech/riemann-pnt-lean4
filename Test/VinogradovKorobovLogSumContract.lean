@@ -39,4 +39,18 @@ example (t : ℝ) (h m N : ℕ) (ht : 0 < t) (hh : 0 < h) (hm : 0 < m)
           logarithmicCorrelationPhase t h m) / 2)) / 2 :=
   norm_zetaOscillation_correlationSum_le_endpoint t h m N ht hh hm hlt
 
+example (t : ℝ) (h m N : ℕ) (ht : 0 < t) (hh : 0 < h) (hm : 0 < m)
+    (hmargin :
+      t * (h : ℝ) / ((m : ℝ) * ((m : ℝ) + h + 1)) +
+        t * (h : ℝ) /
+          (((m + N : ℕ) : ℝ) * (((m + N : ℕ) : ℝ) + h + 1) + h) ≤
+        2 * Real.pi) :
+    ‖∑ k ∈ Finset.range (N + 1),
+        zetaOscillation t (m + k) *
+          (starRingEnd ℂ) (zetaOscillation t (m + k + h))‖ ≤
+      2 * Real.pi *
+          (((m + N : ℕ) : ℝ) * (((m + N : ℕ) : ℝ) + h + 1) + h) /
+        (t * (h : ℝ)) :=
+  norm_zetaOscillation_correlationSum_le_explicit t h m N ht hh hm hmargin
+
 end ZeroFreeRegion.VinogradovKorobov

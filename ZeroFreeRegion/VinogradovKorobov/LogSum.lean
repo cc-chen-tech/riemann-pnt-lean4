@@ -78,4 +78,22 @@ theorem norm_zetaOscillation_correlationSum_le_endpoint
   rw [norm_zetaOscillation_correlationSum_eq]
   exact logarithmicCorrelation_kusminLandau_endpoint_bound t h m N ht hh hm hlt
 
+/-- Explicit zeta-autocorrelation estimate obtained from the logarithmic
+Kusmin--Landau bound. -/
+theorem norm_zetaOscillation_correlationSum_le_explicit
+    (t : ℝ) (h m N : ℕ) (ht : 0 < t) (hh : 0 < h) (hm : 0 < m)
+    (hmargin :
+      t * (h : ℝ) / ((m : ℝ) * ((m : ℝ) + h + 1)) +
+        t * (h : ℝ) /
+          (((m + N : ℕ) : ℝ) * (((m + N : ℕ) : ℝ) + h + 1) + h) ≤
+        2 * Real.pi) :
+    ‖∑ k ∈ Finset.range (N + 1),
+        zetaOscillation t (m + k) *
+          (starRingEnd ℂ) (zetaOscillation t (m + k + h))‖ ≤
+      2 * Real.pi *
+          (((m + N : ℕ) : ℝ) * (((m + N : ℕ) : ℝ) + h + 1) + h) /
+        (t * (h : ℝ)) := by
+  rw [norm_zetaOscillation_correlationSum_eq]
+  exact logarithmicCorrelation_kusminLandau_explicit t h m N ht hh hm hmargin
+
 end ZeroFreeRegion.VinogradovKorobov

@@ -30,6 +30,57 @@ lemma reciprocal_exp_sub_one_eq (x : ℝ) (hx : Real.sin (x / 2) ≠ 0) :
   · field_simp
     ring
 
+/-- A reciprocal chord is uniformly bounded when its angle stays `delta`
+away from both endpoints of one full turn. -/
+lemma norm_reciprocal_chord_inv_le {delta x : ℝ} (hdelta : 0 < delta)
+    (hlower : delta ≤ x) (hupper : x ≤ 2 * Real.pi - delta) :
+    ‖(Complex.exp (Complex.I * (x : ℂ)) - 1)⁻¹‖ ≤
+      Real.pi / (2 * delta) := by
+  have hdelta_pi : delta ≤ Real.pi := by linarith
+  have hxpos : 0 < x := hdelta.trans_le hlower
+  have hxtwo : x < 2 * Real.pi := by linarith
+  have hsin_lower : delta / Real.pi ≤ Real.sin (x / 2) := by
+    rcases le_total x Real.pi with hxpi | hpix
+    · have hjordan : x / Real.pi ≤ Real.sin (x / 2) := by
+        calc
+          x / Real.pi = 2 / Real.pi * (x / 2) := by field_simp
+          _ ≤ Real.sin (x / 2) :=
+            Real.mul_le_sin (x := x / 2) (by positivity) (by linarith)
+      exact (div_le_div_of_nonneg_right hlower Real.pi_pos.le).trans hjordan
+    · have hypos : 0 ≤ (2 * Real.pi - x) / 2 := by linarith
+      have hypi : (2 * Real.pi - x) / 2 ≤ Real.pi / 2 := by linarith
+      have hjordan : (2 * Real.pi - x) / Real.pi ≤
+          Real.sin ((2 * Real.pi - x) / 2) := by
+        calc
+          (2 * Real.pi - x) / Real.pi =
+              2 / Real.pi * ((2 * Real.pi - x) / 2) := by field_simp
+          _ ≤ Real.sin ((2 * Real.pi - x) / 2) :=
+            Real.mul_le_sin (x := (2 * Real.pi - x) / 2) hypos hypi
+      have hlower' : delta ≤ 2 * Real.pi - x := by linarith
+      calc
+        delta / Real.pi ≤ (2 * Real.pi - x) / Real.pi :=
+          div_le_div_of_nonneg_right hlower' Real.pi_pos.le
+        _ ≤ Real.sin ((2 * Real.pi - x) / 2) := hjordan
+        _ = Real.sin (x / 2) := by
+          rw [show (2 * Real.pi - x) / 2 = Real.pi - x / 2 by ring,
+            Real.sin_pi_sub]
+  have hsinpos : 0 < Real.sin (x / 2) :=
+    (div_pos hdelta Real.pi_pos).trans_le hsin_lower
+  have hchord : 2 * delta / Real.pi ≤ ‖(2 : ℝ) * Real.sin (x / 2)‖ := by
+    rw [Real.norm_eq_abs, abs_of_pos (mul_pos (by norm_num) hsinpos)]
+    calc
+      2 * delta / Real.pi = 2 * (delta / Real.pi) := by ring
+      _ ≤ 2 * Real.sin (x / 2) :=
+        mul_le_mul_of_nonneg_left hsin_lower (by norm_num)
+  have hbasepos : 0 < 2 * delta / Real.pi := by positivity
+  have hnormpos : 0 < ‖(2 : ℝ) * Real.sin (x / 2)‖ :=
+    norm_pos_iff.mpr (mul_ne_zero (by norm_num) hsinpos.ne')
+  rw [norm_inv, Complex.norm_exp_I_mul_ofReal_sub_one]
+  calc
+    ‖(2 : ℝ) * Real.sin (x / 2)‖⁻¹ ≤ (2 * delta / Real.pi)⁻¹ :=
+      (inv_le_inv₀ hnormpos hbasepos).2 hchord
+    _ = Real.pi / (2 * delta) := by field_simp
+
 private lemma hasDerivAt_cot (x : ℝ) (hx : Real.sin x ≠ 0) :
     HasDerivAt Real.cot (-(Real.sin x) ^ (-2 : ℤ)) x := by
   rw [show Real.cot = fun y ↦ Real.cos y / Real.sin y by
