@@ -59,3 +59,5 @@ import RiemannPNT
 #print axioms RiemannPNT.API.riemannHypothesis_iff_RH_PsiErrorBound
 #print axioms HardyTheorem.norm_integral_inv_nat_cpow_criticalLine_le
 #print axioms HardyTheorem.norm_integral_criticalLineDirichletTail_le
+#print axioms HardyTheorem.norm_integral_criticalLineDirichletTail_cutoff_le
+#print axioms HardyTheorem.norm_integral_criticalLineDirichletTail_cutoff_isLittleO

@@ -63,6 +63,8 @@ EXPECTED_DECLARATIONS = {
     "RiemannPNT.API.riemannHypothesis_iff_RH_PsiErrorBound",
     "HardyTheorem.norm_integral_inv_nat_cpow_criticalLine_le",
     "HardyTheorem.norm_integral_criticalLineDirichletTail_le",
+    "HardyTheorem.norm_integral_criticalLineDirichletTail_cutoff_le",
+    "HardyTheorem.norm_integral_criticalLineDirichletTail_cutoff_isLittleO",
 }
 
 REPORT_RE = re.compile(

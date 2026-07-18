@@ -11,3 +11,5 @@ import HardyTheorem.FirstZetaApproximation
 #print axioms HardyTheorem.OscillatoryIntegral.norm_integral_cexp_hardyPhase_le
 #print axioms HardyTheorem.norm_integral_inv_nat_cpow_criticalLine_le
 #print axioms HardyTheorem.norm_integral_criticalLineDirichletTail_le
+#print axioms HardyTheorem.norm_integral_criticalLineDirichletTail_cutoff_le
+#print axioms HardyTheorem.norm_integral_criticalLineDirichletTail_cutoff_isLittleO

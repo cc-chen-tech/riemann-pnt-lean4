@@ -1,8 +1,10 @@
 import HardyTheorem.OscillatoryIntegral
+import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 import Mathlib.NumberTheory.Harmonic.Bounds
 
 open Complex Set
+open Filter Asymptotics
 
 namespace HardyTheorem
 
@@ -174,5 +176,83 @@ theorem norm_integral_criticalLineDirichletTail_le
     _ ≤ (2 / Real.log 2) *
         (Real.sqrt N * Real.sqrt (harmonic N : ℝ)) :=
       mul_le_mul_of_nonneg_left (sum_inv_sqrt_Icc_two_le N) (by positivity)
+
+/-- The natural Dirichlet-polynomial cutoff for the first Hardy approximation
+on the dyadic interval `[T, 2T]`. -/
+noncomputable def firstZetaApproximationCutoff (T : ℝ) : ℕ :=
+  ⌊4 * T⌋₊
+
+/-- At the Hardy cutoff, the integrated nonconstant Dirichlet polynomial is
+controlled by a square-root times logarithmic square-root majorant. -/
+theorem norm_integral_criticalLineDirichletTail_cutoff_le
+    {T : ℝ} (hT : 1 ≤ T) :
+    ‖∫ t in T..2 * T, ∑ n ∈ Finset.Icc 2 (firstZetaApproximationCutoff T),
+        1 / (n : ℂ) ^ ((1 / 2 : ℂ) + I * t)‖ ≤
+      (2 / Real.log 2) *
+        (Real.sqrt (4 * T) * Real.sqrt (1 + Real.log (4 * T))) := by
+  have h4T : 1 ≤ 4 * T := by linarith
+  have hfloor : (firstZetaApproximationCutoff T : ℝ) ≤ 4 * T := by
+    exact Nat.floor_le (by positivity)
+  have hharmonic :
+      (harmonic (firstZetaApproximationCutoff T) : ℝ) ≤
+        1 + Real.log (4 * T) := by
+    exact harmonic_floor_le_one_add_log (4 * T) h4T
+  refine norm_integral_criticalLineDirichletTail_le.trans ?_
+  exact mul_le_mul_of_nonneg_left
+    (mul_le_mul (Real.sqrt_le_sqrt hfloor) (Real.sqrt_le_sqrt hharmonic)
+      (Real.sqrt_nonneg _) (Real.sqrt_nonneg _)) (by positivity)
+
+/-- The integrated nonconstant Dirichlet polynomial at the Hardy cutoff is
+`o(T)` on dyadic intervals.  This is the cancellation input needed in the
+lower-bound half of Hardy's contradiction argument. -/
+theorem norm_integral_criticalLineDirichletTail_cutoff_isLittleO :
+    (fun T : ℝ =>
+      ‖∫ t in T..2 * T,
+        ∑ n ∈ Finset.Icc 2 (firstZetaApproximationCutoff T),
+          1 / (n : ℂ) ^ ((1 / 2 : ℂ) + I * t)‖) =o[atTop]
+      (fun T : ℝ => T) := by
+  have hlog : Real.log =o[atTop] (fun T : ℝ => T) := by
+    simpa only [Real.rpow_one] using
+      (isLittleO_log_rpow_atTop (r := (1 : ℝ)) one_pos)
+  have hlogFour :
+      (fun T : ℝ => Real.log (4 * T)) =o[atTop] (fun T : ℝ => T) := by
+    have hadd := (isLittleO_const_id_atTop (Real.log 4)).add hlog
+    refine hadd.congr' ?_ EventuallyEq.rfl
+    filter_upwards [eventually_gt_atTop (0 : ℝ)] with T hT
+    rw [Real.log_mul (by norm_num : (4 : ℝ) ≠ 0) hT.ne']
+  have honeAddLog :
+      (fun T : ℝ => 1 + Real.log (4 * T)) =o[atTop]
+        (fun T : ℝ => T) :=
+    (isLittleO_const_id_atTop (1 : ℝ)).add hlogFour
+  have hsqrtLog :
+      (fun T : ℝ => Real.sqrt (1 + Real.log (4 * T))) =o[atTop]
+        (fun T : ℝ => Real.sqrt T) :=
+    honeAddLog.sqrt (eventually_ge_atTop (0 : ℝ))
+  have hsqrtFour :
+      (fun T : ℝ => Real.sqrt (4 * T)) =O[atTop]
+        (fun T : ℝ => Real.sqrt T) := by
+    apply IsBigO.of_bound 2
+    filter_upwards [eventually_ge_atTop (0 : ℝ)] with T hT
+    rw [Real.norm_of_nonneg (Real.sqrt_nonneg _),
+      Real.norm_of_nonneg (Real.sqrt_nonneg _), Real.sqrt_mul (by norm_num)]
+    norm_num
+  have hproduct :
+      (fun T : ℝ => Real.sqrt (4 * T) *
+        Real.sqrt (1 + Real.log (4 * T))) =o[atTop]
+        (fun T : ℝ => T) := by
+    refine (hsqrtFour.mul_isLittleO hsqrtLog).congr' EventuallyEq.rfl ?_
+    filter_upwards [eventually_ge_atTop (0 : ℝ)] with T hT
+    exact Real.mul_self_sqrt hT
+  have hmajorant :
+      (fun T : ℝ => (2 / Real.log 2) *
+        (Real.sqrt (4 * T) * Real.sqrt (1 + Real.log (4 * T)))) =o[atTop]
+        (fun T : ℝ => T) :=
+    hproduct.const_mul_left (2 / Real.log 2)
+  refine (IsBigO.of_bound' ?_).trans_isLittleO hmajorant
+  filter_upwards [eventually_ge_atTop (1 : ℝ)] with T hT
+  rw [Real.norm_of_nonneg (norm_nonneg _), Real.norm_of_nonneg (by positivity :
+    0 ≤ (2 / Real.log 2) *
+      (Real.sqrt (4 * T) * Real.sqrt (1 + Real.log (4 * T))))]
+  exact norm_integral_criticalLineDirichletTail_cutoff_le hT
 
 end HardyTheorem
