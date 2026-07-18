@@ -8,7 +8,6 @@ from typing import Dict, Iterable, List, Set
 
 
 ROOT = Path(__file__).resolve().parents[1]
-AUDIT_FILE = ROOT / "Test" / "MultiplicityAxiomAudit.lean"
 
 ALLOWED_AXIOMS = {"propext", "Classical.choice", "Quot.sound"}
 EXPECTED_DECLARATIONS = {
@@ -62,6 +61,8 @@ EXPECTED_DECLARATIONS = {
     "RiemannPNT.API.RH_PsiErrorBound_of_riemannHypothesis",
     "RiemannPNT.API.RH_PrimeCountingLiErrorBound_of_riemannHypothesis",
     "RiemannPNT.API.riemannHypothesis_iff_RH_PsiErrorBound",
+    "HardyTheorem.norm_integral_inv_nat_cpow_criticalLine_le",
+    "HardyTheorem.norm_integral_criticalLineDirichletTail_le",
 }
 
 REPORT_RE = re.compile(
@@ -104,7 +105,7 @@ def validate_axioms(
 
 def main() -> int:
     completed = subprocess.run(
-        ["lake", "env", "lean", str(AUDIT_FILE)],
+        ["lake", "build", "Test.MultiplicityAxiomAudit"],
         cwd=ROOT,
         text=True,
         capture_output=True,

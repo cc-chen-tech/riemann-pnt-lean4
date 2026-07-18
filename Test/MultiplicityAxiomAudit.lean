@@ -4,6 +4,7 @@ import PrimeNumberTheorem.GlobalZeroCount
 import PrimeNumberTheorem.QuantitativeGoodHeight
 import PrimeNumberTheorem.RHNaturalPsiError
 import PrimeNumberTheorem.RHPrimeCountingConverse
+import HardyTheorem.FirstZetaApproximation
 import RiemannPNT
 
 #print axioms PrimeNumberTheorem.analyticOrderNatAt_riemannZeta_one_sub_of_nontrivialZero
@@ -56,3 +57,5 @@ import RiemannPNT
 #print axioms RiemannPNT.API.RH_PsiErrorBound_of_riemannHypothesis
 #print axioms RiemannPNT.API.RH_PrimeCountingLiErrorBound_of_riemannHypothesis
 #print axioms RiemannPNT.API.riemannHypothesis_iff_RH_PsiErrorBound
+#print axioms HardyTheorem.norm_integral_inv_nat_cpow_criticalLine_le
+#print axioms HardyTheorem.norm_integral_criticalLineDirichletTail_le
