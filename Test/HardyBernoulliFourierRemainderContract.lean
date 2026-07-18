@@ -17,3 +17,20 @@ example : ∃ C : ℝ, 0 ≤ C ∧ ∀ {a b sigma t : ℝ},
           (x : ℂ) ^ (-(((sigma : ℂ) + I * t) + 2))‖ ≤
         C * a ^ (-(sigma + 2)) :=
   HardyTheorem.exists_norm_intervalIntegral_periodizedBernoulli_two_cpow_le
+
+example : ∃ C : ℝ, 0 ≤ C ∧ ∀ {a sigma t : ℝ},
+    0 < a → 1 < sigma + 2 → |t| ≤ a →
+      ‖∫ x in Set.Ioi a,
+        ((periodizedBernoulli 2 (x : AddCircle (1 : ℝ)) : ℝ) : ℂ) *
+          (x : ℂ) ^ (-(((sigma : ℂ) + I * t) + 2))‖ ≤
+        C * a ^ (-(sigma + 2)) :=
+  HardyTheorem.exists_norm_integral_Ioi_periodizedBernoulli_two_cpow_le
+
+example : ∃ C : ℝ, 0 ≤ C ∧ ∀ {s : ℂ} {N : ℕ},
+    (1 / 4 : ℝ) ≤ s.re → s.re ≤ 2 → 1 ≤ N →
+      |s.im| ≤ (N : ℝ) →
+        ‖s * ∫ x in Set.Ioi (N : ℝ),
+          ((((⌊x⌋₊ : ℝ) - x : ℝ) : ℂ) *
+            (x : ℂ) ^ (-(s + 1)))‖ ≤
+          C * (N : ℝ) ^ (-s.re) :=
+  HardyTheorem.exists_norm_mul_integral_Ioi_floorError_cpow_le

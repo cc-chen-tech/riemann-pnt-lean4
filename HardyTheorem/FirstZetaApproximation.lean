@@ -555,6 +555,548 @@ theorem exists_norm_intervalIntegral_periodizedBernoulli_two_cpow_le :
   rw [heq]
   exact hbound hab ha hsigma ht
 
+private lemma norm_periodizedBernoulli_two_le_tsum_norm_coeff (x : ℝ) :
+    ‖((periodizedBernoulli 2 (x : AddCircle (1 : ℝ)) : ℝ) : ℂ)‖ ≤
+      ∑' k : ℤ, ‖bernoulliTwoFourierCoeff k‖ := by
+  apply (hasSum_bernoulliTwoFourier x).norm_le_of_bounded
+    summable_bernoulliTwoFourierCoeff.norm.hasSum
+  intro k
+  rw [norm_mul, fourier_apply, Circle.norm_coe, mul_one]
+
+private lemma integrableOn_Ioi_periodizedBernoulli_two_cpow
+    {a sigma t : ℝ} (ha : 0 < a) (hsigma : 1 < sigma + 2) :
+    IntegrableOn
+      (fun x : ℝ =>
+        ((periodizedBernoulli 2 (x : AddCircle (1 : ℝ)) : ℝ) : ℂ) *
+          (x : ℂ) ^ (-(((sigma : ℂ) + I * t) + 2)))
+      (Set.Ioi a) := by
+  let A : ℝ := ∑' k : ℤ, ‖bernoulliTwoFourierCoeff k‖
+  let P : ℝ → ℂ := fun x =>
+    (x : ℂ) ^ (-(((sigma : ℂ) + I * t) + 2))
+  let F : ℝ → ℂ := fun x =>
+    ((periodizedBernoulli 2 (x : AddCircle (1 : ℝ)) : ℝ) : ℂ) * P x
+  have hP : IntegrableOn P (Set.Ioi a) := by
+    change IntegrableOn
+      (fun x : ℝ => (x : ℂ) ^ (-(((sigma : ℂ) + I * t) + 2)))
+      (Set.Ioi a)
+    apply integrableOn_Ioi_cpow_of_lt
+    · norm_num [neg_re, add_re, mul_re]
+      linarith
+    · exact ha
+  have hA : 0 ≤ A := tsum_nonneg fun k => norm_nonneg _
+  have hmajorant : IntegrableOn (fun x => A * ‖P x‖) (Set.Ioi a) :=
+    hP.norm.const_mul A
+  have hF_meas : AEStronglyMeasurable F (volume.restrict (Set.Ioi a)) := by
+    apply AEStronglyMeasurable.mul
+    · exact (continuous_ofReal.comp
+        ((periodizedBernoulli.continuous (by norm_num : 2 ≠ 1)).comp
+          continuous_quotient_mk')).aestronglyMeasurable
+    · exact hP.aestronglyMeasurable
+  change Integrable F (volume.restrict (Set.Ioi a))
+  change Integrable (fun x => A * ‖P x‖) (volume.restrict (Set.Ioi a)) at hmajorant
+  apply hmajorant.mono hF_meas
+  filter_upwards with x
+  dsimp only [F]
+  rw [norm_mul, Real.norm_eq_abs,
+    abs_of_nonneg (mul_nonneg hA (norm_nonneg _))]
+  exact mul_le_mul_of_nonneg_right
+    (by simpa only [A] using norm_periodizedBernoulli_two_le_tsum_norm_coeff x)
+    (norm_nonneg _)
+
+/-- The periodic-Bernoulli complex-power estimate remains uniform after the
+upper endpoint tends to infinity. -/
+theorem exists_norm_integral_Ioi_periodizedBernoulli_two_cpow_le :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ {a sigma t : ℝ},
+      0 < a → 1 < sigma + 2 → |t| ≤ a →
+        ‖∫ x in Set.Ioi a,
+          ((periodizedBernoulli 2 (x : AddCircle (1 : ℝ)) : ℝ) : ℂ) *
+            (x : ℂ) ^ (-(((sigma : ℂ) + I * t) + 2))‖ ≤
+          C * a ^ (-(sigma + 2)) := by
+  obtain ⟨C, hC, hfinite⟩ :=
+    exists_norm_intervalIntegral_periodizedBernoulli_two_cpow_le
+  refine ⟨C, hC, ?_⟩
+  intro a sigma t ha hsigma ht
+  let F : ℝ → ℂ := fun x =>
+    ((periodizedBernoulli 2 (x : AddCircle (1 : ℝ)) : ℝ) : ℂ) *
+      (x : ℂ) ^ (-(((sigma : ℂ) + I * t) + 2))
+  have hF : IntegrableOn F (Set.Ioi a) :=
+    integrableOn_Ioi_periodizedBernoulli_two_cpow ha hsigma
+  have hlim : Tendsto (fun b : ℝ => ‖∫ x in a..b, F x‖) atTop
+      (nhds ‖∫ x in Set.Ioi a, F x‖) :=
+    (intervalIntegral_tendsto_integral_Ioi a hF tendsto_id).norm
+  apply le_of_tendsto hlim
+  filter_upwards [eventually_ge_atTop a] with b hb
+  exact hfinite hb ha (by linarith) ht
+
+private lemma integrableOn_Ioi_centeredFloorError_cpow
+    {s : ℂ} (hs : 0 < s.re) {N : ℕ} (hN : 1 ≤ N) :
+    IntegrableOn
+      (fun x : ℝ =>
+        (((((⌊x⌋₊ : ℝ) - x) + 1 / 2 : ℝ) : ℂ) *
+          (x : ℂ) ^ (-(s + 1))))
+      (Set.Ioi (N : ℝ)) := by
+  let P : ℝ → ℂ := fun x => (x : ℂ) ^ (-(s + 1))
+  let F : ℝ → ℂ := fun x =>
+    (((((⌊x⌋₊ : ℝ) - x) + 1 / 2 : ℝ) : ℂ) * P x)
+  have hNpos : 0 < (N : ℝ) := by exact_mod_cast (Nat.zero_lt_of_lt hN)
+  have hP : IntegrableOn P (Set.Ioi (N : ℝ)) := by
+    exact integrableOn_Ioi_cpow_of_lt (by simp; linarith) hNpos
+  have hmajorant :
+      IntegrableOn (fun x => (3 / 2 : ℝ) * ‖P x‖) (Set.Ioi (N : ℝ)) :=
+    hP.norm.const_mul (3 / 2)
+  have hF_meas :
+      AEStronglyMeasurable F (volume.restrict (Set.Ioi (N : ℝ))) := by
+    apply AEStronglyMeasurable.mul
+    · have hfloor : Measurable fun x : ℝ => (⌊x⌋₊ : ℝ) := by fun_prop
+      exact (Complex.measurable_ofReal.comp
+        ((hfloor.sub measurable_id).add measurable_const)).aestronglyMeasurable
+    · exact hP.aestronglyMeasurable
+  change Integrable F (volume.restrict (Set.Ioi (N : ℝ)))
+  change Integrable (fun x => (3 / 2 : ℝ) * ‖P x‖)
+    (volume.restrict (Set.Ioi (N : ℝ))) at hmajorant
+  apply hmajorant.mono hF_meas
+  filter_upwards [ae_restrict_mem measurableSet_Ioi] with x hx
+  have hx0 : 0 ≤ x := hNpos.le.trans hx.le
+  have hfloor := Nat.abs_floor_sub_le hx0
+  have hcenter : |((⌊x⌋₊ : ℝ) - x) + 1 / 2| ≤ 3 / 2 := by
+    calc
+      |((⌊x⌋₊ : ℝ) - x) + 1 / 2| ≤
+          |(⌊x⌋₊ : ℝ) - x| + |(1 / 2 : ℝ)| := abs_add_le _ _
+      _ ≤ 1 + 1 / 2 := by norm_num; linarith
+      _ = 3 / 2 := by norm_num
+  dsimp only [F]
+  rw [norm_mul, norm_real, Real.norm_eq_abs]
+  rw [Real.norm_eq_abs,
+    abs_of_nonneg (mul_nonneg (by norm_num) (norm_nonneg _))]
+  exact mul_le_mul_of_nonneg_right hcenter (norm_nonneg _)
+
+/-- The finite Bernoulli integration-by-parts identity remains exact after the
+upper integer endpoint tends to infinity. -/
+theorem integral_Ioi_centeredFloorError_cpow_eq_bernoulliTwo
+    {s : ℂ} (hs : 0 < s.re) {N : ℕ} (hN : 1 ≤ N) :
+    (∫ x in Set.Ioi (N : ℝ),
+      (((((⌊x⌋₊ : ℝ) - x) + 1 / 2 : ℝ) : ℂ) *
+        (x : ℂ) ^ (-(s + 1)))) =
+      (N : ℂ) ^ (-(s + 1)) / 12 -
+        (s + 1) / 2 *
+          ∫ x in Set.Ioi (N : ℝ),
+            ((periodizedBernoulli 2 (x : AddCircle (1 : ℝ)) : ℝ) : ℂ) *
+              (x : ℂ) ^ (-(s + 2)) := by
+  let f : ℝ → ℂ := fun x =>
+    (((((⌊x⌋₊ : ℝ) - x) + 1 / 2 : ℝ) : ℂ) *
+      (x : ℂ) ^ (-(s + 1)))
+  let g : ℝ → ℂ := fun x =>
+    ((periodizedBernoulli 2 (x : AddCircle (1 : ℝ)) : ℝ) : ℂ) *
+      (x : ℂ) ^ (-(s + 2))
+  have hNpos : 0 < (N : ℝ) := by exact_mod_cast (Nat.zero_lt_of_lt hN)
+  have hf : IntegrableOn f (Set.Ioi (N : ℝ)) := by
+    simpa only [f] using integrableOn_Ioi_centeredFloorError_cpow hs hN
+  have hs_eq : ((s.re : ℂ) + I * s.im) = s := by
+    apply Complex.ext <;> simp
+  have hg : IntegrableOn g (Set.Ioi (N : ℝ)) := by
+    simpa only [g, hs_eq] using
+      (integrableOn_Ioi_periodizedBernoulli_two_cpow
+        (a := (N : ℝ)) (sigma := s.re) (t := s.im) hNpos (by linarith))
+  have hlim_f :
+      Tendsto (fun M : ℕ => ∫ x in (N : ℝ)..(M : ℝ), f x) atTop
+        (nhds (∫ x in Set.Ioi (N : ℝ), f x)) :=
+    intervalIntegral_tendsto_integral_Ioi (N : ℝ) hf
+      tendsto_natCast_atTop_atTop
+  have hlim_g :
+      Tendsto (fun M : ℕ => ∫ x in (N : ℝ)..(M : ℝ), g x) atTop
+        (nhds (∫ x in Set.Ioi (N : ℝ), g x)) :=
+    intervalIntegral_tendsto_integral_Ioi (N : ℝ) hg
+      tendsto_natCast_atTop_atTop
+  have hlim_boundary :
+      Tendsto (fun M : ℕ => (M : ℂ) ^ (-(s + 1))) atTop (nhds 0) := by
+    rw [tendsto_zero_iff_norm_tendsto_zero]
+    have hrpow := (tendsto_rpow_neg_atTop (show 0 < s.re + 1 by linarith)).comp
+      (tendsto_natCast_atTop_atTop :
+        Tendsto (fun M : ℕ => (M : ℝ)) atTop atTop)
+    apply hrpow.congr'
+    filter_upwards [eventually_ge_atTop 1] with M hM
+    have hMpos : 0 < (M : ℝ) := by exact_mod_cast (Nat.zero_lt_of_lt hM)
+    change (M : ℝ) ^ (-(s.re + 1)) =
+      ‖((M : ℝ) : ℂ) ^ (-(s + 1))‖
+    rw [Complex.norm_cpow_eq_rpow_re_of_pos hMpos]
+    simp only [neg_re, add_re, one_re]
+  have hfinite : ∀ᶠ M : ℕ in atTop,
+      (∫ x in (N : ℝ)..(M : ℝ), f x) =
+        ((N : ℂ) ^ (-(s + 1)) - (M : ℂ) ^ (-(s + 1))) / 12 -
+          (s + 1) / 2 * ∫ x in (N : ℝ)..(M : ℝ), g x := by
+    filter_upwards [eventually_ge_atTop N] with M hNM
+    simpa only [f, g] using
+      intervalIntegral_centeredFloorError_cpow_eq_bernoulliTwo hs hN hNM
+  have hlim_rhs : Tendsto
+      (fun M : ℕ =>
+        ((N : ℂ) ^ (-(s + 1)) - (M : ℂ) ^ (-(s + 1))) / 12 -
+          (s + 1) / 2 * ∫ x in (N : ℝ)..(M : ℝ), g x)
+      atTop
+      (nhds ((N : ℂ) ^ (-(s + 1)) / 12 -
+        (s + 1) / 2 * ∫ x in Set.Ioi (N : ℝ), g x)) := by
+    convert ((tendsto_const_nhds.sub hlim_boundary).div_const 12).sub
+      (tendsto_const_nhds.mul hlim_g) using 1
+    all_goals ring_nf
+  change (∫ x in Set.Ioi (N : ℝ), f x) =
+    (N : ℂ) ^ (-(s + 1)) / 12 -
+      (s + 1) / 2 * ∫ x in Set.Ioi (N : ℝ), g x
+  have hfinite' :
+      (fun M : ℕ =>
+        ((N : ℂ) ^ (-(s + 1)) - (M : ℂ) ^ (-(s + 1))) / 12 -
+          (s + 1) / 2 * ∫ x in (N : ℝ)..(M : ℝ), g x) =ᶠ[atTop]
+        (fun M : ℕ => ∫ x in (N : ℝ)..(M : ℝ), f x) :=
+    hfinite.mono fun _M h => h.symm
+  exact tendsto_nhds_unique hlim_f (hlim_rhs.congr' hfinite')
+
+/-- Uniform Abel floor-error estimate in the strip used by Hardy's first zeta
+approximation.  The oscillation in the floor error removes the apparent
+factor `‖s‖` from the elementary absolute-value estimate. -/
+theorem exists_norm_mul_integral_Ioi_floorError_cpow_le :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ {s : ℂ} {N : ℕ},
+      (1 / 4 : ℝ) ≤ s.re → s.re ≤ 2 → 1 ≤ N →
+        |s.im| ≤ (N : ℝ) →
+          ‖s * ∫ x in Set.Ioi (N : ℝ),
+            ((((⌊x⌋₊ : ℝ) - x : ℝ) : ℂ) *
+              (x : ℂ) ^ (-(s + 1)))‖ ≤
+            C * (N : ℝ) ^ (-s.re) := by
+  obtain ⟨B, hB, hBbound⟩ :=
+    exists_norm_integral_Ioi_periodizedBernoulli_two_cpow_le
+  refine ⟨3 / 4 + 6 * B, by positivity, ?_⟩
+  intro s N hs_lower hs_upper hN him
+  let E : ℝ → ℂ := fun x =>
+    ((((⌊x⌋₊ : ℝ) - x : ℝ) : ℂ) * (x : ℂ) ^ (-(s + 1)))
+  let C : ℝ → ℂ := fun x =>
+    (((((⌊x⌋₊ : ℝ) - x) + 1 / 2 : ℝ) : ℂ) *
+      (x : ℂ) ^ (-(s + 1)))
+  let P : ℝ → ℂ := fun x => (x : ℂ) ^ (-(s + 1))
+  let G : ℝ → ℂ := fun x =>
+    ((periodizedBernoulli 2 (x : AddCircle (1 : ℝ)) : ℝ) : ℂ) *
+      (x : ℂ) ^ (-(s + 2))
+  have hs : 0 < s.re := lt_of_lt_of_le (by norm_num) hs_lower
+  have hs0 : s ≠ 0 := ne_zero_of_re_pos hs
+  have hNpos : 0 < (N : ℝ) := by exact_mod_cast (Nat.zero_lt_of_lt hN)
+  have hNge : (1 : ℝ) ≤ N := by exact_mod_cast hN
+  have hCint : IntegrableOn C (Set.Ioi (N : ℝ)) := by
+    simpa only [C] using integrableOn_Ioi_centeredFloorError_cpow hs hN
+  have hPintable : IntegrableOn P (Set.Ioi (N : ℝ)) := by
+    exact integrableOn_Ioi_cpow_of_lt (by simp; linarith) hNpos
+  have hEeq :
+      (∫ x in Set.Ioi (N : ℝ), E x) =
+        (∫ x in Set.Ioi (N : ℝ), C x) -
+          (1 / 2 : ℂ) * ∫ x in Set.Ioi (N : ℝ), P x := by
+    calc
+      (∫ x in Set.Ioi (N : ℝ), E x) =
+          ∫ x in Set.Ioi (N : ℝ), C x - (1 / 2 : ℂ) * P x := by
+        apply setIntegral_congr_fun measurableSet_Ioi
+        intro x _hx
+        dsimp only [E, C, P]
+        push_cast
+        ring
+      _ = (∫ x in Set.Ioi (N : ℝ), C x) -
+          ∫ x in Set.Ioi (N : ℝ), (1 / 2 : ℂ) * P x := by
+        rw [integral_sub hCint (hPintable.const_mul (1 / 2 : ℂ))]
+      _ = (∫ x in Set.Ioi (N : ℝ), C x) -
+          (1 / 2 : ℂ) * ∫ x in Set.Ioi (N : ℝ), P x := by
+        congr 1
+        exact integral_const_mul (μ := volume.restrict (Set.Ioi (N : ℝ)))
+          (1 / 2 : ℂ) P
+  have hPint :
+      (∫ x in Set.Ioi (N : ℝ), P x) = (N : ℂ) ^ (-s) / s := by
+    dsimp only [P]
+    rw [integral_Ioi_cpow_of_lt (by simp; linarith) hNpos]
+    have hexp : -(s + 1) + 1 = -s := by ring
+    rw [hexp]
+    field_simp [hs0]
+    norm_num
+  have hCeq :
+      (∫ x in Set.Ioi (N : ℝ), C x) =
+        (N : ℂ) ^ (-(s + 1)) / 12 -
+          (s + 1) / 2 * ∫ x in Set.Ioi (N : ℝ), G x := by
+    simpa only [C, G] using
+      integral_Ioi_centeredFloorError_cpow_eq_bernoulliTwo hs hN
+  have hformula :
+      s * ∫ x in Set.Ioi (N : ℝ), E x =
+        s * ((N : ℂ) ^ (-(s + 1)) / 12 -
+          (s + 1) / 2 * ∫ x in Set.Ioi (N : ℝ), G x) -
+            (N : ℂ) ^ (-s) / 2 := by
+    rw [hEeq, hCeq, hPint]
+    field_simp [hs0]
+  have hs_eq : ((s.re : ℂ) + I * s.im) = s := by
+    apply Complex.ext <;> simp
+  have hBtail :
+      ‖∫ x in Set.Ioi (N : ℝ), G x‖ ≤
+        B * (N : ℝ) ^ (-(s.re + 2)) := by
+    have hb := hBbound (a := (N : ℝ)) (sigma := s.re) (t := s.im)
+      hNpos (by linarith) (him.trans (by linarith [hNpos]))
+    rw [hs_eq] at hb
+    simpa only [G] using hb
+  have hs_norm : ‖s‖ ≤ 3 * (N : ℝ) := by
+    calc
+      ‖s‖ ≤ |s.re| + |s.im| := Complex.norm_le_abs_re_add_abs_im s
+      _ = s.re + |s.im| := by rw [abs_of_nonneg hs.le]
+      _ ≤ 2 + (N : ℝ) := add_le_add hs_upper him
+      _ ≤ 3 * (N : ℝ) := by linarith
+  have hs_one_norm : ‖s + 1‖ ≤ 4 * (N : ℝ) := by
+    calc
+      ‖s + 1‖ ≤ ‖s‖ + ‖(1 : ℂ)‖ := norm_add_le _ _
+      _ ≤ 3 * (N : ℝ) + 1 := by norm_num; linarith
+      _ ≤ 4 * (N : ℝ) := by linarith
+  have hpow_step (u : ℝ) :
+      (N : ℝ) * (N : ℝ) ^ (-(u + 1)) = (N : ℝ) ^ (-u) := by
+    calc
+      (N : ℝ) * (N : ℝ) ^ (-(u + 1)) =
+          (N : ℝ) ^ (1 : ℝ) * (N : ℝ) ^ (-(u + 1)) := by
+        rw [Real.rpow_one]
+      _ = (N : ℝ) ^ ((1 : ℝ) + (-(u + 1))) :=
+        (Real.rpow_add hNpos _ _).symm
+      _ = (N : ℝ) ^ (-u) := by congr 1; ring
+  have hpow_one :
+      (N : ℝ) * (N : ℝ) ^ (-(s.re + 1)) =
+        (N : ℝ) ^ (-s.re) :=
+    hpow_step s.re
+  have hpow_two :
+      (N : ℝ) * (N : ℝ) * (N : ℝ) ^ (-(s.re + 2)) =
+        (N : ℝ) ^ (-s.re) := by
+    rw [mul_assoc, show -(s.re + 2) = -((s.re + 1) + 1) by ring,
+      hpow_step (s.re + 1), hpow_step s.re]
+  have hNpow_one :
+      ‖(N : ℂ) ^ (-(s + 1))‖ =
+        (N : ℝ) ^ (-(s.re + 1)) := by
+    rw [show (N : ℂ) = ((N : ℝ) : ℂ) by norm_num,
+      Complex.norm_cpow_eq_rpow_re_of_pos hNpos]
+    simp only [neg_re, add_re, one_re]
+  have hNpow_zero :
+      ‖(N : ℂ) ^ (-s)‖ = (N : ℝ) ^ (-s.re) := by
+    rw [show (N : ℂ) = ((N : ℝ) : ℂ) by norm_num,
+      Complex.norm_cpow_eq_rpow_re_of_pos hNpos]
+    simp only [neg_re]
+  have hcenter_norm :
+      ‖(N : ℂ) ^ (-(s + 1)) / 12 -
+          (s + 1) / 2 * ∫ x in Set.Ioi (N : ℝ), G x‖ ≤
+        (N : ℝ) ^ (-(s.re + 1)) / 12 +
+          (‖s + 1‖ / 2) * (B * (N : ℝ) ^ (-(s.re + 2))) := by
+    calc
+      ‖(N : ℂ) ^ (-(s + 1)) / 12 -
+          (s + 1) / 2 * ∫ x in Set.Ioi (N : ℝ), G x‖ ≤
+          ‖(N : ℂ) ^ (-(s + 1)) / 12‖ +
+            ‖(s + 1) / 2 * ∫ x in Set.Ioi (N : ℝ), G x‖ :=
+        norm_sub_le _ _
+      _ = (N : ℝ) ^ (-(s.re + 1)) / 12 +
+          (‖s + 1‖ / 2) * ‖∫ x in Set.Ioi (N : ℝ), G x‖ := by
+        rw [norm_div, norm_mul, norm_div, hNpow_one]
+        norm_num
+      _ ≤ (N : ℝ) ^ (-(s.re + 1)) / 12 +
+          (‖s + 1‖ / 2) * (B * (N : ℝ) ^ (-(s.re + 2))) :=
+        add_le_add le_rfl (mul_le_mul_of_nonneg_left hBtail
+          (show 0 ≤ ‖s + 1‖ / 2 by positivity))
+  have hscaled_center :
+      ‖s * ((N : ℂ) ^ (-(s + 1)) / 12 -
+          (s + 1) / 2 * ∫ x in Set.Ioi (N : ℝ), G x)‖ ≤
+        (1 / 4 + 6 * B) * (N : ℝ) ^ (-s.re) := by
+    rw [norm_mul]
+    have hcoeff : ‖s + 1‖ / 2 ≤ (4 * (N : ℝ)) / 2 :=
+      div_le_div_of_nonneg_right hs_one_norm (by norm_num)
+    have htail_nonneg :
+        0 ≤ B * (N : ℝ) ^ (-(s.re + 2)) :=
+      mul_nonneg hB (Real.rpow_nonneg hNpos.le _)
+    have hcenter_bound := hcenter_norm.trans
+      (add_le_add le_rfl
+        (mul_le_mul_of_nonneg_right hcoeff htail_nonneg))
+    calc
+      ‖s‖ * ‖(N : ℂ) ^ (-(s + 1)) / 12 -
+          (s + 1) / 2 * ∫ x in Set.Ioi (N : ℝ), G x‖ ≤
+          (3 * (N : ℝ)) *
+            ((N : ℝ) ^ (-(s.re + 1)) / 12 +
+              ((4 * (N : ℝ)) / 2) *
+                (B * (N : ℝ) ^ (-(s.re + 2)))) := by
+        exact mul_le_mul hs_norm hcenter_bound (norm_nonneg _) (by positivity)
+      _ = (1 / 4 + 6 * B) * (N : ℝ) ^ (-s.re) := by
+        rw [show (3 * (N : ℝ)) *
+            ((N : ℝ) ^ (-(s.re + 1)) / 12 +
+              ((4 * (N : ℝ)) / 2) *
+                (B * (N : ℝ) ^ (-(s.re + 2)))) =
+              (1 / 4) * ((N : ℝ) * (N : ℝ) ^ (-(s.re + 1))) +
+                6 * B * ((N : ℝ) * (N : ℝ) *
+                  (N : ℝ) ^ (-(s.re + 2))) by ring]
+        rw [hpow_one, hpow_two]
+        ring
+  change ‖s * ∫ x in Set.Ioi (N : ℝ), E x‖ ≤
+    (3 / 4 + 6 * B) * (N : ℝ) ^ (-s.re)
+  rw [hformula]
+  calc
+    ‖s * ((N : ℂ) ^ (-(s + 1)) / 12 -
+          (s + 1) / 2 * ∫ x in Set.Ioi (N : ℝ), G x) -
+        (N : ℂ) ^ (-s) / 2‖ ≤
+        ‖s * ((N : ℂ) ^ (-(s + 1)) / 12 -
+          (s + 1) / 2 * ∫ x in Set.Ioi (N : ℝ), G x)‖ +
+          ‖(N : ℂ) ^ (-s) / 2‖ := norm_sub_le _ _
+    _ ≤ (1 / 4 + 6 * B) * (N : ℝ) ^ (-s.re) +
+        (1 / 2) * (N : ℝ) ^ (-s.re) := by
+      apply add_le_add hscaled_center
+      rw [norm_div, hNpow_zero]
+      norm_num
+      ring_nf
+      exact le_rfl
+    _ = (3 / 4 + 6 * B) * (N : ℝ) ^ (-s.re) := by ring
+
+private lemma floor_rpow_neg_le_four_mul
+    {x sigma : ℝ} (hx : 1 ≤ x) (hsigma0 : 0 ≤ sigma)
+    (hsigma2 : sigma ≤ 2) :
+    (Nat.floor x : ℝ) ^ (-sigma) ≤ 4 * x ^ (-sigma) := by
+  let N := Nat.floor x
+  have hN : 1 ≤ N := by
+    apply Nat.le_floor
+    simpa only [Nat.cast_one] using hx
+  have hNpos : 0 < (N : ℝ) := by exact_mod_cast (Nat.zero_lt_of_lt hN)
+  have hxpos : 0 < x := zero_lt_one.trans_le hx
+  have hxlt : x < (N : ℝ) + 1 := by
+    simpa only [N] using Nat.lt_floor_add_one x
+  have hx_two_N : x ≤ 2 * (N : ℝ) := by
+    have hNreal : (1 : ℝ) ≤ N := by exact_mod_cast hN
+    linarith
+  have htwo : (2 : ℝ) ^ sigma ≤ 4 := by
+    calc
+      (2 : ℝ) ^ sigma ≤ (2 : ℝ) ^ (2 : ℝ) :=
+        Real.rpow_le_rpow_of_exponent_le (by norm_num) hsigma2
+      _ = 4 := by norm_num [Real.rpow_two]
+  have hxpow : x ^ sigma ≤ 4 * (N : ℝ) ^ sigma := by
+    calc
+      x ^ sigma ≤ (2 * (N : ℝ)) ^ sigma :=
+        Real.rpow_le_rpow hxpos.le hx_two_N hsigma0
+      _ = (2 : ℝ) ^ sigma * (N : ℝ) ^ sigma :=
+        Real.mul_rpow (by norm_num) hNpos.le
+      _ ≤ 4 * (N : ℝ) ^ sigma :=
+        mul_le_mul_of_nonneg_right htwo (Real.rpow_nonneg hNpos.le _)
+  change (N : ℝ) ^ (-sigma) ≤ 4 * x ^ (-sigma)
+  rw [Real.rpow_neg hNpos.le, Real.rpow_neg hxpos.le,
+    inv_eq_one_div, inv_eq_one_div, mul_one_div]
+  exact (div_le_div_iff₀ (Real.rpow_pos_of_pos hNpos _)
+    (Real.rpow_pos_of_pos hxpos _)).2 (by simpa using hxpow)
+
+private lemma norm_floor_poleTerm_sub_poleTerm_le_four
+    {s : ℂ} {x : ℝ} (hs : 0 < s.re) (hs2 : s.re ≤ 2)
+    (hs1 : s ≠ 1) (hx : 1 ≤ x) :
+    ‖(Nat.floor x : ℂ) ^ (1 - s) / (s - 1) -
+        (x : ℂ) ^ (1 - s) / (s - 1)‖ ≤
+      4 * x ^ (-s.re) := by
+  let N := Nat.floor x
+  have hN : 1 ≤ N := by
+    apply Nat.le_floor
+    simpa only [Nat.cast_one] using hx
+  have hNpos : 0 < (N : ℝ) := by exact_mod_cast (Nat.zero_lt_of_lt hN)
+  have hxpos : 0 < x := zero_lt_one.trans_le hx
+  have hNx : (N : ℝ) ≤ x := by
+    simpa only [N] using Nat.floor_le hxpos.le
+  have hzero_not_mem : (0 : ℝ) ∉ Set.uIcc (N : ℝ) x := by
+    rw [Set.uIcc_of_le hNx]
+    intro h
+    linarith [h.1]
+  have hint :
+      (∫ u in (N : ℝ)..x, (u : ℂ) ^ (-s)) =
+        ((x : ℂ) ^ (1 - s) - (N : ℂ) ^ (1 - s)) / (1 - s) := by
+    simpa [show -s + 1 = 1 - s by ring] using
+      (integral_cpow (a := (N : ℝ)) (b := x) (r := -s)
+        (Or.inr ⟨by
+          intro h
+          apply hs1
+          have h' := congrArg Neg.neg h
+          simpa using h', hzero_not_mem⟩))
+  have hcorr :
+      (N : ℂ) ^ (1 - s) / (s - 1) -
+          (x : ℂ) ^ (1 - s) / (s - 1) =
+        ∫ u in (N : ℝ)..x, (u : ℂ) ^ (-s) := by
+    rw [hint]
+    have hsub : s - 1 ≠ 0 := sub_ne_zero.mpr hs1
+    have honeSub : 1 - s ≠ 0 := sub_ne_zero.mpr hs1.symm
+    field_simp [hsub, honeSub]
+    ring
+  have hconst := intervalIntegral.norm_integral_le_of_norm_le_const
+    (a := (N : ℝ)) (b := x) (C := (N : ℝ) ^ (-s.re))
+    (f := fun u : ℝ => (u : ℂ) ^ (-s)) (fun u hu => by
+      rw [Set.uIoc_of_le hNx] at hu
+      have hupos : 0 < u := hNpos.trans hu.1
+      rw [Complex.norm_cpow_eq_rpow_re_of_pos hupos]
+      simp only [neg_re]
+      exact Real.antitoneOn_rpow_Ioi_of_exponent_nonpos (neg_nonpos.mpr hs.le)
+        hNpos hupos hu.1.le)
+  have hgap : x - (N : ℝ) ≤ 1 := by
+    have hxlt : x < (N : ℝ) + 1 := by
+      simpa only [N] using Nat.lt_floor_add_one x
+    linarith
+  change ‖(N : ℂ) ^ (1 - s) / (s - 1) -
+      (x : ℂ) ^ (1 - s) / (s - 1)‖ ≤ 4 * x ^ (-s.re)
+  rw [hcorr]
+  calc
+    ‖∫ u in (N : ℝ)..x, (u : ℂ) ^ (-s)‖ ≤
+        (N : ℝ) ^ (-s.re) * |x - (N : ℝ)| := hconst
+    _ = (N : ℝ) ^ (-s.re) * (x - (N : ℝ)) := by
+      rw [abs_of_nonneg (sub_nonneg.mpr hNx)]
+    _ ≤ (N : ℝ) ^ (-s.re) * 1 :=
+      mul_le_mul_of_nonneg_left hgap (Real.rpow_nonneg hNpos.le _)
+    _ = (N : ℝ) ^ (-s.re) := by ring
+    _ ≤ 4 * x ^ (-s.re) := by
+      simpa only [N] using
+        floor_rpow_neg_le_four_mul hx hs.le hs2
+
+/-- Uniform first zeta approximation with a real cutoff.  The remainder
+combines the oscillatory Abel floor-error tail with the short correction from
+`Nat.floor x` to `x` in the pole term. -/
+theorem exists_riemannZeta_first_approximation :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ (s : ℂ) (x : ℝ),
+      (1 / 4 : ℝ) ≤ s.re → s.re ≤ 2 → s ≠ 1 → 1 ≤ x →
+        |s.im| ≤ x / 2 →
+          ∃ R : ℂ,
+            riemannZeta s =
+              (∑ n ∈ Finset.Icc 1 (Nat.floor x), 1 / (n : ℂ) ^ s) +
+                (x : ℂ) ^ (1 - s) / (s - 1) + R ∧
+            ‖R‖ ≤ C * x ^ (-s.re) := by
+  obtain ⟨A, hA, htail⟩ :=
+    exists_norm_mul_integral_Ioi_floorError_cpow_le
+  refine ⟨4 * A + 4, by positivity, ?_⟩
+  intro s x hs_lower hs_upper hs1 hx him
+  let N := Nat.floor x
+  let E : ℂ := s * ∫ u in Set.Ioi (N : ℝ),
+    ((((⌊u⌋₊ : ℝ) - u : ℝ) : ℂ) * (u : ℂ) ^ (-(s + 1)))
+  let D : ℂ := (N : ℂ) ^ (1 - s) / (s - 1) -
+    (x : ℂ) ^ (1 - s) / (s - 1)
+  have hs : 0 < s.re := lt_of_lt_of_le (by norm_num) hs_lower
+  have hN : 1 ≤ N := by
+    apply Nat.le_floor
+    simpa only [Nat.cast_one] using hx
+  have hNpos : 0 < (N : ℝ) := by exact_mod_cast (Nat.zero_lt_of_lt hN)
+  have hxlt : x < (N : ℝ) + 1 := by
+    simpa only [N] using Nat.lt_floor_add_one x
+  have hx_half_le_N : x / 2 ≤ (N : ℝ) := by
+    have hNreal : (1 : ℝ) ≤ N := by exact_mod_cast hN
+    linarith
+  have himN : |s.im| ≤ (N : ℝ) := him.trans hx_half_le_N
+  have hE : ‖E‖ ≤ A * (N : ℝ) ^ (-s.re) := by
+    simpa only [E] using htail hs_lower hs_upper hN himN
+  have hfloorCompare :
+      (N : ℝ) ^ (-s.re) ≤ 4 * x ^ (-s.re) := by
+    simpa only [N] using floor_rpow_neg_le_four_mul hx hs.le hs_upper
+  have hEx : ‖E‖ ≤ (4 * A) * x ^ (-s.re) := by
+    calc
+      ‖E‖ ≤ A * (N : ℝ) ^ (-s.re) := hE
+      _ ≤ A * (4 * x ^ (-s.re)) :=
+        mul_le_mul_of_nonneg_left hfloorCompare hA
+      _ = (4 * A) * x ^ (-s.re) := by ring
+  have hD : ‖D‖ ≤ 4 * x ^ (-s.re) := by
+    simpa only [D, N] using
+      norm_floor_poleTerm_sub_poleTerm_le_four hs hs_upper hs1 hx
+  have hzeta :=
+    ZeroFreeRegion.riemannZeta_eq_dirichletPolynomial_add_pole_add_floorErrorTail
+      hs hs1 hN
+  refine ⟨E + D, ?_, ?_⟩
+  · dsimp only [E, D, N]
+    rw [hzeta]
+    ring
+  · calc
+      ‖E + D‖ ≤ ‖E‖ + ‖D‖ := norm_add_le _ _
+      _ ≤ (4 * A) * x ^ (-s.re) + 4 * x ^ (-s.re) :=
+        add_le_add hEx hD
+      _ = (4 * A + 4) * x ^ (-s.re) := by ring
+
 private lemma inv_nat_cpow_criticalLine_eq_exp
     {n : ℕ} (hn : n ≠ 0) (t : ℝ) :
     1 / (n : ℂ) ^ ((1 / 2 : ℂ) + I * t) =
@@ -729,6 +1271,99 @@ on the dyadic interval `[T, 2T]`. -/
 noncomputable def firstZetaApproximationCutoff (T : ℝ) : ℕ :=
   ⌊4 * T⌋₊
 
+private lemma norm_criticalLine_poleTerm_le_two_div_sqrt
+    {T t : ℝ} (hT : 1 ≤ T) (ht : t ∈ Set.Icc T (2 * T)) :
+    ‖(4 * T : ℂ) ^ (1 - ((1 / 2 : ℂ) + I * t)) /
+        (((1 / 2 : ℂ) + I * t) - 1)‖ ≤
+      2 / Real.sqrt T := by
+  let s : ℂ := (1 / 2 : ℂ) + I * t
+  have hTpos : 0 < T := zero_lt_one.trans_le hT
+  have h4Tpos : 0 < 4 * T := by positivity
+  have htpos : 0 < t := hTpos.trans_le ht.1
+  have hnum :
+      ‖(4 * T : ℂ) ^ (1 - s)‖ = 2 * Real.sqrt T := by
+    rw [show (4 * T : ℂ) = ((4 * T : ℝ) : ℂ) by norm_num,
+      Complex.norm_cpow_eq_rpow_re_of_pos h4Tpos]
+    norm_num [s, sub_re, add_re, div_re, mul_re]
+    rw [← Real.sqrt_eq_rpow, Real.sqrt_mul (by norm_num : (0 : ℝ) ≤ 4)]
+    norm_num
+  have hden : T ≤ ‖s - 1‖ := by
+    calc
+      T ≤ t := ht.1
+      _ = |t| := (abs_of_pos htpos).symm
+      _ = |(s - 1).im| := by simp [s]
+      _ ≤ ‖s - 1‖ := Complex.abs_im_le_norm _
+  have hdenpos : 0 < ‖s - 1‖ := hTpos.trans_le hden
+  change ‖(4 * T : ℂ) ^ (1 - s) / (s - 1)‖ ≤
+    2 / Real.sqrt T
+  rw [norm_div, hnum]
+  calc
+    (2 * Real.sqrt T) / ‖s - 1‖ ≤
+        (2 * Real.sqrt T) / T :=
+      div_le_div_of_nonneg_left (by positivity) hTpos hden
+    _ = 2 / Real.sqrt T := by
+      have hsqrtpos : 0 < Real.sqrt T := Real.sqrt_pos.2 hTpos
+      field_simp [hsqrtpos.ne', hTpos.ne']
+      nlinarith [Real.sq_sqrt hTpos.le]
+
+/-- On a Hardy dyadic interval, the first zeta approximation has a remainder
+of size `O(T⁻¹/²)` after the elementary pole term is absorbed. -/
+theorem criticalLineZetaFirstApprox :
+    ∃ C T0 : ℝ, 0 ≤ C ∧ 1 ≤ T0 ∧ ∀ T t : ℝ,
+      T0 ≤ T → t ∈ Set.Icc T (2 * T) →
+        ∃ R : ℂ,
+          riemannZeta ((1 / 2 : ℂ) + I * t) =
+            (∑ n ∈ Finset.Icc 1 (firstZetaApproximationCutoff T),
+              1 / (n : ℂ) ^ ((1 / 2 : ℂ) + I * t)) + R ∧
+          ‖R‖ ≤ C / Real.sqrt T := by
+  obtain ⟨A, hA, hfirst⟩ := exists_riemannZeta_first_approximation
+  refine ⟨A + 2, 1, by positivity, le_rfl, ?_⟩
+  intro T t hT ht
+  let s : ℂ := (1 / 2 : ℂ) + I * t
+  have hTpos : 0 < T := zero_lt_one.trans_le hT
+  have htpos : 0 < t := hTpos.trans_le ht.1
+  have hs_re : s.re = 1 / 2 := by simp [s]
+  have hs_im : s.im = t := by simp [s]
+  have hs1 : s ≠ 1 := by
+    intro h
+    have him_eq := congrArg Complex.im h
+    simp only [hs_im, one_im] at him_eq
+    linarith
+  have h4T : 1 ≤ 4 * T := by linarith
+  have him_bound : |s.im| ≤ (4 * T) / 2 := by
+    rw [hs_im, abs_of_pos htpos]
+    linarith [ht.2]
+  obtain ⟨R₀, hzeta, hR₀⟩ := hfirst s (4 * T)
+    (by rw [hs_re]; norm_num) (by rw [hs_re]; norm_num) hs1 h4T him_bound
+  let P : ℂ := (4 * T : ℂ) ^ (1 - s) / (s - 1)
+  have hP : ‖P‖ ≤ 2 / Real.sqrt T := by
+    simpa only [P, s] using norm_criticalLine_poleTerm_le_two_div_sqrt hT ht
+  have hpow : (4 * T) ^ (-s.re) ≤ T ^ (-s.re) := by
+    apply Real.antitoneOn_rpow_Ioi_of_exponent_nonpos
+      (by rw [hs_re]; norm_num)
+    · exact hTpos
+    · exact (show 0 < 4 * T by positivity)
+    · linarith
+  have hR₀' : ‖R₀‖ ≤ A / Real.sqrt T := by
+    calc
+      ‖R₀‖ ≤ A * (4 * T) ^ (-s.re) := hR₀
+      _ ≤ A * T ^ (-s.re) := mul_le_mul_of_nonneg_left hpow hA
+      _ = A / Real.sqrt T := by
+        rw [hs_re, Real.rpow_neg hTpos.le, ← Real.sqrt_eq_rpow,
+          div_eq_mul_inv]
+  refine ⟨P + R₀, ?_, ?_⟩
+  · change riemannZeta s =
+      (∑ n ∈ Finset.Icc 1 (firstZetaApproximationCutoff T),
+        1 / (n : ℂ) ^ s) + (P + R₀)
+    rw [hzeta]
+    dsimp only [P, firstZetaApproximationCutoff]
+    push_cast
+    ring
+  · calc
+      ‖P + R₀‖ ≤ ‖P‖ + ‖R₀‖ := norm_add_le _ _
+      _ ≤ 2 / Real.sqrt T + A / Real.sqrt T := add_le_add hP hR₀'
+      _ = (A + 2) / Real.sqrt T := by ring
+
 /-- At the Hardy cutoff, the integrated nonconstant Dirichlet polynomial is
 controlled by a square-root times logarithmic square-root majorant. -/
 theorem norm_integral_criticalLineDirichletTail_cutoff_le
@@ -801,5 +1436,177 @@ theorem norm_integral_criticalLineDirichletTail_cutoff_isLittleO :
     0 ≤ (2 / Real.log 2) *
       (Real.sqrt (4 * T) * Real.sqrt (1 + Real.log (4 * T))))]
   exact norm_integral_criticalLineDirichletTail_cutoff_le hT
+
+/-- The first zeta approximation forces a linear lower bound for the dyadic
+`L¹` norm of zeta on the critical line. -/
+theorem exists_integral_norm_riemannZeta_critical_line_ge_mul :
+    ∃ c T0 : ℝ, 0 < c ∧ 1 ≤ T0 ∧ ∀ T : ℝ, T0 ≤ T →
+      c * T ≤ ∫ t in T..(2 * T),
+        ‖riemannZeta ((1 / 2 : ℂ) + I * t)‖ := by
+  obtain ⟨C, Tapprox, hC, hTapprox, happ⟩ := criticalLineZetaFirstApprox
+  have htail_event :=
+    norm_integral_criticalLineDirichletTail_cutoff_isLittleO.bound
+      (show (0 : ℝ) < 1 / 4 by norm_num)
+  obtain ⟨Ttail, htail_after⟩ := eventually_atTop.1 htail_event
+  let T0 : ℝ := max Tapprox (max Ttail (16 * C ^ 2))
+  refine ⟨1 / 2, T0, by norm_num, ?_, ?_⟩
+  · exact hTapprox.trans (le_max_left _ _)
+  intro T hT
+  have hTa : Tapprox ≤ T := (le_max_left _ _).trans hT
+  have hTrest : max Ttail (16 * C ^ 2) ≤ T :=
+    (le_max_right Tapprox _).trans hT
+  have hTtail : Ttail ≤ T := (le_max_left _ _).trans hTrest
+  have hTerr : 16 * C ^ 2 ≤ T := (le_max_right _ _).trans hTrest
+  have hT1 : 1 ≤ T := hTapprox.trans hTa
+  have hTpos : 0 < T := zero_lt_one.trans_le hT1
+  have hTtwo : T ≤ 2 * T := by linarith
+  let F : ℝ → ℂ := fun t => riemannZeta ((1 / 2 : ℂ) + I * t)
+  let Q : ℝ → ℂ := fun t =>
+    ∑ n ∈ Finset.Icc 2 (firstZetaApproximationCutoff T),
+      1 / (n : ℂ) ^ ((1 / 2 : ℂ) + I * t)
+  let H : ℝ → ℂ := fun t => F t - (1 + Q t)
+  have hcutoff : 1 ≤ firstZetaApproximationCutoff T := by
+    apply Nat.le_floor
+    simpa only [Nat.cast_one, firstZetaApproximationCutoff] using
+      (show (1 : ℝ) ≤ 4 * T by linarith)
+  have hsum_split (t : ℝ) :
+      (∑ n ∈ Finset.Icc 1 (firstZetaApproximationCutoff T),
+          1 / (n : ℂ) ^ ((1 / 2 : ℂ) + I * t)) = 1 + Q t := by
+    have hset : Finset.Icc 1 (firstZetaApproximationCutoff T) =
+        insert 1 (Finset.Icc 2 (firstZetaApproximationCutoff T)) := by
+      ext n
+      simp only [Finset.mem_Icc, Finset.mem_insert]
+      omega
+    rw [hset, Finset.sum_insert (by simp)]
+    simp only [Q, Nat.cast_one, one_cpow, one_div]
+    norm_num
+  have hHpoint : ∀ t ∈ Set.Icc T (2 * T),
+      ‖H t‖ ≤ C / Real.sqrt T := by
+    intro t ht
+    obtain ⟨R, hzeta, hR⟩ := happ T t hTa ht
+    have hHR : H t = R := by
+      dsimp only [H, F]
+      rw [hzeta, hsum_split]
+      ring
+    rw [hHR]
+    exact hR
+  have hQcont : Continuous Q := by
+    dsimp only [Q]
+    apply continuous_finset_sum
+    intro n hn
+    have hn2 : 2 ≤ n := (Finset.mem_Icc.mp hn).1
+    have hn0 : n ≠ 0 := by omega
+    rw [show (fun t : ℝ =>
+        1 / (n : ℂ) ^ ((1 / 2 : ℂ) + I * t)) =
+      (fun t : ℝ => ((n : ℂ) ^ (1 / 2 : ℂ))⁻¹ *
+        Complex.exp ((-I * (Real.log n : ℂ)) * t)) by
+          funext t
+          exact inv_nat_cpow_criticalLine_eq_exp hn0 t]
+    fun_prop
+  have hQint : IntervalIntegrable Q volume T (2 * T) :=
+    hQcont.intervalIntegrable _ _
+  have hFcont : ContinuousOn F (Set.Icc T (2 * T)) := by
+    intro t ht
+    have htpos : 0 < t := hTpos.trans_le ht.1
+    have hs1 : ((1 / 2 : ℂ) + I * t) ≠ 1 := by
+      intro h
+      have him := congrArg Complex.im h
+      norm_num at him
+      linarith
+    have hpath : ContinuousAt (fun u : ℝ => (1 / 2 : ℂ) + I * u) t := by
+      fun_prop
+    have hzbase : ContinuousAt riemannZeta ((1 / 2 : ℂ) + I * t) :=
+      (differentiableAt_riemannZeta hs1).continuousAt
+    have hzcont : ContinuousAt
+        (riemannZeta ∘ fun u : ℝ => (1 / 2 : ℂ) + I * u) t :=
+      (show Tendsto riemannZeta
+          (nhds ((1 / 2 : ℂ) + I * t))
+          (nhds (riemannZeta ((1 / 2 : ℂ) + I * t))) from hzbase).comp
+        (show Tendsto (fun u : ℝ => (1 / 2 : ℂ) + I * u)
+          (nhds t) (nhds ((1 / 2 : ℂ) + I * t)) from hpath)
+    simpa only [F, Function.comp_apply] using hzcont.continuousWithinAt
+  have hFint : IntervalIntegrable F volume T (2 * T) :=
+    ContinuousOn.intervalIntegrable (by
+      simpa only [Set.uIcc_of_le hTtwo] using hFcont)
+  have hUint : IntervalIntegrable (fun t => (1 : ℂ) + Q t) volume T (2 * T) :=
+    continuous_const.intervalIntegrable _ _ |>.add hQint
+  have hHint : IntervalIntegrable H volume T (2 * T) := by
+    dsimp only [H]
+    exact hFint.sub hUint
+  have hHintegral :
+      (∫ t in T..(2 * T), H t) =
+        (∫ t in T..(2 * T), F t) -
+          ((∫ _t in T..(2 * T), (1 : ℂ)) +
+            ∫ t in T..(2 * T), Q t) := by
+    dsimp only [H]
+    rw [intervalIntegral.integral_sub hFint hUint,
+      intervalIntegral.integral_add
+        (continuous_const.intervalIntegrable _ _) hQint]
+  have hone : (∫ _t in T..(2 * T), (1 : ℂ)) = (T : ℂ) := by
+    simp
+    change (((2 * T - T : ℝ) : ℂ) * 1) = (T : ℂ)
+    push_cast
+    ring
+  have hOneEq :
+      (T : ℂ) =
+        (∫ t in T..(2 * T), F t) -
+          (∫ t in T..(2 * T), Q t) -
+            ∫ t in T..(2 * T), H t := by
+    rw [hHintegral, hone]
+    ring
+  have htail_small :
+      ‖∫ t in T..(2 * T), Q t‖ ≤ T / 4 := by
+    have hsmall := htail_after T hTtail
+    rw [Real.norm_of_nonneg (norm_nonneg _), Real.norm_of_nonneg hTpos.le] at hsmall
+    dsimp only [Q]
+    nlinarith [hsmall]
+  have hfourC_le_sqrt : 4 * C ≤ Real.sqrt T := by
+    calc
+      4 * C = Real.sqrt (16 * C ^ 2) := by
+        rw [show 16 * C ^ 2 = (4 * C) ^ 2 by ring,
+          Real.sqrt_sq_eq_abs, abs_of_nonneg (mul_nonneg (by norm_num) hC)]
+      _ ≤ Real.sqrt T := Real.sqrt_le_sqrt hTerr
+  have herror_small :
+      ‖∫ t in T..(2 * T), H t‖ ≤ T / 4 := by
+    have hmajor := intervalIntegral.norm_integral_le_of_norm_le_const
+      (a := T) (b := 2 * T) (C := C / Real.sqrt T) (f := H)
+      (fun t ht => by
+        rw [Set.uIoc_of_le hTtwo] at ht
+        exact hHpoint t ⟨ht.1.le, ht.2⟩)
+    have hsqrtpos : 0 < Real.sqrt T := Real.sqrt_pos.2 hTpos
+    calc
+      ‖∫ t in T..(2 * T), H t‖ ≤
+          (C / Real.sqrt T) * |2 * T - T| := hmajor
+      _ = C * Real.sqrt T := by
+        rw [abs_of_nonneg (by linarith : 0 ≤ 2 * T - T)]
+        field_simp [hsqrtpos.ne']
+        nlinarith [Real.sq_sqrt hTpos.le]
+      _ ≤ T / 4 := by
+        have hmul := mul_le_mul_of_nonneg_right hfourC_le_sqrt
+          (Real.sqrt_nonneg T)
+        nlinarith [Real.sq_sqrt hTpos.le]
+  have htriangle :
+      T ≤ ‖∫ t in T..(2 * T), F t‖ +
+          ‖∫ t in T..(2 * T), Q t‖ +
+            ‖∫ t in T..(2 * T), H t‖ := by
+    calc
+      T = ‖(T : ℂ)‖ := by
+        rw [norm_real, Real.norm_eq_abs, abs_of_pos hTpos]
+      _ = ‖(∫ t in T..(2 * T), F t) -
+          (∫ t in T..(2 * T), Q t) -
+            ∫ t in T..(2 * T), H t‖ := congrArg norm hOneEq
+      _ ≤ ‖(∫ t in T..(2 * T), F t) -
+          (∫ t in T..(2 * T), Q t)‖ +
+            ‖∫ t in T..(2 * T), H t‖ := norm_sub_le _ _
+      _ ≤ (‖∫ t in T..(2 * T), F t‖ +
+          ‖∫ t in T..(2 * T), Q t‖) +
+            ‖∫ t in T..(2 * T), H t‖ :=
+        add_le_add (norm_sub_le _ _) le_rfl
+  have hlower : (1 / 2 : ℝ) * T ≤ ‖∫ t in T..(2 * T), F t‖ := by
+    linarith
+  have hnormIntegral := intervalIntegral.norm_integral_le_integral_norm
+    (μ := volume) (f := F) hTtwo
+  change (1 / 2 : ℝ) * T ≤ ∫ t in T..(2 * T), ‖F t‖
+  exact hlower.trans hnormIntegral
 
 end HardyTheorem
