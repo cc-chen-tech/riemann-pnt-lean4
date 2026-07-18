@@ -5,4 +5,5 @@ import HardyTheorem.ShortIntervalMeanValue
 #check HardyTheorem.continuous_hardyShortIntegral
 #check HardyTheorem.continuous_hardyShortAbsIntegral
 #check HardyTheorem.exists_hardyShortAbsIntegral_le_mul_sqrt
-
+#check HardyTheorem.mul_integral_abs_hardyZ_interior_le_integral_hardyShortAbsIntegral
+#check HardyTheorem.exists_integral_hardyShortAbsIntegral_ge_mul
