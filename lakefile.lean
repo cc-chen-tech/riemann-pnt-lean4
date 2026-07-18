@@ -127,6 +127,7 @@ lean_lib RiemannPNT where
     `Test.VinogradovKorobovScaledTwoAProcessLogSumContract,
     `Test.VinogradovKorobovAProcessBoundsContract,
     `Test.VinogradovKorobovExplicitTwoAProcessBoundContract,
+    `Test.VinogradovKorobovRecursiveAProcessContract,
     `Test.VinogradovKorobovVanDerCorputRangeContract,
     `Test.VinogradovKorobovLogVanDerCorputContract
   ]
