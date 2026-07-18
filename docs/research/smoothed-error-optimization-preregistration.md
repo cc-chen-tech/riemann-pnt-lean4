@@ -38,6 +38,13 @@ B(x,h,T) = max(h/L(x,h)-x, x+h-h/L(x,h))
 This is an endpoint transfer penalty, not by itself a two-sided bound for
 `|psi(x)-x|` at one point.
 
+The current Python milestone specializes every profile to the identity
+approximation `A_T(u) = u`; the height parameter may still enter its proposed
+error envelope. It does not yet evaluate the finite difference of the
+residue-sum-minus-contour approximation from `SecondOrderExplicitFormula`.
+That later integration must supply a certified interval for
+`Re(A_T(x+h) - A_T(x))` instead of substituting `h`.
+
 ## Frozen repository baseline
 
 The branch began clean at commit `638735b` on
@@ -68,17 +75,19 @@ claimed by this branch.
 
 ### FH-1: finite-height profile
 
-For every integer `x >= 10^6` and integer `T >= x`, construct the exact
-finite-height approximation `A_T` from the second-order explicit formula and
-certify
+For every integer `x >= 10^6` and integer `T >= x`, certify the
+identity-centered, finite-height-shaped envelope
 
 ```text
-||A_T(x) - S(x)|| <= x^2/T.
+||(x : C) - S(x)|| <= x^2/T.
 ```
 
 The prototype model name is `finite_height`, with constant `C_F = 1` and
 `E_F(x,T) = C_F x^2/T`. Rational inputs and this envelope are evaluated exactly
-before decimal conversion.
+before decimal conversion. This is a transfer-loss benchmark, not a theorem
+derived from the repository's finite-height contour formula. Connecting that
+formula requires the additional certified approximation-difference input
+described above.
 
 ### RH-1: RH-conditional profile
 
@@ -191,4 +200,7 @@ The complete grid runner and analytic certification are explicitly outside this
 first executable milestone. The unresolved mathematical problem is to derive
 one of FH-1, RH-1, or ZFR-1 with explicit constants and ranges from the current
 contour, zero-sum, and zero-free estimates without losing more in the smoothing
-transfer than the optimizer recovers.
+transfer than the optimizer recovers. For the actual finite-height explicit
+formula, the next software milestone is to add a rigorously certified interval
+input for `Re(A_T(x+h) - A_T(x))`; the current identity-centered objective must
+not be used for that approximation.

@@ -35,6 +35,39 @@ def test_finite_height_envelope_is_exact_before_decimal_conversion():
     assert enclosure.upper == Decimal(24)
 
 
+def test_classical_zero_free_interval_is_ambient_context_independent():
+    candidate = Candidate(
+        name="classical-zero-free",
+        model="classical_zero_free",
+        constant=Fraction(1),
+        decay=Fraction(1, 5),
+    )
+
+    with localcontext() as context:
+        context.prec = 7
+        low_ambient_precision = candidate.smoothed_error(
+            x=1_000_000, height=1_000_000, precision=80
+        )
+    with localcontext() as context:
+        context.prec = 43
+        high_ambient_precision = candidate.smoothed_error(
+            x=1_000_000, height=1_000_000, precision=80
+        )
+    with localcontext() as context:
+        context.prec = 200
+        x = Decimal(1_000_000)
+        reference = x * (-(Decimal(1) / Decimal(5)) * x.ln().sqrt()).exp()
+
+    assert low_ambient_precision == high_ambient_precision
+    assert low_ambient_precision.lower <= reference <= low_ambient_precision.upper
+
+
+def test_candidate_records_identity_approximation_scope():
+    candidate = Candidate("finite-height", "finite_height", Fraction(1))
+
+    assert candidate.as_dict()["approximation"] == "identity"
+
+
 def test_optimizer_selects_the_smallest_certified_upper_bound():
     candidate = Candidate(
         name="zero-error",

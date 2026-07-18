@@ -150,7 +150,10 @@ class Candidate:
         decay = _fraction_interval(self.decay, precision)
         sqrt_log_x = _sqrt_nonnegative(log_x, precision)
         exponent_magnitude = _multiply_nonnegative(decay, sqrt_log_x, precision)
-        exponent = Interval(-exponent_magnitude.upper, -exponent_magnitude.lower)
+        exponent = Interval(
+            exponent_magnitude.upper.copy_negate(),
+            exponent_magnitude.lower.copy_negate(),
+        )
         return _multiply_nonnegative(
             _multiply_nonnegative(constant, x_interval, precision),
             _exp(exponent, precision),
@@ -161,6 +164,7 @@ class Candidate:
         result = {
             "name": self.name,
             "model": self.model,
+            "approximation": "identity",
             "constant": str(self.constant),
         }
         if self.decay is not None:
