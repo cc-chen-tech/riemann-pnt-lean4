@@ -6,3 +6,4 @@ import ZeroFreeRegion.VinogradovKorobov.FirstDerivative
 #print axioms ZeroFreeRegion.VinogradovKorobov.reciprocal_exp_sub_one_eq
 #print axioms ZeroFreeRegion.VinogradovKorobov.sum_norm_reciprocal_exp_sub_one_eq
 #print axioms ZeroFreeRegion.VinogradovKorobov.kusminLandau_endpoint_bound
+#print axioms ZeroFreeRegion.VinogradovKorobov.kusminLandau_endpoint_bound_antitone

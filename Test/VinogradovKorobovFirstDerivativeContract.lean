@@ -29,6 +29,16 @@ example (theta : ℕ → ℝ) (N : ℕ)
       (Real.cot (theta 0 / 2) - Real.cot (theta N / 2)) / 2 :=
   sum_norm_reciprocal_exp_sub_one_eq theta N hpos hlt hmono
 
+example (theta : ℕ → ℝ) (N : ℕ)
+    (hpos : ∀ k ≤ N, 0 < theta k)
+    (hlt : ∀ k ≤ N, theta k < 2 * Real.pi)
+    (hanti : ∀ k < N, theta (k + 1) ≤ theta k) :
+    ∑ k ∈ Finset.range N,
+        ‖(Complex.exp (Complex.I * (theta k : ℂ)) - 1)⁻¹ -
+          (Complex.exp (Complex.I * (theta (k + 1) : ℂ)) - 1)⁻¹‖ =
+      (Real.cot (theta N / 2) - Real.cot (theta 0 / 2)) / 2 :=
+  sum_norm_reciprocal_exp_sub_one_eq_antitone theta N hpos hlt hanti
+
 example (d z : ℕ → ℂ) (N : ℕ) :
     ∑ k ∈ Finset.range (N + 1), d k * (z (k + 1) - z k) =
       d N * z (N + 1) - d 0 * z 0 +
@@ -74,5 +84,17 @@ example (f : ℕ → ℝ) (N : ℕ)
       (Real.cot ((f 1 - f 0) / 2) -
         Real.cot ((f (N + 1) - f N) / 2)) / 2 :=
   kusminLandau_endpoint_bound f N hpos hlt hmono
+
+example (f : ℕ → ℝ) (N : ℕ)
+    (hpos : ∀ k ≤ N, 0 < f (k + 1) - f k)
+    (hlt : ∀ k ≤ N, f (k + 1) - f k < 2 * Real.pi)
+    (hanti : ∀ k < N,
+      f (k + 2) - f (k + 1) ≤ f (k + 1) - f k) :
+    ‖∑ k ∈ Finset.range (N + 1), phaseTerm f k‖ ≤
+      ‖(Complex.exp (Complex.I * ((f 1 - f 0 : ℝ) : ℂ)) - 1)⁻¹‖ +
+      ‖(Complex.exp (Complex.I * ((f (N + 1) - f N : ℝ) : ℂ)) - 1)⁻¹‖ +
+      (Real.cot ((f (N + 1) - f N) / 2) -
+        Real.cot ((f 1 - f 0) / 2)) / 2 :=
+  kusminLandau_endpoint_bound_antitone f N hpos hlt hanti
 
 end ZeroFreeRegion.VinogradovKorobov

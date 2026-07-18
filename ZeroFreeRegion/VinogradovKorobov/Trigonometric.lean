@@ -86,6 +86,14 @@ lemma norm_reciprocal_exp_sub_one_sub_eq {x y : ℝ}
   rw [heq, norm_mul, norm_neg, Complex.norm_I, one_mul]
   rw [Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg hnonneg]
 
+lemma norm_reciprocal_exp_sub_one_sub_eq_of_ge {x y : ℝ}
+    (hy : 0 < y) (hx : x < 2 * Real.pi) (hyx : y ≤ x) :
+    ‖(Complex.exp (Complex.I * (x : ℂ)) - 1)⁻¹ -
+        (Complex.exp (Complex.I * (y : ℂ)) - 1)⁻¹‖ =
+      (Real.cot (y / 2) - Real.cot (x / 2)) / 2 := by
+  rw [← norm_neg, neg_sub]
+  exact norm_reciprocal_exp_sub_one_sub_eq hy hx hyx
+
 /-- Reciprocal-chord variation telescopes for a monotone sequence of angles in
 `(0, 2π)`. -/
 lemma sum_norm_reciprocal_exp_sub_one_eq (theta : ℕ → ℝ) (N : ℕ)
@@ -113,5 +121,33 @@ lemma sum_norm_reciprocal_exp_sub_one_eq (theta : ℕ → ℝ) (N : ℕ)
       rw [Finset.sum_div]
     _ = (Real.cot (theta 0 / 2) - Real.cot (theta N / 2)) / 2 := by
       rw [Finset.sum_range_sub']
+
+/-- Antitone counterpart of `sum_norm_reciprocal_exp_sub_one_eq`. -/
+lemma sum_norm_reciprocal_exp_sub_one_eq_antitone (theta : ℕ → ℝ) (N : ℕ)
+    (hpos : ∀ k ≤ N, 0 < theta k)
+    (hlt : ∀ k ≤ N, theta k < 2 * Real.pi)
+    (hanti : ∀ k < N, theta (k + 1) ≤ theta k) :
+    ∑ k ∈ Finset.range N,
+        ‖(Complex.exp (Complex.I * (theta k : ℂ)) - 1)⁻¹ -
+          (Complex.exp (Complex.I * (theta (k + 1) : ℂ)) - 1)⁻¹‖ =
+      (Real.cot (theta N / 2) - Real.cot (theta 0 / 2)) / 2 := by
+  calc
+    ∑ k ∈ Finset.range N,
+        ‖(Complex.exp (Complex.I * (theta k : ℂ)) - 1)⁻¹ -
+          (Complex.exp (Complex.I * (theta (k + 1) : ℂ)) - 1)⁻¹‖ =
+        ∑ k ∈ Finset.range N,
+          (Real.cot (theta (k + 1) / 2) - Real.cot (theta k / 2)) / 2 := by
+      apply Finset.sum_congr rfl
+      intro k hk
+      exact norm_reciprocal_exp_sub_one_sub_eq_of_ge
+        (hpos (k + 1) (Nat.succ_le_of_lt (Finset.mem_range.mp hk)))
+        (hlt k (Nat.le_of_lt (Finset.mem_range.mp hk)))
+        (hanti k (Finset.mem_range.mp hk))
+    _ = (∑ k ∈ Finset.range N,
+          (Real.cot (theta (k + 1) / 2) - Real.cot (theta k / 2))) / 2 := by
+      rw [Finset.sum_div]
+    _ = (Real.cot (theta N / 2) - Real.cot (theta 0 / 2)) / 2 := by
+      congr 1
+      exact Finset.sum_range_sub (fun k ↦ Real.cot (theta k / 2)) N
 
 end ZeroFreeRegion.VinogradovKorobov

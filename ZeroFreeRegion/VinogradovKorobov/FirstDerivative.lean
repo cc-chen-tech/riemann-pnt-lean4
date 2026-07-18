@@ -137,4 +137,24 @@ theorem kusminLandau_endpoint_bound (f : ℕ → ℝ) (N : ℕ)
   rw [hvariation] at hbound
   simpa using hbound
 
+/-- Antitone-increment form of the discrete Kusmin--Landau estimate. -/
+theorem kusminLandau_endpoint_bound_antitone (f : ℕ → ℝ) (N : ℕ)
+    (hpos : ∀ k ≤ N, 0 < f (k + 1) - f k)
+    (hlt : ∀ k ≤ N, f (k + 1) - f k < 2 * Real.pi)
+    (hanti : ∀ k < N,
+      f (k + 2) - f (k + 1) ≤ f (k + 1) - f k) :
+    ‖∑ k ∈ Finset.range (N + 1), phaseTerm f k‖ ≤
+      ‖(Complex.exp (Complex.I * ((f 1 - f 0 : ℝ) : ℂ)) - 1)⁻¹‖ +
+      ‖(Complex.exp (Complex.I * ((f (N + 1) - f N : ℝ) : ℂ)) - 1)⁻¹‖ +
+      (Real.cot ((f (N + 1) - f N) / 2) -
+        Real.cot ((f 1 - f 0) / 2)) / 2 := by
+  have hq : ∀ k ≤ N, phaseRatio f k ≠ 1 := fun k hk ↦
+    phaseRatio_ne_one_of_increment_mem f k (hpos k hk) (hlt k hk)
+  have hbound := norm_phaseSum_le_reciprocalVariation f N hq
+  have hvariation := sum_norm_reciprocal_exp_sub_one_eq_antitone
+    (fun k ↦ f (k + 1) - f k) N hpos hlt hanti
+  simp only [phaseRatio] at hbound
+  rw [hvariation] at hbound
+  simpa using hbound
+
 end ZeroFreeRegion.VinogradovKorobov
