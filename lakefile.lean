@@ -33,6 +33,7 @@ lean_lib RiemannPNT where
     `PrimeNumberTheorem.CompletePerron,
     `PrimeNumberTheorem.SecondOrderExplicitFormula,
     `PrimeNumberTheorem.SafeSecondOrderExplicitFormula,
+    `PrimeNumberTheorem.SmoothedErrorTransfer,
     `PrimeNumberTheorem.VonMangoldtLSeriesNorm,
     `PrimeNumberTheorem.RightHorizontalEdge,
     `PrimeNumberTheorem.ExplicitFormulaAux,
@@ -132,7 +133,9 @@ lean_lib RiemannPNT where
     `Test.RiemannVonMangoldtAllHeightAsymptoticContract,
     `Test.RiemannVonMangoldtAllHeightAsymptoticAxiomAudit,
     `Test.RiemannVonMangoldtContract,
-    `Test.RiemannVonMangoldtAxiomAudit
+    `Test.RiemannVonMangoldtAxiomAudit,
+    `Test.SmoothedErrorTransferContract,
+    `Test.SmoothedErrorTransferAxiomAudit
   ]
 
 require mathlib from "./vendor/mathlib"
