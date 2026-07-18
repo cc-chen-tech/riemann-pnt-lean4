@@ -13,7 +13,7 @@ interfaces cannot be hidden by the target count:
 1. Quantitative zero-free region
 2. Explicit formula
 3. RH / prime-counting error equivalence
-4. Hardy theorem
+4. Hardy quantitative extensions
 
 The chain-specific notes are maintained separately so that work can proceed in
 parallel:
@@ -30,7 +30,8 @@ parallel:
 - `docs/rh-error-equivalence-chain.md`
   equivalence between RH and prime-counting error terms;
 - `docs/hardy-theorem-chain.md`
-  Hardy Z-function moment estimates and critical-line zeros.
+  the proved Hardy theorem and the remaining quantitative critical-line-zero
+  extensions.
 
 ## Evaluation Boundary
 
@@ -67,7 +68,7 @@ technology rather than more local Jensen/Borel wrappers.
 | Quantitative zero-free region | `classical_zero_free_region` is proved; `vinogradov_korobov_zero_free_region` remains a target | Develop exponential-sum estimates for the stronger width | Formalize the Vinogradov-Korobov exponential-sum input without weakening the proved classical theorem | 1 |
 | Explicit formula | `ExplicitFormulaTruncatedTarget`, the moving-height formula, ordinary PNT, and the de la Vallee Poussin-form `psi` and `pi-Li` remainders are proved | Preserve the natural-sample jump convention and multiplicities in stronger reusable variants | Pursue genuinely stronger power-saving or explicit-constant inputs rather than more endpoint wrappers | 0 |
 | RH error equivalence | Ordinary PNT is proved; `rh_iff_optimal_error` is proved in both directions by `rh_iff_optimal_error_proved` | No remaining implication gap; RH itself and its equivalent error predicates remain unproved unconditionally | Reuse the completed equivalence when another endpoint supplies either RH or the error bound | 4 |
-| Hardy theorem | `hardy_theorem_target`, `hardy_zeros_unbounded_target`, and its absolute-height form are proved | Preserve the distinction between the classical theorem and stronger quantitative zero-counting claims | Develop Hardy-Littlewood, Selberg, and Conrey percentage estimates | 8 (4 in `HardyTheorem`, 3 in `HardyTheorem.Details`, 1 in `KnownResults`) |
+| Hardy quantitative extensions | `hardy_theorem_target`, `hardy_zeros_unbounded_target`, and its absolute-height form are proved | Define distinct-ordinate and analytic-multiplicity counts separately and match each cited theorem | Develop Hardy-Littlewood, Selberg, and Conrey percentage estimates | 8 (4 in `HardyTheorem`, 3 in `HardyTheorem.Details`, 1 in `KnownResults`) |
 
 ## Target-to-Chain Mapping
 
@@ -78,14 +79,14 @@ technology rather than more local Jensen/Borel wrappers.
 | `PrimeNumberTheorem.lean` | `RH_ThetaErrorBound` | RH error equivalence | Equivalent to `RH_PsiErrorBound`; RH implies it, but it remains unresolved without assuming RH |
 | `PrimeNumberTheorem.lean` | `RH_PrimeCountingLiErrorBound` | RH error equivalence | Equivalent to RH by proved forward and reverse implications; not known unconditionally |
 | `PrimeNumberTheorem.lean` | `RH_ErrorBound` | RH error equivalence | Pointwise reformulation of `RH_PrimeCountingLiErrorBound`; RH implies it |
-| `HardyTheorem.lean` | `integral_asymptotic_target` | Hardy theorem | Signed-moment asymptotic input |
-| `HardyTheorem.lean` | `hardy_two_signed_moments_target` | Hardy theorem | Asymptotics for the first two weighted moments |
-| `HardyTheorem.lean` | `hardy_littlewood_lower_bound_target` | Hardy theorem | Quantitative lower bound on critical-line zeros needed for positive density |
-| `HardyTheorem.lean` | `selberg_zero_proportion_target` | Hardy theorem | Proportional form of Hardy-type lower bounds |
-| `HardyTheorem.lean` | `HardyTheorem.Details.gamma_asymptotic_half_plus_it_target` | Hardy theorem | Gamma asymptotic used in approximate functional equation setup |
-| `HardyTheorem.lean` | `HardyTheorem.Details.theta_asymptotic_target` | Hardy theorem | Riemann–Siegel theta asymptotic setup |
-| `HardyTheorem.lean` | `HardyTheorem.Details.approximate_functional_equation_target` | Hardy theorem | Residual error form of the AFE used by Hardy integrals |
-| `RiemannExplorer.lean` | `KnownResults.conrey_40_percent_zeros_on_critical_line_target` | Hardy theorem | Proportionality target for zero density on the critical line |
+| `HardyTheorem.lean` | `integral_asymptotic_target` | Quantitative critical-line extensions | Signed-moment asymptotic input |
+| `HardyTheorem.lean` | `hardy_two_signed_moments_target` | Quantitative critical-line extensions | Asymptotics for the first two weighted moments |
+| `HardyTheorem.lean` | `hardy_littlewood_lower_bound_target` | Quantitative critical-line extensions | Quantitative lower bound on critical-line zeros needed for positive density |
+| `HardyTheorem.lean` | `selberg_zero_proportion_target` | Quantitative critical-line extensions | Proportional form of Hardy-type lower bounds |
+| `HardyTheorem.lean` | `HardyTheorem.Details.gamma_asymptotic_half_plus_it_target` | Quantitative critical-line extensions | Gamma asymptotic used in approximate functional equation setup |
+| `HardyTheorem.lean` | `HardyTheorem.Details.theta_asymptotic_target` | Quantitative critical-line extensions | Riemann–Siegel theta asymptotic setup |
+| `HardyTheorem.lean` | `HardyTheorem.Details.approximate_functional_equation_target` | Quantitative critical-line extensions | Residual error form of the AFE used by Hardy integrals |
+| `RiemannExplorer.lean` | `KnownResults.conrey_40_percent_zeros_on_critical_line_target` | Quantitative critical-line extensions | Proportionality target for zero density on the critical line |
 
 ## Verified Starting Points
 

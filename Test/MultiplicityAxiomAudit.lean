@@ -91,6 +91,8 @@ import RiemannPNT
 #print axioms HardyTheorem.hardy_zeros_unbounded_target_proved
 #print axioms HardyTheorem.hardy_theorem_target_proved
 #print axioms RiemannPNT.API.hardy_zeros_unbounded_target_proved
+#print axioms RiemannPNT.API.hardy_theorem_target_proved
+#print axioms RiemannPNT.API.zeroCountOnCriticalLine_eq_distinct_ncard
 #print axioms HardyTheorem.norm_integral_inv_nat_cpow_criticalLine_le
 #print axioms HardyTheorem.norm_integral_criticalLineDirichletTail_le
 #print axioms HardyTheorem.norm_integral_criticalLineDirichletTail_cutoff_le

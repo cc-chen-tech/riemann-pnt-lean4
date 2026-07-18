@@ -22,15 +22,19 @@ The current repository already contains useful RH-adjacent material:
   - Contains `RH_ErrorBound` and the statement
     `rh_iff_optimal_error`.
   - Contains nontrivial-zero symmetry and critical-strip lemmas.
-  - Contains the explicit von Mangoldt formula as a stated target.
+  - Proves a multiplicity-aware explicit von Mangoldt formula, ordinary PNT,
+    the classical PNT remainder, and both directions of the RH/error
+    equivalence. The equivalence does not prove RH or either equivalent error
+    proposition unconditionally.
 - `HardyTheorem.lean`
-  - Builds Hardy Z-function infrastructure and critical-line zero statements.
-  - Useful for the route "many zeros on the critical line", but not enough for
-    RH by itself.
+  - Proves Hardy's theorem in the stronger unbounded-positive-height form.
+  - This gives infinitely many critical-line zeros, but is not enough for RH
+    and does not exclude zeros away from the critical line.
 - `ZeroFreeRegion.lean`
-  - Contains zero-free-region infrastructure.
-  - Identifies Borel-Caratheodory, Hadamard factorization, and zeta growth
-    estimates as blockers.
+  - Proves the classical `c/log |t|` zero-free region using the local
+    Borel/Jensen and zeta-growth infrastructure.
+  - The stronger Vinogradov-Korobov target still requires exponential-sum
+    estimates.
 - `experiments/pnt/pnt_experiments.py`
   - Provides local numerical data for `pi(x)`, `theta(x)`, `psi(x)`, and
     `Li(x)`.
@@ -112,22 +116,24 @@ Why this route is attractive:
 
 Required infrastructure:
 
-- A rigorous von Mangoldt explicit formula.
+- The existing rigorous von Mangoldt explicit formula as a starting point.
 - Test functions and Fourier/Mellin transform machinery.
 - Summation over zeros with convergence control.
 - Positivity theorem equivalent to RH.
 
 Near-term tasks:
 
-- Keep `explicit_formula_von_mangoldt` as a central blocker, not a side note.
+- Reuse `explicit_formula_von_mangoldt_proved` rather than reintroducing it as
+  a target.
 - Add an experiment that compares `psi(x) - x` with truncated zero terms.
 - Build a dependency map from explicit formula to Perron, residues, and contour
   integrals.
 
 Risk:
 
-High. This route is mathematically natural but depends on contour integration
-and residue machinery that is still weak in the local project.
+High. The local contour and residue route is now sufficient for the PNT
+formula, but the Weil positivity equivalence requires substantially different
+test-function and distributional infrastructure.
 
 ### Route C: Xi Function and Hadamard Product
 

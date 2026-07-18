@@ -31,9 +31,9 @@ CHAIN_SUMMARY = [
         "next_step": "no remaining implication gap; retain the individual RH-scale predicates as conditional theorem interfaces",
     },
     {
-        "name": "Hardy theorem",
-        "target": "hardy_theorem_target",
-        "status": "proved in Lean via the first zeta approximation and a T^(3/4) oscillatory-integral upper bound",
+        "name": "Quantitative critical-line extensions",
+        "target": "hardy_littlewood_lower_bound_target",
+        "status": "Hardy's infinite-zero theorem is proved; stronger Hardy-Littlewood, Selberg, and Conrey counts remain open",
         "next_step": "develop the stronger Hardy-Littlewood, Selberg, and Conrey quantitative zero-counting targets",
     },
 ]

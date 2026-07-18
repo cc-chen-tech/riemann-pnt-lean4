@@ -1,5 +1,9 @@
 # Hardy First-Approximation Implementation Plan
 
+> **Status:** Completed on `feat/hardy-first-approximation`. This is an
+> archived implementation plan; unchecked boxes below are historical work
+> items and are not current blockers.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Prove `HardyTheorem.hardy_zeros_unbounded_target` unconditionally by comparing lower and upper bounds for the dyadic Hardy-Z integral.

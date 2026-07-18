@@ -19,7 +19,7 @@ EXPECTED_CHAINS = {
     "Quantitative zero-free region",
     "Explicit formula",
     "RH error equivalence",
-    "Hardy theorem",
+    "Quantitative critical-line extensions",
 }
 
 

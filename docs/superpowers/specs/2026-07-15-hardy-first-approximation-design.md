@@ -1,5 +1,10 @@
 # Hardy Theorem via the First Zeta Approximation
 
+> **Status:** Completed and verified. The final witnesses are
+> `HardyTheorem.hardy_zeros_unbounded_target_proved` and
+> `HardyTheorem.hardy_theorem_target_proved`. The risks below are retained as
+> the historical design record, not as current blockers.
+
 ## Objective
 
 Prove the existing unconditional target
@@ -193,9 +198,10 @@ The dominant risks are mathematical infrastructure, not Lean syntax:
 2. Mathlib has no ready-made van der Corput first/second derivative integral
    tests in the required form.  They must be developed from integration by
    parts and real-variable monotonicity.
-3. The repository has no finite critical-line first approximation for zeta.
-   Proving it will likely require a finite-sum plus tail-integral argument.
+3. At design time the repository had no finite critical-line first
+   approximation for zeta. This was closed by `criticalLineZetaFirstApprox`
+   using a finite-sum plus tail-integral argument.
 
-If one of these cannot be closed, that exact lemma remains the named blocker.
-The project must not report Hardy's theorem as proved until the final contract
-and full verification pass.
+These risks were closed in the implementation by the vertical Gamma,
+oscillatory-integral, and first-zeta-approximation modules. The final contract
+and full verification pass before the theorem is reported as proved.

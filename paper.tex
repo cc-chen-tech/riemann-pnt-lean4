@@ -43,16 +43,15 @@ bounds near \(s=1\), fixed-strip polynomial growth via Phragm\'en--Lindel\"of,
 a Jensen/Borel all-divisor regular-part estimate of order \(\log|t|\), and the
 candidate-zero repulsion estimate that closes the classical region.
 
-The present development should be read as a verified framework with explicit
-unproved target statements, not as a first or completed PNT formalization.
 With Lean~4.29.1 and Mathlib~4.29.1 the project builds successfully and
-contains no syntactic \texttt{sorry} occurrences.  Secondary verified results
-include a pointwise-in-$x$ quantitative Riemann--von Mangoldt formula using the
-midpoint Chebyshev function and finite-height truncations, proved
-PNT-form equivalence wrappers, RH-scale error-propagation interfaces, and a
-Hardy \(Z\)-function framework.  We give a precise inventory of what is
-verified, what remains conjectural within the code, and which Mathlib
-components would be needed to close the remaining analytic chains.
+contains no syntactic \texttt{sorry} occurrences.  Further verified results
+include a multiplicity-aware Riemann--von Mangoldt formula, the ordinary Prime
+Number Theorem, de~la~Vall\'ee~Poussin-form error bounds for both \(\psi(x)-x\)
+and \(\pi(x)-\operatorname{Li}(x)\), and Hardy's theorem that the critical line
+contains infinitely many zeta zeros.  These are independent formalization
+contributions, not claims of a first PNT formalization or a proof of the
+Riemann Hypothesis.  We give a precise inventory of what is verified and what
+remains conjectural within the code.
 \end{abstract}
 
 %=====================================================================
@@ -77,10 +76,11 @@ long-standing challenge. Previous formalizations have taken different routes:
 \end{itemize}
 
 These external baselines fix the claim boundary for this paper.  We do not
-claim a first formalization of the PNT, nor a completed formalization of the
-classical analytic PNT proof.  Instead, we isolate a Lean~4 module for the
-de~la~Vall\'ee~Poussin 3-4-1/Jensen/Borel mechanism and its classical
-quantitative zero-free-region consequence, built on Mathlib.
+claim a first formalization of the PNT.  Instead, we isolate a Lean~4 route
+through the de~la~Vall\'ee~Poussin 3-4-1/Jensen/Borel mechanism, its classical
+quantitative zero-free-region consequence, a moving-height explicit formula,
+and the resulting PNT error term, all built on Mathlib.  Hardy's theorem is a
+separate verified module rather than a step in the PNT argument.
 
 Our contributions are deliberately stratified:
 
@@ -94,15 +94,17 @@ Our contributions are deliberately stratified:
     \(\psi_0\), analytic zero multiplicities, and finite-height zero sums.  For
     each fixed \(x\ge2\), one constant controls every real \(T\ge2\) with an
     \(O_x(x\log^2(xT)/T)\) remainder.
-  \item \textbf{PNT infrastructure:} proved equivalence wrappers for the
-    standard PNT forms and RH-scale error-propagation interfaces that will
-    compose with a future proof of \(\psi(x)\sim x\); RH-scale use of the
-    explicit formula still requires uniform control of its constant as
-    \(x\) varies.
-  \item \textbf{Hardy framework:} a Hardy \(Z\)-function and critical-line-zero
-    framework, with target statements for Hardy, Hardy--Littlewood, Selberg,
-    and Conrey-style zero-counting results.  These are treated as future work
-    rather than as the main theorem of the paper.
+  \item \textbf{PNT and classical remainder:} the moving-height formula and
+    uniform natural-sample estimates prove all three standard PNT forms and
+    error bounds of shape
+    \(x\exp(-c\sqrt{\log x})\) for both \(\psi(x)-x\) and
+    \(\pi(x)-\operatorname{Li}(x)\), with existential constants.
+  \item \textbf{Hardy's theorem:} a uniform first zeta approximation, a linear
+    lower bound for the critical-line zeta \(L^1\) integral, and an
+    \(O(T^{3/4})\) upper bound for the Hardy \(Z\) integral give critical-line
+    zeros at arbitrarily large positive heights and hence infinitely many
+    distinct critical-line zeros.  Quantitative Hardy--Littlewood, Selberg,
+    and Conrey-style counts remain open.
   \item A reproducible Lean~4.29.1 build and an explicit gap table listing the
     remaining unproved target statements.
 \end{enumerate}
@@ -178,16 +180,16 @@ concerns and minimize dependencies:
   $\operatorname{Res}(\Gamma,-n)=(-1)^{n}/n!$ &
   \texttt{sorry}-free \\
 \texttt{HardyTheorem.lean} &
-  Hardy Z-function framework; corrected targets for the missing moment estimates &
-  \texttt{sorry}-free; targets unproved \\
+  Hardy Z-function, first zeta approximation, and the infinite-zero theorem &
+  \texttt{sorry}-free; Hardy proved, quantitative extensions open \\
 \texttt{PrimeNumberTheorem.lean} &
   PNT forms, equivalences, $\operatorname{Li}(x)$ asymptotics, zero symmetry,
-  bounded-height zero finiteness, explicit formula target &
-  \texttt{sorry}-free; targets unproved \\
+  bounded-height zero finiteness, and explicit formula &
+  \texttt{sorry}-free; PNT and classical remainder proved \\
 \texttt{ZeroFreeRegion.lean} &
-  3-4-1 inequality, compact zero-free region, log derivative series, residue
-  bounds &
-  \texttt{sorry}-free; quantitative targets unproved \\
+  3-4-1 inequality, compact and classical zero-free regions, log derivative
+  series, residue bounds &
+  \texttt{sorry}-free; Vinogradov--Korobov target open \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -388,19 +390,17 @@ Table~\ref{tab:gaps} summarizes the main blockers.
 \toprule
 \textbf{Theorem} & \textbf{Missing Component} & \textbf{Difficulty} \\
 \midrule
-\texttt{explicit\_formula\_von\_mangoldt}
-  & Contour integration \& residue theorem & High \\
-\texttt{rh\_iff\_optimal\_error}
-  & Standard RH/PNT error-term theory & High \\
+Unconditional RH-scale error predicates
+  & Equivalent to the Riemann Hypothesis & Open \\
 \texttt{vinogradov\_korobov\_zero\_free\_region}
   & Exponential sum estimates & Very High \\
-Hardy's integral asymptotics
-  & Corrected moment and special-function estimates & Medium--High \\
+Hardy--Littlewood, Selberg, and Conrey counts
+  & Multiplicity-aware counts and new mean-value estimates & Very High \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\subsection{Distance to the Classical PNT Route}
+\subsection{Completion of the Classical PNT Route}
 
 The current formalization should be understood as the front half of the
 de~la~Vall\'ee~Poussin mechanism:
@@ -411,8 +411,7 @@ de~la~Vall\'ee~Poussin mechanism:
   \quad\Longrightarrow\quad
   \text{classical }c/\log|t|\text{ zero-free region}.
 \]
-This is still not a complete PNT proof along the classical route.  The proof
-establishes the boundary-strip real-part estimate needed by 3-4-1,
+The proof establishes the boundary-strip real-part estimate needed by 3-4-1,
 schematically
 \[
   \operatorname{Re}(-\zeta'/\zeta)(z)
@@ -425,9 +424,14 @@ together with a zero-candidate regular-part estimate of the form
   \operatorname{Re}\!\left(-\frac{\zeta'}{\zeta}(\sigma+it)\right)
     \leq -\frac{1}{\sigma-\beta} + O(\log |t|)
 \]
-when \(\rho=\beta+it\) is a zero.  Both estimates are now proved.  The
-remaining wall before PNT is the later Perron/explicit-formula or Tauberian
-step.
+when \(\rho=\beta+it\) is a zero.  Both estimates are proved.  A
+multiplicity-aware moving-height contour formula, finite-zero estimates, and
+uniform truncation bounds then yield
+\[
+  \psi(x)-x=O\!\left(xe^{-c\sqrt{\log x}}\right)
+\]
+and transfer the same shape to \(\pi(x)-\operatorname{Li}(x)\).  The constants
+are existential rather than numerically optimized.
 
 \subsection{The Borel--Carath\'eodory Shortcut}
 
@@ -451,8 +455,9 @@ Here \(m(\rho)\) is the analytic multiplicity.  The Lean proof includes the
 rectangle contour calculation, selected safe heights, the trivial-zero tail,
 bounded-gap interpolation, the identity
 \(\zeta'(0)/\zeta(0)=\log(2\pi)\), and a finite low-height patch.  This estimate
-is pointwise in \(x\); it does not yet provide the uniform \(x\)-dependence
-needed to derive RH-scale prime-counting errors.
+is pointwise in \(x\).  Separate moving-height estimates provide the uniform
+dependence used for the proved classical PNT remainder; the stronger RH-scale
+bound remains conditional on RH.
 
 %=====================================================================
 \section{Related Work}
@@ -486,37 +491,42 @@ Mathlib, including the functional equation, Euler product, and Dirichlet
 $L$-functions~\cite{mathlib}. Our work directly extends this foundation.
 
 \paragraph{Our contribution.}
-Our contribution is narrower and complementary: in Lean~4, we verify a
-project-local module for the 3-4-1 inequality, related logarithmic-derivative
-series manipulations, and the classical quantitative zero-free region.  We do
-not claim the first PNT formalization, a completed classical analytic PNT
-proof, or a proof of RH.
+Our contribution is complementary: in Lean~4, we verify a project-local route
+from the 3-4-1 inequality and logarithmic-derivative machinery through the
+classical quantitative zero-free region and moving-height explicit formula to
+the PNT remainder.  We also verify Hardy's infinite-critical-line-zero theorem
+by an independent first-approximation argument.  We do not claim the first PNT
+formalization or a proof of RH.
 
 %=====================================================================
 \section{Conclusion and Future Work}
 %=====================================================================
 
 We have organized a Lean~4 project that builds against Mathlib~4.29.1 and
-collects infrastructure toward de~la~Vall\'ee~Poussin's analytic proof of the
-Prime Number Theorem.  The current development is not yet a completed formal
-proof of the PNT: it contains no explicit \texttt{sorry} occurrences, but it
-still has unproved target statements for the stronger Vinogradov--Korobov region,
-Hardy-theorem moment estimates, and explicit-formula machinery.
+formalizes a de~la~Vall\'ee~Poussin analytic route to the Prime Number Theorem
+with its classical error shape.  It contains no explicit \texttt{sorry}
+occurrences.  The development also proves Hardy's theorem by an independent
+first-approximation argument.  Unproved targets remain for the stronger
+Vinogradov--Korobov region, unconditional RH-scale predicates, and
+quantitative critical-line zero counts.
 
 The intended publication claim is therefore relative to existing PNT
-formalizations by other routes: this work contributes a Lean~4 formalization
-of de~la~Vall\'ee~Poussin-style 3-4-1/Jensen infrastructure and the classical
-zero-free region, not a new completion of PNT or RH.
+formalizations: this work contributes a distinct Lean~4 formalization of
+de~la~Vall\'ee~Poussin-style 3-4-1/Jensen machinery, the classical zero-free
+region and remainder, together with an independent Hardy-theorem module.  It
+does not claim the first Lean PNT formalization or a proof of RH.
 
-The immediate path to a publishable artifact is therefore twofold.  First,
-keep the repository reproducible and its claims aligned with the checked Lean
-source.  Second, complete the Perron/explicit-formula chain before advertising
-a classical analytic PNT result.  The larger remaining goals point to useful
-Mathlib extensions, particularly contour integration and residue calculus.
+The immediate path to a publishable artifact is therefore to keep the
+repository reproducible, audit the first-zeta-approximation and moving-contour
+arguments independently, and keep every manuscript claim aligned with a named
+checked Lean declaration.
 
 Future directions include:
 \begin{itemize}[noitemsep]
-  \item Formalizing Perron's formula for the explicit formula.
+  \item Developing multiplicity-aware Hardy--Littlewood, Selberg, and Conrey
+    critical-line zero counts.
+  \item Formalizing the exponential-sum estimates needed for the
+    Vinogradov--Korobov zero-free region.
   \item Extending the framework to Dirichlet $L$-functions for the Prime
     Number Theorem in arithmetic progressions.
 \end{itemize}

@@ -94,6 +94,8 @@ EXPECTED_DECLARATIONS = {
     "HardyTheorem.hardy_zeros_unbounded_target_proved",
     "HardyTheorem.hardy_theorem_target_proved",
     "RiemannPNT.API.hardy_zeros_unbounded_target_proved",
+    "RiemannPNT.API.hardy_theorem_target_proved",
+    "RiemannPNT.API.zeroCountOnCriticalLine_eq_distinct_ncard",
     "HardyTheorem.norm_integral_inv_nat_cpow_criticalLine_le",
     "HardyTheorem.norm_integral_criticalLineDirichletTail_le",
     "HardyTheorem.norm_integral_criticalLineDirichletTail_cutoff_le",

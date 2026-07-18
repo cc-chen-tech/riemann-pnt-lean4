@@ -1,9 +1,9 @@
 # De la Vallee Poussin 3-4-1 Infrastructure for the Riemann Zeta Function in Lean 4
 
-A Lean 4 project developing formalized infrastructure around the Riemann zeta
-function, Hardy's theorem, zero-free regions, and Prime Number Theorem statements.
-It is built on Mathlib and currently serves as a buildable proof framework with
-explicitly isolated unproved target statements.
+A Lean 4 project formalizing results about the Riemann zeta function, Hardy's
+theorem, zero-free regions, and the Prime Number Theorem. It is built on
+Mathlib, proves the named core results below, and keeps stronger open goals as
+explicitly isolated `def ... : Prop` targets.
 
 The strongest verified zero-free-region module in the current repository is:
 
@@ -363,13 +363,15 @@ This keeps the claims tight:
    RH_PrimeCountingLiErrorBound`, the reverse quantitative partial-summation
    chain, and the equivalences with both `RH_PsiErrorBound` and the
    prime-counting `Li` error.
-4. **Hardy contribution:** proving Hardy's classical theorem in the stronger
-   unbounded-positive-height form, while retaining explicit targets for the
-   stronger Hardy-Littlewood, Selberg, and Conrey-style zero-counting results.
+4. **Independent verified contribution:** proving Hardy's theorem in the
+   stronger form that critical-line zeta zeros occur at arbitrarily large
+   positive heights, using a uniform first zeta approximation and dyadic
+   integral bounds. Hardy-Littlewood, Selberg, and Conrey-style quantitative
+   zero-counting statements remain separate targets.
 5. **Mathlib roadmap:** isolating the remaining analytic inputs: stronger
    reusable finite-height estimates where needed, Vinogradov-Korobov
    exponential-sum estimates, and the stronger approximate-functional-equation
-   and moment estimates needed for quantitative critical-line zero counts.
+   and mean-value estimates needed for quantitative critical-line zero counts.
 
 The strongest current title direction is:
 
@@ -492,7 +494,7 @@ of such contours from `goodHeight`: the square at height `T` has real sides
 | `RiemannExplorer.lean` | Riemann Hypothesis statement, zeta definitions, functional equation, trivial zeros | sorry-free |
 | `EulerAndLfunctions.lean` | Thin wrappers around Mathlib zeta/Euler product/L-function facts | sorry-free |
 | `GammaResidue.lean` | Gamma residue facts and numerical special cases | sorry-free |
-| `HardyTheorem.lean` | Hardy Z-function setup and theorem predicates for critical-line zeros | sorry-free; Hardy's theorem and unbounded-zero forms are proved, while stronger quantitative targets remain open |
+| `HardyTheorem.lean` | Hardy Z-function setup, zero equivalence, unbounded-zero theorem, and distinct-ordinate counting interfaces | sorry-free; Hardy's theorem proved, quantitative counting targets open |
 | `PrimeNumberTheorem.lean` | PNT forms, equivalences, Li(x) asymptotics, zero symmetry, bounded-height zero finiteness, and the multiplicity-aware explicit-formula predicate | sorry-free; ordinary PNT and the explicit-formula predicate are proved, RH-scale error targets remain |
 | `PrimeNumberTheorem/PNTFromDynamicPerron.lean` | Transfers the natural-sample de la Vallee Poussin estimate through the floor identity and proves `PNTForm1`, `PNTForm2`, and `PNTForm3` | sorry-free; ordinary PNT proved |
 | `PrimeNumberTheorem/ClassicalPNTError.lean` | Absorbs the moving-height polynomial factors and von Mangoldt half-jump, then transfers the quantitative estimate from natural samples to all large real inputs | sorry-free; `psi(x)-x = O(x exp(-c sqrt(log x)))` proved |
@@ -1293,7 +1295,7 @@ not be cited as completed proofs:
   `RH_ThetaErrorBound`, `RH_PrimeCountingLiErrorBound`, `RH_ErrorBound`;
 - quantitative zero-free-region target:
   `vinogradov_korobov_zero_free_region`;
-- Hardy/critical-line targets:
+- Hardy quantitative-extension targets:
   `integral_asymptotic_target`, `hardy_two_signed_moments_target`,
   `hardy_littlewood_lower_bound_target`, `selberg_zero_proportion_target`,
   `HardyTheorem.Details.gamma_asymptotic_half_plus_it_target`,
@@ -1301,7 +1303,7 @@ not be cited as completed proofs:
   `HardyTheorem.Details.approximate_functional_equation_target`,
   `KnownResults.conrey_40_percent_zeros_on_critical_line_target`.
 
-For the Hardy/AFE chain, the repository proves several target-management
+For the independent Hardy/AFE extension chain, the repository proves several target-management
 bridges around these statements, including threshold/bounded-height patching
 for the approximate functional equation and variants where large- and
 bounded-height constants are absorbed into a common positive constant.  These
@@ -1315,6 +1317,12 @@ bridge and nonstationary-phase estimates.  A bounded Hardy-Z zero set would
 make these two integrals equal at large height, giving a contradiction.  Thus
 critical-line zeros occur at arbitrarily large positive heights, and the
 classical infinite-zero statement follows unconditionally.
+
+The current `zeroCountOnCriticalLine` API counts distinct real ordinates in
+`[0,T]`; it does not count analytic multiplicity. A literature-aligned
+Hardy-Littlewood, Selberg, or Conrey development must introduce a separate
+multiplicity-weighted count before claiming the corresponding historical
+quantitative theorem.
 
 The three remaining open analytic directions are:
 
@@ -1384,16 +1392,17 @@ parallel work breakdown of the remaining analytic chains.
 | Theorem | Missing Mathlib Component | Difficulty |
 |---|---|---|
 | Vinogradov-Korobov zero-free region | Exponential sum estimates | Very High |
-| Hardy's theorem targets | Corrected moment estimates and asymptotic expansions of special functions | Medium–High |
+| Hardy-Littlewood / Selberg / Conrey extensions | Multiplicity-aware zero counts and new mean-value estimates | High–Very High |
 
 ### Easiest Path Forward
 
 The moving-height natural-sample formula, classical zero-free region, and
 finite-zero estimate and quantitative Abel transfer now close ordinary PNT and
-the de la Vallee Poussin-form `psi` and `pi-Li` remainders.  Further progress
-toward the `1/3` line requires genuinely stronger zero-density or power-saving
-input; the other deep alternatives are Vinogradov-Korobov or the Hardy moment
-chain.
+the de la Vallee Poussin-form `psi` and `pi-Li` remainders. Hardy's theorem is
+also closed independently. Further progress toward the `1/3` line requires
+genuinely stronger zero-density or power-saving input; the other deep
+alternatives are Vinogradov-Korobov or quantitative Hardy-Littlewood/Selberg
+mean-value estimates.
 
 ## Related Work
 
