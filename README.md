@@ -394,7 +394,7 @@ Current code status:
 | File | `sorry` count | Unproved targets |
 |---|---:|---|
 | `GammaResidue.lean` | 0 | General Gamma residue formula completed |
-| `HardyTheorem.lean` | 0 | Hardy's theorem is proved in the stronger unbounded-positive-height form; Hardy-Littlewood, Selberg, Conrey-percentage, and auxiliary AFE targets remain open |
+| `HardyTheorem.lean`, `HardyTheorem/CriticalLineMultiplicity.lean` | 0 | Hardy's theorem is proved in the stronger unbounded-positive-height form; distinct, odd-order, and multiplicity-weighted critical-line counts are formalized; their Hardy-Littlewood, Selberg, Conrey-percentage, and auxiliary AFE bounds remain open |
 | `PrimeNumberTheorem.lean`, `PrimeNumberTheorem/PNTFromDynamicPerron.lean`, `PrimeNumberTheorem/ClassicalPNTError.lean`, and `PrimeNumberTheorem/ClassicalPrimeCountingError.lean` | 0 | Ordinary PNT and the classical de la Vallee Poussin-form `psi` and `pi-Li` remainders proved; unconditional RH-scale predicates remain open |
 | `ZeroFreeRegion.lean` | 0 | 3-4-1, compact strip, and classical `c/log|t|` zero-free region proved; Vinogradov-Korobov target open |
 
@@ -419,7 +419,7 @@ Full `def ... : Prop` inventory:
   `PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute`,
   `PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget`,
   `RiemannExplorer.Conrey40.conrey_40_percent_zeros_on_critical_line_target`);
-- reusable predicates: 13
+- reusable predicates: 16
   (`ZeroFreeRegion.classical_zero_free_region`,
   `HardyTheorem.weightedIntegralOf_tail_dominates`,
   `HardyTheorem.hardy_theorem_target`,
@@ -1297,7 +1297,8 @@ not be cited as completed proofs:
   `vinogradov_korobov_zero_free_region`;
 - Hardy quantitative-extension targets:
   `integral_asymptotic_target`, `hardy_two_signed_moments_target`,
-  `hardy_littlewood_lower_bound_target`, `selberg_zero_proportion_target`,
+  `hardy_littlewood_odd_lower_bound_target`,
+  `selberg_odd_zero_proportion_target`,
   `HardyTheorem.Details.gamma_asymptotic_half_plus_it_target`,
   `HardyTheorem.Details.theta_asymptotic_target`,
   `HardyTheorem.Details.approximate_functional_equation_target`,
@@ -1318,11 +1319,15 @@ make these two integrals equal at large height, giving a contradiction.  Thus
 critical-line zeros occur at arbitrarily large positive heights, and the
 classical infinite-zero statement follows unconditionally.
 
-The current `zeroCountOnCriticalLine` API counts distinct real ordinates in
-`[0,T]`; it does not count analytic multiplicity. A literature-aligned
-Hardy-Littlewood, Selberg, or Conrey development must introduce a separate
-multiplicity-weighted count before claiming the corresponding historical
-quantitative theorem.
+The quantitative critical-line API now separates three notions on `[0,T]`:
+`criticalLineOddZeroCount` counts odd-order zeros once,
+`criticalLineDistinctZeroCount` counts all distinct zeros once, and
+`criticalLineZeroMultiplicityCount` weights every zero by
+`analyticOrderNatAt riemannZeta`. Lean proves
+`odd <= distinct = zeroCountOnCriticalLine <= multiplicity`, together with
+monotonicity in `T`. The literature-aligned Hardy-Littlewood and Selberg
+targets use the odd-order count detected by Hardy-Z sign changes. Their actual
+linear and `T log T` lower bounds remain unproved.
 
 The three remaining open analytic directions are:
 
@@ -1392,7 +1397,7 @@ parallel work breakdown of the remaining analytic chains.
 | Theorem | Missing Mathlib Component | Difficulty |
 |---|---|---|
 | Vinogradov-Korobov zero-free region | Exponential sum estimates | Very High |
-| Hardy-Littlewood / Selberg / Conrey extensions | Multiplicity-aware zero counts and new mean-value estimates | High–Very High |
+| Hardy-Littlewood / Selberg / Conrey extensions | New short-integral mean-value estimates; the odd/distinct/multiplicity count infrastructure is complete | High–Very High |
 
 ### Easiest Path Forward
 

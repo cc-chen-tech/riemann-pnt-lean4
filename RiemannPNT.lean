@@ -2,6 +2,7 @@ import RiemannExplorer
 import GammaResidue
 import HardyTheorem
 import HardyTheorem.HardyIntegralContradiction
+import HardyTheorem.CriticalLineMultiplicity
 import EulerAndLfunctions
 import PrimeNumberTheorem
 import PrimeNumberTheorem.Perron
@@ -25266,5 +25267,37 @@ theorem zeroCountOnCriticalLine_eq_distinct_ncard (T : ℝ) :
       {t : Set.Icc 0 T |
         riemannZeta (0.5 + Complex.I * t) = 0}.ncard :=
   HardyTheorem.zeroCountOnCriticalLine_eq_distinct_ncard T
+
+/-- Public distinct critical-line zero count on the complex-zero finset. -/
+noncomputable abbrev criticalLineDistinctZeroCount (T : ℝ) : ℕ :=
+  HardyTheorem.criticalLineDistinctZeroCount T
+
+/-- Public count of critical-line zeros of odd analytic multiplicity. -/
+noncomputable abbrev criticalLineOddZeroCount (T : ℝ) : ℕ :=
+  HardyTheorem.criticalLineOddZeroCount T
+
+/-- Public critical-line zero count weighted by analytic multiplicity. -/
+noncomputable abbrev criticalLineZeroMultiplicityCount (T : ℝ) : ℕ :=
+  HardyTheorem.criticalLineZeroMultiplicityCount T
+
+/-- The sign-change count is bounded by the distinct-zero count. -/
+theorem criticalLineOddZeroCount_le_criticalLineDistinctZeroCount (T : ℝ) :
+    criticalLineOddZeroCount T ≤ criticalLineDistinctZeroCount T :=
+  HardyTheorem.criticalLineOddZeroCount_le_criticalLineDistinctZeroCount T
+
+/-- The distinct-zero count is bounded by the analytic-multiplicity count. -/
+theorem criticalLineDistinctZeroCount_le_criticalLineZeroMultiplicityCount
+    (T : ℝ) :
+    criticalLineDistinctZeroCount T ≤ criticalLineZeroMultiplicityCount T :=
+  HardyTheorem.criticalLineDistinctZeroCount_le_criticalLineZeroMultiplicityCount T
+
+/-- Public literature-aligned Hardy--Littlewood target, counting odd-order
+critical-line zeros detected by sign changes. -/
+abbrev HardyLittlewoodOddLowerBound : Prop :=
+  HardyTheorem.hardy_littlewood_odd_lower_bound_target
+
+/-- Public multiplicity-weighted consequence of the Hardy--Littlewood target. -/
+abbrev HardyLittlewoodMultiplicityLowerBound : Prop :=
+  HardyTheorem.hardy_littlewood_multiplicity_lower_bound_target
 
 end RiemannPNT.API

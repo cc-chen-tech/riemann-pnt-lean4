@@ -195,8 +195,8 @@ predicate; those individual propositions remain mathematical targets.
 
 - `HardyTheorem.integral_asymptotic_target`
 - `HardyTheorem.hardy_two_signed_moments_target`
-- `HardyTheorem.hardy_littlewood_lower_bound_target`
-- `HardyTheorem.selberg_zero_proportion_target`
+- `HardyTheorem.hardy_littlewood_odd_lower_bound_target`
+- `HardyTheorem.selberg_odd_zero_proportion_target`
 - `HardyTheorem.Details.gamma_asymptotic_half_plus_it_target`
 - `HardyTheorem.Details.theta_asymptotic_target`
 - `HardyTheorem.Details.approximate_functional_equation_target`
@@ -204,9 +204,11 @@ predicate; those individual propositions remain mathematical targets.
 
 Hardy's classical infinite-zero theorem itself is already proved. The targets
 above are independent signed-moment/AFE routes or stronger quantitative
-zero-counting extensions. The current `zeroCountOnCriticalLine` counts
-distinct ordinates; a literature-aligned multiplicity count must be introduced
-separately before promoting Hardy-Littlewood, Selberg, or Conrey claims.
+zero-counting extensions. The repository now defines odd-order, distinct, and
+analytic-multiplicity counts and proves
+`odd <= distinct = zeroCountOnCriticalLine <= multiplicity`. The
+Hardy-Littlewood and Selberg targets use the odd-order count supplied by the
+sign-change method. Their quantitative lower bounds remain open.
 
 ### Current verified anchor theorems
 
@@ -216,6 +218,11 @@ separately before promoting Hardy-Littlewood, Selberg, or Conrey claims.
 - `HardyTheorem.hardy_zeros_abs_unbounded_target_proved`
 - `HardyTheorem.hardy_zeros_unbounded_target_proved`
 - `HardyTheorem.hardy_theorem_target_proved`
+- `HardyTheorem.zeroCountOnCriticalLine_eq_criticalLineDistinctZeroCount`
+- `HardyTheorem.criticalLineOddZeroCount_le_criticalLineDistinctZeroCount`
+- `HardyTheorem.criticalLineDistinctZeroCount_le_criticalLineZeroMultiplicityCount`
+- `HardyTheorem.hardy_littlewood_lower_bound_target_of_odd`
+- `HardyTheorem.hardy_littlewood_multiplicity_lower_bound_target_of_odd`
 - `HardyTheorem.hardyZ_zero_iff_zeta_zero`
 - `HardyTheorem.hardyZ_eventually_const_sign_of_finite_zeros`
 - `HardyTheorem.weightedIntegralOf_neg`
