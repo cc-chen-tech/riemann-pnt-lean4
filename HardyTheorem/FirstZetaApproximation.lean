@@ -2,6 +2,7 @@ import HardyTheorem.OscillatoryIntegral
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 import Mathlib.NumberTheory.Harmonic.Bounds
+import ZeroFreeRegion.MeromorphicAux
 
 open Complex Set
 open Filter Asymptotics

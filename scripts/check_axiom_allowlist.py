@@ -65,6 +65,8 @@ EXPECTED_DECLARATIONS = {
     "HardyTheorem.norm_integral_criticalLineDirichletTail_le",
     "HardyTheorem.norm_integral_criticalLineDirichletTail_cutoff_le",
     "HardyTheorem.norm_integral_criticalLineDirichletTail_cutoff_isLittleO",
+    "ZeroFreeRegion.riemannZeta_eq_pole_add_floorError_integral_of_pos_re",
+    "ZeroFreeRegion.riemannZeta_eq_dirichletPolynomial_add_pole_add_floorErrorTail",
 }
 
 REPORT_RE = re.compile(
