@@ -241,6 +241,241 @@ theorem norm_integral_cexp_phase_le_of_monotone_deriv
   norm_integral_cexp_phase_le_of_monotone_deriv_local hab hm
     (fun _ _ => hF.contDiffAt) hmono haway
 
+/-- The first-derivative oscillatory estimate remains valid after inserting a
+positive decreasing power weight.  The constant does not depend on the
+length of the interval: integration by parts applies the unweighted estimate
+to every initial subinterval. -/
+theorem norm_integral_rpow_smul_cexp_phase_le_of_monotone_deriv_local
+    {F : ℝ → ℝ} {a b m p : ℝ}
+    (hab : a ≤ b) (ha : 0 < a) (hm : 0 < m) (hp : 0 < p)
+    (hF : ∀ x ∈ Icc a b, ContDiffAt ℝ 2 F x)
+    (hmono : MonotoneOn (deriv F) (Icc a b) ∨
+      AntitoneOn (deriv F) (Icc a b))
+    (haway : ∀ x ∈ Icc a b, m ≤ |deriv F x|) :
+    ‖∫ x in a..b, x ^ (-p) • Complex.exp (I * F x)‖ ≤
+      4 * a ^ (-p) / m := by
+  let E : ℝ → ℂ := fun x => Complex.exp (I * F x)
+  let G : ℝ → ℂ := fun u => ∫ x in a..u, E x
+  let w : ℝ → ℝ := fun x => x ^ (-p)
+  let w' : ℝ → ℝ := fun x => (-p) * x ^ (-p - 1)
+  have hE_cont : ContinuousOn E (Icc a b) := by
+    intro x hx
+    exact (continuousAt_const.mul
+      (Complex.continuous_ofReal.continuousAt.comp
+        (hF x hx).continuousAt)).cexp.continuousWithinAt
+  have hG_deriv (x : ℝ) (hx : x ∈ Icc a b) : HasDerivAt G (E x) x := by
+    dsimp only [G]
+    have hE_int_ax : IntervalIntegrable E volume a x :=
+      (hE_cont.mono (Icc_subset_Icc le_rfl hx.2)).intervalIntegrable_of_Icc hx.1
+    have hE_at : ContinuousAt E x :=
+      (continuousAt_const.mul
+        (Complex.continuous_ofReal.continuousAt.comp
+          (hF x hx).continuousAt)).cexp
+    obtain ⟨u, hu_nhds, huF⟩ :=
+      (hF x hx).contDiffOn (m := 0) (by norm_num) (by simp)
+    obtain ⟨v, hvu, hv_open, hxv⟩ := mem_nhds_iff.mp hu_nhds
+    have hE_cont_v : ContinuousOn E v := by
+      apply continuousOn_of_forall_continuousAt
+      intro y hy
+      have huy : u ∈ nhds y :=
+        mem_of_superset (hv_open.mem_nhds hy) hvu
+      have hFy : ContinuousAt F y :=
+        (huF y (hvu hy)).continuousWithinAt.continuousAt huy
+      exact (continuousAt_const.mul
+        (Complex.continuous_ofReal.continuousAt.comp hFy)).cexp
+    have hE_meas : StronglyMeasurableAtFilter E (nhds x) volume :=
+      hE_cont_v.stronglyMeasurableAtFilter hv_open x hxv
+    exact intervalIntegral.integral_hasDerivAt_right
+      hE_int_ax hE_meas hE_at
+  have hw_deriv : ∀ x ∈ Icc a b, HasDerivAt w (w' x) x := by
+    intro x hx
+    have hx0 : x ≠ 0 := ne_of_gt (ha.trans_le hx.1)
+    dsimp only [w, w']
+    simpa [sub_eq_add_neg, add_comm, add_left_comm, add_assoc] using
+      (Real.hasDerivAt_rpow_const (p := -p) (Or.inl hx0))
+  have hw'_cont : ContinuousOn w' (Icc a b) := by
+    intro x hx
+    have hx0 : x ≠ 0 := ne_of_gt (ha.trans_le hx.1)
+    exact (continuousAt_const.mul
+      (Real.continuousAt_rpow_const x (-p - 1) (Or.inl hx0))).continuousWithinAt
+  have hw'_int : IntervalIntegrable w' volume a b :=
+    hw'_cont.intervalIntegrable_of_Icc hab
+  have hE_int : IntervalIntegrable E volume a b :=
+    hE_cont.intervalIntegrable_of_Icc hab
+  have hparts := intervalIntegral.integral_smul_deriv_eq_deriv_smul
+    (a := a) (b := b) (u := w) (u' := w') (v := G) (v' := E)
+    (fun x hx => hw_deriv x (by simpa [uIcc_of_le hab] using hx))
+    (fun x hx => hG_deriv x (by simpa [uIcc_of_le hab] using hx)) hw'_int hE_int
+  have hG_zero : G a = 0 := by simp [G]
+  have hG_bound : ∀ x ∈ Icc a b, ‖G x‖ ≤ 4 / m := by
+    intro x hx
+    dsimp only [G]
+    apply norm_integral_cexp_phase_le_of_monotone_deriv_local hx.1 hm
+      (fun y hy => hF y ⟨hy.1, hy.2.trans hx.2⟩)
+    · rcases hmono with hmono | hanti
+      · exact Or.inl (hmono.mono (Icc_subset_Icc le_rfl hx.2))
+      · exact Or.inr (hanti.mono (Icc_subset_Icc le_rfl hx.2))
+    · intro y hy
+      exact haway y ⟨hy.1, hy.2.trans hx.2⟩
+  have hw_nonneg : ∀ x ∈ Icc a b, 0 ≤ w x := by
+    intro x hx
+    exact Real.rpow_nonneg (le_of_lt (ha.trans_le hx.1)) (-p)
+  have hw'_nonpos : ∀ x ∈ Icc a b, w' x ≤ 0 := by
+    intro x hx
+    dsimp only [w']
+    exact mul_nonpos_of_nonpos_of_nonneg (by linarith)
+      (Real.rpow_nonneg (le_of_lt (ha.trans_le hx.1)) (-p - 1))
+  have hK_nonneg : 0 ≤ 4 / m := by positivity
+  have hrem :
+      ‖∫ x in a..b, w' x • G x‖ ≤
+        (4 / m) * (w a - w b) := by
+    have hmajor_int : IntervalIntegrable (fun x => (-w' x) * (4 / m)) volume a b :=
+      hw'_int.neg.mul_const (4 / m)
+    calc
+      ‖∫ x in a..b, w' x • G x‖ ≤
+          ∫ x in a..b, (-w' x) * (4 / m) := by
+        refine intervalIntegral.norm_integral_le_of_norm_le hab ?_ hmajor_int
+        filter_upwards with x hx
+        have hx' : x ∈ Icc a b := ⟨hx.1.le, hx.2⟩
+        have hrewrite : w' x • G x = (-w' x) • (-G x) := by simp
+        have hnorm : ‖(-w' x) • (-G x)‖ = (-w' x) * ‖-G x‖ :=
+          norm_smul_of_nonneg (neg_nonneg.mpr (hw'_nonpos x hx')) (-G x)
+        rw [hrewrite, hnorm, norm_neg]
+        exact mul_le_mul_of_nonneg_left (hG_bound x hx') (neg_nonneg.mpr (hw'_nonpos x hx'))
+      _ = (4 / m) * ∫ x in a..b, -w' x := by
+        rw [intervalIntegral.integral_mul_const]
+        ring
+      _ = (4 / m) * (w a - w b) := by
+        rw [intervalIntegral.integral_neg,
+          intervalIntegral.integral_eq_sub_of_hasDerivAt
+            (fun x hx => hw_deriv x (by simpa [uIcc_of_le hab] using hx)) hw'_int]
+        ring
+  have hboundary : ‖w b • G b‖ ≤ w b * (4 / m) := by
+    have hnorm : ‖w b • G b‖ = w b * ‖G b‖ :=
+      norm_smul_of_nonneg (hw_nonneg b ⟨hab, le_rfl⟩) (G b)
+    rw [hnorm]
+    exact mul_le_mul_of_nonneg_left (hG_bound b ⟨hab, le_rfl⟩)
+      (hw_nonneg b ⟨hab, le_rfl⟩)
+  have hparts' :
+      (∫ x in a..b, w x • E x) =
+        w b • G b - ∫ x in a..b, w' x • G x := by
+    simpa [hG_zero] using hparts
+  calc
+    ‖∫ x in a..b, x ^ (-p) • Complex.exp (I * F x)‖ =
+        ‖∫ x in a..b, w x • E x‖ := by rfl
+    _ = ‖w b • G b - ∫ x in a..b, w' x • G x‖ := by rw [hparts']
+    _ ≤ ‖w b • G b‖ + ‖∫ x in a..b, w' x • G x‖ := norm_sub_le _ _
+    _ ≤ w b * (4 / m) + (4 / m) * (w a - w b) := add_le_add hboundary hrem
+    _ = 4 * a ^ (-p) / m := by dsimp [w]; ring
+
+/-- Global-smoothness wrapper for the local weighted first-derivative
+oscillatory estimate. -/
+theorem norm_integral_rpow_smul_cexp_phase_le_of_monotone_deriv
+    {F : ℝ → ℝ} {a b m p : ℝ}
+    (hab : a ≤ b) (ha : 0 < a) (hm : 0 < m) (hp : 0 < p)
+    (hF : ContDiff ℝ 2 F)
+    (hmono : MonotoneOn (deriv F) (Icc a b) ∨
+      AntitoneOn (deriv F) (Icc a b))
+    (haway : ∀ x ∈ Icc a b, m ≤ |deriv F x|) :
+    ‖∫ x in a..b, x ^ (-p) • Complex.exp (I * F x)‖ ≤
+      4 * a ^ (-p) / m :=
+  norm_integral_rpow_smul_cexp_phase_le_of_monotone_deriv_local
+    hab ha hm hp (fun _ _ => hF.contDiffAt) hmono haway
+
+/-- The phase obtained by combining a nonzero Fourier mode with the Mellin
+oscillation `x ^ (-I * t)`. -/
+noncomputable def fourierMellinPhase (k : ℤ) (t x : ℝ) : ℝ :=
+  2 * Real.pi * (k : ℝ) * x - t * Real.log x
+
+private lemma hasDerivAt_fourierMellinPhase
+    (k : ℤ) (t : ℝ) {x : ℝ} (hx : x ≠ 0) :
+    HasDerivAt (fourierMellinPhase k t)
+      (2 * Real.pi * (k : ℝ) - t / x) x := by
+  unfold fourierMellinPhase
+  convert (((hasDerivAt_id x).const_mul (2 * Real.pi * (k : ℝ))).sub
+    ((Real.hasDerivAt_log hx).const_mul t)) using 1
+  all_goals simp only [inv_eq_one_div]
+  all_goals ring
+
+/-- A nonzero Fourier mode gains one inverse power of its frequency after it
+is combined with Mellin oscillation.  The range `|t| ≤ a` keeps every mode
+uniformly nonstationary on `[a, b]`. -/
+theorem norm_integral_rpow_smul_cexp_fourierMellinPhase_le
+    {a b t p : ℝ} (hab : a ≤ b) (ha : 0 < a) (hp : 0 < p)
+    (ht : |t| ≤ a) (k : ℤ) (hk : k ≠ 0) :
+    ‖∫ x in a..b, x ^ (-p) •
+        Complex.exp (I * fourierMellinPhase k t x)‖ ≤
+      4 * a ^ (-p) / ((2 * Real.pi - 1) * |(k : ℝ)|) := by
+  let m : ℝ := (2 * Real.pi - 1) * |(k : ℝ)|
+  have hfactor : 0 < 2 * Real.pi - 1 := by
+    nlinarith [Real.pi_gt_three]
+  have hkcast : (k : ℝ) ≠ 0 := Int.cast_ne_zero.mpr hk
+  have hkabspos : 0 < |(k : ℝ)| := abs_pos.mpr hkcast
+  have hkabsone : 1 ≤ |(k : ℝ)| := by
+    exact_mod_cast Int.one_le_abs hk
+  have hm : 0 < m := mul_pos hfactor hkabspos
+  have hF : ∀ x ∈ Icc a b,
+      ContDiffAt ℝ 2 (fourierMellinPhase k t) x := by
+    intro x hx
+    have hx0 : x ≠ 0 := ne_of_gt (ha.trans_le hx.1)
+    unfold fourierMellinPhase
+    exact ((contDiffAt_const.mul contDiffAt_id).sub
+      (contDiffAt_const.mul (Real.contDiffAt_log.2 hx0)))
+  have hderiv : ∀ x ∈ Icc a b,
+      deriv (fourierMellinPhase k t) x =
+        2 * Real.pi * (k : ℝ) - t / x := by
+    intro x hx
+    exact (hasDerivAt_fourierMellinPhase k t
+      (ne_of_gt (ha.trans_le hx.1))).deriv
+  have hmono :
+      MonotoneOn (deriv (fourierMellinPhase k t)) (Icc a b) ∨
+        AntitoneOn (deriv (fourierMellinPhase k t)) (Icc a b) := by
+    rcases le_total 0 t with ht0 | ht0
+    · left
+      intro x hx y hy hxy
+      rw [hderiv x hx, hderiv y hy]
+      have hxpos : 0 < x := ha.trans_le hx.1
+      have hypos : 0 < y := hxpos.trans_le hxy
+      have hdiv : t / y ≤ t / x := by
+        exact (div_le_div_iff₀ hypos hxpos).2
+          (mul_le_mul_of_nonneg_left hxy ht0)
+      linarith
+    · right
+      intro x hx y hy hxy
+      rw [hderiv x hx, hderiv y hy]
+      have hxpos : 0 < x := ha.trans_le hx.1
+      have hypos : 0 < y := hxpos.trans_le hxy
+      have hdiv : t / x ≤ t / y := by
+        exact (div_le_div_iff₀ hxpos hypos).2
+          (mul_le_mul_of_nonpos_left hxy ht0)
+      linarith
+  have haway : ∀ x ∈ Icc a b,
+      m ≤ |deriv (fourierMellinPhase k t) x| := by
+    intro x hx
+    rw [hderiv x hx]
+    have hxpos : 0 < x := ha.trans_le hx.1
+    have habsx : |x| = x := abs_of_pos hxpos
+    have htx : |t| ≤ x := ht.trans hx.1
+    have hratio : |t / x| ≤ 1 := by
+      rw [abs_div, habsx]
+      exact (div_le_one hxpos).2 htx
+    have hfreq : |2 * Real.pi * (k : ℝ)| =
+        2 * Real.pi * |(k : ℝ)| := by
+      rw [abs_mul, abs_mul, abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 2),
+        abs_of_pos Real.pi_pos]
+    have htriangle : |2 * Real.pi * (k : ℝ)| ≤
+        |2 * Real.pi * (k : ℝ) - t / x| + |t / x| := by
+      calc
+        |2 * Real.pi * (k : ℝ)| =
+            |(2 * Real.pi * (k : ℝ) - t / x) + t / x| := by ring_nf
+        _ ≤ |2 * Real.pi * (k : ℝ) - t / x| + |t / x| := abs_add_le _ _
+    dsimp only [m]
+    rw [hfreq] at htriangle
+    nlinarith
+  simpa [fourierMellinPhase, m] using
+    norm_integral_rpow_smul_cexp_phase_le_of_monotone_deriv_local
+      hab ha hm hp hF hmono haway
+
 private theorem deriv_growth_of_second_deriv_lower
     {F : ℝ → ℝ} {a b r : ℝ}
     (hF : ∀ x ∈ Icc a b, ContDiffAt ℝ 2 F x)
