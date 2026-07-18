@@ -1,4 +1,4 @@
-import ZeroFreeRegion.VinogradovKorobov.DirichletBlock
+import ZeroFreeRegion.VinogradovKorobov.DirichletPrefix
 
 #print axioms ZeroFreeRegion.VinogradovKorobov.vanDerCorputFundamentalInequality
 #print axioms ZeroFreeRegion.VinogradovKorobov.phaseTerm_mul_conj_shift
@@ -23,3 +23,7 @@ import ZeroFreeRegion.VinogradovKorobov.DirichletBlock
 #print axioms ZeroFreeRegion.VinogradovKorobov.norm_weighted_sum_le_first_mul
 #print axioms ZeroFreeRegion.VinogradovKorobov.inv_nat_cpow_eq_dirichletWeight_mul_zetaOscillation
 #print axioms ZeroFreeRegion.VinogradovKorobov.norm_dirichletBlock_le_weight_mul
+#print axioms ZeroFreeRegion.VinogradovKorobov.zetaOscillationHarmonicBound_mono_length
+#print axioms ZeroFreeRegion.VinogradovKorobov.logarithmic_prefix_margin_of_scale
+#print axioms ZeroFreeRegion.VinogradovKorobov.norm_zetaOscillation_prefix_le_max_sqrt_harmonic
+#print axioms ZeroFreeRegion.VinogradovKorobov.norm_dirichletBlock_le_weight_mul_harmonic_end_of_scale
