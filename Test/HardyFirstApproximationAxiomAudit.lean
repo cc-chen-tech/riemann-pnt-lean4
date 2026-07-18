@@ -7,6 +7,7 @@ import HardyTheorem.HardyIntegralContradiction
 import HardyTheorem.CriticalLineMultiplicity
 import HardyTheorem.AnalyticSignChange
 import HardyTheorem.ShortIntervalMeanValue
+import MathlibAux.DirichletPolynomialMeanSquare
 
 #print axioms HardyTheorem.abs_hardyZ_eq_norm_riemannZeta
 #print axioms HardyTheorem.eventually_abs_integral_hardyZ_eq_integral_norm_zeta_of_bounded_zeros
@@ -36,6 +37,8 @@ import HardyTheorem.ShortIntervalMeanValue
 #print axioms HardyTheorem.exists_hardyShortAbsIntegral_le_mul_sqrt
 #print axioms HardyTheorem.mul_integral_abs_hardyZ_interior_le_integral_hardyShortAbsIntegral
 #print axioms HardyTheorem.exists_integral_hardyShortAbsIntegral_ge_mul
+#print axioms MathlibAux.norm_integral_cexp_linear_le
+#print axioms MathlibAux.integral_normSq_exponentialPolynomial_le
 #print axioms HardyTheorem.norm_integral_inv_nat_cpow_criticalLine_le
 #print axioms HardyTheorem.norm_integral_criticalLineDirichletTail_le
 #print axioms HardyTheorem.norm_integral_criticalLineDirichletTail_cutoff_le

@@ -1,0 +1,5 @@
+import MathlibAux.DirichletPolynomialMeanSquare
+
+#check MathlibAux.exponentialPolynomial
+#check MathlibAux.norm_integral_cexp_linear_le
+#check MathlibAux.integral_normSq_exponentialPolynomial_le

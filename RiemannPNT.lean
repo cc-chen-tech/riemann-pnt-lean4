@@ -29,6 +29,7 @@ import ZeroFreeRegion.MeromorphicAux
 import ZeroFreeRegion.PhragmenLindelofZeta
 import ZeroFreeRegion.ShiftedJensen
 import MathlibAux.RectangleResidue
+import MathlibAux.DirichletPolynomialMeanSquare
 
 open Complex Filter Topology Asymptotics ComplexConjugate
 open scoped ArithmeticFunction LSeries.notation
