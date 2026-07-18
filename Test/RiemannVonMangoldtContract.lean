@@ -1,5 +1,6 @@
 import PrimeNumberTheorem.RiemannVonMangoldt.ZeroCount
 import PrimeNumberTheorem.RiemannVonMangoldt.CompletedZeta
+import PrimeNumberTheorem.RiemannVonMangoldt.GammaDecomposition
 
 open Complex
 open scoped BigOperators
@@ -51,5 +52,12 @@ example {s : ℂ} (hsre : s.re = 1) (hsim : s.im ≠ 0) :
 example {s : ℂ} (hsre : s.re = 0) (hsim : s.im ≠ 0) :
     RiemannHypothesis.completedZeta s ≠ 0 :=
   completedZeta_ne_zero_of_re_eq_zero_of_im_ne_zero hsre hsim
+
+example {s : ℂ} (hs0 : s ≠ 0) (hs1 : s ≠ 1)
+    (hzeta : riemannZeta s ≠ 0) :
+    logDeriv RiemannHypothesis.completedZeta s =
+      1 / s + 1 / (s - 1) - Complex.log Real.pi / 2 +
+        Complex.digamma (s / 2) / 2 + logDeriv riemannZeta s :=
+  logDeriv_completedZeta_eq_zeta_add_gamma hs0 hs1 hzeta
 
 end PrimeNumberTheorem.RiemannVonMangoldt
