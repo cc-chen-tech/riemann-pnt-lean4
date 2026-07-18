@@ -181,4 +181,3 @@ the exact remainder shape.  Keep all of the following explicitly open:
 - any `O(x^(2/3-delta))` prime error;
 - unconditional exclusion of zeros on `Re(s)=2/3` or `Re(s)=1/3`;
 - RH, Hardy's theorem, and the Vinogradov-Korobov region.
-
