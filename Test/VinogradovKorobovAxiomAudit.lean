@@ -1,4 +1,4 @@
-import ZeroFreeRegion.VinogradovKorobov.ZetaApproximation
+import ZeroFreeRegion.VinogradovKorobov.ZetaStrip
 
 #print axioms ZeroFreeRegion.VinogradovKorobov.vanDerCorputFundamentalInequality
 #print axioms ZeroFreeRegion.VinogradovKorobov.phaseTerm_mul_conj_shift
@@ -35,3 +35,5 @@ import ZeroFreeRegion.VinogradovKorobov.ZetaApproximation
 #print axioms ZeroFreeRegion.VinogradovKorobov.norm_riemannZeta_criticalLine_le_harmonic_of_scale
 #print axioms ZeroFreeRegion.VinogradovKorobov.norm_criticalLine_dirichletInterval_one_le_two_sqrt
 #print axioms ZeroFreeRegion.VinogradovKorobov.norm_riemannZeta_criticalLine_le_harmonic_sqrt_initial_of_scale
+#print axioms ZeroFreeRegion.VinogradovKorobov.stripZetaFirstApprox_dirichletInterval
+#print axioms ZeroFreeRegion.VinogradovKorobov.norm_riemannZeta_strip_le_harmonic_of_scale

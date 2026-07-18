@@ -116,6 +116,7 @@ lean_lib RiemannPNT where
     `Test.VinogradovKorobovDirichletPrefixContract,
     `Test.VinogradovKorobovDirichletIntervalContract,
     `Test.VinogradovKorobovZetaApproximationContract,
+    `Test.VinogradovKorobovZetaStripContract,
     `Test.VinogradovKorobovVanDerCorputRangeContract,
     `Test.VinogradovKorobovLogVanDerCorputContract
   ]
