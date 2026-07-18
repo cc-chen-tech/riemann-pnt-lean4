@@ -1,17 +1,20 @@
 # Publishing Readiness
 
-This repository is currently a buildable Lean 4 formalization framework, not a
-completed proof of the Prime Number Theorem or the Riemann Hypothesis.
+This repository is a buildable Lean 4 formalization that proves the ordinary
+Prime Number Theorem and classical de la Vallee Poussin-form remainders for
+Chebyshev `psi` and prime counting `pi-Li` through the de la Vallee Poussin
+route. It does not prove the Riemann Hypothesis or provide numerically explicit
+values for the existential remainder constants.
 
 ## Current Verified Baseline
 
 - Lean toolchain: `leanprover/lean4:v4.29.1`
 - Build command: `lake build`
-- Last verified local result: `Build completed successfully (8262 jobs).`
+- Last verified local result: see the current verification log before release
 - Current code-level `sorry` count: 0
-- Remaining mathematical `def ... : Prop` targets: 22
-- Route-interface `def ... : Prop` declarations: 4
-- Reusable Prop predicates: 2
+- Remaining mathematical `def ... : Prop` targets: 16
+- Route-interface `def ... : Prop` declarations: 5
+- Reusable Prop predicates: 10
 - Unclassified Prop declarations: 0
 
 ## Required Gates Before Public Mathematical Claims
@@ -28,9 +31,10 @@ python3 scripts/list-prop-targets.py
 
 The baseline script runs `lake build`, recursively scans project Lean sources
 for real placeholder proof forms, checks that every `def ... : Prop` is
-classified, checks the 22-item mathematical target inventory, and validates the
-four chain-gap buckets. This does not mean the PNT or RH has been proved:
-several deep results are recorded only as `def ... : Prop` targets.
+classified, checks the 16-item mathematical target inventory, and validates the
+four chain-gap buckets. The ordinary PNT and de la Vallee Poussin-form `psi`
+and `pi-Li` errors are theorem-level; RH, Hardy, Vinogradov-Korobov, and any
+power-saving error below exponent `2/3` remain outside the proved boundary.
 
 As of the current baseline, no route interface has a body equal to `True`.
 `MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum` is still an explicit
@@ -57,17 +61,17 @@ Minimum external comparison set:
 Allowed claim shape:
 
 ```text
-Verified Lean 4 infrastructure for the de la Vallee Poussin 3-4-1 machinery
-and a compact zero-free strip, complementary to existing PNT formalizations by
-other routes.
+Verified Lean 4 formalization of the de la Vallee Poussin 3-4-1 machinery, the
+classical c/log zero-free region, and the resulting ordinary PNT and
+de la Vallee Poussin-form psi and pi-Li remainders through a multiplicity-aware
+moving-height explicit formula and quantitative Abel summation.
 ```
 
 Do not claim:
 
 - first formalization of PNT;
-- completed formalization of the original analytic PNT proof;
-- proof of the classical quantitative zero-free region `1 - c / log |t|`;
-- proof of the full PNT, RH, or RH-equivalent prime-counting error terms;
+- numerically explicit values for the existential remainder constants;
+- proof of RH or RH-equivalent prime-counting error terms;
 - completion of any `def ... : Prop` target unless it has been replaced by a
   checked theorem/lemma.
 
@@ -76,36 +80,27 @@ Do not claim:
 For public positioning, treat the current repository as:
 
 ```text
-proved front half of the de la Vallee Poussin zero-free-region machinery
+ordinary PNT proved through the de la Vallee Poussin zero-free-region and
+moving-height explicit-formula machinery, with de la Vallee Poussin-form
+`psi` and `pi-Li` remainders
 ```
 
 not as:
 
 ```text
-near-complete PNT proof
+proof of RH or a power-saving prime error below exponent `2/3`
 ```
 
-The immediate mathematical blocker is the boundary-strip zeta estimate, not the
-documentation layer:
-
-```lean
-∃ B T0, ∀ z : ℂ,
-  1 ≤ z.re → z.re ≤ 2 → T0 ≤ |z.im| →
-  ‖logDeriv riemannZeta z‖ ≤ B * Real.log |z.im|
-```
-
-Together with a zero-candidate regular-part estimate for `-ζ'/ζ`, this would
-feed the existing conditional zero-free-region closures.  Until these estimates
-are proved in Lean, the correct publishable claim remains the local
-`3-4-1 + compact zero-free strip` module.
+The next stronger zero-free-region blocker is exponential-sum input for the
+Vinogradov-Korobov width. It is not needed for the now-proved ordinary PNT.
 
 ## Unproved Target Statements
 
 | File | Remaining `sorry` count | Main target statements |
 |---|---:|---|
-| `ZeroFreeRegion.lean` | 0 | Compact zero-free region proved; quantitative zero-free regions remain targets |
+| `ZeroFreeRegion.lean` | 0 | Classical `c/log |t|` region proved; Vinogradov-Korobov remains a target |
 | `HardyTheorem.lean` | 0 | Hardy-Z phase facts proved; corrected integral asymptotics and zero-counting consequences remain targets |
-| `PrimeNumberTheorem.lean` | 0 | Bounded-height zero finiteness proved; RH error equivalence and explicit formula remain targets |
+| `PrimeNumberTheorem.lean`, `PrimeNumberTheorem/PNTFromDynamicPerron.lean`, `PrimeNumberTheorem/ClassicalPNTError.lean`, and `PrimeNumberTheorem/ClassicalPrimeCountingError.lean` | 0 | Ordinary PNT and the de la Vallee Poussin-form `psi` and `pi-Li` remainders proved; unconditional RH-scale predicates remain open |
 
 ## Release Dependency Issue
 

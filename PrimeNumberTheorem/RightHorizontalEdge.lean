@@ -1,4 +1,5 @@
 import PrimeNumberTheorem.SafeSecondOrderExplicitFormula
+import PrimeNumberTheorem.VonMangoldtLSeriesNorm
 import ZeroFreeRegion.PhragmenLindelofZeta
 
 open Complex MeasureTheory Set Filter Topology
@@ -6,12 +7,6 @@ open scoped ArithmeticFunction BigOperators LSeries.notation Interval
 
 namespace PrimeNumberTheorem
 namespace ExplicitFormulaResidues
-
-/-- Absolute von Mangoldt Dirichlet-series majorant on the real line
-`Re(s) = 1 + ε`. -/
-noncomputable def vonMangoldtLSeriesNorm (ε : ℝ) : ℝ :=
-  ∑' n : ℕ, ‖LSeries.term
-    (fun n => (ArithmeticFunction.vonMangoldt n : ℂ)) ((1 + ε : ℝ) : ℂ) n‖
 
 theorem norm_neg_logDeriv_riemannZeta_le_vonMangoldtLSeriesNorm
     {ε σ t : ℝ} (hε : 0 < ε) (hσ : 1 + ε ≤ σ) :
@@ -153,21 +148,21 @@ theorem norm_horizontal_right_secondOrderContour_difference_le
         (norm_horizontal_right_secondOrderContour_le hx hε hc hT)
     _ = _ := by ring
 
-/-- A full-norm logarithmic-derivative bound on a horizontal point gives the
-corresponding first-order explicit-formula integrand bound. -/
-lemma norm_explicitFormulaIntegrand_horizontal_le_of_logDeriv_le
-    {x σ t K : ℝ} (hx : 1 ≤ x) (hσ : σ ≤ 2) (ht : 0 < |t|)
+/-- A full-norm logarithmic-derivative bound on a horizontal point gives an
+explicit-formula integrand bound at any upper real endpoint. -/
+lemma norm_explicitFormulaIntegrand_horizontal_le_of_logDeriv_le_of_re_le
+    {x σ b t K : ℝ} (hx : 1 ≤ x) (hσ : σ ≤ b) (ht : 0 < |t|)
     (hK : 0 ≤ K)
     (hlog : ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤ K) :
     ‖explicitFormulaIntegrand x ((σ : ℂ) + I * t)‖ ≤
-      K * x ^ (2 : ℝ) / |t| := by
+      K * x ^ b / |t| := by
   have hxpos : 0 < x := zero_lt_one.trans_le hx
-  have hxpow : x ^ σ ≤ x ^ (2 : ℝ) :=
+  have hxpow : x ^ σ ≤ x ^ b :=
     Real.rpow_le_rpow_of_exponent_le hx hσ
   have hline : |t| ≤ ‖(σ : ℂ) + I * t‖ := by
     have := Complex.abs_im_le_norm ((σ : ℂ) + I * t)
     simpa using this
-  have hnum : 0 ≤ K * x ^ (2 : ℝ) :=
+  have hnum : 0 ≤ K * x ^ b :=
     mul_nonneg hK (Real.rpow_nonneg hxpos.le _)
   change ‖-logDeriv riemannZeta ((σ : ℂ) + I * t) *
       (x : ℂ) ^ ((σ : ℂ) + I * t) /
@@ -179,11 +174,22 @@ lemma norm_explicitFormulaIntegrand_horizontal_le_of_logDeriv_le
   calc
     ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ * x ^ σ /
         ‖(σ : ℂ) + I * t‖ ≤
-      (K * x ^ (2 : ℝ)) / ‖(σ : ℂ) + I * t‖ := by
+      (K * x ^ b) / ‖(σ : ℂ) + I * t‖ := by
         apply div_le_div_of_nonneg_right _ (norm_nonneg _)
         exact mul_le_mul hlog hxpow (Real.rpow_nonneg hxpos.le σ) hK
-    _ ≤ (K * x ^ (2 : ℝ)) / |t| :=
+    _ ≤ (K * x ^ b) / |t| :=
       div_le_div_of_nonneg_left hnum ht hline
+
+/-- Fixed-right-endpoint specialization of the general horizontal point
+bound. -/
+lemma norm_explicitFormulaIntegrand_horizontal_le_of_logDeriv_le
+    {x σ t K : ℝ} (hx : 1 ≤ x) (hσ : σ ≤ 2) (ht : 0 < |t|)
+    (hK : 0 ≤ K)
+    (hlog : ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤ K) :
+    ‖explicitFormulaIntegrand x ((σ : ℂ) + I * t)‖ ≤
+      K * x ^ (2 : ℝ) / |t| :=
+  norm_explicitFormulaIntegrand_horizontal_le_of_logDeriv_le_of_re_le
+    hx hσ ht hK hlog
 
 /-- The new inner-zero-free logarithmic-derivative estimate bounds the
 positive- or negative-height first-order horizontal segment from the inner

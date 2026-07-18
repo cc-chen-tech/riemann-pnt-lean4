@@ -1,4 +1,5 @@
 import PrimeNumberTheorem.LeftVerticalEdge
+import PrimeNumberTheorem.FirstOrderLSeriesPerron
 import PrimeNumberTheorem.QuantitativeGoodHeight
 import ZeroFreeRegion.ShiftedJensen
 
@@ -977,6 +978,258 @@ theorem
             explicitFormulaIntegrand x ((σ : ℂ) + I * T)‖ := norm_sub_le _ _
     _ ≤ K * L ^ 2 / T + K * L ^ 2 / T := add_le_add hbottom htop
     _ = C * x ^ (2 : ℝ) * L ^ 2 / T := by dsimp [C, K]; ring
+
+/-- Uniform selected-height estimate for the complete horizontal contour at
+the moving Perron endpoint `1 + 1 / log m`.  Starting at `m ≥ 3` keeps that
+endpoint inside the central band, and its power contribution is exactly
+`exp 1 * m`. -/
+theorem
+    exists_uniform_goodHeight_Icc_norm_nat_movingRight_horizontal_complete_explicitFormulaContour_difference_le :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ (m : ℕ) {a : ℝ}, 3 ≤ m → a ≤ -1 →
+            ‖(∫ σ : ℝ in a..(1 + 1 / Real.log (m : ℝ)),
+                  explicitFormulaIntegrand (m : ℝ)
+                    ((σ : ℂ) + I * (-T))) -
+              (∫ σ : ℝ in a..(1 + 1 / Real.log (m : ℝ)),
+                  explicitFormulaIntegrand (m : ℝ)
+                    ((σ : ℂ) + I * T))‖ ≤
+              C * (m : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T := by
+  rcases exists_goodHeight_Icc_norm_logDeriv_central_band_le_log_sq with
+    ⟨Cc, hCc, hcentralChoose⟩
+  rcases exists_uniform_norm_integral_farLeft_explicit_le_log_div with
+    ⟨Cf, hCf, hfar⟩
+  let C : ℝ := 2 * Real.exp 1 * (Cf + 3 * Cc)
+  have hC : 0 ≤ C := by dsimp [C]; positivity
+  refine ⟨C, hC, ?_⟩
+  intro A hA
+  rcases hcentralChoose A hA with ⟨T, hTmem, hgood, hlog⟩
+  have hTpos : 0 < T := by linarith [hTmem.1]
+  have hTabs : |T| = T := abs_of_pos hTpos
+  have hTlarge : 1 ≤ |T| := by rw [hTabs]; linarith [hTmem.1]
+  let L : ℝ := 1 + Real.log (A + 6)
+  have hlogA : 0 ≤ Real.log (A + 6) :=
+    Real.log_nonneg (by linarith)
+  have hL : 1 ≤ L := by dsimp [L]; linarith
+  have hlogT : Real.log (1 + T) ≤ Real.log (A + 6) :=
+    Real.log_le_log (by linarith) (by linarith [hTmem.2])
+  have hheight : 1 + Real.log (1 + T) ≤ L ^ 2 := by
+    have hlin : 1 + Real.log (1 + T) ≤ L := by dsimp [L]; linarith
+    have hsq : L ≤ L ^ 2 := by nlinarith [sq_nonneg (L - 1)]
+    exact hlin.trans hsq
+  refine ⟨T, hTmem, hgood, ?_⟩
+  intro m a hm ha
+  let x : ℝ := m
+  let b : ℝ := 1 + 1 / Real.log (m : ℝ)
+  have hx1 : 1 ≤ x := by dsimp [x]; exact_mod_cast (show 1 ≤ m by omega)
+  have hx2 : 2 ≤ x := by dsimp [x]; exact_mod_cast (show 2 ≤ m by omega)
+  have hxpos : 0 < x := zero_lt_one.trans_le hx1
+  have hlogm : 0 < Real.log (m : ℝ) :=
+    Real.log_pos (by exact_mod_cast (show 1 < m by omega))
+  have hb1 : 1 < b := by
+    dsimp [b]
+    linarith [one_div_pos.mpr hlogm]
+  have hlog3 : 1 < Real.log 3 := by
+    exact (Real.lt_log_iff_exp_lt (by norm_num)).2 Real.exp_one_lt_three
+  have hlog3m : Real.log 3 ≤ Real.log (m : ℝ) :=
+    Real.log_le_log (by norm_num) (by exact_mod_cast hm)
+  have hone_logm : 1 < Real.log (m : ℝ) := hlog3.trans_le hlog3m
+  have hinv_logm : 1 / Real.log (m : ℝ) ≤ 1 :=
+    (div_le_one hlogm).2 hone_logm.le
+  have hb2 : b ≤ 2 := by dsimp [b]; linarith
+  have hxb : x ^ b = Real.exp 1 * x := by
+    simpa [x, b] using natCast_rpow_movingPerron_eq_exp_mul
+      (show 2 ≤ m by omega)
+  have hxb_nonneg : 0 ≤ x ^ b := Real.rpow_nonneg hxpos.le _
+  have honepow : 1 ≤ x ^ b :=
+    Real.one_le_rpow hx1 (zero_le_one.trans hb1.le)
+  have hcentralPoint : ∀ t : ℝ, |t| = T →
+      IntervalIntegrable
+        (fun σ : ℝ => explicitFormulaIntegrand x ((σ : ℂ) + I * t))
+        volume (-1) b ∧
+      ‖∫ σ : ℝ in (-1)..b,
+          explicitFormulaIntegrand x ((σ : ℂ) + I * t)‖ ≤
+        (Cc * x ^ b * L ^ 2 / T) * 3 := by
+    intro t ht_abs
+    have htne : t ≠ 0 := by
+      intro ht
+      subst t
+      simp at ht_abs
+      linarith
+    have hK : 0 ≤ Cc * L ^ 2 := mul_nonneg hCc (sq_nonneg _)
+    have hpoint : ∀ σ ∈ Set.uIoc (-1 : ℝ) b,
+        ‖explicitFormulaIntegrand x ((σ : ℂ) + I * t)‖ ≤
+          Cc * x ^ b * L ^ 2 / T := by
+      intro σ hσ
+      rw [Set.uIoc_of_le (show (-1 : ℝ) ≤ b by linarith [hb1])] at hσ
+      have hld := hlog t ht_abs σ hσ.1.le (hσ.2.trans hb2)
+      have hbase :=
+        norm_explicitFormulaIntegrand_horizontal_le_of_logDeriv_le_of_re_le
+          hx1 hσ.2 (abs_pos.mpr htne) hK hld
+      rw [ht_abs] at hbase
+      convert hbase using 1 <;> dsimp [L] <;> ring
+    have hintegrable : IntervalIntegrable
+        (fun σ : ℝ => explicitFormulaIntegrand x ((σ : ℂ) + I * t))
+        volume (-1) b := by
+      apply ContinuousOn.intervalIntegrable
+      intro σ hσ
+      rw [Set.uIcc_of_le (show (-1 : ℝ) ≤ b by linarith [hb1])] at hσ
+      have hzeta := riemannZeta_ne_zero_on_goodHeight_horizontal
+        (T := T) (t := t) (σ := σ) hTpos ht_abs hgood
+      have hs0 : (σ : ℂ) + I * t ≠ 0 := by
+        intro hs
+        apply htne
+        have him := congrArg Complex.im hs
+        simpa using him
+      have hs1 : (σ : ℂ) + I * t ≠ 1 := by
+        intro hs
+        apply htne
+        have him := congrArg Complex.im hs
+        simpa using him
+      have han : ContinuousAt (explicitFormulaIntegrand x) ((σ : ℂ) + I * t) :=
+        (analyticAt_explicitFormulaIntegrand_of_ne_zero_of_ne_one_of_zeta_ne_zero
+          hxpos hs0 hs1 hzeta).continuousAt
+      have hmap : ContinuousAt (fun r : ℝ => ((r : ℂ) + I * t)) σ := by
+        fun_prop
+      change ContinuousWithinAt
+        (explicitFormulaIntegrand x ∘ fun r : ℝ => ((r : ℂ) + I * t)) _ σ
+      exact (ContinuousAt.comp
+        (f := fun r : ℝ => ((r : ℂ) + I * t))
+        (x := σ) (g := explicitFormulaIntegrand x) han hmap).continuousWithinAt
+    refine ⟨hintegrable, ?_⟩
+    have hbound := intervalIntegral.norm_integral_le_of_norm_le_const
+      (f := fun σ : ℝ => explicitFormulaIntegrand x ((σ : ℂ) + I * t))
+      (a := (-1 : ℝ)) (b := b)
+      (C := Cc * x ^ b * L ^ 2 / T) hpoint
+    have hlen : |b - (-1)| ≤ 3 := by
+      rw [abs_of_nonneg (by linarith [hb1])]
+      linarith
+    have hfactor : 0 ≤ Cc * x ^ b * L ^ 2 / T := by positivity
+    calc
+      ‖∫ σ : ℝ in (-1)..b,
+          explicitFormulaIntegrand x ((σ : ℂ) + I * t)‖ ≤
+        (Cc * x ^ b * L ^ 2 / T) * |b - (-1)| := hbound
+      _ ≤ (Cc * x ^ b * L ^ 2 / T) * 3 :=
+        mul_le_mul_of_nonneg_left hlen hfactor
+  have hfarTop0 := hfar hx2 ha hTlarge
+  have hfarBottom0 := hfar hx2 ha (by simpa using hTlarge : 1 ≤ |-T|)
+  have hfarTop :
+      ‖∫ σ : ℝ in a..(-1),
+          explicitFormulaIntegrand x ((σ : ℂ) + I * T)‖ ≤
+        Cf * x ^ b * L ^ 2 / T := by
+    have hbase :
+        ‖∫ σ : ℝ in a..(-1),
+            explicitFormulaIntegrand x ((σ : ℂ) + I * T)‖ ≤
+          Cf * (1 + Real.log (1 + T)) / T := by
+      simpa [mul_comm, hTabs] using hfarTop0.2
+    apply hbase.trans
+    apply div_le_div_of_nonneg_right _ hTpos.le
+    have hcoeff : Cf ≤ Cf * x ^ b := by
+      nlinarith [mul_nonneg hCf (sub_nonneg.mpr honepow)]
+    calc
+      Cf * (1 + Real.log (1 + T)) ≤ Cf * L ^ 2 :=
+        mul_le_mul_of_nonneg_left hheight hCf
+      _ ≤ Cf * x ^ b * L ^ 2 := by
+        nlinarith [sq_nonneg L,
+          mul_nonneg (sub_nonneg.mpr hcoeff) (sq_nonneg L)]
+  have hfarBottom :
+      ‖∫ σ : ℝ in a..(-1),
+          explicitFormulaIntegrand x ((σ : ℂ) + I * (-T))‖ ≤
+        Cf * x ^ b * L ^ 2 / T := by
+    have hbase :
+        ‖∫ σ : ℝ in a..(-1),
+            explicitFormulaIntegrand x ((σ : ℂ) + I * (-T))‖ ≤
+          Cf * (1 + Real.log (1 + T)) / T := by
+      simpa [mul_comm, hTabs] using hfarBottom0.2
+    apply hbase.trans
+    apply div_le_div_of_nonneg_right _ hTpos.le
+    have hcoeff : Cf ≤ Cf * x ^ b := by
+      nlinarith [mul_nonneg hCf (sub_nonneg.mpr honepow)]
+    calc
+      Cf * (1 + Real.log (1 + T)) ≤ Cf * L ^ 2 :=
+        mul_le_mul_of_nonneg_left hheight hCf
+      _ ≤ Cf * x ^ b * L ^ 2 := by
+        nlinarith [sq_nonneg L,
+          mul_nonneg (sub_nonneg.mpr hcoeff) (sq_nonneg L)]
+  have hcentralTop := hcentralPoint T hTabs
+  have hcentralBottom := hcentralPoint (-T) (by simpa [hTabs])
+  have hfarTopInt : IntervalIntegrable
+      (fun σ : ℝ => explicitFormulaIntegrand x ((σ : ℂ) + I * T))
+      volume a (-1) := by simpa [mul_comm] using hfarTop0.1
+  have hfarBottomInt : IntervalIntegrable
+      (fun σ : ℝ => explicitFormulaIntegrand x ((σ : ℂ) + I * (-T)))
+      volume a (-1) := by simpa [mul_comm] using hfarBottom0.1
+  have hcentralBottomInt : IntervalIntegrable
+      (fun σ : ℝ => explicitFormulaIntegrand x ((σ : ℂ) + I * (-T)))
+      volume (-1) b := by simpa using hcentralBottom.1
+  have hcentralBottomBound :
+      ‖∫ σ : ℝ in (-1)..b,
+          explicitFormulaIntegrand x ((σ : ℂ) + I * (-T))‖ ≤
+        (Cc * x ^ b * L ^ 2 / T) * 3 := by
+    simpa using hcentralBottom.2
+  have hjoinTop :
+      (∫ σ : ℝ in a..b,
+          explicitFormulaIntegrand x ((σ : ℂ) + I * T)) =
+        (∫ σ : ℝ in a..(-1),
+          explicitFormulaIntegrand x ((σ : ℂ) + I * T)) +
+        ∫ σ : ℝ in (-1)..b,
+          explicitFormulaIntegrand x ((σ : ℂ) + I * T) :=
+    (intervalIntegral.integral_add_adjacent_intervals
+      hfarTopInt hcentralTop.1).symm
+  have hjoinBottom :
+      (∫ σ : ℝ in a..b,
+          explicitFormulaIntegrand x ((σ : ℂ) + I * (-T))) =
+        (∫ σ : ℝ in a..(-1),
+          explicitFormulaIntegrand x ((σ : ℂ) + I * (-T))) +
+        ∫ σ : ℝ in (-1)..b,
+          explicitFormulaIntegrand x ((σ : ℂ) + I * (-T)) :=
+    (intervalIntegral.integral_add_adjacent_intervals
+      hfarBottomInt hcentralBottomInt).symm
+  let K : ℝ := (Cf + 3 * Cc) * x ^ b
+  have htop :
+      ‖∫ σ : ℝ in a..b,
+          explicitFormulaIntegrand x ((σ : ℂ) + I * T)‖ ≤
+        K * L ^ 2 / T := by
+    rw [hjoinTop]
+    calc
+      _ ≤ ‖∫ σ : ℝ in a..(-1),
+              explicitFormulaIntegrand x ((σ : ℂ) + I * T)‖ +
+            ‖∫ σ : ℝ in (-1)..b,
+              explicitFormulaIntegrand x ((σ : ℂ) + I * T)‖ := norm_add_le _ _
+      _ ≤ Cf * x ^ b * L ^ 2 / T +
+          (Cc * x ^ b * L ^ 2 / T) * 3 :=
+        add_le_add hfarTop hcentralTop.2
+      _ = K * L ^ 2 / T := by dsimp [K]; ring
+  have hbottom :
+      ‖∫ σ : ℝ in a..b,
+          explicitFormulaIntegrand x ((σ : ℂ) + I * (-T))‖ ≤
+        K * L ^ 2 / T := by
+    rw [hjoinBottom]
+    calc
+      _ ≤ ‖∫ σ : ℝ in a..(-1),
+              explicitFormulaIntegrand x ((σ : ℂ) + I * (-T))‖ +
+            ‖∫ σ : ℝ in (-1)..b,
+              explicitFormulaIntegrand x ((σ : ℂ) + I * (-T))‖ := norm_add_le _ _
+      _ ≤ Cf * x ^ b * L ^ 2 / T +
+          (Cc * x ^ b * L ^ 2 / T) * 3 :=
+        add_le_add hfarBottom hcentralBottomBound
+      _ = K * L ^ 2 / T := by dsimp [K]; ring
+  change ‖(∫ σ : ℝ in a..b,
+        explicitFormulaIntegrand x ((σ : ℂ) + I * (-T))) -
+      (∫ σ : ℝ in a..b,
+        explicitFormulaIntegrand x ((σ : ℂ) + I * T))‖ ≤
+    C * x * L ^ 2 / T
+  calc
+    _ ≤ ‖∫ σ : ℝ in a..b,
+            explicitFormulaIntegrand x ((σ : ℂ) + I * (-T))‖ +
+          ‖∫ σ : ℝ in a..b,
+            explicitFormulaIntegrand x ((σ : ℂ) + I * T)‖ := norm_sub_le _ _
+    _ ≤ K * L ^ 2 / T + K * L ^ 2 / T := add_le_add hbottom htop
+    _ = C * x * L ^ 2 / T := by
+      dsimp [C, K]
+      rw [hxb]
+      ring
 
 /-- There is a cofinal sequence of good heights along which both complete
 central horizontal contour integrals tend to zero. -/

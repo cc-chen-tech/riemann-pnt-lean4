@@ -13,6 +13,9 @@ import PrimeNumberTheorem.GlobalZeroCount
 import PrimeNumberTheorem.CentralHorizontalEdge
 import PrimeNumberTheorem.CofinalExplicitFormula
 import PrimeNumberTheorem.ExplicitFormulaAllHeights
+import PrimeNumberTheorem.PNTFromDynamicPerron
+import PrimeNumberTheorem.ClassicalPNTError
+import PrimeNumberTheorem.ClassicalPrimeCountingError
 import PrimeNumberTheorem.RHNaturalPsiError
 import PrimeNumberTheorem.RHPrimeCountingConverse
 import PrimeNumberTheorem.NontrivialZeroMultiplicity
@@ -27,6 +30,31 @@ open Complex Filter Topology Asymptotics ComplexConjugate
 open scoped ArithmeticFunction LSeries.notation
 
 namespace RiemannPNT.API
+
+/-- Public classical de la Vallee Poussin error term for Chebyshev's function. -/
+theorem exists_abs_chebyshevPsi_sub_id_le_exp_neg_sqrt_log :
+    ∃ c C X : ℝ, 0 < c ∧ 0 ≤ C ∧ ∀ x : ℝ, X ≤ x →
+      |PrimeNumberTheorem.chebyshevPsi x - x| ≤
+        C * x * Real.exp (-c * Real.sqrt (Real.log x)) :=
+  PrimeNumberTheorem.exists_abs_chebyshevPsi_sub_id_le_exp_neg_sqrt_log
+
+/-- Public de la Vallee Poussin-form remainder for prime counting. -/
+theorem exists_abs_primeCounting_sub_logIntegral_le_exp_neg_sqrt_log :
+    ∃ c C X : ℝ, 0 < c ∧ 0 ≤ C ∧ ∀ x : ℝ, X ≤ x →
+      |(PrimeNumberTheorem.primeCounting x : ℝ) -
+          PrimeNumberTheorem.logIntegral x| ≤
+        C * x * Real.exp (-c * Real.sqrt (Real.log x)) :=
+  PrimeNumberTheorem.exists_abs_primeCounting_sub_logIntegral_le_exp_neg_sqrt_log
+
+/-- Public unconditional Prime Number Theorem in all three project forms. -/
+theorem pnt_forms_proved :
+    PrimeNumberTheorem.PNTForm1 ∧ PrimeNumberTheorem.PNTForm2 ∧
+      PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.pnt_forms_proved
+
+/-- Public Chebyshev form of the unconditional Prime Number Theorem. -/
+theorem PNTForm3_proved : PrimeNumberTheorem.PNTForm3 :=
+  PrimeNumberTheorem.PNTForm3_proved
 
 /-- Public combined high-height theorem: zeta is nonzero and its logarithmic
 derivative is `O((log |t|)^2)` on a fixed inner substrip of the classical

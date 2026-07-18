@@ -48,10 +48,12 @@ Two questions must stay separate:
   submission time.
 
 The safe publication claim is a focused one: this repository develops verified
-Lean 4 infrastructure for the de la Vallee Poussin 3-4-1 machinery and proves
-the classical `c/log |t|` zero-free region.  It is not a first PNT
-formalization, not a completed classical analytic PNT proof, and not a proof
-of RH.
+Lean 4 infrastructure for the de la Vallee Poussin 3-4-1 machinery, proves the
+classical `c/log |t|` zero-free region, and derives the ordinary PNT through a
+multiplicity-aware moving-height explicit formula, including the de la Vallee
+Poussin-form `psi` and `pi-Li` remainders.  It is not the first PNT
+formalization, does not supply numerically explicit remainder constants, and
+is not a proof of RH.
 
 For the zero-free-region route, the classical `c/log |t|` milestone is now
 proved by `classical_zero_free_region_proved`.  The remaining target in this
@@ -63,8 +65,8 @@ technology rather than more local Jensen/Borel wrappers.
 | Chain | Current Lean target status | Main correction before proof work | Smallest useful next step | Open target count |
 | --- | --- | --- | --- | --- |
 | Quantitative zero-free region | `classical_zero_free_region` is proved; `vinogradov_korobov_zero_free_region` remains a target | Develop exponential-sum estimates for the stronger width | Formalize the Vinogradov-Korobov exponential-sum input without weakening the proved classical theorem | 1 |
-| Explicit formula | `ExplicitFormulaTruncatedTarget` is proved; the uniform natural-point formula is now combined with the RH finite-zero sum and extended to all real `x` | Preserve the natural-sample jump convention and multiplicities in stronger reusable variants | Improve uniform real-`x` finite-height bounds only where another theorem needs them; the RH-to-`psi` use case is closed | 0 |
-| RH error equivalence | `rh_iff_optimal_error` is proved in both directions by `rh_iff_optimal_error_proved` | No remaining implication gap; RH itself and its equivalent error predicates remain unproved unconditionally | Reuse the completed equivalence when another endpoint supplies either RH or the error bound | 7 |
+| Explicit formula | `ExplicitFormulaTruncatedTarget`, the moving-height formula, ordinary PNT, and the de la Vallee Poussin-form `psi` and `pi-Li` remainders are proved | Preserve the natural-sample jump convention and multiplicities in stronger reusable variants | Pursue genuinely stronger power-saving or explicit-constant inputs rather than more endpoint wrappers | 0 |
+| RH error equivalence | Ordinary PNT is proved; `rh_iff_optimal_error` is proved in both directions by `rh_iff_optimal_error_proved` | No remaining implication gap; RH itself and its equivalent error predicates remain unproved unconditionally | Reuse the completed equivalence when another endpoint supplies either RH or the error bound | 4 |
 | Hardy theorem | `hardy_theorem_target` and related moment/asymptotic targets are `def ... : Prop` targets | Use an unbounded-height zero target as the main theorem; use signed moment targets, not merely nonzero constants | Prove bounded-zero eventual-sign control and generic asymptotic sign lemmas | 11 (7 in `HardyTheorem`, 3 in `HardyTheorem.Details`, 1 in `KnownResults`) |
 
 ## Target-to-Chain Mapping
@@ -72,9 +74,6 @@ technology rather than more local Jensen/Borel wrappers.
 | File | Target | Chain | Why it is still open |
 | --- | --- | --- | --- |
 | `ZeroFreeRegion.lean` | `vinogradov_korobov_zero_free_region` (global namespace) | Quantitative zero-free region | Requires Vinogradov–Korobov exponential-sum technology |
-| `PrimeNumberTheorem.lean` | `PNTForm1` | RH error equivalence | Formal statement of one classical asymptotic shape, kept as an interface |
-| `PrimeNumberTheorem.lean` | `PNTForm2` | RH error equivalence | Equivalent to `PNTForm1` once one form is proved; no additional chain input yet |
-| `PrimeNumberTheorem.lean` | `PNTForm3` | RH error equivalence | Equivalent to `PNTForm1`/`PNTForm2`; included as a target interface |
 | `PrimeNumberTheorem.lean` | `RH_PsiErrorBound` | RH error equivalence | Equivalent to RH by a proved theorem; neither proposition is proved unconditionally |
 | `PrimeNumberTheorem.lean` | `RH_ThetaErrorBound` | RH error equivalence | Equivalent to `RH_PsiErrorBound`; RH implies it, but it remains unresolved without assuming RH |
 | `PrimeNumberTheorem.lean` | `RH_PrimeCountingLiErrorBound` | RH error equivalence | Equivalent to RH by proved forward and reverse implications; not known unconditionally |
@@ -254,6 +253,10 @@ The following proved declarations are the main entry points for future work:
 - `PrimeNumberTheorem.PNTForm2_iff_PNTForm3`
 - `PrimeNumberTheorem.PNTForm3_iff_PNTForm2`
 - `PrimeNumberTheorem.PNTForm3_iff_PNTForm1`
+- `PrimeNumberTheorem.PNTForm3_proved`
+- `PrimeNumberTheorem.PNTForm2_proved`
+- `PrimeNumberTheorem.PNTForm1_proved`
+- `PrimeNumberTheorem.pnt_forms_proved`
 - `PrimeNumberTheorem.RH_PsiErrorBound_iff_RH_ThetaErrorBound`
 - `PrimeNumberTheorem.theta_error_div_log_isBigO_sqrt_mul_log`
 - `PrimeNumberTheorem.theta_error_integral_isBigO_sqrt_mul_log`
@@ -352,10 +355,11 @@ actually supplied and checked by Lean.  In particular:
 - do not use a theorem statement for a mathematically false intermediate
   statement;
 - do not cite `def ... : Prop` targets as completed formal results.
-- do not cite local target-count reduction as evidence that PNT or RH has been
-  proved or is near completion.
-- do not advertise this repository as the first PNT formalization or as a
-  complete de la Vallee Poussin proof.
+- do not cite local target-count reduction by itself as evidence for any
+  theorem; cite `PNTForm1_proved`, `PNTForm2_proved`, and `PNTForm3_proved` for
+  ordinary PNT, and keep RH explicitly open.
+- do not advertise this repository as the first PNT formalization or as an
+  effective-error PNT or RH proof.
 
 `HardyTheorem.weightedIntegralOf_tail_dominates` remains a `Prop`-valued
 predicate in Lean, but it is a reusable hypothesis form rather than an
