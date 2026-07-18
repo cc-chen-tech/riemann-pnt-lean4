@@ -1,0 +1,5 @@
+import WeilExtremalKernels.FiniteQuadraticForm
+
+#print axioms WeilExtremalKernels.quadraticForm_ldlMatrix
+#print axioms WeilExtremalKernels.quadraticForm_ldlMatrix_nonneg
+#print axioms WeilExtremalKernels.quadraticForm_nonneg_of_certificate
