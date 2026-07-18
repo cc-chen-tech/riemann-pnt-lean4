@@ -7,6 +7,11 @@ namespace ZeroFreeRegion.VinogradovKorobov
 noncomputable example (sigma t : ℝ) (m N : ℕ) : ℂ :=
   dirichletInterval sigma t m N
 
+example (sigma t : ℝ) (m N : ℕ)
+    (hsigma : 0 ≤ sigma) (hm : 0 < m) :
+    ‖dirichletInterval sigma t m N‖ ≤ N :=
+  norm_dirichletInterval_le_length sigma t m N hsigma hm
+
 example (sigma t : ℝ) (m N₁ N₂ : ℕ) :
     dirichletInterval sigma t m (N₁ + N₂) =
       dirichletInterval sigma t m N₁ +

@@ -11,6 +11,41 @@ noncomputable def dirichletInterval
   ∑ n ∈ Finset.Ico m (m + N),
     1 / (n : ℂ) ^ ((sigma : ℂ) + Complex.I * t)
 
+private lemma dirichletWeight_le_one
+    {sigma : ℝ} (hsigma : 0 ≤ sigma) {n : ℕ} (hn : 1 ≤ n) :
+    dirichletWeight sigma n ≤ 1 := by
+  have h := Real.antitoneOn_rpow_Ioi_of_exponent_nonpos
+    (neg_nonpos.mpr hsigma)
+    (show (1 : ℝ) ∈ Set.Ioi 0 by norm_num)
+    (show (n : ℝ) ∈ Set.Ioi 0 by exact Set.mem_Ioi.mpr (by exact_mod_cast hn))
+    (by exact_mod_cast hn)
+  simpa only [dirichletWeight, Nat.cast_one, Real.one_rpow] using h
+
+/-- The trivial length bound for a positive-start Dirichlet interval in the
+closed right half-plane. -/
+theorem norm_dirichletInterval_le_length
+    (sigma t : ℝ) (m N : ℕ) (hsigma : 0 ≤ sigma) (hm : 0 < m) :
+    ‖dirichletInterval sigma t m N‖ ≤ N := by
+  rw [dirichletInterval, Finset.sum_Ico_eq_sum_range]
+  simp only [Nat.add_sub_cancel_left]
+  calc
+    ‖∑ i ∈ Finset.range N,
+        1 / ((m + i : ℕ) : ℂ) ^ ((sigma : ℂ) + Complex.I * t)‖ ≤
+        ∑ i ∈ Finset.range N,
+          ‖1 / ((m + i : ℕ) : ℂ) ^
+            ((sigma : ℂ) + Complex.I * t)‖ := norm_sum_le _ _
+    _ ≤ ∑ _i ∈ Finset.range N, (1 : ℝ) := by
+      apply Finset.sum_le_sum
+      intro i hi
+      have him : 1 ≤ m + i := by omega
+      rw [inv_nat_cpow_eq_dirichletWeight_mul_zetaOscillation
+        (by omega : m + i ≠ 0) sigma t]
+      rw [norm_mul, Complex.norm_real, Real.norm_eq_abs,
+        abs_of_nonneg (dirichletWeight_nonneg sigma (m + i)),
+        norm_zetaOscillation, mul_one]
+      exact dirichletWeight_le_one hsigma him
+    _ = N := by simp
+
 /-- Consecutive Dirichlet intervals concatenate exactly. -/
 lemma dirichletInterval_add_length
     (sigma t : ℝ) (m N₁ N₂ : ℕ) :
