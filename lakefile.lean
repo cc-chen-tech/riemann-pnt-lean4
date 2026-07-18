@@ -33,6 +33,7 @@ lean_lib RiemannPNT where
     `PrimeNumberTheorem.CompletePerron,
     `PrimeNumberTheorem.SecondOrderExplicitFormula,
     `PrimeNumberTheorem.SafeSecondOrderExplicitFormula,
+    `PrimeNumberTheorem.SmoothedErrorTransfer,
     `PrimeNumberTheorem.VonMangoldtLSeriesNorm,
     `PrimeNumberTheorem.RightHorizontalEdge,
     `PrimeNumberTheorem.ExplicitFormulaAux,
@@ -103,7 +104,9 @@ lean_lib RiemannPNT where
     `Test.SelectedHeightTruncatedExplicitFormulaRateContract,
     `Test.TrivialZeroTailRateContract,
     `Test.ZetaDerivativeZeroContract,
-    `Test.ExplicitFormulaTruncatedTargetContract
+    `Test.ExplicitFormulaTruncatedTargetContract,
+    `Test.SmoothedErrorTransferContract,
+    `Test.SmoothedErrorTransferAxiomAudit
   ]
 
 require mathlib from "./vendor/mathlib"
