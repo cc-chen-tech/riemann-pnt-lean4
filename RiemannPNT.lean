@@ -1,6 +1,7 @@
 import RiemannExplorer
 import GammaResidue
 import HardyTheorem
+import HardyTheorem.HardyIntegralContradiction
 import EulerAndLfunctions
 import PrimeNumberTheorem
 import PrimeNumberTheorem.Perron
@@ -25245,5 +25246,11 @@ theorem rectangleIntegral_const_zero {R : ℝ} (hpos : 0 < R) :
     MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum
       (E := ℂ) (f := fun _ : ℂ => (0 : ℂ)) (c := 0) (R := R) hpos :=
   MathlibAux.rectangleIntegral_const_zero hpos
+
+/-- Public unconditional Hardy theorem: zeta has critical-line zeros at
+arbitrarily large positive heights. -/
+theorem hardy_zeros_unbounded_target_proved :
+    HardyTheorem.hardy_zeros_unbounded_target :=
+  HardyTheorem.hardy_zeros_unbounded_target_proved
 
 end RiemannPNT.API

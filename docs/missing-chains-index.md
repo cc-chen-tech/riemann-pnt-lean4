@@ -5,9 +5,9 @@ current Lean checkout.  The project currently builds and contains no
 `sorry`/`admit`/`axiom` placeholders in Lean source, but several deep goals are
 intentionally recorded as `def ... : Prop` target statements.
 
-At present there are **19** unresolved mathematical `def ... : Prop` targets,
+At present there are **13** unresolved mathematical `def ... : Prop` targets,
 partitioned into exactly **4** analytic chains.  The recursive scanner also
-tracks 5 route interfaces and 7 reusable Prop predicates so subdirectory
+tracks 5 route interfaces and 13 reusable Prop predicates so subdirectory
 interfaces cannot be hidden by the target count:
 
 1. Quantitative zero-free region
@@ -67,7 +67,7 @@ technology rather than more local Jensen/Borel wrappers.
 | Quantitative zero-free region | `classical_zero_free_region` is proved; `vinogradov_korobov_zero_free_region` remains a target | Develop exponential-sum estimates for the stronger width | Formalize the Vinogradov-Korobov exponential-sum input without weakening the proved classical theorem | 1 |
 | Explicit formula | `ExplicitFormulaTruncatedTarget`, the moving-height formula, ordinary PNT, and the de la Vallee Poussin-form `psi` and `pi-Li` remainders are proved | Preserve the natural-sample jump convention and multiplicities in stronger reusable variants | Pursue genuinely stronger power-saving or explicit-constant inputs rather than more endpoint wrappers | 0 |
 | RH error equivalence | Ordinary PNT is proved; `rh_iff_optimal_error` is proved in both directions by `rh_iff_optimal_error_proved` | No remaining implication gap; RH itself and its equivalent error predicates remain unproved unconditionally | Reuse the completed equivalence when another endpoint supplies either RH or the error bound | 4 |
-| Hardy theorem | `hardy_theorem_target` and related moment/asymptotic targets are `def ... : Prop` targets | Use an unbounded-height zero target as the main theorem; use signed moment targets, not merely nonzero constants | Prove bounded-zero eventual-sign control and generic asymptotic sign lemmas | 11 (7 in `HardyTheorem`, 3 in `HardyTheorem.Details`, 1 in `KnownResults`) |
+| Hardy theorem | `hardy_theorem_target`, `hardy_zeros_unbounded_target`, and its absolute-height form are proved | Preserve the distinction between the classical theorem and stronger quantitative zero-counting claims | Develop Hardy-Littlewood, Selberg, and Conrey percentage estimates | 8 (4 in `HardyTheorem`, 3 in `HardyTheorem.Details`, 1 in `KnownResults`) |
 
 ## Target-to-Chain Mapping
 
@@ -80,9 +80,6 @@ technology rather than more local Jensen/Borel wrappers.
 | `PrimeNumberTheorem.lean` | `RH_ErrorBound` | RH error equivalence | Pointwise reformulation of `RH_PrimeCountingLiErrorBound`; RH implies it |
 | `HardyTheorem.lean` | `integral_asymptotic_target` | Hardy theorem | Signed-moment asymptotic input |
 | `HardyTheorem.lean` | `hardy_two_signed_moments_target` | Hardy theorem | Asymptotics for the first two weighted moments |
-| `HardyTheorem.lean` | `hardy_theorem_target` | Hardy theorem | Combined target of Hardy theorem output |
-| `HardyTheorem.lean` | `hardy_zeros_unbounded_target` | Hardy theorem | Harder zero distribution output in an unbounded-height form |
-| `HardyTheorem.lean` | `hardy_zeros_abs_unbounded_target` | Hardy theorem | Equivalent form requiring symmetry/absolute-value zero extraction |
 | `HardyTheorem.lean` | `hardy_littlewood_lower_bound_target` | Hardy theorem | Quantitative lower bound on critical-line zeros needed for positive density |
 | `HardyTheorem.lean` | `selberg_zero_proportion_target` | Hardy theorem | Proportional form of Hardy-type lower bounds |
 | `HardyTheorem.lean` | `HardyTheorem.Details.gamma_asymptotic_half_plus_it_target` | Hardy theorem | Gamma asymptotic used in approximate functional equation setup |

@@ -8,7 +8,6 @@ from typing import Dict, Iterable, List, Set
 
 
 ROOT = Path(__file__).resolve().parents[1]
-AUDIT_FILE = ROOT / "Test" / "MultiplicityAxiomAudit.lean"
 
 ALLOWED_AXIOMS = {"propext", "Classical.choice", "Quot.sound"}
 EXPECTED_DECLARATIONS = {
@@ -79,6 +78,28 @@ EXPECTED_DECLARATIONS = {
     "RiemannPNT.API.RH_PsiErrorBound_of_riemannHypothesis",
     "RiemannPNT.API.RH_PrimeCountingLiErrorBound_of_riemannHypothesis",
     "RiemannPNT.API.riemannHypothesis_iff_RH_PsiErrorBound",
+    "HardyTheorem.OscillatoryIntegral.norm_integral_rpow_smul_cexp_phase_le_of_monotone_deriv",
+    "HardyTheorem.OscillatoryIntegral.norm_integral_rpow_smul_cexp_fourierMellinPhase_le",
+    "HardyTheorem.intervalIntegral_centeredFloorError_cpow_eq_bernoulliTwo",
+    "HardyTheorem.exists_norm_intervalIntegral_periodizedBernoulli_two_mellin_le",
+    "HardyTheorem.exists_norm_intervalIntegral_periodizedBernoulli_two_cpow_le",
+    "HardyTheorem.exists_norm_integral_Ioi_periodizedBernoulli_two_cpow_le",
+    "HardyTheorem.integral_Ioi_centeredFloorError_cpow_eq_bernoulliTwo",
+    "HardyTheorem.exists_norm_mul_integral_Ioi_floorError_cpow_le",
+    "HardyTheorem.exists_riemannZeta_first_approximation",
+    "HardyTheorem.criticalLineZetaFirstApprox",
+    "HardyTheorem.exists_integral_norm_riemannZeta_critical_line_ge_mul",
+    "HardyTheorem.exists_abs_integral_hardyZ_le_rpow_three_quarters",
+    "HardyTheorem.hardyZ_zero_set_not_isBounded",
+    "HardyTheorem.hardy_zeros_unbounded_target_proved",
+    "HardyTheorem.hardy_theorem_target_proved",
+    "RiemannPNT.API.hardy_zeros_unbounded_target_proved",
+    "HardyTheorem.norm_integral_inv_nat_cpow_criticalLine_le",
+    "HardyTheorem.norm_integral_criticalLineDirichletTail_le",
+    "HardyTheorem.norm_integral_criticalLineDirichletTail_cutoff_le",
+    "HardyTheorem.norm_integral_criticalLineDirichletTail_cutoff_isLittleO",
+    "ZeroFreeRegion.riemannZeta_eq_pole_add_floorError_integral_of_pos_re",
+    "ZeroFreeRegion.riemannZeta_eq_dirichletPolynomial_add_pole_add_floorErrorTail",
 }
 
 REPORT_RE = re.compile(
@@ -121,7 +142,7 @@ def validate_axioms(
 
 def main() -> int:
     completed = subprocess.run(
-        ["lake", "env", "lean", str(AUDIT_FILE)],
+        ["lake", "build", "Test.MultiplicityAxiomAudit"],
         cwd=ROOT,
         text=True,
         capture_output=True,

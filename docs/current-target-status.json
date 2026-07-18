@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-15",
+  "timestamp": "2026-07-18",
   "status": "not-yet-complete",
   "completed_without_sorry": true,
   "remaining_prop_targets": {
@@ -18,30 +18,6 @@
         "file": "HardyTheorem.lean",
         "line": 644,
         "shape": "(∃A>0, weightedIntegral 1 ~ (-A*...)) ∧ (∃B>0, weightedIntegral 2 ~ (B*...))",
-        "depends_on": []
-      },
-      {
-        "name": "hardy_theorem_target",
-        "qualified_name": "HardyTheorem.hardy_theorem_target",
-        "file": "HardyTheorem.lean",
-        "line": 1003,
-        "shape": "{t | riemannZeta (1/2 + I*t)=0}.Infinite",
-        "depends_on": []
-      },
-      {
-        "name": "hardy_zeros_unbounded_target",
-        "qualified_name": "HardyTheorem.hardy_zeros_unbounded_target",
-        "file": "HardyTheorem.lean",
-        "line": 1083,
-        "shape": "∀T, ∃t, T ≤ t ∧ riemannZeta (1/2 + I*t)=0",
-        "depends_on": []
-      },
-      {
-        "name": "hardy_zeros_abs_unbounded_target",
-        "qualified_name": "HardyTheorem.hardy_zeros_abs_unbounded_target",
-        "file": "HardyTheorem.lean",
-        "line": 1089,
-        "shape": "∀T, ∃t, T ≤ |t| ∧ riemannZeta (1/2 + I*t)=0",
         "depends_on": []
       },
       {
@@ -193,6 +169,27 @@
       "line": 772
     },
     {
+      "name": "hardy_theorem_target",
+      "qualified_name": "HardyTheorem.hardy_theorem_target",
+      "file": "HardyTheorem.lean",
+      "line": 1003,
+      "proved_by": "HardyTheorem.hardy_theorem_target_proved"
+    },
+    {
+      "name": "hardy_zeros_unbounded_target",
+      "qualified_name": "HardyTheorem.hardy_zeros_unbounded_target",
+      "file": "HardyTheorem.lean",
+      "line": 1083,
+      "proved_by": "HardyTheorem.hardy_zeros_unbounded_target_proved"
+    },
+    {
+      "name": "hardy_zeros_abs_unbounded_target",
+      "qualified_name": "HardyTheorem.hardy_zeros_abs_unbounded_target",
+      "file": "HardyTheorem.lean",
+      "line": 1089,
+      "proved_by": "HardyTheorem.hardy_zeros_abs_unbounded_target_proved"
+    },
+    {
       "name": "goodHeight",
       "qualified_name": "PrimeNumberTheorem.ExplicitFormulaAux.goodHeight",
       "file": "PrimeNumberTheorem/ExplicitFormulaAux.lean",
@@ -274,17 +271,14 @@
     {
       "name": "Hardy theorem",
       "target": "hardy_theorem_target",
-      "status": "not proved in Lean",
-      "next_step": "prove Hardy signed moment asymptotics; the main signed-moment bridge no longer needs tail-dominance"
+      "status": "proved in Lean via the first zeta approximation and a T^(3/4) oscillatory-integral upper bound",
+      "next_step": "develop the stronger Hardy-Littlewood, Selberg, and Conrey quantitative zero-counting targets"
     }
   ],
   "chain_inventory": {
     "Hardy theorem": [
       "integral_asymptotic_target",
       "hardy_two_signed_moments_target",
-      "hardy_theorem_target",
-      "hardy_zeros_unbounded_target",
-      "hardy_zeros_abs_unbounded_target",
       "hardy_littlewood_lower_bound_target",
       "selberg_zero_proportion_target",
       "gamma_asymptotic_half_plus_it_target",
@@ -302,10 +296,10 @@
       "RH_ErrorBound"
     ]
   },
-  "mathematical_target_count": 16,
+  "mathematical_target_count": 13,
   "route_interface_count": 5,
   "route_interface_true_body_count": 0,
-  "reusable_predicate_count": 10,
+  "reusable_predicate_count": 13,
   "unclassified_prop_def_count": 0,
   "all_scanned_prop_defs_count": 31
 }
