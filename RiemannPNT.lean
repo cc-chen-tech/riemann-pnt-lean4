@@ -3,6 +3,8 @@ import GammaResidue
 import HardyTheorem
 import HardyTheorem.HardyIntegralContradiction
 import HardyTheorem.CriticalLineMultiplicity
+import HardyTheorem.AnalyticSignChange
+import HardyTheorem.ShortIntervalMeanValue
 import EulerAndLfunctions
 import PrimeNumberTheorem
 import PrimeNumberTheorem.Perron

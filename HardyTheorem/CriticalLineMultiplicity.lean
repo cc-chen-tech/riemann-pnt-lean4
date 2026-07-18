@@ -170,6 +170,43 @@ lemma criticalLineOddZeroCount_le_criticalLineZeroMultiplicityCount (T : ℝ) :
   (criticalLineOddZeroCount_le_criticalLineDistinctZeroCount T).trans
     (criticalLineDistinctZeroCount_le_criticalLineZeroMultiplicityCount T)
 
+/-- Pairwise disjoint height intervals containing odd-order critical-line
+zeros inject into the odd-order zero count.  This is the finite packing step
+used after the Hardy--Littlewood short-interval estimates. -/
+theorem card_le_criticalLineOddZeroCount_of_pairwiseDisjoint_hits
+    (G : Finset ℕ) (J : ℕ → Set ℝ) (T : ℝ)
+    (hdisj : (G : Set ℕ).PairwiseDisjoint J)
+    (hhit : ∀ i ∈ G, ∃ t ∈ J i,
+      (1 / 2 : ℂ) + I * t ∈ criticalLineOddZerosFinset T) :
+    G.card ≤ criticalLineOddZeroCount T := by
+  classical
+  let τ : G → ℝ := fun i => Classical.choose (hhit i i.property)
+  have hτmem (i : G) : τ i ∈ J i :=
+    (Classical.choose_spec (hhit i i.property)).1
+  have hτzero (i : G) :
+      (1 / 2 : ℂ) + I * τ i ∈ criticalLineOddZerosFinset T :=
+    (Classical.choose_spec (hhit i i.property)).2
+  let F : G → criticalLineOddZerosFinset T := fun i =>
+    ⟨(1 / 2 : ℂ) + I * τ i, hτzero i⟩
+  have hF : Function.Injective F := by
+    intro i j hij
+    apply Subtype.ext
+    by_contra hne
+    have hval :
+        (1 / 2 : ℂ) + I * τ i = (1 / 2 : ℂ) + I * τ j :=
+      congrArg Subtype.val hij
+    have hτeq : τ i = τ j := by
+      have him := congrArg Complex.im hval
+      simpa using him
+    have hd : Disjoint (J (i : ℕ)) (J (j : ℕ)) :=
+      hdisj i.property j.property hne
+    have hjmem : τ i ∈ J (j : ℕ) := by
+      rw [hτeq]
+      exact hτmem j
+    exact Set.disjoint_left.1 hd (hτmem i) hjmem
+  have hcard := Fintype.card_le_of_injective F hF
+  simpa [criticalLineOddZeroCount] using hcard
+
 /-- A linear lower bound for critical-line zeta zeros counted with analytic
 multiplicity.  This follows from the stronger odd-multiplicity count supplied
 by the Hardy--Littlewood sign-change method. -/

@@ -1,0 +1,8 @@
+import HardyTheorem.ShortIntervalMeanValue
+
+#check HardyTheorem.hardyShortIntegral
+#check HardyTheorem.hardyShortAbsIntegral
+#check HardyTheorem.continuous_hardyShortIntegral
+#check HardyTheorem.continuous_hardyShortAbsIntegral
+#check HardyTheorem.exists_hardyShortAbsIntegral_le_mul_sqrt
+
