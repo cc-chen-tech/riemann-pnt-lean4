@@ -1,0 +1,52 @@
+import ZeroFreeRegion.VinogradovKorobov.AProcessBounds
+
+namespace ZeroFreeRegion.VinogradovKorobov
+
+example (B : ℕ → ℝ) (C : ℝ) (L : ℕ)
+    (hC : 0 ≤ C)
+    (hB : ∀ ell ∈ Finset.Icc 1 (L - 1), B ell ≤ C) :
+    ∑ ell ∈ Finset.Icc 1 (L - 1),
+        ((L : ℝ) - (ell : ℝ)) * B ell ≤ (L : ℝ) ^ 2 * C :=
+  sum_aProcess_weights_le_sq_mul B C L hC hB
+
+example (B : ℕ → ℝ) (C : ℝ) (N L : ℕ)
+    (hL : 1 ≤ L) (hLN : L ≤ N) (hC : 0 ≤ C)
+    (hB0 : ∀ ell ∈ Finset.Icc 1 (L - 1), 0 ≤ B ell)
+    (hB : ∀ ell ∈ Finset.Icc 1 (L - 1), B ell ≤ C) :
+    aProcessSquaredBound B N L ≤
+      2 * (N : ℝ) ^ 2 / L + 4 * (N : ℝ) * C :=
+  aProcessSquaredBound_le B C N L hL hLN hC hB0 hB
+
+example (B : ℕ → ℝ) (C : ℝ) (N L : ℕ)
+    (hL : 1 ≤ L) (hLN : L ≤ N) (hC : 0 ≤ C)
+    (hB0 : ∀ ell ∈ Finset.Icc 1 (L - 1), 0 ≤ B ell)
+    (hB : ∀ ell ∈ Finset.Icc 1 (L - 1),
+      B ell ≤ C * (ell : ℝ)⁻¹) :
+    aProcessSquaredBound B N L ≤
+      2 * (N : ℝ) ^ 2 / L +
+        4 * (N : ℝ) * C * (1 + Real.log L) / L :=
+  aProcessSquaredBound_le_reciprocal
+    B C N L hL hLN hC hB0 hB
+
+example (L : ℕ) :
+    (∑ ell ∈ Finset.Icc 1 (L - 1),
+        ((L : ℝ) - (ell : ℝ)) * (Real.sqrt ell)⁻¹) ≤
+      Real.sqrt ((L : ℝ) ^ 3 * (1 + Real.log L)) :=
+  weighted_inv_sqrt_sum_le L
+
+example (B : ℕ → ℝ) (A D : ℝ) (N L : ℕ)
+    (hL : 1 ≤ L) (hLN : L ≤ N) (hA : 0 ≤ A) (hD : 0 ≤ D)
+    (hB0 : ∀ ell ∈ Finset.Icc 1 (L - 1), 0 ≤ B ell)
+    (hB : ∀ ell ∈ Finset.Icc 1 (L - 1),
+      B ell ≤ Real.sqrt (A + D * (ell : ℝ)⁻¹)) :
+    aProcessSquaredBound B N L ≤
+      2 * (N : ℝ) ^ 2 / L +
+        4 * (N : ℝ) *
+          (Real.sqrt A * (L : ℝ) ^ 2 +
+            Real.sqrt D *
+              Real.sqrt ((L : ℝ) ^ 3 * (1 + Real.log L))) /
+          (L : ℝ) ^ 2 :=
+  aProcessSquaredBound_le_sqrt_reciprocal
+    B A D N L hL hLN hA hD hB0 hB
+
+end ZeroFreeRegion.VinogradovKorobov
