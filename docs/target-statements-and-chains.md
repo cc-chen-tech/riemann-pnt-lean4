@@ -46,7 +46,7 @@ For the chain accounting:
 - Explicit formula chain: 0 (the principal-value target is proved; the separate
   quantitative truncated-error statement remains a route interface)
 - RH/prime-counting error chain: 4
-- Hardy theorem chain: 8 (4 in `HardyTheorem`, 3 in `HardyTheorem.Details`,
+- Quantitative critical-line extension chain: 8 (4 in `HardyTheorem`, 3 in `HardyTheorem.Details`,
   1 in `KnownResults`)
 
 ## Chain 1: Quantitative zero-free region
@@ -189,7 +189,7 @@ predicate; those individual propositions remain mathematical targets.
 
 ---
 
-## Chain 4: Hardy theorem
+## Chain 4: Hardy quantitative extensions
 
 ### Target declarations
 
@@ -201,6 +201,12 @@ predicate; those individual propositions remain mathematical targets.
 - `HardyTheorem.Details.theta_asymptotic_target`
 - `HardyTheorem.Details.approximate_functional_equation_target`
 - `KnownResults.conrey_40_percent_zeros_on_critical_line_target`
+
+Hardy's classical infinite-zero theorem itself is already proved. The targets
+above are independent signed-moment/AFE routes or stronger quantitative
+zero-counting extensions. The current `zeroCountOnCriticalLine` counts
+distinct ordinates; a literature-aligned multiplicity count must be introduced
+separately before promoting Hardy-Littlewood, Selberg, or Conrey claims.
 
 ### Current verified anchor theorems
 

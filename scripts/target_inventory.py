@@ -37,22 +37,22 @@ MATH_TARGETS = {
     "PrimeNumberTheorem.RH_ThetaErrorBound": "RH error equivalence",
     "PrimeNumberTheorem.RH_PrimeCountingLiErrorBound": "RH error equivalence",
     "PrimeNumberTheorem.RH_ErrorBound": "RH error equivalence",
-    "HardyTheorem.integral_asymptotic_target": "Hardy theorem",
-    "HardyTheorem.hardy_two_signed_moments_target": "Hardy theorem",
-    "HardyTheorem.hardy_littlewood_lower_bound_target": "Hardy theorem",
-    "HardyTheorem.selberg_zero_proportion_target": "Hardy theorem",
-    "HardyTheorem.Details.gamma_asymptotic_half_plus_it_target": "Hardy theorem",
-    "HardyTheorem.Details.theta_asymptotic_target": "Hardy theorem",
-    "HardyTheorem.Details.approximate_functional_equation_target": "Hardy theorem",
-    "KnownResults.conrey_40_percent_zeros_on_critical_line_target": "Hardy theorem",
+    "HardyTheorem.integral_asymptotic_target": "Quantitative critical-line extensions",
+    "HardyTheorem.hardy_two_signed_moments_target": "Quantitative critical-line extensions",
+    "HardyTheorem.hardy_littlewood_lower_bound_target": "Quantitative critical-line extensions",
+    "HardyTheorem.selberg_zero_proportion_target": "Quantitative critical-line extensions",
+    "HardyTheorem.Details.gamma_asymptotic_half_plus_it_target": "Quantitative critical-line extensions",
+    "HardyTheorem.Details.theta_asymptotic_target": "Quantitative critical-line extensions",
+    "HardyTheorem.Details.approximate_functional_equation_target": "Quantitative critical-line extensions",
+    "KnownResults.conrey_40_percent_zeros_on_critical_line_target": "Quantitative critical-line extensions",
 }
 
 ROUTE_INTERFACES = {
     "PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedTarget": "Explicit formula",
     "PrimeNumberTheorem.ExplicitFormulaTruncated.ExplicitFormulaTruncatedConverseRoute": "Explicit formula",
     "MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum": "Explicit formula",
-    "HardyTheorem.AFE.zeta_critical_afe_target": "Hardy theorem",
-    "RiemannExplorer.Conrey40.conrey_40_percent_zeros_on_critical_line_target": "Hardy theorem",
+    "HardyTheorem.AFE.zeta_critical_afe_target": "Quantitative critical-line extensions",
+    "RiemannExplorer.Conrey40.conrey_40_percent_zeros_on_critical_line_target": "Quantitative critical-line extensions",
 }
 
 REUSABLE_PREDICATES = {

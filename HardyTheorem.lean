@@ -997,9 +997,10 @@ lemma finite_zeros_contradiction_of_two_signed_moments_and_tail_dominance
     False := by
   exact finite_zeros_contradiction_of_two_signed_moments hfinite hmom
 
-/-- Target statement for Hardy's theorem.  The project currently proves the
-Hardy Z-function setup and zero equivalence, but not the analytic moment
-estimates needed for the final contradiction. -/
+/-- Proposition encoding Hardy's theorem. It is discharged unconditionally by
+`HardyTheorem.hardy_theorem_target_proved` in
+`HardyTheorem.HardyIntegralContradiction`. The signed-moment targets below are
+an independent legacy route to the same conclusion. -/
 def hardy_theorem_target : Prop :=
     {t : ℝ | riemannZeta (0.5 + I * t) = 0}.Infinite
 
@@ -1463,6 +1464,15 @@ lemma hardy_theorem_target_iff_hardyZ_abs_unbounded_of_hardyZ_codiscrete
 
 noncomputable def zeroCountOnCriticalLine (T : ℝ) : ℕ :=
   {t : Set.Icc 0 T | riemannZeta (0.5 + I * t) = 0}.ncard
+
+/-- `zeroCountOnCriticalLine` counts distinct real ordinates in `[0, T]`.
+It does not count analytic multiplicity. Quantitative Hardy--Littlewood,
+Selberg, or Conrey statements that count multiplicity need a separate counting
+function. -/
+lemma zeroCountOnCriticalLine_eq_distinct_ncard (T : ℝ) :
+    zeroCountOnCriticalLine T =
+      {t : Set.Icc 0 T | riemannZeta (0.5 + I * t) = 0}.ncard :=
+  rfl
 
 lemma exists_zero_of_zeroCountOnCriticalLine_pos {T : ℝ}
     (h : 0 < zeroCountOnCriticalLine T) :

@@ -3060,15 +3060,22 @@ Core verified declarations:
 - `hardy_zeros_abs_unbounded_of_integral_asymptotic_one_two_of_codiscrete`
 - `hardy_zeros_unbounded_of_integral_asymptotic_one_two_of_codiscrete`
 - `hardy_zeros_unbounded_iff_abs_unbounded`
+- `exists_riemannZeta_first_approximation`
+- `criticalLineZetaFirstApprox`
+- `exists_integral_norm_riemannZeta_critical_line_ge_mul`
+- `exists_abs_integral_hardyZ_le_rpow_three_quarters`
+- `hardyZ_zero_set_not_isBounded`
+- `hardy_zeros_abs_unbounded_target_proved`
+- `hardy_zeros_unbounded_target_proved`
+- `hardy_theorem_target_proved`
 
-These prove the local Hardy-Z setup and the equivalence between zeros of
-`hardyZ` and zeros of `zeta` on the critical line, plus conditional bridges
-from the signed-moment targets to Hardy's infinite and unbounded-height zero
-interfaces.  They do not prove Hardy's theorem unconditionally; the moment
-estimates needed for Hardy's theorem remain targets.  The codiscrete variants
-show that a codiscrete-complement hypothesis for either the critical-line zeta
-zero set or the Hardy-Z zero set is enough to supply the bounded-window
-finiteness input in these conditional bridges.
+These prove the local Hardy-Z setup, a uniform critical-line first zeta
+approximation, the two dyadic integral bounds, and the final constant-sign
+contradiction.  Consequently Hardy's theorem is proved unconditionally in the
+stronger form that critical-line zeros occur at arbitrarily large positive
+heights.  The signed-moment targets remain as an independent legacy route, and
+the Hardy-Littlewood/Selberg/Conrey targets remain stronger quantitative
+extensions.
 
 ### `GammaResidue.lean`
 
@@ -3129,9 +3136,9 @@ metadata, not proof results.
 The following declarations are intentionally `def ... : Prop` targets.  They
 are not exported as theorems and should not be cited as proved.
 
-As of `2026-07-15`, there are **16** mathematical target declarations:
+As of `2026-07-18`, there are **13** mathematical target declarations:
 
-- `HardyTheorem` namespace: **7**
+- `HardyTheorem` namespace: **4**
 - `HardyTheorem.Details` namespace: **3**
 - `PrimeNumberTheorem` namespace: **4**
 - `KnownResults` namespace: **1**
@@ -3184,11 +3191,12 @@ As of `2026-07-15`, there are **16** mathematical target declarations:
 
 - `integral_asymptotic_target`
 - `hardy_two_signed_moments_target`
-- `hardy_theorem_target`
-- `hardy_zeros_unbounded_target`
-- `hardy_zeros_abs_unbounded_target`
 - `hardy_littlewood_lower_bound_target`
 - `selberg_zero_proportion_target`
+
+`hardy_theorem_target`, `hardy_zeros_unbounded_target`, and
+`hardy_zeros_abs_unbounded_target` remain reusable propositions but are
+discharged by named unconditional theorems. They are not unresolved targets.
 
 ### `HardyTheorem.Details`
 
@@ -3458,10 +3466,13 @@ Reusable predicates:
 
 Current status in `HardyTheorem.lean` target list:
 
-- `hardy_zeros_abs_unbounded_target` is a monotone reformulation of
-  `hardy_zeros_unbounded_target`.
+- `hardy_theorem_target`, `hardy_zeros_unbounded_target`, and
+  `hardy_zeros_abs_unbounded_target` are all proved reusable predicates.
 - `hardy_littlewood_lower_bound_target` is available as a derived output if
   `selberg_zero_proportion_target` is available.
+- `zeroCountOnCriticalLine` counts distinct ordinates and does not encode
+  analytic multiplicity; future historical proportion claims must define the
+  intended multiplicity convention explicitly.
 
 Detailed dependency maps for the four unfinished analytic chains are collected
 under `docs/missing-chains-index.md`.
@@ -3681,6 +3692,8 @@ Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
    Both directions are proved, including reverse quantitative partial
    summation from `pi-Li` error back to `theta`, `psi`, and RH.  This closes an
    equivalence theorem but does not prove RH or an equivalent error predicate.
-4. **Hardy theorem.**
-   Need corrected moment asymptotics for Hardy's Z-function and supporting
-   special-function asymptotics.
+4. **Hardy quantitative extensions.**
+   Hardy's theorem is proved. Hardy-Littlewood, Selberg, and Conrey-style
+   counting results still need multiplicity-aware definitions and new
+   mean-value estimates; the signed-moment and AFE targets remain independent
+   alternative infrastructure.

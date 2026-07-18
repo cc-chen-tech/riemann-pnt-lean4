@@ -91,16 +91,23 @@ The target may be promoted only after the proof supplies both directions:
 The final statement must match the chosen prime-counting function and smoothing
 convention.
 
-### Hardy Theorem
+### Hardy Theorem and Quantitative Extensions
 
-The target may be promoted only after the proof supplies:
+Hardy's theorem is now discharged by a first-zeta-approximation route. Its
+accepted proof surface consists of:
 
-- a correct Hardy Z-function moment asymptotic;
-- a sign-change argument that is not based on false eventual-integral
-  positivity;
-- the necessary special-function asymptotics;
-- a verified bridge from infinitely many sign changes to infinitely many zeta
-  zeros on the critical line.
+- a uniform critical-line first zeta approximation;
+- a linear lower bound for the dyadic critical-line zeta `L1` integral;
+- an `O(T^(3/4))` upper bound for the dyadic Hardy-Z integral;
+- a verified constant-sign contradiction under bounded critical-line zeros;
+- theorem witnesses for both unbounded positive zero heights and the infinite
+  set of distinct zero ordinates.
+
+The remaining Hardy-Littlewood, Selberg, and Conrey-style targets are stronger
+quantitative extensions. Before promotion they must specify whether zeros are
+counted distinctly or with analytic multiplicity and must match the convention
+used in the cited theorem. The current `zeroCountOnCriticalLine` counts
+distinct ordinates only.
 
 ## Verification Commands
 

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-18",
+  "timestamp": "2026-07-19",
   "status": "not-yet-complete",
   "completed_without_sorry": true,
   "remaining_prop_targets": {
@@ -24,7 +24,7 @@
         "name": "hardy_littlewood_lower_bound_target",
         "qualified_name": "HardyTheorem.hardy_littlewood_lower_bound_target",
         "file": "HardyTheorem.lean",
-        "line": 1627,
+        "line": 1637,
         "shape": "∃C>0, ∃T0, ∀T≥T0, (zeroCountOnCriticalLine T:ℝ) ≥ C*T",
         "depends_on": []
       },
@@ -32,7 +32,7 @@
         "name": "selberg_zero_proportion_target",
         "qualified_name": "HardyTheorem.selberg_zero_proportion_target",
         "file": "HardyTheorem.lean",
-        "line": 1630,
+        "line": 1640,
         "shape": "∃c>0,∃T0,∀T≥T0, (zeroCountOnCriticalLine T:ℝ) ≥ c*(T/(2π)*log T)",
         "depends_on": []
       }
@@ -42,7 +42,7 @@
         "name": "gamma_asymptotic_half_plus_it_target",
         "qualified_name": "HardyTheorem.Details.gamma_asymptotic_half_plus_it_target",
         "file": "HardyTheorem.lean",
-        "line": 1883,
+        "line": 1893,
         "shape": "(fun t => Gamma(1/2 + I*t)) ~ (sqrt(2π) * exp(I*t*log t - I*t) * exp(-π*t/2))",
         "depends_on": []
       },
@@ -50,7 +50,7 @@
         "name": "theta_asymptotic_target",
         "qualified_name": "HardyTheorem.Details.theta_asymptotic_target",
         "file": "HardyTheorem.lean",
-        "line": 1908,
+        "line": 1918,
         "shape": "∃θ, exp(I*θ t)=exp(I*thetaPhase t) ∧ (fun t => θ t) ~ (t/2*log(t/(2π))-t/2-π/8)",
         "depends_on": []
       },
@@ -58,7 +58,7 @@
         "name": "approximate_functional_equation_target",
         "qualified_name": "HardyTheorem.Details.approximate_functional_equation_target",
         "file": "HardyTheorem.lean",
-        "line": 1935,
+        "line": 1945,
         "shape": "∃C>0, ∀t>1, ∃R, zeta(1/2+It)=finite sums + R ∧ ‖R‖ ≤ C*t^(-1/4)",
         "depends_on": []
       }
@@ -124,7 +124,7 @@
       "qualified_name": "HardyTheorem.AFE.zeta_critical_afe_target",
       "file": "HardyTheorem/AFE.lean",
       "line": 86,
-      "chain": "Hardy theorem",
+      "chain": "Quantitative critical-line extensions",
       "body": "real_statement"
     },
     {
@@ -157,7 +157,7 @@
       "qualified_name": "RiemannExplorer.Conrey40.conrey_40_percent_zeros_on_critical_line_target",
       "file": "RiemannExplorer/Conrey40.lean",
       "line": 70,
-      "chain": "Hardy theorem",
+      "chain": "Quantitative critical-line extensions",
       "body": "real_statement"
     }
   ],
@@ -172,21 +172,21 @@
       "name": "hardy_theorem_target",
       "qualified_name": "HardyTheorem.hardy_theorem_target",
       "file": "HardyTheorem.lean",
-      "line": 1003,
+      "line": 1004,
       "proved_by": "HardyTheorem.hardy_theorem_target_proved"
     },
     {
       "name": "hardy_zeros_unbounded_target",
       "qualified_name": "HardyTheorem.hardy_zeros_unbounded_target",
       "file": "HardyTheorem.lean",
-      "line": 1083,
+      "line": 1084,
       "proved_by": "HardyTheorem.hardy_zeros_unbounded_target_proved"
     },
     {
       "name": "hardy_zeros_abs_unbounded_target",
       "qualified_name": "HardyTheorem.hardy_zeros_abs_unbounded_target",
       "file": "HardyTheorem.lean",
-      "line": 1089,
+      "line": 1090,
       "proved_by": "HardyTheorem.hardy_zeros_abs_unbounded_target_proved"
     },
     {
@@ -269,14 +269,14 @@
       "next_step": "no remaining implication gap; retain the individual RH-scale predicates as conditional theorem interfaces"
     },
     {
-      "name": "Hardy theorem",
-      "target": "hardy_theorem_target",
-      "status": "proved in Lean via the first zeta approximation and a T^(3/4) oscillatory-integral upper bound",
+      "name": "Quantitative critical-line extensions",
+      "target": "hardy_littlewood_lower_bound_target",
+      "status": "Hardy's infinite-zero theorem is proved; stronger Hardy-Littlewood, Selberg, and Conrey counts remain open",
       "next_step": "develop the stronger Hardy-Littlewood, Selberg, and Conrey quantitative zero-counting targets"
     }
   ],
   "chain_inventory": {
-    "Hardy theorem": [
+    "Quantitative critical-line extensions": [
       "integral_asymptotic_target",
       "hardy_two_signed_moments_target",
       "hardy_littlewood_lower_bound_target",

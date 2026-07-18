@@ -25253,4 +25253,18 @@ theorem hardy_zeros_unbounded_target_proved :
     HardyTheorem.hardy_zeros_unbounded_target :=
   HardyTheorem.hardy_zeros_unbounded_target_proved
 
+/-- Public unconditional Hardy theorem: the set of distinct real ordinates of
+critical-line zeta zeros is infinite. -/
+theorem hardy_theorem_target_proved :
+    HardyTheorem.hardy_theorem_target :=
+  HardyTheorem.hardy_theorem_target_proved
+
+/-- Public contract fixing the current critical-line count as a count of
+distinct ordinates, without analytic multiplicity. -/
+theorem zeroCountOnCriticalLine_eq_distinct_ncard (T : ℝ) :
+    HardyTheorem.zeroCountOnCriticalLine T =
+      {t : Set.Icc 0 T |
+        riemannZeta (0.5 + Complex.I * t) = 0}.ncard :=
+  HardyTheorem.zeroCountOnCriticalLine_eq_distinct_ncard T
+
 end RiemannPNT.API
