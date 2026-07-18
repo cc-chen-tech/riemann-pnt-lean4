@@ -65,10 +65,10 @@ theorem completedZeta_eq_zero_iff_riemannZeta_eq_zero_of_mem_criticalStrip
   simp only [hpref, false_or]
   simp [hGamma]
 
-theorem analyticOrderNatAt_completedZeta_eq_riemannZeta_of_mem_criticalStrip
+theorem analyticOrderAt_completedZeta_eq_riemannZeta_of_mem_criticalStrip
     {s : ℂ} (hsre : 0 < s.re) (hsre' : s.re < 1) :
-    analyticOrderNatAt RiemannHypothesis.completedZeta s =
-      analyticOrderNatAt riemannZeta s := by
+    analyticOrderAt RiemannHypothesis.completedZeta s =
+      analyticOrderAt riemannZeta s := by
   have hs0 := ne_zero_of_pos_re hsre
   have hs1 := ne_one_of_re_lt_one hsre'
   have hhalf : AnalyticAt ℂ (fun _ : ℂ => (1 / 2 : ℂ)) s := by fun_prop
@@ -124,7 +124,15 @@ theorem analyticOrderNatAt_completedZeta_eq_riemannZeta_of_mem_criticalStrip
       _ = analyticOrderAt completedRiemannZeta s + 0 := by
         rw [hgamma.analyticOrderAt_eq_zero.mpr hgamma_ne]
       _ = analyticOrderAt completedRiemannZeta s := add_zero _
-  exact congrArg ENat.toNat (hxiOrder.trans hzetaOrder.symm)
+  exact hxiOrder.trans hzetaOrder.symm
+
+theorem analyticOrderNatAt_completedZeta_eq_riemannZeta_of_mem_criticalStrip
+    {s : ℂ} (hsre : 0 < s.re) (hsre' : s.re < 1) :
+    analyticOrderNatAt RiemannHypothesis.completedZeta s =
+      analyticOrderNatAt riemannZeta s :=
+  congrArg ENat.toNat
+    (analyticOrderAt_completedZeta_eq_riemannZeta_of_mem_criticalStrip
+      hsre hsre')
 
 theorem completedZeta_ne_zero_of_re_eq_one_of_im_ne_zero
     {s : ℂ} (hsre : s.re = 1) (hsim : s.im ≠ 0) :

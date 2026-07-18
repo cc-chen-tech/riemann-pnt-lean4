@@ -1,6 +1,7 @@
 import PrimeNumberTheorem.RiemannVonMangoldt.ZeroCount
 import PrimeNumberTheorem.RiemannVonMangoldt.CompletedZeta
 import PrimeNumberTheorem.RiemannVonMangoldt.GammaDecomposition
+import PrimeNumberTheorem.RiemannVonMangoldt.RectangleCount
 
 open Complex
 open scoped BigOperators
@@ -59,5 +60,26 @@ example {s : ℂ} (hs0 : s ≠ 0) (hs1 : s ≠ 1)
       1 / s + 1 / (s - 1) - Complex.log Real.pi / 2 +
         Complex.digamma (s / 2) / 2 + logDeriv riemannZeta s :=
   logDeriv_completedZeta_eq_zeta_add_gamma hs0 hs1 hzeta
+
+example {U T : ℝ} (hU : 0 < U) (hUT : U < T)
+    (hUgood : ExplicitFormulaAux.goodHeight U)
+    (hTgood : ExplicitFormulaAux.goodHeight T) :
+    MathlibAux.boundaryRectIntegral
+        (logDeriv RiemannHypothesis.completedZeta) 0 1 U T =
+      (2 * Real.pi * I) *
+        ∑ rho ∈ positiveNontrivialZerosBetween U T,
+          (analyticOrderNatAt riemannZeta rho : ℂ) :=
+  boundaryRectIntegral_logDeriv_completedZeta_eq_between_sum
+    hU hUT hUgood hTgood
+
+example {U T : ℝ} (hU : 0 < U) (hUT : U < T)
+    (hUgood : ExplicitFormulaAux.goodHeight U)
+    (hTgood : ExplicitFormulaAux.goodHeight T) :
+    MathlibAux.boundaryRectIntegral
+        (logDeriv RiemannHypothesis.completedZeta) 0 1 U T =
+      (2 * Real.pi * I) *
+        ((riemannZeroCount T - riemannZeroCount U : ℕ) : ℂ) :=
+  boundaryRectIntegral_logDeriv_completedZeta_eq_zeroCount_sub
+    hU hUT hUgood hTgood
 
 end PrimeNumberTheorem.RiemannVonMangoldt
