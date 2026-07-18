@@ -30,12 +30,12 @@
 - Consumes: `Finset.Icc`, complex conjugation, `sq_sum_le_card_mul_sum_sq`.
 - Produces: `ZeroFreeRegion.VinogradovKorobov.vanDerCorputFundamentalInequality` with the upstream explicit autocorrelation statement.
 
-- [ ] **Step 1: Add a failing contract importing the missing project module and checking the exact theorem signature.**
-- [ ] **Step 2: Run `lake -Kjobs=1 build Test.VinogradovKorobovVanDerCorputContract` and verify failure is `unknown module` or `unknown constant`.**
-- [ ] **Step 3: Adapt the attributed upstream proof into the project namespace, changing only the incompatible Mathlib import and namespace/theorem name.**
-- [ ] **Step 4: Add the contract and axiom-audit roots to `lakefile.lean`.**
-- [ ] **Step 5: Run the contract and audit targets; require only `propext`, `Classical.choice`, and `Quot.sound`.**
-- [ ] **Step 6: Commit as `feat(vk): add audited van der Corput inequality`.**
+- [x] **Step 1: Add a failing contract importing the missing project module and checking the exact theorem signature.**
+- [x] **Step 2: Run `lake -Kjobs=1 build Test.VinogradovKorobovVanDerCorputContract` and verify failure is `unknown module` or `unknown constant`.**
+- [x] **Step 3: Adapt the attributed upstream proof into the project namespace, changing only the incompatible Mathlib import and namespace/theorem name.**
+- [x] **Step 4: Add the contract and axiom-audit roots to `lakefile.lean`.**
+- [x] **Step 5: Run the contract and audit targets; require only `propext`, `Classical.choice`, and `Quot.sound`.**
+- [x] **Step 6: Commit as `feat(vk): add audited van der Corput inequality`.**
 
 ### Task 2: Linear Phase And Correlation Specialization
 

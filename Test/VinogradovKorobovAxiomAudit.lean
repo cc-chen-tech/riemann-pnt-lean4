@@ -1,0 +1,3 @@
+import ZeroFreeRegion.VinogradovKorobov.VanDerCorput
+
+#print axioms ZeroFreeRegion.VinogradovKorobov.vanDerCorputFundamentalInequality
