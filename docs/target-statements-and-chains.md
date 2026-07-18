@@ -1,7 +1,7 @@
 # Unproved Target Statements and Missing Chains
 
 This file is the authoritative classification of `def ... : Prop` statements
-(as of `2026-07-15`) in this Lean checkout.  It separates genuinely unproved
+(as of `2026-07-18`) in this Lean checkout.  It separates genuinely unproved
 mathematical targets from reusable predicates that already have theorem-level
 proofs.
 
@@ -25,27 +25,28 @@ The safe project positioning is:
 
 ```text
 Lean 4 formalization of de la Vallee Poussin 3-4-1/Jensen machinery,
-the classical c/log zero-free region, and an ordinary PNT derivation
+the classical c/log zero-free region, an ordinary PNT derivation,
+and Hardy's theorem
 ```
 
 ## Target count
 
-- `HardyTheorem` namespace: 7
+- `HardyTheorem` namespace: 4
 - `HardyTheorem.Details` namespace: 3
-- `PrimeNumberTheorem` namespace: 7
+- `PrimeNumberTheorem` namespace: 4
 - `KnownResults` namespace: 1
 - `ZeroFreeRegion` namespace: 0
 - global namespace: 1
 
-Total: **19**.
+Total: **13**.
 
 For the chain accounting:
 
 - Quantitative zero-free region chain: 1
 - Explicit formula chain: 0 (the principal-value target is proved; the separate
   quantitative truncated-error statement remains a route interface)
-- RH/prime-counting error chain: 7
-- Hardy theorem chain: 11 (7 in `HardyTheorem`, 3 in `HardyTheorem.Details`,
+- RH/prime-counting error chain: 4
+- Hardy theorem chain: 8 (4 in `HardyTheorem`, 3 in `HardyTheorem.Details`,
   1 in `KnownResults`)
 
 ## Chain 1: Quantitative zero-free region
@@ -194,9 +195,6 @@ predicate; those individual propositions remain mathematical targets.
 
 - `HardyTheorem.integral_asymptotic_target`
 - `HardyTheorem.hardy_two_signed_moments_target`
-- `HardyTheorem.hardy_theorem_target`
-- `HardyTheorem.hardy_zeros_unbounded_target`
-- `HardyTheorem.hardy_zeros_abs_unbounded_target`
 - `HardyTheorem.hardy_littlewood_lower_bound_target`
 - `HardyTheorem.selberg_zero_proportion_target`
 - `HardyTheorem.Details.gamma_asymptotic_half_plus_it_target`
@@ -206,6 +204,12 @@ predicate; those individual propositions remain mathematical targets.
 
 ### Current verified anchor theorems
 
+- `HardyTheorem.exists_integral_norm_riemannZeta_critical_line_ge_mul`
+- `HardyTheorem.exists_abs_integral_hardyZ_le_rpow_three_quarters`
+- `HardyTheorem.hardyZ_zero_set_not_isBounded`
+- `HardyTheorem.hardy_zeros_abs_unbounded_target_proved`
+- `HardyTheorem.hardy_zeros_unbounded_target_proved`
+- `HardyTheorem.hardy_theorem_target_proved`
 - `HardyTheorem.hardyZ_zero_iff_zeta_zero`
 - `HardyTheorem.hardyZ_eventually_const_sign_of_finite_zeros`
 - `HardyTheorem.weightedIntegralOf_neg`

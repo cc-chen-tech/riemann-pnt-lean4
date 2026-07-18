@@ -8081,6 +8081,413 @@ private lemma riemannZeta_eq_pole_add_floorError_integral_of_one_lt_re {s : ℂ}
   rw [hzfloor, hsplit, hPint]
   ring
 
+/-! ### Analytic continuation of Abel's floor-error formula -/
+
+/-- The bounded floor error, cut off below `1`, whose Mellin transform is the
+absolutely convergent remainder in Abel's formula for zeta. -/
+private noncomputable def riemannZetaFloorErrorAboveOneComplex (t : ℝ) : ℂ :=
+  Set.indicator (Set.Ici (1 : ℝ))
+    (fun u : ℝ => ((((⌊u⌋₊ : ℝ) - u : ℝ) : ℂ))) t
+
+private lemma measurable_riemannZetaFloorErrorAboveOneComplex :
+    Measurable riemannZetaFloorErrorAboveOneComplex := by
+  have hfloor : Measurable fun t : ℝ => (⌊t⌋₊ : ℝ) := by fun_prop
+  exact (Complex.measurable_ofReal.comp (hfloor.sub measurable_id)).indicator
+    measurableSet_Ici
+
+private lemma norm_riemannZetaFloorErrorAboveOneComplex_le_one (t : ℝ) :
+    ‖riemannZetaFloorErrorAboveOneComplex t‖ ≤ 1 := by
+  by_cases ht : (1 : ℝ) ≤ t
+  · have ht0 : 0 ≤ t := zero_le_one.trans ht
+    simp only [riemannZetaFloorErrorAboveOneComplex, Set.indicator_apply,
+      Set.mem_Ici, ht, if_true]
+    change ‖((((⌊t⌋₊ : ℝ) - t : ℝ) : ℂ))‖ ≤ 1
+    rw [norm_real, Real.norm_eq_abs]
+    exact Nat.abs_floor_sub_le ht0
+  · simp [riemannZetaFloorErrorAboveOneComplex, ht]
+
+private lemma locallyIntegrableOn_riemannZetaFloorErrorAboveOneComplex :
+    LocallyIntegrableOn riemannZetaFloorErrorAboveOneComplex
+      (Set.Ioi (0 : ℝ)) := by
+  refine (locallyIntegrableOn_const (s := Set.Ioi (0 : ℝ)) (1 : ℂ)).mono
+    measurable_riemannZetaFloorErrorAboveOneComplex.aestronglyMeasurable ?_
+  filter_upwards [] with t
+  simpa using norm_riemannZetaFloorErrorAboveOneComplex_le_one t
+
+private lemma riemannZetaFloorErrorAboveOneComplex_isBigO_atTop :
+    riemannZetaFloorErrorAboveOneComplex =O[(atTop : Filter ℝ)]
+      (fun t : ℝ => t ^ (0 : ℝ)) := by
+  refine Asymptotics.IsBigO.of_bound 1 ?_
+  filter_upwards [] with t
+  simpa using norm_riemannZetaFloorErrorAboveOneComplex_le_one t
+
+private lemma riemannZetaFloorErrorAboveOneComplex_isBigO_zero (b : ℝ) :
+    riemannZetaFloorErrorAboveOneComplex =O[𝓝[>] (0 : ℝ)]
+      (fun t : ℝ => t ^ (-b)) := by
+  refine Asymptotics.IsBigO.of_bound 0 ?_
+  filter_upwards [Ioo_mem_nhdsGT (show (0 : ℝ) < 1 by norm_num)] with t ht
+  have htnot : ¬ (1 : ℝ) ≤ t := not_le.mpr ht.2
+  simp [riemannZetaFloorErrorAboveOneComplex, htnot]
+
+private lemma mellin_riemannZetaFloorErrorAboveOneComplex_neg_eq_integral
+    (s : ℂ) :
+    mellin riemannZetaFloorErrorAboveOneComplex (-s) =
+      ∫ t in Set.Ioi (1 : ℝ), riemannZetaFloorError s t := by
+  have hintegrand :
+      (fun t : ℝ => (t : ℂ) ^ ((-s) - 1) •
+        riemannZetaFloorErrorAboveOneComplex t) =
+      fun t : ℝ => Set.indicator (Set.Ici (1 : ℝ))
+        (riemannZetaFloorError s) t := by
+    funext t
+    by_cases ht : (1 : ℝ) ≤ t
+    · simp only [Set.indicator_apply, Set.mem_Ici, ht, if_true,
+        riemannZetaFloorErrorAboveOneComplex, smul_eq_mul]
+      dsimp [riemannZetaFloorError]
+      rw [show -s - 1 = -(s + 1) by ring]
+      ring
+    · simp [riemannZetaFloorErrorAboveOneComplex, ht]
+  rw [mellin, hintegrand]
+  calc
+    (∫ t in Set.Ioi (0 : ℝ),
+        Set.indicator (Set.Ici (1 : ℝ)) (riemannZetaFloorError s) t) =
+        ∫ t : ℝ, Set.indicator (Set.Ioi (0 : ℝ))
+          (Set.indicator (Set.Ici (1 : ℝ))
+            (riemannZetaFloorError s)) t := by
+      rw [integral_indicator measurableSet_Ioi]
+    _ = ∫ t : ℝ,
+        Set.indicator (Set.Ici (1 : ℝ)) (riemannZetaFloorError s) t := by
+      apply integral_congr_ae
+      filter_upwards [] with t
+      by_cases ht : (1 : ℝ) ≤ t
+      · have ht0 : t ∈ Set.Ioi (0 : ℝ) := zero_lt_one.trans_le ht
+        simp only [Set.indicator_apply, Set.mem_Ici, ht, ht0, if_true]
+      · simp only [Set.indicator_apply, Set.mem_Ici, ht, if_false,
+          Set.mem_Ioi, ite_self]
+    _ = ∫ t in Set.Ici (1 : ℝ), riemannZetaFloorError s t :=
+      integral_indicator measurableSet_Ici
+    _ = ∫ t in Set.Ioi (1 : ℝ), riemannZetaFloorError s t :=
+      integral_Ici_eq_integral_Ioi
+
+private lemma differentiableAt_mellin_riemannZetaFloorErrorAboveOneComplex_neg
+    {s : ℂ} (hs : 0 < s.re) :
+    DifferentiableAt ℂ
+      (fun z : ℂ => mellin riemannZetaFloorErrorAboveOneComplex (-z)) s := by
+  have hMellin : DifferentiableAt ℂ
+      (mellin riemannZetaFloorErrorAboveOneComplex) (-s) :=
+    mellin_differentiableAt_of_isBigO_rpow
+      locallyIntegrableOn_riemannZetaFloorErrorAboveOneComplex
+      (a := 0) (b := -s.re - 1)
+      (by simpa using riemannZetaFloorErrorAboveOneComplex_isBigO_atTop)
+      (by simp only [Complex.neg_re]; linarith)
+      (riemannZetaFloorErrorAboveOneComplex_isBigO_zero (-s.re - 1))
+      (by simp only [Complex.neg_re]; linarith)
+  simpa only [Function.comp_apply] using
+    hMellin.comp s
+      (differentiableAt_id.neg : DifferentiableAt ℂ (fun z : ℂ => -z) s)
+
+/-- Abel's pole-plus-floor-error formula continues from the half-plane of
+absolute convergence to the punctured half-plane `Re(s) > 0`.
+
+The proof keeps the floor-error integral explicit, proves its Mellin transform
+holomorphic on `Re(s) > 0`, regularizes the pole by `(s - 1) * ζ(s)`, and then
+uses the identity theorem on the full right half-plane. -/
+theorem riemannZeta_eq_pole_add_floorError_integral_of_pos_re {s : ℂ}
+    (hs : 0 < s.re) (hs1 : s ≠ 1) :
+    riemannZeta s = s / (s - 1) +
+      s * ∫ t in Set.Ioi (1 : ℝ),
+        ((((⌊t⌋₊ : ℝ) - t : ℝ) : ℂ) *
+          (t : ℂ) ^ (-(s + 1))) := by
+  let U : Set ℂ := {z : ℂ | 0 < z.re}
+  let M : ℂ → ℂ := fun z =>
+    mellin riemannZetaFloorErrorAboveOneComplex (-z)
+  let G : ℂ → ℂ := fun z => z + z * (z - 1) * M z
+  let Q : ℂ → ℂ := riemannZetaPoleUnitAtOne
+  have hU_open : IsOpen U :=
+    isOpen_lt continuous_const Complex.continuous_re
+  have hU_preconnected : IsPreconnected U :=
+    (convex_halfSpace_re_gt 0).isPreconnected
+  have hQ : AnalyticOnNhd ℂ Q U := by
+    exact analyticOnNhd_riemannZetaPoleUnitAtOne_re_gt (θ := 0) le_rfl
+  have hM_diff : DifferentiableOn ℂ M U := by
+    intro z hz
+    exact (differentiableAt_mellin_riemannZetaFloorErrorAboveOneComplex_neg
+      hz).differentiableWithinAt
+  have hM : AnalyticOnNhd ℂ M U :=
+    hM_diff.analyticOnNhd hU_open
+  have hG : AnalyticOnNhd ℂ G U := by
+    dsimp only [G]
+    exact analyticOnNhd_id.add
+      ((analyticOnNhd_id.mul (analyticOnNhd_id.sub analyticOnNhd_const)).mul hM)
+  have hoverlap : ∀ z : ℂ, 1 < z.re → Q z = G z := by
+    intro z hz
+    have hz0 : z ≠ 0 := ne_zero_of_re_pos (zero_lt_one.trans hz)
+    have hz1 : z ≠ 1 := by
+      intro h
+      subst z
+      norm_num at hz
+    have hunit :=
+      riemannZetaPoleUnitAtOne_eq_sub_one_mul_riemannZeta hz0 hz1
+    have hformula :=
+      riemannZeta_eq_pole_add_floorError_integral_of_one_lt_re hz
+    have hmellin :=
+      mellin_riemannZetaFloorErrorAboveOneComplex_neg_eq_integral z
+    dsimp only [Q, G, M]
+    rw [hunit, hformula, ← hmellin]
+    field_simp [sub_ne_zero.mpr hz1]
+  let x : ℂ := 2
+  have hxU : x ∈ U := by norm_num [U, x]
+  have hx_overlap : 1 < x.re := by norm_num [x]
+  have hlocal : Q =ᶠ[𝓝 x] G := by
+    have hopen : IsOpen {z : ℂ | 1 < z.re} :=
+      isOpen_lt continuous_const Complex.continuous_re
+    filter_upwards [hopen.mem_nhds hx_overlap] with z hz
+    exact hoverlap z hz
+  have hEq : Set.EqOn Q G U :=
+    hQ.eqOn_of_preconnected_of_eventuallyEq
+      hG hU_preconnected hxU hlocal
+  have hs0 : s ≠ 0 := ne_zero_of_re_pos hs
+  have hqg := hEq hs
+  have hunit :=
+    riemannZetaPoleUnitAtOne_eq_sub_one_mul_riemannZeta hs0 hs1
+  have hmellin :=
+    mellin_riemannZetaFloorErrorAboveOneComplex_neg_eq_integral s
+  dsimp only [Q, G, M] at hqg
+  rw [hunit, hmellin] at hqg
+  apply (mul_left_cancel₀ (sub_ne_zero.mpr hs1))
+  calc
+    (s - 1) * riemannZeta s =
+        s + s * (s - 1) *
+          ∫ t in Set.Ioi (1 : ℝ), riemannZetaFloorError s t := hqg
+    _ = (s - 1) * (s / (s - 1) +
+        s * ∫ t in Set.Ioi (1 : ℝ), riemannZetaFloorError s t) := by
+      field_simp [sub_ne_zero.mpr hs1]
+
+private lemma finite_abel_sum_inv_nat_cpow
+    {N : ℕ} (hN : 1 ≤ N) {s : ℂ} (hs0 : s ≠ 0) :
+    ∑ k ∈ Finset.Icc 1 N, 1 / (k : ℂ) ^ s =
+      (N : ℂ) ^ (-s) * (N : ℂ) +
+        s * ∫ t in (1 : ℝ)..(N : ℝ),
+          (⌊t⌋₊ : ℂ) * (t : ℂ) ^ (-(s + 1)) := by
+  let c : ℕ → ℂ := fun n => if n = 0 then 0 else 1
+  let f : ℝ → ℂ := fun t => (t : ℂ) ^ (-s)
+  have hc0 : c 0 = 0 := by simp [c]
+  have hcsum (m : ℕ) : ∑ k ∈ Finset.Icc 0 m, c k = (m : ℂ) := by
+    rw [Finset.Icc_eq_cons_Ioc (Nat.zero_le m), Finset.sum_cons, hc0, zero_add]
+    rw [← Finset.Icc_add_one_left_eq_Ioc]
+    calc
+      (∑ x ∈ Finset.Icc 1 m, c x) =
+          ∑ _x ∈ Finset.Icc 1 m, (1 : ℂ) := by
+        apply Finset.sum_congr rfl
+        intro x hx
+        have hx1 : 1 ≤ x := (Finset.mem_Icc.mp hx).1
+        simp [c, show x ≠ 0 by omega]
+      _ = m := by simp
+  have hf_diff : ∀ t ∈ Set.Icc (1 : ℝ) N, DifferentiableAt ℝ f t := by
+    intro t ht
+    have ht0 : t ≠ 0 := ne_of_gt (zero_lt_one.trans_le ht.1)
+    exact (hasDerivAt_ofReal_cpow_const ht0
+      (neg_ne_zero.mpr hs0)).differentiableAt
+  have hderiv : ∀ t ∈ Set.Icc (1 : ℝ) N,
+      deriv f t = (-s) * (t : ℂ) ^ (-(s + 1)) := by
+    intro t ht
+    have ht0 : t ≠ 0 := ne_of_gt (zero_lt_one.trans_le ht.1)
+    dsimp [f]
+    rw [Complex.deriv_ofReal_cpow_const ht0 (neg_ne_zero.mpr hs0)]
+    rw [show -s - 1 = -(s + 1) by ring]
+  let g : ℝ → ℂ := fun t => (-s) * (t : ℂ) ^ (-(s + 1))
+  have hg_cont : ContinuousOn g (Set.Icc (1 : ℝ) N) := by
+    apply continuousOn_of_forall_continuousAt
+    intro t ht
+    have ht0 : t ≠ 0 := ne_of_gt (zero_lt_one.trans_le ht.1)
+    exact continuousAt_const.mul
+      (continuousAt_ofReal_cpow_const _ _ (Or.inr ht0))
+  have hg_int : IntegrableOn g (Set.Icc (1 : ℝ) N) :=
+    hg_cont.integrableOn_compact isCompact_Icc
+  have hf_int : IntegrableOn (deriv f) (Set.Icc (1 : ℝ) N) := by
+    refine hg_int.congr_fun ?_ measurableSet_Icc
+    intro t ht
+    exact (hderiv t ht).symm
+  have hab := sum_mul_eq_sub_integral_mul₀' c hc0 N hf_diff hf_int
+  have hlhs :
+      (∑ k ∈ Finset.Icc 0 N, f k * c k) =
+        ∑ k ∈ Finset.Icc 1 N, 1 / (k : ℂ) ^ s := by
+    rw [Finset.Icc_eq_cons_Ioc (Nat.zero_le N), Finset.sum_cons, hc0,
+      mul_zero, zero_add]
+    rw [← Finset.Icc_add_one_left_eq_Ioc]
+    apply Finset.sum_congr rfl
+    intro k hk
+    have hk1 : 1 ≤ k := (Finset.mem_Icc.mp hk).1
+    have hk0 : k ≠ 0 := by omega
+    simp [f, c, hk0, Complex.cpow_neg]
+  have hint :
+      (∫ t in Set.Ioc (1 : ℝ) N,
+        deriv f t * ∑ k ∈ Finset.Icc 0 ⌊t⌋₊, c k) =
+      (-s) * ∫ t in Set.Ioc (1 : ℝ) N,
+        (⌊t⌋₊ : ℂ) * (t : ℂ) ^ (-(s + 1)) := by
+    calc
+      (∫ t in Set.Ioc (1 : ℝ) N,
+        deriv f t * ∑ k ∈ Finset.Icc 0 ⌊t⌋₊, c k) =
+          ∫ t in Set.Ioc (1 : ℝ) N,
+            (-s) * ((⌊t⌋₊ : ℂ) * (t : ℂ) ^ (-(s + 1))) := by
+        apply setIntegral_congr_fun measurableSet_Ioc
+        intro t ht
+        have htIcc : t ∈ Set.Icc (1 : ℝ) N := ⟨ht.1.le, ht.2⟩
+        change deriv f t * (∑ k ∈ Finset.Icc 0 ⌊t⌋₊, c k) =
+          (-s) * ((⌊t⌋₊ : ℂ) * (t : ℂ) ^ (-(s + 1)))
+        rw [hderiv t htIcc, hcsum]
+        ring
+      _ = (-s) * ∫ t in Set.Ioc (1 : ℝ) N,
+          (⌊t⌋₊ : ℂ) * (t : ℂ) ^ (-(s + 1)) := by
+        exact integral_const_mul _ _
+  rw [intervalIntegral.integral_of_le (by exact_mod_cast hN)]
+  calc
+    ∑ k ∈ Finset.Icc 1 N, 1 / (k : ℂ) ^ s =
+        f (N : ℝ) * (N : ℂ) -
+          ∫ t in Set.Ioc (1 : ℝ) N,
+            deriv f t * ∑ k ∈ Finset.Icc 0 ⌊t⌋₊, c k := by
+      rw [← hlhs, ← hcsum N]
+      exact hab
+    _ = f (N : ℝ) * (N : ℂ) -
+        (-s) * ∫ t in Set.Ioc (1 : ℝ) N,
+          (⌊t⌋₊ : ℂ) * (t : ℂ) ^ (-(s + 1)) := by rw [hint]
+    _ = (N : ℂ) ^ (-s) * (N : ℂ) -
+          (-s) * ∫ t in Set.Ioc (1 : ℝ) N,
+            (⌊t⌋₊ : ℂ) * (t : ℂ) ^ (-(s + 1)) := by rfl
+    _ = (N : ℂ) ^ (-s) * (N : ℂ) +
+        s * ∫ t in Set.Ioc (1 : ℝ) N,
+          (⌊t⌋₊ : ℂ) * (t : ℂ) ^ (-(s + 1)) := by ring
+
+/-- Exact first Abel approximation at an integer cutoff.  For `Re(s) > 0`
+away from the pole, zeta is a finite Dirichlet polynomial plus the pole term
+and an explicit absolutely convergent floor-error tail. -/
+theorem riemannZeta_eq_dirichletPolynomial_add_pole_add_floorErrorTail
+    {s : ℂ} (hs : 0 < s.re) (hs1 : s ≠ 1)
+    {N : ℕ} (hN : 1 ≤ N) :
+    riemannZeta s =
+      (∑ n ∈ Finset.Icc 1 N, 1 / (n : ℂ) ^ s) +
+        (N : ℂ) ^ (1 - s) / (s - 1) +
+        s * ∫ t in Set.Ioi (N : ℝ),
+          ((((⌊t⌋₊ : ℝ) - t : ℝ) : ℂ) *
+            (t : ℂ) ^ (-(s + 1))) := by
+  let E : ℝ → ℂ := fun t => riemannZetaFloorError s t
+  let P : ℝ → ℂ := fun t => (t : ℂ) ^ (-s)
+  let F : ℝ → ℂ := fun t =>
+    (⌊t⌋₊ : ℂ) * (t : ℂ) ^ (-(s + 1))
+  have hs0 : s ≠ 0 := ne_zero_of_re_pos hs
+  have hNreal : (1 : ℝ) ≤ N := by exact_mod_cast hN
+  have hglobal :
+      riemannZeta s = s / (s - 1) +
+        s * ∫ t in Set.Ioi (1 : ℝ), E t := by
+    simpa [E, riemannZetaFloorError] using
+      riemannZeta_eq_pole_add_floorError_integral_of_pos_re hs hs1
+  have hEone : IntegrableOn E (Set.Ioi (1 : ℝ)) := by
+    simpa [E] using integrableOn_riemannZetaFloorError hs
+  have hEN : IntegrableOn E (Set.Ioi (N : ℝ)) :=
+    hEone.mono_set (Set.Ioi_subset_Ioi hNreal)
+  have hEsplit :
+      (∫ t in (1 : ℝ)..(N : ℝ), E t) +
+          ∫ t in Set.Ioi (N : ℝ), E t =
+        ∫ t in Set.Ioi (1 : ℝ), E t :=
+    intervalIntegral.integral_interval_add_Ioi hEone hEN
+  have hPintable : IntervalIntegrable P volume (1 : ℝ) N := by
+    apply ContinuousOn.intervalIntegrable_of_Icc hNreal
+    intro t ht
+    have ht0 : t ≠ 0 := ne_of_gt (zero_lt_one.trans_le ht.1)
+    exact (continuousAt_ofReal_cpow_const _ _ (Or.inr ht0)).continuousWithinAt
+  have hEintable : IntervalIntegrable E volume (1 : ℝ) N :=
+    (intervalIntegrable_iff_integrableOn_Ioc_of_le hNreal).2
+      (hEone.mono_set Set.Ioc_subset_Ioi_self)
+  have hFpoint : ∀ t ∈ Set.Icc (1 : ℝ) N, F t = P t + E t := by
+    intro t ht
+    have htne : (t : ℂ) ≠ 0 :=
+      Complex.ofReal_ne_zero.mpr (zero_lt_one.trans_le ht.1).ne'
+    have hpow : (t : ℂ) * (t : ℂ) ^ (-(s + 1)) = P t := by
+      dsimp [P]
+      calc
+        (t : ℂ) * (t : ℂ) ^ (-(s + 1)) =
+            (t : ℂ) ^ (1 : ℂ) * (t : ℂ) ^ (-(s + 1)) := by rw [cpow_one]
+        _ = (t : ℂ) ^ ((1 : ℂ) + (-(s + 1))) := by
+          rw [cpow_add _ _ htne]
+        _ = (t : ℂ) ^ (-s) := by congr 1; ring
+    dsimp [F, E, riemannZetaFloorError]
+    rw [← hpow]
+    push_cast
+    ring
+  have hFsplit :
+      (∫ t in (1 : ℝ)..(N : ℝ), F t) =
+        (∫ t in (1 : ℝ)..(N : ℝ), P t) +
+          ∫ t in (1 : ℝ)..(N : ℝ), E t := by
+    calc
+      (∫ t in (1 : ℝ)..(N : ℝ), F t) =
+          ∫ t in (1 : ℝ)..(N : ℝ), P t + E t := by
+        apply intervalIntegral.integral_congr
+        intro t ht
+        rw [Set.uIcc_of_le hNreal] at ht
+        exact hFpoint t ht
+      _ = (∫ t in (1 : ℝ)..(N : ℝ), P t) +
+          ∫ t in (1 : ℝ)..(N : ℝ), E t :=
+        intervalIntegral.integral_add hPintable hEintable
+  have hzero_not_mem : (0 : ℝ) ∉ Set.uIcc (1 : ℝ) (N : ℝ) := by
+    rw [Set.uIcc_of_le hNreal]
+    intro h
+    linarith [h.1]
+  have hPint :
+      (∫ t in (1 : ℝ)..(N : ℝ), P t) =
+        ((N : ℂ) ^ (1 - s) - 1) / (1 - s) := by
+    dsimp [P]
+    simpa [show -s + 1 = 1 - s by ring] using
+      (integral_cpow (a := (1 : ℝ)) (b := (N : ℝ))
+        (r := -s) (Or.inr ⟨by
+          intro h
+          apply hs1
+          have h' := congrArg Neg.neg h
+          simpa using h', hzero_not_mem⟩))
+  have hfinite := finite_abel_sum_inv_nat_cpow hN hs0
+  have hfinite' :
+      (∑ n ∈ Finset.Icc 1 N, 1 / (n : ℂ) ^ s) =
+        (N : ℂ) ^ (1 - s) +
+          s * ((∫ t in (1 : ℝ)..(N : ℝ), P t) +
+            ∫ t in (1 : ℝ)..(N : ℝ), E t) := by
+    rw [← hFsplit]
+    calc
+      (∑ n ∈ Finset.Icc 1 N, 1 / (n : ℂ) ^ s) =
+          (N : ℂ) ^ (-s) * (N : ℂ) +
+            s * ∫ t in (1 : ℝ)..(N : ℝ), F t := by
+        simpa [F] using hfinite
+      _ = (N : ℂ) ^ (1 - s) +
+          s * ∫ t in (1 : ℝ)..(N : ℝ), F t := by
+        have hNC : (N : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr (by omega)
+        congr 1
+        calc
+          (N : ℂ) ^ (-s) * (N : ℂ) =
+              (N : ℂ) ^ (-s) * (N : ℂ) ^ (1 : ℂ) := by rw [cpow_one]
+          _ = (N : ℂ) ^ (-s + 1) := by rw [cpow_add _ _ hNC]
+          _ = (N : ℂ) ^ (1 - s) := by congr 1; ring
+  have hfinitePole :
+      (∑ n ∈ Finset.Icc 1 N, 1 / (n : ℂ) ^ s) +
+          (N : ℂ) ^ (1 - s) / (s - 1) =
+        s / (s - 1) + s * ∫ t in (1 : ℝ)..(N : ℝ), E t := by
+    rw [hfinite', hPint]
+    have hsub : s - 1 ≠ 0 := sub_ne_zero.mpr hs1
+    have honeSub : 1 - s ≠ 0 := sub_ne_zero.mpr hs1.symm
+    field_simp [hsub, honeSub]
+    ring
+  rw [hglobal, ← hEsplit]
+  change s / (s - 1) +
+      s * ((∫ t in (1 : ℝ)..(N : ℝ), E t) +
+        ∫ t in Set.Ioi (N : ℝ), E t) = _
+  calc
+    s / (s - 1) +
+        s * ((∫ t in (1 : ℝ)..(N : ℝ), E t) +
+          ∫ t in Set.Ioi (N : ℝ), E t) =
+        (s / (s - 1) + s * ∫ t in (1 : ℝ)..(N : ℝ), E t) +
+          s * ∫ t in Set.Ioi (N : ℝ), E t := by ring
+    _ = ((∑ n ∈ Finset.Icc 1 N, 1 / (n : ℂ) ^ s) +
+          (N : ℂ) ^ (1 - s) / (s - 1)) +
+          s * ∫ t in Set.Ioi (N : ℝ), E t := by rw [← hfinitePole]
+    _ = _ := by
+      dsimp [E, riemannZetaFloorError]
+
 /-- In the half-plane of absolute convergence, and one unit away from the real
 axis, Abel's formula gives the linear vertical-growth bound `|zeta(s)| <= 2|s|`.
 Unlike the Dirichlet-series estimate, its constant is uniform as `Re(s) -> 1+`. -/
