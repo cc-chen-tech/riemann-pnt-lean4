@@ -28,9 +28,11 @@ forms (`PNTForm1`, `PNTForm2`, and `PNTForm3`) through the classical
 zero-free-region and moving-height explicit-formula route.  It also proves the
 classical de la Vallee Poussin-form estimates
 `psi(x)-x = O(x exp(-c sqrt(log x)))` and
-`pi(x)-Li(x) = O(x exp(-c' sqrt(log x)))`.  It does **not** claim numerical
-values for these existential constants, the Vinogradov-Korobov zero-free
-region, RH, or Hardy's theorem.
+`pi(x)-Li(x) = O(x exp(-c' sqrt(log x)))`.  It also proves Hardy's classical
+theorem that the critical line contains infinitely many zeta zeros.  It does
+**not** claim numerical values for the PNT constants, the Vinogradov-Korobov
+zero-free region, RH, or stronger quantitative critical-line zero-density
+results such as Hardy-Littlewood, Selberg, or Conrey bounds.
 
 ## Evaluation Framework
 
@@ -361,13 +363,13 @@ This keeps the claims tight:
    RH_PrimeCountingLiErrorBound`, the reverse quantitative partial-summation
    chain, and the equivalences with both `RH_PsiErrorBound` and the
    prime-counting `Li` error.
-4. **Framework contribution:** building a Hardy-Z/critical-line-zero framework
-   with explicit target statements for Hardy, Hardy-Littlewood, Selberg, and
-   Conrey-style zero-counting results.
+4. **Hardy contribution:** proving Hardy's classical theorem in the stronger
+   unbounded-positive-height form, while retaining explicit targets for the
+   stronger Hardy-Littlewood, Selberg, and Conrey-style zero-counting results.
 5. **Mathlib roadmap:** isolating the remaining analytic inputs: stronger
    reusable finite-height estimates where needed, Vinogradov-Korobov
-   exponential-sum estimates, and special-function asymptotics for Hardy's
-   theorem.
+   exponential-sum estimates, and the stronger approximate-functional-equation
+   and moment estimates needed for quantitative critical-line zero counts.
 
 The strongest current title direction is:
 
@@ -490,7 +492,7 @@ of such contours from `goodHeight`: the square at height `T` has real sides
 | `RiemannExplorer.lean` | Riemann Hypothesis statement, zeta definitions, functional equation, trivial zeros | sorry-free |
 | `EulerAndLfunctions.lean` | Thin wrappers around Mathlib zeta/Euler product/L-function facts | sorry-free |
 | `GammaResidue.lean` | Gamma residue facts and numerical special cases | sorry-free |
-| `HardyTheorem.lean` | Hardy Z-function setup with corrected target statements for critical-line zeros | sorry-free, targets unproved |
+| `HardyTheorem.lean` | Hardy Z-function setup and theorem predicates for critical-line zeros | sorry-free; Hardy's theorem and unbounded-zero forms are proved, while stronger quantitative targets remain open |
 | `PrimeNumberTheorem.lean` | PNT forms, equivalences, Li(x) asymptotics, zero symmetry, bounded-height zero finiteness, and the multiplicity-aware explicit-formula predicate | sorry-free; ordinary PNT and the explicit-formula predicate are proved, RH-scale error targets remain |
 | `PrimeNumberTheorem/PNTFromDynamicPerron.lean` | Transfers the natural-sample de la Vallee Poussin estimate through the floor identity and proves `PNTForm1`, `PNTForm2`, and `PNTForm3` | sorry-free; ordinary PNT proved |
 | `PrimeNumberTheorem/ClassicalPNTError.lean` | Absorbs the moving-height polynomial factors and von Mangoldt half-jump, then transfers the quantitative estimate from natural samples to all large real inputs | sorry-free; `psi(x)-x = O(x exp(-c sqrt(log x)))` proved |
