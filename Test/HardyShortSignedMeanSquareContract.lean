@@ -11,6 +11,20 @@ open Complex Set
 #print axioms MathlibAux.integral_normSq_intervalIntegral_exponentialPolynomial_le
 #print axioms HardyTheorem.exists_abs_hardyShortIntegral_sub_hardyFirstModelShortIntegral_le
 
+example {ι : Type*} (delta : ℝ) (coeff : ι → ℂ) (freq : ι → ℝ) (n : ι) :
+    MathlibAux.shortExponentialCoefficient delta coeff freq n =
+      coeff n * ∫ v in 0..delta, Complex.exp (Complex.I * (freq n * v)) :=
+  rfl
+
+example (kappa T t : ℝ) :
+    HardyTheorem.hardyFirstModel kappa T t =
+      (Complex.exp (Complex.I * kappa) *
+        (∑ n ∈ Finset.Icc 1 (HardyTheorem.firstZetaApproximationCutoff T),
+          ((n : ℂ) ^ (1 / 2 : ℂ))⁻¹ *
+            Complex.exp
+              (Complex.I * HardyTheorem.OscillatoryIntegral.hardyPhase n t))).re :=
+  rfl
+
 example {ι : Type*} [DecidableEq ι]
     (s : Finset ι) (coeff : ι → ℂ) (freq : ι → ℝ)
     {a b delta : ℝ}
