@@ -1,5 +1,8 @@
-import ZeroFreeRegion.VinogradovKorobov.ExponentialSum
+import ZeroFreeRegion.VinogradovKorobov.FirstDerivative
 
 #print axioms ZeroFreeRegion.VinogradovKorobov.vanDerCorputFundamentalInequality
 #print axioms ZeroFreeRegion.VinogradovKorobov.phaseTerm_mul_conj_shift
 #print axioms ZeroFreeRegion.VinogradovKorobov.norm_linearPhaseSum_le_min
+#print axioms ZeroFreeRegion.VinogradovKorobov.reciprocal_exp_sub_one_eq
+#print axioms ZeroFreeRegion.VinogradovKorobov.sum_norm_reciprocal_exp_sub_one_eq
+#print axioms ZeroFreeRegion.VinogradovKorobov.kusminLandau_endpoint_bound
