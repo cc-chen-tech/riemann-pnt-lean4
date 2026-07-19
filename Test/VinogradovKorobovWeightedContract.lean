@@ -1,4 +1,5 @@
 import ZeroFreeRegion.VinogradovKorobov.VinogradovWeightedMainEstimate
+import ZeroFreeRegion.VinogradovKorobov.VinogradovWeightedBounds
 
 open ZeroFreeRegion.VinogradovKorobov
 
@@ -32,3 +33,11 @@ open ZeroFreeRegion.VinogradovKorobov
 #check normalizedVinogradovWeightedMomentMod_eq_solutionCount
 #check normalizedVinogradovWeightedMomentMod_eq_natCount_of_scale
 #check norm_normalizedVinogradovWeightedMomentMod_le_of_meanValueEstimate
+#check isVinogradovWeightedSolutionMod_iff_powerSumNat_modEq
+#check IsVinogradovWeightedSolutionMod.mono_scale
+#check vinogradovWeightedSolutionCountMod_antitone_scale
+#check isVinogradovWeightedSolutionMod_refl
+#check vinogradovWeightedSolutionCountMod_le_total
+#check pow_le_vinogradovWeightedSolutionCountMod
+#check isVinogradovWeightedSolutionMod_zero
+#check vinogradovWeightedSolutionCountMod_zero
