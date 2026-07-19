@@ -109,6 +109,225 @@ theorem card_vinogradovPrimePowerTargetFiberSet_zero_le_factorial
       card_vinogradovResidueTargetFiberSet_le_factorial p k hkp
         (fun j ↦ (target j : ZMod p))
 
+/-- A base fixed-target tuple together with its one-step correction digit. -/
+noncomputable def vinogradovPrimePowerTargetFiberLiftSet
+    (p k n : ℕ) [Fact p.Prime] (target : Fin k → ℤ) :
+    Finset (Σ _ : Fin k → Fin (p ^ (n + 1)), Fin k → ZMod p) :=
+  (vinogradovPrimePowerTargetFiberSet p k n target).sigma fun x ↦
+    vinogradovHeadCorrectionSet p k n
+      (fun i ↦ (((x i).val + 1 : ℕ) : ℤ)) target
+
+/-- Nonsingularity makes every one-step correction fiber have cardinality at
+most one. -/
+theorem card_vinogradovPrimePowerTargetFiberLiftSet_le
+    (p k n : ℕ) [Fact p.Prime] (hkp : k < p)
+    (target : Fin k → ℤ) :
+    (vinogradovPrimePowerTargetFiberLiftSet p k n target).card ≤
+      (vinogradovPrimePowerTargetFiberSet p k n target).card := by
+  rw [vinogradovPrimePowerTargetFiberLiftSet, Finset.card_sigma]
+  calc
+    (∑ x ∈ vinogradovPrimePowerTargetFiberSet p k n target,
+        (vinogradovHeadCorrectionSet p k n
+          (fun i ↦ (((x i).val + 1 : ℕ) : ℤ)) target).card) ≤
+        ∑ _x ∈ vinogradovPrimePowerTargetFiberSet p k n target, 1 := by
+      apply Finset.sum_le_sum
+      intro x hx
+      have hinjective :=
+        (mem_vinogradovPrimePowerTargetFiberSet_iff
+          p k n target x).mp hx |>.1
+      have hcast : Function.Injective (fun i : Fin k ↦
+          ((((x i).val + 1 : ℕ) : ℤ) : ZMod p)) := by
+        intro i j hij
+        apply hinjective
+        simpa using hij
+      exact card_vinogradovHeadCorrectionSet_le_one p k n hkp
+        (fun i ↦ (((x i).val + 1 : ℕ) : ℤ)) target hcast
+    _ = (vinogradovPrimePowerTargetFiberSet p k n target).card := by
+      simp
+
+/-- The ambient digit decomposition for a fixed-target tuple lift. -/
+noncomputable def vinogradovPrimePowerTargetFiberLiftAmbientEquiv
+    (p k n : ℕ) [Fact p.Prime] :
+    (Σ _ : Fin k → Fin (p ^ (n + 1)), Fin k → ZMod p) ≃
+      (Fin k → Fin (p ^ (n + 2))) :=
+  (Equiv.sigmaEquivProd
+      (Fin k → Fin (p ^ (n + 1))) (Fin k → ZMod p)).trans
+    (vinogradovPrimePowerTupleDigitEquiv p k n)
+
+theorem vinogradovPrimePowerTargetFiberLiftAmbientEquiv_apply_val
+    (p k n : ℕ) [Fact p.Prime]
+    (x : Fin k → Fin (p ^ (n + 1))) (u : Fin k → ZMod p)
+    (i : Fin k) :
+    (vinogradovPrimePowerTargetFiberLiftAmbientEquiv p k n ⟨x, u⟩ i).val =
+      (x i).val + p ^ (n + 1) * (u i).val :=
+  vinogradovPrimePowerTupleDigitEquiv_apply_val p k n x u i
+
+private theorem vinogradovPrimePowerTargetFiberLiftAmbientEquiv_mod
+    (p k n : ℕ) [Fact p.Prime]
+    (x : Fin k → Fin (p ^ (n + 1))) (u : Fin k → ZMod p)
+    (i : Fin k) :
+    (((vinogradovPrimePowerTargetFiberLiftAmbientEquiv p k n
+        ⟨x, u⟩ i).val + 1 : ℕ) : ZMod p) =
+      (((x i).val + 1 : ℕ) : ZMod p) := by
+  rw [vinogradovPrimePowerTargetFiberLiftAmbientEquiv_apply_val]
+  push_cast
+  simp [pow_succ]
+
+private theorem
+    vinogradovPrimePowerTargetFiberLiftAmbientEquiv_injective_iff
+    (p k n : ℕ) [Fact p.Prime]
+    (x : Fin k → Fin (p ^ (n + 1))) (u : Fin k → ZMod p) :
+    Function.Injective (fun i : Fin k ↦
+        (((vinogradovPrimePowerTargetFiberLiftAmbientEquiv p k n
+          ⟨x, u⟩ i).val + 1 : ℕ) : ZMod p)) ↔
+      Function.Injective (fun i : Fin k ↦
+        (((x i).val + 1 : ℕ) : ZMod p)) := by
+  constructor
+  · intro h i j hij
+    apply h
+    simpa only [vinogradovPrimePowerTargetFiberLiftAmbientEquiv_mod] using hij
+  · intro h i j hij
+    apply h
+    simpa only [vinogradovPrimePowerTargetFiberLiftAmbientEquiv_mod] using hij
+
+private theorem mem_vinogradovHeadCorrectionSet_iff_lifted_target
+    (p k n : ℕ) [Fact p.Prime] (target : Fin k → ℤ)
+    (x : Fin k → Fin (p ^ (n + 1))) (u : Fin k → ZMod p) :
+    u ∈ vinogradovHeadCorrectionSet p k n
+        (fun i ↦ (((x i).val + 1 : ℕ) : ℤ)) target ↔
+      ∀ j : Fin k,
+        vinogradovPowerSumInt
+            (fun i ↦ (((vinogradovPrimePowerTargetFiberLiftAmbientEquiv
+              p k n ⟨x, u⟩ i).val + 1 : ℕ) : ℤ)) j ≡
+          target j [ZMOD (p : ℤ) ^ (n + 2)] := by
+  rw [mem_vinogradovHeadCorrectionSet_iff]
+  have hmod : (p : ℤ) ^ (n + 1) * p = (p : ℤ) ^ (n + 2) := by
+    calc
+      (p : ℤ) ^ (n + 1) * p = (p : ℤ) ^ ((n + 1) + 1) :=
+        (pow_succ (p : ℤ) (n + 1)).symm
+      _ = (p : ℤ) ^ (n + 2) := by
+        congr 1
+  have htuple :
+      (fun i ↦ (((vinogradovPrimePowerTargetFiberLiftAmbientEquiv
+          p k n ⟨x, u⟩ i).val + 1 : ℕ) : ℤ)) =
+        fun i ↦ (((x i).val + 1 : ℕ) : ℤ) +
+          (p : ℤ) ^ (n + 1) * (u i).val := by
+    funext i
+    rw [vinogradovPrimePowerTargetFiberLiftAmbientEquiv_apply_val]
+    push_cast
+    ring
+  rw [htuple, hmod]
+
+private theorem vinogradovPrimePowerTargetFiber_lift_to_base
+    (p k n : ℕ) [Fact p.Prime] (target : Fin k → ℤ)
+    (x : Fin k → Fin (p ^ (n + 1))) (u : Fin k → ZMod p)
+    (hhigh : ∀ j : Fin k,
+      vinogradovPowerSumInt
+          (fun i ↦ (((vinogradovPrimePowerTargetFiberLiftAmbientEquiv
+            p k n ⟨x, u⟩ i).val + 1 : ℕ) : ℤ)) j ≡
+        target j [ZMOD (p : ℤ) ^ (n + 2)]) :
+    ∀ j : Fin k,
+      vinogradovPowerSumInt
+          (fun i ↦ (((x i).val + 1 : ℕ) : ℤ)) j ≡
+        target j [ZMOD (p : ℤ) ^ (n + 1)] := by
+  intro j
+  have hdiv : (p : ℤ) ^ (n + 1) ∣ (p : ℤ) ^ (n + 2) := by
+    refine ⟨p, ?_⟩
+    rw [pow_succ]
+  have hcoord : ∀ i : Fin k,
+      (((x i).val + 1 : ℕ) : ℤ) ≡
+        (((vinogradovPrimePowerTargetFiberLiftAmbientEquiv p k n
+          ⟨x, u⟩ i).val + 1 : ℕ) : ℤ)
+        [ZMOD (p : ℤ) ^ (n + 1)] := by
+    intro i
+    rw [vinogradovPrimePowerTargetFiberLiftAmbientEquiv_apply_val]
+    push_cast
+    simpa [add_assoc, add_comm, add_left_comm] using
+      (Int.modEq_add_fac_self
+        (a := ((x i).val : ℤ) + 1)
+        (t := ((u i).val : ℤ))
+        (n := (p : ℤ) ^ (n + 1))).symm
+  exact (vinogradovPowerSumInt_modEq
+    ((p : ℤ) ^ (n + 1)) hcoord j).trans ((hhigh j).of_dvd hdiv)
+
+/-- Membership in the sigma lift is exactly membership of its ambient image
+in the next fixed-target fiber. -/
+theorem mem_vinogradovPrimePowerTargetFiberLiftSet_iff_image_mem
+    (p k n : ℕ) [Fact p.Prime] (target : Fin k → ℤ)
+    (w : Σ _ : Fin k → Fin (p ^ (n + 1)), Fin k → ZMod p) :
+    w ∈ vinogradovPrimePowerTargetFiberLiftSet p k n target ↔
+      vinogradovPrimePowerTargetFiberLiftAmbientEquiv p k n w ∈
+        vinogradovPrimePowerTargetFiberSet p k (n + 1) target := by
+  rcases w with ⟨x, u⟩
+  rw [vinogradovPrimePowerTargetFiberLiftSet, Finset.mem_sigma,
+    mem_vinogradovPrimePowerTargetFiberSet_iff,
+    mem_vinogradovPrimePowerTargetFiberSet_iff]
+  constructor
+  · rintro ⟨⟨hinjective, _hbase⟩, hcorrection⟩
+    exact ⟨
+      (vinogradovPrimePowerTargetFiberLiftAmbientEquiv_injective_iff
+        p k n x u).mpr hinjective,
+      (mem_vinogradovHeadCorrectionSet_iff_lifted_target
+        p k n target x u).mp hcorrection⟩
+  · rintro ⟨hhighInjective, hhighTarget⟩
+    refine ⟨⟨?_, ?_⟩, ?_⟩
+    · exact
+        (vinogradovPrimePowerTargetFiberLiftAmbientEquiv_injective_iff
+          p k n x u).mp hhighInjective
+    · exact vinogradovPrimePowerTargetFiber_lift_to_base
+        p k n target x u hhighTarget
+    · exact
+        (mem_vinogradovHeadCorrectionSet_iff_lifted_target
+          p k n target x u).mpr hhighTarget
+
+/-- The ambient digit equivalence maps the complete one-step lift set onto
+the next fixed-target fiber. -/
+theorem map_vinogradovPrimePowerTargetFiberLiftSet_eq
+    (p k n : ℕ) [Fact p.Prime] (target : Fin k → ℤ) :
+    (vinogradovPrimePowerTargetFiberLiftSet p k n target).map
+        (vinogradovPrimePowerTargetFiberLiftAmbientEquiv p k n).toEmbedding =
+      vinogradovPrimePowerTargetFiberSet p k (n + 1) target := by
+  ext z
+  constructor
+  · intro hz
+    rcases Finset.mem_map.mp hz with ⟨w, hw, rfl⟩
+    exact (mem_vinogradovPrimePowerTargetFiberLiftSet_iff_image_mem
+      p k n target w).mp hw
+  · intro hz
+    let e := vinogradovPrimePowerTargetFiberLiftAmbientEquiv p k n
+    let w := e.symm z
+    have hew : e w = z := e.apply_symm_apply z
+    apply Finset.mem_map.mpr
+    refine ⟨w, ?_, hew⟩
+    apply (mem_vinogradovPrimePowerTargetFiberLiftSet_iff_image_mem
+      p k n target w).mpr
+    simpa [e, w] using hz
+
+/-- Nonsingular fixed-target fibers do not grow under one prime-power lift. -/
+theorem card_vinogradovPrimePowerTargetFiberSet_succ_le
+    (p k n : ℕ) [Fact p.Prime] (hkp : k < p)
+    (target : Fin k → ℤ) :
+    (vinogradovPrimePowerTargetFiberSet p k (n + 1) target).card ≤
+      (vinogradovPrimePowerTargetFiberSet p k n target).card := by
+  rw [← map_vinogradovPrimePowerTargetFiberLiftSet_eq p k n target,
+    Finset.card_map]
+  exact card_vinogradovPrimePowerTargetFiberLiftSet_le p k n hkp target
+
+/-- Uniformly over every prime-power level, a nonsingular prescribed vector
+of the first `k` power sums has at most `k!` ordered preimages. -/
+theorem card_vinogradovPrimePowerTargetFiberSet_le_factorial
+    (p k n : ℕ) [Fact p.Prime] (hkp : k < p)
+    (target : Fin k → ℤ) :
+    (vinogradovPrimePowerTargetFiberSet p k n target).card ≤
+      k.factorial := by
+  induction n with
+  | zero =>
+      exact card_vinogradovPrimePowerTargetFiberSet_zero_le_factorial
+        p k hkp target
+  | succ n ih =>
+      exact (card_vinogradovPrimePowerTargetFiberSet_succ_le
+        p k n hkp target).trans ih
+
 end
 
 end ZeroFreeRegion.VinogradovKorobov
