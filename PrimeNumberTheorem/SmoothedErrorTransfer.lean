@@ -57,7 +57,7 @@ theorem norm_secondOrderExplicitFormulaIntegrand_odd_vertical_le
   let Q : ℝ := vonMangoldtLSeriesNorm 1 + ‖Complex.log Real.pi‖ +
     2 * (‖(Real.eulerMascheroniConstant : ℂ)‖ + 3 +
       Real.log (2 * (N : ℝ) + T + 4)) + Real.pi
-  have hfirst := norm_explicitFormulaIntegrand_odd_vertical_le hx hT ht
+  have hfirst := norm_explicitFormulaIntegrand_odd_vertical_le (N := N) hx hT ht
   change ‖explicitFormulaIntegrand x s / s‖ ≤ Q * x ^ (-(2 * (N : ℝ) + 1)) /
     (2 * (N : ℝ) + 1)
   change ‖explicitFormulaIntegrand x s‖ ≤ Q * x ^ (-(2 * (N : ℝ) + 1)) at hfirst
@@ -131,8 +131,8 @@ theorem norm_secondOrderLeftXDifference_odd_le
           secondOrderExplicitFormulaIntegrand x
             (((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * I)‖ :=
       norm_sub_le _ _
-    _ ≤ secondOrderOddVerticalBound y N T * (2 * T) +
-        secondOrderOddVerticalBound x N T * (2 * T) :=
+    _ ≤ secondOrderOddVerticalBound y N T * (T - -T) +
+        secondOrderOddVerticalBound x N T * (T - -T) :=
       add_le_add hyIntegral hxIntegral
     _ = _ := by dsimp [T]; ring
 
