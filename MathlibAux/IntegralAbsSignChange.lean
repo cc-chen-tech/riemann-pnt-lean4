@@ -14,11 +14,11 @@ signs to occur.  The intermediate value theorem then supplies a zero.
 -/
 
 /-- Strict cancellation in an interval integral of a continuous real
-function forces a zero in that interval. -/
+function forces a zero in the interior of that interval. -/
 theorem exists_zero_of_abs_intervalIntegral_lt_intervalIntegral_abs
     {f : ℝ → ℝ} (hf : Continuous f) {a b : ℝ} (hab : a ≤ b)
     (hstrict : |∫ x in a..b, f x| < ∫ x in a..b, |f x|) :
-    ∃ x ∈ Set.Icc a b, f x = 0 := by
+    ∃ x ∈ Set.Ioo a b, f x = 0 := by
   have hneg : ∃ x ∈ Set.Icc a b, f x < 0 := by
     by_contra hnot
     push Not at hnot
@@ -49,10 +49,15 @@ theorem exists_zero_of_abs_intervalIntegral_lt_intervalIntegral_abs
     exact lt_irrefl _ hstrict
   obtain ⟨x, hx, hxneg⟩ := hneg
   obtain ⟨y, hy, hypos⟩ := hpos
-  obtain ⟨z, hzmem, hz⟩ :=
-    isPreconnected_Icc.intermediate_value hx hy hf.continuousOn
-      (show (0 : ℝ) ∈ Set.Icc (f x) (f y) by
-        exact ⟨hxneg.le, hypos.le⟩)
-  exact ⟨z, hzmem, hz⟩
+  by_cases hxy : x ≤ y
+  · have hzeroImage : (0 : ℝ) ∈ f '' Set.Ioo x y :=
+      intermediate_value_Ioo hxy hf.continuousOn ⟨hxneg, hypos⟩
+    obtain ⟨z, hzxy, hz⟩ := hzeroImage
+    refine ⟨z, ⟨hx.1.trans_lt hzxy.1, hzxy.2.trans_le hy.2⟩, hz⟩
+  · have hyx : y ≤ x := le_of_not_ge hxy
+    have hzeroImage : (0 : ℝ) ∈ f '' Set.Ioo y x :=
+      intermediate_value_Ioo' hyx hf.continuousOn ⟨hxneg, hypos⟩
+    obtain ⟨z, hzyx, hz⟩ := hzeroImage
+    refine ⟨z, ⟨hy.1.trans_lt hzyx.1, hzyx.2.trans_le hx.2⟩, hz⟩
 
 end MathlibAux
