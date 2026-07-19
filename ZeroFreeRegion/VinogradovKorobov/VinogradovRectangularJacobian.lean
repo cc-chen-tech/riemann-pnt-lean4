@@ -1,4 +1,6 @@
 import ZeroFreeRegion.VinogradovKorobov.VinogradovTaylor
+import Mathlib.FieldTheory.Finiteness
+import Mathlib.GroupTheory.Index
 import Mathlib.LinearAlgebra.Matrix.ToLin
 
 open scoped BigOperators
@@ -76,6 +78,130 @@ theorem vinogradovPairCorrectionLinearMap_apply
       (vinogradovRectangularPowerSumJacobian x).mulVec u j -
         (vinogradovRectangularPowerSumJacobian y).mulVec v j := by
   rfl
+
+/-- As soon as there is at least one equation and one variable, the first
+power-sum row makes the pair correction Jacobian nonzero. -/
+theorem one_le_finrank_vinogradovPairCorrectionLinearMap_range
+    (p d s : ℕ) [Fact p.Prime] (hd : 0 < d) (hs : 0 < s)
+    (x y : Fin s → ZMod p) :
+    1 ≤ Module.finrank (ZMod p)
+      (vinogradovPairCorrectionLinearMap p d s x y).range := by
+  let i₀ : Fin s := ⟨0, hs⟩
+  let j₀ : Fin d := ⟨0, hd⟩
+  let u : Fin s → ZMod p := fun i ↦ if i = i₀ then 1 else 0
+  let uv : (Fin s → ZMod p) × (Fin s → ZMod p) := (u, 0)
+  have hvalue :
+      vinogradovPairCorrectionLinearMap p d s x y uv j₀ = 1 := by
+    simp [vinogradovPairCorrectionLinearMap_apply,
+      vinogradovRectangularPowerSumJacobian,
+      Matrix.mulVec, dotProduct, uv, u, i₀, j₀]
+  have hne : vinogradovPairCorrectionLinearMap p d s x y uv ≠ 0 := by
+    intro hzero
+    have := congrFun hzero j₀
+    rw [hvalue] at this
+    exact one_ne_zero this
+  apply Submodule.one_le_finrank_iff.mpr
+  intro hrange
+  have hmem : vinogradovPairCorrectionLinearMap p d s x y uv ∈
+      (vinogradovPairCorrectionLinearMap p d s x y).range := ⟨uv, rfl⟩
+  rw [hrange, Submodule.mem_bot] at hmem
+  exact hne hmem
+
+/-- A finite fiber of an additive linear map has the same cardinality as its
+zero fiber whenever it is nonempty. -/
+theorem card_linearMap_fiber_eq_zero_fiber
+    {R V W : Type*} [Ring R]
+    [AddCommGroup V] [Module R V] [Fintype V]
+    [AddCommMonoid W] [Module R W] [DecidableEq W]
+    (f : V →ₗ[R] W) (y : W) (hy : y ∈ Set.range f) :
+    (Finset.univ.filter fun v ↦ f v = y).card =
+      (Finset.univ.filter fun v ↦ f v = 0).card := by
+  exact AddMonoidHom.card_fiber_eq_of_mem_range f hy ⟨0, f.map_zero⟩
+
+/-- The zero fiber of a finite linear map is its kernel, as a cardinality
+identity. -/
+theorem card_linearMap_zero_fiber_eq_card_ker
+    {R V W : Type*} [Ring R]
+    [AddCommGroup V] [Module R V] [Fintype V]
+    [AddCommMonoid W] [Module R W] [DecidableEq W]
+    (f : V →ₗ[R] W) :
+    (Finset.univ.filter fun v ↦ f v = 0).card = Nat.card f.ker := by
+  let e : {v : V // f v = 0} ≃ f.ker := {
+    toFun v := ⟨v, LinearMap.mem_ker.mpr v.property⟩
+    invFun v := ⟨v, LinearMap.mem_ker.mp v.property⟩
+    left_inv _ := rfl
+    right_inv _ := rfl }
+  calc
+    (Finset.univ.filter fun v ↦ f v = 0).card =
+        Fintype.card {v : V // f v = 0} := (Fintype.card_subtype _).symm
+    _ = Nat.card {v : V // f v = 0} := Nat.card_eq_fintype_card.symm
+    _ = Nat.card f.ker := Nat.card_congr e
+
+/-- The finite-field correction fiber through one correction pair. -/
+noncomputable def vinogradovPairCorrectionFiberSet
+    (p d s : ℕ) [Fact p.Prime]
+    (x y : Fin s → ZMod p)
+    (uv : (Fin s → ZMod p) × (Fin s → ZMod p)) :
+    Finset ((Fin s → ZMod p) × (Fin s → ZMod p)) :=
+  Finset.univ.filter fun zw ↦
+    vinogradovPairCorrectionLinearMap p d s x y zw =
+      vinogradovPairCorrectionLinearMap p d s x y uv
+
+theorem mem_vinogradovPairCorrectionFiberSet_iff
+    (p d s : ℕ) [Fact p.Prime]
+    (x y : Fin s → ZMod p)
+    (uv zw : (Fin s → ZMod p) × (Fin s → ZMod p)) :
+    zw ∈ vinogradovPairCorrectionFiberSet p d s x y uv ↔
+      vinogradovPairCorrectionLinearMap p d s x y zw =
+        vinogradovPairCorrectionLinearMap p d s x y uv := by
+  simp [vinogradovPairCorrectionFiberSet]
+
+/-- Every correction fiber through an actual pair has the cardinality of the
+zero fiber of the pair Jacobian. -/
+theorem card_vinogradovPairCorrectionFiberSet_eq_zero_fiber
+    (p d s : ℕ) [Fact p.Prime]
+    (x y : Fin s → ZMod p)
+    (uv : (Fin s → ZMod p) × (Fin s → ZMod p)) :
+    (vinogradovPairCorrectionFiberSet p d s x y uv).card =
+      (Finset.univ.filter fun zw ↦
+        vinogradovPairCorrectionLinearMap p d s x y zw = 0).card := by
+  apply card_linearMap_fiber_eq_zero_fiber
+  exact ⟨uv, rfl⟩
+
+/-- The exact correction-fiber count is the kernel cardinality of the pair
+Jacobian. -/
+theorem card_vinogradovPairCorrectionFiberSet_eq_card_ker
+    (p d s : ℕ) [Fact p.Prime]
+    (x y : Fin s → ZMod p)
+    (uv : (Fin s → ZMod p) × (Fin s → ZMod p)) :
+    (vinogradovPairCorrectionFiberSet p d s x y uv).card =
+      Nat.card (vinogradovPairCorrectionLinearMap p d s x y).ker := by
+  rw [card_vinogradovPairCorrectionFiberSet_eq_zero_fiber,
+    card_linearMap_zero_fiber_eq_card_ker]
+
+/-- Rank-nullity gives the exact finite-field correction-fiber cardinality.
+The exponent is the source dimension `2*s` minus the Jacobian rank. -/
+theorem card_vinogradovPairCorrectionFiberSet_eq_pow_rankDefect
+    (p d s : ℕ) [Fact p.Prime]
+    (x y : Fin s → ZMod p)
+    (uv : (Fin s → ZMod p) × (Fin s → ZMod p)) :
+    (vinogradovPairCorrectionFiberSet p d s x y uv).card =
+      p ^ (2 * s - Module.finrank (ZMod p)
+        (vinogradovPairCorrectionLinearMap p d s x y).range) := by
+  rw [card_vinogradovPairCorrectionFiberSet_eq_card_ker,
+    Module.natCard_eq_pow_finrank
+      (K := ZMod p)
+      (V := (vinogradovPairCorrectionLinearMap p d s x y).ker),
+    Nat.card_zmod]
+  congr 1
+  have hnullity :=
+    (vinogradovPairCorrectionLinearMap p d s x y).finrank_range_add_finrank_ker
+  have hsource :
+      Module.finrank (ZMod p)
+          ((Fin s → ZMod p) × (Fin s → ZMod p)) = 2 * s := by
+    simp [Module.finrank_prod]
+    omega
+  omega
 
 /-- Two correction pairs above the same base pair which both satisfy the
 next-level power-sum equations lie in the same fiber of the finite-field

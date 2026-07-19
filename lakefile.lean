@@ -152,6 +152,7 @@ lean_lib RiemannPNT where
     `Test.VinogradovKorobovMultiBlockCollisionFiberContract,
     `Test.VinogradovKorobovPrimePowerCollisionFiberContract,
     `Test.VinogradovKorobovRectangularJacobianContract,
+    `Test.VinogradovKorobovCorrectionFiberContract,
     `Test.VinogradovKorobovWeightedContract,
     `Test.VinogradovKorobovWeightedConditioningContract,
     `Test.VinogradovKorobovVanDerCorputRangeContract,
