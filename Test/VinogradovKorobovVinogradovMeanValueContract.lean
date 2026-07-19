@@ -1,4 +1,4 @@
-import ZeroFreeRegion.VinogradovKorobov.VinogradovMonotonicity
+import ZeroFreeRegion.VinogradovKorobov.VinogradovDiagonal
 
 open ZeroFreeRegion.VinogradovKorobov
 
@@ -52,3 +52,8 @@ open ZeroFreeRegion.VinogradovKorobov
 #check vinogradovSolutionCountNat_two_le_of_two_le_degree
 #check norm_normalizedVinogradovMomentMod_le_of_count
 #check norm_normalizedVinogradovMomentMod_two_le_of_two_le_degree
+#check multiset_eq_of_powerSums_eq
+#check IsVinogradovSolutionNat.multiset_eq
+#check fixed_left_solution_count_le_factorial
+#check vinogradovSolutionCountNat_le_diagonal
+#check norm_normalizedVinogradovMomentMod_le_diagonal
