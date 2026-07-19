@@ -1,4 +1,5 @@
 import ZeroFreeRegion.VinogradovKorobov.VinogradovHensel
+import Mathlib.Data.Fintype.CardEmbedding
 
 open scoped BigOperators
 
@@ -83,6 +84,98 @@ theorem card_vinogradovPrimePowerCorrectionSet_eq_one
     · intro hv
       simpa [hv] using hu
   rw [hset, Finset.card_singleton]
+
+/-- Residue vectors whose coordinates are pairwise distinct modulo `p`.  These
+are exactly the nonsingular base points for the power-sum Jacobian when
+`k < p`. -/
+noncomputable def vinogradovNonsingularResidueSet
+    (p k : ℕ) [Fact p.Prime] : Finset (Fin k → ZMod p) := by
+  classical
+  exact Finset.univ.filter Function.Injective
+
+private def injectiveResidueTupleEquivEmbedding (p k : ℕ) :
+    {x : Fin k → ZMod p // Function.Injective x} ≃ (Fin k ↪ ZMod p) where
+  toFun x := ⟨x.1, x.2⟩
+  invFun e := ⟨e, e.injective⟩
+  left_inv x := by
+    ext i
+    rfl
+  right_inv e := by
+    ext i
+    rfl
+
+/-- There are exactly `p.descFactorial k` pairwise-distinct residue vectors of
+length `k` modulo the prime `p`. -/
+theorem card_vinogradovNonsingularResidueSet
+    (p k : ℕ) [Fact p.Prime] :
+    (vinogradovNonsingularResidueSet p k).card = p.descFactorial k := by
+  classical
+  unfold vinogradovNonsingularResidueSet
+  rw [← Fintype.card_subtype]
+  rw [Fintype.card_congr (injectiveResidueTupleEquivEmbedding p k)]
+  simpa using
+    (Fintype.card_embedding_eq (α := Fin k) (β := ZMod p))
+
+/-- Residue vectors at which the power-sum Jacobian is singular: at least two
+coordinates coincide modulo `p`. -/
+noncomputable def vinogradovSingularResidueSet
+    (p k : ℕ) [Fact p.Prime] : Finset (Fin k → ZMod p) := by
+  classical
+  exact Finset.univ.filter fun x ↦ ¬Function.Injective x
+
+/-- The nonsingular and singular residue vectors partition all `p^k` residue
+vectors. -/
+theorem card_nonsingular_add_card_singular
+    (p k : ℕ) [Fact p.Prime] :
+    (vinogradovNonsingularResidueSet p k).card +
+        (vinogradovSingularResidueSet p k).card = p ^ k := by
+  classical
+  simpa [vinogradovNonsingularResidueSet, vinogradovSingularResidueSet,
+    Fintype.card_pi_const, ZMod.card] using
+    (Finset.card_filter_add_card_filter_not
+      (s := (Finset.univ : Finset (Fin k → ZMod p))) Function.Injective)
+
+/-- Consequently, the singular stratum has exact cardinality
+`p^k - p.descFactorial k`. -/
+theorem card_vinogradovSingularResidueSet
+    (p k : ℕ) [Fact p.Prime] :
+    (vinogradovSingularResidueSet p k).card =
+      p ^ k - p.descFactorial k := by
+  have h := card_nonsingular_add_card_singular p k
+  rw [card_vinogradovNonsingularResidueSet] at h
+  omega
+
+/-- The total space of first-order prime-power correction fibers above all
+nonsingular residue vectors. -/
+noncomputable def vinogradovNonsingularPrimePowerLiftSet
+    (p k n : ℕ) [Fact p.Prime] (b : Fin k → ℤ) :
+    Finset (Σ _ : Fin k → ZMod p, Fin k → ZMod p) :=
+  (vinogradovNonsingularResidueSet p k).sigma fun x ↦
+    vinogradovPrimePowerCorrectionSet p k n
+      (fun i ↦ ((x i).val : ℤ)) b
+
+/-- Every nonsingular base vector contributes exactly one correction class, so
+the total nonsingular lift space has the same cardinality as its base. -/
+theorem card_vinogradovNonsingularPrimePowerLiftSet
+    (p k n : ℕ) [Fact p.Prime] (hkp : k < p) (b : Fin k → ℤ) :
+    (vinogradovNonsingularPrimePowerLiftSet p k n b).card =
+      p.descFactorial k := by
+  classical
+  rw [vinogradovNonsingularPrimePowerLiftSet, Finset.card_sigma]
+  calc
+    _ = ∑ _x ∈ vinogradovNonsingularResidueSet p k, 1 := by
+      apply Finset.sum_congr rfl
+      intro x hx
+      have hxin : Function.Injective x := by
+        simpa [vinogradovNonsingularResidueSet] using hx
+      have hcast :
+          Function.Injective
+            (fun i : Fin k ↦ ((((x i).val : ℤ)) : ZMod p)) := by
+        simpa using hxin
+      exact card_vinogradovPrimePowerCorrectionSet_eq_one
+        p k n hkp (fun i ↦ ((x i).val : ℤ)) b hcast
+    _ = (vinogradovNonsingularResidueSet p k).card := by simp
+    _ = p.descFactorial k := card_vinogradovNonsingularResidueSet p k
 
 end
 

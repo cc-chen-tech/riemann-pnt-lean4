@@ -100,3 +100,10 @@ open ZeroFreeRegion.VinogradovKorobov
 #check vinogradovPowerSumInt_modEq
 #check vinogradovPrimePowerCorrectionSet
 #check card_vinogradovPrimePowerCorrectionSet_eq_one
+#check vinogradovNonsingularResidueSet
+#check card_vinogradovNonsingularResidueSet
+#check vinogradovSingularResidueSet
+#check card_vinogradovSingularResidueSet
+#check card_nonsingular_add_card_singular
+#check vinogradovNonsingularPrimePowerLiftSet
+#check card_vinogradovNonsingularPrimePowerLiftSet
