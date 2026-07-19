@@ -57,6 +57,51 @@ def RecursiveAProcessValid
           (recursiveAProcessSquaredBound L Q N depth (ell :: shifts)))
         (remainingAProcessLength N shifts) (L shifts) := rfl
 
+/-- The normalized one-step A-process envelope is nonnegative whenever its
+child bounds are nonnegative on the range used by the recurrence. -/
+theorem aProcessSquaredBound_nonneg
+    (B : ℕ → ℝ) (N L : ℕ) (hL : 1 ≤ L)
+    (hB : ∀ ell ∈ Finset.Icc 1 (L - 1), 0 ≤ B ell) :
+    0 ≤ aProcessSquaredBound B N L := by
+  have hLpos : 0 < (L : ℝ) := Nat.cast_pos.mpr (by omega)
+  have hspan : 0 ≤ (N : ℝ) + ((L : ℝ) - 1) := by
+    have hLone : (1 : ℝ) ≤ (L : ℝ) := by exact_mod_cast hL
+    have hN : 0 ≤ (N : ℝ) := Nat.cast_nonneg N
+    linarith
+  have hsum :
+      0 ≤ ∑ ell ∈ Finset.Icc 1 (L - 1),
+        ((L : ℝ) - (ell : ℝ)) * B ell := by
+    apply Finset.sum_nonneg
+    intro ell hell
+    have hellL : ell ≤ L := by
+      have := (Finset.mem_Icc.mp hell).2
+      omega
+    exact mul_nonneg (sub_nonneg.mpr (by exact_mod_cast hellL)) (hB ell hell)
+  unfold aProcessSquaredBound
+  apply add_nonneg
+  · exact div_nonneg (mul_nonneg hspan (Nat.cast_nonneg N)) hLpos.le
+  · exact div_nonneg
+      (mul_nonneg (mul_nonneg (by positivity) hspan) hsum)
+      (sq_nonneg (L : ℝ))
+
+/-- Every valid recursive envelope with nonnegative terminal data is itself
+nonnegative.  At an internal node this follows directly from the square-root
+children used by the A-process recurrence. -/
+theorem recursiveAProcessSquaredBound_nonneg
+    (f : ℕ → ℝ) (L : List ℕ → ℕ) (Q : List ℕ → ℝ)
+    (N depth : ℕ) (shifts : List ℕ)
+    (hQ : ∀ s, 0 ≤ Q s)
+    (hvalid : RecursiveAProcessValid f L Q N depth shifts) :
+    0 ≤ recursiveAProcessSquaredBound L Q N depth shifts := by
+  cases depth with
+  | zero =>
+      exact hQ shifts
+  | succ depth =>
+      apply aProcessSquaredBound_nonneg
+      · exact hvalid.1
+      · intro ell hell
+        exact Real.sqrt_nonneg _
+
 /-- Soundness of an arbitrary finite recursive A-process tree. -/
 theorem norm_iteratedPhase_sum_sq_le_recursiveAProcess
     (f : ℕ → ℝ) (L : List ℕ → ℕ) (Q : List ℕ → ℝ)
