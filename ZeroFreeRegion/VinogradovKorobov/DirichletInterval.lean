@@ -296,28 +296,26 @@ theorem norm_dirichletInterval_le_sum_constantAProcessExplicitPower
       · exact norm_dirichletInterval_le_length sigma t
           (m + (N / B) * B) (N % B) hsigma (by omega)
 
-/-- The long-interval A-process estimate with all local block hypotheses
-discharged by one condition at the left endpoint and one condition at the
-global right endpoint. -/
-theorem norm_dirichletInterval_le_sum_constantAProcessExplicitPower_of_global_scale
-    (sigma t : ℝ) (m N B depth h : ℕ)
-    (hsigma : 0 ≤ sigma) (ht : 0 < t) (hm : 0 < m)
-    (hB : 0 < B) (hh : 1 ≤ h)
+/-- One left-endpoint majorant and one global right-endpoint scale condition
+imply all local full-block A-process hypotheses. -/
+theorem constantAProcessBlockConditions_of_global_scale
+    (t : ℝ) (m N B depth h : ℕ)
+    (ht : 0 < t) (hm : 0 < m)
     (hmajor : t * ((depth.factorial : ℝ) * (h : ℝ) ^ depth *
       ((m : ℝ) ^ (depth + 1))⁻¹) ≤ Real.pi)
     (hscale : 2 * Real.pi * (h : ℝ) ≤
       zetaAProcessUniformLeafDeltaLower t m N depth *
         (h : ℝ) ^ depth *
           (constantAProcessPrefixThreshold depth h : ℝ)) :
-    ‖dirichletInterval sigma t m N‖ ≤
-      ∑ j ∈ Finset.range (N / B),
-          dirichletWeight sigma (m + j * B) *
-            max (constantAProcessPrefixThreshold depth h : ℝ)
-              (6 * (1 + Real.log h) * (B : ℝ) /
-                (h : ℝ) ^ (1 / (2 : ℝ) ^ depth : ℝ)) +
-        (N % B : ℕ) := by
-  apply norm_dirichletInterval_le_sum_constantAProcessExplicitPower
-    sigma t m N B depth h hsigma ht hm hB hh
+    (∀ j < N / B,
+      t * ((depth.factorial : ℝ) * (h : ℝ) ^ depth *
+        (((m + j * B : ℕ) : ℝ) ^ (depth + 1))⁻¹) ≤ Real.pi) ∧
+    (∀ j < N / B, ∀ K,
+      constantAProcessPrefixThreshold depth h ≤ K → K ≤ B →
+        2 * Real.pi * (h : ℝ) ≤
+          zetaAProcessUniformLeafDeltaLower t (m + j * B) K depth *
+            (h : ℝ) ^ depth * (K : ℝ)) := by
+  constructor
   · intro j hj
     have hdelta := zetaAProcessUniformLeafDeltaLower_antitone_endpoint
       t m 0 (m + j * B) 0 depth ht.le (by omega) (by omega)
@@ -371,6 +369,32 @@ theorem norm_dirichletInterval_le_sum_constantAProcessExplicitPower_of_global_sc
         have hcore := mul_le_mul_of_nonneg_right hdelta
           (show 0 ≤ (h : ℝ) ^ depth by positivity)
         exact mul_le_mul_of_nonneg_right hcore (Nat.cast_nonneg K)
+
+/-- The long-interval A-process estimate with all local block hypotheses
+discharged by one condition at the left endpoint and one condition at the
+global right endpoint. -/
+theorem norm_dirichletInterval_le_sum_constantAProcessExplicitPower_of_global_scale
+    (sigma t : ℝ) (m N B depth h : ℕ)
+    (hsigma : 0 ≤ sigma) (ht : 0 < t) (hm : 0 < m)
+    (hB : 0 < B) (hh : 1 ≤ h)
+    (hmajor : t * ((depth.factorial : ℝ) * (h : ℝ) ^ depth *
+      ((m : ℝ) ^ (depth + 1))⁻¹) ≤ Real.pi)
+    (hscale : 2 * Real.pi * (h : ℝ) ≤
+      zetaAProcessUniformLeafDeltaLower t m N depth *
+        (h : ℝ) ^ depth *
+          (constantAProcessPrefixThreshold depth h : ℝ)) :
+    ‖dirichletInterval sigma t m N‖ ≤
+      ∑ j ∈ Finset.range (N / B),
+          dirichletWeight sigma (m + j * B) *
+            max (constantAProcessPrefixThreshold depth h : ℝ)
+              (6 * (1 + Real.log h) * (B : ℝ) /
+                (h : ℝ) ^ (1 / (2 : ℝ) ^ depth : ℝ)) +
+        (N % B : ℕ) := by
+  obtain ⟨hmajorLocal, hscaleLocal⟩ :=
+    constantAProcessBlockConditions_of_global_scale
+      t m N B depth h ht hm hmajor hscale
+  exact norm_dirichletInterval_le_sum_constantAProcessExplicitPower
+    sigma t m N B depth h hsigma ht hm hB hh hmajorLocal hscaleLocal
 
 /-- Scale-explicit long-interval estimate with the block sum replaced by the
 number of blocks times the left-endpoint Dirichlet weight. -/

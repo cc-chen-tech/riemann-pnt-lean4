@@ -146,4 +146,23 @@ example (sigma t : ℝ) (m N B depth h : ℕ)
   norm_dirichletInterval_le_numBlocks_mul_constantAProcessExplicitPower
     sigma t m N B depth h hsigma ht hm hB hh hmajor hscale
 
+example (t : ℝ) (m N B depth h : ℕ)
+    (ht : 0 < t) (hm : 0 < m)
+    (hmajor : t * ((depth.factorial : ℝ) * (h : ℝ) ^ depth *
+      ((m : ℝ) ^ (depth + 1))⁻¹) ≤ Real.pi)
+    (hscale : 2 * Real.pi * (h : ℝ) ≤
+      zetaAProcessUniformLeafDeltaLower t m N depth *
+        (h : ℝ) ^ depth *
+          (constantAProcessPrefixThreshold depth h : ℝ)) :
+    (∀ j < N / B,
+      t * ((depth.factorial : ℝ) * (h : ℝ) ^ depth *
+        (((m + j * B : ℕ) : ℝ) ^ (depth + 1))⁻¹) ≤ Real.pi) ∧
+    (∀ j < N / B, ∀ K,
+      constantAProcessPrefixThreshold depth h ≤ K → K ≤ B →
+        2 * Real.pi * (h : ℝ) ≤
+          zetaAProcessUniformLeafDeltaLower t (m + j * B) K depth *
+            (h : ℝ) ^ depth * (K : ℝ)) :=
+  constantAProcessBlockConditions_of_global_scale
+    t m N B depth h ht hm hmajor hscale
+
 end ZeroFreeRegion.VinogradovKorobov

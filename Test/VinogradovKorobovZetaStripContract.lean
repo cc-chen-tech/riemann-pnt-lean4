@@ -59,4 +59,29 @@ example :
               C * (2 * t) ^ (-sigma) :=
   norm_riemannZeta_strip_le_sum_constantAProcessExplicitPower
 
+example :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ sigma t : ℝ,
+      (1 / 4 : ℝ) ≤ sigma → sigma ≤ 2 → 1 ≤ t →
+        ∀ m B depth h : ℕ,
+          1 ≤ m → m ≤ Nat.floor (2 * t) + 1 → 0 < B → 1 ≤ h →
+          t * ((depth.factorial : ℝ) * (h : ℝ) ^ depth *
+            ((m : ℝ) ^ (depth + 1))⁻¹) ≤ Real.pi →
+          2 * Real.pi * (h : ℝ) ≤
+            zetaAProcessUniformLeafDeltaLower t m
+                (Nat.floor (2 * t) + 1 - m) depth *
+              (h : ℝ) ^ depth *
+                (constantAProcessPrefixThreshold depth h : ℝ) →
+          ‖riemannZeta ((sigma : ℂ) + I * t)‖ ≤
+            (m - 1 : ℕ) +
+              ((Nat.floor (2 * t) + 1 - m) / B : ℕ) *
+                dirichletWeight sigma m *
+                  max (constantAProcessPrefixThreshold depth h : ℝ)
+                    (6 * (1 + Real.log h) * (B : ℝ) /
+                      (h : ℝ) ^ (1 / (2 : ℝ) ^ depth : ℝ)) +
+              ((Nat.floor (2 * t) + 1 - m) % B : ℕ) +
+              ‖(2 * t : ℂ) ^ (1 - ((sigma : ℂ) + I * t)) /
+                (((sigma : ℂ) + I * t) - 1)‖ +
+              C * (2 * t) ^ (-sigma) :=
+  norm_riemannZeta_strip_le_numBlocks_constantAProcessExplicitPower
+
 end ZeroFreeRegion.VinogradovKorobov

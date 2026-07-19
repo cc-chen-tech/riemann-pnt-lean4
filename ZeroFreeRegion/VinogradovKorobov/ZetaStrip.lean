@@ -218,4 +218,79 @@ theorem norm_riemannZeta_strip_le_sum_constantAProcessExplicitPower :
                       (h : ℝ) ^ (1 / (2 : ℝ) ^ depth : ℝ))) +
               ((M + 1 - m) % B : ℕ))) + ‖P‖)
 
+/-- Parameter-ready zeta strip estimate: all local block conditions and the
+finite block sum have been replaced by two global scale conditions and the
+number of full blocks. -/
+theorem norm_riemannZeta_strip_le_numBlocks_constantAProcessExplicitPower :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ sigma t : ℝ,
+      (1 / 4 : ℝ) ≤ sigma → sigma ≤ 2 → 1 ≤ t →
+        ∀ m B depth h : ℕ,
+          1 ≤ m → m ≤ Nat.floor (2 * t) + 1 → 0 < B → 1 ≤ h →
+          t * ((depth.factorial : ℝ) * (h : ℝ) ^ depth *
+            ((m : ℝ) ^ (depth + 1))⁻¹) ≤ Real.pi →
+          2 * Real.pi * (h : ℝ) ≤
+            zetaAProcessUniformLeafDeltaLower t m
+                (Nat.floor (2 * t) + 1 - m) depth *
+              (h : ℝ) ^ depth *
+                (constantAProcessPrefixThreshold depth h : ℝ) →
+          ‖riemannZeta ((sigma : ℂ) + I * t)‖ ≤
+            (m - 1 : ℕ) +
+              ((Nat.floor (2 * t) + 1 - m) / B : ℕ) *
+                dirichletWeight sigma m *
+                  max (constantAProcessPrefixThreshold depth h : ℝ)
+                    (6 * (1 + Real.log h) * (B : ℝ) /
+                      (h : ℝ) ^ (1 / (2 : ℝ) ^ depth : ℝ)) +
+              ((Nat.floor (2 * t) + 1 - m) % B : ℕ) +
+              ‖(2 * t : ℂ) ^ (1 - ((sigma : ℂ) + I * t)) /
+                (((sigma : ℂ) + I * t) - 1)‖ +
+              C * (2 * t) ^ (-sigma) := by
+  obtain ⟨C, hC, happ⟩ :=
+    norm_riemannZeta_strip_le_sum_constantAProcessExplicitPower
+  refine ⟨C, hC, ?_⟩
+  intro sigma t hsigma hsigmatwo ht m B depth h hm hcut hB hh hmajor hscale
+  let N := Nat.floor (2 * t) + 1 - m
+  let A := max (constantAProcessPrefixThreshold depth h : ℝ)
+    (6 * (1 + Real.log h) * (B : ℝ) /
+      (h : ℝ) ^ (1 / (2 : ℝ) ^ depth : ℝ))
+  let P := ‖(2 * t : ℂ) ^ (1 - ((sigma : ℂ) + I * t)) /
+    (((sigma : ℂ) + I * t) - 1)‖
+  have htpos : 0 < t := zero_lt_one.trans_le ht
+  obtain ⟨hmajorLocal, hscaleLocal⟩ :=
+    constantAProcessBlockConditions_of_global_scale
+      t m N B depth h htpos (by omega) hmajor
+        (by simpa only [N] using hscale)
+  have hbound := happ sigma t hsigma hsigmatwo ht m B depth h
+    hm hcut hB hh
+    (by simpa only [N] using hmajorLocal)
+    (by simpa only [N] using hscaleLocal)
+  have hA : 0 ≤ A := by
+    dsimp only [A]
+    exact (Nat.cast_nonneg _).trans (le_max_left _ _)
+  have hsum :
+      (∑ j ∈ Finset.range (N / B),
+          dirichletWeight sigma (m + j * B) * A) ≤
+        (N / B : ℕ) * dirichletWeight sigma m * A := by
+    calc
+      ∑ j ∈ Finset.range (N / B),
+          dirichletWeight sigma (m + j * B) * A ≤
+          ∑ _j ∈ Finset.range (N / B),
+            dirichletWeight sigma m * A := by
+        apply Finset.sum_le_sum
+        intro j hj
+        exact mul_le_mul_of_nonneg_right
+          (dirichletWeight_le_of_le (by linarith) (by omega) (by omega)) hA
+      _ = (N / B : ℕ) * dirichletWeight sigma m * A := by
+        simp only [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
+        ring
+  change ‖riemannZeta ((sigma : ℂ) + I * t)‖ ≤
+    (m - 1 : ℕ) + (N / B : ℕ) * dirichletWeight sigma m * A +
+      (N % B : ℕ) + P + C * (2 * t) ^ (-sigma)
+  have hbound' : ‖riemannZeta ((sigma : ℂ) + I * t)‖ ≤
+      (m - 1 : ℕ) +
+        (∑ j ∈ Finset.range (N / B),
+          dirichletWeight sigma (m + j * B) * A) +
+        (N % B : ℕ) + P + C * (2 * t) ^ (-sigma) := by
+    simpa only [N, A, P] using hbound
+  exact hbound'.trans (by gcongr)
+
 end ZeroFreeRegion.VinogradovKorobov
