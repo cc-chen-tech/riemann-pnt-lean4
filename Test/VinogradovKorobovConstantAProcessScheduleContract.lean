@@ -134,6 +134,11 @@ example (h j : ℕ) :
       (h : ℝ) ^ (2 / (2 : ℝ) ^ j : ℝ) :=
   constantAProcessGain_eq_rpow h j
 
+example (h j : ℕ) :
+    Real.sqrt (constantAProcessGain h j) =
+      (h : ℝ) ^ (1 / (2 : ℝ) ^ j : ℝ) :=
+  sqrt_constantAProcessGain_eq_rpow h j
+
 example (h j : ℕ) (hh : 1 ≤ h) :
     constantAProcessCoefficient h j ≤
       36 * (1 + Real.log h) ^ 2 :=
@@ -217,5 +222,19 @@ example (t : ℝ) (m N depth h : ℕ)
     ‖∑ n ∈ Finset.range N, phaseTerm (shiftedZetaPhase t m) n‖ < (N : ℝ) :=
   norm_zetaPhase_sum_lt_length_of_constantAProcessExplicitSaving
     t m N depth h ht hm hN hh hbudget hmajor hscale hsaving
+
+example (t : ℝ) (m N depth h : ℕ)
+    (ht : 0 < t) (hm : 0 < m)
+    (hh : 1 ≤ h) (hbudget : depth * (h - 1) < N)
+    (hmajor : t * ((depth.factorial : ℝ) * (h : ℝ) ^ depth *
+      ((m : ℝ) ^ (depth + 1))⁻¹) ≤ Real.pi)
+    (hscale : 2 * Real.pi * (h : ℝ) ≤
+      zetaAProcessUniformLeafDeltaLower t m N depth *
+        (h : ℝ) ^ depth * (N : ℝ)) :
+    ‖∑ n ∈ Finset.range N, phaseTerm (shiftedZetaPhase t m) n‖ ≤
+      6 * (1 + Real.log h) * (N : ℝ) /
+        (h : ℝ) ^ (1 / (2 : ℝ) ^ depth : ℝ) :=
+  norm_zetaPhase_sum_le_constantAProcessExplicitPower
+    t m N depth h ht hm hh hbudget hmajor hscale
 
 end ZeroFreeRegion.VinogradovKorobov

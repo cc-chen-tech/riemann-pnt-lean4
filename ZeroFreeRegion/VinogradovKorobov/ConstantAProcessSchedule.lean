@@ -369,6 +369,17 @@ theorem constantAProcessGain_eq_rpow
       have hpow : (2 : ℝ) ^ j ≠ 0 := by positivity
       field_simp
 
+/-- Square root of the retained gain, in the exponent used by the final
+linear exponential-sum bound. -/
+theorem sqrt_constantAProcessGain_eq_rpow (h j : ℕ) :
+    Real.sqrt (constantAProcessGain h j) =
+      (h : ℝ) ^ (1 / (2 : ℝ) ^ j : ℝ) := by
+  rw [constantAProcessGain_eq_rpow, Real.sqrt_eq_rpow,
+    ← Real.rpow_mul (Nat.cast_nonneg h)]
+  congr 1
+  have hpow : (2 : ℝ) ^ j ≠ 0 := by positivity
+  field_simp
+
 theorem constantAProcessCoefficient_nonneg
     (h j : ℕ) : 0 ≤ constantAProcessCoefficient h j := by
   induction j with
@@ -601,5 +612,63 @@ theorem norm_zetaPhase_sum_lt_length_of_constantAProcessExplicitSaving
     t m N depth h ht hm hN hh hbudget hmajor hscale
   exact constantAProcessCoefficient_lt_gain_of_log_sq_lt_rpow
     h depth hh hsaving
+
+/-- Quantitative arbitrary-depth logarithmic exponential-sum estimate.  It
+retains the explicit `h^(1 / 2^depth)` denominator needed for subsequent
+Dirichlet-block and zeta-strip optimization. -/
+theorem norm_zetaPhase_sum_le_constantAProcessExplicitPower
+    (t : ℝ) (m N depth h : ℕ)
+    (ht : 0 < t) (hm : 0 < m)
+    (hh : 1 ≤ h) (hbudget : depth * (h - 1) < N)
+    (hmajor : t * ((depth.factorial : ℝ) * (h : ℝ) ^ depth *
+      ((m : ℝ) ^ (depth + 1))⁻¹) ≤ Real.pi)
+    (hscale : 2 * Real.pi * (h : ℝ) ≤
+      zetaAProcessUniformLeafDeltaLower t m N depth *
+        (h : ℝ) ^ depth * (N : ℝ)) :
+    ‖∑ n ∈ Finset.range N, phaseTerm (shiftedZetaPhase t m) n‖ ≤
+      6 * (1 + Real.log h) * (N : ℝ) /
+        (h : ℝ) ^ (1 / (2 : ℝ) ^ depth : ℝ) := by
+  have hinit :=
+    zetaAProcessUniformLeafSquaredBound_normalized_le_of_scale
+      t m N depth h ht hm (lt_of_lt_of_le Nat.zero_lt_one hh) hscale
+  have hsq := norm_zetaPhase_sum_sq_le_constantAProcessPowerSupersolution
+    t m N depth h ht hm hh hbudget hmajor hinit
+  let D := constantAProcessCoefficient h depth
+  let G := constantAProcessGain h depth
+  have hD : 0 ≤ D := constantAProcessCoefficient_nonneg h depth
+  have hG : 0 < G := constantAProcessGain_pos h depth hh
+  have hGsqrt : 0 < Real.sqrt G := Real.sqrt_pos.2 hG
+  have hnorm :
+      ‖∑ n ∈ Finset.range N, phaseTerm (shiftedZetaPhase t m) n‖ ≤
+        Real.sqrt (D * (N : ℝ) ^ 2 / G) := by
+    exact Real.le_sqrt_of_sq_le hsq
+  have hroot :
+      Real.sqrt (D * (N : ℝ) ^ 2 / G) ≤
+        Real.sqrt D * (N : ℝ) / Real.sqrt G := by
+    apply (Real.sqrt_le_iff).2
+    refine ⟨div_nonneg
+      (mul_nonneg (Real.sqrt_nonneg D) (Nat.cast_nonneg N)) hGsqrt.le, ?_⟩
+    rw [div_pow, mul_pow, Real.sq_sqrt hD, Real.sq_sqrt hG.le]
+  have hlog : 0 ≤ Real.log (h : ℝ) :=
+    Real.log_nonneg (by exact_mod_cast hh)
+  have hL : 0 ≤ 1 + Real.log (h : ℝ) := by linarith
+  have hsqrtD : Real.sqrt D ≤ 6 * (1 + Real.log h) := by
+    apply (Real.sqrt_le_iff).2
+    refine ⟨by positivity, ?_⟩
+    calc
+      D ≤ 36 * (1 + Real.log h) ^ 2 :=
+        constantAProcessCoefficient_le_log_sq h depth hh
+      _ = (6 * (1 + Real.log h)) ^ 2 := by ring
+  calc
+    ‖∑ n ∈ Finset.range N, phaseTerm (shiftedZetaPhase t m) n‖ ≤
+        Real.sqrt (D * (N : ℝ) ^ 2 / G) := hnorm
+    _ ≤ Real.sqrt D * (N : ℝ) / Real.sqrt G := hroot
+    _ ≤ 6 * (1 + Real.log h) * (N : ℝ) / Real.sqrt G := by
+      apply div_le_div_of_nonneg_right _ hGsqrt.le
+      gcongr
+    _ = 6 * (1 + Real.log h) * (N : ℝ) /
+        (h : ℝ) ^ (1 / (2 : ℝ) ^ depth : ℝ) := by
+      dsimp only [G]
+      rw [sqrt_constantAProcessGain_eq_rpow]
 
 end ZeroFreeRegion.VinogradovKorobov
