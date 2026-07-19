@@ -27,6 +27,111 @@ theorem norm_hardyPhaseShortIntegral_le_length
       simp
     _ = delta := by rw [sub_zero, abs_of_nonneg hdelta, one_mul]
 
+/-- The phase occurring in a shifted cross term of the Hardy first model. -/
+noncomputable def hardyPhaseCorrelation
+    (m n : ℕ) (v w t : ℝ) : ℝ :=
+  hardyPhase m (t + v) - hardyPhase n (t + w)
+
+/-- The Hermitian product of two Hardy-phase short integrals is exactly the
+double short-window integral of their phase correlation.  This is the bridge
+from the finite norm-square expansion to the shifted off-diagonal estimate. -/
+theorem conj_hardyPhaseShortIntegral_mul_eq_integral_integral_correlation
+    (m : ℕ) {n : ℕ} (hn : n ≠ 0)
+    {delta t : ℝ} (ht : 0 < t) (hdelta : 0 ≤ delta) :
+    (starRingEnd ℂ) (hardyPhaseShortIntegral n delta t) *
+        hardyPhaseShortIntegral m delta t =
+      ∫ v in 0..delta, ∫ w in 0..delta,
+        Complex.exp
+          (Complex.I * hardyPhaseCorrelation m n w v t) := by
+  have hInt (k : ℕ) (hk : k ≠ 0) : IntervalIntegrable
+      (fun v : ℝ => Complex.exp (Complex.I * hardyPhase k (t + v)))
+      MeasureTheory.volume 0 delta := by
+    apply ContinuousOn.intervalIntegrable_of_Icc hdelta
+    intro v hv
+    apply ContinuousAt.continuousWithinAt
+    have htv : 0 < t + v := add_pos_of_pos_of_nonneg ht hv.1
+    have hphase : ContinuousAt (fun x : ℝ => hardyPhase k (t + x)) v :=
+      (contDiffAt_hardyPhase_two hk htv).continuousAt.comp
+        (continuousAt_const.add continuousAt_id)
+    exact (continuousAt_const.mul
+      (Complex.continuous_ofReal.continuousAt.comp hphase)).cexp
+  have hconj :
+      (starRingEnd ℂ) (hardyPhaseShortIntegral n delta t) =
+        ∫ v in 0..delta,
+          Complex.exp (-Complex.I * hardyPhase n (t + v)) := by
+    dsimp only [hardyPhaseShortIntegral]
+    calc
+      (starRingEnd ℂ)
+          (∫ v in 0..delta,
+            Complex.exp (Complex.I * hardyPhase n (t + v))) =
+          Complex.conjCLE
+            (∫ v in 0..delta,
+              Complex.exp (Complex.I * hardyPhase n (t + v))) := by
+            rfl
+      _ = ∫ v in 0..delta,
+          Complex.conjCLE
+            (Complex.exp (Complex.I * hardyPhase n (t + v))) :=
+        ((Complex.conjCLE : ℂ →L[ℝ] ℂ).intervalIntegral_comp_comm
+          (hInt n hn)).symm
+      _ = ∫ v in 0..delta,
+          Complex.exp (-Complex.I * hardyPhase n (t + v)) := by
+        apply intervalIntegral.integral_congr
+        intro v hv
+        change
+          Complex.conjCLE
+              (Complex.exp (Complex.I * hardyPhase n (t + v))) =
+            Complex.exp (-Complex.I * hardyPhase n (t + v))
+        rw [Complex.conjCLE_apply, ← Complex.exp_conj]
+        simp
+  rw [hconj]
+  dsimp only [hardyPhaseShortIntegral]
+  calc
+    (∫ v in 0..delta,
+        Complex.exp (-Complex.I * hardyPhase n (t + v))) *
+        (∫ w in 0..delta,
+          Complex.exp (Complex.I * hardyPhase m (t + w))) =
+        ∫ v in 0..delta,
+          Complex.exp (-Complex.I * hardyPhase n (t + v)) *
+            (∫ w in 0..delta,
+              Complex.exp (Complex.I * hardyPhase m (t + w))) :=
+      (intervalIntegral.integral_mul_const
+        (∫ w in 0..delta,
+          Complex.exp (Complex.I * hardyPhase m (t + w)))
+        (fun v : ℝ =>
+          Complex.exp (-Complex.I * hardyPhase n (t + v)))).symm
+    _ = ∫ v in 0..delta, ∫ w in 0..delta,
+        Complex.exp (-Complex.I * hardyPhase n (t + v)) *
+          Complex.exp (Complex.I * hardyPhase m (t + w)) := by
+      apply intervalIntegral.integral_congr
+      intro v hv
+      change
+        Complex.exp (-Complex.I * hardyPhase n (t + v)) *
+            (∫ w in 0..delta,
+              Complex.exp (Complex.I * hardyPhase m (t + w))) =
+          ∫ w in 0..delta,
+            Complex.exp (-Complex.I * hardyPhase n (t + v)) *
+              Complex.exp (Complex.I * hardyPhase m (t + w))
+      exact (intervalIntegral.integral_const_mul
+        (Complex.exp (-Complex.I * hardyPhase n (t + v)))
+        (fun w : ℝ =>
+          Complex.exp (Complex.I * hardyPhase m (t + w)))).symm
+    _ = ∫ v in 0..delta, ∫ w in 0..delta,
+        Complex.exp
+          (Complex.I * hardyPhaseCorrelation m n w v t) := by
+      apply intervalIntegral.integral_congr
+      intro v hv
+      apply intervalIntegral.integral_congr
+      intro w hw
+      change
+        Complex.exp (-Complex.I * hardyPhase n (t + v)) *
+            Complex.exp (Complex.I * hardyPhase m (t + w)) =
+          Complex.exp (Complex.I * hardyPhaseCorrelation m n w v t)
+      rw [← Complex.exp_add]
+      congr 1
+      dsimp only [hardyPhaseCorrelation]
+      push_cast
+      ring
+
 /-- The real logarithm is `1 / T`-Lipschitz on `[T, ∞)` when `T > 0`. -/
 theorem abs_log_sub_log_le_div
     {T x y : ℝ} (hT : 0 < T) (hx : T ≤ x) (hy : T ≤ y) :
@@ -42,11 +147,6 @@ theorem abs_log_sub_log_le_div
   have h := Convex.norm_image_sub_le_of_norm_deriv_le
     hdiff hderiv (convex_Ici T) hx hy
   simpa only [Real.norm_eq_abs, div_eq_mul_inv, one_mul, mul_one, mul_comm] using h
-
-/-- The phase occurring in a shifted cross term of the Hardy first model. -/
-noncomputable def hardyPhaseCorrelation
-    (m n : ℕ) (v w t : ℝ) : ℝ :=
-  hardyPhase m (t + v) - hardyPhase n (t + w)
 
 /-- The first derivative of a shifted Hardy-phase correlation. -/
 theorem deriv_hardyPhaseCorrelation

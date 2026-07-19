@@ -12,6 +12,7 @@ import HardyTheorem.HardyPhaseCorrelation
 #check HardyTheorem.OscillatoryIntegral.norm_integral_cexp_shifted_hardyPhase_le_of_base_frequency
 #check HardyTheorem.OscillatoryIntegral.hardyPhaseShortIntegral
 #check HardyTheorem.OscillatoryIntegral.norm_hardyPhaseShortIntegral_le_length
+#check HardyTheorem.OscillatoryIntegral.conj_hardyPhaseShortIntegral_mul_eq_integral_integral_correlation
 
 example (m n : ℕ) (v w t : ℝ) :
     HardyTheorem.OscillatoryIntegral.hardyPhaseCorrelation m n v w t =
@@ -29,3 +30,4 @@ example (m n : ℕ) (v w t : ℝ) :
 #print axioms HardyTheorem.OscillatoryIntegral.abs_deriv_shifted_hardyPhase_sub_base_le
 #print axioms HardyTheorem.OscillatoryIntegral.norm_integral_cexp_shifted_hardyPhase_le_of_base_frequency
 #print axioms HardyTheorem.OscillatoryIntegral.norm_hardyPhaseShortIntegral_le_length
+#print axioms HardyTheorem.OscillatoryIntegral.conj_hardyPhaseShortIntegral_mul_eq_integral_integral_correlation
