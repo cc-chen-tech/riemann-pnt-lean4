@@ -1,4 +1,4 @@
-import ZeroFreeRegion.VinogradovKorobov.VinogradovLinear
+import ZeroFreeRegion.VinogradovKorobov.VinogradovJacobian
 
 open ZeroFreeRegion.VinogradovKorobov
 
@@ -81,3 +81,8 @@ open ZeroFreeRegion.VinogradovKorobov
 #check vinogradovSolutionCountNat_add_le
 #check vinogradovCriticalWeight_one
 #check vinogradovMeanValueEstimate_linear
+#check vinogradovPowerSumJacobian
+#check vinogradovPowerSumJacobian_eq_diagonal_mul_vandermonde_transpose
+#check det_vinogradovPowerSumJacobian
+#check det_vinogradovPowerSumJacobian_ne_zero
+#check det_vinogradovPowerSumJacobian_zmod_ne_zero
