@@ -102,6 +102,17 @@ EXPECTED_DECLARATIONS = {
     "HardyTheorem.norm_integral_criticalLineDirichletTail_cutoff_isLittleO",
     "ZeroFreeRegion.riemannZeta_eq_pole_add_floorError_integral_of_pos_re",
     "ZeroFreeRegion.riemannZeta_eq_dirichletPolynomial_add_pole_add_floorErrorTail",
+    "MathlibAux.intervalIntegral_mul_cexp_linear_eq_integration_by_parts",
+    "MathlibAux.norm_intervalIntegral_mul_cexp_linear_le_oscillatory",
+    "MathlibAux.norm_intervalIntegral_mul_cexp_linear_le_trivial",
+    "MathlibAux.norm_intervalIntegral_mul_cexp_linear_le_min",
+    "HardyTheorem.hardyPhaseLinearizedSum_eq_commonPhase_mul_negLogPolynomial",
+    "HardyTheorem.normSq_hardyPhaseLinearizedSum_eq_negLogPolynomial",
+    "HardyTheorem.hardyPhaseNegLogPolynomial_eq_conj_positive",
+    "HardyTheorem.norm_deriv_hardyPhaseWindowCoeff_le_min",
+    "HardyTheorem.norm_deriv_hardyPhaseWindowCoeff_le_trivial",
+    "HardyTheorem.sum_inv_nat_central_annulus_le",
+    "HardyTheorem.sum_normSq_deriv_hardyPhaseWindowCoeff_central_annulus_le",
 }
 
 REPORT_RE = re.compile(
