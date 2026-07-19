@@ -1,0 +1,7 @@
+import ZeroFreeRegion.VinogradovKorobov.VinogradovConditionedMoment
+
+open ZeroFreeRegion.VinogradovKorobov
+
+#check vinogradovWeightedResidueWeylSum
+#check vinogradovWeightedConditionedMoment
+#check vinogradovWeightedConditionedMoment_le_refinement

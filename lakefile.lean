@@ -158,6 +158,9 @@ lean_lib RiemannPNT where
     `Test.VinogradovKorobovCorrectionRankStrataContract,
     `Test.VinogradovKorobovWeightedContract,
     `Test.VinogradovKorobovWeightedConditioningContract,
+    `Test.VinogradovKorobovFiniteConditioningContract,
+    `Test.VinogradovKorobovResidueConditioningContract,
+    `Test.VinogradovKorobovConditionedMomentContract,
     `Test.VinogradovKorobovVanDerCorputRangeContract,
     `Test.VinogradovKorobovLogVanDerCorputContract
   ]
