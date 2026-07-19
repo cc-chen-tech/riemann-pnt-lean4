@@ -77,6 +77,112 @@ theorem vinogradovPairCorrectionLinearMap_apply
         (vinogradovRectangularPowerSumJacobian y).mulVec v j := by
   rfl
 
+/-- Two correction pairs above the same base pair which both satisfy the
+next-level power-sum equations lie in the same fiber of the finite-field
+pair Jacobian. -/
+theorem vinogradovPairCorrectionLinearMap_eq_of_affine_solutions
+    (p d s n : ℕ) [Fact p.Prime]
+    (x y u v u' v' : Fin s → ℤ)
+    (hpower : ∀ j : Fin d,
+      vinogradovPowerSumInt
+          (fun i ↦ x i + (p : ℤ) ^ (n + 1) * u i) j ≡
+        vinogradovPowerSumInt
+          (fun i ↦ y i + (p : ℤ) ^ (n + 1) * v i) j
+        [ZMOD (p : ℤ) ^ (n + 2)])
+    (hpower' : ∀ j : Fin d,
+      vinogradovPowerSumInt
+          (fun i ↦ x i + (p : ℤ) ^ (n + 1) * u' i) j ≡
+        vinogradovPowerSumInt
+          (fun i ↦ y i + (p : ℤ) ^ (n + 1) * v' i) j
+        [ZMOD (p : ℤ) ^ (n + 2)]) :
+    vinogradovPairCorrectionLinearMap p d s
+        (fun i ↦ (x i : ZMod p)) (fun i ↦ (y i : ZMod p))
+        ((fun i ↦ (u i : ZMod p)), (fun i ↦ (v i : ZMod p))) =
+      vinogradovPairCorrectionLinearMap p d s
+        (fun i ↦ (x i : ZMod p)) (fun i ↦ (y i : ZMod p))
+        ((fun i ↦ (u' i : ZMod p)), (fun i ↦ (v' i : ZMod p))) := by
+  let q : ℤ := (p : ℤ) ^ (n + 1)
+  have hq0 : q ≠ 0 := by
+    apply pow_ne_zero
+    exact_mod_cast (Fact.out : p.Prime).ne_zero
+  have hpq : (p : ℤ) ∣ q := by
+    exact dvd_pow_self (p : ℤ) (Nat.succ_ne_zero n)
+  have hmod : q * (p : ℤ) = (p : ℤ) ^ (n + 2) := by
+    simp [q, pow_succ]
+  funext j
+  have hlinear :
+      (vinogradovRectangularPowerSumJacobian x).mulVec u j -
+          (vinogradovRectangularPowerSumJacobian y).mulVec v j ≡
+        (vinogradovRectangularPowerSumJacobian x).mulVec u' j -
+          (vinogradovRectangularPowerSumJacobian y).mulVec v' j
+        [ZMOD (p : ℤ)] := by
+    have hxu :=
+      vinogradovPowerSumInt_affine_modEq_mul_of_dvd_rectangular
+        q (p : ℤ) hpq x u j
+    have hyv :=
+      vinogradovPowerSumInt_affine_modEq_mul_of_dvd_rectangular
+        q (p : ℤ) hpq y v j
+    have hxu' :=
+      vinogradovPowerSumInt_affine_modEq_mul_of_dvd_rectangular
+        q (p : ℤ) hpq x u' j
+    have hyv' :=
+      vinogradovPowerSumInt_affine_modEq_mul_of_dvd_rectangular
+        q (p : ℤ) hpq y v' j
+    have hsol :
+        vinogradovPowerSumInt x j +
+              q * (vinogradovRectangularPowerSumJacobian x).mulVec u j ≡
+          vinogradovPowerSumInt y j +
+              q * (vinogradovRectangularPowerSumJacobian y).mulVec v j
+          [ZMOD q * (p : ℤ)] := by
+      have hpowerj :
+          vinogradovPowerSumInt
+                (fun i ↦ x i + (p : ℤ) ^ (n + 1) * u i) j ≡
+            vinogradovPowerSumInt
+                (fun i ↦ y i + (p : ℤ) ^ (n + 1) * v i) j
+            [ZMOD q * (p : ℤ)] := by
+        rw [hmod]
+        exact hpower j
+      exact hxu.symm.trans (hpowerj.trans hyv)
+    have hsol' :
+        vinogradovPowerSumInt x j +
+              q * (vinogradovRectangularPowerSumJacobian x).mulVec u' j ≡
+          vinogradovPowerSumInt y j +
+              q * (vinogradovRectangularPowerSumJacobian y).mulVec v' j
+          [ZMOD q * (p : ℤ)] := by
+      have hpowerj :
+          vinogradovPowerSumInt
+                (fun i ↦ x i + (p : ℤ) ^ (n + 1) * u' i) j ≡
+            vinogradovPowerSumInt
+                (fun i ↦ y i + (p : ℤ) ^ (n + 1) * v' i) j
+            [ZMOD q * (p : ℤ)] := by
+        rw [hmod]
+        exact hpower' j
+      exact hxu'.symm.trans (hpowerj.trans hyv')
+    have hdiff :
+        q * ((vinogradovRectangularPowerSumJacobian x).mulVec u j -
+            (vinogradovRectangularPowerSumJacobian y).mulVec v j) ≡
+          vinogradovPowerSumInt y j - vinogradovPowerSumInt x j
+          [ZMOD q * (p : ℤ)] := by
+      convert
+        ((hsol.add_left (-vinogradovPowerSumInt x j)).add_right
+          (-q * (vinogradovRectangularPowerSumJacobian y).mulVec v j)) using 1 <;> ring
+    have hdiff' :
+        q * ((vinogradovRectangularPowerSumJacobian x).mulVec u' j -
+            (vinogradovRectangularPowerSumJacobian y).mulVec v' j) ≡
+          vinogradovPowerSumInt y j - vinogradovPowerSumInt x j
+          [ZMOD q * (p : ℤ)] := by
+      convert
+        ((hsol'.add_left (-vinogradovPowerSumInt x j)).add_right
+          (-q * (vinogradovRectangularPowerSumJacobian y).mulVec v' j)) using 1 <;> ring
+    exact Int.ModEq.mul_left_cancel' hq0 (hdiff.trans hdiff'.symm)
+  have hz := (ZMod.intCast_eq_intCast_iff
+    ((vinogradovRectangularPowerSumJacobian x).mulVec u j -
+      (vinogradovRectangularPowerSumJacobian y).mulVec v j)
+    ((vinogradovRectangularPowerSumJacobian x).mulVec u' j -
+      (vinogradovRectangularPowerSumJacobian y).mulVec v' j) p).mpr hlinear
+  simpa [vinogradovPairCorrectionLinearMap_apply,
+    vinogradovRectangularPowerSumJacobian, Matrix.mulVec, dotProduct] using hz
+
 end
 
 end ZeroFreeRegion.VinogradovKorobov

@@ -8,3 +8,4 @@ open ZeroFreeRegion.VinogradovKorobov
 #check vinogradovPowerSumInt_affine_modEq_mul_of_dvd_rectangular
 #check vinogradovPairCorrectionLinearMap
 #check vinogradovPairCorrectionLinearMap_apply
+#check vinogradovPairCorrectionLinearMap_eq_of_affine_solutions
