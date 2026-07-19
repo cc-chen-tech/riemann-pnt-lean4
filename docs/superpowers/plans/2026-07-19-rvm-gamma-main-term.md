@@ -128,4 +128,3 @@ git diff --check
 git add lakefile.lean PrimeNumberTheorem/RiemannVonMangoldt.lean PrimeNumberTheorem/RiemannVonMangoldt/GammaMainTerm.lean Test/RiemannVonMangoldtGammaMainTermContract.lean Test/RiemannVonMangoldtGammaMainTermAxiomAudit.lean
 git commit -m "feat(zeta): bound Gamma phase differences by the main term"
 ```
-

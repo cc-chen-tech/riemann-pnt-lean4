@@ -69,4 +69,3 @@ isolate the zeta argument term.
 The focused module, contract, and axiom audit must build. Changed source may
 not contain `sorry`, `admit`, or `axiom`; the audit allowlist remains
 `propext`, `Classical.choice`, and `Quot.sound`.
-
