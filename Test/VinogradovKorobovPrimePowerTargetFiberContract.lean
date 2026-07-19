@@ -1,0 +1,7 @@
+import ZeroFreeRegion.VinogradovKorobov.VinogradovPrimePowerTargetFiber
+
+open ZeroFreeRegion.VinogradovKorobov
+
+#check vinogradovPrimePowerTargetFiberSet
+#check mem_vinogradovPrimePowerTargetFiberSet_iff
+#check card_vinogradovPrimePowerTargetFiberSet_zero_le_factorial
