@@ -58,6 +58,22 @@ example {xi : ℝ} (hxi : 2 * Real.pi ≤ |xi|) :
       (-2 * Complex.I) / xi :=
   fourierKernel_carneiroLittmannRawKernel_of_two_pi_le_abs hxi
 
+noncomputable example : CarneiroLittmannKernel :=
+  carneiroLittmannKernel
+
+example {a b : ℝ} (N : ℕ) (c : ℕ → ℂ) (omega delta : ℕ → ℝ)
+    (hab : a ≤ b)
+    (hdelta : ∀ n, 0 < delta n)
+    (hanti : ∀ n, delta (n + 1) ≤ delta n)
+    (hlocal : ∀ m ∈ Finset.range N, ∀ n ∈ Finset.range N, m ≠ n →
+      delta (min m n) ≤ |omega n - omega m|) :
+    ∫ t in a..b, ‖finiteExponentialSum (Finset.range N) c omega t‖ ^ 2 ≤
+      (b - a) * ∑ n ∈ Finset.range N, ‖c n‖ ^ 2 +
+        4 * Real.pi *
+          ∑ n ∈ Finset.range N, (delta n)⁻¹ * ‖c n‖ ^ 2 :=
+  finiteExponentialSum_meanSquare_le_carneiroLittmann
+    hab hdelta hanti hlocal
+
 #print axioms carneiroLittmannCumulative_nonneg_of_nonpos
 #print axioms one_le_carneiroLittmannCumulative_of_nonneg
 #print axioms carneiroLittmannKernelError_nonneg
@@ -72,6 +88,8 @@ example {xi : ℝ} (hxi : 2 * Real.pi ≤ |xi|) :
 #print axioms carneiroLittmannRawKernel_dilation_antitone
 #print axioms fourierKernel_carneiroLittmannRawKernel_zero
 #print axioms fourierKernel_carneiroLittmannRawKernel_of_two_pi_le_abs
+#print axioms carneiroLittmannKernel
+#print axioms finiteExponentialSum_meanSquare_le_carneiroLittmann
 
 end DirichletPolynomial
 end PrimeNumberTheorem

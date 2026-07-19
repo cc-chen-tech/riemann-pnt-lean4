@@ -823,5 +823,35 @@ theorem fourierKernel_carneiroLittmannRawKernel_of_two_pi_le_abs
     _ = (2 : ℂ) * fourierKernel carneiroLittmannKernelError xi := rfl
     _ = (-2 * Complex.I) / xi := by rw [hError]; ring
 
+/-- The concrete extremal majorant error supplies every field required by the
+abstract Carneiro--Littmann kernel interface. -/
+noncomputable def carneiroLittmannKernel : CarneiroLittmannKernel where
+  kernel := carneiroLittmannRawKernel
+  integrable_kernel := integrable_carneiroLittmannRawKernel
+  kernel_nonneg := carneiroLittmannRawKernel_nonneg
+  dilation_antitone := by
+    intro deltaSmall deltaLarge hsmall hle t
+    exact carneiroLittmannRawKernel_dilation_antitone hsmall hle t
+  fourierKernel_zero := fourierKernel_carneiroLittmannRawKernel_zero
+  fourierKernel_of_two_pi_le_abs := by
+    intro xi hxi
+    exact fourierKernel_carneiroLittmannRawKernel_of_two_pi_le_abs hxi
+
+/-- The Montgomery--Vaughan mean-square bound obtained from the explicit
+Carneiro--Littmann kernel, with no remaining kernel-existence parameter. -/
+theorem finiteExponentialSum_meanSquare_le_carneiroLittmann
+    {N : ℕ} {c : ℕ → ℂ} {omega delta : ℕ → ℝ} {a b : ℝ}
+    (hab : a ≤ b)
+    (hdelta : ∀ n, 0 < delta n)
+    (hanti : ∀ n, delta (n + 1) ≤ delta n)
+    (hlocal : ∀ m ∈ Finset.range N, ∀ n ∈ Finset.range N, m ≠ n →
+      delta (min m n) ≤ |omega n - omega m|) :
+    ∫ t in a..b, ‖finiteExponentialSum (Finset.range N) c omega t‖ ^ 2 ≤
+      (b - a) * ∑ n ∈ Finset.range N, ‖c n‖ ^ 2 +
+        4 * Real.pi *
+          ∑ n ∈ Finset.range N, (delta n)⁻¹ * ‖c n‖ ^ 2 :=
+  finiteExponentialSum_meanSquare_le_of_carneiroLittmannKernel
+    hab hdelta hanti hlocal carneiroLittmannKernel
+
 end DirichletPolynomial
 end PrimeNumberTheorem
