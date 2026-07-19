@@ -120,6 +120,10 @@ EXPECTED_DECLARATIONS = {
     "MathlibAux.norm_integral_timeDependentLogOffDiagonal_le_of_measurable",
     "MathlibAux.integral_normSq_timeDependentLogPolynomial_le_of_measurable",
     "HardyTheorem.integral_normSq_hardyPhaseLinearizedSum_le",
+    "HardyTheorem.integral_normSq_hardyPhaseLinearizedSum_le_dyadic_mul",
+    "HardyTheorem.HasNegToPosLocalSignChangeAt.eq_zero",
+    "HardyTheorem.card_le_criticalLineOddZeroCount_of_pairwiseDisjoint_signChanges",
+    "HardyTheorem.card_le_criticalLineOddZeroCount_of_pairwiseDisjoint_hardyZ_signChanges",
 }
 
 REPORT_RE = re.compile(

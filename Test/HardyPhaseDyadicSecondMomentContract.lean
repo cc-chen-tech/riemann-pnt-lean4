@@ -1,0 +1,5 @@
+import HardyTheorem.HardyPhaseDyadicSecondMoment
+
+#check HardyTheorem.hardyPhaseLinearizedDyadicSecondMomentConstant
+#check HardyTheorem.integral_normSq_hardyPhaseLinearizedSum_le_dyadic_mul
+#print axioms HardyTheorem.integral_normSq_hardyPhaseLinearizedSum_le_dyadic_mul

@@ -33,8 +33,10 @@ import HardyTheorem.HardyPhaseHighTailDerivativeEnergy
 import HardyTheorem.HardyPhaseFullDerivativeEnergy
 import HardyTheorem.HardyPhaseWindowPolynomial
 import HardyTheorem.HardyPhaseMovingSecondMoment
+import HardyTheorem.HardyPhaseDyadicSecondMoment
 import HardyTheorem.HardyPhaseHilbert
 import HardyTheorem.HardyOddMultiplicity
+import HardyTheorem.ShortIntervalSignChangeMeasure
 import MathlibAux.SlidingIntervalCorrelation
 import MathlibAux.DiscreteHilbertInequality
 import MathlibAux.DyadicLogHilbert

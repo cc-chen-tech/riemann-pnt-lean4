@@ -8,6 +8,9 @@ namespace HardyTheorem
 #check HasNegToPosLocalSignChangeAt.eq_zero
 #check card_le_criticalLineOddZeroCount_of_pairwiseDisjoint_signChanges
 #check card_le_criticalLineOddZeroCount_of_pairwiseDisjoint_hardyZ_signChanges
+#print axioms HasNegToPosLocalSignChangeAt.eq_zero
+#print axioms card_le_criticalLineOddZeroCount_of_pairwiseDisjoint_signChanges
+#print axioms card_le_criticalLineOddZeroCount_of_pairwiseDisjoint_hardyZ_signChanges
 
 example (G : Finset ℕ) (J : ℕ → Set ℝ) (T : ℝ)
     (hdisj : (G : Set ℕ).PairwiseDisjoint J)
