@@ -385,5 +385,60 @@ theorem integrable_carneiroLittmannDerivative :
     exact hCover ▸ hUnion
   exact Iff.mp MeasureTheory.integrableOn_univ hAll
 
+/-- The actual cumulative integral beginning at negative infinity.  Its total
+mass is not fixed here; proving the Carneiro--Littmann normalization is a
+separate analytic step. -/
+noncomputable def carneiroLittmannCumulative (x : ℝ) : ℝ :=
+  ∫ u in Set.Iic x, carneiroLittmannDerivative u
+
+/-- Changing the upper endpoint from zero to `x` produces exactly the finite
+interval primitive. -/
+theorem carneiroLittmannCumulative_sub_zero_eq_primitive (x : ℝ) :
+    carneiroLittmannCumulative x - carneiroLittmannCumulative 0 =
+      carneiroLittmannPrimitive x := by
+  simpa only [carneiroLittmannCumulative, carneiroLittmannPrimitive] using
+    (intervalIntegral.integral_Iic_sub_Iic
+      (a := (0 : ℝ)) (b := x)
+      integrable_carneiroLittmannDerivative.integrableOn
+      integrable_carneiroLittmannDerivative.integrableOn)
+
+theorem carneiroLittmannCumulative_eq_primitive_add_zero (x : ℝ) :
+    carneiroLittmannCumulative x =
+      carneiroLittmannPrimitive x + carneiroLittmannCumulative 0 :=
+  sub_eq_iff_eq_add.mp (carneiroLittmannCumulative_sub_zero_eq_primitive x)
+
+/-- The cumulative integral has the concrete filled derivative everywhere. -/
+theorem hasDerivAt_carneiroLittmannCumulative (x : ℝ) :
+    HasDerivAt carneiroLittmannCumulative (carneiroLittmannDerivative x) x := by
+  have hFun : carneiroLittmannCumulative =
+      fun y => carneiroLittmannPrimitive y + carneiroLittmannCumulative 0 := by
+    funext y
+    exact carneiroLittmannCumulative_eq_primitive_add_zero y
+  rw [hFun]
+  exact (hasDerivAt_carneiroLittmannPrimitive x).add_const _
+
+theorem continuous_carneiroLittmannCumulative :
+    Continuous carneiroLittmannCumulative := by
+  exact (show Differentiable ℝ carneiroLittmannCumulative from
+    fun x ↦ (hasDerivAt_carneiroLittmannCumulative x).differentiableAt).continuous
+
+/-- The cumulative integral rises on the negative half-line. -/
+theorem monotoneOn_carneiroLittmannCumulative_Iic :
+    MonotoneOn carneiroLittmannCumulative (Set.Iic 0) := by
+  intro x hx y hy hxy
+  rw [carneiroLittmannCumulative_eq_primitive_add_zero x,
+    carneiroLittmannCumulative_eq_primitive_add_zero y]
+  exact add_le_add_left
+    (monotoneOn_carneiroLittmannPrimitive_Iic hx hy hxy) _
+
+/-- The cumulative integral falls on the positive half-line. -/
+theorem antitoneOn_carneiroLittmannCumulative_Ici :
+    AntitoneOn carneiroLittmannCumulative (Set.Ici 0) := by
+  intro x hx y hy hxy
+  rw [carneiroLittmannCumulative_eq_primitive_add_zero x,
+    carneiroLittmannCumulative_eq_primitive_add_zero y]
+  exact add_le_add_left
+    (antitoneOn_carneiroLittmannPrimitive_Ici hx hy hxy) _
+
 end DirichletPolynomial
 end PrimeNumberTheorem

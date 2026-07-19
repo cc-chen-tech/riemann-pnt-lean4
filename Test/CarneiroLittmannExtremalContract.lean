@@ -70,6 +70,24 @@ example {x : ℝ} (hx : x ≤ -2) :
 example : MeasureTheory.Integrable carneiroLittmannDerivative :=
   integrable_carneiroLittmannDerivative
 
+example (x : ℝ) :
+    carneiroLittmannCumulative x - carneiroLittmannCumulative 0 =
+      carneiroLittmannPrimitive x :=
+  carneiroLittmannCumulative_sub_zero_eq_primitive x
+
+example (x : ℝ) :
+    HasDerivAt carneiroLittmannCumulative (carneiroLittmannDerivative x) x :=
+  hasDerivAt_carneiroLittmannCumulative x
+
+example : Continuous carneiroLittmannCumulative :=
+  continuous_carneiroLittmannCumulative
+
+example : MonotoneOn carneiroLittmannCumulative (Set.Iic 0) :=
+  monotoneOn_carneiroLittmannCumulative_Iic
+
+example : AntitoneOn carneiroLittmannCumulative (Set.Ici 0) :=
+  antitoneOn_carneiroLittmannCumulative_Ici
+
 #print axioms carneiroLittmannDerivative_neg_one
 #print axioms carneiroLittmannDerivative_zero
 #print axioms carneiroLittmannDerivative_eq_formula
@@ -88,6 +106,11 @@ example : MeasureTheory.Integrable carneiroLittmannDerivative :=
 #print axioms abs_carneiroLittmannDerivative_le_rpow_neg_three
 #print axioms abs_carneiroLittmannDerivative_le_four_mul_neg_rpow
 #print axioms integrable_carneiroLittmannDerivative
+#print axioms carneiroLittmannCumulative_sub_zero_eq_primitive
+#print axioms hasDerivAt_carneiroLittmannCumulative
+#print axioms continuous_carneiroLittmannCumulative
+#print axioms monotoneOn_carneiroLittmannCumulative_Iic
+#print axioms antitoneOn_carneiroLittmannCumulative_Ici
 
 end DirichletPolynomial
 end PrimeNumberTheorem
