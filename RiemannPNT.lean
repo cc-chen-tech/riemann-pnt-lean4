@@ -36,6 +36,7 @@ import HardyTheorem.HardyPhaseHighTailDerivativeEnergy
 import HardyTheorem.HardyPhaseFullDerivativeEnergy
 import HardyTheorem.HardyPhaseWindowPolynomial
 import HardyTheorem.HardyPhaseMovingSecondMoment
+import HardyTheorem.HardyPhasePartialSecondMoment
 import HardyTheorem.HardyPhaseDyadicSecondMoment
 import HardyTheorem.HardyPhaseHilbert
 import HardyTheorem.HardyOddMultiplicity
