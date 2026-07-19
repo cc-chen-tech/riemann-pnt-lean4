@@ -1,4 +1,5 @@
 import PrimeNumberTheorem.DirichletPolynomialMeanSquare
+import PrimeNumberTheorem.CarneiroLittmannKernelConstruction
 import Mathlib.NumberTheory.ArithmeticFunction.Moebius
 
 open Complex
@@ -15,6 +16,27 @@ noncomputable def mobiusMollifier (X : ℕ) (s : ℂ) : ℂ :=
 /-- Coefficients of the Möbius mollifier restricted to a vertical line. -/
 noncomputable def mobiusMollifierCoefficient (sigma : ℝ) (n : ℕ) : ℂ :=
   (ArithmeticFunction.moebius n : ℂ) * ((n : ℂ) ^ (sigma : ℂ))⁻¹
+
+/-- Möbius coefficients have modulus at most one, so the mollifier coefficient
+on `Re s = sigma` is bounded by the expected real power. -/
+theorem norm_mobiusMollifierCoefficient_le
+    {n : ℕ} (hn : 0 < n) (sigma : ℝ) :
+    ‖mobiusMollifierCoefficient sigma n‖ ≤ (n : ℝ) ^ (-sigma) := by
+  have hnpos : 0 < (n : ℝ) := by exact_mod_cast hn
+  have hmuInt := ArithmeticFunction.abs_moebius_le_one (n := n)
+  have hmuReal : |(ArithmeticFunction.moebius n : ℝ)| ≤ 1 := by
+    exact_mod_cast hmuInt
+  have hmuComplex : ‖(ArithmeticFunction.moebius n : ℂ)‖ ≤ 1 := by
+    simpa [Complex.norm_intCast] using hmuReal
+  have hnCast : (n : ℂ) = ((n : ℝ) : ℂ) := by norm_cast
+  unfold mobiusMollifierCoefficient
+  rw [norm_mul, norm_inv, hnCast,
+    Complex.norm_cpow_eq_rpow_re_of_pos hnpos]
+  simp only [Complex.ofReal_re]
+  rw [Real.rpow_neg hnpos.le]
+  have hinvnonneg : 0 ≤ ((n : ℝ) ^ sigma)⁻¹ :=
+    inv_nonneg.mpr (Real.rpow_nonneg hnpos.le sigma)
+  simpa using mul_le_mul_of_nonneg_right hmuComplex hinvnonneg
 
 /-- Split a positive natural complex power on a vertical line into its real
 decay coefficient and logarithmic oscillation. -/
@@ -75,6 +97,92 @@ theorem mobiusMollifier_meanSquare_le
   apply DirichletPolynomial.finiteDirichletPolynomial_meanSquare_le hab
   intro n hn
   exact (Finset.mem_Icc.mp hn).1
+
+/-- The concrete Carneiro--Littmann Hilbert kernel gives a single weighted
+diagonal bound for the Möbius mollifier mean square. -/
+theorem mobiusMollifier_meanSquare_le_carneiroLittmann
+    (X : ℕ) (sigma : ℝ) {a b : ℝ} (hab : a ≤ b) :
+    ∫ t in a..b,
+        ‖mobiusMollifier X ((sigma : ℂ) + Complex.I * t)‖ ^ 2 ≤
+      ((b - a) + 4 * Real.pi) *
+        ∑ n ∈ Finset.Icc 1 X,
+          ((n : ℝ) + 1) * ‖mobiusMollifierCoefficient sigma n‖ ^ 2 := by
+  let D : ℝ := ∑ n ∈ Finset.Icc 1 X,
+    ((n : ℝ) + 1) * ‖mobiusMollifierCoefficient sigma n‖ ^ 2
+  have hraw :
+      ∫ t in a..b,
+          ‖mobiusMollifier X ((sigma : ℂ) + Complex.I * t)‖ ^ 2 ≤
+        (b - a) * ∑ n ∈ Finset.Icc 1 X,
+            ‖mobiusMollifierCoefficient sigma n‖ ^ 2 +
+          4 * Real.pi * D := by
+    simp_rw [mobiusMollifier_verticalLine_eq_finiteDirichletPolynomial]
+    unfold DirichletPolynomial.finiteDirichletPolynomial
+    simpa only [D, mul_assoc, show 2 * (2 * Real.pi) = 4 * Real.pi by ring] using
+      (DirichletPolynomial.finiteExponentialSum_meanSquare_le_of_hilbert
+        (S := Finset.Icc 1 X)
+        (c := mobiusMollifierCoefficient sigma)
+        (omega := fun n : ℕ => -Real.log n)
+        (weight := fun n : ℕ => (n : ℝ) + 1)
+        (C := 2 * Real.pi) hab
+        (by
+          intro m hm n hn hmn
+          have hmpos : 0 < (m : ℝ) := by
+            exact_mod_cast (Finset.mem_Icc.mp hm).1
+          have hnpos : 0 < (n : ℝ) := by
+            exact_mod_cast (Finset.mem_Icc.mp hn).1
+          have hlog : Real.log (m : ℝ) = Real.log (n : ℝ) := by linarith
+          exact Nat.cast_injective (Real.log_injOn_pos hmpos hnpos hlog))
+        (by intro n hn; positivity)
+        (fun d =>
+          DirichletPolynomial.norm_hilbertForm_Icc_neg_log_le_carneiroLittmann
+            (show 0 < (1 : ℕ) by omega) d))
+  calc
+    ∫ t in a..b,
+        ‖mobiusMollifier X ((sigma : ℂ) + Complex.I * t)‖ ^ 2 ≤
+      (b - a) * ∑ n ∈ Finset.Icc 1 X,
+          ‖mobiusMollifierCoefficient sigma n‖ ^ 2 +
+        4 * Real.pi * D := hraw
+    _ ≤ (b - a) * D + 4 * Real.pi * D := by
+      apply add_le_add
+      · apply mul_le_mul_of_nonneg_left _ (sub_nonneg.mpr hab)
+        apply Finset.sum_le_sum
+        intro n hn
+        have hnorm : 0 ≤ ‖mobiusMollifierCoefficient sigma n‖ ^ 2 := sq_nonneg _
+        have hnnonneg : 0 ≤ (n : ℝ) := Nat.cast_nonneg n
+        nlinarith
+      · exact le_rfl
+    _ = ((b - a) + 4 * Real.pi) * D := by ring
+
+/-- Replacing the Möbius coefficient by its pointwise power majorant leaves a
+purely real weighted power sum for the mollifier mean square. -/
+theorem mobiusMollifier_meanSquare_le_weightedPowerSum
+    (X : ℕ) (sigma : ℝ) {a b : ℝ} (hab : a ≤ b) :
+    ∫ t in a..b,
+        ‖mobiusMollifier X ((sigma : ℂ) + Complex.I * t)‖ ^ 2 ≤
+      ((b - a) + 4 * Real.pi) *
+        ∑ n ∈ Finset.Icc 1 X,
+          ((n : ℝ) + 1) * ((n : ℝ) ^ (-sigma)) ^ 2 := by
+  calc
+    ∫ t in a..b,
+        ‖mobiusMollifier X ((sigma : ℂ) + Complex.I * t)‖ ^ 2 ≤
+      ((b - a) + 4 * Real.pi) *
+        ∑ n ∈ Finset.Icc 1 X,
+          ((n : ℝ) + 1) * ‖mobiusMollifierCoefficient sigma n‖ ^ 2 :=
+      mobiusMollifier_meanSquare_le_carneiroLittmann X sigma hab
+    _ ≤ ((b - a) + 4 * Real.pi) *
+        ∑ n ∈ Finset.Icc 1 X,
+          ((n : ℝ) + 1) * ((n : ℝ) ^ (-sigma)) ^ 2 := by
+      apply mul_le_mul_of_nonneg_left
+      · apply Finset.sum_le_sum
+        intro n hn
+        have hnpos : 0 < n := (Finset.mem_Icc.mp hn).1
+        have hcoeff := norm_mobiusMollifierCoefficient_le hnpos sigma
+        have hcoeff_nonneg : 0 ≤ ‖mobiusMollifierCoefficient sigma n‖ := norm_nonneg _
+        have hpower_nonneg : 0 ≤ (n : ℝ) ^ (-sigma) := Real.rpow_nonneg (by positivity) _
+        apply mul_le_mul_of_nonneg_left _ (by positivity)
+        nlinarith
+      · exact add_nonneg (sub_nonneg.mpr hab)
+          (mul_nonneg (by norm_num) Real.pi_nonneg)
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem
