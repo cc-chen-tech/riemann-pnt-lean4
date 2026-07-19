@@ -3,6 +3,44 @@ import PrimeNumberTheorem.SmoothedErrorTransfer
 open Complex Set
 open scoped BigOperators Interval
 
+example (x y a c W : ℝ) :
+    ‖PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderContourRemainder y a c W -
+        PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderContourRemainder x a c W‖ ≤
+      (‖PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderHorizontalXDifference
+            x y a c (-(2 * Real.pi * W))‖ +
+          ‖PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderHorizontalXDifference
+            x y a c (2 * Real.pi * W)‖ +
+          ‖PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderLeftXDifference x y a W‖) /
+        (2 * Real.pi) :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.norm_secondOrderContourRemainder_sub_le_edgeDifferences
+    x y a c W
+
+example {x y ε c T : ℝ} (hx : 1 ≤ x) (hy : 1 ≤ y) (hε : 0 < ε)
+    (hc : 1 + ε ≤ c) (hT : 0 < T) :
+    ‖PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderHorizontalXDifference
+        x y (1 + ε) c T‖ ≤
+      (PrimeNumberTheorem.ExplicitFormulaResidues.vonMangoldtLSeriesNorm ε *
+          y ^ c / T ^ 2) *
+          (c - (1 + ε)) +
+        (PrimeNumberTheorem.ExplicitFormulaResidues.vonMangoldtLSeriesNorm ε *
+          x ^ c / T ^ 2) *
+          (c - (1 + ε)) :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.norm_secondOrderHorizontalXDifference_right_le
+    hx hy hε hc hT
+
+example {x y ε c T : ℝ} (hx : 1 ≤ x) (hy : 1 ≤ y) (hε : 0 < ε)
+    (hc : 1 + ε ≤ c) (hT : 0 < T) :
+    ‖PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderHorizontalXDifference
+        x y (1 + ε) c (-T)‖ ≤
+      (PrimeNumberTheorem.ExplicitFormulaResidues.vonMangoldtLSeriesNorm ε *
+          y ^ c / T ^ 2) *
+          (c - (1 + ε)) +
+        (PrimeNumberTheorem.ExplicitFormulaResidues.vonMangoldtLSeriesNorm ε *
+          x ^ c / T ^ 2) *
+          (c - (1 + ε)) :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.norm_secondOrderHorizontalXDifference_right_neg_height_le
+    hx hy hε hc hT
+
 example (approx : ℝ → ℝ → ℂ) (error : ℝ → ℝ → ℝ)
     {x h T : ℝ} (hx : 0 < x) (hh : 0 < h)
     (hxError : ‖approx x T - (PrimeNumberTheorem.smoothedChebyshevPsi x : ℂ)‖ ≤

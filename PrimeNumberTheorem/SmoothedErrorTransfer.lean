@@ -1,5 +1,5 @@
 import PrimeNumberTheorem.RieszDifference
-import PrimeNumberTheorem.SecondOrderExplicitFormula
+import PrimeNumberTheorem.RightHorizontalEdge
 
 /-!
 # Transferring smoothed approximation errors to Chebyshev psi
@@ -15,6 +15,94 @@ open Complex
 open scoped BigOperators Interval
 
 namespace PrimeNumberTheorem
+
+namespace ExplicitFormulaResidues
+
+/-- Difference, in the `x` variable, of one horizontal second-order contour
+edge. -/
+noncomputable def secondOrderHorizontalXDifference
+    (x y a c T : ℝ) : ℂ :=
+  (∫ σ : ℝ in a..c,
+      secondOrderExplicitFormulaIntegrand y ((σ : ℂ) + T * I)) -
+    ∫ σ : ℝ in a..c,
+      secondOrderExplicitFormulaIntegrand x ((σ : ℂ) + T * I)
+
+/-- Difference, in the `x` variable, of the left vertical second-order edge. -/
+noncomputable def secondOrderLeftXDifference
+    (x y a W : ℝ) : ℂ :=
+  (∫ t : ℝ in (-(2 * Real.pi * W))..(2 * Real.pi * W),
+      secondOrderExplicitFormulaIntegrand y ((a : ℂ) + t * I)) -
+    ∫ t : ℝ in (-(2 * Real.pi * W))..(2 * Real.pi * W),
+      secondOrderExplicitFormulaIntegrand x ((a : ℂ) + t * I)
+
+/-- The full second-order contour-remainder difference is controlled by the
+three actual edge differences. This is an exact finite-height budget, not an
+asymptotic estimate. -/
+theorem norm_secondOrderContourRemainder_sub_le_edgeDifferences
+    (x y a c W : ℝ) :
+    ‖secondOrderContourRemainder y a c W -
+        secondOrderContourRemainder x a c W‖ ≤
+      (‖secondOrderHorizontalXDifference x y a c (-(2 * Real.pi * W))‖ +
+          ‖secondOrderHorizontalXDifference x y a c (2 * Real.pi * W)‖ +
+          ‖secondOrderLeftXDifference x y a W‖) /
+        (2 * Real.pi) := by
+  let B := secondOrderHorizontalXDifference x y a c (-(2 * Real.pi * W))
+  let T := secondOrderHorizontalXDifference x y a c (2 * Real.pi * W)
+  let L := secondOrderLeftXDifference x y a W
+  have hremainder :
+      secondOrderContourRemainder y a c W -
+          secondOrderContourRemainder x a c W =
+        (B - T - I * L) / (2 * Real.pi * I) := by
+    dsimp [B, T, L, secondOrderHorizontalXDifference,
+      secondOrderLeftXDifference, secondOrderContourRemainder]
+    ring
+  rw [hremainder, norm_div]
+  have hden : ‖(2 : ℂ) * (Real.pi : ℂ) * I‖ = 2 * Real.pi := by
+    rw [norm_mul, norm_I, mul_one, norm_mul, norm_ofNat, Complex.norm_real,
+      Real.norm_eq_abs, abs_of_pos Real.pi_pos]
+  rw [hden]
+  apply (div_le_div_iff_of_pos_right (mul_pos (by norm_num) Real.pi_pos)).2
+  calc
+    ‖B - T - I * L‖ ≤ ‖B - T‖ + ‖I * L‖ := norm_sub_le _ _
+    _ ≤ (‖B‖ + ‖T‖) + ‖L‖ := by
+      gcongr
+      · exact norm_sub_le B T
+      · simp
+    _ = ‖B‖ + ‖T‖ + ‖L‖ := rfl
+
+/-- Concrete `T^-2` control of the change in the upper right horizontal edge
+when the smoothing endpoint changes from `x` to `y`. -/
+theorem norm_secondOrderHorizontalXDifference_right_le
+    {x y ε c T : ℝ} (hx : 1 ≤ x) (hy : 1 ≤ y) (hε : 0 < ε)
+    (hc : 1 + ε ≤ c) (hT : 0 < T) :
+    ‖secondOrderHorizontalXDifference x y (1 + ε) c T‖ ≤
+      (vonMangoldtLSeriesNorm ε * y ^ c / T ^ 2) * (c - (1 + ε)) +
+        (vonMangoldtLSeriesNorm ε * x ^ c / T ^ 2) * (c - (1 + ε)) := by
+  unfold secondOrderHorizontalXDifference
+  exact (norm_sub_le _ _).trans (add_le_add
+    (norm_horizontal_right_secondOrderContour_le hy hε hc hT)
+    (norm_horizontal_right_secondOrderContour_le hx hε hc hT))
+
+/-- Concrete `T^-2` control of the corresponding lower right horizontal edge
+difference. -/
+theorem norm_secondOrderHorizontalXDifference_right_neg_height_le
+    {x y ε c T : ℝ} (hx : 1 ≤ x) (hy : 1 ≤ y) (hε : 0 < ε)
+    (hc : 1 + ε ≤ c) (hT : 0 < T) :
+    ‖secondOrderHorizontalXDifference x y (1 + ε) c (-T)‖ ≤
+      (vonMangoldtLSeriesNorm ε * y ^ c / T ^ 2) * (c - (1 + ε)) +
+        (vonMangoldtLSeriesNorm ε * x ^ c / T ^ 2) * (c - (1 + ε)) := by
+  unfold secondOrderHorizontalXDifference
+  simpa [sub_eq_add_neg] using
+    (norm_sub_le
+      (∫ σ : ℝ in (1 + ε)..c,
+        secondOrderExplicitFormulaIntegrand y ((σ : ℂ) - T * I))
+      (∫ σ : ℝ in (1 + ε)..c,
+        secondOrderExplicitFormulaIntegrand x ((σ : ℂ) - T * I))).trans
+      (add_le_add
+        (norm_horizontal_right_secondOrderContour_neg_height_le hy hε hc hT)
+        (norm_horizontal_right_secondOrderContour_neg_height_le hx hε hc hT))
+
+end ExplicitFormulaResidues
 
 /-- If a complex approximation controls the first Riesz mean at `x` and
 `x + h`, its real-part finite difference gives explicit endpoint bounds for

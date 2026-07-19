@@ -49,8 +49,12 @@ On the Lean side,
 `exists_chebyshevPsi_bounds_of_secondOrderExplicitFormula` invokes the existing
 finite-height second-order formula at both endpoints and feeds the two proved
 Perron truncation errors into the Riesz-difference sandwich. The three shifted
-contour edges remain inside the approximation. No numerical bound for their
-difference is claimed by this milestone.
+contour edges remain inside the approximation. The exact difference of the
+two contour remainders is now bounded by the sum of the two horizontal-edge
+differences and the left-edge difference, divided by `2*pi`. For the outer
+right portions `sigma in [1+epsilon,c]`, both horizontal differences have a
+proved `T^-2` bound. No numerical bound is claimed here for the remaining
+inner horizontal portions or the left vertical difference.
 
 ## Frozen repository baseline
 
@@ -212,6 +216,8 @@ contour, zero-sum, and zero-free estimates without losing more in the smoothing
 transfer than the optimizer recovers. For the actual finite-height explicit
 formula, the remaining analytic milestone is to prove a rigorously certified
 interval for `Re(A_T(x+h) - A_T(x))` from the actual residue sums and the
-difference of the two second-order contour remainders. The input format and
-Lean endpoint bridge now exist, but no candidate envelope has yet been proved
-on its full stated range.
+difference of the two second-order contour remainders. The contour difference
+is now reduced to actual edge differences, and its two outer right horizontal
+pieces have explicit `T^-2` control. The inner horizontal pieces and the left
+vertical difference remain open. The input format and Lean endpoint bridge now
+exist, but no candidate envelope has yet been proved on its full stated range.
