@@ -13,6 +13,10 @@ import HardyTheorem.HardyPhaseFullSecondMoment
 import HardyTheorem.HardyPhaseCorrelation
 import HardyTheorem.HardyPhaseLinearization
 import HardyTheorem.HardyPhaseLinearizedSum
+import HardyTheorem.HardyPhaseLinearizedEnergy
+import HardyTheorem.HardyPhaseStationaryScale
+import HardyTheorem.HardyPhaseFrequencyLowerBound
+import HardyTheorem.HardyPhaseAdditiveEnvelope
 import HardyTheorem.HardyPhaseHilbert
 import HardyTheorem.HardyOddMultiplicity
 import MathlibAux.SlidingIntervalCorrelation
@@ -20,6 +24,7 @@ import MathlibAux.DiscreteHilbertInequality
 import MathlibAux.DyadicLogHilbert
 import MathlibAux.DyadicPartition
 import MathlibAux.DyadicHarmonic
+import MathlibAux.LogRatioLowerBound
 import MathlibAux.LogKernelRemainder
 import MathlibAux.LogDirichletPolynomialMeanSquare
 import MathlibAux.LogarithmicHilbertIntegrationByParts
