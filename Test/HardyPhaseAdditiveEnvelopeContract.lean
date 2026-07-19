@@ -3,6 +3,8 @@ import HardyTheorem.HardyPhaseAdditiveEnvelope
 #check HardyTheorem.hardyPhaseAdditiveEnvelope
 #check HardyTheorem.hardyPhaseLinearizedEnvelope_le_additiveEnvelope
 #check HardyTheorem.normSq_hardyPhaseLinearizedCoeff_le_additiveEnvelope
+#check HardyTheorem.hardyPhaseAdditiveEnvelope_le_length
+#check HardyTheorem.normSq_hardyPhaseLinearizedCoeff_le_length
 
 example {n : ℕ} (hn : 0 < n) {delta t : ℝ}
     (ht : 0 < t) (hdelta : 0 ≤ delta) :
@@ -14,3 +16,5 @@ example {n : ℕ} (hn : 0 < n) {delta t : ℝ}
 
 #print axioms HardyTheorem.hardyPhaseLinearizedEnvelope_le_additiveEnvelope
 #print axioms HardyTheorem.normSq_hardyPhaseLinearizedCoeff_le_additiveEnvelope
+#print axioms HardyTheorem.hardyPhaseAdditiveEnvelope_le_length
+#print axioms HardyTheorem.normSq_hardyPhaseLinearizedCoeff_le_length

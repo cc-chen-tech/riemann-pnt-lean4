@@ -17,6 +17,7 @@ import HardyTheorem.HardyPhaseLinearizedEnergy
 import HardyTheorem.HardyPhaseStationaryScale
 import HardyTheorem.HardyPhaseFrequencyLowerBound
 import HardyTheorem.HardyPhaseAdditiveEnvelope
+import HardyTheorem.HardyPhaseCentralRightEnergy
 import HardyTheorem.HardyPhaseHilbert
 import HardyTheorem.HardyOddMultiplicity
 import MathlibAux.SlidingIntervalCorrelation
@@ -26,6 +27,7 @@ import MathlibAux.DyadicPartition
 import MathlibAux.DyadicHarmonic
 import MathlibAux.LogRatioLowerBound
 import MathlibAux.MinReciprocalSquareSum
+import MathlibAux.MinReciprocalSquareReindex
 import MathlibAux.LogKernelRemainder
 import MathlibAux.LogDirichletPolynomialMeanSquare
 import MathlibAux.LogarithmicHilbertIntegrationByParts

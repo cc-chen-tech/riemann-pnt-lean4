@@ -66,6 +66,14 @@ theorem hardyPhaseAdditiveEnvelope_nonneg
   · exact hdelta
   · exact le_min hdelta (by positivity)
 
+theorem hardyPhaseAdditiveEnvelope_le_length
+    (n : ℕ) {delta t : ℝ} :
+    hardyPhaseAdditiveEnvelope n delta t ≤ delta := by
+  unfold hardyPhaseAdditiveEnvelope
+  split_ifs
+  · exact le_rfl
+  · exact min_le_left _ _
+
 /-- Each linearized Hardy coefficient is controlled by the purely additive
 stationary-distance envelope. -/
 theorem normSq_hardyPhaseLinearizedCoeff_le_additiveEnvelope
@@ -89,5 +97,18 @@ theorem normSq_hardyPhaseLinearizedCoeff_le_additiveEnvelope
       (hardyPhaseLinearizedEnvelope_le_additiveEnvelope
         (Nat.ne_of_gt hn) ht) (by positivity)
   exact (sq_le_sq₀ hleft hright).2 hle
+
+/-- The unconditional length-energy estimate used for the one or two integer
+indices nearest the stationary real scale. -/
+theorem normSq_hardyPhaseLinearizedCoeff_le_length
+    {n : ℕ} (hn : 0 < n) {delta t : ℝ} (hdelta : 0 ≤ delta) :
+    Complex.normSq (hardyPhaseLinearizedCoeff n delta t) ≤
+      ((Real.sqrt n)⁻¹ * delta) ^ 2 := by
+  rw [Complex.normSq_eq_norm_sq]
+  have hleft : 0 ≤ ‖hardyPhaseLinearizedCoeff n delta t‖ := norm_nonneg _
+  have hright : 0 ≤ (Real.sqrt n)⁻¹ * delta :=
+    mul_nonneg (by positivity) hdelta
+  exact (sq_le_sq₀ hleft hright).2
+    (norm_hardyPhaseLinearizedCoeff_le_length hn hdelta)
 
 end HardyTheorem
