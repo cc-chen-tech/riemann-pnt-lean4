@@ -38,6 +38,7 @@ lean_lib RiemannPNT where
     `PrimeNumberTheorem.ExplicitFormulaAux,
     `PrimeNumberTheorem.LFunction.CompletedContourData,
     `PrimeNumberTheorem.RiemannVonMangoldt.GammaMainTerm,
+    `PrimeNumberTheorem.RiemannVonMangoldt.ZetaArgumentBound,
     `PrimeNumberTheorem.RiemannVonMangoldt,
     `ZeroFreeRegion,
     `ZeroFreeRegion.MeromorphicAux,
@@ -116,6 +117,7 @@ lean_lib RiemannPNT where
     `Test.HorizontalArgumentAxiomAudit,
     `Test.RiemannVonMangoldtGammaMainTermContract,
     `Test.RiemannVonMangoldtGammaMainTermAxiomAudit,
+    `Test.RiemannVonMangoldtZetaArgumentContract,
     `Test.RiemannVonMangoldtContract,
     `Test.RiemannVonMangoldtAxiomAudit
   ]
