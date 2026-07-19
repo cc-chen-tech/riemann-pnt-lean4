@@ -1,4 +1,6 @@
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Sinc
+import Mathlib.Analysis.Calculus.Deriv.MeanValue
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 import PrimeNumberTheorem.ScaledHilbertKernel
 
 namespace PrimeNumberTheorem
@@ -162,6 +164,52 @@ theorem continuous_carneiroLittmannDerivative :
   apply hChart.congr
   filter_upwards [eventually_ne_nhds hxNegOne] with y hy
   exact (carneiroLittmannDerivative_eq_sinc_zeroChart hy).symm
+
+/-- A finite-interval primitive of the concrete Carneiro--Littmann derivative.
+The improper-integral normalization used in the extremal majorant is a later
+step; this definition isolates the local calculus first. -/
+noncomputable def carneiroLittmannPrimitive (x : ℝ) : ℝ :=
+  ∫ u in (0 : ℝ)..x, carneiroLittmannDerivative u
+
+@[simp] theorem carneiroLittmannPrimitive_zero :
+    carneiroLittmannPrimitive 0 = 0 := by
+  simp [carneiroLittmannPrimitive]
+
+/-- The finite-interval primitive has the filled derivative everywhere. -/
+theorem hasDerivAt_carneiroLittmannPrimitive (x : ℝ) :
+    HasDerivAt carneiroLittmannPrimitive (carneiroLittmannDerivative x) x := by
+  exact intervalIntegral.integral_hasDerivAt_right
+    (continuous_carneiroLittmannDerivative.intervalIntegrable 0 x)
+    continuous_carneiroLittmannDerivative.aestronglyMeasurable.stronglyMeasurableAtFilter
+    continuous_carneiroLittmannDerivative.continuousAt
+
+/-- The primitive increases up to its peak at zero. -/
+theorem monotoneOn_carneiroLittmannPrimitive_Iic :
+    MonotoneOn carneiroLittmannPrimitive (Set.Iic 0) := by
+  have hDiff : Differentiable ℝ carneiroLittmannPrimitive :=
+    fun x ↦ (hasDerivAt_carneiroLittmannPrimitive x).differentiableAt
+  refine monotoneOn_of_hasDerivWithinAt_nonneg
+    (f' := carneiroLittmannDerivative) (convex_Iic (0 : ℝ))
+    hDiff.continuous.continuousOn ?_ ?_
+  · intro x hx
+    exact (hasDerivAt_carneiroLittmannPrimitive x).hasDerivWithinAt
+  · intro x hx
+    have hxNeg : x < 0 := by simpa only [interior_Iic] using hx
+    exact carneiroLittmannDerivative_nonneg_of_neg hxNeg
+
+/-- The primitive decreases after its peak at zero. -/
+theorem antitoneOn_carneiroLittmannPrimitive_Ici :
+    AntitoneOn carneiroLittmannPrimitive (Set.Ici 0) := by
+  have hDiff : Differentiable ℝ carneiroLittmannPrimitive :=
+    fun x ↦ (hasDerivAt_carneiroLittmannPrimitive x).differentiableAt
+  refine antitoneOn_of_hasDerivWithinAt_nonpos
+    (f' := carneiroLittmannDerivative) (convex_Ici (0 : ℝ))
+    hDiff.continuous.continuousOn ?_ ?_
+  · intro x hx
+    exact (hasDerivAt_carneiroLittmannPrimitive x).hasDerivWithinAt
+  · intro x hx
+    have hxPos : 0 < x := by simpa only [interior_Ici] using hx
+    exact carneiroLittmannDerivative_nonpos_of_pos hxPos
 
 end DirichletPolynomial
 end PrimeNumberTheorem

@@ -45,6 +45,19 @@ example : ContinuousAt carneiroLittmannDerivative (-1) :=
 example : Continuous carneiroLittmannDerivative :=
   continuous_carneiroLittmannDerivative
 
+example : carneiroLittmannPrimitive 0 = 0 :=
+  carneiroLittmannPrimitive_zero
+
+example (x : ℝ) :
+    HasDerivAt carneiroLittmannPrimitive (carneiroLittmannDerivative x) x :=
+  hasDerivAt_carneiroLittmannPrimitive x
+
+example : MonotoneOn carneiroLittmannPrimitive (Set.Iic 0) :=
+  monotoneOn_carneiroLittmannPrimitive_Iic
+
+example : AntitoneOn carneiroLittmannPrimitive (Set.Ici 0) :=
+  antitoneOn_carneiroLittmannPrimitive_Ici
+
 #print axioms carneiroLittmannDerivative_neg_one
 #print axioms carneiroLittmannDerivative_zero
 #print axioms carneiroLittmannDerivative_eq_formula
@@ -56,6 +69,10 @@ example : Continuous carneiroLittmannDerivative :=
 #print axioms continuousAt_carneiroLittmannDerivative_zero
 #print axioms continuousAt_carneiroLittmannDerivative_neg_one
 #print axioms continuous_carneiroLittmannDerivative
+#print axioms carneiroLittmannPrimitive_zero
+#print axioms hasDerivAt_carneiroLittmannPrimitive
+#print axioms monotoneOn_carneiroLittmannPrimitive_Iic
+#print axioms antitoneOn_carneiroLittmannPrimitive_Ici
 
 end DirichletPolynomial
 end PrimeNumberTheorem
