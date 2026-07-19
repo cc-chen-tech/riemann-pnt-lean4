@@ -15,6 +15,13 @@ noncomputable def discreteHilbertForm
     if m = n then 0
     else (starRingEnd ℂ) (coeff n) * coeff m / ((m : ℂ) - (n : ℂ))
 
+/-- The two-sequence version of the finite discrete Hilbert form. -/
+noncomputable def discreteHilbertBilinearForm
+    (s : Finset ℕ) (left right : ℕ → ℂ) : ℂ :=
+  ∑ m ∈ s, ∑ n ∈ s,
+    if m = n then 0
+    else (starRingEnd ℂ) (left n) * right m / ((m : ℂ) - (n : ℂ))
+
 private theorem integral_cexp_int_frequency_eq_zero
     (k : ℤ) (hk : k ≠ 0) :
     (∫ t in (0 : ℝ)..2 * Real.pi,
@@ -432,6 +439,41 @@ private theorem integral_normSq_exponentialPolynomial_nat_eq
     apply Continuous.intervalIntegrable
     fun_prop
 
+private theorem four_mul_discreteHilbertBilinearForm_eq_polarization
+    (s : Finset ℕ) (left right : ℕ → ℂ) :
+    4 * discreteHilbertBilinearForm s left right =
+      discreteHilbertForm s (fun n => left n + right n) -
+        discreteHilbertForm s (fun n => left n - right n) -
+        I * discreteHilbertForm s (fun n => left n + I * right n) +
+        I * discreteHilbertForm s (fun n => left n - I * right n) := by
+  unfold discreteHilbertBilinearForm discreteHilbertForm
+  simp only [Finset.mul_sum]
+  rw [← Finset.sum_sub_distrib, ← Finset.sum_sub_distrib,
+    ← Finset.sum_add_distrib]
+  apply Finset.sum_congr rfl
+  intro m hm
+  rw [← Finset.sum_sub_distrib, ← Finset.sum_sub_distrib,
+    ← Finset.sum_add_distrib]
+  apply Finset.sum_congr rfl
+  intro n hn
+  by_cases hmn : m = n
+  · simp [hmn]
+  · simp only [hmn, ↓reduceIte, map_add, map_sub, map_mul, conj_I]
+    have hden : (m : ℂ) - (n : ℂ) ≠ 0 := by
+      exact sub_ne_zero.mpr (Nat.cast_injective.ne hmn)
+    field_simp [hden]
+    ring_nf
+    rw [Complex.I_sq]
+    ring
+
+private theorem normSq_four_polarization_sum (x y : ℂ) :
+    Complex.normSq (x + y) + Complex.normSq (x - y) +
+        Complex.normSq (x + I * y) + Complex.normSq (x - I * y) =
+      4 * (Complex.normSq x + Complex.normSq y) := by
+  simp only [Complex.normSq_apply, add_re, add_im, sub_re, sub_im,
+    mul_re, mul_im, I_re, I_im, zero_mul, one_mul, zero_sub]
+  ring
+
 /-- Hilbert's finite discrete inequality with its classical constant `π`.
 The proof realizes the kernel `1 / (m - n)` as a Fourier coefficient of the
 bounded sawtooth `π - t` and uses exact orthogonality of integer frequencies. -/
@@ -497,6 +539,90 @@ theorem norm_discreteHilbertForm_le_pi_mul_sum_normSq
     apply Finset.sum_nonneg
     intro n hn
     exact Complex.normSq_nonneg (coeff n)
+  nlinarith [Real.pi_pos]
+
+/-- Bilinear Hilbert inequality in a polarization-friendly form.  The right
+side is homogeneous after reciprocal rescaling of the two input sequences,
+which is the form needed on dyadic logarithmic-frequency blocks. -/
+theorem norm_discreteHilbertBilinearForm_le_pi_mul_add_sum_normSq
+    (s : Finset ℕ) (left right : ℕ → ℂ) :
+    ‖discreteHilbertBilinearForm s left right‖ ≤
+      Real.pi * ((∑ n ∈ s, Complex.normSq (left n)) +
+        ∑ n ∈ s, Complex.normSq (right n)) := by
+  let qpp := discreteHilbertForm s (fun n => left n + right n)
+  let qpm := discreteHilbertForm s (fun n => left n - right n)
+  let qip := discreteHilbertForm s (fun n => left n + I * right n)
+  let qim := discreteHilbertForm s (fun n => left n - I * right n)
+  have hqpp : ‖qpp‖ ≤ Real.pi *
+      ∑ n ∈ s, Complex.normSq (left n + right n) := by
+    exact norm_discreteHilbertForm_le_pi_mul_sum_normSq _ _
+  have hqpm : ‖qpm‖ ≤ Real.pi *
+      ∑ n ∈ s, Complex.normSq (left n - right n) := by
+    exact norm_discreteHilbertForm_le_pi_mul_sum_normSq _ _
+  have hqip : ‖qip‖ ≤ Real.pi *
+      ∑ n ∈ s, Complex.normSq (left n + I * right n) := by
+    exact norm_discreteHilbertForm_le_pi_mul_sum_normSq _ _
+  have hqim : ‖qim‖ ≤ Real.pi *
+      ∑ n ∈ s, Complex.normSq (left n - I * right n) := by
+    exact norm_discreteHilbertForm_le_pi_mul_sum_normSq _ _
+  have hpolar :
+      4 * discreteHilbertBilinearForm s left right =
+        qpp - qpm - I * qip + I * qim := by
+    simpa only [qpp, qpm, qip, qim] using
+      four_mul_discreteHilbertBilinearForm_eq_polarization s left right
+  have htriangle : ‖qpp - qpm - I * qip + I * qim‖ ≤
+      ‖qpp‖ + ‖qpm‖ + ‖qip‖ + ‖qim‖ := by
+    calc
+      ‖qpp - qpm - I * qip + I * qim‖ ≤
+          ‖qpp - qpm - I * qip‖ + ‖I * qim‖ := norm_add_le _ _
+      _ ≤ (‖qpp - qpm‖ + ‖I * qip‖) + ‖I * qim‖ := by
+        gcongr
+        exact norm_sub_le _ _
+      _ ≤ ((‖qpp‖ + ‖qpm‖) + ‖qip‖) + ‖qim‖ := by
+        rw [norm_mul, norm_mul, norm_I, one_mul, one_mul]
+        gcongr
+        exact norm_sub_le _ _
+      _ = ‖qpp‖ + ‖qpm‖ + ‖qip‖ + ‖qim‖ := by ring
+  have hsumPolar :
+      (∑ n ∈ s, Complex.normSq (left n + right n)) +
+          (∑ n ∈ s, Complex.normSq (left n - right n)) +
+          (∑ n ∈ s, Complex.normSq (left n + I * right n)) +
+          (∑ n ∈ s, Complex.normSq (left n - I * right n)) =
+        4 * ((∑ n ∈ s, Complex.normSq (left n)) +
+          ∑ n ∈ s, Complex.normSq (right n)) := by
+    rw [← Finset.sum_add_distrib, ← Finset.sum_add_distrib,
+      ← Finset.sum_add_distrib]
+    calc
+      (∑ n ∈ s,
+          (Complex.normSq (left n + right n) +
+            Complex.normSq (left n - right n) +
+            Complex.normSq (left n + I * right n) +
+            Complex.normSq (left n - I * right n))) =
+          ∑ n ∈ s, 4 *
+            (Complex.normSq (left n) + Complex.normSq (right n)) := by
+        apply Finset.sum_congr rfl
+        intro n hn
+        exact normSq_four_polarization_sum (left n) (right n)
+      _ = 4 * ((∑ n ∈ s, Complex.normSq (left n)) +
+          ∑ n ∈ s, Complex.normSq (right n)) := by
+        simp only [← Finset.mul_sum, Finset.sum_add_distrib]
+  have hscale :
+      ‖4 * discreteHilbertBilinearForm s left right‖ =
+        4 * ‖discreteHilbertBilinearForm s left right‖ := by
+    simp
+  have htotal :
+      4 * ‖discreteHilbertBilinearForm s left right‖ ≤
+        Real.pi *
+          ((∑ n ∈ s, Complex.normSq (left n + right n)) +
+            (∑ n ∈ s, Complex.normSq (left n - right n)) +
+            (∑ n ∈ s, Complex.normSq (left n + I * right n)) +
+            (∑ n ∈ s, Complex.normSq (left n - I * right n))) := by
+    rw [← hscale, hpolar]
+    calc
+      ‖qpp - qpm - I * qip + I * qim‖ ≤
+          ‖qpp‖ + ‖qpm‖ + ‖qip‖ + ‖qim‖ := htriangle
+      _ ≤ _ := by nlinarith [Real.pi_pos]
+  rw [hsumPolar] at htotal
   nlinarith [Real.pi_pos]
 
 end MathlibAux
