@@ -111,6 +111,120 @@ def test_tampered_ldlt_certificate_fails_exact_check():
     assert not weil.verify_ldlt_certificate(matrix, tampered)
 
 
+def test_interval_certificate_proves_positive_definiteness_from_center_radius():
+    enclosure = weil.interval_matrix_from_center_radius(
+        [[4, 2], [2, 3]],
+        [["1/10", "1/10"], ["1/10", "1/10"]],
+    )
+
+    certificate = weil.certify_interval_matrix(enclosure)
+
+    assert certificate.center_lower_bound == Fraction(8, 9)
+    assert certificate.perturbation_row_bound == Fraction(1, 5)
+    assert weil.verify_interval_matrix_certificate(
+        enclosure, certificate, require_positive=True
+    )
+
+
+def test_lower_upper_and_center_radius_define_the_same_enclosure():
+    from_bounds = weil.interval_matrix_from_bounds(
+        [["39/10", "19/10"], ["19/10", "29/10"]],
+        [["41/10", "21/10"], ["21/10", "31/10"]],
+    )
+    from_center_radius = weil.interval_matrix_from_center_radius(
+        [[4, 2], [2, 3]],
+        [["1/10", "1/10"], ["1/10", "1/10"]],
+    )
+
+    assert from_bounds == from_center_radius
+
+
+def test_interval_certificate_distinguishes_psd_boundary_from_pd():
+    enclosure = weil.interval_matrix_from_center_radius(
+        [[4, 2], [2, 3]],
+        [["4/9", "4/9"], ["4/9", "4/9"]],
+    )
+    certificate = weil.certify_interval_matrix(enclosure)
+
+    assert certificate.center_lower_bound == Fraction(8, 9)
+    assert certificate.perturbation_row_bound == Fraction(8, 9)
+    assert weil.verify_interval_matrix_certificate(enclosure, certificate)
+    assert not weil.verify_interval_matrix_certificate(
+        enclosure, certificate, require_positive=True
+    )
+
+
+@pytest.mark.parametrize(
+    ("center", "radius", "message"),
+    [
+        ([[1, 0], [0, 1]], [[0, 0]], "same shape"),
+        ([[1, 2], [0, 1]], [[0, 0], [0, 0]], "center.*symmetric"),
+        ([[1, 0], [0, 1]], [[0, 1], [0, 0]], "radius.*symmetric"),
+        ([[1, 0], [0, 1]], [[0, 0], [0, -1]], "nonnegative"),
+    ],
+)
+def test_center_radius_interval_validation_is_strict(center, radius, message):
+    with pytest.raises(ValueError, match=message):
+        weil.interval_matrix_from_center_radius(center, radius)
+
+
+@pytest.mark.parametrize(
+    ("lower", "upper", "message"),
+    [
+        ([[0, 0], [0, 0]], [[1, 0]], "same shape"),
+        ([[0, 1], [0, 0]], [[1, 1], [1, 1]], "lower.*symmetric"),
+        ([[0, 0], [0, 0]], [[1, 1], [0, 1]], "upper.*symmetric"),
+        ([[0, 0], [0, 2]], [[1, 0], [0, 1]], "lower.*upper"),
+    ],
+)
+def test_lower_upper_interval_validation_is_strict(lower, upper, message):
+    with pytest.raises(ValueError, match=message):
+        weil.interval_matrix_from_bounds(lower, upper)
+
+
+def test_interval_certificate_rejects_center_without_positive_ldlt_pivots():
+    enclosure = weil.interval_matrix_from_center_radius(
+        [[1, 2], [2, 1]], [[0, 0], [0, 0]]
+    )
+
+    with pytest.raises(ValueError, match="strictly positive"):
+        weil.certify_interval_matrix(enclosure)
+
+
+def test_interval_certificate_rejects_budget_that_exhausts_center_margin():
+    enclosure = weil.interval_matrix_from_center_radius(
+        [[4, 2], [2, 3]],
+        [["1/2", "1/2"], ["1/2", "1/2"]],
+    )
+    certificate = weil.certify_interval_matrix(enclosure)
+
+    assert certificate.perturbation_row_bound == 1
+    assert not weil.verify_interval_matrix_certificate(enclosure, certificate)
+
+
+def test_interval_certificate_recomputes_tampered_margin_and_inverse():
+    enclosure = weil.interval_matrix_from_center_radius(
+        [[4, 2], [2, 3]],
+        [["1/10", "1/10"], ["1/10", "1/10"]],
+    )
+    certificate = weil.certify_interval_matrix(enclosure)
+    tampered_margin = weil.IntervalMatrixCertificate(
+        ldlt=certificate.ldlt,
+        inverse_transpose=certificate.inverse_transpose,
+        center_lower_bound=certificate.center_lower_bound + 1,
+        perturbation_row_bound=certificate.perturbation_row_bound,
+    )
+    tampered_inverse = weil.IntervalMatrixCertificate(
+        ldlt=certificate.ldlt,
+        inverse_transpose=((Fraction(1), Fraction(0)), (Fraction(0), Fraction(1))),
+        center_lower_bound=certificate.center_lower_bound,
+        perturbation_row_bound=certificate.perturbation_row_bound,
+    )
+
+    assert not weil.verify_interval_matrix_certificate(enclosure, tampered_margin)
+    assert not weil.verify_interval_matrix_certificate(enclosure, tampered_inverse)
+
+
 def test_experiment_artifact_round_trip_is_canonical_and_self_checking(tmp_path):
     matrix = weil.fraction_matrix([[4, 2], [2, 3]])
     certificate = weil.ldlt_decompose(matrix)
@@ -252,6 +366,122 @@ def test_experiment_artifact_result_rejects_extra_keys(tmp_path):
     refresh_payload_digest(record)
 
     assert not weil.verify_experiment_artifact(record)
+
+
+def test_interval_artifact_round_trip_replays_enclosure_certificate(tmp_path):
+    enclosure = weil.interval_matrix_from_center_radius(
+        [[4, 2], [2, 3]],
+        [["1/10", "1/10"], ["1/10", "1/10"]],
+    )
+    certificate = weil.certify_interval_matrix(enclosure)
+    output = tmp_path / "interval-certificate.json"
+
+    record = weil.write_interval_experiment_artifact(
+        output,
+        enclosure,
+        certificate,
+        parameters={"c": 100, "N": 1, "assembly": "test-fixture"},
+    )
+
+    assert record["schema_version"] == "weil-extremal-kernel-interval-ldlt/v1"
+    assert record["claim_scope"] == "finite-rational-interval-matrix-only"
+    assert record["enclosure"]["lower"] == [
+        ["39/10", "19/10"],
+        ["19/10", "29/10"],
+    ]
+    assert record["certificate"]["inverse_transpose"] == [
+        ["1", "-1/2"],
+        ["0", "1"],
+    ]
+    assert record["result"] == {
+        "center_lower_bound": "8/9",
+        "certified_pd": True,
+        "certified_psd": True,
+        "exact_center_reconstruction": True,
+        "inverse_transpose_identity": True,
+        "perturbation_row_bound": "1/5",
+        "positive_diagonal": True,
+    }
+    assert weil.verify_interval_experiment_artifact(record)
+    assert weil.verify_interval_experiment_artifact_file(output)
+
+
+@pytest.mark.parametrize(
+    ("path", "replacement"),
+    [
+        (("certificate", "diagonal", 1), "3"),
+        (("certificate", "inverse_transpose", 0, 1), "0"),
+        (("result", "center_lower_bound"), "100"),
+        (("result", "certified_pd"), 1),
+        (("enclosure", "upper", 0, 1), "100"),
+    ],
+)
+def test_interval_artifact_rejects_rehashed_adversarial_tampering(
+    tmp_path, path, replacement
+):
+    enclosure = weil.interval_matrix_from_center_radius(
+        [[4, 2], [2, 3]],
+        [["1/10", "1/10"], ["1/10", "1/10"]],
+    )
+    output = tmp_path / "interval-certificate.json"
+    record = weil.write_interval_experiment_artifact(
+        output,
+        enclosure,
+        weil.certify_interval_matrix(enclosure),
+        parameters={"c": 100, "N": 1},
+    )
+    target = record
+    for key in path[:-1]:
+        target = target[key]
+    target[path[-1]] = replacement
+    refresh_payload_digest(record)
+
+    assert not weil.verify_interval_experiment_artifact(record)
+
+
+def test_cli_certifies_and_replays_center_radius_interval(tmp_path):
+    input_path = tmp_path / "interval.json"
+    output_path = tmp_path / "interval-certificate.json"
+    input_path.write_text(
+        json.dumps(
+            {
+                "center": [["4", "2"], ["2", "3"]],
+                "radius": [["1/10", "1/10"], ["1/10", "1/10"]],
+                "parameters": {"c": 100, "N": 1},
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    certify = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "experiments.rh.weil_extremal_kernels",
+            "certify-interval",
+            str(input_path),
+            str(output_path),
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    verify = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "experiments.rh.weil_extremal_kernels",
+            "verify-interval",
+            str(output_path),
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    assert certify.stdout.strip() == "certified interval matrix positive definite: true"
+    assert verify.stdout.strip() == "valid interval LDL^T artifact: true"
 
 
 def test_cli_certify_and_verify_round_trip(tmp_path):

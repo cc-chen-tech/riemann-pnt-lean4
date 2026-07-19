@@ -15,6 +15,20 @@ separate, rigorous enclosure argument proves the required relation between the
 two matrices. Floating-point eigenvalues, however many digits are printed, do
 not supply that relation.
 
+## Second executable milestone outcome
+
+The exact checker now accepts a symmetric rational interval matrix, factors
+its rational center, verifies the inverse-transpose data exactly, and compares
+a rigorous center lower bound with the maximum interval-radius row sum. The
+corresponding Lean theorems prove that a symmetric entrywise perturbation with
+that row budget preserves positive semidefiniteness, and preserves positive
+definiteness when the budget inequality is strict.
+
+This closes a generic finite interval-transfer step only. No entry of
+`Q_infinity(100, 200)` or `Q_infinity(100, 250)` has been assembled or enclosed,
+and no Guinand--Weil prime, pole, or Archimedean block has been connected to the
+checker. Gates A and B therefore remain open.
+
 ## Registered Mathematical Target
 
 Use the even-sector, cutoff-free Connes--van Suijlekom / Connes--Consani--
@@ -118,8 +132,10 @@ A positive result must contain every link below.
 6. **Independent replay.** A clean process verifies the JSON artifact using
    only the standard-library checker from this repository.
 
-The Python prototype in the first milestone implements link 4 and the exact
-artifact plumbing. It does not implement links 1, 3, or 5.
+The first milestone implemented link 4 and exact artifact plumbing. The second
+milestone implements a generic rational interval reduction and perturbation
+transfer for links 3 and 5. Link 1 and the analytic instantiation of links 3
+and 5 for the registered Weil matrix remain absent.
 
 ## Quantitative Gates
 
@@ -266,9 +282,9 @@ the repository's Python 3.9 interpreter, the same command reported `10 passed`.
 
 ## Known Mathematical Gap
 
-The first milestone does not assemble `Q_infinity(c, N)`, prove interval
-containment for its transcendental entries, formalize the finite Guinand--Weil
-dictionary, or prove the analytic transfer from an interval matrix to a
-rational LDL certificate. Those are mandatory later milestones. Until they are
-closed, the executable checker certifies only the finite rational matrix stored
-in its artifact.
+The branch does not assemble `Q_infinity(c, N)`, prove interval containment for
+its transcendental entries, or formalize the finite Guinand--Weil dictionary.
+The generic interval-to-center perturbation theorem is now present, but no
+analytic matrix enclosure instantiates it. Until those missing links are
+closed, the executable checker certifies only the finite rational interval
+matrix stored in its artifact.

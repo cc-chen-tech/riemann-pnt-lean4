@@ -1,5 +1,5 @@
 import WeilExtremalKernels.FiniteQuadraticForm
 
-#print axioms WeilExtremalKernels.quadraticForm_ldlMatrix
-#print axioms WeilExtremalKernels.quadraticForm_ldlMatrix_nonneg
-#print axioms WeilExtremalKernels.quadraticForm_nonneg_of_certificate
+#print axioms WeilExtremalKernels.abs_quadraticForm_sub_le_rowBound
+#print axioms WeilExtremalKernels.quadraticForm_nonneg_of_interval
+#print axioms WeilExtremalKernels.quadraticForm_pos_of_interval

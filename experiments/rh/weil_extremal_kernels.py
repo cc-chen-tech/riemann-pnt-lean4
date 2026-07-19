@@ -11,6 +11,8 @@ from typing import Any, Iterable, Mapping, Sequence, Union
 
 SCHEMA_VERSION = "weil-extremal-kernel-ldlt/v1"
 CLAIM_SCOPE = "finite-rational-matrix-only"
+INTERVAL_SCHEMA_VERSION = "weil-extremal-kernel-interval-ldlt/v1"
+INTERVAL_CLAIM_SCOPE = "finite-rational-interval-matrix-only"
 
 RationalInput = Union[Fraction, int, str]
 Matrix = tuple[tuple[Fraction, ...], ...]
@@ -24,6 +26,20 @@ class LDLDecompositionError(ValueError):
 class LDLCertificate:
     lower: Matrix
     diagonal: tuple[Fraction, ...]
+
+
+@dataclass(frozen=True)
+class RationalIntervalMatrix:
+    lower: Matrix
+    upper: Matrix
+
+
+@dataclass(frozen=True)
+class IntervalMatrixCertificate:
+    ldlt: LDLCertificate
+    inverse_transpose: Matrix
+    center_lower_bound: Fraction
+    perturbation_row_bound: Fraction
 
 
 def _as_fraction(value: RationalInput) -> Fraction:
@@ -153,6 +169,233 @@ def verify_ldlt_certificate(
         for i in range(size)
         for j in range(size)
     )
+
+
+def _named_rows(rows: Iterable[Iterable[RationalInput]], name: str) -> Matrix:
+    try:
+        return tuple(tuple(_as_fraction(value) for value in row) for row in rows)
+    except (TypeError, ValueError) as error:
+        raise type(error)(f"invalid {name}: {error}") from error
+
+
+def _require_square(matrix: Matrix, name: str) -> None:
+    if not matrix or any(len(row) != len(matrix) for row in matrix):
+        raise ValueError(f"{name} must be a nonempty square matrix")
+
+
+def _require_symmetric(matrix: Matrix, name: str) -> None:
+    size = len(matrix)
+    if any(matrix[i][j] != matrix[j][i] for i in range(size) for j in range(i)):
+        raise ValueError(f"{name} must be symmetric")
+
+
+def interval_matrix_from_bounds(
+    lower: Iterable[Iterable[RationalInput]],
+    upper: Iterable[Iterable[RationalInput]],
+) -> RationalIntervalMatrix:
+    checked_lower = _named_rows(lower, "lower bound")
+    checked_upper = _named_rows(upper, "upper bound")
+    if len(checked_lower) != len(checked_upper) or any(
+        len(lower_row) != len(upper_row)
+        for lower_row, upper_row in zip(checked_lower, checked_upper)
+    ):
+        raise ValueError("lower and upper bounds must have the same shape and be nonempty")
+    _require_square(checked_lower, "lower bound")
+    _require_square(checked_upper, "upper bound")
+    _require_symmetric(checked_lower, "lower bound")
+    _require_symmetric(checked_upper, "upper bound")
+    size = len(checked_lower)
+    if any(
+        checked_lower[i][j] > checked_upper[i][j]
+        for i in range(size)
+        for j in range(size)
+    ):
+        raise ValueError("every lower bound must be at most its upper bound")
+    return RationalIntervalMatrix(lower=checked_lower, upper=checked_upper)
+
+
+def interval_matrix_from_center_radius(
+    center: Iterable[Iterable[RationalInput]],
+    radius: Iterable[Iterable[RationalInput]],
+) -> RationalIntervalMatrix:
+    checked_center = _named_rows(center, "center")
+    checked_radius = _named_rows(radius, "radius")
+    if len(checked_center) != len(checked_radius) or any(
+        len(center_row) != len(radius_row)
+        for center_row, radius_row in zip(checked_center, checked_radius)
+    ):
+        raise ValueError("center and radius must have the same shape and be nonempty")
+    _require_square(checked_center, "center")
+    _require_square(checked_radius, "radius")
+    _require_symmetric(checked_center, "center")
+    _require_symmetric(checked_radius, "radius")
+    size = len(checked_center)
+    if any(checked_radius[i][j] < 0 for i in range(size) for j in range(size)):
+        raise ValueError("radius entries must be nonnegative")
+    lower = tuple(
+        tuple(checked_center[i][j] - checked_radius[i][j] for j in range(size))
+        for i in range(size)
+    )
+    upper = tuple(
+        tuple(checked_center[i][j] + checked_radius[i][j] for j in range(size))
+        for i in range(size)
+    )
+    return RationalIntervalMatrix(lower=lower, upper=upper)
+
+
+def _interval_center(enclosure: RationalIntervalMatrix) -> Matrix:
+    size = len(enclosure.lower)
+    return tuple(
+        tuple((enclosure.lower[i][j] + enclosure.upper[i][j]) / 2 for j in range(size))
+        for i in range(size)
+    )
+
+
+def _interval_radius(enclosure: RationalIntervalMatrix) -> Matrix:
+    size = len(enclosure.lower)
+    return tuple(
+        tuple((enclosure.upper[i][j] - enclosure.lower[i][j]) / 2 for j in range(size))
+        for i in range(size)
+    )
+
+
+def _transpose(matrix: Matrix) -> Matrix:
+    size = len(matrix)
+    return tuple(tuple(matrix[j][i] for j in range(size)) for i in range(size))
+
+
+def _invert_matrix(matrix: Matrix) -> Matrix:
+    checked = fraction_matrix(matrix, require_symmetric=False)
+    size = len(checked)
+    augmented = [
+        list(checked[i]) + [Fraction(i == j) for j in range(size)]
+        for i in range(size)
+    ]
+    for column in range(size):
+        pivot_row = next(
+            (row for row in range(column, size) if augmented[row][column] != 0),
+            None,
+        )
+        if pivot_row is None:
+            raise ValueError("matrix is singular")
+        augmented[column], augmented[pivot_row] = (
+            augmented[pivot_row],
+            augmented[column],
+        )
+        pivot = augmented[column][column]
+        augmented[column] = [value / pivot for value in augmented[column]]
+        for row in range(size):
+            if row == column:
+                continue
+            multiplier = augmented[row][column]
+            augmented[row] = [
+                augmented[row][entry] - multiplier * augmented[column][entry]
+                for entry in range(2 * size)
+            ]
+    return tuple(tuple(row[size:]) for row in augmented)
+
+
+def _matrix_product(left: Matrix, right: Matrix) -> Matrix:
+    size = len(left)
+    return tuple(
+        tuple(
+            sum((left[i][k] * right[k][j] for k in range(size)), Fraction(0))
+            for j in range(size)
+        )
+        for i in range(size)
+    )
+
+
+def _is_identity(matrix: Matrix) -> bool:
+    size = len(matrix)
+    return all(matrix[i][j] == (1 if i == j else 0) for i in range(size) for j in range(size))
+
+
+def _inverse_norm_product(inverse: Matrix) -> Fraction:
+    size = len(inverse)
+    row_norm = max(sum((abs(value) for value in row), Fraction(0)) for row in inverse)
+    column_norm = max(
+        sum((abs(inverse[i][j]) for i in range(size)), Fraction(0))
+        for j in range(size)
+    )
+    return row_norm * column_norm
+
+
+def _interval_certificate_values(
+    enclosure: RationalIntervalMatrix,
+    ldlt: LDLCertificate,
+    inverse_transpose: Matrix,
+) -> tuple[Fraction, Fraction]:
+    diagonal_minimum = min(ldlt.diagonal)
+    center_lower_bound = diagonal_minimum / _inverse_norm_product(inverse_transpose)
+    radius = _interval_radius(enclosure)
+    perturbation_row_bound = max(
+        sum(row, Fraction(0)) for row in radius
+    )
+    return center_lower_bound, perturbation_row_bound
+
+
+def certify_interval_matrix(
+    enclosure: RationalIntervalMatrix,
+) -> IntervalMatrixCertificate:
+    checked_enclosure = interval_matrix_from_bounds(enclosure.lower, enclosure.upper)
+    center = _interval_center(checked_enclosure)
+    ldlt = ldlt_decompose(center)
+    if any(value <= 0 for value in ldlt.diagonal):
+        raise ValueError("center LDL diagonal must be strictly positive")
+    inverse_transpose = _invert_matrix(_transpose(ldlt.lower))
+    center_lower_bound, perturbation_row_bound = _interval_certificate_values(
+        checked_enclosure, ldlt, inverse_transpose
+    )
+    return IntervalMatrixCertificate(
+        ldlt=ldlt,
+        inverse_transpose=inverse_transpose,
+        center_lower_bound=center_lower_bound,
+        perturbation_row_bound=perturbation_row_bound,
+    )
+
+
+def verify_interval_matrix_certificate(
+    enclosure: RationalIntervalMatrix,
+    certificate: IntervalMatrixCertificate,
+    *,
+    require_positive: bool = False,
+) -> bool:
+    try:
+        checked_enclosure = interval_matrix_from_bounds(enclosure.lower, enclosure.upper)
+        center = _interval_center(checked_enclosure)
+        inverse_transpose = fraction_matrix(
+            certificate.inverse_transpose, require_symmetric=False
+        )
+        diagonal = _fraction_vector(certificate.ldlt.diagonal)
+        stored_center_lower_bound = _as_fraction(certificate.center_lower_bound)
+        stored_perturbation_row_bound = _as_fraction(
+            certificate.perturbation_row_bound
+        )
+    except (AttributeError, TypeError, ValueError, ZeroDivisionError):
+        return False
+    size = len(center)
+    if len(inverse_transpose) != size or len(diagonal) != size:
+        return False
+    if any(value <= 0 for value in diagonal):
+        return False
+    if not verify_ldlt_certificate(center, certificate.ldlt, require_nonnegative=False):
+        return False
+    if not _is_identity(
+        _matrix_product(inverse_transpose, _transpose(certificate.ldlt.lower))
+    ):
+        return False
+    center_lower_bound, perturbation_row_bound = _interval_certificate_values(
+        checked_enclosure, certificate.ldlt, inverse_transpose
+    )
+    if (
+        stored_center_lower_bound != center_lower_bound
+        or stored_perturbation_row_bound != perturbation_row_bound
+    ):
+        return False
+    if require_positive:
+        return perturbation_row_bound < center_lower_bound
+    return perturbation_row_bound <= center_lower_bound
 
 
 def _format_fraction(value: Fraction) -> str:
@@ -338,6 +581,187 @@ def verify_experiment_artifact_file(path: str | Path) -> bool:
     return artifact_bytes == canonical_bytes and verify_experiment_artifact(record)
 
 
+def _interval_inverse_identity(certificate: IntervalMatrixCertificate) -> bool:
+    try:
+        lower = fraction_matrix(certificate.ldlt.lower, require_symmetric=False)
+        inverse_transpose = fraction_matrix(
+            certificate.inverse_transpose, require_symmetric=False
+        )
+    except (TypeError, ValueError):
+        return False
+    if len(lower) != len(inverse_transpose):
+        return False
+    return _is_identity(_matrix_product(inverse_transpose, _transpose(lower)))
+
+
+def _interval_artifact_payload(
+    enclosure: RationalIntervalMatrix,
+    certificate: IntervalMatrixCertificate,
+    parameters: Mapping[str, Any],
+) -> dict[str, Any]:
+    center = _interval_center(enclosure)
+    exact_center_reconstruction = verify_ldlt_certificate(
+        center, certificate.ldlt, require_nonnegative=False
+    )
+    positive_diagonal = all(value > 0 for value in certificate.ldlt.diagonal)
+    inverse_transpose_identity = _interval_inverse_identity(certificate)
+    certified_psd = verify_interval_matrix_certificate(enclosure, certificate)
+    certified_pd = verify_interval_matrix_certificate(
+        enclosure, certificate, require_positive=True
+    )
+    return {
+        "certificate": {
+            "diagonal": [_format_fraction(value) for value in certificate.ldlt.diagonal],
+            "inverse_transpose": _format_matrix(certificate.inverse_transpose),
+            "lower": _format_matrix(certificate.ldlt.lower),
+        },
+        "claim_scope": INTERVAL_CLAIM_SCOPE,
+        "enclosure": {
+            "lower": _format_matrix(enclosure.lower),
+            "upper": _format_matrix(enclosure.upper),
+        },
+        "parameters": dict(parameters),
+        "result": {
+            "center_lower_bound": _format_fraction(certificate.center_lower_bound),
+            "certified_pd": certified_pd,
+            "certified_psd": certified_psd,
+            "exact_center_reconstruction": exact_center_reconstruction,
+            "inverse_transpose_identity": inverse_transpose_identity,
+            "perturbation_row_bound": _format_fraction(
+                certificate.perturbation_row_bound
+            ),
+            "positive_diagonal": positive_diagonal,
+        },
+        "schema_version": INTERVAL_SCHEMA_VERSION,
+    }
+
+
+def write_interval_experiment_artifact(
+    path: str | Path,
+    enclosure: RationalIntervalMatrix,
+    certificate: IntervalMatrixCertificate,
+    *,
+    parameters: Mapping[str, Any],
+) -> dict[str, Any]:
+    checked_enclosure = interval_matrix_from_bounds(enclosure.lower, enclosure.upper)
+    payload = _interval_artifact_payload(checked_enclosure, certificate, parameters)
+    record = {**payload, "payload_sha256": _payload_digest(payload)}
+    output_path = Path(path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_bytes((_canonical_json(record) + "\n").encode("utf-8"))
+    return record
+
+
+def verify_interval_experiment_artifact(record: Any) -> bool:
+    required_keys = {
+        "certificate",
+        "claim_scope",
+        "enclosure",
+        "parameters",
+        "payload_sha256",
+        "result",
+        "schema_version",
+    }
+    if not isinstance(record, dict) or set(record) != required_keys:
+        return False
+    if (
+        record["schema_version"] != INTERVAL_SCHEMA_VERSION
+        or record["claim_scope"] != INTERVAL_CLAIM_SCOPE
+        or not isinstance(record["parameters"], dict)
+        or not isinstance(record["payload_sha256"], str)
+    ):
+        return False
+    payload = {key: value for key, value in record.items() if key != "payload_sha256"}
+    try:
+        if _payload_digest(payload) != record["payload_sha256"]:
+            return False
+    except (TypeError, ValueError):
+        return False
+
+    enclosure_record = record["enclosure"]
+    if not isinstance(enclosure_record, dict) or set(enclosure_record) != {
+        "lower",
+        "upper",
+    }:
+        return False
+    if not _all_canonical_fraction_strings(
+        enclosure_record["lower"]
+    ) or not _all_canonical_fraction_strings(enclosure_record["upper"]):
+        return False
+
+    certificate_record = record["certificate"]
+    if not isinstance(certificate_record, dict) or set(certificate_record) != {
+        "diagonal",
+        "inverse_transpose",
+        "lower",
+    }:
+        return False
+    if not _all_canonical_fraction_strings(
+        certificate_record["lower"]
+    ) or not _all_canonical_fraction_strings(certificate_record["inverse_transpose"]):
+        return False
+    raw_diagonal = certificate_record["diagonal"]
+    if not isinstance(raw_diagonal, list) or not all(
+        _is_canonical_fraction_string(value) for value in raw_diagonal
+    ):
+        return False
+
+    result = record["result"]
+    boolean_result_keys = {
+        "certified_pd",
+        "certified_psd",
+        "exact_center_reconstruction",
+        "inverse_transpose_identity",
+        "positive_diagonal",
+    }
+    result_keys = boolean_result_keys | {
+        "center_lower_bound",
+        "perturbation_row_bound",
+    }
+    if not isinstance(result, dict) or set(result) != result_keys:
+        return False
+    if any(type(result[key]) is not bool for key in boolean_result_keys):
+        return False
+    if not _is_canonical_fraction_string(
+        result["center_lower_bound"]
+    ) or not _is_canonical_fraction_string(result["perturbation_row_bound"]):
+        return False
+
+    try:
+        enclosure = interval_matrix_from_bounds(
+            enclosure_record["lower"], enclosure_record["upper"]
+        )
+        certificate = IntervalMatrixCertificate(
+            ldlt=LDLCertificate(
+                lower=fraction_matrix(
+                    certificate_record["lower"], require_symmetric=False
+                ),
+                diagonal=_fraction_vector(raw_diagonal),
+            ),
+            inverse_transpose=fraction_matrix(
+                certificate_record["inverse_transpose"], require_symmetric=False
+            ),
+            center_lower_bound=_as_fraction(result["center_lower_bound"]),
+            perturbation_row_bound=_as_fraction(result["perturbation_row_bound"]),
+        )
+        expected_payload = _interval_artifact_payload(
+            enclosure, certificate, record["parameters"]
+        )
+    except (TypeError, ValueError, ZeroDivisionError):
+        return False
+    return payload == expected_payload
+
+
+def verify_interval_experiment_artifact_file(path: str | Path) -> bool:
+    try:
+        artifact_bytes = Path(path).read_bytes()
+        record = _load_strict_json(artifact_bytes)
+        canonical_bytes = (_canonical_json(record) + "\n").encode("utf-8")
+    except (OSError, TypeError, UnicodeError, ValueError):
+        return False
+    return artifact_bytes == canonical_bytes and verify_interval_experiment_artifact(record)
+
+
 def _certify(input_path: Path, output_path: Path) -> int:
     input_record = _load_strict_json(input_path.read_bytes())
     if not isinstance(input_record, dict) or "matrix" not in input_record:
@@ -361,6 +785,41 @@ def _verify(path: Path) -> int:
     return 0 if valid else 1
 
 
+def _certify_interval(input_path: Path, output_path: Path) -> int:
+    input_record = _load_strict_json(input_path.read_bytes())
+    if not isinstance(input_record, dict):
+        raise ValueError("interval input must be a JSON object")
+    parameters = input_record.get("parameters", {})
+    if not isinstance(parameters, dict):
+        raise ValueError("parameters must be a JSON object")
+    interval_keys = set(input_record) - {"parameters"}
+    if interval_keys == {"center", "radius"}:
+        enclosure = interval_matrix_from_center_radius(
+            input_record["center"], input_record["radius"]
+        )
+    elif interval_keys == {"lower", "upper"}:
+        enclosure = interval_matrix_from_bounds(
+            input_record["lower"], input_record["upper"]
+        )
+    else:
+        raise ValueError("input must contain exactly center/radius or lower/upper")
+    certificate = certify_interval_matrix(enclosure)
+    artifact = write_interval_experiment_artifact(
+        output_path, enclosure, certificate, parameters=parameters
+    )
+    print(
+        "certified interval matrix positive definite: "
+        f"{str(artifact['result']['certified_pd']).lower()}"
+    )
+    return 0
+
+
+def _verify_interval(path: Path) -> int:
+    valid = verify_interval_experiment_artifact_file(path)
+    print(f"valid interval LDL^T artifact: {str(valid).lower()}")
+    return 0 if valid else 1
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Create and verify exact rational LDL^T artifacts."
@@ -374,10 +833,21 @@ def main(argv: Sequence[str] | None = None) -> int:
     verify_parser = subparsers.add_parser("verify")
     verify_parser.add_argument("artifact", type=Path)
 
+    certify_interval_parser = subparsers.add_parser("certify-interval")
+    certify_interval_parser.add_argument("input", type=Path)
+    certify_interval_parser.add_argument("output", type=Path)
+
+    verify_interval_parser = subparsers.add_parser("verify-interval")
+    verify_interval_parser.add_argument("artifact", type=Path)
+
     args = parser.parse_args(argv)
     if args.command == "certify":
         return _certify(args.input, args.output)
-    return _verify(args.artifact)
+    if args.command == "verify":
+        return _verify(args.artifact)
+    if args.command == "certify-interval":
+        return _certify_interval(args.input, args.output)
+    return _verify_interval(args.artifact)
 
 
 if __name__ == "__main__":
