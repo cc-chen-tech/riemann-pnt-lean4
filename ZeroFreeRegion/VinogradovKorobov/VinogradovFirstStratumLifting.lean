@@ -62,6 +62,139 @@ theorem mem_vinogradovPrimePowerFirstNonsingularSolutionSet_iff
   simp [vinogradovPrimePowerFirstNonsingularSolutionSet,
     mem_vinogradovSolutionPairSetMod_iff, and_comm]
 
+/-- The one-based complete residue equivalence used to compare the first
+prime-power level with the residue-field block stratification. -/
+noncomputable def vinogradovFirstStratumCompleteResidueEquiv
+    (p : ℕ) [NeZero p] : Fin p ≃ ZMod p :=
+  (ZMod.finEquiv p).toEquiv.trans (Equiv.addRight 1)
+
+theorem vinogradovFirstStratumCompleteResidueEquiv_apply
+    (p : ℕ) [NeZero p] (x : Fin p) :
+    vinogradovFirstStratumCompleteResidueEquiv p x =
+      (x.val : ZMod p) + 1 := by
+  cases p with
+  | zero => exact (NeZero.ne 0 rfl).elim
+  | succ p =>
+      change (x + (1 : Fin (p + 1)) : Fin (p + 1)) =
+        (⟨x.val % (p + 1), Nat.mod_lt _ (Nat.succ_pos p)⟩ :
+          Fin (p + 1)) + 1
+      congr 1
+      apply Fin.ext
+      simp [Nat.mod_eq_of_lt x.isLt]
+
+/-- Coordinatewise complete-residue transport for an ordered tuple pair. -/
+noncomputable def vinogradovFirstStratumCompleteResiduePairEquiv
+    (p s : ℕ) [NeZero p] :
+    ((Fin s → Fin (p ^ (0 + 1))) ×
+        (Fin s → Fin (p ^ (0 + 1)))) ≃
+      ((Fin s → ZMod p) × (Fin s → ZMod p)) :=
+  Equiv.prodCongr
+    (Equiv.piCongrRight fun _ ↦
+      (finCongr (by simp)).trans
+        (vinogradovFirstStratumCompleteResidueEquiv p))
+    (Equiv.piCongrRight fun _ ↦
+      (finCongr (by simp)).trans
+        (vinogradovFirstStratumCompleteResidueEquiv p))
+
+/-- At the first prime level, retain the exact first-nonsingular condition on
+the left tuple and leave the right tuple unrestricted. -/
+noncomputable def vinogradovPrimeFirstNonsingularAmbientSet
+    (p k r q a : ℕ) [Fact p.Prime] :
+    Finset
+      ((Fin ((q + 1 + a) * k + r) → Fin (p ^ (0 + 1))) ×
+        (Fin ((q + 1 + a) * k + r) → Fin (p ^ (0 + 1)))) := by
+  classical
+  let s := (q + 1 + a) * k + r
+  let e := vinogradovFirstStratumCompleteResiduePairEquiv p s
+  exact
+    ((vinogradovFirstNonsingularResidueSet p k r q a).product
+      (Finset.univ : Finset (Fin s → ZMod p))).map e.symm.toEmbedding
+
+/-- Membership in the base ambient set is exactly the encoded first
+nonsingular block condition. -/
+theorem mem_vinogradovPrimeFirstNonsingularAmbientSet_iff
+    (p k r q a : ℕ) [Fact p.Prime]
+    (x y : Fin ((q + 1 + a) * k + r) → Fin (p ^ (0 + 1))) :
+    (x, y) ∈ vinogradovPrimeFirstNonsingularAmbientSet p k r q a ↔
+      VinogradovFirstNonsingularBlock p k r q a
+        (fun i ↦ (((x i).val + 1 : ℕ) : ZMod p)) := by
+  classical
+  let s := (q + 1 + a) * k + r
+  letI : NeZero p := ⟨(Fact.out : p.Prime).ne_zero⟩
+  let e := vinogradovFirstStratumCompleteResiduePairEquiv p s
+  have hxencode : (e (x, y)).1 =
+      (fun i ↦ (((x i).val + 1 : ℕ) : ZMod p)) := by
+    funext i
+    change vinogradovFirstStratumCompleteResidueEquiv p
+      (Fin.cast (by simp) (x i)) = _
+    simpa only [Nat.cast_add, Nat.cast_one] using
+      vinogradovFirstStratumCompleteResidueEquiv_apply p
+        (Fin.cast (by simp) (x i))
+  simp only [vinogradovPrimeFirstNonsingularAmbientSet, Finset.mem_map]
+  constructor
+  · rintro ⟨z, hz, hzx⟩
+    have hz_eq : z = e (x, y) := by
+      calc
+        z = e (e.symm z) := e.apply_symm_apply z |>.symm
+        _ = e (x, y) := congrArg e hzx
+    have hparts := Finset.mem_product.mp hz
+    rw [hz_eq, hxencode] at hparts
+    exact (mem_vinogradovFirstNonsingularResidueSet_iff
+      p k r q a _).mp hparts.1
+  · intro h
+    refine ⟨e (x, y), ?_, ?_⟩
+    · apply Finset.mem_product.mpr
+      constructor
+      · apply (mem_vinogradovFirstNonsingularResidueSet_iff
+          p k r q a _).mpr
+        rw [hxencode]
+        exact h
+      · simp
+    · change e.symm (e (x, y)) = (x, y)
+      simp
+
+/-- Exact cardinality of the base ambient first-nonsingular stratum. -/
+theorem card_vinogradovPrimeFirstNonsingularAmbientSet
+    (p k r q a : ℕ) [Fact p.Prime] :
+    (vinogradovPrimeFirstNonsingularAmbientSet p k r q a).card =
+      (p ^ k - p.descFactorial k) ^ q * p.descFactorial k *
+        p ^ (a * k + r) * p ^ ((q + 1 + a) * k + r) := by
+  classical
+  let s := (q + 1 + a) * k + r
+  rw [vinogradovPrimeFirstNonsingularAmbientSet, Finset.card_map]
+  change
+    ((vinogradovFirstNonsingularResidueSet p k r q a).product
+      (Finset.univ : Finset (Fin s → ZMod p))).card = _
+  calc
+    ((vinogradovFirstNonsingularResidueSet p k r q a).product
+        (Finset.univ : Finset (Fin s → ZMod p))).card =
+        (vinogradovFirstNonsingularResidueSet p k r q a).card *
+          (Finset.univ : Finset (Fin s → ZMod p)).card :=
+      Finset.card_product _ _
+    _ = _ := by
+      rw [card_vinogradovFirstNonsingularResidueSet]
+      simp only [Finset.card_univ, Fintype.card_fun, Fintype.card_fin,
+        ZMod.card, s]
+
+/-- The actual first-level modular solutions retain the exact `q`-block
+singular saving from the residue stratification. -/
+theorem card_vinogradovPrimePowerFirstNonsingularSolutionSet_zero_le
+    (p k r q a : ℕ) [Fact p.Prime] :
+    (vinogradovPrimePowerFirstNonsingularSolutionSet p k r q a 0).card ≤
+      (p ^ k - p.descFactorial k) ^ q * p.descFactorial k *
+        p ^ (a * k + r) * p ^ ((q + 1 + a) * k + r) := by
+  classical
+  have hsubset :
+      vinogradovPrimePowerFirstNonsingularSolutionSet p k r q a 0 ⊆
+        vinogradovPrimeFirstNonsingularAmbientSet p k r q a := by
+    intro xy hxy
+    apply (mem_vinogradovPrimeFirstNonsingularAmbientSet_iff
+      p k r q a xy.1 xy.2).mpr
+    exact (mem_vinogradovPrimePowerFirstNonsingularSolutionSet_iff
+      p k r q a 0 xy.1 xy.2).mp hxy |>.1
+  rw [← card_vinogradovPrimeFirstNonsingularAmbientSet p k r q a]
+  exact Finset.card_le_card hsubset
+
 /-- Cycling a first-nonsingular prime-power solution puts it in the standard
 Hensel solution set with a nonsingular head. -/
 theorem vinogradovCycledHeadTailPairEquiv_mem_nonsingular
