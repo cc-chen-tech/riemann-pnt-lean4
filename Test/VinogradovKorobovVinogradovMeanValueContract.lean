@@ -1,4 +1,4 @@
-import ZeroFreeRegion.VinogradovKorobov.VinogradovLargeValues
+import ZeroFreeRegion.VinogradovKorobov.VinogradovMomentMonotonicity
 
 open ZeroFreeRegion.VinogradovKorobov
 
@@ -75,3 +75,7 @@ open ZeroFreeRegion.VinogradovKorobov
 #check largeVinogradovCoefficientSet
 #check card_largeVinogradovCoefficientSet_mul_pow_le
 #check card_largeVinogradovCoefficientSet_mul_pow_le_of_meanValueEstimate
+#check norm_vinogradovWeylSumMod_le
+#check sum_norm_vinogradovWeylSumMod_pow_add_le
+#check vinogradovSolutionCountMod_add_le
+#check vinogradovSolutionCountNat_add_le
