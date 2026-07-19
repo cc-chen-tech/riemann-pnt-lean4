@@ -11,6 +11,11 @@ noncomputable example (H : ℕ → ℕ) (N : ℕ) (C : ℝ)
     (depth level : ℕ) (P : ℝ) : ℝ :=
   hybridProductRecursiveAProcessSquaredBound H N C depth level P
 
+example (N : ℕ) (C P : ℝ) (hC : 0 ≤ C) (hP : 0 < P) :
+    hybridProductLeafSquaredEnvelope N C P ≤
+      (N : ℝ) * Real.sqrt C * P⁻¹ :=
+  hybridProductLeafSquaredEnvelope_le_power N C P hC hP
+
 example (t : ℝ) (m N depth : ℕ) (shifts : List ℕ)
     (ht : 0 < t) (hm : 0 < m)
     (hshifts : ∀ h ∈ shifts, 0 < h) :

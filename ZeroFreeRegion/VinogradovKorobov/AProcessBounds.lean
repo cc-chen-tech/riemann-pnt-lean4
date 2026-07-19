@@ -1,5 +1,6 @@
 import ZeroFreeRegion.VinogradovKorobov.IteratedDifference
 import ZeroFreeRegion.VinogradovKorobov.Harmonic
+import ZeroFreeRegion.VinogradovKorobov.PowerSum
 
 namespace ZeroFreeRegion.VinogradovKorobov
 
@@ -217,6 +218,152 @@ theorem aProcessSquaredBound_le_reciprocal
       _ = 4 * (N : ℝ) * C * (1 + Real.log L) / L := by
         field_simp
         ring
+
+/-- One A-process step propagates a constant plus negative real-power child
+bound, halving the accumulated-product decay exponent through the square
+root. -/
+theorem aProcessSquaredBound_le_sqrt_add_rpow
+    (Q : ℕ → ℝ) (A D α : ℝ) (N L : ℕ)
+    (hL : 2 ≤ L) (hLN : L ≤ N)
+    (hA : 0 ≤ A) (hD : 0 ≤ D) (hα0 : 0 ≤ α) (hα2 : α < 2)
+    (hQ : ∀ ell ∈ Finset.Icc 1 (L - 1),
+      Q ell ≤ A + D * (ell : ℝ) ^ (-α)) :
+    aProcessSquaredBound (fun ell ↦ Real.sqrt (Q ell)) N L ≤
+      2 * (N : ℝ) ^ 2 / L +
+        4 * (N : ℝ) *
+          (Real.sqrt A * (L : ℝ) ^ 2 +
+            Real.sqrt D * (L : ℝ) * finiteRpowSumEnvelope L (α / 2)) /
+          (L : ℝ) ^ 2 := by
+  have hαhalf0 : 0 ≤ α / 2 := by linarith
+  have hαhalf1 : α / 2 < 1 := by linarith
+  have hsqrtAdd : ∀ x y : ℝ, 0 ≤ x → 0 ≤ y →
+      Real.sqrt (x + y) ≤ Real.sqrt x + Real.sqrt y := by
+    intro x y hx hy
+    apply (Real.sqrt_le_iff).2
+    refine ⟨add_nonneg (Real.sqrt_nonneg _) (Real.sqrt_nonneg _), ?_⟩
+    rw [add_sq, Real.sq_sqrt hx, Real.sq_sqrt hy]
+    nlinarith [mul_nonneg (Real.sqrt_nonneg x) (Real.sqrt_nonneg y)]
+  have hpoint : ∀ ell ∈ Finset.Icc 1 (L - 1),
+      Real.sqrt (Q ell) ≤
+        Real.sqrt A + Real.sqrt D * (ell : ℝ) ^ (-(α / 2)) := by
+    intro ell hell
+    have hell0 : 0 ≤ (ell : ℝ) := Nat.cast_nonneg ell
+    have hpow0 : 0 ≤ (ell : ℝ) ^ (-α) := Real.rpow_nonneg hell0 _
+    calc
+      Real.sqrt (Q ell) ≤ Real.sqrt (A + D * (ell : ℝ) ^ (-α)) :=
+        Real.sqrt_le_sqrt (hQ ell hell)
+      _ ≤ Real.sqrt A + Real.sqrt (D * (ell : ℝ) ^ (-α)) :=
+        hsqrtAdd A (D * (ell : ℝ) ^ (-α)) hA (mul_nonneg hD hpow0)
+      _ = Real.sqrt A + Real.sqrt D * (ell : ℝ) ^ (-(α / 2)) := by
+        have hsqrtPow : Real.sqrt ((ell : ℝ) ^ (-α)) =
+            (ell : ℝ) ^ (-(α / 2)) := by
+          rw [Real.sqrt_eq_rpow,
+            ← Real.rpow_mul hell0 (-α) (1 / 2 : ℝ)]
+          congr 1
+          ring
+        rw [Real.sqrt_mul hD, hsqrtPow]
+  have hweight :
+      (∑ ell ∈ Finset.Icc 1 (L - 1),
+          ((L : ℝ) - (ell : ℝ))) ≤ (L : ℝ) ^ 2 := by
+    simpa only [mul_one, one_mul] using
+      sum_aProcess_weights_le_sq_mul (fun _ ↦ 1) 1 L (by norm_num)
+        (fun _ _ ↦ le_rfl)
+  have hpower := weighted_rpow_neg_sum_le_envelope
+    L (α / 2) hL hαhalf0 hαhalf1
+  have hsum :
+      (∑ ell ∈ Finset.Icc 1 (L - 1),
+          ((L : ℝ) - (ell : ℝ)) * Real.sqrt (Q ell)) ≤
+        Real.sqrt A * (L : ℝ) ^ 2 +
+          Real.sqrt D * (L : ℝ) * finiteRpowSumEnvelope L (α / 2) := by
+    calc
+      (∑ ell ∈ Finset.Icc 1 (L - 1),
+          ((L : ℝ) - (ell : ℝ)) * Real.sqrt (Q ell)) ≤
+          ∑ ell ∈ Finset.Icc 1 (L - 1),
+            ((L : ℝ) - (ell : ℝ)) *
+              (Real.sqrt A + Real.sqrt D * (ell : ℝ) ^ (-(α / 2))) := by
+        apply Finset.sum_le_sum
+        intro ell hell
+        have hellL : ell ≤ L := by
+          have := (Finset.mem_Icc.mp hell).2
+          omega
+        exact mul_le_mul_of_nonneg_left (hpoint ell hell)
+          (sub_nonneg.mpr (by exact_mod_cast hellL))
+      _ = Real.sqrt A *
+            (∑ ell ∈ Finset.Icc 1 (L - 1),
+              ((L : ℝ) - (ell : ℝ))) +
+          Real.sqrt D *
+            (∑ ell ∈ Finset.Icc 1 (L - 1),
+              ((L : ℝ) - (ell : ℝ)) *
+                (ell : ℝ) ^ (-(α / 2))) := by
+        calc
+          (∑ ell ∈ Finset.Icc 1 (L - 1),
+              ((L : ℝ) - (ell : ℝ)) *
+                (Real.sqrt A +
+                  Real.sqrt D * (ell : ℝ) ^ (-(α / 2)))) =
+              ∑ ell ∈ Finset.Icc 1 (L - 1),
+                (Real.sqrt A * ((L : ℝ) - (ell : ℝ)) +
+                  Real.sqrt D * (((L : ℝ) - (ell : ℝ)) *
+                    (ell : ℝ) ^ (-(α / 2)))) := by
+            apply Finset.sum_congr rfl
+            intro ell hell
+            ring
+          _ = _ := by
+            rw [Finset.sum_add_distrib, Finset.mul_sum, Finset.mul_sum]
+      _ ≤ Real.sqrt A * (L : ℝ) ^ 2 +
+          Real.sqrt D *
+            ((L : ℝ) * finiteRpowSumEnvelope L (α / 2)) :=
+        add_le_add
+          (mul_le_mul_of_nonneg_left hweight (Real.sqrt_nonneg _))
+          (mul_le_mul_of_nonneg_left hpower (Real.sqrt_nonneg _))
+      _ = Real.sqrt A * (L : ℝ) ^ 2 +
+          Real.sqrt D * (L : ℝ) * finiteRpowSumEnvelope L (α / 2) := by
+        ring
+  have hLpos : 0 < (L : ℝ) := Nat.cast_pos.mpr (by omega)
+  have hspan :
+      (N : ℝ) + ((L : ℝ) - 1) ≤ 2 * (N : ℝ) := by
+    have hLNR : (L : ℝ) ≤ (N : ℝ) := by exact_mod_cast hLN
+    linarith
+  have hsumNonneg : 0 ≤
+      Real.sqrt A * (L : ℝ) ^ 2 +
+        Real.sqrt D * (L : ℝ) * finiteRpowSumEnvelope L (α / 2) := by
+    have henv := finiteRpowSumEnvelope_nonneg
+      L (α / 2) hL hαhalf0 hαhalf1
+    positivity
+  have hsumActualNonneg : 0 ≤
+      ∑ ell ∈ Finset.Icc 1 (L - 1),
+        ((L : ℝ) - (ell : ℝ)) * Real.sqrt (Q ell) := by
+    apply Finset.sum_nonneg
+    intro ell hell
+    have hellL : ell ≤ L := by
+      have := (Finset.mem_Icc.mp hell).2
+      omega
+    exact mul_nonneg (sub_nonneg.mpr (by exact_mod_cast hellL))
+      (Real.sqrt_nonneg _)
+  unfold aProcessSquaredBound
+  apply add_le_add
+  · apply div_le_div_of_nonneg_right _ hLpos.le
+    calc
+      ((N : ℝ) + ((L : ℝ) - 1)) * N ≤
+          (2 * (N : ℝ)) * N :=
+        mul_le_mul_of_nonneg_right hspan (Nat.cast_nonneg N)
+      _ = 2 * (N : ℝ) ^ 2 := by ring
+  · calc
+      (2 * ((N : ℝ) + ((L : ℝ) - 1)) *
+          ∑ ell ∈ Finset.Icc 1 (L - 1),
+            ((L : ℝ) - (ell : ℝ)) * Real.sqrt (Q ell)) /
+          (L : ℝ) ^ 2 ≤
+        (2 * (2 * (N : ℝ)) *
+          (Real.sqrt A * (L : ℝ) ^ 2 +
+            Real.sqrt D * (L : ℝ) * finiteRpowSumEnvelope L (α / 2))) /
+          (L : ℝ) ^ 2 := by
+        apply div_le_div_of_nonneg_right _ (sq_nonneg (L : ℝ))
+        exact mul_le_mul
+          (mul_le_mul_of_nonneg_left hspan (by norm_num)) hsum
+          hsumActualNonneg (by positivity)
+      _ = 4 * (N : ℝ) *
+          (Real.sqrt A * (L : ℝ) ^ 2 +
+            Real.sqrt D * (L : ℝ) * finiteRpowSumEnvelope L (α / 2)) /
+          (L : ℝ) ^ 2 := by ring
 
 /-- The reciprocal sum on the A-process shift range is bounded by the usual
 harmonic majorant. -/

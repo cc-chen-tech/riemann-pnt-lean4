@@ -36,6 +36,20 @@ example (B : ℕ → ℝ) (C : ℝ) (N L : ℕ)
   aProcessSquaredBound_le_reciprocal
     B C N L hL hLN hC hB0 hB
 
+example (Q : ℕ → ℝ) (A D α : ℝ) (N L : ℕ)
+    (hL : 2 ≤ L) (hLN : L ≤ N)
+    (hA : 0 ≤ A) (hD : 0 ≤ D) (hα0 : 0 ≤ α) (hα2 : α < 2)
+    (hQ : ∀ ell ∈ Finset.Icc 1 (L - 1),
+      Q ell ≤ A + D * (ell : ℝ) ^ (-α)) :
+    aProcessSquaredBound (fun ell ↦ Real.sqrt (Q ell)) N L ≤
+      2 * (N : ℝ) ^ 2 / L +
+        4 * (N : ℝ) *
+          (Real.sqrt A * (L : ℝ) ^ 2 +
+            Real.sqrt D * (L : ℝ) * finiteRpowSumEnvelope L (α / 2)) /
+          (L : ℝ) ^ 2 :=
+  aProcessSquaredBound_le_sqrt_add_rpow
+    Q A D α N L hL hLN hA hD hα0 hα2 hQ
+
 example (L : ℕ) :
     (∑ ell ∈ Finset.Icc 1 (L - 1),
         ((L : ℝ) - (ell : ℝ)) * (Real.sqrt ell)⁻¹) ≤

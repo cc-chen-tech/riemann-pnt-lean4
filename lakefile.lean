@@ -126,6 +126,7 @@ lean_lib RiemannPNT where
     `Test.VinogradovKorobovScaledSecondDifferenceSumContract,
     `Test.VinogradovKorobovScaledTwoAProcessLogSumContract,
     `Test.VinogradovKorobovAProcessBoundsContract,
+    `Test.VinogradovKorobovPowerSumContract,
     `Test.VinogradovKorobovExplicitTwoAProcessBoundContract,
     `Test.VinogradovKorobovRecursiveAProcessContract,
     `Test.VinogradovKorobovHigherDifferenceIntegralContract,
@@ -137,6 +138,8 @@ lean_lib RiemannPNT where
     `Test.VinogradovKorobovAProcessScheduleContract,
     `Test.VinogradovKorobovConstantAProcessScheduleContract,
     `Test.VinogradovKorobovRecursiveReciprocalEnvelopeContract,
+    `Test.VinogradovKorobovHybridAProcessEnvelopeContract,
+    `Test.VinogradovKorobovPowerDecayAProcessContract,
     `Test.VinogradovKorobovVanDerCorputRangeContract,
     `Test.VinogradovKorobovLogVanDerCorputContract
   ]

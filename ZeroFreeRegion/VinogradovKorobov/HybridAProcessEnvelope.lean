@@ -10,6 +10,39 @@ noncomputable def hybridProductLeafSquaredEnvelope
     (N : ℕ) (C P : ℝ) : ℝ :=
   min ((N : ℝ) ^ 2) (C / P ^ 2)
 
+/-- The geometric-mean interpolation of the trivial and reciprocal-product
+leaf bounds produces one full inverse power of the accumulated product. -/
+theorem hybridProductLeafSquaredEnvelope_le_power
+    (N : ℕ) (C P : ℝ) (hC : 0 ≤ C) (hP : 0 < P) :
+    hybridProductLeafSquaredEnvelope N C P ≤
+      (N : ℝ) * Real.sqrt C * P⁻¹ := by
+  let A : ℝ := (N : ℝ) ^ 2
+  let B : ℝ := C / P ^ 2
+  have hA : 0 ≤ A := sq_nonneg _
+  have hB : 0 ≤ B := div_nonneg hC (sq_nonneg P)
+  have hgeom : min A B ≤ Real.sqrt (A * B) := by
+    rcases le_total A B with hAB | hBA
+    · rw [min_eq_left hAB]
+      apply (Real.le_sqrt hA (mul_nonneg hA hB)).2
+      simpa only [pow_two, mul_assoc] using
+        mul_le_mul_of_nonneg_left hAB hA
+    · rw [min_eq_right hBA]
+      apply (Real.le_sqrt hB (mul_nonneg hA hB)).2
+      calc
+        B ^ 2 = B * B := by ring
+        _ ≤ A * B := mul_le_mul_of_nonneg_right hBA hB
+  unfold hybridProductLeafSquaredEnvelope
+  change min A B ≤ (N : ℝ) * Real.sqrt C * P⁻¹
+  calc
+    min A B ≤ Real.sqrt (A * B) := hgeom
+    _ = (N : ℝ) * Real.sqrt C * P⁻¹ := by
+      dsimp only [A, B]
+      rw [Real.sqrt_mul (sq_nonneg (N : ℝ)),
+        Real.sqrt_sq (Nat.cast_nonneg N), Real.sqrt_div hC,
+        Real.sqrt_sq hP.le]
+      rw [div_eq_mul_inv]
+      ring
+
 /-- A level-scheduled A-process envelope whose state retains the accumulated
 product of all shifts on the current path. -/
 noncomputable def hybridProductRecursiveAProcessSquaredBound
