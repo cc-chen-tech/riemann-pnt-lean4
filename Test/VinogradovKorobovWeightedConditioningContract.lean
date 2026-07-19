@@ -1,0 +1,10 @@
+import ZeroFreeRegion.VinogradovKorobov.VinogradovWeightedConditioning
+
+open ZeroFreeRegion.VinogradovKorobov
+
+#check vinogradovPowerSumDifferenceInt
+#check vinogradovPowerSumDifferenceInt_zero
+#check vinogradovPowerSumDifferenceInt_affine
+#check IsVinogradovWeightedSolutionInt
+#check isVinogradovWeightedSolutionInt_iff_modEq
+#check isVinogradovWeightedSolutionInt_affine_iff_triangular
