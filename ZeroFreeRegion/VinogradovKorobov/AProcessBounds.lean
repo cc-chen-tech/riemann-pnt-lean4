@@ -85,6 +85,63 @@ theorem aProcessSquaredBound_le
         field_simp
         ring
 
+/-- The one-step numerical A-process envelope is monotone in both the block
+length and its nonnegative child bounds. -/
+theorem aProcessSquaredBound_mono
+    (B C : ℕ → ℝ) (N M L : ℕ)
+    (hL : 1 ≤ L) (hNM : N ≤ M)
+    (hB0 : ∀ ell ∈ Finset.Icc 1 (L - 1), 0 ≤ B ell)
+    (hC0 : ∀ ell ∈ Finset.Icc 1 (L - 1), 0 ≤ C ell)
+    (hBC : ∀ ell ∈ Finset.Icc 1 (L - 1), B ell ≤ C ell) :
+    aProcessSquaredBound B N L ≤ aProcessSquaredBound C M L := by
+  have hLreal : (1 : ℝ) ≤ L := by exact_mod_cast hL
+  have hNMreal : (N : ℝ) ≤ M := by exact_mod_cast hNM
+  have hspanN : 0 ≤ (N : ℝ) + ((L : ℝ) - 1) := by
+    have hN0 : 0 ≤ (N : ℝ) := Nat.cast_nonneg N
+    linarith
+  have hspanM : 0 ≤ (M : ℝ) + ((L : ℝ) - 1) := by
+    have hM0 : 0 ≤ (M : ℝ) := Nat.cast_nonneg M
+    linarith
+  have hspan :
+      (N : ℝ) + ((L : ℝ) - 1) ≤
+        (M : ℝ) + ((L : ℝ) - 1) := by linarith
+  have hsumB : 0 ≤ ∑ ell ∈ Finset.Icc 1 (L - 1),
+      ((L : ℝ) - (ell : ℝ)) * B ell := by
+    apply Finset.sum_nonneg
+    intro ell hell
+    have hellL : ell ≤ L := by
+      have := (Finset.mem_Icc.mp hell).2
+      omega
+    exact mul_nonneg (sub_nonneg.mpr (by exact_mod_cast hellL))
+      (hB0 ell hell)
+  have hsumC : 0 ≤ ∑ ell ∈ Finset.Icc 1 (L - 1),
+      ((L : ℝ) - (ell : ℝ)) * C ell := by
+    apply Finset.sum_nonneg
+    intro ell hell
+    have hellL : ell ≤ L := by
+      have := (Finset.mem_Icc.mp hell).2
+      omega
+    exact mul_nonneg (sub_nonneg.mpr (by exact_mod_cast hellL))
+      (hC0 ell hell)
+  have hsum :
+      (∑ ell ∈ Finset.Icc 1 (L - 1),
+          ((L : ℝ) - (ell : ℝ)) * B ell) ≤
+        ∑ ell ∈ Finset.Icc 1 (L - 1),
+          ((L : ℝ) - (ell : ℝ)) * C ell := by
+    apply Finset.sum_le_sum
+    intro ell hell
+    have hellL : ell ≤ L := by
+      have := (Finset.mem_Icc.mp hell).2
+      omega
+    exact mul_le_mul_of_nonneg_left (hBC ell hell)
+      (sub_nonneg.mpr (by exact_mod_cast hellL))
+  unfold aProcessSquaredBound
+  apply add_le_add
+  · apply div_le_div_of_nonneg_right _ (Nat.cast_nonneg L)
+    exact mul_le_mul hspan hNMreal (Nat.cast_nonneg N) hspanM
+  · apply div_le_div_of_nonneg_right _ (sq_nonneg (L : ℝ))
+    gcongr
+
 /-- Weighted A-process sum when the correlations decay like `C / ell`. -/
 lemma sum_aProcess_weights_reciprocal_le
     (B : ℕ → ℝ) (C : ℝ) (L : ℕ) (hC : 0 ≤ C)

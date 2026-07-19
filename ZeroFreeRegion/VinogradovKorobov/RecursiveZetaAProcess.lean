@@ -40,6 +40,18 @@ noncomputable def ZetaAProcessLeafValid
     iteratedZetaPhaseDecrement t m shifts 0 ≤
       2 * Real.pi - zetaAProcessLeafDelta t m N shifts
 
+/-- An unconditional terminal envelope.  A leaf uses the better of the
+trivial and Kusmin--Landau bounds when the nonresonant-turn hypotheses hold,
+and otherwise falls back to the trivial bound. -/
+noncomputable def zetaAProcessHybridLeafSquaredBound
+    (t : ℝ) (m N : ℕ) (shifts : List ℕ) : ℝ := by
+  classical
+  exact if ZetaAProcessLeafValid t m N shifts then
+      min ((remainingAProcessLength N shifts : ℝ) ^ 2)
+        (zetaAProcessLeafSquaredBound t m N shifts)
+    else
+      (remainingAProcessLength N shifts : ℝ) ^ 2
+
 /-- A purely scale-based sufficient condition for a zeta A-process leaf.
 The explicit first-decrement majorant staying below `pi` prevents the entire
 monotone decrement range from crossing one full turn. -/
@@ -162,6 +174,26 @@ theorem recursiveZetaAProcessValid_to_generic
       rcases hvalid with ⟨hL, hLN, hchildren⟩
       exact ⟨hL, hLN, fun ell hell ↦
         ih (ell :: shifts) (hchildren ell hell)⟩
+
+/-- Every iterated zeta phase sum satisfies the hybrid terminal envelope,
+without requiring a nonresonance hypothesis at the leaf. -/
+theorem norm_iteratedZetaPhase_sum_sq_le_hybridLeaf
+    (t : ℝ) (m N : ℕ) (shifts : List ℕ)
+    (ht : 0 < t) (hm : 0 < m) :
+    ‖∑ n ∈ Finset.range (remainingAProcessLength N shifts),
+        phaseTerm
+          (iteratedPhaseDifference shifts (shiftedZetaPhase t m)) n‖ ^ 2 ≤
+      zetaAProcessHybridLeafSquaredBound t m N shifts := by
+  by_cases hvalid : ZetaAProcessLeafValid t m N shifts
+  · rw [zetaAProcessHybridLeafSquaredBound, if_pos hvalid]
+    apply le_min
+    · exact norm_iteratedPhase_sum_sq_le_trivial
+        (shiftedZetaPhase t m) N shifts
+    · exact recursiveZetaAProcessValid_to_generic
+        t m (fun _ ↦ 1) N 0 shifts ht hm hvalid
+  · rw [zetaAProcessHybridLeafSquaredBound, if_neg hvalid]
+    exact norm_iteratedPhase_sum_sq_le_trivial
+      (shiftedZetaPhase t m) N shifts
 
 /-- Root estimate obtained by connecting the recursive A-process to
 arbitrary-order logarithmic Kusmin--Landau leaves. -/

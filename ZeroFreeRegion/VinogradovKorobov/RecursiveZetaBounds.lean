@@ -64,6 +64,13 @@ noncomputable def zetaAProcessProductLeafSquaredBound
   (2 * Real.pi /
     (zetaAProcessUniformLeafDeltaLower t m N depth * (shifts.prod : ℝ))) ^ 2
 
+/-- Path-sensitive terminal envelope retaining both the trivial length bound
+and the reciprocal shift-product Kusmin--Landau bound. -/
+noncomputable def zetaAProcessHybridProductLeafSquaredBound
+    (t : ℝ) (m N depth : ℕ) (shifts : List ℕ) : ℝ :=
+  min ((remainingAProcessLength N shifts : ℝ) ^ 2)
+    (zetaAProcessProductLeafSquaredBound t m N depth shifts)
+
 /-- The uniform coefficient times the complete positive shift product is a
 lower bound for the terminal adjacent decrement. -/
 theorem zetaAProcessUniformLeafDeltaLower_mul_prod_le
@@ -139,6 +146,66 @@ theorem zetaAProcessLeafSquaredBound_le_product
   exact (sq_le_sq₀
     (div_nonneg (mul_nonneg (by norm_num) Real.pi_pos.le) hdeltaPos.le)
     (div_nonneg (mul_nonneg (by norm_num) Real.pi_pos.le) hlowerPos.le)).2 hquot
+
+/-- At a scale-valid leaf, the unconditional hybrid envelope is controlled
+by the explicit minimum of the trivial and shift-product bounds. -/
+theorem zetaAProcessHybridLeafSquaredBound_le_productMin
+    (t : ℝ) (m N depth : ℕ) (shifts : List ℕ)
+    (ht : 0 < t) (hm : 0 < m)
+    (hscale : ZetaAProcessScaleLeafValid t m N shifts)
+    (hdepth : shifts.length = depth) :
+    zetaAProcessHybridLeafSquaredBound t m N shifts ≤
+      zetaAProcessHybridProductLeafSquaredBound t m N depth shifts := by
+  rcases hscale with ⟨hR, hshifts, hmajor⟩
+  have hvalid : ZetaAProcessLeafValid t m N shifts :=
+    zetaAProcessLeafValid_of_scale t m N shifts ht hm
+      ⟨hR, hshifts, hmajor⟩
+  rw [zetaAProcessHybridLeafSquaredBound, if_pos hvalid]
+  unfold zetaAProcessHybridProductLeafSquaredBound
+  exact min_le_min le_rfl (zetaAProcessLeafSquaredBound_le_product
+    t m N depth shifts ht hm hR hshifts hdepth)
+
+/-- A scale-valid zeta tree can retain the pathwise minimum of the trivial
+and reciprocal-product terminal bounds. -/
+theorem recursiveZetaAProcessScaleValid_to_hybridProductGeneric
+    (t : ℝ) (m N totalDepth depth : ℕ) (H : ℕ → ℕ)
+    (shifts : List ℕ) (ht : 0 < t) (hm : 0 < m)
+    (hlen : shifts.length + depth = totalDepth)
+    (hvalid : RecursiveZetaAProcessScaleValid
+      t m (fun s ↦ H s.length) N depth shifts) :
+    RecursiveAProcessValid (shiftedZetaPhase t m) (fun s ↦ H s.length)
+      (zetaAProcessHybridProductLeafSquaredBound t m N totalDepth)
+      N depth shifts := by
+  induction depth generalizing shifts with
+  | zero =>
+      have hdepth : shifts.length = totalDepth := by omega
+      exact (norm_iteratedZetaPhase_sum_sq_le_hybridLeaf
+        t m N shifts ht hm).trans
+          (zetaAProcessHybridLeafSquaredBound_le_productMin
+            t m N totalDepth shifts ht hm hvalid hdepth)
+  | succ depth ih =>
+      rcases hvalid with ⟨hH, hHR, hchildren⟩
+      refine ⟨hH, hHR, ?_⟩
+      intro ell hell
+      have hchildLen : (ell :: shifts).length + depth = totalDepth := by
+        simp only [List.length_cons]
+        omega
+      exact ih (ell :: shifts) hchildLen (hchildren ell hell)
+
+/-- Root A-process estimate retaining the path-sensitive minimum at every
+terminal node. -/
+theorem norm_zetaPhase_sum_sq_le_hybridProductRecursiveAProcess_of_scale
+    (t : ℝ) (m N depth : ℕ) (H : ℕ → ℕ)
+    (ht : 0 < t) (hm : 0 < m)
+    (hvalid : RecursiveZetaAProcessScaleValid
+      t m (fun s ↦ H s.length) N depth []) :
+    ‖∑ n ∈ Finset.range N, phaseTerm (shiftedZetaPhase t m) n‖ ^ 2 ≤
+      recursiveAProcessSquaredBound (fun s ↦ H s.length)
+        (zetaAProcessHybridProductLeafSquaredBound t m N depth)
+        N depth [] := by
+  apply norm_phaseSum_sq_le_recursiveAProcess
+  exact recursiveZetaAProcessScaleValid_to_hybridProductGeneric
+    t m N depth depth H [] ht hm (by simp) hvalid
 
 /-- Every positive-shift leaf of the prescribed depth has at least the
 uniform terminal decrement. -/

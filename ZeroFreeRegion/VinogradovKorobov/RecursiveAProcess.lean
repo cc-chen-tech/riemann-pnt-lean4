@@ -57,6 +57,27 @@ def RecursiveAProcessValid
           (recursiveAProcessSquaredBound L Q N depth (ell :: shifts)))
         (remainingAProcessLength N shifts) (L shifts) := rfl
 
+/-- The trivial squared estimate for an arbitrary iterated phase sum. -/
+theorem norm_iteratedPhase_sum_sq_le_trivial
+    (f : ℕ → ℝ) (N : ℕ) (shifts : List ℕ) :
+    ‖∑ n ∈ Finset.range (remainingAProcessLength N shifts),
+        phaseTerm (iteratedPhaseDifference shifts f) n‖ ^ 2 ≤
+      (remainingAProcessLength N shifts : ℝ) ^ 2 := by
+  have hnorm :
+      ‖∑ n ∈ Finset.range (remainingAProcessLength N shifts),
+          phaseTerm (iteratedPhaseDifference shifts f) n‖ ≤
+        (remainingAProcessLength N shifts : ℝ) := by
+    calc
+      ‖∑ n ∈ Finset.range (remainingAProcessLength N shifts),
+          phaseTerm (iteratedPhaseDifference shifts f) n‖ ≤
+          ∑ n ∈ Finset.range (remainingAProcessLength N shifts),
+            ‖phaseTerm (iteratedPhaseDifference shifts f) n‖ :=
+        norm_sum_le _ _
+      _ = (remainingAProcessLength N shifts : ℝ) := by
+        simp only [norm_phaseTerm, Finset.sum_const, Finset.card_range,
+          nsmul_eq_mul, mul_one]
+  exact (sq_le_sq₀ (norm_nonneg _) (Nat.cast_nonneg _)).2 hnorm
+
 /-- The normalized one-step A-process envelope is nonnegative whenever its
 child bounds are nonnegative on the range used by the recurrence. -/
 theorem aProcessSquaredBound_nonneg

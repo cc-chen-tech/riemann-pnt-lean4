@@ -13,6 +13,9 @@ noncomputable example (t : ℝ) (m N : ℕ) (shifts : List ℕ) : ℝ :=
 noncomputable example (t : ℝ) (m N : ℕ) (shifts : List ℕ) : ℝ :=
   zetaAProcessLeafSquaredBound t m N shifts
 
+noncomputable example (t : ℝ) (m N : ℕ) (shifts : List ℕ) : ℝ :=
+  zetaAProcessHybridLeafSquaredBound t m N shifts
+
 noncomputable example (t : ℝ) (m : ℕ) (shifts : List ℕ) : ℝ :=
   zetaAProcessLeafInitialMajorant t m shifts
 
@@ -50,6 +53,20 @@ example (t : ℝ) (m : ℕ) (L : List ℕ → ℕ) (N depth : ℕ)
       (zetaAProcessLeafSquaredBound t m N) N depth shifts :=
   recursiveZetaAProcessValid_to_generic
     t m L N depth shifts ht hm hvalid
+
+example (f : ℕ → ℝ) (N : ℕ) (shifts : List ℕ) :
+    ‖∑ n ∈ Finset.range (remainingAProcessLength N shifts),
+        phaseTerm (iteratedPhaseDifference shifts f) n‖ ^ 2 ≤
+      (remainingAProcessLength N shifts : ℝ) ^ 2 :=
+  norm_iteratedPhase_sum_sq_le_trivial f N shifts
+
+example (t : ℝ) (m N : ℕ) (shifts : List ℕ)
+    (ht : 0 < t) (hm : 0 < m) :
+    ‖∑ n ∈ Finset.range (remainingAProcessLength N shifts),
+        phaseTerm
+          (iteratedPhaseDifference shifts (shiftedZetaPhase t m)) n‖ ^ 2 ≤
+      zetaAProcessHybridLeafSquaredBound t m N shifts :=
+  norm_iteratedZetaPhase_sum_sq_le_hybridLeaf t m N shifts ht hm
 
 example (t : ℝ) (m : ℕ) (L : List ℕ → ℕ) (N depth : ℕ)
     (ht : 0 < t) (hm : 0 < m)

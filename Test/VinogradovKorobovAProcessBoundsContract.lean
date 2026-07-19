@@ -17,6 +17,14 @@ example (B : ℕ → ℝ) (C : ℝ) (N L : ℕ)
       2 * (N : ℝ) ^ 2 / L + 4 * (N : ℝ) * C :=
   aProcessSquaredBound_le B C N L hL hLN hC hB0 hB
 
+example (B C : ℕ → ℝ) (N M L : ℕ)
+    (hL : 1 ≤ L) (hNM : N ≤ M)
+    (hB0 : ∀ ell ∈ Finset.Icc 1 (L - 1), 0 ≤ B ell)
+    (hC0 : ∀ ell ∈ Finset.Icc 1 (L - 1), 0 ≤ C ell)
+    (hBC : ∀ ell ∈ Finset.Icc 1 (L - 1), B ell ≤ C ell) :
+    aProcessSquaredBound B N L ≤ aProcessSquaredBound C M L :=
+  aProcessSquaredBound_mono B C N M L hL hNM hB0 hC0 hBC
+
 example (B : ℕ → ℝ) (C : ℝ) (N L : ℕ)
     (hL : 1 ≤ L) (hLN : L ≤ N) (hC : 0 ≤ C)
     (hB0 : ∀ ell ∈ Finset.Icc 1 (L - 1), 0 ≤ B ell)
