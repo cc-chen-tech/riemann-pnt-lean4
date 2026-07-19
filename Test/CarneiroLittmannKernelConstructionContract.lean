@@ -61,6 +61,16 @@ example {xi : ℝ} (hxi : 2 * Real.pi ≤ |xi|) :
 noncomputable example : CarneiroLittmannKernel :=
   carneiroLittmannKernel
 
+example {N : ℕ} {c : ℕ → ℂ} {omega delta : ℕ → ℝ}
+    (hdelta : ∀ n, 0 < delta n)
+    (hanti : ∀ n, delta (n + 1) ≤ delta n)
+    (hlocal : ∀ m ∈ Finset.range N, ∀ n ∈ Finset.range N, m ≠ n →
+      delta (min m n) ≤ |omega n - omega m|) :
+    ‖hilbertForm (Finset.range N) c omega‖ ≤
+      2 * Real.pi *
+        ∑ n ∈ Finset.range N, (delta n)⁻¹ * ‖c n‖ ^ 2 :=
+  norm_hilbertForm_range_le_carneiroLittmann hdelta hanti hlocal
+
 example {a b : ℝ} (N : ℕ) (c : ℕ → ℂ) (omega delta : ℕ → ℝ)
     (hab : a ≤ b)
     (hdelta : ∀ n, 0 < delta n)
@@ -89,6 +99,7 @@ example {a b : ℝ} (N : ℕ) (c : ℕ → ℂ) (omega delta : ℕ → ℝ)
 #print axioms fourierKernel_carneiroLittmannRawKernel_zero
 #print axioms fourierKernel_carneiroLittmannRawKernel_of_two_pi_le_abs
 #print axioms carneiroLittmannKernel
+#print axioms norm_hilbertForm_range_le_carneiroLittmann
 #print axioms finiteExponentialSum_meanSquare_le_carneiroLittmann
 
 end DirichletPolynomial

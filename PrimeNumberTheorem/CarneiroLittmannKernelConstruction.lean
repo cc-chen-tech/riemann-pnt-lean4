@@ -837,6 +837,51 @@ noncomputable def carneiroLittmannKernel : CarneiroLittmannKernel where
     intro xi hxi
     exact fourierKernel_carneiroLittmannRawKernel_of_two_pi_le_abs hxi
 
+/-- The concrete kernel discharges the weighted Hilbert-form estimate on a
+finite range for any decreasing system of local frequency scales. -/
+theorem norm_hilbertForm_range_le_carneiroLittmann
+    {N : ℕ} {c : ℕ → ℂ} {omega delta : ℕ → ℝ}
+    (hdelta : ∀ n, 0 < delta n)
+    (hanti : ∀ n, delta (n + 1) ≤ delta n)
+    (hlocal : ∀ m ∈ Finset.range N, ∀ n ∈ Finset.range N, m ≠ n →
+      delta (min m n) ≤ |omega n - omega m|) :
+    ‖hilbertForm (Finset.range N) c omega‖ ≤
+      2 * Real.pi *
+        ∑ n ∈ Finset.range N, (delta n)⁻¹ * ‖c n‖ ^ 2 := by
+  let profileMinus : PositiveHilbertKernelProfile
+      (2 * Real.pi) (-2 * Complex.I) :=
+    carneiroLittmannKernel.normalizedProfile
+  let profilePlus : PositiveHilbertKernelProfile
+      (2 * Real.pi) (2 * Complex.I) := by
+    simpa only [neg_mul, neg_neg] using profileMinus.reflect
+  apply norm_hilbertForm_le_of_two_sided_re_nonneg
+  · exact hilbertForm_plus_certificate_of_positive_kernelSequence
+      (g := scaledKernelSequence profilePlus delta)
+      (weight := fun n => (delta n)⁻¹)
+      (C := 2 * Real.pi)
+      (fun j => integrable_scaledKernelSequence profilePlus (hdelta j))
+      (fun t => scaledKernelSequence_nonneg profilePlus)
+      (scaledKernelSequence_mono profilePlus hdelta hanti)
+      (fun n hn => fourierKernel_scaledKernelSequence_zero
+        profilePlus (hdelta n))
+      (fun m hm n hn hmn => by
+        simpa only [Complex.ofReal_sub] using
+          fourierKernel_scaledKernelSequence_of_large_frequency
+            profilePlus (hdelta (min m n)) (hlocal m hm n hn hmn))
+  · exact hilbertForm_minus_certificate_of_positive_kernelSequence
+      (g := scaledKernelSequence profileMinus delta)
+      (weight := fun n => (delta n)⁻¹)
+      (C := 2 * Real.pi)
+      (fun j => integrable_scaledKernelSequence profileMinus (hdelta j))
+      (fun t => scaledKernelSequence_nonneg profileMinus)
+      (scaledKernelSequence_mono profileMinus hdelta hanti)
+      (fun n hn => fourierKernel_scaledKernelSequence_zero
+        profileMinus (hdelta n))
+      (fun m hm n hn hmn => by
+        simpa only [Complex.ofReal_sub] using
+          fourierKernel_scaledKernelSequence_of_large_frequency
+            profileMinus (hdelta (min m n)) (hlocal m hm n hn hmn))
+
 /-- The Montgomery--Vaughan mean-square bound obtained from the explicit
 Carneiro--Littmann kernel, with no remaining kernel-existence parameter. -/
 theorem finiteExponentialSum_meanSquare_le_carneiroLittmann
