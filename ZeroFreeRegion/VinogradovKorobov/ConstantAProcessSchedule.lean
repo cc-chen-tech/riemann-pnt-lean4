@@ -296,4 +296,194 @@ theorem norm_zetaPhase_sum_sq_le_constantRefined_finite_supersolution
         h N (zetaAProcessUniformLeafSquaredBound t m N depth)
         depth depth K hh hinit hstep)
 
+/-- Denominator gain remaining after repeated square-root propagation. -/
+noncomputable def constantAProcessGain (h : ℕ) : ℕ → ℝ
+  | 0 => (h : ℝ) ^ 2
+  | j + 1 => Real.sqrt (constantAProcessGain h j)
+
+/-- Coefficient growth accompanying the repeated square-root propagation. -/
+noncomputable def constantAProcessCoefficient (h : ℕ) : ℕ → ℝ
+  | 0 => 1
+  | j + 1 =>
+      2 + 4 * (1 + Real.log h) * Real.sqrt (constantAProcessCoefficient h j)
+
+/-- Explicit power-saving candidate for every stage of the normalized
+constant-schedule recurrence. -/
+noncomputable def constantAProcessPowerSupersolution
+    (h N j : ℕ) : ℝ :=
+  constantAProcessCoefficient h j * (N : ℝ) ^ 2 /
+    constantAProcessGain h j
+
+@[simp] lemma constantAProcessGain_zero (h : ℕ) :
+    constantAProcessGain h 0 = (h : ℝ) ^ 2 := rfl
+
+@[simp] lemma constantAProcessGain_succ (h j : ℕ) :
+    constantAProcessGain h (j + 1) = Real.sqrt (constantAProcessGain h j) := rfl
+
+@[simp] lemma constantAProcessCoefficient_zero (h : ℕ) :
+    constantAProcessCoefficient h 0 = 1 := rfl
+
+@[simp] lemma constantAProcessCoefficient_succ (h j : ℕ) :
+    constantAProcessCoefficient h (j + 1) =
+      2 + 4 * (1 + Real.log h) * Real.sqrt
+        (constantAProcessCoefficient h j) := rfl
+
+theorem constantAProcessGain_pos
+    (h j : ℕ) (hh : 1 ≤ h) : 0 < constantAProcessGain h j := by
+  induction j with
+  | zero =>
+      rw [constantAProcessGain_zero]
+      positivity
+  | succ j ih =>
+      rw [constantAProcessGain_succ]
+      exact Real.sqrt_pos.2 ih
+
+theorem constantAProcessGain_succ_le
+    (h j : ℕ) (hh : 1 ≤ h) :
+    constantAProcessGain h (j + 1) ≤ (h : ℝ) := by
+  induction j with
+  | zero =>
+      rw [constantAProcessGain_succ, constantAProcessGain_zero,
+        Real.sqrt_sq (Nat.cast_nonneg h)]
+  | succ j ih =>
+      rw [constantAProcessGain_succ]
+      apply (Real.sqrt_le_iff).2
+      refine ⟨Nat.cast_nonneg h, ?_⟩
+      have hhreal : (1 : ℝ) ≤ (h : ℝ) := by exact_mod_cast hh
+      exact ih.trans (by nlinarith)
+
+/-- Closed form of the denominator gain: every A-process level halves the
+power of `h` retained in the final estimate. -/
+theorem constantAProcessGain_eq_rpow
+    (h j : ℕ) :
+    constantAProcessGain h j =
+      (h : ℝ) ^ (2 / (2 : ℝ) ^ j : ℝ) := by
+  induction j with
+  | zero =>
+      simp
+  | succ j ih =>
+      rw [constantAProcessGain_succ, ih, Real.sqrt_eq_rpow,
+        ← Real.rpow_mul (Nat.cast_nonneg h)]
+      congr 1
+      rw [pow_succ]
+      have hpow : (2 : ℝ) ^ j ≠ 0 := by positivity
+      field_simp
+
+theorem constantAProcessCoefficient_nonneg
+    (h j : ℕ) : 0 ≤ constantAProcessCoefficient h j := by
+  induction j with
+  | zero => simp
+  | succ j ih =>
+      rw [constantAProcessCoefficient_succ]
+      have hlog : 0 ≤ Real.log (h : ℝ) := by
+        by_cases hzero : h = 0
+        · simp [hzero]
+        · exact Real.log_nonneg (by
+            exact_mod_cast (Nat.one_le_iff_ne_zero.mpr hzero))
+      positivity
+
+theorem constantAProcessPowerSupersolution_step
+    (h N j : ℕ) (hh : 1 ≤ h) :
+    2 * (N : ℝ) ^ 2 / h +
+        4 * (N : ℝ) * (1 + Real.log h) * Real.sqrt
+          (constantAProcessPowerSupersolution h N j) ≤
+      constantAProcessPowerSupersolution h N (j + 1) := by
+  let D := constantAProcessCoefficient h j
+  let G := constantAProcessGain h j
+  have hD : 0 ≤ D := constantAProcessCoefficient_nonneg h j
+  have hG : 0 < G := constantAProcessGain_pos h j hh
+  have hGnext : 0 < Real.sqrt G := Real.sqrt_pos.2 hG
+  have hroot :
+      Real.sqrt (D * (N : ℝ) ^ 2 / G) ≤
+        Real.sqrt D * (N : ℝ) / Real.sqrt G := by
+    apply (Real.sqrt_le_iff).2
+    refine ⟨div_nonneg
+      (mul_nonneg (Real.sqrt_nonneg D) (Nat.cast_nonneg N)) hGnext.le, ?_⟩
+    rw [div_pow, mul_pow, Real.sq_sqrt hD,
+      Real.sq_sqrt hG.le]
+  have hfirst :
+      2 * (N : ℝ) ^ 2 / h ≤
+        2 * (N : ℝ) ^ 2 / Real.sqrt G := by
+    apply div_le_div_of_nonneg_left (by positivity) hGnext
+    simpa only [G, ← constantAProcessGain_succ] using
+      constantAProcessGain_succ_le h j hh
+  have hlog : 0 ≤ Real.log (h : ℝ) :=
+    Real.log_nonneg (by exact_mod_cast hh)
+  have hharm : 0 ≤ 1 + Real.log (h : ℝ) := by linarith
+  unfold constantAProcessPowerSupersolution
+  change
+    2 * (N : ℝ) ^ 2 / h +
+        4 * (N : ℝ) * (1 + Real.log h) * Real.sqrt
+          (D * (N : ℝ) ^ 2 / G) ≤
+      (2 + 4 * (1 + Real.log h) * Real.sqrt D) *
+        (N : ℝ) ^ 2 / Real.sqrt G
+  calc
+    2 * (N : ℝ) ^ 2 / h +
+        4 * (N : ℝ) * (1 + Real.log h) * Real.sqrt
+          (D * (N : ℝ) ^ 2 / G) ≤
+      2 * (N : ℝ) ^ 2 / h +
+        4 * (N : ℝ) * (1 + Real.log h) *
+          (Real.sqrt D * (N : ℝ) / Real.sqrt G) := by gcongr
+    _ ≤ 2 * (N : ℝ) ^ 2 / Real.sqrt G +
+        4 * (N : ℝ) * (1 + Real.log h) *
+          (Real.sqrt D * (N : ℝ) / Real.sqrt G) :=
+      add_le_add hfirst le_rfl
+    _ = (2 + 4 * (1 + Real.log h) * Real.sqrt D) *
+        (N : ℝ) ^ 2 / Real.sqrt G := by ring
+
+theorem constantRefinedAProcessSquaredEnvelope_le_powerSupersolution
+    (h N : ℕ) (C : ℝ) (totalDepth depth : ℕ)
+    (hh : 1 ≤ h)
+    (hinit : C / (h : ℝ) ^ (2 * totalDepth) ≤
+      (N : ℝ) ^ 2 / (h : ℝ) ^ 2) :
+    constantRefinedAProcessSquaredEnvelope h N C totalDepth depth ≤
+      constantAProcessPowerSupersolution h N depth := by
+  apply constantRefinedAProcessSquaredEnvelope_le_of_finite_supersolution
+    h N C totalDepth depth (constantAProcessPowerSupersolution h N) hh
+  · simpa [constantAProcessPowerSupersolution] using hinit
+  · intro j hj
+    exact constantAProcessPowerSupersolution_step h N j hh
+
+theorem norm_zetaPhase_sum_sq_le_constantAProcessPowerSupersolution
+    (t : ℝ) (m N depth h : ℕ)
+    (ht : 0 < t) (hm : 0 < m)
+    (hh : 1 ≤ h) (hbudget : depth * (h - 1) < N)
+    (hmajor : t * ((depth.factorial : ℝ) * (h : ℝ) ^ depth *
+      ((m : ℝ) ^ (depth + 1))⁻¹) ≤ Real.pi)
+    (hinit : zetaAProcessUniformLeafSquaredBound t m N depth /
+        (h : ℝ) ^ (2 * depth) ≤ (N : ℝ) ^ 2 / (h : ℝ) ^ 2) :
+    ‖∑ n ∈ Finset.range N, phaseTerm (shiftedZetaPhase t m) n‖ ^ 2 ≤
+      constantAProcessPowerSupersolution h N depth := by
+  exact (norm_zetaPhase_sum_sq_le_constantRefinedAProcessSquaredEnvelope
+    t m N depth h ht hm hh hbudget hmajor).trans
+      (constantRefinedAProcessSquaredEnvelope_le_powerSupersolution
+        h N (zetaAProcessUniformLeafSquaredBound t m N depth)
+        depth depth hh hinit)
+
+/-- Explicit criterion under which the arbitrary-depth A-process estimate is
+strictly better than the trivial length bound. -/
+theorem norm_zetaPhase_sum_lt_length_of_constantAProcessPowerSaving
+    (t : ℝ) (m N depth h : ℕ)
+    (ht : 0 < t) (hm : 0 < m) (hN : 0 < N)
+    (hh : 1 ≤ h) (hbudget : depth * (h - 1) < N)
+    (hmajor : t * ((depth.factorial : ℝ) * (h : ℝ) ^ depth *
+      ((m : ℝ) ^ (depth + 1))⁻¹) ≤ Real.pi)
+    (hinit : zetaAProcessUniformLeafSquaredBound t m N depth /
+        (h : ℝ) ^ (2 * depth) ≤ (N : ℝ) ^ 2 / (h : ℝ) ^ 2)
+    (hsaving : constantAProcessCoefficient h depth <
+      constantAProcessGain h depth) :
+    ‖∑ n ∈ Finset.range N, phaseTerm (shiftedZetaPhase t m) n‖ < (N : ℝ) := by
+  have hsq := norm_zetaPhase_sum_sq_le_constantAProcessPowerSupersolution
+    t m N depth h ht hm hh hbudget hmajor hinit
+  have hgain : 0 < constantAProcessGain h depth :=
+    constantAProcessGain_pos h depth hh
+  have hNsq : 0 < (N : ℝ) ^ 2 := by positivity
+  have hupper : constantAProcessPowerSupersolution h N depth <
+      (N : ℝ) ^ 2 := by
+    unfold constantAProcessPowerSupersolution
+    rw [div_lt_iff₀ hgain]
+    nlinarith
+  rw [← sq_lt_sq₀ (norm_nonneg _) (Nat.cast_nonneg N)]
+  exact hsq.trans_lt hupper
+
 end ZeroFreeRegion.VinogradovKorobov

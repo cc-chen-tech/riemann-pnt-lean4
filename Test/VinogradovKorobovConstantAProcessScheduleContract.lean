@@ -124,4 +124,48 @@ example (t : ℝ) (m N depth h : ℕ) (K : ℕ → ℝ)
   norm_zetaPhase_sum_sq_le_constantRefined_finite_supersolution
     t m N depth h K ht hm hh hbudget hmajor hinit hstep
 
+example (h N j : ℕ) :
+    constantAProcessPowerSupersolution h N j =
+      constantAProcessCoefficient h j * (N : ℝ) ^ 2 /
+        constantAProcessGain h j := rfl
+
+example (h j : ℕ) :
+    constantAProcessGain h j =
+      (h : ℝ) ^ (2 / (2 : ℝ) ^ j : ℝ) :=
+  constantAProcessGain_eq_rpow h j
+
+example (h N : ℕ) (C : ℝ) (totalDepth depth : ℕ)
+    (hh : 1 ≤ h)
+    (hinit : C / (h : ℝ) ^ (2 * totalDepth) ≤
+      (N : ℝ) ^ 2 / (h : ℝ) ^ 2) :
+    constantRefinedAProcessSquaredEnvelope h N C totalDepth depth ≤
+      constantAProcessPowerSupersolution h N depth :=
+  constantRefinedAProcessSquaredEnvelope_le_powerSupersolution
+    h N C totalDepth depth hh hinit
+
+example (t : ℝ) (m N depth h : ℕ)
+    (ht : 0 < t) (hm : 0 < m)
+    (hh : 1 ≤ h) (hbudget : depth * (h - 1) < N)
+    (hmajor : t * ((depth.factorial : ℝ) * (h : ℝ) ^ depth *
+      ((m : ℝ) ^ (depth + 1))⁻¹) ≤ Real.pi)
+    (hinit : zetaAProcessUniformLeafSquaredBound t m N depth /
+        (h : ℝ) ^ (2 * depth) ≤ (N : ℝ) ^ 2 / (h : ℝ) ^ 2) :
+    ‖∑ n ∈ Finset.range N, phaseTerm (shiftedZetaPhase t m) n‖ ^ 2 ≤
+      constantAProcessPowerSupersolution h N depth :=
+  norm_zetaPhase_sum_sq_le_constantAProcessPowerSupersolution
+    t m N depth h ht hm hh hbudget hmajor hinit
+
+example (t : ℝ) (m N depth h : ℕ)
+    (ht : 0 < t) (hm : 0 < m) (hN : 0 < N)
+    (hh : 1 ≤ h) (hbudget : depth * (h - 1) < N)
+    (hmajor : t * ((depth.factorial : ℝ) * (h : ℝ) ^ depth *
+      ((m : ℝ) ^ (depth + 1))⁻¹) ≤ Real.pi)
+    (hinit : zetaAProcessUniformLeafSquaredBound t m N depth /
+        (h : ℝ) ^ (2 * depth) ≤ (N : ℝ) ^ 2 / (h : ℝ) ^ 2)
+    (hsaving : constantAProcessCoefficient h depth <
+      constantAProcessGain h depth) :
+    ‖∑ n ∈ Finset.range N, phaseTerm (shiftedZetaPhase t m) n‖ < (N : ℝ) :=
+  norm_zetaPhase_sum_lt_length_of_constantAProcessPowerSaving
+    t m N depth h ht hm hN hh hbudget hmajor hinit hsaving
+
 end ZeroFreeRegion.VinogradovKorobov
