@@ -1,4 +1,4 @@
-import ZeroFreeRegion.VinogradovKorobov.VinogradovQuadratic
+import ZeroFreeRegion.VinogradovKorobov.VinogradovMonotonicity
 
 open ZeroFreeRegion.VinogradovKorobov
 
@@ -47,3 +47,8 @@ open ZeroFreeRegion.VinogradovKorobov
 #check fixed_left_quadratic_solution_count_le_two
 #check vinogradovSolutionCountNat_two_two_le
 #check norm_normalizedVinogradovMomentMod_two_two_le
+#check IsVinogradovSolutionNat.mono_degree
+#check vinogradovSolutionCountNat_antitone_degree
+#check vinogradovSolutionCountNat_two_le_of_two_le_degree
+#check norm_normalizedVinogradovMomentMod_le_of_count
+#check norm_normalizedVinogradovMomentMod_two_le_of_two_le_degree
