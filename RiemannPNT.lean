@@ -10,6 +10,7 @@ import HardyTheorem.CriticalLineShortDirichlet
 import HardyTheorem.HardyShortSignedMeanSquare
 import HardyTheorem.HardyPhaseSecondMoment
 import HardyTheorem.HardyPhaseCorrelation
+import HardyTheorem.HardyPhaseHilbert
 import HardyTheorem.HardyOddMultiplicity
 import MathlibAux.SlidingIntervalCorrelation
 import MathlibAux.DiscreteHilbertInequality

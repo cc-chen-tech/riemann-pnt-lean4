@@ -2,3 +2,5 @@ import MathlibAux.LogarithmicHilbertIntegrationByParts
 
 #check MathlibAux.norm_integral_amplitude_mul_logOffDiagonalForm_le
 #print axioms MathlibAux.norm_integral_amplitude_mul_logOffDiagonalForm_le
+#check MathlibAux.norm_integral_amplitude_mul_logOffDiagonalForm_neg_le
+#print axioms MathlibAux.norm_integral_amplitude_mul_logOffDiagonalForm_neg_le

@@ -5,7 +5,7 @@ open Complex MeasureTheory Set
 
 namespace MathlibAux
 
-private noncomputable def logOffDiagonalTerm
+noncomputable def logOffDiagonalTerm
     (left right : ℕ → ℂ) (m n : ℕ) (t : ℝ) : ℂ :=
   if m = n then 0
   else (starRingEnd ℂ) (left n) * right m *
@@ -277,5 +277,68 @@ theorem norm_integral_amplitude_mul_logOffDiagonalForm_le
           ‖∫ x in a..b, A' x * H x‖ := norm_sub_le _ _
     _ ≤ 2 * K + K * V := add_le_add hend hrem
     _ = (2 + V) * K := by ring
+
+/-- The same whole-sum integration-by-parts estimate for the opposite
+logarithmic frequency orientation. -/
+theorem norm_integral_amplitude_mul_logOffDiagonalForm_neg_le
+    {M : ℕ} (hM : 0 < M) (s : Finset ℕ) (left right : ℕ → ℂ)
+    (hlower : ∀ n ∈ s, M ≤ n) (hupper : ∀ n ∈ s, n ≤ 2 * M)
+    {A A' : ℝ → ℂ} {a b V : ℝ} (hab : a ≤ b)
+    (hA : ∀ x ∈ Set.uIcc a b, HasDerivAt A (A' x) x)
+    (hAend : ‖A a‖ ≤ 1 ∧ ‖A b‖ ≤ 1)
+    (hA'int : IntervalIntegrable A' volume a b)
+    (hvariation : (∫ x in a..b, ‖A' x‖) ≤ V) :
+    ‖∫ t in a..b, A t * logOffDiagonalForm s left right (-t)‖ ≤
+      (2 + V) * ((5 * Real.pi + 3) * M *
+        ((∑ n ∈ s, Complex.normSq (left n)) +
+          ∑ n ∈ s, Complex.normSq (right n))) := by
+  let Aneg : ℝ → ℂ := fun x => A (-x)
+  let Aneg' : ℝ → ℂ := fun x => -A' (-x)
+  have hnegOrder : -b ≤ -a := neg_le_neg hab
+  have hAneg : ∀ x ∈ Set.uIcc (-b) (-a),
+      HasDerivAt Aneg (Aneg' x) x := by
+    intro x hx
+    have hx' : -x ∈ Set.uIcc a b := by
+      rw [Set.uIcc_of_le hab, Set.mem_Icc]
+      rw [Set.uIcc_of_le hnegOrder, Set.mem_Icc] at hx
+      constructor <;> linarith [hx.1, hx.2]
+    have houter : HasDerivAt A (A' (-x)) (-x) := hA (-x) hx'
+    have hinner : HasDerivAt (fun y : ℝ => -y) (-1) x := hasDerivAt_neg x
+    have hcomp := houter.scomp x hinner
+    simpa only [Aneg, Aneg', Function.comp_def, neg_smul, one_smul] using hcomp
+  have hAnegEnd : ‖Aneg (-b)‖ ≤ 1 ∧ ‖Aneg (-a)‖ ≤ 1 := by
+    simpa only [Aneg, neg_neg] using ⟨hAend.2, hAend.1⟩
+  have hcompInt : IntervalIntegrable (fun x => A' (-x)) volume (-b) (-a) := by
+    have h := (IntervalIntegrable.iff_comp_neg (a := a) (b := b)).mp hA'int
+    exact h.symm
+  have hAnegInt : IntervalIntegrable Aneg' volume (-b) (-a) := by
+    simpa only [Aneg'] using hcompInt.neg
+  have hvariationNeg : (∫ x in -b..-a, ‖Aneg' x‖) ≤ V := by
+    calc
+      (∫ x in -b..-a, ‖Aneg' x‖) =
+          ∫ x in -b..-a, ‖A' (-x)‖ := by
+        apply intervalIntegral.integral_congr
+        intro x hx
+        simp only [Aneg', norm_neg]
+      _ = ∫ x in a..b, ‖A' x‖ := by
+        simpa only [neg_neg] using
+          (intervalIntegral.integral_comp_neg
+            (f := fun x : ℝ => ‖A' x‖) (a := -b) (b := -a))
+      _ ≤ V := hvariation
+  have hbound := norm_integral_amplitude_mul_logOffDiagonalForm_le
+    hM s left right hlower hupper hnegOrder hAneg hAnegEnd
+      hAnegInt hvariationNeg
+  calc
+    ‖∫ t in a..b, A t * logOffDiagonalForm s left right (-t)‖ =
+        ‖∫ x in -b..-a, Aneg x *
+          logOffDiagonalForm s left right x‖ := by
+      congr 1
+      simpa only [Aneg, neg_neg] using
+        (intervalIntegral.integral_comp_neg
+          (f := fun x : ℝ => Aneg x *
+            logOffDiagonalForm s left right x) (a := a) (b := b))
+    _ ≤ (2 + V) * ((5 * Real.pi + 3) * M *
+        ((∑ n ∈ s, Complex.normSq (left n)) +
+          ∑ n ∈ s, Complex.normSq (right n))) := hbound
 
 end MathlibAux

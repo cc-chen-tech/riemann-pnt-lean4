@@ -1,0 +1,5 @@
+import HardyTheorem.HardyPhaseHilbert
+
+#check HardyTheorem.hardyPhaseCorrelationOffDiagonal_eq_amplitude_mul_logOffDiagonal
+#check HardyTheorem.norm_integral_hardyPhaseCorrelationOffDiagonal_dyadic_le
+#print axioms HardyTheorem.norm_integral_hardyPhaseCorrelationOffDiagonal_dyadic_le
