@@ -1,0 +1,11 @@
+import ZeroFreeRegion.VinogradovKorobov.VinogradovSingularWitness
+
+open ZeroFreeRegion.VinogradovKorobov
+
+#check VinogradovCollisionWitness
+#check vinogradovCollisionWitnessSet
+#check mem_vinogradovCollisionWitnessSet_iff
+#check vinogradovCollisionWitnessSet_nonempty_iff
+#check vinogradovMultiBlockCollisionWitnessSet
+#check mem_vinogradovMultiBlockCollisionWitnessSet_iff
+#check vinogradovMultiBlockCollisionWitnessSet_nonempty_iff
