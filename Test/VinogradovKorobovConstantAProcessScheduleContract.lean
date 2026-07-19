@@ -66,4 +66,37 @@ example (t : ℝ) (m N depth h : ℕ) (K : ℝ)
   norm_zetaPhase_sum_sq_le_constantAProcess_supersolution
     t m N depth h K ht hm hh hbudget hmajor hleaf hK
 
+noncomputable example (h N : ℕ) (C : ℝ) (totalDepth depth : ℕ) : ℝ :=
+  constantRefinedAProcessSquaredEnvelope h N C totalDepth depth
+
+example (h N : ℕ) (C : ℝ) (totalDepth depth : ℕ) (hC : 0 ≤ C) :
+    0 ≤ constantRefinedAProcessSquaredEnvelope h N C totalDepth depth :=
+  constantRefinedAProcessSquaredEnvelope_nonneg
+    h N C totalDepth depth hC
+
+example (h N : ℕ) (C : ℝ) (totalDepth depth level : ℕ)
+    (hh : 1 ≤ h) (hC : 0 ≤ C) (hlevel : level + depth = totalDepth) :
+    refinedRecursiveAProcessSquaredBound (fun _ ↦ h) N C depth level =
+      (h : ℝ) ^ (2 * level) *
+        constantRefinedAProcessSquaredEnvelope h N C totalDepth depth :=
+  refinedRecursiveAProcessSquaredBound_const
+    h N C totalDepth depth level hh hC hlevel
+
+example (h N : ℕ) (C : ℝ) (depth : ℕ)
+    (hh : 1 ≤ h) (hC : 0 ≤ C) :
+    refinedRecursiveAProcessSquaredBound (fun _ ↦ h) N C depth 0 =
+      constantRefinedAProcessSquaredEnvelope h N C depth depth :=
+  refinedRecursiveAProcessSquaredBound_const_root h N C depth hh hC
+
+example (t : ℝ) (m N depth h : ℕ)
+    (ht : 0 < t) (hm : 0 < m)
+    (hh : 1 ≤ h) (hbudget : depth * (h - 1) < N)
+    (hmajor : t * ((depth.factorial : ℝ) * (h : ℝ) ^ depth *
+      ((m : ℝ) ^ (depth + 1))⁻¹) ≤ Real.pi) :
+    ‖∑ n ∈ Finset.range N, phaseTerm (shiftedZetaPhase t m) n‖ ^ 2 ≤
+      constantRefinedAProcessSquaredEnvelope h N
+        (zetaAProcessUniformLeafSquaredBound t m N depth) depth depth :=
+  norm_zetaPhase_sum_sq_le_constantRefinedAProcessSquaredEnvelope
+    t m N depth h ht hm hh hbudget hmajor
+
 end ZeroFreeRegion.VinogradovKorobov

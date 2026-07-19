@@ -1,4 +1,4 @@
-import ZeroFreeRegion.VinogradovKorobov.AProcessSchedule
+import ZeroFreeRegion.VinogradovKorobov.RecursiveReciprocalEnvelope
 
 namespace ZeroFreeRegion.VinogradovKorobov
 
@@ -127,5 +127,121 @@ theorem norm_zetaPhase_sum_sq_le_constantAProcess_supersolution
       (constantAProcessSquaredEnvelope_le_of_supersolution
         h N (zetaAProcessUniformLeafSquaredBound t m N depth)
         K depth hleaf hK)
+
+/-- Normalized product-sensitive recurrence for a constant A-process
+schedule.  Its terminal value contains the full `h^(2 * totalDepth)` leaf
+gain before the recurrence is propagated back to the root. -/
+noncomputable def constantRefinedAProcessSquaredEnvelope
+    (h N : ℕ) (C : ℝ) (totalDepth : ℕ) : ℕ → ℝ
+  | 0 => C / (h : ℝ) ^ (2 * totalDepth)
+  | depth + 1 =>
+      2 * (N : ℝ) ^ 2 / h +
+        4 * (N : ℝ) * (1 + Real.log h) * Real.sqrt
+          (constantRefinedAProcessSquaredEnvelope h N C totalDepth depth)
+
+@[simp] lemma constantRefinedAProcessSquaredEnvelope_zero
+    (h N : ℕ) (C : ℝ) (totalDepth : ℕ) :
+    constantRefinedAProcessSquaredEnvelope h N C totalDepth 0 =
+      C / (h : ℝ) ^ (2 * totalDepth) := rfl
+
+@[simp] lemma constantRefinedAProcessSquaredEnvelope_succ
+    (h N : ℕ) (C : ℝ) (totalDepth depth : ℕ) :
+    constantRefinedAProcessSquaredEnvelope h N C totalDepth (depth + 1) =
+      2 * (N : ℝ) ^ 2 / h +
+        4 * (N : ℝ) * (1 + Real.log h) * Real.sqrt
+          (constantRefinedAProcessSquaredEnvelope
+            h N C totalDepth depth) := rfl
+
+theorem constantRefinedAProcessSquaredEnvelope_nonneg
+    (h N : ℕ) (C : ℝ) (totalDepth depth : ℕ) (hC : 0 ≤ C) :
+    0 ≤ constantRefinedAProcessSquaredEnvelope h N C totalDepth depth := by
+  induction depth with
+  | zero =>
+      rw [constantRefinedAProcessSquaredEnvelope_zero]
+      exact div_nonneg hC (by positivity)
+  | succ depth ih =>
+      rw [constantRefinedAProcessSquaredEnvelope_succ]
+      have hlog : 0 ≤ Real.log (h : ℝ) := by
+        by_cases hzero : h = 0
+        · simp [hzero]
+        · exact Real.log_nonneg (by
+            exact_mod_cast (Nat.one_le_iff_ne_zero.mpr hzero))
+      have hharm : 0 ≤ 1 + Real.log (h : ℝ) := by linarith
+      positivity
+
+/-- At a fixed total depth, the level-indexed refined recurrence factors as
+the square of the accumulated constant schedule product times the normalized
+one-variable recurrence. -/
+theorem refinedRecursiveAProcessSquaredBound_const
+    (h N : ℕ) (C : ℝ) (totalDepth depth level : ℕ)
+    (hh : 1 ≤ h) (hC : 0 ≤ C) (hlevel : level + depth = totalDepth) :
+    refinedRecursiveAProcessSquaredBound (fun _ ↦ h) N C depth level =
+      (h : ℝ) ^ (2 * level) *
+        constantRefinedAProcessSquaredEnvelope h N C totalDepth depth := by
+  induction depth generalizing level with
+  | zero =>
+      have hcast : (h : ℝ) ≠ 0 := by positivity
+      simp only [refinedRecursiveAProcessSquaredBound_zero,
+        constantRefinedAProcessSquaredEnvelope_zero]
+      subst totalDepth
+      simp only [Nat.add_zero]
+      field_simp
+  | succ depth ih =>
+      have hnextLevel : level + 1 + depth = totalDepth := by omega
+      have hinner := ih (level + 1) hnextLevel
+      have hK : 0 ≤ constantRefinedAProcessSquaredEnvelope
+          h N C totalDepth depth :=
+        constantRefinedAProcessSquaredEnvelope_nonneg
+          h N C totalDepth depth hC
+      have hpow : 0 ≤ (h : ℝ) ^ (level + 1) := by positivity
+      have hpowSquare :
+          (h : ℝ) ^ (2 * (level + 1)) =
+            ((h : ℝ) ^ (level + 1)) ^ 2 := by
+        rw [show 2 * (level + 1) = (level + 1) * 2 by omega, pow_mul]
+      have hsqrt :
+          Real.sqrt ((h : ℝ) ^ (2 * (level + 1)) *
+            constantRefinedAProcessSquaredEnvelope h N C totalDepth depth) =
+            (h : ℝ) ^ (level + 1) * Real.sqrt
+              (constantRefinedAProcessSquaredEnvelope
+                h N C totalDepth depth) := by
+        rw [hpowSquare, Real.sqrt_mul (sq_nonneg _),
+          Real.sqrt_sq_eq_abs, abs_of_nonneg hpow]
+      rw [refinedRecursiveAProcessSquaredBound_succ,
+        constantRefinedAProcessSquaredEnvelope_succ]
+      simp only [aProcessScheduleProduct_const, Nat.cast_pow, hinner, hsqrt]
+      have hcast : (h : ℝ) ≠ 0 := by positivity
+      simp only [pow_succ]
+      field_simp
+      ring
+
+/-- Root form of the constant-schedule normalization. -/
+theorem refinedRecursiveAProcessSquaredBound_const_root
+    (h N : ℕ) (C : ℝ) (depth : ℕ)
+    (hh : 1 ≤ h) (hC : 0 ≤ C) :
+    refinedRecursiveAProcessSquaredBound (fun _ ↦ h) N C depth 0 =
+      constantRefinedAProcessSquaredEnvelope h N C depth depth := by
+  simpa using refinedRecursiveAProcessSquaredBound_const
+    h N C depth depth 0 hh hC (by simp)
+
+/-- Constant-schedule zeta estimate in the normalized product-sensitive
+recurrence, with the full terminal `h^(2 * depth)` gain exposed. -/
+theorem norm_zetaPhase_sum_sq_le_constantRefinedAProcessSquaredEnvelope
+    (t : ℝ) (m N depth h : ℕ)
+    (ht : 0 < t) (hm : 0 < m)
+    (hh : 1 ≤ h) (hbudget : depth * (h - 1) < N)
+    (hmajor : t * ((depth.factorial : ℝ) * (h : ℝ) ^ depth *
+      ((m : ℝ) ^ (depth + 1))⁻¹) ≤ Real.pi) :
+    ‖∑ n ∈ Finset.range N, phaseTerm (shiftedZetaPhase t m) n‖ ^ 2 ≤
+      constantRefinedAProcessSquaredEnvelope h N
+        (zetaAProcessUniformLeafSquaredBound t m N depth) depth depth := by
+  have hrefined :=
+    norm_zetaPhase_sum_sq_le_scheduledRefinedRecursiveAProcess
+      t m N depth (fun _ ↦ h) ht hm
+      (zetaAProcessScheduleValid_const
+        t m N depth h hh hbudget hmajor)
+  rw [refinedRecursiveAProcessSquaredBound_const_root
+    h N (zetaAProcessUniformLeafSquaredBound t m N depth) depth hh
+    (sq_nonneg _)] at hrefined
+  exact hrefined
 
 end ZeroFreeRegion.VinogradovKorobov
