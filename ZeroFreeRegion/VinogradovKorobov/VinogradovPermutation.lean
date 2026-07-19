@@ -1,4 +1,5 @@
 import ZeroFreeRegion.VinogradovKorobov.VinogradovMultiBlock
+import Mathlib.Logic.Equiv.Fin.Rotate
 
 open scoped BigOperators
 
@@ -95,6 +96,64 @@ theorem isVinogradovSolutionMod_comp_perm_iff {Q k s X : ℕ}
     simpa using h.comp_perm e.symm
   · intro h
     exact h.comp_perm e
+
+/-- The cyclic coordinate permutation that moves block `q` to the front of a
+tuple consisting of `q + 1 + a` length-`k` blocks and an `r`-coordinate tail. -/
+def vinogradovBlockCycle (k r q a : ℕ) (hk : 0 < k) :
+    Equiv.Perm (Fin ((q + 1 + a) * k + r)) :=
+  finCycle ⟨q * k, by
+    simp only [Nat.add_mul, one_mul]
+    omega⟩
+
+/-- The `i`-th coordinate of the first block in the full tuple. -/
+def vinogradovHeadIndex (k r q a : ℕ) (hk : 0 < k) (i : Fin k) :
+    Fin ((q + 1 + a) * k + r) :=
+  ⟨i.val, by
+    simp only [Nat.add_mul, one_mul]
+    omega⟩
+
+/-- The `i`-th coordinate of block `q` in the full tuple. -/
+def vinogradovBlockIndex (k r q a : ℕ) (hk : 0 < k) (i : Fin k) :
+    Fin ((q + 1 + a) * k + r) :=
+  ⟨q * k + i.val, by
+    simp only [Nat.add_mul, one_mul]
+    omega⟩
+
+/-- Cycling by `q*k` sends the new head coordinate to the corresponding old
+coordinate in block `q`. -/
+theorem vinogradovBlockCycle_headIndex
+    (k r q a : ℕ) (hk : 0 < k) (i : Fin k) :
+    vinogradovBlockCycle k r q a hk
+        (vinogradovHeadIndex k r q a hk i) =
+      vinogradovBlockIndex k r q a hk i := by
+  apply Fin.ext
+  simp only [vinogradovBlockCycle, vinogradovHeadIndex,
+    vinogradovBlockIndex, finCycle_apply, Fin.add_def]
+  rw [Nat.mod_eq_of_lt]
+  · omega
+  · simp only [Nat.add_mul, one_mul]
+    omega
+
+/-- Consequently, the moved tuple's head block is exactly its old block `q`. -/
+theorem vinogradovBlockCycle_head_value
+    {α : Type*} (k r q a : ℕ) (hk : 0 < k)
+    (x : Fin ((q + 1 + a) * k + r) → α) (i : Fin k) :
+    x (vinogradovBlockCycle k r q a hk
+        (vinogradovHeadIndex k r q a hk i)) =
+      x (vinogradovBlockIndex k r q a hk i) := by
+  rw [vinogradovBlockCycle_headIndex]
+
+/-- Moving any selected block to the head preserves the residue Vinogradov
+system. -/
+theorem isVinogradovResidueSolution_blockCycle_iff
+    {p d : ℕ} (k r q a : ℕ) (hk : 0 < k)
+    (x y : Fin ((q + 1 + a) * k + r) → ZMod p) :
+    IsVinogradovResidueSolution p d ((q + 1 + a) * k + r)
+        (fun i ↦ x (vinogradovBlockCycle k r q a hk i))
+        (fun i ↦ y (vinogradovBlockCycle k r q a hk i)) ↔
+      IsVinogradovResidueSolution p d ((q + 1 + a) * k + r) x y :=
+  isVinogradovResidueSolution_comp_perm_iff
+    (vinogradovBlockCycle k r q a hk) x y
 
 end
 

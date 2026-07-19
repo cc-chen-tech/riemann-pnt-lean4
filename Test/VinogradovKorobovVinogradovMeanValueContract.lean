@@ -218,6 +218,12 @@ open ZeroFreeRegion.VinogradovKorobov
 #check isVinogradovResidueSolution_comp_perm_iff
 #check vinogradovPowerSumMod_comp_perm
 #check isVinogradovSolutionMod_comp_perm_iff
+#check vinogradovBlockCycle
+#check vinogradovHeadIndex
+#check vinogradovBlockIndex
+#check vinogradovBlockCycle_headIndex
+#check vinogradovBlockCycle_head_value
+#check isVinogradovResidueSolution_blockCycle_iff
 #check isVinogradovSolutionMod_iff_powerSumInt_modEq
 #check card_singular_add_card_nonsingular_eq_vinogradovSolutionCountMod
 #check vinogradovSolutionCountMod_le_nonsingular_add_error
