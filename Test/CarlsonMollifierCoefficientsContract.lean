@@ -17,6 +17,11 @@ example {X N n : ℕ} (hn : 0 < n) (hnX : n ≤ X) (hnN : n ≤ N) :
     mollifiedTruncatedCoefficient X N n = if n = 1 then 1 else 0 :=
   mollifiedTruncatedCoefficient_eq_one_apply hn hnX hnN
 
+example (X N n : ℕ) :
+    ‖mollifiedTruncatedCoefficient X N n‖ ≤
+      (n.divisorsAntidiagonal.card : ℝ) :=
+  norm_mollifiedTruncatedCoefficient_le_card_divisorsAntidiagonal X N n
+
 example (X N : ℕ) (s : ℂ) :
     (∑ m ∈ Finset.Icc 1 N, 1 / (m : ℂ) ^ s) *
         (∑ n ∈ Finset.Icc 1 X,
@@ -33,6 +38,7 @@ example {X N : ℕ} (hX : 0 < X) (hN : 0 < N) (s : ℂ) :
 #print axioms mollifiedTruncatedCoefficient_eq_one_apply
 #print axioms truncatedZeta_sum_mul_mobius_sum_eq_mollifiedTruncatedPolynomial
 #print axioms mollifiedTruncatedPolynomial_sub_one_eq_tail
+#print axioms norm_mollifiedTruncatedCoefficient_le_card_divisorsAntidiagonal
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem

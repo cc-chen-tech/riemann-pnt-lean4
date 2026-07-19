@@ -23,6 +23,43 @@ noncomputable def mollifiedTailCoefficient
   mollifiedTruncatedCoefficient X N n *
     ((n : ℂ) ^ (sigma : ℂ))⁻¹
 
+/-- The vertical-line tail coefficient is bounded by the divisor count times
+the expected real decay `n⁻ˢ`. -/
+theorem norm_mollifiedTailCoefficient_le
+    (X N : ℕ) (sigma : ℝ) {n : ℕ} (hn : 0 < n) :
+    ‖mollifiedTailCoefficient X N sigma n‖ ≤
+      (n.divisorsAntidiagonal.card : ℝ) * (n : ℝ) ^ (-sigma) := by
+  have hcoeff :=
+    norm_mollifiedTruncatedCoefficient_le_card_divisorsAntidiagonal X N n
+  have hdecay : ‖((n : ℂ) ^ (sigma : ℂ))⁻¹‖ = (n : ℝ) ^ (-sigma) := by
+    rw [norm_inv, norm_natCast_cpow_of_pos hn]
+    exact (Real.rpow_neg (Nat.cast_nonneg n) sigma).symm
+  unfold mollifiedTailCoefficient
+  rw [norm_mul, hdecay]
+  exact mul_le_mul_of_nonneg_right hcoeff
+    (Real.rpow_nonneg (Nat.cast_nonneg n) (-sigma))
+
+/-- The weighted coefficient square sum in the conditional Hilbert bound is
+dominated by a purely real divisor-square sum. -/
+theorem mollifiedTailCoefficient_weightedSquareSum_le
+    (X N : ℕ) (sigma : ℝ) :
+    ∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+        ((n : ℝ) + 1) * ‖mollifiedTailCoefficient X N sigma n‖ ^ 2 ≤
+      ∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+        ((n : ℝ) + 1) *
+          ((n.divisorsAntidiagonal.card : ℝ) * (n : ℝ) ^ (-sigma)) ^ 2 := by
+  apply Finset.sum_le_sum
+  intro n hn
+  apply mul_le_mul_of_nonneg_left _ (by positivity)
+  have hnpos : 0 < n := by
+    have hnLower := (Finset.mem_Icc.mp hn).1
+    omega
+  have hnorm := norm_mollifiedTailCoefficient_le X N sigma hnpos
+  have hbound :
+      0 ≤ (n.divisorsAntidiagonal.card : ℝ) * (n : ℝ) ^ (-sigma) :=
+    mul_nonneg (Nat.cast_nonneg _) (Real.rpow_nonneg (Nat.cast_nonneg n) _)
+  nlinarith [norm_nonneg (mollifiedTailCoefficient X N sigma n)]
+
 /-- The Möbius-cancelled tail is a finite exponential sum with frequencies
 `-log n` on every vertical line. -/
 theorem mollifiedTruncatedTail_verticalLine_eq_finiteDirichletPolynomial

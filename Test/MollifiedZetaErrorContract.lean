@@ -18,6 +18,19 @@ example (X : ℕ) (x : ℝ) (s : ℂ) :
 noncomputable example (X N : ℕ) (sigma : ℝ) (n : ℕ) : ℂ :=
   mollifiedTailCoefficient X N sigma n
 
+example (X N n : ℕ) (sigma : ℝ) (hn : 0 < n) :
+    ‖mollifiedTailCoefficient X N sigma n‖ ≤
+      (n.divisorsAntidiagonal.card : ℝ) * (n : ℝ) ^ (-sigma) :=
+  norm_mollifiedTailCoefficient_le X N sigma hn
+
+example (X N : ℕ) (sigma : ℝ) :
+    ∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+        ((n : ℝ) + 1) * ‖mollifiedTailCoefficient X N sigma n‖ ^ 2 ≤
+      ∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+        ((n : ℝ) + 1) *
+          ((n.divisorsAntidiagonal.card : ℝ) * (n : ℝ) ^ (-sigma)) ^ 2 :=
+  mollifiedTailCoefficient_weightedSquareSum_le X N sigma
+
 example (X N : ℕ) (sigma t : ℝ) :
     (∑ n ∈ Finset.Icc (min X N + 1) (N * X),
         mollifiedTruncatedCoefficient X N n /
@@ -97,6 +110,8 @@ example :
 #print axioms exists_mollifiedZetaError_tail_decomposition
 #print axioms mollifiedTruncatedTail_verticalLine_eq_finiteDirichletPolynomial
 #print axioms mollifiedTruncatedTail_meanSquare_le_of_hilbert
+#print axioms norm_mollifiedTailCoefficient_le
+#print axioms mollifiedTailCoefficient_weightedSquareSum_le
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem

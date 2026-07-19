@@ -21,6 +21,42 @@ mollifier, expressed as a finite Dirichlet convolution. -/
 def mollifiedTruncatedCoefficient (X N n : ℕ) : ℂ :=
   (truncatedZetaArithmetic N * truncatedMobiusArithmetic X) n
 
+/-- A crude but uniform divisor-count bound for every collected mollifier
+coefficient.  It is the coefficient input needed before estimating the
+weighted square sum in Carlson's mean-value argument. -/
+theorem norm_mollifiedTruncatedCoefficient_le_card_divisorsAntidiagonal
+    (X N n : ℕ) :
+    ‖mollifiedTruncatedCoefficient X N n‖ ≤
+      (n.divisorsAntidiagonal.card : ℝ) := by
+  unfold mollifiedTruncatedCoefficient
+  rw [ArithmeticFunction.mul_apply]
+  calc
+    ‖∑ p ∈ n.divisorsAntidiagonal,
+        truncatedZetaArithmetic N p.1 * truncatedMobiusArithmetic X p.2‖
+        ≤ ∑ p ∈ n.divisorsAntidiagonal,
+          ‖truncatedZetaArithmetic N p.1 * truncatedMobiusArithmetic X p.2‖ :=
+      norm_sum_le _ _
+    _ ≤ ∑ _p ∈ n.divisorsAntidiagonal, (1 : ℝ) := by
+      apply Finset.sum_le_sum
+      intro p hp
+      by_cases hp1 : p.1 ∈ Finset.Icc 1 N
+      · by_cases hp2 : p.2 ∈ Finset.Icc 1 X
+        · rcases Finset.mem_Icc.mp hp1 with ⟨hp1lo, hp1hi⟩
+          rcases Finset.mem_Icc.mp hp2 with ⟨hp2lo, hp2hi⟩
+          have hmuInt := ArithmeticFunction.abs_moebius_le_one (n := p.2)
+          have hmuReal : |(ArithmeticFunction.moebius p.2 : ℝ)| ≤ 1 := by
+            exact_mod_cast hmuInt
+          simpa [truncatedZetaArithmetic, truncatedMobiusArithmetic,
+            Finset.mem_Icc, hp1lo, hp1hi, hp2lo, hp2hi,
+            Complex.norm_intCast] using hmuReal
+        · have hp2cond : ¬(1 ≤ p.2 ∧ p.2 ≤ X) := by
+            simpa [Finset.mem_Icc] using hp2
+          simp [truncatedMobiusArithmetic, Finset.mem_Icc, hp2cond]
+      · have hp1cond : ¬(1 ≤ p.1 ∧ p.1 ≤ N) := by
+          simpa [Finset.mem_Icc] using hp1
+        simp [truncatedZetaArithmetic, Finset.mem_Icc, hp1cond]
+    _ = (n.divisorsAntidiagonal.card : ℝ) := by simp
+
 /-- The finite Dirichlet polynomial obtained after multiplying the truncated
 zeta sum by the truncated Möbius mollifier and collecting equal products. -/
 noncomputable def mollifiedTruncatedPolynomial (X N : ℕ) (s : ℂ) : ℂ :=
