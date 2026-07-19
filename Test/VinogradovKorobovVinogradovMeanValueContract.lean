@@ -1,4 +1,4 @@
-import ZeroFreeRegion.VinogradovKorobov.VinogradovLifting
+import ZeroFreeRegion.VinogradovKorobov.VinogradovBounds
 
 open ZeroFreeRegion.VinogradovKorobov
 
@@ -34,3 +34,11 @@ open ZeroFreeRegion.VinogradovKorobov
 #check vinogradovSolutionCountMod_eq_nat_of_scale
 #check vinogradovSolutionCountMod_eq_nat_of_topScale
 #check normalizedVinogradovMomentMod_eq_natCount_of_topScale
+#check vinogradovSolutionCountNat_le_total
+#check pow_le_vinogradovSolutionCountNat
+#check isVinogradovSolutionNat_one_iff
+#check vinogradovSolutionCountNat_one
+#check normalizedVinogradovMomentMod_one
+#check fixed_left_solution_count_le
+#check vinogradovSolutionCountNat_le_firstPower
+#check norm_normalizedVinogradovMomentMod_le_firstPower
