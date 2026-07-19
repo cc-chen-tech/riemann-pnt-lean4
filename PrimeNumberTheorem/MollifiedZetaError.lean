@@ -1,5 +1,6 @@
 import PrimeNumberTheorem.CarlsonZetaApproximation
 import PrimeNumberTheorem.CarlsonMollifierCoefficients
+import PrimeNumberTheorem.CarlsonDivisorSquare
 import PrimeNumberTheorem.CarneiroLittmannKernelConstruction
 import PrimeNumberTheorem.MobiusMollifier
 
@@ -201,6 +202,38 @@ theorem mollifiedTruncatedTail_meanSquare_le_weightedDivisorSquareSum
           (mollifiedTailCoefficient_weightedSquareSum_le X N sigma)
           (mul_nonneg (by norm_num) Real.pi_nonneg)
     _ = ((b - a) + 4 * Real.pi) * D := by ring
+
+/-- The Carlson tail is controlled by a weighted fourfold-divisor sum.  This
+is the form suited to a hyperbola-counting or Abel-summation estimate. -/
+theorem mollifiedTruncatedTail_meanSquare_le_fourfoldDivisorCount
+    {X N : ℕ} {sigma a b : ℝ} (hab : a ≤ b) :
+    ∫ t in a..b,
+        ‖∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+          mollifiedTruncatedCoefficient X N n /
+            (n : ℂ) ^ ((sigma : ℂ) + Complex.I * t)‖ ^ 2 ≤
+      ((b - a) + 4 * Real.pi) *
+        ∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+          ((n : ℝ) + 1) * (fourfoldDivisorCount n : ℝ) *
+            ((n : ℝ) ^ (-sigma)) ^ 2 := by
+  calc
+    ∫ t in a..b,
+        ‖∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+          mollifiedTruncatedCoefficient X N n /
+            (n : ℂ) ^ ((sigma : ℂ) + Complex.I * t)‖ ^ 2 ≤
+      ((b - a) + 4 * Real.pi) *
+        ∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+          ((n : ℝ) + 1) *
+            ((n.divisorsAntidiagonal.card : ℝ) * (n : ℝ) ^ (-sigma)) ^ 2 :=
+      mollifiedTruncatedTail_meanSquare_le_weightedDivisorSquareSum hab
+    _ ≤ ((b - a) + 4 * Real.pi) *
+        ∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+          ((n : ℝ) + 1) * (fourfoldDivisorCount n : ℝ) *
+            ((n : ℝ) ^ (-sigma)) ^ 2 := by
+      apply mul_le_mul_of_nonneg_left
+      · exact weightedDivisorSquareSum_le_fourfoldDivisorCount
+          (show 0 < min X N + 1 by omega) sigma
+      · exact add_nonneg (sub_nonneg.mpr hab)
+          (mul_nonneg (by norm_num) Real.pi_nonneg)
 
 /-- The finite product in the mollified zeta approximation is exactly the
 coefficient polynomial obtained from the truncated Dirichlet convolution. -/
