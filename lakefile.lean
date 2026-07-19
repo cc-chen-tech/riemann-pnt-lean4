@@ -171,6 +171,7 @@ lean_lib RiemannPNT where
     `Test.VinogradovKorobovHighDegreeExpansionContract,
     `Test.VinogradovKorobovSpacedPolynomialContract,
     `Test.VinogradovKorobovIntegralMatrixTransformContract,
+    `Test.VinogradovKorobovPolynomialTranslationContract,
     `Test.VinogradovKorobovVanDerCorputRangeContract,
     `Test.VinogradovKorobovLogVanDerCorputContract
   ]
