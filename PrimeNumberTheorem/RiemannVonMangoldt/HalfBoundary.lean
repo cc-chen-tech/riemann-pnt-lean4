@@ -25,6 +25,21 @@ the absolutely convergent line `Re(s)=2`. -/
 noncomputable def completedZetaHalfBoundaryPhase (U T : ℝ) : ℝ :=
   completedZetaHalfBoundaryPhaseAt 2 U T
 
+/-- Expansion of the completed-zeta half-boundary phase into its three
+oriented edge contributions. -/
+theorem completedZetaHalfBoundaryPhase_apply (U T : ℝ) :
+    completedZetaHalfBoundaryPhase U T =
+      (∫ sigma in (1 / 2 : ℝ)..2,
+        logDeriv RiemannHypothesis.completedZeta
+          ((sigma : ℂ) + (U : ℂ) * I)).im -
+      (∫ sigma in (1 / 2 : ℝ)..2,
+        logDeriv RiemannHypothesis.completedZeta
+          ((sigma : ℂ) + (T : ℂ) * I)).im +
+      (∫ t in U..T,
+        logDeriv RiemannHypothesis.completedZeta
+          ((2 : ℂ) + (t : ℂ) * I)).re := by
+  rfl
+
 private theorem completedZeta_ne_zero_on_good_horizontal
     {T sigma : ℝ} (hT : 0 < T)
     (hgood : ExplicitFormulaAux.goodHeight T)
