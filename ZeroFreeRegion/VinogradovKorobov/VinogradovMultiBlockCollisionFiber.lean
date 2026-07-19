@@ -197,6 +197,129 @@ theorem card_vinogradovMultiBlockCollisionFiber
     (vinogradovMultiBlockCollisionFiberEquiv k r b hk w)]
   simp [card_vinogradovMultiBlockCollisionReducedIndex_block k r b hk w]
 
+/-- Reconstructing and forgetting the collision proofs embeds a reduced tuple
+into the full ambient tuple space. -/
+def vinogradovMultiBlockCollisionFiberEmbedding
+    {α : Type*} (k r b : ℕ) (hk : 0 < k)
+    (w : Fin b → VinogradovCollisionWitness k) :
+    (VinogradovMultiBlockCollisionReducedIndex k r b w → α) ↪
+      (Fin (b * k + r) → α) where
+  toFun f :=
+    ((vinogradovMultiBlockCollisionFiberEquiv k r b hk w).symm f).1
+  inj' f g h := by
+    apply (vinogradovMultiBlockCollisionFiberEquiv k r b hk w).symm.injective
+    apply Subtype.ext
+    exact h
+
+/-- Residue tuples satisfying one prescribed collision in every selected
+block. -/
+noncomputable def vinogradovFixedMultiBlockCollisionTupleSet
+    (p k r b : ℕ) [NeZero p] (hk : 0 < k)
+    (w : Fin b → VinogradovCollisionWitness k) :
+    Finset (Fin (b * k + r) → ZMod p) :=
+  (Finset.univ : Finset
+    (VinogradovMultiBlockCollisionReducedIndex k r b w → ZMod p)).map
+      (vinogradovMultiBlockCollisionFiberEmbedding k r b hk w)
+
+theorem mem_vinogradovFixedMultiBlockCollisionTupleSet_iff
+    (p k r b : ℕ) [NeZero p] (hk : 0 < k)
+    (w : Fin b → VinogradovCollisionWitness k)
+    (x : Fin (b * k + r) → ZMod p) :
+    x ∈ vinogradovFixedMultiBlockCollisionTupleSet p k r b hk w ↔
+      ∀ q : Fin b,
+        x (vinogradovCollisionKeptIndex k r b w q) =
+          x (vinogradovCollisionDeletedIndex k r b w q) := by
+  constructor
+  · intro hx
+    obtain ⟨f, _hf, rfl⟩ := Finset.mem_map.mp hx
+    exact
+      ((vinogradovMultiBlockCollisionFiberEquiv k r b hk w).symm f).2
+  · intro hx
+    let z : VinogradovMultiBlockCollisionFiber (ZMod p) k r b w :=
+      ⟨x, hx⟩
+    let f := vinogradovMultiBlockCollisionFiberEquiv k r b hk w z
+    apply Finset.mem_map.mpr
+    refine ⟨f, Finset.mem_univ _, ?_⟩
+    exact congrArg Subtype.val
+      ((vinogradovMultiBlockCollisionFiberEquiv k r b hk w).symm_apply_apply z)
+
+/-- Every fixed simultaneous collision choice has the exact reduced number of
+residue tuples. -/
+theorem card_vinogradovFixedMultiBlockCollisionTupleSet
+    (p k r b : ℕ) [NeZero p] (hk : 0 < k)
+    (w : Fin b → VinogradovCollisionWitness k) :
+    (vinogradovFixedMultiBlockCollisionTupleSet p k r b hk w).card =
+      p ^ (b * (k - 1) + r) := by
+  rw [vinogradovFixedMultiBlockCollisionTupleSet, Finset.card_map]
+  simp [card_vinogradovMultiBlockCollisionReducedIndex_block k r b hk w,
+    ZMod.card]
+
+/-- Union over every simultaneous collision choice. -/
+noncomputable def vinogradovFixedMultiBlockCollisionUnionSet
+    (p k r b : ℕ) [NeZero p] (hk : 0 < k) :
+    Finset (Fin (b * k + r) → ZMod p) :=
+  (Finset.univ : Finset (Fin b → VinogradovCollisionWitness k)).biUnion
+    (vinogradovFixedMultiBlockCollisionTupleSet p k r b hk)
+
+theorem mem_vinogradovFixedMultiBlockCollisionUnionSet_iff
+    (p k r b : ℕ) [NeZero p] (hk : 0 < k)
+    (x : Fin (b * k + r) → ZMod p) :
+    x ∈ vinogradovFixedMultiBlockCollisionUnionSet p k r b hk ↔
+      VinogradovAllBlocksSingular p k r b x := by
+  rw [← vinogradovMultiBlockCollisionWitnessSet_nonempty_iff p k r b x]
+  constructor
+  · intro hx
+    obtain ⟨w, _hw, hxw⟩ := Finset.mem_biUnion.mp hx
+    refine ⟨w, ?_⟩
+    apply (mem_vinogradovMultiBlockCollisionWitnessSet_iff
+      p k r b x w).mpr
+    simpa [vinogradovCollisionKeptIndex,
+      vinogradovCollisionDeletedIndex] using
+      (mem_vinogradovFixedMultiBlockCollisionTupleSet_iff
+        p k r b hk w x).mp hxw
+  · rintro ⟨w, hw⟩
+    apply Finset.mem_biUnion.mpr
+    refine ⟨w, Finset.mem_univ w, ?_⟩
+    apply (mem_vinogradovFixedMultiBlockCollisionTupleSet_iff
+      p k r b hk w x).mpr
+    simpa [vinogradovCollisionKeptIndex,
+      vinogradovCollisionDeletedIndex] using
+      (mem_vinogradovMultiBlockCollisionWitnessSet_iff
+        p k r b x w).mp hw
+
+/-- The collision-fiber union is exactly the recursively defined all-singular
+residue set. -/
+theorem vinogradovFixedMultiBlockCollisionUnionSet_eq_singular
+    (p k r b : ℕ) [Fact p.Prime] (hk : 0 < k) :
+    letI : NeZero p := ⟨(Fact.out : p.Prime).ne_zero⟩
+    vinogradovFixedMultiBlockCollisionUnionSet p k r b hk =
+      vinogradovMultiBlockSingularResidueSet p k r b := by
+  letI : NeZero p := ⟨(Fact.out : p.Prime).ne_zero⟩
+  ext x
+  rw [mem_vinogradovFixedMultiBlockCollisionUnionSet_iff]
+  exact (mem_vinogradovMultiBlockSingularResidueSet_iff p k r b x).symm
+
+/-- Summing the exact fibers gives a structural collision-witness bound for
+the all-singular residue set. -/
+theorem card_vinogradovFixedMultiBlockCollisionUnionSet_le
+    (p k r b : ℕ) [NeZero p] (hk : 0 < k) :
+    (vinogradovFixedMultiBlockCollisionUnionSet p k r b hk).card ≤
+      (Fintype.card (VinogradovCollisionWitness k)) ^ b *
+        p ^ (b * (k - 1) + r) := by
+  calc
+    (vinogradovFixedMultiBlockCollisionUnionSet p k r b hk).card ≤
+        ∑ w : Fin b → VinogradovCollisionWitness k,
+          (vinogradovFixedMultiBlockCollisionTupleSet
+            p k r b hk w).card := Finset.card_biUnion_le
+    _ = ∑ _w : Fin b → VinogradovCollisionWitness k,
+        p ^ (b * (k - 1) + r) := by
+      apply Finset.sum_congr rfl
+      intro w _hw
+      exact card_vinogradovFixedMultiBlockCollisionTupleSet p k r b hk w
+    _ = (Fintype.card (VinogradovCollisionWitness k)) ^ b *
+        p ^ (b * (k - 1) + r) := by
+      simp
+
 end
 
 end ZeroFreeRegion.VinogradovKorobov
