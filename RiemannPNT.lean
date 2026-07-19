@@ -10,6 +10,7 @@ import HardyTheorem.CriticalLineShortDirichlet
 import HardyTheorem.HardyShortSignedMeanSquare
 import HardyTheorem.HardyPhaseCorrelation
 import HardyTheorem.HardyOddMultiplicity
+import MathlibAux.SlidingIntervalCorrelation
 import EulerAndLfunctions
 import PrimeNumberTheorem
 import PrimeNumberTheorem.Perron

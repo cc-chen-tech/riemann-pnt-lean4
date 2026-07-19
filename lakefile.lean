@@ -82,6 +82,8 @@ lean_lib RiemannPNT where
     `MathlibAux.RectangleResidue,
     `MathlibAux.BoundaryRectResidue,
     `MathlibAux.DirichletPolynomialMeanSquare,
+    `MathlibAux.SlidingIntervalCorrelation,
+    `Test.SlidingIntervalCorrelationContract,
     `PrimeNumberTheorem.ExplicitFormulaTruncated,
     `Test.ExplicitFormulaAllHeightsContract,
     `Test.ExplicitFormulaAllHeightsRateContract,

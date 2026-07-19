@@ -1,0 +1,11 @@
+import MathlibAux.SlidingIntervalCorrelation
+
+open Complex MeasureTheory
+
+#check MathlibAux.integral_conj_mul_integral_eq_triple
+#check MathlibAux.slidingIntervalCorrelation_fubini
+#check MathlibAux.slidingIntervalCorrelation_kernel
+
+#print axioms MathlibAux.integral_conj_mul_integral_eq_triple
+#print axioms MathlibAux.slidingIntervalCorrelation_fubini
+#print axioms MathlibAux.slidingIntervalCorrelation_kernel
