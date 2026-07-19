@@ -241,5 +241,98 @@ theorem two_pi_mul_regularizedCarlsonZeroMultiplicityWeightedRealSum_eq_four_edg
   rw [Complex.mul_im, hsumRe] at him
   simpa [f] using him.symm
 
+/-- The weighted detector-zero sum dominates Carlson's target zeta-zero
+count.  Each target zero lies strictly to the right of `sigma`, and detector
+multiplicity dominates zeta multiplicity. -/
+theorem sub_mul_zeroDensityCount_le_regularizedCarlsonWeightedZeroSum
+    {X : ℕ} (hX : 1 ≤ X) {sigma T x0 x1 y0 y1 : ℝ}
+    (hx0 : 0 < x0) (hx0sigma : x0 < sigma)
+    (hx1 : 1 < x1) (hy0 : y0 < 0) (hy1 : T < y1) :
+    (sigma - x0) * (ZeroDensity.zeroDensityCount sigma T : ℝ) ≤
+      ∑ rho ∈ regularizedCarlsonDetectorRectangleDivisorSupport
+          X x0 x1 y0 y1,
+        (rho.re - x0) *
+          (analyticOrderNatAt
+            (regularizedCarlsonZeroDetector X) rho : ℝ) := by
+  classical
+  let S := ZeroDensity.zeroDensityZerosFinset sigma T
+  let P := regularizedCarlsonDetectorRectangleDivisorSupport
+    X x0 x1 y0 y1
+  have hSsub : S ⊆ P := by
+    intro rho hrhoS
+    have hrho := ZeroDensity.mem_zeroDensityZerosFinset.mp hrhoS
+    have hrhoMem : rho ∈ carlsonDetectorRectangle x0 x1 y0 y1 := by
+      dsimp [carlsonDetectorRectangle]
+      constructor
+      · constructor
+        · exact (hx0sigma.trans hrho.2.2.2).le
+        · exact (hrho.1.2.2.trans hx1).le
+      · constructor
+        · exact (hy0.trans hrho.2.1).le
+        · exact hrho.2.2.1.trans hy1.le
+    have hdetectorPos :
+        0 < analyticOrderNatAt (regularizedCarlsonZeroDetector X) rho :=
+      (ZeroFreeRegion.analyticOrderNatAt_riemannZeta_pos_of_zero
+        (by
+          intro hone
+          have hre := congrArg Complex.re hone
+          simp at hre
+          linarith [hrho.1.2.2]) hrho.1.1).trans_le
+        (analyticOrderNatAt_riemannZeta_le_regularizedCarlsonZeroDetector
+          hX hrho.1)
+    have hanalytic : AnalyticAt ℂ (regularizedCarlsonZeroDetector X) rho :=
+      analyticOnNhd_regularizedCarlsonZeroDetector_re_gt
+        (theta := (0 : ℝ)) le_rfl X rho
+          (hx0.trans_le hrhoMem.1.1)
+    have hdetectorZero : regularizedCarlsonZeroDetector X rho = 0 := by
+      apply hanalytic.analyticOrderAt_ne_zero.mp
+      intro horderZero
+      have hnatZero :
+          analyticOrderNatAt (regularizedCarlsonZeroDetector X) rho = 0 := by
+        simp [analyticOrderNatAt, horderZero]
+      omega
+    dsimp [P]
+    exact
+      (mem_regularizedCarlsonDetectorRectangleDivisorSupport_iff_zero
+        hX hx0 hrhoMem).mpr hdetectorZero
+  have hPnonneg : ∀ rho ∈ P,
+      0 ≤ (rho.re - x0) *
+        (analyticOrderNatAt
+          (regularizedCarlsonZeroDetector X) rho : ℝ) := by
+    intro rho hrhoP
+    let K := carlsonDetectorRectangle x0 x1 y0 y1
+    let D := MeromorphicOn.divisor (regularizedCarlsonZeroDetector X) K
+    have hrhoSupport : rho ∈ D.support := by
+      dsimp [P, regularizedCarlsonDetectorRectangleDivisorSupport] at hrhoP
+      exact (D.finiteSupport
+        (isCompact_carlsonDetectorRectangle x0 x1 y0 y1)).mem_toFinset.mp hrhoP
+    have hrhoK : rho ∈ K := D.supportWithinDomain hrhoSupport
+    exact mul_nonneg (sub_nonneg.mpr hrhoK.1.1) (Nat.cast_nonneg _)
+  calc
+    (sigma - x0) * (ZeroDensity.zeroDensityCount sigma T : ℝ) =
+        ∑ rho ∈ S, (sigma - x0) *
+          (analyticOrderNatAt riemannZeta rho : ℝ) := by
+      simp [S, ZeroDensity.zeroDensityCount, Finset.mul_sum]
+    _ ≤ ∑ rho ∈ S, (rho.re - x0) *
+          (analyticOrderNatAt
+            (regularizedCarlsonZeroDetector X) rho : ℝ) := by
+      apply Finset.sum_le_sum
+      intro rho hrhoS
+      have hrho := ZeroDensity.mem_zeroDensityZerosFinset.mp hrhoS
+      have hweight : sigma - x0 ≤ rho.re - x0 := by linarith [hrho.2.2.2]
+      have hmult :
+          (analyticOrderNatAt riemannZeta rho : ℝ) ≤
+            (analyticOrderNatAt
+              (regularizedCarlsonZeroDetector X) rho : ℝ) := by
+        exact_mod_cast
+          analyticOrderNatAt_riemannZeta_le_regularizedCarlsonZeroDetector
+            hX hrho.1
+      exact mul_le_mul hweight hmult (Nat.cast_nonneg _) (by linarith)
+    _ ≤ ∑ rho ∈ P, (rho.re - x0) *
+          (analyticOrderNatAt
+            (regularizedCarlsonZeroDetector X) rho : ℝ) :=
+      Finset.sum_le_sum_of_subset_of_nonneg hSsub
+        (fun rho hrhoP _ => hPnonneg rho hrhoP)
+
 end CarlsonZeroDensity
 end PrimeNumberTheorem
