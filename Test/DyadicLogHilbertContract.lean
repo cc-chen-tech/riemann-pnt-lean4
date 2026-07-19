@@ -1,0 +1,5 @@
+import MathlibAux.DyadicLogHilbert
+
+#check MathlibAux.symmetricWeightedHilbertForm
+#check MathlibAux.norm_symmetricWeightedHilbertForm_le
+#print axioms MathlibAux.norm_symmetricWeightedHilbertForm_le

@@ -13,6 +13,7 @@ import HardyTheorem.HardyPhaseCorrelation
 import HardyTheorem.HardyOddMultiplicity
 import MathlibAux.SlidingIntervalCorrelation
 import MathlibAux.DiscreteHilbertInequality
+import MathlibAux.DyadicLogHilbert
 import EulerAndLfunctions
 import PrimeNumberTheorem
 import PrimeNumberTheorem.Perron
