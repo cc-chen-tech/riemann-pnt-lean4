@@ -142,7 +142,7 @@ theorem norm_integral_exp_I_mul_le_two_div {a b d : ℝ} (hd : d ≠ 0) :
           ‖Complex.exp ((Complex.I * (d : ℂ)) * a)‖ := norm_sub_le _ _
     _ = 2 := by norm_num [Complex.norm_exp]
 
-private lemma conj_mul_finiteExponentialSum_eq {ι : Type*} [DecidableEq ι]
+theorem conj_mul_finiteExponentialSum_eq {ι : Type*} [DecidableEq ι]
     (S : Finset ι) (c : ι → ℂ) (omega : ι → ℝ) (t : ℝ) :
     conj (finiteExponentialSum S c omega t) *
         finiteExponentialSum S c omega t =
