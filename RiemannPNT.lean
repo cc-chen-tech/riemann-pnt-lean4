@@ -22,6 +22,7 @@ import HardyTheorem.HardyPhaseCentralRightEnergy
 import HardyTheorem.HardyPhaseNearestEnergy
 import HardyTheorem.HardyPhaseCentralEnergy
 import HardyTheorem.HardyPhaseLowTailEnergy
+import HardyTheorem.HardyPhaseHighTailEnergy
 import HardyTheorem.HardyPhaseHilbert
 import HardyTheorem.HardyOddMultiplicity
 import MathlibAux.SlidingIntervalCorrelation
