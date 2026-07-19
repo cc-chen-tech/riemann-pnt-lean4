@@ -8,3 +8,4 @@ open ZeroFreeRegion.VinogradovKorobov
 #check IsVinogradovWeightedSolutionInt
 #check isVinogradovWeightedSolutionInt_iff_modEq
 #check isVinogradovWeightedSolutionInt_affine_iff_triangular
+#check weightedAffineRescale_counterexample

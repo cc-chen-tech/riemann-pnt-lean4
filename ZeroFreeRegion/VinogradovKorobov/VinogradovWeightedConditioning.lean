@@ -89,6 +89,24 @@ theorem isVinogradovWeightedSolutionInt_affine_iff_triangular
   · simpa [vinogradovPowerSumDifferenceInt_affine] using h j
   · simpa [vinogradovPowerSumDifferenceInt_affine] using h j
 
+/-- Direct affine rescaling is false for the degree-weighted system.  The
+outer tuples `(1, 1)` and `(3, 3)` solve the degree-one congruence modulo `4`
+and the degree-two congruence modulo `16`, but after removing the common
+residue `1` and dividing by `2`, the tuples `(0, 0)` and `(1, 1)` fail the
+degree-two congruence modulo `4`. -/
+theorem weightedAffineRescale_counterexample :
+    IsVinogradovWeightedSolutionInt 2 2 2 2
+        (fun _ ↦ 1) (fun _ ↦ 3) ∧
+      ¬ IsVinogradovWeightedSolutionInt 2 1 2 2
+        (fun _ ↦ 0) (fun _ ↦ 1) := by
+  constructor
+  · intro j
+    fin_cases j <;>
+      norm_num [vinogradovPowerSumInt, Int.ModEq]
+  · intro h
+    have hdegreeTwo := h (1 : Fin 2)
+    norm_num [vinogradovPowerSumInt, Int.ModEq] at hdegreeTwo
+
 end
 
 end ZeroFreeRegion.VinogradovKorobov
