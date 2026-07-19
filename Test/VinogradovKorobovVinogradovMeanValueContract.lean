@@ -1,4 +1,4 @@
-import ZeroFreeRegion.VinogradovKorobov.VinogradovMomentMonotonicity
+import ZeroFreeRegion.VinogradovKorobov.VinogradovLinear
 
 open ZeroFreeRegion.VinogradovKorobov
 
@@ -79,3 +79,5 @@ open ZeroFreeRegion.VinogradovKorobov
 #check sum_norm_vinogradovWeylSumMod_pow_add_le
 #check vinogradovSolutionCountMod_add_le
 #check vinogradovSolutionCountNat_add_le
+#check vinogradovCriticalWeight_one
+#check vinogradovMeanValueEstimate_linear

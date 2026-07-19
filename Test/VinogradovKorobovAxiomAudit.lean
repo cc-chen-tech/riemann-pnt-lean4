@@ -238,3 +238,5 @@ import ZeroFreeRegion.VinogradovKorobov.VinogradovMainEstimate
 #print axioms ZeroFreeRegion.VinogradovKorobov.sum_norm_vinogradovWeylSumMod_pow_add_le
 #print axioms ZeroFreeRegion.VinogradovKorobov.vinogradovSolutionCountMod_add_le
 #print axioms ZeroFreeRegion.VinogradovKorobov.vinogradovSolutionCountNat_add_le
+#print axioms ZeroFreeRegion.VinogradovKorobov.vinogradovCriticalWeight_one
+#print axioms ZeroFreeRegion.VinogradovKorobov.vinogradovMeanValueEstimate_linear
