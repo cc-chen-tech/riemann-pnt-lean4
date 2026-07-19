@@ -39,6 +39,89 @@ noncomputable def zetaAProcessUniformLeafSquaredBound
     (t : ℝ) (m N depth : ℕ) : ℝ :=
   (2 * Real.pi / zetaAProcessUniformLeafDeltaLower t m N depth) ^ 2
 
+/-- Path-sensitive terminal envelope retaining the full product of the
+A-process shifts. -/
+noncomputable def zetaAProcessProductLeafSquaredBound
+    (t : ℝ) (m N depth : ℕ) (shifts : List ℕ) : ℝ :=
+  (2 * Real.pi /
+    (zetaAProcessUniformLeafDeltaLower t m N depth * (shifts.prod : ℝ))) ^ 2
+
+/-- The uniform coefficient times the complete positive shift product is a
+lower bound for the terminal adjacent decrement. -/
+theorem zetaAProcessUniformLeafDeltaLower_mul_prod_le
+    (t : ℝ) (m N depth : ℕ) (shifts : List ℕ)
+    (ht : 0 < t) (hm : 0 < m)
+    (hR : 1 ≤ remainingAProcessLength N shifts)
+    (hdepth : shifts.length = depth) :
+    zetaAProcessUniformLeafDeltaLower t m N depth * (shifts.prod : ℝ) ≤
+      zetaAProcessLeafDelta t m N shifts := by
+  let R := remainingAProcessLength N shifts
+  have hsumlt : shifts.sum < N := by
+    unfold remainingAProcessLength at hR
+    omega
+  have hnat : m + (R - 1) + (1 + shifts.sum) = m + N := by
+    dsimp [R, remainingAProcessLength]
+    omega
+  have hbase :
+      (((m + (R - 1) : ℕ) : ℝ) +
+          ((1 : ℝ) :: natShiftsToReal shifts).sum) =
+        ((m + N : ℕ) : ℝ) := by
+    simp only [List.sum_cons, sum_natShiftsToReal]
+    exact_mod_cast hnat
+  have hbounds := iterated_shiftedZetaPhase_decrement_bounds
+    t m (R - 1) shifts ht.le hm
+  have hraw :
+      t * ((depth.factorial : ℝ) * (shifts.prod : ℝ) *
+          (((m + N : ℕ) : ℝ) ^ (depth + 1))⁻¹) ≤
+        zetaAProcessLeafDelta t m N shifts := by
+    simpa only [R, zetaAProcessLeafDelta, iteratedZetaPhaseDecrement,
+      hbase, List.length_cons, length_natShiftsToReal, hdepth,
+      List.prod_cons, one_mul, prod_natShiftsToReal] using hbounds.1
+  unfold zetaAProcessUniformLeafDeltaLower
+  calc
+    t * ((depth.factorial : ℝ) *
+        (((m + N : ℕ) : ℝ) ^ (depth + 1))⁻¹) * (shifts.prod : ℝ) =
+      t * ((depth.factorial : ℝ) * (shifts.prod : ℝ) *
+        (((m + N : ℕ) : ℝ) ^ (depth + 1))⁻¹) := by ring
+    _ ≤ zetaAProcessLeafDelta t m N shifts := hraw
+
+/-- The actual leaf envelope is controlled by the path-sensitive product
+envelope. -/
+theorem zetaAProcessLeafSquaredBound_le_product
+    (t : ℝ) (m N depth : ℕ) (shifts : List ℕ)
+    (ht : 0 < t) (hm : 0 < m)
+    (hR : 1 ≤ remainingAProcessLength N shifts)
+    (hshifts : ∀ h ∈ shifts, 0 < h)
+    (hdepth : shifts.length = depth) :
+    zetaAProcessLeafSquaredBound t m N shifts ≤
+      zetaAProcessProductLeafSquaredBound t m N depth shifts := by
+  have hlower := zetaAProcessUniformLeafDeltaLower_mul_prod_le
+    t m N depth shifts ht hm hR hdepth
+  have hcoeffPos : 0 < zetaAProcessUniformLeafDeltaLower t m N depth := by
+    unfold zetaAProcessUniformLeafDeltaLower
+    have hmN : 0 < ((m + N : ℕ) : ℝ) := Nat.cast_pos.mpr (by omega)
+    positivity
+  have hprodPos : 0 < (shifts.prod : ℝ) := by
+    exact_mod_cast (show 0 < shifts.prod by
+      exact List.prod_pos hshifts)
+  have hlowerPos : 0 <
+      zetaAProcessUniformLeafDeltaLower t m N depth * (shifts.prod : ℝ) :=
+    mul_pos hcoeffPos hprodPos
+  have hdeltaPos : 0 < zetaAProcessLeafDelta t m N shifts := by
+    exact iterated_shiftedZetaPhase_decrement_pos
+      t m (remainingAProcessLength N shifts - 1) shifts ht hm hshifts
+  have hquot :
+      2 * Real.pi / zetaAProcessLeafDelta t m N shifts ≤
+        2 * Real.pi /
+          (zetaAProcessUniformLeafDeltaLower t m N depth *
+            (shifts.prod : ℝ)) :=
+    div_le_div_of_nonneg_left
+      (mul_nonneg (by norm_num) Real.pi_pos.le) hlowerPos hlower
+  unfold zetaAProcessLeafSquaredBound zetaAProcessProductLeafSquaredBound
+  exact (sq_le_sq₀
+    (div_nonneg (mul_nonneg (by norm_num) Real.pi_pos.le) hdeltaPos.le)
+    (div_nonneg (mul_nonneg (by norm_num) Real.pi_pos.le) hlowerPos.le)).2 hquot
+
 /-- Every positive-shift leaf of the prescribed depth has at least the
 uniform terminal decrement. -/
 theorem zetaAProcessUniformLeafDeltaLower_le

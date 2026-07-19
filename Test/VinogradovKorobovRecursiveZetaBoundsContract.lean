@@ -8,6 +8,9 @@ noncomputable example (t : ℝ) (m N depth : ℕ) : ℝ :=
 noncomputable example (t : ℝ) (m N depth : ℕ) : ℝ :=
   zetaAProcessUniformLeafSquaredBound t m N depth
 
+noncomputable example (t : ℝ) (m N depth : ℕ) (shifts : List ℕ) : ℝ :=
+  zetaAProcessProductLeafSquaredBound t m N depth shifts
+
 example (t : ℝ) (m N depth : ℕ) (shifts : List ℕ)
     (ht : 0 < t) (hm : 0 < m)
     (hR : 1 ≤ remainingAProcessLength N shifts)
@@ -26,6 +29,25 @@ example (t : ℝ) (m N depth : ℕ) (shifts : List ℕ)
     zetaAProcessLeafSquaredBound t m N shifts ≤
       zetaAProcessUniformLeafSquaredBound t m N depth :=
   zetaAProcessLeafSquaredBound_le_uniform
+    t m N depth shifts ht hm hR hshifts hdepth
+
+example (t : ℝ) (m N depth : ℕ) (shifts : List ℕ)
+    (ht : 0 < t) (hm : 0 < m)
+    (hR : 1 ≤ remainingAProcessLength N shifts)
+    (hdepth : shifts.length = depth) :
+    zetaAProcessUniformLeafDeltaLower t m N depth * (shifts.prod : ℝ) ≤
+      zetaAProcessLeafDelta t m N shifts :=
+  zetaAProcessUniformLeafDeltaLower_mul_prod_le
+    t m N depth shifts ht hm hR hdepth
+
+example (t : ℝ) (m N depth : ℕ) (shifts : List ℕ)
+    (ht : 0 < t) (hm : 0 < m)
+    (hR : 1 ≤ remainingAProcessLength N shifts)
+    (hshifts : ∀ h ∈ shifts, 0 < h)
+    (hdepth : shifts.length = depth) :
+    zetaAProcessLeafSquaredBound t m N shifts ≤
+      zetaAProcessProductLeafSquaredBound t m N depth shifts :=
+  zetaAProcessLeafSquaredBound_le_product
     t m N depth shifts ht hm hR hshifts hdepth
 
 example (t : ℝ) (m N totalDepth depth : ℕ) (H : ℕ → ℕ)
