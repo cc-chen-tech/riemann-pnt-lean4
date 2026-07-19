@@ -72,6 +72,28 @@ example {X : ℕ} (hX : 1 ≤ X) {sigma T : ℝ}
   exists_regularizedCarlsonZeroDetector_goodRectangle
     hX hsigma hsigmaOne hT
 
+example {X : ℕ} (hX : 1 ≤ X) {sigma T : ℝ}
+    (hsigma : 1 / 2 < sigma) (hsigmaOne : sigma < 1) (hT : 0 ≤ T) :
+    ∃ x0 x1 y0 y1 : ℝ,
+      1 / 2 < x0 ∧ x0 < sigma ∧
+      1 < x1 ∧ x1 < 2 ∧ x0 < x1 ∧
+      -1 < y0 ∧ y0 < 0 ∧
+      T < y1 ∧ y1 < T + 1 ∧ y0 < y1 ∧
+      (∀ y ∈ Set.Icc y0 y1,
+        regularizedCarlsonZeroDetector X
+          ((x0 : ℂ) + (y : ℂ) * I) ≠ 0) ∧
+      (∀ y ∈ Set.Icc y0 y1,
+        regularizedCarlsonZeroDetector X
+          ((x1 : ℂ) + (y : ℂ) * I) ≠ 0) ∧
+      (∀ x ∈ Set.Icc x0 x1,
+        regularizedCarlsonZeroDetector X
+          ((x : ℂ) + (y0 : ℂ) * I) ≠ 0) ∧
+      (∀ x ∈ Set.Icc x0 x1,
+        regularizedCarlsonZeroDetector X
+          ((x : ℂ) + (y1 : ℂ) * I) ≠ 0) :=
+  exists_regularizedCarlsonZeroDetector_goodRectangle_half
+    hX hsigma hsigmaOne hT
+
 example {X : ℕ} (hX : 1 ≤ X) (sigma T : ℝ) :
     ZeroDensity.zeroDensityCount sigma T ≤
       carlsonDetectorRectangleZeroCount X sigma 1 0 T :=
@@ -89,7 +111,9 @@ example {X : ℕ} (hX : 1 ≤ X) (sigma T : ℝ) :
 #print axioms mem_regularizedCarlsonDetectorRectangleDivisorSupport_iff_zero
 #print axioms exists_regularizedCarlsonZeroDetector_horizontal_ne_zero
 #print axioms exists_regularizedCarlsonZeroDetector_vertical_ne_zero
+#print axioms exists_regularizedCarlsonZeroDetector_goodRectangle_of_leftWindow
 #print axioms exists_regularizedCarlsonZeroDetector_goodRectangle
+#print axioms exists_regularizedCarlsonZeroDetector_goodRectangle_half
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem

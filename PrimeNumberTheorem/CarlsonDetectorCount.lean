@@ -205,15 +205,14 @@ theorem exists_regularizedCarlsonZeroDetector_vertical_ne_zero
   dsimp [z]
   simp
 
-/-- A detector rectangle whose four sides avoid all detector zeros.  Its
-left side lies just to the left of `sigma`, its right side lies to the right
-of one, and its horizontal sides lie in unit intervals below zero and above
-`T`. -/
-theorem exists_regularizedCarlsonZeroDetector_goodRectangle
-    {X : ℕ} (hX : 1 ≤ X) {sigma T : ℝ}
-    (hsigma : 0 < sigma) (hsigmaOne : sigma < 1) (hT : 0 ≤ T) :
+/-- A detector rectangle whose left side can be selected in any prescribed
+nonempty interval `(theta, sigma)` in the open right half-plane. -/
+theorem exists_regularizedCarlsonZeroDetector_goodRectangle_of_leftWindow
+    {X : ℕ} (hX : 1 ≤ X) {theta sigma T : ℝ}
+    (htheta : 0 < theta) (hthetaSigma : theta < sigma)
+    (hsigmaOne : sigma < 1) (hT : 0 ≤ T) :
     ∃ x0 x1 y0 y1 : ℝ,
-      sigma / 2 < x0 ∧ x0 < sigma ∧
+      theta < x0 ∧ x0 < sigma ∧
       1 < x1 ∧ x1 < 2 ∧ x0 < x1 ∧
       -1 < y0 ∧ y0 < 0 ∧
       T < y1 ∧ y1 < T + 1 ∧ y0 < y1 ∧
@@ -229,17 +228,15 @@ theorem exists_regularizedCarlsonZeroDetector_goodRectangle
       (∀ x ∈ Set.Icc x0 x1,
         regularizedCarlsonZeroDetector X
           ((x : ℂ) + (y1 : ℂ) * I) ≠ 0) := by
-  have hsigmaHalfPos : 0 < sigma / 2 := by linarith
-  have hsigmaHalfLt : sigma / 2 < sigma := by linarith
   obtain ⟨x0, hx0Lower, hx0Upper, hx0ne⟩ :=
     exists_regularizedCarlsonZeroDetector_vertical_ne_zero
-      hX hsigmaHalfPos hsigmaHalfLt
+      hX htheta hthetaSigma
       (a := (-1 : ℝ)) (b := T + 1)
   obtain ⟨x1, hx1Lower, hx1Upper, hx1ne⟩ :=
     exists_regularizedCarlsonZeroDetector_vertical_ne_zero
       hX (by norm_num : (0 : ℝ) < 1) (by norm_num : (1 : ℝ) < 2)
       (a := (-1 : ℝ)) (b := T + 1)
-  have hx0Pos : 0 < x0 := hsigmaHalfPos.trans hx0Lower
+  have hx0Pos : 0 < x0 := htheta.trans hx0Lower
   obtain ⟨y0, hy0Lower, hy0Upper, hy0ne⟩ :=
     exists_regularizedCarlsonZeroDetector_horizontal_ne_zero
       hX hx0Pos (alpha := x1) (T := (-1 : ℝ))
@@ -262,6 +259,57 @@ theorem exists_regularizedCarlsonZeroDetector_goodRectangle
     constructor
     · exact hy0Lower.le.trans hy.1
     · exact hy.2.trans hy1Upper.le
+
+/-- Backwards-compatible good rectangle with left window
+`(sigma / 2, sigma)`. -/
+theorem exists_regularizedCarlsonZeroDetector_goodRectangle
+    {X : ℕ} (hX : 1 ≤ X) {sigma T : ℝ}
+    (hsigma : 0 < sigma) (hsigmaOne : sigma < 1) (hT : 0 ≤ T) :
+    ∃ x0 x1 y0 y1 : ℝ,
+      sigma / 2 < x0 ∧ x0 < sigma ∧
+      1 < x1 ∧ x1 < 2 ∧ x0 < x1 ∧
+      -1 < y0 ∧ y0 < 0 ∧
+      T < y1 ∧ y1 < T + 1 ∧ y0 < y1 ∧
+      (∀ y ∈ Set.Icc y0 y1,
+        regularizedCarlsonZeroDetector X
+          ((x0 : ℂ) + (y : ℂ) * I) ≠ 0) ∧
+      (∀ y ∈ Set.Icc y0 y1,
+        regularizedCarlsonZeroDetector X
+          ((x1 : ℂ) + (y : ℂ) * I) ≠ 0) ∧
+      (∀ x ∈ Set.Icc x0 x1,
+        regularizedCarlsonZeroDetector X
+          ((x : ℂ) + (y0 : ℂ) * I) ≠ 0) ∧
+      (∀ x ∈ Set.Icc x0 x1,
+        regularizedCarlsonZeroDetector X
+          ((x : ℂ) + (y1 : ℂ) * I) ≠ 0) := by
+  exact exists_regularizedCarlsonZeroDetector_goodRectangle_of_leftWindow
+    hX (by linarith) (by linarith) hsigmaOne hT
+
+/-- Carlson-ready good rectangle: when `sigma > 1/2`, its left edge can also
+be chosen strictly to the right of `1/2`, as required by the mean-square
+estimate. -/
+theorem exists_regularizedCarlsonZeroDetector_goodRectangle_half
+    {X : ℕ} (hX : 1 ≤ X) {sigma T : ℝ}
+    (hsigma : 1 / 2 < sigma) (hsigmaOne : sigma < 1) (hT : 0 ≤ T) :
+    ∃ x0 x1 y0 y1 : ℝ,
+      1 / 2 < x0 ∧ x0 < sigma ∧
+      1 < x1 ∧ x1 < 2 ∧ x0 < x1 ∧
+      -1 < y0 ∧ y0 < 0 ∧
+      T < y1 ∧ y1 < T + 1 ∧ y0 < y1 ∧
+      (∀ y ∈ Set.Icc y0 y1,
+        regularizedCarlsonZeroDetector X
+          ((x0 : ℂ) + (y : ℂ) * I) ≠ 0) ∧
+      (∀ y ∈ Set.Icc y0 y1,
+        regularizedCarlsonZeroDetector X
+          ((x1 : ℂ) + (y : ℂ) * I) ≠ 0) ∧
+      (∀ x ∈ Set.Icc x0 x1,
+        regularizedCarlsonZeroDetector X
+          ((x : ℂ) + (y0 : ℂ) * I) ≠ 0) ∧
+      (∀ x ∈ Set.Icc x0 x1,
+        regularizedCarlsonZeroDetector X
+          ((x : ℂ) + (y1 : ℂ) * I) ≠ 0) := by
+  exact exists_regularizedCarlsonZeroDetector_goodRectangle_of_leftWindow
+    hX (by norm_num) hsigma hsigmaOne hT
 
 private theorem divisor_carlsonZeroDetector_eq_analyticOrderNatAt
     {X : ℕ} {sigma alpha a b : ℝ} {rho : ℂ}

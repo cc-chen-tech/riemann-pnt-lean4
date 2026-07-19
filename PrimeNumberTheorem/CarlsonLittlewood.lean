@@ -552,13 +552,13 @@ theorem sub_mul_zeroDensityCount_le_regularizedCarlsonWeightedZeroSum
         (fun rho hrhoP _ => hPnonneg rho hrhoP)
 
 /-- Carlson's zero-density count is reduced to the four Littlewood edge
-integrals on an automatically selected zero-free rectangle, retaining the
-four nonvanishing certificates needed by the logarithmic-norm formula. -/
-theorem exists_regularizedCarlson_goodRectangle_zeroDensity_certificate
-    {X : ℕ} (hX : 1 ≤ X) {sigma T : ℝ}
-    (hsigma : 0 < sigma) (hsigmaOne : sigma < 1) (hT : 0 ≤ T) :
+integrals with the left edge selected in `(theta, sigma)`. -/
+theorem exists_regularizedCarlson_goodRectangle_zeroDensity_certificate_of_leftWindow
+    {X : ℕ} (hX : 1 ≤ X) {theta sigma T : ℝ}
+    (htheta : 0 < theta) (hthetaSigma : theta < sigma)
+    (hsigmaOne : sigma < 1) (hT : 0 ≤ T) :
     ∃ x0 x1 y0 y1 : ℝ,
-      sigma / 2 < x0 ∧ x0 < sigma ∧
+      theta < x0 ∧ x0 < sigma ∧
       1 < x1 ∧ x1 < 2 ∧ x0 < x1 ∧
       -1 < y0 ∧ y0 < 0 ∧
       T < y1 ∧ y1 < T + 1 ∧ y0 < y1 ∧
@@ -581,9 +581,9 @@ theorem exists_regularizedCarlson_goodRectangle_zeroDensity_certificate
       hx0Lower, hx0Upper, hx1Lower, hx1Upper, hx01,
       hy0Lower, hy0Upper, hy1Lower, hy1Upper, hy01,
       hleft, hright, hbottom, htop⟩ :=
-    exists_regularizedCarlsonZeroDetector_goodRectangle
-      hX hsigma hsigmaOne hT
-  have hx0 : 0 < x0 := (by linarith : 0 < sigma / 2).trans hx0Lower
+    exists_regularizedCarlsonZeroDetector_goodRectangle_of_leftWindow
+      hX htheta hthetaSigma hsigmaOne hT
+  have hx0 : 0 < x0 := htheta.trans hx0Lower
   have hcount :=
     sub_mul_zeroDensityCount_le_regularizedCarlsonWeightedZeroSum
       hX hx0 hx0Upper hx1Lower hy0Upper hy1Lower
@@ -622,6 +622,64 @@ theorem exists_regularizedCarlson_goodRectangle_zeroDensity_certificate
     _ = regularizedCarlsonLittlewoodFourEdges X x0 x1 y0 y1 := by
       simpa [regularizedCarlsonLittlewoodFourEdges] using hedges
 
+/-- Backwards-compatible counting certificate with left window
+`(sigma / 2, sigma)`. -/
+theorem exists_regularizedCarlson_goodRectangle_zeroDensity_certificate
+    {X : ℕ} (hX : 1 ≤ X) {sigma T : ℝ}
+    (hsigma : 0 < sigma) (hsigmaOne : sigma < 1) (hT : 0 ≤ T) :
+    ∃ x0 x1 y0 y1 : ℝ,
+      sigma / 2 < x0 ∧ x0 < sigma ∧
+      1 < x1 ∧ x1 < 2 ∧ x0 < x1 ∧
+      -1 < y0 ∧ y0 < 0 ∧
+      T < y1 ∧ y1 < T + 1 ∧ y0 < y1 ∧
+      (∀ y ∈ Set.Icc y0 y1,
+        regularizedCarlsonZeroDetector X
+          ((x0 : ℂ) + (y : ℂ) * I) ≠ 0) ∧
+      (∀ y ∈ Set.Icc y0 y1,
+        regularizedCarlsonZeroDetector X
+          ((x1 : ℂ) + (y : ℂ) * I) ≠ 0) ∧
+      (∀ x ∈ Set.Icc x0 x1,
+        regularizedCarlsonZeroDetector X
+          ((x : ℂ) + (y0 : ℂ) * I) ≠ 0) ∧
+      (∀ x ∈ Set.Icc x0 x1,
+        regularizedCarlsonZeroDetector X
+          ((x : ℂ) + (y1 : ℂ) * I) ≠ 0) ∧
+      (2 * Real.pi) * (sigma - x0) *
+          (ZeroDensity.zeroDensityCount sigma T : ℝ) ≤
+        regularizedCarlsonLittlewoodFourEdges X x0 x1 y0 y1 := by
+  exact
+    exists_regularizedCarlson_goodRectangle_zeroDensity_certificate_of_leftWindow
+      hX (by linarith) (by linarith) hsigmaOne hT
+
+/-- Carlson-ready counting certificate whose left edge lies in
+`(1/2, sigma)`. -/
+theorem exists_regularizedCarlson_goodRectangle_zeroDensity_certificate_half
+    {X : ℕ} (hX : 1 ≤ X) {sigma T : ℝ}
+    (hsigma : 1 / 2 < sigma) (hsigmaOne : sigma < 1) (hT : 0 ≤ T) :
+    ∃ x0 x1 y0 y1 : ℝ,
+      1 / 2 < x0 ∧ x0 < sigma ∧
+      1 < x1 ∧ x1 < 2 ∧ x0 < x1 ∧
+      -1 < y0 ∧ y0 < 0 ∧
+      T < y1 ∧ y1 < T + 1 ∧ y0 < y1 ∧
+      (∀ y ∈ Set.Icc y0 y1,
+        regularizedCarlsonZeroDetector X
+          ((x0 : ℂ) + (y : ℂ) * I) ≠ 0) ∧
+      (∀ y ∈ Set.Icc y0 y1,
+        regularizedCarlsonZeroDetector X
+          ((x1 : ℂ) + (y : ℂ) * I) ≠ 0) ∧
+      (∀ x ∈ Set.Icc x0 x1,
+        regularizedCarlsonZeroDetector X
+          ((x : ℂ) + (y0 : ℂ) * I) ≠ 0) ∧
+      (∀ x ∈ Set.Icc x0 x1,
+        regularizedCarlsonZeroDetector X
+          ((x : ℂ) + (y1 : ℂ) * I) ≠ 0) ∧
+      (2 * Real.pi) * (sigma - x0) *
+          (ZeroDensity.zeroDensityCount sigma T : ℝ) ≤
+        regularizedCarlsonLittlewoodFourEdges X x0 x1 y0 y1 := by
+  exact
+    exists_regularizedCarlson_goodRectangle_zeroDensity_certificate_of_leftWindow
+      hX (by norm_num) hsigma hsigmaOne hT
+
 /-- Projection of the certified good rectangle to the four-edge counting
 inequality used by earlier callers. -/
 theorem exists_regularizedCarlson_goodRectangle_zeroDensity_le_fourEdges
@@ -645,9 +703,36 @@ theorem exists_regularizedCarlson_goodRectangle_zeroDensity_le_fourEdges
     hx0Lower, hx0Upper, hx1Lower, hx1Upper, hx01,
     hy0Lower, hy0Upper, hy1Lower, hy1Upper, hy01, hbound⟩
 
-/-- The complete Carlson counting reduction in endpoint-cancelled form.
-After this theorem, proving a quantitative zero-density estimate amounts to
-bounding the five terms in `regularizedCarlsonLittlewoodLogNormForm`. -/
+/-- The complete endpoint-cancelled Carlson reduction with a prescribed left
+window. -/
+theorem exists_regularizedCarlson_goodRectangle_zeroDensity_le_logNormForm_of_leftWindow
+    {X : ℕ} (hX : 1 ≤ X) {theta sigma T : ℝ}
+    (htheta : 0 < theta) (hthetaSigma : theta < sigma)
+    (hsigmaOne : sigma < 1) (hT : 0 ≤ T) :
+    ∃ x0 x1 y0 y1 : ℝ,
+      theta < x0 ∧ x0 < sigma ∧
+      1 < x1 ∧ x1 < 2 ∧ x0 < x1 ∧
+      -1 < y0 ∧ y0 < 0 ∧
+      T < y1 ∧ y1 < T + 1 ∧ y0 < y1 ∧
+      (2 * Real.pi) * (sigma - x0) *
+          (ZeroDensity.zeroDensityCount sigma T : ℝ) ≤
+        regularizedCarlsonLittlewoodLogNormForm X x0 x1 y0 y1 := by
+  obtain ⟨x0, x1, y0, y1,
+      hx0Lower, hx0Upper, hx1Lower, hx1Upper, hx01,
+      hy0Lower, hy0Upper, hy1Lower, hy1Upper, hy01,
+      hleft, hright, hbottom, htop, hbound⟩ :=
+    exists_regularizedCarlson_goodRectangle_zeroDensity_certificate_of_leftWindow
+      hX htheta hthetaSigma hsigmaOne hT
+  have hx0 : 0 < x0 := htheta.trans hx0Lower
+  have hformula :=
+    regularizedCarlsonLittlewoodFourEdges_eq_logNormFormDef
+      hx0 hx01 hy01 hleft hright hbottom htop
+  refine ⟨x0, x1, y0, y1,
+    hx0Lower, hx0Upper, hx1Lower, hx1Upper, hx01,
+    hy0Lower, hy0Upper, hy1Lower, hy1Upper, hy01, ?_⟩
+  exact hbound.trans_eq hformula
+
+/-- Backwards-compatible endpoint-cancelled reduction. -/
 theorem exists_regularizedCarlson_goodRectangle_zeroDensity_le_logNormForm
     {X : ℕ} (hX : 1 ≤ X) {sigma T : ℝ}
     (hsigma : 0 < sigma) (hsigmaOne : sigma < 1) (hT : 0 ≤ T) :
@@ -659,21 +744,27 @@ theorem exists_regularizedCarlson_goodRectangle_zeroDensity_le_logNormForm
       (2 * Real.pi) * (sigma - x0) *
           (ZeroDensity.zeroDensityCount sigma T : ℝ) ≤
         regularizedCarlsonLittlewoodLogNormForm X x0 x1 y0 y1 := by
-  obtain ⟨x0, x1, y0, y1,
-      hx0Lower, hx0Upper, hx1Lower, hx1Upper, hx01,
-      hy0Lower, hy0Upper, hy1Lower, hy1Upper, hy01,
-      hleft, hright, hbottom, htop, hbound⟩ :=
-    exists_regularizedCarlson_goodRectangle_zeroDensity_certificate
-      hX hsigma hsigmaOne hT
-  have hx0 : 0 < x0 :=
-    (by linarith : 0 < sigma / 2).trans hx0Lower
-  have hformula :=
-    regularizedCarlsonLittlewoodFourEdges_eq_logNormFormDef
-      hx0 hx01 hy01 hleft hright hbottom htop
-  refine ⟨x0, x1, y0, y1,
-    hx0Lower, hx0Upper, hx1Lower, hx1Upper, hx01,
-    hy0Lower, hy0Upper, hy1Lower, hy1Upper, hy01, ?_⟩
-  exact hbound.trans_eq hformula
+  exact
+    exists_regularizedCarlson_goodRectangle_zeroDensity_le_logNormForm_of_leftWindow
+      hX (by linarith) (by linarith) hsigmaOne hT
+
+/-- Carlson-ready endpoint-cancelled reduction with `1/2 < x0 < sigma`, so
+the existing left-edge mean-square estimates apply to the selected
+rectangle. -/
+theorem exists_regularizedCarlson_goodRectangle_zeroDensity_le_logNormForm_half
+    {X : ℕ} (hX : 1 ≤ X) {sigma T : ℝ}
+    (hsigma : 1 / 2 < sigma) (hsigmaOne : sigma < 1) (hT : 0 ≤ T) :
+    ∃ x0 x1 y0 y1 : ℝ,
+      1 / 2 < x0 ∧ x0 < sigma ∧
+      1 < x1 ∧ x1 < 2 ∧ x0 < x1 ∧
+      -1 < y0 ∧ y0 < 0 ∧
+      T < y1 ∧ y1 < T + 1 ∧ y0 < y1 ∧
+      (2 * Real.pi) * (sigma - x0) *
+          (ZeroDensity.zeroDensityCount sigma T : ℝ) ≤
+        regularizedCarlsonLittlewoodLogNormForm X x0 x1 y0 y1 := by
+  exact
+    exists_regularizedCarlson_goodRectangle_zeroDensity_le_logNormForm_of_leftWindow
+      hX (by norm_num) hsigma hsigmaOne hT
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem

@@ -233,16 +233,33 @@ example {X : ℕ} (hX : 1 ≤ X) {sigma T : ℝ}
   exists_regularizedCarlson_goodRectangle_zeroDensity_le_logNormForm
     hX hsigma hsigmaOne hT
 
+example {X : ℕ} (hX : 1 ≤ X) {sigma T : ℝ}
+    (hsigma : 1 / 2 < sigma) (hsigmaOne : sigma < 1) (hT : 0 ≤ T) :
+    ∃ x0 x1 y0 y1 : ℝ,
+      1 / 2 < x0 ∧ x0 < sigma ∧
+      1 < x1 ∧ x1 < 2 ∧ x0 < x1 ∧
+      -1 < y0 ∧ y0 < 0 ∧
+      T < y1 ∧ y1 < T + 1 ∧ y0 < y1 ∧
+      (2 * Real.pi) * (sigma - x0) *
+          (ZeroDensity.zeroDensityCount sigma T : ℝ) ≤
+        regularizedCarlsonLittlewoodLogNormForm X x0 x1 y0 y1 :=
+  exists_regularizedCarlson_goodRectangle_zeroDensity_le_logNormForm_half
+    hX hsigma hsigmaOne hT
+
 #print axioms boundaryRectIntegral_regularizedCarlsonZeroDetector_eq_zeroMultiplicitySum
 #print axioms two_pi_mul_regularizedCarlsonZeroMultiplicityWeightedRealSum_eq_four_edges
 #print axioms sub_mul_zeroDensityCount_le_regularizedCarlsonWeightedZeroSum
 #print axioms exists_regularizedCarlson_goodRectangle_zeroDensity_le_fourEdges
+#print axioms exists_regularizedCarlson_goodRectangle_zeroDensity_certificate_of_leftWindow
 #print axioms exists_regularizedCarlson_goodRectangle_zeroDensity_certificate
+#print axioms exists_regularizedCarlson_goodRectangle_zeroDensity_certificate_half
 #print axioms regularizedCarlsonLittlewood_leftEdge_eq_logNorm
 #print axioms regularizedCarlsonLittlewood_rightEdge_eq_logNorm
 #print axioms regularizedCarlsonLittlewoodFourEdges_eq_logNormForm
 #print axioms regularizedCarlsonLittlewoodFourEdges_eq_logNormFormDef
 #print axioms exists_regularizedCarlson_goodRectangle_zeroDensity_le_logNormForm
+#print axioms exists_regularizedCarlson_goodRectangle_zeroDensity_le_logNormForm_of_leftWindow
+#print axioms exists_regularizedCarlson_goodRectangle_zeroDensity_le_logNormForm_half
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem
