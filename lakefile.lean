@@ -102,6 +102,8 @@ lean_lib RiemannPNT where
     `Test.HardyPhaseLowTailEnergyContract,
     `HardyTheorem.HardyPhaseHighTailEnergy,
     `Test.HardyPhaseHighTailEnergyContract,
+    `HardyTheorem.HardyPhaseDyadicCutoffs,
+    `Test.HardyPhaseDyadicCutoffsContract,
     `HardyTheorem.HardyPhaseHilbert,
     `Test.HardyOddMultiplicityContract,
     `Test.DirichletPolynomialMeanSquareContract,

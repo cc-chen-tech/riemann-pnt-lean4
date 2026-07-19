@@ -76,7 +76,7 @@ theorem highDyadicDistance_mul_logTwo_le_abs_deriv_hardyPhase
   exact hlogLower
 
 /-- If all positive indices lie in a finite dyadic high tail beginning at
-`2^K`, while the stationary scale lies below `2^(K-1)`, their linearized
+`2^K`, while twice the stationary scale is at most `2^K`, their linearized
 short-window energy is bounded by an absolute constant. -/
 theorem sum_normSq_hardyPhaseLinearizedCoeff_far_high_le
     (s : Finset ℕ) (K L : ℕ) {delta t : ℝ}

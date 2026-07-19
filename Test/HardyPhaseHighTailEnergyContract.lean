@@ -30,5 +30,17 @@ example (s : Finset ℕ) (K L : ℕ) {delta t : ℝ}
   HardyTheorem.sum_normSq_hardyPhaseLinearizedCoeff_far_high_le
     s K L ht hdelta hscale hpos hlower hupper
 
+example (K : ℕ) {delta t : ℝ}
+    (ht : 0 < t) (hdelta : 0 ≤ delta)
+    (hscale : 2 *
+      HardyTheorem.OscillatoryIntegral.hardyPhaseStationaryScale t ≤
+        (2 : ℝ) ^ K) :
+    (∑ n ∈ (∅ : Finset ℕ),
+      Complex.normSq
+        (HardyTheorem.hardyPhaseLinearizedCoeff n delta t)) ≤
+      8 / (Real.log 2) ^ 2 :=
+  HardyTheorem.sum_normSq_hardyPhaseLinearizedCoeff_far_high_le
+    (∅ : Finset ℕ) K K ht hdelta hscale (by simp) (by simp) (by simp)
+
 #print axioms HardyTheorem.highDyadicDistance_mul_logTwo_le_abs_deriv_hardyPhase
 #print axioms HardyTheorem.sum_normSq_hardyPhaseLinearizedCoeff_far_high_le
