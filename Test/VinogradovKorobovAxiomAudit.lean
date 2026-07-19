@@ -6,6 +6,7 @@ import ZeroFreeRegion.VinogradovKorobov.RecursiveAProcess
 import ZeroFreeRegion.VinogradovKorobov.HighOrderLogDifference
 import ZeroFreeRegion.VinogradovKorobov.HighOrderZetaPhase
 import ZeroFreeRegion.VinogradovKorobov.RecursiveZetaAProcess
+import ZeroFreeRegion.VinogradovKorobov.RecursiveZetaBounds
 
 #print axioms ZeroFreeRegion.VinogradovKorobov.vanDerCorputFundamentalInequality
 #print axioms ZeroFreeRegion.VinogradovKorobov.phaseTerm_mul_conj_shift
@@ -66,3 +67,5 @@ import ZeroFreeRegion.VinogradovKorobov.RecursiveZetaAProcess
 #print axioms ZeroFreeRegion.VinogradovKorobov.zetaAProcessLeafValid_of_scale
 #print axioms ZeroFreeRegion.VinogradovKorobov.recursiveZetaAProcessValid_of_scale
 #print axioms ZeroFreeRegion.VinogradovKorobov.norm_zetaPhase_sum_sq_le_recursiveAProcess_of_scale
+#print axioms ZeroFreeRegion.VinogradovKorobov.zetaAProcessUniformLeafDeltaLower_le
+#print axioms ZeroFreeRegion.VinogradovKorobov.zetaAProcessLeafSquaredBound_le_uniform
