@@ -1,0 +1,7 @@
+import ZeroFreeRegion.VinogradovKorobov.VinogradovFiniteFieldNewton
+
+open ZeroFreeRegion.VinogradovKorobov
+
+#check multiset_eq_of_powerSums_eq_zmod
+#check IsVinogradovResidueSolution.multiset_eq
+#check fixed_left_residue_solution_count_le_factorial
