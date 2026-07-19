@@ -1,4 +1,4 @@
-import ZeroFreeRegion.VinogradovKorobov.VinogradovMeanValue
+import ZeroFreeRegion.VinogradovKorobov.VinogradovLifting
 
 open ZeroFreeRegion.VinogradovKorobov
 
@@ -10,3 +10,27 @@ open ZeroFreeRegion.VinogradovKorobov
 #check vinogradovSolutionSelector
 #check vinogradovSolutionSelector_eq_indicator
 #check sum_vinogradovSolutionSelector_eq_count
+#check vinogradovPhaseMod
+#check vinogradovWeylSumMod
+#check vinogradovTuplePhaseMod
+#check vinogradovWeylSumMod_pow
+#check conj_stdAddChar
+#check conj_vinogradovWeylSumMod_pow
+#check vinogradovTuplePhaseMod_eq_sum_powerSum
+#check vinogradovTuplePhaseMod_sub_eq
+#check stdAddChar_tuple_mul_neg_tuple
+#check sum_stdAddChar_coefficient_pairing
+#check normalized_sum_tuplePair_eq_selector
+#check normalizedVinogradovMomentMod
+#check normalizedVinogradovMomentMod_eq_solutionCount
+#check vinogradovPowerSumNat
+#check IsVinogradovSolutionNat
+#check vinogradovSolutionCountNat
+#check natCast_vinogradovPowerSumNat
+#check IsVinogradovSolutionNat.toMod
+#check IsVinogradovSolutionMod.toNat_of_lt
+#check vinogradovPowerSumNat_le
+#check isVinogradovSolutionMod_iff_nat_of_scale
+#check vinogradovSolutionCountMod_eq_nat_of_scale
+#check vinogradovSolutionCountMod_eq_nat_of_topScale
+#check normalizedVinogradovMomentMod_eq_natCount_of_topScale

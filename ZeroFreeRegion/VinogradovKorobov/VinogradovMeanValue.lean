@@ -87,6 +87,70 @@ theorem sum_vinogradovSolutionSelector_eq_count (Q k s X : ℕ) [NeZero Q] :
   simp_rw [vinogradovSolutionSelector_eq_indicator]
   simp [vinogradovSolutionCountMod, Finset.sum_boole]
 
+/-- The polynomial phase with coefficient vector `a`, evaluated at an integer
+in `{1, ..., X}` and reduced modulo `Q`. -/
+def vinogradovPhaseMod (Q : ℕ) {k X : ℕ}
+    (a : Fin k → ZMod Q) (n : Fin X) : ZMod Q :=
+  ∑ j : Fin k, a j * ((n.val + 1 : ℕ) : ZMod Q) ^ (j.val + 1)
+
+/-- A complete finite Weyl sum for the Vinogradov polynomial phase modulo `Q`. -/
+noncomputable def vinogradovWeylSumMod (Q k X : ℕ) [NeZero Q]
+    (a : Fin k → ZMod Q) : ℂ :=
+  ∑ n : Fin X, ZMod.stdAddChar (vinogradovPhaseMod Q a n)
+
+/-- The phase accumulated along an `s`-tuple of integers in `{1, ..., X}`. -/
+def vinogradovTuplePhaseMod (Q : ℕ) {k s X : ℕ}
+    (a : Fin k → ZMod Q) (x : Fin s → Fin X) : ZMod Q :=
+  ∑ i : Fin s, vinogradovPhaseMod Q a (x i)
+
+/-- An additive character sends a finite sum to the corresponding finite product. -/
+theorem prod_stdAddChar_eq_sum (Q : ℕ) [NeZero Q]
+    {ι : Type*} (u : Finset ι) (f : ι → ZMod Q) :
+    ∏ i ∈ u, ZMod.stdAddChar (f i) =
+      ZMod.stdAddChar (∑ i ∈ u, f i) := by
+  classical
+  induction u using Finset.induction_on with
+  | empty => simp
+  | @insert a u ha ih =>
+      simp only [Finset.prod_insert ha, Finset.sum_insert ha, ih]
+      exact (AddChar.map_add_eq_mul ZMod.stdAddChar (f a) (∑ i ∈ u, f i)).symm
+
+/-- Expanding the `s`-th power of a Weyl sum produces one summand for every
+ordered `s`-tuple. -/
+theorem vinogradovWeylSumMod_pow (Q k s X : ℕ) [NeZero Q]
+    (a : Fin k → ZMod Q) :
+    vinogradovWeylSumMod Q k X a ^ s =
+      ∑ x : Fin s → Fin X,
+        ZMod.stdAddChar (vinogradovTuplePhaseMod Q a x) := by
+  classical
+  rw [vinogradovWeylSumMod, Fintype.sum_pow]
+  apply Fintype.sum_congr
+  intro x
+  simpa [vinogradovTuplePhaseMod] using
+    (prod_stdAddChar_eq_sum Q (Finset.univ : Finset (Fin s))
+      (fun i ↦ vinogradovPhaseMod Q a (x i)))
+
+/-- Complex conjugation reverses the standard additive character. -/
+theorem conj_stdAddChar (Q : ℕ) [NeZero Q] (z : ZMod Q) :
+    (starRingEnd ℂ) (ZMod.stdAddChar z) = ZMod.stdAddChar (-z) := by
+  have hQ : 0 < ringChar (ZMod Q) := by
+    rw [ZMod.ringChar_zmod_n]
+    exact NeZero.pos Q
+  simpa [AddChar.inv_apply'] using
+    (AddChar.starComp_apply hQ (φ := ZMod.stdAddChar) z)
+
+/-- The conjugate `s`-th power expands over a second tuple with the opposite
+accumulated phase. -/
+theorem conj_vinogradovWeylSumMod_pow (Q k s X : ℕ) [NeZero Q]
+    (a : Fin k → ZMod Q) :
+    (starRingEnd ℂ) (vinogradovWeylSumMod Q k X a) ^ s =
+      ∑ y : Fin s → Fin X,
+        ZMod.stdAddChar (-vinogradovTuplePhaseMod Q a y) := by
+  rw [← map_pow, vinogradovWeylSumMod_pow, map_sum]
+  apply Fintype.sum_congr
+  intro y
+  exact conj_stdAddChar Q _
+
 end
 
 end ZeroFreeRegion.VinogradovKorobov
