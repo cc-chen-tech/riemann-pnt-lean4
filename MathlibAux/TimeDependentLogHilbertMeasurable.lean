@@ -6,6 +6,19 @@ open scoped BigOperators
 
 namespace MathlibAux
 
+/-- A finite logarithmic polynomial inherits continuity on an interval from
+its time-dependent coefficients. -/
+theorem continuousOn_timeDependentLogPolynomial
+    (s : Finset ℕ) (coeff : ℝ → ℕ → ℂ) {a b : ℝ}
+    (hcoeffCont : ∀ n ∈ s,
+      ContinuousOn (fun t ↦ coeff t n) (Set.Icc a b)) :
+    ContinuousOn (timeDependentLogPolynomial s coeff) (Set.Icc a b) := by
+  intro t ht
+  unfold timeDependentLogPolynomial timeLogTwist
+  apply tendsto_finset_sum
+  intro n hn
+  exact (hcoeffCont n hn t ht).mul (by fun_prop)
+
 /-- The time-dependent logarithmic Hilbert integration-by-parts estimate
 with both integrability hypotheses discharged from continuity of the moving
 coefficients, measurability of their derivatives, and the same uniform
@@ -172,12 +185,8 @@ theorem integral_normSq_timeDependentLogPolynomial_le_of_measurable
   let F : ℝ → ℂ := fun t ↦
     logOffDiagonalForm s (coeff t) (coeff t) t
   have hPcont : ContinuousOn P (Set.Icc a b) := by
-    intro t ht
-    dsimp only [P]
-    unfold timeDependentLogPolynomial timeLogTwist
-    apply tendsto_finset_sum
-    intro n hn
-    exact (hcoeffCont n hn t ht).mul (by fun_prop)
+    simpa only [P] using continuousOn_timeDependentLogPolynomial
+      s coeff hcoeffCont
   have hAcont : ContinuousOn A (Set.Icc a b) := by
     intro t ht
     dsimp only [A]

@@ -119,6 +119,7 @@ EXPECTED_DECLARATIONS = {
     "HardyTheorem.sum_normSq_deriv_hardyPhaseWindowCoeff_full_le_mul",
     "MathlibAux.norm_integral_timeDependentLogOffDiagonal_le_of_measurable",
     "MathlibAux.integral_normSq_timeDependentLogPolynomial_le_of_measurable",
+    "MathlibAux.continuousOn_timeDependentLogPolynomial",
     "HardyTheorem.integral_normSq_hardyPhaseLinearizedSum_le",
     "HardyTheorem.integral_normSq_hardyPhaseLinearizedSum_le_dyadic_mul",
     "HardyTheorem.exists_integral_normSq_hardyPhaseLinearizedSum_le_mul",
