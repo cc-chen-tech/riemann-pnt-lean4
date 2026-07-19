@@ -25,6 +25,7 @@ import MathlibAux.DyadicLogHilbert
 import MathlibAux.DyadicPartition
 import MathlibAux.DyadicHarmonic
 import MathlibAux.LogRatioLowerBound
+import MathlibAux.MinReciprocalSquareSum
 import MathlibAux.LogKernelRemainder
 import MathlibAux.LogDirichletPolynomialMeanSquare
 import MathlibAux.LogarithmicHilbertIntegrationByParts

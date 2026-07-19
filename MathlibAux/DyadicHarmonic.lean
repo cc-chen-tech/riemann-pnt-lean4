@@ -30,6 +30,20 @@ theorem sum_inv_dyadic_interval_le_one (k : ℕ) :
   simpa only [pow_succ, mul_comm] using
     (sum_inv_Ico_self_two_mul_le_one (M := 2 ^ k) (by positivity))
 
+/-- Every subset of a dyadic block has reciprocal mass at most one. -/
+theorem sum_inv_le_one_of_subset_dyadic
+    {s : Finset ℕ} {k : ℕ}
+    (hs : s ⊆ Finset.Ico (2 ^ k) (2 ^ (k + 1))) :
+    (∑ n ∈ s, ((n : ℝ))⁻¹) ≤ 1 := by
+  calc
+    (∑ n ∈ s, ((n : ℝ))⁻¹) ≤
+        ∑ n ∈ (Finset.Ico (2 ^ k) (2 ^ (k + 1)) : Finset ℕ),
+          ((n : ℝ))⁻¹ :=
+      Finset.sum_le_sum_of_subset_of_nonneg hs (by
+        intro n _hn _hns
+        positivity)
+    _ ≤ 1 := sum_inv_dyadic_interval_le_one k
+
 /-- Every finite initial segment of the reciprocal-square series beginning
 at one is bounded by two. -/
 theorem sum_inv_sq_Icc_one_le_two (K : ℕ) :
