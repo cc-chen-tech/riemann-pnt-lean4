@@ -1,4 +1,5 @@
 import PrimeNumberTheorem.CarneiroLittmannExtremal
+import Mathlib.MeasureTheory.Integral.IntegralEqImproper
 
 namespace PrimeNumberTheorem
 namespace DirichletPolynomial
@@ -22,7 +23,7 @@ theorem carneiroLittmannSincSquareBase_nonneg (x : ℝ) :
     0 ≤ carneiroLittmannSincSquareBase x := by
   exact sq_nonneg _
 
-private theorem carneiroLittmannSincSquareBase_le_abs_rpow {x : ℝ}
+theorem carneiroLittmannSincSquareBase_le_abs_rpow {x : ℝ}
     (hx : 1 ≤ |x|) :
     carneiroLittmannSincSquareBase x ≤ |x| ^ (-2 : ℝ) := by
   have hx0 : x ≠ 0 := by
@@ -95,6 +96,26 @@ theorem continuous_carneiroLittmannSincSquareBase :
   unfold carneiroLittmannSincSquareBase
   exact (Real.continuous_sinc.comp
     (continuous_const.mul continuous_id)).pow 2
+
+theorem continuous_carneiroLittmannTranslationPotential :
+    Continuous carneiroLittmannTranslationPotential := by
+  exact continuous_id.mul continuous_carneiroLittmannSincSquareBase
+
+theorem abs_carneiroLittmannTranslationPotential_le_inv_abs {x : ℝ}
+    (hx : 1 ≤ |x|) :
+    |carneiroLittmannTranslationPotential x| ≤ 1 / |x| := by
+  have hx0 : 0 < |x| := zero_lt_one.trans_le hx
+  have hbase := carneiroLittmannSincSquareBase_le_abs_rpow hx
+  rw [carneiroLittmannTranslationPotential, abs_mul,
+    abs_of_nonneg (carneiroLittmannSincSquareBase_nonneg x)]
+  calc
+    |x| * carneiroLittmannSincSquareBase x ≤ |x| * |x| ^ (-2 : ℝ) :=
+      mul_le_mul_of_nonneg_left hbase (abs_nonneg x)
+    _ = 1 / |x| := by
+      rw [Real.rpow_neg hx0.le]
+      rw [show |x| ^ (2 : ℝ) = |x| ^ (2 : ℕ) by
+        norm_num [Real.rpow_natCast]]
+      field_simp
 
 theorem integrable_carneiroLittmannSincSquareBase :
     MeasureTheory.Integrable carneiroLittmannSincSquareBase := by
@@ -172,6 +193,120 @@ theorem integrable_carneiroLittmannTranslationDifference :
   filter_upwards [] with x
   exact (carneiroLittmannTranslationDifference_eq_derivative_sub_sincSquare x).symm
 
+/-- On a symmetric finite interval, the integral of the unit translation
+difference telescopes to two unit boundary intervals. -/
+theorem intervalIntegral_carneiroLittmannTranslationDifference_eq_boundary
+    (T : ℝ) :
+    (∫ x in -T..T, carneiroLittmannTranslationDifference x) =
+      (∫ x in T..T + 1, carneiroLittmannTranslationPotential x) -
+        ∫ x in -T..-T + 1, carneiroLittmannTranslationPotential x := by
+  have hqShift : Continuous
+      (fun x => carneiroLittmannTranslationPotential (x + 1)) :=
+    continuous_carneiroLittmannTranslationPotential.comp
+      (continuous_id.add continuous_const)
+  change (∫ x in -T..T,
+    carneiroLittmannTranslationPotential (x + 1) -
+      carneiroLittmannTranslationPotential x) = _
+  rw [intervalIntegral.integral_sub
+    (hqShift.intervalIntegrable (μ := MeasureTheory.volume) (-T) T)
+    (continuous_carneiroLittmannTranslationPotential.intervalIntegrable
+      (μ := MeasureTheory.volume) (-T) T)]
+  rw [intervalIntegral.integral_comp_add_right]
+  have hLeft := intervalIntegral.integral_add_adjacent_intervals
+    (continuous_carneiroLittmannTranslationPotential.intervalIntegrable
+      (μ := MeasureTheory.volume) (-T) (-T + 1))
+    (continuous_carneiroLittmannTranslationPotential.intervalIntegrable
+      (μ := MeasureTheory.volume) (-T + 1) T)
+  have hRight := intervalIntegral.integral_add_adjacent_intervals
+    (continuous_carneiroLittmannTranslationPotential.intervalIntegrable
+      (μ := MeasureTheory.volume) (-T + 1) T)
+    (continuous_carneiroLittmannTranslationPotential.intervalIntegrable
+      (μ := MeasureTheory.volume) T (T + 1))
+  rw [show -T + 1 = -T + 1 by rfl]
+  linarith
+
+/-- The symmetric truncated integral of the translation difference is
+controlled by the two decaying boundary intervals. -/
+theorem norm_intervalIntegral_carneiroLittmannTranslationDifference_le
+    {T : ℝ} (hT : 2 ≤ T) :
+    ‖∫ x in -T..T, carneiroLittmannTranslationDifference x‖ ≤
+      2 / (T - 1) := by
+  have hDen : 0 < T - 1 := by linarith
+  have hRightPoint : ∀ x ∈ Set.uIoc T (T + 1),
+      ‖carneiroLittmannTranslationPotential x‖ ≤ 1 / (T - 1) := by
+    intro x hx
+    rw [Set.uIoc_of_le (by linarith)] at hx
+    rcases hx with ⟨hxLower, hxUpper⟩
+    have hxNonneg : 0 ≤ x := by linarith
+    have hAbs : T - 1 ≤ |x| := by
+      rw [abs_of_nonneg hxNonneg]
+      linarith
+    have hOne : 1 ≤ |x| := by linarith
+    rw [Real.norm_eq_abs]
+    exact (abs_carneiroLittmannTranslationPotential_le_inv_abs hOne).trans
+      (one_div_le_one_div_of_le hDen hAbs)
+  have hLeftPoint : ∀ x ∈ Set.uIoc (-T) (-T + 1),
+      ‖carneiroLittmannTranslationPotential x‖ ≤ 1 / (T - 1) := by
+    intro x hx
+    rw [Set.uIoc_of_le (by linarith)] at hx
+    rcases hx with ⟨hxLower, hxUpper⟩
+    have hxNonpos : x ≤ 0 := by linarith
+    have hAbs : T - 1 ≤ |x| := by
+      rw [abs_of_nonpos hxNonpos]
+      linarith
+    have hOne : 1 ≤ |x| := by linarith
+    rw [Real.norm_eq_abs]
+    exact (abs_carneiroLittmannTranslationPotential_le_inv_abs hOne).trans
+      (one_div_le_one_div_of_le hDen hAbs)
+  have hRight := intervalIntegral.norm_integral_le_of_norm_le_const hRightPoint
+  have hLeft := intervalIntegral.norm_integral_le_of_norm_le_const hLeftPoint
+  have hRight' :
+      ‖∫ x in T..T + 1, carneiroLittmannTranslationPotential x‖ ≤
+        1 / (T - 1) := by
+    simpa [show T + 1 - T = 1 by ring] using hRight
+  have hLeft' :
+      ‖∫ x in -T..-T + 1, carneiroLittmannTranslationPotential x‖ ≤
+        1 / (T - 1) := by
+    simpa [show -T + 1 - -T = 1 by ring] using hLeft
+  rw [intervalIntegral_carneiroLittmannTranslationDifference_eq_boundary]
+  calc
+    ‖(∫ x in T..T + 1, carneiroLittmannTranslationPotential x) -
+        ∫ x in -T..-T + 1, carneiroLittmannTranslationPotential x‖ ≤
+        ‖∫ x in T..T + 1, carneiroLittmannTranslationPotential x‖ +
+          ‖∫ x in -T..-T + 1, carneiroLittmannTranslationPotential x‖ :=
+      norm_sub_le _ _
+    _ ≤ 1 / (T - 1) + 1 / (T - 1) := add_le_add hRight' hLeft'
+    _ = 2 / (T - 1) := by ring
+
+/-- The integrable unit-translation difference has zero total mass. -/
+theorem integral_carneiroLittmannTranslationDifference_eq_zero :
+    (∫ x, carneiroLittmannTranslationDifference x) = 0 := by
+  have hDen : Filter.Tendsto (fun T : ℝ => T - 1)
+      Filter.atTop Filter.atTop := by
+    simpa only [sub_eq_add_neg] using
+      (Filter.tendsto_atTop_add_const_right Filter.atTop (-1 : ℝ)
+        Filter.tendsto_id)
+  have hUpper : Filter.Tendsto (fun T : ℝ => 2 / (T - 1))
+      Filter.atTop (nhds 0) :=
+    tendsto_const_nhds.div_atTop hDen
+  have hNorm : Filter.Tendsto
+      (fun T : ℝ => ‖∫ x in -T..T, carneiroLittmannTranslationDifference x‖)
+      Filter.atTop (nhds 0) := by
+    apply squeeze_zero' (Filter.Eventually.of_forall (fun _ => norm_nonneg _)) _ hUpper
+    filter_upwards [Filter.eventually_ge_atTop (2 : ℝ)] with T hT
+    exact norm_intervalIntegral_carneiroLittmannTranslationDifference_le hT
+  have hZero : Filter.Tendsto
+      (fun T : ℝ => ∫ x in -T..T, carneiroLittmannTranslationDifference x)
+      Filter.atTop (nhds 0) :=
+    tendsto_zero_iff_norm_tendsto_zero.mpr hNorm
+  have hIntegral : Filter.Tendsto
+      (fun T : ℝ => ∫ x in -T..T, carneiroLittmannTranslationDifference x)
+      Filter.atTop (nhds (∫ x, carneiroLittmannTranslationDifference x)) :=
+    MeasureTheory.intervalIntegral_tendsto_integral
+      integrable_carneiroLittmannTranslationDifference
+      Filter.tendsto_neg_atTop_atBot Filter.tendsto_id
+  exact tendsto_nhds_unique hIntegral hZero
+
 /-- Exact reduction of the derivative mass to the translation-difference
 integral and the unshifted sinc-square integral. -/
 theorem integral_carneiroLittmannDerivative_eq_translationDifference_add_base :
@@ -188,6 +323,14 @@ theorem integral_carneiroLittmannDerivative_eq_translationDifference_add_base :
     integrable_carneiroLittmannTranslationDifference
     integrable_carneiroLittmannSincSquare]
   rw [integral_carneiroLittmannSincSquare_eq_base]
+
+/-- The zero-mass translation difference can be removed from the derivative
+normalization, leaving only the sinc-square mass. -/
+theorem integral_carneiroLittmannDerivative_eq_sincSquareBase :
+    (∫ x, carneiroLittmannDerivative x) =
+      ∫ x, carneiroLittmannSincSquareBase x := by
+  rw [integral_carneiroLittmannDerivative_eq_translationDifference_add_base,
+    integral_carneiroLittmannTranslationDifference_eq_zero, zero_add]
 
 end DirichletPolynomial
 end PrimeNumberTheorem

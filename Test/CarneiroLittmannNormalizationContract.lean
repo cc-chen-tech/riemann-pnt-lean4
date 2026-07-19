@@ -32,6 +32,14 @@ example (x : ℝ) :
 example : MeasureTheory.Integrable carneiroLittmannTranslationDifference :=
   integrable_carneiroLittmannTranslationDifference
 
+example : (∫ x, carneiroLittmannTranslationDifference x) = 0 :=
+  integral_carneiroLittmannTranslationDifference_eq_zero
+
+example :
+    (∫ x, carneiroLittmannDerivative x) =
+      ∫ x, carneiroLittmannSincSquareBase x :=
+  integral_carneiroLittmannDerivative_eq_sincSquareBase
+
 example :
     (∫ x, carneiroLittmannDerivative x) =
       (∫ x, carneiroLittmannTranslationDifference x) +
@@ -45,6 +53,8 @@ example :
 #print axioms integral_carneiroLittmannSincSquare_eq_base
 #print axioms carneiroLittmannDerivative_eq_translationDifference_add_sincSquare
 #print axioms integrable_carneiroLittmannTranslationDifference
+#print axioms integral_carneiroLittmannTranslationDifference_eq_zero
+#print axioms integral_carneiroLittmannDerivative_eq_sincSquareBase
 #print axioms integral_carneiroLittmannDerivative_eq_translationDifference_add_base
 
 end DirichletPolynomial
