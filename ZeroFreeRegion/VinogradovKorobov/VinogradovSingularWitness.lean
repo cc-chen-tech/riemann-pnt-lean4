@@ -197,6 +197,60 @@ theorem card_vinogradovFixedCollisionTupleSet
   rw [vinogradovFixedCollisionTupleSet, Finset.card_map]
   simp
 
+/-- The union of all fixed-collision residue fibers. -/
+noncomputable def vinogradovFixedCollisionUnionSet
+    (p k : ℕ) [NeZero p] : Finset (Fin k → ZMod p) :=
+  (Finset.univ : Finset (VinogradovCollisionWitness k)).biUnion
+    (vinogradovFixedCollisionTupleSet p)
+
+theorem mem_vinogradovFixedCollisionUnionSet_iff
+    (p k : ℕ) [NeZero p] (x : Fin k → ZMod p) :
+    x ∈ vinogradovFixedCollisionUnionSet p k ↔
+      ¬Function.Injective x := by
+  constructor
+  · intro hx
+    obtain ⟨w, _hwuniv, hwx⟩ := Finset.mem_biUnion.mp hx
+    apply (vinogradovCollisionWitnessSet_nonempty_iff x).mp
+    refine ⟨w, ?_⟩
+    exact (mem_vinogradovCollisionWitnessSet_iff x w).mpr
+      ((mem_vinogradovFixedCollisionTupleSet_iff p w x).mp hwx)
+  · intro hnot
+    obtain ⟨w, hw⟩ :=
+      (vinogradovCollisionWitnessSet_nonempty_iff x).mpr hnot
+    apply Finset.mem_biUnion.mpr
+    exact ⟨w, Finset.mem_univ w,
+      (mem_vinogradovFixedCollisionTupleSet_iff p w x).mpr
+        ((mem_vinogradovCollisionWitnessSet_iff x w).mp hw)⟩
+
+/-- The collision-fiber union is exactly the existing singular residue set. -/
+theorem vinogradovFixedCollisionUnionSet_eq_singular
+    (p k : ℕ) [Fact p.Prime] :
+    letI : NeZero p := ⟨(Fact.out : p.Prime).ne_zero⟩
+    vinogradovFixedCollisionUnionSet p k =
+      vinogradovSingularResidueSet p k := by
+  letI : NeZero p := ⟨(Fact.out : p.Prime).ne_zero⟩
+  ext x
+  rw [mem_vinogradovFixedCollisionUnionSet_iff]
+  simp [vinogradovSingularResidueSet]
+
+/-- Summing the exact fixed-collision fiber sizes gives the explicit witness
+cover bound. -/
+theorem card_vinogradovFixedCollisionUnionSet_le
+    (p k : ℕ) [NeZero p] :
+    (vinogradovFixedCollisionUnionSet p k).card ≤
+      Fintype.card (VinogradovCollisionWitness k) * p ^ (k - 1) := by
+  calc
+    (vinogradovFixedCollisionUnionSet p k).card ≤
+        ∑ w : VinogradovCollisionWitness k,
+          (vinogradovFixedCollisionTupleSet p w).card :=
+      Finset.card_biUnion_le
+    _ = ∑ _w : VinogradovCollisionWitness k, p ^ (k - 1) := by
+      apply Finset.sum_congr rfl
+      intro w _hw
+      exact card_vinogradovFixedCollisionTupleSet p w
+    _ = Fintype.card (VinogradovCollisionWitness k) * p ^ (k - 1) := by
+      simp
+
 end
 
 end ZeroFreeRegion.VinogradovKorobov
