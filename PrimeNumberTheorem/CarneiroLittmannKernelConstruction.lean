@@ -882,6 +882,128 @@ theorem norm_hilbertForm_range_le_carneiroLittmann
           fourierKernel_scaledKernelSequence_of_large_frequency
             profileMinus (hdelta (min m n)) (hlocal m hm n hn hmn))
 
+/-- The concrete weighted Hilbert inequality for logarithmic frequencies on
+an interval of positive natural numbers. -/
+theorem norm_hilbertForm_Icc_neg_log_le_carneiroLittmann
+    {L U : ℕ} (hL : 0 < L) (c : ℕ → ℂ) :
+    ‖hilbertForm (Finset.Icc L U) c (fun n : ℕ => -Real.log n)‖ ≤
+      2 * Real.pi *
+        ∑ n ∈ Finset.Icc L U, ((n : ℝ) + 1) * ‖c n‖ ^ 2 := by
+  let S : Finset ℕ := Finset.Icc L U
+  let c0 : ℕ → ℂ := fun n => if n ∈ S then c n else 0
+  let omega0 : ℕ → ℝ := fun n => if n = 0 then 1 else -Real.log n
+  let delta : ℕ → ℝ := fun n => 1 / ((n : ℝ) + 1)
+  have hS : S ⊆ Finset.range (U + 1) := by
+    intro n hn
+    exact Finset.mem_range.mpr (Nat.lt_succ_iff.mpr (Finset.mem_Icc.mp hn).2)
+  have hdelta : ∀ n, 0 < delta n := by
+    intro n
+    dsimp [delta]
+    positivity
+  have hanti : ∀ n, delta (n + 1) ≤ delta n := by
+    intro n
+    dsimp [delta]
+    apply one_div_le_one_div_of_le
+    · positivity
+    · push_cast
+      norm_num
+  have hlocal : ∀ m ∈ Finset.range (U + 1), ∀ n ∈ Finset.range (U + 1),
+      m ≠ n → delta (min m n) ≤ |omega0 n - omega0 m| := by
+    intro m hm n hn hmn
+    by_cases hm0 : m = 0
+    · subst m
+      have hnpos : 0 < n := Nat.pos_of_ne_zero (Ne.symm hmn)
+      have hlog : 0 ≤ Real.log n := Real.log_nonneg (by exact_mod_cast hnpos)
+      have habs : 1 ≤ |-Real.log n - 1| := by
+        rw [abs_of_nonpos (by linarith)]
+        linarith
+      simpa [delta, omega0, hnpos.ne'] using habs
+    · have hmpos : 0 < m := Nat.pos_of_ne_zero hm0
+      by_cases hn0 : n = 0
+      · subst n
+        have hlog : 0 ≤ Real.log m := Real.log_nonneg (by exact_mod_cast hmpos)
+        have habs : 1 ≤ |1 + Real.log m| := by
+          rw [abs_of_nonneg (by linarith)]
+          linarith
+        simpa [delta, omega0, hm0] using habs
+      · have hnpos : 0 < n := Nat.pos_of_ne_zero hn0
+        have hgap_pos : 0 < |Real.log n - Real.log m| := by
+          apply abs_pos.mpr
+          rw [sub_ne_zero]
+          intro hlog
+          have hnR : 0 < (n : ℝ) := by exact_mod_cast hnpos
+          have hmR : 0 < (m : ℝ) := by exact_mod_cast hmpos
+          exact hmn.symm (Nat.cast_injective (Real.log_injOn_pos hnR hmR hlog))
+        rcases le_total m n with hmn_le | hnm_le
+        · have hinv := inv_abs_log_sub_log_le_nat_add_one hnpos hmpos hmn.symm
+          have hmul : 1 ≤ ((m : ℝ) + 1) * |Real.log n - Real.log m| :=
+            (div_le_iff₀ hgap_pos).mp hinv
+          have hmin : min m n = m := min_eq_left hmn_le
+          rw [hmin]
+          simp only [delta, omega0, hm0, hn0, if_false]
+          rw [show -Real.log n - -Real.log m =
+            -(Real.log n - Real.log m) by ring, abs_neg]
+          apply (div_le_iff₀ (by positivity : 0 < (m : ℝ) + 1)).2
+          nlinarith
+        · have hinv := inv_abs_log_sub_log_le_nat_add_one hmpos hnpos hmn
+          have hmul : 1 ≤ ((n : ℝ) + 1) * |Real.log m - Real.log n| :=
+            (div_le_iff₀ (by simpa [abs_sub_comm] using hgap_pos)).mp hinv
+          have hmin : min m n = n := min_eq_right hnm_le
+          rw [hmin]
+          simp only [delta, omega0, hm0, hn0, if_false]
+          rw [show -Real.log n - -Real.log m =
+            Real.log m - Real.log n by ring]
+          apply (div_le_iff₀ (by positivity : 0 < (n : ℝ) + 1)).2
+          nlinarith
+  have hRange := norm_hilbertForm_range_le_carneiroLittmann
+    (N := U + 1) (c := c0) (omega := omega0) (delta := delta)
+    hdelta hanti hlocal
+  have hHilbert :
+      hilbertForm (Finset.range (U + 1)) c0 omega0 =
+        hilbertForm S c (fun n : ℕ => -Real.log n) := by
+    unfold hilbertForm
+    have houter :
+        (∑ m ∈ S, ∑ n ∈ Finset.range (U + 1),
+          if m = n then 0
+          else (starRingEnd ℂ) (c0 m) * c0 n / (omega0 n - omega0 m)) =
+        ∑ m ∈ Finset.range (U + 1), ∑ n ∈ Finset.range (U + 1),
+          if m = n then 0
+          else (starRingEnd ℂ) (c0 m) * c0 n / (omega0 n - omega0 m) := by
+      apply Finset.sum_subset hS
+      intro m hm hmS
+      simp [c0, hmS]
+    rw [← houter]
+    apply Finset.sum_congr rfl
+    intro m hmS
+    have hmpos : 0 < m := lt_of_lt_of_le hL (Finset.mem_Icc.mp hmS).1
+    have hinner :
+        (∑ n ∈ S, if m = n then 0
+          else (starRingEnd ℂ) (c0 m) * c0 n / (omega0 n - omega0 m)) =
+        ∑ n ∈ Finset.range (U + 1), if m = n then 0
+          else (starRingEnd ℂ) (c0 m) * c0 n / (omega0 n - omega0 m) := by
+      apply Finset.sum_subset hS
+      intro n hn hnS
+      simp [c0, hnS]
+    rw [← hinner]
+    apply Finset.sum_congr rfl
+    intro n hnS
+    have hnpos : 0 < n := lt_of_lt_of_le hL (Finset.mem_Icc.mp hnS).1
+    simp [c0, omega0, hmS, hnS, hmpos.ne', hnpos.ne']
+  have hweight :
+      (∑ n ∈ Finset.range (U + 1), (delta n)⁻¹ * ‖c0 n‖ ^ 2) =
+        ∑ n ∈ S, ((n : ℝ) + 1) * ‖c n‖ ^ 2 := by
+    have hsum :
+        (∑ n ∈ S, (delta n)⁻¹ * ‖c0 n‖ ^ 2) =
+          ∑ n ∈ Finset.range (U + 1), (delta n)⁻¹ * ‖c0 n‖ ^ 2 := by
+      apply Finset.sum_subset hS
+      intro n hn hnS
+      simp [c0, hnS]
+    rw [← hsum]
+    apply Finset.sum_congr rfl
+    intro n hnS
+    simp [delta, c0, hnS]
+  simpa only [S, hHilbert, hweight] using hRange
+
 /-- The Montgomery--Vaughan mean-square bound obtained from the explicit
 Carneiro--Littmann kernel, with no remaining kernel-existence parameter. -/
 theorem finiteExponentialSum_meanSquare_le_carneiroLittmann

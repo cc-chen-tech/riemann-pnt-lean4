@@ -57,6 +57,17 @@ example {X N : ℕ} {sigma a b C : ℝ} (hab : a ≤ b)
           ((n : ℝ) + 1) * ‖mollifiedTailCoefficient X N sigma n‖ ^ 2 :=
   mollifiedTruncatedTail_meanSquare_le_of_hilbert hab hHilbert
 
+example {X N : ℕ} {sigma a b : ℝ} (hab : a ≤ b) :
+    ∫ t in a..b,
+        ‖∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+          mollifiedTruncatedCoefficient X N n /
+            (n : ℂ) ^ ((sigma : ℂ) + Complex.I * t)‖ ^ 2 ≤
+      (b - a) * ∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+          ‖mollifiedTailCoefficient X N sigma n‖ ^ 2 +
+        4 * Real.pi * ∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+          ((n : ℝ) + 1) * ‖mollifiedTailCoefficient X N sigma n‖ ^ 2 :=
+  mollifiedTruncatedTail_meanSquare_le_carneiroLittmann hab
+
 example :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (X : ℕ) (s : ℂ) (x : ℝ),
       (1 / 2 : ℝ) ≤ s.re → s.re ≤ 1 → s ≠ 1 → 2 ≤ x →
@@ -110,6 +121,7 @@ example :
 #print axioms exists_mollifiedZetaError_tail_decomposition
 #print axioms mollifiedTruncatedTail_verticalLine_eq_finiteDirichletPolynomial
 #print axioms mollifiedTruncatedTail_meanSquare_le_of_hilbert
+#print axioms mollifiedTruncatedTail_meanSquare_le_carneiroLittmann
 #print axioms norm_mollifiedTailCoefficient_le
 #print axioms mollifiedTailCoefficient_weightedSquareSum_le
 

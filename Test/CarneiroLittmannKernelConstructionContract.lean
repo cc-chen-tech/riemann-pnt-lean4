@@ -71,6 +71,12 @@ example {N : ℕ} {c : ℕ → ℂ} {omega delta : ℕ → ℝ}
         ∑ n ∈ Finset.range N, (delta n)⁻¹ * ‖c n‖ ^ 2 :=
   norm_hilbertForm_range_le_carneiroLittmann hdelta hanti hlocal
 
+example {L U : ℕ} (hL : 0 < L) (c : ℕ → ℂ) :
+    ‖hilbertForm (Finset.Icc L U) c (fun n : ℕ => -Real.log n)‖ ≤
+      2 * Real.pi *
+        ∑ n ∈ Finset.Icc L U, ((n : ℝ) + 1) * ‖c n‖ ^ 2 :=
+  norm_hilbertForm_Icc_neg_log_le_carneiroLittmann hL c
+
 example {a b : ℝ} (N : ℕ) (c : ℕ → ℂ) (omega delta : ℕ → ℝ)
     (hab : a ≤ b)
     (hdelta : ∀ n, 0 < delta n)
@@ -100,6 +106,7 @@ example {a b : ℝ} (N : ℕ) (c : ℕ → ℂ) (omega delta : ℕ → ℝ)
 #print axioms fourierKernel_carneiroLittmannRawKernel_of_two_pi_le_abs
 #print axioms carneiroLittmannKernel
 #print axioms norm_hilbertForm_range_le_carneiroLittmann
+#print axioms norm_hilbertForm_Icc_neg_log_le_carneiroLittmann
 #print axioms finiteExponentialSum_meanSquare_le_carneiroLittmann
 
 end DirichletPolynomial

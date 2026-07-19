@@ -1,5 +1,6 @@
 import PrimeNumberTheorem.CarlsonZetaApproximation
 import PrimeNumberTheorem.CarlsonMollifierCoefficients
+import PrimeNumberTheorem.CarneiroLittmannKernelConstruction
 import PrimeNumberTheorem.MobiusMollifier
 
 open Complex
@@ -121,6 +122,25 @@ theorem mollifiedTruncatedTail_meanSquare_le_of_hilbert
   · intro n hn
     positivity
   · exact hHilbert
+
+/-- The concrete Carneiro--Littmann kernel removes the remaining Hilbert-form
+hypothesis from the mean-square estimate for the Möbius-cancelled tail. -/
+theorem mollifiedTruncatedTail_meanSquare_le_carneiroLittmann
+    {X N : ℕ} {sigma a b : ℝ} (hab : a ≤ b) :
+    ∫ t in a..b,
+        ‖∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+          mollifiedTruncatedCoefficient X N n /
+            (n : ℂ) ^ ((sigma : ℂ) + Complex.I * t)‖ ^ 2 ≤
+      (b - a) * ∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+          ‖mollifiedTailCoefficient X N sigma n‖ ^ 2 +
+        4 * Real.pi * ∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+          ((n : ℝ) + 1) * ‖mollifiedTailCoefficient X N sigma n‖ ^ 2 := by
+  simpa only [mul_assoc, show 2 * (2 * Real.pi) = 4 * Real.pi by ring] using
+    mollifiedTruncatedTail_meanSquare_le_of_hilbert
+      (X := X) (N := N) (sigma := sigma) (C := 2 * Real.pi) hab
+      (fun d =>
+        DirichletPolynomial.norm_hilbertForm_Icc_neg_log_le_carneiroLittmann
+          (show 0 < min X N + 1 by omega) d)
 
 /-- The finite product in the mollified zeta approximation is exactly the
 coefficient polynomial obtained from the truncated Dirichlet convolution. -/
