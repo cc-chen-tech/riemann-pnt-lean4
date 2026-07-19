@@ -13,6 +13,17 @@ example :
         riemannZeta s ≠ 0 :=
   vinogradov_korobov_zero_free_region_iff_width
 
+example {c x : ℝ} (hc : 0 ≤ c) (hx : 3 ≤ x) :
+    vinogradovKorobovWidth c x ≤ vinogradovKorobovWidth c 3 :=
+  vinogradovKorobovWidth_le_at_three hc hx
+
+example (T0 : ℝ) (hT0 : 3 ≤ T0)
+    (hhigh : ∃ c > 0, ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥ 1 - vinogradovKorobovWidth c |s.im| →
+      riemannZeta s ≠ 0) :
+    ZeroFreeRegion.vinogradov_korobov_zero_free_region :=
+  compact_patch_vinogradov_korobov_zero_free_region T0 hT0 hhigh
+
 example
     {T0 : ℝ} {width σOf realBound twoBound : ℝ → ℝ}
     {zeroBound : ℝ → ℝ → ℝ}

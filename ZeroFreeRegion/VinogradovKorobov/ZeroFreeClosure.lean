@@ -17,6 +17,93 @@ theorem vinogradov_korobov_zero_free_region_iff_width :
         riemannZeta s ≠ 0 := by
   rfl
 
+/-- For nonnegative width constant, the VK width is largest at the native
+cutoff among all heights at least three. -/
+theorem vinogradovKorobovWidth_le_at_three
+    {c x : ℝ} (hc : 0 ≤ c) (hx : 3 ≤ x) :
+    vinogradovKorobovWidth c x ≤ vinogradovKorobovWidth c 3 := by
+  have hlog3pos : 0 < Real.log (3 : ℝ) := Real.log_pos (by norm_num)
+  have hlogxpos : 0 < Real.log x :=
+    hlog3pos.trans_le (Real.log_le_log (by norm_num) hx)
+  have hlog : Real.log (3 : ℝ) ≤ Real.log x :=
+    Real.log_le_log (by norm_num) hx
+  have hden : (Real.log (3 : ℝ)) ^ (2 / 3 : ℝ) ≤
+      (Real.log x) ^ (2 / 3 : ℝ) :=
+    Real.rpow_le_rpow hlog3pos.le hlog (by norm_num)
+  have hden3pos : 0 < (Real.log (3 : ℝ)) ^ (2 / 3 : ℝ) :=
+    Real.rpow_pos_of_pos hlog3pos _
+  have hdiv : c / (Real.log x) ^ (2 / 3 : ℝ) ≤
+      c / (Real.log (3 : ℝ)) ^ (2 / 3 : ℝ) :=
+    div_le_div_of_nonneg_left hc hden3pos hden
+  have hloglog3pos : 0 < Real.log (Real.log (3 : ℝ)) := by
+    have hlog3one : 1 < Real.log (3 : ℝ) := by
+      simpa only [abs_of_pos (by norm_num : (0 : ℝ) < 3)] using
+        ZeroFreeRegion.log_abs_gt_one_of_three_le
+          (show (3 : ℝ) ≤ |(3 : ℝ)| by norm_num)
+    exact Real.log_pos hlog3one
+  have hloglog : Real.log (Real.log (3 : ℝ)) ≤
+      Real.log (Real.log x) :=
+    Real.log_le_log hlog3pos hlog
+  have hfactor :
+      (Real.log (Real.log x)) ^ (-1 / 3 : ℝ) ≤
+        (Real.log (Real.log (3 : ℝ))) ^ (-1 / 3 : ℝ) :=
+    Real.rpow_le_rpow_of_nonpos hloglog3pos hloglog (by norm_num)
+  unfold vinogradovKorobovWidth
+  exact mul_le_mul hdiv hfactor
+    (Real.rpow_nonneg (hloglog3pos.le.trans hloglog) _)
+    (div_nonneg hc hden3pos.le)
+
+/-- Patch a sufficiently-high VK strip with the already verified compact
+zero-free strip.  This reduces the analytic task to proving VK estimates
+above any convenient cutoff `T0 ≥ 3`. -/
+theorem compact_patch_vinogradov_korobov_zero_free_region
+    (T0 : ℝ) (hT0 : 3 ≤ T0)
+    (hhigh : ∃ c > 0, ∀ s : ℂ, T0 ≤ |s.im| →
+      s.re ≥ 1 - vinogradovKorobovWidth c |s.im| →
+      riemannZeta s ≠ 0) :
+    ZeroFreeRegion.vinogradov_korobov_zero_free_region := by
+  rcases hhigh with ⟨chigh, hchigh, hregion⟩
+  rcases ZeroFreeRegion.classical_zero_free_region_compact T0
+      ((by norm_num : (2 : ℝ) ≤ 3).trans hT0) with
+    ⟨d, hd, hcompact⟩
+  let K : ℝ := vinogradovKorobovWidth 1 3
+  have hK : 0 < K := by
+    dsimp only [K, vinogradovKorobovWidth]
+    have hlog3pos : 0 < Real.log (3 : ℝ) := Real.log_pos (by norm_num)
+    have hloglog3pos : 0 < Real.log (Real.log (3 : ℝ)) := by
+      have hlog3one : 1 < Real.log (3 : ℝ) := by
+        simpa only [abs_of_pos (by norm_num : (0 : ℝ) < 3)] using
+          ZeroFreeRegion.log_abs_gt_one_of_three_le
+            (show (3 : ℝ) ≤ |(3 : ℝ)| by norm_num)
+      exact Real.log_pos hlog3one
+    positivity
+  let c := min chigh (d / K)
+  have hc : 0 < c := lt_min hchigh (div_pos hd hK)
+  rw [vinogradov_korobov_zero_free_region_iff_width]
+  refine ⟨c, hc, ?_⟩
+  intro s hs3 hsre
+  by_cases hsT : T0 ≤ |s.im|
+  · refine hregion s hsT ?_
+    have hc_le : c ≤ chigh := min_le_left _ _
+    have hwidth := ZeroFreeRegion.vinogradov_korobov_width_mono_const
+      hc_le (hT0.trans hsT)
+    have hwidth' : vinogradovKorobovWidth c |s.im| ≤
+        vinogradovKorobovWidth chigh |s.im| := by
+      simpa only [vinogradovKorobovWidth] using hwidth
+    linarith
+  · refine hcompact s (le_of_lt (lt_of_not_ge hsT)) ?_
+    have hwidth3 : vinogradovKorobovWidth c |s.im| ≤
+        vinogradovKorobovWidth c 3 :=
+      vinogradovKorobovWidth_le_at_three hc.le hs3
+    have hcK : c * K ≤ d := by
+      have hc_div : c ≤ d / K := min_le_right _ _
+      exact (le_div_iff₀ hK).mp hc_div
+    have hwidth_eq : vinogradovKorobovWidth c 3 = c * K := by
+      dsimp only [K, vinogradovKorobovWidth]
+      ring
+    rw [hwidth_eq] at hwidth3
+    linarith
+
 /-- Width-agnostic 3-4-1 closure at high height.  All analytic content is
 isolated in upper bounds for the logarithmic derivative at the real point,
 the candidate-zero height, and twice that height. -/
