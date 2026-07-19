@@ -1,4 +1,4 @@
-import ZeroFreeRegion.VinogradovKorobov.VinogradovCorrectionFiber
+import ZeroFreeRegion.VinogradovKorobov.VinogradovLowDiversityPrimePower
 
 namespace ZeroFreeRegion.VinogradovKorobov
 
@@ -309,6 +309,123 @@ theorem vinogradovPrimePowerPairJacobianRank_lt_no_injective_selection
       p d s hdp _ _ hrank,
     not_exists_right_selection_of_finrank_vinogradovPairCorrectionLinearMap_range_lt
       p d s hdp _ _ hrank⟩
+
+/-- At the full-rank threshold `k`, every low-rank base solution lies in the
+ambient set where both residue tuples use fewer than `k` values. -/
+theorem vinogradovPrimePowerFixedCollisionLowRankSolutionSet_subset_lowDiversity
+    (p k r b n : ℕ) [Fact p.Prime] (hkp : k < p)
+    (w : Fin b → VinogradovCollisionWitness k) :
+    vinogradovPrimePowerFixedCollisionLowRankSolutionSet
+        p k r b n k w ⊆
+      vinogradovPrimePowerLowDiversityAmbientSet
+        p (b * k + r) k n := by
+  intro xy hxy
+  have hrank :=
+    (mem_vinogradovPrimePowerFixedCollisionLowRankSolutionSet_iff
+      p k r b n k w xy).mp hxy |>.2
+  have hno :=
+    vinogradovPrimePowerPairJacobianRank_lt_no_injective_selection
+      p k (b * k + r) n hkp xy hrank
+  rw [mem_vinogradovPrimePowerLowDiversityAmbientSet_iff]
+  constructor
+  · apply
+      (no_injective_selection_iff_mem_vinogradovLowDiversityTupleSet
+        p (b * k + r) k
+          (vinogradovPrimePowerBaseLeftResidue
+            p (b * k + r) n xy)).mp
+    simpa [vinogradovPrimePowerBaseLeftResidue] using hno.1
+  · apply
+      (no_injective_selection_iff_mem_vinogradovLowDiversityTupleSet
+        p (b * k + r) k
+          (vinogradovPrimePowerBaseRightResidue
+            p (b * k + r) n xy)).mp
+    simpa [vinogradovPrimePowerBaseRightResidue] using hno.2
+
+/-- The low-rank correction lifts form a subset of the unrestricted
+low-diversity ambient lift space. -/
+theorem vinogradovPrimePowerFixedCollisionLowRankLiftSet_subset_lowDiversity
+    (p k r b n : ℕ) [Fact p.Prime] (hkp : k < p)
+    (w : Fin b → VinogradovCollisionWitness k) :
+    vinogradovPrimePowerFixedCollisionLowRankLiftSet
+        p k r b n k w ⊆
+      vinogradovPrimePowerLowDiversityAmbientLiftSet
+        p (b * k + r) k n := by
+  intro u hu
+  rcases u with ⟨xy, z⟩
+  have hu' :
+      xy ∈ vinogradovPrimePowerFixedCollisionLowRankSolutionSet
+          p k r b n k w ∧
+        z ∈ vinogradovPrimePowerCorrectionSolutionSet
+          p k (b * k + r) n xy := by
+    simpa [vinogradovPrimePowerFixedCollisionLowRankLiftSet] using hu
+  simp only [vinogradovPrimePowerLowDiversityAmbientLiftSet,
+    Finset.mem_sigma, Finset.mem_univ, and_true]
+  exact vinogradovPrimePowerFixedCollisionLowRankSolutionSet_subset_lowDiversity
+    p k r b n hkp w hu'.1
+
+/-- Explicit uniform bound for the formerly uncontrolled low-rank lift
+remainder. -/
+theorem card_vinogradovPrimePowerFixedCollisionLowRankLiftSet_le_lowDiversity
+    (p k r b n : ℕ) [Fact p.Prime] (hkp : k < p)
+    (w : Fin b → VinogradovCollisionWitness k) :
+    (vinogradovPrimePowerFixedCollisionLowRankLiftSet
+      p k r b n k w).card ≤
+      (p ^ (k - 1) * (k - 1) ^ (b * k + r)) ^ 2 *
+        (p ^ (2 * (b * k + r))) ^ (n + 1) := by
+  let q := p ^ (2 * (b * k + r))
+  let B := (p ^ (k - 1) * (k - 1) ^ (b * k + r)) ^ 2
+  calc
+    (vinogradovPrimePowerFixedCollisionLowRankLiftSet
+        p k r b n k w).card ≤
+        (vinogradovPrimePowerLowDiversityAmbientLiftSet
+          p (b * k + r) k n).card :=
+      Finset.card_le_card
+        (vinogradovPrimePowerFixedCollisionLowRankLiftSet_subset_lowDiversity
+          p k r b n hkp w)
+    _ = (vinogradovPrimePowerLowDiversityAmbientSet
+          p (b * k + r) k n).card * q := by
+      exact card_vinogradovPrimePowerLowDiversityAmbientLiftSet
+        p (b * k + r) k n
+    _ ≤ B * q ^ n * q := by
+      exact Nat.mul_le_mul_right q
+        (card_vinogradovPrimePowerLowDiversityAmbientSet_le
+          p (b * k + r) k n)
+    _ = B * q ^ (n + 1) := by
+      rw [pow_succ, mul_assoc]
+
+/-- A closed one-step recurrence: the full-rank stratum gains `k` powers of
+`p`, while the low-rank stratum is bounded by the low-diversity count. -/
+theorem card_vinogradovPrimePowerFixedCollisionSolutionSet_succ_le_fullRank_lowDiversity
+    (p k r b n : ℕ) [Fact p.Prime] (hkp : k < p)
+    (w : Fin b → VinogradovCollisionWitness k) :
+    (vinogradovPrimePowerFixedCollisionSolutionSet
+      p k r b (n + 1) w).card ≤
+      (vinogradovPrimePowerFixedCollisionSolutionSet
+        p k r b n w).card *
+          p ^ (2 * (b * k + r) - k) +
+        (p ^ (k - 1) * (k - 1) ^ (b * k + r)) ^ 2 *
+          (p ^ (2 * (b * k + r))) ^ (n + 1) := by
+  calc
+    (vinogradovPrimePowerFixedCollisionSolutionSet
+        p k r b (n + 1) w).card ≤
+      (vinogradovPrimePowerFixedCollisionHighRankSolutionSet
+        p k r b n k w).card *
+          p ^ (2 * (b * k + r) - k) +
+        (vinogradovPrimePowerFixedCollisionLowRankLiftSet
+          p k r b n k w).card :=
+      card_vinogradovPrimePowerFixedCollisionSolutionSet_succ_le_rank_split
+        p k r b n k w
+    _ ≤ (vinogradovPrimePowerFixedCollisionSolutionSet
+          p k r b n w).card *
+            p ^ (2 * (b * k + r) - k) +
+          (p ^ (k - 1) * (k - 1) ^ (b * k + r)) ^ 2 *
+            (p ^ (2 * (b * k + r))) ^ (n + 1) := by
+      apply Nat.add_le_add
+      · apply Nat.mul_le_mul_right
+        exact Finset.card_le_card (Finset.filter_subset _ _)
+      · exact
+          card_vinogradovPrimePowerFixedCollisionLowRankLiftSet_le_lowDiversity
+            p k r b n hkp w
 
 end
 
