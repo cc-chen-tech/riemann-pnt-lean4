@@ -100,6 +100,17 @@ example (X : ℕ) {sigma : ℝ} (hsigma0 : 0 < sigma) :
         ((sigma : ℂ) + Complex.I * t)) :=
   continuous_regularizedCarlsonZeroDetector_verticalLine X hsigma0
 
+example {X : ℕ} {sigma a b : ℝ} (hsigma0 : 0 < sigma)
+    (hboundary : ∀ t ∈ Set.uIcc a b,
+      regularizedCarlsonZeroDetector X
+        ((sigma : ℂ) + Complex.I * t) ≠ 0) :
+    IntervalIntegrable
+      (fun t : ℝ => Real.log ‖regularizedCarlsonZeroDetector X
+        ((sigma : ℂ) + Complex.I * t)‖)
+      MeasureTheory.volume a b :=
+  intervalIntegrable_log_norm_regularizedCarlsonZeroDetector
+    hsigma0 hboundary
+
 example (X : ℕ) (sigma : ℝ) (hsigma1 : sigma ≠ 1) :
     Continuous (fun t : ℝ =>
       mollifiedZetaError X ((sigma : ℂ) + Complex.I * t)) :=
@@ -226,6 +237,21 @@ example :
             A 4 X sigma u (2 * u) (4 * u) :=
   exists_integral_log_norm_regularizedCarlsonZeroDetector_le_dyadic
 
+example :
+    ∃ A : ℝ, 0 ≤ A ∧ ∀ (X : ℕ) (sigma : ℝ) (n : ℕ),
+      1 ≤ X → 1 / 2 < sigma → sigma < 1 →
+      (∀ t ∈ Set.Icc 1 ((2 : ℝ) ^ n),
+        regularizedCarlsonZeroDetector X
+          ((sigma : ℂ) + Complex.I * t) ≠ 0) →
+        ∫ t in 1..((2 : ℝ) ^ n),
+            Real.log ‖regularizedCarlsonZeroDetector X
+              ((sigma : ℂ) + Complex.I * t)‖ ≤
+          ∑ k ∈ Finset.range n,
+            regularizedCarlsonLogNormEndpoint
+              A 4 X sigma ((2 : ℝ) ^ k) ((2 : ℝ) ^ (k + 1))
+                (4 * (2 : ℝ) ^ k) :=
+  exists_integral_log_norm_regularizedCarlsonZeroDetector_le_dyadicSum
+
 #print axioms carlsonZeroDetector_eq_zeta_mul_mollifier_factorization
 #print axioms tendsto_riemannZeta_real_atTop
 #print axioms tendsto_mollifiedZetaError_real_atTop
@@ -242,6 +268,7 @@ example :
 #print axioms log_norm_regularizedCarlsonZeroDetector_le_two_log_norm_sub_one_add_error_sq
 #print axioms integral_log_norm_regularizedCarlsonZeroDetector_le_geometric_add_meanSquare
 #print axioms continuous_regularizedCarlsonZeroDetector_verticalLine
+#print axioms intervalIntegrable_log_norm_regularizedCarlsonZeroDetector
 #print axioms continuous_mollifiedZetaError_verticalLine
 #print axioms continuous_carlsonZeroDetector_verticalLine
 #print axioms integral_log_norm_carlsonZeroDetector_le_meanSquare
@@ -250,6 +277,7 @@ example :
 #print axioms exists_integral_log_norm_regularizedCarlsonZeroDetector_le_endpoint_of_comparable
 #print axioms exists_integral_log_norm_regularizedCarlsonZeroDetector_le_doublingInterval
 #print axioms exists_integral_log_norm_regularizedCarlsonZeroDetector_le_dyadic
+#print axioms exists_integral_log_norm_regularizedCarlsonZeroDetector_le_dyadicSum
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem

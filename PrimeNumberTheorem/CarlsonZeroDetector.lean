@@ -391,6 +391,34 @@ theorem continuous_regularizedCarlsonZeroDetector_verticalLine
     fun_prop
   simpa [Function.comp_def] using han.continuousAt.comp_of_eq hmap rfl
 
+/-- On a zero-free vertical segment, the logarithmic norm of the regularized
+Carlson detector is interval integrable. -/
+theorem intervalIntegrable_log_norm_regularizedCarlsonZeroDetector
+    {X : ℕ} {sigma a b : ℝ} (hsigma0 : 0 < sigma)
+    (hboundary : ∀ t ∈ Set.uIcc a b,
+      regularizedCarlsonZeroDetector X
+        ((sigma : ℂ) + Complex.I * t) ≠ 0) :
+    IntervalIntegrable
+      (fun t : ℝ => Real.log ‖regularizedCarlsonZeroDetector X
+        ((sigma : ℂ) + Complex.I * t)‖)
+      MeasureTheory.volume a b := by
+  have hdetector :=
+    continuous_regularizedCarlsonZeroDetector_verticalLine X hsigma0
+  apply ContinuousOn.intervalIntegrable
+  intro t ht
+  have hlog : ContinuousAt Real.log
+      ‖regularizedCarlsonZeroDetector X
+        ((sigma : ℂ) + Complex.I * (t : ℂ))‖ :=
+    Real.continuousAt_log (norm_ne_zero_iff.mpr (hboundary t ht))
+  have hlogNorm : ContinuousAt (fun z : ℂ => Real.log ‖z‖)
+      (regularizedCarlsonZeroDetector X
+        ((sigma : ℂ) + Complex.I * (t : ℂ))) :=
+    hlog.comp' continuous_norm.continuousAt
+  exact (ContinuousAt.comp'
+    (f := fun u : ℝ => regularizedCarlsonZeroDetector X
+      ((sigma : ℂ) + Complex.I * u))
+    hlogNorm hdetector.continuousAt).continuousWithinAt
+
 /-- On a zero-free left boundary, the pole-free detector's logarithmic
 integral is controlled by the explicit regularization factor and the same
 mollified-zeta mean square used for Carlson's original detector. -/
@@ -760,6 +788,89 @@ theorem exists_integral_log_norm_regularizedCarlsonZeroDetector_le_dyadic :
   intro X sigma u hX hu hsigma hsigma1 hboundary
   exact hbound X sigma u (2 * u) hX hu (by linarith) le_rfl
     hsigma hsigma1 hboundary
+
+/-- Summing the dyadic estimates controls the logarithmic norm on the whole
+finite height interval `[1, 2^n]`. -/
+theorem exists_integral_log_norm_regularizedCarlsonZeroDetector_le_dyadicSum :
+    ∃ A : ℝ, 0 ≤ A ∧ ∀ (X : ℕ) (sigma : ℝ) (n : ℕ),
+      1 ≤ X → 1 / 2 < sigma → sigma < 1 →
+      (∀ t ∈ Set.Icc 1 ((2 : ℝ) ^ n),
+        regularizedCarlsonZeroDetector X
+          ((sigma : ℂ) + Complex.I * t) ≠ 0) →
+        ∫ t in 1..((2 : ℝ) ^ n),
+            Real.log ‖regularizedCarlsonZeroDetector X
+              ((sigma : ℂ) + Complex.I * t)‖ ≤
+          ∑ k ∈ Finset.range n,
+            regularizedCarlsonLogNormEndpoint
+              A 4 X sigma ((2 : ℝ) ^ k) ((2 : ℝ) ^ (k + 1))
+                (4 * (2 : ℝ) ^ k) := by
+  obtain ⟨A, hA, hdyadic⟩ :=
+    exists_integral_log_norm_regularizedCarlsonZeroDetector_le_dyadic
+  refine ⟨A, hA, ?_⟩
+  intro X sigma n hX hsigma hsigma1 hboundary
+  let f : ℝ → ℝ := fun t =>
+    Real.log ‖regularizedCarlsonZeroDetector X
+      ((sigma : ℂ) + Complex.I * t)‖
+  have hpowOne (k : ℕ) : 1 ≤ (2 : ℝ) ^ k :=
+    one_le_pow₀ (by norm_num)
+  have hpowStep (k : ℕ) :
+      (2 : ℝ) ^ k ≤ (2 : ℝ) ^ (k + 1) :=
+    pow_le_pow_right₀ (by norm_num) (Nat.le_succ k)
+  have hpowTop {k : ℕ} (hk : k < n) :
+      (2 : ℝ) ^ (k + 1) ≤ (2 : ℝ) ^ n :=
+    pow_le_pow_right₀ (by norm_num) (Nat.succ_le_iff.mpr hk)
+  have hsegmentBoundary {k : ℕ} (hk : k < n) :
+      ∀ t ∈ Set.uIcc ((2 : ℝ) ^ k) ((2 : ℝ) ^ (k + 1)),
+        regularizedCarlsonZeroDetector X
+          ((sigma : ℂ) + Complex.I * t) ≠ 0 := by
+    intro t ht
+    rw [Set.uIcc_of_le (hpowStep k)] at ht
+    apply hboundary t
+    exact ⟨(hpowOne k).trans ht.1, ht.2.trans (hpowTop hk)⟩
+  have hint : ∀ k < n,
+      IntervalIntegrable f MeasureTheory.volume
+        ((2 : ℝ) ^ k) ((2 : ℝ) ^ (k + 1)) := by
+    intro k hk
+    exact intervalIntegrable_log_norm_regularizedCarlsonZeroDetector
+      (by linarith) (hsegmentBoundary hk)
+  have hpiece {k : ℕ} (hk : k < n) :
+      (∫ t in ((2 : ℝ) ^ k)..((2 : ℝ) ^ (k + 1)), f t) ≤
+        regularizedCarlsonLogNormEndpoint
+          A 4 X sigma ((2 : ℝ) ^ k) ((2 : ℝ) ^ (k + 1))
+            (4 * (2 : ℝ) ^ k) := by
+    have hboundaryDyadic : ∀ t ∈ Set.Icc ((2 : ℝ) ^ k)
+        (2 * (2 : ℝ) ^ k),
+        regularizedCarlsonZeroDetector X
+          ((sigma : ℂ) + Complex.I * t) ≠ 0 := by
+      intro t ht
+      apply hboundary t
+      constructor
+      · exact (hpowOne k).trans ht.1
+      · have ht' : t ≤ (2 : ℝ) ^ (k + 1) := by
+          simpa [pow_succ, mul_comm] using ht.2
+        exact ht'.trans (hpowTop hk)
+    have h := hdyadic X sigma ((2 : ℝ) ^ k) hX (hpowOne k)
+      hsigma hsigma1 hboundaryDyadic
+    simpa [f, pow_succ, mul_comm] using h
+  have hsum :
+      (∑ k ∈ Finset.range n,
+          ∫ t in ((2 : ℝ) ^ k)..((2 : ℝ) ^ (k + 1)), f t) ≤
+        ∑ k ∈ Finset.range n,
+          regularizedCarlsonLogNormEndpoint
+            A 4 X sigma ((2 : ℝ) ^ k) ((2 : ℝ) ^ (k + 1))
+              (4 * (2 : ℝ) ^ k) := by
+    exact Finset.sum_le_sum fun k hk => hpiece (Finset.mem_range.mp hk)
+  calc
+    (∫ t in 1..((2 : ℝ) ^ n), f t) =
+        ∑ k ∈ Finset.range n,
+          ∫ t in ((2 : ℝ) ^ k)..((2 : ℝ) ^ (k + 1)), f t := by
+      simpa using
+        (intervalIntegral.sum_integral_adjacent_intervals
+          (a := fun k : ℕ => (2 : ℝ) ^ k) hint).symm
+    _ ≤ ∑ k ∈ Finset.range n,
+          regularizedCarlsonLogNormEndpoint
+            A 4 X sigma ((2 : ℝ) ^ k) ((2 : ℝ) ^ (k + 1))
+              (4 * (2 : ℝ) ^ k) := hsum
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem
