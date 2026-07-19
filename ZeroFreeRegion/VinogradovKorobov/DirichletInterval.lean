@@ -1,4 +1,5 @@
 import ZeroFreeRegion.VinogradovKorobov.DirichletPrefix
+import ZeroFreeRegion.VinogradovKorobov.ConstantAProcessSchedule
 
 open scoped BigOperators
 
@@ -129,5 +130,104 @@ theorem norm_dirichletInterval_mul_le_sum_harmonic_of_scale
       · omega
       · exact hL
       · exact hscale j (Finset.mem_range.mp hj)
+
+/-- First prefix length at which the constant A-process schedule budget is
+automatically admissible. -/
+def constantAProcessPrefixThreshold (depth h : ℕ) : ℕ :=
+  depth * (h - 1) + 1
+
+/-- Uniform prefix estimate obtained from the trivial bound below the
+schedule threshold and the explicit arbitrary-depth power bound above it. -/
+theorem norm_zetaOscillation_prefix_le_max_constantAProcessExplicitPower
+    (t : ℝ) (m N depth h : ℕ)
+    (ht : 0 < t) (hm : 0 < m) (hh : 1 ≤ h)
+    (hmajor : t * ((depth.factorial : ℝ) * (h : ℝ) ^ depth *
+      ((m : ℝ) ^ (depth + 1))⁻¹) ≤ Real.pi)
+    (hscale : ∀ K, constantAProcessPrefixThreshold depth h ≤ K → K ≤ N →
+      2 * Real.pi * (h : ℝ) ≤
+        zetaAProcessUniformLeafDeltaLower t m K depth *
+          (h : ℝ) ^ depth * (K : ℝ)) :
+    ∀ K ≤ N,
+      ‖∑ n ∈ Finset.range K, zetaOscillation t (m + n)‖ ≤
+        max (constantAProcessPrefixThreshold depth h : ℝ)
+          (6 * (1 + Real.log h) * (N : ℝ) /
+            (h : ℝ) ^ (1 / (2 : ℝ) ^ depth : ℝ)) := by
+  intro K hKN
+  by_cases hthreshold : constantAProcessPrefixThreshold depth h ≤ K
+  · have hbudget : depth * (h - 1) < K := by
+      unfold constantAProcessPrefixThreshold at hthreshold
+      omega
+    have hbound := norm_zetaPhase_sum_le_constantAProcessExplicitPower
+      t m K depth h ht hm hh hbudget hmajor
+      (hscale K hthreshold hKN)
+    have hmono :
+        6 * (1 + Real.log h) * (K : ℝ) /
+            (h : ℝ) ^ (1 / (2 : ℝ) ^ depth : ℝ) ≤
+          6 * (1 + Real.log h) * (N : ℝ) /
+            (h : ℝ) ^ (1 / (2 : ℝ) ^ depth : ℝ) := by
+      have hlog : 0 ≤ Real.log (h : ℝ) :=
+        Real.log_nonneg (by exact_mod_cast hh)
+      have hKNreal : (K : ℝ) ≤ (N : ℝ) := by exact_mod_cast hKN
+      gcongr
+    calc
+      ‖∑ n ∈ Finset.range K, zetaOscillation t (m + n)‖ =
+          ‖∑ n ∈ Finset.range K, phaseTerm (shiftedZetaPhase t m) n‖ := by
+        apply congrArg norm
+        apply Finset.sum_congr rfl
+        intro n hn
+        exact (phaseTerm_shiftedZetaPhase t m n).symm
+      _ ≤ 6 * (1 + Real.log h) * (K : ℝ) /
+            (h : ℝ) ^ (1 / (2 : ℝ) ^ depth : ℝ) := hbound
+      _ ≤ 6 * (1 + Real.log h) * (N : ℝ) /
+            (h : ℝ) ^ (1 / (2 : ℝ) ^ depth : ℝ) := hmono
+      _ ≤ max (constantAProcessPrefixThreshold depth h : ℝ)
+          (6 * (1 + Real.log h) * (N : ℝ) /
+            (h : ℝ) ^ (1 / (2 : ℝ) ^ depth : ℝ)) := le_max_right _ _
+  · have hKthreshold : K ≤ constantAProcessPrefixThreshold depth h := by omega
+    calc
+      ‖∑ n ∈ Finset.range K, zetaOscillation t (m + n)‖ ≤
+          ∑ n ∈ Finset.range K, ‖zetaOscillation t (m + n)‖ := norm_sum_le _ _
+      _ = K := by
+        simp only [norm_zetaOscillation, Finset.sum_const, Finset.card_range,
+          nsmul_eq_mul, mul_one]
+      _ ≤ constantAProcessPrefixThreshold depth h := by exact_mod_cast hKthreshold
+      _ ≤ max (constantAProcessPrefixThreshold depth h : ℝ)
+          (6 * (1 + Real.log h) * (N : ℝ) /
+            (h : ℝ) ^ (1 / (2 : ℝ) ^ depth : ℝ)) := le_max_left _ _
+
+/-- Abel transfer of the explicit arbitrary-depth prefix bound to a weighted
+Dirichlet interval. -/
+theorem norm_dirichletInterval_le_weight_mul_constantAProcessExplicitPower
+    (sigma t : ℝ) (m N depth h : ℕ)
+    (hsigma : 0 ≤ sigma) (ht : 0 < t) (hm : 0 < m) (hh : 1 ≤ h)
+    (hmajor : t * ((depth.factorial : ℝ) * (h : ℝ) ^ depth *
+      ((m : ℝ) ^ (depth + 1))⁻¹) ≤ Real.pi)
+    (hscale : ∀ K, constantAProcessPrefixThreshold depth h ≤ K → K ≤ N →
+      2 * Real.pi * (h : ℝ) ≤
+        zetaAProcessUniformLeafDeltaLower t m K depth *
+          (h : ℝ) ^ depth * (K : ℝ)) :
+    ‖dirichletInterval sigma t m N‖ ≤
+      dirichletWeight sigma m *
+        max (constantAProcessPrefixThreshold depth h : ℝ)
+          (6 * (1 + Real.log h) * (N : ℝ) /
+            (h : ℝ) ^ (1 / (2 : ℝ) ^ depth : ℝ)) := by
+  cases N with
+  | zero =>
+      simp only [dirichletInterval, Nat.add_zero, Finset.Ico_self,
+        Finset.sum_empty, norm_zero]
+      apply mul_nonneg (dirichletWeight_nonneg sigma m)
+      exact (Nat.cast_nonneg _).trans (le_max_left _ _)
+  | succ N =>
+      rw [dirichletInterval, Finset.sum_Ico_eq_sum_range]
+      simp only [Nat.add_sub_cancel_left]
+      apply norm_dirichletBlock_le_weight_mul sigma t m N
+        (max (constantAProcessPrefixThreshold depth h : ℝ)
+          (6 * (1 + Real.log h) * ((N + 1 : ℕ) : ℝ) /
+            (h : ℝ) ^ (1 / (2 : ℝ) ^ depth : ℝ))) hsigma hm
+      have hprefix :=
+        norm_zetaOscillation_prefix_le_max_constantAProcessExplicitPower
+          t m (N + 1) depth h ht hm hh hmajor hscale
+      intro k hk
+      exact hprefix (k + 1) (by omega)
 
 end ZeroFreeRegion.VinogradovKorobov
