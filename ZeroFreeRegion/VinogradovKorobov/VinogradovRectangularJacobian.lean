@@ -24,6 +24,45 @@ theorem vinogradovRectangularPowerSumJacobian_eq_square
       vinogradovPowerSumJacobian x := by
   rfl
 
+/-- Extending coefficients by zero along a selected set of columns reduces
+the rectangular Jacobian product to the corresponding square Jacobian. -/
+theorem vinogradovRectangularPowerSumJacobian_mulVec_extendByZero
+    {R : Type*} [CommRing R] {d s : ℕ}
+    (x : Fin s → R) (ι : Fin d ↪ Fin s) (u : Fin d → R) :
+    (vinogradovRectangularPowerSumJacobian x).mulVec
+        (Function.extend ι u 0) =
+      (vinogradovPowerSumJacobian (fun i ↦ x (ι i))).mulVec u := by
+  classical
+  ext j
+  change
+    (∑ i : Fin s,
+      (((j.val + 1 : ℕ) : R) * x i ^ j.val) *
+        Function.extend ι u 0 i) =
+      ∑ i : Fin d,
+        (((j.val + 1 : ℕ) : R) * x (ι i) ^ j.val) * u i
+  calc
+    (∑ i : Fin s,
+      (((j.val + 1 : ℕ) : R) * x i ^ j.val) *
+        Function.extend ι u 0 i) =
+        ∑ i ∈ Finset.univ.image ι,
+          (((j.val + 1 : ℕ) : R) * x i ^ j.val) *
+            Function.extend ι u 0 i := by
+      symm
+      apply Finset.sum_subset (Finset.subset_univ _)
+      intro i _hi hiImage
+      rw [Function.extend_apply']
+      · simp
+      · simpa using hiImage
+    _ = ∑ i : Fin d,
+        (((j.val + 1 : ℕ) : R) * x (ι i) ^ j.val) *
+          Function.extend ι u 0 (ι i) := by
+      rw [Finset.sum_image ι.injective.injOn]
+    _ = ∑ i : Fin d,
+        (((j.val + 1 : ℕ) : R) * x (ι i) ^ j.val) * u i := by
+      apply Finset.sum_congr rfl
+      intro i _hi
+      rw [ι.injective.extend_apply]
+
 /-- First-order Taylor expansion for `d` power sums in `s` variables. -/
 theorem vinogradovPowerSumInt_affine_modEq_sq_rectangular
     {d s : ℕ} (q : ℤ) (x h : Fin s → ℤ) (j : Fin d) :
@@ -129,6 +168,151 @@ theorem finrank_vinogradovPairCorrectionLinearMap_range_eq_of_left_injective
   rw [LinearMap.range_eq_top.mpr hsurjective, finrank_top,
     Module.finrank_pi]
   simp
+
+/-- The symmetric statement: an injective right residue tuple also makes the
+square pair correction Jacobian surjective. -/
+theorem finrank_vinogradovPairCorrectionLinearMap_range_eq_of_right_injective
+    (p d : ℕ) [Fact p.Prime] (hdp : d < p)
+    (x y : Fin d → ZMod p) (hy : Function.Injective y) :
+    Module.finrank (ZMod p)
+      (vinogradovPairCorrectionLinearMap p d d x y).range = d := by
+  have hsurjective : Function.Surjective
+      (vinogradovPairCorrectionLinearMap p d d x y) := by
+    intro target
+    obtain ⟨v, hv, _hunique⟩ :=
+      existsUnique_vinogradovPowerSumJacobian_zmod_mulVec_eq
+        p d hdp y hy (-target)
+    refine ⟨(0, v), ?_⟩
+    ext j
+    have hvj := congrFun hv j
+    calc
+      vinogradovPairCorrectionLinearMap p d d x y (0, v) j =
+          -(vinogradovPowerSumJacobian y).mulVec v j := by
+        simp [vinogradovPairCorrectionLinearMap_apply,
+          vinogradovRectangularPowerSumJacobian,
+          vinogradovPowerSumJacobian, Matrix.mulVec, dotProduct]
+      _ = -(-target j) := by
+        rw [hvj]
+        simp
+      _ = target j := neg_neg _
+  rw [LinearMap.range_eq_top.mpr hsurjective, finrank_top,
+    Module.finrank_pi]
+  simp
+
+/-- If `d` selected left coordinates are distinct, the rectangular pair
+Jacobian is already surjective. -/
+theorem finrank_vinogradovPairCorrectionLinearMap_range_eq_of_left_selection
+    (p d s : ℕ) [Fact p.Prime] (hdp : d < p)
+    (x y : Fin s → ZMod p) (ι : Fin d ↪ Fin s)
+    (hx : Function.Injective fun i ↦ x (ι i)) :
+    Module.finrank (ZMod p)
+      (vinogradovPairCorrectionLinearMap p d s x y).range = d := by
+  have hsurjective : Function.Surjective
+      (vinogradovPairCorrectionLinearMap p d s x y) := by
+    intro target
+    obtain ⟨u, hu, _hunique⟩ :=
+      existsUnique_vinogradovPowerSumJacobian_zmod_mulVec_eq
+        p d hdp (fun i ↦ x (ι i)) hx target
+    refine ⟨(Function.extend ι u 0, 0), ?_⟩
+    ext j
+    have huj := congrFun hu j
+    calc
+      vinogradovPairCorrectionLinearMap p d s x y
+          (Function.extend ι u 0, 0) j =
+          (vinogradovRectangularPowerSumJacobian x).mulVec
+            (Function.extend ι u 0) j := by
+        simp [vinogradovPairCorrectionLinearMap_apply, Matrix.mulVec,
+          dotProduct]
+      _ = (vinogradovPowerSumJacobian (fun i ↦ x (ι i))).mulVec u j := by
+        exact congrFun
+          (vinogradovRectangularPowerSumJacobian_mulVec_extendByZero x ι u) j
+      _ = target j := huj
+  rw [LinearMap.range_eq_top.mpr hsurjective, finrank_top,
+    Module.finrank_pi]
+  simp
+
+/-- The same selected-column criterion on the right tuple. -/
+theorem finrank_vinogradovPairCorrectionLinearMap_range_eq_of_right_selection
+    (p d s : ℕ) [Fact p.Prime] (hdp : d < p)
+    (x y : Fin s → ZMod p) (ι : Fin d ↪ Fin s)
+    (hy : Function.Injective fun i ↦ y (ι i)) :
+    Module.finrank (ZMod p)
+      (vinogradovPairCorrectionLinearMap p d s x y).range = d := by
+  have hsurjective : Function.Surjective
+      (vinogradovPairCorrectionLinearMap p d s x y) := by
+    intro target
+    obtain ⟨v, hv, _hunique⟩ :=
+      existsUnique_vinogradovPowerSumJacobian_zmod_mulVec_eq
+        p d hdp (fun i ↦ y (ι i)) hy (-target)
+    refine ⟨(0, Function.extend ι v 0), ?_⟩
+    ext j
+    have hvj := congrFun hv j
+    calc
+      vinogradovPairCorrectionLinearMap p d s x y
+          (0, Function.extend ι v 0) j =
+          -(vinogradovRectangularPowerSumJacobian y).mulVec
+            (Function.extend ι v 0) j := by
+        simp [vinogradovPairCorrectionLinearMap_apply, Matrix.mulVec,
+          dotProduct]
+      _ = -(vinogradovPowerSumJacobian (fun i ↦ y (ι i))).mulVec v j := by
+        rw [congrFun
+          (vinogradovRectangularPowerSumJacobian_mulVec_extendByZero y ι v) j]
+      _ = -((-target) j) := by rw [hvj]
+      _ = target j := by simp
+  rw [LinearMap.range_eq_top.mpr hsurjective, finrank_top,
+    Module.finrank_pi]
+  simp
+
+/-- Rectangular rank deficiency rules out every injective selection of `d`
+left coordinates. -/
+theorem not_exists_left_selection_of_finrank_vinogradovPairCorrectionLinearMap_range_lt
+    (p d s : ℕ) [Fact p.Prime] (hdp : d < p)
+    (x y : Fin s → ZMod p)
+    (hrank : Module.finrank (ZMod p)
+      (vinogradovPairCorrectionLinearMap p d s x y).range < d) :
+    ¬∃ ι : Fin d ↪ Fin s, Function.Injective fun i ↦ x (ι i) := by
+  rintro ⟨ι, hι⟩
+  rw [finrank_vinogradovPairCorrectionLinearMap_range_eq_of_left_selection
+    p d s hdp x y ι hι] at hrank
+  omega
+
+/-- Rectangular rank deficiency also rules out every injective selection on
+the right. -/
+theorem not_exists_right_selection_of_finrank_vinogradovPairCorrectionLinearMap_range_lt
+    (p d s : ℕ) [Fact p.Prime] (hdp : d < p)
+    (x y : Fin s → ZMod p)
+    (hrank : Module.finrank (ZMod p)
+      (vinogradovPairCorrectionLinearMap p d s x y).range < d) :
+    ¬∃ ι : Fin d ↪ Fin s, Function.Injective fun i ↦ y (ι i) := by
+  rintro ⟨ι, hι⟩
+  rw [finrank_vinogradovPairCorrectionLinearMap_range_eq_of_right_selection
+    p d s hdp x y ι hι] at hrank
+  omega
+
+/-- In a square system below the characteristic, rank deficiency forces a
+collision on the left tuple. -/
+theorem not_injective_left_of_finrank_vinogradovPairCorrectionLinearMap_range_lt
+    (p d : ℕ) [Fact p.Prime] (hdp : d < p)
+    (x y : Fin d → ZMod p)
+    (hrank : Module.finrank (ZMod p)
+      (vinogradovPairCorrectionLinearMap p d d x y).range < d) :
+    ¬Function.Injective x := by
+  intro hx
+  rw [finrank_vinogradovPairCorrectionLinearMap_range_eq_of_left_injective
+    p d hdp x y hx] at hrank
+  omega
+
+/-- Rank deficiency likewise forces a collision on the right tuple. -/
+theorem not_injective_right_of_finrank_vinogradovPairCorrectionLinearMap_range_lt
+    (p d : ℕ) [Fact p.Prime] (hdp : d < p)
+    (x y : Fin d → ZMod p)
+    (hrank : Module.finrank (ZMod p)
+      (vinogradovPairCorrectionLinearMap p d d x y).range < d) :
+    ¬Function.Injective y := by
+  intro hy
+  rw [finrank_vinogradovPairCorrectionLinearMap_range_eq_of_right_injective
+    p d hdp x y hy] at hrank
+  omega
 
 /-- A finite fiber of an additive linear map has the same cardinality as its
 zero fiber whenever it is nonempty. -/
