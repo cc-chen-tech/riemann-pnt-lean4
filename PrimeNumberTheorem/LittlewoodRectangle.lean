@@ -153,6 +153,77 @@ theorem intervalIntegral_mul_neg_im_logDeriv_vertical_eq_of_analytic
   intervalIntegral_mul_neg_im_logDeriv_vertical_eq hf hne
     (continuousOn_neg_im_logDeriv_vertical hf hne).intervalIntegrable
 
+/-- A real-weighted vertical logarithmic derivative splits into an argument
+variation term and the endpoint-minus-integral expression for `log ‖f‖`.
+When `sigma = anchor`, the argument variation term vanishes. -/
+theorem intervalIntegral_re_weighted_logDeriv_vertical_eq_of_analytic
+    {f : ℂ → ℂ} {sigma anchor a b : ℝ}
+    (hf : ∀ u ∈ [[a, b]],
+      AnalyticAt ℂ f ((sigma : ℂ) + I * (u : ℂ)))
+    (hne : ∀ u ∈ [[a, b]],
+      f ((sigma : ℂ) + I * (u : ℂ)) ≠ 0) :
+    (∫ u in a..b,
+        ((((sigma : ℂ) + I * (u : ℂ) - (anchor : ℂ)) *
+          logDeriv f ((sigma : ℂ) + I * (u : ℂ))).re)) =
+      (sigma - anchor) *
+          (∫ u in a..b,
+            (logDeriv f ((sigma : ℂ) + I * (u : ℂ))).re) +
+        b * Real.log ‖f ((sigma : ℂ) + I * (b : ℂ))‖ -
+        a * Real.log ‖f ((sigma : ℂ) + I * (a : ℂ))‖ -
+        ∫ u in a..b,
+          Real.log ‖f ((sigma : ℂ) + I * (u : ℂ))‖ := by
+  have hreCont : ContinuousOn
+      (fun u : ℝ =>
+        (logDeriv f ((sigma : ℂ) + I * (u : ℂ))).re) [[a, b]] := by
+    intro u hu
+    have hmap :
+        ContinuousAt (fun v : ℝ => (sigma : ℂ) + I * (v : ℂ)) u := by
+      fun_prop
+    have hlog : ContinuousAt
+        (fun v : ℝ => logDeriv f ((sigma : ℂ) + I * (v : ℂ))) u := by
+      simpa [Function.comp_def] using
+        ((ZeroFreeRegion.analyticAt_logDeriv_of_analyticAt_ne_zero
+          (hf u hu) (hne u hu)).continuousAt.comp_of_eq hmap rfl)
+    exact Complex.continuous_re.continuousAt.comp hlog |>.continuousWithinAt
+  have hnegImCont := continuousOn_neg_im_logDeriv_vertical hf hne
+  have hreInt : IntervalIntegrable
+      (fun u : ℝ =>
+        (logDeriv f ((sigma : ℂ) + I * (u : ℂ))).re)
+      MeasureTheory.volume a b := hreCont.intervalIntegrable
+  have hweightedImInt : IntervalIntegrable
+      (fun u : ℝ =>
+        u * (-(logDeriv f ((sigma : ℂ) + I * (u : ℂ))).im))
+      MeasureTheory.volume a b :=
+    (continuousOn_id.mul hnegImCont).intervalIntegrable
+  calc
+    (∫ u in a..b,
+        ((((sigma : ℂ) + I * (u : ℂ) - (anchor : ℂ)) *
+          logDeriv f ((sigma : ℂ) + I * (u : ℂ))).re)) =
+        ∫ u in a..b,
+          (sigma - anchor) *
+              (logDeriv f ((sigma : ℂ) + I * (u : ℂ))).re +
+            u * (-(logDeriv f
+              ((sigma : ℂ) + I * (u : ℂ))).im) := by
+      apply intervalIntegral.integral_congr
+      intro u hu
+      simp only [Complex.mul_re, Complex.sub_re, Complex.add_re,
+        Complex.sub_im, Complex.add_im, Complex.ofReal_re, Complex.mul_re,
+        Complex.mul_im, Complex.I_re, Complex.I_im, Complex.ofReal_im,
+        zero_mul, one_mul, add_zero, zero_add, sub_zero]
+      ring
+    _ = (sigma - anchor) *
+          (∫ u in a..b,
+            (logDeriv f ((sigma : ℂ) + I * (u : ℂ))).re) +
+        ∫ u in a..b,
+          u * (-(logDeriv f
+            ((sigma : ℂ) + I * (u : ℂ))).im) := by
+      rw [intervalIntegral.integral_add
+        (IntervalIntegrable.const_mul hreInt (sigma - anchor)) hweightedImInt]
+      rw [intervalIntegral.integral_const_mul]
+    _ = _ := by
+      rw [intervalIntegral_mul_neg_im_logDeriv_vertical_eq_of_analytic hf hne]
+      ring
+
 /-- Weighted argument-principle identity on an axis-parallel rectangle.
 
 The hypotheses identify all zeros in the closed rectangle and supply their
