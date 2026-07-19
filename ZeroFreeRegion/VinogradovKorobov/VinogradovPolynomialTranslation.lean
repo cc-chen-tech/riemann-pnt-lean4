@@ -17,6 +17,41 @@ def vinogradovCenteredTaylor (ξ : ℤ)
     (vinogradovCenteredTaylor ξ φ).coeff 0 = 0 := by
   simp [vinogradovCenteredTaylor]
 
+/-- A coefficient below the initial degree of `X^D * ψ` retains the
+corresponding power of the translation center. -/
+theorem pow_sub_dvd_coeff_taylor_X_pow_mul
+    (D m : ℕ) (hmD : m ≤ D) (ψ : Polynomial ℤ) (ξ : ℤ) :
+    ξ ^ (D - m) ∣
+      (Polynomial.taylor ξ (Polynomial.X ^ D * ψ)).coeff m := by
+  rw [Polynomial.taylor_mul, Polynomial.taylor_X_pow,
+    Polynomial.coeff_mul]
+  apply Finset.dvd_sum
+  intro ij hij
+  rw [Polynomial.coeff_X_add_C_pow]
+  have him : ij.1 ≤ m := by
+    have hij' := Finset.mem_antidiagonal.mp hij
+    omega
+  have hpow : ξ ^ (D - m) ∣ ξ ^ (D - ij.1) :=
+    pow_dvd_pow ξ (by omega)
+  exact hpow.trans ((dvd_mul_right _ _).trans (dvd_mul_right _ _))
+
+/-- Exact positive-degree coefficient formula before reducing modulo the
+spacing modulus. -/
+theorem coeff_vinogradovCenteredTaylor_spaced_eq
+    (p c k n m : ℕ) (hm : 0 < m) (ψ : Polynomial ℤ) (ξ : ℤ) :
+    (vinogradovCenteredTaylor ξ
+      (vinogradovSpacedPolynomial p c k n ψ)).coeff m =
+      ξ ^ (n - m) * (n.choose m : ℤ) +
+        (p : ℤ) ^ c *
+          (Polynomial.taylor ξ (Polynomial.X ^ (k + 1) * ψ)).coeff m := by
+  rw [vinogradovCenteredTaylor, Polynomial.coeff_sub,
+    Polynomial.coeff_C_ne_zero hm.ne', sub_zero]
+  simp only [vinogradovSpacedPolynomial, map_add,
+    Polynomial.taylor_X_pow, Polynomial.taylor_mul,
+    Polynomial.taylor_C, Polynomial.coeff_add]
+  rw [mul_assoc, Polynomial.coeff_C_mul,
+    Polynomial.coeff_X_add_C_pow]
+
 /-- Every positive-degree coefficient of a translated `p^c`-spaced
 polynomial agrees modulo `p^c` with the corresponding translated monomial
 coefficient. -/
@@ -25,27 +60,47 @@ theorem coeff_vinogradovCenteredTaylor_spaced_modEq
     (vinogradovCenteredTaylor ξ
       (vinogradovSpacedPolynomial p c k n ψ)).coeff m ≡
       ξ ^ (n - m) * (n.choose m : ℤ) [ZMOD (p : ℤ) ^ c] := by
-  let correction : Polynomial ℤ := Polynomial.X ^ (k + 1) * ψ
-  have hcoeff :
-      (vinogradovCenteredTaylor ξ
-        (vinogradovSpacedPolynomial p c k n ψ)).coeff m =
-        ((Polynomial.X + Polynomial.C ξ) ^ n).coeff m +
-          (p : ℤ) ^ c * (Polynomial.taylor ξ correction).coeff m := by
-    rw [vinogradovCenteredTaylor, Polynomial.coeff_sub,
-      Polynomial.coeff_C_ne_zero hm.ne', sub_zero]
-    simp only [vinogradovSpacedPolynomial, map_add,
-      Polynomial.taylor_X_pow, Polynomial.taylor_mul,
-      Polynomial.taylor_C, Polynomial.coeff_add,
-      correction]
-    rw [mul_assoc, Polynomial.coeff_C_mul]
-  rw [hcoeff, Polynomial.coeff_X_add_C_pow]
+  rw [coeff_vinogradovCenteredTaylor_spaced_eq p c k n m hm ψ ξ]
   have hcorrection :
-      (p : ℤ) ^ c * (Polynomial.taylor ξ correction).coeff m ≡ 0
+      (p : ℤ) ^ c *
+          (Polynomial.taylor ξ (Polynomial.X ^ (k + 1) * ψ)).coeff m ≡ 0
         [ZMOD (p : ℤ) ^ c] := by
     rw [Int.modEq_zero_iff_dvd]
     exact dvd_mul_right _ _
   simpa only [add_zero] using
     (Int.ModEq.refl (ξ ^ (n - m) * (n.choose m : ℤ))).add hcorrection
+
+/-- In the degree range used by Wooley's translated system, each retained
+coefficient factors by the monomial center power. The residual coefficient
+matrix is congruent modulo `p^c` to the binomial coefficient matrix. -/
+theorem exists_vinogradovCenteredTaylor_spaced_coeff_factor
+    (p c k n m : ℕ) (hnk : n ≤ k) (hm0 : 0 < m) (hmn : m ≤ n)
+    (ψ : Polynomial ℤ) (ξ : ℤ) :
+    ∃ Ω : ℤ,
+      (vinogradovCenteredTaylor ξ
+        (vinogradovSpacedPolynomial p c k n ψ)).coeff m =
+          ξ ^ (n - m) * Ω ∧
+        Ω ≡ (n.choose m : ℤ) [ZMOD (p : ℤ) ^ c] := by
+  have hmD : m ≤ k + 1 := by omega
+  obtain ⟨E, hE⟩ := pow_sub_dvd_coeff_taylor_X_pow_mul
+    (k + 1) m hmD ψ ξ
+  let Ω : ℤ := (n.choose m : ℤ) +
+    (p : ℤ) ^ c * ξ ^ (k + 1 - n) * E
+  refine ⟨Ω, ?_, ?_⟩
+  · rw [coeff_vinogradovCenteredTaylor_spaced_eq p c k n m hm0 ψ ξ,
+      hE]
+    dsimp only [Ω]
+    have hexp : k + 1 - m = (n - m) + (k + 1 - n) := by omega
+    rw [hexp, pow_add]
+    ring
+  · dsimp only [Ω]
+    have hzero :
+        (p : ℤ) ^ c * ξ ^ (k + 1 - n) * E ≡ 0
+          [ZMOD (p : ℤ) ^ c] := by
+      rw [Int.modEq_zero_iff_dvd]
+      exact (dvd_mul_right _ _).trans (dvd_mul_right _ _)
+    simpa only [add_zero] using
+      (Int.ModEq.refl (n.choose m : ℤ)).add hzero
 
 /-- The first `r` nonconstant Taylor terms. -/
 def vinogradovCenteredTaylorTruncation (r : ℕ) (ξ : ℤ)
@@ -103,6 +158,36 @@ theorem exists_vinogradovCenteredTaylor_eq_truncation_add_tail
   refine ⟨θ, ?_⟩
   rw [sub_eq_iff_eq_add] at hθ
   simpa only [add_comm] using hθ
+
+/-- Wooley's translated spaced-polynomial expansion: the first `r`
+nonconstant terms have the prescribed center powers and a coefficient matrix
+congruent to the binomial matrix, while all remaining terms enter through an
+`X^(r+1)` tail. -/
+theorem exists_vinogradovCenteredTaylor_spaced_expansion
+    (p c k n r : ℕ) (hrn : r ≤ n) (hnk : n ≤ k)
+    (ψ : Polynomial ℤ) (ξ : ℤ) :
+    ∃ Ω : Fin r → ℤ, ∃ θ : Polynomial ℤ,
+      (∀ i, Ω i ≡ (n.choose (i.val + 1) : ℤ)
+        [ZMOD (p : ℤ) ^ c]) ∧
+      vinogradovCenteredTaylor ξ
+          (vinogradovSpacedPolynomial p c k n ψ) =
+        (∑ i : Fin r,
+          Polynomial.C (ξ ^ (n - (i.val + 1)) * Ω i) *
+            Polynomial.X ^ (i.val + 1)) +
+          Polynomial.X ^ (r + 1) * θ := by
+  choose Ω hΩ using fun i : Fin r ↦
+    exists_vinogradovCenteredTaylor_spaced_coeff_factor
+      p c k n (i.val + 1) hnk (by omega) (by omega) ψ ξ
+  obtain ⟨θ, hθ⟩ :=
+    exists_vinogradovCenteredTaylor_eq_truncation_add_tail r ξ
+      (vinogradovSpacedPolynomial p c k n ψ)
+  refine ⟨Ω, θ, fun i ↦ (hΩ i).2, ?_⟩
+  rw [hθ]
+  congr 2
+  unfold vinogradovCenteredTaylorTruncation
+  apply Finset.sum_congr rfl
+  intro i _
+  rw [(hΩ i).1]
 
 end
 
