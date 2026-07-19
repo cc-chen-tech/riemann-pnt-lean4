@@ -15,6 +15,7 @@ import MathlibAux.SlidingIntervalCorrelation
 import MathlibAux.DiscreteHilbertInequality
 import MathlibAux.DyadicLogHilbert
 import MathlibAux.LogKernelRemainder
+import MathlibAux.LogDirichletPolynomialMeanSquare
 import EulerAndLfunctions
 import PrimeNumberTheorem
 import PrimeNumberTheorem.Perron
