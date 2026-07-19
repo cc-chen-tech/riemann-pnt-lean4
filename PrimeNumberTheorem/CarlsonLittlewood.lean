@@ -28,6 +28,30 @@ noncomputable def regularizedCarlsonLittlewoodFourEdges
         logDeriv (regularizedCarlsonZeroDetector X)
           ((x0 : ℂ) + (y : ℂ) * I))).re)
 
+/-- Endpoint-cancelled form of the regularized Carlson Littlewood rectangle.
+This is the expression whose five remaining terms require quantitative
+estimates. -/
+noncomputable def regularizedCarlsonLittlewoodLogNormForm
+    (X : ℕ) (x0 x1 y0 y1 : ℝ) : ℝ :=
+  (∫ x in x0..x1,
+      (x - x0) *
+        (logDeriv (regularizedCarlsonZeroDetector X)
+          ((x : ℂ) + (y0 : ℂ) * I)).im) -
+    (∫ x in x0..x1,
+      (x - x0) *
+        (logDeriv (regularizedCarlsonZeroDetector X)
+          ((x : ℂ) + (y1 : ℂ) * I)).im) +
+    (x1 - x0) *
+      (∫ y in y0..y1,
+        (logDeriv (regularizedCarlsonZeroDetector X)
+          ((x1 : ℂ) + (y : ℂ) * I)).re) +
+    (∫ y in y0..y1,
+      Real.log ‖regularizedCarlsonZeroDetector X
+        ((x0 : ℂ) + (y : ℂ) * I)‖) -
+    (∫ y in y0..y1,
+      Real.log ‖regularizedCarlsonZeroDetector X
+        ((x1 : ℂ) + (y : ℂ) * I)‖)
+
 /-- The weighted argument principle specialized to the pole-free Carlson
 detector.  The finite divisor support is proved to be exactly the zero set,
 and zero-free boundary hypotheses force every counted zero into the strict
@@ -412,6 +436,28 @@ theorem regularizedCarlsonLittlewoodFourEdges_eq_logNormForm
   rw [hbottomEq, htopEq, hrightEq, hleftEq]
   ring
 
+/-- Named-form wrapper for the endpoint-cancelled Littlewood identity. -/
+theorem regularizedCarlsonLittlewoodFourEdges_eq_logNormFormDef
+    {X : ℕ} {x0 x1 y0 y1 : ℝ}
+    (hx0 : 0 < x0) (hx01 : x0 < x1) (hy01 : y0 < y1)
+    (hleft : ∀ y ∈ Set.Icc y0 y1,
+      regularizedCarlsonZeroDetector X
+        ((x0 : ℂ) + (y : ℂ) * I) ≠ 0)
+    (hright : ∀ y ∈ Set.Icc y0 y1,
+      regularizedCarlsonZeroDetector X
+        ((x1 : ℂ) + (y : ℂ) * I) ≠ 0)
+    (hbottom : ∀ x ∈ Set.Icc x0 x1,
+      regularizedCarlsonZeroDetector X
+        ((x : ℂ) + (y0 : ℂ) * I) ≠ 0)
+    (htop : ∀ x ∈ Set.Icc x0 x1,
+      regularizedCarlsonZeroDetector X
+        ((x : ℂ) + (y1 : ℂ) * I) ≠ 0) :
+    regularizedCarlsonLittlewoodFourEdges X x0 x1 y0 y1 =
+      regularizedCarlsonLittlewoodLogNormForm X x0 x1 y0 y1 := by
+  simpa [regularizedCarlsonLittlewoodLogNormForm] using
+    regularizedCarlsonLittlewoodFourEdges_eq_logNormForm
+      hx0 hx01 hy01 hleft hright hbottom htop
+
 /-- The weighted detector-zero sum dominates Carlson's target zeta-zero
 count.  Each target zero lies strictly to the right of `sigma`, and detector
 multiplicity dominates zeta multiplicity. -/
@@ -598,6 +644,36 @@ theorem exists_regularizedCarlson_goodRectangle_zeroDensity_le_fourEdges
   exact ⟨x0, x1, y0, y1,
     hx0Lower, hx0Upper, hx1Lower, hx1Upper, hx01,
     hy0Lower, hy0Upper, hy1Lower, hy1Upper, hy01, hbound⟩
+
+/-- The complete Carlson counting reduction in endpoint-cancelled form.
+After this theorem, proving a quantitative zero-density estimate amounts to
+bounding the five terms in `regularizedCarlsonLittlewoodLogNormForm`. -/
+theorem exists_regularizedCarlson_goodRectangle_zeroDensity_le_logNormForm
+    {X : ℕ} (hX : 1 ≤ X) {sigma T : ℝ}
+    (hsigma : 0 < sigma) (hsigmaOne : sigma < 1) (hT : 0 ≤ T) :
+    ∃ x0 x1 y0 y1 : ℝ,
+      sigma / 2 < x0 ∧ x0 < sigma ∧
+      1 < x1 ∧ x1 < 2 ∧ x0 < x1 ∧
+      -1 < y0 ∧ y0 < 0 ∧
+      T < y1 ∧ y1 < T + 1 ∧ y0 < y1 ∧
+      (2 * Real.pi) * (sigma - x0) *
+          (ZeroDensity.zeroDensityCount sigma T : ℝ) ≤
+        regularizedCarlsonLittlewoodLogNormForm X x0 x1 y0 y1 := by
+  obtain ⟨x0, x1, y0, y1,
+      hx0Lower, hx0Upper, hx1Lower, hx1Upper, hx01,
+      hy0Lower, hy0Upper, hy1Lower, hy1Upper, hy01,
+      hleft, hright, hbottom, htop, hbound⟩ :=
+    exists_regularizedCarlson_goodRectangle_zeroDensity_certificate
+      hX hsigma hsigmaOne hT
+  have hx0 : 0 < x0 :=
+    (by linarith : 0 < sigma / 2).trans hx0Lower
+  have hformula :=
+    regularizedCarlsonLittlewoodFourEdges_eq_logNormFormDef
+      hx0 hx01 hy01 hleft hright hbottom htop
+  refine ⟨x0, x1, y0, y1,
+    hx0Lower, hx0Upper, hx1Lower, hx1Upper, hx01,
+    hy0Lower, hy0Upper, hy1Lower, hy1Upper, hy01, ?_⟩
+  exact hbound.trans_eq hformula
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem
