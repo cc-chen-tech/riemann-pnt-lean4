@@ -18,6 +18,17 @@ noncomputable def finiteDirichletPolynomial
     (S : Finset ℕ) (c : ℕ → ℂ) (t : ℝ) : ℂ :=
   finiteExponentialSum S c (fun n => -Real.log n) t
 
+/-- Twist the coefficients of a finite exponential sum by their phases at time `t`. -/
+noncomputable def phaseTwist {ι : Type*}
+    (c : ι → ℂ) (omega : ι → ℝ) (t : ℝ) (n : ι) : ℂ :=
+  c n * Complex.exp (Complex.I * (omega n * t))
+
+/-- The off-diagonal Hilbert form attached to a finite family of real frequencies. -/
+noncomputable def hilbertForm {ι : Type*} [DecidableEq ι]
+    (S : Finset ι) (c : ι → ℂ) (omega : ι → ℝ) : ℂ :=
+  ∑ m ∈ S, ∑ n ∈ S,
+    if m = n then 0 else conj (c m) * c n / (omega n - omega m)
+
 private theorem integral_exp_mul_complex {a b : ℝ} {c : ℂ} (hc : c ≠ 0) :
     (∫ x in a..b, Complex.exp (c * x)) =
       (Complex.exp (c * b) - Complex.exp (c * a)) / c := by
@@ -137,6 +148,167 @@ private lemma finiteExponentialMeanSquare_cast_eq {ι : Type*} [DecidableEq ι]
           (fun t : ℝ =>
             Complex.exp (Complex.I * ((omega n - omega m) * t))))
 
+private lemma conj_phaseTwist_mul_phaseTwist {ι : Type*}
+    (c : ι → ℂ) (omega : ι → ℝ) (t : ℝ) (m n : ι) :
+    conj (phaseTwist c omega t m) * phaseTwist c omega t n =
+      conj (c m) * c n *
+        Complex.exp (Complex.I * ((omega n - omega m) * t)) := by
+  simp only [phaseTwist, map_mul, ← Complex.exp_conj, conj_I, conj_ofReal]
+  calc
+    conj (c m) * Complex.exp (-Complex.I * (omega m * t)) *
+        (c n * Complex.exp (Complex.I * (omega n * t))) =
+        conj (c m) * c n *
+          (Complex.exp (-Complex.I * (omega m * t)) *
+            Complex.exp (Complex.I * (omega n * t))) := by ring
+    _ = conj (c m) * c n *
+        Complex.exp (Complex.I * ((omega n - omega m) * t)) := by
+      rw [← Complex.exp_add]
+      congr 2
+      ring
+
+/-- Exact finite mean-square decomposition into its diagonal term and the
+difference of two phase-twisted Hilbert forms.  Unlike the pairwise norm bound,
+this identity retains the cancellation needed by Montgomery--Vaughan. -/
+theorem finiteExponentialMeanSquare_cast_eq_diagonal_add_hilbert
+    {ι : Type*} [DecidableEq ι] {S : Finset ι} {c : ι → ℂ}
+    {omega : ι → ℝ} {a b : ℝ}
+    (homega : Set.InjOn omega (S : Set ι)) :
+    ((∫ t in a..b, ‖finiteExponentialSum S c omega t‖ ^ 2 : ℝ) : ℂ) =
+      (b - a) * (∑ n ∈ S, (‖c n‖ ^ 2 : ℂ)) -
+        Complex.I *
+          (hilbertForm S (phaseTwist c omega b) omega -
+            hilbertForm S (phaseTwist c omega a) omega) := by
+  rw [finiteExponentialMeanSquare_cast_eq]
+  have hpair : ∀ m ∈ S, ∀ n ∈ S,
+      conj (c m) * c n *
+          (∫ t in a..b,
+            Complex.exp (Complex.I * ((omega n - omega m) * t))) =
+        if m = n then (b - a) * (‖c m‖ ^ 2 : ℂ)
+        else -Complex.I *
+          (conj (phaseTwist c omega b m) * phaseTwist c omega b n /
+              (omega n - omega m) -
+            conj (phaseTwist c omega a m) * phaseTwist c omega a n /
+              (omega n - omega m)) := by
+    intro m hm n hn
+    by_cases hmn : m = n
+    · subst n
+      have hzero :
+          (fun t : ℝ =>
+            Complex.exp (Complex.I * ((omega m - omega m) * t))) =
+            fun _ : ℝ => (1 : ℂ) := by
+        funext t
+        norm_num
+      rw [if_pos rfl, hzero, intervalIntegral.integral_const]
+      change (conj (c m) * c m) * ((b - a) • (1 : ℂ)) =
+        ((b : ℂ) - a) * (‖c m‖ ^ 2 : ℂ)
+      rw [Complex.real_smul, ofReal_sub]
+      simp only [mul_one]
+      rw [← ofReal_pow, ← Complex.normSq_eq_norm_sq,
+        Complex.normSq_eq_conj_mul_self]
+      ring
+    · rw [if_neg hmn]
+      have hfreq : omega n - omega m ≠ 0 := by
+        rw [sub_ne_zero]
+        intro heq
+        exact hmn (homega hm hn heq.symm)
+      have hfreqC : (omega n : ℂ) - omega m ≠ 0 := by
+        rw [sub_ne_zero]
+        exact ofReal_injective.ne (sub_ne_zero.mp hfreq)
+      have hId : Complex.I * ((omega n : ℂ) - omega m) ≠ 0 :=
+        mul_ne_zero Complex.I_ne_zero hfreqC
+      have hfun :
+          (fun t : ℝ => Complex.exp (Complex.I * ((omega n - omega m) * t))) =
+            fun t : ℝ =>
+              Complex.exp ((Complex.I * (omega n - omega m : ℂ)) * t) := by
+        funext t
+        congr 1
+        ring
+      rw [hfun, integral_exp_mul_complex hId,
+        conj_phaseTwist_mul_phaseTwist, conj_phaseTwist_mul_phaseTwist]
+      field_simp [Complex.I_ne_zero, hfreqC]
+      rw [Complex.I_sq]
+      ring
+  calc
+    (∑ m ∈ S, ∑ n ∈ S,
+        conj (c m) * c n *
+          (∫ t in a..b,
+            Complex.exp (Complex.I * ((omega n - omega m) * t)))) =
+        ∑ m ∈ S, ∑ n ∈ S,
+          if m = n then (b - a) * (‖c m‖ ^ 2 : ℂ)
+          else -Complex.I *
+            (conj (phaseTwist c omega b m) * phaseTwist c omega b n /
+                (omega n - omega m) -
+              conj (phaseTwist c omega a m) * phaseTwist c omega a n /
+                (omega n - omega m)) := by
+      apply Finset.sum_congr rfl
+      intro m hm
+      apply Finset.sum_congr rfl
+      intro n hn
+      exact hpair m hm n hn
+    _ = (b - a) * (∑ n ∈ S, (‖c n‖ ^ 2 : ℂ)) -
+        Complex.I *
+          (hilbertForm S (phaseTwist c omega b) omega -
+            hilbertForm S (phaseTwist c omega a) omega) := by
+      have hsplit :
+          (∑ m ∈ S, ∑ n ∈ S,
+            if m = n then (b - a) * (‖c m‖ ^ 2 : ℂ)
+            else -Complex.I *
+              (conj (phaseTwist c omega b m) * phaseTwist c omega b n /
+                  (omega n - omega m) -
+                conj (phaseTwist c omega a m) * phaseTwist c omega a n /
+                  (omega n - omega m))) =
+            (∑ m ∈ S, ∑ n ∈ S,
+              if m = n then (b - a) * (‖c m‖ ^ 2 : ℂ) else 0) +
+            (∑ m ∈ S, ∑ n ∈ S,
+              if m = n then 0 else -Complex.I *
+                (conj (phaseTwist c omega b m) * phaseTwist c omega b n /
+                    (omega n - omega m) -
+                  conj (phaseTwist c omega a m) * phaseTwist c omega a n /
+                    (omega n - omega m))) := by
+        rw [← Finset.sum_add_distrib]
+        apply Finset.sum_congr rfl
+        intro m hm
+        rw [← Finset.sum_add_distrib]
+        apply Finset.sum_congr rfl
+        intro n hn
+        by_cases hmn : m = n <;> simp [hmn]
+      have hdiag :
+          (∑ m ∈ S, ∑ n ∈ S,
+            if m = n then (b - a) * (‖c m‖ ^ 2 : ℂ) else 0) =
+            (b - a) * (∑ n ∈ S, (‖c n‖ ^ 2 : ℂ)) := by
+        calc
+          (∑ m ∈ S, ∑ n ∈ S,
+              if m = n then (b - a) * (‖c m‖ ^ 2 : ℂ) else 0) =
+              ∑ m ∈ S, (b - a) * (‖c m‖ ^ 2 : ℂ) := by
+            apply Finset.sum_congr rfl
+            intro m hm
+            simp [hm]
+          _ = (b - a) * (∑ n ∈ S, (‖c n‖ ^ 2 : ℂ)) := by
+            rw [Finset.mul_sum]
+      have hoff :
+          (∑ m ∈ S, ∑ n ∈ S,
+            if m = n then 0 else -Complex.I *
+              (conj (phaseTwist c omega b m) * phaseTwist c omega b n /
+                  (omega n - omega m) -
+                conj (phaseTwist c omega a m) * phaseTwist c omega a n /
+                  (omega n - omega m))) =
+            -Complex.I *
+              (hilbertForm S (phaseTwist c omega b) omega -
+                hilbertForm S (phaseTwist c omega a) omega) := by
+        simp only [hilbertForm]
+        rw [mul_sub, Finset.mul_sum, Finset.mul_sum,
+          ← Finset.sum_sub_distrib]
+        apply Finset.sum_congr rfl
+        intro m hm
+        rw [Finset.mul_sum, Finset.mul_sum,
+          ← Finset.sum_sub_distrib]
+        apply Finset.sum_congr rfl
+        intro n hn
+        by_cases hmn : m = n <;> simp [hmn]
+        ring
+      rw [hsplit, hdiag, hoff]
+      ring
+
 /-- A finite-frequency Montgomery--Vaughan type mean-square bound.  The
 diagonal contributes the interval length, while each pair of distinct
 frequencies contributes the reciprocal-frequency kernel. -/
@@ -197,6 +369,53 @@ theorem finiteExponentialSum_meanSquare_le {ι : Type*} [DecidableEq ι]
         simpa only [ofReal_sub, ofReal_mul] using
           (norm_integral_exp_I_mul_le_two_div
             (a := a) (b := b) (d := omega n - omega m) hfreq)
+
+/-- Reciprocal separation of the logarithmic frequencies.  This is the
+elementary arithmetic input that turns the local gap weight in the weighted
+Hilbert inequality into Ramaré's `(n + 1)` weight. -/
+theorem inv_abs_log_sub_log_le_nat_add_one {m n : ℕ}
+    (hm : 0 < m) (hn : 0 < n) (hmn : m ≠ n) :
+    1 / |Real.log m - Real.log n| ≤ (n : ℝ) + 1 := by
+  have hmR : 0 < (m : ℝ) := by exact_mod_cast hm
+  have hnR : 0 < (n : ℝ) := by exact_mod_cast hn
+  have hn1R : 0 < (n : ℝ) + 1 := by positivity
+  have hlogne : Real.log (m : ℝ) - Real.log (n : ℝ) ≠ 0 := by
+    rw [sub_ne_zero]
+    intro hlog
+    have hmnR : (m : ℝ) = (n : ℝ) :=
+      Real.log_injOn_pos hmR hnR hlog
+    exact hmn (Nat.cast_injective hmnR)
+  have habspos : 0 < |Real.log (m : ℝ) - Real.log (n : ℝ)| :=
+    abs_pos.mpr hlogne
+  have hgap :
+      1 / ((n : ℝ) + 1) ≤
+        |Real.log (m : ℝ) - Real.log (n : ℝ)| := by
+    rcases lt_or_gt_of_ne hmn with hmn_lt | hnm_lt
+    · have hmnR : (m : ℝ) < (n : ℝ) := by exact_mod_cast hmn_lt
+      have hm1nR : (m : ℝ) + 1 ≤ n := by
+        exact_mod_cast (Nat.succ_le_iff.mpr hmn_lt)
+      have hfrac :
+          1 / ((n : ℝ) + 1) ≤ 1 - (m : ℝ) / n := by
+        field_simp
+        nlinarith
+      have hlog := Real.one_sub_inv_le_log_of_pos (div_pos hnR hmR)
+      rw [inv_div, Real.log_div hnR.ne' hmR.ne'] at hlog
+      rw [abs_of_nonpos (sub_nonpos.mpr (Real.log_lt_log hmR hmnR).le)]
+      linarith
+    · have hnmR : (n : ℝ) < (m : ℝ) := by exact_mod_cast hnm_lt
+      have hn1mR : (n : ℝ) + 1 ≤ m := by
+        exact_mod_cast (Nat.succ_le_iff.mpr hnm_lt)
+      have hfrac :
+          1 / ((n : ℝ) + 1) ≤ 1 - (n : ℝ) / m := by
+        field_simp
+        nlinarith [show 1 ≤ (n : ℝ) by exact_mod_cast hn]
+      have hlog := Real.one_sub_inv_le_log_of_pos (div_pos hmR hnR)
+      rw [inv_div, Real.log_div hmR.ne' hnR.ne'] at hlog
+      rw [abs_of_nonneg (sub_nonneg.mpr (Real.log_lt_log hnR hnmR).le)]
+      linarith
+  apply (div_le_iff₀ habspos).2
+  have := (div_le_iff₀ hn1R).1 hgap
+  nlinarith
 
 /-- The finite-frequency mean-square bound specialized to the frequencies
 `-log n` of a Dirichlet polynomial. -/
