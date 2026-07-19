@@ -64,6 +64,34 @@ The local and published records agree on `script`, `c`, `N`, `dimension`,
 `prec_bits`, `n_pos`, `n_neg`, `undetermined_pivot`, and
 `certified_positive_definite`. Timings and timestamps are machine-dependent.
 
+## Second precision replay
+
+The same released script was independently rerun later that day at `9512`
+bits, exactly `512` bits above the published calibration precision:
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 \
+  /tmp/weil-gate-a-venv-20260719d/bin/python \
+  /tmp/arxiv-2607.02828.cNOUSP/anc/arb_ldlt_certify.py \
+  --selftest --c 100 --N 200 --prec 9512 \
+  --json-out /tmp/weil-c100-N200-prec9512-local.json
+```
+
+The source script SHA-256 was rechecked against the frozen value above before
+the run. The self-test passed. Matrix assembly took `1106.3s`; interval LDL
+took `127.1s`; all 401 pivots were again strictly positive. The raw JSON had
+SHA-256
+`6a7cf640ed68098287e2a895610b2a902627a0d4c79839d72390fc5775dbc2f1`.
+The normalized repository record is
+`experiments/rh/reference/groskin_2607_02828_v1_c100_N200_prec9512_local_20260719.json`
+with SHA-256
+`6130a52197e9cde363f3e722124608e784fd31e81f97146444f79595edfcb178`.
+
+This proves persistence of the certified inertia at two precisions separated
+by 512 bits. It does not prove that every entry enclosure narrowed: the
+released JSON records only inertia metadata and does not retain the Arb matrix
+entry balls.
+
 ## Gate status
 
 This closes only a same-route local replay of the published `N=200`
@@ -72,7 +100,8 @@ calibration. Gate A remains open because it additionally requires:
 - a second, independent matrix assembly with entrywise-overlapping intervals;
 - an exact rational certificate replay, rather than only the upstream Arb
   factorization;
-- a second precision at least 512 bits away with narrower entry enclosures;
+- evidence that every entry enclosure narrows at the second precision (the
+  second-precision inertia replay itself is now complete);
 - the registered analytic transfer-margin check.
 
 No `N=250` computation, strict improvement, new positivity theorem, or result
