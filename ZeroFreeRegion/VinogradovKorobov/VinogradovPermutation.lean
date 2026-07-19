@@ -256,6 +256,24 @@ theorem VinogradovFirstNonsingularBlock.selectedBlock_injective
   apply hsplit
   simpa [e, split, vinogradovFirstNonsingularEquiv_selectedBlock] using hij
 
+/-- A first-nonsingular stratum is contained in the recursive stratum having
+at least one nonsingular selected block. -/
+theorem VinogradovFirstNonsingularBlock.hasNonsingularBlock
+    {p k r q a : ℕ}
+    {x : Fin ((q + 1 + a) * k + r) → ZMod p}
+    (h : VinogradovFirstNonsingularBlock p k r q a x)
+    (hk : 0 < k) :
+    VinogradovHasNonsingularBlock p k r (q + 1 + a) x := by
+  apply (hasNonsingularBlock_iff_exists_selectedBlock
+    p k r (q + 1 + a) x).mpr
+  let block : Fin (q + 1 + a) := ⟨q, by omega⟩
+  refine ⟨block, ?_⟩
+  have hinj := h.selectedBlock_injective hk
+  intro i j hij
+  apply hinj
+  simpa [block, vinogradovSelectedBlockIndex,
+    vinogradovBlockIndex] using hij
+
 /-- After cycling block `q` to the front, the new head block is injective. -/
 theorem VinogradovFirstNonsingularBlock.cycledHead_injective
     {p k r q a : ℕ}

@@ -287,6 +287,154 @@ theorem card_vinogradovPrimePowerMultiBlockSingularSolutionSet_le
       card_vinogradovPrimePowerMultiBlockSingularAmbientSet
         p k r b n
 
+/-- Remove the harmless `0 + s` tuple-length presentation introduced by the
+generic digit-lifting API. -/
+def vinogradovPrimePowerCommonPairEquiv
+    (p s n : ℕ) [Fact p.Prime] :
+    vinogradovPrimePowerBasePair p 0 s n ≃
+      ((Fin s → Fin (p ^ (n + 1))) ×
+        (Fin s → Fin (p ^ (n + 1)))) :=
+  Equiv.prodCongr
+    (Equiv.arrowCongr (finCongr (Nat.zero_add s)) (Equiv.refl _))
+    (Equiv.arrowCongr (finCongr (Nat.zero_add s)) (Equiv.refl _))
+
+/-- All degree-`k` Vinogradov solutions modulo `p^(n+1)`, expressed in the
+common pair type used by the multiblock digit lift. -/
+noncomputable def vinogradovPrimePowerCompleteSolutionSet
+    (p k r b n : ℕ) [Fact p.Prime] :
+    Finset (vinogradovPrimePowerBasePair p 0 (b * k + r) n) := by
+  classical
+  exact Finset.univ.filter fun xy ↦
+    IsVinogradovSolutionMod (p ^ (n + 1)) k (b * k + r)
+      (p ^ (n + 1))
+      (fun i ↦ xy.1 (Fin.natAdd 0 i))
+      (fun i ↦ xy.2 (Fin.natAdd 0 i))
+
+/-- Membership in the complete set is precisely the modular Vinogradov
+system in the ordinary `Fin (b*k+r)` coordinate presentation. -/
+theorem mem_vinogradovPrimePowerCompleteSolutionSet_iff
+    (p k r b n : ℕ) [Fact p.Prime]
+    (xy : vinogradovPrimePowerBasePair p 0 (b * k + r) n) :
+    xy ∈ vinogradovPrimePowerCompleteSolutionSet p k r b n ↔
+      IsVinogradovSolutionMod (p ^ (n + 1)) k (b * k + r)
+        (p ^ (n + 1))
+        (fun i ↦ xy.1 (Fin.natAdd 0 i))
+        (fun i ↦ xy.2 (Fin.natAdd 0 i)) := by
+  classical
+  simp [vinogradovPrimePowerCompleteSolutionSet]
+
+/-- The complete prime-power solution set has the cardinality used by the
+finite Vinogradov moment identity. -/
+theorem card_vinogradovPrimePowerCompleteSolutionSet
+    (p k r b n : ℕ) [Fact p.Prime] :
+    (vinogradovPrimePowerCompleteSolutionSet p k r b n).card =
+      vinogradovSolutionCountMod (p ^ (n + 1)) k (b * k + r)
+        (p ^ (n + 1)) := by
+  classical
+  let e := vinogradovPrimePowerCommonPairEquiv p (b * k + r) n
+  have hcard :
+      (vinogradovPrimePowerCompleteSolutionSet p k r b n).card =
+        (vinogradovSolutionPairSetMod (p ^ (n + 1)) k
+          (b * k + r) (p ^ (n + 1))).card := by
+    apply Finset.card_equiv e
+    intro xy
+    rw [mem_vinogradovPrimePowerCompleteSolutionSet_iff,
+      mem_vinogradovSolutionPairSetMod_iff]
+    have hx : (e xy).1 = fun i ↦ xy.1 (Fin.natAdd 0 i) := by
+      funext i
+      simpa [e, vinogradovPrimePowerCommonPairEquiv]
+    have hy : (e xy).2 = fun i ↦ xy.2 (Fin.natAdd 0 i) := by
+      funext i
+      simpa [e, vinogradovPrimePowerCommonPairEquiv]
+    rw [hx, hy]
+  rw [hcard, card_vinogradovSolutionPairSetMod]
+
+/-- Prime-power Vinogradov solutions whose left tuple has at least one
+nonsingular selected block modulo `p`. -/
+noncomputable def vinogradovPrimePowerSomeBlockNonsingularSolutionSet
+    (p k r b n : ℕ) [Fact p.Prime] :
+    Finset (vinogradovPrimePowerBasePair p 0 (b * k + r) n) := by
+  classical
+  exact (vinogradovPrimePowerCompleteSolutionSet p k r b n).filter fun xy ↦
+    VinogradovHasNonsingularBlock p k r b
+      (fun i ↦ (((xy.1 (Fin.natAdd 0 i)).val + 1 : ℕ) : ZMod p))
+
+/-- Membership in the complementary solution stratum records both the
+nonsingular-block witness and the Vinogradov equations. -/
+theorem mem_vinogradovPrimePowerSomeBlockNonsingularSolutionSet_iff
+    (p k r b n : ℕ) [Fact p.Prime]
+    (xy : vinogradovPrimePowerBasePair p 0 (b * k + r) n) :
+    xy ∈ vinogradovPrimePowerSomeBlockNonsingularSolutionSet
+        p k r b n ↔
+      VinogradovHasNonsingularBlock p k r b
+          (fun i ↦ (((xy.1 (Fin.natAdd 0 i)).val + 1 : ℕ) : ZMod p)) ∧
+        IsVinogradovSolutionMod (p ^ (n + 1)) k (b * k + r)
+          (p ^ (n + 1))
+          (fun i ↦ xy.1 (Fin.natAdd 0 i))
+          (fun i ↦ xy.2 (Fin.natAdd 0 i)) := by
+  classical
+  simp [vinogradovPrimePowerSomeBlockNonsingularSolutionSet,
+    mem_vinogradovPrimePowerCompleteSolutionSet_iff, and_comm]
+
+/-- The all-singular and some-nonsingular prime-power solution strata are
+disjoint. -/
+theorem disjoint_primePowerMultiBlockSingular_someNonsingular
+    (p k r b n : ℕ) [Fact p.Prime] :
+    Disjoint
+      (vinogradovPrimePowerMultiBlockSingularSolutionSet p k r b n)
+      (vinogradovPrimePowerSomeBlockNonsingularSolutionSet p k r b n) := by
+  rw [Finset.disjoint_left]
+  intro xy hsing hsome
+  have hall :=
+    (mem_vinogradovPrimePowerMultiBlockSingularSolutionSet_iff
+      p k r b n xy).mp hsing |>.1
+  have hhas :=
+    (mem_vinogradovPrimePowerSomeBlockNonsingularSolutionSet_iff
+      p k r b n xy).mp hsome |>.1
+  exact (not_allBlocksSingular_iff_hasNonsingularBlock
+    p k r b _).mpr hhas hall
+
+/-- The two block strata partition the complete prime-power solution set. -/
+theorem union_primePowerMultiBlockSingular_someNonsingular_eq_complete
+    (p k r b n : ℕ) [Fact p.Prime] :
+    vinogradovPrimePowerMultiBlockSingularSolutionSet p k r b n ∪
+        vinogradovPrimePowerSomeBlockNonsingularSolutionSet p k r b n =
+      vinogradovPrimePowerCompleteSolutionSet p k r b n := by
+  classical
+  ext xy
+  rw [Finset.mem_union,
+    mem_vinogradovPrimePowerMultiBlockSingularSolutionSet_iff,
+    mem_vinogradovPrimePowerSomeBlockNonsingularSolutionSet_iff,
+    mem_vinogradovPrimePowerCompleteSolutionSet_iff]
+  constructor
+  · rintro (h | h)
+    · exact h.2
+    · exact h.2
+  · intro hsolution
+    by_cases hall : VinogradovAllBlocksSingular p k r b
+        (fun i ↦
+          (((xy.1 (Fin.natAdd 0 i)).val + 1 : ℕ) : ZMod p))
+    · exact Or.inl ⟨hall, hsolution⟩
+    · exact Or.inr
+        ⟨(not_allBlocksSingular_iff_hasNonsingularBlock
+          p k r b _).mp hall, hsolution⟩
+
+/-- Exact prime-power decomposition of the complete modular solution count
+into the all-singular and some-nonsingular branches. -/
+theorem card_primePowerMultiBlockSingular_add_someNonsingular
+    (p k r b n : ℕ) [Fact p.Prime] :
+    (vinogradovPrimePowerMultiBlockSingularSolutionSet p k r b n).card +
+        (vinogradovPrimePowerSomeBlockNonsingularSolutionSet
+          p k r b n).card =
+      vinogradovSolutionCountMod (p ^ (n + 1)) k (b * k + r)
+        (p ^ (n + 1)) := by
+  have hcard := Finset.card_union_of_disjoint
+    (disjoint_primePowerMultiBlockSingular_someNonsingular
+      p k r b n)
+  rw [union_primePowerMultiBlockSingular_someNonsingular_eq_complete,
+    card_vinogradovPrimePowerCompleteSolutionSet] at hcard
+  exact hcard.symm
+
 end
 
 end ZeroFreeRegion.VinogradovKorobov

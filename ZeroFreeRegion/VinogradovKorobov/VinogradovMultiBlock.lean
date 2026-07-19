@@ -40,6 +40,114 @@ def VinogradovHasNonsingularBlock
       Function.Injective split.1 ∨
         VinogradovHasNonsingularBlock p k r b split.2
 
+/-- The `i`-th coordinate of selected block `q` among `b` consecutive
+length-`k` blocks, followed by an unrestricted tail of length `r`. -/
+def vinogradovSelectedBlockIndex
+    (k r b : ℕ) (q : Fin b) (i : Fin k) : Fin (b * k + r) :=
+  ⟨q.val * k + i.val, by
+    calc
+      q.val * k + i.val < q.val * k + k :=
+        Nat.add_lt_add_left i.isLt _
+      _ = (q.val + 1) * k := by
+        simp only [Nat.add_mul, one_mul]
+      _ ≤ b * k := Nat.mul_le_mul_right k (Nat.succ_le_iff.mpr q.isLt)
+      _ ≤ b * k + r := Nat.le_add_right _ _⟩
+
+/-- The recursive nonsingular-block predicate is equivalent to an explicit
+witness block in the flattened tuple. -/
+theorem hasNonsingularBlock_iff_exists_selectedBlock
+    (p k r b : ℕ) (x : Fin (b * k + r) → ZMod p) :
+    VinogradovHasNonsingularBlock p k r b x ↔
+      ∃ q : Fin b, Function.Injective fun i : Fin k ↦
+        x (vinogradovSelectedBlockIndex k r b q i) := by
+  induction b with
+  | zero =>
+      simp [VinogradovHasNonsingularBlock]
+  | succ b ih =>
+      let e := vinogradovPrependBlockEquiv p k r b
+      let split := e.symm x
+      have hhead (i : Fin k) :
+          split.1 i =
+            x (vinogradovSelectedBlockIndex k r (b + 1) ⟨0, Nat.zero_lt_succ b⟩ i) := by
+        let hsize : k + (b * k + r) = (b + 1) * k + r := by
+          simp only [Nat.add_mul, one_mul]
+          ac_rfl
+        let idx := Fin.cast hsize (Fin.castAdd (b * k + r) i)
+        have hidx : idx = vinogradovSelectedBlockIndex k r (b + 1)
+            ⟨0, Nat.zero_lt_succ b⟩ i := by
+          apply Fin.ext
+          simp [idx, vinogradovSelectedBlockIndex]
+        calc
+          split.1 i = e split idx := by
+            simp [e, split, vinogradovPrependBlockEquiv, idx,
+              Equiv.piCongrLeft_apply, Fin.append_left]
+          _ = x idx := congrFun (e.apply_symm_apply x) idx
+          _ = x (vinogradovSelectedBlockIndex k r (b + 1)
+              ⟨0, Nat.zero_lt_succ b⟩ i) := congrArg x hidx
+      have htail (q : Fin b) (i : Fin k) :
+          split.2 (vinogradovSelectedBlockIndex k r b q i) =
+            x (vinogradovSelectedBlockIndex k r (b + 1) q.succ i) := by
+        let hsize : k + (b * k + r) = (b + 1) * k + r := by
+          simp only [Nat.add_mul, one_mul]
+          ac_rfl
+        let tailIdx := vinogradovSelectedBlockIndex k r b q i
+        let idx := Fin.cast hsize (Fin.natAdd k tailIdx)
+        have hidx : idx = vinogradovSelectedBlockIndex k r (b + 1)
+            q.succ i := by
+          apply Fin.ext
+          simp only [idx, tailIdx, vinogradovSelectedBlockIndex,
+            Fin.val_cast, Fin.val_natAdd, Fin.val_succ, Nat.add_mul, one_mul]
+          omega
+        calc
+          split.2 tailIdx = e split idx := by
+            simp [e, split, vinogradovPrependBlockEquiv, idx, tailIdx,
+              Equiv.piCongrLeft_apply, Fin.append_right]
+          _ = x idx := congrFun (e.apply_symm_apply x) idx
+          _ = x (vinogradovSelectedBlockIndex k r (b + 1) q.succ i) :=
+            congrArg x hidx
+      simp only [VinogradovHasNonsingularBlock]
+      constructor
+      · rintro (hfirst | hlater)
+        · refine ⟨⟨0, Nat.zero_lt_succ b⟩, ?_⟩
+          intro i j hij
+          apply hfirst
+          rw [hhead i, hhead j]
+          exact hij
+        · obtain ⟨q, hq⟩ := (ih split.2).mp hlater
+          refine ⟨q.succ, ?_⟩
+          intro i j hij
+          apply hq
+          change
+            split.2 (vinogradovSelectedBlockIndex k r b q i) =
+              split.2 (vinogradovSelectedBlockIndex k r b q j)
+          rw [htail q i, htail q j]
+          exact hij
+      · rintro ⟨q, hq⟩
+        revert hq
+        refine Fin.cases ?_ (fun q ↦ ?_) q
+        · intro hq
+          left
+          intro i j hij
+          apply hq
+          change
+            x (vinogradovSelectedBlockIndex k r (b + 1)
+                ⟨0, Nat.zero_lt_succ b⟩ i) =
+              x (vinogradovSelectedBlockIndex k r (b + 1)
+                ⟨0, Nat.zero_lt_succ b⟩ j)
+          rw [← hhead i, ← hhead j]
+          exact hij
+        · intro hq
+          right
+          apply (ih split.2).mpr
+          refine ⟨q, ?_⟩
+          intro i j hij
+          apply hq
+          change
+            x (vinogradovSelectedBlockIndex k r (b + 1) q.succ i) =
+              x (vinogradovSelectedBlockIndex k r (b + 1) q.succ j)
+          rw [← htail q i, ← htail q j]
+          exact hij
+
 /-- Failing to be singular in every selected block is equivalent to having a
 nonsingular selected block. -/
 theorem not_allBlocksSingular_iff_hasNonsingularBlock
