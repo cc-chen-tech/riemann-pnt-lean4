@@ -1,4 +1,4 @@
-import ZeroFreeRegion.VinogradovKorobov.VinogradovWeightedMoment
+import ZeroFreeRegion.VinogradovKorobov.VinogradovWeightedMainEstimate
 
 open ZeroFreeRegion.VinogradovKorobov
 
@@ -19,3 +19,16 @@ open ZeroFreeRegion.VinogradovKorobov
 #check vinogradovWeightedSolutionSelector_eq_indicator
 #check sum_vinogradovWeightedSolutionSelector_eq_count
 #check prod_vinogradovWeightedModulus_inv_natCast
+#check vinogradovWeightedPhaseTerm
+#check vinogradovWeightedWeylSum
+#check vinogradovWeightedTuplePhase
+#check vinogradovWeightedWeylSum_pow
+#check vinogradovWeightedTuplePhase_eq_prod_powerSum
+#check vinogradovWeightedTuplePhase_mul_star_eq_prod_difference
+#check sum_vinogradovWeightedCoefficient_pairing
+#check normalized_sum_weightedTuplePair_eq_selector
+#check conj_vinogradovWeightedWeylSum_pow
+#check normalizedVinogradovWeightedMomentMod
+#check normalizedVinogradovWeightedMomentMod_eq_solutionCount
+#check normalizedVinogradovWeightedMomentMod_eq_natCount_of_scale
+#check norm_normalizedVinogradovWeightedMomentMod_le_of_meanValueEstimate
