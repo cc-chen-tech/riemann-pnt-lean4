@@ -6,6 +6,39 @@ open scoped BigOperators
 open PrimeNumberTheorem
 open PrimeNumberTheorem.ZeroForcedOscillation
 
+example (y T β : ℝ) :
+    zeroPackageExplicitFormulaRemainder y T β =
+      zeroPackageUncontrolledRemainder y T β + zeroPackageClosedTerms y :=
+  zeroPackageExplicitFormulaRemainder_eq_uncontrolled_add_closed y T β
+
+example (y : ℝ) :
+    zeroPackageClosedTerms y =
+      (Real.log (2 * Real.pi) : ℂ) +
+        (1 / 2 : ℂ) *
+          (Real.log (1 - Real.exp (-2 * y)) : ℂ) :=
+  zeroPackageClosedTerms_eq_log_two_pi_add_log_term y
+
+example {y : ℝ} (hy : 0 < y) :
+    ‖zeroPackageClosedTerms y‖ ≤
+      Real.log (2 * Real.pi) +
+        (1 / 2 : ℝ) * Real.exp (-2 * y) / (1 - Real.exp (-2 * y)) :=
+  norm_zeroPackageClosedTerms_le_log_two_pi_add_exp_neg_div hy
+
+example {y T β : ℝ} (hy : 0 < y) :
+    ‖zeroPackageExplicitFormulaRemainder y T β‖ ≤
+      ‖zeroPackageUncontrolledRemainder y T β‖ +
+        Real.log (2 * Real.pi) +
+          (1 / 2 : ℝ) * Real.exp (-2 * y) / (1 - Real.exp (-2 * y)) :=
+  norm_zeroPackageExplicitFormulaRemainder_le_uncontrolled_add_closed hy
+
+example {y T β : ℝ} (hy : 0 < y) :
+    ‖equalRealPartZeroPackageContribution (Real.exp y) T β‖ -
+        ‖zeroPackageUncontrolledRemainder y T β‖ -
+          (Real.log (2 * Real.pi) +
+            (1 / 2 : ℝ) * Real.exp (-2 * y) / (1 - Real.exp (-2 * y))) ≤
+      ‖(((chebyshevPsi0 (Real.exp y) - Real.exp y : ℝ) : ℂ))‖ :=
+  norm_zeroPackage_sub_norm_uncontrolled_sub_closed_le_norm_chebyshevPsi0_sub_exp hy
+
 example (x T β : ℝ) :
     finiteNontrivialZeroSumWithMultiplicity x T =
       equalRealPartZeroPackageContribution x T β +
