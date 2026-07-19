@@ -53,21 +53,23 @@ theorem continuous_carlsonZetaRemainder_verticalLine
   unfold carlsonZetaRemainder
   exact hzeta.sub hsum
 
-/-- A Carlson-ready zeta approximation in a fixed strip.  When the cutoff is
-comparable to the height, the pole term in Abel's formula has the same
-`x ^ (-Re s)` size as the floor-error remainder and can be absorbed into it. -/
-theorem exists_riemannZeta_carlson_approximation :
-    ∃ C : ℝ, 0 ≤ C ∧ ∀ (s : ℂ) (x : ℝ),
+/-- A Carlson-ready zeta approximation with an explicit height-comparability
+factor.  If `x ≤ kappa * |Im s|`, the pole term in Abel's formula costs
+`kappa * x ^ (-Re s)`.  Keeping `kappa` variable makes the estimate usable on
+nondegenerate dyadic height intervals. -/
+theorem exists_riemannZeta_carlson_approximation_of_comparable :
+    ∃ A : ℝ, 0 ≤ A ∧ ∀ (kappa : ℝ) (s : ℂ) (x : ℝ),
+      0 < kappa →
       (1 / 2 : ℝ) ≤ s.re → s.re ≤ 1 → s ≠ 1 → 2 ≤ x →
-        |s.im| ≤ x / 2 → x ≤ 2 * |s.im| →
+        |s.im| ≤ x / 2 → x ≤ kappa * |s.im| →
           ∃ R : ℂ,
             riemannZeta s =
               (∑ n ∈ Finset.Icc 1 (Nat.floor x), 1 / (n : ℂ) ^ s) + R ∧
-            ‖R‖ ≤ C * x ^ (-s.re) := by
+            ‖R‖ ≤ (A + kappa) * x ^ (-s.re) := by
   obtain ⟨A, hA, hbase⟩ :=
     HardyTheorem.exists_riemannZeta_first_approximation
-  refine ⟨A + 2, by positivity, ?_⟩
-  intro s x hs_lower hs_upper hs1 hx him_upper him_lower
+  refine ⟨A, hA, ?_⟩
+  intro kappa s x hkappa hs_lower hs_upper hs1 hx him_upper him_lower
   have hs_quarter : (1 / 4 : ℝ) ≤ s.re := by linarith
   have hs_two : s.re ≤ 2 := hs_upper.trans (by norm_num)
   rcases hbase s x hs_quarter hs_two hs1 (by linarith) him_upper with
@@ -79,46 +81,81 @@ theorem exists_riemannZeta_carlson_approximation :
     ring
   · have hxpos : 0 < x := by linarith
     have hs_sub_ne : s - 1 ≠ 0 := sub_ne_zero.mpr hs1
-    have hden : x / 2 ≤ ‖s - 1‖ := by
+    have hden : x / kappa ≤ ‖s - 1‖ := by
       calc
-        x / 2 ≤ |s.im| := by linarith
+        x / kappa ≤ |s.im| :=
+          (div_le_iff₀ hkappa).2 (by simpa [mul_comm] using him_lower)
         _ = |(s - 1).im| := by simp
         _ ≤ ‖s - 1‖ := Complex.abs_im_le_norm _
     have hpow_nonneg : 0 ≤ x ^ (1 - s.re) :=
       Real.rpow_nonneg hxpos.le _
-    have hP : ‖P‖ ≤ 2 * x ^ (-s.re) := by
+    have hP : ‖P‖ ≤ kappa * x ^ (-s.re) := by
       dsimp [P]
       rw [norm_div, Complex.norm_cpow_eq_rpow_re_of_pos hxpos]
       calc
         x ^ (1 - s.re) / ‖s - 1‖ ≤
-            x ^ (1 - s.re) / (x / 2) :=
+            x ^ (1 - s.re) / (x / kappa) :=
           div_le_div_of_nonneg_left hpow_nonneg (by positivity) hden
-        _ = 2 * x ^ (-s.re) := by
+        _ = kappa * x ^ (-s.re) := by
           rw [show 1 - s.re = 1 + (-s.re) by ring,
             Real.rpow_add hxpos, Real.rpow_one]
           field_simp
     calc
       ‖P + R0‖ ≤ ‖P‖ + ‖R0‖ := norm_add_le _ _
-      _ ≤ 2 * x ^ (-s.re) + A * x ^ (-s.re) := add_le_add hP hR0
-      _ = (A + 2) * x ^ (-s.re) := by ring
+      _ ≤ kappa * x ^ (-s.re) + A * x ^ (-s.re) := add_le_add hP hR0
+      _ = (A + kappa) * x ^ (-s.re) := by ring
 
-/-- The Carlson strip estimate for the canonical zeta remainder.  This removes
-the pointwise existential witness from the approximation theorem. -/
-theorem exists_norm_carlsonZetaRemainder_le :
+/-- The `kappa = 2` specialization retained for the original exact-height
+interface. -/
+theorem exists_riemannZeta_carlson_approximation :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (s : ℂ) (x : ℝ),
       (1 / 2 : ℝ) ≤ s.re → s.re ≤ 1 → s ≠ 1 → 2 ≤ x →
         |s.im| ≤ x / 2 → x ≤ 2 * |s.im| →
-          ‖carlsonZetaRemainder s x‖ ≤ C * x ^ (-s.re) := by
-  obtain ⟨C, hC, happrox⟩ := exists_riemannZeta_carlson_approximation
-  refine ⟨C, hC, ?_⟩
+          ∃ R : ℂ,
+            riemannZeta s =
+              (∑ n ∈ Finset.Icc 1 (Nat.floor x), 1 / (n : ℂ) ^ s) + R ∧
+            ‖R‖ ≤ C * x ^ (-s.re) := by
+  obtain ⟨A, hA, happrox⟩ :=
+    exists_riemannZeta_carlson_approximation_of_comparable
+  refine ⟨A + 2, by positivity, ?_⟩
   intro s x hs_lower hs_upper hs1 hx him_upper him_lower
-  rcases happrox s x hs_lower hs_upper hs1 hx him_upper him_lower with
+  exact happrox 2 s x (by norm_num) hs_lower hs_upper hs1 hx
+    him_upper him_lower
+
+/-- The comparable-height strip estimate for the canonical zeta remainder. -/
+theorem exists_norm_carlsonZetaRemainder_le_of_comparable :
+    ∃ A : ℝ, 0 ≤ A ∧ ∀ (kappa : ℝ) (s : ℂ) (x : ℝ),
+      0 < kappa →
+      (1 / 2 : ℝ) ≤ s.re → s.re ≤ 1 → s ≠ 1 → 2 ≤ x →
+        |s.im| ≤ x / 2 → x ≤ kappa * |s.im| →
+          ‖carlsonZetaRemainder s x‖ ≤
+            (A + kappa) * x ^ (-s.re) := by
+  obtain ⟨A, hA, happrox⟩ :=
+    exists_riemannZeta_carlson_approximation_of_comparable
+  refine ⟨A, hA, ?_⟩
+  intro kappa s x hkappa hs_lower hs_upper hs1 hx him_upper him_lower
+  rcases happrox kappa s x hkappa hs_lower hs_upper hs1 hx
+      him_upper him_lower with
     ⟨R, hR_eq, hR_bound⟩
   have hR : R = carlsonZetaRemainder s x := by
     unfold carlsonZetaRemainder
     rw [hR_eq]
     ring
   rwa [← hR]
+
+/-- The Carlson strip estimate for the canonical zeta remainder, specialized
+to the original `kappa = 2` interface. -/
+theorem exists_norm_carlsonZetaRemainder_le :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ (s : ℂ) (x : ℝ),
+      (1 / 2 : ℝ) ≤ s.re → s.re ≤ 1 → s ≠ 1 → 2 ≤ x →
+        |s.im| ≤ x / 2 → x ≤ 2 * |s.im| →
+          ‖carlsonZetaRemainder s x‖ ≤ C * x ^ (-s.re) := by
+  obtain ⟨A, hA, hbound⟩ :=
+    exists_norm_carlsonZetaRemainder_le_of_comparable
+  refine ⟨A + 2, by positivity, ?_⟩
+  intro s x hs_lower hs_upper hs1 hx him_upper him_lower
+  exact hbound 2 s x (by norm_num) hs_lower hs_upper hs1 hx
+    him_upper him_lower
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem

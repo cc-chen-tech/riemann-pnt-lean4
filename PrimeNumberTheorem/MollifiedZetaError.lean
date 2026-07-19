@@ -385,26 +385,30 @@ theorem canonicalRemainder_mul_mobius_meanSquare_le
           hX hab hsigma hsigma1)
         (sq_nonneg K)
 
-/-- The canonical Carlson remainder estimate supplies the uniform constant in
-the preceding mean-square theorem whenever the cutoff and height are comparable
-throughout the interval. -/
-theorem exists_canonicalRemainder_mul_mobius_meanSquare_le :
-    ∃ C : ℝ, 0 ≤ C ∧ ∀ (X : ℕ) (sigma a b x : ℝ),
+/-- The canonical Carlson remainder estimate with a variable comparability
+factor supplies a uniform bound throughout a genuine height interval. -/
+theorem exists_canonicalRemainder_mul_mobius_meanSquare_le_of_comparable :
+    ∃ A : ℝ, 0 ≤ A ∧ ∀ (kappa : ℝ) (X : ℕ) (sigma a b x : ℝ),
+      0 < kappa →
       1 ≤ X → a ≤ b → 1 / 2 < sigma → sigma < 1 → 2 ≤ x →
-      (∀ t ∈ Set.Icc a b, |t| ≤ x / 2 ∧ x ≤ 2 * |t|) →
+      (∀ t ∈ Set.Icc a b,
+        |t| ≤ x / 2 ∧ x ≤ kappa * |t|) →
         ∫ t in a..b,
             ‖carlsonZetaRemainder ((sigma : ℂ) + Complex.I * t) x *
               mobiusMollifier X ((sigma : ℂ) + Complex.I * t)‖ ^ 2 ≤
-          (C * x ^ (-sigma)) ^ 2 * (((b - a) + 4 * Real.pi) *
-            (2 * (1 +
-              ((X : ℝ) ^ (2 - 2 * sigma) - 1) /
-                (2 - 2 * sigma)))) := by
-  obtain ⟨C, hC, hbound⟩ := exists_norm_carlsonZetaRemainder_le
-  refine ⟨C, hC, ?_⟩
-  intro X sigma a b x hX hab hsigma hsigma1 hx hheight
+          ((A + kappa) * x ^ (-sigma)) ^ 2 *
+            (((b - a) + 4 * Real.pi) *
+              (2 * (1 +
+                ((X : ℝ) ^ (2 - 2 * sigma) - 1) /
+                  (2 - 2 * sigma)))) := by
+  obtain ⟨A, hA, hbound⟩ :=
+    exists_norm_carlsonZetaRemainder_le_of_comparable
+  refine ⟨A, hA, ?_⟩
+  intro kappa X sigma a b x hkappa hX hab hsigma hsigma1 hx hheight
   apply canonicalRemainder_mul_mobius_meanSquare_le
     hX hab hsigma hsigma1
-  · exact mul_nonneg hC (Real.rpow_nonneg (by linarith) _)
+  · exact mul_nonneg (add_nonneg hA hkappa.le)
+      (Real.rpow_nonneg (by linarith) _)
   · intro t ht
     have hs_ne : ((sigma : ℂ) + Complex.I * t) ≠ 1 := by
       intro h
@@ -419,17 +423,39 @@ theorem exists_canonicalRemainder_mul_mobius_meanSquare_le :
       simpa using hsigma1.le
     have him_upper : |((sigma : ℂ) + Complex.I * t).im| ≤ x / 2 := by
       simpa using hcomparability.1
-    have him_lower : x ≤ 2 * |((sigma : ℂ) + Complex.I * t).im| := by
+    have him_lower :
+        x ≤ kappa * |((sigma : ℂ) + Complex.I * t).im| := by
       simpa using hcomparability.2
-    simpa using hbound ((sigma : ℂ) + Complex.I * t) x
-      hs_lower hs_upper hs_ne hx him_upper him_lower
+    simpa using hbound kappa ((sigma : ℂ) + Complex.I * t) x
+      hkappa hs_lower hs_upper hs_ne hx him_upper him_lower
 
-/-- The full mollified zeta error has a Carlson-ready second-moment bound: a
-finite convolution tail plus the canonical zeta remainder contribution. -/
-theorem exists_mollifiedZetaError_meanSquare_le_endpoint :
+/-- The original exact-height `kappa = 2` specialization. -/
+theorem exists_canonicalRemainder_mul_mobius_meanSquare_le :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (X : ℕ) (sigma a b x : ℝ),
       1 ≤ X → a ≤ b → 1 / 2 < sigma → sigma < 1 → 2 ≤ x →
       (∀ t ∈ Set.Icc a b, |t| ≤ x / 2 ∧ x ≤ 2 * |t|) →
+        ∫ t in a..b,
+            ‖carlsonZetaRemainder ((sigma : ℂ) + Complex.I * t) x *
+              mobiusMollifier X ((sigma : ℂ) + Complex.I * t)‖ ^ 2 ≤
+          (C * x ^ (-sigma)) ^ 2 * (((b - a) + 4 * Real.pi) *
+            (2 * (1 +
+              ((X : ℝ) ^ (2 - 2 * sigma) - 1) /
+                (2 - 2 * sigma)))) := by
+  obtain ⟨A, hA, hbound⟩ :=
+    exists_canonicalRemainder_mul_mobius_meanSquare_le_of_comparable
+  refine ⟨A + 2, by positivity, ?_⟩
+  intro X sigma a b x hX hab hsigma hsigma1 hx hheight
+  exact hbound 2 X sigma a b x (by norm_num) hX hab hsigma hsigma1 hx
+    hheight
+
+/-- The full mollified zeta error has a Carlson-ready second-moment bound with
+a variable height-comparability factor. -/
+theorem exists_mollifiedZetaError_meanSquare_le_endpoint_of_comparable :
+    ∃ A : ℝ, 0 ≤ A ∧ ∀ (kappa : ℝ) (X : ℕ) (sigma a b x : ℝ),
+      0 < kappa →
+      1 ≤ X → a ≤ b → 1 / 2 < sigma → sigma < 1 → 2 ≤ x →
+      (∀ t ∈ Set.Icc a b,
+        |t| ≤ x / 2 ∧ x ≤ kappa * |t|) →
         ∫ t in a..b,
             ‖mollifiedZetaError X
               ((sigma : ℂ) + Complex.I * t)‖ ^ 2 ≤
@@ -438,14 +464,15 @@ theorem exists_mollifiedZetaError_meanSquare_le_endpoint :
                 (1 - 2 * sigma) *
               ((((Nat.floor x) * X : ℕ) : ℝ) *
                 (1 + Real.log (Nat.floor x * X)) ^ 3))) +
-          2 * ((C * x ^ (-sigma)) ^ 2 *
+          2 * ((((A + kappa) * x ^ (-sigma)) ^ 2) *
             (((b - a) + 4 * Real.pi) *
               (2 * (1 +
                 ((X : ℝ) ^ (2 - 2 * sigma) - 1) /
                   (2 - 2 * sigma))))) := by
-  obtain ⟨C, hC, hbound⟩ := exists_norm_carlsonZetaRemainder_le
-  refine ⟨C, hC, ?_⟩
-  intro X sigma a b x hX hab hsigma hsigma1 hx hheight
+  obtain ⟨A, hA, hbound⟩ :=
+    exists_norm_carlsonZetaRemainder_le_of_comparable
+  refine ⟨A, hA, ?_⟩
+  intro kappa X sigma a b x hkappa hX hab hsigma hsigma1 hx hheight
   have hXpos : 0 < X := lt_of_lt_of_le Nat.zero_lt_one hX
   have hfloor : 0 < Nat.floor x := Nat.floor_pos.mpr (by linarith)
   let Tail : ℝ → ℂ := fun t =>
@@ -521,11 +548,12 @@ theorem exists_mollifiedZetaError_meanSquare_le_endpoint :
             ((((Nat.floor x) * X : ℕ) : ℝ) *
               (1 + Real.log (Nat.floor x * X)) ^ 3)) := by
     exact mollifiedTruncatedTail_meanSquare_le_prefix_bound hab hsigma
-  have hK : 0 ≤ C * x ^ (-sigma) :=
-    mul_nonneg hC (Real.rpow_nonneg (by linarith) _)
+  have hK : 0 ≤ (A + kappa) * x ^ (-sigma) :=
+    mul_nonneg (add_nonneg hA hkappa.le)
+      (Real.rpow_nonneg (by linarith) _)
   have hRpoint : ∀ t ∈ Set.Icc a b,
       ‖carlsonZetaRemainder ((sigma : ℂ) + Complex.I * t) x‖ ≤
-        C * x ^ (-sigma) := by
+        (A + kappa) * x ^ (-sigma) := by
     intro t ht
     have hs_ne : ((sigma : ℂ) + Complex.I * t) ≠ 1 := by
       intro h
@@ -539,13 +567,15 @@ theorem exists_mollifiedZetaError_meanSquare_le_endpoint :
       simpa using hsigma1.le
     have him_upper : |((sigma : ℂ) + Complex.I * t).im| ≤ x / 2 := by
       simpa using hcomparability.1
-    have him_lower : x ≤ 2 * |((sigma : ℂ) + Complex.I * t).im| := by
+    have him_lower :
+        x ≤ kappa * |((sigma : ℂ) + Complex.I * t).im| := by
       simpa using hcomparability.2
-    simpa using hbound ((sigma : ℂ) + Complex.I * t) x
-      hs_lower hs_upper hs_ne hx him_upper him_lower
+    simpa using hbound kappa ((sigma : ℂ) + Complex.I * t) x
+      hkappa hs_lower hs_upper hs_ne hx him_upper him_lower
   have hRemBound :
       (∫ t in a..b, ‖Rem t‖ ^ 2) ≤
-        (C * x ^ (-sigma)) ^ 2 * (((b - a) + 4 * Real.pi) *
+        ((A + kappa) * x ^ (-sigma)) ^ 2 *
+          (((b - a) + 4 * Real.pi) *
           (2 * (1 +
             ((X : ℝ) ^ (2 - 2 * sigma) - 1) /
               (2 - 2 * sigma)))) := by
@@ -554,6 +584,32 @@ theorem exists_mollifiedZetaError_meanSquare_le_endpoint :
   exact hintegral.trans (add_le_add
     (mul_le_mul_of_nonneg_left hTailBound (by norm_num))
     (mul_le_mul_of_nonneg_left hRemBound (by norm_num)))
+
+/-- The original exact-height `kappa = 2` specialization of the mollified
+zeta second-moment estimate. -/
+theorem exists_mollifiedZetaError_meanSquare_le_endpoint :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ (X : ℕ) (sigma a b x : ℝ),
+      1 ≤ X → a ≤ b → 1 / 2 < sigma → sigma < 1 → 2 ≤ x →
+      (∀ t ∈ Set.Icc a b, |t| ≤ x / 2 ∧ x ≤ 2 * |t|) →
+        ∫ t in a..b,
+            ‖mollifiedZetaError X
+              ((sigma : ℂ) + Complex.I * t)‖ ^ 2 ≤
+          2 * (((b - a) + 4 * Real.pi) *
+            (2 * ((min X (Nat.floor x) + 1 : ℕ) : ℝ) ^
+                (1 - 2 * sigma) *
+              ((((Nat.floor x) * X : ℕ) : ℝ) *
+                (1 + Real.log (Nat.floor x * X)) ^ 3))) +
+          2 * ((C * x ^ (-sigma)) ^ 2 *
+            (((b - a) + 4 * Real.pi) *
+              (2 * (1 +
+                ((X : ℝ) ^ (2 - 2 * sigma) - 1) /
+                  (2 - 2 * sigma))))) := by
+  obtain ⟨A, hA, hbound⟩ :=
+    exists_mollifiedZetaError_meanSquare_le_endpoint_of_comparable
+  refine ⟨A + 2, by positivity, ?_⟩
+  intro X sigma a b x hX hab hsigma hsigma1 hx hheight
+  exact hbound 2 X sigma a b x (by norm_num) hX hab hsigma hsigma1 hx
+    hheight
 
 /-- The Carlson-ready zeta approximation decomposes the mollified error into
 a finite Dirichlet-polynomial product and a controlled remainder times the

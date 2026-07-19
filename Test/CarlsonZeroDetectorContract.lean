@@ -144,6 +144,88 @@ example :
                   (2 - 2 * sigma))))) :=
   exists_integral_log_norm_carlsonZeroDetector_le_endpoint
 
+example :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ (X : ℕ) (sigma a b x : ℝ),
+      1 ≤ X → a ≤ b → 1 / 2 < sigma → sigma < 1 → 2 ≤ x →
+      (∀ t ∈ Set.Icc a b, |t| ≤ x / 2 ∧ x ≤ 2 * |t|) →
+      (∀ t ∈ Set.Icc a b,
+        regularizedCarlsonZeroDetector X
+          ((sigma : ℂ) + Complex.I * t) ≠ 0) →
+        ∫ t in a..b,
+            Real.log ‖regularizedCarlsonZeroDetector X
+              ((sigma : ℂ) + Complex.I * t)‖ ≤
+          2 * (∫ t in a..b,
+            Real.log ‖(sigma : ℂ) + Complex.I * t - 1‖) +
+          2 * (((b - a) + 4 * Real.pi) *
+            (2 * ((min X (Nat.floor x) + 1 : ℕ) : ℝ) ^
+                (1 - 2 * sigma) *
+              ((((Nat.floor x) * X : ℕ) : ℝ) *
+                (1 + Real.log (Nat.floor x * X)) ^ 3))) +
+          2 * ((C * x ^ (-sigma)) ^ 2 *
+            (((b - a) + 4 * Real.pi) *
+              (2 * (1 +
+                ((X : ℝ) ^ (2 - 2 * sigma) - 1) /
+                  (2 - 2 * sigma))))) :=
+  exists_integral_log_norm_regularizedCarlsonZeroDetector_le_endpoint
+
+example :
+    ∃ A : ℝ, 0 ≤ A ∧ ∀ (kappa : ℝ) (X : ℕ)
+        (sigma a b x : ℝ),
+      0 < kappa →
+      1 ≤ X → a ≤ b → 1 / 2 < sigma → sigma < 1 → 2 ≤ x →
+      (∀ t ∈ Set.Icc a b,
+        |t| ≤ x / 2 ∧ x ≤ kappa * |t|) →
+      (∀ t ∈ Set.Icc a b,
+        regularizedCarlsonZeroDetector X
+          ((sigma : ℂ) + Complex.I * t) ≠ 0) →
+        ∫ t in a..b,
+            Real.log ‖regularizedCarlsonZeroDetector X
+              ((sigma : ℂ) + Complex.I * t)‖ ≤
+          2 * (∫ t in a..b,
+            Real.log ‖(sigma : ℂ) + Complex.I * t - 1‖) +
+          2 * (((b - a) + 4 * Real.pi) *
+            (2 * ((min X (Nat.floor x) + 1 : ℕ) : ℝ) ^
+                (1 - 2 * sigma) *
+              ((((Nat.floor x) * X : ℕ) : ℝ) *
+                (1 + Real.log (Nat.floor x * X)) ^ 3))) +
+          2 * (((((A + kappa) * x ^ (-sigma)) ^ 2)) *
+            (((b - a) + 4 * Real.pi) *
+              (2 * (1 +
+                ((X : ℝ) ^ (2 - 2 * sigma) - 1) /
+                  (2 - 2 * sigma))))) :=
+  exists_integral_log_norm_regularizedCarlsonZeroDetector_le_endpoint_of_comparable
+
+noncomputable example (A kappa : ℝ) (X : ℕ)
+    (sigma a b x : ℝ) : ℝ :=
+  regularizedCarlsonLogNormEndpoint A kappa X sigma a b x
+
+example :
+    ∃ A : ℝ, 0 ≤ A ∧ ∀ (X : ℕ) (sigma u v : ℝ),
+      1 ≤ X → 1 ≤ u → u ≤ v → v ≤ 2 * u →
+      1 / 2 < sigma → sigma < 1 →
+      (∀ t ∈ Set.Icc u v,
+        regularizedCarlsonZeroDetector X
+          ((sigma : ℂ) + Complex.I * t) ≠ 0) →
+        ∫ t in u..v,
+            Real.log ‖regularizedCarlsonZeroDetector X
+              ((sigma : ℂ) + Complex.I * t)‖ ≤
+          regularizedCarlsonLogNormEndpoint
+            A 4 X sigma u v (4 * u) :=
+  exists_integral_log_norm_regularizedCarlsonZeroDetector_le_doublingInterval
+
+example :
+    ∃ A : ℝ, 0 ≤ A ∧ ∀ (X : ℕ) (sigma u : ℝ),
+      1 ≤ X → 1 ≤ u → 1 / 2 < sigma → sigma < 1 →
+      (∀ t ∈ Set.Icc u (2 * u),
+        regularizedCarlsonZeroDetector X
+          ((sigma : ℂ) + Complex.I * t) ≠ 0) →
+        ∫ t in u..(2 * u),
+            Real.log ‖regularizedCarlsonZeroDetector X
+              ((sigma : ℂ) + Complex.I * t)‖ ≤
+          regularizedCarlsonLogNormEndpoint
+            A 4 X sigma u (2 * u) (4 * u) :=
+  exists_integral_log_norm_regularizedCarlsonZeroDetector_le_dyadic
+
 #print axioms carlsonZeroDetector_eq_zeta_mul_mollifier_factorization
 #print axioms tendsto_riemannZeta_real_atTop
 #print axioms tendsto_mollifiedZetaError_real_atTop
@@ -164,6 +246,10 @@ example :
 #print axioms continuous_carlsonZeroDetector_verticalLine
 #print axioms integral_log_norm_carlsonZeroDetector_le_meanSquare
 #print axioms exists_integral_log_norm_carlsonZeroDetector_le_endpoint
+#print axioms exists_integral_log_norm_regularizedCarlsonZeroDetector_le_endpoint
+#print axioms exists_integral_log_norm_regularizedCarlsonZeroDetector_le_endpoint_of_comparable
+#print axioms exists_integral_log_norm_regularizedCarlsonZeroDetector_le_doublingInterval
+#print axioms exists_integral_log_norm_regularizedCarlsonZeroDetector_le_dyadic
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem

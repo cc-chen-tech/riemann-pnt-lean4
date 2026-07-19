@@ -157,6 +157,22 @@ example :
   exists_canonicalRemainder_mul_mobius_meanSquare_le
 
 example :
+    ∃ A : ℝ, 0 ≤ A ∧ ∀ (kappa : ℝ) (X : ℕ) (sigma a b x : ℝ),
+      0 < kappa →
+      1 ≤ X → a ≤ b → 1 / 2 < sigma → sigma < 1 → 2 ≤ x →
+      (∀ t ∈ Set.Icc a b,
+        |t| ≤ x / 2 ∧ x ≤ kappa * |t|) →
+        ∫ t in a..b,
+            ‖carlsonZetaRemainder ((sigma : ℂ) + Complex.I * t) x *
+              mobiusMollifier X ((sigma : ℂ) + Complex.I * t)‖ ^ 2 ≤
+          ((A + kappa) * x ^ (-sigma)) ^ 2 *
+            (((b - a) + 4 * Real.pi) *
+              (2 * (1 +
+                ((X : ℝ) ^ (2 - 2 * sigma) - 1) /
+                  (2 - 2 * sigma)))) :=
+  exists_canonicalRemainder_mul_mobius_meanSquare_le_of_comparable
+
+example :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (X : ℕ) (sigma a b x : ℝ),
       1 ≤ X → a ≤ b → 1 / 2 < sigma → sigma < 1 → 2 ≤ x →
       (∀ t ∈ Set.Icc a b, |t| ≤ x / 2 ∧ x ≤ 2 * |t|) →
@@ -174,6 +190,27 @@ example :
                 ((X : ℝ) ^ (2 - 2 * sigma) - 1) /
                   (2 - 2 * sigma))))) :=
   exists_mollifiedZetaError_meanSquare_le_endpoint
+
+example :
+    ∃ A : ℝ, 0 ≤ A ∧ ∀ (kappa : ℝ) (X : ℕ) (sigma a b x : ℝ),
+      0 < kappa →
+      1 ≤ X → a ≤ b → 1 / 2 < sigma → sigma < 1 → 2 ≤ x →
+      (∀ t ∈ Set.Icc a b,
+        |t| ≤ x / 2 ∧ x ≤ kappa * |t|) →
+        ∫ t in a..b,
+            ‖mollifiedZetaError X
+              ((sigma : ℂ) + Complex.I * t)‖ ^ 2 ≤
+          2 * (((b - a) + 4 * Real.pi) *
+            (2 * ((min X (Nat.floor x) + 1 : ℕ) : ℝ) ^
+                (1 - 2 * sigma) *
+              ((((Nat.floor x) * X : ℕ) : ℝ) *
+                (1 + Real.log (Nat.floor x * X)) ^ 3))) +
+          2 * ((((A + kappa) * x ^ (-sigma)) ^ 2) *
+            (((b - a) + 4 * Real.pi) *
+              (2 * (1 +
+                ((X : ℝ) ^ (2 - 2 * sigma) - 1) /
+                  (2 - 2 * sigma))))) :=
+  exists_mollifiedZetaError_meanSquare_le_endpoint_of_comparable
 
 example :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (X : ℕ) (s : ℂ) (x : ℝ),
@@ -236,7 +273,9 @@ example :
 #print axioms norm_mollifiedZetaError_sq_le_tail_add_canonicalRemainder
 #print axioms canonicalRemainder_mul_mobius_meanSquare_le
 #print axioms exists_canonicalRemainder_mul_mobius_meanSquare_le
+#print axioms exists_canonicalRemainder_mul_mobius_meanSquare_le_of_comparable
 #print axioms exists_mollifiedZetaError_meanSquare_le_endpoint
+#print axioms exists_mollifiedZetaError_meanSquare_le_endpoint_of_comparable
 #print axioms norm_mollifiedTailCoefficient_le
 #print axioms mollifiedTailCoefficient_weightedSquareSum_le
 #print axioms mollifiedTailCoefficient_squareSum_le_weightedDivisorSquareSum

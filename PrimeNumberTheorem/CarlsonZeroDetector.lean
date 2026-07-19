@@ -602,5 +602,164 @@ theorem exists_integral_log_norm_carlsonZeroDetector_le_endpoint :
     hab (ne_of_lt hsigma1) hboundary).trans
       (hmean X sigma a b x hX hab hsigma hsigma1 hx hheight)
 
+/-- The endpoint expression controlling the logarithmic norm of the
+regularized Carlson detector on a height-comparable interval. -/
+noncomputable def regularizedCarlsonLogNormEndpoint
+    (A kappa : ℝ) (X : ℕ) (sigma a b x : ℝ) : ℝ :=
+  2 * (∫ t in a..b,
+    Real.log ‖(sigma : ℂ) + Complex.I * t - 1‖) +
+  2 * (((b - a) + 4 * Real.pi) *
+    (2 * ((min X (Nat.floor x) + 1 : ℕ) : ℝ) ^
+        (1 - 2 * sigma) *
+      ((((Nat.floor x) * X : ℕ) : ℝ) *
+        (1 + Real.log (Nat.floor x * X)) ^ 3))) +
+  2 * (((((A + kappa) * x ^ (-sigma)) ^ 2)) *
+    (((b - a) + 4 * Real.pi) *
+      (2 * (1 +
+        ((X : ℝ) ^ (2 - 2 * sigma) - 1) /
+          (2 - 2 * sigma)))))
+
+/-- The comparable-height Carlson mean-square estimate controls the logarithmic
+norm of the pole-free regularized detector on genuine intervals. -/
+theorem exists_integral_log_norm_regularizedCarlsonZeroDetector_le_endpoint_of_comparable :
+    ∃ A : ℝ, 0 ≤ A ∧ ∀ (kappa : ℝ) (X : ℕ)
+        (sigma a b x : ℝ),
+      0 < kappa →
+      1 ≤ X → a ≤ b → 1 / 2 < sigma → sigma < 1 → 2 ≤ x →
+      (∀ t ∈ Set.Icc a b,
+        |t| ≤ x / 2 ∧ x ≤ kappa * |t|) →
+      (∀ t ∈ Set.Icc a b,
+        regularizedCarlsonZeroDetector X
+          ((sigma : ℂ) + Complex.I * t) ≠ 0) →
+        ∫ t in a..b,
+            Real.log ‖regularizedCarlsonZeroDetector X
+              ((sigma : ℂ) + Complex.I * t)‖ ≤
+          2 * (∫ t in a..b,
+            Real.log ‖(sigma : ℂ) + Complex.I * t - 1‖) +
+          2 * (((b - a) + 4 * Real.pi) *
+            (2 * ((min X (Nat.floor x) + 1 : ℕ) : ℝ) ^
+                (1 - 2 * sigma) *
+              ((((Nat.floor x) * X : ℕ) : ℝ) *
+                (1 + Real.log (Nat.floor x * X)) ^ 3))) +
+          2 * (((((A + kappa) * x ^ (-sigma)) ^ 2)) *
+            (((b - a) + 4 * Real.pi) *
+              (2 * (1 +
+                ((X : ℝ) ^ (2 - 2 * sigma) - 1) /
+                  (2 - 2 * sigma))))) := by
+  obtain ⟨A, hA, hmean⟩ :=
+    exists_mollifiedZetaError_meanSquare_le_endpoint_of_comparable
+  refine ⟨A, hA, ?_⟩
+  intro kappa X sigma a b x hkappa hX hab hsigma hsigma1 hx hheight hboundary
+  have hdetBoundary : ∀ t ∈ Set.Icc a b,
+      carlsonZeroDetector X
+        ((sigma : ℂ) + Complex.I * t) ≠ 0 := by
+    intro t ht hdetZero
+    let s : ℂ := (sigma : ℂ) + Complex.I * t
+    have hs0 : s ≠ 0 := by
+      intro hzero
+      have hre := congrArg Complex.re hzero
+      dsimp [s] at hre
+      norm_num at hre
+      linarith
+    have hs1 : s ≠ 1 := by
+      intro hone
+      have hre := congrArg Complex.re hone
+      dsimp [s] at hre
+      norm_num at hre
+      linarith
+    change carlsonZeroDetector X s = 0 at hdetZero
+    apply hboundary t ht
+    rw [show regularizedCarlsonZeroDetector X s =
+        (s - 1) ^ 2 * carlsonZeroDetector X s from
+      regularizedCarlsonZeroDetector_eq_sub_one_sq_mul X hs0 hs1]
+    simp [hdetZero]
+  exact
+    (integral_log_norm_regularizedCarlsonZeroDetector_le_geometric_add_meanSquare
+      hab (by linarith) (ne_of_lt hsigma1) hdetBoundary).trans
+      (by
+        simpa [add_assoc] using
+          (add_le_add_right
+            (hmean kappa X sigma a b x hkappa hX hab hsigma hsigma1 hx hheight)
+            (2 * (∫ t in a..b,
+              Real.log ‖(sigma : ℂ) + Complex.I * t - 1‖))))
+
+/-- The original exact-height `kappa = 2` specialization. -/
+theorem exists_integral_log_norm_regularizedCarlsonZeroDetector_le_endpoint :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ (X : ℕ) (sigma a b x : ℝ),
+      1 ≤ X → a ≤ b → 1 / 2 < sigma → sigma < 1 → 2 ≤ x →
+      (∀ t ∈ Set.Icc a b, |t| ≤ x / 2 ∧ x ≤ 2 * |t|) →
+      (∀ t ∈ Set.Icc a b,
+        regularizedCarlsonZeroDetector X
+          ((sigma : ℂ) + Complex.I * t) ≠ 0) →
+        ∫ t in a..b,
+            Real.log ‖regularizedCarlsonZeroDetector X
+              ((sigma : ℂ) + Complex.I * t)‖ ≤
+          2 * (∫ t in a..b,
+            Real.log ‖(sigma : ℂ) + Complex.I * t - 1‖) +
+          2 * (((b - a) + 4 * Real.pi) *
+            (2 * ((min X (Nat.floor x) + 1 : ℕ) : ℝ) ^
+                (1 - 2 * sigma) *
+              ((((Nat.floor x) * X : ℕ) : ℝ) *
+                (1 + Real.log (Nat.floor x * X)) ^ 3))) +
+          2 * ((C * x ^ (-sigma)) ^ 2 *
+            (((b - a) + 4 * Real.pi) *
+              (2 * (1 +
+                ((X : ℝ) ^ (2 - 2 * sigma) - 1) /
+                  (2 - 2 * sigma))))) := by
+  obtain ⟨A, hA, hbound⟩ :=
+    exists_integral_log_norm_regularizedCarlsonZeroDetector_le_endpoint_of_comparable
+  refine ⟨A + 2, by positivity, ?_⟩
+  intro X sigma a b x hX hab hsigma hsigma1 hx hheight hboundary
+  exact hbound 2 X sigma a b x (by norm_num) hX hab hsigma hsigma1 hx
+    hheight hboundary
+
+/-- Every doubling interval `[u, v]` with `v ≤ 2u` is covered by the fixed
+choices `x = 4u` and `kappa = 4`. -/
+theorem exists_integral_log_norm_regularizedCarlsonZeroDetector_le_doublingInterval :
+    ∃ A : ℝ, 0 ≤ A ∧ ∀ (X : ℕ) (sigma u v : ℝ),
+      1 ≤ X → 1 ≤ u → u ≤ v → v ≤ 2 * u →
+      1 / 2 < sigma → sigma < 1 →
+      (∀ t ∈ Set.Icc u v,
+        regularizedCarlsonZeroDetector X
+          ((sigma : ℂ) + Complex.I * t) ≠ 0) →
+        ∫ t in u..v,
+            Real.log ‖regularizedCarlsonZeroDetector X
+              ((sigma : ℂ) + Complex.I * t)‖ ≤
+          regularizedCarlsonLogNormEndpoint
+            A 4 X sigma u v (4 * u) := by
+  obtain ⟨A, hA, hbound⟩ :=
+    exists_integral_log_norm_regularizedCarlsonZeroDetector_le_endpoint_of_comparable
+  refine ⟨A, hA, ?_⟩
+  intro X sigma u v hX hu huv hvu hsigma hsigma1 hboundary
+  have hheight : ∀ t ∈ Set.Icc u v,
+      |t| ≤ (4 * u) / 2 ∧ 4 * u ≤ 4 * |t| := by
+    intro t ht
+    have ht0 : 0 ≤ t := by linarith [ht.1]
+    rw [abs_of_nonneg ht0]
+    constructor <;> nlinarith [ht.1, ht.2, hvu]
+  have h := hbound 4 X sigma u v (4 * u)
+    (by norm_num) hX huv hsigma hsigma1 (by linarith)
+    hheight hboundary
+  simpa [regularizedCarlsonLogNormEndpoint] using h
+
+/-- The exact dyadic interval `[u, 2u]` specialization. -/
+theorem exists_integral_log_norm_regularizedCarlsonZeroDetector_le_dyadic :
+    ∃ A : ℝ, 0 ≤ A ∧ ∀ (X : ℕ) (sigma u : ℝ),
+      1 ≤ X → 1 ≤ u → 1 / 2 < sigma → sigma < 1 →
+      (∀ t ∈ Set.Icc u (2 * u),
+        regularizedCarlsonZeroDetector X
+          ((sigma : ℂ) + Complex.I * t) ≠ 0) →
+        ∫ t in u..(2 * u),
+            Real.log ‖regularizedCarlsonZeroDetector X
+              ((sigma : ℂ) + Complex.I * t)‖ ≤
+          regularizedCarlsonLogNormEndpoint
+            A 4 X sigma u (2 * u) (4 * u) := by
+  obtain ⟨A, hA, hbound⟩ :=
+    exists_integral_log_norm_regularizedCarlsonZeroDetector_le_doublingInterval
+  refine ⟨A, hA, ?_⟩
+  intro X sigma u hX hu hsigma hsigma1 hboundary
+  exact hbound X sigma u (2 * u) hX hu (by linarith) le_rfl
+    hsigma hsigma1 hboundary
+
 end CarlsonZeroDensity
 end PrimeNumberTheorem
