@@ -136,6 +136,7 @@ lean_lib RiemannPNT where
     `Test.VinogradovKorobovRecursiveAProcessEnvelopeContract,
     `Test.VinogradovKorobovAProcessScheduleContract,
     `Test.VinogradovKorobovConstantAProcessScheduleContract,
+    `Test.VinogradovKorobovRecursiveReciprocalEnvelopeContract,
     `Test.VinogradovKorobovVanDerCorputRangeContract,
     `Test.VinogradovKorobovLogVanDerCorputContract
   ]
