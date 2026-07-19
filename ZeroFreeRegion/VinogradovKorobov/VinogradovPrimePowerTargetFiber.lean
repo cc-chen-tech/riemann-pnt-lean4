@@ -328,6 +328,114 @@ theorem card_vinogradovPrimePowerTargetFiberSet_le_factorial
       exact (card_vinogradovPrimePowerTargetFiberSet_succ_le
         p k n hkp target).trans ih
 
+private def vinogradovPrimePowerRightTarget
+    (k : ℕ) {Q : ℕ} (y : Fin k → Fin Q) : Fin k → ℤ :=
+  fun j ↦ vinogradovPowerSumInt
+    (fun i ↦ (((y i).val + 1 : ℕ) : ℤ)) j
+
+/-- All right tuples, each paired with the nonsingular left fixed-target
+fiber imposed by that right tuple. -/
+noncomputable def vinogradovPrimePowerFixedRightNonsingularSet
+    (p k n : ℕ) [Fact p.Prime] :
+    Finset (Σ _ : Fin k → Fin (p ^ (n + 1)),
+      Fin k → Fin (p ^ (n + 1))) :=
+  (Finset.univ : Finset (Fin k → Fin (p ^ (n + 1)))).sigma fun y ↦
+    vinogradovPrimePowerTargetFiberSet p k n
+      (vinogradovPrimePowerRightTarget k y)
+
+/-- Summing the `k!` bound over all right tuples gives the fixed-right
+nonsingular count. -/
+theorem card_vinogradovPrimePowerFixedRightNonsingularSet_le
+    (p k n : ℕ) [Fact p.Prime] (hkp : k < p) :
+    (vinogradovPrimePowerFixedRightNonsingularSet p k n).card ≤
+      (p ^ (n + 1)) ^ k * k.factorial := by
+  rw [vinogradovPrimePowerFixedRightNonsingularSet, Finset.card_sigma]
+  calc
+    (∑ y : Fin k → Fin (p ^ (n + 1)),
+        (vinogradovPrimePowerTargetFiberSet p k n
+          (vinogradovPrimePowerRightTarget k y)).card) ≤
+        ∑ _y : Fin k → Fin (p ^ (n + 1)), k.factorial := by
+      apply Finset.sum_le_sum
+      intro y _hy
+      exact card_vinogradovPrimePowerTargetFiberSet_le_factorial
+        p k n hkp (vinogradovPrimePowerRightTarget k y)
+    _ = (p ^ (n + 1)) ^ k * k.factorial := by
+      simp
+
+/-- Regroup a right tuple and one of its left fixed-target preimages into the
+ordinary ordered pair `(left, right)`. -/
+def vinogradovPrimePowerFixedRightAmbientEquiv
+    (p k n : ℕ) :
+    (Σ _ : Fin k → Fin (p ^ (n + 1)),
+      Fin k → Fin (p ^ (n + 1))) ≃
+      ((Fin k → Fin (p ^ (n + 1))) ×
+        (Fin k → Fin (p ^ (n + 1)))) :=
+  (Equiv.sigmaEquivProd
+      (Fin k → Fin (p ^ (n + 1)))
+      (Fin k → Fin (p ^ (n + 1)))).trans
+    (Equiv.prodComm _ _)
+
+/-- The fixed-right sigma set is exactly the nonsingular modular Vinogradov
+solution set with `s = k`. -/
+theorem mem_vinogradovPrimePowerFixedRightNonsingularSet_iff_image_mem
+    (p k n : ℕ) [Fact p.Prime]
+    (w : Σ _ : Fin k → Fin (p ^ (n + 1)),
+      Fin k → Fin (p ^ (n + 1))) :
+    w ∈ vinogradovPrimePowerFixedRightNonsingularSet p k n ↔
+      vinogradovPrimePowerFixedRightAmbientEquiv p k n w ∈
+        vinogradovPrimePowerNonsingularSolutionSet p k 0 n := by
+  rcases w with ⟨y, x⟩
+  rw [vinogradovPrimePowerFixedRightNonsingularSet, Finset.mem_sigma]
+  simp only [Finset.mem_univ, true_and]
+  rw [mem_vinogradovPrimePowerTargetFiberSet_iff]
+  change _ ↔ (x, y) ∈
+    vinogradovPrimePowerNonsingularSolutionSet p k 0 n
+  rw [mem_vinogradovPrimePowerNonsingularSolutionSet_iff]
+  constructor
+  · rintro ⟨hinjective, htarget⟩
+    refine ⟨hinjective, ?_⟩
+    apply (isVinogradovSolutionMod_iff_powerSumInt_modEq
+      (p ^ (n + 1)) k k (p ^ (n + 1)) x y).mpr
+    simpa [vinogradovPrimePowerRightTarget] using htarget
+  · rintro ⟨hinjective, hsolution⟩
+    refine ⟨hinjective, ?_⟩
+    have hpower := (isVinogradovSolutionMod_iff_powerSumInt_modEq
+      (p ^ (n + 1)) k k (p ^ (n + 1)) x y).mp hsolution
+    simpa [vinogradovPrimePowerRightTarget] using hpower
+
+/-- Mapping the fixed-right sigma representation gives the complete
+nonsingular solution set for `s = k`. -/
+theorem map_vinogradovPrimePowerFixedRightNonsingularSet_eq
+    (p k n : ℕ) [Fact p.Prime] :
+    (vinogradovPrimePowerFixedRightNonsingularSet p k n).map
+        (vinogradovPrimePowerFixedRightAmbientEquiv p k n).toEmbedding =
+      vinogradovPrimePowerNonsingularSolutionSet p k 0 n := by
+  ext z
+  constructor
+  · intro hz
+    rcases Finset.mem_map.mp hz with ⟨w, hw, rfl⟩
+    exact (mem_vinogradovPrimePowerFixedRightNonsingularSet_iff_image_mem
+      p k n w).mp hw
+  · intro hz
+    let e := vinogradovPrimePowerFixedRightAmbientEquiv p k n
+    let w := e.symm z
+    have hew : e w = z := e.apply_symm_apply z
+    apply Finset.mem_map.mpr
+    refine ⟨w, ?_, hew⟩
+    apply (mem_vinogradovPrimePowerFixedRightNonsingularSet_iff_image_mem
+      p k n w).mpr
+    simpa [e, w] using hz
+
+/-- Explicit nonsingular Vinogradov solution-count bound at the square
+`s = k` scale. -/
+theorem card_vinogradovPrimePowerNonsingularSolutionSet_le_fixed_right
+    (p k n : ℕ) [Fact p.Prime] (hkp : k < p) :
+    (vinogradovPrimePowerNonsingularSolutionSet p k 0 n).card ≤
+      (p ^ (n + 1)) ^ k * k.factorial := by
+  rw [← map_vinogradovPrimePowerFixedRightNonsingularSet_eq p k n,
+    Finset.card_map]
+  exact card_vinogradovPrimePowerFixedRightNonsingularSet_le p k n hkp
+
 end
 
 end ZeroFreeRegion.VinogradovKorobov
