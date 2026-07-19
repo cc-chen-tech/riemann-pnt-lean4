@@ -1,0 +1,4 @@
+import MathlibAux.DyadicLogHilbert
+
+#check MathlibAux.norm_logarithmicHilbertBilinearForm_le
+#print axioms MathlibAux.norm_logarithmicHilbertBilinearForm_le

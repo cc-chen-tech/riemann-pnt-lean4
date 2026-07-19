@@ -91,6 +91,7 @@ lean_lib RiemannPNT where
     `Test.SlidingIntervalCorrelationContract,
     `Test.DiscreteHilbertInequalityContract,
     `Test.DyadicLogHilbertContract,
+    `Test.LogarithmicHilbertBilinearContract,
     `Test.LogKernelRemainderContract,
     `Test.LogDirichletMeanSquareContract,
     `PrimeNumberTheorem.ExplicitFormulaTruncated,
