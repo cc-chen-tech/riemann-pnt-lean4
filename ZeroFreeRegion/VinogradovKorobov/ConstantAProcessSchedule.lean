@@ -34,6 +34,21 @@ theorem coarseRecursiveAProcessSquaredBound_const
       simp only [coarseRecursiveAProcessSquaredBound_succ,
         constantAProcessSquaredEnvelope_succ, ih]
 
+/-- Any supersolution of the constant-schedule recurrence bounds every finite
+iterate of that recurrence. -/
+theorem constantAProcessSquaredEnvelope_le_of_supersolution
+    (h N : ℕ) (C K : ℝ) (depth : ℕ)
+    (hCK : C ≤ K)
+    (hK : 2 * (N : ℝ) ^ 2 / h +
+      4 * (N : ℝ) * Real.sqrt K ≤ K) :
+    constantAProcessSquaredEnvelope h N C depth ≤ K := by
+  induction depth with
+  | zero => exact hCK
+  | succ depth ih =>
+      rw [constantAProcessSquaredEnvelope_succ]
+      apply le_trans _ hK
+      gcongr
+
 @[simp] theorem aProcessScheduleBudget_const (h depth : ℕ) :
     aProcessScheduleBudget (fun _ ↦ h) depth = depth * (h - 1) := by
   induction depth with
@@ -94,5 +109,23 @@ theorem norm_zetaPhase_sum_sq_le_constantAProcessSquaredEnvelope
   simpa only [coarseRecursiveAProcessSquaredBound_const] using
     norm_zetaPhase_sum_sq_le_constantScheduledCoarseRecursiveAProcess
       t m N depth h ht hm hh hbudget hmajor
+
+/-- Constant-schedule estimate with the recurrence hidden behind a chosen
+supersolution. -/
+theorem norm_zetaPhase_sum_sq_le_constantAProcess_supersolution
+    (t : ℝ) (m N depth h : ℕ) (K : ℝ)
+    (ht : 0 < t) (hm : 0 < m)
+    (hh : 1 ≤ h) (hbudget : depth * (h - 1) < N)
+    (hmajor : t * ((depth.factorial : ℝ) * (h : ℝ) ^ depth *
+      ((m : ℝ) ^ (depth + 1))⁻¹) ≤ Real.pi)
+    (hleaf : zetaAProcessUniformLeafSquaredBound t m N depth ≤ K)
+    (hK : 2 * (N : ℝ) ^ 2 / h +
+      4 * (N : ℝ) * Real.sqrt K ≤ K) :
+    ‖∑ n ∈ Finset.range N, phaseTerm (shiftedZetaPhase t m) n‖ ^ 2 ≤ K := by
+  exact (norm_zetaPhase_sum_sq_le_constantAProcessSquaredEnvelope
+    t m N depth h ht hm hh hbudget hmajor).trans
+      (constantAProcessSquaredEnvelope_le_of_supersolution
+        h N (zetaAProcessUniformLeafSquaredBound t m N depth)
+        K depth hleaf hK)
 
 end ZeroFreeRegion.VinogradovKorobov
