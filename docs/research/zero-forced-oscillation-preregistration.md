@@ -25,16 +25,16 @@ Primary sources:
 
 ## Timeboxed milestone outcome
 
-**Status: DONE_WITH_CONCERNS.**  The checked Lean surface proves the exact
-integral of one ordered off-diagonal pair and its explicit interval-independent
-norm bound.  The finite aggregate mean-square expansion and its pointwise
-consequence did not become kernel-clean within the timebox, so they are absent
-from the contract and axiom audit.  Gate F0 is therefore not passed.
+**Status: F0_PASSED; F1_OPEN.**  The checked Lean surface proves the exact
+integral and interval-independent norm bound for one ordered off-diagonal pair,
+the aggregate finite mean-square estimate, and an interior point attaining the
+resulting lower average.  A separate specialization retains natural
+multiplicity as an explicit coefficient factor.  The contract and axiom audit
+cover all three aggregate declarations in addition to the pairwise input.
 
-No assumption, custom axiom, route `Prop`, or conditional wrapper replaces the
-missing aggregate theorem.  The definitions retain arbitrary coefficients,
-distinct-frequency indexing, and explicit natural multiplicities for the next
-milestone, but no theorem about their aggregate mean square is claimed here.
+This passes only the finite-spectrum gate F0.  No theorem yet transfers a zeta
+zero package through the repository's explicit formula to `psi(x)-x`, so F1,
+the Revesz baseline recovery, and both novelty gates remain open.
 
 ## Exact classical-zeta candidate theorem
 
@@ -132,9 +132,8 @@ The aggregate error is an ordered-pair sum.  Therefore each unordered pair is
 represented twice, and the displayed constant `2` on each ordered pair is
 intentional.  No minimum frequency-gap replacement is part of F0.
 
-The timeboxed checked contract is intentionally smaller than this intended F0
-contract.  It contains only `intervalIntegral_offDiagonal_eq` and
-`norm_intervalIntegral_offDiagonal_le`.
+The checked contract now contains the pairwise formulas, the aggregate bound,
+the interior-point consequence, and the multiplicity-weighted specialization.
 
 ## Failure conditions
 
@@ -155,19 +154,12 @@ Report this milestone as failed or incomplete if any of the following occurs:
 
 ## Next exact gap
 
-The next analytic/formal lemma is the aggregate expansion below.  It is a gap,
-not a declaration or assumption:
-
-```text
-For a finite set S and pairwise distinct real frequencies omega on S,
-interchange the interval integral with the finite double expansion of
-|sum_{j in S} c_j exp(i omega_j t)|^2, split diagonal from S x S, and bound
-the real part of every ordered off-diagonal integral by
-2 |c_j| |c_k| / |omega_j-omega_k|.
-```
-
-It must not be added as an axiom or hypothesis of a theorem advertised as the
-mean-square result.
+The next analytic/formal result is F1: isolate a finite, multiplicity-aware
+zero package in the existing truncated explicit formula and prove that its
+complement is uniformly smaller than the F0 lower amplitude on a specified
+logarithmic interval.  This requires quantitative control of lower-real-part
+zeros, trivial-zero terms, and contour/truncation remainders.  F0 alone does
+not provide any of those estimates.
 
 ## Experiment schema
 
@@ -224,6 +216,7 @@ lake -Kjobs=1 build Test.ZeroForcedOscillationContract
 lake -Kjobs=1 build Test.ZeroForcedOscillationAxiomAudit
 ```
 
-The audit must print axioms for the exact pairwise integral and its norm bound.
+The audit must print axioms for the aggregate mean-square bound, its
+multiplicity specialization, and the interior-point consequence.
 A final source scan must find no
 `sorry`, `admit`, or `axiom` in the new production and test files.
