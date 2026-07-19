@@ -45,6 +45,15 @@ example (x : ℝ) :
       (carneiroLittmannDerivative x : ℂ) :=
   fourier_carneiroLittmannSpectralProfile x
 
+example (xi : ℝ) :
+    fourierKernel carneiroLittmannDerivative xi =
+      carneiroLittmannSpectralProfile (xi / (2 * Real.pi)) :=
+  fourierKernel_carneiroLittmannDerivative_eq_spectralProfile xi
+
+example {xi : ℝ} (hxi : 2 * Real.pi ≤ |xi|) :
+    fourierKernel carneiroLittmannDerivative xi = 0 :=
+  fourierKernel_carneiroLittmannDerivative_eq_zero_of_two_pi_le_abs hxi
+
 #print axioms continuous_carneiroLittmannSpectralProfile
 #print axioms hasCompactSupport_carneiroLittmannSpectralProfile
 #print axioms integrable_carneiroLittmannSpectralProfile
@@ -55,6 +64,8 @@ example (x : ℝ) :
 #print axioms integrable_deriv_carneiroLittmannSpectralPrimitive
 #print axioms carneiroLittmannSpectralPrimitiveDerivative_eq
 #print axioms fourier_carneiroLittmannSpectralProfile
+#print axioms fourierKernel_carneiroLittmannDerivative_eq_spectralProfile
+#print axioms fourierKernel_carneiroLittmannDerivative_eq_zero_of_two_pi_le_abs
 
 end DirichletPolynomial
 end PrimeNumberTheorem

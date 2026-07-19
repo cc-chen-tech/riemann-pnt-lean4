@@ -818,5 +818,58 @@ theorem fourier_carneiroLittmannSpectralProfile (x : ℝ) :
       push_cast
       ring
 
+/-- Fourier inversion identifies the project-normalized transform of the
+Carneiro--Littmann derivative with its compact spectral profile. -/
+theorem fourierKernel_carneiroLittmannDerivative_eq_spectralProfile (xi : ℝ) :
+    fourierKernel carneiroLittmannDerivative xi =
+      carneiroLittmannSpectralProfile (xi / (2 * Real.pi)) := by
+  have hFourierEq : 𝓕 carneiroLittmannSpectralProfile =
+      fun x : ℝ => (carneiroLittmannDerivative x : ℂ) := by
+    funext x
+    exact fourier_carneiroLittmannSpectralProfile x
+  have hFourierIntegrable : Integrable (𝓕 carneiroLittmannSpectralProfile) := by
+    rw [hFourierEq]
+    exact integrable_carneiroLittmannDerivative.ofReal
+  have hInv := integrable_carneiroLittmannSpectralProfile.fourierInv_fourier_eq
+    hFourierIntegrable
+    continuous_carneiroLittmannSpectralProfile.continuousAt
+    (v := xi / (2 * Real.pi))
+  rw [Real.fourierInv_eq', hFourierEq] at hInv
+  rw [← hInv]
+  unfold fourierKernel
+  apply integral_congr_ae
+  filter_upwards with t
+  simp only [smul_eq_mul]
+  have hPhase :
+      Complex.exp (((2 * Real.pi * inner ℝ t
+        (xi / (2 * Real.pi)) : ℝ) : ℂ) * Complex.I) =
+        Complex.exp (Complex.I * (xi * t)) := by
+    congr 1
+    rw [show inner ℝ t (xi / (2 * Real.pi)) =
+      t * (xi / (2 * Real.pi)) by
+        calc
+          inner ℝ t (xi / (2 * Real.pi)) =
+              inner ℝ (t • (1 : ℝ))
+                ((xi / (2 * Real.pi)) • (1 : ℝ)) := by simp
+          _ = t * (xi / (2 * Real.pi)) * inner ℝ (1 : ℝ) 1 := by
+            rw [real_inner_smul_left, real_inner_smul_right]
+            ring
+          _ = t * (xi / (2 * Real.pi)) := by norm_num]
+    push_cast
+    field_simp [Real.pi_ne_zero]
+  rw [hPhase]
+  ring
+
+/-- The project-normalized Fourier transform of the derivative vanishes
+outside the compact frequency band `|xi| < 2 * pi`. -/
+theorem fourierKernel_carneiroLittmannDerivative_eq_zero_of_two_pi_le_abs
+    {xi : ℝ} (hxi : 2 * Real.pi ≤ |xi|) :
+    fourierKernel carneiroLittmannDerivative xi = 0 := by
+  rw [fourierKernel_carneiroLittmannDerivative_eq_spectralProfile]
+  apply carneiroLittmannSpectralProfile_eq_zero_of_one_le_abs
+  rw [abs_div, abs_of_pos (mul_pos (by norm_num) Real.pi_pos)]
+  exact (le_div_iff₀ (mul_pos (by norm_num) Real.pi_pos)).2 (by
+    simpa using hxi)
+
 end DirichletPolynomial
 end PrimeNumberTheorem
