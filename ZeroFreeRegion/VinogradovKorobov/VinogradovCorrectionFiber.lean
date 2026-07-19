@@ -254,6 +254,28 @@ theorem card_vinogradovPrimePowerCorrectionSolutionSet_le_pow_pred
         (one_le_finrank_vinogradovPairCorrectionLinearMap_range
           p d s hd hs _ _) _
 
+/-- In the square nonsingular case the full Jacobian rank recovers the sharp
+`p^d` one-step correction bound. -/
+theorem card_vinogradovPrimePowerCorrectionSolutionSet_le_pow_of_left_injective
+    (p d n : ℕ) [Fact p.Prime] (hdp : d < p)
+    (xy : vinogradovPrimePowerBasePair p 0 d n)
+    (hx : Function.Injective fun i ↦
+      (vinogradovPrimePowerBaseLeftInt xy i : ZMod p)) :
+    (vinogradovPrimePowerCorrectionSolutionSet p d d n xy).card ≤ p ^ d := by
+  calc
+    (vinogradovPrimePowerCorrectionSolutionSet p d d n xy).card ≤
+      p ^ (2 * d - Module.finrank (ZMod p)
+        (vinogradovPairCorrectionLinearMap p d d
+          (fun i ↦ (vinogradovPrimePowerBaseLeftInt xy i : ZMod p))
+          (fun i ↦ (vinogradovPrimePowerBaseRightInt xy i : ZMod p))).range) :=
+      card_vinogradovPrimePowerCorrectionSolutionSet_le_pow_rankDefect
+        p d d n xy
+    _ = p ^ d := by
+      rw [finrank_vinogradovPairCorrectionLinearMap_range_eq_of_left_injective
+        p d hdp _ _ hx]
+      congr 1
+      omega
+
 /-- The exact fixed-collision lift recurrence is bounded by the sum of the
 Jacobian rank-defect factors over its base solutions. -/
 theorem card_vinogradovPrimePowerFixedCollisionSolutionLiftSet_le_rankDefects

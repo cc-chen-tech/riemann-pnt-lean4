@@ -1,4 +1,4 @@
-import ZeroFreeRegion.VinogradovKorobov.VinogradovTaylor
+import ZeroFreeRegion.VinogradovKorobov.VinogradovLinearLift
 import Mathlib.FieldTheory.Finiteness
 import Mathlib.GroupTheory.Index
 import Mathlib.LinearAlgebra.Matrix.ToLin
@@ -106,6 +106,29 @@ theorem one_le_finrank_vinogradovPairCorrectionLinearMap_range
       (vinogradovPairCorrectionLinearMap p d s x y).range := ⟨uv, rfl⟩
   rw [hrange, Submodule.mem_bot] at hmem
   exact hne hmem
+
+/-- For a square system, an injective left residue tuple makes the pair
+correction Jacobian surjective, hence of full rank. -/
+theorem finrank_vinogradovPairCorrectionLinearMap_range_eq_of_left_injective
+    (p d : ℕ) [Fact p.Prime] (hdp : d < p)
+    (x y : Fin d → ZMod p) (hx : Function.Injective x) :
+    Module.finrank (ZMod p)
+      (vinogradovPairCorrectionLinearMap p d d x y).range = d := by
+  have hsurjective : Function.Surjective
+      (vinogradovPairCorrectionLinearMap p d d x y) := by
+    intro target
+    obtain ⟨u, hu, _hunique⟩ :=
+      existsUnique_vinogradovPowerSumJacobian_zmod_mulVec_eq
+        p d hdp x hx target
+    refine ⟨(u, 0), ?_⟩
+    ext j
+    have huj := congrFun hu j
+    simpa [vinogradovPairCorrectionLinearMap_apply,
+      vinogradovRectangularPowerSumJacobian,
+      vinogradovPowerSumJacobian, Matrix.mulVec, dotProduct] using huj
+  rw [LinearMap.range_eq_top.mpr hsurjective, finrank_top,
+    Module.finrank_pi]
+  simp
 
 /-- A finite fiber of an additive linear map has the same cardinality as its
 zero fiber whenever it is nonempty. -/

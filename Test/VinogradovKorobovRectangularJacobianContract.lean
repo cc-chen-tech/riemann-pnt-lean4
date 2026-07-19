@@ -9,6 +9,7 @@ open ZeroFreeRegion.VinogradovKorobov
 #check vinogradovPairCorrectionLinearMap
 #check vinogradovPairCorrectionLinearMap_apply
 #check one_le_finrank_vinogradovPairCorrectionLinearMap_range
+#check finrank_vinogradovPairCorrectionLinearMap_range_eq_of_left_injective
 #check card_linearMap_fiber_eq_zero_fiber
 #check card_linearMap_zero_fiber_eq_card_ker
 #check vinogradovPairCorrectionFiberSet
