@@ -15,7 +15,7 @@
 - Do not introduce a second multiplicity definition; use `analyticOrderNatAt`.
 - Do not add a new residue theorem, contour definition, or unproved `Prop` target.
 - Changed proof sources must contain no `sorry`, `admit`, or `axiom`.
-- Focused builds run serially with `lake -j 1 build ...`.
+- Focused builds run serially with `lake -Kjobs=1 build ...`.
 - Audited declarations may depend only on `propext`, `Classical.choice`, and `Quot.sound`.
 - This plan does not claim or prove the final Riemann-von Mangoldt asymptotic or the zeta boundary estimate `O(log T)`.
 
@@ -47,13 +47,13 @@ example (data : CompletedLFunctionContourData) {s : ℂ}
     (hleft : data.leftBoundary < s.re)
     (hright : s.re < data.rightBoundary) :
     data.completed s = 0 ↔ data.base s = 0 :=
-  data.completed_eq_zero_iff_base_eq_zero hleft hright
+  data.completed_eq_zero_iff_base_eq_zero (s := s) hleft hright
 
 example (data : CompletedLFunctionContourData) {s : ℂ}
     (hleft : data.leftBoundary < s.re)
     (hright : s.re < data.rightBoundary) :
     analyticOrderNatAt data.completed s = analyticOrderNatAt data.base s :=
-  data.analyticOrderNatAt_completed_eq_base hleft hright
+  data.analyticOrderNatAt_completed_eq_base (s := s) hleft hright
 
 end PrimeNumberTheorem.LFunction
 ```
@@ -67,7 +67,7 @@ Riemann-von Mangoldt roots in `lakefile.lean`.
 Run:
 
 ```bash
-lake -j 1 build Test.CompletedLFunctionContourContract
+lake -Kjobs=1 build Test.CompletedLFunctionContourContract
 ```
 
 Expected: failure because `PrimeNumberTheorem/LFunction/CompletedContourData.lean` does not exist.
@@ -92,10 +92,10 @@ structure CompletedLFunctionContourData where
   analytic_completed : AnalyticOnNhd ℂ completed Set.univ
   completed_eq_zero_iff_base_eq_zero :
     ∀ {s : ℂ}, leftBoundary < s.re → s.re < rightBoundary →
-      completed s = 0 ↔ base s = 0
+      (completed s = 0 ↔ base s = 0)
   analyticOrderAt_completed_eq_base :
     ∀ {s : ℂ}, leftBoundary < s.re → s.re < rightBoundary →
-      analyticOrderAt completed s = analyticOrderAt base s
+      (analyticOrderAt completed s = analyticOrderAt base s)
 
 namespace CompletedLFunctionContourData
 
@@ -116,8 +116,8 @@ end PrimeNumberTheorem.LFunction
 Run:
 
 ```bash
-lake -j 1 build PrimeNumberTheorem.LFunction.CompletedContourData
-lake -j 1 build Test.CompletedLFunctionContourContract
+lake -Kjobs=1 build PrimeNumberTheorem.LFunction.CompletedContourData
+lake -Kjobs=1 build Test.CompletedLFunctionContourContract
 ```
 
 Expected: both targets build successfully.
@@ -182,7 +182,7 @@ Register the implementation, contract, and audit modules in `lakefile.lean`.
 Run:
 
 ```bash
-lake -j 1 build Test.LogDerivArgumentPrincipleContract
+lake -Kjobs=1 build Test.LogDerivArgumentPrincipleContract
 ```
 
 Expected: failure because `MathlibAux/LogDerivArgumentPrinciple.lean` does not exist.
@@ -234,9 +234,9 @@ module without weakening any hypotheses.
 Run:
 
 ```bash
-lake -j 1 build MathlibAux.LogDerivArgumentPrinciple
-lake -j 1 build Test.LogDerivArgumentPrincipleContract
-lake -j 1 build Test.LogDerivArgumentPrincipleAxiomAudit
+lake -Kjobs=1 build MathlibAux.LogDerivArgumentPrinciple
+lake -Kjobs=1 build Test.LogDerivArgumentPrincipleContract
+lake -Kjobs=1 build Test.LogDerivArgumentPrincipleAxiomAudit
 ```
 
 Expected: all targets build; audit output lists only `propext`, `Classical.choice`, and `Quot.sound`.
@@ -277,7 +277,7 @@ example :
 Run:
 
 ```bash
-lake -j 1 build Test.RiemannVonMangoldtContract
+lake -Kjobs=1 build Test.RiemannVonMangoldtContract
 ```
 
 Expected: failure with unknown identifier `completedZetaContourData`.
@@ -330,9 +330,9 @@ the zeta result genuinely consumes both new abstractions.
 Run:
 
 ```bash
-lake -j 1 build PrimeNumberTheorem.RiemannVonMangoldt
-lake -j 1 build Test.RiemannVonMangoldtContract
-lake -j 1 build Test.RiemannVonMangoldtAxiomAudit
+lake -Kjobs=1 build PrimeNumberTheorem.RiemannVonMangoldt
+lake -Kjobs=1 build Test.RiemannVonMangoldtContract
+lake -Kjobs=1 build Test.RiemannVonMangoldtAxiomAudit
 ```
 
 Expected: public theorem contracts remain unchanged and all targets build.
@@ -356,14 +356,14 @@ git commit -m "refactor(zeta): use generic completed contour core"
 - [ ] **Step 1: Run every required focused build serially**
 
 ```bash
-lake -j 1 build PrimeNumberTheorem.LFunction.CompletedContourData
-lake -j 1 build MathlibAux.LogDerivArgumentPrinciple
-lake -j 1 build Test.CompletedLFunctionContourContract
-lake -j 1 build Test.LogDerivArgumentPrincipleContract
-lake -j 1 build Test.LogDerivArgumentPrincipleAxiomAudit
-lake -j 1 build PrimeNumberTheorem.RiemannVonMangoldt
-lake -j 1 build Test.RiemannVonMangoldtContract
-lake -j 1 build Test.RiemannVonMangoldtAxiomAudit
+lake -Kjobs=1 build PrimeNumberTheorem.LFunction.CompletedContourData
+lake -Kjobs=1 build MathlibAux.LogDerivArgumentPrinciple
+lake -Kjobs=1 build Test.CompletedLFunctionContourContract
+lake -Kjobs=1 build Test.LogDerivArgumentPrincipleContract
+lake -Kjobs=1 build Test.LogDerivArgumentPrincipleAxiomAudit
+lake -Kjobs=1 build PrimeNumberTheorem.RiemannVonMangoldt
+lake -Kjobs=1 build Test.RiemannVonMangoldtContract
+lake -Kjobs=1 build Test.RiemannVonMangoldtAxiomAudit
 ```
 
 Expected: all eight commands exit successfully.
@@ -407,4 +407,3 @@ git commit -m "test(contour): tighten abstraction axiom audit"
 ```
 
 If no correction was required, do not create an empty commit.
-
