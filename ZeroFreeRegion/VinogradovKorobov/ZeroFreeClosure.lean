@@ -4,10 +4,73 @@ open Complex
 
 namespace ZeroFreeRegion.VinogradovKorobov
 
+/-- The standard Vinogradov--Korobov logarithmic scale. -/
+noncomputable def vinogradovKorobovScale (t : ℝ) : ℝ :=
+  (Real.log t) ^ (2 / 3 : ℝ) *
+    (Real.log (Real.log t)) ^ (1 / 3 : ℝ)
+
 /-- The width appearing in the Vinogradov--Korobov zero-free region. -/
 noncomputable def vinogradovKorobovWidth (c t : ℝ) : ℝ :=
   c / (Real.log t) ^ (2 / 3 : ℝ) *
     (Real.log (Real.log t)) ^ (-1 / 3 : ℝ)
+
+theorem vinogradovKorobovScale_pos {t : ℝ} (ht : 3 ≤ t) :
+    0 < vinogradovKorobovScale t := by
+  have hlogpos : 0 < Real.log t :=
+    Real.log_pos (by linarith)
+  have hloglogpos : 0 < Real.log (Real.log t) := by
+    have hlogone : 1 < Real.log t := by
+      have ht0 : 0 ≤ t := by linarith
+      simpa [abs_of_nonneg ht0] using
+        (ZeroFreeRegion.log_abs_gt_one_of_three_le
+          (ht.trans (le_abs_self t)))
+    exact Real.log_pos hlogone
+  unfold vinogradovKorobovScale
+  positivity
+
+/-- On its native range, the repository width is exactly `c / S(t)`. -/
+theorem vinogradovKorobovWidth_eq_div_scale
+    {c t : ℝ} (ht : 3 ≤ t) :
+    vinogradovKorobovWidth c t = c / vinogradovKorobovScale t := by
+  have hlogpos : 0 < Real.log t := Real.log_pos (by linarith)
+  have hloglogpos : 0 < Real.log (Real.log t) := by
+    have hlogone : 1 < Real.log t := by
+      have ht0 : 0 ≤ t := by linarith
+      simpa [abs_of_nonneg ht0] using
+        (ZeroFreeRegion.log_abs_gt_one_of_three_le
+          (ht.trans (le_abs_self t)))
+    exact Real.log_pos hlogone
+  have hneg : (-1 / 3 : ℝ) = -(1 / 3 : ℝ) := by ring
+  unfold vinogradovKorobovWidth vinogradovKorobovScale
+  rw [hneg, Real.rpow_neg hloglogpos.le]
+  field_simp [ne_of_gt (Real.rpow_pos_of_pos hlogpos (2 / 3 : ℝ)),
+    ne_of_gt (Real.rpow_pos_of_pos hloglogpos (1 / 3 : ℝ))]
+
+theorem vinogradovKorobovScale_mono
+    {x y : ℝ} (hx : 3 ≤ x) (hxy : x ≤ y) :
+    vinogradovKorobovScale x ≤ vinogradovKorobovScale y := by
+  have hlogxpos : 0 < Real.log x := Real.log_pos (by linarith)
+  have hlogxy : Real.log x ≤ Real.log y :=
+    Real.log_le_log (by linarith) hxy
+  have hloglogxpos : 0 < Real.log (Real.log x) := by
+    have hlogxone : 1 < Real.log x := by
+      have hx0 : 0 ≤ x := by linarith
+      simpa [abs_of_nonneg hx0] using
+        (ZeroFreeRegion.log_abs_gt_one_of_three_le
+          (hx.trans (le_abs_self x)))
+    exact Real.log_pos hlogxone
+  have hloglogxy : Real.log (Real.log x) ≤ Real.log (Real.log y) :=
+    Real.log_le_log hlogxpos hlogxy
+  have hfirst : (Real.log x) ^ (2 / 3 : ℝ) ≤
+      (Real.log y) ^ (2 / 3 : ℝ) :=
+    Real.rpow_le_rpow hlogxpos.le hlogxy (by norm_num)
+  have hsecond : (Real.log (Real.log x)) ^ (1 / 3 : ℝ) ≤
+      (Real.log (Real.log y)) ^ (1 / 3 : ℝ) :=
+    Real.rpow_le_rpow hloglogxpos.le hloglogxy (by norm_num)
+  unfold vinogradovKorobovScale
+  exact mul_le_mul hfirst hsecond
+    (Real.rpow_nonneg hloglogxpos.le _)
+    (Real.rpow_nonneg (hlogxpos.le.trans hlogxy) _)
 
 /-- The repository's VK target restated using the named width function. -/
 theorem vinogradov_korobov_zero_free_region_iff_width :

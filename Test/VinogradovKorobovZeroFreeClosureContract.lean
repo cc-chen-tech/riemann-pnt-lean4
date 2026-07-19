@@ -6,6 +6,19 @@ namespace ZeroFreeRegion.VinogradovKorobov
 
 noncomputable example (c t : ℝ) : ℝ := vinogradovKorobovWidth c t
 
+noncomputable example (t : ℝ) : ℝ := vinogradovKorobovScale t
+
+example {t : ℝ} (ht : 3 ≤ t) : 0 < vinogradovKorobovScale t :=
+  vinogradovKorobovScale_pos ht
+
+example {c t : ℝ} (ht : 3 ≤ t) :
+    vinogradovKorobovWidth c t = c / vinogradovKorobovScale t :=
+  vinogradovKorobovWidth_eq_div_scale ht
+
+example {x y : ℝ} (hx : 3 ≤ x) (hxy : x ≤ y) :
+    vinogradovKorobovScale x ≤ vinogradovKorobovScale y :=
+  vinogradovKorobovScale_mono hx hxy
+
 example :
     ZeroFreeRegion.vinogradov_korobov_zero_free_region ↔
       ∃ c > 0, ∀ s : ℂ, |s.im| ≥ 3 →
