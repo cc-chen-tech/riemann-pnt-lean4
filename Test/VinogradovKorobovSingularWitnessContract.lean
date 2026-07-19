@@ -9,3 +9,7 @@ open ZeroFreeRegion.VinogradovKorobov
 #check vinogradovMultiBlockCollisionWitnessSet
 #check mem_vinogradovMultiBlockCollisionWitnessSet_iff
 #check vinogradovMultiBlockCollisionWitnessSet_nonempty_iff
+#check VinogradovCollisionReducedIndex
+#check vinogradovCollisionFiberEquiv
+#check vinogradovCollisionFiberEquiv_apply
+#check vinogradovCollisionFiberEquiv_symm_apply

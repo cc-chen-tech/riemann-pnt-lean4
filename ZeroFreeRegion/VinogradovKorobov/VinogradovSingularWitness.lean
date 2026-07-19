@@ -91,6 +91,50 @@ theorem vinogradovMultiBlockCollisionWitnessSet_nonempty_iff
     exact (mem_vinogradovCollisionWitnessSet_iff _ (w q)).mp
       (Classical.choose_spec (hwitness q))
 
+/-- The coordinate type remaining after deleting the larger coordinate in a
+collision witness. -/
+abbrev VinogradovCollisionReducedIndex {k : ℕ}
+    (w : VinogradovCollisionWitness k) :=
+  {i : Fin k // i ≠ w.1.2}
+
+/-- A tuple satisfying one fixed collision is equivalent to a tuple indexed
+by all coordinates except the duplicated larger coordinate. -/
+def vinogradovCollisionFiberEquiv
+    {α : Type*} {k : ℕ} (w : VinogradovCollisionWitness k) :
+    {x : Fin k → α // x w.1.1 = x w.1.2} ≃
+      (VinogradovCollisionReducedIndex w → α) where
+  toFun x i := x.1 i.1
+  invFun f :=
+    ⟨fun i ↦ if h : i = w.1.2 then
+        f ⟨w.1.1, ne_of_lt w.2⟩
+      else f ⟨i, h⟩, by
+      simp [ne_of_lt w.2]⟩
+  left_inv x := by
+    apply Subtype.ext
+    funext i
+    by_cases hi : i = w.1.2
+    · subst i
+      simp [x.2]
+    · simp [hi]
+  right_inv f := by
+    funext i
+    simp [i.2]
+
+theorem vinogradovCollisionFiberEquiv_apply
+    {α : Type*} {k : ℕ} (w : VinogradovCollisionWitness k)
+    (x : {x : Fin k → α // x w.1.1 = x w.1.2})
+    (i : VinogradovCollisionReducedIndex w) :
+    vinogradovCollisionFiberEquiv w x i = x.1 i.1 :=
+  rfl
+
+theorem vinogradovCollisionFiberEquiv_symm_apply
+    {α : Type*} {k : ℕ} (w : VinogradovCollisionWitness k)
+    (f : VinogradovCollisionReducedIndex w → α) (i : Fin k) :
+    ((vinogradovCollisionFiberEquiv w).symm f).1 i =
+      if h : i = w.1.2 then f ⟨w.1.1, ne_of_lt w.2⟩
+      else f ⟨i, h⟩ :=
+  rfl
+
 end
 
 end ZeroFreeRegion.VinogradovKorobov
