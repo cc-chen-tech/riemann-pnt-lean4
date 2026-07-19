@@ -11,6 +11,11 @@ two ordinary divisor-counting functions. -/
 def fourfoldDivisorCount (n : ℕ) : ℕ :=
   (ArithmeticFunction.sigma 0 * ArithmeticFunction.sigma 0) n
 
+/-- The threefold divisor function used in the summatory recurrence for the
+fourfold divisor function. -/
+def tripleDivisorCount (n : ℕ) : ℕ :=
+  (ArithmeticFunction.sigma 0 * ArithmeticFunction.zeta) n
+
 /-- Divisor pairs and divisors have the same cardinality. -/
 theorem card_divisorsAntidiagonal_eq_card_divisors (n : ℕ) :
     n.divisorsAntidiagonal.card = n.divisors.card := by
@@ -110,6 +115,37 @@ theorem weightedDivisorSquareSum_le_fourfoldDivisorCount
       exact mul_le_mul_of_nonneg_right hcard (sq_nonneg _)
     _ = ((n : ℝ) + 1) * (fourfoldDivisorCount n : ℝ) *
         ((n : ℝ) ^ (-sigma)) ^ 2 := by ring
+
+/-- The prefix sum of the threefold divisor function is the divisor-count
+sum weighted by integer quotients. -/
+theorem sum_Ioc_tripleDivisorCount_eq_sum_div (Y : ℕ) :
+    ∑ n ∈ Finset.Ioc 0 Y, tripleDivisorCount n =
+      ∑ n ∈ Finset.Ioc 0 Y,
+        ArithmeticFunction.sigma 0 n * (Y / n) := by
+  unfold tripleDivisorCount
+  exact ArithmeticFunction.sum_Ioc_mul_zeta_eq_sum
+    (ArithmeticFunction.sigma 0) Y
+
+/-- The prefix sum of the fourfold divisor function is the threefold-divisor
+sum weighted by integer quotients. -/
+theorem sum_Ioc_fourfoldDivisorCount_eq_sum_div (Y : ℕ) :
+    ∑ n ∈ Finset.Ioc 0 Y, fourfoldDivisorCount n =
+      ∑ n ∈ Finset.Ioc 0 Y, tripleDivisorCount n * (Y / n) := by
+  have hsigma :
+      ArithmeticFunction.sigma 0 =
+        ArithmeticFunction.zeta * ArithmeticFunction.zeta := by
+    rw [← ArithmeticFunction.zeta_mul_pow_eq_sigma,
+      ArithmeticFunction.pow_zero_eq_zeta]
+  have hfunctions :
+      ArithmeticFunction.sigma 0 * ArithmeticFunction.sigma 0 =
+        (ArithmeticFunction.sigma 0 * ArithmeticFunction.zeta) *
+          ArithmeticFunction.zeta := by
+    rw [hsigma]
+    simp only [mul_assoc]
+  unfold fourfoldDivisorCount tripleDivisorCount
+  rw [hfunctions]
+  exact ArithmeticFunction.sum_Ioc_mul_zeta_eq_sum
+    (ArithmeticFunction.sigma 0 * ArithmeticFunction.zeta) Y
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem

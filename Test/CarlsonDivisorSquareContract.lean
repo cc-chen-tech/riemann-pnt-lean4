@@ -11,6 +11,11 @@ example (n : ℕ) :
   rfl
 
 example (n : ℕ) :
+    tripleDivisorCount n =
+      (ArithmeticFunction.sigma 0 * ArithmeticFunction.zeta) n :=
+  rfl
+
+example (n : ℕ) :
     n.divisorsAntidiagonal.card = n.divisors.card :=
   card_divisorsAntidiagonal_eq_card_divisors n
 
@@ -31,10 +36,23 @@ example {L U : ℕ} (hL : 0 < L) (sigma : ℝ) :
           ((n : ℝ) ^ (-sigma)) ^ 2 :=
   weightedDivisorSquareSum_le_fourfoldDivisorCount hL sigma
 
+example (Y : ℕ) :
+    ∑ n ∈ Finset.Ioc 0 Y, tripleDivisorCount n =
+      ∑ n ∈ Finset.Ioc 0 Y,
+        ArithmeticFunction.sigma 0 n * (Y / n) :=
+  sum_Ioc_tripleDivisorCount_eq_sum_div Y
+
+example (Y : ℕ) :
+    ∑ n ∈ Finset.Ioc 0 Y, fourfoldDivisorCount n =
+      ∑ n ∈ Finset.Ioc 0 Y, tripleDivisorCount n * (Y / n) :=
+  sum_Ioc_fourfoldDivisorCount_eq_sum_div Y
+
 #print axioms card_divisorsAntidiagonal_eq_card_divisors
 #print axioms card_divisors_sq_le_fourfoldDivisorCount_prime_pow
 #print axioms card_divisorsAntidiagonal_sq_le_fourfoldDivisorCount
 #print axioms weightedDivisorSquareSum_le_fourfoldDivisorCount
+#print axioms sum_Ioc_tripleDivisorCount_eq_sum_div
+#print axioms sum_Ioc_fourfoldDivisorCount_eq_sum_div
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem
