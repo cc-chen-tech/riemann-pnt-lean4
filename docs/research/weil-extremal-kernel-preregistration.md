@@ -25,35 +25,57 @@ that row budget preserves positive semidefiniteness, and preserves positive
 definiteness when the budget inequality is strict.
 
 This closes a generic finite interval-transfer step only. No entry of
-`Q_infinity(100, 200)` or `Q_infinity(100, 250)` has been assembled or enclosed,
+`Q_full(100, 200)` or `Q_full(100, 250)` has been assembled or enclosed,
 and no Guinand--Weil prime, pole, or Archimedean block has been connected to the
 checker. Gates A and B therefore remain open.
 
+## Third executable milestone outcome
+
+The notation below has been corrected against the released source of
+arXiv:2607.02828v1. Its Fourier cutoff `N` indexes the full basis by
+`-N, ..., N`, so the full Galerkin matrix has dimension `2*N+1`. The even-sector
+coefficient vector has dimension `N+1`; it is obtained only after an explicit
+embedding/contraction and is not the same matrix.
+
+The repository now fixes these two dimensions independently and checks the
+released `(c,N)=(100,200)` provenance metadata against full dimension `401`,
+positive inertia `401`, and precision `9000` bits. This is a dimensional and
+inertia-metadata calibration only. It does not assemble a matrix, replay Arb,
+or verify the released interval `LDL^T` calculation. The upstream provenance
+file has SHA-256
+`ccb6327eb2f5fc2d81fae923b2db272d4371b7bcbd0ef995562fb99e04538e98`;
+the repository copy adds a terminal newline and has SHA-256
+`5d14ea5bc0874c4edf15b586075337c1852b8e592bd7c4a7867ea14a995325a7`.
+
 ## Registered Mathematical Target
 
-Use the even-sector, cutoff-free Connes--van Suijlekom / Connes--Consani--
-Moscovici Galerkin matrix in the normalization of Groskin's finite
-Guinand--Weil dictionary. Write it as
+Use the cutoff-free Connes--van Suijlekom / Connes--Consani--Moscovici
+Galerkin matrix in the normalization of Groskin's finite Guinand--Weil
+dictionary. Distinguish the full matrix and its even-sector contraction:
 
 ```text
-Q_infinity(c, N) in Sym_(N+1)(R).
+Q_full(c, N) in Sym_(2*N+1)(R),       indices -N, ..., N,
+E_N : R^(N+1) -> R^(2*N+1),          exact even embedding,
+Q_even(c, N) = E_N^T Q_full(c,N) E_N in Sym_(N+1)(R).
 ```
 
 The primary candidate theorem is the finite statement
 
 ```text
-Q_infinity(100, 250) is positive semidefinite.
+Q_full(100, 250) is positive semidefinite.
 ```
 
 The matrix must be assembled from the closed-form prime, pole, and cutoff-free
-archimedean blocks in the cited normalization. The even embedding, Fourier
-normalization, index order `0, ..., N`, and sign convention must be recorded in
-the experiment artifact. A result for a congruent matrix is acceptable only if
-the change-of-basis matrix and its exact invertibility certificate are shipped.
+archimedean blocks in the cited normalization. The Fourier normalization, full
+index order `-N, ..., N`, and sign convention must be recorded in the experiment
+artifact. If an even-sector matrix is also used, the exact embedding `E_N` and
+the contraction identity must be shipped. A result for a congruent full matrix
+is acceptable only if the change-of-basis matrix and its exact invertibility
+certificate are shipped.
 
 This target is deliberately finite. Through the finite dictionary it concerns
-an explicit 251-dimensional family of admissible band-limited test functions;
-it does not establish positivity on all admissible test functions.
+an explicit full `501`-coordinate Galerkin problem. Its even sector has `251`
+coordinates. It does not establish positivity on all admissible test functions.
 
 ### Calibration Target
 
@@ -68,16 +90,17 @@ Reproduction is a required calibration gate and is not a strict improvement.
 
 ### Strict Improvement Rule
 
-Only a rigorous positive-semidefinite certificate for the registered
-`(100, 250)` cutoff-free matrix counts as a strict improvement over the
-registered `(100, 200)` finite-band baseline. Any of the following is useful
-infrastructure but not a strict mathematical improvement:
+Only a rigorous positive-semidefinite certificate for the registered full
+`501 x 501` `(100, 250)` cutoff-free matrix counts as a strict improvement over
+the registered full `401 x 401` `(100, 200)` finite-band baseline. Any of the
+following is useful infrastructure but not a strict mathematical improvement:
 
 - certifying a rounded rational surrogate without an analytic enclosure;
 - reproducing `N = 200`;
 - reporting positive floating-point eigenvalues;
 - certifying a principal submatrix of the `N = 250` matrix;
-- certifying only a pole-neutral or moment-neutral subspace;
+- certifying only the `251 x 251` even contraction or a pole-neutral or
+  moment-neutral subspace;
 - certifying a finite-`T` archimedean truncation without the tail-order bridge.
 
 ## Literature Baseline
@@ -116,7 +139,7 @@ It is whether the published cutoff-free rigorous band can be extended from
 A positive result must contain every link below.
 
 1. **Assembly identity.** Two independent implementations produce enclosing
-   intervals for every entry of the same `Q_infinity(100, N)`, and their
+   intervals for every entry of the same `Q_full(100, N)`, and their
    intervals overlap entrywise.
 2. **Symmetry.** The enclosure is exactly symmetrized by intersection, not by
    silently copying one triangle over the other.
@@ -141,7 +164,7 @@ and 5 for the registered Weil matrix remain absent.
 
 ### Gate A: Baseline Reproduction
 
-At `(c, N) = (100, 200)`:
+At `(c, N) = (100, 200)`, for the full `401 x 401` matrix:
 
 - both assembly routes overlap entrywise;
 - the exact checker accepts the emitted rational LDL certificate;
@@ -155,9 +178,10 @@ no mathematical conclusion is registered.
 
 ### Gate B: Primary Success
 
-At `(c, N) = (100, 250)`, all six certificate-chain links pass and the final
-analytic lower margin is nonnegative. The result must survive reassembly at a
-precision at least 512 bits higher than the first successful run.
+At `(c, N) = (100, 250)`, for the full `501 x 501` matrix, all six
+certificate-chain links pass and the final analytic lower margin is
+nonnegative. The result must survive reassembly at a precision at least 512
+bits higher than the first successful run.
 
 Passing Gate B permits the narrow claim that the registered finite matrix is
 positive semidefinite. It does not permit an RH claim.
@@ -179,7 +203,7 @@ A negative result requires an exact nonzero rational vector `v` and a rigorous
 upper bound
 
 ```text
-v^T Q_infinity(100, N) v < 0.
+v^T Q_full(100, N) v < 0.
 ```
 
 For a finite-`T` assembly, it instead requires the finite value to lie strictly
@@ -239,7 +263,8 @@ git_commit, dirty, command, utc_timestamp
 paper_versions and source URLs
 source file SHA-256 values
 assembly route and software versions
-c, N, sector, basis order, normalization, cutoff mode
+c, N, full_dimension=2*N+1, even_sector_dimension=N+1, sector, basis order,
+normalization, cutoff mode
 working precision in bits
 entry interval matrix or a content-addressed path to it
 rational reduction rule and transfer budget
@@ -282,7 +307,7 @@ the repository's Python 3.9 interpreter, the same command reported `10 passed`.
 
 ## Known Mathematical Gap
 
-The branch does not assemble `Q_infinity(c, N)`, prove interval containment for
+The branch does not assemble `Q_full(c, N)`, prove interval containment for
 its transcendental entries, or formalize the finite Guinand--Weil dictionary.
 The generic interval-to-center perturbation theorem is now present, but no
 analytic matrix enclosure instantiates it. Until those missing links are

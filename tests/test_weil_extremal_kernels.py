@@ -3,10 +3,20 @@ import json
 import subprocess
 import sys
 from fractions import Fraction
+from pathlib import Path
 
 import pytest
 
 from experiments.rh import weil_extremal_kernels as weil
+
+
+REFERENCE_PROVENANCE = (
+    Path(__file__).parents[1]
+    / "experiments"
+    / "rh"
+    / "reference"
+    / "groskin_2607_02828_v1_c100_N200_provenance.json"
+)
 
 
 def refresh_payload_digest(record):
@@ -21,6 +31,74 @@ def refresh_payload_digest(record):
     record["payload_sha256"] = hashlib.sha256(
         canonical_payload.encode("utf-8")
     ).hexdigest()
+
+
+def test_finite_dictionary_dimensions_distinguish_full_and_even_sector():
+    assert weil.finite_dictionary_dimensions(200) == weil.FiniteDictionaryDimensions(
+        fourier_cutoff=200,
+        full_dimension=401,
+        even_sector_dimension=201,
+    )
+    assert weil.finite_dictionary_dimensions(250) == weil.FiniteDictionaryDimensions(
+        fourier_cutoff=250,
+        full_dimension=501,
+        even_sector_dimension=251,
+    )
+    with pytest.raises(ValueError, match="nonnegative integer"):
+        weil.finite_dictionary_dimensions(-1)
+
+
+def test_released_groskin_provenance_is_dimensionally_self_consistent():
+    source = REFERENCE_PROVENANCE.read_bytes()
+    record = json.loads(source)
+
+    assert hashlib.sha256(source).hexdigest() == (
+        "5d14ea5bc0874c4edf15b586075337c1852b8e592bd7c4a7867ea14a995325a7"
+    )
+    assert weil.verify_groskin_provenance_metadata(
+        record, expected_c=100, expected_N=200
+    )
+
+    wrong_sector_dimension = dict(record, dimension=201, n_pos=201)
+    assert not weil.verify_groskin_provenance_metadata(
+        wrong_sector_dimension, expected_c=100, expected_N=200
+    )
+
+
+def test_groskin_provenance_metadata_rejects_inertia_or_status_tampering():
+    record = json.loads(REFERENCE_PROVENANCE.read_text(encoding="utf-8"))
+
+    assert not weil.verify_groskin_provenance_metadata(
+        dict(record, n_neg=1), expected_c=100, expected_N=200
+    )
+    assert not weil.verify_groskin_provenance_metadata(
+        dict(record, certified_positive_definite=False),
+        expected_c=100,
+        expected_N=200,
+    )
+
+
+def test_cli_checks_released_groskin_provenance_metadata_only():
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "experiments.rh.weil_extremal_kernels",
+            "verify-groskin-provenance",
+            str(REFERENCE_PROVENANCE),
+            "--c",
+            "100",
+            "--N",
+            "200",
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.stdout.strip() == (
+        "dimensionally consistent Groskin provenance metadata: true"
+    )
 
 
 def test_quadratic_form_uses_exact_fraction_arithmetic():

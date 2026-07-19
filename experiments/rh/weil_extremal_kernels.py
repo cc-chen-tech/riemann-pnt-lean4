@@ -42,6 +42,57 @@ class IntervalMatrixCertificate:
     perturbation_row_bound: Fraction
 
 
+@dataclass(frozen=True)
+class FiniteDictionaryDimensions:
+    fourier_cutoff: int
+    full_dimension: int
+    even_sector_dimension: int
+
+
+def finite_dictionary_dimensions(N: int) -> FiniteDictionaryDimensions:
+    """Return the full and even-sector sizes for Fourier indices -N,...,N."""
+    if isinstance(N, bool) or not isinstance(N, int) or N < 0:
+        raise ValueError("N must be a nonnegative integer")
+    return FiniteDictionaryDimensions(
+        fourier_cutoff=N,
+        full_dimension=2 * N + 1,
+        even_sector_dimension=N + 1,
+    )
+
+
+def _is_plain_int(value: Any) -> bool:
+    return isinstance(value, int) and not isinstance(value, bool)
+
+
+def verify_groskin_provenance_metadata(
+    record: Any, *, expected_c: int, expected_N: int
+) -> bool:
+    """Check only the dimensional and inertia metadata of the released audit.
+
+    This does not replay matrix assembly, interval arithmetic, or LDL^T.
+    """
+    try:
+        dimensions = finite_dictionary_dimensions(expected_N)
+    except ValueError:
+        return False
+    if not isinstance(record, dict):
+        return False
+    integer_fields = ("c", "N", "dimension", "prec_bits", "n_pos", "n_neg")
+    if any(not _is_plain_int(record.get(field)) for field in integer_fields):
+        return False
+    return (
+        record.get("script") == "arb_ldlt_certify.py"
+        and record["c"] == expected_c
+        and record["N"] == expected_N
+        and record["dimension"] == dimensions.full_dimension
+        and record["prec_bits"] > 0
+        and record["n_pos"] == dimensions.full_dimension
+        and record["n_neg"] == 0
+        and record.get("undetermined_pivot") is None
+        and record.get("certified_positive_definite") is True
+    )
+
+
 def _as_fraction(value: RationalInput) -> Fraction:
     if isinstance(value, bool) or isinstance(value, float):
         raise TypeError("rational entries must be Fraction, int, or rational string")
@@ -820,6 +871,19 @@ def _verify_interval(path: Path) -> int:
     return 0 if valid else 1
 
 
+def _verify_groskin_provenance(path: Path, expected_c: int, expected_N: int) -> int:
+    try:
+        record = _load_strict_json(path.read_bytes())
+    except (OSError, TypeError, UnicodeError, ValueError):
+        valid = False
+    else:
+        valid = verify_groskin_provenance_metadata(
+            record, expected_c=expected_c, expected_N=expected_N
+        )
+    print(f"dimensionally consistent Groskin provenance metadata: {str(valid).lower()}")
+    return 0 if valid else 1
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Create and verify exact rational LDL^T artifacts."
@@ -840,6 +904,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     verify_interval_parser = subparsers.add_parser("verify-interval")
     verify_interval_parser.add_argument("artifact", type=Path)
 
+    verify_groskin_parser = subparsers.add_parser("verify-groskin-provenance")
+    verify_groskin_parser.add_argument("provenance", type=Path)
+    verify_groskin_parser.add_argument("--c", type=int, required=True)
+    verify_groskin_parser.add_argument("--N", type=int, required=True)
+
     args = parser.parse_args(argv)
     if args.command == "certify":
         return _certify(args.input, args.output)
@@ -847,7 +916,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         return _verify(args.artifact)
     if args.command == "certify-interval":
         return _certify_interval(args.input, args.output)
-    return _verify_interval(args.artifact)
+    if args.command == "verify-interval":
+        return _verify_interval(args.artifact)
+    return _verify_groskin_provenance(args.provenance, args.c, args.N)
 
 
 if __name__ == "__main__":
