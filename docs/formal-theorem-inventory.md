@@ -3662,6 +3662,19 @@ Support-level verified declarations:
 - `PrimeNumberTheorem.riemannHypothesis_of_RH_PrimeCountingLiErrorBound` and
   `PrimeNumberTheorem.rh_iff_optimal_error_proved` close the reverse implication
   and the final RH/prime-counting error equivalence.  They do not prove RH.
+- `RiemannVonMangoldt.riemannZeroCount_sub_eq_gammaPhase_add_zetaHalfPathArgument`
+  proves the exact good-height identity between the multiplicity-weighted
+  one-sided zero-count increment, the Gamma phase increment, and the zeta
+  half-boundary phase; `exists_abs_zetaHalfPathArgument_le_log` proves the
+  zeta contribution is logarithmic.
+- `RiemannVonMangoldt.exists_abs_riemannZeroCount_sub_mainTerm_le_log_of_goodHeight`
+  combines that identity with the vertical Gamma asymptotic to prove the
+  classical two-term formula at good heights.
+- `RiemannVonMangoldt.exists_abs_riemannZeroCount_sub_mainTerm_le_log` removes
+  the good-height condition by monotone sandwiching and proves the full
+  all-height Riemann-von Mangoldt estimate for every `T >= 8`.  This counts all
+  positive-ordinate nontrivial zeros with analytic multiplicity and does not
+  assert that any additional zeros lie on the critical line.
 
 ## Remaining Chains Beyond Ordinary PNT
 

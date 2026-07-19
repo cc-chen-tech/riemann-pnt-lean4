@@ -129,6 +129,8 @@ lean_lib RiemannPNT where
     `Test.RiemannVonMangoldtCountPhaseIdentityAxiomAudit,
     `Test.RiemannVonMangoldtGoodHeightAsymptoticContract,
     `Test.RiemannVonMangoldtGoodHeightAsymptoticAxiomAudit,
+    `Test.RiemannVonMangoldtAllHeightAsymptoticContract,
+    `Test.RiemannVonMangoldtAllHeightAsymptoticAxiomAudit,
     `Test.RiemannVonMangoldtContract,
     `Test.RiemannVonMangoldtAxiomAudit
   ]

@@ -265,6 +265,10 @@ formalization. The verified contribution includes:
   `|primeCounting x - logIntegral x| <= C*x*exp(-c*sqrt(log x))`, obtained by
   a proved `psi -> theta` transfer and a direct split estimate for the Abel
   error integral.
+- the classical Riemann-von Mangoldt zero-counting formula for the standard
+  positive-ordinate count with analytic multiplicity, first at good heights
+  through an exact Gamma/zeta phase identity and then at every `T >= 8` by a
+  monotone unit-interval sandwich.
 
 Mathlib already provides the qualitative nonvanishing theorem
 `riemannZeta_ne_zero_of_one_le_re`.  The compact theorem first upgrades this to
