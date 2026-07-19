@@ -210,6 +210,26 @@ noncomputable example (A kappa : ℝ) (X : ℕ)
     (sigma a b x : ℝ) : ℝ :=
   regularizedCarlsonLogNormEndpoint A kappa X sigma a b x
 
+noncomputable example (A kappa : ℝ) (X : ℕ)
+    (sigma a b x : ℝ) : ℝ :=
+  regularizedCarlsonLogNormEndpointExplicit A kappa X sigma a b x
+
+example {sigma u v : ℝ} (hsigma0 : 0 < sigma) (hsigma1 : sigma < 1)
+    (hu : 1 ≤ u) (huv : u ≤ v) :
+    (∫ t in u..v,
+      Real.log ‖(sigma : ℂ) + Complex.I * t - 1‖) ≤
+        (v - u) * Real.log (1 + v) :=
+  integral_log_norm_vertical_sub_one_le_length_mul_log
+    hsigma0 hsigma1 hu huv
+
+example {A kappa sigma a b x : ℝ} {X : ℕ}
+    (hsigma0 : 0 < sigma) (hsigma1 : sigma < 1)
+    (ha : 1 ≤ a) (hab : a ≤ b) :
+    regularizedCarlsonLogNormEndpoint A kappa X sigma a b x ≤
+      regularizedCarlsonLogNormEndpointExplicit A kappa X sigma a b x :=
+  regularizedCarlsonLogNormEndpoint_le_explicit
+    hsigma0 hsigma1 ha hab
+
 example :
     ∃ A : ℝ, 0 ≤ A ∧ ∀ (X : ℕ) (sigma u v : ℝ),
       1 ≤ X → 1 ≤ u → u ≤ v → v ≤ 2 * u →
@@ -236,6 +256,19 @@ example :
           regularizedCarlsonLogNormEndpoint
             A 4 X sigma u (2 * u) (4 * u) :=
   exists_integral_log_norm_regularizedCarlsonZeroDetector_le_dyadic
+
+example :
+    ∃ A : ℝ, 0 ≤ A ∧ ∀ (X : ℕ) (sigma u : ℝ),
+      1 ≤ X → 1 ≤ u → 1 / 2 < sigma → sigma < 1 →
+      (∀ t ∈ Set.Icc u (2 * u),
+        regularizedCarlsonZeroDetector X
+          ((sigma : ℂ) + Complex.I * t) ≠ 0) →
+        ∫ t in u..(2 * u),
+            Real.log ‖regularizedCarlsonZeroDetector X
+              ((sigma : ℂ) + Complex.I * t)‖ ≤
+          regularizedCarlsonLogNormEndpointExplicit
+            A 4 X sigma u (2 * u) (4 * u) :=
+  exists_integral_log_norm_regularizedCarlsonZeroDetector_le_dyadicExplicit
 
 example :
     ∃ A : ℝ, 0 ≤ A ∧ ∀ (X : ℕ) (sigma : ℝ) (n : ℕ),
@@ -314,8 +347,11 @@ example :
 #print axioms exists_integral_log_norm_carlsonZeroDetector_le_endpoint
 #print axioms exists_integral_log_norm_regularizedCarlsonZeroDetector_le_endpoint
 #print axioms exists_integral_log_norm_regularizedCarlsonZeroDetector_le_endpoint_of_comparable
+#print axioms integral_log_norm_vertical_sub_one_le_length_mul_log
+#print axioms regularizedCarlsonLogNormEndpoint_le_explicit
 #print axioms exists_integral_log_norm_regularizedCarlsonZeroDetector_le_doublingInterval
 #print axioms exists_integral_log_norm_regularizedCarlsonZeroDetector_le_dyadic
+#print axioms exists_integral_log_norm_regularizedCarlsonZeroDetector_le_dyadicExplicit
 #print axioms exists_integral_log_norm_regularizedCarlsonZeroDetector_le_dyadicSum
 #print axioms exists_integral_log_norm_regularizedCarlsonZeroDetector_le_dyadicCover
 #print axioms exists_integral_log_norm_regularizedCarlsonZeroDetector_le_low_add_dyadicCover

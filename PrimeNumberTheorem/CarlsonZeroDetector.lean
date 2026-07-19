@@ -630,6 +630,77 @@ theorem exists_integral_log_norm_carlsonZeroDetector_le_endpoint :
     hab (ne_of_lt hsigma1) hboundary).trans
       (hmean X sigma a b x hX hab hsigma hsigma1 hx hheight)
 
+/-- The elementary regularization factor contributes at most interval length
+times `log (1 + v)` on a positive-height interval. -/
+theorem integral_log_norm_vertical_sub_one_le_length_mul_log
+    {sigma u v : ℝ} (hsigma0 : 0 < sigma) (hsigma1 : sigma < 1)
+    (hu : 1 ≤ u) (huv : u ≤ v) :
+    (∫ t in u..v,
+      Real.log ‖(sigma : ℂ) + Complex.I * t - 1‖) ≤
+        (v - u) * Real.log (1 + v) := by
+  have hpointOne (t : ℝ) :
+      (sigma : ℂ) + Complex.I * (t : ℂ) ≠ 1 := by
+    intro hone
+    have hre := congrArg Complex.re hone
+    simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re,
+      Complex.I_re, Complex.I_im, Complex.ofReal_im, zero_mul, one_mul,
+      Complex.one_re] at hre
+    linarith
+  have hcont : Continuous (fun t : ℝ =>
+      Real.log ‖(sigma : ℂ) + Complex.I * t - 1‖) := by
+    rw [continuous_iff_continuousAt]
+    intro t
+    have hlog : ContinuousAt Real.log
+        ‖(sigma : ℂ) + Complex.I * (t : ℂ) - 1‖ :=
+      Real.continuousAt_log
+        (norm_ne_zero_iff.mpr (sub_ne_zero.mpr (hpointOne t)))
+    have hlogNorm : ContinuousAt (fun z : ℂ => Real.log ‖z‖)
+        ((sigma : ℂ) + Complex.I * (t : ℂ) - 1) :=
+      hlog.comp' continuous_norm.continuousAt
+    have hmap : ContinuousAt
+        (fun r : ℝ => (sigma : ℂ) + Complex.I * (r : ℂ) - 1) t := by
+      fun_prop
+    exact hlogNorm.comp_of_eq hmap rfl
+  have hleftInt : IntervalIntegrable (fun t : ℝ =>
+      Real.log ‖(sigma : ℂ) + Complex.I * t - 1‖)
+      MeasureTheory.volume u v :=
+    hcont.intervalIntegrable u v
+  have hrightInt : IntervalIntegrable
+      (fun _t : ℝ => Real.log (1 + v)) MeasureTheory.volume u v :=
+    continuous_const.intervalIntegrable u v
+  have hpoint : ∀ t ∈ Set.Icc u v,
+      Real.log ‖(sigma : ℂ) + Complex.I * t - 1‖ ≤
+        Real.log (1 + v) := by
+    intro t ht
+    have ht0 : 0 ≤ t := by linarith [hu, ht.1]
+    have hnorm : ‖(sigma : ℂ) + Complex.I * t - 1‖ ≤ 1 + v := by
+      calc
+        ‖(sigma : ℂ) + Complex.I * t - 1‖ =
+            ‖((sigma : ℂ) - 1) + Complex.I * t‖ := by
+          congr 1
+          ring
+        _ ≤ ‖(sigma : ℂ) - 1‖ + ‖Complex.I * (t : ℂ)‖ :=
+          norm_add_le _ _
+        _ = |sigma - 1| + |t| := by
+          have hnormReal : ‖(sigma : ℂ) - 1‖ = |sigma - 1| := by
+            rw [← Complex.ofReal_one, ← Complex.ofReal_sub]
+            simpa using (RCLike.norm_ofReal (K := ℂ) (sigma - 1))
+          rw [hnormReal]
+          simp
+        _ = (1 - sigma) + t := by
+          rw [abs_of_nonpos (by linarith), abs_of_nonneg ht0]
+          ring
+        _ ≤ 1 + v := by linarith [ht.2, hsigma0]
+    have hnormPos : 0 < ‖(sigma : ℂ) + Complex.I * t - 1‖ :=
+      norm_pos_iff.mpr (sub_ne_zero.mpr (hpointOne t))
+    exact Real.log_le_log hnormPos hnorm
+  calc
+    (∫ t in u..v,
+        Real.log ‖(sigma : ℂ) + Complex.I * t - 1‖) ≤
+        ∫ _t in u..v, Real.log (1 + v) :=
+      intervalIntegral.integral_mono_on huv hleftInt hrightInt hpoint
+    _ = (v - u) * Real.log (1 + v) := by simp
+
 /-- The endpoint expression controlling the logarithmic norm of the
 regularized Carlson detector on a height-comparable interval. -/
 noncomputable def regularizedCarlsonLogNormEndpoint
@@ -646,6 +717,35 @@ noncomputable def regularizedCarlsonLogNormEndpoint
       (2 * (1 +
         ((X : ℝ) ^ (2 - 2 * sigma) - 1) /
           (2 - 2 * sigma)))))
+
+/-- Integral-free majorant for `regularizedCarlsonLogNormEndpoint`. -/
+noncomputable def regularizedCarlsonLogNormEndpointExplicit
+    (A kappa : ℝ) (X : ℕ) (sigma a b x : ℝ) : ℝ :=
+  2 * ((b - a) * Real.log (1 + b)) +
+  2 * (((b - a) + 4 * Real.pi) *
+    (2 * ((min X (Nat.floor x) + 1 : ℕ) : ℝ) ^
+        (1 - 2 * sigma) *
+      ((((Nat.floor x) * X : ℕ) : ℝ) *
+        (1 + Real.log (Nat.floor x * X)) ^ 3))) +
+  2 * (((((A + kappa) * x ^ (-sigma)) ^ 2)) *
+    (((b - a) + 4 * Real.pi) *
+      (2 * (1 +
+        ((X : ℝ) ^ (2 - 2 * sigma) - 1) /
+          (2 - 2 * sigma)))))
+
+/-- The geometric logarithmic integral can be eliminated from the Carlson
+endpoint on positive-height intervals. -/
+theorem regularizedCarlsonLogNormEndpoint_le_explicit
+    {A kappa sigma a b x : ℝ} {X : ℕ}
+    (hsigma0 : 0 < sigma) (hsigma1 : sigma < 1)
+    (ha : 1 ≤ a) (hab : a ≤ b) :
+    regularizedCarlsonLogNormEndpoint A kappa X sigma a b x ≤
+      regularizedCarlsonLogNormEndpointExplicit A kappa X sigma a b x := by
+  have hgeom := integral_log_norm_vertical_sub_one_le_length_mul_log
+    hsigma0 hsigma1 ha hab
+  unfold regularizedCarlsonLogNormEndpoint
+    regularizedCarlsonLogNormEndpointExplicit
+  linarith
 
 /-- The comparable-height Carlson mean-square estimate controls the logarithmic
 norm of the pole-free regularized detector on genuine intervals. -/
@@ -788,6 +888,26 @@ theorem exists_integral_log_norm_regularizedCarlsonZeroDetector_le_dyadic :
   intro X sigma u hX hu hsigma hsigma1 hboundary
   exact hbound X sigma u (2 * u) hX hu (by linarith) le_rfl
     hsigma hsigma1 hboundary
+
+/-- Integral-free specialization of the dyadic Carlson log-norm estimate. -/
+theorem exists_integral_log_norm_regularizedCarlsonZeroDetector_le_dyadicExplicit :
+    ∃ A : ℝ, 0 ≤ A ∧ ∀ (X : ℕ) (sigma u : ℝ),
+      1 ≤ X → 1 ≤ u → 1 / 2 < sigma → sigma < 1 →
+      (∀ t ∈ Set.Icc u (2 * u),
+        regularizedCarlsonZeroDetector X
+          ((sigma : ℂ) + Complex.I * t) ≠ 0) →
+        ∫ t in u..(2 * u),
+            Real.log ‖regularizedCarlsonZeroDetector X
+              ((sigma : ℂ) + Complex.I * t)‖ ≤
+          regularizedCarlsonLogNormEndpointExplicit
+            A 4 X sigma u (2 * u) (4 * u) := by
+  obtain ⟨A, hA, hbound⟩ :=
+    exists_integral_log_norm_regularizedCarlsonZeroDetector_le_dyadic
+  refine ⟨A, hA, ?_⟩
+  intro X sigma u hX hu hsigma hsigma1 hboundary
+  exact (hbound X sigma u hX hu hsigma hsigma1 hboundary).trans
+    (regularizedCarlsonLogNormEndpoint_le_explicit
+      (by linarith) hsigma1 hu (by linarith))
 
 private theorem integral_log_norm_regularizedCarlsonZeroDetector_le_dyadicSum
     {A : ℝ}
