@@ -603,6 +603,50 @@ theorem card_vinogradovPrimePowerFirstNonsingularSolutionSet_le_stratified
         (card_vinogradovPrimePowerFirstNonsingularSolutionSet_zero_le
           p k r q a))
 
+/-- Finite geometric decomposition used to sum the first-nonsingular block
+strata.  It is stated in subtraction-free natural-number form. -/
+theorem sum_firstNonsingular_geometric
+    (X D b : ℕ) (hDX : D ≤ X) :
+    (∑ q ∈ Finset.range b,
+        (X - D) ^ q * D * X ^ (b - 1 - q)) =
+      X ^ b - (X - D) ^ b := by
+  have hgeom := geom_sum₂_mul_of_ge (Nat.sub_le X D) b
+  rw [Nat.sub_sub_self hDX] at hgeom
+  rw [geom_sum₂_comm X (X - D) b] at hgeom
+  simpa only [Finset.mul_sum, mul_assoc, mul_comm, mul_left_comm] using hgeom
+
+/-- Summing the exact residue cardinalities of all possible locations of the
+first nonsingular block recovers the complete some-nonsingular count. -/
+theorem sum_card_vinogradovFirstNonsingularResidueSet
+    (p k r b : ℕ) [Fact p.Prime] :
+    (∑ q ∈ Finset.range b,
+        (vinogradovFirstNonsingularResidueSet
+          p k r q (b - 1 - q)).card) =
+      (vinogradovSomeBlockNonsingularResidueSet p k r b).card := by
+  rw [card_vinogradovSomeBlockNonsingularResidueSet]
+  simp_rw [card_vinogradovFirstNonsingularResidueSet]
+  let X := p ^ k
+  let D := p.descFactorial k
+  let S := X - D
+  have hDX : D ≤ X := Nat.descFactorial_le_pow p k
+  have hsum := sum_firstNonsingular_geometric X D b hDX
+  calc
+    (∑ q ∈ Finset.range b,
+        S ^ q * D * p ^ ((b - 1 - q) * k + r)) =
+        (∑ q ∈ Finset.range b,
+          S ^ q * D * X ^ (b - 1 - q)) * p ^ r := by
+      rw [Finset.sum_mul]
+      apply Finset.sum_congr rfl
+      intro q hq
+      simp only [X, pow_mul', pow_add]
+      ac_rfl
+    _ = (X ^ b - S ^ b) * p ^ r := by rw [hsum]
+    _ = p ^ (b * k + r) - S ^ b * p ^ r := by
+      rw [Nat.sub_mul, pow_add, pow_mul']
+    _ = p ^ (b * k + r) -
+        (p ^ k - p.descFactorial k) ^ b * p ^ r := by
+      rfl
+
 
 /-- Cycling a first-nonsingular prime-power solution puts it in the standard
 Hensel solution set with a nonsingular head. -/
