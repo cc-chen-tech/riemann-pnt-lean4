@@ -3,8 +3,9 @@ import PrimeNumberTheorem.CarneiroLittmannKernelConstruction
 import Mathlib.NumberTheory.ArithmeticFunction.Moebius
 import Mathlib.Analysis.SumIntegralComparisons
 import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
+import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 
-open Complex
+open Complex Filter Topology
 open scoped BigOperators ComplexConjugate Interval
 
 namespace PrimeNumberTheorem
@@ -14,6 +15,78 @@ namespace CarlsonZeroDensity
 noncomputable def mobiusMollifier (X : ℕ) (s : ℂ) : ℂ :=
   ∑ n ∈ Finset.Icc 1 X,
     (ArithmeticFunction.moebius n : ℂ) / (n : ℂ) ^ s
+
+/-- A finite Möbius mollifier is entire as a function of its complex
+argument. -/
+theorem analyticAt_mobiusMollifier (X : ℕ) (s : ℂ) :
+    AnalyticAt ℂ (mobiusMollifier X) s := by
+  unfold mobiusMollifier
+  apply Finset.analyticAt_fun_sum
+  intro n hn
+  have hn0 : (n : ℂ) ≠ 0 := by
+    exact_mod_cast (Nat.ne_of_gt (Finset.mem_Icc.mp hn).1)
+  have hpow : AnalyticAt ℂ (fun z : ℂ => (n : ℂ) ^ z) s :=
+    (differentiable_id.const_cpow (.inl hn0)).analyticAt s
+  exact analyticAt_const.div hpow
+    (Complex.cpow_ne_zero_iff.mpr (.inl hn0))
+
+/-- Along the positive real axis, every nonconstant term of the finite
+Möbius mollifier decays, while its `n = 1` term is one. -/
+theorem tendsto_mobiusMollifier_atTop (X : ℕ) (hX : 1 ≤ X) :
+    Tendsto (fun x : ℝ => mobiusMollifier X (x : ℂ)) atTop (𝓝 1) := by
+  unfold mobiusMollifier
+  have hsum : Tendsto
+      (fun x : ℝ => ∑ n ∈ Finset.Icc 1 X,
+        (ArithmeticFunction.moebius n : ℂ) / (n : ℂ) ^ (x : ℂ))
+      atTop
+      (𝓝 (∑ n ∈ Finset.Icc 1 X, if n = 1 then (1 : ℂ) else 0)) := by
+    apply tendsto_finset_sum
+    intro n hn
+    by_cases hn1 : n = 1
+    · subst n
+      simpa using (tendsto_const_nhds :
+        Tendsto (fun _x : ℝ => (1 : ℂ)) atTop (𝓝 1))
+    · have hnpos : 0 < n :=
+        lt_of_lt_of_le Nat.zero_lt_one (Finset.mem_Icc.mp hn).1
+      have hn_gt_one : 1 < n := by omega
+      have hnRpos : 0 < (n : ℝ) := by exact_mod_cast hnpos
+      have hnR_gt_one : 1 < (n : ℝ) := by exact_mod_cast hn_gt_one
+      have hbase := tendsto_rpow_atTop_of_base_lt_one
+        ((n : ℝ)⁻¹) (by have := inv_pos.mpr hnRpos; linarith)
+          (inv_lt_one_of_one_lt₀ hnR_gt_one)
+      rw [if_neg hn1]
+      apply tendsto_zero_iff_norm_tendsto_zero.mpr
+      have hnorm :
+          (fun x : ℝ =>
+            ‖(ArithmeticFunction.moebius n : ℂ) /
+              (n : ℂ) ^ (x : ℂ)‖) =
+            fun x : ℝ =>
+              ‖(ArithmeticFunction.moebius n : ℂ)‖ * ((n : ℝ)⁻¹) ^ x := by
+        funext x
+        rw [norm_div, norm_natCast_cpow_of_pos hnpos]
+        simp only [ofReal_re]
+        rw [div_eq_mul_inv,
+          Real.inv_rpow hnRpos.le]
+      rw [hnorm]
+      simpa using hbase.const_mul ‖(ArithmeticFunction.moebius n : ℂ)‖
+  convert hsum using 1
+  simp [hX]
+
+/-- For a genuine mollifier cutoff, the finite Möbius polynomial is not
+locally the zero function, hence has finite analytic order everywhere. -/
+theorem analyticOrderAt_mobiusMollifier_ne_top
+    (X : ℕ) (hX : 1 ≤ X) (s : ℂ) :
+    analyticOrderAt (mobiusMollifier X) s ≠ ⊤ := by
+  have heventually :=
+    (tendsto_mobiusMollifier_atTop X hX).eventually_ne one_ne_zero
+  obtain ⟨x, hx⟩ := heventually.exists
+  have hxorder :
+      analyticOrderAt (mobiusMollifier X) (x : ℂ) ≠ ⊤ := by
+    rw [(analyticAt_mobiusMollifier X (x : ℂ)).analyticOrderAt_eq_zero.mpr hx]
+    exact ENat.coe_ne_top 0
+  exact (show AnalyticOnNhd ℂ (mobiusMollifier X) Set.univ from
+      fun z _hz => analyticAt_mobiusMollifier X z).analyticOrderAt_ne_top_of_isPreconnected
+        isPreconnected_univ (by simp) (by simp) hxorder
 
 /-- Coefficients of the Möbius mollifier restricted to a vertical line. -/
 noncomputable def mobiusMollifierCoefficient (sigma : ℝ) (n : ℕ) : ℂ :=

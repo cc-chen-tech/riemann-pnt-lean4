@@ -1,6 +1,6 @@
 import PrimeNumberTheorem.MobiusMollifier
 
-open Complex
+open Complex Filter Topology
 open scoped Interval
 
 namespace PrimeNumberTheorem
@@ -11,6 +11,18 @@ example (X : ℕ) (s : ℂ) :
       ∑ n ∈ Finset.Icc 1 X,
         (ArithmeticFunction.moebius n : ℂ) / (n : ℂ) ^ s :=
   rfl
+
+example (X : ℕ) (s : ℂ) :
+    AnalyticAt ℂ (mobiusMollifier X) s :=
+  analyticAt_mobiusMollifier X s
+
+example (X : ℕ) (hX : 1 ≤ X) :
+    Tendsto (fun x : ℝ => mobiusMollifier X (x : ℂ)) atTop (𝓝 1) :=
+  tendsto_mobiusMollifier_atTop X hX
+
+example (X : ℕ) (hX : 1 ≤ X) (s : ℂ) :
+    analyticOrderAt (mobiusMollifier X) s ≠ ⊤ :=
+  analyticOrderAt_mobiusMollifier_ne_top X hX s
 
 example (X : ℕ) (sigma t : ℝ) :
     mobiusMollifier X ((sigma : ℂ) + Complex.I * t) =
@@ -70,6 +82,9 @@ example {X : ℕ} (hX : 1 ≤ X) {sigma a b : ℝ}
           ((X : ℝ) ^ (2 - 2 * sigma) - 1) / (2 - 2 * sigma))) :=
   mobiusMollifier_meanSquare_le_rpow_endpoint hX hab hsigma hsigma1
 
+#print axioms analyticAt_mobiusMollifier
+#print axioms tendsto_mobiusMollifier_atTop
+#print axioms analyticOrderAt_mobiusMollifier_ne_top
 #print axioms mobiusMollifier_verticalLine_eq_finiteDirichletPolynomial
 #print axioms continuous_mobiusMollifier_verticalLine
 #print axioms norm_mobiusMollifierCoefficient_le

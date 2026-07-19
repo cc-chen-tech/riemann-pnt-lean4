@@ -26,6 +26,61 @@ theorem carlsonZeroDetector_eq_zero_of_riemannZeta_eq_zero
   rw [carlsonZeroDetector_eq_zeta_mul_mollifier_factorization, hs]
   ring
 
+/-- Every nontrivial zeta zero occurs in Carlson's detector with at least its
+zeta multiplicity.  The extra mollifier factor may increase the multiplicity. -/
+theorem analyticOrderNatAt_riemannZeta_le_carlsonZeroDetector
+    {X : ℕ} {rho : ℂ} (hX : 1 ≤ X)
+    (hrho : RiemannHypothesis.IsNontrivialZero rho) :
+    analyticOrderNatAt riemannZeta rho ≤
+      analyticOrderNatAt (carlsonZeroDetector X) rho := by
+  let g : ℂ → ℂ := fun s =>
+    mobiusMollifier X s *
+      (2 - riemannZeta s * mobiusMollifier X s)
+  have hrho1 : rho ≠ 1 := by
+    intro hone
+    have hre := congrArg Complex.re hone
+    simp at hre
+    linarith [hrho.2.2]
+  have hzeta : AnalyticAt ℂ riemannZeta rho :=
+    ZeroFreeRegion.analyticOnNhd_riemannZeta_ne_one rho hrho1
+  have hmollifier : AnalyticAt ℂ (mobiusMollifier X) rho :=
+    analyticAt_mobiusMollifier X rho
+  have hcomplement : AnalyticAt ℂ
+      (fun s : ℂ => 2 - riemannZeta s * mobiusMollifier X s) rho :=
+    analyticAt_const.sub (hzeta.mul hmollifier)
+  have hg : AnalyticAt ℂ g rho := by
+    dsimp [g]
+    exact hmollifier.mul hcomplement
+  have hzeta_order_ne_top : analyticOrderAt riemannZeta rho ≠ ⊤ :=
+    ZeroFreeRegion.analyticOrderAt_riemannZeta_ne_top_of_ne_one hrho1
+  have hcomplement_ne :
+      (2 - riemannZeta rho * mobiusMollifier X rho : ℂ) ≠ 0 := by
+    rw [hrho.1]
+    norm_num
+  have hcomplement_order_zero :
+      analyticOrderAt
+        (fun s : ℂ => 2 - riemannZeta s * mobiusMollifier X s) rho = 0 :=
+    hcomplement.analyticOrderAt_eq_zero.mpr hcomplement_ne
+  have hmollifier_order_ne_top :
+      analyticOrderAt (mobiusMollifier X) rho ≠ ⊤ :=
+    analyticOrderAt_mobiusMollifier_ne_top X hX rho
+  have hg_order_ne_top : analyticOrderAt g rho ≠ ⊤ := by
+    rw [show analyticOrderAt g rho =
+        analyticOrderAt (mobiusMollifier X) rho +
+          analyticOrderAt
+            (fun s : ℂ => 2 - riemannZeta s * mobiusMollifier X s) rho by
+      exact analyticOrderAt_mul hmollifier hcomplement,
+      hcomplement_order_zero, add_zero]
+    exact hmollifier_order_ne_top
+  have hfactor : carlsonZeroDetector X = riemannZeta * g := by
+    funext s
+    simp only [Pi.mul_apply]
+    simpa [g, mul_assoc] using
+      carlsonZeroDetector_eq_zeta_mul_mollifier_factorization X s
+  rw [hfactor,
+    analyticOrderNatAt_mul hzeta hg hzeta_order_ne_top hg_order_ne_top]
+  exact Nat.le_add_right _ _
+
 /-- The pointwise logarithmic majorant used on the left edge of Littlewood's
 rectangle: `log |h_X|` is controlled by the square entering the mean value
 estimate for `f_X`. -/

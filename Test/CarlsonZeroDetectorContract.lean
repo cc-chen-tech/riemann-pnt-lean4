@@ -19,6 +19,12 @@ example {X : ℕ} {s : ℂ} (hs : riemannZeta s = 0) :
     carlsonZeroDetector X s = 0 :=
   carlsonZeroDetector_eq_zero_of_riemannZeta_eq_zero hs
 
+example {X : ℕ} {rho : ℂ} (hX : 1 ≤ X)
+    (hrho : RiemannHypothesis.IsNontrivialZero rho) :
+    analyticOrderNatAt riemannZeta rho ≤
+      analyticOrderNatAt (carlsonZeroDetector X) rho :=
+  analyticOrderNatAt_riemannZeta_le_carlsonZeroDetector hX hrho
+
 example (X : ℕ) (s : ℂ) :
     Real.log ‖carlsonZeroDetector X s‖ ≤
       ‖mollifiedZetaError X s‖ ^ 2 :=
@@ -70,6 +76,7 @@ example :
 
 #print axioms carlsonZeroDetector_eq_zeta_mul_mollifier_factorization
 #print axioms carlsonZeroDetector_eq_zero_of_riemannZeta_eq_zero
+#print axioms analyticOrderNatAt_riemannZeta_le_carlsonZeroDetector
 #print axioms log_norm_carlsonZeroDetector_le_norm_mollifiedZetaError_sq
 #print axioms continuous_mollifiedZetaError_verticalLine
 #print axioms continuous_carlsonZeroDetector_verticalLine
