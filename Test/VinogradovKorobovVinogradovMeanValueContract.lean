@@ -1,4 +1,4 @@
-import ZeroFreeRegion.VinogradovKorobov.VinogradovLinearLift
+import ZeroFreeRegion.VinogradovKorobov.VinogradovHensel
 
 open ZeroFreeRegion.VinogradovKorobov
 
@@ -90,3 +90,6 @@ open ZeroFreeRegion.VinogradovKorobov
 #check vinogradovPowerSumInt_affine_modEq_sq
 #check existsUnique_mulVec_eq_of_det_ne_zero
 #check existsUnique_vinogradovPowerSumJacobian_zmod_mulVec_eq
+#check vinogradovPowerSumInt_affine_corrections_unique_mod_prime
+#check exists_vinogradovPowerSumInt_affine_lift_mod_prime_sq
+#check exists_unique_mod_vinogradovPowerSumInt_affine_lift_mod_prime_sq
