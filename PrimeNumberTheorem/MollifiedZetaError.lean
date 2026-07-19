@@ -235,6 +235,40 @@ theorem mollifiedTruncatedTail_meanSquare_le_fourfoldDivisorCount
       · exact add_nonneg (sub_nonneg.mpr hab)
           (mul_nonneg (by norm_num) Real.pi_nonneg)
 
+/-- The Carlson mollified tail mean square is bounded by an explicit endpoint
+expression.  This combines the Hilbert-form reduction with the elementary
+summatory estimate for the fourfold divisor function. -/
+theorem mollifiedTruncatedTail_meanSquare_le_prefix_bound
+    {X N : ℕ} {sigma a b : ℝ} (hab : a ≤ b)
+    (hsigma : 1 / 2 < sigma) :
+    ∫ t in a..b,
+        ‖∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+          mollifiedTruncatedCoefficient X N n /
+            (n : ℂ) ^ ((sigma : ℂ) + Complex.I * t)‖ ^ 2 ≤
+      ((b - a) + 4 * Real.pi) *
+        (2 * ((min X N + 1 : ℕ) : ℝ) ^ (1 - 2 * sigma) *
+          (((N * X : ℕ) : ℝ) * (1 + Real.log (N * X)) ^ 3)) := by
+  calc
+    ∫ t in a..b,
+        ‖∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+          mollifiedTruncatedCoefficient X N n /
+            (n : ℂ) ^ ((sigma : ℂ) + Complex.I * t)‖ ^ 2 ≤
+      ((b - a) + 4 * Real.pi) *
+        ∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+          ((n : ℝ) + 1) * (fourfoldDivisorCount n : ℝ) *
+            ((n : ℝ) ^ (-sigma)) ^ 2 :=
+      mollifiedTruncatedTail_meanSquare_le_fourfoldDivisorCount hab
+    _ ≤ ((b - a) + 4 * Real.pi) *
+        (2 * ((min X N + 1 : ℕ) : ℝ) ^ (1 - 2 * sigma) *
+          (((N * X : ℕ) : ℝ) * (1 + Real.log (N * X)) ^ 3)) := by
+      apply mul_le_mul_of_nonneg_left
+      · simpa only [Nat.cast_mul] using
+          (weightedFourfoldDivisorSum_le_prefix_bound
+            (L := min X N + 1) (U := N * X) (sigma := sigma)
+            (show 0 < min X N + 1 by omega) hsigma)
+      · exact add_nonneg (sub_nonneg.mpr hab)
+          (mul_nonneg (by norm_num) Real.pi_nonneg)
+
 /-- The finite product in the mollified zeta approximation is exactly the
 coefficient polynomial obtained from the truncated Dirichlet convolution. -/
 theorem truncatedZetaPolynomial_mul_mobiusMollifier

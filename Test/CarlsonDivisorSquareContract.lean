@@ -1,4 +1,5 @@
 import PrimeNumberTheorem.CarlsonDivisorSquare
+import Mathlib.NumberTheory.Harmonic.Bounds
 
 open scoped BigOperators ArithmeticFunction.sigma
 
@@ -59,6 +60,24 @@ example (Y : ℕ) :
       fourfoldDivisorPrefix Y :=
   sum_Ioc_fourfoldDivisorCount_eq_fourfoldDivisorPrefix Y
 
+example (Y : ℕ) :
+    (fourfoldDivisorPrefix Y : ℝ) ≤
+      (Y : ℝ) * (harmonic Y : ℝ) ^ 3 :=
+  fourfoldDivisorPrefix_le_mul_harmonic_cube Y
+
+example (Y : ℕ) :
+    (∑ n ∈ Finset.Ioc 0 Y, (fourfoldDivisorCount n : ℝ)) ≤
+      (Y : ℝ) * (1 + Real.log Y) ^ 3 :=
+  sum_Ioc_fourfoldDivisorCount_le_mul_one_add_log_cube Y
+
+example {L U : ℕ} (hL : 0 < L) {sigma : ℝ} (hsigma : 1 / 2 < sigma) :
+    ∑ n ∈ Finset.Icc L U,
+        ((n : ℝ) + 1) * (fourfoldDivisorCount n : ℝ) *
+          ((n : ℝ) ^ (-sigma)) ^ 2 ≤
+      2 * (L : ℝ) ^ (1 - 2 * sigma) *
+        ((U : ℝ) * (1 + Real.log U) ^ 3) :=
+  weightedFourfoldDivisorSum_le_prefix_bound hL hsigma
+
 #print axioms card_divisorsAntidiagonal_eq_card_divisors
 #print axioms card_divisors_sq_le_fourfoldDivisorCount_prime_pow
 #print axioms card_divisorsAntidiagonal_sq_le_fourfoldDivisorCount
@@ -66,6 +85,9 @@ example (Y : ℕ) :
 #print axioms sum_Ioc_tripleDivisorCount_eq_sum_div
 #print axioms sum_Ioc_fourfoldDivisorCount_eq_sum_div
 #print axioms sum_Ioc_fourfoldDivisorCount_eq_fourfoldDivisorPrefix
+#print axioms fourfoldDivisorPrefix_le_mul_harmonic_cube
+#print axioms sum_Ioc_fourfoldDivisorCount_le_mul_one_add_log_cube
+#print axioms weightedFourfoldDivisorSum_le_prefix_bound
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem
