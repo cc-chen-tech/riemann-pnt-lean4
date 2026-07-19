@@ -25,16 +25,27 @@ Primary sources:
 
 ## Timeboxed milestone outcome
 
-**Status: F0_PASSED; F1_OPEN.**  The checked Lean surface proves the exact
-integral and interval-independent norm bound for one ordered off-diagonal pair,
-the aggregate finite mean-square estimate, and an interior point attaining the
-resulting lower average.  A separate specialization retains natural
-multiplicity as an explicit coefficient factor.  The contract and axiom audit
-cover all three aggregate declarations in addition to the pairwise input.
+**Status: F0_PASSED_AND_ZETA_ALIGNED; F1_OPEN.**  The checked Lean surface
+proves the exact integral and interval-independent norm bound for one ordered
+off-diagonal pair, the aggregate finite mean-square estimate, and an interior
+point attaining the resulting lower average.  Natural multiplicity is retained
+as an explicit coefficient factor.  It now also proves the exact
+logarithmic-coordinate identity
 
-This passes only the finite-spectrum gate F0.  No theorem yet transfers a zeta
-zero package through the repository's explicit formula to `psi(x)-x`, so F1,
-the Revesz baseline recovery, and both novelty gates remain open.
+```text
+sum_{rho in S} m(rho) exp(y)^rho / rho
+  = exp(beta*y) * sum_{rho in S} (m(rho)/rho) exp(i Im(rho) y)
+```
+
+for a finite package with `Re(rho) = beta`, derives ordinate injectivity from
+that common-real-part condition, and specializes the F0 pointwise lower bound
+directly to this complex-power package.  The contract and axiom audit cover
+these declarations as well as the generic finite-spectrum mechanism.
+
+This remains within the finite-spectrum gate F0: the points in `S` need not yet
+be proved zeta zeros, and no theorem transfers the package through the
+repository's explicit formula to `psi(x)-x`.  Therefore F1, the Revesz baseline
+recovery, and both novelty gates remain open.
 
 ## Exact classical-zeta candidate theorem
 
@@ -127,13 +138,18 @@ provide genuine theorems for:
 - an interior point attaining the interval average, hence the quantitative
   lower pointwise consequence;
 - a specialization retaining `multiplicity : i -> Nat` as an explicit factor.
+- an exact conversion of a common-real-part complex-power package with
+  coefficients `m(rho)/rho` to the generic exponential polynomial;
+- the corresponding local pointwise lower bound with all analytic
+  multiplicities and pairwise ordinate gaps visible.
 
 The aggregate error is an ordered-pair sum.  Therefore each unordered pair is
 represented twice, and the displayed constant `2` on each ordered pair is
 intentional.  No minimum frequency-gap replacement is part of F0.
 
 The checked contract now contains the pairwise formulas, the aggregate bound,
-the interior-point consequence, and the multiplicity-weighted specialization.
+the interior-point consequence, the multiplicity-weighted specialization, and
+the common-real-part complex-power bridge used by a zeta zero package.
 
 ## Failure conditions
 
@@ -154,12 +170,14 @@ Report this milestone as failed or incomplete if any of the following occurs:
 
 ## Next exact gap
 
-The next analytic/formal result is F1: isolate a finite, multiplicity-aware
-zero package in the existing truncated explicit formula and prove that its
-complement is uniformly smaller than the F0 lower amplitude on a specified
-logarithmic interval.  This requires quantitative control of lower-real-part
-zeros, trivial-zero terms, and contour/truncation remainders.  F0 alone does
-not provide any of those estimates.
+The next analytic/formal result is F1: prove that the common-real-part package
+now handled by Lean is an actual selected zeta-zero contribution in the
+existing truncated explicit formula, and prove that its complement is
+uniformly smaller than the F0 lower amplitude on a specified logarithmic
+interval.  This requires quantitative control of lower-real-part zeros,
+trivial-zero terms, and contour/truncation remainders.  The new exact package
+identity removes the algebraic coordinate-change gap but provides none of
+those remainder estimates.
 
 ## Experiment schema
 
@@ -217,6 +235,7 @@ lake -Kjobs=1 build Test.ZeroForcedOscillationAxiomAudit
 ```
 
 The audit must print axioms for the aggregate mean-square bound, its
-multiplicity specialization, and the interior-point consequence.
+multiplicity specialization, the interior-point consequence, and the
+common-real-part complex-power bridge.
 A final source scan must find no
 `sorry`, `admit`, or `axiom` in the new production and test files.

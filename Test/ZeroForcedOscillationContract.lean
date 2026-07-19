@@ -5,6 +5,20 @@ open scoped ComplexConjugate
 
 open PrimeNumberTheorem.ZeroForcedOscillation
 
+example (ρ : ℂ) (β y : ℝ) (hρ : ρ.re = β) :
+    ((Real.exp y : ℝ) : ℂ) ^ ρ =
+      ((Real.exp (β * y) : ℝ) : ℂ) * exp (I * (ρ.im * y)) :=
+  realExp_cpow_eq_growth_mul_oscillation ρ β y hρ
+
+example (S : Finset ℂ) (multiplicity : ℂ → ℕ) (β y : ℝ)
+    (hre : ∀ ρ ∈ S, ρ.re = β) :
+    (∑ ρ ∈ S,
+        (multiplicity ρ : ℂ) * ((Real.exp y : ℝ) : ℂ) ^ ρ / ρ) =
+      ((Real.exp (β * y) : ℝ) : ℂ) *
+        multiplicityWeightedExponentialPolynomial S multiplicity
+          (fun ρ => ρ⁻¹) Complex.im y :=
+  equalRealPart_zeroPackage_eq_exponentialPolynomial S multiplicity β y hre
+
 example {c d : ℂ} {u v a b : ℝ} (huv : u ≠ v) :
     (∫ t in a..b,
         conj (c * exp (I * (u * t))) * (d * exp (I * (v * t)))) =
@@ -43,3 +57,16 @@ example {ι : Type*} [DecidableEq ι] (S : Finset ι)
       offDiagonalBound S (fun i => (multiplicity i : ℂ) * c i) ω :=
   abs_intervalIntegral_sqNorm_multiplicityWeightedExponentialPolynomial_sub_diagonal_le
     S multiplicity c ω hω
+
+example (S : Finset ℂ) (multiplicity : ℂ → ℕ) (β : ℝ)
+    {a b : ℝ} (hab : a < b) (hre : ∀ ρ ∈ S, ρ.re = β) :
+    ∃ y ∈ Set.Ioo a b,
+      Real.exp (β * y) ^ 2 *
+          ((∑ ρ ∈ S, ‖(multiplicity ρ : ℂ) * ρ⁻¹‖ ^ 2) -
+            offDiagonalBound S
+                (fun ρ => (multiplicity ρ : ℂ) * ρ⁻¹) Complex.im /
+              (b - a)) ≤
+        ‖∑ ρ ∈ S,
+            (multiplicity ρ : ℂ) * ((Real.exp y : ℝ) : ℂ) ^ ρ / ρ‖ ^ 2 :=
+  exists_mem_Ioo_sqNorm_equalRealPart_zeroPackage_ge
+    S multiplicity β hab hre
