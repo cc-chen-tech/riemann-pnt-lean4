@@ -32,6 +32,19 @@ example (X : ℕ) (s : ℂ) :
     carlsonZeroDetector X s = 1 - mollifiedZetaError X s ^ 2 :=
   rfl
 
+example {X : ℕ} (hX : 1 ≤ X) {s : ℂ} (hs : 4 ≤ s.re) :
+    carlsonZeroDetector X s ≠ 0 :=
+  carlsonZeroDetector_ne_zero_of_four_le_re hX hs
+
+example {X : ℕ} (hX : 1 ≤ X) {s : ℂ} (hs : 4 ≤ s.re) :
+    regularizedCarlsonZeroDetector X s ≠ 0 :=
+  regularizedCarlsonZeroDetector_ne_zero_of_four_le_re hX hs
+
+example {X : ℕ} (hX : 1 ≤ X) {s : ℂ} (hs : 4 ≤ s.re) :
+    2 * Real.log ‖s - 1‖ + Real.log (56 / 81 : ℝ) ≤
+      Real.log ‖regularizedCarlsonZeroDetector X s‖ :=
+  log_fiftySix_div_eightyOne_le_log_norm_regularized_of_four_le_re hX hs
+
 example (X : ℕ) (s : ℂ) :
     carlsonZeroDetector X s =
       (riemannZeta s * mobiusMollifier X s) *
@@ -395,6 +408,9 @@ example :
 #print axioms tendsto_mollifiedZetaError_real_atTop
 #print axioms tendsto_carlsonZeroDetector_real_atTop
 #print axioms exists_regularizedCarlsonZeroDetector_ne_zero_re_gt
+#print axioms carlsonZeroDetector_ne_zero_of_four_le_re
+#print axioms regularizedCarlsonZeroDetector_ne_zero_of_four_le_re
+#print axioms log_fiftySix_div_eightyOne_le_log_norm_regularized_of_four_le_re
 #print axioms analyticOrderAt_regularizedCarlsonZeroDetector_ne_top
 #print axioms carlsonZeroDetector_eq_zero_of_riemannZeta_eq_zero
 #print axioms analyticOrderNatAt_riemannZeta_le_carlsonZeroDetector

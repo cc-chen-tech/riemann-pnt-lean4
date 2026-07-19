@@ -122,6 +122,37 @@ theorem regularizedCarlsonZeroDetector_eq_sub_one_sq_mul
     carlsonZeroDetector_eq_zeta_mul_mollifier_factorization]
   ring
 
+/-- Carlson's detector has no zeros on the fixed far-right half-plane. -/
+theorem carlsonZeroDetector_ne_zero_of_four_le_re
+    {X : ℕ} (hX : 1 ≤ X) {s : ℂ} (hs : 4 ≤ s.re) :
+    carlsonZeroDetector X s ≠ 0 := by
+  have herr := norm_mollifiedZetaError_lt_one_of_four_le_re hX hs
+  intro hdet
+  have hsquare : (1 : ℂ) = mollifiedZetaError X s ^ 2 := by
+    exact sub_eq_zero.mp (by simpa [carlsonZeroDetector] using hdet)
+  have hnorm := congrArg norm hsquare
+  simp only [norm_one, norm_pow] at hnorm
+  nlinarith [norm_nonneg (mollifiedZetaError X s)]
+
+/-- The pole-free detector is also nonzero on the fixed far-right
+half-plane. -/
+theorem regularizedCarlsonZeroDetector_ne_zero_of_four_le_re
+    {X : ℕ} (hX : 1 ≤ X) {s : ℂ} (hs : 4 ≤ s.re) :
+    regularizedCarlsonZeroDetector X s ≠ 0 := by
+  have hs0 : s ≠ 0 := by
+    intro h
+    have hre := congrArg Complex.re h
+    simp at hre
+    linarith
+  have hs1 : s ≠ 1 := by
+    intro h
+    have hre := congrArg Complex.re h
+    simp at hre
+    linarith
+  rw [regularizedCarlsonZeroDetector_eq_sub_one_sq_mul X hs0 hs1]
+  exact mul_ne_zero (pow_ne_zero 2 (sub_ne_zero.mpr hs1))
+    (carlsonZeroDetector_ne_zero_of_four_le_re hX hs)
+
 /-- The regularized detector is not identically zero on any right half-plane.
 The witness is chosen sufficiently far along the positive real axis. -/
 theorem exists_regularizedCarlsonZeroDetector_ne_zero_re_gt
@@ -401,6 +432,29 @@ theorem two_log_norm_sub_one_add_log_one_sub_sq_le_log_norm_regularized
   have hlog := Real.log_le_log hbasePos hdetLower
   norm_num
   linarith
+
+/-- Numerical logarithmic lower bound for the regularized detector on the
+fixed far-right half-plane. -/
+theorem log_fiftySix_div_eightyOne_le_log_norm_regularized_of_four_le_re
+    {X : ℕ} (hX : 1 ≤ X) {s : ℂ} (hs : 4 ≤ s.re) :
+    2 * Real.log ‖s - 1‖ + Real.log (56 / 81 : ℝ) ≤
+      Real.log ‖regularizedCarlsonZeroDetector X s‖ := by
+  have hs0 : s ≠ 0 := by
+    intro h
+    have hre := congrArg Complex.re h
+    simp at hre
+    linarith
+  have hs1 : s ≠ 1 := by
+    intro h
+    have hre := congrArg Complex.re h
+    simp at hre
+    linarith
+  have herr := norm_mollifiedZetaError_le_five_ninth_of_four_le_re hX hs
+  have h := two_log_norm_sub_one_add_log_one_sub_sq_le_log_norm_regularized
+    hs0 hs1 (show (0 : ℝ) ≤ 5 / 9 by norm_num)
+      (show (5 / 9 : ℝ) < 1 by norm_num) herr
+  norm_num at h ⊢
+  exact h
 
 /-- Away from the removable points, the logarithmic size of the pole-free
 detector differs from the original Carlson detector only by the explicit

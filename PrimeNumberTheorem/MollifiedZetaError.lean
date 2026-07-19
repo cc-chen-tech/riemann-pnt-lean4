@@ -3,6 +3,7 @@ import PrimeNumberTheorem.CarlsonMollifierCoefficients
 import PrimeNumberTheorem.CarlsonDivisorSquare
 import PrimeNumberTheorem.CarneiroLittmannKernelConstruction
 import PrimeNumberTheorem.MobiusMollifier
+import ZeroFreeRegion
 
 open Complex
 open scoped BigOperators Interval
@@ -17,6 +18,68 @@ noncomputable def truncatedZetaPolynomial (x : ℝ) (s : ℂ) : ℂ :=
 /-- Carlson's mollified zeta error. -/
 noncomputable def mollifiedZetaError (X : ℕ) (s : ℂ) : ℂ :=
   riemannZeta s * mobiusMollifier X s - 1
+
+/-- In the half-plane of absolute convergence, the mollified zeta error is
+zeta times the omitted tail of the complete Mobius Dirichlet series. -/
+theorem mollifiedZetaError_eq_riemannZeta_mul_mobius_tail
+    {X : ℕ} {s : ℂ} (hs : 1 < s.re) :
+    mollifiedZetaError X s =
+      riemannZeta s *
+        (mobiusMollifier X s -
+          LSeries (fun n => (ArithmeticFunction.moebius n : ℂ)) s) := by
+  have hproduct := ArithmeticFunction.LSeries_zeta_mul_Lseries_moebius hs
+  rw [ArithmeticFunction.LSeries_zeta_eq_riemannZeta hs] at hproduct
+  unfold mollifiedZetaError
+  rw [← hproduct]
+  ring
+
+/-- On the fixed far-right half-plane `Re(s) >= 4`, the mollified zeta error
+has the uniform numerical bound `5/9`. -/
+theorem norm_mollifiedZetaError_le_five_ninth_of_four_le_re
+    {X : ℕ} (hX : 1 ≤ X) {s : ℂ} (hs : 4 ≤ s.re) :
+    ‖mollifiedZetaError X s‖ ≤ (5 / 9 : ℝ) := by
+  have hs1 : 1 < s.re := by linarith
+  have htail :=
+    norm_LSeries_moebius_sub_mobiusMollifier_le_zeta_tail hX hs1
+  have hzetaReal := ZeroFreeRegion.riemannZeta_re_le_sigma_div_sub s.re hs1
+  have hfrac : s.re / (s.re - 1) ≤ (4 / 3 : ℝ) := by
+    apply (div_le_iff₀ (sub_pos.mpr hs1)).2
+    nlinarith
+  have htailThird :
+      ‖LSeries (fun n => (ArithmeticFunction.moebius n : ℂ)) s -
+          mobiusMollifier X s‖ ≤ (1 / 3 : ℝ) := by
+    linarith
+  have htailThird' :
+      ‖mobiusMollifier X s -
+          LSeries (fun n => (ArithmeticFunction.moebius n : ℂ)) s‖ ≤
+        (1 / 3 : ℝ) := by
+    calc
+      ‖mobiusMollifier X s -
+          LSeries (fun n => (ArithmeticFunction.moebius n : ℂ)) s‖ =
+          ‖-(LSeries (fun n => (ArithmeticFunction.moebius n : ℂ)) s -
+            mobiusMollifier X s)‖ := by congr 1 <;> ring
+      _ = ‖LSeries (fun n => (ArithmeticFunction.moebius n : ℂ)) s -
+          mobiusMollifier X s‖ := norm_neg _
+      _ ≤ (1 / 3 : ℝ) := htailThird
+  have hzetaNorm : ‖riemannZeta s‖ ≤ (5 / 3 : ℝ) := by
+    exact (ZeroFreeRegion.norm_riemannZeta_le_re_zeta_two_of_two_le_re s
+      (by linarith)).trans ZeroFreeRegion.riemannZeta_two_re_le_five_thirds
+  rw [mollifiedZetaError_eq_riemannZeta_mul_mobius_tail hs1, norm_mul]
+  calc
+    ‖riemannZeta s‖ *
+        ‖mobiusMollifier X s -
+          LSeries (fun n => (ArithmeticFunction.moebius n : ℂ)) s‖ ≤
+        (5 / 3 : ℝ) * (1 / 3 : ℝ) :=
+      mul_le_mul hzetaNorm htailThird' (norm_nonneg _) (by norm_num)
+    _ = (5 / 9 : ℝ) := by norm_num
+
+/-- In particular, the mollified zeta error is strictly smaller than one on
+the fixed far-right half-plane. -/
+theorem norm_mollifiedZetaError_lt_one_of_four_le_re
+    {X : ℕ} (hX : 1 ≤ X) {s : ℂ} (hs : 4 ≤ s.re) :
+    ‖mollifiedZetaError X s‖ < 1 :=
+  (norm_mollifiedZetaError_le_five_ninth_of_four_le_re hX hs).trans_lt
+    (by norm_num)
 
 /-- Coefficients of the Möbius-cancelled tail on the vertical line
 `Re s = sigma`. -/

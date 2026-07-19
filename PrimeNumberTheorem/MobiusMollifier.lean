@@ -1,6 +1,7 @@
 import PrimeNumberTheorem.DirichletPolynomialMeanSquare
 import PrimeNumberTheorem.CarneiroLittmannKernelConstruction
 import Mathlib.NumberTheory.ArithmeticFunction.Moebius
+import Mathlib.NumberTheory.LSeries.Dirichlet
 import Mathlib.Analysis.SumIntegralComparisons
 import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
@@ -87,6 +88,141 @@ theorem analyticOrderAt_mobiusMollifier_ne_top
   exact (show AnalyticOnNhd ℂ (mobiusMollifier X) Set.univ from
       fun z _hz => analyticAt_mobiusMollifier X z).analyticOrderAt_ne_top_of_isPreconnected
         isPreconnected_univ (by simp) (by simp) hxorder
+
+/-- In the half-plane of absolute convergence, the complete Mobius
+Dirichlet series is the finite mollifier plus its shifted tail. -/
+theorem LSeries_moebius_eq_mobiusMollifier_add_tail
+    {X : ℕ} {s : ℂ} (hs : 1 < s.re) :
+    LSeries (fun n => (ArithmeticFunction.moebius n : ℂ)) s =
+      mobiusMollifier X s +
+        ∑' n : ℕ,
+          LSeries.term (fun m => (ArithmeticFunction.moebius m : ℂ)) s
+            (n + X + 1) := by
+  let f : ℕ → ℂ := fun n => (ArithmeticFunction.moebius n : ℂ)
+  have hsum : Summable (LSeries.term f s) :=
+    ArithmeticFunction.LSeriesSummable_moebius_iff.mpr hs
+  have hsplit := hsum.sum_add_tsum_nat_add (X + 1)
+  have hrange : Finset.range (X + 1) = insert 0 (Finset.Icc 1 X) := by
+    ext n
+    simp only [Finset.mem_range, Finset.mem_insert, Finset.mem_Icc]
+    omega
+  have hprefix :
+      (∑ n ∈ Finset.range (X + 1), LSeries.term f s n) =
+        mobiusMollifier X s := by
+    rw [hrange, Finset.sum_insert (by simp)]
+    simp only [LSeries.term_zero, zero_add]
+    unfold mobiusMollifier
+    apply Finset.sum_congr rfl
+    intro n hn
+    rw [LSeries.term_of_ne_zero
+      (Nat.ne_of_gt (Finset.mem_Icc.mp hn).1)]
+  change LSeries f s =
+    mobiusMollifier X s + ∑' n : ℕ, LSeries.term f s (n + X + 1)
+  rw [← hprefix]
+  exact hsplit.symm
+
+/-- The Mobius-series truncation error is bounded by the positive zeta tail
+starting at `2`.  This deliberately gives a cutoff-independent estimate; it
+is the uniform bound needed on a fixed far-right edge. -/
+theorem norm_LSeries_moebius_sub_mobiusMollifier_le_zeta_tail
+    {X : ℕ} (hX : 1 ≤ X) {s : ℂ} (hs : 1 < s.re) :
+    ‖LSeries (fun n => (ArithmeticFunction.moebius n : ℂ)) s -
+        mobiusMollifier X s‖ ≤
+      (riemannZeta (s.re : ℂ)).re - 1 := by
+  let mu : ℕ → ℂ := fun n => (ArithmeticFunction.moebius n : ℂ)
+  let zeta : ℕ → ℂ := fun n => (ArithmeticFunction.zeta n : ℂ)
+  have hmu : Summable (LSeries.term mu s) :=
+    ArithmeticFunction.LSeriesSummable_moebius_iff.mpr hs
+  have hzeta : Summable (LSeries.term zeta s) :=
+    ArithmeticFunction.LSeriesSummable_zeta_iff.mpr hs
+  have hsreal : 1 < ((s.re : ℂ)).re := by simpa using hs
+  have hzetaReal : Summable (LSeries.term zeta (s.re : ℂ)) :=
+    ArithmeticFunction.LSeriesSummable_zeta_iff.mpr hsreal
+  have hmuTail : Summable
+      (fun n : ℕ => LSeries.term mu s (n + X + 1)) := by
+    simpa [add_assoc] using (summable_nat_add_iff (X + 1)).mpr hmu
+  have hzetaTailX : Summable
+      (fun n : ℕ => ‖LSeries.term zeta s (n + X + 1)‖) := by
+    simpa [add_assoc] using
+      ((summable_nat_add_iff (X + 1)).mpr hzeta).norm
+  have hzetaTailTwo : Summable
+      (fun n : ℕ => ‖LSeries.term zeta s (n + 2)‖) := by
+    simpa using ((summable_nat_add_iff 2).mpr hzeta).norm
+  have hmu_le_zeta (n : ℕ) :
+      ‖LSeries.term mu s (n + X + 1)‖ ≤
+        ‖LSeries.term zeta s (n + X + 1)‖ := by
+    apply LSeries.norm_term_le
+    dsimp [mu, zeta]
+    exact_mod_cast ArithmeticFunction.abs_moebius_le_one (n := n + X + 1)
+  have hzeta_shift_le (n : ℕ) :
+      ‖LSeries.term zeta s (n + X + 1)‖ ≤
+        ‖LSeries.term zeta s (n + 2)‖ := by
+    have hleft : n + X + 1 ≠ 0 := by omega
+    have hright : n + 2 ≠ 0 := by omega
+    have hzleft : zeta (n + X + 1) = 1 := by
+      simp [zeta, ArithmeticFunction.zeta_apply, hleft]
+    have hzright : zeta (n + 2) = 1 := by
+      simp [zeta, ArithmeticFunction.zeta_apply, hright]
+    rw [LSeries.norm_term_eq, LSeries.norm_term_eq, if_neg hleft,
+      if_neg hright, hzleft, hzright]
+    simp only [norm_one]
+    apply one_div_le_one_div_of_le (Real.rpow_pos_of_pos (by positivity) _)
+    apply Real.rpow_le_rpow (by positivity)
+    · exact_mod_cast (show n + 2 ≤ n + X + 1 by omega)
+    · linarith
+  have htail_norm :
+      ‖∑' n : ℕ, LSeries.term mu s (n + X + 1)‖ ≤
+        ∑' n : ℕ, ‖LSeries.term zeta s (n + 2)‖ := by
+    calc
+      ‖∑' n : ℕ, LSeries.term mu s (n + X + 1)‖ ≤
+          ∑' n : ℕ, ‖LSeries.term mu s (n + X + 1)‖ :=
+        norm_tsum_le_tsum_norm hmuTail.norm
+      _ ≤ ∑' n : ℕ, ‖LSeries.term zeta s (n + X + 1)‖ :=
+        hmuTail.norm.tsum_le_tsum hmu_le_zeta hzetaTailX
+      _ ≤ ∑' n : ℕ, ‖LSeries.term zeta s (n + 2)‖ :=
+        hzetaTailX.tsum_le_tsum hzeta_shift_le hzetaTailTwo
+  have hterm_real (n : ℕ) :
+      ‖LSeries.term zeta s (n + 2)‖ =
+        (LSeries.term zeta (s.re : ℂ) (n + 2)).re := by
+    have hn : n + 2 ≠ 0 := by omega
+    have hzn : zeta (n + 2) = 1 := by
+      simp [zeta, ArithmeticFunction.zeta_apply, hn]
+    rw [LSeries.term_of_ne_zero hn, LSeries.term_of_ne_zero hn]
+    rw [hzn]
+    simp only [one_div]
+    rw [norm_inv, norm_natCast_cpow_of_pos (by omega)]
+    have hpow : ((n + 2 : ℕ) : ℂ) ^ (s.re : ℂ) =
+        ((((n + 2 : ℕ) : ℝ) ^ s.re : ℝ) : ℂ) := by
+      exact (Complex.ofReal_cpow (by positivity) s.re).symm
+    rw [hpow]
+    simp
+  have hsplit := hzetaReal.sum_add_tsum_nat_add 2
+  have hprefix :
+      (∑ n ∈ Finset.range 2, LSeries.term zeta (s.re : ℂ) n) = 1 := by
+    norm_num [Finset.sum_range_succ, LSeries.term, zeta,
+      ArithmeticFunction.zeta_apply]
+  have htail_eq :
+      (∑' n : ℕ, LSeries.term zeta (s.re : ℂ) (n + 2)) =
+        LSeries zeta (s.re : ℂ) - 1 := by
+    rw [LSeries, ← hsplit, hprefix]
+    ring
+  have hzeta_tail_value :
+      (∑' n : ℕ, ‖LSeries.term zeta s (n + 2)‖) =
+        (riemannZeta (s.re : ℂ)).re - 1 := by
+    rw [show (∑' n : ℕ, ‖LSeries.term zeta s (n + 2)‖) =
+        ∑' n : ℕ, (LSeries.term zeta (s.re : ℂ) (n + 2)).re by
+          apply tsum_congr
+          exact hterm_real]
+    rw [← Complex.re_tsum ((summable_nat_add_iff 2).mpr hzetaReal),
+      htail_eq]
+    rw [ArithmeticFunction.LSeries_zeta_eq_riemannZeta hsreal]
+    simp
+  rw [LSeries_moebius_eq_mobiusMollifier_add_tail hs]
+  change ‖(mobiusMollifier X s +
+      ∑' n : ℕ, LSeries.term mu s (n + X + 1)) -
+        mobiusMollifier X s‖ ≤ _
+  rw [add_sub_cancel_left]
+  exact htail_norm.trans_eq hzeta_tail_value
 
 /-- Coefficients of the Möbius mollifier restricted to a vertical line. -/
 noncomputable def mobiusMollifierCoefficient (sigma : ℝ) (n : ℕ) : ℂ :=

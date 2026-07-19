@@ -216,6 +216,13 @@ example (X : ℕ) (x0 x1 y0 y1 : ℝ) :
 noncomputable example (A : ℝ) (X : ℕ) (x0 y0 y1 : ℝ) (n : ℕ) : ℝ :=
   regularizedCarlsonLeftEdgeExplicitBound A X x0 y0 y1 n
 
+example {X : ℕ} (hX : 1 ≤ X) {y0 y1 : ℝ} (hy01 : y0 ≤ y1) :
+    -(∫ y in y0..y1,
+        Real.log ‖regularizedCarlsonZeroDetector X
+          ((4 : ℂ) + I * (y : ℂ))‖) ≤
+      -(y1 - y0) * Real.log (56 / 81 : ℝ) :=
+  neg_integral_log_norm_regularizedCarlson_fixedRight_le hX hy01
+
 example {X : ℕ} {x0 x1 y0 y1 : ℝ}
     (hx0 : 0 < x0) (hx01 : x0 < x1) (hy01 : y0 < y1)
     (hleft : ∀ y ∈ Set.Icc y0 y1,
@@ -261,6 +268,31 @@ example {X : ℕ} (hX : 1 ≤ X) {sigma T : ℝ}
   exists_regularizedCarlson_goodRectangle_zeroDensity_le_logNormForm_half
     hX hsigma hsigmaOne hT
 
+example {X : ℕ} (hX : 1 ≤ X) {theta sigma T : ℝ}
+    (htheta : 0 < theta) (hthetaSigma : theta < sigma)
+    (hsigmaOne : sigma < 1) (hT : 0 ≤ T) :
+    ∃ x0 x1 y0 y1 : ℝ,
+      theta < x0 ∧ x0 < sigma ∧ x1 = 4 ∧ x0 < x1 ∧
+      -1 < y0 ∧ y0 < 0 ∧
+      T < y1 ∧ y1 < T + 1 ∧ y0 < y1 ∧
+      (∀ y ∈ Set.Icc y0 y1,
+        regularizedCarlsonZeroDetector X
+          ((x0 : ℂ) + (y : ℂ) * I) ≠ 0) ∧
+      (∀ y ∈ Set.Icc y0 y1,
+        regularizedCarlsonZeroDetector X
+          ((x1 : ℂ) + (y : ℂ) * I) ≠ 0) ∧
+      (∀ x ∈ Set.Icc x0 x1,
+        regularizedCarlsonZeroDetector X
+          ((x : ℂ) + (y0 : ℂ) * I) ≠ 0) ∧
+      (∀ x ∈ Set.Icc x0 x1,
+        regularizedCarlsonZeroDetector X
+          ((x : ℂ) + (y1 : ℂ) * I) ≠ 0) ∧
+      (2 * Real.pi) * (sigma - x0) *
+          (ZeroDensity.zeroDensityCount sigma T : ℝ) ≤
+        regularizedCarlsonLittlewoodFourEdges X x0 x1 y0 y1 :=
+  exists_regularizedCarlson_goodRectangle_fixedRight_zeroDensity_certificate_of_leftWindow
+    hX htheta hthetaSigma hsigmaOne hT
+
 #print axioms boundaryRectIntegral_regularizedCarlsonZeroDetector_eq_zeroMultiplicitySum
 #print axioms two_pi_mul_regularizedCarlsonZeroMultiplicityWeightedRealSum_eq_four_edges
 #print axioms sub_mul_zeroDensityCount_le_regularizedCarlsonWeightedZeroSum
@@ -268,8 +300,10 @@ example {X : ℕ} (hX : 1 ≤ X) {sigma T : ℝ}
 #print axioms exists_regularizedCarlson_goodRectangle_zeroDensity_certificate_of_leftWindow
 #print axioms exists_regularizedCarlson_goodRectangle_zeroDensity_certificate
 #print axioms exists_regularizedCarlson_goodRectangle_zeroDensity_certificate_half
+#print axioms exists_regularizedCarlson_goodRectangle_fixedRight_zeroDensity_certificate_of_leftWindow
 #print axioms regularizedCarlsonLittlewood_leftEdge_eq_logNorm
 #print axioms regularizedCarlsonLittlewood_rightEdge_eq_logNorm
+#print axioms neg_integral_log_norm_regularizedCarlson_fixedRight_le
 #print axioms regularizedCarlsonLittlewoodFourEdges_eq_logNormForm
 #print axioms regularizedCarlsonLittlewoodFourEdges_eq_logNormFormDef
 #print axioms regularizedCarlsonLittlewoodLogNormForm_eq_left_add_remaining

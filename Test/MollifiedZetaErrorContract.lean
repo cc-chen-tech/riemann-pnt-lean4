@@ -10,6 +10,21 @@ example (X : ℕ) (s : ℂ) :
     mollifiedZetaError X s = riemannZeta s * mobiusMollifier X s - 1 :=
   rfl
 
+example {X : ℕ} {s : ℂ} (hs : 1 < s.re) :
+    mollifiedZetaError X s =
+      riemannZeta s *
+        (mobiusMollifier X s -
+          LSeries (fun n => (ArithmeticFunction.moebius n : ℂ)) s) :=
+  mollifiedZetaError_eq_riemannZeta_mul_mobius_tail hs
+
+example {X : ℕ} (hX : 1 ≤ X) {s : ℂ} (hs : 4 ≤ s.re) :
+    ‖mollifiedZetaError X s‖ ≤ (5 / 9 : ℝ) :=
+  norm_mollifiedZetaError_le_five_ninth_of_four_le_re hX hs
+
+example {X : ℕ} (hX : 1 ≤ X) {s : ℂ} (hs : 4 ≤ s.re) :
+    ‖mollifiedZetaError X s‖ < 1 :=
+  norm_mollifiedZetaError_lt_one_of_four_le_re hX hs
+
 example (X : ℕ) (x : ℝ) (s : ℂ) :
     truncatedZetaPolynomial x s * mobiusMollifier X s =
       mollifiedTruncatedPolynomial X (Nat.floor x) s :=
@@ -260,6 +275,9 @@ example :
   exists_mollifiedZetaError_tail_decomposition
 
 #print axioms exists_mollifiedZetaError_decomposition
+#print axioms mollifiedZetaError_eq_riemannZeta_mul_mobius_tail
+#print axioms norm_mollifiedZetaError_le_five_ninth_of_four_le_re
+#print axioms norm_mollifiedZetaError_lt_one_of_four_le_re
 #print axioms truncatedZetaPolynomial_mul_mobiusMollifier
 #print axioms exists_mollifiedZetaError_coefficient_decomposition
 #print axioms exists_mollifiedZetaError_tail_decomposition

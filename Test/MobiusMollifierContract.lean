@@ -24,6 +24,20 @@ example (X : ℕ) (hX : 1 ≤ X) (s : ℂ) :
     analyticOrderAt (mobiusMollifier X) s ≠ ⊤ :=
   analyticOrderAt_mobiusMollifier_ne_top X hX s
 
+example {X : ℕ} {s : ℂ} (hs : 1 < s.re) :
+    LSeries (fun n => (ArithmeticFunction.moebius n : ℂ)) s =
+      mobiusMollifier X s +
+        ∑' n : ℕ,
+          LSeries.term (fun m => (ArithmeticFunction.moebius m : ℂ)) s
+            (n + X + 1) :=
+  LSeries_moebius_eq_mobiusMollifier_add_tail hs
+
+example {X : ℕ} (hX : 1 ≤ X) {s : ℂ} (hs : 1 < s.re) :
+    ‖LSeries (fun n => (ArithmeticFunction.moebius n : ℂ)) s -
+        mobiusMollifier X s‖ ≤
+      (riemannZeta (s.re : ℂ)).re - 1 :=
+  norm_LSeries_moebius_sub_mobiusMollifier_le_zeta_tail hX hs
+
 example (X : ℕ) (sigma t : ℝ) :
     mobiusMollifier X ((sigma : ℂ) + Complex.I * t) =
       DirichletPolynomial.finiteDirichletPolynomial (Finset.Icc 1 X)
@@ -85,6 +99,8 @@ example {X : ℕ} (hX : 1 ≤ X) {sigma a b : ℝ}
 #print axioms analyticAt_mobiusMollifier
 #print axioms tendsto_mobiusMollifier_atTop
 #print axioms analyticOrderAt_mobiusMollifier_ne_top
+#print axioms LSeries_moebius_eq_mobiusMollifier_add_tail
+#print axioms norm_LSeries_moebius_sub_mobiusMollifier_le_zeta_tail
 #print axioms mobiusMollifier_verticalLine_eq_finiteDirichletPolynomial
 #print axioms continuous_mobiusMollifier_verticalLine
 #print axioms norm_mobiusMollifierCoefficient_le

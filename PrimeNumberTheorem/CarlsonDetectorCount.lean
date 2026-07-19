@@ -260,6 +260,54 @@ theorem exists_regularizedCarlsonZeroDetector_goodRectangle_of_leftWindow
     · exact hy0Lower.le.trans hy.1
     · exact hy.2.trans hy1Upper.le
 
+/-- A good detector rectangle with the quantitative fixed right edge
+`Re(s) = 4`.  Only the left and horizontal sides need finite-zero avoidance;
+the right side is uniformly zero-free by the Mobius-tail estimate. -/
+theorem exists_regularizedCarlsonZeroDetector_goodRectangle_fixedRight_of_leftWindow
+    {X : ℕ} (hX : 1 ≤ X) {theta sigma T : ℝ}
+    (htheta : 0 < theta) (hthetaSigma : theta < sigma)
+    (hsigmaOne : sigma < 1) (hT : 0 ≤ T) :
+    ∃ x0 x1 y0 y1 : ℝ,
+      theta < x0 ∧ x0 < sigma ∧ x1 = 4 ∧ x0 < x1 ∧
+      -1 < y0 ∧ y0 < 0 ∧
+      T < y1 ∧ y1 < T + 1 ∧ y0 < y1 ∧
+      (∀ y ∈ Set.Icc y0 y1,
+        regularizedCarlsonZeroDetector X
+          ((x0 : ℂ) + (y : ℂ) * I) ≠ 0) ∧
+      (∀ y ∈ Set.Icc y0 y1,
+        regularizedCarlsonZeroDetector X
+          ((x1 : ℂ) + (y : ℂ) * I) ≠ 0) ∧
+      (∀ x ∈ Set.Icc x0 x1,
+        regularizedCarlsonZeroDetector X
+          ((x : ℂ) + (y0 : ℂ) * I) ≠ 0) ∧
+      (∀ x ∈ Set.Icc x0 x1,
+        regularizedCarlsonZeroDetector X
+          ((x : ℂ) + (y1 : ℂ) * I) ≠ 0) := by
+  obtain ⟨x0, hx0Lower, hx0Upper, hx0ne⟩ :=
+    exists_regularizedCarlsonZeroDetector_vertical_ne_zero
+      hX htheta hthetaSigma
+      (a := (-1 : ℝ)) (b := T + 1)
+  have hx0Pos : 0 < x0 := htheta.trans hx0Lower
+  obtain ⟨y0, hy0Lower, hy0Upper, hy0ne⟩ :=
+    exists_regularizedCarlsonZeroDetector_horizontal_ne_zero
+      hX hx0Pos (alpha := 4) (T := (-1 : ℝ))
+  obtain ⟨y1, hy1Lower, hy1Upper, hy1ne⟩ :=
+    exists_regularizedCarlsonZeroDetector_horizontal_ne_zero
+      hX hx0Pos (alpha := 4) (T := T)
+  refine ⟨x0, 4, y0, y1,
+    hx0Lower, hx0Upper, rfl, ?_, hy0Lower, ?_, hy1Lower, hy1Upper,
+    (by linarith [hy0Upper, hT, hy1Lower]), ?_, ?_, hy0ne, hy1ne⟩
+  · linarith
+  · linarith
+  · intro y hy
+    apply hx0ne y
+    constructor
+    · exact hy0Lower.le.trans hy.1
+    · exact hy.2.trans hy1Upper.le
+  · intro y _hy
+    apply regularizedCarlsonZeroDetector_ne_zero_of_four_le_re hX
+    simp
+
 /-- Backwards-compatible good rectangle with left window
 `(sigma / 2, sigma)`. -/
 theorem exists_regularizedCarlsonZeroDetector_goodRectangle

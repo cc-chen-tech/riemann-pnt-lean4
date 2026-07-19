@@ -416,6 +416,52 @@ theorem regularizedCarlsonLittlewood_rightEdge_eq_logNorm
       (f := regularizedCarlsonZeroDetector X)
       (sigma := x1) (anchor := x0) hanalytic hne)
 
+/-- The negative log-norm integral on the fixed right edge `Re(s) = 4` is
+bounded by an explicit constant times its length. -/
+theorem neg_integral_log_norm_regularizedCarlson_fixedRight_le
+    {X : ℕ} (hX : 1 ≤ X) {y0 y1 : ℝ} (hy01 : y0 ≤ y1) :
+    -(∫ y in y0..y1,
+        Real.log ‖regularizedCarlsonZeroDetector X
+          ((4 : ℂ) + I * (y : ℂ))‖) ≤
+      -(y1 - y0) * Real.log (56 / 81 : ℝ) := by
+  have hboundary : ∀ y ∈ Set.uIcc y0 y1,
+      regularizedCarlsonZeroDetector X
+        ((4 : ℂ) + I * (y : ℂ)) ≠ 0 := by
+    intro y _hy
+    apply regularizedCarlsonZeroDetector_ne_zero_of_four_le_re hX
+    simp
+  have hrightInt :=
+    intervalIntegrable_log_norm_regularizedCarlsonZeroDetector
+      (X := X) (sigma := 4) (a := y0) (b := y1) (by norm_num) hboundary
+  have hconstInt : IntervalIntegrable
+      (fun _y : ℝ => Real.log (56 / 81 : ℝ))
+      MeasureTheory.volume y0 y1 := intervalIntegrable_const
+  have hpoint (y : ℝ) (_hy : y ∈ Set.Icc y0 y1) :
+      Real.log (56 / 81 : ℝ) ≤
+        Real.log ‖regularizedCarlsonZeroDetector X
+          ((4 : ℂ) + I * (y : ℂ))‖ := by
+    let s : ℂ := (4 : ℂ) + I * (y : ℂ)
+    have hs : 4 ≤ s.re := by simp [s]
+    have hbase :=
+      log_fiftySix_div_eightyOne_le_log_norm_regularized_of_four_le_re hX hs
+    have hnorm : 1 ≤ ‖s - 1‖ := by
+      calc
+        (1 : ℝ) ≤ 3 := by norm_num
+        _ = |(s - 1).re| := by norm_num [s]
+        _ ≤ ‖s - 1‖ := Complex.abs_re_le_norm _
+    have hlog : 0 ≤ Real.log ‖s - 1‖ := Real.log_nonneg hnorm
+    dsimp [s] at hbase ⊢
+    linarith
+  have hlower := intervalIntegral.integral_mono_on
+    hy01 hconstInt hrightInt hpoint
+  have hlower' :
+      (y1 - y0) * Real.log (56 / 81 : ℝ) ≤
+        ∫ y in y0..y1,
+          Real.log ‖regularizedCarlsonZeroDetector X
+            ((4 : ℂ) + I * (y : ℂ))‖ := by
+    simpa using hlower
+  linarith
+
 /-- The endpoint terms from the four edge integrations cancel.  This is the
 detector-specific Littlewood lemma in the form used for quantitative bounds:
 two horizontal argument terms, one right-edge argument term, and the
@@ -673,6 +719,83 @@ theorem exists_regularizedCarlson_goodRectangle_zeroDensity_certificate_of_leftW
             (analyticOrderNatAt
               (regularizedCarlsonZeroDetector X) rho : ℝ) := hscaled
     _ = regularizedCarlsonLittlewoodFourEdges X x0 x1 y0 y1 := by
+      simpa [regularizedCarlsonLittlewoodFourEdges] using hedges
+
+/-- The zero-density counting certificate with the quantitative fixed right
+edge `Re(s) = 4`. -/
+theorem exists_regularizedCarlson_goodRectangle_fixedRight_zeroDensity_certificate_of_leftWindow
+    {X : ℕ} (hX : 1 ≤ X) {theta sigma T : ℝ}
+    (htheta : 0 < theta) (hthetaSigma : theta < sigma)
+    (hsigmaOne : sigma < 1) (hT : 0 ≤ T) :
+    ∃ x0 x1 y0 y1 : ℝ,
+      theta < x0 ∧ x0 < sigma ∧ x1 = 4 ∧ x0 < x1 ∧
+      -1 < y0 ∧ y0 < 0 ∧
+      T < y1 ∧ y1 < T + 1 ∧ y0 < y1 ∧
+      (∀ y ∈ Set.Icc y0 y1,
+        regularizedCarlsonZeroDetector X
+          ((x0 : ℂ) + (y : ℂ) * I) ≠ 0) ∧
+      (∀ y ∈ Set.Icc y0 y1,
+        regularizedCarlsonZeroDetector X
+          ((x1 : ℂ) + (y : ℂ) * I) ≠ 0) ∧
+      (∀ x ∈ Set.Icc x0 x1,
+        regularizedCarlsonZeroDetector X
+          ((x : ℂ) + (y0 : ℂ) * I) ≠ 0) ∧
+      (∀ x ∈ Set.Icc x0 x1,
+        regularizedCarlsonZeroDetector X
+          ((x : ℂ) + (y1 : ℂ) * I) ≠ 0) ∧
+      (2 * Real.pi) * (sigma - x0) *
+          (ZeroDensity.zeroDensityCount sigma T : ℝ) ≤
+        regularizedCarlsonLittlewoodFourEdges X x0 x1 y0 y1 := by
+  obtain ⟨x0, x1, y0, y1,
+      hx0Lower, hx0Upper, hx1Eq, hx01,
+      hy0Lower, hy0Upper, hy1Lower, hy1Upper, hy01,
+      hleft, hright, hbottom, htop⟩ :=
+    exists_regularizedCarlsonZeroDetector_goodRectangle_fixedRight_of_leftWindow
+      hX htheta hthetaSigma hsigmaOne hT
+  subst x1
+  have hx0 : 0 < x0 := htheta.trans hx0Lower
+  have hcount :
+      (sigma - x0) * (ZeroDensity.zeroDensityCount sigma T : ℝ) ≤
+        ∑ rho ∈ regularizedCarlsonDetectorRectangleDivisorSupport
+            X x0 4 y0 y1,
+          (rho.re - x0) *
+            (analyticOrderNatAt
+              (regularizedCarlsonZeroDetector X) rho : ℝ) :=
+    sub_mul_zeroDensityCount_le_regularizedCarlsonWeightedZeroSum
+      (x1 := 4) hX hx0 hx0Upper (by norm_num) hy0Upper hy1Lower
+  have htwoPi : 0 ≤ 2 * Real.pi :=
+    mul_nonneg (by norm_num) Real.pi_pos.le
+  have hscaled :
+      (2 * Real.pi) *
+          ((sigma - x0) *
+            (ZeroDensity.zeroDensityCount sigma T : ℝ)) ≤
+        (2 * Real.pi) *
+          ∑ rho ∈ regularizedCarlsonDetectorRectangleDivisorSupport
+              X x0 4 y0 y1,
+            (rho.re - x0) *
+              (analyticOrderNatAt
+                (regularizedCarlsonZeroDetector X) rho : ℝ) :=
+    mul_le_mul_of_nonneg_left hcount htwoPi
+  have hedges :=
+    two_pi_mul_regularizedCarlsonZeroMultiplicityWeightedRealSum_eq_four_edges
+      hX hx0 hx01 hy01 hleft hright hbottom htop
+  refine ⟨x0, 4, y0, y1,
+    hx0Lower, hx0Upper, rfl, hx01,
+    hy0Lower, hy0Upper, hy1Lower, hy1Upper, hy01,
+    hleft, hright, hbottom, htop, ?_⟩
+  calc
+    (2 * Real.pi) * (sigma - x0) *
+        (ZeroDensity.zeroDensityCount sigma T : ℝ) =
+        (2 * Real.pi) *
+          ((sigma - x0) *
+            (ZeroDensity.zeroDensityCount sigma T : ℝ)) := by ring
+    _ ≤ (2 * Real.pi) *
+        ∑ rho ∈ regularizedCarlsonDetectorRectangleDivisorSupport
+            X x0 4 y0 y1,
+          (rho.re - x0) *
+            (analyticOrderNatAt
+              (regularizedCarlsonZeroDetector X) rho : ℝ) := hscaled
+    _ = regularizedCarlsonLittlewoodFourEdges X x0 4 y0 y1 := by
       simpa [regularizedCarlsonLittlewoodFourEdges] using hedges
 
 /-- Backwards-compatible counting certificate with left window
