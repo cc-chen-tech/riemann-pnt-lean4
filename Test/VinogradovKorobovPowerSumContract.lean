@@ -25,4 +25,10 @@ example (L : ℕ) (α : ℝ)
     0 ≤ finiteRpowSumEnvelope L α :=
   finiteRpowSumEnvelope_nonneg L α hL hα0 hα1
 
+example (L : ℕ) (α : ℝ)
+    (hL : 2 ≤ L) (hα0 : 0 ≤ α) (hα1 : α < 1) :
+    finiteRpowSumEnvelope L α / (L : ℝ) ≤
+      2 / (1 - α) * (L : ℝ) ^ (-α) :=
+  finiteRpowSumEnvelope_div_le_rpow L α hL hα0 hα1
+
 end ZeroFreeRegion.VinogradovKorobov

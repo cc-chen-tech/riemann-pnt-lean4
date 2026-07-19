@@ -86,6 +86,16 @@ theorem aProcessPowerDecayExponent_le_one (depth : ℕ) :
       have hpos := aProcessPowerDecayExponent_pos depth
       linarith
 
+/-- Closed form of the path-product decay exponent after repeated square
+roots. -/
+theorem aProcessPowerDecayExponent_eq (depth : ℕ) :
+    aProcessPowerDecayExponent depth = 1 / (2 : ℝ) ^ depth := by
+  induction depth with
+  | zero => simp
+  | succ depth ih =>
+      rw [aProcessPowerDecayExponent_succ, ih, pow_succ]
+      field_simp
+
 theorem aProcessPowerDecayConstant_nonneg
     (H : ℕ → ℕ) (N : ℕ) (C : ℝ) (depth level : ℕ) :
     0 ≤ aProcessPowerDecayConstant H N C depth level := by
@@ -119,6 +129,49 @@ theorem aProcessPowerDecayCoefficient_nonneg
       exact div_nonneg (mul_nonneg
         (mul_nonneg (by positivity) (Real.sqrt_nonneg _)) hEnv)
         (Nat.cast_nonneg _)
+
+/-- One coefficient step retains a negative real power of the current
+differencing length after averaging the child shifts. -/
+theorem aProcessPowerDecayCoefficient_succ_le_rpow
+    (H : ℕ → ℕ) (N : ℕ) (C : ℝ) (depth level : ℕ)
+    (hH : 2 ≤ H level) :
+    aProcessPowerDecayCoefficient H N C (depth + 1) level ≤
+      8 * (N : ℝ) * Real.sqrt
+          (aProcessPowerDecayCoefficient H N C depth (level + 1)) /
+        (1 - aProcessPowerDecayExponent depth / 2) *
+          (H level : ℝ) ^ (-(aProcessPowerDecayExponent depth / 2)) := by
+  let α := aProcessPowerDecayExponent depth / 2
+  have hα0 : 0 ≤ α := by
+    have := aProcessPowerDecayExponent_pos depth
+    dsimp only [α]
+    linarith
+  have hα1 : α < 1 := by
+    have := aProcessPowerDecayExponent_le_one depth
+    dsimp only [α]
+    linarith
+  have hsum := finiteRpowSumEnvelope_div_le_rpow
+    (H level) α hH hα0 hα1
+  have hpref : 0 ≤ 4 * (N : ℝ) * Real.sqrt
+      (aProcessPowerDecayCoefficient H N C depth (level + 1)) := by
+    positivity
+  rw [aProcessPowerDecayCoefficient_succ]
+  calc
+    4 * (N : ℝ) * Real.sqrt
+          (aProcessPowerDecayCoefficient H N C depth (level + 1)) *
+        finiteRpowSumEnvelope (H level) α / (H level : ℝ) =
+        (4 * (N : ℝ) * Real.sqrt
+          (aProcessPowerDecayCoefficient H N C depth (level + 1))) *
+          (finiteRpowSumEnvelope (H level) α / (H level : ℝ)) := by ring
+    _ ≤ (4 * (N : ℝ) * Real.sqrt
+          (aProcessPowerDecayCoefficient H N C depth (level + 1))) *
+          (2 / (1 - α) * (H level : ℝ) ^ (-α)) :=
+      mul_le_mul_of_nonneg_left hsum hpref
+    _ = 8 * (N : ℝ) * Real.sqrt
+          (aProcessPowerDecayCoefficient H N C depth (level + 1)) /
+        (1 - aProcessPowerDecayExponent depth / 2) *
+          (H level : ℝ) ^ (-(aProcessPowerDecayExponent depth / 2)) := by
+      dsimp only [α]
+      ring
 
 /-- The product-sensitive recursive envelope is dominated by a closed form
 consisting of a path-independent constant and one negative power of the

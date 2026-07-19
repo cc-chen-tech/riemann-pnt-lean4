@@ -94,4 +94,49 @@ theorem finiteRpowSumEnvelope_nonneg
       Real.rpow_nonneg (Nat.cast_nonneg ell) _)
   exact hsum.trans (sum_Icc_rpow_neg_le_envelope L α hL hα0 hα1)
 
+/-- After division by the differencing length, the finite power-sum
+majorant retains the expected negative power of that length. -/
+theorem finiteRpowSumEnvelope_div_le_rpow
+    (L : ℕ) (α : ℝ) (hL : 2 ≤ L) (hα0 : 0 ≤ α) (hα1 : α < 1) :
+    finiteRpowSumEnvelope L α / (L : ℝ) ≤
+      2 / (1 - α) * (L : ℝ) ^ (-α) := by
+  have hLpos : 0 < (L : ℝ) := Nat.cast_pos.mpr (by omega)
+  have hLone : (1 : ℝ) ≤ (L : ℝ) := by
+    exact_mod_cast (show 1 ≤ L by omega)
+  have hden : 0 < 1 - α := by linarith
+  have hpowOne : 1 ≤ (L : ℝ) ^ (1 - α) :=
+    Real.one_le_rpow hLone (by linarith)
+  have hpowNonneg : 0 ≤ (L : ℝ) ^ (1 - α) :=
+    hpowOne.trans' zero_le_one
+  have hsub : (((L - 1 : ℕ) : ℝ)) ≤ (L : ℝ) := by
+    exact_mod_cast (Nat.sub_le L 1)
+  have hsub0 : 0 ≤ (((L - 1 : ℕ) : ℝ)) := Nat.cast_nonneg _
+  have hpowSub : (((L - 1 : ℕ) : ℝ)) ^ (1 - α) ≤
+      (L : ℝ) ^ (1 - α) :=
+    Real.rpow_le_rpow hsub0 hsub (by linarith)
+  have henv : finiteRpowSumEnvelope L α ≤
+      2 * (L : ℝ) ^ (1 - α) / (1 - α) := by
+    unfold finiteRpowSumEnvelope
+    calc
+      1 + ((((L - 1 : ℕ) : ℝ) ^ (1 - α) - 1) / (1 - α)) ≤
+          1 + ((L : ℝ) ^ (1 - α) / (1 - α)) := by
+        gcongr
+        linarith
+      _ ≤ (L : ℝ) ^ (1 - α) +
+          (L : ℝ) ^ (1 - α) / (1 - α) := by linarith
+      _ ≤ (L : ℝ) ^ (1 - α) / (1 - α) +
+          (L : ℝ) ^ (1 - α) / (1 - α) := by
+        gcongr
+        exact (le_div_iff₀ hden).2 (by
+          nlinarith [mul_nonneg hpowNonneg hα0])
+      _ = 2 * (L : ℝ) ^ (1 - α) / (1 - α) := by ring
+  calc
+    finiteRpowSumEnvelope L α / (L : ℝ) ≤
+        (2 * (L : ℝ) ^ (1 - α) / (1 - α)) / (L : ℝ) :=
+      div_le_div_of_nonneg_right henv hLpos.le
+    _ = 2 / (1 - α) * (L : ℝ) ^ (-α) := by
+      rw [show (1 - α : ℝ) = -α + 1 by ring,
+        Real.rpow_add hLpos (-α) 1, Real.rpow_one]
+      field_simp
+
 end ZeroFreeRegion.VinogradovKorobov

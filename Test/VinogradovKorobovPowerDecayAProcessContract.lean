@@ -21,6 +21,19 @@ noncomputable example (H : ℕ → ℕ) (N : ℕ) (C : ℝ)
 example (depth : ℕ) : 0 < aProcessPowerDecayExponent depth :=
   aProcessPowerDecayExponent_pos depth
 
+example (depth : ℕ) :
+    aProcessPowerDecayExponent depth = 1 / (2 : ℝ) ^ depth :=
+  aProcessPowerDecayExponent_eq depth
+
+example (H : ℕ → ℕ) (N : ℕ) (C : ℝ) (depth level : ℕ)
+    (hH : 2 ≤ H level) :
+    aProcessPowerDecayCoefficient H N C (depth + 1) level ≤
+      8 * (N : ℝ) * Real.sqrt
+          (aProcessPowerDecayCoefficient H N C depth (level + 1)) /
+        (1 - aProcessPowerDecayExponent depth / 2) *
+          (H level : ℝ) ^ (-(aProcessPowerDecayExponent depth / 2)) :=
+  aProcessPowerDecayCoefficient_succ_le_rpow H N C depth level hH
+
 example (H : ℕ → ℕ) (N : ℕ) (C P : ℝ) (depth level : ℕ)
     (hC : 0 ≤ C) (hP : 0 < P)
     (hHlower : ∀ j, 2 ≤ H j) (hHupper : ∀ j, H j ≤ N) :
