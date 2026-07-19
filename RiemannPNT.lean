@@ -7,6 +7,7 @@ import HardyTheorem.CompletedZetaFourier
 import HardyTheorem.CriticalLineMultiplicity
 import HardyTheorem.AnalyticSignChange
 import HardyTheorem.ShortIntervalMeanValue
+import HardyTheorem.ShortIntegralZeroDetection
 import HardyTheorem.HardyModelApproximation
 import HardyTheorem.CriticalLineShortDirichlet
 import HardyTheorem.HardyShortSignedMeanSquare
