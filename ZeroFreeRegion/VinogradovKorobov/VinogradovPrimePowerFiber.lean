@@ -177,6 +177,75 @@ theorem card_vinogradovNonsingularPrimePowerLiftSet
     _ = (vinogradovNonsingularResidueSet p k).card := by simp
     _ = p.descFactorial k := card_vinogradovNonsingularResidueSet p k
 
+private theorem mul_sub_mul_tsub_eq
+    (p A F k : ℕ) (hk : k ≤ p) (hF : F ≤ A) :
+    p * A - (p - k) * F = p * (A - F) + k * F := by
+  apply (Nat.sub_eq_iff_eq_add (Nat.mul_le_mul (Nat.sub_le _ _) hF)).mpr
+  calc
+    p * A = p * ((A - F) + F) := by rw [Nat.sub_add_cancel hF]
+    _ = p * (A - F) + p * F := by rw [Nat.mul_add]
+    _ = p * (A - F) + ((p - k) + k) * F := by
+      rw [Nat.sub_add_cancel hk]
+    _ = (p * (A - F) + k * F) + (p - k) * F := by
+      rw [Nat.add_mul]
+      ac_rfl
+
+/-- The proportion of non-injective length-`k` tuples over a set of size `p`
+is at most the union-bound scale `k^2 / p`. -/
+theorem pow_sub_descFactorial_le_sq_mul_pow_pred
+    (p k : ℕ) (hp : 0 < p) :
+    p ^ k - p.descFactorial k ≤ k ^ 2 * p ^ (k - 1) := by
+  induction k with
+  | zero => simp
+  | succ k ih =>
+      by_cases hkp : k < p
+      · have hk : k ≤ p := Nat.le_of_lt hkp
+        have hF : p.descFactorial k ≤ p ^ k :=
+          Nat.descFactorial_le_pow p k
+        rw [Nat.descFactorial_succ, pow_succ]
+        rw [show p ^ k * p = p * p ^ k by ac_rfl]
+        rw [mul_sub_mul_tsub_eq p (p ^ k) (p.descFactorial k) k hk hF]
+        have h1 :
+            p * (p ^ k - p.descFactorial k) ≤
+              p * (k ^ 2 * p ^ (k - 1)) :=
+          Nat.mul_le_mul_left p ih
+        have h2 : k * p.descFactorial k ≤ k * p ^ k :=
+          Nat.mul_le_mul_left k hF
+        calc
+          p * (p ^ k - p.descFactorial k) + k * p.descFactorial k
+              ≤ p * (k ^ 2 * p ^ (k - 1)) + k * p ^ k :=
+            Nat.add_le_add h1 h2
+          _ ≤ (k + 1) ^ 2 * p ^ k := by
+            by_cases hk0 : k = 0
+            · subst k
+              simp
+            · have hpow : p ^ k = p * p ^ (k - 1) := by
+                conv_lhs => rw [show k = (k - 1) + 1 by omega]
+                rw [pow_succ]
+                ac_rfl
+              rw [hpow]
+              ring_nf
+              gcongr
+              omega
+      · have hpk : p ≤ k := Nat.le_of_not_gt hkp
+        rw [Nat.descFactorial_eq_zero_iff_lt.mpr (by omega), Nat.sub_zero]
+        rw [show k + 1 - 1 = k by omega]
+        rw [pow_succ]
+        calc
+          p ^ k * p = p * p ^ k := by ac_rfl
+          _ ≤ (k + 1) ^ 2 * p ^ k :=
+            Nat.mul_le_mul_right (p ^ k) (by nlinarith)
+
+/-- The singular residue stratum saves one full power of `p`, up to the
+explicit polynomial factor `k^2`. -/
+theorem card_vinogradovSingularResidueSet_le_sq_mul_pow_pred
+    (p k : ℕ) [Fact p.Prime] :
+    (vinogradovSingularResidueSet p k).card ≤
+      k ^ 2 * p ^ (k - 1) := by
+  rw [card_vinogradovSingularResidueSet]
+  exact pow_sub_descFactorial_le_sq_mul_pow_pred p k
+    (Fact.out : p.Prime).pos
+
 end
 
 end ZeroFreeRegion.VinogradovKorobov
