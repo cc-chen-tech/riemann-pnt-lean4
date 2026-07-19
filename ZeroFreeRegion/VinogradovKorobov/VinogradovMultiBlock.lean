@@ -406,6 +406,170 @@ theorem card_vinogradovSingularHeadNonsingularTailResidueSet
   rw [Finset.card_product, card_vinogradovSingularResidueSet,
     card_vinogradovSomeBlockNonsingularResidueSet]
 
+/-- Residue-field Vinogradov solutions whose left tuple contains a
+nonsingular selected block. -/
+noncomputable def vinogradovSomeBlockNonsingularSolutionSet
+    (p d k r b : ℕ) [Fact p.Prime] :
+    Finset
+      ((Fin (b * k + r) → ZMod p) ×
+        (Fin (b * k + r) → ZMod p)) := by
+  classical
+  exact
+    ((vinogradovSomeBlockNonsingularResidueSet p k r b).product
+        Finset.univ).filter fun xy ↦
+      IsVinogradovResidueSolution p d (b * k + r) xy.1 xy.2
+
+theorem mem_vinogradovSomeBlockNonsingularSolutionSet_iff
+    (p d k r b : ℕ) [Fact p.Prime]
+    (x y : Fin (b * k + r) → ZMod p) :
+    (x, y) ∈ vinogradovSomeBlockNonsingularSolutionSet p d k r b ↔
+      VinogradovHasNonsingularBlock p k r b x ∧
+        IsVinogradovResidueSolution p d (b * k + r) x y := by
+  classical
+  simp [vinogradovSomeBlockNonsingularSolutionSet,
+    mem_vinogradovSomeBlockNonsingularResidueSet_iff]
+
+/-- Solutions in the immediately nonsingular branch. -/
+noncomputable def vinogradovHeadNonsingularSolutionSet
+    (p d k r b : ℕ) [Fact p.Prime] :
+    Finset
+      ((Fin ((b + 1) * k + r) → ZMod p) ×
+        (Fin ((b + 1) * k + r) → ZMod p)) := by
+  classical
+  exact
+    ((vinogradovHeadNonsingularResidueSet p k r b).product
+        Finset.univ).filter fun xy ↦
+      IsVinogradovResidueSolution p d ((b + 1) * k + r) xy.1 xy.2
+
+theorem mem_vinogradovHeadNonsingularSolutionSet_iff
+    (p d k r b : ℕ) [Fact p.Prime]
+    (x y : Fin ((b + 1) * k + r) → ZMod p) :
+    (x, y) ∈ vinogradovHeadNonsingularSolutionSet p d k r b ↔
+      Function.Injective
+          ((vinogradovPrependBlockEquiv p k r b).symm x).1 ∧
+        IsVinogradovResidueSolution p d ((b + 1) * k + r) x y := by
+  classical
+  simp [vinogradovHeadNonsingularSolutionSet,
+    mem_vinogradovHeadNonsingularResidueSet_iff]
+
+/-- Solutions in the recursive branch with a singular head and a later
+nonsingular block. -/
+noncomputable def vinogradovSingularHeadNonsingularTailSolutionSet
+    (p d k r b : ℕ) [Fact p.Prime] :
+    Finset
+      ((Fin ((b + 1) * k + r) → ZMod p) ×
+        (Fin ((b + 1) * k + r) → ZMod p)) := by
+  classical
+  exact
+    ((vinogradovSingularHeadNonsingularTailResidueSet p k r b).product
+        Finset.univ).filter fun xy ↦
+      IsVinogradovResidueSolution p d ((b + 1) * k + r) xy.1 xy.2
+
+theorem mem_vinogradovSingularHeadNonsingularTailSolutionSet_iff
+    (p d k r b : ℕ) [Fact p.Prime]
+    (x y : Fin ((b + 1) * k + r) → ZMod p) :
+    (x, y) ∈
+        vinogradovSingularHeadNonsingularTailSolutionSet p d k r b ↔
+      (¬Function.Injective
+          ((vinogradovPrependBlockEquiv p k r b).symm x).1 ∧
+        VinogradovHasNonsingularBlock p k r b
+          ((vinogradovPrependBlockEquiv p k r b).symm x).2) ∧
+        IsVinogradovResidueSolution p d ((b + 1) * k + r) x y := by
+  classical
+  simp [vinogradovSingularHeadNonsingularTailSolutionSet,
+    mem_vinogradovSingularHeadNonsingularTailResidueSet_iff]
+
+theorem disjoint_headNonsingular_singularHeadNonsingularTail_solution
+    (p d k r b : ℕ) [Fact p.Prime] :
+    Disjoint (vinogradovHeadNonsingularSolutionSet p d k r b)
+      (vinogradovSingularHeadNonsingularTailSolutionSet p d k r b) := by
+  rw [Finset.disjoint_left]
+  rintro ⟨x, y⟩ hx hy
+  exact
+    ((mem_vinogradovSingularHeadNonsingularTailSolutionSet_iff
+      p d k r b x y).mp hy).1.1
+      ((mem_vinogradovHeadNonsingularSolutionSet_iff
+        p d k r b x y).mp hx).1
+
+theorem union_headNonsingular_singularHeadNonsingularTail_solution_eq_someBlock
+    (p d k r b : ℕ) [Fact p.Prime] :
+    vinogradovHeadNonsingularSolutionSet p d k r b ∪
+        vinogradovSingularHeadNonsingularTailSolutionSet p d k r b =
+      vinogradovSomeBlockNonsingularSolutionSet p d k r (b + 1) := by
+  ext xy
+  rcases xy with ⟨x, y⟩
+  rw [Finset.mem_union,
+    mem_vinogradovHeadNonsingularSolutionSet_iff,
+    mem_vinogradovSingularHeadNonsingularTailSolutionSet_iff,
+    mem_vinogradovSomeBlockNonsingularSolutionSet_iff]
+  simp only [VinogradovHasNonsingularBlock]
+  tauto
+
+theorem card_headNonsingular_add_card_singularHeadNonsingularTail_solution
+    (p d k r b : ℕ) [Fact p.Prime] :
+    (vinogradovHeadNonsingularSolutionSet p d k r b).card +
+        (vinogradovSingularHeadNonsingularTailSolutionSet
+          p d k r b).card =
+      (vinogradovSomeBlockNonsingularSolutionSet p d k r (b + 1)).card := by
+  have h := Finset.card_union_of_disjoint
+    (disjoint_headNonsingular_singularHeadNonsingularTail_solution
+      p d k r b)
+  rw [union_headNonsingular_singularHeadNonsingularTail_solution_eq_someBlock]
+    at h
+  exact h.symm
+
+theorem card_vinogradovHeadNonsingularSolutionSet_le
+    (p d k r b : ℕ) [Fact p.Prime] :
+    (vinogradovHeadNonsingularSolutionSet p d k r b).card ≤
+      (p.descFactorial k * p ^ (b * k + r)) *
+        p ^ ((b + 1) * k + r) := by
+  classical
+  calc
+    (vinogradovHeadNonsingularSolutionSet p d k r b).card ≤
+        ((vinogradovHeadNonsingularResidueSet p k r b).product
+          (Finset.univ :
+            Finset (Fin ((b + 1) * k + r) → ZMod p))).card := by
+      unfold vinogradovHeadNonsingularSolutionSet
+      exact Finset.card_le_card (Finset.filter_subset _ _)
+    _ = (p.descFactorial k * p ^ (b * k + r)) *
+          p ^ ((b + 1) * k + r) := by
+      change
+        ((vinogradovHeadNonsingularResidueSet p k r b) ×ˢ
+          (Finset.univ :
+            Finset (Fin ((b + 1) * k + r) → ZMod p))).card = _
+      rw [Finset.card_product,
+        card_vinogradovHeadNonsingularResidueSet]
+      congr 1
+      simp [ZMod.card]
+
+theorem card_vinogradovSingularHeadNonsingularTailSolutionSet_le
+    (p d k r b : ℕ) [Fact p.Prime] :
+    (vinogradovSingularHeadNonsingularTailSolutionSet p d k r b).card ≤
+      ((p ^ k - p.descFactorial k) *
+          (p ^ (b * k + r) -
+            (p ^ k - p.descFactorial k) ^ b * p ^ r)) *
+        p ^ ((b + 1) * k + r) := by
+  classical
+  calc
+    (vinogradovSingularHeadNonsingularTailSolutionSet p d k r b).card ≤
+        ((vinogradovSingularHeadNonsingularTailResidueSet p k r b).product
+          (Finset.univ :
+            Finset (Fin ((b + 1) * k + r) → ZMod p))).card := by
+      unfold vinogradovSingularHeadNonsingularTailSolutionSet
+      exact Finset.card_le_card (Finset.filter_subset _ _)
+    _ = ((p ^ k - p.descFactorial k) *
+            (p ^ (b * k + r) -
+            (p ^ k - p.descFactorial k) ^ b * p ^ r)) *
+          p ^ ((b + 1) * k + r) := by
+      change
+        ((vinogradovSingularHeadNonsingularTailResidueSet p k r b) ×ˢ
+          (Finset.univ :
+            Finset (Fin ((b + 1) * k + r) → ZMod p))).card = _
+      rw [Finset.card_product,
+        card_vinogradovSingularHeadNonsingularTailResidueSet]
+      congr 1
+      simp [ZMod.card]
+
 /-- Residue-field Vinogradov solutions whose left tuple is singular in every
 one of the selected `b` blocks. -/
 noncomputable def vinogradovMultiBlockSingularSolutionSet
