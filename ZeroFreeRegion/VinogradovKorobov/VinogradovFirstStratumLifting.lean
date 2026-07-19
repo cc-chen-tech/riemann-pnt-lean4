@@ -254,6 +254,125 @@ theorem vinogradovPrimePowerLiftAmbientEquiv_uncycled_firstNonsingular_iff
       p k r q a n hk xy z i
   rw [hfun]
 
+/-- The first-nonsingular solution stratum written in the cycled head-tail
+coordinates used by the standard Hensel lift. -/
+noncomputable def vinogradovPrimePowerCycledFirstNonsingularSolutionSet
+    (p k r q a n : ℕ) [Fact p.Prime] (hk : 0 < k) :
+    Finset (vinogradovPrimePowerBasePair p k
+      (q * k + a * k + r) n) := by
+  classical
+  exact
+    (vinogradovPrimePowerFirstNonsingularSolutionSet p k r q a n).map
+      (vinogradovCycledHeadTailPairEquiv
+        (α := Fin (p ^ (n + 1))) k r q a hk).toEmbedding
+
+/-- Membership in the cycled stratum is transported exactly by the inverse
+coordinate equivalence. -/
+theorem mem_vinogradovPrimePowerCycledFirstNonsingularSolutionSet_iff
+    (p k r q a n : ℕ) [Fact p.Prime] (hk : 0 < k)
+    (xy : vinogradovPrimePowerBasePair p k
+      (q * k + a * k + r) n) :
+    xy ∈ vinogradovPrimePowerCycledFirstNonsingularSolutionSet
+        p k r q a n hk ↔
+      (vinogradovCycledHeadTailPairEquiv
+        (α := Fin (p ^ (n + 1))) k r q a hk).symm xy ∈
+          vinogradovPrimePowerFirstNonsingularSolutionSet p k r q a n := by
+  classical
+  simp only [vinogradovPrimePowerCycledFirstNonsingularSolutionSet,
+    Finset.mem_map]
+  constructor
+  · rintro ⟨z, hz, rfl⟩
+    simpa using hz
+  · intro hz
+    refine ⟨(vinogradovCycledHeadTailPairEquiv
+      (α := Fin (p ^ (n + 1))) k r q a hk).symm xy, hz, ?_⟩
+    simp
+
+/-- Cycling coordinates does not change the stratum cardinality. -/
+theorem card_vinogradovPrimePowerCycledFirstNonsingularSolutionSet
+    (p k r q a n : ℕ) [Fact p.Prime] (hk : 0 < k) :
+    (vinogradovPrimePowerCycledFirstNonsingularSolutionSet
+      p k r q a n hk).card =
+      (vinogradovPrimePowerFirstNonsingularSolutionSet
+        p k r q a n).card := by
+  classical
+  simp [vinogradovPrimePowerCycledFirstNonsingularSolutionSet]
+
+/-- The one-step Hensel correction space restricted to a single
+first-nonsingular stratum. -/
+noncomputable def vinogradovPrimePowerFirstNonsingularLiftSet
+    (p k r q a n : ℕ) [Fact p.Prime] (hk : 0 < k) :
+    Finset
+      (Σ _ : vinogradovPrimePowerBasePair p k
+          (q * k + a * k + r) n,
+        Σ _ : vinogradovFreeCorrectionData p k
+          (q * k + a * k + r),
+          Fin k → ZMod p) := by
+  classical
+  exact
+    (vinogradovPrimePowerCycledFirstNonsingularSolutionSet
+      p k r q a n hk).sigma fun xy ↦
+        vinogradovSolutionCorrectionSet p k
+          (q * k + a * k + r) n
+          (fun i ↦ (((xy.1 i).val + 1 : ℕ) : ℤ))
+          (fun i ↦ (((xy.2 i).val + 1 : ℕ) : ℤ))
+
+/-- Restricting the base solutions preserves the uniform Hensel fiber bound. -/
+theorem card_vinogradovPrimePowerFirstNonsingularLiftSet_le
+    (p k r q a n : ℕ) [Fact p.Prime] (hk : 0 < k) (hkp : k < p) :
+    (vinogradovPrimePowerFirstNonsingularLiftSet
+      p k r q a n hk).card ≤
+      (vinogradovPrimePowerFirstNonsingularSolutionSet
+        p k r q a n).card *
+        p ^ (k + 2 * (q * k + a * k + r)) := by
+  classical
+  rw [vinogradovPrimePowerFirstNonsingularLiftSet, Finset.card_sigma]
+  calc
+    (∑ xy ∈ vinogradovPrimePowerCycledFirstNonsingularSolutionSet
+        p k r q a n hk,
+      (vinogradovSolutionCorrectionSet p k
+        (q * k + a * k + r) n
+        (fun i ↦ (((xy.1 i).val + 1 : ℕ) : ℤ))
+        (fun i ↦ (((xy.2 i).val + 1 : ℕ) : ℤ))).card) ≤
+      ∑ _xy ∈ vinogradovPrimePowerCycledFirstNonsingularSolutionSet
+        p k r q a n hk,
+        p ^ (k + 2 * (q * k + a * k + r)) := by
+      apply Finset.sum_le_sum
+      intro xy hxy
+      have hsource :=
+        (mem_vinogradovPrimePowerCycledFirstNonsingularSolutionSet_iff
+          p k r q a n hk xy).mp hxy
+      have hfirst :=
+        (mem_vinogradovPrimePowerFirstNonsingularSolutionSet_iff
+          p k r q a n _ _).mp hsource |>.1
+      have hinj := hfirst.cycledHeadTail_injective hk
+      have hencoded :
+          vinogradovCycledHeadTailTuple k r q a hk
+              (fun i ↦
+                ((((vinogradovCycledHeadTailFunctionEquiv
+                  (α := Fin (p ^ (n + 1))) k r q a hk).symm xy.1 i).val + 1 :
+                  ℕ) : ZMod p)) =
+            (fun i ↦ (((xy.1 i).val + 1 : ℕ) : ZMod p)) := by
+        funext i
+        simp [vinogradovCycledHeadTailTuple,
+          vinogradovCycledHeadTailFunctionEquiv]
+      rw [hencoded] at hinj
+      have hcast : Function.Injective fun i : Fin k ↦
+          (((((xy.1 (Fin.castAdd (q * k + a * k + r) i)).val + 1 : ℕ) :
+            ℤ)) : ZMod p) := by
+        intro i j hij
+        apply hinj
+        simpa using hij
+      exact card_vinogradovSolutionCorrectionSet_le p k
+        (q * k + a * k + r) n hkp
+        (fun i ↦ (((xy.1 i).val + 1 : ℕ) : ℤ))
+        (fun i ↦ (((xy.2 i).val + 1 : ℕ) : ℤ)) hcast
+    _ = (vinogradovPrimePowerFirstNonsingularSolutionSet
+          p k r q a n).card *
+        p ^ (k + 2 * (q * k + a * k + r)) := by
+      simp [card_vinogradovPrimePowerCycledFirstNonsingularSolutionSet]
+
+
 /-- Cycling a first-nonsingular prime-power solution puts it in the standard
 Hensel solution set with a nonsingular head. -/
 theorem vinogradovCycledHeadTailPairEquiv_mem_nonsingular
