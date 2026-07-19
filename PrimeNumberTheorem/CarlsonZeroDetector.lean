@@ -1018,6 +1018,32 @@ theorem exists_integral_log_norm_regularizedCarlsonZeroDetector_le_dyadicSum :
     integral_log_norm_regularizedCarlsonZeroDetector_le_dyadicSum
       hdyadic X sigma n hX hsigma hsigma1 hboundary⟩
 
+/-- The full dyadic log-norm sum has no remaining geometric logarithmic
+integrals. -/
+theorem exists_integral_log_norm_regularizedCarlsonZeroDetector_le_dyadicSumExplicit :
+    ∃ A : ℝ, 0 ≤ A ∧ ∀ (X : ℕ) (sigma : ℝ) (n : ℕ),
+      1 ≤ X → 1 / 2 < sigma → sigma < 1 →
+      (∀ t ∈ Set.Icc 1 ((2 : ℝ) ^ n),
+        regularizedCarlsonZeroDetector X
+          ((sigma : ℂ) + Complex.I * t) ≠ 0) →
+        ∫ t in 1..((2 : ℝ) ^ n),
+            Real.log ‖regularizedCarlsonZeroDetector X
+              ((sigma : ℂ) + Complex.I * t)‖ ≤
+          ∑ k ∈ Finset.range n,
+            regularizedCarlsonLogNormEndpointExplicit
+              A 4 X sigma ((2 : ℝ) ^ k) ((2 : ℝ) ^ (k + 1))
+                (4 * (2 : ℝ) ^ k) := by
+  obtain ⟨A, hA, hbound⟩ :=
+    exists_integral_log_norm_regularizedCarlsonZeroDetector_le_dyadicSum
+  refine ⟨A, hA, ?_⟩
+  intro X sigma n hX hsigma hsigma1 hboundary
+  refine (hbound X sigma n hX hsigma hsigma1 hboundary).trans ?_
+  apply Finset.sum_le_sum
+  intro k hk
+  exact regularizedCarlsonLogNormEndpoint_le_explicit
+    (by linarith) hsigma1 (one_le_pow₀ (by norm_num))
+      (pow_le_pow_right₀ (by norm_num) (Nat.le_succ k))
+
 /-- A dyadic cover with one final partial interval controls every upper
 endpoint between two consecutive powers of two. -/
 theorem exists_integral_log_norm_regularizedCarlsonZeroDetector_le_dyadicCover :
@@ -1103,6 +1129,38 @@ theorem exists_integral_log_norm_regularizedCarlsonZeroDetector_le_dyadicCover :
           A 4 X sigma ((2 : ℝ) ^ n) v (4 * (2 : ℝ) ^ n) :=
       add_le_add hfull hpartial
 
+/-- The arbitrary-height dyadic cover with every high-height endpoint made
+explicit. -/
+theorem exists_integral_log_norm_regularizedCarlsonZeroDetector_le_dyadicCoverExplicit :
+    ∃ A : ℝ, 0 ≤ A ∧ ∀ (X : ℕ) (sigma v : ℝ) (n : ℕ),
+      1 ≤ X → 1 / 2 < sigma → sigma < 1 →
+      (2 : ℝ) ^ n ≤ v → v ≤ (2 : ℝ) ^ (n + 1) →
+      (∀ t ∈ Set.Icc 1 v,
+        regularizedCarlsonZeroDetector X
+          ((sigma : ℂ) + Complex.I * t) ≠ 0) →
+        ∫ t in 1..v,
+            Real.log ‖regularizedCarlsonZeroDetector X
+              ((sigma : ℂ) + Complex.I * t)‖ ≤
+          (∑ k ∈ Finset.range n,
+            regularizedCarlsonLogNormEndpointExplicit
+              A 4 X sigma ((2 : ℝ) ^ k) ((2 : ℝ) ^ (k + 1))
+                (4 * (2 : ℝ) ^ k)) +
+          regularizedCarlsonLogNormEndpointExplicit
+            A 4 X sigma ((2 : ℝ) ^ n) v (4 * (2 : ℝ) ^ n) := by
+  obtain ⟨A, hA, hbound⟩ :=
+    exists_integral_log_norm_regularizedCarlsonZeroDetector_le_dyadicCover
+  refine ⟨A, hA, ?_⟩
+  intro X sigma v n hX hsigma hsigma1 hnv hvn hboundary
+  refine (hbound X sigma v n hX hsigma hsigma1 hnv hvn hboundary).trans ?_
+  apply add_le_add
+  · apply Finset.sum_le_sum
+    intro k hk
+    exact regularizedCarlsonLogNormEndpoint_le_explicit
+      (by linarith) hsigma1 (one_le_pow₀ (by norm_num))
+        (pow_le_pow_right₀ (by norm_num) (Nat.le_succ k))
+  · exact regularizedCarlsonLogNormEndpoint_le_explicit
+      (by linarith) hsigma1 (one_le_pow₀ (by norm_num)) hnv
+
 /-- The full left vertical edge is a fixed low-height segment plus the
 dyadic high-height cover.  All height growth is isolated in the endpoint
 sum; the remaining low segment has length at most two in Carlson's good
@@ -1180,6 +1238,55 @@ theorem exists_integral_log_norm_regularizedCarlsonZeroDetector_le_low_add_dyadi
           regularizedCarlsonLogNormEndpoint
             A 4 X sigma ((2 : ℝ) ^ n) v (4 * (2 : ℝ) ^ n) := by
       ring
+
+/-- The full left edge has only one fixed low-height integral remaining; all
+height-dependent endpoint terms are explicit. -/
+theorem exists_integral_log_norm_regularizedCarlsonZeroDetector_le_low_add_dyadicCoverExplicit :
+    ∃ A : ℝ, 0 ≤ A ∧ ∀ (X : ℕ) (sigma y0 v : ℝ) (n : ℕ),
+      1 ≤ X → 1 / 2 < sigma → sigma < 1 → y0 ≤ 1 →
+      (2 : ℝ) ^ n ≤ v → v ≤ (2 : ℝ) ^ (n + 1) →
+      (∀ t ∈ Set.Icc y0 v,
+        regularizedCarlsonZeroDetector X
+          ((sigma : ℂ) + Complex.I * t) ≠ 0) →
+        ∫ t in y0..v,
+            Real.log ‖regularizedCarlsonZeroDetector X
+              ((sigma : ℂ) + Complex.I * t)‖ ≤
+          (∫ t in y0..1,
+            Real.log ‖regularizedCarlsonZeroDetector X
+              ((sigma : ℂ) + Complex.I * t)‖) +
+          (∑ k ∈ Finset.range n,
+            regularizedCarlsonLogNormEndpointExplicit
+              A 4 X sigma ((2 : ℝ) ^ k) ((2 : ℝ) ^ (k + 1))
+                (4 * (2 : ℝ) ^ k)) +
+          regularizedCarlsonLogNormEndpointExplicit
+            A 4 X sigma ((2 : ℝ) ^ n) v (4 * (2 : ℝ) ^ n) := by
+  obtain ⟨A, hA, hbound⟩ :=
+    exists_integral_log_norm_regularizedCarlsonZeroDetector_le_low_add_dyadicCover
+  refine ⟨A, hA, ?_⟩
+  intro X sigma y0 v n hX hsigma hsigma1 hy0 hnv hvn hboundary
+  refine (hbound X sigma y0 v n hX hsigma hsigma1 hy0 hnv hvn hboundary).trans ?_
+  apply add_le_add
+  · have hsum :
+        (∑ k ∈ Finset.range n,
+          regularizedCarlsonLogNormEndpoint
+            A 4 X sigma ((2 : ℝ) ^ k) ((2 : ℝ) ^ (k + 1))
+              (4 * (2 : ℝ) ^ k)) ≤
+        ∑ k ∈ Finset.range n,
+          regularizedCarlsonLogNormEndpointExplicit
+            A 4 X sigma ((2 : ℝ) ^ k) ((2 : ℝ) ^ (k + 1))
+              (4 * (2 : ℝ) ^ k) := by
+        apply Finset.sum_le_sum
+        intro k hk
+        exact regularizedCarlsonLogNormEndpoint_le_explicit
+          (by linarith) hsigma1 (one_le_pow₀ (by norm_num))
+            (pow_le_pow_right₀ (by norm_num) (Nat.le_succ k))
+    simpa [add_comm] using
+      (add_le_add_right hsum
+        (∫ t in y0..1,
+          Real.log ‖regularizedCarlsonZeroDetector X
+            ((sigma : ℂ) + Complex.I * t)‖))
+  · exact regularizedCarlsonLogNormEndpoint_le_explicit
+      (by linarith) hsigma1 (one_le_pow₀ (by norm_num)) hnv
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem
