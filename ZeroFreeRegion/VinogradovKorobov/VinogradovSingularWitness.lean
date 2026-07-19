@@ -251,6 +251,57 @@ theorem card_vinogradovFixedCollisionUnionSet_le
     _ = Fintype.card (VinogradovCollisionWitness k) * p ^ (k - 1) := by
       simp
 
+/-- Flattening a block number and a coordinate inside that block is
+injective when the block length is positive. -/
+theorem vinogradovSelectedBlockIndex_pair_injective
+    (k r b : ℕ) (hk : 0 < k) :
+    Function.Injective fun qi : Fin b × Fin k ↦
+      vinogradovSelectedBlockIndex k r b qi.1 qi.2 := by
+  rintro ⟨q, i⟩ ⟨q', i'⟩ h
+  have hval : q.val * k + i.val = q'.val * k + i'.val :=
+    congrArg Fin.val h
+  have himod := congrArg (fun n : ℕ ↦ n % k) hval
+  have hii : i.val = i'.val := by
+    simpa [Nat.add_mod, Nat.mod_eq_of_lt i.isLt,
+      Nat.mod_eq_of_lt i'.isLt] using himod
+  have hi : i = i' := Fin.ext hii
+  subst i'
+  have hmul : q.val * k = q'.val * k := Nat.add_right_cancel hval
+  have hqval : q.val = q'.val := by
+    exact Nat.eq_of_mul_eq_mul_right hk hmul
+  have hq : q = q' := Fin.ext hqval
+  subst q'
+  rfl
+
+/-- For any collision choices, a retained smaller coordinate can never be a
+deleted larger coordinate, even across different blocks. -/
+theorem vinogradovCollisionWitness_selected_left_ne_selected_right
+    (k r b : ℕ) (hk : 0 < k)
+    (w : Fin b → VinogradovCollisionWitness k) (q q' : Fin b) :
+    vinogradovSelectedBlockIndex k r b q (w q).1.1 ≠
+      vinogradovSelectedBlockIndex k r b q' (w q').1.2 := by
+  intro hindex
+  have hpairs : (q, (w q).1.1) = (q', (w q').1.2) := by
+    apply vinogradovSelectedBlockIndex_pair_injective k r b hk
+    exact hindex
+  have hq : q = q' := congrArg Prod.fst hpairs
+  subst q'
+  have hi : (w q).1.1 = (w q).1.2 := congrArg Prod.snd hpairs
+  exact (ne_of_lt (w q).2) hi
+
+/-- The larger coordinates selected for deletion in distinct blocks are
+themselves distinct. -/
+theorem vinogradovCollisionWitness_selected_right_injective
+    (k r b : ℕ) (hk : 0 < k)
+    (w : Fin b → VinogradovCollisionWitness k) :
+    Function.Injective fun q : Fin b ↦
+      vinogradovSelectedBlockIndex k r b q (w q).1.2 := by
+  intro q q' hindex
+  have hpairs : (q, (w q).1.2) = (q', (w q').1.2) := by
+    apply vinogradovSelectedBlockIndex_pair_injective k r b hk
+    exact hindex
+  exact congrArg Prod.fst hpairs
+
 end
 
 end ZeroFreeRegion.VinogradovKorobov

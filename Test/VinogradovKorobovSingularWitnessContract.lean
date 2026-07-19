@@ -22,3 +22,6 @@ open ZeroFreeRegion.VinogradovKorobov
 #check mem_vinogradovFixedCollisionUnionSet_iff
 #check vinogradovFixedCollisionUnionSet_eq_singular
 #check card_vinogradovFixedCollisionUnionSet_le
+#check vinogradovSelectedBlockIndex_pair_injective
+#check vinogradovCollisionWitness_selected_left_ne_selected_right
+#check vinogradovCollisionWitness_selected_right_injective
