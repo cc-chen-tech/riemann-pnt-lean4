@@ -230,6 +230,18 @@ example {A kappa sigma a b x : ℝ} {X : ℕ}
   regularizedCarlsonLogNormEndpoint_le_explicit
     hsigma0 hsigma1 ha hab
 
+example (X : ℕ) (s : ℂ) :
+    1 - ‖mollifiedZetaError X s‖ ^ 2 ≤ ‖carlsonZeroDetector X s‖ :=
+  one_sub_norm_mollifiedZetaError_sq_le_norm_carlsonZeroDetector X s
+
+example {X : ℕ} {s : ℂ} {r : ℝ}
+    (hs0 : s ≠ 0) (hs1 : s ≠ 1) (hr : 0 ≤ r) (hr1 : r < 1)
+    (herr : ‖mollifiedZetaError X s‖ ≤ r) :
+    2 * Real.log ‖s - 1‖ + Real.log (1 - r ^ 2) ≤
+      Real.log ‖regularizedCarlsonZeroDetector X s‖ :=
+  two_log_norm_sub_one_add_log_one_sub_sq_le_log_norm_regularized
+    hs0 hs1 hr hr1 herr
+
 example :
     ∃ A : ℝ, 0 ≤ A ∧ ∀ (X : ℕ) (sigma u v : ℝ),
       1 ≤ X → 1 ≤ u → u ≤ v → v ≤ 2 * u →
@@ -403,6 +415,9 @@ example :
 #print axioms exists_integral_log_norm_regularizedCarlsonZeroDetector_le_endpoint_of_comparable
 #print axioms integral_log_norm_vertical_sub_one_le_length_mul_log
 #print axioms regularizedCarlsonLogNormEndpoint_le_explicit
+#print axioms one_sub_norm_mollifiedZetaError_sq_le_norm_carlsonZeroDetector
+#print axioms one_sub_sq_le_norm_carlsonZeroDetector_of_norm_error_le
+#print axioms two_log_norm_sub_one_add_log_one_sub_sq_le_log_norm_regularized
 #print axioms exists_integral_log_norm_regularizedCarlsonZeroDetector_le_doublingInterval
 #print axioms exists_integral_log_norm_regularizedCarlsonZeroDetector_le_dyadic
 #print axioms exists_integral_log_norm_regularizedCarlsonZeroDetector_le_dyadicExplicit

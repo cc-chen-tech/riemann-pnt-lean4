@@ -355,6 +355,53 @@ theorem log_norm_carlsonZeroDetector_le_norm_mollifiedZetaError_sq
           (show 0 < 1 + ‖f‖ ^ 2 by positivity)
       _ = ‖mollifiedZetaError X s‖ ^ 2 := rfl
 
+/-- Reverse-triangle lower bound for Carlson's detector. -/
+theorem one_sub_norm_mollifiedZetaError_sq_le_norm_carlsonZeroDetector
+    (X : ℕ) (s : ℂ) :
+    1 - ‖mollifiedZetaError X s‖ ^ 2 ≤ ‖carlsonZeroDetector X s‖ := by
+  unfold carlsonZeroDetector
+  calc
+    1 - ‖mollifiedZetaError X s‖ ^ 2 =
+        ‖(1 : ℂ)‖ - ‖mollifiedZetaError X s ^ 2‖ := by simp
+    _ ≤ ‖(1 : ℂ) - mollifiedZetaError X s ^ 2‖ :=
+      norm_sub_norm_le _ _
+
+/-- If the mollified error is uniformly bounded by a radius below one, then
+Carlson's detector is uniformly separated from zero. -/
+theorem one_sub_sq_le_norm_carlsonZeroDetector_of_norm_error_le
+    {X : ℕ} {s : ℂ} {r : ℝ} (hr : 0 ≤ r)
+    (herr : ‖mollifiedZetaError X s‖ ≤ r) :
+    1 - r ^ 2 ≤ ‖carlsonZeroDetector X s‖ := by
+  calc
+    1 - r ^ 2 ≤ 1 - ‖mollifiedZetaError X s‖ ^ 2 := by
+      nlinarith [norm_nonneg (mollifiedZetaError X s)]
+    _ ≤ ‖carlsonZeroDetector X s‖ :=
+      one_sub_norm_mollifiedZetaError_sq_le_norm_carlsonZeroDetector X s
+
+/-- Logarithmic lower bound for the regularized detector under a right-edge
+smallness hypothesis for the mollified error. -/
+theorem two_log_norm_sub_one_add_log_one_sub_sq_le_log_norm_regularized
+    {X : ℕ} {s : ℂ} {r : ℝ}
+    (hs0 : s ≠ 0) (hs1 : s ≠ 1) (hr : 0 ≤ r) (hr1 : r < 1)
+    (herr : ‖mollifiedZetaError X s‖ ≤ r) :
+    2 * Real.log ‖s - 1‖ + Real.log (1 - r ^ 2) ≤
+      Real.log ‖regularizedCarlsonZeroDetector X s‖ := by
+  have hbasePos : 0 < 1 - r ^ 2 := by nlinarith
+  have hdetLower : 1 - r ^ 2 ≤ ‖carlsonZeroDetector X s‖ :=
+    one_sub_sq_le_norm_carlsonZeroDetector_of_norm_error_le hr herr
+  have hdetPos : 0 < ‖carlsonZeroDetector X s‖ :=
+    hbasePos.trans_le hdetLower
+  have hdet : carlsonZeroDetector X s ≠ 0 := norm_pos_iff.mp hdetPos
+  rw [regularizedCarlsonZeroDetector_eq_sub_one_sq_mul X hs0 hs1,
+    norm_mul, norm_pow,
+    Real.log_mul
+      (pow_ne_zero 2 (norm_ne_zero_iff.mpr (sub_ne_zero.mpr hs1)))
+      (norm_ne_zero_iff.mpr hdet),
+    Real.log_pow]
+  have hlog := Real.log_le_log hbasePos hdetLower
+  norm_num
+  linarith
+
 /-- Away from the removable points, the logarithmic size of the pole-free
 detector differs from the original Carlson detector only by the explicit
 geometric factor `(s - 1)^2`. -/
