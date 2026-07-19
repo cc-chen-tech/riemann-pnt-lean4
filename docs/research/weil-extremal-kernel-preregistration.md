@@ -47,6 +47,13 @@ file has SHA-256
 the repository copy adds a terminal newline and has SHA-256
 `5d14ea5bc0874c4edf15b586075337c1852b8e592bd7c4a7867ea14a995325a7`.
 
+On 2026-07-19 the released Arb script was also replayed locally at the full
+`(c,N,prec)=(100,200,9000)` calibration. All 401 interval pivots were strictly
+positive and the mathematical metadata matched the published record. See
+`docs/research/weil-gate-a-local-reproduction-2026-07-19.md`. This is a
+same-route reproduction only; the independent-assembly, second-precision,
+exact-certificate, and analytic-transfer requirements of Gate A remain open.
+
 ## Registered Mathematical Target
 
 Use the cutoff-free Connes--van Suijlekom / Connes--Consani--Moscovici
