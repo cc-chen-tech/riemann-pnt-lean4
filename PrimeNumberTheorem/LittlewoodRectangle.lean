@@ -77,6 +77,45 @@ theorem intervalIntegral_mul_neg_im_logDeriv_vertical_eq
       (fun u hu => hasDerivAt_log_norm_vertical (hf u hu) (hne u hu))
       intervalIntegrable_const hint)
 
+/-- The imaginary part of the logarithmic derivative is continuous along a
+compact vertical segment on which `f` is analytic and nonvanishing. -/
+theorem continuousOn_neg_im_logDeriv_vertical
+    {f : ℂ → ℂ} {sigma a b : ℝ}
+    (hf : ∀ u ∈ [[a, b]],
+      AnalyticAt ℂ f ((sigma : ℂ) + I * (u : ℂ)))
+    (hne : ∀ u ∈ [[a, b]],
+      f ((sigma : ℂ) + I * (u : ℂ)) ≠ 0) :
+    ContinuousOn
+      (fun u : ℝ => -(logDeriv f ((sigma : ℂ) + I * (u : ℂ))).im)
+      [[a, b]] := by
+  intro u hu
+  have hmap :
+      ContinuousAt (fun v : ℝ => (sigma : ℂ) + I * (v : ℂ)) u := by
+    fun_prop
+  have hlog : ContinuousAt
+      (fun v : ℝ => logDeriv f ((sigma : ℂ) + I * (v : ℂ))) u := by
+    simpa [Function.comp_def] using
+      ((ZeroFreeRegion.analyticAt_logDeriv_of_analyticAt_ne_zero
+        (hf u hu) (hne u hu)).continuousAt.comp_of_eq hmap rfl)
+  exact (Complex.continuous_im.continuousAt.comp hlog).neg.continuousWithinAt
+
+/-- Vertical-edge integration by parts with integrability discharged by
+analyticity and nonvanishing on the whole segment. -/
+theorem intervalIntegral_mul_neg_im_logDeriv_vertical_eq_of_analytic
+    {f : ℂ → ℂ} {sigma a b : ℝ}
+    (hf : ∀ u ∈ [[a, b]],
+      AnalyticAt ℂ f ((sigma : ℂ) + I * (u : ℂ)))
+    (hne : ∀ u ∈ [[a, b]],
+      f ((sigma : ℂ) + I * (u : ℂ)) ≠ 0) :
+    (∫ u in a..b,
+        u * (-(logDeriv f ((sigma : ℂ) + I * (u : ℂ))).im)) =
+      b * Real.log ‖f ((sigma : ℂ) + I * (b : ℂ))‖ -
+        a * Real.log ‖f ((sigma : ℂ) + I * (a : ℂ))‖ -
+          ∫ u in a..b,
+            Real.log ‖f ((sigma : ℂ) + I * (u : ℂ))‖ :=
+  intervalIntegral_mul_neg_im_logDeriv_vertical_eq hf hne
+    (continuousOn_neg_im_logDeriv_vertical hf hne).intervalIntegrable
+
 /-- Weighted argument-principle identity on an axis-parallel rectangle.
 
 The hypotheses identify all zeros in the closed rectangle and supply their

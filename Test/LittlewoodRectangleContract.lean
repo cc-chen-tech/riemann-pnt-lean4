@@ -30,6 +30,29 @@ example {f : ℂ → ℂ} {sigma a b : ℝ}
             Real.log ‖f ((sigma : ℂ) + I * (u : ℂ))‖ :=
   intervalIntegral_mul_neg_im_logDeriv_vertical_eq hf hne hint
 
+example {f : ℂ → ℂ} {sigma a b : ℝ}
+    (hf : ∀ u ∈ [[a, b]],
+      AnalyticAt ℂ f ((sigma : ℂ) + I * (u : ℂ)))
+    (hne : ∀ u ∈ [[a, b]],
+      f ((sigma : ℂ) + I * (u : ℂ)) ≠ 0) :
+    ContinuousOn
+      (fun u : ℝ => -(logDeriv f ((sigma : ℂ) + I * (u : ℂ))).im)
+      [[a, b]] :=
+  continuousOn_neg_im_logDeriv_vertical hf hne
+
+example {f : ℂ → ℂ} {sigma a b : ℝ}
+    (hf : ∀ u ∈ [[a, b]],
+      AnalyticAt ℂ f ((sigma : ℂ) + I * (u : ℂ)))
+    (hne : ∀ u ∈ [[a, b]],
+      f ((sigma : ℂ) + I * (u : ℂ)) ≠ 0) :
+    (∫ u in a..b,
+        u * (-(logDeriv f ((sigma : ℂ) + I * (u : ℂ))).im)) =
+      b * Real.log ‖f ((sigma : ℂ) + I * (b : ℂ))‖ -
+        a * Real.log ‖f ((sigma : ℂ) + I * (a : ℂ))‖ -
+          ∫ u in a..b,
+            Real.log ‖f ((sigma : ℂ) + I * (u : ℂ))‖ :=
+  intervalIntegral_mul_neg_im_logDeriv_vertical_eq_of_analytic hf hne
+
 example {f : ℂ → ℂ} {x0 x1 y0 y1 : ℝ}
     (poles : Finset ℂ) (multiplicity : ℂ → ℕ) (anchor : ℂ)
     (hf : AnalyticOnNhd ℂ f ([[x0, x1]] ×ℂ [[y0, y1]]))
@@ -50,6 +73,8 @@ example {f : ℂ → ℂ} {x0 x1 y0 y1 : ℝ}
 #print axioms boundaryRectIntegral_weighted_logDeriv_eq_zeroMultiplicitySum
 #print axioms hasDerivAt_log_norm_vertical
 #print axioms intervalIntegral_mul_neg_im_logDeriv_vertical_eq
+#print axioms continuousOn_neg_im_logDeriv_vertical
+#print axioms intervalIntegral_mul_neg_im_logDeriv_vertical_eq_of_analytic
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem
