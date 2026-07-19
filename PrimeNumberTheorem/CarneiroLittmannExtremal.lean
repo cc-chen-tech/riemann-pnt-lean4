@@ -1,3 +1,4 @@
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Sinc
 import PrimeNumberTheorem.ScaledHilbertKernel
 
 namespace PrimeNumberTheorem
@@ -67,6 +68,100 @@ theorem mul_carneiroLittmannDerivative_nonpos (x : ℝ) :
   · simp
   · exact mul_nonpos_of_nonneg_of_nonpos hx.le
       (carneiroLittmannDerivative_nonpos_of_pos hx)
+
+/-- A continuous local formula around zero.  The factor `x` makes the
+removable value at zero explicit. -/
+theorem carneiroLittmannDerivative_eq_sinc_zeroChart {x : ℝ}
+    (hxNegOne : x ≠ -1) :
+    carneiroLittmannDerivative x =
+      -x * (Real.sinc (Real.pi * x)) ^ 2 / (x + 1) ^ 2 := by
+  by_cases hxZero : x = 0
+  · subst x
+    simp
+  rw [carneiroLittmannDerivative_eq_formula hxNegOne hxZero]
+  rw [Real.sinc_of_ne_zero (mul_ne_zero Real.pi_ne_zero hxZero)]
+  have hxPlusOne : x + 1 ≠ 0 := by
+    intro h
+    apply hxNegOne
+    linarith
+  field_simp [Real.pi_ne_zero, hxZero, hxPlusOne]
+
+/-- A continuous local formula around `-1`.  Translating the sinc function
+makes the removable value at `-1` explicit. -/
+theorem carneiroLittmannDerivative_eq_sinc_negOneChart {x : ℝ}
+    (hxZero : x ≠ 0) :
+    carneiroLittmannDerivative x =
+      -(Real.sinc (Real.pi * (x + 1))) ^ 2 / x := by
+  by_cases hxNegOne : x = -1
+  · subst x
+    simp
+  rw [carneiroLittmannDerivative_eq_formula hxNegOne hxZero]
+  have hxPlusOne : x + 1 ≠ 0 := by
+    intro h
+    apply hxNegOne
+    linarith
+  rw [Real.sinc_of_ne_zero (mul_ne_zero Real.pi_ne_zero hxPlusOne)]
+  have hsin : Real.sin (Real.pi * (x + 1)) =
+      -Real.sin (Real.pi * x) := by
+    rw [show Real.pi * (x + 1) = Real.pi * x + Real.pi by ring]
+    exact Real.sin_add_pi _
+  rw [hsin]
+  field_simp [Real.pi_ne_zero, hxZero, hxPlusOne]
+
+/-- The filled value at zero is the actual limit of the derivative formula. -/
+theorem continuousAt_carneiroLittmannDerivative_zero :
+    ContinuousAt carneiroLittmannDerivative 0 := by
+  have hSinc : ContinuousAt
+      (fun x : ℝ => Real.sinc (Real.pi * x)) 0 :=
+    Real.continuous_sinc.continuousAt.comp'
+      (continuousAt_const.mul continuousAt_id)
+  have hChart : ContinuousAt
+      (fun x : ℝ => -x * (Real.sinc (Real.pi * x)) ^ 2 / (x + 1) ^ 2) 0 := by
+    exact (continuousAt_id.neg.mul (hSinc.pow 2)).div
+      ((continuousAt_id.add continuousAt_const).pow 2) (by norm_num)
+  apply hChart.congr
+  filter_upwards [eventually_ne_nhds (by norm_num : (0 : ℝ) ≠ -1)] with x hx
+  exact (carneiroLittmannDerivative_eq_sinc_zeroChart hx).symm
+
+/-- The filled value at `-1` is the actual limit of the derivative formula. -/
+theorem continuousAt_carneiroLittmannDerivative_neg_one :
+    ContinuousAt carneiroLittmannDerivative (-1) := by
+  have hSinc : ContinuousAt
+      (fun x : ℝ => Real.sinc (Real.pi * (x + 1))) (-1) :=
+    Real.continuous_sinc.continuousAt.comp'
+      (continuousAt_const.mul (continuousAt_id.add continuousAt_const))
+  have hChart : ContinuousAt
+      (fun x : ℝ => -(Real.sinc (Real.pi * (x + 1))) ^ 2 / x) (-1) := by
+    exact (hSinc.pow 2).neg.div continuousAt_id (by norm_num)
+  apply hChart.congr
+  filter_upwards [eventually_ne_nhds (by norm_num : (-1 : ℝ) ≠ 0)] with x hx
+  exact (carneiroLittmannDerivative_eq_sinc_negOneChart hx).symm
+
+/-- The two filled singularities make the Carneiro--Littmann derivative
+continuous on the whole real line. -/
+theorem continuous_carneiroLittmannDerivative :
+    Continuous carneiroLittmannDerivative := by
+  rw [continuous_iff_continuousAt]
+  intro x
+  by_cases hxNegOne : x = -1
+  · subst x
+    exact continuousAt_carneiroLittmannDerivative_neg_one
+  have hxPlusOne : x + 1 ≠ 0 := by
+    intro h
+    apply hxNegOne
+    linarith
+  have hSinc : ContinuousAt
+      (fun y : ℝ => Real.sinc (Real.pi * y)) x :=
+    Real.continuous_sinc.continuousAt.comp'
+      (continuousAt_const.mul continuousAt_id)
+  have hChart : ContinuousAt
+      (fun y : ℝ => -y * (Real.sinc (Real.pi * y)) ^ 2 / (y + 1) ^ 2) x := by
+    exact (continuousAt_id.neg.mul (hSinc.pow 2)).div
+      ((continuousAt_id.add continuousAt_const).pow 2)
+      (pow_ne_zero 2 hxPlusOne)
+  apply hChart.congr
+  filter_upwards [eventually_ne_nhds hxNegOne] with y hy
+  exact (carneiroLittmannDerivative_eq_sinc_zeroChart hy).symm
 
 end DirichletPolynomial
 end PrimeNumberTheorem
