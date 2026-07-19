@@ -1,4 +1,4 @@
-import ZeroFreeRegion.VinogradovKorobov.VinogradovCongruence
+import ZeroFreeRegion.VinogradovKorobov.VinogradovMainEstimate
 
 open ZeroFreeRegion.VinogradovKorobov
 
@@ -67,3 +67,7 @@ open ZeroFreeRegion.VinogradovKorobov
 #check exists_affineCoordinates_of_forall_modEq
 #check isVinogradovSolutionInt_affine_iff
 #check IsVinogradovSolutionInt.rescale_of_common_modEq
+#check vinogradovCriticalWeight
+#check VinogradovMeanValueEstimate
+#check vinogradovMeanValueEstimate_diagonal
+#check norm_normalizedVinogradovMomentMod_le_of_meanValueEstimate

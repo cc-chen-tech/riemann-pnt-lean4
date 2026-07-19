@@ -26,6 +26,7 @@ import ZeroFreeRegion.VinogradovKorobov.VinogradovNewton
 import ZeroFreeRegion.VinogradovKorobov.VinogradovDiagonal
 import ZeroFreeRegion.VinogradovKorobov.VinogradovSymmetry
 import ZeroFreeRegion.VinogradovKorobov.VinogradovCongruence
+import ZeroFreeRegion.VinogradovKorobov.VinogradovMainEstimate
 
 #print axioms ZeroFreeRegion.VinogradovKorobov.vanDerCorputFundamentalInequality
 #print axioms ZeroFreeRegion.VinogradovKorobov.phaseTerm_mul_conj_shift
@@ -228,3 +229,5 @@ import ZeroFreeRegion.VinogradovKorobov.VinogradovCongruence
 #print axioms ZeroFreeRegion.VinogradovKorobov.exists_affineCoordinates_of_forall_modEq
 #print axioms ZeroFreeRegion.VinogradovKorobov.isVinogradovSolutionInt_affine_iff
 #print axioms ZeroFreeRegion.VinogradovKorobov.IsVinogradovSolutionInt.rescale_of_common_modEq
+#print axioms ZeroFreeRegion.VinogradovKorobov.vinogradovMeanValueEstimate_diagonal
+#print axioms ZeroFreeRegion.VinogradovKorobov.norm_normalizedVinogradovMomentMod_le_of_meanValueEstimate
