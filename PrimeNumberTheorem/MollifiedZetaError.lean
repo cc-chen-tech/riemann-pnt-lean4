@@ -61,6 +61,30 @@ theorem mollifiedTailCoefficient_weightedSquareSum_le
     mul_nonneg (Nat.cast_nonneg _) (Real.rpow_nonneg (Nat.cast_nonneg n) _)
   nlinarith [norm_nonneg (mollifiedTailCoefficient X N sigma n)]
 
+/-- The unweighted coefficient square sum is controlled by the same weighted
+divisor-square majorant. -/
+theorem mollifiedTailCoefficient_squareSum_le_weightedDivisorSquareSum
+    (X N : ℕ) (sigma : ℝ) :
+    ∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+        ‖mollifiedTailCoefficient X N sigma n‖ ^ 2 ≤
+      ∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+        ((n : ℝ) + 1) *
+          ((n.divisorsAntidiagonal.card : ℝ) * (n : ℝ) ^ (-sigma)) ^ 2 := by
+  apply Finset.sum_le_sum
+  intro n hn
+  have hnpos : 0 < n := by
+    have hnLower := (Finset.mem_Icc.mp hn).1
+    omega
+  have hnorm := norm_mollifiedTailCoefficient_le X N sigma hnpos
+  have hbound :
+      0 ≤ (n.divisorsAntidiagonal.card : ℝ) * (n : ℝ) ^ (-sigma) :=
+    mul_nonneg (Nat.cast_nonneg _) (Real.rpow_nonneg (Nat.cast_nonneg n) _)
+  have hweight : 1 ≤ (n : ℝ) + 1 := by
+    have hnnonneg : (0 : ℝ) ≤ n := Nat.cast_nonneg n
+    linarith
+  nlinarith [norm_nonneg (mollifiedTailCoefficient X N sigma n),
+    sq_nonneg ((n.divisorsAntidiagonal.card : ℝ) * (n : ℝ) ^ (-sigma))]
+
 /-- The Möbius-cancelled tail is a finite exponential sum with frequencies
 `-log n` on every vertical line. -/
 theorem mollifiedTruncatedTail_verticalLine_eq_finiteDirichletPolynomial
@@ -141,6 +165,42 @@ theorem mollifiedTruncatedTail_meanSquare_le_carneiroLittmann
       (fun d =>
         DirichletPolynomial.norm_hilbertForm_Icc_neg_log_le_carneiroLittmann
           (show 0 < min X N + 1 by omega) d)
+
+/-- The mollified tail mean square is reduced to one purely real weighted
+divisor-square sum.  Estimating this sum is the remaining arithmetic input. -/
+theorem mollifiedTruncatedTail_meanSquare_le_weightedDivisorSquareSum
+    {X N : ℕ} {sigma a b : ℝ} (hab : a ≤ b) :
+    ∫ t in a..b,
+        ‖∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+          mollifiedTruncatedCoefficient X N n /
+            (n : ℂ) ^ ((sigma : ℂ) + Complex.I * t)‖ ^ 2 ≤
+      ((b - a) + 4 * Real.pi) *
+        ∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+          ((n : ℝ) + 1) *
+            ((n.divisorsAntidiagonal.card : ℝ) * (n : ℝ) ^ (-sigma)) ^ 2 := by
+  let D : ℝ :=
+    ∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+      ((n : ℝ) + 1) *
+        ((n.divisorsAntidiagonal.card : ℝ) * (n : ℝ) ^ (-sigma)) ^ 2
+  calc
+    ∫ t in a..b,
+        ‖∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+          mollifiedTruncatedCoefficient X N n /
+            (n : ℂ) ^ ((sigma : ℂ) + Complex.I * t)‖ ^ 2 ≤
+        (b - a) * ∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+            ‖mollifiedTailCoefficient X N sigma n‖ ^ 2 +
+          4 * Real.pi * ∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+            ((n : ℝ) + 1) * ‖mollifiedTailCoefficient X N sigma n‖ ^ 2 :=
+      mollifiedTruncatedTail_meanSquare_le_carneiroLittmann hab
+    _ ≤ (b - a) * D + 4 * Real.pi * D := by
+      apply add_le_add
+      · exact mul_le_mul_of_nonneg_left
+          (mollifiedTailCoefficient_squareSum_le_weightedDivisorSquareSum
+            X N sigma) (sub_nonneg.mpr hab)
+      · exact mul_le_mul_of_nonneg_left
+          (mollifiedTailCoefficient_weightedSquareSum_le X N sigma)
+          (mul_nonneg (by norm_num) Real.pi_nonneg)
+    _ = ((b - a) + 4 * Real.pi) * D := by ring
 
 /-- The finite product in the mollified zeta approximation is exactly the
 coefficient polynomial obtained from the truncated Dirichlet convolution. -/

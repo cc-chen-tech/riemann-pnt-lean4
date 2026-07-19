@@ -31,6 +31,14 @@ example (X N : ℕ) (sigma : ℝ) :
           ((n.divisorsAntidiagonal.card : ℝ) * (n : ℝ) ^ (-sigma)) ^ 2 :=
   mollifiedTailCoefficient_weightedSquareSum_le X N sigma
 
+example (X N : ℕ) (sigma : ℝ) :
+    ∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+        ‖mollifiedTailCoefficient X N sigma n‖ ^ 2 ≤
+      ∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+        ((n : ℝ) + 1) *
+          ((n.divisorsAntidiagonal.card : ℝ) * (n : ℝ) ^ (-sigma)) ^ 2 :=
+  mollifiedTailCoefficient_squareSum_le_weightedDivisorSquareSum X N sigma
+
 example (X N : ℕ) (sigma t : ℝ) :
     (∑ n ∈ Finset.Icc (min X N + 1) (N * X),
         mollifiedTruncatedCoefficient X N n /
@@ -67,6 +75,17 @@ example {X N : ℕ} {sigma a b : ℝ} (hab : a ≤ b) :
         4 * Real.pi * ∑ n ∈ Finset.Icc (min X N + 1) (N * X),
           ((n : ℝ) + 1) * ‖mollifiedTailCoefficient X N sigma n‖ ^ 2 :=
   mollifiedTruncatedTail_meanSquare_le_carneiroLittmann hab
+
+example {X N : ℕ} {sigma a b : ℝ} (hab : a ≤ b) :
+    ∫ t in a..b,
+        ‖∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+          mollifiedTruncatedCoefficient X N n /
+            (n : ℂ) ^ ((sigma : ℂ) + Complex.I * t)‖ ^ 2 ≤
+      ((b - a) + 4 * Real.pi) *
+        ∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+          ((n : ℝ) + 1) *
+            ((n.divisorsAntidiagonal.card : ℝ) * (n : ℝ) ^ (-sigma)) ^ 2 :=
+  mollifiedTruncatedTail_meanSquare_le_weightedDivisorSquareSum hab
 
 example :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (X : ℕ) (s : ℂ) (x : ℝ),
@@ -122,8 +141,10 @@ example :
 #print axioms mollifiedTruncatedTail_verticalLine_eq_finiteDirichletPolynomial
 #print axioms mollifiedTruncatedTail_meanSquare_le_of_hilbert
 #print axioms mollifiedTruncatedTail_meanSquare_le_carneiroLittmann
+#print axioms mollifiedTruncatedTail_meanSquare_le_weightedDivisorSquareSum
 #print axioms norm_mollifiedTailCoefficient_le
 #print axioms mollifiedTailCoefficient_weightedSquareSum_le
+#print axioms mollifiedTailCoefficient_squareSum_le_weightedDivisorSquareSum
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem
