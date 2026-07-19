@@ -31,6 +31,14 @@ example : Integrable carneiroLittmannSpectralPrimitive :=
 example : Integrable (deriv carneiroLittmannSpectralPrimitive) :=
   integrable_deriv_carneiroLittmannSpectralPrimitive
 
+example (u : ℝ) :
+    carneiroLittmannSpectralPrimitiveDerivative u =
+      (((2 * Real.pi : ℝ) : ℂ) * Complex.I) *
+        (carneiroLittmannSpectralProfile u -
+          2 * (triangleFourierKernel u : ℂ) *
+            carneiroLittmannSpectralPhase u) :=
+  carneiroLittmannSpectralPrimitiveDerivative_eq u
+
 #print axioms continuous_carneiroLittmannSpectralProfile
 #print axioms hasCompactSupport_carneiroLittmannSpectralProfile
 #print axioms integrable_carneiroLittmannSpectralProfile
@@ -39,6 +47,7 @@ example : Integrable (deriv carneiroLittmannSpectralPrimitive) :=
 #print axioms differentiable_carneiroLittmannSpectralPrimitive
 #print axioms integrable_carneiroLittmannSpectralPrimitive
 #print axioms integrable_deriv_carneiroLittmannSpectralPrimitive
+#print axioms carneiroLittmannSpectralPrimitiveDerivative_eq
 
 end DirichletPolynomial
 end PrimeNumberTheorem

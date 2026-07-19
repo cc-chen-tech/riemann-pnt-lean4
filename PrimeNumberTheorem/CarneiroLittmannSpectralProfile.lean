@@ -510,5 +510,80 @@ theorem integrable_deriv_carneiroLittmannSpectralPrimitive :
   filter_upwards with u
   exact (hasDerivAt_carneiroLittmannSpectralPrimitive u).deriv.symm
 
+/-- Algebraic decomposition of the compact spectral profile into the
+derivative of the compact primitive and a modulated triangle kernel. -/
+theorem carneiroLittmannSpectralPrimitiveDerivative_eq (u : ℝ) :
+    carneiroLittmannSpectralPrimitiveDerivative u =
+      (((2 * Real.pi : ℝ) : ℂ) * Complex.I) *
+        (carneiroLittmannSpectralProfile u -
+          2 * (triangleFourierKernel u : ℂ) *
+            carneiroLittmannSpectralPhase u) := by
+  have hFrequency : carneiroLittmannSpectralFrequency =
+      (((2 * Real.pi : ℝ) : ℂ) * Complex.I) := rfl
+  have hFrequencyNe : carneiroLittmannSpectralFrequency ≠ 0 := by
+    rw [hFrequency]
+    exact mul_ne_zero
+      (Complex.ofReal_ne_zero.mpr (mul_ne_zero (by norm_num) Real.pi_ne_zero))
+      Complex.I_ne_zero
+  by_cases hneg : u ≤ -1
+  · have huNonpos : u ≤ 0 := hneg.trans (by norm_num)
+    have hAbs : 1 ≤ |u| := by
+      rw [abs_of_nonpos huNonpos]
+      linarith
+    have hTriangle : triangleFourierKernel u = 0 := by
+      unfold triangleFourierKernel
+      rw [max_eq_right]
+      linarith
+    rw [carneiroLittmannSpectralPrimitiveDerivative, if_pos hneg,
+      carneiroLittmannSpectralProfile, if_pos hneg, hTriangle]
+    push_cast
+    ring
+  · have hLower : -1 < u := lt_of_not_ge hneg
+    by_cases hzero : u ≤ 0
+    · have hTriangle : triangleFourierKernel u = 1 + u := by
+        unfold triangleFourierKernel
+        rw [abs_of_nonpos hzero, max_eq_left]
+        · ring
+        · linarith
+      rw [carneiroLittmannSpectralPrimitiveDerivative, if_neg hneg,
+        carneiroLittmannSpectralPrimitiveDerivativeMiddle, if_pos hzero,
+        carneiroLittmannSpectralProfile, if_neg hneg, if_pos hzero,
+        hTriangle]
+      unfold carneiroLittmannSpectralPrimitiveDerivativeLeft
+        carneiroLittmannSpectralLeft
+      rw [hFrequency]
+      field_simp [hFrequencyNe]
+      push_cast
+      ring
+    · have huPos : 0 < u := lt_of_not_ge hzero
+      by_cases hone : u ≤ 1
+      · have hTriangle : triangleFourierKernel u = 1 - u := by
+          unfold triangleFourierKernel
+          rw [abs_of_nonneg huPos.le, max_eq_left]
+          exact sub_nonneg.mpr hone
+        rw [carneiroLittmannSpectralPrimitiveDerivative, if_neg hneg,
+          carneiroLittmannSpectralPrimitiveDerivativeMiddle, if_neg hzero,
+          carneiroLittmannSpectralPrimitiveDerivativeRightPiece, if_pos hone,
+          carneiroLittmannSpectralProfile, if_neg hneg, if_neg hzero,
+          if_pos hone, hTriangle]
+        unfold carneiroLittmannSpectralPrimitiveDerivativeRight
+          carneiroLittmannSpectralRight
+        rw [hFrequency]
+        field_simp [hFrequencyNe]
+        push_cast
+        ring
+      · have honeLt : 1 < u := lt_of_not_ge hone
+        have hTriangle : triangleFourierKernel u = 0 := by
+          unfold triangleFourierKernel
+          rw [abs_of_pos huPos, max_eq_right]
+          linarith
+        rw [carneiroLittmannSpectralPrimitiveDerivative, if_neg hneg,
+          carneiroLittmannSpectralPrimitiveDerivativeMiddle, if_neg hzero,
+          carneiroLittmannSpectralPrimitiveDerivativeRightPiece, if_neg hone,
+          carneiroLittmannSpectralProfile, if_neg hneg, if_neg hzero,
+          if_neg hone, hTriangle]
+        push_cast
+        ring
+
 end DirichletPolynomial
 end PrimeNumberTheorem
