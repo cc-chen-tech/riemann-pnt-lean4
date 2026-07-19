@@ -10,6 +10,7 @@ import HardyTheorem.ShortIntervalMeanValue
 import HardyTheorem.HardyModelApproximation
 import HardyTheorem.CriticalLineShortDirichlet
 import HardyTheorem.HardyShortSignedMeanSquare
+import HardyTheorem.HardyShortSecondMoment
 import HardyTheorem.HardyPhaseSecondMoment
 import HardyTheorem.HardyPhaseFullSecondMoment
 import HardyTheorem.HardyPhaseCorrelation
