@@ -6,6 +6,29 @@ open scoped BigOperators ComplexConjugate
 namespace PrimeNumberTheorem
 namespace DirichletPolynomial
 
+/-- Reflecting a real weight reflects its Fourier kernel frequency. -/
+theorem fourierKernel_reflect (g : ℝ → ℝ) (xi : ℝ) :
+    fourierKernel (fun t => g (-t)) xi = fourierKernel g (-xi) := by
+  let F : ℝ → ℂ := fun y =>
+    (g y : ℂ) * Complex.exp
+      (Complex.I * (-(xi : ℂ) * (y : ℂ)))
+  unfold fourierKernel
+  calc
+    (∫ t, (g (-t) : ℂ) * Complex.exp (Complex.I * (xi * t))) =
+        ∫ t, F ((-1 : ℝ) * t) := by
+      congr 1
+      funext t
+      simp only [F, neg_one_mul]
+      congr 2
+      push_cast
+      ring
+    _ = |((-1 : ℝ)⁻¹)| • ∫ y, F y :=
+      Measure.integral_comp_mul_left F (-1)
+    _ = ∫ y, F y := by norm_num
+    _ = ∫ t, (g t : ℂ) * Complex.exp
+        (Complex.I * (((-xi : ℝ) : ℂ) * (t : ℂ))) := by
+      simp only [F, Complex.ofReal_neg]
+
 /-- A normalized positive Fourier kernel for the weighted Hilbert inequality.
 The high-frequency formula begins at frequency one; positive dilation moves
 that threshold to the local separation scale. -/
@@ -20,6 +43,34 @@ structure PositiveHilbertKernelProfile (C : ℝ) (kappa : ℂ) where
     fourierKernel kernel 0 = ((2 * C : ℝ) : ℂ)
   fourierKernel_of_one_le_abs : ∀ {xi : ℝ}, 1 ≤ |xi| →
     fourierKernel kernel xi = kappa / xi
+
+/-- Reflection preserves positivity and scale monotonicity while reversing the
+sign of the reciprocal-frequency Fourier coefficient. -/
+def PositiveHilbertKernelProfile.reflect {C : ℝ} {kappa : ℂ}
+    (profile : PositiveHilbertKernelProfile C kappa) :
+    PositiveHilbertKernelProfile C (-kappa) where
+  kernel := fun t => profile.kernel (-t)
+  integrable_kernel := by
+    simpa only [neg_one_mul] using
+      profile.integrable_kernel.comp_mul_left'
+        (by norm_num : (-1 : ℝ) ≠ 0)
+  kernel_nonneg := fun t => profile.kernel_nonneg (-t)
+  dilation_antitone := by
+    intro deltaSmall deltaLarge hsmall hle t
+    simpa only [mul_neg] using
+      profile.dilation_antitone hsmall hle (-t)
+  fourierKernel_zero := by
+    rw [fourierKernel_reflect, neg_zero]
+    exact profile.fourierKernel_zero
+  fourierKernel_of_one_le_abs := by
+    intro xi hxi
+    have hxi_neg : 1 ≤ |-xi| := by simpa only [abs_neg] using hxi
+    have hxi_pos : 0 < |xi| := zero_lt_one.trans_le hxi
+    have hxi_ne : xi ≠ 0 := abs_pos.mp hxi_pos
+    rw [fourierKernel_reflect,
+      profile.fourierKernel_of_one_le_abs hxi_neg]
+    push_cast
+    field_simp [hxi_ne]
 
 /-- The kernel profile dilated by the local scale at index `n`. -/
 def scaledKernelSequence {C : ℝ} {kappa : ℂ}
@@ -131,6 +182,24 @@ theorem finiteExponentialSum_meanSquare_le_of_scaled_positive_kernels
     simpa only [ofReal_sub] using
       (fourierKernel_scaledKernelSequence_of_large_frequency
         profilePlus (hdelta (min m n)) (hlocal m hm n hn hmn))
+
+/-- Reflection supplies the opposite high-frequency sign, so one concrete
+positive profile is enough for the finite weighted mean-square estimate. -/
+theorem finiteExponentialSum_meanSquare_le_of_scaled_positive_kernel
+    {N : ℕ} {c : ℕ → ℂ} {omega delta : ℕ → ℝ} {a b C : ℝ}
+    (hab : a ≤ b)
+    (hdelta : ∀ n, 0 < delta n)
+    (hanti : ∀ n, delta (n + 1) ≤ delta n)
+    (hlocal : ∀ m ∈ Finset.range N, ∀ n ∈ Finset.range N, m ≠ n →
+      delta (min m n) ≤ |omega n - omega m|)
+    (profile : PositiveHilbertKernelProfile C (-2 * Complex.I)) :
+    ∫ t in a..b, ‖finiteExponentialSum (Finset.range N) c omega t‖ ^ 2 ≤
+      (b - a) * ∑ n ∈ Finset.range N, ‖c n‖ ^ 2 +
+        2 * C * ∑ n ∈ Finset.range N, (delta n)⁻¹ * ‖c n‖ ^ 2 := by
+  have profilePlus : PositiveHilbertKernelProfile C (2 * Complex.I) := by
+    simpa only [neg_mul, neg_neg] using profile.reflect
+  exact finiteExponentialSum_meanSquare_le_of_scaled_positive_kernels
+    hab hdelta hanti hlocal profile profilePlus
 
 end DirichletPolynomial
 end PrimeNumberTheorem
