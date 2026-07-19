@@ -8,6 +8,8 @@ open PrimeNumberTheorem
 #check RiemannVonMangoldt.shiftedZetaDivisor
 #check RiemannVonMangoldt.shiftedDivisorPrincipalPart
 #check RiemannVonMangoldt.abs_integral_im_shiftedDivisorPrincipalPart_le_pi_mul_mass
+#check RiemannVonMangoldt.zetaHorizontalArgumentVariation
+#check RiemannVonMangoldt.exists_abs_zetaHorizontalArgumentVariation_le_log
 
 example {T : ℝ} (hT : 4 ≤ T)
     (hgood : ExplicitFormulaAux.goodHeight T) :
@@ -17,3 +19,9 @@ example {T : ℝ} (hT : 4 ≤ T)
         (RiemannVonMangoldt.shiftedZetaDivisor T u : ℝ) :=
   RiemannVonMangoldt.abs_integral_im_shiftedDivisorPrincipalPart_le_pi_mul_mass
     hT hgood
+
+example : ∃ C : ℝ, 0 ≤ C ∧ ∀ T : ℝ, 4 ≤ T →
+    ExplicitFormulaAux.goodHeight T →
+    |RiemannVonMangoldt.zetaHorizontalArgumentVariation T| ≤
+      C * (1 + Real.log (T + 5)) :=
+  RiemannVonMangoldt.exists_abs_zetaHorizontalArgumentVariation_le_log
