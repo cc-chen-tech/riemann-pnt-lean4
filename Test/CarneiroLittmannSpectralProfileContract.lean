@@ -18,10 +18,27 @@ example {u : ℝ} (hu : 1 ≤ |u|) :
     carneiroLittmannSpectralProfile u = 0 :=
   carneiroLittmannSpectralProfile_eq_zero_of_one_le_abs hu
 
+example (u : ℝ) : HasDerivAt carneiroLittmannSpectralPrimitive
+    (carneiroLittmannSpectralPrimitiveDerivative u) u :=
+  hasDerivAt_carneiroLittmannSpectralPrimitive u
+
+example : Differentiable ℝ carneiroLittmannSpectralPrimitive :=
+  differentiable_carneiroLittmannSpectralPrimitive
+
+example : Integrable carneiroLittmannSpectralPrimitive :=
+  integrable_carneiroLittmannSpectralPrimitive
+
+example : Integrable (deriv carneiroLittmannSpectralPrimitive) :=
+  integrable_deriv_carneiroLittmannSpectralPrimitive
+
 #print axioms continuous_carneiroLittmannSpectralProfile
 #print axioms hasCompactSupport_carneiroLittmannSpectralProfile
 #print axioms integrable_carneiroLittmannSpectralProfile
 #print axioms carneiroLittmannSpectralProfile_eq_zero_of_one_le_abs
+#print axioms hasDerivAt_carneiroLittmannSpectralPrimitive
+#print axioms differentiable_carneiroLittmannSpectralPrimitive
+#print axioms integrable_carneiroLittmannSpectralPrimitive
+#print axioms integrable_deriv_carneiroLittmannSpectralPrimitive
 
 end DirichletPolynomial
 end PrimeNumberTheorem
