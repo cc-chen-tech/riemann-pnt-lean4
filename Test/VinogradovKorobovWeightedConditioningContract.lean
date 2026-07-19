@@ -9,3 +9,6 @@ open ZeroFreeRegion.VinogradovKorobov
 #check isVinogradovWeightedSolutionInt_iff_modEq
 #check isVinogradovWeightedSolutionInt_affine_iff_triangular
 #check weightedAffineRescale_counterexample
+#check IsVinogradovMixedAffineEquationInt
+#check IsVinogradovMixedAffineEquationInt.centered_powerSum_eq
+#check IsVinogradovMixedAffineEquationInt.centered_modEq
