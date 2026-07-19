@@ -65,6 +65,7 @@ lean_lib RiemannPNT where
     `Test.OscillatorySecondDerivativeContract,
     `MathlibAux.RectangleResidue,
     `MathlibAux.BoundaryRectResidue,
+    `MathlibAux.LogDerivArgumentPrinciple,
     `PrimeNumberTheorem.ExplicitFormulaTruncated,
     `Test.ExplicitFormulaAllHeightsContract,
     `Test.ExplicitFormulaAllHeightsRateContract,
@@ -107,6 +108,8 @@ lean_lib RiemannPNT where
     `Test.ZetaDerivativeZeroContract,
     `Test.ExplicitFormulaTruncatedTargetContract,
     `Test.CompletedLFunctionContourContract,
+    `Test.LogDerivArgumentPrincipleContract,
+    `Test.LogDerivArgumentPrincipleAxiomAudit,
     `Test.RiemannVonMangoldtContract,
     `Test.RiemannVonMangoldtAxiomAudit
   ]
