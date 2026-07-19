@@ -1,0 +1,21 @@
+import ZeroFreeRegion.VinogradovKorobov.VinogradovWeightedMoment
+
+open ZeroFreeRegion.VinogradovKorobov
+
+#check vinogradovWeightedModulus
+#check sum_vinogradovWeightedDegrees
+#check sum_vinogradovWeightedExponents
+#check prod_vinogradovWeightedModulus
+#check vinogradovWeightedPowerSumMod
+#check IsVinogradovWeightedSolutionMod
+#check vinogradovWeightedSolutionCountMod
+#check natCast_vinogradovPowerSumNat_weighted
+#check IsVinogradovSolutionNat.toWeightedMod
+#check IsVinogradovWeightedSolutionMod.toNat_of_lt
+#check isVinogradovWeightedSolutionMod_iff_nat_of_scale
+#check vinogradovWeightedSolutionCountMod_eq_nat_of_scale
+#check VinogradovWeightedCoefficient
+#check vinogradovWeightedSolutionSelector
+#check vinogradovWeightedSolutionSelector_eq_indicator
+#check sum_vinogradovWeightedSolutionSelector_eq_count
+#check prod_vinogradovWeightedModulus_inv_natCast
