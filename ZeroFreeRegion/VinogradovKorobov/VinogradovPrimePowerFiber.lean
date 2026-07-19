@@ -313,6 +313,214 @@ theorem card_vinogradovBlockSingularResidueSet_le_sq_mul_pow_pred
         congr 2
         omega
 
+/-- A power sum of a tuple whose entries already lie in the residue field. -/
+def vinogradovResiduePowerSum
+    (p : ℕ) {d s : ℕ} (x : Fin s → ZMod p) (j : Fin d) : ZMod p :=
+  ∑ i, x i ^ (j.val + 1)
+
+/-- The Vinogradov system over the residue field `ZMod p`. -/
+def IsVinogradovResidueSolution
+    (p d s : ℕ) (x y : Fin s → ZMod p) : Prop :=
+  ∀ j : Fin d,
+    vinogradovResiduePowerSum p x j =
+      vinogradovResiduePowerSum p y j
+
+/-- At the complete residue scale `X = p`, the original modular Vinogradov
+system is exactly the residue-field system after encoding `{1, ..., p}` in
+`ZMod p`. -/
+theorem isVinogradovSolutionMod_iff_residueSolution
+    (p d s : ℕ) (x y : Fin s → Fin p) :
+    IsVinogradovSolutionMod p d s p x y ↔
+      IsVinogradovResidueSolution p d s
+        (fun i ↦ ((x i).val + 1 : ZMod p))
+        (fun i ↦ ((y i).val + 1 : ZMod p)) := by
+  rfl
+
+/-- Residue-field Vinogradov solutions for which the first block on the
+left-hand side is singular. -/
+noncomputable def vinogradovBlockSingularSolutionSet
+    (p d k r : ℕ) [Fact p.Prime] :
+    Finset ((Fin (k + r) → ZMod p) × (Fin (k + r) → ZMod p)) := by
+  classical
+  exact
+    ((vinogradovBlockSingularResidueSet p k r).product Finset.univ).filter
+      fun xy ↦ IsVinogradovResidueSolution p d (k + r) xy.1 xy.2
+
+/-- Membership records both the singular first block and all residue power-sum
+equations. -/
+theorem mem_vinogradovBlockSingularSolutionSet_iff
+    (p d k r : ℕ) [Fact p.Prime]
+    (x y : Fin (k + r) → ZMod p) :
+    (x, y) ∈ vinogradovBlockSingularSolutionSet p d k r ↔
+      (¬Function.Injective
+          (fun i : Fin k ↦ x (Fin.castAdd r i))) ∧
+        IsVinogradovResidueSolution p d (k + r) x y := by
+  classical
+  simp [vinogradovBlockSingularSolutionSet,
+    mem_vinogradovBlockSingularResidueSet_iff]
+
+/-- The singular part of the residue-field solution space inherits the full
+one-power saving from the singular coordinate block. -/
+theorem card_vinogradovBlockSingularSolutionSet_le
+    (p d k r : ℕ) [Fact p.Prime] :
+    (vinogradovBlockSingularSolutionSet p d k r).card ≤
+      k ^ 2 * p ^ (2 * (k + r) - 1) := by
+  classical
+  have hsubset :
+      (vinogradovBlockSingularSolutionSet p d k r).card ≤
+        (vinogradovBlockSingularResidueSet p k r).card *
+          p ^ (k + r) := by
+    unfold vinogradovBlockSingularSolutionSet
+    calc
+      (((vinogradovBlockSingularResidueSet p k r).product
+          (Finset.univ : Finset (Fin (k + r) → ZMod p))).filter
+            fun xy ↦
+              IsVinogradovResidueSolution p d (k + r) xy.1 xy.2).card ≤
+          ((vinogradovBlockSingularResidueSet p k r).product
+            (Finset.univ :
+              Finset (Fin (k + r) → ZMod p))).card :=
+        Finset.card_le_card (Finset.filter_subset _ _)
+      _ = (vinogradovBlockSingularResidueSet p k r).card *
+          p ^ (k + r) := by
+        change
+          ((vinogradovBlockSingularResidueSet p k r) ×ˢ
+            (Finset.univ : Finset (Fin (k + r) → ZMod p))).card = _
+        rw [Finset.card_product]
+        congr 1
+        simpa [Fintype.card_pi_const, ZMod.card] using
+          (Finset.card_univ :
+            (Finset.univ : Finset (Fin (k + r) → ZMod p)).card =
+              Fintype.card (Fin (k + r) → ZMod p))
+  by_cases hk : k = 0
+  · subst k
+    simpa [card_vinogradovBlockSingularResidueSet] using hsubset
+  · calc
+      (vinogradovBlockSingularSolutionSet p d k r).card ≤
+          (vinogradovBlockSingularResidueSet p k r).card *
+            p ^ (k + r) := hsubset
+      _ ≤ (k ^ 2 * p ^ (k + r - 1)) * p ^ (k + r) :=
+        Nat.mul_le_mul_right (p ^ (k + r))
+          (card_vinogradovBlockSingularResidueSet_le_sq_mul_pow_pred p k r)
+      _ = k ^ 2 * p ^ (2 * (k + r) - 1) := by
+        rw [mul_assoc, ← pow_add]
+        congr 2
+        omega
+
+private noncomputable def completeResidueEquiv
+    (p : ℕ) [NeZero p] : Fin p ≃ ZMod p :=
+  (ZMod.finEquiv p).toEquiv.trans (Equiv.addRight 1)
+
+private theorem completeResidueEquiv_apply
+    (p : ℕ) [NeZero p] (x : Fin p) :
+    completeResidueEquiv p x = (x.val : ZMod p) + 1 := by
+  cases p with
+  | zero => exact (NeZero.ne 0 rfl).elim
+  | succ p =>
+      change (x + (1 : Fin (p + 1)) : Fin (p + 1)) =
+        (⟨x.val % (p + 1), Nat.mod_lt _ (Nat.succ_pos p)⟩ :
+          Fin (p + 1)) + 1
+      congr 1
+      apply Fin.ext
+      simp [Nat.mod_eq_of_lt x.isLt]
+
+private noncomputable def completeResidueTupleEquiv
+    (p s : ℕ) [NeZero p] :
+    (Fin s → Fin p) ≃ (Fin s → ZMod p) :=
+  Equiv.piCongrRight fun _ ↦ completeResidueEquiv p
+
+private noncomputable def completeResiduePairEquiv
+    (p s : ℕ) [NeZero p] :
+    ((Fin s → Fin p) × (Fin s → Fin p)) ≃
+      ((Fin s → ZMod p) × (Fin s → ZMod p)) :=
+  Equiv.prodCongr (completeResidueTupleEquiv p s)
+    (completeResidueTupleEquiv p s)
+
+/-- The singular solution stratum in the original `IsVinogradovSolutionMod`
+coordinates at the complete residue scale `X = p`. -/
+noncomputable def vinogradovBlockSingularSolutionSetMod
+    (p d k r : ℕ) [Fact p.Prime] :
+    Finset ((Fin (k + r) → Fin p) × (Fin (k + r) → Fin p)) := by
+  classical
+  exact
+    (vinogradovBlockSingularSolutionSet p d k r).map
+      (completeResiduePairEquiv p (k + r)).symm.toEmbedding
+
+/-- The transported set is exactly the singular stratum of the modular
+Vinogradov system already used by the finite-moment identity. -/
+theorem mem_vinogradovBlockSingularSolutionSetMod_iff
+    (p d k r : ℕ) [Fact p.Prime]
+    (x y : Fin (k + r) → Fin p) :
+    (x, y) ∈ vinogradovBlockSingularSolutionSetMod p d k r ↔
+      (¬Function.Injective
+          (fun i : Fin k ↦ x (Fin.castAdd r i))) ∧
+        IsVinogradovSolutionMod p d (k + r) p x y := by
+  classical
+  have hxencode :
+      completeResidueTupleEquiv p (k + r) x =
+        (fun i ↦ ((x i).val + 1 : ZMod p)) := by
+    funext i
+    change completeResidueEquiv p (x i) = _
+    exact completeResidueEquiv_apply p (x i)
+  have hyencode :
+      completeResidueTupleEquiv p (k + r) y =
+        (fun i ↦ ((y i).val + 1 : ZMod p)) := by
+    funext i
+    change completeResidueEquiv p (y i) = _
+    exact completeResidueEquiv_apply p (y i)
+  simp only [vinogradovBlockSingularSolutionSetMod, Finset.mem_map]
+  constructor
+  · rintro ⟨z, hz, hzx⟩
+    have hz_eq : z = completeResiduePairEquiv p (k + r) (x, y) := by
+      calc
+        z = completeResiduePairEquiv p (k + r)
+            ((completeResiduePairEquiv p (k + r)).symm z) :=
+          (completeResiduePairEquiv p (k + r)).apply_symm_apply z |>.symm
+        _ = completeResiduePairEquiv p (k + r) (x, y) :=
+          congrArg (completeResiduePairEquiv p (k + r)) hzx
+    rw [hz_eq] at hz
+    have hz' :=
+      (mem_vinogradovBlockSingularSolutionSet_iff p d k r
+        ((completeResidueTupleEquiv p (k + r)) x)
+        ((completeResidueTupleEquiv p (k + r)) y)).mp hz
+    constructor
+    · intro hxinj
+      apply hz'.1
+      exact (completeResidueEquiv p).injective.comp hxinj
+    · apply (isVinogradovSolutionMod_iff_residueSolution p d (k + r) x y).mpr
+      rw [hxencode, hyencode] at hz'
+      exact hz'.2
+  · rintro ⟨hx, hsol⟩
+    refine ⟨completeResiduePairEquiv p (k + r) (x, y), ?_, by simp⟩
+    apply (mem_vinogradovBlockSingularSolutionSet_iff p d k r _ _).mpr
+    constructor
+    · intro hcomp
+      apply hx
+      intro i j hij
+      apply hcomp
+      simp only [completeResidueTupleEquiv, Equiv.piCongrRight_apply]
+      exact congrArg (completeResidueEquiv p) hij
+    · have hres :=
+        (isVinogradovSolutionMod_iff_residueSolution p d (k + r) x y).mp hsol
+      rw [hxencode, hyencode]
+      exact hres
+
+/-- Transport to the original complete modular coordinates preserves the
+number of singular solutions. -/
+theorem card_vinogradovBlockSingularSolutionSetMod_eq_residue
+    (p d k r : ℕ) [Fact p.Prime] :
+    (vinogradovBlockSingularSolutionSetMod p d k r).card =
+      (vinogradovBlockSingularSolutionSet p d k r).card := by
+  rw [vinogradovBlockSingularSolutionSetMod, Finset.card_map]
+
+/-- Hence the singular part of the existing complete modular moment has the
+same one-power saving. -/
+theorem card_vinogradovBlockSingularSolutionSetMod_le
+    (p d k r : ℕ) [Fact p.Prime] :
+    (vinogradovBlockSingularSolutionSetMod p d k r).card ≤
+      k ^ 2 * p ^ (2 * (k + r) - 1) := by
+  rw [card_vinogradovBlockSingularSolutionSetMod_eq_residue]
+  exact card_vinogradovBlockSingularSolutionSet_le p d k r
+
 end
 
 end ZeroFreeRegion.VinogradovKorobov
