@@ -1,8 +1,16 @@
 import MathlibAux.DirichletPolynomialMeanSquare
 
 #check MathlibAux.exponentialPolynomial
+#check MathlibAux.normSq_finset_sum_eq_sum_re_conj_mul
 #check MathlibAux.norm_integral_cexp_linear_le
 #check MathlibAux.integral_normSq_exponentialPolynomial_le
+
+example {ι : Type*} [DecidableEq ι]
+    (s : Finset ι) (f : ι → ℂ) :
+    Complex.normSq (∑ n ∈ s, f n) =
+      ∑ m ∈ s, ∑ n ∈ s,
+        ((starRingEnd ℂ) (f n) * f m).re :=
+  MathlibAux.normSq_finset_sum_eq_sum_re_conj_mul s f
 
 example {ι : Type*} [DecidableEq ι]
     (s : Finset ι) (coeff : ι → ℂ) (freq : ι → ℝ)

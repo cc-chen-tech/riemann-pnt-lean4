@@ -62,6 +62,7 @@ import MathlibAux.DirichletPolynomialMeanSquare
 #print axioms HardyTheorem.hardyFirstModelShortIntegral_sq_le_normSq_phase_sum
 #print axioms MathlibAux.norm_integral_cexp_linear_le
 #print axioms MathlibAux.integral_normSq_exponentialPolynomial_le
+#print axioms MathlibAux.normSq_finset_sum_eq_sum_re_conj_mul
 #print axioms HardyTheorem.norm_integral_inv_nat_cpow_criticalLine_le
 #print axioms HardyTheorem.norm_integral_criticalLineDirichletTail_le
 #print axioms HardyTheorem.norm_integral_criticalLineDirichletTail_cutoff_le

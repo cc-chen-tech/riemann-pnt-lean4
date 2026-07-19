@@ -38,6 +38,24 @@ theorem norm_integral_cexp_linear_le {a b omega : ℝ} (homega : omega ≠ 0) :
         norm_num
   exact div_le_div_of_nonneg_right hnum (abs_nonneg omega)
 
+/-- The norm-square of a finite complex sum is the real part of its complete
+Hermitian double sum. -/
+theorem normSq_finset_sum_eq_sum_re_conj_mul
+    {ι : Type*} [DecidableEq ι]
+    (s : Finset ι) (f : ι → ℂ) :
+    Complex.normSq (∑ n ∈ s, f n) =
+      ∑ m ∈ s, ∑ n ∈ s,
+        ((starRingEnd ℂ) (f n) * f m).re := by
+  have hnorm :
+      Complex.normSq (∑ n ∈ s, f n) =
+        ((starRingEnd ℂ) (∑ n ∈ s, f n) *
+          (∑ n ∈ s, f n)).re := by
+    have h := congrArg Complex.re
+      (Complex.normSq_eq_conj_mul_self (z := ∑ n ∈ s, f n))
+    simpa using h
+  rw [hnorm]
+  simp only [map_sum, Finset.sum_mul, Finset.mul_sum, Complex.re_sum]
+
 private theorem normSq_exponentialPolynomial_eq_sum {ι : Type*} [DecidableEq ι]
     (s : Finset ι) (coeff : ι → ℂ) (freq : ι → ℝ) (t : ℝ) :
     Complex.normSq (exponentialPolynomial s coeff freq t) =
