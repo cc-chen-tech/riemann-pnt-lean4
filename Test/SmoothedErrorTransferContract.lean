@@ -3,6 +3,24 @@ import PrimeNumberTheorem.SmoothedErrorTransfer
 open Complex Set
 open scoped BigOperators Interval
 
+example {x T t : ℝ} {N : ℕ} (hx : 1 < x) (hT : 0 ≤ T) (ht : |t| ≤ T) :
+    ‖PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderExplicitFormulaIntegrand
+        x (((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * I)‖ ≤
+      PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderOddVerticalBound x N T :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.norm_secondOrderExplicitFormulaIntegrand_odd_vertical_le
+    hx hT ht
+
+example {x y W : ℝ} {N : ℕ} (hx : 1 < x) (hy : 1 < y) (hW : 0 ≤ W) :
+    ‖PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderLeftXDifference
+        x y (-(2 * (N : ℝ) + 1)) W‖ ≤
+      (PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderOddVerticalBound
+          y N (2 * Real.pi * W) +
+        PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderOddVerticalBound
+          x N (2 * Real.pi * W)) *
+        (2 * (2 * Real.pi * W)) :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.norm_secondOrderLeftXDifference_odd_le
+    hx hy hW
+
 example {x σ b t K : ℝ} (hx : 1 ≤ x) (hσ : σ ≤ b) (ht : 0 < |t|)
     (hK : 0 ≤ K)
     (hlog : ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤ K) :

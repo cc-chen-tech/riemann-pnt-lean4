@@ -1,6 +1,7 @@
 import PrimeNumberTheorem.RieszDifference
 import PrimeNumberTheorem.RightHorizontalEdge
 import PrimeNumberTheorem.CentralHorizontalEdge
+import PrimeNumberTheorem.LeftVerticalEdge
 
 /-!
 # Transferring smoothed approximation errors to Chebyshev psi
@@ -35,6 +36,105 @@ noncomputable def secondOrderLeftXDifference
       secondOrderExplicitFormulaIntegrand y ((a : ℂ) + t * I)) -
     ∫ t : ℝ in (-(2 * Real.pi * W))..(2 * Real.pi * W),
       secondOrderExplicitFormulaIntegrand x ((a : ℂ) + t * I)
+
+/-- The negative-odd left-vertical majorant for the second-order Perron
+kernel.  Relative to the first-order API, the extra kernel contributes the
+explicit factor `(2N+1)^{-1}`. -/
+noncomputable def secondOrderOddVerticalBound (x : ℝ) (N : ℕ) (T : ℝ) : ℝ :=
+  (vonMangoldtLSeriesNorm 1 + ‖Complex.log Real.pi‖ +
+      2 * (‖(Real.eulerMascheroniConstant : ℂ)‖ + 3 +
+        Real.log (2 * (N : ℝ) + T + 4)) + Real.pi) *
+      x ^ (-(2 * (N : ℝ) + 1)) / (2 * (N : ℝ) + 1)
+
+/-- On a finite negative-odd vertical segment, the second-order Perron kernel
+gains the reciprocal distance of the line from the imaginary axis. -/
+theorem norm_secondOrderExplicitFormulaIntegrand_odd_vertical_le
+    {x T t : ℝ} {N : ℕ} (hx : 1 < x) (hT : 0 ≤ T) (ht : |t| ≤ T) :
+    ‖secondOrderExplicitFormulaIntegrand x
+      (((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * I)‖ ≤
+      secondOrderOddVerticalBound x N T := by
+  let s : ℂ := ((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * I
+  let Q : ℝ := vonMangoldtLSeriesNorm 1 + ‖Complex.log Real.pi‖ +
+    2 * (‖(Real.eulerMascheroniConstant : ℂ)‖ + 3 +
+      Real.log (2 * (N : ℝ) + T + 4)) + Real.pi
+  have hfirst := norm_explicitFormulaIntegrand_odd_vertical_le hx hT ht
+  change ‖explicitFormulaIntegrand x s / s‖ ≤ Q * x ^ (-(2 * (N : ℝ) + 1)) /
+    (2 * (N : ℝ) + 1)
+  change ‖explicitFormulaIntegrand x s‖ ≤ Q * x ^ (-(2 * (N : ℝ) + 1)) at hfirst
+  have hN : 0 ≤ (N : ℝ) := Nat.cast_nonneg N
+  have hden_pos : 0 < 2 * (N : ℝ) + 1 := by linarith
+  have hden : 2 * (N : ℝ) + 1 ≤ ‖s‖ := by
+    have hre : 2 * (N : ℝ) + 1 ≤ |s.re| := by
+      simp [s]
+      rw [abs_of_nonpos (by linarith)]
+      linarith
+    exact hre.trans (Complex.abs_re_le_norm s)
+  have hQ : 0 ≤ Q := by
+    have hseries : 0 ≤ vonMangoldtLSeriesNorm 1 :=
+      tsum_nonneg fun n => norm_nonneg _
+    have hM : 1 ≤ 2 * (N : ℝ) + T + 4 := by linarith
+    have hlog : 0 ≤ Real.log (2 * (N : ℝ) + T + 4) := Real.log_nonneg hM
+    dsimp [Q]
+    positivity
+  have hnum : 0 ≤ Q * x ^ (-(2 * (N : ℝ) + 1)) :=
+    mul_nonneg hQ (Real.rpow_nonneg (zero_lt_one.trans hx).le _)
+  rw [norm_div]
+  calc
+    ‖explicitFormulaIntegrand x s‖ / ‖s‖ ≤
+        (Q * x ^ (-(2 * (N : ℝ) + 1))) / ‖s‖ :=
+      div_le_div_of_nonneg_right hfirst (norm_nonneg s)
+    _ ≤ (Q * x ^ (-(2 * (N : ℝ) + 1))) / (2 * (N : ℝ) + 1) :=
+      div_le_div_of_nonneg_left hnum hden_pos hden
+
+/-- Quantitative endpoint-difference bound for the second-order left vertical
+edge on the negative-odd line `Re(s)=-(2N+1)`.  The only restriction on the
+height parameter is nonnegativity; no good-height hypothesis is used here. -/
+theorem norm_secondOrderLeftXDifference_odd_le
+    {x y W : ℝ} {N : ℕ} (hx : 1 < x) (hy : 1 < y) (hW : 0 ≤ W) :
+    ‖secondOrderLeftXDifference x y (-(2 * (N : ℝ) + 1)) W‖ ≤
+      (secondOrderOddVerticalBound y N (2 * Real.pi * W) +
+        secondOrderOddVerticalBound x N (2 * Real.pi * W)) *
+        (2 * (2 * Real.pi * W)) := by
+  let T : ℝ := 2 * Real.pi * W
+  have hT : 0 ≤ T := by
+    dsimp [T]
+    positivity
+  have hyIntegral := intervalIntegral.norm_integral_le_of_norm_le_const
+    (f := fun t : ℝ => secondOrderExplicitFormulaIntegrand y
+      (((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * I))
+    (a := -T) (b := T) (C := secondOrderOddVerticalBound y N T)
+    (fun t ht => by
+      rw [Set.uIoc_of_le (by linarith)] at ht
+      have habs : |t| ≤ T := abs_le.mpr ⟨by linarith [ht.1], ht.2⟩
+      exact norm_secondOrderExplicitFormulaIntegrand_odd_vertical_le hy hT habs)
+  have hxIntegral := intervalIntegral.norm_integral_le_of_norm_le_const
+    (f := fun t : ℝ => secondOrderExplicitFormulaIntegrand x
+      (((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * I))
+    (a := -T) (b := T) (C := secondOrderOddVerticalBound x N T)
+    (fun t ht => by
+      rw [Set.uIoc_of_le (by linarith)] at ht
+      have habs : |t| ≤ T := abs_le.mpr ⟨by linarith [ht.1], ht.2⟩
+      exact norm_secondOrderExplicitFormulaIntegrand_odd_vertical_le hx hT habs)
+  rw [abs_of_nonneg (by linarith : 0 ≤ T - -T)] at hyIntegral hxIntegral
+  unfold secondOrderLeftXDifference
+  change ‖(∫ t : ℝ in (-T)..T,
+      secondOrderExplicitFormulaIntegrand y
+        (((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * I)) -
+      ∫ t : ℝ in (-T)..T,
+        secondOrderExplicitFormulaIntegrand x
+          (((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * I)‖ ≤ _
+  calc
+    _ ≤ ‖∫ t : ℝ in (-T)..T,
+          secondOrderExplicitFormulaIntegrand y
+            (((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * I)‖ +
+        ‖∫ t : ℝ in (-T)..T,
+          secondOrderExplicitFormulaIntegrand x
+            (((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * I)‖ :=
+      norm_sub_le _ _
+    _ ≤ secondOrderOddVerticalBound y N T * (2 * T) +
+        secondOrderOddVerticalBound x N T * (2 * T) :=
+      add_le_add hyIntegral hxIntegral
+    _ = _ := by dsimp [T]; ring
 
 /-- A logarithmic-derivative bound on one horizontal point gains a second
 factor of the height in the denominator for the second-order Perron kernel. -/

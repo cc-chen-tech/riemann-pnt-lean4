@@ -62,7 +62,19 @@ explicit multiple of
 (b-a) * (x^2 + y^2) * (1+log(A+6))^2 / T^2.
 ```
 
-No numerical bound is claimed here for the left vertical difference.
+On the existing nonsingular negative-odd left lines
+`Re(s) = -(2N+1)`, the second-order kernel now gives a finite-height endpoint
+difference bound. Its two endpoint majorants are the existing left-vertical
+logarithmic factors times
+
+```text
+x^(-(2N+1)) / (2N+1)
+```
+
+and the segment length is `2 * (2*pi*W)`. This is a real improvement over the
+first-order left-edge API, but it applies only to these negative-odd lines. It
+does not bound `secondOrderLeftXDifference` for the general safe left boundary
+selected by the finite second-order contour theorem.
 
 ## Frozen repository baseline
 
@@ -227,6 +239,10 @@ interval for `Re(A_T(x+h) - A_T(x))` from the actual residue sums and the
 difference of the two second-order contour remainders. The contour difference
 is now reduced to actual edge differences. Its complete horizontal pieces have
 selected-good-height `T^-2` control throughout the central band containing the
-second-order contour. The left vertical difference remains open. The input
-format and Lean endpoint bridge now exist, but no candidate envelope has yet
-been proved on its full stated range.
+second-order contour. The left vertical difference is now controlled on
+negative-odd left lines, with its explicit finite-height logarithmic majorant
+and the extra `(2N+1)^(-1)` second-order-kernel factor. The remaining analytic
+gap is to transfer this estimate to the general safe left boundary selected by
+the finite second-order contour theorem, or to redesign that theorem around a
+negative-odd left edge. The input format and Lean endpoint bridge now exist,
+but no candidate envelope has yet been proved on its full stated range.
