@@ -570,4 +570,146 @@ theorem norm_logarithmicHilbertForm_le
     _ = (5 * Real.pi + 3) * M *
         ∑ n ∈ s, Complex.normSq (coeff n) := by ring
 
+private theorem sq_norm_sum_le_two_mul_upper
+    {N : ℕ} (hN : 0 < N) (s : Finset ℕ) (coeff : ℕ → ℂ)
+    (hupper : ∀ n ∈ s, n ≤ N) :
+    (∑ n ∈ s, ‖coeff n‖) ^ 2 ≤
+      2 * N * ∑ n ∈ s, Complex.normSq (coeff n) := by
+  have hsubset : s ⊆ Finset.range (N + 1) := by
+    intro n hn
+    exact Finset.mem_range.mpr (Nat.lt_succ_of_le (hupper n hn))
+  have hcardNat : s.card ≤ N + 1 := by
+    simpa using Finset.card_le_card hsubset
+  have hcard : (s.card : ℝ) ≤ 2 * N := by
+    exact_mod_cast (show s.card ≤ 2 * N by omega)
+  have hcauchy :
+      (∑ n ∈ s, ‖coeff n‖) ^ 2 ≤
+        (s.card : ℝ) * ∑ n ∈ s, ‖coeff n‖ ^ 2 :=
+    sq_sum_le_card_mul_sum_sq
+  calc
+    (∑ n ∈ s, ‖coeff n‖) ^ 2 ≤
+        (s.card : ℝ) * ∑ n ∈ s, ‖coeff n‖ ^ 2 := hcauchy
+    _ ≤ (2 * N) * ∑ n ∈ s, ‖coeff n‖ ^ 2 := by gcongr
+    _ = 2 * N * ∑ n ∈ s, Complex.normSq (coeff n) := by
+      simp only [Complex.sq_norm]
+
+private theorem norm_logarithmicKernelRemainderBilinearForm_le_of_upper
+    {N : ℕ} (hN : 0 < N) (s : Finset ℕ) (left right : ℕ → ℂ)
+    (hpositive : ∀ n ∈ s, n ≠ 0) (hupper : ∀ n ∈ s, n ≤ N) :
+    ‖logarithmicKernelRemainderBilinearForm s left right‖ ≤
+      4 * N * ((∑ n ∈ s, Complex.normSq (left n)) +
+        ∑ n ∈ s, Complex.normSq (right n)) := by
+  have hraw :
+      ‖logarithmicKernelRemainderBilinearForm s left right‖ ≤
+        4 * ((∑ n ∈ s, ‖left n‖) * (∑ n ∈ s, ‖right n‖)) := by
+    unfold logarithmicKernelRemainderBilinearForm
+    calc
+      ‖∑ m ∈ s, ∑ n ∈ s,
+          if m = n then 0
+          else (starRingEnd ℂ) (left n) * right m *
+            (((1 / (Real.log (m : ℝ) - Real.log (n : ℝ)) -
+              ((m : ℝ) + n) / (2 * ((m : ℝ) - n))) : ℝ) : ℂ)‖ ≤
+          ∑ m ∈ s, ‖∑ n ∈ s,
+            if m = n then 0
+            else (starRingEnd ℂ) (left n) * right m *
+              (((1 / (Real.log (m : ℝ) - Real.log (n : ℝ)) -
+                ((m : ℝ) + n) / (2 * ((m : ℝ) - n))) : ℝ) : ℂ)‖ :=
+        norm_sum_le _ _
+      _ ≤ ∑ m ∈ s, ∑ n ∈ s,
+          ‖if m = n then 0
+            else (starRingEnd ℂ) (left n) * right m *
+              (((1 / (Real.log (m : ℝ) - Real.log (n : ℝ)) -
+                ((m : ℝ) + n) / (2 * ((m : ℝ) - n))) : ℝ) : ℂ)‖ := by
+        apply Finset.sum_le_sum
+        intro m hm
+        exact norm_sum_le _ _
+      _ ≤ ∑ m ∈ s, ∑ n ∈ s, 4 * (‖left n‖ * ‖right m‖) := by
+        apply Finset.sum_le_sum
+        intro m hm
+        apply Finset.sum_le_sum
+        intro n hn
+        by_cases hmn : m = n
+        · simp only [hmn, ↓reduceIte, norm_zero]
+          positivity
+        · simp only [hmn, ↓reduceIte, norm_mul, Complex.norm_conj,
+            norm_real, Real.norm_eq_abs]
+          have hmpos : 0 < (m : ℝ) := by
+            exact_mod_cast Nat.pos_of_ne_zero (hpositive m hm)
+          have hnpos : 0 < (n : ℝ) := by
+            exact_mod_cast Nat.pos_of_ne_zero (hpositive n hn)
+          have hrem := abs_inv_log_sub_sub_symmetric_le_four
+            hmpos hnpos (by exact_mod_cast hmn)
+          calc
+            ‖left n‖ * ‖right m‖ *
+                |1 / (Real.log (m : ℝ) - Real.log (n : ℝ)) -
+                  ((m : ℝ) + n) / (2 * ((m : ℝ) - n))| ≤
+                ‖left n‖ * ‖right m‖ * 4 := by gcongr
+            _ = 4 * (‖left n‖ * ‖right m‖) := by ring
+      _ = 4 * ((∑ n ∈ s, ‖left n‖) * (∑ n ∈ s, ‖right n‖)) := by
+        simp only [Finset.sum_mul, Finset.mul_sum]
+  have hleft := sq_norm_sum_le_two_mul_upper hN s left hupper
+  have hright := sq_norm_sum_le_two_mul_upper hN s right hupper
+  have hleftNonneg : 0 ≤ ∑ n ∈ s, ‖left n‖ := by positivity
+  have hrightNonneg : 0 ≤ ∑ n ∈ s, ‖right n‖ := by positivity
+  calc
+    ‖logarithmicKernelRemainderBilinearForm s left right‖ ≤
+        4 * ((∑ n ∈ s, ‖left n‖) * (∑ n ∈ s, ‖right n‖)) := hraw
+    _ ≤ 2 * ((∑ n ∈ s, ‖left n‖) ^ 2 +
+          (∑ n ∈ s, ‖right n‖) ^ 2) := by
+      nlinarith [sq_nonneg ((∑ n ∈ s, ‖left n‖) -
+        ∑ n ∈ s, ‖right n‖)]
+    _ ≤ 4 * N * ((∑ n ∈ s, Complex.normSq (left n)) +
+          ∑ n ∈ s, Complex.normSq (right n)) := by
+      nlinarith
+
+/-- Global finite logarithmic Hilbert inequality.  Unlike the sharper dyadic
+version, this only assumes positive indices bounded by `N`; hence it controls
+all cross-block interactions of a truncated Dirichlet polynomial at once. -/
+theorem norm_logarithmicHilbertBilinearForm_le_of_upper
+    {N : ℕ} (hN : 0 < N) (s : Finset ℕ) (left right : ℕ → ℂ)
+    (hpositive : ∀ n ∈ s, n ≠ 0) (hupper : ∀ n ∈ s, n ≤ N) :
+    ‖logarithmicHilbertBilinearForm s left right‖ ≤
+      (5 * Real.pi + 4) * N *
+        ((∑ n ∈ s, Complex.normSq (left n)) +
+          ∑ n ∈ s, Complex.normSq (right n)) := by
+  have hupper2 : ∀ n ∈ s, n ≤ 2 * N := by
+    intro n hn
+    have hnN := hupper n hn
+    omega
+  have hprincipal := norm_symmetricWeightedHilbertBilinearForm_le
+    hN s left right hupper2
+  have hremainder := norm_logarithmicKernelRemainderBilinearForm_le_of_upper
+    hN s left right hpositive hupper
+  rw [logarithmicHilbertBilinearForm_eq_principal_add_remainder]
+  calc
+    ‖(1 / 2 : ℂ) * symmetricWeightedHilbertBilinearForm s left right +
+        logarithmicKernelRemainderBilinearForm s left right‖ ≤
+        ‖(1 / 2 : ℂ) * symmetricWeightedHilbertBilinearForm s left right‖ +
+          ‖logarithmicKernelRemainderBilinearForm s left right‖ := norm_add_le _ _
+    _ ≤ (1 / 2 : ℝ) *
+          (5 * Real.pi * N *
+            ((∑ n ∈ s, Complex.normSq (left n)) +
+              ∑ n ∈ s, Complex.normSq (right n))) +
+        4 * N * ((∑ n ∈ s, Complex.normSq (left n)) +
+          ∑ n ∈ s, Complex.normSq (right n)) := by
+      rw [norm_mul, norm_div, norm_one, norm_ofNat]
+      norm_num
+      exact add_le_add (mul_le_mul_of_nonneg_left hprincipal (by norm_num))
+        hremainder
+    _ ≤ (5 * Real.pi + 4) * N *
+        ((∑ n ∈ s, Complex.normSq (left n)) +
+          ∑ n ∈ s, Complex.normSq (right n)) := by
+      have hsum : 0 ≤
+          (∑ n ∈ s, Complex.normSq (left n)) +
+            ∑ n ∈ s, Complex.normSq (right n) := by
+        exact add_nonneg
+          (Finset.sum_nonneg fun n hn => Complex.normSq_nonneg (left n))
+          (Finset.sum_nonneg fun n hn => Complex.normSq_nonneg (right n))
+      have hNreal : 0 ≤ (N : ℝ) := Nat.cast_nonneg N
+      have hNS : 0 ≤ (N : ℝ) *
+          ((∑ n ∈ s, Complex.normSq (left n)) +
+            ∑ n ∈ s, Complex.normSq (right n)) :=
+        mul_nonneg hNreal hsum
+      nlinarith [Real.pi_pos]
+
 end MathlibAux

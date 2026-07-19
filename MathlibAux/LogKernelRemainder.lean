@@ -1,4 +1,5 @@
 import Mathlib.Analysis.SpecialFunctions.Log.Deriv
+import Mathlib.Analysis.Complex.ExponentialBounds
 
 open Real
 
@@ -89,6 +90,74 @@ theorem abs_inv_log_sub_sub_symmetric_le_one
   · exact hordered ha hb hba ha2
   · have hablt : a < b := lt_of_le_of_ne (le_of_not_gt hba) hab
     have hswap := hordered hb ha hablt hb2
+    have hloglt : Real.log a < Real.log b :=
+      Real.strictMonoOn_log ha hb hablt
+    have hlogne : Real.log a - Real.log b ≠ 0 :=
+      sub_ne_zero.mpr hloglt.ne
+    have hlogne' : Real.log b - Real.log a ≠ 0 :=
+      sub_ne_zero.mpr hloglt.ne.symm
+    have hsubne : a - b ≠ 0 := sub_ne_zero.mpr hab
+    have hsubne' : b - a ≠ 0 := sub_ne_zero.mpr hab.symm
+    have hneg :
+        1 / (Real.log b - Real.log a) -
+            (b + a) / (2 * (b - a)) =
+          -(1 / (Real.log a - Real.log b) -
+            (a + b) / (2 * (a - b))) := by
+      field_simp [hlogne, hlogne', hsubne, hsubne']
+      ring
+    rw [hneg, abs_neg] at hswap
+    exact hswap
+
+/-- The symmetric logarithmic-kernel remainder is globally bounded.  The
+factor-two hypothesis in `abs_inv_log_sub_sub_symmetric_le_one` is useful for
+the sharp dyadic estimate, while this coarser bound also covers indices in
+widely separated dyadic blocks. -/
+theorem abs_inv_log_sub_sub_symmetric_le_four
+    {a b : ℝ} (ha : 0 < a) (hb : 0 < b) (hab : a ≠ b) :
+    |1 / (Real.log a - Real.log b) -
+        (a + b) / (2 * (a - b))| ≤ 4 := by
+  have hordered : ∀ {u v : ℝ}, 0 < u → 0 < v → v < u →
+      |1 / (Real.log u - Real.log v) -
+          (u + v) / (2 * (u - v))| ≤ 4 := by
+    intro u v hu hv hvu
+    by_cases hnear : u ≤ 2 * v
+    · exact (abs_inv_log_sub_sub_symmetric_le_one hu hv hvu.ne'
+        hnear (by nlinarith)).trans (by norm_num)
+    · have hfar : 2 * v < u := lt_of_not_ge hnear
+      have hratio : 2 < u / v := (lt_div_iff₀ hv).2 hfar
+      have hlogmono : Real.log 2 < Real.log (u / v) :=
+        Real.strictMonoOn_log (by norm_num) (div_pos hu hv) hratio
+      have hlogeq : Real.log (u / v) = Real.log u - Real.log v := by
+        rw [Real.log_div hu.ne' hv.ne']
+      have hloghalf : (1 / 2 : ℝ) < Real.log 2 := by
+        exact (by norm_num : (1 / 2 : ℝ) < 0.6931471803).trans
+          Real.log_two_gt_d9
+      have hlogpos : 0 < Real.log u - Real.log v := by
+        exact sub_pos.mpr (Real.strictMonoOn_log hv hu hvu)
+      have hinv : 1 / (Real.log u - Real.log v) ≤ 2 := by
+        have hhalfDiff : (1 / 2 : ℝ) < Real.log u - Real.log v := by
+          rw [← hlogeq]
+          exact hloghalf.trans hlogmono
+        rw [div_le_iff₀ hlogpos]
+        nlinarith
+      have hdenpos : 0 < 2 * (u - v) := by nlinarith
+      have hfrac : (u + v) / (2 * (u - v)) ≤ 3 / 2 := by
+        rw [div_le_iff₀ hdenpos]
+        nlinarith
+      calc
+        |1 / (Real.log u - Real.log v) -
+            (u + v) / (2 * (u - v))| ≤
+            |1 / (Real.log u - Real.log v)| +
+              |(u + v) / (2 * (u - v))| := abs_sub _ _
+        _ = 1 / (Real.log u - Real.log v) +
+              (u + v) / (2 * (u - v)) := by
+            rw [abs_of_pos (one_div_pos.mpr hlogpos),
+              abs_of_pos (div_pos (by positivity) hdenpos)]
+        _ ≤ 4 := by nlinarith
+  by_cases hba : b < a
+  · exact hordered ha hb hba
+  · have hablt : a < b := lt_of_le_of_ne (le_of_not_gt hba) hab
+    have hswap := hordered hb ha hablt
     have hloglt : Real.log a < Real.log b :=
       Real.strictMonoOn_log ha hb hablt
     have hlogne : Real.log a - Real.log b ≠ 0 :=
