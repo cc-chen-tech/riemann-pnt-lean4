@@ -210,6 +210,25 @@ theorem hardyFirstModelShortIntegral_eq_re_sum_hardyPhaseShortIntegral
         (OscillatoryIntegral.contDiffAt_hardyPhase_two hn
           (ht.trans_le hu.1)).continuousAt)).cexp
 
+/-- The signed real first-model short integral is pointwise dominated in
+square by the norm-square of its complex phase sum. -/
+theorem hardyFirstModelShortIntegral_sq_le_normSq_phase_sum
+    (kappa T delta t : ℝ) (ht : 0 < t) (hdelta : 0 ≤ delta) :
+    (hardyFirstModelShortIntegral kappa T delta t) ^ 2 ≤
+      Complex.normSq
+        (Complex.exp (I * kappa) *
+          (∑ n ∈ Finset.Icc 1 (firstZetaApproximationCutoff T),
+            ((n : ℂ) ^ (1 / 2 : ℂ))⁻¹ *
+              OscillatoryIntegral.hardyPhaseShortIntegral n delta t)) := by
+  rw [hardyFirstModelShortIntegral_eq_re_sum_hardyPhaseShortIntegral
+    kappa T delta t ht hdelta]
+  simpa only [pow_two] using
+    Complex.re_sq_le_normSq
+      (Complex.exp (I * kappa) *
+        (∑ n ∈ Finset.Icc 1 (firstZetaApproximationCutoff T),
+          ((n : ℂ) ^ (1 / 2 : ℂ))⁻¹ *
+            OscillatoryIntegral.hardyPhaseShortIntegral n delta t))
+
 private theorem hardyFirstModel_eq_re_thetaModel_dirichletPolynomial
     (kappa T : ℝ) {t : ℝ} (ht : 0 < t) :
     hardyFirstModel kappa T t =
