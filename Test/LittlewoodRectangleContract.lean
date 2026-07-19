@@ -6,6 +6,30 @@ open scoped BigOperators Interval
 namespace PrimeNumberTheorem
 namespace CarlsonZeroDensity
 
+example {f : ℂ → ℂ} {sigma t : ℝ}
+    (hf : AnalyticAt ℂ f ((sigma : ℂ) + I * (t : ℂ)))
+    (hne : f ((sigma : ℂ) + I * (t : ℂ)) ≠ 0) :
+    HasDerivAt
+      (fun u : ℝ => Real.log ‖f ((sigma : ℂ) + I * (u : ℂ))‖)
+      (-(logDeriv f ((sigma : ℂ) + I * (t : ℂ))).im) t :=
+  hasDerivAt_log_norm_vertical hf hne
+
+example {f : ℂ → ℂ} {sigma a b : ℝ}
+    (hf : ∀ u ∈ [[a, b]],
+      AnalyticAt ℂ f ((sigma : ℂ) + I * (u : ℂ)))
+    (hne : ∀ u ∈ [[a, b]],
+      f ((sigma : ℂ) + I * (u : ℂ)) ≠ 0)
+    (hint : IntervalIntegrable
+      (fun u : ℝ => -(logDeriv f ((sigma : ℂ) + I * (u : ℂ))).im)
+      MeasureTheory.volume a b) :
+    (∫ u in a..b,
+        u * (-(logDeriv f ((sigma : ℂ) + I * (u : ℂ))).im)) =
+      b * Real.log ‖f ((sigma : ℂ) + I * (b : ℂ))‖ -
+        a * Real.log ‖f ((sigma : ℂ) + I * (a : ℂ))‖ -
+          ∫ u in a..b,
+            Real.log ‖f ((sigma : ℂ) + I * (u : ℂ))‖ :=
+  intervalIntegral_mul_neg_im_logDeriv_vertical_eq hf hne hint
+
 example {f : ℂ → ℂ} {x0 x1 y0 y1 : ℝ}
     (poles : Finset ℂ) (multiplicity : ℂ → ℕ) (anchor : ℂ)
     (hf : AnalyticOnNhd ℂ f ([[x0, x1]] ×ℂ [[y0, y1]]))
@@ -24,6 +48,8 @@ example {f : ℂ → ℂ} {x0 x1 y0 y1 : ℝ}
     poles multiplicity anchor hf hzero horder hpoles
 
 #print axioms boundaryRectIntegral_weighted_logDeriv_eq_zeroMultiplicitySum
+#print axioms hasDerivAt_log_norm_vertical
+#print axioms intervalIntegral_mul_neg_im_logDeriv_vertical_eq
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem

@@ -1,4 +1,8 @@
 import MathlibAux.BoundaryRectResidue
+import Mathlib.Analysis.Complex.RealDeriv
+import Mathlib.Analysis.InnerProductSpace.Calculus
+import Mathlib.Analysis.SpecialFunctions.Log.Deriv
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts
 import ZeroFreeRegion.MeromorphicAux
 
 open Complex Set
@@ -6,6 +10,72 @@ open scoped BigOperators Interval
 
 namespace PrimeNumberTheorem
 namespace CarlsonZeroDensity
+
+/-- Along a vertical line, the derivative of `log ‖f‖` is the negative
+imaginary part of the logarithmic derivative of `f`. -/
+theorem hasDerivAt_log_norm_vertical
+    {f : ℂ → ℂ} {sigma t : ℝ}
+    (hf : AnalyticAt ℂ f ((sigma : ℂ) + I * (t : ℂ)))
+    (hne : f ((sigma : ℂ) + I * (t : ℂ)) ≠ 0) :
+    HasDerivAt
+      (fun u : ℝ => Real.log ‖f ((sigma : ℂ) + I * (u : ℂ))‖)
+      (-(logDeriv f ((sigma : ℂ) + I * (t : ℂ))).im) t := by
+  let s : ℂ := (sigma : ℂ) + I * (t : ℂ)
+  have hparam :
+      HasDerivAt (fun z : ℂ => (sigma : ℂ) + I * z) I (t : ℂ) := by
+    simpa using
+      ((hasDerivAt_id (t : ℂ)).const_mul I).const_add (sigma : ℂ)
+  have hcompComplex :
+      HasDerivAt (fun z : ℂ => f ((sigma : ℂ) + I * z))
+        (deriv f s * I) (t : ℂ) := by
+    simpa [s] using hf.differentiableAt.hasDerivAt.comp (t : ℂ) hparam
+  have hvertical :
+      HasDerivAt (fun u : ℝ => f ((sigma : ℂ) + I * (u : ℂ)))
+        (deriv f s * I) t := by
+    simpa using hcompComplex.comp_ofReal
+  have hnormSq := hvertical.norm_sq
+  have hnormSqNe : ‖f s‖ ^ 2 ≠ 0 := by
+    exact pow_ne_zero 2 (norm_ne_zero_iff.mpr (by simpa [s] using hne))
+  have hlogNormSq := hnormSq.log hnormSqNe
+  have hhalf := hlogNormSq.const_mul (2 : ℝ)⁻¹
+  convert hhalf using 1
+  · funext u
+    rw [Real.log_pow]
+    ring
+  · rw [logDeriv_apply, hf.differentiableAt.hasDerivAt.deriv]
+    simp only [Complex.inner, Complex.mul_re, Complex.mul_im, Complex.I_re,
+      Complex.I_im, Complex.conj_re, Complex.conj_im, Complex.div_im,
+      Complex.normSq_eq_norm_sq]
+    field_simp
+    ring
+
+/-- Integration by parts on a vertical edge.  This converts the imaginary
+part of the logarithmic derivative into endpoint and `log ‖f‖` terms. -/
+theorem intervalIntegral_mul_neg_im_logDeriv_vertical_eq
+    {f : ℂ → ℂ} {sigma a b : ℝ}
+    (hf : ∀ u ∈ [[a, b]],
+      AnalyticAt ℂ f ((sigma : ℂ) + I * (u : ℂ)))
+    (hne : ∀ u ∈ [[a, b]],
+      f ((sigma : ℂ) + I * (u : ℂ)) ≠ 0)
+    (hint : IntervalIntegrable
+      (fun u : ℝ => -(logDeriv f ((sigma : ℂ) + I * (u : ℂ))).im)
+      MeasureTheory.volume a b) :
+    (∫ u in a..b,
+        u * (-(logDeriv f ((sigma : ℂ) + I * (u : ℂ))).im)) =
+      b * Real.log ‖f ((sigma : ℂ) + I * (b : ℂ))‖ -
+        a * Real.log ‖f ((sigma : ℂ) + I * (a : ℂ))‖ -
+          ∫ u in a..b,
+            Real.log ‖f ((sigma : ℂ) + I * (u : ℂ))‖ := by
+  simpa only [one_mul] using
+    (intervalIntegral.integral_mul_deriv_eq_deriv_mul
+      (u := fun u : ℝ => u)
+      (v := fun u : ℝ => Real.log ‖f ((sigma : ℂ) + I * (u : ℂ))‖)
+      (u' := fun _ : ℝ => 1)
+      (v' := fun u : ℝ =>
+        -(logDeriv f ((sigma : ℂ) + I * (u : ℂ))).im)
+      (fun u _ => hasDerivAt_id u)
+      (fun u hu => hasDerivAt_log_norm_vertical (hf u hu) (hne u hu))
+      intervalIntegrable_const hint)
 
 /-- Weighted argument-principle identity on an axis-parallel rectangle.
 
