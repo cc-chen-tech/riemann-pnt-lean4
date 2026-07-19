@@ -99,6 +99,195 @@ theorem norm_intervalIntegral_offDiagonal_le
       gcongr
     _ = 2 * ‖c‖ * ‖d‖ / |v - u| := by ring
 
+private lemma intervalIntegral_sqNorm_exponentialPolynomial_expansion
+    {ι : Type*} [DecidableEq ι] (S : Finset ι)
+    (c : ι → ℂ) (ω : ι → ℝ) {a b : ℝ} :
+    (∫ t in a..b,
+        conj (exponentialPolynomial S c ω t) *
+          exponentialPolynomial S c ω t) =
+      ((b - a) * ∑ i ∈ S, ‖c i‖ ^ 2 : ℝ) +
+        ∑ i ∈ S, ∑ j ∈ S.erase i,
+          ∫ t in a..b,
+            conj (c i * exp (I * (ω i * t))) *
+              (c j * exp (I * (ω j * t))) := by
+  let q : ι → ℝ → ℂ := fun i t => c i * exp (I * (ω i * t))
+  have hq (i : ι) : Continuous (q i) := by
+    dsimp [q]
+    fun_prop
+  have hpair (i j : ι) :
+      IntervalIntegrable (fun t => conj (q i t) * q j t) MeasureTheory.volume a b :=
+    Continuous.intervalIntegrable (by fun_prop) a b
+  have hdiag (i : ι) :
+      (∫ t in a..b, conj (q i t) * q i t) =
+        ((b - a) * ‖c i‖ ^ 2 : ℝ) := by
+    calc
+      (∫ t in a..b, conj (q i t) * q i t) =
+          ∫ _t in a..b, ((‖c i‖ ^ 2 : ℝ) : ℂ) := by
+        apply intervalIntegral.integral_congr
+        intro t _ht
+        dsimp [q]
+        rw [offDiagonal_integrand_eq]
+        simp [Complex.sq_norm, Complex.normSq_eq_conj_mul_self]
+      _ = ((b - a) * ‖c i‖ ^ 2 : ℝ) := by
+        simp only [intervalIntegral.integral_const]
+        change (((b - a : ℝ) : ℂ) * ((‖c i‖ ^ 2 : ℝ) : ℂ)) = _
+        norm_cast
+  calc
+    (∫ t in a..b,
+        conj (exponentialPolynomial S c ω t) *
+          exponentialPolynomial S c ω t) =
+        ∫ t in a..b, ∑ i ∈ S, ∑ j ∈ S, conj (q i t) * q j t := by
+      apply intervalIntegral.integral_congr
+      intro t _ht
+      simp only [exponentialPolynomial, q, map_sum]
+      rw [Finset.sum_mul_sum]
+    _ = ∑ i ∈ S, ∑ j ∈ S,
+        ∫ t in a..b, conj (q i t) * q j t := by
+      rw [intervalIntegral.integral_finset_sum]
+      · apply Finset.sum_congr rfl
+        intro i hi
+        rw [intervalIntegral.integral_finset_sum]
+        intro j hj
+        exact hpair i j
+      · intro i hi
+        exact Continuous.intervalIntegrable (by fun_prop) a b
+    _ = ∑ i ∈ S,
+        (((b - a) * ‖c i‖ ^ 2 : ℝ) +
+          ∑ j ∈ S.erase i, ∫ t in a..b, conj (q i t) * q j t) := by
+      apply Finset.sum_congr rfl
+      intro i hi
+      rw [← hdiag i, ← Finset.sum_erase_add S _ hi, add_comm]
+    _ = ((b - a) * ∑ i ∈ S, ‖c i‖ ^ 2 : ℝ) +
+        ∑ i ∈ S, ∑ j ∈ S.erase i,
+          ∫ t in a..b,
+            conj (c i * exp (I * (ω i * t))) *
+              (c j * exp (I * (ω j * t))) := by
+      simp only [Finset.sum_add_distrib, q]
+      push_cast
+      rw [Finset.mul_sum]
+
+/-- The finite exponential-polynomial mean square differs from its diagonal
+mass by at most the explicit ordered off-diagonal budget. -/
+theorem abs_intervalIntegral_sqNorm_exponentialPolynomial_sub_diagonal_le
+    {ι : Type*} [DecidableEq ι] (S : Finset ι)
+    (c : ι → ℂ) (ω : ι → ℝ) {a b : ℝ} (hω : Set.InjOn ω ↑S) :
+    |(∫ t in a..b, ‖exponentialPolynomial S c ω t‖ ^ 2) -
+        (b - a) * ∑ i ∈ S, ‖c i‖ ^ 2| ≤
+      offDiagonalBound S c ω := by
+  let R : ℝ :=
+    (∫ t in a..b, ‖exponentialPolynomial S c ω t‖ ^ 2) -
+      (b - a) * ∑ i ∈ S, ‖c i‖ ^ 2
+  let E : ℂ := ∑ i ∈ S, ∑ j ∈ S.erase i,
+    ∫ t in a..b,
+      conj (c i * exp (I * (ω i * t))) *
+        (c j * exp (I * (ω j * t)))
+  have herror :
+      (R : ℂ) = E := by
+    have hexpansion :=
+      intervalIntegral_sqNorm_exponentialPolynomial_expansion S c ω (a := a) (b := b)
+    calc
+      (R : ℂ) =
+          (∫ t in a..b,
+              ((‖exponentialPolynomial S c ω t‖ ^ 2 : ℝ) : ℂ)) -
+            (((b - a) * ∑ i ∈ S, ‖c i‖ ^ 2 : ℝ) : ℂ) := by
+        rw [intervalIntegral.integral_ofReal]
+        simp only [R]
+        push_cast
+        rfl
+      _ = (∫ t in a..b,
+              conj (exponentialPolynomial S c ω t) *
+                exponentialPolynomial S c ω t) -
+            (((b - a) * ∑ i ∈ S, ‖c i‖ ^ 2 : ℝ) : ℂ) := by
+        congr 1
+        apply intervalIntegral.integral_congr
+        intro t _ht
+        dsimp
+        rw [Complex.sq_norm, Complex.normSq_eq_conj_mul_self]
+      _ = E := by
+        rw [hexpansion]
+        simp only [E]
+        push_cast
+        ring
+  calc
+    |(∫ t in a..b, ‖exponentialPolynomial S c ω t‖ ^ 2) -
+        (b - a) * ∑ i ∈ S, ‖c i‖ ^ 2| = |R| := rfl
+    _ = ‖(R : ℂ)‖ := by simp
+    _ = ‖E‖ := congrArg norm herror
+    _ ≤ ∑ i ∈ S, ‖∑ j ∈ S.erase i,
+          ∫ t in a..b,
+            conj (c i * exp (I * (ω i * t))) *
+              (c j * exp (I * (ω j * t)))‖ := by
+      exact norm_sum_le _ _
+    _ ≤ ∑ i ∈ S, ∑ j ∈ S.erase i,
+        ‖∫ t in a..b,
+            conj (c i * exp (I * (ω i * t))) *
+              (c j * exp (I * (ω j * t)))‖ := by
+      gcongr with i hi
+      exact norm_sum_le _ _
+    _ ≤ offDiagonalBound S c ω := by
+      apply Finset.sum_le_sum
+      intro i hi
+      apply Finset.sum_le_sum
+      intro j hj
+      exact norm_intervalIntegral_offDiagonal_le (c i) (c j)
+        (hω.ne hi (Finset.mem_of_mem_erase hj) (Finset.ne_of_mem_erase hj).symm)
+
+/-- The aggregate mean-square estimate with analytic multiplicities retained
+as explicit natural-number factors in the coefficients. -/
+theorem
+    abs_intervalIntegral_sqNorm_multiplicityWeightedExponentialPolynomial_sub_diagonal_le
+    {ι : Type*} [DecidableEq ι] (S : Finset ι)
+    (multiplicity : ι → ℕ) (c : ι → ℂ) (ω : ι → ℝ)
+    {a b : ℝ} (hω : Set.InjOn ω ↑S) :
+    |(∫ t in a..b,
+          ‖multiplicityWeightedExponentialPolynomial S multiplicity c ω t‖ ^ 2) -
+        (b - a) * ∑ i ∈ S, ‖(multiplicity i : ℂ) * c i‖ ^ 2| ≤
+      offDiagonalBound S (fun i => (multiplicity i : ℂ) * c i) ω := by
+  simpa [multiplicityWeightedExponentialPolynomial] using
+    abs_intervalIntegral_sqNorm_exponentialPolynomial_sub_diagonal_le
+      S (fun i => (multiplicity i : ℂ) * c i) ω hω
+
+/-- On every nondegenerate interval, some interior point reaches the diagonal
+mass minus the explicit ordered off-diagonal budget per unit length. -/
+theorem exists_mem_Ioo_sqNorm_exponentialPolynomial_ge
+    {ι : Type*} [DecidableEq ι] (S : Finset ι)
+    (c : ι → ℂ) (ω : ι → ℝ) {a b : ℝ} (hab : a < b)
+    (hω : Set.InjOn ω ↑S) :
+    ∃ t ∈ Set.Ioo a b,
+      (∑ i ∈ S, ‖c i‖ ^ 2) - offDiagonalBound S c ω / (b - a) ≤
+        ‖exponentialPolynomial S c ω t‖ ^ 2 := by
+  let f : ℝ → ℝ := fun t => ‖exponentialPolynomial S c ω t‖ ^ 2
+  let D : ℝ := ∑ i ∈ S, ‖c i‖ ^ 2
+  let B : ℝ := offDiagonalBound S c ω
+  let A : ℝ := D - B / (b - a)
+  have hf : Continuous f := by
+    dsimp [f, exponentialPolynomial]
+    fun_prop
+  have haggregate :=
+    abs_intervalIntegral_sqNorm_exponentialPolynomial_sub_diagonal_le
+      S c ω (a := a) (b := b) hω
+  have hlower : (b - a) * D - B ≤ ∫ t in a..b, f t := by
+    have hleft := (abs_le.mp haggregate).1
+    dsimp [f, D, B] at hleft ⊢
+    linarith
+  have hlength : b - a ≠ 0 := sub_ne_zero.mpr hab.ne'
+  have hscale : (b - a) * A = (b - a) * D - B := by
+    dsimp [A]
+    field_simp
+  by_contra! hnone
+  have hdiff : IntervalIntegrable (fun t => A - f t) MeasureTheory.volume a b :=
+    Continuous.intervalIntegrable (continuous_const.sub hf) a b
+  have hpositive : 0 < ∫ t in a..b, A - f t :=
+    intervalIntegral.intervalIntegral_pos_of_pos_on
+      hdiff (fun t ht => sub_pos.mpr (hnone t ht)) hab
+  rw [intervalIntegral.integral_sub
+      (Continuous.intervalIntegrable continuous_const a b)
+      (Continuous.intervalIntegrable hf a b),
+    intervalIntegral.integral_const] at hpositive
+  change 0 < (b - a) * A - ∫ t in a..b, f t at hpositive
+  rw [hscale] at hpositive
+  linarith
+
 end
 
 end PrimeNumberTheorem.ZeroForcedOscillation
