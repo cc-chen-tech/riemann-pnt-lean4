@@ -149,6 +149,55 @@ theorem existsUnique_vinogradovBinomialMatrix_mulVec_eq
   existsUnique_mulVec_eq_of_det_ne_zero (vinogradovBinomialMatrix p k r)
     (det_vinogradovBinomialMatrix_zmod_ne_zero p k r hrk hkp) b
 
+/-- Reducing the prime-power binomial matrix modulo `p` gives the original
+binomial matrix modulo `p`. -/
+theorem map_vinogradovBinomialMatrix_primePower
+    (p k r N : ℕ) (hN : 0 < N) :
+    (vinogradovBinomialMatrix (p ^ N) k r).map
+        (ZMod.castHom (dvd_pow_self p hN.ne') (ZMod p)) =
+      vinogradovBinomialMatrix p k r := by
+  ext i j
+  simp [vinogradovBinomialMatrix]
+
+/-- Nonsingularity modulo `p` lifts to a unit determinant modulo every
+positive power `p^N`. -/
+theorem isUnit_det_vinogradovBinomialMatrix_zmod_primePower
+    (p k r N : ℕ) [Fact p.Prime] (hrk : r ≤ k) (hkp : k < p)
+    (hN : 0 < N) :
+    IsUnit (vinogradovBinomialMatrix (p ^ N) k r).det := by
+  letI : NeZero (p ^ N) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  let A := vinogradovBinomialMatrix (p ^ N) k r
+  let reduce := ZMod.castHom (dvd_pow_self p hN.ne') (ZMod p)
+  have hreduce :
+      reduce A.det = (vinogradovBinomialMatrix p k r).det := by
+    rw [RingHom.map_det]
+    exact congrArg Matrix.det
+      (map_vinogradovBinomialMatrix_primePower p k r N hN)
+  have hnot : ¬ p ∣ A.det.val := by
+    intro hdvd
+    have hzero : reduce A.det = 0 := by
+      rw [← ZMod.natCast_zmod_val A.det]
+      simp only [map_natCast]
+      exact (ZMod.natCast_eq_zero_iff _ _).mpr hdvd
+    have : (vinogradovBinomialMatrix p k r).det = 0 := by
+      rw [← hreduce, hzero]
+    exact (det_vinogradovBinomialMatrix_zmod_ne_zero p k r hrk hkp) this
+  rw [← ZMod.natCast_zmod_val A.det]
+  exact (ZMod.isUnit_iff_coprime _ _).mpr
+    ((Fact.out : p.Prime).coprime_pow_of_not_dvd hnot)
+
+/-- The translated binomial system has a unique solution modulo every
+positive prime power. -/
+theorem existsUnique_vinogradovBinomialMatrix_primePower_mulVec_eq
+    (p k r N : ℕ) [Fact p.Prime] (hrk : r ≤ k) (hkp : k < p)
+    (hN : 0 < N) (b : Fin r → ZMod (p ^ N)) :
+    ∃! x, (vinogradovBinomialMatrix (p ^ N) k r).mulVec x = b :=
+  existsUnique_mulVec_eq_of_isUnit_det
+    (vinogradovBinomialMatrix (p ^ N) k r)
+    (isUnit_det_vinogradovBinomialMatrix_zmod_primePower
+      p k r N hrk hkp hN) b
+
 end
 
 end ZeroFreeRegion.VinogradovKorobov
