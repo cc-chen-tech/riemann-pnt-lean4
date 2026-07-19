@@ -135,6 +135,68 @@ theorem vinogradovCollisionFiberEquiv_symm_apply
       else f ⟨i, h⟩ :=
   rfl
 
+/-- Deleting the duplicated larger coordinate leaves exactly `k - 1`
+indices. -/
+theorem card_vinogradovCollisionReducedIndex
+    {k : ℕ} (w : VinogradovCollisionWitness k) :
+    Fintype.card (VinogradovCollisionReducedIndex w) = k - 1 := by
+  simpa [VinogradovCollisionReducedIndex] using
+    (Fintype.card_subtype_compl
+      (fun i : Fin k ↦ i = w.1.2))
+
+/-- The type of tuples satisfying a fixed collision has the expected exact
+cardinality. -/
+theorem card_vinogradovCollisionFiber
+    {α : Type*} [Fintype α] {k : ℕ}
+    (w : VinogradovCollisionWitness k) :
+    Fintype.card {x : Fin k → α // x w.1.1 = x w.1.2} =
+      (Fintype.card α) ^ (k - 1) := by
+  rw [Fintype.card_congr (vinogradovCollisionFiberEquiv w)]
+  simp
+
+/-- Reconstruct a complete tuple from its coordinates away from the duplicate
+and forget the proof of the fixed collision. -/
+def vinogradovCollisionFiberEmbedding
+    {α : Type*} {k : ℕ} (w : VinogradovCollisionWitness k) :
+    (VinogradovCollisionReducedIndex w → α) ↪ (Fin k → α) where
+  toFun f := ((vinogradovCollisionFiberEquiv w).symm f).1
+  inj' f g h := by
+    apply (vinogradovCollisionFiberEquiv w).symm.injective
+    apply Subtype.ext
+    exact h
+
+/-- Residue tuples satisfying one prescribed coordinate collision. -/
+noncomputable def vinogradovFixedCollisionTupleSet
+    (p : ℕ) [NeZero p] {k : ℕ} (w : VinogradovCollisionWitness k) :
+    Finset (Fin k → ZMod p) :=
+  (Finset.univ : Finset
+    (VinogradovCollisionReducedIndex w → ZMod p)).map
+      (vinogradovCollisionFiberEmbedding w)
+
+theorem mem_vinogradovFixedCollisionTupleSet_iff
+    (p : ℕ) [NeZero p] {k : ℕ} (w : VinogradovCollisionWitness k)
+    (x : Fin k → ZMod p) :
+    x ∈ vinogradovFixedCollisionTupleSet p w ↔
+      x w.1.1 = x w.1.2 := by
+  constructor
+  · intro hx
+    obtain ⟨f, _hf, rfl⟩ := Finset.mem_map.mp hx
+    exact ((vinogradovCollisionFiberEquiv w).symm f).2
+  · intro hx
+    let z : {x : Fin k → ZMod p // x w.1.1 = x w.1.2} := ⟨x, hx⟩
+    let f := vinogradovCollisionFiberEquiv w z
+    apply Finset.mem_map.mpr
+    refine ⟨f, Finset.mem_univ _, ?_⟩
+    exact congrArg Subtype.val
+      ((vinogradovCollisionFiberEquiv w).symm_apply_apply z)
+
+/-- A fixed collision removes exactly one free residue coordinate. -/
+theorem card_vinogradovFixedCollisionTupleSet
+    (p : ℕ) [NeZero p] {k : ℕ} (w : VinogradovCollisionWitness k) :
+    (vinogradovFixedCollisionTupleSet p w).card = p ^ (k - 1) := by
+  rw [vinogradovFixedCollisionTupleSet, Finset.card_map]
+  simp
+
 end
 
 end ZeroFreeRegion.VinogradovKorobov

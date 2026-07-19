@@ -13,3 +13,8 @@ open ZeroFreeRegion.VinogradovKorobov
 #check vinogradovCollisionFiberEquiv
 #check vinogradovCollisionFiberEquiv_apply
 #check vinogradovCollisionFiberEquiv_symm_apply
+#check card_vinogradovCollisionReducedIndex
+#check card_vinogradovCollisionFiber
+#check vinogradovCollisionFiberEmbedding
+#check card_vinogradovFixedCollisionTupleSet
+#check mem_vinogradovFixedCollisionTupleSet_iff
