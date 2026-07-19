@@ -1,5 +1,6 @@
 import ZeroFreeRegion.VinogradovKorobov.VinogradovWeightedMainEstimate
 import ZeroFreeRegion.VinogradovKorobov.VinogradovWeightedBounds
+import ZeroFreeRegion.VinogradovKorobov.VinogradovWeightedComparison
 
 open ZeroFreeRegion.VinogradovKorobov
 
@@ -41,3 +42,7 @@ open ZeroFreeRegion.VinogradovKorobov
 #check pow_le_vinogradovWeightedSolutionCountMod
 #check isVinogradovWeightedSolutionMod_zero
 #check vinogradovWeightedSolutionCountMod_zero
+#check IsVinogradovWeightedSolutionMod.toCommonMod
+#check vinogradovWeightedSolutionCountMod_le_common
+#check vinogradovWeightedPrimePowerMultiBlockSolutionCount_le_strata
+#check norm_normalizedVinogradovWeightedMomentMod_primePowerMultiBlock_le_strata
