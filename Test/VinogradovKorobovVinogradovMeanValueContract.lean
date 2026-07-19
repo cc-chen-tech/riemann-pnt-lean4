@@ -1,4 +1,4 @@
-import ZeroFreeRegion.VinogradovKorobov.VinogradovBounds
+import ZeroFreeRegion.VinogradovKorobov.VinogradovQuadratic
 
 open ZeroFreeRegion.VinogradovKorobov
 
@@ -42,3 +42,8 @@ open ZeroFreeRegion.VinogradovKorobov
 #check fixed_left_solution_count_le
 #check vinogradovSolutionCountNat_le_firstPower
 #check norm_normalizedVinogradovMomentMod_le_firstPower
+#check pair_eq_or_swap_of_sum_sq
+#check isVinogradovSolutionNat_two_eq_or_swap
+#check fixed_left_quadratic_solution_count_le_two
+#check vinogradovSolutionCountNat_two_two_le
+#check norm_normalizedVinogradovMomentMod_two_two_le
