@@ -9,6 +9,7 @@ import HardyTheorem.HardyModelApproximation
 import HardyTheorem.CriticalLineShortDirichlet
 import HardyTheorem.HardyShortSignedMeanSquare
 import HardyTheorem.HardyPhaseSecondMoment
+import HardyTheorem.HardyPhaseFullSecondMoment
 import HardyTheorem.HardyPhaseCorrelation
 import HardyTheorem.HardyPhaseLinearization
 import HardyTheorem.HardyPhaseLinearizedSum

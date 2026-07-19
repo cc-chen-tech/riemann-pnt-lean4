@@ -75,6 +75,8 @@ lean_lib RiemannPNT where
     `Test.HardyModelApproximationContract,
     `Test.CriticalLineShortDirichletContract,
     `Test.HardyShortSignedMeanSquareContract,
+    `HardyTheorem.HardyPhaseFullSecondMoment,
+    `Test.HardyPhaseFullSecondMomentContract,
     `Test.HardyPhaseCorrelationContract,
     `HardyTheorem.HardyPhaseLinearization,
     `Test.HardyPhaseLinearizationContract,
