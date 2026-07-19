@@ -2,6 +2,8 @@ import RiemannExplorer
 import GammaResidue
 import HardyTheorem
 import HardyTheorem.HardyIntegralContradiction
+import HardyTheorem.HardyCompletedCriticalLine
+import HardyTheorem.CompletedZetaFourier
 import HardyTheorem.CriticalLineMultiplicity
 import HardyTheorem.AnalyticSignChange
 import HardyTheorem.ShortIntervalMeanValue
@@ -55,6 +57,7 @@ import MathlibAux.TimeDependentLogHilbert
 import MathlibAux.TimeDependentLogHilbertMeasurable
 import MathlibAux.RectangularFourierFirstMoment
 import MathlibAux.RectangularFourierEnvelope
+import MathlibAux.MellinLogIntegrability
 import HardyTheorem.HardyPhaseHilbertShiftIntegral
 import EulerAndLfunctions
 import PrimeNumberTheorem

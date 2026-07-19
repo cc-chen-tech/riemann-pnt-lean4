@@ -1,4 +1,5 @@
 import HardyTheorem.HardyCompletedCriticalLine
+import MathlibAux.MellinLogIntegrability
 import Mathlib.Analysis.MellinInversion
 
 open Complex
@@ -17,8 +18,23 @@ variables turns that construction into an exact Fourier transform.
 /-- The logarithmic-coordinate kernel whose Fourier transform gives the
 pole-removed completed zeta function on the critical line. -/
 noncomputable def completedZetaLogKernel (u : ℝ) : ℂ :=
-  Real.exp (-(1 / 4 : ℝ) * u) •
-    (HurwitzZeta.hurwitzEvenFEPair 0).f_modif (Real.exp (-u))
+  MathlibAux.logMellinKernel
+    (HurwitzZeta.hurwitzEvenFEPair 0).f_modif (1 / 4 : ℝ) u
+
+set_option maxHeartbeats 400000 in
+/-- The completed-zeta Fourier kernel is integrable.  This is the analytic
+hypothesis needed to use its pointwise Fourier transform, obtained directly
+from the Mellin convergence built into Mathlib's strong functional-equation
+pair. -/
+theorem integrable_completedZetaLogKernel :
+    MeasureTheory.Integrable completedZetaLogKernel := by
+  have hmellin : MellinConvergent
+      (HurwitzZeta.hurwitzEvenFEPair 0).f_modif ((1 / 4 : ℝ) : ℂ) :=
+    ((HurwitzZeta.hurwitzEvenFEPair 0).toStrongFEPair.hasMellin
+      ((1 / 4 : ℝ) : ℂ)).1
+  simpa only [completedZetaLogKernel] using
+    (MathlibAux.integrable_logMellinKernel_of_mellinConvergent
+      (HurwitzZeta.hurwitzEvenFEPair 0).f_modif (1 / 4 : ℝ) hmellin)
 
 /-- Exact critical-line Fourier formula for the pole-removed completed zeta
 function.  Mathlib's Fourier variable uses the `2 * pi` normalization, hence
