@@ -1,4 +1,4 @@
-import ZeroFreeRegion.VinogradovKorobov.VinogradovHensel
+import ZeroFreeRegion.VinogradovKorobov.VinogradovPrimePowerFiber
 
 open ZeroFreeRegion.VinogradovKorobov
 
@@ -97,3 +97,6 @@ open ZeroFreeRegion.VinogradovKorobov
 #check vinogradovPowerSumInt_affine_corrections_unique_mod_prime_at_scale
 #check exists_unique_mod_vinogradovPowerSumInt_affine_lift_mod_prime_at_scale
 #check exists_unique_mod_vinogradovPowerSumInt_affine_lift_mod_prime_pow_succ
+#check vinogradovPowerSumInt_modEq
+#check vinogradovPrimePowerCorrectionSet
+#check card_vinogradovPrimePowerCorrectionSet_eq_one
