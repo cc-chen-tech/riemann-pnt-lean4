@@ -30,6 +30,7 @@ example (X : ℕ) (sigma : ℝ) {a b : ℝ} (hab : a ≤ b) :
 
 #print axioms mobiusMollifier_verticalLine_eq_finiteDirichletPolynomial
 #print axioms mobiusMollifier_meanSquare_le
+#print axioms inv_nat_cpow_verticalLine_eq_exp
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem

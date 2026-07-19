@@ -3,7 +3,7 @@ import PrimeNumberTheorem.CarlsonMollifierCoefficients
 import PrimeNumberTheorem.MobiusMollifier
 
 open Complex
-open scoped BigOperators
+open scoped BigOperators Interval
 
 namespace PrimeNumberTheorem
 namespace CarlsonZeroDensity
@@ -15,6 +15,75 @@ noncomputable def truncatedZetaPolynomial (x : ℝ) (s : ℂ) : ℂ :=
 /-- Carlson's mollified zeta error. -/
 noncomputable def mollifiedZetaError (X : ℕ) (s : ℂ) : ℂ :=
   riemannZeta s * mobiusMollifier X s - 1
+
+/-- Coefficients of the Möbius-cancelled tail on the vertical line
+`Re s = sigma`. -/
+noncomputable def mollifiedTailCoefficient
+    (X N : ℕ) (sigma : ℝ) (n : ℕ) : ℂ :=
+  mollifiedTruncatedCoefficient X N n *
+    ((n : ℂ) ^ (sigma : ℂ))⁻¹
+
+/-- The Möbius-cancelled tail is a finite exponential sum with frequencies
+`-log n` on every vertical line. -/
+theorem mollifiedTruncatedTail_verticalLine_eq_finiteDirichletPolynomial
+    (X N : ℕ) (sigma t : ℝ) :
+    (∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+        mollifiedTruncatedCoefficient X N n /
+          (n : ℂ) ^ ((sigma : ℂ) + Complex.I * t)) =
+      DirichletPolynomial.finiteDirichletPolynomial
+        (Finset.Icc (min X N + 1) (N * X))
+        (mollifiedTailCoefficient X N sigma) t := by
+  unfold DirichletPolynomial.finiteDirichletPolynomial
+    DirichletPolynomial.finiteExponentialSum mollifiedTailCoefficient
+  apply Finset.sum_congr rfl
+  intro n hn
+  have hnpos : 0 < n := by
+    have hnLower := (Finset.mem_Icc.mp hn).1
+    omega
+  have hinv := inv_nat_cpow_verticalLine_eq_exp
+    (Nat.ne_of_gt hnpos) sigma t
+  rw [div_eq_mul_inv, ← one_div, hinv]
+  rw [← mul_assoc]
+  congr 1
+  push_cast
+  ring_nf
+
+/-- Conditional mean-square estimate for the Möbius-cancelled tail.  Its only
+analytic hypothesis is the weighted Hilbert-form inequality; all zeta,
+Möbius, vertical-line, and interval bookkeeping is already discharged. -/
+theorem mollifiedTruncatedTail_meanSquare_le_of_hilbert
+    {X N : ℕ} {sigma a b C : ℝ} (hab : a ≤ b)
+    (hHilbert : ∀ d : ℕ → ℂ,
+      ‖DirichletPolynomial.hilbertForm
+          (Finset.Icc (min X N + 1) (N * X)) d
+          (fun n : ℕ => -Real.log n)‖ ≤
+        C * ∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+          ((n : ℝ) + 1) * ‖d n‖ ^ 2) :
+    ∫ t in a..b,
+        ‖∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+          mollifiedTruncatedCoefficient X N n /
+            (n : ℂ) ^ ((sigma : ℂ) + Complex.I * t)‖ ^ 2 ≤
+      (b - a) * ∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+          ‖mollifiedTailCoefficient X N sigma n‖ ^ 2 +
+        2 * C * ∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+          ((n : ℝ) + 1) * ‖mollifiedTailCoefficient X N sigma n‖ ^ 2 := by
+  simp_rw [mollifiedTruncatedTail_verticalLine_eq_finiteDirichletPolynomial]
+  unfold DirichletPolynomial.finiteDirichletPolynomial
+  apply DirichletPolynomial.finiteExponentialSum_meanSquare_le_of_hilbert hab
+  · intro m hm n hn hmn
+    have hmpos : 0 < (m : ℝ) := by
+      exact_mod_cast (show 0 < m by
+        have := (Finset.mem_Icc.mp hm).1
+        omega)
+    have hnpos : 0 < (n : ℝ) := by
+      exact_mod_cast (show 0 < n by
+        have := (Finset.mem_Icc.mp hn).1
+        omega)
+    have hlog : Real.log (m : ℝ) = Real.log (n : ℝ) := by linarith
+    exact Nat.cast_injective (Real.log_injOn_pos hmpos hnpos hlog)
+  · intro n hn
+    positivity
+  · exact hHilbert
 
 /-- The finite product in the mollified zeta approximation is exactly the
 coefficient polynomial obtained from the truncated Dirichlet convolution. -/

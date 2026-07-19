@@ -1,6 +1,7 @@
 import PrimeNumberTheorem.MollifiedZetaError
 
 open Complex
+open scoped BigOperators Interval
 
 namespace PrimeNumberTheorem
 namespace CarlsonZeroDensity
@@ -13,6 +14,35 @@ example (X : ℕ) (x : ℝ) (s : ℂ) :
     truncatedZetaPolynomial x s * mobiusMollifier X s =
       mollifiedTruncatedPolynomial X (Nat.floor x) s :=
   truncatedZetaPolynomial_mul_mobiusMollifier X x s
+
+noncomputable example (X N : ℕ) (sigma : ℝ) (n : ℕ) : ℂ :=
+  mollifiedTailCoefficient X N sigma n
+
+example (X N : ℕ) (sigma t : ℝ) :
+    (∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+        mollifiedTruncatedCoefficient X N n /
+          (n : ℂ) ^ ((sigma : ℂ) + Complex.I * t)) =
+      DirichletPolynomial.finiteDirichletPolynomial
+        (Finset.Icc (min X N + 1) (N * X))
+        (mollifiedTailCoefficient X N sigma) t :=
+  mollifiedTruncatedTail_verticalLine_eq_finiteDirichletPolynomial X N sigma t
+
+example {X N : ℕ} {sigma a b C : ℝ} (hab : a ≤ b)
+    (hHilbert : ∀ d : ℕ → ℂ,
+      ‖DirichletPolynomial.hilbertForm
+          (Finset.Icc (min X N + 1) (N * X)) d
+          (fun n : ℕ => -Real.log n)‖ ≤
+        C * ∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+          ((n : ℝ) + 1) * ‖d n‖ ^ 2) :
+    ∫ t in a..b,
+        ‖∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+          mollifiedTruncatedCoefficient X N n /
+            (n : ℂ) ^ ((sigma : ℂ) + Complex.I * t)‖ ^ 2 ≤
+      (b - a) * ∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+          ‖mollifiedTailCoefficient X N sigma n‖ ^ 2 +
+        2 * C * ∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+          ((n : ℝ) + 1) * ‖mollifiedTailCoefficient X N sigma n‖ ^ 2 :=
+  mollifiedTruncatedTail_meanSquare_le_of_hilbert hab hHilbert
 
 example :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (X : ℕ) (s : ℂ) (x : ℝ),
@@ -65,6 +95,8 @@ example :
 #print axioms truncatedZetaPolynomial_mul_mobiusMollifier
 #print axioms exists_mollifiedZetaError_coefficient_decomposition
 #print axioms exists_mollifiedZetaError_tail_decomposition
+#print axioms mollifiedTruncatedTail_verticalLine_eq_finiteDirichletPolynomial
+#print axioms mollifiedTruncatedTail_meanSquare_le_of_hilbert
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem

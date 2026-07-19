@@ -16,7 +16,9 @@ noncomputable def mobiusMollifier (X : ℕ) (s : ℂ) : ℂ :=
 noncomputable def mobiusMollifierCoefficient (sigma : ℝ) (n : ℕ) : ℂ :=
   (ArithmeticFunction.moebius n : ℂ) * ((n : ℂ) ^ (sigma : ℂ))⁻¹
 
-private theorem inv_nat_cpow_verticalLine_eq_exp
+/-- Split a positive natural complex power on a vertical line into its real
+decay coefficient and logarithmic oscillation. -/
+theorem inv_nat_cpow_verticalLine_eq_exp
     {n : ℕ} (hn : n ≠ 0) (sigma t : ℝ) :
     1 / (n : ℂ) ^ ((sigma : ℂ) + Complex.I * t) =
       ((n : ℂ) ^ (sigma : ℂ))⁻¹ *
