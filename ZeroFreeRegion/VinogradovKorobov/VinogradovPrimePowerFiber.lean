@@ -246,6 +246,73 @@ theorem card_vinogradovSingularResidueSet_le_sq_mul_pow_pred
   exact pow_sub_descFactorial_le_sq_mul_pow_pred p k
     (Fact.out : p.Prime).pos
 
+private noncomputable def splitResidueTupleEquiv
+    (p k r : ℕ) :
+    (Fin (k + r) → ZMod p) ≃
+      (Fin k → ZMod p) × (Fin r → ZMod p) :=
+  ((finSumFinEquiv : Fin k ⊕ Fin r ≃ Fin (k + r)).piCongrLeft
+      (fun _ ↦ ZMod p)).symm.trans
+    (Equiv.sumPiEquivProdPi (fun _ : Fin k ⊕ Fin r ↦ ZMod p))
+
+/-- Length-`k+r` residue vectors whose first block of `k` coordinates is
+singular.  The tail block is unrestricted. -/
+noncomputable def vinogradovBlockSingularResidueSet
+    (p k r : ℕ) [Fact p.Prime] : Finset (Fin (k + r) → ZMod p) := by
+  classical
+  exact
+    ((vinogradovSingularResidueSet p k).product
+      (Finset.univ : Finset (Fin r → ZMod p))).map
+        (splitResidueTupleEquiv p k r).symm.toEmbedding
+
+/-- Membership in the block-singular set means exactly that two coordinates
+in the first block coincide. -/
+theorem mem_vinogradovBlockSingularResidueSet_iff
+    (p k r : ℕ) [Fact p.Prime] (x : Fin (k + r) → ZMod p) :
+    x ∈ vinogradovBlockSingularResidueSet p k r ↔
+      ¬Function.Injective (fun i : Fin k ↦ x (Fin.castAdd r i)) := by
+  classical
+  simp [vinogradovBlockSingularResidueSet, vinogradovSingularResidueSet,
+    splitResidueTupleEquiv, Equiv.trans_apply]
+
+/-- Appending `r` unrestricted coordinates multiplies the singular block
+count by exactly `p^r`. -/
+theorem card_vinogradovBlockSingularResidueSet
+    (p k r : ℕ) [Fact p.Prime] :
+    (vinogradovBlockSingularResidueSet p k r).card =
+      (p ^ k - p.descFactorial k) * p ^ r := by
+  classical
+  rw [vinogradovBlockSingularResidueSet, Finset.card_map]
+  change
+    ((vinogradovSingularResidueSet p k) ×ˢ
+      (Finset.univ : Finset (Fin r → ZMod p))).card = _
+  rw [Finset.card_product, card_vinogradovSingularResidueSet]
+  congr 1
+  simpa [Fintype.card_pi_const, ZMod.card] using
+    (Finset.card_univ :
+      (Finset.univ : Finset (Fin r → ZMod p)).card =
+        Fintype.card (Fin r → ZMod p))
+
+/-- A singular head block still saves one full power of `p` after adjoining
+an arbitrary tail. -/
+theorem card_vinogradovBlockSingularResidueSet_le_sq_mul_pow_pred
+    (p k r : ℕ) [Fact p.Prime] :
+    (vinogradovBlockSingularResidueSet p k r).card ≤
+      k ^ 2 * p ^ (k + r - 1) := by
+  rw [card_vinogradovBlockSingularResidueSet]
+  by_cases hk : k = 0
+  · subst k
+    simp
+  · calc
+      (p ^ k - p.descFactorial k) * p ^ r
+          ≤ (k ^ 2 * p ^ (k - 1)) * p ^ r :=
+        Nat.mul_le_mul_right (p ^ r)
+          (pow_sub_descFactorial_le_sq_mul_pow_pred p k
+            (Fact.out : p.Prime).pos)
+      _ = k ^ 2 * p ^ (k + r - 1) := by
+        rw [mul_assoc, ← pow_add]
+        congr 2
+        omega
+
 end
 
 end ZeroFreeRegion.VinogradovKorobov

@@ -109,3 +109,7 @@ open ZeroFreeRegion.VinogradovKorobov
 #check card_vinogradovNonsingularPrimePowerLiftSet
 #check pow_sub_descFactorial_le_sq_mul_pow_pred
 #check card_vinogradovSingularResidueSet_le_sq_mul_pow_pred
+#check vinogradovBlockSingularResidueSet
+#check mem_vinogradovBlockSingularResidueSet_iff
+#check card_vinogradovBlockSingularResidueSet
+#check card_vinogradovBlockSingularResidueSet_le_sq_mul_pow_pred
