@@ -5,3 +5,6 @@ open ZeroFreeRegion.VinogradovKorobov
 #check multiset_eq_of_powerSums_eq_zmod
 #check IsVinogradovResidueSolution.multiset_eq
 #check fixed_left_residue_solution_count_le_factorial
+#check vinogradovResidueTargetFiberSet
+#check mem_vinogradovResidueTargetFiberSet_iff
+#check card_vinogradovResidueTargetFiberSet_le_factorial

@@ -150,6 +150,47 @@ theorem fixed_left_residue_solution_count_le_factorial
     _ = s.factorial := by
       rw [List.length_permutations, List.length_ofFn]
 
+/-- Residue tuples whose first `k` power sums equal a prescribed target. -/
+noncomputable def vinogradovResidueTargetFiberSet
+    (p k : ℕ) [Fact p.Prime] (target : Fin k → ZMod p) :
+    Finset (Fin k → ZMod p) :=
+  Finset.univ.filter fun x ↦
+    ∀ j : Fin k, vinogradovResiduePowerSum p x j = target j
+
+theorem mem_vinogradovResidueTargetFiberSet_iff
+    (p k : ℕ) [Fact p.Prime] (target : Fin k → ZMod p)
+    (x : Fin k → ZMod p) :
+    x ∈ vinogradovResidueTargetFiberSet p k target ↔
+      ∀ j : Fin k, vinogradovResiduePowerSum p x j = target j := by
+  simp [vinogradovResidueTargetFiberSet]
+
+/-- When `k < p`, every prescribed vector of the first `k` power sums has at
+most `k!` ordered residue-tuple preimages. -/
+theorem card_vinogradovResidueTargetFiberSet_le_factorial
+    (p k : ℕ) [Fact p.Prime] (hkp : k < p)
+    (target : Fin k → ZMod p) :
+    (vinogradovResidueTargetFiberSet p k target).card ≤ k.factorial := by
+  by_cases hempty : vinogradovResidueTargetFiberSet p k target = ∅
+  · simp [hempty]
+  · have hnonempty : (vinogradovResidueTargetFiberSet p k target).Nonempty :=
+      Finset.nonempty_iff_ne_empty.mpr hempty
+    obtain ⟨x₀, hx₀⟩ := hnonempty
+    calc
+      (vinogradovResidueTargetFiberSet p k target).card ≤
+          (Finset.univ.filter fun y : Fin k → ZMod p ↦
+            IsVinogradovResidueSolution p k k x₀ y).card := by
+        apply Finset.card_le_card
+        intro y hy
+        have hx₀' :=
+          (mem_vinogradovResidueTargetFiberSet_iff p k target x₀).mp hx₀
+        have hy' :=
+          (mem_vinogradovResidueTargetFiberSet_iff p k target y).mp hy
+        simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+        intro j
+        exact (hx₀' j).trans (hy' j).symm
+      _ ≤ k.factorial :=
+        fixed_left_residue_solution_count_le_factorial p k k le_rfl hkp x₀
+
 end
 
 end ZeroFreeRegion.VinogradovKorobov
