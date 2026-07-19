@@ -1,5 +1,6 @@
 import ZeroFreeRegion.VinogradovKorobov.VinogradovPrimePowerMultiBlock
 import ZeroFreeRegion.VinogradovKorobov.VinogradovPrimePowerTargetFiber
+import ZeroFreeRegion.VinogradovKorobov.VinogradovWeightedComparison
 
 namespace ZeroFreeRegion.VinogradovKorobov
 
@@ -92,6 +93,40 @@ theorem norm_normalizedVinogradovMomentMod_primePowerMultiBlock_le_target_fibers
   rw [normalizedVinogradovMomentMod_eq_solutionCount]
   norm_cast
   exact vinogradovPrimePowerMultiBlockSolutionCount_le_target_fibers
+    p k r b n hk hkp
+
+/-- The weighted system is contained in the weakest common-modulus system,
+so the sharper target-fiber multiblock estimate is also an unconditional
+weighted fallback. -/
+theorem vinogradovWeightedPrimePowerMultiBlockSolutionCount_le_target_fibers
+    (p k r b n : ℕ) [Fact p.Prime] (hk : 0 < k) (hkp : k < p) :
+    vinogradovWeightedSolutionCountMod p (n + 1) k (b * k + r)
+        (p ^ (n + 1)) ≤
+      ((p ^ k - p.descFactorial k) ^ b * p ^ r *
+          p ^ (b * k + r)) *
+        (p ^ (2 * (b * k + r))) ^ n +
+      b * ((p ^ (n + 1)) ^
+        (k + 2 * ((b - 1) * k + r)) * k.factorial) := by
+  exact (vinogradovWeightedSolutionCountMod_le_common
+      p (n + 1) k (b * k + r) (p ^ (n + 1))).trans
+    (vinogradovPrimePowerMultiBlockSolutionCount_le_target_fibers
+      p k r b n hk hkp)
+
+/-- The sharper common-modulus fallback transfers to the normalized weighted
+Weyl moment. -/
+theorem
+    norm_normalizedVinogradovWeightedMomentMod_primePowerMultiBlock_le_target_fibers
+    (p k r b n : ℕ) [Fact p.Prime] (hk : 0 < k) (hkp : k < p) :
+    ‖normalizedVinogradovWeightedMomentMod
+        p (n + 1) k (b * k + r) (p ^ (n + 1))‖ ≤
+      ((((p ^ k - p.descFactorial k) ^ b * p ^ r *
+            p ^ (b * k + r)) *
+          (p ^ (2 * (b * k + r))) ^ n +
+        b * ((p ^ (n + 1)) ^
+          (k + 2 * ((b - 1) * k + r)) * k.factorial) : ℕ) : ℝ) := by
+  rw [normalizedVinogradovWeightedMomentMod_eq_solutionCount]
+  norm_cast
+  exact vinogradovWeightedPrimePowerMultiBlockSolutionCount_le_target_fibers
     p k r b n hk hkp
 
 end
