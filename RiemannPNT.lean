@@ -16,6 +16,7 @@ import MathlibAux.DiscreteHilbertInequality
 import MathlibAux.DyadicLogHilbert
 import MathlibAux.LogKernelRemainder
 import MathlibAux.LogDirichletPolynomialMeanSquare
+import MathlibAux.LogarithmicHilbertIntegrationByParts
 import EulerAndLfunctions
 import PrimeNumberTheorem
 import PrimeNumberTheorem.Perron
