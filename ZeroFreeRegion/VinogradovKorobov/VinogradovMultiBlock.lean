@@ -30,6 +30,31 @@ def VinogradovAllBlocksSingular
       ¬Function.Injective split.1 ∧
         VinogradovAllBlocksSingular p k r b split.2
 
+/-- The recursive assertion that at least one of the selected length-`k`
+blocks is nonsingular modulo `p`. -/
+def VinogradovHasNonsingularBlock
+    (p k r : ℕ) : (b : ℕ) → (Fin (b * k + r) → ZMod p) → Prop
+  | 0, _ => False
+  | b + 1, x =>
+      let split := (vinogradovPrependBlockEquiv p k r b).symm x
+      Function.Injective split.1 ∨
+        VinogradovHasNonsingularBlock p k r b split.2
+
+/-- Failing to be singular in every selected block is equivalent to having a
+nonsingular selected block. -/
+theorem not_allBlocksSingular_iff_hasNonsingularBlock
+    (p k r b : ℕ) (x : Fin (b * k + r) → ZMod p) :
+    ¬VinogradovAllBlocksSingular p k r b x ↔
+      VinogradovHasNonsingularBlock p k r b x := by
+  induction b with
+  | zero =>
+      simp [VinogradovAllBlocksSingular, VinogradovHasNonsingularBlock]
+  | succ b ih =>
+      simp only [VinogradovAllBlocksSingular,
+        VinogradovHasNonsingularBlock, not_and_or]
+      rw [ih]
+      simp only [not_not]
+
 /-- Residue tuples in which all `b` consecutive blocks of length `k` are
 singular.  This is the finite combinatorial stratum that accumulates one
 power-of-`p` saving for each block. -/
@@ -110,6 +135,55 @@ theorem card_vinogradovMultiBlockSingularResidueSet_le
   gcongr
   exact pow_sub_descFactorial_le_sq_mul_pow_pred p k
     (Fact.out : p.Prime).pos
+
+/-- The complementary residue stratum in which at least one selected block is
+nonsingular. -/
+noncomputable def vinogradovSomeBlockNonsingularResidueSet
+    (p k r b : ℕ) [Fact p.Prime] :
+    Finset (Fin (b * k + r) → ZMod p) :=
+  Finset.univ \ vinogradovMultiBlockSingularResidueSet p k r b
+
+/-- Membership in the complementary finite set is exactly the existence of a
+nonsingular selected block. -/
+theorem mem_vinogradovSomeBlockNonsingularResidueSet_iff
+    (p k r b : ℕ) [Fact p.Prime]
+    (x : Fin (b * k + r) → ZMod p) :
+    x ∈ vinogradovSomeBlockNonsingularResidueSet p k r b ↔
+      VinogradovHasNonsingularBlock p k r b x := by
+  simp [vinogradovSomeBlockNonsingularResidueSet,
+    mem_vinogradovMultiBlockSingularResidueSet_iff,
+    not_allBlocksSingular_iff_hasNonsingularBlock]
+
+/-- The all-singular and some-nonsingular strata partition the full residue
+space. -/
+theorem card_allSingular_add_card_someNonsingular
+    (p k r b : ℕ) [Fact p.Prime] :
+    (vinogradovMultiBlockSingularResidueSet p k r b).card +
+        (vinogradovSomeBlockNonsingularResidueSet p k r b).card =
+      p ^ (b * k + r) := by
+  classical
+  rw [Nat.add_comm]
+  calc
+    (vinogradovSomeBlockNonsingularResidueSet p k r b).card +
+          (vinogradovMultiBlockSingularResidueSet p k r b).card =
+        (Finset.univ : Finset (Fin (b * k + r) → ZMod p)).card := by
+      simpa [vinogradovSomeBlockNonsingularResidueSet] using
+        Finset.card_sdiff_add_card_eq_card
+          (Finset.subset_univ
+            (vinogradovMultiBlockSingularResidueSet p k r b))
+    _ = p ^ (b * k + r) := by
+      simp [ZMod.card]
+
+/-- Exact cardinality of the residue tuples having a nonsingular selected
+block. -/
+theorem card_vinogradovSomeBlockNonsingularResidueSet
+    (p k r b : ℕ) [Fact p.Prime] :
+    (vinogradovSomeBlockNonsingularResidueSet p k r b).card =
+      p ^ (b * k + r) -
+        (p ^ k - p.descFactorial k) ^ b * p ^ r := by
+  have hpartition := card_allSingular_add_card_someNonsingular p k r b
+  rw [card_vinogradovMultiBlockSingularResidueSet] at hpartition
+  omega
 
 /-- Residue-field Vinogradov solutions whose left tuple is singular in every
 one of the selected `b` blocks. -/
