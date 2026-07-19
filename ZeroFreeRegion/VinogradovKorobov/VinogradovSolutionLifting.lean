@@ -225,6 +225,84 @@ theorem card_vinogradovSolutionCorrectionSet_le
     (fun i ↦ x (Fin.castAdd r i)) hx
     (vinogradovSolutionCorrectionTarget p k r n x y)
 
+/-- Solutions modulo `p^(n+1)` whose selected left block remains
+nonsingular after reduction modulo `p`. -/
+noncomputable def vinogradovPrimePowerNonsingularSolutionSet
+    (p k r n : ℕ) [Fact p.Prime] :
+    Finset
+      ((Fin (k + r) → Fin (p ^ (n + 1))) ×
+        (Fin (k + r) → Fin (p ^ (n + 1)))) := by
+  classical
+  exact
+    (vinogradovSolutionPairSetMod
+      (p ^ (n + 1)) k (k + r) (p ^ (n + 1))).filter fun xy ↦
+        Function.Injective fun i : Fin k ↦
+          (((xy.1 (Fin.castAdd r i)).val + 1 : ℕ) : ZMod p)
+
+/-- Membership combines the level-`n+1` Vinogradov equations with
+nonsingularity of the selected left block modulo `p`. -/
+theorem mem_vinogradovPrimePowerNonsingularSolutionSet_iff
+    (p k r n : ℕ) [Fact p.Prime]
+    (x y : Fin (k + r) → Fin (p ^ (n + 1))) :
+    (x, y) ∈ vinogradovPrimePowerNonsingularSolutionSet p k r n ↔
+      Function.Injective (fun i : Fin k ↦
+        (((x (Fin.castAdd r i)).val + 1 : ℕ) : ZMod p)) ∧
+      IsVinogradovSolutionMod
+        (p ^ (n + 1)) k (k + r) (p ^ (n + 1)) x y := by
+  classical
+  simp [vinogradovPrimePowerNonsingularSolutionSet,
+    mem_vinogradovSolutionPairSetMod_iff, and_comm]
+
+/-- The total one-step lift space above all nonsingular solutions at level
+`p^(n+1)`.  Each fiber records the free and controlled corrections separately. -/
+noncomputable def vinogradovPrimePowerNonsingularLiftSet
+    (p k r n : ℕ) [Fact p.Prime] :
+    Finset
+      (Σ _ :
+          ((Fin (k + r) → Fin (p ^ (n + 1))) ×
+            (Fin (k + r) → Fin (p ^ (n + 1)))),
+        Σ _ : vinogradovFreeCorrectionData p k r,
+          Fin k → ZMod p) := by
+  classical
+  exact
+    (vinogradovPrimePowerNonsingularSolutionSet p k r n).sigma fun xy ↦
+      vinogradovSolutionCorrectionSet p k r n
+        (fun i ↦ (((xy.1 i).val + 1 : ℕ) : ℤ))
+        (fun i ↦ (((xy.2 i).val + 1 : ℕ) : ℤ))
+
+/-- Summing the `p^(k+2r)` fiber bound over all nonsingular base solutions
+gives the one-step prime-power lifting recurrence. -/
+theorem card_vinogradovPrimePowerNonsingularLiftSet_le
+    (p k r n : ℕ) [Fact p.Prime] (hkp : k < p) :
+    (vinogradovPrimePowerNonsingularLiftSet p k r n).card ≤
+      (vinogradovPrimePowerNonsingularSolutionSet p k r n).card *
+        p ^ (k + 2 * r) := by
+  classical
+  rw [vinogradovPrimePowerNonsingularLiftSet, Finset.card_sigma]
+  calc
+    (∑ xy ∈ vinogradovPrimePowerNonsingularSolutionSet p k r n,
+        (vinogradovSolutionCorrectionSet p k r n
+          (fun i ↦ (((xy.1 i).val + 1 : ℕ) : ℤ))
+          (fun i ↦ (((xy.2 i).val + 1 : ℕ) : ℤ))).card) ≤
+        ∑ _xy ∈ vinogradovPrimePowerNonsingularSolutionSet p k r n,
+          p ^ (k + 2 * r) := by
+      apply Finset.sum_le_sum
+      intro xy hxy
+      have hx :=
+        (mem_vinogradovPrimePowerNonsingularSolutionSet_iff
+          p k r n xy.1 xy.2).mp hxy |>.1
+      have hcast : Function.Injective
+          (fun i : Fin k ↦
+            (((((xy.1 (Fin.castAdd r i)).val + 1 : ℕ) : ℤ)) : ZMod p)) := by
+        intro i j hij
+        apply hx
+        simpa using hij
+      exact card_vinogradovSolutionCorrectionSet_le p k r n hkp
+        (fun i ↦ (((xy.1 i).val + 1 : ℕ) : ℤ))
+        (fun i ↦ (((xy.2 i).val + 1 : ℕ) : ℤ)) hcast
+    _ = (vinogradovPrimePowerNonsingularSolutionSet p k r n).card *
+        p ^ (k + 2 * r) := by simp
+
 end
 
 end ZeroFreeRegion.VinogradovKorobov
