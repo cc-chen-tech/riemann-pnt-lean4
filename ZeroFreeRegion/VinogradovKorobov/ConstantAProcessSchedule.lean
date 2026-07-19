@@ -382,6 +382,44 @@ theorem constantAProcessCoefficient_nonneg
             exact_mod_cast (Nat.one_le_iff_ne_zero.mpr hzero))
       positivity
 
+/-- Uniform depth-independent bound for the coefficient growth in the
+explicit power supersolution. -/
+theorem constantAProcessCoefficient_le_log_sq
+    (h j : ℕ) (hh : 1 ≤ h) :
+    constantAProcessCoefficient h j ≤
+      36 * (1 + Real.log h) ^ 2 := by
+  let L := 1 + Real.log (h : ℝ)
+  have hlog : 0 ≤ Real.log (h : ℝ) :=
+    Real.log_nonneg (by exact_mod_cast hh)
+  have hL : 1 ≤ L := by dsimp only [L]; linarith
+  have hLsq : 1 ≤ L ^ 2 := by nlinarith [sq_nonneg (L - 1)]
+  induction j with
+  | zero =>
+      rw [constantAProcessCoefficient_zero]
+      change 1 ≤ 36 * L ^ 2
+      nlinarith
+  | succ j ih =>
+      rw [constantAProcessCoefficient_succ]
+      change 2 + 4 * L * Real.sqrt (constantAProcessCoefficient h j) ≤
+        36 * L ^ 2
+      have hsqrt : Real.sqrt (constantAProcessCoefficient h j) ≤ 6 * L := by
+        apply (Real.sqrt_le_iff).2
+        refine ⟨by linarith, ?_⟩
+        calc
+          constantAProcessCoefficient h j ≤ 36 * L ^ 2 := ih
+          _ = (6 * L) ^ 2 := by ring
+      nlinarith
+
+/-- Closed-form sufficient condition for the coefficient to be smaller than
+the retained denominator gain. -/
+theorem constantAProcessCoefficient_lt_gain_of_log_sq_lt_rpow
+    (h depth : ℕ) (hh : 1 ≤ h)
+    (hsaving : 36 * (1 + Real.log h) ^ 2 <
+      (h : ℝ) ^ (2 / (2 : ℝ) ^ depth : ℝ)) :
+    constantAProcessCoefficient h depth < constantAProcessGain h depth := by
+  rw [constantAProcessGain_eq_rpow]
+  exact (constantAProcessCoefficient_le_log_sq h depth hh).trans_lt hsaving
+
 theorem constantAProcessPowerSupersolution_step
     (h N j : ℕ) (hh : 1 ≤ h) :
     2 * (N : ℝ) ^ 2 / h +
@@ -544,5 +582,24 @@ theorem norm_zetaPhase_sum_lt_length_of_constantAProcessScaleSaving
     t m N depth h ht hm hN hh hbudget hmajor _ hsaving
   exact zetaAProcessUniformLeafSquaredBound_normalized_le_of_scale
     t m N depth h ht hm (lt_of_lt_of_le Nat.zero_lt_one hh) hscale
+
+/-- Fully explicit arbitrary-depth nontriviality criterion, with no recursive
+coefficient or gain terms remaining in the hypotheses. -/
+theorem norm_zetaPhase_sum_lt_length_of_constantAProcessExplicitSaving
+    (t : ℝ) (m N depth h : ℕ)
+    (ht : 0 < t) (hm : 0 < m) (hN : 0 < N)
+    (hh : 1 ≤ h) (hbudget : depth * (h - 1) < N)
+    (hmajor : t * ((depth.factorial : ℝ) * (h : ℝ) ^ depth *
+      ((m : ℝ) ^ (depth + 1))⁻¹) ≤ Real.pi)
+    (hscale : 2 * Real.pi * (h : ℝ) ≤
+      zetaAProcessUniformLeafDeltaLower t m N depth *
+        (h : ℝ) ^ depth * (N : ℝ))
+    (hsaving : 36 * (1 + Real.log h) ^ 2 <
+      (h : ℝ) ^ (2 / (2 : ℝ) ^ depth : ℝ)) :
+    ‖∑ n ∈ Finset.range N, phaseTerm (shiftedZetaPhase t m) n‖ < (N : ℝ) := by
+  apply norm_zetaPhase_sum_lt_length_of_constantAProcessScaleSaving
+    t m N depth h ht hm hN hh hbudget hmajor hscale
+  exact constantAProcessCoefficient_lt_gain_of_log_sq_lt_rpow
+    h depth hh hsaving
 
 end ZeroFreeRegion.VinogradovKorobov

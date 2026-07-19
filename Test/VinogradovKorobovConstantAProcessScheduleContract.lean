@@ -134,6 +134,18 @@ example (h j : ℕ) :
       (h : ℝ) ^ (2 / (2 : ℝ) ^ j : ℝ) :=
   constantAProcessGain_eq_rpow h j
 
+example (h j : ℕ) (hh : 1 ≤ h) :
+    constantAProcessCoefficient h j ≤
+      36 * (1 + Real.log h) ^ 2 :=
+  constantAProcessCoefficient_le_log_sq h j hh
+
+example (h depth : ℕ) (hh : 1 ≤ h)
+    (hsaving : 36 * (1 + Real.log h) ^ 2 <
+      (h : ℝ) ^ (2 / (2 : ℝ) ^ depth : ℝ)) :
+    constantAProcessCoefficient h depth < constantAProcessGain h depth :=
+  constantAProcessCoefficient_lt_gain_of_log_sq_lt_rpow
+    h depth hh hsaving
+
 example (h N : ℕ) (C : ℝ) (totalDepth depth : ℕ)
     (hh : 1 ≤ h)
     (hinit : C / (h : ℝ) ^ (2 * totalDepth) ≤
@@ -190,6 +202,20 @@ example (t : ℝ) (m N depth h : ℕ)
       constantAProcessGain h depth) :
     ‖∑ n ∈ Finset.range N, phaseTerm (shiftedZetaPhase t m) n‖ < (N : ℝ) :=
   norm_zetaPhase_sum_lt_length_of_constantAProcessScaleSaving
+    t m N depth h ht hm hN hh hbudget hmajor hscale hsaving
+
+example (t : ℝ) (m N depth h : ℕ)
+    (ht : 0 < t) (hm : 0 < m) (hN : 0 < N)
+    (hh : 1 ≤ h) (hbudget : depth * (h - 1) < N)
+    (hmajor : t * ((depth.factorial : ℝ) * (h : ℝ) ^ depth *
+      ((m : ℝ) ^ (depth + 1))⁻¹) ≤ Real.pi)
+    (hscale : 2 * Real.pi * (h : ℝ) ≤
+      zetaAProcessUniformLeafDeltaLower t m N depth *
+        (h : ℝ) ^ depth * (N : ℝ))
+    (hsaving : 36 * (1 + Real.log h) ^ 2 <
+      (h : ℝ) ^ (2 / (2 : ℝ) ^ depth : ℝ)) :
+    ‖∑ n ∈ Finset.range N, phaseTerm (shiftedZetaPhase t m) n‖ < (N : ℝ) :=
+  norm_zetaPhase_sum_lt_length_of_constantAProcessExplicitSaving
     t m N depth h ht hm hN hh hbudget hmajor hscale hsaving
 
 end ZeroFreeRegion.VinogradovKorobov
