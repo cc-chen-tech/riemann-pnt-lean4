@@ -7,6 +7,27 @@ open scoped BigOperators Interval
 namespace PrimeNumberTheorem
 namespace CarlsonZeroDensity
 
+/-- The four oriented real edge integrals in Littlewood's weighted rectangle
+formula for the regularized Carlson detector. -/
+noncomputable def regularizedCarlsonLittlewoodFourEdges
+    (X : ℕ) (x0 x1 y0 y1 : ℝ) : ℝ :=
+  (∫ x in x0..x1,
+      ((((x : ℂ) + (y0 : ℂ) * I - (x0 : ℂ)) *
+        logDeriv (regularizedCarlsonZeroDetector X)
+          ((x : ℂ) + (y0 : ℂ) * I))).im) -
+    (∫ x in x0..x1,
+      ((((x : ℂ) + (y1 : ℂ) * I - (x0 : ℂ)) *
+        logDeriv (regularizedCarlsonZeroDetector X)
+          ((x : ℂ) + (y1 : ℂ) * I))).im) +
+    (∫ y in y0..y1,
+      ((((x1 : ℂ) + (y : ℂ) * I - (x0 : ℂ)) *
+        logDeriv (regularizedCarlsonZeroDetector X)
+          ((x1 : ℂ) + (y : ℂ) * I))).re) -
+    (∫ y in y0..y1,
+      ((((x0 : ℂ) + (y : ℂ) * I - (x0 : ℂ)) *
+        logDeriv (regularizedCarlsonZeroDetector X)
+          ((x0 : ℂ) + (y : ℂ) * I))).re)
+
 /-- The weighted argument principle specialized to the pole-free Carlson
 detector.  The finite divisor support is proved to be exactly the zero set,
 and zero-free boundary hypotheses force every counted zero into the strict
@@ -333,6 +354,63 @@ theorem sub_mul_zeroDensityCount_le_regularizedCarlsonWeightedZeroSum
             (regularizedCarlsonZeroDetector X) rho : ℝ) :=
       Finset.sum_le_sum_of_subset_of_nonneg hSsub
         (fun rho hrhoP _ => hPnonneg rho hrhoP)
+
+/-- Carlson's zero-density count is reduced to the four Littlewood edge
+integrals on an automatically selected zero-free rectangle. -/
+theorem exists_regularizedCarlson_goodRectangle_zeroDensity_le_fourEdges
+    {X : ℕ} (hX : 1 ≤ X) {sigma T : ℝ}
+    (hsigma : 0 < sigma) (hsigmaOne : sigma < 1) (hT : 0 ≤ T) :
+    ∃ x0 x1 y0 y1 : ℝ,
+      sigma / 2 < x0 ∧ x0 < sigma ∧
+      1 < x1 ∧ x1 < 2 ∧ x0 < x1 ∧
+      -1 < y0 ∧ y0 < 0 ∧
+      T < y1 ∧ y1 < T + 1 ∧ y0 < y1 ∧
+      (2 * Real.pi) * (sigma - x0) *
+          (ZeroDensity.zeroDensityCount sigma T : ℝ) ≤
+        regularizedCarlsonLittlewoodFourEdges X x0 x1 y0 y1 := by
+  obtain ⟨x0, x1, y0, y1,
+      hx0Lower, hx0Upper, hx1Lower, hx1Upper, hx01,
+      hy0Lower, hy0Upper, hy1Lower, hy1Upper, hy01,
+      hleft, hright, hbottom, htop⟩ :=
+    exists_regularizedCarlsonZeroDetector_goodRectangle
+      hX hsigma hsigmaOne hT
+  have hx0 : 0 < x0 := (by linarith : 0 < sigma / 2).trans hx0Lower
+  have hcount :=
+    sub_mul_zeroDensityCount_le_regularizedCarlsonWeightedZeroSum
+      hX hx0 hx0Upper hx1Lower hy0Upper hy1Lower
+  have htwoPi : 0 ≤ 2 * Real.pi :=
+    mul_nonneg (by norm_num) Real.pi_pos.le
+  have hscaled :
+      (2 * Real.pi) *
+          ((sigma - x0) *
+            (ZeroDensity.zeroDensityCount sigma T : ℝ)) ≤
+        (2 * Real.pi) *
+          ∑ rho ∈ regularizedCarlsonDetectorRectangleDivisorSupport
+              X x0 x1 y0 y1,
+            (rho.re - x0) *
+              (analyticOrderNatAt
+                (regularizedCarlsonZeroDetector X) rho : ℝ) :=
+    mul_le_mul_of_nonneg_left hcount htwoPi
+  have hedges :=
+    two_pi_mul_regularizedCarlsonZeroMultiplicityWeightedRealSum_eq_four_edges
+      hX hx0 hx01 hy01 hleft hright hbottom htop
+  refine ⟨x0, x1, y0, y1,
+    hx0Lower, hx0Upper, hx1Lower, hx1Upper, hx01,
+    hy0Lower, hy0Upper, hy1Lower, hy1Upper, hy01, ?_⟩
+  calc
+    (2 * Real.pi) * (sigma - x0) *
+        (ZeroDensity.zeroDensityCount sigma T : ℝ) =
+        (2 * Real.pi) *
+          ((sigma - x0) *
+            (ZeroDensity.zeroDensityCount sigma T : ℝ)) := by ring
+    _ ≤ (2 * Real.pi) *
+        ∑ rho ∈ regularizedCarlsonDetectorRectangleDivisorSupport
+            X x0 x1 y0 y1,
+          (rho.re - x0) *
+            (analyticOrderNatAt
+              (regularizedCarlsonZeroDetector X) rho : ℝ) := hscaled
+    _ = regularizedCarlsonLittlewoodFourEdges X x0 x1 y0 y1 := by
+      simpa [regularizedCarlsonLittlewoodFourEdges] using hedges
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem

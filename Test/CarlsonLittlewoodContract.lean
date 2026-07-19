@@ -84,9 +84,23 @@ example {X : ℕ} (hX : 1 ≤ X) {sigma T x0 x1 y0 y1 : ℝ}
   sub_mul_zeroDensityCount_le_regularizedCarlsonWeightedZeroSum
     hX hx0 hx0sigma hx1 hy0 hy1
 
+example {X : ℕ} (hX : 1 ≤ X) {sigma T : ℝ}
+    (hsigma : 0 < sigma) (hsigmaOne : sigma < 1) (hT : 0 ≤ T) :
+    ∃ x0 x1 y0 y1 : ℝ,
+      sigma / 2 < x0 ∧ x0 < sigma ∧
+      1 < x1 ∧ x1 < 2 ∧ x0 < x1 ∧
+      -1 < y0 ∧ y0 < 0 ∧
+      T < y1 ∧ y1 < T + 1 ∧ y0 < y1 ∧
+      (2 * Real.pi) * (sigma - x0) *
+          (ZeroDensity.zeroDensityCount sigma T : ℝ) ≤
+        regularizedCarlsonLittlewoodFourEdges X x0 x1 y0 y1 :=
+  exists_regularizedCarlson_goodRectangle_zeroDensity_le_fourEdges
+    hX hsigma hsigmaOne hT
+
 #print axioms boundaryRectIntegral_regularizedCarlsonZeroDetector_eq_zeroMultiplicitySum
 #print axioms two_pi_mul_regularizedCarlsonZeroMultiplicityWeightedRealSum_eq_four_edges
 #print axioms sub_mul_zeroDensityCount_le_regularizedCarlsonWeightedZeroSum
+#print axioms exists_regularizedCarlson_goodRectangle_zeroDensity_le_fourEdges
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem
