@@ -66,6 +66,109 @@ noncomputable def regularizedCarlsonDetectorRectangleZeroCount
   ∑ z ∈ regularizedCarlsonDetectorRectangleDivisorSupport
       X sigma alpha a b, (D z).toNat
 
+private theorem divisor_regularizedCarlsonZeroDetector_eq_analyticOrderNatAt_of_mem
+    {X : ℕ} (hX : 1 ≤ X) {sigma alpha a b : ℝ}
+    (hsigma : 0 < sigma) {z : ℂ}
+    (hz : z ∈ carlsonDetectorRectangle sigma alpha a b) :
+    MeromorphicOn.divisor (regularizedCarlsonZeroDetector X)
+        (carlsonDetectorRectangle sigma alpha a b) z =
+      (analyticOrderNatAt (regularizedCarlsonZeroDetector X) z : ℤ) := by
+  have hzre : 0 < z.re := by
+    have hzIcc := hz.1
+    exact hsigma.trans_le hzIcc.1
+  have hanalytic : AnalyticAt ℂ (regularizedCarlsonZeroDetector X) z :=
+    analyticOnNhd_regularizedCarlsonZeroDetector_re_gt
+      (theta := (0 : ℝ)) le_rfl X z hzre
+  have horder :
+      analyticOrderAt (regularizedCarlsonZeroDetector X) z ≠ ⊤ :=
+    analyticOrderAt_regularizedCarlsonZeroDetector_ne_top X hX hzre
+  rw [MeromorphicOn.divisor_apply
+      (meromorphic_regularizedCarlsonZeroDetector X).meromorphicOn hz,
+    hanalytic.meromorphicOrderAt_eq]
+  have hcast := Nat.cast_analyticOrderNatAt horder
+  rw [← hcast]
+  simp
+
+/-- Inside a rectangle contained in the open right half-plane, the finite
+divisor support of the regularized detector is exactly its zero set. -/
+theorem mem_regularizedCarlsonDetectorRectangleDivisorSupport_iff_zero
+    {X : ℕ} (hX : 1 ≤ X) {sigma alpha a b : ℝ}
+    (hsigma : 0 < sigma) {z : ℂ}
+    (hz : z ∈ carlsonDetectorRectangle sigma alpha a b) :
+    z ∈ regularizedCarlsonDetectorRectangleDivisorSupport X sigma alpha a b ↔
+      regularizedCarlsonZeroDetector X z = 0 := by
+  classical
+  let D := MeromorphicOn.divisor (regularizedCarlsonZeroDetector X)
+    (carlsonDetectorRectangle sigma alpha a b)
+  have hdivisor : D z =
+      (analyticOrderNatAt (regularizedCarlsonZeroDetector X) z : ℤ) := by
+    dsimp [D]
+    exact divisor_regularizedCarlsonZeroDetector_eq_analyticOrderNatAt_of_mem
+      hX hsigma hz
+  have hzre : 0 < z.re := hsigma.trans_le hz.1.1
+  have hanalytic : AnalyticAt ℂ (regularizedCarlsonZeroDetector X) z :=
+    analyticOnNhd_regularizedCarlsonZeroDetector_re_gt
+      (theta := (0 : ℝ)) le_rfl X z hzre
+  have horder :
+      analyticOrderAt (regularizedCarlsonZeroDetector X) z ≠ ⊤ :=
+    analyticOrderAt_regularizedCarlsonZeroDetector_ne_top X hX hzre
+  have hnatCast := Nat.cast_analyticOrderNatAt horder
+  rw [regularizedCarlsonDetectorRectangleDivisorSupport]
+  rw [(D.finiteSupport
+    (isCompact_carlsonDetectorRectangle sigma alpha a b)).mem_toFinset]
+  simp only [Function.mem_support]
+  rw [hdivisor, Int.ofNat_ne_zero]
+  constructor
+  · intro hnat
+    apply hanalytic.analyticOrderAt_ne_zero.mp
+    intro hzero
+    have hcastZero :
+        (analyticOrderNatAt (regularizedCarlsonZeroDetector X) z : ℕ∞) = 0 :=
+      hnatCast.trans hzero
+    exact hnat (by simpa using hcastZero)
+  · intro hzero hnatZero
+    have horderZero :
+        analyticOrderAt (regularizedCarlsonZeroDetector X) z = 0 := by
+      rw [← hnatCast, hnatZero]
+      rfl
+    exact (hanalytic.analyticOrderAt_eq_zero.mp horderZero) hzero
+
+/-- Every unit height interval contains a horizontal segment on which the
+regularized detector is nonvanishing throughout a prescribed compact real
+interval in the open right half-plane. -/
+theorem exists_regularizedCarlsonZeroDetector_horizontal_ne_zero
+    {X : ℕ} (hX : 1 ≤ X) {sigma alpha T : ℝ}
+    (hsigma : 0 < sigma) :
+    ∃ t : ℝ, T < t ∧ t < T + 1 ∧
+      ∀ x ∈ Set.Icc sigma alpha,
+        regularizedCarlsonZeroDetector X
+          ((x : ℂ) + (t : ℂ) * I) ≠ 0 := by
+  classical
+  let P := regularizedCarlsonDetectorRectangleDivisorSupport
+    X sigma alpha T (T + 1)
+  let bad : Finset ℝ := P.image Complex.im
+  obtain ⟨t, htIoo, htbad⟩ :=
+    (Set.Ioo_infinite (show T < T + 1 by linarith)).exists_notMem_finset bad
+  refine ⟨t, htIoo.1, htIoo.2, ?_⟩
+  intro x hx hzero
+  let z : ℂ := (x : ℂ) + (t : ℂ) * I
+  have hz : z ∈ carlsonDetectorRectangle sigma alpha T (T + 1) := by
+    change z.re ∈ Set.Icc sigma alpha ∧ z.im ∈ Set.Icc T (T + 1)
+    constructor
+    · simpa [z] using hx
+    · simpa [z] using And.intro htIoo.1.le htIoo.2.le
+  have hzP : z ∈ P := by
+    dsimp [P]
+    exact
+      (mem_regularizedCarlsonDetectorRectangleDivisorSupport_iff_zero
+        hX hsigma hz).mpr hzero
+  apply htbad
+  dsimp [bad]
+  apply Finset.mem_image.mpr
+  refine ⟨z, hzP, ?_⟩
+  dsimp [z]
+  simp
+
 private theorem divisor_carlsonZeroDetector_eq_analyticOrderNatAt
     {X : ℕ} {sigma alpha a b : ℝ} {rho : ℂ}
     (hX : 1 ≤ X) (hrho : RiemannHypothesis.IsNontrivialZero rho)

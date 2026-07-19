@@ -5,6 +5,29 @@ open Complex
 namespace PrimeNumberTheorem
 namespace CarlsonZeroDensity
 
+example : Filter.Tendsto (fun x : ℝ => riemannZeta (x : ℂ))
+    Filter.atTop (nhds 1) :=
+  tendsto_riemannZeta_real_atTop
+
+example (X : ℕ) (hX : 1 ≤ X) :
+    Filter.Tendsto (fun x : ℝ => mollifiedZetaError X (x : ℂ))
+      Filter.atTop (nhds 0) :=
+  tendsto_mollifiedZetaError_real_atTop X hX
+
+example (X : ℕ) (hX : 1 ≤ X) :
+    Filter.Tendsto (fun x : ℝ => carlsonZeroDetector X (x : ℂ))
+      Filter.atTop (nhds 1) :=
+  tendsto_carlsonZeroDetector_real_atTop X hX
+
+example (X : ℕ) (hX : 1 ≤ X) (sigma : ℝ) :
+    ∃ x : ℝ, sigma < x ∧
+      regularizedCarlsonZeroDetector X (x : ℂ) ≠ 0 :=
+  exists_regularizedCarlsonZeroDetector_ne_zero_re_gt X hX sigma
+
+example (X : ℕ) (hX : 1 ≤ X) {s : ℂ} (hs : 0 < s.re) :
+    analyticOrderAt (regularizedCarlsonZeroDetector X) s ≠ ⊤ :=
+  analyticOrderAt_regularizedCarlsonZeroDetector_ne_top X hX hs
+
 example (X : ℕ) (s : ℂ) :
     carlsonZeroDetector X s = 1 - mollifiedZetaError X s ^ 2 :=
   rfl
@@ -122,6 +145,11 @@ example :
   exists_integral_log_norm_carlsonZeroDetector_le_endpoint
 
 #print axioms carlsonZeroDetector_eq_zeta_mul_mollifier_factorization
+#print axioms tendsto_riemannZeta_real_atTop
+#print axioms tendsto_mollifiedZetaError_real_atTop
+#print axioms tendsto_carlsonZeroDetector_real_atTop
+#print axioms exists_regularizedCarlsonZeroDetector_ne_zero_re_gt
+#print axioms analyticOrderAt_regularizedCarlsonZeroDetector_ne_top
 #print axioms carlsonZeroDetector_eq_zero_of_riemannZeta_eq_zero
 #print axioms analyticOrderNatAt_riemannZeta_le_carlsonZeroDetector
 #print axioms analyticOnNhd_regularizedCarlsonZeroDetector_re_gt

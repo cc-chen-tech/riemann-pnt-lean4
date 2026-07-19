@@ -1,4 +1,5 @@
 import PrimeNumberTheorem.MollifiedZetaError
+import Mathlib.NumberTheory.LSeries.Injectivity
 
 open Complex
 open Filter Topology
@@ -7,10 +8,46 @@ open scoped Interval
 namespace PrimeNumberTheorem
 namespace CarlsonZeroDensity
 
+/-- Along the positive real axis, the Riemann zeta function tends to its
+first Dirichlet-series coefficient. -/
+theorem tendsto_riemannZeta_real_atTop :
+    Tendsto (fun x : ℝ => riemannZeta (x : ℂ)) atTop (𝓝 1) := by
+  have hL :
+      Tendsto (fun x : ℝ => LSeries (ArithmeticFunction.zeta ·) (x : ℂ))
+        atTop (𝓝 1) := by
+    simpa using LSeries.tendsto_atTop
+      (f := (ArithmeticFunction.zeta ·))
+      (by
+        rw [ArithmeticFunction.abscissaOfAbsConv_zeta]
+        exact EReal.coe_lt_top 1)
+  apply hL.congr'
+  filter_upwards [eventually_gt_atTop (1 : ℝ)] with x hx
+  exact ArithmeticFunction.LSeries_zeta_eq_riemannZeta
+    (s := (x : ℂ)) (by simpa using hx)
+
+/-- The mollified zeta error tends to zero along the positive real axis. -/
+theorem tendsto_mollifiedZetaError_real_atTop (X : ℕ) (hX : 1 ≤ X) :
+    Tendsto (fun x : ℝ => mollifiedZetaError X (x : ℂ)) atTop (𝓝 0) := by
+  have hmul := tendsto_riemannZeta_real_atTop.mul
+    (tendsto_mobiusMollifier_atTop X hX)
+  have hsub := hmul.sub
+    (tendsto_const_nhds :
+      Tendsto (fun _x : ℝ => (1 : ℂ)) atTop (𝓝 1))
+  simpa [mollifiedZetaError] using hsub
+
 /-- Carlson's auxiliary zero detector `h_X = 1 - f_X^2`, where
 `f_X = zeta * M_X - 1`. -/
 noncomputable def carlsonZeroDetector (X : ℕ) (s : ℂ) : ℂ :=
   1 - mollifiedZetaError X s ^ 2
+
+/-- Carlson's detector tends to one along the positive real axis. -/
+theorem tendsto_carlsonZeroDetector_real_atTop (X : ℕ) (hX : 1 ≤ X) :
+    Tendsto (fun x : ℝ => carlsonZeroDetector X (x : ℂ)) atTop (𝓝 1) := by
+  have hpow := (tendsto_mollifiedZetaError_real_atTop X hX).pow 2
+  have hsub :=
+    (tendsto_const_nhds :
+      Tendsto (fun _x : ℝ => (1 : ℂ)) atTop (𝓝 1)).sub hpow
+  simpa [carlsonZeroDetector] using hsub
 
 /-- Pole-free Carlson detector on the right half-plane.  Replacing zeta by
 its analytic pole unit makes this function analytic across `s = 1`; away
@@ -84,6 +121,52 @@ theorem regularizedCarlsonZeroDetector_eq_sub_one_sq_mul
     hs0 hs1,
     carlsonZeroDetector_eq_zeta_mul_mollifier_factorization]
   ring
+
+/-- The regularized detector is not identically zero on any right half-plane.
+The witness is chosen sufficiently far along the positive real axis. -/
+theorem exists_regularizedCarlsonZeroDetector_ne_zero_re_gt
+    (X : ℕ) (hX : 1 ≤ X) (sigma : ℝ) :
+    ∃ x : ℝ, sigma < x ∧
+      regularizedCarlsonZeroDetector X (x : ℂ) ≠ 0 := by
+  have hdet : ∀ᶠ x : ℝ in atTop,
+      carlsonZeroDetector X (x : ℂ) ≠ 0 :=
+    (tendsto_carlsonZeroDetector_real_atTop X hX).eventually_ne one_ne_zero
+  have hxgt : ∀ᶠ x : ℝ in atTop, max sigma 1 < x :=
+    eventually_gt_atTop (max sigma 1)
+  obtain ⟨x, hdetx, hx⟩ := (hdet.and hxgt).exists
+  have hx_sigma : sigma < x :=
+    lt_of_le_of_lt (le_max_left sigma 1) hx
+  have hx_one : 1 < x :=
+    lt_of_le_of_lt (le_max_right sigma 1) hx
+  have hx0 : (x : ℂ) ≠ 0 := by
+    exact_mod_cast (ne_of_gt (lt_trans zero_lt_one hx_one))
+  have hx1 : (x : ℂ) ≠ 1 := by
+    exact_mod_cast (ne_of_gt hx_one)
+  refine ⟨x, hx_sigma, ?_⟩
+  rw [regularizedCarlsonZeroDetector_eq_sub_one_sq_mul X hx0 hx1]
+  exact mul_ne_zero (pow_ne_zero 2 (sub_ne_zero.mpr hx1)) hdetx
+
+/-- The regularized detector has finite analytic order at every point of the
+open right half-plane. -/
+theorem analyticOrderAt_regularizedCarlsonZeroDetector_ne_top
+    (X : ℕ) (hX : 1 ≤ X) {s : ℂ} (hs : 0 < s.re) :
+    analyticOrderAt (regularizedCarlsonZeroDetector X) s ≠ ⊤ := by
+  let U : Set ℂ := {z : ℂ | 0 < z.re}
+  have hanalytic : AnalyticOnNhd ℂ (regularizedCarlsonZeroDetector X) U :=
+    analyticOnNhd_regularizedCarlsonZeroDetector_re_gt
+      (theta := (0 : ℝ)) le_rfl X
+  obtain ⟨x, hx, hne⟩ :=
+    exists_regularizedCarlsonZeroDetector_ne_zero_re_gt X hX 0
+  have hxU : (x : ℂ) ∈ U := by
+    simpa [U] using hx
+  have hsU : s ∈ U := by
+    simpa [U] using hs
+  have hxorder :
+      analyticOrderAt (regularizedCarlsonZeroDetector X) (x : ℂ) ≠ ⊤ := by
+    rw [(hanalytic (x : ℂ) hxU).analyticOrderAt_eq_zero.mpr hne]
+    exact ENat.coe_ne_top 0
+  exact hanalytic.analyticOrderAt_ne_top_of_isPreconnected
+    (convex_halfSpace_re_gt 0).isPreconnected hxU hsU hxorder
 
 theorem carlsonZeroDetector_eq_zero_of_riemannZeta_eq_zero
     {X : ℕ} {s : ℂ} (hs : riemannZeta s = 0) :

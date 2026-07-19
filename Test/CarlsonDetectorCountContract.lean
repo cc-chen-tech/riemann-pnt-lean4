@@ -24,6 +24,23 @@ noncomputable example (X : ℕ) (sigma alpha a b : ℝ) : Finset ℂ :=
 noncomputable example (X : ℕ) (sigma alpha a b : ℝ) : ℕ :=
   regularizedCarlsonDetectorRectangleZeroCount X sigma alpha a b
 
+example {X : ℕ} (hX : 1 ≤ X) {sigma alpha a b : ℝ}
+    (hsigma : 0 < sigma) {z : ℂ}
+    (hz : z ∈ carlsonDetectorRectangle sigma alpha a b) :
+    z ∈ regularizedCarlsonDetectorRectangleDivisorSupport X sigma alpha a b ↔
+      regularizedCarlsonZeroDetector X z = 0 :=
+  mem_regularizedCarlsonDetectorRectangleDivisorSupport_iff_zero
+    hX hsigma hz
+
+example {X : ℕ} (hX : 1 ≤ X) {sigma alpha T : ℝ}
+    (hsigma : 0 < sigma) :
+    ∃ t : ℝ, T < t ∧ t < T + 1 ∧
+      ∀ x ∈ Set.Icc sigma alpha,
+        regularizedCarlsonZeroDetector X
+          ((x : ℂ) + (t : ℂ) * I) ≠ 0 :=
+  exists_regularizedCarlsonZeroDetector_horizontal_ne_zero
+    hX hsigma (T := T)
+
 example {X : ℕ} (hX : 1 ≤ X) (sigma T : ℝ) :
     ZeroDensity.zeroDensityCount sigma T ≤
       carlsonDetectorRectangleZeroCount X sigma 1 0 T :=
@@ -38,6 +55,8 @@ example {X : ℕ} (hX : 1 ≤ X) (sigma T : ℝ) :
 #print axioms meromorphic_carlsonZeroDetector
 #print axioms zeroDensityCount_le_carlsonDetectorRectangleZeroCount
 #print axioms zeroDensityCount_le_regularizedCarlsonDetectorRectangleZeroCount
+#print axioms mem_regularizedCarlsonDetectorRectangleDivisorSupport_iff_zero
+#print axioms exists_regularizedCarlsonZeroDetector_horizontal_ne_zero
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem
