@@ -9,7 +9,7 @@ namespace HardyTheorem
 
 open OscillatoryIntegral
 
-/-- The complete central range around the stationary scale has `O(delta)`
+/-- The central portion of `s` around the stationary scale has `O(delta)`
 energy, apart from the explicit `O(delta^2 / r)` contribution of the two
 adjacent integer indices. -/
 theorem sum_normSq_hardyPhaseLinearizedCoeff_central_le
