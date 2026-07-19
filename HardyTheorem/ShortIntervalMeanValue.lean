@@ -186,7 +186,7 @@ theorem mul_integral_abs_hardyZ_interior_le_integral_hardyShortAbsIntegral
 short-interval length. The threshold may depend on the length, while the
 linear constant does not. -/
 theorem exists_integral_hardyShortAbsIntegral_ge_mul :
-    ∃ c : ℝ, 0 < c ∧ ∀ δ : ℝ, 1 ≤ δ → ∃ T0 : ℝ, 1 ≤ T0 ∧
+    ∃ c : ℝ, 0 < c ∧ ∀ δ : ℝ, 0 < δ → ∃ T0 : ℝ, 1 ≤ T0 ∧
       ∀ T : ℝ, T0 ≤ T →
         c * δ * T ≤ ∫ t in T..2 * T - δ, hardyShortAbsIntegral δ t := by
   obtain ⟨c0, Tz, hc0, hTz, hzeta⟩ :=
@@ -194,8 +194,8 @@ theorem exists_integral_hardyShortAbsIntegral_ge_mul :
   obtain ⟨C, Tp, hC, hTp, hshort⟩ :=
     exists_hardyShortAbsIntegral_le_mul_sqrt
   refine ⟨c0 / 2, by positivity, ?_⟩
-  intro δ hδ1
-  have hδ : 0 ≤ δ := zero_le_one.trans hδ1
+  intro δ hδpos
+  have hδ : 0 ≤ δ := hδpos.le
   let K : ℝ := 4 * C * δ / c0
   let T0 : ℝ := max Tz (max Tp (max (2 * δ) (max 1 (K ^ 2))))
   refine ⟨T0, ?_, ?_⟩
