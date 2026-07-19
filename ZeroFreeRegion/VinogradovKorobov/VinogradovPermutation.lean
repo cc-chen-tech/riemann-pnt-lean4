@@ -36,6 +36,24 @@ theorem isVinogradovSolutionInt_comp_perm_iff {k s : ℕ}
   · intro h
     exact h.comp_perm e
 
+/-- Integer power sums are invariant under an arbitrary finite coordinate
+equivalence. -/
+theorem vinogradovPowerSumInt_comp_equiv {k s t : ℕ}
+    (e : Fin s ≃ Fin t) (x : Fin t → ℤ) (j : Fin k) :
+    vinogradovPowerSumInt (fun i ↦ x (e i)) j =
+      vinogradovPowerSumInt x j := by
+  unfold vinogradovPowerSumInt
+  exact _root_.Equiv.sum_comp e (fun i ↦ x i ^ (j.val + 1))
+
+theorem isVinogradovSolutionInt_comp_equiv_iff {k s t : ℕ}
+    (e : Fin s ≃ Fin t) (x y : Fin t → ℤ) :
+    IsVinogradovSolutionInt k s
+        (fun i ↦ x (e i)) (fun i ↦ y (e i)) ↔
+      IsVinogradovSolutionInt k t x y := by
+  constructor <;> intro h j
+  · simpa only [vinogradovPowerSumInt_comp_equiv] using h j
+  · simpa only [vinogradovPowerSumInt_comp_equiv] using h j
+
 /-- Reindexing residue coordinates by a permutation preserves every residue
 power sum. -/
 theorem vinogradovResiduePowerSum_comp_perm {p d s : ℕ}
@@ -67,6 +85,26 @@ theorem isVinogradovResidueSolution_comp_perm_iff {p d s : ℕ}
   · intro h
     exact h.comp_perm e
 
+/-- Residue power sums are unchanged when the coordinate type is replaced by
+an equivalent finite type. -/
+theorem vinogradovResiduePowerSum_comp_equiv {p d s t : ℕ}
+    (e : Fin s ≃ Fin t) (x : Fin t → ZMod p) (j : Fin d) :
+    vinogradovResiduePowerSum p (fun i ↦ x (e i)) j =
+      vinogradovResiduePowerSum p x j := by
+  unfold vinogradovResiduePowerSum
+  exact _root_.Equiv.sum_comp e (fun i ↦ x i ^ (j.val + 1))
+
+/-- The residue Vinogradov system is invariant under an arbitrary finite
+coordinate equivalence, including arithmetic reassociations of `Fin` sizes. -/
+theorem isVinogradovResidueSolution_comp_equiv_iff {p d s t : ℕ}
+    (e : Fin s ≃ Fin t) (x y : Fin t → ZMod p) :
+    IsVinogradovResidueSolution p d s
+        (fun i ↦ x (e i)) (fun i ↦ y (e i)) ↔
+      IsVinogradovResidueSolution p d t x y := by
+  constructor <;> intro h j
+  · simpa only [vinogradovResiduePowerSum_comp_equiv] using h j
+  · simpa only [vinogradovResiduePowerSum_comp_equiv] using h j
+
 /-- The bounded modular power sums are also invariant under coordinate
 permutation. -/
 theorem vinogradovPowerSumMod_comp_perm {Q k s X : ℕ}
@@ -96,6 +134,25 @@ theorem isVinogradovSolutionMod_comp_perm_iff {Q k s X : ℕ}
     simpa using h.comp_perm e.symm
   · intro h
     exact h.comp_perm e
+
+/-- Bounded modular power sums are invariant under an arbitrary finite
+coordinate equivalence. -/
+theorem vinogradovPowerSumMod_comp_equiv {Q k s t X : ℕ}
+    (e : Fin s ≃ Fin t) (x : Fin t → Fin X) (j : Fin k) :
+    vinogradovPowerSumMod Q (fun i ↦ x (e i)) j =
+      vinogradovPowerSumMod Q x j := by
+  unfold vinogradovPowerSumMod
+  exact _root_.Equiv.sum_comp e
+    (fun i ↦ ((x i).val + 1 : ZMod Q) ^ (j.val + 1))
+
+theorem isVinogradovSolutionMod_comp_equiv_iff {Q k s t X : ℕ}
+    (e : Fin s ≃ Fin t) (x y : Fin t → Fin X) :
+    IsVinogradovSolutionMod Q k s X
+        (fun i ↦ x (e i)) (fun i ↦ y (e i)) ↔
+      IsVinogradovSolutionMod Q k t X x y := by
+  constructor <;> intro h j
+  · simpa only [vinogradovPowerSumMod_comp_equiv] using h j
+  · simpa only [vinogradovPowerSumMod_comp_equiv] using h j
 
 /-- The cyclic coordinate permutation that moves block `q` to the front of a
 tuple consisting of `q + 1 + a` length-`k` blocks and an `r`-coordinate tail. -/
@@ -211,6 +268,87 @@ theorem VinogradovFirstNonsingularBlock.cycledHead_injective
   intro i j hij
   apply h.selectedBlock_injective hk
   simpa [vinogradovBlockCycle_head_value] using hij
+
+/-- The selected-block cycle, with the tuple size reassociated as one
+length-`k` head followed by all remaining coordinates. -/
+def vinogradovCycledHeadTailEquiv
+    (k r q a : ℕ) (hk : 0 < k) :
+    Fin (k + (q * k + a * k + r)) ≃
+      Fin ((q + 1 + a) * k + r) :=
+  (finCongr (by
+    simp only [Nat.add_mul, one_mul]
+    omega)).trans (vinogradovBlockCycle k r q a hk)
+
+/-- The head of the reassociated tuple is sent to the selected block by the
+cycle. -/
+theorem vinogradovCycledHeadTailEquiv_castAdd
+    (k r q a : ℕ) (hk : 0 < k) (i : Fin k) :
+    vinogradovCycledHeadTailEquiv k r q a hk
+        (Fin.castAdd (q * k + a * k + r) i) =
+      vinogradovBlockCycle k r q a hk
+        (vinogradovHeadIndex k r q a hk i) := by
+  unfold vinogradovCycledHeadTailEquiv
+  apply congrArg (vinogradovBlockCycle k r q a hk)
+  apply Fin.ext
+  rfl
+
+/-- A tuple after moving block `q` to the front and exposing the exact
+`Fin (k + tail)` shape used by the Hensel lifting API. -/
+def vinogradovCycledHeadTailTuple
+    {α : Type*} (k r q a : ℕ) (hk : 0 < k)
+    (x : Fin ((q + 1 + a) * k + r) → α) :
+    Fin (k + (q * k + a * k + r)) → α :=
+  fun i ↦ x (vinogradovCycledHeadTailEquiv k r q a hk i)
+
+/-- The reassociated tuple's Hensel head is exactly the cycled selected
+block. -/
+theorem vinogradovCycledHeadTailTuple_castAdd
+    {α : Type*} (k r q a : ℕ) (hk : 0 < k)
+    (x : Fin ((q + 1 + a) * k + r) → α) (i : Fin k) :
+    vinogradovCycledHeadTailTuple k r q a hk x
+        (Fin.castAdd (q * k + a * k + r) i) =
+      x (vinogradovBlockCycle k r q a hk
+        (vinogradovHeadIndex k r q a hk i)) := by
+  rw [vinogradovCycledHeadTailTuple,
+    vinogradovCycledHeadTailEquiv_castAdd]
+
+/-- Cycling and reassociating coordinates preserves the full residue
+Vinogradov system. -/
+theorem isVinogradovResidueSolution_cycledHeadTail_iff
+    {p d : ℕ} (k r q a : ℕ) (hk : 0 < k)
+    (x y : Fin ((q + 1 + a) * k + r) → ZMod p) :
+    IsVinogradovResidueSolution p d (k + (q * k + a * k + r))
+        (vinogradovCycledHeadTailTuple k r q a hk x)
+        (vinogradovCycledHeadTailTuple k r q a hk y) ↔
+      IsVinogradovResidueSolution p d ((q + 1 + a) * k + r) x y := by
+  exact isVinogradovResidueSolution_comp_equiv_iff
+    (vinogradovCycledHeadTailEquiv k r q a hk) x y
+
+/-- The same selected-block cycle and reassociation preserves each bounded
+modular Vinogradov system. -/
+theorem isVinogradovSolutionMod_cycledHeadTail_iff
+    (Q d X k r q a : ℕ) (hk : 0 < k)
+    (x y : Fin ((q + 1 + a) * k + r) → Fin X) :
+    IsVinogradovSolutionMod Q d (k + (q * k + a * k + r)) X
+        (vinogradovCycledHeadTailTuple k r q a hk x)
+        (vinogradovCycledHeadTailTuple k r q a hk y) ↔
+      IsVinogradovSolutionMod Q d ((q + 1 + a) * k + r) X x y := by
+  exact isVinogradovSolutionMod_comp_equiv_iff
+    (vinogradovCycledHeadTailEquiv k r q a hk) x y
+
+/-- A first-nonsingular stratum becomes an injective Hensel head after the
+selected block is cycled and the tuple size is reassociated. -/
+theorem VinogradovFirstNonsingularBlock.cycledHeadTail_injective
+    {p k r q a : ℕ}
+    {x : Fin ((q + 1 + a) * k + r) → ZMod p}
+    (h : VinogradovFirstNonsingularBlock p k r q a x)
+    (hk : 0 < k) :
+    Function.Injective fun i : Fin k ↦
+      vinogradovCycledHeadTailTuple k r q a hk x
+        (Fin.castAdd (q * k + a * k + r) i) := by
+  intro i j hij
+  apply h.cycledHead_injective hk
+  simpa only [vinogradovCycledHeadTailTuple_castAdd] using hij
 
 end
 
