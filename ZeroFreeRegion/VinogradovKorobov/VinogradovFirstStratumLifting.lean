@@ -195,6 +195,65 @@ theorem card_vinogradovPrimePowerFirstNonsingularSolutionSet_zero_le
   rw [← card_vinogradovPrimeFirstNonsingularAmbientSet p k r q a]
   exact Finset.card_le_card hsubset
 
+/-- After a standard Hensel digit lift in cycled coordinates, undoing the
+cycle preserves every original left coordinate modulo `p`. -/
+theorem vinogradovPrimePowerLiftAmbientEquiv_uncycled_fst_mod
+    (p k r q a n : ℕ) [Fact p.Prime] (hk : 0 < k)
+    (xy : vinogradovPrimePowerBasePair p k
+      (q * k + a * k + r) n)
+    (z : vinogradovPrimePowerSplitCorrection p k
+      (q * k + a * k + r))
+    (i : Fin ((q + 1 + a) * k + r)) :
+    (((((vinogradovCycledHeadTailPairEquiv
+      (α := Fin (p ^ (n + 2))) k r q a hk).symm
+        (vinogradovPrimePowerLiftAmbientEquiv p k
+          (q * k + a * k + r) n ⟨xy, z⟩)).1 i).val + 1 : ℕ) :
+        ZMod p) =
+      (((((vinogradovCycledHeadTailPairEquiv
+        (α := Fin (p ^ (n + 1))) k r q a hk).symm xy).1 i).val + 1 : ℕ) :
+        ZMod p) := by
+  simpa [vinogradovCycledHeadTailPairEquiv,
+    vinogradovCycledHeadTailFunctionEquiv] using
+      (vinogradovPrimePowerLiftAmbientEquiv_fst_mod p k
+        (q * k + a * k + r) n xy z
+        ((vinogradovCycledHeadTailEquiv k r q a hk).symm i))
+
+/-- The exact first-nonsingular residue stratum is invariant under one
+Hensel digit lift performed after cycling its selected block to the head. -/
+theorem vinogradovPrimePowerLiftAmbientEquiv_uncycled_firstNonsingular_iff
+    (p k r q a n : ℕ) [Fact p.Prime] (hk : 0 < k)
+    (xy : vinogradovPrimePowerBasePair p k
+      (q * k + a * k + r) n)
+    (z : vinogradovPrimePowerSplitCorrection p k
+      (q * k + a * k + r)) :
+    VinogradovFirstNonsingularBlock p k r q a
+        (fun i ↦
+          (((((vinogradovCycledHeadTailPairEquiv
+            (α := Fin (p ^ (n + 2))) k r q a hk).symm
+              (vinogradovPrimePowerLiftAmbientEquiv p k
+                (q * k + a * k + r) n ⟨xy, z⟩)).1 i).val + 1 : ℕ) :
+            ZMod p)) ↔
+      VinogradovFirstNonsingularBlock p k r q a
+        (fun i ↦
+          (((((vinogradovCycledHeadTailPairEquiv
+            (α := Fin (p ^ (n + 1))) k r q a hk).symm xy).1 i).val + 1 : ℕ) :
+            ZMod p)) := by
+  have hfun :
+      (fun i ↦
+        (((((vinogradovCycledHeadTailPairEquiv
+          (α := Fin (p ^ (n + 2))) k r q a hk).symm
+            (vinogradovPrimePowerLiftAmbientEquiv p k
+              (q * k + a * k + r) n ⟨xy, z⟩)).1 i).val + 1 : ℕ) :
+          ZMod p)) =
+        (fun i ↦
+          (((((vinogradovCycledHeadTailPairEquiv
+            (α := Fin (p ^ (n + 1))) k r q a hk).symm xy).1 i).val + 1 : ℕ) :
+            ZMod p)) := by
+    funext i
+    exact vinogradovPrimePowerLiftAmbientEquiv_uncycled_fst_mod
+      p k r q a n hk xy z i
+  rw [hfun]
+
 /-- Cycling a first-nonsingular prime-power solution puts it in the standard
 Hensel solution set with a nonsingular head. -/
 theorem vinogradovCycledHeadTailPairEquiv_mem_nonsingular
