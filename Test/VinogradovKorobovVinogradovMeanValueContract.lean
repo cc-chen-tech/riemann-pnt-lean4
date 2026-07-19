@@ -1,0 +1,12 @@
+import ZeroFreeRegion.VinogradovKorobov.VinogradovMeanValue
+
+open ZeroFreeRegion.VinogradovKorobov
+
+#check vinogradovPowerSumMod
+#check IsVinogradovSolutionMod
+#check vinogradovSolutionCountMod
+#check sum_stdAddChar_mul
+#check normalized_sum_stdAddChar_mul
+#check vinogradovSolutionSelector
+#check vinogradovSolutionSelector_eq_indicator
+#check sum_vinogradovSolutionSelector_eq_count

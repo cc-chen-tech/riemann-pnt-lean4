@@ -144,6 +144,7 @@ lean_lib RiemannPNT where
     `Test.VinogradovKorobovZeroFreeClosureContract,
     `Test.VinogradovKorobovZetaGrowthToLogDerivativeContract,
     `Test.VinogradovKorobovParameterizedZeroRepulsionContract,
+    `Test.VinogradovKorobovVinogradovMeanValueContract,
     `Test.VinogradovKorobovVanDerCorputRangeContract,
     `Test.VinogradovKorobovLogVanDerCorputContract
   ]
