@@ -1,4 +1,7 @@
 import HardyTheorem.AnalyticSignChange
 
 #check HardyTheorem.odd_analyticOrderNatAt_of_local_sign_change
+#check HardyTheorem.odd_analyticOrderNatAt_of_reverse_local_sign_change
 
+#print axioms HardyTheorem.odd_analyticOrderNatAt_of_local_sign_change
+#print axioms HardyTheorem.odd_analyticOrderNatAt_of_reverse_local_sign_change

@@ -49,4 +49,25 @@ theorem odd_analyticOrderNatAt_of_local_sign_change
       constructor <;> linarith [hx.1, hx.2]
     exact (not_lt_of_ge (hbound hdist)) hxneg
 
+/-- The reverse orientation of a genuine local sign change also forces odd
+analytic order. -/
+theorem odd_analyticOrderNatAt_of_reverse_local_sign_change
+    {f : ℝ → ℝ} {c : ℝ}
+    (hf : AnalyticAt ℝ f c)
+    (hfinite : analyticOrderAt f c ≠ ⊤)
+    (hleft : ∀ ε > 0, ∃ x ∈ Set.Ioo (c - ε) c, 0 < f x)
+    (hright : ∀ ε > 0, ∃ x ∈ Set.Ioo c (c + ε), f x < 0) :
+    Odd (analyticOrderNatAt f c) := by
+  have hnegfinite : analyticOrderAt (-f) c ≠ ⊤ := by
+    simpa using hfinite
+  have hodd := odd_analyticOrderNatAt_of_local_sign_change
+    hf.neg hnegfinite
+    (fun ε hε => by
+      obtain ⟨x, hx, hxpos⟩ := hleft ε hε
+      exact ⟨x, hx, neg_lt_zero.mpr hxpos⟩)
+    (fun ε hε => by
+      obtain ⟨x, hx, hxneg⟩ := hright ε hε
+      exact ⟨x, hx, neg_pos.mpr hxneg⟩)
+  simpa [analyticOrderNatAt] using hodd
+
 end HardyTheorem

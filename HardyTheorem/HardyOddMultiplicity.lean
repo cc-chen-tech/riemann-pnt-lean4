@@ -320,4 +320,45 @@ theorem odd_analyticOrderNatAt_riemannZeta_of_hardyZ_local_sign_change
   exact odd_analyticOrderNatAt_of_local_sign_change
     (analyticAt_criticalLineCompletedRiemannZeta t) hfinite hleft' hright'
 
+/-- A local sign change of Hardy's `Z` function in the reverse orientation
+also forces odd zeta multiplicity. -/
+theorem odd_analyticOrderNatAt_riemannZeta_of_hardyZ_reverse_local_sign_change
+    {t : ℝ}
+    (hleft : ∀ ε > 0, ∃ x ∈ Set.Ioo (t - ε) t, 0 < hardyZ x)
+    (hright : ∀ ε > 0, ∃ x ∈ Set.Ioo t (t + ε), hardyZ x < 0) :
+    Odd (analyticOrderNatAt riemannZeta ((1 / 2 : ℂ) + I * t)) := by
+  have hleft' : ∀ ε > 0, ∃ x ∈ Set.Ioo (t - ε) t,
+      0 < criticalLineCompletedRiemannZeta x := by
+    intro ε hε
+    obtain ⟨x, hx, hxpos⟩ := hleft ε hε
+    refine ⟨x, hx, ?_⟩
+    rw [hardyZ_eq_criticalLineCompletedRiemannZeta_div_norm] at hxpos
+    have hnorm : 0 < ‖Gammaℝ ((1 / 2 : ℂ) + I * x)‖ :=
+      norm_pos_iff.mpr (Gammaℝ_ne_zero_of_re_pos (by simp))
+    exact (div_pos_iff_of_pos_right hnorm).mp hxpos
+  have hright' : ∀ ε > 0, ∃ x ∈ Set.Ioo t (t + ε),
+      criticalLineCompletedRiemannZeta x < 0 := by
+    intro ε hε
+    obtain ⟨x, hx, hxneg⟩ := hright ε hε
+    refine ⟨x, hx, ?_⟩
+    rw [hardyZ_eq_criticalLineCompletedRiemannZeta_div_norm] at hxneg
+    have hnorm : 0 < ‖Gammaℝ ((1 / 2 : ℂ) + I * x)‖ :=
+      norm_pos_iff.mpr (Gammaℝ_ne_zero_of_re_pos (by simp))
+    by_contra hnot
+    exact (not_lt_of_ge (div_nonneg (le_of_not_gt hnot) hnorm.le)) hxneg
+  have hfinite : analyticOrderAt criticalLineCompletedRiemannZeta t ≠ ⊤ := by
+    intro htop
+    have hzero := analyticOrderAt_eq_top.mp htop
+    rw [Metric.eventually_nhds_iff] at hzero
+    obtain ⟨ε, hε, hzero⟩ := hzero
+    obtain ⟨x, hx, hxneg⟩ := hright' ε hε
+    have hdist : dist x t < ε := by
+      rw [Real.dist_eq, abs_lt]
+      constructor <;> linarith [hx.1, hx.2]
+    rw [hzero hdist] at hxneg
+    exact lt_irrefl 0 hxneg
+  rw [← analyticOrderNatAt_criticalLineCompletedRiemannZeta_eq_riemannZeta t]
+  exact odd_analyticOrderNatAt_of_reverse_local_sign_change
+    (analyticAt_criticalLineCompletedRiemannZeta t) hfinite hleft' hright'
+
 end HardyTheorem
