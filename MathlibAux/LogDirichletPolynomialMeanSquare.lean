@@ -294,4 +294,109 @@ theorem integral_normSq_logExponentialPolynomial_le
   have hlength : 0 ≤ b - a := sub_nonneg.mpr hab
   nlinarith
 
+/-- A logarithmic-frequency polynomial supported on arbitrary positive
+indices up to `N` has a global second-moment bound.  The endpoint cost is
+`O(N)` times the coefficient energy. -/
+theorem integral_normSq_logExponentialPolynomial_le_of_upper
+    {N : ℕ} (hN : 0 < N) (s : Finset ℕ) (coeff : ℕ → ℂ)
+    (hpositive : ∀ n ∈ s, n ≠ 0) (hupper : ∀ n ∈ s, n ≤ N)
+    {a b : ℝ} :
+    (∫ t in a..b,
+        Complex.normSq
+          (exponentialPolynomial s coeff (fun n => Real.log n) t)) ≤
+      ((b - a) + 4 * (5 * Real.pi + 4) * N) *
+        ∑ n ∈ s, Complex.normSq (coeff n) := by
+  let P : ℝ → ℂ := fun t =>
+    exponentialPolynomial s coeff (fun n => Real.log n) t
+  have hPcont : Continuous P := by
+    dsimp only [P, exponentialPolynomial]
+    fun_prop
+  have hre :
+      (∫ t in a..b, Complex.normSq (P t)) =
+        (∫ t in a..b, (starRingEnd ℂ) (P t) * P t).re := by
+    have hcomplexInt : IntervalIntegrable
+        (fun t : ℝ => (starRingEnd ℂ) (P t) * P t) volume a b := by
+      apply Continuous.intervalIntegrable
+      fun_prop
+    calc
+      (∫ t in a..b, Complex.normSq (P t)) =
+          ∫ t in a..b, ((starRingEnd ℂ) (P t) * P t).re := by
+        apply intervalIntegral.integral_congr
+        intro t ht
+        exact congrArg Complex.re
+          (Complex.normSq_eq_conj_mul_self (z := P t))
+      _ = (∫ t in a..b, (starRingEnd ℂ) (P t) * P t).re :=
+        Complex.reCLM.intervalIntegral_comp_comm hcomplexInt
+  have hexact := integral_conj_mul_logExponentialPolynomial_eq
+    (s := s) (coeff := coeff) hpositive (a := a) (b := b)
+  have htwist (t : ℝ) (n : ℕ) :
+      Complex.normSq (logTwistedCoeff coeff t n) =
+        Complex.normSq (coeff n) := by
+    dsimp only [logTwistedCoeff]
+    have hexp : Complex.normSq
+        (Complex.exp (I * ((Real.log n * t : ℝ) : ℂ))) = 1 := by
+      rw [Complex.normSq_eq_norm_sq,
+        Complex.norm_exp_I_mul_ofReal]
+      norm_num
+    rw [Complex.normSq_mul, hexp, mul_one]
+  have hbnd (t : ℝ) :
+      ‖logarithmicHilbertForm s (logTwistedCoeff coeff t)‖ ≤
+        2 * ((5 * Real.pi + 4) * N *
+          ∑ n ∈ s, Complex.normSq (coeff n)) := by
+    have h := norm_logarithmicHilbertBilinearForm_le_of_upper
+      hN s (logTwistedCoeff coeff t) (logTwistedCoeff coeff t)
+        hpositive hupper
+    change ‖logarithmicHilbertBilinearForm s
+      (logTwistedCoeff coeff t) (logTwistedCoeff coeff t)‖ ≤ _
+    calc
+      ‖logarithmicHilbertBilinearForm s
+          (logTwistedCoeff coeff t) (logTwistedCoeff coeff t)‖ ≤
+          (5 * Real.pi + 4) * N *
+            ((∑ n ∈ s,
+                Complex.normSq (logTwistedCoeff coeff t n)) +
+              ∑ n ∈ s,
+                Complex.normSq (logTwistedCoeff coeff t n)) := h
+      _ = 2 * ((5 * Real.pi + 4) * N *
+            ∑ n ∈ s, Complex.normSq (coeff n)) := by
+        simp only [htwist]
+        ring
+  rw [hre, hexact]
+  have himajor :
+      ((1 / I) *
+        (logarithmicHilbertForm s (logTwistedCoeff coeff b) -
+          logarithmicHilbertForm s (logTwistedCoeff coeff a))).re ≤
+        4 * ((5 * Real.pi + 4) * N *
+          ∑ n ∈ s, Complex.normSq (coeff n)) := by
+    calc
+      ((1 / I) *
+          (logarithmicHilbertForm s (logTwistedCoeff coeff b) -
+            logarithmicHilbertForm s (logTwistedCoeff coeff a))).re ≤
+          ‖(1 / I) *
+            (logarithmicHilbertForm s (logTwistedCoeff coeff b) -
+              logarithmicHilbertForm s (logTwistedCoeff coeff a))‖ :=
+        Complex.re_le_norm _
+      _ = ‖logarithmicHilbertForm s (logTwistedCoeff coeff b) -
+              logarithmicHilbertForm s (logTwistedCoeff coeff a)‖ := by
+        rw [norm_mul, norm_div, norm_one, norm_I, div_one, one_mul]
+      _ ≤ ‖logarithmicHilbertForm s (logTwistedCoeff coeff b)‖ +
+            ‖logarithmicHilbertForm s (logTwistedCoeff coeff a)‖ :=
+        norm_sub_le _ _
+      _ ≤ 4 * ((5 * Real.pi + 4) * N *
+            ∑ n ∈ s, Complex.normSq (coeff n)) := by
+        nlinarith [hbnd a, hbnd b]
+  rw [show
+      (((b - a : ℝ) : ℂ) *
+          ((∑ n ∈ s, Complex.normSq (coeff n) : ℝ) : ℂ) +
+        (1 / I) *
+          (logarithmicHilbertForm s (logTwistedCoeff coeff b) -
+            logarithmicHilbertForm s (logTwistedCoeff coeff a))).re =
+        (b - a) * (∑ n ∈ s, Complex.normSq (coeff n)) +
+          ((1 / I) *
+            (logarithmicHilbertForm s (logTwistedCoeff coeff b) -
+              logarithmicHilbertForm s (logTwistedCoeff coeff a))).re by
+    simp]
+  have henergy : 0 ≤ ∑ n ∈ s, Complex.normSq (coeff n) := by
+    exact Finset.sum_nonneg fun n hn => Complex.normSq_nonneg (coeff n)
+  nlinarith
+
 end MathlibAux

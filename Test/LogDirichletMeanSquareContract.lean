@@ -1,4 +1,6 @@
 import MathlibAux.LogDirichletPolynomialMeanSquare
 
 #check MathlibAux.integral_normSq_logExponentialPolynomial_le
+#check MathlibAux.integral_normSq_logExponentialPolynomial_le_of_upper
 #print axioms MathlibAux.integral_normSq_logExponentialPolynomial_le
+#print axioms MathlibAux.integral_normSq_logExponentialPolynomial_le_of_upper
