@@ -10,6 +10,8 @@ import HardyTheorem.ShortIntervalMeanValue
 import HardyTheorem.ShortIntegralZeroDetection
 import HardyTheorem.HardyModelApproximation
 import HardyTheorem.CriticalLineShortDirichlet
+import HardyTheorem.CriticalLineShortDirichletUniform
+import HardyTheorem.HardyShortAbsLower
 import HardyTheorem.HardyShortSignedMeanSquare
 import HardyTheorem.HardyShortSecondMoment
 import HardyTheorem.HardyPhaseSecondMoment
@@ -57,6 +59,9 @@ import MathlibAux.DyadicWeightedSquareHighTail
 import MathlibAux.RealDyadicScale
 import MathlibAux.LogKernelRemainder
 import MathlibAux.LogDirichletPolynomialMeanSquare
+import MathlibAux.NegativeLogDirichletPolynomialMeanSquare
+import MathlibAux.LogSquareSummability
+import MathlibAux.IntervalPackingFromMeasure
 import MathlibAux.LogarithmicHilbertIntegrationByParts
 import MathlibAux.TimeDependentLogHilbert
 import MathlibAux.TimeDependentLogHilbertMeasurable
