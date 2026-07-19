@@ -175,6 +175,7 @@ lean_lib RiemannPNT where
     `Test.VinogradovKorobovTranslatedCongruenceContract,
     `Test.VinogradovKorobovSpacedNormalizationContract,
     `Test.VinogradovKorobovMatrixNormalizationContract,
+    `Test.VinogradovKorobovNormalFormEvaluationContract,
     `Test.VinogradovKorobovVanDerCorputRangeContract,
     `Test.VinogradovKorobovLogVanDerCorputContract
   ]
