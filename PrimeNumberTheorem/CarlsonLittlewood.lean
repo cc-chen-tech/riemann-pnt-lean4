@@ -506,8 +506,9 @@ theorem sub_mul_zeroDensityCount_le_regularizedCarlsonWeightedZeroSum
         (fun rho hrhoP _ => hPnonneg rho hrhoP)
 
 /-- Carlson's zero-density count is reduced to the four Littlewood edge
-integrals on an automatically selected zero-free rectangle. -/
-theorem exists_regularizedCarlson_goodRectangle_zeroDensity_le_fourEdges
+integrals on an automatically selected zero-free rectangle, retaining the
+four nonvanishing certificates needed by the logarithmic-norm formula. -/
+theorem exists_regularizedCarlson_goodRectangle_zeroDensity_certificate
     {X : ℕ} (hX : 1 ≤ X) {sigma T : ℝ}
     (hsigma : 0 < sigma) (hsigmaOne : sigma < 1) (hT : 0 ≤ T) :
     ∃ x0 x1 y0 y1 : ℝ,
@@ -515,6 +516,18 @@ theorem exists_regularizedCarlson_goodRectangle_zeroDensity_le_fourEdges
       1 < x1 ∧ x1 < 2 ∧ x0 < x1 ∧
       -1 < y0 ∧ y0 < 0 ∧
       T < y1 ∧ y1 < T + 1 ∧ y0 < y1 ∧
+      (∀ y ∈ Set.Icc y0 y1,
+        regularizedCarlsonZeroDetector X
+          ((x0 : ℂ) + (y : ℂ) * I) ≠ 0) ∧
+      (∀ y ∈ Set.Icc y0 y1,
+        regularizedCarlsonZeroDetector X
+          ((x1 : ℂ) + (y : ℂ) * I) ≠ 0) ∧
+      (∀ x ∈ Set.Icc x0 x1,
+        regularizedCarlsonZeroDetector X
+          ((x : ℂ) + (y0 : ℂ) * I) ≠ 0) ∧
+      (∀ x ∈ Set.Icc x0 x1,
+        regularizedCarlsonZeroDetector X
+          ((x : ℂ) + (y1 : ℂ) * I) ≠ 0) ∧
       (2 * Real.pi) * (sigma - x0) *
           (ZeroDensity.zeroDensityCount sigma T : ℝ) ≤
         regularizedCarlsonLittlewoodFourEdges X x0 x1 y0 y1 := by
@@ -546,7 +559,8 @@ theorem exists_regularizedCarlson_goodRectangle_zeroDensity_le_fourEdges
       hX hx0 hx01 hy01 hleft hright hbottom htop
   refine ⟨x0, x1, y0, y1,
     hx0Lower, hx0Upper, hx1Lower, hx1Upper, hx01,
-    hy0Lower, hy0Upper, hy1Lower, hy1Upper, hy01, ?_⟩
+    hy0Lower, hy0Upper, hy1Lower, hy1Upper, hy01,
+    hleft, hright, hbottom, htop, ?_⟩
   calc
     (2 * Real.pi) * (sigma - x0) *
         (ZeroDensity.zeroDensityCount sigma T : ℝ) =
@@ -561,6 +575,29 @@ theorem exists_regularizedCarlson_goodRectangle_zeroDensity_le_fourEdges
               (regularizedCarlsonZeroDetector X) rho : ℝ) := hscaled
     _ = regularizedCarlsonLittlewoodFourEdges X x0 x1 y0 y1 := by
       simpa [regularizedCarlsonLittlewoodFourEdges] using hedges
+
+/-- Projection of the certified good rectangle to the four-edge counting
+inequality used by earlier callers. -/
+theorem exists_regularizedCarlson_goodRectangle_zeroDensity_le_fourEdges
+    {X : ℕ} (hX : 1 ≤ X) {sigma T : ℝ}
+    (hsigma : 0 < sigma) (hsigmaOne : sigma < 1) (hT : 0 ≤ T) :
+    ∃ x0 x1 y0 y1 : ℝ,
+      sigma / 2 < x0 ∧ x0 < sigma ∧
+      1 < x1 ∧ x1 < 2 ∧ x0 < x1 ∧
+      -1 < y0 ∧ y0 < 0 ∧
+      T < y1 ∧ y1 < T + 1 ∧ y0 < y1 ∧
+      (2 * Real.pi) * (sigma - x0) *
+          (ZeroDensity.zeroDensityCount sigma T : ℝ) ≤
+        regularizedCarlsonLittlewoodFourEdges X x0 x1 y0 y1 := by
+  obtain ⟨x0, x1, y0, y1,
+      hx0Lower, hx0Upper, hx1Lower, hx1Upper, hx01,
+      hy0Lower, hy0Upper, hy1Lower, hy1Upper, hy01,
+      _hleft, _hright, _hbottom, _htop, hbound⟩ :=
+    exists_regularizedCarlson_goodRectangle_zeroDensity_certificate
+      hX hsigma hsigmaOne hT
+  exact ⟨x0, x1, y0, y1,
+    hx0Lower, hx0Upper, hx1Lower, hx1Upper, hx01,
+    hy0Lower, hy0Upper, hy1Lower, hy1Upper, hy01, hbound⟩
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem

@@ -97,6 +97,31 @@ example {X : ℕ} (hX : 1 ≤ X) {sigma T : ℝ}
   exists_regularizedCarlson_goodRectangle_zeroDensity_le_fourEdges
     hX hsigma hsigmaOne hT
 
+example {X : ℕ} (hX : 1 ≤ X) {sigma T : ℝ}
+    (hsigma : 0 < sigma) (hsigmaOne : sigma < 1) (hT : 0 ≤ T) :
+    ∃ x0 x1 y0 y1 : ℝ,
+      sigma / 2 < x0 ∧ x0 < sigma ∧
+      1 < x1 ∧ x1 < 2 ∧ x0 < x1 ∧
+      -1 < y0 ∧ y0 < 0 ∧
+      T < y1 ∧ y1 < T + 1 ∧ y0 < y1 ∧
+      (∀ y ∈ Set.Icc y0 y1,
+        regularizedCarlsonZeroDetector X
+          ((x0 : ℂ) + (y : ℂ) * I) ≠ 0) ∧
+      (∀ y ∈ Set.Icc y0 y1,
+        regularizedCarlsonZeroDetector X
+          ((x1 : ℂ) + (y : ℂ) * I) ≠ 0) ∧
+      (∀ x ∈ Set.Icc x0 x1,
+        regularizedCarlsonZeroDetector X
+          ((x : ℂ) + (y0 : ℂ) * I) ≠ 0) ∧
+      (∀ x ∈ Set.Icc x0 x1,
+        regularizedCarlsonZeroDetector X
+          ((x : ℂ) + (y1 : ℂ) * I) ≠ 0) ∧
+      (2 * Real.pi) * (sigma - x0) *
+          (ZeroDensity.zeroDensityCount sigma T : ℝ) ≤
+        regularizedCarlsonLittlewoodFourEdges X x0 x1 y0 y1 :=
+  exists_regularizedCarlson_goodRectangle_zeroDensity_certificate
+    hX hsigma hsigmaOne hT
+
 example {X : ℕ} {x0 y0 y1 : ℝ}
     (hx0 : 0 < x0) (hy01 : y0 < y1)
     (hleft : ∀ y ∈ Set.Icc y0 y1,
@@ -177,6 +202,7 @@ example {X : ℕ} {x0 x1 y0 y1 : ℝ}
 #print axioms two_pi_mul_regularizedCarlsonZeroMultiplicityWeightedRealSum_eq_four_edges
 #print axioms sub_mul_zeroDensityCount_le_regularizedCarlsonWeightedZeroSum
 #print axioms exists_regularizedCarlson_goodRectangle_zeroDensity_le_fourEdges
+#print axioms exists_regularizedCarlson_goodRectangle_zeroDensity_certificate
 #print axioms regularizedCarlsonLittlewood_leftEdge_eq_logNorm
 #print axioms regularizedCarlsonLittlewood_rightEdge_eq_logNorm
 #print axioms regularizedCarlsonLittlewoodFourEdges_eq_logNormForm
