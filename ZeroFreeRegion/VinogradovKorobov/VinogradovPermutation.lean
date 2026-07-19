@@ -235,6 +235,104 @@ theorem vinogradovFirstNonsingularEquiv_selectedBlock
   rw [← hindex]
   simpa [vinogradovFirstNonsingularEquiv, oldIndex, hsize] using h
 
+/-- A coordinate in one of the initial `q` blocks of the three-part split is
+the corresponding coordinate in the flattened full tuple. -/
+theorem vinogradovFirstNonsingularEquiv_initialBlock
+    {p : ℕ} (k r q a : ℕ)
+    (x : Fin ((q + 1 + a) * k + r) → ZMod p)
+    (j : Fin q) (i : Fin k) :
+    ((vinogradovFirstNonsingularEquiv p k r q a).symm x).1
+        (vinogradovSelectedBlockIndex k 0 q j i) =
+      x (vinogradovSelectedBlockIndex k r (q + 1 + a)
+        ⟨j.val, by omega⟩ i) := by
+  let hsize : q * k + (k + (a * k + r)) =
+      (q + 1 + a) * k + r := by
+    simp only [Nat.add_mul, one_mul]
+    omega
+  let prefixIndex := vinogradovSelectedBlockIndex k 0 q j i
+  let oldIndex : Fin ((q + 1 + a) * k + r) :=
+    Fin.cast hsize (Fin.castAdd (k + (a * k + r)) prefixIndex)
+  have h := congrFun
+    ((vinogradovFirstNonsingularEquiv p k r q a).apply_symm_apply x)
+    oldIndex
+  have hindex : oldIndex =
+      vinogradovSelectedBlockIndex k r (q + 1 + a)
+        ⟨j.val, by omega⟩ i := by
+    apply Fin.ext
+    simp [oldIndex, prefixIndex, vinogradovSelectedBlockIndex]
+  rw [← hindex]
+  simpa [vinogradovFirstNonsingularEquiv, oldIndex, prefixIndex, hsize,
+    Equiv.piCongrLeft_apply, Fin.append_left] using h
+
+/-- The three-part first-nonsingular predicate is exactly the flattened
+direct predicate at block `q`. -/
+theorem firstNonsingularBlock_iff_direct
+    {p k r q a : ℕ} (hk : 0 < k)
+    (x : Fin ((q + 1 + a) * k + r) → ZMod p) :
+    VinogradovFirstNonsingularBlock p k r q a x ↔
+      VinogradovFirstNonsingularBlockDirect p k r (q + 1 + a)
+        ⟨q, by omega⟩ x := by
+  let e := vinogradovFirstNonsingularEquiv p k r q a
+  let split := e.symm x
+  let block : Fin (q + 1 + a) := ⟨q, by omega⟩
+  have hprefixValue (j : Fin q) (i : Fin k) :
+      split.1 (vinogradovSelectedBlockIndex k 0 q j i) =
+        x (vinogradovSelectedBlockIndex k r (q + 1 + a)
+          ⟨j.val, by omega⟩ i) := by
+    simpa [e, split] using
+      (vinogradovFirstNonsingularEquiv_initialBlock k r q a x j i)
+  constructor
+  · intro hfirst
+    have hparts : VinogradovAllBlocksSingular p k 0 q split.1 ∧
+        Function.Injective split.2.1 := by
+      simpa [VinogradovFirstNonsingularBlock, e, split] using hfirst
+    constructor
+    · intro j hj hjinj
+      let j' : Fin q := ⟨j.val, by
+        change j.val < q
+        simpa [block] using hj⟩
+      have hsing :=
+        (allBlocksSingular_iff_forall_selectedBlock
+          p k 0 q split.1).mp hparts.1 j'
+      apply hsing
+      intro i l hil
+      apply hjinj
+      have hi := hprefixValue j' i
+      have hl := hprefixValue j' l
+      simpa [j', block, vinogradovSelectedBlockIndex] using
+        (hi.symm.trans (hil.trans hl))
+    · intro i j hij
+      apply hparts.2
+      simpa [block, vinogradovSelectedBlockIndex,
+        vinogradovBlockIndex,
+        vinogradovFirstNonsingularEquiv_selectedBlock,
+        e, split] using hij
+  · intro hdirect
+    have hprefix : VinogradovAllBlocksSingular p k 0 q split.1 := by
+      apply (allBlocksSingular_iff_forall_selectedBlock
+        p k 0 q split.1).mpr
+      intro j hjinj
+      let j' : Fin (q + 1 + a) := ⟨j.val, by omega⟩
+      have hjlt : j' < block := by
+        change j.val < q
+        exact j.isLt
+      apply hdirect.1 j' hjlt
+      intro i l hil
+      apply hjinj
+      have hi := hprefixValue j i
+      have hl := hprefixValue j l
+      simpa [j', block, vinogradovSelectedBlockIndex] using
+        (hi.trans (hil.trans hl.symm))
+    have hselected : Function.Injective split.2.1 := by
+      intro i j hij
+      apply hdirect.2
+      simpa [block, vinogradovSelectedBlockIndex,
+        vinogradovBlockIndex,
+        vinogradovFirstNonsingularEquiv_selectedBlock,
+        e, split] using hij
+    simpa [VinogradovFirstNonsingularBlock, e, split] using
+      And.intro hprefix hselected
+
 /-- A tuple in the `q`-th first-nonsingular stratum has an injective direct
 coordinate block at `q`. -/
 theorem VinogradovFirstNonsingularBlock.selectedBlock_injective

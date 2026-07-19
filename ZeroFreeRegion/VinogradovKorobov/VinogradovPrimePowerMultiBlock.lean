@@ -435,6 +435,488 @@ theorem card_primePowerMultiBlockSingular_add_someNonsingular
     card_vinogradovPrimePowerCompleteSolutionSet] at hcard
   exact hcard.symm
 
+/-- Reassociate the `q`-th first-nonsingular tuple length with the common
+`0 + (b*k+r)` presentation used by the multiblock prime-power API. -/
+def vinogradovPrimePowerFirstStratumCommonEquiv
+    (p k r b n : ℕ) [Fact p.Prime] (q : Fin b) :
+    ((Fin ((q.val + 1 + (b - 1 - q.val)) * k + r) →
+          Fin (p ^ (n + 1))) ×
+        (Fin ((q.val + 1 + (b - 1 - q.val)) * k + r) →
+          Fin (p ^ (n + 1)))) ≃
+      vinogradovPrimePowerBasePair p 0 (b * k + r) n := by
+  have hblocks : q.val + 1 + (b - 1 - q.val) = b := by
+    omega
+  have hsize :
+      (q.val + 1 + (b - 1 - q.val)) * k + r =
+        0 + (b * k + r) := by
+    simp only [Nat.zero_add]
+    rw [hblocks]
+  exact Equiv.prodCongr
+    (Equiv.arrowCongr (finCongr hsize) (Equiv.refl _))
+    (Equiv.arrowCongr (finCongr hsize) (Equiv.refl _))
+
+/-- The `q`-th first-nonsingular prime-power stratum transported to the
+single common tuple type for `b` selected blocks. -/
+noncomputable def vinogradovPrimePowerFirstStratumCommonSet
+    (p k r b n : ℕ) [Fact p.Prime] (q : Fin b) :
+    Finset (vinogradovPrimePowerBasePair p 0 (b * k + r) n) :=
+  (vinogradovPrimePowerFirstNonsingularSolutionSet
+      p k r q.val (b - 1 - q.val) n).map
+    (vinogradovPrimePowerFirstStratumCommonEquiv
+      p k r b n q).toEmbedding
+
+/-- Membership in a common-coordinate stratum is pulled back exactly through
+the coordinate equivalence. -/
+theorem mem_vinogradovPrimePowerFirstStratumCommonSet_iff
+    (p k r b n : ℕ) [Fact p.Prime] (q : Fin b)
+    (xy : vinogradovPrimePowerBasePair p 0 (b * k + r) n) :
+    xy ∈ vinogradovPrimePowerFirstStratumCommonSet p k r b n q ↔
+      (vinogradovPrimePowerFirstStratumCommonEquiv
+        p k r b n q).symm xy ∈
+        vinogradovPrimePowerFirstNonsingularSolutionSet
+          p k r q.val (b - 1 - q.val) n := by
+  classical
+  simp [vinogradovPrimePowerFirstStratumCommonSet]
+
+/-- Common-coordinate transport preserves the numerical value of every left
+tuple coordinate. -/
+theorem vinogradovPrimePowerFirstStratumCommonEquiv_fst_apply
+    (p k r b n : ℕ) [Fact p.Prime] (q : Fin b)
+    (xy :
+      (Fin ((q.val + 1 + (b - 1 - q.val)) * k + r) →
+          Fin (p ^ (n + 1))) ×
+        (Fin ((q.val + 1 + (b - 1 - q.val)) * k + r) →
+          Fin (p ^ (n + 1))))
+    (i : Fin (b * k + r)) :
+    ((vinogradovPrimePowerFirstStratumCommonEquiv
+        p k r b n q) xy).1 (Fin.natAdd 0 i) =
+      xy.1 (Fin.cast (by
+        have hblocks : q.val + 1 + (b - 1 - q.val) = b := by omega
+        simpa [hblocks]) i) := by
+  simp [vinogradovPrimePowerFirstStratumCommonEquiv]
+
+/-- Common-coordinate transport preserves the numerical value of every right
+tuple coordinate. -/
+theorem vinogradovPrimePowerFirstStratumCommonEquiv_snd_apply
+    (p k r b n : ℕ) [Fact p.Prime] (q : Fin b)
+    (xy :
+      (Fin ((q.val + 1 + (b - 1 - q.val)) * k + r) →
+          Fin (p ^ (n + 1))) ×
+        (Fin ((q.val + 1 + (b - 1 - q.val)) * k + r) →
+          Fin (p ^ (n + 1))))
+    (i : Fin (b * k + r)) :
+    ((vinogradovPrimePowerFirstStratumCommonEquiv
+        p k r b n q) xy).2 (Fin.natAdd 0 i) =
+      xy.2 (Fin.cast (by
+        have hblocks : q.val + 1 + (b - 1 - q.val) = b := by omega
+        simpa [hblocks]) i) := by
+  simp [vinogradovPrimePowerFirstStratumCommonEquiv]
+
+/-- The direct first-nonsingular predicate is invariant under transport to
+the common multiblock coordinate type. -/
+theorem vinogradovPrimePowerFirstStratumCommonEquiv_firstDirect_iff
+    (p k r b n : ℕ) [Fact p.Prime] (q : Fin b)
+    (xy :
+      (Fin ((q.val + 1 + (b - 1 - q.val)) * k + r) →
+          Fin (p ^ (n + 1))) ×
+        (Fin ((q.val + 1 + (b - 1 - q.val)) * k + r) →
+          Fin (p ^ (n + 1)))) :
+    VinogradovFirstNonsingularBlockDirect p k r
+        (q.val + 1 + (b - 1 - q.val)) ⟨q.val, by omega⟩
+        (fun i ↦ (((xy.1 i).val + 1 : ℕ) : ZMod p)) ↔
+      VinogradovFirstNonsingularBlockDirect p k r b q
+        (fun i ↦
+          (((((vinogradovPrimePowerFirstStratumCommonEquiv
+            p k r b n q) xy).1 (Fin.natAdd 0 i)).val + 1 : ℕ) : ZMod p)) := by
+  let sourceBlocks := q.val + 1 + (b - 1 - q.val)
+  have hsourceBlocks : sourceBlocks = b := by
+    dsimp [sourceBlocks]
+    omega
+  let toSource (j : Fin b) : Fin sourceBlocks :=
+    ⟨j.val, by simpa [hsourceBlocks] using j.isLt⟩
+  let toCommon (j : Fin sourceBlocks) : Fin b :=
+    ⟨j.val, by simpa [hsourceBlocks] using j.isLt⟩
+  let sourceResidue : Fin (sourceBlocks * k + r) → ZMod p :=
+    fun i ↦ (((xy.1 i).val + 1 : ℕ) : ZMod p)
+  let commonResidue : Fin (b * k + r) → ZMod p :=
+    fun i ↦
+      (((((vinogradovPrimePowerFirstStratumCommonEquiv
+        p k r b n q) xy).1 (Fin.natAdd 0 i)).val + 1 : ℕ) : ZMod p)
+  have hcoord (j : Fin b) (i : Fin k) :
+      commonResidue (vinogradovSelectedBlockIndex k r b j i) =
+        sourceResidue
+          (vinogradovSelectedBlockIndex k r sourceBlocks (toSource j) i) := by
+    dsimp [commonResidue, sourceResidue]
+    rw [vinogradovPrimePowerFirstStratumCommonEquiv_fst_apply]
+    congr 2
+  change
+    VinogradovFirstNonsingularBlockDirect p k r sourceBlocks
+        ⟨q.val, by omega⟩ sourceResidue ↔
+      VinogradovFirstNonsingularBlockDirect p k r b q commonResidue
+  constructor
+  · intro hsource
+    constructor
+    · intro j hj hjinj
+      have hsing := hsource.1 (toSource j) (by
+        change j.val < q.val
+        exact hj)
+      apply hsing
+      intro i l hil
+      apply hjinj
+      change
+        commonResidue (vinogradovSelectedBlockIndex k r b j i) =
+          commonResidue (vinogradovSelectedBlockIndex k r b j l)
+      rw [hcoord j i, hcoord j l]
+      exact hil
+    · intro i j hij
+      apply hsource.2
+      change
+        sourceResidue
+            (vinogradovSelectedBlockIndex k r sourceBlocks (toSource q) i) =
+          sourceResidue
+            (vinogradovSelectedBlockIndex k r sourceBlocks (toSource q) j)
+      rw [← hcoord q i, ← hcoord q j]
+      exact hij
+  · intro hcommon
+    constructor
+    · intro j hj hjinj
+      let j' := toCommon j
+      have hj' : j' < q := by
+        change j.val < q.val
+        exact hj
+      have hsing := hcommon.1 j' hj'
+      apply hsing
+      intro i l hil
+      apply hjinj
+      have hjcast : toSource j' = j := by
+        apply Fin.ext
+        rfl
+      change
+        sourceResidue (vinogradovSelectedBlockIndex k r sourceBlocks j i) =
+          sourceResidue (vinogradovSelectedBlockIndex k r sourceBlocks j l)
+      change
+        commonResidue (vinogradovSelectedBlockIndex k r b j' i) =
+          commonResidue (vinogradovSelectedBlockIndex k r b j' l) at hil
+      rw [hcoord j' i, hcoord j' l, hjcast] at hil
+      exact hil
+    · intro i j hij
+      apply hcommon.2
+      have hq : toSource q = ⟨q.val, by omega⟩ := by
+        apply Fin.ext
+        rfl
+      change
+        commonResidue (vinogradovSelectedBlockIndex k r b q i) =
+          commonResidue (vinogradovSelectedBlockIndex k r b q j)
+      rw [hcoord q i, hcoord q j, hq]
+      exact hij
+
+/-- The modular Vinogradov equations are invariant under transport to the
+common multiblock coordinate type. -/
+theorem vinogradovPrimePowerFirstStratumCommonEquiv_solution_iff
+    (p k r b n : ℕ) [Fact p.Prime] (q : Fin b)
+    (xy :
+      (Fin ((q.val + 1 + (b - 1 - q.val)) * k + r) →
+          Fin (p ^ (n + 1))) ×
+        (Fin ((q.val + 1 + (b - 1 - q.val)) * k + r) →
+          Fin (p ^ (n + 1)))) :
+    IsVinogradovSolutionMod (p ^ (n + 1)) k
+        ((q.val + 1 + (b - 1 - q.val)) * k + r)
+        (p ^ (n + 1)) xy.1 xy.2 ↔
+      IsVinogradovSolutionMod (p ^ (n + 1)) k (b * k + r)
+        (p ^ (n + 1))
+        (fun i ↦ ((vinogradovPrimePowerFirstStratumCommonEquiv
+          p k r b n q) xy).1 (Fin.natAdd 0 i))
+        (fun i ↦ ((vinogradovPrimePowerFirstStratumCommonEquiv
+          p k r b n q) xy).2 (Fin.natAdd 0 i)) := by
+  have hblocks : q.val + 1 + (b - 1 - q.val) = b := by
+    omega
+  have hsize :
+      (q.val + 1 + (b - 1 - q.val)) * k + r = b * k + r := by
+    rw [hblocks]
+  let c := finCongr hsize
+  let leftCommon : Fin (b * k + r) → Fin (p ^ (n + 1)) :=
+    fun i ↦ ((vinogradovPrimePowerFirstStratumCommonEquiv
+      p k r b n q) xy).1 (Fin.natAdd 0 i)
+  let rightCommon : Fin (b * k + r) → Fin (p ^ (n + 1)) :=
+    fun i ↦ ((vinogradovPrimePowerFirstStratumCommonEquiv
+      p k r b n q) xy).2 (Fin.natAdd 0 i)
+  have hx : (fun i ↦ leftCommon (c i)) = xy.1 := by
+    funext i
+    dsimp [leftCommon]
+    rw [vinogradovPrimePowerFirstStratumCommonEquiv_fst_apply]
+    congr 1
+  have hy : (fun i ↦ rightCommon (c i)) = xy.2 := by
+    funext i
+    dsimp [rightCommon]
+    rw [vinogradovPrimePowerFirstStratumCommonEquiv_snd_apply]
+    congr 1
+  have hiff := isVinogradovSolutionMod_comp_equiv_iff
+    c leftCommon rightCommon (Q := p ^ (n + 1)) (k := k)
+    (X := p ^ (n + 1))
+  rw [hx, hy] at hiff
+  exact hiff
+
+/-- A common-coordinate stratum records exactly the direct first
+nonsingular-block condition and the complete modular Vinogradov system. -/
+theorem mem_vinogradovPrimePowerFirstStratumCommonSet_iff_direct
+    (p k r b n : ℕ) [Fact p.Prime] (hk : 0 < k) (q : Fin b)
+    (xy : vinogradovPrimePowerBasePair p 0 (b * k + r) n) :
+    xy ∈ vinogradovPrimePowerFirstStratumCommonSet p k r b n q ↔
+      VinogradovFirstNonsingularBlockDirect p k r b q
+          (fun i ↦ (((xy.1 (Fin.natAdd 0 i)).val + 1 : ℕ) : ZMod p)) ∧
+        IsVinogradovSolutionMod (p ^ (n + 1)) k (b * k + r)
+          (p ^ (n + 1))
+          (fun i ↦ xy.1 (Fin.natAdd 0 i))
+          (fun i ↦ xy.2 (Fin.natAdd 0 i)) := by
+  let e := vinogradovPrimePowerFirstStratumCommonEquiv p k r b n q
+  let uv := e.symm xy
+  have he : e uv = xy := e.apply_symm_apply xy
+  rw [mem_vinogradovPrimePowerFirstStratumCommonSet_iff,
+    mem_vinogradovPrimePowerFirstNonsingularSolutionSet_iff]
+  constructor
+  · rintro ⟨hfirst, hsolution⟩
+    have hdirectSource :=
+      (firstNonsingularBlock_iff_direct (p := p) hk
+        (fun i ↦ (((uv.1 i).val + 1 : ℕ) : ZMod p))).mp hfirst
+    have hdirectCommon :=
+      (vinogradovPrimePowerFirstStratumCommonEquiv_firstDirect_iff
+        p k r b n q uv).mp hdirectSource
+    have hsolutionCommon :=
+      (vinogradovPrimePowerFirstStratumCommonEquiv_solution_iff
+        p k r b n q uv).mp hsolution
+    rw [he] at hdirectCommon hsolutionCommon
+    exact ⟨hdirectCommon, hsolutionCommon⟩
+  · rintro ⟨hdirectCommon, hsolutionCommon⟩
+    have hdirectSource :=
+      (vinogradovPrimePowerFirstStratumCommonEquiv_firstDirect_iff
+        p k r b n q uv).mpr (by
+          simpa [e, uv] using hdirectCommon)
+    have hfirst :=
+      (firstNonsingularBlock_iff_direct (p := p) hk
+        (fun i ↦ (((uv.1 i).val + 1 : ℕ) : ZMod p))).mpr hdirectSource
+    have hsolution :=
+      (vinogradovPrimePowerFirstStratumCommonEquiv_solution_iff
+        p k r b n q uv).mpr (by
+          simpa [e, uv] using hsolutionCommon)
+    exact ⟨hfirst, hsolution⟩
+
+/-- Transport to common coordinates preserves each first-stratum count. -/
+theorem card_vinogradovPrimePowerFirstStratumCommonSet
+    (p k r b n : ℕ) [Fact p.Prime] (q : Fin b) :
+    (vinogradovPrimePowerFirstStratumCommonSet p k r b n q).card =
+      (vinogradovPrimePowerFirstNonsingularSolutionSet
+        p k r q.val (b - 1 - q.val) n).card := by
+  simp [vinogradovPrimePowerFirstStratumCommonSet]
+
+/-- Union of all common-coordinate first-nonsingular strata. -/
+noncomputable def vinogradovPrimePowerFirstStrataCommonUnion
+    (p k r b n : ℕ) [Fact p.Prime] :
+    Finset (vinogradovPrimePowerBasePair p 0 (b * k + r) n) :=
+  Finset.univ.biUnion fun q : Fin b ↦
+    vinogradovPrimePowerFirstStratumCommonSet p k r b n q
+
+/-- The common first-stratum union covers exactly the prime-power solutions
+having at least one nonsingular selected block. -/
+theorem vinogradovPrimePowerFirstStrataCommonUnion_eq_someBlock
+    (p k r b n : ℕ) [Fact p.Prime] (hk : 0 < k) :
+    vinogradovPrimePowerFirstStrataCommonUnion p k r b n =
+      vinogradovPrimePowerSomeBlockNonsingularSolutionSet p k r b n := by
+  classical
+  ext xy
+  rw [mem_vinogradovPrimePowerSomeBlockNonsingularSolutionSet_iff]
+  simp only [vinogradovPrimePowerFirstStrataCommonUnion,
+    Finset.mem_biUnion, Finset.mem_univ, true_and]
+  constructor
+  · rintro ⟨q, hq⟩
+    have hparts :=
+      (mem_vinogradovPrimePowerFirstStratumCommonSet_iff_direct
+        p k r b n hk q xy).mp hq
+    exact ⟨
+      (hasNonsingularBlock_iff_exists_firstNonsingularBlockDirect
+        p k r b _).mpr ⟨q, hparts.1⟩,
+      hparts.2⟩
+  · rintro ⟨hhas, hsolution⟩
+    obtain ⟨q, hq⟩ :=
+      (hasNonsingularBlock_iff_exists_firstNonsingularBlockDirect
+        p k r b _).mp hhas
+    exact ⟨q,
+      (mem_vinogradovPrimePowerFirstStratumCommonSet_iff_direct
+        p k r b n hk q xy).mpr ⟨hq, hsolution⟩⟩
+
+/-- The nonsingular branch is bounded by the sum of its first-nonsingular
+strata, now that all strata inhabit a single finite type. -/
+theorem card_vinogradovPrimePowerSomeBlockNonsingularSolutionSet_le_sum_first
+    (p k r b n : ℕ) [Fact p.Prime] (hk : 0 < k) :
+    (vinogradovPrimePowerSomeBlockNonsingularSolutionSet
+        p k r b n).card ≤
+      ∑ q : Fin b,
+        (vinogradovPrimePowerFirstNonsingularSolutionSet
+          p k r q.val (b - 1 - q.val) n).card := by
+  rw [← vinogradovPrimePowerFirstStrataCommonUnion_eq_someBlock
+    p k r b n hk]
+  calc
+    (vinogradovPrimePowerFirstStrataCommonUnion p k r b n).card ≤
+        ∑ q : Fin b,
+          (vinogradovPrimePowerFirstStratumCommonSet
+            p k r b n q).card := Finset.card_biUnion_le
+    _ = ∑ q : Fin b,
+          (vinogradovPrimePowerFirstNonsingularSolutionSet
+            p k r q.val (b - 1 - q.val) n).card := by
+      apply Finset.sum_congr rfl
+      intro q _
+      exact card_vinogradovPrimePowerFirstStratumCommonSet p k r b n q
+
+/-- Substituting the stratified Hensel estimate term by term gives an explicit
+finite-sum bound for the full nonsingular branch. -/
+theorem card_vinogradovPrimePowerSomeBlockNonsingularSolutionSet_le_sum_stratified
+    (p k r b n : ℕ) [Fact p.Prime] (hk : 0 < k) (hkp : k < p) :
+    (vinogradovPrimePowerSomeBlockNonsingularSolutionSet
+        p k r b n).card ≤
+      ∑ q : Fin b,
+        ((p ^ k - p.descFactorial k) ^ q.val *
+            p.descFactorial k * p ^ ((b - 1 - q.val) * k + r) *
+            p ^ ((q.val + 1 + (b - 1 - q.val)) * k + r)) *
+          (p ^ (k + 2 *
+            (q.val * k + (b - 1 - q.val) * k + r))) ^ n := by
+  calc
+    (vinogradovPrimePowerSomeBlockNonsingularSolutionSet
+        p k r b n).card ≤
+        ∑ q : Fin b,
+          (vinogradovPrimePowerFirstNonsingularSolutionSet
+            p k r q.val (b - 1 - q.val) n).card :=
+      card_vinogradovPrimePowerSomeBlockNonsingularSolutionSet_le_sum_first
+        p k r b n hk
+    _ ≤ _ := by
+      apply Finset.sum_le_sum
+      intro q _
+      exact
+        card_vinogradovPrimePowerFirstNonsingularSolutionSet_le_stratified
+          p k r q.val (b - 1 - q.val) n hk hkp
+
+/-- For `q < b`, every factor in the stratified Hensel bound except the
+finite geometric weight is independent of `q`. -/
+theorem vinogradovPrimePowerFirstStratifiedTerm_eq_common
+    (p k r b n q : ℕ) (hq : q < b) :
+    ((p ^ k - p.descFactorial k) ^ q *
+          p.descFactorial k * p ^ ((b - 1 - q) * k + r) *
+          p ^ ((q + 1 + (b - 1 - q)) * k + r)) *
+        (p ^ (k + 2 * (q * k + (b - 1 - q) * k + r))) ^ n =
+      ((p ^ k - p.descFactorial k) ^ q *
+          p.descFactorial k * (p ^ k) ^ (b - 1 - q)) *
+        (p ^ r * p ^ (b * k + r) *
+          (p ^ (k + 2 * ((b - 1) * k + r))) ^ n) := by
+  have hblocks : q + 1 + (b - 1 - q) = b := by
+    omega
+  have hprefix : q + (b - 1 - q) = b - 1 := by
+    omega
+  have htailExponent :
+      q * k + (b - 1 - q) * k + r = (b - 1) * k + r := by
+    rw [← Nat.add_mul, hprefix]
+  have htailPow :
+      p ^ ((b - 1 - q) * k + r) =
+        (p ^ k) ^ (b - 1 - q) * p ^ r := by
+    rw [pow_add, Nat.mul_comm (b - 1 - q) k, pow_mul]
+  rw [hblocks, htailExponent, htailPow]
+  ring
+
+/-- Closed form of the sum of all stratified Hensel upper bounds. -/
+theorem sum_vinogradovPrimePowerFirstStratified_eq
+    (p k r b n : ℕ) :
+    (∑ q : Fin b,
+        ((p ^ k - p.descFactorial k) ^ q.val *
+            p.descFactorial k * p ^ ((b - 1 - q.val) * k + r) *
+            p ^ ((q.val + 1 + (b - 1 - q.val)) * k + r)) *
+          (p ^ (k + 2 *
+            (q.val * k + (b - 1 - q.val) * k + r))) ^ n) =
+      ((p ^ k) ^ b - (p ^ k - p.descFactorial k) ^ b) *
+        (p ^ r * p ^ (b * k + r) *
+          (p ^ (k + 2 * ((b - 1) * k + r))) ^ n) := by
+  let term : ℕ → ℕ := fun q ↦
+    ((p ^ k - p.descFactorial k) ^ q *
+        p.descFactorial k * p ^ ((b - 1 - q) * k + r) *
+        p ^ ((q + 1 + (b - 1 - q)) * k + r)) *
+      (p ^ (k + 2 * (q * k + (b - 1 - q) * k + r))) ^ n
+  change (∑ q : Fin b, term q.val) = _
+  rw [Fin.sum_univ_eq_sum_range term b]
+  dsimp only [term]
+  calc
+    (∑ q ∈ Finset.range b,
+        ((p ^ k - p.descFactorial k) ^ q *
+            p.descFactorial k * p ^ ((b - 1 - q) * k + r) *
+            p ^ ((q + 1 + (b - 1 - q)) * k + r)) *
+          (p ^ (k + 2 * (q * k + (b - 1 - q) * k + r))) ^ n) =
+        ∑ q ∈ Finset.range b,
+          ((p ^ k - p.descFactorial k) ^ q *
+              p.descFactorial k * (p ^ k) ^ (b - 1 - q)) *
+            (p ^ r * p ^ (b * k + r) *
+              (p ^ (k + 2 * ((b - 1) * k + r))) ^ n) := by
+      apply Finset.sum_congr rfl
+      intro q hq
+      exact vinogradovPrimePowerFirstStratifiedTerm_eq_common
+        p k r b n q (Finset.mem_range.mp hq)
+    _ = (∑ q ∈ Finset.range b,
+          (p ^ k - p.descFactorial k) ^ q *
+            p.descFactorial k * (p ^ k) ^ (b - 1 - q)) *
+          (p ^ r * p ^ (b * k + r) *
+            (p ^ (k + 2 * ((b - 1) * k + r))) ^ n) := by
+      rw [Finset.sum_mul]
+    _ = ((p ^ k) ^ b - (p ^ k - p.descFactorial k) ^ b) *
+          (p ^ r * p ^ (b * k + r) *
+            (p ^ (k + 2 * ((b - 1) * k + r))) ^ n) := by
+      rw [sum_firstNonsingular_geometric]
+      exact Nat.descFactorial_le_pow _ _
+
+/-- Summing the first-nonsingular strata gives a closed upper bound for the
+entire nonsingular multiblock branch. -/
+theorem card_vinogradovPrimePowerSomeBlockNonsingularSolutionSet_le_closed
+    (p k r b n : ℕ) [Fact p.Prime] (hk : 0 < k) (hkp : k < p) :
+    (vinogradovPrimePowerSomeBlockNonsingularSolutionSet
+        p k r b n).card ≤
+      ((p ^ k) ^ b - (p ^ k - p.descFactorial k) ^ b) *
+        (p ^ r * p ^ (b * k + r) *
+          (p ^ (k + 2 * ((b - 1) * k + r))) ^ n) := by
+  rw [← sum_vinogradovPrimePowerFirstStratified_eq p k r b n]
+  exact
+    card_vinogradovPrimePowerSomeBlockNonsingularSolutionSet_le_sum_stratified
+      p k r b n hk hkp
+
+/-- The all-singular and first-nonsingular estimates combine into a complete
+explicit multiblock prime-power Vinogradov solution-count bound. -/
+theorem vinogradovPrimePowerMultiBlockSolutionCount_le_strata
+    (p k r b n : ℕ) [Fact p.Prime] (hk : 0 < k) (hkp : k < p) :
+    vinogradovSolutionCountMod (p ^ (n + 1)) k (b * k + r)
+        (p ^ (n + 1)) ≤
+      ((p ^ k - p.descFactorial k) ^ b * p ^ r *
+          p ^ (b * k + r)) *
+        (p ^ (2 * (b * k + r))) ^ n +
+      ((p ^ k) ^ b - (p ^ k - p.descFactorial k) ^ b) *
+        (p ^ r * p ^ (b * k + r) *
+          (p ^ (k + 2 * ((b - 1) * k + r))) ^ n) := by
+  rw [← card_primePowerMultiBlockSingular_add_someNonsingular]
+  exact Nat.add_le_add
+    (card_vinogradovPrimePowerMultiBlockSingularSolutionSet_le p k r b n)
+    (card_vinogradovPrimePowerSomeBlockNonsingularSolutionSet_le_closed
+      p k r b n hk hkp)
+
+/-- The multiblock strata estimate transfers to the normalized complete
+Vinogradov moment. -/
+theorem norm_normalizedVinogradovMomentMod_primePowerMultiBlock_le_strata
+    (p k r b n : ℕ) [Fact p.Prime] (hk : 0 < k) (hkp : k < p) :
+    ‖normalizedVinogradovMomentMod
+        (p ^ (n + 1)) k (b * k + r) (p ^ (n + 1))‖ ≤
+      ((((p ^ k - p.descFactorial k) ^ b * p ^ r *
+            p ^ (b * k + r)) *
+          (p ^ (2 * (b * k + r))) ^ n +
+        ((p ^ k) ^ b - (p ^ k - p.descFactorial k) ^ b) *
+          (p ^ r * p ^ (b * k + r) *
+            (p ^ (k + 2 * ((b - 1) * k + r))) ^ n) : ℕ) : ℝ) := by
+  letI : NeZero (p ^ (n + 1)) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  rw [normalizedVinogradovMomentMod_eq_solutionCount]
+  norm_cast
+  exact vinogradovPrimePowerMultiBlockSolutionCount_le_strata
+    p k r b n hk hkp
+
 end
 
 end ZeroFreeRegion.VinogradovKorobov

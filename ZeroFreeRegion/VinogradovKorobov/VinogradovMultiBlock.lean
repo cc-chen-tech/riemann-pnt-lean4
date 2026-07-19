@@ -148,6 +148,48 @@ theorem hasNonsingularBlock_iff_exists_selectedBlock
           rw [← htail q i, ← htail q j]
           exact hij
 
+/-- An explicit first nonsingular block: block `q` is injective and every
+earlier selected block is singular. -/
+def VinogradovFirstNonsingularBlockDirect
+    (p k r b : ℕ) (q : Fin b)
+    (x : Fin (b * k + r) → ZMod p) : Prop :=
+  (∀ j : Fin b, j < q →
+      ¬Function.Injective fun i : Fin k ↦
+        x (vinogradovSelectedBlockIndex k r b j i)) ∧
+    Function.Injective fun i : Fin k ↦
+      x (vinogradovSelectedBlockIndex k r b q i)
+
+/-- Every tuple having a nonsingular selected block has a first such block,
+and conversely. -/
+theorem hasNonsingularBlock_iff_exists_firstNonsingularBlockDirect
+    (p k r b : ℕ) (x : Fin (b * k + r) → ZMod p) :
+    VinogradovHasNonsingularBlock p k r b x ↔
+      ∃ q : Fin b, VinogradovFirstNonsingularBlockDirect p k r b q x := by
+  classical
+  constructor
+  · intro hhas
+    obtain ⟨q, hq⟩ :=
+      (hasNonsingularBlock_iff_exists_selectedBlock p k r b x).mp hhas
+    let good : Finset (Fin b) := Finset.univ.filter fun j ↦
+      Function.Injective fun i : Fin k ↦
+        x (vinogradovSelectedBlockIndex k r b j i)
+    have hgood : good.Nonempty := by
+      refine ⟨q, ?_⟩
+      simp [good, hq]
+    let q₀ := good.min' hgood
+    have hq₀mem : q₀ ∈ good := good.min'_mem hgood
+    have hq₀inj : Function.Injective fun i : Fin k ↦
+        x (vinogradovSelectedBlockIndex k r b q₀ i) := by
+      exact (Finset.mem_filter.mp hq₀mem).2
+    refine ⟨q₀, ?_, hq₀inj⟩
+    intro j hj hjinj
+    have hjmem : j ∈ good := by
+      simp [good, hjinj]
+    exact (not_le_of_gt hj) (good.min'_le j hjmem)
+  · rintro ⟨q, hq⟩
+    apply (hasNonsingularBlock_iff_exists_selectedBlock p k r b x).mpr
+    exact ⟨q, hq.2⟩
+
 /-- Failing to be singular in every selected block is equivalent to having a
 nonsingular selected block. -/
 theorem not_allBlocksSingular_iff_hasNonsingularBlock
@@ -162,6 +204,27 @@ theorem not_allBlocksSingular_iff_hasNonsingularBlock
         VinogradovHasNonsingularBlock, not_and_or]
       rw [ih]
       simp only [not_not]
+
+/-- All selected blocks are singular exactly when every explicit flattened
+block fails injectivity. -/
+theorem allBlocksSingular_iff_forall_selectedBlock
+    (p k r b : ℕ) (x : Fin (b * k + r) → ZMod p) :
+    VinogradovAllBlocksSingular p k r b x ↔
+      ∀ q : Fin b, ¬Function.Injective fun i : Fin k ↦
+        x (vinogradovSelectedBlockIndex k r b q i) := by
+  constructor
+  · intro hall q hq
+    have hhas : VinogradovHasNonsingularBlock p k r b x :=
+      (hasNonsingularBlock_iff_exists_selectedBlock p k r b x).mpr ⟨q, hq⟩
+    exact (not_allBlocksSingular_iff_hasNonsingularBlock
+      p k r b x).mpr hhas hall
+  · intro hblocks
+    by_contra hall
+    have hhas := (not_allBlocksSingular_iff_hasNonsingularBlock
+      p k r b x).mp hall
+    obtain ⟨q, hq⟩ :=
+      (hasNonsingularBlock_iff_exists_selectedBlock p k r b x).mp hhas
+    exact hblocks q hq
 
 /-- Residue tuples in which all `b` consecutive blocks of length `k` are
 singular.  This is the finite combinatorial stratum that accumulates one
