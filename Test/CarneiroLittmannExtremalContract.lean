@@ -58,6 +58,18 @@ example : MonotoneOn carneiroLittmannPrimitive (Set.Iic 0) :=
 example : AntitoneOn carneiroLittmannPrimitive (Set.Ici 0) :=
   antitoneOn_carneiroLittmannPrimitive_Ici
 
+example {x : ℝ} (hx : 1 ≤ x) :
+    |carneiroLittmannDerivative x| ≤ x ^ (-3 : ℝ) :=
+  abs_carneiroLittmannDerivative_le_rpow_neg_three hx
+
+example {x : ℝ} (hx : x ≤ -2) :
+    |carneiroLittmannDerivative x| ≤
+      4 * (-x) ^ (-3 : ℝ) :=
+  abs_carneiroLittmannDerivative_le_four_mul_neg_rpow hx
+
+example : MeasureTheory.Integrable carneiroLittmannDerivative :=
+  integrable_carneiroLittmannDerivative
+
 #print axioms carneiroLittmannDerivative_neg_one
 #print axioms carneiroLittmannDerivative_zero
 #print axioms carneiroLittmannDerivative_eq_formula
@@ -73,6 +85,9 @@ example : AntitoneOn carneiroLittmannPrimitive (Set.Ici 0) :=
 #print axioms hasDerivAt_carneiroLittmannPrimitive
 #print axioms monotoneOn_carneiroLittmannPrimitive_Iic
 #print axioms antitoneOn_carneiroLittmannPrimitive_Ici
+#print axioms abs_carneiroLittmannDerivative_le_rpow_neg_three
+#print axioms abs_carneiroLittmannDerivative_le_four_mul_neg_rpow
+#print axioms integrable_carneiroLittmannDerivative
 
 end DirichletPolynomial
 end PrimeNumberTheorem

@@ -1,6 +1,8 @@
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Sinc
+import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+import Mathlib.MeasureTheory.Measure.Lebesgue.Integral
 import PrimeNumberTheorem.ScaledHilbertKernel
 
 namespace PrimeNumberTheorem
@@ -210,6 +212,178 @@ theorem antitoneOn_carneiroLittmannPrimitive_Ici :
   · intro x hx
     have hxPos : 0 < x := by simpa only [interior_Ici] using hx
     exact carneiroLittmannDerivative_nonpos_of_pos hxPos
+
+/-- The positive tail decays cubically. -/
+theorem abs_carneiroLittmannDerivative_le_rpow_neg_three {x : ℝ}
+    (hx : 1 ≤ x) :
+    |carneiroLittmannDerivative x| ≤ x ^ (-3 : ℝ) := by
+  have hx0 : 0 < x := zero_lt_one.trans_le hx
+  have hxZero : x ≠ 0 := hx0.ne'
+  have hxNegOne : x ≠ -1 := by linarith
+  have hxPlusOne0 : 0 < x + 1 := by linarith
+  have hAbs :
+      |carneiroLittmannDerivative x| =
+        (Real.sin (Real.pi * x)) ^ 2 /
+          (Real.pi ^ 2 * x * (x + 1) ^ 2) := by
+    rw [carneiroLittmannDerivative_eq_formula hxNegOne hxZero]
+    simp only [abs_div, abs_neg, abs_pow, abs_mul, sq_abs,
+      abs_of_pos Real.pi_pos, abs_of_pos hx0, abs_of_pos hxPlusOne0]
+  have hSin : (Real.sin (Real.pi * x)) ^ 2 ≤ 1 := by
+    nlinarith [Real.neg_one_le_sin (Real.pi * x), Real.sin_le_one (Real.pi * x)]
+  have hPiSq : 1 ≤ Real.pi ^ 2 := by
+    nlinarith [Real.two_le_pi]
+  have hShiftSq : x ^ 2 ≤ (x + 1) ^ 2 := by nlinarith
+  have hDenPos : 0 < Real.pi ^ 2 * x * (x + 1) ^ 2 := by positivity
+  have hCubePos : 0 < x ^ 3 := pow_pos hx0 3
+  have hDen : x ^ 3 ≤ Real.pi ^ 2 * x * (x + 1) ^ 2 := by
+    calc
+      x ^ 3 = 1 * x * x ^ 2 := by ring
+      _ ≤ Real.pi ^ 2 * x * (x + 1) ^ 2 := by gcongr
+  calc
+    |carneiroLittmannDerivative x| =
+        (Real.sin (Real.pi * x)) ^ 2 /
+          (Real.pi ^ 2 * x * (x + 1) ^ 2) := hAbs
+    _ ≤ 1 / (Real.pi ^ 2 * x * (x + 1) ^ 2) :=
+      div_le_div_of_nonneg_right hSin hDenPos.le
+    _ ≤ 1 / x ^ 3 := one_div_le_one_div_of_le hCubePos hDen
+    _ = x ^ (-3 : ℝ) := by
+      rw [Real.rpow_neg hx0.le]
+      norm_num [Real.rpow_natCast]
+
+/-- The negative tail has the same cubic decay, with a harmless factor four
+coming from `|-x - 1| ≥ |-x| / 2` once `x ≤ -2`. -/
+theorem abs_carneiroLittmannDerivative_le_four_mul_neg_rpow {x : ℝ}
+    (hx : x ≤ -2) :
+    |carneiroLittmannDerivative x| ≤
+      4 * (-x) ^ (-3 : ℝ) := by
+  have hx0 : x < 0 := lt_of_le_of_lt hx (by norm_num)
+  have hxPlusOne0 : x + 1 < 0 := by linarith
+  have hxZero : x ≠ 0 := hx0.ne
+  have hxNegOne : x ≠ -1 := by linarith
+  let y : ℝ := -x
+  have hy : 2 ≤ y := by dsimp [y]; linarith
+  have hy0 : 0 < y := by linarith
+  have hyMinusOne0 : 0 < y - 1 := by linarith
+  have hAbs :
+      |carneiroLittmannDerivative x| =
+        (Real.sin (Real.pi * x)) ^ 2 /
+          (Real.pi ^ 2 * y * (y - 1) ^ 2) := by
+    rw [carneiroLittmannDerivative_eq_formula hxNegOne hxZero]
+    simp only [abs_div, abs_neg, abs_pow, abs_mul, sq_abs,
+      abs_of_pos Real.pi_pos, abs_of_neg hx0, abs_of_neg hxPlusOne0]
+    dsimp [y]
+    congr 2
+    ring
+  have hSin : (Real.sin (Real.pi * x)) ^ 2 ≤ 1 := by
+    nlinarith [Real.neg_one_le_sin (Real.pi * x), Real.sin_le_one (Real.pi * x)]
+  have hPiSq : 1 ≤ Real.pi ^ 2 := by
+    nlinarith [Real.two_le_pi]
+  have hHalfNonneg : 0 ≤ y / 2 := by positivity
+  have hShift : y / 2 ≤ y - 1 := by linarith
+  have hShiftSq : (y / 2) ^ 2 ≤ (y - 1) ^ 2 := by nlinarith
+  have hDenPos : 0 < Real.pi ^ 2 * y * (y - 1) ^ 2 := by
+    exact mul_pos (mul_pos (sq_pos_of_pos Real.pi_pos) hy0)
+      (sq_pos_of_pos hyMinusOne0)
+  have hCubePos : 0 < y ^ 3 := pow_pos hy0 3
+  have hDen : y ^ 3 ≤ 4 * (Real.pi ^ 2 * y * (y - 1) ^ 2) := by
+    calc
+      y ^ 3 = 4 * (1 * y * (y / 2) ^ 2) := by ring
+      _ ≤ 4 * (Real.pi ^ 2 * y * (y - 1) ^ 2) := by gcongr
+  calc
+    |carneiroLittmannDerivative x| =
+        (Real.sin (Real.pi * x)) ^ 2 /
+          (Real.pi ^ 2 * y * (y - 1) ^ 2) := hAbs
+    _ ≤ 1 / (Real.pi ^ 2 * y * (y - 1) ^ 2) :=
+      div_le_div_of_nonneg_right hSin hDenPos.le
+    _ ≤ 4 / y ^ 3 := by
+      exact (div_le_div_iff₀ hDenPos hCubePos).2 (by simpa using hDen)
+    _ = 4 * y ^ (-3 : ℝ) := by
+      rw [Real.rpow_neg hy0.le]
+      norm_num [Real.rpow_natCast, div_eq_mul_inv]
+    _ = 4 * (-x) ^ (-3 : ℝ) := by rfl
+
+/-- The concrete derivative is absolutely integrable.  The proof uses the
+cubic bounds on both tails and continuity on the remaining compact interval. -/
+theorem integrable_carneiroLittmannDerivative :
+    MeasureTheory.Integrable carneiroLittmannDerivative := by
+  let globalMajorant : ℝ → ℝ :=
+    fun x => 16 * (1 + ‖x‖) ^ (-2 : ℝ)
+  have hGlobalMajorant : MeasureTheory.Integrable globalMajorant := by
+    exact (integrable_one_add_norm (E := ℝ) (r := (2 : ℝ)) (by norm_num)).const_mul 16
+  have hDecayCompare {y : ℝ} (hy : 1 ≤ y) :
+      4 * y ^ (-3 : ℝ) ≤ 16 * (1 + y) ^ (-2 : ℝ) := by
+    have hy0 : 0 < y := zero_lt_one.trans_le hy
+    have hOneY0 : 0 < 1 + y := by linarith
+    rw [Real.rpow_neg hy0.le, Real.rpow_neg hOneY0.le]
+    rw [show y ^ (3 : ℝ) = y ^ (3 : ℕ) by norm_num [Real.rpow_natCast]]
+    rw [show (1 + y) ^ (2 : ℝ) = (1 + y) ^ (2 : ℕ) by
+      norm_num [Real.rpow_natCast]]
+    rw [← div_eq_mul_inv, ← div_eq_mul_inv]
+    apply (div_le_div_iff₀ (pow_pos hy0 3) (pow_pos hOneY0 2)).2
+    have hOneAddSq : (1 + y) ^ 2 ≤ (2 * y) ^ 2 := by nlinarith
+    have hSqCube : y ^ 2 ≤ y ^ 3 := by
+      calc
+        y ^ 2 = y ^ 2 * 1 := by ring
+        _ ≤ y ^ 2 * y := by gcongr
+        _ = y ^ 3 := by ring
+    nlinarith
+  have hRight : MeasureTheory.IntegrableOn carneiroLittmannDerivative (Set.Ioi 1) := by
+    change MeasureTheory.Integrable carneiroLittmannDerivative
+      (MeasureTheory.volume.restrict (Set.Ioi 1))
+    have hMajorantOn := hGlobalMajorant.integrableOn (s := Set.Ioi (1 : ℝ))
+    change MeasureTheory.Integrable globalMajorant
+      (MeasureTheory.volume.restrict (Set.Ioi 1)) at hMajorantOn
+    refine hMajorantOn.mono'
+      continuous_carneiroLittmannDerivative.aestronglyMeasurable.restrict ?_
+    filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_Ioi] with x hx
+    have hx0 : 0 < x := zero_lt_one.trans hx
+    calc
+      ‖carneiroLittmannDerivative x‖ = |carneiroLittmannDerivative x| :=
+        Real.norm_eq_abs _
+      _ ≤ x ^ (-3 : ℝ) :=
+        abs_carneiroLittmannDerivative_le_rpow_neg_three hx.le
+      _ ≤ 4 * x ^ (-3 : ℝ) := by
+        have := Real.rpow_nonneg hx0.le (-3 : ℝ)
+        linarith
+      _ ≤ 16 * (1 + x) ^ (-2 : ℝ) := hDecayCompare hx.le
+      _ = globalMajorant x := by
+        simp only [globalMajorant, Real.norm_eq_abs, abs_of_pos hx0]
+  have hLeft : MeasureTheory.IntegrableOn carneiroLittmannDerivative (Set.Iic (-2)) := by
+    change MeasureTheory.Integrable carneiroLittmannDerivative
+      (MeasureTheory.volume.restrict (Set.Iic (-2)))
+    have hMajorantOn := hGlobalMajorant.integrableOn (s := Set.Iic (-2 : ℝ))
+    change MeasureTheory.Integrable globalMajorant
+      (MeasureTheory.volume.restrict (Set.Iic (-2))) at hMajorantOn
+    refine hMajorantOn.mono'
+      continuous_carneiroLittmannDerivative.aestronglyMeasurable.restrict ?_
+    filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_Iic] with x hx
+    have hxLe : x ≤ -2 := by simpa only [Set.mem_Iic] using hx
+    have hx0 : x < 0 := lt_of_le_of_lt hxLe (by norm_num)
+    calc
+      ‖carneiroLittmannDerivative x‖ = |carneiroLittmannDerivative x| :=
+        Real.norm_eq_abs _
+      _ ≤ 4 * (-x) ^ (-3 : ℝ) :=
+        abs_carneiroLittmannDerivative_le_four_mul_neg_rpow hxLe
+      _ ≤ 16 * (1 + (-x)) ^ (-2 : ℝ) := hDecayCompare (by linarith [hxLe])
+      _ = globalMajorant x := by
+        simp only [globalMajorant, Real.norm_eq_abs, abs_of_neg hx0]
+  have hMiddle : MeasureTheory.IntegrableOn carneiroLittmannDerivative
+      (Set.Icc (-2) 1) :=
+    continuous_carneiroLittmannDerivative.continuousOn.integrableOn_compact isCompact_Icc
+  have hCover :
+      (Set.Iic (-2 : ℝ) ∪ Set.Icc (-2 : ℝ) 1) ∪ Set.Ioi (1 : ℝ) = Set.univ := by
+    ext x
+    simp only [Set.mem_union, Set.mem_Iic, Set.mem_Icc, Set.mem_Ioi,
+      Set.mem_univ, iff_true]
+    by_cases hxLeft : x ≤ -2
+    · exact Or.inl (Or.inl hxLeft)
+    by_cases hxRight : x ≤ 1
+    · exact Or.inl (Or.inr ⟨le_of_not_ge hxLeft, hxRight⟩)
+    · exact Or.inr (lt_of_not_ge hxRight)
+  have hAll : MeasureTheory.IntegrableOn carneiroLittmannDerivative Set.univ := by
+    have hUnion := (hLeft.union hMiddle).union hRight
+    exact hCover ▸ hUnion
+  exact Iff.mp MeasureTheory.integrableOn_univ hAll
 
 end DirichletPolynomial
 end PrimeNumberTheorem
