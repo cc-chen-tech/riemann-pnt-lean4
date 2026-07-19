@@ -25,6 +25,25 @@ example {X : ℕ} {rho : ℂ} (hX : 1 ≤ X)
       analyticOrderNatAt (carlsonZeroDetector X) rho :=
   analyticOrderNatAt_riemannZeta_le_carlsonZeroDetector hX hrho
 
+example {theta : ℝ} (htheta : 0 ≤ theta) (X : ℕ) :
+    AnalyticOnNhd ℂ (regularizedCarlsonZeroDetector X)
+      {s : ℂ | theta < s.re} :=
+  analyticOnNhd_regularizedCarlsonZeroDetector_re_gt htheta X
+
+example (X : ℕ) : Meromorphic (regularizedCarlsonZeroDetector X) :=
+  meromorphic_regularizedCarlsonZeroDetector X
+
+example (X : ℕ) {s : ℂ} (hs0 : s ≠ 0) (hs1 : s ≠ 1) :
+    regularizedCarlsonZeroDetector X s =
+      (s - 1) ^ 2 * carlsonZeroDetector X s :=
+  regularizedCarlsonZeroDetector_eq_sub_one_sq_mul X hs0 hs1
+
+example {X : ℕ} {rho : ℂ} (hX : 1 ≤ X)
+    (hrho : RiemannHypothesis.IsNontrivialZero rho) :
+    analyticOrderNatAt riemannZeta rho ≤
+      analyticOrderNatAt (regularizedCarlsonZeroDetector X) rho :=
+  analyticOrderNatAt_riemannZeta_le_regularizedCarlsonZeroDetector hX hrho
+
 example (X : ℕ) (s : ℂ) :
     Real.log ‖carlsonZeroDetector X s‖ ≤
       ‖mollifiedZetaError X s‖ ^ 2 :=
@@ -77,6 +96,10 @@ example :
 #print axioms carlsonZeroDetector_eq_zeta_mul_mollifier_factorization
 #print axioms carlsonZeroDetector_eq_zero_of_riemannZeta_eq_zero
 #print axioms analyticOrderNatAt_riemannZeta_le_carlsonZeroDetector
+#print axioms analyticOnNhd_regularizedCarlsonZeroDetector_re_gt
+#print axioms meromorphic_regularizedCarlsonZeroDetector
+#print axioms regularizedCarlsonZeroDetector_eq_sub_one_sq_mul
+#print axioms analyticOrderNatAt_riemannZeta_le_regularizedCarlsonZeroDetector
 #print axioms log_norm_carlsonZeroDetector_le_norm_mollifiedZetaError_sq
 #print axioms continuous_mollifiedZetaError_verticalLine
 #print axioms continuous_carlsonZeroDetector_verticalLine

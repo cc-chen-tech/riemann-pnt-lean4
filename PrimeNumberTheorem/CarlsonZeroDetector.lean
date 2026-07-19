@@ -1,6 +1,7 @@
 import PrimeNumberTheorem.MollifiedZetaError
 
 open Complex
+open Filter Topology
 open scoped Interval
 
 namespace PrimeNumberTheorem
@@ -11,6 +12,58 @@ namespace CarlsonZeroDensity
 noncomputable def carlsonZeroDetector (X : ℕ) (s : ℂ) : ℂ :=
   1 - mollifiedZetaError X s ^ 2
 
+/-- Pole-free Carlson detector on the right half-plane.  Replacing zeta by
+its analytic pole unit makes this function analytic across `s = 1`; away
+from `0` and `1` it is `(s - 1)^2 * carlsonZeroDetector X s`. -/
+noncomputable def regularizedCarlsonZeroDetector (X : ℕ) (s : ℂ) : ℂ :=
+  let q := ZeroFreeRegion.riemannZetaPoleUnitAtOne s
+  let m := mobiusMollifier X s
+  q * m * (2 * (s - 1) - q * m)
+
+/-- The pole-free Carlson detector is analytic on every right half-plane
+contained in `Re(s) > 0`. -/
+theorem analyticOnNhd_regularizedCarlsonZeroDetector_re_gt
+    {theta : ℝ} (htheta : 0 ≤ theta) (X : ℕ) :
+    AnalyticOnNhd ℂ (regularizedCarlsonZeroDetector X)
+      {s : ℂ | theta < s.re} := by
+  intro s hs
+  have hq : AnalyticAt ℂ ZeroFreeRegion.riemannZetaPoleUnitAtOne s :=
+    ZeroFreeRegion.analyticOnNhd_riemannZetaPoleUnitAtOne_re_gt htheta s hs
+  have hm : AnalyticAt ℂ (mobiusMollifier X) s :=
+    analyticAt_mobiusMollifier X s
+  have hlinear : AnalyticAt ℂ (fun z : ℂ => 2 * (z - 1)) s :=
+    analyticAt_const.mul (analyticAt_id.sub analyticAt_const)
+  unfold regularizedCarlsonZeroDetector
+  exact (hq.mul hm).mul (hlinear.sub (hq.mul hm))
+
+/-- Globally the pole-free detector is meromorphic.  Its possible behavior at
+`0` is harmless for Carlson rectangles, which lie in `Re(s) > 1/2`. -/
+theorem meromorphic_regularizedCarlsonZeroDetector (X : ℕ) :
+    Meromorphic (regularizedCarlsonZeroDetector X) := by
+  intro s
+  have hcompleted : MeromorphicAt completedRiemannZeta₀ s :=
+    (differentiable_completedZeta₀.analyticAt s).meromorphicAt
+  have hid : MeromorphicAt (fun z : ℂ => z) s :=
+    analyticAt_id.meromorphicAt
+  have honeDiv : MeromorphicAt (fun z : ℂ => 1 / z) s :=
+    (MeromorphicAt.const 1 s).div hid
+  have hgammaInv : MeromorphicAt (fun z : ℂ => (Gammaℝ z)⁻¹) s :=
+    (differentiable_Gammaℝ_inv.analyticAt s).meromorphicAt
+  have hregular : MeromorphicAt ZeroFreeRegion.riemannZetaRegularAtOne s := by
+    unfold ZeroFreeRegion.riemannZetaRegularAtOne
+    exact (hcompleted.sub honeDiv).mul hgammaInv
+  have hq : MeromorphicAt ZeroFreeRegion.riemannZetaPoleUnitAtOne s := by
+    unfold ZeroFreeRegion.riemannZetaPoleUnitAtOne
+    exact (((analyticAt_id.sub analyticAt_const).meromorphicAt.mul hregular).add
+      hgammaInv)
+  have hm : MeromorphicAt (mobiusMollifier X) s :=
+    (analyticAt_mobiusMollifier X s).meromorphicAt
+  have hlinear : MeromorphicAt (fun z : ℂ => 2 * (z - 1)) s :=
+    (analyticAt_const.mul
+      (analyticAt_id.sub analyticAt_const)).meromorphicAt
+  unfold regularizedCarlsonZeroDetector
+  exact (hq.mul hm).mul (hlinear.sub (hq.mul hm))
+
 /-- The detector factors through zeta, so every zeta zero is a detector zero. -/
 theorem carlsonZeroDetector_eq_zeta_mul_mollifier_factorization
     (X : ℕ) (s : ℂ) :
@@ -18,6 +71,18 @@ theorem carlsonZeroDetector_eq_zeta_mul_mollifier_factorization
       (riemannZeta s * mobiusMollifier X s) *
         (2 - riemannZeta s * mobiusMollifier X s) := by
   unfold carlsonZeroDetector mollifiedZetaError
+  ring
+
+/-- Away from the removable points, the analytic detector is the original
+Carlson detector multiplied by the square cancelling its pole at `1`. -/
+theorem regularizedCarlsonZeroDetector_eq_sub_one_sq_mul
+    (X : ℕ) {s : ℂ} (hs0 : s ≠ 0) (hs1 : s ≠ 1) :
+    regularizedCarlsonZeroDetector X s =
+      (s - 1) ^ 2 * carlsonZeroDetector X s := by
+  unfold regularizedCarlsonZeroDetector
+  rw [ZeroFreeRegion.riemannZetaPoleUnitAtOne_eq_sub_one_mul_riemannZeta
+    hs0 hs1,
+    carlsonZeroDetector_eq_zeta_mul_mollifier_factorization]
   ring
 
 theorem carlsonZeroDetector_eq_zero_of_riemannZeta_eq_zero
@@ -78,6 +143,105 @@ theorem analyticOrderNatAt_riemannZeta_le_carlsonZeroDetector
     simpa [g, mul_assoc] using
       carlsonZeroDetector_eq_zeta_mul_mollifier_factorization X s
   rw [hfactor,
+    analyticOrderNatAt_mul hzeta hg hzeta_order_ne_top hg_order_ne_top]
+  exact Nat.le_add_right _ _
+
+/-- Every nontrivial zeta zero occurs in the pole-free Carlson detector with
+at least its zeta multiplicity. -/
+theorem analyticOrderNatAt_riemannZeta_le_regularizedCarlsonZeroDetector
+    {X : ℕ} {rho : ℂ} (hX : 1 ≤ X)
+    (hrho : RiemannHypothesis.IsNontrivialZero rho) :
+    analyticOrderNatAt riemannZeta rho ≤
+      analyticOrderNatAt (regularizedCarlsonZeroDetector X) rho := by
+  let q : ℂ → ℂ := ZeroFreeRegion.riemannZetaPoleUnitAtOne
+  let complement : ℂ → ℂ := fun s =>
+    2 * (s - 1) - q s * mobiusMollifier X s
+  let g : ℂ → ℂ := fun s =>
+    (s - 1) * (mobiusMollifier X s * complement s)
+  have hrho0 : rho ≠ 0 := by
+    intro hzero
+    subst rho
+    have hpos := hrho.2.1
+    norm_num at hpos
+  have hrho1 : rho ≠ 1 := by
+    intro hone
+    have hre := congrArg Complex.re hone
+    simp at hre
+    linarith [hrho.2.2]
+  have hzeta : AnalyticAt ℂ riemannZeta rho :=
+    ZeroFreeRegion.analyticOnNhd_riemannZeta_ne_one rho hrho1
+  have hq : AnalyticAt ℂ q rho := by
+    dsimp [q]
+    exact ZeroFreeRegion.analyticOnNhd_riemannZetaPoleUnitAtOne_re_gt
+      (θ := 0) le_rfl rho hrho.2.1
+  have hm : AnalyticAt ℂ (mobiusMollifier X) rho :=
+    analyticAt_mobiusMollifier X rho
+  have hcomplement : AnalyticAt ℂ complement rho := by
+    dsimp [complement]
+    exact (analyticAt_const.mul (analyticAt_id.sub analyticAt_const)).sub
+      (hq.mul hm)
+  have hq_rho : q rho = 0 := by
+    dsimp [q]
+    rw [ZeroFreeRegion.riemannZetaPoleUnitAtOne_eq_sub_one_mul_riemannZeta
+      hrho0 hrho1, hrho.1, mul_zero]
+  have hcomplement_ne : complement rho ≠ 0 := by
+    dsimp [complement]
+    rw [hq_rho, zero_mul, sub_zero]
+    exact mul_ne_zero (by norm_num) (sub_ne_zero.mpr hrho1)
+  have hcomplement_order_zero : analyticOrderAt complement rho = 0 :=
+    hcomplement.analyticOrderAt_eq_zero.mpr hcomplement_ne
+  have hm_order_ne_top : analyticOrderAt (mobiusMollifier X) rho ≠ ⊤ :=
+    analyticOrderAt_mobiusMollifier_ne_top X hX rho
+  have hm_complement_order_ne_top :
+      analyticOrderAt ((mobiusMollifier X) * complement) rho ≠ ⊤ := by
+    rw [analyticOrderAt_mul hm hcomplement, hcomplement_order_zero, add_zero]
+    exact hm_order_ne_top
+  have hsub : AnalyticAt ℂ (fun s : ℂ => s - 1) rho :=
+    analyticAt_id.sub analyticAt_const
+  have hsub_order_zero :
+      analyticOrderAt (fun s : ℂ => s - 1) rho = 0 :=
+    hsub.analyticOrderAt_eq_zero.mpr (sub_ne_zero.mpr hrho1)
+  have hg : AnalyticAt ℂ g rho := by
+    dsimp [g]
+    exact hsub.mul (hm.mul hcomplement)
+  have hg_order_ne_top : analyticOrderAt g rho ≠ ⊤ := by
+    rw [show analyticOrderAt g rho =
+        analyticOrderAt (fun s : ℂ => s - 1) rho +
+          analyticOrderAt ((mobiusMollifier X) * complement) rho by
+      exact analyticOrderAt_mul hsub (hm.mul hcomplement),
+      hsub_order_zero, zero_add]
+    exact hm_complement_order_ne_top
+  have hq_eventually :
+      q =ᶠ[𝓝 rho]
+        fun s : ℂ => (s - 1) * riemannZeta s := by
+    filter_upwards [eventually_ne_nhds hrho0, eventually_ne_nhds hrho1]
+      with s hs0 hs1
+    exact ZeroFreeRegion.riemannZetaPoleUnitAtOne_eq_sub_one_mul_riemannZeta
+      hs0 hs1
+  have hfactor :
+      regularizedCarlsonZeroDetector X =ᶠ[𝓝 rho]
+        riemannZeta * g := by
+    filter_upwards [hq_eventually] with s hqs
+    simp only [Pi.mul_apply]
+    change ZeroFreeRegion.riemannZetaPoleUnitAtOne s *
+        mobiusMollifier X s *
+          (2 * (s - 1) - ZeroFreeRegion.riemannZetaPoleUnitAtOne s *
+            mobiusMollifier X s) =
+      riemannZeta s *
+        ((s - 1) * (mobiusMollifier X s *
+          (2 * (s - 1) - ZeroFreeRegion.riemannZetaPoleUnitAtOne s *
+            mobiusMollifier X s)))
+    rw [show ZeroFreeRegion.riemannZetaPoleUnitAtOne s =
+        (s - 1) * riemannZeta s by exact hqs]
+    ring
+  have hzeta_order_ne_top : analyticOrderAt riemannZeta rho ≠ ⊤ :=
+    ZeroFreeRegion.analyticOrderAt_riemannZeta_ne_top_of_ne_one hrho1
+  have horder_nat :
+      analyticOrderNatAt (regularizedCarlsonZeroDetector X) rho =
+        analyticOrderNatAt (riemannZeta * g) rho := by
+    unfold analyticOrderNatAt
+    rw [analyticOrderAt_congr hfactor]
+  rw [horder_nat,
     analyticOrderNatAt_mul hzeta hg hzeta_order_ne_top hg_order_ne_top]
   exact Nat.le_add_right _ _
 
