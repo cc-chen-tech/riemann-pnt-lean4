@@ -3,6 +3,28 @@ import PrimeNumberTheorem.SmoothedErrorTransfer
 open Complex Set
 open scoped BigOperators Interval
 
+example {x σ b t K : ℝ} (hx : 1 ≤ x) (hσ : σ ≤ b) (ht : 0 < |t|)
+    (hK : 0 ≤ K)
+    (hlog : ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤ K) :
+    ‖PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderExplicitFormulaIntegrand
+        x ((σ : ℂ) + I * t)‖ ≤ K * x ^ b / |t| ^ 2 :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.norm_secondOrderExplicitFormulaIntegrand_horizontal_le_of_logDeriv_le_of_re_le
+    hx hσ ht hK hlog
+
+example {x y a b : ℝ} (hx : 1 ≤ x) (hy : 1 ≤ y) (ha : -1 ≤ a)
+    (hab : a ≤ b) (hb : b ≤ 2) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        PrimeNumberTheorem.ExplicitFormulaAux.goodHeight T ∧
+          ∀ t : ℝ, |t| = T →
+            ‖PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderHorizontalXDifference
+                x y a b t‖ ≤
+              ((C * y ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T ^ 2) +
+                (C * x ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T ^ 2)) *
+                (b - a) :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.exists_goodHeight_Icc_norm_secondOrderHorizontalXDifference_le
+    hx hy ha hab hb
+
 example (x y a c W : ℝ) :
     ‖PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderContourRemainder y a c W -
         PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderContourRemainder x a c W‖ ≤
