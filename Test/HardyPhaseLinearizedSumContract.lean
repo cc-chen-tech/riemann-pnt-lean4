@@ -1,0 +1,8 @@
+import HardyTheorem.HardyPhaseLinearizedSum
+
+#check HardyTheorem.hardyPhaseLinearizedSum
+#check HardyTheorem.norm_hardyPhaseSum_sub_linearized_le
+#check HardyTheorem.norm_hardyPhaseSum_sub_linearized_le_sqrtCutoff
+
+#print axioms HardyTheorem.norm_hardyPhaseSum_sub_linearized_le
+#print axioms HardyTheorem.norm_hardyPhaseSum_sub_linearized_le_sqrtCutoff

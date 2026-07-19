@@ -11,6 +11,7 @@ import HardyTheorem.HardyShortSignedMeanSquare
 import HardyTheorem.HardyPhaseSecondMoment
 import HardyTheorem.HardyPhaseCorrelation
 import HardyTheorem.HardyPhaseLinearization
+import HardyTheorem.HardyPhaseLinearizedSum
 import HardyTheorem.HardyPhaseHilbert
 import HardyTheorem.HardyOddMultiplicity
 import MathlibAux.SlidingIntervalCorrelation

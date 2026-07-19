@@ -78,6 +78,8 @@ lean_lib RiemannPNT where
     `Test.HardyPhaseCorrelationContract,
     `HardyTheorem.HardyPhaseLinearization,
     `Test.HardyPhaseLinearizationContract,
+    `HardyTheorem.HardyPhaseLinearizedSum,
+    `Test.HardyPhaseLinearizedSumContract,
     `HardyTheorem.HardyPhaseHilbert,
     `Test.HardyOddMultiplicityContract,
     `Test.DirichletPolynomialMeanSquareContract,
