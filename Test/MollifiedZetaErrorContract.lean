@@ -109,6 +109,72 @@ example {X N : ℕ} {sigma a b : ℝ} (hab : a ≤ b)
           (((N * X : ℕ) : ℝ) * (1 + Real.log (N * X)) ^ 3)) :=
   mollifiedTruncatedTail_meanSquare_le_prefix_bound hab hsigma
 
+example {X : ℕ} (hX : 0 < X) (s : ℂ) (x : ℝ)
+    (hfloor : 0 < Nat.floor x) :
+    mollifiedZetaError X s =
+        (∑ n ∈ Finset.Icc (min X (Nat.floor x) + 1)
+            (Nat.floor x * X),
+          mollifiedTruncatedCoefficient X (Nat.floor x) n /
+            (n : ℂ) ^ s) +
+          carlsonZetaRemainder s x * mobiusMollifier X s :=
+  mollifiedZetaError_eq_tail_add_canonicalRemainder hX s x hfloor
+
+example {X : ℕ} (hX : 0 < X) (s : ℂ) (x : ℝ)
+    (hfloor : 0 < Nat.floor x) :
+    ‖mollifiedZetaError X s‖ ^ 2 ≤
+        2 * ‖∑ n ∈ Finset.Icc (min X (Nat.floor x) + 1)
+            (Nat.floor x * X),
+          mollifiedTruncatedCoefficient X (Nat.floor x) n /
+            (n : ℂ) ^ s‖ ^ 2 +
+          2 * ‖carlsonZetaRemainder s x * mobiusMollifier X s‖ ^ 2 :=
+  norm_mollifiedZetaError_sq_le_tail_add_canonicalRemainder hX s x hfloor
+
+example {X : ℕ} (hX : 1 ≤ X) {sigma a b x K : ℝ}
+    (hab : a ≤ b) (hsigma : 1 / 2 < sigma) (hsigma1 : sigma < 1)
+    (hK : 0 ≤ K)
+    (hR : ∀ t ∈ Set.Icc a b,
+      ‖carlsonZetaRemainder ((sigma : ℂ) + Complex.I * t) x‖ ≤ K) :
+    ∫ t in a..b,
+        ‖carlsonZetaRemainder ((sigma : ℂ) + Complex.I * t) x *
+          mobiusMollifier X ((sigma : ℂ) + Complex.I * t)‖ ^ 2 ≤
+      K ^ 2 * (((b - a) + 4 * Real.pi) *
+        (2 * (1 +
+          ((X : ℝ) ^ (2 - 2 * sigma) - 1) / (2 - 2 * sigma)))) :=
+  canonicalRemainder_mul_mobius_meanSquare_le
+    hX hab hsigma hsigma1 hK hR
+
+example :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ (X : ℕ) (sigma a b x : ℝ),
+      1 ≤ X → a ≤ b → 1 / 2 < sigma → sigma < 1 → 2 ≤ x →
+      (∀ t ∈ Set.Icc a b, |t| ≤ x / 2 ∧ x ≤ 2 * |t|) →
+        ∫ t in a..b,
+            ‖carlsonZetaRemainder ((sigma : ℂ) + Complex.I * t) x *
+              mobiusMollifier X ((sigma : ℂ) + Complex.I * t)‖ ^ 2 ≤
+          (C * x ^ (-sigma)) ^ 2 * (((b - a) + 4 * Real.pi) *
+            (2 * (1 +
+              ((X : ℝ) ^ (2 - 2 * sigma) - 1) /
+                (2 - 2 * sigma)))) :=
+  exists_canonicalRemainder_mul_mobius_meanSquare_le
+
+example :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ (X : ℕ) (sigma a b x : ℝ),
+      1 ≤ X → a ≤ b → 1 / 2 < sigma → sigma < 1 → 2 ≤ x →
+      (∀ t ∈ Set.Icc a b, |t| ≤ x / 2 ∧ x ≤ 2 * |t|) →
+        ∫ t in a..b,
+            ‖mollifiedZetaError X
+              ((sigma : ℂ) + Complex.I * t)‖ ^ 2 ≤
+          2 * (((b - a) + 4 * Real.pi) *
+            (2 * ((min X (Nat.floor x) + 1 : ℕ) : ℝ) ^
+                (1 - 2 * sigma) *
+              ((((Nat.floor x) * X : ℕ) : ℝ) *
+                (1 + Real.log (Nat.floor x * X)) ^ 3))) +
+          2 * ((C * x ^ (-sigma)) ^ 2 *
+            (((b - a) + 4 * Real.pi) *
+              (2 * (1 +
+                ((X : ℝ) ^ (2 - 2 * sigma) - 1) /
+                  (2 - 2 * sigma))))) :=
+  exists_mollifiedZetaError_meanSquare_le_endpoint
+
 example :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (X : ℕ) (s : ℂ) (x : ℝ),
       (1 / 2 : ℝ) ≤ s.re → s.re ≤ 1 → s ≠ 1 → 2 ≤ x →
@@ -166,6 +232,11 @@ example :
 #print axioms mollifiedTruncatedTail_meanSquare_le_weightedDivisorSquareSum
 #print axioms mollifiedTruncatedTail_meanSquare_le_fourfoldDivisorCount
 #print axioms mollifiedTruncatedTail_meanSquare_le_prefix_bound
+#print axioms mollifiedZetaError_eq_tail_add_canonicalRemainder
+#print axioms norm_mollifiedZetaError_sq_le_tail_add_canonicalRemainder
+#print axioms canonicalRemainder_mul_mobius_meanSquare_le
+#print axioms exists_canonicalRemainder_mul_mobius_meanSquare_le
+#print axioms exists_mollifiedZetaError_meanSquare_le_endpoint
 #print axioms norm_mollifiedTailCoefficient_le
 #print axioms mollifiedTailCoefficient_weightedSquareSum_le
 #print axioms mollifiedTailCoefficient_squareSum_le_weightedDivisorSquareSum

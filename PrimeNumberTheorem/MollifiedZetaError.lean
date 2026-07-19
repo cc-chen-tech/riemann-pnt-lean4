@@ -279,6 +279,282 @@ theorem truncatedZetaPolynomial_mul_mobiusMollifier
   exact truncatedZeta_sum_mul_mobius_sum_eq_mollifiedTruncatedPolynomial
     X (Nat.floor x) s
 
+/-- The mollified zeta error decomposes using the canonical zeta remainder,
+so the remainder term is a genuine function rather than a pointwise witness. -/
+theorem mollifiedZetaError_eq_tail_add_canonicalRemainder
+    {X : ℕ} (hX : 0 < X) (s : ℂ) (x : ℝ)
+    (hfloor : 0 < Nat.floor x) :
+    mollifiedZetaError X s =
+        (∑ n ∈ Finset.Icc (min X (Nat.floor x) + 1)
+            (Nat.floor x * X),
+          mollifiedTruncatedCoefficient X (Nat.floor x) n /
+            (n : ℂ) ^ s) +
+          carlsonZetaRemainder s x * mobiusMollifier X s := by
+  have htail := mollifiedTruncatedPolynomial_sub_one_eq_tail hX hfloor s
+  unfold mollifiedZetaError
+  rw [riemannZeta_eq_truncated_add_carlsonZetaRemainder]
+  change (truncatedZetaPolynomial x s + carlsonZetaRemainder s x) *
+      mobiusMollifier X s - 1 = _
+  rw [add_mul, truncatedZetaPolynomial_mul_mobiusMollifier]
+  calc
+    mollifiedTruncatedPolynomial X (Nat.floor x) s +
+        carlsonZetaRemainder s x * mobiusMollifier X s - 1 =
+      (mollifiedTruncatedPolynomial X (Nat.floor x) s - 1) +
+        carlsonZetaRemainder s x * mobiusMollifier X s := by ring
+    _ = _ := by rw [htail]
+
+/-- Squaring the norm of the canonical decomposition separates the finite tail
+and the now-integrable canonical remainder contribution. -/
+theorem norm_mollifiedZetaError_sq_le_tail_add_canonicalRemainder
+    {X : ℕ} (hX : 0 < X) (s : ℂ) (x : ℝ)
+    (hfloor : 0 < Nat.floor x) :
+    ‖mollifiedZetaError X s‖ ^ 2 ≤
+        2 * ‖∑ n ∈ Finset.Icc (min X (Nat.floor x) + 1)
+            (Nat.floor x * X),
+          mollifiedTruncatedCoefficient X (Nat.floor x) n /
+            (n : ℂ) ^ s‖ ^ 2 +
+          2 * ‖carlsonZetaRemainder s x * mobiusMollifier X s‖ ^ 2 := by
+  let A : ℂ :=
+    ∑ n ∈ Finset.Icc (min X (Nat.floor x) + 1) (Nat.floor x * X),
+      mollifiedTruncatedCoefficient X (Nat.floor x) n / (n : ℂ) ^ s
+  let B : ℂ := carlsonZetaRemainder s x * mobiusMollifier X s
+  have hdecomp : mollifiedZetaError X s = A + B := by
+    exact mollifiedZetaError_eq_tail_add_canonicalRemainder hX s x hfloor
+  rw [hdecomp]
+  have htri : ‖A + B‖ ≤ ‖A‖ + ‖B‖ := norm_add_le A B
+  have hA : 0 ≤ ‖A‖ := norm_nonneg A
+  have hB : 0 ≤ ‖B‖ := norm_nonneg B
+  have hAB : 0 ≤ ‖A + B‖ := norm_nonneg (A + B)
+  dsimp [A, B]
+  nlinarith [sq_nonneg (‖A‖ - ‖B‖)]
+
+/-- A uniform pointwise bound for the canonical zeta remainder converts its
+product with the Möbius mollifier into the sharp mollifier mean-square bound. -/
+theorem canonicalRemainder_mul_mobius_meanSquare_le
+    {X : ℕ} (hX : 1 ≤ X) {sigma a b x K : ℝ}
+    (hab : a ≤ b) (hsigma : 1 / 2 < sigma) (hsigma1 : sigma < 1)
+    (hK : 0 ≤ K)
+    (hR : ∀ t ∈ Set.Icc a b,
+      ‖carlsonZetaRemainder ((sigma : ℂ) + Complex.I * t) x‖ ≤ K) :
+    ∫ t in a..b,
+        ‖carlsonZetaRemainder ((sigma : ℂ) + Complex.I * t) x *
+          mobiusMollifier X ((sigma : ℂ) + Complex.I * t)‖ ^ 2 ≤
+      K ^ 2 * (((b - a) + 4 * Real.pi) *
+        (2 * (1 +
+          ((X : ℝ) ^ (2 - 2 * sigma) - 1) / (2 - 2 * sigma)))) := by
+  have hsigma_ne : sigma ≠ 1 := ne_of_lt hsigma1
+  have hRcont := continuous_carlsonZetaRemainder_verticalLine x sigma hsigma_ne
+  have hMcont := continuous_mobiusMollifier_verticalLine X sigma
+  have hleftInt : IntervalIntegrable (fun t : ℝ =>
+      ‖carlsonZetaRemainder ((sigma : ℂ) + Complex.I * t) x *
+        mobiusMollifier X ((sigma : ℂ) + Complex.I * t)‖ ^ 2)
+      MeasureTheory.volume a b :=
+    ((hRcont.mul hMcont).norm.pow 2).intervalIntegrable a b
+  have hrightInt : IntervalIntegrable (fun t : ℝ =>
+      K ^ 2 * ‖mobiusMollifier X
+        ((sigma : ℂ) + Complex.I * t)‖ ^ 2)
+      MeasureTheory.volume a b :=
+    (continuous_const.mul (hMcont.norm.pow 2)).intervalIntegrable a b
+  have hpoint : ∀ t ∈ Set.Icc a b,
+      ‖carlsonZetaRemainder ((sigma : ℂ) + Complex.I * t) x *
+        mobiusMollifier X ((sigma : ℂ) + Complex.I * t)‖ ^ 2 ≤
+      K ^ 2 * ‖mobiusMollifier X
+        ((sigma : ℂ) + Complex.I * t)‖ ^ 2 := by
+    intro t ht
+    rw [norm_mul, mul_pow]
+    apply mul_le_mul_of_nonneg_right _ (sq_nonneg _)
+    have hnorm := norm_nonneg
+      (carlsonZetaRemainder ((sigma : ℂ) + Complex.I * t) x)
+    nlinarith [hR t ht]
+  calc
+    ∫ t in a..b,
+        ‖carlsonZetaRemainder ((sigma : ℂ) + Complex.I * t) x *
+          mobiusMollifier X ((sigma : ℂ) + Complex.I * t)‖ ^ 2 ≤
+      ∫ t in a..b,
+        K ^ 2 * ‖mobiusMollifier X
+          ((sigma : ℂ) + Complex.I * t)‖ ^ 2 :=
+      intervalIntegral.integral_mono_on hab hleftInt hrightInt hpoint
+    _ = K ^ 2 * ∫ t in a..b,
+        ‖mobiusMollifier X ((sigma : ℂ) + Complex.I * t)‖ ^ 2 := by
+      rw [intervalIntegral.integral_const_mul]
+    _ ≤ K ^ 2 * (((b - a) + 4 * Real.pi) *
+        (2 * (1 +
+          ((X : ℝ) ^ (2 - 2 * sigma) - 1) / (2 - 2 * sigma)))) := by
+      exact mul_le_mul_of_nonneg_left
+        (mobiusMollifier_meanSquare_le_rpow_endpoint
+          hX hab hsigma hsigma1)
+        (sq_nonneg K)
+
+/-- The canonical Carlson remainder estimate supplies the uniform constant in
+the preceding mean-square theorem whenever the cutoff and height are comparable
+throughout the interval. -/
+theorem exists_canonicalRemainder_mul_mobius_meanSquare_le :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ (X : ℕ) (sigma a b x : ℝ),
+      1 ≤ X → a ≤ b → 1 / 2 < sigma → sigma < 1 → 2 ≤ x →
+      (∀ t ∈ Set.Icc a b, |t| ≤ x / 2 ∧ x ≤ 2 * |t|) →
+        ∫ t in a..b,
+            ‖carlsonZetaRemainder ((sigma : ℂ) + Complex.I * t) x *
+              mobiusMollifier X ((sigma : ℂ) + Complex.I * t)‖ ^ 2 ≤
+          (C * x ^ (-sigma)) ^ 2 * (((b - a) + 4 * Real.pi) *
+            (2 * (1 +
+              ((X : ℝ) ^ (2 - 2 * sigma) - 1) /
+                (2 - 2 * sigma)))) := by
+  obtain ⟨C, hC, hbound⟩ := exists_norm_carlsonZetaRemainder_le
+  refine ⟨C, hC, ?_⟩
+  intro X sigma a b x hX hab hsigma hsigma1 hx hheight
+  apply canonicalRemainder_mul_mobius_meanSquare_le
+    hX hab hsigma hsigma1
+  · exact mul_nonneg hC (Real.rpow_nonneg (by linarith) _)
+  · intro t ht
+    have hs_ne : ((sigma : ℂ) + Complex.I * t) ≠ 1 := by
+      intro h
+      have hre := congrArg Complex.re h
+      norm_num at hre
+      linarith
+    have hcomparability := hheight t ht
+    have hs_lower : (1 / 2 : ℝ) ≤
+        ((sigma : ℂ) + Complex.I * t).re := by
+      simpa using hsigma.le
+    have hs_upper : ((sigma : ℂ) + Complex.I * t).re ≤ 1 := by
+      simpa using hsigma1.le
+    have him_upper : |((sigma : ℂ) + Complex.I * t).im| ≤ x / 2 := by
+      simpa using hcomparability.1
+    have him_lower : x ≤ 2 * |((sigma : ℂ) + Complex.I * t).im| := by
+      simpa using hcomparability.2
+    simpa using hbound ((sigma : ℂ) + Complex.I * t) x
+      hs_lower hs_upper hs_ne hx him_upper him_lower
+
+/-- The full mollified zeta error has a Carlson-ready second-moment bound: a
+finite convolution tail plus the canonical zeta remainder contribution. -/
+theorem exists_mollifiedZetaError_meanSquare_le_endpoint :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ (X : ℕ) (sigma a b x : ℝ),
+      1 ≤ X → a ≤ b → 1 / 2 < sigma → sigma < 1 → 2 ≤ x →
+      (∀ t ∈ Set.Icc a b, |t| ≤ x / 2 ∧ x ≤ 2 * |t|) →
+        ∫ t in a..b,
+            ‖mollifiedZetaError X
+              ((sigma : ℂ) + Complex.I * t)‖ ^ 2 ≤
+          2 * (((b - a) + 4 * Real.pi) *
+            (2 * ((min X (Nat.floor x) + 1 : ℕ) : ℝ) ^
+                (1 - 2 * sigma) *
+              ((((Nat.floor x) * X : ℕ) : ℝ) *
+                (1 + Real.log (Nat.floor x * X)) ^ 3))) +
+          2 * ((C * x ^ (-sigma)) ^ 2 *
+            (((b - a) + 4 * Real.pi) *
+              (2 * (1 +
+                ((X : ℝ) ^ (2 - 2 * sigma) - 1) /
+                  (2 - 2 * sigma))))) := by
+  obtain ⟨C, hC, hbound⟩ := exists_norm_carlsonZetaRemainder_le
+  refine ⟨C, hC, ?_⟩
+  intro X sigma a b x hX hab hsigma hsigma1 hx hheight
+  have hXpos : 0 < X := lt_of_lt_of_le Nat.zero_lt_one hX
+  have hfloor : 0 < Nat.floor x := Nat.floor_pos.mpr (by linarith)
+  let Tail : ℝ → ℂ := fun t =>
+    ∑ n ∈ Finset.Icc (min X (Nat.floor x) + 1) (Nat.floor x * X),
+      mollifiedTruncatedCoefficient X (Nat.floor x) n /
+        (n : ℂ) ^ ((sigma : ℂ) + Complex.I * t)
+  let Rem : ℝ → ℂ := fun t =>
+    carlsonZetaRemainder ((sigma : ℂ) + Complex.I * t) x *
+      mobiusMollifier X ((sigma : ℂ) + Complex.I * t)
+  have hTailCont : Continuous Tail := by
+    have hpoly : Continuous (fun t : ℝ =>
+        DirichletPolynomial.finiteDirichletPolynomial
+          (Finset.Icc (min X (Nat.floor x) + 1) (Nat.floor x * X))
+          (mollifiedTailCoefficient X (Nat.floor x) sigma) t) := by
+      unfold DirichletPolynomial.finiteDirichletPolynomial
+        DirichletPolynomial.finiteExponentialSum
+      fun_prop
+    exact hpoly.congr fun t =>
+      (mollifiedTruncatedTail_verticalLine_eq_finiteDirichletPolynomial
+        X (Nat.floor x) sigma t).symm
+  have hRcont := continuous_carlsonZetaRemainder_verticalLine
+    x sigma (ne_of_lt hsigma1)
+  have hMcont := continuous_mobiusMollifier_verticalLine X sigma
+  have hRemCont : Continuous Rem := hRcont.mul hMcont
+  have hErrorCont : Continuous (fun t : ℝ =>
+      mollifiedZetaError X ((sigma : ℂ) + Complex.I * t)) := by
+    exact (hTailCont.add hRemCont).congr fun t =>
+      (mollifiedZetaError_eq_tail_add_canonicalRemainder
+        hXpos ((sigma : ℂ) + Complex.I * t) x hfloor).symm
+  have hTailSqInt : IntervalIntegrable (fun t : ℝ => ‖Tail t‖ ^ 2)
+      MeasureTheory.volume a b :=
+    (hTailCont.norm.pow 2).intervalIntegrable a b
+  have hRemSqInt : IntervalIntegrable (fun t : ℝ => ‖Rem t‖ ^ 2)
+      MeasureTheory.volume a b :=
+    (hRemCont.norm.pow 2).intervalIntegrable a b
+  have hErrorSqInt : IntervalIntegrable (fun t : ℝ =>
+      ‖mollifiedZetaError X ((sigma : ℂ) + Complex.I * t)‖ ^ 2)
+      MeasureTheory.volume a b :=
+    (hErrorCont.norm.pow 2).intervalIntegrable a b
+  have hMajorantInt : IntervalIntegrable (fun t : ℝ =>
+      2 * ‖Tail t‖ ^ 2 + 2 * ‖Rem t‖ ^ 2)
+      MeasureTheory.volume a b :=
+    ((continuous_const.mul (hTailCont.norm.pow 2)).add
+      (continuous_const.mul (hRemCont.norm.pow 2))).intervalIntegrable a b
+  have hpoint : ∀ t ∈ Set.Icc a b,
+      ‖mollifiedZetaError X ((sigma : ℂ) + Complex.I * t)‖ ^ 2 ≤
+        2 * ‖Tail t‖ ^ 2 + 2 * ‖Rem t‖ ^ 2 := by
+    intro t _
+    exact norm_mollifiedZetaError_sq_le_tail_add_canonicalRemainder
+      hXpos ((sigma : ℂ) + Complex.I * t) x hfloor
+  have hintegral :
+      (∫ t in a..b,
+          ‖mollifiedZetaError X ((sigma : ℂ) + Complex.I * t)‖ ^ 2) ≤
+        2 * (∫ t in a..b, ‖Tail t‖ ^ 2) +
+          2 * (∫ t in a..b, ‖Rem t‖ ^ 2) := by
+    calc
+      (∫ t in a..b,
+          ‖mollifiedZetaError X ((sigma : ℂ) + Complex.I * t)‖ ^ 2) ≤
+        ∫ t in a..b, (2 * ‖Tail t‖ ^ 2 + 2 * ‖Rem t‖ ^ 2) :=
+        intervalIntegral.integral_mono_on
+          hab hErrorSqInt hMajorantInt hpoint
+      _ = 2 * (∫ t in a..b, ‖Tail t‖ ^ 2) +
+          2 * (∫ t in a..b, ‖Rem t‖ ^ 2) := by
+        rw [intervalIntegral.integral_add
+          (hTailSqInt.const_mul 2) (hRemSqInt.const_mul 2),
+          intervalIntegral.integral_const_mul,
+          intervalIntegral.integral_const_mul]
+  have hTailBound :
+      (∫ t in a..b, ‖Tail t‖ ^ 2) ≤
+        ((b - a) + 4 * Real.pi) *
+          (2 * ((min X (Nat.floor x) + 1 : ℕ) : ℝ) ^
+              (1 - 2 * sigma) *
+            ((((Nat.floor x) * X : ℕ) : ℝ) *
+              (1 + Real.log (Nat.floor x * X)) ^ 3)) := by
+    exact mollifiedTruncatedTail_meanSquare_le_prefix_bound hab hsigma
+  have hK : 0 ≤ C * x ^ (-sigma) :=
+    mul_nonneg hC (Real.rpow_nonneg (by linarith) _)
+  have hRpoint : ∀ t ∈ Set.Icc a b,
+      ‖carlsonZetaRemainder ((sigma : ℂ) + Complex.I * t) x‖ ≤
+        C * x ^ (-sigma) := by
+    intro t ht
+    have hs_ne : ((sigma : ℂ) + Complex.I * t) ≠ 1 := by
+      intro h
+      have hre := congrArg Complex.re h
+      norm_num at hre
+      linarith
+    have hcomparability := hheight t ht
+    have hs_lower : (1 / 2 : ℝ) ≤
+        ((sigma : ℂ) + Complex.I * t).re := by simpa using hsigma.le
+    have hs_upper : ((sigma : ℂ) + Complex.I * t).re ≤ 1 := by
+      simpa using hsigma1.le
+    have him_upper : |((sigma : ℂ) + Complex.I * t).im| ≤ x / 2 := by
+      simpa using hcomparability.1
+    have him_lower : x ≤ 2 * |((sigma : ℂ) + Complex.I * t).im| := by
+      simpa using hcomparability.2
+    simpa using hbound ((sigma : ℂ) + Complex.I * t) x
+      hs_lower hs_upper hs_ne hx him_upper him_lower
+  have hRemBound :
+      (∫ t in a..b, ‖Rem t‖ ^ 2) ≤
+        (C * x ^ (-sigma)) ^ 2 * (((b - a) + 4 * Real.pi) *
+          (2 * (1 +
+            ((X : ℝ) ^ (2 - 2 * sigma) - 1) /
+              (2 - 2 * sigma)))) := by
+    exact canonicalRemainder_mul_mobius_meanSquare_le
+      hX hab hsigma hsigma1 hK hRpoint
+  exact hintegral.trans (add_le_add
+    (mul_le_mul_of_nonneg_left hTailBound (by norm_num))
+    (mul_le_mul_of_nonneg_left hRemBound (by norm_num)))
+
 /-- The Carlson-ready zeta approximation decomposes the mollified error into
 a finite Dirichlet-polynomial product and a controlled remainder times the
 mollifier.  The final inequality is the pointwise input for the second-moment
