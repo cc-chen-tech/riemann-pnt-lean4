@@ -117,6 +117,114 @@ theorem card_vinogradovParameterizedCorrectionSet_le
     _ = Fintype.card (vinogradovFreeCorrectionData p k r) := by simp
     _ = p ^ (k + 2 * r) := card_vinogradovFreeCorrectionData p k r
 
+/-- Join a head block and a tail block into one tuple. -/
+def vinogradovJoinTuple {α : Type*} {k r : ℕ}
+    (head : Fin k → α) (tail : Fin r → α) : Fin (k + r) → α :=
+  fun i ↦ Sum.elim head tail (finSumFinEquiv.symm i)
+
+@[simp]
+theorem vinogradovJoinTuple_castAdd {α : Type*} {k r : ℕ}
+    (head : Fin k → α) (tail : Fin r → α) (i : Fin k) :
+    vinogradovJoinTuple head tail (Fin.castAdd r i) = head i := by
+  simp [vinogradovJoinTuple]
+
+@[simp]
+theorem vinogradovJoinTuple_natAdd {α : Type*} {k r : ℕ}
+    (head : Fin k → α) (tail : Fin r → α) (i : Fin r) :
+    vinogradovJoinTuple head tail (Fin.natAdd k i) = tail i := by
+  simp [vinogradovJoinTuple]
+
+/-- Power sums split additively across the selected head and free tail
+coordinates. -/
+theorem vinogradovPowerSumInt_joinTuple {d k r : ℕ}
+    (head : Fin k → ℤ) (tail : Fin r → ℤ) (j : Fin d) :
+    vinogradovPowerSumInt (vinogradovJoinTuple head tail) j =
+      vinogradovPowerSumInt head j + vinogradovPowerSumInt tail j := by
+  unfold vinogradovPowerSumInt
+  rw [← finSumFinEquiv.sum_comp
+    (fun i ↦ vinogradovJoinTuple head tail i ^ (j.val + 1))]
+  rw [Fintype.sum_sum_type]
+  simp [vinogradovJoinTuple]
+
+/-- For fixed free corrections, the right-hand power sum minus the corrected
+left tail is the target imposed on the nonsingular head block. -/
+def vinogradovSolutionCorrectionTarget
+    (p k r n : ℕ) [Fact p.Prime]
+    (x y : Fin (k + r) → ℤ)
+    (free : vinogradovFreeCorrectionData p k r) : Fin k → ℤ :=
+  fun j ↦
+    vinogradovPowerSumInt
+        (fun i ↦ y i + (p : ℤ) ^ (n + 1) * (free.2 i).val) j -
+      vinogradovPowerSumInt
+        (fun i ↦ x (Fin.natAdd k i) +
+          (p : ℤ) ^ (n + 1) * (free.1 i).val) j
+
+/-- All one-step corrections of a pair of length-`k+r` tuples, represented by
+the free left-tail and right corrections together with the controlled left
+head correction. -/
+noncomputable def vinogradovSolutionCorrectionSet
+    (p k r n : ℕ) [Fact p.Prime]
+    (x y : Fin (k + r) → ℤ) :
+    Finset (Σ _ : vinogradovFreeCorrectionData p k r,
+      Fin k → ZMod p) :=
+  vinogradovParameterizedCorrectionSet p k r n
+    (fun i ↦ x (Fin.castAdd r i))
+    (vinogradovSolutionCorrectionTarget p k r n x y)
+
+/-- Membership is exactly the complete next-level Vinogradov system after
+joining the controlled head correction to the free tail correction. -/
+theorem mem_vinogradovSolutionCorrectionSet_iff
+    (p k r n : ℕ) [Fact p.Prime]
+    (x y : Fin (k + r) → ℤ)
+    (z : Σ _ : vinogradovFreeCorrectionData p k r,
+      Fin k → ZMod p) :
+    z ∈ vinogradovSolutionCorrectionSet p k r n x y ↔
+      ∀ j : Fin k,
+        vinogradovPowerSumInt
+            (vinogradovJoinTuple
+              (fun i ↦ x (Fin.castAdd r i) +
+                (p : ℤ) ^ (n + 1) * (z.2 i).val)
+              (fun i ↦ x (Fin.natAdd k i) +
+                (p : ℤ) ^ (n + 1) * (z.1.1 i).val)) j ≡
+          vinogradovPowerSumInt
+            (fun i ↦ y i +
+              (p : ℤ) ^ (n + 1) * (z.1.2 i).val) j
+            [ZMOD (p : ℤ) ^ (n + 1) * p] := by
+  classical
+  simp only [vinogradovSolutionCorrectionSet,
+    vinogradovParameterizedCorrectionSet, Finset.mem_sigma,
+    Finset.mem_univ, true_and,
+    mem_vinogradovHeadCorrectionSet_iff]
+  constructor
+  · intro h j
+    rw [vinogradovPowerSumInt_joinTuple]
+    have := (h j).add_right
+      (vinogradovPowerSumInt
+        (fun i ↦ x (Fin.natAdd k i) +
+          (p : ℤ) ^ (n + 1) * (z.1.1 i).val) j)
+    simpa [vinogradovSolutionCorrectionTarget] using this
+  · intro h j
+    have hj := h j
+    rw [vinogradovPowerSumInt_joinTuple] at hj
+    have := hj.add_right
+      (-vinogradovPowerSumInt
+        (fun i ↦ x (Fin.natAdd k i) +
+          (p : ℤ) ^ (n + 1) * (z.1.1 i).val) j)
+    simpa [vinogradovSolutionCorrectionTarget] using this
+
+/-- A nonsingular left head block leaves at most `p^(k+2r)` complete
+one-step corrections of the pair. -/
+theorem card_vinogradovSolutionCorrectionSet_le
+    (p k r n : ℕ) [Fact p.Prime] (hkp : k < p)
+    (x y : Fin (k + r) → ℤ)
+    (hx : Function.Injective
+      (fun i : Fin k ↦ (x (Fin.castAdd r i) : ZMod p))) :
+    (vinogradovSolutionCorrectionSet p k r n x y).card ≤
+      p ^ (k + 2 * r) := by
+  exact card_vinogradovParameterizedCorrectionSet_le p k r n hkp
+    (fun i ↦ x (Fin.castAdd r i)) hx
+    (vinogradovSolutionCorrectionTarget p k r n x y)
+
 end
 
 end ZeroFreeRegion.VinogradovKorobov
