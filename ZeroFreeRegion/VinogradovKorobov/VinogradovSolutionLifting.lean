@@ -303,6 +303,47 @@ theorem card_vinogradovPrimePowerNonsingularLiftSet_le
     _ = (vinogradovPrimePowerNonsingularSolutionSet p k r n).card *
         p ^ (k + 2 * r) := by simp
 
+/-- Base-`p` digit decomposition between one coordinate modulo `p^(n+2)`
+and a coordinate modulo `p^(n+1)` together with one new residue digit. -/
+noncomputable def vinogradovPrimePowerDigitEquiv
+    (p n : ℕ) [Fact p.Prime] :
+    Fin (p ^ (n + 1)) × ZMod p ≃ Fin (p ^ (n + 2)) := by
+  classical
+  letI : NeZero p := ⟨(Fact.out : p.Prime).ne_zero⟩
+  have hpow : p * p ^ (n + 1) = p ^ (n + 2) := by
+    calc
+      p * p ^ (n + 1) = p ^ (n + 1) * p := by ac_rfl
+      _ = p ^ (n + 2) := by
+        simp only [pow_succ]
+  exact
+    (Equiv.prodCongr (Equiv.refl (Fin (p ^ (n + 1))))
+        (ZMod.finEquiv p).symm.toEquiv).trans
+      ((Equiv.prodComm _ _).trans
+        (finProdFinEquiv.trans (finCongr hpow)))
+
+/-- Combining a base coordinate and a new digit has the expected integer
+value `base + p^(n+1) * digit`. -/
+theorem vinogradovPrimePowerDigitEquiv_apply_val
+    (p n : ℕ) [Fact p.Prime]
+    (x : Fin (p ^ (n + 1))) (u : ZMod p) :
+    (vinogradovPrimePowerDigitEquiv p n (x, u)).val =
+      x.val + p ^ (n + 1) * u.val := by
+  classical
+  letI : NeZero p := ⟨(Fact.out : p.Prime).ne_zero⟩
+  obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero
+    (Fact.out : p.Prime).ne_zero
+  simp [vinogradovPrimePowerDigitEquiv, Equiv.trans_apply,
+    finProdFinEquiv]
+  rfl
+
+/-- The digit decomposition recombines to the original higher-level
+coordinate. -/
+theorem vinogradovPrimePowerDigitEquiv_symm_apply
+    (p n : ℕ) [Fact p.Prime] (z : Fin (p ^ (n + 2))) :
+    vinogradovPrimePowerDigitEquiv p n
+      ((vinogradovPrimePowerDigitEquiv p n).symm z) = z :=
+  (vinogradovPrimePowerDigitEquiv p n).apply_symm_apply z
+
 end
 
 end ZeroFreeRegion.VinogradovKorobov
