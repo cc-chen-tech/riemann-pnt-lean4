@@ -299,4 +299,63 @@ theorem norm_integral_hardyPhaseCorrelationOffDiagonal_dyadic_le
       simp only [normSq_hardyShiftTwist]
       ring
 
+/-- The full off-diagonal Hardy correlation for any finite positive index set
+bounded by `N`.  This controls all dyadic cross-block interactions at once. -/
+theorem norm_integral_hardyPhaseCorrelationOffDiagonal_le_of_upper
+    {N : ℕ} (hN : 0 < N) (s : Finset ℕ) (coeff : ℕ → ℂ)
+    (hpositive : ∀ n ∈ s, n ≠ 0) (hupper : ∀ n ∈ s, n ≤ N)
+    {T delta v w : ℝ} (hT : 0 < T) (hdelta : 0 ≤ delta)
+    (hroom : delta ≤ T) (hv : v ∈ Set.Icc 0 delta)
+    (hw : w ∈ Set.Icc 0 delta) :
+    ‖∫ t in T..2 * T - delta,
+        hardyPhaseCorrelationOffDiagonal s coeff v w t‖ ≤
+      (2 + delta / 2) * ((5 * Real.pi + 4) * N *
+        (2 * ∑ n ∈ s, Complex.normSq (coeff n))) := by
+  have hab : T ≤ 2 * T - delta := by linarith
+  let A : ℝ → ℂ := hardyCorrelationAmplitude v w
+  let A' : ℝ → ℂ := hardyCorrelationAmplitudeDerivative v w
+  have hA : ∀ t ∈ Set.uIcc T (2 * T - delta),
+      HasDerivAt A (A' t) t := by
+    intro t ht
+    rw [Set.uIcc_of_le hab] at ht
+    exact hasDerivAt_hardyCorrelationAmplitude
+      (by linarith [hT, ht.1, hv.1]) (by linarith [hT, ht.1, hw.1])
+  have hAend : ‖A T‖ ≤ 1 ∧ ‖A (2 * T - delta)‖ ≤ 1 := by
+    constructor <;> dsimp only [A, hardyCorrelationAmplitude] <;>
+      rw [Complex.norm_exp_I_mul_ofReal]
+  have hA'int : IntervalIntegrable A' volume T (2 * T - delta) := by
+    apply ContinuousOn.intervalIntegrable_of_Icc hab
+    intro t ht
+    exact (continuousAt_hardyCorrelationAmplitudeDerivative
+      (by linarith [hT, ht.1, hv.1])
+      (by linarith [hT, ht.1, hw.1])).continuousWithinAt
+  have hvariation : (∫ t in T..2 * T - delta, ‖A' t‖) ≤ delta / 2 :=
+    integral_norm_hardyCorrelationAmplitudeDerivative_le
+      hT hdelta hroom hv hw
+  have hgeneric :=
+    MathlibAux.norm_integral_amplitude_mul_logOffDiagonalForm_neg_le_of_upper
+      hN s (hardyShiftTwist coeff w) (hardyShiftTwist coeff v)
+        hpositive hupper hab hA hAend hA'int hvariation
+  calc
+    ‖∫ t in T..2 * T - delta,
+        hardyPhaseCorrelationOffDiagonal s coeff v w t‖ =
+        ‖∫ t in T..2 * T - delta,
+          A t * MathlibAux.logOffDiagonalForm s
+            (hardyShiftTwist coeff w) (hardyShiftTwist coeff v) (-t)‖ := by
+      congr 1
+      apply intervalIntegral.integral_congr
+      intro t ht
+      have ht' : t ∈ Set.Icc T (2 * T - delta) := by
+        simpa [Set.uIcc_of_le hab] using ht
+      exact hardyPhaseCorrelationOffDiagonal_eq_amplitude_mul_logOffDiagonal
+        s coeff hpositive (by linarith [hT, ht'.1, hv.1])
+          (by linarith [hT, ht'.1, hw.1])
+    _ ≤ (2 + delta / 2) * ((5 * Real.pi + 4) * N *
+        ((∑ n ∈ s, Complex.normSq (hardyShiftTwist coeff w n)) +
+          ∑ n ∈ s, Complex.normSq (hardyShiftTwist coeff v n))) := hgeneric
+    _ = (2 + delta / 2) * ((5 * Real.pi + 4) * N *
+        (2 * ∑ n ∈ s, Complex.normSq (coeff n))) := by
+      simp only [normSq_hardyShiftTwist]
+      ring
+
 end HardyTheorem

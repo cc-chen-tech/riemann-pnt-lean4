@@ -341,4 +341,193 @@ theorem norm_integral_amplitude_mul_logOffDiagonalForm_neg_le
         ((∑ n ∈ s, Complex.normSq (left n)) +
           ∑ n ∈ s, Complex.normSq (right n))) := hbound
 
+private theorem norm_logarithmicHilbertPrimitive_le_of_upper
+    {N : ℕ} (hN : 0 < N) (s : Finset ℕ) (left right : ℕ → ℂ)
+    (hpositive : ∀ n ∈ s, n ≠ 0) (hupper : ∀ n ∈ s, n ≤ N)
+    (t : ℝ) :
+    ‖logarithmicHilbertPrimitive s left right t‖ ≤
+      (5 * Real.pi + 4) * N *
+        ((∑ n ∈ s, Complex.normSq (left n)) +
+          ∑ n ∈ s, Complex.normSq (right n)) := by
+  rw [logarithmicHilbertPrimitive_eq_bilinearForm]
+  have h := norm_logarithmicHilbertBilinearForm_le_of_upper hN s
+    (logarithmicTwist left t) (logarithmicTwist right t) hpositive hupper
+  simpa only [normSq_logarithmicTwist] using h
+
+private theorem norm_integral_amplitude_mul_logOffDiagonalForm_le_of_primitive_bound
+    (s : Finset ℕ) (left right : ℕ → ℂ)
+    (hpositive : ∀ n ∈ s, n ≠ 0)
+    {A A' : ℝ → ℂ} {a b V K : ℝ} (hab : a ≤ b)
+    (hA : ∀ x ∈ Set.uIcc a b, HasDerivAt A (A' x) x)
+    (hAend : ‖A a‖ ≤ 1 ∧ ‖A b‖ ≤ 1)
+    (hA'int : IntervalIntegrable A' volume a b)
+    (hvariation : (∫ x in a..b, ‖A' x‖) ≤ V)
+    (hK : 0 ≤ K)
+    (hHbound : ∀ x : ℝ, ‖logarithmicHilbertPrimitive s left right x‖ ≤ K) :
+    ‖∫ t in a..b, A t * logOffDiagonalForm s left right t‖ ≤
+      (2 + V) * K := by
+  let H : ℝ → ℂ := logarithmicHilbertPrimitive s left right
+  let B : ℝ → ℂ := logOffDiagonalForm s left right
+  have hHderiv : ∀ x ∈ Set.uIcc a b, HasDerivAt H (I * B x) x := by
+    intro x hx
+    exact hasDerivAt_logarithmicHilbertPrimitive s left right hpositive x
+  have hBint : IntervalIntegrable (fun x => I * B x) volume a b := by
+    apply Continuous.intervalIntegrable
+    dsimp only [B, logOffDiagonalForm, logOffDiagonalTerm]
+    apply Continuous.const_mul
+    apply continuous_finset_sum
+    intro m hm
+    apply continuous_finset_sum
+    intro n hn
+    split_ifs <;> fun_prop
+  have hparts := intervalIntegral.integral_mul_deriv_eq_deriv_mul
+    hA hHderiv hA'int hBint
+  have hleft :
+      (∫ x in a..b, A x * (I * B x)) =
+        I * ∫ x in a..b, A x * B x := by
+    calc
+      (∫ x in a..b, A x * (I * B x)) =
+          ∫ x in a..b, I * (A x * B x) := by
+        apply intervalIntegral.integral_congr
+        intro x hx
+        ring
+      _ = I * ∫ x in a..b, A x * B x :=
+        intervalIntegral.integral_const_mul _ _
+  have hidentity :
+      I * ∫ x in a..b, A x * B x =
+        A b * H b - A a * H a - ∫ x in a..b, A' x * H x :=
+    hleft.symm.trans hparts
+  have hrem : ‖∫ x in a..b, A' x * H x‖ ≤ K * V := by
+    have hmajorInt : IntervalIntegrable (fun x => K * ‖A' x‖)
+        volume a b := (hA'int.norm).const_mul K
+    have hnorm := intervalIntegral.norm_integral_le_of_norm_le hab
+      (by
+        filter_upwards with x
+        intro hx
+        calc
+          ‖A' x * H x‖ = ‖A' x‖ * ‖H x‖ := norm_mul _ _
+          _ ≤ ‖A' x‖ * K :=
+            mul_le_mul_of_nonneg_left (hHbound x) (norm_nonneg _)
+          _ = K * ‖A' x‖ := by ring)
+      hmajorInt
+    calc
+      ‖∫ x in a..b, A' x * H x‖ ≤
+          ∫ x in a..b, K * ‖A' x‖ := hnorm
+      _ = K * ∫ x in a..b, ‖A' x‖ :=
+        intervalIntegral.integral_const_mul _ _
+      _ ≤ K * V := mul_le_mul_of_nonneg_left hvariation hK
+  have hend : ‖A b * H b - A a * H a‖ ≤ 2 * K := by
+    calc
+      ‖A b * H b - A a * H a‖ ≤
+          ‖A b * H b‖ + ‖A a * H a‖ := norm_sub_le _ _
+      _ = ‖A b‖ * ‖H b‖ + ‖A a‖ * ‖H a‖ := by
+        rw [norm_mul, norm_mul]
+      _ ≤ 1 * K + 1 * K := by
+        exact add_le_add
+          (mul_le_mul hAend.2 (hHbound b) (norm_nonneg _) (by norm_num))
+          (mul_le_mul hAend.1 (hHbound a) (norm_nonneg _) (by norm_num))
+      _ = 2 * K := by ring
+  calc
+    ‖∫ t in a..b, A t * logOffDiagonalForm s left right t‖ =
+        ‖I * ∫ t in a..b, A t * B t‖ := by
+      rw [norm_mul, norm_I, one_mul]
+    _ = ‖A b * H b - A a * H a - ∫ x in a..b, A' x * H x‖ := by
+      rw [hidentity]
+    _ ≤ ‖A b * H b - A a * H a‖ +
+          ‖∫ x in a..b, A' x * H x‖ := norm_sub_le _ _
+    _ ≤ 2 * K + K * V := add_le_add hend hrem
+    _ = (2 + V) * K := by ring
+
+/-- Whole-sum integration by parts under a global positive-index cutoff.
+This version controls interactions between distinct dyadic blocks in one
+application. -/
+theorem norm_integral_amplitude_mul_logOffDiagonalForm_le_of_upper
+    {N : ℕ} (hN : 0 < N) (s : Finset ℕ) (left right : ℕ → ℂ)
+    (hpositive : ∀ n ∈ s, n ≠ 0) (hupper : ∀ n ∈ s, n ≤ N)
+    {A A' : ℝ → ℂ} {a b V : ℝ} (hab : a ≤ b)
+    (hA : ∀ x ∈ Set.uIcc a b, HasDerivAt A (A' x) x)
+    (hAend : ‖A a‖ ≤ 1 ∧ ‖A b‖ ≤ 1)
+    (hA'int : IntervalIntegrable A' volume a b)
+    (hvariation : (∫ x in a..b, ‖A' x‖) ≤ V) :
+    ‖∫ t in a..b, A t * logOffDiagonalForm s left right t‖ ≤
+      (2 + V) * ((5 * Real.pi + 4) * N *
+        ((∑ n ∈ s, Complex.normSq (left n)) +
+          ∑ n ∈ s, Complex.normSq (right n))) := by
+  let K : ℝ := (5 * Real.pi + 4) * N *
+    ((∑ n ∈ s, Complex.normSq (left n)) +
+      ∑ n ∈ s, Complex.normSq (right n))
+  apply norm_integral_amplitude_mul_logOffDiagonalForm_le_of_primitive_bound
+    s left right hpositive hab hA hAend hA'int hvariation
+  · dsimp only [K]
+    apply mul_nonneg
+    · exact mul_nonneg (by positivity) (Nat.cast_nonneg N)
+    · exact add_nonneg
+        (Finset.sum_nonneg fun n hn => Complex.normSq_nonneg (left n))
+        (Finset.sum_nonneg fun n hn => Complex.normSq_nonneg (right n))
+  · intro x
+    exact norm_logarithmicHilbertPrimitive_le_of_upper
+      hN s left right hpositive hupper x
+
+/-- Opposite-frequency form of the global whole-sum estimate. -/
+theorem norm_integral_amplitude_mul_logOffDiagonalForm_neg_le_of_upper
+    {N : ℕ} (hN : 0 < N) (s : Finset ℕ) (left right : ℕ → ℂ)
+    (hpositive : ∀ n ∈ s, n ≠ 0) (hupper : ∀ n ∈ s, n ≤ N)
+    {A A' : ℝ → ℂ} {a b V : ℝ} (hab : a ≤ b)
+    (hA : ∀ x ∈ Set.uIcc a b, HasDerivAt A (A' x) x)
+    (hAend : ‖A a‖ ≤ 1 ∧ ‖A b‖ ≤ 1)
+    (hA'int : IntervalIntegrable A' volume a b)
+    (hvariation : (∫ x in a..b, ‖A' x‖) ≤ V) :
+    ‖∫ t in a..b, A t * logOffDiagonalForm s left right (-t)‖ ≤
+      (2 + V) * ((5 * Real.pi + 4) * N *
+        ((∑ n ∈ s, Complex.normSq (left n)) +
+          ∑ n ∈ s, Complex.normSq (right n))) := by
+  let Aneg : ℝ → ℂ := fun x => A (-x)
+  let Aneg' : ℝ → ℂ := fun x => -A' (-x)
+  have hnegOrder : -b ≤ -a := neg_le_neg hab
+  have hAneg : ∀ x ∈ Set.uIcc (-b) (-a),
+      HasDerivAt Aneg (Aneg' x) x := by
+    intro x hx
+    have hx' : -x ∈ Set.uIcc a b := by
+      rw [Set.uIcc_of_le hab, Set.mem_Icc]
+      rw [Set.uIcc_of_le hnegOrder, Set.mem_Icc] at hx
+      constructor <;> linarith [hx.1, hx.2]
+    have houter : HasDerivAt A (A' (-x)) (-x) := hA (-x) hx'
+    have hinner : HasDerivAt (fun y : ℝ => -y) (-1) x := hasDerivAt_neg x
+    have hcomp := houter.scomp x hinner
+    simpa only [Aneg, Aneg', Function.comp_def, neg_smul, one_smul] using hcomp
+  have hAnegEnd : ‖Aneg (-b)‖ ≤ 1 ∧ ‖Aneg (-a)‖ ≤ 1 := by
+    simpa only [Aneg, neg_neg] using ⟨hAend.2, hAend.1⟩
+  have hcompInt : IntervalIntegrable (fun x => A' (-x)) volume (-b) (-a) := by
+    have h := (IntervalIntegrable.iff_comp_neg (a := a) (b := b)).mp hA'int
+    exact h.symm
+  have hAnegInt : IntervalIntegrable Aneg' volume (-b) (-a) := by
+    simpa only [Aneg'] using hcompInt.neg
+  have hvariationNeg : (∫ x in -b..-a, ‖Aneg' x‖) ≤ V := by
+    calc
+      (∫ x in -b..-a, ‖Aneg' x‖) =
+          ∫ x in -b..-a, ‖A' (-x)‖ := by
+        apply intervalIntegral.integral_congr
+        intro x hx
+        simp only [Aneg', norm_neg]
+      _ = ∫ x in a..b, ‖A' x‖ := by
+        simpa only [neg_neg] using
+          (intervalIntegral.integral_comp_neg
+            (f := fun x : ℝ => ‖A' x‖) (a := -b) (b := -a))
+      _ ≤ V := hvariation
+  have hbound := norm_integral_amplitude_mul_logOffDiagonalForm_le_of_upper
+    hN s left right hpositive hupper hnegOrder hAneg hAnegEnd
+      hAnegInt hvariationNeg
+  calc
+    ‖∫ t in a..b, A t * logOffDiagonalForm s left right (-t)‖ =
+        ‖∫ x in -b..-a, Aneg x *
+          logOffDiagonalForm s left right x‖ := by
+      congr 1
+      simpa only [Aneg, neg_neg] using
+        (intervalIntegral.integral_comp_neg
+          (f := fun x : ℝ => Aneg x *
+            logOffDiagonalForm s left right x) (a := a) (b := b))
+    _ ≤ (2 + V) * ((5 * Real.pi + 4) * N *
+        ((∑ n ∈ s, Complex.normSq (left n)) +
+          ∑ n ∈ s, Complex.normSq (right n))) := hbound
+
 end MathlibAux

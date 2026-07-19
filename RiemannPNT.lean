@@ -15,9 +15,11 @@ import HardyTheorem.HardyOddMultiplicity
 import MathlibAux.SlidingIntervalCorrelation
 import MathlibAux.DiscreteHilbertInequality
 import MathlibAux.DyadicLogHilbert
+import MathlibAux.DyadicPartition
 import MathlibAux.LogKernelRemainder
 import MathlibAux.LogDirichletPolynomialMeanSquare
 import MathlibAux.LogarithmicHilbertIntegrationByParts
+import HardyTheorem.HardyPhaseHilbertShiftIntegral
 import EulerAndLfunctions
 import PrimeNumberTheorem
 import PrimeNumberTheorem.Perron
