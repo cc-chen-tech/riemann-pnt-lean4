@@ -1,5 +1,6 @@
 import PrimeNumberTheorem.RieszDifference
 import PrimeNumberTheorem.RightHorizontalEdge
+import PrimeNumberTheorem.CentralHorizontalEdge
 
 /-!
 # Transferring smoothed approximation errors to Chebyshev psi
@@ -34,6 +35,95 @@ noncomputable def secondOrderLeftXDifference
       secondOrderExplicitFormulaIntegrand y ((a : ℂ) + t * I)) -
     ∫ t : ℝ in (-(2 * Real.pi * W))..(2 * Real.pi * W),
       secondOrderExplicitFormulaIntegrand x ((a : ℂ) + t * I)
+
+/-- A logarithmic-derivative bound on one horizontal point gains a second
+factor of the height in the denominator for the second-order Perron kernel. -/
+lemma norm_secondOrderExplicitFormulaIntegrand_horizontal_le_of_logDeriv_le_of_re_le
+    {x σ b t K : ℝ} (hx : 1 ≤ x) (hσ : σ ≤ b) (ht : 0 < |t|)
+    (hK : 0 ≤ K)
+    (hlog : ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤ K) :
+    ‖secondOrderExplicitFormulaIntegrand x ((σ : ℂ) + I * t)‖ ≤
+      K * x ^ b / |t| ^ 2 := by
+  let s : ℂ := (σ : ℂ) + I * t
+  have hfirst := norm_explicitFormulaIntegrand_horizontal_le_of_logDeriv_le_of_re_le
+    hx hσ ht hK hlog
+  have hline : |t| ≤ ‖s‖ := by
+    have him := Complex.abs_im_le_norm s
+    simpa [s] using him
+  have hnum : 0 ≤ K * x ^ b :=
+    mul_nonneg hK (Real.rpow_nonneg (zero_le_one.trans hx) _)
+  change ‖explicitFormulaIntegrand x s / s‖ ≤ _
+  rw [norm_div]
+  calc
+    ‖explicitFormulaIntegrand x s‖ / ‖s‖ ≤
+        (K * x ^ b / |t|) / ‖s‖ :=
+      div_le_div_of_nonneg_right hfirst (norm_nonneg s)
+    _ ≤ (K * x ^ b / |t|) / |t| :=
+      div_le_div_of_nonneg_left (div_nonneg hnum ht.le) ht hline
+    _ = K * x ^ b / |t| ^ 2 := by ring
+
+/-- In every unit height interval, one selected good height controls the full
+central horizontal endpoint difference for the second-order contour. The
+bound is uniform on every real interval `[a,b]` contained in `[-1,2]`. -/
+theorem exists_goodHeight_Icc_norm_secondOrderHorizontalXDifference_le
+    {x y a b : ℝ} (hx : 1 ≤ x) (hy : 1 ≤ y) (ha : -1 ≤ a)
+    (hab : a ≤ b) (hb : b ≤ 2) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ t : ℝ, |t| = T →
+            ‖secondOrderHorizontalXDifference x y a b t‖ ≤
+              ((C * y ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T ^ 2) +
+                (C * x ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T ^ 2)) *
+                (b - a) := by
+  rcases exists_goodHeight_Icc_norm_logDeriv_central_band_le_log_sq with
+    ⟨C, hC, hchoose⟩
+  refine ⟨C, hC, ?_⟩
+  intro A hA
+  rcases hchoose A hA with ⟨T, hT, hgood, hlog⟩
+  refine ⟨T, hT, hgood, ?_⟩
+  intro t ht
+  have hTabs : 0 < |t| := by rw [ht]; linarith [hT.1]
+  have hK : 0 ≤ C * (1 + Real.log (A + 6)) ^ 2 :=
+    mul_nonneg hC (sq_nonneg _)
+  let Ky : ℝ := C * y ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T ^ 2
+  let Kx : ℝ := C * x ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T ^ 2
+  have hyPoint : ∀ σ ∈ Set.uIoc a b,
+      ‖secondOrderExplicitFormulaIntegrand y ((σ : ℂ) + t * I)‖ ≤ Ky := by
+    intro σ hσ
+    rw [Set.uIoc_of_le hab] at hσ
+    have hpoint :=
+      norm_secondOrderExplicitFormulaIntegrand_horizontal_le_of_logDeriv_le_of_re_le
+        (b := 2) hy (le_trans hσ.2 hb) hTabs hK
+          (hlog t ht σ (le_trans ha hσ.1.le) (le_trans hσ.2 hb))
+    rw [ht] at hpoint
+    simpa [Ky, mul_comm, mul_left_comm, mul_assoc] using hpoint
+  have hxPoint : ∀ σ ∈ Set.uIoc a b,
+      ‖secondOrderExplicitFormulaIntegrand x ((σ : ℂ) + t * I)‖ ≤ Kx := by
+    intro σ hσ
+    rw [Set.uIoc_of_le hab] at hσ
+    have hpoint :=
+      norm_secondOrderExplicitFormulaIntegrand_horizontal_le_of_logDeriv_le_of_re_le
+        (b := 2) hx (le_trans hσ.2 hb) hTabs hK
+          (hlog t ht σ (le_trans ha hσ.1.le) (le_trans hσ.2 hb))
+    rw [ht] at hpoint
+    simpa [Kx, mul_comm, mul_left_comm, mul_assoc] using hpoint
+  have hyIntegral := intervalIntegral.norm_integral_le_of_norm_le_const
+    (f := fun σ : ℝ => secondOrderExplicitFormulaIntegrand y ((σ : ℂ) + t * I))
+    (a := a) (b := b) (C := Ky) hyPoint
+  have hxIntegral := intervalIntegral.norm_integral_le_of_norm_le_const
+    (f := fun σ : ℝ => secondOrderExplicitFormulaIntegrand x ((σ : ℂ) + t * I))
+    (a := a) (b := b) (C := Kx) hxPoint
+  rw [abs_of_nonneg (sub_nonneg.mpr hab)] at hyIntegral hxIntegral
+  unfold secondOrderHorizontalXDifference
+  calc
+    _ ≤ ‖∫ σ : ℝ in a..b,
+          secondOrderExplicitFormulaIntegrand y ((σ : ℂ) + t * I)‖ +
+        ‖∫ σ : ℝ in a..b,
+          secondOrderExplicitFormulaIntegrand x ((σ : ℂ) + t * I)‖ :=
+      norm_sub_le _ _
+    _ ≤ Ky * (b - a) + Kx * (b - a) := add_le_add hyIntegral hxIntegral
+    _ = _ := by dsimp [Ky, Kx]; ring
 
 /-- The full second-order contour-remainder difference is controlled by the
 three actual edge differences. This is an exact finite-height budget, not an

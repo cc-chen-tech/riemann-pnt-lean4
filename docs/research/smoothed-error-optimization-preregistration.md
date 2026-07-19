@@ -53,8 +53,16 @@ contour edges remain inside the approximation. The exact difference of the
 two contour remainders is now bounded by the sum of the two horizontal-edge
 differences and the left-edge difference, divided by `2*pi`. For the outer
 right portions `sigma in [1+epsilon,c]`, both horizontal differences have a
-proved `T^-2` bound. No numerical bound is claimed here for the remaining
-inner horizontal portions or the left vertical difference.
+proved `T^-2` bound at every height. More generally, in every unit height
+interval `[A,A+1]` with `A >= 4`, a selected good height controls the complete
+horizontal endpoint difference on every `[a,b]` contained in `[-1,2]` by an
+explicit multiple of
+
+```text
+(b-a) * (x^2 + y^2) * (1+log(A+6))^2 / T^2.
+```
+
+No numerical bound is claimed here for the left vertical difference.
 
 ## Frozen repository baseline
 
@@ -217,7 +225,8 @@ transfer than the optimizer recovers. For the actual finite-height explicit
 formula, the remaining analytic milestone is to prove a rigorously certified
 interval for `Re(A_T(x+h) - A_T(x))` from the actual residue sums and the
 difference of the two second-order contour remainders. The contour difference
-is now reduced to actual edge differences, and its two outer right horizontal
-pieces have explicit `T^-2` control. The inner horizontal pieces and the left
-vertical difference remain open. The input format and Lean endpoint bridge now
-exist, but no candidate envelope has yet been proved on its full stated range.
+is now reduced to actual edge differences. Its complete horizontal pieces have
+selected-good-height `T^-2` control throughout the central band containing the
+second-order contour. The left vertical difference remains open. The input
+format and Lean endpoint bridge now exist, but no candidate envelope has yet
+been proved on its full stated range.
