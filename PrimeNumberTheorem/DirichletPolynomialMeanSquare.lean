@@ -309,6 +309,94 @@ theorem finiteExponentialMeanSquare_cast_eq_diagonal_add_hilbert
       rw [hsplit, hdiag, hoff]
       ring
 
+/-- Transfer a weighted Hilbert-form bound to a diagonal mean-square bound.
+The hypothesis is purely finite-dimensional; all interval integration and phase
+bookkeeping are discharged by this theorem. -/
+theorem finiteExponentialSum_meanSquare_le_of_hilbert
+    {ι : Type*} [DecidableEq ι] {S : Finset ι} {c : ι → ℂ}
+    {omega weight : ι → ℝ} {a b C : ℝ}
+    (hab : a ≤ b) (homega : Set.InjOn omega (S : Set ι))
+    (hweight : ∀ n ∈ S, 0 ≤ weight n)
+    (hHilbert : ∀ d : ι → ℂ,
+      ‖hilbertForm S d omega‖ ≤
+        C * ∑ n ∈ S, weight n * ‖d n‖ ^ 2) :
+    ∫ t in a..b, ‖finiteExponentialSum S c omega t‖ ^ 2 ≤
+      (b - a) * ∑ n ∈ S, ‖c n‖ ^ 2 +
+        2 * C * ∑ n ∈ S, weight n * ‖c n‖ ^ 2 := by
+  let L : ℝ := ∫ t in a..b, ‖finiteExponentialSum S c omega t‖ ^ 2
+  let D : ℝ := ∑ n ∈ S, ‖c n‖ ^ 2
+  let W : ℝ := ∑ n ∈ S, weight n * ‖c n‖ ^ 2
+  have hL : 0 ≤ L := by
+    dsimp [L]
+    exact intervalIntegral.integral_nonneg hab (fun t _ => sq_nonneg _)
+  have hD : 0 ≤ D := by
+    dsimp [D]
+    positivity
+  have hW : 0 ≤ W := by
+    dsimp [W]
+    exact Finset.sum_nonneg fun n hn =>
+      mul_nonneg (hweight n hn) (sq_nonneg _)
+  have hphase (t : ℝ) :
+      (∑ n ∈ S, weight n * ‖phaseTwist c omega t n‖ ^ 2) = W := by
+    dsimp [W]
+    apply Finset.sum_congr rfl
+    intro n hn
+    simp [phaseTwist, Complex.norm_exp]
+  have hHb := hHilbert (phaseTwist c omega b)
+  have hHa := hHilbert (phaseTwist c omega a)
+  rw [hphase] at hHb hHa
+  have heq :=
+    finiteExponentialMeanSquare_cast_eq_diagonal_add_hilbert
+      (S := S) (c := c) (omega := omega) (a := a) (b := b) homega
+  have hsumcast :
+      (∑ n ∈ S, (‖c n‖ ^ 2 : ℂ)) = (D : ℂ) := by
+    dsimp [D]
+    push_cast
+    rfl
+  have hdiagNorm :
+      ‖((b : ℂ) - a) * (∑ n ∈ S, (‖c n‖ ^ 2 : ℂ))‖ =
+        (b - a) * D := by
+    have hbaNorm : ‖(b : ℂ) - a‖ = b - a := by
+      rw [← ofReal_sub]
+      exact Complex.norm_of_nonneg (sub_nonneg.mpr hab)
+    have hDNorm : ‖(D : ℂ)‖ = D := by
+      exact Complex.norm_of_nonneg hD
+    rw [hsumcast, norm_mul, hbaNorm, hDNorm]
+  have hnormL : ‖(L : ℂ)‖ = L := by
+    exact Complex.norm_of_nonneg hL
+  have heqL :
+      (L : ℂ) =
+        ((b : ℂ) - a) * (∑ n ∈ S, (‖c n‖ ^ 2 : ℂ)) -
+          Complex.I *
+            (hilbertForm S (phaseTwist c omega b) omega -
+              hilbertForm S (phaseTwist c omega a) omega) := by
+    simpa only [L] using heq
+  change L ≤ (b - a) * D + 2 * C * W
+  calc
+    L = ‖(L : ℂ)‖ := hnormL.symm
+    _ = ‖((b : ℂ) - a) * (∑ n ∈ S, (‖c n‖ ^ 2 : ℂ)) -
+          Complex.I *
+            (hilbertForm S (phaseTwist c omega b) omega -
+              hilbertForm S (phaseTwist c omega a) omega)‖ := by
+      apply congrArg norm
+      exact heqL
+    _ ≤ ‖((b : ℂ) - a) * (∑ n ∈ S, (‖c n‖ ^ 2 : ℂ))‖ +
+          ‖Complex.I *
+            (hilbertForm S (phaseTwist c omega b) omega -
+              hilbertForm S (phaseTwist c omega a) omega)‖ :=
+      norm_sub_le _ _
+    _ = (b - a) * D +
+          ‖hilbertForm S (phaseTwist c omega b) omega -
+            hilbertForm S (phaseTwist c omega a) omega‖ := by
+      rw [hdiagNorm, norm_mul, norm_I, one_mul]
+    _ ≤ (b - a) * D +
+          (‖hilbertForm S (phaseTwist c omega b) omega‖ +
+            ‖hilbertForm S (phaseTwist c omega a) omega‖) :=
+      add_le_add (le_refl _) (norm_sub_le _ _)
+    _ ≤ (b - a) * D + (C * W + C * W) :=
+      add_le_add (le_refl _) (add_le_add hHb hHa)
+    _ = (b - a) * D + 2 * C * W := by ring
+
 /-- A finite-frequency Montgomery--Vaughan type mean-square bound.  The
 diagonal contributes the interval length, while each pair of distinct
 frequencies contributes the reciprocal-frequency kernel. -/
