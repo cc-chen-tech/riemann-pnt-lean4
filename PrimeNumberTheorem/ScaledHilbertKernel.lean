@@ -72,6 +72,59 @@ def PositiveHilbertKernelProfile.reflect {C : ℝ} {kappa : ℂ}
     push_cast
     field_simp [hxi_ne]
 
+/-- The exact real-line properties of the Carneiro--Littmann majorant error in
+the paper's Fourier normalization, translated to this file's `+i xi x`
+convention.  Constructing an inhabitant from the explicit extremal function is
+the remaining analytic step. -/
+structure CarneiroLittmannKernel where
+  kernel : ℝ → ℝ
+  integrable_kernel : Integrable kernel
+  kernel_nonneg : ∀ t, 0 ≤ kernel t
+  dilation_antitone : ∀ {deltaSmall deltaLarge : ℝ},
+    0 < deltaSmall → deltaSmall ≤ deltaLarge → ∀ t,
+      kernel (deltaLarge * t) ≤ kernel (deltaSmall * t)
+  fourierKernel_zero : fourierKernel kernel 0 = (2 : ℂ)
+  fourierKernel_of_two_pi_le_abs : ∀ {xi : ℝ},
+    2 * Real.pi ≤ |xi| →
+      fourierKernel kernel xi = (-2 * Complex.I) / xi
+
+/-- Rescaling the paper's kernel by `(2 pi)⁻¹` moves its Fourier threshold from
+`2 pi` to one.  Its mass becomes `4 pi`, so the weighted Hilbert constant is
+`C = 2 pi`. -/
+noncomputable def CarneiroLittmannKernel.normalizedProfile
+    (kernel : CarneiroLittmannKernel) :
+    PositiveHilbertKernelProfile (2 * Real.pi) (-2 * Complex.I) where
+  kernel := fun t => kernel.kernel ((2 * Real.pi)⁻¹ * t)
+  integrable_kernel := by
+    exact kernel.integrable_kernel.comp_mul_left'
+      (inv_ne_zero (mul_ne_zero (by norm_num) Real.pi_ne_zero))
+  kernel_nonneg := fun t => kernel.kernel_nonneg ((2 * Real.pi)⁻¹ * t)
+  dilation_antitone := by
+    intro deltaSmall deltaLarge hsmall hle t
+    simpa only [mul_assoc, mul_left_comm, mul_comm] using
+      kernel.dilation_antitone hsmall hle ((2 * Real.pi)⁻¹ * t)
+  fourierKernel_zero := by
+    have hscale : 0 < (2 * Real.pi)⁻¹ := inv_pos.mpr (mul_pos (by norm_num) Real.pi_pos)
+    rw [fourierKernel_scale_pos hscale]
+    simp only [zero_div, kernel.fourierKernel_zero, inv_inv]
+    push_cast
+    ring
+  fourierKernel_of_one_le_abs := by
+    intro xi hxi
+    have htwoPi : 0 < 2 * Real.pi := mul_pos (by norm_num) Real.pi_pos
+    have hscale : 0 < (2 * Real.pi)⁻¹ := inv_pos.mpr htwoPi
+    have hraw : 2 * Real.pi ≤ |xi / (2 * Real.pi)⁻¹| := by
+      rw [abs_div, abs_of_pos hscale]
+      apply (le_div_iff₀ hscale).2
+      rw [mul_inv_cancel₀ htwoPi.ne']
+      exact hxi
+    have hxi_pos : 0 < |xi| := zero_lt_one.trans_le hxi
+    have hxi_ne : xi ≠ 0 := abs_pos.mp hxi_pos
+    rw [fourierKernel_scale_pos hscale,
+      kernel.fourierKernel_of_two_pi_le_abs hraw]
+    push_cast
+    field_simp [htwoPi.ne', hxi_ne]
+
 /-- The kernel profile dilated by the local scale at index `n`. -/
 def scaledKernelSequence {C : ℝ} {kappa : ℂ}
     (profile : PositiveHilbertKernelProfile C kappa)
@@ -200,6 +253,26 @@ theorem finiteExponentialSum_meanSquare_le_of_scaled_positive_kernel
     simpa only [neg_mul, neg_neg] using profile.reflect
   exact finiteExponentialSum_meanSquare_le_of_scaled_positive_kernels
     hab hdelta hanti hlocal profile profilePlus
+
+/-- The paper-normalized Carneiro--Littmann kernel gives the concrete
+`2 pi` weighted Hilbert constant, hence a `4 pi` finite mean-square error. -/
+theorem finiteExponentialSum_meanSquare_le_of_carneiroLittmannKernel
+    {N : ℕ} {c : ℕ → ℂ} {omega delta : ℕ → ℝ} {a b : ℝ}
+    (hab : a ≤ b)
+    (hdelta : ∀ n, 0 < delta n)
+    (hanti : ∀ n, delta (n + 1) ≤ delta n)
+    (hlocal : ∀ m ∈ Finset.range N, ∀ n ∈ Finset.range N, m ≠ n →
+      delta (min m n) ≤ |omega n - omega m|)
+    (kernel : CarneiroLittmannKernel) :
+    ∫ t in a..b, ‖finiteExponentialSum (Finset.range N) c omega t‖ ^ 2 ≤
+      (b - a) * ∑ n ∈ Finset.range N, ‖c n‖ ^ 2 +
+        4 * Real.pi *
+          ∑ n ∈ Finset.range N, (delta n)⁻¹ * ‖c n‖ ^ 2 := by
+  have h := finiteExponentialSum_meanSquare_le_of_scaled_positive_kernel
+    (c := c) (omega := omega) (delta := delta)
+    hab hdelta hanti hlocal kernel.normalizedProfile
+  convert h using 1
+  ring
 
 end DirichletPolynomial
 end PrimeNumberTheorem
