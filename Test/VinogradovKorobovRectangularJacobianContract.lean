@@ -1,0 +1,10 @@
+import ZeroFreeRegion.VinogradovKorobov.VinogradovRectangularJacobian
+
+open ZeroFreeRegion.VinogradovKorobov
+
+#check vinogradovRectangularPowerSumJacobian
+#check vinogradovRectangularPowerSumJacobian_eq_square
+#check vinogradovPowerSumInt_affine_modEq_sq_rectangular
+#check vinogradovPowerSumInt_affine_modEq_mul_of_dvd_rectangular
+#check vinogradovPairCorrectionLinearMap
+#check vinogradovPairCorrectionLinearMap_apply
