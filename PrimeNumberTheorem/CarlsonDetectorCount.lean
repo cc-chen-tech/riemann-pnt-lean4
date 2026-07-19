@@ -169,6 +169,100 @@ theorem exists_regularizedCarlsonZeroDetector_horizontal_ne_zero
   dsimp [z]
   simp
 
+/-- Every nonempty real interval in the open right half-plane contains a
+vertical segment on which the regularized detector is nonvanishing over a
+prescribed compact height interval. -/
+theorem exists_regularizedCarlsonZeroDetector_vertical_ne_zero
+    {X : ℕ} (hX : 1 ≤ X) {sigma0 sigma1 a b : ℝ}
+    (hsigma0 : 0 < sigma0) (hsigma : sigma0 < sigma1) :
+    ∃ sigma : ℝ, sigma0 < sigma ∧ sigma < sigma1 ∧
+      ∀ t ∈ Set.Icc a b,
+        regularizedCarlsonZeroDetector X
+          ((sigma : ℂ) + (t : ℂ) * I) ≠ 0 := by
+  classical
+  let P := regularizedCarlsonDetectorRectangleDivisorSupport
+    X sigma0 sigma1 a b
+  let bad : Finset ℝ := P.image Complex.re
+  obtain ⟨sigma, hsigmaIoo, hsigmabad⟩ :=
+    (Set.Ioo_infinite hsigma).exists_notMem_finset bad
+  refine ⟨sigma, hsigmaIoo.1, hsigmaIoo.2, ?_⟩
+  intro t ht hzero
+  let z : ℂ := (sigma : ℂ) + (t : ℂ) * I
+  have hz : z ∈ carlsonDetectorRectangle sigma0 sigma1 a b := by
+    change z.re ∈ Set.Icc sigma0 sigma1 ∧ z.im ∈ Set.Icc a b
+    constructor
+    · simpa [z] using And.intro hsigmaIoo.1.le hsigmaIoo.2.le
+    · simpa [z] using ht
+  have hzP : z ∈ P := by
+    dsimp [P]
+    exact
+      (mem_regularizedCarlsonDetectorRectangleDivisorSupport_iff_zero
+        hX hsigma0 hz).mpr hzero
+  apply hsigmabad
+  dsimp [bad]
+  apply Finset.mem_image.mpr
+  refine ⟨z, hzP, ?_⟩
+  dsimp [z]
+  simp
+
+/-- A detector rectangle whose four sides avoid all detector zeros.  Its
+left side lies just to the left of `sigma`, its right side lies to the right
+of one, and its horizontal sides lie in unit intervals below zero and above
+`T`. -/
+theorem exists_regularizedCarlsonZeroDetector_goodRectangle
+    {X : ℕ} (hX : 1 ≤ X) {sigma T : ℝ}
+    (hsigma : 0 < sigma) (hsigmaOne : sigma < 1) (hT : 0 ≤ T) :
+    ∃ x0 x1 y0 y1 : ℝ,
+      sigma / 2 < x0 ∧ x0 < sigma ∧
+      1 < x1 ∧ x1 < 2 ∧ x0 < x1 ∧
+      -1 < y0 ∧ y0 < 0 ∧
+      T < y1 ∧ y1 < T + 1 ∧ y0 < y1 ∧
+      (∀ y ∈ Set.Icc y0 y1,
+        regularizedCarlsonZeroDetector X
+          ((x0 : ℂ) + (y : ℂ) * I) ≠ 0) ∧
+      (∀ y ∈ Set.Icc y0 y1,
+        regularizedCarlsonZeroDetector X
+          ((x1 : ℂ) + (y : ℂ) * I) ≠ 0) ∧
+      (∀ x ∈ Set.Icc x0 x1,
+        regularizedCarlsonZeroDetector X
+          ((x : ℂ) + (y0 : ℂ) * I) ≠ 0) ∧
+      (∀ x ∈ Set.Icc x0 x1,
+        regularizedCarlsonZeroDetector X
+          ((x : ℂ) + (y1 : ℂ) * I) ≠ 0) := by
+  have hsigmaHalfPos : 0 < sigma / 2 := by linarith
+  have hsigmaHalfLt : sigma / 2 < sigma := by linarith
+  obtain ⟨x0, hx0Lower, hx0Upper, hx0ne⟩ :=
+    exists_regularizedCarlsonZeroDetector_vertical_ne_zero
+      hX hsigmaHalfPos hsigmaHalfLt
+      (a := (-1 : ℝ)) (b := T + 1)
+  obtain ⟨x1, hx1Lower, hx1Upper, hx1ne⟩ :=
+    exists_regularizedCarlsonZeroDetector_vertical_ne_zero
+      hX (by norm_num : (0 : ℝ) < 1) (by norm_num : (1 : ℝ) < 2)
+      (a := (-1 : ℝ)) (b := T + 1)
+  have hx0Pos : 0 < x0 := hsigmaHalfPos.trans hx0Lower
+  obtain ⟨y0, hy0Lower, hy0Upper, hy0ne⟩ :=
+    exists_regularizedCarlsonZeroDetector_horizontal_ne_zero
+      hX hx0Pos (alpha := x1) (T := (-1 : ℝ))
+  obtain ⟨y1, hy1Lower, hy1Upper, hy1ne⟩ :=
+    exists_regularizedCarlsonZeroDetector_horizontal_ne_zero
+      hX hx0Pos (alpha := x1) (T := T)
+  refine ⟨x0, x1, y0, y1,
+    hx0Lower, hx0Upper, hx1Lower, hx1Upper,
+    hx0Upper.trans (hsigmaOne.trans hx1Lower),
+    hy0Lower, ?_, hy1Lower, hy1Upper,
+    (by linarith [hy0Upper, hT, hy1Lower]), ?_, ?_, hy0ne, hy1ne⟩
+  · linarith
+  · intro y hy
+    apply hx0ne y
+    constructor
+    · exact hy0Lower.le.trans hy.1
+    · exact hy.2.trans hy1Upper.le
+  · intro y hy
+    apply hx1ne y
+    constructor
+    · exact hy0Lower.le.trans hy.1
+    · exact hy.2.trans hy1Upper.le
+
 private theorem divisor_carlsonZeroDetector_eq_analyticOrderNatAt
     {X : ℕ} {sigma alpha a b : ℝ} {rho : ℂ}
     (hX : 1 ≤ X) (hrho : RiemannHypothesis.IsNontrivialZero rho)
