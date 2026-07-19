@@ -1,4 +1,5 @@
 import HardyTheorem.HardyModelApproximation
+import HardyTheorem.HardyPhaseCorrelation
 import HardyTheorem.ShortIntervalMeanValue
 import MathlibAux.DirichletPolynomialMeanSquare
 
@@ -110,6 +111,104 @@ noncomputable def hardyFirstModel (kappa T t : ℝ) : ℝ :=
 noncomputable def hardyFirstModelShortIntegral
     (kappa T delta t : ℝ) : ℝ :=
   ∫ u in t..t + delta, hardyFirstModel kappa T u
+
+/-- Expanding the first Hardy model and translating the short window turns its
+signed integral into the real part of a finite sum of single-phase short
+integrals.  This is the exact finite-dimensional form used in the second
+moment argument. -/
+theorem hardyFirstModelShortIntegral_eq_re_sum_hardyPhaseShortIntegral
+    (kappa T delta t : ℝ) (ht : 0 < t) (hdelta : 0 ≤ delta) :
+    hardyFirstModelShortIntegral kappa T delta t =
+      (Complex.exp (I * kappa) *
+        (∑ n ∈ Finset.Icc 1 (firstZetaApproximationCutoff T),
+          ((n : ℂ) ^ (1 / 2 : ℂ))⁻¹ *
+            OscillatoryIntegral.hardyPhaseShortIntegral n delta t)).re := by
+  let S : ℝ → ℂ := fun u =>
+    Complex.exp (I * kappa) *
+      (∑ n ∈ Finset.Icc 1 (firstZetaApproximationCutoff T),
+        ((n : ℂ) ^ (1 / 2 : ℂ))⁻¹ *
+          Complex.exp (I * OscillatoryIntegral.hardyPhase n u))
+  have htle : t ≤ t + delta := by linarith
+  have hScont : ContinuousOn S (Icc t (t + delta)) := by
+    intro u hu
+    apply ContinuousAt.continuousWithinAt
+    apply ContinuousAt.mul continuousAt_const
+    apply tendsto_finset_sum
+    intro n hnmem
+    apply ContinuousAt.mul continuousAt_const
+    have hn : n ≠ 0 := by
+      have := (Finset.mem_Icc.mp hnmem).1
+      omega
+    exact (continuousAt_const.mul
+      (Complex.continuous_ofReal.continuousAt.comp
+        (OscillatoryIntegral.contDiffAt_hardyPhase_two hn
+          (ht.trans_le hu.1)).continuousAt)).cexp
+  have hSint : IntervalIntegrable S volume t (t + delta) :=
+    hScont.intervalIntegrable_of_Icc htle
+  change (∫ u in t..t + delta, (S u).re) = _
+  have hre := Complex.reCLM.intervalIntegral_comp_comm hSint
+  change (∫ u in t..t + delta, (S u).re) =
+      (∫ u in t..t + delta, S u).re at hre
+  rw [hre]
+  congr 1
+  dsimp only [S]
+  have hfactor :
+      (∫ u in t..t + delta,
+        Complex.exp (I * kappa) *
+          (∑ n ∈ Finset.Icc 1 (firstZetaApproximationCutoff T),
+            ((n : ℂ) ^ (1 / 2 : ℂ))⁻¹ *
+              Complex.exp (I * OscillatoryIntegral.hardyPhase n u))) =
+        Complex.exp (I * kappa) *
+          ∫ u in t..t + delta,
+            ∑ n ∈ Finset.Icc 1 (firstZetaApproximationCutoff T),
+              ((n : ℂ) ^ (1 / 2 : ℂ))⁻¹ *
+                Complex.exp (I * OscillatoryIntegral.hardyPhase n u) :=
+    intervalIntegral.integral_const_mul _ _
+  rw [hfactor]
+  congr 1
+  rw [intervalIntegral.integral_finset_sum]
+  · apply Finset.sum_congr rfl
+    intro n hnmem
+    have hfactorN :
+        (∫ u in t..t + delta,
+          ((n : ℂ) ^ (1 / 2 : ℂ))⁻¹ *
+            Complex.exp (I * OscillatoryIntegral.hardyPhase n u)) =
+          ((n : ℂ) ^ (1 / 2 : ℂ))⁻¹ *
+            ∫ u in t..t + delta,
+              Complex.exp (I * OscillatoryIntegral.hardyPhase n u) :=
+      intervalIntegral.integral_const_mul _ _
+    rw [hfactorN]
+    congr 1
+    dsimp only [OscillatoryIntegral.hardyPhaseShortIntegral]
+    calc
+      (∫ u in t..t + delta,
+          Complex.exp (I * OscillatoryIntegral.hardyPhase n u)) =
+          ∫ v in 0..delta,
+            Complex.exp
+              (I * OscillatoryIntegral.hardyPhase n (v + t)) := by
+        have hshift := intervalIntegral.integral_comp_add_right
+          (fun u : ℝ =>
+            Complex.exp (I * OscillatoryIntegral.hardyPhase n u)) t
+          (a := 0) (b := delta)
+        simpa only [zero_add, add_comm delta t] using hshift.symm
+      _ = ∫ v in 0..delta,
+          Complex.exp
+            (I * OscillatoryIntegral.hardyPhase n (t + v)) := by
+        apply intervalIntegral.integral_congr
+        intro v hv
+        simp only [add_comm]
+  · intro n hnmem
+    apply ContinuousOn.intervalIntegrable_of_Icc htle
+    intro u hu
+    apply ContinuousAt.continuousWithinAt
+    apply ContinuousAt.mul continuousAt_const
+    have hn : n ≠ 0 := by
+      have := (Finset.mem_Icc.mp hnmem).1
+      omega
+    exact (continuousAt_const.mul
+      (Complex.continuous_ofReal.continuousAt.comp
+        (OscillatoryIntegral.contDiffAt_hardyPhase_two hn
+          (ht.trans_le hu.1)).continuousAt)).cexp
 
 private theorem hardyFirstModel_eq_re_thetaModel_dirichletPolynomial
     (kappa T : ℝ) {t : ℝ} (ht : 0 < t) :

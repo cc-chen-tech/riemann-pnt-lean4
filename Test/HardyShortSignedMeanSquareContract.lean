@@ -7,8 +7,10 @@ open Complex Set
 #check MathlibAux.integral_normSq_intervalIntegral_exponentialPolynomial_le
 #check HardyTheorem.hardyFirstModel
 #check HardyTheorem.hardyFirstModelShortIntegral
+#check HardyTheorem.hardyFirstModelShortIntegral_eq_re_sum_hardyPhaseShortIntegral
 #check HardyTheorem.exists_abs_hardyShortIntegral_sub_hardyFirstModelShortIntegral_le
 #print axioms MathlibAux.integral_normSq_intervalIntegral_exponentialPolynomial_le
+#print axioms HardyTheorem.hardyFirstModelShortIntegral_eq_re_sum_hardyPhaseShortIntegral
 #print axioms HardyTheorem.exists_abs_hardyShortIntegral_sub_hardyFirstModelShortIntegral_le
 
 example {ι : Type*} (delta : ℝ) (coeff : ι → ℂ) (freq : ι → ℝ) (n : ι) :

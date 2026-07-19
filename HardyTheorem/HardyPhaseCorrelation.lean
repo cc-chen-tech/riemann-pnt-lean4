@@ -5,6 +5,28 @@ open Set
 
 namespace HardyTheorem.OscillatoryIntegral
 
+/-- The complex short-window integral of one Hardy oscillatory phase. -/
+noncomputable def hardyPhaseShortIntegral
+    (n : ℕ) (delta t : ℝ) : ℂ :=
+  ∫ v in 0..delta, Complex.exp (Complex.I * hardyPhase n (t + v))
+
+/-- The trivial bound for one Hardy-phase short integral is the window
+length.  It is paired with the reciprocal-frequency estimate away from the
+stationary range. -/
+theorem norm_hardyPhaseShortIntegral_le_length
+    (n : ℕ) {delta t : ℝ} (hdelta : 0 ≤ delta) :
+    ‖hardyPhaseShortIntegral n delta t‖ ≤ delta := by
+  dsimp only [hardyPhaseShortIntegral]
+  calc
+    ‖∫ v in 0..delta,
+        Complex.exp (Complex.I * hardyPhase n (t + v))‖ ≤
+        1 * |delta - 0| := by
+      apply intervalIntegral.norm_integral_le_of_norm_le_const
+      intro v hv
+      rw [Complex.norm_exp]
+      simp
+    _ = delta := by rw [sub_zero, abs_of_nonneg hdelta, one_mul]
+
 /-- The real logarithm is `1 / T`-Lipschitz on `[T, ∞)` when `T > 0`. -/
 theorem abs_log_sub_log_le_div
     {T x y : ℝ} (hT : 0 < T) (hx : T ≤ x) (hy : T ≤ y) :
