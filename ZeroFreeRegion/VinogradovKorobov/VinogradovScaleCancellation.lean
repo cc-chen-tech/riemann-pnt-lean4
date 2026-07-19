@@ -9,6 +9,14 @@ noncomputable section
 def vinogradovFarScale (k r a b γ : ℕ) : ℕ :=
   (k - r + 1) * b - r * a - (k - r) * γ
 
+/-- The column-aligned scale produced directly by the high-degree binomial
+system.  Unlike `vinogradovFarScaleDifference`, the power of the center
+depends on the degree. -/
+def vinogradovAlignedFarScaleDifference
+    (p k a γ : ℕ) (ω : ℤ) {r : ℕ} (d : Fin r → ℤ) (j : Fin r) : ℤ :=
+  ω ^ (k - (j.val + 1)) *
+    (p : ℤ) ^ (γ * (k - (j.val + 1)) + a * (j.val + 1)) * d j
+
 /-- A factor coprime to `p` can be cancelled from a congruence modulo a
 power of `p`. -/
 theorem modEq_zero_cancel_coprime_primePower
@@ -86,6 +94,47 @@ theorem vinogradovScaledCongruences_to_farScale
     p k r ((k - r + 1) * b) a γ hp hbudget ω hω d hd
   simpa only [vinogradovFarScale, Nat.sub_sub, Nat.mul_comm,
     Nat.add_comm] using h
+
+/-- Direct cancellation for the column-aligned high-degree system.  When
+`γ ≤ a`, the largest `p`-adic scale occurs in degree `r`, so every component
+survives modulo the same residual exponent `B'`. -/
+theorem vinogradovAlignedCongruences_to_farScale
+    (p k r a b γ : ℕ) (hp : p ≠ 0) (hrk : r ≤ k) (hγa : γ ≤ a)
+    (hbudget : γ * (k - r) + a * r ≤ (k - r + 1) * b)
+    (ω : ℤ) (hω : IsCoprime (p : ℤ) ω) (d : Fin r → ℤ)
+    (hd : ∀ j,
+      vinogradovAlignedFarScaleDifference p k a γ ω d j ≡ 0
+        [ZMOD (p : ℤ) ^ ((k - r + 1) * b)]) :
+    ∀ j, d j ≡ 0 [ZMOD (p : ℤ) ^ vinogradovFarScale k r a b γ] := by
+  intro j
+  let m := j.val + 1
+  have hmr : m ≤ r := Nat.succ_le_iff.mpr j.isLt
+  have hmk : m ≤ k := hmr.trans hrk
+  have hk_split : k - m = (k - r) + (r - m) := by omega
+  have hscale_le :
+      γ * (k - m) + a * m ≤ γ * (k - r) + a * r := by
+    calc
+      γ * (k - m) + a * m =
+          γ * (k - r) + γ * (r - m) + a * m := by
+            rw [hk_split, Nat.mul_add]
+      _ ≤ γ * (k - r) + a * (r - m) + a * m := by
+            exact Nat.add_le_add_right
+              (Nat.add_le_add_left (Nat.mul_le_mul_right (r - m) hγa) _) _
+      _ = γ * (k - r) + a * r := by
+            have har : a * (r - m) + a * m = a * r := by
+              rw [← Nat.mul_add, Nat.sub_add_cancel hmr]
+            rw [Nat.add_assoc, har]
+  have hscale_budget :
+      γ * (k - m) + a * m ≤ (k - r + 1) * b :=
+    hscale_le.trans hbudget
+  have hj := modEq_zero_cancel_coprime_primePower_scale
+    p (k - m) (γ * (k - m) + a * m) ((k - r + 1) * b)
+      hp hscale_budget ω (d j) hω (hd j)
+  apply hj.of_dvd
+  apply pow_dvd_pow (p : ℤ)
+  simp only [vinogradovFarScale, Nat.sub_sub]
+  simpa only [Nat.mul_comm, Nat.add_comm] using
+    Nat.sub_le_sub_left hscale_le ((k - r + 1) * b)
 
 end
 
