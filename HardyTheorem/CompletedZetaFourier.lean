@@ -80,6 +80,27 @@ theorem completedZetaLogKernel_neg (u : ℝ) :
     _ = Real.exp (-(4⁻¹ * u)) • z := by
       simp [Algebra.smul_def]
 
+/-- On the critical line the two elementary pole terms in the completed zeta
+function combine into a positive real rational kernel. -/
+theorem criticalLine_pole_sum_eq (t : ℝ) :
+    1 / ((1 / 2 : ℂ) + I * t) +
+        1 / (1 - ((1 / 2 : ℂ) + I * t)) =
+      ((1 / (t ^ 2 + 1 / 4) : ℝ) : ℂ) := by
+  have hs : (1 / 2 : ℂ) + I * t ≠ 0 := by
+    intro h
+    have := congrArg Complex.re h
+    norm_num at this
+  have hones : 1 - ((1 / 2 : ℂ) + I * t) ≠ 0 := by
+    intro h
+    have := congrArg Complex.re h
+    norm_num at this
+  have hden : t ^ 2 + (1 / 4 : ℝ) ≠ 0 := by positivity
+  rw [one_div_add_one_div hs hones]
+  field_simp [hs, hones, hden]
+  push_cast
+  ring_nf
+  simp [I_sq]
+
 set_option maxHeartbeats 400000 in
 /-- The completed-zeta Fourier kernel is integrable.  This is the analytic
 hypothesis needed to use its pointwise Fourier transform, obtained directly
