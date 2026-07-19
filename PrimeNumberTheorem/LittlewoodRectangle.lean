@@ -11,6 +11,43 @@ open scoped BigOperators Interval
 namespace PrimeNumberTheorem
 namespace CarlsonZeroDensity
 
+/-- The imaginary part of a positively oriented rectangular boundary integral
+is the bottom imaginary integral minus the top one, plus the right real
+integral minus the left one. -/
+theorem im_boundaryRectIntegral_eq_four_edges
+    {G : ℂ → ℂ} {x0 x1 y0 y1 : ℝ}
+    (hbottom : IntervalIntegrable
+      (fun x : ℝ => G ((x : ℂ) + (y0 : ℂ) * I))
+      MeasureTheory.volume x0 x1)
+    (htop : IntervalIntegrable
+      (fun x : ℝ => G ((x : ℂ) + (y1 : ℂ) * I))
+      MeasureTheory.volume x0 x1)
+    (hright : IntervalIntegrable
+      (fun y : ℝ => G ((x1 : ℂ) + (y : ℂ) * I))
+      MeasureTheory.volume y0 y1)
+    (hleft : IntervalIntegrable
+      (fun y : ℝ => G ((x0 : ℂ) + (y : ℂ) * I))
+      MeasureTheory.volume y0 y1) :
+    (MathlibAux.boundaryRectIntegral G x0 x1 y0 y1).im =
+      (∫ x in x0..x1,
+          (G ((x : ℂ) + (y0 : ℂ) * I)).im) -
+        (∫ x in x0..x1,
+          (G ((x : ℂ) + (y1 : ℂ) * I)).im) +
+        (∫ y in y0..y1,
+          (G ((x1 : ℂ) + (y : ℂ) * I)).re) -
+        (∫ y in y0..y1,
+          (G ((x0 : ℂ) + (y : ℂ) * I)).re) := by
+  have hbottomIm := Complex.imCLM.intervalIntegral_comp_comm hbottom
+  have htopIm := Complex.imCLM.intervalIntegral_comp_comm htop
+  have hrightRe := Complex.reCLM.intervalIntegral_comp_comm hright
+  have hleftRe := Complex.reCLM.intervalIntegral_comp_comm hleft
+  simp only [Complex.imCLM_apply] at hbottomIm htopIm
+  simp only [Complex.reCLM_apply] at hrightRe hleftRe
+  simp only [MathlibAux.boundaryRectIntegral, Complex.sub_im, Complex.add_im,
+    smul_eq_mul, Complex.mul_im, Complex.I_re, Complex.I_im, zero_mul,
+    one_mul, zero_add]
+  rw [← hbottomIm, ← htopIm, ← hrightRe, ← hleftRe]
+
 /-- Along a vertical line, the derivative of `log ‖f‖` is the negative
 imaginary part of the logarithmic derivative of `f`. -/
 theorem hasDerivAt_log_norm_vertical
@@ -219,6 +256,71 @@ theorem boundaryRectIntegral_weighted_logDeriv_eq_zeroMultiplicitySum
     MathlibAux.boundaryRectIntegral_eq_finite_simple_pole_weighted_residue_sum_of_differentiableOn
       poles (fun rho => (multiplicity rho : ℂ)) anchor
       hregular.differentiableOn hpoles
+
+/-- Taking imaginary parts in the weighted argument principle expresses the
+real weighted zero count as the four oriented edge integrals. -/
+theorem two_pi_mul_zeroMultiplicityWeightedRealSum_eq_four_edges
+    {f : ℂ → ℂ} {x0 x1 y0 y1 : ℝ}
+    (poles : Finset ℂ) (multiplicity : ℂ → ℕ)
+    (hf : AnalyticOnNhd ℂ f ([[x0, x1]] ×ℂ [[y0, y1]]))
+    (hzero : ∀ z ∈ ([[x0, x1]] ×ℂ [[y0, y1]] : Set ℂ),
+      f z = 0 ↔ z ∈ poles)
+    (horder : ∀ rho ∈ poles,
+      analyticOrderAt f rho = multiplicity rho)
+    (hpoles : ∀ rho ∈ poles,
+      x0 < rho.re ∧ rho.re < x1 ∧ y0 < rho.im ∧ rho.im < y1)
+    (hbottom : IntervalIntegrable
+      (fun x : ℝ =>
+        (((x : ℂ) + (y0 : ℂ) * I - (x0 : ℂ)) *
+          logDeriv f ((x : ℂ) + (y0 : ℂ) * I)))
+      MeasureTheory.volume x0 x1)
+    (htop : IntervalIntegrable
+      (fun x : ℝ =>
+        (((x : ℂ) + (y1 : ℂ) * I - (x0 : ℂ)) *
+          logDeriv f ((x : ℂ) + (y1 : ℂ) * I)))
+      MeasureTheory.volume x0 x1)
+    (hright : IntervalIntegrable
+      (fun y : ℝ =>
+        (((x1 : ℂ) + (y : ℂ) * I - (x0 : ℂ)) *
+          logDeriv f ((x1 : ℂ) + (y : ℂ) * I)))
+      MeasureTheory.volume y0 y1)
+    (hleft : IntervalIntegrable
+      (fun y : ℝ =>
+        (((x0 : ℂ) + (y : ℂ) * I - (x0 : ℂ)) *
+          logDeriv f ((x0 : ℂ) + (y : ℂ) * I)))
+      MeasureTheory.volume y0 y1) :
+    (2 * Real.pi) *
+        ∑ rho ∈ poles,
+          (rho.re - x0) * (multiplicity rho : ℝ) =
+      (∫ x in x0..x1,
+          ((((x : ℂ) + (y0 : ℂ) * I - (x0 : ℂ)) *
+            logDeriv f ((x : ℂ) + (y0 : ℂ) * I))).im) -
+        (∫ x in x0..x1,
+          ((((x : ℂ) + (y1 : ℂ) * I - (x0 : ℂ)) *
+            logDeriv f ((x : ℂ) + (y1 : ℂ) * I))).im) +
+        (∫ y in y0..y1,
+          ((((x1 : ℂ) + (y : ℂ) * I - (x0 : ℂ)) *
+            logDeriv f ((x1 : ℂ) + (y : ℂ) * I))).re) -
+        (∫ y in y0..y1,
+          ((((x0 : ℂ) + (y : ℂ) * I - (x0 : ℂ)) *
+            logDeriv f ((x0 : ℂ) + (y : ℂ) * I))).re) := by
+  classical
+  have hres :=
+    boundaryRectIntegral_weighted_logDeriv_eq_zeroMultiplicitySum
+      poles multiplicity (x0 : ℂ) hf hzero horder hpoles
+  have hedges := im_boundaryRectIntegral_eq_four_edges
+    (G := fun z : ℂ => (z - (x0 : ℂ)) * logDeriv f z)
+    hbottom htop hright hleft
+  have him := congrArg Complex.im hres
+  rw [hedges] at him
+  have hsumRe :
+      (∑ rho ∈ poles,
+          (rho - (x0 : ℂ)) * (multiplicity rho : ℂ)).re =
+        ∑ rho ∈ poles,
+          (rho.re - x0) * (multiplicity rho : ℝ) := by
+    simp [Complex.re_sum, Complex.mul_re]
+  rw [Complex.mul_im, hsumRe] at him
+  simpa using him.symm
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem
