@@ -16,6 +16,13 @@ fourfold divisor function. -/
 def tripleDivisorCount (n : ℕ) : ℕ :=
   (ArithmeticFunction.sigma 0 * ArithmeticFunction.zeta) n
 
+/-- The explicit nested count of positive quadruples whose product is at
+most `Y`; the last quotient counts the fourth factor. -/
+def fourfoldDivisorPrefix (Y : ℕ) : ℕ :=
+  ∑ a ∈ Finset.Ioc 0 Y,
+    ∑ b ∈ Finset.Ioc 0 (Y / a),
+      ∑ c ∈ Finset.Ioc 0 ((Y / a) / b), ((Y / a) / b) / c
+
 /-- Divisor pairs and divisors have the same cardinality. -/
 theorem card_divisorsAntidiagonal_eq_card_divisors (n : ℕ) :
     n.divisorsAntidiagonal.card = n.divisors.card := by
@@ -146,6 +153,41 @@ theorem sum_Ioc_fourfoldDivisorCount_eq_sum_div (Y : ℕ) :
   rw [hfunctions]
   exact ArithmeticFunction.sum_Ioc_mul_zeta_eq_sum
     (ArithmeticFunction.sigma 0 * ArithmeticFunction.zeta) Y
+
+/-- The summatory fourfold-divisor function is exactly the nested positive
+quadruple count. -/
+theorem sum_Ioc_fourfoldDivisorCount_eq_fourfoldDivisorPrefix (Y : ℕ) :
+    ∑ n ∈ Finset.Ioc 0 Y, fourfoldDivisorCount n =
+      fourfoldDivisorPrefix Y := by
+  have hsigma :
+      ArithmeticFunction.sigma 0 =
+        ArithmeticFunction.zeta * ArithmeticFunction.zeta := by
+    rw [← ArithmeticFunction.zeta_mul_pow_eq_sigma,
+      ArithmeticFunction.pow_zero_eq_zeta]
+  have hfunctions :
+      ArithmeticFunction.sigma 0 * ArithmeticFunction.sigma 0 =
+        ArithmeticFunction.zeta *
+          (ArithmeticFunction.zeta *
+            (ArithmeticFunction.zeta * ArithmeticFunction.zeta)) := by
+    rw [hsigma]
+    simp only [mul_assoc]
+  unfold fourfoldDivisorCount fourfoldDivisorPrefix
+  rw [hfunctions,
+    ArithmeticFunction.sum_Ioc_mul_eq_sum_sum]
+  apply Finset.sum_congr rfl
+  intro a ha
+  have ha0 : a ≠ 0 := by
+    have := (Finset.mem_Ioc.mp ha).1
+    omega
+  rw [ArithmeticFunction.zeta_apply_ne ha0, one_mul,
+    ArithmeticFunction.sum_Ioc_mul_eq_sum_sum]
+  apply Finset.sum_congr rfl
+  intro b hb
+  have hb0 : b ≠ 0 := by
+    have := (Finset.mem_Ioc.mp hb).1
+    omega
+  rw [ArithmeticFunction.zeta_apply_ne hb0, one_mul, ← hsigma,
+    ArithmeticFunction.sum_Ioc_sigma0_eq_sum_div]
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem

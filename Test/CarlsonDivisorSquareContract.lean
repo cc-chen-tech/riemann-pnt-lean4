@@ -47,12 +47,25 @@ example (Y : ℕ) :
       ∑ n ∈ Finset.Ioc 0 Y, tripleDivisorCount n * (Y / n) :=
   sum_Ioc_fourfoldDivisorCount_eq_sum_div Y
 
+example (Y : ℕ) :
+    fourfoldDivisorPrefix Y =
+      ∑ a ∈ Finset.Ioc 0 Y,
+        ∑ b ∈ Finset.Ioc 0 (Y / a),
+          ∑ c ∈ Finset.Ioc 0 ((Y / a) / b), ((Y / a) / b) / c :=
+  rfl
+
+example (Y : ℕ) :
+    ∑ n ∈ Finset.Ioc 0 Y, fourfoldDivisorCount n =
+      fourfoldDivisorPrefix Y :=
+  sum_Ioc_fourfoldDivisorCount_eq_fourfoldDivisorPrefix Y
+
 #print axioms card_divisorsAntidiagonal_eq_card_divisors
 #print axioms card_divisors_sq_le_fourfoldDivisorCount_prime_pow
 #print axioms card_divisorsAntidiagonal_sq_le_fourfoldDivisorCount
 #print axioms weightedDivisorSquareSum_le_fourfoldDivisorCount
 #print axioms sum_Ioc_tripleDivisorCount_eq_sum_div
 #print axioms sum_Ioc_fourfoldDivisorCount_eq_sum_div
+#print axioms sum_Ioc_fourfoldDivisorCount_eq_fourfoldDivisorPrefix
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem
