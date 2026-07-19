@@ -54,6 +54,7 @@ lean_lib RiemannPNT where
     `HardyTheorem.HardyModelApproximation,
     `HardyTheorem.CriticalLineShortDirichlet,
     `HardyTheorem.HardyShortSignedMeanSquare,
+    `HardyTheorem.HardyPhaseSecondMoment,
     `HardyTheorem.HardyPhaseCorrelation,
     `HardyTheorem.HardyOddMultiplicity,
     `Test.HardyFirstApproximationAxiomAudit,

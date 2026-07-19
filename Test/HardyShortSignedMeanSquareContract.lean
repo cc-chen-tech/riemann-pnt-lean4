@@ -1,4 +1,4 @@
-import HardyTheorem.HardyShortSignedMeanSquare
+import HardyTheorem.HardyPhaseSecondMoment
 
 open Complex Set
 
@@ -9,9 +9,11 @@ open Complex Set
 #check HardyTheorem.hardyFirstModelShortIntegral
 #check HardyTheorem.hardyFirstModelShortIntegral_eq_re_sum_hardyPhaseShortIntegral
 #check HardyTheorem.hardyFirstModelShortIntegral_sq_le_normSq_phase_sum
+#check HardyTheorem.integral_conj_hardyPhaseShortIntegral_mul_eq_triple_correlation
 #check HardyTheorem.exists_abs_hardyShortIntegral_sub_hardyFirstModelShortIntegral_le
 #print axioms MathlibAux.integral_normSq_intervalIntegral_exponentialPolynomial_le
 #print axioms HardyTheorem.hardyFirstModelShortIntegral_eq_re_sum_hardyPhaseShortIntegral
+#print axioms HardyTheorem.integral_conj_hardyPhaseShortIntegral_mul_eq_triple_correlation
 #print axioms HardyTheorem.hardyFirstModelShortIntegral_sq_le_normSq_phase_sum
 #print axioms HardyTheorem.exists_abs_hardyShortIntegral_sub_hardyFirstModelShortIntegral_le
 

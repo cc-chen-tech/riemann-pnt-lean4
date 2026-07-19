@@ -8,6 +8,7 @@ import HardyTheorem.ShortIntervalMeanValue
 import HardyTheorem.HardyModelApproximation
 import HardyTheorem.CriticalLineShortDirichlet
 import HardyTheorem.HardyShortSignedMeanSquare
+import HardyTheorem.HardyPhaseSecondMoment
 import HardyTheorem.HardyPhaseCorrelation
 import HardyTheorem.HardyOddMultiplicity
 import MathlibAux.SlidingIntervalCorrelation
