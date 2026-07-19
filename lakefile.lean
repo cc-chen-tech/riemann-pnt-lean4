@@ -119,6 +119,8 @@ lean_lib RiemannPNT where
     `Test.RiemannVonMangoldtGammaMainTermAxiomAudit,
     `Test.RiemannVonMangoldtZetaArgumentContract,
     `Test.RiemannVonMangoldtZetaArgumentAxiomAudit,
+    `Test.RiemannVonMangoldtCompletedZetaSymmetryContract,
+    `Test.RiemannVonMangoldtCompletedZetaSymmetryAxiomAudit,
     `Test.RiemannVonMangoldtContract,
     `Test.RiemannVonMangoldtAxiomAudit
   ]
