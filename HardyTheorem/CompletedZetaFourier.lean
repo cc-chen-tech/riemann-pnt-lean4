@@ -21,6 +21,65 @@ noncomputable def completedZetaLogKernel (u : ℝ) : ℂ :=
   MathlibAux.logMellinKernel
     (HurwitzZeta.hurwitzEvenFEPair 0).f_modif (1 / 4 : ℝ) u
 
+@[simp]
+theorem completedZetaLogKernel_zero : completedZetaLogKernel 0 = 0 := by
+  simp [completedZetaLogKernel, MathlibAux.logMellinKernel,
+    WeakFEPair.f_modif]
+
+/-- The logarithmic Mellin kernel is even.  This is the theta functional
+equation in logarithmic coordinates and is useful for reducing all frequency
+estimates to one half-line. -/
+theorem completedZetaLogKernel_neg (u : ℝ) :
+    completedZetaLogKernel (-u) = completedZetaLogKernel u := by
+  have h := (HurwitzZeta.hurwitzEvenFEPair 0).hf_modif_FE
+    (Real.exp (-u)) (Real.exp_pos (-u))
+  change (HurwitzZeta.hurwitzEvenFEPair 0).f_modif
+      (1 / Real.exp (-u)) =
+    ((HurwitzZeta.hurwitzEvenFEPair 0).ε *
+      (((Real.exp (-u)) ^
+        (HurwitzZeta.hurwitzEvenFEPair 0).k : ℝ) : ℂ)) •
+        (HurwitzZeta.hurwitzEvenFEPair 0).symm.f_modif
+          (Real.exp (-u)) at h
+  rw [HurwitzZeta.hurwitzEvenFEPair_zero_symm] at h
+  simp only [HurwitzZeta.hurwitzEvenFEPair, one_mul, one_div,
+    Real.exp_neg, inv_inv] at h
+  have hrpow : (Real.exp u)⁻¹ ^ (2 : ℝ)⁻¹ = Real.exp (-u / 2) := by
+    rw [Real.rpow_def_of_pos (inv_pos.mpr (Real.exp_pos u)),
+      Real.log_inv, Real.log_exp]
+    ring
+  rw [hrpow] at h
+  have hnamed :
+      (HurwitzZeta.hurwitzEvenFEPair 0).f_modif (Real.exp u) =
+        (Real.exp (-u / 2) : ℂ) •
+          (HurwitzZeta.hurwitzEvenFEPair 0).f_modif (Real.exp u)⁻¹ := by
+    simpa [HurwitzZeta.hurwitzEvenFEPair] using h
+  unfold completedZetaLogKernel MathlibAux.logMellinKernel
+  simp only [neg_neg, neg_mul, one_div]
+  rw [show Real.exp (-u) = (Real.exp u)⁻¹ by exact Real.exp_neg u]
+  rw [hnamed]
+  have hscalar :
+      Real.exp (-(4⁻¹ * -u)) * Real.exp (-u / 2) =
+        Real.exp (-(4⁻¹ * u)) := by
+    rw [← Real.exp_add]
+    congr 1
+    ring
+  have hscalarSmul :
+      Real.exp (-(4⁻¹ * -u)) • ((Real.exp (-u / 2) : ℝ) : ℂ) =
+        ((Real.exp (-(4⁻¹ * u)) : ℝ) : ℂ) := by
+    rw [Complex.real_smul]
+    exact_mod_cast hscalar
+  let z := (HurwitzZeta.hurwitzEvenFEPair 0).f_modif (Real.exp u)⁻¹
+  calc
+    Real.exp (-(4⁻¹ * -u)) •
+        (((Real.exp (-u / 2) : ℝ) : ℂ) • z) =
+        (Real.exp (-(4⁻¹ * -u)) •
+          ((Real.exp (-u / 2) : ℝ) : ℂ)) • z :=
+      (IsScalarTower.smul_assoc _ _ _).symm
+    _ = ((Real.exp (-(4⁻¹ * u)) : ℝ) : ℂ) • z :=
+      congrArg (fun c : ℂ => c • z) hscalarSmul
+    _ = Real.exp (-(4⁻¹ * u)) • z := by
+      simp [Algebra.smul_def]
+
 set_option maxHeartbeats 400000 in
 /-- The completed-zeta Fourier kernel is integrable.  This is the analytic
 hypothesis needed to use its pointwise Fourier transform, obtained directly

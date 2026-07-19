@@ -20,6 +20,8 @@ example (t : ℝ) :
 end HardyTheorem
 
 #print axioms HardyTheorem.integrable_completedZetaLogKernel
+#print axioms HardyTheorem.completedZetaLogKernel_zero
+#print axioms HardyTheorem.completedZetaLogKernel_neg
 
 #print axioms HardyTheorem.completedRiemannZeta₀_criticalLine_eq_fourier
 #print axioms HardyTheorem.completedRiemannZeta_criticalLine_eq_fourier_sub_poles
