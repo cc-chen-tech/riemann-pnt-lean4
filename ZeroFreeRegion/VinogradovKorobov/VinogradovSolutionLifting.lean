@@ -832,6 +832,323 @@ theorem card_vinogradovPrimePowerNonsingularSolutionSet_le_iterated
       simp only [Nat.zero_add, pow_one]
       rw [← pow_mul, ← pow_add]
 
+/-- All pairs of tuples at level `p^(n+1)` whose selected left block is
+singular after reduction modulo `p`.  No Vinogradov equations are imposed. -/
+noncomputable def vinogradovPrimePowerSingularAmbientSet
+    (p k r n : ℕ) [Fact p.Prime] :
+    Finset (vinogradovPrimePowerBasePair p k r n) := by
+  classical
+  exact Finset.univ.filter fun xy ↦
+    ¬Function.Injective fun i : Fin k ↦
+      (((xy.1 (Fin.castAdd r i)).val + 1 : ℕ) : ZMod p)
+
+/-- Membership in the singular ambient set is exactly failure of injectivity
+of the selected left block modulo `p`. -/
+theorem mem_vinogradovPrimePowerSingularAmbientSet_iff
+    (p k r n : ℕ) [Fact p.Prime]
+    (xy : vinogradovPrimePowerBasePair p k r n) :
+    xy ∈ vinogradovPrimePowerSingularAmbientSet p k r n ↔
+      ¬Function.Injective fun i : Fin k ↦
+        (((xy.1 (Fin.castAdd r i)).val + 1 : ℕ) : ZMod p) := by
+  classical
+  simp [vinogradovPrimePowerSingularAmbientSet]
+
+/-- Encode the complete residue interval in `ZMod p` using the same
+one-based convention as `IsVinogradovSolutionMod`. -/
+private noncomputable def vinogradovCompleteResidueEquiv
+    (p : ℕ) [NeZero p] : Fin p ≃ ZMod p :=
+  (ZMod.finEquiv p).toEquiv.trans (Equiv.addRight 1)
+
+private theorem vinogradovCompleteResidueEquiv_apply
+    (p : ℕ) [NeZero p] (x : Fin p) :
+    vinogradovCompleteResidueEquiv p x = (x.val : ZMod p) + 1 := by
+  cases p with
+  | zero => exact (NeZero.ne 0 rfl).elim
+  | succ p =>
+      change (x + (1 : Fin (p + 1)) : Fin (p + 1)) =
+        (⟨x.val % (p + 1), Nat.mod_lt _ (Nat.succ_pos p)⟩ :
+          Fin (p + 1)) + 1
+      congr 1
+      apply Fin.ext
+      simp [Nat.mod_eq_of_lt x.isLt]
+
+/-- Rewrite the first prime-power level into the existing `Fin p`
+coordinates without changing any representatives. -/
+private def vinogradovPrimePowerBaseZeroEquiv (p k r : ℕ) :
+    vinogradovPrimePowerBasePair p k r 0 ≃
+      ((Fin (k + r) → Fin p) × (Fin (k + r) → Fin p)) :=
+  Equiv.prodCongr
+    (Equiv.piCongrRight fun _ ↦ finCongr (by simp))
+    (Equiv.piCongrRight fun _ ↦ finCongr (by simp))
+
+/-- At the first prime level, the ambient singular set has the cardinality of
+the already-counted degree-zero singular solution stratum. -/
+theorem card_vinogradovPrimePowerSingularAmbientSet_zero
+    (p k r : ℕ) [Fact p.Prime] :
+    (vinogradovPrimePowerSingularAmbientSet p k r 0).card =
+      (vinogradovBlockSingularSolutionSetMod p 0 k r).card := by
+  classical
+  apply Finset.card_equiv (vinogradovPrimePowerBaseZeroEquiv p k r)
+  intro xy
+  rw [mem_vinogradovPrimePowerSingularAmbientSet_iff,
+    mem_vinogradovBlockSingularSolutionSetMod_iff]
+  letI : NeZero p := ⟨(Fact.out : p.Prime).ne_zero⟩
+  have hinj :
+      Function.Injective (fun i : Fin k ↦
+        (vinogradovPrimePowerBaseZeroEquiv p k r xy).1
+          (Fin.castAdd r i)) ↔
+      Function.Injective (fun i : Fin k ↦
+        (((xy.1 (Fin.castAdd r i)).val + 1 : ℕ) : ZMod p)) := by
+    constructor
+    · intro h i j hij
+      apply h
+      apply (vinogradovCompleteResidueEquiv p).injective
+      simpa [vinogradovCompleteResidueEquiv_apply,
+        vinogradovPrimePowerBaseZeroEquiv] using hij
+    · intro h i j hij
+      apply h
+      simpa [vinogradovCompleteResidueEquiv_apply,
+        vinogradovPrimePowerBaseZeroEquiv] using
+        congrArg (vinogradovCompleteResidueEquiv p) hij
+  constructor
+  · intro h
+    exact ⟨fun hraw ↦ h (hinj.mp hraw), fun j ↦ Fin.elim0 j⟩
+  · rintro ⟨hraw, _⟩ hinjEncoded
+    exact hraw (hinj.mpr hinjEncoded)
+
+/-- The base singular ambient stratum saves one power of `p`. -/
+theorem card_vinogradovPrimePowerSingularAmbientSet_zero_le
+    (p k r : ℕ) [Fact p.Prime] :
+    (vinogradovPrimePowerSingularAmbientSet p k r 0).card ≤
+      k ^ 2 * p ^ (2 * (k + r) - 1) := by
+  rw [card_vinogradovPrimePowerSingularAmbientSet_zero]
+  exact card_vinogradovBlockSingularSolutionSetMod_le p 0 k r
+
+/-- The complete split correction space contains one residue digit for each
+coordinate of both tuples. -/
+theorem card_vinogradovPrimePowerSplitCorrection
+    (p k r : ℕ) [Fact p.Prime] :
+    Fintype.card (vinogradovPrimePowerSplitCorrection p k r) =
+      p ^ (2 * (k + r)) := by
+  classical
+  rw [Fintype.card_congr (vinogradovSplitCorrectionEquiv p k r)]
+  simp only [Fintype.card_prod, Fintype.card_fun, Fintype.card_fin, ZMod.card]
+  rw [← pow_add]
+  congr 1
+  omega
+
+/-- A singular base pair together with arbitrary next digits. -/
+noncomputable def vinogradovPrimePowerSingularAmbientLiftSet
+    (p k r n : ℕ) [Fact p.Prime] :
+    Finset
+      (Σ _ : vinogradovPrimePowerBasePair p k r n,
+        vinogradovPrimePowerSplitCorrection p k r) := by
+  classical
+  exact
+    (vinogradovPrimePowerSingularAmbientSet p k r n).sigma fun _ ↦
+      Finset.univ
+
+/-- The cardinality of the singular ambient lift space is the base count
+times the number of unrestricted new digits. -/
+theorem card_vinogradovPrimePowerSingularAmbientLiftSet
+    (p k r n : ℕ) [Fact p.Prime] :
+    (vinogradovPrimePowerSingularAmbientLiftSet p k r n).card =
+      (vinogradovPrimePowerSingularAmbientSet p k r n).card *
+        p ^ (2 * (k + r)) := by
+  classical
+  rw [vinogradovPrimePowerSingularAmbientLiftSet, Finset.card_sigma]
+  simp only [Finset.card_univ, Finset.sum_const_nat]
+  rw [card_vinogradovPrimePowerSplitCorrection]
+
+/-- Singularity is transported exactly by the one-step digit equivalence. -/
+theorem mem_vinogradovPrimePowerSingularAmbientLiftSet_iff_image_mem
+    (p k r n : ℕ) [Fact p.Prime]
+    (w : Σ _ : vinogradovPrimePowerBasePair p k r n,
+      vinogradovPrimePowerSplitCorrection p k r) :
+    w ∈ vinogradovPrimePowerSingularAmbientLiftSet p k r n ↔
+      vinogradovPrimePowerLiftAmbientEquiv p k r n w ∈
+        vinogradovPrimePowerSingularAmbientSet p k r (n + 1) := by
+  rcases w with ⟨xy, z⟩
+  simp only [vinogradovPrimePowerSingularAmbientLiftSet, Finset.mem_sigma,
+    Finset.mem_univ, and_true]
+  rw [
+    mem_vinogradovPrimePowerSingularAmbientSet_iff,
+    mem_vinogradovPrimePowerSingularAmbientSet_iff]
+  exact not_congr
+    (vinogradovPrimePowerLiftAmbientEquiv_head_injective_iff
+      p k r n xy z).symm
+
+/-- Mapping all singular base pairs and arbitrary digits gives exactly all
+singular pairs at the next prime-power level. -/
+theorem map_vinogradovPrimePowerSingularAmbientLiftSet_eq
+    (p k r n : ℕ) [Fact p.Prime] :
+    (vinogradovPrimePowerSingularAmbientLiftSet p k r n).map
+        (vinogradovPrimePowerLiftAmbientEquiv p k r n).toEmbedding =
+      vinogradovPrimePowerSingularAmbientSet p k r (n + 1) := by
+  classical
+  ext v
+  constructor
+  · intro hv
+    rcases Finset.mem_map.mp hv with ⟨w, hw, rfl⟩
+    exact
+      (mem_vinogradovPrimePowerSingularAmbientLiftSet_iff_image_mem
+        p k r n w).mp hw
+  · intro hv
+    let e := vinogradovPrimePowerLiftAmbientEquiv p k r n
+    let w := e.symm v
+    have hew : e w = v := e.apply_symm_apply v
+    apply Finset.mem_map.mpr
+    refine ⟨w, ?_, hew⟩
+    apply
+      (mem_vinogradovPrimePowerSingularAmbientLiftSet_iff_image_mem
+        p k r n w).mpr
+    simpa [e, w] using hv
+
+/-- The singular ambient count has an exact one-step recurrence: every pair
+acquires one unrestricted residue digit in each coordinate. -/
+theorem card_vinogradovPrimePowerSingularAmbientSet_succ
+    (p k r n : ℕ) [Fact p.Prime] :
+    (vinogradovPrimePowerSingularAmbientSet p k r (n + 1)).card =
+      (vinogradovPrimePowerSingularAmbientSet p k r n).card *
+        p ^ (2 * (k + r)) := by
+  rw [← map_vinogradovPrimePowerSingularAmbientLiftSet_eq p k r n,
+    Finset.card_map,
+    card_vinogradovPrimePowerSingularAmbientLiftSet]
+
+/-- Iterating the exact recurrence expresses every singular ambient count in
+terms of its first-prime-level count. -/
+theorem card_vinogradovPrimePowerSingularAmbientSet_eq_base_mul_pow
+    (p k r n : ℕ) [Fact p.Prime] :
+    (vinogradovPrimePowerSingularAmbientSet p k r n).card =
+      (vinogradovPrimePowerSingularAmbientSet p k r 0).card *
+        (p ^ (2 * (k + r))) ^ n := by
+  induction n with
+  | zero => simp
+  | succ n ih =>
+      rw [card_vinogradovPrimePowerSingularAmbientSet_succ,
+        ih, pow_succ, mul_assoc]
+
+/-- At every prime-power level, singularity of the selected head block saves
+one full power of `p`, up to the explicit factor `k^2`. -/
+theorem card_vinogradovPrimePowerSingularAmbientSet_le_iterated
+    (p k r n : ℕ) [Fact p.Prime] :
+    (vinogradovPrimePowerSingularAmbientSet p k r n).card ≤
+      k ^ 2 * p ^ (2 * (k + r) * (n + 1) - 1) := by
+  by_cases hk : k = 0
+  · subst k
+    have hempty :
+        vinogradovPrimePowerSingularAmbientSet p 0 r n = ∅ := by
+      ext xy
+      simp only [mem_vinogradovPrimePowerSingularAmbientSet_iff,
+        Finset.notMem_empty, iff_false, not_not]
+      intro i
+      exact Fin.elim0 i
+    rw [hempty]
+    simp
+  · calc
+      (vinogradovPrimePowerSingularAmbientSet p k r n).card =
+          (vinogradovPrimePowerSingularAmbientSet p k r 0).card *
+            (p ^ (2 * (k + r))) ^ n :=
+        card_vinogradovPrimePowerSingularAmbientSet_eq_base_mul_pow
+          p k r n
+      _ ≤ (k ^ 2 * p ^ (2 * (k + r) - 1)) *
+            (p ^ (2 * (k + r))) ^ n :=
+        Nat.mul_le_mul_right ((p ^ (2 * (k + r))) ^ n)
+          (card_vinogradovPrimePowerSingularAmbientSet_zero_le p k r)
+      _ = k ^ 2 * p ^ (2 * (k + r) * (n + 1) - 1) := by
+        rw [← pow_mul, mul_assoc, ← pow_add]
+        congr 2
+        have hdist :
+            2 * (k + r) * (n + 1) =
+              2 * (k + r) * n + 2 * (k + r) := by
+          ring
+        rw [hdist]
+        omega
+
+/-- Prime-power Vinogradov solutions whose selected left block is singular
+modulo `p`. -/
+noncomputable def vinogradovPrimePowerSingularSolutionSet
+    (p k r n : ℕ) [Fact p.Prime] :
+    Finset (vinogradovPrimePowerBasePair p k r n) := by
+  classical
+  exact
+    (vinogradovSolutionPairSetMod
+      (p ^ (n + 1)) k (k + r) (p ^ (n + 1))).filter fun xy ↦
+        ¬Function.Injective fun i : Fin k ↦
+          (((xy.1 (Fin.castAdd r i)).val + 1 : ℕ) : ZMod p)
+
+/-- Membership in the prime-power singular solution stratum records both the
+collision and all Vinogradov equations. -/
+theorem mem_vinogradovPrimePowerSingularSolutionSet_iff
+    (p k r n : ℕ) [Fact p.Prime]
+    (xy : vinogradovPrimePowerBasePair p k r n) :
+    xy ∈ vinogradovPrimePowerSingularSolutionSet p k r n ↔
+      (¬Function.Injective fun i : Fin k ↦
+        (((xy.1 (Fin.castAdd r i)).val + 1 : ℕ) : ZMod p)) ∧
+      IsVinogradovSolutionMod
+        (p ^ (n + 1)) k (k + r) (p ^ (n + 1)) xy.1 xy.2 := by
+  classical
+  rw [vinogradovPrimePowerSingularSolutionSet, Finset.mem_filter]
+  constructor
+  · rintro ⟨hsol, hsing⟩
+    exact ⟨hsing, (mem_vinogradovSolutionPairSetMod_iff _ _ _ _ _ _).mp hsol⟩
+  · rintro ⟨hsing, hsol⟩
+    exact ⟨(mem_vinogradovSolutionPairSetMod_iff _ _ _ _ _ _).mpr hsol, hsing⟩
+
+/-- The singular solution stratum is a subset of the singular ambient
+stratum and inherits its explicit one-power saving. -/
+theorem card_vinogradovPrimePowerSingularSolutionSet_le_iterated
+    (p k r n : ℕ) [Fact p.Prime] :
+    (vinogradovPrimePowerSingularSolutionSet p k r n).card ≤
+      k ^ 2 * p ^ (2 * (k + r) * (n + 1) - 1) := by
+  apply le_trans (Finset.card_le_card ?_)
+    (card_vinogradovPrimePowerSingularAmbientSet_le_iterated p k r n)
+  intro xy hxy
+  exact
+    (mem_vinogradovPrimePowerSingularAmbientSet_iff p k r n xy).mpr
+      ((mem_vinogradovPrimePowerSingularSolutionSet_iff p k r n xy).mp hxy).1
+
+/-- Singular and nonsingular prime-power solutions partition the complete
+modular Vinogradov solution set. -/
+theorem card_primePower_singular_add_nonsingular_eq_solutionCount
+    (p k r n : ℕ) [Fact p.Prime] :
+    (vinogradovPrimePowerSingularSolutionSet p k r n).card +
+        (vinogradovPrimePowerNonsingularSolutionSet p k r n).card =
+      vinogradovSolutionCountMod
+        (p ^ (n + 1)) k (k + r) (p ^ (n + 1)) := by
+  classical
+  let all := vinogradovSolutionPairSetMod
+    (p ^ (n + 1)) k (k + r) (p ^ (n + 1))
+  let singular := fun xy : vinogradovPrimePowerBasePair p k r n ↦
+    ¬Function.Injective fun i : Fin k ↦
+      (((xy.1 (Fin.castAdd r i)).val + 1 : ℕ) : ZMod p)
+  have hpartition :=
+    Finset.card_filter_add_card_filter_not (s := all) singular
+  simpa [all, singular, vinogradovPrimePowerSingularSolutionSet,
+    vinogradovPrimePowerNonsingularSolutionSet,
+    card_vinogradovSolutionPairSetMod] using hpartition
+
+/-- Combining nonsingular Hensel lifting with the singular one-power saving
+gives a complete explicit prime-power modular solution-count bound. -/
+theorem vinogradovPrimePowerSolutionCount_le_strata
+    (p k r n : ℕ) [Fact p.Prime] (hkp : k < p) :
+    vinogradovSolutionCountMod
+        (p ^ (n + 1)) k (k + r) (p ^ (n + 1)) ≤
+      p ^ (2 * (k + r) + (k + 2 * r) * n) +
+        k ^ 2 * p ^ (2 * (k + r) * (n + 1) - 1) := by
+  rw [← card_primePower_singular_add_nonsingular_eq_solutionCount]
+  calc
+    (vinogradovPrimePowerSingularSolutionSet p k r n).card +
+        (vinogradovPrimePowerNonsingularSolutionSet p k r n).card ≤
+      k ^ 2 * p ^ (2 * (k + r) * (n + 1) - 1) +
+        p ^ (2 * (k + r) + (k + 2 * r) * n) :=
+      Nat.add_le_add
+        (card_vinogradovPrimePowerSingularSolutionSet_le_iterated p k r n)
+        (card_vinogradovPrimePowerNonsingularSolutionSet_le_iterated
+          p k r n hkp)
+    _ = p ^ (2 * (k + r) + (k + 2 * r) * n) +
+        k ^ 2 * p ^ (2 * (k + r) * (n + 1) - 1) := Nat.add_comm _ _
+
 end
 
 end ZeroFreeRegion.VinogradovKorobov
