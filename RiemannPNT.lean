@@ -38,6 +38,7 @@ import HardyTheorem.HardyPhaseWindowPolynomial
 import HardyTheorem.HardyPhaseMovingSecondMoment
 import HardyTheorem.HardyPhasePartialSecondMoment
 import HardyTheorem.HardyPhaseSharpTwoBandSecondMoment
+import HardyTheorem.HardyShortSharpSecondMoment
 import HardyTheorem.HardyPhaseDyadicSecondMoment
 import HardyTheorem.HardyPhaseHilbert
 import HardyTheorem.HardyOddMultiplicity
