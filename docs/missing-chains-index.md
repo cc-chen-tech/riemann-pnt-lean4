@@ -52,7 +52,9 @@ The safe publication claim is a focused one: this repository develops verified
 Lean 4 infrastructure for the de la Vallee Poussin 3-4-1 machinery, proves the
 classical `c/log |t|` zero-free region, and derives the ordinary PNT through a
 multiplicity-aware moving-height explicit formula, including the de la Vallee
-Poussin-form `psi` and `pi-Li` remainders.  It is not the first PNT
+Poussin-form `psi` and `pi-Li` remainders.  It also proves the classical
+Riemann-von Mangoldt asymptotic for the one-sided multiplicity-weighted zeta
+zero count.  It is not the first PNT
 formalization, does not supply numerically explicit remainder constants, and
 is not a proof of RH.
 
