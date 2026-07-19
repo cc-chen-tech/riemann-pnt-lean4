@@ -49,6 +49,34 @@ example (X : ℕ) (s : ℂ) :
       ‖mollifiedZetaError X s‖ ^ 2 :=
   log_norm_carlsonZeroDetector_le_norm_mollifiedZetaError_sq X s
 
+example {X : ℕ} {s : ℂ} (hs0 : s ≠ 0) (hs1 : s ≠ 1)
+    (hdet : carlsonZeroDetector X s ≠ 0) :
+    Real.log ‖regularizedCarlsonZeroDetector X s‖ ≤
+      2 * Real.log ‖s - 1‖ + ‖mollifiedZetaError X s‖ ^ 2 :=
+  log_norm_regularizedCarlsonZeroDetector_le_two_log_norm_sub_one_add_error_sq
+    hs0 hs1 hdet
+
+example {X : ℕ} {sigma a b : ℝ} (hab : a ≤ b)
+    (hsigma0 : 0 < sigma) (hsigma1 : sigma ≠ 1)
+    (hboundary : ∀ t ∈ Set.Icc a b,
+      carlsonZeroDetector X ((sigma : ℂ) + Complex.I * t) ≠ 0) :
+    (∫ t in a..b,
+        Real.log ‖regularizedCarlsonZeroDetector X
+          ((sigma : ℂ) + Complex.I * t)‖) ≤
+      2 * (∫ t in a..b,
+        Real.log ‖(sigma : ℂ) + Complex.I * t - 1‖) +
+      ∫ t in a..b,
+        ‖mollifiedZetaError X
+          ((sigma : ℂ) + Complex.I * t)‖ ^ 2 :=
+  integral_log_norm_regularizedCarlsonZeroDetector_le_geometric_add_meanSquare
+    hab hsigma0 hsigma1 hboundary
+
+example (X : ℕ) {sigma : ℝ} (hsigma0 : 0 < sigma) :
+    Continuous (fun t : ℝ =>
+      regularizedCarlsonZeroDetector X
+        ((sigma : ℂ) + Complex.I * t)) :=
+  continuous_regularizedCarlsonZeroDetector_verticalLine X hsigma0
+
 example (X : ℕ) (sigma : ℝ) (hsigma1 : sigma ≠ 1) :
     Continuous (fun t : ℝ =>
       mollifiedZetaError X ((sigma : ℂ) + Complex.I * t)) :=
@@ -101,6 +129,9 @@ example :
 #print axioms regularizedCarlsonZeroDetector_eq_sub_one_sq_mul
 #print axioms analyticOrderNatAt_riemannZeta_le_regularizedCarlsonZeroDetector
 #print axioms log_norm_carlsonZeroDetector_le_norm_mollifiedZetaError_sq
+#print axioms log_norm_regularizedCarlsonZeroDetector_le_two_log_norm_sub_one_add_error_sq
+#print axioms integral_log_norm_regularizedCarlsonZeroDetector_le_geometric_add_meanSquare
+#print axioms continuous_regularizedCarlsonZeroDetector_verticalLine
 #print axioms continuous_mollifiedZetaError_verticalLine
 #print axioms continuous_carlsonZeroDetector_verticalLine
 #print axioms integral_log_norm_carlsonZeroDetector_le_meanSquare

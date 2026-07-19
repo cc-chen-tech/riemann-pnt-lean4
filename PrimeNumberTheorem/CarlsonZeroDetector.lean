@@ -272,6 +272,156 @@ theorem log_norm_carlsonZeroDetector_le_norm_mollifiedZetaError_sq
           (show 0 < 1 + ‖f‖ ^ 2 by positivity)
       _ = ‖mollifiedZetaError X s‖ ^ 2 := rfl
 
+/-- Away from the removable points, the logarithmic size of the pole-free
+detector differs from the original Carlson detector only by the explicit
+geometric factor `(s - 1)^2`. -/
+theorem log_norm_regularizedCarlsonZeroDetector_le_two_log_norm_sub_one_add_error_sq
+    {X : ℕ} {s : ℂ} (hs0 : s ≠ 0) (hs1 : s ≠ 1)
+    (hdet : carlsonZeroDetector X s ≠ 0) :
+    Real.log ‖regularizedCarlsonZeroDetector X s‖ ≤
+      2 * Real.log ‖s - 1‖ + ‖mollifiedZetaError X s‖ ^ 2 := by
+  rw [regularizedCarlsonZeroDetector_eq_sub_one_sq_mul X hs0 hs1,
+    norm_mul, norm_pow,
+    Real.log_mul
+      (pow_ne_zero 2 (norm_ne_zero_iff.mpr (sub_ne_zero.mpr hs1)))
+      (norm_ne_zero_iff.mpr hdet),
+    Real.log_pow]
+  simpa using add_le_add_right
+    (log_norm_carlsonZeroDetector_le_norm_mollifiedZetaError_sq X s)
+    (2 * Real.log ‖s - 1‖)
+
+/-- The pole-free detector is continuous on every vertical line in the right
+half-plane. -/
+theorem continuous_regularizedCarlsonZeroDetector_verticalLine
+    (X : ℕ) {sigma : ℝ} (hsigma0 : 0 < sigma) :
+    Continuous (fun t : ℝ =>
+      regularizedCarlsonZeroDetector X
+        ((sigma : ℂ) + Complex.I * t)) := by
+  rw [continuous_iff_continuousAt]
+  intro t
+  have han : AnalyticAt ℂ (regularizedCarlsonZeroDetector X)
+      ((sigma : ℂ) + Complex.I * (t : ℂ)) :=
+    analyticOnNhd_regularizedCarlsonZeroDetector_re_gt
+      (theta := (0 : ℝ)) le_rfl X _ (by simpa using hsigma0)
+  have hmap : ContinuousAt
+      (fun u : ℝ => (sigma : ℂ) + Complex.I * (u : ℂ)) t := by
+    fun_prop
+  simpa [Function.comp_def] using han.continuousAt.comp_of_eq hmap rfl
+
+/-- On a zero-free left boundary, the pole-free detector's logarithmic
+integral is controlled by the explicit regularization factor and the same
+mollified-zeta mean square used for Carlson's original detector. -/
+theorem integral_log_norm_regularizedCarlsonZeroDetector_le_geometric_add_meanSquare
+    {X : ℕ} {sigma a b : ℝ} (hab : a ≤ b)
+    (hsigma0 : 0 < sigma) (hsigma1 : sigma ≠ 1)
+    (hboundary : ∀ t ∈ Set.Icc a b,
+      carlsonZeroDetector X ((sigma : ℂ) + Complex.I * t) ≠ 0) :
+    (∫ t in a..b,
+        Real.log ‖regularizedCarlsonZeroDetector X
+          ((sigma : ℂ) + Complex.I * t)‖) ≤
+      2 * (∫ t in a..b,
+        Real.log ‖(sigma : ℂ) + Complex.I * t - 1‖) +
+      ∫ t in a..b,
+        ‖mollifiedZetaError X
+          ((sigma : ℂ) + Complex.I * t)‖ ^ 2 := by
+  have hregCont :=
+    continuous_regularizedCarlsonZeroDetector_verticalLine X hsigma0
+  have hzetaCont : Continuous (fun t : ℝ =>
+      riemannZeta ((sigma : ℂ) + Complex.I * t)) := by
+    simpa [carlsonZetaRemainder] using
+      (continuous_carlsonZetaRemainder_verticalLine 0 sigma hsigma1)
+  have herrorCont : Continuous (fun t : ℝ =>
+      mollifiedZetaError X ((sigma : ℂ) + Complex.I * t)) := by
+    unfold mollifiedZetaError
+    exact (hzetaCont.mul
+      (continuous_mobiusMollifier_verticalLine X sigma)).sub continuous_const
+  have hpointNe {t : ℝ} :
+      (sigma : ℂ) + Complex.I * (t : ℂ) ≠ 0 := by
+    intro hzero
+    have hre := congrArg Complex.re hzero
+    simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re,
+      Complex.I_re, Complex.I_im, Complex.ofReal_im, zero_mul, one_mul,
+      Complex.zero_re] at hre
+    linarith
+  have hpointOne {t : ℝ} :
+      (sigma : ℂ) + Complex.I * (t : ℂ) ≠ 1 := by
+    intro hone
+    have hre := congrArg Complex.re hone
+    simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re,
+      Complex.I_re, Complex.I_im, Complex.ofReal_im, zero_mul, one_mul,
+      Complex.one_re] at hre
+    apply hsigma1
+    linarith
+  have hregNe {t : ℝ} (ht : t ∈ Set.Icc a b) :
+      regularizedCarlsonZeroDetector X
+          ((sigma : ℂ) + Complex.I * (t : ℂ)) ≠ 0 := by
+    rw [regularizedCarlsonZeroDetector_eq_sub_one_sq_mul X
+      hpointNe hpointOne]
+    exact mul_ne_zero (pow_ne_zero 2 (sub_ne_zero.mpr hpointOne))
+      (hboundary t ht)
+  have hlogRegContOn : ContinuousOn (fun t : ℝ =>
+      Real.log ‖regularizedCarlsonZeroDetector X
+        ((sigma : ℂ) + Complex.I * t)‖) (Set.Icc a b) := by
+    intro t ht
+    have hlog : ContinuousAt Real.log
+        ‖regularizedCarlsonZeroDetector X
+          ((sigma : ℂ) + Complex.I * (t : ℂ))‖ :=
+      Real.continuousAt_log (norm_ne_zero_iff.mpr (hregNe ht))
+    have hlogNorm : ContinuousAt (fun z : ℂ => Real.log ‖z‖)
+        (regularizedCarlsonZeroDetector X
+          ((sigma : ℂ) + Complex.I * (t : ℂ))) :=
+      hlog.comp' continuous_norm.continuousAt
+    exact (ContinuousAt.comp'
+      (f := fun u : ℝ => regularizedCarlsonZeroDetector X
+        ((sigma : ℂ) + Complex.I * u))
+      hlogNorm hregCont.continuousAt).continuousWithinAt
+  have hgeomCont : Continuous (fun t : ℝ =>
+      Real.log ‖(sigma : ℂ) + Complex.I * t - 1‖) := by
+    rw [continuous_iff_continuousAt]
+    intro t
+    have hlog : ContinuousAt Real.log
+        ‖(sigma : ℂ) + Complex.I * (t : ℂ) - 1‖ :=
+      Real.continuousAt_log
+        (norm_ne_zero_iff.mpr (sub_ne_zero.mpr hpointOne))
+    have hlogNorm : ContinuousAt (fun z : ℂ => Real.log ‖z‖)
+        ((sigma : ℂ) + Complex.I * (t : ℂ) - 1) :=
+      hlog.comp' continuous_norm.continuousAt
+    have hmap : ContinuousAt
+        (fun u : ℝ => (sigma : ℂ) + Complex.I * (u : ℂ) - 1) t := by
+      fun_prop
+    exact ContinuousAt.comp'
+      (f := fun u : ℝ => (sigma : ℂ) + Complex.I * (u : ℂ) - 1)
+      hlogNorm hmap
+  have hleftInt : IntervalIntegrable (fun t : ℝ =>
+      Real.log ‖regularizedCarlsonZeroDetector X
+        ((sigma : ℂ) + Complex.I * t)‖)
+      MeasureTheory.volume a b :=
+    hlogRegContOn.intervalIntegrable_of_Icc hab
+  have hgeomInt : IntervalIntegrable (fun t : ℝ =>
+      2 * Real.log ‖(sigma : ℂ) + Complex.I * t - 1‖)
+      MeasureTheory.volume a b :=
+    (continuous_const.mul hgeomCont).intervalIntegrable a b
+  have herrorInt : IntervalIntegrable (fun t : ℝ =>
+      ‖mollifiedZetaError X
+        ((sigma : ℂ) + Complex.I * t)‖ ^ 2)
+      MeasureTheory.volume a b :=
+    (herrorCont.norm.pow 2).intervalIntegrable a b
+  calc
+    (∫ t in a..b,
+        Real.log ‖regularizedCarlsonZeroDetector X
+          ((sigma : ℂ) + Complex.I * t)‖) ≤
+        ∫ t in a..b,
+          2 * Real.log ‖(sigma : ℂ) + Complex.I * t - 1‖ +
+            ‖mollifiedZetaError X
+              ((sigma : ℂ) + Complex.I * t)‖ ^ 2 := by
+      exact intervalIntegral.integral_mono_on hab hleftInt
+        (hgeomInt.add herrorInt) fun t ht =>
+          log_norm_regularizedCarlsonZeroDetector_le_two_log_norm_sub_one_add_error_sq
+            hpointNe hpointOne (hboundary t ht)
+    _ = _ := by
+      rw [intervalIntegral.integral_add hgeomInt herrorInt,
+        intervalIntegral.integral_const_mul]
+
 /-- Away from the zeta pole, the mollified zeta error is continuous on a
 vertical line. -/
 theorem continuous_mollifiedZetaError_verticalLine
