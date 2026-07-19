@@ -17,7 +17,9 @@ import HardyTheorem.HardyPhaseLinearizedEnergy
 import HardyTheorem.HardyPhaseStationaryScale
 import HardyTheorem.HardyPhaseFrequencyLowerBound
 import HardyTheorem.HardyPhaseAdditiveEnvelope
+import HardyTheorem.HardyPhaseCentralLeftEnergy
 import HardyTheorem.HardyPhaseCentralRightEnergy
+import HardyTheorem.HardyPhaseNearestEnergy
 import HardyTheorem.HardyPhaseHilbert
 import HardyTheorem.HardyOddMultiplicity
 import MathlibAux.SlidingIntervalCorrelation
