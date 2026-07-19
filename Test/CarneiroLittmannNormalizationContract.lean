@@ -17,6 +17,12 @@ example : MeasureTheory.Integrable carneiroLittmannSincSquareBase :=
 example : MeasureTheory.Integrable carneiroLittmannSincSquare :=
   integrable_carneiroLittmannSincSquare
 
+example (x : ℝ) :
+    (∫ t : ℝ in (-(1 / 2 : ℝ))..(1 / 2 : ℝ),
+      Complex.exp ((2 * Real.pi * x * t : ℝ) * Complex.I)) =
+        (Real.sinc (Real.pi * x) : ℂ) :=
+  intervalIntegral_cexp_two_pi_mul_eq_sinc x
+
 example :
     (∫ x, carneiroLittmannSincSquare x) =
       ∫ x, carneiroLittmannSincSquareBase x :=
@@ -50,6 +56,7 @@ example :
 #print axioms carneiroLittmannSincSquareBase_le_japanese
 #print axioms integrable_carneiroLittmannSincSquareBase
 #print axioms integrable_carneiroLittmannSincSquare
+#print axioms intervalIntegral_cexp_two_pi_mul_eq_sinc
 #print axioms integral_carneiroLittmannSincSquare_eq_base
 #print axioms carneiroLittmannDerivative_eq_translationDifference_add_sincSquare
 #print axioms integrable_carneiroLittmannTranslationDifference

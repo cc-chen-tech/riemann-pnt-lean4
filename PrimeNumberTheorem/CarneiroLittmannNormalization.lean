@@ -132,6 +132,37 @@ theorem integrable_carneiroLittmannSincSquare :
   simpa only [carneiroLittmannSincSquare, add_comm] using
     integrable_carneiroLittmannSincSquareBase.comp_add_left 1
 
+/-- The normalized sinc is the Fourier integral of the unit interval.  This
+is the finite-interval input for the later sinc-square normalization via
+Fourier inversion. -/
+theorem intervalIntegral_cexp_two_pi_mul_eq_sinc (x : ℝ) :
+    (∫ t : ℝ in (-(1 / 2 : ℝ))..(1 / 2 : ℝ),
+      Complex.exp ((2 * Real.pi * x * t : ℝ) * Complex.I)) =
+        (Real.sinc (Real.pi * x) : ℂ) := by
+  by_cases hx : x = 0
+  · subst x
+    norm_num
+  have hc : 2 * Real.pi * x ≠ 0 := by
+    exact mul_ne_zero (mul_ne_zero (by norm_num) Real.pi_ne_zero) hx
+  have hScale := intervalIntegral.integral_comp_mul_right
+    (f := fun u : ℝ => Complex.exp (u * Complex.I))
+    (a := -(1 / 2 : ℝ)) (b := (1 / 2 : ℝ)) hc
+  rw [show (-(1 / 2 : ℝ)) * (2 * Real.pi * x) = -(Real.pi * x) by ring,
+    show (1 / 2 : ℝ) * (2 * Real.pi * x) = Real.pi * x by ring] at hScale
+  rw [integral_exp_mul_I_eq_sinc (Real.pi * x)] at hScale
+  rw [show (fun t : ℝ => Complex.exp ((2 * Real.pi * x * t : ℝ) * Complex.I)) =
+      fun t : ℝ => Complex.exp ((t * (2 * Real.pi * x) : ℝ) * Complex.I) by
+    funext t
+    congr 2
+    ring_nf]
+  rw [hScale]
+  norm_cast
+  change (((2 * Real.pi * x)⁻¹ : ℝ) : ℂ) *
+      (2 * (Real.pi * x) * Real.sinc (Real.pi * x) : ℝ) = _
+  rw [← Complex.ofReal_mul]
+  norm_cast
+  field_simp [Real.pi_ne_zero, hx]
+
 theorem integral_carneiroLittmannSincSquare_eq_base :
     (∫ x, carneiroLittmannSincSquare x) =
       ∫ x, carneiroLittmannSincSquareBase x := by
