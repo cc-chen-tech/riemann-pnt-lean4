@@ -185,6 +185,96 @@ theorem card_vinogradovSomeBlockNonsingularResidueSet
   rw [card_vinogradovMultiBlockSingularResidueSet] at hpartition
   omega
 
+/-- Reassociate a tuple into `q` initial blocks, one distinguished block, and
+`a` later blocks together with the unrestricted tail. -/
+private def vinogradovFirstNonsingularEquiv
+    (p k r q a : ℕ) :
+    ((Fin (q * k) → ZMod p) ×
+        ((Fin k → ZMod p) × (Fin (a * k + r) → ZMod p))) ≃
+      (Fin ((q + 1 + a) * k + r) → ZMod p) :=
+  (Equiv.prodCongr (Equiv.refl _)
+      (Fin.appendEquiv k (a * k + r))).trans
+    ((Fin.appendEquiv (q * k) (k + (a * k + r))).trans
+      ((finCongr (by
+        simp only [Nat.add_mul, one_mul]
+        omega)).piCongrLeft fun _ ↦ ZMod p))
+
+/-- The distinguished block is the first nonsingular block: the preceding
+`q` blocks are singular, while the remaining `a` blocks are unrestricted. -/
+def VinogradovFirstNonsingularBlock
+    (p k r q a : ℕ)
+    (x : Fin ((q + 1 + a) * k + r) → ZMod p) : Prop :=
+  let split := (vinogradovFirstNonsingularEquiv p k r q a).symm x
+  VinogradovAllBlocksSingular p k 0 q split.1 ∧
+    Function.Injective split.2.1
+
+/-- The finite stratum in which the first nonsingular block occurs after
+exactly `q` singular blocks, with `a` blocks remaining. -/
+noncomputable def vinogradovFirstNonsingularResidueSet
+    (p k r q a : ℕ) [Fact p.Prime] :
+    Finset (Fin ((q + 1 + a) * k + r) → ZMod p) :=
+  (((vinogradovMultiBlockSingularResidueSet p k 0 q).product
+      ((vinogradovNonsingularResidueSet p k).product Finset.univ)).map
+    (vinogradovFirstNonsingularEquiv p k r q a).toEmbedding)
+
+/-- Membership in the finite first-nonsingular stratum has the intended block
+interpretation. -/
+theorem mem_vinogradovFirstNonsingularResidueSet_iff
+    (p k r q a : ℕ) [Fact p.Prime]
+    (x : Fin ((q + 1 + a) * k + r) → ZMod p) :
+    x ∈ vinogradovFirstNonsingularResidueSet p k r q a ↔
+      VinogradovFirstNonsingularBlock p k r q a x := by
+  let e := vinogradovFirstNonsingularEquiv p k r q a
+  let split := e.symm x
+  have hesplit : e split = x := e.apply_symm_apply x
+  constructor
+  · intro hx
+    rcases Finset.mem_map.mp hx with ⟨z, hz, hzx⟩
+    have hz_eq : z = split := by
+      apply e.injective
+      simpa [e, split] using hzx
+    subst z
+    have hparts := Finset.mem_product.mp hz
+    have htail := Finset.mem_product.mp hparts.2
+    exact ⟨(mem_vinogradovMultiBlockSingularResidueSet_iff
+        p k 0 q split.1).mp hparts.1,
+      by simpa [vinogradovNonsingularResidueSet] using htail.1⟩
+  · intro hx
+    have hx' :
+        VinogradovAllBlocksSingular p k 0 q split.1 ∧
+          Function.Injective split.2.1 := by
+      simpa [VinogradovFirstNonsingularBlock, e, split] using hx
+    apply Finset.mem_map.mpr
+    refine ⟨split, ?_, hesplit⟩
+    apply Finset.mem_product.mpr
+    refine ⟨(mem_vinogradovMultiBlockSingularResidueSet_iff
+      p k 0 q split.1).mpr hx'.1, ?_⟩
+    apply Finset.mem_product.mpr
+    exact ⟨by simpa [vinogradovNonsingularResidueSet] using hx'.2,
+      Finset.mem_univ _⟩
+
+/-- Exact size of a first-nonsingular stratum. -/
+theorem card_vinogradovFirstNonsingularResidueSet
+    (p k r q a : ℕ) [Fact p.Prime] :
+    (vinogradovFirstNonsingularResidueSet p k r q a).card =
+      (p ^ k - p.descFactorial k) ^ q *
+        p.descFactorial k * p ^ (a * k + r) := by
+  rw [vinogradovFirstNonsingularResidueSet, Finset.card_map]
+  change
+    ((vinogradovMultiBlockSingularResidueSet p k 0 q) ×ˢ
+      ((vinogradovNonsingularResidueSet p k) ×ˢ
+        (Finset.univ : Finset (Fin (a * k + r) → ZMod p)))).card = _
+  rw [Finset.card_product, Finset.card_product,
+    card_vinogradovMultiBlockSingularResidueSet,
+    card_vinogradovNonsingularResidueSet]
+  have htail :
+      (Finset.univ : Finset (Fin (a * k + r) → ZMod p)).card =
+        p ^ (a * k + r) := by
+    simp [ZMod.card]
+  rw [htail]
+  simp only [pow_zero, mul_one]
+  ac_rfl
+
 /-- Residue-field Vinogradov solutions whose left tuple is singular in every
 one of the selected `b` blocks. -/
 noncomputable def vinogradovMultiBlockSingularSolutionSet
