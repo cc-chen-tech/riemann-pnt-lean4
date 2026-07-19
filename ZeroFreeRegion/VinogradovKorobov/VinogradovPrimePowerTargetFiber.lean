@@ -609,6 +609,42 @@ theorem card_vinogradovPrimePowerNonsingularSolutionSet_le_fixed_data
     Finset.card_map]
   exact card_vinogradovPrimePowerBlockFixedDataSet_le p k r n hkp
 
+/-- Combining the fixed-target nonsingular bound with the existing singular
+stratum saves the extra initial `p^k` factor in the earlier Hensel estimate. -/
+theorem vinogradovPrimePowerSolutionCount_le_target_fibers
+    (p k r n : ℕ) [Fact p.Prime] (hkp : k < p) :
+    vinogradovSolutionCountMod
+        (p ^ (n + 1)) k (k + r) (p ^ (n + 1)) ≤
+      (p ^ (n + 1)) ^ (k + 2 * r) * k.factorial +
+        k ^ 2 * p ^ (2 * (k + r) * (n + 1) - 1) := by
+  rw [← card_primePower_singular_add_nonsingular_eq_solutionCount]
+  calc
+    (vinogradovPrimePowerSingularSolutionSet p k r n).card +
+        (vinogradovPrimePowerNonsingularSolutionSet p k r n).card ≤
+      k ^ 2 * p ^ (2 * (k + r) * (n + 1) - 1) +
+        (p ^ (n + 1)) ^ (k + 2 * r) * k.factorial :=
+      Nat.add_le_add
+        (card_vinogradovPrimePowerSingularSolutionSet_le_iterated p k r n)
+        (card_vinogradovPrimePowerNonsingularSolutionSet_le_fixed_data
+          p k r n hkp)
+    _ = (p ^ (n + 1)) ^ (k + 2 * r) * k.factorial +
+        k ^ 2 * p ^ (2 * (k + r) * (n + 1) - 1) := Nat.add_comm _ _
+
+/-- The improved target-fiber solution count transfers to the normalized
+complete prime-power Vinogradov moment. -/
+theorem norm_normalizedVinogradovMomentMod_primePower_le_target_fibers
+    (p k r n : ℕ) [Fact p.Prime] (hkp : k < p) :
+    ‖normalizedVinogradovMomentMod
+        (p ^ (n + 1)) k (k + r) (p ^ (n + 1))‖ ≤
+      ((p ^ (n + 1)) ^ (k + 2 * r) * k.factorial +
+        k ^ 2 * p ^ (2 * (k + r) * (n + 1) - 1) : ℝ) := by
+  letI : NeZero (p ^ (n + 1)) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  rw [normalizedVinogradovMomentMod_eq_solutionCount]
+  norm_cast
+  exact vinogradovPrimePowerSolutionCount_le_target_fibers
+    p k r n hkp
+
 end
 
 end ZeroFreeRegion.VinogradovKorobov
