@@ -187,7 +187,7 @@ theorem card_vinogradovSomeBlockNonsingularResidueSet
 
 /-- Reassociate a tuple into `q` initial blocks, one distinguished block, and
 `a` later blocks together with the unrestricted tail. -/
-private def vinogradovFirstNonsingularEquiv
+def vinogradovFirstNonsingularEquiv
     (p k r q a : ℕ) :
     ((Fin (q * k) → ZMod p) ×
         ((Fin k → ZMod p) × (Fin (a * k + r) → ZMod p))) ≃

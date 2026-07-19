@@ -155,6 +155,63 @@ theorem isVinogradovResidueSolution_blockCycle_iff
   isVinogradovResidueSolution_comp_perm_iff
     (vinogradovBlockCycle k r q a hk) x y
 
+/-- The distinguished component of the three-part first-nonsingular split is
+the direct coordinate block beginning at `q*k`. -/
+theorem vinogradovFirstNonsingularEquiv_selectedBlock
+    {p : ℕ} (k r q a : ℕ) (hk : 0 < k)
+    (x : Fin ((q + 1 + a) * k + r) → ZMod p) (i : Fin k) :
+    ((vinogradovFirstNonsingularEquiv p k r q a).symm x).2.1 i =
+      x (vinogradovBlockIndex k r q a hk i) := by
+  let hsize : q * k + (k + (a * k + r)) =
+      (q + 1 + a) * k + r := by
+    simp only [Nat.add_mul, one_mul]
+    omega
+  let oldIndex : Fin ((q + 1 + a) * k + r) :=
+    Fin.cast hsize
+      (Fin.natAdd (q * k) (Fin.castAdd (a * k + r) i))
+  have h := congrFun
+    ((vinogradovFirstNonsingularEquiv p k r q a).apply_symm_apply x)
+    oldIndex
+  have hindex : oldIndex = vinogradovBlockIndex k r q a hk i := by
+    apply Fin.ext
+    rfl
+  rw [← hindex]
+  simpa [vinogradovFirstNonsingularEquiv, oldIndex, hsize] using h
+
+/-- A tuple in the `q`-th first-nonsingular stratum has an injective direct
+coordinate block at `q`. -/
+theorem VinogradovFirstNonsingularBlock.selectedBlock_injective
+    {p k r q a : ℕ}
+    {x : Fin ((q + 1 + a) * k + r) → ZMod p}
+    (h : VinogradovFirstNonsingularBlock p k r q a x)
+    (hk : 0 < k) :
+    Function.Injective fun i : Fin k ↦
+      x (vinogradovBlockIndex k r q a hk i) := by
+  let e := vinogradovFirstNonsingularEquiv p k r q a
+  let split := e.symm x
+  have hsplit : Function.Injective split.2.1 := by
+    have hfull :
+        VinogradovAllBlocksSingular p k 0 q split.1 ∧
+          Function.Injective split.2.1 := by
+      simpa [VinogradovFirstNonsingularBlock, e, split] using h
+    exact hfull.2
+  intro i j hij
+  apply hsplit
+  simpa [e, split, vinogradovFirstNonsingularEquiv_selectedBlock] using hij
+
+/-- After cycling block `q` to the front, the new head block is injective. -/
+theorem VinogradovFirstNonsingularBlock.cycledHead_injective
+    {p k r q a : ℕ}
+    {x : Fin ((q + 1 + a) * k + r) → ZMod p}
+    (h : VinogradovFirstNonsingularBlock p k r q a x)
+    (hk : 0 < k) :
+    Function.Injective fun i : Fin k ↦
+      x (vinogradovBlockCycle k r q a hk
+        (vinogradovHeadIndex k r q a hk i)) := by
+  intro i j hij
+  apply h.selectedBlock_injective hk
+  simpa [vinogradovBlockCycle_head_value] using hij
+
 end
 
 end ZeroFreeRegion.VinogradovKorobov
