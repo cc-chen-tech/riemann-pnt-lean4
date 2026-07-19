@@ -159,33 +159,109 @@ theorem map_vinogradovBinomialMatrix_primePower
   ext i j
   simp [vinogradovBinomialMatrix]
 
-/-- Nonsingularity modulo `p` lifts to a unit determinant modulo every
-positive power `p^N`. -/
-theorem isUnit_det_vinogradovBinomialMatrix_zmod_primePower
-    (p k r N : ℕ) [Fact p.Prime] (hrk : r ≤ k) (hkp : k < p)
-    (hN : 0 < N) :
-    IsUnit (vinogradovBinomialMatrix (p ^ N) k r).det := by
+/-- A square matrix modulo `p^N` has unit determinant as soon as its
+reduction modulo `p` has nonzero determinant. -/
+theorem isUnit_det_of_primePower_reduction_ne_zero
+    (p N r : ℕ) [Fact p.Prime] (hN : 0 < N)
+    (A : Matrix (Fin r) (Fin r) (ZMod (p ^ N)))
+    (hreduce :
+      (A.map (ZMod.castHom (dvd_pow_self p hN.ne') (ZMod p))).det ≠ 0) :
+    IsUnit A.det := by
   letI : NeZero (p ^ N) :=
     ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
-  let A := vinogradovBinomialMatrix (p ^ N) k r
   let reduce := ZMod.castHom (dvd_pow_self p hN.ne') (ZMod p)
-  have hreduce :
-      reduce A.det = (vinogradovBinomialMatrix p k r).det := by
-    rw [RingHom.map_det]
-    exact congrArg Matrix.det
-      (map_vinogradovBinomialMatrix_primePower p k r N hN)
+  have hdetReduce : reduce A.det = (A.map reduce).det :=
+    RingHom.map_det reduce A
   have hnot : ¬ p ∣ A.det.val := by
     intro hdvd
     have hzero : reduce A.det = 0 := by
       rw [← ZMod.natCast_zmod_val A.det]
       simp only [map_natCast]
       exact (ZMod.natCast_eq_zero_iff _ _).mpr hdvd
-    have : (vinogradovBinomialMatrix p k r).det = 0 := by
-      rw [← hreduce, hzero]
-    exact (det_vinogradovBinomialMatrix_zmod_ne_zero p k r hrk hkp) this
+    exact hreduce (by rw [← hdetReduce, hzero])
   rw [← ZMod.natCast_zmod_val A.det]
   exact (ZMod.isUnit_iff_coprime _ _).mpr
     ((Fact.out : p.Prime).coprime_pow_of_not_dvd hnot)
+
+/-- Any coefficient matrix whose reduction modulo `p` is Wooley's
+binomial matrix is invertible modulo `p^N`.  This permits the higher-order
+`p^c` perturbations in the spaced polynomial system. -/
+theorem isUnit_det_of_map_eq_vinogradovBinomialMatrix
+    (p k r N : ℕ) [Fact p.Prime] (hrk : r ≤ k) (hkp : k < p)
+    (hN : 0 < N) (A : Matrix (Fin r) (Fin r) (ZMod (p ^ N)))
+    (hA : A.map (ZMod.castHom (dvd_pow_self p hN.ne') (ZMod p)) =
+      vinogradovBinomialMatrix p k r) :
+    IsUnit A.det := by
+  apply isUnit_det_of_primePower_reduction_ne_zero p N r hN A
+  rw [hA]
+  exact det_vinogradovBinomialMatrix_zmod_ne_zero p k r hrk hkp
+
+/-- Nonsingularity modulo `p` lifts to a unit determinant modulo every
+positive power `p^N`. -/
+theorem isUnit_det_vinogradovBinomialMatrix_zmod_primePower
+    (p k r N : ℕ) [Fact p.Prime] (hrk : r ≤ k) (hkp : k < p)
+    (hN : 0 < N) :
+    IsUnit (vinogradovBinomialMatrix (p ^ N) k r).det := by
+  apply isUnit_det_of_map_eq_vinogradovBinomialMatrix
+    p k r N hrk hkp hN
+  exact map_vinogradovBinomialMatrix_primePower p k r N hN
+
+/-- Every perturbed translated coefficient system with the correct reduction
+modulo `p` has a unique solution modulo `p^N`. -/
+theorem existsUnique_mulVec_eq_of_map_eq_vinogradovBinomialMatrix
+    (p k r N : ℕ) [Fact p.Prime] (hrk : r ≤ k) (hkp : k < p)
+    (hN : 0 < N) (A : Matrix (Fin r) (Fin r) (ZMod (p ^ N)))
+    (hA : A.map (ZMod.castHom (dvd_pow_self p hN.ne') (ZMod p)) =
+      vinogradovBinomialMatrix p k r) (b : Fin r → ZMod (p ^ N)) :
+    ∃! x, A.mulVec x = b :=
+  existsUnique_mulVec_eq_of_isUnit_det A
+    (isUnit_det_of_map_eq_vinogradovBinomialMatrix
+      p k r N hrk hkp hN A hA) b
+
+/-- Integer coefficient matrices satisfying Wooley's binomial congruence
+reduce to the binomial matrix modulo `p`. -/
+theorem map_intMatrix_eq_vinogradovBinomialMatrix_of_modEq
+    (p k r N : ℕ) (hN : 0 < N) (Ω : Matrix (Fin r) (Fin r) ℤ)
+    (hΩ : ∀ i j,
+      Ω i j ≡ (Nat.choose (vinogradovBinomialPoint k r i) (j.val + 1) : ℤ)
+        [ZMOD (p : ℤ)]) :
+    (Matrix.of (fun i j ↦ (Ω i j : ZMod (p ^ N)))).map
+        (ZMod.castHom (dvd_pow_self p hN.ne') (ZMod p)) =
+      vinogradovBinomialMatrix p k r := by
+  ext i j
+  simp only [Matrix.map_apply, Matrix.of_apply, vinogradovBinomialMatrix]
+  have hij := (ZMod.intCast_eq_intCast_iff
+    (Ω i j)
+    (Nat.choose (vinogradovBinomialPoint k r i) (j.val + 1) : ℤ) p).mpr
+      (hΩ i j)
+  simpa only [map_intCast, Int.cast_natCast] using hij
+
+/-- Wooley's integer perturbation matrix has unit determinant modulo every
+positive power `p^N` when its coefficients satisfy the required binomial
+congruences modulo `p`. -/
+theorem isUnit_det_intMatrix_of_vinogradovBinomial_modEq
+    (p k r N : ℕ) [Fact p.Prime] (hrk : r ≤ k) (hkp : k < p)
+    (hN : 0 < N) (Ω : Matrix (Fin r) (Fin r) ℤ)
+    (hΩ : ∀ i j,
+      Ω i j ≡ (Nat.choose (vinogradovBinomialPoint k r i) (j.val + 1) : ℤ)
+        [ZMOD (p : ℤ)]) :
+    IsUnit (Matrix.of (fun i j ↦ (Ω i j : ZMod (p ^ N)))).det :=
+  isUnit_det_of_map_eq_vinogradovBinomialMatrix p k r N hrk hkp hN _
+    (map_intMatrix_eq_vinogradovBinomialMatrix_of_modEq p k r N hN Ω hΩ)
+
+/-- Consequently, the integer perturbed coefficient system has a unique
+solution modulo `p^N`. -/
+theorem existsUnique_intMatrix_mulVec_eq_of_vinogradovBinomial_modEq
+    (p k r N : ℕ) [Fact p.Prime] (hrk : r ≤ k) (hkp : k < p)
+    (hN : 0 < N) (Ω : Matrix (Fin r) (Fin r) ℤ)
+    (hΩ : ∀ i j,
+      Ω i j ≡ (Nat.choose (vinogradovBinomialPoint k r i) (j.val + 1) : ℤ)
+        [ZMOD (p : ℤ)]) (b : Fin r → ZMod (p ^ N)) :
+    ∃! x,
+      (Matrix.of (fun i j ↦ (Ω i j : ZMod (p ^ N)))).mulVec x = b :=
+  existsUnique_mulVec_eq_of_isUnit_det _
+    (isUnit_det_intMatrix_of_vinogradovBinomial_modEq
+      p k r N hrk hkp hN Ω hΩ) b
 
 /-- The translated binomial system has a unique solution modulo every
 positive prime power. -/
