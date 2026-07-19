@@ -17,6 +17,13 @@ REFERENCE_PROVENANCE = (
     / "reference"
     / "groskin_2607_02828_v1_c100_N200_provenance.json"
 )
+LOCAL_REPRODUCTION = (
+    Path(__file__).parents[1]
+    / "experiments"
+    / "rh"
+    / "reference"
+    / "groskin_2607_02828_v1_c100_N200_local_20260719.json"
+)
 
 
 def refresh_payload_digest(record):
@@ -62,6 +69,18 @@ def test_released_groskin_provenance_is_dimensionally_self_consistent():
     wrong_sector_dimension = dict(record, dimension=201, n_pos=201)
     assert not weil.verify_groskin_provenance_metadata(
         wrong_sector_dimension, expected_c=100, expected_N=200
+    )
+
+
+def test_local_groskin_reproduction_is_frozen_and_dimensionally_consistent():
+    source = LOCAL_REPRODUCTION.read_bytes()
+    record = json.loads(source)
+
+    assert hashlib.sha256(source).hexdigest() == (
+        "e6813465db1fef0087e6220a1e76c55d4fdd877db33d27ac51d0ece396033956"
+    )
+    assert weil.verify_groskin_provenance_metadata(
+        record, expected_c=100, expected_N=200
     )
 
 
