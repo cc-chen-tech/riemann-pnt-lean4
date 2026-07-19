@@ -1,4 +1,5 @@
 import ZeroFreeRegion.VinogradovKorobov.RecursiveZetaAProcess
+import ZeroFreeRegion.VinogradovKorobov.RecursiveAProcessEnvelope
 
 namespace ZeroFreeRegion.VinogradovKorobov
 
@@ -113,5 +114,60 @@ theorem zetaAProcessLeafSquaredBound_le_uniform
   exact (sq_le_sq₀
     (div_nonneg (mul_nonneg (by norm_num) Real.pi_pos.le) hdeltaPos.le)
     (div_nonneg (mul_nonneg (by norm_num) Real.pi_pos.le) hlowerPos.le)).2 hquot
+
+/-- A scale-valid zeta tree can use one constant terminal bound at every leaf
+because every root-to-leaf path has the prescribed total depth. -/
+theorem recursiveZetaAProcessScaleValid_to_uniformGeneric
+    (t : ℝ) (m N totalDepth depth : ℕ) (H : ℕ → ℕ)
+    (shifts : List ℕ) (ht : 0 < t) (hm : 0 < m)
+    (hlen : shifts.length + depth = totalDepth)
+    (hvalid : RecursiveZetaAProcessScaleValid
+      t m (fun s ↦ H s.length) N depth shifts) :
+    RecursiveAProcessValid (shiftedZetaPhase t m) (fun s ↦ H s.length)
+      (fun _ ↦ zetaAProcessUniformLeafSquaredBound t m N totalDepth)
+      N depth shifts := by
+  induction depth generalizing shifts with
+  | zero =>
+      rcases hvalid with ⟨hR, hshifts, hmajor⟩
+      have hdepth : shifts.length = totalDepth := by omega
+      have hscale : ZetaAProcessScaleLeafValid t m N shifts :=
+        ⟨hR, hshifts, hmajor⟩
+      have hactual :
+          RecursiveAProcessValid (shiftedZetaPhase t m)
+            (fun s ↦ H s.length) (zetaAProcessLeafSquaredBound t m N)
+            N 0 shifts := by
+        apply recursiveZetaAProcessValid_to_generic
+          t m (fun s ↦ H s.length) N 0 shifts ht hm
+        exact recursiveZetaAProcessValid_of_scale
+          t m (fun s ↦ H s.length) N 0 shifts ht hm hscale
+      exact hactual.trans (zetaAProcessLeafSquaredBound_le_uniform
+        t m N totalDepth shifts ht hm hR hshifts hdepth)
+  | succ depth ih =>
+      rcases hvalid with ⟨hH, hHR, hchildren⟩
+      refine ⟨hH, hHR, ?_⟩
+      intro ell hell
+      have hchildLen : (ell :: shifts).length + depth = totalDepth := by
+        simp only [List.length_cons]
+        omega
+      exact ih (ell :: shifts) hchildLen (hchildren ell hell)
+
+/-- Fully connected arbitrary-depth zeta exponential-sum estimate: explicit
+scale-valid tree conditions imply a path-independent numerical envelope. -/
+theorem norm_zetaPhase_sum_sq_le_uniformCoarseRecursiveAProcess
+    (t : ℝ) (m N depth : ℕ) (H : ℕ → ℕ)
+    (ht : 0 < t) (hm : 0 < m)
+    (hvalid : RecursiveZetaAProcessScaleValid
+      t m (fun s ↦ H s.length) N depth []) :
+    ‖∑ n ∈ Finset.range N, phaseTerm (shiftedZetaPhase t m) n‖ ^ 2 ≤
+      coarseRecursiveAProcessSquaredBound H N
+        (zetaAProcessUniformLeafSquaredBound t m N depth) depth 0 := by
+  apply norm_phaseSum_sq_le_coarseRecursiveAProcess
+    (shiftedZetaPhase t m) H
+    (fun _ ↦ zetaAProcessUniformLeafSquaredBound t m N depth)
+    N (zetaAProcessUniformLeafSquaredBound t m N depth) depth
+  · exact recursiveZetaAProcessScaleValid_to_uniformGeneric
+      t m N depth depth H [] ht hm (by simp) hvalid
+  · intro shifts
+    exact le_rfl
 
 end ZeroFreeRegion.VinogradovKorobov
