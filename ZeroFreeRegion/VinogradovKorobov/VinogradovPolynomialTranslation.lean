@@ -102,6 +102,29 @@ theorem exists_vinogradovCenteredTaylor_spaced_coeff_factor
     simpa only [add_zero] using
       (Int.ModEq.refl (n.choose m : ℤ)).add hzero
 
+/-- Full coefficient range. Above the monomial degree, the truncated natural
+exponent is zero and the binomial coefficient vanishes, so the spacing
+congruence supplies the required coefficient directly. -/
+theorem exists_vinogradovCenteredTaylor_spaced_coeff_factor_all
+    (p c k n m : ℕ) (hnk : n ≤ k) (hm0 : 0 < m)
+    (ψ : Polynomial ℤ) (ξ : ℤ) :
+    ∃ Ω : ℤ,
+      (vinogradovCenteredTaylor ξ
+        (vinogradovSpacedPolynomial p c k n ψ)).coeff m =
+          ξ ^ (n - m) * Ω ∧
+        Ω ≡ (n.choose m : ℤ) [ZMOD (p : ℤ) ^ c] := by
+  by_cases hmn : m ≤ n
+  · exact exists_vinogradovCenteredTaylor_spaced_coeff_factor
+      p c k n m hnk hm0 hmn ψ ξ
+  · refine ⟨(vinogradovCenteredTaylor ξ
+        (vinogradovSpacedPolynomial p c k n ψ)).coeff m, ?_, ?_⟩
+    · simp only [Nat.sub_eq_zero_of_le (Nat.le_of_lt (lt_of_not_ge hmn)),
+        pow_zero, one_mul]
+    · simpa only [Nat.sub_eq_zero_of_le
+          (Nat.le_of_lt (lt_of_not_ge hmn)), pow_zero, one_mul] using
+        coeff_vinogradovCenteredTaylor_spaced_modEq
+          p c k n m hm0 ψ ξ
+
 /-- The first `r` nonconstant Taylor terms. -/
 def vinogradovCenteredTaylorTruncation (r : ℕ) (ξ : ℤ)
     (φ : Polynomial ℤ) : Polynomial ℤ :=
@@ -188,6 +211,68 @@ theorem exists_vinogradovCenteredTaylor_spaced_expansion
   apply Finset.sum_congr rfl
   intro i _
   rw [(hΩ i).1]
+
+/-- The same translated expansion without requiring every retained degree to
+lie below the monomial degree. Natural subtraction records the zero-exponent
+case, while the associated binomial coefficient is then zero modulo the
+spacing modulus. -/
+theorem exists_vinogradovCenteredTaylor_spaced_expansion_all
+    (p c k n r : ℕ) (hnk : n ≤ k)
+    (ψ : Polynomial ℤ) (ξ : ℤ) :
+    ∃ Ω : Fin r → ℤ, ∃ θ : Polynomial ℤ,
+      (∀ i, Ω i ≡ (n.choose (i.val + 1) : ℤ)
+        [ZMOD (p : ℤ) ^ c]) ∧
+      vinogradovCenteredTaylor ξ
+          (vinogradovSpacedPolynomial p c k n ψ) =
+        (∑ i : Fin r,
+          Polynomial.C (ξ ^ (n - (i.val + 1)) * Ω i) *
+            Polynomial.X ^ (i.val + 1)) +
+          Polynomial.X ^ (r + 1) * θ := by
+  choose Ω hΩ using fun i : Fin r ↦
+    exists_vinogradovCenteredTaylor_spaced_coeff_factor_all
+      p c k n (i.val + 1) hnk (by omega) ψ ξ
+  obtain ⟨θ, hθ⟩ :=
+    exists_vinogradovCenteredTaylor_eq_truncation_add_tail r ξ
+      (vinogradovSpacedPolynomial p c k n ψ)
+  refine ⟨Ω, θ, fun i ↦ (hΩ i).2, ?_⟩
+  rw [hθ]
+  congr 2
+  unfold vinogradovCenteredTaylorTruncation
+  apply Finset.sum_congr rfl
+  intro i _
+  rw [(hΩ i).1]
+
+/-- The row-wise translated high-degree spaced system from Wooley's equation
+(7.10), packaged with its perturbed binomial coefficient matrix and common
+`X^(r+1)` tails. -/
+theorem exists_vinogradovTranslatedSpacedSystemExpansion
+    (p c k r : ℕ) (hc : 0 < c) (hrk : r ≤ k)
+    (ψ : Fin r → Polynomial ℤ) (ξ : ℤ) :
+    ∃ Ω : Matrix (Fin r) (Fin r) ℤ, ∃ θ : Fin r → Polynomial ℤ,
+      IsVinogradovBinomialCoefficientMatrix p k r Ω ∧
+      ∀ i,
+        vinogradovCenteredTaylor ξ
+            (vinogradovSpacedPolynomial p c k
+              (vinogradovBinomialPoint k r i) (ψ i)) =
+          (∑ j : Fin r,
+            Polynomial.C
+                (ξ ^ (vinogradovBinomialPoint k r i - (j.val + 1)) *
+                  Ω i j) * Polynomial.X ^ (j.val + 1)) +
+            Polynomial.X ^ (r + 1) * θ i := by
+  have hpoint (i : Fin r) : vinogradovBinomialPoint k r i ≤ k := by
+    simp only [vinogradovBinomialPoint]
+    omega
+  choose Ω θ hΩ hexp using fun i : Fin r ↦
+    exists_vinogradovCenteredTaylor_spaced_expansion_all
+      p c k (vinogradovBinomialPoint k r i) r (hpoint i) (ψ i) ξ
+  refine ⟨Matrix.of fun i j ↦ Ω i j, θ, ?_, ?_⟩
+  · intro i j
+    have hij := (hΩ i j).of_dvd
+      (show (p : ℤ) ∣ (p : ℤ) ^ c by
+        exact dvd_pow_self _ hc.ne')
+    simpa only [Matrix.of_apply] using hij
+  · intro i
+    simpa only [Matrix.of_apply] using hexp i
 
 end
 

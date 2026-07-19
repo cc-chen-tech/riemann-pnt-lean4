@@ -29,6 +29,16 @@ example (p c k n m : ℕ) (hnk : n ≤ k) (hm0 : 0 < m)
   exists_vinogradovCenteredTaylor_spaced_coeff_factor
     p c k n m hnk hm0 hmn ψ ξ
 
+example (p c k n m : ℕ) (hnk : n ≤ k) (hm0 : 0 < m)
+    (ψ : Polynomial ℤ) (ξ : ℤ) :
+    ∃ Ω : ℤ,
+      (vinogradovCenteredTaylor ξ
+        (vinogradovSpacedPolynomial p c k n ψ)).coeff m =
+          ξ ^ (n - m) * Ω ∧
+        Ω ≡ (n.choose m : ℤ) [ZMOD (p : ℤ) ^ c] :=
+  exists_vinogradovCenteredTaylor_spaced_coeff_factor_all
+    p c k n m hnk hm0 ψ ξ
+
 example (r : ℕ) (ξ : ℤ) (φ : Polynomial ℤ) :
     ∃ θ : Polynomial ℤ,
       vinogradovCenteredTaylor ξ φ =
@@ -49,5 +59,21 @@ example (p c k n r : ℕ) (hrn : r ≤ n) (hnk : n ≤ k)
           Polynomial.X ^ (r + 1) * θ :=
   exists_vinogradovCenteredTaylor_spaced_expansion
     p c k n r hrn hnk ψ ξ
+
+example (p c k r : ℕ) (hc : 0 < c) (hrk : r ≤ k)
+    (ψ : Fin r → Polynomial ℤ) (ξ : ℤ) :
+    ∃ Ω : Matrix (Fin r) (Fin r) ℤ, ∃ θ : Fin r → Polynomial ℤ,
+      IsVinogradovBinomialCoefficientMatrix p k r Ω ∧
+      ∀ i,
+        vinogradovCenteredTaylor ξ
+            (vinogradovSpacedPolynomial p c k
+              (vinogradovBinomialPoint k r i) (ψ i)) =
+          (∑ j : Fin r,
+            Polynomial.C
+                (ξ ^ (vinogradovBinomialPoint k r i - (j.val + 1)) *
+                  Ω i j) * Polynomial.X ^ (j.val + 1)) +
+            Polynomial.X ^ (r + 1) * θ i :=
+  exists_vinogradovTranslatedSpacedSystemExpansion
+    p c k r hc hrk ψ ξ
 
 end ZeroFreeRegion.VinogradovKorobov
