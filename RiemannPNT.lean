@@ -60,6 +60,7 @@ import MathlibAux.TimeDependentLogHilbertMeasurable
 import MathlibAux.RectangularFourierFirstMoment
 import MathlibAux.RectangularFourierEnvelope
 import MathlibAux.MellinLogIntegrability
+import MathlibAux.SlidingWindowParseval
 import HardyTheorem.HardyPhaseHilbertShiftIntegral
 import EulerAndLfunctions
 import PrimeNumberTheorem
