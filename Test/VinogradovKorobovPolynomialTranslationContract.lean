@@ -39,6 +39,17 @@ example (p c k n m : ℕ) (hnk : n ≤ k) (hm0 : 0 < m)
   exists_vinogradovCenteredTaylor_spaced_coeff_factor_all
     p c k n m hnk hm0 ψ ξ
 
+example (p c k n m : ℕ) (hnk : n ≤ k) (hm0 : 0 < m)
+    (hmk : m ≤ k) (ψ : Polynomial ℤ) (ξ : ℤ) :
+    ∃ Ω : ℤ,
+      Ω ≡ (n.choose m : ℤ) [ZMOD (p : ℤ) ^ c] ∧
+      ξ ^ (k - n) *
+          (vinogradovCenteredTaylor ξ
+            (vinogradovSpacedPolynomial p c k n ψ)).coeff m ≡
+        ξ ^ (k - m) * Ω [ZMOD (p : ℤ) ^ c] :=
+  exists_vinogradovCenteredTaylor_spaced_aligned_coeff
+    p c k n m hnk hm0 hmk ψ ξ
+
 example (r : ℕ) (ξ : ℤ) (φ : Polynomial ℤ) :
     ∃ θ : Polynomial ℤ,
       vinogradovCenteredTaylor ξ φ =

@@ -125,6 +125,39 @@ theorem exists_vinogradovCenteredTaylor_spaced_coeff_factor_all
         coeff_vinogradovCenteredTaylor_spaced_modEq
           p c k n m hm0 ψ ξ
 
+/-- Multiplying row degree `n` by the complementary center power aligns its
+retained coefficients with the common column factor `ξ^(k-m)` modulo the
+spacing modulus. Entries above the monomial degree are absorbed because their
+binomial coefficient is zero. -/
+theorem exists_vinogradovCenteredTaylor_spaced_aligned_coeff
+    (p c k n m : ℕ) (hnk : n ≤ k) (hm0 : 0 < m) (hmk : m ≤ k)
+    (ψ : Polynomial ℤ) (ξ : ℤ) :
+    ∃ Ω : ℤ,
+      Ω ≡ (n.choose m : ℤ) [ZMOD (p : ℤ) ^ c] ∧
+      ξ ^ (k - n) *
+          (vinogradovCenteredTaylor ξ
+            (vinogradovSpacedPolynomial p c k n ψ)).coeff m ≡
+        ξ ^ (k - m) * Ω [ZMOD (p : ℤ) ^ c] := by
+  obtain ⟨Ω, hcoeff, hΩ⟩ :=
+    exists_vinogradovCenteredTaylor_spaced_coeff_factor_all
+      p c k n m hnk hm0 ψ ξ
+  refine ⟨Ω, hΩ, ?_⟩
+  rw [hcoeff]
+  by_cases hmn : m ≤ n
+  · have hexp : k - n + (n - m) = k - m := by omega
+    rw [← mul_assoc, ← pow_add, hexp]
+  · have hnm : n < m := lt_of_not_ge hmn
+    have hΩ0 : Ω ≡ 0 [ZMOD (p : ℤ) ^ c] := by
+      simpa only [Nat.choose_eq_zero_of_lt hnm, Nat.cast_zero] using hΩ
+    have hleft :
+        ξ ^ (k - n) * (ξ ^ (n - m) * Ω) ≡ 0
+          [ZMOD (p : ℤ) ^ c] := by
+      simpa only [mul_assoc, mul_zero] using
+        hΩ0.mul_left (ξ ^ (k - n) * ξ ^ (n - m))
+    have hright : ξ ^ (k - m) * Ω ≡ 0 [ZMOD (p : ℤ) ^ c] := by
+      simpa only [mul_zero] using hΩ0.mul_left (ξ ^ (k - m))
+    exact hleft.trans hright.symm
+
 /-- The first `r` nonconstant Taylor terms. -/
 def vinogradovCenteredTaylorTruncation (r : ℕ) (ξ : ℤ)
     (φ : Polynomial ℤ) : Polynomial ℤ :=
