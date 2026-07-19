@@ -769,6 +769,69 @@ theorem card_vinogradovPrimePowerNonsingularSolutionSet_succ_le
     Finset.card_map]
   exact card_vinogradovPrimePowerNonsingularLiftSet_le p k r n hkp
 
+/-- The nonsingular solution set is bounded by the number of all ordered
+pairs of tuples at the same prime-power level. -/
+theorem card_vinogradovPrimePowerNonsingularSolutionSet_le_total
+    (p k r n : ℕ) [Fact p.Prime] :
+    (vinogradovPrimePowerNonsingularSolutionSet p k r n).card ≤
+      (p ^ (n + 1)) ^ (2 * (k + r)) := by
+  classical
+  calc
+    (vinogradovPrimePowerNonsingularSolutionSet p k r n).card ≤
+        Fintype.card
+          ((Fin (k + r) → Fin (p ^ (n + 1))) ×
+            (Fin (k + r) → Fin (p ^ (n + 1)))) := by
+      simpa using
+        (Finset.card_le_univ
+          (vinogradovPrimePowerNonsingularSolutionSet p k r n))
+    _ = (p ^ (n + 1)) ^ (2 * (k + r)) := by
+      simp only [Fintype.card_prod, Fintype.card_fun, Fintype.card_fin]
+      rw [← pow_add]
+      congr 2
+      omega
+
+/-- Iterating the one-step recurrence bounds level `n` by the base
+nonsingular count times the `n`-th power of the correction factor. -/
+theorem card_vinogradovPrimePowerNonsingularSolutionSet_le_base_mul_pow
+    (p k r n : ℕ) [Fact p.Prime] (hkp : k < p) :
+    (vinogradovPrimePowerNonsingularSolutionSet p k r n).card ≤
+      (vinogradovPrimePowerNonsingularSolutionSet p k r 0).card *
+        (p ^ (k + 2 * r)) ^ n := by
+  induction n with
+  | zero => simp
+  | succ n ih =>
+      calc
+        (vinogradovPrimePowerNonsingularSolutionSet p k r (n + 1)).card ≤
+            (vinogradovPrimePowerNonsingularSolutionSet p k r n).card *
+              p ^ (k + 2 * r) :=
+          card_vinogradovPrimePowerNonsingularSolutionSet_succ_le
+            p k r n hkp
+        _ ≤ ((vinogradovPrimePowerNonsingularSolutionSet p k r 0).card *
+              (p ^ (k + 2 * r)) ^ n) * p ^ (k + 2 * r) :=
+          Nat.mul_le_mul_right (p ^ (k + 2 * r)) ih
+        _ = (vinogradovPrimePowerNonsingularSolutionSet p k r 0).card *
+              (p ^ (k + 2 * r)) ^ (n + 1) := by
+          simp only [pow_succ, mul_assoc]
+
+/-- A fully explicit form of the iterated nonsingular lifting bound. -/
+theorem card_vinogradovPrimePowerNonsingularSolutionSet_le_iterated
+    (p k r n : ℕ) [Fact p.Prime] (hkp : k < p) :
+    (vinogradovPrimePowerNonsingularSolutionSet p k r n).card ≤
+      p ^ (2 * (k + r) + (k + 2 * r) * n) := by
+  calc
+    (vinogradovPrimePowerNonsingularSolutionSet p k r n).card ≤
+        (vinogradovPrimePowerNonsingularSolutionSet p k r 0).card *
+          (p ^ (k + 2 * r)) ^ n :=
+      card_vinogradovPrimePowerNonsingularSolutionSet_le_base_mul_pow
+        p k r n hkp
+    _ ≤ (p ^ (0 + 1)) ^ (2 * (k + r)) *
+          (p ^ (k + 2 * r)) ^ n :=
+      Nat.mul_le_mul_right ((p ^ (k + 2 * r)) ^ n)
+        (card_vinogradovPrimePowerNonsingularSolutionSet_le_total p k r 0)
+    _ = p ^ (2 * (k + r) + (k + 2 * r) * n) := by
+      simp only [Nat.zero_add, pow_one]
+      rw [← pow_mul, ← pow_add]
+
 end
 
 end ZeroFreeRegion.VinogradovKorobov
