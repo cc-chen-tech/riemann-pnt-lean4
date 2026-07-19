@@ -1,0 +1,4 @@
+import MathlibAux.HorizontalArgument
+
+#print axioms MathlibAux.intervalIntegral_im_inv_horizontal_sub_eq
+#print axioms MathlibAux.abs_intervalIntegral_im_inv_horizontal_sub_le_pi
