@@ -34,6 +34,7 @@ import MathlibAux.MinReciprocalSquareSum
 import MathlibAux.MinReciprocalSquareReindex
 import MathlibAux.DyadicWeightedSquareTail
 import MathlibAux.DyadicWeightedSquareHighTail
+import MathlibAux.RealDyadicScale
 import MathlibAux.LogKernelRemainder
 import MathlibAux.LogDirichletPolynomialMeanSquare
 import MathlibAux.LogarithmicHilbertIntegrationByParts
