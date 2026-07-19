@@ -104,4 +104,57 @@ theorem integral_normSq_hardyPhaseLinearizedSum_le_dyadic_mul
       dsimp only [hardyPhaseLinearizedDyadicSecondMomentConstant, K, A]
       ring
 
+/-- After fixing a positive window length, the stationary-scale hypotheses in
+the dyadic estimate hold uniformly above an explicit threshold. -/
+theorem exists_integral_normSq_hardyPhaseLinearizedSum_le_mul
+    (delta : ℝ) (hdelta : 1 ≤ delta) :
+    ∃ C > 0, ∃ T0 : ℝ, 1 ≤ T0 ∧ ∀ T ≥ T0,
+      (∫ t in T..2 * T - delta,
+        Complex.normSq (hardyPhaseLinearizedSum T delta t)) ≤ C * T := by
+  let C := hardyPhaseLinearizedDyadicSecondMomentConstant delta
+  let T0 : ℝ := max 1
+    (max delta (max (128 * Real.pi) (2 * Real.pi * delta ^ 2)))
+  have hdelta0 : 0 ≤ delta := zero_le_one.trans hdelta
+  have hC : 0 < C := by
+    dsimp only [C, hardyPhaseLinearizedDyadicSecondMomentConstant]
+    positivity
+  refine ⟨C, hC, T0, ?_, ?_⟩
+  · dsimp only [T0]
+    exact le_max_left _ _
+  intro T hT
+  have hT1 : 1 ≤ T := (le_max_left _ _).trans hT
+  have hrest :
+      max delta (max (128 * Real.pi) (2 * Real.pi * delta ^ 2)) ≤ T :=
+    (le_max_right (1 : ℝ) _).trans hT
+  have hroom : delta ≤ T := (le_max_left _ _).trans hrest
+  have hrest' : max (128 * Real.pi) (2 * Real.pi * delta ^ 2) ≤ T :=
+    (le_max_right delta _).trans hrest
+  have hscaleT : 128 * Real.pi ≤ T := (le_max_left _ _).trans hrest'
+  have hwindowT : 2 * Real.pi * delta ^ 2 ≤ T :=
+    (le_max_right _ _).trans hrest'
+  have hscale : ∀ t ∈ Set.Icc T (2 * T - delta),
+      8 ≤ hardyPhaseStationaryScale t := by
+    intro t ht
+    unfold hardyPhaseStationaryScale
+    have ht0 : 0 ≤ t := (zero_le_one.trans hT1).trans ht.1
+    rw [Real.le_sqrt (by norm_num : (0 : ℝ) ≤ 8) (by positivity)]
+    apply (le_div_iff₀ (by positivity : 0 < 2 * Real.pi)).2
+    calc
+      8 ^ 2 * (2 * Real.pi) = 128 * Real.pi := by ring
+      _ ≤ T := hscaleT
+      _ ≤ t := ht.1
+  have hwindow : ∀ t ∈ Set.Icc T (2 * T - delta),
+      delta ≤ hardyPhaseStationaryScale t := by
+    intro t ht
+    unfold hardyPhaseStationaryScale
+    have ht0 : 0 ≤ t := (zero_le_one.trans hT1).trans ht.1
+    rw [Real.le_sqrt hdelta0 (by positivity)]
+    apply (le_div_iff₀ (by positivity : 0 < 2 * Real.pi)).2
+    calc
+      delta ^ 2 * (2 * Real.pi) = 2 * Real.pi * delta ^ 2 := by ring
+      _ ≤ T := hwindowT
+      _ ≤ t := ht.1
+  exact integral_normSq_hardyPhaseLinearizedSum_le_dyadic_mul
+    hT1 hdelta hroom hscale hwindow
+
 end HardyTheorem
