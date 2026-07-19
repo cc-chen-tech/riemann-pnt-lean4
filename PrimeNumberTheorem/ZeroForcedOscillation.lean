@@ -29,6 +29,48 @@ def multiplicityWeightedExponentialPolynomial {ι : Type*} (S : Finset ι)
     (multiplicity : ι → ℕ) (c : ι → ℂ) (ω : ι → ℝ) (t : ℝ) : ℂ :=
   exponentialPolynomial S (fun i => (multiplicity i : ℂ) * c i) ω t
 
+/-- Complex powers of `exp y` split into their real growth and oscillatory
+parts. This is the logarithmic-coordinate identity used for zeta-zero terms. -/
+theorem realExp_cpow_eq_growth_mul_oscillation
+    (ρ : ℂ) (β y : ℝ) (hρ : ρ.re = β) :
+    ((Real.exp y : ℝ) : ℂ) ^ ρ =
+      ((Real.exp (β * y) : ℝ) : ℂ) * exp (I * (ρ.im * y)) := by
+  change Complex.cpow ((Real.exp y : ℝ) : ℂ) ρ = _
+  simp only [Complex.cpow, Complex.ofReal_eq_zero, Real.exp_ne_zero, if_false]
+  rw [← Complex.ofReal_log (Real.exp_pos y).le, Real.log_exp]
+  rw [show ((y : ℝ) : ℂ) * ρ =
+      ((β * y : ℝ) : ℂ) + I * (ρ.im * y) by
+    apply Complex.ext <;> simp [hρ] <;> ring]
+  rw [Complex.exp_add, ← Complex.ofReal_exp]
+
+/-- On a finite package with one common real part, distinct complex points
+have distinct imaginary parts. -/
+theorem im_injOn_of_re_eq
+    (S : Finset ℂ) (β : ℝ) (hre : ∀ ρ ∈ S, ρ.re = β) :
+    Set.InjOn Complex.im ↑S := by
+  intro ρ hρ σ hσ him
+  apply Complex.ext
+  · rw [hre ρ hρ, hre σ hσ]
+  · exact him
+
+/-- A finite equal-real-part zero package is exactly a real growth factor
+times a multiplicity-aware exponential polynomial in `y = log x`. -/
+theorem equalRealPart_zeroPackage_eq_exponentialPolynomial
+    (S : Finset ℂ) (multiplicity : ℂ → ℕ) (β y : ℝ)
+    (hre : ∀ ρ ∈ S, ρ.re = β) :
+    (∑ ρ ∈ S,
+        (multiplicity ρ : ℂ) * ((Real.exp y : ℝ) : ℂ) ^ ρ / ρ) =
+      ((Real.exp (β * y) : ℝ) : ℂ) *
+        multiplicityWeightedExponentialPolynomial S multiplicity
+          (fun ρ => ρ⁻¹) Complex.im y := by
+  simp only [multiplicityWeightedExponentialPolynomial, exponentialPolynomial,
+    Finset.mul_sum]
+  apply Finset.sum_congr rfl
+  intro ρ hρ
+  rw [realExp_cpow_eq_growth_mul_oscillation ρ β y (hre ρ hρ)]
+  simp only [div_eq_mul_inv]
+  ring
+
 private lemma offDiagonal_integrand_eq
     (c d : ℂ) (u v t : ℝ) :
     conj (c * exp (I * (u * t))) * (d * exp (I * (v * t))) =
@@ -287,6 +329,46 @@ theorem exists_mem_Ioo_sqNorm_exponentialPolynomial_ge
   change 0 < (b - a) * A - ∫ t in a..b, f t at hpositive
   rw [hscale] at hpositive
   linarith
+
+/-- An equal-real-part package of complex powers has a locally visible value.
+The lower bound keeps analytic multiplicities and all pairwise ordinate gaps
+explicit; no zeta explicit-formula remainder is included here. -/
+theorem exists_mem_Ioo_sqNorm_equalRealPart_zeroPackage_ge
+    (S : Finset ℂ) (multiplicity : ℂ → ℕ) (β : ℝ)
+    {a b : ℝ} (hab : a < b) (hre : ∀ ρ ∈ S, ρ.re = β) :
+    ∃ y ∈ Set.Ioo a b,
+      Real.exp (β * y) ^ 2 *
+          ((∑ ρ ∈ S, ‖(multiplicity ρ : ℂ) * ρ⁻¹‖ ^ 2) -
+            offDiagonalBound S
+                (fun ρ => (multiplicity ρ : ℂ) * ρ⁻¹) Complex.im /
+              (b - a)) ≤
+        ‖∑ ρ ∈ S,
+            (multiplicity ρ : ℂ) * ((Real.exp y : ℝ) : ℂ) ^ ρ / ρ‖ ^ 2 := by
+  have him := im_injOn_of_re_eq S β hre
+  rcases exists_mem_Ioo_sqNorm_exponentialPolynomial_ge S
+      (fun ρ => (multiplicity ρ : ℂ) * ρ⁻¹) Complex.im hab him with
+    ⟨y, hy, hpoint⟩
+  refine ⟨y, hy, ?_⟩
+  have hsum :=
+    equalRealPart_zeroPackage_eq_exponentialPolynomial S multiplicity β y hre
+  rw [hsum, norm_mul, Complex.norm_real, Real.norm_eq_abs,
+    abs_of_pos (Real.exp_pos (β * y))]
+  change Real.exp (β * y) ^ 2 *
+        ((∑ ρ ∈ S, ‖(multiplicity ρ : ℂ) * ρ⁻¹‖ ^ 2) -
+          offDiagonalBound S
+              (fun ρ => (multiplicity ρ : ℂ) * ρ⁻¹) Complex.im /
+            (b - a)) ≤
+      (Real.exp (β * y) *
+        ‖multiplicityWeightedExponentialPolynomial S multiplicity
+          (fun ρ => ρ⁻¹) Complex.im y‖) ^ 2
+  have hscaled := mul_le_mul_of_nonneg_left hpoint
+    (sq_nonneg (Real.exp (β * y)))
+  calc
+    _ ≤ Real.exp (β * y) ^ 2 *
+        ‖multiplicityWeightedExponentialPolynomial S multiplicity
+          (fun ρ => ρ⁻¹) Complex.im y‖ ^ 2 := by
+      simpa [multiplicityWeightedExponentialPolynomial] using hscaled
+    _ = _ := by ring
 
 end
 
