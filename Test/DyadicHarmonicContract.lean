@@ -1,0 +1,7 @@
+import MathlibAux.DyadicHarmonic
+
+#check MathlibAux.sum_inv_dyadic_interval_le_one
+#check MathlibAux.sum_inv_sq_Icc_one_le_two
+
+#print axioms MathlibAux.sum_inv_dyadic_interval_le_one
+#print axioms MathlibAux.sum_inv_sq_Icc_one_le_two
