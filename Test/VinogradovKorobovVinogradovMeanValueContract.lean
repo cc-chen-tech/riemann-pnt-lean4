@@ -1,5 +1,6 @@
 import ZeroFreeRegion.VinogradovKorobov.VinogradovSolutionLifting
 import ZeroFreeRegion.VinogradovKorobov.VinogradovMultiBlock
+import ZeroFreeRegion.VinogradovKorobov.VinogradovPermutation
 
 open ZeroFreeRegion.VinogradovKorobov
 
@@ -209,6 +210,14 @@ open ZeroFreeRegion.VinogradovKorobov
 #check card_headNonsingular_add_card_singularHeadNonsingularTail_solution
 #check card_vinogradovHeadNonsingularSolutionSet_le
 #check card_vinogradovSingularHeadNonsingularTailSolutionSet_le
+#check vinogradovPowerSumInt_comp_perm
+#check IsVinogradovSolutionInt.comp_perm
+#check isVinogradovSolutionInt_comp_perm_iff
+#check vinogradovResiduePowerSum_comp_perm
+#check IsVinogradovResidueSolution.comp_perm
+#check isVinogradovResidueSolution_comp_perm_iff
+#check vinogradovPowerSumMod_comp_perm
+#check isVinogradovSolutionMod_comp_perm_iff
 #check isVinogradovSolutionMod_iff_powerSumInt_modEq
 #check card_singular_add_card_nonsingular_eq_vinogradovSolutionCountMod
 #check vinogradovSolutionCountMod_le_nonsingular_add_error
