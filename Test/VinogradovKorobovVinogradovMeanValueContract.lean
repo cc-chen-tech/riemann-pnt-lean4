@@ -1,4 +1,4 @@
-import ZeroFreeRegion.VinogradovKorobov.VinogradovPrimePowerFiber
+import ZeroFreeRegion.VinogradovKorobov.VinogradovSolutionStrata
 
 open ZeroFreeRegion.VinogradovKorobov
 
@@ -123,3 +123,10 @@ open ZeroFreeRegion.VinogradovKorobov
 #check mem_vinogradovBlockSingularSolutionSetMod_iff
 #check card_vinogradovBlockSingularSolutionSetMod_eq_residue
 #check card_vinogradovBlockSingularSolutionSetMod_le
+#check vinogradovSolutionPairSetMod
+#check mem_vinogradovSolutionPairSetMod_iff
+#check card_vinogradovSolutionPairSetMod
+#check vinogradovBlockNonsingularSolutionSetMod
+#check mem_vinogradovBlockNonsingularSolutionSetMod_iff
+#check card_singular_add_card_nonsingular_eq_vinogradovSolutionCountMod
+#check vinogradovSolutionCountMod_le_nonsingular_add_error
