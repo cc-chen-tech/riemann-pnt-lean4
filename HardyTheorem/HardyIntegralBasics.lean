@@ -5,7 +5,9 @@ open scoped Interval
 
 namespace HardyTheorem
 
-private lemma hardyZ_eq_completedRiemannZeta_re_div_norm (t : ℝ) :
+/-- On the critical line, Hardy's real function is the real completed zeta
+value divided by the strictly positive archimedean factor. -/
+theorem hardyZ_eq_completedRiemannZeta_re_div_norm (t : ℝ) :
     hardyZ t =
       (completedRiemannZeta ((1 / 2 : ℂ) + I * t)).re /
         ‖Gammaℝ ((1 / 2 : ℂ) + I * t)‖ := by
