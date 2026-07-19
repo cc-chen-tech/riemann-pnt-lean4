@@ -129,6 +129,57 @@ theorem iteratedShiftIntegral_invPow_bounds
     rw [clampReal_eq_self hy.1 hy.2]
   rwa [← hcongr] at hbounds
 
+/-- A globally continuous antitone inverse-power kernel agreeing with the
+usual kernel to the right of `a`. -/
+noncomputable def forwardClampedInvPow (p : ℕ) (a y : ℝ) : ℝ :=
+  (max a y ^ p)⁻¹
+
+lemma continuous_forwardClampedInvPow
+    (p : ℕ) {a : ℝ} (ha : 0 < a) :
+    Continuous (forwardClampedInvPow p a) := by
+  have hmax : Continuous (fun y ↦ max a y) := continuous_const.max continuous_id
+  apply (hmax.pow p).inv₀
+  intro y
+  exact pow_ne_zero p (ne_of_gt (ha.trans_le (le_max_left a y)))
+
+lemma antitone_forwardClampedInvPow
+    (p : ℕ) {a : ℝ} (ha : 0 < a) :
+    Antitone (forwardClampedInvPow p a) := by
+  intro x y hxy
+  exact inv_pow_antitone p
+    (ha.trans_le (le_max_left a x)) (max_le_max_left a hxy)
+
+/-- The arbitrary iterated inverse-power kernel decreases as its base point
+moves to the right. -/
+theorem antitoneOn_iteratedShiftIntegral_invPow
+    (p : ℕ) (shifts : List ℝ)
+    (hshifts : ∀ h ∈ shifts, 0 ≤ h) :
+    AntitoneOn
+      (fun x ↦ iteratedShiftIntegral shifts (fun y ↦ (y ^ p)⁻¹) x)
+      (Set.Ioi 0) := by
+  intro x hx y hy hxy
+  have hcont := continuous_forwardClampedInvPow p hx
+  have hanti := antitone_iteratedShiftIntegral hcont
+    (antitone_forwardClampedInvPow p hx) shifts hshifts hxy
+  have hxcongr :
+      iteratedShiftIntegral shifts (fun z ↦ (z ^ p)⁻¹) x =
+        iteratedShiftIntegral shifts (forwardClampedInvPow p x) x := by
+    apply iteratedShiftIntegral_congr_Icc shifts hshifts
+    intro z hz
+    unfold forwardClampedInvPow
+    rw [max_eq_right hz.1]
+  have hycongr :
+      iteratedShiftIntegral shifts (fun z ↦ (z ^ p)⁻¹) y =
+        iteratedShiftIntegral shifts (forwardClampedInvPow p x) y := by
+    apply iteratedShiftIntegral_congr_Icc shifts hshifts
+    intro z hz
+    unfold forwardClampedInvPow
+    rw [max_eq_right (hxy.trans hz.1)]
+  change iteratedShiftIntegral shifts (fun z ↦ (z ^ p)⁻¹) y ≤
+    iteratedShiftIntegral shifts (fun z ↦ (z ^ p)⁻¹) x
+  rw [hycongr, hxcongr]
+  exact hanti
+
 /-- Exact positive-kernel representation of every nonempty iterated
 logarithmic difference. -/
 theorem neg_realIteratedLogDifference_eq_kernelIntegral
@@ -184,6 +235,29 @@ theorem neg_realIteratedLogDifference_eq_kernelIntegral
         simp only [List.length_cons, pow_succ]
         ring
   exact (mul_left_cancel₀ hsign hcancel).symm
+
+/-- Every nonempty positive-shift logarithmic difference decreases with the
+positive base point. -/
+theorem antitoneOn_neg_realIteratedLogDifference
+    (h : ℝ) (shifts : List ℝ)
+    (hh : 0 ≤ h) (hshifts : ∀ k ∈ shifts, 0 ≤ k) :
+    AntitoneOn
+      (fun x ↦ -realIteratedPhaseDifference (h :: shifts) Real.log x)
+      (Set.Ioi 0) := by
+  have hnonneg : ∀ k ∈ h :: shifts, 0 ≤ k := by
+    intro k hk
+    simp only [List.mem_cons] at hk
+    rcases hk with rfl | hk
+    · exact hh
+    · exact hshifts k hk
+  have hkernel := antitoneOn_iteratedShiftIntegral_invPow
+    (h :: shifts).length (h :: shifts) hnonneg
+  intro x hx y hy hxy
+  change -realIteratedPhaseDifference (h :: shifts) Real.log y ≤
+    -realIteratedPhaseDifference (h :: shifts) Real.log x
+  rw [neg_realIteratedLogDifference_eq_kernelIntegral h shifts hh hshifts hx,
+    neg_realIteratedLogDifference_eq_kernelIntegral h shifts hh hshifts hy]
+  exact mul_le_mul_of_nonneg_left (hkernel hx hy hxy) (by positivity)
 
 /-- Uniform scale bounds for every nonempty iterated logarithmic difference.
 The numerator is the product of all A-process shifts and the derivative

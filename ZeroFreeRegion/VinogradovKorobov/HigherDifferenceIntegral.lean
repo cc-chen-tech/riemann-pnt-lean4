@@ -37,6 +37,30 @@ noncomputable def iteratedShiftIntegral : List ℝ → (ℝ → ℝ) → ℝ →
     iteratedShiftIntegral (h :: shifts) f x =
       ∫ u in x..x + h, iteratedShiftIntegral shifts f u := rfl
 
+/-- Iterated signed differences commute with multiplication by a scalar. -/
+lemma realIteratedPhaseDifference_const_mul
+    (shifts : List ℝ) (c : ℝ) (f : ℝ → ℝ) (x : ℝ) :
+    realIteratedPhaseDifference shifts (fun y ↦ c * f y) x =
+      c * realIteratedPhaseDifference shifts f x := by
+  induction shifts generalizing x with
+  | nil => rfl
+  | cons h shifts ih =>
+      simp only [realIteratedPhaseDifference_cons, realPhaseDifference,
+        ih]
+      ring
+
+/-- Iterated differences commute with translating the input variable. -/
+lemma realIteratedPhaseDifference_comp_add
+    (shifts : List ℝ) (f : ℝ → ℝ) (a x : ℝ) :
+    realIteratedPhaseDifference shifts (fun y ↦ f (a + y)) x =
+      realIteratedPhaseDifference shifts f (a + x) := by
+  induction shifts generalizing x with
+  | nil => rfl
+  | cons h shifts ih =>
+      simp only [realIteratedPhaseDifference_cons, realPhaseDifference, ih]
+      congr 1
+      ring
+
 /-- Signed differences preserve a derivative tower on the positive axis. -/
 lemma hasDerivAt_realIteratedPhaseDifference_of_tower
     (F : ℕ → ℝ → ℝ)
@@ -232,5 +256,39 @@ lemma iteratedShiftIntegral_congr_Icc
           y ≤ u + shifts.sum := hy.2
           _ ≤ (x + h) + shifts.sum := add_le_add huxh le_rfl
           _ = x + (h + shifts.sum) := by ring
+
+/-- Iterated integration over nonnegative shifts preserves antitonicity. -/
+lemma antitone_iteratedShiftIntegral
+    {f : ℝ → ℝ} (hf : Continuous f) (hanti : Antitone f)
+    (shifts : List ℝ) (hshifts : ∀ h ∈ shifts, 0 ≤ h) :
+    Antitone (iteratedShiftIntegral shifts f) := by
+  induction shifts with
+  | nil => exact hanti
+  | cons h shifts ih =>
+      have hh : 0 ≤ h := hshifts h (by simp)
+      have htail : ∀ k ∈ shifts, 0 ≤ k := by
+        intro k hk
+        exact hshifts k (by simp [hk])
+      have hinnerCont := continuous_iteratedShiftIntegral hf shifts
+      have hinnerAnti := ih htail
+      intro x y hxy
+      calc
+        iteratedShiftIntegral (h :: shifts) f y =
+            ∫ u in (0 : ℝ)..h,
+              iteratedShiftIntegral shifts f (u + y) := by
+          rw [iteratedShiftIntegral_cons,
+            intervalIntegral.integral_comp_add_right]
+          congr 1 <;> ring
+        _ ≤ ∫ u in (0 : ℝ)..h,
+              iteratedShiftIntegral shifts f (u + x) := by
+          apply intervalIntegral.integral_mono_on hh
+            ((hinnerCont.comp (continuous_id.add continuous_const)).intervalIntegrable 0 h)
+            ((hinnerCont.comp (continuous_id.add continuous_const)).intervalIntegrable 0 h)
+          intro u _
+          exact hinnerAnti (add_le_add_right hxy u)
+        _ = iteratedShiftIntegral (h :: shifts) f x := by
+          rw [iteratedShiftIntegral_cons,
+            intervalIntegral.integral_comp_add_right]
+          congr 1 <;> ring
 
 end ZeroFreeRegion.VinogradovKorobov
