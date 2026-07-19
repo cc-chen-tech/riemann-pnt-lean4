@@ -445,5 +445,52 @@ theorem integral_carneiroLittmannKernelError_eq_one :
   rw [hIntegralMoment, integral_carneiroLittmannSincSquare_eq_base,
     integral_carneiroLittmannSincSquareBase_eq_one]
 
+/-- The signum-majorant kernel is twice the Heaviside-majorant error. -/
+noncomputable def carneiroLittmannRawKernel (x : ℝ) : ℝ :=
+  2 * carneiroLittmannKernelError x
+
+theorem integrable_carneiroLittmannRawKernel :
+    Integrable carneiroLittmannRawKernel := by
+  simpa only [carneiroLittmannRawKernel] using
+    integrable_carneiroLittmannKernelError.const_mul 2
+
+theorem carneiroLittmannRawKernel_nonneg (x : ℝ) :
+    0 ≤ carneiroLittmannRawKernel x := by
+  exact mul_nonneg (by norm_num) (carneiroLittmannKernelError_nonneg x)
+
+theorem carneiroLittmannRawKernel_dilation_antitone
+    {deltaSmall deltaLarge : ℝ}
+    (hsmall : 0 < deltaSmall) (hle : deltaSmall ≤ deltaLarge) (t : ℝ) :
+    carneiroLittmannRawKernel (deltaLarge * t) ≤
+      carneiroLittmannRawKernel (deltaSmall * t) := by
+  unfold carneiroLittmannRawKernel
+  exact mul_le_mul_of_nonneg_left
+    (carneiroLittmannKernelError_dilation_antitone hsmall hle t) (by norm_num)
+
+theorem fourierKernel_carneiroLittmannRawKernel_zero :
+    fourierKernel carneiroLittmannRawKernel 0 = (2 : ℂ) := by
+  have hOfReal :
+      (∫ t : ℝ, (carneiroLittmannKernelError t : ℂ) ∂MeasureTheory.volume) =
+        Complex.ofReal
+          (∫ t : ℝ, carneiroLittmannKernelError t ∂MeasureTheory.volume) := by
+    exact integral_ofReal
+  have hRealMass :
+      (∫ t : ℝ, carneiroLittmannKernelError t ∂MeasureTheory.volume) = 1 :=
+    integral_carneiroLittmannKernelError_eq_one
+  unfold fourierKernel carneiroLittmannRawKernel
+  simp only [Complex.ofReal_mul, Complex.ofReal_ofNat, Complex.ofReal_zero,
+    zero_mul, mul_zero, Complex.exp_zero, mul_one]
+  calc
+    (∫ t : ℝ, (2 : ℂ) * (carneiroLittmannKernelError t : ℂ)) =
+        (2 : ℂ) * ∫ t : ℝ, (carneiroLittmannKernelError t : ℂ) :=
+      MeasureTheory.integral_const_mul _ _
+    _ = (2 : ℂ) * Complex.ofReal
+        (∫ t : ℝ, carneiroLittmannKernelError t ∂MeasureTheory.volume) := by
+      exact congrArg (fun z : ℂ => (2 : ℂ) * z)
+        hOfReal
+    _ = 2 := by
+      rw [hRealMass]
+      norm_num
+
 end DirichletPolynomial
 end PrimeNumberTheorem

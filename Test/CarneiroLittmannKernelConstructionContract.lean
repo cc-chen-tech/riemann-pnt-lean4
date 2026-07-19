@@ -38,6 +38,21 @@ example (x : ℝ) :
 example : (∫ x : ℝ, carneiroLittmannKernelError x) = 1 :=
   integral_carneiroLittmannKernelError_eq_one
 
+example : MeasureTheory.Integrable carneiroLittmannRawKernel :=
+  integrable_carneiroLittmannRawKernel
+
+example (x : ℝ) : 0 ≤ carneiroLittmannRawKernel x :=
+  carneiroLittmannRawKernel_nonneg x
+
+example {deltaSmall deltaLarge : ℝ}
+    (hsmall : 0 < deltaSmall) (hle : deltaSmall ≤ deltaLarge) (t : ℝ) :
+    carneiroLittmannRawKernel (deltaLarge * t) ≤
+      carneiroLittmannRawKernel (deltaSmall * t) :=
+  carneiroLittmannRawKernel_dilation_antitone hsmall hle t
+
+example : fourierKernel carneiroLittmannRawKernel 0 = (2 : ℂ) :=
+  fourierKernel_carneiroLittmannRawKernel_zero
+
 #print axioms carneiroLittmannCumulative_nonneg_of_nonpos
 #print axioms one_le_carneiroLittmannCumulative_of_nonneg
 #print axioms carneiroLittmannKernelError_nonneg
@@ -47,6 +62,10 @@ example : (∫ x : ℝ, carneiroLittmannKernelError x) = 1 :=
 #print axioms integrable_carneiroLittmannKernelError
 #print axioms neg_mul_carneiroLittmannDerivative_eq_sincSquare
 #print axioms integral_carneiroLittmannKernelError_eq_one
+#print axioms integrable_carneiroLittmannRawKernel
+#print axioms carneiroLittmannRawKernel_nonneg
+#print axioms carneiroLittmannRawKernel_dilation_antitone
+#print axioms fourierKernel_carneiroLittmannRawKernel_zero
 
 end DirichletPolynomial
 end PrimeNumberTheorem
