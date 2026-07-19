@@ -5,6 +5,8 @@ open ZeroFreeRegion.VinogradovKorobov
 #check vinogradovPowerSumDifferenceInt
 #check vinogradovPowerSumDifferenceInt_zero
 #check vinogradovPowerSumDifferenceInt_affine
+#check vinogradovPowerSumDifferenceInt_affine_one
+#check vinogradovPowerSumDifferenceInt_scale
 #check IsVinogradovWeightedSolutionInt
 #check isVinogradovWeightedSolutionInt_iff_modEq
 #check isVinogradovWeightedSolutionInt_affine_iff_triangular
@@ -12,3 +14,6 @@ open ZeroFreeRegion.VinogradovKorobov
 #check IsVinogradovMixedAffineEquationInt
 #check IsVinogradovMixedAffineEquationInt.centered_powerSum_eq
 #check IsVinogradovMixedAffineEquationInt.centered_modEq
+#check IsVinogradovMixedAffineEquationInt.centered_weightedSolution
+#check IsVinogradovWeightedSolutionInt.affine_degreeOne_rescale
+#check IsVinogradovWeightedSolutionInt.scale_rescale
