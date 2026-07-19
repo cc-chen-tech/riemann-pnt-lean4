@@ -267,4 +267,94 @@ theorem norm_integral_cexp_hardyPhaseCorrelation_le_of_log_gap
       field_simp [ne_of_gt hgap]
       norm_num
 
+/-- Over a positive-height short window, the instantaneous frequency of one
+Hardy phase moves by at most `v / (2T)` from its value at the left endpoint. -/
+theorem abs_deriv_shifted_hardyPhase_sub_base_le
+    {n : ℕ} (hn : n ≠ 0) {T t v : ℝ}
+    (hT : 0 < T) (hTt : T ≤ t) (hv : 0 ≤ v) :
+    |deriv (fun x : ℝ => hardyPhase n (x + t)) v -
+        deriv (hardyPhase n) t| ≤ v / (2 * T) := by
+  have htpos : 0 < t := hT.trans_le hTt
+  have htvpos : 0 < v + t := by linarith
+  rw [deriv_comp_add_const, deriv_hardyPhase hn htvpos,
+    deriv_hardyPhase hn htpos]
+  have hlog := abs_log_sub_log_le_div hT hTt (by linarith : T ≤ v + t)
+  have hden : 0 < 2 * Real.pi * (n : ℝ) ^ 2 := by positivity
+  rw [Real.log_div (ne_of_gt htvpos) (ne_of_gt hden),
+    Real.log_div (ne_of_gt htpos) (ne_of_gt hden)]
+  calc
+    |1 / 2 * (Real.log (v + t) - Real.log (2 * Real.pi * (n : ℝ) ^ 2)) -
+        1 / 2 * (Real.log t - Real.log (2 * Real.pi * (n : ℝ) ^ 2))| =
+        (1 / 2) * |Real.log (v + t) - Real.log t| := by
+      rw [show 1 / 2 * (Real.log (v + t) -
+            Real.log (2 * Real.pi * (n : ℝ) ^ 2)) -
+          1 / 2 * (Real.log t - Real.log (2 * Real.pi * (n : ℝ) ^ 2)) =
+          (1 / 2) * (Real.log (v + t) - Real.log t) by ring]
+      rw [abs_mul, abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 1 / 2)]
+    _ ≤ (1 / 2) * (|(v + t) - t| / T) := by gcongr
+    _ = v / (2 * T) := by
+      rw [show (v + t) - t = v by ring, abs_of_nonneg hv]
+      field_simp
+
+/-- Away from its stationary point, the short integral of one Hardy phase is
+bounded by the reciprocal base frequency.  The shift hypothesis makes the
+bound uniform throughout the whole short window. -/
+theorem norm_integral_cexp_shifted_hardyPhase_le_of_base_frequency
+    {n : ℕ} (hn : n ≠ 0) {T t delta : ℝ}
+    (hT : 0 < T) (hTt : T ≤ t) (hdelta : 0 ≤ delta)
+    (hgap : 0 < |deriv (hardyPhase n) t|)
+    (hshift : delta / (2 * T) ≤ |deriv (hardyPhase n) t| / 2) :
+    ‖∫ v in 0..delta,
+        Complex.exp (Complex.I * hardyPhase n (t + v))‖ ≤
+      8 / |deriv (hardyPhase n) t| := by
+  let F : ℝ → ℝ := fun v => hardyPhase n (v + t)
+  have hF : ∀ x ∈ Icc (0 : ℝ) delta, ContDiffAt ℝ 2 F x := by
+    intro x hx
+    have hxtpos : 0 < x + t := by linarith [hT, hTt, hx.1]
+    simpa only [F] using
+      (contDiffAt_hardyPhase_two hn hxtpos).comp x
+        (contDiffAt_id.add contDiffAt_const)
+  have hmono : MonotoneOn (deriv F) (Icc (0 : ℝ) delta) := by
+    apply monotoneOn_deriv_of_iteratedDeriv_two_nonneg hF
+    intro x hx
+    have hxtpos : 0 < x + t := by linarith [hT, hTt, hx.1]
+    rw [show iteratedDeriv 2 F x =
+        iteratedDeriv 2 (hardyPhase n) (x + t) by
+      exact congrFun (iteratedDeriv_comp_add_const
+        (n := 2) (f := hardyPhase n) (s := t)) x]
+    rw [iteratedDeriv_two_hardyPhase hn hxtpos]
+    positivity
+  have haway : ∀ x ∈ Icc (0 : ℝ) delta,
+      |deriv (hardyPhase n) t| / 2 ≤ |deriv F x| := by
+    intro x hx
+    have herr := abs_deriv_shifted_hardyPhase_sub_base_le
+      hn hT hTt hx.1
+    have hxshift : x / (2 * T) ≤ |deriv (hardyPhase n) t| / 2 := by
+      exact (div_le_div_of_nonneg_right hx.2 (by positivity)).trans hshift
+    have htriangle : |deriv (hardyPhase n) t| ≤
+        |deriv F x - deriv (hardyPhase n) t| + |deriv F x| := by
+      calc
+        |deriv (hardyPhase n) t| =
+            |(deriv (hardyPhase n) t - deriv F x) + deriv F x| := by ring_nf
+        _ ≤ |deriv (hardyPhase n) t - deriv F x| + |deriv F x| :=
+          abs_add_le _ _
+        _ = |deriv F x - deriv (hardyPhase n) t| + |deriv F x| := by
+          rw [abs_sub_comm]
+    dsimp only [F] at herr ⊢
+    nlinarith
+  have hbound := norm_integral_cexp_phase_le_of_monotone_deriv_local
+    hdelta (half_pos hgap) hF (Or.inl hmono) haway
+  calc
+    ‖∫ v in 0..delta,
+        Complex.exp (Complex.I * hardyPhase n (t + v))‖ =
+        ‖∫ v in 0..delta, Complex.exp (Complex.I * F v)‖ := by
+      apply congrArg norm
+      apply intervalIntegral.integral_congr
+      intro v _hv
+      simp only [F, add_comm]
+    _ ≤ 4 / (|deriv (hardyPhase n) t| / 2) := hbound
+    _ = 8 / |deriv (hardyPhase n) t| := by
+      field_simp [ne_of_gt hgap]
+      norm_num
+
 end HardyTheorem.OscillatoryIntegral
