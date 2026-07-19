@@ -1149,6 +1149,45 @@ theorem vinogradovPrimePowerSolutionCount_le_strata
     _ = p ^ (2 * (k + r) + (k + 2 * r) * n) +
         k ^ 2 * p ^ (2 * (k + r) * (n + 1) - 1) := Nat.add_comm _ _
 
+/-- The prime-power strata bound transfers directly to the normalized
+complete Vinogradov moment. -/
+theorem norm_normalizedVinogradovMomentMod_primePower_le_strata
+    (p k r n : ℕ) [Fact p.Prime] (hkp : k < p) :
+    ‖normalizedVinogradovMomentMod
+        (p ^ (n + 1)) k (k + r) (p ^ (n + 1))‖ ≤
+      (p ^ (2 * (k + r) + (k + 2 * r) * n) +
+        k ^ 2 * p ^ (2 * (k + r) * (n + 1) - 1) : ℝ) := by
+  letI : NeZero (p ^ (n + 1)) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  rw [normalizedVinogradovMomentMod_eq_solutionCount]
+  norm_cast
+  exact vinogradovPrimePowerSolutionCount_le_strata p k r n hkp
+
+/-- Consequently, the same strata bound controls the number of coefficient
+vectors for which the complete prime-power Weyl sum is large. -/
+theorem card_largeVinogradovCoefficientSet_primePower_mul_pow_le_strata
+    (p k r n : ℕ) [Fact p.Prime] (hkp : k < p)
+    {V : ℝ} (hV : 0 ≤ V) :
+    ((largeVinogradovCoefficientSet
+        (p ^ (n + 1)) k (p ^ (n + 1)) V).card : ℝ) *
+        V ^ (2 * (k + r)) ≤
+      ((p ^ (n + 1) : ℕ) : ℝ) ^ k *
+        (p ^ (2 * (k + r) + (k + 2 * r) * n) +
+          k ^ 2 * p ^ (2 * (k + r) * (n + 1) - 1) : ℝ) := by
+  letI : NeZero (p ^ (n + 1)) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  have hcount :
+      (vinogradovSolutionCountMod
+          (p ^ (n + 1)) k (k + r) (p ^ (n + 1)) : ℝ) ≤
+        (p ^ (2 * (k + r) + (k + 2 * r) * n) +
+          k ^ 2 * p ^ (2 * (k + r) * (n + 1) - 1) : ℝ) := by
+    exact_mod_cast vinogradovPrimePowerSolutionCount_le_strata p k r n hkp
+  have hscale : 0 ≤ ((p ^ (n + 1) : ℕ) : ℝ) ^ k := by positivity
+  have hscaled := mul_le_mul_of_nonneg_left hcount hscale
+  exact
+    (card_largeVinogradovCoefficientSet_mul_pow_le
+      (p ^ (n + 1)) k (k + r) (p ^ (n + 1)) hV).trans hscaled
+
 end
 
 end ZeroFreeRegion.VinogradovKorobov
