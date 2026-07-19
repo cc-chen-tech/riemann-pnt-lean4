@@ -81,4 +81,32 @@ example (sigma t : ℝ) (m N depth h : ℕ)
   norm_dirichletInterval_le_weight_mul_constantAProcessExplicitPower
     sigma t m N depth h hsigma ht hm hh hmajor hscale
 
+example (sigma t : ℝ) (m N B : ℕ) (hB : 0 < B) :
+    dirichletInterval sigma t m N =
+      ∑ j ∈ Finset.range (N / B),
+          dirichletInterval sigma t (m + j * B) B +
+        dirichletInterval sigma t (m + (N / B) * B) (N % B) :=
+  dirichletInterval_division_blocks sigma t m N B hB
+
+example (sigma t : ℝ) (m N B depth h : ℕ)
+    (hsigma : 0 ≤ sigma) (ht : 0 < t) (hm : 0 < m)
+    (hB : 0 < B) (hh : 1 ≤ h)
+    (hmajor : ∀ j < N / B,
+      t * ((depth.factorial : ℝ) * (h : ℝ) ^ depth *
+        (((m + j * B : ℕ) : ℝ) ^ (depth + 1))⁻¹) ≤ Real.pi)
+    (hscale : ∀ j < N / B, ∀ K,
+      constantAProcessPrefixThreshold depth h ≤ K → K ≤ B →
+        2 * Real.pi * (h : ℝ) ≤
+          zetaAProcessUniformLeafDeltaLower t (m + j * B) K depth *
+            (h : ℝ) ^ depth * (K : ℝ)) :
+    ‖dirichletInterval sigma t m N‖ ≤
+      ∑ j ∈ Finset.range (N / B),
+          dirichletWeight sigma (m + j * B) *
+            max (constantAProcessPrefixThreshold depth h : ℝ)
+              (6 * (1 + Real.log h) * (B : ℝ) /
+                (h : ℝ) ^ (1 / (2 : ℝ) ^ depth : ℝ)) +
+        (N % B : ℕ) :=
+  norm_dirichletInterval_le_sum_constantAProcessExplicitPower
+    sigma t m N B depth h hsigma ht hm hB hh hmajor hscale
+
 end ZeroFreeRegion.VinogradovKorobov

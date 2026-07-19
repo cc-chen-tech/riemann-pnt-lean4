@@ -73,6 +73,20 @@ lemma dirichletInterval_mul_length
       rw [Nat.succ_mul, dirichletInterval_add_length, ih,
         Finset.sum_range_succ]
 
+/-- Euclidean division splits an arbitrary interval into equal full blocks
+and one final remainder block. -/
+lemma dirichletInterval_division_blocks
+    (sigma t : ℝ) (m N B : ℕ) (_hB : 0 < B) :
+    dirichletInterval sigma t m N =
+      ∑ j ∈ Finset.range (N / B),
+          dirichletInterval sigma t (m + j * B) B +
+        dirichletInterval sigma t (m + (N / B) * B) (N % B) := by
+  have hsplit := dirichletInterval_add_length sigma t m
+    ((N / B) * B) (N % B)
+  rw [Nat.div_add_mod'] at hsplit
+  rw [dirichletInterval_mul_length] at hsplit
+  exact hsplit
+
 /-- The scale-form logarithmic estimate on an interval of exactly `N`
 integer terms. -/
 theorem norm_dirichletInterval_le_weight_mul_harmonic_of_scale
@@ -229,5 +243,57 @@ theorem norm_dirichletInterval_le_weight_mul_constantAProcessExplicitPower
           t m (N + 1) depth h ht hm hh hmajor hscale
       intro k hk
       exact hprefix (k + 1) (by omega)
+
+/-- Long-interval transfer of the explicit arbitrary-depth estimate.  Every
+full block is controlled by its own scale hypotheses; the final Euclidean
+remainder is bounded trivially by its length. -/
+theorem norm_dirichletInterval_le_sum_constantAProcessExplicitPower
+    (sigma t : ℝ) (m N B depth h : ℕ)
+    (hsigma : 0 ≤ sigma) (ht : 0 < t) (hm : 0 < m)
+    (hB : 0 < B) (hh : 1 ≤ h)
+    (hmajor : ∀ j < N / B,
+      t * ((depth.factorial : ℝ) * (h : ℝ) ^ depth *
+        (((m + j * B : ℕ) : ℝ) ^ (depth + 1))⁻¹) ≤ Real.pi)
+    (hscale : ∀ j < N / B, ∀ K,
+      constantAProcessPrefixThreshold depth h ≤ K → K ≤ B →
+        2 * Real.pi * (h : ℝ) ≤
+          zetaAProcessUniformLeafDeltaLower t (m + j * B) K depth *
+            (h : ℝ) ^ depth * (K : ℝ)) :
+    ‖dirichletInterval sigma t m N‖ ≤
+      ∑ j ∈ Finset.range (N / B),
+          dirichletWeight sigma (m + j * B) *
+            max (constantAProcessPrefixThreshold depth h : ℝ)
+              (6 * (1 + Real.log h) * (B : ℝ) /
+                (h : ℝ) ^ (1 / (2 : ℝ) ^ depth : ℝ)) +
+        (N % B : ℕ) := by
+  rw [dirichletInterval_division_blocks sigma t m N B hB]
+  calc
+    ‖(∑ j ∈ Finset.range (N / B),
+          dirichletInterval sigma t (m + j * B) B) +
+        dirichletInterval sigma t (m + (N / B) * B) (N % B)‖ ≤
+        ‖∑ j ∈ Finset.range (N / B),
+          dirichletInterval sigma t (m + j * B) B‖ +
+        ‖dirichletInterval sigma t (m + (N / B) * B) (N % B)‖ :=
+      norm_add_le _ _
+    _ ≤ (∑ j ∈ Finset.range (N / B),
+          ‖dirichletInterval sigma t (m + j * B) B‖) +
+        ‖dirichletInterval sigma t (m + (N / B) * B) (N % B)‖ := by
+      gcongr
+      exact norm_sum_le _ _
+    _ ≤ (∑ j ∈ Finset.range (N / B),
+          dirichletWeight sigma (m + j * B) *
+            max (constantAProcessPrefixThreshold depth h : ℝ)
+              (6 * (1 + Real.log h) * (B : ℝ) /
+                (h : ℝ) ^ (1 / (2 : ℝ) ^ depth : ℝ))) +
+        (N % B : ℕ) := by
+      apply add_le_add
+      · apply Finset.sum_le_sum
+        intro j hj
+        apply norm_dirichletInterval_le_weight_mul_constantAProcessExplicitPower
+          sigma t (m + j * B) B depth h hsigma ht (by omega) hh
+        · exact hmajor j (Finset.mem_range.mp hj)
+        · exact hscale j (Finset.mem_range.mp hj)
+      · exact norm_dirichletInterval_le_length sigma t
+          (m + (N / B) * B) (N % B) hsigma (by omega)
 
 end ZeroFreeRegion.VinogradovKorobov
