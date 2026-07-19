@@ -26,7 +26,7 @@ import ZeroFreeRegion.VinogradovKorobov.VinogradovNewton
 import ZeroFreeRegion.VinogradovKorobov.VinogradovDiagonal
 import ZeroFreeRegion.VinogradovKorobov.VinogradovSymmetry
 import ZeroFreeRegion.VinogradovKorobov.VinogradovCongruence
-import ZeroFreeRegion.VinogradovKorobov.VinogradovTaylor
+import ZeroFreeRegion.VinogradovKorobov.VinogradovLinearLift
 
 #print axioms ZeroFreeRegion.VinogradovKorobov.vanDerCorputFundamentalInequality
 #print axioms ZeroFreeRegion.VinogradovKorobov.phaseTerm_mul_conj_shift
@@ -246,3 +246,5 @@ import ZeroFreeRegion.VinogradovKorobov.VinogradovTaylor
 #print axioms ZeroFreeRegion.VinogradovKorobov.det_vinogradovPowerSumJacobian_zmod_ne_zero
 #print axioms ZeroFreeRegion.VinogradovKorobov.int_pow_add_mul_modEq_sq
 #print axioms ZeroFreeRegion.VinogradovKorobov.vinogradovPowerSumInt_affine_modEq_sq
+#print axioms ZeroFreeRegion.VinogradovKorobov.existsUnique_mulVec_eq_of_det_ne_zero
+#print axioms ZeroFreeRegion.VinogradovKorobov.existsUnique_vinogradovPowerSumJacobian_zmod_mulVec_eq
