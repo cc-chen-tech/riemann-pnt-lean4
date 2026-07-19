@@ -275,6 +275,137 @@ theorem card_vinogradovFirstNonsingularResidueSet
   simp only [pow_zero, mul_one]
   ac_rfl
 
+/-- Tuples whose first selected block is already nonsingular. -/
+noncomputable def vinogradovHeadNonsingularResidueSet
+    (p k r b : ℕ) [Fact p.Prime] :
+    Finset (Fin ((b + 1) * k + r) → ZMod p) :=
+  ((vinogradovNonsingularResidueSet p k).product Finset.univ).map
+    (vinogradovPrependBlockEquiv p k r b).toEmbedding
+
+/-- Membership in the head stratum is exactly nonsingularity of the first
+block. -/
+theorem mem_vinogradovHeadNonsingularResidueSet_iff
+    (p k r b : ℕ) [Fact p.Prime]
+    (x : Fin ((b + 1) * k + r) → ZMod p) :
+    x ∈ vinogradovHeadNonsingularResidueSet p k r b ↔
+      Function.Injective
+        ((vinogradovPrependBlockEquiv p k r b).symm x).1 := by
+  let e := vinogradovPrependBlockEquiv p k r b
+  let split := e.symm x
+  have hesplit : e split = x := e.apply_symm_apply x
+  constructor
+  · intro hx
+    rcases Finset.mem_map.mp hx with ⟨z, hz, hzx⟩
+    have hz_eq : z = split := by
+      apply e.injective
+      simpa [e, split] using hzx
+    subst z
+    simpa [vinogradovNonsingularResidueSet] using
+      (Finset.mem_product.mp hz).1
+  · intro hx
+    apply Finset.mem_map.mpr
+    refine ⟨split, ?_, hesplit⟩
+    exact Finset.mem_product.mpr
+      ⟨by simpa [vinogradovNonsingularResidueSet] using hx,
+        Finset.mem_univ _⟩
+
+/-- Tuples whose first block is singular but whose remaining selected blocks
+contain a nonsingular block. -/
+noncomputable def vinogradovSingularHeadNonsingularTailResidueSet
+    (p k r b : ℕ) [Fact p.Prime] :
+    Finset (Fin ((b + 1) * k + r) → ZMod p) :=
+  ((vinogradovSingularResidueSet p k).product
+      (vinogradovSomeBlockNonsingularResidueSet p k r b)).map
+    (vinogradovPrependBlockEquiv p k r b).toEmbedding
+
+/-- Membership in the recursive tail stratum records a singular head and a
+nonsingular block later in the tuple. -/
+theorem mem_vinogradovSingularHeadNonsingularTailResidueSet_iff
+    (p k r b : ℕ) [Fact p.Prime]
+    (x : Fin ((b + 1) * k + r) → ZMod p) :
+    x ∈ vinogradovSingularHeadNonsingularTailResidueSet p k r b ↔
+      ¬Function.Injective
+          ((vinogradovPrependBlockEquiv p k r b).symm x).1 ∧
+        VinogradovHasNonsingularBlock p k r b
+          ((vinogradovPrependBlockEquiv p k r b).symm x).2 := by
+  let e := vinogradovPrependBlockEquiv p k r b
+  let split := e.symm x
+  have hesplit : e split = x := e.apply_symm_apply x
+  constructor
+  · intro hx
+    rcases Finset.mem_map.mp hx with ⟨z, hz, hzx⟩
+    have hz_eq : z = split := by
+      apply e.injective
+      simpa [e, split] using hzx
+    subst z
+    have hparts := Finset.mem_product.mp hz
+    exact ⟨by simpa [vinogradovSingularResidueSet] using hparts.1,
+      (mem_vinogradovSomeBlockNonsingularResidueSet_iff
+        p k r b split.2).mp hparts.2⟩
+  · rintro ⟨hhead, htail⟩
+    apply Finset.mem_map.mpr
+    refine ⟨split, ?_, hesplit⟩
+    exact Finset.mem_product.mpr
+      ⟨by simpa [vinogradovSingularResidueSet] using hhead,
+        (mem_vinogradovSomeBlockNonsingularResidueSet_iff
+          p k r b split.2).mpr htail⟩
+
+/-- The head-nonsingular and singular-head/nonsingular-tail cases cannot
+overlap. -/
+theorem disjoint_headNonsingular_singularHeadNonsingularTail
+    (p k r b : ℕ) [Fact p.Prime] :
+    Disjoint (vinogradovHeadNonsingularResidueSet p k r b)
+      (vinogradovSingularHeadNonsingularTailResidueSet p k r b) := by
+  rw [Finset.disjoint_left]
+  intro x hx hy
+  exact
+    ((mem_vinogradovSingularHeadNonsingularTailResidueSet_iff
+      p k r b x).mp hy).1
+      ((mem_vinogradovHeadNonsingularResidueSet_iff p k r b x).mp hx)
+
+/-- The two recursive cases cover exactly all tuples having a nonsingular
+selected block. -/
+theorem union_headNonsingular_singularHeadNonsingularTail_eq_someBlock
+    (p k r b : ℕ) [Fact p.Prime] :
+    vinogradovHeadNonsingularResidueSet p k r b ∪
+        vinogradovSingularHeadNonsingularTailResidueSet p k r b =
+      vinogradovSomeBlockNonsingularResidueSet p k r (b + 1) := by
+  ext x
+  rw [Finset.mem_union,
+    mem_vinogradovHeadNonsingularResidueSet_iff,
+    mem_vinogradovSingularHeadNonsingularTailResidueSet_iff,
+    mem_vinogradovSomeBlockNonsingularResidueSet_iff]
+  simp only [VinogradovHasNonsingularBlock]
+  tauto
+
+/-- Exact size of the head-nonsingular case. -/
+theorem card_vinogradovHeadNonsingularResidueSet
+    (p k r b : ℕ) [Fact p.Prime] :
+    (vinogradovHeadNonsingularResidueSet p k r b).card =
+      p.descFactorial k * p ^ (b * k + r) := by
+  rw [vinogradovHeadNonsingularResidueSet, Finset.card_map]
+  change
+    ((vinogradovNonsingularResidueSet p k) ×ˢ
+      (Finset.univ : Finset (Fin (b * k + r) → ZMod p))).card = _
+  rw [Finset.card_product, card_vinogradovNonsingularResidueSet]
+  congr 1
+  simp [ZMod.card]
+
+/-- Exact size of the singular-head case that still has a nonsingular block
+in its tail. -/
+theorem card_vinogradovSingularHeadNonsingularTailResidueSet
+    (p k r b : ℕ) [Fact p.Prime] :
+    (vinogradovSingularHeadNonsingularTailResidueSet p k r b).card =
+      (p ^ k - p.descFactorial k) *
+        (p ^ (b * k + r) -
+          (p ^ k - p.descFactorial k) ^ b * p ^ r) := by
+  rw [vinogradovSingularHeadNonsingularTailResidueSet, Finset.card_map]
+  change
+    ((vinogradovSingularResidueSet p k) ×ˢ
+      (vinogradovSomeBlockNonsingularResidueSet p k r b)).card = _
+  rw [Finset.card_product, card_vinogradovSingularResidueSet,
+    card_vinogradovSomeBlockNonsingularResidueSet]
+
 /-- Residue-field Vinogradov solutions whose left tuple is singular in every
 one of the selected `b` blocks. -/
 noncomputable def vinogradovMultiBlockSingularSolutionSet
