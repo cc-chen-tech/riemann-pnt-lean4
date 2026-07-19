@@ -123,6 +123,8 @@ lean_lib RiemannPNT where
     `Test.RiemannVonMangoldtCompletedZetaSymmetryAxiomAudit,
     `Test.RiemannVonMangoldtHalfBoundaryContract,
     `Test.RiemannVonMangoldtHalfBoundaryAxiomAudit,
+    `Test.RiemannVonMangoldtRightVerticalZetaArgumentContract,
+    `Test.RiemannVonMangoldtRightVerticalZetaArgumentAxiomAudit,
     `Test.RiemannVonMangoldtContract,
     `Test.RiemannVonMangoldtAxiomAudit
   ]
