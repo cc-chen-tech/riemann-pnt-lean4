@@ -145,4 +145,126 @@ theorem abs_deriv_hardyPhaseCorrelation_sub_log_gap_le
       rw [show (t + v) - (t + w) = v - w by ring]
       field_simp
 
+private theorem monotoneOn_deriv_of_iteratedDeriv_two_nonneg
+    {F : ℝ → ℝ} {a b : ℝ}
+    (hF : ∀ x ∈ Icc a b, ContDiffAt ℝ 2 F x)
+    (hsecond : ∀ x ∈ Icc a b, 0 ≤ iteratedDeriv 2 F x) :
+    MonotoneOn (deriv F) (Icc a b) := by
+  intro x hx y hy hxy
+  have hsecond' : ∀ z ∈ interior (Icc a b),
+      0 ≤ deriv (deriv F) z := by
+    intro z hz
+    simpa [show 2 = 1 + 1 by omega, iteratedDeriv_succ,
+      iteratedDeriv_one] using hsecond z (interior_subset hz)
+  have hgrowth := Convex.mul_sub_le_image_sub_of_le_deriv
+    (convex_Icc a b)
+    (by
+      intro z hz
+      exact ((hF z hz).derivWithin (m := 0) (by norm_num)).continuousAt.continuousWithinAt)
+    (by
+      intro z hz
+      exact (((hF z (interior_subset hz)).derivWithin (m := 1)
+        (by norm_num)).differentiableAt (by norm_num)).differentiableWithinAt)
+    hsecond' x hx y hy hxy
+  simpa using hgrowth
+
+private theorem antitoneOn_deriv_of_iteratedDeriv_two_nonpos
+    {F : ℝ → ℝ} {a b : ℝ}
+    (hF : ∀ x ∈ Icc a b, ContDiffAt ℝ 2 F x)
+    (hsecond : ∀ x ∈ Icc a b, iteratedDeriv 2 F x ≤ 0) :
+    AntitoneOn (deriv F) (Icc a b) := by
+  intro x hx y hy hxy
+  have hsecond' : ∀ z ∈ interior (Icc a b),
+      deriv (deriv F) z ≤ 0 := by
+    intro z hz
+    simpa [show 2 = 1 + 1 by omega, iteratedDeriv_succ,
+      iteratedDeriv_one] using hsecond z (interior_subset hz)
+  have hgrowth := Convex.image_sub_le_mul_sub_of_deriv_le
+    (convex_Icc a b)
+    (by
+      intro z hz
+      exact ((hF z hz).derivWithin (m := 0) (by norm_num)).continuousAt.continuousWithinAt)
+    (by
+      intro z hz
+      exact (((hF z (interior_subset hz)).derivWithin (m := 1)
+        (by norm_num)).differentiableAt (by norm_num)).differentiableWithinAt)
+    hsecond' x hx y hy hxy
+  simpa using hgrowth
+
+/-- Away from the shifted diagonal, a Hardy-phase cross term has the same
+reciprocal logarithmic-gap bound as a linear exponential. -/
+theorem norm_integral_cexp_hardyPhaseCorrelation_le_of_log_gap
+    {m n : ℕ} (hm : m ≠ 0) (hn : n ≠ 0)
+    {T a b v w : ℝ} (hT : 0 < T) (hab : a ≤ b) (hTa : T ≤ a)
+    (hv : 0 ≤ v) (hw : 0 ≤ w)
+    (hgap : 0 < |Real.log n - Real.log m|)
+    (hshift : |v - w| / (2 * T) ≤
+      |Real.log n - Real.log m| / 2) :
+    ‖∫ t in a..b,
+        Complex.exp (Complex.I * hardyPhaseCorrelation m n v w t)‖ ≤
+      8 / |Real.log n - Real.log m| := by
+  let F : ℝ → ℝ := hardyPhaseCorrelation m n v w
+  have hF : ∀ x ∈ Icc a b, ContDiffAt ℝ 2 F x := by
+    intro x hx
+    have hxv : 0 < x + v := by linarith [hT, hTa, hx.1]
+    have hxw : 0 < x + w := by linarith [hT, hTa, hx.1]
+    have hmCont : ContDiffAt ℝ 2 (fun y : ℝ => hardyPhase m (y + v)) x := by
+      simpa [Function.comp_def] using
+        (contDiffAt_hardyPhase_two hm hxv).comp x
+          (contDiffAt_id.add contDiffAt_const)
+    have hnCont : ContDiffAt ℝ 2 (fun y : ℝ => hardyPhase n (y + w)) x := by
+      simpa [Function.comp_def] using
+        (contDiffAt_hardyPhase_two hn hxw).comp x
+          (contDiffAt_id.add contDiffAt_const)
+    exact hmCont.sub hnCont
+  have hmono : MonotoneOn (deriv F) (Icc a b) ∨
+      AntitoneOn (deriv F) (Icc a b) := by
+    rcases le_total v w with hvw | hwv
+    · left
+      apply monotoneOn_deriv_of_iteratedDeriv_two_nonneg hF
+      intro x hx
+      have hxvpos : 0 < x + v := by linarith [hT, hTa, hx.1]
+      have hxwpos : 0 < x + w := by linarith [hT, hTa, hx.1]
+      rw [iteratedDeriv_two_hardyPhaseCorrelation hm hn hxvpos hxwpos]
+      · apply sub_nonneg.mpr
+        apply one_div_le_one_div_of_le
+        · exact mul_pos (by norm_num) hxvpos
+        · nlinarith
+    · right
+      apply antitoneOn_deriv_of_iteratedDeriv_two_nonpos hF
+      intro x hx
+      have hxvpos : 0 < x + v := by linarith [hT, hTa, hx.1]
+      have hxwpos : 0 < x + w := by linarith [hT, hTa, hx.1]
+      rw [iteratedDeriv_two_hardyPhaseCorrelation hm hn hxvpos hxwpos]
+      · apply sub_nonpos.mpr
+        apply one_div_le_one_div_of_le
+        · exact mul_pos (by norm_num) hxwpos
+        · nlinarith
+  have haway : ∀ x ∈ Icc a b,
+      |Real.log n - Real.log m| / 2 ≤ |deriv F x| := by
+    intro x hx
+    have hxv : T ≤ x + v := by linarith [hTa, hx.1]
+    have hxw : T ≤ x + w := by linarith [hTa, hx.1]
+    have herr := abs_deriv_hardyPhaseCorrelation_sub_log_gap_le
+      hm hn hT hxv hxw
+    have htriangle : |Real.log n - Real.log m| ≤
+        |deriv F x - (Real.log n - Real.log m)| + |deriv F x| := by
+      calc
+        |Real.log n - Real.log m| =
+            |(Real.log n - Real.log m - deriv F x) + deriv F x| := by ring_nf
+        _ ≤ |Real.log n - Real.log m - deriv F x| + |deriv F x| := abs_add_le _ _
+        _ = |deriv F x - (Real.log n - Real.log m)| + |deriv F x| := by
+          rw [abs_sub_comm]
+    nlinarith
+  have hbound := norm_integral_cexp_phase_le_of_monotone_deriv_local
+    hab (half_pos hgap) hF hmono haway
+  calc
+    ‖∫ t in a..b,
+        Complex.exp (Complex.I * hardyPhaseCorrelation m n v w t)‖ ≤
+        4 / (|Real.log n - Real.log m| / 2) := by
+      simpa only [F] using hbound
+    _ = 8 / |Real.log n - Real.log m| := by
+      field_simp [ne_of_gt hgap]
+      norm_num
+
 end HardyTheorem.OscillatoryIntegral
