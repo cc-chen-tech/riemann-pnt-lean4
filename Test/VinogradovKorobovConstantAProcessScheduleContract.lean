@@ -99,4 +99,29 @@ example (t : ℝ) (m N depth h : ℕ)
   norm_zetaPhase_sum_sq_le_constantRefinedAProcessSquaredEnvelope
     t m N depth h ht hm hh hbudget hmajor
 
+example (h N : ℕ) (C : ℝ) (totalDepth depth : ℕ) (K : ℕ → ℝ)
+    (hh : 1 ≤ h)
+    (hinit : C / (h : ℝ) ^ (2 * totalDepth) ≤ K 0)
+    (hstep : ∀ j < depth,
+      2 * (N : ℝ) ^ 2 / h +
+          4 * (N : ℝ) * (1 + Real.log h) * Real.sqrt (K j) ≤ K (j + 1)) :
+    constantRefinedAProcessSquaredEnvelope h N C totalDepth depth ≤ K depth :=
+  constantRefinedAProcessSquaredEnvelope_le_of_finite_supersolution
+    h N C totalDepth depth K hh hinit hstep
+
+example (t : ℝ) (m N depth h : ℕ) (K : ℕ → ℝ)
+    (ht : 0 < t) (hm : 0 < m)
+    (hh : 1 ≤ h) (hbudget : depth * (h - 1) < N)
+    (hmajor : t * ((depth.factorial : ℝ) * (h : ℝ) ^ depth *
+      ((m : ℝ) ^ (depth + 1))⁻¹) ≤ Real.pi)
+    (hinit : zetaAProcessUniformLeafSquaredBound t m N depth /
+        (h : ℝ) ^ (2 * depth) ≤ K 0)
+    (hstep : ∀ j < depth,
+      2 * (N : ℝ) ^ 2 / h +
+          4 * (N : ℝ) * (1 + Real.log h) * Real.sqrt (K j) ≤ K (j + 1)) :
+    ‖∑ n ∈ Finset.range N, phaseTerm (shiftedZetaPhase t m) n‖ ^ 2 ≤
+      K depth :=
+  norm_zetaPhase_sum_sq_le_constantRefined_finite_supersolution
+    t m N depth h K ht hm hh hbudget hmajor hinit hstep
+
 end ZeroFreeRegion.VinogradovKorobov

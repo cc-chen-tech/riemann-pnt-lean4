@@ -244,4 +244,56 @@ theorem norm_zetaPhase_sum_sq_le_constantRefinedAProcessSquaredEnvelope
     (sq_nonneg _)] at hrefined
   exact hrefined
 
+/-- A finite supersolution sequence controls every finite iterate of the
+normalized refined recurrence without replacing it by a depth-independent
+fixed point. -/
+theorem constantRefinedAProcessSquaredEnvelope_le_of_finite_supersolution
+    (h N : ℕ) (C : ℝ) (totalDepth depth : ℕ) (K : ℕ → ℝ)
+    (hh : 1 ≤ h)
+    (hinit : C / (h : ℝ) ^ (2 * totalDepth) ≤ K 0)
+    (hstep : ∀ j < depth,
+      2 * (N : ℝ) ^ 2 / h +
+          4 * (N : ℝ) * (1 + Real.log h) * Real.sqrt (K j) ≤ K (j + 1)) :
+    constantRefinedAProcessSquaredEnvelope h N C totalDepth depth ≤ K depth := by
+  have hlog : 0 ≤ Real.log (h : ℝ) :=
+    Real.log_nonneg (by exact_mod_cast hh)
+  have hharm : 0 ≤ 1 + Real.log (h : ℝ) := by linarith
+  induction depth with
+  | zero => exact hinit
+  | succ depth ih =>
+      rw [constantRefinedAProcessSquaredEnvelope_succ]
+      have ih' : constantRefinedAProcessSquaredEnvelope
+          h N C totalDepth depth ≤ K depth :=
+        ih (fun j hj ↦ hstep j (lt_trans hj (Nat.lt_succ_self depth)))
+      calc
+        2 * (N : ℝ) ^ 2 / h +
+            4 * (N : ℝ) * (1 + Real.log h) * Real.sqrt
+              (constantRefinedAProcessSquaredEnvelope
+                h N C totalDepth depth) ≤
+          2 * (N : ℝ) ^ 2 / h +
+            4 * (N : ℝ) * (1 + Real.log h) * Real.sqrt (K depth) := by
+              gcongr
+        _ ≤ K (depth + 1) := hstep depth (Nat.lt_succ_self depth)
+
+/-- Zeta exponential-sum bound obtained by supplying a finite supersolution
+sequence for the normalized constant-schedule recurrence. -/
+theorem norm_zetaPhase_sum_sq_le_constantRefined_finite_supersolution
+    (t : ℝ) (m N depth h : ℕ) (K : ℕ → ℝ)
+    (ht : 0 < t) (hm : 0 < m)
+    (hh : 1 ≤ h) (hbudget : depth * (h - 1) < N)
+    (hmajor : t * ((depth.factorial : ℝ) * (h : ℝ) ^ depth *
+      ((m : ℝ) ^ (depth + 1))⁻¹) ≤ Real.pi)
+    (hinit : zetaAProcessUniformLeafSquaredBound t m N depth /
+        (h : ℝ) ^ (2 * depth) ≤ K 0)
+    (hstep : ∀ j < depth,
+      2 * (N : ℝ) ^ 2 / h +
+          4 * (N : ℝ) * (1 + Real.log h) * Real.sqrt (K j) ≤ K (j + 1)) :
+    ‖∑ n ∈ Finset.range N, phaseTerm (shiftedZetaPhase t m) n‖ ^ 2 ≤
+      K depth := by
+  exact (norm_zetaPhase_sum_sq_le_constantRefinedAProcessSquaredEnvelope
+    t m N depth h ht hm hh hbudget hmajor).trans
+      (constantRefinedAProcessSquaredEnvelope_le_of_finite_supersolution
+        h N (zetaAProcessUniformLeafSquaredBound t m N depth)
+        depth depth K hh hinit hstep)
+
 end ZeroFreeRegion.VinogradovKorobov
