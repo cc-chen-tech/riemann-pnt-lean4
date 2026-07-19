@@ -24,6 +24,8 @@ import HardyTheorem.HardyPhaseCentralEnergy
 import HardyTheorem.HardyPhaseLowTailEnergy
 import HardyTheorem.HardyPhaseHighTailEnergy
 import HardyTheorem.HardyPhaseDyadicCutoffs
+import HardyTheorem.HardyPhaseFullLinearizedEnergy
+import HardyTheorem.HardyPhaseWindowCoeffDerivative
 import HardyTheorem.HardyPhaseHilbert
 import HardyTheorem.HardyOddMultiplicity
 import MathlibAux.SlidingIntervalCorrelation
@@ -40,6 +42,7 @@ import MathlibAux.RealDyadicScale
 import MathlibAux.LogKernelRemainder
 import MathlibAux.LogDirichletPolynomialMeanSquare
 import MathlibAux.LogarithmicHilbertIntegrationByParts
+import MathlibAux.TimeDependentLogHilbert
 import MathlibAux.RectangularFourierEnvelope
 import HardyTheorem.HardyPhaseHilbertShiftIntegral
 import EulerAndLfunctions
