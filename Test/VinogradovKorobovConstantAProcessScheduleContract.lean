@@ -168,4 +168,28 @@ example (t : ℝ) (m N depth h : ℕ)
   norm_zetaPhase_sum_lt_length_of_constantAProcessPowerSaving
     t m N depth h ht hm hN hh hbudget hmajor hinit hsaving
 
+example (t : ℝ) (m N depth h : ℕ)
+    (ht : 0 < t) (hm : 0 < m) (hh : 0 < h)
+    (hscale : 2 * Real.pi * (h : ℝ) ≤
+      zetaAProcessUniformLeafDeltaLower t m N depth *
+        (h : ℝ) ^ depth * (N : ℝ)) :
+    zetaAProcessUniformLeafSquaredBound t m N depth /
+        (h : ℝ) ^ (2 * depth) ≤ (N : ℝ) ^ 2 / (h : ℝ) ^ 2 :=
+  zetaAProcessUniformLeafSquaredBound_normalized_le_of_scale
+    t m N depth h ht hm hh hscale
+
+example (t : ℝ) (m N depth h : ℕ)
+    (ht : 0 < t) (hm : 0 < m) (hN : 0 < N)
+    (hh : 1 ≤ h) (hbudget : depth * (h - 1) < N)
+    (hmajor : t * ((depth.factorial : ℝ) * (h : ℝ) ^ depth *
+      ((m : ℝ) ^ (depth + 1))⁻¹) ≤ Real.pi)
+    (hscale : 2 * Real.pi * (h : ℝ) ≤
+      zetaAProcessUniformLeafDeltaLower t m N depth *
+        (h : ℝ) ^ depth * (N : ℝ))
+    (hsaving : constantAProcessCoefficient h depth <
+      constantAProcessGain h depth) :
+    ‖∑ n ∈ Finset.range N, phaseTerm (shiftedZetaPhase t m) n‖ < (N : ℝ) :=
+  norm_zetaPhase_sum_lt_length_of_constantAProcessScaleSaving
+    t m N depth h ht hm hN hh hbudget hmajor hscale hsaving
+
 end ZeroFreeRegion.VinogradovKorobov

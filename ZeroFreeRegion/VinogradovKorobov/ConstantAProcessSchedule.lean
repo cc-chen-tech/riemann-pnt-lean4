@@ -460,6 +460,45 @@ theorem norm_zetaPhase_sum_sq_le_constantAProcessPowerSupersolution
         h N (zetaAProcessUniformLeafSquaredBound t m N depth)
         depth depth hh hinit)
 
+/-- A division-free scale condition implies the normalized terminal leaf
+bound required by the explicit power supersolution. -/
+theorem zetaAProcessUniformLeafSquaredBound_normalized_le_of_scale
+    (t : ℝ) (m N depth h : ℕ)
+    (ht : 0 < t) (hm : 0 < m) (hh : 0 < h)
+    (hscale : 2 * Real.pi * (h : ℝ) ≤
+      zetaAProcessUniformLeafDeltaLower t m N depth *
+        (h : ℝ) ^ depth * (N : ℝ)) :
+    zetaAProcessUniformLeafSquaredBound t m N depth /
+        (h : ℝ) ^ (2 * depth) ≤ (N : ℝ) ^ 2 / (h : ℝ) ^ 2 := by
+  let D := zetaAProcessUniformLeafDeltaLower t m N depth
+  have hD : 0 < D := by
+    dsimp only [D]
+    unfold zetaAProcessUniformLeafDeltaLower
+    have hmN : 0 < ((m + N : ℕ) : ℝ) := Nat.cast_pos.mpr (by omega)
+    positivity
+  have hhreal : 0 < (h : ℝ) := Nat.cast_pos.mpr hh
+  have hpow : 0 < (h : ℝ) ^ depth := by positivity
+  have hquot :
+      2 * Real.pi / (D * (h : ℝ) ^ depth) ≤ (N : ℝ) / h := by
+    apply (div_le_div_iff₀ (mul_pos hD hpow) hhreal).2
+    simpa only [D, mul_assoc, mul_comm, mul_left_comm] using hscale
+  have hquotNonneg : 0 ≤ 2 * Real.pi / (D * (h : ℝ) ^ depth) :=
+    div_nonneg (mul_nonneg (by norm_num) Real.pi_pos.le)
+      (mul_pos hD hpow).le
+  have hNquotNonneg : 0 ≤ (N : ℝ) / h :=
+    div_nonneg (Nat.cast_nonneg N) hhreal.le
+  unfold zetaAProcessUniformLeafSquaredBound
+  change (2 * Real.pi / D) ^ 2 / (h : ℝ) ^ (2 * depth) ≤
+    (N : ℝ) ^ 2 / (h : ℝ) ^ 2
+  rw [show 2 * depth = depth * 2 by omega, pow_mul]
+  calc
+    (2 * Real.pi / D) ^ 2 / ((h : ℝ) ^ depth) ^ 2 =
+        (2 * Real.pi / (D * (h : ℝ) ^ depth)) ^ 2 := by
+      field_simp
+    _ ≤ ((N : ℝ) / h) ^ 2 :=
+      (sq_le_sq₀ hquotNonneg hNquotNonneg).2 hquot
+    _ = (N : ℝ) ^ 2 / (h : ℝ) ^ 2 := by rw [div_pow]
+
 /-- Explicit criterion under which the arbitrary-depth A-process estimate is
 strictly better than the trivial length bound. -/
 theorem norm_zetaPhase_sum_lt_length_of_constantAProcessPowerSaving
@@ -485,5 +524,25 @@ theorem norm_zetaPhase_sum_lt_length_of_constantAProcessPowerSaving
     nlinarith
   rw [← sq_lt_sq₀ (norm_nonneg _) (Nat.cast_nonneg N)]
   exact hsq.trans_lt hupper
+
+/-- Nontrivial logarithmic exponential-sum estimate stated only with the
+division-free terminal scale condition and the explicit coefficient/gain
+comparison. -/
+theorem norm_zetaPhase_sum_lt_length_of_constantAProcessScaleSaving
+    (t : ℝ) (m N depth h : ℕ)
+    (ht : 0 < t) (hm : 0 < m) (hN : 0 < N)
+    (hh : 1 ≤ h) (hbudget : depth * (h - 1) < N)
+    (hmajor : t * ((depth.factorial : ℝ) * (h : ℝ) ^ depth *
+      ((m : ℝ) ^ (depth + 1))⁻¹) ≤ Real.pi)
+    (hscale : 2 * Real.pi * (h : ℝ) ≤
+      zetaAProcessUniformLeafDeltaLower t m N depth *
+        (h : ℝ) ^ depth * (N : ℝ))
+    (hsaving : constantAProcessCoefficient h depth <
+      constantAProcessGain h depth) :
+    ‖∑ n ∈ Finset.range N, phaseTerm (shiftedZetaPhase t m) n‖ < (N : ℝ) := by
+  apply norm_zetaPhase_sum_lt_length_of_constantAProcessPowerSaving
+    t m N depth h ht hm hN hh hbudget hmajor _ hsaving
+  exact zetaAProcessUniformLeafSquaredBound_normalized_le_of_scale
+    t m N depth h ht hm (lt_of_lt_of_le Nat.zero_lt_one hh) hscale
 
 end ZeroFreeRegion.VinogradovKorobov
