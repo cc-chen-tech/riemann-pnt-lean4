@@ -252,6 +252,24 @@ example :
                 (4 * (2 : ℝ) ^ k) :=
   exists_integral_log_norm_regularizedCarlsonZeroDetector_le_dyadicSum
 
+example :
+    ∃ A : ℝ, 0 ≤ A ∧ ∀ (X : ℕ) (sigma v : ℝ) (n : ℕ),
+      1 ≤ X → 1 / 2 < sigma → sigma < 1 →
+      (2 : ℝ) ^ n ≤ v → v ≤ (2 : ℝ) ^ (n + 1) →
+      (∀ t ∈ Set.Icc 1 v,
+        regularizedCarlsonZeroDetector X
+          ((sigma : ℂ) + Complex.I * t) ≠ 0) →
+        ∫ t in 1..v,
+            Real.log ‖regularizedCarlsonZeroDetector X
+              ((sigma : ℂ) + Complex.I * t)‖ ≤
+          (∑ k ∈ Finset.range n,
+            regularizedCarlsonLogNormEndpoint
+              A 4 X sigma ((2 : ℝ) ^ k) ((2 : ℝ) ^ (k + 1))
+                (4 * (2 : ℝ) ^ k)) +
+          regularizedCarlsonLogNormEndpoint
+            A 4 X sigma ((2 : ℝ) ^ n) v (4 * (2 : ℝ) ^ n) :=
+  exists_integral_log_norm_regularizedCarlsonZeroDetector_le_dyadicCover
+
 #print axioms carlsonZeroDetector_eq_zeta_mul_mollifier_factorization
 #print axioms tendsto_riemannZeta_real_atTop
 #print axioms tendsto_mollifiedZetaError_real_atTop
@@ -278,6 +296,7 @@ example :
 #print axioms exists_integral_log_norm_regularizedCarlsonZeroDetector_le_doublingInterval
 #print axioms exists_integral_log_norm_regularizedCarlsonZeroDetector_le_dyadic
 #print axioms exists_integral_log_norm_regularizedCarlsonZeroDetector_le_dyadicSum
+#print axioms exists_integral_log_norm_regularizedCarlsonZeroDetector_le_dyadicCover
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem
