@@ -1,4 +1,4 @@
-import ZeroFreeRegion.VinogradovKorobov.VinogradovMainEstimate
+import ZeroFreeRegion.VinogradovKorobov.VinogradovLargeValues
 
 open ZeroFreeRegion.VinogradovKorobov
 
@@ -71,3 +71,7 @@ open ZeroFreeRegion.VinogradovKorobov
 #check VinogradovMeanValueEstimate
 #check vinogradovMeanValueEstimate_diagonal
 #check norm_normalizedVinogradovMomentMod_le_of_meanValueEstimate
+#check sum_norm_vinogradovWeylSumMod_pow_two_mul_eq
+#check largeVinogradovCoefficientSet
+#check card_largeVinogradovCoefficientSet_mul_pow_le
+#check card_largeVinogradovCoefficientSet_mul_pow_le_of_meanValueEstimate
