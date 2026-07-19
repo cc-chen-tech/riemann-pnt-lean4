@@ -38,12 +38,19 @@ B(x,h,T) = max(h/L(x,h)-x, x+h-h/L(x,h))
 This is an endpoint transfer penalty, not by itself a two-sided bound for
 `|psi(x)-x|` at one point.
 
-The current Python milestone specializes every profile to the identity
-approximation `A_T(u) = u`; the height parameter may still enter its proposed
-error envelope. It does not yet evaluate the finite difference of the
-residue-sum-minus-contour approximation from `SecondOrderExplicitFormula`.
-That later integration must supply a certified interval for
-`Re(A_T(x+h) - A_T(x))` instead of substituting `h`.
+The current Python milestone has two explicit modes. The identity mode
+`A_T(u) = u` remains a calibration convenience. The certified mode requires a
+directed interval for every requested value of
+`Re(A_T(x+h) - A_T(x))`; missing, duplicate, or unused widths are rejected.
+The optimizer never silently substitutes `h` for a finite-height
+residue-sum-minus-contour approximation.
+
+On the Lean side,
+`exists_chebyshevPsi_bounds_of_secondOrderExplicitFormula` invokes the existing
+finite-height second-order formula at both endpoints and feeds the two proved
+Perron truncation errors into the Riesz-difference sandwich. The three shifted
+contour edges remain inside the approximation. No numerical bound for their
+difference is claimed by this milestone.
 
 ## Frozen repository baseline
 
@@ -179,10 +186,11 @@ namespace; it must not overwrite this experiment.
 ## Reproducible record format
 
 The prototype emits deterministic JSON with schema
-`smoothed-error-comparison-v1`. Required top-level fields are `arithmetic`,
-`domain`, `results`, `schema`, and `winner`. Decimal interval upper bounds are
-serialized as strings, candidate rational parameters as canonical `Fraction`
-strings, and no timestamp or machine-specific path is included.
+`smoothed-error-comparison-v2`. Required top-level fields are `approximation`,
+`arithmetic`, `domain`, `results`, `schema`, and `winner`. Decimal interval
+upper bounds are serialized as strings, candidate rational parameters as
+canonical `Fraction` strings, and no timestamp or machine-specific path is
+included.
 
 One fixed-profile smoke command is:
 
@@ -193,6 +201,7 @@ python3 -m experiments.pnt.smoothed_error_optimizer \
   --candidate fh-1:finite_height:1 \
   --candidate rh-1:rh:1 \
   --candidate zfr-1:classical_zero_free:1:1/5 \
+  --identity-approximation \
   --precision 80
 ```
 
@@ -201,6 +210,8 @@ first executable milestone. The unresolved mathematical problem is to derive
 one of FH-1, RH-1, or ZFR-1 with explicit constants and ranges from the current
 contour, zero-sum, and zero-free estimates without losing more in the smoothing
 transfer than the optimizer recovers. For the actual finite-height explicit
-formula, the next software milestone is to add a rigorously certified interval
-input for `Re(A_T(x+h) - A_T(x))`; the current identity-centered objective must
-not be used for that approximation.
+formula, the remaining analytic milestone is to prove a rigorously certified
+interval for `Re(A_T(x+h) - A_T(x))` from the actual residue sums and the
+difference of the two second-order contour remainders. The input format and
+Lean endpoint bridge now exist, but no candidate envelope has yet been proved
+on its full stated range.

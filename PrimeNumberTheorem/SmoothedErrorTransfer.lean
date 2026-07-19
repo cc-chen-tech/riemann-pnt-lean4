@@ -1,4 +1,5 @@
 import PrimeNumberTheorem.RieszDifference
+import PrimeNumberTheorem.SecondOrderExplicitFormula
 
 /-!
 # Transferring smoothed approximation errors to Chebyshev psi
@@ -11,6 +12,7 @@ both depend on the height parameter `T`.
 -/
 
 open Complex
+open scoped BigOperators Interval
 
 namespace PrimeNumberTheorem
 
@@ -78,5 +80,103 @@ theorem chebyshevPsi_bounds_of_smoothedApproximation
           (smoothedChebyshevPsi (x + h) - smoothedChebyshevPsi x) /
             Real.log ((x + h) / x) := (div_le_div_iff_of_pos_right hlog).2 hLower
       _ ≤ chebyshevPsi (x + h) := hRiesz.2
+
+namespace ExplicitFormulaResidues
+
+/-- The explicit Perron truncation error appearing in the finite-height
+second-order formula. This excludes the three shifted contour edges, which are
+part of the approximation itself. -/
+noncomputable def secondOrderPerronError (x c W : ℝ) : ℝ :=
+  ∑' n : ℕ, vonMangoldt n * (x / n) ^ c / (2 * Real.pi ^ 2 * W)
+
+/-- Apply the finite-height second-order explicit formula at both endpoints of
+one smoothing interval and feed the resulting, genuinely constructed Perron
+error bounds into `chebyshevPsi_bounds_of_smoothedApproximation`.
+
+The approximation at each endpoint is the finite residue sum minus the full
+second-order contour remainder. No bound on that contour remainder is assumed
+or manufactured here. -/
+theorem exists_chebyshevPsi_bounds_of_secondOrderExplicitFormula
+    {x h a c W : ℝ} (hx : 0 < x) (hh : 0 < h) (ha : 0 < a)
+    (hac : a < c) (hc : 1 < c) (hW : 0 < W)
+    (hboundary : ∀ p ∈
+      ([[a, c]] ×ℂ [[-(2 * Real.pi * W), 2 * Real.pi * W]] : Set ℂ),
+      p = 1 ∨ riemannZeta p = 0 →
+        a < p.re ∧ p.re < c ∧
+          -(2 * Real.pi * W) < p.im ∧ p.im < 2 * Real.pi * W) :
+    ∃ (polesX : Finset ℂ) (residueX : ℂ → ℂ)
+        (polesY : Finset ℂ) (residueY : ℂ → ℂ),
+      (∀ p ∈ polesX,
+        a < p.re ∧ p.re < c ∧
+          -(2 * Real.pi * W) < p.im ∧ p.im < 2 * Real.pi * W) ∧
+      (∀ p ∈ polesX, p = 1 ∨ riemannZeta p = 0) ∧
+      (∀ p ∈ polesX, residueX p =
+        if p = 1 then (x : ℂ)
+        else -(analyticOrderNatAt riemannZeta p : ℂ) * (x : ℂ) ^ p / p ^ 2) ∧
+      (∀ p ∈ polesY,
+        a < p.re ∧ p.re < c ∧
+          -(2 * Real.pi * W) < p.im ∧ p.im < 2 * Real.pi * W) ∧
+      (∀ p ∈ polesY, p = 1 ∨ riemannZeta p = 0) ∧
+      (∀ p ∈ polesY, residueY p =
+        if p = 1 then ((x + h : ℝ) : ℂ)
+        else -(analyticOrderNatAt riemannZeta p : ℂ) *
+          ((x + h : ℝ) : ℂ) ^ p / p ^ 2) ∧
+      ‖((∑ p ∈ polesX, residueX p) - secondOrderContourRemainder x a c W) -
+          (smoothedChebyshevPsi x : ℂ)‖ ≤ secondOrderPerronError x c W ∧
+      ‖((∑ p ∈ polesY, residueY p) -
+          secondOrderContourRemainder (x + h) a c W) -
+          (smoothedChebyshevPsi (x + h) : ℂ)‖ ≤
+        secondOrderPerronError (x + h) c W ∧
+      chebyshevPsi x ≤
+          ((((∑ p ∈ polesY, residueY p) -
+                secondOrderContourRemainder (x + h) a c W) -
+              ((∑ p ∈ polesX, residueX p) -
+                secondOrderContourRemainder x a c W)).re +
+            (secondOrderPerronError x c W +
+              secondOrderPerronError (x + h) c W)) /
+              Real.log ((x + h) / x) ∧
+        ((((∑ p ∈ polesY, residueY p) -
+                secondOrderContourRemainder (x + h) a c W) -
+              ((∑ p ∈ polesX, residueX p) -
+                secondOrderContourRemainder x a c W)).re -
+            (secondOrderPerronError x c W +
+              secondOrderPerronError (x + h) c W)) /
+              Real.log ((x + h) / x) ≤
+          chebyshevPsi (x + h) := by
+  have hy : 0 < x + h := by linarith
+  rcases exists_norm_residue_sum_sub_contourRemainder_sub_smoothedPsi_le
+      hx ha hac hc hW hboundary with
+    ⟨polesX, residueX, hpolesX, hclassX, hresidueX, hxError⟩
+  rcases exists_norm_residue_sum_sub_contourRemainder_sub_smoothedPsi_le
+      hy ha hac hc hW hboundary with
+    ⟨polesY, residueY, hpolesY, hclassY, hresidueY, hyError⟩
+  have hxError' :
+      ‖((∑ p ∈ polesX, residueX p) - secondOrderContourRemainder x a c W) -
+          (smoothedChebyshevPsi x : ℂ)‖ ≤ secondOrderPerronError x c W := by
+    simpa [secondOrderPerronError] using hxError
+  have hyError' :
+      ‖((∑ p ∈ polesY, residueY p) -
+          secondOrderContourRemainder (x + h) a c W) -
+          (smoothedChebyshevPsi (x + h) : ℂ)‖ ≤
+        secondOrderPerronError (x + h) c W := by
+    simpa [secondOrderPerronError] using hyError
+  let approxX : ℂ :=
+    (∑ p ∈ polesX, residueX p) - secondOrderContourRemainder x a c W
+  let approxY : ℂ :=
+    (∑ p ∈ polesY, residueY p) - secondOrderContourRemainder (x + h) a c W
+  let approx : ℝ → ℝ → ℂ := fun u _ => if u = x then approxX else approxY
+  let error : ℝ → ℝ → ℝ := fun u _ =>
+    if u = x then secondOrderPerronError x c W
+    else secondOrderPerronError (x + h) c W
+  have hxy : x + h ≠ x := by linarith
+  have hbounds := chebyshevPsi_bounds_of_smoothedApproximation
+    approx error (T := W) hx hh
+    (by simpa [approx, error, approxX] using hxError')
+    (by simpa [approx, error, approxY, hxy] using hyError')
+  refine ⟨polesX, residueX, polesY, residueY, hpolesX, hclassX, hresidueX,
+    hpolesY, hclassY, hresidueY, hxError', hyError', ?_⟩
+  simpa [approx, error, approxX, approxY, hxy] using hbounds
+
+end ExplicitFormulaResidues
 
 end PrimeNumberTheorem
