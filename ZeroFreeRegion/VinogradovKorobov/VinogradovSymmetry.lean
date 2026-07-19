@@ -67,6 +67,45 @@ theorem IsVinogradovSolutionInt.scale {k s : ℕ} {x y : Fin s → ℤ}
   simp_rw [mul_pow, ← Finset.mul_sum]
   rw [h.powerSum_eq (Nat.succ_le_of_lt j.isLt)]
 
+/-- Translation is an equivalence on the integer Vinogradov system. -/
+theorem isVinogradovSolutionInt_translate_iff {k s : ℕ}
+    (x y : Fin s → ℤ) (c : ℤ) :
+    IsVinogradovSolutionInt k s (fun i => x i + c) (fun i => y i + c) ↔
+      IsVinogradovSolutionInt k s x y := by
+  constructor
+  · intro h
+    have hback := h.translate (-c)
+    simpa only [add_neg_cancel_right] using hback
+  · intro h
+    exact h.translate c
+
+/-- A nonzero integer dilation is an equivalence on the integer Vinogradov
+system. -/
+theorem isVinogradovSolutionInt_scale_iff {k s : ℕ}
+    (x y : Fin s → ℤ) {d : ℤ} (hd : d ≠ 0) :
+    IsVinogradovSolutionInt k s (fun i => d * x i) (fun i => d * y i) ↔
+      IsVinogradovSolutionInt k s x y := by
+  constructor
+  · intro h j
+    have hp := h j
+    unfold vinogradovPowerSumInt at hp ⊢
+    simp_rw [mul_pow, ← Finset.mul_sum] at hp
+    exact mul_left_cancel₀ (pow_ne_zero (j.val + 1) hd) hp
+  · intro h
+    exact h.scale d
+
+/-- The bounded natural-number Vinogradov system embeds into the unrestricted
+integer system by sending a coordinate `z : Fin X` to `z + 1`. -/
+theorem IsVinogradovSolutionNat.toInt {k s X : ℕ} {x y : Fin s → Fin X}
+    (h : IsVinogradovSolutionNat k s X x y) :
+    IsVinogradovSolutionInt k s
+      (fun i => ((x i).val + 1 : ℕ))
+      (fun i => ((y i).val + 1 : ℕ)) := by
+  intro j
+  have hp := h j
+  simpa only [vinogradovPowerSumInt, vinogradovPowerSumNat,
+    Nat.cast_sum, Nat.cast_pow] using congrArg (fun z : ℕ => (z : ℤ)) hp
+
 end
 
 end ZeroFreeRegion.VinogradovKorobov

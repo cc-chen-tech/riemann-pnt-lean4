@@ -221,3 +221,6 @@ import ZeroFreeRegion.VinogradovKorobov.VinogradovSymmetry
 #print axioms ZeroFreeRegion.VinogradovKorobov.norm_normalizedVinogradovMomentMod_le_diagonal
 #print axioms ZeroFreeRegion.VinogradovKorobov.IsVinogradovSolutionInt.translate
 #print axioms ZeroFreeRegion.VinogradovKorobov.IsVinogradovSolutionInt.scale
+#print axioms ZeroFreeRegion.VinogradovKorobov.isVinogradovSolutionInt_translate_iff
+#print axioms ZeroFreeRegion.VinogradovKorobov.isVinogradovSolutionInt_scale_iff
+#print axioms ZeroFreeRegion.VinogradovKorobov.IsVinogradovSolutionNat.toInt

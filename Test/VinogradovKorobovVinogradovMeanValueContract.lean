@@ -61,3 +61,6 @@ open ZeroFreeRegion.VinogradovKorobov
 #check IsVinogradovSolutionInt
 #check IsVinogradovSolutionInt.translate
 #check IsVinogradovSolutionInt.scale
+#check isVinogradovSolutionInt_translate_iff
+#check isVinogradovSolutionInt_scale_iff
+#check IsVinogradovSolutionNat.toInt
