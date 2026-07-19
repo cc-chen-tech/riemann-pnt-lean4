@@ -152,6 +152,37 @@ theorem antitone_iterated_shiftedZetaPhase_decrement
     exact_mod_cast Nat.add_le_add_left hab m
   exact hlogAnti haPos hbPos habR
 
+/-- Strict positivity of every adjacent decrement when all recursive shifts
+are positive. -/
+theorem iterated_shiftedZetaPhase_decrement_pos
+    (t : ℝ) (m n : ℕ) (shifts : List ℕ)
+    (ht : 0 < t) (hm : 0 < m) (hshifts : ∀ h ∈ shifts, 0 < h) :
+    0 < iteratedPhaseDifference shifts (shiftedZetaPhase t m) n -
+      iteratedPhaseDifference shifts (shiftedZetaPhase t m) (n + 1) := by
+  have hbounds := iterated_shiftedZetaPhase_decrement_bounds
+    t m n shifts ht.le hm
+  have hprodPos : 0 < ((1 : ℝ) :: natShiftsToReal shifts).prod := by
+    simp only [List.prod_cons, one_mul]
+    exact prod_natShiftsToReal_pos shifts hshifts
+  have hsumNonneg : 0 ≤ ((1 : ℝ) :: natShiftsToReal shifts).sum :=
+    list_sum_nonneg_of_forall _ (by
+      intro k hk
+      simp only [List.mem_cons] at hk
+      rcases hk with rfl | hk
+      · norm_num
+      · exact natShiftsToReal_nonneg shifts k hk)
+  have hbasePos : 0 < ((m + n : ℕ) : ℝ) +
+      ((1 : ℝ) :: natShiftsToReal shifts).sum := by
+    have : 0 < ((m + n : ℕ) : ℝ) := Nat.cast_pos.mpr (by omega)
+    linarith
+  have hlowerPos : 0 < t * ((shifts.length.factorial : ℝ) *
+      ((1 : ℝ) :: natShiftsToReal shifts).prod *
+      ((((m + n : ℕ) : ℝ) +
+        ((1 : ℝ) :: natShiftsToReal shifts).sum) ^
+          ((1 : ℝ) :: natShiftsToReal shifts).length)⁻¹) := by
+    positivity
+  exact hlowerPos.trans_le hbounds.1
+
 /-- Arbitrary-depth Kusmin--Landau terminal estimate for a recursive
 A-process leaf. -/
 theorem iterated_shiftedZetaPhase_kusminLandau_range

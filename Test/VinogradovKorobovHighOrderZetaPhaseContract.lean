@@ -6,6 +6,12 @@ example (t : ℝ) (m n : ℕ) (shifts : List ℕ)
     (ht : 0 ≤ t) (hm : 0 < m) :=
   iterated_shiftedZetaPhase_decrement_bounds t m n shifts ht hm
 
+example (t : ℝ) (m n : ℕ) (shifts : List ℕ)
+    (ht : 0 < t) (hm : 0 < m) (hshifts : ∀ h ∈ shifts, 0 < h) :
+    0 < iteratedPhaseDifference shifts (shiftedZetaPhase t m) n -
+      iteratedPhaseDifference shifts (shiftedZetaPhase t m) (n + 1) :=
+  iterated_shiftedZetaPhase_decrement_pos t m n shifts ht hm hshifts
+
 example (t : ℝ) (m R : ℕ) (shifts : List ℕ)
     (ht : 0 < t) (hm : 0 < m) (hR : 1 ≤ R)
     (hshifts : ∀ h ∈ shifts, 0 < h)
