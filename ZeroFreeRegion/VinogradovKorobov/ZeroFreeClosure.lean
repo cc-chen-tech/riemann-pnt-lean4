@@ -9,6 +9,11 @@ noncomputable def vinogradovKorobovScale (t : ℝ) : ℝ :=
   (Real.log t) ^ (2 / 3 : ℝ) *
     (Real.log (Real.log t)) ^ (1 / 3 : ℝ)
 
+/-- The standard horizontal radius used to convert Richert growth into the
+Vinogradov--Korobov logarithmic-derivative scale. -/
+noncomputable def vinogradovKorobovEta (t : ℝ) : ℝ :=
+  (Real.log (Real.log t) / Real.log t) ^ (2 / 3 : ℝ)
+
 /-- The width appearing in the Vinogradov--Korobov zero-free region. -/
 noncomputable def vinogradovKorobovWidth (c t : ℝ) : ℝ :=
   c / (Real.log t) ^ (2 / 3 : ℝ) *
@@ -27,6 +32,62 @@ theorem vinogradovKorobovScale_pos {t : ℝ} (ht : 3 ≤ t) :
     exact Real.log_pos hlogone
   unfold vinogradovKorobovScale
   positivity
+
+theorem vinogradovKorobovEta_pos {t : ℝ} (ht : 3 ≤ t) :
+    0 < vinogradovKorobovEta t := by
+  have hlogpos : 0 < Real.log t := Real.log_pos (by linarith)
+  have hloglogpos : 0 < Real.log (Real.log t) := by
+    have ht0 : 0 ≤ t := by linarith
+    have hlogone : 1 < Real.log t := by
+      simpa [abs_of_nonneg ht0] using
+        (ZeroFreeRegion.log_abs_gt_one_of_three_le
+          (ht.trans (le_abs_self t)))
+    exact Real.log_pos hlogone
+  unfold vinogradovKorobovEta
+  positivity
+
+/-- The parameter identity behind the VK exponent: a logarithmic-growth loss
+`log log t`, divided by the Richert radius `eta(t)`, is exactly `S(t)`. -/
+theorem log_log_div_vinogradovKorobovEta_eq_scale
+    {t : ℝ} (ht : 3 ≤ t) :
+    Real.log (Real.log t) / vinogradovKorobovEta t =
+      vinogradovKorobovScale t := by
+  have hL : 0 < Real.log t := Real.log_pos (by linarith)
+  have hLL : 0 < Real.log (Real.log t) := by
+    have ht0 : 0 ≤ t := by linarith
+    have hLone : 1 < Real.log t := by
+      simpa [abs_of_nonneg ht0] using
+        (ZeroFreeRegion.log_abs_gt_one_of_three_le
+          (ht.trans (le_abs_self t)))
+    exact Real.log_pos hLone
+  have hsub := Real.rpow_sub hLL (1 : ℝ) (2 / 3 : ℝ)
+  have hquot : Real.log (Real.log t) /
+      (Real.log (Real.log t)) ^ (2 / 3 : ℝ) =
+        (Real.log (Real.log t)) ^ (1 / 3 : ℝ) := by
+    calc
+      Real.log (Real.log t) /
+          (Real.log (Real.log t)) ^ (2 / 3 : ℝ) =
+          (Real.log (Real.log t)) ^ (1 : ℝ) /
+            (Real.log (Real.log t)) ^ (2 / 3 : ℝ) := by
+              rw [Real.rpow_one]
+      _ = (Real.log (Real.log t)) ^ ((1 : ℝ) - 2 / 3) := hsub.symm
+      _ = (Real.log (Real.log t)) ^ (1 / 3 : ℝ) := by norm_num
+  unfold vinogradovKorobovEta vinogradovKorobovScale
+  rw [Real.div_rpow hLL.le hL.le]
+  have hLp : (Real.log t) ^ (2 / 3 : ℝ) ≠ 0 :=
+    ne_of_gt (Real.rpow_pos_of_pos hL _)
+  have hLLp : (Real.log (Real.log t)) ^ (2 / 3 : ℝ) ≠ 0 :=
+    ne_of_gt (Real.rpow_pos_of_pos hLL _)
+  calc
+    Real.log (Real.log t) /
+        ((Real.log (Real.log t)) ^ (2 / 3 : ℝ) /
+          (Real.log t) ^ (2 / 3 : ℝ)) =
+        (Real.log t) ^ (2 / 3 : ℝ) *
+          (Real.log (Real.log t) /
+            (Real.log (Real.log t)) ^ (2 / 3 : ℝ)) := by
+              field_simp [hLp, hLLp]
+    _ = (Real.log t) ^ (2 / 3 : ℝ) *
+        (Real.log (Real.log t)) ^ (1 / 3 : ℝ) := by rw [hquot]
 
 /-- On its native range, the repository width is exactly `c / S(t)`. -/
 theorem vinogradovKorobovWidth_eq_div_scale

@@ -8,8 +8,18 @@ noncomputable example (c t : ℝ) : ℝ := vinogradovKorobovWidth c t
 
 noncomputable example (t : ℝ) : ℝ := vinogradovKorobovScale t
 
+noncomputable example (t : ℝ) : ℝ := vinogradovKorobovEta t
+
 example {t : ℝ} (ht : 3 ≤ t) : 0 < vinogradovKorobovScale t :=
   vinogradovKorobovScale_pos ht
+
+example {t : ℝ} (ht : 3 ≤ t) : 0 < vinogradovKorobovEta t :=
+  vinogradovKorobovEta_pos ht
+
+example {t : ℝ} (ht : 3 ≤ t) :
+    Real.log (Real.log t) / vinogradovKorobovEta t =
+      vinogradovKorobovScale t :=
+  log_log_div_vinogradovKorobovEta_eq_scale ht
 
 example {c t : ℝ} (ht : 3 ≤ t) :
     vinogradovKorobovWidth c t = c / vinogradovKorobovScale t :=
