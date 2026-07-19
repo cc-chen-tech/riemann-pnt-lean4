@@ -1,4 +1,4 @@
-import ZeroFreeRegion.VinogradovKorobov.VinogradovDiagonal
+import ZeroFreeRegion.VinogradovKorobov.VinogradovSymmetry
 
 open ZeroFreeRegion.VinogradovKorobov
 
@@ -57,3 +57,7 @@ open ZeroFreeRegion.VinogradovKorobov
 #check fixed_left_solution_count_le_factorial
 #check vinogradovSolutionCountNat_le_diagonal
 #check norm_normalizedVinogradovMomentMod_le_diagonal
+#check vinogradovPowerSumInt
+#check IsVinogradovSolutionInt
+#check IsVinogradovSolutionInt.translate
+#check IsVinogradovSolutionInt.scale

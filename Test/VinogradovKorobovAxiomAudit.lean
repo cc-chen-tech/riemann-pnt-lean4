@@ -24,6 +24,7 @@ import ZeroFreeRegion.VinogradovKorobov.VinogradovQuadratic
 import ZeroFreeRegion.VinogradovKorobov.VinogradovMonotonicity
 import ZeroFreeRegion.VinogradovKorobov.VinogradovNewton
 import ZeroFreeRegion.VinogradovKorobov.VinogradovDiagonal
+import ZeroFreeRegion.VinogradovKorobov.VinogradovSymmetry
 
 #print axioms ZeroFreeRegion.VinogradovKorobov.vanDerCorputFundamentalInequality
 #print axioms ZeroFreeRegion.VinogradovKorobov.phaseTerm_mul_conj_shift
@@ -218,3 +219,5 @@ import ZeroFreeRegion.VinogradovKorobov.VinogradovDiagonal
 #print axioms ZeroFreeRegion.VinogradovKorobov.fixed_left_solution_count_le_factorial
 #print axioms ZeroFreeRegion.VinogradovKorobov.vinogradovSolutionCountNat_le_diagonal
 #print axioms ZeroFreeRegion.VinogradovKorobov.norm_normalizedVinogradovMomentMod_le_diagonal
+#print axioms ZeroFreeRegion.VinogradovKorobov.IsVinogradovSolutionInt.translate
+#print axioms ZeroFreeRegion.VinogradovKorobov.IsVinogradovSolutionInt.scale
