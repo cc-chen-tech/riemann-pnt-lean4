@@ -344,6 +344,39 @@ theorem vinogradovPrimePowerDigitEquiv_symm_apply
       ((vinogradovPrimePowerDigitEquiv p n).symm z) = z :=
   (vinogradovPrimePowerDigitEquiv p n).apply_symm_apply z
 
+/-- Coordinatewise digit decomposition for a complete tuple. -/
+noncomputable def vinogradovPrimePowerTupleDigitEquiv
+    (p s n : ℕ) [Fact p.Prime] :
+    ((Fin s → Fin (p ^ (n + 1))) × (Fin s → ZMod p)) ≃
+      (Fin s → Fin (p ^ (n + 2))) where
+  toFun z i := vinogradovPrimePowerDigitEquiv p n (z.1 i, z.2 i)
+  invFun z :=
+    (fun i ↦ ((vinogradovPrimePowerDigitEquiv p n).symm (z i)).1,
+      fun i ↦ ((vinogradovPrimePowerDigitEquiv p n).symm (z i)).2)
+  left_inv z := by
+    apply Prod.ext
+    · funext i
+      exact congrArg Prod.fst
+        ((vinogradovPrimePowerDigitEquiv p n).symm_apply_apply
+          (z.1 i, z.2 i))
+    · funext i
+      exact congrArg Prod.snd
+        ((vinogradovPrimePowerDigitEquiv p n).symm_apply_apply
+          (z.1 i, z.2 i))
+  right_inv z := by
+    funext i
+    exact (vinogradovPrimePowerDigitEquiv p n).apply_symm_apply (z i)
+
+/-- The coordinatewise tuple equivalence has the same base-plus-digit value
+formula as the scalar equivalence. -/
+theorem vinogradovPrimePowerTupleDigitEquiv_apply_val
+    (p s n : ℕ) [Fact p.Prime]
+    (x : Fin s → Fin (p ^ (n + 1))) (u : Fin s → ZMod p)
+    (i : Fin s) :
+    (vinogradovPrimePowerTupleDigitEquiv p s n (x, u) i).val =
+      (x i).val + p ^ (n + 1) * (u i).val :=
+  vinogradovPrimePowerDigitEquiv_apply_val p n (x i) (u i)
+
 end
 
 end ZeroFreeRegion.VinogradovKorobov

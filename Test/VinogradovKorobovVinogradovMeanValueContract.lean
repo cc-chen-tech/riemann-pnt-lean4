@@ -138,6 +138,8 @@ open ZeroFreeRegion.VinogradovKorobov
 #check vinogradovPrimePowerDigitEquiv
 #check vinogradovPrimePowerDigitEquiv_apply_val
 #check vinogradovPrimePowerDigitEquiv_symm_apply
+#check vinogradovPrimePowerTupleDigitEquiv
+#check vinogradovPrimePowerTupleDigitEquiv_apply_val
 #check card_singular_add_card_nonsingular_eq_vinogradovSolutionCountMod
 #check vinogradovSolutionCountMod_le_nonsingular_add_error
 #check vinogradovHeadCorrectionSet
