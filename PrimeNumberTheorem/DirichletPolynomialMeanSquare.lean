@@ -29,6 +29,79 @@ noncomputable def hilbertForm {ι : Type*} [DecidableEq ι]
   ∑ m ∈ S, ∑ n ∈ S,
     if m = n then 0 else conj (c m) * c n / (omega n - omega m)
 
+/-- The off-diagonal Hilbert form is purely imaginary.  This is the finite
+matrix symmetry used by two-sided positive-kernel proofs of Hilbert's
+inequality. -/
+theorem conj_hilbertForm_eq_neg {ι : Type*} [DecidableEq ι]
+    (S : Finset ι) (c : ι → ℂ) (omega : ι → ℝ) :
+    conj (hilbertForm S c omega) = -hilbertForm S c omega := by
+  unfold hilbertForm
+  simp only [map_sum]
+  calc
+    (∑ m ∈ S, ∑ n ∈ S,
+        conj (if m = n then 0
+          else conj (c m) * c n / (omega n - omega m))) =
+        ∑ m ∈ S, ∑ n ∈ S,
+          -(if n = m then 0
+            else conj (c n) * c m / (omega m - omega n)) := by
+      apply Finset.sum_congr rfl
+      intro m hm
+      apply Finset.sum_congr rfl
+      intro n hn
+      by_cases hmn : m = n
+      · subst n
+        simp
+      · simp only [if_neg hmn, if_neg (Ne.symm hmn)]
+        have hden :
+            ((omega n : ℂ) - (omega m : ℂ))⁻¹ =
+              -((omega m : ℂ) - (omega n : ℂ))⁻¹ := by
+          rw [show (omega m : ℂ) - (omega n : ℂ) =
+            -((omega n : ℂ) - (omega m : ℂ)) by ring, inv_neg]
+          ring
+        change conj (conj (c m) * c n *
+            (((omega n : ℂ) - (omega m : ℂ))⁻¹)) =
+          -(conj (c n) * c m *
+            (((omega m : ℂ) - (omega n : ℂ))⁻¹))
+        rw [map_mul, map_mul, map_inv₀, map_sub, conj_conj,
+          conj_ofReal, conj_ofReal, hden]
+        ring
+    _ = ∑ m ∈ S, ∑ n ∈ S,
+          -(if m = n then 0
+            else conj (c m) * c n / (omega n - omega m)) := by
+      rw [Finset.sum_comm]
+    _ = -(∑ m ∈ S, ∑ n ∈ S,
+          if m = n then 0
+          else conj (c m) * c n / (omega n - omega m)) := by
+      simp
+
+/-- Real-part formulation of `conj_hilbertForm_eq_neg`. -/
+theorem hilbertForm_re_eq_zero {ι : Type*} [DecidableEq ι]
+    (S : Finset ι) (c : ι → ℂ) (omega : ι → ℝ) :
+    (hilbertForm S c omega).re = 0 := by
+  have h := congrArg Complex.re (conj_hilbertForm_eq_neg S c omega)
+  simp only [conj_re, neg_re] at h
+  linarith
+
+/-- A two-sided positive-kernel certificate controls the norm of the Hilbert
+form.  Fourier proofs of the weighted Hilbert--Montgomery--Vaughan inequality
+produce exactly these two real-part inequalities. -/
+theorem norm_hilbertForm_le_of_two_sided_re_nonneg
+    {ι : Type*} [DecidableEq ι] {S : Finset ι}
+    {c : ι → ℂ} {omega : ι → ℝ} {D : ℝ}
+    (hplus : 0 ≤ ((D : ℂ) + Complex.I * hilbertForm S c omega).re)
+    (hminus : 0 ≤ ((D : ℂ) - Complex.I * hilbertForm S c omega).re) :
+    ‖hilbertForm S c omega‖ ≤ D := by
+  have hre := hilbertForm_re_eq_zero S c omega
+  have himUpper : (hilbertForm S c omega).im ≤ D := by
+    simpa using hplus
+  have himLower : -D ≤ (hilbertForm S c omega).im := by
+    have h : 0 ≤ D + (hilbertForm S c omega).im := by
+      simpa using hminus
+    linarith
+  rw [Complex.norm_def, Complex.normSq_apply, hre, zero_mul, zero_add,
+    ← pow_two, Real.sqrt_sq_eq_abs]
+  exact abs_le.mpr ⟨himLower, himUpper⟩
+
 private theorem integral_exp_mul_complex {a b : ℝ} {c : ℂ} (hc : c ≠ 0) :
     (∫ x in a..b, Complex.exp (c * x)) =
       (Complex.exp (c * b) - Complex.exp (c * a)) / c := by
@@ -396,6 +469,29 @@ theorem finiteExponentialSum_meanSquare_le_of_hilbert
     _ ≤ (b - a) * D + (C * W + C * W) :=
       add_le_add (le_refl _) (add_le_add hHb hHa)
     _ = (b - a) * D + 2 * C * W := by ring
+
+/-- Transfer two-sided positive-kernel certificates directly to a finite
+exponential-sum mean-square bound.  This is the interface used by the Fourier
+proof of the weighted Hilbert--Montgomery--Vaughan inequality. -/
+theorem finiteExponentialSum_meanSquare_le_of_two_sided_certificate
+    {ι : Type*} [DecidableEq ι] {S : Finset ι} {c : ι → ℂ}
+    {omega weight : ι → ℝ} {a b C : ℝ}
+    (hab : a ≤ b) (homega : Set.InjOn omega (S : Set ι))
+    (hweight : ∀ n ∈ S, 0 ≤ weight n)
+    (hplus : ∀ d : ι → ℂ,
+      0 ≤ (((C * ∑ n ∈ S, weight n * ‖d n‖ ^ 2 : ℝ) : ℂ) +
+        Complex.I * hilbertForm S d omega).re)
+    (hminus : ∀ d : ι → ℂ,
+      0 ≤ (((C * ∑ n ∈ S, weight n * ‖d n‖ ^ 2 : ℝ) : ℂ) -
+        Complex.I * hilbertForm S d omega).re) :
+    ∫ t in a..b, ‖finiteExponentialSum S c omega t‖ ^ 2 ≤
+      (b - a) * ∑ n ∈ S, ‖c n‖ ^ 2 +
+        2 * C * ∑ n ∈ S, weight n * ‖c n‖ ^ 2 := by
+  apply finiteExponentialSum_meanSquare_le_of_hilbert
+    hab homega hweight
+  intro d
+  exact norm_hilbertForm_le_of_two_sided_re_nonneg
+    (hplus d) (hminus d)
 
 /-- A finite-frequency Montgomery--Vaughan type mean-square bound.  The
 diagonal contributes the interval length, while each pair of distinct
