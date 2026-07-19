@@ -1,0 +1,9 @@
+import MathlibAux.TimeDependentLogHilbertMeasurable
+
+open Complex MeasureTheory Set
+open scoped BigOperators
+
+#check MathlibAux.norm_integral_timeDependentLogOffDiagonal_le_of_measurable
+#check MathlibAux.integral_normSq_timeDependentLogPolynomial_le_of_measurable
+#print axioms MathlibAux.norm_integral_timeDependentLogOffDiagonal_le_of_measurable
+#print axioms MathlibAux.integral_normSq_timeDependentLogPolynomial_le_of_measurable

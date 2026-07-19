@@ -117,6 +117,9 @@ EXPECTED_DECLARATIONS = {
     "HardyTheorem.sum_normSq_deriv_hardyPhaseWindowCoeff_far_high_le",
     "HardyTheorem.sum_normSq_deriv_hardyPhaseWindowCoeff_full_le",
     "HardyTheorem.sum_normSq_deriv_hardyPhaseWindowCoeff_full_le_mul",
+    "MathlibAux.norm_integral_timeDependentLogOffDiagonal_le_of_measurable",
+    "MathlibAux.integral_normSq_timeDependentLogPolynomial_le_of_measurable",
+    "HardyTheorem.integral_normSq_hardyPhaseLinearizedSum_le",
 }
 
 REPORT_RE = re.compile(

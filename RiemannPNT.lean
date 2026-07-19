@@ -32,6 +32,7 @@ import HardyTheorem.HardyPhaseLowTailDerivativeEnergy
 import HardyTheorem.HardyPhaseHighTailDerivativeEnergy
 import HardyTheorem.HardyPhaseFullDerivativeEnergy
 import HardyTheorem.HardyPhaseWindowPolynomial
+import HardyTheorem.HardyPhaseMovingSecondMoment
 import HardyTheorem.HardyPhaseHilbert
 import HardyTheorem.HardyOddMultiplicity
 import MathlibAux.SlidingIntervalCorrelation
@@ -49,6 +50,7 @@ import MathlibAux.LogKernelRemainder
 import MathlibAux.LogDirichletPolynomialMeanSquare
 import MathlibAux.LogarithmicHilbertIntegrationByParts
 import MathlibAux.TimeDependentLogHilbert
+import MathlibAux.TimeDependentLogHilbertMeasurable
 import MathlibAux.RectangularFourierFirstMoment
 import MathlibAux.RectangularFourierEnvelope
 import HardyTheorem.HardyPhaseHilbertShiftIntegral
