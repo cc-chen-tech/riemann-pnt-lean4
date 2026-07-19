@@ -109,4 +109,41 @@ example (sigma t : ℝ) (m N B depth h : ℕ)
   norm_dirichletInterval_le_sum_constantAProcessExplicitPower
     sigma t m N B depth h hsigma ht hm hB hh hmajor hscale
 
+example (sigma t : ℝ) (m N B depth h : ℕ)
+    (hsigma : 0 ≤ sigma) (ht : 0 < t) (hm : 0 < m)
+    (hB : 0 < B) (hh : 1 ≤ h)
+    (hmajor : t * ((depth.factorial : ℝ) * (h : ℝ) ^ depth *
+      ((m : ℝ) ^ (depth + 1))⁻¹) ≤ Real.pi)
+    (hscale : 2 * Real.pi * (h : ℝ) ≤
+      zetaAProcessUniformLeafDeltaLower t m N depth *
+        (h : ℝ) ^ depth *
+          (constantAProcessPrefixThreshold depth h : ℝ)) :
+    ‖dirichletInterval sigma t m N‖ ≤
+      ∑ j ∈ Finset.range (N / B),
+          dirichletWeight sigma (m + j * B) *
+            max (constantAProcessPrefixThreshold depth h : ℝ)
+              (6 * (1 + Real.log h) * (B : ℝ) /
+                (h : ℝ) ^ (1 / (2 : ℝ) ^ depth : ℝ)) +
+        (N % B : ℕ) :=
+  norm_dirichletInterval_le_sum_constantAProcessExplicitPower_of_global_scale
+    sigma t m N B depth h hsigma ht hm hB hh hmajor hscale
+
+example (sigma t : ℝ) (m N B depth h : ℕ)
+    (hsigma : 0 ≤ sigma) (ht : 0 < t) (hm : 0 < m)
+    (hB : 0 < B) (hh : 1 ≤ h)
+    (hmajor : t * ((depth.factorial : ℝ) * (h : ℝ) ^ depth *
+      ((m : ℝ) ^ (depth + 1))⁻¹) ≤ Real.pi)
+    (hscale : 2 * Real.pi * (h : ℝ) ≤
+      zetaAProcessUniformLeafDeltaLower t m N depth *
+        (h : ℝ) ^ depth *
+          (constantAProcessPrefixThreshold depth h : ℝ)) :
+    ‖dirichletInterval sigma t m N‖ ≤
+      (N / B : ℕ) * dirichletWeight sigma m *
+        max (constantAProcessPrefixThreshold depth h : ℝ)
+          (6 * (1 + Real.log h) * (B : ℝ) /
+            (h : ℝ) ^ (1 / (2 : ℝ) ^ depth : ℝ)) +
+        (N % B : ℕ) :=
+  norm_dirichletInterval_le_numBlocks_mul_constantAProcessExplicitPower
+    sigma t m N B depth h hsigma ht hm hB hh hmajor hscale
+
 end ZeroFreeRegion.VinogradovKorobov

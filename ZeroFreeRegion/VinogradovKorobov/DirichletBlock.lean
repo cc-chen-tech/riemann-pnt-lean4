@@ -24,6 +24,17 @@ lemma dirichletWeight_antitone
   · exact Set.mem_Ioi.mpr (by positivity)
   · exact_mod_cast (show m + k ≤ m + (k + 1) by omega)
 
+/-- Dirichlet weights with nonnegative real part are antitone on all positive
+integer arguments. -/
+lemma dirichletWeight_le_of_le
+    {sigma : ℝ} (hsigma : 0 ≤ sigma) {m n : ℕ}
+    (hm : 0 < m) (hmn : m ≤ n) :
+    dirichletWeight sigma n ≤ dirichletWeight sigma m := by
+  apply Real.antitoneOn_rpow_Ioi_of_exponent_nonpos (neg_nonpos.mpr hsigma)
+  · exact Set.mem_Ioi.mpr (by exact_mod_cast hm)
+  · exact Set.mem_Ioi.mpr (by exact_mod_cast hm.trans_le hmn)
+  · exact_mod_cast hmn
+
 /-- Split a Dirichlet monomial into its decreasing real amplitude and unit
 logarithmic oscillation. -/
 lemma inv_nat_cpow_eq_dirichletWeight_mul_zetaOscillation

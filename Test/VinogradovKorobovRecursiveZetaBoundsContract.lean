@@ -11,6 +11,14 @@ noncomputable example (t : ℝ) (m N depth : ℕ) : ℝ :=
 noncomputable example (t : ℝ) (m N depth : ℕ) (shifts : List ℕ) : ℝ :=
   zetaAProcessProductLeafSquaredBound t m N depth shifts
 
+example (t : ℝ) (m₁ N₁ m₂ N₂ depth : ℕ)
+    (ht : 0 ≤ t) (hleft : 0 < m₁ + N₁)
+    (hend : m₁ + N₁ ≤ m₂ + N₂) :
+    zetaAProcessUniformLeafDeltaLower t m₂ N₂ depth ≤
+      zetaAProcessUniformLeafDeltaLower t m₁ N₁ depth :=
+  zetaAProcessUniformLeafDeltaLower_antitone_endpoint
+    t m₁ N₁ m₂ N₂ depth ht hleft hend
+
 example (t : ℝ) (m N depth : ℕ) (shifts : List ℕ)
     (ht : 0 < t) (hm : 0 < m)
     (hR : 1 ≤ remainingAProcessLength N shifts)

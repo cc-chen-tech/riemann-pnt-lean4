@@ -296,4 +296,127 @@ theorem norm_dirichletInterval_le_sum_constantAProcessExplicitPower
       · exact norm_dirichletInterval_le_length sigma t
           (m + (N / B) * B) (N % B) hsigma (by omega)
 
+/-- The long-interval A-process estimate with all local block hypotheses
+discharged by one condition at the left endpoint and one condition at the
+global right endpoint. -/
+theorem norm_dirichletInterval_le_sum_constantAProcessExplicitPower_of_global_scale
+    (sigma t : ℝ) (m N B depth h : ℕ)
+    (hsigma : 0 ≤ sigma) (ht : 0 < t) (hm : 0 < m)
+    (hB : 0 < B) (hh : 1 ≤ h)
+    (hmajor : t * ((depth.factorial : ℝ) * (h : ℝ) ^ depth *
+      ((m : ℝ) ^ (depth + 1))⁻¹) ≤ Real.pi)
+    (hscale : 2 * Real.pi * (h : ℝ) ≤
+      zetaAProcessUniformLeafDeltaLower t m N depth *
+        (h : ℝ) ^ depth *
+          (constantAProcessPrefixThreshold depth h : ℝ)) :
+    ‖dirichletInterval sigma t m N‖ ≤
+      ∑ j ∈ Finset.range (N / B),
+          dirichletWeight sigma (m + j * B) *
+            max (constantAProcessPrefixThreshold depth h : ℝ)
+              (6 * (1 + Real.log h) * (B : ℝ) /
+                (h : ℝ) ^ (1 / (2 : ℝ) ^ depth : ℝ)) +
+        (N % B : ℕ) := by
+  apply norm_dirichletInterval_le_sum_constantAProcessExplicitPower
+    sigma t m N B depth h hsigma ht hm hB hh
+  · intro j hj
+    have hdelta := zetaAProcessUniformLeafDeltaLower_antitone_endpoint
+      t m 0 (m + j * B) 0 depth ht.le (by omega) (by omega)
+    calc
+      t * ((depth.factorial : ℝ) * (h : ℝ) ^ depth *
+          (((m + j * B : ℕ) : ℝ) ^ (depth + 1))⁻¹) =
+          zetaAProcessUniformLeafDeltaLower t (m + j * B) 0 depth *
+            (h : ℝ) ^ depth := by
+        unfold zetaAProcessUniformLeafDeltaLower
+        simp only [Nat.add_zero]
+        ring
+      _ ≤ zetaAProcessUniformLeafDeltaLower t m 0 depth *
+            (h : ℝ) ^ depth :=
+        mul_le_mul_of_nonneg_right hdelta (by positivity)
+      _ = t * ((depth.factorial : ℝ) * (h : ℝ) ^ depth *
+          ((m : ℝ) ^ (depth + 1))⁻¹) := by
+        unfold zetaAProcessUniformLeafDeltaLower
+        simp only [Nat.add_zero]
+        ring
+      _ ≤ Real.pi := hmajor
+  · intro j hj K hthreshold hKB
+    have hjq : j + 1 ≤ N / B := by omega
+    have hmul : (j + 1) * B ≤ (N / B) * B :=
+      Nat.mul_le_mul_right B hjq
+    have hquotient : (N / B) * B ≤ N := Nat.div_mul_le_self N B
+    have hend : m + j * B + K ≤ m + N := by
+      have hblock : j * B + K ≤ (j + 1) * B := by
+        have hprefix := Nat.add_le_add_left hKB (j * B)
+        simpa only [Nat.succ_mul] using hprefix
+      omega
+    have hdelta := zetaAProcessUniformLeafDeltaLower_antitone_endpoint
+      t (m + j * B) K m N depth ht.le (by omega) hend
+    have hglobalNonneg :
+        0 ≤ zetaAProcessUniformLeafDeltaLower t m N depth := by
+      unfold zetaAProcessUniformLeafDeltaLower
+      positivity
+    have hthresholdReal :
+        (constantAProcessPrefixThreshold depth h : ℝ) ≤ (K : ℝ) := by
+      exact_mod_cast hthreshold
+    calc
+      2 * Real.pi * (h : ℝ) ≤
+          zetaAProcessUniformLeafDeltaLower t m N depth *
+            (h : ℝ) ^ depth *
+              (constantAProcessPrefixThreshold depth h : ℝ) := hscale
+      _ ≤ zetaAProcessUniformLeafDeltaLower t m N depth *
+            (h : ℝ) ^ depth * (K : ℝ) := by
+        exact mul_le_mul_of_nonneg_left hthresholdReal
+          (mul_nonneg hglobalNonneg (by positivity))
+      _ ≤ zetaAProcessUniformLeafDeltaLower t (m + j * B) K depth *
+            (h : ℝ) ^ depth * (K : ℝ) := by
+        have hcore := mul_le_mul_of_nonneg_right hdelta
+          (show 0 ≤ (h : ℝ) ^ depth by positivity)
+        exact mul_le_mul_of_nonneg_right hcore (Nat.cast_nonneg K)
+
+/-- Scale-explicit long-interval estimate with the block sum replaced by the
+number of blocks times the left-endpoint Dirichlet weight. -/
+theorem norm_dirichletInterval_le_numBlocks_mul_constantAProcessExplicitPower
+    (sigma t : ℝ) (m N B depth h : ℕ)
+    (hsigma : 0 ≤ sigma) (ht : 0 < t) (hm : 0 < m)
+    (hB : 0 < B) (hh : 1 ≤ h)
+    (hmajor : t * ((depth.factorial : ℝ) * (h : ℝ) ^ depth *
+      ((m : ℝ) ^ (depth + 1))⁻¹) ≤ Real.pi)
+    (hscale : 2 * Real.pi * (h : ℝ) ≤
+      zetaAProcessUniformLeafDeltaLower t m N depth *
+        (h : ℝ) ^ depth *
+          (constantAProcessPrefixThreshold depth h : ℝ)) :
+    ‖dirichletInterval sigma t m N‖ ≤
+      (N / B : ℕ) * dirichletWeight sigma m *
+        max (constantAProcessPrefixThreshold depth h : ℝ)
+          (6 * (1 + Real.log h) * (B : ℝ) /
+            (h : ℝ) ^ (1 / (2 : ℝ) ^ depth : ℝ)) +
+        (N % B : ℕ) := by
+  have hsum :=
+    norm_dirichletInterval_le_sum_constantAProcessExplicitPower_of_global_scale
+      sigma t m N B depth h hsigma ht hm hB hh hmajor hscale
+  refine hsum.trans ?_
+  apply add_le_add
+  · calc
+      ∑ j ∈ Finset.range (N / B),
+          dirichletWeight sigma (m + j * B) *
+            max (constantAProcessPrefixThreshold depth h : ℝ)
+              (6 * (1 + Real.log h) * (B : ℝ) /
+                (h : ℝ) ^ (1 / (2 : ℝ) ^ depth : ℝ)) ≤
+          ∑ _j ∈ Finset.range (N / B),
+            dirichletWeight sigma m *
+              max (constantAProcessPrefixThreshold depth h : ℝ)
+                (6 * (1 + Real.log h) * (B : ℝ) /
+                  (h : ℝ) ^ (1 / (2 : ℝ) ^ depth : ℝ)) := by
+        apply Finset.sum_le_sum
+        intro j hj
+        apply mul_le_mul_of_nonneg_right
+          (dirichletWeight_le_of_le hsigma hm (by omega))
+        exact (Nat.cast_nonneg _).trans (le_max_left _ _)
+      _ = (N / B : ℕ) * dirichletWeight sigma m *
+          max (constantAProcessPrefixThreshold depth h : ℝ)
+            (6 * (1 + Real.log h) * (B : ℝ) /
+              (h : ℝ) ^ (1 / (2 : ℝ) ^ depth : ℝ)) := by
+        simp only [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
+        ring
+  · exact le_rfl
+
 end ZeroFreeRegion.VinogradovKorobov

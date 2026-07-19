@@ -34,6 +34,24 @@ noncomputable def zetaAProcessUniformLeafDeltaLower
   t * ((depth.factorial : ℝ) *
     (((m + N : ℕ) : ℝ) ^ (depth + 1))⁻¹)
 
+/-- The path-independent leaf decrement lower bound decreases when the
+right endpoint of the root block moves to the right. -/
+theorem zetaAProcessUniformLeafDeltaLower_antitone_endpoint
+    (t : ℝ) (m₁ N₁ m₂ N₂ depth : ℕ)
+    (ht : 0 ≤ t) (hleft : 0 < m₁ + N₁)
+    (hend : m₁ + N₁ ≤ m₂ + N₂) :
+    zetaAProcessUniformLeafDeltaLower t m₂ N₂ depth ≤
+      zetaAProcessUniformLeafDeltaLower t m₁ N₁ depth := by
+  have hleftReal : 0 < (((m₁ + N₁ : ℕ) : ℝ)) := by
+    exact_mod_cast hleft
+  have hendReal : (((m₁ + N₁ : ℕ) : ℝ)) ≤
+      (((m₂ + N₂ : ℕ) : ℝ)) := by
+    exact_mod_cast hend
+  have hinv := inv_pow_antitone (depth + 1) hleftReal hendReal
+  unfold zetaAProcessUniformLeafDeltaLower
+  apply mul_le_mul_of_nonneg_left _ ht
+  exact mul_le_mul_of_nonneg_left hinv (Nat.cast_nonneg depth.factorial)
+
 /-- Path-independent squared Kusmin--Landau envelope at fixed depth. -/
 noncomputable def zetaAProcessUniformLeafSquaredBound
     (t : ℝ) (m N depth : ℕ) : ℝ :=
