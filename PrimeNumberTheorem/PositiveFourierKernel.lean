@@ -154,6 +154,163 @@ theorem finiteFourierKernelForm_re_nonneg
   simp only [ofReal_re]
   exact integral_nonneg fun t => mul_nonneg (hg0 t) (sq_nonneg _)
 
+/-- A prescribed reciprocal-frequency formula for the off-diagonal Fourier
+kernel turns its finite quadratic form into a diagonal term plus a scalar
+multiple of the Hilbert form. -/
+theorem finiteFourierKernelForm_eq_diagonal_add_mul_hilbert
+    {ι : Type*} [DecidableEq ι] {S : Finset ι}
+    {c : ι → ℂ} {omega : ι → ℝ} {g : ℝ → ℝ} {kappa : ℂ}
+    (hkernel : ∀ m ∈ S, ∀ n ∈ S, m ≠ n →
+      fourierKernel g (omega n - omega m) =
+        kappa / (omega n - omega m)) :
+    finiteFourierKernelForm S c omega g =
+      fourierKernel g 0 * (∑ n ∈ S, (‖c n‖ ^ 2 : ℂ)) +
+        kappa * hilbertForm S c omega := by
+  have hpair : ∀ m ∈ S, ∀ n ∈ S,
+      conj (c m) * c n * fourierKernel g (omega n - omega m) =
+        if m = n then
+          fourierKernel g 0 * (‖c m‖ ^ 2 : ℂ)
+        else kappa * (conj (c m) * c n / (omega n - omega m)) := by
+    intro m hm n hn
+    by_cases hmn : m = n
+    · subst n
+      rw [if_pos rfl, sub_self]
+      rw [← ofReal_pow, ← Complex.normSq_eq_norm_sq,
+        Complex.normSq_eq_conj_mul_self]
+      ring
+    · rw [if_neg hmn, hkernel m hm n hn hmn]
+      ring
+  have hdiag :
+      (∑ m ∈ S, ∑ n ∈ S,
+        if m = n then fourierKernel g 0 * (‖c m‖ ^ 2 : ℂ) else 0) =
+        fourierKernel g 0 * (∑ n ∈ S, (‖c n‖ ^ 2 : ℂ)) := by
+    calc
+      (∑ m ∈ S, ∑ n ∈ S,
+          if m = n then fourierKernel g 0 * (‖c m‖ ^ 2 : ℂ) else 0) =
+          ∑ m ∈ S, fourierKernel g 0 * (‖c m‖ ^ 2 : ℂ) := by
+        apply Finset.sum_congr rfl
+        intro m hm
+        simp [hm]
+      _ = fourierKernel g 0 * (∑ n ∈ S, (‖c n‖ ^ 2 : ℂ)) := by
+        rw [Finset.mul_sum]
+  have hoff :
+      (∑ m ∈ S, ∑ n ∈ S,
+        if m = n then 0
+        else kappa * (conj (c m) * c n / (omega n - omega m))) =
+        kappa * hilbertForm S c omega := by
+    unfold hilbertForm
+    rw [Finset.mul_sum]
+    apply Finset.sum_congr rfl
+    intro m hm
+    rw [Finset.mul_sum]
+    apply Finset.sum_congr rfl
+    intro n hn
+    by_cases hmn : m = n <;> simp [hmn]
+  unfold finiteFourierKernelForm
+  calc
+    (∑ m ∈ S, ∑ n ∈ S,
+        conj (c m) * c n * fourierKernel g (omega n - omega m)) =
+        ∑ m ∈ S, ∑ n ∈ S,
+          if m = n then
+            fourierKernel g 0 * (‖c m‖ ^ 2 : ℂ)
+          else kappa * (conj (c m) * c n / (omega n - omega m)) := by
+      apply Finset.sum_congr rfl
+      intro m hm
+      apply Finset.sum_congr rfl
+      intro n hn
+      exact hpair m hm n hn
+    _ = (∑ m ∈ S, ∑ n ∈ S,
+          if m = n then fourierKernel g 0 * (‖c m‖ ^ 2 : ℂ) else 0) +
+        (∑ m ∈ S, ∑ n ∈ S,
+          if m = n then 0
+          else kappa * (conj (c m) * c n / (omega n - omega m))) := by
+      rw [← Finset.sum_add_distrib]
+      apply Finset.sum_congr rfl
+      intro m hm
+      rw [← Finset.sum_add_distrib]
+      apply Finset.sum_congr rfl
+      intro n hn
+      by_cases hmn : m = n <;> simp [hmn]
+    _ = fourierKernel g 0 * (∑ n ∈ S, (‖c n‖ ^ 2 : ℂ)) +
+        kappa * hilbertForm S c omega := by
+      rw [hdiag, hoff]
+
+/-- A nonnegative kernel with off-diagonal value `-2i / ξ` supplies the
+minus side of a weighted Hilbert-form certificate. -/
+theorem hilbertForm_minus_certificate_of_positive_kernel
+    {ι : Type*} [DecidableEq ι] {S : Finset ι}
+    {c : ι → ℂ} {omega : ι → ℝ} {g : ℝ → ℝ} {C : ℝ}
+    (hg : Integrable g) (hg0 : ∀ t, 0 ≤ g t)
+    (hzero : fourierKernel g 0 = ((2 * C : ℝ) : ℂ))
+    (hkernel : ∀ m ∈ S, ∀ n ∈ S, m ≠ n →
+      fourierKernel g (omega n - omega m) =
+        (-2 * Complex.I) / (omega n - omega m)) :
+    0 ≤ (((C * ∑ n ∈ S, ‖c n‖ ^ 2 : ℝ) : ℂ) -
+      Complex.I * hilbertForm S c omega).re := by
+  have hsum :
+      (∑ n ∈ S, (‖c n‖ ^ 2 : ℂ)) =
+        ((∑ n ∈ S, ‖c n‖ ^ 2 : ℝ) : ℂ) := by
+    push_cast
+    rfl
+  have hform :=
+    finiteFourierKernelForm_eq_diagonal_add_mul_hilbert
+      (S := S) (c := c) (omega := omega) (g := g)
+      (kappa := -2 * Complex.I) hkernel
+  have hfactor :
+      finiteFourierKernelForm S c omega g =
+        (2 : ℂ) *
+          (((C * ∑ n ∈ S, ‖c n‖ ^ 2 : ℝ) : ℂ) -
+            Complex.I * hilbertForm S c omega) := by
+    rw [hform, hzero, hsum]
+    push_cast
+    ring
+  have hnonneg := finiteFourierKernelForm_re_nonneg
+    (S := S) (c := c) (omega := omega) hg hg0
+  rw [hfactor] at hnonneg
+  have htwice :
+      0 ≤ 2 * ((((C * ∑ n ∈ S, ‖c n‖ ^ 2 : ℝ) : ℂ) -
+        Complex.I * hilbertForm S c omega).re) := by
+    simpa using hnonneg
+  linarith
+
+/-- A nonnegative kernel with off-diagonal value `2i / ξ` supplies the plus
+side of a weighted Hilbert-form certificate. -/
+theorem hilbertForm_plus_certificate_of_positive_kernel
+    {ι : Type*} [DecidableEq ι] {S : Finset ι}
+    {c : ι → ℂ} {omega : ι → ℝ} {g : ℝ → ℝ} {C : ℝ}
+    (hg : Integrable g) (hg0 : ∀ t, 0 ≤ g t)
+    (hzero : fourierKernel g 0 = ((2 * C : ℝ) : ℂ))
+    (hkernel : ∀ m ∈ S, ∀ n ∈ S, m ≠ n →
+      fourierKernel g (omega n - omega m) =
+        (2 * Complex.I) / (omega n - omega m)) :
+    0 ≤ (((C * ∑ n ∈ S, ‖c n‖ ^ 2 : ℝ) : ℂ) +
+      Complex.I * hilbertForm S c omega).re := by
+  have hsum :
+      (∑ n ∈ S, (‖c n‖ ^ 2 : ℂ)) =
+        ((∑ n ∈ S, ‖c n‖ ^ 2 : ℝ) : ℂ) := by
+    push_cast
+    rfl
+  have hform :=
+    finiteFourierKernelForm_eq_diagonal_add_mul_hilbert
+      (S := S) (c := c) (omega := omega) (g := g)
+      (kappa := 2 * Complex.I) hkernel
+  have hfactor :
+      finiteFourierKernelForm S c omega g =
+        (2 : ℂ) *
+          (((C * ∑ n ∈ S, ‖c n‖ ^ 2 : ℝ) : ℂ) +
+            Complex.I * hilbertForm S c omega) := by
+    rw [hform, hzero, hsum]
+    push_cast
+    ring
+  have hnonneg := finiteFourierKernelForm_re_nonneg
+    (S := S) (c := c) (omega := omega) hg hg0
+  rw [hfactor] at hnonneg
+  have htwice :
+      0 ≤ 2 * ((((C * ∑ n ∈ S, ‖c n‖ ^ 2 : ℝ) : ℂ) +
+        Complex.I * hilbertForm S c omega).re) := by
+    simpa using hnonneg
+  linarith
+
 /-- The finite Fourier-kernel form is additive with respect to subtraction of
 integrable weights. -/
 theorem finiteFourierKernelForm_sub
