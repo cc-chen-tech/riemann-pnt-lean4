@@ -8,6 +8,7 @@ from pathlib import Path
 import pytest
 
 from experiments.rh import weil_extremal_kernels as weil
+from experiments.rh import weil_extremal_crosscheck as crosscheck
 
 
 REFERENCE_PROVENANCE = (
@@ -23,6 +24,20 @@ LOCAL_REPRODUCTION = (
     / "rh"
     / "reference"
     / "groskin_2607_02828_v1_c100_N200_local_20260719.json"
+)
+LOCAL_REPRODUCTION_PREC9512 = (
+    Path(__file__).parents[1]
+    / "experiments"
+    / "rh"
+    / "reference"
+    / "groskin_2607_02828_v1_c100_N200_prec9512_local_20260719.json"
+)
+HIGH_PRECISION_CROSSCHECK = (
+    Path(__file__).parents[1]
+    / "experiments"
+    / "rh"
+    / "reference"
+    / "groskin_2607_02828_v1_small_n_high_precision_crosscheck.json"
 )
 
 
@@ -82,6 +97,254 @@ def test_local_groskin_reproduction_is_frozen_and_dimensionally_consistent():
     assert weil.verify_groskin_provenance_metadata(
         record, expected_c=100, expected_N=200
     )
+
+
+def test_local_groskin_second_precision_reproduction_is_frozen_and_consistent():
+    source = LOCAL_REPRODUCTION_PREC9512.read_bytes()
+    record = json.loads(source)
+
+    assert hashlib.sha256(source).hexdigest() == (
+        "6130a52197e9cde363f3e722124608e784fd31e81f97146444f79595edfcb178"
+    )
+    assert record["prec_bits"] == 9512
+    assert record["prec_bits"] - 9000 == 512
+    assert weil.verify_groskin_provenance_metadata(
+        record, expected_c=100, expected_N=200
+    )
+
+
+def test_small_n_high_precision_crosscheck_is_frozen_and_complete(monkeypatch):
+    source = HIGH_PRECISION_CROSSCHECK.read_bytes()
+    record = json.loads(source)
+
+    assert hashlib.sha256(source).hexdigest() == (
+        "62da7e8d50bea317d3cee154a1fa758a0b0d31939016bc158d13eff9418bca2e"
+    )
+    assert crosscheck.verify_crosscheck_artifact_file(HIGH_PRECISION_CROSSCHECK)
+    assert record["claim_scope"] == "high-precision-pointwise-crosscheck-only"
+    assert [case["entry_count"] for case in record["cases"]] == [81, 289]
+    assert [case["comparison_dps"] for case in record["cases"]] == [140, 140]
+    assert [case["precision_audit_digits"] for case in record["cases"]] == [
+        130,
+        130,
+    ]
+    assert all(case["all_entries_compared"] for case in record["cases"])
+    assert all(case["passes_numerical_tolerance"] for case in record["cases"])
+    assert all(
+        {
+            "absolute_difference",
+            "auxiliary_closed_form_high_precision_audit",
+            "auxiliary_closed_form_low_precision_audit",
+            "auxiliary_low_to_high_difference",
+            "ccm_hypergeometric_lerch_high_precision_audit",
+            "ccm_hypergeometric_lerch_low_precision_audit",
+            "ccm_low_to_high_difference",
+        }
+        <= set(entry)
+        for case in record["cases"]
+        for entry in case["entries"]
+    )
+
+    class PrecisionGuard:
+        dps = 15
+
+        class Context:
+            def __init__(self, owner, dps):
+                self.owner = owner
+                self.dps = dps
+                self.previous = None
+
+            def __enter__(self):
+                self.previous = self.owner.dps
+                self.owner.dps = self.dps
+
+            def __exit__(self, *_args):
+                self.owner.dps = self.previous
+
+        def workdps(self, dps):
+            return self.Context(self, dps)
+
+        def power(self, base, exponent):
+            assert self.dps >= 140
+            return GuardedReal(base**exponent)
+
+        def isfinite(self, _value):
+            assert self.dps >= 140
+            return True
+
+        def nstr(self, value, _digits, strip_zeros=False):
+            assert self.dps >= 140
+            assert strip_zeros is False
+            return str(value.value)
+
+    precision = PrecisionGuard()
+
+    class GuardedReal:
+        def __init__(self, value):
+            self.value = value
+
+        def __sub__(self, other):
+            assert precision.dps >= 140
+            return GuardedReal(self.value - other.value)
+
+        def __abs__(self):
+            return GuardedReal(abs(self.value))
+
+        def __lt__(self, other):
+            assert precision.dps >= 140
+            return self.value < other.value
+
+    monkeypatch.setattr(crosscheck, "_mpmath", lambda: precision)
+    monkeypatch.setattr(
+        crosscheck,
+        "assemble_auxiliary_closed_form",
+        lambda *_args: {(0, 0): GuardedReal(1)},
+    )
+    monkeypatch.setattr(
+        crosscheck,
+        "assemble_ccm_closed_form",
+        lambda *_args: {(0, 0): GuardedReal(1)},
+    )
+
+    comparison = crosscheck.compare_all_entries(13, 0, 80, 120)
+
+    assert comparison["comparison_dps"] == 140
+    assert comparison["precision_audit_digits"] == 130
+    assert precision.dps == 15
+
+
+@pytest.mark.parametrize(
+    "tampering",
+    [
+        "all_entries_false",
+        "passes_false",
+        "huge_tolerance",
+        "huge_maximum",
+        "wrong_maximum_entry",
+        "huge_entry_diagnostic",
+        "over_tolerance_but_passes",
+    ],
+)
+def test_crosscheck_artifact_rejects_rehashed_semantic_tampering(tampering):
+    record = json.loads(HIGH_PRECISION_CROSSCHECK.read_text(encoding="utf-8"))
+    case = record["cases"][0]
+
+    if tampering == "all_entries_false":
+        case["all_entries_compared"] = False
+    elif tampering == "passes_false":
+        case["passes_numerical_tolerance"] = False
+    elif tampering == "huge_tolerance":
+        case["numerical_tolerance"] = "9e999"
+    elif tampering == "huge_maximum":
+        case["max_abs_route_difference_high"]["value"] = "9e999"
+    elif tampering == "wrong_maximum_entry":
+        case["max_abs_route_difference_high"]["entry"] = [0, 0]
+    elif tampering == "huge_entry_diagnostic":
+        case["entries"][0]["auxiliary_low_to_high_difference"] = "9e999"
+    else:
+        case["entries"][0]["absolute_difference"] = "9e-50"
+        case["max_abs_route_difference_high"]["value"] = "9e-50"
+    refresh_payload_digest(record)
+
+    assert not crosscheck.verify_crosscheck_artifact(record)
+
+
+@pytest.mark.parametrize(
+    "tampering",
+    [
+        "empty_cases",
+        "empty_limitations",
+        "tampered_limitations",
+        "tampered_routes",
+        "duplicate_case",
+    ],
+)
+def test_crosscheck_artifact_rejects_rehashed_top_level_tampering(tampering):
+    record = json.loads(HIGH_PRECISION_CROSSCHECK.read_text(encoding="utf-8"))
+
+    if tampering == "empty_cases":
+        record["cases"] = []
+    elif tampering == "empty_limitations":
+        record["limitations"] = []
+    elif tampering == "tampered_limitations":
+        record["limitations"][0] = "Point values are rigorous intervals."
+    elif tampering == "tampered_routes":
+        record["routes"]["auxiliary_closed_form"] = "upstream main assembly"
+    else:
+        record["cases"].append(
+            json.loads(json.dumps(record["cases"][0]))
+        )
+    refresh_payload_digest(record)
+
+    assert not crosscheck.verify_crosscheck_artifact(record)
+
+
+def test_crosscheck_artifact_rejects_rehashed_matrix_value_tampering():
+    record = json.loads(HIGH_PRECISION_CROSSCHECK.read_text(encoding="utf-8"))
+    record["cases"][0]["entries"][0]["auxiliary_closed_form"] = "999.0"
+    refresh_payload_digest(record)
+
+    assert not crosscheck.verify_crosscheck_artifact(record)
+
+
+def test_crosscheck_artifact_rejects_rehashed_zeroed_precision_diagnostics():
+    record = json.loads(HIGH_PRECISION_CROSSCHECK.read_text(encoding="utf-8"))
+    for case in record["cases"]:
+        for entry in case["entries"]:
+            entry["auxiliary_low_to_high_difference"] = "0.0"
+            entry["ccm_low_to_high_difference"] = "0.0"
+        case["max_abs_auxiliary_low_to_high"]["value"] = "0.0"
+        case["max_abs_ccm_low_to_high"]["value"] = "0.0"
+    refresh_payload_digest(record)
+
+    assert not crosscheck.verify_crosscheck_artifact(record)
+
+
+def test_append_rejects_rehashed_semantically_invalid_artifact(
+    tmp_path, monkeypatch
+):
+    record = json.loads(HIGH_PRECISION_CROSSCHECK.read_text(encoding="utf-8"))
+    record["cases"][0]["all_entries_compared"] = False
+    refresh_payload_digest(record)
+    output = tmp_path / "crosscheck.json"
+    output.write_text(
+        json.dumps(record, sort_keys=True, separators=(",", ":")) + "\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        crosscheck,
+        "compare_all_entries",
+        lambda *_args: pytest.fail("append computed before validating the artifact"),
+    )
+
+    with pytest.raises(ValueError, match="invalid cross-check artifact"):
+        crosscheck.append_crosscheck_cases(output, [(13, 1)], 80, 120)
+
+
+def test_real_mpmath_assemblies_agree_and_are_symmetric_at_small_n():
+    mp = pytest.importorskip("mpmath")
+
+    auxiliary = crosscheck.assemble_auxiliary_closed_form(13, 1, 70)
+    ccm = crosscheck.assemble_ccm_closed_form(13, 1, 70)
+
+    with mp.workdps(90):
+        auxiliary_asymmetry = max(
+            abs(auxiliary[(i, j)] - auxiliary[(j, i)])
+            for i in range(-1, 2)
+            for j in range(-1, 2)
+        )
+        ccm_asymmetry = max(
+            abs(ccm[(i, j)] - ccm[(j, i)])
+            for i in range(-1, 2)
+            for j in range(-1, 2)
+        )
+        route_difference = max(
+            abs(auxiliary[entry] - ccm[entry]) for entry in auxiliary
+        )
+
+        assert auxiliary_asymmetry < mp.mpf("1e-60")
+        assert ccm_asymmetry < mp.mpf("1e-60")
+        assert route_difference < mp.mpf("1e-60")
 
 
 def test_groskin_provenance_metadata_rejects_inertia_or_status_tampering():

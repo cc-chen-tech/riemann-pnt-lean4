@@ -48,11 +48,43 @@ the repository copy adds a terminal newline and has SHA-256
 `5d14ea5bc0874c4edf15b586075337c1852b8e592bd7c4a7867ea14a995325a7`.
 
 On 2026-07-19 the released Arb script was also replayed locally at the full
-`(c,N,prec)=(100,200,9000)` calibration. All 401 interval pivots were strictly
-positive and the mathematical metadata matched the published record. See
+`(c,N)=(100,200)` calibration at both `9000` and `9512` bits. All 401 interval
+pivots were strictly positive in both runs, and the 9000-bit mathematical
+metadata matched the published record. See
 `docs/research/weil-gate-a-local-reproduction-2026-07-19.md`. This is a
-same-route reproduction only; the independent-assembly, second-precision,
-exact-certificate, and analytic-transfer requirements of Gate A remain open.
+same-route reproduction only. The 512-bit-separated inertia is stable, but the
+released metadata do not retain entry balls and hence cannot certify that each
+enclosure narrowed. The rigorous independent-assembly, exact-certificate, and
+analytic-transfer requirements of Gate A remain open.
+
+## Small-N Independent Numerical Cross-Check
+
+`experiments.rh.weil_extremal_crosscheck` now independently rewrites two
+closed-form full-matrix assemblies without importing or calling
+`anc/arb_ldlt_certify.py`: an auxiliary `S/CC/XC` route and a CCM
+hypergeometric/Lerch route. The frozen artifact
+`experiments/rh/reference/groskin_2607_02828_v1_small_n_high_precision_crosscheck.json`
+contains every ordered entry for `(c,N)=(13,4)` and `(13,8)`, recomputed at
+80 and 120 decimal digits. After those assemblies return, all cross-route and
+cross-precision subtraction, maximum-difference selection, tolerance
+construction and comparison, and diagnostic decimal formatting run at 140
+decimal digits, retaining 20 guard digits above the high assembly precision.
+Arithmetic internal to each formula assembly remains at that route's declared
+80 or 120 decimal digits. Each entry also freezes both routes' low- and
+high-precision point values at 130 audit digits (`high_dps+10`). This is
+necessary because all low/high pairs in these cases coincide after only 70
+significant digits. The verifier recomputes the 70-digit cross-precision
+diagnostics from the audit values using the corresponding serialization
+half-ulp budgets. The artifact is content-addressed by SHA-256
+`62da7e8d50bea317d3cee154a1fa758a0b0d31939016bc158d13eff9418bca2e`.
+
+The artifact is explicitly a high-precision pointwise comparison, not an
+interval certificate. It does not cover the registered `(100,200)` matrix;
+the separate 512-bit-separated full replays use only the upstream route and
+record no entry balls. The cross-check provides no outward-rounded entry
+enclosures, no entrywise interval intersections, no exact rational LDL
+artifact, and no analytic transfer margin. It therefore does not satisfy Gate
+A or advance the `N=250` claim search.
 
 ## Registered Mathematical Target
 
