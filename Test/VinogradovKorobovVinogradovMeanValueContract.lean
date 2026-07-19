@@ -1,4 +1,4 @@
-import ZeroFreeRegion.VinogradovKorobov.VinogradovJacobian
+import ZeroFreeRegion.VinogradovKorobov.VinogradovTaylor
 
 open ZeroFreeRegion.VinogradovKorobov
 
@@ -86,3 +86,5 @@ open ZeroFreeRegion.VinogradovKorobov
 #check det_vinogradovPowerSumJacobian
 #check det_vinogradovPowerSumJacobian_ne_zero
 #check det_vinogradovPowerSumJacobian_zmod_ne_zero
+#check int_pow_add_mul_modEq_sq
+#check vinogradovPowerSumInt_affine_modEq_sq
