@@ -34,6 +34,39 @@ def vinogradovCycledHeadTailPairEquiv
     (vinogradovCycledHeadTailFunctionEquiv k r q a hk)
     (vinogradovCycledHeadTailFunctionEquiv k r q a hk)
 
+/-- Undoing the selected-block cycle on a tuple pair preserves the bounded
+Vinogradov system.  This packages the coordinate transport in the orientation
+used by the restricted Hensel lift. -/
+theorem isVinogradovSolutionMod_uncycledPair_iff
+    (Q d X k r q a : ℕ) (hk : 0 < k)
+    (xy :
+      (Fin (k + (q * k + a * k + r)) → Fin X) ×
+        (Fin (k + (q * k + a * k + r)) → Fin X)) :
+    IsVinogradovSolutionMod Q d ((q + 1 + a) * k + r) X
+        ((vinogradovCycledHeadTailPairEquiv
+          (α := Fin X) k r q a hk).symm xy).1
+        ((vinogradovCycledHeadTailPairEquiv
+          (α := Fin X) k r q a hk).symm xy).2 ↔
+      IsVinogradovSolutionMod Q d (k + (q * k + a * k + r)) X
+        xy.1 xy.2 := by
+  let e := vinogradovCycledHeadTailPairEquiv
+    (α := Fin X) k r q a hk
+  let uv := e.symm xy
+  have h := (isVinogradovSolutionMod_cycledHeadTail_iff
+    Q d X k r q a hk uv.1 uv.2).symm
+  have he : e uv = xy := e.apply_symm_apply xy
+  have hx : vinogradovCycledHeadTailTuple k r q a hk uv.1 = xy.1 := by
+    simpa only [e, vinogradovCycledHeadTailPairEquiv,
+      Equiv.prodCongr_apply,
+      vinogradovCycledHeadTailFunctionEquiv_apply] using
+        congrArg Prod.fst he
+  have hy : vinogradovCycledHeadTailTuple k r q a hk uv.2 = xy.2 := by
+    simpa only [e, vinogradovCycledHeadTailPairEquiv,
+      Equiv.prodCongr_apply,
+      vinogradovCycledHeadTailFunctionEquiv_apply] using
+        congrArg Prod.snd he
+  simpa only [uv, hx, hy] using h
+
 /-- Prime-power Vinogradov solutions whose left tuple lies in the `q`-th
 first-nonsingular residue stratum. -/
 noncomputable def vinogradovPrimePowerFirstNonsingularSolutionSet
@@ -371,6 +404,204 @@ theorem card_vinogradovPrimePowerFirstNonsingularLiftSet_le
           p k r q a n).card *
         p ^ (k + 2 * (q * k + a * k + r)) := by
       simp [card_vinogradovPrimePowerCycledFirstNonsingularSolutionSet]
+
+/-- Membership in the restricted lift set is transported exactly to the same
+first-nonsingular stratum at the next prime-power level. -/
+theorem mem_vinogradovPrimePowerFirstNonsingularLiftSet_iff_image_mem
+    (p k r q a n : ℕ) [Fact p.Prime] (hk : 0 < k)
+    (w : Σ _ : vinogradovPrimePowerBasePair p k
+        (q * k + a * k + r) n,
+      vinogradovPrimePowerSplitCorrection p k
+        (q * k + a * k + r)) :
+    w ∈ vinogradovPrimePowerFirstNonsingularLiftSet
+        p k r q a n hk ↔
+      vinogradovPrimePowerLiftAmbientEquiv p k
+          (q * k + a * k + r) n w ∈
+        vinogradovPrimePowerCycledFirstNonsingularSolutionSet
+          p k r q a (n + 1) hk := by
+  rcases w with ⟨xy, z⟩
+  rw [vinogradovPrimePowerFirstNonsingularLiftSet, Finset.mem_sigma]
+  constructor
+  · rintro ⟨hbaseCycled, hcorrection⟩
+    have hbaseOriginal :=
+      (mem_vinogradovPrimePowerCycledFirstNonsingularSolutionSet_iff
+        p k r q a n hk xy).mp hbaseCycled
+    have hbaseParts :=
+      (mem_vinogradovPrimePowerFirstNonsingularSolutionSet_iff
+        p k r q a n _ _).mp hbaseOriginal
+    have hhighCycled :=
+      (mem_vinogradovSolutionCorrectionSet_iff_lifted_solution
+        p k (q * k + a * k + r) n xy z).mp hcorrection
+    have hhighOriginal :
+        IsVinogradovSolutionMod (p ^ (n + 2)) k
+          ((q + 1 + a) * k + r) (p ^ (n + 2))
+          ((vinogradovCycledHeadTailPairEquiv
+            (α := Fin (p ^ (n + 2))) k r q a hk).symm
+              (vinogradovPrimePowerLiftAmbientEquiv p k
+                (q * k + a * k + r) n ⟨xy, z⟩)).1
+          ((vinogradovCycledHeadTailPairEquiv
+            (α := Fin (p ^ (n + 2))) k r q a hk).symm
+              (vinogradovPrimePowerLiftAmbientEquiv p k
+                (q * k + a * k + r) n ⟨xy, z⟩)).2 :=
+      (isVinogradovSolutionMod_uncycledPair_iff
+        (p ^ (n + 2)) k (p ^ (n + 2)) k r q a hk _).mpr
+          hhighCycled
+    apply
+      (mem_vinogradovPrimePowerCycledFirstNonsingularSolutionSet_iff
+        p k r q a (n + 1) hk _).mpr
+    apply
+      (mem_vinogradovPrimePowerFirstNonsingularSolutionSet_iff
+        p k r q a (n + 1) _ _).mpr
+    constructor
+    · exact
+        (vinogradovPrimePowerLiftAmbientEquiv_uncycled_firstNonsingular_iff
+          p k r q a n hk xy z).mpr hbaseParts.1
+    · simpa only [Nat.add_assoc] using hhighOriginal
+  · intro hhighCycledMem
+    have hhighOriginalMem :=
+      (mem_vinogradovPrimePowerCycledFirstNonsingularSolutionSet_iff
+        p k r q a (n + 1) hk _).mp hhighCycledMem
+    have hhighParts :=
+      (mem_vinogradovPrimePowerFirstNonsingularSolutionSet_iff
+        p k r q a (n + 1) _ _).mp hhighOriginalMem
+    have hhighOriginal :
+        IsVinogradovSolutionMod (p ^ (n + 2)) k
+          ((q + 1 + a) * k + r) (p ^ (n + 2))
+          ((vinogradovCycledHeadTailPairEquiv
+            (α := Fin (p ^ (n + 2))) k r q a hk).symm
+              (vinogradovPrimePowerLiftAmbientEquiv p k
+                (q * k + a * k + r) n ⟨xy, z⟩)).1
+          ((vinogradovCycledHeadTailPairEquiv
+            (α := Fin (p ^ (n + 2))) k r q a hk).symm
+              (vinogradovPrimePowerLiftAmbientEquiv p k
+                (q * k + a * k + r) n ⟨xy, z⟩)).2 := by
+      simpa only [Nat.add_assoc] using hhighParts.2
+    have hhighCycled :=
+      (isVinogradovSolutionMod_uncycledPair_iff
+        (p ^ (n + 2)) k (p ^ (n + 2)) k r q a hk _).mp
+          hhighOriginal
+    have hbaseCycled :=
+      vinogradovPrimePowerLiftAmbientEquiv_solution_to_base
+        p k (q * k + a * k + r) n xy z hhighCycled
+    have hbaseOriginal :
+        IsVinogradovSolutionMod (p ^ (n + 1)) k
+          ((q + 1 + a) * k + r) (p ^ (n + 1))
+          ((vinogradovCycledHeadTailPairEquiv
+            (α := Fin (p ^ (n + 1))) k r q a hk).symm xy).1
+          ((vinogradovCycledHeadTailPairEquiv
+            (α := Fin (p ^ (n + 1))) k r q a hk).symm xy).2 :=
+      (isVinogradovSolutionMod_uncycledPair_iff
+        (p ^ (n + 1)) k (p ^ (n + 1)) k r q a hk xy).mpr
+          hbaseCycled
+    constructor
+    · apply
+        (mem_vinogradovPrimePowerCycledFirstNonsingularSolutionSet_iff
+          p k r q a n hk xy).mpr
+      apply
+        (mem_vinogradovPrimePowerFirstNonsingularSolutionSet_iff
+          p k r q a n _ _).mpr
+      constructor
+      · exact
+          (vinogradovPrimePowerLiftAmbientEquiv_uncycled_firstNonsingular_iff
+            p k r q a n hk xy z).mp hhighParts.1
+      · exact hbaseOriginal
+    · exact
+        (mem_vinogradovSolutionCorrectionSet_iff_lifted_solution
+          p k (q * k + a * k + r) n xy z).mpr hhighCycled
+
+/-- Mapping the restricted lift set through the digit equivalence gives
+exactly the cycled first-nonsingular stratum at the next level. -/
+theorem map_vinogradovPrimePowerFirstNonsingularLiftSet_eq
+    (p k r q a n : ℕ) [Fact p.Prime] (hk : 0 < k) :
+    (vinogradovPrimePowerFirstNonsingularLiftSet
+        p k r q a n hk).map
+        (vinogradovPrimePowerLiftAmbientEquiv p k
+          (q * k + a * k + r) n).toEmbedding =
+      vinogradovPrimePowerCycledFirstNonsingularSolutionSet
+        p k r q a (n + 1) hk := by
+  classical
+  ext v
+  constructor
+  · intro hv
+    rcases Finset.mem_map.mp hv with ⟨w, hw, rfl⟩
+    exact
+      (mem_vinogradovPrimePowerFirstNonsingularLiftSet_iff_image_mem
+        p k r q a n hk w).mp hw
+  · intro hv
+    let e := vinogradovPrimePowerLiftAmbientEquiv p k
+      (q * k + a * k + r) n
+    let w := e.symm v
+    have hew : e w = v := e.apply_symm_apply v
+    apply Finset.mem_map.mpr
+    refine ⟨w, ?_, hew⟩
+    apply
+      (mem_vinogradovPrimePowerFirstNonsingularLiftSet_iff_image_mem
+        p k r q a n hk w).mpr
+    simpa [e, w] using hv
+
+/-- Each first-nonsingular stratum satisfies the same one-step Hensel
+recurrence as the standard head stratum, without discarding its base saving. -/
+theorem card_vinogradovPrimePowerFirstNonsingularSolutionSet_succ_le
+    (p k r q a n : ℕ) [Fact p.Prime] (hk : 0 < k) (hkp : k < p) :
+    (vinogradovPrimePowerFirstNonsingularSolutionSet
+        p k r q a (n + 1)).card ≤
+      (vinogradovPrimePowerFirstNonsingularSolutionSet
+        p k r q a n).card *
+        p ^ (k + 2 * (q * k + a * k + r)) := by
+  rw [← card_vinogradovPrimePowerCycledFirstNonsingularSolutionSet
+      p k r q a (n + 1) hk,
+    ← map_vinogradovPrimePowerFirstNonsingularLiftSet_eq
+      p k r q a n hk,
+    Finset.card_map]
+  exact card_vinogradovPrimePowerFirstNonsingularLiftSet_le
+    p k r q a n hk hkp
+
+/-- Iterating the restricted recurrence retains the exact cardinality of the
+base first-nonsingular stratum. -/
+theorem card_vinogradovPrimePowerFirstNonsingularSolutionSet_le_base_mul_pow
+    (p k r q a n : ℕ) [Fact p.Prime] (hk : 0 < k) (hkp : k < p) :
+    (vinogradovPrimePowerFirstNonsingularSolutionSet p k r q a n).card ≤
+      (vinogradovPrimePowerFirstNonsingularSolutionSet
+        p k r q a 0).card *
+        (p ^ (k + 2 * (q * k + a * k + r))) ^ n := by
+  induction n with
+  | zero => simp
+  | succ n ih =>
+      calc
+        (vinogradovPrimePowerFirstNonsingularSolutionSet
+            p k r q a (n + 1)).card ≤
+            (vinogradovPrimePowerFirstNonsingularSolutionSet
+              p k r q a n).card *
+              p ^ (k + 2 * (q * k + a * k + r)) :=
+          card_vinogradovPrimePowerFirstNonsingularSolutionSet_succ_le
+            p k r q a n hk hkp
+        _ ≤ ((vinogradovPrimePowerFirstNonsingularSolutionSet
+              p k r q a 0).card *
+              (p ^ (k + 2 * (q * k + a * k + r))) ^ n) *
+              p ^ (k + 2 * (q * k + a * k + r)) :=
+          Nat.mul_le_mul_right
+            (p ^ (k + 2 * (q * k + a * k + r))) ih
+        _ = (vinogradovPrimePowerFirstNonsingularSolutionSet
+              p k r q a 0).card *
+              (p ^ (k + 2 * (q * k + a * k + r))) ^ (n + 1) := by
+          simp only [pow_succ, mul_assoc]
+
+/-- Fully explicit first-stratum lifting bound.  The factor
+`(p^k - p.descFactorial k)^q` records the saving from the `q` preceding
+singular blocks and survives every prime-power lift. -/
+theorem card_vinogradovPrimePowerFirstNonsingularSolutionSet_le_stratified
+    (p k r q a n : ℕ) [Fact p.Prime] (hk : 0 < k) (hkp : k < p) :
+    (vinogradovPrimePowerFirstNonsingularSolutionSet p k r q a n).card ≤
+      ((p ^ k - p.descFactorial k) ^ q * p.descFactorial k *
+          p ^ (a * k + r) * p ^ ((q + 1 + a) * k + r)) *
+        (p ^ (k + 2 * (q * k + a * k + r))) ^ n := by
+  exact
+    (card_vinogradovPrimePowerFirstNonsingularSolutionSet_le_base_mul_pow
+      p k r q a n hk hkp).trans
+      (Nat.mul_le_mul_right
+        ((p ^ (k + 2 * (q * k + a * k + r))) ^ n)
+        (card_vinogradovPrimePowerFirstNonsingularSolutionSet_zero_le
+          p k r q a))
 
 
 /-- Cycling a first-nonsingular prime-power solution puts it in the standard
