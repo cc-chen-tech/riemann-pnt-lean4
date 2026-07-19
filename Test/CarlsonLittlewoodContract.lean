@@ -201,6 +201,18 @@ example {X : ℕ} {x0 x1 y0 y1 : ℝ}
 noncomputable example (X : ℕ) (x0 x1 y0 y1 : ℝ) : ℝ :=
   regularizedCarlsonLittlewoodLogNormForm X x0 x1 y0 y1
 
+noncomputable example (X : ℕ) (x0 x1 y0 y1 : ℝ) : ℝ :=
+  regularizedCarlsonLittlewoodRemainingEdges X x0 x1 y0 y1
+
+example (X : ℕ) (x0 x1 y0 y1 : ℝ) :
+    regularizedCarlsonLittlewoodLogNormForm X x0 x1 y0 y1 =
+      (∫ y in y0..y1,
+        Real.log ‖regularizedCarlsonZeroDetector X
+          ((x0 : ℂ) + (y : ℂ) * I)‖) +
+      regularizedCarlsonLittlewoodRemainingEdges X x0 x1 y0 y1 :=
+  regularizedCarlsonLittlewoodLogNormForm_eq_left_add_remaining
+    X x0 x1 y0 y1
+
 noncomputable example (A : ℝ) (X : ℕ) (x0 y0 y1 : ℝ) (n : ℕ) : ℝ :=
   regularizedCarlsonLeftEdgeExplicitBound A X x0 y0 y1 n
 
@@ -260,6 +272,8 @@ example {X : ℕ} (hX : 1 ≤ X) {sigma T : ℝ}
 #print axioms regularizedCarlsonLittlewood_rightEdge_eq_logNorm
 #print axioms regularizedCarlsonLittlewoodFourEdges_eq_logNormForm
 #print axioms regularizedCarlsonLittlewoodFourEdges_eq_logNormFormDef
+#print axioms regularizedCarlsonLittlewoodLogNormForm_eq_left_add_remaining
+#print axioms zeroDensityCount_le_leftBound_add_remaining
 #print axioms exists_regularizedCarlson_goodRectangle_zeroDensity_le_logNormForm
 #print axioms exists_regularizedCarlson_goodRectangle_zeroDensity_le_logNormForm_of_leftWindow
 #print axioms exists_regularizedCarlson_goodRectangle_zeroDensity_le_logNormForm_half

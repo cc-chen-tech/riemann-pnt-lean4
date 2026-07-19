@@ -52,6 +52,59 @@ noncomputable def regularizedCarlsonLittlewoodLogNormForm
       Real.log ‖regularizedCarlsonZeroDetector X
         ((x1 : ℂ) + (y : ℂ) * I)‖)
 
+/-- The still-uncontrolled part of the endpoint-cancelled Littlewood formula:
+the bottom and top horizontal argument terms together with the two right-edge
+terms. -/
+noncomputable def regularizedCarlsonLittlewoodRemainingEdges
+    (X : ℕ) (x0 x1 y0 y1 : ℝ) : ℝ :=
+  (∫ x in x0..x1,
+      (x - x0) *
+        (logDeriv (regularizedCarlsonZeroDetector X)
+          ((x : ℂ) + (y0 : ℂ) * I)).im) -
+    (∫ x in x0..x1,
+      (x - x0) *
+        (logDeriv (regularizedCarlsonZeroDetector X)
+          ((x : ℂ) + (y1 : ℂ) * I)).im) +
+    (x1 - x0) *
+      (∫ y in y0..y1,
+        (logDeriv (regularizedCarlsonZeroDetector X)
+          ((x1 : ℂ) + (y : ℂ) * I)).re) -
+    (∫ y in y0..y1,
+      Real.log ‖regularizedCarlsonZeroDetector X
+        ((x1 : ℂ) + (y : ℂ) * I)‖)
+
+/-- Exact split of the Littlewood log-norm form into the left logarithmic
+norm integral and all remaining boundary contributions. -/
+theorem regularizedCarlsonLittlewoodLogNormForm_eq_left_add_remaining
+    (X : ℕ) (x0 x1 y0 y1 : ℝ) :
+    regularizedCarlsonLittlewoodLogNormForm X x0 x1 y0 y1 =
+      (∫ y in y0..y1,
+        Real.log ‖regularizedCarlsonZeroDetector X
+          ((x0 : ℂ) + (y : ℂ) * I)‖) +
+      regularizedCarlsonLittlewoodRemainingEdges X x0 x1 y0 y1 := by
+  unfold regularizedCarlsonLittlewoodLogNormForm
+    regularizedCarlsonLittlewoodRemainingEdges
+  ring
+
+/-- Any upper bound for the left logarithmic norm integral transfers the
+Carlson count reduction to that bound plus the remaining three edges. -/
+theorem zeroDensityCount_le_leftBound_add_remaining
+    {X : ℕ} {sigma T x0 x1 y0 y1 leftBound : ℝ}
+    (hcount :
+      (2 * Real.pi) * (sigma - x0) *
+          (ZeroDensity.zeroDensityCount sigma T : ℝ) ≤
+        regularizedCarlsonLittlewoodLogNormForm X x0 x1 y0 y1)
+    (hleft :
+      (∫ y in y0..y1,
+        Real.log ‖regularizedCarlsonZeroDetector X
+          ((x0 : ℂ) + (y : ℂ) * I)‖) ≤ leftBound) :
+    (2 * Real.pi) * (sigma - x0) *
+        (ZeroDensity.zeroDensityCount sigma T : ℝ) ≤
+      leftBound +
+        regularizedCarlsonLittlewoodRemainingEdges X x0 x1 y0 y1 := by
+  rw [regularizedCarlsonLittlewoodLogNormForm_eq_left_add_remaining] at hcount
+  linarith
+
 /-- The weighted argument principle specialized to the pole-free Carlson
 detector.  The finite divisor support is proved to be exactly the zero set,
 and zero-free boundary hypotheses force every counted zero into the strict
