@@ -246,5 +246,204 @@ theorem integrable_carneiroLittmannKernelError :
     exact hCover ▸ (hLeft.union hMiddle).union hRight
   exact integrableOn_univ.mp hAll
 
+/-- Multiplying the extremal derivative by `-x` gives exactly the translated
+sinc-square density whose total mass is one. -/
+theorem neg_mul_carneiroLittmannDerivative_eq_sincSquare (x : ℝ) :
+    -(x * carneiroLittmannDerivative x) = carneiroLittmannSincSquare x := by
+  by_cases hxNegOne : x = -1
+  · subst x
+    simp [carneiroLittmannSincSquare, carneiroLittmannSincSquareBase]
+  by_cases hxZero : x = 0
+  · subst x
+    simp [carneiroLittmannSincSquare, carneiroLittmannSincSquareBase,
+      Real.sinc_of_ne_zero Real.pi_ne_zero, Real.sin_pi]
+  have hxPlusOne : x + 1 ≠ 0 := by
+    intro h
+    apply hxNegOne
+    linarith
+  rw [carneiroLittmannDerivative_eq_formula hxNegOne hxZero,
+    carneiroLittmannSincSquare, carneiroLittmannSincSquareBase,
+    Real.sinc_of_ne_zero (mul_ne_zero Real.pi_ne_zero hxPlusOne)]
+  have hsin : Real.sin (Real.pi * (x + 1)) =
+      -Real.sin (Real.pi * x) := by
+    rw [show Real.pi * (x + 1) = Real.pi * x + Real.pi by ring]
+    exact Real.sin_add_pi _
+  rw [hsin]
+  field_simp [Real.pi_ne_zero, hxZero, hxPlusOne]
+
+private theorem tendsto_mul_carneiroLittmannKernelError_atTop : Filter.Tendsto
+    (fun x : ℝ => x * carneiroLittmannKernelError x)
+    Filter.atTop (nhds 0) := by
+  apply tendsto_zero_iff_norm_tendsto_zero.mpr
+  have hUpper : Filter.Tendsto (fun x : ℝ => 1 / x)
+      Filter.atTop (nhds 0) :=
+    tendsto_const_nhds.div_atTop Filter.tendsto_id
+  apply squeeze_zero' (Filter.Eventually.of_forall (fun _ => norm_nonneg _)) _ hUpper
+  filter_upwards [Filter.eventually_ge_atTop (1 : ℝ)] with x hx
+  have hx0 : 0 < x := zero_lt_one.trans_le hx
+  have hError := carneiroLittmannKernelError_le_rpow_neg_two_of_one_le hx
+  rw [Real.norm_eq_abs, abs_of_nonneg
+    (mul_nonneg hx0.le (carneiroLittmannKernelError_nonneg x))]
+  calc
+    x * carneiroLittmannKernelError x ≤ x * (x ^ (-2 : ℝ) / 2) :=
+      mul_le_mul_of_nonneg_left hError hx0.le
+    _ = 1 / (2 * x) := by
+      rw [Real.rpow_neg hx0.le]
+      norm_num [Real.rpow_natCast]
+      field_simp
+    _ ≤ 1 / x := by
+      exact one_div_le_one_div_of_le hx0 (by linarith)
+
+private theorem tendsto_mul_carneiroLittmannKernelError_atBot : Filter.Tendsto
+    (fun x : ℝ => x * carneiroLittmannKernelError x)
+    Filter.atBot (nhds 0) := by
+  apply tendsto_zero_iff_norm_tendsto_zero.mpr
+  have hDen : Filter.Tendsto (fun x : ℝ => -x)
+      Filter.atBot Filter.atTop := Filter.tendsto_neg_atBot_atTop
+  have hUpper : Filter.Tendsto (fun x : ℝ => 2 / (-x))
+      Filter.atBot (nhds 0) := tendsto_const_nhds.div_atTop hDen
+  apply squeeze_zero' (Filter.Eventually.of_forall (fun _ => norm_nonneg _)) _ hUpper
+  filter_upwards [Filter.eventually_le_atBot (-2 : ℝ)] with x hx
+  have hxneg : x < 0 := lt_of_le_of_lt hx (by norm_num)
+  have hnegx : 0 < -x := neg_pos.mpr hxneg
+  have hError :=
+    carneiroLittmannKernelError_le_two_mul_neg_rpow_neg_two_of_le_neg_two hx
+  rw [Real.norm_eq_abs, abs_of_nonpos
+    (mul_nonpos_of_nonpos_of_nonneg hxneg.le
+      (carneiroLittmannKernelError_nonneg x))]
+  calc
+    -(x * carneiroLittmannKernelError x) =
+        (-x) * carneiroLittmannKernelError x := by ring
+    _ ≤ (-x) * (2 * (-x) ^ (-2 : ℝ)) :=
+      mul_le_mul_of_nonneg_left hError hnegx.le
+    _ = 2 / (-x) := by
+      rw [Real.rpow_neg hnegx.le]
+      norm_num [Real.rpow_natCast]
+      field_simp
+
+private theorem tendsto_mul_carneiroLittmannKernelError_Ioi_zero : Filter.Tendsto
+    (fun x : ℝ => x * carneiroLittmannKernelError x)
+    (nhdsWithin 0 (Set.Ioi 0)) (nhds 0) := by
+  have hBase : Filter.Tendsto
+      (fun x : ℝ => x * (carneiroLittmannCumulative x - 1))
+      (nhds 0) (nhds 0) := by
+    have hId : ContinuousAt (fun x : ℝ => x) 0 := continuousAt_id
+    have hCum : ContinuousAt carneiroLittmannCumulative 0 :=
+      continuous_carneiroLittmannCumulative.continuousAt
+    have hOne : ContinuousAt (fun _ : ℝ => (1 : ℝ)) 0 := continuousAt_const
+    simpa using (hId.mul (hCum.sub hOne)).tendsto
+  refine (hBase.mono_left inf_le_left).congr' ?_
+  filter_upwards [self_mem_nhdsWithin] with x hx
+  have hx' : 0 < x := hx
+  rw [carneiroLittmannKernelError, if_neg (not_le.mpr hx')]
+
+private theorem tendsto_mul_carneiroLittmannKernelError_Iio_zero : Filter.Tendsto
+    (fun x : ℝ => x * carneiroLittmannKernelError x)
+    (nhdsWithin 0 (Set.Iio 0)) (nhds 0) := by
+  have hBase : Filter.Tendsto
+      (fun x : ℝ => x * carneiroLittmannCumulative x)
+      (nhds 0) (nhds 0) := by
+    have hId : ContinuousAt (fun x : ℝ => x) 0 := continuousAt_id
+    have hCum : ContinuousAt carneiroLittmannCumulative 0 :=
+      continuous_carneiroLittmannCumulative.continuousAt
+    simpa using (hId.mul hCum).tendsto
+  refine (hBase.mono_left inf_le_left).congr' ?_
+  filter_upwards [self_mem_nhdsWithin] with x hx
+  have hx' : x < 0 := hx
+  rw [carneiroLittmannKernelError, if_pos hx'.le]
+
+private theorem integrable_mul_carneiroLittmannDerivative :
+    Integrable (fun x : ℝ => x * carneiroLittmannDerivative x) := by
+  refine integrable_carneiroLittmannSincSquare.neg.congr ?_
+  filter_upwards with x
+  simpa using (congrArg Neg.neg
+    (neg_mul_carneiroLittmannDerivative_eq_sincSquare x)).symm
+
+/-- The Heaviside majorant error has total mass one. Consequently the signum
+majorant error, which is twice this kernel, has the required mass two. -/
+theorem integral_carneiroLittmannKernelError_eq_one :
+    (∫ x : ℝ, carneiroLittmannKernelError x) = 1 := by
+  have hDerivRight : ∀ x ∈ Set.Ioi (0 : ℝ),
+      HasDerivAt carneiroLittmannKernelError
+        (carneiroLittmannDerivative x) x := by
+    intro x hx
+    have hx' : 0 < x := hx
+    have hBase := (hasDerivAt_carneiroLittmannCumulative x).sub_const 1
+    apply hBase.congr_of_eventuallyEq
+    filter_upwards [Ioi_mem_nhds hx'] with y hy
+    rw [carneiroLittmannKernelError, if_neg (not_le.mpr hy)]
+  have hDerivLeft : ∀ x ∈ Set.Iio (0 : ℝ),
+      HasDerivAt carneiroLittmannKernelError
+        (carneiroLittmannDerivative x) x := by
+    intro x hx
+    have hx' : x < 0 := hx
+    have hBase := hasDerivAt_carneiroLittmannCumulative x
+    apply hBase.congr_of_eventuallyEq
+    filter_upwards [Iio_mem_nhds hx'] with y hy
+    rw [carneiroLittmannKernelError, if_pos hy.le]
+  have hRight := integral_Ioi_deriv_mul_eq_sub
+    (a := (0 : ℝ)) (u := fun x : ℝ => x)
+    (u' := fun _ : ℝ => 1) (v := carneiroLittmannKernelError)
+    (v' := carneiroLittmannDerivative)
+    (fun x _ => hasDerivAt_id x) hDerivRight
+    (by
+      have h :=
+        (integrable_carneiroLittmannKernelError.integrableOn (s := Set.Ioi (0 : ℝ))).add
+          (integrable_mul_carneiroLittmannDerivative.integrableOn
+            (s := Set.Ioi (0 : ℝ)))
+      refine h.congr_fun ?_ measurableSet_Ioi
+      intro x hx
+      simp)
+    tendsto_mul_carneiroLittmannKernelError_Ioi_zero
+    tendsto_mul_carneiroLittmannKernelError_atTop
+  have hLeft := integral_Iic_deriv_mul_eq_sub
+    (a := (0 : ℝ)) (u := fun x : ℝ => x)
+    (u' := fun _ : ℝ => 1) (v := carneiroLittmannKernelError)
+    (v' := carneiroLittmannDerivative)
+    (fun x _ => hasDerivAt_id x) hDerivLeft
+    (by
+      have h :=
+        (integrable_carneiroLittmannKernelError.integrableOn (s := Set.Iic (0 : ℝ))).add
+          (integrable_mul_carneiroLittmannDerivative.integrableOn
+            (s := Set.Iic (0 : ℝ)))
+      refine h.congr_fun ?_ measurableSet_Iic
+      intro x hx
+      simp)
+    tendsto_mul_carneiroLittmannKernelError_Iio_zero
+    tendsto_mul_carneiroLittmannKernelError_atBot
+  rw [sub_self] at hRight hLeft
+  simp only [one_mul] at hRight hLeft
+  rw [integral_add
+      integrable_carneiroLittmannKernelError.integrableOn
+      integrable_mul_carneiroLittmannDerivative.integrableOn] at hRight hLeft
+  have hSplitError :
+      (∫ x in Set.Iic (0 : ℝ), carneiroLittmannKernelError x) +
+          (∫ x in Set.Ioi (0 : ℝ), carneiroLittmannKernelError x) =
+        ∫ x : ℝ, carneiroLittmannKernelError x := by
+    simpa only [Set.compl_Iic] using
+      (integral_add_compl (s := Set.Iic (0 : ℝ)) measurableSet_Iic
+        integrable_carneiroLittmannKernelError)
+  have hSplitDerivative :
+      (∫ x in Set.Iic (0 : ℝ), x * carneiroLittmannDerivative x) +
+          (∫ x in Set.Ioi (0 : ℝ), x * carneiroLittmannDerivative x) =
+        ∫ x : ℝ, x * carneiroLittmannDerivative x := by
+    simpa only [Set.compl_Iic] using
+      (integral_add_compl (s := Set.Iic (0 : ℝ)) measurableSet_Iic
+        integrable_mul_carneiroLittmannDerivative)
+  have hMoment :
+      (∫ x : ℝ, carneiroLittmannKernelError x) =
+        -(∫ x : ℝ, x * carneiroLittmannDerivative x) := by
+    linarith
+  rw [hMoment]
+  have hIntegralMoment :
+      -(∫ x : ℝ, x * carneiroLittmannDerivative x) =
+        ∫ x : ℝ, carneiroLittmannSincSquare x := by
+    rw [← MeasureTheory.integral_neg]
+    apply integral_congr_ae
+    filter_upwards with x
+    exact neg_mul_carneiroLittmannDerivative_eq_sincSquare x
+  rw [hIntegralMoment, integral_carneiroLittmannSincSquare_eq_base,
+    integral_carneiroLittmannSincSquareBase_eq_one]
+
 end DirichletPolynomial
 end PrimeNumberTheorem

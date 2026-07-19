@@ -31,6 +31,13 @@ example {x : ℝ} (hx : x ≤ -2) :
 example : MeasureTheory.Integrable carneiroLittmannKernelError :=
   integrable_carneiroLittmannKernelError
 
+example (x : ℝ) :
+    -(x * carneiroLittmannDerivative x) = carneiroLittmannSincSquare x :=
+  neg_mul_carneiroLittmannDerivative_eq_sincSquare x
+
+example : (∫ x : ℝ, carneiroLittmannKernelError x) = 1 :=
+  integral_carneiroLittmannKernelError_eq_one
+
 #print axioms carneiroLittmannCumulative_nonneg_of_nonpos
 #print axioms one_le_carneiroLittmannCumulative_of_nonneg
 #print axioms carneiroLittmannKernelError_nonneg
@@ -38,6 +45,8 @@ example : MeasureTheory.Integrable carneiroLittmannKernelError :=
 #print axioms carneiroLittmannKernelError_le_rpow_neg_two_of_one_le
 #print axioms carneiroLittmannKernelError_le_two_mul_neg_rpow_neg_two_of_le_neg_two
 #print axioms integrable_carneiroLittmannKernelError
+#print axioms neg_mul_carneiroLittmannDerivative_eq_sincSquare
+#print axioms integral_carneiroLittmannKernelError_eq_one
 
 end DirichletPolynomial
 end PrimeNumberTheorem
