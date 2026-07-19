@@ -1,6 +1,7 @@
 import PrimeNumberTheorem.CarneiroLittmannSpectralProfile
 
 open MeasureTheory Set
+open FourierTransform
 
 namespace PrimeNumberTheorem
 namespace DirichletPolynomial
@@ -39,6 +40,11 @@ example (u : ℝ) :
             carneiroLittmannSpectralPhase u) :=
   carneiroLittmannSpectralPrimitiveDerivative_eq u
 
+example (x : ℝ) :
+    𝓕 carneiroLittmannSpectralProfile x =
+      (carneiroLittmannDerivative x : ℂ) :=
+  fourier_carneiroLittmannSpectralProfile x
+
 #print axioms continuous_carneiroLittmannSpectralProfile
 #print axioms hasCompactSupport_carneiroLittmannSpectralProfile
 #print axioms integrable_carneiroLittmannSpectralProfile
@@ -48,6 +54,7 @@ example (u : ℝ) :
 #print axioms integrable_carneiroLittmannSpectralPrimitive
 #print axioms integrable_deriv_carneiroLittmannSpectralPrimitive
 #print axioms carneiroLittmannSpectralPrimitiveDerivative_eq
+#print axioms fourier_carneiroLittmannSpectralProfile
 
 end DirichletPolynomial
 end PrimeNumberTheorem

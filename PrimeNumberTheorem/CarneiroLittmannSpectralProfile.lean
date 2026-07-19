@@ -1,6 +1,8 @@
 import PrimeNumberTheorem.TriangleFourierKernel
+import Mathlib.Analysis.Fourier.FourierTransformDeriv
 
 open Complex MeasureTheory Set
+open FourierTransform
 
 namespace PrimeNumberTheorem
 namespace DirichletPolynomial
@@ -584,6 +586,237 @@ theorem carneiroLittmannSpectralPrimitiveDerivative_eq (u : ℝ) :
           if_neg hone, hTriangle]
         push_cast
         ring
+
+private theorem integrable_carneiroLittmannModulatedTriangle :
+    Integrable (fun u : ℝ => carneiroLittmannSpectralPhase u *
+      (triangleFourierKernel u : ℂ)) := by
+  have hProduct : Integrable (fun u : ℝ =>
+      (triangleFourierKernel u : ℂ) * carneiroLittmannSpectralPhase u) := by
+    apply integrable_triangleFourierKernel.ofReal.mul_bdd (c := 1)
+    · exact continuous_carneiroLittmannSpectralPhase.aestronglyMeasurable
+    · filter_upwards with u
+      simp [carneiroLittmannSpectralPhase, Complex.norm_exp]
+  refine hProduct.congr ?_
+  filter_upwards with u
+  ring
+
+private theorem fourier_sub_of_integrable {f g : ℝ → ℂ}
+    (hf : Integrable f) (hg : Integrable g) (x : ℝ) :
+    𝓕 (fun u => f u - g u) x = 𝓕 f x - 𝓕 g x := by
+  have hf' : Integrable (fun v : ℝ => 𝐞 (-(v * x)) • f v) := by
+    exact (VectorFourier.fourierIntegral_convergent_iff
+      (e := 𝐞) (μ := volume) (L := LinearMap.mul ℝ ℝ)
+      Real.continuous_fourierChar (by fun_prop) x).2 hf
+  have hg' : Integrable (fun v : ℝ => 𝐞 (-(v * x)) • g v) := by
+    exact (VectorFourier.fourierIntegral_convergent_iff
+      (e := 𝐞) (μ := volume) (L := LinearMap.mul ℝ ℝ)
+      Real.continuous_fourierChar (by fun_prop) x).2 hg
+  rw [Real.fourier_real_eq, Real.fourier_real_eq, Real.fourier_real_eq]
+  rw [← MeasureTheory.integral_sub hf' hg']
+  congr 1
+  funext u
+  rw [smul_sub]
+
+private theorem fourier_const_mul (c : ℂ) (f : ℝ → ℂ) (x : ℝ) :
+    𝓕 (fun u => c * f u) x = c * 𝓕 f x := by
+  rw [Real.fourier_real_eq, Real.fourier_real_eq]
+  calc
+    (∫ u : ℝ, 𝐞 (-(u * x)) • (c * f u)) =
+        ∫ u : ℝ, c * (𝐞 (-(u * x)) • f u) := by
+      congr 1
+      funext u
+      simp only [Circle.smul_def, smul_eq_mul]
+      ring
+    _ = c * ∫ u : ℝ, 𝐞 (-(u * x)) • f u :=
+      MeasureTheory.integral_const_mul _ _
+
+private theorem fourier_carneiroLittmannModulatedTriangle (x : ℝ) :
+    𝓕 (fun u : ℝ => carneiroLittmannSpectralPhase u *
+      (triangleFourierKernel u : ℂ)) x =
+        (carneiroLittmannSincSquareBase (x + 1) : ℂ) := by
+  calc
+    𝓕 (fun u : ℝ => carneiroLittmannSpectralPhase u *
+        (triangleFourierKernel u : ℂ)) x =
+        ∫ u : ℝ,
+          Complex.exp (((-2 * Real.pi * u * x : ℝ) : ℂ) * Complex.I) •
+            (carneiroLittmannSpectralPhase u *
+              (triangleFourierKernel u : ℂ)) :=
+      Real.fourier_real_eq_integral_exp_smul _ _
+    _ = ∫ u : ℝ,
+        Complex.exp (((-2 * Real.pi * u * (x + 1) : ℝ) : ℂ) * Complex.I) •
+          (triangleFourierKernel u : ℂ) := by
+      congr 1
+      funext u
+      simp only [carneiroLittmannSpectralPhase, smul_eq_mul]
+      rw [← mul_assoc, ← Complex.exp_add]
+      congr 1
+      push_cast
+      ring
+    _ = 𝓕 (fun u : ℝ => (triangleFourierKernel u : ℂ)) (x + 1) :=
+      (Real.fourier_real_eq_integral_exp_smul _ _).symm
+    _ = (carneiroLittmannSincSquareBase (x + 1) : ℂ) := by
+      simpa only [carneiroLittmannSincSquareBase] using
+        fourier_triangleFourierKernel (x + 1)
+
+private theorem carneiroLittmannSpectralPrimitive_eq (u : ℝ) :
+    carneiroLittmannSpectralPrimitive u =
+      carneiroLittmannSpectralPhase u * (triangleFourierKernel u : ℂ) -
+        (triangleFourierKernel u : ℂ) := by
+  by_cases hneg : u ≤ -1
+  · have huNonpos : u ≤ 0 := hneg.trans (by norm_num)
+    have hAbs : 1 ≤ |u| := by
+      rw [abs_of_nonpos huNonpos]
+      linarith
+    have hTriangle : triangleFourierKernel u = 0 := by
+      unfold triangleFourierKernel
+      rw [max_eq_right]
+      linarith
+    rw [carneiroLittmannSpectralPrimitive, if_pos hneg, hTriangle]
+    norm_num
+  · have hLower : -1 < u := lt_of_not_ge hneg
+    by_cases hzero : u ≤ 0
+    · have hTriangle : triangleFourierKernel u = 1 + u := by
+        unfold triangleFourierKernel
+        rw [abs_of_nonpos hzero, max_eq_left]
+        · ring
+        · linarith
+      rw [carneiroLittmannSpectralPrimitive, if_neg hneg,
+        carneiroLittmannSpectralPrimitiveMiddle, if_pos hzero,
+        carneiroLittmannSpectralPrimitiveLeft, hTriangle]
+      push_cast
+      ring
+    · have huPos : 0 < u := lt_of_not_ge hzero
+      by_cases hone : u ≤ 1
+      · have hTriangle : triangleFourierKernel u = 1 - u := by
+          unfold triangleFourierKernel
+          rw [abs_of_nonneg huPos.le, max_eq_left]
+          exact sub_nonneg.mpr hone
+        rw [carneiroLittmannSpectralPrimitive, if_neg hneg,
+          carneiroLittmannSpectralPrimitiveMiddle, if_neg hzero,
+          carneiroLittmannSpectralPrimitiveRightPiece, if_pos hone,
+          carneiroLittmannSpectralPrimitiveRight, hTriangle]
+        push_cast
+        ring
+      · have honeLt : 1 < u := lt_of_not_ge hone
+        have hTriangle : triangleFourierKernel u = 0 := by
+          unfold triangleFourierKernel
+          rw [abs_of_pos huPos, max_eq_right]
+          linarith
+        rw [carneiroLittmannSpectralPrimitive, if_neg hneg,
+          carneiroLittmannSpectralPrimitiveMiddle, if_neg hzero,
+          carneiroLittmannSpectralPrimitiveRightPiece, if_neg hone,
+          hTriangle]
+        norm_num
+
+private theorem fourier_carneiroLittmannSpectralPrimitive (x : ℝ) :
+    𝓕 carneiroLittmannSpectralPrimitive x =
+      (carneiroLittmannSincSquareBase (x + 1) : ℂ) -
+        (carneiroLittmannSincSquareBase x : ℂ) := by
+  have hFunction : carneiroLittmannSpectralPrimitive = fun u : ℝ =>
+      carneiroLittmannSpectralPhase u * (triangleFourierKernel u : ℂ) -
+        (triangleFourierKernel u : ℂ) := by
+    funext u
+    exact carneiroLittmannSpectralPrimitive_eq u
+  rw [hFunction]
+  calc
+    𝓕 (fun u : ℝ =>
+        carneiroLittmannSpectralPhase u * (triangleFourierKernel u : ℂ) -
+          (triangleFourierKernel u : ℂ)) x =
+        𝓕 (fun u : ℝ => carneiroLittmannSpectralPhase u *
+          (triangleFourierKernel u : ℂ)) x -
+            𝓕 (fun u : ℝ => (triangleFourierKernel u : ℂ)) x :=
+      fourier_sub_of_integrable integrable_carneiroLittmannModulatedTriangle
+        integrable_triangleFourierKernel.ofReal x
+    _ = (carneiroLittmannSincSquareBase (x + 1) : ℂ) -
+        𝓕 (fun u : ℝ => (triangleFourierKernel u : ℂ)) x := by
+      rw [fourier_carneiroLittmannModulatedTriangle]
+    _ = (carneiroLittmannSincSquareBase (x + 1) : ℂ) -
+        (carneiroLittmannSincSquareBase x : ℂ) := by
+      simpa only [carneiroLittmannSincSquareBase] using
+        congrArg (fun z : ℂ =>
+          (carneiroLittmannSincSquareBase (x + 1) : ℂ) - z)
+          (fourier_triangleFourierKernel x)
+
+private theorem fourier_carneiroLittmannSpectralPrimitiveDerivative (x : ℝ) :
+    𝓕 carneiroLittmannSpectralPrimitiveDerivative x =
+      carneiroLittmannSpectralFrequency * (x : ℂ) *
+        ((carneiroLittmannSincSquareBase (x + 1) : ℂ) -
+          (carneiroLittmannSincSquareBase x : ℂ)) := by
+  have hDerivFunction : deriv carneiroLittmannSpectralPrimitive =
+      carneiroLittmannSpectralPrimitiveDerivative := by
+    funext u
+    exact (hasDerivAt_carneiroLittmannSpectralPrimitive u).deriv
+  have hFourierDeriv := congrFun
+    (Real.fourier_deriv integrable_carneiroLittmannSpectralPrimitive
+      differentiable_carneiroLittmannSpectralPrimitive
+      integrable_deriv_carneiroLittmannSpectralPrimitive) x
+  rw [hDerivFunction, fourier_carneiroLittmannSpectralPrimitive] at hFourierDeriv
+  unfold carneiroLittmannSpectralFrequency
+  push_cast
+  simpa only [smul_eq_mul] using hFourierDeriv
+
+/-- The compact spectral profile has the concrete Carneiro--Littmann
+derivative as its standard Fourier transform. This replaces a Paley--Wiener
+appeal by an explicit compact-spectrum calculation. -/
+theorem fourier_carneiroLittmannSpectralProfile (x : ℝ) :
+    𝓕 carneiroLittmannSpectralProfile x =
+      (carneiroLittmannDerivative x : ℂ) := by
+  let c : ℂ := carneiroLittmannSpectralFrequency
+  let modulatedTriangle : ℝ → ℂ := fun u =>
+    carneiroLittmannSpectralPhase u * (triangleFourierKernel u : ℂ)
+  have hc : c ≠ 0 := by
+    dsimp [c, carneiroLittmannSpectralFrequency]
+    exact mul_ne_zero
+      (Complex.ofReal_ne_zero.mpr (mul_ne_zero (by norm_num) Real.pi_ne_zero))
+      Complex.I_ne_zero
+  have hDerivativeFunction : carneiroLittmannSpectralPrimitiveDerivative =
+      fun u => c * (carneiroLittmannSpectralProfile u -
+        2 * modulatedTriangle u) := by
+    funext u
+    rw [carneiroLittmannSpectralPrimitiveDerivative_eq]
+    dsimp [c, modulatedTriangle, carneiroLittmannSpectralFrequency]
+    ring
+  have hTransformDerivative :
+      𝓕 carneiroLittmannSpectralPrimitiveDerivative x =
+        c * (𝓕 carneiroLittmannSpectralProfile x -
+          2 * 𝓕 modulatedTriangle x) := by
+    rw [hDerivativeFunction, fourier_const_mul]
+    congr 1
+    rw [fourier_sub_of_integrable integrable_carneiroLittmannSpectralProfile
+      (integrable_carneiroLittmannModulatedTriangle.const_mul 2) x]
+    rw [fourier_const_mul]
+  have hDerivativeKnown :=
+    fourier_carneiroLittmannSpectralPrimitiveDerivative x
+  have hModulatedKnown :
+      𝓕 modulatedTriangle x =
+        (carneiroLittmannSincSquareBase (x + 1) : ℂ) := by
+    exact fourier_carneiroLittmannModulatedTriangle x
+  rw [hModulatedKnown] at hTransformDerivative
+  rw [hDerivativeKnown] at hTransformDerivative
+  have hFrequency : c = (((2 * Real.pi : ℝ) : ℂ) * Complex.I) := rfl
+  have hCancelled :
+      𝓕 carneiroLittmannSpectralProfile x -
+          2 * (carneiroLittmannSincSquareBase (x + 1) : ℂ) =
+        (x : ℂ) *
+          ((carneiroLittmannSincSquareBase (x + 1) : ℂ) -
+            (carneiroLittmannSincSquareBase x : ℂ)) := by
+    apply mul_left_cancel₀ hc
+    rw [hFrequency]
+    simpa only [c, carneiroLittmannSpectralFrequency, mul_assoc] using
+      hTransformDerivative.symm
+  calc
+    𝓕 carneiroLittmannSpectralProfile x =
+        (x : ℂ) *
+            ((carneiroLittmannSincSquareBase (x + 1) : ℂ) -
+              (carneiroLittmannSincSquareBase x : ℂ)) +
+          2 * (carneiroLittmannSincSquareBase (x + 1) : ℂ) := by
+      linear_combination hCancelled
+    _ = (carneiroLittmannDerivative x : ℂ) := by
+      rw [carneiroLittmannDerivative_eq_translationDifference_add_sincSquare]
+      simp only [carneiroLittmannTranslationPotential,
+        carneiroLittmannSincSquare]
+      push_cast
+      ring
 
 end DirichletPolynomial
 end PrimeNumberTheorem
