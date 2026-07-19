@@ -1,0 +1,9 @@
+import MathlibAux.LogSquareSummability
+
+#check MathlibAux.sum_Icc_inv_nat_mul_log_sq_le_four
+#check MathlibAux.summable_inv_nat_mul_log_sq
+#check HardyTheorem.sum_normSq_criticalLineShortDirichletCoeff_le_sixteen
+
+#print axioms MathlibAux.sum_Icc_inv_nat_mul_log_sq_le_four
+#print axioms MathlibAux.summable_inv_nat_mul_log_sq
+#print axioms HardyTheorem.sum_normSq_criticalLineShortDirichletCoeff_le_sixteen
