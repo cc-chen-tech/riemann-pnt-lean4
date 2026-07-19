@@ -47,6 +47,43 @@ theorem vinogradovResidueClassFinset_filter_refinement
       ZMod.cast_natCast (pow_dvd_pow p hab)] at hcast
     exact hcast.trans hz
 
+/-- A coarse residue-class sum is exactly the sum of its compatible finer
+residue-class sums. -/
+theorem vinogradovResidueClassSum_eq_sum_refinement
+    {E : Type*} [AddCommMonoid E]
+    (p a b X : ℕ) (hab : a ≤ b)
+    [NeZero (p ^ a)] [NeZero (p ^ b)]
+    (ξ : ZMod (p ^ a)) (f : Fin X → E) :
+    vinogradovResidueClassSum (p ^ a) X ξ f =
+      ∑ z ∈ (Finset.univ.filter fun z : ZMod (p ^ b) ↦
+        ZMod.castHom (pow_dvd_pow p hab) (ZMod (p ^ a)) z = ξ),
+        vinogradovResidueClassSum (p ^ b) X z f := by
+  let S := vinogradovResidueClassFinset (p ^ a) X ξ
+  let T := Finset.univ.filter fun z : ZMod (p ^ b) ↦
+    ZMod.castHom (pow_dvd_pow p hab) (ZMod (p ^ a)) z = ξ
+  let residue := fun m : Fin X ↦ ((m.val + 1 : ℕ) : ZMod (p ^ b))
+  have hmaps : ∀ m ∈ S, residue m ∈ T := by
+    intro m hm
+    have hm' : ((m.val + 1 : ℕ) : ZMod (p ^ a)) = ξ := by
+      simpa [S] using hm
+    refine Finset.mem_filter.mpr ⟨Finset.mem_univ _, ?_⟩
+    rw [ZMod.castHom_apply,
+      ZMod.cast_natCast (pow_dvd_pow p hab)]
+    exact hm'
+  calc
+    vinogradovResidueClassSum (p ^ a) X ξ f = ∑ m ∈ S, f m := rfl
+    _ = ∑ z ∈ T, ∑ m ∈ S with residue m = z, f m := by
+      rw [← Finset.sum_fiberwise_of_maps_to hmaps]
+    _ = ∑ z ∈ T, vinogradovResidueClassSum (p ^ b) X z f := by
+      apply Finset.sum_congr rfl
+      intro z hz
+      unfold vinogradovResidueClassSum
+      rw [show S = vinogradovResidueClassFinset (p ^ a) X ξ from rfl]
+      rw [show residue =
+        (fun m : Fin X ↦ ((m.val + 1 : ℕ) : ZMod (p ^ b))) from rfl]
+      rw [vinogradovResidueClassFinset_filter_refinement p a b X hab ξ z
+        (Finset.mem_filter.mp hz).2]
+
 /-- Pointwise residue conditioning for finite Weyl sums.  A class modulo
 `p^a` splits into exactly `p^(b-a)` classes modulo `p^b`, and finite Holder
 controls the `(n+1)`-st power with the sharp cardinality loss. -/
