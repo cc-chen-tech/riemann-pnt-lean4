@@ -2,6 +2,38 @@ import ZeroFreeRegion.VinogradovKorobov.AProcessSchedule
 
 namespace ZeroFreeRegion.VinogradovKorobov
 
+/-- One-variable numerical envelope for a constant differencing schedule. -/
+noncomputable def constantAProcessSquaredEnvelope
+    (h N : ℕ) (C : ℝ) : ℕ → ℝ
+  | 0 => C
+  | depth + 1 =>
+      2 * (N : ℝ) ^ 2 / h +
+        4 * (N : ℝ) * Real.sqrt
+          (constantAProcessSquaredEnvelope h N C depth)
+
+@[simp] lemma constantAProcessSquaredEnvelope_zero
+    (h N : ℕ) (C : ℝ) :
+    constantAProcessSquaredEnvelope h N C 0 = C := rfl
+
+@[simp] lemma constantAProcessSquaredEnvelope_succ
+    (h N : ℕ) (C : ℝ) (depth : ℕ) :
+    constantAProcessSquaredEnvelope h N C (depth + 1) =
+      2 * (N : ℝ) ^ 2 / h +
+        4 * (N : ℝ) * Real.sqrt
+          (constantAProcessSquaredEnvelope h N C depth) := rfl
+
+/-- The generic level-indexed envelope loses its level dependence for a
+constant schedule. -/
+theorem coarseRecursiveAProcessSquaredBound_const
+    (h N : ℕ) (C : ℝ) (depth level : ℕ) :
+    coarseRecursiveAProcessSquaredBound (fun _ ↦ h) N C depth level =
+      constantAProcessSquaredEnvelope h N C depth := by
+  induction depth generalizing level with
+  | zero => rfl
+  | succ depth ih =>
+      simp only [coarseRecursiveAProcessSquaredBound_succ,
+        constantAProcessSquaredEnvelope_succ, ih]
+
 @[simp] theorem aProcessScheduleBudget_const (h depth : ℕ) :
     aProcessScheduleBudget (fun _ ↦ h) depth = depth * (h - 1) := by
   induction depth with
@@ -47,5 +79,20 @@ theorem norm_zetaPhase_sum_sq_le_constantScheduledCoarseRecursiveAProcess
     t m N depth (fun _ ↦ h) ht hm
   exact zetaAProcessScheduleValid_const
     t m N depth h hh hbudget hmajor
+
+/-- Constant-schedule estimate stated with the one-variable squared
+envelope. -/
+theorem norm_zetaPhase_sum_sq_le_constantAProcessSquaredEnvelope
+    (t : ℝ) (m N depth h : ℕ)
+    (ht : 0 < t) (hm : 0 < m)
+    (hh : 1 ≤ h) (hbudget : depth * (h - 1) < N)
+    (hmajor : t * ((depth.factorial : ℝ) * (h : ℝ) ^ depth *
+      ((m : ℝ) ^ (depth + 1))⁻¹) ≤ Real.pi) :
+    ‖∑ n ∈ Finset.range N, phaseTerm (shiftedZetaPhase t m) n‖ ^ 2 ≤
+      constantAProcessSquaredEnvelope h N
+        (zetaAProcessUniformLeafSquaredBound t m N depth) depth := by
+  simpa only [coarseRecursiveAProcessSquaredBound_const] using
+    norm_zetaPhase_sum_sq_le_constantScheduledCoarseRecursiveAProcess
+      t m N depth h ht hm hh hbudget hmajor
 
 end ZeroFreeRegion.VinogradovKorobov
