@@ -1,0 +1,5 @@
+import MathlibAux.DiscreteHilbertInequality
+
+#check MathlibAux.discreteHilbertForm
+#check MathlibAux.norm_discreteHilbertForm_le_pi_mul_sum_normSq
+#print axioms MathlibAux.norm_discreteHilbertForm_le_pi_mul_sum_normSq
