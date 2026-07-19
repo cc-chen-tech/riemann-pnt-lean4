@@ -436,6 +436,179 @@ theorem card_vinogradovPrimePowerNonsingularSolutionSet_le_fixed_right
     Finset.card_map]
   exact card_vinogradovPrimePowerFixedRightNonsingularSet_le p k n hkp
 
+private def vinogradovPrimePowerBlockTarget
+    (k : ℕ) {Q r : ℕ} (tail : Fin r → Fin Q)
+    (y : Fin (k + r) → Fin Q) : Fin k → ℤ :=
+  fun j ↦
+    vinogradovPowerSumInt
+        (fun i ↦ (((y i).val + 1 : ℕ) : ℤ)) j -
+      vinogradovPowerSumInt
+        (fun i ↦ (((tail i).val + 1 : ℕ) : ℤ)) j
+
+/-- Fix the free left tail and the complete right tuple; the remaining
+nonsingular left head is a fixed-target fiber. -/
+noncomputable def vinogradovPrimePowerBlockFixedDataSet
+    (p k r n : ℕ) [Fact p.Prime] :
+    Finset (Σ _ :
+      ((Fin r → Fin (p ^ (n + 1))) ×
+        (Fin (k + r) → Fin (p ^ (n + 1)))),
+      Fin k → Fin (p ^ (n + 1))) :=
+  (Finset.univ : Finset
+      ((Fin r → Fin (p ^ (n + 1))) ×
+        (Fin (k + r) → Fin (p ^ (n + 1))))).sigma fun free ↦
+    vinogradovPrimePowerTargetFiberSet p k n
+      (vinogradovPrimePowerBlockTarget k free.1 free.2)
+
+/-- Summing over the free tail and right tuple costs exactly
+`Q^(k+2r)` choices, while the nonsingular head costs at most `k!`. -/
+theorem card_vinogradovPrimePowerBlockFixedDataSet_le
+    (p k r n : ℕ) [Fact p.Prime] (hkp : k < p) :
+    (vinogradovPrimePowerBlockFixedDataSet p k r n).card ≤
+      (p ^ (n + 1)) ^ (k + 2 * r) * k.factorial := by
+  rw [vinogradovPrimePowerBlockFixedDataSet, Finset.card_sigma]
+  calc
+    (∑ free :
+        ((Fin r → Fin (p ^ (n + 1))) ×
+          (Fin (k + r) → Fin (p ^ (n + 1)))),
+        (vinogradovPrimePowerTargetFiberSet p k n
+          (vinogradovPrimePowerBlockTarget k free.1 free.2)).card) ≤
+        ∑ _free :
+          ((Fin r → Fin (p ^ (n + 1))) ×
+            (Fin (k + r) → Fin (p ^ (n + 1)))),
+          k.factorial := by
+      apply Finset.sum_le_sum
+      intro free _hfree
+      exact card_vinogradovPrimePowerTargetFiberSet_le_factorial
+        p k n hkp
+          (vinogradovPrimePowerBlockTarget k free.1 free.2)
+    _ = ((p ^ (n + 1)) ^ r * (p ^ (n + 1)) ^ (k + r)) *
+          k.factorial := by
+      simp
+    _ = (p ^ (n + 1)) ^ (k + 2 * r) * k.factorial := by
+      rw [← pow_add]
+      congr 2
+      omega
+
+/-- Regroup fixed tail/right data and a head tuple into the ordinary pair of
+complete left and right tuples. -/
+def vinogradovPrimePowerBlockFixedDataAmbientEquiv
+    (p k r n : ℕ) :
+    (Σ _ :
+      ((Fin r → Fin (p ^ (n + 1))) ×
+        (Fin (k + r) → Fin (p ^ (n + 1)))),
+      Fin k → Fin (p ^ (n + 1))) ≃
+      ((Fin (k + r) → Fin (p ^ (n + 1))) ×
+        (Fin (k + r) → Fin (p ^ (n + 1)))) where
+  toFun z := (vinogradovJoinTuple z.2 z.1.1, z.1.2)
+  invFun xy :=
+    ⟨((fun i ↦ xy.1 (Fin.natAdd k i)), xy.2),
+      fun i ↦ xy.1 (Fin.castAdd r i)⟩
+  left_inv z := by
+    rcases z with ⟨⟨tail, y⟩, head⟩
+    apply Sigma.ext
+    · apply Prod.ext
+      · funext i
+        simp
+      · rfl
+    · simp
+  right_inv xy := by
+    apply Prod.ext
+    · exact vinogradovJoinTuple_split xy.1
+    · rfl
+
+private theorem vinogradovOneBasedJoinTuple
+    {k r Q : ℕ} (head : Fin k → Fin Q) (tail : Fin r → Fin Q) :
+    (fun i ↦ (((vinogradovJoinTuple head tail i).val + 1 : ℕ) : ℤ)) =
+      vinogradovJoinTuple
+        (fun i ↦ (((head i).val + 1 : ℕ) : ℤ))
+        (fun i ↦ (((tail i).val + 1 : ℕ) : ℤ)) := by
+  funext i
+  rcases finSumFinEquiv.surjective i with ⟨z, rfl⟩
+  cases z with
+  | inl i => simp
+  | inr i => simp
+
+/-- The fixed-data sigma representation is exactly the existing modular
+nonsingular solution set. -/
+theorem mem_vinogradovPrimePowerBlockFixedDataSet_iff_image_mem
+    (p k r n : ℕ) [Fact p.Prime]
+    (w : Σ _ :
+      ((Fin r → Fin (p ^ (n + 1))) ×
+        (Fin (k + r) → Fin (p ^ (n + 1)))),
+      Fin k → Fin (p ^ (n + 1))) :
+    w ∈ vinogradovPrimePowerBlockFixedDataSet p k r n ↔
+      vinogradovPrimePowerBlockFixedDataAmbientEquiv p k r n w ∈
+        vinogradovPrimePowerNonsingularSolutionSet p k r n := by
+  rcases w with ⟨⟨tail, y⟩, head⟩
+  rw [vinogradovPrimePowerBlockFixedDataSet, Finset.mem_sigma]
+  simp only [Finset.mem_univ, true_and]
+  rw [mem_vinogradovPrimePowerTargetFiberSet_iff]
+  change _ ↔ (vinogradovJoinTuple head tail, y) ∈
+    vinogradovPrimePowerNonsingularSolutionSet p k r n
+  rw [mem_vinogradovPrimePowerNonsingularSolutionSet_iff]
+  constructor
+  · rintro ⟨hinjective, htarget⟩
+    refine ⟨?_, ?_⟩
+    · simpa using hinjective
+    · apply (isVinogradovSolutionMod_iff_powerSumInt_modEq
+        (p ^ (n + 1)) k (k + r) (p ^ (n + 1))
+        (vinogradovJoinTuple head tail) y).mpr
+      intro j
+      rw [vinogradovOneBasedJoinTuple,
+        vinogradovPowerSumInt_joinTuple]
+      have hj := (htarget j).add_right
+        (vinogradovPowerSumInt
+          (fun i ↦ (((tail i).val + 1 : ℕ) : ℤ)) j)
+      simpa [vinogradovPrimePowerBlockTarget] using hj
+  · rintro ⟨hinjective, hsolution⟩
+    refine ⟨?_, ?_⟩
+    · simpa using hinjective
+    · have hpower := (isVinogradovSolutionMod_iff_powerSumInt_modEq
+        (p ^ (n + 1)) k (k + r) (p ^ (n + 1))
+        (vinogradovJoinTuple head tail) y).mp hsolution
+      intro j
+      have hj := hpower j
+      rw [vinogradovOneBasedJoinTuple,
+        vinogradovPowerSumInt_joinTuple] at hj
+      have hj' := hj.add_right
+        (-vinogradovPowerSumInt
+          (fun i ↦ (((tail i).val + 1 : ℕ) : ℤ)) j)
+      simpa [vinogradovPrimePowerBlockTarget] using hj'
+
+/-- The fixed-data representation maps onto every nonsingular solution with
+a selected left head block. -/
+theorem map_vinogradovPrimePowerBlockFixedDataSet_eq
+    (p k r n : ℕ) [Fact p.Prime] :
+    (vinogradovPrimePowerBlockFixedDataSet p k r n).map
+        (vinogradovPrimePowerBlockFixedDataAmbientEquiv
+          p k r n).toEmbedding =
+      vinogradovPrimePowerNonsingularSolutionSet p k r n := by
+  ext z
+  constructor
+  · intro hz
+    rcases Finset.mem_map.mp hz with ⟨w, hw, rfl⟩
+    exact (mem_vinogradovPrimePowerBlockFixedDataSet_iff_image_mem
+      p k r n w).mp hw
+  · intro hz
+    let e := vinogradovPrimePowerBlockFixedDataAmbientEquiv p k r n
+    let w := e.symm z
+    have hew : e w = z := e.apply_symm_apply z
+    apply Finset.mem_map.mpr
+    refine ⟨w, ?_, hew⟩
+    apply (mem_vinogradovPrimePowerBlockFixedDataSet_iff_image_mem
+      p k r n w).mpr
+    simpa [e, w] using hz
+
+/-- Fixed-data counting improves the nonsingular solution bound to one
+`k!` fiber over `Q^(k+2r)` free choices. -/
+theorem card_vinogradovPrimePowerNonsingularSolutionSet_le_fixed_data
+    (p k r n : ℕ) [Fact p.Prime] (hkp : k < p) :
+    (vinogradovPrimePowerNonsingularSolutionSet p k r n).card ≤
+      (p ^ (n + 1)) ^ (k + 2 * r) * k.factorial := by
+  rw [← map_vinogradovPrimePowerBlockFixedDataSet_eq p k r n,
+    Finset.card_map]
+  exact card_vinogradovPrimePowerBlockFixedDataSet_le p k r n hkp
+
 end
 
 end ZeroFreeRegion.VinogradovKorobov
