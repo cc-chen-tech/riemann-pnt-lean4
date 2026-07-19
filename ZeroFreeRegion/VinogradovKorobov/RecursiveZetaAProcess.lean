@@ -23,6 +23,13 @@ noncomputable def zetaAProcessLeafSquaredBound
     (t : ℝ) (m N : ℕ) (shifts : List ℕ) : ℝ :=
   (2 * Real.pi / zetaAProcessLeafDelta t m N shifts) ^ 2
 
+/-- Explicit upper majorant for the first adjacent decrement at a leaf. -/
+noncomputable def zetaAProcessLeafInitialMajorant
+    (t : ℝ) (m : ℕ) (shifts : List ℕ) : ℝ :=
+  t * ((shifts.length.factorial : ℝ) *
+    ((1 : ℝ) :: natShiftsToReal shifts).prod *
+    ((m : ℝ) ^ ((1 : ℝ) :: natShiftsToReal shifts).length)⁻¹)
+
 /-- The terminal hypotheses needed to apply the arbitrary-depth
 Kusmin--Landau estimate. -/
 noncomputable def ZetaAProcessLeafValid
@@ -32,6 +39,15 @@ noncomputable def ZetaAProcessLeafValid
     (∀ h ∈ shifts, 0 < h) ∧
     iteratedZetaPhaseDecrement t m shifts 0 ≤
       2 * Real.pi - zetaAProcessLeafDelta t m N shifts
+
+/-- A purely scale-based sufficient condition for a zeta A-process leaf.
+The explicit first-decrement majorant staying below `pi` prevents the entire
+monotone decrement range from crossing one full turn. -/
+noncomputable def ZetaAProcessScaleLeafValid
+    (t : ℝ) (m N : ℕ) (shifts : List ℕ) : Prop :=
+  1 ≤ remainingAProcessLength N shifts ∧
+    (∀ h ∈ shifts, 0 < h) ∧
+    zetaAProcessLeafInitialMajorant t m shifts ≤ Real.pi
 
 /-- Specialized proof obligations for a zeta-phase recursive A-process tree.
 Internal nodes choose admissible differencing lengths; leaves carry the
@@ -45,6 +61,59 @@ noncomputable def RecursiveZetaAProcessValid
       L shifts ≤ remainingAProcessLength N shifts ∧
       ∀ ell ∈ Finset.Icc 1 (L shifts - 1),
         RecursiveZetaAProcessValid t m L N depth (ell :: shifts)
+
+/-- Recursive A-process obligations with the terminal turn condition replaced
+by the explicit initial-decrement scale inequality. -/
+noncomputable def RecursiveZetaAProcessScaleValid
+    (t : ℝ) (m : ℕ) (L : List ℕ → ℕ) (N : ℕ) :
+    ℕ → List ℕ → Prop
+  | 0, shifts => ZetaAProcessScaleLeafValid t m N shifts
+  | depth + 1, shifts =>
+      1 ≤ L shifts ∧
+      L shifts ≤ remainingAProcessLength N shifts ∧
+      ∀ ell ∈ Finset.Icc 1 (L shifts - 1),
+        RecursiveZetaAProcessScaleValid t m L N depth (ell :: shifts)
+
+/-- The explicit scale majorant implies the nonresonant-turn leaf condition. -/
+theorem zetaAProcessLeafValid_of_scale
+    (t : ℝ) (m N : ℕ) (shifts : List ℕ)
+    (ht : 0 < t) (hm : 0 < m)
+    (hvalid : ZetaAProcessScaleLeafValid t m N shifts) :
+    ZetaAProcessLeafValid t m N shifts := by
+  rcases hvalid with ⟨hR, hshifts, hmajor⟩
+  refine ⟨hR, hshifts, ?_⟩
+  let R := remainingAProcessLength N shifts
+  have hbounds := iterated_shiftedZetaPhase_decrement_bounds
+    t m 0 shifts ht.le hm
+  have hfirst : iteratedZetaPhaseDecrement t m shifts 0 ≤
+      zetaAProcessLeafInitialMajorant t m shifts := by
+    simpa only [iteratedZetaPhaseDecrement,
+      zetaAProcessLeafInitialMajorant, Nat.add_zero] using hbounds.2
+  have hanti := antitone_iterated_shiftedZetaPhase_decrement
+    t m shifts ht.le hm
+  have hlastFirst : zetaAProcessLeafDelta t m N shifts ≤
+      iteratedZetaPhaseDecrement t m shifts 0 := by
+    simpa only [R, zetaAProcessLeafDelta, iteratedZetaPhaseDecrement] using
+      hanti (Nat.zero_le (R - 1))
+  have hfirstPi := hfirst.trans hmajor
+  have hlastPi := hlastFirst.trans hfirstPi
+  linarith
+
+/-- Every scale-valid recursive zeta tree is valid for the terminal
+Kusmin--Landau formulation. -/
+theorem recursiveZetaAProcessValid_of_scale
+    (t : ℝ) (m : ℕ) (L : List ℕ → ℕ) (N depth : ℕ)
+    (shifts : List ℕ) (ht : 0 < t) (hm : 0 < m)
+    (hvalid : RecursiveZetaAProcessScaleValid t m L N depth shifts) :
+    RecursiveZetaAProcessValid t m L N depth shifts := by
+  induction depth generalizing shifts with
+  | zero =>
+      exact zetaAProcessLeafValid_of_scale
+        t m N shifts ht hm hvalid
+  | succ depth ih =>
+      rcases hvalid with ⟨hL, hLN, hchildren⟩
+      exact ⟨hL, hLN, fun ell hell ↦
+        ih (ell :: shifts) (hchildren ell hell)⟩
 
 /-- The specialized zeta conditions discharge every leaf and internal-node
 obligation of the generic recursive A-process. -/
@@ -105,6 +174,19 @@ theorem norm_zetaPhase_sum_sq_le_recursiveAProcess
         (zetaAProcessLeafSquaredBound t m N) N depth [] := by
   apply norm_phaseSum_sq_le_recursiveAProcess
   exact recursiveZetaAProcessValid_to_generic
+    t m L N depth [] ht hm hvalid
+
+/-- Root recursive A-process estimate under fully explicit scale-valid leaf
+conditions. -/
+theorem norm_zetaPhase_sum_sq_le_recursiveAProcess_of_scale
+    (t : ℝ) (m : ℕ) (L : List ℕ → ℕ) (N depth : ℕ)
+    (ht : 0 < t) (hm : 0 < m)
+    (hvalid : RecursiveZetaAProcessScaleValid t m L N depth []) :
+    ‖∑ n ∈ Finset.range N, phaseTerm (shiftedZetaPhase t m) n‖ ^ 2 ≤
+      recursiveAProcessSquaredBound L
+        (zetaAProcessLeafSquaredBound t m N) N depth [] := by
+  apply norm_zetaPhase_sum_sq_le_recursiveAProcess t m L N depth ht hm
+  exact recursiveZetaAProcessValid_of_scale
     t m L N depth [] ht hm hvalid
 
 end ZeroFreeRegion.VinogradovKorobov
