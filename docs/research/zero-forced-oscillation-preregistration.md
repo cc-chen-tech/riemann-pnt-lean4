@@ -26,7 +26,7 @@ Primary sources:
 ## Timeboxed milestone outcome
 
 **Status: F0_PASSED_AND_ZETA_ALIGNED; F1_PACKAGE_ISOLATION_PASSED;
-F1_REMAINDER_OPEN.**  The checked Lean surface
+F1_CLOSED_TERMS_BOUNDED; F1_UNCONTROLLED_REMAINDER_OPEN.**  The checked Lean surface
 proves the exact integral and interval-independent norm bound for one ordered
 off-diagonal pair, the aggregate finite mean-square estimate, and an interior
 point attaining the resulting lower average.  Natural multiplicity is retained
@@ -53,10 +53,27 @@ psi0(exp y) - exp y = -selected_package(y) - explicit_remainder(y,T,beta)
 ```
 
 and the corresponding reverse-triangle lower bound. This completes package
-isolation inside the actual explicit-formula approximation. It does not bound
-the complementary zeros, logarithmic terms, or approximation error, so the
-quantitative remainder requirement in F1, the Revesz baseline recovery, and
-both novelty gates remain open.
+isolation inside the actual explicit-formula approximation. The closed block is
+now split from the remaining analytic terms: Lean proves
+
+```text
+zeta'(0) / zeta(0) = log(2*pi)
+|log(1 - exp(-2y))| <= exp(-2y) / (1 - exp(-2y))   (y > 0),
+```
+
+and hence a norm budget
+
+```text
+||closed_terms(y)|| <= log(2*pi)
+  + (1/2) * exp(-2y) / (1 - exp(-2y)).
+```
+
+The resulting transfer theorem subtracts exactly this budget while retaining
+`uncontrolled_remainder(y,T,beta)` as the sum of the complementary zero
+package and the actual explicit-formula approximation error. It does not
+bound either constituent, and does not give a uniform truncation estimate on a
+logarithmic interval. Therefore the quantitative remainder requirement in F1,
+the Revesz baseline recovery, and both novelty gates remain open.
 
 ## Exact classical-zeta candidate theorem
 
@@ -182,14 +199,14 @@ Report this milestone as failed or incomplete if any of the following occurs:
 ## Next exact gap
 
 The next analytic/formal result is the remaining quantitative half of F1:
-prove that `zeroPackageExplicitFormulaRemainder y T beta` is uniformly smaller
-than the F0 lower amplitude on a specified logarithmic interval. The package
-is already an actual selected zeta-zero contribution in the repository's
-finite-height approximation. What remains requires quantitative control of
-lower-real-part zeros, the closed-form logarithmic terms, and the
-explicit-formula approximation error. The exact decomposition removes the
-finite-sum and sign bookkeeping gap but provides none of those smallness
-estimates.
+prove that `zeroPackageUncontrolledRemainder y T beta` is uniformly smaller
+than the F0 lower amplitude minus the proved closed-form budget on a specified
+logarithmic interval. The package is already an actual selected zeta-zero
+contribution in the repository's finite-height approximation. What remains
+requires quantitative control of complementary/lower-real-part zeros and the
+explicit-formula approximation error. The closed logarithmic term is no
+longer a gap, but no theorem here controls complementary zeros or a uniform
+truncation error.
 
 ## Experiment schema
 
@@ -242,12 +259,13 @@ The contract build must first fail because the production import is absent.
 After implementation, run only:
 
 ```text
-lake -Kjobs=1 build Test.ZeroForcedOscillationContract
-lake -Kjobs=1 build Test.ZeroForcedOscillationAxiomAudit
+lake env lean Test/ZeroForcedOscillationExplicitFormulaContract.lean
+lake env lean Test/ZeroForcedOscillationExplicitFormulaAxiomAudit.lean
 ```
 
 The audit must print axioms for the aggregate mean-square bound, its
-multiplicity specialization, the interior-point consequence, and the
-common-real-part complex-power bridge.
+multiplicity specialization, the interior-point consequence, the
+common-real-part complex-power bridge, the closed-term bound, and the
+closed-budget transfer.
 A final source scan must find no
 `sorry`, `admit`, or `axiom` in the new production and test files.
