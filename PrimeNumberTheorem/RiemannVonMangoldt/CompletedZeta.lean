@@ -1,4 +1,5 @@
 import PrimeNumberTheorem.NontrivialZeroMultiplicity
+import PrimeNumberTheorem.LFunction.CompletedContourData
 
 open Complex Filter
 
@@ -133,6 +134,27 @@ theorem analyticOrderNatAt_completedZeta_eq_riemannZeta_of_mem_criticalStrip
   congrArg ENat.toNat
     (analyticOrderAt_completedZeta_eq_riemannZeta_of_mem_criticalStrip
       hsre hsre')
+
+/-- The completed Riemann zeta function as an instance of the reusable
+completed/base-function contour interface on the critical strip. -/
+noncomputable def completedZetaContourData :
+    LFunction.CompletedLFunctionContourData where
+  base := riemannZeta
+  completed := RiemannHypothesis.completedZeta
+  leftBoundary := 0
+  rightBoundary := 1
+  left_lt_right := zero_lt_one
+  analytic_completed := by
+    intro s _hs
+    exact differentiable_completedZeta.analyticAt s
+  completed_eq_zero_iff_base_eq_zero := by
+    intro s hs0 hs1
+    exact completedZeta_eq_zero_iff_riemannZeta_eq_zero_of_mem_criticalStrip
+      hs0 hs1
+  analyticOrderAt_completed_eq_base := by
+    intro s hs0 hs1
+    exact analyticOrderAt_completedZeta_eq_riemannZeta_of_mem_criticalStrip
+      hs0 hs1
 
 theorem completedZeta_ne_zero_of_re_eq_one_of_im_ne_zero
     {s : ℂ} (hsre : s.re = 1) (hsim : s.im ≠ 0) :

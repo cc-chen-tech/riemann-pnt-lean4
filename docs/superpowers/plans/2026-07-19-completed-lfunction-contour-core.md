@@ -269,7 +269,7 @@ example :
       completedZetaContourData.completed = RiemannHypothesis.completedZeta ∧
       completedZetaContourData.leftBoundary = 0 ∧
       completedZetaContourData.rightBoundary = 1 := by
-  rfl
+  exact ⟨rfl, rfl, rfl, rfl⟩
 ```
 
 - [ ] **Step 2: Run the contract and verify the RED state**

@@ -35,6 +35,13 @@ example {U T : ℝ} (hUT : U ≤ T) :
 example : Differentiable ℂ RiemannHypothesis.completedZeta :=
   differentiable_completedZeta
 
+example :
+    completedZetaContourData.base = riemannZeta ∧
+      completedZetaContourData.completed = RiemannHypothesis.completedZeta ∧
+      completedZetaContourData.leftBoundary = 0 ∧
+      completedZetaContourData.rightBoundary = 1 := by
+  exact ⟨rfl, rfl, rfl, rfl⟩
+
 example {s : ℂ} (hsre : 0 < s.re) (hsre' : s.re < 1) :
     RiemannHypothesis.completedZeta s = 0 ↔ riemannZeta s = 0 :=
   completedZeta_eq_zero_iff_riemannZeta_eq_zero_of_mem_criticalStrip
