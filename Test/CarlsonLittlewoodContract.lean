@@ -97,10 +97,89 @@ example {X : ℕ} (hX : 1 ≤ X) {sigma T : ℝ}
   exists_regularizedCarlson_goodRectangle_zeroDensity_le_fourEdges
     hX hsigma hsigmaOne hT
 
+example {X : ℕ} {x0 y0 y1 : ℝ}
+    (hx0 : 0 < x0) (hy01 : y0 < y1)
+    (hleft : ∀ y ∈ Set.Icc y0 y1,
+      regularizedCarlsonZeroDetector X
+        ((x0 : ℂ) + (y : ℂ) * I) ≠ 0) :
+    (∫ y in y0..y1,
+        ((((x0 : ℂ) + (y : ℂ) * I - (x0 : ℂ)) *
+          logDeriv (regularizedCarlsonZeroDetector X)
+            ((x0 : ℂ) + (y : ℂ) * I))).re) =
+      y1 * Real.log ‖regularizedCarlsonZeroDetector X
+          ((x0 : ℂ) + (y1 : ℂ) * I)‖ -
+      y0 * Real.log ‖regularizedCarlsonZeroDetector X
+          ((x0 : ℂ) + (y0 : ℂ) * I)‖ -
+      ∫ y in y0..y1,
+        Real.log ‖regularizedCarlsonZeroDetector X
+          ((x0 : ℂ) + (y : ℂ) * I)‖ :=
+  regularizedCarlsonLittlewood_leftEdge_eq_logNorm hx0 hy01 hleft
+
+example {X : ℕ} {x0 x1 y0 y1 : ℝ}
+    (hx1 : 0 < x1) (hy01 : y0 < y1)
+    (hright : ∀ y ∈ Set.Icc y0 y1,
+      regularizedCarlsonZeroDetector X
+        ((x1 : ℂ) + (y : ℂ) * I) ≠ 0) :
+    (∫ y in y0..y1,
+        ((((x1 : ℂ) + (y : ℂ) * I - (x0 : ℂ)) *
+          logDeriv (regularizedCarlsonZeroDetector X)
+            ((x1 : ℂ) + (y : ℂ) * I))).re) =
+      (x1 - x0) *
+        (∫ y in y0..y1,
+          (logDeriv (regularizedCarlsonZeroDetector X)
+            ((x1 : ℂ) + (y : ℂ) * I)).re) +
+      y1 * Real.log ‖regularizedCarlsonZeroDetector X
+          ((x1 : ℂ) + (y1 : ℂ) * I)‖ -
+      y0 * Real.log ‖regularizedCarlsonZeroDetector X
+          ((x1 : ℂ) + (y0 : ℂ) * I)‖ -
+      ∫ y in y0..y1,
+        Real.log ‖regularizedCarlsonZeroDetector X
+          ((x1 : ℂ) + (y : ℂ) * I)‖ :=
+  regularizedCarlsonLittlewood_rightEdge_eq_logNorm hx1 hy01 hright
+
+example {X : ℕ} {x0 x1 y0 y1 : ℝ}
+    (hx0 : 0 < x0) (hx01 : x0 < x1) (hy01 : y0 < y1)
+    (hleft : ∀ y ∈ Set.Icc y0 y1,
+      regularizedCarlsonZeroDetector X
+        ((x0 : ℂ) + (y : ℂ) * I) ≠ 0)
+    (hright : ∀ y ∈ Set.Icc y0 y1,
+      regularizedCarlsonZeroDetector X
+        ((x1 : ℂ) + (y : ℂ) * I) ≠ 0)
+    (hbottom : ∀ x ∈ Set.Icc x0 x1,
+      regularizedCarlsonZeroDetector X
+        ((x : ℂ) + (y0 : ℂ) * I) ≠ 0)
+    (htop : ∀ x ∈ Set.Icc x0 x1,
+      regularizedCarlsonZeroDetector X
+        ((x : ℂ) + (y1 : ℂ) * I) ≠ 0) :
+    regularizedCarlsonLittlewoodFourEdges X x0 x1 y0 y1 =
+      (∫ x in x0..x1,
+        (x - x0) *
+          (logDeriv (regularizedCarlsonZeroDetector X)
+            ((x : ℂ) + (y0 : ℂ) * I)).im) -
+      (∫ x in x0..x1,
+        (x - x0) *
+          (logDeriv (regularizedCarlsonZeroDetector X)
+            ((x : ℂ) + (y1 : ℂ) * I)).im) +
+      (x1 - x0) *
+        (∫ y in y0..y1,
+          (logDeriv (regularizedCarlsonZeroDetector X)
+            ((x1 : ℂ) + (y : ℂ) * I)).re) +
+      (∫ y in y0..y1,
+        Real.log ‖regularizedCarlsonZeroDetector X
+          ((x0 : ℂ) + (y : ℂ) * I)‖) -
+      (∫ y in y0..y1,
+        Real.log ‖regularizedCarlsonZeroDetector X
+          ((x1 : ℂ) + (y : ℂ) * I)‖) :=
+  regularizedCarlsonLittlewoodFourEdges_eq_logNormForm
+    hx0 hx01 hy01 hleft hright hbottom htop
+
 #print axioms boundaryRectIntegral_regularizedCarlsonZeroDetector_eq_zeroMultiplicitySum
 #print axioms two_pi_mul_regularizedCarlsonZeroMultiplicityWeightedRealSum_eq_four_edges
 #print axioms sub_mul_zeroDensityCount_le_regularizedCarlsonWeightedZeroSum
 #print axioms exists_regularizedCarlson_goodRectangle_zeroDensity_le_fourEdges
+#print axioms regularizedCarlsonLittlewood_leftEdge_eq_logNorm
+#print axioms regularizedCarlsonLittlewood_rightEdge_eq_logNorm
+#print axioms regularizedCarlsonLittlewoodFourEdges_eq_logNormForm
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem

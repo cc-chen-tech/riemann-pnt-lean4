@@ -262,6 +262,156 @@ theorem two_pi_mul_regularizedCarlsonZeroMultiplicityWeightedRealSum_eq_four_edg
   rw [Complex.mul_im, hsumRe] at him
   simpa [f] using him.symm
 
+/-- The anchored left vertical edge is exactly an endpoint contribution minus
+the logarithmic norm integral.  The argument-variation term vanishes because
+the edge and the weight have the same real anchor. -/
+theorem regularizedCarlsonLittlewood_leftEdge_eq_logNorm
+    {X : ℕ} {x0 y0 y1 : ℝ}
+    (hx0 : 0 < x0) (hy01 : y0 < y1)
+    (hleft : ∀ y ∈ Set.Icc y0 y1,
+      regularizedCarlsonZeroDetector X
+        ((x0 : ℂ) + (y : ℂ) * I) ≠ 0) :
+    (∫ y in y0..y1,
+        ((((x0 : ℂ) + (y : ℂ) * I - (x0 : ℂ)) *
+          logDeriv (regularizedCarlsonZeroDetector X)
+            ((x0 : ℂ) + (y : ℂ) * I))).re) =
+      y1 * Real.log ‖regularizedCarlsonZeroDetector X
+          ((x0 : ℂ) + (y1 : ℂ) * I)‖ -
+      y0 * Real.log ‖regularizedCarlsonZeroDetector X
+          ((x0 : ℂ) + (y0 : ℂ) * I)‖ -
+      ∫ y in y0..y1,
+        Real.log ‖regularizedCarlsonZeroDetector X
+          ((x0 : ℂ) + (y : ℂ) * I)‖ := by
+  have hanalytic : ∀ y ∈ [[y0, y1]],
+      AnalyticAt ℂ (regularizedCarlsonZeroDetector X)
+        ((x0 : ℂ) + I * (y : ℂ)) := by
+    intro y _
+    exact analyticOnNhd_regularizedCarlsonZeroDetector_re_gt
+      (theta := (0 : ℝ)) le_rfl X _ (by simpa using hx0)
+  have hne : ∀ y ∈ [[y0, y1]],
+      regularizedCarlsonZeroDetector X
+        ((x0 : ℂ) + I * (y : ℂ)) ≠ 0 := by
+    intro y hy
+    simpa [mul_comm] using
+      hleft y (by simpa only [uIcc_of_le hy01.le] using hy)
+  simpa [mul_comm] using
+    (intervalIntegral_re_weighted_logDeriv_vertical_eq_of_analytic
+      (f := regularizedCarlsonZeroDetector X)
+      (sigma := x0) (anchor := x0) hanalytic hne)
+
+/-- The right vertical edge splits into argument variation, endpoint values,
+and the logarithmic norm integral. -/
+theorem regularizedCarlsonLittlewood_rightEdge_eq_logNorm
+    {X : ℕ} {x0 x1 y0 y1 : ℝ}
+    (hx1 : 0 < x1) (hy01 : y0 < y1)
+    (hright : ∀ y ∈ Set.Icc y0 y1,
+      regularizedCarlsonZeroDetector X
+        ((x1 : ℂ) + (y : ℂ) * I) ≠ 0) :
+    (∫ y in y0..y1,
+        ((((x1 : ℂ) + (y : ℂ) * I - (x0 : ℂ)) *
+          logDeriv (regularizedCarlsonZeroDetector X)
+            ((x1 : ℂ) + (y : ℂ) * I))).re) =
+      (x1 - x0) *
+        (∫ y in y0..y1,
+          (logDeriv (regularizedCarlsonZeroDetector X)
+            ((x1 : ℂ) + (y : ℂ) * I)).re) +
+      y1 * Real.log ‖regularizedCarlsonZeroDetector X
+          ((x1 : ℂ) + (y1 : ℂ) * I)‖ -
+      y0 * Real.log ‖regularizedCarlsonZeroDetector X
+          ((x1 : ℂ) + (y0 : ℂ) * I)‖ -
+      ∫ y in y0..y1,
+        Real.log ‖regularizedCarlsonZeroDetector X
+          ((x1 : ℂ) + (y : ℂ) * I)‖ := by
+  have hanalytic : ∀ y ∈ [[y0, y1]],
+      AnalyticAt ℂ (regularizedCarlsonZeroDetector X)
+        ((x1 : ℂ) + I * (y : ℂ)) := by
+    intro y _
+    exact analyticOnNhd_regularizedCarlsonZeroDetector_re_gt
+      (theta := (0 : ℝ)) le_rfl X _ (by simpa using hx1)
+  have hne : ∀ y ∈ [[y0, y1]],
+      regularizedCarlsonZeroDetector X
+        ((x1 : ℂ) + I * (y : ℂ)) ≠ 0 := by
+    intro y hy
+    simpa [mul_comm] using
+      hright y (by simpa only [uIcc_of_le hy01.le] using hy)
+  simpa [mul_comm] using
+    (intervalIntegral_re_weighted_logDeriv_vertical_eq_of_analytic
+      (f := regularizedCarlsonZeroDetector X)
+      (sigma := x1) (anchor := x0) hanalytic hne)
+
+/-- The endpoint terms from the four edge integrations cancel.  This is the
+detector-specific Littlewood lemma in the form used for quantitative bounds:
+two horizontal argument terms, one right-edge argument term, and the
+difference of the left and right logarithmic norm integrals. -/
+theorem regularizedCarlsonLittlewoodFourEdges_eq_logNormForm
+    {X : ℕ} {x0 x1 y0 y1 : ℝ}
+    (hx0 : 0 < x0) (hx01 : x0 < x1) (hy01 : y0 < y1)
+    (hleft : ∀ y ∈ Set.Icc y0 y1,
+      regularizedCarlsonZeroDetector X
+        ((x0 : ℂ) + (y : ℂ) * I) ≠ 0)
+    (hright : ∀ y ∈ Set.Icc y0 y1,
+      regularizedCarlsonZeroDetector X
+        ((x1 : ℂ) + (y : ℂ) * I) ≠ 0)
+    (hbottom : ∀ x ∈ Set.Icc x0 x1,
+      regularizedCarlsonZeroDetector X
+        ((x : ℂ) + (y0 : ℂ) * I) ≠ 0)
+    (htop : ∀ x ∈ Set.Icc x0 x1,
+      regularizedCarlsonZeroDetector X
+        ((x : ℂ) + (y1 : ℂ) * I) ≠ 0) :
+    regularizedCarlsonLittlewoodFourEdges X x0 x1 y0 y1 =
+      (∫ x in x0..x1,
+        (x - x0) *
+          (logDeriv (regularizedCarlsonZeroDetector X)
+            ((x : ℂ) + (y0 : ℂ) * I)).im) -
+      (∫ x in x0..x1,
+        (x - x0) *
+          (logDeriv (regularizedCarlsonZeroDetector X)
+            ((x : ℂ) + (y1 : ℂ) * I)).im) +
+      (x1 - x0) *
+        (∫ y in y0..y1,
+          (logDeriv (regularizedCarlsonZeroDetector X)
+            ((x1 : ℂ) + (y : ℂ) * I)).re) +
+      (∫ y in y0..y1,
+        Real.log ‖regularizedCarlsonZeroDetector X
+          ((x0 : ℂ) + (y : ℂ) * I)‖) -
+      (∫ y in y0..y1,
+        Real.log ‖regularizedCarlsonZeroDetector X
+          ((x1 : ℂ) + (y : ℂ) * I)‖) := by
+  have horizontalAnalytic (y : ℝ) : ∀ x ∈ [[x0, x1]],
+      AnalyticAt ℂ (regularizedCarlsonZeroDetector X)
+        ((x : ℂ) + (y : ℂ) * I) := by
+    intro x hx
+    have hxIcc : x ∈ Set.Icc x0 x1 := by
+      simpa only [uIcc_of_le hx01.le] using hx
+    exact analyticOnNhd_regularizedCarlsonZeroDetector_re_gt
+      (theta := (0 : ℝ)) le_rfl X _ (by
+        simpa using hx0.trans_le hxIcc.1)
+  have hbottom' : ∀ x ∈ [[x0, x1]],
+      regularizedCarlsonZeroDetector X
+        ((x : ℂ) + (y0 : ℂ) * I) ≠ 0 := by
+    intro x hx
+    exact hbottom x (by simpa only [uIcc_of_le hx01.le] using hx)
+  have htop' : ∀ x ∈ [[x0, x1]],
+      regularizedCarlsonZeroDetector X
+        ((x : ℂ) + (y1 : ℂ) * I) ≠ 0 := by
+    intro x hx
+    exact htop x (by simpa only [uIcc_of_le hx01.le] using hx)
+  have hbottomEq :=
+    intervalIntegral_im_weighted_logDeriv_horizontal_eq_of_analytic
+      (f := regularizedCarlsonZeroDetector X) (anchor := x0)
+      (horizontalAnalytic y0) hbottom'
+  have htopEq :=
+    intervalIntegral_im_weighted_logDeriv_horizontal_eq_of_analytic
+      (f := regularizedCarlsonZeroDetector X) (anchor := x0)
+      (horizontalAnalytic y1) htop'
+  have hrightEq := regularizedCarlsonLittlewood_rightEdge_eq_logNorm
+    (x0 := x0) (hx0.trans hx01) hy01 hright
+  have hleftEq := regularizedCarlsonLittlewood_leftEdge_eq_logNorm
+    hx0 hy01 hleft
+  unfold regularizedCarlsonLittlewoodFourEdges
+  rw [hbottomEq, htopEq, hrightEq, hleftEq]
+  ring
+
 /-- The weighted detector-zero sum dominates Carlson's target zeta-zero
 count.  Each target zero lies strictly to the right of `sigma`, and detector
 multiplicity dominates zeta multiplicity. -/

@@ -94,6 +94,40 @@ example {f : ℂ → ℂ} {sigma anchor a b : ℝ}
           Real.log ‖f ((sigma : ℂ) + I * (u : ℂ))‖ :=
   intervalIntegral_re_weighted_logDeriv_vertical_eq_of_analytic hf hne
 
+example {f : ℂ → ℂ} {x y : ℝ}
+    (hf : AnalyticAt ℂ f ((x : ℂ) + (y : ℂ) * I))
+    (hne : f ((x : ℂ) + (y : ℂ) * I) ≠ 0) :
+    HasDerivAt
+      (fun u : ℝ => Real.log ‖f ((u : ℂ) + (y : ℂ) * I)‖)
+      (logDeriv f ((x : ℂ) + (y : ℂ) * I)).re x :=
+  hasDerivAt_log_norm_horizontal hf hne
+
+example {f : ℂ → ℂ} {y a b : ℝ}
+    (hf : ∀ x ∈ [[a, b]],
+      AnalyticAt ℂ f ((x : ℂ) + (y : ℂ) * I))
+    (hne : ∀ x ∈ [[a, b]],
+      f ((x : ℂ) + (y : ℂ) * I) ≠ 0) :
+    (∫ x in a..b,
+        (logDeriv f ((x : ℂ) + (y : ℂ) * I)).re) =
+      Real.log ‖f ((b : ℂ) + (y : ℂ) * I)‖ -
+        Real.log ‖f ((a : ℂ) + (y : ℂ) * I)‖ :=
+  intervalIntegral_re_logDeriv_horizontal_eq_logNorm_sub hf hne
+
+example {f : ℂ → ℂ} {anchor y a b : ℝ}
+    (hf : ∀ x ∈ [[a, b]],
+      AnalyticAt ℂ f ((x : ℂ) + (y : ℂ) * I))
+    (hne : ∀ x ∈ [[a, b]],
+      f ((x : ℂ) + (y : ℂ) * I) ≠ 0) :
+    (∫ x in a..b,
+        ((((x : ℂ) + (y : ℂ) * I - (anchor : ℂ)) *
+          logDeriv f ((x : ℂ) + (y : ℂ) * I))).im) =
+      (∫ x in a..b,
+        (x - anchor) *
+          (logDeriv f ((x : ℂ) + (y : ℂ) * I)).im) +
+      y * (Real.log ‖f ((b : ℂ) + (y : ℂ) * I)‖ -
+        Real.log ‖f ((a : ℂ) + (y : ℂ) * I)‖) :=
+  intervalIntegral_im_weighted_logDeriv_horizontal_eq_of_analytic hf hne
+
 example {f : ℂ → ℂ} {x0 x1 y0 y1 : ℝ}
     (poles : Finset ℂ) (multiplicity : ℂ → ℕ) (anchor : ℂ)
     (hf : AnalyticOnNhd ℂ f ([[x0, x1]] ×ℂ [[y0, y1]]))
@@ -165,6 +199,9 @@ example {f : ℂ → ℂ} {x0 x1 y0 y1 : ℝ}
 #print axioms continuousOn_neg_im_logDeriv_vertical
 #print axioms intervalIntegral_mul_neg_im_logDeriv_vertical_eq_of_analytic
 #print axioms intervalIntegral_re_weighted_logDeriv_vertical_eq_of_analytic
+#print axioms hasDerivAt_log_norm_horizontal
+#print axioms intervalIntegral_re_logDeriv_horizontal_eq_logNorm_sub
+#print axioms intervalIntegral_im_weighted_logDeriv_horizontal_eq_of_analytic
 #print axioms two_pi_mul_zeroMultiplicityWeightedRealSum_eq_four_edges
 
 end CarlsonZeroDensity

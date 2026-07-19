@@ -209,7 +209,7 @@ theorem intervalIntegral_re_weighted_logDeriv_vertical_eq_of_analytic
       simp only [Complex.mul_re, Complex.sub_re, Complex.add_re,
         Complex.sub_im, Complex.add_im, Complex.ofReal_re, Complex.mul_re,
         Complex.mul_im, Complex.I_re, Complex.I_im, Complex.ofReal_im,
-        zero_mul, one_mul, add_zero, zero_add, sub_zero]
+        zero_mul, zero_add, sub_zero]
       ring
     _ = (sigma - anchor) *
           (∫ u in a..b,
@@ -223,6 +223,143 @@ theorem intervalIntegral_re_weighted_logDeriv_vertical_eq_of_analytic
     _ = _ := by
       rw [intervalIntegral_mul_neg_im_logDeriv_vertical_eq_of_analytic hf hne]
       ring
+
+/-- Along a horizontal line, the derivative of `log ‖f‖` is the real part
+of the logarithmic derivative of `f`. -/
+theorem hasDerivAt_log_norm_horizontal
+    {f : ℂ → ℂ} {x y : ℝ}
+    (hf : AnalyticAt ℂ f ((x : ℂ) + (y : ℂ) * I))
+    (hne : f ((x : ℂ) + (y : ℂ) * I) ≠ 0) :
+    HasDerivAt
+      (fun u : ℝ => Real.log ‖f ((u : ℂ) + (y : ℂ) * I)‖)
+      (logDeriv f ((x : ℂ) + (y : ℂ) * I)).re x := by
+  let s : ℂ := (x : ℂ) + (y : ℂ) * I
+  have hparam :
+      HasDerivAt (fun z : ℂ => z + (y : ℂ) * I) 1 (x : ℂ) := by
+    simpa using (hasDerivAt_id (x : ℂ)).add_const ((y : ℂ) * I)
+  have hcompComplex :
+      HasDerivAt (fun z : ℂ => f (z + (y : ℂ) * I))
+        (deriv f s) (x : ℂ) := by
+    simpa [s] using hf.differentiableAt.hasDerivAt.comp (x : ℂ) hparam
+  have hhorizontal :
+      HasDerivAt (fun u : ℝ => f ((u : ℂ) + (y : ℂ) * I))
+        (deriv f s) x := by
+    simpa using hcompComplex.comp_ofReal
+  have hnormSq := hhorizontal.norm_sq
+  have hnormSqNe : ‖f s‖ ^ 2 ≠ 0 := by
+    exact pow_ne_zero 2 (norm_ne_zero_iff.mpr (by simpa [s] using hne))
+  have hlogNormSq := hnormSq.log hnormSqNe
+  have hhalf := hlogNormSq.const_mul (2 : ℝ)⁻¹
+  convert hhalf using 1
+  · funext u
+    rw [Real.log_pow]
+    ring
+  · rw [logDeriv_apply, hf.differentiableAt.hasDerivAt.deriv]
+    simp only [Complex.inner, Complex.mul_re, Complex.conj_re,
+      Complex.conj_im]
+    rw [Complex.div_re, Complex.normSq_eq_norm_sq]
+    field_simp
+    ring
+
+/-- The logarithmic derivative is continuous along a compact horizontal
+segment on which `f` is analytic and nonvanishing. -/
+theorem continuousOn_logDeriv_horizontal
+    {f : ℂ → ℂ} {y a b : ℝ}
+    (hf : ∀ x ∈ [[a, b]],
+      AnalyticAt ℂ f ((x : ℂ) + (y : ℂ) * I))
+    (hne : ∀ x ∈ [[a, b]],
+      f ((x : ℂ) + (y : ℂ) * I) ≠ 0) :
+    ContinuousOn
+      (fun x : ℝ => logDeriv f ((x : ℂ) + (y : ℂ) * I))
+      [[a, b]] := by
+  intro x hx
+  have hmap : ContinuousAt
+      (fun u : ℝ => (u : ℂ) + (y : ℂ) * I) x := by
+    fun_prop
+  simpa [Function.comp_def] using
+    ((ZeroFreeRegion.analyticAt_logDeriv_of_analyticAt_ne_zero
+      (hf x hx) (hne x hx)).continuousAt.comp_of_eq hmap rfl).continuousWithinAt
+
+/-- The horizontal integral of the real part of `f'/f` is the change in
+`log ‖f‖`. -/
+theorem intervalIntegral_re_logDeriv_horizontal_eq_logNorm_sub
+    {f : ℂ → ℂ} {y a b : ℝ}
+    (hf : ∀ x ∈ [[a, b]],
+      AnalyticAt ℂ f ((x : ℂ) + (y : ℂ) * I))
+    (hne : ∀ x ∈ [[a, b]],
+      f ((x : ℂ) + (y : ℂ) * I) ≠ 0) :
+    (∫ x in a..b,
+        (logDeriv f ((x : ℂ) + (y : ℂ) * I)).re) =
+      Real.log ‖f ((b : ℂ) + (y : ℂ) * I)‖ -
+        Real.log ‖f ((a : ℂ) + (y : ℂ) * I)‖ := by
+  have hlogCont := continuousOn_logDeriv_horizontal hf hne
+  have hreCont : ContinuousOn
+      (fun x : ℝ =>
+        (logDeriv f ((x : ℂ) + (y : ℂ) * I)).re) [[a, b]] :=
+    Complex.continuous_re.comp_continuousOn hlogCont
+  exact intervalIntegral.integral_eq_sub_of_hasDerivAt
+    (fun x hx => hasDerivAt_log_norm_horizontal (hf x hx) (hne x hx))
+    hreCont.intervalIntegrable
+
+/-- A horizontal weighted logarithmic derivative splits into its weighted
+imaginary part and the endpoint change of `log ‖f‖`. -/
+theorem intervalIntegral_im_weighted_logDeriv_horizontal_eq_of_analytic
+    {f : ℂ → ℂ} {anchor y a b : ℝ}
+    (hf : ∀ x ∈ [[a, b]],
+      AnalyticAt ℂ f ((x : ℂ) + (y : ℂ) * I))
+    (hne : ∀ x ∈ [[a, b]],
+      f ((x : ℂ) + (y : ℂ) * I) ≠ 0) :
+    (∫ x in a..b,
+        ((((x : ℂ) + (y : ℂ) * I - (anchor : ℂ)) *
+          logDeriv f ((x : ℂ) + (y : ℂ) * I))).im) =
+      (∫ x in a..b,
+        (x - anchor) *
+          (logDeriv f ((x : ℂ) + (y : ℂ) * I)).im) +
+      y * (Real.log ‖f ((b : ℂ) + (y : ℂ) * I)‖ -
+        Real.log ‖f ((a : ℂ) + (y : ℂ) * I)‖) := by
+  have hlogCont := continuousOn_logDeriv_horizontal hf hne
+  have hreCont : ContinuousOn
+      (fun x : ℝ =>
+        (logDeriv f ((x : ℂ) + (y : ℂ) * I)).re) [[a, b]] :=
+    Complex.continuous_re.comp_continuousOn hlogCont
+  have himCont : ContinuousOn
+      (fun x : ℝ =>
+        (logDeriv f ((x : ℂ) + (y : ℂ) * I)).im) [[a, b]] :=
+    Complex.continuous_im.comp_continuousOn hlogCont
+  have hweightedImInt : IntervalIntegrable
+      (fun x : ℝ => (x - anchor) *
+        (logDeriv f ((x : ℂ) + (y : ℂ) * I)).im)
+      MeasureTheory.volume a b :=
+    ((continuousOn_id.sub continuousOn_const).mul himCont).intervalIntegrable
+  have hyReInt : IntervalIntegrable
+      (fun x : ℝ => y *
+        (logDeriv f ((x : ℂ) + (y : ℂ) * I)).re)
+      MeasureTheory.volume a b :=
+    (continuousOn_const.mul hreCont).intervalIntegrable
+  calc
+    (∫ x in a..b,
+        ((((x : ℂ) + (y : ℂ) * I - (anchor : ℂ)) *
+          logDeriv f ((x : ℂ) + (y : ℂ) * I))).im) =
+        ∫ x in a..b,
+          (x - anchor) *
+              (logDeriv f ((x : ℂ) + (y : ℂ) * I)).im +
+            y * (logDeriv f ((x : ℂ) + (y : ℂ) * I)).re := by
+      apply intervalIntegral.integral_congr
+      intro x _
+      simp only [Complex.mul_im, Complex.sub_re, Complex.add_re,
+        Complex.sub_im, Complex.add_im, Complex.ofReal_re, Complex.mul_re,
+        Complex.mul_im, Complex.I_re, Complex.I_im, Complex.ofReal_im,
+        zero_mul, add_zero, zero_add, sub_zero]
+      ring
+    _ = (∫ x in a..b,
+          (x - anchor) *
+            (logDeriv f ((x : ℂ) + (y : ℂ) * I)).im) +
+        ∫ x in a..b,
+          y * (logDeriv f ((x : ℂ) + (y : ℂ) * I)).re := by
+      rw [intervalIntegral.integral_add hweightedImInt hyReInt]
+    _ = _ := by
+      rw [intervalIntegral.integral_const_mul,
+        intervalIntegral_re_logDeriv_horizontal_eq_logNorm_sub hf hne]
 
 /-- Weighted argument-principle identity on an axis-parallel rectangle.
 
