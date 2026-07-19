@@ -53,6 +53,11 @@ example {deltaSmall deltaLarge : ℝ}
 example : fourierKernel carneiroLittmannRawKernel 0 = (2 : ℂ) :=
   fourierKernel_carneiroLittmannRawKernel_zero
 
+example {xi : ℝ} (hxi : 2 * Real.pi ≤ |xi|) :
+    fourierKernel carneiroLittmannRawKernel xi =
+      (-2 * Complex.I) / xi :=
+  fourierKernel_carneiroLittmannRawKernel_of_two_pi_le_abs hxi
+
 #print axioms carneiroLittmannCumulative_nonneg_of_nonpos
 #print axioms one_le_carneiroLittmannCumulative_of_nonneg
 #print axioms carneiroLittmannKernelError_nonneg
@@ -66,6 +71,7 @@ example : fourierKernel carneiroLittmannRawKernel 0 = (2 : ℂ) :=
 #print axioms carneiroLittmannRawKernel_nonneg
 #print axioms carneiroLittmannRawKernel_dilation_antitone
 #print axioms fourierKernel_carneiroLittmannRawKernel_zero
+#print axioms fourierKernel_carneiroLittmannRawKernel_of_two_pi_le_abs
 
 end DirichletPolynomial
 end PrimeNumberTheorem
