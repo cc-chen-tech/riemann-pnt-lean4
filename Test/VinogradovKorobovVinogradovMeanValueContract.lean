@@ -1,4 +1,4 @@
-import ZeroFreeRegion.VinogradovKorobov.VinogradovSymmetry
+import ZeroFreeRegion.VinogradovKorobov.VinogradovCongruence
 
 open ZeroFreeRegion.VinogradovKorobov
 
@@ -64,3 +64,6 @@ open ZeroFreeRegion.VinogradovKorobov
 #check isVinogradovSolutionInt_translate_iff
 #check isVinogradovSolutionInt_scale_iff
 #check IsVinogradovSolutionNat.toInt
+#check exists_affineCoordinates_of_forall_modEq
+#check isVinogradovSolutionInt_affine_iff
+#check IsVinogradovSolutionInt.rescale_of_common_modEq
