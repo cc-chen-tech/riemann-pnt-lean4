@@ -113,6 +113,10 @@ EXPECTED_DECLARATIONS = {
     "HardyTheorem.norm_deriv_hardyPhaseWindowCoeff_le_trivial",
     "HardyTheorem.sum_inv_nat_central_annulus_le",
     "HardyTheorem.sum_normSq_deriv_hardyPhaseWindowCoeff_central_annulus_le",
+    "HardyTheorem.sum_normSq_deriv_hardyPhaseWindowCoeff_far_low_le",
+    "HardyTheorem.sum_normSq_deriv_hardyPhaseWindowCoeff_far_high_le",
+    "HardyTheorem.sum_normSq_deriv_hardyPhaseWindowCoeff_full_le",
+    "HardyTheorem.sum_normSq_deriv_hardyPhaseWindowCoeff_full_le_mul",
 }
 
 REPORT_RE = re.compile(
