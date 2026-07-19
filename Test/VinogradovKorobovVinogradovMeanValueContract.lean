@@ -1,4 +1,4 @@
-import ZeroFreeRegion.VinogradovKorobov.VinogradovSolutionStrata
+import ZeroFreeRegion.VinogradovKorobov.VinogradovSolutionLifting
 
 open ZeroFreeRegion.VinogradovKorobov
 
@@ -130,3 +130,10 @@ open ZeroFreeRegion.VinogradovKorobov
 #check mem_vinogradovBlockNonsingularSolutionSetMod_iff
 #check card_singular_add_card_nonsingular_eq_vinogradovSolutionCountMod
 #check vinogradovSolutionCountMod_le_nonsingular_add_error
+#check vinogradovHeadCorrectionSet
+#check mem_vinogradovHeadCorrectionSet_iff
+#check card_vinogradovHeadCorrectionSet_le_one
+#check vinogradovFreeCorrectionData
+#check card_vinogradovFreeCorrectionData
+#check vinogradovParameterizedCorrectionSet
+#check card_vinogradovParameterizedCorrectionSet_le
