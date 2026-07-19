@@ -9,6 +9,7 @@ example {t : ℝ} (ht : 0 < t)
       (∀ n : ℕ, (n : ℝ) < hardyPhaseStationaryScale t / 8 →
         n < 2 ^ Klow) ∧
       2 * hardyPhaseStationaryScale t ≤ (2 : ℝ) ^ Khigh ∧
+      (2 : ℝ) ^ Khigh ≤ 4 * hardyPhaseStationaryScale t ∧
       (∀ n : ℕ, 8 * hardyPhaseStationaryScale t < (n : ℝ) →
         2 ^ Khigh ≤ n) ∧
       N < 2 ^ L :=

@@ -15,6 +15,7 @@ theorem exists_hardyPhaseDyadicCutoffs
       (∀ n : ℕ, (n : ℝ) < hardyPhaseStationaryScale t / 8 →
         n < 2 ^ Klow) ∧
       2 * hardyPhaseStationaryScale t ≤ (2 : ℝ) ^ Khigh ∧
+      (2 : ℝ) ^ Khigh ≤ 4 * hardyPhaseStationaryScale t ∧
       (∀ n : ℕ, 8 * hardyPhaseStationaryScale t < (n : ℝ) →
         2 ^ Khigh ≤ n) ∧
       N < 2 ^ L := by
@@ -36,7 +37,7 @@ theorem exists_hardyPhaseDyadicCutoffs
   obtain ⟨Jlast, -, hJlastUpper⟩ :=
     MathlibAux.exists_nat_pow_two_le_lt_pow_two hNOne
 
-  refine ⟨Jlow + 1, Jhigh + 1, Jlast + 1, ?_, ?_, ?_, ?_, ?_⟩
+  refine ⟨Jlow + 1, Jhigh + 1, Jlast + 1, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · dsimp only [r] at hJlowLower ⊢
     rw [pow_succ, pow_succ]
     nlinarith
@@ -45,6 +46,8 @@ theorem exists_hardyPhaseDyadicCutoffs
       hn.trans hJlowUpper
     exact_mod_cast hnreal
   · exact hJhighUpper.le
+  · rw [pow_succ]
+    nlinarith
   · intro n hn
     have hpow : (2 : ℝ) ^ (Jhigh + 1) ≤ 4 * r := by
       rw [pow_succ]

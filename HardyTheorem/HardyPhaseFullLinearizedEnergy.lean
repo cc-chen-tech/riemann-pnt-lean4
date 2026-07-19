@@ -31,7 +31,7 @@ theorem sum_normSq_hardyPhaseLinearizedCoeff_full_le
   let central : Finset ℕ := nonlow.filter fun n ↦ (n : ℝ) ≤ 8 * r
   let high : Finset ℕ := nonlow.filter fun n ↦ ¬(n : ℝ) ≤ 8 * r
   obtain ⟨Klow, Khigh, L, hlowScale, hlowCutoff, hhighScale,
-      hhighCutoff, hlastCutoff⟩ :=
+      _, hhighCutoff, hlastCutoff⟩ :=
     exists_hardyPhaseDyadicCutoffs ht hscale N
   have mem_low {n : ℕ} (hn : n ∈ low) :
       n ∈ s ∧ (n : ℝ) < r / 8 := by
