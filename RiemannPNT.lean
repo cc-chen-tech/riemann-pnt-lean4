@@ -62,6 +62,7 @@ import MathlibAux.RectangularFourierFirstMoment
 import MathlibAux.RectangularFourierEnvelope
 import MathlibAux.MellinLogIntegrability
 import MathlibAux.SlidingWindowParseval
+import MathlibAux.SlidingIntegralFourierCompatibility
 import HardyTheorem.HardyPhaseHilbertShiftIntegral
 import EulerAndLfunctions
 import PrimeNumberTheorem
