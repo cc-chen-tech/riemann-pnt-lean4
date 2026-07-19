@@ -52,5 +52,40 @@ theorem exists_verticalGammaPhase_div_pi_sub_mainTerm_tendsto_const_inv :
       div_le_div_of_nonneg_right (herr T hT) Real.pi_pos.le
     _ = (C / Real.pi) / T := by ring
 
+/-- Between two heights, the unknown additive phase constant cancels. The
+normalized Gamma phase difference therefore differs from the difference of
+the Riemann-von Mangoldt main terms by `O(1/U + 1/T)`. -/
+theorem exists_verticalGammaPhase_difference_sub_mainTerm_difference_le_inv_sum :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ U T : ℝ, 1 ≤ U → 1 ≤ T →
+      |(HardyTheorem.verticalGammaUnwrappedPhase T -
+            HardyTheorem.verticalGammaUnwrappedPhase U) / Real.pi -
+          (riemannVonMangoldtMainTerm T - riemannVonMangoldtMainTerm U)| ≤
+        C / U + C / T := by
+  obtain ⟨kappa, C, hC, herr⟩ :=
+    exists_verticalGammaPhase_div_pi_sub_mainTerm_tendsto_const_inv
+  refine ⟨C, hC, ?_⟩
+  intro U T hU hT
+  have hrewrite :
+      (HardyTheorem.verticalGammaUnwrappedPhase T -
+            HardyTheorem.verticalGammaUnwrappedPhase U) / Real.pi -
+          (riemannVonMangoldtMainTerm T - riemannVonMangoldtMainTerm U) =
+        (HardyTheorem.verticalGammaUnwrappedPhase T / Real.pi -
+            riemannVonMangoldtMainTerm T - kappa) -
+          (HardyTheorem.verticalGammaUnwrappedPhase U / Real.pi -
+            riemannVonMangoldtMainTerm U - kappa) := by
+    ring
+  rw [hrewrite]
+  calc
+    |(HardyTheorem.verticalGammaUnwrappedPhase T / Real.pi -
+          riemannVonMangoldtMainTerm T - kappa) -
+        (HardyTheorem.verticalGammaUnwrappedPhase U / Real.pi -
+          riemannVonMangoldtMainTerm U - kappa)| ≤
+      |HardyTheorem.verticalGammaUnwrappedPhase T / Real.pi -
+          riemannVonMangoldtMainTerm T - kappa| +
+        |HardyTheorem.verticalGammaUnwrappedPhase U / Real.pi -
+          riemannVonMangoldtMainTerm U - kappa| := abs_sub _ _
+    _ ≤ C / T + C / U := add_le_add (herr T hT) (herr U hU)
+    _ = C / U + C / T := by ring
+
 end RiemannVonMangoldt
 end PrimeNumberTheorem
