@@ -19,6 +19,15 @@ instance vinogradovWeightedModulus_neZero
     NeZero (vinogradovWeightedModulus p a j) :=
   ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
 
+/-- The weighted coefficient space has the critical-weight cardinality. -/
+theorem card_vinogradovWeightedCoefficient
+    (p a k : ℕ) [Fact p.Prime] :
+    Fintype.card (VinogradovWeightedCoefficient p a k) =
+      p ^ (a * (k * (k + 1) / 2)) := by
+  rw [Fintype.card_pi]
+  simp only [ZMod.card]
+  exact prod_vinogradovWeightedModulus p a k
+
 /-- One term of the weighted complete Weyl sum.  It is the product of the
 degree-wise additive characters because the coefficient rings have different
 moduli. -/
@@ -30,11 +39,30 @@ noncomputable def vinogradovWeightedPhaseTerm
       (c j * (((m.val + 1 : ℕ) :
         ZMod (vinogradovWeightedModulus p a j)) ^ (j.val + 1)))
 
+/-- Every weighted phase term has unit norm. -/
+theorem norm_vinogradovWeightedPhaseTerm
+    (p a : ℕ) [Fact p.Prime] {k X : ℕ}
+    (c : VinogradovWeightedCoefficient p a k) (m : Fin X) :
+    ‖vinogradovWeightedPhaseTerm p a c m‖ = 1 := by
+  simp [vinogradovWeightedPhaseTerm]
+
 /-- Complete Weyl sum for a degree-weighted coefficient vector. -/
 noncomputable def vinogradovWeightedWeylSum
     (p a k X : ℕ) [Fact p.Prime]
     (c : VinogradovWeightedCoefficient p a k) : ℂ :=
   ∑ m : Fin X, vinogradovWeightedPhaseTerm p a c m
+
+/-- A weighted complete Weyl sum has the trivial norm bound `X`. -/
+theorem norm_vinogradovWeightedWeylSum_le
+    (p a k X : ℕ) [Fact p.Prime]
+    (c : VinogradovWeightedCoefficient p a k) :
+    ‖vinogradovWeightedWeylSum p a k X c‖ ≤ X := by
+  unfold vinogradovWeightedWeylSum
+  calc
+    ‖∑ m : Fin X, vinogradovWeightedPhaseTerm p a c m‖ ≤
+        ∑ m : Fin X, ‖vinogradovWeightedPhaseTerm p a c m‖ :=
+      norm_sum_le _ _
+    _ = X := by simp [norm_vinogradovWeightedPhaseTerm]
 
 /-- Product of weighted phase terms along an ordered tuple. -/
 noncomputable def vinogradovWeightedTuplePhase
