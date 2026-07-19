@@ -129,6 +129,7 @@ lean_lib RiemannPNT where
     `Test.MollifiedZetaErrorContract,
     `Test.CarlsonZeroDetectorContract,
     `Test.CarlsonDetectorCountContract,
+    `Test.BoundaryRectResidueWeightedContract,
     `Test.CarlsonMollifierCoefficientsContract,
     `Test.LocalZeroContributionBoundContract,
     `Test.LocalZeroMultiplicityBoundContract,

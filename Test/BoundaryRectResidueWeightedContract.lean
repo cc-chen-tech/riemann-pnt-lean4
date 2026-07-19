@@ -1,0 +1,8 @@
+import MathlibAux.BoundaryRectResidue
+
+open Complex Set
+open scoped BigOperators Interval
+
+#check MathlibAux.boundaryRectIntegral_eq_finite_simple_pole_weighted_residue_sum_of_differentiableOn
+
+#print axioms MathlibAux.boundaryRectIntegral_eq_finite_simple_pole_weighted_residue_sum_of_differentiableOn
