@@ -166,6 +166,7 @@ lean_lib RiemannPNT where
     `Test.VinogradovKorobovRefinedScaleContract,
     `Test.VinogradovKorobovBinomialMatrixContract,
     `Test.VinogradovKorobovTriangularEliminationContract,
+    `Test.VinogradovKorobovScaleCancellationContract,
     `Test.VinogradovKorobovVanDerCorputRangeContract,
     `Test.VinogradovKorobovLogVanDerCorputContract
   ]
