@@ -766,5 +766,90 @@ theorem exists_regularizedCarlson_goodRectangle_zeroDensity_le_logNormForm_half
     exists_regularizedCarlson_goodRectangle_zeroDensity_le_logNormForm_of_leftWindow
       hX (by norm_num) hsigma hsigmaOne hT
 
+/-- Explicit upper endpoint for the selected Carlson left edge.  The only
+integral left in this expression is the fixed low-height segment `[y0, 1]`;
+all growth above height one is a finite dyadic sum. -/
+noncomputable def regularizedCarlsonLeftEdgeExplicitBound
+    (A : ℝ) (X : ℕ) (x0 y0 y1 : ℝ) (n : ℕ) : ℝ :=
+  (∫ t in y0..1,
+    Real.log ‖regularizedCarlsonZeroDetector X
+      ((x0 : ℂ) + Complex.I * t)‖) +
+  (∑ k ∈ Finset.range n,
+    regularizedCarlsonLogNormEndpointExplicit
+      A 4 X x0 ((2 : ℝ) ^ k) ((2 : ℝ) ^ (k + 1))
+        (4 * (2 : ℝ) ^ k)) +
+  regularizedCarlsonLogNormEndpointExplicit
+    A 4 X x0 ((2 : ℝ) ^ n) y1 (4 * (2 : ℝ) ^ n)
+
+/-- On every dyadic base height `2^n`, one selected Carlson rectangle now
+simultaneously carries the counting inequality and the explicit left-edge
+bound.  Consequently only the two horizontal terms and the right-edge terms
+in `regularizedCarlsonLittlewoodLogNormForm` remain to be bounded. -/
+theorem exists_regularizedCarlson_dyadicRectangle_count_and_leftEdgeExplicit :
+    ∃ A : ℝ, 0 ≤ A ∧ ∀ (X : ℕ) (sigma : ℝ) (n : ℕ),
+      1 ≤ X → 1 / 2 < sigma → sigma < 1 →
+      ∃ x0 x1 y0 y1 : ℝ,
+        1 / 2 < x0 ∧ x0 < sigma ∧
+        1 < x1 ∧ x1 < 2 ∧ x0 < x1 ∧
+        -1 < y0 ∧ y0 < 0 ∧
+        (2 : ℝ) ^ n < y1 ∧ y1 < (2 : ℝ) ^ n + 1 ∧ y0 < y1 ∧
+        (∀ y ∈ Set.Icc y0 y1,
+          regularizedCarlsonZeroDetector X
+            ((x0 : ℂ) + (y : ℂ) * I) ≠ 0) ∧
+        (∀ y ∈ Set.Icc y0 y1,
+          regularizedCarlsonZeroDetector X
+            ((x1 : ℂ) + (y : ℂ) * I) ≠ 0) ∧
+        (∀ x ∈ Set.Icc x0 x1,
+          regularizedCarlsonZeroDetector X
+            ((x : ℂ) + (y0 : ℂ) * I) ≠ 0) ∧
+        (∀ x ∈ Set.Icc x0 x1,
+          regularizedCarlsonZeroDetector X
+            ((x : ℂ) + (y1 : ℂ) * I) ≠ 0) ∧
+        (2 * Real.pi) * (sigma - x0) *
+            (ZeroDensity.zeroDensityCount sigma ((2 : ℝ) ^ n) : ℝ) ≤
+          regularizedCarlsonLittlewoodLogNormForm X x0 x1 y0 y1 ∧
+        (∫ y in y0..y1,
+            Real.log ‖regularizedCarlsonZeroDetector X
+              ((x0 : ℂ) + (y : ℂ) * I)‖) ≤
+          regularizedCarlsonLeftEdgeExplicitBound A X x0 y0 y1 n := by
+  obtain ⟨A, hA, hleftBound⟩ :=
+    exists_integral_log_norm_regularizedCarlsonZeroDetector_le_low_add_dyadicCoverExplicit
+  refine ⟨A, hA, ?_⟩
+  intro X sigma n hX hsigma hsigma1
+  obtain ⟨x0, x1, y0, y1,
+      hx0Lower, hx0Upper, hx1Lower, hx1Upper, hx01,
+      hy0Lower, hy0Upper, hy1Lower, hy1Upper, hy01,
+      hleft, hright, hbottom, htop, hcount⟩ :=
+    exists_regularizedCarlson_goodRectangle_zeroDensity_certificate_half
+      hX hsigma hsigma1 (T := (2 : ℝ) ^ n) (by positivity)
+  have hx0Pos : 0 < x0 := by linarith
+  have hformula :=
+    regularizedCarlsonLittlewoodFourEdges_eq_logNormFormDef
+      hx0Pos hx01 hy01 hleft hright hbottom htop
+  have hcountLog :
+      (2 * Real.pi) * (sigma - x0) *
+          (ZeroDensity.zeroDensityCount sigma ((2 : ℝ) ^ n) : ℝ) ≤
+        regularizedCarlsonLittlewoodLogNormForm X x0 x1 y0 y1 :=
+    hcount.trans_eq hformula
+  have hpowOne : 1 ≤ (2 : ℝ) ^ n :=
+    one_le_pow₀ (by norm_num)
+  have hy1Step : y1 ≤ (2 : ℝ) ^ (n + 1) := by
+    have hstep : (2 : ℝ) ^ n + 1 ≤ (2 : ℝ) ^ (n + 1) := by
+      rw [pow_succ]
+      nlinarith
+    exact hy1Upper.le.trans hstep
+  have hleft' : ∀ t ∈ Set.Icc y0 y1,
+      regularizedCarlsonZeroDetector X
+        ((x0 : ℂ) + Complex.I * t) ≠ 0 := by
+    intro t ht
+    simpa [mul_comm] using hleft t ht
+  have hleftExplicit := hleftBound X x0 y0 y1 n hX hx0Lower
+    (hx0Upper.trans hsigma1) (by linarith) hy1Lower.le hy1Step hleft'
+  refine ⟨x0, x1, y0, y1,
+    hx0Lower, hx0Upper, hx1Lower, hx1Upper, hx01,
+    hy0Lower, hy0Upper, hy1Lower, hy1Upper, hy01,
+    hleft, hright, hbottom, htop, hcountLog, ?_⟩
+  simpa [regularizedCarlsonLeftEdgeExplicitBound, mul_comm] using hleftExplicit
+
 end CarlsonZeroDensity
 end PrimeNumberTheorem

@@ -201,6 +201,9 @@ example {X : ℕ} {x0 x1 y0 y1 : ℝ}
 noncomputable example (X : ℕ) (x0 x1 y0 y1 : ℝ) : ℝ :=
   regularizedCarlsonLittlewoodLogNormForm X x0 x1 y0 y1
 
+noncomputable example (A : ℝ) (X : ℕ) (x0 y0 y1 : ℝ) (n : ℕ) : ℝ :=
+  regularizedCarlsonLeftEdgeExplicitBound A X x0 y0 y1 n
+
 example {X : ℕ} {x0 x1 y0 y1 : ℝ}
     (hx0 : 0 < x0) (hx01 : x0 < x1) (hy01 : y0 < y1)
     (hleft : ∀ y ∈ Set.Icc y0 y1,
@@ -260,6 +263,8 @@ example {X : ℕ} (hX : 1 ≤ X) {sigma T : ℝ}
 #print axioms exists_regularizedCarlson_goodRectangle_zeroDensity_le_logNormForm
 #print axioms exists_regularizedCarlson_goodRectangle_zeroDensity_le_logNormForm_of_leftWindow
 #print axioms exists_regularizedCarlson_goodRectangle_zeroDensity_le_logNormForm_half
+#check exists_regularizedCarlson_dyadicRectangle_count_and_leftEdgeExplicit
+#print axioms exists_regularizedCarlson_dyadicRectangle_count_and_leftEdgeExplicit
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem
