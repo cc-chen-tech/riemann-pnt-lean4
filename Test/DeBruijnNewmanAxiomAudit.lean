@@ -23,3 +23,11 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.hasDerivAt_thetaTD
 #print axioms RiemannExplorer.DeBruijnNewman.phiKernelG_eq
 #print axioms RiemannExplorer.DeBruijnNewman.phi_eq_exp_mul_phiKernelG
+#print axioms RiemannExplorer.DeBruijnNewman.thetaT_bridge
+#print axioms RiemannExplorer.DeBruijnNewman.thetaT_fe
+#print axioms RiemannExplorer.DeBruijnNewman.thetaT_fe_deriv
+#print axioms RiemannExplorer.DeBruijnNewman.thetaT_fe_deriv1_norm
+#print axioms RiemannExplorer.DeBruijnNewman.thetaT_fe_deriv2_norm
+#print axioms RiemannExplorer.DeBruijnNewman.phiKernelG_inv
+#print axioms RiemannExplorer.DeBruijnNewman.phi_even
+#print axioms RiemannExplorer.DeBruijnNewman.phi_even_target_proved

@@ -1187,6 +1187,260 @@ theorem phi_eq_exp_mul_phiKernelG (u : ℝ) :
     _ = Real.exp (5 * u) * phiKernelG (Real.exp (4 * u)) := by
         unfold phiKernelG; rw [tsum_mul_left]
 
+/-! ## Phase 1c 第二块：Jacobi θ 函数方程与 Φ 偶性 -/
+
+/-- Bridge between the real theta function `T` and Mathlib's `jacobiTheta`:
+for `x > 0`, `(T x : ℂ) = ϑ(I x)`. -/
+theorem thetaT_bridge {x : ℝ} (hx : 0 < x) :
+    (thetaT x : ℂ) = jacobiTheta (Complex.I * (x : ℂ)) := by
+  have him : 0 < (Complex.I * (x : ℂ)).im := by
+    rw [Complex.mul_im]
+    simpa using hx
+  have hterm : ∀ n : ℕ, (thetaSTerm n x : ℂ)
+      = Complex.exp (↑Real.pi * Complex.I * ((n : ℂ) + 1) ^ 2 * (Complex.I * (x : ℂ))) := by
+    intro n
+    have e : (Complex.I : ℂ) * Complex.I = -1 := Complex.I_mul_I
+    have harg : ((-Real.pi * ((n : ℝ) + 1) ^ 2 * x : ℝ) : ℂ)
+        = ↑Real.pi * Complex.I * ((n : ℂ) + 1) ^ 2 * (Complex.I * (x : ℂ)) := by
+      rw [show (↑Real.pi : ℂ) * Complex.I * ((n : ℂ) + 1) ^ 2 * (Complex.I * (x : ℂ))
+          = -((↑Real.pi : ℂ) * ((n : ℂ) + 1) ^ 2 * (x : ℂ)) from by
+        rw [show (↑Real.pi : ℂ) * Complex.I * ((n : ℂ) + 1) ^ 2 * (Complex.I * (x : ℂ))
+            = ((↑Real.pi : ℂ) * ((n : ℂ) + 1) ^ 2 * (x : ℂ)) * (Complex.I * Complex.I) from by
+          ring]
+        rw [e]
+        ring]
+      rw [Complex.ofReal_mul, Complex.ofReal_mul, Complex.ofReal_neg, Complex.ofReal_pow,
+        Complex.ofReal_add, Complex.ofReal_one, Complex.ofReal_natCast]
+      ring
+    unfold thetaSTerm
+    rw [Complex.ofReal_exp, harg]
+  have hS : (thetaS x : ℂ) = ∑' n : ℕ,
+      Complex.exp (↑Real.pi * Complex.I * ((n : ℂ) + 1) ^ 2 * (Complex.I * (x : ℂ))) := by
+    unfold thetaS
+    rw [Complex.ofReal_tsum]
+    exact tsum_congr hterm
+  rw [jacobiTheta_eq_tsum_nat him]
+  show ((1 + 2 * thetaS x : ℝ) : ℂ)
+    = 1 + 2 * ∑' n : ℕ,
+      Complex.exp (↑Real.pi * Complex.I * ((n : ℂ) + 1) ^ 2 * (Complex.I * (x : ℂ)))
+  rw [← hS]
+  push_cast
+  ring
+
+/-- **Jacobi functional equation** for the real theta function:
+`√x · T(x) = T(1/x)` for `x > 0`. -/
+theorem thetaT_fe {x : ℝ} (hx : 0 < x) :
+    Real.sqrt x * thetaT x = thetaT (1 / x) := by
+  have him : 0 < (Complex.I * (x : ℂ)).im := by
+    rw [Complex.mul_im]
+    simpa using hx
+  have hθ : jacobiTheta ↑(ModularGroup.S • (⟨Complex.I * (x : ℂ), him⟩ : UpperHalfPlane))
+      = (-Complex.I * (Complex.I * (x : ℂ))) ^ (1 / 2 : ℂ)
+        * jacobiTheta (Complex.I * (x : ℂ)) :=
+    jacobiTheta_S_smul _
+  have hS : (↑(ModularGroup.S • (⟨Complex.I * (x : ℂ), him⟩ : UpperHalfPlane)) : ℂ)
+      = Complex.I * ((1 / x : ℝ) : ℂ) := by
+    rw [UpperHalfPlane.modular_S_smul, UpperHalfPlane.coe_mk,
+      show ((1 / x : ℝ) : ℂ) = (x : ℂ)⁻¹ from by rw [one_div, Complex.ofReal_inv],
+      ← neg_inv, UpperHalfPlane.coe_mk, mul_inv, Complex.inv_I]
+    ring
+  have hF : (-Complex.I * (Complex.I * (x : ℂ))) ^ (1 / 2 : ℂ) = (Real.sqrt x : ℂ) := by
+    have e1 : -Complex.I * (Complex.I * (x : ℂ)) = (x : ℂ) := by
+      have e : (Complex.I : ℂ) * Complex.I = -1 := Complex.I_mul_I
+      calc -Complex.I * (Complex.I * (x : ℂ))
+          = -((Complex.I * Complex.I) * (x : ℂ)) := by ring
+        _ = -((-1) * (x : ℂ)) := by rw [e]
+        _ = (x : ℂ) := by ring
+    have he : ((1 / 2 : ℝ) : ℂ) = (1 / 2 : ℂ) := by simp
+    rw [e1, Real.sqrt_eq_rpow, ← he, ← Complex.ofReal_cpow hx.le (1 / 2 : ℝ)]
+  rw [hS, hF, ← thetaT_bridge hx, ← thetaT_bridge (one_div_pos.mpr hx)] at hθ
+  rw [← Complex.ofReal_mul] at hθ
+  exact (Complex.ofReal_injective hθ).symm
+
+/-- **First derivative of the functional equation**: for `y > 0`,
+`T(y)/(2√y) + √y·T'(y) = −T'(1/y)/y²`. -/
+theorem thetaT_fe_deriv {y : ℝ} (hy : 0 < y) :
+    (1 / (2 * Real.sqrt y)) * thetaT y + Real.sqrt y * thetaTD y
+      = -thetaTD (1 / y) / y ^ 2 := by
+  have hf : HasDerivAt (fun y => Real.sqrt y * thetaT y)
+      ((1 / (2 * Real.sqrt y)) * thetaT y + Real.sqrt y * thetaTD y) y :=
+    (Real.hasDerivAt_sqrt hy.ne').mul (hasDerivAt_thetaT hy)
+  have hinv : HasDerivAt (fun y : ℝ => (1 / y : ℝ)) (-(y ^ 2)⁻¹) y := by
+    simpa [one_div] using hasDerivAt_inv hy.ne'
+  have hg : HasDerivAt (fun y => thetaT (1 / y)) (-thetaTD (1 / y) / y ^ 2) y := by
+    have h1 := (hasDerivAt_thetaT (one_div_pos.mpr hy)).comp y hinv
+    convert h1 using 1
+    ring
+  have heq : (fun y => Real.sqrt y * thetaT y) =ᶠ[nhds y] (fun y => thetaT (1 / y)) :=
+    Filter.eventually_of_mem (Ioi_mem_nhds hy) (fun z hz => thetaT_fe hz)
+  exact HasDerivAt.unique ((Filter.EventuallyEq.hasDerivAt_iff heq).mp hf) hg
+
+/-- Normalized first-order consequence of the functional equation:
+`x²·T + 2x³·T' + 2√x·T'(1/x) = 0`. -/
+theorem thetaT_fe_deriv1_norm {x : ℝ} (hx : 0 < x) :
+    x ^ 2 * thetaT x + 2 * x ^ 3 * thetaTD x + 2 * Real.sqrt x * thetaTD (1 / x) = 0 := by
+  have hs2 : Real.sqrt x ^ 2 = x := Real.sq_sqrt hx.le
+  have hspos : (0 : ℝ) < Real.sqrt x := Real.sqrt_pos.mpr hx
+  have hE1x := thetaT_fe_deriv hx
+  have h2s : (2 : ℝ) * Real.sqrt x ≠ 0 := mul_ne_zero (by norm_num) hspos.ne'
+  have hmul : ((1 / (2 * Real.sqrt x)) * thetaT x + Real.sqrt x * thetaTD x)
+        * (2 * Real.sqrt x * x ^ 2)
+      = (-thetaTD (1 / x) / x ^ 2) * (2 * Real.sqrt x * x ^ 2) := by
+    rw [hE1x]
+  rw [show ((1 / (2 * Real.sqrt x)) * thetaT x + Real.sqrt x * thetaTD x)
+        * (2 * Real.sqrt x * x ^ 2)
+        = thetaT x * x ^ 2 + 2 * thetaTD x * x ^ 2 * (Real.sqrt x * Real.sqrt x) from by
+      field_simp [h2s]] at hmul
+  rw [show (-thetaTD (1 / x) / x ^ 2) * (2 * Real.sqrt x * x ^ 2)
+        = -(2 * Real.sqrt x * thetaTD (1 / x)) from by
+      field_simp [hx.ne']] at hmul
+  rw [← pow_two, hs2] at hmul
+  linarith [hmul]
+
+/-- Normalized second-order consequence of the functional equation:
+`−x³·T + 4x⁴·T' + 4x⁵·T'' = 4√x·T''(1/x) + 8x√x·T'(1/x)`. -/
+theorem thetaT_fe_deriv2_norm {x : ℝ} (hx : 0 < x) :
+    -x ^ 3 * thetaT x + 4 * x ^ 4 * thetaTD x + 4 * x ^ 5 * thetaTDD x
+      = 4 * Real.sqrt x * thetaTDD (1 / x) + 8 * x * Real.sqrt x * thetaTD (1 / x) := by
+  have hs2 : Real.sqrt x ^ 2 = x := Real.sq_sqrt hx.le
+  have hspos : (0 : ℝ) < Real.sqrt x := Real.sqrt_pos.mpr hx
+  have hL1 : HasDerivAt (fun y : ℝ => (1 / (2 * Real.sqrt y)) * thetaT y)
+      ((thetaTD x * (2 * Real.sqrt x) - thetaT x * (2 * (1 / (2 * Real.sqrt x))))
+        / (2 * Real.sqrt x) ^ 2) x := by
+    have h1 := (hasDerivAt_thetaT hx).div ((Real.hasDerivAt_sqrt hx.ne').const_mul 2)
+      (show (2 : ℝ) * Real.sqrt x ≠ 0 from mul_ne_zero (by norm_num) hspos.ne')
+    have hfun : (fun y : ℝ => (1 / (2 * Real.sqrt y)) * thetaT y)
+        = thetaT / (fun y => 2 * Real.sqrt y) := by
+      ext y
+      simp only [Pi.div_apply]
+      rw [div_eq_mul_inv, one_mul]
+      ring
+    rw [hfun]
+    exact h1
+  have hL2 : HasDerivAt (fun y : ℝ => Real.sqrt y * thetaTD y)
+      ((1 / (2 * Real.sqrt x)) * thetaTD x + Real.sqrt x * thetaTDD x) x :=
+    (Real.hasDerivAt_sqrt hx.ne').mul (hasDerivAt_thetaTD hx)
+  have hL : HasDerivAt (fun y : ℝ => (1 / (2 * Real.sqrt y)) * thetaT y
+        + Real.sqrt y * thetaTD y)
+      ((thetaTD x * (2 * Real.sqrt x) - thetaT x * (2 * (1 / (2 * Real.sqrt x))))
+          / (2 * Real.sqrt x) ^ 2
+        + ((1 / (2 * Real.sqrt x)) * thetaTD x + Real.sqrt x * thetaTDD x)) x :=
+    hL1.add hL2
+  have hinv : HasDerivAt (fun y : ℝ => (1 / y : ℝ)) (-(x ^ 2)⁻¹) x := by
+    simpa [one_div] using hasDerivAt_inv hx.ne'
+  have hR1 : HasDerivAt (fun y : ℝ => thetaTD (1 / y) / y ^ 2)
+      (((thetaTDD (1 / x) * (-(x ^ 2)⁻¹)) * x ^ 2 - thetaTD (1 / x) * (1 * x + x * 1))
+        / (x ^ 2) ^ 2) x := by
+    have hcomp := (hasDerivAt_thetaTD (one_div_pos.mpr hx)).comp x hinv
+    have hpow : HasDerivAt (fun y : ℝ => y ^ 2) (1 * x + x * 1) x := by
+      simpa [sq] using (hasDerivAt_id x).mul (hasDerivAt_id x)
+    have h1 := hcomp.div hpow (show (x : ℝ) ^ 2 ≠ 0 from pow_ne_zero 2 hx.ne')
+    have hfun : (fun y : ℝ => thetaTD (1 / y) / y ^ 2)
+        = (thetaTD ∘ fun y => 1 / y) / (fun y => y ^ 2) := by
+      ext y
+      simp only [Pi.div_apply, Function.comp_apply]
+    rw [hfun]
+    exact h1
+  have hR : HasDerivAt (fun y : ℝ => -thetaTD (1 / y) / y ^ 2)
+      (-(((thetaTDD (1 / x) * (-(x ^ 2)⁻¹)) * x ^ 2 - thetaTD (1 / x) * (1 * x + x * 1))
+        / (x ^ 2) ^ 2)) x := by
+    have hfun : (fun y : ℝ => -thetaTD (1 / y) / y ^ 2)
+        = -fun y : ℝ => thetaTD (1 / y) / y ^ 2 := by
+      ext y
+      simp only [Pi.neg_apply]
+      rw [neg_div]
+    rw [hfun]
+    exact hR1.neg
+  have heq2 : (fun y : ℝ => (1 / (2 * Real.sqrt y)) * thetaT y + Real.sqrt y * thetaTD y)
+      =ᶠ[nhds x] (fun y : ℝ => -thetaTD (1 / y) / y ^ 2) :=
+    Filter.eventually_of_mem (Ioi_mem_nhds hx) (fun z hz => thetaT_fe_deriv hz)
+  have hE2raw := HasDerivAt.unique ((Filter.EventuallyEq.hasDerivAt_iff heq2).mp hL) hR
+  have h2s : (2 : ℝ) * Real.sqrt x ≠ 0 := mul_ne_zero (by norm_num) hspos.ne'
+  have hmul : ((thetaTD x * (2 * Real.sqrt x) - thetaT x * (2 * (1 / (2 * Real.sqrt x))))
+        / (2 * Real.sqrt x) ^ 2
+        + (1 / (2 * Real.sqrt x) * thetaTD x + Real.sqrt x * thetaTDD x))
+        * (4 * Real.sqrt x ^ 3 * x ^ 4)
+      = (-((thetaTDD (1 / x) * -(x ^ 2)⁻¹ * x ^ 2 - thetaTD (1 / x) * (1 * x + x * 1))
+        / (x ^ 2) ^ 2)) * (4 * Real.sqrt x ^ 3 * x ^ 4) := by
+    rw [hE2raw]
+  rw [show ((thetaTD x * (2 * Real.sqrt x) - thetaT x * (2 * (1 / (2 * Real.sqrt x))))
+        / (2 * Real.sqrt x) ^ 2
+        + (1 / (2 * Real.sqrt x) * thetaTD x + Real.sqrt x * thetaTDD x))
+        * (4 * Real.sqrt x ^ 3 * x ^ 4)
+      = (2 * Real.sqrt x ^ 2 * thetaTD x - thetaT x) * x ^ 4
+        + (2 * thetaTD x * Real.sqrt x ^ 2 * x ^ 4
+          + 4 * Real.sqrt x ^ 4 * x ^ 4 * thetaTDD x) from by
+      field_simp [h2s]
+      ring] at hmul
+  rw [show (-((thetaTDD (1 / x) * -(x ^ 2)⁻¹ * x ^ 2 - thetaTD (1 / x) * (1 * x + x * 1))
+        / (x ^ 2) ^ 2)) * (4 * Real.sqrt x ^ 3 * x ^ 4)
+      = 4 * Real.sqrt x ^ 3 * thetaTDD (1 / x) + 8 * Real.sqrt x ^ 3 * x * thetaTD (1 / x) from by
+      field_simp [hx.ne']
+      ring] at hmul
+  rw [hs2] at hmul
+  have hs3 : Real.sqrt x ^ 3 = x * Real.sqrt x := by
+    rw [show (3 : ℕ) = 2 + 1 from rfl, pow_succ, hs2]
+  have hs4 : Real.sqrt x ^ 4 = x ^ 2 := by
+    rw [show (4 : ℕ) = 2 + 2 from rfl, pow_add, hs2, ← pow_two]
+  rw [hs3, hs4] at hmul
+  have hG : x * ((-x ^ 3 * thetaT x + 4 * x ^ 4 * thetaTD x + 4 * x ^ 5 * thetaTDD x)
+      - (4 * Real.sqrt x * thetaTDD (1 / x) + 8 * x * Real.sqrt x * thetaTD (1 / x))) = 0 := by
+    linear_combination hmul
+  have hG' := (mul_eq_zero.mp hG).resolve_left hx.ne'
+  linarith [hG']
+
+/-- **Inversion formula for the kernel `G`**:
+`G(1/x) = x^(5/2) · G(x)` for `x > 0`, written as `x²·√x` to stay in `ℕ`-powers. -/
+theorem phiKernelG_inv {x : ℝ} (hx : 0 < x) :
+    phiKernelG (1 / x) = x ^ 2 * Real.sqrt x * phiKernelG x := by
+  rw [phiKernelG_eq (one_div_pos.mpr hx), phiKernelG_eq hx]
+  have hs2 : Real.sqrt x ^ 2 = x := Real.sq_sqrt hx.le
+  have hE1n := thetaT_fe_deriv1_norm hx
+  have hE2n := thetaT_fe_deriv2_norm hx
+  have hne : (4 : ℝ) * x ^ 2 ≠ 0 := mul_ne_zero (by norm_num) (pow_ne_zero 2 hx.ne')
+  have hv : x * (x : ℝ)⁻¹ = 1 := mul_inv_cancel₀ hx.ne'
+  have h4 : 4 * x ^ 2 * ((1 / x) * thetaTDD (1 / x) + (3 / 2) * thetaTD (1 / x)
+        - x ^ 2 * Real.sqrt x * (x * thetaTDD x + (3 / 2) * thetaTD x)) = 0 := by
+    linear_combination -Real.sqrt x * hE2n - x * Real.sqrt x * hE1n
+      - (4 * thetaTDD (1 / x) + 6 * x * thetaTD (1 / x)) * hs2
+      + 4 * x * thetaTDD (1 / x) * hv
+  have h0 := (mul_eq_zero.mp h4).resolve_left hne
+  linarith
+
+/-- **Φ is even** (the functional equation of `ζ`, in kernel form):
+`Φ(−u) = Φ(u)`. -/
+theorem phi_even (u : ℝ) : phi (-u) = phi u := by
+  rw [phi_eq_exp_mul_phiKernelG, phi_eq_exp_mul_phiKernelG]
+  have h1 : Real.exp (4 * -u) = 1 / Real.exp (4 * u) := by
+    rw [show 4 * -u = -(4 * u) from by ring, Real.exp_neg, ← one_div]
+  have h5 : Real.exp (5 * -u) = (Real.exp (5 * u))⁻¹ := by
+    rw [show 5 * -u = -(5 * u) from by ring, Real.exp_neg]
+  rw [h1, phiKernelG_inv (Real.exp_pos _), h5]
+  have h8 : Real.exp (4 * u) ^ 2 = Real.exp (8 * u) := by
+    rw [sq, ← Real.exp_add]
+    congr 1
+    ring
+  have h2 : Real.sqrt (Real.exp (4 * u)) = Real.exp (2 * u) := by
+    have h : Real.exp (2 * u) ^ 2 = Real.exp (4 * u) := by
+      rw [sq, ← Real.exp_add]
+      congr 1
+      ring
+    rw [← h, Real.sqrt_sq (Real.exp_nonneg _)]
+  rw [h8, h2]
+  have h10 : Real.exp (8 * u) * Real.exp (2 * u) = Real.exp (5 * u) * Real.exp (5 * u) := by
+    have e1 : Real.exp (8 * u) * Real.exp (2 * u) = Real.exp (10 * u) := by
+      rw [← Real.exp_add]
+      congr 1
+      ring
+    have e2 : Real.exp (5 * u) * Real.exp (5 * u) = Real.exp (10 * u) := by
+      rw [← Real.exp_add]
+      congr 1
+      ring
+    rw [e1, e2]
+  rw [h10]
+  have hne : Real.exp (5 * u) ≠ 0 := (Real.exp_pos _).ne'
+  field_simp
+
 /-! ## Prop 目标（晋升纪律见 `docs/implementation-standards.md`） -/
 
 /-- **适定性目标**（Phase 1a）：对每个 `t : ℝ`、`z : ℂ`，被积函数
@@ -1207,6 +1461,9 @@ theorem heat_integrand_integrable_target_proved : heat_integrand_integrable_targ
 `Mathlib/NumberTheory/ModularForms/JacobiTheta`。 -/
 def phi_even_target : Prop :=
   ∀ u : ℝ, phi (-u) = phi u
+
+/-- Phase 1c 收官：`phi_even_target` 已由 `phi_even` 证明。 -/
+theorem phi_even_target_proved : phi_even_target := phi_even
 
 /-- **H_t 正则性目标**（Phase 1b）：每个 `H_t` 是偶的整函数。 -/
 def h_even_entire_target : Prop :=
