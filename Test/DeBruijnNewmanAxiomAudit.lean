@@ -36,3 +36,6 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.f_modif_eq_of_mem_Ioo
 #print axioms RiemannExplorer.DeBruijnNewman.completedRiemannZeta₀_eq_half_mellin
 #print axioms RiemannExplorer.DeBruijnNewman.completedRiemannZeta₀_eq_two_mul_integral
+#print axioms RiemannExplorer.DeBruijnNewman.mellin_integrand_expFourMul
+#print axioms RiemannExplorer.DeBruijnNewman.integrable_expFourMul_f_modif
+#print axioms RiemannExplorer.DeBruijnNewman.completedRiemannZeta₀_eq_integral_split
