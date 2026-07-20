@@ -131,6 +131,13 @@ example {X : ℕ} {T L : ℝ}
         regularizedCarlsonFactorDiskSeparation X T :=
   regularizedCarlsonFactorDiskSeparation_lower_of_mass_le hmass
 
+example {X : ℕ} {T L : ℝ}
+    (hmass : regularizedCarlsonFactorDiskZeroMass X T ≤ L) :
+    0 < 1 / (4 * (L + 1)) ∧
+      1 / (4 * (L + 1)) ≤
+        regularizedCarlsonFactorHorizontalSeparation X T :=
+  regularizedCarlsonFactorHorizontalSeparation_lower_of_mass_le hmass
+
 example {X : ℕ} (hX : 1 ≤ X) {T : ℝ} :
     ∃ r : ℝ,
       0 < r ∧ r ∈ Set.Icc (121 / 32 : ℝ) (122 / 32 : ℝ) ∧
@@ -201,6 +208,24 @@ example : ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X →
               regularizedCarlsonFactorHorizontalSeparation X T :=
   exists_regularizedCarlson_horizontal_logDeriv_le_factorDisk
 
+example : ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X →
+    ∀ {sigma T L : ℝ}, 1 / 2 < sigma → 5 ≤ T →
+      regularizedCarlsonFactorDiskZeroMass X T ≤ L →
+      ∃ r ∈ Set.Icc (121 / 32 : ℝ) (122 / 32 : ℝ),
+      ∃ t ∈ Set.Icc T (T + 1),
+        (∀ x ∈ Set.Icc sigma 4,
+          regularizedCarlsonZeroDetector X
+            ((x : ℂ) + (t : ℂ) * I) ≠ 0) ∧
+        ∀ x ∈ Set.Icc sigma 4,
+          ‖logDeriv (regularizedCarlsonZeroDetector X)
+            ((x : ℂ) + (t : ℂ) * I)‖ ≤
+            4 * max
+                (regularizedCarlsonFactorCircleLogUpper C X T -
+                  regularizedCarlsonFactorCenterLogLower X T) 1 *
+              (r + 15 / 4) / (r - 15 / 4) ^ 2 +
+            L / (1 / (4 * (L + 1))) :=
+  exists_regularizedCarlson_horizontal_logDeriv_le_of_factorDiskMass_le
+
 example : ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X → ∀ {T : ℝ}, 5 ≤ T →
     (∑ᶠ u,
       (MeromorphicOn.divisor (regularizedCarlsonZeroDetector X)
@@ -235,9 +260,11 @@ example : ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X → ∀ {T : ℝ}, 5 �
 #print axioms exists_regularizedCarlsonZeroDetector_fixedJensenFactor_explicit_center_lower
 #print axioms mem_regularizedCarlsonFactorDiskZeroSupport_iff_zero
 #print axioms regularizedCarlsonFactorDiskSeparation_lower_of_mass_le
+#print axioms regularizedCarlsonFactorHorizontalSeparation_lower_of_mass_le
 #print axioms exists_regularizedCarlsonZeroDetector_goodFactorCircle
 #print axioms exists_regularizedCarlsonZeroDetector_goodFactor_logDeriv_le
 #print axioms exists_regularizedCarlson_horizontal_logDeriv_le_factorDisk
+#print axioms exists_regularizedCarlson_horizontal_logDeriv_le_of_factorDiskMass_le
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem

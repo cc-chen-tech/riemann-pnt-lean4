@@ -557,6 +557,60 @@ theorem regularizedCarlsonFactorDiskSeparation_lower_of_mass_le
   rw [hsepEq]
   exact hrecip
 
+/-- A divisor-mass bound also controls the pigeonhole separation for the
+horizontal side, because the number of distinct zero heights is no larger
+than the total zero multiplicity. -/
+theorem regularizedCarlsonFactorHorizontalSeparation_lower_of_mass_le
+    {X : ℕ} {T L : ℝ}
+    (hmass : regularizedCarlsonFactorDiskZeroMass X T ≤ L) :
+    0 < 1 / (4 * (L + 1)) ∧
+      1 / (4 * (L + 1)) ≤
+        regularizedCarlsonFactorHorizontalSeparation X T := by
+  classical
+  let c : ℂ := (4 : ℂ) + I * (T + 1 / 2)
+  let b : ℝ := 123 / 32
+  let D := MeromorphicOn.divisor (regularizedCarlsonZeroDetector X)
+    (Metric.closedBall c b)
+  let zeros := regularizedCarlsonFactorDiskZeroSupport X T
+  let heights := regularizedCarlsonFactorDiskZeroHeights X T
+  have hanalyticFactor : AnalyticOnNhd ℂ
+      (regularizedCarlsonZeroDetector X) (Metric.closedBall c b) := by
+    apply
+      (analyticOnNhd_regularizedCarlsonZeroDetector_fixedJensenOuterDisk
+        X T).mono
+    exact Metric.closedBall_subset_closedBall (by norm_num [b])
+  have hDnonneg : 0 ≤ D := hanalyticFactor.divisor_nonneg
+  have hmassNonneg : 0 ≤ regularizedCarlsonFactorDiskZeroMass X T := by
+    change 0 ≤ ∑ᶠ u, (D u : ℝ)
+    apply finsum_nonneg
+    intro u
+    exact_mod_cast hDnonneg u
+  have hLnonneg : 0 ≤ L := hmassNonneg.trans hmass
+  have hsupportMass : (zeros.card : ℝ) ≤
+      regularizedCarlsonFactorDiskZeroMass X T := by
+    have h := card_divisor_support_le_finsum_mass hanalyticFactor
+    simpa [zeros, D, c, b, regularizedCarlsonFactorDiskZeroSupport,
+      regularizedCarlsonFactorDiskZeroMass] using h
+  have hheightNat : heights.card ≤ zeros.card := by
+    dsimp [heights, regularizedCarlsonFactorDiskZeroHeights]
+    exact Finset.card_image_le
+  have hheightMass : (heights.card : ℝ) ≤
+      regularizedCarlsonFactorDiskZeroMass X T := by
+    have hheightReal : (heights.card : ℝ) ≤ (zeros.card : ℝ) := by
+      exact_mod_cast hheightNat
+    exact hheightReal.trans hsupportMass
+  have hheightL : (heights.card : ℝ) ≤ L :=
+    hheightMass.trans hmass
+  have hsmallDenPos : 0 < 4 * ((heights.card : ℝ) + 1) := by positivity
+  have hlargeDenPos : 0 < 4 * (L + 1) := by positivity
+  have hdenLe : 4 * ((heights.card : ℝ) + 1) ≤ 4 * (L + 1) := by
+    nlinarith
+  have hrecip : 1 / (4 * (L + 1)) ≤
+      1 / (4 * ((heights.card : ℝ) + 1)) :=
+    one_div_le_one_div_of_le hsmallDenPos hdenLe
+  refine ⟨one_div_pos.mpr hlargeDenPos, ?_⟩
+  simpa [regularizedCarlsonFactorHorizontalSeparation, heights] using hrecip
+
 /-- A circle strictly inside the factorization disk avoids every detector
 zero there, with a quantitative separation from its finite zero support. -/
 theorem exists_regularizedCarlsonZeroDetector_goodFactorCircle
@@ -908,6 +962,65 @@ theorem exists_regularizedCarlson_horizontal_logDeriv_le_factorDisk :
           regularizedCarlsonFactorDiskZeroMass X T /
             regularizedCarlsonFactorHorizontalSeparation X T := by
         rw [add_comm]
+
+/-- The preceding horizontal logarithmic-derivative estimate with its
+principal-part term expressed using any available upper bound for the local
+divisor mass. -/
+theorem exists_regularizedCarlson_horizontal_logDeriv_le_of_factorDiskMass_le :
+    ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X →
+      ∀ {sigma T L : ℝ}, 1 / 2 < sigma → 5 ≤ T →
+        regularizedCarlsonFactorDiskZeroMass X T ≤ L →
+        ∃ r ∈ Set.Icc (121 / 32 : ℝ) (122 / 32 : ℝ),
+        ∃ t ∈ Set.Icc T (T + 1),
+          (∀ x ∈ Set.Icc sigma 4,
+            regularizedCarlsonZeroDetector X
+              ((x : ℂ) + (t : ℂ) * I) ≠ 0) ∧
+          ∀ x ∈ Set.Icc sigma 4,
+            ‖logDeriv (regularizedCarlsonZeroDetector X)
+              ((x : ℂ) + (t : ℂ) * I)‖ ≤
+              4 * max
+                  (regularizedCarlsonFactorCircleLogUpper C X T -
+                    regularizedCarlsonFactorCenterLogLower X T) 1 *
+                (r + 15 / 4) / (r - 15 / 4) ^ 2 +
+              L / (1 / (4 * (L + 1))) := by
+  rcases exists_regularizedCarlson_horizontal_logDeriv_le_factorDisk with
+    ⟨C, hC, hhorizontal⟩
+  refine ⟨C, hC, ?_⟩
+  intro X hX sigma T L hsigma hT hmass
+  rcases hhorizontal hX hsigma hT with ⟨r, hr, t, ht, hne, hbound⟩
+  have hsep :=
+    regularizedCarlsonFactorHorizontalSeparation_lower_of_mass_le hmass
+  have hmassNonneg : 0 ≤ regularizedCarlsonFactorDiskZeroMass X T := by
+    let c : ℂ := (4 : ℂ) + I * (T + 1 / 2)
+    let b : ℝ := 123 / 32
+    let D := MeromorphicOn.divisor (regularizedCarlsonZeroDetector X)
+      (Metric.closedBall c b)
+    have hanalyticFactor : AnalyticOnNhd ℂ
+        (regularizedCarlsonZeroDetector X) (Metric.closedBall c b) := by
+      apply
+        (analyticOnNhd_regularizedCarlsonZeroDetector_fixedJensenOuterDisk
+          X T).mono
+      exact Metric.closedBall_subset_closedBall (by norm_num [b])
+    have hDnonneg : 0 ≤ D := hanalyticFactor.divisor_nonneg
+    change 0 ≤ ∑ᶠ u, (D u : ℝ)
+    apply finsum_nonneg
+    intro u
+    exact_mod_cast hDnonneg u
+  have hprincipal :
+      regularizedCarlsonFactorDiskZeroMass X T /
+          regularizedCarlsonFactorHorizontalSeparation X T ≤
+        L / (1 / (4 * (L + 1))) := by
+    calc
+      regularizedCarlsonFactorDiskZeroMass X T /
+          regularizedCarlsonFactorHorizontalSeparation X T ≤
+          regularizedCarlsonFactorDiskZeroMass X T /
+            (1 / (4 * (L + 1))) :=
+        div_le_div_of_nonneg_left hmassNonneg hsep.1 hsep.2
+      _ ≤ L / (1 / (4 * (L + 1))) :=
+        div_le_div_of_nonneg_right hmass hsep.1.le
+  refine ⟨r, hr, t, ht, hne, ?_⟩
+  intro x hx
+  exact (hbound x hx).trans (add_le_add_right hprincipal _)
 
 /-- The complete divisor mass on the factorization disk is explicitly
 controlled by the detector's polynomial outer-circle growth. -/
