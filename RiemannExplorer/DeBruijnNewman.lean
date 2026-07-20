@@ -3214,5 +3214,103 @@ theorem cexp_mul_thetaNWD_eq (a : ℂ) (u : ℝ) :
   rw [hN, show (a - 1) * (u : ℂ) = a * (u : ℂ) + -(u : ℂ) from by ring, Complex.exp_add]
   ring
 
+/-- 主恒等式（指数形式）：`16·(∫₀^∞ + ∫₋∞⁰) e^{izu}Φ(u) du
+= 2 − ((1+z²)/2)·Λ₀((1+iz)/2)`。由两侧二阶方程、边界相消与
+`completedRiemannZeta₀` 的积分表示组装。 -/
+theorem sixteen_integral_cexp_phi_eq (z : ℂ) :
+    16 * ((∫ u in Set.Ioi (0 : ℝ), Complex.exp (Complex.I * z * (u : ℂ)) * (phi u : ℂ))
+        + (∫ u in Set.Iic (0 : ℝ), Complex.exp (Complex.I * z * (u : ℂ)) * (phi u : ℂ)))
+      = 2 - ((1 + z * z) / 2) * completedRiemannZeta₀ ((1 + Complex.I * z) / 2) := by
+  have hc : (1 + Complex.I * z) * (1 + Complex.I * z) - 2 * (1 + Complex.I * z)
+      = -(1 + z * z) := by
+    have hII : Complex.I * z * (Complex.I * z) = -(z * z) := by
+      calc Complex.I * z * (Complex.I * z)
+          = Complex.I * Complex.I * (z * z) := by ring
+        _ = -(z * z) := by rw [Complex.I_mul_I]; ring
+    linear_combination hII
+  have hconvW : (∫ u in Set.Ioi (0 : ℝ), Complex.exp ((1 + Complex.I * z) * (u : ℂ))
+        * (thetaNWD u : ℂ))
+      = 16 * (∫ u in Set.Ioi (0 : ℝ), Complex.exp (Complex.I * z * (u : ℂ)) * (phi u : ℂ)) := by
+    have e1 : (∫ u in Set.Ioi (0 : ℝ), Complex.exp ((1 + Complex.I * z) * (u : ℂ))
+          * (thetaNWD u : ℂ))
+        = ∫ u in Set.Ioi (0 : ℝ), 16 * (Complex.exp (Complex.I * z * (u : ℂ)) * (phi u : ℂ)) := by
+      apply MeasureTheory.setIntegral_congr_fun measurableSet_Ioi
+      intro u _
+      show Complex.exp ((1 + Complex.I * z) * (u : ℂ)) * (thetaNWD u : ℂ)
+        = 16 * (Complex.exp (Complex.I * z * (u : ℂ)) * (phi u : ℂ))
+      rw [cexp_mul_thetaNWD_eq (1 + Complex.I * z) u,
+        show (1 + Complex.I * z) - 1 = Complex.I * z from by ring]
+    exact e1.trans (MeasureTheory.integral_const_mul 16 _)
+  have hconvM : (∫ u in Set.Iic (0 : ℝ), Complex.exp ((1 + Complex.I * z) * (u : ℂ))
+        * (thetaNWD u : ℂ))
+      = 16 * (∫ u in Set.Iic (0 : ℝ), Complex.exp (Complex.I * z * (u : ℂ)) * (phi u : ℂ)) := by
+    have e1 : (∫ u in Set.Iic (0 : ℝ), Complex.exp ((1 + Complex.I * z) * (u : ℂ))
+          * (thetaNWD u : ℂ))
+        = ∫ u in Set.Iic (0 : ℝ), 16 * (Complex.exp (Complex.I * z * (u : ℂ)) * (phi u : ℂ)) := by
+      apply MeasureTheory.setIntegral_congr_fun measurableSet_Iic
+      intro u _
+      show Complex.exp ((1 + Complex.I * z) * (u : ℂ)) * (thetaNWD u : ℂ)
+        = 16 * (Complex.exp (Complex.I * z * (u : ℂ)) * (phi u : ℂ))
+      rw [cexp_mul_thetaNWD_eq (1 + Complex.I * z) u,
+        show (1 + Complex.I * z) - 1 = Complex.I * z from by ring]
+    exact e1.trans (MeasureTheory.integral_const_mul 16 _)
+  have hW : 16 * (∫ u in Set.Ioi (0 : ℝ), Complex.exp (Complex.I * z * (u : ℂ)) * (phi u : ℂ))
+      = -(1 + z * z)
+          * (∫ u in Set.Ioi (0 : ℝ), Complex.exp ((1 + Complex.I * z) * (u : ℂ))
+              * (thetaW u : ℂ))
+        - (thetaNW 0 : ℂ) + (1 + Complex.I * z) * (thetaW 0 : ℂ) := by
+    have h1 := integral_Ioi_cexp_thetaNWD (1 + Complex.I * z)
+    linear_combination hconvW.symm + h1
+      + (∫ u in Set.Ioi (0 : ℝ), Complex.exp ((1 + Complex.I * z) * (u : ℂ)) * (thetaW u : ℂ)) * hc
+  have hM : 16 * (∫ u in Set.Iic (0 : ℝ), Complex.exp (Complex.I * z * (u : ℂ)) * (phi u : ℂ))
+      = -(1 + z * z)
+          * (∫ u in Set.Iic (0 : ℝ), Complex.exp ((1 + Complex.I * z) * (u : ℂ))
+              * (thetaM u : ℂ))
+        + (thetaNM 0 : ℂ) - (1 + Complex.I * z) * (thetaM 0 : ℂ) := by
+    have h1 := integral_Iic_cexp_thetaNWD (1 + Complex.I * z)
+    linear_combination hconvM.symm + h1
+      + (∫ u in Set.Iic (0 : ℝ), Complex.exp ((1 + Complex.I * z) * (u : ℂ)) * (thetaM u : ℂ)) * hc
+  have hb : (-(thetaNW 0 : ℂ) + (1 + Complex.I * z) * (thetaW 0 : ℂ))
+      + ((thetaNM 0 : ℂ) - (1 + Complex.I * z) * (thetaM 0 : ℂ)) = 2 := by
+    have hW0 : thetaW 0 = thetaM 0 := by
+      show thetaT (Real.exp (4 * 0)) - 1 = thetaT (Real.exp (4 * 0)) - Real.exp (-2 * 0)
+      rw [show (-2 : ℝ) * 0 = 0 from by ring, Real.exp_zero]
+    have hMD0 : thetaMD 0 = thetaWD 0 + 2 := by
+      show thetaWD 0 + 2 * Real.exp (-2 * 0) = thetaWD 0 + 2
+      rw [show (-2 : ℝ) * 0 = 0 from by ring, Real.exp_zero, mul_one]
+    have h1 : (thetaNW 0 : ℂ) = (thetaWD 0 : ℂ) + 2 * (thetaW 0 : ℂ) := by
+      unfold thetaNW
+      push_cast
+      ring
+    have h2 : (thetaNM 0 : ℂ) = (thetaWD 0 : ℂ) + 2 + 2 * (thetaM 0 : ℂ) := by
+      unfold thetaNM
+      rw [hMD0]
+      push_cast
+      ring
+    have h3 : (thetaW 0 : ℂ) = (thetaM 0 : ℂ) := by exact_mod_cast hW0
+    rw [h1, h2, h3]
+    ring
+  have hAB : 2 * ((∫ u in Set.Ioi (0 : ℝ), Complex.exp ((1 + Complex.I * z) * (u : ℂ))
+          * (thetaW u : ℂ))
+        + (∫ u in Set.Iic (0 : ℝ), Complex.exp ((1 + Complex.I * z) * (u : ℂ))
+          * (thetaM u : ℂ)))
+      = completedRiemannZeta₀ ((1 + Complex.I * z) / 2) := by
+    rw [completedRiemannZeta₀_eq_integral_split]
+    congr 1
+    congr 1
+    · apply MeasureTheory.setIntegral_congr_fun measurableSet_Ioi
+      intro u _
+      show Complex.exp ((1 + Complex.I * z) * (u : ℂ)) * (thetaW u : ℂ)
+        = Complex.exp (2 * ((1 + Complex.I * z) / 2) * (u : ℂ)) * (thetaW u : ℂ)
+      rw [show 2 * ((1 + Complex.I * z) / 2) * (u : ℂ) = (1 + Complex.I * z) * (u : ℂ) from by
+        ring]
+    · apply MeasureTheory.setIntegral_congr_fun measurableSet_Iic
+      intro u _
+      show Complex.exp ((1 + Complex.I * z) * (u : ℂ)) * (thetaM u : ℂ)
+        = Complex.exp (2 * ((1 + Complex.I * z) / 2) * (u : ℂ)) * (thetaM u : ℂ)
+      rw [show 2 * ((1 + Complex.I * z) / 2) * (u : ℂ) = (1 + Complex.I * z) * (u : ℂ) from by
+        ring]
+  linear_combination hW + hM + hb - ((1 + z * z) / 2) * hAB
+
 end DeBruijnNewman
 end RiemannExplorer
