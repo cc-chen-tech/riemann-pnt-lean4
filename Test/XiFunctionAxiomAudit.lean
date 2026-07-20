@@ -4,6 +4,7 @@ import RiemannExplorer.SchwarzSymmetric
 import RiemannExplorer.LiReality
 import RiemannExplorer.LiZeroSumConvergence
 import RiemannExplorer.LiPositivity
+import RiemannExplorer.XiPartialFraction
 
 #print axioms RiemannExplorer.xiFunction_one_sub
 #print axioms RiemannExplorer.xiFunction_zero
@@ -46,3 +47,6 @@ import RiemannExplorer.LiPositivity
 #print axioms RiemannExplorer.liPairedTerm_re_nonneg_of_rh
 #print axioms RiemannExplorer.tsum_liPairedTerm_re_nonneg_of_rh
 #print axioms RiemannExplorer.liCoefficient_re_nonneg_of_representation_of_rh
+#print axioms RiemannExplorer.xiPairedMittagLefflerTerm_eq
+#print axioms RiemannExplorer.norm_xiPairedMittagLefflerTerm_le
+#print axioms RiemannExplorer.summable_xiPairedMittagLefflerTerm
