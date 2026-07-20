@@ -1340,6 +1340,12 @@ coefficient energy at most `1 + log X`.  The exact positive-height partition
 `N(T) = N_critical(T) + 2*N_right(1/2,T)` is formalized with analytic
 multiplicity; the non-strict critical-line count includes the separate
 possible ordinate-zero contribution.
+The current Selberg infrastructure also includes an exact finite Dirichlet
+convolution expansion for the mollified critical-line polynomial, a divisor
+bound for its collected coefficients, sliding-window Markov bounds, and a
+Paley--Zygmund second/fourth-moment measure lemma.  These are proved tools;
+the zeta-specific shrinking-window moment estimates needed for the final
+`T * log T` conclusion remain open.
 
 The three remaining open analytic directions are:
 
