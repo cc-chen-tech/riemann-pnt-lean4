@@ -826,6 +826,367 @@ theorem h_even_entire (t : ℝ) :
       ∀ z : ℂ, deBruijnNewmanH t (-z) = deBruijnNewmanH t z :=
   ⟨differentiable_deBruijnNewmanH t, deBruijnNewmanH_even t⟩
 
+/-! ## Phase 1c 第一块：theta 级数、逐项求导与 `G = x·T'' + (3/2)·T'` -/
+
+/-- General summability helper: `Σ_{n ≥ 0} (n+1)^k e^{x (n+1)}` converges
+for `x < 0` (any power `k`). -/
+theorem summable_shift_pow_mul_exp' {k : ℕ} {x : ℝ} (hx : x < 0) :
+    Summable fun n : ℕ => ((n + 1 : ℕ) : ℝ) ^ k * Real.exp x ^ (n + 1) := by
+  have hr : ‖Real.exp x‖ < 1 := by
+    rw [Real.norm_eq_abs, abs_of_nonneg (Real.exp_nonneg _), Real.exp_lt_one_iff]
+    exact hx
+  exact (summable_nat_add_iff
+      (f := fun m : ℕ => (m : ℝ) ^ k * Real.exp x ^ m) 1).mpr
+    (summable_pow_mul_geometric_of_norm_lt_one k hr)
+
+/-- The `n ≥ 1` Jacobi theta series (real, `x > 0`):
+`S(x) = Σ_{n ≥ 1} e^{−π n² x}`, indexed as `n + 1` over `ℕ`. -/
+noncomputable def thetaSTerm (n : ℕ) (x : ℝ) : ℝ :=
+  Real.exp (-Real.pi * ((n : ℝ) + 1) ^ 2 * x)
+
+/-- First termwise derivative of `thetaSTerm`:
+`d/dx e^{−π n² x} = e^{−π n² x} · (−π n²)`. -/
+noncomputable def thetaSDerivTerm (n : ℕ) (x : ℝ) : ℝ :=
+  Real.exp (-Real.pi * ((n : ℝ) + 1) ^ 2 * x) * (-Real.pi * ((n : ℝ) + 1) ^ 2)
+
+/-- Second termwise derivative: `d²/dx² e^{−π n² x} = e^{−π n² x} · (−π n²)²`. -/
+noncomputable def thetaSDeriv2Term (n : ℕ) (x : ℝ) : ℝ :=
+  (Real.exp (-Real.pi * ((n : ℝ) + 1) ^ 2 * x) * (-Real.pi * ((n : ℝ) + 1) ^ 2))
+    * (-Real.pi * ((n : ℝ) + 1) ^ 2)
+
+/-- The `n ≥ 1` theta series `S(x) = Σ_{n ≥ 1} e^{−π n² x}`. -/
+noncomputable def thetaS (x : ℝ) : ℝ := ∑' n : ℕ, thetaSTerm n x
+
+/-- First derivative of the full theta function `T = 1 + 2S`. -/
+noncomputable def thetaTD (x : ℝ) : ℝ := 2 * (∑' n : ℕ, thetaSDerivTerm n x)
+
+/-- Second derivative of the full theta function `T = 1 + 2S`. -/
+noncomputable def thetaTDD (x : ℝ) : ℝ := 2 * (∑' n : ℕ, thetaSDeriv2Term n x)
+
+/-- The Jacobi theta function on the positive imaginary axis, as a real
+function: `T(x) = Σ_{n ∈ ℤ} e^{−π n² x} = 1 + 2 S(x)`. -/
+noncomputable def thetaT (x : ℝ) : ℝ := 1 + 2 * thetaS x
+
+theorem thetaSTerm_le (n : ℕ) {x : ℝ} (hx : 0 < x) :
+    thetaSTerm n x ≤ Real.exp (-Real.pi * x) ^ (n + 1) := by
+  unfold thetaSTerm
+  have h1 : ((n : ℝ) + 1) ≤ ((n : ℝ) + 1) ^ 2 := by
+    have h0 : (0 : ℝ) ≤ (n : ℝ) := by exact_mod_cast n.zero_le
+    have hpos : (1 : ℝ) ≤ (n : ℝ) + 1 := by linarith
+    nth_rewrite 1 [← pow_one ((n : ℝ) + 1)]
+    exact pow_le_pow_right₀ (by linarith) (by norm_num : 1 ≤ 2)
+  have h2 : -Real.pi * ((n : ℝ) + 1) ^ 2 * x ≤ -Real.pi * ((n : ℝ) + 1) * x := by
+    have hpx : (0 : ℝ) < Real.pi * x := by positivity
+    have : Real.pi * ((n : ℝ) + 1) * x ≤ Real.pi * ((n : ℝ) + 1) ^ 2 * x := by
+      apply mul_le_mul_of_nonneg_right _ hx.le
+      apply mul_le_mul_of_nonneg_left h1 (by positivity)
+    linarith
+  calc Real.exp (-Real.pi * ((n : ℝ) + 1) ^ 2 * x)
+      ≤ Real.exp (-Real.pi * ((n : ℝ) + 1) * x) := Real.exp_le_exp.mpr h2
+    _ = Real.exp (-Real.pi * x) ^ (n + 1) := by
+        rw [← Real.exp_nat_mul]
+        congr 1
+        push_cast
+        ring
+
+theorem summable_thetaSTerm {x : ℝ} (hx : 0 < x) :
+    Summable fun n : ℕ => thetaSTerm n x := by
+  have h := summable_shift_pow_mul_exp' (k := 0)
+    (show -Real.pi * x < 0 from by nlinarith [Real.pi_pos])
+  simp only [pow_zero, one_mul] at h
+  exact Summable.of_nonneg_of_le (fun n => Real.exp_nonneg _)
+    (fun n => thetaSTerm_le n hx) h
+
+theorem summable_thetaSDerivTerm {x : ℝ} (hx : 0 < x) :
+    Summable fun n : ℕ => thetaSDerivTerm n x := by
+  have h := summable_shift_pow_mul_exp' (k := 2)
+    (show -Real.pi * x < 0 from by nlinarith [Real.pi_pos])
+  refine Summable.of_norm_bounded (h.mul_left Real.pi) (fun n => ?_)
+  unfold thetaSDerivTerm
+  rw [Real.norm_eq_abs, abs_mul, abs_of_nonneg (Real.exp_nonneg _),
+    abs_of_nonpos (show -Real.pi * ((n : ℝ) + 1) ^ 2 ≤ 0 from by
+      nlinarith [Real.pi_pos, sq_nonneg ((n : ℝ) + 1)]),
+    show -(-Real.pi * ((n : ℝ) + 1) ^ 2 : ℝ) = Real.pi * ((n : ℝ) + 1) ^ 2 from by ring]
+  have hle := thetaSTerm_le n hx
+  unfold thetaSTerm at hle
+  calc Real.exp (-Real.pi * ((n : ℝ) + 1) ^ 2 * x) * (Real.pi * ((n : ℝ) + 1) ^ 2)
+      = Real.pi * ((n : ℝ) + 1) ^ 2 * Real.exp (-Real.pi * ((n : ℝ) + 1) ^ 2 * x) := by
+        ring
+    _ ≤ Real.pi * ((n : ℝ) + 1) ^ 2 * Real.exp (-Real.pi * x) ^ (n + 1) :=
+        mul_le_mul_of_nonneg_left hle (by positivity)
+    _ = Real.pi * (((n + 1 : ℕ) : ℝ) ^ 2 * Real.exp (-Real.pi * x) ^ (n + 1)) := by
+        push_cast
+        ring
+
+theorem summable_thetaSDeriv2Term {x : ℝ} (hx : 0 < x) :
+    Summable fun n : ℕ => thetaSDeriv2Term n x := by
+  have h := summable_shift_pow_mul_exp' (k := 4)
+    (show -Real.pi * x < 0 from by nlinarith [Real.pi_pos])
+  refine Summable.of_norm_bounded (h.mul_left (Real.pi ^ 2)) (fun n => ?_)
+  unfold thetaSDeriv2Term
+  rw [Real.norm_eq_abs, abs_mul, abs_mul, abs_of_nonneg (Real.exp_nonneg _),
+    abs_of_nonpos (show -Real.pi * ((n : ℝ) + 1) ^ 2 ≤ 0 from by
+      nlinarith [Real.pi_pos, sq_nonneg ((n : ℝ) + 1)]),
+    show -(-Real.pi * ((n : ℝ) + 1) ^ 2 : ℝ) = Real.pi * ((n : ℝ) + 1) ^ 2 from by ring]
+  have hle := thetaSTerm_le n hx
+  unfold thetaSTerm at hle
+  have hsq : (Real.pi * ((n : ℝ) + 1) ^ 2) * (Real.pi * ((n : ℝ) + 1) ^ 2)
+      = Real.pi ^ 2 * ((n : ℝ) + 1) ^ 4 := by ring
+  calc Real.exp (-Real.pi * ((n : ℝ) + 1) ^ 2 * x)
+        * (Real.pi * ((n : ℝ) + 1) ^ 2) * (Real.pi * ((n : ℝ) + 1) ^ 2)
+      = Real.pi ^ 2 * ((n : ℝ) + 1) ^ 4
+          * Real.exp (-Real.pi * ((n : ℝ) + 1) ^ 2 * x) := by ring
+    _ ≤ Real.pi ^ 2 * ((n : ℝ) + 1) ^ 4 * Real.exp (-Real.pi * x) ^ (n + 1) :=
+        mul_le_mul_of_nonneg_left hle (by positivity)
+    _ = Real.pi ^ 2 * (((n + 1 : ℕ) : ℝ) ^ 4 * Real.exp (-Real.pi * x) ^ (n + 1)) := by
+        push_cast
+        ring
+
+/-- Termwise derivative identity for the theta summands. -/
+theorem thetaSTerm_hasDerivAt (n : ℕ) (y : ℝ) :
+    HasDerivAt (thetaSTerm n) (thetaSDerivTerm n y) y := by
+  unfold thetaSTerm thetaSDerivTerm
+  simpa only [mul_one] using
+    ((hasDerivAt_id y).const_mul (-Real.pi * ((n : ℝ) + 1) ^ 2)).exp
+
+/-- Second termwise derivative identity. -/
+theorem thetaSDerivTerm_hasDerivAt (n : ℕ) (y : ℝ) :
+    HasDerivAt (thetaSDerivTerm n) (thetaSDeriv2Term n y) y := by
+  unfold thetaSDerivTerm thetaSDeriv2Term
+  simpa only [mul_one] using
+    (((hasDerivAt_id y).const_mul (-Real.pi * ((n : ℝ) + 1) ^ 2)).exp).mul_const
+      (-Real.pi * ((n : ℝ) + 1) ^ 2)
+
+/-- **Termwise differentiation of the theta series**: for `x > 0`,
+`S'(x) = Σ_{n ≥ 1} (−π n²) e^{−π n² x}`. -/
+theorem hasDerivAt_thetaS {x : ℝ} (hx : 0 < x) :
+    HasDerivAt thetaS (∑' n : ℕ, thetaSDerivTerm n x) x := by
+  unfold thetaS
+  have hx2 : (0 : ℝ) < x / 2 := by linarith
+  have hub : Summable fun n : ℕ =>
+      Real.pi * (((n + 1 : ℕ) : ℝ) ^ 2 * Real.exp (-Real.pi * (x / 2)) ^ (n + 1)) :=
+    (summable_shift_pow_mul_exp' (k := 2)
+      (show -Real.pi * (x / 2) < 0 from by nlinarith [Real.pi_pos])).mul_left _
+  have hg : ∀ n : ℕ, ∀ y : ℝ, y ∈ Set.Ioi (x / 2) →
+      HasDerivAt (thetaSTerm n) (thetaSDerivTerm n y) y :=
+    fun n y _ => thetaSTerm_hasDerivAt n y
+  have hg' : ∀ n : ℕ, ∀ y : ℝ, y ∈ Set.Ioi (x / 2) → ‖thetaSDerivTerm n y‖
+      ≤ Real.pi * (((n + 1 : ℕ) : ℝ) ^ 2 * Real.exp (-Real.pi * (x / 2)) ^ (n + 1)) := by
+    intro n y hy
+    have hy2 : x / 2 < y := hy
+    unfold thetaSDerivTerm
+    rw [Real.norm_eq_abs, abs_mul, abs_of_nonneg (Real.exp_nonneg _),
+      abs_of_nonpos (show -Real.pi * ((n : ℝ) + 1) ^ 2 ≤ 0 from by
+        nlinarith [Real.pi_pos, sq_nonneg ((n : ℝ) + 1)]),
+      show -(-Real.pi * ((n : ℝ) + 1) ^ 2 : ℝ) = Real.pi * ((n : ℝ) + 1) ^ 2 from by ring]
+    have h1 : Real.exp (-Real.pi * ((n : ℝ) + 1) ^ 2 * y)
+        ≤ Real.exp (-Real.pi * (x / 2)) ^ (n + 1) := by
+      have hsq : ((n : ℝ) + 1) ≤ ((n : ℝ) + 1) ^ 2 := by
+        have h0 : (0 : ℝ) ≤ (n : ℝ) := by exact_mod_cast n.zero_le
+        have hpos : (1 : ℝ) ≤ (n : ℝ) + 1 := by linarith
+        nth_rewrite 1 [← pow_one ((n : ℝ) + 1)]
+        exact pow_le_pow_right₀ (by linarith) (by norm_num : 1 ≤ 2)
+      have h2 : -Real.pi * ((n : ℝ) + 1) ^ 2 * y ≤ -Real.pi * ((n : ℝ) + 1) * (x / 2) := by
+        have h3 : Real.pi * ((n : ℝ) + 1) * (x / 2) ≤ Real.pi * ((n : ℝ) + 1) ^ 2 * y := by
+          calc Real.pi * ((n : ℝ) + 1) * (x / 2)
+              ≤ Real.pi * ((n : ℝ) + 1) * y :=
+              mul_le_mul_of_nonneg_left (by linarith) (by positivity)
+            _ ≤ Real.pi * ((n : ℝ) + 1) ^ 2 * y := by
+              apply mul_le_mul_of_nonneg_right _ (by linarith : (0 : ℝ) ≤ y)
+              apply mul_le_mul_of_nonneg_left hsq (by positivity)
+        linarith
+      calc Real.exp (-Real.pi * ((n : ℝ) + 1) ^ 2 * y)
+          ≤ Real.exp (-Real.pi * ((n : ℝ) + 1) * (x / 2)) := Real.exp_le_exp.mpr h2
+        _ = Real.exp (-Real.pi * (x / 2)) ^ (n + 1) := by
+            rw [← Real.exp_nat_mul]
+            congr 1
+            push_cast
+            ring
+    calc Real.exp (-Real.pi * ((n : ℝ) + 1) ^ 2 * y) * (Real.pi * ((n : ℝ) + 1) ^ 2)
+        = Real.pi * (((n : ℝ) + 1) ^ 2 * Real.exp (-Real.pi * ((n : ℝ) + 1) ^ 2 * y)) := by
+          ring
+      _ ≤ Real.pi * (((n : ℝ) + 1) ^ 2 * Real.exp (-Real.pi * (x / 2)) ^ (n + 1)) :=
+          mul_le_mul_of_nonneg_left
+            (mul_le_mul_of_nonneg_left h1 (by positivity)) (by positivity)
+      _ = Real.pi * (((n + 1 : ℕ) : ℝ) ^ 2 * Real.exp (-Real.pi * (x / 2)) ^ (n + 1)) := by
+          rw [Nat.cast_add, Nat.cast_one]
+  have hy₀ : (x / 2 + 1 : ℝ) ∈ Set.Ioi (x / 2) := by
+    simp only [Set.mem_Ioi]
+    linarith
+  have hg0 : Summable fun n : ℕ => thetaSTerm n (x / 2 + 1) :=
+    summable_thetaSTerm (by linarith)
+  have hy : x ∈ Set.Ioi (x / 2 : ℝ) := by
+    simp only [Set.mem_Ioi]
+    linarith
+  exact hasDerivAt_tsum_of_isPreconnected hub isOpen_Ioi isPreconnected_Ioi hg hg' hy₀ hg0 hy
+
+/-- **Second termwise differentiation**: for `x > 0`,
+`S''(x) = Σ_{n ≥ 1} (π² n⁴) e^{−π n² x}`. -/
+theorem hasDerivAt_thetaSDeriv {x : ℝ} (hx : 0 < x) :
+    HasDerivAt (fun y => ∑' n : ℕ, thetaSDerivTerm n y)
+      (∑' n : ℕ, thetaSDeriv2Term n x) x := by
+  have hx2 : (0 : ℝ) < x / 2 := by linarith
+  have hub : Summable fun n : ℕ =>
+      Real.pi ^ 2 * (((n + 1 : ℕ) : ℝ) ^ 4 * Real.exp (-Real.pi * (x / 2)) ^ (n + 1)) :=
+    (summable_shift_pow_mul_exp' (k := 4)
+      (show -Real.pi * (x / 2) < 0 from by nlinarith [Real.pi_pos])).mul_left _
+  have hg : ∀ n : ℕ, ∀ y : ℝ, y ∈ Set.Ioi (x / 2) →
+      HasDerivAt (thetaSDerivTerm n) (thetaSDeriv2Term n y) y :=
+    fun n y _ => thetaSDerivTerm_hasDerivAt n y
+  have hg' : ∀ n : ℕ, ∀ y : ℝ, y ∈ Set.Ioi (x / 2) → ‖thetaSDeriv2Term n y‖
+      ≤ Real.pi ^ 2 * (((n + 1 : ℕ) : ℝ) ^ 4 * Real.exp (-Real.pi * (x / 2)) ^ (n + 1)) := by
+    intro n y hy
+    have hy2 : x / 2 < y := hy
+    unfold thetaSDeriv2Term
+    rw [Real.norm_eq_abs, abs_mul, abs_mul, abs_of_nonneg (Real.exp_nonneg _),
+      abs_of_nonpos (show -Real.pi * ((n : ℝ) + 1) ^ 2 ≤ 0 from by
+        nlinarith [Real.pi_pos, sq_nonneg ((n : ℝ) + 1)]),
+      show -(-Real.pi * ((n : ℝ) + 1) ^ 2 : ℝ) = Real.pi * ((n : ℝ) + 1) ^ 2 from by ring]
+    have h1 : Real.exp (-Real.pi * ((n : ℝ) + 1) ^ 2 * y)
+        ≤ Real.exp (-Real.pi * (x / 2)) ^ (n + 1) := by
+      have hsq : ((n : ℝ) + 1) ≤ ((n : ℝ) + 1) ^ 2 := by
+        have h0 : (0 : ℝ) ≤ (n : ℝ) := by exact_mod_cast n.zero_le
+        have hpos : (1 : ℝ) ≤ (n : ℝ) + 1 := by linarith
+        nth_rewrite 1 [← pow_one ((n : ℝ) + 1)]
+        exact pow_le_pow_right₀ (by linarith) (by norm_num : 1 ≤ 2)
+      have h2 : -Real.pi * ((n : ℝ) + 1) ^ 2 * y ≤ -Real.pi * ((n : ℝ) + 1) * (x / 2) := by
+        have h3 : Real.pi * ((n : ℝ) + 1) * (x / 2) ≤ Real.pi * ((n : ℝ) + 1) ^ 2 * y := by
+          calc Real.pi * ((n : ℝ) + 1) * (x / 2)
+              ≤ Real.pi * ((n : ℝ) + 1) * y :=
+              mul_le_mul_of_nonneg_left (by linarith) (by positivity)
+            _ ≤ Real.pi * ((n : ℝ) + 1) ^ 2 * y := by
+              apply mul_le_mul_of_nonneg_right _ (by linarith : (0 : ℝ) ≤ y)
+              apply mul_le_mul_of_nonneg_left hsq (by positivity)
+        linarith
+      calc Real.exp (-Real.pi * ((n : ℝ) + 1) ^ 2 * y)
+          ≤ Real.exp (-Real.pi * ((n : ℝ) + 1) * (x / 2)) := Real.exp_le_exp.mpr h2
+        _ = Real.exp (-Real.pi * (x / 2)) ^ (n + 1) := by
+            rw [← Real.exp_nat_mul]
+            congr 1
+            push_cast
+            ring
+    calc Real.exp (-Real.pi * ((n : ℝ) + 1) ^ 2 * y) * (Real.pi * ((n : ℝ) + 1) ^ 2)
+          * (Real.pi * ((n : ℝ) + 1) ^ 2)
+        = Real.pi ^ 2 * (((n : ℝ) + 1) ^ 4
+            * Real.exp (-Real.pi * ((n : ℝ) + 1) ^ 2 * y)) := by ring
+      _ ≤ Real.pi ^ 2 * (((n : ℝ) + 1) ^ 4 * Real.exp (-Real.pi * (x / 2)) ^ (n + 1)) :=
+          mul_le_mul_of_nonneg_left
+            (mul_le_mul_of_nonneg_left h1 (by positivity)) (by positivity)
+      _ = Real.pi ^ 2 * (((n + 1 : ℕ) : ℝ) ^ 4 * Real.exp (-Real.pi * (x / 2)) ^ (n + 1)) := by
+          rw [Nat.cast_add, Nat.cast_one]
+  have hy₀ : (x / 2 + 1 : ℝ) ∈ Set.Ioi (x / 2) := by
+    simp only [Set.mem_Ioi]
+    linarith
+  have hg0 : Summable fun n : ℕ => thetaSDerivTerm n (x / 2 + 1) :=
+    summable_thetaSDerivTerm (by linarith)
+  have hy : x ∈ Set.Ioi (x / 2 : ℝ) := by
+    simp only [Set.mem_Ioi]
+    linarith
+  exact hasDerivAt_tsum_of_isPreconnected hub isOpen_Ioi isPreconnected_Ioi hg hg' hy₀ hg0 hy
+
+/-- The full theta function `T = 1 + 2S` is differentiable with
+`T'(x) = 2·S'(x)` for `x > 0`. -/
+theorem hasDerivAt_thetaT {x : ℝ} (hx : 0 < x) :
+    HasDerivAt thetaT (thetaTD x) x := by
+  unfold thetaT thetaTD
+  exact ((hasDerivAt_thetaS hx).const_mul 2).const_add 1
+
+/-- `T'` is differentiable with `T''(x) = 2·S''(x)` for `x > 0`. -/
+theorem hasDerivAt_thetaTD {x : ℝ} (hx : 0 < x) :
+    HasDerivAt thetaTD (thetaTDD x) x := by
+  unfold thetaTD thetaTDD
+  exact (hasDerivAt_thetaSDeriv hx).const_mul 2
+
+/-- The kernel `G(x) = Σ_{n ≥ 1} (2π² n⁴ x − 3π n²) e^{−π n² x}`
+of the `x = e^{4u}` change of variables. -/
+noncomputable def phiKernelGTerm (n : ℕ) (x : ℝ) : ℝ :=
+  (2 * Real.pi ^ 2 * ((n : ℝ) + 1) ^ 4 * x - 3 * Real.pi * ((n : ℝ) + 1) ^ 2)
+    * Real.exp (-Real.pi * ((n : ℝ) + 1) ^ 2 * x)
+
+/-- `G(x) = Σ_{n ≥ 1} (2π² n⁴ x − 3π n²) e^{−π n² x}`. -/
+noncomputable def phiKernelG (x : ℝ) : ℝ := ∑' n : ℕ, phiKernelGTerm n x
+
+theorem summable_phiKernelGTerm {x : ℝ} (hx : 0 < x) :
+    Summable fun n : ℕ => phiKernelGTerm n x := by
+  have h := summable_shift_pow_mul_exp' (k := 4)
+    (show -Real.pi * x < 0 from by nlinarith [Real.pi_pos])
+  refine Summable.of_norm_bounded
+    ((h.mul_left (2 * Real.pi ^ 2 * |x|)).add
+      ((summable_shift_pow_mul_exp' (k := 2)
+        (show -Real.pi * x < 0 from by nlinarith [Real.pi_pos])).mul_left
+        (3 * Real.pi))) (fun n => ?_)
+  unfold phiKernelGTerm
+  rw [Real.norm_eq_abs]
+  have hA : (0 : ℝ) ≤ 2 * Real.pi ^ 2 * ((n : ℝ) + 1) ^ 4 * |x| := by positivity
+  have hB : (0 : ℝ) ≤ 3 * Real.pi * ((n : ℝ) + 1) ^ 2 := by positivity
+  have hsub : |2 * Real.pi ^ 2 * ((n : ℝ) + 1) ^ 4 * x - 3 * Real.pi * ((n : ℝ) + 1) ^ 2|
+      ≤ 2 * Real.pi ^ 2 * ((n : ℝ) + 1) ^ 4 * |x| + 3 * Real.pi * ((n : ℝ) + 1) ^ 2 := by
+    have h1 : |2 * Real.pi ^ 2 * ((n : ℝ) + 1) ^ 4 * x|
+        = 2 * Real.pi ^ 2 * ((n : ℝ) + 1) ^ 4 * |x| := by
+      rw [abs_mul, abs_of_nonneg (by positivity : (0 : ℝ) ≤ 2 * Real.pi ^ 2 * ((n : ℝ) + 1) ^ 4)]
+    have h2 : |3 * Real.pi * ((n : ℝ) + 1) ^ 2| = 3 * Real.pi * ((n : ℝ) + 1) ^ 2 :=
+      abs_of_nonneg hB
+    calc |2 * Real.pi ^ 2 * ((n : ℝ) + 1) ^ 4 * x - 3 * Real.pi * ((n : ℝ) + 1) ^ 2|
+        ≤ |2 * Real.pi ^ 2 * ((n : ℝ) + 1) ^ 4 * x|
+          + |3 * Real.pi * ((n : ℝ) + 1) ^ 2| := abs_sub _ _
+      _ = 2 * Real.pi ^ 2 * ((n : ℝ) + 1) ^ 4 * |x|
+          + 3 * Real.pi * ((n : ℝ) + 1) ^ 2 := by rw [h1, h2]
+  have hle := thetaSTerm_le n hx
+  unfold thetaSTerm at hle
+  calc |(2 * Real.pi ^ 2 * ((n : ℝ) + 1) ^ 4 * x - 3 * Real.pi * ((n : ℝ) + 1) ^ 2)
+        * Real.exp (-Real.pi * ((n : ℝ) + 1) ^ 2 * x)|
+      = |2 * Real.pi ^ 2 * ((n : ℝ) + 1) ^ 4 * x - 3 * Real.pi * ((n : ℝ) + 1) ^ 2|
+        * Real.exp (-Real.pi * ((n : ℝ) + 1) ^ 2 * x) := by
+        rw [abs_mul, abs_of_nonneg (Real.exp_nonneg _)]
+    _ ≤ (2 * Real.pi ^ 2 * ((n : ℝ) + 1) ^ 4 * |x| + 3 * Real.pi * ((n : ℝ) + 1) ^ 2)
+        * Real.exp (-Real.pi * ((n : ℝ) + 1) ^ 2 * x) :=
+        mul_le_mul_of_nonneg_right hsub (Real.exp_nonneg _)
+    _ ≤ (2 * Real.pi ^ 2 * ((n : ℝ) + 1) ^ 4 * |x| + 3 * Real.pi * ((n : ℝ) + 1) ^ 2)
+        * Real.exp (-Real.pi * x) ^ (n + 1) :=
+        mul_le_mul_of_nonneg_left hle (by positivity)
+    _ = 2 * Real.pi ^ 2 * |x| * (((n + 1 : ℕ) : ℝ) ^ 4 * Real.exp (-Real.pi * x) ^ (n + 1))
+        + 3 * Real.pi * (((n + 1 : ℕ) : ℝ) ^ 2 * Real.exp (-Real.pi * x) ^ (n + 1)) := by
+        push_cast
+        ring
+
+/-- **Structural identity**: `G(x) = x·T''(x) + (3/2)·T'(x)` for `x > 0`. -/
+theorem phiKernelG_eq {x : ℝ} (hx : 0 < x) :
+    phiKernelG x = x * thetaTDD x + (3 / 2) * thetaTD x := by
+  have hs2 := summable_thetaSDeriv2Term hx
+  have hs1 := summable_thetaSDerivTerm hx
+  have hterm : ∀ n : ℕ, phiKernelGTerm n x
+      = 2 * x * thetaSDeriv2Term n x + 3 * thetaSDerivTerm n x := by
+    intro n
+    unfold phiKernelGTerm thetaSDeriv2Term thetaSDerivTerm
+    ring
+  calc phiKernelG x = ∑' n : ℕ, phiKernelGTerm n x := rfl
+    _ = ∑' n : ℕ, (2 * x * thetaSDeriv2Term n x + 3 * thetaSDerivTerm n x) :=
+        tsum_congr hterm
+    _ = 2 * x * (∑' n : ℕ, thetaSDeriv2Term n x)
+        + 3 * (∑' n : ℕ, thetaSDerivTerm n x) := by
+        rw [(hs2.mul_left (2 * x)).tsum_add (hs1.mul_left 3), tsum_mul_left, tsum_mul_left]
+    _ = x * thetaTDD x + (3 / 2) * thetaTD x := by unfold thetaTDD thetaTD; ring
+
+/-- **Change of variables**: `Φ(u) = e^{5u} · G(e^{4u})`. -/
+theorem phi_eq_exp_mul_phiKernelG (u : ℝ) :
+    phi u = Real.exp (5 * u) * phiKernelG (Real.exp (4 * u)) := by
+  have hterm : ∀ n : ℕ, phiTerm (n + 1) u
+      = Real.exp (5 * u) * phiKernelGTerm n (Real.exp (4 * u)) := by
+    intro n
+    unfold phiTerm phiKernelGTerm
+    have e1 : Real.exp (9 * u) = Real.exp (5 * u) * Real.exp (4 * u) := by
+      rw [← Real.exp_add]
+      congr 1
+      ring
+    rw [e1]
+    push_cast
+    ring_nf
+  calc phi u = ∑' n : ℕ, phiTerm (n + 1) u := rfl
+    _ = ∑' n : ℕ, Real.exp (5 * u) * phiKernelGTerm n (Real.exp (4 * u)) :=
+        tsum_congr hterm
+    _ = Real.exp (5 * u) * phiKernelG (Real.exp (4 * u)) := by
+        unfold phiKernelG; rw [tsum_mul_left]
+
 /-! ## Prop 目标（晋升纪律见 `docs/implementation-standards.md`） -/
 
 /-- **适定性目标**（Phase 1a）：对每个 `t : ℝ`、`z : ℂ`，被积函数

@@ -18,3 +18,8 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_even
 #print axioms RiemannExplorer.DeBruijnNewman.h_even_entire
 #print axioms RiemannExplorer.DeBruijnNewman.h_even_entire_target_proved
+#print axioms RiemannExplorer.DeBruijnNewman.hasDerivAt_thetaS
+#print axioms RiemannExplorer.DeBruijnNewman.hasDerivAt_thetaT
+#print axioms RiemannExplorer.DeBruijnNewman.hasDerivAt_thetaTD
+#print axioms RiemannExplorer.DeBruijnNewman.phiKernelG_eq
+#print axioms RiemannExplorer.DeBruijnNewman.phi_eq_exp_mul_phiKernelG
