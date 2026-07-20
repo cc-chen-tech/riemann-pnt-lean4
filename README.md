@@ -1464,6 +1464,15 @@ problem, but they do not estimate that double sum.  The remaining Selberg core
 is a uniform dyadic average-square bound for these complete/truncated
 Moebius-weighted coefficients, strong enough to make the short-window bad set
 only `O(T)`.
+The complete-range square energy is now expanded one step further without
+taking absolute values.  Simultaneous divisibility by two mollifier products
+is rewritten as divisibility by their least common multiple, and summing over
+`1 <= k <= N` gives the exact signed harmonic kernel
+`(lcm : R)^(-1) * harmonic (N / lcm)`.  The actual complex collected-coefficient
+energy on `1 < k <= N` is proved equal to this four-index quadratic form minus
+the constant mode `1`.  This exposes the cancellation-sensitive arithmetic
+quantity required by Selberg's argument; proving a sharp bound for that signed
+quadratic form, and controlling the truncated range `N < k`, remain open.
 
 The three remaining open analytic directions are:
 
