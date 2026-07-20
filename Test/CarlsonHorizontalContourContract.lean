@@ -1,0 +1,12 @@
+import PrimeNumberTheorem.CarlsonHorizontalContour
+
+open Complex Set
+
+namespace PrimeNumberTheorem
+namespace CarlsonZeroDensity
+
+#check exists_regularizedCarlson_fixedRight_count_with_explicit_top
+#print axioms exists_regularizedCarlson_fixedRight_count_with_explicit_top
+
+end CarlsonZeroDensity
+end PrimeNumberTheorem
