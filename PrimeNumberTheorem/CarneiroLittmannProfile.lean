@@ -1395,6 +1395,54 @@ theorem carneiroLittmannTailProfile_certificate :
       (fun _ => carneiroLittmannDensity_nonnegative)
       (fun _ => carneiroLittmannDensity_nonpositive) hNew horder t
 
+/-- The weighted Hilbert--Montgomery--Vaughan local-separation bound with the
+concrete Carneiro--Littmann certificate discharged internally. -/
+theorem hilbertForm_norm_le_two_pi_localSeparation_carneiroLittmann
+    {ι : Type*} [DecidableEq ι]
+    (S : Finset ι) (c : ι → ℂ) (omega : ι → ℝ)
+    (hS : S.Nontrivial) (homega : Set.InjOn omega (S : Set ι)) :
+    ‖hilbertForm S c omega‖ ≤
+      2 * Real.pi *
+        ∑ n ∈ S, ‖c n‖ ^ 2 / localFrequencySeparation S omega n :=
+  carneiroLittmannTailProfile_certificate
+    |>.hilbertForm_norm_le_two_pi_localSeparation S c omega hS homega
+
+/-- The resulting finite-frequency mean-square estimate, with a local gap at
+each frequency and no external kernel hypothesis. -/
+theorem finiteExponentialSum_meanSquare_le_localSeparation
+    {ι : Type*} [DecidableEq ι]
+    {S : Finset ι} {c : ι → ℂ} {omega : ι → ℝ} {a b : ℝ}
+    (hab : a ≤ b) (hS : S.Nontrivial)
+    (homega : Set.InjOn omega (S : Set ι)) :
+    ∫ t in a..b, ‖finiteExponentialSum S c omega t‖ ^ 2 ≤
+      (b - a) * ∑ n ∈ S, ‖c n‖ ^ 2 +
+        4 * Real.pi *
+          ∑ n ∈ S, ‖c n‖ ^ 2 / localFrequencySeparation S omega n := by
+  have hmean := finiteExponentialSum_meanSquare_le_of_hilbert
+    (c := c)
+    (weight := fun n => (localFrequencySeparation S omega n)⁻¹)
+    (C := 2 * Real.pi) hab homega
+    (fun n hn => (inv_pos.mpr
+      (localFrequencySeparation_pos hS hn homega)).le)
+    (fun d => by
+      have hd :=
+        hilbertForm_norm_le_two_pi_localSeparation_carneiroLittmann
+          S d omega hS homega
+      simpa [div_eq_mul_inv, mul_comm] using hd)
+  have hsum :
+      (∑ n ∈ S, (localFrequencySeparation S omega n)⁻¹ * ‖c n‖ ^ 2) =
+        ∑ n ∈ S, ‖c n‖ ^ 2 / localFrequencySeparation S omega n := by
+    apply Finset.sum_congr rfl
+    intro n hn
+    rw [div_eq_mul_inv]
+    ring
+  calc
+    _ ≤ (b - a) * ∑ n ∈ S, ‖c n‖ ^ 2 +
+        2 * (2 * Real.pi) *
+          ∑ n ∈ S, (localFrequencySeparation S omega n)⁻¹ * ‖c n‖ ^ 2 :=
+      hmean
+    _ = _ := by rw [hsum]; ring
+
 /-- Compatibility wrapper accepting the normalized shifted sinc-square
 identity.  The concrete certificate itself is now unconditional. -/
 theorem carneiroLittmannTailProfile_certificate_of_sinc_shift_integral

@@ -132,6 +132,25 @@ example :
     MonotoneExtremalKernelCertificate carneiroLittmannTailProfile :=
   carneiroLittmannTailProfile_certificate
 
+example {ι : Type*} [DecidableEq ι]
+    (S : Finset ι) (c : ι → ℂ) (omega : ι → ℝ)
+    (hS : S.Nontrivial) (homega : Set.InjOn omega (S : Set ι)) :
+    ‖hilbertForm S c omega‖ ≤
+      2 * Real.pi *
+        ∑ n ∈ S, ‖c n‖ ^ 2 / localFrequencySeparation S omega n :=
+  hilbertForm_norm_le_two_pi_localSeparation_carneiroLittmann
+    S c omega hS homega
+
+example {ι : Type*} [DecidableEq ι]
+    {S : Finset ι} {c : ι → ℂ} {omega : ι → ℝ} {a b : ℝ}
+    (hab : a ≤ b) (hS : S.Nontrivial)
+    (homega : Set.InjOn omega (S : Set ι)) :
+    ∫ t in a..b, ‖finiteExponentialSum S c omega t‖ ^ 2 ≤
+      (b - a) * ∑ n ∈ S, ‖c n‖ ^ 2 +
+        4 * Real.pi *
+          ∑ n ∈ S, ‖c n‖ ^ 2 / localFrequencySeparation S omega n :=
+  finiteExponentialSum_meanSquare_le_localSeparation hab hS homega
+
 example
     (hmass : ∫ x, Real.sinc (Real.pi * (x + 1)) ^ 2 = 1) :
     MonotoneExtremalKernelCertificate carneiroLittmannTailProfile :=
@@ -168,6 +187,8 @@ example
 #print axioms fourierKernel_signedRadialTailProfile_mul
 #print axioms fourierKernel_carneiroLittmannTailProfile_eq
 #print axioms carneiroLittmannTailProfile_certificate
+#print axioms hilbertForm_norm_le_two_pi_localSeparation_carneiroLittmann
+#print axioms finiteExponentialSum_meanSquare_le_localSeparation
 #print axioms carneiroLittmannTailProfile_certificate_of_sinc_shift_integral
 #print axioms carneiroLittmannTailProfile_certificate_of_integral_sinc_sq
 
