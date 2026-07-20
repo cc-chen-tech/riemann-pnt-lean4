@@ -61,6 +61,7 @@ import HardyTheorem.SelbergGoodWindowMeasure
 import HardyTheorem.SelbergSignedBadSet
 import HardyTheorem.SelbergMollifiedSecondMoment
 import HardyTheorem.SelbergShortAbsLower
+import HardyTheorem.SelbergMollifiedTripleDirichlet
 import MathlibAux.SlidingIntervalCorrelation
 import MathlibAux.SlidingWindowBadSet
 import MathlibAux.PaleyZygmund

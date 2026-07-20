@@ -1,0 +1,20 @@
+import HardyTheorem.SelbergMollifiedTripleDirichlet
+
+open Complex
+
+namespace HardyTheorem
+
+#check conj_selbergMoebiusMollifier_criticalLine_eq_sum
+#check conj_selbergMoebiusMollifier_criticalLine_eq_neg
+#check selbergMollifiedTripleSupport
+#check selbergMollifiedTripleCoeff
+#check selbergMollifiedTripleFrequency
+#check selbergMollifiedTriplePolynomial
+#check criticalLineDirichletPolynomial_mul_mollifier_mul_conj_eq_tripleSum
+#check criticalLineDirichletPolynomial_mul_mollifier_mul_conj_eq_exponentialPolynomial
+
+#print axioms conj_selbergMoebiusMollifier_criticalLine_eq_neg
+#print axioms criticalLineDirichletPolynomial_mul_mollifier_mul_conj_eq_tripleSum
+#print axioms criticalLineDirichletPolynomial_mul_mollifier_mul_conj_eq_exponentialPolynomial
+
+end HardyTheorem

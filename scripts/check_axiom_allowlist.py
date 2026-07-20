@@ -154,6 +154,8 @@ EXPECTED_DECLARATIONS = {
     "HardyTheorem.exists_integral_sq_selbergMoebiusMollifiedHardyZ_le",
     "HardyTheorem.exists_selbergMoebiusMollifiedZetaFirstApprox",
     "HardyTheorem.exists_selbergMoebiusAbsShortIntegral_ge_sub_shortDirichlet_coarse",
+    "HardyTheorem.conj_selbergMoebiusMollifier_criticalLine_eq_neg",
+    "HardyTheorem.criticalLineDirichletPolynomial_mul_mollifier_mul_conj_eq_exponentialPolynomial",
     "HardyTheorem.hardy_littlewood_lower_bound_target_proved",
     "HardyTheorem.hardy_littlewood_odd_lower_bound_target_proved",
     "RiemannPNT.API.hardyLittlewoodOddLowerBound_proved",

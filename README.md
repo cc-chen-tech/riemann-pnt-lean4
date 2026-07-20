@@ -1373,6 +1373,11 @@ absolute mass of the mollified Hardy function.  Its remaining loss is the norm
 of one explicit finite Dirichlet polynomial plus `O(H * X / sqrt T)`.  Proving
 that polynomial small for all but `O(T)` starts is still open and is the direct
 input needed for the small-absolute-mass bad-set estimate.
+For the signed estimate, the repository now expands the correct expression
+`P_N * M_X * conj(M_X)` as a finite three-index exponential polynomial with
+frequency `log l - log m - log n`.  This avoids treating the conjugate factor
+as an ordinary Dirichlet convolution; a sharp mean-value bound for this
+polynomial remains open.
 
 The three remaining open analytic directions are:
 
