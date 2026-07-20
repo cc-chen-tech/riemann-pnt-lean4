@@ -3474,5 +3474,78 @@ theorem completedZeta_eq_of_ne_zero_ne_one (s : ℂ) (h0 : s ≠ 0) (h1 : s ≠ 
   field_simp [h0, hs1]
   ring
 
+/-- **`ξ` 零点 ⇔ `ζ` 非平凡零点**：`completedZeta s = 0 ↔ IsNontrivialZero s`。
+正向用 `Re ≥ 1` 非零区（`riemannZeta_ne_zero_of_one_le_re`）+ 函数方程排除
+`Re ≤ 0`；反向由 `ζ = Λ / Gammaℝ` 与 `Gammaℝ ≠ 0`（`Re s > 0`）得到。 -/
+theorem completedZeta_eq_zero_iff (s : ℂ) :
+    RiemannHypothesis.completedZeta s = 0 ↔ RiemannHypothesis.IsNontrivialZero s := by
+  constructor
+  · intro h
+    have h0 : s ≠ 0 := by
+      intro hs0
+      rw [hs0] at h
+      unfold RiemannHypothesis.completedZeta at h
+      norm_num at h
+    have h1 : s ≠ 1 := by
+      intro hs1
+      rw [hs1] at h
+      unfold RiemannHypothesis.completedZeta at h
+      norm_num at h
+    have hΛ : completedRiemannZeta s = 0 := by
+      have h2 := h
+      rw [completedZeta_eq_of_ne_zero_ne_one s h0 h1] at h2
+      have hne : (1 / 2 : ℂ) * s * (s - 1) ≠ 0 := by
+        simp only [ne_eq, mul_ne_zero_iff]
+        exact ⟨⟨(by norm_num), h0⟩, sub_ne_zero.mpr h1⟩
+      exact (mul_eq_zero.mp h2).resolve_left hne
+    have hζ : riemannZeta s = 0 := by
+      have h := riemannZeta_def_of_ne_zero h0
+      rw [hΛ, zero_div] at h
+      exact h
+    have hre_pos : 0 < s.re := by
+      by_contra hle
+      push_neg at hle
+      have hre1 : 1 ≤ (1 - s).re := by
+        rw [Complex.sub_re, Complex.one_re]
+        linarith
+      have hne1 : (1 - s) ≠ 0 := fun hh => h1 (sub_eq_zero.mp hh).symm
+      have hne2 : (1 - s) ≠ 1 := fun hh => h0 (sub_eq_self.mp hh)
+      have hΛ1 : completedRiemannZeta (1 - s) ≠ 0 := by
+        have hζ1 : riemannZeta (1 - s) ≠ 0 := riemannZeta_ne_zero_of_one_le_re hre1
+        have h3 := riemannZeta_def_of_ne_zero hne1
+        exact fun hh => hζ1 (by rw [h3, hh, zero_div])
+      have hFE := RiemannHypothesis.functional_equation s
+      rw [h, completedZeta_eq_of_ne_zero_ne_one (1 - s) hne1 hne2] at hFE
+      have hne12 : (1 / 2 : ℂ) * (1 - s) * ((1 - s) - 1) ≠ 0 := by
+        simp only [ne_eq, mul_ne_zero_iff]
+        exact ⟨⟨(by norm_num), hne1⟩, by
+          rw [show (1 : ℂ) - s - 1 = -s from by ring]
+          exact neg_ne_zero.mpr h0⟩
+      rcases mul_eq_zero.mp hFE.symm with hh | hh
+      · exact hne12 hh
+      · exact hΛ1 hh
+    have hre_lt : s.re < 1 := by
+      by_contra hle
+      push_neg at hle
+      exact riemannZeta_ne_zero_of_one_le_re hle hζ
+    exact ⟨hζ, hre_pos, hre_lt⟩
+  · rintro ⟨hζ, hpos, hlt⟩
+    have h0 : s ≠ 0 := by
+      intro hh
+      rw [hh] at hpos
+      simp at hpos
+    have h1 : s ≠ 1 := by
+      intro hh
+      rw [hh] at hlt
+      simp at hlt
+    have hΛ : completedRiemannZeta s = 0 := by
+      have hΓ : Complex.Gammaℝ s ≠ 0 := Complex.Gammaℝ_ne_zero_of_re_pos hpos
+      have h := riemannZeta_def_of_ne_zero h0
+      rw [hζ] at h
+      rcases div_eq_zero_iff.mp h.symm with hh | hh
+      · exact hh
+      · exact absurd hh hΓ
+    rw [completedZeta_eq_of_ne_zero_ne_one s h0 h1, hΛ, mul_zero]
+
 end DeBruijnNewman
 end RiemannExplorer
