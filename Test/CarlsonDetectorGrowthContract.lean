@@ -111,6 +111,9 @@ noncomputable example (C : ℝ) (X : ℕ) (T : ℝ) : ℝ :=
 noncomputable example (X : ℕ) (T : ℝ) : ℝ :=
   regularizedCarlsonFactorCenterLogLower X T
 
+noncomputable example (C : ℝ) (X : ℕ) (T L : ℝ) : ℝ :=
+  regularizedCarlsonFactorLogVariationMajorant C X T L
+
 noncomputable example (X : ℕ) (T : ℝ) : Finset ℝ :=
   regularizedCarlsonFactorDiskZeroHeights X T
 
@@ -137,6 +140,13 @@ example {X : ℕ} {T L : ℝ}
       1 / (4 * (L + 1)) ≤
         regularizedCarlsonFactorHorizontalSeparation X T :=
   regularizedCarlsonFactorHorizontalSeparation_lower_of_mass_le hmass
+
+example {C T L : ℝ} {X : ℕ}
+    (hmass : regularizedCarlsonFactorDiskZeroMass X T ≤ L) :
+    regularizedCarlsonFactorCircleLogUpper C X T -
+        regularizedCarlsonFactorCenterLogLower X T ≤
+      regularizedCarlsonFactorLogVariationMajorant C X T L :=
+  regularizedCarlsonFactorLogVariation_le_of_mass_le hmass
 
 example {X : ℕ} (hX : 1 ≤ X) {T : ℝ} :
     ∃ r : ℝ,
@@ -226,6 +236,23 @@ example : ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X →
             L / (1 / (4 * (L + 1))) :=
   exists_regularizedCarlson_horizontal_logDeriv_le_of_factorDiskMass_le
 
+example : ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X →
+    ∀ {sigma T L : ℝ}, 1 / 2 < sigma → 5 ≤ T →
+      regularizedCarlsonFactorDiskZeroMass X T ≤ L →
+      ∃ r ∈ Set.Icc (121 / 32 : ℝ) (122 / 32 : ℝ),
+      ∃ t ∈ Set.Icc T (T + 1),
+        (∀ x ∈ Set.Icc sigma 4,
+          regularizedCarlsonZeroDetector X
+            ((x : ℂ) + (t : ℂ) * I) ≠ 0) ∧
+        ∀ x ∈ Set.Icc sigma 4,
+          ‖logDeriv (regularizedCarlsonZeroDetector X)
+            ((x : ℂ) + (t : ℂ) * I)‖ ≤
+            4 * max
+                (regularizedCarlsonFactorLogVariationMajorant C X T L) 1 *
+              (r + 15 / 4) / (r - 15 / 4) ^ 2 +
+            L / (1 / (4 * (L + 1))) :=
+  exists_regularizedCarlson_horizontal_logDeriv_le_of_factorDiskMass_le_explicit
+
 example : ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X → ∀ {T : ℝ}, 5 ≤ T →
     (∑ᶠ u,
       (MeromorphicOn.divisor (regularizedCarlsonZeroDetector X)
@@ -261,10 +288,12 @@ example : ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X → ∀ {T : ℝ}, 5 �
 #print axioms mem_regularizedCarlsonFactorDiskZeroSupport_iff_zero
 #print axioms regularizedCarlsonFactorDiskSeparation_lower_of_mass_le
 #print axioms regularizedCarlsonFactorHorizontalSeparation_lower_of_mass_le
+#print axioms regularizedCarlsonFactorLogVariation_le_of_mass_le
 #print axioms exists_regularizedCarlsonZeroDetector_goodFactorCircle
 #print axioms exists_regularizedCarlsonZeroDetector_goodFactor_logDeriv_le
 #print axioms exists_regularizedCarlson_horizontal_logDeriv_le_factorDisk
 #print axioms exists_regularizedCarlson_horizontal_logDeriv_le_of_factorDiskMass_le
+#print axioms exists_regularizedCarlson_horizontal_logDeriv_le_of_factorDiskMass_le_explicit
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem

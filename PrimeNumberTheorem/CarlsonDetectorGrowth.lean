@@ -415,6 +415,14 @@ noncomputable def regularizedCarlsonFactorCenterLogLower
   -Real.log (123 / 32 : ℝ) *
     regularizedCarlsonFactorDiskZeroMass X T
 
+/-- An explicit upper bound for the logarithmic variation of the extracted
+factor, assuming `L` bounds the complete divisor mass in the factorization
+disk. -/
+noncomputable def regularizedCarlsonFactorLogVariationMajorant
+    (C : ℝ) (X : ℕ) (T L : ℝ) : ℝ :=
+  Real.log (C * (X : ℝ) ^ 2 * (T + 14) ^ 10) +
+    (-Real.log (1 / (128 * (L + 1))) + Real.log (123 / 32 : ℝ)) * L
+
 private theorem fixedJensenFactorDisk_re_pos
     {T : ℝ} {z : ℂ}
     (hz : z ∈ Metric.closedBall
@@ -610,6 +618,67 @@ theorem regularizedCarlsonFactorHorizontalSeparation_lower_of_mass_le
     one_div_le_one_div_of_le hsmallDenPos hdenLe
   refine ⟨one_div_pos.mpr hlargeDenPos, ?_⟩
   simpa [regularizedCarlsonFactorHorizontalSeparation, heights] using hrecip
+
+/-- Replacing the actual divisor mass and good-circle separation by a common
+mass majorant gives a fully explicit logarithmic-variation bound. -/
+theorem regularizedCarlsonFactorLogVariation_le_of_mass_le
+    {C T L : ℝ} {X : ℕ}
+    (hmass : regularizedCarlsonFactorDiskZeroMass X T ≤ L) :
+    regularizedCarlsonFactorCircleLogUpper C X T -
+        regularizedCarlsonFactorCenterLogLower X T ≤
+      regularizedCarlsonFactorLogVariationMajorant C X T L := by
+  let m := regularizedCarlsonFactorDiskZeroMass X T
+  let sep := regularizedCarlsonFactorDiskSeparation X T
+  let delta : ℝ := 1 / (128 * (L + 1))
+  have hsep := regularizedCarlsonFactorDiskSeparation_lower_of_mass_le hmass
+  have hmNonneg : 0 ≤ m := by
+    let c : ℂ := (4 : ℂ) + I * (T + 1 / 2)
+    let b : ℝ := 123 / 32
+    let D := MeromorphicOn.divisor (regularizedCarlsonZeroDetector X)
+      (Metric.closedBall c b)
+    have hanalyticFactor : AnalyticOnNhd ℂ
+        (regularizedCarlsonZeroDetector X) (Metric.closedBall c b) := by
+      apply
+        (analyticOnNhd_regularizedCarlsonZeroDetector_fixedJensenOuterDisk
+          X T).mono
+      exact Metric.closedBall_subset_closedBall (by norm_num [b])
+    have hDnonneg : 0 ≤ D := hanalyticFactor.divisor_nonneg
+    change 0 ≤ ∑ᶠ u, (D u : ℝ)
+    apply finsum_nonneg
+    intro u
+    exact_mod_cast hDnonneg u
+  have hLNonneg : 0 ≤ L := hmNonneg.trans hmass
+  have hdeltaPos : 0 < delta := by simpa [delta] using hsep.1
+  have hdeltaSep : delta ≤ sep := by simpa [delta, sep] using hsep.2
+  have hlogDeltaSep : Real.log delta ≤ Real.log sep :=
+    Real.log_le_log hdeltaPos hdeltaSep
+  have hdeltaLeOne : delta ≤ 1 := by
+    dsimp [delta]
+    have hden : 1 ≤ 128 * (L + 1) := by nlinarith
+    calc
+      1 / (128 * (L + 1)) ≤ 1 / 1 :=
+        one_div_le_one_div_of_le (by norm_num) hden
+      _ = 1 := by norm_num
+  have hlogDeltaNonpos : Real.log delta ≤ 0 :=
+    Real.log_nonpos hdeltaPos.le hdeltaLeOne
+  have hlogBNonneg : 0 ≤ Real.log (123 / 32 : ℝ) :=
+    Real.log_nonneg (by norm_num)
+  have hcoeffLe :
+      -Real.log sep + Real.log (123 / 32 : ℝ) ≤
+        -Real.log delta + Real.log (123 / 32 : ℝ) := by
+    linarith
+  have hcoeffNonneg :
+      0 ≤ -Real.log delta + Real.log (123 / 32 : ℝ) := by
+    linarith
+  have hweighted :
+      (-Real.log sep + Real.log (123 / 32 : ℝ)) * m ≤
+        (-Real.log delta + Real.log (123 / 32 : ℝ)) * L := by
+    exact (mul_le_mul_of_nonneg_right hcoeffLe hmNonneg).trans
+      (mul_le_mul_of_nonneg_left hmass hcoeffNonneg)
+  dsimp [regularizedCarlsonFactorCircleLogUpper,
+    regularizedCarlsonFactorCenterLogLower,
+    regularizedCarlsonFactorLogVariationMajorant, m, sep, delta]
+  linarith
 
 /-- A circle strictly inside the factorization disk avoids every detector
 zero there, with a quantitative separation from its finite zero support. -/
@@ -1021,6 +1090,57 @@ theorem exists_regularizedCarlson_horizontal_logDeriv_le_of_factorDiskMass_le :
   refine ⟨r, hr, t, ht, hne, ?_⟩
   intro x hx
   exact (hbound x hx).trans (add_le_add_right hprincipal _)
+
+/-- The horizontal logarithmic-derivative bound with both the regular factor
+and the principal part expressed only through an assumed divisor-mass
+majorant. -/
+theorem
+    exists_regularizedCarlson_horizontal_logDeriv_le_of_factorDiskMass_le_explicit :
+    ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X →
+      ∀ {sigma T L : ℝ}, 1 / 2 < sigma → 5 ≤ T →
+        regularizedCarlsonFactorDiskZeroMass X T ≤ L →
+        ∃ r ∈ Set.Icc (121 / 32 : ℝ) (122 / 32 : ℝ),
+        ∃ t ∈ Set.Icc T (T + 1),
+          (∀ x ∈ Set.Icc sigma 4,
+            regularizedCarlsonZeroDetector X
+              ((x : ℂ) + (t : ℂ) * I) ≠ 0) ∧
+          ∀ x ∈ Set.Icc sigma 4,
+            ‖logDeriv (regularizedCarlsonZeroDetector X)
+              ((x : ℂ) + (t : ℂ) * I)‖ ≤
+              4 * max
+                  (regularizedCarlsonFactorLogVariationMajorant C X T L) 1 *
+                (r + 15 / 4) / (r - 15 / 4) ^ 2 +
+              L / (1 / (4 * (L + 1))) := by
+  rcases
+      exists_regularizedCarlson_horizontal_logDeriv_le_of_factorDiskMass_le with
+    ⟨C, hC, hhorizontal⟩
+  refine ⟨C, hC, ?_⟩
+  intro X hX sigma T L hsigma hT hmass
+  rcases hhorizontal hX hsigma hT hmass with
+    ⟨r, hr, t, ht, hne, hbound⟩
+  have hvariation :=
+    regularizedCarlsonFactorLogVariation_le_of_mass_le
+      (C := C) hmass
+  have hrPos : 0 < r := lt_of_lt_of_le (by norm_num) hr.1
+  have hgapPos : 0 < r - 15 / 4 := by linarith [hr.1]
+  have hregular :
+      4 * max
+          (regularizedCarlsonFactorCircleLogUpper C X T -
+            regularizedCarlsonFactorCenterLogLower X T) 1 *
+          (r + 15 / 4) / (r - 15 / 4) ^ 2 ≤
+        4 * max
+          (regularizedCarlsonFactorLogVariationMajorant C X T L) 1 *
+          (r + 15 / 4) / (r - 15 / 4) ^ 2 := by
+    have hmax := max_le_max_right (1 : ℝ) hvariation
+    have hnum : 0 ≤ r + 15 / 4 := by positivity
+    have hinv : 0 ≤ ((r - 15 / 4) ^ 2)⁻¹ := by positivity
+    have hfour := mul_le_mul_of_nonneg_left hmax (by norm_num : (0 : ℝ) ≤ 4)
+    have hnumerator := mul_le_mul_of_nonneg_right hfour hnum
+    simpa [div_eq_mul_inv] using
+      (mul_le_mul_of_nonneg_right hnumerator hinv)
+  refine ⟨r, hr, t, ht, hne, ?_⟩
+  intro x hx
+  exact (hbound x hx).trans (add_le_add_left hregular _)
 
 /-- The complete divisor mass on the factorization disk is explicitly
 controlled by the detector's polynomial outer-circle growth. -/
