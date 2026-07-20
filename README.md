@@ -1454,6 +1454,16 @@ coefficient above `N * X * (X - 1)` is now proved to be zero; `N * X * X` is
 only the formal product support, not the effective support.  The corresponding
 transformed square-energy sums are proved equal after replacing the formal
 endpoint by this effective endpoint.
+Finite complex Cauchy--Schwarz is now also applied after splitting the
+critical-line normalization as `1 / sqrt(d*l) = 1 / sqrt d / sqrt l` on each
+product fiber.  This replaces the earlier fiber-cardinality loss by two
+explicit weighted square energies.  In the complete range `1 <= k <= N`, the
+collected convolution is proved equal to the full double sum over
+`d,l <= X` with `d*l | k`.  These are genuine reductions of the arithmetic
+problem, but they do not estimate that double sum.  The remaining Selberg core
+is a uniform dyadic average-square bound for these complete/truncated
+Moebius-weighted coefficients, strong enough to make the short-window bad set
+only `O(T)`.
 
 The three remaining open analytic directions are:
 

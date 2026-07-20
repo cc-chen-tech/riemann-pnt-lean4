@@ -1,4 +1,5 @@
 import HardyTheorem.SelbergShortCollectedEnergy
+import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 
 open Complex
 open scoped BigOperators
@@ -34,7 +35,7 @@ theorem normSq_finset_sum_mul_le_sum_normSq_mul_sum_normSq
       rw [norm_mul]
     _ ≤ (∑ i ∈ s, ‖f i‖ ^ 2) *
         ∑ i ∈ s, ‖g i‖ ^ 2 :=
-      sum_mul_sq_le_sq_mul_sq s (fun i => ‖f i‖) (fun i => ‖g i‖)
+      Finset.sum_mul_sq_le_sq_mul_sq s (fun i => ‖f i‖) (fun i => ‖g i‖)
     _ = (∑ i ∈ s, Complex.normSq (f i)) *
         ∑ i ∈ s, Complex.normSq (g i) := by
       simp only [Complex.normSq_eq_norm_sq]
