@@ -98,3 +98,6 @@ import RiemannExplorer.XiGrowthOrder
 #print axioms RiemannExplorer.real_Gamma_le_exp
 #print axioms RiemannExplorer.Complex.norm_Gamma_le_real_Gamma
 #print axioms RiemannExplorer.Complex.norm_Gamma_le_exp
+#print axioms RiemannExplorer.norm_riemannZeta_le_of_two_le_re
+#print axioms RiemannExplorer.exists_norm_riemannZeta_le_on_compact_strip
+#print axioms RiemannExplorer.exists_norm_sub_one_mul_riemannZeta_le_fifth
