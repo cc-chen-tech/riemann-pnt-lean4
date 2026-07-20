@@ -1,4 +1,5 @@
 import HardyTheorem.SelbergShortCompleteRangeArithmetic
+import HardyTheorem.SelbergShortTopRangeVanishing
 import MathlibAux.GcdLcmQuadratic
 import Mathlib.Data.Nat.Totient
 
@@ -52,6 +53,93 @@ noncomputable def selbergShortDoubleMoebiusCoeff
   ∑ p ∈ (selbergShortCompleteRangePairSupport X).filter
       (fun p => selbergShortCompleteRangePairProduct p = r),
     selbergShortCompleteRangePairWeight X p
+
+/-- Because the tapered coefficient vanishes at its right endpoint, the
+collected double-Moebius coefficient has effective support at most
+`(X - 1)^2`, not the formal product endpoint `X^2`. -/
+theorem selbergShortDoubleMoebiusCoeff_eq_zero_of_pred_sq_lt
+    {X r : ℕ} (hX : 2 ≤ X) (hr : (X - 1) * (X - 1) < r) :
+    selbergShortDoubleMoebiusCoeff X r = 0 := by
+  classical
+  unfold selbergShortDoubleMoebiusCoeff
+  apply Finset.sum_eq_zero
+  intro p hp
+  rcases Finset.mem_filter.mp hp with ⟨hpBox, hpProduct⟩
+  rcases Finset.mem_product.mp hpBox with ⟨hpLeft, hpRight⟩
+  have hpLeftLe : p.1 ≤ X := (Finset.mem_Icc.mp hpLeft).2
+  have hpRightLe : p.2 ≤ X := (Finset.mem_Icc.mp hpRight).2
+  have hendpoint : p.1 = X ∨ p.2 = X := by
+    by_contra hnot
+    push Not at hnot
+    have hpLeftPred : p.1 ≤ X - 1 := by omega
+    have hpRightPred : p.2 ≤ X - 1 := by omega
+    have hpProductLe : p.1 * p.2 ≤ (X - 1) * (X - 1) :=
+      Nat.mul_le_mul hpLeftPred hpRightPred
+    rw [selbergShortCompleteRangePairProduct] at hpProduct
+    omega
+  rcases hendpoint with hpLeftEq | hpRightEq
+  · rw [selbergShortCompleteRangePairWeight, hpLeftEq,
+      selbergMoebiusCoeff_self_eq_zero hX, zero_mul]
+  · rw [selbergShortCompleteRangePairWeight, hpRightEq,
+      selbergMoebiusCoeff_self_eq_zero hX, mul_zero]
+
+/-- Every product-dependent finite sum against the collected coefficient can
+be shortened from the formal box `1,...,X^2` to its effective support
+`1,...,(X-1)^2`. -/
+theorem sum_selbergShortDoubleMoebiusCoeff_eq_effectiveSupport
+    {X : ℕ} (hX : 2 ≤ X) (F : ℕ → ℝ) :
+    (∑ r ∈ Finset.Icc 1 (X * X),
+        selbergShortDoubleMoebiusCoeff X r * F r) =
+      ∑ r ∈ Finset.Icc 1 ((X - 1) * (X - 1)),
+        selbergShortDoubleMoebiusCoeff X r * F r := by
+  have hpredSqLe : (X - 1) * (X - 1) ≤ X * X := by
+    exact Nat.mul_le_mul (Nat.sub_le X 1) (Nat.sub_le X 1)
+  symm
+  apply Finset.sum_subset (Finset.Icc_subset_Icc le_rfl hpredSqLe)
+  intro r hrFormal hrNotEffective
+  have hrAbove : (X - 1) * (X - 1) < r := by
+    have hrNotLe : ¬r ≤ (X - 1) * (X - 1) := by
+      intro hrLe
+      exact hrNotEffective (Finset.mem_Icc.mpr
+        ⟨(Finset.mem_Icc.mp hrFormal).1, hrLe⟩)
+    omega
+  rw [selbergShortDoubleMoebiusCoeff_eq_zero_of_pred_sq_lt hX hrAbove,
+    zero_mul]
+
+/-- The same effective-support reduction applies simultaneously to both
+indices of every signed quadratic form in the collected coefficients. -/
+theorem sum_double_selbergShortDoubleMoebiusCoeff_eq_effectiveSupport
+    {X : ℕ} (hX : 2 ≤ X) (F : ℕ → ℕ → ℝ) :
+    (∑ r ∈ Finset.Icc 1 (X * X), ∑ s ∈ Finset.Icc 1 (X * X),
+        selbergShortDoubleMoebiusCoeff X r *
+          selbergShortDoubleMoebiusCoeff X s * F r s) =
+      ∑ r ∈ Finset.Icc 1 ((X - 1) * (X - 1)),
+        ∑ s ∈ Finset.Icc 1 ((X - 1) * (X - 1)),
+          selbergShortDoubleMoebiusCoeff X r *
+            selbergShortDoubleMoebiusCoeff X s * F r s := by
+  calc
+    (∑ r ∈ Finset.Icc 1 (X * X), ∑ s ∈ Finset.Icc 1 (X * X),
+        selbergShortDoubleMoebiusCoeff X r *
+          selbergShortDoubleMoebiusCoeff X s * F r s) =
+        ∑ r ∈ Finset.Icc 1 ((X - 1) * (X - 1)),
+          selbergShortDoubleMoebiusCoeff X r *
+            (∑ s ∈ Finset.Icc 1 (X * X),
+              selbergShortDoubleMoebiusCoeff X s * F r s) := by
+      simpa only [Finset.mul_sum, mul_assoc] using
+        sum_selbergShortDoubleMoebiusCoeff_eq_effectiveSupport hX
+          (fun r => ∑ s ∈ Finset.Icc 1 (X * X),
+            selbergShortDoubleMoebiusCoeff X s * F r s)
+    _ = ∑ r ∈ Finset.Icc 1 ((X - 1) * (X - 1)),
+        ∑ s ∈ Finset.Icc 1 ((X - 1) * (X - 1)),
+          selbergShortDoubleMoebiusCoeff X r *
+            selbergShortDoubleMoebiusCoeff X s * F r s := by
+      apply Finset.sum_congr rfl
+      intro r _hr
+      rw [sum_selbergShortDoubleMoebiusCoeff_eq_effectiveSupport hX
+        (fun s => F r s), Finset.mul_sum]
+      apply Finset.sum_congr rfl
+      intro s _hs
+      ring
 
 /-- The least-common-multiple modulus attached to two mollifier products. -/
 def selbergShortCompleteRangeLcm
@@ -492,6 +580,23 @@ theorem sum_normSq_selbergShortDirichletCollectedCoeff_completeRange_eq_doubleLc
       (sum_completeRangeQuadrupleWeight_mul_kernel_eq_doubleCollected X
         (fun r s => (Nat.lcm r s : ℝ)⁻¹ *
           (harmonic (N / Nat.lcm r s) : ℝ)))
+
+/-- The complete-range lcm-harmonic form only uses the genuinely nonzero
+double-Moebius product indices, bounded by `(X-1)^2`. -/
+theorem sum_normSq_selbergShortDirichletCollectedCoeff_completeRange_eq_effectiveDoubleLcmHarmonic
+    {N X : ℕ} (hX : 2 ≤ X) :
+    (∑ k ∈ Finset.Icc 1 N,
+        Complex.normSq (selbergShortDirichletCollectedCoeff N X k)) =
+      ∑ r ∈ Finset.Icc 1 ((X - 1) * (X - 1)),
+        ∑ s ∈ Finset.Icc 1 ((X - 1) * (X - 1)),
+          selbergShortDoubleMoebiusCoeff X r *
+            selbergShortDoubleMoebiusCoeff X s *
+              ((Nat.lcm r s : ℝ)⁻¹ *
+                (harmonic (N / Nat.lcm r s) : ℝ)) := by
+  rw [sum_normSq_selbergShortDirichletCollectedCoeff_completeRange_eq_doubleLcmHarmonic]
+  exact sum_double_selbergShortDoubleMoebiusCoeff_eq_effectiveSupport hX
+    (fun r s => (Nat.lcm r s : ℝ)⁻¹ *
+      (harmonic (N / Nat.lcm r s) : ℝ))
 
 /-- Removing the constant `k = 1` mode subtracts exactly one from the complete
 signed lcm-harmonic quadratic form. -/

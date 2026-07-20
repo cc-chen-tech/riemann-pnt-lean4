@@ -1493,6 +1493,16 @@ sum of divisor sums squared.  Specializing this theorem proves nonnegativity
 of the reciprocal-lcm quadratic form for `selbergShortDoubleMoebiusCoeff`.
 The unresolved estimate is sharper: it must retain and control the varying
 factor `harmonic (N / lcm(r,s))`, together with the range above `N`.
+That varying kernel is now diagonalized without taking absolute values:
+for arbitrary real coefficients `a_r`, its quadratic form is exactly
+`sum_(k <= N) (sum_(r | k) a_r)^2 / k`.  Thus the full kernel is positive
+semidefinite and the Selberg specialization retains all cancellation inside
+the divisor sum.  The collected coefficient itself is also proved to vanish
+above `(X - 1)^2`, so both lcm indices can be restricted to that effective
+box.  Independently, the unresolved coefficient range above `N` is shortened
+from `N * X * (X - 1)` to the sharp support endpoint
+`N * (X - 1)^2`.  These are exact reductions, not the still-missing sharp
+upper bound for the resulting tapered-Moebius divisor-square sum.
 
 The three remaining open analytic directions are:
 
