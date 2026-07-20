@@ -1433,6 +1433,15 @@ claimed yet.
 The corresponding full-energy theorem makes this localization exact by
 splitting `Ioc 1 (N * X * X)` at `min N X` and leaving only the explicit
 high-range energy sum on the right-hand side.
+For every remaining high-range mode, the oscillatory interval transform now
+contributes the sharper square envelope `min (abs H) (2 / log k)^2` (and hence
+the simpler weight `4 / log(k)^2`).  The resulting theorem retains
+the square mass inside each multiplicative fiber instead of replacing it by
+a global divisor-count bound.  The remaining hard arithmetic input is a
+uniform estimate for this logarithmically weighted fiber-energy sum.
+The linear cutoff also vanishes exactly at its endpoint, so every collected
+coefficient above `N * X * (X - 1)` is now proved to be zero; `N * X * X` is
+only the formal product support, not the effective support.
 
 The three remaining open analytic directions are:
 

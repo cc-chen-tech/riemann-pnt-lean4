@@ -1,0 +1,11 @@
+import HardyTheorem.SelbergShortTopRangeVanishing
+
+namespace Test.SelbergShortTopRangeVanishingContract
+
+#check HardyTheorem.selbergMoebiusCoeff_self_eq_zero
+#check HardyTheorem.selbergShortDirichletCollectedCoeff_eq_zero_of_topRange
+
+#print axioms HardyTheorem.selbergMoebiusCoeff_self_eq_zero
+#print axioms HardyTheorem.selbergShortDirichletCollectedCoeff_eq_zero_of_topRange
+
+end Test.SelbergShortTopRangeVanishingContract
