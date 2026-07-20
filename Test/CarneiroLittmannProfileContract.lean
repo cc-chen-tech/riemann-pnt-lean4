@@ -1,6 +1,6 @@
 import PrimeNumberTheorem.CarneiroLittmannProfile
 
-open Complex MeasureTheory Set
+open Complex FourierTransform MeasureTheory Set
 
 namespace PrimeNumberTheorem
 namespace DirichletPolynomial
@@ -45,6 +45,17 @@ example {x : ℝ} (hx : x ≤ 0) :
 
 example : Integrable carneiroLittmannDensity :=
   integrable_carneiroLittmannDensity
+
+example {xi : ℝ} (hxi : 1 ≤ |xi|) :
+    𝓕 (fun x : ℝ => (carneiroLittmannDensity x : ℂ)) xi = 0 :=
+  fourier_carneiroLittmannDensity_eq_zero_of_one_le_abs hxi
+
+example {xi : ℝ} (hxi : 2 * Real.pi ≤ |xi|) :
+    fourierKernel carneiroLittmannDensity xi = 0 :=
+  fourierKernel_carneiroLittmannDensity_eq_zero hxi
+
+example : ∫ x, carneiroLittmannDensity x = -1 :=
+  integral_carneiroLittmannDensity_eq_neg_one
 
 example : Integrable (fun x : ℝ => x * carneiroLittmannDensity x) :=
   integrable_id_mul_carneiroLittmannDensity
@@ -112,28 +123,24 @@ example {q : ℝ → ℝ}
       2 * (fourierKernel q xi - ((∫ x, q x : ℝ) : ℂ)) :=
   fourierKernel_signedRadialTailProfile_mul hq hmoment hxi
 
-example
-    (htail : ∀ xi : ℝ, 2 * Real.pi ≤ |xi| →
-      fourierKernel carneiroLittmannTailProfile xi =
-        (-2 * Complex.I) / xi) :
+example {xi : ℝ} (hxi : 2 * Real.pi ≤ |xi|) :
+    fourierKernel carneiroLittmannTailProfile xi =
+      (-2 * Complex.I) / xi :=
+  fourierKernel_carneiroLittmannTailProfile_eq hxi
+
+example :
     MonotoneExtremalKernelCertificate carneiroLittmannTailProfile :=
-  carneiroLittmannTailProfile_certificate htail
+  carneiroLittmannTailProfile_certificate
 
 example
-    (hmass : ∫ x, Real.sinc (Real.pi * (x + 1)) ^ 2 = 1)
-    (htail : ∀ xi : ℝ, 2 * Real.pi ≤ |xi| →
-      fourierKernel carneiroLittmannTailProfile xi =
-        (-2 * Complex.I) / xi) :
+    (hmass : ∫ x, Real.sinc (Real.pi * (x + 1)) ^ 2 = 1) :
     MonotoneExtremalKernelCertificate carneiroLittmannTailProfile :=
-  carneiroLittmannTailProfile_certificate_of_sinc_shift_integral hmass htail
+  carneiroLittmannTailProfile_certificate_of_sinc_shift_integral hmass
 
 example
-    (hmass : ∫ x, Real.sinc x ^ 2 = Real.pi)
-    (htail : ∀ xi : ℝ, 2 * Real.pi ≤ |xi| →
-      fourierKernel carneiroLittmannTailProfile xi =
-        (-2 * Complex.I) / xi) :
+    (hmass : ∫ x, Real.sinc x ^ 2 = Real.pi) :
     MonotoneExtremalKernelCertificate carneiroLittmannTailProfile :=
-  carneiroLittmannTailProfile_certificate_of_integral_sinc_sq hmass htail
+  carneiroLittmannTailProfile_certificate_of_integral_sinc_sq hmass
 
 #print axioms signedRadialTailProfile_nonnegative
 #print axioms signedRadialTailProfile_antitoneOn_nonnegative
@@ -142,6 +149,9 @@ example
 #print axioms carneiroLittmannDensity_nonnegative
 #print axioms carneiroLittmannDensity_nonpositive
 #print axioms integrable_carneiroLittmannDensity
+#print axioms fourier_carneiroLittmannDensity_eq_zero_of_one_le_abs
+#print axioms fourierKernel_carneiroLittmannDensity_eq_zero
+#print axioms integral_carneiroLittmannDensity_eq_neg_one
 #print axioms integrable_id_mul_carneiroLittmannDensity
 #print axioms id_mul_carneiroLittmannDensity_eq_sinc_shift
 #print axioms id_mul_carneiroLittmannDensity_ae_eq_sinc_shift
@@ -156,6 +166,7 @@ example
 #print axioms integral_carneiroLittmannTailProfile_eq_sinc_sq
 #print axioms integral_carneiroLittmannTailProfile_eq_two
 #print axioms fourierKernel_signedRadialTailProfile_mul
+#print axioms fourierKernel_carneiroLittmannTailProfile_eq
 #print axioms carneiroLittmannTailProfile_certificate
 #print axioms carneiroLittmannTailProfile_certificate_of_sinc_shift_integral
 #print axioms carneiroLittmannTailProfile_certificate_of_integral_sinc_sq

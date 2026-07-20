@@ -215,23 +215,30 @@ theorem fourier_sinc_pi_mul_sq (xi : ℝ) :
   rw [hfourierEq, Real.fourierInv_eq_fourier_neg, hhEq] at hinv
   simpa [triangularPulse] using hinv
 
-theorem fourier_sinc_pi_add_one_sq_eq_zero
-    {xi : ℝ} (hxi : 1 ≤ |xi|) :
+theorem fourier_sinc_pi_add_one_sq (xi : ℝ) :
     𝓕 (fun x : ℝ =>
-      (Real.sinc (Real.pi * (x + 1)) ^ 2 : ℂ)) xi = 0 := by
+      (Real.sinc (Real.pi * (x + 1)) ^ 2 : ℂ)) xi =
+      Complex.exp ((2 * Real.pi * xi : ℝ) * Complex.I) *
+        (max (1 - |xi|) 0 : ℝ) := by
   let f : ℝ → ℂ := fun x => Real.sinc (Real.pi * x) ^ 2
   have htranslate := congrFun
     (Fourier.fourierIntegral_comp_add_right Real.fourierChar volume f 1) xi
   have hscalar (u : ℝ → ℂ) (w : ℝ) :
       Fourier.fourierIntegral Real.fourierChar volume u w = 𝓕 u w := by
     rw [Fourier.fourierIntegral_def, Real.fourier_real_eq]
-  have hbase := fourier_sinc_pi_mul_sq xi
-  have hmax : max (1 - |xi|) 0 = 0 := max_eq_right (by linarith)
-  rw [hmax] at hbase
   rw [hscalar, hscalar] at htranslate
-  change 𝓕 f xi = 0 at hbase
-  rw [hbase] at htranslate
-  simpa [f] using htranslate
+  rw [fourier_sinc_pi_mul_sq] at htranslate
+  simpa only [f, Function.comp_apply, one_mul, Real.fourierChar_apply,
+    Circle.smul_def, smul_eq_mul] using htranslate
+
+theorem fourier_sinc_pi_add_one_sq_eq_zero
+    {xi : ℝ} (hxi : 1 ≤ |xi|) :
+    𝓕 (fun x : ℝ =>
+      (Real.sinc (Real.pi * (x + 1)) ^ 2 : ℂ)) xi = 0 := by
+  rw [fourier_sinc_pi_add_one_sq]
+  have hmax : max (1 - |xi|) 0 = 0 := max_eq_right (by linarith)
+  rw [hmax]
+  simp
 
 end SincSquareFourier
 end PrimeNumberTheorem

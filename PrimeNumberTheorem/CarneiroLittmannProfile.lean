@@ -1,5 +1,7 @@
 import PrimeNumberTheorem.MonotoneExtremalKernel
-import PrimeNumberTheorem.SincSquareIntegral
+import PrimeNumberTheorem.SincSquareFourier
+import Mathlib.Analysis.Fourier.FourierTransformDeriv
+import Mathlib.Analysis.Fourier.RiemannLebesgueLemma
 import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
 import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Sinc
@@ -7,7 +9,7 @@ import Mathlib.MeasureTheory.Integral.Asymptotics
 import Mathlib.MeasureTheory.Integral.Bochner.Set
 import Mathlib.MeasureTheory.Integral.Prod
 
-open Asymptotics Complex Filter MeasureTheory Set
+open Asymptotics Complex Filter FourierTransform MeasureTheory Set
 
 namespace PrimeNumberTheorem
 namespace DirichletPolynomial
@@ -1047,6 +1049,254 @@ theorem integrable_carneiroLittmannSincShiftSq :
   integrable_id_mul_carneiroLittmannDensity.congr
     id_mul_carneiroLittmannDensity_ae_eq_sinc_shift
 
+/-- The Fourier transform of the Carneiro--Littmann density vanishes outside
+the unit interval.  The proof differentiates the transform, uses
+`x * density x = sinc (pi * (x + 1)) ^ 2`, and fixes the resulting constant by
+the Riemann--Lebesgue lemma. -/
+theorem fourier_carneiroLittmannDensity_eq_zero_of_one_le_abs
+    {xi : ℝ} (hxi : 1 ≤ |xi|) :
+    𝓕 (fun x : ℝ => (carneiroLittmannDensity x : ℂ)) xi = 0 := by
+  let q : ℝ → ℂ := fun x => carneiroLittmannDensity x
+  let c : ℂ := (-2 : ℂ) * Real.pi * Complex.I
+  let r : ℝ → ℂ := fun x => Real.sinc (Real.pi * (x + 1)) ^ 2
+  have hq : Integrable q := integrable_carneiroLittmannDensity.ofReal
+  have hxq : Integrable (fun x : ℝ => x • q x) := by
+    have hc : Integrable (fun x : ℝ =>
+        Complex.ofReal (x * carneiroLittmannDensity x)) :=
+      integrable_id_mul_carneiroLittmannDensity.ofReal
+    convert hc using 1
+    funext x
+    simp [q]
+  have hweighted : (fun x : ℝ =>
+      ((-2 : ℂ) * Real.pi * Complex.I * x) • q x) =ᵐ[volume]
+      c • r := by
+    filter_upwards [id_mul_carneiroLittmannDensity_ae_eq_sinc_shift]
+      with x hx
+    simp only [q, c, r, Pi.smul_apply, smul_eq_mul]
+    have hcast : (x : ℂ) * (carneiroLittmannDensity x : ℂ) =
+        (Real.sinc (Real.pi * (x + 1)) ^ 2 : ℂ) := by
+      exact_mod_cast hx
+    calc
+      _ = c * ((x : ℂ) * (carneiroLittmannDensity x : ℂ)) := by ring
+      _ = _ := by rw [hcast]
+  have hweightedZero {z : ℝ} (hz : 1 ≤ |z|) :
+      𝓕 (fun x : ℝ =>
+        ((-2 : ℂ) * Real.pi * Complex.I * x) • q x) z = 0 := by
+    calc
+      _ = 𝓕 (c • r) z := Real.fourier_congr_ae hweighted z
+      _ = c • 𝓕 r z := by
+        rw [Real.fourier_real_eq, Real.fourier_real_eq]
+        simp only [Pi.smul_apply, Circle.smul_def, smul_eq_mul]
+        have heq : (fun v : ℝ =>
+            (𝐞 (-(v * z)) : ℂ) * (c * r v)) =
+            fun v => c * ((𝐞 (-(v * z)) : ℂ) * r v) := by
+          funext v
+          ring
+        rw [heq]
+        exact MeasureTheory.integral_const_mul c
+          (fun v : ℝ => (𝐞 (-(v * z)) : ℂ) * r v)
+      _ = 0 := by
+        rw [SincSquareFourier.fourier_sinc_pi_add_one_sq_eq_zero hz]
+        simp
+  have hderiv {z : ℝ} (hz : 1 ≤ |z|) : deriv (𝓕 q) z = 0 := by
+    have h := (Real.hasDerivAt_fourier hq hxq z).deriv
+    rw [h]
+    exact hweightedZero hz
+  have hdiff : Differentiable ℝ (𝓕 q) := fun z =>
+    (Real.hasDerivAt_fourier hq hxq z).differentiableAt
+  have hconst {x y : ℝ} (hx : 1 ≤ x) (hy : 1 ≤ y) :
+      𝓕 q x = 𝓕 q y := by
+    have hbound := (convex_Ici (1 : ℝ)).norm_image_sub_le_of_norm_deriv_le
+      (f := 𝓕 q) (x := x) (y := y)
+      (fun z _ => hdiff z)
+      (fun z hz => by
+        change 1 ≤ z at hz
+        have hz0 : 0 ≤ z := by linarith [hz]
+        rw [hderiv (by simpa [abs_of_nonneg hz0] using hz)])
+      hx hy
+    have hzero : ‖𝓕 q y - 𝓕 q x‖ = 0 :=
+      le_antisymm (by simpa using hbound) (norm_nonneg _)
+    exact (sub_eq_zero.mp (norm_eq_zero.mp hzero)).symm
+  have hpos {x : ℝ} (hx : 1 ≤ x) : 𝓕 q x = 0 := by
+    have htend : Tendsto (𝓕 q) atTop (nhds 0) :=
+      (Real.zero_at_infty_fourier q).mono_left atTop_le_cocompact
+    have heq : (fun _ : ℝ => 𝓕 q x) =ᶠ[atTop] 𝓕 q := by
+      filter_upwards [Ici_mem_atTop (1 : ℝ)] with y hy
+      exact hconst hx hy
+    have hconstTend : Tendsto (fun _ : ℝ => 𝓕 q x) atTop (nhds 0) :=
+      htend.congr' heq.symm
+    exact (tendsto_nhds_unique hconstTend tendsto_const_nhds).symm
+  have hconstNeg {x y : ℝ} (hx : x ≤ -1) (hy : y ≤ -1) :
+      𝓕 q x = 𝓕 q y := by
+    have hbound := (convex_Iic (-1 : ℝ)).norm_image_sub_le_of_norm_deriv_le
+      (f := 𝓕 q) (x := x) (y := y)
+      (fun z _ => hdiff z)
+      (fun z hz => by
+        change z ≤ -1 at hz
+        have hz0 : z ≤ 0 := by linarith [hz]
+        rw [hderiv (by rw [abs_of_nonpos hz0]; linarith [hz])])
+      hx hy
+    have hzero : ‖𝓕 q y - 𝓕 q x‖ = 0 :=
+      le_antisymm (by simpa using hbound) (norm_nonneg _)
+    exact (sub_eq_zero.mp (norm_eq_zero.mp hzero)).symm
+  have hneg {x : ℝ} (hx : x ≤ -1) : 𝓕 q x = 0 := by
+    have htend : Tendsto (𝓕 q) atBot (nhds 0) :=
+      (Real.zero_at_infty_fourier q).mono_left atBot_le_cocompact
+    have heq : (fun _ : ℝ => 𝓕 q x) =ᶠ[atBot] 𝓕 q := by
+      filter_upwards [Iic_mem_atBot (-1 : ℝ)] with y hy
+      exact hconstNeg hx hy
+    have hconstTend : Tendsto (fun _ : ℝ => 𝓕 q x) atBot (nhds 0) :=
+      htend.congr' heq.symm
+    exact (tendsto_nhds_unique hconstTend tendsto_const_nhds).symm
+  by_cases hposxi : 0 ≤ xi
+  · exact hpos (by simpa [abs_of_nonneg hposxi] using hxi)
+  · have hnegxi : xi ≤ -1 := by
+      rw [abs_of_neg (lt_of_not_ge hposxi)] at hxi
+      linarith
+    exact hneg hnegxi
+
+/-- The Carneiro--Littmann density has total mass `-1`.  The proof recovers the
+value at frequency zero from the compact support endpoint at frequency one and
+the exact Fourier transform of the weighted density. -/
+theorem integral_carneiroLittmannDensity_eq_neg_one :
+    ∫ x, carneiroLittmannDensity x = -1 := by
+  let q : ℝ → ℂ := fun x => carneiroLittmannDensity x
+  let r : ℝ → ℂ := fun x => Real.sinc (Real.pi * (x + 1)) ^ 2
+  let a : ℂ := 2 * Real.pi * Complex.I
+  let Q : ℝ → ℂ := 𝓕 q
+  let B : ℝ → ℂ := fun z =>
+    a * Q z - Complex.exp (a * (z : ℂ)) *
+      (a * (z : ℂ) - a - 1)
+  have ha : a ≠ 0 := by
+    dsimp [a]
+    exact mul_ne_zero (mul_ne_zero (by norm_num)
+      (Complex.ofReal_ne_zero.mpr Real.pi_ne_zero)) Complex.I_ne_zero
+  have hq : Integrable q := integrable_carneiroLittmannDensity.ofReal
+  have hxq : Integrable (fun x : ℝ => x • q x) := by
+    have hc : Integrable (fun x : ℝ =>
+        Complex.ofReal (x * carneiroLittmannDensity x)) :=
+      integrable_id_mul_carneiroLittmannDensity.ofReal
+    convert hc using 1
+    funext x
+    simp [q]
+  have hweighted : (fun x : ℝ =>
+      ((-2 : ℂ) * Real.pi * Complex.I * x) • q x) =ᵐ[volume]
+      (-a) • r := by
+    filter_upwards [id_mul_carneiroLittmannDensity_ae_eq_sinc_shift]
+      with x hx
+    simp only [q, r, a, Pi.smul_apply, smul_eq_mul]
+    have hcast : (x : ℂ) * (carneiroLittmannDensity x : ℂ) =
+        (Real.sinc (Real.pi * (x + 1)) ^ 2 : ℂ) := by
+      exact_mod_cast hx
+    rw [← hcast]
+    ring
+  have hQderiv {z : ℝ} (hz0 : 0 ≤ z) (hz1 : z ≤ 1) :
+      HasDerivAt Q
+        (a * Complex.exp (a * (z : ℂ)) * ((z : ℂ) - 1)) z := by
+    have hbase := Real.hasDerivAt_fourier hq hxq z
+    have hbaseQ : HasDerivAt Q
+        (𝓕 (fun x : ℝ =>
+          ((-2 : ℂ) * Real.pi * Complex.I * x) • q x) z) z := by
+      simpa only [Q] using hbase
+    apply hbaseQ.congr_deriv
+    exact calc
+      𝓕 (fun x : ℝ => ((-2 : ℂ) * Real.pi * Complex.I * x) • q x) z =
+          𝓕 ((-a) • r) z := Real.fourier_congr_ae hweighted z
+      _ = (-a) • 𝓕 r z := by
+        rw [Real.fourier_real_eq, Real.fourier_real_eq]
+        simp only [Pi.smul_apply, Circle.smul_def, smul_eq_mul]
+        have heq : (fun v : ℝ =>
+            (𝐞 (-(v * z)) : ℂ) * ((-a) * r v)) =
+            fun v => (-a) * ((𝐞 (-(v * z)) : ℂ) * r v) := by
+          funext v
+          ring
+        rw [heq]
+        exact MeasureTheory.integral_const_mul (-a)
+          (fun v : ℝ => (𝐞 (-(v * z)) : ℂ) * r v)
+      _ = a * Complex.exp (a * (z : ℂ)) * ((z : ℂ) - 1) := by
+        rw [SincSquareFourier.fourier_sinc_pi_add_one_sq]
+        rw [abs_of_nonneg hz0, max_eq_left (by linarith)]
+        have hphase : ((2 * Real.pi * z : ℝ) : ℂ) * Complex.I =
+            a * (z : ℂ) := by
+          dsimp [a]
+          push_cast
+          ring
+        rw [hphase]
+        simp only [smul_eq_mul]
+        push_cast
+        ring
+  have hBderiv {z : ℝ} (hz0 : 0 ≤ z) (hz1 : z ≤ 1) :
+      HasDerivAt B 0 z := by
+    have hlin : HasDerivAt (fun y : ℝ => a * (y : ℂ)) a z := by
+      simpa only [mul_one] using
+        ((hasDerivAt_id (z : ℂ)).const_mul a).comp_ofReal
+    have hexp := hlin.cexp
+    have hpoly : HasDerivAt
+        (fun y : ℝ => a * (y : ℂ) - a - 1) a z :=
+      (hlin.sub_const a).sub_const 1
+    have hprod := hexp.mul hpoly
+    have hleft := (hQderiv hz0 hz1).const_mul a
+    dsimp only [B]
+    exact (hleft.sub hprod).congr_deriv (by ring)
+  have hB01 : B 0 = B 1 := by
+    have hbound := (convex_Icc (0 : ℝ) 1).norm_image_sub_le_of_norm_deriv_le
+      (f := B) (x := 0) (y := 1)
+      (fun z hz => (hBderiv hz.1 hz.2).differentiableAt)
+      (fun z hz => by rw [(hBderiv hz.1 hz.2).deriv])
+      (left_mem_Icc.2 zero_le_one) (right_mem_Icc.2 zero_le_one)
+    have hzero : ‖B 1 - B 0‖ = 0 :=
+      le_antisymm (by simpa using hbound) (norm_nonneg _)
+    exact sub_eq_zero.mp (norm_eq_zero.mp hzero) |>.symm
+  have hQ1 : Q 1 = 0 := by
+    dsimp only [Q]
+    exact fourier_carneiroLittmannDensity_eq_zero_of_one_le_abs (by simp)
+  have hexpa : Complex.exp a = 1 := by
+    simpa only [a] using Complex.exp_two_pi_mul_I
+  have hQ0 : Q 0 = -1 := by
+    have h := hB01
+    dsimp only [B] at h
+    simp only [Complex.ofReal_zero, mul_zero, Complex.exp_zero,
+      Complex.ofReal_one, mul_one, hQ1] at h
+    rw [hexpa] at h
+    have hmul : a * (Q 0 + 1) = 0 := by
+      linear_combination h
+    exact add_eq_zero_iff_eq_neg.mp ((mul_eq_zero.mp hmul).resolve_left ha)
+  have hQ0Integral : Q 0 = ((∫ x, carneiroLittmannDensity x : ℝ) : ℂ) := by
+    dsimp only [Q, q]
+    rw [Real.fourier_real_eq]
+    simp
+    exact integral_ofReal
+  rw [hQ0Integral] at hQ0
+  exact_mod_cast hQ0
+
+theorem fourierKernel_carneiroLittmannDensity_eq_zero
+    {xi : ℝ} (hxi : 2 * Real.pi ≤ |xi|) :
+    fourierKernel carneiroLittmannDensity xi = 0 := by
+  let w : ℝ := -(xi / (2 * Real.pi))
+  have hden : 0 < 2 * Real.pi := by positivity
+  have hw : 1 ≤ |w| := by
+    dsimp [w]
+    rw [abs_neg, abs_div, abs_of_pos hden]
+    exact (le_div_iff₀ hden).2 (by simpa [mul_comm] using hxi)
+  have hz := fourier_carneiroLittmannDensity_eq_zero_of_one_le_abs hw
+  rw [Real.fourier_real_eq_integral_exp_smul] at hz
+  unfold fourierKernel
+  calc
+    (∫ t : ℝ, (carneiroLittmannDensity t : ℂ) *
+        Complex.exp (Complex.I * (xi * t))) =
+        ∫ t : ℝ, Complex.exp (↑(-2 * Real.pi * t * w) * Complex.I) •
+          (carneiroLittmannDensity t : ℂ) := by
+      congr 1
+      funext t
+      simp only [smul_eq_mul]
+      have hphase : -2 * Real.pi * t * w = xi * t := by
+        dsimp [w]
+        field_simp [Real.pi_ne_zero]
+      rw [hphase]
+      push_cast
+      ring_nf
+    _ = 0 := hz
+
 /-- The direct two-sided tail-integral candidate for `M - sgn`, where `M` is
 the monotone Carneiro--Littmann majorant.  At the origin it uses the right-tail
 normalization; this possible one-point difference is immaterial to the
@@ -1102,20 +1352,42 @@ theorem integral_carneiroLittmannTailProfile_eq_two :
     SincSquareIntegral.integral_sinc_sq]
   field_simp [Real.pi_ne_zero]
 
-/-- The reciprocal Fourier-tail identity is the sole remaining hypothesis for
-the concrete extremal-kernel certificate.  Integrability, nonnegativity,
-mass normalization, and dilation monotonicity are all discharged here. -/
-theorem carneiroLittmannTailProfile_certificate
-    (htail : ∀ xi : ℝ, 2 * Real.pi ≤ |xi| →
-      fourierKernel carneiroLittmannTailProfile xi =
-        (-2 * Complex.I) / xi) :
+/-- The concrete tail profile has the reciprocal Fourier transform required by
+the separation kernel outside the cutoff `2 * pi`. -/
+theorem fourierKernel_carneiroLittmannTailProfile_eq
+    {xi : ℝ} (hxi : 2 * Real.pi ≤ |xi|) :
+    fourierKernel carneiroLittmannTailProfile xi =
+      (-2 * Complex.I) / xi := by
+  have hxi0 : xi ≠ 0 := by
+    intro hzero
+    rw [hzero, abs_zero] at hxi
+    linarith [Real.pi_pos]
+  have hc : Complex.I * (xi : ℂ) ≠ 0 :=
+    mul_ne_zero Complex.I_ne_zero (Complex.ofReal_ne_zero.mpr hxi0)
+  have hmul := fourierKernel_signedRadialTailProfile_mul
+    integrable_carneiroLittmannDensity
+    integrable_id_mul_carneiroLittmannDensity hxi0
+  change (Complex.I * (xi : ℂ)) *
+      fourierKernel carneiroLittmannTailProfile xi = _ at hmul
+  rw [fourierKernel_carneiroLittmannDensity_eq_zero hxi,
+    integral_carneiroLittmannDensity_eq_neg_one] at hmul
+  norm_num at hmul
+  apply mul_left_cancel₀ hc
+  rw [hmul]
+  field_simp [hxi0]
+  simp
+
+/-- The unconditional monotone extremal-kernel certificate for the concrete
+Carneiro--Littmann tail profile. -/
+theorem carneiroLittmannTailProfile_certificate :
     MonotoneExtremalKernelCertificate carneiroLittmannTailProfile where
   integrable := integrable_carneiroLittmannTailProfile
   nonnegative := carneiroLittmannTailProfile_nonnegative
   fourier_zero := by
     rw [fourierKernel_zero, integral_carneiroLittmannTailProfile_eq_two]
     norm_num
-  fourier_tail := htail
+  fourier_tail := fun _ hxi =>
+    fourierKernel_carneiroLittmannTailProfile_eq hxi
   dilation_antitone := by
     intro deltaNew deltaOld hNew horder t
     exact signedRadialTailProfile_dilation_antitone
@@ -1123,26 +1395,19 @@ theorem carneiroLittmannTailProfile_certificate
       (fun _ => carneiroLittmannDensity_nonnegative)
       (fun _ => carneiroLittmannDensity_nonpositive) hNew horder t
 
-/-- A normalized full-line sinc-square integral supplies the remaining mass
-field of the concrete certificate.  The reciprocal Fourier tail remains a
-separate analytic obligation. -/
+/-- Compatibility wrapper accepting the normalized shifted sinc-square
+identity.  The concrete certificate itself is now unconditional. -/
 theorem carneiroLittmannTailProfile_certificate_of_sinc_shift_integral
-    (_hmass : ∫ x, Real.sinc (Real.pi * (x + 1)) ^ 2 = 1)
-    (htail : ∀ xi : ℝ, 2 * Real.pi ≤ |xi| →
-      fourierKernel carneiroLittmannTailProfile xi =
-        (-2 * Complex.I) / xi) :
+    (_hmass : ∫ x, Real.sinc (Real.pi * (x + 1)) ^ 2 = 1) :
     MonotoneExtremalKernelCertificate carneiroLittmannTailProfile := by
-  exact carneiroLittmannTailProfile_certificate htail
+  exact carneiroLittmannTailProfile_certificate
 
-/-- The standard identity `integral sinc^2 = pi` supplies the concrete mass
-normalization; only the reciprocal Fourier tail then remains. -/
+/-- Compatibility wrapper accepting the standard identity
+`integral sinc^2 = pi`. -/
 theorem carneiroLittmannTailProfile_certificate_of_integral_sinc_sq
-    (_hmass : ∫ x, Real.sinc x ^ 2 = Real.pi)
-    (htail : ∀ xi : ℝ, 2 * Real.pi ≤ |xi| →
-      fourierKernel carneiroLittmannTailProfile xi =
-        (-2 * Complex.I) / xi) :
+    (_hmass : ∫ x, Real.sinc x ^ 2 = Real.pi) :
     MonotoneExtremalKernelCertificate carneiroLittmannTailProfile := by
-  exact carneiroLittmannTailProfile_certificate htail
+  exact carneiroLittmannTailProfile_certificate
 
 end DirichletPolynomial
 end PrimeNumberTheorem
