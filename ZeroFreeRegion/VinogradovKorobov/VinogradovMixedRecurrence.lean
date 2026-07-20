@@ -504,6 +504,87 @@ theorem norm_normalizedVinogradovMixedModConditionedMoment_le_primePowerStrata
         (Y ^ (2 * t) : ℝ) :=
       mul_le_mul_of_nonneg_right hstrata' (by positivity)
 
+/-- The one-based integer center represented by a complete residue index. -/
+def vinogradovCenterValue {N : ℕ} (z : Fin N) : ℤ :=
+  ((z.val + 1 : ℕ) : ℤ)
+
+/-- Pairs of residue centers whose difference is a unit at the base prime.
+This is the `gamma = 0` stratum of the mixed recurrence. -/
+noncomputable def vinogradovUnitSeparatedCenterPairSet
+    (p a b : ℕ) : Finset (Fin (p ^ a) × Fin (p ^ b)) := by
+  classical
+  exact Finset.univ.filter fun z ↦
+    IsCoprime (p : ℤ)
+      (vinogradovCenterValue z.1 - vinogradovCenterValue z.2)
+
+theorem mem_vinogradovUnitSeparatedCenterPairSet_iff
+    (p a b : ℕ) (z : Fin (p ^ a) × Fin (p ^ b)) :
+    z ∈ vinogradovUnitSeparatedCenterPairSet p a b ↔
+      IsCoprime (p : ℤ)
+        (vinogradovCenterValue z.1 - vinogradovCenterValue z.2) := by
+  classical
+  simp [vinogradovUnitSeparatedCenterPairSet]
+
+/-- Sum of the norms of the mixed conditioned moments over all unit-separated
+center pairs.  This is the first aggregate surface for the recurrence. -/
+noncomputable def normalizedVinogradovUnitSeparatedMixedMomentSum
+    (p a b k r t X Y : ℕ) [Fact p.Prime] : ℝ := by
+  letI : NeZero (p ^ ((k - r + 1) * b)) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  exact ∑ z ∈ vinogradovUnitSeparatedCenterPairSet p a b,
+    ‖normalizedVinogradovMixedModConditionedMoment
+      p ((k - r + 1) * b) a b k r t X Y
+        (vinogradovCenterValue z.1) (vinogradovCenterValue z.2)‖
+
+/-- Aggregating the pointwise `gamma = 0` recurrence costs only the number
+of unit-separated center pairs; the same far-scale moment bounds every
+summand. -/
+theorem normalizedVinogradovUnitSeparatedMixedMomentSum_le_farScaleMoment
+    (p a b k r t X Y : ℕ) [Fact p.Prime]
+    (hrk : r ≤ k) (hkp : k < p) (hb : 0 < b)
+    (hbudget : a * r ≤ (k - r + 1) * b)
+    (htail : (k - r + 1) * b ≤ a * (r + 1))
+    (hscale : X ≤ p ^ a * p ^ vinogradovFarScale k r a b 0) :
+    normalizedVinogradovUnitSeparatedMixedMomentSum
+        p a b k r t X Y ≤
+      (vinogradovUnitSeparatedCenterPairSet p a b).card *
+        (‖normalizedVinogradovMomentMod
+          (p ^ vinogradovFarScale k r a b 0) r r
+            (p ^ vinogradovFarScale k r a b 0)‖ *
+          (Y ^ (2 * t) : ℝ)) := by
+  letI : NeZero (p ^ ((k - r + 1) * b)) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  letI : NeZero (p ^ vinogradovFarScale k r a b 0) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  unfold normalizedVinogradovUnitSeparatedMixedMomentSum
+  calc
+    (∑ z ∈ vinogradovUnitSeparatedCenterPairSet p a b,
+      ‖normalizedVinogradovMixedModConditionedMoment
+        p ((k - r + 1) * b) a b k r t X Y
+          (vinogradovCenterValue z.1) (vinogradovCenterValue z.2)‖) ≤
+      ∑ _z ∈ vinogradovUnitSeparatedCenterPairSet p a b,
+        ‖normalizedVinogradovMomentMod
+          (p ^ vinogradovFarScale k r a b 0) r r
+            (p ^ vinogradovFarScale k r a b 0)‖ *
+          (Y ^ (2 * t) : ℝ) := by
+      apply Finset.sum_le_sum
+      intro z hz
+      have hunit :=
+        (mem_vinogradovUnitSeparatedCenterPairSet_iff p a b z).mp hz
+      simpa only [Nat.zero_mul, zero_add, pow_zero, mul_one] using
+        (norm_normalizedVinogradovMixedModConditionedMoment_le_farScaleMoment
+          p a b k r t X Y 0
+          (vinogradovCenterValue z.1) (vinogradovCenterValue z.2)
+          (vinogradovCenterValue z.1 - vinogradovCenterValue z.2)
+          hrk hkp hb (Nat.zero_le a) (by simpa using hbudget) htail
+          (by simp) hunit hscale)
+    _ = (vinogradovUnitSeparatedCenterPairSet p a b).card *
+        (‖normalizedVinogradovMomentMod
+          (p ^ vinogradovFarScale k r a b 0) r r
+            (p ^ vinogradovFarScale k r a b 0)‖ *
+          (Y ^ (2 * t) : ℝ)) := by
+      simp
+
 end
 
 end ZeroFreeRegion.VinogradovKorobov
