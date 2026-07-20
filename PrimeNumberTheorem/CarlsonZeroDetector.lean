@@ -40,6 +40,21 @@ theorem tendsto_mollifiedZetaError_real_atTop (X : ℕ) (hX : 1 ≤ X) :
 noncomputable def carlsonZeroDetector (X : ℕ) (s : ℂ) : ℂ :=
   1 - mollifiedZetaError X s ^ 2
 
+/-- Carlson's original detector is analytic away from the zeta pole at
+`s = 1`. -/
+theorem analyticAt_carlsonZeroDetector_of_ne_one
+    (X : ℕ) {s : ℂ} (hs1 : s ≠ 1) :
+    AnalyticAt ℂ (carlsonZeroDetector X) s := by
+  have hzeta : AnalyticAt ℂ riemannZeta s :=
+    ZeroFreeRegion.analyticOnNhd_riemannZeta_ne_one s hs1
+  have hm : AnalyticAt ℂ (mobiusMollifier X) s :=
+    analyticAt_mobiusMollifier X s
+  have herr : AnalyticAt ℂ (mollifiedZetaError X) s := by
+    unfold mollifiedZetaError
+    exact (hzeta.mul hm).sub analyticAt_const
+  unfold carlsonZeroDetector
+  exact analyticAt_const.sub (herr.pow 2)
+
 /-- Carlson's detector tends to one along the positive real axis. -/
 theorem tendsto_carlsonZeroDetector_real_atTop (X : ℕ) (hX : 1 ≤ X) :
     Tendsto (fun x : ℝ => carlsonZeroDetector X (x : ℂ)) atTop (𝓝 1) := by
@@ -122,6 +137,43 @@ theorem regularizedCarlsonZeroDetector_eq_sub_one_sq_mul
     carlsonZeroDetector_eq_zeta_mul_mollifier_factorization]
   ring
 
+/-- Away from `0`, `1`, and detector zeros, the logarithmic derivative of
+the regularized detector splits into the two pole-cancelling linear factors
+and the original Carlson detector. -/
+theorem logDeriv_regularizedCarlsonZeroDetector_eq_two_inv_add
+    (X : ℕ) {s : ℂ} (hs0 : s ≠ 0) (hs1 : s ≠ 1)
+    (hdet : carlsonZeroDetector X s ≠ 0) :
+    logDeriv (regularizedCarlsonZeroDetector X) s =
+      2 * (s - 1)⁻¹ + logDeriv (carlsonZeroDetector X) s := by
+  let p : ℂ → ℂ := fun z => (z - 1) ^ 2
+  have hfactor : regularizedCarlsonZeroDetector X =ᶠ[𝓝 s]
+      fun z => p z * carlsonZeroDetector X z := by
+    filter_upwards [eventually_ne_nhds hs0, eventually_ne_nhds hs1]
+      with z hz0 hz1
+    exact regularizedCarlsonZeroDetector_eq_sub_one_sq_mul X hz0 hz1
+  have hlogDerivEq :
+      logDeriv (regularizedCarlsonZeroDetector X) s =
+        logDeriv (fun z => p z * carlsonZeroDetector X z) s := by
+    unfold logDeriv
+    change deriv (regularizedCarlsonZeroDetector X) s /
+        regularizedCarlsonZeroDetector X s =
+      deriv (fun z => p z * carlsonZeroDetector X z) s /
+        (p s * carlsonZeroDetector X s)
+    rw [hfactor.deriv_eq, hfactor.eq_of_nhds]
+  have hpne : p s ≠ 0 := by
+    exact pow_ne_zero 2 (sub_ne_zero.mpr hs1)
+  have hpdiff : DifferentiableAt ℂ p s := by
+    dsimp [p]
+    fun_prop
+  have hdetdiff : DifferentiableAt ℂ (carlsonZeroDetector X) s :=
+    (analyticAt_carlsonZeroDetector_of_ne_one X hs1).differentiableAt
+  rw [hlogDerivEq, logDeriv_mul s hpne hdet hpdiff hdetdiff]
+  have hpLog : logDeriv p s = 2 * (s - 1)⁻¹ := by
+    dsimp [p]
+    rw [logDeriv_fun_pow (n := 2) (by fun_prop)]
+    simp [logDeriv_apply]
+  rw [hpLog]
+
 /-- Carlson's detector has no zeros on the fixed far-right half-plane. -/
 theorem carlsonZeroDetector_ne_zero_of_four_le_re
     {X : ℕ} (hX : 1 ≤ X) {s : ℂ} (hs : 4 ≤ s.re) :
@@ -133,6 +185,22 @@ theorem carlsonZeroDetector_ne_zero_of_four_le_re
   have hnorm := congrArg norm hsquare
   simp only [norm_one, norm_pow] at hnorm
   nlinarith [norm_nonneg (mollifiedZetaError X s)]
+
+/-- On the fixed far-right half-plane Carlson's detector stays in a closed
+half-plane strictly to the right of the imaginary axis. -/
+theorem fiftySix_div_eightyOne_le_re_carlsonZeroDetector_of_four_le_re
+    {X : ℕ} (hX : 1 ≤ X) {s : ℂ} (hs : 4 ≤ s.re) :
+    (56 / 81 : ℝ) ≤ (carlsonZeroDetector X s).re := by
+  let f : ℂ := mollifiedZetaError X s
+  have herr : ‖f‖ ≤ 5 / 9 := by
+    simpa [f] using
+      norm_mollifiedZetaError_le_five_ninth_of_four_le_re hX hs
+  have hre : (f ^ 2).re ≤ ‖f ^ 2‖ :=
+    (le_abs_self (f ^ 2).re).trans (Complex.abs_re_le_norm (f ^ 2))
+  rw [norm_pow] at hre
+  unfold carlsonZeroDetector
+  simp only [Complex.sub_re, Complex.one_re]
+  nlinarith [norm_nonneg f]
 
 /-- The pole-free detector is also nonzero on the fixed far-right
 half-plane. -/

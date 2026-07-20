@@ -86,6 +86,38 @@ theorem hasDerivAt_log_norm_vertical
     field_simp
     ring
 
+/-- Along a vertical line, the derivative of the principal argument of an
+analytic function staying in the slit plane is the real part of its
+logarithmic derivative. -/
+theorem hasDerivAt_im_log_vertical_of_analyticAt
+    {f : ℂ → ℂ} {sigma t : ℝ}
+    (hf : AnalyticAt ℂ f ((sigma : ℂ) + I * (t : ℂ)))
+    (hslit : f ((sigma : ℂ) + I * (t : ℂ)) ∈ Complex.slitPlane) :
+    HasDerivAt
+      (fun u : ℝ =>
+        (Complex.log (f ((sigma : ℂ) + I * (u : ℂ)))).im)
+      (logDeriv f ((sigma : ℂ) + I * (t : ℂ))).re t := by
+  let s : ℂ := (sigma : ℂ) + I * (t : ℂ)
+  have hparam :
+      HasDerivAt (fun z : ℂ => (sigma : ℂ) + I * z) I (t : ℂ) := by
+    simpa using
+      ((hasDerivAt_id (t : ℂ)).const_mul I).const_add (sigma : ℂ)
+  have hcompComplex :
+      HasDerivAt (fun z : ℂ => f ((sigma : ℂ) + I * z))
+        (deriv f s * I) (t : ℂ) := by
+    simpa [s] using hf.differentiableAt.hasDerivAt.comp (t : ℂ) hparam
+  have hvertical :
+      HasDerivAt (fun u : ℝ => f ((sigma : ℂ) + I * (u : ℂ)))
+        (deriv f s * I) t := by
+    simpa using hcompComplex.comp_ofReal
+  have hlog := hvertical.clog_real (by simpa [s] using hslit)
+  have him := Complex.imCLM.hasFDerivAt.comp_hasDerivAt t hlog
+  convert him using 1
+  simp only [Complex.imCLM_apply, logDeriv_apply]
+  change (deriv f s / f s).re = (deriv f s * I / f s).im
+  rw [show deriv f s * I / f s = I * (deriv f s / f s) by ring]
+  simp
+
 /-- Integration by parts on a vertical edge.  This converts the imaginary
 part of the logarithmic derivative into endpoint and `log ‖f‖` terms. -/
 theorem intervalIntegral_mul_neg_im_logDeriv_vertical_eq

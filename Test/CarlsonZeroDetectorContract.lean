@@ -37,6 +37,14 @@ example {X : ℕ} (hX : 1 ≤ X) {s : ℂ} (hs : 4 ≤ s.re) :
   carlsonZeroDetector_ne_zero_of_four_le_re hX hs
 
 example {X : ℕ} (hX : 1 ≤ X) {s : ℂ} (hs : 4 ≤ s.re) :
+    (56 / 81 : ℝ) ≤ (carlsonZeroDetector X s).re :=
+  fiftySix_div_eightyOne_le_re_carlsonZeroDetector_of_four_le_re hX hs
+
+example (X : ℕ) {s : ℂ} (hs1 : s ≠ 1) :
+    AnalyticAt ℂ (carlsonZeroDetector X) s :=
+  analyticAt_carlsonZeroDetector_of_ne_one X hs1
+
+example {X : ℕ} (hX : 1 ≤ X) {s : ℂ} (hs : 4 ≤ s.re) :
     regularizedCarlsonZeroDetector X s ≠ 0 :=
   regularizedCarlsonZeroDetector_ne_zero_of_four_le_re hX hs
 
@@ -73,6 +81,13 @@ example (X : ℕ) {s : ℂ} (hs0 : s ≠ 0) (hs1 : s ≠ 1) :
     regularizedCarlsonZeroDetector X s =
       (s - 1) ^ 2 * carlsonZeroDetector X s :=
   regularizedCarlsonZeroDetector_eq_sub_one_sq_mul X hs0 hs1
+
+example (X : ℕ) {s : ℂ} (hs0 : s ≠ 0) (hs1 : s ≠ 1)
+    (hdet : carlsonZeroDetector X s ≠ 0) :
+    logDeriv (regularizedCarlsonZeroDetector X) s =
+      2 * (s - 1)⁻¹ + logDeriv (carlsonZeroDetector X) s :=
+  logDeriv_regularizedCarlsonZeroDetector_eq_two_inv_add
+    X hs0 hs1 hdet
 
 example {X : ℕ} {rho : ℂ} (hX : 1 ≤ X)
     (hrho : RiemannHypothesis.IsNontrivialZero rho) :
@@ -409,6 +424,8 @@ example :
 #print axioms tendsto_carlsonZeroDetector_real_atTop
 #print axioms exists_regularizedCarlsonZeroDetector_ne_zero_re_gt
 #print axioms carlsonZeroDetector_ne_zero_of_four_le_re
+#print axioms fiftySix_div_eightyOne_le_re_carlsonZeroDetector_of_four_le_re
+#print axioms analyticAt_carlsonZeroDetector_of_ne_one
 #print axioms regularizedCarlsonZeroDetector_ne_zero_of_four_le_re
 #print axioms log_fiftySix_div_eightyOne_le_log_norm_regularized_of_four_le_re
 #print axioms analyticOrderAt_regularizedCarlsonZeroDetector_ne_top
@@ -417,6 +434,7 @@ example :
 #print axioms analyticOnNhd_regularizedCarlsonZeroDetector_re_gt
 #print axioms meromorphic_regularizedCarlsonZeroDetector
 #print axioms regularizedCarlsonZeroDetector_eq_sub_one_sq_mul
+#print axioms logDeriv_regularizedCarlsonZeroDetector_eq_two_inv_add
 #print axioms analyticOrderNatAt_riemannZeta_le_regularizedCarlsonZeroDetector
 #print axioms log_norm_carlsonZeroDetector_le_norm_mollifiedZetaError_sq
 #print axioms log_norm_regularizedCarlsonZeroDetector_le_two_log_norm_sub_one_add_error_sq

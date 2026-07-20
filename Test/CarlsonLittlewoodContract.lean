@@ -223,6 +223,29 @@ example {X : ℕ} (hX : 1 ≤ X) {y0 y1 : ℝ} (hy01 : y0 ≤ y1) :
       -(y1 - y0) * Real.log (56 / 81 : ℝ) :=
   neg_integral_log_norm_regularizedCarlson_fixedRight_le hX hy01
 
+noncomputable example (X : ℕ) (y0 y1 : ℝ) : ℝ :=
+  carlsonDetectorFixedRightArgumentVariation X y0 y1
+
+example {X : ℕ} (hX : 1 ≤ X) (y0 y1 : ℝ) :
+    |carlsonDetectorFixedRightArgumentVariation X y0 y1| ≤ Real.pi :=
+  abs_carlsonDetectorFixedRightArgumentVariation_le_pi hX y0 y1
+
+noncomputable example (y0 y1 : ℝ) : ℝ :=
+  subOneFixedRightArgumentVariation y0 y1
+
+example (y0 y1 : ℝ) :
+    |subOneFixedRightArgumentVariation y0 y1| ≤ Real.pi :=
+  abs_subOneFixedRightArgumentVariation_le_pi y0 y1
+
+noncomputable example (X : ℕ) (y0 y1 : ℝ) : ℝ :=
+  regularizedCarlsonFixedRightArgumentVariation X y0 y1
+
+example {X : ℕ} (hX : 1 ≤ X) (y0 y1 : ℝ) :
+    |regularizedCarlsonFixedRightArgumentVariation X y0 y1| ≤
+      3 * Real.pi :=
+  abs_regularizedCarlsonFixedRightArgumentVariation_le_three_pi
+    hX y0 y1
+
 example {X : ℕ} {x0 x1 y0 y1 : ℝ}
     (hx0 : 0 < x0) (hx01 : x0 < x1) (hy01 : y0 < y1)
     (hleft : ∀ y ∈ Set.Icc y0 y1,
@@ -304,6 +327,9 @@ example {X : ℕ} (hX : 1 ≤ X) {theta sigma T : ℝ}
 #print axioms regularizedCarlsonLittlewood_leftEdge_eq_logNorm
 #print axioms regularizedCarlsonLittlewood_rightEdge_eq_logNorm
 #print axioms neg_integral_log_norm_regularizedCarlson_fixedRight_le
+#print axioms abs_carlsonDetectorFixedRightArgumentVariation_le_pi
+#print axioms abs_subOneFixedRightArgumentVariation_le_pi
+#print axioms abs_regularizedCarlsonFixedRightArgumentVariation_le_three_pi
 #print axioms regularizedCarlsonLittlewoodFourEdges_eq_logNormForm
 #print axioms regularizedCarlsonLittlewoodFourEdges_eq_logNormFormDef
 #print axioms regularizedCarlsonLittlewoodLogNormForm_eq_left_add_remaining

@@ -462,6 +462,287 @@ theorem neg_integral_log_norm_regularizedCarlson_fixedRight_le
     simpa using hlower
   linarith
 
+/-- The branch-free argument variation of Carlson's original detector on the
+fixed line `Re(s) = 4`. -/
+noncomputable def carlsonDetectorFixedRightArgumentVariation
+    (X : ℕ) (y0 y1 : ℝ) : ℝ :=
+  ∫ y in y0..y1,
+    (logDeriv (carlsonZeroDetector X)
+      ((4 : ℂ) + I * (y : ℂ))).re
+
+private theorem hasDerivAt_carlsonDetectorFixedRightArgument
+    {X : ℕ} (hX : 1 ≤ X) (y : ℝ) :
+    HasDerivAt
+      (fun t : ℝ =>
+        (Complex.log (carlsonZeroDetector X
+          ((4 : ℂ) + I * (t : ℂ)))).im)
+      (logDeriv (carlsonZeroDetector X)
+        ((4 : ℂ) + I * (y : ℂ))).re y := by
+  let s : ℂ := (4 : ℂ) + I * (y : ℂ)
+  have hs1 : s ≠ 1 := by
+    intro h
+    have hre := congrArg Complex.re h
+    simp [s] at hre
+  have hanalytic : AnalyticAt ℂ (carlsonZeroDetector X) s :=
+    analyticAt_carlsonZeroDetector_of_ne_one X hs1
+  have hright : (56 / 81 : ℝ) ≤ (carlsonZeroDetector X s).re :=
+    fiftySix_div_eightyOne_le_re_carlsonZeroDetector_of_four_le_re
+      hX (by simp [s])
+  have hslit : carlsonZeroDetector X s ∈ Complex.slitPlane := by
+    rw [Complex.mem_slitPlane_iff]
+    exact Or.inl ((by norm_num : (0 : ℝ) < 56 / 81).trans_le hright)
+  simpa [s] using
+    hasDerivAt_im_log_vertical_of_analyticAt hanalytic hslit
+
+private theorem intervalIntegrable_carlsonDetectorFixedRightArgument
+    {X : ℕ} (hX : 1 ≤ X) (y0 y1 : ℝ) :
+    IntervalIntegrable
+      (fun y : ℝ =>
+        (logDeriv (carlsonZeroDetector X)
+          ((4 : ℂ) + I * (y : ℂ))).re)
+      MeasureTheory.volume y0 y1 := by
+  apply ContinuousOn.intervalIntegrable
+  intro y _hy
+  let s : ℂ := (4 : ℂ) + I * (y : ℂ)
+  have hs1 : s ≠ 1 := by
+    intro h
+    have hre := congrArg Complex.re h
+    simp [s] at hre
+  have hanalytic : AnalyticAt ℂ (carlsonZeroDetector X) s :=
+    analyticAt_carlsonZeroDetector_of_ne_one X hs1
+  have hne : carlsonZeroDetector X s ≠ 0 :=
+    carlsonZeroDetector_ne_zero_of_four_le_re hX (by simp [s])
+  have hlog : AnalyticAt ℂ (logDeriv (carlsonZeroDetector X)) s :=
+    ZeroFreeRegion.analyticAt_logDeriv_of_analyticAt_ne_zero hanalytic hne
+  have hmap : ContinuousAt
+      (fun t : ℝ => (4 : ℂ) + I * (t : ℂ)) y := by
+    fun_prop
+  have hcomp : ContinuousAt
+      (fun t : ℝ => logDeriv (carlsonZeroDetector X)
+        ((4 : ℂ) + I * (t : ℂ))) y := by
+    simpa [s, Function.comp_def] using
+      hlog.continuousAt.comp_of_eq hmap rfl
+  exact
+    (Complex.continuous_re.continuousAt.comp_of_eq hcomp rfl).continuousWithinAt
+
+/-- The original detector stays in the right half-plane on `Re(s) = 4`, so
+its total argument variation between any two heights is at most `pi`. -/
+theorem abs_carlsonDetectorFixedRightArgumentVariation_le_pi
+    {X : ℕ} (hX : 1 ≤ X) (y0 y1 : ℝ) :
+    |carlsonDetectorFixedRightArgumentVariation X y0 y1| ≤ Real.pi := by
+  have hFTC := intervalIntegral.integral_eq_sub_of_hasDerivAt
+    (fun y _hy => hasDerivAt_carlsonDetectorFixedRightArgument hX y)
+    (intervalIntegrable_carlsonDetectorFixedRightArgument hX y0 y1)
+  have hvariation : carlsonDetectorFixedRightArgumentVariation X y0 y1 =
+      (carlsonZeroDetector X ((4 : ℂ) + I * (y1 : ℂ))).arg -
+        (carlsonZeroDetector X ((4 : ℂ) + I * (y0 : ℂ))).arg := by
+    rw [carlsonDetectorFixedRightArgumentVariation, hFTC]
+    simp only [Complex.log_im]
+  rw [hvariation]
+  have harg (y : ℝ) :
+      |(carlsonZeroDetector X ((4 : ℂ) + I * (y : ℂ))).arg| <
+        Real.pi / 2 := by
+    apply Complex.abs_arg_lt_pi_div_two_iff.mpr
+    apply Or.inl
+    have hright :=
+      fiftySix_div_eightyOne_le_re_carlsonZeroDetector_of_four_le_re
+        hX (s := (4 : ℂ) + I * (y : ℂ)) (by simp)
+    exact (by norm_num : (0 : ℝ) < 56 / 81).trans_le hright
+  apply le_of_lt
+  calc
+    |(carlsonZeroDetector X ((4 : ℂ) + I * (y1 : ℂ))).arg -
+        (carlsonZeroDetector X ((4 : ℂ) + I * (y0 : ℂ))).arg| ≤
+      |(carlsonZeroDetector X ((4 : ℂ) + I * (y1 : ℂ))).arg| +
+        |(carlsonZeroDetector X ((4 : ℂ) + I * (y0 : ℂ))).arg| :=
+      abs_sub _ _
+    _ < Real.pi / 2 + Real.pi / 2 := add_lt_add (harg y1) (harg y0)
+    _ = Real.pi := by ring
+
+/-- Argument variation of the linear pole-cancelling factor `s - 1` on the
+fixed line `Re(s) = 4`. -/
+noncomputable def subOneFixedRightArgumentVariation (y0 y1 : ℝ) : ℝ :=
+  ∫ y in y0..y1,
+    (((4 : ℂ) + I * (y : ℂ) - 1)⁻¹).re
+
+private theorem hasDerivAt_subOneFixedRightArgument (y : ℝ) :
+    HasDerivAt
+      (fun t : ℝ =>
+        (Complex.log ((4 : ℂ) + I * (t : ℂ) - 1)).im)
+      (((4 : ℂ) + I * (y : ℂ) - 1)⁻¹).re y := by
+  let s : ℂ := (4 : ℂ) + I * (y : ℂ)
+  have hanalytic : AnalyticAt ℂ (fun z : ℂ => z - 1) s :=
+    analyticAt_id.sub analyticAt_const
+  have hslit : s - 1 ∈ Complex.slitPlane := by
+    rw [Complex.mem_slitPlane_iff]
+    exact Or.inl (by norm_num [s])
+  have h := hasDerivAt_im_log_vertical_of_analyticAt
+    (f := fun z : ℂ => z - 1) (sigma := 4) hanalytic hslit
+  simpa [s, logDeriv_apply] using h
+
+private theorem intervalIntegrable_subOneFixedRightArgument
+    (y0 y1 : ℝ) :
+    IntervalIntegrable
+      (fun y : ℝ => (((4 : ℂ) + I * (y : ℂ) - 1)⁻¹).re)
+      MeasureTheory.volume y0 y1 := by
+  apply ContinuousOn.intervalIntegrable
+  intro y _hy
+  let s : ℂ := (4 : ℂ) + I * (y : ℂ)
+  have hanalytic : AnalyticAt ℂ (fun z : ℂ => z - 1) s :=
+    analyticAt_id.sub analyticAt_const
+  have hne : s - 1 ≠ 0 := by
+    intro h
+    have hre := congrArg Complex.re h
+    norm_num [s] at hre
+  have hlog : AnalyticAt ℂ (logDeriv (fun z : ℂ => z - 1)) s :=
+    ZeroFreeRegion.analyticAt_logDeriv_of_analyticAt_ne_zero hanalytic hne
+  have hmap : ContinuousAt
+      (fun t : ℝ => (4 : ℂ) + I * (t : ℂ)) y := by
+    fun_prop
+  have hcomp : ContinuousAt
+      (fun t : ℝ => logDeriv (fun z : ℂ => z - 1)
+        ((4 : ℂ) + I * (t : ℂ))) y := by
+    simpa [s, Function.comp_def] using
+      hlog.continuousAt.comp_of_eq hmap rfl
+  have hre : ContinuousWithinAt
+      (fun t : ℝ =>
+        (logDeriv (fun z : ℂ => z - 1)
+          ((4 : ℂ) + I * (t : ℂ))).re) [[y0, y1]] y :=
+    (Complex.continuous_re.continuousAt.comp_of_eq hcomp rfl).continuousWithinAt
+  simpa [logDeriv_apply] using hre
+
+/-- The linear factor has positive real part on `Re(s) = 4`, so its argument
+variation between arbitrary heights is at most `pi`. -/
+theorem abs_subOneFixedRightArgumentVariation_le_pi (y0 y1 : ℝ) :
+    |subOneFixedRightArgumentVariation y0 y1| ≤ Real.pi := by
+  have hFTC := intervalIntegral.integral_eq_sub_of_hasDerivAt
+    (fun y _hy => hasDerivAt_subOneFixedRightArgument y)
+    (intervalIntegrable_subOneFixedRightArgument y0 y1)
+  have hvariation : subOneFixedRightArgumentVariation y0 y1 =
+      ((4 : ℂ) + I * (y1 : ℂ) - 1).arg -
+        ((4 : ℂ) + I * (y0 : ℂ) - 1).arg := by
+    rw [subOneFixedRightArgumentVariation, hFTC]
+    simp only [Complex.log_im]
+  rw [hvariation]
+  have harg (y : ℝ) :
+      |((4 : ℂ) + I * (y : ℂ) - 1).arg| < Real.pi / 2 := by
+    apply Complex.abs_arg_lt_pi_div_two_iff.mpr
+    exact Or.inl (by norm_num)
+  apply le_of_lt
+  calc
+    |((4 : ℂ) + I * (y1 : ℂ) - 1).arg -
+        ((4 : ℂ) + I * (y0 : ℂ) - 1).arg| ≤
+      |((4 : ℂ) + I * (y1 : ℂ) - 1).arg| +
+        |((4 : ℂ) + I * (y0 : ℂ) - 1).arg| := abs_sub _ _
+    _ < Real.pi / 2 + Real.pi / 2 := add_lt_add (harg y1) (harg y0)
+    _ = Real.pi := by ring
+
+/-- Argument variation of the pole-free Carlson detector on the fixed line
+`Re(s) = 4`. -/
+noncomputable def regularizedCarlsonFixedRightArgumentVariation
+    (X : ℕ) (y0 y1 : ℝ) : ℝ :=
+  ∫ y in y0..y1,
+    (logDeriv (regularizedCarlsonZeroDetector X)
+      ((4 : ℂ) + I * (y : ℂ))).re
+
+private theorem intervalIntegrable_regularizedCarlsonFixedRightArgument
+    {X : ℕ} (hX : 1 ≤ X) (y0 y1 : ℝ) :
+    IntervalIntegrable
+      (fun y : ℝ =>
+        (logDeriv (regularizedCarlsonZeroDetector X)
+          ((4 : ℂ) + I * (y : ℂ))).re)
+      MeasureTheory.volume y0 y1 := by
+  apply ContinuousOn.intervalIntegrable
+  intro y _hy
+  let s : ℂ := (4 : ℂ) + I * (y : ℂ)
+  have hanalytic : AnalyticAt ℂ (regularizedCarlsonZeroDetector X) s :=
+    analyticOnNhd_regularizedCarlsonZeroDetector_re_gt
+      (theta := (0 : ℝ)) le_rfl X s (by norm_num [s])
+  have hne : regularizedCarlsonZeroDetector X s ≠ 0 :=
+    regularizedCarlsonZeroDetector_ne_zero_of_four_le_re hX (by simp [s])
+  have hlog :
+      AnalyticAt ℂ (logDeriv (regularizedCarlsonZeroDetector X)) s :=
+    ZeroFreeRegion.analyticAt_logDeriv_of_analyticAt_ne_zero hanalytic hne
+  have hmap : ContinuousAt
+      (fun t : ℝ => (4 : ℂ) + I * (t : ℂ)) y := by
+    fun_prop
+  have hcomp : ContinuousAt
+      (fun t : ℝ => logDeriv (regularizedCarlsonZeroDetector X)
+        ((4 : ℂ) + I * (t : ℂ))) y := by
+    simpa [s, Function.comp_def] using
+      hlog.continuousAt.comp_of_eq hmap rfl
+  exact
+    (Complex.continuous_re.continuousAt.comp_of_eq hcomp rfl).continuousWithinAt
+
+private theorem regularizedCarlsonFixedRightArgumentVariation_eq
+    {X : ℕ} (hX : 1 ≤ X) (y0 y1 : ℝ) :
+    regularizedCarlsonFixedRightArgumentVariation X y0 y1 =
+      2 * subOneFixedRightArgumentVariation y0 y1 +
+        carlsonDetectorFixedRightArgumentVariation X y0 y1 := by
+  have hlinearInt := intervalIntegrable_subOneFixedRightArgument y0 y1
+  have hdetectorInt :=
+    intervalIntegrable_carlsonDetectorFixedRightArgument hX y0 y1
+  rw [regularizedCarlsonFixedRightArgumentVariation,
+    subOneFixedRightArgumentVariation,
+    carlsonDetectorFixedRightArgumentVariation]
+  calc
+    (∫ y in y0..y1,
+        (logDeriv (regularizedCarlsonZeroDetector X)
+          ((4 : ℂ) + I * (y : ℂ))).re) =
+        ∫ y in y0..y1,
+          2 * (((4 : ℂ) + I * (y : ℂ) - 1)⁻¹).re +
+            (logDeriv (carlsonZeroDetector X)
+              ((4 : ℂ) + I * (y : ℂ))).re := by
+      apply intervalIntegral.integral_congr
+      intro y _hy
+      let s : ℂ := (4 : ℂ) + I * (y : ℂ)
+      have hs0 : s ≠ 0 := by
+        intro h
+        have hre := congrArg Complex.re h
+        norm_num [s] at hre
+      have hs1 : s ≠ 1 := by
+        intro h
+        have hre := congrArg Complex.re h
+        norm_num [s] at hre
+      have hdet : carlsonZeroDetector X s ≠ 0 :=
+        carlsonZeroDetector_ne_zero_of_four_le_re hX (by simp [s])
+      have hsplit := congrArg Complex.re
+        (logDeriv_regularizedCarlsonZeroDetector_eq_two_inv_add
+          X hs0 hs1 hdet)
+      simpa [s, Complex.add_re, Complex.mul_re] using hsplit
+    _ = 2 * (∫ y in y0..y1,
+          (((4 : ℂ) + I * (y : ℂ) - 1)⁻¹).re) +
+        ∫ y in y0..y1,
+          (logDeriv (carlsonZeroDetector X)
+            ((4 : ℂ) + I * (y : ℂ))).re := by
+      rw [intervalIntegral.integral_add
+        (IntervalIntegrable.const_mul hlinearInt 2) hdetectorInt,
+        intervalIntegral.integral_const_mul]
+
+/-- The two pole-cancelling linear factors contribute at most `2*pi`, while
+the original detector contributes at most `pi`; hence the regularized right
+edge argument term is bounded independently of the rectangle height. -/
+theorem abs_regularizedCarlsonFixedRightArgumentVariation_le_three_pi
+    {X : ℕ} (hX : 1 ≤ X) (y0 y1 : ℝ) :
+    |regularizedCarlsonFixedRightArgumentVariation X y0 y1| ≤
+      3 * Real.pi := by
+  rw [regularizedCarlsonFixedRightArgumentVariation_eq hX]
+  have hlinear := abs_subOneFixedRightArgumentVariation_le_pi y0 y1
+  have hdetector :=
+    abs_carlsonDetectorFixedRightArgumentVariation_le_pi hX y0 y1
+  calc
+    |2 * subOneFixedRightArgumentVariation y0 y1 +
+        carlsonDetectorFixedRightArgumentVariation X y0 y1| ≤
+      |2 * subOneFixedRightArgumentVariation y0 y1| +
+        |carlsonDetectorFixedRightArgumentVariation X y0 y1| :=
+      abs_add_le _ _
+    _ = 2 * |subOneFixedRightArgumentVariation y0 y1| +
+        |carlsonDetectorFixedRightArgumentVariation X y0 y1| := by
+      rw [abs_mul]
+      norm_num
+    _ ≤ 2 * Real.pi + Real.pi :=
+      add_le_add (mul_le_mul_of_nonneg_left hlinear (by norm_num)) hdetector
+    _ = 3 * Real.pi := by ring
+
 /-- The endpoint terms from the four edge integrations cancel.  This is the
 detector-specific Littlewood lemma in the form used for quantitative bounds:
 two horizontal argument terms, one right-edge argument term, and the

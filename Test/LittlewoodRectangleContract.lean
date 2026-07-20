@@ -38,6 +38,15 @@ example {f : ℂ → ℂ} {sigma t : ℝ}
       (-(logDeriv f ((sigma : ℂ) + I * (t : ℂ))).im) t :=
   hasDerivAt_log_norm_vertical hf hne
 
+example {f : ℂ → ℂ} {sigma t : ℝ}
+    (hf : AnalyticAt ℂ f ((sigma : ℂ) + I * (t : ℂ)))
+    (hslit : f ((sigma : ℂ) + I * (t : ℂ)) ∈ Complex.slitPlane) :
+    HasDerivAt
+      (fun u : ℝ =>
+        (Complex.log (f ((sigma : ℂ) + I * (u : ℂ)))).im)
+      (logDeriv f ((sigma : ℂ) + I * (t : ℂ))).re t :=
+  hasDerivAt_im_log_vertical_of_analyticAt hf hslit
+
 example {f : ℂ → ℂ} {sigma a b : ℝ}
     (hf : ∀ u ∈ [[a, b]],
       AnalyticAt ℂ f ((sigma : ℂ) + I * (u : ℂ)))
@@ -195,6 +204,7 @@ example {f : ℂ → ℂ} {x0 x1 y0 y1 : ℝ}
 #print axioms boundaryRectIntegral_weighted_logDeriv_eq_zeroMultiplicitySum
 #print axioms im_boundaryRectIntegral_eq_four_edges
 #print axioms hasDerivAt_log_norm_vertical
+#print axioms hasDerivAt_im_log_vertical_of_analyticAt
 #print axioms intervalIntegral_mul_neg_im_logDeriv_vertical_eq
 #print axioms continuousOn_neg_im_logDeriv_vertical
 #print axioms intervalIntegral_mul_neg_im_logDeriv_vertical_eq_of_analytic
