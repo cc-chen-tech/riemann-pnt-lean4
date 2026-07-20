@@ -27,6 +27,15 @@ noncomputable example (X : ℕ) (sigma alpha a b : ℝ) : ℕ :=
 noncomputable example (X : ℕ) (sigma alpha T : ℝ) : Finset ℝ :=
   regularizedCarlsonDetectorHorizontalZeroHeights X sigma alpha T
 
+example {X : ℕ} (hX : 1 ≤ X) {sigma alpha T : ℝ}
+    (hsigma : 0 < sigma) :
+    (regularizedCarlsonDetectorHorizontalZeroHeights
+      X sigma alpha T).card ≤
+      regularizedCarlsonDetectorRectangleZeroCount
+        X sigma alpha T (T + 1) :=
+  card_regularizedCarlsonDetectorHorizontalZeroHeights_le_zeroCount
+    hX hsigma
+
 noncomputable example (X : ℕ) (sigma alpha a b : ℝ) (z : ℂ) : ℂ :=
   regularizedCarlsonDetectorRectanglePrincipalPart X sigma alpha a b z
 
@@ -221,6 +230,7 @@ example {X : ℕ} (hX : 1 ≤ X) (sigma T : ℝ) :
 #print axioms zeroDensityCount_le_carlsonDetectorRectangleZeroCount
 #print axioms zeroDensityCount_le_regularizedCarlsonDetectorRectangleZeroCount
 #print axioms mem_regularizedCarlsonDetectorRectangleDivisorSupport_iff_zero
+#print axioms card_regularizedCarlsonDetectorHorizontalZeroHeights_le_zeroCount
 #print axioms analyticOnNhd_regularizedCarlsonDetectorRectangleRegularPart
 #print axioms regularizedCarlsonDetectorRectangleRegularPart_eq_logDeriv_sub_principalPart
 #print axioms norm_regularizedCarlsonDetectorRectanglePrincipalPart_le_count_div

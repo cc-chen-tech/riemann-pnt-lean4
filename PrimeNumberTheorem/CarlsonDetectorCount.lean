@@ -211,6 +211,59 @@ theorem mem_regularizedCarlsonDetectorRectangleDivisorSupport_iff_zero
       rfl
     exact (hanalytic.analyticOrderAt_eq_zero.mp horderZero) hzero
 
+/-- The number of distinct zero ordinates in a unit rectangle is at most the
+total analytic zero multiplicity in that rectangle. -/
+theorem card_regularizedCarlsonDetectorHorizontalZeroHeights_le_zeroCount
+    {X : ℕ} (hX : 1 ≤ X) {sigma alpha T : ℝ}
+    (hsigma : 0 < sigma) :
+    (regularizedCarlsonDetectorHorizontalZeroHeights
+      X sigma alpha T).card ≤
+      regularizedCarlsonDetectorRectangleZeroCount
+        X sigma alpha T (T + 1) := by
+  classical
+  let K := carlsonDetectorRectangle sigma alpha T (T + 1)
+  let D := MeromorphicOn.divisor (regularizedCarlsonZeroDetector X) K
+  let P := regularizedCarlsonDetectorRectangleDivisorSupport
+    X sigma alpha T (T + 1)
+  let H := regularizedCarlsonDetectorHorizontalZeroHeights X sigma alpha T
+  have hfinite : D.support.Finite :=
+    D.finiteSupport (isCompact_carlsonDetectorRectangle sigma alpha T (T + 1))
+  have hpoint : ∀ u ∈ P, 1 ≤ (D u).toNat := by
+    intro u hu
+    have huSupport : u ∈ D.support := by
+      change u ∈ hfinite.toFinset at hu
+      exact hfinite.mem_toFinset.mp hu
+    have huK : u ∈ K := by
+      by_contra hnot
+      have hDne : D u ≠ 0 := by
+        simpa only [Function.mem_support] using huSupport
+      apply hDne
+      dsimp [D]
+      simp [MeromorphicOn.divisor, hnot]
+    have hDu : D u =
+        (analyticOrderNatAt (regularizedCarlsonZeroDetector X) u : ℤ) := by
+      dsimp [D, K]
+      exact divisor_regularizedCarlsonZeroDetector_eq_analyticOrderNatAt_of_mem
+        hX hsigma huK
+    have hDne : D u ≠ 0 := by
+      simpa only [Function.mem_support] using huSupport
+    have hnatNe :
+        analyticOrderNatAt (regularizedCarlsonZeroDetector X) u ≠ 0 := by
+      rw [hDu, Int.ofNat_ne_zero] at hDne
+      exact hDne
+    rw [hDu, Int.toNat_natCast]
+    exact Nat.one_le_iff_ne_zero.mpr hnatNe
+  calc
+    H.card ≤ P.card := by
+      dsimp [H, regularizedCarlsonDetectorHorizontalZeroHeights]
+      exact Finset.card_image_le
+    _ = ∑ u ∈ P, 1 := by simp
+    _ ≤ ∑ u ∈ P, (D u).toNat := by
+      exact Finset.sum_le_sum fun u hu => hpoint u hu
+    _ = regularizedCarlsonDetectorRectangleZeroCount
+        X sigma alpha T (T + 1) := by
+      rfl
+
 /-- Subtracting all multiplicity-weighted rectangle-zero principal parts
 removes every singularity of the detector logarithmic derivative on the
 rectangle. -/
