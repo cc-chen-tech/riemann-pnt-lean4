@@ -88,3 +88,4 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.integral_Iic_cexp_thetaNM
 #print axioms RiemannExplorer.DeBruijnNewman.integral_Ioi_cexp_thetaNWD
 #print axioms RiemannExplorer.DeBruijnNewman.integral_Iic_cexp_thetaNWD
+#print axioms RiemannExplorer.DeBruijnNewman.cexp_mul_thetaNWD_eq

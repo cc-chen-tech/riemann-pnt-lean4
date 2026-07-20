@@ -3193,5 +3193,26 @@ theorem integral_Iic_cexp_thetaNWD (a : ℂ) :
     linear_combination h4 + a * hBNM - a * h3
   exact hconv.trans hsolve
 
+/-- 被积函数转换：`e^{au}·NW'(u) = 16·e^{(a−1)u}·Φ(u)`（`sixteen_phi_eq` 的复形式）。 -/
+theorem cexp_mul_thetaNWD_eq (a : ℂ) (u : ℝ) :
+    Complex.exp (a * (u : ℂ)) * (thetaNWD u : ℂ)
+      = 16 * (Complex.exp ((a - 1) * (u : ℂ)) * (phi u : ℂ)) := by
+  have h16 : 16 * phi u = Real.exp u * thetaNWD u := sixteen_phi_eq u
+  have h16c : (16 : ℂ) * (phi u : ℂ) = (Real.exp u : ℂ) * (thetaNWD u : ℂ) := by
+    exact_mod_cast h16
+  have hre : (Real.exp u : ℂ) = Complex.exp (u : ℂ) := Complex.ofReal_exp u
+  have hN : (thetaNWD u : ℂ) = 16 * (phi u : ℂ) * Complex.exp (-(u : ℂ)) := by
+    calc (thetaNWD u : ℂ)
+        = Complex.exp (u : ℂ) * (thetaNWD u : ℂ) * Complex.exp (-(u : ℂ)) := by
+          have hrw : Complex.exp (u : ℂ) * (thetaNWD u : ℂ) * Complex.exp (-(u : ℂ))
+            = (Complex.exp (u : ℂ) * Complex.exp (-(u : ℂ))) * (thetaNWD u : ℂ) := by ring
+          rw [hrw, ← Complex.exp_add, show (u : ℂ) + -(u : ℂ) = 0 from by ring,
+            Complex.exp_zero, one_mul]
+      _ = 16 * (phi u : ℂ) * Complex.exp (-(u : ℂ)) := by
+          rw [← show (16 : ℂ) * (phi u : ℂ) = Complex.exp (u : ℂ) * (thetaNWD u : ℂ) from by
+            rw [← hre]; exact h16c]
+  rw [hN, show (a - 1) * (u : ℂ) = a * (u : ℂ) + -(u : ℂ) from by ring, Complex.exp_add]
+  ring
+
 end DeBruijnNewman
 end RiemannExplorer
