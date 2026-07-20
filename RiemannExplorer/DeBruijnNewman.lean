@@ -1743,5 +1743,139 @@ def lambda_nonneg_target : Prop :=
 def rh_iff_lambda_le_zero_target : Prop :=
   RiemannHypothesis.Statement ↔ deBruijnNewmanLambda ≤ 0
 
+/-!
+### Phase 1d(iv)：`W/M` 的导数基础设施与反射表示
+
+为半轴分部积分准备：`W'(u) = 4e^{4u}T'(e^{4u})`，
+`W''(u) = 16e^{8u}T''(e^{4u}) + 16e^{4u}T'(e^{4u})`，`M'/M''` 类似；
+并由 Jacobi 函数方程给出 `M`、`M'` 在 `u → −∞` 端的反射表示。
+-/
+
+/-- `u ↦ e^{−2u}` 的导数。 -/
+theorem hasDerivAt_expNegTwoMul (u : ℝ) :
+    HasDerivAt (fun v : ℝ ↦ Real.exp (-2 * v)) (-2 * Real.exp (-2 * u)) u := by
+  have h := (HasDerivAt.const_mul (-2 : ℝ) (hasDerivAt_id u)).exp
+  rwa [mul_one, mul_comm] at h
+
+/-- `u ↦ e^{−4u}` 的导数。 -/
+theorem hasDerivAt_expNegFourMul (u : ℝ) :
+    HasDerivAt (fun v : ℝ ↦ Real.exp (-4 * v)) (-4 * Real.exp (-4 * u)) u := by
+  have h := (HasDerivAt.const_mul (-4 : ℝ) (hasDerivAt_id u)).exp
+  rwa [mul_one, mul_comm] at h
+
+/-- `W'(u) = 4e^{4u}·T'(e^{4u})`（链式法则形态）。 -/
+noncomputable def thetaWD (u : ℝ) : ℝ := 4 * Real.exp (4 * u) * thetaTD (Real.exp (4 * u))
+
+/-- `W''(u) = 16e^{8u}·T''(e^{4u}) + 16e^{4u}·T'(e^{4u})`。 -/
+noncomputable def thetaWDD (u : ℝ) : ℝ :=
+  16 * Real.exp (8 * u) * thetaTDD (Real.exp (4 * u))
+    + 16 * Real.exp (4 * u) * thetaTD (Real.exp (4 * u))
+
+/-- `M'(u) = W'(u) + 2e^{−2u}`（`M = W + 1 − e^{−2u}`）。 -/
+noncomputable def thetaMD (u : ℝ) : ℝ := thetaWD u + 2 * Real.exp (-2 * u)
+
+/-- `M''(u) = W''(u) − 4e^{−2u}`。 -/
+noncomputable def thetaMDD (u : ℝ) : ℝ := thetaWDD u - 4 * Real.exp (-2 * u)
+
+/-- `W` 处处可导，导数为 `thetaWD`。 -/
+theorem hasDerivAt_thetaW (u : ℝ) : HasDerivAt thetaW (thetaWD u) u := by
+  have h1 := (hasDerivAt_thetaT (Real.exp_pos (4 * u))).comp u (hasDerivAt_expFourMul u)
+  have h2 := h1.sub (hasDerivAt_const u (1 : ℝ))
+  rw [show thetaTD (Real.exp (4 * u)) * (4 * Real.exp (4 * u)) - 0
+      = thetaWD u from by unfold thetaWD; ring] at h2
+  exact h2
+
+/-- `thetaWD` 处处可导，导数为 `thetaWDD`（乘积法则 + 链式法则）。 -/
+theorem hasDerivAt_thetaWD (u : ℝ) : HasDerivAt thetaWD (thetaWDD u) u := by
+  have hA : HasDerivAt (fun v : ℝ ↦ 4 * Real.exp (4 * v))
+      (4 * (4 * Real.exp (4 * u))) u :=
+    (hasDerivAt_expFourMul u).const_mul 4
+  have hB := (hasDerivAt_thetaTD (Real.exp_pos (4 * u))).comp u (hasDerivAt_expFourMul u)
+  have h := hA.mul hB
+  rw [Function.comp_apply, show 4 * (4 * Real.exp (4 * u)) * thetaTD (Real.exp (4 * u))
+        + 4 * Real.exp (4 * u) * (thetaTDD (Real.exp (4 * u)) * (4 * Real.exp (4 * u)))
+      = thetaWDD u from ?_] at h
+  · exact h
+  · unfold thetaWDD
+    rw [show Real.exp (8 * u) = Real.exp (4 * u) * Real.exp (4 * u) from by
+      rw [← Real.exp_add]
+      congr 1
+      ring]
+    ring
+
+/-- `M` 处处可导，导数为 `thetaMD`。 -/
+theorem hasDerivAt_thetaM (u : ℝ) : HasDerivAt thetaM (thetaMD u) u := by
+  have h1 := (hasDerivAt_thetaT (Real.exp_pos (4 * u))).comp u (hasDerivAt_expFourMul u)
+  have h := h1.sub (hasDerivAt_expNegTwoMul u)
+  rw [show thetaTD (Real.exp (4 * u)) * (4 * Real.exp (4 * u)) - -2 * Real.exp (-2 * u)
+      = thetaMD u from by unfold thetaMD thetaWD; ring] at h
+  exact h
+
+/-- `thetaMD` 处处可导，导数为 `thetaMDD`。 -/
+theorem hasDerivAt_thetaMD (u : ℝ) : HasDerivAt thetaMD (thetaMDD u) u := by
+  have h2 : HasDerivAt (fun v : ℝ ↦ 2 * Real.exp (-2 * v))
+      (2 * (-2 * Real.exp (-2 * u))) u :=
+    (hasDerivAt_expNegTwoMul u).const_mul 2
+  have h := (hasDerivAt_thetaWD u).add h2
+  rw [show thetaWDD u + 2 * (-2 * Real.exp (-2 * u)) = thetaMDD u from by
+    unfold thetaMDD; ring] at h
+  exact h
+
+/-- `M` 的反射表示：`M(u) = 2e^{−2u}·S(e^{−4u})`（Jacobi 函数方程）。
+给出 `u → −∞` 端的超指数衰减。 -/
+theorem thetaM_eq_reflected (u : ℝ) :
+    thetaM u = 2 * Real.exp (-2 * u) * thetaS (Real.exp (-4 * u)) := by
+  have hsqrt : Real.sqrt (Real.exp (4 * u)) = Real.exp (2 * u) := by
+    rw [Real.sqrt_eq_iff_eq_sq (Real.exp_nonneg _) (Real.exp_nonneg _), pow_two,
+      ← Real.exp_add]
+    congr 1
+    ring
+  have hinv : 1 / Real.exp (4 * u) = Real.exp (-4 * u) := by
+    rw [show (-4 : ℝ) * u = -(4 * u) from by ring, Real.exp_neg, one_div]
+  have hfe := thetaT_fe (Real.exp_pos (4 * u))
+  rw [hsqrt, hinv] at hfe
+  have hT : thetaT (Real.exp (4 * u)) = Real.exp (-2 * u) * thetaT (Real.exp (-4 * u)) := by
+    rw [← hfe]
+    rw [show Real.exp (-2 * u) * (Real.exp (2 * u) * thetaT (Real.exp (4 * u)))
+        = (Real.exp (-2 * u) * Real.exp (2 * u)) * thetaT (Real.exp (4 * u)) from by ring,
+      ← Real.exp_add, show (-2 : ℝ) * u + 2 * u = (0 : ℝ) from by ring, Real.exp_zero,
+      one_mul]
+  unfold thetaM
+  rw [hT]
+  unfold thetaT
+  ring
+
+/-- `M'` 的反射表示：
+`M'(u) = −4e^{−2u}·S(e^{−4u}) − 4e^{−6u}·T'(e^{−4u})`。 -/
+theorem thetaMD_eq_reflected (u : ℝ) :
+    thetaMD u = -4 * Real.exp (-2 * u) * thetaS (Real.exp (-4 * u))
+      - 4 * Real.exp (-6 * u) * thetaTD (Real.exp (-4 * u)) := by
+  have hS := (hasDerivAt_thetaS (Real.exp_pos (-4 * u))).comp u (hasDerivAt_expNegFourMul u)
+  have hE : HasDerivAt (fun v : ℝ ↦ 2 * Real.exp (-2 * v))
+      (2 * (-2 * Real.exp (-2 * u))) u :=
+    (hasDerivAt_expNegTwoMul u).const_mul 2
+  have hmul := hE.mul hS
+  have hder : deriv thetaM u = thetaMD u := (hasDerivAt_thetaM u).deriv
+  rw [← hder]
+  have hfun : thetaM = fun u : ℝ ↦ 2 * Real.exp (-2 * u) * thetaS (Real.exp (-4 * u)) :=
+    funext thetaM_eq_reflected
+  rw [hfun]
+  have h1 := hmul.deriv
+  rw [Function.comp_apply, show 2 * (-2 * Real.exp (-2 * u)) * thetaS (Real.exp (-4 * u))
+        + 2 * Real.exp (-2 * u)
+          * ((∑' n : ℕ, thetaSDerivTerm n (Real.exp (-4 * u))) * (-4 * Real.exp (-4 * u)))
+      = -4 * Real.exp (-2 * u) * thetaS (Real.exp (-4 * u))
+        - 4 * Real.exp (-6 * u) * thetaTD (Real.exp (-4 * u)) from ?_] at h1
+  · exact h1
+  · have hTD : (∑' n : ℕ, thetaSDerivTerm n (Real.exp (-4 * u)))
+        = thetaTD (Real.exp (-4 * u)) / 2 := by
+      unfold thetaTD
+      ring
+    rw [hTD, show Real.exp (-6 * u) = Real.exp (-2 * u) * Real.exp (-4 * u) from by
+      rw [← Real.exp_add]
+      congr 1
+      ring]
+    ring
+
 end DeBruijnNewman
 end RiemannExplorer

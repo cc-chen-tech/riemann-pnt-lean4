@@ -39,3 +39,11 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.mellin_integrand_expFourMul
 #print axioms RiemannExplorer.DeBruijnNewman.integrable_expFourMul_f_modif
 #print axioms RiemannExplorer.DeBruijnNewman.completedRiemannZeta₀_eq_integral_split
+#print axioms RiemannExplorer.DeBruijnNewman.hasDerivAt_expNegTwoMul
+#print axioms RiemannExplorer.DeBruijnNewman.hasDerivAt_expNegFourMul
+#print axioms RiemannExplorer.DeBruijnNewman.hasDerivAt_thetaW
+#print axioms RiemannExplorer.DeBruijnNewman.hasDerivAt_thetaWD
+#print axioms RiemannExplorer.DeBruijnNewman.hasDerivAt_thetaM
+#print axioms RiemannExplorer.DeBruijnNewman.hasDerivAt_thetaMD
+#print axioms RiemannExplorer.DeBruijnNewman.thetaM_eq_reflected
+#print axioms RiemannExplorer.DeBruijnNewman.thetaMD_eq_reflected
