@@ -295,5 +295,65 @@ theorem exists_regularizedCarlson_horizontal_logDeriv_le_regular_add_logPolynomi
   simp only [div_eq_mul_inv]
   gcongr
 
+/-- On a slightly smaller factorization disk, all detector zeros can be
+removed into an analytic nonvanishing factor whose center value is bounded
+below by the local divisor mass. -/
+theorem exists_regularizedCarlsonZeroDetector_fixedJensenFactor_center_lower
+    {X : ℕ} (hX : 1 ≤ X) {T : ℝ} :
+    ∃ g : ℂ → ℂ,
+      AnalyticOnNhd ℂ g
+        (Metric.closedBall ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ)) ∧
+      (∀ u : (Metric.closedBall
+          ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ) : Set ℂ),
+        g u ≠ 0) ∧
+      -Real.log (123 / 32 : ℝ) *
+          (∑ᶠ u,
+            (MeromorphicOn.divisor (regularizedCarlsonZeroDetector X)
+              (Metric.closedBall
+                ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ)) u : ℝ)) ≤
+        Real.log ‖g ((4 : ℂ) + I * (T + 1 / 2))‖ := by
+  let c : ℂ := (4 : ℂ) + I * (T + 1 / 2)
+  let b : ℝ := 123 / 32
+  have hanalytic : AnalyticOnNhd ℂ (regularizedCarlsonZeroDetector X)
+      (Metric.closedBall c b) := by
+    apply
+      (analyticOnNhd_regularizedCarlsonZeroDetector_fixedJensenOuterDisk
+        X T).mono
+    exact Metric.closedBall_subset_closedBall (by norm_num [b])
+  have hcenter : regularizedCarlsonZeroDetector X c ≠ 0 := by
+    apply regularizedCarlsonZeroDetector_ne_zero_of_four_le_re hX
+    simp [c]
+  have hnotop : ∀ u : (Metric.closedBall c b : Set ℂ),
+      meromorphicOrderAt (regularizedCarlsonZeroDetector X) u ≠ ⊤ := by
+    intro u
+    have hdist : ‖(u : ℂ) - c‖ ≤ b := by
+      have hdist' : dist (u : ℂ) c ≤ b :=
+        Metric.mem_closedBall.mp u.property
+      simpa [Complex.dist_eq] using hdist'
+    have hreAbs := Complex.abs_re_le_norm ((u : ℂ) - c)
+    have hre : 0 < (u : ℂ).re := by
+      have : |(u : ℂ).re - 4| ≤ b := by
+        simpa [c] using hreAbs.trans hdist
+      rw [abs_le] at this
+      dsimp [b] at this
+      linarith
+    rw [(hanalytic u u.property).meromorphicOrderAt_eq]
+    intro htop
+    apply analyticOrderAt_regularizedCarlsonZeroDetector_ne_top X hX hre
+    exact ENat.map_eq_top_iff.mp htop
+  rcases exists_analytic_nonzero_factor_log_norm_at_center
+      (f := regularizedCarlsonZeroDetector X) (c := c) (R := b)
+      (by norm_num [b]) hanalytic hnotop hcenter with
+    ⟨g, hg, hgne, hfactor⟩
+  have hsum := finsum_divisor_mul_log_norm_center_sub_le_log_mul_mass
+    (f := regularizedCarlsonZeroDetector X) (c := c) (b := b)
+    (by norm_num [b]) hanalytic hcenter
+  have hcenterLog : 0 ≤ Real.log ‖regularizedCarlsonZeroDetector X c‖ :=
+    Real.log_nonneg
+      (one_le_norm_regularizedCarlsonZeroDetector_of_four_le_re hX (by simp [c]))
+  refine ⟨g, by simpa [c, b] using hg, by simpa [c, b] using hgne, ?_⟩
+  dsimp [c, b] at hfactor hsum hcenterLog ⊢
+  linarith
+
 end CarlsonZeroDensity
 end PrimeNumberTheorem

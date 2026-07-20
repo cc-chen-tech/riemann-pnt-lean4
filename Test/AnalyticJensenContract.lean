@@ -48,10 +48,39 @@ example {f : ℂ → ℂ} {c : ℂ} {r R K m : ℝ}
   jensen_inner_zero_multiplicity_le_log_div
     hr hrR hanalytic hm hcenter hcircle
 
+example {f : ℂ → ℂ} {c : ℂ} {b : ℝ} (hb : 1 ≤ b)
+    (hanalytic : AnalyticOnNhd ℂ f (Metric.closedBall c b))
+    (hc : f c ≠ 0) :
+    (∑ᶠ u,
+        (MeromorphicOn.divisor f (Metric.closedBall c b) u : ℝ) *
+          Real.log ‖c - u‖) ≤
+      Real.log b *
+        (∑ᶠ u,
+          (MeromorphicOn.divisor f (Metric.closedBall c b) u : ℝ)) :=
+  finsum_divisor_mul_log_norm_center_sub_le_log_mul_mass
+    hb hanalytic hc
+
+example {f : ℂ → ℂ} {c : ℂ} {R : ℝ} (hR : 0 < R)
+    (hanalytic : AnalyticOnNhd ℂ f (Metric.closedBall c R))
+    (hnotop : ∀ u : (Metric.closedBall c R : Set ℂ),
+      meromorphicOrderAt f u ≠ ⊤)
+    (hc : f c ≠ 0) :
+    ∃ g : ℂ → ℂ,
+      AnalyticOnNhd ℂ g (Metric.closedBall c R) ∧
+      (∀ u : (Metric.closedBall c R : Set ℂ), g u ≠ 0) ∧
+      Real.log ‖f c‖ =
+        (∑ᶠ u,
+          (MeromorphicOn.divisor f (Metric.closedBall c R) u : ℝ) *
+            Real.log ‖c - u‖) + Real.log ‖g c‖ :=
+  exists_analytic_nonzero_factor_log_norm_at_center
+    hR hanalytic hnotop hc
+
 #print axioms jensen_weighted_zero_mass_le_of_circleAverage_le
 #print axioms circleAverage_log_norm_le_log_of_norm_le
 #print axioms jensen_inner_zero_multiplicity_le_of_circleAverage_le
 #print axioms jensen_inner_zero_multiplicity_le_log_div
+#print axioms finsum_divisor_mul_log_norm_center_sub_le_log_mul_mass
+#print axioms exists_analytic_nonzero_factor_log_norm_at_center
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem

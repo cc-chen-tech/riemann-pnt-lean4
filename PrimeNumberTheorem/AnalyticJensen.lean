@@ -185,5 +185,109 @@ theorem jensen_inner_zero_multiplicity_le_log_div
     jensen_inner_zero_multiplicity_le_of_circleAverage_le
       hr hrR hanalytic hm hcenter hcircle
 
+/-- On an analytic disk of radius at least one, the center-evaluated divisor
+contribution is at most `log b` times the total zero multiplicity. -/
+theorem finsum_divisor_mul_log_norm_center_sub_le_log_mul_mass
+    {f : ℂ → ℂ} {c : ℂ} {b : ℝ} (hb : 1 ≤ b)
+    (hanalytic : AnalyticOnNhd ℂ f (Metric.closedBall c b))
+    (hc : f c ≠ 0) :
+    (∑ᶠ u,
+        (MeromorphicOn.divisor f (Metric.closedBall c b) u : ℝ) *
+          Real.log ‖c - u‖) ≤
+      Real.log b *
+        (∑ᶠ u,
+          (MeromorphicOn.divisor f (Metric.closedBall c b) u : ℝ)) := by
+  classical
+  let U : Set ℂ := Metric.closedBall c b
+  let D := MeromorphicOn.divisor f U
+  have hD_nonneg : 0 ≤ D := hanalytic.divisor_nonneg
+  have hD_finite : D.support.Finite :=
+    D.finiteSupport (isCompact_closedBall c b)
+  have hcU : c ∈ U := by simp [U, (zero_le_one.trans hb)]
+  have hDc : D c = 0 := by
+    rw [show D c = MeromorphicOn.divisor f U c by rfl]
+    rw [MeromorphicOn.divisor_apply hanalytic.meromorphicOn hcU]
+    have hnormal := (hanalytic c hcU).meromorphicNFAt
+    rw [(hnormal.meromorphicOrderAt_eq_zero_iff).2 hc]
+    simp
+  have hleft_support :
+      (fun u : ℂ => (D u : ℝ) * Real.log ‖c - u‖).support ⊆
+        hD_finite.toFinset := by
+    intro u hu
+    apply hD_finite.mem_toFinset.mpr
+    by_contra hDu
+    have hDu_zero : D u = 0 := by
+      simpa [Function.mem_support] using hDu
+    simp [hDu_zero] at hu
+  have hright_support :
+      (fun u : ℂ => (D u : ℝ)).support ⊆ hD_finite.toFinset := by
+    intro u hu
+    exact hD_finite.mem_toFinset.mpr (by
+      simpa [Function.mem_support] using hu)
+  rw [show (∑ᶠ u,
+      (MeromorphicOn.divisor f (Metric.closedBall c b) u : ℝ) *
+        Real.log ‖c - u‖) =
+      ∑ᶠ u, (D u : ℝ) * Real.log ‖c - u‖ by rfl]
+  rw [show (∑ᶠ u,
+      (MeromorphicOn.divisor f (Metric.closedBall c b) u : ℝ)) =
+      ∑ᶠ u, (D u : ℝ) by rfl]
+  rw [finsum_eq_sum_of_support_subset _ hleft_support,
+    finsum_eq_sum_of_support_subset _ hright_support, Finset.mul_sum]
+  apply Finset.sum_le_sum
+  intro u hu
+  have hu_support : u ∈ D.support := hD_finite.mem_toFinset.mp hu
+  have huU : u ∈ U := D.supportWithinDomain hu_support
+  have huc : u ≠ c := by
+    intro h
+    subst u
+    have hne : D c ≠ 0 := by
+      simpa [Function.mem_support] using hu_support
+    exact hne hDc
+  have hnorm_pos : 0 < ‖c - u‖ :=
+    norm_pos_iff.mpr (sub_ne_zero.mpr huc.symm)
+  have hnorm_le : ‖c - u‖ ≤ b := by
+    simpa [U, Metric.mem_closedBall, dist_eq_norm, norm_sub_rev] using huU
+  have hlog : Real.log ‖c - u‖ ≤ Real.log b :=
+    Real.log_le_log hnorm_pos hnorm_le
+  have hDreal : (0 : ℝ) ≤ (D u : ℝ) := by
+    exact_mod_cast hD_nonneg u
+  simpa [mul_comm] using mul_le_mul_of_nonneg_left hlog hDreal
+
+/-- Extract all zeros of an analytic function on a closed disk and identify
+the logarithmic norm of the resulting nonvanishing factor at the center. -/
+theorem exists_analytic_nonzero_factor_log_norm_at_center
+    {f : ℂ → ℂ} {c : ℂ} {R : ℝ} (hR : 0 < R)
+    (hanalytic : AnalyticOnNhd ℂ f (Metric.closedBall c R))
+    (hnotop : ∀ u : (Metric.closedBall c R : Set ℂ),
+      meromorphicOrderAt f u ≠ ⊤)
+    (hc : f c ≠ 0) :
+    ∃ g : ℂ → ℂ,
+      AnalyticOnNhd ℂ g (Metric.closedBall c R) ∧
+      (∀ u : (Metric.closedBall c R : Set ℂ), g u ≠ 0) ∧
+      Real.log ‖f c‖ =
+        (∑ᶠ u,
+          (MeromorphicOn.divisor f (Metric.closedBall c R) u : ℝ) *
+            Real.log ‖c - u‖) + Real.log ‖g c‖ := by
+  let U : Set ℂ := Metric.closedBall c R
+  have hmer : MeromorphicOn f U := hanalytic.meromorphicOn
+  have hfinite : (MeromorphicOn.divisor f U).support.Finite :=
+    (MeromorphicOn.divisor f U).finiteSupport (isCompact_closedBall c R)
+  rcases hmer.extract_zeros_poles hnotop hfinite with ⟨g, hg, hgne, hfactor⟩
+  have hcU : c ∈ U := by simp [U, hR.le]
+  have hcBall : c ∈ Metric.ball c R := by simp [hR]
+  have haccUniv : AccPt c (Filter.principal (Set.univ : Set ℂ)) :=
+    PerfectSpace.univ_preperfect c (Set.mem_univ c)
+  have hacc : AccPt c (Filter.principal U) := by
+    have hnhds : U ∈ nhds c := by
+      exact Metric.closedBall_mem_nhds_of_mem hcBall
+    simpa [U] using haccUniv.nhds_inter hnhds
+  have hlog :=
+    MeromorphicOn.log_norm_meromorphicTrailingCoeffAt_extract_zeros_poles
+      hfinite hcU hacc (hmer c hcU) (hg c hcU)
+        (hgne ⟨c, hcU⟩) hfactor
+  rw [(hanalytic c hcU).meromorphicTrailingCoeffAt_of_ne_zero hc] at hlog
+  refine ⟨g, by simpa [U] using hg, by simpa [U] using hgne, ?_⟩
+  simpa [U] using hlog
+
 end CarlsonZeroDensity
 end PrimeNumberTheorem
