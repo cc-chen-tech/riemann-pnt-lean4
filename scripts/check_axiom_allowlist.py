@@ -166,6 +166,8 @@ EXPECTED_DECLARATIONS = {
     "HardyTheorem.selbergShortDirichletTriplePolynomial_eq_collectedPolynomial",
     "HardyTheorem.selbergShortDirichletCollectedFrequency_injective_on_support",
     "HardyTheorem.selbergShortDirichletCollectedPolynomial_sub_one_eq",
+    "HardyTheorem.selbergShortDirichletCollectedCoeff_eq_convolution",
+    "HardyTheorem.norm_selbergShortDirichletCollectedCoeff_le_convolutionMajorant",
     "HardyTheorem.selbergMollifiedShortDirichletPolynomial_eq_slidingCollected",
     "HardyTheorem.integral_normSq_selbergMollifiedShortDirichletPolynomial_le_gapSum",
     "HardyTheorem.hardy_littlewood_lower_bound_target_proved",

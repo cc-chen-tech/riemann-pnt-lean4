@@ -1407,6 +1407,11 @@ integral of this collected nonconstant polynomial, and its full start-variable
 second moment is bounded by an explicit finite diagonal-plus-frequency-gap
 sum.  The unresolved Selberg input is now the sharp arithmetic estimate of
 that displayed finite sum.
+The collected coefficient itself is now identified with a truncated ordinary
+Dirichlet convolution, with the critical-line normalization factored out as
+`1 / sqrt k`.  A conservative divisor-count pointwise majorant is proved; it
+does not yet provide the sharp square-energy estimate needed to close the
+Selberg bound.
 
 The three remaining open analytic directions are:
 

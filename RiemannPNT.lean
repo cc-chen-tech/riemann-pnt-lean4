@@ -65,6 +65,7 @@ import HardyTheorem.SelbergMollifiedTripleDirichlet
 import HardyTheorem.SelbergSmallAbsBadSet
 import HardyTheorem.SelbergShortDirichletExpansion
 import HardyTheorem.SelbergShortDirichletCollected
+import HardyTheorem.SelbergShortCollectedArithmetic
 import HardyTheorem.SelbergShortDirichletMeanSquare
 import MathlibAux.SlidingIntervalCorrelation
 import MathlibAux.SlidingWindowBadSet
