@@ -1503,6 +1503,28 @@ box.  Independently, the unresolved coefficient range above `N` is shortened
 from `N * X * (X - 1)` to the sharp support endpoint
 `N * (X - 1)^2`.  These are exact reductions, not the still-missing sharp
 upper bound for the resulting tapered-Moebius divisor-square sum.
+The finitely supported tapered coefficient is now also packaged as a real
+arithmetic function.  Its product-collected coefficient is proved to be its
+Dirichlet-convolution square, and the divisor sum in the diagonalized energy
+is exactly the value of that square convolved with the arithmetic zeta
+function.  This identifies the remaining estimate with a standard
+cancellation-sensitive weighted square average of arithmetic-function
+coefficients; no upper bound for that average is claimed yet.
+An independent coefficient audit also identifies a genuine obstruction to
+closing the small-absolute-mass estimate through this all-negative-frequency
+polynomial.  At every prime `p <= min N X`, the unnormalised coefficient of
+`P_N M_X^2` is proved to be `-1 + 2 * log p / log X`; it is not uniformly
+small for the linear Moebius mollifier.  Consequently the existing exact
+energy reductions must not be advertised as approaching a fixed-small-
+constant mean-square bound.  The viable continuation is either a mollifier
+approximating `zeta^(-1/2)`, or the distinct ratio-frequency expansion of
+`P_N M_X * conj(M_X)`.
+The latter route now has its first exact module: every triple is keyed by the
+reduced positive rational `l / (m*n)`, equality of keys is proved equivalent
+to equality of logarithmic frequencies on the finite support, and the full
+`P_N M_X * conj(M_X)` polynomial is proved equal to the polynomial obtained
+by collecting these ratio-frequency fibers.  No mean-square estimate for the
+new collected coefficients is claimed yet.
 
 The three remaining open analytic directions are:
 

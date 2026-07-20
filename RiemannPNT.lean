@@ -62,6 +62,7 @@ import HardyTheorem.SelbergSignedBadSet
 import HardyTheorem.SelbergMollifiedSecondMoment
 import HardyTheorem.SelbergShortAbsLower
 import HardyTheorem.SelbergMollifiedTripleDirichlet
+import HardyTheorem.SelbergMollifiedTripleCollected
 import HardyTheorem.SelbergSmallAbsBadSet
 import HardyTheorem.SelbergShortDirichletExpansion
 import HardyTheorem.SelbergShortDirichletCollected
@@ -77,6 +78,8 @@ import HardyTheorem.SelbergShortWeightedPairEnergy
 import HardyTheorem.SelbergShortCompleteRangeArithmetic
 import HardyTheorem.SelbergShortCompleteRangeEnergy
 import HardyTheorem.SelbergShortHarmonicDecomposition
+import HardyTheorem.SelbergShortArithmeticFunction
+import HardyTheorem.SelbergShortPrimeObstruction
 import HardyTheorem.SelbergShortDirichletMeanSquare
 import HardyTheorem.SelbergShortDirichletHilbertMeanSquare
 import HardyTheorem.SelbergSmallAbsGapBound
