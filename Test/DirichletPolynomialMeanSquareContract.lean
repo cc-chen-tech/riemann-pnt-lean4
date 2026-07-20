@@ -43,6 +43,18 @@ example {ι : Type*} [DecidableEq ι] (S : Finset ι)
   hilbertForm_re_eq_zero S c omega
 
 example {ι : Type*} [DecidableEq ι] (S : Finset ι)
+    (c : ι → ℂ) (omega : ι → ℝ) :
+    hilbertForm S c (fun n => -omega n) = -hilbertForm S c omega :=
+  hilbertForm_neg_frequency S c omega
+
+example {α ι : Type*} [DecidableEq α] [DecidableEq ι]
+    (S : Finset α) (index : α → ι) (hinj : Set.InjOn index (S : Set α))
+    (c : ι → ℂ) (omega : ι → ℝ) :
+    hilbertForm (S.image index) c omega =
+      hilbertForm S (fun n => c (index n)) (fun n => omega (index n)) :=
+  hilbertForm_image_eq S index hinj c omega
+
+example {ι : Type*} [DecidableEq ι] (S : Finset ι)
     (c : ι → ℂ) (omega : ι → ℝ) (D : ℝ)
     (hplus : 0 ≤ ((D : ℂ) + Complex.I * hilbertForm S c omega).re)
     (hminus : 0 ≤ ((D : ℂ) - Complex.I * hilbertForm S c omega).re) :
@@ -98,6 +110,8 @@ example {ι : Type*} [DecidableEq ι] (S : Finset ι)
 #print axioms finiteExponentialMeanSquare_cast_eq_diagonal_add_hilbert
 #print axioms conj_hilbertForm_eq_neg
 #print axioms hilbertForm_re_eq_zero
+#print axioms hilbertForm_neg_frequency
+#print axioms hilbertForm_image_eq
 #print axioms norm_hilbertForm_le_of_two_sided_re_nonneg
 #print axioms inv_abs_log_sub_log_le_nat_add_one
 #print axioms finiteExponentialSum_meanSquare_le_of_hilbert

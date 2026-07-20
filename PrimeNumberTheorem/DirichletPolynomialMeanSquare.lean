@@ -82,6 +82,44 @@ theorem hilbertForm_re_eq_zero {ι : Type*} [DecidableEq ι]
   simp only [conj_re, neg_re] at h
   linarith
 
+/-- Negating every frequency negates the off-diagonal Hilbert form. -/
+theorem hilbertForm_neg_frequency {ι : Type*} [DecidableEq ι]
+    (S : Finset ι) (c : ι → ℂ) (omega : ι → ℝ) :
+    hilbertForm S c (fun n => -omega n) = -hilbertForm S c omega := by
+  unfold hilbertForm
+  rw [← Finset.sum_neg_distrib]
+  apply Finset.sum_congr rfl
+  intro m hm
+  rw [← Finset.sum_neg_distrib]
+  apply Finset.sum_congr rfl
+  intro n hn
+  by_cases hmn : m = n
+  · simp [hmn]
+  · simp only [if_neg hmn]
+    push_cast
+    rw [show (-((omega n : ℂ))) - (-((omega m : ℂ))) =
+      -((omega n : ℂ) - (omega m : ℂ)) by ring, div_neg]
+
+/-- Reindexing a finite family by an injective map preserves its Hilbert form. -/
+theorem hilbertForm_image_eq
+    {α ι : Type*} [DecidableEq α] [DecidableEq ι]
+    (S : Finset α) (index : α → ι) (hinj : Set.InjOn index (S : Set α))
+    (c : ι → ℂ) (omega : ι → ℝ) :
+    hilbertForm (S.image index) c omega =
+      hilbertForm S (fun n => c (index n)) (fun n => omega (index n)) := by
+  unfold hilbertForm
+  rw [Finset.sum_image hinj]
+  apply Finset.sum_congr rfl
+  intro m hm
+  rw [Finset.sum_image hinj]
+  apply Finset.sum_congr rfl
+  intro n hn
+  by_cases hmn : m = n
+  · subst n
+    simp
+  · have hindex : index m ≠ index n := fun h => hmn (hinj hm hn h)
+    simp [hmn, hindex]
+
 /-- A two-sided positive-kernel certificate controls the norm of the Hilbert
 form.  Fourier proofs of the weighted Hilbert--Montgomery--Vaughan inequality
 produce exactly these two real-part inequalities. -/

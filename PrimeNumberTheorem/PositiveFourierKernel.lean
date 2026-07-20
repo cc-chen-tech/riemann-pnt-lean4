@@ -11,6 +11,14 @@ namespace DirichletPolynomial
 noncomputable def fourierKernel (g : ℝ → ℝ) (xi : ℝ) : ℂ :=
   ∫ t, (g t : ℂ) * Complex.exp (Complex.I * (xi * t))
 
+/-- At frequency zero, the Fourier kernel is the real total mass of the
+weight, embedded in the complex numbers. -/
+theorem fourierKernel_zero (g : ℝ → ℝ) :
+    fourierKernel g 0 = ((∫ t, g t : ℝ) : ℂ) := by
+  unfold fourierKernel
+  simp only [zero_mul, ofReal_zero, mul_zero, Complex.exp_zero, mul_one]
+  exact integral_ofReal
+
 /-- Positive dilation of a weight divides its Fourier frequency and contributes
 the reciprocal Jacobian. -/
 theorem fourierKernel_scale_pos
