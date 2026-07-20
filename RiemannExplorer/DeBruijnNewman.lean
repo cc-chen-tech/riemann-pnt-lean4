@@ -2974,5 +2974,109 @@ theorem integral_Iic_cexp_thetaNM (a : ℂ) :
   rwa [show Complex.exp (a * ((0 : ℝ) : ℂ)) * (thetaNM 0 : ℂ) - 0 = (thetaNM 0 : ℂ)
     from by simp] at hIBP
 
+/-! ## Phase 1d(vi)：主恒等式组装 —— `H₀(z) = (1/8)·Ξ(z/2)` -/
+
+/-- W 侧解出的二阶方程：`∫₀^∞ e^{au}·NW'(u) du = (a²−2a)·A − NW(0) + a·W(0)`，
+其中 `A = ∫₀^∞ e^{au}·W(u) du`。由一阶/二阶两条 IBP 方程线性组合得到。 -/
+theorem integral_Ioi_cexp_thetaNWD (a : ℂ) :
+    ∫ u in Set.Ioi (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaNWD u : ℂ)
+      = (a * a - 2 * a)
+          * (∫ u in Set.Ioi (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaW u : ℂ))
+        - (thetaNW 0 : ℂ) + a * (thetaW 0 : ℂ) := by
+  have hNW : MeasureTheory.IntegrableOn
+      (fun u : ℝ => Complex.exp (a * (u : ℂ)) * (thetaNW u : ℂ))
+      (Set.Ioi 0) MeasureTheory.volume := by
+    refine ((integrableOn_cexp_thetaWD a).add
+      ((integrableOn_cexp_thetaW a).const_mul 2)).congr ?_
+    filter_upwards with u
+    show Complex.exp (a * (u : ℂ)) * (thetaWD u : ℂ)
+        + 2 * (Complex.exp (a * (u : ℂ)) * (thetaW u : ℂ))
+      = Complex.exp (a * (u : ℂ)) * (thetaNW u : ℂ)
+    unfold thetaNW
+    push_cast
+    ring
+  have hNWD : MeasureTheory.IntegrableOn
+      (fun u : ℝ => Complex.exp (a * (u : ℂ)) * (thetaNWD u : ℂ))
+      (Set.Ioi 0) MeasureTheory.volume := by
+    refine ((integrableOn_cexp_thetaWDD a).add
+      ((integrableOn_cexp_thetaWD a).const_mul 2)).congr ?_
+    filter_upwards with u
+    show Complex.exp (a * (u : ℂ)) * (thetaWDD u : ℂ)
+        + 2 * (Complex.exp (a * (u : ℂ)) * (thetaWD u : ℂ))
+      = Complex.exp (a * (u : ℂ)) * (thetaNWD u : ℂ)
+    unfold thetaNWD
+    push_cast
+    ring
+  have h1 : a * (∫ u in Set.Ioi (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaW u : ℂ))
+        + (∫ u in Set.Ioi (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaWD u : ℂ))
+      = -(thetaW 0 : ℂ) := by
+    have e1 : a * (∫ u in Set.Ioi (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaW u : ℂ))
+        = ∫ u in Set.Ioi (0 : ℝ), a * (Complex.exp (a * (u : ℂ)) * (thetaW u : ℂ)) :=
+      (MeasureTheory.integral_const_mul a _).symm
+    have e2 : (∫ u in Set.Ioi (0 : ℝ), a * (Complex.exp (a * (u : ℂ)) * (thetaW u : ℂ)))
+          + (∫ u in Set.Ioi (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaWD u : ℂ))
+        = ∫ u in Set.Ioi (0 : ℝ), (a * (Complex.exp (a * (u : ℂ)) * (thetaW u : ℂ))
+            + Complex.exp (a * (u : ℂ)) * (thetaWD u : ℂ)) :=
+      (MeasureTheory.integral_add ((integrableOn_cexp_thetaW a).const_mul a)
+        (integrableOn_cexp_thetaWD a)).symm
+    have e3 : (∫ u in Set.Ioi (0 : ℝ), (a * (Complex.exp (a * (u : ℂ)) * (thetaW u : ℂ))
+            + Complex.exp (a * (u : ℂ)) * (thetaWD u : ℂ)))
+        = ∫ u in Set.Ioi (0 : ℝ), Complex.exp (a * (u : ℂ))
+            * (a * (thetaW u : ℂ) + (thetaWD u : ℂ)) := by
+      apply MeasureTheory.setIntegral_congr_fun measurableSet_Ioi
+      intro u _
+      show a * (Complex.exp (a * (u : ℂ)) * (thetaW u : ℂ))
+          + Complex.exp (a * (u : ℂ)) * (thetaWD u : ℂ)
+        = Complex.exp (a * (u : ℂ)) * (a * (thetaW u : ℂ) + (thetaWD u : ℂ))
+      ring
+    exact ((congrArg (· + _) e1).trans (e2.trans e3)).trans (integral_Ioi_cexp_thetaW a)
+  have h2 : a * (∫ u in Set.Ioi (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaNW u : ℂ))
+        + (∫ u in Set.Ioi (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaNWD u : ℂ))
+      = -(thetaNW 0 : ℂ) := by
+    have e1 : a * (∫ u in Set.Ioi (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaNW u : ℂ))
+        = ∫ u in Set.Ioi (0 : ℝ), a * (Complex.exp (a * (u : ℂ)) * (thetaNW u : ℂ)) :=
+      (MeasureTheory.integral_const_mul a _).symm
+    have e2 : (∫ u in Set.Ioi (0 : ℝ), a * (Complex.exp (a * (u : ℂ)) * (thetaNW u : ℂ)))
+          + (∫ u in Set.Ioi (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaNWD u : ℂ))
+        = ∫ u in Set.Ioi (0 : ℝ), (a * (Complex.exp (a * (u : ℂ)) * (thetaNW u : ℂ))
+            + Complex.exp (a * (u : ℂ)) * (thetaNWD u : ℂ)) :=
+      (MeasureTheory.integral_add (hNW.const_mul a) hNWD).symm
+    have e3 : (∫ u in Set.Ioi (0 : ℝ), (a * (Complex.exp (a * (u : ℂ)) * (thetaNW u : ℂ))
+            + Complex.exp (a * (u : ℂ)) * (thetaNWD u : ℂ)))
+        = ∫ u in Set.Ioi (0 : ℝ), Complex.exp (a * (u : ℂ))
+            * (a * (thetaNW u : ℂ) + (thetaNWD u : ℂ)) := by
+      apply MeasureTheory.setIntegral_congr_fun measurableSet_Ioi
+      intro u _
+      show a * (Complex.exp (a * (u : ℂ)) * (thetaNW u : ℂ))
+          + Complex.exp (a * (u : ℂ)) * (thetaNWD u : ℂ)
+        = Complex.exp (a * (u : ℂ)) * (a * (thetaNW u : ℂ) + (thetaNWD u : ℂ))
+      ring
+    exact ((congrArg (· + _) e1).trans (e2.trans e3)).trans (integral_Ioi_cexp_thetaNW a)
+  have hANW : (∫ u in Set.Ioi (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaWD u : ℂ))
+        + 2 * (∫ u in Set.Ioi (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaW u : ℂ))
+      = ∫ u in Set.Ioi (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaNW u : ℂ) := by
+    have e1 : 2 * (∫ u in Set.Ioi (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaW u : ℂ))
+        = ∫ u in Set.Ioi (0 : ℝ), 2 * (Complex.exp (a * (u : ℂ)) * (thetaW u : ℂ)) :=
+      (MeasureTheory.integral_const_mul 2 _).symm
+    have e2 : (∫ u in Set.Ioi (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaWD u : ℂ))
+          + (∫ u in Set.Ioi (0 : ℝ), 2 * (Complex.exp (a * (u : ℂ)) * (thetaW u : ℂ)))
+        = ∫ u in Set.Ioi (0 : ℝ), (Complex.exp (a * (u : ℂ)) * (thetaWD u : ℂ)
+            + 2 * (Complex.exp (a * (u : ℂ)) * (thetaW u : ℂ))) :=
+      (MeasureTheory.integral_add (integrableOn_cexp_thetaWD a)
+        ((integrableOn_cexp_thetaW a).const_mul 2)).symm
+    have e3 : (∫ u in Set.Ioi (0 : ℝ), (Complex.exp (a * (u : ℂ)) * (thetaWD u : ℂ)
+            + 2 * (Complex.exp (a * (u : ℂ)) * (thetaW u : ℂ))))
+        = ∫ u in Set.Ioi (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaNW u : ℂ) := by
+      apply MeasureTheory.setIntegral_congr_fun measurableSet_Ioi
+      intro u _
+      show Complex.exp (a * (u : ℂ)) * (thetaWD u : ℂ)
+          + 2 * (Complex.exp (a * (u : ℂ)) * (thetaW u : ℂ))
+        = Complex.exp (a * (u : ℂ)) * (thetaNW u : ℂ)
+      unfold thetaNW
+      push_cast
+      ring
+    exact (congrArg _ e1).trans (e2.trans e3)
+  linear_combination h2 + a * hANW - a * h1
+
 end DeBruijnNewman
 end RiemannExplorer
