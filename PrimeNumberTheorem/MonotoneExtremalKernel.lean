@@ -452,6 +452,80 @@ theorem hilbertForm_range_norm_le_two_pi_weighted_of_ordered
     (hpsi.weightedHilbert_minus_re_nonneg_of_ordered
       c omega hdelta hmono N hgap)
 
+/-- Transport the ordered `range N` inequality through an injective finite
+reindexing into an arbitrary target index type. -/
+theorem hilbertForm_image_norm_le_two_pi_weighted_of_ordered
+    {ι : Type*} [DecidableEq ι]
+    {psi : ℝ → ℝ} (hpsi : MonotoneExtremalKernelCertificate psi)
+    (index : ℕ → ι) (c : ι → ℂ) (omega : ι → ℝ) {delta : ℕ → ℝ}
+    (hdelta : ∀ j, 0 < delta j)
+    (hmono : ∀ j, delta (j + 1) ≤ delta j) (N : ℕ)
+    (hinj : Set.InjOn index (Finset.range N : Set ℕ))
+    (hgap : ∀ m ∈ Finset.range N, ∀ n ∈ Finset.range N, m ≠ n →
+      delta (min m n) ≤ |omega (index n) - omega (index m)|) :
+    ‖hilbertForm ((Finset.range N).image index) c omega‖ ≤
+      2 * Real.pi *
+        ∑ n ∈ Finset.range N, ‖c (index n)‖ ^ 2 / delta n := by
+  rw [hilbertForm_image_eq (Finset.range N) index hinj]
+  exact hpsi.hilbertForm_range_norm_le_two_pi_weighted_of_ordered
+    (fun n => c (index n)) (fun n => omega (index n))
+    hdelta hmono N hgap
+
+/-- The transported inequality with `delta` specialized to the actual local
+frequency separations of the image family.  The enumeration is assumed to be
+ordered by these separations; constructing such an enumeration is a separate
+finite sorting step. -/
+theorem hilbertForm_image_norm_le_two_pi_localSeparation_of_ordered
+    {ι : Type*} [DecidableEq ι]
+    {psi : ℝ → ℝ} (hpsi : MonotoneExtremalKernelCertificate psi)
+    (index : ℕ → ι) (c : ι → ℂ) (omega : ι → ℝ) (N : ℕ)
+    (hinj : Set.InjOn index (Finset.range N : Set ℕ))
+    (hS : ((Finset.range N).image index).Nontrivial)
+    (hmem : ∀ j, index j ∈ (Finset.range N).image index)
+    (homega : Set.InjOn omega
+      (((Finset.range N).image index : Finset ι) : Set ι))
+    (hmono : ∀ j,
+      localFrequencySeparation ((Finset.range N).image index) omega (index (j + 1)) ≤
+        localFrequencySeparation ((Finset.range N).image index) omega (index j)) :
+    ‖hilbertForm ((Finset.range N).image index) c omega‖ ≤
+      2 * Real.pi *
+        ∑ n ∈ (Finset.range N).image index,
+          ‖c n‖ ^ 2 /
+            localFrequencySeparation ((Finset.range N).image index) omega n := by
+  let S : Finset ι := (Finset.range N).image index
+  let delta : ℕ → ℝ := fun j => localFrequencySeparation S omega (index j)
+  have hdelta : ∀ j, 0 < delta j := fun j =>
+    localFrequencySeparation_pos hS (hmem j) homega
+  have hgap : ∀ m ∈ Finset.range N, ∀ n ∈ Finset.range N, m ≠ n →
+      delta (min m n) ≤ |omega (index n) - omega (index m)| := by
+    intro m hm n hn hmn
+    have hindexNe : index m ≠ index n := fun h => hmn (hinj hm hn h)
+    rcases le_total m n with hmnOrder | hnmOrder
+    · rw [min_eq_left hmnOrder]
+      have hsep := localFrequencySeparation_le_abs_sub
+        (S := S) (omega := omega) (m := index n) (n := index m)
+        (hmem n) hindexNe.symm
+      simpa only [abs_sub_comm] using hsep
+    · rw [min_eq_right hnmOrder]
+      exact localFrequencySeparation_le_abs_sub
+        (S := S) (omega := omega) (m := index m) (n := index n)
+        (hmem m) hindexNe
+  have hbound := hpsi.hilbertForm_image_norm_le_two_pi_weighted_of_ordered
+    index c omega hdelta hmono N hinj hgap
+  dsimp [delta, S] at hbound
+  calc
+    ‖hilbertForm ((Finset.range N).image index) c omega‖ ≤
+        2 * Real.pi *
+          ∑ n ∈ Finset.range N, ‖c (index n)‖ ^ 2 /
+            localFrequencySeparation ((Finset.range N).image index) omega (index n) :=
+      hbound
+    _ = 2 * Real.pi *
+        ∑ n ∈ (Finset.range N).image index,
+          ‖c n‖ ^ 2 /
+            localFrequencySeparation ((Finset.range N).image index) omega n := by
+      congr 1
+      rw [Finset.sum_image hinj]
+
 end MonotoneExtremalKernelCertificate
 end DirichletPolynomial
 end PrimeNumberTheorem
