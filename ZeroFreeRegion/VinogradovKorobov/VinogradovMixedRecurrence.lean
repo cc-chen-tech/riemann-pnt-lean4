@@ -716,6 +716,13 @@ noncomputable def normalizedVinogradovUnitSeparatedMixedMomentSum
       p ((k - r + 1) * b) a b k r t X Y
         (vinogradovCenterValue z.1) (vinogradovCenterValue z.2)‖
 
+/-- Average mixed conditioned moment over all base-prime-separated center
+pairs. -/
+noncomputable def normalizedVinogradovUnitSeparatedMixedMomentAverage
+    (p a b k r t X Y : ℕ) [Fact p.Prime] : ℝ :=
+  normalizedVinogradovUnitSeparatedMixedMomentSum p a b k r t X Y /
+    (vinogradovUnitSeparatedCenterPairSet p a b).card
+
 /-- Aggregating the pointwise `gamma = 0` recurrence costs only the number
 of unit-separated center pairs; the same far-scale moment bounds every
 summand. -/
@@ -781,6 +788,36 @@ theorem normalizedVinogradovUnitSeparatedMixedMomentSum_le_farScaleMoment_explic
             (p ^ vinogradovFarScale k r a b 0)‖ *
           (Y ^ (2 * t) : ℝ)) := by
   simpa only [card_vinogradovUnitSeparatedCenterPairSet p a b hb] using
+    normalizedVinogradovUnitSeparatedMixedMomentSum_le_farScaleMoment
+      p a b k r t X Y hrk hkp hb hbudget htail hscale
+
+/-- After averaging over the `gamma = 0` center-pair stratum, its exact
+cardinality factor cancels from the recurrence. -/
+theorem normalizedVinogradovUnitSeparatedMixedMomentAverage_le_farScaleMoment
+    (p a b k r t X Y : ℕ) [Fact p.Prime]
+    (hrk : r ≤ k) (hkp : k < p) (hb : 0 < b)
+    (hbudget : a * r ≤ (k - r + 1) * b)
+    (htail : (k - r + 1) * b ≤ a * (r + 1))
+    (hscale : X ≤ p ^ a * p ^ vinogradovFarScale k r a b 0) :
+    normalizedVinogradovUnitSeparatedMixedMomentAverage
+        p a b k r t X Y ≤
+      ‖normalizedVinogradovMomentMod
+        (p ^ vinogradovFarScale k r a b 0) r r
+          (p ^ vinogradovFarScale k r a b 0)‖ *
+        (Y ^ (2 * t) : ℝ) := by
+  have hexponent : b - 1 < b := by omega
+  have hpow : p ^ (b - 1) < p ^ b :=
+    Nat.pow_lt_pow_right (Fact.out : p.Prime).one_lt hexponent
+  have hcardNat : 0 < (vinogradovUnitSeparatedCenterPairSet p a b).card := by
+    rw [card_vinogradovUnitSeparatedCenterPairSet p a b hb]
+    exact Nat.mul_pos (pow_pos (Fact.out : p.Prime).pos a)
+      (Nat.sub_pos_of_lt hpow)
+  have hcardReal :
+      (0 : ℝ) < (vinogradovUnitSeparatedCenterPairSet p a b).card := by
+    exact_mod_cast hcardNat
+  unfold normalizedVinogradovUnitSeparatedMixedMomentAverage
+  apply (div_le_iff₀ hcardReal).2
+  simpa only [mul_comm] using
     normalizedVinogradovUnitSeparatedMixedMomentSum_le_farScaleMoment
       p a b k r t X Y hrk hkp hb hbudget htail hscale
 
