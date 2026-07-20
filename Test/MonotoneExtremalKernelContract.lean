@@ -242,6 +242,26 @@ example {ι : Type*} [DecidableEq ι]
   hpsi.hilbertForm_image_norm_le_two_pi_localSeparation_of_ordered
     index c omega N hinj hS hmem homega hmono
 
+example {ι : Type*} [DecidableEq ι]
+    (S : Finset ι) (omega : ι → ℝ) (hS : S.Nonempty) :
+    ∃ index : ℕ → ι,
+      Set.InjOn index (Finset.range S.card : Set ℕ) ∧
+      (Finset.range S.card).image index = S ∧
+      (∀ j, index j ∈ S) ∧
+      ∀ j,
+        localFrequencySeparation S omega (index (j + 1)) ≤
+          localFrequencySeparation S omega (index j) :=
+  exists_localSeparation_ordered_enumeration S omega hS
+
+example {ι : Type*} [DecidableEq ι]
+    {psi : ℝ → ℝ} (hpsi : MonotoneExtremalKernelCertificate psi)
+    (S : Finset ι) (c : ι → ℂ) (omega : ι → ℝ)
+    (hS : S.Nontrivial) (homega : Set.InjOn omega (S : Set ι)) :
+    ‖hilbertForm S c omega‖ ≤
+      2 * Real.pi *
+        ∑ n ∈ S, ‖c n‖ ^ 2 / localFrequencySeparation S omega n :=
+  hpsi.hilbertForm_norm_le_two_pi_localSeparation S c omega hS homega
+
 #print axioms MonotoneExtremalKernelCertificate.integrable_dilation
 #print axioms fourierKernel_reflect
 #print axioms MonotoneExtremalKernelCertificate.integrable_reflection
@@ -265,6 +285,8 @@ example {ι : Type*} [DecidableEq ι]
 #print axioms MonotoneExtremalKernelCertificate.hilbertForm_range_norm_le_two_pi_weighted_of_ordered
 #print axioms MonotoneExtremalKernelCertificate.hilbertForm_image_norm_le_two_pi_weighted_of_ordered
 #print axioms MonotoneExtremalKernelCertificate.hilbertForm_image_norm_le_two_pi_localSeparation_of_ordered
+#print axioms exists_localSeparation_ordered_enumeration
+#print axioms MonotoneExtremalKernelCertificate.hilbertForm_norm_le_two_pi_localSeparation
 
 end DirichletPolynomial
 end PrimeNumberTheorem

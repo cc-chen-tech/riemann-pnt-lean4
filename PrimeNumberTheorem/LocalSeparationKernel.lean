@@ -1,5 +1,6 @@
 import PrimeNumberTheorem.PositiveFourierKernel
 import Mathlib.Data.Finset.Sort
+import Mathlib.Data.List.GetD
 
 open Complex MeasureTheory
 open scoped BigOperators ComplexConjugate
@@ -191,6 +192,113 @@ theorem orderedLocalFrequencySeparations_pos
   rcases mem_orderedLocalFrequencySeparations.mp hdelta with ⟨n, hn, hndelta⟩
   rw [← hndelta]
   exact localFrequencySeparation_pos hS hn homega
+
+/-- A nonempty finite family admits an enumeration ordered by decreasing local
+frequency separation.  Past the end of the finite list, the enumeration is
+extended constantly by its final (smallest-separation) element. -/
+theorem exists_localSeparation_ordered_enumeration
+    {ι : Type*} [DecidableEq ι]
+    (S : Finset ι) (omega : ι → ℝ) (hS : S.Nonempty) :
+    ∃ index : ℕ → ι,
+      Set.InjOn index (Finset.range S.card : Set ℕ) ∧
+      (Finset.range S.card).image index = S ∧
+      (∀ j, index j ∈ S) ∧
+      ∀ j,
+        localFrequencySeparation S omega (index (j + 1)) ≤
+          localFrequencySeparation S omega (index j) := by
+  classical
+  let r : ι → ι → Prop := fun m n =>
+    localFrequencySeparation S omega m ≥ localFrequencySeparation S omega n
+  letI : IsTrans ι r := ⟨by
+    intro a b c hab hbc
+    dsimp only [r] at hab hbc ⊢
+    exact hbc.trans hab⟩
+  letI : Std.Total r := ⟨by
+    intro a b
+    exact le_total (localFrequencySeparation S omega b)
+      (localFrequencySeparation S omega a)⟩
+  let L : List ι := S.toList.insertionSort r
+  have hlength : L.length = S.card := by
+    simp [L]
+  have hLnodup : L.Nodup := by
+    exact (List.perm_insertionSort r S.toList).nodup_iff.mpr S.nodup_toList
+  have hL : L ≠ [] := by
+    apply List.ne_nil_of_length_pos
+    rw [hlength]
+    exact Finset.card_pos.mpr hS
+  let last : ι := L.getLast hL
+  let index : ℕ → ι := fun j => L.getD j last
+  have hlastMem : last ∈ S := by
+    change L.getLast hL ∈ S
+    have hmemL : L.getLast hL ∈ L := List.getLast_mem hL
+    dsimp only [L] at hmemL
+    rw [List.mem_insertionSort, Finset.mem_toList] at hmemL
+    exact hmemL
+  have hindexMem : ∀ j, index j ∈ S := by
+    intro j
+    by_cases hj : j < L.length
+    · simp only [index, List.getD_eq_getElem L last hj]
+      have hmemL : L[j] ∈ L := List.get_mem L ⟨j, hj⟩
+      dsimp only [L] at hmemL
+      rw [List.mem_insertionSort, Finset.mem_toList] at hmemL
+      exact hmemL
+    · simp only [index,
+        List.getD_eq_default L last (Nat.le_of_not_gt hj)]
+      exact hlastMem
+  have hinj : Set.InjOn index (Finset.range S.card : Set ℕ) := by
+    intro m hm n hn hmn
+    have hmLt : m < L.length := by
+      rw [hlength]
+      exact Finset.mem_range.mp hm
+    have hnLt : n < L.length := by
+      rw [hlength]
+      exact Finset.mem_range.mp hn
+    have hget : L.get ⟨m, hmLt⟩ = L.get ⟨n, hnLt⟩ := by
+      dsimp only [index] at hmn
+      rw [List.getD_eq_get L last ⟨m, hmLt⟩,
+        List.getD_eq_get L last ⟨n, hnLt⟩] at hmn
+      exact hmn
+    exact Fin.ext_iff.mp (hLnodup.injective_get hget)
+  have himage : (Finset.range S.card).image index = S := by
+    apply Finset.Subset.antisymm
+    · intro n hn
+      rcases Finset.mem_image.mp hn with ⟨j, hj, rfl⟩
+      exact hindexMem j
+    · intro n hn
+      have hnL : n ∈ L := by simpa [L] using hn
+      rcases List.mem_iff_get.mp hnL with ⟨j, hj⟩
+      apply Finset.mem_image.mpr
+      refine ⟨j, ?_, ?_⟩
+      · rw [Finset.mem_range, ← hlength]
+        exact j.isLt
+      · simp only [index, List.getD_eq_get L last j]
+        exact hj
+  have hmono : ∀ j,
+      localFrequencySeparation S omega (index (j + 1)) ≤
+        localFrequencySeparation S omega (index j) := by
+    have hpair : L.Pairwise r := by
+      exact List.pairwise_insertionSort r S.toList
+    intro j
+    by_cases hsucc : j + 1 < L.length
+    · have hj : j < L.length := by omega
+      simp only [index, List.getD_eq_get L last ⟨j + 1, hsucc⟩,
+        List.getD_eq_get L last ⟨j, hj⟩]
+      exact hpair.rel_get_of_le (show (⟨j, hj⟩ : Fin L.length) ≤
+        ⟨j + 1, hsucc⟩ by exact Nat.le_succ j)
+    · simp only [index,
+        List.getD_eq_default L last (Nat.le_of_not_gt hsucc)]
+      by_cases hj : j < L.length
+      · rw [List.getD_eq_get L last ⟨j, hj⟩]
+        change r (L.get ⟨j, hj⟩) last
+        have hlengthPos : 0 < L.length := List.length_pos_of_ne_nil hL
+        have hlastLt : L.length - 1 < L.length := by omega
+        rw [show last = L.get ⟨L.length - 1, hlastLt⟩ by
+          exact (List.get_length_sub_one hlastLt).symm]
+        exact hpair.rel_get_of_le (show (⟨j, hj⟩ : Fin L.length) ≤
+          ⟨L.length - 1, hlastLt⟩ by
+            exact Nat.le_sub_one_of_lt hj)
+      · rw [List.getD_eq_default L last (Nat.le_of_not_gt hj)]
+  exact ⟨index, hinj, himage, hindexMem, hmono⟩
 
 /-- The frequency-side profile obtained by positively dilating a Fourier
 weight. -/

@@ -526,6 +526,41 @@ theorem hilbertForm_image_norm_le_two_pi_localSeparation_of_ordered
       congr 1
       rw [Finset.sum_image hinj]
 
+/-- The weighted Hilbert--Montgomery--Vaughan inequality for an arbitrary
+nontrivial finite family of distinct real frequencies.  The required ordering
+is supplied internally by sorting the indices by decreasing local separation. -/
+theorem hilbertForm_norm_le_two_pi_localSeparation
+    {ι : Type*} [DecidableEq ι]
+    {psi : ℝ → ℝ} (hpsi : MonotoneExtremalKernelCertificate psi)
+    (S : Finset ι) (c : ι → ℂ) (omega : ι → ℝ)
+    (hS : S.Nontrivial) (homega : Set.InjOn omega (S : Set ι)) :
+    ‖hilbertForm S c omega‖ ≤
+      2 * Real.pi *
+        ∑ n ∈ S, ‖c n‖ ^ 2 / localFrequencySeparation S omega n := by
+  rcases exists_localSeparation_ordered_enumeration S omega hS.nonempty with
+    ⟨index, hinj, himage, hmem, hmono⟩
+  have himageNontrivial : ((Finset.range S.card).image index).Nontrivial := by
+    rw [himage]
+    exact hS
+  have hmemImage : ∀ j, index j ∈ (Finset.range S.card).image index := by
+    rw [himage]
+    exact hmem
+  have homegaImage : Set.InjOn omega
+      ((((Finset.range S.card).image index : Finset ι)) : Set ι) := by
+    rw [himage]
+    exact homega
+  have hmonoImage : ∀ j,
+      localFrequencySeparation ((Finset.range S.card).image index) omega
+          (index (j + 1)) ≤
+        localFrequencySeparation ((Finset.range S.card).image index) omega
+          (index j) := by
+    rw [himage]
+    exact hmono
+  have hbound := hpsi.hilbertForm_image_norm_le_two_pi_localSeparation_of_ordered
+    index c omega S.card hinj himageNontrivial hmemImage homegaImage hmonoImage
+  rw [himage] at hbound
+  exact hbound
+
 end MonotoneExtremalKernelCertificate
 end DirichletPolynomial
 end PrimeNumberTheorem
