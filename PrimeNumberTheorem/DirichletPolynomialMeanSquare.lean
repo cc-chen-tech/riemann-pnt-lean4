@@ -82,6 +82,24 @@ theorem hilbertForm_re_eq_zero {ι : Type*} [DecidableEq ι]
   simp only [conj_re, neg_re] at h
   linarith
 
+/-- Negating every frequency negates the off-diagonal Hilbert form. -/
+theorem hilbertForm_neg_frequency {ι : Type*} [DecidableEq ι]
+    (S : Finset ι) (c : ι → ℂ) (omega : ι → ℝ) :
+    hilbertForm S c (fun n => -omega n) = -hilbertForm S c omega := by
+  unfold hilbertForm
+  rw [← Finset.sum_neg_distrib]
+  apply Finset.sum_congr rfl
+  intro m hm
+  rw [← Finset.sum_neg_distrib]
+  apply Finset.sum_congr rfl
+  intro n hn
+  by_cases hmn : m = n
+  · simp [hmn]
+  · simp only [if_neg hmn]
+    push_cast
+    rw [show (-((omega n : ℂ))) - (-((omega m : ℂ))) =
+      -((omega n : ℂ) - (omega m : ℂ)) by ring, div_neg]
+
 /-- A two-sided positive-kernel certificate controls the norm of the Hilbert
 form.  Fourier proofs of the weighted Hilbert--Montgomery--Vaughan inequality
 produce exactly these two real-part inequalities. -/

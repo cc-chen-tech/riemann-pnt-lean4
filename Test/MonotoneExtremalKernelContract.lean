@@ -91,6 +91,125 @@ example {ι : Type*} [DecidableEq ι]
           (fun t => psi (deltaOld * t))).re :=
   hpsi.kernelForm_dilation_increment_re_nonneg hNew hOld horder
 
+example (psi : ℝ → ℝ) (q : ℕ → ℝ) (j : ℕ) : ℝ → ℝ :=
+  cumulativeExtremalWeight psi q j
+
+example {psi : ℝ → ℝ} (hpsi : MonotoneExtremalKernelCertificate psi)
+    {q : ℕ → ℝ} (hq : ∀ j, 0 < q j) (j : ℕ) :
+    Integrable (cumulativeExtremalWeight psi q j) :=
+  hpsi.integrable_cumulativeExtremalWeight hq j
+
+example {psi : ℝ → ℝ} (hpsi : MonotoneExtremalKernelCertificate psi)
+    {q : ℕ → ℝ} (hq : ∀ j, 0 < q j)
+    (hmono : ∀ j, q (j + 1) ≤ q j) (j : ℕ) (t : ℝ) :
+    0 ≤ cumulativeExtremalWeight psi q (j + 1) t -
+      cumulativeExtremalWeight psi q j t :=
+  hpsi.cumulativeExtremalWeight_sub_nonneg hq hmono j t
+
+example {psi : ℝ → ℝ} (hpsi : MonotoneExtremalKernelCertificate psi)
+    (c : ℕ → ℂ) (omega : ℕ → ℝ) {q : ℕ → ℝ}
+    (hq : ∀ j, 0 < q j) (hmono : ∀ j, q (j + 1) ≤ q j) (N : ℕ) :
+    0 ≤ (∑ j ∈ Finset.range N,
+      finiteFourierKernelForm (suffixIndexSet N j) c omega
+        (fun t => cumulativeExtremalWeight psi q (j + 1) t -
+          cumulativeExtremalWeight psi q j t)).re :=
+  hpsi.sum_suffix_cumulativeExtremalWeight_re_nonneg c omega hq hmono N
+
+example (psi : ℝ → ℝ) (q : ℕ → ℝ) (xi : ℝ) :
+    fourierKernel (cumulativeExtremalWeight psi q 0) xi = 0 :=
+  MonotoneExtremalKernelCertificate.fourierKernel_cumulativeExtremalWeight_zero
+    psi q xi
+
+example {psi : ℝ → ℝ} (hpsi : MonotoneExtremalKernelCertificate psi)
+    {delta : ℕ → ℝ} (hdelta : ∀ j, 0 < delta j) (n : ℕ) :
+    fourierKernel
+        (cumulativeExtremalWeight psi
+          (fun j => normalizedFourierDilationScale (delta j)) (n + 1)) 0 =
+      (((4 * Real.pi / delta n : ℝ)) : ℂ) :=
+  hpsi.fourier_cumulativeExtremalWeight_succ_zero hdelta n
+
+example {psi : ℝ → ℝ} (hpsi : MonotoneExtremalKernelCertificate psi)
+    {delta : ℕ → ℝ} (hdelta : ∀ j, 0 < delta j)
+    {n : ℕ} {xi : ℝ} (hgap : delta n ≤ |xi|) :
+    fourierKernel
+        (cumulativeExtremalWeight psi
+          (fun j => normalizedFourierDilationScale (delta j)) (n + 1)) xi =
+      (-2 * Complex.I) / xi :=
+  hpsi.fourier_cumulativeExtremalWeight_succ_offDiagonal hdelta hgap
+
+example {psi : ℝ → ℝ} (hpsi : MonotoneExtremalKernelCertificate psi)
+    {delta : ℕ → ℝ} (hdelta : ∀ j, 0 < delta j)
+    (omega : ℕ → ℝ) {m n : ℕ}
+    (hgap : m ≠ n → delta (min m n) ≤ |omega n - omega m|) :
+    fourierKernel
+        (cumulativeExtremalWeight psi
+          (fun j => normalizedFourierDilationScale (delta j)) (min m n + 1))
+        (omega n - omega m) -
+      fourierKernel
+        (cumulativeExtremalWeight psi
+          (fun j => normalizedFourierDilationScale (delta j)) 0)
+        (omega n - omega m) =
+      if m = n then (((4 * Real.pi / delta n : ℝ)) : ℂ)
+      else (-2 * Complex.I) / (omega n - omega m) :=
+  hpsi.cumulativeExtremalWeight_endpointKernel_eq hdelta omega hgap
+
+example {psi : ℝ → ℝ} (hpsi : MonotoneExtremalKernelCertificate psi)
+    (c : ℕ → ℂ) (omega : ℕ → ℝ) {delta : ℕ → ℝ}
+    (hdelta : ∀ j, 0 < delta j) (N : ℕ)
+    (hgap : ∀ m ∈ Finset.range N, ∀ n ∈ Finset.range N, m ≠ n →
+      delta (min m n) ≤ |omega n - omega m|) :
+    (∑ m ∈ Finset.range N, ∑ n ∈ Finset.range N,
+      conj (c m) * c n *
+        (fourierKernel
+            (cumulativeExtremalWeight psi
+              (fun j => normalizedFourierDilationScale (delta j))
+              (min m n + 1)) (omega n - omega m) -
+          fourierKernel
+            (cumulativeExtremalWeight psi
+              (fun j => normalizedFourierDilationScale (delta j)) 0)
+              (omega n - omega m))) =
+      (((4 * Real.pi *
+        ∑ n ∈ Finset.range N, ‖c n‖ ^ 2 / delta n : ℝ)) : ℂ) +
+        (-2 * Complex.I) * hilbertForm (Finset.range N) c omega :=
+  hpsi.sum_cumulativeEndpointKernel_eq_diagonal_add_hilbert
+    c omega hdelta N hgap
+
+example {psi : ℝ → ℝ} (hpsi : MonotoneExtremalKernelCertificate psi)
+    (c : ℕ → ℂ) (omega : ℕ → ℝ) {delta : ℕ → ℝ}
+    (hdelta : ∀ j, 0 < delta j)
+    (hmono : ∀ j, delta (j + 1) ≤ delta j) (N : ℕ)
+    (hgap : ∀ m ∈ Finset.range N, ∀ n ∈ Finset.range N, m ≠ n →
+      delta (min m n) ≤ |omega n - omega m|) :
+    0 ≤ ((((2 * Real.pi *
+        ∑ n ∈ Finset.range N, ‖c n‖ ^ 2 / delta n : ℝ)) : ℂ) -
+      Complex.I * hilbertForm (Finset.range N) c omega).re :=
+  hpsi.weightedHilbert_minus_re_nonneg_of_ordered
+    c omega hdelta hmono N hgap
+
+example {psi : ℝ → ℝ} (hpsi : MonotoneExtremalKernelCertificate psi)
+    (c : ℕ → ℂ) (omega : ℕ → ℝ) {delta : ℕ → ℝ}
+    (hdelta : ∀ j, 0 < delta j)
+    (hmono : ∀ j, delta (j + 1) ≤ delta j) (N : ℕ)
+    (hgap : ∀ m ∈ Finset.range N, ∀ n ∈ Finset.range N, m ≠ n →
+      delta (min m n) ≤ |omega n - omega m|) :
+    0 ≤ ((((2 * Real.pi *
+        ∑ n ∈ Finset.range N, ‖c n‖ ^ 2 / delta n : ℝ)) : ℂ) +
+      Complex.I * hilbertForm (Finset.range N) c omega).re :=
+  hpsi.weightedHilbert_plus_re_nonneg_of_ordered
+    c omega hdelta hmono N hgap
+
+example {psi : ℝ → ℝ} (hpsi : MonotoneExtremalKernelCertificate psi)
+    (c : ℕ → ℂ) (omega : ℕ → ℝ) {delta : ℕ → ℝ}
+    (hdelta : ∀ j, 0 < delta j)
+    (hmono : ∀ j, delta (j + 1) ≤ delta j) (N : ℕ)
+    (hgap : ∀ m ∈ Finset.range N, ∀ n ∈ Finset.range N, m ≠ n →
+      delta (min m n) ≤ |omega n - omega m|) :
+    ‖hilbertForm (Finset.range N) c omega‖ ≤
+      2 * Real.pi *
+        ∑ n ∈ Finset.range N, ‖c n‖ ^ 2 / delta n :=
+  hpsi.hilbertForm_range_norm_le_two_pi_weighted_of_ordered
+    c omega hdelta hmono N hgap
+
 #print axioms MonotoneExtremalKernelCertificate.integrable_dilation
 #print axioms fourierKernel_reflect
 #print axioms MonotoneExtremalKernelCertificate.integrable_reflection
@@ -101,6 +220,17 @@ example {ι : Type*} [DecidableEq ι]
 #print axioms MonotoneExtremalKernelCertificate.fourier_reflection_localDilation_offDiagonal
 #print axioms MonotoneExtremalKernelCertificate.fourier_localDilation_zero
 #print axioms MonotoneExtremalKernelCertificate.kernelForm_dilation_increment_re_nonneg
+#print axioms MonotoneExtremalKernelCertificate.integrable_cumulativeExtremalWeight
+#print axioms MonotoneExtremalKernelCertificate.cumulativeExtremalWeight_sub_nonneg
+#print axioms MonotoneExtremalKernelCertificate.sum_suffix_cumulativeExtremalWeight_re_nonneg
+#print axioms MonotoneExtremalKernelCertificate.fourierKernel_cumulativeExtremalWeight_zero
+#print axioms MonotoneExtremalKernelCertificate.fourier_cumulativeExtremalWeight_succ_zero
+#print axioms MonotoneExtremalKernelCertificate.fourier_cumulativeExtremalWeight_succ_offDiagonal
+#print axioms MonotoneExtremalKernelCertificate.cumulativeExtremalWeight_endpointKernel_eq
+#print axioms MonotoneExtremalKernelCertificate.sum_cumulativeEndpointKernel_eq_diagonal_add_hilbert
+#print axioms MonotoneExtremalKernelCertificate.weightedHilbert_minus_re_nonneg_of_ordered
+#print axioms MonotoneExtremalKernelCertificate.weightedHilbert_plus_re_nonneg_of_ordered
+#print axioms MonotoneExtremalKernelCertificate.hilbertForm_range_norm_le_two_pi_weighted_of_ordered
 
 end DirichletPolynomial
 end PrimeNumberTheorem

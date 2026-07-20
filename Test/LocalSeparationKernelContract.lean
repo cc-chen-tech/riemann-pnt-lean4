@@ -34,6 +34,20 @@ example (delta : ℝ) :
     2 * Real.pi * normalizedFourierDilationScale delta = delta :=
   two_pi_mul_normalizedFourierDilationScale delta
 
+example {deltaNew deltaOld : ℝ} (horder : deltaNew ≤ deltaOld) :
+    normalizedFourierDilationScale deltaNew ≤
+      normalizedFourierDilationScale deltaOld :=
+  normalizedFourierDilationScale_mono horder
+
+example {g : ℝ → ℝ} {kappa : ℂ} {delta xi : ℝ}
+    (hdelta : 0 < delta) (hgap : delta ≤ |xi|)
+    (htail : ∀ eta : ℝ, 2 * Real.pi ≤ |eta| →
+      fourierKernel g eta = kappa / eta) :
+    fourierKernel
+        (fun t => g (normalizedFourierDilationScale delta * t)) xi =
+      kappa / xi :=
+  fourierKernel_normalizedDilation_eq_const_div hdelta hgap htail
+
 noncomputable example {ι : Type*} [DecidableEq ι]
     (S : Finset ι) (omega : ι → ℝ) (n : ι) : ℝ :=
   localFourierDilationScale S omega n
@@ -161,6 +175,17 @@ example {R : Type*} [CommRing R]
         a m n * (K (min m n + 1) m n - K 0 m n) :=
   sum_suffix_mul_kernelIncrement_telescope a K N
 
+example (c : ℕ → ℂ) (omega : ℕ → ℝ) (g : ℕ → ℝ → ℝ)
+    (hg : ∀ j, Integrable (g j)) (N : ℕ) :
+    (∑ j ∈ Finset.range N,
+        finiteFourierKernelForm (suffixIndexSet N j) c omega
+          (fun t => g (j + 1) t - g j t)) =
+      ∑ m ∈ Finset.range N, ∑ n ∈ Finset.range N,
+        conj (c m) * c n *
+          (fourierKernel (g (min m n + 1)) (omega n - omega m) -
+            fourierKernel (g 0) (omega n - omega m)) :=
+  sum_suffix_finiteFourierKernelForm_sub_telescope c omega g hg N
+
 example {ι : Type*} [DecidableEq ι]
     (S : Finset ι) (c : ι → ℂ) (omega : ι → ℝ)
     (g : ℝ → ℝ) (index : ℕ → ι) (N : ℕ) :
@@ -179,6 +204,8 @@ example {ι : Type*} [DecidableEq ι]
 #print axioms localFrequencySeparation_pos
 #print axioms normalizedFourierDilationScale_pos
 #print axioms two_pi_mul_normalizedFourierDilationScale
+#print axioms normalizedFourierDilationScale_mono
+#print axioms fourierKernel_normalizedDilation_eq_const_div
 #print axioms localFourierDilationScale_pos
 #print axioms two_pi_mul_localFourierDilationScale_le_abs_sub
 #print axioms fourierKernel_localDilation_eq_const_div
@@ -193,6 +220,7 @@ example {ι : Type*} [DecidableEq ι]
 #print axioms orderedLocalFrequencySeparations_kernelForm_telescope
 #print axioms sum_suffix_double_eq_sum_min
 #print axioms sum_suffix_mul_kernelIncrement_telescope
+#print axioms sum_suffix_finiteFourierKernelForm_sub_telescope
 #print axioms finiteFourierKernelForm_localSeparation_telescope
 
 end DirichletPolynomial

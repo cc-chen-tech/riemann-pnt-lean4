@@ -59,6 +59,35 @@ theorem two_pi_mul_normalizedFourierDilationScale (delta : ℝ) :
   unfold normalizedFourierDilationScale
   field_simp [Real.pi_ne_zero]
 
+theorem normalizedFourierDilationScale_mono
+    {deltaNew deltaOld : ℝ} (horder : deltaNew ≤ deltaOld) :
+    normalizedFourierDilationScale deltaNew ≤
+      normalizedFourierDilationScale deltaOld := by
+  unfold normalizedFourierDilationScale
+  exact div_le_div_of_nonneg_right horder (by positivity)
+
+/-- A reciprocal Fourier tail beyond `2 * pi` remains exactly reciprocal
+after dilation by a prescribed frequency gap divided by `2 * pi`. -/
+theorem fourierKernel_normalizedDilation_eq_const_div
+    {g : ℝ → ℝ} {kappa : ℂ} {delta xi : ℝ}
+    (hdelta : 0 < delta) (hgap : delta ≤ |xi|)
+    (htail : ∀ eta : ℝ, 2 * Real.pi ≤ |eta| →
+      fourierKernel g eta = kappa / eta) :
+    fourierKernel
+        (fun t => g (normalizedFourierDilationScale delta * t)) xi =
+      kappa / xi := by
+  let q := normalizedFourierDilationScale delta
+  have hq : 0 < q := normalizedFourierDilationScale_pos hdelta
+  have hthreshold : 2 * Real.pi ≤ |xi / q| := by
+    rw [abs_div, abs_of_pos hq]
+    apply (le_div_iff₀ hq).2
+    rw [show 2 * Real.pi * q = delta by
+      exact two_pi_mul_normalizedFourierDilationScale delta]
+    exact hgap
+  rw [fourierKernel_scale_pos hq, htail _ hthreshold]
+  push_cast
+  field_simp [hq.ne']
+
 /-- The correctly normalized dilation scale attached to one local frequency
 separation. -/
 noncomputable def localFourierDilationScale
@@ -319,6 +348,44 @@ theorem sum_suffix_mul_kernelIncrement_telescope
   rw [← Finset.mul_sum]
   congr 1
   exact Finset.sum_range_sub (fun j => K j m n) (min m n + 1)
+
+/-- The Fourier-kernel form version of the suffix telescope.  Each stage uses
+the difference of two integrable weights on the current suffix, and each pair
+of indices survives exactly to its `min` endpoint. -/
+theorem sum_suffix_finiteFourierKernelForm_sub_telescope
+    (c : ℕ → ℂ) (omega : ℕ → ℝ) (g : ℕ → ℝ → ℝ)
+    (hg : ∀ j, Integrable (g j)) (N : ℕ) :
+    (∑ j ∈ Finset.range N,
+        finiteFourierKernelForm (suffixIndexSet N j) c omega
+          (fun t => g (j + 1) t - g j t)) =
+      ∑ m ∈ Finset.range N, ∑ n ∈ Finset.range N,
+        conj (c m) * c n *
+          (fourierKernel (g (min m n + 1)) (omega n - omega m) -
+            fourierKernel (g 0) (omega n - omega m)) := by
+  calc
+    (∑ j ∈ Finset.range N,
+        finiteFourierKernelForm (suffixIndexSet N j) c omega
+          (fun t => g (j + 1) t - g j t)) =
+        ∑ j ∈ Finset.range N, ∑ m ∈ suffixIndexSet N j,
+          ∑ n ∈ suffixIndexSet N j,
+            conj (c m) * c n *
+              (fourierKernel (g (j + 1)) (omega n - omega m) -
+                fourierKernel (g j) (omega n - omega m)) := by
+      apply Finset.sum_congr rfl
+      intro j hj
+      unfold finiteFourierKernelForm
+      apply Finset.sum_congr rfl
+      intro m hm
+      apply Finset.sum_congr rfl
+      intro n hn
+      rw [fourierKernel_sub (hg (j + 1)) (hg j)]
+    _ = ∑ m ∈ Finset.range N, ∑ n ∈ Finset.range N,
+          conj (c m) * c n *
+            (fourierKernel (g (min m n + 1)) (omega n - omega m) -
+              fourierKernel (g 0) (omega n - omega m)) := by
+      exact sum_suffix_mul_kernelIncrement_telescope
+        (fun m n => conj (c m) * c n)
+        (fun j m n => fourierKernel (g j) (omega n - omega m)) N
 
 /-- The finite Fourier-kernel forms telescope when their dilation scales are
 the local separations selected by an index sequence. -/
