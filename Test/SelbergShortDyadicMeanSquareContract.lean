@@ -5,8 +5,8 @@ open scoped BigOperators
 
 namespace Test.SelbergShortDyadicMeanSquareContract
 
-example {N X K : ℕ} (hN : 1 ≤ N) (hX : 1 ≤ X)
-    (hbound : ∀ k ∈ Finset.Ioc 1 (N * X * X), k < 2 ^ K)
+example {N X K : ℕ} (hN : 1 ≤ N) (hX : 2 ≤ X)
+    (hbound : ∀ k ∈ Finset.Ioc 1 (N * X * (X - 1)), k < 2 ^ K)
     {a b : ℝ} (hab : a ≤ b) :
     (∫ t in a..b,
         Complex.normSq
@@ -15,12 +15,14 @@ example {N X K : ℕ} (hN : 1 ≤ N) (hX : 1 ≤ X)
         ∑ j ∈ Finset.range K,
           ((b - a) +
               2 * ((5 * Real.pi + 3) * ((2 ^ j : ℕ) : ℝ))) *
-            ∑ k ∈ MathlibAux.dyadicBlock (Finset.Ioc 1 (N * X * X)) j,
+            ∑ k ∈ MathlibAux.dyadicBlock
+                (Finset.Ioc 1 (N * X * (X - 1))) j,
               Complex.normSq
                 (HardyTheorem.selbergShortDirichletCollectedCoeff N X k) := by
   exact HardyTheorem.integral_normSq_selbergShortDirichletCollectedPolynomial_sub_one_le_dyadic
     hN hX hbound hab
 
 #print axioms HardyTheorem.integral_normSq_selbergShortDirichletCollectedPolynomial_sub_one_le_dyadic
+#print axioms HardyTheorem.selbergShortDirichletCollectedPolynomial_sub_one_eq_effectiveSupport
 
 end Test.SelbergShortDyadicMeanSquareContract
