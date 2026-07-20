@@ -188,6 +188,7 @@ lean_lib RiemannPNT where
     `Test.VinogradovKorobovModularSymmetryContract,
     `Test.VinogradovKorobovIntegerSelectorContract,
     `Test.VinogradovKorobovMixedMomentContract,
+    `Test.VinogradovKorobovMixedRecurrenceContract,
     `Test.VinogradovKorobovVanDerCorputRangeContract,
     `Test.VinogradovKorobovLogVanDerCorputContract
   ]
