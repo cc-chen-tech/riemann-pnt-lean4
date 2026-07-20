@@ -269,6 +269,35 @@ example (X : ℕ) (x0 y0 y1 : ℝ) :
       regularizedCarlsonFixedRightBoundaryContribution X x0 y0 y1 :=
   regularizedCarlsonLittlewoodRemainingEdges_fixedRight_eq X x0 y0 y1
 
+noncomputable example (X : ℕ) (x0 y : ℝ) : ℝ :=
+  regularizedCarlsonHorizontalArgumentTerm X x0 y
+
+example {X : ℕ} {x0 y M : ℝ}
+    (hx0 : x0 ≤ 4) (hM : 0 ≤ M)
+    (hbound : ∀ x ∈ Set.Icc x0 4,
+      ‖logDeriv (regularizedCarlsonZeroDetector X)
+        ((x : ℂ) + (y : ℂ) * I)‖ ≤ M) :
+    |regularizedCarlsonHorizontalArgumentTerm X x0 y| ≤
+      (4 - x0) ^ 2 * M :=
+  abs_regularizedCarlsonHorizontalArgumentTerm_le_sq_mul
+    hx0 hM hbound
+
+example {X : ℕ} (hX : 1 ≤ X) {x0 y0 y1 M0 M1 : ℝ}
+    (hx0 : x0 ≤ 4) (hy01 : y0 ≤ y1)
+    (hM0 : 0 ≤ M0) (hM1 : 0 ≤ M1)
+    (hbottom : ∀ x ∈ Set.Icc x0 4,
+      ‖logDeriv (regularizedCarlsonZeroDetector X)
+        ((x : ℂ) + (y0 : ℂ) * I)‖ ≤ M0)
+    (htop : ∀ x ∈ Set.Icc x0 4,
+      ‖logDeriv (regularizedCarlsonZeroDetector X)
+        ((x : ℂ) + (y1 : ℂ) * I)‖ ≤ M1) :
+    regularizedCarlsonLittlewoodRemainingEdges X x0 4 y0 y1 ≤
+      (4 - x0) ^ 2 * (M0 + M1) +
+        (4 - x0) * (3 * Real.pi) -
+        (y1 - y0) * Real.log (56 / 81 : ℝ) :=
+  regularizedCarlsonLittlewoodRemainingEdges_fixedRight_le_of_horizontalBounds
+    hX hx0 hy01 hM0 hM1 hbottom htop
+
 example {X : ℕ} {x0 x1 y0 y1 : ℝ}
     (hx0 : 0 < x0) (hx01 : x0 < x1) (hy01 : y0 < y1)
     (hleft : ∀ y ∈ Set.Icc y0 y1,
@@ -355,6 +384,8 @@ example {X : ℕ} (hX : 1 ≤ X) {theta sigma T : ℝ}
 #print axioms abs_regularizedCarlsonFixedRightArgumentVariation_le_three_pi
 #print axioms regularizedCarlsonFixedRightBoundaryContribution_le
 #print axioms regularizedCarlsonLittlewoodRemainingEdges_fixedRight_eq
+#print axioms abs_regularizedCarlsonHorizontalArgumentTerm_le_sq_mul
+#print axioms regularizedCarlsonLittlewoodRemainingEdges_fixedRight_le_of_horizontalBounds
 #print axioms regularizedCarlsonLittlewoodFourEdges_eq_logNormForm
 #print axioms regularizedCarlsonLittlewoodFourEdges_eq_logNormFormDef
 #print axioms regularizedCarlsonLittlewoodLogNormForm_eq_left_add_remaining

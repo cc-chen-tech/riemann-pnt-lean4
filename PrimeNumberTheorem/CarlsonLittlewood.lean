@@ -813,6 +813,107 @@ theorem regularizedCarlsonLittlewoodRemainingEdges_fixedRight_eq
     regularizedCarlsonFixedRightArgumentVariation
   abel
 
+/-- One of the two weighted horizontal argument terms in the endpoint-
+cancelled Littlewood formula. -/
+noncomputable def regularizedCarlsonHorizontalArgumentTerm
+    (X : ℕ) (x0 y : ℝ) : ℝ :=
+  ∫ x in x0..4,
+    (x - x0) *
+      (logDeriv (regularizedCarlsonZeroDetector X)
+        ((x : ℂ) + (y : ℂ) * I)).im
+
+/-- A uniform logarithmic-derivative bound on a horizontal edge controls its
+weighted argument term by the square of the edge width. -/
+theorem abs_regularizedCarlsonHorizontalArgumentTerm_le_sq_mul
+    {X : ℕ} {x0 y M : ℝ}
+    (hx0 : x0 ≤ 4) (hM : 0 ≤ M)
+    (hbound : ∀ x ∈ Set.Icc x0 4,
+      ‖logDeriv (regularizedCarlsonZeroDetector X)
+        ((x : ℂ) + (y : ℂ) * I)‖ ≤ M) :
+    |regularizedCarlsonHorizontalArgumentTerm X x0 y| ≤
+      (4 - x0) ^ 2 * M := by
+  have hwidth : 0 ≤ 4 - x0 := sub_nonneg.mpr hx0
+  have hpoint (x : ℝ) (hx : x ∈ Set.uIoc x0 4) :
+      ‖(x - x0) *
+        (logDeriv (regularizedCarlsonZeroDetector X)
+          ((x : ℂ) + (y : ℂ) * I)).im‖ ≤
+        (4 - x0) * M := by
+    rw [Set.uIoc_of_le hx0] at hx
+    have hxIcc : x ∈ Set.Icc x0 4 := ⟨hx.1.le, hx.2⟩
+    have hxnonneg : 0 ≤ x - x0 := sub_nonneg.mpr hx.1.le
+    have hxwidth : x - x0 ≤ 4 - x0 := by linarith [hx.2]
+    simp only [Real.norm_eq_abs, abs_mul, abs_of_nonneg hxnonneg]
+    calc
+      (x - x0) *
+          |(logDeriv (regularizedCarlsonZeroDetector X)
+            ((x : ℂ) + (y : ℂ) * I)).im| ≤
+        (x - x0) *
+          ‖logDeriv (regularizedCarlsonZeroDetector X)
+            ((x : ℂ) + (y : ℂ) * I)‖ :=
+        mul_le_mul_of_nonneg_left (Complex.abs_im_le_norm _) hxnonneg
+      _ ≤ (x - x0) * M :=
+        mul_le_mul_of_nonneg_left (hbound x hxIcc) hxnonneg
+      _ ≤ (4 - x0) * M :=
+        mul_le_mul_of_nonneg_right hxwidth hM
+  have hintegral := intervalIntegral.norm_integral_le_of_norm_le_const
+    (f := fun x : ℝ =>
+      (x - x0) *
+        (logDeriv (regularizedCarlsonZeroDetector X)
+          ((x : ℂ) + (y : ℂ) * I)).im)
+    (a := x0) (b := 4) (C := (4 - x0) * M) hpoint
+  have hterm :
+      |regularizedCarlsonHorizontalArgumentTerm X x0 y| ≤
+        ((4 - x0) * M) * (4 - x0) := by
+    simpa [regularizedCarlsonHorizontalArgumentTerm, Real.norm_eq_abs,
+      abs_of_nonneg hwidth] using hintegral
+  calc
+    |regularizedCarlsonHorizontalArgumentTerm X x0 y| ≤
+        ((4 - x0) * M) * (4 - x0) := hterm
+    _ = (4 - x0) ^ 2 * M := by ring
+
+/-- Once uniform logarithmic-derivative bounds are available on the two
+horizontal edges, every remaining term in the fixed-right Littlewood formula
+has an explicit upper bound. -/
+theorem regularizedCarlsonLittlewoodRemainingEdges_fixedRight_le_of_horizontalBounds
+    {X : ℕ} (hX : 1 ≤ X) {x0 y0 y1 M0 M1 : ℝ}
+    (hx0 : x0 ≤ 4) (hy01 : y0 ≤ y1)
+    (hM0 : 0 ≤ M0) (hM1 : 0 ≤ M1)
+    (hbottom : ∀ x ∈ Set.Icc x0 4,
+      ‖logDeriv (regularizedCarlsonZeroDetector X)
+        ((x : ℂ) + (y0 : ℂ) * I)‖ ≤ M0)
+    (htop : ∀ x ∈ Set.Icc x0 4,
+      ‖logDeriv (regularizedCarlsonZeroDetector X)
+        ((x : ℂ) + (y1 : ℂ) * I)‖ ≤ M1) :
+    regularizedCarlsonLittlewoodRemainingEdges X x0 4 y0 y1 ≤
+      (4 - x0) ^ 2 * (M0 + M1) +
+        (4 - x0) * (3 * Real.pi) -
+        (y1 - y0) * Real.log (56 / 81 : ℝ) := by
+  let bottom := regularizedCarlsonHorizontalArgumentTerm X x0 y0
+  let top := regularizedCarlsonHorizontalArgumentTerm X x0 y1
+  let right := regularizedCarlsonFixedRightBoundaryContribution X x0 y0 y1
+  have hbottomTerm : |bottom| ≤ (4 - x0) ^ 2 * M0 := by
+    exact abs_regularizedCarlsonHorizontalArgumentTerm_le_sq_mul
+      hx0 hM0 hbottom
+  have htopTerm : |top| ≤ (4 - x0) ^ 2 * M1 := by
+    exact abs_regularizedCarlsonHorizontalArgumentTerm_le_sq_mul
+      hx0 hM1 htop
+  have hright : right ≤
+      (4 - x0) * (3 * Real.pi) -
+        (y1 - y0) * Real.log (56 / 81 : ℝ) :=
+    regularizedCarlsonFixedRightBoundaryContribution_le hX hx0 hy01
+  rw [regularizedCarlsonLittlewoodRemainingEdges_fixedRight_eq]
+  change bottom - top + right ≤ _
+  calc
+    bottom - top + right ≤ |bottom| + |top| + right := by
+      linarith [le_abs_self bottom, neg_le_abs top]
+    _ ≤ (4 - x0) ^ 2 * M0 + (4 - x0) ^ 2 * M1 +
+        ((4 - x0) * (3 * Real.pi) -
+          (y1 - y0) * Real.log (56 / 81 : ℝ)) :=
+      add_le_add (add_le_add hbottomTerm htopTerm) hright
+    _ = (4 - x0) ^ 2 * (M0 + M1) +
+        (4 - x0) * (3 * Real.pi) -
+        (y1 - y0) * Real.log (56 / 81 : ℝ) := by ring
+
 /-- The endpoint terms from the four edge integrations cancel.  This is the
 detector-specific Littlewood lemma in the form used for quantitative bounds:
 two horizontal argument terms, one right-edge argument term, and the
