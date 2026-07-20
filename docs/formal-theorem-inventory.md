@@ -19,8 +19,9 @@ python3 -m pytest
 
 At the time of writing, `lake build` succeeds, the recursive placeholder scan
 has no project Lean-source matches, the scanner classifies every project
-`def ... : Prop`, the mathematical target inventory is stable at 16
-declarations, and the Python experiment tests pass.
+`def ... : Prop`, the mathematical target inventory now stands at 18
+declarations (13 pre-existing plus 5 new Li-criterion targets), and the Python
+experiment tests pass.
 
 ## Proved Project-Local Results
 
@@ -3131,17 +3132,56 @@ This file provides project-level definitions and wrappers:
 It also records exploratory strategy strings.  Those strings are explanatory
 metadata, not proof results.
 
+### `RiemannExplorer/XiFunction.lean`
+
+This file provides the canonical xi-function API (Route C foundation for the
+Li route).  All declarations are in the `RiemannExplorer` namespace and are
+axiom-audited in `Test/XiFunctionAxiomAudit.lean`:
+
+- `xiFunction`
+- `xiFunction_eq_completedZeta`
+- `xiFunction_one_sub`
+- `xiFunction_zero`
+- `xiFunction_one`
+- `differentiable_xiFunction`
+- `xiFunction_eq_half_mul_completed`
+- `xiFunction_eq_classical`
+- `xiFunction_eq_classical_of_one_lt_re`
+- `xiFunction_eq_zero_iff`
+- `xiFunction_eq_zero_iff_isNontrivialZero`
+- `riemannHypothesis_iff_xi_zeros_on_critical_line`
+- `xiFunction_conj`
+- `xiFunction_critical_line_real`
+
+### `RiemannExplorer/LiCriterion.lean`
+
+This file provides the Li-coefficient definition, the `LiCriterionHolds`
+predicate, and the proved sanity/reduction lemmas.  All declarations are in
+the `RiemannExplorer` namespace and are axiom-audited in
+`Test/XiFunctionAxiomAudit.lean`:
+
+- `liCoefficient`
+- `liCoefficient_zero`
+- `liCoefficient_zero_real`
+- `liCoefficient_zero_im`
+- `li_criterion_iff_rh_target_of_directions`
+- `li_criterion_iff_rh_target_iff`
+
+The same file also introduces the five `def ... : Prop` targets listed in the
+target section below; those are not proved theorems.
+
 ## Target Statements, Not Proved Theorems
 
 The following declarations are intentionally `def ... : Prop` targets.  They
 are not exported as theorems and should not be cited as proved.
 
-As of `2026-07-18`, there are **13** mathematical target declarations:
+As of `2026-07-19`, there are **18** mathematical target declarations:
 
 - `HardyTheorem` namespace: **4**
 - `HardyTheorem.Details` namespace: **3**
 - `PrimeNumberTheorem` namespace: **4**
 - `KnownResults` namespace: **1**
+- `RiemannExplorer` namespace: **5** (all in `RiemannExplorer/LiCriterion.lean`)
 - `ZeroFreeRegion` namespace: **0**
 - global namespace: **1** (`vinogradov_korobov_zero_free_region`)
 
@@ -3228,6 +3268,24 @@ the global target.
 - `conrey_40_percent_zeros_on_critical_line_target`
   target: a positive-proportion statement on critical-line zeros, expressed as
   a target alias for `HardyTheorem.selberg_zero_proportion_target`.
+
+### `RiemannExplorer` in `RiemannExplorer/LiCriterion.lean`
+
+- `LiCriterionHolds`
+  target: positivity of every Li coefficient `liCoefficient n` for `n ≥ 1`
+  (real part positive, imaginary part zero).  Equivalent to RH by the
+  unproved Li–RH equivalence; not provable unconditionally.
+- `li_criterion_implies_rh_target`
+  target: `LiCriterionHolds → RiemannHypothesis.Statement`.
+- `rh_implies_li_criterion_target`
+  target: `RiemannHypothesis.Statement → LiCriterionHolds`.
+- `li_criterion_iff_rh_target`
+  target: the Li–RH equivalence itself.  A proved reduction from the two
+  one-direction targets exists (`li_criterion_iff_rh_target_of_directions`).
+- `li_zero_sum_representation_target`
+  target: the paired conjugate zero-sum representation of `liCoefficient n`
+  over distinct upper-half-plane nontrivial zeros (no analytic multiplicity);
+  the multiplicity convention must be aligned before promotion.
 
 ## Route Interfaces and Reusable Predicates
 
@@ -3710,3 +3768,10 @@ Ordinary PNT is proved by `PNTForm1_proved`, `PNTForm2_proved`, and
    counting results still need multiplicity-aware definitions and new
    mean-value estimates; the signed-moment and AFE targets remain independent
    alternative infrastructure.
+5. **Li criterion.**
+   The xi-function API is proved (functional equation, entirety, strip zero
+   correspondence, Schwarz symmetry, critical-line real-valuedness), and the
+   Li coefficients and `LiCriterionHolds` predicate are defined.  The
+   remaining targets are the paired zero-sum representation of the Li
+   coefficients and both directions of the Li–RH equivalence, all of which
+   need Hadamard-product and zero-sum machinery.

@@ -1,4 +1,6 @@
 import RiemannExplorer
+import RiemannExplorer.XiFunction
+import RiemannExplorer.LiCriterion
 import GammaResidue
 import HardyTheorem
 import HardyTheorem.HardyIntegralContradiction

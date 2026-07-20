@@ -1,0 +1,19 @@
+import RiemannExplorer.XiFunction
+import RiemannExplorer.LiCriterion
+
+#print axioms RiemannExplorer.xiFunction_one_sub
+#print axioms RiemannExplorer.xiFunction_zero
+#print axioms RiemannExplorer.xiFunction_one
+#print axioms RiemannExplorer.differentiable_xiFunction
+#print axioms RiemannExplorer.xiFunction_eq_half_mul_completed
+#print axioms RiemannExplorer.xiFunction_eq_classical
+#print axioms RiemannExplorer.xiFunction_eq_classical_of_one_lt_re
+#print axioms RiemannExplorer.xiFunction_eq_zero_iff
+#print axioms RiemannExplorer.xiFunction_eq_zero_iff_isNontrivialZero
+#print axioms RiemannExplorer.riemannHypothesis_iff_xi_zeros_on_critical_line
+#print axioms RiemannExplorer.xiFunction_conj
+#print axioms RiemannExplorer.xiFunction_critical_line_real
+#print axioms RiemannExplorer.liCoefficient_zero
+#print axioms RiemannExplorer.liCoefficient_zero_real
+#print axioms RiemannExplorer.liCoefficient_zero_im
+#print axioms RiemannExplorer.li_criterion_iff_rh_target_of_directions

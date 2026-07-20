@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Validate the unresolved target/chain bookkeeping.
 
-This script is intentionally strict: the repository currently tracks exactly four
+This script is intentionally strict: the repository currently tracks exactly five
 main unresolved mathematical chains, and each unresolved `def ... : Prop`
 target must be assigned to one of them.
 """
@@ -20,6 +20,7 @@ EXPECTED_CHAINS = {
     "Explicit formula",
     "RH error equivalence",
     "Quantitative critical-line extensions",
+    "Li criterion",
 }
 
 

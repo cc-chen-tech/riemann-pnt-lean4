@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-19",
+  "timestamp": "2026-07-20",
   "status": "not-yet-complete",
   "completed_without_sorry": true,
   "remaining_prop_targets": {
@@ -94,6 +94,48 @@
         "file": "PrimeNumberTheorem.lean",
         "line": 1348,
         "shape": "∃C>0, ∀x≥2, |(primeCounting x:ℝ)-logIntegral x| ≤ C*sqrt x*log x",
+        "depends_on": []
+      }
+    ],
+    "RiemannExplorer": [
+      {
+        "name": "LiCriterionHolds",
+        "qualified_name": "RiemannExplorer.LiCriterionHolds",
+        "file": "RiemannExplorer/LiCriterion.lean",
+        "line": 93,
+        "shape": "∀ n ≥ 1, (liCoefficient n).im = 0 ∧ 0 < (liCoefficient n).re",
+        "depends_on": []
+      },
+      {
+        "name": "li_criterion_implies_rh_target",
+        "qualified_name": "RiemannExplorer.li_criterion_implies_rh_target",
+        "file": "RiemannExplorer/LiCriterion.lean",
+        "line": 100,
+        "shape": "LiCriterionHolds → RiemannHypothesis.Statement",
+        "depends_on": []
+      },
+      {
+        "name": "rh_implies_li_criterion_target",
+        "qualified_name": "RiemannExplorer.rh_implies_li_criterion_target",
+        "file": "RiemannExplorer/LiCriterion.lean",
+        "line": 106,
+        "shape": "RiemannHypothesis.Statement → LiCriterionHolds",
+        "depends_on": []
+      },
+      {
+        "name": "li_criterion_iff_rh_target",
+        "qualified_name": "RiemannExplorer.li_criterion_iff_rh_target",
+        "file": "RiemannExplorer/LiCriterion.lean",
+        "line": 111,
+        "shape": "LiCriterionHolds ↔ RiemannHypothesis.Statement",
+        "depends_on": []
+      },
+      {
+        "name": "li_zero_sum_representation_target",
+        "qualified_name": "RiemannExplorer.li_zero_sum_representation_target",
+        "file": "RiemannExplorer/LiCriterion.lean",
+        "line": 143,
+        "shape": "∀ n ≥ 1, liCoefficient n = ∑' ρ (paired conjugate zero terms), distinct zeros, no multiplicity",
         "depends_on": []
       }
     ],
@@ -273,9 +315,22 @@
       "target": "hardy_littlewood_lower_bound_target",
       "status": "Hardy's infinite-zero theorem is proved; stronger Hardy-Littlewood, Selberg, and Conrey counts remain open",
       "next_step": "develop the stronger Hardy-Littlewood, Selberg, and Conrey quantitative zero-counting targets"
+    },
+    {
+      "name": "Li criterion",
+      "target": "li_criterion_iff_rh_target",
+      "status": "the xi-function API (functional equation, entirety, zero correspondence, critical-line real-valuedness) is proved; the Li coefficient definition and LiCriterionHolds predicate are in place; the Li-RH equivalence and the zero-sum representation remain targets",
+      "next_step": "build Hadamard product and zero-sum machinery, then prove the paired zero-sum representation and both directions of the Li-RH equivalence"
     }
   ],
   "chain_inventory": {
+    "Li criterion": [
+      "LiCriterionHolds",
+      "li_criterion_implies_rh_target",
+      "rh_implies_li_criterion_target",
+      "li_criterion_iff_rh_target",
+      "li_zero_sum_representation_target"
+    ],
     "Quantitative critical-line extensions": [
       "integral_asymptotic_target",
       "hardy_two_signed_moments_target",
@@ -296,10 +351,10 @@
       "RH_ErrorBound"
     ]
   },
-  "mathematical_target_count": 13,
+  "mathematical_target_count": 18,
   "route_interface_count": 5,
   "route_interface_true_body_count": 0,
   "reusable_predicate_count": 13,
   "unclassified_prop_def_count": 0,
-  "all_scanned_prop_defs_count": 31
+  "all_scanned_prop_defs_count": 36
 }

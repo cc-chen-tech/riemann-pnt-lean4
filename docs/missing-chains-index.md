@@ -5,8 +5,8 @@ current Lean checkout.  The project currently builds and contains no
 `sorry`/`admit`/`axiom` placeholders in Lean source, but several deep goals are
 intentionally recorded as `def ... : Prop` target statements.
 
-At present there are **13** unresolved mathematical `def ... : Prop` targets,
-partitioned into exactly **4** analytic chains.  The recursive scanner also
+At present there are **18** unresolved mathematical `def ... : Prop` targets,
+partitioned into exactly **5** analytic chains.  The recursive scanner also
 tracks 5 route interfaces and 13 reusable Prop predicates so subdirectory
 interfaces cannot be hidden by the target count:
 
@@ -14,6 +14,7 @@ interfaces cannot be hidden by the target count:
 2. Explicit formula
 3. RH / prime-counting error equivalence
 4. Hardy quantitative extensions
+5. Li criterion (xi-function and Li-positivity route)
 
 The chain-specific notes are maintained separately so that work can proceed in
 parallel:
@@ -31,7 +32,12 @@ parallel:
   equivalence between RH and prime-counting error terms;
 - `docs/hardy-theorem-chain.md`
   the proved Hardy theorem and the remaining quantitative critical-line-zero
-  extensions.
+  extensions;
+- `docs/li-criterion-chain.md`
+  the proved xi-function API (`RiemannExplorer/XiFunction.lean`), the Li
+  coefficient definition and predicate
+  (`RiemannExplorer/LiCriterion.lean`), and the remaining Li–RH equivalence
+  and zero-sum-representation targets.
 
 ## Evaluation Boundary
 
@@ -71,6 +77,7 @@ technology rather than more local Jensen/Borel wrappers.
 | Explicit formula | `ExplicitFormulaTruncatedTarget`, the moving-height formula, ordinary PNT, and the de la Vallee Poussin-form `psi` and `pi-Li` remainders are proved | Preserve the natural-sample jump convention and multiplicities in stronger reusable variants | Pursue genuinely stronger power-saving or explicit-constant inputs rather than more endpoint wrappers | 0 |
 | RH error equivalence | Ordinary PNT is proved; `rh_iff_optimal_error` is proved in both directions by `rh_iff_optimal_error_proved` | No remaining implication gap; RH itself and its equivalent error predicates remain unproved unconditionally | Reuse the completed equivalence when another endpoint supplies either RH or the error bound | 4 |
 | Hardy quantitative extensions | `hardy_theorem_target`, `hardy_zeros_unbounded_target`, and its absolute-height form are proved | Define distinct-ordinate and analytic-multiplicity counts separately and match each cited theorem | Develop Hardy-Littlewood, Selberg, and Conrey percentage estimates | 8 (4 in `HardyTheorem`, 3 in `HardyTheorem.Details`, 1 in `KnownResults`) |
+| Li criterion | The xi-function API (functional equation, entirety, strip zero correspondence, critical-line real-valuedness) is proved; `liCoefficient` and `LiCriterionHolds` are defined | Align the zero-sum convention (distinct zeros vs analytic multiplicity) before promoting the representation target | Build Hadamard-product and zero-sum machinery, then prove the paired zero-sum representation and both Li–RH directions | 5 (all in `RiemannExplorer.LiCriterion`) |
 
 ## Target-to-Chain Mapping
 
@@ -89,6 +96,11 @@ technology rather than more local Jensen/Borel wrappers.
 | `HardyTheorem.lean` | `HardyTheorem.Details.theta_asymptotic_target` | Quantitative critical-line extensions | Riemann–Siegel theta asymptotic setup |
 | `HardyTheorem.lean` | `HardyTheorem.Details.approximate_functional_equation_target` | Quantitative critical-line extensions | Residual error form of the AFE used by Hardy integrals |
 | `RiemannExplorer.lean` | `KnownResults.conrey_40_percent_zeros_on_critical_line_target` | Quantitative critical-line extensions | Proportionality target for zero density on the critical line |
+| `RiemannExplorer/LiCriterion.lean` | `LiCriterionHolds` | Li criterion | Equivalent to RH; not provable unconditionally |
+| `RiemannExplorer/LiCriterion.lean` | `li_criterion_implies_rh_target` | Li criterion | Needs the zero-sum representation and zero-exclusion arguments |
+| `RiemannExplorer/LiCriterion.lean` | `rh_implies_li_criterion_target` | Li criterion | Needs the zero-sum representation plus convergence control under RH |
+| `RiemannExplorer/LiCriterion.lean` | `li_criterion_iff_rh_target` | Li criterion | Follows from the two one-direction targets |
+| `RiemannExplorer/LiCriterion.lean` | `li_zero_sum_representation_target` | Li criterion | Needs Hadamard-product machinery; distinct-zero convention, no analytic multiplicity |
 
 ## Verified Starting Points
 
@@ -345,6 +357,22 @@ The following proved declarations are the main entry points for future work:
 - `RiemannExplorer.infinitely_many_zeros_on_critical_line_of_conrey_target`
 - `RiemannExplorer.exists_zero_on_critical_line_of_hardy_littlewood_lower_bound`
 - `RiemannExplorer.exists_zero_on_critical_line_of_selberg_zero_proportion`
+- `RiemannExplorer.xiFunction_one_sub`
+- `RiemannExplorer.xiFunction_zero`
+- `RiemannExplorer.xiFunction_one`
+- `RiemannExplorer.differentiable_xiFunction`
+- `RiemannExplorer.xiFunction_eq_half_mul_completed`
+- `RiemannExplorer.xiFunction_eq_classical`
+- `RiemannExplorer.xiFunction_eq_classical_of_one_lt_re`
+- `RiemannExplorer.xiFunction_eq_zero_iff`
+- `RiemannExplorer.xiFunction_eq_zero_iff_isNontrivialZero`
+- `RiemannExplorer.riemannHypothesis_iff_xi_zeros_on_critical_line`
+- `RiemannExplorer.xiFunction_conj`
+- `RiemannExplorer.xiFunction_critical_line_real`
+- `RiemannExplorer.liCoefficient_zero`
+- `RiemannExplorer.liCoefficient_zero_real`
+- `RiemannExplorer.liCoefficient_zero_im`
+- `RiemannExplorer.li_criterion_iff_rh_target_of_directions`
 
 ## Non-Goals
 

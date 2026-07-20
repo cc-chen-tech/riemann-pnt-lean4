@@ -36,6 +36,12 @@ CHAIN_SUMMARY = [
         "status": "Hardy's infinite-zero theorem is proved; stronger Hardy-Littlewood, Selberg, and Conrey counts remain open",
         "next_step": "develop the stronger Hardy-Littlewood, Selberg, and Conrey quantitative zero-counting targets",
     },
+    {
+        "name": "Li criterion",
+        "target": "li_criterion_iff_rh_target",
+        "status": "the xi-function API (functional equation, entirety, zero correspondence, critical-line real-valuedness) is proved; the Li coefficient definition and LiCriterionHolds predicate are in place; the Li-RH equivalence and the zero-sum representation remain targets",
+        "next_step": "build Hadamard product and zero-sum machinery, then prove the paired zero-sum representation and both directions of the Li-RH equivalence",
+    },
 ]
 
 PROVED_ROUTE_INTERFACES = {

@@ -204,3 +204,24 @@ an immediate proof attempt. The first implementation should prove only:
 - a clean statement of zero correspondence for nontrivial zeros.
 
 Once those are stable, the Li criterion route has a credible Lean foundation.
+
+## Implementation Status (2026-07-19)
+
+The recommended `XiFunction.lean` now exists as
+`RiemannExplorer/XiFunction.lean` with namespace `RiemannExplorer`:
+
+- `xiFunction` is the canonical entire xi function.  The audit's open
+  question 1 is resolved: the affine correction in the legacy
+  `RiemannExplorer.completedZeta` is exactly the pole-cancellation of
+  `completedRiemannZeta_eq`, so `xiFunction_eq_completedZeta` holds by `rfl`.
+  The legacy name is kept for interface compatibility; new work uses
+  `xiFunction`.
+- Proved: the functional equation (`xiFunction_one_sub`), entirety
+  (`differentiable_xiFunction`), the classical expression for `1 < s.re`
+  (`xiFunction_eq_classical_of_one_lt_re`), and the zero correspondence for
+  nontrivial zeros (`xiFunction_eq_zero_iff_isNontrivialZero`), matching the
+  audit's "Recommendation" list.  Also proved: Schwarz symmetry
+  (`xiFunction_conj`) and critical-line real-valuedness
+  (`xiFunction_critical_line_real`).
+- Li coefficients live in the separate consumer file
+  `RiemannExplorer/LiCriterion.lean`, as the audit's boundary requires.

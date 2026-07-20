@@ -45,6 +45,11 @@ MATH_TARGETS = {
     "HardyTheorem.Details.theta_asymptotic_target": "Quantitative critical-line extensions",
     "HardyTheorem.Details.approximate_functional_equation_target": "Quantitative critical-line extensions",
     "KnownResults.conrey_40_percent_zeros_on_critical_line_target": "Quantitative critical-line extensions",
+    "RiemannExplorer.LiCriterionHolds": "Li criterion",
+    "RiemannExplorer.li_criterion_implies_rh_target": "Li criterion",
+    "RiemannExplorer.rh_implies_li_criterion_target": "Li criterion",
+    "RiemannExplorer.li_criterion_iff_rh_target": "Li criterion",
+    "RiemannExplorer.li_zero_sum_representation_target": "Li criterion",
 }
 
 ROUTE_INTERFACES = {

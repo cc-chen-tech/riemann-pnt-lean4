@@ -198,3 +198,28 @@ Do the next step in this order:
    cleanup settles.
 4. Postpone Lean implementation of Li criterion until `xiFunction` has a
    stable API.
+
+## Implementation Status (2026-07-19)
+
+Stage 1 and the statement layer of Stage 2 are now implemented in
+`RiemannExplorer/LiCriterion.lean` (namespace `RiemannExplorer`):
+
+- `liCoefficient` uses the xi-derivative form recommended by this note
+  (`(1/(n-1)!) · iteratedDeriv n (fun s ↦ s^(n-1) · Complex.log (xiFunction s)) 1`).
+  The `Complex.log` branch and nonvanishing-neighborhood risks listed above
+  remain explicit dependencies of the next stage.
+- `LiCriterionHolds` is in place; the Li–RH equivalence is registered as the
+  explicit `def : Prop` targets `li_criterion_implies_rh_target`,
+  `rh_implies_li_criterion_target`, and `li_criterion_iff_rh_target`, per the
+  repository promotion discipline.  The note's suggested theorem statements
+  are therefore targets, not sorried theorems.
+- The zero-sum expression is registered as
+  `li_zero_sum_representation_target` in paired-conjugate form over distinct
+  upper-half-plane zeros (unpaired, the series is not absolutely convergent);
+  the analytic-multiplicity convention still has to be aligned before
+  promotion.
+- Proved sanity checks: `λ₀ = log ξ(1) = log(1/2) ∈ ℝ`
+  (`liCoefficient_zero`, `liCoefficient_zero_real`, `liCoefficient_zero_im`).
+- The experiment module `experiments/rh/li_coefficients.py` with tests already
+  exists; its outputs remain empirical and do not imply RH.
+- The chain-specific tracking document is `docs/li-criterion-chain.md`.
