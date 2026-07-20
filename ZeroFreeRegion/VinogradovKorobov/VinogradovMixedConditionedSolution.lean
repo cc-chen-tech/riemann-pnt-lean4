@@ -26,6 +26,41 @@ def IsVinogradovMixedAffineCongruenceInt
         (fun i ↦ eta + (p : ℤ) ^ b * u i)
         (fun i ↦ eta + (p : ℤ) ^ b * v i) (j.val + 1))
 
+/-- The mixed two-block congruences are the ordinary modular Vinogradov
+system after crossing the two restricted tails between the tuple sides. -/
+theorem isVinogradovMixedAffineCongruenceInt_iff_joinTuple
+    (p B b k r t : ℕ) (eta : ℤ)
+    (x y : Fin r → ℤ) (u v : Fin t → ℤ) :
+    IsVinogradovMixedAffineCongruenceInt p B b k r t eta x y u v ↔
+      IsVinogradovSolutionIntMod (p ^ B) k (r + t)
+        (vinogradovJoinTuple x
+          (fun i ↦ eta + (p : ℤ) ^ b * v i))
+        (vinogradovJoinTuple y
+          (fun i ↦ eta + (p : ℤ) ^ b * u i)) := by
+  constructor
+  · intro h j
+    rw [vinogradovPowerSumInt_joinTuple,
+      vinogradovPowerSumInt_joinTuple]
+    have hj := h j
+    have hadd := hj.add_right
+      (vinogradovPowerSumInt y j +
+        vinogradovPowerSumInt
+          (fun i ↦ eta + (p : ℤ) ^ b * v i) j)
+    convert hadd using 1 <;>
+      simp only [vinogradovPowerSumDifferenceInt,
+        vinogradovPowerSumInt] <;> ring
+  · intro h j
+    have hj := h j
+    rw [vinogradovPowerSumInt_joinTuple,
+      vinogradovPowerSumInt_joinTuple] at hj
+    have hsub := hj.add_right
+      (-(vinogradovPowerSumInt y j +
+        vinogradovPowerSumInt
+          (fun i ↦ eta + (p : ℤ) ^ b * v i) j))
+    convert hsub using 1 <;>
+      simp only [vinogradovPowerSumDifferenceInt,
+        vinogradovPowerSumInt] <;> ring
+
 /-- Centering a mixed modular system at `eta` exposes the exact factor
 `p^(b(j+1))` contributed by the restricted block. -/
 theorem IsVinogradovMixedAffineCongruenceInt.centered_powerSum_modEq
