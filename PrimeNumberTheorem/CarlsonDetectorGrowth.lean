@@ -3,7 +3,7 @@ import PrimeNumberTheorem.AnalyticBorel
 import PrimeNumberTheorem.FiniteZeroGoodRadius
 import ZeroFreeRegion.PhragmenLindelofZeta
 
-open Complex
+open Complex MeromorphicOn
 
 namespace PrimeNumberTheorem
 namespace CarlsonZeroDensity
@@ -374,6 +374,35 @@ noncomputable def regularizedCarlsonFactorDiskZeroSupport
     (isCompact_closedBall
       ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ))).toFinset
 
+/-- Total analytic zero multiplicity in the fixed factorization disk. -/
+noncomputable def regularizedCarlsonFactorDiskZeroMass
+    (X : ℕ) (T : ℝ) : ℝ :=
+  ∑ᶠ u,
+    (MeromorphicOn.divisor (regularizedCarlsonZeroDetector X)
+      (Metric.closedBall
+        ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ)) u : ℝ)
+
+/-- Quantitative separation supplied by the fixed good-circle interval. -/
+noncomputable def regularizedCarlsonFactorDiskSeparation
+    (X : ℕ) (T : ℝ) : ℝ :=
+  ((122 / 32 : ℝ) - 121 / 32) /
+    (4 * ((((regularizedCarlsonFactorDiskZeroSupport X T).image
+      (dist ((4 : ℂ) + I * (T + 1 / 2)))).card : ℝ) + 1))
+
+/-- Logarithmic norm majorant for the extracted nonzero factor on its selected
+good circle. -/
+noncomputable def regularizedCarlsonFactorCircleLogUpper
+    (C : ℝ) (X : ℕ) (T : ℝ) : ℝ :=
+  Real.log (C * (X : ℝ) ^ 2 * (T + 14) ^ 10) -
+    Real.log (regularizedCarlsonFactorDiskSeparation X T) *
+      regularizedCarlsonFactorDiskZeroMass X T
+
+/-- Center lower bound for the same extracted nonzero factor. -/
+noncomputable def regularizedCarlsonFactorCenterLogLower
+    (X : ℕ) (T : ℝ) : ℝ :=
+  -Real.log (123 / 32 : ℝ) *
+    regularizedCarlsonFactorDiskZeroMass X T
+
 private theorem fixedJensenFactorDisk_re_pos
     {T : ℝ} {z : ℂ}
     (hz : z ∈ Metric.closedBall
@@ -388,6 +417,20 @@ private theorem fixedJensenFactorDisk_re_pos
     simpa using hreAbs.trans hdist
   rw [abs_le] at hre
   linarith
+
+private theorem fixedJensenFactorDisk_meromorphicOrder_ne_top
+    {X : ℕ} (hX : 1 ≤ X) {T : ℝ} {z : ℂ}
+    (hz : z ∈ Metric.closedBall
+      ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ)) :
+    meromorphicOrderAt (regularizedCarlsonZeroDetector X) z ≠ ⊤ := by
+  have hanalytic : AnalyticAt ℂ (regularizedCarlsonZeroDetector X) z := by
+    exact analyticOnNhd_regularizedCarlsonZeroDetector_re_gt
+      (theta := (0 : ℝ)) le_rfl X z (fixedJensenFactorDisk_re_pos hz)
+  rw [hanalytic.meromorphicOrderAt_eq]
+  intro htop
+  apply analyticOrderAt_regularizedCarlsonZeroDetector_ne_top X hX
+    (fixedJensenFactorDisk_re_pos hz)
+  exact ENat.map_eq_top_iff.mp htop
 
 /-- On the factorization disk, the finite divisor support is exactly the
 zero set of the regularized Carlson detector. -/
@@ -475,6 +518,171 @@ theorem exists_regularizedCarlsonZeroDetector_goodFactorCircle
       (by norm_num : (0 : ℝ) < 121 / 32)
       (by norm_num : (121 / 32 : ℝ) < 122 / 32)
       (by norm_num : (122 / 32 : ℝ) < 123 / 32) hcover)
+
+/-- One zero-avoiding circle and one extracted factor simultaneously carry
+the center lower bound, boundary logarithmic growth, and a logarithmic-
+derivative bound throughout the disk containing Carlson's unit rectangle. -/
+theorem exists_regularizedCarlsonZeroDetector_goodFactor_logDeriv_le :
+    ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X → ∀ {T : ℝ}, 5 ≤ T →
+      ∃ r : ℝ, ∃ g : ℂ → ℂ,
+        r ∈ Set.Icc (121 / 32 : ℝ) (122 / 32 : ℝ) ∧
+        AnalyticOnNhd ℂ g
+          (Metric.closedBall
+            ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ)) ∧
+        (∀ u : (Metric.closedBall
+            ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ) : Set ℂ),
+          g u ≠ 0) ∧
+        regularizedCarlsonFactorCenterLogLower X T ≤
+          Real.log ‖g ((4 : ℂ) + I * (T + 1 / 2))‖ ∧
+        (∀ z ∈ Metric.sphere
+            ((4 : ℂ) + I * (T + 1 / 2)) r,
+          Real.log ‖g z‖ ≤
+            regularizedCarlsonFactorCircleLogUpper C X T) ∧
+        ∀ z ∈ Metric.closedBall
+            ((4 : ℂ) + I * (T + 1 / 2)) (15 / 4 : ℝ),
+          ‖logDeriv g z‖ ≤
+            4 * max
+                (regularizedCarlsonFactorCircleLogUpper C X T -
+                  regularizedCarlsonFactorCenterLogLower X T) 1 *
+              (r + 15 / 4) / (r - 15 / 4) ^ 2 := by
+  rcases exists_norm_regularizedCarlsonZeroDetector_le_fixedJensenSphere with
+    ⟨C, hC, hsphereOuter⟩
+  refine ⟨C, hC, ?_⟩
+  intro X hX T hT
+  let c : ℂ := (4 : ℂ) + I * (T + 1 / 2)
+  let b : ℝ := 123 / 32
+  let R : ℝ := 31 / 8
+  let M : ℝ := C * (X : ℝ) ^ 2 * (T + 14) ^ 10
+  let D := MeromorphicOn.divisor (regularizedCarlsonZeroDetector X)
+    (Metric.closedBall c b)
+  let zeros := regularizedCarlsonFactorDiskZeroSupport X T
+  let delta := regularizedCarlsonFactorDiskSeparation X T
+  have hXReal : 1 ≤ (X : ℝ) := by exact_mod_cast hX
+  have hXPow : 1 ≤ (X : ℝ) ^ 2 := by
+    simpa using pow_le_pow_left₀ (by norm_num : (0 : ℝ) ≤ 1) hXReal 2
+  have hTBase : 1 ≤ T + 14 := by linarith
+  have hTPow : 1 ≤ (T + 14) ^ 10 := by
+    simpa using pow_le_pow_left₀ (by norm_num : (0 : ℝ) ≤ 1) hTBase 10
+  have hCX : 1 ≤ C * (X : ℝ) ^ 2 := by
+    simpa using mul_le_mul hC hXPow (by norm_num) (by linarith)
+  have hM : 1 ≤ M := by
+    dsimp [M]
+    simpa using mul_le_mul hCX hTPow (by norm_num)
+      (mul_nonneg (by linarith) (by positivity))
+  have hanalyticOuter : AnalyticOnNhd ℂ
+      (regularizedCarlsonZeroDetector X) (Metric.closedBall c R) := by
+    simpa [c, R] using
+      analyticOnNhd_regularizedCarlsonZeroDetector_fixedJensenOuterDisk X T
+  have hdiffOuter : DiffContOnCl ℂ (regularizedCarlsonZeroDetector X)
+      (Metric.ball c R) :=
+    hanalyticOuter.differentiableOn.diffContOnCl_ball subset_rfl
+  have hclosedNorm : ∀ z ∈ Metric.closedBall c R,
+      ‖regularizedCarlsonZeroDetector X z‖ ≤ M := by
+    intro z hz
+    apply Complex.norm_le_of_forall_mem_frontier_norm_le
+      Metric.isBounded_ball hdiffOuter
+    · intro u hu
+      have huSphere : u ∈ Metric.sphere c R :=
+        Metric.frontier_ball_subset_sphere hu
+      simpa [c, R, M] using hsphereOuter hX hT (by simpa [c, R] using huSphere)
+    · rw [closure_ball c (by norm_num [R] : R ≠ 0)]
+      exact hz
+  rcases exists_regularizedCarlsonZeroDetector_goodFactorCircle hX (T := T) with
+    ⟨r, hrpos, hrange, hsep, hsphereFactor, hsphereNe⟩
+  have hrb : r < b := by
+    dsimp [b]
+    linarith [hrange.2]
+  have hbR : b ≤ R := by norm_num [b, R]
+  have hanalyticFactor : AnalyticOnNhd ℂ
+      (regularizedCarlsonZeroDetector X) (Metric.closedBall c b) :=
+    hanalyticOuter.mono (Metric.closedBall_subset_closedBall hbR)
+  have hnotop : ∀ u : (Metric.closedBall c b : Set ℂ),
+      meromorphicOrderAt (regularizedCarlsonZeroDetector X) u ≠ ⊤ := by
+    intro u
+    apply fixedJensenFactorDisk_meromorphicOrder_ne_top hX
+    change (u : ℂ) ∈ Metric.closedBall
+      ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ)
+    exact u.property
+  rcases exists_analytic_nonzero_factor_log_norm_pointwise_of_ne_zero
+      (f := regularizedCarlsonZeroDetector X) (c := c) (r := r) (R := b)
+      hrb hanalyticFactor hnotop with ⟨g, hg, hgne, hfactor⟩
+  have hDfinite : D.support.Finite := by
+    exact D.finiteSupport (isCompact_closedBall c b)
+  have hDnonneg : 0 ≤ D := hanalyticFactor.divisor_nonneg
+  have hcenterNe : regularizedCarlsonZeroDetector X c ≠ 0 := by
+    apply regularizedCarlsonZeroDetector_ne_zero_of_four_le_re hX
+    simp [c]
+  have hcenterEq := hfactor c (by simp [hrpos.le]) hcenterNe
+  have hcenterSum :=
+    finsum_divisor_mul_log_norm_center_sub_le_log_mul_mass
+      (f := regularizedCarlsonZeroDetector X) (c := c) (b := b)
+      (by norm_num [b]) hanalyticFactor hcenterNe
+  have hcenterF : 0 ≤ Real.log ‖regularizedCarlsonZeroDetector X c‖ :=
+    Real.log_nonneg
+      (one_le_norm_regularizedCarlsonZeroDetector_of_four_le_re hX (by simp [c]))
+  have hcenterG : regularizedCarlsonFactorCenterLogLower X T ≤
+      Real.log ‖g c‖ := by
+    change -Real.log b * (∑ᶠ u, (D u : ℝ)) ≤ Real.log ‖g c‖
+    simpa [D, c, b] using (show
+      -Real.log b * (∑ᶠ u, (D u : ℝ)) ≤ Real.log ‖g c‖ by
+        linarith)
+  have hdelta : 0 < delta := by
+    dsimp [delta, regularizedCarlsonFactorDiskSeparation, zeros, c]
+    positivity
+  have hsphereG : ∀ z ∈ Metric.sphere c r,
+      Real.log ‖g z‖ ≤ regularizedCarlsonFactorCircleLogUpper C X T := by
+    intro z hz
+    have hzFactor : z ∈ Metric.closedBall c b := hsphereFactor z (by simpa [c] using hz)
+    have hzOuter : z ∈ Metric.closedBall c R :=
+      Metric.closedBall_subset_closedBall hbR hzFactor
+    have hfz : regularizedCarlsonZeroDetector X z ≠ 0 :=
+      hsphereNe z (by simpa [c] using hz)
+    have hfactorZ := hfactor z
+      (Metric.sphere_subset_closedBall (by simpa [c] using hz)) hfz
+    have hsepSupport : ∀ u ∈ D.support, delta ≤ ‖z - u‖ := by
+      intro u hu
+      have huZeros : u ∈ zeros := by
+        dsimp [zeros, regularizedCarlsonFactorDiskZeroSupport]
+        exact hDfinite.mem_toFinset.mpr hu
+      have h := hsep z (by simpa [c] using hz) u (by simpa [zeros] using huZeros)
+      simpa [delta, regularizedCarlsonFactorDiskSeparation, c,
+        Complex.dist_eq] using h
+    have hsumLower :=
+      ZeroFreeRegion.log_mul_finsum_le_finsum_mul_log_norm_sub_of_finiteSupport
+        hDfinite (fun u => hDnonneg u) hdelta hsepSupport
+    have hlogF : Real.log ‖regularizedCarlsonZeroDetector X z‖ ≤ Real.log M :=
+      Real.log_le_log (norm_pos_iff.mpr hfz) (hclosedNorm z hzOuter)
+    change Real.log ‖g z‖ ≤
+      Real.log M - Real.log delta * (∑ᶠ u, (D u : ℝ))
+    simpa [D, c, M, delta, regularizedCarlsonFactorCircleLogUpper,
+      regularizedCarlsonFactorDiskZeroMass] using (show
+        Real.log ‖g z‖ ≤
+          Real.log M - Real.log delta * (∑ᶠ u, (D u : ℝ)) by
+      linarith)
+  have hgCircle : AnalyticOnNhd ℂ g (Metric.closedBall c r) :=
+    hg.mono (Metric.closedBall_subset_closedBall hrb.le)
+  have hgneCircle : ∀ z ∈ Metric.closedBall c r, g z ≠ 0 := by
+    intro z hz
+    exact hgne ⟨z, Metric.closedBall_subset_closedBall hrb.le hz⟩
+  have hdR : (15 / 4 : ℝ) < r := by linarith [hrange.1]
+  have hlogDeriv : ∀ z ∈ Metric.closedBall c (15 / 4 : ℝ),
+      ‖logDeriv g z‖ ≤
+        4 * max
+            (regularizedCarlsonFactorCircleLogUpper C X T -
+              regularizedCarlsonFactorCenterLogLower X T) 1 *
+          (r + 15 / 4) / (r - 15 / 4) ^ 2 := by
+    intro z hz
+    exact
+      ZeroFreeRegion.norm_logDeriv_le_four_mul_max_sub_mul_add_div_sq_of_sphere_log_norm_le_of_center_lower
+        hrpos (by norm_num) hdR hgCircle hgneCircle hcenterG hsphereG hz
+  refine ⟨r, g, hrange, ?_, ?_, ?_, ?_, ?_⟩
+  · simpa [c, b] using hg
+  · simpa [c, b] using hgne
+  · simpa [c] using hcenterG
+  · intro z hz
+    exact hsphereG z (by simpa [c] using hz)
+  · intro z hz
+    exact hlogDeriv z (by simpa [c] using hz)
 
 /-- The complete divisor mass on the factorization disk is explicitly
 controlled by the detector's polynomial outer-circle growth. -/

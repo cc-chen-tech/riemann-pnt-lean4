@@ -99,6 +99,18 @@ noncomputable example (C : ℝ) (X : ℕ) (T : ℝ) : ℝ :=
 noncomputable example (X : ℕ) (T : ℝ) : Finset ℂ :=
   regularizedCarlsonFactorDiskZeroSupport X T
 
+noncomputable example (X : ℕ) (T : ℝ) : ℝ :=
+  regularizedCarlsonFactorDiskZeroMass X T
+
+noncomputable example (X : ℕ) (T : ℝ) : ℝ :=
+  regularizedCarlsonFactorDiskSeparation X T
+
+noncomputable example (C : ℝ) (X : ℕ) (T : ℝ) : ℝ :=
+  regularizedCarlsonFactorCircleLogUpper C X T
+
+noncomputable example (X : ℕ) (T : ℝ) : ℝ :=
+  regularizedCarlsonFactorCenterLogLower X T
+
 example {X : ℕ} (hX : 1 ≤ X) {T : ℝ} {z : ℂ}
     (hz : z ∈ Metric.closedBall
       ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ)) :
@@ -124,6 +136,30 @@ example {X : ℕ} (hX : 1 ≤ X) {T : ℝ} :
           ((4 : ℂ) + I * (T + 1 / 2)) r,
         regularizedCarlsonZeroDetector X z ≠ 0 :=
   exists_regularizedCarlsonZeroDetector_goodFactorCircle hX
+
+example : ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X → ∀ {T : ℝ}, 5 ≤ T →
+    ∃ r : ℝ, ∃ g : ℂ → ℂ,
+      r ∈ Set.Icc (121 / 32 : ℝ) (122 / 32 : ℝ) ∧
+      AnalyticOnNhd ℂ g
+        (Metric.closedBall
+          ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ)) ∧
+      (∀ u : (Metric.closedBall
+          ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ) : Set ℂ),
+        g u ≠ 0) ∧
+      regularizedCarlsonFactorCenterLogLower X T ≤
+        Real.log ‖g ((4 : ℂ) + I * (T + 1 / 2))‖ ∧
+      (∀ z ∈ Metric.sphere
+          ((4 : ℂ) + I * (T + 1 / 2)) r,
+        Real.log ‖g z‖ ≤
+          regularizedCarlsonFactorCircleLogUpper C X T) ∧
+      ∀ z ∈ Metric.closedBall
+          ((4 : ℂ) + I * (T + 1 / 2)) (15 / 4 : ℝ),
+        ‖logDeriv g z‖ ≤
+          4 * max
+              (regularizedCarlsonFactorCircleLogUpper C X T -
+                regularizedCarlsonFactorCenterLogLower X T) 1 *
+            (r + 15 / 4) / (r - 15 / 4) ^ 2 :=
+  exists_regularizedCarlsonZeroDetector_goodFactor_logDeriv_le
 
 example : ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X → ∀ {T : ℝ}, 5 ≤ T →
     (∑ᶠ u,
@@ -159,6 +195,7 @@ example : ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X → ∀ {T : ℝ}, 5 �
 #print axioms exists_regularizedCarlsonZeroDetector_fixedJensenFactor_explicit_center_lower
 #print axioms mem_regularizedCarlsonFactorDiskZeroSupport_iff_zero
 #print axioms exists_regularizedCarlsonZeroDetector_goodFactorCircle
+#print axioms exists_regularizedCarlsonZeroDetector_goodFactor_logDeriv_le
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem
