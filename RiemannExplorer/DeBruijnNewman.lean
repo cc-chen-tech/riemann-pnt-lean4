@@ -3078,5 +3078,120 @@ theorem integral_Ioi_cexp_thetaNWD (a : ℂ) :
     exact (congrArg _ e1).trans (e2.trans e3)
   linear_combination h2 + a * hANW - a * h1
 
+/-- M 侧解出的二阶方程：`∫₋∞⁰ e^{au}·NM'(u) du = (a²−2a)·B + NM(0) − a·M(0)`，
+其中 `B = ∫₋∞⁰ e^{au}·M(u) du`；经 `NMD = NWD` 转到 W 侧核。 -/
+theorem integral_Iic_cexp_thetaNWD (a : ℂ) :
+    ∫ u in Set.Iic (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaNWD u : ℂ)
+      = (a * a - 2 * a)
+          * (∫ u in Set.Iic (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaM u : ℂ))
+        + (thetaNM 0 : ℂ) - a * (thetaM 0 : ℂ) := by
+  have hconv : (∫ u in Set.Iic (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaNWD u : ℂ))
+      = ∫ u in Set.Iic (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaNMD u : ℂ) := by
+    apply MeasureTheory.setIntegral_congr_fun measurableSet_Iic
+    intro u _
+    show Complex.exp (a * (u : ℂ)) * (thetaNWD u : ℂ)
+      = Complex.exp (a * (u : ℂ)) * (thetaNMD u : ℂ)
+    rw [show (thetaNWD u : ℂ) = (thetaNMD u : ℂ) from by
+      exact_mod_cast (thetaMDD_add_two_thetaMD_eq u).symm]
+  have hNM : MeasureTheory.IntegrableOn
+      (fun u : ℝ => Complex.exp (a * (u : ℂ)) * (thetaNM u : ℂ))
+      (Set.Iic 0) MeasureTheory.volume := by
+    refine ((integrableOn_cexp_thetaMD a).add
+      ((integrableOn_cexp_thetaM a).const_mul 2)).congr ?_
+    filter_upwards with u
+    show Complex.exp (a * (u : ℂ)) * (thetaMD u : ℂ)
+        + 2 * (Complex.exp (a * (u : ℂ)) * (thetaM u : ℂ))
+      = Complex.exp (a * (u : ℂ)) * (thetaNM u : ℂ)
+    unfold thetaNM
+    push_cast
+    ring
+  have hNMD : MeasureTheory.IntegrableOn
+      (fun u : ℝ => Complex.exp (a * (u : ℂ)) * (thetaNMD u : ℂ))
+      (Set.Iic 0) MeasureTheory.volume := by
+    refine ((integrableOn_cexp_thetaMDD a).add
+      ((integrableOn_cexp_thetaMD a).const_mul 2)).congr ?_
+    filter_upwards with u
+    show Complex.exp (a * (u : ℂ)) * (thetaMDD u : ℂ)
+        + 2 * (Complex.exp (a * (u : ℂ)) * (thetaMD u : ℂ))
+      = Complex.exp (a * (u : ℂ)) * (thetaNMD u : ℂ)
+    unfold thetaNMD
+    push_cast
+    ring
+  have h3 : a * (∫ u in Set.Iic (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaM u : ℂ))
+        + (∫ u in Set.Iic (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaMD u : ℂ))
+      = (thetaM 0 : ℂ) := by
+    have e1 : a * (∫ u in Set.Iic (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaM u : ℂ))
+        = ∫ u in Set.Iic (0 : ℝ), a * (Complex.exp (a * (u : ℂ)) * (thetaM u : ℂ)) :=
+      (MeasureTheory.integral_const_mul a _).symm
+    have e2 : (∫ u in Set.Iic (0 : ℝ), a * (Complex.exp (a * (u : ℂ)) * (thetaM u : ℂ)))
+          + (∫ u in Set.Iic (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaMD u : ℂ))
+        = ∫ u in Set.Iic (0 : ℝ), (a * (Complex.exp (a * (u : ℂ)) * (thetaM u : ℂ))
+            + Complex.exp (a * (u : ℂ)) * (thetaMD u : ℂ)) :=
+      (MeasureTheory.integral_add ((integrableOn_cexp_thetaM a).const_mul a)
+        (integrableOn_cexp_thetaMD a)).symm
+    have e3 : (∫ u in Set.Iic (0 : ℝ), (a * (Complex.exp (a * (u : ℂ)) * (thetaM u : ℂ))
+            + Complex.exp (a * (u : ℂ)) * (thetaMD u : ℂ)))
+        = ∫ u in Set.Iic (0 : ℝ), Complex.exp (a * (u : ℂ))
+            * (a * (thetaM u : ℂ) + (thetaMD u : ℂ)) := by
+      apply MeasureTheory.setIntegral_congr_fun measurableSet_Iic
+      intro u _
+      show a * (Complex.exp (a * (u : ℂ)) * (thetaM u : ℂ))
+          + Complex.exp (a * (u : ℂ)) * (thetaMD u : ℂ)
+        = Complex.exp (a * (u : ℂ)) * (a * (thetaM u : ℂ) + (thetaMD u : ℂ))
+      ring
+    exact ((congrArg (· + _) e1).trans (e2.trans e3)).trans (integral_Iic_cexp_thetaM a)
+  have h4 : a * (∫ u in Set.Iic (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaNM u : ℂ))
+        + (∫ u in Set.Iic (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaNMD u : ℂ))
+      = (thetaNM 0 : ℂ) := by
+    have e1 : a * (∫ u in Set.Iic (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaNM u : ℂ))
+        = ∫ u in Set.Iic (0 : ℝ), a * (Complex.exp (a * (u : ℂ)) * (thetaNM u : ℂ)) :=
+      (MeasureTheory.integral_const_mul a _).symm
+    have e2 : (∫ u in Set.Iic (0 : ℝ), a * (Complex.exp (a * (u : ℂ)) * (thetaNM u : ℂ)))
+          + (∫ u in Set.Iic (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaNMD u : ℂ))
+        = ∫ u in Set.Iic (0 : ℝ), (a * (Complex.exp (a * (u : ℂ)) * (thetaNM u : ℂ))
+            + Complex.exp (a * (u : ℂ)) * (thetaNMD u : ℂ)) :=
+      (MeasureTheory.integral_add (hNM.const_mul a) hNMD).symm
+    have e3 : (∫ u in Set.Iic (0 : ℝ), (a * (Complex.exp (a * (u : ℂ)) * (thetaNM u : ℂ))
+            + Complex.exp (a * (u : ℂ)) * (thetaNMD u : ℂ)))
+        = ∫ u in Set.Iic (0 : ℝ), Complex.exp (a * (u : ℂ))
+            * (a * (thetaNM u : ℂ) + (thetaNMD u : ℂ)) := by
+      apply MeasureTheory.setIntegral_congr_fun measurableSet_Iic
+      intro u _
+      show a * (Complex.exp (a * (u : ℂ)) * (thetaNM u : ℂ))
+          + Complex.exp (a * (u : ℂ)) * (thetaNMD u : ℂ)
+        = Complex.exp (a * (u : ℂ)) * (a * (thetaNM u : ℂ) + (thetaNMD u : ℂ))
+      ring
+    exact ((congrArg (· + _) e1).trans (e2.trans e3)).trans (integral_Iic_cexp_thetaNM a)
+  have hBNM : (∫ u in Set.Iic (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaMD u : ℂ))
+        + 2 * (∫ u in Set.Iic (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaM u : ℂ))
+      = ∫ u in Set.Iic (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaNM u : ℂ) := by
+    have e1 : 2 * (∫ u in Set.Iic (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaM u : ℂ))
+        = ∫ u in Set.Iic (0 : ℝ), 2 * (Complex.exp (a * (u : ℂ)) * (thetaM u : ℂ)) :=
+      (MeasureTheory.integral_const_mul 2 _).symm
+    have e2 : (∫ u in Set.Iic (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaMD u : ℂ))
+          + (∫ u in Set.Iic (0 : ℝ), 2 * (Complex.exp (a * (u : ℂ)) * (thetaM u : ℂ)))
+        = ∫ u in Set.Iic (0 : ℝ), (Complex.exp (a * (u : ℂ)) * (thetaMD u : ℂ)
+            + 2 * (Complex.exp (a * (u : ℂ)) * (thetaM u : ℂ))) :=
+      (MeasureTheory.integral_add (integrableOn_cexp_thetaMD a)
+        ((integrableOn_cexp_thetaM a).const_mul 2)).symm
+    have e3 : (∫ u in Set.Iic (0 : ℝ), (Complex.exp (a * (u : ℂ)) * (thetaMD u : ℂ)
+            + 2 * (Complex.exp (a * (u : ℂ)) * (thetaM u : ℂ))))
+        = ∫ u in Set.Iic (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaNM u : ℂ) := by
+      apply MeasureTheory.setIntegral_congr_fun measurableSet_Iic
+      intro u _
+      show Complex.exp (a * (u : ℂ)) * (thetaMD u : ℂ)
+          + 2 * (Complex.exp (a * (u : ℂ)) * (thetaM u : ℂ))
+        = Complex.exp (a * (u : ℂ)) * (thetaNM u : ℂ)
+      unfold thetaNM
+      push_cast
+      ring
+    exact (congrArg _ e1).trans (e2.trans e3)
+  have hsolve : (∫ u in Set.Iic (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaNMD u : ℂ))
+      = (a * a - 2 * a)
+          * (∫ u in Set.Iic (0 : ℝ), Complex.exp (a * (u : ℂ)) * (thetaM u : ℂ))
+        + (thetaNM 0 : ℂ) - a * (thetaM 0 : ℂ) := by
+    linear_combination h4 + a * hBNM - a * h3
+  exact hconv.trans hsolve
+
 end DeBruijnNewman
 end RiemannExplorer
