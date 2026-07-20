@@ -20,6 +20,7 @@ lean_lib RiemannPNT where
     `RiemannExplorer.LiStrictPositivity,
     `RiemannExplorer.XiPartialFractionAnalytic,
     `RiemannExplorer.XiPartialFractionResidue,
+    `RiemannExplorer.XiPartialFractionEntire,
     `GammaResidue,
     `HardyTheorem,
     `EulerAndLfunctions,
