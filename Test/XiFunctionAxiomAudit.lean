@@ -9,6 +9,7 @@ import RiemannExplorer.LiStrictPositivity
 import RiemannExplorer.XiPartialFractionAnalytic
 import RiemannExplorer.XiPartialFractionResidue
 import RiemannExplorer.XiPartialFractionEntire
+import RiemannExplorer.XiGrowthOrder
 
 #print axioms RiemannExplorer.xiFunction_one_sub
 #print axioms RiemannExplorer.xiFunction_zero
@@ -92,3 +93,8 @@ import RiemannExplorer.XiPartialFractionEntire
 #print axioms RiemannExplorer.tendsto_sub_mul_logDeriv_sub_const_sub_xiPairedMittagLefflerSum_of_zero
 #print axioms RiemannExplorer.xiPartialFractionEntireCorrection_apply_of_ne_zero
 #print axioms RiemannExplorer.differentiable_xiPartialFractionEntireCorrection
+#print axioms RiemannExplorer.pow_ceil_le_exp_mul_log
+#print axioms RiemannExplorer.real_Gamma_le_ceil_pow_ceil
+#print axioms RiemannExplorer.real_Gamma_le_exp
+#print axioms RiemannExplorer.Complex.norm_Gamma_le_real_Gamma
+#print axioms RiemannExplorer.Complex.norm_Gamma_le_exp
