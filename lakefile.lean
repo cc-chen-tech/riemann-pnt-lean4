@@ -10,6 +10,7 @@ lean_lib RiemannPNT where
     `RiemannPNT,
     `RiemannExplorer,
     `RiemannExplorer.Conrey40,
+    `RiemannExplorer.DeBruijnNewman,
     `GammaResidue,
     `HardyTheorem,
     `EulerAndLfunctions,
@@ -195,7 +196,8 @@ lean_lib RiemannPNT where
     `Test.RiemannVonMangoldtAllHeightAsymptoticContract,
     `Test.RiemannVonMangoldtAllHeightAsymptoticAxiomAudit,
     `Test.RiemannVonMangoldtContract,
-    `Test.RiemannVonMangoldtAxiomAudit
+    `Test.RiemannVonMangoldtAxiomAudit,
+    `Test.DeBruijnNewmanAxiomAudit
   ]
 
 require mathlib from "./vendor/mathlib"

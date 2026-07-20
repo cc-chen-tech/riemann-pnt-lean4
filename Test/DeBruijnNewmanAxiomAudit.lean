@@ -1,0 +1,8 @@
+import RiemannExplorer.DeBruijnNewman
+
+#print axioms RiemannExplorer.DeBruijnNewman.phiTerm_zero
+#print axioms RiemannExplorer.DeBruijnNewman.abs_phiTerm_le
+#print axioms RiemannExplorer.DeBruijnNewman.summable_phiTerm_all
+#print axioms RiemannExplorer.DeBruijnNewman.summable_phiTerm
+#print axioms RiemannExplorer.DeBruijnNewman.norm_cos_le_exp_abs_im
+#print axioms RiemannExplorer.DeBruijnNewman.norm_cos_mul_ofReal_le_exp
