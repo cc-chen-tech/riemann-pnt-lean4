@@ -274,4 +274,93 @@ theorem differentiable_xiPartialFractionEntireCorrection (c : ℂ)
     exact ((differentiableOn_logDeriv_xiFunction_sub_xiPairedMittagLefflerSum
       c).differentiableAt (hopen.mem_nhds hs)).congr_of_eventuallyEq hev
 
+/-- ξ 在任意点附近不恒为零（恒等定理 + `ξ 0 = 1/2`）。 -/
+theorem xiFunction_ne_eventually_zero (s₀ : ℂ) :
+    ¬ ∀ᶠ z in 𝓝 s₀, xiFunction z = 0 := by
+  intro h
+  have han : AnalyticOnNhd ℂ xiFunction Set.univ :=
+    (differentiable_xiFunction.differentiableOn (s := Set.univ)).analyticOnNhd
+      isOpen_univ
+  have hfreq : ∃ᶠ z in 𝓝[≠] s₀, xiFunction z = 0 :=
+    (h.filter_mono nhdsWithin_le_nhds).frequently
+  have hEq := han.eqOn_zero_of_preconnected_of_frequently_eq_zero
+    isPreconnected_univ (Set.mem_univ _) hfreq
+  have h00 := hEq (Set.mem_univ (0 : ℂ))
+  simp only [Pi.zero_apply] at h00
+  rw [xiFunction_zero] at h00
+  norm_num at h00
+
+/-- ξ 的零点孤立：任意点的去心邻域上 ξ 最终非零。 -/
+theorem xiFunction_eventually_ne_zero_punctured (s₀ : ℂ) :
+    ∀ᶠ z in 𝓝[≠] s₀, xiFunction z ≠ 0 := by
+  rw [← Filter.not_frequently]
+  intro hfreq
+  exact xiFunction_ne_eventually_zero s₀
+    ((differentiable_xiFunction.analyticAt
+      s₀).frequently_zero_iff_eventually_zero.mp hfreq)
+
+/-- **不可约缺口的精确刻画（必要条件）**：若
+`xi_partial_fraction_expansion_target` 成立（存在常数 `B` 使**按不同零点
+计、留数 1** 的配对展开在非零点处成立），则 ξ 的每个零点都是**单零点**
+（解析重数 1）。
+
+证明：在零点 `s₀` 处，留数定理给出
+`(s − s₀)·(ξ'/ξ − B − F) → 重数 − 1`（去心）；而展开式使该函数在
+`{ξ ≠ 0}`（去心邻域的最终集，`xiFunction_eventually_ne_zero_punctured`）
+上恒为零，极限唯一性给出「重数 − 1 = 0」。
+
+因此该 target 逻辑上**蕴含**「ζ 的非平凡零点全为单零点」——这是著名
+**公开问题**（与 RH 互不蕴含）。故 target 的无条件证明必须先解决零点
+单性；无条件的 Hadamard 展开必须按解析重数对级数计次。 -/
+theorem xi_partial_fraction_expansion_target_imp_simple_zeros
+    (h : xi_partial_fraction_expansion_target)
+    (hclass : ∀ s : ℂ, xiFunction s = 0 →
+      RiemannHypothesis.IsNontrivialZero s ∧ s.im ≠ 0)
+    {s₀ : ℂ} (hs₀ : xiFunction s₀ = 0) :
+    analyticOrderNatAt xiFunction s₀ = 1 := by
+  obtain ⟨B, hB⟩ := h
+  obtain ⟨hz, him⟩ := hclass s₀ hs₀
+  have hpunct := xiFunction_eventually_ne_zero_punctured s₀
+  -- 留数侧：极限 = 重数 − 1
+  have h1 := tendsto_sub_mul_logDeriv_xiFunction_of_zero hs₀
+  have hF := tendsto_sub_mul_xiPairedMittagLefflerSum_of_zero hz him
+  have hB0 : Filter.Tendsto (fun s => (s - s₀) * B) (𝓝[≠] s₀) (𝓝 0) := by
+    have hsub0 : Filter.Tendsto (fun s : ℂ => s - s₀) (𝓝[≠] s₀) (𝓝 0) := by
+      have h : Filter.Tendsto (fun s : ℂ => s - s₀) (𝓝 s₀) (𝓝 0) := by
+        have h := (continuous_sub_right s₀).tendsto s₀
+        simpa using h
+      exact h.mono_left nhdsWithin_le_nhds
+    have hc0 : Filter.Tendsto (fun _ : ℂ => B) (𝓝[≠] s₀) (𝓝 B) :=
+      tendsto_const_nhds
+    have h := hsub0.mul hc0
+    rwa [zero_mul] at h
+  have hD : Filter.Tendsto
+      (fun s => (s - s₀) * (deriv xiFunction s / xiFunction s - B -
+        xiPairedMittagLefflerSum s))
+      (𝓝[≠] s₀) (𝓝 ((analyticOrderNatAt xiFunction s₀ : ℂ) - 1)) := by
+    have h := (h1.sub hB0).sub hF
+    rw [sub_zero] at h
+    refine h.congr' (Filter.Eventually.of_forall fun s => ?_)
+    show (s - s₀) * (deriv xiFunction s / xiFunction s) - (s - s₀) * B -
+        (s - s₀) * xiPairedMittagLefflerSum s =
+      (s - s₀) * (deriv xiFunction s / xiFunction s - B -
+        xiPairedMittagLefflerSum s)
+    ring
+  -- 展开式侧：该函数在去心邻域的最终集上恒为零
+  have hzero : (fun s => (s - s₀) * (deriv xiFunction s / xiFunction s - B -
+      xiPairedMittagLefflerSum s)) =ᶠ[𝓝[≠] s₀] fun _ => 0 := by
+    refine hpunct.mono fun z hz => ?_
+    have heq := hB z hz
+    show (z - s₀) * (deriv xiFunction z / xiFunction z - B -
+        ∑' ρ : UpperHalfPlaneNontrivialZero, xiPairedMittagLefflerTerm z (ρ : ℂ)) =
+      0
+    rw [heq]
+    ring
+  have hlim0 : Filter.Tendsto (fun _ : ℂ => (0 : ℂ)) (𝓝[≠] s₀)
+      (𝓝 ((analyticOrderNatAt xiFunction s₀ : ℂ) - 1)) :=
+    hD.congr' hzero
+  have huniq := tendsto_nhds_unique hlim0 tendsto_const_nhds
+  have hm : (analyticOrderNatAt xiFunction s₀ : ℂ) = 1 := sub_eq_zero.mp huniq
+  exact_mod_cast hm
+
 end RiemannExplorer

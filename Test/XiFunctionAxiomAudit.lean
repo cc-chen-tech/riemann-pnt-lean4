@@ -101,3 +101,6 @@ import RiemannExplorer.XiGrowthOrder
 #print axioms RiemannExplorer.norm_riemannZeta_le_of_two_le_re
 #print axioms RiemannExplorer.exists_norm_riemannZeta_le_on_compact_strip
 #print axioms RiemannExplorer.exists_norm_sub_one_mul_riemannZeta_le_fifth
+#print axioms RiemannExplorer.xiFunction_ne_eventually_zero
+#print axioms RiemannExplorer.xiFunction_eventually_ne_zero_punctured
+#print axioms RiemannExplorer.xi_partial_fraction_expansion_target_imp_simple_zeros
