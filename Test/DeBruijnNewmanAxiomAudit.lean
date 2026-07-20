@@ -6,3 +6,8 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.summable_phiTerm
 #print axioms RiemannExplorer.DeBruijnNewman.norm_cos_le_exp_abs_im
 #print axioms RiemannExplorer.DeBruijnNewman.norm_cos_mul_ofReal_le_exp
+#print axioms RiemannExplorer.DeBruijnNewman.continuous_phi
+#print axioms RiemannExplorer.DeBruijnNewman.abs_phi_le
+#print axioms RiemannExplorer.DeBruijnNewman.heat_decay_eventually_le
+#print axioms RiemannExplorer.DeBruijnNewman.heat_integrand_integrable
+#print axioms RiemannExplorer.DeBruijnNewman.heat_integrand_integrable_target_proved

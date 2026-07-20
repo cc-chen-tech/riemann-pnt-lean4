@@ -391,6 +391,242 @@ is discharged; all deep statements about `H_t` are `def : Prop` targets below. -
 noncomputable def deBruijnNewmanH (t : ℝ) (z : ℂ) : ℂ :=
   ∫ u in Set.Ioi 0, heatIntegrand t z u
 
+/-! ## Phase 1a 第二块：主衰减估计与 `H_t` 被积函数的可积性 -/
+
+/-- **Master decay estimate**: polynomial-exponential factors are eventually
+crushed by the double-exponential kernel: for `C > 0`, `a ≥ 0`,
+`C · e^{t u² + a u} · e^{−π e^{4u}} ≤ e^{−u}` for all sufficiently large `u`. -/
+theorem heat_decay_eventually_le (t a C : ℝ) (hC : 0 < C) (ha : 0 ≤ a) :
+    ∀ᶠ u in Filter.atTop,
+      C * Real.exp (t * u ^ 2 + a * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))
+        ≤ Real.exp (-u) := by
+  have hcube : ∀ u : ℝ, 0 ≤ u → (4 * u) ^ 3 / 27 ≤ Real.exp (4 * u) := by
+    intro u hu
+    have h1 : 4 * u / 3 + 1 ≤ Real.exp (4 * u / 3) := Real.add_one_le_exp _
+    have h2 : (4 * u / 3) ^ 3 ≤ Real.exp (4 * u / 3) ^ 3 :=
+      pow_le_pow_left₀ (by positivity) (by linarith) 3
+    have h3 : Real.exp (4 * u / 3) ^ 3 = Real.exp (4 * u) := by
+      rw [← Real.exp_nat_mul]
+      congr 1
+      ring
+    have h4 : (4 * u / 3) ^ 3 = (4 * u) ^ 3 / 27 := by ring
+    rwa [h3, h4] at h2
+  have hsq : ∀ u : ℝ, 0 ≤ u → 4 * u ^ 2 ≤ Real.exp (4 * u) := by
+    intro u hu
+    have h1 : 2 * u ≤ Real.exp (2 * u) := by
+      have h := Real.add_one_le_exp (2 * u)
+      linarith
+    have h2 : (2 * u) ^ 2 ≤ Real.exp (2 * u) ^ 2 := pow_le_pow_left₀ (by linarith) h1 2
+    have h3 : Real.exp (2 * u) ^ 2 = Real.exp (4 * u) := by
+      rw [← Real.exp_nat_mul]
+      congr 1
+      ring
+    have h4 : (2 * u) ^ 2 = 4 * u ^ 2 := by ring
+    rwa [h3, h4] at h2
+  set B : ℝ := 1 + 27 * max t 0 / (32 * Real.pi) + (a + 1) / Real.pi
+      + max (Real.log C) 0 / Real.pi with hB
+  have hx0 : 0 ≤ 27 * max t 0 / (32 * Real.pi) :=
+    div_nonneg (by positivity) (by positivity)
+  have hy0 : 0 ≤ (a + 1) / Real.pi := div_nonneg (by linarith) (le_of_lt Real.pi_pos)
+  have hz0 : 0 ≤ max (Real.log C) 0 / Real.pi :=
+    div_nonneg (le_max_right _ _) (le_of_lt Real.pi_pos)
+  have hB1 : 1 ≤ B := by rw [hB]; linarith
+  filter_upwards [Filter.eventually_ge_atTop B] with u huB
+  have hu1 : 1 ≤ u := le_trans hB1 huB
+  have hu0 : 0 ≤ u := zero_le_one.trans hu1
+  have hpi3 : 0 ≤ (32 * Real.pi / 27) * u ^ 3 := by positivity
+  have hi : t * u ^ 2 ≤ (32 * Real.pi / 27) * u ^ 3 := by
+    rcases le_total t 0 with ht | ht
+    · exact (mul_nonpos_of_nonpos_of_nonneg ht (pow_nonneg hu0 _)).trans hpi3
+    · have h1 : 27 * t / (32 * Real.pi) ≤ B := by
+        have hmax : 27 * t / (32 * Real.pi) ≤ 27 * max t 0 / (32 * Real.pi) := by
+          rw [div_le_iff₀ (by positivity : (0:ℝ) < 32 * Real.pi),
+            div_mul_cancel₀ _ (ne_of_gt (by positivity : (0:ℝ) < 32 * Real.pi))]
+          exact mul_le_mul_of_nonneg_left (le_max_left _ _) (by norm_num)
+        rw [hB]
+        linarith [hmax]
+      have h3 : t ≤ (32 * Real.pi / 27) * B := by
+        rw [div_le_iff₀ (by positivity : (0:ℝ) < 32 * Real.pi)] at h1
+        have h4 : (32 * Real.pi / 27) * B = B * (32 * Real.pi) / 27 := by ring
+        rw [h4, le_div_iff₀ (by norm_num : (0:ℝ) < 27)]
+        calc t * 27 = 27 * t := by ring
+          _ ≤ B * (32 * Real.pi) := h1
+      calc t * u ^ 2 ≤ (32 * Real.pi / 27) * B * u ^ 2 :=
+            mul_le_mul_of_nonneg_right h3 (pow_nonneg hu0 _)
+        _ ≤ (32 * Real.pi / 27) * u * u ^ 2 :=
+            mul_le_mul_of_nonneg_right
+              (mul_le_mul_of_nonneg_left huB (by positivity)) (pow_nonneg hu0 _)
+        _ = (32 * Real.pi / 27) * u ^ 3 := by ring
+  have hii : (a + 1) * u ≤ Real.pi * u ^ 2 := by
+    have h1 : (a + 1) / Real.pi ≤ B := by rw [hB]; linarith
+    rw [div_le_iff₀ Real.pi_pos] at h1
+    calc (a + 1) * u ≤ B * Real.pi * u :=
+          mul_le_mul_of_nonneg_right h1 hu0
+      _ ≤ Real.pi * u * u :=
+          mul_le_mul_of_nonneg_right
+            (calc B * Real.pi = Real.pi * B := by ring
+              _ ≤ Real.pi * u := mul_le_mul_of_nonneg_left huB (le_of_lt Real.pi_pos)) hu0
+      _ = Real.pi * u ^ 2 := by ring
+  have hiii : Real.log C ≤ Real.pi * u ^ 2 := by
+    have h1 : max (Real.log C) 0 / Real.pi ≤ B := by rw [hB]; linarith
+    rw [div_le_iff₀ Real.pi_pos] at h1
+    calc Real.log C ≤ max (Real.log C) 0 := le_max_left _ _
+      _ ≤ B * Real.pi := h1
+      _ ≤ u * Real.pi := mul_le_mul_of_nonneg_right huB (le_of_lt Real.pi_pos)
+      _ = Real.pi * u := by ring
+      _ ≤ Real.pi * u ^ 2 :=
+          mul_le_mul_of_nonneg_left (le_self_pow₀ hu1 (by norm_num)) (le_of_lt Real.pi_pos)
+  have hmain : t * u ^ 2 + (a + 1) * u + Real.log C ≤ Real.pi * Real.exp (4 * u) := by
+    have hsplit : (32 * Real.pi / 27) * u ^ 3 + 2 * Real.pi * u ^ 2
+        ≤ Real.pi * Real.exp (4 * u) := by
+      have hc := hcube u hu0
+      have hs := hsq u hu0
+      have h64 : (4 * u) ^ 3 / 27 = (64 / 27) * u ^ 3 := by ring
+      rw [h64] at hc
+      have h2 : (32 * Real.pi / 27) * u ^ 3 ≤ (Real.pi / 2) * Real.exp (4 * u) := by
+        have he : (32 * Real.pi / 27) * u ^ 3
+            = (Real.pi / 2) * ((64 / 27) * u ^ 3) := by ring
+        rw [he]
+        exact mul_le_mul_of_nonneg_left hc (by positivity)
+      have h3 : 2 * Real.pi * u ^ 2 ≤ (Real.pi / 2) * Real.exp (4 * u) := by
+        have he : 2 * Real.pi * u ^ 2 = (Real.pi / 2) * (4 * u ^ 2) := by ring
+        rw [he]
+        exact mul_le_mul_of_nonneg_left hs (by positivity)
+      calc (32 * Real.pi / 27) * u ^ 3 + 2 * Real.pi * u ^ 2
+          ≤ (Real.pi / 2) * Real.exp (4 * u) + (Real.pi / 2) * Real.exp (4 * u) :=
+            add_le_add h2 h3
+        _ = Real.pi * Real.exp (4 * u) := by ring
+    calc t * u ^ 2 + (a + 1) * u + Real.log C
+        ≤ (32 * Real.pi / 27) * u ^ 3 + Real.pi * u ^ 2 + Real.pi * u ^ 2 :=
+          add_le_add (add_le_add hi hii) hiii
+      _ = (32 * Real.pi / 27) * u ^ 3 + 2 * Real.pi * u ^ 2 := by ring
+      _ ≤ Real.pi * Real.exp (4 * u) := hsplit
+  have hau : (a + 1) * u = a * u + u := by ring
+  rw [(Real.exp_log hC).symm, ← Real.exp_add, ← Real.exp_add]
+  apply Real.exp_le_exp.mpr
+  linarith [hmain]
+
+/-- Variant of `heat_decay_eventually_le` carrying an extra factor `u`
+(absorbed via `u ≤ e^u`). Used for the differentiated integrand. -/
+theorem heat_decay_eventually_le_mul (t a C : ℝ) (hC : 0 < C) (ha : 0 ≤ a) :
+    ∀ᶠ u in Filter.atTop,
+      C * u * Real.exp (t * u ^ 2 + a * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))
+        ≤ Real.exp (-u) := by
+  have hmain := heat_decay_eventually_le t (a + 1) C hC (by linarith)
+  filter_upwards [hmain] with u hu
+  have hule : u ≤ Real.exp u := by
+    have h := Real.add_one_le_exp u
+    linarith
+  calc C * u * Real.exp (t * u ^ 2 + a * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))
+      ≤ C * Real.exp u * Real.exp (t * u ^ 2 + a * u)
+          * Real.exp (-(Real.pi * Real.exp (4 * u))) := by
+        apply mul_le_mul_of_nonneg_right _ (Real.exp_nonneg _)
+        apply mul_le_mul_of_nonneg_right _ (Real.exp_nonneg _)
+        exact mul_le_mul_of_nonneg_left hule (le_of_lt hC)
+    _ = C * Real.exp (t * u ^ 2 + (a + 1) * u)
+          * Real.exp (-(Real.pi * Real.exp (4 * u))) := by
+        have he : Real.exp u * Real.exp (t * u ^ 2 + a * u)
+            = Real.exp (t * u ^ 2 + (a + 1) * u) := by
+          rw [← Real.exp_add]
+          congr 1
+          ring
+        have e1 : C * Real.exp u * Real.exp (t * u ^ 2 + a * u)
+            * Real.exp (-(Real.pi * Real.exp (4 * u)))
+          = C * (Real.exp u * Real.exp (t * u ^ 2 + a * u))
+            * Real.exp (-(Real.pi * Real.exp (4 * u))) := by ring
+        rw [e1, he]
+    _ ≤ Real.exp (-u) := hu
+
+/-- Dominating function for the `H_t` integrand with `c = |Im z|`:
+`u ↦ (2π² + 3π) · K₁ · e^{t u² + (9 + c) u} · e^{−π e^{4u}}`. -/
+noncomputable def heatDominatingFun (t c : ℝ) (u : ℝ) : ℝ :=
+  (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+    * Real.exp (t * u ^ 2 + (9 + c) * u)
+    * Real.exp (-(Real.pi * Real.exp (4 * u)))
+
+theorem continuous_heatDominatingFun (t c : ℝ) : Continuous (heatDominatingFun t c) := by
+  unfold heatDominatingFun
+  fun_prop
+
+theorem heatDominatingFun_isBigO (t c : ℝ) (hc : 0 ≤ c) :
+    Asymptotics.IsBigO Filter.atTop (heatDominatingFun t c)
+      fun u : ℝ => Real.exp (-(1:ℝ) * u) := by
+  apply Asymptotics.IsBigO.of_bound'
+  have hC0 : (0:ℝ) ≤ (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst :=
+    mul_nonneg (by positivity) phiTailConst_nonneg
+  have h := heat_decay_eventually_le t (9 + c)
+    ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst)
+    (mul_pos (by positivity) phiTailConst_pos) (by linarith)
+  filter_upwards [h] with u hu
+  have hdom0 : 0 ≤ heatDominatingFun t c u :=
+    mul_nonneg (mul_nonneg hC0 (Real.exp_nonneg _)) (Real.exp_nonneg _)
+  rw [Real.norm_eq_abs, abs_of_nonneg hdom0, Real.norm_eq_abs,
+    abs_of_nonneg (Real.exp_nonneg _), neg_mul, one_mul]
+  exact hu
+
+theorem integrableOn_heatDominatingFun (t c : ℝ) (hc : 0 ≤ c) :
+    MeasureTheory.IntegrableOn (heatDominatingFun t c) (Set.Ioi 0)
+      MeasureTheory.volume :=
+  integrable_of_isBigO_exp_neg (show (0:ℝ) < 1 by norm_num)
+    (continuous_heatDominatingFun t c).continuousOn
+    (heatDominatingFun_isBigO t c hc)
+
+/-- **Phase 1a main theorem**: the `H_t` integrand
+`u ↦ e^{t u²} Φ(u) cos(z u)` is integrable on `(0, ∞)` for every `t : ℝ`
+and `z : ℂ`. -/
+theorem heat_integrand_integrable (t : ℝ) (z : ℂ) :
+    MeasureTheory.IntegrableOn (heatIntegrand t z) (Set.Ioi 0)
+      MeasureTheory.volume := by
+  have hcont : Continuous (heatIntegrand t z) := by
+    unfold heatIntegrand
+    fun_prop
+  have hC0 : (0:ℝ) ≤ (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst :=
+    mul_nonneg (by positivity) phiTailConst_nonneg
+  apply MeasureTheory.Integrable.mono'
+    (integrableOn_heatDominatingFun t |z.im| (abs_nonneg _))
+  · exact hcont.continuousOn.aestronglyMeasurable measurableSet_Ioi
+  · filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_Ioi] with u hu
+    have hu0 : 0 ≤ u := le_of_lt hu
+    have h1 : ‖heatIntegrand t z u‖
+        = |Real.exp (t * u ^ 2) * phi u| * ‖Complex.cos (z * (u : ℂ))‖ := by
+      unfold heatIntegrand
+      rw [norm_mul, show ‖((Real.exp (t * u ^ 2) * phi u : ℝ) : ℂ)‖
+          = |Real.exp (t * u ^ 2) * phi u| from RCLike.norm_ofReal _]
+    rw [h1]
+    have hcos : ‖Complex.cos (z * (u : ℂ))‖ ≤ Real.exp (|z.im| * u) := by
+      calc ‖Complex.cos (z * (u : ℂ))‖ ≤ Real.exp |z.im * u| :=
+            norm_cos_mul_ofReal_le_exp z u
+        _ = Real.exp (|z.im| * u) := by rw [abs_mul, abs_of_nonneg hu0]
+    have hphi : |Real.exp (t * u ^ 2) * phi u|
+        ≤ Real.exp (t * u ^ 2) * ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+            * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))) := by
+      rw [abs_mul, abs_of_pos (Real.exp_pos _)]
+      exact mul_le_mul_of_nonneg_left (abs_phi_le u hu0) (Real.exp_nonneg _)
+    have hb0 : 0 ≤ Real.exp (t * u ^ 2)
+        * ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+          * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))) :=
+      mul_nonneg (Real.exp_nonneg _)
+        (mul_nonneg (mul_nonneg hC0 (Real.exp_nonneg _)) (Real.exp_nonneg _))
+    calc |Real.exp (t * u ^ 2) * phi u| * ‖Complex.cos (z * (u : ℂ))‖
+        ≤ (Real.exp (t * u ^ 2) * ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+            * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))))
+          * Real.exp (|z.im| * u) := mul_le_mul hphi hcos (norm_nonneg _) hb0
+      _ = (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+          * Real.exp (t * u ^ 2 + (9 + |z.im|) * u)
+          * Real.exp (-(Real.pi * Real.exp (4 * u))) := by
+          have e1 : Real.exp (t * u ^ 2)
+              * ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+                * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u))))
+              * Real.exp (|z.im| * u)
+            = (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+              * (Real.exp (t * u ^ 2) * Real.exp (9 * u) * Real.exp (|z.im| * u))
+              * Real.exp (-(Real.pi * Real.exp (4 * u))) := by ring
+          rw [e1, ← Real.exp_add, ← Real.exp_add]
+          have e2 : t * u ^ 2 + 9 * u + |z.im| * u
+              = t * u ^ 2 + (9 + |z.im|) * u := by ring
+          rw [e2]
+      _ = heatDominatingFun t |z.im| u := rfl
+
 /-! ## Prop 目标（晋升纪律见 `docs/implementation-standards.md`） -/
 
 /-- **适定性目标**（Phase 1a）：对每个 `t : ℝ`、`z : ℂ`，被积函数
@@ -400,6 +636,11 @@ noncomputable def deBruijnNewmanH (t : ℝ) (z : ℂ) : ℂ :=
 def heat_integrand_integrable_target : Prop :=
   ∀ t : ℝ, ∀ z : ℂ,
     MeasureTheory.IntegrableOn (heatIntegrand t z) (Set.Ioi 0) MeasureTheory.volume
+
+/-- Phase 1a 收官：`heat_integrand_integrable_target` 已由
+`heat_integrand_integrable` 证明。 -/
+theorem heat_integrand_integrable_target_proved : heat_integrand_integrable_target :=
+  fun t z => heat_integrand_integrable t z
 
 /-- **Φ 偶性目标**（Phase 1c）：`Φ(−u) = Φ(u)`。
 经 Poisson 求和等价于 ζ 的函数方程（Riemann）；Mathlib 侧锚点为
