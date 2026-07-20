@@ -126,6 +126,7 @@ EXPECTED_DECLARATIONS = {
     "HardyTheorem.HasNegToPosLocalSignChangeAt.eq_zero",
     "HardyTheorem.card_le_criticalLineOddZeroCount_of_pairwiseDisjoint_signChanges",
     "HardyTheorem.card_le_criticalLineOddZeroCount_of_pairwiseDisjoint_hardyZ_signChanges",
+    "HardyTheorem.hardy_littlewood_lower_bound_target_proved",
 }
 
 REPORT_RE = re.compile(

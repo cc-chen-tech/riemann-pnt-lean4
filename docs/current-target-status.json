@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-19",
+  "timestamp": "2026-07-20",
   "status": "not-yet-complete",
   "completed_without_sorry": true,
   "remaining_prop_targets": {
@@ -8,7 +8,7 @@
         "name": "hardy_littlewood_odd_lower_bound_target",
         "qualified_name": "HardyTheorem.hardy_littlewood_odd_lower_bound_target",
         "file": "HardyTheorem/CriticalLineMultiplicity.lean",
-        "line": 182,
+        "line": 219,
         "shape": "<unknown>",
         "depends_on": []
       },
@@ -16,7 +16,7 @@
         "name": "selberg_odd_zero_proportion_target",
         "qualified_name": "HardyTheorem.selberg_odd_zero_proportion_target",
         "file": "HardyTheorem/CriticalLineMultiplicity.lean",
-        "line": 213,
+        "line": 250,
         "shape": "<unknown>",
         "depends_on": []
       },
@@ -166,7 +166,25 @@
       "name": "hardy_littlewood_multiplicity_lower_bound_target",
       "qualified_name": "HardyTheorem.hardy_littlewood_multiplicity_lower_bound_target",
       "file": "HardyTheorem/CriticalLineMultiplicity.lean",
-      "line": 176
+      "line": 213
+    },
+    {
+      "name": "HasNegToPosLocalSignChangeAt",
+      "qualified_name": "HardyTheorem.HasNegToPosLocalSignChangeAt",
+      "file": "HardyTheorem/ShortIntervalSignChangeMeasure.lean",
+      "line": 19
+    },
+    {
+      "name": "HasPosToNegLocalSignChangeAt",
+      "qualified_name": "HardyTheorem.HasPosToNegLocalSignChangeAt",
+      "file": "HardyTheorem/ShortIntervalSignChangeMeasure.lean",
+      "line": 25
+    },
+    {
+      "name": "HasLocalSignChangeAt",
+      "qualified_name": "HardyTheorem.HasLocalSignChangeAt",
+      "file": "HardyTheorem/ShortIntervalSignChangeMeasure.lean",
+      "line": 30
     },
     {
       "name": "weightedIntegralOf_tail_dominates",
@@ -317,7 +335,7 @@
   "mathematical_target_count": 13,
   "route_interface_count": 5,
   "route_interface_true_body_count": 0,
-  "reusable_predicate_count": 16,
+  "reusable_predicate_count": 19,
   "unclassified_prop_def_count": 0,
-  "all_scanned_prop_defs_count": 34
+  "all_scanned_prop_defs_count": 37
 }

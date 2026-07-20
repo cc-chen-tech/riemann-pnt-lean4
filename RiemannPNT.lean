@@ -8,10 +8,14 @@ import HardyTheorem.CriticalLineMultiplicity
 import HardyTheorem.AnalyticSignChange
 import HardyTheorem.ShortIntervalMeanValue
 import HardyTheorem.ShortIntegralZeroDetection
+import HardyTheorem.ShortIntervalDistinctZeroCount
 import HardyTheorem.HardyModelApproximation
 import HardyTheorem.CriticalLineShortDirichlet
 import HardyTheorem.CriticalLineShortDirichletUniform
 import HardyTheorem.HardyShortAbsLower
+import HardyTheorem.HardyGoodWindowMeasure
+import HardyTheorem.HardyLittlewoodPacking
+import HardyTheorem.HardyLittlewoodTheorem
 import HardyTheorem.HardyShortSignedMeanSquare
 import HardyTheorem.HardyShortSecondMoment
 import HardyTheorem.HardyPhaseSecondMoment

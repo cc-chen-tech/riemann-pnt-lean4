@@ -123,3 +123,4 @@ import RiemannPNT
 #print axioms HardyTheorem.HasNegToPosLocalSignChangeAt.eq_zero
 #print axioms HardyTheorem.card_le_criticalLineOddZeroCount_of_pairwiseDisjoint_signChanges
 #print axioms HardyTheorem.card_le_criticalLineOddZeroCount_of_pairwiseDisjoint_hardyZ_signChanges
+#print axioms HardyTheorem.hardy_littlewood_lower_bound_target_proved
