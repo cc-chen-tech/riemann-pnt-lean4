@@ -1,0 +1,16 @@
+import HardyTheorem.SelbergMollifierMeanSquare
+
+open Complex
+
+namespace HardyTheorem
+
+#check selbergMoebiusCriticalLineCoeff
+#check selbergMoebiusMollifier_criticalLine_eq_logExponentialPolynomial
+#check sum_normSq_selbergMoebiusCriticalLineCoeff_le
+#check integral_normSq_selbergMoebiusMollifier_le
+
+#print axioms selbergMoebiusMollifier_criticalLine_eq_logExponentialPolynomial
+#print axioms sum_normSq_selbergMoebiusCriticalLineCoeff_le
+#print axioms integral_normSq_selbergMoebiusMollifier_le
+
+end HardyTheorem

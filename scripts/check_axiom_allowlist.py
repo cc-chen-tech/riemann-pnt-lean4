@@ -133,12 +133,21 @@ EXPECTED_DECLARATIONS = {
     "HardyTheorem.hasLocalSignChangeAt_hardyZ_of_mollified",
     "HardyTheorem.odd_analyticOrderNatAt_riemannZeta_of_mollified_localSignChange",
     "HardyTheorem.odd_analyticOrderNatAt_riemannZeta_of_selbergMoebius_localSignChange",
+    "HardyTheorem.selbergMoebiusMollifier_criticalLine_eq_logExponentialPolynomial",
+    "HardyTheorem.sum_normSq_selbergMoebiusCriticalLineCoeff_le",
+    "HardyTheorem.integral_normSq_selbergMoebiusMollifier_le",
     "HardyTheorem.hardy_littlewood_lower_bound_target_proved",
     "HardyTheorem.hardy_littlewood_odd_lower_bound_target_proved",
     "RiemannPNT.API.hardyLittlewoodOddLowerBound_proved",
     "HardyTheorem.criticalLineOddZeroCount_two_mul_lower_bound_of_good_window_measure",
     "HardyTheorem.selberg_odd_zero_proportion_target_of_log_good_window_measure",
     "PrimeNumberTheorem.RiemannVonMangoldt.exists_eventually_riemannZeroCount_ge_selbergScale",
+    "PrimeNumberTheorem.RiemannVonMangoldt.isNontrivialZero_criticalLineReflection",
+    "PrimeNumberTheorem.RiemannVonMangoldt.analyticOrderNatAt_riemannZeta_conj_of_nontrivialZero",
+    "PrimeNumberTheorem.RiemannVonMangoldt.analyticOrderNatAt_riemannZeta_criticalLineReflection_of_nontrivialZero",
+    "PrimeNumberTheorem.RiemannVonMangoldt.riemannZeroCount_eq_positiveCriticalLine_add_two_mul_zeroDensityCount",
+    "PrimeNumberTheorem.RiemannVonMangoldt.riemannZeroCount_add_halfMultiplicity_eq_criticalLine_add_two_mul_zeroDensityCount",
+    "PrimeNumberTheorem.RiemannVonMangoldt.riemannZeroCount_eq_criticalLine_add_two_mul_zeroDensityCount",
 }
 
 REPORT_RE = re.compile(

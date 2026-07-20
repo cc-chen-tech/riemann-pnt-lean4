@@ -41,6 +41,7 @@ lean_lib RiemannPNT where
     `PrimeNumberTheorem.RiemannVonMangoldt.GammaMainTerm,
     `PrimeNumberTheorem.RiemannVonMangoldt.ZetaArgumentBound,
     `PrimeNumberTheorem.RiemannVonMangoldt.SelbergScale,
+    `PrimeNumberTheorem.RiemannVonMangoldt.CriticalLinePartition,
     `PrimeNumberTheorem.RiemannVonMangoldt,
     `ZeroFreeRegion,
     `ZeroFreeRegion.MeromorphicAux,
@@ -164,8 +165,10 @@ lean_lib RiemannPNT where
     `Test.HardyOddMultiplicityContract,
     `HardyTheorem.ShortIntervalSignChangeMeasure,
     `HardyTheorem.SelbergMollifier,
+    `HardyTheorem.SelbergMollifierMeanSquare,
     `Test.ShortIntervalSignChangeMeasureContract,
     `Test.SelbergMollifierContract,
+    `Test.SelbergMollifierMeanSquareContract,
     `Test.IntegralAbsSignChangeContract,
     `Test.DirichletPolynomialMeanSquareContract,
     `Test.OscillatoryFirstDerivativeContract,
@@ -294,6 +297,8 @@ lean_lib RiemannPNT where
     `Test.RiemannVonMangoldtAllHeightAsymptoticAxiomAudit,
     `Test.RiemannVonMangoldtSelbergScaleContract,
     `Test.RiemannVonMangoldtSelbergScaleAxiomAudit,
+    `Test.RiemannVonMangoldtCriticalLinePartitionContract,
+    `Test.RiemannVonMangoldtCriticalLinePartitionAxiomAudit,
     `Test.RiemannVonMangoldtContract,
     `Test.RiemannVonMangoldtAxiomAudit
   ]
