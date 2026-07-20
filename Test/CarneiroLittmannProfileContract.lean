@@ -101,13 +101,15 @@ example :
       2 * (Real.pi⁻¹ * ∫ u, Real.sinc u ^ 2) :=
   integral_carneiroLittmannTailProfile_eq_sinc_sq
 
+example : ∫ x, carneiroLittmannTailProfile x = 2 :=
+  integral_carneiroLittmannTailProfile_eq_two
+
 example
-    (hmass : ∫ x, carneiroLittmannTailProfile x = 2)
     (htail : ∀ xi : ℝ, 2 * Real.pi ≤ |xi| →
       fourierKernel carneiroLittmannTailProfile xi =
         (-2 * Complex.I) / xi) :
     MonotoneExtremalKernelCertificate carneiroLittmannTailProfile :=
-  carneiroLittmannTailProfile_certificate hmass htail
+  carneiroLittmannTailProfile_certificate htail
 
 example
     (hmass : ∫ x, Real.sinc (Real.pi * (x + 1)) ^ 2 = 1)
@@ -144,6 +146,7 @@ example
 #print axioms integral_carneiroLittmannTailProfile_eq_sinc_shift
 #print axioms integral_carneiroLittmannSincShiftSq_eq
 #print axioms integral_carneiroLittmannTailProfile_eq_sinc_sq
+#print axioms integral_carneiroLittmannTailProfile_eq_two
 #print axioms carneiroLittmannTailProfile_certificate
 #print axioms carneiroLittmannTailProfile_certificate_of_sinc_shift_integral
 #print axioms carneiroLittmannTailProfile_certificate_of_integral_sinc_sq

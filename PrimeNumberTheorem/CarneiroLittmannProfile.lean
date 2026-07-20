@@ -1,4 +1,5 @@
 import PrimeNumberTheorem.MonotoneExtremalKernel
+import PrimeNumberTheorem.SincSquareIntegral
 import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Sinc
 import Mathlib.MeasureTheory.Integral.Asymptotics
@@ -751,12 +752,16 @@ theorem integral_carneiroLittmannTailProfile_eq_sinc_sq :
   rw [integral_carneiroLittmannTailProfile_eq_sinc_shift,
     integral_carneiroLittmannSincShiftSq_eq]
 
-/-- Once the two remaining mass/Fourier facts are supplied, the concrete tail
-profile satisfies the full extremal-kernel certificate.  Integrability,
-nonnegativity, and dilation monotonicity are discharged here from the density
-formula and its first-moment estimate. -/
+theorem integral_carneiroLittmannTailProfile_eq_two :
+    ∫ x, carneiroLittmannTailProfile x = 2 := by
+  rw [integral_carneiroLittmannTailProfile_eq_sinc_sq,
+    SincSquareIntegral.integral_sinc_sq]
+  field_simp [Real.pi_ne_zero]
+
+/-- The reciprocal Fourier-tail identity is the sole remaining hypothesis for
+the concrete extremal-kernel certificate.  Integrability, nonnegativity,
+mass normalization, and dilation monotonicity are all discharged here. -/
 theorem carneiroLittmannTailProfile_certificate
-    (hmass : ∫ x, carneiroLittmannTailProfile x = 2)
     (htail : ∀ xi : ℝ, 2 * Real.pi ≤ |xi| →
       fourierKernel carneiroLittmannTailProfile xi =
         (-2 * Complex.I) / xi) :
@@ -764,7 +769,7 @@ theorem carneiroLittmannTailProfile_certificate
   integrable := integrable_carneiroLittmannTailProfile
   nonnegative := carneiroLittmannTailProfile_nonnegative
   fourier_zero := by
-    rw [fourierKernel_zero, hmass]
+    rw [fourierKernel_zero, integral_carneiroLittmannTailProfile_eq_two]
     norm_num
   fourier_tail := htail
   dilation_antitone := by
@@ -778,28 +783,22 @@ theorem carneiroLittmannTailProfile_certificate
 field of the concrete certificate.  The reciprocal Fourier tail remains a
 separate analytic obligation. -/
 theorem carneiroLittmannTailProfile_certificate_of_sinc_shift_integral
-    (hmass : ∫ x, Real.sinc (Real.pi * (x + 1)) ^ 2 = 1)
+    (_hmass : ∫ x, Real.sinc (Real.pi * (x + 1)) ^ 2 = 1)
     (htail : ∀ xi : ℝ, 2 * Real.pi ≤ |xi| →
       fourierKernel carneiroLittmannTailProfile xi =
         (-2 * Complex.I) / xi) :
     MonotoneExtremalKernelCertificate carneiroLittmannTailProfile := by
-  apply carneiroLittmannTailProfile_certificate
-  · rw [integral_carneiroLittmannTailProfile_eq_sinc_shift, hmass]
-    norm_num
-  · exact htail
+  exact carneiroLittmannTailProfile_certificate htail
 
 /-- The standard identity `integral sinc^2 = pi` supplies the concrete mass
 normalization; only the reciprocal Fourier tail then remains. -/
 theorem carneiroLittmannTailProfile_certificate_of_integral_sinc_sq
-    (hmass : ∫ x, Real.sinc x ^ 2 = Real.pi)
+    (_hmass : ∫ x, Real.sinc x ^ 2 = Real.pi)
     (htail : ∀ xi : ℝ, 2 * Real.pi ≤ |xi| →
       fourierKernel carneiroLittmannTailProfile xi =
         (-2 * Complex.I) / xi) :
     MonotoneExtremalKernelCertificate carneiroLittmannTailProfile := by
-  apply carneiroLittmannTailProfile_certificate
-  · rw [integral_carneiroLittmannTailProfile_eq_sinc_sq, hmass]
-    field_simp [Real.pi_ne_zero]
-  · exact htail
+  exact carneiroLittmannTailProfile_certificate htail
 
 end DirichletPolynomial
 end PrimeNumberTheorem
