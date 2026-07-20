@@ -16,6 +16,8 @@ import HardyTheorem.HardyShortAbsLower
 import HardyTheorem.HardyGoodWindowMeasure
 import HardyTheorem.HardyLittlewoodPacking
 import HardyTheorem.HardyLittlewoodTheorem
+import HardyTheorem.HardyLittlewoodOddTheorem
+import HardyTheorem.SelbergPacking
 import HardyTheorem.HardyShortSignedMeanSquare
 import HardyTheorem.HardyShortSecondMoment
 import HardyTheorem.HardyPhaseSecondMoment
@@ -25370,6 +25372,12 @@ theorem criticalLineDistinctZeroCount_le_criticalLineZeroMultiplicityCount
 critical-line zeros detected by sign changes. -/
 abbrev HardyLittlewoodOddLowerBound : Prop :=
   HardyTheorem.hardy_littlewood_odd_lower_bound_target
+
+/-- Public unconditional Hardy--Littlewood theorem for odd-multiplicity
+critical-line zeros, each ordinate counted once. -/
+theorem hardyLittlewoodOddLowerBound_proved :
+    HardyLittlewoodOddLowerBound :=
+  HardyTheorem.hardy_littlewood_odd_lower_bound_target_proved
 
 /-- Public multiplicity-weighted consequence of the Hardy--Littlewood target. -/
 abbrev HardyLittlewoodMultiplicityLowerBound : Prop :=

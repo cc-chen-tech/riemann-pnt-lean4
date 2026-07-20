@@ -5,14 +5,27 @@ open Complex
 namespace HardyTheorem
 
 #check selbergMollifier
+#check selbergMoebiusWeight
+#check selbergMoebiusCoeff
+#check selbergMoebiusMollifier
+#check selbergMoebiusWeight_mem_Icc
+#check abs_selbergMoebiusCoeff_le_one
+#check selbergMoebiusCoeff_one
 #check selbergMollifiedHardyZ
+#check selbergMoebiusMollifiedHardyZ
 #check continuous_selbergMollifier_criticalLine
 #check continuous_selbergMollifiedHardyZ
+#check continuous_selbergMoebiusMollifiedHardyZ
 #check hasLocalSignChangeAt_hardyZ_of_mollified
 #check odd_analyticOrderNatAt_riemannZeta_of_mollified_localSignChange
+#check odd_analyticOrderNatAt_riemannZeta_of_selbergMoebius_localSignChange
 
 #print axioms continuous_selbergMollifier_criticalLine
+#print axioms selbergMoebiusWeight_mem_Icc
+#print axioms abs_selbergMoebiusCoeff_le_one
+#print axioms continuous_selbergMoebiusMollifiedHardyZ
 #print axioms hasLocalSignChangeAt_hardyZ_of_mollified
 #print axioms odd_analyticOrderNatAt_riemannZeta_of_mollified_localSignChange
+#print axioms odd_analyticOrderNatAt_riemannZeta_of_selbergMoebius_localSignChange
 
 end HardyTheorem

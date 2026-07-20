@@ -195,7 +195,6 @@ predicate; those individual propositions remain mathematical targets.
 
 - `HardyTheorem.integral_asymptotic_target`
 - `HardyTheorem.hardy_two_signed_moments_target`
-- `HardyTheorem.hardy_littlewood_odd_lower_bound_target`
 - `HardyTheorem.selberg_odd_zero_proportion_target`
 - `HardyTheorem.Details.gamma_asymptotic_half_plus_it_target`
 - `HardyTheorem.Details.theta_asymptotic_target`
@@ -207,8 +206,9 @@ above are independent signed-moment/AFE routes or stronger quantitative
 zero-counting extensions. The repository now defines odd-order, distinct, and
 analytic-multiplicity counts and proves
 `odd <= distinct = zeroCountOnCriticalLine <= multiplicity`. The
-Hardy-Littlewood and Selberg targets use the odd-order count supplied by the
-sign-change method. Their quantitative lower bounds remain open.
+Hardy-Littlewood and Selberg statements use the odd-order count supplied by
+the sign-change method. The Hardy-Littlewood linear lower bound is now proved;
+the Selberg `T*log T` lower bound remains open.
 
 ### Current verified anchor theorems
 
@@ -221,6 +221,9 @@ sign-change method. Their quantitative lower bounds remain open.
 - `HardyTheorem.zeroCountOnCriticalLine_eq_criticalLineDistinctZeroCount`
 - `HardyTheorem.criticalLineOddZeroCount_le_criticalLineDistinctZeroCount`
 - `HardyTheorem.criticalLineDistinctZeroCount_le_criticalLineZeroMultiplicityCount`
+- `HardyTheorem.hardy_littlewood_odd_lower_bound_target_proved`
+- `HardyTheorem.criticalLineOddZeroCount_two_mul_lower_bound_of_good_window_measure`
+- `HardyTheorem.selberg_odd_zero_proportion_target_of_log_good_window_measure`
 - `HardyTheorem.hardy_littlewood_lower_bound_target_of_odd`
 - `HardyTheorem.hardy_littlewood_multiplicity_lower_bound_target_of_odd`
 - `HardyTheorem.hardyZ_zero_iff_zeta_zero`

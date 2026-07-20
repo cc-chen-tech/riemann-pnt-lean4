@@ -1289,7 +1289,7 @@ prove the missing high-height zeta growth or logarithmic-derivative estimates.
 
 ### Target Statements, Not Proved Theorems
 
-The remaining 13 target declarations are intentionally `def ... : Prop` rather
+The remaining 12 target declarations are intentionally `def ... : Prop` rather
 than theorem declarations. They are tracked as future proof obligations and must
 not be cited as completed proofs:
 
@@ -1300,7 +1300,6 @@ not be cited as completed proofs:
   `vinogradov_korobov_zero_free_region`;
 - Hardy quantitative-extension targets:
   `integral_asymptotic_target`, `hardy_two_signed_moments_target`,
-  `hardy_littlewood_odd_lower_bound_target`,
   `selberg_odd_zero_proportion_target`,
   `HardyTheorem.Details.gamma_asymptotic_half_plus_it_target`,
   `HardyTheorem.Details.theta_asymptotic_target`,
@@ -1328,9 +1327,12 @@ The quantitative critical-line API now separates three notions on `[0,T]`:
 `criticalLineZeroMultiplicityCount` weights every zero by
 `analyticOrderNatAt riemannZeta`. Lean proves
 `odd <= distinct = zeroCountOnCriticalLine <= multiplicity`, together with
-monotonicity in `T`. The literature-aligned Hardy-Littlewood and Selberg
-targets use the odd-order count detected by Hardy-Z sign changes. Their actual
-linear and `T log T` lower bounds remain unproved.
+monotonicity in `T`. The literature-aligned Hardy-Littlewood theorem is now
+proved for this odd-order count by
+`hardy_littlewood_odd_lower_bound_target_proved`, giving an eventual lower
+bound `C*T`. The Selberg `T*log T` lower bound remains unproved. The repository
+does prove its finite packing bridge and the reduction from logarithmic-length
+good-window estimates to `selberg_odd_zero_proportion_target`.
 
 The three remaining open analytic directions are:
 
@@ -1340,8 +1342,9 @@ The three remaining open analytic directions are:
    quantitative partial summation from `pi-Li` back to `theta`, `psi`, and RH.
    The remaining RH-scale predicates are unproved only because they are
    equivalent to the still-open RH itself.
-3. **Hardy theorem**: the classical theorem is proved.  The remaining work is
-   quantitative: Hardy-Littlewood lower bounds, Selberg proportions, Conrey's
+3. **Critical-line zero counts**: Hardy's theorem and the Hardy-Littlewood
+   linear lower bound, including its odd-multiplicity form, are proved. The
+   remaining quantitative work is Selberg's `T*log T` bound, Conrey's
    percentage theorem, and independent AFE/asymptotic targets.
 
 The quantitative explicit-formula/PNT direction is closed for the ordinary

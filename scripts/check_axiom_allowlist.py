@@ -127,9 +127,17 @@ EXPECTED_DECLARATIONS = {
     "HardyTheorem.card_le_criticalLineOddZeroCount_of_pairwiseDisjoint_signChanges",
     "HardyTheorem.card_le_criticalLineOddZeroCount_of_pairwiseDisjoint_hardyZ_signChanges",
     "HardyTheorem.continuous_selbergMollifier_criticalLine",
+    "HardyTheorem.selbergMoebiusWeight_mem_Icc",
+    "HardyTheorem.abs_selbergMoebiusCoeff_le_one",
+    "HardyTheorem.continuous_selbergMoebiusMollifiedHardyZ",
     "HardyTheorem.hasLocalSignChangeAt_hardyZ_of_mollified",
     "HardyTheorem.odd_analyticOrderNatAt_riemannZeta_of_mollified_localSignChange",
+    "HardyTheorem.odd_analyticOrderNatAt_riemannZeta_of_selbergMoebius_localSignChange",
     "HardyTheorem.hardy_littlewood_lower_bound_target_proved",
+    "HardyTheorem.hardy_littlewood_odd_lower_bound_target_proved",
+    "RiemannPNT.API.hardyLittlewoodOddLowerBound_proved",
+    "HardyTheorem.criticalLineOddZeroCount_two_mul_lower_bound_of_good_window_measure",
+    "HardyTheorem.selberg_odd_zero_proportion_target_of_log_good_window_measure",
     "PrimeNumberTheorem.RiemannVonMangoldt.exists_eventually_riemannZeroCount_ge_selbergScale",
 }
 
