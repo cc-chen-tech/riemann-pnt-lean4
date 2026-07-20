@@ -20,6 +20,10 @@ example (g h : ℝ → ℝ) (xi : ℝ)
       fourierKernel g xi - fourierKernel h xi :=
   fourierKernel_sub hg hh
 
+example (g : ℝ → ℝ) :
+    fourierKernel g 0 = ((∫ t, g t : ℝ) : ℂ) :=
+  fourierKernel_zero g
+
 example {ι : Type*} [DecidableEq ι] (S : Finset ι)
     (c : ι → ℂ) (omega : ι → ℝ) (t : ℝ) :
     conj (finiteExponentialSum S c omega t) *
@@ -106,6 +110,7 @@ example {ι : Type*} [DecidableEq ι] (S : Finset ι)
 #print axioms conj_mul_finiteExponentialSum_eq
 #print axioms fourierKernel_scale_pos
 #print axioms fourierKernel_sub
+#print axioms fourierKernel_zero
 #print axioms finiteFourierKernelForm_eq_integral_normSq
 #print axioms finiteFourierKernelForm_re_nonneg
 #print axioms finiteFourierKernelForm_sub
