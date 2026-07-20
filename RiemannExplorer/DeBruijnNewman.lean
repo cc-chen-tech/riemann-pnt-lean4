@@ -1531,6 +1531,79 @@ theorem completedRiemannZeta₀_eq_half_mellin (s : ℂ) :
   unfold completedRiemannZeta₀ HurwitzZeta.completedHurwitzZetaEven₀ WeakFEPair.Λ₀
   ring
 
+/-- 换元 `t = e^{4u}`：Mellin 积分化为全实轴积分
+`Λ₀(s) = 2 ∫_ℝ e^{2su} · f_modif(e^{4u}) du`（`dt/t = 4 du`）。
+这是 H₀ 恒等式路线的测度论核心。 -/
+theorem completedRiemannZeta₀_eq_two_mul_integral (s : ℂ) :
+    completedRiemannZeta₀ s
+      = 2 * ∫ u : ℝ, Complex.exp (2 * s * (u : ℂ))
+          * (HurwitzZeta.hurwitzEvenFEPair 0).f_modif (Real.exp (4 * u)) := by
+  rw [completedRiemannZeta₀_eq_half_mellin]
+  unfold mellin
+  have hfderiv : ∀ u : ℝ,
+      HasDerivAt (fun v : ℝ ↦ Real.exp (4 * v)) (4 * Real.exp (4 * u)) u := by
+    intro u
+    have h := (HasDerivAt.const_mul 4 (hasDerivAt_id u)).exp
+    rwa [mul_one, mul_comm] at h
+  have hinj : Set.InjOn (fun v : ℝ ↦ Real.exp (4 * v)) Set.univ := by
+    intro a _ b _ h
+    have h1 := Real.exp_injective h
+    linarith
+  have himage : (fun v : ℝ ↦ Real.exp (4 * v)) '' Set.univ = Set.Ioi 0 := by
+    ext y
+    simp only [Set.mem_image, Set.mem_univ, true_and, Set.mem_Ioi]
+    constructor
+    · rintro ⟨u, -, rfl⟩
+      exact Real.exp_pos _
+    · intro hy
+      exact ⟨Real.log y / 4, by
+        rw [mul_div_cancel₀ _ (by norm_num : (4 : ℝ) ≠ 0), Real.exp_log hy]⟩
+  have hsub := MeasureTheory.integral_image_eq_integral_abs_deriv_smul MeasurableSet.univ
+    (fun u _ ↦ (hfderiv u).hasDerivWithinAt) hinj
+    (fun t ↦ ((t : ℂ) ^ (s / 2 - 1)) • (HurwitzZeta.hurwitzEvenFEPair 0).f_modif t)
+  rw [himage] at hsub
+  rw [hsub, MeasureTheory.Measure.restrict_univ]
+  have hpoint : ∀ u : ℝ, (|4 * Real.exp (4 * u)| : ℝ)
+        • (((Real.exp (4 * u) : ℝ) : ℂ) ^ (s / 2 - 1)
+          • (HurwitzZeta.hurwitzEvenFEPair 0).f_modif (Real.exp (4 * u)))
+      = 4 * (Complex.exp (2 * s * (u : ℂ))
+        * (HurwitzZeta.hurwitzEvenFEPair 0).f_modif (Real.exp (4 * u))) := by
+    intro u
+    have hexp_pos : 0 < Real.exp (4 * u) := Real.exp_pos _
+    set w := (HurwitzZeta.hurwitzEvenFEPair 0).f_modif (Real.exp (4 * u))
+    have hcpow : ((Real.exp (4 * u) : ℝ) : ℂ) ^ (s / 2 - 1)
+        = Complex.exp ((4 * u : ℝ) * (s / 2 - 1)) := by
+      rw [Complex.cpow_def_of_ne_zero (Complex.ofReal_ne_zero.mpr hexp_pos.ne') _,
+        ← Complex.ofReal_log hexp_pos.le, Real.log_exp]
+    have hmerge : Complex.exp (((4 : ℝ) * u : ℝ) : ℂ)
+          * (Complex.exp ((((4 : ℝ) * u : ℝ) : ℂ) * (s / 2 - 1)) * w)
+        = Complex.exp (2 * s * (u : ℂ)) * w := by
+      rw [← mul_assoc, ← Complex.exp_add]
+      congr 2
+      push_cast
+      ring
+    rw [abs_of_pos (by positivity : (0 : ℝ) < 4 * Real.exp (4 * u)),
+      Complex.real_smul, smul_eq_mul, Complex.ofReal_mul, Complex.ofReal_ofNat, hcpow,
+      Complex.ofReal_exp, mul_assoc, hmerge, ← mul_assoc]
+  have hcong : (∫ x : ℝ, (|4 * Real.exp (4 * x)| : ℝ)
+        • (((Real.exp (4 * x) : ℝ) : ℂ) ^ (s / 2 - 1)
+          • (HurwitzZeta.hurwitzEvenFEPair 0).f_modif (Real.exp (4 * x))))
+      = ∫ x : ℝ, 4 * (Complex.exp (2 * s * (x : ℂ))
+        * (HurwitzZeta.hurwitzEvenFEPair 0).f_modif (Real.exp (4 * x))) :=
+    MeasureTheory.integral_congr_ae (Filter.Eventually.of_forall hpoint)
+  show (1 / 2 : ℂ) * ∫ x : ℝ, (|4 * Real.exp (4 * x)| : ℝ)
+        • (((Real.exp (4 * x) : ℝ) : ℂ) ^ (s / 2 - 1)
+          • (HurwitzZeta.hurwitzEvenFEPair 0).f_modif (Real.exp (4 * x)))
+      = 2 * ∫ u : ℝ, Complex.exp (2 * s * (u : ℂ))
+        * (HurwitzZeta.hurwitzEvenFEPair 0).f_modif (Real.exp (4 * u))
+  have hfact : (∫ x : ℝ, (4 : ℂ) * (Complex.exp (2 * s * (x : ℂ))
+        * (HurwitzZeta.hurwitzEvenFEPair 0).f_modif (Real.exp (4 * x))))
+      = 4 * ∫ x : ℝ, (Complex.exp (2 * s * (x : ℂ))
+        * (HurwitzZeta.hurwitzEvenFEPair 0).f_modif (Real.exp (4 * x))) :=
+    MeasureTheory.integral_const_mul 4 _
+  rw [hcong, hfact]
+  ring
+
 /-- **H_t 正则性目标**（Phase 1b）：每个 `H_t` 是偶的整函数。 -/
 def h_even_entire_target : Prop :=
   ∀ t : ℝ, Differentiable ℂ (deBruijnNewmanH t) ∧

@@ -35,3 +35,4 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.f_modif_eq_of_one_lt
 #print axioms RiemannExplorer.DeBruijnNewman.f_modif_eq_of_mem_Ioo
 #print axioms RiemannExplorer.DeBruijnNewman.completedRiemannZeta₀_eq_half_mellin
+#print axioms RiemannExplorer.DeBruijnNewman.completedRiemannZeta₀_eq_two_mul_integral
