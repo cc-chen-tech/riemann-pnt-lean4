@@ -1,21 +1,26 @@
 # Li Criterion Chain
 
 This document scopes the Li-criterion route to RH (roadmap Route A, combined
-with the Route C xi-function foundation).  Four stages are now implemented
+with the Route C xi-function foundation).  Five stages are now implemented
 in Lean: a canonical xi-function API, the Li-criterion statement layer, two
 unconditional inputs — the reality of the Li coefficients and the
-convergence of the paired zero series — and two further proved slices:
-**term-wise nonnegativity of the paired zero terms under RH**, and the
+convergence of the paired zero series — and three further proved slices:
+**term-wise nonnegativity of the paired zero terms under RH**, the
 **convergence of the paired Mittag-Leffler series** in the `ξ'/ξ`
-partial-fraction expansion.  The Li–RH equivalence itself and the
-zero-sum representation of the Li coefficients remain `def ... : Prop`
-targets; for the latter, the right-hand side is now a *genuinely convergent*
-series (`summable_li_zero_sum_terms`), and for the former, RH is now proved
-to imply `0 ≤ (liCoefficient n).re` *modulo* that same representation
-(`liCoefficient_re_nonneg_of_representation_of_rh`).  The missing analytic
-ingredient for the representation is exactly the `ξ'/ξ` partial-fraction
-expansion (Hadamard-factorization level); its right-hand paired series is
-proved convergent (`summable_xiPairedMittagLefflerTerm`).
+partial-fraction expansion, and **strict positivity under RH** (via a
+root-of-unity finiteness argument against Hardy's infinite-zero theorem).
+The Li–RH equivalence itself, the zero-sum representation of the Li
+coefficients, and the `ξ'/ξ` expansion identity remain `def ... : Prop`
+targets.  The forward direction `rh_implies_li_criterion_target` is now
+proved *modulo the zero-sum representation alone*
+(`rh_implies_li_criterion_of_representation`): nonnegativity comes from the
+`1 - cos(nθ) ≥ 0` computation, and strictness from the fact that a vanishing
+paired sum would force `(1-1/ρ)ⁿ = 1` at every upper half-plane zero —
+only finitely many such zeros exist, contradicting Hardy.  For the
+representation, both sides are genuinely convergent series
+(`summable_li_zero_sum_terms`, `summable_xiPairedMittagLefflerTerm`), and
+the expansion's quotient constant is conditionally identified as
+`B = ξ'(0)/ξ(0)` (`xi_partial_fraction_const_eq_logDeriv_zero`).
 
 Design documents:
 
@@ -63,34 +68,46 @@ All declarations live in the `RiemannExplorer` namespace.  Axiom audits are in
 | `xiPairedMittagLefflerTerm_eq` | Algebraic decomposition of the paired `ξ'/ξ` Mittag-Leffler term: `2(s - ↑ρ.re)/((s-ρ)(s-conjρ)) + ↑(2·ρ.re/normSq ρ)` (`XiPartialFraction.lean`). |
 | `norm_xiPairedMittagLefflerTerm_le` | Bound `‖·‖ ≤ (8·(‖s‖+1) + 2)·‖ρ‖⁻²` for `‖ρ‖ ≥ 2`, `2‖s‖ ≤ ‖ρ‖`, `|ρ.re| ≤ 1` (via `‖s-ρ‖ ≥ ‖ρ‖/2`). |
 | `summable_xiPairedMittagLefflerTerm` | **Unconditional convergence**, for each fixed `s`, of the paired Mittag-Leffler series over upper half-plane zeros — the convergence half of the `ξ'/ξ` partial-fraction expansion. |
+| `infinite_upperZeros` | `UpperHalfPlaneNontrivialZero` is infinite (**unconditional**): Hardy's proved `hardy_zeros_unbounded_target_proved` gives critical-line zeros `1/2 + it` with `t ≥ T`; these are automatically nontrivial zeros (`LiStrictPositivity.lean`). |
+| `finite_upperZeros_pow_eq_one` | For `n ≥ 1`, only finitely many upper half-plane zeros satisfy `(1-1/ρ)ⁿ = 1` (injection `ρ ↦ 1-1/ρ` into the finite root set of `Xⁿ - 1`). |
+| `liPairedTerm_eq_one_of_re_eq_zero_of_rh` | Under RH, `(liPairedTerm n ρ).re = 0` forces `(1-1/ρ)ⁿ = 1` (real part 1 + norm 1 ⇒ value 1). |
+| `liCoefficient_re_pos_of_representation_of_rh` | **Strict positivity, conditional**: representation + RH ⇒ `0 < (liCoefficient n).re` — a zero paired sum would force all zeros into the finite root-of-unity set, contradicting `infinite_upperZeros`. |
+| `rh_implies_li_criterion_of_representation` | **Forward direction reduced to the representation alone**: `li_zero_sum_representation_target ⇒ rh_implies_li_criterion_target`. |
+| `xiPairedMittagLefflerTerm_zero_left`, `tsum_xiPairedMittagLefflerTerm_zero_left` | At `s = 0` every paired Mittag-Leffler term vanishes (`1/(0-ρ) + 1/ρ = 0`), so the whole paired series vanishes. |
+| `xi_partial_fraction_const_eq_logDeriv_zero`, `xi_partial_fraction_const_unique` | **Quotient-constant identification**: any constant `B` making the `ξ'/ξ` expansion valid must equal `ξ'(0)/ξ(0)` (evaluate at `s = 0`, where `ξ(0) = 1/2 ≠ 0`); in particular `B` is unique. |
 
 ## Current Target Assessment
 
-The chain now carries five `def ... : Prop` targets (all in
-`RiemannExplorer/LiCriterion.lean`):
+The chain now carries six `def ... : Prop` targets (five in
+`RiemannExplorer/LiCriterion.lean`, one in
+`RiemannExplorer/XiPartialFraction.lean`):
 
 | Target | Shape | Why it is still open |
 | --- | --- | --- |
 | `LiCriterionHolds` | `∀ n ≥ 1, (liCoefficient n).im = 0 ∧ 0 < (liCoefficient n).re` | Equivalent to RH; cannot be proved unconditionally.  The `.im = 0` half is now proved unconditionally (`liCoefficient_im`); by `liCriterionHolds_iff_re_pos` only real positivity remains. |
 | `li_criterion_implies_rh_target` | `LiCriterionHolds → RiemannHypothesis.Statement` | Needs the zero-sum representation and zero-exclusion arguments. |
-| `rh_implies_li_criterion_target` | `RiemannHypothesis.Statement → LiCriterionHolds` | Reduced by `liCoefficient_re_nonneg_of_representation_of_rh` to exactly two gaps: (i) the zero-sum representation `li_zero_sum_representation_target` (whose series is proved convergent, `summable_li_zero_sum_terms`), and (ii) strict positivity `0 <` — the paired series is a sum of `2·(1 - cos(nθ_ρ))` terms, so vanishing forces `(1-1/ρ)ⁿ = 1` at every zero, which has at most `n-1` solutions, contradicting Hardy's infinitude of critical-line zeros. |
+| `rh_implies_li_criterion_target` | `RiemannHypothesis.Statement → LiCriterionHolds` | **Reduced to the zero-sum representation alone** (`rh_implies_li_criterion_of_representation`): term-wise nonnegativity (`liPairedTerm_re_nonneg_of_rh`) and strict positivity (`liCoefficient_re_pos_of_representation_of_rh`, via the root-of-unity finiteness contradiction against Hardy) are both proved. |
 | `li_criterion_iff_rh_target` | `LiCriterionHolds ↔ RiemannHypothesis.Statement` | The Li 1997 / Bombieri–Lagarias 1999 equivalence; follows once both directions are proved (`li_criterion_iff_rh_target_of_directions`). |
-| `li_zero_sum_representation_target` | `∀ n ≥ 1, liCoefficient n = ∑' ρ, paired conjugate zero terms` | The right-hand series is now proved convergent for every `n` (`summable_li_zero_sum_terms`), and the paired series on the `ξ'/ξ` side is proved convergent (`summable_xiPairedMittagLefflerTerm`).  The remaining gaps are exactly: (i) the removable-singularity argument that `ξ'/ξ - B - Σ_ρ [1/(s-ρ) + 1/ρ]` is entire; (ii) the growth order `≤ 1` of `ξ` (Gamma-factor bounds + Phragmén–Lindelöf), forcing that entire difference to be constant; (iii) identification of the quotient constant `B = ξ'(0)/ξ(0)`; (iv) pairing convention (`ρ ↔ conj ρ` here vs classical `ρ ↔ 1 - ρ`); (v) counted over distinct zeros without analytic multiplicity (convention must be aligned before promotion). |
+| `li_zero_sum_representation_target` | `∀ n ≥ 1, liCoefficient n = ∑' ρ, paired conjugate zero terms` | The right-hand series is now proved convergent for every `n` (`summable_li_zero_sum_terms`), and the paired series on the `ξ'/ξ` side is proved convergent (`summable_xiPairedMittagLefflerTerm`).  The remaining gaps are exactly: (i) the removable-singularity argument that `ξ'/ξ - B - Σ_ρ [1/(s-ρ) + 1/ρ]` is entire; (ii) the growth order `≤ 1` of `ξ` (Gamma-factor bounds + Phragmén–Lindelöf), forcing that entire difference to be constant; (iii) pairing convention (`ρ ↔ conj ρ` here vs classical `ρ ↔ 1 - ρ`); (iv) counted over distinct zeros without analytic multiplicity (convention must be aligned before promotion). |
+| `xi_partial_fraction_expansion_target` | `∃ B : ℂ, ∀ s, ξ s ≠ 0 → ξ'(s)/ξ(s) = B + ∑' ρ, paired Mittag-Leffler terms` | Registered in `XiPartialFraction.lean`.  Convergence of the right side is proved (`summable_xiPairedMittagLefflerTerm`); the quotient constant is conditionally identified, `B = ξ'(0)/ξ(0)` (`xi_partial_fraction_const_eq_logDeriv_zero`).  Remaining: the removable-singularity entirety of the difference and the growth order `≤ 1` of `ξ`. |
 
 ## Dependencies For The Next Stage
 
 - Hadamard factorization for entire functions of finite order, or at least
   the `ξ'/ξ` partial-fraction expansion over the zeros (Mathlib-level
-  blocker, shared with Route C).  The convergence half of the expansion is
-  now proved (`summable_xiPairedMittagLefflerTerm`); what remains is the
-  identity itself, via (i) the removable-singularity step, (ii) the growth
-  order `≤ 1` of `ξ` (Gamma-factor bounds + Phragmén–Lindelöf; cf. the
-  existing `ZeroFreeRegion.PhragmenLindelofZeta` tooling), and (iii) the
-  quotient-constant identification.
-- Strict positivity of the paired Li series: `tsum = 0` would force
-  `(1-1/ρ)ⁿ = 1` at every upper half-plane zero (at most `n-1` roots of
-  unity solutions), contradicting Hardy's theorem that infinitely many
-  zeros lie on the critical line.
+  blocker, shared with Route C), registered as
+  `xi_partial_fraction_expansion_target`.  The convergence half of the
+  expansion is now proved (`summable_xiPairedMittagLefflerTerm`) and the
+  quotient constant is conditionally identified
+  (`xi_partial_fraction_const_eq_logDeriv_zero`); what remains is the
+  identity itself, via (i) the removable-singularity step, and (ii) the
+  growth order `≤ 1` of `ξ` (Gamma-factor bounds + Phragmén–Lindelöf;
+  cf. the existing `ZeroFreeRegion.PhragmenLindelofZeta` tooling).
+- ~~Strict positivity of the paired Li series~~: **proved**
+  (`liCoefficient_re_pos_of_representation_of_rh`) — a vanishing sum forces
+  `(1-1/ρ)ⁿ = 1` at every upper half-plane zero (finite root-of-unity set),
+  contradicting Hardy's infinitude of critical-line zeros
+  (`infinite_upperZeros`).
 - Zero-sum machinery over nontrivial zeros, with an explicit convention for
   distinct zeros versus analytic multiplicity
   (cf. `PrimeNumberTheorem.NontrivialZeroMultiplicity`).
@@ -110,7 +127,7 @@ they do not imply RH and must not be cited as proof.
 lake build RiemannExplorer.XiFunction RiemannExplorer.LiCriterion \
   RiemannExplorer.SchwarzSymmetric RiemannExplorer.LiReality \
   RiemannExplorer.LiZeroSumConvergence RiemannExplorer.LiPositivity \
-  RiemannExplorer.XiPartialFraction
+  RiemannExplorer.XiPartialFraction RiemannExplorer.LiStrictPositivity
 lake build Test.XiFunctionAxiomAudit
 ```
 

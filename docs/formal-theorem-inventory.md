@@ -3263,30 +3263,58 @@ expansion (the Hadamard-factorization-level gap in
 (via `‖s-ρ‖ ≥ ‖ρ‖/2`), and hence the paired series converges for each fixed
 `s` (low/high split at `B := max 2 (2‖s‖)`, finite low part from
 `nontrivialZerosFinset B`, high part dominated by the summable
-`‖ρ‖⁻²`-series).  The file header documents the five remaining gaps:
-removable-singularity entirety of the difference, growth order `≤ 1` of `ξ`,
-quotient-constant identification, pairing convention (`ρ ↔ conj ρ` vs
-classical `ρ ↔ 1 - ρ`), and multiplicity convention.  All declarations are
-in the `RiemannExplorer` namespace and are axiom-audited in
-`Test/XiFunctionAxiomAudit.lean`:
+`‖ρ‖⁻²`-series).  It also registers the expansion itself as the target
+`xi_partial_fraction_expansion_target` and conditionally identifies the
+quotient constant: at `s = 0` every paired term vanishes
+(`1/(0-ρ) + 1/ρ = 0`), so any valid `B` equals `ξ'(0)/ξ(0)` and is unique.
+The file header documents the remaining gaps: removable-singularity
+entirety of the difference, growth order `≤ 1` of `ξ`, pairing convention
+(`ρ ↔ conj ρ` vs classical `ρ ↔ 1 - ρ`), and multiplicity convention.
+All theorems below are in the `RiemannExplorer` namespace and are
+axiom-audited in `Test/XiFunctionAxiomAudit.lean`:
 
 - `xiPairedMittagLefflerTerm`
 - `xiPairedMittagLefflerTerm_eq`
 - `norm_xiPairedMittagLefflerTerm_le`
 - `summable_xiPairedMittagLefflerTerm`
+- `xiPairedMittagLefflerTerm_zero_left`
+- `tsum_xiPairedMittagLefflerTerm_zero_left`
+- `xi_partial_fraction_const_eq_logDeriv_zero`
+- `xi_partial_fraction_const_unique`
+
+### `RiemannExplorer/LiStrictPositivity.lean`
+
+This file proves the strict-positivity half of the forward Li direction:
+under the zero-sum representation and RH, `0 < (liCoefficient n).re` for
+every `n ≥ 1`.  The argument is a contradiction: RH makes each paired term
+real and nonnegative, so a vanishing sum forces each term's real part to
+zero (`Summable.le_tsum`); real part `1` with norm `1` forces
+`(1-1/ρ)ⁿ = 1` at every upper half-plane zero, but those zeros inject via
+`ρ ↦ 1-1/ρ` into the finite root set of `Xⁿ - 1`, while Hardy's proved
+theorem supplies infinitely many upper half-plane zeros (critical-line
+zeros `1/2 + it`, `t ≥ 1`, are automatically nontrivial zeros).  All
+declarations are in the `RiemannExplorer` namespace and are axiom-audited
+in `Test/XiFunctionAxiomAudit.lean`:
+
+- `infinite_upperZeros`
+- `finite_upperZeros_pow_eq_one`
+- `liPairedTerm_eq_one_of_re_eq_zero_of_rh`
+- `liCoefficient_re_pos_of_representation_of_rh`
+- `rh_implies_li_criterion_of_representation`
 
 ## Target Statements, Not Proved Theorems
 
 The following declarations are intentionally `def ... : Prop` targets.  They
 are not exported as theorems and should not be cited as proved.
 
-As of `2026-07-19`, there are **18** mathematical target declarations:
+As of `2026-07-21`, there are **19** mathematical target declarations:
 
 - `HardyTheorem` namespace: **4**
 - `HardyTheorem.Details` namespace: **3**
 - `PrimeNumberTheorem` namespace: **4**
 - `KnownResults` namespace: **1**
-- `RiemannExplorer` namespace: **5** (all in `RiemannExplorer/LiCriterion.lean`)
+- `RiemannExplorer` namespace: **6** (five in `RiemannExplorer/LiCriterion.lean`,
+  one in `RiemannExplorer/XiPartialFraction.lean`)
 - `ZeroFreeRegion` namespace: **0**
 - global namespace: **1** (`vinogradov_korobov_zero_free_region`)
 
@@ -3391,6 +3419,18 @@ the global target.
   target: the paired conjugate zero-sum representation of `liCoefficient n`
   over distinct upper-half-plane nontrivial zeros (no analytic multiplicity);
   the multiplicity convention must be aligned before promotion.
+
+### `RiemannExplorer` in `RiemannExplorer/XiPartialFraction.lean`
+
+- `xi_partial_fraction_expansion_target`
+  target: the `ξ'/ξ` partial-fraction expansion
+  `∃ B : ℂ, ∀ s, ξ s ≠ 0 → ξ'(s)/ξ(s) = B + ∑' ρ, paired Mittag-Leffler terms`
+  over distinct upper-half-plane nontrivial zeros.  The right-hand series is
+  proved convergent (`summable_xiPairedMittagLefflerTerm`) and the quotient
+  constant is conditionally identified as `B = ξ'(0)/ξ(0)`
+  (`xi_partial_fraction_const_eq_logDeriv_zero`); what remains is the
+  removable-singularity entirety of the difference and the growth order
+  `≤ 1` of `ξ`.
 
 ## Route Interfaces and Reusable Predicates
 
