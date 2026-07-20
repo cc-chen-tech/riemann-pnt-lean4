@@ -3228,6 +3228,53 @@ at `‖ρ‖ = 2` plus dyadic-shell counting from the global zero count
 - `summable_liPairedTerm`
 - `summable_li_zero_sum_terms`
 
+### `RiemannExplorer/LiPositivity.lean`
+
+This file proves term-wise nonnegativity of the paired Li zero terms under
+RH: each paired term is real (unconditionally), with
+`(liPairedTerm n ρ).re = 2·(1 - Re((1-1/ρ)ⁿ))`; on the critical line
+`‖1 - 1/ρ‖ = 1` (since `1 - 1/ρ = (ρ-1)/ρ` and `‖ρ-1‖ = ‖ρ‖` when
+`ρ.re = 1/2`), so `Re((1-1/ρ)ⁿ) ≤ 1` and the paired term is nonnegative —
+the formal version of `1 - cos(nθ) ≥ 0`.  The final theorem
+`liCoefficient_re_nonneg_of_representation_of_rh` reduces
+`rh_implies_li_criterion_target` to exactly two remaining gaps: the zero-sum
+representation and strict positivity.  All declarations are in the
+`RiemannExplorer` namespace and are axiom-audited in
+`Test/XiFunctionAxiomAudit.lean`:
+
+- `liPairedTerm_eq_ofReal_two_mul_re`
+- `liPairedTerm_im`
+- `liPairedTerm_re`
+- `normSq_sub_one_eq_normSq_of_re_eq_half`
+- `norm_one_sub_inv_of_re_eq_half`
+- `liPairedTerm_re_nonneg_of_re_eq_half`
+- `liPairedTerm_re_nonneg_of_rh`
+- `tsum_liPairedTerm_re_nonneg_of_rh`
+- `liCoefficient_re_nonneg_of_representation_of_rh`
+
+### `RiemannExplorer/XiPartialFraction.lean`
+
+This file proves the convergence half of the `ξ'/ξ` partial-fraction
+expansion (the Hadamard-factorization-level gap in
+`li_zero_sum_representation_target`): the paired Mittag-Leffler term
+`[1/(s-ρ) + 1/ρ] + [1/(s-conjρ) + 1/conjρ]` decomposes as
+`2(s - ↑ρ.re)/((s-ρ)(s-conjρ)) + ↑(2·ρ.re/normSq ρ)`, is bounded by
+`(8·(‖s‖+1) + 2)·‖ρ‖⁻²` for `‖ρ‖ ≥ 2`, `2‖s‖ ≤ ‖ρ‖`, `|ρ.re| ≤ 1`
+(via `‖s-ρ‖ ≥ ‖ρ‖/2`), and hence the paired series converges for each fixed
+`s` (low/high split at `B := max 2 (2‖s‖)`, finite low part from
+`nontrivialZerosFinset B`, high part dominated by the summable
+`‖ρ‖⁻²`-series).  The file header documents the five remaining gaps:
+removable-singularity entirety of the difference, growth order `≤ 1` of `ξ`,
+quotient-constant identification, pairing convention (`ρ ↔ conj ρ` vs
+classical `ρ ↔ 1 - ρ`), and multiplicity convention.  All declarations are
+in the `RiemannExplorer` namespace and are axiom-audited in
+`Test/XiFunctionAxiomAudit.lean`:
+
+- `xiPairedMittagLefflerTerm`
+- `xiPairedMittagLefflerTerm_eq`
+- `norm_xiPairedMittagLefflerTerm_le`
+- `summable_xiPairedMittagLefflerTerm`
+
 ## Target Statements, Not Proved Theorems
 
 The following declarations are intentionally `def ... : Prop` targets.  They
