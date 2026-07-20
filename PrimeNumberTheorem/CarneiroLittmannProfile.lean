@@ -102,6 +102,57 @@ theorem integrable_positiveTailIntegral
     rw [positiveTailIntegral, if_neg hx, heq]
     simp
 
+/-- Fubini's identity for a positive-half-line tail integral: integrating the
+tail once more multiplies the density by the length `t` of `[0, t]`. -/
+theorem integral_positiveTailIntegral
+    {q : ℝ → ℝ}
+    (hq : Integrable q)
+    (hmoment : Integrable (fun x : ℝ => x * q x)) :
+    ∫ x, positiveTailIntegral q x =
+      ∫ x in Ici 0, x * q x := by
+  have hkernel := integrable_positiveTailKernel hq hmoment
+  calc
+    ∫ x, positiveTailIntegral q x =
+        ∫ x, ∫ t, positiveTailKernel q (x, t) := by
+      apply integral_congr_ae
+      filter_upwards with x
+      by_cases hx : 0 ≤ x
+      · have heq : (fun t : ℝ => positiveTailKernel q (x, t)) =
+            (Ici x).indicator q := by
+          funext t
+          simp [positiveTailKernel, Set.indicator, hx]
+        rw [positiveTailIntegral, if_pos hx, heq,
+          integral_indicator measurableSet_Ici]
+      · have heq : (fun t : ℝ => positiveTailKernel q (x, t)) = 0 := by
+          funext t
+          simp [positiveTailKernel, hx]
+        rw [positiveTailIntegral, if_neg hx, heq]
+        simp
+    _ = ∫ p, positiveTailKernel q p :=
+      (integral_prod (positiveTailKernel q) hkernel).symm
+    _ = ∫ t, ∫ x, positiveTailKernel q (x, t) :=
+      integral_prod_symm (positiveTailKernel q) hkernel
+    _ = ∫ x in Ici 0, x * q x := by
+      rw [← integral_indicator measurableSet_Ici]
+      apply integral_congr_ae
+      filter_upwards with t
+      by_cases ht : 0 ≤ t
+      · have heq : (fun x : ℝ => positiveTailKernel q (x, t)) =
+            (Icc 0 t).indicator (fun _ => q t) := by
+          funext x
+          simp [positiveTailKernel, Set.indicator]
+        rw [heq, integral_indicator measurableSet_Icc]
+        simp [ht]
+      · have heq : (fun x : ℝ => positiveTailKernel q (x, t)) = 0 := by
+          funext x
+          simp only [positiveTailKernel]
+          split_ifs with hx
+          · exfalso
+            exact ht (hx.1.trans hx.2)
+          · simp
+        rw [heq]
+        simp [ht]
+
 private noncomputable def reflectedSignedDensity (q : ℝ → ℝ) (x : ℝ) : ℝ :=
   -q (-x)
 
@@ -164,6 +215,75 @@ theorem integrable_signedRadialTailProfile
     simp only [signedRadialTailProfile, Set.piecewise, mem_Ici, hx]
     rw [positiveTailIntegral_reflectedSignedDensity_neg hxlt]
     simp
+
+/-- The total mass of a signed radial tail profile is twice the first moment
+of its density.  No sign hypothesis is needed; absolute integrability of the
+density and its first moment justifies both Fubini interchanges. -/
+theorem integral_signedRadialTailProfile
+    {q : ℝ → ℝ}
+    (hq : Integrable q)
+    (hmoment : Integrable (fun x : ℝ => x * q x)) :
+    ∫ x, signedRadialTailProfile q x =
+      2 * ∫ x, x * q x := by
+  let r : ℝ → ℝ := reflectedSignedDensity q
+  have hr : Integrable r := integrable_reflectedSignedDensity hq
+  have hrMoment : Integrable (fun x : ℝ => x * r x) :=
+    integrable_id_mul_reflectedSignedDensity hmoment
+  have hplus : Integrable (positiveTailIntegral q) :=
+    integrable_positiveTailIntegral hq hmoment
+  have hminus : Integrable (positiveTailIntegral r) :=
+    integrable_positiveTailIntegral hr hrMoment
+  have hminusComp : Integrable
+      (positiveTailIntegral r ∘ fun x : ℝ => -x) :=
+    (Measure.measurePreserving_neg volume).integrable_comp_of_integrable hminus
+  have hne : ∀ᵐ x : ℝ, x ≠ 0 := by
+    rw [ae_iff]
+    simp
+  have hprofile : signedRadialTailProfile q =ᵐ[volume]
+      fun x => 2 * positiveTailIntegral q x +
+        2 * positiveTailIntegral r (-x) := by
+    filter_upwards [hne] with x hx0
+    by_cases hx : 0 ≤ x
+    · have hxpos : 0 < x := lt_of_le_of_ne hx (Ne.symm hx0)
+      simp [signedRadialTailProfile, positiveTailIntegral, r, hx, hxpos]
+    · have hxneg : x < 0 := lt_of_not_ge hx
+      rw [signedRadialTailProfile, if_neg hx,
+        positiveTailIntegral_reflectedSignedDensity_neg hxneg]
+      simp [positiveTailIntegral, hx]
+  have hreflectIntegral :
+      ∫ x, positiveTailIntegral r (-x) =
+        ∫ x, positiveTailIntegral r x := by
+    simpa [Function.comp_apply] using
+      (Measure.measurePreserving_neg volume).integral_comp
+        measurableEmbedding_neg (positiveTailIntegral r)
+  have hrMomentSet :
+      ∫ x in Ici 0, x * r x =
+        ∫ x in Iic 0, x * q x := by
+    rw [integral_Ici_eq_integral_Ioi]
+    simpa [r, reflectedSignedDensity] using
+      integral_comp_neg_Ioi 0 (fun x : ℝ => x * q x)
+  have hsplit :
+      (∫ x in Ici 0, x * q x) + (∫ x in Iio 0, x * q x) =
+        ∫ x, x * q x := by
+    simpa using integral_add_compl measurableSet_Ici hmoment
+  have hplusIntegral := integral_positiveTailIntegral hq hmoment
+  have hminusIntegral := integral_positiveTailIntegral hr hrMoment
+  calc
+    ∫ x, signedRadialTailProfile q x =
+        ∫ x, (2 * positiveTailIntegral q x +
+          2 * positiveTailIntegral r (-x)) :=
+      integral_congr_ae hprofile
+    _ = 2 * (∫ x, positiveTailIntegral q x) +
+        2 * (∫ x, positiveTailIntegral r (-x)) := by
+      rw [integral_add (hplus.const_mul 2)
+        (by simpa [Function.comp_apply] using hminusComp.const_mul 2)]
+      simp only [integral_const_mul]
+    _ = 2 * (∫ x in Ici 0, x * q x) +
+        2 * (∫ x in Ici 0, x * r x) := by
+      rw [hreflectIntegral, hplusIntegral, hminusIntegral]
+    _ = 2 * ∫ x, x * q x := by
+      rw [hrMomentSet, integral_Iic_eq_integral_Iio]
+      linear_combination 2 * hsplit
 
 theorem signedRadialTailProfile_nonnegative
     {q : ℝ → ℝ}
@@ -471,6 +591,30 @@ private theorem id_mul_carneiroLittmannDensity_eq
   unfold carneiroLittmannDensity
   field_simp [Real.pi_ne_zero, hx]
 
+/-- Away from the removable point `-1`, the first-moment integrand is a
+translated normalized sinc square. -/
+theorem id_mul_carneiroLittmannDensity_eq_sinc_shift
+    {x : ℝ} (hx : x ≠ -1) :
+    x * carneiroLittmannDensity x =
+      Real.sinc (Real.pi * (x + 1)) ^ 2 := by
+  by_cases hx0 : x = 0
+  · subst x
+    simp [carneiroLittmannDensity, Real.sinc_of_ne_zero Real.pi_ne_zero]
+  · rw [carneiroLittmannDensity_eq_sinc_neg_one hx]
+    field_simp
+
+/-- The first-moment integrand agrees almost everywhere with the translated
+normalized sinc square; the sole exceptional point is irrelevant to its
+Lebesgue integral. -/
+theorem id_mul_carneiroLittmannDensity_ae_eq_sinc_shift :
+    (fun x : ℝ => x * carneiroLittmannDensity x) =ᵐ[volume]
+      (fun x : ℝ => Real.sinc (Real.pi * (x + 1)) ^ 2) := by
+  have hne : ∀ᵐ x : ℝ, x ≠ -1 := by
+    rw [ae_iff]
+    simp
+  filter_upwards [hne] with x hx
+  exact id_mul_carneiroLittmannDensity_eq_sinc_shift hx
+
 private theorem locallyIntegrable_id_mul_carneiroLittmannDensity :
     LocallyIntegrable (fun x : ℝ => x * carneiroLittmannDensity x) := by
   apply (continuous_id.mul continuous_carneiroLittmannRegularizedDensity).locallyIntegrable.congr
@@ -552,6 +696,12 @@ theorem integrable_id_mul_carneiroLittmannDensity :
     id_mul_carneiroLittmannDensity_isBigO_atTop
     (integrable_inv_one_add_sq.integrableAtFilter atTop)
 
+theorem integrable_carneiroLittmannSincShiftSq :
+    Integrable (fun x : ℝ =>
+      Real.sinc (Real.pi * (x + 1)) ^ 2) :=
+  integrable_id_mul_carneiroLittmannDensity.congr
+    id_mul_carneiroLittmannDensity_ae_eq_sinc_shift
+
 /-- The direct two-sided tail-integral candidate for `M - sgn`, where `M` is
 the monotone Carneiro--Littmann majorant.  At the origin it uses the right-tail
 normalization; this possible one-point difference is immaterial to the
@@ -569,6 +719,37 @@ theorem integrable_carneiroLittmannTailProfile :
     Integrable carneiroLittmannTailProfile :=
   integrable_signedRadialTailProfile integrable_carneiroLittmannDensity
     integrable_id_mul_carneiroLittmannDensity
+
+/-- The concrete profile mass is reduced to the standard full-line integral
+of a translated normalized sinc square. -/
+theorem integral_carneiroLittmannTailProfile_eq_sinc_shift :
+    ∫ x, carneiroLittmannTailProfile x =
+      2 * (∫ x, Real.sinc (Real.pi * (x + 1)) ^ 2) := by
+  change ∫ x, signedRadialTailProfile carneiroLittmannDensity x = _
+  rw [integral_signedRadialTailProfile integrable_carneiroLittmannDensity
+    integrable_id_mul_carneiroLittmannDensity]
+  congr 1
+  exact integral_congr_ae id_mul_carneiroLittmannDensity_ae_eq_sinc_shift
+
+/-- Translation invariance and the substitution `u = pi * x` reduce the
+shifted normalized sinc-square integral to the unscaled standard integral. -/
+theorem integral_carneiroLittmannSincShiftSq_eq :
+    ∫ x, Real.sinc (Real.pi * (x + 1)) ^ 2 =
+      Real.pi⁻¹ * ∫ u, Real.sinc u ^ 2 := by
+  calc
+    ∫ x, Real.sinc (Real.pi * (x + 1)) ^ 2 =
+        ∫ x, Real.sinc (Real.pi * x) ^ 2 := by
+      simpa using integral_add_right_eq_self
+        (fun x : ℝ => Real.sinc (Real.pi * x) ^ 2) 1
+    _ = Real.pi⁻¹ * ∫ u, Real.sinc u ^ 2 := by
+      simpa [abs_of_pos (inv_pos.mpr Real.pi_pos), smul_eq_mul] using
+        Measure.integral_comp_mul_left (fun u : ℝ => Real.sinc u ^ 2) Real.pi
+
+theorem integral_carneiroLittmannTailProfile_eq_sinc_sq :
+    ∫ x, carneiroLittmannTailProfile x =
+      2 * (Real.pi⁻¹ * ∫ u, Real.sinc u ^ 2) := by
+  rw [integral_carneiroLittmannTailProfile_eq_sinc_shift,
+    integral_carneiroLittmannSincShiftSq_eq]
 
 /-- Once the two remaining mass/Fourier facts are supplied, the concrete tail
 profile satisfies the full extremal-kernel certificate.  Integrability,
@@ -592,6 +773,33 @@ theorem carneiroLittmannTailProfile_certificate
       integrable_carneiroLittmannDensity
       (fun _ => carneiroLittmannDensity_nonnegative)
       (fun _ => carneiroLittmannDensity_nonpositive) hNew horder t
+
+/-- A normalized full-line sinc-square integral supplies the remaining mass
+field of the concrete certificate.  The reciprocal Fourier tail remains a
+separate analytic obligation. -/
+theorem carneiroLittmannTailProfile_certificate_of_sinc_shift_integral
+    (hmass : ∫ x, Real.sinc (Real.pi * (x + 1)) ^ 2 = 1)
+    (htail : ∀ xi : ℝ, 2 * Real.pi ≤ |xi| →
+      fourierKernel carneiroLittmannTailProfile xi =
+        (-2 * Complex.I) / xi) :
+    MonotoneExtremalKernelCertificate carneiroLittmannTailProfile := by
+  apply carneiroLittmannTailProfile_certificate
+  · rw [integral_carneiroLittmannTailProfile_eq_sinc_shift, hmass]
+    norm_num
+  · exact htail
+
+/-- The standard identity `integral sinc^2 = pi` supplies the concrete mass
+normalization; only the reciprocal Fourier tail then remains. -/
+theorem carneiroLittmannTailProfile_certificate_of_integral_sinc_sq
+    (hmass : ∫ x, Real.sinc x ^ 2 = Real.pi)
+    (htail : ∀ xi : ℝ, 2 * Real.pi ≤ |xi| →
+      fourierKernel carneiroLittmannTailProfile xi =
+        (-2 * Complex.I) / xi) :
+    MonotoneExtremalKernelCertificate carneiroLittmannTailProfile := by
+  apply carneiroLittmannTailProfile_certificate
+  · rw [integral_carneiroLittmannTailProfile_eq_sinc_sq, hmass]
+    field_simp [Real.pi_ne_zero]
+  · exact htail
 
 end DirichletPolynomial
 end PrimeNumberTheorem
