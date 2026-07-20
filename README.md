@@ -1412,6 +1412,19 @@ Dirichlet convolution, with the critical-line normalization factored out as
 `1 / sqrt k`.  A conservative divisor-count pointwise majorant is proved; it
 does not yet provide the sharp square-energy estimate needed to close the
 Selberg bound.
+The constant-term lower bound, finite-polynomial mean square, and bad-set
+Markov argument are now composed into a direct measure estimate for starts
+with small mollified absolute mass.  Its right-hand side is precisely the
+finite diagonal-plus-frequency-gap sum above; proving that sum has the
+Selberg-scale bound is still open.
+On the complete low-product range, the collected coefficient is now an exact
+von-Mangoldt--Moebius divisor convolution and satisfies the safe pointwise
+bound `2 / sqrt k`.  Separately, finite Cauchy--Schwarz retains the actual
+cardinality and square mass of each multiplicative product fiber.  A global
+Hilbert estimate also reduces the short-error second moment to the exact
+sliding-transformed coefficient energy.  The remaining hard step is a sharp
+global energy estimate exploiting Moebius cancellation across both the low
+and truncated high ranges.
 
 The three remaining open analytic directions are:
 

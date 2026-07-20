@@ -244,7 +244,13 @@ the Selberg `T*log T` lower bound remains open.
 - `HardyTheorem.selbergShortDirichletCollectedPolynomial_sub_one_eq`
 - `HardyTheorem.selbergShortDirichletCollectedCoeff_eq_convolution`
 - `HardyTheorem.norm_selbergShortDirichletCollectedCoeff_le_convolutionMajorant`
+- `HardyTheorem.selbergShortCollectedDirichletConvolution_eq_lowRange`
+- `HardyTheorem.norm_selbergShortDirichletCollectedCoeff_le_two_div_sqrt`
+- `HardyTheorem.sum_normSq_selbergShortDirichletCollectedCoeff_le_pairFiberEnergy`
 - `HardyTheorem.integral_normSq_selbergMollifiedShortDirichletPolynomial_le_gapSum`
+- `HardyTheorem.integral_normSq_selbergMollifiedShortDirichletPolynomial_le_energy`
+- `HardyTheorem.volume_selbergSmallAbsoluteMassStarts_inter_Icc_le_gapSum`
+- `HardyTheorem.exists_volume_selbergSmallAbsoluteMassStarts_inter_Icc_le_gapSum`
 - `PrimeNumberTheorem.RiemannVonMangoldt.riemannZeroCount_eq_positiveCriticalLine_add_two_mul_zeroDensityCount`
 - `HardyTheorem.hardy_littlewood_lower_bound_target_of_odd`
 - `HardyTheorem.hardy_littlewood_multiplicity_lower_bound_target_of_odd`

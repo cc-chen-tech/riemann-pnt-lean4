@@ -1,0 +1,9 @@
+import HardyTheorem.SelbergShortDirichletHilbertMeanSquare
+
+namespace Test.SelbergShortDirichletHilbertMeanSquareContract
+
+#check HardyTheorem.integral_normSq_selbergMollifiedShortDirichletPolynomial_le_energy
+
+#print axioms HardyTheorem.integral_normSq_selbergMollifiedShortDirichletPolynomial_le_energy
+
+end Test.SelbergShortDirichletHilbertMeanSquareContract

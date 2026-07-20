@@ -1,0 +1,16 @@
+import HardyTheorem.SelbergSmallAbsGapBound
+
+open MeasureTheory Set
+
+namespace Test.SelbergSmallAbsGapBoundContract
+
+#check HardyTheorem.selbergShortDirichletGapSum
+#check HardyTheorem.integral_normSq_selbergMollifiedShortDirichletPolynomial_le_gapSum'
+#check HardyTheorem.volume_selbergSmallAbsoluteMassStarts_inter_Icc_le_gapSum
+#check HardyTheorem.exists_volume_selbergSmallAbsoluteMassStarts_inter_Icc_le_gapSum
+
+#print axioms HardyTheorem.integral_normSq_selbergMollifiedShortDirichletPolynomial_le_gapSum'
+#print axioms HardyTheorem.volume_selbergSmallAbsoluteMassStarts_inter_Icc_le_gapSum
+#print axioms HardyTheorem.exists_volume_selbergSmallAbsoluteMassStarts_inter_Icc_le_gapSum
+
+end Test.SelbergSmallAbsGapBoundContract
