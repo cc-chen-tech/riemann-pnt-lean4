@@ -37,6 +37,21 @@ theorem vinogradovPolynomialSumDifference_of_dilation_factor {s : ℕ}
   rw [vinogradovPolynomialSumDifference_dilation, hfactor,
     vinogradovPolynomialSumDifference_C_mul]
 
+/-- A coefficientwise divisibility check constructs an integral quotient of
+a dilated polynomial. This packages the integrality obligation in the
+construction of the lower-degree system. -/
+theorem exists_vinogradovPolynomialDilation_factor
+    (q A : ℤ) (H : Polynomial ℤ)
+    (hcoeff : ∀ n : ℕ, A ∣ H.coeff n * q ^ n) :
+    ∃ Ψ : Polynomial ℤ,
+      vinogradovPolynomialDilation q H = Polynomial.C A * Ψ := by
+  have hdvd : Polynomial.C A ∣ vinogradovPolynomialDilation q H := by
+    rw [Polynomial.C_dvd_iff_dvd_coeff]
+    intro n
+    simpa only [vinogradovPolynomialDilation,
+      Polynomial.comp_C_mul_X_coeff] using hcoeff n
+  exact hdvd
+
 /-- Once the translated high-degree rows factor through a lower-degree
 polynomial system with the common center scale from (7.11), prime-power
 cancellation yields that lower-degree system at one uniform residual scale.
@@ -123,6 +138,42 @@ theorem vinogradovDilationFactorSystem_to_farScale
       (ω ^ (k - r) *
         (p : ℤ) ^ (γ * (k - r) + a * (i.val + 1)))
       (H i) (Ψ i) (hfactor i) x y
+
+/-- Coefficientwise construction of the complete lower-degree system. Once
+each dilated row has the expected common scalar in every coefficient, an
+integral polynomial family `Ψ` exists and satisfies the far-scale congruence
+system. -/
+theorem exists_vinogradovLowerDegreeSystem_to_farScale_of_coeff_dvd
+    {s : ℕ} (p k r a b γ : ℕ) (hp : p ≠ 0)
+    (hbudget : γ * (k - r) + a * r ≤ (k - r + 1) * b)
+    (ω : ℤ) (hω : IsCoprime (p : ℤ) ω)
+    (H : Fin r → Polynomial ℤ) (x y : Fin s → ℤ)
+    (hcoeff : ∀ (i : Fin r) (n : ℕ),
+      ω ^ (k - r) *
+          (p : ℤ) ^ (γ * (k - r) + a * (i.val + 1)) ∣
+        (H i).coeff n * ((p : ℤ) ^ a) ^ n)
+    (hsystem :
+      IsVinogradovPolynomialCongruenceSystem p ((k - r + 1) * b) H
+        (fun j ↦ (p : ℤ) ^ a * x j)
+        (fun j ↦ (p : ℤ) ^ a * y j)) :
+    ∃ Ψ : Fin r → Polynomial ℤ,
+      (∀ i : Fin r,
+        vinogradovPolynomialDilation ((p : ℤ) ^ a) (H i) =
+          Polynomial.C
+              (ω ^ (k - r) *
+                (p : ℤ) ^ (γ * (k - r) + a * (i.val + 1))) *
+            Ψ i) ∧
+      IsVinogradovPolynomialCongruenceSystem p
+        (vinogradovFarScale k r a b γ) Ψ x y := by
+  choose Ψ hΨ using fun i : Fin r ↦
+    exists_vinogradovPolynomialDilation_factor
+      ((p : ℤ) ^ a)
+      (ω ^ (k - r) *
+        (p : ℤ) ^ (γ * (k - r) + a * (i.val + 1)))
+      (H i) (hcoeff i)
+  refine ⟨Ψ, hΨ, ?_⟩
+  exact vinogradovDilationFactorSystem_to_farScale
+    p k r a b γ hp hbudget ω hω H Ψ x y hΨ hsystem
 
 end
 
