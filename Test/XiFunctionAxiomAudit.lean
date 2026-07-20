@@ -3,6 +3,7 @@ import RiemannExplorer.LiCriterion
 import RiemannExplorer.SchwarzSymmetric
 import RiemannExplorer.LiReality
 import RiemannExplorer.LiZeroSumConvergence
+import RiemannExplorer.LiPositivity
 
 #print axioms RiemannExplorer.xiFunction_one_sub
 #print axioms RiemannExplorer.xiFunction_zero
@@ -36,3 +37,12 @@ import RiemannExplorer.LiZeroSumConvergence
 #print axioms RiemannExplorer.norm_liPairedTerm_le
 #print axioms RiemannExplorer.summable_liPairedTerm
 #print axioms RiemannExplorer.summable_li_zero_sum_terms
+#print axioms RiemannExplorer.liPairedTerm_eq_ofReal_two_mul_re
+#print axioms RiemannExplorer.liPairedTerm_im
+#print axioms RiemannExplorer.liPairedTerm_re
+#print axioms RiemannExplorer.normSq_sub_one_eq_normSq_of_re_eq_half
+#print axioms RiemannExplorer.norm_one_sub_inv_of_re_eq_half
+#print axioms RiemannExplorer.liPairedTerm_re_nonneg_of_re_eq_half
+#print axioms RiemannExplorer.liPairedTerm_re_nonneg_of_rh
+#print axioms RiemannExplorer.tsum_liPairedTerm_re_nonneg_of_rh
+#print axioms RiemannExplorer.liCoefficient_re_nonneg_of_representation_of_rh
