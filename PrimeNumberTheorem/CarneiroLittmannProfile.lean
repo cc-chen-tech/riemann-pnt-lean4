@@ -1,6 +1,7 @@
 import PrimeNumberTheorem.MonotoneExtremalKernel
 import PrimeNumberTheorem.SincSquareIntegral
 import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
+import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Sinc
 import Mathlib.MeasureTheory.Integral.Asymptotics
 import Mathlib.MeasureTheory.Integral.Bochner.Set
@@ -28,6 +29,349 @@ noncomputable def positiveTailIntegral (q : ℝ → ℝ) (x : ℝ) : ℝ :=
 
 private noncomputable def positiveTailKernel (q : ℝ → ℝ) (p : ℝ × ℝ) : ℝ :=
   if 0 ≤ p.1 ∧ p.1 ≤ p.2 then q p.2 else 0
+
+/-- The two-sided Fubini kernel underlying `signedRadialTailProfile`.  For a
+fixed density point `t`, its `x`-support is the oriented segment from `0` to
+`t`. -/
+private noncomputable def signedRadialTailKernel
+    (q : ℝ → ℝ) (p : ℝ × ℝ) : ℝ :=
+  if 0 ≤ p.1 ∧ p.1 ≤ p.2 then q p.2
+  else if p.2 ≤ p.1 ∧ p.1 < 0 then -q p.2
+  else 0
+
+private theorem signedRadialTailKernel_aestronglyMeasurable
+    {q : ℝ → ℝ} (hq : AEStronglyMeasurable q) :
+    AEStronglyMeasurable (signedRadialTailKernel q)
+      (volume.prod volume) := by
+  let splus : Set (ℝ × ℝ) := {p | 0 ≤ p.1 ∧ p.1 ≤ p.2}
+  let sminus : Set (ℝ × ℝ) := {p | p.2 ≤ p.1 ∧ p.1 < 0}
+  have hsplus : MeasurableSet splus :=
+    (measurableSet_le measurable_const measurable_fst).inter
+      (measurableSet_le measurable_fst measurable_snd)
+  have hsminus : MeasurableSet sminus :=
+    (measurableSet_le measurable_snd measurable_fst).inter
+      (measurableSet_lt measurable_fst measurable_const)
+  have heq : signedRadialTailKernel q =
+      splus.indicator (fun p => q p.2) +
+        sminus.indicator (fun p => -q p.2) := by
+    funext p
+    by_cases hp : 0 ≤ p.1 ∧ p.1 ≤ p.2
+    · have hm : ¬(p.2 ≤ p.1 ∧ p.1 < 0) := by
+        intro h
+        linarith
+      simp [signedRadialTailKernel, splus, sminus, Set.indicator, hp, hm]
+    · by_cases hm : p.2 ≤ p.1 ∧ p.1 < 0 <;>
+        simp [signedRadialTailKernel, splus, sminus, Set.indicator, hp, hm]
+  rw [heq]
+  exact (hq.comp_snd.indicator hsplus).add
+    (hq.comp_snd.neg.indicator hsminus)
+
+private theorem integrable_signedRadialTailKernel
+    {q : ℝ → ℝ}
+    (hq : Integrable q)
+    (hmoment : Integrable (fun x : ℝ => x * q x)) :
+    Integrable (signedRadialTailKernel q) (volume.prod volume) := by
+  have hmeas :=
+    signedRadialTailKernel_aestronglyMeasurable hq.aestronglyMeasurable
+  apply (integrable_prod_iff' hmeas).2
+  constructor
+  · filter_upwards with t
+    by_cases ht : 0 ≤ t
+    · have heq : (fun x : ℝ => signedRadialTailKernel q (x, t)) =
+          (Icc 0 t).indicator (fun _ => q t) := by
+        funext x
+        simp only [signedRadialTailKernel]
+        by_cases hx : 0 ≤ x ∧ x ≤ t
+        · simp [hx, Set.indicator]
+        · have hminus : ¬(t ≤ x ∧ x < 0) := by
+            intro h
+            linarith
+          simp [hx, hminus, Set.indicator]
+      rw [heq]
+      exact (integrableOn_const (μ := volume) (s := Icc 0 t)
+        isCompact_Icc.measure_lt_top.ne).integrable_indicator measurableSet_Icc
+    · have htneg : t < 0 := lt_of_not_ge ht
+      have heq : (fun x : ℝ => signedRadialTailKernel q (x, t)) =
+          (Ico t 0).indicator (fun _ => -q t) := by
+        funext x
+        simp only [signedRadialTailKernel]
+        by_cases hx : t ≤ x ∧ x < 0
+        · have hplus : ¬(0 ≤ x ∧ x ≤ t) := by
+            intro h
+            linarith
+          simp [hplus, hx, Set.indicator]
+        · have hplus : ¬(0 ≤ x ∧ x ≤ t) := by
+            intro h
+            linarith
+          simp [hplus, hx, Set.indicator]
+      rw [heq]
+      exact (integrableOn_const (μ := volume) (s := Ico t 0)
+        measure_Ico_lt_top.ne).integrable_indicator measurableSet_Ico
+  · convert hmoment.norm using 1
+    funext t
+    by_cases ht : 0 ≤ t
+    · have heq : (fun x : ℝ => ‖signedRadialTailKernel q (x, t)‖) =
+          (Icc 0 t).indicator (fun _ => ‖q t‖) := by
+        funext x
+        simp only [signedRadialTailKernel]
+        by_cases hx : 0 ≤ x ∧ x ≤ t
+        · simp [hx, Set.indicator]
+        · have hminus : ¬(t ≤ x ∧ x < 0) := by
+            intro h
+            linarith
+          simp [hx, hminus, Set.indicator]
+      rw [heq, integral_indicator measurableSet_Icc]
+      simp [ht, norm_mul, abs_of_nonneg ht]
+    · have htneg : t < 0 := lt_of_not_ge ht
+      have heq : (fun x : ℝ => ‖signedRadialTailKernel q (x, t)‖) =
+          (Ico t 0).indicator (fun _ => ‖q t‖) := by
+        funext x
+        simp only [signedRadialTailKernel]
+        by_cases hx : t ≤ x ∧ x < 0
+        · have hplus : ¬(0 ≤ x ∧ x ≤ t) := by
+            intro h
+            linarith
+          simp [hplus, hx, Set.indicator]
+        · have hplus : ¬(0 ≤ x ∧ x ≤ t) := by
+            intro h
+            linarith
+          simp [hplus, hx, Set.indicator]
+      rw [heq, integral_indicator measurableSet_Ico]
+      simp [htneg.le, norm_mul, abs_of_nonpos htneg.le]
+
+private theorem signedRadialTailProfile_eq_kernelIntegral
+    (q : ℝ → ℝ) (x : ℝ) :
+    signedRadialTailProfile q x =
+      2 * ∫ t, signedRadialTailKernel q (x, t) := by
+  rw [signedRadialTailProfile]
+  by_cases hx : 0 ≤ x
+  · rw [if_pos hx]
+    congr 1
+    rw [← integral_indicator measurableSet_Ici]
+    apply integral_congr_ae
+    filter_upwards with t
+    have hminus : ¬(t ≤ x ∧ x < 0) := by
+      intro h
+      exact (not_lt_of_ge hx) h.2
+    simp [signedRadialTailKernel, Set.indicator, hminus, hx]
+  · have hxneg : x < 0 := lt_of_not_ge hx
+    rw [if_neg hx]
+    congr 1
+    rw [← integral_indicator measurableSet_Iic]
+    apply integral_congr_ae
+    filter_upwards with t
+    have hplus : ¬(0 ≤ x ∧ x ≤ t) := by
+      intro h
+      exact hx h.1
+    simp [signedRadialTailKernel, Set.indicator, hplus, hxneg]
+
+private theorem integrable_signedRadialTailKernel_mul_exp
+    {q : ℝ → ℝ}
+    (hq : Integrable q)
+    (hmoment : Integrable (fun x : ℝ => x * q x)) (xi : ℝ) :
+    Integrable (fun p : ℝ × ℝ =>
+      ((signedRadialTailKernel q p : ℝ) : ℂ) *
+        Complex.exp (Complex.I * (xi * p.1))) (volume.prod volume) := by
+  apply (integrable_signedRadialTailKernel hq hmoment).ofReal.mul_bdd (c := 1)
+  · fun_prop
+  · filter_upwards with p
+    simp [Complex.norm_exp]
+
+private theorem integral_signedRadialTailKernel_mul_exp
+    (q : ℝ → ℝ) {xi t : ℝ} (hxi : xi ≠ 0) :
+    (∫ x : ℝ, ((signedRadialTailKernel q (x, t) : ℝ) : ℂ) *
+      Complex.exp (Complex.I * (xi * x))) =
+        (q t : ℂ) *
+          (Complex.exp ((Complex.I * (xi : ℂ)) * t) - 1) /
+            (Complex.I * (xi : ℂ)) := by
+  have hc : Complex.I * (xi : ℂ) ≠ 0 :=
+    mul_ne_zero Complex.I_ne_zero (ofReal_ne_zero.mpr hxi)
+  have hphase (x : ℝ) :
+      Complex.I * (xi * x) = (Complex.I * (xi : ℂ)) * x := by
+    ring
+  by_cases ht : 0 ≤ t
+  · have heq : (fun x : ℝ =>
+        ((signedRadialTailKernel q (x, t) : ℝ) : ℂ) *
+          Complex.exp (Complex.I * (xi * x))) =
+        (Icc 0 t).indicator (fun x =>
+          (q t : ℂ) * Complex.exp (Complex.I * (xi * x))) := by
+      funext x
+      by_cases hx : 0 ≤ x ∧ x ≤ t
+      · simp [signedRadialTailKernel, Set.indicator, hx]
+      · have hminus : ¬(t ≤ x ∧ x < 0) := by
+          intro h
+          linarith
+        simp [signedRadialTailKernel, Set.indicator, hx, hminus]
+    rw [heq, integral_indicator measurableSet_Icc,
+      integral_Icc_eq_integral_Ioc,
+      ← intervalIntegral.integral_of_le ht]
+    simp_rw [hphase]
+    calc
+      (∫ x in 0..t,
+          (q t : ℂ) * Complex.exp ((Complex.I * (xi : ℂ)) * x)) =
+          (q t : ℂ) *
+            ∫ x in 0..t, Complex.exp ((Complex.I * (xi : ℂ)) * x) := by
+        exact intervalIntegral.integral_const_mul (q t : ℂ)
+          (fun x : ℝ => Complex.exp ((Complex.I * (xi : ℂ)) * x))
+      _ = (q t : ℂ) *
+          (Complex.exp ((Complex.I * (xi : ℂ)) * t) - 1) /
+            (Complex.I * (xi : ℂ)) := by
+        rw [integral_exp_mul_complex hc]
+        push_cast
+        simp
+        ring
+
+  · have htneg : t < 0 := lt_of_not_ge ht
+    have heq : (fun x : ℝ =>
+        ((signedRadialTailKernel q (x, t) : ℝ) : ℂ) *
+          Complex.exp (Complex.I * (xi * x))) =
+        (Ico t 0).indicator (fun x =>
+          (-(q t) : ℂ) * Complex.exp (Complex.I * (xi * x))) := by
+      funext x
+      by_cases hx : t ≤ x ∧ x < 0
+      · have hplus : ¬(0 ≤ x ∧ x ≤ t) := by
+          intro h
+          linarith
+        simp [signedRadialTailKernel, Set.indicator, hplus, hx]
+      · have hplus : ¬(0 ≤ x ∧ x ≤ t) := by
+          intro h
+          linarith
+        simp [signedRadialTailKernel, Set.indicator, hplus, hx]
+    rw [heq, integral_indicator measurableSet_Ico,
+      integral_Ico_eq_integral_Ioc,
+      ← intervalIntegral.integral_of_le htneg.le]
+    simp_rw [hphase]
+    calc
+      (∫ x in t..0,
+          (-(q t) : ℂ) * Complex.exp ((Complex.I * (xi : ℂ)) * x)) =
+          (-(q t) : ℂ) *
+            ∫ x in t..0, Complex.exp ((Complex.I * (xi : ℂ)) * x) := by
+        exact intervalIntegral.integral_const_mul (-(q t) : ℂ)
+          (fun x : ℝ => Complex.exp ((Complex.I * (xi : ℂ)) * x))
+      _ = (q t : ℂ) *
+          (Complex.exp ((Complex.I * (xi : ℂ)) * t) - 1) /
+            (Complex.I * (xi : ℂ)) := by
+        rw [integral_exp_mul_complex hc]
+        push_cast
+        simp
+        ring
+
+/-- Fourier transform of a two-sided radial tail profile.  This Fubini
+identity isolates the two concrete facts needed later: the total mass and the
+high-frequency transform of the density. -/
+theorem fourierKernel_signedRadialTailProfile_mul
+    {q : ℝ → ℝ}
+    (hq : Integrable q)
+    (hmoment : Integrable (fun x : ℝ => x * q x))
+    {xi : ℝ} (hxi : xi ≠ 0) :
+    (Complex.I * (xi : ℂ)) * fourierKernel (signedRadialTailProfile q) xi =
+      2 * (fourierKernel q xi - ((∫ x, q x : ℝ) : ℂ)) := by
+  let c : ℂ := Complex.I * (xi : ℂ)
+  have hc : c ≠ 0 :=
+    mul_ne_zero Complex.I_ne_zero (ofReal_ne_zero.mpr hxi)
+  have hkernel := integrable_signedRadialTailKernel_mul_exp hq hmoment xi
+  have hqComplex : Integrable (fun x : ℝ => (q x : ℂ)) := hq.ofReal
+  have hqExp : Integrable (fun x : ℝ =>
+      (q x : ℂ) * Complex.exp (Complex.I * (xi * x))) := by
+    apply hqComplex.mul_bdd (c := 1)
+    · fun_prop
+    · filter_upwards with x
+      simp [Complex.norm_exp]
+  have houter (x : ℝ) :
+      (signedRadialTailProfile q x : ℂ) *
+          Complex.exp (Complex.I * (xi * x)) =
+        2 * ∫ t : ℝ, ((signedRadialTailKernel q (x, t) : ℝ) : ℂ) *
+          Complex.exp (Complex.I * (xi * x)) := by
+    have hint := MeasureTheory.integral_mul_const (μ := volume)
+      (Complex.exp (Complex.I * (xi * x)))
+      (fun t : ℝ => ((signedRadialTailKernel q (x, t) : ℝ) : ℂ))
+    have hcast :
+        (∫ t : ℝ, ((signedRadialTailKernel q (x, t) : ℝ) : ℂ)) =
+          ((∫ t : ℝ, signedRadialTailKernel q (x, t) : ℝ) : ℂ) :=
+      integral_ofReal
+    calc
+      (signedRadialTailProfile q x : ℂ) *
+          Complex.exp (Complex.I * (xi * x)) =
+          2 * (((∫ t : ℝ, signedRadialTailKernel q (x, t) : ℝ) : ℂ)) *
+            Complex.exp (Complex.I * (xi * x)) := by
+        rw [signedRadialTailProfile_eq_kernelIntegral]
+        push_cast
+        ring
+      _ = 2 * (∫ t : ℝ,
+            ((signedRadialTailKernel q (x, t) : ℝ) : ℂ)) *
+          Complex.exp (Complex.I * (xi * x)) := by
+        exact congrArg (fun z : ℂ =>
+          2 * z * Complex.exp (Complex.I * (xi * x))) hcast.symm
+      _ = 2 * ((∫ t : ℝ,
+            ((signedRadialTailKernel q (x, t) : ℝ) : ℂ)) *
+          Complex.exp (Complex.I * (xi * x))) := by ring
+      _ = 2 * ∫ t : ℝ,
+          ((signedRadialTailKernel q (x, t) : ℝ) : ℂ) *
+            Complex.exp (Complex.I * (xi * x)) := by
+        exact congrArg (fun z : ℂ => 2 * z) hint.symm
+  have hinner (t : ℝ) :
+      (∫ x : ℝ, ((signedRadialTailKernel q (x, t) : ℝ) : ℂ) *
+        Complex.exp (Complex.I * (xi * x))) =
+        c⁻¹ * ((q t : ℂ) * Complex.exp (Complex.I * (xi * t)) -
+          (q t : ℂ)) := by
+    rw [integral_signedRadialTailKernel_mul_exp q hxi]
+    dsimp [c]
+    field_simp
+  have hconst :
+      (∫ t : ℝ, c⁻¹ *
+        ((q t : ℂ) * Complex.exp (Complex.I * (xi * t)) - (q t : ℂ))) =
+        c⁻¹ * ∫ t : ℝ,
+          ((q t : ℂ) * Complex.exp (Complex.I * (xi * t)) - (q t : ℂ)) :=
+    MeasureTheory.integral_const_mul c⁻¹
+      (fun t : ℝ =>
+        (q t : ℂ) * Complex.exp (Complex.I * (xi * t)) - (q t : ℂ))
+  have hqIntegral :
+      (∫ t : ℝ, (q t : ℂ)) = ((∫ t : ℝ, q t : ℝ) : ℂ) :=
+    integral_ofReal
+  have hfourier :
+      fourierKernel (signedRadialTailProfile q) xi =
+        2 * c⁻¹ *
+          (fourierKernel q xi - ((∫ x, q x : ℝ) : ℂ)) := by
+    unfold fourierKernel
+    calc
+      (∫ x : ℝ, (signedRadialTailProfile q x : ℂ) *
+          Complex.exp (Complex.I * (xi * x))) =
+          ∫ x : ℝ, 2 *
+            (∫ t : ℝ, ((signedRadialTailKernel q (x, t) : ℝ) : ℂ) *
+              Complex.exp (Complex.I * (xi * x))) := by
+        apply integral_congr_ae
+        filter_upwards with x
+        exact houter x
+      _ = 2 * ∫ x : ℝ, ∫ t : ℝ,
+            ((signedRadialTailKernel q (x, t) : ℝ) : ℂ) *
+              Complex.exp (Complex.I * (xi * x)) := by
+        exact MeasureTheory.integral_const_mul 2
+          (fun x : ℝ => ∫ t : ℝ,
+            ((signedRadialTailKernel q (x, t) : ℝ) : ℂ) *
+              Complex.exp (Complex.I * (xi * x)))
+      _ = 2 * ∫ t : ℝ, ∫ x : ℝ,
+            ((signedRadialTailKernel q (x, t) : ℝ) : ℂ) *
+              Complex.exp (Complex.I * (xi * x)) := by
+        rw [integral_integral_swap hkernel]
+      _ = 2 * ∫ t : ℝ,
+            c⁻¹ * ((q t : ℂ) * Complex.exp (Complex.I * (xi * t)) -
+              (q t : ℂ)) := by
+        congr 1
+        apply integral_congr_ae
+        filter_upwards with t
+        exact hinner t
+      _ = 2 * (c⁻¹ * ∫ t : ℝ,
+            ((q t : ℂ) * Complex.exp (Complex.I * (xi * t)) -
+              (q t : ℂ))) := by
+        rw [hconst]
+      _ = 2 * c⁻¹ *
+          (fourierKernel q xi - ((∫ x, q x : ℝ) : ℂ)) := by
+        rw [integral_sub hqExp hqComplex, hqIntegral]
+        unfold fourierKernel
+        ring
+  rw [hfourier]
+  field_simp
+  ring
 
 private theorem positiveTailKernel_aestronglyMeasurable
     {q : ℝ → ℝ} (hq : AEStronglyMeasurable q) :

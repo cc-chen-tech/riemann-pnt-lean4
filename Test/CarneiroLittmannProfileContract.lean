@@ -104,6 +104,14 @@ example :
 example : ∫ x, carneiroLittmannTailProfile x = 2 :=
   integral_carneiroLittmannTailProfile_eq_two
 
+example {q : ℝ → ℝ}
+    (hq : Integrable q)
+    (hmoment : Integrable (fun x : ℝ => x * q x))
+    {xi : ℝ} (hxi : xi ≠ 0) :
+    (Complex.I * (xi : ℂ)) * fourierKernel (signedRadialTailProfile q) xi =
+      2 * (fourierKernel q xi - ((∫ x, q x : ℝ) : ℂ)) :=
+  fourierKernel_signedRadialTailProfile_mul hq hmoment hxi
+
 example
     (htail : ∀ xi : ℝ, 2 * Real.pi ≤ |xi| →
       fourierKernel carneiroLittmannTailProfile xi =
@@ -147,6 +155,7 @@ example
 #print axioms integral_carneiroLittmannSincShiftSq_eq
 #print axioms integral_carneiroLittmannTailProfile_eq_sinc_sq
 #print axioms integral_carneiroLittmannTailProfile_eq_two
+#print axioms fourierKernel_signedRadialTailProfile_mul
 #print axioms carneiroLittmannTailProfile_certificate
 #print axioms carneiroLittmannTailProfile_certificate_of_sinc_shift_integral
 #print axioms carneiroLittmannTailProfile_certificate_of_integral_sinc_sq
