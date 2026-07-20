@@ -1398,6 +1398,15 @@ one-index polynomial on `1 <= k <= N * X^2`, its `k = 1` coefficient is one,
 and after subtracting this constant the frequencies `-log k` are pairwise
 distinct on `2 <= k <= N * X^2`.  No coefficient-energy estimate is claimed
 yet.
+Finite Cauchy--Schwarz is now available in fiberwise form: collecting equal
+frequencies increases total square energy by at most the largest product-fiber
+cardinality.  Obtaining a sharp enough arithmetic bound for that loss, rather
+than using the crude total number of triples, remains open.
+The absolute-error short integral is now identified exactly with the sliding
+integral of this collected nonconstant polynomial, and its full start-variable
+second moment is bounded by an explicit finite diagonal-plus-frequency-gap
+sum.  The unresolved Selberg input is now the sharp arithmetic estimate of
+that displayed finite sum.
 
 The three remaining open analytic directions are:
 

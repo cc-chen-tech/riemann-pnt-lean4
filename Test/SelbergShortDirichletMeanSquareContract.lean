@@ -1,0 +1,11 @@
+import HardyTheorem.SelbergShortDirichletMeanSquare
+
+namespace Test.SelbergShortDirichletMeanSquareContract
+
+#check HardyTheorem.selbergMollifiedShortDirichletPolynomial_eq_slidingCollected
+#check HardyTheorem.integral_normSq_selbergMollifiedShortDirichletPolynomial_le_gapSum
+
+#print axioms HardyTheorem.selbergMollifiedShortDirichletPolynomial_eq_slidingCollected
+#print axioms HardyTheorem.integral_normSq_selbergMollifiedShortDirichletPolynomial_le_gapSum
+
+end Test.SelbergShortDirichletMeanSquareContract
