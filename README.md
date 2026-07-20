@@ -1445,7 +1445,10 @@ dyadic blocks.  The endpoint cost on block `j` is proportional to `2^j` times
 that block's coefficient energy, instead of the largest endpoint times the
 total energy.  Applying this sharper analytic estimate to the collected
 Selberg coefficients still requires the missing arithmetic block-energy
-bound; it does not prove the Selberg target by itself.
+bound.  This theorem is also specialized directly to the collected
+nonconstant Selberg polynomial, so the remaining input is now exactly its
+per-block coefficient energy; the specialization does not prove the Selberg
+target by itself.
 The linear cutoff also vanishes exactly at its endpoint, so every collected
 coefficient above `N * X * (X - 1)` is now proved to be zero; `N * X * X` is
 only the formal product support, not the effective support.  The corresponding
