@@ -127,6 +127,7 @@ EXPECTED_DECLARATIONS = {
     "HardyTheorem.card_le_criticalLineOddZeroCount_of_pairwiseDisjoint_signChanges",
     "HardyTheorem.card_le_criticalLineOddZeroCount_of_pairwiseDisjoint_hardyZ_signChanges",
     "HardyTheorem.hardy_littlewood_lower_bound_target_proved",
+    "PrimeNumberTheorem.RiemannVonMangoldt.exists_eventually_riemannZeroCount_ge_selbergScale",
 }
 
 REPORT_RE = re.compile(
