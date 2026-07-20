@@ -39,8 +39,8 @@ CHAIN_SUMMARY = [
     {
         "name": "Li criterion",
         "target": "li_criterion_iff_rh_target",
-        "status": "the xi-function API (functional equation, entirety, zero correspondence, critical-line real-valuedness) is proved; the Li coefficient definition and LiCriterionHolds predicate are in place; the Li-RH equivalence and the zero-sum representation remain targets",
-        "next_step": "build Hadamard product and zero-sum machinery, then prove the paired zero-sum representation and both directions of the Li-RH equivalence",
+        "status": "the xi-function API (functional equation, entirety, zero correspondence, critical-line real-valuedness) is proved; the Li coefficient definition and LiCriterionHolds predicate are in place; the Li coefficients are proved real unconditionally; the paired zero series and the paired Mittag-Leffler series are proved convergent; under RH the forward direction is reduced to the zero-sum representation alone (strict positivity discharged via Hardy); the xi'/xi expansion is registered as a target with its quotient constant conditionally identified",
+        "next_step": "prove the remaining xi'/xi partial-fraction identity slices (removable-singularity entirety, growth order <= 1 of xi), then the paired zero-sum representation and both directions of the Li-RH equivalence",
     },
 ]
 

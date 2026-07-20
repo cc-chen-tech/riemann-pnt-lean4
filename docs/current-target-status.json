@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-20",
+  "timestamp": "2026-07-21",
   "status": "not-yet-complete",
   "completed_without_sorry": true,
   "remaining_prop_targets": {
@@ -136,6 +136,14 @@
         "file": "RiemannExplorer/LiCriterion.lean",
         "line": 143,
         "shape": "∀ n ≥ 1, liCoefficient n = ∑' ρ (paired conjugate zero terms), distinct zeros, no multiplicity",
+        "depends_on": []
+      },
+      {
+        "name": "xi_partial_fraction_expansion_target",
+        "qualified_name": "RiemannExplorer.xi_partial_fraction_expansion_target",
+        "file": "RiemannExplorer/XiPartialFraction.lean",
+        "line": 314,
+        "shape": "∃ B : ℂ, ∀ s, xiFunction s ≠ 0 → deriv xiFunction s / xiFunction s = B + ∑' ρ (paired Mittag-Leffler terms); convergence proved, B = ξ'(0)/ξ(0) conditionally identified",
         "depends_on": []
       }
     ],
@@ -319,8 +327,8 @@
     {
       "name": "Li criterion",
       "target": "li_criterion_iff_rh_target",
-      "status": "the xi-function API (functional equation, entirety, zero correspondence, critical-line real-valuedness) is proved; the Li coefficient definition and LiCriterionHolds predicate are in place; the Li-RH equivalence and the zero-sum representation remain targets",
-      "next_step": "build Hadamard product and zero-sum machinery, then prove the paired zero-sum representation and both directions of the Li-RH equivalence"
+      "status": "the xi-function API (functional equation, entirety, zero correspondence, critical-line real-valuedness) is proved; the Li coefficient definition and LiCriterionHolds predicate are in place; the Li coefficients are proved real unconditionally; the paired zero series and the paired Mittag-Leffler series are proved convergent; under RH the forward direction is reduced to the zero-sum representation alone (strict positivity discharged via Hardy); the xi'/xi expansion is registered as a target with its quotient constant conditionally identified",
+      "next_step": "prove the remaining xi'/xi partial-fraction identity slices (removable-singularity entirety, growth order <= 1 of xi), then the paired zero-sum representation and both directions of the Li-RH equivalence"
     }
   ],
   "chain_inventory": {
@@ -329,7 +337,8 @@
       "li_criterion_implies_rh_target",
       "rh_implies_li_criterion_target",
       "li_criterion_iff_rh_target",
-      "li_zero_sum_representation_target"
+      "li_zero_sum_representation_target",
+      "xi_partial_fraction_expansion_target"
     ],
     "Quantitative critical-line extensions": [
       "integral_asymptotic_target",
@@ -351,10 +360,10 @@
       "RH_ErrorBound"
     ]
   },
-  "mathematical_target_count": 18,
+  "mathematical_target_count": 19,
   "route_interface_count": 5,
   "route_interface_true_body_count": 0,
   "reusable_predicate_count": 13,
   "unclassified_prop_def_count": 0,
-  "all_scanned_prop_defs_count": 36
+  "all_scanned_prop_defs_count": 37
 }

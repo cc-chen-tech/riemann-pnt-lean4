@@ -50,6 +50,7 @@ MATH_TARGETS = {
     "RiemannExplorer.rh_implies_li_criterion_target": "Li criterion",
     "RiemannExplorer.li_criterion_iff_rh_target": "Li criterion",
     "RiemannExplorer.li_zero_sum_representation_target": "Li criterion",
+    "RiemannExplorer.xi_partial_fraction_expansion_target": "Li criterion",
 }
 
 ROUTE_INTERFACES = {
