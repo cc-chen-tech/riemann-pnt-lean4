@@ -17,6 +17,37 @@ noncomputable def mobiusMollifier (X : ℕ) (s : ℂ) : ℂ :=
   ∑ n ∈ Finset.Icc 1 X,
     (ArithmeticFunction.moebius n : ℂ) / (n : ℂ) ^ s
 
+/-- On the closed right half-plane, the finite Möbius mollifier has the crude
+uniform bound given by its number of possible summands. -/
+theorem norm_mobiusMollifier_le_natCast
+    {X : ℕ} {s : ℂ} (hs : 0 ≤ s.re) :
+    ‖mobiusMollifier X s‖ ≤ X := by
+  unfold mobiusMollifier
+  calc
+    ‖∑ n ∈ Finset.Icc 1 X,
+        (ArithmeticFunction.moebius n : ℂ) / (n : ℂ) ^ s‖ ≤
+        ∑ n ∈ Finset.Icc 1 X,
+          ‖(ArithmeticFunction.moebius n : ℂ) / (n : ℂ) ^ s‖ :=
+      norm_sum_le _ _
+    _ ≤ ∑ _n ∈ Finset.Icc 1 X, (1 : ℝ) := by
+      apply Finset.sum_le_sum
+      intro n hn
+      have hnpos : 0 < n := (Finset.mem_Icc.mp hn).1
+      have hnRpos : 0 < (n : ℝ) := by exact_mod_cast hnpos
+      have hnRone : 1 ≤ (n : ℝ) := by exact_mod_cast hnpos
+      have hmuInt := ArithmeticFunction.abs_moebius_le_one (n := n)
+      have hmuReal : |(ArithmeticFunction.moebius n : ℝ)| ≤ 1 := by
+        exact_mod_cast hmuInt
+      have hmu : ‖(ArithmeticFunction.moebius n : ℂ)‖ ≤ 1 := by
+        simpa [Complex.norm_intCast] using hmuReal
+      rw [norm_div, norm_natCast_cpow_of_pos hnpos]
+      have hdenPos : 0 < (n : ℝ) ^ s.re :=
+        Real.rpow_pos_of_pos hnRpos _
+      have hden : 1 ≤ (n : ℝ) ^ s.re :=
+        Real.one_le_rpow hnRone hs
+      exact (div_le_one hdenPos).2 (hmu.trans hden)
+    _ = X := by simp
+
 /-- A finite Möbius mollifier is entire as a function of its complex
 argument. -/
 theorem analyticAt_mobiusMollifier (X : ℕ) (s : ℂ) :

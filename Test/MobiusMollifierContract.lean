@@ -6,6 +6,10 @@ open scoped Interval
 namespace PrimeNumberTheorem
 namespace CarlsonZeroDensity
 
+example {X : ℕ} {s : ℂ} (hs : 0 ≤ s.re) :
+    ‖mobiusMollifier X s‖ ≤ X :=
+  norm_mobiusMollifier_le_natCast hs
+
 example (X : ℕ) (s : ℂ) :
     mobiusMollifier X s =
       ∑ n ∈ Finset.Icc 1 X,
@@ -97,6 +101,7 @@ example {X : ℕ} (hX : 1 ≤ X) {sigma a b : ℝ}
   mobiusMollifier_meanSquare_le_rpow_endpoint hX hab hsigma hsigma1
 
 #print axioms analyticAt_mobiusMollifier
+#print axioms norm_mobiusMollifier_le_natCast
 #print axioms tendsto_mobiusMollifier_atTop
 #print axioms analyticOrderAt_mobiusMollifier_ne_top
 #print axioms LSeries_moebius_eq_mobiusMollifier_add_tail
