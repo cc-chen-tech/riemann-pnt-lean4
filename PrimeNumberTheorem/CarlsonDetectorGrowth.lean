@@ -382,6 +382,18 @@ noncomputable def regularizedCarlsonFactorDiskZeroMass
       (Metric.closedBall
         ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ)) u : ℝ)
 
+/-- Imaginary parts of the distinct detector zeros in the fixed
+factorization disk. -/
+noncomputable def regularizedCarlsonFactorDiskZeroHeights
+    (X : ℕ) (T : ℝ) : Finset ℝ :=
+  (regularizedCarlsonFactorDiskZeroSupport X T).image Complex.im
+
+/-- Pigeonhole separation available for a horizontal line through a
+unit-height Carlson rectangle. -/
+noncomputable def regularizedCarlsonFactorHorizontalSeparation
+    (X : ℕ) (T : ℝ) : ℝ :=
+  1 / (4 * (((regularizedCarlsonFactorDiskZeroHeights X T).card : ℝ) + 1))
+
 /-- Quantitative separation supplied by the fixed good-circle interval. -/
 noncomputable def regularizedCarlsonFactorDiskSeparation
     (X : ℕ) (T : ℝ) : ℝ :=
@@ -755,6 +767,147 @@ theorem exists_regularizedCarlsonZeroDetector_goodFactor_logDeriv_le :
     exact hld z (by simpa [c, b] using hz) hfz
   · intro z hz
     exact hlogDeriv z (by simpa [c] using hz)
+
+/-- One horizontal side of the unit Carlson rectangle avoids every zero in
+the fixed factorization disk.  On that side, the detector's logarithmic
+derivative is bounded by the extracted analytic factor plus the complete
+local divisor mass divided by the pigeonhole separation. -/
+theorem exists_regularizedCarlson_horizontal_logDeriv_le_factorDisk :
+    ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X →
+      ∀ {sigma T : ℝ}, 1 / 2 < sigma → 5 ≤ T →
+        ∃ r ∈ Set.Icc (121 / 32 : ℝ) (122 / 32 : ℝ),
+        ∃ t ∈ Set.Icc T (T + 1),
+          (∀ x ∈ Set.Icc sigma 4,
+            regularizedCarlsonZeroDetector X
+              ((x : ℂ) + (t : ℂ) * I) ≠ 0) ∧
+          ∀ x ∈ Set.Icc sigma 4,
+            ‖logDeriv (regularizedCarlsonZeroDetector X)
+              ((x : ℂ) + (t : ℂ) * I)‖ ≤
+              4 * max
+                  (regularizedCarlsonFactorCircleLogUpper C X T -
+                    regularizedCarlsonFactorCenterLogLower X T) 1 *
+                (r + 15 / 4) / (r - 15 / 4) ^ 2 +
+              regularizedCarlsonFactorDiskZeroMass X T /
+                regularizedCarlsonFactorHorizontalSeparation X T := by
+  classical
+  rcases exists_regularizedCarlsonZeroDetector_goodFactor_logDeriv_le with
+    ⟨C, hC, hfactor⟩
+  refine ⟨C, hC, ?_⟩
+  intro X hX sigma T hsigma hT
+  rcases hfactor hX hT with
+    ⟨r, g, hr, hg, hgne, hcenter, hsphere, hdecomp, hgBound⟩
+  let c : ℂ := (4 : ℂ) + I * (T + 1 / 2)
+  let U : Set ℂ := Metric.closedBall c (123 / 32 : ℝ)
+  let D := MeromorphicOn.divisor (regularizedCarlsonZeroDetector X) U
+  let H := regularizedCarlsonFactorDiskZeroHeights X T
+  let delta := regularizedCarlsonFactorHorizontalSeparation X T
+  rcases ZeroFreeRegion.exists_radius_separated_from_finset H
+      (show T < T + 1 by linarith) with ⟨t, ht, hsep⟩
+  have hdelta : 0 < delta := by
+    dsimp [delta, regularizedCarlsonFactorHorizontalSeparation]
+    positivity
+  have hanalyticFactor : AnalyticOnNhd ℂ
+      (regularizedCarlsonZeroDetector X) U := by
+    simpa [U, c] using
+      (analyticOnNhd_regularizedCarlsonZeroDetector_fixedJensenOuterDisk X T).mono
+        (Metric.closedBall_subset_closedBall (by norm_num))
+  have hDfinite : D.support.Finite := by
+    exact D.finiteSupport (by simpa [U] using isCompact_closedBall c (123 / 32 : ℝ))
+  have hDnonneg : 0 ≤ D := hanalyticFactor.divisor_nonneg
+  refine ⟨r, hr, t, ht, ?_, ?_⟩
+  · intro x hx
+    let z : ℂ := (x : ℂ) + (t : ℂ) * I
+    have hzRectangle : z ∈ carlsonDetectorRectangle sigma 4 T (T + 1) := by
+      change z.re ∈ Set.Icc sigma 4 ∧ z.im ∈ Set.Icc T (T + 1)
+      constructor
+      · simpa [z] using hx
+      · simpa [z] using ht
+    have hzInner : z ∈ Metric.closedBall c (15 / 4 : ℝ) := by
+      simpa [c] using
+        (carlsonDetectorRectangle_subset_fixedJensenInnerDisk hsigma hzRectangle)
+    have hzFactor : z ∈ U := by
+      dsimp [U]
+      exact Metric.closedBall_subset_closedBall (by norm_num) hzInner
+    intro hzero
+    have hzSupport : z ∈ regularizedCarlsonFactorDiskZeroSupport X T :=
+      (mem_regularizedCarlsonFactorDiskZeroSupport_iff_zero hX
+        (by simpa [U, c] using hzFactor)).2 hzero
+    have hzHeight : z.im ∈ H := by
+      dsimp [H, regularizedCarlsonFactorDiskZeroHeights]
+      exact Finset.mem_image.mpr ⟨z, hzSupport, rfl⟩
+    have hzeroDistance : delta ≤ 0 := by
+      simpa [z, delta, regularizedCarlsonFactorHorizontalSeparation, H] using
+        hsep z.im hzHeight
+    exact (not_lt_of_ge hzeroDistance) hdelta
+  · intro x hx
+    let z : ℂ := (x : ℂ) + (t : ℂ) * I
+    have hzRectangle : z ∈ carlsonDetectorRectangle sigma 4 T (T + 1) := by
+      change z.re ∈ Set.Icc sigma 4 ∧ z.im ∈ Set.Icc T (T + 1)
+      constructor
+      · simpa [z] using hx
+      · simpa [z] using ht
+    have hzInner : z ∈ Metric.closedBall c (15 / 4 : ℝ) := by
+      simpa [c] using
+        (carlsonDetectorRectangle_subset_fixedJensenInnerDisk hsigma hzRectangle)
+    have hzFactor : z ∈ U := by
+      dsimp [U]
+      exact Metric.closedBall_subset_closedBall (by norm_num) hzInner
+    have hzFactorBall : z ∈ Metric.ball c (123 / 32 : ℝ) :=
+      Metric.closedBall_subset_ball (by norm_num) hzInner
+    have hzNe : regularizedCarlsonZeroDetector X z ≠ 0 := by
+      intro hzero
+      have hzSupport : z ∈ regularizedCarlsonFactorDiskZeroSupport X T :=
+        (mem_regularizedCarlsonFactorDiskZeroSupport_iff_zero hX
+          (by simpa [U, c] using hzFactor)).2 hzero
+      have hzHeight : z.im ∈ H := by
+        dsimp [H, regularizedCarlsonFactorDiskZeroHeights]
+        exact Finset.mem_image.mpr ⟨z, hzSupport, rfl⟩
+      have hzeroDistance : delta ≤ 0 := by
+        simpa [z, delta, regularizedCarlsonFactorHorizontalSeparation, H] using
+          hsep z.im hzHeight
+      exact (not_lt_of_ge hzeroDistance) hdelta
+    have hprincipal :
+        ‖∑ᶠ u, (D u : ℂ) * (z - u)⁻¹‖ ≤
+          regularizedCarlsonFactorDiskZeroMass X T / delta := by
+      have hbound := ZeroFreeRegion.norm_finsum_divisor_mul_inv_le_mass_div
+        hDfinite (fun u => hDnonneg u) hdelta (by
+          intro u hu
+          have huSupport : u ∈ regularizedCarlsonFactorDiskZeroSupport X T := by
+            dsimp [regularizedCarlsonFactorDiskZeroSupport]
+            exact hDfinite.mem_toFinset.mpr hu
+          have huHeight : u.im ∈ H := by
+            dsimp [H, regularizedCarlsonFactorDiskZeroHeights]
+            exact Finset.mem_image.mpr ⟨u, huSupport, rfl⟩
+          have hheight : delta ≤ |t - u.im| := by
+            simpa [delta, regularizedCarlsonFactorHorizontalSeparation, H] using
+              hsep u.im huHeight
+          have him : |(z - u).im| ≤ ‖z - u‖ := Complex.abs_im_le_norm (z - u)
+          have hrewrite : |(z - u).im| = |t - u.im| := by simp [z]
+          rw [hrewrite] at him
+          exact hheight.trans him)
+      simpa [D, U, c, regularizedCarlsonFactorDiskZeroMass] using hbound
+    have hsplit := hdecomp z (by simpa [c] using hzFactorBall) hzNe
+    have hgAt := hgBound z (by simpa [c] using hzInner)
+    rw [show logDeriv (regularizedCarlsonZeroDetector X) z =
+        (∑ᶠ u, (D u : ℂ) * (z - u)⁻¹) + logDeriv g z by
+      simpa [D, U, c] using hsplit]
+    calc
+      ‖(∑ᶠ u, (D u : ℂ) * (z - u)⁻¹) + logDeriv g z‖ ≤
+          ‖∑ᶠ u, (D u : ℂ) * (z - u)⁻¹‖ + ‖logDeriv g z‖ :=
+        norm_add_le _ _
+      _ ≤ regularizedCarlsonFactorDiskZeroMass X T / delta +
+          4 * max
+              (regularizedCarlsonFactorCircleLogUpper C X T -
+                regularizedCarlsonFactorCenterLogLower X T) 1 *
+            (r + 15 / 4) / (r - 15 / 4) ^ 2 :=
+        add_le_add hprincipal hgAt
+      _ = 4 * max
+              (regularizedCarlsonFactorCircleLogUpper C X T -
+                regularizedCarlsonFactorCenterLogLower X T) 1 *
+            (r + 15 / 4) / (r - 15 / 4) ^ 2 +
+          regularizedCarlsonFactorDiskZeroMass X T /
+            regularizedCarlsonFactorHorizontalSeparation X T := by
+        rw [add_comm]
 
 /-- The complete divisor mass on the factorization disk is explicitly
 controlled by the detector's polynomial outer-circle growth. -/

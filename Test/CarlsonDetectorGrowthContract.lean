@@ -111,6 +111,12 @@ noncomputable example (C : ℝ) (X : ℕ) (T : ℝ) : ℝ :=
 noncomputable example (X : ℕ) (T : ℝ) : ℝ :=
   regularizedCarlsonFactorCenterLogLower X T
 
+noncomputable example (X : ℕ) (T : ℝ) : Finset ℝ :=
+  regularizedCarlsonFactorDiskZeroHeights X T
+
+noncomputable example (X : ℕ) (T : ℝ) : ℝ :=
+  regularizedCarlsonFactorHorizontalSeparation X T
+
 example {X : ℕ} (hX : 1 ≤ X) {T : ℝ} {z : ℂ}
     (hz : z ∈ Metric.closedBall
       ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ)) :
@@ -177,6 +183,24 @@ example : ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X → ∀ {T : ℝ}, 5 �
             (r + 15 / 4) / (r - 15 / 4) ^ 2 :=
   exists_regularizedCarlsonZeroDetector_goodFactor_logDeriv_le
 
+example : ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X →
+    ∀ {sigma T : ℝ}, 1 / 2 < sigma → 5 ≤ T →
+      ∃ r ∈ Set.Icc (121 / 32 : ℝ) (122 / 32 : ℝ),
+      ∃ t ∈ Set.Icc T (T + 1),
+        (∀ x ∈ Set.Icc sigma 4,
+          regularizedCarlsonZeroDetector X
+            ((x : ℂ) + (t : ℂ) * I) ≠ 0) ∧
+        ∀ x ∈ Set.Icc sigma 4,
+          ‖logDeriv (regularizedCarlsonZeroDetector X)
+            ((x : ℂ) + (t : ℂ) * I)‖ ≤
+            4 * max
+                (regularizedCarlsonFactorCircleLogUpper C X T -
+                  regularizedCarlsonFactorCenterLogLower X T) 1 *
+              (r + 15 / 4) / (r - 15 / 4) ^ 2 +
+            regularizedCarlsonFactorDiskZeroMass X T /
+              regularizedCarlsonFactorHorizontalSeparation X T :=
+  exists_regularizedCarlson_horizontal_logDeriv_le_factorDisk
+
 example : ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X → ∀ {T : ℝ}, 5 ≤ T →
     (∑ᶠ u,
       (MeromorphicOn.divisor (regularizedCarlsonZeroDetector X)
@@ -213,6 +237,7 @@ example : ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X → ∀ {T : ℝ}, 5 �
 #print axioms regularizedCarlsonFactorDiskSeparation_lower_of_mass_le
 #print axioms exists_regularizedCarlsonZeroDetector_goodFactorCircle
 #print axioms exists_regularizedCarlsonZeroDetector_goodFactor_logDeriv_le
+#print axioms exists_regularizedCarlson_horizontal_logDeriv_le_factorDisk
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem
