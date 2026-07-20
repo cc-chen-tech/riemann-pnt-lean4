@@ -1481,6 +1481,18 @@ coefficients.  Consequently the complete nonconstant energy is available in
 the standard signed form `sum_(r,s) alpha_X(r) alpha_X(s)
 H_(N/lcm(r,s))/lcm(r,s) - 1`.  No cancellation estimate for this quadratic
 form is claimed yet.
+For the next diagonalization step, the formalization now proves
+`1/lcm(r,s) = gcd(r,s)/(r*s)` for positive indices and rewrites the gcd as the
+totient sum over common divisors in a fixed finite box.  These are the two
+arithmetic identities needed to turn the reciprocal-lcm quadratic form into a
+sum of squares; they do not by themselves bound the extra truncated harmonic
+factor.
+The reciprocal-lcm part is now fully diagonalized in a reusable Mathlib-style
+module: for arbitrary real finite coefficients it equals a totient-weighted
+sum of divisor sums squared.  Specializing this theorem proves nonnegativity
+of the reciprocal-lcm quadratic form for `selbergShortDoubleMoebiusCoeff`.
+The unresolved estimate is sharper: it must retain and control the varying
+factor `harmonic (N / lcm(r,s))`, together with the range above `N`.
 
 The three remaining open analytic directions are:
 

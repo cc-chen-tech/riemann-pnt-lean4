@@ -91,6 +91,7 @@ import MathlibAux.DyadicPartition
 import MathlibAux.DyadicHarmonic
 import MathlibAux.LogRatioLowerBound
 import MathlibAux.MinReciprocalSquareSum
+import MathlibAux.GcdLcmQuadratic
 import MathlibAux.MinReciprocalSquareReindex
 import MathlibAux.DyadicWeightedSquareTail
 import MathlibAux.DyadicWeightedSquareHighTail

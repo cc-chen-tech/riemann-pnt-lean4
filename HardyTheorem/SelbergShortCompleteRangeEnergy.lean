@@ -1,4 +1,6 @@
 import HardyTheorem.SelbergShortCompleteRangeArithmetic
+import MathlibAux.GcdLcmQuadratic
+import Mathlib.Data.Nat.Totient
 
 open scoped BigOperators
 
@@ -66,6 +68,53 @@ noncomputable def selbergShortCompleteRangeQuadrupleWeight
 noncomputable def selbergShortLcmHarmonicKernel
     (L U r : ℕ) : ℝ :=
   ∑ k ∈ (Finset.Icc L U).filter (fun k => r ∣ k), (k : ℝ)⁻¹
+
+/-- For positive natural indices, reciprocal lcm is the gcd kernel divided by
+the two indices. -/
+theorem natCast_lcm_inv_eq_gcd_mul_inv_mul_inv
+    {r s : ℕ} (hr : 0 < r) (hs : 0 < s) :
+    (Nat.lcm r s : ℝ)⁻¹ =
+      (Nat.gcd r s : ℝ) * (r : ℝ)⁻¹ * (s : ℝ)⁻¹ := by
+  have hr0 : (r : ℝ) ≠ 0 := by positivity
+  have hs0 : (s : ℝ) ≠ 0 := by positivity
+  have hlcm0 : (Nat.lcm r s : ℝ) ≠ 0 := by
+    exact_mod_cast (Nat.ne_of_gt (Nat.lcm_pos hr hs))
+  have hprod :
+      (Nat.gcd r s : ℝ) * (Nat.lcm r s : ℝ) = (r : ℝ) * (s : ℝ) := by
+    exact_mod_cast Nat.gcd_mul_lcm r s
+  field_simp
+  nlinarith
+
+/-- If `r,s` lie in the positive box up to `M`, their gcd is the sum of
+Euler's totient over common divisors in that same fixed box. -/
+theorem natCast_gcd_eq_sum_totient_commonDivisors
+    {M r s : ℕ} (hr : r ∈ Finset.Icc 1 M) :
+    (Nat.gcd r s : ℝ) =
+      ∑ d ∈ (Finset.Icc 1 M).filter (fun d => d ∣ r ∧ d ∣ s),
+        (Nat.totient d : ℝ) := by
+  classical
+  have hrPos : 0 < r := (Finset.mem_Icc.mp hr).1
+  have hgcdPos : 0 < Nat.gcd r s := Nat.gcd_pos_of_pos_left s hrPos
+  have hset :
+      (Finset.Icc 1 M).filter (fun d => d ∣ r ∧ d ∣ s) =
+        (Nat.gcd r s).divisors := by
+    ext d
+    constructor
+    · intro hd
+      rcases Finset.mem_filter.mp hd with ⟨_hdBox, hdr, hds⟩
+      exact Nat.mem_divisors.mpr
+        ⟨Nat.dvd_gcd hdr hds, (Nat.ne_of_gt hgcdPos)⟩
+    · intro hd
+      rcases Nat.mem_divisors.mp hd with ⟨hdgcd, _hgcd0⟩
+      have hdr : d ∣ r := hdgcd.trans (Nat.gcd_dvd_left r s)
+      have hds : d ∣ s := hdgcd.trans (Nat.gcd_dvd_right r s)
+      have hdPos : 0 < d := Nat.pos_of_dvd_of_pos hdgcd hgcdPos
+      have hdM : d ≤ M :=
+        (Nat.le_of_dvd hrPos hdr).trans (Finset.mem_Icc.mp hr).2
+      exact Finset.mem_filter.mpr
+        ⟨Finset.mem_Icc.mpr ⟨hdPos, hdM⟩, hdr, hds⟩
+  rw [hset]
+  exact_mod_cast (Nat.sum_totient (Nat.gcd r s)).symm
 
 /-- Collecting one finite mollifier-pair sum by the represented product is
 exact for every product-dependent kernel. -/
@@ -501,5 +550,31 @@ theorem sum_normSq_selbergShortDirichletCollectedCoeff_nonconstantRange_eq_doubl
   rw [selbergShortDirichletCollectedCoeff_one hN hX] at hsum
   norm_num at hsum
   linarith
+
+/-- The reciprocal-lcm quadratic form for the collected double-Moebius
+coefficients is exactly a totient-weighted sum of divisor squares. -/
+theorem selbergShortDoubleMoebius_reciprocalLcmQuadratic_eq_totientSquares
+    (X : ℕ) :
+    (∑ r ∈ Finset.Icc 1 (X * X), ∑ s ∈ Finset.Icc 1 (X * X),
+        selbergShortDoubleMoebiusCoeff X r *
+          selbergShortDoubleMoebiusCoeff X s *
+            (Nat.lcm r s : ℝ)⁻¹) =
+      ∑ d ∈ Finset.Icc 1 (X * X), (Nat.totient d : ℝ) *
+        (∑ r ∈ (Finset.Icc 1 (X * X)).filter (fun r => d ∣ r),
+          selbergShortDoubleMoebiusCoeff X r * (r : ℝ)⁻¹) ^ 2 := by
+  exact MathlibAux.sum_reciprocal_lcm_quadratic_eq_totient_squares
+    (selbergShortDoubleMoebiusCoeff X) (X * X)
+
+/-- In particular, the reciprocal-lcm quadratic form is nonnegative. -/
+theorem selbergShortDoubleMoebius_reciprocalLcmQuadratic_nonneg
+    (X : ℕ) :
+    0 ≤ ∑ r ∈ Finset.Icc 1 (X * X), ∑ s ∈ Finset.Icc 1 (X * X),
+      selbergShortDoubleMoebiusCoeff X r *
+        selbergShortDoubleMoebiusCoeff X s *
+          (Nat.lcm r s : ℝ)⁻¹ := by
+  rw [selbergShortDoubleMoebius_reciprocalLcmQuadratic_eq_totientSquares]
+  apply Finset.sum_nonneg
+  intro d _hd
+  exact mul_nonneg (by positivity) (sq_nonneg _)
 
 end HardyTheorem
