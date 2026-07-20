@@ -209,5 +209,91 @@ theorem exists_regularizedCarlsonDetectorRectangleZeroCount_le_logPolynomial :
   intro z hz
   exact hsphere hX hT hz
 
+/-- The logarithmic majorant produced by the fixed Jensen geometry. -/
+noncomputable def regularizedCarlsonLocalZeroLogMajorant
+    (C : ℝ) (X : ℕ) (T : ℝ) : ℝ :=
+  Real.log (C * (X : ℝ) ^ 2 * (T + 14) ^ 10) /
+    Real.log ((31 / 8 : ℝ) / (15 / 4 : ℝ))
+
+/-- The local logarithmic count also controls the principal part on a
+quantitatively selected horizontal segment. -/
+theorem exists_regularizedCarlson_horizontal_principalPart_le_logPolynomial :
+    ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X → ∀ {sigma T : ℝ},
+      1 / 2 < sigma → 5 ≤ T →
+      ∃ t ∈ Set.Icc T (T + 1),
+        (∀ x ∈ Set.Icc sigma 4,
+          regularizedCarlsonZeroDetector X
+            ((x : ℂ) + (t : ℂ) * I) ≠ 0) ∧
+        ∀ x ∈ Set.Icc sigma 4,
+          ‖regularizedCarlsonDetectorRectanglePrincipalPart
+            X sigma 4 T (T + 1) ((x : ℂ) + (t : ℂ) * I)‖ ≤
+            regularizedCarlsonLocalZeroLogMajorant C X T /
+              (1 / ((4 : ℝ) *
+                (regularizedCarlsonLocalZeroLogMajorant C X T + 1))) := by
+  rcases exists_regularizedCarlsonDetectorRectangleZeroCount_le_logPolynomial with
+    ⟨C, hC, hcount⟩
+  refine ⟨C, hC, ?_⟩
+  intro X hX sigma T hsigma hT
+  rcases
+      exists_regularizedCarlsonZeroDetector_horizontal_principalPart_le_zeroCount
+        hX (by linarith) (sigma := sigma) (alpha := (4 : ℝ)) (T := T) with
+    ⟨t, ht, hne, hprincipal⟩
+  refine ⟨t, ht, hne, ?_⟩
+  intro x hx
+  refine (hprincipal x hx).trans ?_
+  have hcountBound :
+      (regularizedCarlsonDetectorRectangleZeroCount
+          X sigma 4 T (T + 1) : ℝ) ≤
+        regularizedCarlsonLocalZeroLogMajorant C X T := by
+    simpa [regularizedCarlsonLocalZeroLogMajorant] using
+      hcount hX hsigma hT
+  have hmajorantNonneg :
+      0 ≤ regularizedCarlsonLocalZeroLogMajorant C X T :=
+    (Nat.cast_nonneg _).trans hcountBound
+  simp only [div_eq_mul_inv]
+  gcongr
+
+/-- Once the analytic regular part is bounded, the selected horizontal
+logarithmic derivative now depends only on the explicit logarithmic local
+majorant, rather than an unevaluated rectangle zero count. -/
+theorem exists_regularizedCarlson_horizontal_logDeriv_le_regular_add_logPolynomial :
+    ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X → ∀ {sigma T M : ℝ},
+      1 / 2 < sigma → 5 ≤ T →
+      (∀ t ∈ Set.Icc T (T + 1), ∀ x ∈ Set.Icc sigma 4,
+        ‖regularizedCarlsonDetectorRectangleRegularPart
+          X sigma 4 T (T + 1) ((x : ℂ) + (t : ℂ) * I)‖ ≤ M) →
+      ∃ t ∈ Set.Icc T (T + 1),
+        (∀ x ∈ Set.Icc sigma 4,
+          regularizedCarlsonZeroDetector X
+            ((x : ℂ) + (t : ℂ) * I) ≠ 0) ∧
+        ∀ x ∈ Set.Icc sigma 4,
+          ‖logDeriv (regularizedCarlsonZeroDetector X)
+            ((x : ℂ) + (t : ℂ) * I)‖ ≤
+            M + regularizedCarlsonLocalZeroLogMajorant C X T /
+              (1 / ((4 : ℝ) *
+                (regularizedCarlsonLocalZeroLogMajorant C X T + 1))) := by
+  rcases exists_regularizedCarlsonDetectorRectangleZeroCount_le_logPolynomial with
+    ⟨C, hC, hcount⟩
+  refine ⟨C, hC, ?_⟩
+  intro X hX sigma T M hsigma hT hregular
+  rcases
+      exists_regularizedCarlsonZeroDetector_horizontal_logDeriv_le_regular_add_zeroCount
+        hX (by linarith) hregular with
+    ⟨t, ht, hne, hlogDeriv⟩
+  refine ⟨t, ht, hne, ?_⟩
+  intro x hx
+  refine (hlogDeriv x hx).trans ?_
+  have hcountBound :
+      (regularizedCarlsonDetectorRectangleZeroCount
+          X sigma 4 T (T + 1) : ℝ) ≤
+        regularizedCarlsonLocalZeroLogMajorant C X T := by
+    simpa [regularizedCarlsonLocalZeroLogMajorant] using
+      hcount hX hsigma hT
+  have hmajorantNonneg :
+      0 ≤ regularizedCarlsonLocalZeroLogMajorant C X T :=
+    (Nat.cast_nonneg _).trans hcountBound
+  simp only [div_eq_mul_inv]
+  gcongr
+
 end CarlsonZeroDensity
 end PrimeNumberTheorem

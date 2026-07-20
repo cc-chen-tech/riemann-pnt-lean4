@@ -44,12 +44,48 @@ example : ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X → ∀ {sigma T : ℝ
         Real.log ((31 / 8 : ℝ) / (15 / 4 : ℝ)) :=
   exists_regularizedCarlsonDetectorRectangleZeroCount_le_logPolynomial
 
+noncomputable example (C : ℝ) (X : ℕ) (T : ℝ) : ℝ :=
+  regularizedCarlsonLocalZeroLogMajorant C X T
+
+example : ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X → ∀ {sigma T : ℝ},
+    1 / 2 < sigma → 5 ≤ T →
+    ∃ t ∈ Set.Icc T (T + 1),
+      (∀ x ∈ Set.Icc sigma 4,
+        regularizedCarlsonZeroDetector X
+          ((x : ℂ) + (t : ℂ) * I) ≠ 0) ∧
+      ∀ x ∈ Set.Icc sigma 4,
+        ‖regularizedCarlsonDetectorRectanglePrincipalPart
+          X sigma 4 T (T + 1) ((x : ℂ) + (t : ℂ) * I)‖ ≤
+          regularizedCarlsonLocalZeroLogMajorant C X T /
+            (1 / ((4 : ℝ) *
+              (regularizedCarlsonLocalZeroLogMajorant C X T + 1))) :=
+  exists_regularizedCarlson_horizontal_principalPart_le_logPolynomial
+
+example : ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X → ∀ {sigma T M : ℝ},
+    1 / 2 < sigma → 5 ≤ T →
+    (∀ t ∈ Set.Icc T (T + 1), ∀ x ∈ Set.Icc sigma 4,
+      ‖regularizedCarlsonDetectorRectangleRegularPart
+        X sigma 4 T (T + 1) ((x : ℂ) + (t : ℂ) * I)‖ ≤ M) →
+    ∃ t ∈ Set.Icc T (T + 1),
+      (∀ x ∈ Set.Icc sigma 4,
+        regularizedCarlsonZeroDetector X
+          ((x : ℂ) + (t : ℂ) * I) ≠ 0) ∧
+      ∀ x ∈ Set.Icc sigma 4,
+        ‖logDeriv (regularizedCarlsonZeroDetector X)
+          ((x : ℂ) + (t : ℂ) * I)‖ ≤
+          M + regularizedCarlsonLocalZeroLogMajorant C X T /
+            (1 / ((4 : ℝ) *
+              (regularizedCarlsonLocalZeroLogMajorant C X T + 1))) :=
+  exists_regularizedCarlson_horizontal_logDeriv_le_regular_add_logPolynomial
+
 #print axioms fixedJensenSphere_re_mem_Icc
 #print axioms fixedJensenSphere_abs_im_mem_Icc
 #print axioms norm_sub_one_le_on_fixedJensenSphere
 #print axioms exists_norm_riemannZeta_le_fixedJensenSphere
 #print axioms exists_norm_regularizedCarlsonZeroDetector_le_fixedJensenSphere
 #print axioms exists_regularizedCarlsonDetectorRectangleZeroCount_le_logPolynomial
+#print axioms exists_regularizedCarlson_horizontal_principalPart_le_logPolynomial
+#print axioms exists_regularizedCarlson_horizontal_logDeriv_le_regular_add_logPolynomial
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem
