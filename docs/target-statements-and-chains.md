@@ -246,6 +246,8 @@ the Selberg `T*log T` lower bound remains open.
 - `HardyTheorem.norm_selbergShortDirichletCollectedCoeff_le_convolutionMajorant`
 - `HardyTheorem.selbergShortCollectedDirichletConvolution_eq_lowRange`
 - `HardyTheorem.norm_selbergShortDirichletCollectedCoeff_le_two_div_sqrt`
+- `HardyTheorem.sum_normSq_sliding_selbergShortDirichletCollectedCoeff_lowRange_le_log`
+- `HardyTheorem.sum_normSq_sliding_selbergShortDirichletCollectedCoeff_le_lowRange_add_highRange`
 - `HardyTheorem.sum_normSq_selbergShortDirichletCollectedCoeff_le_pairFiberEnergy`
 - `HardyTheorem.integral_normSq_selbergMollifiedShortDirichletPolynomial_le_gapSum`
 - `HardyTheorem.integral_normSq_selbergMollifiedShortDirichletPolynomial_le_energy`

@@ -1425,6 +1425,14 @@ Hilbert estimate also reduces the short-error second moment to the exact
 sliding-transformed coefficient energy.  The remaining hard step is a sharp
 global energy estimate exploiting Moebius cancellation across both the low
 and truncated high ranges.
+The complete low range of the sliding-transformed energy is now bounded by
+`4 * H^2 * (1 + log (min N X))`.  Thus the unresolved global estimate is
+localized to the truncated range above `min N X` and to the off-diagonal
+frequency interactions; no uniform Selberg-scale bound for those terms is
+claimed yet.
+The corresponding full-energy theorem makes this localization exact by
+splitting `Ioc 1 (N * X * X)` at `min N X` and leaving only the explicit
+high-range energy sum on the right-hand side.
 
 The three remaining open analytic directions are:
 
