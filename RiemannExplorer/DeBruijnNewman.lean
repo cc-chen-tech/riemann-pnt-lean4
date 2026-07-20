@@ -2055,5 +2055,316 @@ theorem abs_thetaTDD_le {x : ℝ} (hx : 1 ≤ x) :
         unfold phiTailConst; rw [tsum_mul_left]
     _ = (2 * Real.pi ^ 2 * phiTailConst) * Real.exp (-Real.pi * x) := by ring
 
+/-!
+### Phase 1d(iv-b2)：`W` 侧的界、极限与可积性
+
+`u ≥ 0` 时 `|W| ≤ 2Cs·e^{−πe^{4u}}`、`|W'| ≤ 8πCs₁·e^{4u}e^{−πe^{4u}}`、
+`|W''| ≤ (32π²K₁+32πCs₁)e^{8u}e^{−πe^{4u}}`；主引理
+`integrableOn_exp_mul_exp_neg` / `tendsto_exp_mul_exp_neg_atTop`
+给出任意指数斜率下的可积性与衰减，由此得到 IBP 所需的
+`e^{au}·↑W / ↑W' / ↑W''` 可积性与 `↑W·e^{au}, ↑W'·e^{au} → 0`。
+-/
+
+/-- `thetaW` 在 `ℝ` 上连续（处处可导）。 -/
+theorem continuous_thetaW : Continuous thetaW :=
+  continuous_iff_continuousAt.mpr fun u => (hasDerivAt_thetaW u).continuousAt
+
+/-- `thetaWD` 在 `ℝ` 上连续。 -/
+theorem continuous_thetaWD : Continuous thetaWD :=
+  continuous_iff_continuousAt.mpr fun u => (hasDerivAt_thetaWD u).continuousAt
+
+/-- `thetaWDD` 可测（`W'` 的导数）。 -/
+theorem measurable_thetaWDD : Measurable thetaWDD := by
+  have h : deriv thetaWD = thetaWDD := funext fun u => (hasDerivAt_thetaWD u).deriv
+  rw [← h]
+  exact measurable_deriv thetaWD
+
+/-- `u ≥ 0` 时 `|W(u)| ≤ 2Cs·e^{−πe^{4u}}`。 -/
+theorem abs_thetaW_le {u : ℝ} (hu : 0 ≤ u) :
+    |thetaW u| ≤ 2 * thetaSConst * Real.exp (-(Real.pi * Real.exp (4 * u))) := by
+  have h1 : (1:ℝ) ≤ Real.exp (4 * u) := Real.one_le_exp (by linarith)
+  have hW : thetaW u = 2 * thetaS (Real.exp (4 * u)) := by
+    unfold thetaW thetaT; ring
+  rw [hW, abs_mul, abs_of_nonneg (by norm_num : (0:ℝ) ≤ 2)]
+  calc 2 * |thetaS (Real.exp (4 * u))|
+      ≤ 2 * (thetaSConst * Real.exp (-Real.pi * Real.exp (4 * u))) :=
+        mul_le_mul_of_nonneg_left (abs_thetaS_le h1) (by norm_num)
+    _ = 2 * thetaSConst * Real.exp (-(Real.pi * Real.exp (4 * u))) := by
+        rw [show (-Real.pi * Real.exp (4 * u)) = -(Real.pi * Real.exp (4 * u)) from by ring]
+        ring
+
+/-- `u ≥ 0` 时 `|W'(u)| ≤ 8π·Cs₁·e^{4u}·e^{−πe^{4u}}`。 -/
+theorem abs_thetaWD_le {u : ℝ} (hu : 0 ≤ u) :
+    |thetaWD u| ≤ 8 * Real.pi * thetaSD1Const * Real.exp (4 * u)
+      * Real.exp (-(Real.pi * Real.exp (4 * u))) := by
+  have h1 : (1:ℝ) ≤ Real.exp (4 * u) := Real.one_le_exp (by linarith)
+  unfold thetaWD
+  rw [abs_mul, abs_mul, abs_of_nonneg (by norm_num : (0:ℝ) ≤ 4),
+    abs_of_nonneg (Real.exp_nonneg _)]
+  calc 4 * Real.exp (4 * u) * |thetaTD (Real.exp (4 * u))|
+      ≤ 4 * Real.exp (4 * u)
+        * ((2 * Real.pi * thetaSD1Const) * Real.exp (-Real.pi * Real.exp (4 * u))) :=
+        mul_le_mul_of_nonneg_left (abs_thetaTD_le h1) (by positivity)
+    _ = 8 * Real.pi * thetaSD1Const * Real.exp (4 * u)
+        * Real.exp (-(Real.pi * Real.exp (4 * u))) := by
+        rw [show (-Real.pi * Real.exp (4 * u)) = -(Real.pi * Real.exp (4 * u)) from by ring]
+        ring
+
+/-- `u ≥ 0` 时 `|W''(u)| ≤ (32π²K₁ + 32πCs₁)·e^{8u}·e^{−πe^{4u}}`。 -/
+theorem abs_thetaWDD_le {u : ℝ} (hu : 0 ≤ u) :
+    |thetaWDD u| ≤ (32 * Real.pi ^ 2 * phiTailConst + 32 * Real.pi * thetaSD1Const)
+      * Real.exp (8 * u) * Real.exp (-(Real.pi * Real.exp (4 * u))) := by
+  have h1 : (1:ℝ) ≤ Real.exp (4 * u) := Real.one_le_exp (by linarith)
+  have h48 : Real.exp (4 * u) ≤ Real.exp (8 * u) := Real.exp_le_exp.mpr (by linarith)
+  have hT : |16 * Real.exp (8 * u) * thetaTDD (Real.exp (4 * u))
+      + 16 * Real.exp (4 * u) * thetaTD (Real.exp (4 * u))|
+      ≤ 16 * Real.exp (8 * u) * |thetaTDD (Real.exp (4 * u))|
+        + 16 * Real.exp (4 * u) * |thetaTD (Real.exp (4 * u))| := by
+    calc |16 * Real.exp (8 * u) * thetaTDD (Real.exp (4 * u))
+          + 16 * Real.exp (4 * u) * thetaTD (Real.exp (4 * u))|
+        ≤ |16 * Real.exp (8 * u) * thetaTDD (Real.exp (4 * u))|
+          + |16 * Real.exp (4 * u) * thetaTD (Real.exp (4 * u))| := abs_add_le _ _
+      _ = 16 * Real.exp (8 * u) * |thetaTDD (Real.exp (4 * u))|
+          + 16 * Real.exp (4 * u) * |thetaTD (Real.exp (4 * u))| := by
+          rw [abs_mul, abs_mul, abs_of_nonneg (by norm_num : (0:ℝ) ≤ 16),
+            abs_of_nonneg (Real.exp_nonneg _), abs_mul, abs_mul,
+            abs_of_nonneg (by norm_num : (0:ℝ) ≤ 16), abs_of_nonneg (Real.exp_nonneg _)]
+  unfold thetaWDD
+  calc |16 * Real.exp (8 * u) * thetaTDD (Real.exp (4 * u))
+        + 16 * Real.exp (4 * u) * thetaTD (Real.exp (4 * u))|
+      ≤ 16 * Real.exp (8 * u) * |thetaTDD (Real.exp (4 * u))|
+        + 16 * Real.exp (4 * u) * |thetaTD (Real.exp (4 * u))| := hT
+    _ ≤ 16 * Real.exp (8 * u) * ((2 * Real.pi ^ 2 * phiTailConst)
+          * Real.exp (-Real.pi * Real.exp (4 * u)))
+        + 16 * Real.exp (8 * u) * ((2 * Real.pi * thetaSD1Const)
+          * Real.exp (-Real.pi * Real.exp (4 * u))) := by
+        apply add_le_add
+        · exact mul_le_mul_of_nonneg_left (abs_thetaTDD_le h1) (by positivity)
+        · exact mul_le_mul (mul_le_mul_of_nonneg_left h48 (by norm_num))
+            (abs_thetaTD_le h1) (abs_nonneg _) (by positivity)
+    _ = (32 * Real.pi ^ 2 * phiTailConst + 32 * Real.pi * thetaSD1Const)
+        * Real.exp (8 * u) * Real.exp (-(Real.pi * Real.exp (4 * u))) := by
+        rw [show (-Real.pi * Real.exp (4 * u)) = -(Real.pi * Real.exp (4 * u)) from by ring]
+        ring
+
+/-- 主可积性引理：任意指数斜率 `K`，`u ↦ e^{Ku}·e^{−πe^{4u}}` 在 `(0,∞)` 可积。 -/
+theorem integrableOn_exp_mul_exp_neg (K : ℝ) :
+    MeasureTheory.IntegrableOn (fun u : ℝ => Real.exp (K * u)
+      * Real.exp (-(Real.pi * Real.exp (4 * u)))) (Set.Ioi 0) MeasureTheory.volume := by
+  have hcont : Continuous (fun u : ℝ => Real.exp (K * u)
+      * Real.exp (-(Real.pi * Real.exp (4 * u)))) := by fun_prop
+  apply MeasureTheory.Integrable.mono'
+    (integrableOn_heatDominatingFun 0 (max 0 (K - 9)) (le_max_left _ _))
+  · exact hcont.continuousOn.aestronglyMeasurable measurableSet_Ioi
+  · filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_Ioi] with u hu
+    have hu0 : 0 ≤ u := le_of_lt hu
+    have hK : K * u ≤ (9 + max 0 (K - 9)) * u := by
+      have h1 : K ≤ 9 + max 0 (K - 9) := by
+        have h := le_max_right 0 (K - 9)
+        linarith
+      exact mul_le_mul_of_nonneg_right h1 hu0
+    have hC1 : (1:ℝ) ≤ (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst := by
+      have h1 := one_le_phiTailConst
+      have h2 : (1:ℝ) ≤ 2 * Real.pi ^ 2 + 3 * Real.pi := by nlinarith [Real.pi_gt_three]
+      calc (1:ℝ) = 1 * 1 := by ring
+        _ ≤ (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst :=
+            mul_le_mul h2 h1 zero_le_one (by positivity)
+    calc ‖Real.exp (K * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))‖
+        = Real.exp (K * u) * Real.exp (-(Real.pi * Real.exp (4 * u))) := by
+          rw [Real.norm_eq_abs, abs_of_nonneg (by positivity)]
+      _ ≤ Real.exp (0 * u ^ 2 + (9 + max 0 (K - 9)) * u)
+          * Real.exp (-(Real.pi * Real.exp (4 * u))) := by
+          apply mul_le_mul_of_nonneg_right _ (Real.exp_nonneg _)
+          apply Real.exp_le_exp.mpr
+          have h0 : (0:ℝ) * u ^ 2 + (9 + max 0 (K - 9)) * u
+              = (9 + max 0 (K - 9)) * u := by ring
+          rw [h0]
+          exact hK
+      _ ≤ (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+          * Real.exp (0 * u ^ 2 + (9 + max 0 (K - 9)) * u)
+          * Real.exp (-(Real.pi * Real.exp (4 * u))) := by
+          have he : (0:ℝ) ≤ Real.exp (0 * u ^ 2 + (9 + max 0 (K - 9)) * u)
+              * Real.exp (-(Real.pi * Real.exp (4 * u))) := by positivity
+          calc Real.exp (0 * u ^ 2 + (9 + max 0 (K - 9)) * u)
+                * Real.exp (-(Real.pi * Real.exp (4 * u)))
+              = 1 * (Real.exp (0 * u ^ 2 + (9 + max 0 (K - 9)) * u)
+                * Real.exp (-(Real.pi * Real.exp (4 * u)))) := by ring
+            _ ≤ ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst)
+                * (Real.exp (0 * u ^ 2 + (9 + max 0 (K - 9)) * u)
+                  * Real.exp (-(Real.pi * Real.exp (4 * u)))) :=
+                mul_le_mul_of_nonneg_right hC1 he
+            _ = (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+                * Real.exp (0 * u ^ 2 + (9 + max 0 (K - 9)) * u)
+                * Real.exp (-(Real.pi * Real.exp (4 * u))) := by ring
+      _ = heatDominatingFun 0 (max 0 (K - 9)) u := rfl
+
+/-- 主极限引理：`e^{Cu}·e^{−πe^{4u}} → 0`（`u → +∞`，任意 `C`）。 -/
+theorem tendsto_exp_mul_exp_neg_atTop (C : ℝ) :
+    Filter.Tendsto (fun u : ℝ => Real.exp (C * u)
+      * Real.exp (-(Real.pi * Real.exp (4 * u)))) Filter.atTop (nhds 0) := by
+  have hquad : ∀ u : ℝ, 0 ≤ u → 4 * Real.pi * u ^ 2 ≤ Real.pi * Real.exp (4 * u) := by
+    intro u hu
+    have h := Real.add_one_le_exp (2 * u)
+    have hnn : (0:ℝ) ≤ 1 + 2 * u := by linarith
+    have h1 : (1 + 2 * u) ^ 2 ≤ (Real.exp (2 * u)) ^ 2 :=
+      pow_le_pow_left₀ hnn (by linarith) 2
+    have h2 : (Real.exp (2 * u)) ^ 2 = Real.exp (4 * u) := by
+      rw [pow_two, ← Real.exp_add]
+      congr 1
+      ring
+    have h3 : 4 * u ^ 2 ≤ Real.exp (4 * u) := by nlinarith
+    calc 4 * Real.pi * u ^ 2 = Real.pi * (4 * u ^ 2) := by ring
+      _ ≤ Real.pi * Real.exp (4 * u) :=
+          mul_le_mul_of_nonneg_left h3 (le_of_lt Real.pi_pos)
+  refine squeeze_zero' (f := fun u => Real.exp (C * u)
+    * Real.exp (-(Real.pi * Real.exp (4 * u)))) (g := fun u => Real.exp (-u)) ?_ ?_ ?_
+  · filter_upwards [Filter.eventually_ge_atTop 0] with u hu
+    positivity
+  · filter_upwards [Filter.eventually_ge_atTop (max 1 ((C + 1) / (4 * Real.pi)))] with u hu
+    have hu1 : (1:ℝ) ≤ u := le_trans (le_max_left _ _) hu
+    have hu0 : 0 ≤ u := by linarith
+    have hpi4 : (0:ℝ) < 4 * Real.pi := by positivity
+    have hC : C + 1 ≤ 4 * Real.pi * u := by
+      have h2 := le_trans (le_max_right 1 ((C + 1) / (4 * Real.pi))) hu
+      have h3 : (C + 1) / (4 * Real.pi) * (4 * Real.pi) ≤ u * (4 * Real.pi) :=
+        mul_le_mul_of_nonneg_right h2 (le_of_lt hpi4)
+      rw [div_mul_cancel₀ _ (ne_of_gt hpi4)] at h3
+      linarith
+    have hmain : C * u - Real.pi * Real.exp (4 * u) ≤ -u := by
+      have h3 := hquad u hu0
+      nlinarith [hC, h3, hu0]
+    calc Real.exp (C * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))
+        = Real.exp (C * u + -(Real.pi * Real.exp (4 * u))) := by rw [← Real.exp_add]
+      _ = Real.exp (C * u - Real.pi * Real.exp (4 * u)) := by
+          congr 1
+      _ ≤ Real.exp (-u) := Real.exp_le_exp.mpr hmain
+  · exact Real.tendsto_exp_atBot.comp Filter.tendsto_neg_atTop_atBot
+
+/-- D1：`↑W(u)·e^{au} → 0`（`u → +∞`）。 -/
+theorem tendsto_thetaW_cexp_atTop (a : ℂ) :
+    Filter.Tendsto (fun u : ℝ => (thetaW u : ℂ) * Complex.exp (a * (u : ℂ)))
+      Filter.atTop (nhds 0) := by
+  have hre : ∀ u : ℝ, (a * (u : ℂ)).re = a.re * u := fun u => by simp [Complex.mul_re]
+  have hg : Filter.Tendsto (fun u : ℝ => 2 * thetaSConst * (Real.exp (a.re * u)
+      * Real.exp (-(Real.pi * Real.exp (4 * u))))) Filter.atTop
+      (nhds (2 * thetaSConst * 0)) :=
+    Filter.Tendsto.const_mul _ (tendsto_exp_mul_exp_neg_atTop a.re)
+  rw [mul_zero] at hg
+  refine squeeze_zero_norm' (f := fun u : ℝ => (thetaW u : ℂ) * Complex.exp (a * (u : ℂ)))
+    (a := fun u : ℝ => 2 * thetaSConst * (Real.exp (a.re * u)
+      * Real.exp (-(Real.pi * Real.exp (4 * u))))) ?_ hg
+  filter_upwards [Filter.eventually_ge_atTop 0] with u hu
+  calc ‖(thetaW u : ℂ) * Complex.exp (a * (u : ℂ))‖
+      = |thetaW u| * Real.exp (a.re * u) := by
+        rw [norm_mul, show ‖(thetaW u : ℂ)‖ = |thetaW u| from RCLike.norm_ofReal _, Complex.norm_exp, hre u]
+    _ ≤ (2 * thetaSConst * Real.exp (-(Real.pi * Real.exp (4 * u))))
+        * Real.exp (a.re * u) :=
+        mul_le_mul_of_nonneg_right (abs_thetaW_le hu) (Real.exp_nonneg _)
+    _ = 2 * thetaSConst * (Real.exp (a.re * u)
+        * Real.exp (-(Real.pi * Real.exp (4 * u)))) := by ring
+
+/-- D2：`↑W'(u)·e^{au} → 0`（`u → +∞`）。 -/
+theorem tendsto_thetaWD_cexp_atTop (a : ℂ) :
+    Filter.Tendsto (fun u : ℝ => (thetaWD u : ℂ) * Complex.exp (a * (u : ℂ)))
+      Filter.atTop (nhds 0) := by
+  have hre : ∀ u : ℝ, (a * (u : ℂ)).re = a.re * u := fun u => by simp [Complex.mul_re]
+  have hg : Filter.Tendsto (fun u : ℝ => 8 * Real.pi * thetaSD1Const
+      * (Real.exp ((a.re + 4) * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))))
+      Filter.atTop (nhds (8 * Real.pi * thetaSD1Const * 0)) :=
+    Filter.Tendsto.const_mul _ (tendsto_exp_mul_exp_neg_atTop (a.re + 4))
+  rw [mul_zero] at hg
+  refine squeeze_zero_norm' (f := fun u : ℝ => (thetaWD u : ℂ) * Complex.exp (a * (u : ℂ)))
+    (a := fun u : ℝ => 8 * Real.pi * thetaSD1Const * (Real.exp ((a.re + 4) * u)
+      * Real.exp (-(Real.pi * Real.exp (4 * u))))) ?_ hg
+  filter_upwards [Filter.eventually_ge_atTop 0] with u hu
+  calc ‖(thetaWD u : ℂ) * Complex.exp (a * (u : ℂ))‖
+      = |thetaWD u| * Real.exp (a.re * u) := by
+        rw [norm_mul, show ‖(thetaWD u : ℂ)‖ = |thetaWD u| from RCLike.norm_ofReal _, Complex.norm_exp, hre u]
+    _ ≤ (8 * Real.pi * thetaSD1Const * Real.exp (4 * u)
+        * Real.exp (-(Real.pi * Real.exp (4 * u)))) * Real.exp (a.re * u) :=
+        mul_le_mul_of_nonneg_right (abs_thetaWD_le hu) (Real.exp_nonneg _)
+    _ = 8 * Real.pi * thetaSD1Const * (Real.exp ((a.re + 4) * u)
+        * Real.exp (-(Real.pi * Real.exp (4 * u)))) := by
+        have e1 : Real.exp ((a.re + 4) * u) = Real.exp (a.re * u) * Real.exp (4 * u) := by
+          rw [← Real.exp_add]
+          congr 1
+          ring
+        rw [e1]
+        ring
+
+/-- I1：`e^{au}·↑W(u)` 在 `(0,∞)` 可积。 -/
+theorem integrableOn_cexp_thetaW (a : ℂ) :
+    MeasureTheory.IntegrableOn (fun u : ℝ => Complex.exp (a * (u : ℂ)) * (thetaW u : ℂ))
+      (Set.Ioi 0) MeasureTheory.volume := by
+  have hre : ∀ u : ℝ, (a * (u : ℂ)).re = a.re * u := fun u => by simp [Complex.mul_re]
+  apply MeasureTheory.Integrable.mono'
+    ((integrableOn_exp_mul_exp_neg a.re).const_mul (2 * thetaSConst))
+  · exact ((by fun_prop : Measurable (fun u : ℝ => Complex.exp (a * (u : ℂ)))).mul
+      (Complex.measurable_ofReal.comp continuous_thetaW.measurable)).aestronglyMeasurable
+  · filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_Ioi] with u hu
+    have hu0 : 0 ≤ u := le_of_lt hu
+    calc ‖Complex.exp (a * (u : ℂ)) * (thetaW u : ℂ)‖
+        = Real.exp (a.re * u) * |thetaW u| := by
+          rw [norm_mul, Complex.norm_exp, hre u, show ‖(thetaW u : ℂ)‖ = |thetaW u| from RCLike.norm_ofReal _]
+      _ ≤ Real.exp (a.re * u)
+          * (2 * thetaSConst * Real.exp (-(Real.pi * Real.exp (4 * u)))) :=
+          mul_le_mul_of_nonneg_left (abs_thetaW_le hu0) (Real.exp_nonneg _)
+      _ = 2 * thetaSConst * (Real.exp (a.re * u)
+          * Real.exp (-(Real.pi * Real.exp (4 * u)))) := by ring
+
+/-- I2：`e^{au}·↑W'(u)` 在 `(0,∞)` 可积。 -/
+theorem integrableOn_cexp_thetaWD (a : ℂ) :
+    MeasureTheory.IntegrableOn (fun u : ℝ => Complex.exp (a * (u : ℂ)) * (thetaWD u : ℂ))
+      (Set.Ioi 0) MeasureTheory.volume := by
+  have hre : ∀ u : ℝ, (a * (u : ℂ)).re = a.re * u := fun u => by simp [Complex.mul_re]
+  apply MeasureTheory.Integrable.mono'
+    ((integrableOn_exp_mul_exp_neg (a.re + 4)).const_mul (8 * Real.pi * thetaSD1Const))
+  · exact ((by fun_prop : Measurable (fun u : ℝ => Complex.exp (a * (u : ℂ)))).mul
+      (Complex.measurable_ofReal.comp continuous_thetaWD.measurable)).aestronglyMeasurable
+  · filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_Ioi] with u hu
+    have hu0 : 0 ≤ u := le_of_lt hu
+    calc ‖Complex.exp (a * (u : ℂ)) * (thetaWD u : ℂ)‖
+        = Real.exp (a.re * u) * |thetaWD u| := by
+          rw [norm_mul, Complex.norm_exp, hre u, show ‖(thetaWD u : ℂ)‖ = |thetaWD u| from RCLike.norm_ofReal _]
+      _ ≤ Real.exp (a.re * u) * (8 * Real.pi * thetaSD1Const * Real.exp (4 * u)
+          * Real.exp (-(Real.pi * Real.exp (4 * u)))) :=
+          mul_le_mul_of_nonneg_left (abs_thetaWD_le hu0) (Real.exp_nonneg _)
+      _ = 8 * Real.pi * thetaSD1Const * (Real.exp ((a.re + 4) * u)
+          * Real.exp (-(Real.pi * Real.exp (4 * u)))) := by
+          have e1 : Real.exp ((a.re + 4) * u) = Real.exp (a.re * u) * Real.exp (4 * u) := by
+            rw [← Real.exp_add]
+            congr 1
+            ring
+          rw [e1]
+          ring
+
+/-- I3：`e^{au}·↑W''(u)` 在 `(0,∞)` 可积。 -/
+theorem integrableOn_cexp_thetaWDD (a : ℂ) :
+    MeasureTheory.IntegrableOn (fun u : ℝ => Complex.exp (a * (u : ℂ)) * (thetaWDD u : ℂ))
+      (Set.Ioi 0) MeasureTheory.volume := by
+  have hre : ∀ u : ℝ, (a * (u : ℂ)).re = a.re * u := fun u => by simp [Complex.mul_re]
+  apply MeasureTheory.Integrable.mono'
+    ((integrableOn_exp_mul_exp_neg (a.re + 8)).const_mul
+      (32 * Real.pi ^ 2 * phiTailConst + 32 * Real.pi * thetaSD1Const))
+  · exact ((by fun_prop : Measurable (fun u : ℝ => Complex.exp (a * (u : ℂ)))).mul
+      (Complex.measurable_ofReal.comp measurable_thetaWDD)).aestronglyMeasurable
+  · filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_Ioi] with u hu
+    have hu0 : 0 ≤ u := le_of_lt hu
+    calc ‖Complex.exp (a * (u : ℂ)) * (thetaWDD u : ℂ)‖
+        = Real.exp (a.re * u) * |thetaWDD u| := by
+          rw [norm_mul, Complex.norm_exp, hre u, show ‖(thetaWDD u : ℂ)‖ = |thetaWDD u| from RCLike.norm_ofReal _]
+      _ ≤ Real.exp (a.re * u) * ((32 * Real.pi ^ 2 * phiTailConst
+          + 32 * Real.pi * thetaSD1Const) * Real.exp (8 * u)
+          * Real.exp (-(Real.pi * Real.exp (4 * u)))) :=
+          mul_le_mul_of_nonneg_left (abs_thetaWDD_le hu0) (Real.exp_nonneg _)
+      _ = (32 * Real.pi ^ 2 * phiTailConst + 32 * Real.pi * thetaSD1Const)
+          * (Real.exp ((a.re + 8) * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))) := by
+          have e1 : Real.exp ((a.re + 8) * u) = Real.exp (a.re * u) * Real.exp (8 * u) := by
+            rw [← Real.exp_add]
+            congr 1
+            ring
+          rw [e1]
+          ring
+
 end DeBruijnNewman
 end RiemannExplorer

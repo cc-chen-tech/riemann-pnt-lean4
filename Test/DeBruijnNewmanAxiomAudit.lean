@@ -53,3 +53,14 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.abs_thetaS_le
 #print axioms RiemannExplorer.DeBruijnNewman.abs_thetaTD_le
 #print axioms RiemannExplorer.DeBruijnNewman.abs_thetaTDD_le
+#print axioms RiemannExplorer.DeBruijnNewman.measurable_thetaWDD
+#print axioms RiemannExplorer.DeBruijnNewman.abs_thetaW_le
+#print axioms RiemannExplorer.DeBruijnNewman.abs_thetaWD_le
+#print axioms RiemannExplorer.DeBruijnNewman.abs_thetaWDD_le
+#print axioms RiemannExplorer.DeBruijnNewman.integrableOn_exp_mul_exp_neg
+#print axioms RiemannExplorer.DeBruijnNewman.tendsto_exp_mul_exp_neg_atTop
+#print axioms RiemannExplorer.DeBruijnNewman.tendsto_thetaW_cexp_atTop
+#print axioms RiemannExplorer.DeBruijnNewman.tendsto_thetaWD_cexp_atTop
+#print axioms RiemannExplorer.DeBruijnNewman.integrableOn_cexp_thetaW
+#print axioms RiemannExplorer.DeBruijnNewman.integrableOn_cexp_thetaWD
+#print axioms RiemannExplorer.DeBruijnNewman.integrableOn_cexp_thetaWDD
