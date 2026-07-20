@@ -1,0 +1,4 @@
+import HardyTheorem.HardyLittlewoodTheorem
+
+#check HardyTheorem.hardy_littlewood_lower_bound_target_proved
+#print axioms HardyTheorem.hardy_littlewood_lower_bound_target_proved
