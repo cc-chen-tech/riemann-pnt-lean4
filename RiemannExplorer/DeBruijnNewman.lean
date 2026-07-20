@@ -3443,5 +3443,19 @@ theorem deBruijnNewmanH_zero_eq_completedZeta (z : ℂ) :
     linear_combination (completedRiemannZeta₀ ((1 + Complex.I * z) / 2) / 16) * hss
   linear_combination hH + (1 / 32) * hmaster - (1 / 2) * hsum - (1 / 2) * hpar - hXi
 
+/-- **Phase 2 桥接引理**：`H₀` 的零点与 `ξ` 的零点一一对应：
+`H₀(z) = 0 ↔ ξ(1/2 + I·(z/2)) = 0`（`1/8 ≠ 0` 的直接推论）。
+`z = x ∈ ℝ` 时 `1/2 + I·(x/2)` 落在临界线 `Re = 1/2` 上，
+故 `H₀` 的实零点对应临界线上的 `ξ` 零点。 -/
+theorem deBruijnNewmanH_zero_eq_zero_iff (z : ℂ) :
+    deBruijnNewmanH 0 z = 0
+      ↔ RiemannHypothesis.completedZeta (1 / 2 + Complex.I * (z / 2)) = 0 := by
+  rw [deBruijnNewmanH_zero_eq_completedZeta z]
+  constructor
+  · intro h
+    exact (mul_eq_zero.mp h).resolve_left (by norm_num)
+  · intro h
+    rw [h, mul_zero]
+
 end DeBruijnNewman
 end RiemannExplorer

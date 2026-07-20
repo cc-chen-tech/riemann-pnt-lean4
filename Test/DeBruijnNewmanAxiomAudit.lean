@@ -94,3 +94,4 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.integral_Iic_cexp_iz_phi
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_zero_eq_integral
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_zero_eq_completedZeta
+#print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_zero_eq_zero_iff
