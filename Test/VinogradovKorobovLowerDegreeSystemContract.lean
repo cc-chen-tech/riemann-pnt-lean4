@@ -1,0 +1,25 @@
+import ZeroFreeRegion.VinogradovKorobov.VinogradovLowerDegreeSystem
+
+namespace ZeroFreeRegion.VinogradovKorobov
+
+example {s : ℕ} (p k r a b γ : ℕ) (hp : p ≠ 0)
+    (hbudget : γ * (k - r) + a * r ≤ (k - r + 1) * b)
+    (ω : ℤ) (hω : IsCoprime (p : ℤ) ω)
+    (H Ψ : Fin r → Polynomial ℤ) (x y : Fin s → ℤ)
+    (hfactor : ∀ i : Fin r,
+      vinogradovPolynomialSumDifference (H i)
+          (fun j ↦ (p : ℤ) ^ a * x j)
+          (fun j ↦ (p : ℤ) ^ a * y j) =
+        ω ^ (k - r) *
+          (p : ℤ) ^ (γ * (k - r) + a * (i.val + 1)) *
+            vinogradovPolynomialSumDifference (Ψ i) x y)
+    (hsystem :
+      IsVinogradovPolynomialCongruenceSystem p ((k - r + 1) * b) H
+        (fun j ↦ (p : ℤ) ^ a * x j)
+        (fun j ↦ (p : ℤ) ^ a * y j)) :
+    IsVinogradovPolynomialCongruenceSystem p
+      (vinogradovFarScale k r a b γ) Ψ x y :=
+  vinogradovCommonFactorSystem_to_farScale
+    p k r a b γ hp hbudget ω hω H Ψ x y hfactor hsystem
+
+end ZeroFreeRegion.VinogradovKorobov
