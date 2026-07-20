@@ -3,6 +3,7 @@ import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Sinc
 import Mathlib.MeasureTheory.Integral.Asymptotics
 import Mathlib.MeasureTheory.Integral.Bochner.Set
+import Mathlib.MeasureTheory.Integral.Prod
 
 open Asymptotics Complex Filter MeasureTheory Set
 
@@ -17,6 +18,152 @@ noncomputable def signedRadialTailProfile (q : ℝ → ℝ) (x : ℝ) : ℝ :=
     2 * ∫ t in Ici x, q t
   else
     2 * ∫ t in Iic x, -q t
+
+/-- The positive-half-line tail integral, extended by zero to the negative
+half-line.  This auxiliary operator packages the Fubini argument used for the
+two sides of `signedRadialTailProfile`. -/
+noncomputable def positiveTailIntegral (q : ℝ → ℝ) (x : ℝ) : ℝ :=
+  if 0 ≤ x then ∫ t in Ici x, q t else 0
+
+private noncomputable def positiveTailKernel (q : ℝ → ℝ) (p : ℝ × ℝ) : ℝ :=
+  if 0 ≤ p.1 ∧ p.1 ≤ p.2 then q p.2 else 0
+
+private theorem positiveTailKernel_aestronglyMeasurable
+    {q : ℝ → ℝ} (hq : AEStronglyMeasurable q) :
+    AEStronglyMeasurable (positiveTailKernel q) (volume.prod volume) := by
+  let s : Set (ℝ × ℝ) := {p | 0 ≤ p.1 ∧ p.1 ≤ p.2}
+  have hs : MeasurableSet s :=
+    (measurableSet_le measurable_const measurable_fst).inter
+      (measurableSet_le measurable_fst measurable_snd)
+  have heq : positiveTailKernel q = s.indicator (fun p => q p.2) := by
+    funext p
+    simp [positiveTailKernel, s, Set.indicator]
+  rw [heq]
+  exact hq.comp_snd.indicator hs
+
+private theorem integrable_positiveTailKernel
+    {q : ℝ → ℝ}
+    (hq : Integrable q)
+    (hmoment : Integrable (fun x : ℝ => x * q x)) :
+    Integrable (positiveTailKernel q) (volume.prod volume) := by
+  have hmeas := positiveTailKernel_aestronglyMeasurable hq.aestronglyMeasurable
+  apply (integrable_prod_iff' hmeas).2
+  constructor
+  · filter_upwards with t
+    have heq : (fun x : ℝ => positiveTailKernel q (x, t)) =
+        (Icc 0 t).indicator (fun _ => q t) := by
+      funext x
+      simp [positiveTailKernel, Set.indicator]
+    rw [heq]
+    exact (integrableOn_const (μ := volume) (s := Icc 0 t)
+      isCompact_Icc.measure_lt_top.ne).integrable_indicator measurableSet_Icc
+  · have hnorm : Integrable (fun t : ℝ => ‖t * q t‖) := hmoment.norm
+    have hindicator := hnorm.indicator (s := Ici 0) measurableSet_Ici
+    convert hindicator using 1
+    funext t
+    by_cases ht : 0 ≤ t
+    · have heq : (fun x : ℝ => ‖positiveTailKernel q (x, t)‖) =
+          (Icc 0 t).indicator (fun _ => ‖q t‖) := by
+        funext x
+        by_cases hx : 0 ≤ x ∧ x ≤ t <;>
+          simp [positiveTailKernel, Set.indicator, hx]
+      rw [heq, integral_indicator measurableSet_Icc]
+      simp [ht, norm_mul, abs_of_nonneg ht]
+    · have heq : (fun x : ℝ => ‖positiveTailKernel q (x, t)‖) = 0 := by
+        funext x
+        simp only [positiveTailKernel]
+        split_ifs with hx
+        · exfalso
+          exact ht (hx.1.trans hx.2)
+        · simp
+      rw [heq]
+      simp [ht]
+
+/-- A density with an integrable first moment has an integrable tail integral
+on the positive half-line. -/
+theorem integrable_positiveTailIntegral
+    {q : ℝ → ℝ}
+    (hq : Integrable q)
+    (hmoment : Integrable (fun x : ℝ => x * q x)) :
+    Integrable (positiveTailIntegral q) := by
+  have hkernel := integrable_positiveTailKernel hq hmoment
+  have hinner := hkernel.integral_prod_left
+  convert hinner using 1
+  funext x
+  by_cases hx : 0 ≤ x
+  · have heq : (fun t : ℝ => positiveTailKernel q (x, t)) =
+        (Ici x).indicator q := by
+      funext t
+      simp [positiveTailKernel, Set.indicator, hx]
+    rw [positiveTailIntegral, if_pos hx, heq, integral_indicator measurableSet_Ici]
+  · have heq : (fun t : ℝ => positiveTailKernel q (x, t)) = 0 := by
+      funext t
+      simp [positiveTailKernel, hx]
+    rw [positiveTailIntegral, if_neg hx, heq]
+    simp
+
+private noncomputable def reflectedSignedDensity (q : ℝ → ℝ) (x : ℝ) : ℝ :=
+  -q (-x)
+
+private theorem integrable_reflectedSignedDensity
+    {q : ℝ → ℝ} (hq : Integrable q) :
+    Integrable (reflectedSignedDensity q) := by
+  have hcomp : Integrable (q ∘ fun x : ℝ => -x) :=
+    (Measure.measurePreserving_neg volume).integrable_comp_of_integrable hq
+  apply hcomp.neg.congr
+  filter_upwards with x
+  rfl
+
+private theorem integrable_id_mul_reflectedSignedDensity
+    {q : ℝ → ℝ} (hmoment : Integrable (fun x : ℝ => x * q x)) :
+    Integrable (fun x : ℝ => x * reflectedSignedDensity q x) := by
+  have hcomp : Integrable ((fun x : ℝ => x * q x) ∘ fun x : ℝ => -x) :=
+    (Measure.measurePreserving_neg volume).integrable_comp_of_integrable hmoment
+  apply hcomp.congr
+  filter_upwards with x
+  simp [reflectedSignedDensity, Function.comp_apply]
+
+private theorem positiveTailIntegral_reflectedSignedDensity_neg
+    {q : ℝ → ℝ} {x : ℝ} (hx : x < 0) :
+    positiveTailIntegral (reflectedSignedDensity q) (-x) =
+      ∫ t in Iic x, -q t := by
+  rw [positiveTailIntegral, if_pos (neg_nonneg.mpr hx.le)]
+  simp only [reflectedSignedDensity]
+  rw [integral_Ici_eq_integral_Ioi]
+  simpa using integral_comp_neg_Ioi (-x) (fun t : ℝ => -q t)
+
+/-- If both the density and its signed first moment are integrable, then the
+two-sided signed radial tail profile is integrable. -/
+theorem integrable_signedRadialTailProfile
+    {q : ℝ → ℝ}
+    (hq : Integrable q)
+    (hmoment : Integrable (fun x : ℝ => x * q x)) :
+    Integrable (signedRadialTailProfile q) := by
+  have hplus : Integrable (positiveTailIntegral q) :=
+    integrable_positiveTailIntegral hq hmoment
+  have hreflected : Integrable (reflectedSignedDensity q) :=
+    integrable_reflectedSignedDensity hq
+  have hreflectedMoment :
+      Integrable (fun x : ℝ => x * reflectedSignedDensity q x) :=
+    integrable_id_mul_reflectedSignedDensity hmoment
+  have hminus : Integrable (positiveTailIntegral (reflectedSignedDensity q)) :=
+    integrable_positiveTailIntegral hreflected hreflectedMoment
+  have hminusComp : Integrable
+      (positiveTailIntegral (reflectedSignedDensity q) ∘ fun x : ℝ => -x) :=
+    (Measure.measurePreserving_neg volume).integrable_comp_of_integrable hminus
+  have hpiece : Integrable ((Ici (0 : ℝ)).piecewise
+      (fun x => 2 * positiveTailIntegral q x)
+      (fun x => 2 * positiveTailIntegral (reflectedSignedDensity q) (-x))) :=
+    Integrable.piecewise measurableSet_Ici (hplus.const_mul 2).integrableOn
+      (by simpa [Function.comp_apply] using (hminusComp.const_mul 2).integrableOn)
+  apply hpiece.congr
+  filter_upwards with x
+  by_cases hx : 0 ≤ x
+  · simp [signedRadialTailProfile, positiveTailIntegral, Set.piecewise, hx]
+  · have hxlt : x < 0 := lt_of_not_ge hx
+    simp only [signedRadialTailProfile, Set.piecewise, mem_Ici, hx]
+    rw [positiveTailIntegral_reflectedSignedDensity_neg hxlt]
+    simp
 
 theorem signedRadialTailProfile_nonnegative
     {q : ℝ → ℝ}
@@ -317,6 +464,94 @@ theorem integrable_carneiroLittmannDensity :
     carneiroLittmannDensity_isBigO_atTop
     (integrable_inv_one_add_sq.integrableAtFilter atTop)
 
+private theorem id_mul_carneiroLittmannDensity_eq
+    {x : ℝ} (hx : x ≠ 0) :
+    x * carneiroLittmannDensity x =
+      Real.sin (Real.pi * x) ^ 2 / (Real.pi ^ 2 * (x + 1) ^ 2) := by
+  unfold carneiroLittmannDensity
+  field_simp [Real.pi_ne_zero, hx]
+
+private theorem locallyIntegrable_id_mul_carneiroLittmannDensity :
+    LocallyIntegrable (fun x : ℝ => x * carneiroLittmannDensity x) := by
+  apply (continuous_id.mul continuous_carneiroLittmannRegularizedDensity).locallyIntegrable.congr
+  filter_upwards [carneiroLittmannDensity_ae_eq_regularized.symm] with x hx
+  simp only [Pi.mul_apply, id_eq, hx]
+
+private theorem id_mul_carneiroLittmannDensity_norm_le_inv_one_add_sq_of_two_le
+    {x : ℝ} (hx : 2 ≤ x) :
+    ‖x * carneiroLittmannDensity x‖ ≤ ‖(1 + x ^ 2)⁻¹‖ := by
+  have hx0 : 0 ≤ x := by linarith
+  have hxne : x ≠ 0 := by linarith
+  have hden : 0 < Real.pi ^ 2 * (x + 1) ^ 2 := by positivity
+  have hone : 0 < 1 + x ^ 2 := by positivity
+  rw [id_mul_carneiroLittmannDensity_eq hxne, Real.norm_eq_abs,
+    abs_of_nonneg (div_nonneg (sq_nonneg _) hden.le), Real.norm_eq_abs,
+    abs_of_pos (inv_pos.mpr hone)]
+  apply (div_le_iff₀ hden).2
+  calc
+    Real.sin (Real.pi * x) ^ 2 ≤ 1 := by
+      nlinarith [Real.neg_one_le_sin (Real.pi * x),
+        Real.sin_le_one (Real.pi * x)]
+    _ ≤ (1 + x ^ 2)⁻¹ * (Real.pi ^ 2 * (x + 1) ^ 2) := by
+      have hpi : 1 ≤ Real.pi ^ 2 := by nlinarith [Real.two_le_pi]
+      have hpoly : 1 + x ^ 2 ≤ (x + 1) ^ 2 := by nlinarith
+      have h : 1 + x ^ 2 ≤ Real.pi ^ 2 * (x + 1) ^ 2 :=
+        hpoly.trans <| by
+          simpa using mul_le_mul_of_nonneg_right hpi (sq_nonneg (x + 1))
+      rw [inv_mul_eq_div]
+      exact (le_div_iff₀ hone).2 (by simpa using h)
+
+private theorem id_mul_carneiroLittmannDensity_norm_le_eight_inv_one_add_sq_of_le_neg_two
+    {x : ℝ} (hx : x ≤ -2) :
+    ‖x * carneiroLittmannDensity x‖ ≤ 8 * ‖(1 + x ^ 2)⁻¹‖ := by
+  have hxne : x ≠ 0 := by linarith
+  have hx1 : x + 1 ≠ 0 := by linarith
+  have hden : 0 < Real.pi ^ 2 * (x + 1) ^ 2 := by positivity
+  have hone : 0 < 1 + x ^ 2 := by positivity
+  rw [id_mul_carneiroLittmannDensity_eq hxne, Real.norm_eq_abs,
+    abs_of_nonneg (div_nonneg (sq_nonneg _) hden.le), Real.norm_eq_abs,
+    abs_of_pos (inv_pos.mpr hone)]
+  apply (div_le_iff₀ hden).2
+  calc
+    Real.sin (Real.pi * x) ^ 2 ≤ 1 := by
+      nlinarith [Real.neg_one_le_sin (Real.pi * x),
+        Real.sin_le_one (Real.pi * x)]
+    _ ≤ 8 * (1 + x ^ 2)⁻¹ * (Real.pi ^ 2 * (x + 1) ^ 2) := by
+      have hpi : 1 ≤ Real.pi ^ 2 := by nlinarith [Real.two_le_pi]
+      have hpoly : 1 + x ^ 2 ≤ 8 * (x + 1) ^ 2 := by
+        nlinarith [sq_nonneg (x + 2)]
+      have hden' : 8 * (x + 1) ^ 2 ≤
+          8 * (Real.pi ^ 2 * (x + 1) ^ 2) := by
+        nlinarith [sq_nonneg (x + 1),
+          mul_le_mul_of_nonneg_right hpi (sq_nonneg (x + 1))]
+      have h := hpoly.trans hden'
+      have hdiv : 1 ≤
+          (8 * (Real.pi ^ 2 * (x + 1) ^ 2)) / (1 + x ^ 2) :=
+        (le_div_iff₀ hone).2 (by simpa using h)
+      simpa [div_eq_mul_inv, mul_assoc, mul_comm, mul_left_comm] using hdiv
+
+private theorem id_mul_carneiroLittmannDensity_isBigO_atTop :
+    (fun x : ℝ => x * carneiroLittmannDensity x) =O[atTop]
+      (fun x : ℝ => (1 + x ^ 2)⁻¹) := by
+  apply IsBigO.of_bound 1
+  filter_upwards [Ici_mem_atTop (2 : ℝ)] with x hx
+  simpa using id_mul_carneiroLittmannDensity_norm_le_inv_one_add_sq_of_two_le hx
+
+private theorem id_mul_carneiroLittmannDensity_isBigO_atBot :
+    (fun x : ℝ => x * carneiroLittmannDensity x) =O[atBot]
+      (fun x : ℝ => (1 + x ^ 2)⁻¹) := by
+  apply IsBigO.of_bound 8
+  filter_upwards [Iic_mem_atBot (-2 : ℝ)] with x hx
+  exact id_mul_carneiroLittmannDensity_norm_le_eight_inv_one_add_sq_of_le_neg_two hx
+
+theorem integrable_id_mul_carneiroLittmannDensity :
+    Integrable (fun x : ℝ => x * carneiroLittmannDensity x) :=
+  locallyIntegrable_id_mul_carneiroLittmannDensity.integrable_of_isBigO_atBot_atTop
+    id_mul_carneiroLittmannDensity_isBigO_atBot
+    (integrable_inv_one_add_sq.integrableAtFilter atBot)
+    id_mul_carneiroLittmannDensity_isBigO_atTop
+    (integrable_inv_one_add_sq.integrableAtFilter atTop)
+
 /-- The direct two-sided tail-integral candidate for `M - sgn`, where `M` is
 the monotone Carneiro--Littmann majorant.  At the origin it uses the right-tail
 normalization; this possible one-point difference is immaterial to the
@@ -330,18 +565,22 @@ theorem carneiroLittmannTailProfile_nonnegative (x : ℝ) :
     (fun _ => carneiroLittmannDensity_nonnegative)
     (fun _ => carneiroLittmannDensity_nonpositive) x
 
-/-- Once the three remaining profile integral/Fourier facts are supplied, the concrete
-tail profile satisfies the full extremal-kernel certificate.  Nonnegativity and
-dilation monotonicity are discharged here from the now-proved density
-integrability and sign formulas. -/
+theorem integrable_carneiroLittmannTailProfile :
+    Integrable carneiroLittmannTailProfile :=
+  integrable_signedRadialTailProfile integrable_carneiroLittmannDensity
+    integrable_id_mul_carneiroLittmannDensity
+
+/-- Once the two remaining mass/Fourier facts are supplied, the concrete tail
+profile satisfies the full extremal-kernel certificate.  Integrability,
+nonnegativity, and dilation monotonicity are discharged here from the density
+formula and its first-moment estimate. -/
 theorem carneiroLittmannTailProfile_certificate
-    (hprofile : Integrable carneiroLittmannTailProfile)
     (hmass : ∫ x, carneiroLittmannTailProfile x = 2)
     (htail : ∀ xi : ℝ, 2 * Real.pi ≤ |xi| →
       fourierKernel carneiroLittmannTailProfile xi =
         (-2 * Complex.I) / xi) :
     MonotoneExtremalKernelCertificate carneiroLittmannTailProfile where
-  integrable := hprofile
+  integrable := integrable_carneiroLittmannTailProfile
   nonnegative := carneiroLittmannTailProfile_nonnegative
   fourier_zero := by
     rw [fourierKernel_zero, hmass]

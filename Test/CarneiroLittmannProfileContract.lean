@@ -46,16 +46,30 @@ example {x : ℝ} (hx : x ≤ 0) :
 example : Integrable carneiroLittmannDensity :=
   integrable_carneiroLittmannDensity
 
+example : Integrable (fun x : ℝ => x * carneiroLittmannDensity x) :=
+  integrable_id_mul_carneiroLittmannDensity
+
+noncomputable example (q : ℝ → ℝ) (x : ℝ) : ℝ :=
+  positiveTailIntegral q x
+
+example {q : ℝ → ℝ}
+    (hq : Integrable q)
+    (hmoment : Integrable (fun x : ℝ => x * q x)) :
+    Integrable (positiveTailIntegral q) :=
+  integrable_positiveTailIntegral hq hmoment
+
 noncomputable example (x : ℝ) : ℝ := carneiroLittmannTailProfile x
 
+example : Integrable carneiroLittmannTailProfile :=
+  integrable_carneiroLittmannTailProfile
+
 example
-    (hprofile : Integrable carneiroLittmannTailProfile)
     (hmass : ∫ x, carneiroLittmannTailProfile x = 2)
     (htail : ∀ xi : ℝ, 2 * Real.pi ≤ |xi| →
       fourierKernel carneiroLittmannTailProfile xi =
         (-2 * Complex.I) / xi) :
     MonotoneExtremalKernelCertificate carneiroLittmannTailProfile :=
-  carneiroLittmannTailProfile_certificate hprofile hmass htail
+  carneiroLittmannTailProfile_certificate hmass htail
 
 #print axioms signedRadialTailProfile_nonnegative
 #print axioms signedRadialTailProfile_antitoneOn_nonnegative
@@ -64,6 +78,10 @@ example
 #print axioms carneiroLittmannDensity_nonnegative
 #print axioms carneiroLittmannDensity_nonpositive
 #print axioms integrable_carneiroLittmannDensity
+#print axioms integrable_id_mul_carneiroLittmannDensity
+#print axioms integrable_positiveTailIntegral
+#print axioms integrable_signedRadialTailProfile
+#print axioms integrable_carneiroLittmannTailProfile
 #print axioms carneiroLittmannTailProfile_certificate
 
 end DirichletPolynomial
