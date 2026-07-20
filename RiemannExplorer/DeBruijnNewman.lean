@@ -212,6 +212,171 @@ theorem norm_cos_mul_ofReal_le_exp (z : ℂ) (u : ℝ) :
   rw [← him]
   exact norm_cos_le_exp_abs_im _
 
+/-! ## Phase 1a 第一块：Φ 的连续性与 `[0,∞)` 上的双指数衰减界 -/
+
+/-- Pointwise continuity of each kernel term. -/
+@[fun_prop]
+theorem continuous_phiTerm (n : ℕ) : Continuous fun u : ℝ => phiTerm n u := by
+  unfold phiTerm
+  fun_prop
+
+/-- `Φ` is continuous on `ℝ`: on every compact neighborhood the defining
+series admits a uniform geometric bound, so `continuousOn_tsum` applies
+locally. -/
+@[fun_prop]
+theorem continuous_phi : Continuous phi := by
+  rw [continuous_iff_continuousAt]
+  intro u₀
+  set C₀ : ℝ := 2 * Real.pi ^ 2 * Real.exp (9 * (u₀ + 1))
+    + 3 * Real.pi * Real.exp (5 * (u₀ + 1)) with hC₀
+  set r₀ : ℝ := Real.exp (-(Real.pi * Real.exp (4 * (u₀ - 1)))) with hr₀
+  have hr₀1 : r₀ < 1 := by
+    rw [hr₀, Real.exp_lt_one_iff]
+    have hpe : 0 < Real.pi * Real.exp (4 * (u₀ - 1)) := by positivity
+    linarith
+  have hs : Summable fun n : ℕ => C₀ * (((n + 1 : ℕ) : ℝ) ^ 4 * r₀ ^ (n + 1)) := by
+    have h := summable_pow_mul_geometric_of_norm_lt_one 4 (show ‖r₀‖ < 1 from by
+      rwa [Real.norm_eq_abs, abs_of_nonneg (Real.exp_nonneg _)])
+    exact ((summable_nat_add_iff 1).mpr h).mul_left C₀
+  have hcont : ContinuousOn (fun u : ℝ => ∑' n : ℕ, phiTerm (n + 1) u)
+      (Set.Icc (u₀ - 1) (u₀ + 1)) := by
+    refine continuousOn_tsum (fun n => (continuous_phiTerm (n + 1)).continuousOn) hs
+      (fun n u hu => ?_)
+    rw [Real.norm_eq_abs]
+    calc |phiTerm (n + 1) u|
+        ≤ (2 * Real.pi ^ 2 * Real.exp (9 * u) + 3 * Real.pi * Real.exp (5 * u))
+            * (((n + 1 : ℕ) : ℝ) ^ 4
+              * Real.exp (-(Real.pi * Real.exp (4 * u))) ^ (n + 1)) :=
+          abs_phiTerm_le u (n + 1)
+      _ ≤ C₀ * (((n + 1 : ℕ) : ℝ) ^ 4 * r₀ ^ (n + 1)) := by
+          apply mul_le_mul _ _ (by positivity) (by rw [hC₀]; positivity)
+          · have hu1 : u ≤ u₀ + 1 := hu.2
+            rw [hC₀]
+            apply add_le_add
+            · apply mul_le_mul_of_nonneg_left _ (by positivity)
+              exact Real.exp_le_exp.mpr (by linarith)
+            · apply mul_le_mul_of_nonneg_left _ (by positivity)
+              exact Real.exp_le_exp.mpr (by linarith)
+          · have hu0 : u₀ - 1 ≤ u := hu.1
+            apply mul_le_mul_of_nonneg_left _ (pow_nonneg (Nat.cast_nonneg _) _)
+            apply pow_le_pow_left₀ (Real.exp_nonneg _)
+            apply Real.exp_le_exp.mpr
+            have hle : Real.pi * Real.exp (4 * (u₀ - 1)) ≤ Real.pi * Real.exp (4 * u) := by
+              apply mul_le_mul_of_nonneg_left _ (by positivity)
+              exact Real.exp_le_exp.mpr (by linarith)
+            linarith [hle]
+  exact hcont.continuousAt (Icc_mem_nhds (by linarith) (by linarith))
+
+/-- Summability helper: `Σ_{n ≥ 0} (n+1)⁴ e^{x n}` converges for `x < 0`.
+Used both for the tail constant (`x = -π`) and for the pointwise geometric
+comparison (`x = -π e^{4u}`). -/
+theorem summable_shift_pow_mul_exp {x : ℝ} (hx : x < 0) :
+    Summable fun n : ℕ => ((n + 1 : ℕ) : ℝ) ^ 4 * Real.exp x ^ n := by
+  have hr : ‖Real.exp x‖ < 1 := by
+    rw [Real.norm_eq_abs, abs_of_nonneg (Real.exp_nonneg _), Real.exp_lt_one_iff]
+    exact hx
+  have h1 := (summable_nat_add_iff
+      (f := fun m : ℕ => (m : ℝ) ^ 4 * Real.exp x ^ m) 1).mpr
+    (summable_pow_mul_geometric_of_norm_lt_one 4 hr)
+  have h2 := h1.mul_left (Real.exp x)⁻¹
+  refine h2.congr fun n => ?_
+  have hxne : Real.exp x ≠ 0 := (Real.exp_pos _).ne'
+  show (Real.exp x)⁻¹ * (((n + 1 : ℕ) : ℝ) ^ 4 * Real.exp x ^ (n + 1))
+      = ((n + 1 : ℕ) : ℝ) ^ 4 * Real.exp x ^ n
+  rw [pow_succ]
+  field_simp
+  ring
+
+/-- The tail constant `K₁ = Σ_{n ≥ 1} n⁴ e^{-π (n-1)}` used to dominate the
+kernel series on `[0, ∞)`. -/
+noncomputable def phiTailConst : ℝ :=
+  ∑' n : ℕ, ((n + 1 : ℕ) : ℝ) ^ 4 * Real.exp (-Real.pi) ^ n
+
+theorem summable_phiTailConst :
+    Summable fun n : ℕ => ((n + 1 : ℕ) : ℝ) ^ 4 * Real.exp (-Real.pi) ^ n :=
+  summable_shift_pow_mul_exp (neg_lt_zero.mpr Real.pi_pos)
+
+theorem phiTailConst_nonneg : 0 ≤ phiTailConst :=
+  tsum_nonneg fun n => by positivity
+
+theorem phiTailConst_pos : 0 < phiTailConst := by
+  apply Summable.tsum_pos summable_phiTailConst (fun n => by positivity) 0
+  simp
+
+/-- Global decay bound for `Φ` on `[0, ∞)`:
+`|Φ(u)| ≤ (2π² + 3π) · K₁ · e^{9u} · e^{−π e^{4u}}`. -/
+theorem abs_phi_le (u : ℝ) (hu : 0 ≤ u) :
+    |phi u| ≤ (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst * Real.exp (9 * u)
+      * Real.exp (-(Real.pi * Real.exp (4 * u))) := by
+  have hs_bound : Summable fun n : ℕ =>
+      (2 * Real.pi ^ 2 * Real.exp (9 * u) + 3 * Real.pi * Real.exp (5 * u))
+        * (((n + 1 : ℕ) : ℝ) ^ 4
+          * Real.exp (-(Real.pi * Real.exp (4 * u))) ^ (n + 1)) := by
+    have h := summable_pow_mul_geometric_of_norm_lt_one 4 (show
+        ‖Real.exp (-(Real.pi * Real.exp (4 * u)))‖ < 1 from by
+      rw [Real.norm_eq_abs, abs_of_nonneg (Real.exp_nonneg _), Real.exp_lt_one_iff]
+      have hpe : 0 < Real.pi * Real.exp (4 * u) := by positivity
+      linarith)
+    exact ((summable_nat_add_iff 1).mpr h).mul_left _
+  have hs_norm : Summable fun n : ℕ => ‖phiTerm (n + 1) u‖ :=
+    Summable.of_norm_bounded hs_bound (fun n => by
+      simp only [Real.norm_eq_abs, abs_abs]
+      exact abs_phiTerm_le u (n + 1))
+  have hC0 : 0 ≤ (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst :=
+    mul_nonneg (by positivity) phiTailConst_nonneg
+  have hr_le : Real.exp (-(Real.pi * Real.exp (4 * u))) ≤ Real.exp (-Real.pi) := by
+    apply Real.exp_le_exp.mpr
+    have hpe : Real.pi ≤ Real.pi * Real.exp (4 * u) := by
+      nth_rewrite 1 [← mul_one Real.pi]
+      exact mul_le_mul_of_nonneg_left (Real.one_le_exp (by linarith)) (le_of_lt Real.pi_pos)
+    linarith
+  calc |phi u| = ‖∑' n : ℕ, phiTerm (n + 1) u‖ := (Real.norm_eq_abs _).symm
+    _ ≤ ∑' n : ℕ, ‖phiTerm (n + 1) u‖ := norm_tsum_le_tsum_norm hs_norm
+    _ ≤ ∑' n : ℕ,
+        (2 * Real.pi ^ 2 * Real.exp (9 * u) + 3 * Real.pi * Real.exp (5 * u))
+          * (((n + 1 : ℕ) : ℝ) ^ 4
+            * Real.exp (-(Real.pi * Real.exp (4 * u))) ^ (n + 1)) :=
+        Summable.tsum_le_tsum (fun n => by
+          rw [Real.norm_eq_abs]; exact abs_phiTerm_le u (n + 1)) hs_norm hs_bound
+    _ = (2 * Real.pi ^ 2 * Real.exp (9 * u) + 3 * Real.pi * Real.exp (5 * u))
+          * (∑' n : ℕ, ((n + 1 : ℕ) : ℝ) ^ 4
+            * Real.exp (-(Real.pi * Real.exp (4 * u))) ^ (n + 1)) := by
+        rw [tsum_mul_left]
+    _ ≤ (2 * Real.pi ^ 2 * Real.exp (9 * u) + 3 * Real.pi * Real.exp (5 * u))
+          * (phiTailConst * Real.exp (-(Real.pi * Real.exp (4 * u)))) := by
+        apply mul_le_mul_of_nonneg_left _ (by positivity)
+        calc ∑' n : ℕ, ((n + 1 : ℕ) : ℝ) ^ 4
+                * Real.exp (-(Real.pi * Real.exp (4 * u))) ^ (n + 1)
+            = Real.exp (-(Real.pi * Real.exp (4 * u)))
+                * (∑' n : ℕ, ((n + 1 : ℕ) : ℝ) ^ 4
+                    * Real.exp (-(Real.pi * Real.exp (4 * u))) ^ n) := by
+              rw [← tsum_mul_left]
+              apply tsum_congr
+              intro n
+              rw [pow_succ]
+              ring
+          _ ≤ Real.exp (-(Real.pi * Real.exp (4 * u))) * phiTailConst := by
+              apply mul_le_mul_of_nonneg_left _ (Real.exp_nonneg _)
+              apply Summable.tsum_le_tsum _ _ summable_phiTailConst
+              · intro n
+                apply mul_le_mul_of_nonneg_left _ (by positivity)
+                exact pow_le_pow_left₀ (Real.exp_nonneg _) hr_le n
+              · exact summable_shift_pow_mul_exp
+                  (neg_lt_zero.mpr (show (0:ℝ) < Real.pi * Real.exp (4 * u) by positivity))
+          _ = phiTailConst * Real.exp (-(Real.pi * Real.exp (4 * u))) := by ring
+    _ ≤ ((2 * Real.pi ^ 2 + 3 * Real.pi) * Real.exp (9 * u))
+          * (phiTailConst * Real.exp (-(Real.pi * Real.exp (4 * u)))) := by
+        apply mul_le_mul_of_nonneg_right _
+          (mul_nonneg phiTailConst_nonneg (Real.exp_nonneg _))
+        have h59 : Real.exp (5 * u) ≤ Real.exp (9 * u) := Real.exp_le_exp.mpr (by linarith)
+        calc 2 * Real.pi ^ 2 * Real.exp (9 * u) + 3 * Real.pi * Real.exp (5 * u)
+            ≤ 2 * Real.pi ^ 2 * Real.exp (9 * u) + 3 * Real.pi * Real.exp (9 * u) :=
+              add_le_add_right
+                (mul_le_mul_of_nonneg_left h59 (show (0:ℝ) ≤ 3 * Real.pi by positivity)) _
+          _ = (2 * Real.pi ^ 2 + 3 * Real.pi) * Real.exp (9 * u) := by ring
+    _ = (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst * Real.exp (9 * u)
+          * Real.exp (-(Real.pi * Real.exp (4 * u))) := by ring
+
 /-! ## H_t：积分定义与适定性目标 -/
 
 /-- The integrand of the de Bruijn–Newman family,
