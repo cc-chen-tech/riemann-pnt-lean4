@@ -246,6 +246,29 @@ example {X : ℕ} (hX : 1 ≤ X) (y0 y1 : ℝ) :
   abs_regularizedCarlsonFixedRightArgumentVariation_le_three_pi
     hX y0 y1
 
+noncomputable example (X : ℕ) (x0 y0 y1 : ℝ) : ℝ :=
+  regularizedCarlsonFixedRightBoundaryContribution X x0 y0 y1
+
+example {X : ℕ} (hX : 1 ≤ X) {x0 y0 y1 : ℝ}
+    (hx0 : x0 ≤ 4) (hy01 : y0 ≤ y1) :
+    regularizedCarlsonFixedRightBoundaryContribution X x0 y0 y1 ≤
+      (4 - x0) * (3 * Real.pi) -
+        (y1 - y0) * Real.log (56 / 81 : ℝ) :=
+  regularizedCarlsonFixedRightBoundaryContribution_le hX hx0 hy01
+
+example (X : ℕ) (x0 y0 y1 : ℝ) :
+    regularizedCarlsonLittlewoodRemainingEdges X x0 4 y0 y1 =
+      (∫ x in x0..4,
+        (x - x0) *
+          (logDeriv (regularizedCarlsonZeroDetector X)
+            ((x : ℂ) + (y0 : ℂ) * I)).im) -
+      (∫ x in x0..4,
+        (x - x0) *
+          (logDeriv (regularizedCarlsonZeroDetector X)
+            ((x : ℂ) + (y1 : ℂ) * I)).im) +
+      regularizedCarlsonFixedRightBoundaryContribution X x0 y0 y1 :=
+  regularizedCarlsonLittlewoodRemainingEdges_fixedRight_eq X x0 y0 y1
+
 example {X : ℕ} {x0 x1 y0 y1 : ℝ}
     (hx0 : 0 < x0) (hx01 : x0 < x1) (hy01 : y0 < y1)
     (hleft : ∀ y ∈ Set.Icc y0 y1,
@@ -330,6 +353,8 @@ example {X : ℕ} (hX : 1 ≤ X) {theta sigma T : ℝ}
 #print axioms abs_carlsonDetectorFixedRightArgumentVariation_le_pi
 #print axioms abs_subOneFixedRightArgumentVariation_le_pi
 #print axioms abs_regularizedCarlsonFixedRightArgumentVariation_le_three_pi
+#print axioms regularizedCarlsonFixedRightBoundaryContribution_le
+#print axioms regularizedCarlsonLittlewoodRemainingEdges_fixedRight_eq
 #print axioms regularizedCarlsonLittlewoodFourEdges_eq_logNormForm
 #print axioms regularizedCarlsonLittlewoodFourEdges_eq_logNormFormDef
 #print axioms regularizedCarlsonLittlewoodLogNormForm_eq_left_add_remaining
