@@ -47,3 +47,9 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.hasDerivAt_thetaMD
 #print axioms RiemannExplorer.DeBruijnNewman.thetaM_eq_reflected
 #print axioms RiemannExplorer.DeBruijnNewman.thetaMD_eq_reflected
+#print axioms RiemannExplorer.DeBruijnNewman.summable_thetaSConst
+#print axioms RiemannExplorer.DeBruijnNewman.summable_thetaSD1Const
+#print axioms RiemannExplorer.DeBruijnNewman.one_le_phiTailConst
+#print axioms RiemannExplorer.DeBruijnNewman.abs_thetaS_le
+#print axioms RiemannExplorer.DeBruijnNewman.abs_thetaTD_le
+#print axioms RiemannExplorer.DeBruijnNewman.abs_thetaTDD_le

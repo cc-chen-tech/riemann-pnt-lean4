@@ -1877,5 +1877,183 @@ theorem thetaMD_eq_reflected (u : ℝ) :
       ring]
     ring
 
+/-!
+### Phase 1d(iv-b1)：theta 级数在 `x ≥ 1` 的指数衰减界
+
+为 `W/M` 在无穷远端的极限与可积性准备常数与估计：
+`|S(x)| ≤ Cs·e^{−πx}`，`|T'(x)| ≤ 2π·Cs₁·e^{−πx}`，
+`|T''(x)| ≤ 2π²·K₁·e^{−πx}`（`x ≥ 1`）。
+-/
+
+/-- `S` 衰减界常数：`Cs = Σ_{n≥0} e^{−πn} = 1/(1−e^{−π})`。 -/
+noncomputable def thetaSConst : ℝ := ∑' n : ℕ, Real.exp (-Real.pi) ^ n
+
+theorem summable_thetaSConst : Summable fun n : ℕ => Real.exp (-Real.pi) ^ n := by
+  have hr : ‖Real.exp (-Real.pi)‖ < 1 := by
+    rw [Real.norm_eq_abs, abs_of_nonneg (Real.exp_nonneg _), Real.exp_lt_one_iff]
+    exact neg_lt_zero.mpr Real.pi_pos
+  exact summable_geometric_of_norm_lt_one hr
+
+theorem thetaSConst_nonneg : 0 ≤ thetaSConst :=
+  tsum_nonneg fun _ => pow_nonneg (Real.exp_nonneg _) _
+
+/-- `S'` 衰减界常数：`Cs₁ = Σ (n+1)² e^{−πn}`。 -/
+noncomputable def thetaSD1Const : ℝ :=
+  ∑' n : ℕ, ((n + 1 : ℕ) : ℝ) ^ 2 * Real.exp (-Real.pi) ^ n
+
+theorem summable_thetaSD1Const :
+    Summable fun n : ℕ => ((n + 1 : ℕ) : ℝ) ^ 2 * Real.exp (-Real.pi) ^ n := by
+  have hr : ‖Real.exp (-Real.pi)‖ < 1 := by
+    rw [Real.norm_eq_abs, abs_of_nonneg (Real.exp_nonneg _), Real.exp_lt_one_iff]
+    exact neg_lt_zero.mpr Real.pi_pos
+  have h := (summable_nat_add_iff
+      (f := fun m : ℕ => (m : ℝ) ^ 2 * Real.exp (-Real.pi) ^ m) 1).mpr
+    (summable_pow_mul_geometric_of_norm_lt_one 2 hr)
+  have hne : Real.exp (-Real.pi) ≠ 0 := Real.exp_ne_zero _
+  refine (h.mul_left (Real.exp (-Real.pi))⁻¹).congr (fun n => ?_)
+  rw [pow_succ]
+  field_simp
+  ring
+
+theorem thetaSD1Const_nonneg : 0 ≤ thetaSD1Const := tsum_nonneg fun _ => by positivity
+
+/-- `phiTailConst ≥ 1`（第 0 项即为 1）。 -/
+theorem one_le_phiTailConst : (1 : ℝ) ≤ phiTailConst := by
+  have h := Summable.le_tsum summable_phiTailConst 0 (fun m _ => by positivity)
+  have h0 : ((0 + 1 : ℕ) : ℝ) ^ 4 * Real.exp (-Real.pi) ^ 0 = 1 := by simp
+  rw [h0] at h
+  exact h
+
+/-- `x ≥ 1` 时 `|S(x)| ≤ Cs·e^{−πx}`。 -/
+theorem abs_thetaS_le {x : ℝ} (hx : 1 ≤ x) :
+    |thetaS x| ≤ thetaSConst * Real.exp (-Real.pi * x) := by
+  have hx0 : 0 < x := by linarith
+  have hs : Summable fun n : ℕ => Real.exp (-Real.pi * x) * Real.exp (-Real.pi) ^ n :=
+    summable_thetaSConst.mul_left _
+  have hST : ∀ n : ℕ, thetaSTerm n x ≤ Real.exp (-Real.pi * x) * Real.exp (-Real.pi) ^ n := by
+    intro n
+    calc thetaSTerm n x ≤ Real.exp (-Real.pi * x) ^ (n + 1) := thetaSTerm_le n hx0
+      _ = Real.exp (-Real.pi * x) * Real.exp (-Real.pi * x) ^ n := by rw [pow_succ]; ring
+      _ ≤ Real.exp (-Real.pi * x) * Real.exp (-Real.pi) ^ n := by
+          apply mul_le_mul_of_nonneg_left _ (Real.exp_nonneg _)
+          apply pow_le_pow_left₀ (Real.exp_nonneg _) _ n
+          apply Real.exp_le_exp.mpr
+          nlinarith [Real.pi_pos]
+  have hn : Summable fun n : ℕ => ‖thetaSTerm n x‖ :=
+    Summable.of_norm_bounded hs (fun n => by
+      simp only [Real.norm_eq_abs, abs_abs]
+      rw [abs_of_nonneg (show (0 : ℝ) ≤ thetaSTerm n x from Real.exp_nonneg _)]
+      exact hST n)
+  calc |thetaS x| = ‖∑' n : ℕ, thetaSTerm n x‖ := (Real.norm_eq_abs _).symm
+    _ ≤ ∑' n : ℕ, ‖thetaSTerm n x‖ := norm_tsum_le_tsum_norm hn
+    _ ≤ ∑' n : ℕ, Real.exp (-Real.pi * x) * Real.exp (-Real.pi) ^ n :=
+        Summable.tsum_le_tsum (fun n => by
+          rw [Real.norm_eq_abs,
+            abs_of_nonneg (show (0 : ℝ) ≤ thetaSTerm n x from Real.exp_nonneg _)]
+          exact hST n) hn hs
+    _ = Real.exp (-Real.pi * x) * thetaSConst := by unfold thetaSConst; rw [tsum_mul_left]
+    _ = thetaSConst * Real.exp (-Real.pi * x) := by ring
+
+/-- `x ≥ 1` 时 `|T'(x)| ≤ 2π·Cs₁·e^{−πx}`。 -/
+theorem abs_thetaTD_le {x : ℝ} (hx : 1 ≤ x) :
+    |thetaTD x| ≤ (2 * Real.pi * thetaSD1Const) * Real.exp (-Real.pi * x) := by
+  have hx0 : 0 < x := by linarith
+  have hs : Summable fun n : ℕ =>
+      Real.pi * Real.exp (-Real.pi * x) * (((n + 1 : ℕ) : ℝ) ^ 2 * Real.exp (-Real.pi) ^ n) :=
+    summable_thetaSD1Const.mul_left _
+  have hST : ∀ n : ℕ, |thetaSDerivTerm n x| ≤ Real.pi * Real.exp (-Real.pi * x)
+      * (((n + 1 : ℕ) : ℝ) ^ 2 * Real.exp (-Real.pi) ^ n) := by
+    intro n
+    have h1 : Real.exp (-Real.pi * ((n : ℝ) + 1) ^ 2 * x)
+        ≤ Real.exp (-Real.pi * x) * Real.exp (-Real.pi) ^ n := by
+      calc Real.exp (-Real.pi * ((n : ℝ) + 1) ^ 2 * x) = thetaSTerm n x := rfl
+        _ ≤ Real.exp (-Real.pi * x) ^ (n + 1) := thetaSTerm_le n hx0
+        _ = Real.exp (-Real.pi * x) * Real.exp (-Real.pi * x) ^ n := by rw [pow_succ]; ring
+        _ ≤ Real.exp (-Real.pi * x) * Real.exp (-Real.pi) ^ n := by
+            apply mul_le_mul_of_nonneg_left _ (Real.exp_nonneg _)
+            apply pow_le_pow_left₀ (Real.exp_nonneg _) _ n
+            apply Real.exp_le_exp.mpr
+            nlinarith [Real.pi_pos]
+    have hneg : -Real.pi * ((n : ℝ) + 1) ^ 2 < 0 := by
+      have hp : (0 : ℝ) < Real.pi * ((n : ℝ) + 1) ^ 2 := by positivity
+      linarith
+    unfold thetaSDerivTerm
+    rw [abs_mul, abs_of_nonneg (Real.exp_nonneg _), abs_of_neg hneg]
+    calc Real.exp (-Real.pi * ((n : ℝ) + 1) ^ 2 * x) * -(-Real.pi * ((n : ℝ) + 1) ^ 2)
+        = (Real.pi * ((n : ℝ) + 1) ^ 2) * Real.exp (-Real.pi * ((n : ℝ) + 1) ^ 2 * x) := by ring
+      _ ≤ (Real.pi * ((n : ℝ) + 1) ^ 2)
+          * (Real.exp (-Real.pi * x) * Real.exp (-Real.pi) ^ n) :=
+          mul_le_mul_of_nonneg_left h1 (by positivity)
+      _ = Real.pi * Real.exp (-Real.pi * x)
+          * (((n + 1 : ℕ) : ℝ) ^ 2 * Real.exp (-Real.pi) ^ n) := by push_cast; ring
+  have hn : Summable fun n : ℕ => ‖thetaSDerivTerm n x‖ :=
+    Summable.of_norm_bounded hs (fun n => by
+      simp only [Real.norm_eq_abs, abs_abs]
+      exact hST n)
+  have h2 : ‖(2 : ℝ)‖ = 2 := by rw [Real.norm_eq_abs]; norm_num
+  calc |thetaTD x| = ‖thetaTD x‖ := (Real.norm_eq_abs _).symm
+    _ = 2 * ‖∑' n : ℕ, thetaSDerivTerm n x‖ := by unfold thetaTD; rw [norm_mul, h2]
+    _ ≤ 2 * ∑' n : ℕ, ‖thetaSDerivTerm n x‖ :=
+        mul_le_mul_of_nonneg_left (norm_tsum_le_tsum_norm hn) (by norm_num)
+    _ ≤ 2 * ∑' n : ℕ, Real.pi * Real.exp (-Real.pi * x)
+          * (((n + 1 : ℕ) : ℝ) ^ 2 * Real.exp (-Real.pi) ^ n) :=
+        mul_le_mul_of_nonneg_left (Summable.tsum_le_tsum (fun n => by
+          rw [Real.norm_eq_abs]; exact hST n) hn hs) (by norm_num)
+    _ = 2 * (Real.pi * Real.exp (-Real.pi * x) * thetaSD1Const) := by
+        unfold thetaSD1Const; rw [tsum_mul_left]
+    _ = (2 * Real.pi * thetaSD1Const) * Real.exp (-Real.pi * x) := by ring
+
+/-- `x ≥ 1` 时 `|T''(x)| ≤ 2π²·K₁·e^{−πx}`。 -/
+theorem abs_thetaTDD_le {x : ℝ} (hx : 1 ≤ x) :
+    |thetaTDD x| ≤ (2 * Real.pi ^ 2 * phiTailConst) * Real.exp (-Real.pi * x) := by
+  have hx0 : 0 < x := by linarith
+  have hs : Summable fun n : ℕ =>
+      Real.pi ^ 2 * Real.exp (-Real.pi * x)
+        * (((n + 1 : ℕ) : ℝ) ^ 4 * Real.exp (-Real.pi) ^ n) :=
+    summable_phiTailConst.mul_left _
+  have hST : ∀ n : ℕ, |thetaSDeriv2Term n x| ≤ Real.pi ^ 2 * Real.exp (-Real.pi * x)
+      * (((n + 1 : ℕ) : ℝ) ^ 4 * Real.exp (-Real.pi) ^ n) := by
+    intro n
+    have h1 : Real.exp (-Real.pi * ((n : ℝ) + 1) ^ 2 * x)
+        ≤ Real.exp (-Real.pi * x) * Real.exp (-Real.pi) ^ n := by
+      calc Real.exp (-Real.pi * ((n : ℝ) + 1) ^ 2 * x) = thetaSTerm n x := rfl
+        _ ≤ Real.exp (-Real.pi * x) ^ (n + 1) := thetaSTerm_le n hx0
+        _ = Real.exp (-Real.pi * x) * Real.exp (-Real.pi * x) ^ n := by rw [pow_succ]; ring
+        _ ≤ Real.exp (-Real.pi * x) * Real.exp (-Real.pi) ^ n := by
+            apply mul_le_mul_of_nonneg_left _ (Real.exp_nonneg _)
+            apply pow_le_pow_left₀ (Real.exp_nonneg _) _ n
+            apply Real.exp_le_exp.mpr
+            nlinarith [Real.pi_pos]
+    have hneg : -Real.pi * ((n : ℝ) + 1) ^ 2 < 0 := by
+      have hp : (0 : ℝ) < Real.pi * ((n : ℝ) + 1) ^ 2 := by positivity
+      linarith
+    unfold thetaSDeriv2Term
+    rw [abs_mul, abs_mul, abs_of_nonneg (Real.exp_nonneg _), abs_of_neg hneg]
+    calc Real.exp (-Real.pi * ((n : ℝ) + 1) ^ 2 * x) * -(-Real.pi * ((n : ℝ) + 1) ^ 2)
+          * -(-Real.pi * ((n : ℝ) + 1) ^ 2)
+        = (Real.pi ^ 2 * ((n : ℝ) + 1) ^ 4) * Real.exp (-Real.pi * ((n : ℝ) + 1) ^ 2 * x) := by
+          ring
+      _ ≤ (Real.pi ^ 2 * ((n : ℝ) + 1) ^ 4)
+          * (Real.exp (-Real.pi * x) * Real.exp (-Real.pi) ^ n) :=
+          mul_le_mul_of_nonneg_left h1 (by positivity)
+      _ = Real.pi ^ 2 * Real.exp (-Real.pi * x)
+          * (((n + 1 : ℕ) : ℝ) ^ 4 * Real.exp (-Real.pi) ^ n) := by push_cast; ring
+  have hn : Summable fun n : ℕ => ‖thetaSDeriv2Term n x‖ :=
+    Summable.of_norm_bounded hs (fun n => by
+      simp only [Real.norm_eq_abs, abs_abs]
+      exact hST n)
+  have h2 : ‖(2 : ℝ)‖ = 2 := by rw [Real.norm_eq_abs]; norm_num
+  calc |thetaTDD x| = ‖thetaTDD x‖ := (Real.norm_eq_abs _).symm
+    _ = 2 * ‖∑' n : ℕ, thetaSDeriv2Term n x‖ := by unfold thetaTDD; rw [norm_mul, h2]
+    _ ≤ 2 * ∑' n : ℕ, ‖thetaSDeriv2Term n x‖ :=
+        mul_le_mul_of_nonneg_left (norm_tsum_le_tsum_norm hn) (by norm_num)
+    _ ≤ 2 * ∑' n : ℕ, Real.pi ^ 2 * Real.exp (-Real.pi * x)
+          * (((n + 1 : ℕ) : ℝ) ^ 4 * Real.exp (-Real.pi) ^ n) :=
+        mul_le_mul_of_nonneg_left (Summable.tsum_le_tsum (fun n => by
+          rw [Real.norm_eq_abs]; exact hST n) hn hs) (by norm_num)
+    _ = 2 * (Real.pi ^ 2 * Real.exp (-Real.pi * x) * phiTailConst) := by
+        unfold phiTailConst; rw [tsum_mul_left]
+    _ = (2 * Real.pi ^ 2 * phiTailConst) * Real.exp (-Real.pi * x) := by ring
+
 end DeBruijnNewman
 end RiemannExplorer
