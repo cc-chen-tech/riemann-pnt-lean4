@@ -485,6 +485,66 @@ theorem mem_regularizedCarlsonFactorDiskZeroSupport_iff_zero
       rfl
     exact (hz_analytic.analyticOrderAt_eq_zero.mp horderZero) hzero
 
+/-- Any upper bound for the total divisor mass gives a concrete lower bound
+for the good-circle separation scale. -/
+theorem regularizedCarlsonFactorDiskSeparation_lower_of_mass_le
+    {X : ℕ} {T L : ℝ}
+    (hmass : regularizedCarlsonFactorDiskZeroMass X T ≤ L) :
+    0 < 1 / (128 * (L + 1)) ∧
+      1 / (128 * (L + 1)) ≤
+        regularizedCarlsonFactorDiskSeparation X T := by
+  classical
+  let c : ℂ := (4 : ℂ) + I * (T + 1 / 2)
+  let b : ℝ := 123 / 32
+  let D := MeromorphicOn.divisor (regularizedCarlsonZeroDetector X)
+    (Metric.closedBall c b)
+  let zeros := regularizedCarlsonFactorDiskZeroSupport X T
+  let radialCard : ℝ :=
+    (((zeros.image (dist c)).card : ℕ) : ℝ)
+  have hanalyticFactor : AnalyticOnNhd ℂ
+      (regularizedCarlsonZeroDetector X) (Metric.closedBall c b) := by
+    apply
+      (analyticOnNhd_regularizedCarlsonZeroDetector_fixedJensenOuterDisk
+        X T).mono
+    exact Metric.closedBall_subset_closedBall (by norm_num [b])
+  have hDnonneg : 0 ≤ D := hanalyticFactor.divisor_nonneg
+  have hmassNonneg : 0 ≤ regularizedCarlsonFactorDiskZeroMass X T := by
+    change 0 ≤ ∑ᶠ u, (D u : ℝ)
+    apply finsum_nonneg
+    intro u
+    exact_mod_cast hDnonneg u
+  have hLnonneg : 0 ≤ L := hmassNonneg.trans hmass
+  have hsupportMass : (zeros.card : ℝ) ≤
+      regularizedCarlsonFactorDiskZeroMass X T := by
+    have h := card_divisor_support_le_finsum_mass hanalyticFactor
+    simpa [zeros, D, c, b, regularizedCarlsonFactorDiskZeroSupport,
+      regularizedCarlsonFactorDiskZeroMass] using h
+  have hradialNat : (zeros.image (dist c)).card ≤ zeros.card :=
+    Finset.card_image_le
+  have hradialSupport : radialCard ≤ (zeros.card : ℝ) := by
+    dsimp [radialCard]
+    exact_mod_cast hradialNat
+  have hradialL : radialCard ≤ L :=
+    hradialSupport.trans (hsupportMass.trans hmass)
+  have hsmallDenPos : 0 < 128 * (radialCard + 1) := by positivity
+  have hlargeDenPos : 0 < 128 * (L + 1) := by positivity
+  have hdenLe : 128 * (radialCard + 1) ≤ 128 * (L + 1) := by
+    nlinarith
+  have hrecip : 1 / (128 * (L + 1)) ≤
+      1 / (128 * (radialCard + 1)) :=
+    one_div_le_one_div_of_le hsmallDenPos hdenLe
+  have hsepEq : regularizedCarlsonFactorDiskSeparation X T =
+      1 / (128 * (radialCard + 1)) := by
+    dsimp only [regularizedCarlsonFactorDiskSeparation, zeros, c]
+    change ((122 / 32 : ℝ) - 121 / 32) /
+        (4 * (radialCard + 1)) = 1 / (128 * (radialCard + 1))
+    have hk : radialCard + 1 ≠ 0 := ne_of_gt (by positivity)
+    field_simp [hk]
+    ring
+  refine ⟨one_div_pos.mpr hlargeDenPos, ?_⟩
+  rw [hsepEq]
+  exact hrecip
+
 /-- A circle strictly inside the factorization disk avoids every detector
 zero there, with a quantitative separation from its finite zero support. -/
 theorem exists_regularizedCarlsonZeroDetector_goodFactorCircle

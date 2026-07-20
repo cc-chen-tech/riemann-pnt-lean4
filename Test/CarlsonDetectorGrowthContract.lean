@@ -118,6 +118,13 @@ example {X : ℕ} (hX : 1 ≤ X) {T : ℝ} {z : ℂ}
       regularizedCarlsonZeroDetector X z = 0 :=
   mem_regularizedCarlsonFactorDiskZeroSupport_iff_zero hX hz
 
+example {X : ℕ} {T L : ℝ}
+    (hmass : regularizedCarlsonFactorDiskZeroMass X T ≤ L) :
+    0 < 1 / (128 * (L + 1)) ∧
+      1 / (128 * (L + 1)) ≤
+        regularizedCarlsonFactorDiskSeparation X T :=
+  regularizedCarlsonFactorDiskSeparation_lower_of_mass_le hmass
+
 example {X : ℕ} (hX : 1 ≤ X) {T : ℝ} :
     ∃ r : ℝ,
       0 < r ∧ r ∈ Set.Icc (121 / 32 : ℝ) (122 / 32 : ℝ) ∧
@@ -194,6 +201,7 @@ example : ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X → ∀ {T : ℝ}, 5 �
 #print axioms exists_regularizedCarlsonFactorZeroMass_le_logPolynomial
 #print axioms exists_regularizedCarlsonZeroDetector_fixedJensenFactor_explicit_center_lower
 #print axioms mem_regularizedCarlsonFactorDiskZeroSupport_iff_zero
+#print axioms regularizedCarlsonFactorDiskSeparation_lower_of_mass_le
 #print axioms exists_regularizedCarlsonZeroDetector_goodFactorCircle
 #print axioms exists_regularizedCarlsonZeroDetector_goodFactor_logDeriv_le
 
