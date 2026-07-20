@@ -95,3 +95,5 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_zero_eq_integral
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_zero_eq_completedZeta
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_zero_eq_zero_iff
+#print axioms RiemannExplorer.DeBruijnNewman.allZerosReal_zero_iff_forall_completedZeta
+#print axioms RiemannExplorer.DeBruijnNewman.completedZeta_eq_of_ne_zero_ne_one

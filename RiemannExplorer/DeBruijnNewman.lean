@@ -3457,5 +3457,22 @@ theorem deBruijnNewmanH_zero_eq_zero_iff (z : ℂ) :
   · intro h
     rw [h, mul_zero]
 
+/-! ## Phase 2：`AllZerosReal` / `Λ` 的第一批推论（定义见 1713–1721 行） -/
+
+/-- `t = 0` 切片的零点对应（桥接引理的谓词形式）。 -/
+theorem allZerosReal_zero_iff_forall_completedZeta :
+    AllZerosReal 0 ↔ ∀ z : ℂ,
+      RiemannHypothesis.completedZeta (1 / 2 + Complex.I * (z / 2)) = 0 → z.im = 0 :=
+  forall_congr' fun z => imp_congr (deBruijnNewmanH_zero_eq_zero_iff z) Iff.rfl
+
+/-- `ξ` 的乘积形式：`completedZeta s = (1/2)·s·(s−1)·Λ(s)`（`s ∉ {0, 1}`）。 -/
+theorem completedZeta_eq_of_ne_zero_ne_one (s : ℂ) (h0 : s ≠ 0) (h1 : s ≠ 1) :
+    RiemannHypothesis.completedZeta s = (1 / 2) * s * (s - 1) * completedRiemannZeta s := by
+  have hs1 : (1 - s) ≠ 0 := sub_ne_zero.mpr h1.symm
+  unfold RiemannHypothesis.completedZeta
+  rw [completedRiemannZeta_eq s]
+  field_simp [h0, hs1]
+  ring
+
 end DeBruijnNewman
 end RiemannExplorer
