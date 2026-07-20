@@ -3312,5 +3312,71 @@ theorem sixteen_integral_cexp_phi_eq (z : ℂ) :
         ring]
   linear_combination hW + hM + hb - ((1 + z * z) / 2) * hAB
 
+/-- `u ↦ e^{wu}·Φ(u)` 在 `(0, ∞)` 上可积（任意 `w : ℂ`，双指数衰减吸收线性指数）。 -/
+theorem integrableOn_cexp_mul_phi (w : ℂ) :
+    MeasureTheory.IntegrableOn (fun u : ℝ => Complex.exp (w * (u : ℂ)) * (phi u : ℂ))
+      (Set.Ioi 0) MeasureTheory.volume := by
+  have hcont : Continuous (fun u : ℝ => Complex.exp (w * (u : ℂ)) * (phi u : ℂ)) :=
+    (Complex.continuous_exp.comp (continuous_const.mul Complex.continuous_ofReal)).mul
+      (Complex.continuous_ofReal.comp continuous_phi)
+  apply MeasureTheory.Integrable.mono' (integrableOn_heatDominatingFun 0 |w.re| (abs_nonneg _))
+  · exact hcont.continuousOn.aestronglyMeasurable measurableSet_Ioi
+  · filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_Ioi] with u hu
+    have hu0 : 0 ≤ u := le_of_lt hu
+    have h1 : ‖Complex.exp (w * (u : ℂ)) * (phi u : ℂ)‖
+        = Real.exp ((w * (u : ℂ)).re) * |phi u| := by
+      rw [norm_mul, Complex.norm_exp,
+        show ‖(phi u : ℂ)‖ = |phi u| from RCLike.norm_ofReal _]
+    rw [h1]
+    have hre_eq : (w * (u : ℂ)).re = w.re * u := by simp [Complex.mul_re]
+    have hre : (w * (u : ℂ)).re ≤ |w.re| * u := by
+      rw [hre_eq]
+      exact mul_le_mul_of_nonneg_right (le_abs_self _) hu0
+    calc Real.exp ((w * (u : ℂ)).re) * |phi u|
+        ≤ Real.exp (|w.re| * u) * ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+            * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))) :=
+          mul_le_mul (Real.exp_le_exp.mpr hre) (abs_phi_le u hu0) (abs_nonneg _)
+            (Real.exp_nonneg _)
+      _ = heatDominatingFun 0 |w.re| u := by
+          have e1 : Real.exp (|w.re| * u)
+              * ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+                * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u))))
+            = (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+              * (Real.exp (|w.re| * u) * Real.exp (9 * u))
+              * Real.exp (-(Real.pi * Real.exp (4 * u))) := by ring
+          rw [e1, ← Real.exp_add,
+            show |w.re| * u + 9 * u = 0 * u ^ 2 + (9 + |w.re|) * u from by ring]
+          rfl
+
+/-- parity 换元：`∫₋∞⁰ e^{izu}Φ = ∫₀^∞ e^{−izu}Φ`（`Φ` 偶 + 负号替换）。 -/
+theorem integral_Iic_cexp_iz_phi (z : ℂ) :
+    (∫ u in Set.Iic (0 : ℝ), Complex.exp (Complex.I * z * (u : ℂ)) * (phi u : ℂ))
+      = ∫ u in Set.Ioi (0 : ℝ), Complex.exp ((-(Complex.I * z)) * (u : ℂ)) * (phi u : ℂ) := by
+  have h := integral_comp_neg_Iic (0 : ℝ)
+    (fun u : ℝ => Complex.exp ((-(Complex.I * z)) * (u : ℂ)) * (phi u : ℂ))
+  rw [neg_zero] at h
+  have hcongr : (∫ u in Set.Iic (0 : ℝ), Complex.exp (Complex.I * z * (u : ℂ)) * (phi u : ℂ))
+      = ∫ u in Set.Iic (0 : ℝ), Complex.exp ((-(Complex.I * z)) * ((-u : ℝ) : ℂ))
+          * (phi (-u) : ℂ) := by
+    apply MeasureTheory.setIntegral_congr_fun measurableSet_Iic
+    intro u _
+    show Complex.exp (Complex.I * z * (u : ℂ)) * (phi u : ℂ)
+      = Complex.exp ((-(Complex.I * z)) * ((-u : ℝ) : ℂ)) * (phi (-u) : ℂ)
+    rw [phi_even u, Complex.ofReal_neg,
+      show (-(Complex.I * z)) * -(u : ℂ) = Complex.I * z * (u : ℂ) from by ring]
+  exact hcongr.trans h
+
+/-- `H₀(z)` 的被积函数在 `t = 0` 时化简为 `Φ(u)·cos(zu)`。 -/
+theorem deBruijnNewmanH_zero_eq_integral (z : ℂ) :
+    deBruijnNewmanH 0 z
+      = ∫ u in Set.Ioi (0 : ℝ), (phi u : ℂ) * Complex.cos (z * (u : ℂ)) := by
+  show (∫ u in Set.Ioi (0 : ℝ), heatIntegrand 0 z u)
+    = ∫ u in Set.Ioi (0 : ℝ), (phi u : ℂ) * Complex.cos (z * (u : ℂ))
+  apply MeasureTheory.setIntegral_congr_fun measurableSet_Ioi
+  intro u _
+  show heatIntegrand 0 z u = (phi u : ℂ) * Complex.cos (z * (u : ℂ))
+  unfold heatIntegrand
+  rw [show (0 : ℝ) * u ^ 2 = 0 from by ring, Real.exp_zero, one_mul]
+
 end DeBruijnNewman
 end RiemannExplorer

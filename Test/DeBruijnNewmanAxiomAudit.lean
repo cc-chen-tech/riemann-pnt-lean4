@@ -90,3 +90,6 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.integral_Iic_cexp_thetaNWD
 #print axioms RiemannExplorer.DeBruijnNewman.cexp_mul_thetaNWD_eq
 #print axioms RiemannExplorer.DeBruijnNewman.sixteen_integral_cexp_phi_eq
+#print axioms RiemannExplorer.DeBruijnNewman.integrableOn_cexp_mul_phi
+#print axioms RiemannExplorer.DeBruijnNewman.integral_Iic_cexp_iz_phi
+#print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_zero_eq_integral
