@@ -1,0 +1,11 @@
+import ZeroFreeRegion.VinogradovKorobov.VinogradovIntegerSelector
+
+open ZeroFreeRegion.VinogradovKorobov
+
+#check vinogradovIntPowerSumMod
+#check isVinogradovSolutionIntMod_iff_powerSumMod
+#check vinogradovIntSolutionSelector
+#check vinogradovIntSolutionSelector_eq_indicator
+
+#print axioms isVinogradovSolutionIntMod_iff_powerSumMod
+#print axioms vinogradovIntSolutionSelector_eq_indicator
