@@ -1,4 +1,5 @@
 import HardyTheorem.SelbergShortCollectedArithmetic
+import MathlibAux.SlidingExponentialCoefficientBound
 
 namespace HardyTheorem
 
@@ -46,5 +47,60 @@ theorem selbergShortDirichletCollectedCoeff_eq_zero_of_topRange
     rw [hpSecondEq, selbergMoebiusCoeff_self_eq_zero hX, mul_zero]
   rw [hconv]
   simp
+
+/-- The sliding interval transform also vanishes throughout the ineffective
+top range. -/
+theorem sliding_selbergShortDirichletCollectedCoeff_eq_zero_of_topRange
+    {N X k : ℕ} (hX : 2 ≤ X)
+    (hk : N * X * (X - 1) < k) (H : ℝ) :
+    MathlibAux.slidingExponentialCoefficient H
+        (selbergShortDirichletCollectedCoeff N X)
+        selbergShortDirichletCollectedFrequency k = 0 := by
+  rw [MathlibAux.slidingExponentialCoefficient,
+    selbergShortDirichletCollectedCoeff_eq_zero_of_topRange hX hk,
+    zero_mul]
+
+/-- The complete transformed square energy is unchanged when the formal
+product support is shortened to the effective endpoint `N * X * (X - 1)`. -/
+theorem sum_normSq_sliding_selbergShortDirichletCollectedCoeff_eq_effectiveSupport
+    {N X : ℕ} (hN : 1 ≤ N) (hX : 2 ≤ X) (H : ℝ) :
+    (∑ k ∈ Finset.Ioc 1 (N * X * X),
+        Complex.normSq
+          (MathlibAux.slidingExponentialCoefficient H
+            (selbergShortDirichletCollectedCoeff N X)
+            selbergShortDirichletCollectedFrequency k)) =
+      ∑ k ∈ Finset.Ioc 1 (N * X * (X - 1)),
+        Complex.normSq
+          (MathlibAux.slidingExponentialCoefficient H
+            (selbergShortDirichletCollectedCoeff N X)
+            selbergShortDirichletCollectedFrequency k) := by
+  have honeX : 1 ≤ X := by omega
+  have honePred : 1 ≤ X - 1 := by omega
+  have honeEffective : 1 ≤ N * X * (X - 1) :=
+    Nat.mul_pos (Nat.mul_pos hN honeX) honePred
+  have heffectiveFormal : N * X * (X - 1) ≤ N * X * X :=
+    Nat.mul_le_mul_left (N * X) (Nat.sub_le X 1)
+  have hsplit :
+      Finset.Ioc 1 (N * X * (X - 1)) ∪
+          Finset.Ioc (N * X * (X - 1)) (N * X * X) =
+        Finset.Ioc 1 (N * X * X) :=
+    Finset.Ioc_union_Ioc_eq_Ioc honeEffective heffectiveFormal
+  have hdisjoint :
+      Disjoint (Finset.Ioc 1 (N * X * (X - 1)))
+        (Finset.Ioc (N * X * (X - 1)) (N * X * X)) :=
+    Finset.Ioc_disjoint_Ioc_of_le le_rfl
+  rw [← hsplit, Finset.sum_union hdisjoint]
+  have htop :
+      (∑ k ∈ Finset.Ioc (N * X * (X - 1)) (N * X * X),
+        Complex.normSq
+          (MathlibAux.slidingExponentialCoefficient H
+            (selbergShortDirichletCollectedCoeff N X)
+            selbergShortDirichletCollectedFrequency k)) = 0 := by
+    apply Finset.sum_eq_zero
+    intro k hk
+    rw [sliding_selbergShortDirichletCollectedCoeff_eq_zero_of_topRange
+      hX (Finset.mem_Ioc.mp hk).1 H]
+    simp
+  rw [htop, add_zero]
 
 end HardyTheorem

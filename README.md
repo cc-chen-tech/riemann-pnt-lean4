@@ -1441,7 +1441,9 @@ a global divisor-count bound.  The remaining hard arithmetic input is a
 uniform estimate for this logarithmically weighted fiber-energy sum.
 The linear cutoff also vanishes exactly at its endpoint, so every collected
 coefficient above `N * X * (X - 1)` is now proved to be zero; `N * X * X` is
-only the formal product support, not the effective support.
+only the formal product support, not the effective support.  The corresponding
+transformed square-energy sums are proved equal after replacing the formal
+endpoint by this effective endpoint.
 
 The three remaining open analytic directions are:
 
