@@ -43,17 +43,19 @@ example {x : ℝ} (hx : x ≤ 0) :
     carneiroLittmannDensity x ≤ 0 :=
   carneiroLittmannDensity_nonpositive hx
 
+example : Integrable carneiroLittmannDensity :=
+  integrable_carneiroLittmannDensity
+
 noncomputable example (x : ℝ) : ℝ := carneiroLittmannTailProfile x
 
 example
-    (hdensity : Integrable carneiroLittmannDensity)
     (hprofile : Integrable carneiroLittmannTailProfile)
     (hmass : ∫ x, carneiroLittmannTailProfile x = 2)
     (htail : ∀ xi : ℝ, 2 * Real.pi ≤ |xi| →
       fourierKernel carneiroLittmannTailProfile xi =
         (-2 * Complex.I) / xi) :
     MonotoneExtremalKernelCertificate carneiroLittmannTailProfile :=
-  carneiroLittmannTailProfile_certificate hdensity hprofile hmass htail
+  carneiroLittmannTailProfile_certificate hprofile hmass htail
 
 #print axioms signedRadialTailProfile_nonnegative
 #print axioms signedRadialTailProfile_antitoneOn_nonnegative
@@ -61,6 +63,7 @@ example
 #print axioms signedRadialTailProfile_dilation_antitone
 #print axioms carneiroLittmannDensity_nonnegative
 #print axioms carneiroLittmannDensity_nonpositive
+#print axioms integrable_carneiroLittmannDensity
 #print axioms carneiroLittmannTailProfile_certificate
 
 end DirichletPolynomial
