@@ -170,6 +170,41 @@ theorem paleyZygmund_measure_lower_bound
   exact (div_le_iff₀ hsecond).2
     (paleyZygmund_mul_secondMoment_le_measure hs hμs hμs_pos hf hf_nonneg hf_sq hθ0 hθ1)
 
+/-- Complementary form of Paley--Zygmund: the part of `s` where `f` is at
+most `θ` times its mean has measure bounded by the interval measure minus the
+moment ratio.  This is the form needed to control small-mass bad starts. -/
+theorem paleyZygmund_smallMass_measure_upper_bound
+    {α : Type*} [MeasurableSpace α] {μ : Measure α}
+    {s : Set α} {f : α → ℝ} {θ : ℝ}
+    (hs : MeasurableSet s) (hμs : μ s ≠ ⊤) (hμs_pos : 0 < μ.real s)
+    (hf : Measurable f) (hf_nonneg : ∀ x ∈ s, 0 ≤ f x)
+    (hf_sq : IntegrableOn (fun x => f x ^ 2) s μ)
+    (hsecond : 0 < ∫ x in s, f x ^ 2 ∂μ)
+    (hθ0 : 0 ≤ θ) (hθ1 : θ < 1) :
+    μ.real {x ∈ s |
+        f x ≤ θ * ((∫ y in s, f y ∂μ) / μ.real s)} ≤
+      μ.real s -
+        ((1 - θ) ^ 2 * (∫ x in s, f x ∂μ) ^ 2 /
+          (∫ x in s, f x ^ 2 ∂μ)) := by
+  let good : Set α :=
+    {x ∈ s | θ * ((∫ y in s, f y ∂μ) / μ.real s) < f x}
+  have hgood : MeasurableSet good := hs.inter (hf measurableSet_Ioi)
+  have hgood_subset : good ⊆ s := fun _ hx => hx.1
+  have hsmall_eq :
+      {x ∈ s | f x ≤ θ * ((∫ y in s, f y ∂μ) / μ.real s)} =
+        s \ good := by
+    ext x
+    constructor
+    · intro hx
+      exact ⟨hx.1, fun hg => (not_lt_of_ge hx.2) hg.2⟩
+    · intro hx
+      exact ⟨hx.1, le_of_not_gt fun hlt => hx.2 ⟨hx.1, hlt⟩⟩
+  have hgood_lower :=
+    paleyZygmund_measure_lower_bound hs hμs hμs_pos hf hf_nonneg hf_sq
+      hsecond hθ0 hθ1
+  rw [hsmall_eq, measureReal_diff hgood_subset hgood hμs]
+  exact tsub_le_tsub_left hgood_lower _
+
 /-- Second/fourth-moment form of Paley--Zygmund.  This is the form used when
 the nonnegative mass is a square, for example the squared norm of a mollified
 Dirichlet polynomial. -/

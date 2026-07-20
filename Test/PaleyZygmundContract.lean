@@ -7,11 +7,13 @@ namespace MathlibAux
 #check sq_setIntegral_le_measureReal_mul_setIntegral_sq
 #check paleyZygmund_mul_secondMoment_le_measure
 #check paleyZygmund_measure_lower_bound
+#check paleyZygmund_smallMass_measure_upper_bound
 #check paleyZygmund_sq_measure_lower_bound
 
 #print axioms sq_setIntegral_le_measureReal_mul_setIntegral_sq
 #print axioms paleyZygmund_mul_secondMoment_le_measure
 #print axioms paleyZygmund_measure_lower_bound
+#print axioms paleyZygmund_smallMass_measure_upper_bound
 #print axioms paleyZygmund_sq_measure_lower_bound
 
 example {α : Type*} [MeasurableSpace α] {μ : Measure α}

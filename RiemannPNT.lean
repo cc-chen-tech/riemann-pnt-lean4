@@ -55,9 +55,14 @@ import HardyTheorem.ShortIntervalSignChangeMeasure
 import HardyTheorem.SelbergMollifier
 import HardyTheorem.SelbergMollifierMeanSquare
 import HardyTheorem.SelbergMollifiedDirichlet
+import HardyTheorem.SelbergMollifiedCoefficientArithmetic
+import HardyTheorem.SelbergMollifiedCoefficientEnergy
+import HardyTheorem.SelbergGoodWindowMeasure
+import HardyTheorem.SelbergSignedBadSet
 import MathlibAux.SlidingIntervalCorrelation
 import MathlibAux.SlidingWindowBadSet
 import MathlibAux.PaleyZygmund
+import MathlibAux.ExponentialPolynomialFourthMoment
 import MathlibAux.DiscreteHilbertInequality
 import MathlibAux.DyadicLogHilbert
 import MathlibAux.DyadicPartition

@@ -1346,6 +1346,24 @@ bound for its collected coefficients, sliding-window Markov bounds, and a
 Paley--Zygmund second/fourth-moment measure lemma.  These are proved tools;
 the zeta-specific shrinking-window moment estimates needed for the final
 `T * log T` conclusion remain open.
+In the complete divisor range the collected coefficient is now evaluated
+exactly: it is `1` at the constant term and `vonMangoldt k / log X` for
+`1 < k <= min N X`.  A collision-safe fourth-moment bound for finite
+exponential polynomials is also available by collecting equal pair
+frequencies before applying the second-moment estimate.
+After dividing by the critical-line square root, the complete-range
+coefficient energy is bounded termwise by `1 / k` and in total by
+`1 + log X`.
+The final packing bridge has also been specialized to two explicit bad-set
+bounds: starts with too little mollified absolute mass and starts with too
+large a mollified signed integral must each have volume at most `T / 24`.
+Proving those two bounds uniformly for windows of length `A / log T` is the
+remaining analytic core of the Selberg target.
+The excessive-signed-integral half has now been reduced further: an interval
+Cauchy--Schwarz argument and sliding-window averaging prove the explicit
+bound `volume <= H^2 * M / eta^2` from a single global `L2` bound `M` for the
+mollified Hardy function on the enlarged interval.  The needed zeta-specific
+`L2` estimate and the small-absolute-mass estimate are not yet proved.
 
 The three remaining open analytic directions are:
 
