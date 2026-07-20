@@ -2739,5 +2739,240 @@ theorem integrableOn_cexp_thetaMDD (a : ℂ) :
           rw [e2, e6, e10]
           ring
 
+/-!
+### Phase 1d(v-1)：核心恒等式与四条半轴分部积分
+
+`16Φ(u) = e^u(W''+2W')`，`M''+2M' = W''+2W'`（奇异项抵消）；
+对 `F(u) = e^{au}·↑g(u)`（`g = W, NW, M, NM`）用半轴 FTC
+`integral_Ioi/Iic_of_hasDerivAt_of_tendsto'` 得四条 IBP 方程，
+边界项分别为 `−W(0), −NW(0), M(0), NM(0)`。
+-/
+
+/-- `16Φ(u) = e^u·(W''(u) + 2W'(u))`（`G` 结构恒等式的指数坐标形态）。 -/
+theorem sixteen_phi_eq (u : ℝ) :
+    16 * phi u = Real.exp u * (thetaWDD u + 2 * thetaWD u) := by
+  rw [phi_eq_exp_mul_phiKernelG, phiKernelG_eq (Real.exp_pos (4 * u))]
+  unfold thetaWDD thetaWD
+  have e5 : Real.exp (5 * u) = Real.exp u * Real.exp (4 * u) := by
+    rw [← Real.exp_add]; congr 1; ring
+  have e8 : Real.exp (8 * u) = Real.exp (4 * u) * Real.exp (4 * u) := by
+    rw [← Real.exp_add]; congr 1; ring
+  rw [e5, e8]
+  ring
+
+/-- `e^{−2u}` 奇异项精确抵消：`M'' + 2M' = W'' + 2W'`。 -/
+theorem thetaMDD_add_two_thetaMD_eq (u : ℝ) :
+    thetaMDD u + 2 * thetaMD u = thetaWDD u + 2 * thetaWD u := by
+  unfold thetaMDD thetaMD
+  ring
+
+/-- `NW := W' + 2W`（W 侧 IBP 原函数核）。 -/
+noncomputable def thetaNW (u : ℝ) : ℝ := thetaWD u + 2 * thetaW u
+
+/-- `NW' = W'' + 2W'`。 -/
+noncomputable def thetaNWD (u : ℝ) : ℝ := thetaWDD u + 2 * thetaWD u
+
+/-- `NM := M' + 2M`（M 侧 IBP 原函数核）。 -/
+noncomputable def thetaNM (u : ℝ) : ℝ := thetaMD u + 2 * thetaM u
+
+/-- `NM' = M'' + 2M'`。 -/
+noncomputable def thetaNMD (u : ℝ) : ℝ := thetaMDD u + 2 * thetaMD u
+
+theorem hasDerivAt_thetaNW (u : ℝ) : HasDerivAt thetaNW (thetaNWD u) u :=
+  (hasDerivAt_thetaWD u).add ((hasDerivAt_thetaW u).const_mul 2)
+
+theorem hasDerivAt_thetaNM (u : ℝ) : HasDerivAt thetaNM (thetaNMD u) u :=
+  (hasDerivAt_thetaMD u).add ((hasDerivAt_thetaM u).const_mul 2)
+
+/-- `u ↦ e^{au}·↑g(u)` 的导数（`g` 实值可导）。 -/
+theorem hasDerivAt_cexp_mul_ofReal (a : ℂ) {g : ℝ → ℝ} {g' : ℝ} {u : ℝ}
+    (hg : HasDerivAt g g' u) :
+    HasDerivAt (fun u : ℝ => Complex.exp (a * (u : ℂ)) * (g u : ℂ))
+      (Complex.exp (a * (u : ℂ)) * (a * (g u : ℂ) + (g' : ℂ))) u := by
+  have h1 : HasDerivAt (fun u : ℝ => (u : ℂ)) ((1 : ℝ) : ℂ) u :=
+    (hasDerivAt_id u).ofReal_comp
+  have h2 : HasDerivAt (fun u : ℝ => a * (u : ℂ)) a u := by
+    have h := h1.const_mul a
+    rwa [Complex.ofReal_one, mul_one] at h
+  have h := h2.cexp.mul hg.ofReal_comp
+  rw [show Complex.exp (a * (u : ℂ)) * a * (g u : ℂ)
+      + Complex.exp (a * (u : ℂ)) * (g' : ℂ)
+      = Complex.exp (a * (u : ℂ)) * (a * (g u : ℂ) + (g' : ℂ)) from by ring] at h
+  exact h
+
+/-- W 侧一阶 IBP：`∫₀^∞ e^{au}(aW + W') = −W(0)`。 -/
+theorem integral_Ioi_cexp_thetaW (a : ℂ) :
+    ∫ u in Set.Ioi (0 : ℝ), Complex.exp (a * (u : ℂ))
+        * (a * (thetaW u : ℂ) + (thetaWD u : ℂ))
+      = -(thetaW 0 : ℂ) := by
+  have hderiv : ∀ u ∈ Set.Ici (0 : ℝ), HasDerivAt
+      (fun u : ℝ => Complex.exp (a * (u : ℂ)) * (thetaW u : ℂ))
+      (Complex.exp (a * (u : ℂ)) * (a * (thetaW u : ℂ) + (thetaWD u : ℂ))) u :=
+    fun u _ => hasDerivAt_cexp_mul_ofReal a (hasDerivAt_thetaW u)
+  have hint : MeasureTheory.IntegrableOn
+      (fun u : ℝ => Complex.exp (a * (u : ℂ)) * (a * (thetaW u : ℂ) + (thetaWD u : ℂ)))
+      (Set.Ioi 0) MeasureTheory.volume := by
+    refine (((integrableOn_cexp_thetaW a).const_mul a).add
+      (integrableOn_cexp_thetaWD a)).congr ?_
+    filter_upwards with u
+    show a * (Complex.exp (a * (u : ℂ)) * (thetaW u : ℂ))
+        + Complex.exp (a * (u : ℂ)) * (thetaWD u : ℂ)
+      = Complex.exp (a * (u : ℂ)) * (a * (thetaW u : ℂ) + (thetaWD u : ℂ))
+    ring
+  have htend : Filter.Tendsto (fun u : ℝ => Complex.exp (a * (u : ℂ)) * (thetaW u : ℂ))
+      Filter.atTop (nhds 0) :=
+    (tendsto_thetaW_cexp_atTop a).congr (fun u => mul_comm _ _)
+  have hIBP := MeasureTheory.integral_Ioi_of_hasDerivAt_of_tendsto' hderiv hint htend
+  rwa [show (0 : ℂ) - (Complex.exp (a * ((0 : ℝ) : ℂ)) * (thetaW 0 : ℂ)) = -(thetaW 0 : ℂ)
+    from by simp] at hIBP
+
+/-- W 侧二阶 IBP：`∫₀^∞ e^{au}(a·NW + NW') = −NW(0)`。 -/
+theorem integral_Ioi_cexp_thetaNW (a : ℂ) :
+    ∫ u in Set.Ioi (0 : ℝ), Complex.exp (a * (u : ℂ))
+        * (a * (thetaNW u : ℂ) + (thetaNWD u : ℂ))
+      = -(thetaNW 0 : ℂ) := by
+  have hderiv : ∀ u ∈ Set.Ici (0 : ℝ), HasDerivAt
+      (fun u : ℝ => Complex.exp (a * (u : ℂ)) * (thetaNW u : ℂ))
+      (Complex.exp (a * (u : ℂ)) * (a * (thetaNW u : ℂ) + (thetaNWD u : ℂ))) u :=
+    fun u _ => hasDerivAt_cexp_mul_ofReal a (hasDerivAt_thetaNW u)
+  have hW : MeasureTheory.IntegrableOn
+      (fun u : ℝ => Complex.exp (a * (u : ℂ)) * (thetaNW u : ℂ))
+      (Set.Ioi 0) MeasureTheory.volume := by
+    refine ((integrableOn_cexp_thetaWD a).add
+      ((integrableOn_cexp_thetaW a).const_mul 2)).congr ?_
+    filter_upwards with u
+    show Complex.exp (a * (u : ℂ)) * (thetaWD u : ℂ)
+        + 2 * (Complex.exp (a * (u : ℂ)) * (thetaW u : ℂ))
+      = Complex.exp (a * (u : ℂ)) * (thetaNW u : ℂ)
+    unfold thetaNW
+    push_cast
+    ring
+  have hWD : MeasureTheory.IntegrableOn
+      (fun u : ℝ => Complex.exp (a * (u : ℂ)) * (thetaNWD u : ℂ))
+      (Set.Ioi 0) MeasureTheory.volume := by
+    refine ((integrableOn_cexp_thetaWDD a).add
+      ((integrableOn_cexp_thetaWD a).const_mul 2)).congr ?_
+    filter_upwards with u
+    show Complex.exp (a * (u : ℂ)) * (thetaWDD u : ℂ)
+        + 2 * (Complex.exp (a * (u : ℂ)) * (thetaWD u : ℂ))
+      = Complex.exp (a * (u : ℂ)) * (thetaNWD u : ℂ)
+    unfold thetaNWD
+    push_cast
+    ring
+  have hint : MeasureTheory.IntegrableOn
+      (fun u : ℝ => Complex.exp (a * (u : ℂ)) * (a * (thetaNW u : ℂ) + (thetaNWD u : ℂ)))
+      (Set.Ioi 0) MeasureTheory.volume := by
+    refine ((hW.const_mul a).add hWD).congr ?_
+    filter_upwards with u
+    show a * (Complex.exp (a * (u : ℂ)) * (thetaNW u : ℂ))
+        + Complex.exp (a * (u : ℂ)) * (thetaNWD u : ℂ)
+      = Complex.exp (a * (u : ℂ)) * (a * (thetaNW u : ℂ) + (thetaNWD u : ℂ))
+    ring
+  have htend : Filter.Tendsto (fun u : ℝ => Complex.exp (a * (u : ℂ)) * (thetaNW u : ℂ))
+      Filter.atTop (nhds 0) := by
+    have h1 := (tendsto_thetaWD_cexp_atTop a).congr (fun u => mul_comm _ _)
+    have h2 := Filter.Tendsto.const_mul (2 : ℂ)
+      ((tendsto_thetaW_cexp_atTop a).congr (fun u => mul_comm _ _))
+    rw [mul_zero] at h2
+    have h3 := h1.add h2
+    rw [add_zero] at h3
+    refine h3.congr (fun u => ?_)
+    show Complex.exp (a * (u : ℂ)) * (thetaWD u : ℂ)
+        + 2 * (Complex.exp (a * (u : ℂ)) * (thetaW u : ℂ))
+      = Complex.exp (a * (u : ℂ)) * (thetaNW u : ℂ)
+    unfold thetaNW
+    push_cast
+    ring
+  have hIBP := MeasureTheory.integral_Ioi_of_hasDerivAt_of_tendsto' hderiv hint htend
+  rwa [show (0 : ℂ) - (Complex.exp (a * ((0 : ℝ) : ℂ)) * (thetaNW 0 : ℂ)) = -(thetaNW 0 : ℂ)
+    from by simp] at hIBP
+
+/-- M 侧一阶 IBP：`∫₋∞⁰ e^{au}(aM + M') = M(0)`。 -/
+theorem integral_Iic_cexp_thetaM (a : ℂ) :
+    ∫ u in Set.Iic (0 : ℝ), Complex.exp (a * (u : ℂ))
+        * (a * (thetaM u : ℂ) + (thetaMD u : ℂ))
+      = (thetaM 0 : ℂ) := by
+  have hderiv : ∀ u ∈ Set.Iic (0 : ℝ), HasDerivAt
+      (fun u : ℝ => Complex.exp (a * (u : ℂ)) * (thetaM u : ℂ))
+      (Complex.exp (a * (u : ℂ)) * (a * (thetaM u : ℂ) + (thetaMD u : ℂ))) u :=
+    fun u _ => hasDerivAt_cexp_mul_ofReal a (hasDerivAt_thetaM u)
+  have hint : MeasureTheory.IntegrableOn
+      (fun u : ℝ => Complex.exp (a * (u : ℂ)) * (a * (thetaM u : ℂ) + (thetaMD u : ℂ)))
+      (Set.Iic 0) MeasureTheory.volume := by
+    refine (((integrableOn_cexp_thetaM a).const_mul a).add
+      (integrableOn_cexp_thetaMD a)).congr ?_
+    filter_upwards with u
+    show a * (Complex.exp (a * (u : ℂ)) * (thetaM u : ℂ))
+        + Complex.exp (a * (u : ℂ)) * (thetaMD u : ℂ)
+      = Complex.exp (a * (u : ℂ)) * (a * (thetaM u : ℂ) + (thetaMD u : ℂ))
+    ring
+  have htend : Filter.Tendsto (fun u : ℝ => Complex.exp (a * (u : ℂ)) * (thetaM u : ℂ))
+      Filter.atBot (nhds 0) :=
+    (tendsto_thetaM_cexp_atBot a).congr (fun u => mul_comm _ _)
+  have hIBP := MeasureTheory.integral_Iic_of_hasDerivAt_of_tendsto' hderiv hint htend
+  rwa [show Complex.exp (a * ((0 : ℝ) : ℂ)) * (thetaM 0 : ℂ) - 0 = (thetaM 0 : ℂ)
+    from by simp] at hIBP
+
+/-- M 侧二阶 IBP：`∫₋∞⁰ e^{au}(a·NM + NM') = NM(0)`。 -/
+theorem integral_Iic_cexp_thetaNM (a : ℂ) :
+    ∫ u in Set.Iic (0 : ℝ), Complex.exp (a * (u : ℂ))
+        * (a * (thetaNM u : ℂ) + (thetaNMD u : ℂ))
+      = (thetaNM 0 : ℂ) := by
+  have hderiv : ∀ u ∈ Set.Iic (0 : ℝ), HasDerivAt
+      (fun u : ℝ => Complex.exp (a * (u : ℂ)) * (thetaNM u : ℂ))
+      (Complex.exp (a * (u : ℂ)) * (a * (thetaNM u : ℂ) + (thetaNMD u : ℂ))) u :=
+    fun u _ => hasDerivAt_cexp_mul_ofReal a (hasDerivAt_thetaNM u)
+  have hM : MeasureTheory.IntegrableOn
+      (fun u : ℝ => Complex.exp (a * (u : ℂ)) * (thetaNM u : ℂ))
+      (Set.Iic 0) MeasureTheory.volume := by
+    refine ((integrableOn_cexp_thetaMD a).add
+      ((integrableOn_cexp_thetaM a).const_mul 2)).congr ?_
+    filter_upwards with u
+    show Complex.exp (a * (u : ℂ)) * (thetaMD u : ℂ)
+        + 2 * (Complex.exp (a * (u : ℂ)) * (thetaM u : ℂ))
+      = Complex.exp (a * (u : ℂ)) * (thetaNM u : ℂ)
+    unfold thetaNM
+    push_cast
+    ring
+  have hMD : MeasureTheory.IntegrableOn
+      (fun u : ℝ => Complex.exp (a * (u : ℂ)) * (thetaNMD u : ℂ))
+      (Set.Iic 0) MeasureTheory.volume := by
+    refine ((integrableOn_cexp_thetaMDD a).add
+      ((integrableOn_cexp_thetaMD a).const_mul 2)).congr ?_
+    filter_upwards with u
+    show Complex.exp (a * (u : ℂ)) * (thetaMDD u : ℂ)
+        + 2 * (Complex.exp (a * (u : ℂ)) * (thetaMD u : ℂ))
+      = Complex.exp (a * (u : ℂ)) * (thetaNMD u : ℂ)
+    unfold thetaNMD
+    push_cast
+    ring
+  have hint : MeasureTheory.IntegrableOn
+      (fun u : ℝ => Complex.exp (a * (u : ℂ)) * (a * (thetaNM u : ℂ) + (thetaNMD u : ℂ)))
+      (Set.Iic 0) MeasureTheory.volume := by
+    refine ((hM.const_mul a).add hMD).congr ?_
+    filter_upwards with u
+    show a * (Complex.exp (a * (u : ℂ)) * (thetaNM u : ℂ))
+        + Complex.exp (a * (u : ℂ)) * (thetaNMD u : ℂ)
+      = Complex.exp (a * (u : ℂ)) * (a * (thetaNM u : ℂ) + (thetaNMD u : ℂ))
+    ring
+  have htend : Filter.Tendsto (fun u : ℝ => Complex.exp (a * (u : ℂ)) * (thetaNM u : ℂ))
+      Filter.atBot (nhds 0) := by
+    have h1 := (tendsto_thetaMD_cexp_atBot a).congr (fun u => mul_comm _ _)
+    have h2 := Filter.Tendsto.const_mul (2 : ℂ)
+      ((tendsto_thetaM_cexp_atBot a).congr (fun u => mul_comm _ _))
+    rw [mul_zero] at h2
+    have h3 := h1.add h2
+    rw [add_zero] at h3
+    refine h3.congr (fun u => ?_)
+    show Complex.exp (a * (u : ℂ)) * (thetaMD u : ℂ)
+        + 2 * (Complex.exp (a * (u : ℂ)) * (thetaM u : ℂ))
+      = Complex.exp (a * (u : ℂ)) * (thetaNM u : ℂ)
+    unfold thetaNM
+    push_cast
+    ring
+  have hIBP := MeasureTheory.integral_Iic_of_hasDerivAt_of_tendsto' hderiv hint htend
+  rwa [show Complex.exp (a * ((0 : ℝ) : ℂ)) * (thetaNM 0 : ℂ) - 0 = (thetaNM 0 : ℂ)
+    from by simp] at hIBP
+
 end DeBruijnNewman
 end RiemannExplorer

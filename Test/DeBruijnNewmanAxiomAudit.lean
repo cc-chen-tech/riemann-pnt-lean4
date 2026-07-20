@@ -77,3 +77,12 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.integrableOn_cexp_thetaM
 #print axioms RiemannExplorer.DeBruijnNewman.integrableOn_cexp_thetaMD
 #print axioms RiemannExplorer.DeBruijnNewman.integrableOn_cexp_thetaMDD
+#print axioms RiemannExplorer.DeBruijnNewman.sixteen_phi_eq
+#print axioms RiemannExplorer.DeBruijnNewman.thetaMDD_add_two_thetaMD_eq
+#print axioms RiemannExplorer.DeBruijnNewman.hasDerivAt_thetaNW
+#print axioms RiemannExplorer.DeBruijnNewman.hasDerivAt_thetaNM
+#print axioms RiemannExplorer.DeBruijnNewman.hasDerivAt_cexp_mul_ofReal
+#print axioms RiemannExplorer.DeBruijnNewman.integral_Ioi_cexp_thetaW
+#print axioms RiemannExplorer.DeBruijnNewman.integral_Ioi_cexp_thetaNW
+#print axioms RiemannExplorer.DeBruijnNewman.integral_Iic_cexp_thetaM
+#print axioms RiemannExplorer.DeBruijnNewman.integral_Iic_cexp_thetaNM
