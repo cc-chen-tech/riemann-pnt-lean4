@@ -1465,6 +1465,72 @@ def phi_even_target : Prop :=
 /-- Phase 1c 收官：`phi_even_target` 已由 `phi_even` 证明。 -/
 theorem phi_even_target_proved : phi_even_target := phi_even
 
+/-! ## Phase 1d(i)：cosKernel–thetaT 桥与 `completedRiemannZeta₀` 的 Mellin 表达
+
+H₀ 恒等式路线的第一步：把 Mathlib 的 `completedRiemannZeta₀`
+（经 `hurwitzEvenFEPair 0` 的 `f_modif` 的 Mellin 变换定义）与本文的
+`thetaT` 对接。关键事实：`HurwitzZeta.cosKernel 0 x = thetaT x`（`x > 0`），
+以及 `f_modif` 在 `t > 1` / `0 < t < 1` 两段上的具体形态。 -/
+
+/-- cosKernel 0 与 thetaT 的桥接（正实轴上）：两边都等于
+`jacobiTheta (I · x)`。 -/
+theorem cosKernel_zero_eq_thetaT {x : ℝ} (hx : 0 < x) :
+    (HurwitzZeta.cosKernel 0 x : ℂ) = thetaT x := by
+  have h2 := HurwitzZeta.cosKernel_def (0 : ℝ) x
+  rw [QuotientAddGroup.mk_zero] at h2
+  simp only [Complex.ofReal_zero, ← jacobiTheta_eq_jacobiTheta₂] at h2
+  rw [h2]
+  exact (thetaT_bridge hx).symm
+
+/-- `hurwitzEvenFEPair 0` 的 `f` 就是 `cosKernel 0`（经
+`evenKernel_eq_cosKernel_of_zero`）。 -/
+theorem fePair_f_apply (x : ℝ) :
+    (HurwitzZeta.hurwitzEvenFEPair 0).f x = (HurwitzZeta.cosKernel 0 x : ℂ) := by
+  simp [HurwitzZeta.hurwitzEvenFEPair, HurwitzZeta.evenKernel_eq_cosKernel_of_zero]
+
+theorem fePair_f₀ : (HurwitzZeta.hurwitzEvenFEPair 0).f₀ = 1 := by
+  simp [HurwitzZeta.hurwitzEvenFEPair]
+
+theorem fePair_g₀ : (HurwitzZeta.hurwitzEvenFEPair 0).g₀ = 1 := rfl
+
+theorem fePair_ε : (HurwitzZeta.hurwitzEvenFEPair 0).ε = 1 := rfl
+
+theorem fePair_k : (HurwitzZeta.hurwitzEvenFEPair 0).k = 1 / 2 := rfl
+
+/-- `f_modif` 在 `t > 1` 段：`f_modif t = thetaT t − 1`（在 `ℂ` 中）。 -/
+theorem f_modif_eq_of_one_lt {x : ℝ} (hx : 1 < x) :
+    (HurwitzZeta.hurwitzEvenFEPair 0).f_modif x = (thetaT x : ℂ) - 1 := by
+  have hx0 : 0 < x := one_pos.trans hx
+  have h1 : (HurwitzZeta.hurwitzEvenFEPair 0).f_modif x
+      = (HurwitzZeta.hurwitzEvenFEPair 0).f x - (HurwitzZeta.hurwitzEvenFEPair 0).f₀ := by
+    unfold WeakFEPair.f_modif
+    rw [Pi.add_apply, Set.indicator_of_mem (Set.mem_Ioi.mpr hx) _,
+      Set.indicator_of_notMem (Set.notMem_Ioo_of_ge hx.le) _, add_zero]
+  rw [h1, fePair_f_apply, fePair_f₀, cosKernel_zero_eq_thetaT hx0]
+
+/-- `f_modif` 在 `0 < t < 1` 段：`f_modif t = thetaT t − t^{−1/2}`（在 `ℂ` 中）。 -/
+theorem f_modif_eq_of_mem_Ioo {x : ℝ} (hx0 : 0 < x) (hx1 : x < 1) :
+    (HurwitzZeta.hurwitzEvenFEPair 0).f_modif x
+      = (thetaT x : ℂ) - ((x ^ (-1 / 2 : ℝ) : ℝ) : ℂ) := by
+  have h1 : (HurwitzZeta.hurwitzEvenFEPair 0).f_modif x
+      = (HurwitzZeta.hurwitzEvenFEPair 0).f x
+        - ((HurwitzZeta.hurwitzEvenFEPair 0).ε
+            * ((x ^ (-(HurwitzZeta.hurwitzEvenFEPair 0).k) : ℝ) : ℂ))
+          • (HurwitzZeta.hurwitzEvenFEPair 0).g₀ := by
+    unfold WeakFEPair.f_modif
+    rw [Pi.add_apply, Set.indicator_of_notMem (Set.notMem_Ioi.mpr hx1.le) _,
+      Set.indicator_of_mem (Set.mem_Ioo.mpr ⟨hx0, hx1⟩) _, zero_add]
+  rw [h1, fePair_f_apply, fePair_ε, fePair_k, fePair_g₀, cosKernel_zero_eq_thetaT hx0]
+  norm_num [smul_eq_mul]
+
+/-- `completedRiemannZeta₀` 的 Mellin 表达（全局成立，因 `f_modif` 是
+strong FE-pair 的核）：`Λ₀(s) = (1/2) · Mellin(f_modif)(s/2)`。 -/
+theorem completedRiemannZeta₀_eq_half_mellin (s : ℂ) :
+    completedRiemannZeta₀ s
+      = (1 / 2) * mellin (HurwitzZeta.hurwitzEvenFEPair 0).f_modif (s / 2) := by
+  unfold completedRiemannZeta₀ HurwitzZeta.completedHurwitzZetaEven₀ WeakFEPair.Λ₀
+  ring
+
 /-- **H_t 正则性目标**（Phase 1b）：每个 `H_t` 是偶的整函数。 -/
 def h_even_entire_target : Prop :=
   ∀ t : ℝ, Differentiable ℂ (deBruijnNewmanH t) ∧

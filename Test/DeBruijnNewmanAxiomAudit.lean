@@ -31,3 +31,7 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.phiKernelG_inv
 #print axioms RiemannExplorer.DeBruijnNewman.phi_even
 #print axioms RiemannExplorer.DeBruijnNewman.phi_even_target_proved
+#print axioms RiemannExplorer.DeBruijnNewman.cosKernel_zero_eq_thetaT
+#print axioms RiemannExplorer.DeBruijnNewman.f_modif_eq_of_one_lt
+#print axioms RiemannExplorer.DeBruijnNewman.f_modif_eq_of_mem_Ioo
+#print axioms RiemannExplorer.DeBruijnNewman.completedRiemannZeta₀_eq_half_mellin
