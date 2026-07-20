@@ -181,6 +181,8 @@ lean_lib RiemannPNT where
     `Test.VinogradovKorobovLowerDegreeSystemContract,
     `Test.VinogradovKorobovTranslatedValuationContract,
     `Test.VinogradovKorobovUnitTwistedMatrixContract,
+    `Test.VinogradovKorobovTranslatedCoefficientMatrixContract,
+    `Test.VinogradovKorobovLowDegreePsiContract,
     `Test.VinogradovKorobovVanDerCorputRangeContract,
     `Test.VinogradovKorobovLogVanDerCorputContract
   ]
