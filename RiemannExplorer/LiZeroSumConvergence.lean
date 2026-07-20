@@ -336,4 +336,145 @@ theorem summable_norm_inv_sq_upperZeros :
             mul_nonneg (mul_nonneg hC (by positivity)) (by positivity))
   exact add_le_add hlow hhigh
 
+/-! ## Part C：配对项的 `O(1/‖ρ‖²)` 控制与主定理 -/
+
+/-- Li 零点级数的共轭配对项：与 `li_zero_sum_representation_target`
+（`LiCriterion.lean`）的被加项逐字一致。 -/
+noncomputable def liPairedTerm (n : ℕ) (ρ : ℂ) : ℂ :=
+  ((1 : ℂ) - (1 - 1 / ρ) ^ n) + ((1 : ℂ) - (1 - 1 / conj ρ) ^ n)
+
+/-- 配对项拆成「线性主项 + 两个二项式余项」（纯代数恒等式）。
+收敛性的关键在于：配对后线性项 `n·(1/ρ + 1/conj ρ)` 仍受 `O(1/‖ρ‖²)`
+控制（见 `norm_liPairedTerm_le`），未配对时 `n/ρ` 不绝对可和。 -/
+theorem liPairedTerm_eq (n : ℕ) (ρ : ℂ) :
+    liPairedTerm n ρ = (n : ℂ) * (1 / ρ + 1 / conj ρ) +
+      ((1 - (1 - 1 / ρ) ^ n - (n : ℂ) * (1 / ρ)) +
+        (1 - (1 - 1 / conj ρ) ^ n - (n : ℂ) * (1 / conj ρ))) := by
+  unfold liPairedTerm
+  ring
+
+/-- 配对项的范数界：对 `‖ρ‖ ≥ 2` 且 `|ρ.re| ≤ 1`（非平凡零点自动满足后者，
+因为 `0 < ρ.re < 1`），
+
+```text
+‖liPairedTerm n ρ‖ ≤ (2n + 8·(3/2)ⁿ)·‖ρ‖⁻²。
+```
+
+证明：`1/ρ + 1/conj ρ = 2·Re(ρ⁻¹) = 2·ρ.re/normSq ρ`（`Complex.add_conj` +
+`Complex.inv_re`），其范数 `≤ 2·‖ρ‖⁻²`；两个余项各由 Part A 的
+`norm_one_sub_one_sub_pow_sub_le`（取 `w = 1/ρ`、`w = 1/conj ρ`，
+范数 `≤ 1/2`）控制为 `4·(3/2)ⁿ·‖ρ‖⁻²`。 -/
+theorem norm_liPairedTerm_le (n : ℕ) {ρ : ℂ} (hρ2 : 2 ≤ ‖ρ‖) (hre : |ρ.re| ≤ 1) :
+    ‖liPairedTerm n ρ‖ ≤ (2 * (n : ℝ) + 8 * (3 / 2) ^ n) * ‖ρ‖⁻¹ ^ 2 := by
+  have hρ0 : ρ ≠ 0 := by
+    intro h
+    rw [h, norm_zero] at hρ2
+    norm_num at hρ2
+  have hnormSq : (0 : ℝ) < Complex.normSq ρ := Complex.normSq_pos.mpr hρ0
+  have hmain : (1 : ℂ) / ρ + 1 / conj ρ = ((2 * ρ.re / Complex.normSq ρ : ℝ) : ℂ) := by
+    rw [one_div, one_div, ← Complex.conj_inv, Complex.add_conj, Complex.inv_re]
+    congr 1
+    ring
+  have hmain_norm : ‖(n : ℂ) * (1 / ρ + 1 / conj ρ)‖ ≤ 2 * (n : ℝ) * ‖ρ‖⁻¹ ^ 2 := by
+    rw [hmain, norm_mul, Complex.norm_natCast, norm_real, Real.norm_eq_abs]
+    have habs : |2 * ρ.re / Complex.normSq ρ| = 2 * |ρ.re| / Complex.normSq ρ := by
+      rw [abs_div, abs_of_pos hnormSq, abs_mul, abs_of_pos (by norm_num : (0 : ℝ) < 2)]
+    have hle : 2 * |ρ.re| / Complex.normSq ρ ≤ 2 * ‖ρ‖⁻¹ ^ 2 := by
+      have h1 : 2 * |ρ.re| ≤ 2 * 1 := mul_le_mul_of_nonneg_left hre (by norm_num)
+      have h2 : 2 * |ρ.re| / Complex.normSq ρ ≤ 2 * 1 / Complex.normSq ρ :=
+        div_le_div_of_nonneg_right h1 hnormSq.le
+      have h3 : 2 * 1 / Complex.normSq ρ = 2 * ‖ρ‖⁻¹ ^ 2 := by
+        rw [Complex.normSq_eq_norm_sq, inv_pow]
+        ring
+      exact h2.trans_eq h3
+    calc (n : ℝ) * |2 * ρ.re / Complex.normSq ρ|
+        = (n : ℝ) * (2 * |ρ.re| / Complex.normSq ρ) := by rw [habs]
+      _ ≤ (n : ℝ) * (2 * ‖ρ‖⁻¹ ^ 2) := mul_le_mul_of_nonneg_left hle (Nat.cast_nonneg _)
+      _ = 2 * (n : ℝ) * ‖ρ‖⁻¹ ^ 2 := by ring
+  have hz1 : ‖(1 : ℂ) / ρ‖ ≤ 1 / 2 := by
+    rw [norm_div, norm_one]
+    exact one_div_le_one_div_of_le (by norm_num) hρ2
+  have hz2 : ‖(1 : ℂ) / conj ρ‖ ≤ 1 / 2 := by
+    rw [norm_div, norm_one, Complex.norm_conj]
+    exact one_div_le_one_div_of_le (by norm_num) hρ2
+  calc ‖liPairedTerm n ρ‖
+      = ‖(n : ℂ) * (1 / ρ + 1 / conj ρ) +
+          ((1 - (1 - 1 / ρ) ^ n - (n : ℂ) * (1 / ρ)) +
+            (1 - (1 - 1 / conj ρ) ^ n - (n : ℂ) * (1 / conj ρ)))‖ := by
+        rw [liPairedTerm_eq]
+    _ ≤ ‖(n : ℂ) * (1 / ρ + 1 / conj ρ)‖ +
+          (‖1 - (1 - 1 / ρ) ^ n - (n : ℂ) * (1 / ρ)‖ +
+            ‖1 - (1 - 1 / conj ρ) ^ n - (n : ℂ) * (1 / conj ρ)‖) :=
+        (norm_add_le _ _).trans (add_le_add le_rfl (norm_add_le _ _))
+    _ ≤ (2 * (n : ℝ) * ‖ρ‖⁻¹ ^ 2) +
+          (4 * (3 / 2) ^ n * ‖(1 : ℂ) / ρ‖ ^ 2 +
+            4 * (3 / 2) ^ n * ‖(1 : ℂ) / conj ρ‖ ^ 2) :=
+        add_le_add hmain_norm
+          (add_le_add (norm_one_sub_one_sub_pow_sub_le n hz1)
+            (norm_one_sub_one_sub_pow_sub_le n hz2))
+    _ = (2 * (n : ℝ) + 8 * (3 / 2) ^ n) * ‖ρ‖⁻¹ ^ 2 := by
+        have e1 : ‖(1 : ℂ) / ρ‖ = ‖ρ‖⁻¹ := by rw [norm_div, norm_one, one_div]
+        have e2 : ‖(1 : ℂ) / conj ρ‖ = ‖ρ‖⁻¹ := by
+          rw [norm_div, norm_one, Complex.norm_conj, one_div]
+        rw [e1, e2]
+        ring
+
+/-- **Part C 主定理**：Li 零点配对级数对每个 `n`（无条件）收敛。
+
+证明：按 `‖ρ‖ < 2` 与 `‖ρ‖ ≥ 2` 把被加项拆成两个函数。低点函数在
+`nontrivialZerosFinset 4` 的原像之外恒为零（有限支撑，
+`summable_of_ne_finset_zero`）；高点函数由
+`norm_liPairedTerm_le`（`|ρ.re| ≤ 1` 来自 `0 < ρ.re < 1`）被
+`(2n + 8·(3/2)ⁿ)·‖ρ‖⁻²` 控制，后者可和由 Part B 的
+`summable_norm_inv_sq_upperZeros` 给出（`Summable.of_norm_bounded`）。 -/
+theorem summable_liPairedTerm (n : ℕ) :
+    Summable fun ρ : UpperHalfPlaneNontrivialZero ↦ liPairedTerm n (ρ : ℂ) := by
+  classical
+  have hsplit : (fun ρ : UpperHalfPlaneNontrivialZero ↦ liPairedTerm n (ρ : ℂ)) =
+      (fun ρ : UpperHalfPlaneNontrivialZero ↦
+          if ‖(ρ : ℂ)‖ < 2 then liPairedTerm n (ρ : ℂ) else 0) +
+        (fun ρ : UpperHalfPlaneNontrivialZero ↦
+          if 2 ≤ ‖(ρ : ℂ)‖ then liPairedTerm n (ρ : ℂ) else 0) := by
+    funext ρ
+    simp only [Pi.add_apply]
+    by_cases h : ‖(ρ : ℂ)‖ < 2
+    · rw [if_pos h, if_neg (by linarith), add_zero]
+    · rw [if_neg h, if_pos (le_of_not_gt h), zero_add]
+  rw [hsplit]
+  refine Summable.add ?_ ?_
+  · apply summable_of_ne_finset_zero
+      (s := (PrimeNumberTheorem.nontrivialZerosFinset 4).preimage
+        (fun ρ : UpperHalfPlaneNontrivialZero ↦ (ρ : ℂ)) Subtype.coe_injective.injOn)
+    intro ρ hρ
+    rw [Finset.mem_preimage] at hρ
+    by_cases hlt : ‖(ρ : ℂ)‖ < 2
+    · exfalso
+      apply hρ
+      rw [PrimeNumberTheorem.mem_nontrivialZerosFinset]
+      exact ⟨ρ.2.1, ((Complex.abs_im_le_norm _).trans hlt.le).trans (by norm_num)⟩
+    · exact if_neg hlt
+  · refine Summable.of_norm_bounded
+      (g := fun ρ : UpperHalfPlaneNontrivialZero ↦
+        (2 * (n : ℝ) + 8 * (3 / 2) ^ n) * ‖(ρ : ℂ)‖⁻¹ ^ 2)
+      (summable_norm_inv_sq_upperZeros.mul_left _) fun ρ => ?_
+    by_cases h : 2 ≤ ‖(ρ : ℂ)‖
+    · rw [if_pos h]
+      have hre : |(ρ : ℂ).re| ≤ 1 := by
+        have h1 := ρ.2.1.2.1
+        have h2 := ρ.2.1.2.2
+        rw [abs_le]
+        constructor <;> linarith
+      exact norm_liPairedTerm_le n h hre
+    · rw [if_neg h, norm_zero]
+      positivity
+
+/-- `li_zero_sum_representation_target` 右端级数对每个 `n`（无条件）收敛：
+该目标从「形式书写一个未必收敛的级数」升级为「真收敛级数上的恒等式」。
+这就是 `li_zero_sum_representation_target` 在「ξ'/ξ 部分分式展开」
+（Hardamard 因子分解级，Mathlib 缺失）之外的全部收敛性前置。 -/
+theorem summable_li_zero_sum_terms (n : ℕ) :
+    Summable fun ρ : UpperHalfPlaneNontrivialZero ↦
+      (((1 : ℂ) - (1 - 1 / (ρ : ℂ)) ^ n) + ((1 : ℂ) - (1 - 1 / conj (ρ : ℂ)) ^ n)) :=
+  summable_liPairedTerm n
+
 end RiemannExplorer
