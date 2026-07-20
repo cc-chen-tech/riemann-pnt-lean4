@@ -1192,6 +1192,37 @@ theorem exists_regularizedCarlsonFactorZeroMass_le_logPolynomial :
   rw [hlocal]
   simpa [regularizedCarlsonFactorZeroLogMajorant, M, c] using hjensen
 
+/-- A completely zero-free-data-independent logarithmic-derivative bound on
+one horizontal side of every unit Carlson rectangle.  Both local divisor
+terms have been replaced by the Jensen logarithmic polynomial majorant. -/
+theorem exists_regularizedCarlson_horizontal_logDeriv_le_logPolynomial :
+    ∃ C₁ C₂ : ℝ, 1 ≤ C₁ ∧ 1 ≤ C₂ ∧
+      ∀ {X : ℕ}, 1 ≤ X → ∀ {sigma T : ℝ},
+        1 / 2 < sigma → 5 ≤ T →
+        ∃ r ∈ Set.Icc (121 / 32 : ℝ) (122 / 32 : ℝ),
+        ∃ t ∈ Set.Icc T (T + 1),
+          (∀ x ∈ Set.Icc sigma 4,
+            regularizedCarlsonZeroDetector X
+              ((x : ℂ) + (t : ℂ) * I) ≠ 0) ∧
+          ∀ x ∈ Set.Icc sigma 4,
+            ‖logDeriv (regularizedCarlsonZeroDetector X)
+              ((x : ℂ) + (t : ℂ) * I)‖ ≤
+              4 * max
+                  (regularizedCarlsonFactorLogVariationMajorant C₁ X T
+                    (regularizedCarlsonFactorZeroLogMajorant C₂ X T)) 1 *
+                (r + 15 / 4) / (r - 15 / 4) ^ 2 +
+              regularizedCarlsonFactorZeroLogMajorant C₂ X T /
+                (1 / (4 *
+                  (regularizedCarlsonFactorZeroLogMajorant C₂ X T + 1))) := by
+  rcases
+      exists_regularizedCarlson_horizontal_logDeriv_le_of_factorDiskMass_le_explicit
+    with ⟨C₁, hC₁, hhorizontal⟩
+  rcases exists_regularizedCarlsonFactorZeroMass_le_logPolynomial with
+    ⟨C₂, hC₂, hmass⟩
+  refine ⟨C₁, C₂, hC₁, hC₂, ?_⟩
+  intro X hX sigma T hsigma hT
+  exact hhorizontal hX hsigma hT (hmass hX hT)
+
 /-- The zero-removed detector factor has an explicit center lower bound in
 terms of `X` and `T`; no unevaluated divisor mass remains. -/
 theorem exists_regularizedCarlsonZeroDetector_fixedJensenFactor_explicit_center_lower :

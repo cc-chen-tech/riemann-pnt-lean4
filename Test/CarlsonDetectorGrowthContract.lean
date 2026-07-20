@@ -261,6 +261,26 @@ example : ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X → ∀ {T : ℝ}, 5 �
       regularizedCarlsonFactorZeroLogMajorant C X T :=
   exists_regularizedCarlsonFactorZeroMass_le_logPolynomial
 
+example : ∃ C₁ C₂ : ℝ, 1 ≤ C₁ ∧ 1 ≤ C₂ ∧
+    ∀ {X : ℕ}, 1 ≤ X → ∀ {sigma T : ℝ},
+      1 / 2 < sigma → 5 ≤ T →
+      ∃ r ∈ Set.Icc (121 / 32 : ℝ) (122 / 32 : ℝ),
+      ∃ t ∈ Set.Icc T (T + 1),
+        (∀ x ∈ Set.Icc sigma 4,
+          regularizedCarlsonZeroDetector X
+            ((x : ℂ) + (t : ℂ) * I) ≠ 0) ∧
+        ∀ x ∈ Set.Icc sigma 4,
+          ‖logDeriv (regularizedCarlsonZeroDetector X)
+            ((x : ℂ) + (t : ℂ) * I)‖ ≤
+            4 * max
+                (regularizedCarlsonFactorLogVariationMajorant C₁ X T
+                  (regularizedCarlsonFactorZeroLogMajorant C₂ X T)) 1 *
+              (r + 15 / 4) / (r - 15 / 4) ^ 2 +
+            regularizedCarlsonFactorZeroLogMajorant C₂ X T /
+              (1 / (4 *
+                (regularizedCarlsonFactorZeroLogMajorant C₂ X T + 1))) :=
+  exists_regularizedCarlson_horizontal_logDeriv_le_logPolynomial
+
 example : ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X → ∀ {T : ℝ}, 5 ≤ T →
     ∃ g : ℂ → ℂ,
       AnalyticOnNhd ℂ g
@@ -284,6 +304,7 @@ example : ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X → ∀ {T : ℝ}, 5 �
 #print axioms exists_regularizedCarlson_horizontal_logDeriv_le_regular_add_logPolynomial
 #print axioms exists_regularizedCarlsonZeroDetector_fixedJensenFactor_center_lower
 #print axioms exists_regularizedCarlsonFactorZeroMass_le_logPolynomial
+#print axioms exists_regularizedCarlson_horizontal_logDeriv_le_logPolynomial
 #print axioms exists_regularizedCarlsonZeroDetector_fixedJensenFactor_explicit_center_lower
 #print axioms mem_regularizedCarlsonFactorDiskZeroSupport_iff_zero
 #print axioms regularizedCarlsonFactorDiskSeparation_lower_of_mass_le
