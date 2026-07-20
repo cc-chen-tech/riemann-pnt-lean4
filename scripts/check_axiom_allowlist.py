@@ -126,6 +126,9 @@ EXPECTED_DECLARATIONS = {
     "HardyTheorem.HasNegToPosLocalSignChangeAt.eq_zero",
     "HardyTheorem.card_le_criticalLineOddZeroCount_of_pairwiseDisjoint_signChanges",
     "HardyTheorem.card_le_criticalLineOddZeroCount_of_pairwiseDisjoint_hardyZ_signChanges",
+    "HardyTheorem.continuous_selbergMollifier_criticalLine",
+    "HardyTheorem.hasLocalSignChangeAt_hardyZ_of_mollified",
+    "HardyTheorem.odd_analyticOrderNatAt_riemannZeta_of_mollified_localSignChange",
     "HardyTheorem.hardy_littlewood_lower_bound_target_proved",
     "PrimeNumberTheorem.RiemannVonMangoldt.exists_eventually_riemannZeroCount_ge_selbergScale",
 }

@@ -1,0 +1,18 @@
+import HardyTheorem.SelbergMollifier
+
+open Complex
+
+namespace HardyTheorem
+
+#check selbergMollifier
+#check selbergMollifiedHardyZ
+#check continuous_selbergMollifier_criticalLine
+#check continuous_selbergMollifiedHardyZ
+#check hasLocalSignChangeAt_hardyZ_of_mollified
+#check odd_analyticOrderNatAt_riemannZeta_of_mollified_localSignChange
+
+#print axioms continuous_selbergMollifier_criticalLine
+#print axioms hasLocalSignChangeAt_hardyZ_of_mollified
+#print axioms odd_analyticOrderNatAt_riemannZeta_of_mollified_localSignChange
+
+end HardyTheorem

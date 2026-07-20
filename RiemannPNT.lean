@@ -50,6 +50,7 @@ import HardyTheorem.HardyPhaseDyadicSecondMoment
 import HardyTheorem.HardyPhaseHilbert
 import HardyTheorem.HardyOddMultiplicity
 import HardyTheorem.ShortIntervalSignChangeMeasure
+import HardyTheorem.SelbergMollifier
 import MathlibAux.SlidingIntervalCorrelation
 import MathlibAux.DiscreteHilbertInequality
 import MathlibAux.DyadicLogHilbert
