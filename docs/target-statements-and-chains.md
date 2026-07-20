@@ -236,6 +236,11 @@ the Selberg `T*log T` lower bound remains open.
 - `HardyTheorem.exists_selbergMoebiusMollifiedZetaFirstApprox`
 - `HardyTheorem.exists_selbergMoebiusAbsShortIntegral_ge_sub_shortDirichlet_coarse`
 - `HardyTheorem.criticalLineDirichletPolynomial_mul_mollifier_mul_conj_eq_exponentialPolynomial`
+- `MathlibAux.integral_normSq_slidingExponentialPolynomialIntegral_le`
+- `MathlibAux.norm_slidingExponentialCoefficient_le_min`
+- `HardyTheorem.volume_selbergSmallAbsoluteMassStarts_inter_Icc_le_of_shortDirichletL2`
+- `HardyTheorem.selbergMollifiedShortDirichletPolynomial_eq_integral_expansion`
+- `HardyTheorem.selbergShortDirichletCollectedPolynomial_sub_one_eq`
 - `PrimeNumberTheorem.RiemannVonMangoldt.riemannZeroCount_eq_positiveCriticalLine_add_two_mul_zeroDensityCount`
 - `HardyTheorem.hardy_littlewood_lower_bound_target_of_odd`
 - `HardyTheorem.hardy_littlewood_multiplicity_lower_bound_target_of_odd`

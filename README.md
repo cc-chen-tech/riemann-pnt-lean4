@@ -1378,6 +1378,26 @@ For the signed estimate, the repository now expands the correct expression
 frequency `log l - log m - log n`.  This avoids treating the conjugate factor
 as an ordinary Dirichlet convolution; a sharp mean-value bound for this
 polynomial remains open.
+For finite exponential polynomials, the sliding short integral is now proved
+to preserve the frequency set while multiplying every coefficient by the
+exact interval Fourier factor.  Its start-variable second moment has an
+explicit diagonal-plus-frequency-gap bound.  A separate Chebyshev bridge now
+turns any adequate `L2` bound for the absolute-error polynomial directly into
+a measure bound for `selbergSmallAbsoluteMassStarts`.
+The finite error polynomial itself is now expanded exactly with coefficient
+`b_X(n) * b_X(l) / sqrt(m*n*l)` and frequency `-log(m*n*l)`.  Equal products
+produce equal frequencies, so the current next step is to collect all triples
+with the same product before applying the frequency-gap mean-square estimate.
+The transformed sliding coefficient now also has the sharp reusable envelope
+`norm a * min |H| (2 / |lambda|)`, combining interval length and oscillatory
+cancellation.  The remaining work is arithmetic: control the collected
+coefficient energy and the frequency-gap sum uniformly at Selberg's choices
+of `H` and `X`.
+The product collisions are now collected exactly: the triple polynomial is a
+one-index polynomial on `1 <= k <= N * X^2`, its `k = 1` coefficient is one,
+and after subtracting this constant the frequencies `-log k` are pairwise
+distinct on `2 <= k <= N * X^2`.  No coefficient-energy estimate is claimed
+yet.
 
 The three remaining open analytic directions are:
 
