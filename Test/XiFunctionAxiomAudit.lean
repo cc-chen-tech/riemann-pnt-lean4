@@ -1,5 +1,7 @@
 import RiemannExplorer.XiFunction
 import RiemannExplorer.LiCriterion
+import RiemannExplorer.SchwarzSymmetric
+import RiemannExplorer.LiReality
 
 #print axioms RiemannExplorer.xiFunction_one_sub
 #print axioms RiemannExplorer.xiFunction_zero
@@ -17,3 +19,10 @@ import RiemannExplorer.LiCriterion
 #print axioms RiemannExplorer.liCoefficient_zero_real
 #print axioms RiemannExplorer.liCoefficient_zero_im
 #print axioms RiemannExplorer.li_criterion_iff_rh_target_of_directions
+#print axioms RiemannExplorer.deriv_schwarzSymmetricOn
+#print axioms RiemannExplorer.differentiableOn_deriv
+#print axioms RiemannExplorer.schwarzSymmetric_iteratedDeriv
+#print axioms RiemannExplorer.iteratedDeriv_schwarz_real
+#print axioms RiemannExplorer.liCoefficient_is_real
+#print axioms RiemannExplorer.liCoefficient_im
+#print axioms RiemannExplorer.liCriterionHolds_iff_re_pos

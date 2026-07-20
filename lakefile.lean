@@ -12,6 +12,8 @@ lean_lib RiemannPNT where
     `RiemannExplorer.Conrey40,
     `RiemannExplorer.XiFunction,
     `RiemannExplorer.LiCriterion,
+    `RiemannExplorer.SchwarzSymmetric,
+    `RiemannExplorer.LiReality,
     `GammaResidue,
     `HardyTheorem,
     `EulerAndLfunctions,
