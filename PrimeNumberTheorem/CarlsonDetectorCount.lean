@@ -57,6 +57,13 @@ noncomputable def regularizedCarlsonDetectorRectangleDivisorSupport
       (carlsonDetectorRectangle sigma alpha a b)).finiteSupport
     (isCompact_carlsonDetectorRectangle sigma alpha a b)).toFinset
 
+/-- Distinct imaginary parts of the regularized detector zeros in the unit
+height window used to select a quantitatively separated horizontal edge. -/
+noncomputable def regularizedCarlsonDetectorHorizontalZeroHeights
+    (X : ℕ) (sigma alpha T : ℝ) : Finset ℝ :=
+  (regularizedCarlsonDetectorRectangleDivisorSupport
+    X sigma alpha T (T + 1)).image Complex.im
+
 /-- Total zero multiplicity of the pole-free Carlson detector in a closed
 rectangle. -/
 noncomputable def regularizedCarlsonDetectorRectangleZeroCount
@@ -65,6 +72,14 @@ noncomputable def regularizedCarlsonDetectorRectangleZeroCount
     (carlsonDetectorRectangle sigma alpha a b)
   ∑ z ∈ regularizedCarlsonDetectorRectangleDivisorSupport
       X sigma alpha a b, (D z).toNat
+
+/-- Multiplicity-weighted sum of the logarithmic principal parts contributed
+by all regularized-detector zeros in a closed rectangle. -/
+noncomputable def regularizedCarlsonDetectorRectanglePrincipalPart
+    (X : ℕ) (sigma alpha a b : ℝ) (z : ℂ) : ℂ :=
+  let D := MeromorphicOn.divisor (regularizedCarlsonZeroDetector X)
+    (carlsonDetectorRectangle sigma alpha a b)
+  ∑ᶠ u, (D u : ℂ) * (z - u)⁻¹
 
 private theorem divisor_regularizedCarlsonZeroDetector_eq_analyticOrderNatAt_of_mem
     {X : ℕ} (hX : 1 ≤ X) {sigma alpha a b : ℝ}
@@ -88,6 +103,54 @@ private theorem divisor_regularizedCarlsonZeroDetector_eq_analyticOrderNatAt_of_
   have hcast := Nat.cast_analyticOrderNatAt horder
   rw [← hcast]
   simp
+
+/-- If a point stays `delta` away from every zero in the rectangle, the norm
+of the rectangle's full principal-part sum is at most total zero multiplicity
+divided by `delta`. -/
+theorem norm_regularizedCarlsonDetectorRectanglePrincipalPart_le_count_div
+    {X : ℕ} (hX : 1 ≤ X) {sigma alpha a b delta : ℝ}
+    (hsigma : 0 < sigma) (hdelta : 0 < delta) {z : ℂ}
+    (hsep : ∀ u ∈ regularizedCarlsonDetectorRectangleDivisorSupport
+        X sigma alpha a b, delta ≤ ‖z - u‖) :
+    ‖regularizedCarlsonDetectorRectanglePrincipalPart
+        X sigma alpha a b z‖ ≤
+      (regularizedCarlsonDetectorRectangleZeroCount
+        X sigma alpha a b : ℝ) / delta := by
+  classical
+  let K := carlsonDetectorRectangle sigma alpha a b
+  let D := MeromorphicOn.divisor (regularizedCarlsonZeroDetector X) K
+  have hfinite : D.support.Finite :=
+    D.finiteSupport (isCompact_carlsonDetectorRectangle sigma alpha a b)
+  have hD : ∀ u, 0 ≤ D u := by
+    intro u
+    by_cases hu : u ∈ K
+    · have hDu : D u =
+          (analyticOrderNatAt (regularizedCarlsonZeroDetector X) u : ℤ) := by
+        dsimp [D, K]
+        exact divisor_regularizedCarlsonZeroDetector_eq_analyticOrderNatAt_of_mem
+          hX hsigma hu
+      rw [hDu]
+      exact Int.natCast_nonneg _
+    · dsimp [D]
+      simp [MeromorphicOn.divisor, hu]
+  have hsepSupport : ∀ u ∈ D.support, delta ≤ ‖z - u‖ := by
+    intro u hu
+    apply hsep u
+    dsimp [regularizedCarlsonDetectorRectangleDivisorSupport, D, K]
+    exact hfinite.mem_toFinset.mpr hu
+  have hprincipal := ZeroFreeRegion.norm_finsum_divisor_mul_inv_le_mass_div
+    hfinite hD hdelta hsepSupport
+  have hmass :
+      (∑ᶠ u, (D u : ℝ)) =
+        (regularizedCarlsonDetectorRectangleZeroCount
+          X sigma alpha a b : ℝ) := by
+    rw [← ZeroFreeRegion.sum_toNat_eq_finsum_cast_of_nonneg_finiteSupport
+      hfinite hD]
+    dsimp [regularizedCarlsonDetectorRectangleZeroCount,
+      regularizedCarlsonDetectorRectangleDivisorSupport, D, K]
+    norm_cast
+  simpa [regularizedCarlsonDetectorRectanglePrincipalPart, D, K, hmass]
+    using hprincipal
 
 /-- Inside a rectangle contained in the open right half-plane, the finite
 divisor support of the regularized detector is exactly its zero set. -/
@@ -168,6 +231,100 @@ theorem exists_regularizedCarlsonZeroDetector_horizontal_ne_zero
   refine ⟨z, hzP, ?_⟩
   dsimp [z]
   simp
+
+/-- Every unit height interval contains a horizontal segment separated by an
+explicit pigeonhole distance from every regularized-detector zero in the
+corresponding rectangle.  In particular, the detector is nonzero on the whole
+segment. -/
+theorem exists_regularizedCarlsonZeroDetector_horizontal_quantitativelySeparated
+    {X : ℕ} (hX : 1 ≤ X) {sigma alpha T : ℝ}
+    (hsigma : 0 < sigma) :
+    ∃ t ∈ Set.Icc T (T + 1),
+      (∀ z ∈ regularizedCarlsonDetectorRectangleDivisorSupport
+          X sigma alpha T (T + 1),
+        1 / ((4 : ℝ) *
+            ((regularizedCarlsonDetectorHorizontalZeroHeights
+              X sigma alpha T).card + 1)) ≤ |t - z.im|) ∧
+      ∀ x ∈ Set.Icc sigma alpha,
+        regularizedCarlsonZeroDetector X
+          ((x : ℂ) + (t : ℂ) * I) ≠ 0 := by
+  classical
+  let P := regularizedCarlsonDetectorRectangleDivisorSupport
+    X sigma alpha T (T + 1)
+  let H := regularizedCarlsonDetectorHorizontalZeroHeights X sigma alpha T
+  rcases ZeroFreeRegion.exists_radius_separated_from_finset H
+      (show T < T + 1 by linarith) with ⟨t, ht, hsep⟩
+  have hdelta :
+      0 < 1 / ((4 : ℝ) * ((H.card : ℝ) + 1)) := by
+    positivity
+  refine ⟨t, ht, ?_, ?_⟩
+  · intro z hz
+    have hzim : z.im ∈ H := by
+      dsimp [H, regularizedCarlsonDetectorHorizontalZeroHeights]
+      exact Finset.mem_image.mpr ⟨z, by simpa [P] using hz, rfl⟩
+    simpa [H] using hsep z.im hzim
+  · intro x hx hzero
+    let z : ℂ := (x : ℂ) + (t : ℂ) * I
+    have hz : z ∈ carlsonDetectorRectangle sigma alpha T (T + 1) := by
+      change z.re ∈ Set.Icc sigma alpha ∧ z.im ∈ Set.Icc T (T + 1)
+      constructor
+      · simpa [z] using hx
+      · simpa [z] using ht
+    have hzP : z ∈ P := by
+      dsimp [P]
+      exact
+        (mem_regularizedCarlsonDetectorRectangleDivisorSupport_iff_zero
+          hX hsigma hz).mpr hzero
+    have hzim : z.im ∈ H := by
+      dsimp [H, regularizedCarlsonDetectorHorizontalZeroHeights]
+      exact Finset.mem_image.mpr ⟨z, by simpa [P] using hzP, rfl⟩
+    have hzeroDistance :
+        1 / ((4 : ℝ) * ((H.card : ℝ) + 1)) ≤ 0 := by
+      simpa [z] using hsep z.im hzim
+    exact (not_lt_of_ge hzeroDistance) hdelta
+
+/-- On a quantitatively selected horizontal segment, the complete principal
+part contributed by rectangle zeros is uniformly bounded by the rectangle's
+total zero multiplicity divided by the pigeonhole separation. -/
+theorem exists_regularizedCarlsonZeroDetector_horizontal_principalPart_le_count
+    {X : ℕ} (hX : 1 ≤ X) {sigma alpha T : ℝ}
+    (hsigma : 0 < sigma) :
+    ∃ t ∈ Set.Icc T (T + 1),
+      (∀ x ∈ Set.Icc sigma alpha,
+        regularizedCarlsonZeroDetector X
+          ((x : ℂ) + (t : ℂ) * I) ≠ 0) ∧
+      ∀ x ∈ Set.Icc sigma alpha,
+        ‖regularizedCarlsonDetectorRectanglePrincipalPart
+          X sigma alpha T (T + 1)
+            ((x : ℂ) + (t : ℂ) * I)‖ ≤
+          (regularizedCarlsonDetectorRectangleZeroCount
+            X sigma alpha T (T + 1) : ℝ) /
+            (1 / ((4 : ℝ) *
+              ((regularizedCarlsonDetectorHorizontalZeroHeights
+                X sigma alpha T).card + 1))) := by
+  classical
+  let H := regularizedCarlsonDetectorHorizontalZeroHeights X sigma alpha T
+  let delta : ℝ := 1 / ((4 : ℝ) * ((H.card : ℝ) + 1))
+  rcases
+      exists_regularizedCarlsonZeroDetector_horizontal_quantitativelySeparated
+        hX hsigma (alpha := alpha) (T := T) with
+    ⟨t, ht, hsep, hne⟩
+  have hdelta : 0 < delta := by
+    dsimp [delta]
+    positivity
+  refine ⟨t, ht, hne, ?_⟩
+  intro x _hx
+  apply norm_regularizedCarlsonDetectorRectanglePrincipalPart_le_count_div
+    hX hsigma hdelta
+  intro u hu
+  have hheight : delta ≤ |t - u.im| := by
+    simpa [delta, H] using hsep u hu
+  let z : ℂ := (x : ℂ) + (t : ℂ) * I
+  have him : |(z - u).im| ≤ ‖z - u‖ := Complex.abs_im_le_norm (z - u)
+  have hrewrite : |(z - u).im| = |t - u.im| := by
+    simp [z]
+  rw [hrewrite] at him
+  simpa [z] using hheight.trans him
 
 /-- Every nonempty real interval in the open right half-plane contains a
 vertical segment on which the regularized detector is nonvanishing over a

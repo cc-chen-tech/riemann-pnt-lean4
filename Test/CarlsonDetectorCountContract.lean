@@ -24,6 +24,23 @@ noncomputable example (X : ℕ) (sigma alpha a b : ℝ) : Finset ℂ :=
 noncomputable example (X : ℕ) (sigma alpha a b : ℝ) : ℕ :=
   regularizedCarlsonDetectorRectangleZeroCount X sigma alpha a b
 
+noncomputable example (X : ℕ) (sigma alpha T : ℝ) : Finset ℝ :=
+  regularizedCarlsonDetectorHorizontalZeroHeights X sigma alpha T
+
+noncomputable example (X : ℕ) (sigma alpha a b : ℝ) (z : ℂ) : ℂ :=
+  regularizedCarlsonDetectorRectanglePrincipalPart X sigma alpha a b z
+
+example {X : ℕ} (hX : 1 ≤ X) {sigma alpha a b delta : ℝ}
+    (hsigma : 0 < sigma) (hdelta : 0 < delta) {z : ℂ}
+    (hsep : ∀ u ∈ regularizedCarlsonDetectorRectangleDivisorSupport
+        X sigma alpha a b, delta ≤ ‖z - u‖) :
+    ‖regularizedCarlsonDetectorRectanglePrincipalPart
+        X sigma alpha a b z‖ ≤
+      (regularizedCarlsonDetectorRectangleZeroCount
+        X sigma alpha a b : ℝ) / delta :=
+  norm_regularizedCarlsonDetectorRectanglePrincipalPart_le_count_div
+    hX hsigma hdelta hsep
+
 example {X : ℕ} (hX : 1 ≤ X) {sigma alpha a b : ℝ}
     (hsigma : 0 < sigma) {z : ℂ}
     (hz : z ∈ carlsonDetectorRectangle sigma alpha a b) :
@@ -39,6 +56,38 @@ example {X : ℕ} (hX : 1 ≤ X) {sigma alpha T : ℝ}
         regularizedCarlsonZeroDetector X
           ((x : ℂ) + (t : ℂ) * I) ≠ 0 :=
   exists_regularizedCarlsonZeroDetector_horizontal_ne_zero
+    hX hsigma (T := T)
+
+example {X : ℕ} (hX : 1 ≤ X) {sigma alpha T : ℝ}
+    (hsigma : 0 < sigma) :
+    ∃ t ∈ Set.Icc T (T + 1),
+      (∀ z ∈ regularizedCarlsonDetectorRectangleDivisorSupport
+          X sigma alpha T (T + 1),
+        1 / ((4 : ℝ) *
+            ((regularizedCarlsonDetectorHorizontalZeroHeights
+              X sigma alpha T).card + 1)) ≤ |t - z.im|) ∧
+      ∀ x ∈ Set.Icc sigma alpha,
+        regularizedCarlsonZeroDetector X
+          ((x : ℂ) + (t : ℂ) * I) ≠ 0 :=
+  exists_regularizedCarlsonZeroDetector_horizontal_quantitativelySeparated
+    hX hsigma (T := T)
+
+example {X : ℕ} (hX : 1 ≤ X) {sigma alpha T : ℝ}
+    (hsigma : 0 < sigma) :
+    ∃ t ∈ Set.Icc T (T + 1),
+      (∀ x ∈ Set.Icc sigma alpha,
+        regularizedCarlsonZeroDetector X
+          ((x : ℂ) + (t : ℂ) * I) ≠ 0) ∧
+      ∀ x ∈ Set.Icc sigma alpha,
+        ‖regularizedCarlsonDetectorRectanglePrincipalPart
+          X sigma alpha T (T + 1)
+            ((x : ℂ) + (t : ℂ) * I)‖ ≤
+          (regularizedCarlsonDetectorRectangleZeroCount
+            X sigma alpha T (T + 1) : ℝ) /
+            (1 / ((4 : ℝ) *
+              ((regularizedCarlsonDetectorHorizontalZeroHeights
+                X sigma alpha T).card + 1))) :=
+  exists_regularizedCarlsonZeroDetector_horizontal_principalPart_le_count
     hX hsigma (T := T)
 
 example {X : ℕ} (hX : 1 ≤ X) {sigma0 sigma1 a b : ℝ}
@@ -131,7 +180,10 @@ example {X : ℕ} (hX : 1 ≤ X) (sigma T : ℝ) :
 #print axioms zeroDensityCount_le_carlsonDetectorRectangleZeroCount
 #print axioms zeroDensityCount_le_regularizedCarlsonDetectorRectangleZeroCount
 #print axioms mem_regularizedCarlsonDetectorRectangleDivisorSupport_iff_zero
+#print axioms norm_regularizedCarlsonDetectorRectanglePrincipalPart_le_count_div
 #print axioms exists_regularizedCarlsonZeroDetector_horizontal_ne_zero
+#print axioms exists_regularizedCarlsonZeroDetector_horizontal_quantitativelySeparated
+#print axioms exists_regularizedCarlsonZeroDetector_horizontal_principalPart_le_count
 #print axioms exists_regularizedCarlsonZeroDetector_vertical_ne_zero
 #print axioms exists_regularizedCarlsonZeroDetector_goodRectangle_of_leftWindow
 #print axioms exists_regularizedCarlsonZeroDetector_goodRectangle
