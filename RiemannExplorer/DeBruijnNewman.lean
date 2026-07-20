@@ -2366,5 +2366,378 @@ theorem integrableOn_cexp_thetaWDD (a : ℂ) :
           rw [e1]
           ring
 
+/-!
+### Phase 1d(iv-c)：`M` 侧（`−∞` 端）的界、极限与可积性
+
+反射表示给出 `u ≤ 0` 时
+`|M| ≤ 2Cs·e^{−2u}e^{−πe^{−4u}}`，`|M'| ≤ (4Cs·e^{−2u}+8πCs₁·e^{−6u})e^{−πe^{−4u}}`；
+`thetaMDD_eq_reflected` 给出 `M''` 反射表示与对应界；
+主引理 `tendsto_exp_mul_exp_neg_atBot` / `integrableOn_exp_mul_exp_neg_atBot`
+由 `+∞` 端经 `u ↦ −u` 保测换元得到。
+-/
+
+/-- `u ↦ e^{−6u}` 的导数。 -/
+theorem hasDerivAt_expNegSixMul (u : ℝ) :
+    HasDerivAt (fun v : ℝ ↦ Real.exp (-6 * v)) (-6 * Real.exp (-6 * u)) u := by
+  have h := (HasDerivAt.const_mul (-6 : ℝ) (hasDerivAt_id u)).exp
+  rwa [mul_one, mul_comm] at h
+
+/-- `thetaM` 在 `ℝ` 上连续。 -/
+theorem continuous_thetaM : Continuous thetaM :=
+  continuous_iff_continuousAt.mpr fun u => (hasDerivAt_thetaM u).continuousAt
+
+/-- `thetaMD` 在 `ℝ` 上连续。 -/
+theorem continuous_thetaMD : Continuous thetaMD :=
+  continuous_iff_continuousAt.mpr fun u => (hasDerivAt_thetaMD u).continuousAt
+
+/-- `thetaMDD` 可测（`M'` 的导数）。 -/
+theorem measurable_thetaMDD : Measurable thetaMDD := by
+  have h : deriv thetaMD = thetaMDD := funext fun u => (hasDerivAt_thetaMD u).deriv
+  rw [← h]
+  exact measurable_deriv thetaMD
+
+/-- 主极限引理（`−∞` 端）：`e^{Cu}·e^{−πe^{−4u}} → 0`（`u → −∞`，任意 `C`）。 -/
+theorem tendsto_exp_mul_exp_neg_atBot (C : ℝ) :
+    Filter.Tendsto (fun u : ℝ => Real.exp (C * u)
+      * Real.exp (-(Real.pi * Real.exp (-4 * u)))) Filter.atBot (nhds 0) := by
+  have h := (tendsto_exp_mul_exp_neg_atTop (-C)).comp Filter.tendsto_neg_atBot_atTop
+  refine h.congr (fun u => ?_)
+  have e1 : (-C) * (-u) = C * u := by ring
+  have e2 : (4:ℝ) * (-u) = -4 * u := by ring
+  rw [Function.comp_apply, e1, e2]
+
+/-- 主可积性引理（`−∞` 端）：任意 `K`，`u ↦ e^{Ku}·e^{−πe^{−4u}}` 在 `(−∞,0]` 可积。 -/
+theorem integrableOn_exp_mul_exp_neg_atBot (K : ℝ) :
+    MeasureTheory.IntegrableOn (fun u : ℝ => Real.exp (K * u)
+      * Real.exp (-(Real.pi * Real.exp (-4 * u)))) (Set.Iic 0) MeasureTheory.volume := by
+  have h := ((MeasureTheory.Measure.measurePreserving_neg MeasureTheory.volume
+      ).integrableOn_comp_preimage (Homeomorph.neg ℝ).measurableEmbedding).2
+    (integrableOn_exp_mul_exp_neg (-K))
+  have hset : (Neg.neg : ℝ → ℝ) ⁻¹' Set.Ioi (0 : ℝ) = Set.Iio (0 : ℝ) := by
+    ext u
+    simp only [Set.mem_preimage, Set.mem_Ioi, Set.mem_Iio]
+    exact neg_pos
+  rw [hset] at h
+  rw [integrableOn_Iic_iff_integrableOn_Iio]
+  refine h.congr_fun ?_ measurableSet_Iio
+  intro u _
+  have e1 : (-K) * (-u) = K * u := by ring
+  have e2 : (4:ℝ) * (-u) = -4 * u := by ring
+  simp only [Function.comp_apply, e1, e2]
+
+/-- `u ≤ 0` 时 `|M(u)| ≤ 2Cs·e^{−2u}·e^{−πe^{−4u}}`（反射表示）。 -/
+theorem abs_thetaM_le {u : ℝ} (hu : u ≤ 0) :
+    |thetaM u| ≤ 2 * thetaSConst * Real.exp (-2 * u)
+      * Real.exp (-(Real.pi * Real.exp (-4 * u))) := by
+  have h1 : (1:ℝ) ≤ Real.exp (-4 * u) := Real.one_le_exp (by linarith)
+  rw [thetaM_eq_reflected, abs_mul, abs_mul, abs_of_nonneg (by norm_num : (0:ℝ) ≤ 2),
+    abs_of_nonneg (Real.exp_nonneg _)]
+  calc 2 * Real.exp (-2 * u) * |thetaS (Real.exp (-4 * u))|
+      ≤ 2 * Real.exp (-2 * u) * (thetaSConst * Real.exp (-Real.pi * Real.exp (-4 * u))) :=
+        mul_le_mul_of_nonneg_left (abs_thetaS_le h1) (by positivity)
+    _ = 2 * thetaSConst * Real.exp (-2 * u) * Real.exp (-(Real.pi * Real.exp (-4 * u))) := by
+        rw [show (-Real.pi * Real.exp (-4 * u)) = -(Real.pi * Real.exp (-4 * u)) from by ring]
+        ring
+
+/-- `M''` 的反射表示：
+`M''(u) = 8e^{−2u}S(e^{−4u}) + 32e^{−6u}T'(e^{−4u}) + 16e^{−10u}T''(e^{−4u})`。 -/
+theorem thetaMDD_eq_reflected (u : ℝ) :
+    thetaMDD u = 8 * Real.exp (-2 * u) * thetaS (Real.exp (-4 * u))
+      + 32 * Real.exp (-6 * u) * thetaTD (Real.exp (-4 * u))
+      + 16 * Real.exp (-10 * u) * thetaTDD (Real.exp (-4 * u)) := by
+  have hS := (hasDerivAt_thetaS (Real.exp_pos (-4 * u))).comp u (hasDerivAt_expNegFourMul u)
+  have hTD := (hasDerivAt_thetaTD (Real.exp_pos (-4 * u))).comp u (hasDerivAt_expNegFourMul u)
+  have hE2 : HasDerivAt (fun v : ℝ ↦ -4 * Real.exp (-2 * v))
+      ((-4 : ℝ) * (-2 * Real.exp (-2 * u))) u :=
+    (hasDerivAt_expNegTwoMul u).const_mul (-4)
+  have hE6 : HasDerivAt (fun v : ℝ ↦ 4 * Real.exp (-6 * v))
+      ((4 : ℝ) * (-6 * Real.exp (-6 * u))) u :=
+    (hasDerivAt_expNegSixMul u).const_mul 4
+  have hmul := (hE2.mul hS).sub (hE6.mul hTD)
+  have hder : deriv thetaMD u = thetaMDD u := (hasDerivAt_thetaMD u).deriv
+  rw [← hder]
+  have hfun : thetaMD = fun u : ℝ ↦ -4 * Real.exp (-2 * u) * thetaS (Real.exp (-4 * u))
+      - 4 * Real.exp (-6 * u) * thetaTD (Real.exp (-4 * u)) :=
+    funext thetaMD_eq_reflected
+  rw [hfun]
+  have h1 := hmul.deriv
+  rw [Function.comp_apply, Function.comp_apply,
+    show (-4 : ℝ) * (-2 * Real.exp (-2 * u)) * thetaS (Real.exp (-4 * u))
+        + -4 * Real.exp (-2 * u)
+          * ((∑' n : ℕ, thetaSDerivTerm n (Real.exp (-4 * u))) * (-4 * Real.exp (-4 * u)))
+        - ((4 : ℝ) * (-6 * Real.exp (-6 * u)) * thetaTD (Real.exp (-4 * u))
+          + 4 * Real.exp (-6 * u)
+            * (thetaTDD (Real.exp (-4 * u)) * (-4 * Real.exp (-4 * u))))
+      = 8 * Real.exp (-2 * u) * thetaS (Real.exp (-4 * u))
+        + 32 * Real.exp (-6 * u) * thetaTD (Real.exp (-4 * u))
+        + 16 * Real.exp (-10 * u) * thetaTDD (Real.exp (-4 * u)) from ?_] at h1
+  · exact h1
+  · have hTD2 : (∑' n : ℕ, thetaSDerivTerm n (Real.exp (-4 * u)))
+        = thetaTD (Real.exp (-4 * u)) / 2 := by
+      unfold thetaTD
+      ring
+    rw [hTD2,
+      show Real.exp (-10 * u) = Real.exp (-2 * u) * Real.exp (-4 * u) * Real.exp (-4 * u)
+        from by
+        rw [← Real.exp_add, ← Real.exp_add]
+        congr 1
+        ring,
+      show Real.exp (-6 * u) = Real.exp (-2 * u) * Real.exp (-4 * u) from by
+        rw [← Real.exp_add]
+        congr 1
+        ring]
+    ring
+
+/-- `u ≤ 0` 时 `|M'(u)|` 的反射衰减界。 -/
+theorem abs_thetaMD_le {u : ℝ} (hu : u ≤ 0) :
+    |thetaMD u| ≤ 4 * thetaSConst * Real.exp (-2 * u)
+        * Real.exp (-(Real.pi * Real.exp (-4 * u)))
+      + 8 * Real.pi * thetaSD1Const * Real.exp (-6 * u)
+        * Real.exp (-(Real.pi * Real.exp (-4 * u))) := by
+  have h1 : (1:ℝ) ≤ Real.exp (-4 * u) := Real.one_le_exp (by linarith)
+  rw [thetaMD_eq_reflected]
+  calc |-4 * Real.exp (-2 * u) * thetaS (Real.exp (-4 * u))
+        - 4 * Real.exp (-6 * u) * thetaTD (Real.exp (-4 * u))|
+      = |-4 * Real.exp (-2 * u) * thetaS (Real.exp (-4 * u))
+        + -(4 * Real.exp (-6 * u) * thetaTD (Real.exp (-4 * u)))| := by
+        rw [sub_eq_add_neg]
+    _ ≤ |-4 * Real.exp (-2 * u) * thetaS (Real.exp (-4 * u))|
+        + |-(4 * Real.exp (-6 * u) * thetaTD (Real.exp (-4 * u)))| := abs_add_le _ _
+    _ ≤ (4 * Real.exp (-2 * u) * (thetaSConst * Real.exp (-Real.pi * Real.exp (-4 * u))))
+        + (4 * Real.exp (-6 * u) * ((2 * Real.pi * thetaSD1Const)
+          * Real.exp (-Real.pi * Real.exp (-4 * u)))) := by
+        apply add_le_add
+        · rw [abs_mul, abs_mul, abs_of_neg (by norm_num : (-4:ℝ) < 0), neg_neg,
+            abs_of_nonneg (Real.exp_nonneg _)]
+          exact mul_le_mul_of_nonneg_left (abs_thetaS_le h1) (by positivity)
+        · rw [abs_neg, abs_mul, abs_mul, abs_of_nonneg (by norm_num : (0:ℝ) ≤ 4),
+            abs_of_nonneg (Real.exp_nonneg _)]
+          exact mul_le_mul_of_nonneg_left (abs_thetaTD_le h1) (by positivity)
+    _ = 4 * thetaSConst * Real.exp (-2 * u) * Real.exp (-(Real.pi * Real.exp (-4 * u)))
+        + 8 * Real.pi * thetaSD1Const * Real.exp (-6 * u)
+          * Real.exp (-(Real.pi * Real.exp (-4 * u))) := by
+        rw [show (-Real.pi * Real.exp (-4 * u)) = -(Real.pi * Real.exp (-4 * u)) from by ring]
+        ring
+
+/-- `u ≤ 0` 时 `|M''(u)|` 的反射衰减界。 -/
+theorem abs_thetaMDD_le {u : ℝ} (hu : u ≤ 0) :
+    |thetaMDD u| ≤ 8 * thetaSConst * Real.exp (-2 * u)
+        * Real.exp (-(Real.pi * Real.exp (-4 * u)))
+      + 64 * Real.pi * thetaSD1Const * Real.exp (-6 * u)
+        * Real.exp (-(Real.pi * Real.exp (-4 * u)))
+      + 32 * Real.pi ^ 2 * phiTailConst * Real.exp (-10 * u)
+        * Real.exp (-(Real.pi * Real.exp (-4 * u))) := by
+  have h1 : (1:ℝ) ≤ Real.exp (-4 * u) := Real.one_le_exp (by linarith)
+  rw [thetaMDD_eq_reflected]
+  calc |8 * Real.exp (-2 * u) * thetaS (Real.exp (-4 * u))
+        + 32 * Real.exp (-6 * u) * thetaTD (Real.exp (-4 * u))
+        + 16 * Real.exp (-10 * u) * thetaTDD (Real.exp (-4 * u))|
+      ≤ |8 * Real.exp (-2 * u) * thetaS (Real.exp (-4 * u))|
+        + |32 * Real.exp (-6 * u) * thetaTD (Real.exp (-4 * u))|
+        + |16 * Real.exp (-10 * u) * thetaTDD (Real.exp (-4 * u))| := by
+        calc |8 * Real.exp (-2 * u) * thetaS (Real.exp (-4 * u))
+              + 32 * Real.exp (-6 * u) * thetaTD (Real.exp (-4 * u))
+              + 16 * Real.exp (-10 * u) * thetaTDD (Real.exp (-4 * u))|
+            ≤ |8 * Real.exp (-2 * u) * thetaS (Real.exp (-4 * u))
+              + 32 * Real.exp (-6 * u) * thetaTD (Real.exp (-4 * u))|
+              + |16 * Real.exp (-10 * u) * thetaTDD (Real.exp (-4 * u))| := abs_add_le _ _
+          _ ≤ (|8 * Real.exp (-2 * u) * thetaS (Real.exp (-4 * u))|
+              + |32 * Real.exp (-6 * u) * thetaTD (Real.exp (-4 * u))|)
+              + |16 * Real.exp (-10 * u) * thetaTDD (Real.exp (-4 * u))| :=
+              add_le_add_left (abs_add_le _ _) _
+    _ ≤ (8 * Real.exp (-2 * u) * (thetaSConst * Real.exp (-Real.pi * Real.exp (-4 * u))))
+        + (32 * Real.exp (-6 * u) * ((2 * Real.pi * thetaSD1Const)
+          * Real.exp (-Real.pi * Real.exp (-4 * u))))
+        + (16 * Real.exp (-10 * u) * ((2 * Real.pi ^ 2 * phiTailConst)
+          * Real.exp (-Real.pi * Real.exp (-4 * u)))) := by
+        apply add_le_add
+        · apply add_le_add
+          · rw [abs_mul, abs_mul, abs_of_nonneg (by norm_num : (0:ℝ) ≤ 8),
+              abs_of_nonneg (Real.exp_nonneg _)]
+            exact mul_le_mul_of_nonneg_left (abs_thetaS_le h1) (by positivity)
+          · rw [abs_mul, abs_mul, abs_of_nonneg (by norm_num : (0:ℝ) ≤ 32),
+              abs_of_nonneg (Real.exp_nonneg _)]
+            exact mul_le_mul_of_nonneg_left (abs_thetaTD_le h1) (by positivity)
+        · rw [abs_mul, abs_mul, abs_of_nonneg (by norm_num : (0:ℝ) ≤ 16),
+            abs_of_nonneg (Real.exp_nonneg _)]
+          exact mul_le_mul_of_nonneg_left (abs_thetaTDD_le h1) (by positivity)
+    _ = 8 * thetaSConst * Real.exp (-2 * u) * Real.exp (-(Real.pi * Real.exp (-4 * u)))
+        + 64 * Real.pi * thetaSD1Const * Real.exp (-6 * u)
+          * Real.exp (-(Real.pi * Real.exp (-4 * u)))
+        + 32 * Real.pi ^ 2 * phiTailConst * Real.exp (-10 * u)
+          * Real.exp (-(Real.pi * Real.exp (-4 * u))) := by
+        rw [show (-Real.pi * Real.exp (-4 * u)) = -(Real.pi * Real.exp (-4 * u)) from by ring]
+        ring
+
+/-- D3：`↑M(u)·e^{au} → 0`（`u → −∞`）。 -/
+theorem tendsto_thetaM_cexp_atBot (a : ℂ) :
+    Filter.Tendsto (fun u : ℝ => (thetaM u : ℂ) * Complex.exp (a * (u : ℂ)))
+      Filter.atBot (nhds 0) := by
+  have hre : ∀ u : ℝ, (a * (u : ℂ)).re = a.re * u := fun u => by simp [Complex.mul_re]
+  have hg : Filter.Tendsto (fun u : ℝ => 2 * thetaSConst * (Real.exp ((a.re - 2) * u)
+      * Real.exp (-(Real.pi * Real.exp (-4 * u))))) Filter.atBot
+      (nhds (2 * thetaSConst * 0)) :=
+    Filter.Tendsto.const_mul _ (tendsto_exp_mul_exp_neg_atBot (a.re - 2))
+  rw [mul_zero] at hg
+  refine squeeze_zero_norm' (f := fun u : ℝ => (thetaM u : ℂ) * Complex.exp (a * (u : ℂ)))
+    (a := fun u : ℝ => 2 * thetaSConst * (Real.exp ((a.re - 2) * u)
+      * Real.exp (-(Real.pi * Real.exp (-4 * u))))) ?_ hg
+  filter_upwards [Filter.eventually_le_atBot 0] with u hu
+  calc ‖(thetaM u : ℂ) * Complex.exp (a * (u : ℂ))‖
+      = |thetaM u| * Real.exp (a.re * u) := by
+        rw [norm_mul, show ‖(thetaM u : ℂ)‖ = |thetaM u| from RCLike.norm_ofReal _,
+          Complex.norm_exp, hre u]
+    _ ≤ (2 * thetaSConst * Real.exp (-2 * u)
+        * Real.exp (-(Real.pi * Real.exp (-4 * u)))) * Real.exp (a.re * u) :=
+        mul_le_mul_of_nonneg_right (abs_thetaM_le hu) (Real.exp_nonneg _)
+    _ = 2 * thetaSConst * (Real.exp ((a.re - 2) * u)
+        * Real.exp (-(Real.pi * Real.exp (-4 * u)))) := by
+        have e1 : Real.exp ((a.re - 2) * u) = Real.exp (a.re * u) * Real.exp (-2 * u) := by
+          rw [← Real.exp_add]; congr 1; ring
+        rw [e1]
+        ring
+
+/-- D4：`↑M'(u)·e^{au} → 0`（`u → −∞`）。 -/
+theorem tendsto_thetaMD_cexp_atBot (a : ℂ) :
+    Filter.Tendsto (fun u : ℝ => (thetaMD u : ℂ) * Complex.exp (a * (u : ℂ)))
+      Filter.atBot (nhds 0) := by
+  have hre : ∀ u : ℝ, (a * (u : ℂ)).re = a.re * u := fun u => by simp [Complex.mul_re]
+  have hg : Filter.Tendsto (fun u : ℝ => 4 * thetaSConst * (Real.exp ((a.re - 2) * u)
+        * Real.exp (-(Real.pi * Real.exp (-4 * u))))
+      + 8 * Real.pi * thetaSD1Const * (Real.exp ((a.re - 6) * u)
+        * Real.exp (-(Real.pi * Real.exp (-4 * u))))) Filter.atBot (nhds 0) := by
+    have h1 := Filter.Tendsto.const_mul (4 * thetaSConst)
+      (tendsto_exp_mul_exp_neg_atBot (a.re - 2))
+    have h2 := Filter.Tendsto.const_mul (8 * Real.pi * thetaSD1Const)
+      (tendsto_exp_mul_exp_neg_atBot (a.re - 6))
+    rw [mul_zero] at h1 h2
+    have h3 := h1.add h2
+    rwa [add_zero] at h3
+  refine squeeze_zero_norm' (f := fun u : ℝ => (thetaMD u : ℂ) * Complex.exp (a * (u : ℂ)))
+    (a := fun u : ℝ => 4 * thetaSConst * (Real.exp ((a.re - 2) * u)
+        * Real.exp (-(Real.pi * Real.exp (-4 * u))))
+      + 8 * Real.pi * thetaSD1Const * (Real.exp ((a.re - 6) * u)
+        * Real.exp (-(Real.pi * Real.exp (-4 * u))))) ?_ hg
+  filter_upwards [Filter.eventually_le_atBot 0] with u hu
+  calc ‖(thetaMD u : ℂ) * Complex.exp (a * (u : ℂ))‖
+      = |thetaMD u| * Real.exp (a.re * u) := by
+        rw [norm_mul, show ‖(thetaMD u : ℂ)‖ = |thetaMD u| from RCLike.norm_ofReal _,
+          Complex.norm_exp, hre u]
+    _ ≤ (4 * thetaSConst * Real.exp (-2 * u)
+          * Real.exp (-(Real.pi * Real.exp (-4 * u)))
+        + 8 * Real.pi * thetaSD1Const * Real.exp (-6 * u)
+          * Real.exp (-(Real.pi * Real.exp (-4 * u)))) * Real.exp (a.re * u) :=
+        mul_le_mul_of_nonneg_right (abs_thetaMD_le hu) (Real.exp_nonneg _)
+    _ = 4 * thetaSConst * (Real.exp ((a.re - 2) * u)
+          * Real.exp (-(Real.pi * Real.exp (-4 * u))))
+        + 8 * Real.pi * thetaSD1Const * (Real.exp ((a.re - 6) * u)
+          * Real.exp (-(Real.pi * Real.exp (-4 * u)))) := by
+        have e2 : Real.exp ((a.re - 2) * u) = Real.exp (a.re * u) * Real.exp (-2 * u) := by
+          rw [← Real.exp_add]; congr 1; ring
+        have e6 : Real.exp ((a.re - 6) * u) = Real.exp (a.re * u) * Real.exp (-6 * u) := by
+          rw [← Real.exp_add]; congr 1; ring
+        rw [e2, e6]
+        ring
+
+/-- I4：`e^{au}·↑M(u)` 在 `(−∞,0]` 可积。 -/
+theorem integrableOn_cexp_thetaM (a : ℂ) :
+    MeasureTheory.IntegrableOn (fun u : ℝ => Complex.exp (a * (u : ℂ)) * (thetaM u : ℂ))
+      (Set.Iic 0) MeasureTheory.volume := by
+  have hre : ∀ u : ℝ, (a * (u : ℂ)).re = a.re * u := fun u => by simp [Complex.mul_re]
+  apply MeasureTheory.Integrable.mono'
+    ((integrableOn_exp_mul_exp_neg_atBot (a.re - 2)).const_mul (2 * thetaSConst))
+  · exact ((by fun_prop : Measurable (fun u : ℝ => Complex.exp (a * (u : ℂ)))).mul
+      (Complex.measurable_ofReal.comp continuous_thetaM.measurable)).aestronglyMeasurable
+  · filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_Iic] with u hu
+    have hu0 : u ≤ 0 := hu
+    calc ‖Complex.exp (a * (u : ℂ)) * (thetaM u : ℂ)‖
+        = Real.exp (a.re * u) * |thetaM u| := by
+          rw [norm_mul, Complex.norm_exp, hre u,
+            show ‖(thetaM u : ℂ)‖ = |thetaM u| from RCLike.norm_ofReal _]
+      _ ≤ Real.exp (a.re * u) * (2 * thetaSConst * Real.exp (-2 * u)
+          * Real.exp (-(Real.pi * Real.exp (-4 * u)))) :=
+          mul_le_mul_of_nonneg_left (abs_thetaM_le hu0) (Real.exp_nonneg _)
+      _ = 2 * thetaSConst * (Real.exp ((a.re - 2) * u)
+          * Real.exp (-(Real.pi * Real.exp (-4 * u)))) := by
+          have e1 : Real.exp ((a.re - 2) * u) = Real.exp (a.re * u) * Real.exp (-2 * u) := by
+            rw [← Real.exp_add]; congr 1; ring
+          rw [e1]
+          ring
+
+/-- I5：`e^{au}·↑M'(u)` 在 `(−∞,0]` 可积。 -/
+theorem integrableOn_cexp_thetaMD (a : ℂ) :
+    MeasureTheory.IntegrableOn (fun u : ℝ => Complex.exp (a * (u : ℂ)) * (thetaMD u : ℂ))
+      (Set.Iic 0) MeasureTheory.volume := by
+  have hre : ∀ u : ℝ, (a * (u : ℂ)).re = a.re * u := fun u => by simp [Complex.mul_re]
+  apply MeasureTheory.Integrable.mono'
+    (((integrableOn_exp_mul_exp_neg_atBot (a.re - 2)).const_mul (4 * thetaSConst)).add
+      ((integrableOn_exp_mul_exp_neg_atBot (a.re - 6)).const_mul
+        (8 * Real.pi * thetaSD1Const)))
+  · exact ((by fun_prop : Measurable (fun u : ℝ => Complex.exp (a * (u : ℂ)))).mul
+      (Complex.measurable_ofReal.comp continuous_thetaMD.measurable)).aestronglyMeasurable
+  · filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_Iic] with u hu
+    have hu0 : u ≤ 0 := hu
+    calc ‖Complex.exp (a * (u : ℂ)) * (thetaMD u : ℂ)‖
+        = Real.exp (a.re * u) * |thetaMD u| := by
+          rw [norm_mul, Complex.norm_exp, hre u,
+            show ‖(thetaMD u : ℂ)‖ = |thetaMD u| from RCLike.norm_ofReal _]
+      _ ≤ Real.exp (a.re * u) * (4 * thetaSConst * Real.exp (-2 * u)
+            * Real.exp (-(Real.pi * Real.exp (-4 * u)))
+          + 8 * Real.pi * thetaSD1Const * Real.exp (-6 * u)
+            * Real.exp (-(Real.pi * Real.exp (-4 * u)))) :=
+          mul_le_mul_of_nonneg_left (abs_thetaMD_le hu0) (Real.exp_nonneg _)
+      _ = 4 * thetaSConst * (Real.exp ((a.re - 2) * u)
+            * Real.exp (-(Real.pi * Real.exp (-4 * u))))
+          + 8 * Real.pi * thetaSD1Const * (Real.exp ((a.re - 6) * u)
+            * Real.exp (-(Real.pi * Real.exp (-4 * u)))) := by
+          have e2 : Real.exp ((a.re - 2) * u) = Real.exp (a.re * u) * Real.exp (-2 * u) := by
+            rw [← Real.exp_add]; congr 1; ring
+          have e6 : Real.exp ((a.re - 6) * u) = Real.exp (a.re * u) * Real.exp (-6 * u) := by
+            rw [← Real.exp_add]; congr 1; ring
+          rw [e2, e6]
+          ring
+
+/-- I6：`e^{au}·↑M''(u)` 在 `(−∞,0]` 可积。 -/
+theorem integrableOn_cexp_thetaMDD (a : ℂ) :
+    MeasureTheory.IntegrableOn (fun u : ℝ => Complex.exp (a * (u : ℂ)) * (thetaMDD u : ℂ))
+      (Set.Iic 0) MeasureTheory.volume := by
+  have hre : ∀ u : ℝ, (a * (u : ℂ)).re = a.re * u := fun u => by simp [Complex.mul_re]
+  apply MeasureTheory.Integrable.mono'
+    ((((integrableOn_exp_mul_exp_neg_atBot (a.re - 2)).const_mul (8 * thetaSConst)).add
+      ((integrableOn_exp_mul_exp_neg_atBot (a.re - 6)).const_mul
+        (64 * Real.pi * thetaSD1Const))).add
+      ((integrableOn_exp_mul_exp_neg_atBot (a.re - 10)).const_mul
+        (32 * Real.pi ^ 2 * phiTailConst)))
+  · exact ((by fun_prop : Measurable (fun u : ℝ => Complex.exp (a * (u : ℂ)))).mul
+      (Complex.measurable_ofReal.comp measurable_thetaMDD)).aestronglyMeasurable
+  · filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_Iic] with u hu
+    have hu0 : u ≤ 0 := hu
+    calc ‖Complex.exp (a * (u : ℂ)) * (thetaMDD u : ℂ)‖
+        = Real.exp (a.re * u) * |thetaMDD u| := by
+          rw [norm_mul, Complex.norm_exp, hre u,
+            show ‖(thetaMDD u : ℂ)‖ = |thetaMDD u| from RCLike.norm_ofReal _]
+      _ ≤ Real.exp (a.re * u) * (8 * thetaSConst * Real.exp (-2 * u)
+            * Real.exp (-(Real.pi * Real.exp (-4 * u)))
+          + 64 * Real.pi * thetaSD1Const * Real.exp (-6 * u)
+            * Real.exp (-(Real.pi * Real.exp (-4 * u)))
+          + 32 * Real.pi ^ 2 * phiTailConst * Real.exp (-10 * u)
+            * Real.exp (-(Real.pi * Real.exp (-4 * u)))) :=
+          mul_le_mul_of_nonneg_left (abs_thetaMDD_le hu0) (Real.exp_nonneg _)
+      _ = 8 * thetaSConst * (Real.exp ((a.re - 2) * u)
+            * Real.exp (-(Real.pi * Real.exp (-4 * u))))
+          + 64 * Real.pi * thetaSD1Const * (Real.exp ((a.re - 6) * u)
+            * Real.exp (-(Real.pi * Real.exp (-4 * u))))
+          + 32 * Real.pi ^ 2 * phiTailConst * (Real.exp ((a.re - 10) * u)
+            * Real.exp (-(Real.pi * Real.exp (-4 * u)))) := by
+          have e2 : Real.exp ((a.re - 2) * u) = Real.exp (a.re * u) * Real.exp (-2 * u) := by
+            rw [← Real.exp_add]; congr 1; ring
+          have e6 : Real.exp ((a.re - 6) * u) = Real.exp (a.re * u) * Real.exp (-6 * u) := by
+            rw [← Real.exp_add]; congr 1; ring
+          have e10 : Real.exp ((a.re - 10) * u)
+              = Real.exp (a.re * u) * Real.exp (-10 * u) := by
+            rw [← Real.exp_add]; congr 1; ring
+          rw [e2, e6, e10]
+          ring
+
 end DeBruijnNewman
 end RiemannExplorer

@@ -64,3 +64,16 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.integrableOn_cexp_thetaW
 #print axioms RiemannExplorer.DeBruijnNewman.integrableOn_cexp_thetaWD
 #print axioms RiemannExplorer.DeBruijnNewman.integrableOn_cexp_thetaWDD
+#print axioms RiemannExplorer.DeBruijnNewman.hasDerivAt_expNegSixMul
+#print axioms RiemannExplorer.DeBruijnNewman.measurable_thetaMDD
+#print axioms RiemannExplorer.DeBruijnNewman.tendsto_exp_mul_exp_neg_atBot
+#print axioms RiemannExplorer.DeBruijnNewman.integrableOn_exp_mul_exp_neg_atBot
+#print axioms RiemannExplorer.DeBruijnNewman.abs_thetaM_le
+#print axioms RiemannExplorer.DeBruijnNewman.thetaMDD_eq_reflected
+#print axioms RiemannExplorer.DeBruijnNewman.abs_thetaMD_le
+#print axioms RiemannExplorer.DeBruijnNewman.abs_thetaMDD_le
+#print axioms RiemannExplorer.DeBruijnNewman.tendsto_thetaM_cexp_atBot
+#print axioms RiemannExplorer.DeBruijnNewman.tendsto_thetaMD_cexp_atBot
+#print axioms RiemannExplorer.DeBruijnNewman.integrableOn_cexp_thetaM
+#print axioms RiemannExplorer.DeBruijnNewman.integrableOn_cexp_thetaMD
+#print axioms RiemannExplorer.DeBruijnNewman.integrableOn_cexp_thetaMDD
