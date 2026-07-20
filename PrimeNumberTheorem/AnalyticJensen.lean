@@ -289,6 +289,48 @@ theorem exists_analytic_nonzero_factor_log_norm_at_center
   refine ⟨g, by simpa [U] using hg, by simpa [U] using hgne, ?_⟩
   simpa [U] using hlog
 
+/-- Extract one analytic nonvanishing factor and identify its logarithmic norm
+pointwise at every nonzero value in a strictly smaller concentric disk. -/
+theorem exists_analytic_nonzero_factor_log_norm_pointwise_of_ne_zero
+    {f : ℂ → ℂ} {c : ℂ} {r R : ℝ} (hrR : r < R)
+    (hanalytic : AnalyticOnNhd ℂ f (Metric.closedBall c R))
+    (hnotop : ∀ u : (Metric.closedBall c R : Set ℂ),
+      meromorphicOrderAt f u ≠ ⊤) :
+    ∃ g : ℂ → ℂ,
+      AnalyticOnNhd ℂ g (Metric.closedBall c R) ∧
+      (∀ u : (Metric.closedBall c R : Set ℂ), g u ≠ 0) ∧
+      ∀ z ∈ Metric.closedBall c r, f z ≠ 0 →
+        Real.log ‖f z‖ =
+          (∑ᶠ u,
+            (MeromorphicOn.divisor f (Metric.closedBall c R) u : ℝ) *
+              Real.log ‖z - u‖) + Real.log ‖g z‖ := by
+  let U : Set ℂ := Metric.closedBall c R
+  have hmer : MeromorphicOn f U := hanalytic.meromorphicOn
+  have hfinite : (MeromorphicOn.divisor f U).support.Finite :=
+    (MeromorphicOn.divisor f U).finiteSupport (isCompact_closedBall c R)
+  rcases hmer.extract_zeros_poles hnotop hfinite with ⟨g, hg, hgne, hfactor⟩
+  refine ⟨g, by simpa [U] using hg, by simpa [U] using hgne, ?_⟩
+  intro z hz hfz
+  have hz_outer : z ∈ U := by
+    exact Metric.closedBall_subset_closedBall hrR.le hz
+  have hz_ball : z ∈ Metric.ball c R := by
+    rw [Metric.mem_ball]
+    have hzdist : dist z c ≤ r := by
+      simpa [Metric.mem_closedBall] using hz
+    exact hzdist.trans_lt hrR
+  have hacc_univ : AccPt z (Filter.principal (Set.univ : Set ℂ)) :=
+    PerfectSpace.univ_preperfect z (Set.mem_univ z)
+  have hacc : AccPt z (Filter.principal U) := by
+    have hnhds : U ∈ nhds z := by
+      exact Metric.closedBall_mem_nhds_of_mem hz_ball
+    simpa [U] using hacc_univ.nhds_inter hnhds
+  have hlog :=
+    MeromorphicOn.log_norm_meromorphicTrailingCoeffAt_extract_zeros_poles
+      hfinite hz_outer hacc (hmer z hz_outer) (hg z hz_outer)
+        (hgne ⟨z, hz_outer⟩) hfactor
+  rw [(hanalytic z hz_outer).meromorphicTrailingCoeffAt_of_ne_zero hfz] at hlog
+  simpa [U] using hlog
+
 /-- Divisor mass is local on nested closed disks: the divisor computed on the
 inner disk equals the outer divisor restricted to that disk. -/
 theorem finsum_divisor_closedBall_eq_finsum_mem_of_le
