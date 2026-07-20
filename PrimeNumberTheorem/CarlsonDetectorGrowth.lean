@@ -423,6 +423,33 @@ noncomputable def regularizedCarlsonFactorLogVariationMajorant
   Real.log (C * (X : ℝ) ^ 2 * (T + 14) ^ 10) +
     (-Real.log (1 / (128 * (L + 1))) + Real.log (123 / 32 : ℝ)) * L
 
+/-- Final explicit majorant for the logarithmic derivative on a selected
+horizontal side. -/
+noncomputable def regularizedCarlsonHorizontalLogDerivMajorant
+    (C₁ C₂ : ℝ) (X : ℕ) (T : ℝ) : ℝ :=
+  4 * max
+      (regularizedCarlsonFactorLogVariationMajorant C₁ X T
+        (regularizedCarlsonFactorZeroLogMajorant C₂ X T)) 1 * 7744 +
+    regularizedCarlsonFactorZeroLogMajorant C₂ X T /
+      (1 / (4 * (regularizedCarlsonFactorZeroLogMajorant C₂ X T + 1)))
+
+/-- The Borel geometry factor is uniformly bounded on the fixed good-radius
+interval. -/
+theorem regularizedCarlsonFactorGeometry_le {r : ℝ}
+    (hr : r ∈ Set.Icc (121 / 32 : ℝ) (122 / 32 : ℝ)) :
+    (r + 15 / 4) / (r - 15 / 4) ^ 2 ≤ 7744 := by
+  have hgapPos : 0 < r - 15 / 4 := by linarith [hr.1]
+  have hgapLower : (1 / 32 : ℝ) ≤ r - 15 / 4 := by linarith [hr.1]
+  have hgapSquare : (1 / 32 : ℝ) ^ 2 ≤ (r - 15 / 4) ^ 2 :=
+    (sq_le_sq₀ (by norm_num) hgapPos.le).2 hgapLower
+  have hnum : r + 15 / 4 ≤ (242 / 32 : ℝ) := by linarith [hr.2]
+  apply (div_le_iff₀ (sq_pos_of_pos hgapPos)).2
+  calc
+    r + 15 / 4 ≤ (242 / 32 : ℝ) := hnum
+    _ = 7744 * (1 / 32 : ℝ) ^ 2 := by norm_num
+    _ ≤ 7744 * (r - 15 / 4) ^ 2 :=
+      mul_le_mul_of_nonneg_left hgapSquare (by norm_num)
+
 private theorem fixedJensenFactorDisk_re_pos
     {T : ℝ} {z : ℂ}
     (hz : z ∈ Metric.closedBall
@@ -1222,6 +1249,51 @@ theorem exists_regularizedCarlson_horizontal_logDeriv_le_logPolynomial :
   refine ⟨C₁, C₂, hC₁, hC₂, ?_⟩
   intro X hX sigma T hsigma hT
   exact hhorizontal hX hsigma hT (hmass hX hT)
+
+/-- The selected horizontal side has a bound depending only on `X`, its base
+height, and two global constants; the auxiliary good-circle radius has been
+eliminated. -/
+theorem exists_regularizedCarlson_horizontal_logDeriv_le_explicitMajorant :
+    ∃ C₁ C₂ : ℝ, 1 ≤ C₁ ∧ 1 ≤ C₂ ∧
+      ∀ {X : ℕ}, 1 ≤ X → ∀ {sigma T : ℝ},
+        1 / 2 < sigma → 5 ≤ T →
+        ∃ t ∈ Set.Icc T (T + 1),
+          (∀ x ∈ Set.Icc sigma 4,
+            regularizedCarlsonZeroDetector X
+              ((x : ℂ) + (t : ℂ) * I) ≠ 0) ∧
+          ∀ x ∈ Set.Icc sigma 4,
+            ‖logDeriv (regularizedCarlsonZeroDetector X)
+              ((x : ℂ) + (t : ℂ) * I)‖ ≤
+              regularizedCarlsonHorizontalLogDerivMajorant C₁ C₂ X T := by
+  rcases exists_regularizedCarlson_horizontal_logDeriv_le_logPolynomial with
+    ⟨C₁, C₂, hC₁, hC₂, hhorizontal⟩
+  refine ⟨C₁, C₂, hC₁, hC₂, ?_⟩
+  intro X hX sigma T hsigma hT
+  rcases hhorizontal hX hsigma hT with ⟨r, hr, t, ht, hne, hbound⟩
+  have hgeometry := regularizedCarlsonFactorGeometry_le hr
+  have hfactorNonneg :
+      0 ≤ 4 * max
+        (regularizedCarlsonFactorLogVariationMajorant C₁ X T
+          (regularizedCarlsonFactorZeroLogMajorant C₂ X T)) 1 := by
+    positivity
+  have hregular :
+      4 * max
+          (regularizedCarlsonFactorLogVariationMajorant C₁ X T
+            (regularizedCarlsonFactorZeroLogMajorant C₂ X T)) 1 *
+          (r + 15 / 4) / (r - 15 / 4) ^ 2 ≤
+        4 * max
+          (regularizedCarlsonFactorLogVariationMajorant C₁ X T
+            (regularizedCarlsonFactorZeroLogMajorant C₂ X T)) 1 * 7744 := by
+    simpa [div_eq_mul_inv, mul_assoc] using
+      (mul_le_mul_of_nonneg_left hgeometry hfactorNonneg)
+  refine ⟨t, ht, hne, ?_⟩
+  intro x hx
+  exact (hbound x hx).trans (by
+    simpa [regularizedCarlsonHorizontalLogDerivMajorant] using
+      add_le_add_right hregular
+        (regularizedCarlsonFactorZeroLogMajorant C₂ X T /
+          (1 / (4 *
+            (regularizedCarlsonFactorZeroLogMajorant C₂ X T + 1)))))
 
 /-- The zero-removed detector factor has an explicit center lower bound in
 terms of `X` and `T`; no unevaluated divisor mass remains. -/

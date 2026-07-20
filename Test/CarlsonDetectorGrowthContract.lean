@@ -114,6 +114,13 @@ noncomputable example (X : ℕ) (T : ℝ) : ℝ :=
 noncomputable example (C : ℝ) (X : ℕ) (T L : ℝ) : ℝ :=
   regularizedCarlsonFactorLogVariationMajorant C X T L
 
+noncomputable example (C₁ C₂ : ℝ) (X : ℕ) (T : ℝ) : ℝ :=
+  regularizedCarlsonHorizontalLogDerivMajorant C₁ C₂ X T
+
+example {r : ℝ} (hr : r ∈ Set.Icc (121 / 32 : ℝ) (122 / 32 : ℝ)) :
+    (r + 15 / 4) / (r - 15 / 4) ^ 2 ≤ 7744 :=
+  regularizedCarlsonFactorGeometry_le hr
+
 noncomputable example (X : ℕ) (T : ℝ) : Finset ℝ :=
   regularizedCarlsonFactorDiskZeroHeights X T
 
@@ -281,6 +288,19 @@ example : ∃ C₁ C₂ : ℝ, 1 ≤ C₁ ∧ 1 ≤ C₂ ∧
                 (regularizedCarlsonFactorZeroLogMajorant C₂ X T + 1))) :=
   exists_regularizedCarlson_horizontal_logDeriv_le_logPolynomial
 
+example : ∃ C₁ C₂ : ℝ, 1 ≤ C₁ ∧ 1 ≤ C₂ ∧
+    ∀ {X : ℕ}, 1 ≤ X → ∀ {sigma T : ℝ},
+      1 / 2 < sigma → 5 ≤ T →
+      ∃ t ∈ Set.Icc T (T + 1),
+        (∀ x ∈ Set.Icc sigma 4,
+          regularizedCarlsonZeroDetector X
+            ((x : ℂ) + (t : ℂ) * I) ≠ 0) ∧
+        ∀ x ∈ Set.Icc sigma 4,
+          ‖logDeriv (regularizedCarlsonZeroDetector X)
+            ((x : ℂ) + (t : ℂ) * I)‖ ≤
+            regularizedCarlsonHorizontalLogDerivMajorant C₁ C₂ X T :=
+  exists_regularizedCarlson_horizontal_logDeriv_le_explicitMajorant
+
 example : ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X → ∀ {T : ℝ}, 5 ≤ T →
     ∃ g : ℂ → ℂ,
       AnalyticOnNhd ℂ g
@@ -310,11 +330,13 @@ example : ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X → ∀ {T : ℝ}, 5 �
 #print axioms regularizedCarlsonFactorDiskSeparation_lower_of_mass_le
 #print axioms regularizedCarlsonFactorHorizontalSeparation_lower_of_mass_le
 #print axioms regularizedCarlsonFactorLogVariation_le_of_mass_le
+#print axioms regularizedCarlsonFactorGeometry_le
 #print axioms exists_regularizedCarlsonZeroDetector_goodFactorCircle
 #print axioms exists_regularizedCarlsonZeroDetector_goodFactor_logDeriv_le
 #print axioms exists_regularizedCarlson_horizontal_logDeriv_le_factorDisk
 #print axioms exists_regularizedCarlson_horizontal_logDeriv_le_of_factorDiskMass_le
 #print axioms exists_regularizedCarlson_horizontal_logDeriv_le_of_factorDiskMass_le_explicit
+#print axioms exists_regularizedCarlson_horizontal_logDeriv_le_explicitMajorant
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem
