@@ -1,5 +1,6 @@
 import PrimeNumberTheorem.CarlsonZeroDetector
 import Mathlib.Analysis.Meromorphic.Divisor
+import ZeroFreeRegion.MeromorphicAux
 
 open Complex MeasureTheory MeromorphicOn Real
 
@@ -330,6 +331,138 @@ theorem exists_analytic_nonzero_factor_log_norm_pointwise_of_ne_zero
         (hgne ⟨z, hz_outer⟩) hfactor
   rw [(hanalytic z hz_outer).meromorphicTrailingCoeffAt_of_ne_zero hfz] at hlog
   simpa [U] using hlog
+
+/-- The same extracted nonvanishing factor simultaneously supplies the
+pointwise logarithmic-norm formula and the logarithmic-derivative principal-
+part decomposition. -/
+theorem exists_analytic_nonzero_factor_log_norm_logDeriv_pointwise_of_ne_zero
+    {f : ℂ → ℂ} {c : ℂ} {r R : ℝ} (hrR : r < R)
+    (hanalytic : AnalyticOnNhd ℂ f (Metric.closedBall c R))
+    (hnotop : ∀ u : (Metric.closedBall c R : Set ℂ),
+      meromorphicOrderAt f u ≠ ⊤) :
+    ∃ g : ℂ → ℂ,
+      AnalyticOnNhd ℂ g (Metric.closedBall c R) ∧
+      (∀ u : (Metric.closedBall c R : Set ℂ), g u ≠ 0) ∧
+      (∀ z ∈ Metric.closedBall c r, f z ≠ 0 →
+        Real.log ‖f z‖ =
+          (∑ᶠ u,
+            (MeromorphicOn.divisor f (Metric.closedBall c R) u : ℝ) *
+              Real.log ‖z - u‖) + Real.log ‖g z‖) ∧
+      ∀ z ∈ Metric.ball c R, f z ≠ 0 →
+        logDeriv f z =
+          (∑ᶠ u,
+            (MeromorphicOn.divisor f (Metric.closedBall c R) u : ℂ) *
+              (z - u)⁻¹) + logDeriv g z := by
+  classical
+  let U : Set ℂ := Metric.closedBall c R
+  let D := MeromorphicOn.divisor f U
+  let fac : ℂ → ℂ := ∏ᶠ u, fun w : ℂ => (w - u) ^ D u
+  have hmer : MeromorphicOn f U := hanalytic.meromorphicOn
+  have hfinite : D.support.Finite :=
+    D.finiteSupport (isCompact_closedBall c R)
+  rcases hmer.extract_zeros_poles hnotop hfinite with ⟨g, hg, hgne, hfactor⟩
+  have hg' : AnalyticOnNhd ℂ g (Metric.closedBall c R) := by
+    simpa [U] using hg
+  have hgne' : ∀ u : (Metric.closedBall c R : Set ℂ), g u ≠ 0 := by
+    simpa [U] using hgne
+  have hlog : ∀ z ∈ Metric.closedBall c r, f z ≠ 0 →
+      Real.log ‖f z‖ =
+        (∑ᶠ u,
+          (MeromorphicOn.divisor f (Metric.closedBall c R) u : ℝ) *
+            Real.log ‖z - u‖) + Real.log ‖g z‖ := by
+    intro z hz hfz
+    have hz_outer : z ∈ U :=
+      Metric.closedBall_subset_closedBall hrR.le hz
+    have hz_ball : z ∈ Metric.ball c R := by
+      rw [Metric.mem_ball]
+      have hzdist : dist z c ≤ r := by
+        simpa [Metric.mem_closedBall] using hz
+      exact hzdist.trans_lt hrR
+    have hacc_univ : AccPt z (Filter.principal (Set.univ : Set ℂ)) :=
+      PerfectSpace.univ_preperfect z (Set.mem_univ z)
+    have hacc : AccPt z (Filter.principal U) := by
+      have hnhds : U ∈ nhds z :=
+        Metric.closedBall_mem_nhds_of_mem hz_ball
+      simpa [U] using hacc_univ.nhds_inter hnhds
+    have hpoint :=
+      MeromorphicOn.log_norm_meromorphicTrailingCoeffAt_extract_zeros_poles
+        hfinite hz_outer hacc (hmer z hz_outer) (hg z hz_outer)
+          (hgne ⟨z, hz_outer⟩) hfactor
+    rw [(hanalytic z hz_outer).meromorphicTrailingCoeffAt_of_ne_zero hfz]
+      at hpoint
+    simpa [D, U] using hpoint
+  have hld : ∀ z ∈ Metric.ball c R, f z ≠ 0 →
+      logDeriv f z =
+        (∑ᶠ u,
+          (MeromorphicOn.divisor f (Metric.closedBall c R) u : ℂ) *
+            (z - u)⁻¹) + logDeriv g z := by
+    intro z hz hfz
+    have hzU : z ∈ U := Metric.ball_subset_closedBall hz
+    have hza : AnalyticAt ℂ f z := hanalytic z hzU
+    have hDz : D z = 0 := by
+      rw [show D z = MeromorphicOn.divisor f U z by rfl]
+      rw [MeromorphicOn.divisor_apply hmer hzU]
+      rw [(hza.meromorphicNFAt.meromorphicOrderAt_eq_zero_iff).2 hfz]
+      simp
+    have hsep : ∀ u ∈ D.support, z ≠ u := by
+      intro u hu hzu
+      subst u
+      have : D z ≠ 0 := by simpa [Function.mem_support] using hu
+      exact this hDz
+    have hfacnf : MeromorphicNFAt fac z :=
+      Function.FactorizedRational.meromorphicNFOn D U hzU
+    have hfaca : AnalyticAt ℂ fac z := by
+      apply hfacnf.meromorphicOrderAt_nonneg_iff_analyticAt.mp
+      rw [show meromorphicOrderAt fac z = D z by
+        exact Function.FactorizedRational.meromorphicOrderAt_eq D hfinite]
+      simp [hDz]
+    have hfacne : fac z ≠ 0 := by
+      rw [← hfacnf.meromorphicOrderAt_eq_zero_iff]
+      rw [show meromorphicOrderAt fac z = D z by
+        exact Function.FactorizedRational.meromorphicOrderAt_eq D hfinite]
+      simp [hDz]
+    have hrhsa : AnalyticAt ℂ (fun w => fac w * g w) z :=
+      hfaca.mul (hg z hzU)
+    have hU_nhds : U ∈ nhds z :=
+      Metric.closedBall_mem_nhds_of_mem hz
+    have hacc : AccPt z (Filter.principal U) := by
+      rw [accPt_principal_iff_nhdsWithin]
+      have heq : nhdsWithin z (U \ {z}) = nhdsWithin z {z}ᶜ := by
+        rw [nhdsWithin_eq_iff_eventuallyEq]
+        filter_upwards [hU_nhds] with w hw
+        apply propext
+        constructor
+        · intro h
+          exact h.2
+        · intro h
+          exact ⟨hw, h⟩
+      rw [heq]
+      infer_instance
+    have hfactorNE : f =ᶠ[nhdsWithin z {z}ᶜ]
+        fun w => fac w * g w := by
+      apply hza.meromorphicAt.eventuallyEq_nhdsNE_of_eventuallyEq_codiscreteWithin
+        hrhsa.meromorphicAt hzU hacc
+      simpa [fac, D, U, Pi.smul_apply', smul_eq_mul] using hfactor
+    have hfactorN : f =ᶠ[nhds z] fun w => fac w * g w :=
+      (hza.continuousAt.eventuallyEq_nhds_iff_eventuallyEq_nhdsNE
+        hrhsa.continuousAt).mp hfactorNE
+    have hlogeq : logDeriv f z = logDeriv (fun w => fac w * g w) z := by
+      simp only [logDeriv_apply]
+      rw [hfactorN.deriv_eq, hfactorN.eq_of_nhds]
+    have hmul := logDeriv_mul z hfacne (hgne ⟨z, hzU⟩)
+      hfaca.differentiableAt (hg z hzU).differentiableAt
+    have hfaclog : logDeriv fac z =
+        ∑ᶠ u, (D u : ℂ) * (z - u)⁻¹ := by
+      simpa [fac] using
+        ZeroFreeRegion.logDeriv_finprod_sub_zpow_eq_finsum_mul_inv hfinite hsep
+    calc
+      logDeriv f z = logDeriv (fun w => fac w * g w) z := hlogeq
+      _ = logDeriv fac z + logDeriv g z := hmul
+      _ = (∑ᶠ u, (D u : ℂ) * (z - u)⁻¹) + logDeriv g z := by rw [hfaclog]
+      _ = (∑ᶠ u,
+            (MeromorphicOn.divisor f (Metric.closedBall c R) u : ℂ) *
+              (z - u)⁻¹) + logDeriv g z := by rfl
+  exact ⟨g, hg', hgne', hlog, hld⟩
 
 /-- Divisor mass is local on nested closed disks: the divisor computed on the
 inner disk equals the outer divisor restricted to that disk. -/

@@ -90,6 +90,26 @@ example {f : ℂ → ℂ} {c : ℂ} {r R : ℝ} (hrR : r < R)
   exists_analytic_nonzero_factor_log_norm_pointwise_of_ne_zero
     hrR hanalytic hnotop
 
+example {f : ℂ → ℂ} {c : ℂ} {r R : ℝ} (hrR : r < R)
+    (hanalytic : AnalyticOnNhd ℂ f (Metric.closedBall c R))
+    (hnotop : ∀ u : (Metric.closedBall c R : Set ℂ),
+      meromorphicOrderAt f u ≠ ⊤) :
+    ∃ g : ℂ → ℂ,
+      AnalyticOnNhd ℂ g (Metric.closedBall c R) ∧
+      (∀ u : (Metric.closedBall c R : Set ℂ), g u ≠ 0) ∧
+      (∀ z ∈ Metric.closedBall c r, f z ≠ 0 →
+        Real.log ‖f z‖ =
+          (∑ᶠ u,
+            (MeromorphicOn.divisor f (Metric.closedBall c R) u : ℝ) *
+              Real.log ‖z - u‖) + Real.log ‖g z‖) ∧
+      ∀ z ∈ Metric.ball c R, f z ≠ 0 →
+        logDeriv f z =
+          (∑ᶠ u,
+            (MeromorphicOn.divisor f (Metric.closedBall c R) u : ℂ) *
+              (z - u)⁻¹) + logDeriv g z :=
+  exists_analytic_nonzero_factor_log_norm_logDeriv_pointwise_of_ne_zero
+    hrR hanalytic hnotop
+
 example {f : ℂ → ℂ} {c : ℂ} {b R : ℝ} (hbR : b ≤ R)
     (hmeromorphic : MeromorphicOn f (Metric.closedBall c R)) :
     (∑ᶠ u,
@@ -113,6 +133,8 @@ example {f : ℂ → ℂ} {c : ℂ} {R : ℝ}
 #print axioms finsum_divisor_mul_log_norm_center_sub_le_log_mul_mass
 #print axioms exists_analytic_nonzero_factor_log_norm_at_center
 #print axioms exists_analytic_nonzero_factor_log_norm_pointwise_of_ne_zero
+#print axioms
+  exists_analytic_nonzero_factor_log_norm_logDeriv_pointwise_of_ne_zero
 #print axioms finsum_divisor_closedBall_eq_finsum_mem_of_le
 #print axioms card_divisor_support_le_finsum_mass
 

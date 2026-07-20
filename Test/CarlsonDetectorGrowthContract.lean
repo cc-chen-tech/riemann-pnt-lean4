@@ -159,6 +159,15 @@ example : ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X → ∀ {T : ℝ}, 5 �
           ((4 : ℂ) + I * (T + 1 / 2)) r,
         Real.log ‖g z‖ ≤
           regularizedCarlsonFactorCircleLogUpper C X T) ∧
+      (∀ z ∈ Metric.ball
+          ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ),
+        regularizedCarlsonZeroDetector X z ≠ 0 →
+          logDeriv (regularizedCarlsonZeroDetector X) z =
+            (∑ᶠ u,
+              (MeromorphicOn.divisor (regularizedCarlsonZeroDetector X)
+                (Metric.closedBall
+                  ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ)) u : ℂ) *
+                (z - u)⁻¹) + logDeriv g z) ∧
       ∀ z ∈ Metric.closedBall
           ((4 : ℂ) + I * (T + 1 / 2)) (15 / 4 : ℝ),
         ‖logDeriv g z‖ ≤

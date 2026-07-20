@@ -598,6 +598,15 @@ theorem exists_regularizedCarlsonZeroDetector_goodFactor_logDeriv_le :
             ((4 : ℂ) + I * (T + 1 / 2)) r,
           Real.log ‖g z‖ ≤
             regularizedCarlsonFactorCircleLogUpper C X T) ∧
+        (∀ z ∈ Metric.ball
+            ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ),
+          regularizedCarlsonZeroDetector X z ≠ 0 →
+            logDeriv (regularizedCarlsonZeroDetector X) z =
+              (∑ᶠ u,
+                (MeromorphicOn.divisor (regularizedCarlsonZeroDetector X)
+                  (Metric.closedBall
+                    ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ)) u : ℂ) *
+                  (z - u)⁻¹) + logDeriv g z) ∧
         ∀ z ∈ Metric.closedBall
             ((4 : ℂ) + I * (T + 1 / 2)) (15 / 4 : ℝ),
           ‖logDeriv g z‖ ≤
@@ -663,9 +672,10 @@ theorem exists_regularizedCarlsonZeroDetector_goodFactor_logDeriv_le :
     change (u : ℂ) ∈ Metric.closedBall
       ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ)
     exact u.property
-  rcases exists_analytic_nonzero_factor_log_norm_pointwise_of_ne_zero
+  rcases
+      exists_analytic_nonzero_factor_log_norm_logDeriv_pointwise_of_ne_zero
       (f := regularizedCarlsonZeroDetector X) (c := c) (r := r) (R := b)
-      hrb hanalyticFactor hnotop with ⟨g, hg, hgne, hfactor⟩
+      hrb hanalyticFactor hnotop with ⟨g, hg, hgne, hfactor, hld⟩
   have hDfinite : D.support.Finite := by
     exact D.finiteSupport (isCompact_closedBall c b)
   have hDnonneg : 0 ≤ D := hanalyticFactor.divisor_nonneg
@@ -735,12 +745,14 @@ theorem exists_regularizedCarlsonZeroDetector_goodFactor_logDeriv_le :
     exact
       ZeroFreeRegion.norm_logDeriv_le_four_mul_max_sub_mul_add_div_sq_of_sphere_log_norm_le_of_center_lower
         hrpos (by norm_num) hdR hgCircle hgneCircle hcenterG hsphereG hz
-  refine ⟨r, g, hrange, ?_, ?_, ?_, ?_, ?_⟩
+  refine ⟨r, g, hrange, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · simpa [c, b] using hg
   · simpa [c, b] using hgne
   · simpa [c] using hcenterG
   · intro z hz
     exact hsphereG z (by simpa [c] using hz)
+  · intro z hz hfz
+    exact hld z (by simpa [c, b] using hz) hfz
   · intro z hz
     exact hlogDeriv z (by simpa [c] using hz)
 
