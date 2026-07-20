@@ -81,6 +81,21 @@ noncomputable def regularizedCarlsonDetectorRectanglePrincipalPart
     (carlsonDetectorRectangle sigma alpha a b)
   ∑ᶠ u, (D u : ℂ) * (z - u)⁻¹
 
+/-- The logarithmic derivative after subtracting every rectangle-zero
+principal part and filling the resulting removable singularities. -/
+noncomputable def regularizedCarlsonDetectorRectangleRegularPart
+    (X : ℕ) (sigma alpha a b : ℝ) : ℂ → ℂ :=
+  let K := carlsonDetectorRectangle sigma alpha a b
+  let P := regularizedCarlsonDetectorRectangleDivisorSupport
+    X sigma alpha a b
+  toMeromorphicNFOn
+    (fun z : ℂ =>
+      logDeriv (regularizedCarlsonZeroDetector X) z -
+        ∑ u ∈ P,
+          (analyticOrderNatAt (regularizedCarlsonZeroDetector X) u : ℂ) *
+            (z - u)⁻¹)
+    K
+
 private theorem divisor_regularizedCarlsonZeroDetector_eq_analyticOrderNatAt_of_mem
     {X : ℕ} (hX : 1 ≤ X) {sigma alpha a b : ℝ}
     (hsigma : 0 < sigma) {z : ℂ}
@@ -195,6 +210,156 @@ theorem mem_regularizedCarlsonDetectorRectangleDivisorSupport_iff_zero
       rw [← hnatCast, hnatZero]
       rfl
     exact (hanalytic.analyticOrderAt_eq_zero.mp horderZero) hzero
+
+/-- Subtracting all multiplicity-weighted rectangle-zero principal parts
+removes every singularity of the detector logarithmic derivative on the
+rectangle. -/
+theorem analyticOnNhd_regularizedCarlsonDetectorRectangleRegularPart
+    {X : ℕ} (hX : 1 ≤ X) {sigma alpha a b : ℝ}
+    (hsigma : 0 < sigma) :
+    AnalyticOnNhd ℂ
+      (regularizedCarlsonDetectorRectangleRegularPart X sigma alpha a b)
+      (carlsonDetectorRectangle sigma alpha a b) := by
+  classical
+  let K := carlsonDetectorRectangle sigma alpha a b
+  let P := regularizedCarlsonDetectorRectangleDivisorSupport
+    X sigma alpha a b
+  let D := MeromorphicOn.divisor (regularizedCarlsonZeroDetector X) K
+  have hfinite : D.support.Finite :=
+    D.finiteSupport (isCompact_carlsonDetectorRectangle sigma alpha a b)
+  have hf : AnalyticOnNhd ℂ (regularizedCarlsonZeroDetector X) K := by
+    intro z hz
+    exact analyticOnNhd_regularizedCarlsonZeroDetector_re_gt
+      (theta := (0 : ℝ)) le_rfl X z (hsigma.trans_le hz.1.1)
+  have hzero : ∀ z ∈ K,
+      regularizedCarlsonZeroDetector X z = 0 ↔ z ∈ P := by
+    intro z hz
+    simpa [P, K] using
+      (mem_regularizedCarlsonDetectorRectangleDivisorSupport_iff_zero
+        hX hsigma hz).symm
+  have horder : ∀ u ∈ P,
+      analyticOrderAt (regularizedCarlsonZeroDetector X) u =
+        analyticOrderNatAt (regularizedCarlsonZeroDetector X) u := by
+    intro u hu
+    have huSupport : u ∈ D.support := by
+      change u ∈ hfinite.toFinset at hu
+      exact hfinite.mem_toFinset.mp hu
+    have huK : u ∈ K := by
+      by_contra hnot
+      have hDne : D u ≠ 0 := by
+        simpa only [Function.mem_support] using huSupport
+      apply hDne
+      dsimp [D]
+      simp [MeromorphicOn.divisor, hnot]
+    have huRe : 0 < u.re := hsigma.trans_le huK.1.1
+    exact (Nat.cast_analyticOrderNatAt
+      (analyticOrderAt_regularizedCarlsonZeroDetector_ne_top
+        X hX huRe)).symm
+  dsimp [regularizedCarlsonDetectorRectangleRegularPart]
+  exact
+    ZeroFreeRegion.analyticOnNhd_toMeromorphicNFOn_logDeriv_sub_finset_principalParts
+      hf P (analyticOrderNatAt (regularizedCarlsonZeroDetector X)) hzero horder
+
+/-- Away from detector zeros, the normalized regular part is literally the
+logarithmic derivative minus the complete multiplicity-weighted rectangle
+principal part. -/
+theorem regularizedCarlsonDetectorRectangleRegularPart_eq_logDeriv_sub_principalPart
+    {X : ℕ} (hX : 1 ≤ X) {sigma alpha a b : ℝ}
+    (hsigma : 0 < sigma) {z : ℂ}
+    (hz : z ∈ carlsonDetectorRectangle sigma alpha a b)
+    (hne : regularizedCarlsonZeroDetector X z ≠ 0) :
+    regularizedCarlsonDetectorRectangleRegularPart X sigma alpha a b z =
+      logDeriv (regularizedCarlsonZeroDetector X) z -
+        regularizedCarlsonDetectorRectanglePrincipalPart
+          X sigma alpha a b z := by
+  classical
+  let K := carlsonDetectorRectangle sigma alpha a b
+  let P := regularizedCarlsonDetectorRectangleDivisorSupport
+    X sigma alpha a b
+  let D := MeromorphicOn.divisor (regularizedCarlsonZeroDetector X) K
+  let raw : ℂ → ℂ := fun w =>
+    logDeriv (regularizedCarlsonZeroDetector X) w -
+      ∑ u ∈ P,
+        (analyticOrderNatAt (regularizedCarlsonZeroDetector X) u : ℂ) *
+          (w - u)⁻¹
+  have hf : AnalyticOnNhd ℂ (regularizedCarlsonZeroDetector X) K := by
+    intro w hw
+    exact analyticOnNhd_regularizedCarlsonZeroDetector_re_gt
+      (theta := (0 : ℝ)) le_rfl X w (hsigma.trans_le hw.1.1)
+  have hfinite : D.support.Finite :=
+    D.finiteSupport (isCompact_carlsonDetectorRectangle sigma alpha a b)
+  have hD : ∀ u, 0 ≤ D u := by
+    intro u
+    by_cases hu : u ∈ K
+    · have hDu : D u =
+          (analyticOrderNatAt (regularizedCarlsonZeroDetector X) u : ℤ) := by
+        dsimp [D, K]
+        exact divisor_regularizedCarlsonZeroDetector_eq_analyticOrderNatAt_of_mem
+          hX hsigma hu
+      rw [hDu]
+      exact Int.natCast_nonneg _
+    · dsimp [D]
+      simp [MeromorphicOn.divisor, hu]
+  have hprincipal :
+      (∑ u ∈ P,
+          (analyticOrderNatAt (regularizedCarlsonZeroDetector X) u : ℂ) *
+            (z - u)⁻¹) =
+        regularizedCarlsonDetectorRectanglePrincipalPart
+          X sigma alpha a b z := by
+    rw [regularizedCarlsonDetectorRectanglePrincipalPart]
+    rw [← ZeroFreeRegion.sum_toNat_cast_mul_eq_finsum_cast_mul_of_nonneg_finiteSupport
+      hfinite hD (fun u => (z - u)⁻¹)]
+    apply Finset.sum_congr
+    · rfl
+    · intro u hu
+      have huSupport : u ∈ D.support := hfinite.mem_toFinset.mp hu
+      have huK : u ∈ K := by
+        by_contra hnot
+        have hDne : D u ≠ 0 := by
+          simpa only [Function.mem_support] using huSupport
+        apply hDne
+        dsimp [D]
+        simp [MeromorphicOn.divisor, hnot]
+      have hDu : D u =
+          (analyticOrderNatAt (regularizedCarlsonZeroDetector X) u : ℤ) := by
+        dsimp [D, K]
+        exact divisor_regularizedCarlsonZeroDetector_eq_analyticOrderNatAt_of_mem
+          hX hsigma huK
+      rw [hDu, Int.toNat_natCast]
+  have hrawMeromorphic : MeromorphicOn raw K := by
+    simpa [raw] using
+      ZeroFreeRegion.meromorphicOn_logDeriv_sub_finset_principalParts
+        hf.meromorphicOn P
+          (analyticOrderNatAt (regularizedCarlsonZeroDetector X))
+  have hrawAnalytic : AnalyticAt ℂ raw z := by
+    have hlog : AnalyticAt ℂ
+        (logDeriv (regularizedCarlsonZeroDetector X)) z :=
+      (hf z hz).deriv.div (hf z hz) hne
+    have hsum : AnalyticAt ℂ
+        (fun w : ℂ =>
+          ∑ u ∈ P,
+            (analyticOrderNatAt (regularizedCarlsonZeroDetector X) u : ℂ) *
+              (w - u)⁻¹) z := by
+      apply Finset.analyticAt_fun_sum
+      intro u hu
+      have hzu : z ≠ u := by
+        intro heq
+        subst u
+        exact hne
+          ((mem_regularizedCarlsonDetectorRectangleDivisorSupport_iff_zero
+            hX hsigma hz).mp (by simpa [P] using hu))
+      exact analyticAt_const.mul
+        ((analyticAt_id.sub analyticAt_const).inv (sub_ne_zero.mpr hzu))
+    simpa [raw] using hlog.sub hsum
+  have hregular :
+      regularizedCarlsonDetectorRectangleRegularPart
+          X sigma alpha a b z = raw z := by
+    dsimp [regularizedCarlsonDetectorRectangleRegularPart]
+    rw [toMeromorphicNFOn_eq_toMeromorphicNFAt hrawMeromorphic hz]
+    rw [toMeromorphicNFAt_eq_self.2 hrawAnalytic.meromorphicNFAt]
+  rw [hregular]
+  dsimp [raw]
+  rw [hprincipal]
 
 /-- Every unit height interval contains a horizontal segment on which the
 regularized detector is nonvanishing throughout a prescribed compact real
@@ -325,6 +490,54 @@ theorem exists_regularizedCarlsonZeroDetector_horizontal_principalPart_le_count
     simp [z]
   rw [hrewrite] at him
   simpa [z] using hheight.trans him
+
+/-- A uniform bound for the analytic regular part on a unit rectangle,
+together with quantitative zero avoidance, yields a usable logarithmic-
+derivative bound on one horizontal segment in that window. -/
+theorem exists_regularizedCarlsonZeroDetector_horizontal_logDeriv_le_regular_add_count
+    {X : ℕ} (hX : 1 ≤ X) {sigma alpha T M : ℝ}
+    (hsigma : 0 < sigma)
+    (hregular : ∀ t ∈ Set.Icc T (T + 1), ∀ x ∈ Set.Icc sigma alpha,
+      ‖regularizedCarlsonDetectorRectangleRegularPart
+        X sigma alpha T (T + 1) ((x : ℂ) + (t : ℂ) * I)‖ ≤ M) :
+    ∃ t ∈ Set.Icc T (T + 1),
+      (∀ x ∈ Set.Icc sigma alpha,
+        regularizedCarlsonZeroDetector X
+          ((x : ℂ) + (t : ℂ) * I) ≠ 0) ∧
+      ∀ x ∈ Set.Icc sigma alpha,
+        ‖logDeriv (regularizedCarlsonZeroDetector X)
+          ((x : ℂ) + (t : ℂ) * I)‖ ≤
+          M + (regularizedCarlsonDetectorRectangleZeroCount
+            X sigma alpha T (T + 1) : ℝ) /
+            (1 / ((4 : ℝ) *
+              ((regularizedCarlsonDetectorHorizontalZeroHeights
+                X sigma alpha T).card + 1))) := by
+  rcases
+      exists_regularizedCarlsonZeroDetector_horizontal_principalPart_le_count
+        hX hsigma (alpha := alpha) (T := T) with
+    ⟨t, ht, hne, hprincipal⟩
+  refine ⟨t, ht, hne, ?_⟩
+  intro x hx
+  let z : ℂ := (x : ℂ) + (t : ℂ) * I
+  have hz : z ∈ carlsonDetectorRectangle sigma alpha T (T + 1) := by
+    change z.re ∈ Set.Icc sigma alpha ∧ z.im ∈ Set.Icc T (T + 1)
+    constructor
+    · simpa [z] using hx
+    · simpa [z] using ht
+  have hsplit :
+      logDeriv (regularizedCarlsonZeroDetector X) z =
+        regularizedCarlsonDetectorRectangleRegularPart
+            X sigma alpha T (T + 1) z +
+          regularizedCarlsonDetectorRectanglePrincipalPart
+            X sigma alpha T (T + 1) z := by
+    have hdecomposition :=
+      regularizedCarlsonDetectorRectangleRegularPart_eq_logDeriv_sub_principalPart
+        hX hsigma hz (hne x hx)
+    linear_combination -hdecomposition
+  rw [hsplit]
+  exact (norm_add_le _ _).trans
+    (add_le_add (by simpa [z] using hregular t ht x hx)
+      (by simpa [z] using hprincipal x hx))
 
 /-- Every nonempty real interval in the open right half-plane contains a
 vertical segment on which the regularized detector is nonvanishing over a
