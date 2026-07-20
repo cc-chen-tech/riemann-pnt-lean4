@@ -1,4 +1,4 @@
-import PrimeNumberTheorem.CarlsonZeroDetector
+import PrimeNumberTheorem.AnalyticJensen
 import PrimeNumberTheorem.ZeroDensityCount
 
 open Complex
@@ -18,6 +18,53 @@ theorem isCompact_carlsonDetectorRectangle
     IsCompact (carlsonDetectorRectangle sigma alpha a b) := by
   simpa [carlsonDetectorRectangle] using
     (isCompact_Icc.reProdIm isCompact_Icc)
+
+/-- The unit-height Carlson rectangle from `sigma` to the fixed right edge `4`
+fits inside a radius-`15/4` disk centered at the midpoint of that right edge. -/
+theorem carlsonDetectorRectangle_subset_fixedJensenInnerDisk
+    {sigma T : ℝ} (hsigma : 1 / 2 < sigma) :
+    carlsonDetectorRectangle sigma 4 T (T + 1) ⊆
+      Metric.closedBall ((4 : ℂ) + I * (T + 1 / 2)) (15 / 4 : ℝ) := by
+  intro z hz
+  rw [Metric.mem_closedBall, Complex.dist_eq]
+  have hreLower : sigma ≤ z.re := hz.1.1
+  have hreUpper : z.re ≤ 4 := hz.1.2
+  have himLower : T ≤ z.im := hz.2.1
+  have himUpper : z.im ≤ T + 1 := hz.2.2
+  have hreProduct :
+      0 ≤ ((7 / 2 : ℝ) - (4 - z.re)) *
+        ((7 / 2 : ℝ) + (4 - z.re)) := by
+    apply mul_nonneg <;> linarith
+  have himProduct :
+      0 ≤ ((1 / 2 : ℝ) - (z.im - (T + 1 / 2))) *
+        ((1 / 2 : ℝ) + (z.im - (T + 1 / 2))) := by
+    apply mul_nonneg <;> linarith
+  have hsquare :
+      ‖z - ((4 : ℂ) + I * (T + 1 / 2))‖ ^ 2 ≤ (15 / 4 : ℝ) ^ 2 := by
+    rw [Complex.sq_norm]
+    simp [Complex.normSq_apply]
+    nlinarith
+  nlinarith [norm_nonneg (z - ((4 : ℂ) + I * (T + 1 / 2)))]
+
+/-- The slightly larger fixed Jensen disk remains in the open right half-plane,
+so the regularized Carlson detector is analytic throughout it. -/
+theorem analyticOnNhd_regularizedCarlsonZeroDetector_fixedJensenOuterDisk
+    (X : ℕ) (T : ℝ) :
+    AnalyticOnNhd ℂ (regularizedCarlsonZeroDetector X)
+      (Metric.closedBall ((4 : ℂ) + I * (T + 1 / 2)) (31 / 8 : ℝ)) := by
+  intro z hz
+  have hdist :
+      ‖z - ((4 : ℂ) + I * (T + 1 / 2))‖ ≤ (31 / 8 : ℝ) := by
+    simpa [Metric.mem_closedBall, Complex.dist_eq] using hz
+  have hreAbs :=
+    Complex.abs_re_le_norm (z - ((4 : ℂ) + I * (T + 1 / 2)))
+  have hzre : 0 < z.re := by
+    have : |z.re - 4| ≤ (31 / 8 : ℝ) := by
+      simpa using hreAbs.trans hdist
+    rw [abs_le] at this
+    linarith
+  exact analyticOnNhd_regularizedCarlsonZeroDetector_re_gt
+    (theta := (0 : ℝ)) le_rfl X z hzre
 
 /-- Carlson's detector is meromorphic on the whole complex plane. -/
 theorem meromorphic_carlsonZeroDetector (X : ℕ) :
@@ -72,6 +119,196 @@ noncomputable def regularizedCarlsonDetectorRectangleZeroCount
     (carlsonDetectorRectangle sigma alpha a b)
   ∑ z ∈ regularizedCarlsonDetectorRectangleDivisorSupport
       X sigma alpha a b, (D z).toNat
+
+/-- The natural-valued rectangle count is exactly the real divisor mass on a
+rectangle contained in the analytic right half-plane. -/
+theorem regularizedCarlsonDetectorRectangleZeroCount_cast_eq_finsum_divisor
+    {X : ℕ} (_hX : 1 ≤ X) {sigma alpha a b : ℝ}
+    (hsigma : 0 < sigma) :
+    (regularizedCarlsonDetectorRectangleZeroCount
+        X sigma alpha a b : ℝ) =
+      ∑ᶠ u, (MeromorphicOn.divisor (regularizedCarlsonZeroDetector X)
+        (carlsonDetectorRectangle sigma alpha a b) u : ℝ) := by
+  classical
+  let K := carlsonDetectorRectangle sigma alpha a b
+  let D := MeromorphicOn.divisor (regularizedCarlsonZeroDetector X) K
+  have hfinite : D.support.Finite :=
+    D.finiteSupport (isCompact_carlsonDetectorRectangle sigma alpha a b)
+  have hanalytic :
+      AnalyticOnNhd ℂ (regularizedCarlsonZeroDetector X) K := by
+    intro u hu
+    exact analyticOnNhd_regularizedCarlsonZeroDetector_re_gt
+      (theta := (0 : ℝ)) le_rfl X u (hsigma.trans_le hu.1.1)
+  have hD : ∀ u, 0 ≤ D u := by
+    exact MeromorphicOn.AnalyticOnNhd.divisor_nonneg hanalytic
+  rw [← ZeroFreeRegion.sum_toNat_eq_finsum_cast_of_nonneg_finiteSupport
+    hfinite hD]
+  dsimp [regularizedCarlsonDetectorRectangleZeroCount,
+    regularizedCarlsonDetectorRectangleDivisorSupport, D, K]
+  norm_cast
+
+/-- A rectangle contained in an inner Jensen disk has no more detector-zero
+multiplicity than the outer-disk divisor mass restricted to that inner disk. -/
+theorem regularizedCarlsonDetectorRectangleZeroCount_le_innerDiskDivisorMass
+    {X : ℕ} (hX : 1 ≤ X) {sigma alpha a b r R : ℝ} {c : ℂ}
+    (hsigma : 0 < sigma) (hr : 0 < r) (hrR : r < R)
+    (hsubset : carlsonDetectorRectangle sigma alpha a b ⊆
+      Metric.closedBall c r)
+    (hanalytic : AnalyticOnNhd ℂ (regularizedCarlsonZeroDetector X)
+      (Metric.closedBall c R)) :
+    (regularizedCarlsonDetectorRectangleZeroCount
+        X sigma alpha a b : ℝ) ≤
+      ∑ᶠ u ∈ (Metric.closedBall c r : Set ℂ),
+        (MeromorphicOn.divisor (regularizedCarlsonZeroDetector X)
+          (Metric.closedBall c R) u : ℝ) := by
+  classical
+  let K := carlsonDetectorRectangle sigma alpha a b
+  let B := Metric.closedBall c R
+  let DK := MeromorphicOn.divisor (regularizedCarlsonZeroDetector X) K
+  let DB := MeromorphicOn.divisor (regularizedCarlsonZeroDetector X) B
+  have hR : 0 < R := hr.trans hrR
+  have hinnerOuter : Metric.closedBall c r ⊆ B := by
+    exact Metric.closedBall_subset_closedBall hrR.le
+  have hKOuter : K ⊆ B := hsubset.trans hinnerOuter
+  have hDK_finite : DK.support.Finite :=
+    DK.finiteSupport (isCompact_carlsonDetectorRectangle sigma alpha a b)
+  have hDB_finite : DB.support.Finite :=
+    DB.finiteSupport (isCompact_closedBall c R)
+  have hDB_nonneg : 0 ≤ DB := by
+    dsimp [DB, B]
+    exact MeromorphicOn.AnalyticOnNhd.divisor_nonneg hanalytic
+  have hvalue : ∀ u ∈ K, DK u = DB u := by
+    intro u hu
+    dsimp [DK, DB]
+    rw [MeromorphicOn.divisor_apply
+        (hanalytic.meromorphicOn.mono_set hKOuter) hu,
+      MeromorphicOn.divisor_apply hanalytic.meromorphicOn (hKOuter hu)]
+  have hsupport : hDK_finite.toFinset ⊆ hDB_finite.toFinset := by
+    intro u hu
+    apply hDB_finite.mem_toFinset.mpr
+    have huDK : u ∈ DK.support := hDK_finite.mem_toFinset.mp hu
+    have huK : u ∈ K := DK.supportWithinDomain huDK
+    have hneDK : DK u ≠ 0 := by
+      simpa [Function.mem_support] using huDK
+    have hneDB : DB u ≠ 0 := by rwa [← hvalue u huK]
+    simpa [Function.mem_support] using hneDB
+  have hleft_support : (fun u : ℂ => (DK u : ℝ)).support ⊆
+      hDK_finite.toFinset := by
+    intro u hu
+    apply hDK_finite.mem_toFinset.mpr
+    simpa [Function.mem_support] using hu
+  have hright_support :
+      ((Metric.closedBall c r).indicator (fun u : ℂ => (DB u : ℝ))).support ⊆
+        hDB_finite.toFinset := by
+    intro u hu
+    apply hDB_finite.mem_toFinset.mpr
+    by_contra hnot
+    have hzero : DB u = 0 := by
+      simpa [Function.mem_support] using hnot
+    simp [hzero] at hu
+  rw [regularizedCarlsonDetectorRectangleZeroCount_cast_eq_finsum_divisor
+    hX hsigma]
+  change (∑ᶠ u, (DK u : ℝ)) ≤
+    ∑ᶠ u ∈ (Metric.closedBall c r : Set ℂ), (DB u : ℝ)
+  rw [finsum_mem_def]
+  rw [finsum_eq_sum_of_support_subset _ hleft_support]
+  rw [finsum_eq_sum_of_support_subset _ hright_support]
+  calc
+    ∑ u ∈ hDK_finite.toFinset, (DK u : ℝ) =
+        ∑ u ∈ hDK_finite.toFinset,
+          (Metric.closedBall c r).indicator (fun v : ℂ => (DB v : ℝ)) u := by
+      apply Finset.sum_congr rfl
+      intro u hu
+      have huDK : u ∈ DK.support := hDK_finite.mem_toFinset.mp hu
+      have huK : u ∈ K := DK.supportWithinDomain huDK
+      simp [Set.indicator_of_mem (hsubset huK), hvalue u huK]
+    _ ≤ ∑ u ∈ hDB_finite.toFinset,
+          (Metric.closedBall c r).indicator (fun v : ℂ => (DB v : ℝ)) u :=
+      Finset.sum_le_sum_of_subset_of_nonneg hsupport (by
+        intro u _hu _hu_not_small
+        by_cases huInner : u ∈ Metric.closedBall c r
+        · simpa [Set.indicator_of_mem huInner] using hDB_nonneg u
+        · simp [huInner])
+
+/-- Generic Jensen control specialized to the regularized Carlson detector on
+an enclosing disk. -/
+theorem regularizedCarlsonDetectorRectangleZeroCount_le_jensen_log_div
+    {X : ℕ} (hX : 1 ≤ X) {sigma alpha a b r R K m : ℝ} {c : ℂ}
+    (hsigma : 0 < sigma) (hr : 0 < r) (hrR : r < R)
+    (hsubset : carlsonDetectorRectangle sigma alpha a b ⊆
+      Metric.closedBall c r)
+    (hanalytic : AnalyticOnNhd ℂ (regularizedCarlsonZeroDetector X)
+      (Metric.closedBall c R))
+    (hm : 0 < m) (hcenter : m ≤ ‖regularizedCarlsonZeroDetector X c‖)
+    (hcircle : Real.circleAverage
+      (Real.log ‖regularizedCarlsonZeroDetector X ·‖) c R ≤ K) :
+    (regularizedCarlsonDetectorRectangleZeroCount
+        X sigma alpha a b : ℝ) ≤
+      (K - Real.log m) / Real.log (R / r) :=
+  (regularizedCarlsonDetectorRectangleZeroCount_le_innerDiskDivisorMass
+      hX hsigma hr hrR hsubset hanalytic).trans
+    (jensen_inner_zero_multiplicity_le_log_div
+      hr hrR hanalytic hm hcenter hcircle)
+
+/-- With the Jensen disk centered on the fixed far-right half-plane, the
+detector's built-in lower bound removes the center-value term completely. -/
+theorem regularizedCarlsonDetectorRectangleZeroCount_le_jensen_log_div_of_four_le_center
+    {X : ℕ} (hX : 1 ≤ X) {sigma alpha a b r R K : ℝ} {c : ℂ}
+    (hsigma : 0 < sigma) (hr : 0 < r) (hrR : r < R)
+    (hsubset : carlsonDetectorRectangle sigma alpha a b ⊆
+      Metric.closedBall c r)
+    (hanalytic : AnalyticOnNhd ℂ (regularizedCarlsonZeroDetector X)
+      (Metric.closedBall c R))
+    (hc : 4 ≤ c.re)
+    (hcircle : Real.circleAverage
+      (Real.log ‖regularizedCarlsonZeroDetector X ·‖) c R ≤ K) :
+    (regularizedCarlsonDetectorRectangleZeroCount
+        X sigma alpha a b : ℝ) ≤
+      K / Real.log (R / r) := by
+  simpa using
+    regularizedCarlsonDetectorRectangleZeroCount_le_jensen_log_div
+      hX hsigma hr hrR hsubset hanalytic (m := (1 : ℝ)) one_pos
+        (one_le_norm_regularizedCarlsonZeroDetector_of_four_le_re hX hc)
+        hcircle
+
+/-- Fixed-disk Carlson zero-counting interface.  All geometry, analyticity, and
+the center lower bound are discharged; only the detector's circle-average
+growth remains to be estimated. -/
+theorem regularizedCarlsonDetectorRectangleZeroCount_le_fixedJensenCircle
+    {X : ℕ} (hX : 1 ≤ X) {sigma T K : ℝ}
+    (hsigma : 1 / 2 < sigma)
+    (hcircle : Real.circleAverage
+      (Real.log ‖regularizedCarlsonZeroDetector X ·‖)
+        ((4 : ℂ) + I * (T + 1 / 2)) (31 / 8 : ℝ) ≤ K) :
+    (regularizedCarlsonDetectorRectangleZeroCount
+        X sigma 4 T (T + 1) : ℝ) ≤
+      K / Real.log ((31 / 8 : ℝ) / (15 / 4 : ℝ)) := by
+  apply
+    regularizedCarlsonDetectorRectangleZeroCount_le_jensen_log_div_of_four_le_center
+      hX (by linarith) (by norm_num) (by norm_num)
+        (carlsonDetectorRectangle_subset_fixedJensenInnerDisk hsigma)
+        (analyticOnNhd_regularizedCarlsonZeroDetector_fixedJensenOuterDisk X T)
+  · simp
+  · exact hcircle
+
+/-- Fixed-disk local zero count reduced to a pointwise detector norm bound on
+one explicit circle. -/
+theorem regularizedCarlsonDetectorRectangleZeroCount_le_fixedJensenSphereNorm
+    {X : ℕ} (hX : 1 ≤ X) {sigma T M : ℝ}
+    (hsigma : 1 / 2 < sigma) (hM : 1 ≤ M)
+    (hsphere : ∀ z ∈ Metric.sphere
+      ((4 : ℂ) + I * (T + 1 / 2)) (31 / 8 : ℝ),
+        ‖regularizedCarlsonZeroDetector X z‖ ≤ M) :
+    (regularizedCarlsonDetectorRectangleZeroCount
+        X sigma 4 T (T + 1) : ℝ) ≤
+      Real.log M / Real.log ((31 / 8 : ℝ) / (15 / 4 : ℝ)) := by
+  apply regularizedCarlsonDetectorRectangleZeroCount_le_fixedJensenCircle
+    hX hsigma
+  exact circleAverage_log_norm_le_log_of_norm_le
+    (by norm_num)
+    (analyticOnNhd_regularizedCarlsonZeroDetector_fixedJensenOuterDisk
+      X T).meromorphicOn
+    hM hsphere
 
 /-- Multiplicity-weighted sum of the logarithmic principal parts contributed
 by all regularized-detector zeros in a closed rectangle. -/
@@ -544,6 +781,45 @@ theorem exists_regularizedCarlsonZeroDetector_horizontal_principalPart_le_count
   rw [hrewrite] at him
   simpa [z] using hheight.trans him
 
+/-- The selected horizontal principal-part bound can be stated using only the
+rectangle's total zero multiplicity.  This removes the auxiliary count of
+distinct zero heights from the interface needed by a Jensen estimate. -/
+theorem exists_regularizedCarlsonZeroDetector_horizontal_principalPart_le_zeroCount
+    {X : ℕ} (hX : 1 ≤ X) {sigma alpha T : ℝ}
+    (hsigma : 0 < sigma) :
+    ∃ t ∈ Set.Icc T (T + 1),
+      (∀ x ∈ Set.Icc sigma alpha,
+        regularizedCarlsonZeroDetector X
+          ((x : ℂ) + (t : ℂ) * I) ≠ 0) ∧
+      ∀ x ∈ Set.Icc sigma alpha,
+        ‖regularizedCarlsonDetectorRectanglePrincipalPart
+          X sigma alpha T (T + 1)
+            ((x : ℂ) + (t : ℂ) * I)‖ ≤
+          (regularizedCarlsonDetectorRectangleZeroCount
+            X sigma alpha T (T + 1) : ℝ) /
+            (1 / ((4 : ℝ) *
+              ((regularizedCarlsonDetectorRectangleZeroCount
+                X sigma alpha T (T + 1) : ℝ) + 1))) := by
+  classical
+  rcases
+      exists_regularizedCarlsonZeroDetector_horizontal_principalPart_le_count
+        hX hsigma (alpha := alpha) (T := T) with
+    ⟨t, ht, hne, hprincipal⟩
+  refine ⟨t, ht, hne, ?_⟩
+  intro x hx
+  refine (hprincipal x hx).trans ?_
+  have hcard :=
+    card_regularizedCarlsonDetectorHorizontalZeroHeights_le_zeroCount
+      hX hsigma (alpha := alpha) (T := T)
+  have hcardReal :
+      (regularizedCarlsonDetectorHorizontalZeroHeights
+          X sigma alpha T).card ≤
+        (regularizedCarlsonDetectorRectangleZeroCount
+          X sigma alpha T (T + 1) : ℝ) := by
+    exact_mod_cast hcard
+  simp only [div_eq_mul_inv]
+  gcongr
+
 /-- A uniform bound for the analytic regular part on a unit rectangle,
 together with quantitative zero avoidance, yields a usable logarithmic-
 derivative bound on one horizontal segment in that window. -/
@@ -567,6 +843,53 @@ theorem exists_regularizedCarlsonZeroDetector_horizontal_logDeriv_le_regular_add
                 X sigma alpha T).card + 1))) := by
   rcases
       exists_regularizedCarlsonZeroDetector_horizontal_principalPart_le_count
+        hX hsigma (alpha := alpha) (T := T) with
+    ⟨t, ht, hne, hprincipal⟩
+  refine ⟨t, ht, hne, ?_⟩
+  intro x hx
+  let z : ℂ := (x : ℂ) + (t : ℂ) * I
+  have hz : z ∈ carlsonDetectorRectangle sigma alpha T (T + 1) := by
+    change z.re ∈ Set.Icc sigma alpha ∧ z.im ∈ Set.Icc T (T + 1)
+    constructor
+    · simpa [z] using hx
+    · simpa [z] using ht
+  have hsplit :
+      logDeriv (regularizedCarlsonZeroDetector X) z =
+        regularizedCarlsonDetectorRectangleRegularPart
+            X sigma alpha T (T + 1) z +
+          regularizedCarlsonDetectorRectanglePrincipalPart
+            X sigma alpha T (T + 1) z := by
+    have hdecomposition :=
+      regularizedCarlsonDetectorRectangleRegularPart_eq_logDeriv_sub_principalPart
+        hX hsigma hz (hne x hx)
+    linear_combination -hdecomposition
+  rw [hsplit]
+  exact (norm_add_le _ _).trans
+    (add_le_add (by simpa [z] using hregular t ht x hx)
+      (by simpa [z] using hprincipal x hx))
+
+/-- A regular-part bound yields a horizontal logarithmic-derivative bound whose
+only zero-counting input is the rectangle's total zero multiplicity. -/
+theorem exists_regularizedCarlsonZeroDetector_horizontal_logDeriv_le_regular_add_zeroCount
+    {X : ℕ} (hX : 1 ≤ X) {sigma alpha T M : ℝ}
+    (hsigma : 0 < sigma)
+    (hregular : ∀ t ∈ Set.Icc T (T + 1), ∀ x ∈ Set.Icc sigma alpha,
+      ‖regularizedCarlsonDetectorRectangleRegularPart
+        X sigma alpha T (T + 1) ((x : ℂ) + (t : ℂ) * I)‖ ≤ M) :
+    ∃ t ∈ Set.Icc T (T + 1),
+      (∀ x ∈ Set.Icc sigma alpha,
+        regularizedCarlsonZeroDetector X
+          ((x : ℂ) + (t : ℂ) * I) ≠ 0) ∧
+      ∀ x ∈ Set.Icc sigma alpha,
+        ‖logDeriv (regularizedCarlsonZeroDetector X)
+          ((x : ℂ) + (t : ℂ) * I)‖ ≤
+          M + (regularizedCarlsonDetectorRectangleZeroCount
+            X sigma alpha T (T + 1) : ℝ) /
+            (1 / ((4 : ℝ) *
+              ((regularizedCarlsonDetectorRectangleZeroCount
+                X sigma alpha T (T + 1) : ℝ) + 1))) := by
+  rcases
+      exists_regularizedCarlsonZeroDetector_horizontal_principalPart_le_zeroCount
         hX hsigma (alpha := alpha) (T := T) with
     ⟨t, ht, hne, hprincipal⟩
   refine ⟨t, ht, hne, ?_⟩

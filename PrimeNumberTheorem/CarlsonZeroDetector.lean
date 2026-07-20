@@ -221,6 +221,37 @@ theorem regularizedCarlsonZeroDetector_ne_zero_of_four_le_re
   exact mul_ne_zero (pow_ne_zero 2 (sub_ne_zero.mpr hs1))
     (carlsonZeroDetector_ne_zero_of_four_le_re hX hs)
 
+/-- The pole-free detector is uniformly bounded away from zero on the fixed
+far-right half-plane.  This supplies the center lower bound for Jensen disks
+anchored on `Re(s) = 4`. -/
+theorem one_le_norm_regularizedCarlsonZeroDetector_of_four_le_re
+    {X : ℕ} (hX : 1 ≤ X) {s : ℂ} (hs : 4 ≤ s.re) :
+    1 ≤ ‖regularizedCarlsonZeroDetector X s‖ := by
+  have hs0 : s ≠ 0 := by
+    intro h
+    have hre := congrArg Complex.re h
+    simp at hre
+    linarith
+  have hs1 : s ≠ 1 := by
+    intro h
+    have hre := congrArg Complex.re h
+    simp at hre
+    linarith
+  have hsub : 3 ≤ ‖s - 1‖ := by
+    have hre : 3 ≤ |(s - 1).re| := by
+      simp only [Complex.sub_re, Complex.one_re]
+      rw [abs_of_nonneg (by linarith)]
+      linarith
+    exact hre.trans (Complex.abs_re_le_norm (s - 1))
+  have hdetRe :=
+    fiftySix_div_eightyOne_le_re_carlsonZeroDetector_of_four_le_re hX hs
+  have hdetNorm : (56 / 81 : ℝ) ≤ ‖carlsonZeroDetector X s‖ :=
+    hdetRe.trans ((le_abs_self _).trans
+      (Complex.abs_re_le_norm (carlsonZeroDetector X s)))
+  rw [regularizedCarlsonZeroDetector_eq_sub_one_sq_mul X hs0 hs1,
+    norm_mul, norm_pow]
+  nlinarith [norm_nonneg (s - 1), norm_nonneg (carlsonZeroDetector X s)]
+
 /-- The regularized detector is not identically zero on any right half-plane.
 The witness is chosen sufficiently far along the positive real axis. -/
 theorem exists_regularizedCarlsonZeroDetector_ne_zero_re_gt

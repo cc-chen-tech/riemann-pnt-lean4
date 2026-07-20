@@ -49,6 +49,10 @@ example {X : ℕ} (hX : 1 ≤ X) {s : ℂ} (hs : 4 ≤ s.re) :
   regularizedCarlsonZeroDetector_ne_zero_of_four_le_re hX hs
 
 example {X : ℕ} (hX : 1 ≤ X) {s : ℂ} (hs : 4 ≤ s.re) :
+    1 ≤ ‖regularizedCarlsonZeroDetector X s‖ :=
+  one_le_norm_regularizedCarlsonZeroDetector_of_four_le_re hX hs
+
+example {X : ℕ} (hX : 1 ≤ X) {s : ℂ} (hs : 4 ≤ s.re) :
     2 * Real.log ‖s - 1‖ + Real.log (56 / 81 : ℝ) ≤
       Real.log ‖regularizedCarlsonZeroDetector X s‖ :=
   log_fiftySix_div_eightyOne_le_log_norm_regularized_of_four_le_re hX hs
@@ -427,6 +431,7 @@ example :
 #print axioms fiftySix_div_eightyOne_le_re_carlsonZeroDetector_of_four_le_re
 #print axioms analyticAt_carlsonZeroDetector_of_ne_one
 #print axioms regularizedCarlsonZeroDetector_ne_zero_of_four_le_re
+#print axioms one_le_norm_regularizedCarlsonZeroDetector_of_four_le_re
 #print axioms log_fiftySix_div_eightyOne_le_log_norm_regularized_of_four_le_re
 #print axioms analyticOrderAt_regularizedCarlsonZeroDetector_ne_top
 #print axioms carlsonZeroDetector_eq_zero_of_riemannZeta_eq_zero
