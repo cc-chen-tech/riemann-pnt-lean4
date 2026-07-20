@@ -355,5 +355,89 @@ theorem exists_regularizedCarlsonZeroDetector_fixedJensenFactor_center_lower
   dsimp [c, b] at hfactor hsum hcenterLog ⊢
   linarith
 
+/-- Jensen majorant for the total detector divisor mass on the factorization
+disk of radius `123/32`. -/
+noncomputable def regularizedCarlsonFactorZeroLogMajorant
+    (C : ℝ) (X : ℕ) (T : ℝ) : ℝ :=
+  Real.log (C * (X : ℝ) ^ 2 * (T + 14) ^ 10) /
+    Real.log ((31 / 8 : ℝ) / (123 / 32 : ℝ))
+
+/-- The complete divisor mass on the factorization disk is explicitly
+controlled by the detector's polynomial outer-circle growth. -/
+theorem exists_regularizedCarlsonFactorZeroMass_le_logPolynomial :
+    ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X → ∀ {T : ℝ}, 5 ≤ T →
+      (∑ᶠ u,
+        (MeromorphicOn.divisor (regularizedCarlsonZeroDetector X)
+          (Metric.closedBall
+            ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ)) u : ℝ)) ≤
+        regularizedCarlsonFactorZeroLogMajorant C X T := by
+  rcases exists_norm_regularizedCarlsonZeroDetector_le_fixedJensenSphere with
+    ⟨C, hC, hsphere⟩
+  refine ⟨C, hC, ?_⟩
+  intro X hX T hT
+  let c : ℂ := (4 : ℂ) + I * (T + 1 / 2)
+  let M : ℝ := C * (X : ℝ) ^ 2 * (T + 14) ^ 10
+  have hXReal : 1 ≤ (X : ℝ) := by exact_mod_cast hX
+  have hXPow : 1 ≤ (X : ℝ) ^ 2 := by
+    simpa using pow_le_pow_left₀ (by norm_num : (0 : ℝ) ≤ 1) hXReal 2
+  have hTBase : 1 ≤ T + 14 := by linarith
+  have hTPow : 1 ≤ (T + 14) ^ 10 := by
+    simpa using pow_le_pow_left₀ (by norm_num : (0 : ℝ) ≤ 1) hTBase 10
+  have hCX : 1 ≤ C * (X : ℝ) ^ 2 := by
+    simpa using mul_le_mul hC hXPow (by norm_num) (by linarith)
+  have hM : 1 ≤ M := by
+    dsimp [M]
+    simpa using mul_le_mul hCX hTPow (by norm_num)
+      (mul_nonneg (by linarith) (by positivity))
+  have hanalytic :=
+    analyticOnNhd_regularizedCarlsonZeroDetector_fixedJensenOuterDisk X T
+  have hcircle : Real.circleAverage
+      (Real.log ‖regularizedCarlsonZeroDetector X ·‖) c (31 / 8 : ℝ) ≤
+        Real.log M := by
+    apply circleAverage_log_norm_le_log_of_norm_le
+      (by norm_num) hanalytic.meromorphicOn hM
+    intro z hz
+    simpa [M, c] using hsphere hX hT (by simpa [c] using hz)
+  have hjensen := jensen_inner_zero_multiplicity_le_log_div
+    (f := regularizedCarlsonZeroDetector X) (c := c)
+    (r := (123 / 32 : ℝ)) (R := (31 / 8 : ℝ))
+    (K := Real.log M) (m := (1 : ℝ))
+    (by norm_num) (by norm_num) hanalytic one_pos
+    (one_le_norm_regularizedCarlsonZeroDetector_of_four_le_re hX (by simp [c]))
+    hcircle
+  have hlocal := finsum_divisor_closedBall_eq_finsum_mem_of_le
+    (f := regularizedCarlsonZeroDetector X) (c := c)
+    (b := (123 / 32 : ℝ)) (R := (31 / 8 : ℝ))
+    (by norm_num) hanalytic.meromorphicOn
+  rw [hlocal]
+  simpa [regularizedCarlsonFactorZeroLogMajorant, M, c] using hjensen
+
+/-- The zero-removed detector factor has an explicit center lower bound in
+terms of `X` and `T`; no unevaluated divisor mass remains. -/
+theorem exists_regularizedCarlsonZeroDetector_fixedJensenFactor_explicit_center_lower :
+    ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X → ∀ {T : ℝ}, 5 ≤ T →
+      ∃ g : ℂ → ℂ,
+        AnalyticOnNhd ℂ g
+          (Metric.closedBall
+            ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ)) ∧
+        (∀ u : (Metric.closedBall
+            ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ) : Set ℂ),
+          g u ≠ 0) ∧
+        -Real.log (123 / 32 : ℝ) *
+            regularizedCarlsonFactorZeroLogMajorant C X T ≤
+          Real.log ‖g ((4 : ℂ) + I * (T + 1 / 2))‖ := by
+  rcases exists_regularizedCarlsonFactorZeroMass_le_logPolynomial with
+    ⟨C, hC, hmass⟩
+  refine ⟨C, hC, ?_⟩
+  intro X hX T hT
+  rcases exists_regularizedCarlsonZeroDetector_fixedJensenFactor_center_lower
+      hX (T := T) with ⟨g, hg, hgne, hcenter⟩
+  refine ⟨g, hg, hgne, ?_⟩
+  have hlogNonneg : 0 ≤ Real.log (123 / 32 : ℝ) :=
+    Real.log_nonneg (by norm_num)
+  have hmul := mul_le_mul_of_nonpos_left (hmass hX hT)
+    (neg_nonpos.mpr hlogNonneg)
+  exact hmul.trans hcenter
+
 end CarlsonZeroDensity
 end PrimeNumberTheorem

@@ -93,6 +93,30 @@ example {X : ℕ} (hX : 1 ≤ X) {T : ℝ} :
         Real.log ‖g ((4 : ℂ) + I * (T + 1 / 2))‖ :=
   exists_regularizedCarlsonZeroDetector_fixedJensenFactor_center_lower hX
 
+noncomputable example (C : ℝ) (X : ℕ) (T : ℝ) : ℝ :=
+  regularizedCarlsonFactorZeroLogMajorant C X T
+
+example : ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X → ∀ {T : ℝ}, 5 ≤ T →
+    (∑ᶠ u,
+      (MeromorphicOn.divisor (regularizedCarlsonZeroDetector X)
+        (Metric.closedBall
+          ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ)) u : ℝ)) ≤
+      regularizedCarlsonFactorZeroLogMajorant C X T :=
+  exists_regularizedCarlsonFactorZeroMass_le_logPolynomial
+
+example : ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X → ∀ {T : ℝ}, 5 ≤ T →
+    ∃ g : ℂ → ℂ,
+      AnalyticOnNhd ℂ g
+        (Metric.closedBall
+          ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ)) ∧
+      (∀ u : (Metric.closedBall
+          ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ) : Set ℂ),
+        g u ≠ 0) ∧
+      -Real.log (123 / 32 : ℝ) *
+          regularizedCarlsonFactorZeroLogMajorant C X T ≤
+        Real.log ‖g ((4 : ℂ) + I * (T + 1 / 2))‖ :=
+  exists_regularizedCarlsonZeroDetector_fixedJensenFactor_explicit_center_lower
+
 #print axioms fixedJensenSphere_re_mem_Icc
 #print axioms fixedJensenSphere_abs_im_mem_Icc
 #print axioms norm_sub_one_le_on_fixedJensenSphere
@@ -102,6 +126,8 @@ example {X : ℕ} (hX : 1 ≤ X) {T : ℝ} :
 #print axioms exists_regularizedCarlson_horizontal_principalPart_le_logPolynomial
 #print axioms exists_regularizedCarlson_horizontal_logDeriv_le_regular_add_logPolynomial
 #print axioms exists_regularizedCarlsonZeroDetector_fixedJensenFactor_center_lower
+#print axioms exists_regularizedCarlsonFactorZeroMass_le_logPolynomial
+#print axioms exists_regularizedCarlsonZeroDetector_fixedJensenFactor_explicit_center_lower
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem

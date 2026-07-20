@@ -75,12 +75,21 @@ example {f : ℂ → ℂ} {c : ℂ} {R : ℝ} (hR : 0 < R)
   exists_analytic_nonzero_factor_log_norm_at_center
     hR hanalytic hnotop hc
 
+example {f : ℂ → ℂ} {c : ℂ} {b R : ℝ} (hbR : b ≤ R)
+    (hmeromorphic : MeromorphicOn f (Metric.closedBall c R)) :
+    (∑ᶠ u,
+        (MeromorphicOn.divisor f (Metric.closedBall c b) u : ℝ)) =
+      ∑ᶠ u ∈ (Metric.closedBall c b : Set ℂ),
+        (MeromorphicOn.divisor f (Metric.closedBall c R) u : ℝ) :=
+  finsum_divisor_closedBall_eq_finsum_mem_of_le hbR hmeromorphic
+
 #print axioms jensen_weighted_zero_mass_le_of_circleAverage_le
 #print axioms circleAverage_log_norm_le_log_of_norm_le
 #print axioms jensen_inner_zero_multiplicity_le_of_circleAverage_le
 #print axioms jensen_inner_zero_multiplicity_le_log_div
 #print axioms finsum_divisor_mul_log_norm_center_sub_le_log_mul_mass
 #print axioms exists_analytic_nonzero_factor_log_norm_at_center
+#print axioms finsum_divisor_closedBall_eq_finsum_mem_of_le
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem

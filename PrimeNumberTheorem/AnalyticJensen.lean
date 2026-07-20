@@ -289,5 +289,25 @@ theorem exists_analytic_nonzero_factor_log_norm_at_center
   refine ⟨g, by simpa [U] using hg, by simpa [U] using hgne, ?_⟩
   simpa [U] using hlog
 
+/-- Divisor mass is local on nested closed disks: the divisor computed on the
+inner disk equals the outer divisor restricted to that disk. -/
+theorem finsum_divisor_closedBall_eq_finsum_mem_of_le
+    {f : ℂ → ℂ} {c : ℂ} {b R : ℝ} (hbR : b ≤ R)
+    (hmeromorphic : MeromorphicOn f (Metric.closedBall c R)) :
+    (∑ᶠ u,
+        (MeromorphicOn.divisor f (Metric.closedBall c b) u : ℝ)) =
+      ∑ᶠ u ∈ (Metric.closedBall c b : Set ℂ),
+        (MeromorphicOn.divisor f (Metric.closedBall c R) u : ℝ) := by
+  rw [finsum_mem_def]
+  apply finsum_congr
+  intro u
+  by_cases hu : u ∈ Metric.closedBall c b
+  · rw [Set.indicator_of_mem hu,
+      MeromorphicOn.divisor_apply
+        (hmeromorphic.mono_set (Metric.closedBall_subset_closedBall hbR)) hu,
+      MeromorphicOn.divisor_apply hmeromorphic
+        (Metric.closedBall_subset_closedBall hbR hu)]
+  · simp [hu, Function.locallyFinsuppWithin.apply_eq_zero_of_notMem]
+
 end CarlsonZeroDensity
 end PrimeNumberTheorem
