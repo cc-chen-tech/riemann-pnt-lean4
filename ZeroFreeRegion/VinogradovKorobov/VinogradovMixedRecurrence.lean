@@ -453,6 +453,57 @@ theorem norm_normalizedVinogradovMixedModConditionedMoment_le_farScaleMoment
     p a b k r t X Y gamma xi eta omega hrk hkp hb hgammaa
       hbudget htail hcenter homega hscale
 
+/-- The explicit one-block prime-power strata bound used to terminate the
+first mixed-moment recurrence. -/
+def vinogradovDiagonalPrimePowerStrataBound (p r n : ℕ) : ℕ :=
+  (p ^ r - p.descFactorial r) * p ^ r * (p ^ (2 * r)) ^ n +
+    (p ^ r - (p ^ r - p.descFactorial r)) *
+      (p ^ r * (p ^ r) ^ n)
+
+/-- The first mixed-moment recurrence terminates unconditionally at the
+existing prime-power rank stratification when the residual exponent is
+written as `n+1`.  This is explicit but is not yet the optimal VMVT bound. -/
+theorem norm_normalizedVinogradovMixedModConditionedMoment_le_primePowerStrata
+    (p a b k r t X Y gamma n : ℕ) [Fact p.Prime]
+    (xi eta omega : ℤ)
+    (hr : 0 < r) (hrk : r ≤ k) (hkp : k < p) (hb : 0 < b)
+    (hgammaa : gamma ≤ a)
+    (hbudget : gamma * (k - r) + a * r ≤ (k - r + 1) * b)
+    (htail : (k - r + 1) * b ≤ a * (r + 1))
+    (hcenter : xi - eta = omega * (p : ℤ) ^ gamma)
+    (homega : IsCoprime (p : ℤ) omega)
+    (hscale : X ≤ p ^ a * p ^ vinogradovFarScale k r a b gamma)
+    (hfar : vinogradovFarScale k r a b gamma = n + 1) :
+    ‖normalizedVinogradovMixedModConditionedMoment
+        p ((k - r + 1) * b) a b k r t X Y xi eta‖ ≤
+      (vinogradovDiagonalPrimePowerStrataBound p r n : ℝ) *
+        (Y ^ (2 * t) : ℝ) := by
+  have hrec :=
+    norm_normalizedVinogradovMixedModConditionedMoment_le_farScaleMoment
+      p a b k r t X Y gamma xi eta omega hrk hkp hb hgammaa
+        hbudget htail hcenter homega hscale
+  have hstrata :=
+    norm_normalizedVinogradovMomentMod_primePowerMultiBlock_le_strata
+      p r 0 1 n hr (hrk.trans_lt hkp)
+  have hstrata' :
+      ‖normalizedVinogradovMomentMod
+        (p ^ (n + 1)) r r (p ^ (n + 1))‖ ≤
+          (vinogradovDiagonalPrimePowerStrataBound p r n : ℝ) := by
+    simpa [vinogradovDiagonalPrimePowerStrataBound] using hstrata
+  calc
+    ‖normalizedVinogradovMixedModConditionedMoment
+        p ((k - r + 1) * b) a b k r t X Y xi eta‖ ≤
+      ‖normalizedVinogradovMomentMod
+        (p ^ vinogradovFarScale k r a b gamma) r r
+          (p ^ vinogradovFarScale k r a b gamma)‖ *
+        (Y ^ (2 * t) : ℝ) := hrec
+    _ = ‖normalizedVinogradovMomentMod
+          (p ^ (n + 1)) r r (p ^ (n + 1))‖ *
+        (Y ^ (2 * t) : ℝ) := by rw [hfar]
+    _ ≤ (vinogradovDiagonalPrimePowerStrataBound p r n : ℝ) *
+        (Y ^ (2 * t) : ℝ) :=
+      mul_le_mul_of_nonneg_right hstrata' (by positivity)
+
 end
 
 end ZeroFreeRegion.VinogradovKorobov
