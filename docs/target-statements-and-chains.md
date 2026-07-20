@@ -224,6 +224,8 @@ the Selberg `T*log T` lower bound remains open.
 - `HardyTheorem.hardy_littlewood_odd_lower_bound_target_proved`
 - `HardyTheorem.criticalLineOddZeroCount_two_mul_lower_bound_of_good_window_measure`
 - `HardyTheorem.selberg_odd_zero_proportion_target_of_log_good_window_measure`
+- `HardyTheorem.integral_normSq_selbergMoebiusMollifier_le_one_add_log`
+- `PrimeNumberTheorem.RiemannVonMangoldt.riemannZeroCount_eq_positiveCriticalLine_add_two_mul_zeroDensityCount`
 - `HardyTheorem.hardy_littlewood_lower_bound_target_of_odd`
 - `HardyTheorem.hardy_littlewood_multiplicity_lower_bound_target_of_odd`
 - `HardyTheorem.hardyZ_zero_iff_zeta_zero`

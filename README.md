@@ -1333,6 +1333,13 @@ proved for this odd-order count by
 bound `C*T`. The Selberg `T*log T` lower bound remains unproved. The repository
 does prove its finite packing bridge and the reduction from logarithmic-length
 good-window estimates to `selberg_odd_zero_proportion_target`.
+It also defines the classical linearly tapered finite Moebius mollifier,
+proves that its nonnegative square weight cannot create false Hardy-Z sign
+changes, and establishes a critical-line interval mean-square bound with
+coefficient energy at most `1 + log X`.  The exact positive-height partition
+`N(T) = N_critical(T) + 2*N_right(1/2,T)` is formalized with analytic
+multiplicity; the non-strict critical-line count includes the separate
+possible ordinate-zero contribution.
 
 The three remaining open analytic directions are:
 

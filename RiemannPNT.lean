@@ -55,6 +55,7 @@ import HardyTheorem.ShortIntervalSignChangeMeasure
 import HardyTheorem.SelbergMollifier
 import HardyTheorem.SelbergMollifierMeanSquare
 import MathlibAux.SlidingIntervalCorrelation
+import MathlibAux.SlidingWindowBadSet
 import MathlibAux.DiscreteHilbertInequality
 import MathlibAux.DyadicLogHilbert
 import MathlibAux.DyadicPartition
