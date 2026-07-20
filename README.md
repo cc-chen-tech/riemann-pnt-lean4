@@ -1364,6 +1364,15 @@ Cauchy--Schwarz argument and sliding-window averaging prove the explicit
 bound `volume <= H^2 * M / eta^2` from a single global `L2` bound `M` for the
 mollified Hardy function on the enlarged interval.  The needed zeta-specific
 `L2` estimate and the small-absolute-mass estimate are not yet proved.
+An unconditional pointwise argument currently gives only the coarse dyadic
+bound `integral <= C * X^2 * T^2`.  This verifies the correct
+`|zeta|^2 * |M|^4` quantity but is too large for Selberg; the finite-frequency
+mean-value argument must improve it to essentially linear growth in `T`.
+The first zeta approximation also gives a genuine lower bound for the short
+absolute mass of the mollified Hardy function.  Its remaining loss is the norm
+of one explicit finite Dirichlet polynomial plus `O(H * X / sqrt T)`.  Proving
+that polynomial small for all but `O(T)` starts is still open and is the direct
+input needed for the small-absolute-mass bad-set estimate.
 
 The three remaining open analytic directions are:
 

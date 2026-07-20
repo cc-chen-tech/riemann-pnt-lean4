@@ -59,6 +59,8 @@ import HardyTheorem.SelbergMollifiedCoefficientArithmetic
 import HardyTheorem.SelbergMollifiedCoefficientEnergy
 import HardyTheorem.SelbergGoodWindowMeasure
 import HardyTheorem.SelbergSignedBadSet
+import HardyTheorem.SelbergMollifiedSecondMoment
+import HardyTheorem.SelbergShortAbsLower
 import MathlibAux.SlidingIntervalCorrelation
 import MathlibAux.SlidingWindowBadSet
 import MathlibAux.PaleyZygmund
