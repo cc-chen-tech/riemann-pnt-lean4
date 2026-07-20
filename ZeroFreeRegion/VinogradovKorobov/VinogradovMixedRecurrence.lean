@@ -1,4 +1,5 @@
 import ZeroFreeRegion.VinogradovKorobov.VinogradovMixedMoment
+import ZeroFreeRegion.VinogradovKorobov.VinogradovFiniteConditioning
 
 namespace ZeroFreeRegion.VinogradovKorobov
 
@@ -525,6 +526,185 @@ theorem mem_vinogradovUnitSeparatedCenterPairSet_iff
   classical
   simp [vinogradovUnitSeparatedCenterPairSet]
 
+/-- For a prime modulus, two one-based centers have coprime difference
+exactly when their base-prime residues are distinct. -/
+theorem isCoprime_vinogradovCenterDifference_iff_ne
+    (p a b : ℕ) [Fact p.Prime]
+    (x : Fin (p ^ a)) (y : Fin (p ^ b)) :
+    IsCoprime (p : ℤ)
+        (vinogradovCenterValue x - vinogradovCenterValue y) ↔
+      (vinogradovCenterValue x : ZMod p) ≠
+        (vinogradovCenterValue y : ZMod p) := by
+  rw [(Nat.prime_iff_prime_int.mp (Fact.out : p.Prime)).coprime_iff_not_dvd]
+  constructor
+  · intro hcop heq
+    apply hcop
+    have hdvd := (ZMod.intCast_eq_intCast_iff_dvd_sub
+      (vinogradovCenterValue x) (vinogradovCenterValue y) p).mp heq
+    have hneg : vinogradovCenterValue y - vinogradovCenterValue x =
+        -(vinogradovCenterValue x - vinogradovCenterValue y) := by ring
+    rw [hneg, dvd_neg] at hdvd
+    exact hdvd
+  · intro hne hdvd
+    apply hne
+    rw [ZMod.intCast_eq_intCast_iff_dvd_sub]
+    have hneg : vinogradovCenterValue y - vinogradovCenterValue x =
+        -(vinogradovCenterValue x - vinogradovCenterValue y) := by ring
+    rw [hneg, dvd_neg]
+    exact hdvd
+
+/-- Every fixed residue modulo `p` occurs exactly `p^(a-1)` times among the
+one-based centers modulo `p^a`. -/
+theorem card_vinogradovCenterResidue_fiber
+    (p a : ℕ) [Fact p.Prime] (ha : 0 < a) (ξ : ZMod p) :
+    (Finset.univ.filter fun z : Fin (p ^ a) ↦
+      (vinogradovCenterValue z : ZMod p) = ξ).card = p ^ (a - 1) := by
+  letI : NeZero p := ⟨(Fact.out : p.Prime).ne_zero⟩
+  letI : NeZero (p ^ a) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  have hle : 1 ≤ a := ha
+  have hdiv : p ∣ p ^ a := by simpa using pow_dvd_pow p hle
+  let cast : ZMod (p ^ a) →+ ZMod p :=
+    (ZMod.castHom hdiv (ZMod p)).toAddMonoidHom
+  have hsurjective : Function.Surjective cast :=
+    ZMod.castHom_surjective hdiv
+  have hfiber (y : ZMod p) :
+      (Finset.univ.filter fun z : ZMod (p ^ a) ↦ cast z = y).card =
+        (Finset.univ.filter fun z : ZMod (p ^ a) ↦ cast z = ξ).card :=
+    AddMonoidHom.card_fiber_eq_of_mem_range cast
+      (hsurjective y) (hsurjective ξ)
+  have htotal :
+      p ^ a = p *
+        (Finset.univ.filter fun z : ZMod (p ^ a) ↦ cast z = ξ).card := by
+    calc
+      p ^ a = (Finset.univ : Finset (ZMod (p ^ a))).card := by
+        simp [ZMod.card]
+      _ = ∑ y : ZMod p,
+          (Finset.univ.filter fun z : ZMod (p ^ a) ↦ cast z = y).card :=
+        Finset.card_eq_sum_card_fiberwise (fun _ _ ↦ Finset.mem_univ _)
+      _ = ∑ _y : ZMod p,
+          (Finset.univ.filter fun z : ZMod (p ^ a) ↦ cast z = ξ).card := by
+        apply Finset.sum_congr rfl
+        intro y hy
+        exact hfiber y
+      _ = p *
+          (Finset.univ.filter fun z : ZMod (p ^ a) ↦ cast z = ξ).card := by
+        simp [ZMod.card]
+  have hpower : p ^ a = p * p ^ (a - 1) := by
+    calc
+      p ^ a = p ^ 1 * p ^ (a - 1) := by
+        rw [← pow_add, Nat.add_sub_of_le hle]
+      _ = p * p ^ (a - 1) := by simp
+  have hzmod :
+      (Finset.univ.filter fun z : ZMod (p ^ a) ↦ cast z = ξ).card =
+        p ^ (a - 1) := by
+    apply Nat.eq_of_mul_eq_mul_left (Fact.out : p.Prime).pos
+    exact htotal.symm.trans hpower
+  have hcard :
+      (Finset.univ.filter fun z : Fin (p ^ a) ↦
+        (vinogradovCenterValue z : ZMod p) = ξ).card =
+        (Finset.univ.filter fun z : ZMod (p ^ a) ↦
+          cast z = ξ).card := by
+    apply Finset.card_equiv (vinogradovCompleteResidueEquiv (p ^ a))
+    intro z
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+    rw [vinogradovCompleteResidueEquiv_apply]
+    simp only [vinogradovCenterValue]
+    dsimp only [cast]
+    change _ ↔ ZMod.castHom hdiv (ZMod p)
+      ((z.val : ZMod (p ^ a)) + 1) = ξ
+    rw [map_add, map_natCast, map_one]
+    simp
+  rw [hcard]
+  exact hzmod
+
+/-- The center pairs equal modulo `p` have cardinality
+`p^a * p^(b-1)`. -/
+theorem card_vinogradovCenterResidueEqualPairSet
+    (p a b : ℕ) [Fact p.Prime] (hb : 0 < b) :
+    (Finset.univ.filter fun z : Fin (p ^ a) × Fin (p ^ b) ↦
+      (vinogradovCenterValue z.1 : ZMod p) =
+        (vinogradovCenterValue z.2 : ZMod p)).card =
+      p ^ a * p ^ (b - 1) := by
+  classical
+  let S := Finset.univ.filter fun z : Fin (p ^ a) × Fin (p ^ b) ↦
+    (vinogradovCenterValue z.1 : ZMod p) =
+      (vinogradovCenterValue z.2 : ZMod p)
+  have hmaps : ∀ z ∈ S,
+      Prod.fst z ∈ (Finset.univ : Finset (Fin (p ^ a))) :=
+    fun _ _ ↦ Finset.mem_univ _
+  rw [show (Finset.univ.filter fun z : Fin (p ^ a) × Fin (p ^ b) ↦
+      (vinogradovCenterValue z.1 : ZMod p) =
+        (vinogradovCenterValue z.2 : ZMod p)) = S from rfl]
+  rw [Finset.card_eq_sum_card_fiberwise hmaps]
+  calc
+    (∑ x : Fin (p ^ a), {z ∈ S | z.1 = x}.card) =
+        ∑ _x : Fin (p ^ a), p ^ (b - 1) := by
+      apply Finset.sum_congr rfl
+      intro x hx
+      let T := Finset.univ.filter fun y : Fin (p ^ b) ↦
+        (vinogradovCenterValue y : ZMod p) =
+          (vinogradovCenterValue x : ZMod p)
+      have hcard : {z ∈ S | z.1 = x}.card = T.card := by
+        apply Finset.card_bij (fun z _ ↦ z.2)
+        · intro z hz
+          have hzS := (Finset.mem_filter.mp hz).1
+          have hzx := (Finset.mem_filter.mp hz).2
+          have heq := (Finset.mem_filter.mp hzS).2
+          simpa [T, hzx] using heq.symm
+        · intro z₁ hz₁ z₂ hz₂ hsecond
+          apply Prod.ext
+          · exact ((Finset.mem_filter.mp hz₁).2.trans
+              (Finset.mem_filter.mp hz₂).2.symm)
+          · exact hsecond
+        · intro y hy
+          refine ⟨(x, y), ?_, rfl⟩
+          have hyT := (Finset.mem_filter.mp hy).2
+          simp only [Finset.mem_filter]
+          exact ⟨by simpa [S] using hyT.symm, trivial⟩
+      rw [hcard]
+      exact card_vinogradovCenterResidue_fiber p b hb
+        (vinogradovCenterValue x : ZMod p)
+    _ = p ^ a * p ^ (b - 1) := by simp
+
+/-- Exact cardinality of the `gamma = 0` center-pair stratum.  For each
+center modulo `p^a`, precisely the `p^(b-1)` centers with the same residue
+modulo `p` are excluded. -/
+theorem card_vinogradovUnitSeparatedCenterPairSet
+    (p a b : ℕ) [Fact p.Prime] (hb : 0 < b) :
+    (vinogradovUnitSeparatedCenterPairSet p a b).card =
+      p ^ a * (p ^ b - p ^ (b - 1)) := by
+  classical
+  let E := Finset.univ.filter fun z : Fin (p ^ a) × Fin (p ^ b) ↦
+    (vinogradovCenterValue z.1 : ZMod p) =
+      (vinogradovCenterValue z.2 : ZMod p)
+  let U := Finset.univ.filter fun z : Fin (p ^ a) × Fin (p ^ b) ↦
+    (vinogradovCenterValue z.1 : ZMod p) ≠
+      (vinogradovCenterValue z.2 : ZMod p)
+  have hunit : vinogradovUnitSeparatedCenterPairSet p a b = U := by
+    ext z
+    simp only [mem_vinogradovUnitSeparatedCenterPairSet_iff,
+      U, Finset.mem_filter, Finset.mem_univ, true_and]
+    exact isCoprime_vinogradovCenterDifference_iff_ne p a b z.1 z.2
+  have hequal : E.card = p ^ a * p ^ (b - 1) := by
+    exact card_vinogradovCenterResidueEqualPairSet p a b hb
+  have hpartition : E.card + U.card = p ^ a * p ^ b := by
+    calc
+      E.card + U.card =
+          (Finset.univ : Finset (Fin (p ^ a) × Fin (p ^ b))).card := by
+        exact Finset.card_filter_add_card_filter_not
+          (s := Finset.univ)
+          (fun z : Fin (p ^ a) × Fin (p ^ b) ↦
+            (vinogradovCenterValue z.1 : ZMod p) =
+              (vinogradovCenterValue z.2 : ZMod p))
+      _ = p ^ a * p ^ b := by simp
+  rw [hunit]
+  rw [hequal] at hpartition
+  calc
+    U.card = p ^ a * p ^ b - p ^ a * p ^ (b - 1) := by omega
+    _ = p ^ a * (p ^ b - p ^ (b - 1)) := by
+      rw [Nat.mul_sub_left_distrib]
+
 /-- Sum of the norms of the mixed conditioned moments over all unit-separated
 center pairs.  This is the first aggregate surface for the recurrence. -/
 noncomputable def normalizedVinogradovUnitSeparatedMixedMomentSum
@@ -584,6 +764,25 @@ theorem normalizedVinogradovUnitSeparatedMixedMomentSum_le_farScaleMoment
             (p ^ vinogradovFarScale k r a b 0)‖ *
           (Y ^ (2 * t) : ℝ)) := by
       simp
+
+/-- The aggregate `gamma = 0` recurrence with its center-pair factor written
+explicitly. -/
+theorem normalizedVinogradovUnitSeparatedMixedMomentSum_le_farScaleMoment_explicit
+    (p a b k r t X Y : ℕ) [Fact p.Prime]
+    (hrk : r ≤ k) (hkp : k < p) (hb : 0 < b)
+    (hbudget : a * r ≤ (k - r + 1) * b)
+    (htail : (k - r + 1) * b ≤ a * (r + 1))
+    (hscale : X ≤ p ^ a * p ^ vinogradovFarScale k r a b 0) :
+    normalizedVinogradovUnitSeparatedMixedMomentSum
+        p a b k r t X Y ≤
+      (p ^ a * (p ^ b - p ^ (b - 1)) : ℕ) *
+        (‖normalizedVinogradovMomentMod
+          (p ^ vinogradovFarScale k r a b 0) r r
+            (p ^ vinogradovFarScale k r a b 0)‖ *
+          (Y ^ (2 * t) : ℝ)) := by
+  simpa only [card_vinogradovUnitSeparatedCenterPairSet p a b hb] using
+    normalizedVinogradovUnitSeparatedMixedMomentSum_le_farScaleMoment
+      p a b k r t X Y hrk hkp hb hbudget htail hscale
 
 end
 
