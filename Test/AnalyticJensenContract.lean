@@ -98,6 +98,14 @@ example {f : ℂ → ℂ} {c : ℂ} {b R : ℝ} (hbR : b ≤ R)
         (MeromorphicOn.divisor f (Metric.closedBall c R) u : ℝ) :=
   finsum_divisor_closedBall_eq_finsum_mem_of_le hbR hmeromorphic
 
+example {f : ℂ → ℂ} {c : ℂ} {R : ℝ}
+    (hanalytic : AnalyticOnNhd ℂ f (Metric.closedBall c R)) :
+    (((MeromorphicOn.divisor f (Metric.closedBall c R)).finiteSupport
+        (isCompact_closedBall c R)).toFinset.card : ℝ) ≤
+      ∑ᶠ u,
+        (MeromorphicOn.divisor f (Metric.closedBall c R) u : ℝ) :=
+  card_divisor_support_le_finsum_mass hanalytic
+
 #print axioms jensen_weighted_zero_mass_le_of_circleAverage_le
 #print axioms circleAverage_log_norm_le_log_of_norm_le
 #print axioms jensen_inner_zero_multiplicity_le_of_circleAverage_le
@@ -106,6 +114,7 @@ example {f : ℂ → ℂ} {c : ℂ} {b R : ℝ} (hbR : b ≤ R)
 #print axioms exists_analytic_nonzero_factor_log_norm_at_center
 #print axioms exists_analytic_nonzero_factor_log_norm_pointwise_of_ne_zero
 #print axioms finsum_divisor_closedBall_eq_finsum_mem_of_le
+#print axioms card_divisor_support_le_finsum_mass
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem

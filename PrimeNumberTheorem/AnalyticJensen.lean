@@ -351,5 +351,42 @@ theorem finsum_divisor_closedBall_eq_finsum_mem_of_le
         (Metric.closedBall_subset_closedBall hbR hu)]
   · simp [hu, Function.locallyFinsuppWithin.apply_eq_zero_of_notMem]
 
+/-- The number of distinct points in an analytic divisor support is at most
+its total multiplicity. -/
+theorem card_divisor_support_le_finsum_mass
+    {f : ℂ → ℂ} {c : ℂ} {R : ℝ}
+    (hanalytic : AnalyticOnNhd ℂ f (Metric.closedBall c R)) :
+    (((MeromorphicOn.divisor f (Metric.closedBall c R)).finiteSupport
+        (isCompact_closedBall c R)).toFinset.card : ℝ) ≤
+      ∑ᶠ u,
+        (MeromorphicOn.divisor f (Metric.closedBall c R) u : ℝ) := by
+  classical
+  let D := MeromorphicOn.divisor f (Metric.closedBall c R)
+  let hfinite : D.support.Finite :=
+    D.finiteSupport (isCompact_closedBall c R)
+  have hDnonneg : 0 ≤ D := hanalytic.divisor_nonneg
+  have hone : ∀ u ∈ hfinite.toFinset, (1 : ℝ) ≤ (D u : ℝ) := by
+    intro u hu
+    have huSupport : u ∈ D.support := hfinite.mem_toFinset.mp hu
+    have hne : D u ≠ 0 := by
+      simpa [Function.mem_support] using huSupport
+    have hpos : 0 < D u := lt_of_le_of_ne (hDnonneg u) (Ne.symm hne)
+    have honeInt : (1 : ℤ) ≤ D u := (Int.add_one_le_iff).2 hpos
+    exact_mod_cast honeInt
+  have hsupport : (fun u : ℂ => (D u : ℝ)).support ⊆ hfinite.toFinset := by
+    intro u hu
+    exact hfinite.mem_toFinset.mpr (by
+      simpa [Function.mem_support] using hu)
+  rw [show (((MeromorphicOn.divisor f
+      (Metric.closedBall c R)).finiteSupport
+        (isCompact_closedBall c R)).toFinset.card : ℝ) =
+      (hfinite.toFinset.card : ℝ) by rfl]
+  rw [show (∑ᶠ u,
+      (MeromorphicOn.divisor f (Metric.closedBall c R) u : ℝ)) =
+      ∑ᶠ u, (D u : ℝ) by rfl]
+  rw [finsum_eq_sum_of_support_subset _ hsupport]
+  simpa using hfinite.toFinset.card_nsmul_le_sum
+    (fun u => (D u : ℝ)) 1 hone
+
 end CarlsonZeroDensity
 end PrimeNumberTheorem
