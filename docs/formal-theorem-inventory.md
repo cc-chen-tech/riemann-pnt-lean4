@@ -3170,6 +3170,64 @@ the `RiemannExplorer` namespace and are axiom-audited in
 The same file also introduces the five `def ... : Prop` targets listed in the
 target section below; those are not proved theorems.
 
+### `RiemannExplorer/SchwarzSymmetric.lean`
+
+This file provides the general Schwarz-symmetry propagation lemmas used by the
+Li route: on an open conjugate-stable set, Schwarz symmetry of a
+differentiable function passes to its derivative and to all iterated
+derivatives, so iterated derivatives at real points are real.  All
+declarations are in the `RiemannExplorer` namespace and are axiom-audited in
+`Test/XiFunctionAxiomAudit.lean`:
+
+- `deriv_schwarzSymmetricOn`
+- `differentiableOn_deriv`
+- `schwarzSymmetric_iteratedDeriv`
+- `iteratedDeriv_schwarz_real`
+
+### `RiemannExplorer/LiReality.lean`
+
+This file proves the unconditional reality of the Li coefficients: ξ is
+Schwarz symmetric (`xiFunction_conj`) and has positive real part on the open
+conjugate-stable set `xiPosReSet := ξ ⁻¹' {w | 0 < w.re}` containing `s = 1`,
+so `s^(n-1)·log ξ(s)` is Schwarz symmetric there and every iterated
+derivative at `1` is real.  All declarations are in the `RiemannExplorer`
+namespace and are axiom-audited in `Test/XiFunctionAxiomAudit.lean`:
+
+- `xiPosReSet`
+- `isOpen_xiPosReSet`
+- `conj_mem_xiPosReSet`
+- `one_mem_xiPosReSet`
+- `differentiableOn_pow_mul_log_xi`
+- `schwarzSymmetricOn_pow_mul_log_xi`
+- `liCoefficient_is_real`
+- `liCoefficient_im`
+- `liCriterionHolds_iff_re_pos`
+
+### `RiemannExplorer/LiZeroSumConvergence.lean`
+
+This file proves the unconditional convergence of the paired zero series on
+the right-hand side of `li_zero_sum_representation_target`: the binomial
+remainder bound `‖1 - (1-w)ⁿ - n·w‖ ≤ 4·(3/2)ⁿ·‖w‖²` for `‖w‖ ≤ 1/2`, the
+summability of `‖ρ‖⁻²` over upper half-plane nontrivial zeros (low/high split
+at `‖ρ‖ = 2` plus dyadic-shell counting from the global zero count
+`N(T) ≤ C·T·(1 + log(T+6))`), and the paired-term bound
+`‖liPairedTerm n ρ‖ ≤ (2n + 8·(3/2)ⁿ)·‖ρ‖⁻²` coming from the cancellation
+`1/ρ + 1/conj ρ = 2·ρ.re/‖ρ‖²`.  All declarations are in the
+`RiemannExplorer` namespace and are axiom-audited in
+`Test/XiFunctionAxiomAudit.lean`:
+
+- `one_sub_one_sub_pow_sub_eq`
+- `norm_one_sub_one_sub_pow_sub_le`
+- `log_two_pow_add_six_le`
+- `shellIdx`
+- `two_pow_shellIdx_add_one_le`
+- `summable_norm_inv_sq_upperZeros`
+- `liPairedTerm`
+- `liPairedTerm_eq`
+- `norm_liPairedTerm_le`
+- `summable_liPairedTerm`
+- `summable_li_zero_sum_terms`
+
 ## Target Statements, Not Proved Theorems
 
 The following declarations are intentionally `def ... : Prop` targets.  They

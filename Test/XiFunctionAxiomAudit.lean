@@ -2,6 +2,7 @@ import RiemannExplorer.XiFunction
 import RiemannExplorer.LiCriterion
 import RiemannExplorer.SchwarzSymmetric
 import RiemannExplorer.LiReality
+import RiemannExplorer.LiZeroSumConvergence
 
 #print axioms RiemannExplorer.xiFunction_one_sub
 #print axioms RiemannExplorer.xiFunction_zero
@@ -26,3 +27,12 @@ import RiemannExplorer.LiReality
 #print axioms RiemannExplorer.liCoefficient_is_real
 #print axioms RiemannExplorer.liCoefficient_im
 #print axioms RiemannExplorer.liCriterionHolds_iff_re_pos
+#print axioms RiemannExplorer.one_sub_one_sub_pow_sub_eq
+#print axioms RiemannExplorer.norm_one_sub_one_sub_pow_sub_le
+#print axioms RiemannExplorer.log_two_pow_add_six_le
+#print axioms RiemannExplorer.two_pow_shellIdx_add_one_le
+#print axioms RiemannExplorer.summable_norm_inv_sq_upperZeros
+#print axioms RiemannExplorer.liPairedTerm_eq
+#print axioms RiemannExplorer.norm_liPairedTerm_le
+#print axioms RiemannExplorer.summable_liPairedTerm
+#print axioms RiemannExplorer.summable_li_zero_sum_terms
