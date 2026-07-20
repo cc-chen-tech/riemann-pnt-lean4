@@ -7,6 +7,7 @@ import RiemannExplorer.LiPositivity
 import RiemannExplorer.XiPartialFraction
 import RiemannExplorer.LiStrictPositivity
 import RiemannExplorer.XiPartialFractionAnalytic
+import RiemannExplorer.XiPartialFractionResidue
 
 #print axioms RiemannExplorer.xiFunction_one_sub
 #print axioms RiemannExplorer.xiFunction_zero
@@ -72,3 +73,10 @@ import RiemannExplorer.XiPartialFractionAnalytic
 #print axioms RiemannExplorer.differentiableAt_tsum_xiPairedMittagLefflerTerm
 #print axioms RiemannExplorer.differentiableOn_tsum_xiPairedMittagLefflerTerm
 #print axioms RiemannExplorer.tendstoUniformlyOn_tsum_xiPairedMittagLefflerTerm_of_isCompact
+#print axioms RiemannExplorer.upperZero_ne_zero
+#print axioms RiemannExplorer.upperZero_conj_ne_zero
+#print axioms RiemannExplorer.upperZero_ne_conj
+#print axioms RiemannExplorer.tendsto_sub_mul_xiPairedMittagLefflerTerm_self
+#print axioms RiemannExplorer.tendsto_sub_mul_xiPairedMittagLefflerTerm_of_ne
+#print axioms RiemannExplorer.tendsto_sub_mul_xiPairedMittagLefflerSum
+#print axioms RiemannExplorer.differentiableOn_logDeriv_xiFunction_sub_xiPairedMittagLefflerSum
