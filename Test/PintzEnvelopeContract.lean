@@ -76,6 +76,9 @@ example :
       2 * Real.sqrt (c * Real.log x) ≤ pintzZeroEnvelope x :=
   exists_eventually_two_mul_sqrt_le_zeroEnvelope
 
+example : Tendsto pintzZeroEnvelope atTop atTop :=
+  tendsto_pintzZeroEnvelope_atTop
+
 example : MonotoneOn pintzZeroEnvelope (Set.Ici 1) :=
   monotoneOn_pintzZeroEnvelope
 
@@ -90,6 +93,7 @@ example : MonotoneOn pintzZeroEnvelope (Set.Ici 1) :=
 #print axioms eventually_two_mul_sqrt_le_lowZeroTerm
 #print axioms eventually_all_lowZeroTerms_above_sqrt
 #print axioms exists_eventually_two_mul_sqrt_le_zeroEnvelope
+#print axioms tendsto_pintzZeroEnvelope_atTop
 #print axioms pintzZeroEnvelope_le_zeroTerm
 #print axioms monotoneOn_pintzZeroEnvelope
 

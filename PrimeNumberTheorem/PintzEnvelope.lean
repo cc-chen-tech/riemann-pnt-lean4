@@ -229,6 +229,22 @@ theorem exists_eventually_two_mul_sqrt_le_zeroEnvelope :
   · exact hhigh hx hrho hhighHeight
   · exact hlow rho ⟨hrho, him, lt_of_not_ge hhighHeight⟩
 
+/-- The Pintz zero envelope tends to infinity. -/
+theorem tendsto_pintzZeroEnvelope_atTop :
+    Tendsto pintzZeroEnvelope atTop atTop := by
+  rcases exists_eventually_two_mul_sqrt_le_zeroEnvelope with
+    ⟨c, hc, henvelope⟩
+  have hinside :
+      Tendsto (fun x : ℝ => c * Real.log x) atTop atTop :=
+    Real.tendsto_log_atTop.const_mul_atTop hc
+  have hsqrt :
+      Tendsto (fun x : ℝ => Real.sqrt (c * Real.log x)) atTop atTop :=
+    Real.tendsto_sqrt_atTop.comp hinside
+  have hscale :
+      Tendsto (fun x : ℝ => 2 * Real.sqrt (c * Real.log x)) atTop atTop :=
+    hsqrt.const_mul_atTop (by norm_num)
+  exact tendsto_atTop_mono' atTop henvelope hscale
+
 /-- The envelope is no larger than the contribution of any chosen positive
 ordinate nontrivial zero. -/
 theorem pintzZeroEnvelope_le_zeroTerm {x : ℝ} (hx : 1 ≤ x) {rho : ℂ}
