@@ -1473,6 +1473,14 @@ energy on `1 < k <= N` is proved equal to this four-index quadratic form minus
 the constant mode `1`.  This exposes the cancellation-sensitive arithmetic
 quantity required by Selberg's argument; proving a sharp bound for that signed
 quadratic form, and controlling the truncated range `N < k`, remain open.
+The pair products are now collected once more into the real coefficient
+`selbergShortDoubleMoebiusCoeff X r = sum_(d*e=r) b_X(d)b_X(e)`.  A generic
+finite theorem proves that every four-index kernel depending only on the two
+products is exactly the corresponding double sum in these collected
+coefficients.  Consequently the complete nonconstant energy is available in
+the standard signed form `sum_(r,s) alpha_X(r) alpha_X(s)
+H_(N/lcm(r,s))/lcm(r,s) - 1`.  No cancellation estimate for this quadratic
+form is claimed yet.
 
 The three remaining open analytic directions are:
 

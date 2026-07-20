@@ -29,6 +29,28 @@ noncomputable def selbergShortCompleteRangeQuadrupleSupport
   ((Finset.Icc 1 X).product (Finset.Icc 1 X)).product
     ((Finset.Icc 1 X).product (Finset.Icc 1 X))
 
+/-- The fixed support for one pair of mollifier indices. -/
+noncomputable def selbergShortCompleteRangePairSupport
+    (X : ℕ) : Finset (ℕ × ℕ) :=
+  (Finset.Icc 1 X).product (Finset.Icc 1 X)
+
+/-- The product index represented by one mollifier pair. -/
+def selbergShortCompleteRangePairProduct (p : ℕ × ℕ) : ℕ :=
+  p.1 * p.2
+
+/-- The signed weight represented by one mollifier pair. -/
+noncomputable def selbergShortCompleteRangePairWeight
+    (X : ℕ) (p : ℕ × ℕ) : ℝ :=
+  selbergMoebiusCoeff X p.1 * selbergMoebiusCoeff X p.2
+
+/-- The coefficient obtained by collecting all two-index mollifier terms with
+the same product `r`. -/
+noncomputable def selbergShortDoubleMoebiusCoeff
+    (X r : ℕ) : ℝ :=
+  ∑ p ∈ (selbergShortCompleteRangePairSupport X).filter
+      (fun p => selbergShortCompleteRangePairProduct p = r),
+    selbergShortCompleteRangePairWeight X p
+
 /-- The least-common-multiple modulus attached to two mollifier products. -/
 def selbergShortCompleteRangeLcm
     (q : (ℕ × ℕ) × (ℕ × ℕ)) : ℕ :=
@@ -44,6 +66,110 @@ noncomputable def selbergShortCompleteRangeQuadrupleWeight
 noncomputable def selbergShortLcmHarmonicKernel
     (L U r : ℕ) : ℝ :=
   ∑ k ∈ (Finset.Icc L U).filter (fun k => r ∣ k), (k : ℝ)⁻¹
+
+/-- Collecting one finite mollifier-pair sum by the represented product is
+exact for every product-dependent kernel. -/
+theorem sum_completeRangePairWeight_mul_kernel_eq_collected
+    (X : ℕ) (F : ℕ → ℝ) :
+    (∑ p ∈ selbergShortCompleteRangePairSupport X,
+        selbergShortCompleteRangePairWeight X p *
+          F (selbergShortCompleteRangePairProduct p)) =
+      ∑ r ∈ Finset.Icc 1 (X * X),
+        selbergShortDoubleMoebiusCoeff X r * F r := by
+  classical
+  let P := selbergShortCompleteRangePairSupport X
+  let R := Finset.Icc 1 (X * X)
+  let g := selbergShortCompleteRangePairProduct
+  let w := selbergShortCompleteRangePairWeight X
+  have hmaps : ∀ p ∈ P, g p ∈ R := by
+    intro p hp
+    rcases Finset.mem_product.mp hp with ⟨hp1, hp2⟩
+    exact Finset.mem_Icc.mpr
+      ⟨Nat.mul_pos (Finset.mem_Icc.mp hp1).1
+          (Finset.mem_Icc.mp hp2).1,
+        Nat.mul_le_mul (Finset.mem_Icc.mp hp1).2
+          (Finset.mem_Icc.mp hp2).2⟩
+  have hfiber :
+      (∑ p ∈ P, w p * F (g p)) =
+        ∑ r ∈ R, ∑ p ∈ P.filter (fun p => g p = r),
+          w p * F (g p) := by
+    symm
+    exact Finset.sum_fiberwise_of_maps_to hmaps (fun p => w p * F (g p))
+  change (∑ p ∈ P, w p * F (g p)) = _
+  rw [hfiber]
+  apply Finset.sum_congr rfl
+  intro r _hr
+  calc
+    (∑ p ∈ P.filter (fun p => g p = r), w p * F (g p)) =
+        ∑ p ∈ P.filter (fun p => g p = r), w p * F r := by
+      apply Finset.sum_congr rfl
+      intro p hp
+      rw [(Finset.mem_filter.mp hp).2]
+    _ = (∑ p ∈ P.filter (fun p => g p = r), w p) * F r := by
+      rw [Finset.sum_mul]
+    _ = selbergShortDoubleMoebiusCoeff X r * F r := by
+      rfl
+
+/-- A four-index mollifier sum whose kernel depends only on the two represented
+products is exactly the corresponding two-index quadratic form in the
+collected coefficients `selbergShortDoubleMoebiusCoeff`. -/
+theorem sum_completeRangeQuadrupleWeight_mul_kernel_eq_doubleCollected
+    (X : ℕ) (F : ℕ → ℕ → ℝ) :
+    (∑ q ∈ selbergShortCompleteRangeQuadrupleSupport X,
+        selbergShortCompleteRangeQuadrupleWeight X q *
+          F (selbergShortCompleteRangePairProduct q.1)
+            (selbergShortCompleteRangePairProduct q.2)) =
+      ∑ r ∈ Finset.Icc 1 (X * X),
+        ∑ s ∈ Finset.Icc 1 (X * X),
+          selbergShortDoubleMoebiusCoeff X r *
+            selbergShortDoubleMoebiusCoeff X s * F r s := by
+  classical
+  let P := selbergShortCompleteRangePairSupport X
+  let g := selbergShortCompleteRangePairProduct
+  let w := selbergShortCompleteRangePairWeight X
+  have hsupport :
+      selbergShortCompleteRangeQuadrupleSupport X = P.product P := by
+    rfl
+  rw [hsupport]
+  change (∑ q ∈ P.product P,
+      w q.1 * w q.2 * F (g q.1) (g q.2)) = _
+  calc
+    (∑ q ∈ P.product P,
+        w q.1 * w q.2 * F (g q.1) (g q.2)) =
+        ∑ p ∈ P, ∑ q ∈ P, w p * w q * F (g p) (g q) := by
+      exact Finset.sum_product P P
+        (fun q : (ℕ × ℕ) × (ℕ × ℕ) =>
+          w q.1 * w q.2 * F (g q.1) (g q.2))
+    _ =
+        ∑ p ∈ P, w p *
+          ∑ q ∈ P, w q * F (g p) (g q) := by
+      apply Finset.sum_congr rfl
+      intro p _hp
+      rw [Finset.mul_sum]
+      apply Finset.sum_congr rfl
+      intro q _hq
+      ring
+    _ = ∑ p ∈ P, w p *
+          ∑ s ∈ Finset.Icc 1 (X * X),
+            selbergShortDoubleMoebiusCoeff X s * F (g p) s := by
+      apply Finset.sum_congr rfl
+      intro p _hp
+      rw [sum_completeRangePairWeight_mul_kernel_eq_collected]
+    _ = ∑ r ∈ Finset.Icc 1 (X * X),
+          selbergShortDoubleMoebiusCoeff X r *
+            (∑ s ∈ Finset.Icc 1 (X * X),
+              selbergShortDoubleMoebiusCoeff X s * F r s) := by
+      simpa only [P, w, g] using
+        (sum_completeRangePairWeight_mul_kernel_eq_collected X
+          (fun r => ∑ s ∈ Finset.Icc 1 (X * X),
+            selbergShortDoubleMoebiusCoeff X s * F r s))
+    _ = _ := by
+      apply Finset.sum_congr rfl
+      intro r _hr
+      rw [Finset.mul_sum]
+      apply Finset.sum_congr rfl
+      intro s _hs
+      ring
 
 /-- Positive multiples of `r` up to `N` are exactly the image of
 `1,...,N/r` under multiplication by `r`. -/
@@ -296,6 +422,28 @@ theorem sum_normSq_selbergShortDirichletCollectedCoeff_completeRange_eq_lcmHarmo
     Nat.lcm_pos hleftPos hrightPos
   rw [selbergShortLcmHarmonicKernel_one_eq_inv_mul_harmonic hlcm]
 
+/-- The same complete-range energy after collecting each pair product first.
+This is the standard two-index signed Selberg quadratic form in the finite
+coefficients `selbergShortDoubleMoebiusCoeff`. -/
+theorem sum_normSq_selbergShortDirichletCollectedCoeff_completeRange_eq_doubleLcmHarmonic
+    (N X : ℕ) :
+    (∑ k ∈ Finset.Icc 1 N,
+        Complex.normSq (selbergShortDirichletCollectedCoeff N X k)) =
+      ∑ r ∈ Finset.Icc 1 (X * X),
+        ∑ s ∈ Finset.Icc 1 (X * X),
+          selbergShortDoubleMoebiusCoeff X r *
+            selbergShortDoubleMoebiusCoeff X s *
+              ((Nat.lcm r s : ℝ)⁻¹ *
+                (harmonic (N / Nat.lcm r s) : ℝ)) := by
+  rw [sum_normSq_selbergShortDirichletCollectedCoeff_completeRange_eq_lcmHarmonic]
+  simpa only [selbergShortCompleteRangeQuadrupleWeight,
+    selbergShortCompleteRangePairWeight,
+    selbergShortCompleteRangeLcm,
+    selbergShortCompleteRangePairProduct] using
+      (sum_completeRangeQuadrupleWeight_mul_kernel_eq_doubleCollected X
+        (fun r s => (Nat.lcm r s : ℝ)⁻¹ *
+          (harmonic (N / Nat.lcm r s) : ℝ)))
+
 /-- Removing the constant `k = 1` mode subtracts exactly one from the complete
 signed lcm-harmonic quadratic form. -/
 theorem sum_normSq_selbergShortDirichletCollectedCoeff_nonconstantRange_eq_lcmHarmonic_sub_one
@@ -324,6 +472,34 @@ theorem sum_normSq_selbergShortDirichletCollectedCoeff_nonconstantRange_eq_lcmHa
     norm_num
   rw [sum_normSq_selbergShortDirichletCollectedCoeff_completeRange_eq_lcmHarmonic
     N X, hOne] at hsplit
+  linarith
+
+/-- The nonconstant complete-range energy in the collected two-index form.
+The only removed term is the exact constant coefficient at `k = 1`. -/
+theorem sum_normSq_selbergShortDirichletCollectedCoeff_nonconstantRange_eq_doubleLcmHarmonic_sub_one
+    {N X : ℕ} (hN : 1 ≤ N) (hX : 1 ≤ X) :
+    (∑ k ∈ Finset.Ioc 1 N,
+        Complex.normSq (selbergShortDirichletCollectedCoeff N X k)) =
+      (∑ r ∈ Finset.Icc 1 (X * X),
+        ∑ s ∈ Finset.Icc 1 (X * X),
+          selbergShortDoubleMoebiusCoeff X r *
+            selbergShortDoubleMoebiusCoeff X s *
+              ((Nat.lcm r s : ℝ)⁻¹ *
+                (harmonic (N / Nat.lcm r s) : ℝ))) - 1 := by
+  rw [← sum_normSq_selbergShortDirichletCollectedCoeff_completeRange_eq_doubleLcmHarmonic
+    N X]
+  have hOneMem : 1 ∈ Finset.Icc 1 N := Finset.mem_Icc.mpr ⟨le_rfl, hN⟩
+  have hsum := Finset.sum_erase_add (Finset.Icc 1 N)
+    (fun k : ℕ =>
+      Complex.normSq (selbergShortDirichletCollectedCoeff N X k)) hOneMem
+  rw [Finset.Icc_erase_left] at hsum
+  change (∑ k ∈ Finset.Ioc 1 N,
+      Complex.normSq (selbergShortDirichletCollectedCoeff N X k)) +
+        Complex.normSq (selbergShortDirichletCollectedCoeff N X 1) =
+      ∑ k ∈ Finset.Icc 1 N,
+        Complex.normSq (selbergShortDirichletCollectedCoeff N X k) at hsum
+  rw [selbergShortDirichletCollectedCoeff_one hN hX] at hsum
+  norm_num at hsum
   linarith
 
 end HardyTheorem
