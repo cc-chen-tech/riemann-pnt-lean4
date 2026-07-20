@@ -3378,5 +3378,70 @@ theorem deBruijnNewmanH_zero_eq_integral (z : ℂ) :
   unfold heatIntegrand
   rw [show (0 : ℝ) * u ^ 2 = 0 from by ring, Real.exp_zero, one_mul]
 
+/-- **Phase 1d 收官恒等式**：`H₀(z) = (1/8)·Ξ(z/2)`，即
+`deBruijnNewmanH 0 z = (1/8)·completedZeta (1/2 + I·(z/2))`。
+由主恒等式（`sixteen_integral_cexp_phi_eq`）、parity 换元
+（`integral_Iic_cexp_iz_phi`）与 `cos` 的指数表示组装。 -/
+theorem deBruijnNewmanH_zero_eq_completedZeta (z : ℂ) :
+    deBruijnNewmanH 0 z
+      = (1 / 8) * RiemannHypothesis.completedZeta (1 / 2 + Complex.I * (z / 2)) := by
+  have hmaster := sixteen_integral_cexp_phi_eq z
+  have hpar := integral_Iic_cexp_iz_phi z
+  have hH := deBruijnNewmanH_zero_eq_integral z
+  have hsum : (∫ u in Set.Ioi (0 : ℝ), Complex.exp (Complex.I * z * (u : ℂ)) * (phi u : ℂ))
+        + (∫ u in Set.Ioi (0 : ℝ), Complex.exp ((-(Complex.I * z)) * (u : ℂ)) * (phi u : ℂ))
+      = 2 * (∫ u in Set.Ioi (0 : ℝ), (phi u : ℂ) * Complex.cos (z * (u : ℂ))) := by
+    have e1 : (∫ u in Set.Ioi (0 : ℝ), Complex.exp (Complex.I * z * (u : ℂ)) * (phi u : ℂ))
+          + (∫ u in Set.Ioi (0 : ℝ), Complex.exp ((-(Complex.I * z)) * (u : ℂ)) * (phi u : ℂ))
+        = ∫ u in Set.Ioi (0 : ℝ), (Complex.exp (Complex.I * z * (u : ℂ)) * (phi u : ℂ)
+            + Complex.exp ((-(Complex.I * z)) * (u : ℂ)) * (phi u : ℂ)) :=
+      (MeasureTheory.integral_add (integrableOn_cexp_mul_phi (Complex.I * z))
+        (integrableOn_cexp_mul_phi (-(Complex.I * z)))).symm
+    have e2 : (∫ u in Set.Ioi (0 : ℝ), (Complex.exp (Complex.I * z * (u : ℂ)) * (phi u : ℂ)
+            + Complex.exp ((-(Complex.I * z)) * (u : ℂ)) * (phi u : ℂ)))
+        = ∫ u in Set.Ioi (0 : ℝ), 2 * ((phi u : ℂ) * Complex.cos (z * (u : ℂ))) := by
+      apply MeasureTheory.setIntegral_congr_fun measurableSet_Ioi
+      intro u _
+      have h2c : 2 * Complex.cos (z * (u : ℂ))
+          = Complex.exp (Complex.I * z * (u : ℂ))
+            + Complex.exp ((-(Complex.I * z)) * (u : ℂ)) := by
+        unfold Complex.cos
+        rw [show -(z * (u : ℂ)) * Complex.I = (-(Complex.I * z)) * (u : ℂ) from by ring,
+          show z * (u : ℂ) * Complex.I = Complex.I * z * (u : ℂ) from by ring]
+        ring
+      show Complex.exp (Complex.I * z * (u : ℂ)) * (phi u : ℂ)
+          + Complex.exp ((-(Complex.I * z)) * (u : ℂ)) * (phi u : ℂ)
+        = 2 * ((phi u : ℂ) * Complex.cos (z * (u : ℂ)))
+      calc Complex.exp (Complex.I * z * (u : ℂ)) * (phi u : ℂ)
+            + Complex.exp ((-(Complex.I * z)) * (u : ℂ)) * (phi u : ℂ)
+          = (phi u : ℂ) * (Complex.exp (Complex.I * z * (u : ℂ))
+              + Complex.exp ((-(Complex.I * z)) * (u : ℂ))) := by ring
+        _ = (phi u : ℂ) * (2 * Complex.cos (z * (u : ℂ))) := by rw [← h2c]
+        _ = 2 * ((phi u : ℂ) * Complex.cos (z * (u : ℂ))) := by ring
+    have e3 : (∫ u in Set.Ioi (0 : ℝ), 2 * ((phi u : ℂ) * Complex.cos (z * (u : ℂ))))
+        = 2 * (∫ u in Set.Ioi (0 : ℝ), (phi u : ℂ) * Complex.cos (z * (u : ℂ))) :=
+      MeasureTheory.integral_const_mul 2 _
+    exact e1.trans (e2.trans e3)
+  have hXi : (1 / 8) * RiemannHypothesis.completedZeta (1 / 2 + Complex.I * (z / 2))
+      = 1 / 16 - ((1 + z * z) / 64) * completedRiemannZeta₀ ((1 + Complex.I * z) / 2) := by
+    have hss : ((1 + Complex.I * z) / 2) * (((1 + Complex.I * z) / 2) - 1)
+        = -(1 + z * z) / 4 := by
+      have hII : Complex.I * z * (Complex.I * z) = -(z * z) := by
+        calc Complex.I * z * (Complex.I * z)
+            = Complex.I * Complex.I * (z * z) := by ring
+          _ = -(z * z) := by rw [Complex.I_mul_I]; ring
+      linear_combination hII / 4
+    have hdef : RiemannHypothesis.completedZeta (1 / 2 + Complex.I * (z / 2))
+        = (1 / 2) * ((1 + Complex.I * z) / 2) * (((1 + Complex.I * z) / 2) - 1)
+            * completedRiemannZeta₀ ((1 + Complex.I * z) / 2)
+          - (1 / 2) * (((1 + Complex.I * z) / 2) - 1)
+          + (1 / 2) * ((1 + Complex.I * z) / 2) := by
+      have hs : (1 / 2 : ℂ) + Complex.I * (z / 2) = (1 + Complex.I * z) / 2 := by ring
+      unfold RiemannHypothesis.completedZeta
+      rw [hs]
+    rw [hdef]
+    linear_combination (completedRiemannZeta₀ ((1 + Complex.I * z) / 2) / 16) * hss
+  linear_combination hH + (1 / 32) * hmaster - (1 / 2) * hsum - (1 / 2) * hpar - hXi
+
 end DeBruijnNewman
 end RiemannExplorer
