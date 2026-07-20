@@ -11,3 +11,10 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.heat_decay_eventually_le
 #print axioms RiemannExplorer.DeBruijnNewman.heat_integrand_integrable
 #print axioms RiemannExplorer.DeBruijnNewman.heat_integrand_integrable_target_proved
+#print axioms RiemannExplorer.DeBruijnNewman.norm_sin_le_exp_abs_im
+#print axioms RiemannExplorer.DeBruijnNewman.norm_sin_mul_ofReal_le_exp
+#print axioms RiemannExplorer.DeBruijnNewman.heat_integrand_hasDerivAt
+#print axioms RiemannExplorer.DeBruijnNewman.differentiable_deBruijnNewmanH
+#print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_even
+#print axioms RiemannExplorer.DeBruijnNewman.h_even_entire
+#print axioms RiemannExplorer.DeBruijnNewman.h_even_entire_target_proved

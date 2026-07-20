@@ -168,21 +168,26 @@ noncomputable def phi (u : ℝ) : ℝ := ∑' n : ℕ, phiTerm (n + 1) u
 
 /-! ## 余弦增长界（H_t 被积函数控制的组成部分） -/
 
+/-- `cosh y + |sinh y| = exp |y|` for real `y`. -/
+theorem cosh_add_abs_sinh_eq (y : ℝ) :
+    Real.cosh y + |Real.sinh y| = Real.exp |y| := by
+  rw [Real.cosh_eq, Real.sinh_eq]
+  rcases le_total 0 y with hy | hy
+  · have h1 : Real.exp (-y) ≤ Real.exp y := Real.exp_le_exp.mpr (by linarith)
+    rw [abs_of_nonneg (by linarith : (0 : ℝ) ≤ (Real.exp y - Real.exp (-y)) / 2),
+      abs_of_nonneg hy]
+    linarith
+  · have h1 : Real.exp y ≤ Real.exp (-y) := Real.exp_le_exp.mpr (by linarith)
+    rw [abs_of_nonpos (by linarith : (Real.exp y - Real.exp (-y)) / 2 ≤ 0),
+      abs_of_nonpos hy]
+    linarith
+
 /-- Auxiliary cosine growth bound: `‖cos w‖ ≤ exp |Im w|` for `w : ℂ`.
 Proved from `Complex.cos_eq` and `cosh y + |sinh y| = exp |y|`. -/
 theorem norm_cos_le_exp_abs_im (w : ℂ) :
     ‖Complex.cos w‖ ≤ Real.exp |w.im| := by
-  have hcs : Real.cosh w.im + |Real.sinh w.im| = Real.exp |w.im| := by
-    rw [Real.cosh_eq, Real.sinh_eq]
-    rcases le_total 0 w.im with hy | hy
-    · have h1 : Real.exp (-w.im) ≤ Real.exp w.im := Real.exp_le_exp.mpr (by linarith)
-      rw [abs_of_nonneg (by linarith : (0 : ℝ) ≤ (Real.exp w.im - Real.exp (-w.im)) / 2),
-        abs_of_nonneg hy]
-      linarith
-    · have h1 : Real.exp w.im ≤ Real.exp (-w.im) := Real.exp_le_exp.mpr (by linarith)
-      rw [abs_of_nonpos (by linarith : (Real.exp w.im - Real.exp (-w.im)) / 2 ≤ 0),
-        abs_of_nonpos hy]
-      linarith
+  have hcs : Real.cosh w.im + |Real.sinh w.im| = Real.exp |w.im| :=
+    cosh_add_abs_sinh_eq w.im
   have hc : 0 ≤ Real.cosh w.im := by rw [Real.cosh_eq]; positivity
   have nc : ‖Complex.cos (w.re : ℂ)‖ = |Real.cos w.re| := by
     simp [← Complex.ofReal_cos]
@@ -204,6 +209,33 @@ theorem norm_cos_le_exp_abs_im (w : ℂ) :
     rwa [one_mul] at h
   linarith [hcs]
 
+/-- Auxiliary sine growth bound: `‖sin w‖ ≤ exp |Im w|` for `w : ℂ`,
+from the same `cosh_add_abs_sinh_eq` template. -/
+theorem norm_sin_le_exp_abs_im (w : ℂ) :
+    ‖Complex.sin w‖ ≤ Real.exp |w.im| := by
+  have hcs : Real.cosh w.im + |Real.sinh w.im| = Real.exp |w.im| :=
+    cosh_add_abs_sinh_eq w.im
+  have hc : 0 ≤ Real.cosh w.im := by rw [Real.cosh_eq]; positivity
+  have nc : ‖Complex.cos (w.re : ℂ)‖ = |Real.cos w.re| := by
+    simp [← Complex.ofReal_cos]
+  have nch : ‖Complex.cosh (w.im : ℂ)‖ = Real.cosh w.im := by
+    simp [← Complex.ofReal_cosh, abs_of_nonneg hc]
+  have ns : ‖Complex.sin (w.re : ℂ)‖ = |Real.sin w.re| := by
+    simp [← Complex.ofReal_sin]
+  have nsh : ‖Complex.sinh (w.im : ℂ)‖ = |Real.sinh w.im| := by
+    simp [← Complex.ofReal_sinh]
+  rw [Complex.sin_eq]
+  apply le_trans (norm_add_le _ _)
+  simp only [norm_mul]
+  rw [ns, nch, nc, nsh, Complex.norm_I, mul_one]
+  have h1 : |Real.sin w.re| * Real.cosh w.im ≤ Real.cosh w.im := by
+    have h := mul_le_mul_of_nonneg_right (Real.abs_sin_le_one w.re) hc
+    rwa [one_mul] at h
+  have h2 : |Real.cos w.re| * |Real.sinh w.im| ≤ |Real.sinh w.im| := by
+    have h := mul_le_mul_of_nonneg_right (Real.abs_cos_le_one w.re) (abs_nonneg (Real.sinh w.im))
+    rwa [one_mul] at h
+  linarith [hcs]
+
 /-- Growth control for the oscillatory factor of the `H_t` integrand:
 `‖cos (z · u)‖ ≤ exp |Im z · u|` for real `u`. -/
 theorem norm_cos_mul_ofReal_le_exp (z : ℂ) (u : ℝ) :
@@ -211,6 +243,14 @@ theorem norm_cos_mul_ofReal_le_exp (z : ℂ) (u : ℝ) :
   have him : (z * (u : ℂ)).im = z.im * u := by simp [Complex.mul_im]
   rw [← him]
   exact norm_cos_le_exp_abs_im _
+
+/-- Growth control for the sine factor of the differentiated integrand:
+`‖sin (z · u)‖ ≤ exp |Im z · u|` for real `u`. -/
+theorem norm_sin_mul_ofReal_le_exp (z : ℂ) (u : ℝ) :
+    ‖Complex.sin (z * (u : ℂ))‖ ≤ Real.exp |z.im * u| := by
+  have him : (z * (u : ℂ)).im = z.im * u := by simp [Complex.mul_im]
+  rw [← him]
+  exact norm_sin_le_exp_abs_im _
 
 /-! ## Phase 1a 第一块：Φ 的连续性与 `[0,∞)` 上的双指数衰减界 -/
 
@@ -627,6 +667,165 @@ theorem heat_integrand_integrable (t : ℝ) (z : ℂ) :
           rw [e2]
       _ = heatDominatingFun t |z.im| u := rfl
 
+/-! ## Phase 1b：被积函数的 `z` 导数与 `H_t` 的整性、偶性 -/
+
+/-- The `z`-derivative of the `H_t` integrand:
+`u ↦ e^{t u²} Φ(u) · (− sin(z u)) · u`. -/
+noncomputable def heatIntegrandDeriv (t : ℝ) (z : ℂ) (u : ℝ) : ℂ :=
+  ((Real.exp (t * u ^ 2) * phi u : ℝ) : ℂ) * (-Complex.sin (z * (u : ℂ)) * (u : ℂ))
+
+theorem heat_integrand_hasDerivAt (t : ℝ) (u : ℝ) (z : ℂ) :
+    HasDerivAt (fun w : ℂ => heatIntegrand t w u) (heatIntegrandDeriv t z u) z := by
+  have h := (((hasDerivAt_id z).mul_const (u : ℂ)).ccos).const_mul
+    ((Real.exp (t * u ^ 2) * phi u : ℝ) : ℂ)
+  simpa [heatIntegrand, heatIntegrandDeriv] using h
+
+/-- Dominating function for the differentiated `H_t` integrand:
+`u ↦ (2π² + 3π) · K₁ · u · e^{t u² + (9 + c) u} · e^{−π e^{4u}}`. -/
+noncomputable def heatDerivDominatingFun (t c : ℝ) (u : ℝ) : ℝ :=
+  (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst * u
+    * Real.exp (t * u ^ 2 + (9 + c) * u)
+    * Real.exp (-(Real.pi * Real.exp (4 * u)))
+
+theorem continuous_heatDerivDominatingFun (t c : ℝ) :
+    Continuous (heatDerivDominatingFun t c) := by
+  unfold heatDerivDominatingFun
+  fun_prop
+
+theorem heatDerivDominatingFun_isBigO (t c : ℝ) (hc : 0 ≤ c) :
+    Asymptotics.IsBigO Filter.atTop (heatDerivDominatingFun t c)
+      fun u : ℝ => Real.exp (-(1:ℝ) * u) := by
+  apply Asymptotics.IsBigO.of_bound'
+  have hC0 : (0:ℝ) ≤ (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst :=
+    mul_nonneg (by positivity) phiTailConst_nonneg
+  have h := heat_decay_eventually_le_mul t (9 + c)
+    ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst)
+    (mul_pos (by positivity) phiTailConst_pos) (by linarith)
+  filter_upwards [h, Filter.eventually_ge_atTop 0] with u hu hu0
+  have hdom0 : 0 ≤ heatDerivDominatingFun t c u :=
+    mul_nonneg (mul_nonneg (mul_nonneg hC0 hu0) (Real.exp_nonneg _)) (Real.exp_nonneg _)
+  rw [Real.norm_eq_abs, abs_of_nonneg hdom0, Real.norm_eq_abs,
+    abs_of_nonneg (Real.exp_nonneg _), neg_mul, one_mul]
+  exact hu
+
+theorem integrableOn_heatDerivDominatingFun (t c : ℝ) (hc : 0 ≤ c) :
+    MeasureTheory.IntegrableOn (heatDerivDominatingFun t c) (Set.Ioi 0)
+      MeasureTheory.volume :=
+  integrable_of_isBigO_exp_neg (show (0:ℝ) < 1 by norm_num)
+    (continuous_heatDerivDominatingFun t c).continuousOn
+    (heatDerivDominatingFun_isBigO t c hc)
+
+theorem continuous_heatIntegrandDeriv (t : ℝ) (z : ℂ) :
+    Continuous fun u : ℝ => heatIntegrandDeriv t z u := by
+  unfold heatIntegrandDeriv
+  fun_prop
+
+/-- **Phase 1b main theorem, part 1**: every `H_t` is entire
+(ℂ-differentiable everywhere), by dominated differentiation under the
+integral sign on `(0, ∞)`. -/
+theorem differentiable_deBruijnNewmanH (t : ℝ) :
+    Differentiable ℂ (deBruijnNewmanH t) := by
+  intro z₀
+  set μ := MeasureTheory.volume.restrict (Set.Ioi (0:ℝ)) with hμ
+  have hcont : ∀ w : ℂ, Continuous (heatIntegrand t w) := fun w => by
+    unfold heatIntegrand
+    fun_prop
+  have hmeas : ∀ w : ℂ, MeasureTheory.AEStronglyMeasurable (heatIntegrand t w) μ :=
+    fun w => (hcont w).continuousOn.aestronglyMeasurable measurableSet_Ioi
+  have hderv_meas : MeasureTheory.AEStronglyMeasurable (heatIntegrandDeriv t z₀) μ :=
+    (continuous_heatIntegrandDeriv t z₀).continuousOn.aestronglyMeasurable
+      measurableSet_Ioi
+  have hC0 : (0:ℝ) ≤ (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst :=
+    mul_nonneg (by positivity) phiTailConst_nonneg
+  have hbound : ∀ᵐ u ∂μ, ∀ w ∈ Metric.ball z₀ 1,
+      ‖heatIntegrandDeriv t w u‖ ≤ heatDerivDominatingFun t (|z₀.im| + 1) u := by
+    filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_Ioi] with u hu w hw
+    have hu0 : 0 ≤ u := le_of_lt hu
+    have hwim : |w.im| ≤ |z₀.im| + 1 := by
+      have h2 : |(w - z₀).im| ≤ ‖w - z₀‖ := Complex.abs_im_le_norm _
+      have h3 : ‖w - z₀‖ < 1 := by
+        rw [← dist_eq_norm]
+        exact Metric.mem_ball.mp hw
+      have him : w.im - z₀.im = (w - z₀).im := by simp [Complex.sub_im]
+      calc |w.im| = |w.im - z₀.im + z₀.im| :=
+            (congrArg abs (sub_add_cancel w.im z₀.im)).symm
+        _ ≤ |w.im - z₀.im| + |z₀.im| := abs_add_le _ _
+        _ ≤ ‖w - z₀‖ + |z₀.im| := by rw [him]; exact add_le_add_left h2 _
+        _ ≤ 1 + |z₀.im| := by linarith [h3.le]
+        _ = |z₀.im| + 1 := by ring
+    have hsin : ‖Complex.sin (w * (u : ℂ))‖ ≤ Real.exp ((|z₀.im| + 1) * u) := by
+      calc ‖Complex.sin (w * (u : ℂ))‖ ≤ Real.exp |w.im * u| :=
+            norm_sin_mul_ofReal_le_exp w u
+        _ = Real.exp (|w.im| * u) := by rw [abs_mul, abs_of_nonneg hu0]
+        _ ≤ Real.exp ((|z₀.im| + 1) * u) :=
+            Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_right hwim hu0)
+    have hn : ‖heatIntegrandDeriv t w u‖
+        = |Real.exp (t * u ^ 2) * phi u| * (‖Complex.sin (w * (u : ℂ))‖ * u) := by
+      unfold heatIntegrandDeriv
+      rw [norm_mul, norm_mul, norm_neg,
+        show ‖((Real.exp (t * u ^ 2) * phi u : ℝ) : ℂ)‖
+          = |Real.exp (t * u ^ 2) * phi u| from RCLike.norm_ofReal _,
+        show ‖(u : ℂ)‖ = u from by
+          rw [show ‖(u : ℂ)‖ = |u| from RCLike.norm_ofReal u, abs_of_nonneg hu0]]
+    rw [hn]
+    have hphi : |Real.exp (t * u ^ 2) * phi u|
+        ≤ Real.exp (t * u ^ 2) * ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+            * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))) := by
+      rw [abs_mul, abs_of_pos (Real.exp_pos _)]
+      exact mul_le_mul_of_nonneg_left (abs_phi_le u hu0) (Real.exp_nonneg _)
+    have hb0 : 0 ≤ Real.exp (t * u ^ 2)
+        * ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+          * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))) :=
+      mul_nonneg (Real.exp_nonneg _)
+        (mul_nonneg (mul_nonneg hC0 (Real.exp_nonneg _)) (Real.exp_nonneg _))
+    calc |Real.exp (t * u ^ 2) * phi u| * (‖Complex.sin (w * (u : ℂ))‖ * u)
+        ≤ (Real.exp (t * u ^ 2) * ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+            * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))))
+          * (Real.exp ((|z₀.im| + 1) * u) * u) :=
+          mul_le_mul hphi
+            (mul_le_mul hsin le_rfl hu0 (Real.exp_nonneg _))
+            (mul_nonneg (norm_nonneg _) hu0) hb0
+      _ = heatDerivDominatingFun t (|z₀.im| + 1) u := by
+          unfold heatDerivDominatingFun
+          have e1 : Real.exp (t * u ^ 2)
+              * ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+                * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u))))
+              * (Real.exp ((|z₀.im| + 1) * u) * u)
+            = (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst * u
+              * (Real.exp (t * u ^ 2) * Real.exp (9 * u)
+                * Real.exp ((|z₀.im| + 1) * u))
+              * Real.exp (-(Real.pi * Real.exp (4 * u))) := by ring
+          rw [e1, ← Real.exp_add, ← Real.exp_add]
+          have e2 : t * u ^ 2 + 9 * u + (|z₀.im| + 1) * u
+              = t * u ^ 2 + (9 + (|z₀.im| + 1)) * u := by ring
+          rw [e2]
+  have hint : MeasureTheory.Integrable (heatDerivDominatingFun t (|z₀.im| + 1)) μ :=
+    integrableOn_heatDerivDominatingFun t (|z₀.im| + 1) (by positivity)
+  have hdiff : ∀ᵐ u ∂μ, ∀ w ∈ Metric.ball z₀ 1,
+      HasDerivAt (fun x => heatIntegrand t x u) (heatIntegrandDeriv t w u) w :=
+    Filter.Eventually.of_forall fun u w _ => heat_integrand_hasDerivAt t u w
+  have hFint : MeasureTheory.Integrable (heatIntegrand t z₀) μ :=
+    heat_integrand_integrable t z₀
+  have h := hasDerivAt_integral_of_dominated_loc_of_deriv_le
+    (Metric.ball_mem_nhds z₀ (by norm_num : (0:ℝ) < 1))
+    (Filter.Eventually.of_forall hmeas) hFint hderv_meas hbound hint hdiff
+  exact h.2.differentiableAt
+
+/-- **Phase 1b main theorem, part 2**: every `H_t` is even. -/
+theorem deBruijnNewmanH_even (t : ℝ) (z : ℂ) :
+    deBruijnNewmanH t (-z) = deBruijnNewmanH t z := by
+  unfold deBruijnNewmanH
+  apply MeasureTheory.setIntegral_congr_fun measurableSet_Ioi
+  intro u _
+  unfold heatIntegrand
+  rw [neg_mul, Complex.cos_neg]
+
+/-- Bundled Phase 1b result: `H_t` is an even entire function. -/
+theorem h_even_entire (t : ℝ) :
+    Differentiable ℂ (deBruijnNewmanH t) ∧
+      ∀ z : ℂ, deBruijnNewmanH t (-z) = deBruijnNewmanH t z :=
+  ⟨differentiable_deBruijnNewmanH t, deBruijnNewmanH_even t⟩
+
 /-! ## Prop 目标（晋升纪律见 `docs/implementation-standards.md`） -/
 
 /-- **适定性目标**（Phase 1a）：对每个 `t : ℝ`、`z : ℂ`，被积函数
@@ -652,6 +851,9 @@ def phi_even_target : Prop :=
 def h_even_entire_target : Prop :=
   ∀ t : ℝ, Differentiable ℂ (deBruijnNewmanH t) ∧
     ∀ z : ℂ, deBruijnNewmanH t (-z) = deBruijnNewmanH t z
+
+/-- Phase 1b 收官：`h_even_entire_target` 已由 `h_even_entire` 证明。 -/
+theorem h_even_entire_target_proved : h_even_entire_target := h_even_entire
 
 /-- **反向热方程目标**（Phase 1b）：`∂_t H_t = −∂_z² H_t`
 （Polymath15 的 ξ 热流视角）。 -/
