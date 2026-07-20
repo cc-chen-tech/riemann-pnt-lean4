@@ -42,15 +42,104 @@ theorem localFrequencySeparation_pos
   intro heq
   exact hmn (homega hmS hn heq.symm)
 
-/-- The distinct local separation values, arranged in nondecreasing order. -/
+/-- Convert a frequency gap in the convention `exp (i * omega * t)` to the
+dilation parameter used by Fourier transforms normalized with
+`exp (-2 * pi * i * lambda * t)`. -/
+noncomputable def normalizedFourierDilationScale (delta : ℝ) : ℝ :=
+  delta / (2 * Real.pi)
+
+theorem normalizedFourierDilationScale_pos
+    {delta : ℝ} (hdelta : 0 < delta) :
+    0 < normalizedFourierDilationScale delta := by
+  unfold normalizedFourierDilationScale
+  positivity
+
+theorem two_pi_mul_normalizedFourierDilationScale (delta : ℝ) :
+    2 * Real.pi * normalizedFourierDilationScale delta = delta := by
+  unfold normalizedFourierDilationScale
+  field_simp [Real.pi_ne_zero]
+
+/-- The correctly normalized dilation scale attached to one local frequency
+separation. -/
+noncomputable def localFourierDilationScale
+    {ι : Type*} [DecidableEq ι]
+    (S : Finset ι) (omega : ι → ℝ) (n : ι) : ℝ :=
+  normalizedFourierDilationScale (localFrequencySeparation S omega n)
+
+theorem localFourierDilationScale_pos
+    {ι : Type*} [DecidableEq ι] {S : Finset ι} {omega : ι → ℝ} {n : ι}
+    (hS : S.Nontrivial) (hn : n ∈ S)
+    (homega : Set.InjOn omega (S : Set ι)) :
+    0 < localFourierDilationScale S omega n := by
+  exact normalizedFourierDilationScale_pos
+    (localFrequencySeparation_pos hS hn homega)
+
+/-- The normalized local dilation reaches the Fourier tail threshold before
+every distinct frequency difference. -/
+theorem two_pi_mul_localFourierDilationScale_le_abs_sub
+    {ι : Type*} [DecidableEq ι] {S : Finset ι} {omega : ι → ℝ} {m n : ι}
+    (hm : m ∈ S) (hmn : m ≠ n) :
+    2 * Real.pi * localFourierDilationScale S omega n ≤
+      |omega n - omega m| := by
+  rw [localFourierDilationScale,
+    two_pi_mul_normalizedFourierDilationScale]
+  exact localFrequencySeparation_le_abs_sub hm hmn
+
+/-- A base kernel with reciprocal-frequency tail beyond `2 * pi`, dilated by
+the normalized local separation, preserves its reciprocal-frequency constant
+on every off-diagonal frequency. -/
+theorem fourierKernel_localDilation_eq_const_div
+    {ι : Type*} [DecidableEq ι]
+    {S : Finset ι} {omega : ι → ℝ} {g : ℝ → ℝ} {kappa : ℂ} {m n : ι}
+    (hS : S.Nontrivial) (hm : m ∈ S) (hn : n ∈ S) (hmn : m ≠ n)
+    (homega : Set.InjOn omega (S : Set ι))
+    (htail : ∀ xi : ℝ, 2 * Real.pi ≤ |xi| →
+      fourierKernel g xi = kappa / xi) :
+    fourierKernel
+        (fun t => g (localFourierDilationScale S omega n * t))
+        (omega n - omega m) =
+      kappa / (omega n - omega m) := by
+  let delta := localFourierDilationScale S omega n
+  have hdelta : 0 < delta := localFourierDilationScale_pos hS hn homega
+  have hthreshold :
+      2 * Real.pi ≤ |(omega n - omega m) / delta| := by
+    rw [abs_div, abs_of_pos hdelta]
+    apply (le_div_iff₀ hdelta).2
+    exact two_pi_mul_localFourierDilationScale_le_abs_sub hm hmn
+  have hfreq : omega n - omega m ≠ 0 := by
+    rw [sub_ne_zero]
+    intro h
+    exact hmn (homega hm hn h.symm)
+  rw [fourierKernel_scale_pos hdelta, htail _ hthreshold]
+  push_cast
+  field_simp [hdelta.ne', hfreq]
+
+/-- The specialization of the convention bridge to the negative Hilbert
+kernel supplied by the monotone majorant. -/
+theorem fourierKernel_localDilation_eq_neg_two_I_div
+    {ι : Type*} [DecidableEq ι]
+    {S : Finset ι} {omega : ι → ℝ} {g : ℝ → ℝ} {m n : ι}
+    (hS : S.Nontrivial) (hm : m ∈ S) (hn : n ∈ S) (hmn : m ≠ n)
+    (homega : Set.InjOn omega (S : Set ι))
+    (htail : ∀ xi : ℝ, 2 * Real.pi ≤ |xi| →
+      fourierKernel g xi = (-2 * Complex.I) / xi) :
+    fourierKernel
+        (fun t => g (localFourierDilationScale S omega n * t))
+        (omega n - omega m) =
+      (-2 * Complex.I) / (omega n - omega m) :=
+  fourierKernel_localDilation_eq_const_div
+    hS hm hn hmn homega htail
+
+/-- The distinct local separation values, arranged in nonincreasing order as
+in the weighted Hilbert--Montgomery--Vaughan argument. -/
 noncomputable def orderedLocalFrequencySeparations
     {ι : Type*} [DecidableEq ι] (S : Finset ι) (omega : ι → ℝ) : List ℝ :=
-  (S.image (localFrequencySeparation S omega)).sort (· ≤ ·)
+  (S.image (localFrequencySeparation S omega)).sort (· ≥ ·)
 
 /-- The list of distinct local separations is sorted. -/
 theorem orderedLocalFrequencySeparations_pairwise
     {ι : Type*} [DecidableEq ι] (S : Finset ι) (omega : ι → ℝ) :
-    (orderedLocalFrequencySeparations S omega).Pairwise (· ≤ ·) := by
+    (orderedLocalFrequencySeparations S omega).Pairwise (· ≥ ·) := by
   classical
   exact Finset.pairwise_sort _ _
 
@@ -160,6 +249,76 @@ theorem orderedLocalFrequencySeparations_kernelForm_telescope
           (fun t => g (delta * t)))
         (orderedLocalFrequencySeparations S omega) :=
   adjacentDifferenceSum_eq_endpointDifference _ _
+
+/-- The indices in `range N` retained at stage `j`. -/
+def suffixIndexSet (N j : ℕ) : Finset ℕ :=
+  (Finset.range N).filter (j ≤ ·)
+
+/-- Reordering a sum over nested suffixes: a pair `(m,n)` occurs precisely at
+the stages `j ≤ min m n`.  This is the finite combinatorial identity used in
+the weighted Hilbert--Montgomery--Vaughan proof. -/
+theorem sum_suffix_double_eq_sum_min
+    {A : Type*} [AddCommMonoid A]
+    (term : ℕ → ℕ → ℕ → A) (N : ℕ) :
+    (∑ j ∈ Finset.range N, ∑ m ∈ suffixIndexSet N j,
+        ∑ n ∈ suffixIndexSet N j, term j m n) =
+      ∑ m ∈ Finset.range N, ∑ n ∈ Finset.range N,
+        ∑ j ∈ Finset.range (min m n + 1), term j m n := by
+  calc
+    (∑ j ∈ Finset.range N, ∑ m ∈ suffixIndexSet N j,
+        ∑ n ∈ suffixIndexSet N j, term j m n) =
+        ∑ j ∈ Finset.range N, ∑ m ∈ Finset.range N,
+          ∑ n ∈ Finset.range N,
+            if j ≤ m ∧ j ≤ n then term j m n else 0 := by
+      apply Finset.sum_congr rfl
+      intro j hj
+      simp only [suffixIndexSet]
+      rw [Finset.sum_filter]
+      apply Finset.sum_congr rfl
+      intro m hm
+      rw [Finset.sum_filter]
+      by_cases hjm : j ≤ m <;> simp [hjm]
+    _ = ∑ m ∈ Finset.range N, ∑ n ∈ Finset.range N,
+          ∑ j ∈ Finset.range N,
+            if j ≤ m ∧ j ≤ n then term j m n else 0 := by
+      rw [Finset.sum_comm]
+      apply Finset.sum_congr rfl
+      intro m hm
+      rw [Finset.sum_comm]
+    _ = ∑ m ∈ Finset.range N, ∑ n ∈ Finset.range N,
+          ∑ j ∈ Finset.range (min m n + 1), term j m n := by
+      apply Finset.sum_congr rfl
+      intro m hm
+      apply Finset.sum_congr rfl
+      intro n hn
+      have hmN : m < N := Finset.mem_range.mp hm
+      have hnN : n < N := Finset.mem_range.mp hn
+      have hfilter :
+          (Finset.range N).filter (fun j => j ≤ m ∧ j ≤ n) =
+            Finset.range (min m n + 1) := by
+        ext j
+        simp only [Finset.mem_filter, Finset.mem_range]
+        omega
+      rw [← Finset.sum_filter, hfilter]
+
+/-- After the suffix reordering, successive kernel increments telescope for
+each pair of indices. -/
+theorem sum_suffix_mul_kernelIncrement_telescope
+    {R : Type*} [CommRing R]
+    (a : ℕ → ℕ → R) (K : ℕ → ℕ → ℕ → R) (N : ℕ) :
+    (∑ j ∈ Finset.range N, ∑ m ∈ suffixIndexSet N j,
+        ∑ n ∈ suffixIndexSet N j,
+          a m n * (K (j + 1) m n - K j m n)) =
+      ∑ m ∈ Finset.range N, ∑ n ∈ Finset.range N,
+        a m n * (K (min m n + 1) m n - K 0 m n) := by
+  rw [sum_suffix_double_eq_sum_min]
+  apply Finset.sum_congr rfl
+  intro m hm
+  apply Finset.sum_congr rfl
+  intro n hn
+  rw [← Finset.mul_sum]
+  congr 1
+  exact Finset.sum_range_sub (fun j => K j m n) (min m n + 1)
 
 /-- The finite Fourier-kernel forms telescope when their dilation scales are
 the local separations selected by an index sequence. -/
