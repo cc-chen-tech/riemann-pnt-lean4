@@ -96,6 +96,35 @@ example {X : ℕ} (hX : 1 ≤ X) {T : ℝ} :
 noncomputable example (C : ℝ) (X : ℕ) (T : ℝ) : ℝ :=
   regularizedCarlsonFactorZeroLogMajorant C X T
 
+noncomputable example (X : ℕ) (T : ℝ) : Finset ℂ :=
+  regularizedCarlsonFactorDiskZeroSupport X T
+
+example {X : ℕ} (hX : 1 ≤ X) {T : ℝ} {z : ℂ}
+    (hz : z ∈ Metric.closedBall
+      ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ)) :
+    z ∈ regularizedCarlsonFactorDiskZeroSupport X T ↔
+      regularizedCarlsonZeroDetector X z = 0 :=
+  mem_regularizedCarlsonFactorDiskZeroSupport_iff_zero hX hz
+
+example {X : ℕ} (hX : 1 ≤ X) {T : ℝ} :
+    ∃ r : ℝ,
+      0 < r ∧ r ∈ Set.Icc (121 / 32 : ℝ) (122 / 32 : ℝ) ∧
+      (∀ z ∈ Metric.sphere
+          ((4 : ℂ) + I * (T + 1 / 2)) r,
+        ∀ rho ∈ regularizedCarlsonFactorDiskZeroSupport X T,
+          ((122 / 32 : ℝ) - 121 / 32) /
+              (4 * ((((regularizedCarlsonFactorDiskZeroSupport X T).image
+                (dist ((4 : ℂ) + I * (T + 1 / 2)))).card : ℝ) + 1)) ≤
+            dist z rho) ∧
+      (∀ z ∈ Metric.sphere
+          ((4 : ℂ) + I * (T + 1 / 2)) r,
+        z ∈ Metric.closedBall
+          ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ)) ∧
+      ∀ z ∈ Metric.sphere
+          ((4 : ℂ) + I * (T + 1 / 2)) r,
+        regularizedCarlsonZeroDetector X z ≠ 0 :=
+  exists_regularizedCarlsonZeroDetector_goodFactorCircle hX
+
 example : ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X → ∀ {T : ℝ}, 5 ≤ T →
     (∑ᶠ u,
       (MeromorphicOn.divisor (regularizedCarlsonZeroDetector X)
@@ -128,6 +157,8 @@ example : ∃ C : ℝ, 1 ≤ C ∧ ∀ {X : ℕ}, 1 ≤ X → ∀ {T : ℝ}, 5 �
 #print axioms exists_regularizedCarlsonZeroDetector_fixedJensenFactor_center_lower
 #print axioms exists_regularizedCarlsonFactorZeroMass_le_logPolynomial
 #print axioms exists_regularizedCarlsonZeroDetector_fixedJensenFactor_explicit_center_lower
+#print axioms mem_regularizedCarlsonFactorDiskZeroSupport_iff_zero
+#print axioms exists_regularizedCarlsonZeroDetector_goodFactorCircle
 
 end CarlsonZeroDensity
 end PrimeNumberTheorem

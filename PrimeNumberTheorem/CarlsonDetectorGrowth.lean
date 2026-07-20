@@ -1,4 +1,6 @@
 import PrimeNumberTheorem.CarlsonDetectorCount
+import PrimeNumberTheorem.AnalyticBorel
+import PrimeNumberTheorem.FiniteZeroGoodRadius
 import ZeroFreeRegion.PhragmenLindelofZeta
 
 open Complex
@@ -361,6 +363,118 @@ noncomputable def regularizedCarlsonFactorZeroLogMajorant
     (C : ℝ) (X : ℕ) (T : ℝ) : ℝ :=
   Real.log (C * (X : ℝ) ^ 2 * (T + 14) ^ 10) /
     Real.log ((31 / 8 : ℝ) / (123 / 32 : ℝ))
+
+/-- Distinct zeros of the regularized detector in the fixed factorization
+disk.  Multiplicity is retained separately by the divisor. -/
+noncomputable def regularizedCarlsonFactorDiskZeroSupport
+    (X : ℕ) (T : ℝ) : Finset ℂ :=
+  ((MeromorphicOn.divisor (regularizedCarlsonZeroDetector X)
+      (Metric.closedBall
+        ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ))).finiteSupport
+    (isCompact_closedBall
+      ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ))).toFinset
+
+private theorem fixedJensenFactorDisk_re_pos
+    {T : ℝ} {z : ℂ}
+    (hz : z ∈ Metric.closedBall
+      ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ)) :
+    0 < z.re := by
+  have hdist :
+      ‖z - ((4 : ℂ) + I * (T + 1 / 2))‖ ≤ (123 / 32 : ℝ) := by
+    simpa [Metric.mem_closedBall, Complex.dist_eq] using hz
+  have hreAbs :=
+    Complex.abs_re_le_norm (z - ((4 : ℂ) + I * (T + 1 / 2)))
+  have hre : |z.re - 4| ≤ (123 / 32 : ℝ) := by
+    simpa using hreAbs.trans hdist
+  rw [abs_le] at hre
+  linarith
+
+/-- On the factorization disk, the finite divisor support is exactly the
+zero set of the regularized Carlson detector. -/
+theorem mem_regularizedCarlsonFactorDiskZeroSupport_iff_zero
+    {X : ℕ} (hX : 1 ≤ X) {T : ℝ} {z : ℂ}
+    (hz : z ∈ Metric.closedBall
+      ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ)) :
+    z ∈ regularizedCarlsonFactorDiskZeroSupport X T ↔
+      regularizedCarlsonZeroDetector X z = 0 := by
+  classical
+  let U : Set ℂ := Metric.closedBall
+    ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ)
+  let D := MeromorphicOn.divisor (regularizedCarlsonZeroDetector X) U
+  have hanalytic : AnalyticOnNhd ℂ (regularizedCarlsonZeroDetector X) U := by
+    apply
+      (analyticOnNhd_regularizedCarlsonZeroDetector_fixedJensenOuterDisk
+        X T).mono
+    exact Metric.closedBall_subset_closedBall (by norm_num [U])
+  have hzre : 0 < z.re := fixedJensenFactorDisk_re_pos hz
+  have horder : analyticOrderAt (regularizedCarlsonZeroDetector X) z ≠ ⊤ :=
+    analyticOrderAt_regularizedCarlsonZeroDetector_ne_top X hX hzre
+  have hdivisor : D z =
+      (analyticOrderNatAt (regularizedCarlsonZeroDetector X) z : ℤ) := by
+    rw [MeromorphicOn.divisor_apply hanalytic.meromorphicOn (by simpa [U] using hz),
+      (hanalytic z (by simpa [U] using hz)).meromorphicOrderAt_eq]
+    have hcast := Nat.cast_analyticOrderNatAt horder
+    rw [← hcast]
+    simp
+  have hz_analytic : AnalyticAt ℂ (regularizedCarlsonZeroDetector X) z :=
+    hanalytic z (by simpa [U] using hz)
+  have hnatCast := Nat.cast_analyticOrderNatAt horder
+  rw [regularizedCarlsonFactorDiskZeroSupport]
+  rw [(D.finiteSupport (isCompact_closedBall
+    ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ))).mem_toFinset]
+  simp only [Function.mem_support]
+  rw [show MeromorphicOn.divisor (regularizedCarlsonZeroDetector X)
+      (Metric.closedBall
+        ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ)) z = D z by rfl,
+    hdivisor, Int.ofNat_ne_zero]
+  constructor
+  · intro hnat
+    apply hz_analytic.analyticOrderAt_ne_zero.mp
+    intro hzero
+    have hcastZero :
+        (analyticOrderNatAt (regularizedCarlsonZeroDetector X) z : ℕ∞) = 0 :=
+      hnatCast.trans hzero
+    exact hnat (by simpa using hcastZero)
+  · intro hzero hnatZero
+    have horderZero :
+        analyticOrderAt (regularizedCarlsonZeroDetector X) z = 0 := by
+      rw [← hnatCast, hnatZero]
+      rfl
+    exact (hz_analytic.analyticOrderAt_eq_zero.mp horderZero) hzero
+
+/-- A circle strictly inside the factorization disk avoids every detector
+zero there, with a quantitative separation from its finite zero support. -/
+theorem exists_regularizedCarlsonZeroDetector_goodFactorCircle
+    {X : ℕ} (hX : 1 ≤ X) {T : ℝ} :
+    ∃ r : ℝ,
+      0 < r ∧ r ∈ Set.Icc (121 / 32 : ℝ) (122 / 32 : ℝ) ∧
+      (∀ z ∈ Metric.sphere
+          ((4 : ℂ) + I * (T + 1 / 2)) r,
+        ∀ rho ∈ regularizedCarlsonFactorDiskZeroSupport X T,
+          ((122 / 32 : ℝ) - 121 / 32) /
+              (4 * ((((regularizedCarlsonFactorDiskZeroSupport X T).image
+                (dist ((4 : ℂ) + I * (T + 1 / 2)))).card : ℝ) + 1)) ≤
+            dist z rho) ∧
+      (∀ z ∈ Metric.sphere
+          ((4 : ℂ) + I * (T + 1 / 2)) r,
+        z ∈ Metric.closedBall
+          ((4 : ℂ) + I * (T + 1 / 2)) (123 / 32 : ℝ)) ∧
+      ∀ z ∈ Metric.sphere
+          ((4 : ℂ) + I * (T + 1 / 2)) r,
+        regularizedCarlsonZeroDetector X z ≠ 0 := by
+  let c : ℂ := (4 : ℂ) + I * (T + 1 / 2)
+  let zeros := regularizedCarlsonFactorDiskZeroSupport X T
+  have hcover : ∀ z ∈ Metric.closedBall c (123 / 32 : ℝ),
+      regularizedCarlsonZeroDetector X z = 0 → z ∈ zeros := by
+    intro z hz hzero
+    exact (mem_regularizedCarlsonFactorDiskZeroSupport_iff_zero hX
+      (by simpa [c] using hz)).2 hzero
+  simpa [c, zeros] using
+    (PrimeNumberTheorem.exists_good_radius_avoiding_covered_finset_zeros
+      (f := regularizedCarlsonZeroDetector X) zeros c
+      (by norm_num : (0 : ℝ) < 121 / 32)
+      (by norm_num : (121 / 32 : ℝ) < 122 / 32)
+      (by norm_num : (122 / 32 : ℝ) < 123 / 32) hcover)
 
 /-- The complete divisor mass on the factorization disk is explicitly
 controlled by the detector's polynomial outer-circle growth. -/
