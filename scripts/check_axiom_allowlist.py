@@ -179,6 +179,7 @@ EXPECTED_DECLARATIONS = {
     "HardyTheorem.sum_normSq_sliding_selbergShortDirichletCollectedCoeff_le_lowRange_add_pairFiberMinHighRange",
     "HardyTheorem.selbergShortDirichletCollectedPolynomial_sub_one_eq_effectiveSupport",
     "HardyTheorem.integral_normSq_selbergShortDirichletCollectedPolynomial_sub_one_le_dyadic",
+    "HardyTheorem.integral_normSq_selbergShortDirichletCollectedPolynomial_sub_one_le_effectiveDyadic",
     "HardyTheorem.sum_normSq_selbergShortDirichletCollectedCoeff_le_pairFiberEnergy",
     "HardyTheorem.selbergMollifiedShortDirichletPolynomial_eq_slidingCollected",
     "HardyTheorem.integral_normSq_selbergMollifiedShortDirichletPolynomial_le_gapSum",

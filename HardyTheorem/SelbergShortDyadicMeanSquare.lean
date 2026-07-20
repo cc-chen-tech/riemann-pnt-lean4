@@ -16,6 +16,11 @@ file specializes that general estimate without discarding the separate energy
 of each dyadic coefficient block.
 -/
 
+/-- The least binary exponent whose power covers the effective Selberg
+product support. -/
+def selbergShortEffectiveDyadicExponent (N X : ℕ) : ℕ :=
+  Nat.clog 2 (N * X * (X - 1) + 1)
+
 /-- Removing the constant term and the coefficients killed by the endpoint
 zero leaves exactly the effective nonconstant product support. -/
 theorem selbergShortDirichletCollectedPolynomial_sub_one_eq_effectiveSupport
@@ -64,6 +69,30 @@ theorem integral_normSq_selbergShortDirichletCollectedPolynomial_sub_one_le_dyad
   · intro k hk
     exact Nat.ne_of_gt (lt_trans zero_lt_one (Finset.mem_Ioc.mp hk).1)
   · exact hbound
+  · exact hab
+
+/-- The effective support always admits the canonical dyadic mean-square
+bound obtained from its binary ceiling logarithm. -/
+theorem integral_normSq_selbergShortDirichletCollectedPolynomial_sub_one_le_effectiveDyadic
+    {N X : ℕ} (hN : 1 ≤ N) (hX : 2 ≤ X)
+    {a b : ℝ} (hab : a ≤ b) :
+    (∫ t in a..b,
+        Complex.normSq
+          (selbergShortDirichletCollectedPolynomial N X t - 1)) ≤
+      (selbergShortEffectiveDyadicExponent N X : ℝ) *
+        ∑ j ∈ Finset.range (selbergShortEffectiveDyadicExponent N X),
+          ((b - a) +
+              2 * ((5 * Real.pi + 3) * ((2 ^ j : ℕ) : ℝ))) *
+            ∑ k ∈ MathlibAux.dyadicBlock
+                (Finset.Ioc 1 (N * X * (X - 1))) j,
+              Complex.normSq (selbergShortDirichletCollectedCoeff N X k) := by
+  apply integral_normSq_selbergShortDirichletCollectedPolynomial_sub_one_le_dyadic
+    hN hX
+  · intro k hk
+    have hkEndpoint : k ≤ N * X * (X - 1) := (Finset.mem_Ioc.mp hk).2
+    have hkSucc : k < N * X * (X - 1) + 1 := Nat.lt_succ_iff.mpr hkEndpoint
+    exact hkSucc.trans_le
+      (Nat.le_pow_clog Nat.one_lt_two (N * X * (X - 1) + 1))
   · exact hab
 
 end HardyTheorem
