@@ -462,6 +462,422 @@ theorem neg_integral_log_norm_regularizedCarlson_fixedRight_le
     simpa using hlower
   linarith
 
+/-- The elementary regularization factor is no larger on a left edge in the
+critical strip than on the fixed right edge `Re(s)=4`. -/
+theorem integral_log_norm_subOne_left_le_fixedRight
+    {x0 y0 y1 : ℝ} (hx0Half : 1 / 2 < x0) (hx0One : x0 < 1)
+    (hy01 : y0 ≤ y1) :
+    (∫ y in y0..y1,
+        Real.log ‖(x0 : ℂ) + I * (y : ℂ) - 1‖) ≤
+      ∫ y in y0..y1,
+        Real.log ‖(4 : ℂ) + I * (y : ℂ) - 1‖ := by
+  have hcontinuous (a : ℝ) (ha : a ≠ 1) :
+      Continuous (fun y : ℝ =>
+        Real.log ‖(a : ℂ) + I * (y : ℂ) - 1‖) := by
+    rw [continuous_iff_continuousAt]
+    intro y
+    have hne : (a : ℂ) + I * (y : ℂ) - 1 ≠ 0 := by
+      intro hzero
+      have hre := congrArg Complex.re hzero
+      simp only [Complex.sub_re, Complex.add_re, Complex.ofReal_re,
+        Complex.mul_re, Complex.I_re, Complex.I_im, Complex.ofReal_im,
+        zero_mul, one_mul, Complex.one_re, Complex.zero_re] at hre
+      apply ha
+      linarith
+    have hmap : ContinuousAt
+        (fun t : ℝ => (a : ℂ) + I * (t : ℂ) - 1) y := by
+      fun_prop
+    have hlog : ContinuousAt Real.log
+        ‖(a : ℂ) + I * (y : ℂ) - 1‖ :=
+      Real.continuousAt_log (norm_ne_zero_iff.mpr hne)
+    exact hlog.comp_of_eq
+      (continuous_norm.continuousAt.comp_of_eq hmap rfl) rfl
+  have hleftInt : IntervalIntegrable (fun y : ℝ =>
+      Real.log ‖(x0 : ℂ) + I * (y : ℂ) - 1‖)
+      MeasureTheory.volume y0 y1 :=
+    (hcontinuous x0 (ne_of_lt hx0One)).intervalIntegrable y0 y1
+  have hrightInt : IntervalIntegrable (fun y : ℝ =>
+      Real.log ‖(4 : ℂ) + I * (y : ℂ) - 1‖)
+      MeasureTheory.volume y0 y1 :=
+    (hcontinuous 4 (by norm_num)).intervalIntegrable y0 y1
+  apply intervalIntegral.integral_mono_on hy01 hleftInt hrightInt
+  intro y _hy
+  have hnorm :
+      ‖(x0 : ℂ) + I * (y : ℂ) - 1‖ ≤
+        ‖(4 : ℂ) + I * (y : ℂ) - 1‖ := by
+    apply (sq_le_sq₀ (norm_nonneg _) (norm_nonneg _)).1
+    rw [Complex.sq_norm, Complex.sq_norm]
+    norm_num [Complex.normSq_apply]
+    nlinarith [sq_nonneg (x0 - 1)]
+  have hleftPos : 0 < ‖(x0 : ℂ) + I * (y : ℂ) - 1‖ := by
+    rw [norm_pos_iff]
+    intro hzero
+    have hre := congrArg Complex.re hzero
+    simp only [Complex.sub_re, Complex.add_re, Complex.ofReal_re,
+      Complex.mul_re, Complex.I_re, Complex.I_im, Complex.ofReal_im,
+      zero_mul, one_mul, Complex.one_re, Complex.zero_re] at hre
+    linarith
+  exact Real.log_le_log hleftPos hnorm
+
+/-- The fixed-right logarithmic lower bound with the full elementary
+regularization factor retained for cancellation against the left edge. -/
+theorem neg_integral_log_norm_regularizedCarlson_fixedRight_le_with_subOne
+    {X : ℕ} (hX : 1 ≤ X) {y0 y1 : ℝ} (hy01 : y0 ≤ y1) :
+    -(∫ y in y0..y1,
+        Real.log ‖regularizedCarlsonZeroDetector X
+          ((4 : ℂ) + I * (y : ℂ))‖) ≤
+      -2 * (∫ y in y0..y1,
+        Real.log ‖(4 : ℂ) + I * (y : ℂ) - 1‖) -
+        (y1 - y0) * Real.log (56 / 81 : ℝ) := by
+  have hrightInt :=
+    intervalIntegrable_log_norm_regularizedCarlsonZeroDetector
+      (X := X) (sigma := 4) (a := y0) (b := y1) (by norm_num)
+      (fun _ _ => regularizedCarlsonZeroDetector_ne_zero_of_four_le_re
+        hX (by simp))
+  have hgeomCont : Continuous (fun y : ℝ =>
+      Real.log ‖(4 : ℂ) + I * (y : ℂ) - 1‖) := by
+    rw [continuous_iff_continuousAt]
+    intro y
+    have hne : (4 : ℂ) + I * (y : ℂ) - 1 ≠ 0 := by
+      intro hzero
+      have hre := congrArg Complex.re hzero
+      norm_num at hre
+    have hmap : ContinuousAt
+        (fun t : ℝ => (4 : ℂ) + I * (t : ℂ) - 1) y := by
+      fun_prop
+    have hlog : ContinuousAt Real.log
+        ‖(4 : ℂ) + I * (y : ℂ) - 1‖ :=
+      Real.continuousAt_log (norm_ne_zero_iff.mpr hne)
+    exact hlog.comp_of_eq
+      (continuous_norm.continuousAt.comp_of_eq hmap rfl) rfl
+  have hgeomInt : IntervalIntegrable (fun y : ℝ =>
+      Real.log ‖(4 : ℂ) + I * (y : ℂ) - 1‖)
+      MeasureTheory.volume y0 y1 := hgeomCont.intervalIntegrable y0 y1
+  have hminorantInt : IntervalIntegrable (fun y : ℝ =>
+      2 * Real.log ‖(4 : ℂ) + I * (y : ℂ) - 1‖ +
+        Real.log (56 / 81 : ℝ)) MeasureTheory.volume y0 y1 := by
+    exact (hgeomInt.const_mul 2).add intervalIntegrable_const
+  have hlower := intervalIntegral.integral_mono_on hy01 hminorantInt hrightInt
+    (fun y _hy => by
+      simpa [mul_comm] using
+        (log_fiftySix_div_eightyOne_le_log_norm_regularized_of_four_le_re
+          hX (s := (4 : ℂ) + I * (y : ℂ)) (by simp)))
+  have hminorantEq :
+      (∫ y in y0..y1,
+          2 * Real.log ‖(4 : ℂ) + I * (y : ℂ) - 1‖ +
+            Real.log (56 / 81 : ℝ)) =
+        2 * (∫ y in y0..y1,
+          Real.log ‖(4 : ℂ) + I * (y : ℂ) - 1‖) +
+          (y1 - y0) * Real.log (56 / 81 : ℝ) := by
+    rw [intervalIntegral.integral_add (hgeomInt.const_mul 2)
+        intervalIntegrable_const,
+      intervalIntegral.integral_const_mul]
+    simp
+  rw [hminorantEq] at hlower
+  have hlower' :
+      2 * (∫ y in y0..y1,
+          Real.log ‖(4 : ℂ) + I * (y : ℂ) - 1‖) +
+          (y1 - y0) * Real.log (56 / 81 : ℝ) ≤
+        ∫ y in y0..y1,
+          Real.log ‖regularizedCarlsonZeroDetector X
+            ((4 : ℂ) + (y : ℂ) * I)‖ := by
+    simpa only [mul_comm I] using hlower
+  have hneg := neg_le_neg hlower
+  simpa only [neg_add, neg_mul] using hneg
+
+/-- The inverse-square majorant used on the far-right horizontal extension
+has an exact elementary integral. -/
+theorem integral_inv_sq_sub_one_eq {R : ℝ} (hR : 4 ≤ R) :
+    (∫ x : ℝ in 4..R, 1 / (x - 1) ^ 2) =
+      1 / 3 - 1 / (R - 1) := by
+  let F : ℝ → ℝ := fun x => -(x - 1)⁻¹
+  have hderiv (x : ℝ) (hx : x ∈ Set.uIcc (4 : ℝ) R) :
+      HasDerivAt F (1 / (x - 1) ^ 2) x := by
+    have hx4 : 4 ≤ x := by
+      rw [Set.uIcc_of_le hR] at hx
+      exact hx.1
+    have hxne : x - 1 ≠ 0 := by linarith
+    have h := (((hasDerivAt_id x).sub_const 1).inv hxne).neg
+    convert h using 1
+    simp only [id_eq]
+    field_simp
+  have hint : IntervalIntegrable (fun x : ℝ => 1 / (x - 1) ^ 2)
+      MeasureTheory.volume 4 R := by
+    apply ContinuousOn.intervalIntegrable
+    intro x hx
+    have hx4 : 4 ≤ x := by
+      rw [Set.uIcc_of_le hR] at hx
+      exact hx.1
+    have hxne : x - 1 ≠ 0 := by linarith
+    exact (continuousAt_const.div
+      ((continuousAt_id.sub continuousAt_const).pow 2)
+      (pow_ne_zero 2 hxne)).continuousWithinAt
+  have hFTC := intervalIntegral.integral_eq_sub_of_hasDerivAt hderiv hint
+  convert hFTC using 1 <;> norm_num [F, one_div] <;> ring
+
+/-- The principal argument of the original Carlson detector has uniformly
+bounded integral on every horizontal ray starting at `Re(s)=4`.  The key is
+the quadratic decay of its complex logarithm, not a constant pointwise
+argument bound. -/
+theorem abs_integral_im_log_carlsonZeroDetector_horizontal_le
+    {X : ℕ} (hX : 1 ≤ X) {R y : ℝ} (hR : 4 ≤ R) :
+    |∫ x : ℝ in 4..R,
+        (Complex.log (carlsonZeroDetector X
+          ((x : ℂ) + (y : ℂ) * I))).im| ≤ 25 / 18 := by
+  let g : ℝ → ℝ := fun x => 25 / (6 * (x - 1) ^ 2)
+  have hgInt : IntervalIntegrable g MeasureTheory.volume 4 R := by
+    apply ContinuousOn.intervalIntegrable
+    intro x hx
+    have hx4 : 4 ≤ x := by
+      rw [Set.uIcc_of_le hR] at hx
+      exact hx.1
+    have hxne : x - 1 ≠ 0 := by linarith
+    dsimp [g]
+    exact (continuousAt_const.div
+      (continuousAt_const.mul
+        ((continuousAt_id.sub continuousAt_const).pow 2))
+      (mul_ne_zero (by norm_num) (pow_ne_zero 2 hxne))).continuousWithinAt
+  have hpoint : ∀ᵐ x : ℝ, x ∈ Set.Ioc (4 : ℝ) R →
+      ‖(Complex.log (carlsonZeroDetector X
+        ((x : ℂ) + (y : ℂ) * I))).im‖ ≤ g x := by
+    filter_upwards [] with x hx
+    have hx4 : 4 ≤ x := hx.1.le
+    have hlog := norm_log_carlsonZeroDetector_le_inv_sq_of_four_le_re
+      hX (s := (x : ℂ) + (y : ℂ) * I) (by simpa using hx4)
+    have hlog' : ‖Complex.log (carlsonZeroDetector X
+        ((x : ℂ) + (y : ℂ) * I))‖ ≤ g x := by
+      simpa [g] using hlog
+    rw [Real.norm_eq_abs]
+    exact (Complex.abs_im_le_norm _).trans hlog'
+  have hintegral := intervalIntegral.norm_integral_le_of_norm_le hR hpoint hgInt
+  have hgEq : (∫ x : ℝ in 4..R, g x) =
+      (25 / 6 : ℝ) * (1 / 3 - 1 / (R - 1)) := by
+    calc
+      (∫ x : ℝ in 4..R, g x) =
+          ∫ x : ℝ in 4..R, (25 / 6 : ℝ) * (1 / (x - 1) ^ 2) := by
+        apply intervalIntegral.integral_congr
+        intro x hx
+        have hx4 : 4 ≤ x := by
+          rw [Set.uIcc_of_le hR] at hx
+          exact hx.1
+        have hxne : x - 1 ≠ 0 := by linarith
+        dsimp [g]
+        field_simp
+      _ = (25 / 6 : ℝ) * (1 / 3 - 1 / (R - 1)) := by
+        rw [intervalIntegral.integral_const_mul,
+          integral_inv_sq_sub_one_eq hR]
+  have hRden : 0 ≤ 1 / (R - 1) := one_div_nonneg.mpr (by linarith)
+  rw [hgEq] at hintegral
+  simpa [Real.norm_eq_abs] using hintegral.trans (by nlinarith)
+
+/-- The negative logarithmic integral of Carlson's original detector on the
+fixed line `Re(s)=4` is bounded independently of the height.  We close a
+zero-free rectangle at `Re(s)=4+(y1-y0)`: the far edge is small by quadratic
+logarithmic decay, and both horizontal argument integrals are absolutely
+convergent with the same decay. -/
+theorem neg_integral_log_norm_carlsonZeroDetector_fixedRight_le_constant
+    {X : ℕ} (hX : 1 ≤ X) {y0 y1 : ℝ} (hy01 : y0 ≤ y1) :
+    -(∫ y in y0..y1,
+        Real.log ‖carlsonZeroDetector X
+          ((4 : ℂ) + (y : ℂ) * I)‖) ≤ 125 / 18 := by
+  let R : ℝ := 4 + (y1 - y0)
+  let G : ℂ → ℂ := fun s => Complex.log (carlsonZeroDetector X s)
+  have hR : 4 ≤ R := by dsimp [R]; linarith
+  have hdiff : DifferentiableOn ℂ G ([[4, R]] ×ℂ [[y0, y1]]) := by
+    intro s hs
+    rw [mem_reProdIm] at hs
+    have hsRe : 4 ≤ s.re := by
+      rw [Set.uIcc_of_le hR] at hs
+      exact hs.1.1
+    have hs1 : s ≠ 1 := by
+      intro h
+      have hre := congrArg Complex.re h
+      simp at hre
+      linarith
+    have hanalytic := analyticAt_carlsonZeroDetector_of_ne_one X hs1
+    have hdetRe :=
+      fiftySix_div_eightyOne_le_re_carlsonZeroDetector_of_four_le_re hX hsRe
+    have hslit : carlsonZeroDetector X s ∈ Complex.slitPlane := by
+      rw [Complex.mem_slitPlane_iff]
+      exact Or.inl ((by norm_num : (0 : ℝ) < 56 / 81).trans_le hdetRe)
+    exact (hanalytic.clog hslit).differentiableAt.differentiableWithinAt
+  have hcont : ContinuousOn G ([[4, R]] ×ℂ [[y0, y1]]) := hdiff.continuousOn
+  have hbottom : IntervalIntegrable
+      (fun x : ℝ => G ((x : ℂ) + (y0 : ℂ) * I))
+      MeasureTheory.volume 4 R := by
+    exact (hcont.comp
+      (Complex.continuous_ofReal.add
+        (continuous_const.mul continuous_const)).continuousOn (by
+          intro x hx
+          simpa [mem_reProdIm] using
+            And.intro hx (left_mem_uIcc : y0 ∈ [[y0, y1]]))).intervalIntegrable
+  have htop : IntervalIntegrable
+      (fun x : ℝ => G ((x : ℂ) + (y1 : ℂ) * I))
+      MeasureTheory.volume 4 R := by
+    exact (hcont.comp
+      (Complex.continuous_ofReal.add
+        (continuous_const.mul continuous_const)).continuousOn (by
+          intro x hx
+          simpa [mem_reProdIm] using
+            And.intro hx (right_mem_uIcc : y1 ∈ [[y0, y1]]))).intervalIntegrable
+  have hright : IntervalIntegrable
+      (fun y : ℝ => G ((R : ℂ) + (y : ℂ) * I))
+      MeasureTheory.volume y0 y1 := by
+    exact (hcont.comp
+      (continuous_const.add
+        (Complex.continuous_ofReal.mul continuous_const)).continuousOn (by
+          intro y hy
+          simpa [mem_reProdIm] using
+            And.intro (right_mem_uIcc : R ∈ [[4, R]]) hy)).intervalIntegrable
+  have hleft : IntervalIntegrable
+      (fun y : ℝ => G ((4 : ℂ) + (y : ℂ) * I))
+      MeasureTheory.volume y0 y1 := by
+    exact (hcont.comp
+      (continuous_const.add
+        (Complex.continuous_ofReal.mul continuous_const)).continuousOn (by
+          intro y hy
+          simpa [mem_reProdIm] using
+            And.intro (left_mem_uIcc : (4 : ℝ) ∈ [[4, R]]) hy)).intervalIntegrable
+  have hzero := MathlibAux.boundaryRectIntegral_eq_zero_of_differentiableOn
+    G 4 R y0 y1 hdiff
+  have hedges := im_boundaryRectIntegral_eq_four_edges
+    hbottom htop hright hleft
+  rw [hzero] at hedges
+  have hbottomAbs :
+      |∫ x : ℝ in 4..R, (G ((x : ℂ) + (y0 : ℂ) * I)).im| ≤ 25 / 18 := by
+    simpa [G] using
+      abs_integral_im_log_carlsonZeroDetector_horizontal_le hX hR
+  have htopAbs :
+      |∫ x : ℝ in 4..R, (G ((x : ℂ) + (y1 : ℂ) * I)).im| ≤ 25 / 18 := by
+    simpa [G] using
+      abs_integral_im_log_carlsonZeroDetector_horizontal_le hX hR
+  let C : ℝ := 25 / (6 * (R - 1) ^ 2)
+  have hC : 0 ≤ C := by dsimp [C]; positivity
+  have hrightAbsRaw := intervalIntegral.norm_integral_le_of_norm_le_const
+    (f := fun y : ℝ =>
+      Real.log ‖carlsonZeroDetector X ((R : ℂ) + (y : ℂ) * I)‖)
+    (a := y0) (b := y1) (C := C) (fun y _hy => by
+      change |Real.log ‖carlsonZeroDetector X
+        ((R : ℂ) + (y : ℂ) * I)‖| ≤ C
+      rw [← Complex.log_re]
+      have hlog := norm_log_carlsonZeroDetector_le_inv_sq_of_four_le_re
+        hX (s := (R : ℂ) + (y : ℂ) * I) (by simpa using hR)
+      have hlog' : ‖Complex.log (carlsonZeroDetector X
+          ((R : ℂ) + (y : ℂ) * I))‖ ≤ C := by
+        simpa [C] using hlog
+      exact (Complex.abs_re_le_norm _).trans hlog')
+  have hlength : 0 ≤ y1 - y0 := sub_nonneg.mpr hy01
+  have hCwidth : C * |y1 - y0| ≤ 25 / 6 := by
+    rw [abs_of_nonneg hlength]
+    dsimp [C, R]
+    have hsquare : y1 - y0 ≤ (3 + (y1 - y0)) ^ 2 := by
+      nlinarith [sq_nonneg (y1 - y0)]
+    have hdenPos : 0 < 6 * (4 + (y1 - y0) - 1) ^ 2 := by
+      have : 0 < 4 + (y1 - y0) - 1 := by linarith
+      positivity
+    rw [div_mul_eq_mul_div]
+    apply (div_le_iff₀ hdenPos).2
+    nlinarith
+  have hrightAbs :
+      |∫ y in y0..y1,
+          Real.log ‖carlsonZeroDetector X
+            ((R : ℂ) + (y : ℂ) * I)‖| ≤ 25 / 6 := by
+    simpa [Real.norm_eq_abs] using hrightAbsRaw.trans hCwidth
+  dsimp [G] at hedges hbottomAbs htopAbs
+  simp only [Complex.zero_im, Complex.log_re] at hedges
+  have hbottomLower := neg_le_of_abs_le hbottomAbs
+  have htopUpper := le_of_abs_le htopAbs
+  have hrightLower := neg_le_of_abs_le hrightAbs
+  linarith
+
+/-- Refined fixed-right bound retaining the elementary `(s-1)^2` term for
+exact cancellation, with the original detector contributing only an absolute
+constant instead of a term proportional to the edge height. -/
+theorem
+    neg_integral_log_norm_regularizedCarlson_fixedRight_le_with_subOne_constant
+    {X : ℕ} (hX : 1 ≤ X) {y0 y1 : ℝ} (hy01 : y0 ≤ y1) :
+    -(∫ y in y0..y1,
+        Real.log ‖regularizedCarlsonZeroDetector X
+          ((4 : ℂ) + I * (y : ℂ))‖) ≤
+      -2 * (∫ y in y0..y1,
+        Real.log ‖(4 : ℂ) + I * (y : ℂ) - 1‖) + 125 / 18 := by
+  have hgeomCont : Continuous (fun y : ℝ =>
+      Real.log ‖(4 : ℂ) + I * (y : ℂ) - 1‖) := by
+    rw [continuous_iff_continuousAt]
+    intro y
+    have hne : (4 : ℂ) + I * (y : ℂ) - 1 ≠ 0 := by
+      intro hzero
+      have hre := congrArg Complex.re hzero
+      norm_num at hre
+    have hmap : ContinuousAt
+        (fun t : ℝ => (4 : ℂ) + I * (t : ℂ) - 1) y := by
+      fun_prop
+    have hlog : ContinuousAt Real.log
+        ‖(4 : ℂ) + I * (y : ℂ) - 1‖ :=
+      Real.continuousAt_log (norm_ne_zero_iff.mpr hne)
+    exact hlog.comp_of_eq
+      (continuous_norm.continuousAt.comp_of_eq hmap rfl) rfl
+  have hgeomInt : IntervalIntegrable (fun y : ℝ =>
+      Real.log ‖(4 : ℂ) + I * (y : ℂ) - 1‖)
+      MeasureTheory.volume y0 y1 := hgeomCont.intervalIntegrable y0 y1
+  have hdetIntI := intervalIntegrable_log_norm_carlsonZeroDetector
+    (X := X) (sigma := 4) (a := y0) (b := y1) (by norm_num)
+    (fun _ _ => carlsonZeroDetector_ne_zero_of_four_le_re hX (by simp))
+  have hdetInt : IntervalIntegrable (fun y : ℝ =>
+      Real.log ‖carlsonZeroDetector X
+        ((4 : ℂ) + I * (y : ℂ))‖)
+      MeasureTheory.volume y0 y1 := hdetIntI
+  have hsplit :
+      (∫ y in y0..y1,
+          Real.log ‖regularizedCarlsonZeroDetector X
+            ((4 : ℂ) + I * (y : ℂ))‖) =
+        2 * (∫ y in y0..y1,
+          Real.log ‖(4 : ℂ) + I * (y : ℂ) - 1‖) +
+        ∫ y in y0..y1,
+          Real.log ‖carlsonZeroDetector X
+            ((4 : ℂ) + I * (y : ℂ))‖ := by
+    calc
+      (∫ y in y0..y1,
+          Real.log ‖regularizedCarlsonZeroDetector X
+            ((4 : ℂ) + I * (y : ℂ))‖) =
+          ∫ y in y0..y1,
+            (2 * Real.log ‖(4 : ℂ) + I * (y : ℂ) - 1‖ +
+              Real.log ‖carlsonZeroDetector X
+                ((4 : ℂ) + I * (y : ℂ))‖) := by
+        apply intervalIntegral.integral_congr
+        intro y _hy
+        let s : ℂ := (4 : ℂ) + I * (y : ℂ)
+        have hs0 : s ≠ 0 := by
+          intro hz
+          have hre := congrArg Complex.re hz
+          norm_num [s] at hre
+        have hs1 : s ≠ 1 := by
+          intro hz
+          have hre := congrArg Complex.re hz
+          norm_num [s] at hre
+        have hdet : carlsonZeroDetector X s ≠ 0 :=
+          carlsonZeroDetector_ne_zero_of_four_le_re hX (by simp [s])
+        simpa [s] using
+          log_norm_regularizedCarlsonZeroDetector_eq_two_log_norm_sub_one_add
+            X hs0 hs1 hdet
+      _ = 2 * (∫ y in y0..y1,
+            Real.log ‖(4 : ℂ) + I * (y : ℂ) - 1‖) +
+          ∫ y in y0..y1,
+            Real.log ‖carlsonZeroDetector X
+              ((4 : ℂ) + I * (y : ℂ))‖ := by
+        rw [intervalIntegral.integral_add (hgeomInt.const_mul 2) hdetInt,
+          intervalIntegral.integral_const_mul]
+  have hdetNeg :=
+    neg_integral_log_norm_carlsonZeroDetector_fixedRight_le_constant
+      hX hy01
+  have hdetNeg' :
+      -(∫ y in y0..y1,
+          Real.log ‖carlsonZeroDetector X
+            ((4 : ℂ) + I * (y : ℂ))‖) ≤ 125 / 18 := by
+    simpa only [mul_comm I] using hdetNeg
+  rw [hsplit]
+  linarith
+
 /-- The branch-free argument variation of Carlson's original detector on the
 fixed line `Re(s) = 4`. -/
 noncomputable def carlsonDetectorFixedRightArgumentVariation
@@ -914,6 +1330,147 @@ theorem regularizedCarlsonLittlewoodRemainingEdges_fixedRight_le_of_horizontalBo
         (4 - x0) * (3 * Real.pi) -
         (y1 - y0) * Real.log (56 / 81 : ℝ) := by ring
 
+/-- Refined remaining-edge bound retaining the fixed-right contribution of
+the elementary factor `(s - 1)^2`. -/
+theorem
+    regularizedCarlsonLittlewoodRemainingEdges_fixedRight_le_of_horizontalBounds_with_subOne
+    {X : ℕ} (hX : 1 ≤ X) {x0 y0 y1 M0 M1 : ℝ}
+    (hx0 : x0 ≤ 4) (hy01 : y0 ≤ y1)
+    (hM0 : 0 ≤ M0) (hM1 : 0 ≤ M1)
+    (hbottom : ∀ x ∈ Set.Icc x0 4,
+      ‖logDeriv (regularizedCarlsonZeroDetector X)
+        ((x : ℂ) + (y0 : ℂ) * I)‖ ≤ M0)
+    (htop : ∀ x ∈ Set.Icc x0 4,
+      ‖logDeriv (regularizedCarlsonZeroDetector X)
+        ((x : ℂ) + (y1 : ℂ) * I)‖ ≤ M1) :
+    regularizedCarlsonLittlewoodRemainingEdges X x0 4 y0 y1 ≤
+      (4 - x0) ^ 2 * (M0 + M1) +
+        (4 - x0) * (3 * Real.pi) -
+        2 * (∫ y in y0..y1,
+          Real.log ‖(4 : ℂ) + I * (y : ℂ) - 1‖) -
+        (y1 - y0) * Real.log (56 / 81 : ℝ) := by
+  let bottom := regularizedCarlsonHorizontalArgumentTerm X x0 y0
+  let top := regularizedCarlsonHorizontalArgumentTerm X x0 y1
+  let right := regularizedCarlsonFixedRightBoundaryContribution X x0 y0 y1
+  have hbottomTerm : |bottom| ≤ (4 - x0) ^ 2 * M0 :=
+    abs_regularizedCarlsonHorizontalArgumentTerm_le_sq_mul hx0 hM0 hbottom
+  have htopTerm : |top| ≤ (4 - x0) ^ 2 * M1 :=
+    abs_regularizedCarlsonHorizontalArgumentTerm_le_sq_mul hx0 hM1 htop
+  have hargAbs :=
+    abs_regularizedCarlsonFixedRightArgumentVariation_le_three_pi
+      hX y0 y1
+  have harg :
+      regularizedCarlsonFixedRightArgumentVariation X y0 y1 ≤
+        3 * Real.pi := (le_abs_self _).trans hargAbs
+  have hscaled :
+      (4 - x0) * regularizedCarlsonFixedRightArgumentVariation X y0 y1 ≤
+        (4 - x0) * (3 * Real.pi) :=
+    mul_le_mul_of_nonneg_left harg (sub_nonneg.mpr hx0)
+  have hrightLog :=
+    neg_integral_log_norm_regularizedCarlson_fixedRight_le_with_subOne
+      hX hy01
+  have hrightLog' :
+      -(∫ y in y0..y1,
+          Real.log ‖regularizedCarlsonZeroDetector X
+            ((4 : ℂ) + (y : ℂ) * I)‖) ≤
+        -2 * (∫ y in y0..y1,
+          Real.log ‖(4 : ℂ) + I * (y : ℂ) - 1‖) -
+          (y1 - y0) * Real.log (56 / 81 : ℝ) := by
+    simpa only [mul_comm I] using hrightLog
+  have hright : right ≤
+      (4 - x0) * (3 * Real.pi) -
+        2 * (∫ y in y0..y1,
+          Real.log ‖(4 : ℂ) + I * (y : ℂ) - 1‖) -
+        (y1 - y0) * Real.log (56 / 81 : ℝ) := by
+    dsimp [right]
+    unfold regularizedCarlsonFixedRightBoundaryContribution
+    linarith
+  rw [regularizedCarlsonLittlewoodRemainingEdges_fixedRight_eq]
+  change bottom - top + right ≤ _
+  calc
+    bottom - top + right ≤ |bottom| + |top| + right := by
+      linarith [le_abs_self bottom, neg_le_abs top]
+    _ ≤ (4 - x0) ^ 2 * M0 + (4 - x0) ^ 2 * M1 +
+        ((4 - x0) * (3 * Real.pi) -
+          2 * (∫ y in y0..y1,
+            Real.log ‖(4 : ℂ) + I * (y : ℂ) - 1‖) -
+          (y1 - y0) * Real.log (56 / 81 : ℝ)) :=
+      add_le_add (add_le_add hbottomTerm htopTerm) hright
+    _ = (4 - x0) ^ 2 * (M0 + M1) +
+        (4 - x0) * (3 * Real.pi) -
+        2 * (∫ y in y0..y1,
+          Real.log ‖(4 : ℂ) + I * (y : ℂ) - 1‖) -
+        (y1 - y0) * Real.log (56 / 81 : ℝ) := by ring
+
+/-- Height-uniform refinement of the remaining-edge estimate.  The
+elementary factor is still retained for exact left/right cancellation, while
+the original detector's fixed-right logarithmic integral is absorbed into an
+absolute constant. -/
+theorem
+    regularizedCarlsonLittlewoodRemainingEdges_fixedRight_le_of_horizontalBounds_with_subOne_constant
+    {X : ℕ} (hX : 1 ≤ X) {x0 y0 y1 M0 M1 : ℝ}
+    (hx0 : x0 ≤ 4) (hy01 : y0 ≤ y1)
+    (hM0 : 0 ≤ M0) (hM1 : 0 ≤ M1)
+    (hbottom : ∀ x ∈ Set.Icc x0 4,
+      ‖logDeriv (regularizedCarlsonZeroDetector X)
+        ((x : ℂ) + (y0 : ℂ) * I)‖ ≤ M0)
+    (htop : ∀ x ∈ Set.Icc x0 4,
+      ‖logDeriv (regularizedCarlsonZeroDetector X)
+        ((x : ℂ) + (y1 : ℂ) * I)‖ ≤ M1) :
+    regularizedCarlsonLittlewoodRemainingEdges X x0 4 y0 y1 ≤
+      (4 - x0) ^ 2 * (M0 + M1) +
+        (4 - x0) * (3 * Real.pi) -
+        2 * (∫ y in y0..y1,
+          Real.log ‖(4 : ℂ) + I * (y : ℂ) - 1‖) + 125 / 18 := by
+  let bottom := regularizedCarlsonHorizontalArgumentTerm X x0 y0
+  let top := regularizedCarlsonHorizontalArgumentTerm X x0 y1
+  let right := regularizedCarlsonFixedRightBoundaryContribution X x0 y0 y1
+  have hbottomTerm : |bottom| ≤ (4 - x0) ^ 2 * M0 :=
+    abs_regularizedCarlsonHorizontalArgumentTerm_le_sq_mul hx0 hM0 hbottom
+  have htopTerm : |top| ≤ (4 - x0) ^ 2 * M1 :=
+    abs_regularizedCarlsonHorizontalArgumentTerm_le_sq_mul hx0 hM1 htop
+  have hargAbs :=
+    abs_regularizedCarlsonFixedRightArgumentVariation_le_three_pi
+      hX y0 y1
+  have harg :
+      regularizedCarlsonFixedRightArgumentVariation X y0 y1 ≤
+        3 * Real.pi := (le_abs_self _).trans hargAbs
+  have hscaled :
+      (4 - x0) * regularizedCarlsonFixedRightArgumentVariation X y0 y1 ≤
+        (4 - x0) * (3 * Real.pi) :=
+    mul_le_mul_of_nonneg_left harg (sub_nonneg.mpr hx0)
+  have hrightLog :=
+    neg_integral_log_norm_regularizedCarlson_fixedRight_le_with_subOne_constant
+      hX hy01
+  have hrightLog' :
+      -(∫ y in y0..y1,
+          Real.log ‖regularizedCarlsonZeroDetector X
+            ((4 : ℂ) + (y : ℂ) * I)‖) ≤
+        -2 * (∫ y in y0..y1,
+          Real.log ‖(4 : ℂ) + I * (y : ℂ) - 1‖) + 125 / 18 := by
+    simpa only [mul_comm I] using hrightLog
+  have hright : right ≤
+      (4 - x0) * (3 * Real.pi) -
+        2 * (∫ y in y0..y1,
+          Real.log ‖(4 : ℂ) + I * (y : ℂ) - 1‖) + 125 / 18 := by
+    dsimp [right]
+    unfold regularizedCarlsonFixedRightBoundaryContribution
+    linarith
+  rw [regularizedCarlsonLittlewoodRemainingEdges_fixedRight_eq]
+  change bottom - top + right ≤ _
+  calc
+    bottom - top + right ≤ |bottom| + |top| + right := by
+      linarith [le_abs_self bottom, neg_le_abs top]
+    _ ≤ (4 - x0) ^ 2 * M0 + (4 - x0) ^ 2 * M1 +
+        ((4 - x0) * (3 * Real.pi) -
+          2 * (∫ y in y0..y1,
+            Real.log ‖(4 : ℂ) + I * (y : ℂ) - 1‖) + 125 / 18) :=
+      add_le_add (add_le_add hbottomTerm htopTerm) hright
+    _ = (4 - x0) ^ 2 * (M0 + M1) +
+        (4 - x0) * (3 * Real.pi) -
+        2 * (∫ y in y0..y1,
+          Real.log ‖(4 : ℂ) + I * (y : ℂ) - 1‖) + 125 / 18 := by ring
+
 /-- The endpoint terms from the four edge integrations cancel.  This is the
 detector-specific Littlewood lemma in the form used for quantitative bounds:
 two horizontal argument terms, one right-edge argument term, and the
@@ -1101,6 +1658,160 @@ theorem sub_mul_zeroDensityCount_le_regularizedCarlsonWeightedZeroSum
             (regularizedCarlsonZeroDetector X) rho : ℝ) :=
       Finset.sum_le_sum_of_subset_of_nonneg hSsub
         (fun rho hrhoP _ => hPnonneg rho hrhoP)
+
+/-- A Carlson rectangle whose bottom edge lies above zero still controls the
+full zero-density count after adding the fixed low-height zero contribution.
+Zeros of ordinate at most `U` are charged to the global multiplicity count;
+all remaining target zeros lie in the rectangle when `y0 <= U`. -/
+theorem
+    sub_mul_zeroDensityCount_le_low_global_add_regularizedCarlsonWeightedZeroSum
+    {X : ℕ} (hX : 1 ≤ X) {sigma T U x0 x1 y0 y1 : ℝ}
+    (hx0 : 0 < x0) (hx0sigma : x0 < sigma)
+    (hx1 : 1 < x1) (hy0U : y0 ≤ U) (hy1 : T < y1) :
+    (sigma - x0) * (ZeroDensity.zeroDensityCount sigma T : ℝ) ≤
+      (sigma - x0) * ExplicitFormulaAux.globalZeroMultiplicity U +
+        ∑ rho ∈ regularizedCarlsonDetectorRectangleDivisorSupport
+            X x0 x1 y0 y1,
+          (rho.re - x0) *
+            (analyticOrderNatAt
+              (regularizedCarlsonZeroDetector X) rho : ℝ) := by
+  classical
+  let S := ZeroDensity.zeroDensityZerosFinset sigma T
+  let Slow := S.filter fun rho : ℂ => rho.im ≤ U
+  let Shigh := S.filter fun rho : ℂ => ¬rho.im ≤ U
+  let P := regularizedCarlsonDetectorRectangleDivisorSupport
+    X x0 x1 y0 y1
+  have hSlowSub : Slow ⊆ nontrivialZerosFinset U := by
+    intro rho hrho
+    rcases Finset.mem_filter.mp hrho with ⟨hrhoS, himU⟩
+    have htarget := ZeroDensity.mem_zeroDensityZerosFinset.mp hrhoS
+    exact mem_nontrivialZerosFinset.mpr
+      ⟨htarget.1, by simpa [abs_of_pos htarget.2.1] using himU⟩
+  have hLowMultiplicity :
+      (∑ rho ∈ Slow, (analyticOrderNatAt riemannZeta rho : ℝ)) ≤
+        ExplicitFormulaAux.globalZeroMultiplicity U := by
+    calc
+      (∑ rho ∈ Slow, (analyticOrderNatAt riemannZeta rho : ℝ)) ≤
+          ∑ rho ∈ nontrivialZerosFinset U,
+            (analyticOrderNatAt riemannZeta rho : ℝ) := by
+        exact Finset.sum_le_sum_of_subset_of_nonneg hSlowSub
+          (fun _ _ _ => Nat.cast_nonneg _)
+      _ = ExplicitFormulaAux.globalZeroMultiplicity U := rfl
+  have hweightNonneg : 0 ≤ sigma - x0 := sub_nonneg.mpr hx0sigma.le
+  have hlow :
+      (∑ rho ∈ Slow,
+          (sigma - x0) * (analyticOrderNatAt riemannZeta rho : ℝ)) ≤
+        (sigma - x0) * ExplicitFormulaAux.globalZeroMultiplicity U := by
+    simpa [Finset.mul_sum] using
+      mul_le_mul_of_nonneg_left hLowMultiplicity hweightNonneg
+  have hShighSub : Shigh ⊆ P := by
+    intro rho hrhoHigh
+    rcases Finset.mem_filter.mp hrhoHigh with ⟨hrhoS, himNot⟩
+    have hrho := ZeroDensity.mem_zeroDensityZerosFinset.mp hrhoS
+    have himU : U < rho.im := lt_of_not_ge himNot
+    have hrhoMem : rho ∈ carlsonDetectorRectangle x0 x1 y0 y1 := by
+      dsimp [carlsonDetectorRectangle]
+      constructor
+      · constructor
+        · exact (hx0sigma.trans hrho.2.2.2).le
+        · exact (hrho.1.2.2.trans hx1).le
+      · constructor
+        · exact (hy0U.trans himU.le)
+        · exact hrho.2.2.1.trans hy1.le
+    have hdetectorPos :
+        0 < analyticOrderNatAt (regularizedCarlsonZeroDetector X) rho :=
+      (ZeroFreeRegion.analyticOrderNatAt_riemannZeta_pos_of_zero
+        (by
+          intro hone
+          have hre := congrArg Complex.re hone
+          simp at hre
+          linarith [hrho.1.2.2]) hrho.1.1).trans_le
+        (analyticOrderNatAt_riemannZeta_le_regularizedCarlsonZeroDetector
+          hX hrho.1)
+    have hanalytic : AnalyticAt ℂ (regularizedCarlsonZeroDetector X) rho :=
+      analyticOnNhd_regularizedCarlsonZeroDetector_re_gt
+        (theta := (0 : ℝ)) le_rfl X rho
+          (hx0.trans_le hrhoMem.1.1)
+    have hdetectorZero : regularizedCarlsonZeroDetector X rho = 0 := by
+      apply hanalytic.analyticOrderAt_ne_zero.mp
+      intro horderZero
+      have hnatZero :
+          analyticOrderNatAt (regularizedCarlsonZeroDetector X) rho = 0 := by
+        simp [analyticOrderNatAt, horderZero]
+      omega
+    dsimp [P]
+    exact
+      (mem_regularizedCarlsonDetectorRectangleDivisorSupport_iff_zero
+        hX hx0 hrhoMem).mpr hdetectorZero
+  have hPnonneg : ∀ rho ∈ P,
+      0 ≤ (rho.re - x0) *
+        (analyticOrderNatAt
+          (regularizedCarlsonZeroDetector X) rho : ℝ) := by
+    intro rho hrhoP
+    let K := carlsonDetectorRectangle x0 x1 y0 y1
+    let D := MeromorphicOn.divisor (regularizedCarlsonZeroDetector X) K
+    have hrhoSupport : rho ∈ D.support := by
+      dsimp [P, regularizedCarlsonDetectorRectangleDivisorSupport] at hrhoP
+      exact (D.finiteSupport
+        (isCompact_carlsonDetectorRectangle x0 x1 y0 y1)).mem_toFinset.mp hrhoP
+    have hrhoK : rho ∈ K := D.supportWithinDomain hrhoSupport
+    exact mul_nonneg (sub_nonneg.mpr hrhoK.1.1) (Nat.cast_nonneg _)
+  have hhigh :
+      (∑ rho ∈ Shigh,
+          (sigma - x0) * (analyticOrderNatAt riemannZeta rho : ℝ)) ≤
+        ∑ rho ∈ P, (rho.re - x0) *
+          (analyticOrderNatAt
+            (regularizedCarlsonZeroDetector X) rho : ℝ) := by
+    calc
+      (∑ rho ∈ Shigh,
+          (sigma - x0) * (analyticOrderNatAt riemannZeta rho : ℝ)) ≤
+          ∑ rho ∈ Shigh, (rho.re - x0) *
+            (analyticOrderNatAt
+              (regularizedCarlsonZeroDetector X) rho : ℝ) := by
+        apply Finset.sum_le_sum
+        intro rho hrhoHigh
+        have hrhoS := (Finset.mem_filter.mp hrhoHigh).1
+        have hrho := ZeroDensity.mem_zeroDensityZerosFinset.mp hrhoS
+        have hweight : sigma - x0 ≤ rho.re - x0 := by
+          linarith [hrho.2.2.2]
+        have hmult :
+            (analyticOrderNatAt riemannZeta rho : ℝ) ≤
+              (analyticOrderNatAt
+                (regularizedCarlsonZeroDetector X) rho : ℝ) := by
+          exact_mod_cast
+            analyticOrderNatAt_riemannZeta_le_regularizedCarlsonZeroDetector
+              hX hrho.1
+        exact mul_le_mul hweight hmult (Nat.cast_nonneg _) (by linarith)
+      _ ≤ ∑ rho ∈ P, (rho.re - x0) *
+          (analyticOrderNatAt
+            (regularizedCarlsonZeroDetector X) rho : ℝ) :=
+        Finset.sum_le_sum_of_subset_of_nonneg hShighSub
+          (fun rho hrhoP _ => hPnonneg rho hrhoP)
+  calc
+    (sigma - x0) * (ZeroDensity.zeroDensityCount sigma T : ℝ) =
+        ∑ rho ∈ S,
+          (sigma - x0) * (analyticOrderNatAt riemannZeta rho : ℝ) := by
+      simp [S, ZeroDensity.zeroDensityCount, Finset.mul_sum]
+    _ = (∑ rho ∈ Slow,
+          (sigma - x0) * (analyticOrderNatAt riemannZeta rho : ℝ)) +
+        ∑ rho ∈ Shigh,
+          (sigma - x0) * (analyticOrderNatAt riemannZeta rho : ℝ) := by
+      simpa [Slow, Shigh] using
+        (Finset.sum_filter_add_sum_filter_not S
+          (fun rho : ℂ => rho.im ≤ U)
+          (fun rho : ℂ =>
+            (sigma - x0) * (analyticOrderNatAt riemannZeta rho : ℝ))).symm
+    _ ≤ (sigma - x0) * ExplicitFormulaAux.globalZeroMultiplicity U +
+        ∑ rho ∈ P, (rho.re - x0) *
+          (analyticOrderNatAt
+            (regularizedCarlsonZeroDetector X) rho : ℝ) :=
+      add_le_add hlow hhigh
+    _ = (sigma - x0) * ExplicitFormulaAux.globalZeroMultiplicity U +
+        ∑ rho ∈ regularizedCarlsonDetectorRectangleDivisorSupport
+            X x0 x1 y0 y1,
+          (rho.re - x0) *
+            (analyticOrderNatAt
+              (regularizedCarlsonZeroDetector X) rho : ℝ) := rfl
 
 /-- Carlson's zero-density count is reduced to the four Littlewood edge
 integrals with the left edge selected in `(theta, sigma)`. -/

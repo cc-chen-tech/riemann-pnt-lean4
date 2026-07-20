@@ -52,6 +52,8 @@ example {X : ℕ} (hX : 1 ≤ X) {s : ℂ} (hs : 4 ≤ s.re) :
     1 ≤ ‖regularizedCarlsonZeroDetector X s‖ :=
   one_le_norm_regularizedCarlsonZeroDetector_of_four_le_re hX hs
 
+#check norm_log_carlsonZeroDetector_le_inv_sq_of_four_le_re
+
 example {X : ℕ} (hX : 1 ≤ X) {s : ℂ} (hs : 4 ≤ s.re) :
     2 * Real.log ‖s - 1‖ + Real.log (56 / 81 : ℝ) ≤
       Real.log ‖regularizedCarlsonZeroDetector X s‖ :=
@@ -245,6 +247,10 @@ noncomputable example (A kappa : ℝ) (X : ℕ)
 noncomputable example (A kappa : ℝ) (X : ℕ)
     (sigma a b x : ℝ) : ℝ :=
   regularizedCarlsonLogNormEndpointExplicit A kappa X sigma a b x
+
+#check carlsonLogNormSharpEndpointExplicit
+#check log_norm_regularizedCarlsonZeroDetector_eq_two_log_norm_sub_one_add
+#check exists_integral_log_norm_carlsonZeroDetector_le_sharpDoublingIntervalExplicit_of_regularizedBoundary
 
 example {sigma u v : ℝ} (hsigma0 : 0 < sigma) (hsigma1 : sigma < 1)
     (hu : 1 ≤ u) (huv : u ≤ v) :
@@ -454,6 +460,11 @@ example :
 #print axioms exists_integral_log_norm_regularizedCarlsonZeroDetector_le_endpoint_of_comparable
 #print axioms integral_log_norm_vertical_sub_one_le_length_mul_log
 #print axioms regularizedCarlsonLogNormEndpoint_le_explicit
+#print axioms regularizedCarlsonLogNormSharpEndpoint_le_explicit
+#print axioms log_norm_regularizedCarlsonZeroDetector_eq_two_log_norm_sub_one_add
+#print axioms exists_integral_log_norm_carlsonZeroDetector_le_sharpDoublingIntervalExplicit_of_regularizedBoundary
+#print axioms exists_integral_log_norm_regularizedCarlsonZeroDetector_le_sharpEndpoint_of_comparable
+#print axioms exists_integral_log_norm_regularizedCarlsonZeroDetector_le_sharpDoublingIntervalExplicit
 #print axioms one_sub_norm_mollifiedZetaError_sq_le_norm_carlsonZeroDetector
 #print axioms one_sub_sq_le_norm_carlsonZeroDetector_of_norm_error_le
 #print axioms two_log_norm_sub_one_add_log_one_sub_sq_le_log_norm_regularized

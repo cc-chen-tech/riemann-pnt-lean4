@@ -1,6 +1,9 @@
 import Mathlib.NumberTheory.ArithmeticFunction.Misc
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.NumberTheory.Harmonic.Bounds
+import Mathlib.Algebra.BigOperators.Module
+import Mathlib.Analysis.SumIntegralComparisons
+import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 
 open scoped BigOperators ArithmeticFunction.sigma
 
@@ -123,6 +126,31 @@ theorem weightedDivisorSquareSum_le_fourfoldDivisorCount
       exact mul_le_mul_of_nonneg_right hcard (sq_nonneg _)
     _ = ((n : ℝ) + 1) * (fourfoldDivisorCount n : ℝ) *
         ((n : ℝ) ^ (-sigma)) ^ 2 := by ring
+
+/-- The unweighted divisor-square sum is bounded termwise by the corresponding
+fourfold-divisor sum.  This separate estimate is needed for the diagonal term
+in the Carlson mean-square argument. -/
+theorem divisorSquareSum_le_fourfoldDivisorCount
+    {L U : ℕ} (hL : 0 < L) (sigma : ℝ) :
+    ∑ n ∈ Finset.Icc L U,
+        ((n.divisorsAntidiagonal.card : ℝ) * (n : ℝ) ^ (-sigma)) ^ 2 ≤
+      ∑ n ∈ Finset.Icc L U,
+        (fourfoldDivisorCount n : ℝ) * ((n : ℝ) ^ (-sigma)) ^ 2 := by
+  apply Finset.sum_le_sum
+  intro n hn
+  have hnpos : 0 < n := lt_of_lt_of_le hL (Finset.mem_Icc.mp hn).1
+  have hcardNat := card_divisorsAntidiagonal_sq_le_fourfoldDivisorCount hnpos.ne'
+  have hcard :
+      (n.divisorsAntidiagonal.card : ℝ) ^ 2 ≤
+        (fourfoldDivisorCount n : ℝ) := by
+    exact_mod_cast hcardNat
+  calc
+    ((n.divisorsAntidiagonal.card : ℝ) * (n : ℝ) ^ (-sigma)) ^ 2 =
+        (n.divisorsAntidiagonal.card : ℝ) ^ 2 *
+          ((n : ℝ) ^ (-sigma)) ^ 2 := by ring
+    _ ≤ (fourfoldDivisorCount n : ℝ) *
+        ((n : ℝ) ^ (-sigma)) ^ 2 :=
+      mul_le_mul_of_nonneg_right hcard (sq_nonneg _)
 
 /-- The prefix sum of the threefold divisor function is the divisor-count
 sum weighted by integer quotients. -/
@@ -343,6 +371,492 @@ theorem sum_Ioc_fourfoldDivisorCount_le_mul_one_add_log_cube (Y : ℕ) :
         positivity
       gcongr
       exact harmonic_le_one_add_log Y
+
+/-- A finite, discrete Abel estimate.  If the prefix sums of `c` are bounded
+by a linear function of slope `K`, then pairing `c` with a nonnegative
+decreasing weight costs at most `K` times an ordinary sum of that weight.
+
+The extra `L * f L` is the lower endpoint term in summation by parts. -/
+theorem sum_Icc_mul_le_prefixSlope
+    {c f : ℕ → ℝ} {L U : ℕ} {K : ℝ}
+    (hL : 0 < L) (hLU : L ≤ U)
+    (hc : ∀ n, 0 ≤ c n) (hf : ∀ n, 0 ≤ f n)
+    (hfAnti : ∀ ⦃m n : ℕ⦄, L ≤ m → m ≤ n → n ≤ U → f n ≤ f m)
+    (hprefix : ∀ n : ℕ, n ≤ U →
+      ∑ k ∈ Finset.range (n + 1), c k ≤ K * (n + 1 : ℕ)) :
+    ∑ n ∈ Finset.Icc L U, f n * c n ≤
+      K * ((L : ℝ) * f L + ∑ n ∈ Finset.Icc L U, f n) := by
+  have hLU' : L - 1 < U := by omega
+  have hinterval : Finset.Ioc (L - 1) U = Finset.Icc L U := by
+    ext n
+    simp only [Finset.mem_Ioc, Finset.mem_Icc]
+    omega
+  have hLsub : L - 1 + 1 = L := by omega
+  have hparts := Finset.sum_Ioc_by_parts f c hLU'
+  simp only [smul_eq_mul, hLsub] at hparts
+  rw [hinterval] at hparts
+  have hsumNeg :
+      -(∑ i ∈ Finset.Ioc (L - 1) (U - 1),
+          (f (i + 1) - f i) *
+            (∑ j ∈ Finset.range (i + 1), c j)) =
+        ∑ i ∈ Finset.Ioc (L - 1) (U - 1),
+          (f i - f (i + 1)) *
+            (∑ j ∈ Finset.range (i + 1), c j) := by
+    rw [← Finset.sum_neg_distrib]
+    apply Finset.sum_congr rfl
+    intro i hi
+    ring
+  have hrewrite :
+      ∑ n ∈ Finset.Icc L U, f n * c n =
+        f U * (∑ i ∈ Finset.range (U + 1), c i) -
+          f L * (∑ i ∈ Finset.range L, c i) +
+          ∑ i ∈ Finset.Ioc (L - 1) (U - 1),
+            (f i - f (i + 1)) *
+              (∑ j ∈ Finset.range (i + 1), c j) := by
+    rw [hparts]
+    rw [sub_eq_add_neg, hsumNeg]
+  rw [hrewrite]
+  have hlower :
+      0 ≤ f L * (∑ i ∈ Finset.range L, c i) := by
+    exact mul_nonneg (hf L) (Finset.sum_nonneg fun i hi => hc i)
+  have hendpoint :
+      f U * (∑ i ∈ Finset.range (U + 1), c i) ≤
+        f U * (K * (U + 1 : ℕ)) :=
+    mul_le_mul_of_nonneg_left (hprefix U le_rfl) (hf U)
+  have hcross :
+      (∑ i ∈ Finset.Ioc (L - 1) (U - 1),
+          (f i - f (i + 1)) *
+            (∑ j ∈ Finset.range (i + 1), c j)) ≤
+        ∑ i ∈ Finset.Ioc (L - 1) (U - 1),
+          (f i - f (i + 1)) * (K * (i + 1 : ℕ)) := by
+    apply Finset.sum_le_sum
+    intro i hi
+    rcases Finset.mem_Ioc.mp hi with ⟨hiL, hiU⟩
+    have hiL' : L ≤ i := by omega
+    have hiU' : i + 1 ≤ U := by omega
+    have hdiff : 0 ≤ f i - f (i + 1) := by
+      have := hfAnti hiL' (Nat.le_succ i) hiU'
+      linarith
+    exact mul_le_mul_of_nonneg_left (hprefix i (i.le_succ.trans hiU')) hdiff
+  have hbound :
+      f U * (∑ i ∈ Finset.range (U + 1), c i) -
+          f L * (∑ i ∈ Finset.range L, c i) +
+          ∑ i ∈ Finset.Ioc (L - 1) (U - 1),
+            (f i - f (i + 1)) *
+              (∑ j ∈ Finset.range (i + 1), c j) ≤
+        f U * (K * (U + 1 : ℕ)) +
+          ∑ i ∈ Finset.Ioc (L - 1) (U - 1),
+            (f i - f (i + 1)) * (K * (i + 1 : ℕ)) := by
+    linarith [add_le_add hendpoint hcross]
+  refine hbound.trans_eq ?_
+  have hfactor :
+      (∑ i ∈ Finset.Ioc (L - 1) (U - 1),
+          (f i - f (i + 1)) * (K * (i + 1 : ℕ))) =
+        K * ∑ i ∈ Finset.Ioc (L - 1) (U - 1),
+          (f i - f (i + 1)) * (i + 1 : ℕ) := by
+    rw [Finset.mul_sum]
+    apply Finset.sum_congr rfl
+    intro i hi
+    ring
+  rw [hfactor]
+  have hones := Finset.sum_Ioc_by_parts f (fun _ => (1 : ℝ)) hLU'
+  simp only [smul_eq_mul, mul_one, Finset.sum_const, Finset.card_range,
+    nsmul_eq_mul, mul_one, hLsub] at hones
+  rw [hinterval] at hones
+  have hsumDiff :
+      (∑ i ∈ Finset.Ioc (L - 1) (U - 1),
+          (f i - f (i + 1)) * (i + 1 : ℕ)) =
+        -(∑ i ∈ Finset.Ioc (L - 1) (U - 1),
+          (f (i + 1) - f i) * (i + 1 : ℕ)) := by
+    rw [← Finset.sum_neg_distrib]
+    apply Finset.sum_congr rfl
+    intro i hi
+    ring
+  have htel :
+      f U * (U + 1 : ℕ) +
+          ∑ i ∈ Finset.Ioc (L - 1) (U - 1),
+            (f i - f (i + 1)) * (i + 1 : ℕ) =
+        (L : ℝ) * f L + ∑ n ∈ Finset.Icc L U, f n := by
+    rw [hsumDiff, hones]
+    ring
+  calc
+    f U * (K * (U + 1 : ℕ)) +
+        K * ∑ i ∈ Finset.Ioc (L - 1) (U - 1),
+          (f i - f (i + 1)) * (i + 1 : ℕ) =
+      K * (f U * (U + 1 : ℕ) +
+        ∑ i ∈ Finset.Ioc (L - 1) (U - 1),
+          (f i - f (i + 1)) * (i + 1 : ℕ)) := by ring
+    _ = K * ((L : ℝ) * f L + ∑ n ∈ Finset.Icc L U, f n) := by
+      rw [htel]
+
+/-- The fourfold-divisor prefix estimate, inserted into the discrete Abel
+lemma for an arbitrary nonnegative decreasing weight. -/
+theorem fourfoldDivisorSum_mul_le_prefixSlope
+    {f : ℕ → ℝ} {L U : ℕ} (hL : 0 < L) (hLU : L ≤ U)
+    (hf : ∀ n, 0 ≤ f n)
+    (hfAnti : ∀ ⦃m n : ℕ⦄, L ≤ m → m ≤ n → n ≤ U → f n ≤ f m) :
+    ∑ n ∈ Finset.Icc L U, f n * (fourfoldDivisorCount n : ℝ) ≤
+      (1 + Real.log U) ^ 3 *
+        ((L : ℝ) * f L + ∑ n ∈ Finset.Icc L U, f n) := by
+  apply sum_Icc_mul_le_prefixSlope hL hLU
+  · intro n
+    positivity
+  · exact hf
+  · exact hfAnti
+  · intro n hnU
+    have hUpos : 0 < U := hL.trans_le hLU
+    have hlogU0 : 0 ≤ Real.log U :=
+      Real.log_nonneg (by exact_mod_cast hUpos)
+    have hlogU : 0 ≤ 1 + Real.log U := by
+      linarith
+    have hprefixEq :
+        (∑ k ∈ Finset.range (n + 1), (fourfoldDivisorCount k : ℝ)) =
+          ∑ k ∈ Finset.Ioc 0 n, (fourfoldDivisorCount k : ℝ) := by
+      rw [Nat.range_succ_eq_Icc_zero, Finset.Icc_eq_cons_Ioc (Nat.zero_le n),
+        Finset.sum_cons]
+      simp [fourfoldDivisorCount]
+    rw [hprefixEq]
+    calc
+      (∑ k ∈ Finset.Ioc 0 n, (fourfoldDivisorCount k : ℝ)) ≤
+          (n : ℝ) * (1 + Real.log n) ^ 3 :=
+        sum_Ioc_fourfoldDivisorCount_le_mul_one_add_log_cube n
+      _ ≤ (1 + Real.log U) ^ 3 * (n + 1 : ℕ) := by
+        have hnlog : 1 + Real.log n ≤ 1 + Real.log U := by
+          by_cases hn : n = 0
+          · subst n
+            simpa using hlogU0
+          · gcongr
+        have hnlogNonneg : 0 ≤ 1 + Real.log n := by
+          by_cases hn : n = 0
+          · subst n
+            simp
+          · have : 0 ≤ Real.log n :=
+              Real.log_nonneg (by exact_mod_cast Nat.pos_of_ne_zero hn)
+            linarith
+        have hcube : (1 + Real.log n) ^ 3 ≤ (1 + Real.log U) ^ 3 := by
+          gcongr
+        calc
+          (n : ℝ) * (1 + Real.log n) ^ 3 ≤
+              (n : ℝ) * (1 + Real.log U) ^ 3 := by
+            exact mul_le_mul_of_nonneg_left hcube (Nat.cast_nonneg n)
+          _ ≤ ((n + 1 : ℕ) : ℝ) * (1 + Real.log U) ^ 3 := by
+            apply mul_le_mul_of_nonneg_right
+            · exact_mod_cast Nat.le_succ n
+            · exact pow_nonneg hlogU 3
+          _ = (1 + Real.log U) ^ 3 * (n + 1 : ℕ) := by ring
+
+/-- Integral comparison for a nonpositive real power with exponent above
+`-1`, on a positive natural interval. -/
+theorem sum_Icc_rpow_le_add_div_of_neg_one_lt
+    {L U : ℕ} (hL : 0 < L) (hLU : L ≤ U) {q : ℝ}
+    (hqNeg : q ≤ 0) (hq : -1 < q) :
+    ∑ n ∈ Finset.Icc L U, (n : ℝ) ^ q ≤
+      (L : ℝ) ^ q +
+        ((U : ℝ) ^ (q + 1) - (L : ℝ) ^ (q + 1)) / (q + 1) := by
+  have hanti :
+      AntitoneOn (fun x : ℝ => x ^ q) (Set.Icc (L : ℝ) U) := by
+    apply (Real.antitoneOn_rpow_Ioi_of_exponent_nonpos hqNeg).mono
+    intro x hx
+    exact Set.mem_Ioi.mpr ((by exact_mod_cast hL : (0 : ℝ) < L).trans_le hx.1)
+  have htail := AntitoneOn.sum_le_integral_Ico
+    (f := fun x : ℝ => x ^ q) hLU hanti
+  have hshift :
+      (∑ n ∈ Finset.Ioc L U, (n : ℝ) ^ q) =
+        ∑ n ∈ Finset.Ico L U, ((n + 1 : ℕ) : ℝ) ^ q := by
+    simpa only [Finset.Ico_add_one_add_one_eq_Ioc] using
+      (Finset.sum_Ico_add' (fun n : ℕ => (n : ℝ) ^ q) L U 1).symm
+  have hset : Finset.Icc L U = insert L (Finset.Ioc L U) := by
+    ext n
+    simp only [Finset.mem_Icc, Finset.mem_insert, Finset.mem_Ioc]
+    omega
+  have hintegral :
+      (∫ x : ℝ in (L : ℝ)..U, x ^ q) =
+        ((U : ℝ) ^ (q + 1) - (L : ℝ) ^ (q + 1)) / (q + 1) := by
+    rw [integral_rpow (Or.inl hq)]
+  rw [hset, Finset.sum_insert (by simp), hshift]
+  simpa [add_comm] using
+    add_le_add_left (htail.trans_eq hintegral) ((L : ℝ) ^ q)
+
+/-- Integral comparison for a nonpositive real power with exponent below
+`-1`.  Positivity of the interval keeps the real power differentiable. -/
+theorem sum_Icc_rpow_le_add_div_of_lt_neg_one
+    {L U : ℕ} (hL : 0 < L) (hLU : L ≤ U) {q : ℝ}
+    (hq : q < -1) :
+    ∑ n ∈ Finset.Icc L U, (n : ℝ) ^ q ≤
+      (L : ℝ) ^ q +
+        ((U : ℝ) ^ (q + 1) - (L : ℝ) ^ (q + 1)) / (q + 1) := by
+  have hqNeg : q ≤ 0 := by linarith
+  have hanti :
+      AntitoneOn (fun x : ℝ => x ^ q) (Set.Icc (L : ℝ) U) := by
+    apply (Real.antitoneOn_rpow_Ioi_of_exponent_nonpos hqNeg).mono
+    intro x hx
+    exact Set.mem_Ioi.mpr ((by exact_mod_cast hL : (0 : ℝ) < L).trans_le hx.1)
+  have htail := AntitoneOn.sum_le_integral_Ico
+    (f := fun x : ℝ => x ^ q) hLU hanti
+  have hshift :
+      (∑ n ∈ Finset.Ioc L U, (n : ℝ) ^ q) =
+        ∑ n ∈ Finset.Ico L U, ((n + 1 : ℕ) : ℝ) ^ q := by
+    simpa only [Finset.Ico_add_one_add_one_eq_Ioc] using
+      (Finset.sum_Ico_add' (fun n : ℕ => (n : ℝ) ^ q) L U 1).symm
+  have hset : Finset.Icc L U = insert L (Finset.Ioc L U) := by
+    ext n
+    simp only [Finset.mem_Icc, Finset.mem_insert, Finset.mem_Ioc]
+    omega
+  have hzeroNotMem : (0 : ℝ) ∉ Set.uIcc (L : ℝ) (U : ℝ) := by
+    rw [Set.uIcc_of_le (by exact_mod_cast hLU)]
+    intro hzero
+    have := hzero.1
+    have hLreal : (0 : ℝ) < L := by exact_mod_cast hL
+    linarith
+  have hintegral :
+      (∫ x : ℝ in (L : ℝ)..U, x ^ q) =
+        ((U : ℝ) ^ (q + 1) - (L : ℝ) ^ (q + 1)) / (q + 1) := by
+    rw [integral_rpow (Or.inr ⟨by linarith, hzeroNotMem⟩)]
+  rw [hset, Finset.sum_insert (by simp), hshift]
+  simpa [add_comm] using
+    add_le_add_left (htail.trans_eq hintegral) ((L : ℝ) ^ q)
+
+/-- Sharp lower-endpoint bound after partial summation when the power is
+strictly below `-1`. -/
+theorem fourfoldDivisorRpowSum_le_lowerEndpoint
+    {L U : ℕ} (hL : 0 < L) (hLU : L ≤ U) {q : ℝ} (hq : q < -1) :
+    ∑ n ∈ Finset.Icc L U,
+        (fourfoldDivisorCount n : ℝ) * (n : ℝ) ^ q ≤
+      (1 + Real.log U) ^ 3 *
+        ((2 + 1 / (-q - 1)) * (L : ℝ) ^ (q + 1)) := by
+  have hqNeg : q ≤ 0 := by linarith
+  have hAbel := fourfoldDivisorSum_mul_le_prefixSlope
+    (f := fun n : ℕ => (n : ℝ) ^ q) hL hLU
+    (fun n => Real.rpow_nonneg (Nat.cast_nonneg n) q)
+    (by
+      intro m n hmL hmn hnU
+      apply Real.rpow_le_rpow_of_nonpos
+      · exact_mod_cast hL.trans_le hmL
+      · exact_mod_cast hmn
+      · exact hqNeg)
+  have hPower := sum_Icc_rpow_le_add_div_of_lt_neg_one hL hLU hq
+  have hrNeg : q + 1 < 0 := by linarith
+  have hdenomPos : 0 < -q - 1 := by linarith
+  have hdivEq :
+      ((U : ℝ) ^ (q + 1) - (L : ℝ) ^ (q + 1)) / (q + 1) =
+        ((L : ℝ) ^ (q + 1) - (U : ℝ) ^ (q + 1)) / (-q - 1) := by
+    rw [show -q - 1 = -(q + 1) by ring, div_neg]
+    ring
+  have hdivLe :
+      ((U : ℝ) ^ (q + 1) - (L : ℝ) ^ (q + 1)) / (q + 1) ≤
+        (L : ℝ) ^ (q + 1) / (-q - 1) := by
+    rw [hdivEq]
+    apply div_le_div_of_nonneg_right _ hdenomPos.le
+    linarith [Real.rpow_nonneg (Nat.cast_nonneg U) (q + 1)]
+  have hLone : (1 : ℝ) ≤ L := by exact_mod_cast hL
+  have hfLLe : (L : ℝ) ^ q ≤ (L : ℝ) ^ (q + 1) :=
+    Real.rpow_le_rpow_of_exponent_le hLone (by linarith)
+  have hLmul :
+      (L : ℝ) * (L : ℝ) ^ q = (L : ℝ) ^ (q + 1) := by
+    calc
+      (L : ℝ) * (L : ℝ) ^ q =
+          (L : ℝ) ^ (1 : ℝ) * (L : ℝ) ^ q := by rw [Real.rpow_one]
+      _ = (L : ℝ) ^ ((1 : ℝ) + q) := by
+        rw [Real.rpow_add (by exact_mod_cast hL)]
+      _ = (L : ℝ) ^ (q + 1) := by ring_nf
+  have hEndpoint :
+      (L : ℝ) * (L : ℝ) ^ q +
+          ∑ n ∈ Finset.Icc L U, (n : ℝ) ^ q ≤
+        (2 + 1 / (-q - 1)) * (L : ℝ) ^ (q + 1) := by
+    calc
+      (L : ℝ) * (L : ℝ) ^ q +
+          ∑ n ∈ Finset.Icc L U, (n : ℝ) ^ q ≤
+        (L : ℝ) ^ (q + 1) +
+          ((L : ℝ) ^ q +
+            ((U : ℝ) ^ (q + 1) - (L : ℝ) ^ (q + 1)) / (q + 1)) := by
+          rw [hLmul]
+          gcongr
+      _ ≤ (L : ℝ) ^ (q + 1) +
+          ((L : ℝ) ^ (q + 1) +
+            (L : ℝ) ^ (q + 1) / (-q - 1)) := by
+          gcongr
+      _ = (2 + 1 / (-q - 1)) * (L : ℝ) ^ (q + 1) := by
+          field_simp
+          ring
+  calc
+    (∑ n ∈ Finset.Icc L U,
+        (fourfoldDivisorCount n : ℝ) * (n : ℝ) ^ q) =
+      ∑ n ∈ Finset.Icc L U,
+        (n : ℝ) ^ q * (fourfoldDivisorCount n : ℝ) := by
+          apply Finset.sum_congr rfl
+          intro n hn
+          ring
+    _ ≤ (1 + Real.log U) ^ 3 *
+        ((L : ℝ) * (L : ℝ) ^ q +
+          ∑ n ∈ Finset.Icc L U, (n : ℝ) ^ q) := hAbel
+    _ ≤ (1 + Real.log U) ^ 3 *
+        ((2 + 1 / (-q - 1)) * (L : ℝ) ^ (q + 1)) := by
+          apply mul_le_mul_of_nonneg_left hEndpoint
+          positivity
+
+/-- Sharp upper-endpoint bound after partial summation when the power lies in
+`(-1, 0]`. -/
+theorem fourfoldDivisorRpowSum_le_upperEndpoint
+    {L U : ℕ} (hL : 0 < L) (hLU : L ≤ U) {q : ℝ}
+    (hqNeg : q ≤ 0) (hq : -1 < q) :
+    ∑ n ∈ Finset.Icc L U,
+        (fourfoldDivisorCount n : ℝ) * (n : ℝ) ^ q ≤
+      (1 + Real.log U) ^ 3 *
+        ((2 + 1 / (q + 1)) * (U : ℝ) ^ (q + 1)) := by
+  have hAbel := fourfoldDivisorSum_mul_le_prefixSlope
+    (f := fun n : ℕ => (n : ℝ) ^ q) hL hLU
+    (fun n => Real.rpow_nonneg (Nat.cast_nonneg n) q)
+    (by
+      intro m n hmL hmn hnU
+      apply Real.rpow_le_rpow_of_nonpos
+      · exact_mod_cast hL.trans_le hmL
+      · exact_mod_cast hmn
+      · exact hqNeg)
+  have hPower := sum_Icc_rpow_le_add_div_of_neg_one_lt hL hLU hqNeg hq
+  have hrPos : 0 < q + 1 := by linarith
+  have hdivLe :
+      ((U : ℝ) ^ (q + 1) - (L : ℝ) ^ (q + 1)) / (q + 1) ≤
+        (U : ℝ) ^ (q + 1) / (q + 1) := by
+    apply div_le_div_of_nonneg_right _ hrPos.le
+    linarith [Real.rpow_nonneg (Nat.cast_nonneg L) (q + 1)]
+  have hLone : (1 : ℝ) ≤ L := by exact_mod_cast hL
+  have hUone : (1 : ℝ) ≤ U := hLone.trans (by exact_mod_cast hLU)
+  have hfLLeL : (L : ℝ) ^ q ≤ (L : ℝ) ^ (q + 1) :=
+    Real.rpow_le_rpow_of_exponent_le hLone (by linarith)
+  have hLpowLeU : (L : ℝ) ^ (q + 1) ≤ (U : ℝ) ^ (q + 1) := by
+    exact Real.rpow_le_rpow (Nat.cast_nonneg L) (by exact_mod_cast hLU) hrPos.le
+  have hLmul :
+      (L : ℝ) * (L : ℝ) ^ q = (L : ℝ) ^ (q + 1) := by
+    calc
+      (L : ℝ) * (L : ℝ) ^ q =
+          (L : ℝ) ^ (1 : ℝ) * (L : ℝ) ^ q := by rw [Real.rpow_one]
+      _ = (L : ℝ) ^ ((1 : ℝ) + q) := by
+        rw [Real.rpow_add (by exact_mod_cast hL)]
+      _ = (L : ℝ) ^ (q + 1) := by ring_nf
+  have hEndpoint :
+      (L : ℝ) * (L : ℝ) ^ q +
+          ∑ n ∈ Finset.Icc L U, (n : ℝ) ^ q ≤
+        (2 + 1 / (q + 1)) * (U : ℝ) ^ (q + 1) := by
+    calc
+      (L : ℝ) * (L : ℝ) ^ q +
+          ∑ n ∈ Finset.Icc L U, (n : ℝ) ^ q ≤
+        (L : ℝ) ^ (q + 1) +
+          ((L : ℝ) ^ q +
+            ((U : ℝ) ^ (q + 1) - (L : ℝ) ^ (q + 1)) / (q + 1)) := by
+          rw [hLmul]
+          gcongr
+      _ ≤ (U : ℝ) ^ (q + 1) +
+          ((U : ℝ) ^ (q + 1) +
+            (U : ℝ) ^ (q + 1) / (q + 1)) := by
+          exact add_le_add hLpowLeU
+            (add_le_add (hfLLeL.trans hLpowLeU) hdivLe)
+      _ = (2 + 1 / (q + 1)) * (U : ℝ) ^ (q + 1) := by
+          field_simp
+          ring
+  calc
+    (∑ n ∈ Finset.Icc L U,
+        (fourfoldDivisorCount n : ℝ) * (n : ℝ) ^ q) =
+      ∑ n ∈ Finset.Icc L U,
+        (n : ℝ) ^ q * (fourfoldDivisorCount n : ℝ) := by
+          apply Finset.sum_congr rfl
+          intro n hn
+          ring
+    _ ≤ (1 + Real.log U) ^ 3 *
+        ((L : ℝ) * (L : ℝ) ^ q +
+          ∑ n ∈ Finset.Icc L U, (n : ℝ) ^ q) := hAbel
+    _ ≤ (1 + Real.log U) ^ 3 *
+        ((2 + 1 / (q + 1)) * (U : ℝ) ^ (q + 1)) := by
+          apply mul_le_mul_of_nonneg_left hEndpoint
+          positivity
+
+/-- The unweighted Carlson divisor sum has the sharp lower-endpoint scale
+`L^(1 - 2σ)`. -/
+theorem unweightedFourfoldDivisorSum_le_sharp
+    {L U : ℕ} (hL : 0 < L) (hLU : L ≤ U) {sigma : ℝ}
+    (hsigma : 1 / 2 < sigma) :
+    ∑ n ∈ Finset.Icc L U,
+        (fourfoldDivisorCount n : ℝ) * ((n : ℝ) ^ (-sigma)) ^ 2 ≤
+      (1 + Real.log U) ^ 3 *
+        ((2 + 1 / (2 * sigma - 1)) * (L : ℝ) ^ (1 - 2 * sigma)) := by
+  have hbase := fourfoldDivisorRpowSum_le_lowerEndpoint
+    hL hLU (q := -2 * sigma) (by linarith)
+  convert hbase using 1
+  · apply Finset.sum_congr rfl
+    intro n hn
+    have hnpos : 0 < (n : ℝ) := by
+      exact_mod_cast hL.trans_le (Finset.mem_Icc.mp hn).1
+    rw [← Real.rpow_natCast, ← Real.rpow_mul hnpos.le]
+    congr 2 <;> ring
+  · congr 3 <;> ring
+
+/-- The Hilbert-weighted Carlson divisor sum has the sharp upper-endpoint
+scale `U^(2 - 2σ)`. -/
+theorem weightedFourfoldDivisorSum_le_sharp
+    {L U : ℕ} (hL : 0 < L) (hLU : L ≤ U) {sigma : ℝ}
+    (hsigma : 1 / 2 < sigma) (hsigma1 : sigma < 1) :
+    ∑ n ∈ Finset.Icc L U,
+        ((n : ℝ) + 1) * (fourfoldDivisorCount n : ℝ) *
+          ((n : ℝ) ^ (-sigma)) ^ 2 ≤
+      2 * ((1 + Real.log U) ^ 3 *
+        ((2 + 1 / (2 - 2 * sigma)) * (U : ℝ) ^ (2 - 2 * sigma))) := by
+  let q : ℝ := 1 - 2 * sigma
+  have hqNeg : q ≤ 0 := by dsimp [q]; linarith
+  have hq : -1 < q := by dsimp [q]; linarith
+  have hbase := fourfoldDivisorRpowSum_le_upperEndpoint
+    hL hLU (q := q) hqNeg hq
+  have hterm {n : ℕ} (hn : n ∈ Finset.Icc L U) :
+      ((n : ℝ) + 1) * (fourfoldDivisorCount n : ℝ) *
+          ((n : ℝ) ^ (-sigma)) ^ 2 ≤
+        2 * ((fourfoldDivisorCount n : ℝ) * (n : ℝ) ^ q) := by
+    have hnNat : 1 ≤ n := hL.trans_le (Finset.mem_Icc.mp hn).1
+    have hnpos : 0 < (n : ℝ) := by exact_mod_cast hnNat
+    have hnlinear : (n : ℝ) + 1 ≤ 2 * (n : ℝ) := by
+      exact_mod_cast (show n + 1 ≤ 2 * n by omega)
+    have hsquare :
+        ((n : ℝ) ^ (-sigma)) ^ 2 = (n : ℝ) ^ (-2 * sigma) := by
+      rw [← Real.rpow_natCast, ← Real.rpow_mul hnpos.le]
+      congr 1
+      ring
+    calc
+      ((n : ℝ) + 1) * (fourfoldDivisorCount n : ℝ) *
+          ((n : ℝ) ^ (-sigma)) ^ 2 ≤
+        (2 * (n : ℝ)) * (fourfoldDivisorCount n : ℝ) *
+          ((n : ℝ) ^ (-sigma)) ^ 2 := by
+            gcongr
+      _ = 2 * ((fourfoldDivisorCount n : ℝ) * (n : ℝ) ^ q) := by
+        rw [hsquare]
+        calc
+          (2 * (n : ℝ)) * (fourfoldDivisorCount n : ℝ) *
+              (n : ℝ) ^ (-2 * sigma) =
+            2 * (fourfoldDivisorCount n : ℝ) *
+              ((n : ℝ) ^ (1 : ℝ) * (n : ℝ) ^ (-2 * sigma)) := by
+                rw [Real.rpow_one]
+                ring
+          _ = 2 * (fourfoldDivisorCount n : ℝ) *
+              (n : ℝ) ^ ((1 : ℝ) + (-2 * sigma)) := by
+                rw [Real.rpow_add hnpos]
+          _ = 2 * ((fourfoldDivisorCount n : ℝ) * (n : ℝ) ^ q) := by
+                dsimp [q]
+                ring_nf
+  calc
+    (∑ n ∈ Finset.Icc L U,
+        ((n : ℝ) + 1) * (fourfoldDivisorCount n : ℝ) *
+          ((n : ℝ) ^ (-sigma)) ^ 2) ≤
+      ∑ n ∈ Finset.Icc L U,
+        2 * ((fourfoldDivisorCount n : ℝ) * (n : ℝ) ^ q) := by
+          apply Finset.sum_le_sum
+          intro n hn
+          exact hterm hn
+    _ = 2 * ∑ n ∈ Finset.Icc L U,
+        (fourfoldDivisorCount n : ℝ) * (n : ℝ) ^ q := by
+          rw [Finset.mul_sum]
+    _ ≤ 2 * ((1 + Real.log U) ^ 3 *
+        ((2 + 1 / (q + 1)) * (U : ℝ) ^ (q + 1))) := by
+          gcongr
+    _ = 2 * ((1 + Real.log U) ^ 3 *
+        ((2 + 1 / (2 - 2 * sigma)) * (U : ℝ) ^ (2 - 2 * sigma))) := by
+          dsimp [q]
+          ring_nf
 
 /-- On an interval starting at `L`, the negative power in the Carlson weight
 is bounded by its value at `L`.  Combining this with the summatory `d₄` bound

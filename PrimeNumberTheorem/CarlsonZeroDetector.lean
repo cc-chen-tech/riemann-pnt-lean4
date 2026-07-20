@@ -137,6 +137,21 @@ theorem regularizedCarlsonZeroDetector_eq_sub_one_sq_mul
     carlsonZeroDetector_eq_zeta_mul_mollifier_factorization]
   ring
 
+/-- Exact logarithmic splitting of the pole-free detector into its elementary
+regularization factor and Carlson's original detector. -/
+theorem log_norm_regularizedCarlsonZeroDetector_eq_two_log_norm_sub_one_add
+    (X : ℕ) {s : ℂ} (hs0 : s ≠ 0) (hs1 : s ≠ 1)
+    (hdet : carlsonZeroDetector X s ≠ 0) :
+    Real.log ‖regularizedCarlsonZeroDetector X s‖ =
+      2 * Real.log ‖s - 1‖ + Real.log ‖carlsonZeroDetector X s‖ := by
+  rw [regularizedCarlsonZeroDetector_eq_sub_one_sq_mul X hs0 hs1,
+    norm_mul, norm_pow,
+    Real.log_mul
+      (pow_ne_zero 2 (norm_ne_zero_iff.mpr (sub_ne_zero.mpr hs1)))
+      (norm_ne_zero_iff.mpr hdet),
+    Real.log_pow]
+  norm_num
+
 /-- Away from `0`, `1`, and detector zeros, the logarithmic derivative of
 the regularized detector splits into the two pole-cancelling linear factors
 and the original Carlson detector. -/
@@ -251,6 +266,37 @@ theorem one_le_norm_regularizedCarlsonZeroDetector_of_four_le_re
   rw [regularizedCarlsonZeroDetector_eq_sub_one_sq_mul X hs0 hs1,
     norm_mul, norm_pow]
   nlinarith [norm_nonneg (s - 1), norm_nonneg (carlsonZeroDetector X s)]
+
+/-- The principal logarithm of Carlson's original detector decays
+quadratically on the far-right half-plane.  This is the quantitative input
+for replacing the pointwise fixed-edge lower bound by a mean boundary bound. -/
+theorem norm_log_carlsonZeroDetector_le_inv_sq_of_four_le_re
+    {X : ℕ} (hX : 1 ≤ X) {s : ℂ} (hs : 4 ≤ s.re) :
+    ‖Complex.log (carlsonZeroDetector X s)‖ ≤
+      25 / (6 * (s.re - 1) ^ 2) := by
+  let f := mollifiedZetaError X s
+  have hd : 0 < s.re - 1 := by linarith
+  have hf : ‖f‖ ≤ 5 / (3 * (s.re - 1)) := by
+    simpa [f] using
+      norm_mollifiedZetaError_le_five_thirds_div_sub_one_of_four_le_re hX hs
+  have hfUniform : ‖f‖ ≤ (5 / 9 : ℝ) := by
+    simpa [f] using norm_mollifiedZetaError_le_five_ninth_of_four_le_re hX hs
+  have hsqHalf : ‖-(f ^ 2)‖ ≤ (1 / 2 : ℝ) := by
+    rw [norm_neg, norm_pow]
+    nlinarith [norm_nonneg f]
+  have hlog := Complex.norm_log_one_add_half_le_self hsqHalf
+  have hsq : ‖f‖ ^ 2 ≤ (5 / (3 * (s.re - 1))) ^ 2 :=
+    sq_le_sq₀ (norm_nonneg f) (by positivity) |>.2 hf
+  calc
+    ‖Complex.log (carlsonZeroDetector X s)‖ =
+        ‖Complex.log (1 + -(f ^ 2))‖ := by
+      simp only [carlsonZeroDetector, sub_eq_add_neg]
+      rfl
+    _ ≤ (3 / 2 : ℝ) * ‖-(f ^ 2)‖ := hlog
+    _ = (3 / 2 : ℝ) * ‖f‖ ^ 2 := by rw [norm_neg, norm_pow]
+    _ ≤ (3 / 2 : ℝ) * (5 / (3 * (s.re - 1))) ^ 2 :=
+      mul_le_mul_of_nonneg_left hsq (by norm_num)
+    _ = 25 / (6 * (s.re - 1) ^ 2) := by field_simp; ring
 
 /-- The regularized detector is not identically zero on any right half-plane.
 The witness is chosen sufficiently far along the positive real axis. -/
@@ -755,6 +801,33 @@ theorem continuous_carlsonZeroDetector_verticalLine
   exact continuous_const.sub
     ((continuous_mollifiedZetaError_verticalLine X sigma hsigma1).pow 2)
 
+/-- On a zero-free vertical segment away from `Re(s)=1`, the logarithmic
+norm of Carlson's original detector is interval integrable. -/
+theorem intervalIntegrable_log_norm_carlsonZeroDetector
+    {X : ℕ} {sigma a b : ℝ} (hsigma1 : sigma ≠ 1)
+    (hboundary : ∀ t ∈ Set.uIcc a b,
+      carlsonZeroDetector X
+        ((sigma : ℂ) + Complex.I * t) ≠ 0) :
+    IntervalIntegrable
+      (fun t : ℝ => Real.log ‖carlsonZeroDetector X
+        ((sigma : ℂ) + Complex.I * t)‖)
+      MeasureTheory.volume a b := by
+  have hdetector := continuous_carlsonZeroDetector_verticalLine X sigma hsigma1
+  apply ContinuousOn.intervalIntegrable
+  intro t ht
+  have hlog : ContinuousAt Real.log
+      ‖carlsonZeroDetector X
+        ((sigma : ℂ) + Complex.I * (t : ℂ))‖ :=
+    Real.continuousAt_log (norm_ne_zero_iff.mpr (hboundary t ht))
+  have hlogNorm : ContinuousAt (fun z : ℂ => Real.log ‖z‖)
+      (carlsonZeroDetector X
+        ((sigma : ℂ) + Complex.I * (t : ℂ))) :=
+    hlog.comp' continuous_norm.continuousAt
+  exact (ContinuousAt.comp'
+    (f := fun u : ℝ => carlsonZeroDetector X
+      ((sigma : ℂ) + Complex.I * u))
+    hlogNorm hdetector.continuousAt).continuousWithinAt
+
 /-- On a zero-free vertical boundary, Littlewood's logarithmic left-edge
 integral is bounded by the mollified-zeta second moment. -/
 theorem integral_log_norm_carlsonZeroDetector_le_meanSquare
@@ -933,6 +1006,70 @@ noncomputable def regularizedCarlsonLogNormEndpointExplicit
         ((X : ℝ) ^ (2 - 2 * sigma) - 1) /
           (2 - 2 * sigma)))))
 
+/-- Sharp Carlson log-norm endpoint, using separate lower- and upper-endpoint
+bounds for the mollified Dirichlet-polynomial tail. -/
+noncomputable def carlsonLogNormSharpEndpointExplicit
+    (A kappa : ℝ) (X : ℕ) (sigma a b x : ℝ) : ℝ :=
+  2 * ((b - a) * ((1 + Real.log (Nat.floor x * X)) ^ 3 *
+      ((2 + 1 / (2 * sigma - 1)) *
+        ((min X (Nat.floor x) + 1 : ℕ) : ℝ) ^ (1 - 2 * sigma))) +
+    8 * Real.pi * ((1 + Real.log (Nat.floor x * X)) ^ 3 *
+      ((2 + 1 / (2 - 2 * sigma)) *
+        (((Nat.floor x) * X : ℕ) : ℝ) ^ (2 - 2 * sigma)))) +
+  2 * (((((A + kappa) * x ^ (-sigma)) ^ 2)) *
+    (((b - a) + 4 * Real.pi) *
+      (2 * (1 +
+        ((X : ℝ) ^ (2 - 2 * sigma) - 1) /
+          (2 - 2 * sigma)))))
+
+/-- Sharp Carlson log-norm endpoint, using separate lower- and upper-endpoint
+bounds for the mollified Dirichlet-polynomial tail. -/
+noncomputable def regularizedCarlsonLogNormSharpEndpoint
+    (A kappa : ℝ) (X : ℕ) (sigma a b x : ℝ) : ℝ :=
+  2 * (∫ t in a..b,
+    Real.log ‖(sigma : ℂ) + Complex.I * t - 1‖) +
+  2 * ((b - a) * ((1 + Real.log (Nat.floor x * X)) ^ 3 *
+      ((2 + 1 / (2 * sigma - 1)) *
+        ((min X (Nat.floor x) + 1 : ℕ) : ℝ) ^ (1 - 2 * sigma))) +
+    8 * Real.pi * ((1 + Real.log (Nat.floor x * X)) ^ 3 *
+      ((2 + 1 / (2 - 2 * sigma)) *
+        (((Nat.floor x) * X : ℕ) : ℝ) ^ (2 - 2 * sigma)))) +
+  2 * (((((A + kappa) * x ^ (-sigma)) ^ 2)) *
+    (((b - a) + 4 * Real.pi) *
+      (2 * (1 +
+        ((X : ℝ) ^ (2 - 2 * sigma) - 1) /
+          (2 - 2 * sigma)))))
+
+/-- Integral-free form of the sharp Carlson log-norm endpoint. -/
+noncomputable def regularizedCarlsonLogNormSharpEndpointExplicit
+    (A kappa : ℝ) (X : ℕ) (sigma a b x : ℝ) : ℝ :=
+  2 * ((b - a) * Real.log (1 + b)) +
+  2 * ((b - a) * ((1 + Real.log (Nat.floor x * X)) ^ 3 *
+      ((2 + 1 / (2 * sigma - 1)) *
+        ((min X (Nat.floor x) + 1 : ℕ) : ℝ) ^ (1 - 2 * sigma))) +
+    8 * Real.pi * ((1 + Real.log (Nat.floor x * X)) ^ 3 *
+      ((2 + 1 / (2 - 2 * sigma)) *
+        (((Nat.floor x) * X : ℕ) : ℝ) ^ (2 - 2 * sigma)))) +
+  2 * (((((A + kappa) * x ^ (-sigma)) ^ 2)) *
+    (((b - a) + 4 * Real.pi) *
+      (2 * (1 +
+        ((X : ℝ) ^ (2 - 2 * sigma) - 1) /
+          (2 - 2 * sigma)))))
+
+/-- Eliminate the geometric logarithmic integral from the sharp endpoint. -/
+theorem regularizedCarlsonLogNormSharpEndpoint_le_explicit
+    {A kappa sigma a b x : ℝ} {X : ℕ}
+    (hsigma0 : 0 < sigma) (hsigma1 : sigma < 1)
+    (ha : 1 ≤ a) (hab : a ≤ b) :
+    regularizedCarlsonLogNormSharpEndpoint A kappa X sigma a b x ≤
+      regularizedCarlsonLogNormSharpEndpointExplicit
+        A kappa X sigma a b x := by
+  have hgeom := integral_log_norm_vertical_sub_one_le_length_mul_log
+    hsigma0 hsigma1 ha hab
+  unfold regularizedCarlsonLogNormSharpEndpoint
+    regularizedCarlsonLogNormSharpEndpointExplicit
+  linarith
+
 /-- The geometric logarithmic integral can be eliminated from the Carlson
 endpoint on positive-height intervals. -/
 theorem regularizedCarlsonLogNormEndpoint_le_explicit
@@ -946,6 +1083,62 @@ theorem regularizedCarlsonLogNormEndpoint_le_explicit
   unfold regularizedCarlsonLogNormEndpoint
     regularizedCarlsonLogNormEndpointExplicit
   linarith
+
+/-- The regularized detector inherits the sharp mollified-zeta endpoint on
+every height-comparable interval. -/
+theorem exists_integral_log_norm_regularizedCarlsonZeroDetector_le_sharpEndpoint_of_comparable :
+    ∃ A : ℝ, 0 ≤ A ∧ ∀ (kappa : ℝ) (X : ℕ)
+        (sigma a b x : ℝ),
+      0 < kappa →
+      1 ≤ X → a ≤ b → 1 / 2 < sigma → sigma < 1 → 2 ≤ x →
+      (∀ t ∈ Set.Icc a b,
+        |t| ≤ x / 2 ∧ x ≤ kappa * |t|) →
+      (∀ t ∈ Set.Icc a b,
+        regularizedCarlsonZeroDetector X
+          ((sigma : ℂ) + Complex.I * t) ≠ 0) →
+        ∫ t in a..b,
+            Real.log ‖regularizedCarlsonZeroDetector X
+              ((sigma : ℂ) + Complex.I * t)‖ ≤
+          regularizedCarlsonLogNormSharpEndpoint
+            A kappa X sigma a b x := by
+  obtain ⟨A, hA, hmean⟩ :=
+    exists_mollifiedZetaError_meanSquare_le_sharpEndpoint_of_comparable
+  refine ⟨A, hA, ?_⟩
+  intro kappa X sigma a b x hkappa hX hab hsigma hsigma1 hx hheight hboundary
+  have hdetBoundary : ∀ t ∈ Set.Icc a b,
+      carlsonZeroDetector X
+        ((sigma : ℂ) + Complex.I * t) ≠ 0 := by
+    intro t ht hdetZero
+    let s : ℂ := (sigma : ℂ) + Complex.I * t
+    have hs0 : s ≠ 0 := by
+      intro hzero
+      have hre := congrArg Complex.re hzero
+      dsimp [s] at hre
+      norm_num at hre
+      linarith
+    have hs1 : s ≠ 1 := by
+      intro hone
+      have hre := congrArg Complex.re hone
+      dsimp [s] at hre
+      norm_num at hre
+      linarith
+    change carlsonZeroDetector X s = 0 at hdetZero
+    apply hboundary t ht
+    rw [show regularizedCarlsonZeroDetector X s =
+        (s - 1) ^ 2 * carlsonZeroDetector X s from
+      regularizedCarlsonZeroDetector_eq_sub_one_sq_mul X hs0 hs1]
+    simp [hdetZero]
+  have hlog :=
+    integral_log_norm_regularizedCarlsonZeroDetector_le_geometric_add_meanSquare
+      hab (by linarith) (ne_of_lt hsigma1) hdetBoundary
+  have hmeanBound :=
+    hmean kappa X sigma a b x hkappa hX hab hsigma hsigma1 hx hheight
+  apply hlog.trans
+  unfold regularizedCarlsonLogNormSharpEndpoint
+  simpa only [add_assoc] using
+    add_le_add_right hmeanBound
+      (2 * (∫ t in a..b,
+        Real.log ‖(sigma : ℂ) + Complex.I * t - 1‖))
 
 /-- The comparable-height Carlson mean-square estimate controls the logarithmic
 norm of the pole-free regularized detector on genuine intervals. -/
@@ -1069,6 +1262,93 @@ theorem exists_integral_log_norm_regularizedCarlsonZeroDetector_le_doublingInter
     (by norm_num) hX huv hsigma hsigma1 (by linarith)
     hheight hboundary
   simpa [regularizedCarlsonLogNormEndpoint] using h
+
+/-- Sharp integral-free endpoint on every doubling interval. -/
+theorem exists_integral_log_norm_regularizedCarlsonZeroDetector_le_sharpDoublingIntervalExplicit :
+    ∃ A : ℝ, 0 ≤ A ∧ ∀ (X : ℕ) (sigma u v : ℝ),
+      1 ≤ X → 1 ≤ u → u ≤ v → v ≤ 2 * u →
+      1 / 2 < sigma → sigma < 1 →
+      (∀ t ∈ Set.Icc u v,
+        regularizedCarlsonZeroDetector X
+          ((sigma : ℂ) + Complex.I * t) ≠ 0) →
+        ∫ t in u..v,
+            Real.log ‖regularizedCarlsonZeroDetector X
+              ((sigma : ℂ) + Complex.I * t)‖ ≤
+          regularizedCarlsonLogNormSharpEndpointExplicit
+            A 4 X sigma u v (4 * u) := by
+  obtain ⟨A, hA, hbound⟩ :=
+    exists_integral_log_norm_regularizedCarlsonZeroDetector_le_sharpEndpoint_of_comparable
+  refine ⟨A, hA, ?_⟩
+  intro X sigma u v hX hu huv hvu hsigma hsigma1 hboundary
+  have hheight : ∀ t ∈ Set.Icc u v,
+      |t| ≤ (4 * u) / 2 ∧ 4 * u ≤ 4 * |t| := by
+    intro t ht
+    have ht0 : 0 ≤ t := by linarith [ht.1]
+    rw [abs_of_nonneg ht0]
+    constructor <;> nlinarith [ht.1, ht.2, hvu]
+  have h := hbound 4 X sigma u v (4 * u)
+    (by norm_num) hX huv hsigma hsigma1 (by linarith)
+    hheight hboundary
+  exact h.trans
+    (regularizedCarlsonLogNormSharpEndpoint_le_explicit
+      (by linarith) hsigma1 hu huv)
+
+/-- On a doubling interval, the logarithmic norm of Carlson's original
+detector is bounded by the sharp arithmetic endpoint.  The boundary
+hypothesis is stated for the regularized detector so this theorem plugs
+directly into the Littlewood contour certificate. -/
+theorem
+    exists_integral_log_norm_carlsonZeroDetector_le_sharpDoublingIntervalExplicit_of_regularizedBoundary :
+    ∃ A : ℝ, 0 ≤ A ∧ ∀ (X : ℕ) (sigma u v : ℝ),
+      1 ≤ X → 1 ≤ u → u ≤ v → v ≤ 2 * u →
+      1 / 2 < sigma → sigma < 1 →
+      (∀ t ∈ Set.Icc u v,
+        regularizedCarlsonZeroDetector X
+          ((sigma : ℂ) + Complex.I * t) ≠ 0) →
+        ∫ t in u..v,
+            Real.log ‖carlsonZeroDetector X
+              ((sigma : ℂ) + Complex.I * t)‖ ≤
+          carlsonLogNormSharpEndpointExplicit
+            A 4 X sigma u v (4 * u) := by
+  obtain ⟨A, hA, hmean⟩ :=
+    exists_mollifiedZetaError_meanSquare_le_sharpEndpoint_of_comparable
+  refine ⟨A, hA, ?_⟩
+  intro X sigma u v hX hu huv hvu hsigma hsigma1 hboundary
+  have hdetBoundary : ∀ t ∈ Set.Icc u v,
+      carlsonZeroDetector X
+        ((sigma : ℂ) + Complex.I * t) ≠ 0 := by
+    intro t ht hdet
+    let s : ℂ := (sigma : ℂ) + Complex.I * t
+    have hs0 : s ≠ 0 := by
+      intro hzero
+      have hre := congrArg Complex.re hzero
+      dsimp [s] at hre
+      norm_num at hre
+      linarith
+    have hs1 : s ≠ 1 := by
+      intro hone
+      have hre := congrArg Complex.re hone
+      dsimp [s] at hre
+      norm_num at hre
+      linarith
+    change carlsonZeroDetector X s = 0 at hdet
+    apply hboundary t ht
+    rw [show regularizedCarlsonZeroDetector X s =
+        (s - 1) ^ 2 * carlsonZeroDetector X s from
+      regularizedCarlsonZeroDetector_eq_sub_one_sq_mul X hs0 hs1]
+    simp [hdet]
+  have hheight : ∀ t ∈ Set.Icc u v,
+      |t| ≤ (4 * u) / 2 ∧ 4 * u ≤ 4 * |t| := by
+    intro t ht
+    have ht0 : 0 ≤ t := by linarith [hu, ht.1]
+    rw [abs_of_nonneg ht0]
+    constructor <;> nlinarith [ht.1, ht.2, hvu]
+  have hlog := integral_log_norm_carlsonZeroDetector_le_meanSquare
+    huv (ne_of_lt hsigma1) hdetBoundary
+  have hmeanBound := hmean 4 X sigma u v (4 * u)
+    (by norm_num) hX huv hsigma hsigma1 (by linarith) hheight
+  exact hlog.trans (by
+    simpa [carlsonLogNormSharpEndpointExplicit] using hmeanBound)
 
 /-- The exact dyadic interval `[u, 2u]` specialization. -/
 theorem exists_integral_log_norm_regularizedCarlsonZeroDetector_le_dyadic :

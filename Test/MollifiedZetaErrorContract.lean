@@ -21,6 +21,8 @@ example {X : ℕ} (hX : 1 ≤ X) {s : ℂ} (hs : 4 ≤ s.re) :
     ‖mollifiedZetaError X s‖ ≤ (5 / 9 : ℝ) :=
   norm_mollifiedZetaError_le_five_ninth_of_four_le_re hX hs
 
+#check norm_mollifiedZetaError_le_five_thirds_div_sub_one_of_four_le_re
+
 example {X : ℕ} (hX : 1 ≤ X) {s : ℂ} (hs : 4 ≤ s.re) :
     ‖mollifiedZetaError X s‖ < 1 :=
   norm_mollifiedZetaError_lt_one_of_four_le_re hX hs
@@ -112,6 +114,37 @@ example {X N : ℕ} {sigma a b : ℝ} (hab : a ≤ b) :
           ((n : ℝ) + 1) * (fourfoldDivisorCount n : ℝ) *
             ((n : ℝ) ^ (-sigma)) ^ 2 :=
   mollifiedTruncatedTail_meanSquare_le_fourfoldDivisorCount hab
+
+example {X N : ℕ} {sigma a b : ℝ} (hab : a ≤ b) :
+    ∫ t in a..b,
+        ‖∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+          mollifiedTruncatedCoefficient X N n /
+            (n : ℂ) ^ ((sigma : ℂ) + Complex.I * t)‖ ^ 2 ≤
+      (b - a) *
+          ∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+            (fourfoldDivisorCount n : ℝ) *
+              ((n : ℝ) ^ (-sigma)) ^ 2 +
+        4 * Real.pi *
+          ∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+            ((n : ℝ) + 1) * (fourfoldDivisorCount n : ℝ) *
+              ((n : ℝ) ^ (-sigma)) ^ 2 :=
+  mollifiedTruncatedTail_meanSquare_le_separatedFourfoldDivisorSums hab
+
+example {X N : ℕ} {sigma a b : ℝ} (hab : a ≤ b)
+    (hsupport : min X N + 1 ≤ N * X)
+    (hsigma : 1 / 2 < sigma) (hsigma1 : sigma < 1) :
+    ∫ t in a..b,
+        ‖∑ n ∈ Finset.Icc (min X N + 1) (N * X),
+          mollifiedTruncatedCoefficient X N n /
+            (n : ℂ) ^ ((sigma : ℂ) + Complex.I * t)‖ ^ 2 ≤
+      (b - a) * ((1 + Real.log (N * X)) ^ 3 *
+        ((2 + 1 / (2 * sigma - 1)) *
+          ((min X N + 1 : ℕ) : ℝ) ^ (1 - 2 * sigma))) +
+        8 * Real.pi * ((1 + Real.log (N * X)) ^ 3 *
+          ((2 + 1 / (2 - 2 * sigma)) *
+            ((N * X : ℕ) : ℝ) ^ (2 - 2 * sigma))) :=
+  mollifiedTruncatedTail_meanSquare_le_sharpDivisorEndpoint
+    hab hsupport hsigma hsigma1
 
 example {X N : ℕ} {sigma a b : ℝ} (hab : a ≤ b)
     (hsigma : 1 / 2 < sigma) :
@@ -286,6 +319,10 @@ example :
 #print axioms mollifiedTruncatedTail_meanSquare_le_carneiroLittmann
 #print axioms mollifiedTruncatedTail_meanSquare_le_weightedDivisorSquareSum
 #print axioms mollifiedTruncatedTail_meanSquare_le_fourfoldDivisorCount
+#print axioms mollifiedTruncatedTail_meanSquare_le_separatedFourfoldDivisorSums
+#print axioms mollifiedTruncatedTail_meanSquare_le_sharpDivisorEndpoint
+#print axioms mollifiedZetaError_meanSquare_le_tail_add_remainder
+#print axioms exists_mollifiedZetaError_meanSquare_le_sharpEndpoint_of_comparable
 #print axioms mollifiedTruncatedTail_meanSquare_le_prefix_bound
 #print axioms mollifiedZetaError_eq_tail_add_canonicalRemainder
 #print axioms norm_mollifiedZetaError_sq_le_tail_add_canonicalRemainder
@@ -296,6 +333,7 @@ example :
 #print axioms exists_mollifiedZetaError_meanSquare_le_endpoint_of_comparable
 #print axioms norm_mollifiedTailCoefficient_le
 #print axioms mollifiedTailCoefficient_weightedSquareSum_le
+#print axioms mollifiedTailCoefficient_squareSum_le_divisorSquareSum
 #print axioms mollifiedTailCoefficient_squareSum_le_weightedDivisorSquareSum
 
 end CarlsonZeroDensity

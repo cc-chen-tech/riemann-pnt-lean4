@@ -223,6 +223,15 @@ example {X : ℕ} (hX : 1 ≤ X) {y0 y1 : ℝ} (hy01 : y0 ≤ y1) :
       -(y1 - y0) * Real.log (56 / 81 : ℝ) :=
   neg_integral_log_norm_regularizedCarlson_fixedRight_le hX hy01
 
+#check integral_log_norm_subOne_left_le_fixedRight
+#check neg_integral_log_norm_regularizedCarlson_fixedRight_le_with_subOne
+#check integral_inv_sq_sub_one_eq
+#check abs_integral_im_log_carlsonZeroDetector_horizontal_le
+#check neg_integral_log_norm_carlsonZeroDetector_fixedRight_le_constant
+#check neg_integral_log_norm_regularizedCarlson_fixedRight_le_with_subOne_constant
+#check regularizedCarlsonLittlewoodRemainingEdges_fixedRight_le_of_horizontalBounds_with_subOne_constant
+#check regularizedCarlsonLittlewoodRemainingEdges_fixedRight_le_of_horizontalBounds_with_subOne
+
 noncomputable example (X : ℕ) (y0 y1 : ℝ) : ℝ :=
   carlsonDetectorFixedRightArgumentVariation X y0 y1
 
@@ -383,6 +392,9 @@ example {X : ℕ} (hX : 1 ≤ X) {theta sigma T : ℝ}
 #print axioms abs_subOneFixedRightArgumentVariation_le_pi
 #print axioms abs_regularizedCarlsonFixedRightArgumentVariation_le_three_pi
 #print axioms regularizedCarlsonFixedRightBoundaryContribution_le
+#print axioms integral_log_norm_subOne_left_le_fixedRight
+#print axioms neg_integral_log_norm_regularizedCarlson_fixedRight_le_with_subOne
+#print axioms regularizedCarlsonLittlewoodRemainingEdges_fixedRight_le_of_horizontalBounds_with_subOne
 #print axioms regularizedCarlsonLittlewoodRemainingEdges_fixedRight_eq
 #print axioms abs_regularizedCarlsonHorizontalArgumentTerm_le_sq_mul
 #print axioms regularizedCarlsonLittlewoodRemainingEdges_fixedRight_le_of_horizontalBounds
