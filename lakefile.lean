@@ -17,6 +17,7 @@ lean_lib RiemannPNT where
     `RiemannExplorer.LiZeroSumConvergence,
     `RiemannExplorer.LiPositivity,
     `RiemannExplorer.XiPartialFraction,
+    `RiemannExplorer.LiStrictPositivity,
     `GammaResidue,
     `HardyTheorem,
     `EulerAndLfunctions,

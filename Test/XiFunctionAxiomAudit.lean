@@ -5,6 +5,7 @@ import RiemannExplorer.LiReality
 import RiemannExplorer.LiZeroSumConvergence
 import RiemannExplorer.LiPositivity
 import RiemannExplorer.XiPartialFraction
+import RiemannExplorer.LiStrictPositivity
 
 #print axioms RiemannExplorer.xiFunction_one_sub
 #print axioms RiemannExplorer.xiFunction_zero
@@ -50,3 +51,8 @@ import RiemannExplorer.XiPartialFraction
 #print axioms RiemannExplorer.xiPairedMittagLefflerTerm_eq
 #print axioms RiemannExplorer.norm_xiPairedMittagLefflerTerm_le
 #print axioms RiemannExplorer.summable_xiPairedMittagLefflerTerm
+#print axioms RiemannExplorer.infinite_upperZeros
+#print axioms RiemannExplorer.finite_upperZeros_pow_eq_one
+#print axioms RiemannExplorer.liPairedTerm_eq_one_of_re_eq_zero_of_rh
+#print axioms RiemannExplorer.liCoefficient_re_pos_of_representation_of_rh
+#print axioms RiemannExplorer.rh_implies_li_criterion_of_representation
