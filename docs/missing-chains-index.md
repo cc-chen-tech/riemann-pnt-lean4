@@ -45,7 +45,10 @@ parallel:
   (`RiemannExplorer/LiPositivity.lean`), the convergence of the paired
   Mittag-Leffler series for the `ξ'/ξ` expansion and the conditional
   identification of its quotient constant
-  (`RiemannExplorer/XiPartialFraction.lean`), the strict positivity of the
+  (`RiemannExplorer/XiPartialFraction.lean`), the analyticity of the paired
+  Mittag-Leffler sum off the zeros of `ξ` and its compact-uniform
+  convergence (`RiemannExplorer/XiPartialFractionAnalytic.lean`), the strict
+  positivity of the
   Li coefficients under RH modulo the representation
   (`RiemannExplorer/LiStrictPositivity.lean`), and the remaining Li–RH
   equivalence, zero-sum-representation, and `ξ'/ξ`-expansion targets.
@@ -88,7 +91,7 @@ technology rather than more local Jensen/Borel wrappers.
 | Explicit formula | `ExplicitFormulaTruncatedTarget`, the moving-height formula, ordinary PNT, and the de la Vallee Poussin-form `psi` and `pi-Li` remainders are proved | Preserve the natural-sample jump convention and multiplicities in stronger reusable variants | Pursue genuinely stronger power-saving or explicit-constant inputs rather than more endpoint wrappers | 0 |
 | RH error equivalence | Ordinary PNT is proved; `rh_iff_optimal_error` is proved in both directions by `rh_iff_optimal_error_proved` | No remaining implication gap; RH itself and its equivalent error predicates remain unproved unconditionally | Reuse the completed equivalence when another endpoint supplies either RH or the error bound | 4 |
 | Hardy quantitative extensions | `hardy_theorem_target`, `hardy_zeros_unbounded_target`, and its absolute-height form are proved | Define distinct-ordinate and analytic-multiplicity counts separately and match each cited theorem | Develop Hardy-Littlewood, Selberg, and Conrey percentage estimates | 8 (4 in `HardyTheorem`, 3 in `HardyTheorem.Details`, 1 in `KnownResults`) |
-| Li criterion | The xi-function API (functional equation, entirety, strip zero correspondence, critical-line real-valuedness) is proved; `liCoefficient` and `LiCriterionHolds` are defined; the Li coefficients are proved real unconditionally (`liCoefficient_im`, so `LiCriterionHolds` reduces to real positivity via `liCriterionHolds_iff_re_pos`); the paired zero series is proved convergent for every `n` (`summable_li_zero_sum_terms`); under RH the paired terms are proved term-wise nonnegative and the paired sum is proved strictly positive (root-of-unity finiteness against Hardy's proved infinitude), so the forward direction is reduced to the representation alone (`rh_implies_li_criterion_of_representation`); the paired `ξ'/ξ` Mittag-Leffler series is proved convergent (`summable_xiPairedMittagLefflerTerm`) and the expansion's quotient constant is conditionally identified (`xi_partial_fraction_const_eq_logDeriv_zero`) | Align the zero-sum convention (distinct zeros vs analytic multiplicity) before promoting the representation target | Prove the remaining `ξ'/ξ` partial-fraction identity slices (removable-singularity entirety, growth order `≤ 1` of `ξ`) against the now-convergent series, then the paired zero-sum representation and both Li–RH directions | 6 (five in `RiemannExplorer.LiCriterion`, one in `RiemannExplorer.XiPartialFraction`) |
+| Li criterion | The xi-function API (functional equation, entirety, strip zero correspondence, critical-line real-valuedness) is proved; `liCoefficient` and `LiCriterionHolds` are defined; the Li coefficients are proved real unconditionally (`liCoefficient_im`, so `LiCriterionHolds` reduces to real positivity via `liCriterionHolds_iff_re_pos`); the paired zero series is proved convergent for every `n` (`summable_li_zero_sum_terms`); under RH the paired terms are proved term-wise nonnegative and the paired sum is proved strictly positive (root-of-unity finiteness against Hardy's proved infinitude), so the forward direction is reduced to the representation alone (`rh_implies_li_criterion_of_representation`); the paired `ξ'/ξ` Mittag-Leffler series is proved convergent (`summable_xiPairedMittagLefflerTerm`), its sum is proved differentiable wherever `ξ ≠ 0` and compact-uniformly convergent (`differentiableOn_tsum_xiPairedMittagLefflerTerm`, `tendstoUniformlyOn_tsum_xiPairedMittagLefflerTerm_of_isCompact`), and the expansion's quotient constant is conditionally identified (`xi_partial_fraction_const_eq_logDeriv_zero`) | Align the zero-sum convention (distinct zeros vs analytic multiplicity) before promoting the representation target | Prove the remaining `ξ'/ξ` partial-fraction identity slices (removable-singularity residue computation at each zero, growth order `≤ 1` of `ξ`) against the now-analytic series, then the paired zero-sum representation and both Li–RH directions | 6 (five in `RiemannExplorer.LiCriterion`, one in `RiemannExplorer.XiPartialFraction`) |
 
 ## Target-to-Chain Mapping
 
@@ -112,7 +115,7 @@ technology rather than more local Jensen/Borel wrappers.
 | `RiemannExplorer/LiCriterion.lean` | `rh_implies_li_criterion_target` | Li criterion | Reduced to the zero-sum representation alone (`rh_implies_li_criterion_of_representation`); strict positivity discharged (`liCoefficient_re_pos_of_representation_of_rh`) |
 | `RiemannExplorer/LiCriterion.lean` | `li_criterion_iff_rh_target` | Li criterion | Follows from the two one-direction targets |
 | `RiemannExplorer/LiCriterion.lean` | `li_zero_sum_representation_target` | Li criterion | Needs the `ξ'/ξ` partial-fraction identity (convergence half proved: `summable_xiPairedMittagLefflerTerm`); distinct-zero convention, no analytic multiplicity |
-| `RiemannExplorer/XiPartialFraction.lean` | `xi_partial_fraction_expansion_target` | Li criterion | Needs removable-singularity entirety and growth order `≤ 1` of `ξ`; convergence proved, quotient constant conditionally identified |
+| `RiemannExplorer/XiPartialFraction.lean` | `xi_partial_fraction_expansion_target` | Li criterion | Needs removable-singularity residue computation and growth order `≤ 1` of `ξ`; convergence, off-zero analyticity, compact-uniform convergence proved, quotient constant conditionally identified |
 
 ## Verified Starting Points
 
@@ -396,6 +399,12 @@ The following proved declarations are the main entry points for future work:
 - `RiemannExplorer.norm_liPairedTerm_le`
 - `RiemannExplorer.summable_liPairedTerm`
 - `RiemannExplorer.summable_li_zero_sum_terms`
+- `RiemannExplorer.summable_xiPairedMittagLefflerTerm`
+- `RiemannExplorer.differentiableOn_tsum_xiPairedMittagLefflerTerm`
+- `RiemannExplorer.tendstoUniformlyOn_tsum_xiPairedMittagLefflerTerm_of_isCompact`
+- `RiemannExplorer.xi_partial_fraction_const_eq_logDeriv_zero`
+- `RiemannExplorer.liCoefficient_re_pos_of_representation_of_rh`
+- `RiemannExplorer.rh_implies_li_criterion_of_representation`
 
 ## Non-Goals
 

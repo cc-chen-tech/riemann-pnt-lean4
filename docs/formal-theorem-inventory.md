@@ -3282,6 +3282,39 @@ axiom-audited in `Test/XiFunctionAxiomAudit.lean`:
 - `xi_partial_fraction_const_eq_logDeriv_zero`
 - `xi_partial_fraction_const_unique`
 
+### `RiemannExplorer/XiPartialFractionAnalytic.lean`
+
+This file proves the analytic (removable-singularity-slice) properties of the
+paired Mittag-Leffler series `xiPairedMittagLefflerSum`.  Each term is
+differentiable at any `s ≠ ρ, conjρ`.  Splitting the series at
+`B := max 2 (2(‖s₀‖+1))` into a finite low part (a sum over
+`nontrivialZerosFinset B`, via `tsum_eq_sum`) and a high part dominated by
+the summable majorant `(8(‖s₀‖+2)+2)·‖ρ‖⁻²`, Weierstrass term-by-term
+differentiation (`differentiableOn_tsum_of_summable_norm`) gives that the sum
+is differentiable at every `s₀` with `ξ s₀ ≠ 0` — the hypothesis forces
+`s₀ ≠ ρ` (`xiFunction_eq_zero_iff_isNontrivialZero`) and `s₀ ≠ conjρ`
+(`xiFunction_conj`) — and hence `DifferentiableOn` the open set
+`{s | ξ s ≠ 0}`.  The Weierstrass M-test
+(`tendstoUniformlyOn_tsum`, with `K ⊆ closedBall 0 (max r 0)` and majorant
+`(8(max r 0+1)+2)·‖ρ‖⁻²`) gives uniform convergence of the partial-sum net
+on every compact set.  All theorems below are in the `RiemannExplorer`
+namespace and are axiom-audited in `Test/XiFunctionAxiomAudit.lean`:
+
+- `differentiableAt_xiPairedMittagLefflerTerm`
+- `xiPairedMittagLefflerTerm_eq_low_add_high`
+- `xiPairedMittagLefflerTerm_low_eq_zero_of_not_mem`
+- `summable_xiPairedMittagLefflerTerm_low`
+- `summable_xiPairedMittagLefflerTerm_high`
+- `xiPairedMittagLefflerSum_eq_low_add_high`
+- `tsum_xiPairedMittagLefflerTerm_low_eq_sum`
+- `differentiableOn_tsum_xiPairedMittagLefflerTerm_high`
+- `differentiableAt_tsum_xiPairedMittagLefflerTerm`
+- `differentiableOn_tsum_xiPairedMittagLefflerTerm`
+- `tendstoUniformlyOn_tsum_xiPairedMittagLefflerTerm_of_isCompact`
+
+(The function definition `xiPairedMittagLefflerSum` itself is not
+axiom-audited, per the audit convention for definitions.)
+
 ### `RiemannExplorer/LiStrictPositivity.lean`
 
 This file proves the strict-positivity half of the forward Li direction:

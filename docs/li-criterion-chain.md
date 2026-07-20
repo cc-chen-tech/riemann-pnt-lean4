@@ -75,6 +75,11 @@ All declarations live in the `RiemannExplorer` namespace.  Axiom audits are in
 | `rh_implies_li_criterion_of_representation` | **Forward direction reduced to the representation alone**: `li_zero_sum_representation_target ⇒ rh_implies_li_criterion_target`. |
 | `xiPairedMittagLefflerTerm_zero_left`, `tsum_xiPairedMittagLefflerTerm_zero_left` | At `s = 0` every paired Mittag-Leffler term vanishes (`1/(0-ρ) + 1/ρ = 0`), so the whole paired series vanishes. |
 | `xi_partial_fraction_const_eq_logDeriv_zero`, `xi_partial_fraction_const_unique` | **Quotient-constant identification**: any constant `B` making the `ξ'/ξ` expansion valid must equal `ξ'(0)/ξ(0)` (evaluate at `s = 0`, where `ξ(0) = 1/2 ≠ 0`); in particular `B` is unique. |
+| `differentiableAt_xiPairedMittagLefflerTerm` | Each paired Mittag-Leffler term is differentiable at any `s ≠ ρ, conjρ` (`XiPartialFractionAnalytic.lean`). |
+| `xiPairedMittagLefflerTerm_eq_low_add_high`, `summable_xiPairedMittagLefflerTerm_low/high`, `xiPairedMittagLefflerSum_eq_low_add_high`, `tsum_xiPairedMittagLefflerTerm_low_eq_sum` | Low/high split of the paired series at `‖ρ‖ = B`: the low part is a finite sum over `nontrivialZerosFinset B` (via `tsum_eq_sum`), the high part is summable by subtraction. |
+| `differentiableOn_tsum_xiPairedMittagLefflerTerm_high` | The high-part series is `DifferentiableOn` the open ball `ball s₀ 1` for `B := max 2 (2(‖s₀‖+1))`: the M-test bound `(8(‖s₀‖+2)+2)·‖ρ‖⁻²` is summable and every term is differentiable inside the ball (`differentiableOn_tsum_of_summable_norm`, Weierstrass term-by-term differentiation). |
+| `differentiableAt_tsum_xiPairedMittagLefflerTerm`, `differentiableOn_tsum_xiPairedMittagLefflerTerm` | **The paired Mittag-Leffler sum is differentiable wherever `ξ s ≠ 0`** (`ξ s₀ ≠ 0` forces `s₀ ≠ ρ, conjρ` via `xiFunction_eq_zero_iff_isNontrivialZero` + `xiFunction_conj`); hence `DifferentiableOn` the open set `{s | ξ s ≠ 0}`. |
+| `tendstoUniformlyOn_tsum_xiPairedMittagLefflerTerm_of_isCompact` | **Weierstrass M-test**: the partial-sum net of the paired Mittag-Leffler series converges uniformly on every compact set `K` (`K ⊆ closedBall 0 (max r 0)`, high part controlled by the summable `(8(max r 0+1)+2)·‖ρ‖⁻²`, low part eventually constant; `tendstoUniformlyOn_tsum` + `TendstoUniformlyOn.add`). |
 
 ## Current Target Assessment
 
@@ -89,7 +94,7 @@ The chain now carries six `def ... : Prop` targets (five in
 | `rh_implies_li_criterion_target` | `RiemannHypothesis.Statement → LiCriterionHolds` | **Reduced to the zero-sum representation alone** (`rh_implies_li_criterion_of_representation`): term-wise nonnegativity (`liPairedTerm_re_nonneg_of_rh`) and strict positivity (`liCoefficient_re_pos_of_representation_of_rh`, via the root-of-unity finiteness contradiction against Hardy) are both proved. |
 | `li_criterion_iff_rh_target` | `LiCriterionHolds ↔ RiemannHypothesis.Statement` | The Li 1997 / Bombieri–Lagarias 1999 equivalence; follows once both directions are proved (`li_criterion_iff_rh_target_of_directions`). |
 | `li_zero_sum_representation_target` | `∀ n ≥ 1, liCoefficient n = ∑' ρ, paired conjugate zero terms` | The right-hand series is now proved convergent for every `n` (`summable_li_zero_sum_terms`), and the paired series on the `ξ'/ξ` side is proved convergent (`summable_xiPairedMittagLefflerTerm`).  The remaining gaps are exactly: (i) the removable-singularity argument that `ξ'/ξ - B - Σ_ρ [1/(s-ρ) + 1/ρ]` is entire; (ii) the growth order `≤ 1` of `ξ` (Gamma-factor bounds + Phragmén–Lindelöf), forcing that entire difference to be constant; (iii) pairing convention (`ρ ↔ conj ρ` here vs classical `ρ ↔ 1 - ρ`); (iv) counted over distinct zeros without analytic multiplicity (convention must be aligned before promotion). |
-| `xi_partial_fraction_expansion_target` | `∃ B : ℂ, ∀ s, ξ s ≠ 0 → ξ'(s)/ξ(s) = B + ∑' ρ, paired Mittag-Leffler terms` | Registered in `XiPartialFraction.lean`.  Convergence of the right side is proved (`summable_xiPairedMittagLefflerTerm`); the quotient constant is conditionally identified, `B = ξ'(0)/ξ(0)` (`xi_partial_fraction_const_eq_logDeriv_zero`).  Remaining: the removable-singularity entirety of the difference and the growth order `≤ 1` of `ξ`. |
+| `xi_partial_fraction_expansion_target` | `∃ B : ℂ, ∀ s, ξ s ≠ 0 → ξ'(s)/ξ(s) = B + ∑' ρ, paired Mittag-Leffler terms` | Registered in `XiPartialFraction.lean`.  Convergence of the right side is proved (`summable_xiPairedMittagLefflerTerm`); the right side is analytic wherever `ξ ≠ 0` and locally uniformly convergent on compacts (`differentiableOn_tsum_xiPairedMittagLefflerTerm`, `tendstoUniformlyOn_tsum_xiPairedMittagLefflerTerm_of_isCompact`); the quotient constant is conditionally identified, `B = ξ'(0)/ξ(0)` (`xi_partial_fraction_const_eq_logDeriv_zero`).  Remaining: the removable-singularity entirety of the difference (residue computation at each zero) and the growth order `≤ 1` of `ξ`. |
 
 ## Dependencies For The Next Stage
 
@@ -97,11 +102,15 @@ The chain now carries six `def ... : Prop` targets (five in
   the `ξ'/ξ` partial-fraction expansion over the zeros (Mathlib-level
   blocker, shared with Route C), registered as
   `xi_partial_fraction_expansion_target`.  The convergence half of the
-  expansion is now proved (`summable_xiPairedMittagLefflerTerm`) and the
+  expansion is now proved (`summable_xiPairedMittagLefflerTerm`), the sum is
+  analytic off the zeros of `ξ` and locally uniform on compacts
+  (`differentiableOn_tsum_xiPairedMittagLefflerTerm`,
+  `tendstoUniformlyOn_tsum_xiPairedMittagLefflerTerm_of_isCompact`), and the
   quotient constant is conditionally identified
   (`xi_partial_fraction_const_eq_logDeriv_zero`); what remains is the
-  identity itself, via (i) the removable-singularity step, and (ii) the
-  growth order `≤ 1` of `ξ` (Gamma-factor bounds + Phragmén–Lindelöf;
+  identity itself, via (i) the removable-singularity step (residue
+  computation at each zero), and (ii) the growth order `≤ 1` of `ξ`
+  (Gamma-factor bounds + Phragmén–Lindelöf;
   cf. the existing `ZeroFreeRegion.PhragmenLindelofZeta` tooling).
 - ~~Strict positivity of the paired Li series~~: **proved**
   (`liCoefficient_re_pos_of_representation_of_rh`) — a vanishing sum forces
@@ -127,7 +136,8 @@ they do not imply RH and must not be cited as proof.
 lake build RiemannExplorer.XiFunction RiemannExplorer.LiCriterion \
   RiemannExplorer.SchwarzSymmetric RiemannExplorer.LiReality \
   RiemannExplorer.LiZeroSumConvergence RiemannExplorer.LiPositivity \
-  RiemannExplorer.XiPartialFraction RiemannExplorer.LiStrictPositivity
+  RiemannExplorer.XiPartialFraction RiemannExplorer.LiStrictPositivity \
+  RiemannExplorer.XiPartialFractionAnalytic
 lake build Test.XiFunctionAxiomAudit
 ```
 
