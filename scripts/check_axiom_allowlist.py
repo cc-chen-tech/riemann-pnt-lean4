@@ -160,6 +160,7 @@ EXPECTED_DECLARATIONS = {
     "MathlibAux.integral_normSq_slidingExponentialPolynomialIntegral_le",
     "MathlibAux.norm_slidingExponentialCoefficient_le_min",
     "MathlibAux.sum_normSq_fiber_le_mul_sum_normSq",
+    "MathlibAux.integral_normSq_negLogExponentialPolynomial_le_dyadic",
     "HardyTheorem.volume_selbergSmallAbsoluteMassStarts_inter_Icc_le_of_shortDirichletL2",
     "HardyTheorem.criticalLineDirichletPolynomial_mul_mollifier_sq_eq_exponentialPolynomial",
     "HardyTheorem.selbergMollifiedShortDirichletPolynomial_eq_integral_expansion",

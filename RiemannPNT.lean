@@ -94,6 +94,7 @@ import MathlibAux.RealDyadicScale
 import MathlibAux.LogKernelRemainder
 import MathlibAux.LogDirichletPolynomialMeanSquare
 import MathlibAux.NegativeLogDirichletPolynomialMeanSquare
+import MathlibAux.DyadicNegativeLogPolynomialMeanSquare
 import MathlibAux.LogSquareSummability
 import MathlibAux.IntervalPackingFromMeasure
 import MathlibAux.LogarithmicHilbertIntegrationByParts
