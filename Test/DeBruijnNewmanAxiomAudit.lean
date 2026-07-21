@@ -104,3 +104,5 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_conj
 #print axioms RiemannExplorer.DeBruijnNewman.allZerosReal_zero_lambda_le
 #print axioms RiemannExplorer.DeBruijnNewman.lambda_le_zero_of_rh
+#print axioms RiemannExplorer.DeBruijnNewman.tendstoLocallyUniformly_deBruijnNewmanH
+#print axioms RiemannExplorer.DeBruijnNewman.dist_deBruijnNewmanH_le

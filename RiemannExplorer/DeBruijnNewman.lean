@@ -4127,5 +4127,239 @@ theorem lambda_le_zero_of_rh (hRH : RiemannHypothesis.Statement) :
     deBruijnNewmanLambda ≤ 0 :=
   allZerosReal_zero_lambda_le (statement_iff_allZerosReal_zero.mp hRH)
 
+/-- Zeros of `H_t` are invariant under conjugation. -/
+theorem deBruijnNewmanH_zero_star {t : ℝ} {z : ℂ} (hz : deBruijnNewmanH t z = 0) :
+    deBruijnNewmanH t (star z) = 0 := by
+  rw [deBruijnNewmanH_conj, hz, star_zero]
+
+/-- `H_t(z)` is continuous in `t` (in fact differentiable, by
+`hasDerivAt_deBruijnNewmanH_t`). -/
+theorem continuous_deBruijnNewmanH_t (z : ℂ) :
+    Continuous fun t : ℝ => deBruijnNewmanH t z :=
+  continuous_iff_continuousAt.mpr
+    fun t => (hasDerivAt_deBruijnNewmanH_t z t).continuousAt
+
+/-- The elementary bound `|e^x − 1| ≤ |x|·e^{|x|}` for all real `x`.
+(Mathlib only has the `|x| ≤ 1` special case `Complex.abs_exp_sub_one_le`.) -/
+theorem abs_exp_sub_one_le_abs_mul_exp_abs (x : ℝ) :
+    |Real.exp x - 1| ≤ |x| * Real.exp |x| := by
+  by_cases hx : 0 ≤ x
+  · rw [abs_of_nonneg (by linarith [Real.add_one_le_exp x] : 0 ≤ Real.exp x - 1),
+      abs_of_nonneg hx]
+    have h1 : 1 - Real.exp (-x) ≤ x := by
+      have h := Real.add_one_le_exp (-x)
+      linarith
+    have h2 : Real.exp x - 1 = Real.exp x * (1 - Real.exp (-x)) := by
+      have he : Real.exp x * Real.exp (-x) = 1 := by
+        rw [← Real.exp_add, add_neg_cancel, Real.exp_zero]
+      rw [mul_sub, he, mul_one]
+    rw [h2]
+    calc Real.exp x * (1 - Real.exp (-x)) ≤ Real.exp x * x :=
+          mul_le_mul_of_nonneg_left h1 (Real.exp_nonneg _)
+      _ = x * Real.exp x := mul_comm _ _
+  · have hx' : x < 0 := not_le.mp hx
+    have h1 : Real.exp x - 1 < 0 := by
+      have h := Real.exp_lt_exp.mpr hx'
+      rw [Real.exp_zero] at h
+      linarith
+    have h2 : 1 - Real.exp x ≤ -x := by linarith [Real.add_one_le_exp x]
+    have h3 : (1:ℝ) ≤ Real.exp (-x) := by linarith [Real.add_one_le_exp (-x)]
+    have h4 : -x ≤ (-x) * Real.exp (-x) := by
+      have h := mul_le_mul_of_nonneg_left h3 (le_of_lt (neg_pos.mpr hx'))
+      rwa [mul_one] at h
+    rw [abs_of_neg h1, abs_of_neg hx']
+    linarith
+
+/-- Local Lipschitz control of `H_t` in `t`: on `|t − t₀| ≤ 1` and
+`z ∈ ball z₀ 1`, the difference `H_t(z) − H_{t₀}(z)` is bounded by
+`|t − t₀|` times an absolutely convergent dominating integral. -/
+theorem dist_deBruijnNewmanH_le (t₀ : ℝ) (z₀ : ℂ) {t : ℝ} {z : ℂ}
+    (ht : |t - t₀| ≤ 1) (hz : z ∈ Metric.ball z₀ 1) :
+    dist (deBruijnNewmanH t z) (deBruijnNewmanH t₀ z)
+      ≤ |t - t₀| * ∫ u : ℝ in Set.Ioi 0,
+          heatSqDominatingFun (t₀ + 1) (|z₀.im| + 1) u := by
+  rw [dist_eq_norm]
+  have hsub : deBruijnNewmanH t z - deBruijnNewmanH t₀ z
+      = ∫ u : ℝ in Set.Ioi 0, (heatIntegrand t z u - heatIntegrand t₀ z u) := by
+    show (∫ u : ℝ in Set.Ioi 0, heatIntegrand t z u)
+        - (∫ u : ℝ in Set.Ioi 0, heatIntegrand t₀ z u) = _
+    exact (MeasureTheory.integral_sub
+      (f := fun u : ℝ => heatIntegrand t z u) (g := fun u : ℝ => heatIntegrand t₀ z u)
+      (μ := MeasureTheory.volume.restrict (Set.Ioi (0:ℝ)))
+      (heat_integrand_integrable t z) (heat_integrand_integrable t₀ z)).symm
+  calc ‖deBruijnNewmanH t z - deBruijnNewmanH t₀ z‖
+      = ‖∫ u : ℝ in Set.Ioi 0, (heatIntegrand t z u - heatIntegrand t₀ z u)‖ := by
+        rw [hsub]
+    _ ≤ ∫ u : ℝ in Set.Ioi 0, ‖heatIntegrand t z u - heatIntegrand t₀ z u‖ :=
+        MeasureTheory.norm_integral_le_integral_norm _
+    _ ≤ ∫ u : ℝ in Set.Ioi 0,
+          |t - t₀| * heatSqDominatingFun (t₀ + 1) (|z₀.im| + 1) u := by
+        apply MeasureTheory.integral_mono_ae
+        · exact ((heat_integrand_integrable t z).sub
+            (heat_integrand_integrable t₀ z)).norm
+        · exact (integrableOn_heatSqDominatingFun (t₀ + 1) (|z₀.im| + 1)
+            (by positivity)).const_mul _
+        · filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_Ioi] with u hu
+          have hu0 : 0 ≤ u := le_of_lt hu
+          have hzim : |z.im| ≤ |z₀.im| + 1 := by
+            have h2 : |(z - z₀).im| ≤ ‖z - z₀‖ := Complex.abs_im_le_norm _
+            have h3 : ‖z - z₀‖ < 1 := by
+              rw [← dist_eq_norm]
+              exact Metric.mem_ball.mp hz
+            have him : z.im - z₀.im = (z - z₀).im := by simp [Complex.sub_im]
+            calc |z.im| = |z.im - z₀.im + z₀.im| :=
+                  (congrArg abs (sub_add_cancel z.im z₀.im)).symm
+              _ ≤ |z.im - z₀.im| + |z₀.im| := abs_add_le _ _
+              _ ≤ ‖z - z₀‖ + |z₀.im| := by rw [him]; exact add_le_add_left h2 _
+              _ ≤ 1 + |z₀.im| := by linarith [h3.le]
+              _ = |z₀.im| + 1 := by ring
+          have hdiff : heatIntegrand t z u - heatIntegrand t₀ z u
+              = ((phi u * (Real.exp (t * u ^ 2) - Real.exp (t₀ * u ^ 2)) : ℝ) : ℂ)
+                * Complex.cos (z * (u : ℂ)) := by
+            unfold heatIntegrand
+            simp only [Complex.ofReal_mul, Complex.ofReal_sub]
+            ring
+          rw [hdiff]
+          have hn : ‖((phi u * (Real.exp (t * u ^ 2) - Real.exp (t₀ * u ^ 2)) : ℝ) : ℂ)
+                * Complex.cos (z * (u : ℂ))‖
+              = |phi u| * |Real.exp (t * u ^ 2) - Real.exp (t₀ * u ^ 2)|
+                * ‖Complex.cos (z * (u : ℂ))‖ := by
+            rw [norm_mul,
+              show ‖((phi u * (Real.exp (t * u ^ 2)
+                    - Real.exp (t₀ * u ^ 2)) : ℝ) : ℂ)‖
+                = |phi u * (Real.exp (t * u ^ 2) - Real.exp (t₀ * u ^ 2))|
+              from RCLike.norm_ofReal _,
+              abs_mul]
+          rw [hn]
+          have hexp : |Real.exp (t * u ^ 2) - Real.exp (t₀ * u ^ 2)|
+              ≤ |t - t₀| * u ^ 2 * Real.exp ((t₀ + 1) * u ^ 2) := by
+            have he : Real.exp (t * u ^ 2) - Real.exp (t₀ * u ^ 2)
+                = Real.exp (t₀ * u ^ 2) * (Real.exp ((t - t₀) * u ^ 2) - 1) := by
+              have h1 : Real.exp (t * u ^ 2)
+                  = Real.exp (t₀ * u ^ 2) * Real.exp ((t - t₀) * u ^ 2) := by
+                rw [← Real.exp_add]
+                congr 1
+                ring
+              rw [h1]
+              ring
+            rw [he, abs_mul, abs_of_pos (Real.exp_pos _)]
+            have h2 : |Real.exp ((t - t₀) * u ^ 2) - 1|
+                ≤ |(t - t₀) * u ^ 2| * Real.exp |(t - t₀) * u ^ 2| :=
+              abs_exp_sub_one_le_abs_mul_exp_abs _
+            have h3 : |(t - t₀) * u ^ 2| = |t - t₀| * u ^ 2 := by
+              rw [abs_mul, abs_of_nonneg (sq_nonneg u)]
+            have h4 : Real.exp |(t - t₀) * u ^ 2| ≤ Real.exp (u ^ 2) := by
+              apply Real.exp_le_exp.mpr
+              rw [h3]
+              calc |t - t₀| * u ^ 2 ≤ 1 * u ^ 2 :=
+                    mul_le_mul_of_nonneg_right ht (sq_nonneg u)
+                _ = u ^ 2 := one_mul _
+            calc Real.exp (t₀ * u ^ 2) * |Real.exp ((t - t₀) * u ^ 2) - 1|
+                ≤ Real.exp (t₀ * u ^ 2) * (|t - t₀| * u ^ 2 * Real.exp (u ^ 2)) := by
+                  apply mul_le_mul_of_nonneg_left _ (Real.exp_nonneg _)
+                  calc |Real.exp ((t - t₀) * u ^ 2) - 1|
+                      ≤ |(t - t₀) * u ^ 2| * Real.exp |(t - t₀) * u ^ 2| := h2
+                    _ = |t - t₀| * u ^ 2 * Real.exp |(t - t₀) * u ^ 2| := by rw [h3]
+                    _ ≤ |t - t₀| * u ^ 2 * Real.exp (u ^ 2) :=
+                        mul_le_mul_of_nonneg_left h4
+                          (mul_nonneg (abs_nonneg _) (sq_nonneg u))
+              _ = |t - t₀| * u ^ 2 * Real.exp ((t₀ + 1) * u ^ 2) := by
+                  have h5 : Real.exp (t₀ * u ^ 2) * Real.exp (u ^ 2)
+                      = Real.exp ((t₀ + 1) * u ^ 2) := by
+                    rw [← Real.exp_add]
+                    congr 1
+                    ring
+                  rw [show Real.exp (t₀ * u ^ 2) * (|t - t₀| * u ^ 2 * Real.exp (u ^ 2))
+                      = |t - t₀| * u ^ 2 * (Real.exp (t₀ * u ^ 2) * Real.exp (u ^ 2))
+                    from by ring, h5]
+          have hcos : ‖Complex.cos (z * (u : ℂ))‖ ≤ Real.exp ((|z₀.im| + 1) * u) := by
+            calc ‖Complex.cos (z * (u : ℂ))‖ ≤ Real.exp |z.im * u| :=
+                  norm_cos_mul_ofReal_le_exp z u
+              _ = Real.exp (|z.im| * u) := by rw [abs_mul, abs_of_nonneg hu0]
+              _ ≤ Real.exp ((|z₀.im| + 1) * u) :=
+                  Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_right hzim hu0)
+          have hphi : |phi u| ≤ (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+              * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u))) :=
+            abs_phi_le u hu0
+          have hb0 : 0 ≤ (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+              * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u))) :=
+            mul_nonneg (mul_nonneg
+              (mul_nonneg (by positivity) phiTailConst_nonneg)
+              (Real.exp_nonneg _)) (Real.exp_nonneg _)
+          have hb0' : 0 ≤ (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+              * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))
+              * (|t - t₀| * u ^ 2 * Real.exp ((t₀ + 1) * u ^ 2)) :=
+            mul_nonneg hb0
+              (mul_nonneg (mul_nonneg (abs_nonneg _) (sq_nonneg u))
+                (Real.exp_nonneg _))
+          calc |phi u| * |Real.exp (t * u ^ 2) - Real.exp (t₀ * u ^ 2)|
+                * ‖Complex.cos (z * (u : ℂ))‖
+              ≤ ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+                  * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u))))
+                * (|t - t₀| * u ^ 2 * Real.exp ((t₀ + 1) * u ^ 2))
+                * Real.exp ((|z₀.im| + 1) * u) :=
+                mul_le_mul (mul_le_mul hphi hexp (abs_nonneg _) hb0) hcos
+                  (norm_nonneg _) hb0'
+            _ = |t - t₀| * heatSqDominatingFun (t₀ + 1) (|z₀.im| + 1) u := by
+                unfold heatSqDominatingFun
+                have e1 : ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+                      * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u))))
+                    * (|t - t₀| * u ^ 2 * Real.exp ((t₀ + 1) * u ^ 2))
+                    * Real.exp ((|z₀.im| + 1) * u)
+                  = |t - t₀| * ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+                      * u ^ 2
+                      * (Real.exp ((t₀ + 1) * u ^ 2) * Real.exp (9 * u)
+                        * Real.exp ((|z₀.im| + 1) * u))
+                      * Real.exp (-(Real.pi * Real.exp (4 * u)))) := by ring
+                rw [e1, ← Real.exp_add, ← Real.exp_add]
+                have e2 : (t₀ + 1) * u ^ 2 + 9 * u + (|z₀.im| + 1) * u
+                    = (t₀ + 1) * u ^ 2 + (9 + (|z₀.im| + 1)) * u := by ring
+                rw [e2]
+    _ = |t - t₀| * ∫ u : ℝ in Set.Ioi 0,
+          heatSqDominatingFun (t₀ + 1) (|z₀.im| + 1) u := by
+        exact MeasureTheory.integral_const_mul _ _
+
+/-- **Local uniform convergence of the de Bruijn–Newman flow in `t`**:
+`H_t → H_{t₀}` locally uniformly as `t → t₀`. This is the analytic input
+for a future Hurwitz-type argument that `AllZerosReal` is closed under
+decreasing limits of `t`. -/
+theorem tendstoLocallyUniformly_deBruijnNewmanH (t₀ : ℝ) :
+    TendstoLocallyUniformly (fun t : ℝ => deBruijnNewmanH t)
+      (deBruijnNewmanH t₀) (nhds t₀) := by
+  intro uu huu z₀
+  rw [Metric.mem_uniformity_dist] at huu
+  obtain ⟨ε, hε, huε⟩ := huu
+  set C := ∫ u : ℝ in Set.Ioi 0, heatSqDominatingFun (t₀ + 1) (|z₀.im| + 1) u
+    with hC
+  have hC0 : 0 ≤ C := by
+    rw [hC]
+    apply MeasureTheory.integral_nonneg_of_ae
+    filter_upwards with u
+    exact mul_nonneg (mul_nonneg (mul_nonneg
+      (mul_nonneg (by positivity : (0:ℝ) ≤ 2 * Real.pi ^ 2 + 3 * Real.pi)
+        phiTailConst_nonneg) (sq_nonneg u)) (Real.exp_nonneg _)) (Real.exp_nonneg _)
+  have hC1 : (0:ℝ) < C + 1 := by linarith
+  have hδ : (0:ℝ) < min 1 (ε / (C + 1)) := lt_min one_pos (div_pos hε hC1)
+  refine ⟨Metric.ball z₀ 1, Metric.ball_mem_nhds z₀ one_pos, ?_⟩
+  filter_upwards [Metric.ball_mem_nhds t₀ hδ] with t ht z hz
+  apply huε
+  have htm : |t - t₀| < min 1 (ε / (C + 1)) := by
+    rwa [Metric.mem_ball, Real.dist_eq] at ht
+  have ht1 : |t - t₀| ≤ 1 := htm.le.trans (min_le_left _ _)
+  have hdest := dist_deBruijnNewmanH_le t₀ z₀ ht1 hz
+  rw [dist_comm] at hdest
+  have hεC : |t - t₀| * C < ε := by
+    have h : |t - t₀| < ε / (C + 1) := htm.trans_le (min_le_right _ _)
+    have h2 : C / (C + 1) < 1 := by
+      rw [div_lt_one hC1]
+      linarith
+    calc |t - t₀| * C ≤ (ε / (C + 1)) * C :=
+          mul_le_mul_of_nonneg_right h.le hC0
+      _ = ε * C / (C + 1) := div_mul_eq_mul_div _ _ _
+      _ = ε * (C / (C + 1)) := mul_div_assoc _ _ _
+      _ < ε * 1 := mul_lt_mul_of_pos_left h2 hε
+      _ = ε := mul_one ε
+  exact lt_of_le_of_lt hdest hεC
+
 end DeBruijnNewman
 end RiemannExplorer
