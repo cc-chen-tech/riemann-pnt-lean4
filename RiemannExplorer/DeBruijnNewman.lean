@@ -720,6 +720,469 @@ theorem continuous_heatIntegrandDeriv (t : ℝ) (z : ℂ) :
   unfold heatIntegrandDeriv
   fun_prop
 
+/-- Variant of `heat_decay_eventually_le` carrying an extra factor `u²`
+(absorbed via `u² ≤ e^{2u}`). Used for the second `z`-derivative and the
+`t`-derivative of the `H_t` integrand. -/
+theorem heat_decay_eventually_le_mul2 (t a C : ℝ) (hC : 0 < C) (ha : 0 ≤ a) :
+    ∀ᶠ u in Filter.atTop,
+      C * u ^ 2 * Real.exp (t * u ^ 2 + a * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))
+        ≤ Real.exp (-u) := by
+  have hmain := heat_decay_eventually_le t (a + 2) C hC (by linarith)
+  filter_upwards [hmain, Filter.eventually_ge_atTop 0] with u hu hu0
+  have hule : u ≤ Real.exp u := by
+    have h := Real.add_one_le_exp u
+    linarith
+  have hu2 : u ^ 2 ≤ Real.exp (2 * u) := by
+    have h1 : u * u ≤ Real.exp u * Real.exp u := mul_self_le_mul_self hu0 hule
+    have h2 : Real.exp u * Real.exp u = Real.exp (2 * u) := by
+      rw [← Real.exp_add]
+      congr 1
+      ring
+    calc u ^ 2 = u * u := pow_two u
+      _ ≤ Real.exp u * Real.exp u := h1
+      _ = Real.exp (2 * u) := h2
+  calc C * u ^ 2 * Real.exp (t * u ^ 2 + a * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))
+      ≤ C * Real.exp (2 * u) * Real.exp (t * u ^ 2 + a * u)
+          * Real.exp (-(Real.pi * Real.exp (4 * u))) := by
+        apply mul_le_mul_of_nonneg_right _ (Real.exp_nonneg _)
+        apply mul_le_mul_of_nonneg_right _ (Real.exp_nonneg _)
+        exact mul_le_mul_of_nonneg_left hu2 (le_of_lt hC)
+    _ = C * Real.exp (t * u ^ 2 + (a + 2) * u)
+          * Real.exp (-(Real.pi * Real.exp (4 * u))) := by
+        have he : Real.exp (2 * u) * Real.exp (t * u ^ 2 + a * u)
+            = Real.exp (t * u ^ 2 + (a + 2) * u) := by
+          rw [← Real.exp_add]
+          congr 1
+          ring
+        have e1 : C * Real.exp (2 * u) * Real.exp (t * u ^ 2 + a * u)
+            * Real.exp (-(Real.pi * Real.exp (4 * u)))
+          = C * (Real.exp (2 * u) * Real.exp (t * u ^ 2 + a * u))
+            * Real.exp (-(Real.pi * Real.exp (4 * u))) := by ring
+        rw [e1, he]
+    _ ≤ Real.exp (-u) := hu
+
+/-- Dominating function for the second `z`-derivative (and the `t`-derivative)
+of the `H_t` integrand:
+`u ↦ (2π² + 3π) · K₁ · u² · e^{t u² + (9 + c) u} · e^{−π e^{4u}}`. -/
+noncomputable def heatSqDominatingFun (t c : ℝ) (u : ℝ) : ℝ :=
+  (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst * u ^ 2
+    * Real.exp (t * u ^ 2 + (9 + c) * u)
+    * Real.exp (-(Real.pi * Real.exp (4 * u)))
+
+theorem continuous_heatSqDominatingFun (t c : ℝ) :
+    Continuous (heatSqDominatingFun t c) := by
+  unfold heatSqDominatingFun
+  fun_prop
+
+theorem heatSqDominatingFun_isBigO (t c : ℝ) (hc : 0 ≤ c) :
+    Asymptotics.IsBigO Filter.atTop (heatSqDominatingFun t c)
+      fun u : ℝ => Real.exp (-(1:ℝ) * u) := by
+  apply Asymptotics.IsBigO.of_bound'
+  have hC0 : (0:ℝ) ≤ (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst :=
+    mul_nonneg (by positivity) phiTailConst_nonneg
+  have h := heat_decay_eventually_le_mul2 t (9 + c)
+    ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst)
+    (mul_pos (by positivity) phiTailConst_pos) (by linarith)
+  filter_upwards [h, Filter.eventually_ge_atTop 0] with u hu hu0
+  have hdom0 : 0 ≤ heatSqDominatingFun t c u :=
+    mul_nonneg (mul_nonneg (mul_nonneg hC0 (sq_nonneg u)) (Real.exp_nonneg _))
+      (Real.exp_nonneg _)
+  rw [Real.norm_eq_abs, abs_of_nonneg hdom0, Real.norm_eq_abs,
+    abs_of_nonneg (Real.exp_nonneg _), neg_mul, one_mul]
+  exact hu
+
+theorem integrableOn_heatSqDominatingFun (t c : ℝ) (hc : 0 ≤ c) :
+    MeasureTheory.IntegrableOn (heatSqDominatingFun t c) (Set.Ioi 0)
+      MeasureTheory.volume :=
+  integrable_of_isBigO_exp_neg (show (0:ℝ) < 1 by norm_num)
+    (continuous_heatSqDominatingFun t c).continuousOn
+    (heatSqDominatingFun_isBigO t c hc)
+
+/-- Pointwise continuity of the `H_t` integrand (global version). -/
+theorem continuous_heatIntegrand (t : ℝ) (z : ℂ) :
+    Continuous (heatIntegrand t z) := by
+  unfold heatIntegrand
+  fun_prop
+
+/-- The `t`-derivative of the `H_t` integrand:
+`∂_t [e^{t u²} Φ(u) cos(z u)] = u² · e^{t u²} Φ(u) cos(z u)`. -/
+theorem heat_integrand_hasDerivAt_t (u : ℝ) (z : ℂ) (t : ℝ) :
+    HasDerivAt (fun s : ℝ => heatIntegrand s z u)
+      ((u : ℂ) ^ 2 * heatIntegrand t z u) t := by
+  have h1 : HasDerivAt (fun s : ℝ => Real.exp (s * u ^ 2))
+      (Real.exp (t * u ^ 2) * u ^ 2) t := by
+    simpa using ((hasDerivAt_id t).mul_const (u ^ 2 : ℝ)).exp
+  have h2 : HasDerivAt (fun s : ℝ => Real.exp (s * u ^ 2) * phi u)
+      (Real.exp (t * u ^ 2) * u ^ 2 * phi u) t := h1.mul_const (phi u)
+  have h3 : HasDerivAt (fun s : ℝ => ((Real.exp (s * u ^ 2) * phi u : ℝ) : ℂ))
+      (((Real.exp (t * u ^ 2) * u ^ 2 * phi u : ℝ) : ℂ)) t := h2.ofReal_comp
+  have h4 : HasDerivAt (fun s : ℝ => ((Real.exp (s * u ^ 2) * phi u : ℝ) : ℂ)
+        * Complex.cos (z * (u : ℂ)))
+      ((((Real.exp (t * u ^ 2) * u ^ 2 * phi u : ℝ) : ℂ))
+        * Complex.cos (z * (u : ℂ))) t :=
+    h3.mul_const (Complex.cos (z * (u : ℂ)))
+  refine h4.congr_deriv ?_
+  unfold heatIntegrand
+  push_cast
+  ring
+
+/-- The `z`-derivative of `heatIntegrandDeriv`:
+`∂_z [−e^{t u²} Φ(u) sin(z u) · u] = −u² · e^{t u²} Φ(u) cos(z u)`. -/
+theorem heat_integrandDeriv_hasDerivAt (t : ℝ) (u : ℝ) (z : ℂ) :
+    HasDerivAt (fun w : ℂ => heatIntegrandDeriv t w u)
+      (-((u : ℂ) ^ 2) * heatIntegrand t z u) z := by
+  have h := ((((hasDerivAt_id z).mul_const (u : ℂ)).csin).neg.mul_const
+    (u : ℂ)).const_mul ((Real.exp (t * u ^ 2) * phi u : ℝ) : ℂ)
+  refine h.congr_deriv ?_
+  show ((Real.exp (t * u ^ 2) * phi u : ℝ) : ℂ)
+      * (-(Complex.cos (z * (u : ℂ)) * (1 * (u : ℂ))) * (u : ℂ))
+      = -((u : ℂ) ^ 2) * heatIntegrand t z u
+  unfold heatIntegrand
+  ring
+
+/-- The once-`z`-differentiated `H_t` integrand is integrable on `(0, ∞)`. -/
+theorem heat_integrandDeriv_integrable (t : ℝ) (z : ℂ) :
+    MeasureTheory.IntegrableOn (heatIntegrandDeriv t z) (Set.Ioi 0)
+      MeasureTheory.volume := by
+  have hC0 : (0:ℝ) ≤ (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst :=
+    mul_nonneg (by positivity) phiTailConst_nonneg
+  apply MeasureTheory.Integrable.mono'
+    (integrableOn_heatDerivDominatingFun t |z.im| (abs_nonneg _))
+  · exact (continuous_heatIntegrandDeriv t z).continuousOn.aestronglyMeasurable
+      measurableSet_Ioi
+  · filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_Ioi] with u hu
+    have hu0 : 0 ≤ u := le_of_lt hu
+    have hsin : ‖Complex.sin (z * (u : ℂ))‖ ≤ Real.exp (|z.im| * u) := by
+      calc ‖Complex.sin (z * (u : ℂ))‖ ≤ Real.exp |z.im * u| :=
+            norm_sin_mul_ofReal_le_exp z u
+        _ = Real.exp (|z.im| * u) := by rw [abs_mul, abs_of_nonneg hu0]
+    have hn : ‖heatIntegrandDeriv t z u‖
+        = |Real.exp (t * u ^ 2) * phi u| * (‖Complex.sin (z * (u : ℂ))‖ * u) := by
+      unfold heatIntegrandDeriv
+      rw [norm_mul, norm_mul, norm_neg,
+        show ‖((Real.exp (t * u ^ 2) * phi u : ℝ) : ℂ)‖
+          = |Real.exp (t * u ^ 2) * phi u| from RCLike.norm_ofReal _,
+        show ‖(u : ℂ)‖ = u from by
+          rw [show ‖(u : ℂ)‖ = |u| from RCLike.norm_ofReal u, abs_of_nonneg hu0]]
+    rw [hn]
+    have hphi : |Real.exp (t * u ^ 2) * phi u|
+        ≤ Real.exp (t * u ^ 2) * ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+            * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))) := by
+      rw [abs_mul, abs_of_pos (Real.exp_pos _)]
+      exact mul_le_mul_of_nonneg_left (abs_phi_le u hu0) (Real.exp_nonneg _)
+    have hb0 : 0 ≤ Real.exp (t * u ^ 2)
+        * ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+          * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))) :=
+      mul_nonneg (Real.exp_nonneg _)
+        (mul_nonneg (mul_nonneg hC0 (Real.exp_nonneg _)) (Real.exp_nonneg _))
+    calc |Real.exp (t * u ^ 2) * phi u| * (‖Complex.sin (z * (u : ℂ))‖ * u)
+        ≤ (Real.exp (t * u ^ 2) * ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+            * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))))
+          * (Real.exp (|z.im| * u) * u) :=
+          mul_le_mul hphi
+            (mul_le_mul hsin le_rfl hu0 (Real.exp_nonneg _))
+            (mul_nonneg (norm_nonneg _) hu0) hb0
+      _ = heatDerivDominatingFun t |z.im| u := by
+          unfold heatDerivDominatingFun
+          have e1 : Real.exp (t * u ^ 2)
+              * ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+                * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u))))
+              * (Real.exp (|z.im| * u) * u)
+            = (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst * u
+              * (Real.exp (t * u ^ 2) * Real.exp (9 * u)
+                * Real.exp (|z.im| * u))
+              * Real.exp (-(Real.pi * Real.exp (4 * u))) := by ring
+          rw [e1, ← Real.exp_add, ← Real.exp_add]
+          have e2 : t * u ^ 2 + 9 * u + |z.im| * u
+              = t * u ^ 2 + (9 + |z.im|) * u := by ring
+          rw [e2]
+
+/-- The `z`-derivative of `H_t` as an integral:
+`H_t'(z₀) = ∫_0^∞ e^{t u²} Φ(u) (−sin(z₀ u)) · u du`. -/
+theorem hasDerivAt_deBruijnNewmanH (t : ℝ) (z₀ : ℂ) :
+    HasDerivAt (deBruijnNewmanH t)
+      (∫ u in Set.Ioi 0, heatIntegrandDeriv t z₀ u) z₀ := by
+  set μ := MeasureTheory.volume.restrict (Set.Ioi (0:ℝ)) with hμ
+  have hcont : ∀ w : ℂ, Continuous (heatIntegrand t w) := fun w => by
+    unfold heatIntegrand
+    fun_prop
+  have hmeas : ∀ w : ℂ, MeasureTheory.AEStronglyMeasurable (heatIntegrand t w) μ :=
+    fun w => (hcont w).continuousOn.aestronglyMeasurable measurableSet_Ioi
+  have hderv_meas : MeasureTheory.AEStronglyMeasurable (heatIntegrandDeriv t z₀) μ :=
+    (continuous_heatIntegrandDeriv t z₀).continuousOn.aestronglyMeasurable
+      measurableSet_Ioi
+  have hC0 : (0:ℝ) ≤ (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst :=
+    mul_nonneg (by positivity) phiTailConst_nonneg
+  have hbound : ∀ᵐ u ∂μ, ∀ w ∈ Metric.ball z₀ 1,
+      ‖heatIntegrandDeriv t w u‖ ≤ heatDerivDominatingFun t (|z₀.im| + 1) u := by
+    filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_Ioi] with u hu w hw
+    have hu0 : 0 ≤ u := le_of_lt hu
+    have hwim : |w.im| ≤ |z₀.im| + 1 := by
+      have h2 : |(w - z₀).im| ≤ ‖w - z₀‖ := Complex.abs_im_le_norm _
+      have h3 : ‖w - z₀‖ < 1 := by
+        rw [← dist_eq_norm]
+        exact Metric.mem_ball.mp hw
+      have him : w.im - z₀.im = (w - z₀).im := by simp [Complex.sub_im]
+      calc |w.im| = |w.im - z₀.im + z₀.im| :=
+            (congrArg abs (sub_add_cancel w.im z₀.im)).symm
+        _ ≤ |w.im - z₀.im| + |z₀.im| := abs_add_le _ _
+        _ ≤ ‖w - z₀‖ + |z₀.im| := by rw [him]; exact add_le_add_left h2 _
+        _ ≤ 1 + |z₀.im| := by linarith [h3.le]
+        _ = |z₀.im| + 1 := by ring
+    have hsin : ‖Complex.sin (w * (u : ℂ))‖ ≤ Real.exp ((|z₀.im| + 1) * u) := by
+      calc ‖Complex.sin (w * (u : ℂ))‖ ≤ Real.exp |w.im * u| :=
+            norm_sin_mul_ofReal_le_exp w u
+        _ = Real.exp (|w.im| * u) := by rw [abs_mul, abs_of_nonneg hu0]
+        _ ≤ Real.exp ((|z₀.im| + 1) * u) :=
+            Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_right hwim hu0)
+    have hn : ‖heatIntegrandDeriv t w u‖
+        = |Real.exp (t * u ^ 2) * phi u| * (‖Complex.sin (w * (u : ℂ))‖ * u) := by
+      unfold heatIntegrandDeriv
+      rw [norm_mul, norm_mul, norm_neg,
+        show ‖((Real.exp (t * u ^ 2) * phi u : ℝ) : ℂ)‖
+          = |Real.exp (t * u ^ 2) * phi u| from RCLike.norm_ofReal _,
+        show ‖(u : ℂ)‖ = u from by
+          rw [show ‖(u : ℂ)‖ = |u| from RCLike.norm_ofReal u, abs_of_nonneg hu0]]
+    rw [hn]
+    have hphi : |Real.exp (t * u ^ 2) * phi u|
+        ≤ Real.exp (t * u ^ 2) * ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+            * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))) := by
+      rw [abs_mul, abs_of_pos (Real.exp_pos _)]
+      exact mul_le_mul_of_nonneg_left (abs_phi_le u hu0) (Real.exp_nonneg _)
+    have hb0 : 0 ≤ Real.exp (t * u ^ 2)
+        * ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+          * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))) :=
+      mul_nonneg (Real.exp_nonneg _)
+        (mul_nonneg (mul_nonneg hC0 (Real.exp_nonneg _)) (Real.exp_nonneg _))
+    calc |Real.exp (t * u ^ 2) * phi u| * (‖Complex.sin (w * (u : ℂ))‖ * u)
+        ≤ (Real.exp (t * u ^ 2) * ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+            * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))))
+          * (Real.exp ((|z₀.im| + 1) * u) * u) :=
+          mul_le_mul hphi
+            (mul_le_mul hsin le_rfl hu0 (Real.exp_nonneg _))
+            (mul_nonneg (norm_nonneg _) hu0) hb0
+      _ = heatDerivDominatingFun t (|z₀.im| + 1) u := by
+          unfold heatDerivDominatingFun
+          have e1 : Real.exp (t * u ^ 2)
+              * ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+                * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u))))
+              * (Real.exp ((|z₀.im| + 1) * u) * u)
+            = (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst * u
+              * (Real.exp (t * u ^ 2) * Real.exp (9 * u)
+                * Real.exp ((|z₀.im| + 1) * u))
+              * Real.exp (-(Real.pi * Real.exp (4 * u))) := by ring
+          rw [e1, ← Real.exp_add, ← Real.exp_add]
+          have e2 : t * u ^ 2 + 9 * u + (|z₀.im| + 1) * u
+              = t * u ^ 2 + (9 + (|z₀.im| + 1)) * u := by ring
+          rw [e2]
+  have hint : MeasureTheory.Integrable (heatDerivDominatingFun t (|z₀.im| + 1)) μ :=
+    integrableOn_heatDerivDominatingFun t (|z₀.im| + 1) (by positivity)
+  have hdiff : ∀ᵐ u ∂μ, ∀ w ∈ Metric.ball z₀ 1,
+      HasDerivAt (fun x => heatIntegrand t x u) (heatIntegrandDeriv t w u) w :=
+    Filter.Eventually.of_forall fun u w _ => heat_integrand_hasDerivAt t u w
+  have hFint : MeasureTheory.Integrable (heatIntegrand t z₀) μ :=
+    heat_integrand_integrable t z₀
+  have h := hasDerivAt_integral_of_dominated_loc_of_deriv_le
+    (Metric.ball_mem_nhds z₀ (by norm_num : (0:ℝ) < 1))
+    (Filter.Eventually.of_forall hmeas) hFint hderv_meas hbound hint hdiff
+  exact h.2
+
+/-- Derivative formula: `deriv (H_t) z₀ = ∫_0^∞ e^{t u²} Φ(u) (−sin(z₀ u)) u du`. -/
+theorem deriv_deBruijnNewmanH (t : ℝ) (z₀ : ℂ) :
+    deriv (deBruijnNewmanH t) z₀ = ∫ u in Set.Ioi 0, heatIntegrandDeriv t z₀ u :=
+  (hasDerivAt_deBruijnNewmanH t z₀).deriv
+
+/-- The second `z`-derivative of the integrand integral:
+`(∫ heatIntegrandDeriv)' = ∫ −u² · heatIntegrand`. -/
+theorem hasDerivAt_integral_heatIntegrandDeriv (t : ℝ) (z₀ : ℂ) :
+    HasDerivAt (fun w : ℂ => ∫ u in Set.Ioi 0, heatIntegrandDeriv t w u)
+      (∫ u : ℝ in Set.Ioi 0, -((u : ℂ) ^ 2) * heatIntegrand t z₀ u) z₀ := by
+  set μ := MeasureTheory.volume.restrict (Set.Ioi (0:ℝ)) with hμ
+  have hmeas : ∀ w : ℂ, MeasureTheory.AEStronglyMeasurable (heatIntegrandDeriv t w) μ :=
+    fun w => (continuous_heatIntegrandDeriv t w).continuousOn.aestronglyMeasurable
+      measurableSet_Ioi
+  have hderv_meas : MeasureTheory.AEStronglyMeasurable
+      (fun u : ℝ => -((u : ℂ) ^ 2) * heatIntegrand t z₀ u) μ :=
+    ((Complex.continuous_ofReal.pow 2).neg.mul
+      (continuous_heatIntegrand t z₀)).continuousOn.aestronglyMeasurable
+      measurableSet_Ioi
+  have hC0 : (0:ℝ) ≤ (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst :=
+    mul_nonneg (by positivity) phiTailConst_nonneg
+  have hbound : ∀ᵐ u ∂μ, ∀ w ∈ Metric.ball z₀ 1,
+      ‖-(((u : ℝ) : ℂ) ^ 2) * heatIntegrand t w u‖
+        ≤ heatSqDominatingFun t (|z₀.im| + 1) u := by
+    filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_Ioi] with u hu w hw
+    have hu0 : 0 ≤ u := le_of_lt hu
+    have hwim : |w.im| ≤ |z₀.im| + 1 := by
+      have h2 : |(w - z₀).im| ≤ ‖w - z₀‖ := Complex.abs_im_le_norm _
+      have h3 : ‖w - z₀‖ < 1 := by
+        rw [← dist_eq_norm]
+        exact Metric.mem_ball.mp hw
+      have him : w.im - z₀.im = (w - z₀).im := by simp [Complex.sub_im]
+      calc |w.im| = |w.im - z₀.im + z₀.im| :=
+            (congrArg abs (sub_add_cancel w.im z₀.im)).symm
+        _ ≤ |w.im - z₀.im| + |z₀.im| := abs_add_le _ _
+        _ ≤ ‖w - z₀‖ + |z₀.im| := by rw [him]; exact add_le_add_left h2 _
+        _ ≤ 1 + |z₀.im| := by linarith [h3.le]
+        _ = |z₀.im| + 1 := by ring
+    have hcos : ‖Complex.cos (w * (u : ℂ))‖ ≤ Real.exp ((|z₀.im| + 1) * u) := by
+      calc ‖Complex.cos (w * (u : ℂ))‖ ≤ Real.exp |w.im * u| :=
+            norm_cos_mul_ofReal_le_exp w u
+        _ = Real.exp (|w.im| * u) := by rw [abs_mul, abs_of_nonneg hu0]
+        _ ≤ Real.exp ((|z₀.im| + 1) * u) :=
+            Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_right hwim hu0)
+    have hn : ‖-((u : ℂ) ^ 2) * heatIntegrand t w u‖
+        = u ^ 2 * (|Real.exp (t * u ^ 2) * phi u|
+            * ‖Complex.cos (w * (u : ℂ))‖) := by
+      rw [norm_mul, norm_neg, norm_pow,
+        show ‖(u : ℂ)‖ = u from by
+          rw [show ‖(u : ℂ)‖ = |u| from RCLike.norm_ofReal u, abs_of_nonneg hu0]]
+      unfold heatIntegrand
+      rw [norm_mul, show ‖((Real.exp (t * u ^ 2) * phi u : ℝ) : ℂ)‖
+          = |Real.exp (t * u ^ 2) * phi u| from RCLike.norm_ofReal _]
+    rw [hn]
+    have hphi : |Real.exp (t * u ^ 2) * phi u|
+        ≤ Real.exp (t * u ^ 2) * ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+            * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))) := by
+      rw [abs_mul, abs_of_pos (Real.exp_pos _)]
+      exact mul_le_mul_of_nonneg_left (abs_phi_le u hu0) (Real.exp_nonneg _)
+    have hb0 : 0 ≤ Real.exp (t * u ^ 2)
+        * ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+          * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))) :=
+      mul_nonneg (Real.exp_nonneg _)
+        (mul_nonneg (mul_nonneg hC0 (Real.exp_nonneg _)) (Real.exp_nonneg _))
+    calc u ^ 2 * (|Real.exp (t * u ^ 2) * phi u| * ‖Complex.cos (w * (u : ℂ))‖)
+        ≤ u ^ 2 * ((Real.exp (t * u ^ 2)
+            * ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+              * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))))
+          * Real.exp ((|z₀.im| + 1) * u)) :=
+          mul_le_mul_of_nonneg_left
+            (mul_le_mul hphi hcos (norm_nonneg _) hb0) (sq_nonneg u)
+      _ = heatSqDominatingFun t (|z₀.im| + 1) u := by
+          unfold heatSqDominatingFun
+          have e1 : u ^ 2 * ((Real.exp (t * u ^ 2)
+                * ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+                  * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))))
+              * Real.exp ((|z₀.im| + 1) * u))
+            = (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst * u ^ 2
+              * (Real.exp (t * u ^ 2) * Real.exp (9 * u)
+                * Real.exp ((|z₀.im| + 1) * u))
+              * Real.exp (-(Real.pi * Real.exp (4 * u))) := by ring
+          rw [e1, ← Real.exp_add, ← Real.exp_add]
+          have e2 : t * u ^ 2 + 9 * u + (|z₀.im| + 1) * u
+              = t * u ^ 2 + (9 + (|z₀.im| + 1)) * u := by ring
+          rw [e2]
+  have hint : MeasureTheory.Integrable (heatSqDominatingFun t (|z₀.im| + 1)) μ :=
+    integrableOn_heatSqDominatingFun t (|z₀.im| + 1) (by positivity)
+  have hdiff : ∀ᵐ u ∂μ, ∀ w ∈ Metric.ball z₀ 1,
+      HasDerivAt (fun x => heatIntegrandDeriv t x u)
+        (-(((u : ℝ) : ℂ) ^ 2) * heatIntegrand t w u) w :=
+    Filter.Eventually.of_forall fun u w _ => heat_integrandDeriv_hasDerivAt t u w
+  have hFint : MeasureTheory.Integrable (heatIntegrandDeriv t z₀) μ :=
+    heat_integrandDeriv_integrable t z₀
+  exact (hasDerivAt_integral_of_dominated_loc_of_deriv_le
+    (Metric.ball_mem_nhds z₀ (by norm_num : (0:ℝ) < 1))
+    (Filter.Eventually.of_forall hmeas) hFint hderv_meas hbound hint hdiff).2
+
+/-- The second `z`-derivative of `H_t` as an integral:
+`H_t''(z₀) = ∫_0^∞ −u² · e^{t u²} Φ(u) cos(z₀ u) du`. -/
+theorem hasDerivAt_deriv_deBruijnNewmanH (t : ℝ) (z₀ : ℂ) :
+    HasDerivAt (deriv (fun w : ℂ => deBruijnNewmanH t w))
+      (∫ u : ℝ in Set.Ioi 0, -((u : ℂ) ^ 2) * heatIntegrand t z₀ u) z₀ := by
+  have hEq : (fun w : ℂ => ∫ u in Set.Ioi 0, heatIntegrandDeriv t w u)
+      = deriv (fun w : ℂ => deBruijnNewmanH t w) :=
+    funext fun w => (deriv_deBruijnNewmanH t w).symm
+  rw [← hEq]
+  exact hasDerivAt_integral_heatIntegrandDeriv t z₀
+
+/-- The `t`-derivative of `H_t` as an integral:
+`∂_t H_t(z) = ∫_0^∞ u² · e^{t u²} Φ(u) cos(z u) du`. -/
+theorem hasDerivAt_deBruijnNewmanH_t (z : ℂ) (t : ℝ) :
+    HasDerivAt (fun s : ℝ => deBruijnNewmanH s z)
+      (∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand t z u) t := by
+  set μ := MeasureTheory.volume.restrict (Set.Ioi (0:ℝ)) with hμ
+  have hmeas : ∀ s : ℝ, MeasureTheory.AEStronglyMeasurable
+      (fun u : ℝ => heatIntegrand s z u) μ :=
+    fun s => (continuous_heatIntegrand s z).continuousOn.aestronglyMeasurable
+      measurableSet_Ioi
+  have hderv_meas : MeasureTheory.AEStronglyMeasurable
+      (fun u : ℝ => ((u : ℂ) ^ 2) * heatIntegrand t z u) μ :=
+    ((Complex.continuous_ofReal.pow 2).mul
+      (continuous_heatIntegrand t z)).continuousOn.aestronglyMeasurable
+      measurableSet_Ioi
+  have hC0 : (0:ℝ) ≤ (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst :=
+    mul_nonneg (by positivity) phiTailConst_nonneg
+  have hbound : ∀ᵐ u ∂μ, ∀ s ∈ Metric.ball t 1,
+      ‖(((u : ℝ) : ℂ) ^ 2) * heatIntegrand s z u‖
+        ≤ heatSqDominatingFun (t + 1) |z.im| u := by
+    filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_Ioi] with u hu s hs
+    have hu0 : 0 ≤ u := le_of_lt hu
+    have hs1 : s ≤ t + 1 := by
+      have h1 : |s - t| < 1 := by
+        rw [← Real.dist_eq]
+        exact Metric.mem_ball.mp hs
+      have h2 : s - t ≤ |s - t| := le_abs_self _
+      linarith
+    have hexp : Real.exp (s * u ^ 2) ≤ Real.exp ((t + 1) * u ^ 2) :=
+      Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_right hs1 (sq_nonneg u))
+    have hn : ‖((u : ℂ) ^ 2) * heatIntegrand s z u‖
+        = u ^ 2 * (|Real.exp (s * u ^ 2) * phi u|
+            * ‖Complex.cos (z * (u : ℂ))‖) := by
+      rw [norm_mul, norm_pow,
+        show ‖(u : ℂ)‖ = u from by
+          rw [show ‖(u : ℂ)‖ = |u| from RCLike.norm_ofReal u, abs_of_nonneg hu0]]
+      unfold heatIntegrand
+      rw [norm_mul, show ‖((Real.exp (s * u ^ 2) * phi u : ℝ) : ℂ)‖
+          = |Real.exp (s * u ^ 2) * phi u| from RCLike.norm_ofReal _]
+    rw [hn]
+    have hcos : ‖Complex.cos (z * (u : ℂ))‖ ≤ Real.exp (|z.im| * u) := by
+      calc ‖Complex.cos (z * (u : ℂ))‖ ≤ Real.exp |z.im * u| :=
+            norm_cos_mul_ofReal_le_exp z u
+        _ = Real.exp (|z.im| * u) := by rw [abs_mul, abs_of_nonneg hu0]
+    have hphi : |Real.exp (s * u ^ 2) * phi u|
+        ≤ Real.exp ((t + 1) * u ^ 2) * ((2 * Real.pi ^ 2 + 3 * Real.pi)
+            * phiTailConst * Real.exp (9 * u)
+            * Real.exp (-(Real.pi * Real.exp (4 * u)))) := by
+      rw [abs_mul, abs_of_pos (Real.exp_pos _)]
+      exact mul_le_mul hexp (abs_phi_le u hu0) (abs_nonneg _) (Real.exp_nonneg _)
+    have hb0 : 0 ≤ Real.exp ((t + 1) * u ^ 2)
+        * ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+          * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))) :=
+      mul_nonneg (Real.exp_nonneg _)
+        (mul_nonneg (mul_nonneg hC0 (Real.exp_nonneg _)) (Real.exp_nonneg _))
+    calc u ^ 2 * (|Real.exp (s * u ^ 2) * phi u| * ‖Complex.cos (z * (u : ℂ))‖)
+        ≤ u ^ 2 * ((Real.exp ((t + 1) * u ^ 2)
+            * ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+              * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))))
+          * Real.exp (|z.im| * u)) :=
+          mul_le_mul_of_nonneg_left
+            (mul_le_mul hphi hcos (norm_nonneg _) hb0) (sq_nonneg u)
+      _ = heatSqDominatingFun (t + 1) |z.im| u := by
+          unfold heatSqDominatingFun
+          have e1 : u ^ 2 * ((Real.exp ((t + 1) * u ^ 2)
+                * ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+                  * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))))
+              * Real.exp (|z.im| * u))
+            = (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst * u ^ 2
+              * (Real.exp ((t + 1) * u ^ 2) * Real.exp (9 * u)
+                * Real.exp (|z.im| * u))
+              * Real.exp (-(Real.pi * Real.exp (4 * u))) := by ring
+          rw [e1, ← Real.exp_add, ← Real.exp_add]
+          have e2 : (t + 1) * u ^ 2 + 9 * u + |z.im| * u
+              = (t + 1) * u ^ 2 + (9 + |z.im|) * u := by ring
+          rw [e2]
+  have hint : MeasureTheory.Integrable (heatSqDominatingFun (t + 1) |z.im|) μ :=
+    integrableOn_heatSqDominatingFun (t + 1) |z.im| (abs_nonneg _)
+  have hdiff : ∀ᵐ u ∂μ, ∀ s ∈ Metric.ball t 1,
+      HasDerivAt (fun s' => heatIntegrand s' z u)
+        ((((u : ℝ) : ℂ) ^ 2) * heatIntegrand s z u) s :=
+    Filter.Eventually.of_forall fun u s _ => heat_integrand_hasDerivAt_t u z s
+  have hFint : MeasureTheory.Integrable (fun u : ℝ => heatIntegrand t z u) μ :=
+    heat_integrand_integrable t z
+  exact (hasDerivAt_integral_of_dominated_loc_of_deriv_le
+    (Metric.ball_mem_nhds t (by norm_num : (0:ℝ) < 1))
+    (Filter.Eventually.of_forall hmeas) hFint hderv_meas hbound hint hdiff).2
+
 /-- **Phase 1b main theorem, part 1**: every `H_t` is entire
 (ℂ-differentiable everywhere), by dominated differentiation under the
 integral sign on `(0, ∞)`. -/
@@ -1708,6 +2171,33 @@ def backward_heat_equation_target : Prop :=
   ∀ t : ℝ, ∀ z : ℂ,
     deriv (fun s : ℝ => deBruijnNewmanH s z) t =
       - iteratedDeriv 2 (fun w : ℂ => deBruijnNewmanH t w) z
+
+/-- The negated second-derivative integral as the negative of the
+`t`-derivative integral. -/
+theorem integral_neg_sq_heatIntegrand (t : ℝ) (z : ℂ) :
+    (∫ u : ℝ in Set.Ioi 0, -((u : ℂ) ^ 2) * heatIntegrand t z u)
+      = -(∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand t z u) := by
+  rw [← MeasureTheory.integral_neg]
+  apply MeasureTheory.setIntegral_congr_fun measurableSet_Ioi
+  intro u _
+  exact neg_mul _ _
+
+/-- **反向热方程**（Phase 1c 遗留目标收官）：`∂_t H_t = −∂_z² H_t`。
+两侧都化为 `∫_0^∞ u² e^{t u²} Φ(u) cos(z u) du`。 -/
+theorem backward_heat_equation (t : ℝ) (z : ℂ) :
+    deriv (fun s : ℝ => deBruijnNewmanH s z) t =
+      - iteratedDeriv 2 (fun w : ℂ => deBruijnNewmanH t w) z := by
+  have h2 : iteratedDeriv 2 (fun w : ℂ => deBruijnNewmanH t w)
+      = deriv (deriv (fun w : ℂ => deBruijnNewmanH t w)) := by
+    rw [show (2 : ℕ) = 1 + 1 from rfl, iteratedDeriv_succ, iteratedDeriv_one]
+  rw [(hasDerivAt_deBruijnNewmanH_t z t).deriv, h2,
+    (hasDerivAt_deriv_deBruijnNewmanH t z).deriv,
+    integral_neg_sq_heatIntegrand, neg_neg]
+
+/-- Phase 1c 遗留收官：`backward_heat_equation_target` 已由
+`backward_heat_equation` 证明。 -/
+theorem backward_heat_equation_target_proved : backward_heat_equation_target :=
+  fun t z => backward_heat_equation t z
 
 /-- `H_t` 只有实零点（命题层谓词）。 -/
 def AllZerosReal (t : ℝ) : Prop :=

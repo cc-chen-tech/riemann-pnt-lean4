@@ -99,3 +99,5 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.completedZeta_eq_of_ne_zero_ne_one
 #print axioms RiemannExplorer.DeBruijnNewman.completedZeta_eq_zero_iff
 #print axioms RiemannExplorer.DeBruijnNewman.statement_iff_allZerosReal_zero
+#print axioms RiemannExplorer.DeBruijnNewman.backward_heat_equation
+#print axioms RiemannExplorer.DeBruijnNewman.backward_heat_equation_target_proved
