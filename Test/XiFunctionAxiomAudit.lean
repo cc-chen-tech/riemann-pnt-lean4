@@ -17,6 +17,7 @@ import RiemannExplorer.XiLogDerivDisc
 import RiemannExplorer.XiCorrectionConst
 import RiemannExplorer.LiWeightedPositivity
 import RiemannExplorer.LiWeightedRepresentation
+import RiemannExplorer.LiConverse
 
 #print axioms RiemannExplorer.xiFunction_one_sub
 #print axioms RiemannExplorer.xiFunction_zero
@@ -226,3 +227,8 @@ import RiemannExplorer.LiWeightedRepresentation
 #print axioms RiemannExplorer.tsum_weightedLiPairedTerm_eq_sum
 #print axioms RiemannExplorer.li_weighted_zero_sum_representation
 #print axioms RiemannExplorer.rh_implies_li_criterion_target_proved
+#print axioms RiemannExplorer.half_le_re_of_norm_one_sub_inv_le_one
+#print axioms RiemannExplorer.finite_upperZeros_norm_one_sub_inv_ge
+#print axioms RiemannExplorer.exists_max_norm_one_sub_inv
+#print axioms RiemannExplorer.rh_of_forall_upperZero_norm_one_sub_inv_le
+#print axioms RiemannExplorer.li_criterion_implies_rh_of_bl_bound
