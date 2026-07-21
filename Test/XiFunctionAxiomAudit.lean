@@ -109,3 +109,5 @@ import RiemannExplorer.XiGrowthOrder
 #print axioms RiemannExplorer.xiFunction_zero_imp_isNontrivialZero
 #print axioms RiemannExplorer.xi_partial_fraction_expansion_target_im_ne_zero
 #print axioms RiemannExplorer.xi_partial_fraction_expansion_target_imp_simple_zeros_unconditional
+#print axioms RiemannExplorer.exists_exp_one_add_mul_log_bound
+#print axioms RiemannExplorer.exists_norm_xiFunction_le_exp_order_one

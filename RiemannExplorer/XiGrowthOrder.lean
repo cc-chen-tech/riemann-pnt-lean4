@@ -24,6 +24,7 @@ import Mathlib.NumberTheory.LSeries.RiemannZeta
 import Mathlib.NumberTheory.ZetaValues
 import Mathlib.Analysis.PSeries
 import ZeroFreeRegion.PhragmenLindelofZeta
+import RiemannExplorer.XiFunction
 
 namespace RiemannExplorer
 
@@ -289,5 +290,273 @@ theorem exists_norm_sub_one_mul_riemannZeta_le_fifth :
         _ ≤ max (Real.pi ^ 2 / 6) (max M (81 * C₀)) * (1 + ‖s‖) ^ 5 :=
             mul_le_mul_of_nonneg_right (le_trans (le_max_left _ _) (le_max_right _ _))
               (pow_nonneg (le_trans zero_le_one h1s) _)
+
+/-! ## ξ 的整体增长阶（≤ 1，对数尺度） -/
+
+/-- 吸收引理：任何「正常数 × `(1+t)^a`」都被对数尺度的
+`exp(K·(1+t)·log(4+t))` 控制（`t ≥ 0`）。 -/
+theorem exists_exp_one_add_mul_log_bound (A : ℝ) (hA : 0 < A) (a : ℝ) :
+    ∃ K : ℝ, 0 ≤ K ∧ ∀ t : ℝ, 0 ≤ t →
+      A * (1 + t) ^ a ≤ Real.exp (K * (1 + t) * Real.log (4 + t)) := by
+  refine ⟨max 0 (Real.log A / Real.log 4) + max 0 a,
+    add_nonneg (le_max_left _ _) (le_max_left _ _), fun t ht => ?_⟩
+  have hL4 : (0:ℝ) < Real.log 4 := Real.log_pos (by norm_num)
+  have h1t : (0:ℝ) < 1 + t := by linarith
+  have hL : Real.log 4 ≤ Real.log (4 + t) := Real.log_le_log (by norm_num) (by linarith)
+  have hL1 : Real.log (1 + t) ≤ Real.log (4 + t) := Real.log_le_log h1t (by linarith)
+  have hlog1nn : (0:ℝ) ≤ Real.log (1 + t) := Real.log_nonneg (by linarith)
+  have hLnn : (0:ℝ) ≤ Real.log (4 + t) := hL4.le.trans hL
+  have hu : Real.log A ≤ max 0 (Real.log A / Real.log 4) * Real.log (4 + t) := by
+    by_cases hA1 : 0 ≤ Real.log A
+    · calc Real.log A = (Real.log A / Real.log 4) * Real.log 4 :=
+          (div_mul_cancel₀ (Real.log A) hL4.ne').symm
+        _ ≤ (Real.log A / Real.log 4) * Real.log (4 + t) :=
+            mul_le_mul_of_nonneg_left hL (div_nonneg hA1 hL4.le)
+        _ ≤ max 0 (Real.log A / Real.log 4) * Real.log (4 + t) :=
+            mul_le_mul_of_nonneg_right (le_max_right _ _) hLnn
+    · exact (le_of_not_ge hA1).trans (mul_nonneg (le_max_left _ _) hLnn)
+  have hv : a * Real.log (1 + t) ≤ max 0 a * Real.log (4 + t) := by
+    by_cases ha : 0 ≤ a
+    · calc a * Real.log (1 + t) ≤ a * Real.log (4 + t) :=
+          mul_le_mul_of_nonneg_left hL1 ha
+        _ ≤ max 0 a * Real.log (4 + t) :=
+          mul_le_mul_of_nonneg_right (le_max_right _ _) hLnn
+    · exact (mul_nonpos_of_nonpos_of_nonneg (le_of_not_ge ha) hlog1nn).trans
+        (mul_nonneg (le_max_left _ _) hLnn)
+  have hkey : Real.log A + a * Real.log (1 + t) ≤
+      (max 0 (Real.log A / Real.log 4) + max 0 a) * (1 + t) * Real.log (4 + t) := by
+    have hnn : (0:ℝ) ≤
+        (max 0 (Real.log A / Real.log 4) + max 0 a) * Real.log (4 + t) :=
+      mul_nonneg (add_nonneg (le_max_left _ _) (le_max_left _ _)) hLnn
+    calc Real.log A + a * Real.log (1 + t)
+        ≤ max 0 (Real.log A / Real.log 4) * Real.log (4 + t) +
+            max 0 a * Real.log (4 + t) := add_le_add hu hv
+      _ = (max 0 (Real.log A / Real.log 4) + max 0 a) * Real.log (4 + t) := by ring
+      _ = ((max 0 (Real.log A / Real.log 4) + max 0 a) * Real.log (4 + t)) * 1 :=
+          (mul_one _).symm
+      _ ≤ ((max 0 (Real.log A / Real.log 4) + max 0 a) * Real.log (4 + t)) * (1 + t) :=
+          mul_le_mul_of_nonneg_left (by linarith) hnn
+      _ = (max 0 (Real.log A / Real.log 4) + max 0 a) * (1 + t) * Real.log (4 + t) :=
+          by ring
+  calc A * (1 + t) ^ a = Real.exp (Real.log (A * (1 + t) ^ a)) :=
+        (Real.exp_log (mul_pos hA (Real.rpow_pos_of_pos h1t a))).symm
+    _ = Real.exp (Real.log A + a * Real.log (1 + t)) := by
+        rw [Real.log_mul (ne_of_gt hA) (ne_of_gt (Real.rpow_pos_of_pos h1t a)),
+          Real.log_rpow h1t]
+    _ ≤ Real.exp ((max 0 (Real.log A / Real.log 4) + max 0 a) * (1 + t) *
+          Real.log (4 + t)) := Real.exp_le_exp.mpr hkey
+
+/-- **ξ 的增长阶至多为 1**（对数尺度）：存在常数 `K` 使对所有 `s : ℂ`，
+`‖ξ(s)‖ ≤ exp(K·(1+‖s‖)·log(4+‖s‖))`。
+
+证明分三区：右半平面大区（`1/2 ≤ re s`、`2 ≤ ‖s‖`）用经典乘积
+`ξ = (1/2)·s·Gammaℝ·((s−1)ζ)` 配合 Γ 的阶 1 界（`Complex.norm_Gamma_le_exp`）、
+`(s−1)ζ` 的五次界（`exists_norm_sub_one_mul_riemannZeta_le_fifth`）与
+`‖π^(−s/2)‖ ≤ 1`；紧盘 `‖s‖ ≤ 2` 用连续性；左半平面用函数方程
+`ξ(s) = ξ(1−s)` 归约。这是 Hadamard 展开缺口的「增长阶」组件。 -/
+theorem exists_norm_xiFunction_le_exp_order_one :
+    ∃ K : ℝ, ∀ s : ℂ,
+      ‖xiFunction s‖ ≤ Real.exp (K * (1 + ‖s‖) * Real.log (4 + ‖s‖)) := by
+  obtain ⟨C, hC⟩ := exists_norm_sub_one_mul_riemannZeta_le_fifth
+  have hCnn : (0:ℝ) ≤ C := by
+    have h := hC 2 (by simp; norm_num)
+      (le_of_eq (by rw [show ((2:ℂ) - 1) = 1 by ring, norm_one]))
+    exact nonneg_of_mul_nonneg_left ((norm_nonneg _).trans h) (by positivity)
+  -- 紧盘 `‖s‖ ≤ 2` 上的界
+  obtain ⟨M₀, hM₀⟩ : ∃ M₀ : ℝ, ∀ s : ℂ, ‖s‖ ≤ 2 → ‖xiFunction s‖ ≤ M₀ := by
+    have hcomp : IsCompact (Metric.closedBall (0 : ℂ) 2) := isCompact_closedBall _ _
+    have hcont : ContinuousOn (fun s => ‖xiFunction s‖) (Metric.closedBall (0 : ℂ) 2) :=
+      differentiable_xiFunction.continuous.norm.continuousOn
+    obtain ⟨M₀, hM₀⟩ := hcomp.bddAbove_image hcont
+    refine ⟨M₀, fun s hs => hM₀ (Set.mem_image_of_mem _
+      (by rwa [Metric.mem_closedBall, dist_zero_right]))⟩
+  have hM0nn : (0:ℝ) ≤ M₀ :=
+    (norm_nonneg _).trans (hM₀ 0 (by rw [norm_zero]; norm_num))
+  -- 吸收常数
+  obtain ⟨K₁, hK₁, hK₁b⟩ := exists_exp_one_add_mul_log_bound (8 * C / 5 + 1)
+    (by positivity) 6
+  obtain ⟨K₂, hK₂, hK₂b⟩ := exists_exp_one_add_mul_log_bound (M₀ + 1)
+    (by linarith) 0
+  -- 右半平面的统一界（大区 + 小区）
+  set K₃ := max (K₁ + 4) K₂ with hK₃def
+  have hK₃nn : (0:ℝ) ≤ K₃ := (add_nonneg hK₁ (by norm_num)).trans (le_max_left _ _)
+  have hAB : ∀ s : ℂ, 1 / 2 ≤ s.re →
+      ‖xiFunction s‖ ≤ Real.exp (K₃ * (1 + ‖s‖) * Real.log (4 + ‖s‖)) := by
+    intro s hsre
+    have h1snn : (0:ℝ) ≤ 1 + ‖s‖ := by linarith [norm_nonneg s]
+    have hLnn : (0:ℝ) ≤ Real.log (4 + ‖s‖) :=
+      Real.log_nonneg (by linarith [norm_nonneg s])
+    by_cases h2 : 2 ≤ ‖s‖
+    · -- 大区：经典乘积
+      have hs0 : s ≠ 0 := by
+        intro h; rw [h, norm_zero] at h2; norm_num at h2
+      have hs1 : s ≠ 1 := by
+        intro h; rw [h, norm_one] at h2; norm_num at h2
+      have hG : Complex.Gammaℝ s ≠ 0 := Complex.Gammaℝ_ne_zero_of_re_pos (by linarith)
+      have hsn1 : 1 ≤ ‖s - 1‖ := by
+        have hle : ‖s‖ ≤ ‖s - 1‖ + 1 := by
+          calc ‖s‖ = ‖(s - 1) + 1‖ := by rw [sub_add_cancel]
+            _ ≤ ‖s - 1‖ + ‖(1 : ℂ)‖ := norm_add_le _ _
+            _ = ‖s - 1‖ + 1 := by rw [norm_one]
+        linarith
+      have hz := hC s hsre hsn1
+      have hre2 : (s / 2 : ℂ).re = s.re / 2 := by
+        rw [show (s / 2 : ℂ) = s * ((1 / 2 : ℝ) : ℂ) by push_cast; ring]
+        rw [Complex.mul_re]
+        simp
+        ring
+      have hren2 : (-s / 2 : ℂ).re = -s.re / 2 := by
+        rw [show (-s / 2 : ℂ) = s * ((-1 / 2 : ℝ) : ℂ) by push_cast; ring]
+        rw [Complex.mul_re]
+        simp
+        ring
+      have hpi : ‖(Real.pi : ℂ) ^ (-s / 2)‖ ≤ 1 := by
+        rw [Complex.norm_cpow_eq_rpow_re_of_pos Real.pi_pos, hren2]
+        exact Real.rpow_le_one_of_one_le_of_nonpos
+          (by linarith [Real.pi_gt_three] : (1:ℝ) ≤ Real.pi) (by linarith)
+      have hgam : ‖Complex.Gamma (s / 2)‖ ≤
+          Real.exp (Real.log (16 / 5) + (s.re / 2 + 3) * Real.log (s.re / 2 + 3)) := by
+        have h := Complex.norm_Gamma_le_exp (z := s / 2) (by rw [hre2]; linarith)
+        rwa [hre2] at h
+      have hGR : ‖Complex.Gammaℝ s‖ ≤
+          Real.exp (Real.log (16 / 5) + (s.re / 2 + 3) * Real.log (s.re / 2 + 3)) := by
+        have heq : ‖Complex.Gammaℝ s‖ =
+            ‖(Real.pi : ℂ) ^ (-s / 2)‖ * ‖Complex.Gamma (s / 2)‖ := by
+          rw [show Complex.Gammaℝ s =
+              (Real.pi : ℂ) ^ (-s / 2) * Complex.Gamma (s / 2) from rfl, norm_mul]
+        rw [heq]
+        calc ‖(Real.pi : ℂ) ^ (-s / 2)‖ * ‖Complex.Gamma (s / 2)‖
+            ≤ 1 * Real.exp (Real.log (16 / 5) +
+                (s.re / 2 + 3) * Real.log (s.re / 2 + 3)) :=
+              mul_le_mul hpi hgam (norm_nonneg _) zero_le_one
+          _ = _ := one_mul _
+      -- `(x+3)·log(x+3)` 的单调性：把 `s.re/2` 换成 `‖s‖/2`
+      have hsre_norm : s.re ≤ ‖s‖ := Complex.re_le_norm s
+      have hmono : (s.re / 2 + 3) * Real.log (s.re / 2 + 3) ≤
+          (‖s‖ / 2 + 3) * Real.log (‖s‖ / 2 + 3) := by
+        have h1 : s.re / 2 + 3 ≤ ‖s‖ / 2 + 3 := by linarith
+        have h2 : Real.log (s.re / 2 + 3) ≤ Real.log (‖s‖ / 2 + 3) :=
+          Real.log_le_log (by linarith) h1
+        exact mul_le_mul h1 h2 (Real.log_nonneg (by linarith)) (by linarith)
+      have hquad : (‖s‖ / 2 + 3) * Real.log (‖s‖ / 2 + 3) ≤
+          4 * (1 + ‖s‖) * Real.log (4 + ‖s‖) := by
+        have hLl : Real.log (‖s‖ / 2 + 3) ≤ Real.log (4 + ‖s‖) :=
+          Real.log_le_log (by linarith [norm_nonneg s]) (by linarith [norm_nonneg s])
+        have hb2 : ‖s‖ / 2 + 3 ≤ 4 + ‖s‖ := by linarith [norm_nonneg s]
+        calc (‖s‖ / 2 + 3) * Real.log (‖s‖ / 2 + 3)
+            ≤ (4 + ‖s‖) * Real.log (4 + ‖s‖) :=
+              mul_le_mul hb2 hLl (Real.log_nonneg (by linarith [norm_nonneg s]))
+                (by linarith [norm_nonneg s])
+          _ ≤ (4 * (1 + ‖s‖)) * Real.log (4 + ‖s‖) :=
+              mul_le_mul_of_nonneg_right (by linarith [norm_nonneg s]) hLnn
+          _ = 4 * (1 + ‖s‖) * Real.log (4 + ‖s‖) := by ring
+      have hexp1 : Real.exp (Real.log (16 / 5) + (s.re / 2 + 3) * Real.log (s.re / 2 + 3)) ≤
+          Real.exp (Real.log (16 / 5) + 4 * (1 + ‖s‖) * Real.log (4 + ‖s‖)) :=
+        Real.exp_le_exp.mpr (add_le_add le_rfl (hmono.trans hquad))
+      -- 主链：经典乘积的范数
+      rw [xiFunction_eq_classical hs0 hs1 hG]
+      have hrw : (1 / 2 : ℂ) * s * (s - 1) * Complex.Gammaℝ s * riemannZeta s =
+          (1 / 2) * s * Complex.Gammaℝ s * ((s - 1) * riemannZeta s) := by ring
+      rw [hrw]
+      have hnorm : ‖(1 / 2 : ℂ) * s * Complex.Gammaℝ s * ((s - 1) * riemannZeta s)‖ =
+          (1 / 2) * ‖s‖ * ‖Complex.Gammaℝ s‖ * ‖(s - 1) * riemannZeta s‖ := by
+        have h1n : ‖(1 / 2 : ℂ)‖ = 1 / 2 := by simp
+        rw [norm_mul, norm_mul, norm_mul, h1n]
+      rw [hnorm]
+      calc (1 / 2) * ‖s‖ * ‖Complex.Gammaℝ s‖ * ‖(s - 1) * riemannZeta s‖
+          ≤ (1 / 2) * ‖s‖ *
+              Real.exp (Real.log (16 / 5) + 4 * (1 + ‖s‖) * Real.log (4 + ‖s‖)) *
+              (C * (1 + ‖s‖) ^ 5) := by
+            apply mul_le_mul _ hz (norm_nonneg _) (by positivity)
+            exact mul_le_mul_of_nonneg_left (hGR.trans hexp1) (by positivity)
+        _ = (16 / 5) * (C / 2) * ‖s‖ * (1 + ‖s‖) ^ 5 *
+              Real.exp (4 * (1 + ‖s‖) * Real.log (4 + ‖s‖)) := by
+            rw [Real.exp_add, Real.exp_log (by norm_num : (0:ℝ) < 16 / 5)]
+            ring
+        _ ≤ (8 * C / 5 + 1) * (1 + ‖s‖) ^ 6 *
+              Real.exp (4 * (1 + ‖s‖) * Real.log (4 + ‖s‖)) := by
+            apply mul_le_mul_of_nonneg_right _ (Real.exp_pos _).le
+            have hs6 : ‖s‖ * (1 + ‖s‖) ^ 5 ≤ (1 + ‖s‖) ^ 6 := by
+              have e : (1 + ‖s‖) ^ 6 = (1 + ‖s‖) ^ 5 * (1 + ‖s‖) := by ring
+              have hmul := mul_le_mul_of_nonneg_left
+                (by linarith [norm_nonneg s] : ‖s‖ ≤ 1 + ‖s‖)
+                (pow_nonneg h1snn 5)
+              calc ‖s‖ * (1 + ‖s‖) ^ 5 = (1 + ‖s‖) ^ 5 * ‖s‖ := mul_comm _ _
+                _ ≤ (1 + ‖s‖) ^ 5 * (1 + ‖s‖) := hmul
+                _ = (1 + ‖s‖) ^ 6 := e.symm
+            calc (16 / 5) * (C / 2) * ‖s‖ * (1 + ‖s‖) ^ 5
+                = (8 * C / 5) * (‖s‖ * (1 + ‖s‖) ^ 5) := by ring
+              _ ≤ (8 * C / 5) * ((1 + ‖s‖) ^ 6) :=
+                  mul_le_mul_of_nonneg_left hs6 (by linarith [hCnn])
+              _ = (8 * C / 5) * (1 + ‖s‖) ^ 6 := by ring
+              _ ≤ (8 * C / 5 + 1) * (1 + ‖s‖) ^ 6 :=
+                  mul_le_mul_of_nonneg_right (by linarith) (pow_nonneg h1snn 6)
+        _ ≤ Real.exp (K₁ * (1 + ‖s‖) * Real.log (4 + ‖s‖)) *
+              Real.exp (4 * (1 + ‖s‖) * Real.log (4 + ‖s‖)) := by
+            apply mul_le_mul_of_nonneg_right _ (Real.exp_pos _).le
+            have e : (8 * C / 5 + 1) * (1 + ‖s‖) ^ 6 =
+                (8 * C / 5 + 1) * (1 + ‖s‖) ^ (6:ℝ) := by simp
+            rw [e]
+            exact hK₁b ‖s‖ (norm_nonneg _)
+        _ = Real.exp ((K₁ + 4) * (1 + ‖s‖) * Real.log (4 + ‖s‖)) := by
+            rw [← Real.exp_add]
+            congr 1
+            ring
+        _ ≤ Real.exp (K₃ * (1 + ‖s‖) * Real.log (4 + ‖s‖)) :=
+            Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_right
+              (mul_le_mul_of_nonneg_right (le_max_left _ _) h1snn) hLnn)
+    · -- 小区：紧盘界
+      have hs2 : ‖s‖ ≤ 2 := le_of_not_ge h2
+      calc ‖xiFunction s‖ ≤ M₀ := hM₀ s hs2
+        _ ≤ M₀ + 1 := by linarith
+        _ = (M₀ + 1) * (1 + ‖s‖) ^ (0:ℝ) := by rw [Real.rpow_zero, mul_one]
+        _ ≤ Real.exp (K₂ * (1 + ‖s‖) * Real.log (4 + ‖s‖)) :=
+            hK₂b ‖s‖ (norm_nonneg _)
+        _ ≤ Real.exp (K₃ * (1 + ‖s‖) * Real.log (4 + ‖s‖)) :=
+            Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_right
+              (mul_le_mul_of_nonneg_right (le_max_right _ _) h1snn) hLnn)
+  -- 全平面：左半平面经函数方程归约
+  refine ⟨4 * K₃, fun s => ?_⟩
+  have h1snn : (0:ℝ) ≤ 1 + ‖s‖ := by linarith [norm_nonneg s]
+  have hLnn : (0:ℝ) ≤ Real.log (4 + ‖s‖) := Real.log_nonneg (by linarith [norm_nonneg s])
+  by_cases hre : 1 / 2 ≤ s.re
+  · exact (hAB s hre).trans (Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_right
+      (mul_le_mul_of_nonneg_right (by linarith [hK₃nn] : K₃ ≤ 4 * K₃) h1snn) hLnn))
+  · have hre' : 1 / 2 ≤ (1 - s).re := by
+      rw [Complex.sub_re, Complex.one_re]
+      linarith [le_of_not_ge hre]
+    rw [xiFunction_one_sub]
+    have h1s : ‖1 - s‖ ≤ 1 + ‖s‖ := by
+      calc ‖1 - s‖ ≤ ‖(1 : ℂ)‖ + ‖s‖ := norm_sub_le _ _
+        _ = 1 + ‖s‖ := by rw [norm_one]
+    have hmono : (1 + ‖1 - s‖) * Real.log (4 + ‖1 - s‖) ≤
+        4 * ((1 + ‖s‖) * Real.log (4 + ‖s‖)) := by
+      have h1 : (1:ℝ) + ‖1 - s‖ ≤ 2 + ‖s‖ := by linarith
+      have h2 : Real.log (4 + ‖1 - s‖) ≤ Real.log (5 + ‖s‖) :=
+        Real.log_le_log (by linarith [norm_nonneg (1 - s)]) (by linarith [norm_nonneg s])
+      have h3 : Real.log (5 + ‖s‖) ≤ 2 * Real.log (4 + ‖s‖) := by
+        have h4 : (5 + ‖s‖) ≤ (4 + ‖s‖) ^ 2 := by nlinarith [norm_nonneg s]
+        calc Real.log (5 + ‖s‖) ≤ Real.log ((4 + ‖s‖) ^ 2) :=
+              Real.log_le_log (by linarith [norm_nonneg s]) h4
+          _ = 2 * Real.log (4 + ‖s‖) := by rw [Real.log_pow]; norm_num
+      calc (1 + ‖1 - s‖) * Real.log (4 + ‖1 - s‖)
+          ≤ (2 + ‖s‖) * Real.log (5 + ‖s‖) :=
+            mul_le_mul h1 h2 (Real.log_nonneg (by linarith [norm_nonneg (1 - s)]))
+              (by linarith [norm_nonneg s])
+        _ ≤ (2 * (1 + ‖s‖)) * (2 * Real.log (4 + ‖s‖)) :=
+            mul_le_mul (by linarith [norm_nonneg s]) h3
+              (Real.log_nonneg (by linarith [norm_nonneg s]))
+              (by linarith [norm_nonneg s])
+        _ = 4 * ((1 + ‖s‖) * Real.log (4 + ‖s‖)) := by ring
+    calc ‖xiFunction (1 - s)‖
+        ≤ Real.exp (K₃ * (1 + ‖1 - s‖) * Real.log (4 + ‖1 - s‖)) := hAB (1 - s) hre'
+      _ ≤ Real.exp (K₃ * (4 * ((1 + ‖s‖) * Real.log (4 + ‖s‖)))) :=
+          Real.exp_le_exp.mpr (by
+            have h := mul_le_mul_of_nonneg_left hmono hK₃nn
+            rw [← mul_assoc] at h
+            exact h)
+      _ = Real.exp (4 * K₃ * (1 + ‖s‖) * Real.log (4 + ‖s‖)) := by
+          congr 1
+          ring
 
 end RiemannExplorer
