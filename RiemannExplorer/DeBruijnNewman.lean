@@ -5040,6 +5040,45 @@ theorem hasStrictFDerivAt_deBruijnNewmanH_prod (p : ℝ × ℂ) :
     (Filter.Eventually.of_forall fun q => hasFDerivAt_deBruijnNewmanH_prod q)
     continuous_jointFDerivCLM.continuousAt
 
+/-- **The z-partial of the joint derivative**: composing `jointFDerivCLM`
+with the right inclusion recovers multiplication by `∂_z H_t(w)`. -/
+theorem jointFDerivCLM_comp_inr (t : ℝ) (w : ℂ) :
+    (jointFDerivCLM t w).comp (ContinuousLinearMap.inr ℝ ℝ ℂ)
+      = ContinuousLinearMap.mul ℝ ℂ (deriv (deBruijnNewmanH t) w) := by
+  ext z
+  rw [ContinuousLinearMap.comp_apply, ContinuousLinearMap.inr_apply,
+    jointFDerivCLM_apply]
+  simp
+
+/-- **Invertibility of the z-partial at a simple zero**: if
+`∂_z H_{t₀}(x₀) ≠ 0`, the z-component of the joint real derivative is an
+invertible `ℝ`-linear map — the nondegeneracy hypothesis of the implicit
+function theorem. The two-sided inverse is multiplication by
+`(∂_z H_{t₀}(x₀))⁻¹`. -/
+theorem isInvertible_jointFDerivCLM_comp_inr (t₀ : ℝ) (x₀ : ℂ)
+    (hD : deriv (deBruijnNewmanH t₀) x₀ ≠ 0) :
+    ((fderiv ℝ (fun q : ℝ × ℂ => deBruijnNewmanH q.1 q.2) (t₀, x₀)).comp
+      (ContinuousLinearMap.inr ℝ ℝ ℂ)).IsInvertible := by
+  have hfd : fderiv ℝ (fun q : ℝ × ℂ => deBruijnNewmanH q.1 q.2) (t₀, x₀)
+      = jointFDerivCLM t₀ x₀ :=
+    (hasFDerivAt_deBruijnNewmanH_prod (t₀, x₀)).fderiv
+  rw [hfd, jointFDerivCLM_comp_inr]
+  exact ⟨ContinuousLinearEquiv.equivOfInverse
+    (ContinuousLinearMap.mul ℝ ℂ (deriv (deBruijnNewmanH t₀) x₀))
+    (ContinuousLinearMap.mul ℝ ℂ (deriv (deBruijnNewmanH t₀) x₀)⁻¹)
+    (fun z => inv_mul_cancel_left₀ hD z) (fun z => mul_inv_cancel_left₀ hD z), rfl⟩
+
+/-- **Global `C¹` regularity**: `(t, z) ↦ H_t(z)` is `C¹` over `ℝ`, with
+derivative `jointFDerivCLM`. -/
+theorem contDiff_one_deBruijnNewmanH_prod :
+    ContDiff ℝ 1 (fun q : ℝ × ℂ => deBruijnNewmanH q.1 q.2) := by
+  rw [contDiff_one_iff_fderiv]
+  refine ⟨fun q => (hasFDerivAt_deBruijnNewmanH_prod q).differentiableAt, ?_⟩
+  rw [show (fderiv ℝ fun q : ℝ × ℂ => deBruijnNewmanH q.1 q.2)
+      = fun q : ℝ × ℂ => jointFDerivCLM q.1 q.2
+      from funext fun q => (hasFDerivAt_deBruijnNewmanH_prod q).fderiv]
+  exact continuous_jointFDerivCLM
+
 /-- **Diagonal derivative — the zero-transport piece**: if `z(t) → z₀` as
 `t → t₀`, then `t ↦ H_t(z(t)) − H_{t₀}(z(t))` has derivative `∂_t H_{t₀}(z₀)`
 (the `u²`-weighted heat integral) at `t₀`. Proof: the FTC representation

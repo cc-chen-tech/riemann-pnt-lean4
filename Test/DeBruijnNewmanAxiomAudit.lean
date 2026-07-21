@@ -136,3 +136,6 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.hasFDerivAt_deBruijnNewmanH_prod
 #print axioms RiemannExplorer.DeBruijnNewman.continuous_jointFDerivCLM
 #print axioms RiemannExplorer.DeBruijnNewman.hasStrictFDerivAt_deBruijnNewmanH_prod
+#print axioms RiemannExplorer.DeBruijnNewman.jointFDerivCLM_comp_inr
+#print axioms RiemannExplorer.DeBruijnNewman.isInvertible_jointFDerivCLM_comp_inr
+#print axioms RiemannExplorer.DeBruijnNewman.contDiff_one_deBruijnNewmanH_prod
