@@ -186,3 +186,6 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_taylor_three_z
 
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_taylor_three_z_remainder_norm_le
+
+#print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanHzderiv_two_lipschitz
+#print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewman_double_zero_height_mul_curvature
