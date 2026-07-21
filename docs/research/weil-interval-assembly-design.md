@@ -196,3 +196,24 @@ status and the role of this design are:
 - It does not weaken the preregistered claim boundary: the current evidence
   for the Weil line remains a point-value-level cross-check, the intervalized
   artifacts are under construction, and Gate A is not closed.
+
+## Addendum 2026-07-22: small-N link 1/2 integration gate closed
+
+The two intervalized routes now ship 256-bit artifacts for (c=13, N=4) and
+(c=13, N=8), and `weil_extremal_interval_overlap.py` merges them with
+entrywise non-empty intersections everywhere (max merged width ~1e-70). The
+integration test (`tests/test_weil_interval_integration.py`) regenerates the
+merge, checks symmetry, and checks consistency with the frozen pointwise
+cross-check artifact up to that artifact's own `numerical_tolerance` (1e-60).
+
+Audit finding recorded during integration: the frozen artifact's
+`ccm_hypergeometric_lerch_high_precision_audit` prints are only accurate to
+about 71 digits despite the advertised 130 audit digits. Recomputing entry
+(-8,-8) of the N=8 case at 200 dps with both assembly routes gives values
+agreeing with each other to 9.6e-117 and with the frozen auxiliary audit to
+3.6e-121, while the frozen CCM audit deviates by 3.7e-71. The interval
+artifacts are sound (they contain the 200-dps truth); the frozen CCM audit
+serialization is the inaccurate reference. Consistency gates against that
+field must therefore use distance-to-interval within the frozen tolerance,
+not literal containment. This changes no Gate status: the registered target
+remains c=100, N=200, and Gate A remains open.
