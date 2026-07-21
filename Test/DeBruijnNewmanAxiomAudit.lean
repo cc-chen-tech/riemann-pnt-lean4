@@ -189,3 +189,5 @@ import RiemannExplorer.DeBruijnNewman
 
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanHzderiv_two_lipschitz
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewman_double_zero_height_mul_curvature
+
+#print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewman_eq_of_deriv_near_const

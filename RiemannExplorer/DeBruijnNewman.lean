@@ -6555,6 +6555,79 @@ theorem deBruijnNewmanHzderiv_two_lipschitz (t : ℝ) (w k : ℂ) (M : ℝ)
   have h1 := intervalIntegral.norm_integral_le_of_norm_le_const (C := M * ‖k‖) hpt
   rwa [sub_zero, abs_one, mul_one] at h1
 
+/-- **Injectivity from a near-constant derivative**: if on the segment from
+`z₂` to `z₁` the `z`-derivative of `H_t` deviates from a nonzero constant `A`
+by at most `‖A‖/2`, then `H_t z₁ = H_t z₂` forces `z₁ = z₂`. Proof: the
+z-direction FTC writes `H_t z₁ − H_t z₂ = A·(z₁−z₂) + E` with
+`‖E‖ ≤ (‖A‖/2)·‖z₁−z₂‖`, so `‖A‖·‖z₁−z₂‖ ≤ (‖A‖/2)·‖z₁−z₂‖` and `z₁ = z₂`.
+This is the uniqueness engine of the double-zero exclusion: applied on the
+small disks around `c(t) ± √q` with `A = ∂²_z H_t(c(t))·(±√q)`, together with
+conjugation it forces the unique zero in each disk to be real. -/
+theorem deBruijnNewman_eq_of_deriv_near_const (t : ℝ) (z₁ z₂ A : ℂ) (hA : A ≠ 0)
+    (hdev : ∀ u : ℝ, u ∈ Set.uIcc (0:ℝ) 1 →
+      ‖deriv (deBruijnNewmanH t) (z₂ + (u : ℂ) * (z₁ - z₂)) - A‖ ≤ ‖A‖ / 2)
+    (heq : deBruijnNewmanH t z₁ = deBruijnNewmanH t z₂) :
+    z₁ = z₂ := by
+  have hApos : 0 < ‖A‖ := norm_pos_iff.mpr hA
+  have hftc := deBruijnNewmanH_z_sub_eq_intervalIntegral t z₂ (z₁ - z₂)
+  rw [show z₂ + (z₁ - z₂) = z₁ from by ring, heq, sub_self] at hftc
+  set k : ℂ := z₁ - z₂ with hkdef
+  have hconst : (∫ u : ℝ in (0:ℝ)..1, A * k) = A * k := by
+    rw [intervalIntegral.integral_const]
+    simp
+  have hintD : IntervalIntegrable
+      (fun u : ℝ => deriv (deBruijnNewmanH t) (z₂ + (u : ℂ) * k) * k)
+      MeasureTheory.volume 0 1 :=
+    ((continuous_deBruijnNewmanH_zderiv.comp
+      (continuous_const.prodMk
+        ((Complex.continuous_ofReal.mul continuous_const).const_add z₂))).mul
+      continuous_const).continuousOn.intervalIntegrable
+  have hintC : IntervalIntegrable (fun _ : ℝ => A * k) MeasureTheory.volume 0 1 :=
+    intervalIntegrable_const
+  have hsplit : (∫ u : ℝ in (0:ℝ)..1,
+        deriv (deBruijnNewmanH t) (z₂ + (u : ℂ) * k) * k)
+      = A * k + ∫ u : ℝ in (0:ℝ)..1,
+        (deriv (deBruijnNewmanH t) (z₂ + (u : ℂ) * k) * k - A * k) := by
+    have hpt : ∀ u : ℝ,
+        deriv (deBruijnNewmanH t) (z₂ + (u : ℂ) * k) * k
+        = A * k + (deriv (deBruijnNewmanH t) (z₂ + (u : ℂ) * k) * k - A * k) := by
+      intro u
+      ring
+    rw [intervalIntegral.integral_congr fun u _ => hpt u,
+      intervalIntegral.integral_add hintC (hintD.sub hintC), hconst]
+  have hE : ‖∫ u : ℝ in (0:ℝ)..1,
+        (deriv (deBruijnNewmanH t) (z₂ + (u : ℂ) * k) * k - A * k)‖
+      ≤ ‖A‖ / 2 * ‖k‖ := by
+    have hpt : ∀ u ∈ Set.uIoc (0:ℝ) 1,
+        ‖deriv (deBruijnNewmanH t) (z₂ + (u : ℂ) * k) * k - A * k‖
+        ≤ ‖A‖ / 2 * ‖k‖ := by
+      intro u hu
+      have hu' : u ∈ Set.uIcc (0:ℝ) 1 := by
+        rw [Set.uIoc_of_le zero_le_one] at hu
+        exact Set.mem_uIcc.mpr (Or.inl ⟨hu.1.le, hu.2⟩)
+      have e : deriv (deBruijnNewmanH t) (z₂ + (u : ℂ) * k) * k - A * k
+          = (deriv (deBruijnNewmanH t) (z₂ + (u : ℂ) * k) - A) * k :=
+        (sub_mul _ _ _).symm
+      rw [e, norm_mul]
+      exact mul_le_mul (hdev u hu') (le_refl ‖k‖) (norm_nonneg _)
+        (div_nonneg hApos.le zero_le_two)
+    have h1 := intervalIntegral.norm_integral_le_of_norm_le_const
+      (C := ‖A‖ / 2 * ‖k‖) hpt
+    rwa [sub_zero, abs_one, mul_one] at h1
+  rw [hsplit] at hftc
+  have hnorm : ‖A‖ * ‖k‖ ≤ ‖A‖ / 2 * ‖k‖ := by
+    have h1 : A * k = -(∫ u : ℝ in (0:ℝ)..1,
+        (deriv (deBruijnNewmanH t) (z₂ + (u : ℂ) * k) * k - A * k)) :=
+      eq_neg_of_add_eq_zero_left hftc.symm
+    calc ‖A‖ * ‖k‖ = ‖A * k‖ := by rw [norm_mul]
+      _ ≤ ‖A‖ / 2 * ‖k‖ := by rw [h1, norm_neg]; exact hE
+  have hk0 : ‖k‖ = 0 := by
+    by_contra hne
+    have hpos : 0 < ‖k‖ := lt_of_le_of_ne (norm_nonneg k) (Ne.symm hne)
+    have h2 : ‖A‖ ≤ ‖A‖ / 2 := le_of_mul_le_mul_right hnorm hpos
+    linarith [hApos]
+  exact sub_eq_zero.mp (norm_eq_zero.mp hk0)
+
 /-- **Conjugation symmetry of the second `z`-derivative**: `∂²_z H_t(\bar z)
 = \overline{∂²_z H_t(z)}`, transported through the integral representation
 `deriv_two_deBruijnNewmanH` by `Complex.cos_conj`. Together with the heat
