@@ -15,6 +15,7 @@ import RiemannExplorer.XiPartialFractionWeighted
 import RiemannExplorer.XiZeroCountingBounds
 import RiemannExplorer.XiLogDerivDisc
 import RiemannExplorer.XiCorrectionConst
+import RiemannExplorer.LiWeightedPositivity
 
 #print axioms RiemannExplorer.xiFunction_one_sub
 #print axioms RiemannExplorer.xiFunction_zero
@@ -176,3 +177,10 @@ import RiemannExplorer.XiCorrectionConst
 #print axioms RiemannExplorer.deriv_xiWeightedEntireCorrection_eq_zero
 #print axioms RiemannExplorer.xiWeightedEntireCorrection_eq_zero
 #print axioms RiemannExplorer.xi_weighted_partial_fraction_expansion
+#print axioms RiemannExplorer.one_le_analyticOrderNatAt_xiFunction_of_isNontrivialZero
+#print axioms RiemannExplorer.summable_weightedLiPairedTerm
+#print axioms RiemannExplorer.weightedLiPairedTerm_im
+#print axioms RiemannExplorer.weightedLiPairedTerm_re_nonneg_of_rh
+#print axioms RiemannExplorer.tsum_weightedLiPairedTerm_re_nonneg_of_rh
+#print axioms RiemannExplorer.liCoefficient_re_pos_of_weighted_representation_of_rh
+#print axioms RiemannExplorer.rh_implies_li_criterion_of_weighted_representation
