@@ -469,4 +469,68 @@ theorem boundaryRectIntegral_eq_finite_simple_pole_residue_sum_of_differentiable
     boundaryRectIntegral_eq_finite_simple_pole_residue_sum
       poles residue hpoles
 
+/-- Weighted finite-principal-part residue formula on an axis-parallel
+rectangle.  This is the algebraic contour identity underlying Littlewood's
+lemma: multiplying a logarithmic derivative by `z - anchor` weights each
+interior divisor point by `p - anchor`. -/
+theorem boundaryRectIntegral_eq_finite_simple_pole_weighted_residue_sum_of_differentiableOn
+    {g : ℂ → ℂ} {x0 x1 y0 y1 : ℝ}
+    (poles : Finset ℂ) (residue : ℂ → ℂ) (anchor : ℂ)
+    (hg : DifferentiableOn ℂ g ([[x0, x1]] ×ℂ [[y0, y1]]))
+    (hpoles : ∀ p ∈ poles,
+      x0 < p.re ∧ p.re < x1 ∧ y0 < p.im ∧ p.im < y1) :
+    boundaryRectIntegral
+        (fun z : ℂ =>
+          (z - anchor) *
+            (g z + ∑ p ∈ poles, (z - p)⁻¹ * residue p))
+        x0 x1 y0 y1 =
+      (2 * Real.pi * I) *
+        ∑ p ∈ poles, (p - anchor) * residue p := by
+  let G : ℂ → ℂ := fun z =>
+    (z - anchor) * g z + ∑ p ∈ poles, residue p
+  have hG : DifferentiableOn ℂ G ([[x0, x1]] ×ℂ [[y0, y1]]) := by
+    intro z hz
+    dsimp [G]
+    exact (((differentiableAt_id.sub_const anchor).differentiableWithinAt.mul
+      (hg z hz)).add
+        (differentiableWithinAt_const (∑ p ∈ poles, residue p)))
+  have hboundary :
+      boundaryRectIntegral
+          (fun z : ℂ =>
+            (z - anchor) *
+              (g z + ∑ p ∈ poles, (z - p)⁻¹ * residue p))
+          x0 x1 y0 y1 =
+        boundaryRectIntegral
+          (fun z : ℂ =>
+            G z + ∑ p ∈ poles,
+              (z - p)⁻¹ * ((p - anchor) * residue p))
+          x0 x1 y0 y1 := by
+    apply boundaryRectIntegral_congr_of_eqOn_boundary
+    intro z hz hnotInterior
+    dsimp [G]
+    rw [mul_add, Finset.mul_sum]
+    calc
+      (z - anchor) * g z +
+          ∑ p ∈ poles, (z - anchor) * ((z - p)⁻¹ * residue p) =
+        (z - anchor) * g z +
+          ∑ p ∈ poles,
+            (residue p + (z - p)⁻¹ * ((p - anchor) * residue p)) := by
+        congr 1
+        apply Finset.sum_congr rfl
+        intro p hp
+        have hzp : z ≠ p := by
+          intro h
+          subst z
+          exact hnotInterior (hpoles p hp)
+        field_simp [sub_ne_zero.mpr hzp]
+        ring
+      _ = (z - anchor) * g z + ∑ p ∈ poles, residue p +
+          ∑ p ∈ poles, (z - p)⁻¹ * ((p - anchor) * residue p) := by
+        rw [Finset.sum_add_distrib]
+        ring
+  rw [hboundary]
+  exact
+    boundaryRectIntegral_eq_finite_simple_pole_residue_sum_of_differentiableOn
+      poles (fun p => (p - anchor) * residue p) hG hpoles
+
 end MathlibAux
