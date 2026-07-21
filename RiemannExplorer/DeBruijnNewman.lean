@@ -5079,6 +5079,54 @@ theorem contDiff_one_deBruijnNewmanH_prod :
       from funext fun q => (hasFDerivAt_deBruijnNewmanH_prod q).fderiv]
   exact continuous_jointFDerivCLM
 
+/-- **IFT zero trajectory through a simple real zero**: if `H_{t₀}(x₀) = 0`
+with `x₀` real and `∂_z H_{t₀}(x₀) ≠ 0`, then near `(t₀, x₀)` the zero set of
+`(t, z) ↦ H_t(z)` is a differentiable curve `t ↦ ψ(t)` through `x₀` which
+stays real. Existence and uniqueness come from the implicit function theorem
+(`ContDiffAt.implicitFunction`); reality of `ψ` follows from the conjugation
+symmetry `H_t(\bar z) = \overline{H_t(z)}`: the conjugate curve is another
+local zero through the same real point, so local uniqueness forces
+`ψ(t) = \overline{ψ(t)}`. -/
+theorem deBruijnNewman_simple_zero_trajectory (t₀ : ℝ) (x₀ : ℂ)
+    (hz : deBruijnNewmanH t₀ x₀ = 0) (hD : deriv (deBruijnNewmanH t₀) x₀ ≠ 0)
+    (hx : x₀.im = 0) :
+    ∃ ψ : ℝ → ℂ, DifferentiableAt ℝ ψ t₀ ∧ ψ t₀ = x₀
+      ∧ (∀ᶠ t in nhds t₀, deBruijnNewmanH t (ψ t) = 0)
+      ∧ (∀ᶠ t in nhds t₀, (ψ t).im = 0) := by
+  have hCD : ContDiffAt ℝ 1 (fun q : ℝ × ℂ => deBruijnNewmanH q.1 q.2) (t₀, x₀) :=
+    contDiff_one_deBruijnNewmanH_prod.contDiffAt
+  have hInv := isInvertible_jointFDerivCLM_comp_inr t₀ x₀ hD
+  have hstar : star x₀ = x₀ := by
+    rw [Complex.star_def, Complex.conj_eq_iff_im]; exact hx
+  set ψ := hCD.implicitFunction one_ne_zero hInv with hψ
+  have hψCD : ContDiffAt ℝ 1 ψ t₀ := hCD.contDiffAt_implicitFunction one_ne_zero hInv
+  have hψ0 : ψ t₀ = x₀ := hCD.implicitFunction_apply_self one_ne_zero hInv
+  have hzero : ∀ᶠ t in nhds t₀, deBruijnNewmanH t (ψ t) = 0 := by
+    have hev := hCD.eventually_apply_implicitFunction one_ne_zero hInv
+    refine hev.mono fun t ht => ?_
+    simp only [] at ht
+    rwa [hz] at ht
+  refine ⟨ψ, hψCD.differentiableAt one_ne_zero, hψ0, hzero, ?_⟩
+  -- reality via the conjugate curve and local uniqueness
+  have htend : Filter.Tendsto (fun t : ℝ => (t, star (ψ t)))
+      (nhds t₀) (nhds (t₀, x₀)) := by
+    have h1 : ContinuousAt (fun t : ℝ => (t, star (ψ t))) t₀ :=
+      continuousAt_id.prodMk
+        (continuous_star.continuousAt.comp
+          (hψCD.differentiableAt one_ne_zero).continuousAt)
+    have h2 : (t₀, star (ψ t₀)) = (t₀, x₀) := by rw [hψ0, hstar]
+    exact h2 ▸ h1.tendsto
+  have huniq := htend.eventually
+    (hCD.eventually_apply_eq_iff_implicitFunction one_ne_zero hInv)
+  filter_upwards [huniq, hzero] with t ht hzt
+  have hL : (fun q : ℝ × ℂ => deBruijnNewmanH q.1 q.2) (t, star (ψ t))
+      = (fun q : ℝ × ℂ => deBruijnNewmanH q.1 q.2) (t₀, x₀) := by
+    change deBruijnNewmanH t (star (ψ t)) = deBruijnNewmanH t₀ x₀
+    rw [deBruijnNewmanH_conj, hzt, star_zero, hz]
+  have him : ψ t = star (ψ t) := ht.mp hL
+  rw [Complex.star_def] at him
+  exact Complex.conj_eq_iff_im.mp him.symm
+
 /-- **Diagonal derivative — the zero-transport piece**: if `z(t) → z₀` as
 `t → t₀`, then `t ↦ H_t(z(t)) − H_{t₀}(z(t))` has derivative `∂_t H_{t₀}(z₀)`
 (the `u²`-weighted heat integral) at `t₀`. Proof: the FTC representation
