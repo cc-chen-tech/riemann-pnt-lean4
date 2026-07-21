@@ -393,7 +393,6 @@ lean_lib RiemannPNT where
     `Test.FirstOrderPerronRateContract,
     `Test.GlobalZeroCountContract,
     `Test.ZeroDensityCountContract,
-    `Test.DirichletPolynomialMeanSquareContract,
     `Test.FourierL1L2Contract,
     `Test.SincSquareIntegralContract,
     `Test.SincSquareFourierContract,
