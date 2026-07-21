@@ -110,3 +110,8 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.exists_zero_of_norm_sub_lt
 #print axioms RiemannExplorer.DeBruijnNewman.hurwitz_exists_zero_ball
 #print axioms RiemannExplorer.DeBruijnNewman.allZerosReal_of_tendsto
+#print axioms RiemannExplorer.DeBruijnNewman.phiTerm_nonneg
+#print axioms RiemannExplorer.DeBruijnNewman.phi_pos
+#print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_apply_zero_re
+#print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_zero_re_pos
+#print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_exists_ne_zero

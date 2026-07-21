@@ -4361,6 +4361,184 @@ theorem tendstoLocallyUniformly_deBruijnNewmanH (t₀ : ℝ) :
       _ = ε := mul_one ε
   exact lt_of_le_of_lt hdest hεC
 
+/-! ## Phase 2(vii)：`Φ` 正性与 `H_t` 的全局非退化 -/
+
+/-- For `u ≥ 0` and `n ≥ 1` every summand of the `Φ` series is nonnegative:
+`2π²n⁴e^{9u} ≥ 3πn²e^{5u}` because `2πn² ≥ 2π > 3 ≥ 3e^{−4u}`. -/
+theorem phiTerm_nonneg (hu : 0 ≤ u) {n : ℕ} (hn : 1 ≤ n) : 0 ≤ phiTerm n u := by
+  unfold phiTerm
+  apply mul_nonneg ?_ (Real.exp_nonneg _)
+  have hn1 : (1 : ℝ) ≤ (n : ℝ) := by exact_mod_cast hn
+  have h2 : (3 : ℝ) ≤ 2 * Real.pi * (n : ℝ) ^ 2 := by
+    have hpi : (3 : ℝ) < 2 * Real.pi := by linarith [Real.pi_gt_three]
+    calc (3 : ℝ) ≤ 2 * Real.pi := hpi.le
+      _ = 2 * Real.pi * 1 := (mul_one _).symm
+      _ ≤ 2 * Real.pi * (n : ℝ) ^ 2 :=
+          mul_le_mul_of_nonneg_left (by nlinarith [hn1]) (by positivity)
+  have key : 3 * Real.pi * (n : ℝ) ^ 2 * Real.exp (5 * u)
+      ≤ 2 * Real.pi ^ 2 * (n : ℝ) ^ 4 * Real.exp (9 * u) := by
+    calc 3 * Real.pi * (n : ℝ) ^ 2 * Real.exp (5 * u)
+        ≤ 3 * Real.pi * (n : ℝ) ^ 2 * Real.exp (9 * u) :=
+          mul_le_mul_of_nonneg_left (Real.exp_le_exp.mpr (by linarith [hu])) (by positivity)
+      _ = 3 * (Real.pi * (n : ℝ) ^ 2 * Real.exp (9 * u)) := by ring
+      _ ≤ (2 * Real.pi * (n : ℝ) ^ 2) * (Real.pi * (n : ℝ) ^ 2 * Real.exp (9 * u)) :=
+          mul_le_mul_of_nonneg_right h2 (by positivity)
+      _ = 2 * Real.pi ^ 2 * (n : ℝ) ^ 4 * Real.exp (9 * u) := by ring
+  linarith
+
+/-- The first `Φ` summand is strictly positive for `u ≥ 0`. -/
+theorem phiTerm_one_pos (hu : 0 ≤ u) : 0 < phiTerm 1 u := by
+  unfold phiTerm
+  simp only [Nat.cast_one, one_pow, mul_one]
+  apply mul_pos ?_ (Real.exp_pos _)
+  have h2 : Real.exp (5 * u) ≤ Real.exp (9 * u) := Real.exp_le_exp.mpr (by linarith [hu])
+  have h3 : 3 * Real.pi * Real.exp (5 * u) < 2 * Real.pi ^ 2 * Real.exp (9 * u) := by
+    have hpi : (3 : ℝ) < 2 * Real.pi := by linarith [Real.pi_gt_three]
+    have h3π : 3 * Real.pi < 2 * Real.pi ^ 2 := by
+      calc 3 * Real.pi = Real.pi * 3 := by ring
+        _ < Real.pi * (2 * Real.pi) := mul_lt_mul_of_pos_left hpi Real.pi_pos
+        _ = 2 * Real.pi ^ 2 := by ring
+    calc 3 * Real.pi * Real.exp (5 * u)
+        ≤ 3 * Real.pi * Real.exp (9 * u) :=
+          mul_le_mul_of_nonneg_left h2 (by positivity)
+      _ < (2 * Real.pi ^ 2) * Real.exp (9 * u) :=
+          mul_lt_mul_of_pos_right h3π (Real.exp_pos _)
+  linarith
+
+/-- `Φ u ≥ 0` for `u ≥ 0`. -/
+theorem phi_nonneg (hu : 0 ≤ u) : 0 ≤ phi u :=
+  tsum_nonneg fun n => phiTerm_nonneg hu (by omega)
+
+/-- **`Φ` is strictly positive on `[0, ∞)`**: the whole series is nonnegative and
+its first summand is strictly positive. -/
+theorem phi_pos (hu : 0 ≤ u) : 0 < phi u := by
+  refine (phiTerm_one_pos hu).trans_le ?_
+  exact (summable_phiTerm u).le_tsum 0 fun j _ => phiTerm_nonneg hu (by omega)
+
+/-- At `z = 0` the `H_t` integral is real: `(H_t 0).re = ∫₀^∞ e^{tu²} Φ(u) du`. -/
+theorem deBruijnNewmanH_apply_zero_re (t : ℝ) :
+    (deBruijnNewmanH t 0).re = ∫ u in Set.Ioi 0, Real.exp (t * u ^ 2) * phi u := by
+  have e1 : ∫ u in Set.Ioi 0, (heatIntegrand t 0 u).re
+      = (∫ u in Set.Ioi 0, heatIntegrand t 0 u).re :=
+    integral_re (heat_integrand_integrable t 0)
+  have e2 : ∫ u in Set.Ioi 0, (heatIntegrand t 0 u).re
+      = ∫ u in Set.Ioi 0, Real.exp (t * u ^ 2) * phi u := by
+    apply MeasureTheory.setIntegral_congr_fun measurableSet_Ioi
+    intro u _
+    show (heatIntegrand t 0 u).re = Real.exp (t * u ^ 2) * phi u
+    unfold heatIntegrand
+    rw [zero_mul, Complex.cos_zero, mul_one, Complex.ofReal_re]
+  show (∫ u in Set.Ioi 0, heatIntegrand t 0 u).re = _
+  rw [← e1]; exact e2
+
+/-- **Global non-degeneracy in strong form**: `(H_t 0).re > 0` for every `t : ℝ`.
+On `[0, 1/16]` one has `Φ ≥ (2π² − 3πe^{5/16})·e^{−πe^{1/4}} > 0` (the key estimate
+`e^{5/16} < 2π/3` is certified by cubing), while `e^{tu²}` is bounded below by
+`min 1 (exp (t / 256))`; the set integral over `Ioc 0 (1/16)` is therefore strictly
+positive. -/
+theorem deBruijnNewmanH_zero_re_pos (t : ℝ) : 0 < (deBruijnNewmanH t 0).re := by
+  rw [deBruijnNewmanH_apply_zero_re]
+  have hexp : Real.exp (5 / 16 : ℝ) < 2 * Real.pi / 3 := by
+    have h1 : (Real.exp (5 / 16 : ℝ)) ^ 3 < (2 * Real.pi / 3) ^ 3 := by
+      have e1 : (Real.exp (5 / 16 : ℝ)) ^ 3 = Real.exp (15 / 16 : ℝ) := by
+        rw [← Real.exp_nat_mul]; congr 1; ring
+      have e2 : Real.exp (15 / 16 : ℝ) < Real.exp 1 :=
+        Real.exp_strictMono (by norm_num)
+      have e3 : Real.exp 1 < (2 * Real.pi / 3) ^ 3 := by
+        have h2 : (2 : ℝ) < 2 * Real.pi / 3 := by linarith [Real.pi_gt_three]
+        have h8 : (8 : ℝ) < (2 * Real.pi / 3) ^ 3 := by
+          have h := pow_lt_pow_left₀ h2 (by norm_num : (0 : ℝ) ≤ 2) three_ne_zero
+          norm_num at h
+          exact h
+        exact lt_trans Real.exp_one_lt_d9 (by linarith [h8])
+      rw [e1]; exact lt_trans e2 e3
+    exact lt_of_pow_lt_pow_left₀ 3 (by positivity : (0 : ℝ) ≤ 2 * Real.pi / 3) h1
+  set b₀ : ℝ := 2 * Real.pi ^ 2 - 3 * Real.pi * Real.exp (5 / 16) with hb₀
+  have hb₀pos : 0 < b₀ := by
+    have h := mul_lt_mul_of_pos_left hexp (by positivity : (0 : ℝ) < 3 * Real.pi)
+    have h2 : 3 * Real.pi * (2 * Real.pi / 3) = 2 * Real.pi ^ 2 := by ring
+    rw [hb₀]; linarith
+  set e₀ : ℝ := Real.exp (-(Real.pi * Real.exp (1 / 4 : ℝ))) with he₀
+  have he₀pos : 0 < e₀ := Real.exp_pos _
+  have hpt : ∀ u ∈ Set.Ioc 0 (1 / 16 : ℝ), b₀ * e₀ ≤ phiTerm 1 u := by
+    intro u hu
+    have eA : (1 : ℝ) ≤ Real.exp (9 * u) := by
+      rw [← Real.exp_zero]; exact Real.exp_le_exp.mpr (by linarith [hu.1])
+    have eB : Real.exp (5 * u) ≤ Real.exp (5 / 16 : ℝ) :=
+      Real.exp_le_exp.mpr (by linarith [hu.2])
+    have eC : e₀ ≤ Real.exp (-(Real.pi * Real.exp (4 * u))) := by
+      rw [he₀]
+      apply Real.exp_le_exp.mpr
+      have h4 : Real.exp (4 * u) ≤ Real.exp (1 / 4 : ℝ) :=
+        Real.exp_le_exp.mpr (by linarith [hu.2])
+      have := mul_le_mul_of_nonneg_left h4 Real.pi_pos.le
+      linarith
+    have ebr : b₀
+        ≤ 2 * Real.pi ^ 2 * Real.exp (9 * u) - 3 * Real.pi * Real.exp (5 * u) := by
+      have h1 : (2 : ℝ) * Real.pi ^ 2 ≤ 2 * Real.pi ^ 2 * Real.exp (9 * u) := by
+        calc 2 * Real.pi ^ 2 = 2 * Real.pi ^ 2 * 1 := (mul_one _).symm
+          _ ≤ 2 * Real.pi ^ 2 * Real.exp (9 * u) :=
+            mul_le_mul_of_nonneg_left eA (by positivity)
+      have h2 := mul_le_mul_of_nonneg_left eB (by positivity : (0 : ℝ) ≤ 3 * Real.pi)
+      rw [hb₀]; linarith
+    simp only [phiTerm, Nat.cast_one, one_pow, mul_one]
+    exact mul_le_mul ebr eC he₀pos.le (le_trans hb₀pos.le ebr)
+  have hphi : ∀ u ∈ Set.Ioc 0 (1 / 16 : ℝ), b₀ * e₀ ≤ phi u := by
+    intro u hu
+    exact (hpt u hu).trans ((summable_phiTerm u).le_tsum 0
+      fun j _ => phiTerm_nonneg hu.1.le (by omega))
+  set E : ℝ := min 1 (Real.exp (t * (1 / 16 : ℝ) ^ 2)) with hE
+  have hEpos : 0 < E := lt_min zero_lt_one (Real.exp_pos _)
+  have hE' : ∀ u ∈ Set.Ioc 0 (1 / 16 : ℝ), E ≤ Real.exp (t * u ^ 2) := by
+    intro u hu
+    have hu2 : u ^ 2 ≤ (1 / 16 : ℝ) ^ 2 := pow_le_pow_left₀ hu.1.le hu.2 2
+    by_cases ht : 0 ≤ t
+    · exact (min_le_left _ _).trans (by
+        rw [← Real.exp_zero]
+        exact Real.exp_le_exp.mpr (by nlinarith [sq_nonneg u]))
+    · exact (min_le_right _ _).trans (Real.exp_le_exp.mpr (by
+        have htn := mul_le_mul_of_nonpos_left hu2 (not_le.mp ht).le
+        linarith))
+  have hIntR : MeasureTheory.IntegrableOn (fun u => Real.exp (t * u ^ 2) * phi u)
+      (Set.Ioi 0) MeasureTheory.volume := by
+    apply MeasureTheory.IntegrableOn.congr_fun (heat_integrand_integrable t 0).re
+      ?_ measurableSet_Ioi
+    intro u _
+    show (heatIntegrand t 0 u).re = Real.exp (t * u ^ 2) * phi u
+    unfold heatIntegrand
+    rw [zero_mul, Complex.cos_zero, mul_one, Complex.ofReal_re]
+  have hI1 : (∫ u in Set.Ioc 0 (1 / 16 : ℝ), Real.exp (t * u ^ 2) * phi u)
+      ≤ ∫ u in Set.Ioi 0, Real.exp (t * u ^ 2) * phi u := by
+    refine MeasureTheory.setIntegral_mono_set hIntR ?_ ?_
+    · refine (MeasureTheory.ae_restrict_iff' measurableSet_Ioi).mpr
+        (Filter.Eventually.of_forall fun u hu =>
+          mul_nonneg (Real.exp_nonneg _) (phi_nonneg hu.le))
+    · exact Filter.Eventually.of_forall fun u hu => Set.Ioc_subset_Ioi_self hu
+  have hI2 : (∫ u in Set.Ioc 0 (1 / 16 : ℝ), E * (b₀ * e₀))
+      ≤ ∫ u in Set.Ioc 0 (1 / 16 : ℝ), Real.exp (t * u ^ 2) * phi u := by
+    refine MeasureTheory.setIntegral_mono_on ?_ ?_ measurableSet_Ioc fun u hu => ?_
+    · exact MeasureTheory.integrableOn_const
+        (by rw [Real.volume_Ioc]; exact ENNReal.ofReal_ne_top)
+    · exact hIntR.mono_set Set.Ioc_subset_Ioi_self
+    · exact mul_le_mul (hE' u hu) (hphi u hu) (mul_nonneg hb₀pos.le he₀pos.le)
+        (Real.exp_nonneg _)
+  have hI3 : ∫ u in Set.Ioc 0 (1 / 16 : ℝ), E * (b₀ * e₀)
+      = (1 / 16 : ℝ) * (E * (b₀ * e₀)) := by
+    rw [MeasureTheory.setIntegral_const, MeasureTheory.measureReal_def, Real.volume_Ioc,
+      ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 1 / 16 - 0), smul_eq_mul]
+    ring
+  have hpos : 0 < (1 / 16 : ℝ) * (E * (b₀ * e₀)) :=
+    mul_pos (by norm_num) (mul_pos hEpos (mul_pos hb₀pos he₀pos))
+  linarith
+
+/-- Every `H_t` is somewhere nonzero (indeed `(H_t 0).re > 0`): the non-degeneracy
+hypothesis for Hurwitz / identity-theorem arguments at any time. -/
+theorem deBruijnNewmanH_exists_ne_zero (t : ℝ) : ∃ z : ℂ, deBruijnNewmanH t z ≠ 0 := by
+  refine ⟨0, fun h => ?_⟩
+  have hpos := deBruijnNewmanH_zero_re_pos t
+  rw [h, Complex.zero_re] at hpos
+  exact lt_irrefl 0 hpos
+
 /-- **Zero persistence (Rouché core) via the maximum modulus principle**:
 if `f` vanishes at `w` with `‖f‖ ≥ m > 0` on the sphere of radius `ρ`
 around `w`, and `g` is uniformly within `m / 2` of `f` on that sphere, then
