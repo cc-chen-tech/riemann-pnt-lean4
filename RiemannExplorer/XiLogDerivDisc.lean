@@ -212,6 +212,66 @@ lemma xiZeroDiscMult_eq_analyticOrderNatAt {R : ℝ} {u : ℂ}
       ← Nat.cast_analyticOrderNatAt hne_top, ENat.map_coe, WithTop.untop₀_coe]
   rw [xiZeroDiscMult, key, Int.toNat_natCast]
 
+/-- 除子加权的 `(z − u)⁻¹` 形式和收敛为 `xiZeroDiscFinset R` 上的有限和。 -/
+theorem xi_finsum_divisor_mul_inv_eq_sum (R : ℝ) (z : ℂ) :
+    (∑ᶠ u, ((MeromorphicOn.divisor xiFunction
+          (Metric.closedBall 0 R) u : ℤ) : ℂ) * (z - u)⁻¹)
+      = ∑ u ∈ xiZeroDiscFinset R, (xiZeroDiscMult R u : ℂ) * (z - u)⁻¹ := by
+  have hsupp : (Function.support fun u => ((MeromorphicOn.divisor xiFunction
+          (Metric.closedBall 0 R) u : ℤ) : ℂ) * (z - u)⁻¹) ⊆
+      ↑(xiZeroDiscFinset R) := by
+    intro u hu
+    rw [Function.mem_support] at hu
+    by_contra huS
+    rw [Finset.mem_coe, mem_xiZeroDiscFinset] at huS
+    push_neg at huS
+    exact hu (by
+      show ((MeromorphicOn.divisor xiFunction (Metric.closedBall 0 R) u : ℤ) : ℂ)
+          * (z - u)⁻¹ = 0
+      rw [huS]
+      simp)
+  rw [finsum_eq_sum_of_support_subset _ hsupp]
+  refine Finset.sum_congr rfl fun u hu => ?_
+  rw [← xiZeroDiscMult_cast R u]
+  norm_cast
+
+/-- **圆盘零点重数和的 Jensen 界**：`∑_{u ∈ S_R} m_u ≤ (K(1+2R)log(4+2R) + log 2)/log 2`。
+由 finsum 支撑转换（`finsum_mem_def` + indicator 支撑含于 `xiZeroDiscFinset R`）
+归结为 `xi_zero_count_in_closedBall_le`。 -/
+theorem xiZeroDiscMult_sum_le {K : ℝ}
+    (hK : ∀ t : ℝ, 0 < t → circleAverage (Real.log ‖xiFunction ·‖) 0 t ≤
+      K * (1 + t) * Real.log (4 + t)) (R : ℝ) (hR : 4 ≤ R) :
+    ∑ u ∈ xiZeroDiscFinset R, (xiZeroDiscMult R u : ℝ) ≤
+      (K * (1 + 2 * R) * Real.log (4 + 2 * R) + Real.log 2) / Real.log 2 := by
+  have hcnt_eq : (∑ᶠ u ∈ Metric.closedBall (0 : ℂ) R,
+        ((MeromorphicOn.divisor xiFunction (Metric.closedBall 0 R) u : ℤ) : ℝ))
+      = ∑ u ∈ xiZeroDiscFinset R, (xiZeroDiscMult R u : ℝ) := by
+    rw [finsum_mem_def]
+    have hsupp : (Function.support ((Metric.closedBall (0 : ℂ) R).indicator
+            fun u => ((MeromorphicOn.divisor xiFunction
+              (Metric.closedBall 0 R) u : ℤ) : ℝ))) ⊆ ↑(xiZeroDiscFinset R) := by
+      intro u hu
+      rw [Function.mem_support] at hu
+      by_contra huS
+      rw [Finset.mem_coe, mem_xiZeroDiscFinset] at huS
+      push_neg at huS
+      exact hu (by
+        show (Metric.closedBall (0 : ℂ) R).indicator (fun u =>
+            ((MeromorphicOn.divisor xiFunction (Metric.closedBall 0 R) u : ℤ) : ℝ)) u = 0
+        by_cases hmem : u ∈ Metric.closedBall (0 : ℂ) R
+        · rw [Set.indicator_of_mem hmem]
+          show ((MeromorphicOn.divisor xiFunction (Metric.closedBall 0 R) u : ℤ) : ℝ) = 0
+          rw [huS]
+          simp
+        · rw [Set.indicator_of_notMem hmem])
+    rw [finsum_eq_sum_of_support_subset _ hsupp]
+    refine Finset.sum_congr rfl fun u hu => ?_
+    rw [Set.indicator_of_mem (xiZeroDiscFinset_subset_closedBall hu),
+      ← xiZeroDiscMult_cast R u]
+    norm_cast
+  rw [← hcnt_eq]
+  exact xi_zero_count_in_closedBall_le hK R hR
+
 /-- Blaschke 型乘积 `B_R(z) = ∏_{u} canonicalFactor (2R) u z ^ {m_u}`。 -/
 noncomputable def xiBlaschkeProd (R : ℝ) (z : ℂ) : ℂ :=
   ∏ u ∈ xiZeroDiscFinset R, Complex.canonicalFactor (2 * R) u z ^ xiZeroDiscMult R u
@@ -736,8 +796,8 @@ theorem xi_logDeriv_sub_finsum_divisor_le :
         _ ≤ max (max K₀ 0) K₁ * ((1 + t) * Real.log (4 + t)) :=
             mul_le_mul_of_nonneg_right hK1le (mul_nonneg h1 h2)
         _ = max (max K₀ 0) K₁ * (1 + t) * Real.log (4 + t) := (mul_assoc _ _ _).symm
-    -- Jensen 零点计数
-    have hcnt0 := xi_zero_count_in_closedBall_le hcircK R hR
+    -- Jensen 零点计数（重数和形式）
+    have hcnt' := xiZeroDiscMult_sum_le hcircK R hR
     -- Blaschke 正则化函数 `g`
     obtain ⟨g, hgA, hgne, hg⟩ := exists_xiBlaschkeRegularized hR0
     have hgC : ContinuousOn g (Metric.ball (0 : ℂ) (3 * R)) := hgA.continuousOn
@@ -874,58 +934,8 @@ theorem xi_logDeriv_sub_finsum_divisor_le :
     -- 对数导数恒等式
     have hlogB := logDeriv_xiBlaschkeProd hR0 hz2R (fun u hu h => hzS (h ▸ hu))
     have hlogg := logDeriv_xiBlaschkeRegularized hR0 hg hgC hz hzS hξz
-    -- finsum → 有限和（ℂ 与 ℝ 两个版本）
-    have hfinsum : (∑ᶠ u, ((MeromorphicOn.divisor xiFunction
-            (Metric.closedBall 0 R) u : ℤ) : ℂ) * (z - u)⁻¹)
-        = ∑ u ∈ xiZeroDiscFinset R, (xiZeroDiscMult R u : ℂ) * (z - u)⁻¹ := by
-      have hsupp : (Function.support fun u => ((MeromorphicOn.divisor xiFunction
-              (Metric.closedBall 0 R) u : ℤ) : ℂ) * (z - u)⁻¹) ⊆
-          ↑(xiZeroDiscFinset R) := by
-        intro u hu
-        rw [Function.mem_support] at hu
-        by_contra huS
-        rw [Finset.mem_coe, mem_xiZeroDiscFinset] at huS
-        push_neg at huS
-        exact hu (by
-          show ((MeromorphicOn.divisor xiFunction (Metric.closedBall 0 R) u : ℤ) : ℂ)
-              * (z - u)⁻¹ = 0
-          rw [huS]
-          simp)
-      rw [finsum_eq_sum_of_support_subset _ hsupp]
-      refine Finset.sum_congr rfl fun u hu => ?_
-      rw [← xiZeroDiscMult_cast R u]
-      norm_cast
-    have hcnt_eq : (∑ᶠ u ∈ Metric.closedBall (0 : ℂ) R,
-          ((MeromorphicOn.divisor xiFunction (Metric.closedBall 0 R) u : ℤ) : ℝ))
-        = ∑ u ∈ xiZeroDiscFinset R, (xiZeroDiscMult R u : ℝ) := by
-      rw [finsum_mem_def]
-      have hsupp : (Function.support ((Metric.closedBall (0 : ℂ) R).indicator
-              fun u => ((MeromorphicOn.divisor xiFunction
-                (Metric.closedBall 0 R) u : ℤ) : ℝ))) ⊆ ↑(xiZeroDiscFinset R) := by
-        intro u hu
-        rw [Function.mem_support] at hu
-        by_contra huS
-        rw [Finset.mem_coe, mem_xiZeroDiscFinset] at huS
-        push_neg at huS
-        exact hu (by
-          show (Metric.closedBall (0 : ℂ) R).indicator (fun u =>
-              ((MeromorphicOn.divisor xiFunction (Metric.closedBall 0 R) u : ℤ) : ℝ)) u = 0
-          by_cases hmem : u ∈ Metric.closedBall (0 : ℂ) R
-          · rw [Set.indicator_of_mem hmem]
-            show ((MeromorphicOn.divisor xiFunction (Metric.closedBall 0 R) u : ℤ) : ℝ) = 0
-            rw [huS]
-            simp
-          · rw [Set.indicator_of_notMem hmem])
-      rw [finsum_eq_sum_of_support_subset _ hsupp]
-      refine Finset.sum_congr rfl fun u hu => ?_
-      rw [Set.indicator_of_mem (xiZeroDiscFinset_subset_closedBall hu),
-        ← xiZeroDiscMult_cast R u]
-      norm_cast
-    have hcnt' : ∑ u ∈ xiZeroDiscFinset R, (xiZeroDiscMult R u : ℝ) ≤
-        (max (max K₀ 0) K₁ * (1 + 2 * R) * Real.log (4 + 2 * R) + Real.log 2)
-          / Real.log 2 := by
-      rw [hcnt_eq] at hcnt0
-      exact hcnt0
+    -- finsum → 有限和
+    have hfinsum := xi_finsum_divisor_mul_inv_eq_sum R z
     -- 共轭项逐项上界 `≤ m_u · 2/(7R)`
     have hterm : ∀ u ∈ xiZeroDiscFinset R,
         ‖(xiZeroDiscMult R u : ℂ) * ((conj u)
