@@ -13,6 +13,7 @@ lean_lib RiemannPNT where
     `GammaResidue,
     `HardyTheorem,
     `EulerAndLfunctions,
+    `WeilExtremalKernels.FiniteQuadraticForm,
     `PrimeNumberTheorem,
     `PrimeNumberTheorem.FirstOrderPerron,
     `PrimeNumberTheorem.FirstOrderLSeriesPerron,
@@ -65,7 +66,14 @@ lean_lib RiemannPNT where
     `PrimeNumberTheorem.CompletePerron,
     `PrimeNumberTheorem.SecondOrderExplicitFormula,
     `PrimeNumberTheorem.SafeSecondOrderExplicitFormula,
+    `PrimeNumberTheorem.SmoothedErrorTransfer,
+    `PrimeNumberTheorem.ZeroForcedOscillation,
+    `PrimeNumberTheorem.ZeroForcedOscillationExplicitFormula,
     `PrimeNumberTheorem.VonMangoldtLSeriesNorm,
+    `Test.ZeroForcedOscillationContract,
+    `Test.ZeroForcedOscillationAxiomAudit,
+    `Test.ZeroForcedOscillationExplicitFormulaContract,
+    `Test.ZeroForcedOscillationExplicitFormulaAxiomAudit,
     `PrimeNumberTheorem.RightHorizontalEdge,
     `PrimeNumberTheorem.ExplicitFormulaAux,
     `PrimeNumberTheorem.LFunction.CompletedContourData,
@@ -118,6 +126,8 @@ lean_lib RiemannPNT where
     `Test.HardyDigammaStirlingContract,
     `Test.HardyWeightedOscillatoryContract,
     `Test.HardyIntegralBasicsContract,
+    `Test.WeilFiniteQuadraticFormContract,
+    `Test.WeilFiniteQuadraticFormAxiomAudit,
     `Test.HardyCompletedCriticalLineContract,
     `Test.CompletedZetaFourierContract,
     `Test.HardyPhaseContract,
@@ -383,7 +393,6 @@ lean_lib RiemannPNT where
     `Test.FirstOrderPerronRateContract,
     `Test.GlobalZeroCountContract,
     `Test.ZeroDensityCountContract,
-    `Test.DirichletPolynomialMeanSquareContract,
     `Test.FourierL1L2Contract,
     `Test.SincSquareIntegralContract,
     `Test.SincSquareFourierContract,
@@ -453,7 +462,9 @@ lean_lib RiemannPNT where
     `Test.RiemannVonMangoldtCriticalLinePartitionContract,
     `Test.RiemannVonMangoldtCriticalLinePartitionAxiomAudit,
     `Test.RiemannVonMangoldtContract,
-    `Test.RiemannVonMangoldtAxiomAudit
+    `Test.RiemannVonMangoldtAxiomAudit,
+    `Test.SmoothedErrorTransferContract,
+    `Test.SmoothedErrorTransferAxiomAudit
   ]
 
 require mathlib from "./vendor/mathlib"
