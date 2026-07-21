@@ -113,30 +113,24 @@ theorem selbergMollifiedTripleCoeff_constant_eq
     Real.sq_sqrt hmreal.le
   have hnSq : Real.sqrt (n : ℝ) ^ 2 = (n : ℝ) :=
     Real.sq_sqrt hnreal.le
+  have hmSqC : ((Real.sqrt m : ℝ) : ℂ) ^ 2 = (m : ℂ) := by
+    exact_mod_cast hmSq
+  have hnSqC : ((Real.sqrt n : ℝ) : ℂ) ^ 2 = (n : ℂ) := by
+    exact_mod_cast hnSq
   have hden :
       (((Real.sqrt m : ℝ) : ℂ)⁻¹ *
           ((Real.sqrt n : ℝ) : ℂ)⁻¹) *
           (((Real.sqrt m * Real.sqrt n : ℝ) : ℂ)⁻¹) =
         (((m * n : ℕ) : ℝ) : ℂ)⁻¹ := by
-    calc
-      (((Real.sqrt m : ℝ) : ℂ)⁻¹ *
-          ((Real.sqrt n : ℝ) : ℂ)⁻¹) *
-          (((Real.sqrt m * Real.sqrt n : ℝ) : ℂ)⁻¹) =
-          ((((Real.sqrt m : ℝ) : ℂ) *
-              ((Real.sqrt n : ℝ) : ℂ))⁻¹) *
-            ((((Real.sqrt m : ℝ) : ℂ) *
-              ((Real.sqrt n : ℝ) : ℂ))⁻¹) := by
-            push_cast
-            rw [mul_inv]
-      _ = (((((Real.sqrt m : ℝ) : ℂ) *
-              ((Real.sqrt n : ℝ) : ℂ)) *
-            (((Real.sqrt m : ℝ) : ℂ) *
-              ((Real.sqrt n : ℝ) : ℂ)))⁻¹) := by
-            rw [mul_inv]
-      _ = (((m * n : ℕ) : ℝ) : ℂ)⁻¹ := by
-            congr 1
-            push_cast
-            rw [← pow_two, mul_pow, hmSq, hnSq, Nat.cast_mul]
+    rw [← mul_inv, ← mul_inv]
+    congr 1
+    rw [show (((m * n : ℕ) : ℝ) : ℂ) =
+        ((Real.sqrt m : ℝ) : ℂ) ^ 2 * ((Real.sqrt n : ℝ) : ℂ) ^ 2 by
+      rw [hmSqC, hnSqC]
+      push_cast
+      ring]
+    push_cast
+    ring
   unfold selbergMollifiedTripleCoeff
   simp only
   rw [hsqrtmul]
