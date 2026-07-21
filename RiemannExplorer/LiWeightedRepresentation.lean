@@ -1485,6 +1485,145 @@ theorem iteratedDeriv_log_xi_one {m : ℕ} (hm : 2 ≤ m) :
   show (-1 : ℂ) ^ (m - 1) * (Nat.factorial (m - 1) : ℂ) * xiWeightedInvPowSum m 1 = _
   rw [xiWeightedInvPowSum_one_eq_invResidSum hm]
 
+include hr0 hr1 hball hρfar in
+/-- **统一的 `L⁽ᵏ⁾(1)` 公式**（`k ≥ 1`）：`k = 1` 时
+`(-1)⁰·0!·R₁ = R₁` 即 `deriv_log_xi_one_eq`；`k ≥ 2` 时即
+`iteratedDeriv_log_xi_one`。 -/
+theorem iteratedDeriv_log_xi_one_of_pos {k : ℕ} (hk : 1 ≤ k) :
+    iteratedDeriv k (fun s => Complex.log (xiFunction s)) 1 =
+      (-1 : ℂ) ^ (k - 1) * (Nat.factorial (k - 1) : ℂ) * xiWeightedInvResidSum k := by
+  rcases eq_or_lt_of_le hk with rfl | hk2
+  · rw [iteratedDeriv_one]
+    simp only [Nat.sub_self, pow_zero, Nat.factorial_zero, Nat.cast_one, one_mul]
+    exact deriv_log_xi_one_eq hr0 hball
+  · exact iteratedDeriv_log_xi_one hr0 hr1 hball hρfar (by omega)
+
+include hr0 hr1 hball hρfar in
+/-- **`λ_n` 的有限和公式**：`λ_n = Σ_{i∈range n} (-1)ⁱ·C(n,i+1)·R_{i+1}`。
+Leibniz 展开 `dⁿ[s^{n-1}·L]`（`i = n` 项因 `(n-1)↓n = 0` 消失），
+`sum_range_reflect` 换 `j = i+1`，系数经
+`(n-1)↓(n-1-i) = (n-1)!/i!` 与 `(n-i-1) = i` 配对消去。 -/
+theorem liCoefficient_eq_sum_choose_invResid (n : ℕ) (hn : 1 ≤ n) :
+    liCoefficient n = ∑ i ∈ Finset.range n,
+      (-1 : ℂ) ^ i * (n.choose (i + 1) : ℂ) * xiWeightedInvResidSum (i + 1) := by
+  have hfC : ContDiffAt ℂ n (fun s : ℂ => s ^ (n - 1)) 1 :=
+    (contDiff_id.pow (n - 1)).contDiffAt
+  have hLC : ContDiffAt ℂ n (fun s => Complex.log (xiFunction s)) 1 :=
+    contDiffAt_log_xi_one hr0 hball n
+  rw [liCoefficient, iteratedDeriv_fun_mul hfC hLC, Finset.mul_sum,
+    Finset.sum_range_succ]
+  have htermn : (1 / (Nat.factorial (n - 1) : ℂ)) *
+      (↑(n.choose n) * iteratedDeriv n (fun s : ℂ => s ^ (n - 1)) 1 *
+        iteratedDeriv (n - n) (fun s => Complex.log (xiFunction s)) 1) = 0 := by
+    have h0 : iteratedDeriv n (fun s : ℂ => s ^ (n - 1)) 1 = 0 := by
+      rw [iteratedDeriv_pow,
+        Nat.descFactorial_eq_zero_iff_lt.mpr (by omega : n - 1 < n)]
+      simp
+    rw [h0]
+    simp
+  rw [htermn, add_zero, ← Finset.sum_range_reflect]
+  apply Finset.sum_congr rfl
+  intro i hi
+  rw [Finset.mem_range] at hi
+  have hi1 : i + 1 ≤ n := by omega
+  have hf : iteratedDeriv (n - 1 - i) (fun s : ℂ => s ^ (n - 1)) 1 =
+      ((Nat.factorial (n - 1) / Nat.factorial i : ℕ) : ℂ) := by
+    rw [iteratedDeriv_pow, one_pow, mul_one]
+    congr 1
+    rw [Nat.descFactorial_eq_div (by omega : n - 1 - i ≤ n - 1),
+      show n - 1 - (n - 1 - i) = i from by omega]
+  have hLval : iteratedDeriv (n - (n - 1 - i)) (fun s => Complex.log (xiFunction s)) 1 =
+      (-1 : ℂ) ^ i * (Nat.factorial i : ℂ) * xiWeightedInvResidSum (i + 1) := by
+    have he : n - (n - 1 - i) = i + 1 := by omega
+    rw [he]
+    have h := iteratedDeriv_log_xi_one_of_pos hr0 hr1 hball hρfar (k := i + 1) (by omega)
+    rw [show i + 1 - 1 = i from by omega] at h
+    exact h
+  have hchoose : n.choose (n - 1 - i) = n.choose (i + 1) := by
+    rw [show n - 1 - i = n - (i + 1) from by omega]
+    exact Nat.choose_symm hi1
+  rw [hf, hLval, hchoose]
+  have hfact : ((Nat.factorial (n - 1) / Nat.factorial i : ℕ) : ℂ) =
+      (Nat.factorial (n - 1) : ℂ) / (Nat.factorial i : ℂ) :=
+    Nat.cast_div (Nat.factorial_dvd_factorial (by omega : i ≤ n - 1))
+      (Nat.cast_ne_zero.mpr (Nat.factorial_ne_zero i))
+  rw [hfact]
+  have hfi : ((Nat.factorial i : ℕ) : ℂ) ≠ 0 :=
+    Nat.cast_ne_zero.mpr (Nat.factorial_ne_zero i)
+  have hfn : ((Nat.factorial (n - 1) : ℕ) : ℂ) ≠ 0 :=
+    Nat.cast_ne_zero.mpr (Nat.factorial_ne_zero (n - 1))
+  field_simp
+
 end FinalAssembly
+
+/-- **点态二项式展开**：`1 - (1 - x)ⁿ = Σ_{i∈range n} (-1)ⁱ·C(n,i+1)·x^{i+1}`
+（`add_pow` 展开后剥 `i = 0` 项，`-(-1)^{i+1} = (-1)^i`）。 -/
+theorem one_sub_one_sub_pow_eq_sum (n : ℕ) (x : ℂ) :
+    1 - (1 - x) ^ n = ∑ i ∈ Finset.range n,
+      (-1 : ℂ) ^ i * (n.choose (i + 1) : ℂ) * x ^ (i + 1) := by
+  have hexp : (1 - x) ^ n = ∑ i ∈ Finset.range (n + 1),
+      (-1 : ℂ) ^ i * (n.choose i : ℂ) * x ^ i := by
+    have h := add_pow (-x) (1 : ℂ) n
+    rw [show (1 : ℂ) - x = -x + 1 from by ring, h]
+    apply Finset.sum_congr rfl
+    intro i _
+    rw [neg_pow, one_pow, mul_one]
+    ring
+  rw [hexp, Finset.sum_range_succ']
+  simp only [pow_zero, Nat.choose_zero_right, Nat.cast_one, mul_one]
+  have h1 : (1 : ℂ) - (∑ i ∈ Finset.range n,
+        (-1 : ℂ) ^ (i + 1) * (n.choose (i + 1) : ℂ) * x ^ (i + 1) + 1) =
+      -∑ i ∈ Finset.range n, (-1 : ℂ) ^ (i + 1) * (n.choose (i + 1) : ℂ) * x ^ (i + 1) := by
+    ring
+  rw [h1, ← Finset.sum_neg_distrib]
+  apply Finset.sum_congr rfl
+  intro i _
+  rw [pow_succ (-1 : ℂ) i]
+  ring
+
+/-- **加权 Li 配对级数 = 有限留数和**（无条件）：
+`Σ_ρ m_ξ(ρ)·liPairedTerm n ρ = Σ_{i∈range n} (-1)ⁱ·C(n,i+1)·R_{i+1}`。
+点态二项式展开 + `tsum_finsetSum`/`tsum_mul_left` 换序
+（每个 `R_{i+1}` 的可和性由 `summable_xiWeightedInvResidTerm` 保证）。 -/
+theorem tsum_weightedLiPairedTerm_eq_sum (n : ℕ) :
+    (∑' ρ : UpperHalfPlaneNontrivialZero,
+      (analyticOrderNatAt xiFunction (ρ : ℂ) : ℂ) * liPairedTerm n (ρ : ℂ)) =
+    ∑ i ∈ Finset.range n,
+      (-1 : ℂ) ^ i * (n.choose (i + 1) : ℂ) * xiWeightedInvResidSum (i + 1) := by
+  classical
+  have hpt : ∀ ρ : UpperHalfPlaneNontrivialZero,
+      (analyticOrderNatAt xiFunction (ρ : ℂ) : ℂ) * liPairedTerm n (ρ : ℂ) =
+        ∑ i ∈ Finset.range n, ((-1 : ℂ) ^ i * (n.choose (i + 1) : ℂ)) *
+          xiWeightedInvResidTerm (i + 1) (ρ : ℂ) := by
+    intro ρ
+    simp only [liPairedTerm, one_div]
+    rw [one_sub_one_sub_pow_eq_sum n (↑ρ)⁻¹, one_sub_one_sub_pow_eq_sum n (conj ↑ρ)⁻¹,
+      mul_add, Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
+    apply Finset.sum_congr rfl
+    intro i _
+    rw [xiWeightedInvResidTerm]
+    ring
+  rw [tsum_congr hpt,
+    Summable.tsum_finsetSum (fun i _ =>
+      (summable_xiWeightedInvResidTerm (m := i + 1) (by omega)).mul_left _)]
+  apply Finset.sum_congr rfl
+  intro i _
+  rw [tsum_mul_left, xiWeightedInvResidSum]
+
+/-- **B1 主定理：Li 系数的重数加权零点求和表示**（无条件）。
+两条路线算同一有限和：`λ_n`（Leibniz + `L⁽ʲ⁾(1)` 留数公式）
+与 `Σ_ρ m_ξ·liPairedTerm`（点态二项式 + 换序）。 -/
+theorem li_weighted_zero_sum_representation (n : ℕ) (hn : 1 ≤ n) :
+    liCoefficient n = ∑' ρ : UpperHalfPlaneNontrivialZero,
+      (analyticOrderNatAt xiFunction (ρ : ℂ) : ℂ) * liPairedTerm n (ρ : ℂ) := by
+  obtain ⟨r, hr0, hr1, hball, hρfar⟩ := exists_ball_log_xi_and_zeros_far
+  rw [liCoefficient_eq_sum_choose_invResid hr0 hr1 hball hρfar n hn,
+    tsum_weightedLiPairedTerm_eq_sum n]
+
+/-- **正向方向闭合（无条件）**：RH ⇒ Li 准则。
+由 `li_weighted_zero_sum_representation`（B1）与
+`rh_implies_li_criterion_of_weighted_representation`（B2）拼接。 -/
+theorem rh_implies_li_criterion_target_proved : rh_implies_li_criterion_target :=
+  rh_implies_li_criterion_of_weighted_representation li_weighted_zero_sum_representation
 
 end RiemannExplorer
