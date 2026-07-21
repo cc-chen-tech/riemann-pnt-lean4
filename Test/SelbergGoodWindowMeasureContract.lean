@@ -1,0 +1,17 @@
+import HardyTheorem.SelbergGoodWindowMeasure
+
+open HardyTheorem
+
+#check selbergMoebiusSignedShortIntegral
+#check selbergMoebiusAbsShortIntegral
+#check selbergSmallAbsoluteMassStarts
+#check selbergExcessiveSignedMassStarts
+#check selbergGoodWindowStarts
+
+#check exists_selbergMoebiusMollifiedHardyZ_localSignChange_of_goodStart
+#check exists_hardyZ_localSignChange_of_selbergGoodStart
+#check selberg_odd_zero_proportion_target_of_mollified_good_window_bounds
+
+#print axioms exists_selbergMoebiusMollifiedHardyZ_localSignChange_of_goodStart
+#print axioms exists_hardyZ_localSignChange_of_selbergGoodStart
+#print axioms selberg_odd_zero_proportion_target_of_mollified_good_window_bounds

@@ -1,0 +1,11 @@
+import HardyTheorem.HardyLittlewoodOddTheorem
+
+namespace HardyTheorem
+
+#check hardy_littlewood_odd_lower_bound_target_proved
+#print axioms hardy_littlewood_odd_lower_bound_target_proved
+
+example : hardy_littlewood_odd_lower_bound_target :=
+  hardy_littlewood_odd_lower_bound_target_proved
+
+end HardyTheorem

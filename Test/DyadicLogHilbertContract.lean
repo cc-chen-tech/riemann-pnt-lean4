@@ -1,0 +1,10 @@
+import MathlibAux.DyadicLogHilbert
+
+#check MathlibAux.symmetricWeightedHilbertForm
+#check MathlibAux.norm_symmetricWeightedHilbertForm_le
+#check MathlibAux.logarithmicHilbertForm
+#check MathlibAux.norm_logarithmicHilbertForm_le
+#check MathlibAux.norm_logarithmicHilbertBilinearForm_le_of_upper
+#print axioms MathlibAux.norm_symmetricWeightedHilbertForm_le
+#print axioms MathlibAux.norm_logarithmicHilbertForm_le
+#print axioms MathlibAux.norm_logarithmicHilbertBilinearForm_le_of_upper

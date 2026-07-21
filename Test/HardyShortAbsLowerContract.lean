@@ -1,0 +1,4 @@
+import HardyTheorem.HardyShortAbsLower
+
+#check HardyTheorem.exists_hardyShortAbsIntegral_ge_sub_shortDirichlet
+#print axioms HardyTheorem.exists_hardyShortAbsIntegral_ge_sub_shortDirichlet

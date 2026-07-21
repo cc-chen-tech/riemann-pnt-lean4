@@ -1,0 +1,8 @@
+import HardyTheorem.HardyPhaseMovingSecondMoment
+
+open Complex MeasureTheory Set
+open scoped BigOperators
+
+#check HardyTheorem.normSq_hardyPhaseWindowCoeff_eq_linearizedCoeff
+#check HardyTheorem.integral_normSq_hardyPhaseLinearizedSum_le
+#print axioms HardyTheorem.integral_normSq_hardyPhaseLinearizedSum_le

@@ -1,0 +1,4 @@
+import HardyTheorem.SelbergPacking
+
+#print axioms HardyTheorem.criticalLineOddZeroCount_two_mul_lower_bound_of_good_window_measure
+#print axioms HardyTheorem.selberg_odd_zero_proportion_target_of_log_good_window_measure

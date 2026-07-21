@@ -104,10 +104,10 @@ accepted proof surface consists of:
   set of distinct zero ordinates.
 
 The remaining Hardy-Littlewood, Selberg, and Conrey-style targets are stronger
-quantitative extensions. Before promotion they must specify whether zeros are
-counted distinctly or with analytic multiplicity and must match the convention
-used in the cited theorem. The current `zeroCountOnCriticalLine` counts
-distinct ordinates only.
+quantitative extensions. The repository now specifies separate odd-order,
+distinct, and analytic-multiplicity counts. Hardy-Littlewood and Selberg use
+the odd-order count detected by sign changes; Conrey must continue to
+distinguish multiplicity-counted critical-line zeros from simple zeros.
 
 ## Verification Commands
 

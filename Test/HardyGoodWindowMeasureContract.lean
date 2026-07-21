@@ -1,0 +1,5 @@
+import HardyTheorem.HardyGoodWindowMeasure
+
+#check HardyTheorem.hardyGoodWindowStarts
+#check HardyTheorem.exists_fixed_window_bad_start_measure_le
+#print axioms HardyTheorem.exists_fixed_window_bad_start_measure_le

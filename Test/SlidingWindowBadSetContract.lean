@@ -1,0 +1,9 @@
+import MathlibAux.SlidingWindowBadSet
+
+open MeasureTheory Set
+
+#check MathlibAux.volume_slidingWindowMass_ge_le
+#check MathlibAux.volume_slidingWindowMass_gt_le
+
+#print axioms MathlibAux.volume_slidingWindowMass_ge_le
+#print axioms MathlibAux.volume_slidingWindowMass_gt_le

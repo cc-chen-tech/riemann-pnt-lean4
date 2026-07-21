@@ -195,8 +195,7 @@ predicate; those individual propositions remain mathematical targets.
 
 - `HardyTheorem.integral_asymptotic_target`
 - `HardyTheorem.hardy_two_signed_moments_target`
-- `HardyTheorem.hardy_littlewood_lower_bound_target`
-- `HardyTheorem.selberg_zero_proportion_target`
+- `HardyTheorem.selberg_odd_zero_proportion_target`
 - `HardyTheorem.Details.gamma_asymptotic_half_plus_it_target`
 - `HardyTheorem.Details.theta_asymptotic_target`
 - `HardyTheorem.Details.approximate_functional_equation_target`
@@ -204,9 +203,12 @@ predicate; those individual propositions remain mathematical targets.
 
 Hardy's classical infinite-zero theorem itself is already proved. The targets
 above are independent signed-moment/AFE routes or stronger quantitative
-zero-counting extensions. The current `zeroCountOnCriticalLine` counts
-distinct ordinates; a literature-aligned multiplicity count must be introduced
-separately before promoting Hardy-Littlewood, Selberg, or Conrey claims.
+zero-counting extensions. The repository now defines odd-order, distinct, and
+analytic-multiplicity counts and proves
+`odd <= distinct = zeroCountOnCriticalLine <= multiplicity`. The
+Hardy-Littlewood and Selberg statements use the odd-order count supplied by
+the sign-change method. The Hardy-Littlewood linear lower bound is now proved;
+the Selberg `T*log T` lower bound remains open.
 
 ### Current verified anchor theorems
 
@@ -216,6 +218,48 @@ separately before promoting Hardy-Littlewood, Selberg, or Conrey claims.
 - `HardyTheorem.hardy_zeros_abs_unbounded_target_proved`
 - `HardyTheorem.hardy_zeros_unbounded_target_proved`
 - `HardyTheorem.hardy_theorem_target_proved`
+- `HardyTheorem.zeroCountOnCriticalLine_eq_criticalLineDistinctZeroCount`
+- `HardyTheorem.criticalLineOddZeroCount_le_criticalLineDistinctZeroCount`
+- `HardyTheorem.criticalLineDistinctZeroCount_le_criticalLineZeroMultiplicityCount`
+- `HardyTheorem.hardy_littlewood_odd_lower_bound_target_proved`
+- `HardyTheorem.criticalLineOddZeroCount_two_mul_lower_bound_of_good_window_measure`
+- `HardyTheorem.selberg_odd_zero_proportion_target_of_log_good_window_measure`
+- `HardyTheorem.integral_normSq_selbergMoebiusMollifier_le_one_add_log`
+- `HardyTheorem.criticalLineDirichletPolynomial_mul_selbergMoebiusMollifier_eq_convolutionSum`
+- `HardyTheorem.selbergMollifiedDirichletCoeff_eq_vonMangoldt_div_log`
+- `HardyTheorem.sum_normSq_selbergMollifiedCriticalLineCoeff_le_one_add_log`
+- `MathlibAux.integral_fourthMoment_logExponentialPolynomial_le`
+- `MathlibAux.paleyZygmund_sq_measure_lower_bound`
+- `HardyTheorem.selberg_odd_zero_proportion_target_of_mollified_good_window_bounds`
+- `HardyTheorem.volume_selbergExcessiveSignedMassStarts_inter_Icc_le`
+- `HardyTheorem.exists_integral_sq_selbergMoebiusMollifiedHardyZ_le`
+- `HardyTheorem.exists_selbergMoebiusMollifiedZetaFirstApprox`
+- `HardyTheorem.exists_selbergMoebiusAbsShortIntegral_ge_sub_shortDirichlet_coarse`
+- `HardyTheorem.criticalLineDirichletPolynomial_mul_mollifier_mul_conj_eq_exponentialPolynomial`
+- `MathlibAux.integral_normSq_slidingExponentialPolynomialIntegral_le`
+- `MathlibAux.norm_slidingExponentialCoefficient_le_min`
+- `MathlibAux.sum_normSq_fiber_le_mul_sum_normSq`
+- `HardyTheorem.volume_selbergSmallAbsoluteMassStarts_inter_Icc_le_of_shortDirichletL2`
+- `HardyTheorem.selbergMollifiedShortDirichletPolynomial_eq_integral_expansion`
+- `HardyTheorem.selbergShortDirichletCollectedPolynomial_sub_one_eq`
+- `HardyTheorem.selbergShortDirichletCollectedCoeff_eq_convolution`
+- `HardyTheorem.norm_selbergShortDirichletCollectedCoeff_le_convolutionMajorant`
+- `HardyTheorem.selbergShortDirichletCollectedCoeff_eq_zero_of_topRange`
+- `HardyTheorem.sum_normSq_sliding_selbergShortDirichletCollectedCoeff_eq_effectiveSupport`
+- `HardyTheorem.selbergShortCollectedDirichletConvolution_eq_lowRange`
+- `HardyTheorem.norm_selbergShortDirichletCollectedCoeff_le_two_div_sqrt`
+- `HardyTheorem.sum_normSq_sliding_selbergShortDirichletCollectedCoeff_lowRange_le_log`
+- `HardyTheorem.sum_normSq_sliding_selbergShortDirichletCollectedCoeff_le_lowRange_add_highRange`
+- `HardyTheorem.sum_normSq_sliding_selbergShortDirichletCollectedCoeff_le_lowRange_add_pairFiberHighRange`
+- `HardyTheorem.sum_normSq_sliding_selbergShortDirichletCollectedCoeff_le_lowRange_add_pairFiberMinHighRange`
+- `HardyTheorem.sum_normSq_selbergShortDirichletCollectedCoeff_le_pairFiberEnergy`
+- `HardyTheorem.integral_normSq_selbergMollifiedShortDirichletPolynomial_le_gapSum`
+- `HardyTheorem.integral_normSq_selbergMollifiedShortDirichletPolynomial_le_energy`
+- `HardyTheorem.volume_selbergSmallAbsoluteMassStarts_inter_Icc_le_gapSum`
+- `HardyTheorem.exists_volume_selbergSmallAbsoluteMassStarts_inter_Icc_le_gapSum`
+- `PrimeNumberTheorem.RiemannVonMangoldt.riemannZeroCount_eq_positiveCriticalLine_add_two_mul_zeroDensityCount`
+- `HardyTheorem.hardy_littlewood_lower_bound_target_of_odd`
+- `HardyTheorem.hardy_littlewood_multiplicity_lower_bound_target_of_odd`
 - `HardyTheorem.hardyZ_zero_iff_zeta_zero`
 - `HardyTheorem.hardyZ_eventually_const_sign_of_finite_zeros`
 - `HardyTheorem.weightedIntegralOf_neg`

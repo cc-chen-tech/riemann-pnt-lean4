@@ -1,0 +1,35 @@
+import HardyTheorem.CriticalLineMultiplicity
+
+open Complex
+
+namespace HardyTheorem
+
+#check criticalLineZerosFinset
+#check criticalLineDistinctZeroCount
+#check criticalLineOddZeroCount
+#check criticalLineZeroMultiplicityCount
+#check mem_criticalLineZerosFinset
+#check criticalLineZeroMultiplicityCount_mono
+#check criticalLineDistinctZeroCount_mono
+#check criticalLineOddZeroCount_mono
+#check criticalLineOddZeroCount_le_criticalLineDistinctZeroCount
+#check criticalLineDistinctZeroCount_le_criticalLineZeroMultiplicityCount
+#check zeroCountOnCriticalLine_eq_criticalLineDistinctZeroCount
+#check zeroCountOnCriticalLine_le_criticalLineZeroMultiplicityCount
+#check criticalLineOddZeroCount_le_criticalLineZeroMultiplicityCount
+#check card_le_criticalLineOddZeroCount_of_pairwiseDisjoint_hits
+#check hardy_littlewood_odd_lower_bound_target
+#check hardy_littlewood_multiplicity_lower_bound_target
+#check hardy_littlewood_multiplicity_lower_bound_target_of_odd
+#check hardy_littlewood_lower_bound_target_of_odd
+#check hardy_theorem_target_of_hardy_littlewood_odd_lower_bound
+#check selberg_odd_zero_proportion_target
+#check selberg_zero_proportion_target_of_odd
+
+example (T : ℝ) :
+    criticalLineZeroMultiplicityCount T =
+      ∑ ρ ∈ criticalLineZerosFinset T,
+        analyticOrderNatAt riemannZeta ρ := by
+  rfl
+
+end HardyTheorem

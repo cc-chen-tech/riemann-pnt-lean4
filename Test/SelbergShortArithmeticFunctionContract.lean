@@ -1,0 +1,9 @@
+import HardyTheorem.SelbergShortArithmeticFunction
+
+#check HardyTheorem.selbergShortTaperedMoebius
+#check HardyTheorem.selbergShortTaperedMoebius_apply
+#check HardyTheorem.selbergShortDoubleMoebiusCoeff_eq_convolution_sq
+#check HardyTheorem.selbergShortDoubleMoebiusDivisorSum_eq_zetaConvolution
+
+#print axioms HardyTheorem.selbergShortDoubleMoebiusCoeff_eq_convolution_sq
+#print axioms HardyTheorem.selbergShortDoubleMoebiusDivisorSum_eq_zetaConvolution

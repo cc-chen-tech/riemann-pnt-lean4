@@ -2,15 +2,139 @@ import RiemannExplorer
 import GammaResidue
 import HardyTheorem
 import HardyTheorem.HardyIntegralContradiction
+import HardyTheorem.HardyCompletedCriticalLine
+import HardyTheorem.CompletedZetaFourier
+import HardyTheorem.CriticalLineMultiplicity
+import HardyTheorem.AnalyticSignChange
+import HardyTheorem.ShortIntervalMeanValue
+import HardyTheorem.ShortIntegralZeroDetection
+import HardyTheorem.ShortIntervalDistinctZeroCount
+import HardyTheorem.HardyModelApproximation
+import HardyTheorem.CriticalLineShortDirichlet
+import HardyTheorem.CriticalLineShortDirichletUniform
+import HardyTheorem.HardyShortAbsLower
+import HardyTheorem.HardyGoodWindowMeasure
+import HardyTheorem.HardyLittlewoodPacking
+import HardyTheorem.HardyLittlewoodTheorem
+import HardyTheorem.HardyLittlewoodOddTheorem
+import HardyTheorem.SelbergPacking
+import HardyTheorem.HardyShortSignedMeanSquare
+import HardyTheorem.HardyShortSecondMoment
+import HardyTheorem.HardyPhaseSecondMoment
+import HardyTheorem.HardyPhaseFullSecondMoment
+import HardyTheorem.HardyPhaseCorrelation
+import HardyTheorem.HardyPhaseLinearization
+import HardyTheorem.HardyPhaseLinearizedSum
+import HardyTheorem.HardyPhaseLinearizedEnergy
+import HardyTheorem.HardyPhaseStationaryScale
+import HardyTheorem.HardyPhaseFrequencyLowerBound
+import HardyTheorem.HardyPhaseAdditiveEnvelope
+import HardyTheorem.HardyPhaseCentralLeftEnergy
+import HardyTheorem.HardyPhaseCentralRightEnergy
+import HardyTheorem.HardyPhaseNearestEnergy
+import HardyTheorem.HardyPhaseCentralEnergy
+import HardyTheorem.HardyPhaseLowTailEnergy
+import HardyTheorem.HardyPhaseHighTailEnergy
+import HardyTheorem.HardyPhaseDyadicCutoffs
+import HardyTheorem.HardyPhaseFullLinearizedEnergy
+import HardyTheorem.HardyPhaseWindowCoeffDerivative
+import HardyTheorem.HardyPhaseWindowCoeffEnvelope
+import HardyTheorem.HardyPhaseCentralDerivativeEnergy
+import HardyTheorem.HardyPhaseLowTailDerivativeEnergy
+import HardyTheorem.HardyPhaseHighTailDerivativeEnergy
+import HardyTheorem.HardyPhaseFullDerivativeEnergy
+import HardyTheorem.HardyPhaseWindowPolynomial
+import HardyTheorem.HardyPhaseMovingSecondMoment
+import HardyTheorem.HardyPhasePartialSecondMoment
+import HardyTheorem.HardyPhaseSharpTwoBandSecondMoment
+import HardyTheorem.HardyShortSharpSecondMoment
+import HardyTheorem.HardyPhaseDyadicSecondMoment
+import HardyTheorem.HardyPhaseHilbert
+import HardyTheorem.HardyOddMultiplicity
+import HardyTheorem.ShortIntervalSignChangeMeasure
+import HardyTheorem.SelbergMollifier
+import HardyTheorem.SelbergMollifierMeanSquare
+import HardyTheorem.SelbergMollifiedDirichlet
+import HardyTheorem.SelbergMollifiedCoefficientArithmetic
+import HardyTheorem.SelbergMollifiedCoefficientEnergy
+import HardyTheorem.SelbergGoodWindowMeasure
+import HardyTheorem.SelbergSignedBadSet
+import HardyTheorem.SelbergMollifiedSecondMoment
+import HardyTheorem.SelbergShortAbsLower
+import HardyTheorem.SelbergMollifiedTripleDirichlet
+import HardyTheorem.SelbergMollifiedTripleCollected
+import HardyTheorem.SelbergMollifiedTripleConstant
+import HardyTheorem.SelbergMollifiedTripleMeanSquare
+import HardyTheorem.SelbergMollifiedTripleMainTerm
+import HardyTheorem.SelbergMertensBound
+import HardyTheorem.SelbergMollifiedTripleMainLower
+import HardyTheorem.SelbergSmallAbsBadSet
+import HardyTheorem.SelbergShortDirichletExpansion
+import HardyTheorem.SelbergShortDirichletCollected
+import HardyTheorem.SelbergShortCollectedArithmetic
+import HardyTheorem.SelbergShortTopRangeVanishing
+import HardyTheorem.SelbergShortLowRangeArithmetic
+import HardyTheorem.SelbergShortLowRangeEnergy
+import HardyTheorem.SelbergShortHighRangeEnergy
+import HardyTheorem.SelbergShortHighRange
+import HardyTheorem.SelbergShortDyadicMeanSquare
+import HardyTheorem.SelbergShortCollectedEnergy
+import HardyTheorem.SelbergShortWeightedPairEnergy
+import HardyTheorem.SelbergShortCompleteRangeArithmetic
+import HardyTheorem.SelbergShortCompleteRangeEnergy
+import HardyTheorem.SelbergShortHarmonicDecomposition
+import HardyTheorem.SelbergShortArithmeticFunction
+import HardyTheorem.SelbergShortPrimeObstruction
+import HardyTheorem.SelbergShortDirichletMeanSquare
+import HardyTheorem.SelbergShortDirichletHilbertMeanSquare
+import HardyTheorem.SelbergSmallAbsGapBound
+import HardyTheorem.SelbergSmallAbsFinalBound
+import HardyTheorem.SelbergSmallAbsGapDecomposition
+import HardyTheorem.SelbergSignedFinalBound
+import MathlibAux.SlidingIntervalCorrelation
+import MathlibAux.SlidingWindowBadSet
+import MathlibAux.SlidingExponentialPolynomialMeanSquare
+import MathlibAux.SlidingExponentialCoefficientBound
+import MathlibAux.FiberwiseNormSq
+import MathlibAux.PaleyZygmund
+import MathlibAux.ExponentialPolynomialFourthMoment
+import MathlibAux.DiscreteHilbertInequality
+import MathlibAux.DyadicLogHilbert
+import MathlibAux.DyadicPartition
+import MathlibAux.DyadicHarmonic
+import MathlibAux.LogRatioLowerBound
+import MathlibAux.MinReciprocalSquareSum
+import MathlibAux.GcdLcmQuadratic
+import MathlibAux.MinReciprocalSquareReindex
+import MathlibAux.DyadicWeightedSquareTail
+import MathlibAux.DyadicWeightedSquareHighTail
+import MathlibAux.RealDyadicScale
+import MathlibAux.LogKernelRemainder
+import MathlibAux.LogDirichletPolynomialMeanSquare
+import MathlibAux.NegativeLogDirichletPolynomialMeanSquare
+import MathlibAux.DyadicNegativeLogPolynomialMeanSquare
+import MathlibAux.LogSquareSummability
+import MathlibAux.IntervalPackingFromMeasure
+import MathlibAux.LogarithmicHilbertIntegrationByParts
+import MathlibAux.TimeDependentLogHilbert
+import MathlibAux.TimeDependentLogHilbertMeasurable
+import MathlibAux.RectangularFourierFirstMoment
+import MathlibAux.RectangularFourierEnvelope
+import MathlibAux.MellinLogIntegrability
+import MathlibAux.SlidingWindowParseval
+import MathlibAux.SlidingIntegralFourierCompatibility
+import HardyTheorem.HardyPhaseHilbertShiftIntegral
 import EulerAndLfunctions
 import PrimeNumberTheorem
 import PrimeNumberTheorem.Perron
+import PrimeNumberTheorem.RiemannVonMangoldt.CriticalLinePartition
 import PrimeNumberTheorem.RieszDifference
 import PrimeNumberTheorem.ExplicitFormulaResidues
 import PrimeNumberTheorem.ExplicitFormulaRectangle
 import PrimeNumberTheorem.FirstOrderExplicitFormula
 import PrimeNumberTheorem.QuantitativeGoodHeight
 import PrimeNumberTheorem.GlobalZeroCount
+import PrimeNumberTheorem.RiemannVonMangoldt
 import PrimeNumberTheorem.CentralHorizontalEdge
 import PrimeNumberTheorem.CofinalExplicitFormula
 import PrimeNumberTheorem.ExplicitFormulaAllHeights
@@ -26,6 +150,7 @@ import ZeroFreeRegion.MeromorphicAux
 import ZeroFreeRegion.PhragmenLindelofZeta
 import ZeroFreeRegion.ShiftedJensen
 import MathlibAux.RectangleResidue
+import MathlibAux.DirichletPolynomialMeanSquare
 
 open Complex Filter Topology Asymptotics ComplexConjugate
 open scoped ArithmeticFunction LSeries.notation
@@ -25266,5 +25391,43 @@ theorem zeroCountOnCriticalLine_eq_distinct_ncard (T : ℝ) :
       {t : Set.Icc 0 T |
         riemannZeta (0.5 + Complex.I * t) = 0}.ncard :=
   HardyTheorem.zeroCountOnCriticalLine_eq_distinct_ncard T
+
+/-- Public distinct critical-line zero count on the complex-zero finset. -/
+noncomputable abbrev criticalLineDistinctZeroCount (T : ℝ) : ℕ :=
+  HardyTheorem.criticalLineDistinctZeroCount T
+
+/-- Public count of critical-line zeros of odd analytic multiplicity. -/
+noncomputable abbrev criticalLineOddZeroCount (T : ℝ) : ℕ :=
+  HardyTheorem.criticalLineOddZeroCount T
+
+/-- Public critical-line zero count weighted by analytic multiplicity. -/
+noncomputable abbrev criticalLineZeroMultiplicityCount (T : ℝ) : ℕ :=
+  HardyTheorem.criticalLineZeroMultiplicityCount T
+
+/-- The sign-change count is bounded by the distinct-zero count. -/
+theorem criticalLineOddZeroCount_le_criticalLineDistinctZeroCount (T : ℝ) :
+    criticalLineOddZeroCount T ≤ criticalLineDistinctZeroCount T :=
+  HardyTheorem.criticalLineOddZeroCount_le_criticalLineDistinctZeroCount T
+
+/-- The distinct-zero count is bounded by the analytic-multiplicity count. -/
+theorem criticalLineDistinctZeroCount_le_criticalLineZeroMultiplicityCount
+    (T : ℝ) :
+    criticalLineDistinctZeroCount T ≤ criticalLineZeroMultiplicityCount T :=
+  HardyTheorem.criticalLineDistinctZeroCount_le_criticalLineZeroMultiplicityCount T
+
+/-- Public literature-aligned Hardy--Littlewood target, counting odd-order
+critical-line zeros detected by sign changes. -/
+abbrev HardyLittlewoodOddLowerBound : Prop :=
+  HardyTheorem.hardy_littlewood_odd_lower_bound_target
+
+/-- Public unconditional Hardy--Littlewood theorem for odd-multiplicity
+critical-line zeros, each ordinate counted once. -/
+theorem hardyLittlewoodOddLowerBound_proved :
+    HardyLittlewoodOddLowerBound :=
+  HardyTheorem.hardy_littlewood_odd_lower_bound_target_proved
+
+/-- Public multiplicity-weighted consequence of the Hardy--Littlewood target. -/
+abbrev HardyLittlewoodMultiplicityLowerBound : Prop :=
+  HardyTheorem.hardy_littlewood_multiplicity_lower_bound_target
 
 end RiemannPNT.API
