@@ -175,3 +175,4 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanHzderiv_im_eq_zero_of_im_eq_zero
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanHzderiv_two_im_eq_zero_of_im_eq_zero
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewman_double_zero_quadratic_signs
+#print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewman_double_zero_births_real_zeros

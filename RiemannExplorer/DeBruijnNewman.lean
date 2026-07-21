@@ -6785,6 +6785,100 @@ theorem deBruijnNewman_double_zero_quadratic_signs (τ : ℝ) (x₀ : ℂ) (c : 
       linarith
     exact ⟨mul_neg_of_neg_of_pos hg0 hgY, mul_neg_of_neg_of_pos hg0 hgN⟩
 
+/-- **Birth of two real zeros after a double-zero collision**: if `c` is a
+real-valued critical curve and the quadratic sign flip of
+`deBruijnNewman_double_zero_quadratic_signs` holds on `𝓝[>] τ`, then for `t`
+slightly larger than `τ` the function `H_t` has two real zeros straddling the
+critical point `c(t)`, each within distance `2√(t−τ)` of it. Proof: apply the
+intermediate value theorem to `v ↦ Re(H_t(c(t)+v))` on `[−Y, 0]` and `[0, Y]`
+with `Y = 2√(t−τ)`; strictness of the roots follows from the strict sign
+flip, and reality of the zeros from Phase 2(34). -/
+theorem deBruijnNewman_double_zero_births_real_zeros (τ : ℝ) (c : ℝ → ℂ)
+    (hcreal : ∀ᶠ t in nhds τ, (c t).im = 0)
+    (hsigns : ∀ᶠ t in nhdsWithin τ (Set.Ioi τ),
+      (deBruijnNewmanH t (c t)).re
+          * (deBruijnNewmanH t (c t + ((2 * Real.sqrt (t - τ) : ℝ) : ℂ))).re < 0
+        ∧ (deBruijnNewmanH t (c t)).re
+          * (deBruijnNewmanH t (c t + ((-(2 * Real.sqrt (t - τ)) : ℝ) : ℂ))).re < 0) :
+    ∀ᶠ t in nhdsWithin τ (Set.Ioi τ), ∃ z₁ z₂ : ℂ,
+      deBruijnNewmanH t z₁ = 0 ∧ deBruijnNewmanH t z₂ = 0
+        ∧ z₁.im = 0 ∧ z₂.im = 0 ∧ z₁.re < (c t).re ∧ (c t).re < z₂.re
+        ∧ ‖z₁ - c t‖ ≤ 2 * Real.sqrt (t - τ) ∧ ‖z₂ - c t‖ ≤ 2 * Real.sqrt (t - τ) := by
+  -- continuity of `v ↦ Re(H_t(c(t)+v))`, for each parameter `t`
+  have hgcont : ∀ t : ℝ, Continuous fun v : ℝ =>
+      (deBruijnNewmanH t (c t + (v : ℂ))).re :=
+    fun t => Complex.continuous_re.comp (contDiff_one_deBruijnNewmanH_prod.continuous.comp
+      (continuous_const.prodMk (continuous_const.add Complex.continuous_ofReal)))
+  -- IVT root catcher with strict inequalities
+  have hroot : ∀ g : ℝ → ℝ, Continuous g → ∀ a b : ℝ, a ≤ b → g a * g b < 0 →
+      ∃ y : ℝ, a < y ∧ y < b ∧ g y = 0 := by
+    intro g hg a b hab hsign
+    have key : ∀ h : ℝ → ℝ, Continuous h → h a < 0 → 0 < h b →
+        ∃ y : ℝ, a < y ∧ y < b ∧ h y = 0 := by
+      intro h hh ha hb
+      have h0 : (0 : ℝ) ∈ Set.Icc (h a) (h b) := ⟨le_of_lt ha, le_of_lt hb⟩
+      obtain ⟨y, hyI, hy0⟩ := intermediate_value_Icc hab hh.continuousOn h0
+      refine ⟨y, lt_of_le_of_ne hyI.1 ?_, lt_of_le_of_ne' hyI.2 ?_, hy0⟩
+      · intro e
+        subst e
+        rw [hy0] at ha
+        exact lt_irrefl _ ha
+      · intro e
+        subst e
+        rw [hy0] at hb
+        exact lt_irrefl _ hb
+    rcases mul_neg_iff.mp hsign with ⟨hga, hgb⟩ | ⟨hga, hgb⟩
+    · obtain ⟨y, h1, h2, h3⟩ := key (fun v => -g v) hg.neg
+        (show -g a < 0 from by linarith) (show 0 < -g b from by linarith)
+      exact ⟨y, h1, h2, neg_eq_zero.mp h3⟩
+    · exact key g hg hga hgb
+  filter_upwards [hsigns, hcreal.filter_mono nhdsWithin_le_nhds] with t hsign hct_im
+  have hYnn : 0 ≤ 2 * Real.sqrt (t - τ) :=
+    mul_nonneg (by norm_num) (Real.sqrt_nonneg _)
+  set Y : ℝ := 2 * Real.sqrt (t - τ) with hYdef
+  set g : ℝ → ℝ := fun v => (deBruijnNewmanH t (c t + (v : ℂ))).re with hgdef
+  have hg0 : g 0 = (deBruijnNewmanH t (c t)).re := by
+    simp only [hgdef, Complex.ofReal_zero, add_zero]
+  have hgYv : g Y = (deBruijnNewmanH t (c t + ((2 * Real.sqrt (t - τ) : ℝ) : ℂ))).re := by
+    simp only [hgdef, hYdef]
+  have hgNv : g (-Y)
+      = (deBruijnNewmanH t (c t + ((-(2 * Real.sqrt (t - τ)) : ℝ) : ℂ))).re := by
+    simp only [hgdef, hYdef]
+  have hgY : g 0 * g Y < 0 := by rw [hg0, hgYv]; exact hsign.1
+  have hgN : g (-Y) * g 0 < 0 := by
+    rw [hgNv, hg0, mul_comm]
+    exact hsign.2
+  obtain ⟨y₁, hy₁lo, hy₁hi, hgy₁⟩ := hroot g (hgcont t) (-Y) 0 (neg_nonpos.mpr hYnn) hgN
+  obtain ⟨y₂, hy₂lo, hy₂hi, hgy₂⟩ := hroot g (hgcont t) 0 Y hYnn hgY
+  -- package each real root as a complex zero of `H_t`
+  have hz₁im : (c t + (y₁ : ℂ)).im = 0 := by
+    rw [Complex.add_im, Complex.ofReal_im, hct_im, add_zero]
+  have hz₂im : (c t + (y₂ : ℂ)).im = 0 := by
+    rw [Complex.add_im, Complex.ofReal_im, hct_im, add_zero]
+  have hre₁ : (deBruijnNewmanH t (c t + (y₁ : ℂ))).re = 0 := by
+    have e : g y₁ = (deBruijnNewmanH t (c t + (y₁ : ℂ))).re := by simp only [hgdef]
+    rw [← e, hgy₁]
+  have hre₂ : (deBruijnNewmanH t (c t + (y₂ : ℂ))).re = 0 := by
+    have e : g y₂ = (deBruijnNewmanH t (c t + (y₂ : ℂ))).re := by simp only [hgdef]
+    rw [← e, hgy₂]
+  have hHz₁ : deBruijnNewmanH t (c t + (y₁ : ℂ)) = 0 := by
+    rw [Complex.ext_iff]
+    exact ⟨hre₁, deBruijnNewmanH_im_eq_zero_of_im_eq_zero t hz₁im⟩
+  have hHz₂ : deBruijnNewmanH t (c t + (y₂ : ℂ)) = 0 := by
+    rw [Complex.ext_iff]
+    exact ⟨hre₂, deBruijnNewmanH_im_eq_zero_of_im_eq_zero t hz₂im⟩
+  refine ⟨c t + (y₁ : ℂ), c t + (y₂ : ℂ), hHz₁, hHz₂, hz₁im, hz₂im, ?_, ?_, ?_, ?_⟩
+  · rw [Complex.add_re, Complex.ofReal_re]
+    linarith [hy₁hi]
+  · rw [Complex.add_re, Complex.ofReal_re]
+    linarith [hy₂lo]
+  · rw [show c t + (y₁ : ℂ) - c t = (y₁ : ℂ) from by ring,
+      show ‖(y₁ : ℂ)‖ = |y₁| from RCLike.norm_ofReal _, abs_of_neg hy₁hi]
+    linarith [hy₁lo]
+  · rw [show c t + (y₂ : ℂ) - c t = (y₂ : ℂ) from by ring,
+      show ‖(y₂ : ℂ)‖ = |y₂| from RCLike.norm_ofReal _, abs_of_pos hy₂lo]
+    linarith [hy₂hi]
+
 /-- **Diagonal derivative — the zero-transport piece**: if `z(t) → z₀` as
 `t → t₀`, then `t ↦ H_t(z(t)) − H_{t₀}(z(t))` has derivative `∂_t H_{t₀}(z₀)`
 (the `u²`-weighted heat integral) at `t₀`. Proof: the FTC representation
