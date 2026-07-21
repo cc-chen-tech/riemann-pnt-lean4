@@ -167,3 +167,5 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.jointFDerivZderivCLM_comp_inr
 #print axioms RiemannExplorer.DeBruijnNewman.isInvertible_jointFDerivZderivCLM_comp_inr
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewman_critical_curve
+#print axioms RiemannExplorer.DeBruijnNewman.hasDerivAt_deBruijnNewmanH_on_critical_curve
+#print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_critical_height

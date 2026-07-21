@@ -6030,6 +6030,90 @@ theorem deBruijnNewman_critical_curve (τ : ℝ) (x₀ : ℂ)
     rw [eq_comm, div_eq_iff hD2, mul_comm]
     exact h1.symm
 
+/-- **Derivative of `H` along a curve through a critical point**: if `c` is
+differentiable at `τ` and `∂_z H_τ(c(τ)) = 0`, then the derivative of
+`t ↦ H_t(c(t))` at `τ` is just the time derivative `∂_t H_τ(c(τ))` (the
+`u²`-weighted heat integral): the chain-rule term `∂_z H · c'(τ)` drops out.
+This is the mechanism making the height of `H` along the critical curve
+evolve purely by the heat time derivative. -/
+theorem hasDerivAt_deBruijnNewmanH_on_critical_curve (τ : ℝ) (c : ℝ → ℂ)
+    (hcdiff : DifferentiableAt ℝ c τ)
+    (hz : deriv (deBruijnNewmanH τ) (c τ) = 0) :
+    HasDerivAt (fun t : ℝ => deBruijnNewmanH t (c t))
+      (∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand τ (c τ) u) τ := by
+  have hprod : HasFDerivAt (fun t : ℝ => (t, c t))
+      ((ContinuousLinearMap.id ℝ ℝ).prod (fderiv ℝ c τ)) τ :=
+    (hasFDerivAt_id τ).prodMk hcdiff.hasFDerivAt
+  have hcomp := (hasFDerivAt_deBruijnNewmanH_prod (τ, c τ)).comp
+    (f := fun t : ℝ => (t, c t)) (x := τ) hprod
+  have hval : ((jointFDerivCLM (τ, c τ).1 (τ, c τ).2).comp
+      ((ContinuousLinearMap.id ℝ ℝ).prod (fderiv ℝ c τ))) 1
+      = (∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand τ (c τ) u)
+        + deriv (deBruijnNewmanH τ) (c τ) * deriv c τ := by
+    have hf1 : fderiv ℝ c τ 1 = deriv c τ := by
+      have h := hcdiff.hasFDerivAt.unique
+        (hasDerivAt_iff_hasFDerivAt.mp hcdiff.hasDerivAt)
+      rw [h]
+      simp
+    simp [ContinuousLinearMap.comp_apply, ContinuousLinearMap.prod_apply,
+      jointFDerivCLM_apply, hf1]
+  rw [hz, zero_mul, add_zero] at hval
+  have h := hcomp.hasDerivAt
+  rw [hval] at h
+  exact h
+
+/-- **Height of `H` along the critical curve (FTC form)**: near a critical
+time `τ` with `H_τ(x₀) = 0` and `c(τ) = x₀`, if `c` is differentiable and
+critical (`∂_z H_t(c(t)) = 0`) on a neighborhood of `τ`, then
+`H_t(c(t)) = ∫_τ^t ∂_s H_s(c(s)) ds`.
+Since `∂_t H_τ(x₀) = −∂²_z H_τ(x₀)` by the backward heat equation, the height
+along the critical curve starts at `0` with slope `−∂²_z H_τ(x₀) ≠ 0` — the
+first pillar of the quadratic local model at a double zero. -/
+theorem deBruijnNewmanH_critical_height (τ : ℝ) (x₀ : ℂ) (c : ℝ → ℂ)
+    (hcdiff : ∀ᶠ t in nhds τ, DifferentiableAt ℝ c t)
+    (hcrit : ∀ᶠ t in nhds τ, deriv (deBruijnNewmanH t) (c t) = 0)
+    (hc0 : c τ = x₀) (hz0 : deBruijnNewmanH τ x₀ = 0) :
+    ∀ᶠ t in nhds τ, deBruijnNewmanH t (c t)
+      = ∫ s : ℝ in τ..t,
+        ∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand s (c s) u := by
+  rw [Metric.eventually_nhds_iff] at hcdiff hcrit ⊢
+  obtain ⟨δ₁, hδ₁, hD⟩ := hcdiff
+  obtain ⟨δ₂, hδ₂, hC⟩ := hcrit
+  refine ⟨min δ₁ δ₂, lt_min_iff.mpr ⟨hδ₁, hδ₂⟩, fun t ht => ?_⟩
+  have hderivAt : ∀ s : ℝ, dist s τ < min δ₁ δ₂ →
+      HasDerivAt (fun r : ℝ => deBruijnNewmanH r (c r))
+        (∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand s (c s) u) s := by
+    intro s hs
+    exact hasDerivAt_deBruijnNewmanH_on_critical_curve s c
+      (hD (lt_of_lt_of_le hs (min_le_left _ _)))
+      (hC (lt_of_lt_of_le hs (min_le_right _ _)))
+  have hmem : ∀ s ∈ Set.uIcc τ t, dist s τ < min δ₁ δ₂ := by
+    intro s hs
+    have hle : dist s τ ≤ dist t τ := by
+      rw [Real.dist_eq, Real.dist_eq]
+      rcases Set.mem_uIcc.mp hs with h | h
+      · rw [abs_of_nonneg (by linarith : (0:ℝ) ≤ s - τ),
+          abs_of_nonneg (by linarith : (0:ℝ) ≤ t - τ)]
+        linarith [h.2]
+      · rw [abs_of_nonpos (by linarith : s - τ ≤ (0:ℝ)),
+          abs_of_nonpos (by linarith : t - τ ≤ (0:ℝ))]
+        linarith [h.1]
+    exact lt_of_le_of_lt hle ht
+  have hint : IntervalIntegrable (fun s : ℝ =>
+      ∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand s (c s) u)
+      MeasureTheory.volume τ t := by
+    apply ContinuousOn.intervalIntegrable
+    intro s hs
+    have hsd := hmem s hs
+    have hcs : ContinuousAt c s :=
+      (hD (lt_of_lt_of_le hsd (min_le_left _ _))).continuousAt
+    exact (continuous_deBruijnNewmanH_tderiv.continuousAt.comp
+      (continuousAt_id.prodMk hcs)).continuousWithinAt
+  have hftc := intervalIntegral.integral_eq_sub_of_hasDerivAt
+    (fun s hs => hderivAt s (hmem s hs)) hint
+  rw [hc0, hz0, sub_zero] at hftc
+  exact hftc.symm
+
 /-- **Diagonal derivative — the zero-transport piece**: if `z(t) → z₀` as
 `t → t₀`, then `t ↦ H_t(z(t)) − H_{t₀}(z(t))` has derivative `∂_t H_{t₀}(z₀)`
 (the `u²`-weighted heat integral) at `t₀`. Proof: the FTC representation
