@@ -101,3 +101,6 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.statement_iff_allZerosReal_zero
 #print axioms RiemannExplorer.DeBruijnNewman.backward_heat_equation
 #print axioms RiemannExplorer.DeBruijnNewman.backward_heat_equation_target_proved
+#print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_conj
+#print axioms RiemannExplorer.DeBruijnNewman.allZerosReal_zero_lambda_le
+#print axioms RiemannExplorer.DeBruijnNewman.lambda_le_zero_of_rh

@@ -4090,5 +4090,42 @@ theorem statement_iff_allZerosReal_zero :
     rw [him2] at him
     linarith
 
+/-- `H_t` has real coefficients: conjugation symmetry
+`H_t (star z) = star (H_t z)`. Together with `deBruijnNewmanH_even`, the
+zeros of `H_t` come in orbits of `{z, -z, star z, -star z}`. -/
+theorem deBruijnNewmanH_conj (t : ℝ) (z : ℂ) :
+    deBruijnNewmanH t (star z) = star (deBruijnNewmanH t z) := by
+  unfold deBruijnNewmanH
+  show (∫ (u : ℝ) in Set.Ioi 0, heatIntegrand t (star z) u)
+      = (starRingEnd ℂ) (∫ (u : ℝ) in Set.Ioi 0, heatIntegrand t z u)
+  have e1 : (starRingEnd ℂ) (∫ (u : ℝ) in Set.Ioi 0, heatIntegrand t z u)
+      = ∫ (u : ℝ) in Set.Ioi 0, (starRingEnd ℂ) (heatIntegrand t z u) :=
+    (integral_conj (f := fun u : ℝ => heatIntegrand t z u)
+      (μ := MeasureTheory.volume.restrict (Set.Ioi (0:ℝ)))).symm
+  refine Eq.trans ?_ e1.symm
+  apply MeasureTheory.setIntegral_congr_fun measurableSet_Ioi
+  intro u _
+  show ((Real.exp (t * u ^ 2) * phi u : ℝ) : ℂ)
+      * Complex.cos ((starRingEnd ℂ) z * (u : ℂ))
+      = (starRingEnd ℂ)
+        (((Real.exp (t * u ^ 2) * phi u : ℝ) : ℂ) * Complex.cos (z * (u : ℂ)))
+  rw [map_mul, Complex.conj_ofReal, ← Complex.cos_conj, map_mul, Complex.conj_ofReal]
+
+/-- `Λ ≤ 0` as soon as `H_0` has only real zeros: `0` belongs to the set
+whose infimum defines `Λ` (if the set is not bounded below, `sInf` takes
+its junk value `sInf ∅ = 0`, which is also `≤ 0`). -/
+theorem allZerosReal_zero_lambda_le (h : AllZerosReal 0) :
+    deBruijnNewmanLambda ≤ 0 := by
+  unfold deBruijnNewmanLambda
+  by_cases hb : BddBelow {s : ℝ | AllZerosReal s}
+  · exact csInf_le hb h
+  · simp [csInf_of_not_bddBelow hb]
+
+/-- **RH ⇒ Λ ≤ 0**（Phase 2 的「容易方向」）：RH 给出 `H_0` 只有实零点，
+故 `0 ∈ {t | AllZerosReal t}`，从而 `Λ = sInf {t | AllZerosReal t} ≤ 0`。 -/
+theorem lambda_le_zero_of_rh (hRH : RiemannHypothesis.Statement) :
+    deBruijnNewmanLambda ≤ 0 :=
+  allZerosReal_zero_lambda_le (statement_iff_allZerosReal_zero.mp hRH)
+
 end DeBruijnNewman
 end RiemannExplorer
