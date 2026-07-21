@@ -5647,5 +5647,68 @@ theorem rh_iff_lambda_le_zero_of_monotone (hmono : de_bruijn_monotone_target)
     apply allZerosReal_zero_of_forall_pos
     exact forall_pos_allZerosReal_of_lambda_le_zero_of_monotone hmono hne hΛ
 
+/-! ## Phase 2(ix)：de Bruijn 单调性的条件化骨架（连续归纳） -/
+
+/-- **Continuous-induction skeleton of de Bruijn monotonicity**: if the
+real-zero property is "right-open" at every time where it holds — i.e. it
+persists on some right interval `[t₀, t₀ + δ)` — then it is monotone in time.
+The zero-reality set is closed (`isClosed_allZerosReal`), so the continuous
+induction principle `IsClosed.Icc_subset_of_forall_exists_gt` propagates the
+property across any closed interval. The remaining analytic content of de
+Bruijn's monotonicity theorem is exactly this right-openness: persistence
+through double-zero collisions and exclusion of zeros escaping to infinity. -/
+theorem de_bruijn_monotone_of_right_open
+    (hopen : ∀ t₀ : ℝ, AllZerosReal t₀ → ∃ δ > 0,
+      ∀ t ∈ Set.Ico t₀ (t₀ + δ), AllZerosReal t) :
+    de_bruijn_monotone_target := by
+  intro t₀ t' ht₀ htt'
+  have hsub : Set.Icc t₀ t' ⊆ {t : ℝ | AllZerosReal t} := by
+    refine IsClosed.Icc_subset_of_forall_exists_gt
+      (isClosed_allZerosReal.inter isClosed_Icc) ht₀ fun x hx y hy => ?_
+    obtain ⟨δ, hδ, hδt⟩ := hopen x hx.1
+    have hxy : x < y := hy
+    exact ⟨min (x + δ / 2) ((x + y) / 2),
+      hδt _ ⟨le_of_lt (lt_min_iff.mpr ⟨by linarith, by linarith⟩),
+        lt_of_le_of_lt (min_le_left _ _) (by linarith)⟩,
+      lt_min_iff.mpr ⟨by linarith, by linarith⟩,
+      le_trans (min_le_right _ _) (by linarith)⟩
+  exact hsub ⟨htt', le_refl t'⟩
+
+/-- **Reduction of de Bruijn monotonicity to simplicity and non-escape**: if at
+every time `t₀` with only real zeros (i) every zero of `H_{t₀}` is simple, and
+(ii) no zeros enter from infinity on a right interval — some compact set `K`
+contains every zero of `H_t` for `t ∈ [t₀, t₀ + δ)` — then de Bruijn
+monotonicity holds. Zeros of `H_t` inside `K` stay real by
+`deBruijnNewman_zeros_stay_real_on_compact` (the IFT trajectory theorem, which
+needs no zero-counting), and outside `K` there are none, so the property is
+right-open and `de_bruijn_monotone_of_right_open` closes the induction. The
+two hypotheses are exactly the two remaining analytic gaps: persistence of
+simplicity through collisions, and confinement of zeros. -/
+theorem de_bruijn_monotone_of_simple_and_no_escape
+    (hsimple : ∀ t₀ : ℝ, AllZerosReal t₀ → ∀ z : ℂ, deBruijnNewmanH t₀ z = 0 →
+      deriv (deBruijnNewmanH t₀) z ≠ 0)
+    (hnoesc : ∀ t₀ : ℝ, AllZerosReal t₀ → ∃ δ > 0, ∃ K : Set ℂ, IsCompact K ∧
+      ∀ t ∈ Set.Ico t₀ (t₀ + δ), ∀ z ∉ K, deBruijnNewmanH t z ≠ 0) :
+    de_bruijn_monotone_target := by
+  apply de_bruijn_monotone_of_right_open
+  intro t₀ ht₀
+  obtain ⟨δ, hδ, K, hK, hout⟩ := hnoesc t₀ ht₀
+  have hreal : ∀ z ∈ K, deBruijnNewmanH t₀ z = 0 → z.im = 0 :=
+    fun z _ hz => ht₀ z hz
+  have hstay := deBruijnNewman_zeros_stay_real_on_compact t₀ K hK hreal
+    (fun z _ hz => hsimple t₀ ht₀ z hz)
+  rw [Metric.eventually_nhds_iff] at hstay
+  obtain ⟨ε, hε, hεP⟩ := hstay
+  refine ⟨min δ (ε / 2), lt_min_iff.mpr ⟨hδ, by linarith⟩, fun t ht z hz => ?_⟩
+  have htδ : t < t₀ + δ := lt_of_lt_of_le ht.2 (add_le_add (le_refl t₀) (min_le_left _ _))
+  have hdist : dist t t₀ < ε := by
+    have ht2 : t < t₀ + min δ (ε / 2) := ht.2
+    rw [Real.dist_eq, abs_of_nonneg (sub_nonneg.mpr ht.1)]
+    have hmin : min δ (ε / 2) ≤ ε / 2 := min_le_right _ _
+    linarith
+  by_cases hzK : z ∈ K
+  · exact hεP hdist z hzK hz
+  · exact absurd hz (hout t ⟨ht.1, htδ⟩ z hzK)
+
 end DeBruijnNewman
 end RiemannExplorer

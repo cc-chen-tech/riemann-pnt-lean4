@@ -145,3 +145,5 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_heat_equation
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_heat_pde
 #print axioms RiemannExplorer.DeBruijnNewman.continuous_deBruijnNewmanH_zderiv_two
+#print axioms RiemannExplorer.DeBruijnNewman.de_bruijn_monotone_of_right_open
+#print axioms RiemannExplorer.DeBruijnNewman.de_bruijn_monotone_of_simple_and_no_escape
