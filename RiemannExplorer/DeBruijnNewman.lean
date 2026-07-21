@@ -4361,5 +4361,24 @@ theorem tendstoLocallyUniformly_deBruijnNewmanH (t₀ : ℝ) :
       _ = ε := mul_one ε
   exact lt_of_le_of_lt hdest hεC
 
+/-- `H_0` is not identically zero: at `z = -i` it equals
+`(1/8)·ξ(1) = 1/16`. This is the non-degeneracy hypothesis needed for any
+Hurwitz-type zero-persistence argument at `t = 0`. -/
+theorem deBruijnNewmanH_zero_exists_ne_zero :
+    ∃ z : ℂ, deBruijnNewmanH 0 z ≠ 0 := by
+  have hξ : RiemannHypothesis.completedZeta 1 = 1 / 2 := by
+    unfold RiemannHypothesis.completedZeta
+    norm_num
+  have hz : (1 : ℂ) / 2 + Complex.I * (-Complex.I / 2) = 1 := by
+    have h1 : Complex.I * (-Complex.I / 2) = 1 / 2 := by
+      rw [show Complex.I * (-Complex.I / 2) = -(Complex.I * Complex.I) / 2 from by ring,
+        Complex.I_mul_I]
+      ring
+    rw [h1]
+    ring
+  use -Complex.I
+  rw [deBruijnNewmanH_zero_eq_completedZeta, hz, hξ]
+  norm_num
+
 end DeBruijnNewman
 end RiemannExplorer
