@@ -5092,7 +5092,8 @@ theorem deBruijnNewman_simple_zero_trajectory (t₀ : ℝ) (x₀ : ℂ)
     (hx : x₀.im = 0) :
     ∃ ψ : ℝ → ℂ, DifferentiableAt ℝ ψ t₀ ∧ ψ t₀ = x₀
       ∧ (∀ᶠ t in nhds t₀, deBruijnNewmanH t (ψ t) = 0)
-      ∧ (∀ᶠ t in nhds t₀, (ψ t).im = 0) := by
+      ∧ (∀ᶠ t in nhds t₀, (ψ t).im = 0)
+      ∧ (∀ᶠ v in nhds (t₀, x₀), deBruijnNewmanH v.1 v.2 = 0 → v.2 = ψ v.1) := by
   have hCD : ContDiffAt ℝ 1 (fun q : ℝ × ℂ => deBruijnNewmanH q.1 q.2) (t₀, x₀) :=
     contDiff_one_deBruijnNewmanH_prod.contDiffAt
   have hInv := isInvertible_jointFDerivCLM_comp_inr t₀ x₀ hD
@@ -5106,26 +5107,99 @@ theorem deBruijnNewman_simple_zero_trajectory (t₀ : ℝ) (x₀ : ℂ)
     refine hev.mono fun t ht => ?_
     simp only [] at ht
     rwa [hz] at ht
-  refine ⟨ψ, hψCD.differentiableAt one_ne_zero, hψ0, hzero, ?_⟩
-  -- reality via the conjugate curve and local uniqueness
-  have htend : Filter.Tendsto (fun t : ℝ => (t, star (ψ t)))
-      (nhds t₀) (nhds (t₀, x₀)) := by
-    have h1 : ContinuousAt (fun t : ℝ => (t, star (ψ t))) t₀ :=
-      continuousAt_id.prodMk
-        (continuous_star.continuousAt.comp
-          (hψCD.differentiableAt one_ne_zero).continuousAt)
-    have h2 : (t₀, star (ψ t₀)) = (t₀, x₀) := by rw [hψ0, hstar]
-    exact h2 ▸ h1.tendsto
-  have huniq := htend.eventually
-    (hCD.eventually_apply_eq_iff_implicitFunction one_ne_zero hInv)
-  filter_upwards [huniq, hzero] with t ht hzt
-  have hL : (fun q : ℝ × ℂ => deBruijnNewmanH q.1 q.2) (t, star (ψ t))
-      = (fun q : ℝ × ℂ => deBruijnNewmanH q.1 q.2) (t₀, x₀) := by
-    change deBruijnNewmanH t (star (ψ t)) = deBruijnNewmanH t₀ x₀
-    rw [deBruijnNewmanH_conj, hzt, star_zero, hz]
-  have him : ψ t = star (ψ t) := ht.mp hL
-  rw [Complex.star_def] at him
-  exact Complex.conj_eq_iff_im.mp him.symm
+  refine ⟨ψ, hψCD.differentiableAt one_ne_zero, hψ0, hzero, ?_, ?_⟩
+  · -- reality via the conjugate curve and local uniqueness
+    have htend : Filter.Tendsto (fun t : ℝ => (t, star (ψ t)))
+        (nhds t₀) (nhds (t₀, x₀)) := by
+      have h1 : ContinuousAt (fun t : ℝ => (t, star (ψ t))) t₀ :=
+        continuousAt_id.prodMk
+          (continuous_star.continuousAt.comp
+            (hψCD.differentiableAt one_ne_zero).continuousAt)
+      have h2 : (t₀, star (ψ t₀)) = (t₀, x₀) := by rw [hψ0, hstar]
+      exact h2 ▸ h1.tendsto
+    have huniq := htend.eventually
+      (hCD.eventually_apply_eq_iff_implicitFunction one_ne_zero hInv)
+    filter_upwards [huniq, hzero] with t ht hzt
+    have hL : (fun q : ℝ × ℂ => deBruijnNewmanH q.1 q.2) (t, star (ψ t))
+        = (fun q : ℝ × ℂ => deBruijnNewmanH q.1 q.2) (t₀, x₀) := by
+      change deBruijnNewmanH t (star (ψ t)) = deBruijnNewmanH t₀ x₀
+      rw [deBruijnNewmanH_conj, hzt, star_zero, hz]
+    have him : ψ t = star (ψ t) := ht.mp hL
+    rw [Complex.star_def] at him
+    exact Complex.conj_eq_iff_im.mp him.symm
+  · -- local uniqueness: any nearby zero lies on ψ
+    refine (hCD.eventually_apply_eq_iff_implicitFunction one_ne_zero hInv).mono
+      fun v hv hv0 => (hv.mp ?_).symm
+    exact hv0.trans hz.symm
+
+set_option maxHeartbeats 800000 in
+/-- **Local propagation of zero reality (simple zeros, counting-free)**: if
+every zero of `H_{t₀}` in a compact set `K` is real and simple, then all zeros
+of `H_t` in `K` stay real for `t` near `t₀`. Proof by contradiction: a
+sequence of non-real zeros in `K` subconverges to a zero of `H_{t₀}` in `K`
+(joint continuity), which is real and simple, so the IFT trajectory is the
+unique local zero curve — forcing the subsequence onto a real curve. No
+zero-counting (argument principle) is needed: local uniqueness comes from the
+implicit function theorem. -/
+theorem deBruijnNewman_zeros_stay_real_on_compact (t₀ : ℝ) (K : Set ℂ)
+    (hK : IsCompact K)
+    (hreal : ∀ z ∈ K, deBruijnNewmanH t₀ z = 0 → z.im = 0)
+    (hsimple : ∀ z ∈ K, deBruijnNewmanH t₀ z = 0 → deriv (deBruijnNewmanH t₀) z ≠ 0) :
+    ∀ᶠ t in nhds t₀, ∀ z ∈ K, deBruijnNewmanH t z = 0 → z.im = 0 := by
+  by_contra h
+  rw [Filter.not_eventually] at h
+  -- bad times `tₙ → t₀` carrying non-real zeros in `K`
+  have hseq : ∀ n : ℕ, ∃ t : ℝ, dist t t₀ < 1 / (n + 1 : ℝ)
+      ∧ ¬ (∀ z ∈ K, deBruijnNewmanH t z = 0 → z.im = 0) := by
+    intro n
+    have h1 : ∃ᶠ t in nhds t₀,
+        ¬ (∀ z ∈ K, deBruijnNewmanH t z = 0 → z.im = 0)
+        ∧ t ∈ Metric.ball t₀ (1 / (n + 1 : ℝ)) :=
+      h.and_eventually (Metric.ball_mem_nhds t₀ (by positivity))
+    rcases h1.exists with ⟨t, htP, htd⟩
+    exact ⟨t, htd, htP⟩
+  choose t htd htP using hseq
+  have htT : Filter.Tendsto t Filter.atTop (nhds t₀) := by
+    rw [Metric.tendsto_atTop]
+    intro ε hε
+    obtain ⟨N, hN⟩ := exists_nat_one_div_lt hε
+    refine ⟨N, fun n hn => ?_⟩
+    calc dist (t n) t₀ < 1 / (n + 1 : ℝ) := htd n
+      _ ≤ 1 / (N + 1 : ℝ) := by
+          apply one_div_le_one_div_of_le (by positivity)
+          exact_mod_cast Nat.add_le_add_right hn 1
+      _ < ε := hN
+  have hzex : ∀ n : ℕ, ∃ z : ℂ, z ∈ K ∧ deBruijnNewmanH (t n) z = 0 ∧ z.im ≠ 0 := by
+    intro n
+    have h2 := htP n
+    push Not at h2
+    exact h2
+  choose z hzK hz0 hzim using hzex
+  obtain ⟨zstar, hzstarK, φ, hφ, hzT⟩ := hK.tendsto_subseq hzK
+  -- the limit point is a zero of `H_{t₀}` in `K`
+  have hcontF : Continuous fun q : ℝ × ℂ => deBruijnNewmanH q.1 q.2 :=
+    contDiff_one_deBruijnNewmanH_prod.continuous
+  have hpair : Filter.Tendsto (fun n => (t (φ n), z (φ n))) Filter.atTop (nhds (t₀, zstar)) :=
+    (htT.comp (StrictMono.tendsto_atTop hφ)).prodMk_nhds hzT
+  have hlim : Filter.Tendsto (fun n => deBruijnNewmanH (t (φ n)) (z (φ n))) Filter.atTop
+      (nhds (deBruijnNewmanH t₀ zstar)) := (hcontF.tendsto (t₀, zstar)).comp hpair
+  have h0 : Filter.Tendsto (fun n => deBruijnNewmanH (t (φ n)) (z (φ n))) Filter.atTop
+      (nhds 0) :=
+    Filter.Tendsto.congr (fun n => (hz0 (φ n)).symm) tendsto_const_nhds
+  have hzstar0 : deBruijnNewmanH t₀ zstar = 0 := tendsto_nhds_unique hlim h0
+  -- the IFT trajectory through the simple real zero `(t₀, zstar)`
+  obtain ⟨ψ, _, _, _, hψreal, hψuniq⟩ :=
+    deBruijnNewman_simple_zero_trajectory t₀ zstar hzstar0 (hsimple zstar hzstarK hzstar0)
+      (hreal zstar hzstarK hzstar0)
+  -- the subsequence lies on the real curve eventually: contradiction
+  have hvin : ∀ᶠ n in Filter.atTop, (z (φ n)).im = 0 := by
+    filter_upwards [hpair.eventually hψuniq,
+      (htT.comp (StrictMono.tendsto_atTop hφ)).eventually hψreal] with n hn1 hn2
+    have hn1' : z (φ n) = ψ (t (φ n)) := hn1 (hz0 (φ n))
+    rw [hn1']
+    exact hn2
+  obtain ⟨n, hn⟩ := hvin.exists
+  exact hzim (φ n) hn
 
 /-- **Diagonal derivative — the zero-transport piece**: if `z(t) → z₀` as
 `t → t₀`, then `t ↦ H_t(z(t)) − H_{t₀}(z(t))` has derivative `∂_t H_{t₀}(z₀)`
