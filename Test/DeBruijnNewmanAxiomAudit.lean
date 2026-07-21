@@ -123,3 +123,4 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.norm_sq_mul_heatIntegrand_le
 #print axioms RiemannExplorer.DeBruijnNewman.continuous_deBruijnNewmanH_tderiv
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_sub_eq_intervalIntegral
+#print axioms RiemannExplorer.DeBruijnNewman.hasDerivAt_deBruijnNewmanH_diag_sub

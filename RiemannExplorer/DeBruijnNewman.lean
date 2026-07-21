@@ -4677,6 +4677,99 @@ theorem deBruijnNewmanH_sub_eq_intervalIntegral (t₀ t : ℝ) (w : ℂ) :
       (fun x _ => (hasDerivAt_deBruijnNewmanH_t w x).differentiableAt) hint
   exact h2.symm
 
+/-- **Diagonal derivative — the zero-transport piece**: if `z(t) → z₀` as
+`t → t₀`, then `t ↦ H_t(z(t)) − H_{t₀}(z(t))` has derivative `∂_t H_{t₀}(z₀)`
+(the `u²`-weighted heat integral) at `t₀`. Proof: the FTC representation
+`deBruijnNewmanH_sub_eq_intervalIntegral` writes the increment as an interval
+integral of `s ↦ ∂_s H_s(z(t))`; joint continuity of the time derivative
+(`continuous_deBruijnNewmanH_tderiv`) keeps the integrand within `ε/2` of its
+value at `(t₀, z₀)` along the whole interval, so the slope is within `ε` of
+`∂_t H_{t₀}(z₀)`. This is the transport half of the chain rule for
+`t ↦ H_t(z(t))` along a zero trajectory. -/
+theorem hasDerivAt_deBruijnNewmanH_diag_sub (z : ℝ → ℂ) (z₀ : ℂ) (t₀ : ℝ)
+    (hz : Filter.Tendsto z (nhds t₀) (nhds z₀)) :
+    HasDerivAt (fun t : ℝ => deBruijnNewmanH t (z t) - deBruijnNewmanH t₀ (z t))
+      (∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand t₀ z₀ u) t₀ := by
+  rw [hasDerivAt_iff_tendsto_slope, Metric.tendsto_nhdsWithin_nhds]
+  intro ε hε
+  have hDcont : ContinuousAt (fun p : ℝ × ℂ =>
+      ∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand p.1 p.2 u) (t₀, z₀) :=
+    continuous_deBruijnNewmanH_tderiv.continuousAt
+  rw [Metric.continuousAt_iff] at hDcont
+  obtain ⟨δ, hδ0, hδ⟩ := hDcont (ε / 2) (half_pos hε)
+  rw [Metric.tendsto_nhds_nhds] at hz
+  obtain ⟨δ₁, hδ₁0, hδ₁⟩ := hz (δ / 2) (half_pos hδ0)
+  refine ⟨min (δ / 2) δ₁, lt_min (half_pos hδ0) hδ₁0, ?_⟩
+  intro t htne htd
+  have ht1 : dist t t₀ < δ / 2 := lt_of_lt_of_le htd (min_le_left _ _)
+  have ht2 : dist (z t) z₀ < δ / 2 := hδ₁ (lt_of_lt_of_le htd (min_le_right _ _))
+  have htne' : t ≠ t₀ := by simpa using htne
+  have htn0 : t - t₀ ≠ 0 := sub_ne_zero.mpr htne'
+  have hDs : ∀ s : ℝ, s ∈ Set.uIoc t₀ t →
+      ‖(∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand s (z t) u)
+        - ∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand t₀ z₀ u‖ ≤ ε / 2 := by
+    intro s hsm
+    have hst : dist s t₀ ≤ dist t t₀ := by
+      rw [Real.dist_eq, Real.dist_eq]
+      rcases Set.mem_uIcc.mp (Set.uIoc_subset_uIcc hsm) with h | h
+      · rw [abs_of_nonneg (by linarith : (0:ℝ) ≤ s - t₀),
+            abs_of_nonneg (by linarith : (0:ℝ) ≤ t - t₀)]
+        linarith [h.2]
+      · rw [abs_of_nonpos (by linarith : s - t₀ ≤ (0:ℝ)),
+            abs_of_nonpos (by linarith : t - t₀ ≤ (0:ℝ))]
+        linarith [h.1]
+    have hpair : dist (s, z t) (t₀, z₀) < δ := by
+      rw [Prod.dist_eq, max_lt_iff]
+      show dist s t₀ < δ ∧ dist (z t) z₀ < δ
+      exact ⟨lt_of_le_of_lt hst (by linarith [ht1]),
+        (by linarith [ht2] : dist (z t) z₀ < δ)⟩
+    have hthis := hδ hpair
+    rw [dist_eq_norm] at hthis
+    exact hthis.le
+  have hR : ‖∫ s : ℝ in t₀..t,
+        ((∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand s (z t) u)
+          - ∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand t₀ z₀ u)‖
+      ≤ (ε / 2) * |t - t₀| :=
+    intervalIntegral.norm_integral_le_of_norm_le_const fun s hsm => hDs s hsm
+  have hF : slope (fun t : ℝ => deBruijnNewmanH t (z t) - deBruijnNewmanH t₀ (z t)) t₀ t
+      = (t - t₀)⁻¹ • (deBruijnNewmanH t (z t) - deBruijnNewmanH t₀ (z t)) := by
+    show (t - t₀)⁻¹ • ((deBruijnNewmanH t (z t) - deBruijnNewmanH t₀ (z t))
+        - (deBruijnNewmanH t₀ (z t₀) - deBruijnNewmanH t₀ (z t₀))) = _
+    rw [sub_self, sub_zero]
+  have hdec : (t - t₀)⁻¹ • (∫ s : ℝ in t₀..t,
+        ∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand s (z t) u)
+      - ∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand t₀ z₀ u
+      = (t - t₀)⁻¹ • (∫ s : ℝ in t₀..t,
+          ((∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand s (z t) u)
+            - ∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand t₀ z₀ u)) := by
+    have hI1 : IntervalIntegrable (fun s : ℝ =>
+          ∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand s (z t) u)
+        MeasureTheory.volume t₀ t :=
+      (continuous_deBruijnNewmanH_tderiv.comp
+        (continuous_id.prodMk continuous_const)).continuousOn.intervalIntegrable
+    rw [intervalIntegral.integral_sub hI1 intervalIntegrable_const,
+      intervalIntegral.integral_const]
+    show (t - t₀)⁻¹ • (∫ s : ℝ in t₀..t, ∫ u : ℝ in Set.Ioi 0,
+            ((u : ℂ) ^ 2) * heatIntegrand s (z t) u)
+          - ∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand t₀ z₀ u
+        = (t - t₀)⁻¹ • ((∫ s : ℝ in t₀..t, ∫ u : ℝ in Set.Ioi 0,
+            ((u : ℂ) ^ 2) * heatIntegrand s (z t) u)
+          - (t - t₀) • ∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand t₀ z₀ u)
+    rw [Algebra.smul_def, Algebra.smul_def, Algebra.smul_def, RCLike.algebraMap_eq_ofReal,
+      RCLike.ofReal_inv, mul_sub, ← mul_assoc,
+      inv_mul_cancel₀ (RCLike.ofReal_ne_zero (K := ℂ).mpr htn0), one_mul]
+  rw [dist_eq_norm, hF, deBruijnNewmanH_sub_eq_intervalIntegral t₀ t (z t), hdec,
+    Algebra.smul_def, RCLike.algebraMap_eq_ofReal, norm_mul, RCLike.norm_ofReal, abs_inv]
+  calc |t - t₀|⁻¹ * ‖∫ s : ℝ in t₀..t,
+          ((∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand s (z t) u)
+            - ∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand t₀ z₀ u)‖
+      ≤ |t - t₀|⁻¹ * ((ε / 2) * |t - t₀|) :=
+        mul_le_mul_of_nonneg_left hR (by positivity)
+    _ = ε / 2 := by
+        have h0 : |t - t₀| ≠ 0 := abs_ne_zero.mpr htn0
+        rw [mul_comm |t - t₀|⁻¹ _, mul_assoc, mul_inv_cancel₀ h0, mul_one]
+    _ < ε := half_lt_self hε
+
 /-- **Zero persistence (Rouché core) via the maximum modulus principle**:
 if `f` vanishes at `w` with `‖f‖ ≥ m > 0` on the sphere of radius `ρ`
 around `w`, and `g` is uniformly within `m / 2` of `f` on that sphere, then
