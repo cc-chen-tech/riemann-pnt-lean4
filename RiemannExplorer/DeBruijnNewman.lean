@@ -6926,6 +6926,445 @@ theorem deBruijnNewmanH_height_tendsto_zero (τ : ℝ) (x₀ : ℂ) (c : ℝ →
       (nhds (deBruijnNewmanH τ (c τ))) := h3
   rwa [hv] at h4
 
+/-- The local quadratic modulus along the critical curve at a double zero:
+`q(t) = −2·Re H_t(c(t)) / Re ∂²_z H_t(c(t))`. For `t > τ` close to the
+collision time it is positive (the height–curvature sign opposition
+`deBruijnNewman_double_zero_height_mul_curvature`), and the quadratic model of
+`H_t` near `c(t)` reads `H_t(c(t) + w) ≈ ∂²_z H_t(c(t))·(w² − q)/2`, whose
+roots are `w = ±√q`. -/
+noncomputable def deBruijnNewmanLocalQ (c : ℝ → ℂ) (t : ℝ) : ℝ :=
+  -2 * (deBruijnNewmanH t (c t)).re / (deriv (deriv (deBruijnNewmanH t)) (c t)).re
+
+/-- **Double-zero exclusion, localization**: for `t > τ` close to an exactly
+double real zero, every zero of `H_t` in a small ball around `x₀` lies within
+`√(q(t))/4` of one of the two model roots `c(t) ± √(q(t))`. Proof: the
+order-2 Taylor model `H_t(c(t) + w) = ∂²_z H_t(c(t))·(w² − q)/2 + R₃` with
+`‖R₃‖ ≤ M‖w‖³` (Phases 2(39)–2(40)) excludes the outer annulus
+`‖w‖ ≥ 2√q` (quadratic dominates the cubic remainder on a fixed scale), the
+inner disk `‖w‖ ≤ √q/2` (the constant term dominates), and the middle
+annulus away from the two model roots (the factorization
+`w² − q = (w − √q)(w + √q)` dominates). -/
+theorem deBruijnNewman_double_zero_localization (τ : ℝ) (x₀ : ℂ) (c : ℝ → ℂ)
+    (hcont : ContinuousAt c τ)
+    (hcdiff : ∀ᶠ t in nhds τ, DifferentiableAt ℝ c t)
+    (hcrit : ∀ᶠ t in nhds τ, deriv (deBruijnNewmanH t) (c t) = 0)
+    (hcreal : ∀ᶠ t in nhds τ, (c t).im = 0)
+    (hc0 : c τ = x₀) (hz0 : deBruijnNewmanH τ x₀ = 0)
+    (hB : deriv (deriv (deBruijnNewmanH τ)) x₀ ≠ 0)
+    (hx : x₀.im = 0) :
+    ∃ r : ℝ, 0 < r ∧ ∀ᶠ t in nhdsWithin τ (Set.Ioi τ),
+      ∀ z : ℂ, z ∈ Metric.ball x₀ r → deBruijnNewmanH t z = 0 →
+        ‖z - (c t + ((Real.sqrt (deBruijnNewmanLocalQ c t) : ℝ) : ℂ))‖
+          < Real.sqrt (deBruijnNewmanLocalQ c t) / 4
+        ∨ ‖z - (c t - ((Real.sqrt (deBruijnNewmanLocalQ c t) : ℝ) : ℂ))‖
+          < Real.sqrt (deBruijnNewmanLocalQ c t) / 4 := by
+  -- curvature at the collision, as a real number
+  have hBim : (deriv (deriv (deBruijnNewmanH τ)) x₀).im = 0 :=
+    deBruijnNewmanHzderiv_two_im_eq_zero_of_im_eq_zero τ hx
+  set B : ℝ := (deriv (deriv (deBruijnNewmanH τ)) x₀).re with hBdef
+  have hBne : B ≠ 0 := by
+    intro e
+    apply hB
+    have h := (Complex.re_add_im (deriv (deriv (deBruijnNewmanH τ)) x₀)).symm
+    rw [hBim, Complex.ofReal_zero, zero_mul, add_zero, ← hBdef, e,
+      Complex.ofReal_zero] at h
+    exact h
+  have hBpos : 0 < |B| := abs_pos.mpr hBne
+  -- uniform `∂³_z` bound on a compact box
+  obtain ⟨M₃, hM₃⟩ := (isCompact_Icc.prod
+    (isCompact_closedBall x₀ 1)).exists_bound_of_continuousOn
+    continuous_deBruijnNewmanH_zderiv_three.continuousOn
+  set M : ℝ := max M₃ 1 with hMdef
+  have hMpos : (0:ℝ) < M := lt_max_iff.mpr (Or.inr zero_lt_one)
+  have hMne : M ≠ 0 := ne_of_gt hMpos
+  have hMge : ∀ (s : ℝ) (ζ : ℂ), s ∈ Set.Icc (τ - 1) (τ + 1) →
+      ζ ∈ Metric.closedBall x₀ 1 →
+      ‖iteratedDeriv 3 (deBruijnNewmanH s) ζ‖ ≤ M := by
+    intro s ζ hs hζ
+    exact le_trans (hM₃ (s, ζ) ⟨hs, hζ⟩) (le_max_left _ _)
+  -- radius and smallness bounds
+  set r : ℝ := min (1/3) (3 * |B| / (64 * M)) with hrdef
+  have hrpos : 0 < r :=
+    lt_min_iff.mpr ⟨by norm_num, div_pos (by positivity : (0:ℝ) < 3 * |B|)
+      (by positivity : (0:ℝ) < 64 * M)⟩
+  set Qbound : ℝ := min (3 * |B| / (2 * M)) (|B| / (512 * M)) with hQdef
+  have hQpos : 0 < Qbound :=
+    lt_min_iff.mpr ⟨div_pos (by positivity) (by positivity),
+      div_pos hBpos (by positivity)⟩
+  set η : ℝ := |B| * Qbound ^ 2 / 4 with hηdef
+  have hηpos : 0 < η := by positivity
+  -- eventually windows
+  have hsigns := deBruijnNewman_double_zero_height_mul_curvature τ x₀ c hcont
+    hcdiff hcrit hcreal hc0 hz0 hB hx
+  have hwin := (deBruijnNewman_zderiv_two_re_nhds_eventually τ x₀ c hcont hc0 hB
+    hx).filter_mono (nhdsWithin_le_nhds (s := Set.Ioi τ))
+  have hht := (Metric.tendsto_nhds.mp
+    (deBruijnNewmanH_height_tendsto_zero τ x₀ c hcont hc0 hz0) η hηpos).filter_mono
+    (nhdsWithin_le_nhds (s := Set.Ioi τ))
+  obtain ⟨δc, hδc, hcP⟩ := Metric.continuousAt_iff.mp hcont r hrpos
+  have hct : ∀ᶠ t in nhdsWithin τ (Set.Ioi τ), dist t τ < δc := by
+    have hb : ∀ᶠ s in nhds τ, dist s τ < δc := Metric.ball_mem_nhds τ hδc
+    exact hb.filter_mono (nhdsWithin_le_nhds (s := Set.Ioi τ))
+  have ht1 := (eventually_lt_nhds (by linarith : τ < τ + 1)).filter_mono
+    (nhdsWithin_le_nhds (s := Set.Ioi τ))
+  refine ⟨r, hrpos, ?_⟩
+  have hcr0 := hcrit.filter_mono (nhdsWithin_le_nhds (s := Set.Ioi τ))
+  filter_upwards [hsigns, hwin, hht, hct, ht1, hcr0, self_mem_nhdsWithin]
+    with t hsg hwn hhtn hctn ht1n hcrn htI
+  intro z hzB hz
+  obtain ⟨him1, him2, hsign⟩ := hsg
+  have ht : τ < t := htI
+  have htτ : 0 < t - τ := sub_pos.mpr ht
+  -- sign data
+  have hprod : (deBruijnNewmanH t (c t)).re
+      * (deriv (deriv (deBruijnNewmanH t)) (c t)).re < 0 := by
+    refine lt_of_le_of_lt hsign (mul_neg_of_neg_of_pos ?_ htτ)
+    exact neg_lt_zero.mpr (div_pos (sq_pos_of_ne_zero hBne) (by norm_num))
+  have hDr0 : (deriv (deriv (deBruijnNewmanH t)) (c t)).re ≠ 0 := by
+    intro e
+    rw [e, mul_zero] at hprod
+    exact lt_irrefl _ hprod
+  have hDrge : |B| / 2 < |(deriv (deriv (deBruijnNewmanH t)) (c t)).re| := by
+    have h1 := abs_sub_abs_le_abs_sub B (deriv (deriv (deBruijnNewmanH t)) (c t)).re
+    rw [abs_sub_comm] at h1
+    linarith [hwn, h1]
+  have hHr0 : (deBruijnNewmanH t (c t)).re ≠ 0 := by
+    intro e
+    rw [e, zero_mul] at hprod
+    exact lt_irrefl _ hprod
+  have hHne : deBruijnNewmanH t (c t) ≠ 0 := by
+    intro e
+    apply hHr0
+    have h2 : (deBruijnNewmanH t (c t)).re = (0 : ℂ).re := congrArg Complex.re e
+    exact h2
+  -- q positivity and smallness
+  set q : ℝ := deBruijnNewmanLocalQ c t with hqdef
+  have hqval : deBruijnNewmanLocalQ c t
+      = -2 * (deBruijnNewmanH t (c t)).re
+        / (deriv (deriv (deBruijnNewmanH t)) (c t)).re := rfl
+  have hqpos : 0 < q := by
+    have e : q = -2 * ((deBruijnNewmanH t (c t)).re
+        * (deriv (deriv (deBruijnNewmanH t)) (c t)).re)
+        / ((deriv (deriv (deBruijnNewmanH t)) (c t)).re ^ 2) := by
+      rw [hqdef, hqval]
+      field_simp
+    rw [e]
+    exact div_pos (mul_pos_of_neg_of_neg (by norm_num) hprod)
+      (sq_pos_of_ne_zero hDr0)
+  have hqsmall : q < Qbound ^ 2 := by
+    have hHsmall : ‖deBruijnNewmanH t (c t)‖ < η := by
+      have h1 := hhtn
+      rwa [dist_zero_right] at h1
+    have hqabs : |q| ≤ 4 * ‖deBruijnNewmanH t (c t)‖ / |B| := by
+      have h1 : |(deBruijnNewmanH t (c t)).re| ≤ ‖deBruijnNewmanH t (c t)‖ :=
+        Complex.abs_re_le_norm _
+      rw [hqdef, hqval, abs_div, abs_mul]
+      have h2 : |(-2 : ℝ)| = 2 := by norm_num
+      rw [h2]
+      calc 2 * |(deBruijnNewmanH t (c t)).re|
+            / |(deriv (deriv (deBruijnNewmanH t)) (c t)).re|
+          ≤ (2 * ‖deBruijnNewmanH t (c t)‖)
+            / |(deriv (deriv (deBruijnNewmanH t)) (c t)).re| :=
+            div_le_div_of_nonneg_right
+              (mul_le_mul_of_nonneg_left h1 zero_le_two) (abs_nonneg _)
+        _ ≤ (2 * ‖deBruijnNewmanH t (c t)‖) / (|B| / 2) :=
+            div_le_div_of_nonneg_left (mul_nonneg zero_le_two (norm_nonneg _))
+              (div_pos hBpos (by norm_num)) hDrge.le
+        _ = 4 * ‖deBruijnNewmanH t (c t)‖ / |B| := by field_simp; ring
+    calc q ≤ |q| := le_abs_self q
+      _ ≤ 4 * ‖deBruijnNewmanH t (c t)‖ / |B| := hqabs
+      _ < 4 * η / |B| := by
+        apply div_lt_div_of_pos_right _ hBpos
+        apply mul_lt_mul_of_pos_left _ (by norm_num : (0:ℝ) < 4)
+        linarith [hHsmall]
+      _ = Qbound ^ 2 := by rw [hηdef]; field_simp
+  -- sqrt q
+  set sq : ℝ := Real.sqrt q with hsqdef
+  have hsqpos : 0 < sq := Real.sqrt_pos.mpr hqpos
+  have hsq2 : sq ^ 2 = q := Real.sq_sqrt hqpos.le
+  have hsqsmall : sq < Qbound := by
+    have h1 : sq < Real.sqrt (Qbound ^ 2) := Real.sqrt_lt_sqrt hqpos.le hqsmall
+    rwa [Real.sqrt_sq hQpos.le] at h1
+  have hsqb : sq < 3 * |B| / (2 * M) := lt_of_lt_of_le hsqsmall (min_le_left _ _)
+  have hsqc : sq < |B| / (512 * M) := lt_of_lt_of_le hsqsmall (min_le_right _ _)
+  -- w and its norm
+  set w : ℂ := z - c t with hwdef
+  have hctn : dist (c t) x₀ < r := by
+    have h1 := hcP (Metric.mem_ball.mp hctn)
+    rwa [hc0] at h1
+  have hwnorm : ‖w‖ < 2 * r := by
+    have h1 : ‖w‖ ≤ ‖z - x₀‖ + ‖x₀ - c t‖ := by
+      have e : w = (z - x₀) + (x₀ - c t) := by rw [hwdef]; ring
+      rw [e]
+      exact norm_add_le _ _
+    have h2 : ‖z - x₀‖ < r := by
+      have h3 : dist z x₀ < r := Metric.mem_ball.mp hzB
+      rwa [dist_eq_norm] at h3
+    have h3 : ‖x₀ - c t‖ < r := by
+      have h4 : ‖c t - x₀‖ < r := by rwa [← dist_eq_norm]
+      rwa [norm_sub_rev] at h4
+    linarith [h1, h2, h3]
+  -- the D3 bound on the segment, hence the cubic remainder bound
+  have hseg : ∀ u : ℝ, u ∈ Set.Icc (0:ℝ) 1 →
+      c t + (u : ℂ) * w ∈ Metric.closedBall x₀ 1 := by
+    intro u hu
+    have h1 : c t + (u : ℂ) * w - x₀ = (c t - x₀) + (u : ℂ) * w := by ring
+    have hun : ‖(u : ℂ)‖ = u := by
+      have e : ‖(u : ℂ)‖ = |u| := RCLike.norm_ofReal _
+      rw [e, abs_of_nonneg hu.1]
+    have hctn2 : ‖c t - x₀‖ ≤ r := by rw [← dist_eq_norm]; exact hctn.le
+    rw [Metric.mem_closedBall, dist_eq_norm, h1]
+    calc ‖(c t - x₀) + (u : ℂ) * w‖
+        ≤ ‖c t - x₀‖ + ‖(u : ℂ) * w‖ := norm_add_le _ _
+      _ = ‖c t - x₀‖ + u * ‖w‖ := by rw [norm_mul, hun]
+      _ ≤ r + 1 * (2 * r) := by
+        have h2 : u * ‖w‖ ≤ 1 * (2 * r) :=
+          mul_le_mul hu.2 hwnorm.le (norm_nonneg _) zero_le_one
+        linarith [hctn2, h2]
+      _ ≤ 1 := by
+        have hr3 : r ≤ 1/3 := min_le_left _ _
+        linarith
+  have hRem : ‖deBruijnNewmanH t z - (deBruijnNewmanH t (c t)
+        + deriv (deBruijnNewmanH t) (c t) * w
+        + deriv (deriv (deBruijnNewmanH t)) (c t) * w ^ 2 / 2)‖
+      ≤ M * ‖w‖ ^ 3 := by
+    have h1 : z = c t + w := by rw [hwdef]; ring
+    rw [h1]
+    apply deBruijnNewmanH_taylor_three_z_remainder_norm_le
+    intro q' r' s' hq' hr' hs'
+    have hu1 : 0 ≤ q' * r' * s' :=
+      mul_nonneg (mul_nonneg hq'.1 hr'.1) hs'.1
+    have hu2 : q' * r' * s' ≤ 1 := by
+      have h1 : q' * r' ≤ 1 * 1 :=
+        mul_le_mul hq'.2 hr'.2 hr'.1 zero_le_one
+      rw [mul_one] at h1
+      calc q' * r' * s' ≤ 1 * s' :=
+            mul_le_mul h1 (le_refl s') hs'.1 zero_le_one
+        _ = s' := one_mul _
+        _ ≤ 1 := hs'.2
+    have hbox1 : t ∈ Set.Icc (τ - 1) (τ + 1) := by
+      constructor <;> linarith [ht, ht1n]
+    exact hMge t _ hbox1 (hseg _ ⟨hu1, hu2⟩)
+  -- the model identity and the master norm inequality
+  have hmodel : deBruijnNewmanH t (c t)
+        + deriv (deriv (deBruijnNewmanH t)) (c t) * w ^ 2 / 2
+      = deriv (deriv (deBruijnNewmanH t)) (c t) * (w ^ 2 - ((q : ℝ) : ℂ)) / 2 := by
+    have e1 : deBruijnNewmanH t (c t)
+        = (((deBruijnNewmanH t (c t)).re : ℝ) : ℂ) := by
+      have h := (Complex.re_add_im (deBruijnNewmanH t (c t))).symm
+      rwa [him1, Complex.ofReal_zero, zero_mul, add_zero] at h
+    have e2 : deriv (deriv (deBruijnNewmanH t)) (c t)
+        = (((deriv (deriv (deBruijnNewmanH t)) (c t)).re : ℝ) : ℂ) := by
+      have h := (Complex.re_add_im (deriv (deriv (deBruijnNewmanH t)) (c t))).symm
+      rwa [him2, Complex.ofReal_zero, zero_mul, add_zero] at h
+    have hHr : (deBruijnNewmanH t (c t)).re
+        = -q * (deriv (deriv (deBruijnNewmanH t)) (c t)).re / 2 := by
+      have h1' : q * (deriv (deriv (deBruijnNewmanH t)) (c t)).re
+          = -2 * (deBruijnNewmanH t (c t)).re := by
+        rw [hqdef, hqval]
+        exact div_mul_cancel₀ _ hDr0
+      linarith
+    rw [e1, e2, hHr]
+    push_cast
+    ring
+  have hT : deBruijnNewmanH t z
+      = deriv (deriv (deBruijnNewmanH t)) (c t) * (w ^ 2 - ((q : ℝ) : ℂ)) / 2
+        + (deBruijnNewmanH t z
+          - (deBruijnNewmanH t (c t) + deriv (deBruijnNewmanH t) (c t) * w
+            + deriv (deriv (deBruijnNewmanH t)) (c t) * w ^ 2 / 2)) := by
+    rw [hcrn, zero_mul, add_zero, hmodel]
+    ring
+  have heq : deriv (deriv (deBruijnNewmanH t)) (c t) * (w ^ 2 - ((q : ℝ) : ℂ)) / 2
+      = -(deBruijnNewmanH t z
+        - (deBruijnNewmanH t (c t) + deriv (deBruijnNewmanH t) (c t) * w
+          + deriv (deriv (deBruijnNewmanH t)) (c t) * w ^ 2 / 2)) := by
+    rw [hT] at hz
+    exact eq_neg_of_add_eq_zero_left hz
+  have hnorm : ‖deriv (deriv (deBruijnNewmanH t)) (c t)
+        * (w ^ 2 - ((q : ℝ) : ℂ)) / 2‖
+      ≤ M * ‖w‖ ^ 3 := by
+    rw [heq, norm_neg]
+    exact hRem
+  have hnormlhs : ‖deriv (deriv (deBruijnNewmanH t)) (c t)
+        * (w ^ 2 - ((q : ℝ) : ℂ)) / 2‖
+      = |(deriv (deriv (deBruijnNewmanH t)) (c t)).re| / 2
+        * ‖w ^ 2 - ((q : ℝ) : ℂ)‖ := by
+    have e2 : deriv (deriv (deBruijnNewmanH t)) (c t)
+        = (((deriv (deriv (deBruijnNewmanH t)) (c t)).re : ℝ) : ℂ) := by
+      have h := (Complex.re_add_im (deriv (deriv (deBruijnNewmanH t)) (c t))).symm
+      rwa [him2, Complex.ofReal_zero, zero_mul, add_zero] at h
+    rw [norm_div, norm_mul]
+    nth_rewrite 1 [e2]
+    have e3 : ‖((((deriv (deriv (deBruijnNewmanH t)) (c t)).re) : ℝ) : ℂ)‖
+        = |(deriv (deriv (deBruijnNewmanH t)) (c t)).re| := RCLike.norm_ofReal _
+    rw [e3, RCLike.norm_two]
+    ring
+  have hfact : w ^ 2 - ((q : ℝ) : ℂ)
+      = (w - ((sq : ℝ) : ℂ)) * (w + ((sq : ℝ) : ℂ)) := by
+    have h1 : (((sq : ℝ) : ℂ)) ^ 2 = ((q : ℝ) : ℂ) := by
+      rw [← Complex.ofReal_pow, hsq2]
+    rw [← h1]
+    ring
+  have hnormfact : ‖w ^ 2 - ((q : ℝ) : ℂ)‖
+      = ‖w - ((sq : ℝ) : ℂ)‖ * ‖w + ((sq : ℝ) : ℂ)‖ := by
+    rw [hfact, norm_mul]
+  have hmain : |(deriv (deriv (deBruijnNewmanH t)) (c t)).re| / 2
+      * (‖w - ((sq : ℝ) : ℂ)‖ * ‖w + ((sq : ℝ) : ℂ)‖) ≤ M * ‖w‖ ^ 3 := by
+    rw [← hnormfact, ← hnormlhs]
+    exact hnorm
+  have hwne : w ≠ 0 := by
+    intro e
+    apply hHne
+    have e2 : z - c t = 0 := hwdef ▸ e
+    have e3 : z = c t := sub_eq_zero.mp e2
+    rwa [e3] at hz
+  have hqnorm : ‖((q : ℝ) : ℂ)‖ = q := by
+    have e : ‖((q : ℝ) : ℂ)‖ = |q| := RCLike.norm_ofReal _
+    rw [e, abs_of_pos hqpos]
+  have hwn2 : ‖w ^ 2‖ = ‖w‖ ^ 2 := norm_pow w 2
+  -- case analysis
+  by_cases ha : 2 * sq ≤ ‖w‖
+  · -- outer annulus: excluded
+    exfalso
+    have hq' : q ≤ ‖w‖ ^ 2 / 4 := by
+      have h1 : sq ≤ ‖w‖ / 2 := by linarith [ha]
+      have h2 : sq ^ 2 ≤ (‖w‖ / 2) ^ 2 := pow_le_pow_left₀ hsqpos.le h1 2
+      rw [hsq2] at h2
+      calc q ≤ (‖w‖ / 2) ^ 2 := h2
+        _ = ‖w‖ ^ 2 / 4 := by ring
+    have hlb : ‖w‖ ^ 2 - q ≤ ‖w - ((sq : ℝ) : ℂ)‖ * ‖w + ((sq : ℝ) : ℂ)‖ := by
+      rw [← hnormfact]
+      have h1 : ‖w ^ 2‖ ≤ ‖w ^ 2 - ((q : ℝ) : ℂ)‖ + ‖((q : ℝ) : ℂ)‖ := by
+        have h2 := norm_add_le (w ^ 2 - ((q : ℝ) : ℂ)) ((q : ℝ) : ℂ)
+        rwa [sub_add_cancel] at h2
+      rw [hwn2, hqnorm] at h1
+      exact sub_le_iff_le_add.mpr h1
+    have hw2 : (0:ℝ) < ‖w‖ ^ 2 := pow_pos (norm_pos_iff.mpr hwne) 2
+    have hchain : 3 * |B| / 16 ≤ M * ‖w‖ := by
+      have h5 : |(deriv (deriv (deBruijnNewmanH t)) (c t)).re| / 2 * (‖w‖ ^ 2 - q)
+          ≤ |(deriv (deriv (deBruijnNewmanH t)) (c t)).re| / 2
+            * (‖w - ((sq : ℝ) : ℂ)‖ * ‖w + ((sq : ℝ) : ℂ)‖) :=
+        mul_le_mul_of_nonneg_left hlb (div_nonneg (abs_nonneg _) zero_le_two)
+      have h6 : ‖w‖ ^ 2 - q ≥ 3 * ‖w‖ ^ 2 / 4 := by linarith [hq']
+      have h7 : |(deriv (deriv (deBruijnNewmanH t)) (c t)).re| / 2
+            * (3 * ‖w‖ ^ 2 / 4)
+          ≤ M * ‖w‖ ^ 3 :=
+        le_trans (mul_le_mul_of_nonneg_left h6 (div_nonneg (abs_nonneg _) zero_le_two))
+          (le_trans h5 hmain)
+      have h8 : |(deriv (deriv (deBruijnNewmanH t)) (c t)).re| / 2
+            * (3 * ‖w‖ ^ 2 / 4)
+          = (3 * |(deriv (deriv (deBruijnNewmanH t)) (c t)).re| / 8) * ‖w‖ ^ 2 := by
+        ring
+      have h9 : M * ‖w‖ ^ 3 = (M * ‖w‖) * ‖w‖ ^ 2 := by ring
+      rw [h8, h9] at h7
+      have h10 : 3 * |(deriv (deriv (deBruijnNewmanH t)) (c t)).re| / 8 ≤ M * ‖w‖ :=
+        le_of_mul_le_mul_right h7 hw2
+      linarith [hDrge, h10]
+    have hrM : r ≤ 3 * |B| / (64 * M) := min_le_right _ _
+    have h1 : M * ‖w‖ < M * (2 * r) := mul_lt_mul_of_pos_left hwnorm hMpos
+    have h2 : M * (2 * r) ≤ 3 * |B| / 32 := by
+      calc M * (2 * r) ≤ M * (2 * (3 * |B| / (64 * M))) :=
+            mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hrM zero_le_two)
+              hMpos.le
+        _ = 3 * |B| / 32 := by field_simp; ring
+    linarith [hchain, h1, h2, hBpos]
+  · have haw : ‖w‖ < 2 * sq := not_le.mp ha
+    by_cases hb : ‖w‖ ≤ sq / 2
+    · -- inner disk: excluded
+      exfalso
+      have hlb : 3 * q / 4 ≤ ‖w - ((sq : ℝ) : ℂ)‖ * ‖w + ((sq : ℝ) : ℂ)‖ := by
+        rw [← hnormfact]
+        have h1 : ‖((q : ℝ) : ℂ)‖ ≤ ‖((q : ℝ) : ℂ) - w ^ 2‖ + ‖w ^ 2‖ := by
+          have h2 := norm_add_le (((q : ℝ) : ℂ) - w ^ 2) (w ^ 2)
+          rwa [sub_add_cancel] at h2
+        have h3 : ‖((q : ℝ) : ℂ) - w ^ 2‖ = ‖w ^ 2 - ((q : ℝ) : ℂ)‖ :=
+          norm_sub_rev _ _
+        rw [h3, hqnorm, hwn2] at h1
+        have h6 : ‖w‖ ^ 2 ≤ q / 4 := by
+          have h7 : (sq / 2) ^ 2 = q / 4 := by
+            have e : (sq / 2) ^ 2 = sq ^ 2 / 4 := by ring
+            rw [e, hsq2]
+          calc ‖w‖ ^ 2 ≤ (sq / 2) ^ 2 := pow_le_pow_left₀ (norm_nonneg _) hb 2
+            _ = q / 4 := h7
+        linarith [h1, h6]
+      have h5 : |(deriv (deriv (deBruijnNewmanH t)) (c t)).re| / 2 * (3 * q / 4)
+          ≤ M * ‖w‖ ^ 3 :=
+        le_trans (mul_le_mul_of_nonneg_left hlb (div_nonneg (abs_nonneg _) zero_le_two))
+          hmain
+      have h6 : ‖w‖ ^ 3 ≤ (sq / 2) ^ 3 := pow_le_pow_left₀ (norm_nonneg _) hb 3
+      have h7 : |(deriv (deriv (deBruijnNewmanH t)) (c t)).re| / 2 * (3 * q / 4)
+          ≤ M * (sq / 2) ^ 3 :=
+        le_trans h5 (mul_le_mul_of_nonneg_left h6 hMpos.le)
+      have h8 : (sq / 2) ^ 3 = sq * q / 8 := by
+        have e : (sq / 2) ^ 3 = (sq * sq ^ 2) / 8 := by ring
+        rw [e, hsq2]
+      rw [h8] at h7
+      have h9 : |(deriv (deriv (deBruijnNewmanH t)) (c t)).re| / 2 * (3 * q / 4)
+          = (3 * |(deriv (deriv (deBruijnNewmanH t)) (c t)).re| / 8) * q := by ring
+      have h10 : M * (sq * q / 8) = (M * sq / 8) * q := by ring
+      rw [h9, h10] at h7
+      have h11 : 3 * |(deriv (deriv (deBruijnNewmanH t)) (c t)).re| / 8 ≤ M * sq / 8 :=
+        le_of_mul_le_mul_right h7 hqpos
+      have h12 : M * sq < 3 * |B| / 2 := by
+        calc M * sq < M * (3 * |B| / (2 * M)) := mul_lt_mul_of_pos_left hsqb hMpos
+          _ = 3 * |B| / 2 := by field_simp
+      have h13 : 3 * |B| / 2 ≤ M * sq := by
+        have h14 : 3 * |B| / 16 ≤ M * sq / 8 := by linarith [hDrge, h11]
+        linarith [h14]
+      linarith [h12, h13, hBpos]
+    · have hbw : sq / 2 < ‖w‖ := not_le.mp hb
+      by_cases hc : sq / 4 ≤ ‖w - ((sq : ℝ) : ℂ)‖ ∧ sq / 4 ≤ ‖w + ((sq : ℝ) : ℂ)‖
+      · -- middle annulus: excluded
+        exfalso
+        obtain ⟨hc1, hc2⟩ := hc
+        have hlb : sq ^ 2 / 16 ≤ ‖w - ((sq : ℝ) : ℂ)‖ * ‖w + ((sq : ℝ) : ℂ)‖ := by
+          calc sq ^ 2 / 16 = (sq / 4) * (sq / 4) := by ring
+            _ ≤ ‖w - ((sq : ℝ) : ℂ)‖ * ‖w + ((sq : ℝ) : ℂ)‖ :=
+              mul_le_mul hc1 hc2 (div_nonneg hsqpos.le zero_le_four)
+                (norm_nonneg _)
+        have h5 : |(deriv (deriv (deBruijnNewmanH t)) (c t)).re| / 2 * (sq ^ 2 / 16)
+            ≤ M * ‖w‖ ^ 3 :=
+          le_trans (mul_le_mul_of_nonneg_left hlb
+            (div_nonneg (abs_nonneg _) zero_le_two)) hmain
+        have h6 : ‖w‖ ^ 3 < (2 * sq) ^ 3 :=
+          pow_lt_pow_left₀ haw (norm_nonneg _) (by norm_num : (3:ℕ) ≠ 0)
+        have h7 : (2 * sq) ^ 3 = 8 * (sq * sq ^ 2) := by ring
+        have h8 : M * ‖w‖ ^ 3 < M * (8 * sq * q) := by
+          have h9 : M * ‖w‖ ^ 3 < M * (2 * sq) ^ 3 :=
+            mul_lt_mul_of_pos_left h6 hMpos
+          rw [h7, hsq2] at h9
+          have h10 : 8 * (sq * q) = 8 * sq * q := by ring
+          rwa [h10] at h9
+        have h11 := lt_of_le_of_lt h5 h8
+        have h12 : |(deriv (deriv (deBruijnNewmanH t)) (c t)).re| / 2 * (sq ^ 2 / 16)
+            = (|(deriv (deriv (deBruijnNewmanH t)) (c t)).re| / 32) * q := by
+          rw [hsq2]
+          ring
+        have h13 : M * (8 * sq * q) = (8 * M * sq) * q := by ring
+        rw [h12, h13] at h11
+        have h14 : |(deriv (deriv (deBruijnNewmanH t)) (c t)).re| / 32
+            ≤ 8 * M * sq := le_of_mul_le_mul_right h11.le hqpos
+        have h15 : M * sq < |B| / 512 := by
+          calc M * sq < M * (|B| / (512 * M)) := mul_lt_mul_of_pos_left hsqc hMpos
+            _ = |B| / 512 := by field_simp
+        have h16 : |B| / 64 ≤ 8 * M * sq := by linarith [hDrge, h14]
+        have h17 : 8 * M * sq < |B| / 64 := by linarith [h15]
+        linarith [h16, h17]
+      · -- the two small disks
+        rcases not_and_or.mp hc with h | h
+        · left
+          have e : z - (c t + ((sq : ℝ) : ℂ)) = w - ((sq : ℝ) : ℂ) := by
+            rw [hwdef]
+            ring
+          rw [e]
+          exact not_le.mp h
+        · right
+          have e : z - (c t - ((sq : ℝ) : ℂ)) = w + ((sq : ℝ) : ℂ) := by
+            rw [hwdef]
+            ring
+          rw [e]
+          exact not_le.mp h
+
 
 set_option maxHeartbeats 2000000 in
 /-- **Quadratic sign flip along the critical curve (quantitative core of de

@@ -194,3 +194,5 @@ import RiemannExplorer.DeBruijnNewman
 
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewman_zderiv_two_re_nhds_eventually
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_height_tendsto_zero
+
+#print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewman_double_zero_localization
