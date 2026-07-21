@@ -4653,6 +4653,30 @@ theorem continuous_deBruijnNewmanH_tderiv :
     (Filter.Eventually.of_forall hmeas) hbound
     (integrableOn_heatSqDominatingFun (t₀ + 1) (|z₀.im| + 1) (by positivity)) hlim
 
+/-- **FTC representation**: the increment of `H` in `t` is the interval integral
+of its time derivative, `H_t(w) − H_{t₀}(w) = ∫_{t₀}^{t} ∂_s H_s(w) ds`. The
+integrand `∂_s H_s(w)` is jointly continuous by
+`continuous_deBruijnNewmanH_tderiv`. -/
+theorem deBruijnNewmanH_sub_eq_intervalIntegral (t₀ t : ℝ) (w : ℂ) :
+    deBruijnNewmanH t w - deBruijnNewmanH t₀ w
+      = ∫ s : ℝ in t₀..t, ∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand s w u := by
+  have hDcont : Continuous fun s : ℝ =>
+      ∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand s w u :=
+    continuous_deBruijnNewmanH_tderiv.comp (continuous_id.prodMk continuous_const)
+  have hint : IntervalIntegrable (deriv fun s : ℝ => deBruijnNewmanH s w)
+      MeasureTheory.volume t₀ t := by
+    rw [show deriv (fun s : ℝ => deBruijnNewmanH s w)
+        = fun s : ℝ => ∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand s w u
+        from funext fun s => (hasDerivAt_deBruijnNewmanH_t w s).deriv]
+    exact hDcont.continuousOn.intervalIntegrable
+  have h2 : ∫ s : ℝ in t₀..t, ∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand s w u
+      = deBruijnNewmanH t w - deBruijnNewmanH t₀ w := by
+    rw [intervalIntegral.integral_congr
+      fun s _ => ((hasDerivAt_deBruijnNewmanH_t w s).deriv).symm]
+    exact intervalIntegral.integral_deriv_eq_sub
+      (fun x _ => (hasDerivAt_deBruijnNewmanH_t w x).differentiableAt) hint
+  exact h2.symm
+
 /-- **Zero persistence (Rouché core) via the maximum modulus principle**:
 if `f` vanishes at `w` with `‖f‖ ≥ m > 0` on the sphere of radius `ρ`
 around `w`, and `g` is uniformly within `m / 2` of `f` on that sphere, then

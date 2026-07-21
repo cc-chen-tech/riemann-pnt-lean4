@@ -122,3 +122,4 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.rh_iff_lambda_le_zero_of_monotone
 #print axioms RiemannExplorer.DeBruijnNewman.norm_sq_mul_heatIntegrand_le
 #print axioms RiemannExplorer.DeBruijnNewman.continuous_deBruijnNewmanH_tderiv
+#print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_sub_eq_intervalIntegral
