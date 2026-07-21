@@ -169,3 +169,4 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewman_critical_curve
 #print axioms RiemannExplorer.DeBruijnNewman.hasDerivAt_deBruijnNewmanH_on_critical_curve
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_critical_height
+#print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_taylor_two_z

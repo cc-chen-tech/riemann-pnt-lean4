@@ -6114,6 +6114,70 @@ theorem deBruijnNewmanH_critical_height (τ : ℝ) (x₀ : ℂ) (c : ℝ → ℂ
   rw [hc0, hz0, sub_zero] at hftc
   exact hftc.symm
 
+/-- **Taylor expansion of order 2 in `z` with iterated-integral remainder**:
+`H_t(w + k) = H_t(w) + ∂_z H_t(w)·k
+  + ∫₀¹ (∫₀¹ ∂²_z H_t(w + r s·k)·(s k) dr)·k ds`.
+Two applications of the `z`-direction FTC
+(`deBruijnNewmanH_z_sub_eq_intervalIntegral` and its derivative counterpart
+`deBruijnNewmanHzderiv_z_sub_eq_intervalIntegral`); no zero-counting. Along
+the critical curve (where `∂_z H_t(c(t)) = 0`) the linear term vanishes and
+this becomes the quadratic local model of `H` near a double zero. -/
+theorem deBruijnNewmanH_taylor_two_z (t : ℝ) (w k : ℂ) :
+    deBruijnNewmanH t (w + k)
+      = deBruijnNewmanH t w + deriv (deBruijnNewmanH t) w * k
+        + ∫ s : ℝ in (0:ℝ)..1,
+          (∫ r : ℝ in (0:ℝ)..1,
+            deriv (deriv (deBruijnNewmanH t)) (w + ((r * s : ℝ) : ℂ) * k)
+              * ((s : ℂ) * k)) * k := by
+  have h1 := deBruijnNewmanH_z_sub_eq_intervalIntegral t w k
+  have h2 : ∀ s : ℝ, deriv (deBruijnNewmanH t) (w + (s : ℂ) * k)
+      - deriv (deBruijnNewmanH t) w
+      = ∫ r : ℝ in (0:ℝ)..1,
+        deriv (deriv (deBruijnNewmanH t)) (w + (r : ℂ) * ((s : ℂ) * k))
+          * ((s : ℂ) * k) :=
+    fun s => deBruijnNewmanHzderiv_z_sub_eq_intervalIntegral t w ((s : ℂ) * k)
+  have hconst : deriv (deBruijnNewmanH t) w * k
+      = ∫ s : ℝ in (0:ℝ)..1, deriv (deBruijnNewmanH t) w * k := by
+    rw [intervalIntegral.integral_const]
+    simp
+  have hintB : IntervalIntegrable
+      (fun s : ℝ => deriv (deBruijnNewmanH t) (w + (s : ℂ) * k) * k)
+      MeasureTheory.volume 0 1 :=
+    ((continuous_deBruijnNewmanH_zderiv.comp
+      (continuous_const.prodMk
+        ((Complex.continuous_ofReal.mul continuous_const).const_add w))).mul
+      continuous_const).continuousOn.intervalIntegrable
+  have hintB₀ : IntervalIntegrable (fun _ : ℝ => deriv (deBruijnNewmanH t) w * k)
+      MeasureTheory.volume 0 1 := intervalIntegrable_const
+  have hpt : ∀ s : ℝ,
+      deriv (deBruijnNewmanH t) (w + (s : ℂ) * k) * k
+        - deriv (deBruijnNewmanH t) w * k
+      = (∫ r : ℝ in (0:ℝ)..1,
+          deriv (deriv (deBruijnNewmanH t)) (w + ((r * s : ℝ) : ℂ) * k)
+            * ((s : ℂ) * k)) * k := by
+    intro s
+    rw [← sub_mul, h2 s]
+    apply congrArg (· * k)
+    apply intervalIntegral.integral_congr
+    intro r _
+    have hcast : (r : ℂ) * ((s : ℂ) * k) = ((r * s : ℝ) : ℂ) * k := by
+      push_cast
+      ring
+    show deriv (deriv (deBruijnNewmanH t)) (w + (r : ℂ) * ((s : ℂ) * k)) * ((s : ℂ) * k)
+      = deriv (deriv (deBruijnNewmanH t)) (w + ((r * s : ℝ) : ℂ) * k) * ((s : ℂ) * k)
+    rw [hcast]
+  have h3 : deBruijnNewmanH t (w + k) - deBruijnNewmanH t w
+      - deriv (deBruijnNewmanH t) w * k
+      = ∫ s : ℝ in (0:ℝ)..1,
+        (∫ r : ℝ in (0:ℝ)..1,
+          deriv (deriv (deBruijnNewmanH t)) (w + ((r * s : ℝ) : ℂ) * k)
+            * ((s : ℂ) * k)) * k := by
+    rw [h1, hconst, ← intervalIntegral.integral_sub hintB hintB₀,
+      intervalIntegral.integral_congr fun s _ => hpt s]
+  rw [sub_sub] at h3
+  rw [← h3]
+  ring
+
 /-- **Diagonal derivative — the zero-transport piece**: if `z(t) → z₀` as
 `t → t₀`, then `t ↦ H_t(z(t)) − H_{t₀}(z(t))` has derivative `∂_t H_{t₀}(z₀)`
 (the `u²`-weighted heat integral) at `t₀`. Proof: the FTC representation
