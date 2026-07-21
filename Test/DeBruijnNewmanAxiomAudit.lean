@@ -196,3 +196,5 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_height_tendsto_zero
 
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewman_double_zero_localization
+
+#print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewman_double_zero_disk_real
