@@ -6178,6 +6178,58 @@ theorem deBruijnNewmanH_taylor_two_z (t : ℝ) (w k : ℂ) :
   rw [← h3]
   ring
 
+/-- **Conjugation symmetry of the second `z`-derivative**: `∂²_z H_t(\bar z)
+= \overline{∂²_z H_t(z)}`, transported through the integral representation
+`deriv_two_deBruijnNewmanH` by `Complex.cos_conj`. Together with the heat
+equation this is what makes the curvature at a real double zero real. -/
+theorem deBruijnNewmanHzderiv_two_conj (t : ℝ) (z : ℂ) :
+    deriv (deriv (deBruijnNewmanH t)) (star z)
+      = star (deriv (deriv (deBruijnNewmanH t)) z) := by
+  rw [deriv_two_deBruijnNewmanH, deriv_two_deBruijnNewmanH]
+  show (∫ (u : ℝ) in Set.Ioi 0, -((u : ℂ) ^ 2) * heatIntegrand t (star z) u)
+      = (starRingEnd ℂ) (∫ (u : ℝ) in Set.Ioi 0, -((u : ℂ) ^ 2) * heatIntegrand t z u)
+  have e1 : (starRingEnd ℂ) (∫ (u : ℝ) in Set.Ioi 0, -((u : ℂ) ^ 2) * heatIntegrand t z u)
+      = ∫ (u : ℝ) in Set.Ioi 0, (starRingEnd ℂ) (-((u : ℂ) ^ 2) * heatIntegrand t z u) :=
+    (integral_conj (f := fun u : ℝ => -((u : ℂ) ^ 2) * heatIntegrand t z u)
+      (μ := MeasureTheory.volume.restrict (Set.Ioi (0:ℝ)))).symm
+  refine Eq.trans ?_ e1.symm
+  apply MeasureTheory.setIntegral_congr_fun measurableSet_Ioi
+  intro u _
+  show -((u : ℂ) ^ 2) * (((Real.exp (t * u ^ 2) * phi u : ℝ) : ℂ)
+      * Complex.cos ((starRingEnd ℂ) z * (u : ℂ)))
+      = (starRingEnd ℂ) (-((u : ℂ) ^ 2) * (((Real.exp (t * u ^ 2) * phi u : ℝ) : ℂ)
+        * Complex.cos (z * (u : ℂ))))
+  rw [map_mul, map_neg, map_pow, Complex.conj_ofReal, map_mul, Complex.conj_ofReal,
+    ← Complex.cos_conj, map_mul, Complex.conj_ofReal]
+
+/-- **Reality of `H_t` at real points**: if `z.im = 0` then `(H_t z).im = 0`,
+from the conjugation symmetry `deBruijnNewmanH_conj`. -/
+theorem deBruijnNewmanH_im_eq_zero_of_im_eq_zero (t : ℝ) {z : ℂ} (hz : z.im = 0) :
+    (deBruijnNewmanH t z).im = 0 := by
+  have hstar : star z = z := by
+    rw [Complex.star_def, Complex.conj_eq_iff_im]; exact hz
+  have h := deBruijnNewmanH_conj t z
+  rw [hstar, Complex.star_def] at h
+  exact Complex.conj_eq_iff_im.mp h.symm
+
+/-- **Reality of `∂_z H_t` at real points**. -/
+theorem deBruijnNewmanHzderiv_im_eq_zero_of_im_eq_zero (t : ℝ) {z : ℂ} (hz : z.im = 0) :
+    (deriv (deBruijnNewmanH t) z).im = 0 := by
+  have hstar : star z = z := by
+    rw [Complex.star_def, Complex.conj_eq_iff_im]; exact hz
+  have h := deBruijnNewmanHzderiv_conj t z
+  rw [hstar, Complex.star_def] at h
+  exact Complex.conj_eq_iff_im.mp h.symm
+
+/-- **Reality of `∂²_z H_t` at real points**. -/
+theorem deBruijnNewmanHzderiv_two_im_eq_zero_of_im_eq_zero (t : ℝ) {z : ℂ}
+    (hz : z.im = 0) : (deriv (deriv (deBruijnNewmanH t)) z).im = 0 := by
+  have hstar : star z = z := by
+    rw [Complex.star_def, Complex.conj_eq_iff_im]; exact hz
+  have h := deBruijnNewmanHzderiv_two_conj t z
+  rw [hstar, Complex.star_def] at h
+  exact Complex.conj_eq_iff_im.mp h.symm
+
 /-- **Diagonal derivative — the zero-transport piece**: if `z(t) → z₀` as
 `t → t₀`, then `t ↦ H_t(z(t)) − H_{t₀}(z(t))` has derivative `∂_t H_{t₀}(z₀)`
 (the `u²`-weighted heat integral) at `t₀`. Proof: the FTC representation
