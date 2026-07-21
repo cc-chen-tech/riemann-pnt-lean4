@@ -21,6 +21,7 @@
 
 import RiemannExplorer.XiPartialFractionResidue
 import Mathlib.Analysis.Complex.RemovableSingularity
+import Mathlib.NumberTheory.LSeries.Nonvanishing
 
 open Complex ComplexConjugate
 open scoped BigOperators Topology
@@ -362,5 +363,156 @@ theorem xi_partial_fraction_expansion_target_imp_simple_zeros
   have huniq := tendsto_nhds_unique hlim0 tendsto_const_nhds
   have hm : (analyticOrderNatAt xiFunction s₀ : ℂ) = 1 := sub_eq_zero.mp huniq
   exact_mod_cast hm
+
+/-- The completed Riemann ξ function has no zeros in the closed half-plane `re s ≥ 1`:
+there `ζ` is nonzero (`riemannZeta_ne_zero_of_one_le_re`, including the line `re s = 1`),
+`Gammaℝ` is nonzero for positive real part, and `ξ 1 = 1 / 2 ≠ 0` at the pole point. -/
+theorem xiFunction_ne_zero_of_one_le_re {s : ℂ} (hsre : 1 ≤ s.re) :
+    xiFunction s ≠ 0 := by
+  by_cases hs1 : s = 1
+  · rw [hs1, xiFunction_one]
+    norm_num
+  · intro hξ
+    have h0 : s ≠ 0 := fun hs0 => by
+      rw [hs0, Complex.zero_re] at hsre
+      norm_num at hsre
+    have hG : Gammaℝ s ≠ 0 := Gammaℝ_ne_zero_of_re_pos (by linarith)
+    rw [xiFunction_eq_classical h0 hs1 hG] at hξ
+    have hζ : riemannZeta s = 0 := by
+      rcases mul_eq_zero.mp hξ with h' | h'
+      · rcases mul_eq_zero.mp h' with h'' | h''
+        · rcases mul_eq_zero.mp h'' with h3 | h3
+          · rcases mul_eq_zero.mp h3 with h4 | h4
+            · norm_num at h4
+            · exact absurd h4 h0
+          · exact absurd (sub_eq_zero.mp h3) hs1
+        · exact absurd h'' hG
+      · exact h'
+    exact riemannZeta_ne_zero_of_one_le_re hsre hζ
+
+/-- Every zero of ξ is a nontrivial zero of ζ: zeros with `re ≥ 1` are excluded by
+`xiFunction_ne_zero_of_one_le_re`, and zeros with `re ≤ 0` are excluded via the functional
+equation `ξ (1 - s) = ξ s`. -/
+theorem xiFunction_zero_imp_isNontrivialZero {s : ℂ} (hξ : xiFunction s = 0) :
+    RiemannHypothesis.IsNontrivialZero s := by
+  have hlt1 : s.re < 1 := by
+    by_contra hcon
+    exact xiFunction_ne_zero_of_one_le_re (le_of_not_gt hcon) hξ
+  have hgt0 : 0 < s.re := by
+    by_contra hcon
+    have hle : s.re ≤ 0 := le_of_not_gt hcon
+    have h1 : 1 ≤ (1 - s).re := by
+      rw [Complex.sub_re, Complex.one_re]
+      linarith
+    have h2 := xiFunction_ne_zero_of_one_le_re h1
+    rw [← xiFunction_one_sub] at h2
+    exact h2 hξ
+  exact ⟨(xiFunction_eq_zero_iff hgt0 hlt1).mp hξ, hgt0, hlt1⟩
+
+/-- **Under the expansion target, ξ has no zeros on the real axis.** At a real zero `s₀`
+(`s₀.im = 0`), `s₀` differs from every upper zero (positive imaginary part) and from every
+conjugate of an upper zero (negative imaginary part), so the paired Mittag–Leffler series is
+differentiable at `s₀` (`differentiableAt_tsum_xiPairedMittagLefflerTerm_of_ne`) and
+`(s - s₀)·F(s) → 0`; the expansion then forces the analytic order `m` of `s₀` to satisfy
+`m - 0 - 0 = 0`, i.e. `m = 0`, contradicting `ξ s₀ = 0`. -/
+theorem xi_partial_fraction_expansion_target_im_ne_zero
+    (h : xi_partial_fraction_expansion_target) {s₀ : ℂ} (hs₀ : xiFunction s₀ = 0) :
+    s₀.im ≠ 0 := by
+  obtain ⟨B, hB⟩ := h
+  intro him
+  have hsρ : ∀ ρ : UpperHalfPlaneNontrivialZero, s₀ ≠ (ρ : ℂ) := fun ρ hρ => by
+    have himρ : s₀.im = (ρ : ℂ).im := congrArg Complex.im hρ
+    rw [him] at himρ
+    linarith [ρ.2.2]
+  have hsρc : ∀ ρ : UpperHalfPlaneNontrivialZero, s₀ ≠ conj (ρ : ℂ) := fun ρ hρ => by
+    have himρ : s₀.im = (conj (ρ : ℂ)).im := congrArg Complex.im hρ
+    rw [him, Complex.conj_im] at himρ
+    linarith [ρ.2.2]
+  have hdiff : DifferentiableAt ℂ (fun s => xiPairedMittagLefflerSum s) s₀ :=
+    differentiableAt_tsum_xiPairedMittagLefflerTerm_of_ne hsρ hsρc
+  -- 级数侧：可微 ⇒ `(s − s₀)·F → 0`
+  have hF0 : Filter.Tendsto (fun s => (s - s₀) * xiPairedMittagLefflerSum s)
+      (𝓝[≠] s₀) (𝓝 0) := by
+    have hsub0 : Filter.Tendsto (fun s : ℂ => s - s₀) (𝓝[≠] s₀) (𝓝 0) := by
+      have h : Filter.Tendsto (fun s : ℂ => s - s₀) (𝓝 s₀) (𝓝 0) := by
+        have h := (continuous_sub_right s₀).tendsto s₀
+        simpa using h
+      exact h.mono_left nhdsWithin_le_nhds
+    have hFs : Filter.Tendsto xiPairedMittagLefflerSum (𝓝[≠] s₀)
+        (𝓝 (xiPairedMittagLefflerSum s₀)) :=
+      hdiff.continuousAt.tendsto.mono_left nhdsWithin_le_nhds
+    have h := hsub0.mul hFs
+    rwa [zero_mul] at h
+  -- 常数侧：`(s − s₀)·B → 0`
+  have hB0 : Filter.Tendsto (fun s => (s - s₀) * B) (𝓝[≠] s₀) (𝓝 0) := by
+    have hsub0 : Filter.Tendsto (fun s : ℂ => s - s₀) (𝓝[≠] s₀) (𝓝 0) := by
+      have h : Filter.Tendsto (fun s : ℂ => s - s₀) (𝓝 s₀) (𝓝 0) := by
+        have h := (continuous_sub_right s₀).tendsto s₀
+        simpa using h
+      exact h.mono_left nhdsWithin_le_nhds
+    have hc0 : Filter.Tendsto (fun _ : ℂ => B) (𝓝[≠] s₀) (𝓝 B) :=
+      tendsto_const_nhds
+    have h := hsub0.mul hc0
+    rwa [zero_mul] at h
+  -- 留数侧：`(s − s₀)·ξ'/ξ → m`（解析重数）
+  have h1 := tendsto_sub_mul_logDeriv_xiFunction_of_zero hs₀
+  have hD : Filter.Tendsto
+      (fun s => (s - s₀) * (deriv xiFunction s / xiFunction s - B -
+        xiPairedMittagLefflerSum s))
+      (𝓝[≠] s₀) (𝓝 ((analyticOrderNatAt xiFunction s₀ : ℂ) - 0 - 0)) := by
+    have h := (h1.sub hB0).sub hF0
+    refine h.congr' (Filter.Eventually.of_forall fun s => ?_)
+    show (s - s₀) * (deriv xiFunction s / xiFunction s) - (s - s₀) * B -
+        (s - s₀) * xiPairedMittagLefflerSum s =
+      (s - s₀) * (deriv xiFunction s / xiFunction s - B -
+        xiPairedMittagLefflerSum s)
+    ring
+  -- 展开式侧：该函数在去心邻域的最终集 `{ξ ≠ 0}` 上恒为零
+  have hzero : (fun s => (s - s₀) * (deriv xiFunction s / xiFunction s - B -
+      xiPairedMittagLefflerSum s)) =ᶠ[𝓝[≠] s₀] fun _ => 0 := by
+    refine (xiFunction_eventually_ne_zero_punctured s₀).mono fun z hz => ?_
+    have heq := hB z hz
+    show (z - s₀) * (deriv xiFunction z / xiFunction z - B -
+        ∑' ρ : UpperHalfPlaneNontrivialZero, xiPairedMittagLefflerTerm z (ρ : ℂ)) = 0
+    rw [heq]
+    ring
+  have hlim0 : Filter.Tendsto (fun _ : ℂ => (0 : ℂ)) (𝓝[≠] s₀)
+      (𝓝 ((analyticOrderNatAt xiFunction s₀ : ℂ) - 0 - 0)) :=
+    hD.congr' hzero
+  have huniq := tendsto_nhds_unique hlim0 tendsto_const_nhds
+  -- 极限唯一性：`↑m − 0 − 0 = 0`，即 `m = 0`
+  have hm0 : analyticOrderNatAt xiFunction s₀ = 0 := by
+    have hm : (analyticOrderNatAt xiFunction s₀ : ℂ) = 0 := by
+      have h2 := huniq
+      simp only [sub_zero] at h2
+      exact h2
+    exact_mod_cast hm
+  -- 与 `ξ s₀ = 0` 矛盾：解析阶为 0 当且仅当函数值非零
+  have hne_top : analyticOrderAt xiFunction s₀ ≠ ⊤ := by
+    intro htop
+    exact xiFunction_ne_eventually_zero s₀ (analyticOrderAt_eq_top.mp htop)
+  have hord0 : analyticOrderAt xiFunction s₀ = 0 := by
+    have hcast := Nat.cast_analyticOrderNatAt hne_top
+    rw [hm0] at hcast
+    rw [← hcast]
+    simp
+  exact ((differentiable_xiFunction.analyticAt
+    s₀).analyticOrderAt_eq_zero.mp hord0) hs₀
+
+/-- **The target forces all zeros of ξ to be simple — unconditional version.** The two
+structural side conditions of `xi_partial_fraction_expansion_target_imp_simple_zeros`
+(every zero of ξ is a nontrivial zero of ζ, and no zero of ξ is real) are themselves
+consequences of the target, proved in `xiFunction_zero_imp_isNontrivialZero` and
+`xi_partial_fraction_expansion_target_im_ne_zero` above. Hence the full strength
+`target ⇒ ∀ zero, analyticOrderNatAt ξ zero = 1` holds with no extra hypotheses. Since the
+simplicity of the zeros of ζ is an open problem independent of RH, the target is not
+provable unconditionally; the multiplicity-weighted series is the correct unconditional
+formulation. -/
+theorem xi_partial_fraction_expansion_target_imp_simple_zeros_unconditional
+    (h : xi_partial_fraction_expansion_target) {s₀ : ℂ} (hs₀ : xiFunction s₀ = 0) :
+    analyticOrderNatAt xiFunction s₀ = 1 :=
+  xi_partial_fraction_expansion_target_imp_simple_zeros h
+    (fun _ hs => ⟨xiFunction_zero_imp_isNontrivialZero hs,
+      xi_partial_fraction_expansion_target_im_ne_zero h hs⟩) hs₀
 
 end RiemannExplorer

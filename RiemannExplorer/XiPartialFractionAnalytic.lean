@@ -279,6 +279,52 @@ theorem differentiableAt_tsum_xiPairedMittagLefflerTerm {s₀ : ℂ}
     exact (differentiableOn_tsum_xiPairedMittagLefflerTerm_high s₀).differentiableAt
       (Metric.ball_mem_nhds s₀ one_pos)
 
+/-- 与 `differentiableAt_tsum_xiPairedMittagLefflerTerm` 同一论证，但把
+「`s₀` 不等于任何上半零点、也不等于任何上半零点的共轭」作为**显式假设**
+（原定理由 `xiFunction s₀ ≠ 0` 推出这两条）。用于 `s₀` 本身是 ξ 的**实**零点
+（从而自动避开所有非实零点及其共轭）的情形。 -/
+theorem differentiableAt_tsum_xiPairedMittagLefflerTerm_of_ne {s₀ : ℂ}
+    (hsρ : ∀ ρ : UpperHalfPlaneNontrivialZero, s₀ ≠ (ρ : ℂ))
+    (hsρc : ∀ ρ : UpperHalfPlaneNontrivialZero, s₀ ≠ conj (ρ : ℂ)) :
+    DifferentiableAt ℂ (fun s => xiPairedMittagLefflerSum s) s₀ := by
+  classical
+  set B := max 2 (2 * (‖s₀‖ + 1)) with hB
+  set F₀ := (PrimeNumberTheorem.nontrivialZerosFinset B).preimage
+      (fun ρ : UpperHalfPlaneNontrivialZero ↦ (ρ : ℂ)) Subtype.coe_injective.injOn
+  -- 函数分解 F = F_low + F_high
+  have hdecomp : (fun s => xiPairedMittagLefflerSum s) =
+      (fun s => ∑' ρ : UpperHalfPlaneNontrivialZero,
+        if ‖(ρ : ℂ)‖ < B then xiPairedMittagLefflerTerm s (ρ : ℂ) else 0) +
+        (fun s => ∑' ρ : UpperHalfPlaneNontrivialZero,
+          if B ≤ ‖(ρ : ℂ)‖ then xiPairedMittagLefflerTerm s (ρ : ℂ) else 0) := by
+    funext s
+    simp only [Pi.add_apply]
+    exact xiPairedMittagLefflerSum_eq_low_add_high B s
+  rw [hdecomp]
+  refine DifferentiableAt.add ?_ ?_
+  · -- 低部：有限和，逐项可微
+    rw [show (fun s => ∑' ρ : UpperHalfPlaneNontrivialZero,
+          if ‖(ρ : ℂ)‖ < B then xiPairedMittagLefflerTerm s (ρ : ℂ) else 0) =
+        fun s => ∑ ρ ∈ F₀,
+          (if ‖(ρ : ℂ)‖ < B then xiPairedMittagLefflerTerm s (ρ : ℂ) else 0)
+      from funext fun s => tsum_xiPairedMittagLefflerTerm_low_eq_sum B s]
+    rw [show (fun s => ∑ ρ ∈ F₀,
+          (if ‖(ρ : ℂ)‖ < B then xiPairedMittagLefflerTerm s (ρ : ℂ) else 0)) =
+        (∑ ρ ∈ F₀, fun s =>
+          if ‖(ρ : ℂ)‖ < B then xiPairedMittagLefflerTerm s (ρ : ℂ) else 0)
+      from funext fun s => by rw [Finset.sum_apply]]
+    refine DifferentiableAt.sum fun ρ _ => ?_
+    by_cases hlt : ‖(ρ : ℂ)‖ < B
+    · rw [show (fun s => if ‖(ρ : ℂ)‖ < B then xiPairedMittagLefflerTerm s (ρ : ℂ) else 0) =
+          fun s => xiPairedMittagLefflerTerm s (ρ : ℂ) from funext fun s => if_pos hlt]
+      exact differentiableAt_xiPairedMittagLefflerTerm (hsρ ρ) (hsρc ρ)
+    · rw [show (fun s => if ‖(ρ : ℂ)‖ < B then xiPairedMittagLefflerTerm s (ρ : ℂ) else 0) =
+          fun _ => 0 from funext fun s => if_neg hlt]
+      exact differentiableAt_const _
+  · -- 高部：球上 DifferentiableOn ⇒ s₀ 处 DifferentiableAt
+    exact (differentiableOn_tsum_xiPairedMittagLefflerTerm_high s₀).differentiableAt
+      (Metric.ball_mem_nhds s₀ one_pos)
+
 /-- 和函数在开集 `{s | ξ s ≠ 0}` 上 `DifferentiableOn`。 -/
 theorem differentiableOn_tsum_xiPairedMittagLefflerTerm :
     DifferentiableOn ℂ xiPairedMittagLefflerSum {s : ℂ | xiFunction s ≠ 0} :=
