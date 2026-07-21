@@ -147,3 +147,5 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.continuous_deBruijnNewmanH_zderiv_two
 #print axioms RiemannExplorer.DeBruijnNewman.de_bruijn_monotone_of_right_open
 #print axioms RiemannExplorer.DeBruijnNewman.de_bruijn_monotone_of_simple_and_no_escape
+#print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewman_simple_zero_velocity
+#print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewman_simple_zero_velocity_heat

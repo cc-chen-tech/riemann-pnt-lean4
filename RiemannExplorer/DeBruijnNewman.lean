@@ -5710,5 +5710,76 @@ theorem de_bruijn_monotone_of_simple_and_no_escape
   · exact hεP hdist z hzK hz
   · exact absurd hz (hout t ⟨ht.1, htδ⟩ z hzK)
 
+/-! ## Phase 2(x)：零点速度（Rodgers–Tao 向量场雏形） -/
+
+/-- **Zero-trajectory velocity, integral form (first Rodgers–Tao block)**: near a
+simple real zero `x₀` of `H_{t₀}`, the implicit-function zero trajectory `ψ`
+moves with complex velocity
+`ψ'(t₀) = −(∂_t H_{t₀}(x₀)) / (∂_z H_{t₀}(x₀))`,
+where `∂_t H` is the `u²`-weighted heat integral. Proof: the identity
+`H_t(ψ t) = 0` holds on a neighborhood, so the composite has derivative `0`
+at `t₀`; the chain rule through the joint derivative `jointFDerivCLM` gives
+`(∂_t H) + (∂_z H) · ψ'(t₀) = 0`, and simplicity lets one divide. -/
+theorem deBruijnNewman_simple_zero_velocity (t₀ : ℝ) (x₀ : ℂ)
+    (hz : deBruijnNewmanH t₀ x₀ = 0) (hD : deriv (deBruijnNewmanH t₀) x₀ ≠ 0)
+    (hx : x₀.im = 0) :
+    ∃ ψ : ℝ → ℂ, DifferentiableAt ℝ ψ t₀ ∧ ψ t₀ = x₀
+      ∧ (∀ᶠ t in nhds t₀, deBruijnNewmanH t (ψ t) = 0)
+      ∧ (∀ᶠ t in nhds t₀, (ψ t).im = 0)
+      ∧ deriv ψ t₀
+        = -(∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand t₀ x₀ u)
+          / deriv (deBruijnNewmanH t₀) x₀ := by
+  obtain ⟨ψ, hψdiff, hψ0, hzero, hreal, -⟩ :=
+    deBruijnNewman_simple_zero_trajectory t₀ x₀ hz hD hx
+  refine ⟨ψ, hψdiff, hψ0, hzero, hreal, ?_⟩
+  have hg0 : HasDerivAt ((fun q : ℝ × ℂ => deBruijnNewmanH q.1 q.2)
+      ∘ fun t : ℝ => (t, ψ t)) 0 t₀ :=
+    (hasDerivAt_const (c := (0 : ℂ)) (x := t₀)).congr_of_eventuallyEq
+      (hzero.mono fun t h => h)
+  have hprod : HasFDerivAt (fun t : ℝ => (t, ψ t))
+      ((ContinuousLinearMap.id ℝ ℝ).prod (fderiv ℝ ψ t₀)) t₀ :=
+    (hasFDerivAt_id t₀).prodMk hψdiff.hasFDerivAt
+  have hcomp := (hasFDerivAt_deBruijnNewmanH_prod (t₀, ψ t₀)).comp
+    (f := fun t : ℝ => (t, ψ t)) (x := t₀) hprod
+  have hval : ((jointFDerivCLM (t₀, ψ t₀).1 (t₀, ψ t₀).2).comp
+      ((ContinuousLinearMap.id ℝ ℝ).prod (fderiv ℝ ψ t₀))) 1
+      = (∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand t₀ (ψ t₀) u)
+        + deriv (deBruijnNewmanH t₀) (ψ t₀) * deriv ψ t₀ := by
+    have hf1 : fderiv ℝ ψ t₀ 1 = deriv ψ t₀ := by
+      have h := hψdiff.hasFDerivAt.unique (hasDerivAt_iff_hasFDerivAt.mp hψdiff.hasDerivAt)
+      rw [h]
+      simp
+    simp [ContinuousLinearMap.comp_apply, ContinuousLinearMap.prod_apply,
+      jointFDerivCLM_apply, hf1]
+  have key : (∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand t₀ (ψ t₀) u)
+      + deriv (deBruijnNewmanH t₀) (ψ t₀) * deriv ψ t₀ = 0 := by
+    have hu := hg0.unique hcomp.hasDerivAt
+    rw [hval] at hu
+    exact hu.symm
+  rw [hψ0] at key
+  have h1 : deriv (deBruijnNewmanH t₀) x₀ * deriv ψ t₀
+      = -(∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand t₀ x₀ u) := by
+    rw [add_comm] at key
+    exact eq_neg_of_add_eq_zero_left key
+  rw [eq_comm, div_eq_iff hD, mul_comm]
+  exact h1.symm
+
+/-- **Zero-trajectory velocity, heat-equation form**: at a simple real zero,
+`ψ'(t₀) = (∂²_z H_{t₀}(x₀)) / (∂_z H_{t₀}(x₀))`.
+This is the Rodgers–Tao velocity field `ż = H_zz / H_z` at a single zero
+(before the Hadamard expansion `H_z/H = Σ 1/(· − zⱼ)` turns it into
+`2 Σ_{j ≠ k} 1/(z_k − z_j)`): the minus sign of the backward heat equation
+`∂²_z H = −∂_t H` cancels the implicit-function minus sign. -/
+theorem deBruijnNewman_simple_zero_velocity_heat (t₀ : ℝ) (x₀ : ℂ)
+    (hz : deBruijnNewmanH t₀ x₀ = 0) (hD : deriv (deBruijnNewmanH t₀) x₀ ≠ 0)
+    (hx : x₀.im = 0) :
+    ∃ ψ : ℝ → ℂ, DifferentiableAt ℝ ψ t₀ ∧ ψ t₀ = x₀
+      ∧ (∀ᶠ t in nhds t₀, deBruijnNewmanH t (ψ t) = 0)
+      ∧ (∀ᶠ t in nhds t₀, (ψ t).im = 0)
+      ∧ deriv ψ t₀
+        = iteratedDeriv 2 (deBruijnNewmanH t₀) x₀ / deriv (deBruijnNewmanH t₀) x₀ := by
+  obtain ⟨ψ, h1, h2, h3, h4, h5⟩ := deBruijnNewman_simple_zero_velocity t₀ x₀ hz hD hx
+  exact ⟨ψ, h1, h2, h3, h4, by rw [h5, deBruijnNewmanH_heat_equation]⟩
+
 end DeBruijnNewman
 end RiemannExplorer
