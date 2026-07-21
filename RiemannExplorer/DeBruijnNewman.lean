@@ -5240,6 +5240,215 @@ theorem continuous_deBruijnNewmanH_zderiv_two :
       from funext fun p => deBruijnNewmanH_heat_equation p.1 p.2]
   exact continuous_deBruijnNewmanH_tderiv.neg
 
+/-! ## Phase 2(viii)b：三阶 `z` 导数层（临界曲线预备） -/
+
+/-- Variant of `heat_decay_eventually_le` carrying an extra factor `u³`
+(absorbed via `u³ ≤ e^{3u}`). Used for the third `z`-derivative and the
+mixed `t`-`z` derivative of the `H_t` integrand. -/
+theorem heat_decay_eventually_le_mul3 (t a C : ℝ) (hC : 0 < C) (ha : 0 ≤ a) :
+    ∀ᶠ u in Filter.atTop,
+      C * u ^ 3 * Real.exp (t * u ^ 2 + a * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))
+        ≤ Real.exp (-u) := by
+  have hmain := heat_decay_eventually_le t (a + 3) C hC (by linarith)
+  filter_upwards [hmain, Filter.eventually_ge_atTop 0] with u hu hu0
+  have hule : u ≤ Real.exp u := by
+    have h := Real.add_one_le_exp u
+    linarith
+  have hu3 : u ^ 3 ≤ Real.exp (3 * u) := by
+    have huu : u * u ≤ Real.exp u * Real.exp u := mul_self_le_mul_self hu0 hule
+    have h1 : u * u * u ≤ Real.exp u * Real.exp u * Real.exp u :=
+      mul_le_mul huu hule hu0 (mul_nonneg (Real.exp_nonneg _) (Real.exp_nonneg _))
+    have h2 : Real.exp u * Real.exp u * Real.exp u = Real.exp (3 * u) := by
+      rw [← Real.exp_add, ← Real.exp_add]
+      congr 1
+      ring
+    calc u ^ 3 = u * u * u := by ring
+      _ ≤ Real.exp u * Real.exp u * Real.exp u := h1
+      _ = Real.exp (3 * u) := h2
+  calc C * u ^ 3 * Real.exp (t * u ^ 2 + a * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))
+      ≤ C * Real.exp (3 * u) * Real.exp (t * u ^ 2 + a * u)
+          * Real.exp (-(Real.pi * Real.exp (4 * u))) := by
+        apply mul_le_mul_of_nonneg_right _ (Real.exp_nonneg _)
+        apply mul_le_mul_of_nonneg_right _ (Real.exp_nonneg _)
+        exact mul_le_mul_of_nonneg_left hu3 (le_of_lt hC)
+    _ = C * Real.exp (t * u ^ 2 + (a + 3) * u)
+          * Real.exp (-(Real.pi * Real.exp (4 * u))) := by
+        have he : Real.exp (3 * u) * Real.exp (t * u ^ 2 + a * u)
+            = Real.exp (t * u ^ 2 + (a + 3) * u) := by
+          rw [← Real.exp_add]
+          congr 1
+          ring
+        have e1 : C * Real.exp (3 * u) * Real.exp (t * u ^ 2 + a * u)
+            * Real.exp (-(Real.pi * Real.exp (4 * u)))
+          = C * (Real.exp (3 * u) * Real.exp (t * u ^ 2 + a * u))
+            * Real.exp (-(Real.pi * Real.exp (4 * u))) := by ring
+        rw [e1, he]
+    _ ≤ Real.exp (-u) := hu
+
+/-- Dominating function for the third `z`-derivative (and the mixed
+`t`-`z` derivative) of the `H_t` integrand:
+`u ↦ (2π² + 3π) · K₁ · u³ · e^{t u² + (9 + c) u} · e^{−π e^{4u}}`. -/
+noncomputable def heatCubeDominatingFun (t c : ℝ) (u : ℝ) : ℝ :=
+  (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst * u ^ 3
+    * Real.exp (t * u ^ 2 + (9 + c) * u)
+    * Real.exp (-(Real.pi * Real.exp (4 * u)))
+
+theorem continuous_heatCubeDominatingFun (t c : ℝ) :
+    Continuous (heatCubeDominatingFun t c) := by
+  unfold heatCubeDominatingFun
+  fun_prop
+
+theorem heatCubeDominatingFun_isBigO (t c : ℝ) (hc : 0 ≤ c) :
+    Asymptotics.IsBigO Filter.atTop (heatCubeDominatingFun t c)
+      fun u : ℝ => Real.exp (-(1:ℝ) * u) := by
+  apply Asymptotics.IsBigO.of_bound'
+  have hC0 : (0:ℝ) ≤ (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst :=
+    mul_nonneg (by positivity) phiTailConst_nonneg
+  have h := heat_decay_eventually_le_mul3 t (9 + c)
+    ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst)
+    (mul_pos (by positivity) phiTailConst_pos) (by linarith)
+  filter_upwards [h, Filter.eventually_ge_atTop 0] with u hu hu0
+  have hdom0 : 0 ≤ heatCubeDominatingFun t c u :=
+    mul_nonneg (mul_nonneg (mul_nonneg hC0 (pow_nonneg hu0 3)) (Real.exp_nonneg _))
+      (Real.exp_nonneg _)
+  rw [Real.norm_eq_abs, abs_of_nonneg hdom0, Real.norm_eq_abs,
+    abs_of_nonneg (Real.exp_nonneg _), neg_mul, one_mul]
+  exact hu
+
+theorem integrableOn_heatCubeDominatingFun (t c : ℝ) (hc : 0 ≤ c) :
+    MeasureTheory.IntegrableOn (heatCubeDominatingFun t c) (Set.Ioi 0)
+      MeasureTheory.volume :=
+  integrable_of_isBigO_exp_neg (show (0:ℝ) < 1 by norm_num)
+    (continuous_heatCubeDominatingFun t c).continuousOn
+    (heatCubeDominatingFun_isBigO t c hc)
+
+/-- **Box bound for the twice-weighted `z`-derivative integrand**: for
+`t ≤ t₁`, `|z.im| ≤ c` and `u ≥ 0`,
+`‖u² · heatIntegrandDeriv t z u‖ ≤ heatCubeDominatingFun t₁ c u`. -/
+theorem norm_sq_mul_heatIntegrandDeriv_le {t t₁ c : ℝ} (ht : t ≤ t₁) (hc : 0 ≤ c)
+    {z : ℂ} (hzim : |z.im| ≤ c) {u : ℝ} (hu : 0 ≤ u) :
+    ‖((u : ℂ) ^ 2) * heatIntegrandDeriv t z u‖ ≤ heatCubeDominatingFun t₁ c u := by
+  have hn : ‖((u : ℂ) ^ 2) * heatIntegrandDeriv t z u‖
+      = u ^ 2 * ‖heatIntegrandDeriv t z u‖ := by
+    rw [norm_mul, norm_pow,
+      show ‖(u : ℂ)‖ = u from by
+        rw [show ‖(u : ℂ)‖ = |u| from RCLike.norm_ofReal u, abs_of_nonneg hu]]
+  rw [hn]
+  calc u ^ 2 * ‖heatIntegrandDeriv t z u‖
+      ≤ u ^ 2 * heatDerivDominatingFun t₁ c u :=
+        mul_le_mul_of_nonneg_left (norm_heatIntegrandDeriv_le ht hc hzim hu)
+          (sq_nonneg u)
+    _ = heatCubeDominatingFun t₁ c u := by
+        unfold heatCubeDominatingFun heatDerivDominatingFun
+        ring
+
+/-- The third `z`-derivative of the integrand integral:
+`(∫ −u² · heatIntegrand)' = ∫ −u² · heatIntegrandDeriv`. -/
+theorem hasDerivAt_integral_negSq_heatIntegrand (t : ℝ) (z₀ : ℂ) :
+    HasDerivAt (fun w : ℂ => ∫ u : ℝ in Set.Ioi 0, -(((u : ℝ) : ℂ) ^ 2) * heatIntegrand t w u)
+      (∫ u : ℝ in Set.Ioi 0, -(((u : ℝ) : ℂ) ^ 2) * heatIntegrandDeriv t z₀ u) z₀ := by
+  set μ := MeasureTheory.volume.restrict (Set.Ioi (0:ℝ)) with hμ
+  have hmeas : ∀ w : ℂ, MeasureTheory.AEStronglyMeasurable
+      (fun u : ℝ => -(((u : ℝ) : ℂ) ^ 2) * heatIntegrand t w u) μ :=
+    fun w => (((Complex.continuous_ofReal.pow 2).neg.mul
+      (continuous_heatIntegrand t w)).continuousOn.aestronglyMeasurable
+      measurableSet_Ioi)
+  have hderv_meas : MeasureTheory.AEStronglyMeasurable
+      (fun u : ℝ => -(((u : ℝ) : ℂ) ^ 2) * heatIntegrandDeriv t z₀ u) μ :=
+    (((Complex.continuous_ofReal.pow 2).neg.mul
+      (continuous_heatIntegrandDeriv t z₀)).continuousOn.aestronglyMeasurable
+      measurableSet_Ioi)
+  have hbound : ∀ᵐ u ∂μ, ∀ w ∈ Metric.ball z₀ 1,
+      ‖-(((u : ℝ) : ℂ) ^ 2) * heatIntegrandDeriv t w u‖
+        ≤ heatCubeDominatingFun t (|z₀.im| + 1) u := by
+    filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_Ioi] with u hu w hw
+    rw [neg_mul, norm_neg]
+    exact norm_sq_mul_heatIntegrandDeriv_le (t := t) (t₁ := t) (c := |z₀.im| + 1)
+      (le_refl t) (by positivity)
+      (abs_im_le_add_one_of_dist_lt_one (Metric.mem_ball.mp hw)) hu.le
+  have hint : MeasureTheory.Integrable (heatCubeDominatingFun t (|z₀.im| + 1)) μ :=
+    integrableOn_heatCubeDominatingFun t (|z₀.im| + 1) (by positivity)
+  have hdiff : ∀ᵐ u ∂μ, ∀ w ∈ Metric.ball z₀ 1,
+      HasDerivAt (fun x => -(((u : ℝ) : ℂ) ^ 2) * heatIntegrand t x u)
+        (-(((u : ℝ) : ℂ) ^ 2) * heatIntegrandDeriv t w u) w :=
+    Filter.Eventually.of_forall fun u w _ =>
+      (heat_integrand_hasDerivAt t u w).const_mul (-(((u : ℝ) : ℂ) ^ 2))
+  have hFint : MeasureTheory.Integrable
+      (fun u : ℝ => -(((u : ℝ) : ℂ) ^ 2) * heatIntegrand t z₀ u) μ := by
+    apply MeasureTheory.Integrable.mono'
+      (integrableOn_heatSqDominatingFun t |z₀.im| (abs_nonneg _))
+    · exact (((Complex.continuous_ofReal.pow 2).neg.mul
+        (continuous_heatIntegrand t z₀)).continuousOn.aestronglyMeasurable
+        measurableSet_Ioi)
+    · filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_Ioi] with u hu
+      rw [neg_mul, norm_neg]
+      exact norm_sq_mul_heatIntegrand_le (le_refl t) (abs_nonneg _) (le_refl _) hu.le
+  exact (hasDerivAt_integral_of_dominated_loc_of_deriv_le
+    (Metric.ball_mem_nhds z₀ (by norm_num : (0:ℝ) < 1))
+    (Filter.Eventually.of_forall hmeas) hFint hderv_meas hbound hint hdiff).2
+
+/-- **The third `z`-derivative**: `∂³_z H_t(z)
+= ∫₀^∞ u³ · e^{tu²} Φ(u) sin(zu) du`, written as `∫ −u² · heatIntegrandDeriv`.
+One more dominated differentiation past `deriv_two_deBruijnNewmanH`. -/
+theorem deriv_three_deBruijnNewmanH (t : ℝ) (z : ℂ) :
+    iteratedDeriv 3 (deBruijnNewmanH t) z
+      = ∫ u : ℝ in Set.Ioi 0, -(((u : ℝ) : ℂ) ^ 2) * heatIntegrandDeriv t z u := by
+  have hEq : iteratedDeriv 2 (deBruijnNewmanH t)
+      = fun w : ℂ => ∫ u : ℝ in Set.Ioi 0, -(((u : ℝ) : ℂ) ^ 2) * heatIntegrand t w u :=
+    funext fun w => by
+      rw [show (2 : ℕ) = 1 + 1 from rfl, iteratedDeriv_succ, iteratedDeriv_one]
+      exact deriv_two_deBruijnNewmanH t w
+  rw [show (3 : ℕ) = 2 + 1 from rfl, iteratedDeriv_succ, hEq]
+  exact (hasDerivAt_integral_negSq_heatIntegrand t z).deriv
+
+/-- **Joint continuity of `∂³_z H`**: dominated convergence with the
+`heatCubeDominatingFun` box bound `norm_sq_mul_heatIntegrandDeriv_le`. -/
+theorem continuous_deBruijnNewmanH_zderiv_three :
+    Continuous fun p : ℝ × ℂ => iteratedDeriv 3 (deBruijnNewmanH p.1) p.2 := by
+  rw [show (fun p : ℝ × ℂ => iteratedDeriv 3 (deBruijnNewmanH p.1) p.2)
+      = fun p : ℝ × ℂ =>
+        ∫ u : ℝ in Set.Ioi 0, -((u : ℂ) ^ 2) * heatIntegrandDeriv p.1 p.2 u
+      from funext fun p => deriv_three_deBruijnNewmanH p.1 p.2]
+  rw [continuous_iff_continuousAt]
+  intro ⟨t₀, z₀⟩
+  set μ := MeasureTheory.volume.restrict (Set.Ioi (0:ℝ)) with hμ
+  have hmeas : ∀ p : ℝ × ℂ, MeasureTheory.AEStronglyMeasurable
+      (fun u : ℝ => -((u : ℂ) ^ 2) * heatIntegrandDeriv p.1 p.2 u) μ :=
+    fun p => (((Complex.continuous_ofReal.pow 2).neg.mul
+      (continuous_heatIntegrandDeriv p.1 p.2)).continuousOn.aestronglyMeasurable
+      measurableSet_Ioi)
+  have hb1 : ∀ᶠ p : ℝ × ℂ in nhds (t₀, z₀), dist p.1 t₀ < 1 :=
+    (continuous_fst.tendsto (t₀, z₀)).eventually (Metric.ball_mem_nhds t₀ zero_lt_one)
+  have hb2 : ∀ᶠ p : ℝ × ℂ in nhds (t₀, z₀), dist p.2 z₀ < 1 :=
+    (continuous_snd.tendsto (t₀, z₀)).eventually (Metric.ball_mem_nhds z₀ zero_lt_one)
+  have hbound : ∀ᶠ p : ℝ × ℂ in nhds (t₀, z₀), ∀ᵐ u : ℝ ∂μ,
+      ‖-((u : ℂ) ^ 2) * heatIntegrandDeriv p.1 p.2 u‖
+        ≤ heatCubeDominatingFun (t₀ + 1) (|z₀.im| + 1) u := by
+    filter_upwards [hb1, hb2] with p hp1 hp2
+    filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_Ioi] with u hu
+    rw [neg_mul, norm_neg]
+    exact norm_sq_mul_heatIntegrandDeriv_le (t := p.1) (t₁ := t₀ + 1)
+      (c := |z₀.im| + 1)
+      (by
+        have h1 : |p.1 - t₀| < 1 := by rw [← Real.dist_eq]; exact hp1
+        linarith [(abs_lt.mp h1).2])
+      (by positivity) (abs_im_le_add_one_of_dist_lt_one hp2) hu.le
+  have hlim : ∀ᵐ u : ℝ ∂μ, Filter.Tendsto
+      (fun p : ℝ × ℂ => -((u : ℂ) ^ 2) * heatIntegrandDeriv p.1 p.2 u)
+      (nhds (t₀, z₀)) (nhds (-((u : ℂ) ^ 2) * heatIntegrandDeriv t₀ z₀ u)) := by
+    apply Filter.Eventually.of_forall
+    intro u
+    have hcont : Continuous
+        (fun p : ℝ × ℂ => -((u : ℂ) ^ 2) * heatIntegrandDeriv p.1 p.2 u) := by
+      unfold heatIntegrandDeriv
+      fun_prop
+    exact hcont.tendsto (t₀, z₀)
+  show Filter.Tendsto _ (nhds (t₀, z₀)) (nhds _)
+  exact MeasureTheory.tendsto_integral_filter_of_dominated_convergence
+    (heatCubeDominatingFun (t₀ + 1) (|z₀.im| + 1))
+    (Filter.Eventually.of_forall hmeas) hbound
+    (integrableOn_heatCubeDominatingFun (t₀ + 1) (|z₀.im| + 1) (by positivity)) hlim
+
 /-- **Diagonal derivative — the zero-transport piece**: if `z(t) → z₀` as
 `t → t₀`, then `t ↦ H_t(z(t)) − H_{t₀}(z(t))` has derivative `∂_t H_{t₀}(z₀)`
 (the `u²`-weighted heat integral) at `t₀`. Proof: the FTC representation

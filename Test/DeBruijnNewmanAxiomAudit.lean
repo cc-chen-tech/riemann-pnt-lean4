@@ -149,3 +149,6 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.de_bruijn_monotone_of_simple_and_no_escape
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewman_simple_zero_velocity
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewman_simple_zero_velocity_heat
+#print axioms RiemannExplorer.DeBruijnNewman.hasDerivAt_integral_negSq_heatIntegrand
+#print axioms RiemannExplorer.DeBruijnNewman.deriv_three_deBruijnNewmanH
+#print axioms RiemannExplorer.DeBruijnNewman.continuous_deBruijnNewmanH_zderiv_three
