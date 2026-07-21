@@ -182,3 +182,5 @@ import RiemannExplorer.DeBruijnNewman
 
 #print axioms RiemannExplorer.DeBruijnNewman.hasDerivAt_deBruijnNewmanHzderiv_two_affine
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanHzderiv_two_z_sub_eq_intervalIntegral
+
+#print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_taylor_three_z

@@ -6242,6 +6242,183 @@ theorem deBruijnNewmanH_taylor_two_z (t : ℝ) (w k : ℂ) :
   rw [← h3]
   ring
 
+/-- **Order-2 Taylor expansion of `H_t` in `z` with cubic integral remainder**:
+`H_t(w + k) = H_t(w) + ∂_z H_t(w)·k + ∂²_z H_t(w)·k²/2 + R₃`, where `R₃` is the
+triple interval integral of `∂³_z H_t` along the segment. Obtained by iterating
+the FTC (`deBruijnNewmanHzderiv_two_z_sub_eq_intervalIntegral`) inside the
+order-1 remainder of `deBruijnNewmanH_taylor_two_z`. Since `∂³_z H` is jointly
+continuous (`continuous_deBruijnNewmanH_zderiv_three`), `R₃` is `O(‖k‖³)` on
+compacts — the quantitative input for excluding non-real zeros of `H_t` near an
+exactly-double real zero after the collision. -/
+theorem deBruijnNewmanH_taylor_three_z (t : ℝ) (w k : ℂ) :
+    deBruijnNewmanH t (w + k)
+      = deBruijnNewmanH t w + deriv (deBruijnNewmanH t) w * k
+        + deriv (deriv (deBruijnNewmanH t)) w * k ^ 2 / 2
+        + ∫ s : ℝ in (0:ℝ)..1,
+          (∫ r : ℝ in (0:ℝ)..1,
+            (∫ q : ℝ in (0:ℝ)..1,
+              iteratedDeriv 3 (deBruijnNewmanH t) (w + ((q * r * s : ℝ) : ℂ) * k)
+                * (((r * s : ℝ) : ℂ) * k))
+              * ((s : ℂ) * k)) * k := by
+  -- substitute the D2-FTC into the order-1 remainder, pointwise in `r, s`
+  have hsub : ∀ r s : ℝ,
+      deriv (deriv (deBruijnNewmanH t)) (w + ((r * s : ℝ) : ℂ) * k)
+      = deriv (deriv (deBruijnNewmanH t)) w
+        + ∫ q : ℝ in (0:ℝ)..1,
+          iteratedDeriv 3 (deBruijnNewmanH t) (w + ((q * r * s : ℝ) : ℂ) * k)
+            * (((r * s : ℝ) : ℂ) * k) := by
+    intro r s
+    have h := deBruijnNewmanHzderiv_two_z_sub_eq_intervalIntegral t w
+      (((r * s : ℝ) : ℂ) * k)
+    rw [sub_eq_iff_eq_add] at h
+    refine (h.trans (add_comm _ _)).trans
+      (congrArg (deriv (deriv (deBruijnNewmanH t)) w + ·) ?_)
+    apply intervalIntegral.integral_congr
+    intro q _
+    show iteratedDeriv 3 (deBruijnNewmanH t) (w + (q : ℂ) * (((r * s : ℝ) : ℂ) * k))
+        * (((r * s : ℝ) : ℂ) * k)
+      = iteratedDeriv 3 (deBruijnNewmanH t) (w + ((q * r * s : ℝ) : ℂ) * k)
+        * (((r * s : ℝ) : ℂ) * k)
+    have hcast : (q : ℂ) * (((r * s : ℝ) : ℂ) * k) = ((q * r * s : ℝ) : ℂ) * k := by
+      push_cast
+      ring
+    rw [hcast]
+  have hpt : ∀ s r : ℝ,
+      deriv (deriv (deBruijnNewmanH t)) (w + ((r * s : ℝ) : ℂ) * k) * ((s : ℂ) * k)
+      = deriv (deriv (deBruijnNewmanH t)) w * ((s : ℂ) * k)
+        + (∫ q : ℝ in (0:ℝ)..1,
+            iteratedDeriv 3 (deBruijnNewmanH t) (w + ((q * r * s : ℝ) : ℂ) * k)
+              * (((r * s : ℝ) : ℂ) * k)) * ((s : ℂ) * k) := by
+    intro s r
+    rw [hsub r s, add_mul]
+  -- continuity of the parametric q-integral (in `r`), and integrability
+  have hcontB : ∀ s : ℝ, Continuous fun r : ℝ =>
+      (∫ q : ℝ in (0:ℝ)..1,
+        iteratedDeriv 3 (deBruijnNewmanH t) (w + ((q * r * s : ℝ) : ℂ) * k)
+          * (((r * s : ℝ) : ℂ) * k)) * ((s : ℂ) * k) := by
+    intro s
+    refine Continuous.mul ?_ continuous_const
+    refine intervalIntegral.continuous_parametric_intervalIntegral_of_continuous'
+      ?_ 0 1
+    exact (continuous_deBruijnNewmanH_zderiv_three.comp
+      (continuous_const.prodMk (continuous_const.add
+        ((Complex.continuous_ofReal.comp
+          ((continuous_snd.mul continuous_fst).mul continuous_const)).mul
+          continuous_const)))).mul
+      ((Complex.continuous_ofReal.comp (continuous_fst.mul continuous_const)).mul
+        continuous_const)
+  have hintA : ∀ s : ℝ, IntervalIntegrable
+      (fun _ : ℝ => deriv (deriv (deBruijnNewmanH t)) w * ((s : ℂ) * k))
+      MeasureTheory.volume 0 1 :=
+    fun _ => intervalIntegrable_const
+  have hintB : ∀ s : ℝ, IntervalIntegrable
+      (fun r : ℝ => (∫ q : ℝ in (0:ℝ)..1,
+          iteratedDeriv 3 (deBruijnNewmanH t) (w + ((q * r * s : ℝ) : ℂ) * k)
+            * (((r * s : ℝ) : ℂ) * k)) * ((s : ℂ) * k))
+      MeasureTheory.volume 0 1 :=
+    fun s => (hcontB s).continuousOn.intervalIntegrable
+  -- split the r-integral into the constant (D2) part and the q-integral part
+  have hsplit : ∀ s : ℝ,
+      (∫ r : ℝ in (0:ℝ)..1,
+        deriv (deriv (deBruijnNewmanH t)) (w + ((r * s : ℝ) : ℂ) * k) * ((s : ℂ) * k))
+      = (∫ r : ℝ in (0:ℝ)..1, deriv (deriv (deBruijnNewmanH t)) w * ((s : ℂ) * k))
+        + ∫ r : ℝ in (0:ℝ)..1,
+          (∫ q : ℝ in (0:ℝ)..1,
+            iteratedDeriv 3 (deBruijnNewmanH t) (w + ((q * r * s : ℝ) : ℂ) * k)
+              * (((r * s : ℝ) : ℂ) * k)) * ((s : ℂ) * k) := by
+    intro s
+    rw [intervalIntegral.integral_congr fun r _ => hpt s r]
+    exact intervalIntegral.integral_add (hintA s) (hintB s)
+  have hconst : ∀ s : ℝ,
+      (∫ r : ℝ in (0:ℝ)..1, deriv (deriv (deBruijnNewmanH t)) w * ((s : ℂ) * k))
+      = deriv (deriv (deBruijnNewmanH t)) w * ((s : ℂ) * k) := by
+    intro s
+    rw [intervalIntegral.integral_const]
+    simp
+  -- the outer s-integral of the constant part is `D2(w)·k²/2`
+  have houter : (∫ s : ℝ in (0:ℝ)..1,
+      deriv (deriv (deBruijnNewmanH t)) w * ((s : ℂ) * k) * k)
+      = deriv (deriv (deBruijnNewmanH t)) w * k ^ 2 / 2 := by
+    have heq : ∀ s : ℝ,
+        deriv (deriv (deBruijnNewmanH t)) w * ((s : ℂ) * k) * k
+        = (deriv (deriv (deBruijnNewmanH t)) w * k ^ 2) * (s : ℂ) := by
+      intro s
+      ring
+    rw [intervalIntegral.integral_congr fun s _ => heq s]
+    have e : (∫ s : ℝ in (0:ℝ)..1,
+        (deriv (deriv (deBruijnNewmanH t)) w * k ^ 2) * (s : ℂ))
+        = (deriv (deriv (deBruijnNewmanH t)) w * k ^ 2)
+          * ∫ s : ℝ in (0:ℝ)..1, (s : ℂ) :=
+      intervalIntegral.integral_const_mul _ _
+    have e2 : (∫ s : ℝ in (0:ℝ)..1, (s : ℂ)) = ↑(∫ s : ℝ in (0:ℝ)..1, s) :=
+      intervalIntegral.integral_ofReal
+    have h3 : (∫ s : ℝ in (0:ℝ)..1, s) = 1 / 2 := by
+      rw [integral_id]
+      norm_num
+    rw [e, e2, h3]
+    push_cast
+    ring
+  -- continuity of the double parametric integral (in `s`), for the final split
+  have hcont2 : Continuous fun s : ℝ =>
+      (∫ r : ℝ in (0:ℝ)..1,
+        (∫ q : ℝ in (0:ℝ)..1,
+          iteratedDeriv 3 (deBruijnNewmanH t) (w + ((q * r * s : ℝ) : ℂ) * k)
+            * (((r * s : ℝ) : ℂ) * k)) * ((s : ℂ) * k)) * k := by
+    refine Continuous.mul ?_ continuous_const
+    refine intervalIntegral.continuous_parametric_intervalIntegral_of_continuous'
+      ?_ 0 1
+    refine Continuous.mul ?_ ?_
+    · refine intervalIntegral.continuous_parametric_intervalIntegral_of_continuous'
+        ?_ 0 1
+      exact (continuous_deBruijnNewmanH_zderiv_three.comp
+        (continuous_const.prodMk (continuous_const.add
+          ((Complex.continuous_ofReal.comp
+            ((continuous_snd.mul continuous_fst.snd).mul
+              continuous_fst.fst)).mul continuous_const)))).mul
+        ((Complex.continuous_ofReal.comp
+          (continuous_fst.snd.mul continuous_fst.fst)).mul continuous_const)
+    · exact (Complex.continuous_ofReal.comp continuous_fst).mul continuous_const
+  have hI1 : IntervalIntegrable
+      (fun s : ℝ => deriv (deriv (deBruijnNewmanH t)) w * ((s : ℂ) * k) * k)
+      MeasureTheory.volume 0 1 :=
+    ((continuous_const.mul
+      (Complex.continuous_ofReal.mul continuous_const)).mul
+      continuous_const).continuousOn.intervalIntegrable
+  have hI2 : IntervalIntegrable
+      (fun s : ℝ => (∫ r : ℝ in (0:ℝ)..1,
+        (∫ q : ℝ in (0:ℝ)..1,
+          iteratedDeriv 3 (deBruijnNewmanH t) (w + ((q * r * s : ℝ) : ℂ) * k)
+            * (((r * s : ℝ) : ℂ) * k)) * ((s : ℂ) * k)) * k)
+      MeasureTheory.volume 0 1 :=
+    hcont2.continuousOn.intervalIntegrable
+  -- assemble: the order-1 remainder equals `D2(w)·k²/2 + R₃`
+  have key : (∫ s : ℝ in (0:ℝ)..1,
+        (∫ r : ℝ in (0:ℝ)..1,
+          deriv (deriv (deBruijnNewmanH t)) (w + ((r * s : ℝ) : ℂ) * k)
+            * ((s : ℂ) * k)) * k)
+      = deriv (deriv (deBruijnNewmanH t)) w * k ^ 2 / 2
+        + ∫ s : ℝ in (0:ℝ)..1,
+          (∫ r : ℝ in (0:ℝ)..1,
+            (∫ q : ℝ in (0:ℝ)..1,
+              iteratedDeriv 3 (deBruijnNewmanH t) (w + ((q * r * s : ℝ) : ℂ) * k)
+                * (((r * s : ℝ) : ℂ) * k))
+              * ((s : ℂ) * k)) * k := by
+    have houter' : ∀ s : ℝ,
+        (∫ r : ℝ in (0:ℝ)..1,
+          deriv (deriv (deBruijnNewmanH t)) (w + ((r * s : ℝ) : ℂ) * k)
+            * ((s : ℂ) * k)) * k
+        = deriv (deriv (deBruijnNewmanH t)) w * ((s : ℂ) * k) * k
+          + (∫ r : ℝ in (0:ℝ)..1,
+            (∫ q : ℝ in (0:ℝ)..1,
+              iteratedDeriv 3 (deBruijnNewmanH t) (w + ((q * r * s : ℝ) : ℂ) * k)
+                * (((r * s : ℝ) : ℂ) * k)) * ((s : ℂ) * k)) * k := by
+      intro s
+      rw [hsplit s, hconst s, add_mul]
+    rw [intervalIntegral.integral_congr fun s _ => houter' s,
+      intervalIntegral.integral_add hI1 hI2, houter]
+  rw [deBruijnNewmanH_taylor_two_z, key]
+  ac_rfl
+
 /-- **Conjugation symmetry of the second `z`-derivative**: `∂²_z H_t(\bar z)
 = \overline{∂²_z H_t(z)}`, transported through the integral representation
 `deriv_two_deBruijnNewmanH` by `Complex.cos_conj`. Together with the heat
