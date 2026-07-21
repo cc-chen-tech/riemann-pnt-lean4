@@ -115,3 +115,8 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_apply_zero_re
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_zero_re_pos
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_exists_ne_zero
+#print axioms RiemannExplorer.DeBruijnNewman.isClosed_allZerosReal
+#print axioms RiemannExplorer.DeBruijnNewman.allZerosReal_lambda
+#print axioms RiemannExplorer.DeBruijnNewman.allZerosReal_zero_of_forall_pos
+#print axioms RiemannExplorer.DeBruijnNewman.forall_pos_allZerosReal_of_lambda_le_zero_of_monotone
+#print axioms RiemannExplorer.DeBruijnNewman.rh_iff_lambda_le_zero_of_monotone

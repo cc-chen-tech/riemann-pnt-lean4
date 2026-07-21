@@ -4731,5 +4731,60 @@ theorem deBruijnNewmanH_zero_exists_ne_zero :
   rw [deBruijnNewmanH_zero_eq_completedZeta, hz, hξ]
   norm_num
 
+/-! ## Phase 2(viii)：零点实性集合的闭性与条件版收官 -/
+
+/-- The zero-reality set `{t | AllZerosReal t}` is closed in `ℝ`: sequential
+closedness is `allZerosReal_of_tendsto` (non-degeneracy at the limit time from
+`deBruijnNewmanH_exists_ne_zero`), and `ℝ` is a sequential space. -/
+theorem isClosed_allZerosReal : IsClosed {t : ℝ | AllZerosReal t} := by
+  apply IsSeqClosed.isClosed
+  intro t t₀ htm htt₀
+  exact allZerosReal_of_tendsto htt₀ (deBruijnNewmanH_exists_ne_zero t₀) htm
+
+/-- If the zero-reality set is nonempty and bounded below, the infimum is a
+member: `AllZerosReal Λ`. -/
+theorem allZerosReal_lambda (hne : {t : ℝ | AllZerosReal t}.Nonempty)
+    (hbdd : BddBelow {t : ℝ | AllZerosReal t}) : AllZerosReal deBruijnNewmanLambda :=
+  isClosed_allZerosReal.csInf_mem hne hbdd
+
+/-- If `AllZerosReal` holds at all positive times, it holds at `0`, via the
+sequence `1/(n+1) ↓ 0` and Hurwitz closedness. -/
+theorem allZerosReal_zero_of_forall_pos (h : ∀ t : ℝ, 0 < t → AllZerosReal t) :
+    AllZerosReal 0 := by
+  apply allZerosReal_of_tendsto (t := fun n : ℕ => ((n : ℝ) + 1)⁻¹) ?_
+    (deBruijnNewmanH_exists_ne_zero 0) (fun n => h _ (by positivity))
+  have h1 : Filter.Tendsto (fun n : ℕ => ((n : ℝ))⁻¹) Filter.atTop (nhds 0) :=
+    tendsto_inv_atTop_nhds_zero_nat
+  simpa using (Filter.tendsto_add_atTop_iff_nat (f := fun n : ℕ => ((n : ℝ))⁻¹) 1).mpr h1
+
+/-- **Conditional de Bruijn step**: under monotonicity, `Λ ≤ 0` (with the
+zero-reality set nonempty) gives `AllZerosReal s` for every positive `s`:
+either `csInf_lt_iff` (bounded case) or bare unboundedness supplies a member
+below `s`, and monotonicity lifts it to `s`. -/
+theorem forall_pos_allZerosReal_of_lambda_le_zero_of_monotone
+    (hmono : de_bruijn_monotone_target) (hne : {t : ℝ | AllZerosReal t}.Nonempty)
+    (hΛ : deBruijnNewmanLambda ≤ 0) :
+    ∀ s : ℝ, 0 < s → AllZerosReal s := by
+  intro s hs
+  have hlt : deBruijnNewmanLambda < s := lt_of_le_of_lt hΛ hs
+  obtain ⟨t, ht, hts⟩ : ∃ t ∈ {t : ℝ | AllZerosReal t}, t < s := by
+    by_cases hb : BddBelow {t : ℝ | AllZerosReal t}
+    · exact (csInf_lt_iff hb hne).mp hlt
+    · exact not_bddBelow_iff.mp hb s
+  exact hmono ht hts.le
+
+/-- **Conditional endpoint (Phase 2 target)**: under de Bruijn monotonicity and
+nonemptiness of the zero-reality set, `RH ⇔ Λ ≤ 0`. The forward direction is
+`lambda_le_zero_of_rh` (unconditional); the reverse lifts `Λ ≤ 0` through
+monotonicity to all positive times and closes at `0` by Hurwitz. -/
+theorem rh_iff_lambda_le_zero_of_monotone (hmono : de_bruijn_monotone_target)
+    (hne : {t : ℝ | AllZerosReal t}.Nonempty) : rh_iff_lambda_le_zero_target := by
+  constructor
+  · exact lambda_le_zero_of_rh
+  · intro hΛ
+    apply statement_iff_allZerosReal_zero.mpr
+    apply allZerosReal_zero_of_forall_pos
+    exact forall_pos_allZerosReal_of_lambda_le_zero_of_monotone hmono hne hΛ
+
 end DeBruijnNewman
 end RiemannExplorer
