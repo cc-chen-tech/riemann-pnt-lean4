@@ -684,4 +684,325 @@ theorem logDeriv_xiBlaschkeRegularized {R : ℝ} (hR : 0 < R) {g : ℂ → ℂ}
     logDeriv_mul z hξz hBne differentiable_xiFunction.differentiableAt hBan.differentiableAt
   rw [← hF, logDeriv_apply, logDeriv_apply, hder, ← hval]
 
+/-- **C1 主定理（圆盘零点主部估计）**：存在常数 `C ≥ 0`，对所有 `R ≥ 4` 与
+`z ∈ closedBall 0 (R/2)`（`ξ z ≠ 0`），
+
+`‖ξ'/ξ(z) − ∑ᶠ u, (D_R u : ℂ)·(z−u)⁻¹‖ ≤ C·(1 + log R)²`，
+
+其中 `D_R` 为 ξ 在 `closedBall 0 R` 上的零点除子。证明：Blaschke 正则化 `g = ξ·B_R`
+（`exists_xiBlaschkeRegularized`）满足 `logDeriv g = logDeriv ξ + logDeriv B_R`
+（`logDeriv_xiBlaschkeRegularized`）；`logDeriv g` 由 Borel–Carathéodory
+（`ZeroFreeRegion.norm_logDeriv_le_..._of_center_lower`）控制为 `O(log R)`；
+`logDeriv B_R` 的 `(z−u)⁻¹` 部分给出除子和，共轭部分每项 `≤ 2m_u/(7R)`，
+再由 Jensen 计数 `xi_zero_count_in_closedBall_le` 吸收为 `O(log R)`。 -/
+theorem xi_logDeriv_sub_finsum_divisor_le :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ R : ℝ, 4 ≤ R → ∀ z ∈ Metric.closedBall 0 (R / 2),
+      xiFunction z ≠ 0 →
+        ‖(logDeriv xiFunction z - (∑ᶠ u, ((MeromorphicOn.divisor xiFunction
+          (Metric.closedBall 0 R) u : ℤ) : ℂ) * (z - u)⁻¹))‖ ≤ C * (1 + Real.log R) ^ 2 := by
+  obtain ⟨K₀, hgr⟩ := exists_norm_xiFunction_le_exp_order_one
+  obtain ⟨K₁, _hK₁0, hcirc⟩ := exists_circleAverage_log_norm_xi_le
+  refine ⟨(48 + 4 / (7 * Real.log 2)) * (3 * max (max K₀ 0) K₁ + 1), ?_,
+    fun R hR z hz hξz => ?_⟩
+  · have hL2 : (0 : ℝ) < Real.log 2 := Real.log_pos (by norm_num)
+    have hK0 : 0 ≤ max (max K₀ 0) K₁ := le_trans (le_max_right _ _) (le_max_left _ _)
+    positivity
+  · have hR0 : (0 : ℝ) < R := by linarith
+    have hL2 : (0 : ℝ) < Real.log 2 := Real.log_pos (by norm_num)
+    have hlogR0 : (0 : ℝ) ≤ Real.log R := Real.log_nonneg (by linarith)
+    have hK0 : 0 ≤ max (max K₀ 0) K₁ := le_trans (le_max_right _ _) (le_max_left _ _)
+    have hK0le : K₀ ≤ max (max K₀ 0) K₁ := le_trans (le_max_left _ _) (le_max_left _ _)
+    have hK1le : K₁ ≤ max (max K₀ 0) K₁ := le_max_right _ _
+    -- 统一常数 `K` 后的增长界与圆平均界
+    have hgrowK : ∀ s : ℂ, ‖xiFunction s‖ ≤
+        Real.exp (max (max K₀ 0) K₁ * (1 + ‖s‖) * Real.log (4 + ‖s‖)) := by
+      intro s
+      refine (hgr s).trans (Real.exp_le_exp.mpr ?_)
+      have hnn : (0 : ℝ) ≤ (1 + ‖s‖) * Real.log (4 + ‖s‖) :=
+        mul_nonneg (by positivity) (Real.log_nonneg (by linarith [norm_nonneg s]))
+      calc K₀ * (1 + ‖s‖) * Real.log (4 + ‖s‖)
+          = K₀ * ((1 + ‖s‖) * Real.log (4 + ‖s‖)) := mul_assoc _ _ _
+        _ ≤ max (max K₀ 0) K₁ * ((1 + ‖s‖) * Real.log (4 + ‖s‖)) :=
+            mul_le_mul_of_nonneg_right hK0le hnn
+        _ = max (max K₀ 0) K₁ * (1 + ‖s‖) * Real.log (4 + ‖s‖) := (mul_assoc _ _ _).symm
+    have hcircK : ∀ t : ℝ, 0 < t → circleAverage (Real.log ‖xiFunction ·‖) 0 t ≤
+        max (max K₀ 0) K₁ * (1 + t) * Real.log (4 + t) := by
+      intro t ht
+      refine (hcirc t ht).trans ?_
+      have h1 : (0 : ℝ) ≤ 1 + t := by linarith
+      have h2 : (0 : ℝ) ≤ Real.log (4 + t) := Real.log_nonneg (by linarith)
+      calc K₁ * (1 + t) * Real.log (4 + t)
+          = K₁ * ((1 + t) * Real.log (4 + t)) := mul_assoc _ _ _
+        _ ≤ max (max K₀ 0) K₁ * ((1 + t) * Real.log (4 + t)) :=
+            mul_le_mul_of_nonneg_right hK1le (mul_nonneg h1 h2)
+        _ = max (max K₀ 0) K₁ * (1 + t) * Real.log (4 + t) := (mul_assoc _ _ _).symm
+    -- Jensen 零点计数
+    have hcnt0 := xi_zero_count_in_closedBall_le hcircK R hR
+    -- Blaschke 正则化函数 `g`
+    obtain ⟨g, hgA, hgne, hg⟩ := exists_xiBlaschkeRegularized hR0
+    have hgC : ContinuousOn g (Metric.ball (0 : ℂ) (3 * R)) := hgA.continuousOn
+    have hA0 : (0 : ℝ) ≤ max (max K₀ 0) K₁ * (1 + 2 * R) * Real.log (4 + 2 * R) :=
+      mul_nonneg (mul_nonneg hK0 (by linarith)) (Real.log_nonneg (by linarith))
+    -- 外圈 `sphere 0 (2R)` 上的范数上界
+    have hfront : ∀ w ∈ Metric.sphere (0 : ℂ) (2 * R),
+        ‖g w‖ ≤ Real.exp (max (max K₀ 0) K₁ * (1 + 2 * R) * Real.log (4 + 2 * R)) := by
+      intro w hw
+      by_cases hgw : g w = 0
+      · rw [hgw, norm_zero]
+        exact Real.exp_nonneg _
+      · rw [← Real.exp_log (norm_pos_iff.mpr hgw)]
+        exact Real.exp_le_exp.mpr
+          (log_norm_xiBlaschkeRegularized_le_of_mem_sphere hR0 hK0 hgrowK hg hgC hw)
+    -- 最大模原理：`closedBall 0 (2R)` 上的范数上界
+    have hd : DiffContOnCl ℂ g (Metric.ball (0 : ℂ) (2 * R)) :=
+      hgA.differentiableOn.diffContOnCl_ball
+        (Metric.closedBall_subset_ball (by linarith : 2 * R < 3 * R))
+    have hnormle : ∀ w ∈ Metric.closedBall (0 : ℂ) (2 * R),
+        ‖g w‖ ≤ Real.exp (max (max K₀ 0) K₁ * (1 + 2 * R) * Real.log (4 + 2 * R)) := by
+      intro w hw
+      refine Complex.norm_le_of_forall_mem_frontier_norm_le Metric.isBounded_ball hd
+        (fun w' hw' => hfront w' (Metric.frontier_ball_subset_sphere hw')) ?_
+      rwa [closure_ball (0 : ℂ) (by linarith : (2 * R) ≠ 0)]
+    -- `sphere 0 R` 上的对数上界
+    have hsphere : ∀ w ∈ Metric.sphere (0 : ℂ) R,
+        Real.log ‖g w‖ ≤ max (max K₀ 0) K₁ * (1 + 2 * R) * Real.log (4 + 2 * R) := by
+      intro w hw
+      have hw' : ‖w‖ = R := by
+        have h := hw
+        rw [Metric.mem_sphere, dist_zero_right] at h
+        exact h
+      have hwcl : w ∈ Metric.closedBall (0 : ℂ) (2 * R) := by
+        rw [Metric.mem_closedBall, dist_zero_right, hw']
+        linarith
+      by_cases hgw : g w = 0
+      · rw [hgw, norm_zero, Real.log_zero]
+        exact hA0
+      · have hle := Real.log_le_log (norm_pos_iff.mpr hgw) (hnormle w hwcl)
+        rwa [Real.log_exp] at hle
+    -- 圆心下界 + Borel–Carathéodory
+    have hcenter := center_lower_xiBlaschkeRegularized hR0 hg hgC
+    have hBor :=
+      ZeroFreeRegion.norm_logDeriv_le_four_mul_max_sub_mul_add_div_sq_of_sphere_log_norm_le_of_center_lower
+        hR0 (by positivity : (0 : ℝ) ≤ R / 2) (by linarith : R / 2 < R)
+        (hgA.mono (Metric.closedBall_subset_ball (by linarith : R < 3 * R)))
+        hgne hcenter hsphere hz
+    have hBor' : ‖logDeriv g z‖ ≤
+        24 * max (max (max K₀ 0) K₁ * (1 + 2 * R) * Real.log (4 + 2 * R)
+          - Real.log (1 / 2)) 1 / R := by
+      refine hBor.trans (le_of_eq ?_)
+      field_simp [hR0.ne', show (R - R / 2 : ℝ) ≠ 0 from ne_of_gt (by linarith)]
+      ring
+    have hM1 : max (max (max K₀ 0) K₁ * (1 + 2 * R) * Real.log (4 + 2 * R)
+          - Real.log (1 / 2)) 1 ≤
+        max (max K₀ 0) K₁ * (1 + 2 * R) * Real.log (4 + 2 * R) + Real.log 2 + 1 := by
+      have hL12 : Real.log (1 / 2 : ℝ) = -Real.log 2 := by
+        rw [show (1 / 2 : ℝ) = (2 : ℝ)⁻¹ by norm_num, Real.log_inv]
+      rw [hL12, sub_neg_eq_add]
+      exact max_le_iff.mpr ⟨by linarith, by linarith⟩
+    have hBor2 : ‖logDeriv g z‖ ≤
+        24 * (max (max K₀ 0) K₁ * (1 + 2 * R) * Real.log (4 + 2 * R)
+          + Real.log 2 + 1) / R :=
+      hBor'.trans (by
+        rw [div_le_div_iff₀ hR0 hR0]
+        exact mul_le_mul_of_nonneg_right
+          (mul_le_mul_of_nonneg_left hM1 (by norm_num : (0 : ℝ) ≤ 24)) hR0.le)
+    -- 对数估计：`log(4+2R) ≤ 2(1+log R)`、`log 2 < 1`、`log 6 < 2`
+    have hlog2lt : Real.log 2 < 1 := by
+      have h := Real.log_two_lt_d9
+      linarith
+    have hlog6 : Real.log 6 < 2 := by
+      have h6e : (6 : ℝ) < Real.exp 2 := by
+        have h1 := Real.exp_one_gt_d9
+        have he2 : Real.exp 2 = Real.exp 1 * Real.exp 1 := by
+          rw [← Real.exp_add]
+          norm_num
+        nlinarith [Real.exp_pos 1]
+      calc Real.log 6 < Real.log (Real.exp 2) := Real.log_lt_log (by norm_num) h6e
+        _ = 2 := Real.log_exp 2
+    have hlog42 : Real.log (4 + 2 * R) ≤ 2 * (1 + Real.log R) := by
+      have h1 : (4 : ℝ) + 2 * R ≤ 6 * R := by linarith
+      have h2 := Real.log_le_log (show (0 : ℝ) < 4 + 2 * R by positivity) h1
+      rw [Real.log_mul (by norm_num : (6 : ℝ) ≠ 0) hR0.ne'] at h2
+      linarith
+    have hA_le : max (max K₀ 0) K₁ * (1 + 2 * R) * Real.log (4 + 2 * R) ≤
+        6 * max (max K₀ 0) K₁ * R * (1 + Real.log R) := by
+      have h12 : (1 : ℝ) + 2 * R ≤ 3 * R := by linarith
+      have h3 := mul_le_mul (mul_le_mul_of_nonneg_left h12 hK0) hlog42
+        (Real.log_nonneg (by linarith : (1 : ℝ) ≤ 4 + 2 * R))
+        (mul_nonneg hK0 (by linarith : (0 : ℝ) ≤ 3 * R))
+      have heq : max (max K₀ 0) K₁ * (3 * R) * (2 * (1 + Real.log R)) =
+          6 * max (max K₀ 0) K₁ * R * (1 + Real.log R) := by ring
+      rwa [heq] at h3
+    have hAbound : max (max K₀ 0) K₁ * (1 + 2 * R) * Real.log (4 + 2 * R)
+          + Real.log 2 + 1 ≤
+        2 * (3 * max (max K₀ 0) K₁ + 1) * R * (1 + Real.log R) := by
+      nlinarith [hA_le, hlog2lt.le, hlogR0, hR, mul_nonneg hR0.le hlogR0]
+    have hT1 : 24 * (max (max K₀ 0) K₁ * (1 + 2 * R) * Real.log (4 + 2 * R)
+          + Real.log 2 + 1) / R ≤
+        48 * (3 * max (max K₀ 0) K₁ + 1) * (1 + Real.log R) := by
+      rw [div_le_iff₀ hR0]
+      calc 24 * (max (max K₀ 0) K₁ * (1 + 2 * R) * Real.log (4 + 2 * R)
+              + Real.log 2 + 1)
+          ≤ 24 * (2 * (3 * max (max K₀ 0) K₁ + 1) * R * (1 + Real.log R)) :=
+            mul_le_mul_of_nonneg_left hAbound (by norm_num)
+        _ = 48 * (3 * max (max K₀ 0) K₁ + 1) * (1 + Real.log R) * R := by ring
+    have hT2 : (2 / (7 * R)) * ((max (max K₀ 0) K₁ * (1 + 2 * R) * Real.log (4 + 2 * R)
+          + Real.log 2) / Real.log 2) ≤
+        (4 / (7 * Real.log 2)) * (3 * max (max K₀ 0) K₁ + 1) * (1 + Real.log R) := by
+      have h1 : (max (max K₀ 0) K₁ * (1 + 2 * R) * Real.log (4 + 2 * R)
+            + Real.log 2) / Real.log 2 ≤
+          (2 * (3 * max (max K₀ 0) K₁ + 1) * R * (1 + Real.log R)) / Real.log 2 := by
+        rw [div_le_div_iff₀ hL2 hL2]
+        exact mul_le_mul_of_nonneg_right (by linarith [hAbound]) hL2.le
+      have h2 := mul_le_mul_of_nonneg_left h1 (by positivity : (0 : ℝ) ≤ 2 / (7 * R))
+      have heq : (2 / (7 * R)) *
+            ((2 * (3 * max (max K₀ 0) K₁ + 1) * R * (1 + Real.log R)) / Real.log 2) =
+          (4 / (7 * Real.log 2)) * (3 * max (max K₀ 0) K₁ + 1) * (1 + Real.log R) := by
+        field_simp [hR0.ne', hL2.ne']
+        ring
+      rwa [heq] at h2
+    -- z 侧的零点/范数事实
+    have hzS : z ∉ xiZeroDiscFinset R :=
+      fun h => hξz (xiFunction_eq_zero_of_mem_xiZeroDiscFinset h)
+    have hzR2 : ‖z‖ ≤ R / 2 := by
+      have hz' := hz
+      rw [Metric.mem_closedBall, dist_zero_right] at hz'
+      exact hz'
+    have hz2R : z ∈ Metric.closedBall (0 : ℂ) (2 * R) := by
+      rw [Metric.mem_closedBall, dist_zero_right]
+      linarith
+    -- 对数导数恒等式
+    have hlogB := logDeriv_xiBlaschkeProd hR0 hz2R (fun u hu h => hzS (h ▸ hu))
+    have hlogg := logDeriv_xiBlaschkeRegularized hR0 hg hgC hz hzS hξz
+    -- finsum → 有限和（ℂ 与 ℝ 两个版本）
+    have hfinsum : (∑ᶠ u, ((MeromorphicOn.divisor xiFunction
+            (Metric.closedBall 0 R) u : ℤ) : ℂ) * (z - u)⁻¹)
+        = ∑ u ∈ xiZeroDiscFinset R, (xiZeroDiscMult R u : ℂ) * (z - u)⁻¹ := by
+      have hsupp : (Function.support fun u => ((MeromorphicOn.divisor xiFunction
+              (Metric.closedBall 0 R) u : ℤ) : ℂ) * (z - u)⁻¹) ⊆
+          ↑(xiZeroDiscFinset R) := by
+        intro u hu
+        rw [Function.mem_support] at hu
+        by_contra huS
+        rw [Finset.mem_coe, mem_xiZeroDiscFinset] at huS
+        push_neg at huS
+        exact hu (by
+          show ((MeromorphicOn.divisor xiFunction (Metric.closedBall 0 R) u : ℤ) : ℂ)
+              * (z - u)⁻¹ = 0
+          rw [huS]
+          simp)
+      rw [finsum_eq_sum_of_support_subset _ hsupp]
+      refine Finset.sum_congr rfl fun u hu => ?_
+      rw [← xiZeroDiscMult_cast R u]
+      norm_cast
+    have hcnt_eq : (∑ᶠ u ∈ Metric.closedBall (0 : ℂ) R,
+          ((MeromorphicOn.divisor xiFunction (Metric.closedBall 0 R) u : ℤ) : ℝ))
+        = ∑ u ∈ xiZeroDiscFinset R, (xiZeroDiscMult R u : ℝ) := by
+      rw [finsum_mem_def]
+      have hsupp : (Function.support ((Metric.closedBall (0 : ℂ) R).indicator
+              fun u => ((MeromorphicOn.divisor xiFunction
+                (Metric.closedBall 0 R) u : ℤ) : ℝ))) ⊆ ↑(xiZeroDiscFinset R) := by
+        intro u hu
+        rw [Function.mem_support] at hu
+        by_contra huS
+        rw [Finset.mem_coe, mem_xiZeroDiscFinset] at huS
+        push_neg at huS
+        exact hu (by
+          show (Metric.closedBall (0 : ℂ) R).indicator (fun u =>
+              ((MeromorphicOn.divisor xiFunction (Metric.closedBall 0 R) u : ℤ) : ℝ)) u = 0
+          by_cases hmem : u ∈ Metric.closedBall (0 : ℂ) R
+          · rw [Set.indicator_of_mem hmem]
+            show ((MeromorphicOn.divisor xiFunction (Metric.closedBall 0 R) u : ℤ) : ℝ) = 0
+            rw [huS]
+            simp
+          · rw [Set.indicator_of_notMem hmem])
+      rw [finsum_eq_sum_of_support_subset _ hsupp]
+      refine Finset.sum_congr rfl fun u hu => ?_
+      rw [Set.indicator_of_mem (xiZeroDiscFinset_subset_closedBall hu),
+        ← xiZeroDiscMult_cast R u]
+      norm_cast
+    have hcnt' : ∑ u ∈ xiZeroDiscFinset R, (xiZeroDiscMult R u : ℝ) ≤
+        (max (max K₀ 0) K₁ * (1 + 2 * R) * Real.log (4 + 2 * R) + Real.log 2)
+          / Real.log 2 := by
+      rw [hcnt_eq] at hcnt0
+      exact hcnt0
+    -- 共轭项逐项上界 `≤ m_u · 2/(7R)`
+    have hterm : ∀ u ∈ xiZeroDiscFinset R,
+        ‖(xiZeroDiscMult R u : ℂ) * ((conj u)
+            / (((2 * R : ℝ) : ℂ) ^ 2 - conj u * z))‖ ≤
+          (xiZeroDiscMult R u : ℝ) * (2 / (7 * R)) := by
+      intro u hu
+      have huB := xiZeroDiscFinset_subset_closedBall hu
+      rw [Metric.mem_closedBall, dist_zero_right] at huB
+      have hNnorm : 7 * R ^ 2 / 2 ≤ ‖(((2 * R : ℝ) : ℂ) ^ 2 - conj u * z)‖ := by
+        have h1 : ‖(((2 * R : ℝ) : ℂ) ^ 2)‖ - ‖conj u * z‖ ≤
+            ‖(((2 * R : ℝ) : ℂ) ^ 2 - conj u * z)‖ := norm_sub_norm_le _ _
+        have h2 : ‖(((2 * R : ℝ) : ℂ) ^ 2)‖ = (2 * R) ^ 2 := by
+          rw [norm_pow, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg (by positivity)]
+        have h3 : ‖conj u * z‖ ≤ R * (R / 2) := by
+          rw [norm_mul, norm_conj]
+          exact mul_le_mul huB hzR2 (norm_nonneg _) (by linarith)
+        rw [h2] at h1
+        nlinarith [h1, h3, hR0]
+      have hNpos : 0 < ‖(((2 * R : ℝ) : ℂ) ^ 2 - conj u * z)‖ :=
+        lt_of_lt_of_le (by positivity) hNnorm
+      rw [norm_mul, norm_div, RCLike.norm_natCast, norm_conj]
+      rcases eq_or_lt_of_le (Nat.cast_nonneg (xiZeroDiscMult R u) :
+        (0 : ℝ) ≤ (xiZeroDiscMult R u : ℝ)) with hm | hm
+      · rw [← hm]
+        simp
+      · refine mul_le_mul_of_nonneg_left ?_ hm.le
+        rw [div_le_div_iff₀ hNpos (by positivity : (0 : ℝ) < 7 * R)]
+        nlinarith [hNnorm, huB, hR0,
+          mul_nonneg (sub_nonneg.mpr huB) (show (0 : ℝ) ≤ 7 * R by linarith)]
+    have hsumle : ‖∑ u ∈ xiZeroDiscFinset R, (xiZeroDiscMult R u : ℂ) * ((conj u)
+            / (((2 * R : ℝ) : ℂ) ^ 2 - conj u * z))‖ ≤
+        (2 / (7 * R)) * ((max (max K₀ 0) K₁ * (1 + 2 * R) * Real.log (4 + 2 * R)
+          + Real.log 2) / Real.log 2) := by
+      calc ‖∑ u ∈ xiZeroDiscFinset R, (xiZeroDiscMult R u : ℂ) * ((conj u)
+              / (((2 * R : ℝ) : ℂ) ^ 2 - conj u * z))‖
+          ≤ ∑ u ∈ xiZeroDiscFinset R, ‖(xiZeroDiscMult R u : ℂ) * ((conj u)
+              / (((2 * R : ℝ) : ℂ) ^ 2 - conj u * z))‖ := norm_sum_le _ _
+        _ ≤ ∑ u ∈ xiZeroDiscFinset R, (xiZeroDiscMult R u : ℝ) * (2 / (7 * R)) :=
+            Finset.sum_le_sum hterm
+        _ = (∑ u ∈ xiZeroDiscFinset R, (xiZeroDiscMult R u : ℝ)) * (2 / (7 * R)) :=
+            (Finset.sum_mul _ _ _).symm
+        _ ≤ ((max (max K₀ 0) K₁ * (1 + 2 * R) * Real.log (4 + 2 * R) + Real.log 2)
+              / Real.log 2) * (2 / (7 * R)) :=
+            mul_le_mul_of_nonneg_right hcnt' (by positivity)
+        _ = (2 / (7 * R)) * ((max (max K₀ 0) K₁ * (1 + 2 * R) * Real.log (4 + 2 * R)
+              + Real.log 2) / Real.log 2) := by ring
+    -- 关键恒等式：`logDeriv ξ z − ∑ᶠ = logDeriv g z + Σ m_u·conj u/N_u`
+    have hsum : ∑ u ∈ xiZeroDiscFinset R, (xiZeroDiscMult R u : ℂ) *
+          (-(conj u) / (((2 * R : ℝ) : ℂ) ^ 2 - conj u * z) - (z - u)⁻¹)
+        = -(∑ u ∈ xiZeroDiscFinset R, (xiZeroDiscMult R u : ℂ) * ((conj u)
+            / (((2 * R : ℝ) : ℂ) ^ 2 - conj u * z)))
+          - ∑ u ∈ xiZeroDiscFinset R, (xiZeroDiscMult R u : ℂ) * (z - u)⁻¹ := by
+      rw [← Finset.sum_neg_distrib, ← Finset.sum_sub_distrib]
+      refine Finset.sum_congr rfl fun u _ => ?_
+      ring
+    have hkey : logDeriv xiFunction z - (∑ᶠ u, ((MeromorphicOn.divisor xiFunction
+            (Metric.closedBall 0 R) u : ℤ) : ℂ) * (z - u)⁻¹)
+        = logDeriv g z + ∑ u ∈ xiZeroDiscFinset R, (xiZeroDiscMult R u : ℂ) *
+            ((conj u) / (((2 * R : ℝ) : ℂ) ^ 2 - conj u * z)) := by
+      have h1 : logDeriv xiFunction z = logDeriv g z - logDeriv (xiBlaschkeProd R) z := by
+        rw [hlogg]
+        ring
+      rw [hfinsum, h1, hlogB, hsum]
+      ring
+    -- 合并各项
+    rw [hkey]
+    refine (norm_add_le _ _).trans ?_
+    refine (add_le_add (hBor2.trans hT1) (hsumle.trans hT2)).trans ?_
+    have hW1 : (1 : ℝ) ≤ 1 + Real.log R := by linarith
+    have hW2 : 1 + Real.log R ≤ (1 + Real.log R) ^ 2 := by
+      have h := mul_le_mul_of_nonneg_right hW1 (by linarith : (0 : ℝ) ≤ 1 + Real.log R)
+      rwa [one_mul, ← pow_two] at h
+    calc 48 * (3 * max (max K₀ 0) K₁ + 1) * (1 + Real.log R)
+          + (4 / (7 * Real.log 2)) * (3 * max (max K₀ 0) K₁ + 1) * (1 + Real.log R)
+        = (48 + 4 / (7 * Real.log 2)) * (3 * max (max K₀ 0) K₁ + 1)
+          * (1 + Real.log R) := by ring
+      _ ≤ (48 + 4 / (7 * Real.log 2)) * (3 * max (max K₀ 0) K₁ + 1)
+          * (1 + Real.log R) ^ 2 := mul_le_mul_of_nonneg_left hW2 (by positivity)
+
 end RiemannExplorer

@@ -156,3 +156,9 @@ import RiemannExplorer.XiLogDerivDisc
 #print axioms RiemannExplorer.exists_upperZeros_tail_weighted_norm_inv_sq_le
 #print axioms RiemannExplorer.exists_circleAverage_log_norm_xi_le
 #print axioms RiemannExplorer.xi_zero_count_in_closedBall_le
+#print axioms RiemannExplorer.exists_xiBlaschkeRegularized
+#print axioms RiemannExplorer.log_norm_xiBlaschkeRegularized_le_of_mem_sphere
+#print axioms RiemannExplorer.center_lower_xiBlaschkeRegularized
+#print axioms RiemannExplorer.logDeriv_xiBlaschkeProd
+#print axioms RiemannExplorer.logDeriv_xiBlaschkeRegularized
+#print axioms RiemannExplorer.xi_logDeriv_sub_finsum_divisor_le
