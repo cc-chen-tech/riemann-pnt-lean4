@@ -12,6 +12,7 @@ import RiemannExplorer.XiPartialFractionEntire
 import RiemannExplorer.XiGrowthOrder
 import RiemannExplorer.ZetaRealSegment
 import RiemannExplorer.XiPartialFractionWeighted
+import RiemannExplorer.XiZeroCountingBounds
 
 #print axioms RiemannExplorer.xiFunction_one_sub
 #print axioms RiemannExplorer.xiFunction_zero
@@ -150,3 +151,5 @@ import RiemannExplorer.XiPartialFractionWeighted
 #print axioms RiemannExplorer.xiWeightedMittagLefflerSum_zero_left
 #print axioms RiemannExplorer.xiWeightedEntireCorrection_zero
 #print axioms RiemannExplorer.xi_weighted_partial_fraction_expansion_of_const_correction
+#print axioms RiemannExplorer.exists_upperZeros_weighted_norm_inv_le_log_sq
+#print axioms RiemannExplorer.exists_upperZeros_tail_weighted_norm_inv_sq_le
