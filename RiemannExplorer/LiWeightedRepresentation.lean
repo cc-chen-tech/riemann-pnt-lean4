@@ -178,4 +178,380 @@ theorem analyticOrderNatAt_xiFunction_one_sub_conj (s₀ : ℂ) :
     · simp [Complex.sub_im, Complex.conj_im]
   rw [h1, analyticOrderNatAt_xiFunction_conj, analyticOrderNatAt_xiFunction_one_sub]
 
+/-! ## Part 3：重数加权逆幂级数 `D_j` 的逐项微分 -/
+
+/-- 重数加权逆幂配对项：`m_ξ(ρ)·((s-ρ)⁻¹^j + (s-conjρ)⁻¹^j)`。 -/
+noncomputable def xiWeightedInvPowTerm (j : ℕ) (s ρ : ℂ) : ℂ :=
+  (analyticOrderNatAt xiFunction ρ : ℂ) * ((s - ρ)⁻¹ ^ j + (s - conj ρ)⁻¹ ^ j)
+
+/-- 重数加权逆幂配对级数 `D_j(s)`。 -/
+noncomputable def xiWeightedInvPowSum (j : ℕ) (s : ℂ) : ℂ :=
+  ∑' ρ : UpperHalfPlaneNontrivialZero, xiWeightedInvPowTerm j s (ρ : ℂ)
+
+/-- M-判别界函数：`‖ρ‖ < 4`（有限支撑）用 `(2/r₁)^j` 常数界，
+`‖ρ‖ ≥ 4` 用 `20·‖ρ‖⁻²` 界（对一切 `j ≥ 1` 统一：高段逐片
+`≤ 2^{4-j}‖ρ‖⁻² ≤ 4‖ρ‖⁻²`，`j = 1` 配对恒等式给出 `20‖ρ‖⁻²`）。 -/
+noncomputable def xiWeightedInvPowBound (r₁ : ℝ) (j : ℕ)
+    (ρ : UpperHalfPlaneNontrivialZero) : ℝ :=
+  if ‖(ρ : ℂ)‖ < 4 then
+    (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) * (2 * (2 / r₁) ^ j)
+  else
+    (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) * (20 * ‖(ρ : ℂ)‖⁻¹ ^ 2)
+
+/-- 界函数可和：低段有限支撑（`nontrivialZerosFinset 4` 原像之外恒零），
+高段是 `summable_xiOrder_mul_norm_inv_sq_upperZeros` 的常数倍。 -/
+theorem summable_xiWeightedInvPowBound {r₁ : ℝ} (hr₁ : 0 < r₁) (j : ℕ) :
+    Summable (xiWeightedInvPowBound r₁ j) := by
+  show Summable fun ρ => xiWeightedInvPowBound r₁ j ρ
+  classical
+  have hsplit : (fun ρ : UpperHalfPlaneNontrivialZero ↦ xiWeightedInvPowBound r₁ j ρ) =
+      (fun ρ : UpperHalfPlaneNontrivialZero ↦
+          if ‖(ρ : ℂ)‖ < 4 then
+            (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) * (2 * (2 / r₁) ^ j)
+          else 0) +
+        (fun ρ : UpperHalfPlaneNontrivialZero ↦
+          if ‖(ρ : ℂ)‖ < 4 then 0
+          else (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) * (20 * ‖(ρ : ℂ)‖⁻¹ ^ 2)) := by
+    funext ρ
+    simp only [Pi.add_apply, xiWeightedInvPowBound]
+    by_cases h : ‖(ρ : ℂ)‖ < 4
+    · rw [if_pos h, if_pos h, if_pos h, add_zero]
+    · rw [if_neg h, if_neg h, if_neg h, zero_add]
+  rw [hsplit]
+  refine Summable.add ?_ ?_
+  · apply summable_of_ne_finset_zero
+      (s := (PrimeNumberTheorem.nontrivialZerosFinset 4).preimage
+        (fun ρ : UpperHalfPlaneNontrivialZero ↦ (ρ : ℂ)) Subtype.coe_injective.injOn)
+    intro ρ hρ
+    rw [Finset.mem_preimage] at hρ
+    by_cases hlt : ‖(ρ : ℂ)‖ < 4
+    · exfalso
+      apply hρ
+      rw [PrimeNumberTheorem.mem_nontrivialZerosFinset]
+      exact ⟨ρ.2.1, (Complex.abs_im_le_norm _).trans hlt.le⟩
+    · exact if_neg hlt
+  · refine Summable.of_norm_bounded
+      (g := fun ρ : UpperHalfPlaneNontrivialZero ↦
+        20 * ((analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) * ‖(ρ : ℂ)‖⁻¹ ^ 2))
+      (summable_xiOrder_mul_norm_inv_sq_upperZeros.mul_left _) fun ρ => ?_
+    by_cases h : ‖(ρ : ℂ)‖ < 4
+    · rw [if_pos h, norm_zero]
+      positivity
+    · rw [if_neg h, Real.norm_eq_abs,
+        abs_of_nonneg (by positivity : (0 : ℝ) ≤
+          (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) * (20 * ‖(ρ : ℂ)‖⁻¹ ^ 2))]
+      exact le_of_eq (by ring)
+
+section DSeries
+
+variable {r₁ : ℝ} (hr₁ : 0 < r₁) (hr₁1 : r₁ ≤ 1)
+  (hρfar : ∀ ρ : UpperHalfPlaneNontrivialZero,
+    r₁ ≤ ‖1 - (ρ : ℂ)‖ ∧ r₁ ≤ ‖1 - conj (ρ : ℂ)‖)
+
+include hr₁ hr₁1 hρfar in
+/-- 球内点到任一上半零点（及其共轭）的距离下界 `r₁/2`，且 `‖s‖ ≤ 3/2`。 -/
+theorem dist_bound_of_mem_ball {s : ℂ} (hs : s ∈ Metric.ball (1 : ℂ) (r₁ / 2))
+    (ρ : UpperHalfPlaneNontrivialZero) :
+    r₁ / 2 ≤ ‖s - (ρ : ℂ)‖ ∧ r₁ / 2 ≤ ‖s - conj (ρ : ℂ)‖ ∧ ‖s‖ ≤ 3 / 2 := by
+  have hsn1 : ‖s - 1‖ < r₁ / 2 := by
+    have := Metric.mem_ball.mp hs
+    rwa [dist_eq_norm] at this
+  have hfar := hρfar ρ
+  have hsub : ‖1 - s‖ = ‖s - 1‖ := norm_sub_rev _ _
+  refine ⟨?_, ?_, ?_⟩
+  · have htr : ‖1 - (ρ : ℂ)‖ ≤ ‖1 - s‖ + ‖s - (ρ : ℂ)‖ := by
+      calc ‖1 - (ρ : ℂ)‖ = ‖(1 - s) + (s - (ρ : ℂ))‖ := by
+            congr 1
+            ring
+        _ ≤ ‖1 - s‖ + ‖s - (ρ : ℂ)‖ := norm_add_le _ _
+    rw [hsub] at htr
+    linarith
+  · have htr : ‖1 - conj (ρ : ℂ)‖ ≤ ‖1 - s‖ + ‖s - conj (ρ : ℂ)‖ := by
+      calc ‖1 - conj (ρ : ℂ)‖ = ‖(1 - s) + (s - conj (ρ : ℂ))‖ := by
+            congr 1
+            ring
+        _ ≤ ‖1 - s‖ + ‖s - conj (ρ : ℂ)‖ := norm_add_le _ _
+    rw [hsub] at htr
+    linarith
+  · have hs1 : ‖s‖ = ‖(s - 1) + 1‖ := by
+      congr 1
+      ring
+    have hs2 := norm_add_le (s - 1) (1 : ℂ)
+    rw [norm_one] at hs2
+    rw [hs1]
+    linarith
+
+include hr₁ hr₁1 hρfar in
+/-- **M-判别主界**：`j ≥ 1`、`s ∈ ball 1 (r₁/2)` 时
+`‖xiWeightedInvPowTerm j s ρ‖ ≤ xiWeightedInvPowBound r₁ j ρ`。 -/
+theorem norm_xiWeightedInvPowTerm_le {j : ℕ} (hj : 1 ≤ j) {s : ℂ}
+    (hs : s ∈ Metric.ball (1 : ℂ) (r₁ / 2)) (ρ : UpperHalfPlaneNontrivialZero) :
+    ‖xiWeightedInvPowTerm j s (ρ : ℂ)‖ ≤ xiWeightedInvPowBound r₁ j ρ := by
+  obtain ⟨hd1, hd2, hsn⟩ := dist_bound_of_mem_ball hr₁ hr₁1 hρfar hs ρ
+  rw [xiWeightedInvPowTerm, norm_mul, RCLike.norm_natCast]
+  by_cases hρ4 : ‖(ρ : ℂ)‖ < 4
+  · -- 低段：两片各 ≤ (2/r₁)^j
+    rw [xiWeightedInvPowBound, if_pos hρ4]
+    have hb1 : ‖(s - (ρ : ℂ))⁻¹ ^ j‖ ≤ (2 / r₁) ^ j := by
+      rw [norm_pow, norm_inv]
+      have h1 : ‖s - (ρ : ℂ)‖⁻¹ ≤ 2 / r₁ := by
+        have h2 : ‖s - (ρ : ℂ)‖⁻¹ ≤ (r₁ / 2)⁻¹ :=
+          inv_anti₀ (by positivity) hd1
+        rwa [inv_div] at h2
+      exact pow_le_pow_left₀ (by positivity) h1 j
+    have hb2 : ‖(s - conj (ρ : ℂ))⁻¹ ^ j‖ ≤ (2 / r₁) ^ j := by
+      rw [norm_pow, norm_inv]
+      have h1 : ‖s - conj (ρ : ℂ)‖⁻¹ ≤ 2 / r₁ := by
+        have h2 : ‖s - conj (ρ : ℂ)‖⁻¹ ≤ (r₁ / 2)⁻¹ :=
+          inv_anti₀ (by positivity) hd2
+        rwa [inv_div] at h2
+      exact pow_le_pow_left₀ (by positivity) h1 j
+    calc (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) *
+            ‖(s - (ρ : ℂ))⁻¹ ^ j + (s - conj (ρ : ℂ))⁻¹ ^ j‖
+        ≤ (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) *
+            (‖(s - (ρ : ℂ))⁻¹ ^ j‖ + ‖(s - conj (ρ : ℂ))⁻¹ ^ j‖) :=
+          mul_le_mul_of_nonneg_left (norm_add_le _ _) (Nat.cast_nonneg _)
+      _ ≤ (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) *
+            ((2 / r₁) ^ j + (2 / r₁) ^ j) :=
+          mul_le_mul_of_nonneg_left (add_le_add hb1 hb2) (Nat.cast_nonneg _)
+      _ = (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) * (2 * (2 / r₁) ^ j) := by ring
+  · -- 高段
+    rw [xiWeightedInvPowBound, if_neg hρ4]
+    have hρ4' : 4 ≤ ‖(ρ : ℂ)‖ := le_of_not_gt hρ4
+    have hρpos : 0 < ‖(ρ : ℂ)‖ := by linarith
+    have hge1 : ‖(ρ : ℂ)‖ / 2 ≤ ‖s - (ρ : ℂ)‖ := by
+      have h := norm_sub_norm_le (ρ : ℂ) s
+      have hsr : ‖(ρ : ℂ) - s‖ = ‖s - (ρ : ℂ)‖ := norm_sub_rev _ _
+      rw [hsr] at h
+      have h1 : ‖(ρ : ℂ)‖ - ‖s‖ ≤ ‖s - (ρ : ℂ)‖ := h
+      linarith
+    have hge2 : ‖(ρ : ℂ)‖ / 2 ≤ ‖s - conj (ρ : ℂ)‖ := by
+      have h := norm_sub_norm_le (conj (ρ : ℂ)) s
+      have hsr : ‖conj (ρ : ℂ) - s‖ = ‖s - conj (ρ : ℂ)‖ := norm_sub_rev _ _
+      rw [hsr, Complex.norm_conj] at h
+      have h1 : ‖(ρ : ℂ)‖ - ‖s‖ ≤ ‖s - conj (ρ : ℂ)‖ := h
+      linarith
+    rcases Nat.lt_or_ge j 2 with hj1 | hj2
+    · -- j = 1：配对恒等式
+      have hj_eq : j = 1 := by omega
+      subst hj_eq
+      have h1 : s - (ρ : ℂ) ≠ 0 := sub_ne_zero.mpr fun h => by
+        rw [h] at hd1
+        simp at hd1
+        linarith
+      have h2 : s - conj (ρ : ℂ) ≠ 0 := sub_ne_zero.mpr fun h => by
+        rw [h] at hd2
+        simp at hd2
+        linarith
+      have hid : (s - (ρ : ℂ))⁻¹ ^ 1 + (s - conj (ρ : ℂ))⁻¹ ^ 1 =
+          (2 * s - (2 * (ρ : ℂ).re : ℂ)) / ((s - (ρ : ℂ)) * (s - conj (ρ : ℂ))) := by
+        rw [pow_one, pow_one]
+        field_simp
+        have hc : (ρ : ℂ) + conj (ρ : ℂ) = (2 * (ρ : ℂ).re : ℂ) := by
+          rw [Complex.add_conj]
+          push_cast
+          ring
+        linear_combination -hc
+      have hnum : ‖2 * s - (2 * (ρ : ℂ).re : ℂ)‖ ≤ 5 := by
+        have hre : |(ρ : ℂ).re| ≤ 1 := by
+          have h3 := ρ.2.1.2.1
+          have h4 := ρ.2.1.2.2
+          rw [abs_le]
+          constructor <;> linarith
+        calc ‖2 * s - (2 * (ρ : ℂ).re : ℂ)‖
+            ≤ ‖2 * s‖ + ‖(2 * (ρ : ℂ).re : ℂ)‖ := norm_sub_le _ _
+          _ = 2 * ‖s‖ + 2 * |(ρ : ℂ).re| := by
+            rw [norm_mul, norm_mul, Complex.norm_real, Real.norm_eq_abs]
+            norm_num
+          _ ≤ 2 * (3 / 2) + 2 * 1 := by linarith
+          _ = 5 := by norm_num
+      have hden : (‖(ρ : ℂ)‖ / 2) ^ 2 ≤ ‖s - (ρ : ℂ)‖ * ‖s - conj (ρ : ℂ)‖ := by
+        rw [sq]
+        exact mul_le_mul hge1 hge2 (by positivity) (by linarith)
+      have hdenpos : 0 < ‖s - (ρ : ℂ)‖ * ‖s - conj (ρ : ℂ)‖ :=
+        mul_pos (by linarith) (by linarith)
+      have hmain : ‖(2 * s - (2 * (ρ : ℂ).re : ℂ)) /
+            ((s - (ρ : ℂ)) * (s - conj (ρ : ℂ)))‖ ≤ 20 * ‖(ρ : ℂ)‖⁻¹ ^ 2 := by
+        rw [norm_div, norm_mul]
+        have hle1 : ‖2 * s - (2 * (ρ : ℂ).re : ℂ)‖ / (‖s - (ρ : ℂ)‖ * ‖s - conj (ρ : ℂ)‖)
+            ≤ 5 / (‖s - (ρ : ℂ)‖ * ‖s - conj (ρ : ℂ)‖) :=
+          div_le_div_of_nonneg_right hnum hdenpos.le
+        have hle2 : (5 : ℝ) / (‖s - (ρ : ℂ)‖ * ‖s - conj (ρ : ℂ)‖) ≤
+            5 / (‖(ρ : ℂ)‖ / 2) ^ 2 :=
+          div_le_div_of_nonneg_left (by norm_num) (by positivity) hden
+        have heq : (5 : ℝ) / (‖(ρ : ℂ)‖ / 2) ^ 2 = 20 * ‖(ρ : ℂ)‖⁻¹ ^ 2 := by
+          rw [div_pow, inv_pow]
+          field_simp
+          ring
+        exact hle1.trans (hle2.trans_eq heq)
+      have hmain' : ‖(s - (ρ : ℂ))⁻¹ ^ 1 + (s - conj (ρ : ℂ))⁻¹ ^ 1‖ ≤
+          20 * ‖(ρ : ℂ)‖⁻¹ ^ 2 := by
+        rw [hid]
+        exact hmain
+      exact mul_le_mul_of_nonneg_left hmain' (Nat.cast_nonneg _)
+    · -- j ≥ 2：逐片估计
+      have hb1 : ‖(s - (ρ : ℂ))⁻¹ ^ j‖ ≤ 4 * ‖(ρ : ℂ)‖⁻¹ ^ 2 := by
+        rw [norm_pow, norm_inv]
+        have h1 : ‖s - (ρ : ℂ)‖⁻¹ ≤ 2 / ‖(ρ : ℂ)‖ := by
+          have h2 : ‖s - (ρ : ℂ)‖⁻¹ ≤ (‖(ρ : ℂ)‖ / 2)⁻¹ :=
+            inv_anti₀ (by positivity) hge1
+          rwa [inv_div] at h2
+        have h3 : (‖s - (ρ : ℂ)‖⁻¹) ^ j ≤ (2 / ‖(ρ : ℂ)‖) ^ j :=
+          pow_le_pow_left₀ (by positivity) h1 j
+        have h4 : (2 / ‖(ρ : ℂ)‖) ^ j ≤ (2 / ‖(ρ : ℂ)‖) ^ 2 :=
+          pow_le_pow_of_le_one (by positivity)
+            ((div_le_one hρpos).mpr (by linarith)) hj2
+        have h5 : (2 / ‖(ρ : ℂ)‖) ^ 2 = 4 * ‖(ρ : ℂ)‖⁻¹ ^ 2 := by
+          rw [div_pow, inv_pow]
+          field_simp
+          ring
+        exact h3.trans (h4.trans_eq h5)
+      have hb2 : ‖(s - conj (ρ : ℂ))⁻¹ ^ j‖ ≤ 4 * ‖(ρ : ℂ)‖⁻¹ ^ 2 := by
+        rw [norm_pow, norm_inv]
+        have h1 : ‖s - conj (ρ : ℂ)‖⁻¹ ≤ 2 / ‖(ρ : ℂ)‖ := by
+          have h2 : ‖s - conj (ρ : ℂ)‖⁻¹ ≤ (‖(ρ : ℂ)‖ / 2)⁻¹ :=
+            inv_anti₀ (by positivity) hge2
+          rwa [inv_div] at h2
+        have h3 : (‖s - conj (ρ : ℂ)‖⁻¹) ^ j ≤ (2 / ‖(ρ : ℂ)‖) ^ j :=
+          pow_le_pow_left₀ (by positivity) h1 j
+        have h4 : (2 / ‖(ρ : ℂ)‖) ^ j ≤ (2 / ‖(ρ : ℂ)‖) ^ 2 :=
+          pow_le_pow_of_le_one (by positivity)
+            ((div_le_one hρpos).mpr (by linarith)) hj2
+        have h5 : (2 / ‖(ρ : ℂ)‖) ^ 2 = 4 * ‖(ρ : ℂ)‖⁻¹ ^ 2 := by
+          rw [div_pow, inv_pow]
+          field_simp
+          ring
+        exact h3.trans (h4.trans_eq h5)
+      have hle1 : (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) *
+            ‖(s - (ρ : ℂ))⁻¹ ^ j + (s - conj (ρ : ℂ))⁻¹ ^ j‖ ≤
+          (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) *
+            (‖(s - (ρ : ℂ))⁻¹ ^ j‖ + ‖(s - conj (ρ : ℂ))⁻¹ ^ j‖) :=
+        mul_le_mul_of_nonneg_left (norm_add_le _ _) (Nat.cast_nonneg _)
+      have hle2 : (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) *
+            (‖(s - (ρ : ℂ))⁻¹ ^ j‖ + ‖(s - conj (ρ : ℂ))⁻¹ ^ j‖) ≤
+          (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) *
+            (4 * ‖(ρ : ℂ)‖⁻¹ ^ 2 + 4 * ‖(ρ : ℂ)‖⁻¹ ^ 2) :=
+        mul_le_mul_of_nonneg_left (add_le_add hb1 hb2) (Nat.cast_nonneg _)
+      have hle3 : (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) *
+            (4 * ‖(ρ : ℂ)‖⁻¹ ^ 2 + 4 * ‖(ρ : ℂ)‖⁻¹ ^ 2) ≤
+          (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) * (20 * ‖(ρ : ℂ)‖⁻¹ ^ 2) := by
+        apply mul_le_mul_of_nonneg_left _ (Nat.cast_nonneg _)
+        have hnn : 0 ≤ ‖(ρ : ℂ)‖⁻¹ ^ 2 := by positivity
+        linarith
+      exact hle1.trans (hle2.trans hle3)
+
+include hr₁ hr₁1 hρfar in
+/-- 每个逆幂配对项在球上复可微（分母在球内非零）。 -/
+theorem differentiableOn_xiWeightedInvPowTerm (j : ℕ)
+    (ρ : UpperHalfPlaneNontrivialZero) :
+    DifferentiableOn ℂ (fun s => xiWeightedInvPowTerm j s (ρ : ℂ))
+      (Metric.ball 1 (r₁ / 2)) := by
+  intro s hs
+  obtain ⟨hd1, hd2, _⟩ := dist_bound_of_mem_ball hr₁ hr₁1 hρfar hs ρ
+  have h1 : s - (ρ : ℂ) ≠ 0 := by
+    intro h
+    rw [h, norm_zero] at hd1
+    linarith
+  have h2 : s - conj (ρ : ℂ) ≠ 0 := by
+    intro h
+    rw [h, norm_zero] at hd2
+    linarith
+  have hp1 : DifferentiableAt ℂ (fun w => (w - (ρ : ℂ))⁻¹ ^ j) s :=
+    ((differentiableAt_id.sub_const _).inv h1).pow j
+  have hp2 : DifferentiableAt ℂ (fun w => (w - conj (ρ : ℂ))⁻¹ ^ j) s :=
+    ((differentiableAt_id.sub_const _).inv h2).pow j
+  exact ((hp1.add hp2).const_mul _).differentiableWithinAt
+
+include hr₁ hr₁1 hρfar in
+/-- **`D_j` 在球上复可微**（Weierstrass M-判别逐项微分）。 -/
+theorem differentiableOn_xiWeightedInvPowSum {j : ℕ} (hj : 1 ≤ j) :
+    DifferentiableOn ℂ (fun s => xiWeightedInvPowSum j s) (Metric.ball 1 (r₁ / 2)) := by
+  classical
+  exact differentiableOn_tsum_of_summable_norm (u := xiWeightedInvPowBound r₁ j)
+    (summable_xiWeightedInvPowBound hr₁ j)
+    (fun ρ => differentiableOn_xiWeightedInvPowTerm hr₁ hr₁1 hρfar j ρ)
+    Metric.isOpen_ball
+    (fun ρ s hs => norm_xiWeightedInvPowTerm_le hr₁ hr₁1 hρfar hj hs ρ)
+
+/-- 逆幂片的逐项导数：`d/ds [(s-c)⁻¹^j] = j·(s-c)⁻¹^(j-1)·(-(s-c)²)⁻¹`。 -/
+theorem hasDerivAt_invPow_piece {s c : ℂ} (h : s - c ≠ 0) (j : ℕ) :
+    HasDerivAt (fun w => (w - c)⁻¹ ^ j)
+      ((j : ℂ) * ((s - c)⁻¹ ^ (j - 1)) * (-((s - c) ^ 2)⁻¹)) s := by
+  have h1 : HasDerivAt (fun w : ℂ => w - c) 1 s := (hasDerivAt_id' s).sub_const c
+  have h2 : HasDerivAt (fun w : ℂ => (w - c)⁻¹) (-((s - c) ^ 2)⁻¹) s := by
+    have h2' := (hasDerivAt_inv h).comp s h1
+    simpa using h2'
+  exact h2.pow j
+
+/-- 逆幂片导数的规范形：`= -j·(s-c)⁻¹^(j+1)`（`j ≥ 1`）。 -/
+theorem invPow_piece_deriv_eq {s c : ℂ} (h : s - c ≠ 0) {j : ℕ} (hj : 1 ≤ j) :
+    (j : ℂ) * ((s - c)⁻¹ ^ (j - 1)) * (-((s - c) ^ 2)⁻¹) =
+      -((j : ℂ) * ((s - c)⁻¹ ^ (j + 1))) := by
+  have hp : ((s - c)⁻¹) ^ (j - 1) * ((s - c)⁻¹) ^ 2 = ((s - c)⁻¹) ^ (j + 1) := by
+    rw [← pow_add]
+    congr 1
+    omega
+  rw [← inv_pow (s - c) 2]
+  calc (j : ℂ) * ((s - c)⁻¹ ^ (j - 1)) * (-(((s - c)⁻¹) ^ 2))
+      = -((j : ℂ) * (((s - c)⁻¹) ^ (j - 1) * ((s - c)⁻¹) ^ 2)) := by ring
+    _ = -((j : ℂ) * ((s - c)⁻¹) ^ (j + 1)) := by rw [hp]
+
+include hr₁ hr₁1 hρfar in
+/-- 逆幂配对项的逐项导数：`deriv (xiWeightedInvPowTerm j · ρ) s =
+-j · xiWeightedInvPowTerm (j+1) s ρ`（`j ≥ 1`）。 -/
+theorem hasDerivAt_xiWeightedInvPowTerm {j : ℕ} (hj : 1 ≤ j) {s : ℂ}
+    (hs : s ∈ Metric.ball (1 : ℂ) (r₁ / 2)) (ρ : UpperHalfPlaneNontrivialZero) :
+    HasDerivAt (fun w => xiWeightedInvPowTerm j w (ρ : ℂ))
+      (-(j : ℂ) * xiWeightedInvPowTerm (j + 1) s (ρ : ℂ)) s := by
+  obtain ⟨hd1, hd2, _⟩ := dist_bound_of_mem_ball hr₁ hr₁1 hρfar hs ρ
+  have h1 : s - (ρ : ℂ) ≠ 0 := by
+    intro h
+    rw [h, norm_zero] at hd1
+    linarith
+  have h2 : s - conj (ρ : ℂ) ≠ 0 := by
+    intro h
+    rw [h, norm_zero] at hd2
+    linarith
+  have hp1 := hasDerivAt_invPow_piece h1 j
+  have hp2 := hasDerivAt_invPow_piece h2 j
+  have hsum := hp1.add hp2
+  have hval := hsum.const_mul (analyticOrderNatAt xiFunction (ρ : ℂ) : ℂ)
+  have hv1 := invPow_piece_deriv_eq h1 hj
+  have hv2 := invPow_piece_deriv_eq h2 hj
+  rw [hv1, hv2] at hval
+  refine hval.congr_deriv ?_
+  show (analyticOrderNatAt xiFunction (ρ : ℂ) : ℂ) *
+      (-((j : ℂ) * ((s - (ρ : ℂ))⁻¹) ^ (j + 1)) +
+        -((j : ℂ) * ((s - conj (ρ : ℂ))⁻¹) ^ (j + 1))) =
+    -(j : ℂ) * ((analyticOrderNatAt xiFunction (ρ : ℂ) : ℂ) *
+      ((s - (ρ : ℂ))⁻¹ ^ (j + 1) + (s - conj (ρ : ℂ))⁻¹ ^ (j + 1)))
+  ring
+
+include hr₁ hr₁1 hρfar in
+/-- **`D_j` 的导数恒等式**：球上 `deriv D_j = -j · D_{j+1}`（`j ≥ 1`）。
+由 `hasSum_deriv_of_summable_norm`（Weierstrass–Cauchy）逐项微分。 -/
+theorem deriv_xiWeightedInvPowSum_eqOn {j : ℕ} (hj : 1 ≤ j) :
+    Set.EqOn (deriv fun s => xiWeightedInvPowSum j s)
+      (fun s => -(j : ℂ) * xiWeightedInvPowSum (j + 1) s)
+      (Metric.ball 1 (r₁ / 2)) := by
+  classical
+  intro s hs
+  have hsu := hasSum_deriv_of_summable_norm (u := xiWeightedInvPowBound r₁ j)
+    (summable_xiWeightedInvPowBound hr₁ j)
+    (fun ρ => differentiableOn_xiWeightedInvPowTerm hr₁ hr₁1 hρfar j ρ)
+    Metric.isOpen_ball
+    (fun ρ w hw => norm_xiWeightedInvPowTerm_le hr₁ hr₁1 hρfar hj hw ρ) hs
+  have hd : ∀ ρ : UpperHalfPlaneNontrivialZero,
+      deriv (fun w => xiWeightedInvPowTerm j w (ρ : ℂ)) s =
+        -(j : ℂ) * xiWeightedInvPowTerm (j + 1) s (ρ : ℂ) := fun ρ =>
+    (hasDerivAt_xiWeightedInvPowTerm hr₁ hr₁1 hρfar hj hs ρ).deriv
+  have hsu' : HasSum (fun ρ : UpperHalfPlaneNontrivialZero =>
+        -(j : ℂ) * xiWeightedInvPowTerm (j + 1) s (ρ : ℂ))
+      (deriv (fun s => xiWeightedInvPowSum j s) s) := hsu.congr_fun fun ρ => (hd ρ).symm
+  have htsum := hsu'.tsum_eq
+  rw [tsum_mul_left] at htsum
+  exact htsum.symm
+
+end DSeries
+
 end RiemannExplorer
