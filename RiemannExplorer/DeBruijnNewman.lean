@@ -4446,6 +4446,48 @@ theorem exists_zero_of_norm_sub_lt {f g : ℂ → ℂ} {w : ℂ} {ρ : ℝ} (hρ
   rw [h1] at hwmax
   linarith
 
+/-- **Hurwitz zero persistence** for the de Bruijn–Newman family: if `H_{t₀}` vanishes
+at `w` and has no other zero in the closed ball `closedBall w ρ` (the isolation
+hypothesis), then along any sequence `t n → t₀`, eventually `H_{t n}` has a zero in
+the open ball `ball w ρ`. Proof: `‖H_{t₀}‖` attains a positive minimum `m` on the
+compact boundary sphere; local uniform convergence of `H_t` to `H_{t₀}` makes
+`‖H_{t₀} - H_{t n}‖ < m / 2` on the sphere eventually, and
+`exists_zero_of_norm_sub_lt` (the maximum-modulus Rouché core) produces the zero. -/
+theorem hurwitz_exists_zero_ball {t₀ : ℝ} {t : ℕ → ℝ} {w : ℂ} {ρ : ℝ}
+    (ht : Filter.Tendsto t Filter.atTop (nhds t₀)) (hfw : deBruijnNewmanH t₀ w = 0)
+    (hρ : 0 < ρ)
+    (hiso : ∀ z ∈ Metric.closedBall w ρ, z ≠ w → deBruijnNewmanH t₀ z ≠ 0) :
+    ∀ᶠ n in Filter.atTop, ∃ z ∈ Metric.ball w ρ, deBruijnNewmanH (t n) z = 0 := by
+  have hcont : ContinuousOn (fun z => ‖deBruijnNewmanH t₀ z‖) (Metric.sphere w ρ) :=
+    (differentiable_deBruijnNewmanH t₀).continuous.continuousOn.norm
+  obtain ⟨z₀, hz₀, hmin⟩ := (isCompact_sphere w ρ).exists_isMinOn
+    ⟨w + (ρ : ℂ), by
+      rw [Metric.mem_sphere, dist_eq_norm]
+      have hw' : w + (ρ : ℂ) - w = (ρ : ℂ) := by ring
+      calc ‖w + (ρ : ℂ) - w‖ = ‖(ρ : ℂ)‖ := by rw [hw']
+        _ = ‖ρ‖ := RCLike.norm_ofReal ρ
+        _ = ρ := by rw [Real.norm_eq_abs, abs_of_nonneg hρ.le]⟩ hcont
+  have hm0 : 0 < ‖deBruijnNewmanH t₀ z₀‖ := by
+    rw [norm_pos_iff]
+    apply hiso z₀ (Metric.sphere_subset_closedBall hz₀)
+    intro h
+    rw [h, Metric.mem_sphere, dist_self] at hz₀
+    exact hρ.ne' hz₀.symm
+  have hunif : TendstoUniformlyOn (fun t : ℝ => deBruijnNewmanH t) (deBruijnNewmanH t₀)
+      (nhds t₀) (Metric.sphere w ρ) :=
+    tendstoLocallyUniformly_iff_forall_isCompact.mp
+      (tendstoLocallyUniformly_deBruijnNewmanH t₀) _ (isCompact_sphere w ρ)
+  rw [Metric.tendstoUniformlyOn_iff] at hunif
+  refine (ht.eventually (hunif _ (half_pos hm0))).mono fun n hn => ?_
+  exact exists_zero_of_norm_sub_lt hρ
+    (differentiable_deBruijnNewmanH t₀).diffContOnCl
+    (differentiable_deBruijnNewmanH (t n)).diffContOnCl hfw
+    (fun z hz => hmin hz) hm0
+    (fun z hz => by
+      have h' := hn z hz
+      rw [dist_eq_norm] at h'
+      exact h')
+
 /-- `H_0` is not identically zero: at `z = -i` it equals
 `(1/8)·ξ(1) = 1/16`. This is the non-degeneracy hypothesis needed for any
 Hurwitz-type zero-persistence argument at `t = 0`. -/

@@ -108,3 +108,4 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.dist_deBruijnNewmanH_le
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_zero_exists_ne_zero
 #print axioms RiemannExplorer.DeBruijnNewman.exists_zero_of_norm_sub_lt
+#print axioms RiemannExplorer.DeBruijnNewman.hurwitz_exists_zero_ball
