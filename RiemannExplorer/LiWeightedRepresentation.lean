@@ -242,6 +242,62 @@ theorem summable_xiWeightedInvPowBound {r₁ : ℝ} (hr₁ : 0 < r₁) (j : ℕ)
           (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) * (20 * ‖(ρ : ℂ)‖⁻¹ ^ 2))]
       exact le_of_eq (by ring)
 
+/-- W 的 M-判别界函数：低段（有限支撑）逐片 `2/r₁` 与 `‖ρ‖⁻¹`，
+高段 `22·‖ρ‖⁻²`（首对配恒等式 `≤ 20‖ρ‖⁻²`，常数对 `2|re ρ|/‖ρ‖² ≤ 2‖ρ‖⁻²`）。
+注：`xiWeightedMittagLefflerTerm`/`xiWeightedMittagLefflerSum` 已在
+`XiPartialFractionWeighted.lean` 定义（经 `XiCorrectionConst` 导入），本文件
+只补充球上 M-判别与逐项微分机器。 -/
+noncomputable def xiWeightedMittagLefflerBound (r₁ : ℝ)
+    (ρ : UpperHalfPlaneNontrivialZero) : ℝ :=
+  if ‖(ρ : ℂ)‖ < 4 then
+    (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) * (4 / r₁ + 2 * ‖(ρ : ℂ)‖⁻¹)
+  else
+    (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) * (22 * ‖(ρ : ℂ)‖⁻¹ ^ 2)
+
+/-- W 界函数可和：低段有限支撑（`nontrivialZerosFinset 4` 原像之外恒零），
+高段是 `summable_xiOrder_mul_norm_inv_sq_upperZeros` 的常数倍。 -/
+theorem summable_xiWeightedMittagLefflerBound {r₁ : ℝ} (hr₁ : 0 < r₁) :
+    Summable (xiWeightedMittagLefflerBound r₁) := by
+  show Summable fun ρ => xiWeightedMittagLefflerBound r₁ ρ
+  classical
+  have hsplit : (fun ρ : UpperHalfPlaneNontrivialZero ↦ xiWeightedMittagLefflerBound r₁ ρ) =
+      (fun ρ : UpperHalfPlaneNontrivialZero ↦
+          if ‖(ρ : ℂ)‖ < 4 then
+            (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) * (4 / r₁ + 2 * ‖(ρ : ℂ)‖⁻¹)
+          else 0) +
+        (fun ρ : UpperHalfPlaneNontrivialZero ↦
+          if ‖(ρ : ℂ)‖ < 4 then 0
+          else (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) * (22 * ‖(ρ : ℂ)‖⁻¹ ^ 2)) := by
+    funext ρ
+    simp only [Pi.add_apply, xiWeightedMittagLefflerBound]
+    by_cases h : ‖(ρ : ℂ)‖ < 4
+    · rw [if_pos h, if_pos h, if_pos h, add_zero]
+    · rw [if_neg h, if_neg h, if_neg h, zero_add]
+  rw [hsplit]
+  refine Summable.add ?_ ?_
+  · apply summable_of_ne_finset_zero
+      (s := (PrimeNumberTheorem.nontrivialZerosFinset 4).preimage
+        (fun ρ : UpperHalfPlaneNontrivialZero ↦ (ρ : ℂ)) Subtype.coe_injective.injOn)
+    intro ρ hρ
+    rw [Finset.mem_preimage] at hρ
+    by_cases hlt : ‖(ρ : ℂ)‖ < 4
+    · exfalso
+      apply hρ
+      rw [PrimeNumberTheorem.mem_nontrivialZerosFinset]
+      exact ⟨ρ.2.1, (Complex.abs_im_le_norm _).trans hlt.le⟩
+    · exact if_neg hlt
+  · refine Summable.of_norm_bounded
+      (g := fun ρ : UpperHalfPlaneNontrivialZero ↦
+        22 * ((analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) * ‖(ρ : ℂ)‖⁻¹ ^ 2))
+      (summable_xiOrder_mul_norm_inv_sq_upperZeros.mul_left _) fun ρ => ?_
+    by_cases h : ‖(ρ : ℂ)‖ < 4
+    · rw [if_pos h, norm_zero]
+      positivity
+    · rw [if_neg h, Real.norm_eq_abs,
+        abs_of_nonneg (by positivity : (0 : ℝ) ≤
+          (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) * (22 * ‖(ρ : ℂ)‖⁻¹ ^ 2))]
+      exact le_of_eq (by ring)
+
 section DSeries
 
 variable {r₁ : ℝ} (hr₁ : 0 < r₁) (hr₁1 : r₁ ≤ 1)
@@ -551,6 +607,280 @@ theorem deriv_xiWeightedInvPowSum_eqOn {j : ℕ} (hj : 1 ≤ j) :
   have htsum := hsu'.tsum_eq
   rw [tsum_mul_left] at htsum
   exact htsum.symm
+
+include hr₁ hr₁1 hρfar in
+/-- **M-判别主界（W）**：`s ∈ ball 1 (r₁/2)` 时
+`‖xiWeightedMittagLefflerTerm s ρ‖ ≤ xiWeightedMittagLefflerBound r₁ ρ`。 -/
+theorem norm_xiWeightedMittagLefflerTerm_le {s : ℂ}
+    (hs : s ∈ Metric.ball (1 : ℂ) (r₁ / 2)) (ρ : UpperHalfPlaneNontrivialZero) :
+    ‖xiWeightedMittagLefflerTerm s (ρ : ℂ)‖ ≤ xiWeightedMittagLefflerBound r₁ ρ := by
+  obtain ⟨hd1, hd2, _⟩ := dist_bound_of_mem_ball hr₁ hr₁1 hρfar hs ρ
+  simp only [xiWeightedMittagLefflerTerm, xiPairedMittagLefflerTerm, one_div]
+  rw [norm_mul, RCLike.norm_natCast]
+  by_cases hρ4 : ‖(ρ : ℂ)‖ < 4
+  · -- 低段：四片逐片估计
+    rw [xiWeightedMittagLefflerBound, if_pos hρ4]
+    refine mul_le_mul_of_nonneg_left ?_ (Nat.cast_nonneg _)
+    have hb1 : ‖(s - (ρ : ℂ))⁻¹‖ ≤ 2 / r₁ := by
+      rw [norm_inv]
+      have h2 : ‖s - (ρ : ℂ)‖⁻¹ ≤ (r₁ / 2)⁻¹ := inv_anti₀ (by positivity) hd1
+      rwa [inv_div] at h2
+    have hb2 : ‖(s - conj (ρ : ℂ))⁻¹‖ ≤ 2 / r₁ := by
+      rw [norm_inv]
+      have h2 : ‖s - conj (ρ : ℂ)‖⁻¹ ≤ (r₁ / 2)⁻¹ := inv_anti₀ (by positivity) hd2
+      rwa [inv_div] at h2
+    have hb3 : ‖(ρ : ℂ)⁻¹‖ = ‖(ρ : ℂ)‖⁻¹ := norm_inv (ρ : ℂ)
+    have hb4 : ‖(conj (ρ : ℂ))⁻¹‖ = ‖(ρ : ℂ)‖⁻¹ := by rw [norm_inv, Complex.norm_conj]
+    calc ‖((s - (ρ : ℂ))⁻¹ + (ρ : ℂ)⁻¹) + ((s - conj (ρ : ℂ))⁻¹ + (conj (ρ : ℂ))⁻¹)‖
+        ≤ (‖(s - (ρ : ℂ))⁻¹‖ + ‖(ρ : ℂ)⁻¹‖) +
+            (‖(s - conj (ρ : ℂ))⁻¹‖ + ‖(conj (ρ : ℂ))⁻¹‖) :=
+          (norm_add_le _ _).trans (add_le_add (norm_add_le _ _) (norm_add_le _ _))
+      _ ≤ (2 / r₁ + ‖(ρ : ℂ)‖⁻¹) + (2 / r₁ + ‖(ρ : ℂ)‖⁻¹) := by
+          rw [hb3, hb4]
+          exact add_le_add (add_le_add hb1 le_rfl) (add_le_add hb2 le_rfl)
+      _ = 4 / r₁ + 2 * ‖(ρ : ℂ)‖⁻¹ := by ring
+  · -- 高段：重新配对 [(s-ρ)⁻¹ + (s-conjρ)⁻¹] + [ρ⁻¹ + conjρ⁻¹]
+    rw [xiWeightedMittagLefflerBound, if_neg hρ4]
+    refine mul_le_mul_of_nonneg_left ?_ (Nat.cast_nonneg _)
+    have hρ4' : 4 ≤ ‖(ρ : ℂ)‖ := le_of_not_gt hρ4
+    have hρpos : 0 < ‖(ρ : ℂ)‖ := by linarith
+    have hρne : (ρ : ℂ) ≠ 0 := norm_pos_iff.mp hρpos
+    have hconjne : conj (ρ : ℂ) ≠ 0 := by
+      intro h
+      apply hρne
+      rw [← norm_eq_zero, ← Complex.norm_conj, h, norm_zero]
+    have hre : |(ρ : ℂ).re| ≤ 1 := by
+      have h3 := ρ.2.1.2.1
+      have h4 := ρ.2.1.2.2
+      rw [abs_le]
+      constructor <;> linarith
+    -- 首对：复用 `j = 1` 的逆幂配对界
+    have hpair1 : ‖(s - (ρ : ℂ))⁻¹ + (s - conj (ρ : ℂ))⁻¹‖ ≤
+        20 * ‖(ρ : ℂ)‖⁻¹ ^ 2 := by
+      have hW := norm_xiWeightedInvPowTerm_le hr₁ hr₁1 hρfar (j := 1) le_rfl hs ρ
+      rw [xiWeightedInvPowBound, if_neg hρ4, xiWeightedInvPowTerm, norm_mul,
+        RCLike.norm_natCast, pow_one, pow_one] at hW
+      have hm : (0 : ℝ) < (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) := by
+        have h1 := one_le_analyticOrderNatAt_xiFunction_of_isNontrivialZero ρ.2.1
+        have h1' : (1 : ℝ) ≤ (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) := by
+          exact_mod_cast h1
+        linarith
+      exact le_of_mul_le_mul_left hW hm
+    -- 常数对：`ρ⁻¹ + conjρ⁻¹ = 2·re ρ/(ρ·conjρ)`，`|re ρ| ≤ 1`
+    have hid2 : (ρ : ℂ)⁻¹ + (conj (ρ : ℂ))⁻¹ =
+        (2 * (ρ : ℂ).re : ℂ) / ((ρ : ℂ) * conj (ρ : ℂ)) := by
+      field_simp
+      have hc : (ρ : ℂ) + conj (ρ : ℂ) = (2 * (ρ : ℂ).re : ℂ) := by
+        rw [Complex.add_conj]
+        push_cast
+        ring
+      linear_combination hc
+    have hpair2 : ‖(ρ : ℂ)⁻¹ + (conj (ρ : ℂ))⁻¹‖ ≤ 2 * ‖(ρ : ℂ)‖⁻¹ ^ 2 := by
+      rw [hid2, norm_div]
+      have hnum : ‖(2 * (ρ : ℂ).re : ℂ)‖ = 2 * |(ρ : ℂ).re| := by
+        rw [norm_mul, Complex.norm_real, Real.norm_eq_abs]
+        norm_num
+      rw [hnum, norm_mul, Complex.norm_conj]
+      have hle2 : 2 * |(ρ : ℂ).re| / (‖(ρ : ℂ)‖ * ‖(ρ : ℂ)‖) ≤
+          2 / (‖(ρ : ℂ)‖ * ‖(ρ : ℂ)‖) :=
+        div_le_div_of_nonneg_right (by linarith) (by positivity)
+      refine hle2.trans_eq ?_
+      rw [show ‖(ρ : ℂ)‖ * ‖(ρ : ℂ)‖ = ‖(ρ : ℂ)‖ ^ 2 from (sq _).symm, inv_pow,
+        div_eq_mul_inv]
+    have hreg : ((s - (ρ : ℂ))⁻¹ + (ρ : ℂ)⁻¹) + ((s - conj (ρ : ℂ))⁻¹ + (conj (ρ : ℂ))⁻¹) =
+        ((s - (ρ : ℂ))⁻¹ + (s - conj (ρ : ℂ))⁻¹) + ((ρ : ℂ)⁻¹ + (conj (ρ : ℂ))⁻¹) := by
+      ring
+    rw [hreg]
+    calc ‖((s - (ρ : ℂ))⁻¹ + (s - conj (ρ : ℂ))⁻¹) + ((ρ : ℂ)⁻¹ + (conj (ρ : ℂ))⁻¹)‖
+        ≤ ‖(s - (ρ : ℂ))⁻¹ + (s - conj (ρ : ℂ))⁻¹‖ +
+            ‖(ρ : ℂ)⁻¹ + (conj (ρ : ℂ))⁻¹‖ := norm_add_le _ _
+      _ ≤ 20 * ‖(ρ : ℂ)‖⁻¹ ^ 2 + 2 * ‖(ρ : ℂ)‖⁻¹ ^ 2 := add_le_add hpair1 hpair2
+      _ = 22 * ‖(ρ : ℂ)‖⁻¹ ^ 2 := by ring
+
+include hr₁ hr₁1 hρfar in
+/-- 每个 Mittag-Leffler 配对项在球上复可微（分母在球内非零）。 -/
+theorem differentiableOn_xiWeightedMittagLefflerTerm (ρ : UpperHalfPlaneNontrivialZero) :
+    DifferentiableOn ℂ (fun s => xiWeightedMittagLefflerTerm s (ρ : ℂ))
+      (Metric.ball 1 (r₁ / 2)) := by
+  intro s hs
+  simp only [xiWeightedMittagLefflerTerm, xiPairedMittagLefflerTerm, one_div]
+  obtain ⟨hd1, hd2, _⟩ := dist_bound_of_mem_ball hr₁ hr₁1 hρfar hs ρ
+  have h1 : s - (ρ : ℂ) ≠ 0 := by
+    intro h
+    rw [h, norm_zero] at hd1
+    linarith
+  have h2 : s - conj (ρ : ℂ) ≠ 0 := by
+    intro h
+    rw [h, norm_zero] at hd2
+    linarith
+  have hp1 : DifferentiableAt ℂ (fun w => (w - (ρ : ℂ))⁻¹) s :=
+    (differentiableAt_id.sub_const _).inv h1
+  have hp2 : DifferentiableAt ℂ (fun w => (w - conj (ρ : ℂ))⁻¹) s :=
+    (differentiableAt_id.sub_const _).inv h2
+  apply DifferentiableAt.differentiableWithinAt
+  apply DifferentiableAt.const_mul
+  apply DifferentiableAt.add
+  · apply DifferentiableAt.add
+    · exact hp1
+    · exact differentiableAt_const _
+  · apply DifferentiableAt.add
+    · exact hp2
+    · exact differentiableAt_const _
+
+include hr₁ hr₁1 hρfar in
+/-- **`W` 在球上复可微**（Weierstrass M-判别逐项微分）。 -/
+theorem differentiableOn_xiWeightedMittagLefflerSum :
+    DifferentiableOn ℂ (fun s => xiWeightedMittagLefflerSum s)
+      (Metric.ball 1 (r₁ / 2)) := by
+  classical
+  exact differentiableOn_tsum_of_summable_norm (u := xiWeightedMittagLefflerBound r₁)
+    (summable_xiWeightedMittagLefflerBound hr₁)
+    (fun ρ => differentiableOn_xiWeightedMittagLefflerTerm hr₁ hr₁1 hρfar ρ)
+    Metric.isOpen_ball
+    (fun ρ s hs => norm_xiWeightedMittagLefflerTerm_le hr₁ hr₁1 hρfar hs ρ)
+
+include hr₁ hr₁1 hρfar in
+/-- Mittag-Leffler 配对项的逐项导数：`deriv (xiWeightedMittagLefflerTerm · ρ) s =
+-xiWeightedInvPowTerm 2 s ρ`（常数片导数为零）。 -/
+theorem hasDerivAt_xiWeightedMittagLefflerTerm {s : ℂ}
+    (hs : s ∈ Metric.ball (1 : ℂ) (r₁ / 2)) (ρ : UpperHalfPlaneNontrivialZero) :
+    HasDerivAt (fun w => xiWeightedMittagLefflerTerm w (ρ : ℂ))
+      (-xiWeightedInvPowTerm 2 s (ρ : ℂ)) s := by
+  simp only [xiWeightedMittagLefflerTerm, xiPairedMittagLefflerTerm, one_div]
+  obtain ⟨hd1, hd2, _⟩ := dist_bound_of_mem_ball hr₁ hr₁1 hρfar hs ρ
+  have h1 : s - (ρ : ℂ) ≠ 0 := by
+    intro h
+    rw [h, norm_zero] at hd1
+    linarith
+  have h2 : s - conj (ρ : ℂ) ≠ 0 := by
+    intro h
+    rw [h, norm_zero] at hd2
+    linarith
+  have hp1 : HasDerivAt (fun w : ℂ => (w - (ρ : ℂ))⁻¹) (-((s - (ρ : ℂ)) ^ 2)⁻¹) s := by
+    simpa using hasDerivAt_invPow_piece h1 1
+  have hp2 : HasDerivAt (fun w : ℂ => (w - conj (ρ : ℂ))⁻¹)
+      (-((s - conj (ρ : ℂ)) ^ 2)⁻¹) s := by
+    simpa using hasDerivAt_invPow_piece h2 1
+  have hsum : HasDerivAt
+      (fun w => (analyticOrderNatAt xiFunction (ρ : ℂ) : ℂ) *
+        ((w - (ρ : ℂ))⁻¹ + (ρ : ℂ)⁻¹ + ((w - conj (ρ : ℂ))⁻¹ + (conj (ρ : ℂ))⁻¹)))
+      ((analyticOrderNatAt xiFunction (ρ : ℂ) : ℂ) *
+        ((-((s - (ρ : ℂ)) ^ 2)⁻¹ + 0) + (-((s - conj (ρ : ℂ)) ^ 2)⁻¹ + 0))) s := by
+    apply HasDerivAt.const_mul
+    apply HasDerivAt.add
+    · apply HasDerivAt.add
+      · exact hp1
+      · exact hasDerivAt_const s _
+    · apply HasDerivAt.add
+      · exact hp2
+      · exact hasDerivAt_const s _
+  refine hsum.congr_deriv ?_
+  show (analyticOrderNatAt xiFunction (ρ : ℂ) : ℂ) *
+      ((-((s - (ρ : ℂ)) ^ 2)⁻¹ + 0) + (-((s - conj (ρ : ℂ)) ^ 2)⁻¹ + 0)) =
+    -((analyticOrderNatAt xiFunction (ρ : ℂ) : ℂ) *
+      ((s - (ρ : ℂ))⁻¹ ^ 2 + (s - conj (ρ : ℂ))⁻¹ ^ 2))
+  rw [← inv_pow (s - (ρ : ℂ)) 2, ← inv_pow (s - conj (ρ : ℂ)) 2]
+  ring
+
+include hr₁ hr₁1 hρfar in
+/-- **`W` 的导数恒等式**：球上 `deriv W = -D_2`
+（Weierstrass–Cauchy 逐项微分）。 -/
+theorem deriv_xiWeightedMittagLefflerSum_eqOn :
+    Set.EqOn (deriv fun s => xiWeightedMittagLefflerSum s)
+      (fun s => -xiWeightedInvPowSum 2 s) (Metric.ball 1 (r₁ / 2)) := by
+  classical
+  intro s hs
+  have hsu := hasSum_deriv_of_summable_norm (u := xiWeightedMittagLefflerBound r₁)
+    (summable_xiWeightedMittagLefflerBound hr₁)
+    (fun ρ => differentiableOn_xiWeightedMittagLefflerTerm hr₁ hr₁1 hρfar ρ)
+    Metric.isOpen_ball
+    (fun ρ w hw => norm_xiWeightedMittagLefflerTerm_le hr₁ hr₁1 hρfar hw ρ) hs
+  have hd : ∀ ρ : UpperHalfPlaneNontrivialZero,
+      deriv (fun w => xiWeightedMittagLefflerTerm w (ρ : ℂ)) s =
+        -xiWeightedInvPowTerm 2 s (ρ : ℂ) := fun ρ =>
+    (hasDerivAt_xiWeightedMittagLefflerTerm hr₁ hr₁1 hρfar hs ρ).deriv
+  have hsu' : HasSum (fun ρ : UpperHalfPlaneNontrivialZero =>
+        -xiWeightedInvPowTerm 2 s (ρ : ℂ))
+      (deriv (fun s => xiWeightedMittagLefflerSum s) s) :=
+    hsu.congr_fun fun ρ => (hd ρ).symm
+  have htsum := hsu'.tsum_eq
+  rw [tsum_neg] at htsum
+  exact htsum.symm
+
+include hr₁ hr₁1 hρfar in
+/-- **D-族高阶导数（带常数因子）**：球上
+`iteratedDeriv k (c·D_j) = c·(-1)^k·(j+k-1)↓_k·D_{j+k}`（`j ≥ 1`），
+其中 `(j+k-1)↓_k = Nat.descFactorial (j+k-1) k = j(j+1)⋯(j+k-1)`。
+归纳步：`iteratedDeriv_succ'`（此版为 `iteratedDeriv (n+1) f =
+iteratedDeriv n (deriv f)`）+ `deriv_const_mul` + D-求导规则。 -/
+theorem iteratedDeriv_const_mul_xiWeightedInvPowSum_eqOn (k : ℕ) (c : ℂ) {j : ℕ}
+    (hj : 1 ≤ j) :
+    Set.EqOn (iteratedDeriv k fun s => c * xiWeightedInvPowSum j s)
+      (fun s => c * ((-1 : ℂ) ^ k * (Nat.descFactorial (j + k - 1) k : ℂ) *
+        xiWeightedInvPowSum (j + k) s))
+      (Metric.ball 1 (r₁ / 2)) := by
+  induction k generalizing c j with
+  | zero =>
+      intro s hs
+      simp [iteratedDeriv_zero, Nat.descFactorial_zero]
+  | succ k ih =>
+      intro s hs
+      rw [iteratedDeriv_succ']
+      have hdon : DifferentiableOn ℂ (fun s => xiWeightedInvPowSum j s)
+          (Metric.ball 1 (r₁ / 2)) :=
+        differentiableOn_xiWeightedInvPowSum hr₁ hr₁1 hρfar hj
+      have hEv : (deriv fun s => c * xiWeightedInvPowSum j s) =ᶠ[𝓝 s]
+          (fun s => (c * -(j : ℂ)) * xiWeightedInvPowSum (j + 1) s) := by
+        apply Filter.eventuallyEq_of_mem (Metric.isOpen_ball.mem_nhds hs)
+        intro w hw
+        rw [deriv_const_mul _ (hdon.differentiableAt (Metric.isOpen_ball.mem_nhds hw)),
+          deriv_xiWeightedInvPowSum_eqOn hr₁ hr₁1 hρfar hj hw]
+        ring
+      have hj1 : 1 ≤ j + 1 := by omega
+      rw [hEv.iteratedDeriv_eq k]
+      have hIH := ih (c * -(j : ℂ)) (j := j + 1) hj1 hs
+      rw [hIH]
+      have h1 : j + 1 + k - 1 = j + k := by omega
+      have h2 : j + (k + 1) - 1 = j + k := by omega
+      have h3 : j + 1 + k = j + (k + 1) := by omega
+      rw [h1, h2, h3]
+      have h4 : Nat.descFactorial (j + k) (k + 1) = j * Nat.descFactorial (j + k) k := by
+        rw [Nat.descFactorial_succ, show j + k - k = j from by omega]
+      rw [h4, pow_succ' (-1 : ℂ) k]
+      push_cast
+      ring
+
+include hr₁ hr₁1 hρfar in
+/-- **`W` 的高阶导数公式**：球上
+`iteratedDeriv (k+1) W = (-1)^(k+1)·(k+1)!·D_{k+2}`。
+由 `iteratedDeriv_succ'`、`deriv W = -D_2` 与 D-族公式
+（`descFactorial (k+1) k = (k+1)!`）合并。 -/
+theorem iteratedDeriv_xiWeightedMittagLefflerSum_eqOn (k : ℕ) :
+    Set.EqOn (iteratedDeriv (k + 1) fun s => xiWeightedMittagLefflerSum s)
+      (fun s => (-1 : ℂ) ^ (k + 1) * (Nat.factorial (k + 1) : ℂ) *
+        xiWeightedInvPowSum (k + 2) s)
+      (Metric.ball 1 (r₁ / 2)) := by
+  intro s hs
+  rw [iteratedDeriv_succ']
+  have hEq : Set.EqOn (deriv fun s => xiWeightedMittagLefflerSum s)
+      (fun s => (-1 : ℂ) * xiWeightedInvPowSum 2 s) (Metric.ball 1 (r₁ / 2)) := by
+    intro w hw
+    rw [deriv_xiWeightedMittagLefflerSum_eqOn hr₁ hr₁1 hρfar hw]
+    ring
+  have hEv := Filter.eventuallyEq_of_mem (Metric.isOpen_ball.mem_nhds hs) hEq
+  rw [hEv.iteratedDeriv_eq k]
+  have h2le : (1 : ℕ) ≤ 2 := by norm_num
+  have hD := iteratedDeriv_const_mul_xiWeightedInvPowSum_eqOn hr₁ hr₁1 hρfar k
+    (-1 : ℂ) (j := 2) h2le hs
+  rw [hD]
+  have hfact : Nat.descFactorial (k + 1) k = Nat.factorial (k + 1) := by
+    rw [Nat.descFactorial_eq_div (by omega), show k + 1 - k = 1 from by omega,
+      Nat.factorial_one, Nat.div_one]
+  have h5 : 2 + k - 1 = k + 1 := by omega
+  have h6 : 2 + k = k + 2 := by omega
+  rw [h5, h6, hfact, pow_succ' (-1 : ℂ) k]
+  push_cast
+  ring
 
 end DSeries
 
