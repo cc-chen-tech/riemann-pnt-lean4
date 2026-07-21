@@ -5571,6 +5571,319 @@ theorem continuous_deBruijnNewmanH_crossderiv :
     (Filter.Eventually.of_forall hmeas) hbound
     (integrableOn_heatCubeDominatingFun (t₀ + 1) (|z₀.im| + 1) (by positivity)) hlim
 
+/-! ## Phase 2(viii)c：`z` 导数映射的联合 `C¹`（临界曲线 IFT 预备） -/
+
+/-- **The joint real derivative of the `z`-derivative map** `(t, z) ↦ ∂_z H_t(z)`:
+`(h, k) ↦ h • (∂_t ∂_z H_t(w)) + (∂²_z H_t(w)) * k`, where `∂_t ∂_z H` is the
+`u²`-weighted integral of `heatIntegrandDeriv` (the cross derivative) and
+`∂²_z H_t(w) = deriv (deriv (H_t)) w`. -/
+noncomputable def jointFDerivZderivCLM (t : ℝ) (w : ℂ) : ℝ × ℂ →L[ℝ] ℂ :=
+  (ContinuousLinearMap.fst ℝ ℝ ℂ).smulRight
+      (∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrandDeriv t w u)
+    + ((ContinuousLinearMap.mul ℝ ℂ) (deriv (deriv (deBruijnNewmanH t)) w)).comp
+      (ContinuousLinearMap.snd ℝ ℝ ℂ)
+
+/-- Evaluation of `jointFDerivZderivCLM`. -/
+theorem jointFDerivZderivCLM_apply (t : ℝ) (w : ℂ) (q : ℝ × ℂ) :
+    jointFDerivZderivCLM t w q
+      = q.1 • (∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrandDeriv t w u)
+        + deriv (deriv (deBruijnNewmanH t)) w * q.2 :=
+  rfl
+
+/-- **Joint continuity of `∂²_z H` in `deriv`-form**: the pointwise identity
+`iteratedDeriv 2 = deriv ∘ deriv` transports
+`continuous_deBruijnNewmanH_zderiv_two`. -/
+theorem continuous_deBruijnNewmanH_deriv_two :
+    Continuous fun p : ℝ × ℂ => deriv (deriv (deBruijnNewmanH p.1)) p.2 := by
+  rw [show (fun p : ℝ × ℂ => deriv (deriv (deBruijnNewmanH p.1)) p.2)
+      = fun p : ℝ × ℂ => iteratedDeriv 2 (deBruijnNewmanH p.1) p.2
+      from funext fun p => by
+        rw [show (2 : ℕ) = 1 + 1 from rfl, iteratedDeriv_succ, iteratedDeriv_one]]
+  exact continuous_deBruijnNewmanH_zderiv_two
+
+/-- **Affine restriction derivative for the `z`-derivative map**: the
+derivative of `s ↦ ∂_z H_t(w + s·k)` at `s : ℝ` is `∂²_z H_t(w + s·k) · k`. -/
+theorem hasDerivAt_deBruijnNewmanHzderiv_affine (t : ℝ) (w k : ℂ) (s : ℝ) :
+    HasDerivAt (fun s : ℝ => deriv (deBruijnNewmanH t) (w + (s : ℂ) * k))
+      (deriv (deriv (deBruijnNewmanH t)) (w + (s : ℂ) * k) * k) s := by
+  have h1 : HasDerivAt (fun s : ℝ => (s : ℂ)) 1 s := by
+    simpa using Complex.ofRealCLM.hasDerivAt (x := s)
+  have h2 : HasDerivAt (fun s : ℝ => w + (s : ℂ) * k) k s := by
+    simpa using (h1.mul_const k).const_add w
+  have hg : HasDerivAt (deriv (deBruijnNewmanH t))
+      (∫ u : ℝ in Set.Ioi 0, -((u : ℂ) ^ 2) * heatIntegrand t (w + (s : ℂ) * k) u)
+      (w + (s : ℂ) * k) :=
+    hasDerivAt_deriv_deBruijnNewmanH t (w + (s : ℂ) * k)
+  have h3 := @HasDerivAt.scomp ℝ _ ℂ _ _ s ℂ _ _ _ IsScalarTower.right _ _ _ _ hg h2
+  have h4 : HasDerivAt (fun s : ℝ => deriv (deBruijnNewmanH t) (w + (s : ℂ) * k))
+      ((∫ u : ℝ in Set.Ioi 0, -((u : ℂ) ^ 2) * heatIntegrand t (w + (s : ℂ) * k) u)
+        * k) s := by
+    simpa [Function.comp_def, smul_eq_mul, mul_comm] using h3
+  rw [deriv_two_deBruijnNewmanH]
+  exact h4
+
+/-- **FTC in the z-direction for the `z`-derivative map**:
+`∂_z H_t(w + k) − ∂_z H_t(w) = ∫₀¹ ∂²_z H_t(w + s·k)·k ds`. The integrand is
+jointly continuous by `continuous_deBruijnNewmanH_deriv_two`. -/
+theorem deBruijnNewmanHzderiv_z_sub_eq_intervalIntegral (t : ℝ) (w k : ℂ) :
+    deriv (deBruijnNewmanH t) (w + k) - deriv (deBruijnNewmanH t) w
+      = ∫ s : ℝ in (0:ℝ)..1,
+        deriv (deriv (deBruijnNewmanH t)) (w + (s : ℂ) * k) * k := by
+  have hDcont : Continuous fun s : ℝ =>
+      deriv (deriv (deBruijnNewmanH t)) (w + (s : ℂ) * k) * k :=
+    (continuous_deBruijnNewmanH_deriv_two.comp
+      (continuous_const.prodMk
+        ((Complex.continuous_ofReal.mul continuous_const).const_add w))).mul
+      continuous_const
+  have hint : IntervalIntegrable
+      (deriv fun s : ℝ => deriv (deBruijnNewmanH t) (w + (s : ℂ) * k))
+      MeasureTheory.volume 0 1 := by
+    rw [show (deriv fun s : ℝ => deriv (deBruijnNewmanH t) (w + (s : ℂ) * k))
+        = fun s : ℝ => deriv (deriv (deBruijnNewmanH t)) (w + (s : ℂ) * k) * k
+        from funext fun s => (hasDerivAt_deBruijnNewmanHzderiv_affine t w k s).deriv]
+    exact hDcont.continuousOn.intervalIntegrable
+  have h2 : ∫ s : ℝ in (0:ℝ)..1,
+        deriv (deriv (deBruijnNewmanH t)) (w + (s : ℂ) * k) * k
+      = deriv (deBruijnNewmanH t) (w + (1 : ℂ) * k)
+        - deriv (deBruijnNewmanH t) (w + (0 : ℂ) * k) := by
+    rw [intervalIntegral.integral_congr
+      fun s _ => (hasDerivAt_deBruijnNewmanHzderiv_affine t w k s).deriv.symm]
+    exact intervalIntegral.integral_deriv_eq_sub
+      (fun x _ => (hasDerivAt_deBruijnNewmanHzderiv_affine t w k x).differentiableAt)
+      hint
+  simpa using h2.symm
+
+/-- **FTC in the t-direction for the `z`-derivative map**:
+`∂_z H_t(w) − ∂_z H_{t₀}(w) = ∫_{t₀}^{t} ∂_s ∂_z H_s(w) ds`, with the cross
+derivative jointly continuous by `continuous_deBruijnNewmanH_crossderiv`. -/
+theorem deBruijnNewmanHzderiv_t_sub_eq_intervalIntegral (t₀ t : ℝ) (w : ℂ) :
+    deriv (deBruijnNewmanH t) w - deriv (deBruijnNewmanH t₀) w
+      = ∫ s : ℝ in t₀..t,
+        ∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrandDeriv s w u := by
+  have hDcont : Continuous fun s : ℝ =>
+      ∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrandDeriv s w u :=
+    continuous_deBruijnNewmanH_crossderiv.comp (continuous_id.prodMk continuous_const)
+  have hint : IntervalIntegrable
+      (deriv fun s : ℝ => deriv (deBruijnNewmanH s) w)
+      MeasureTheory.volume t₀ t := by
+    rw [show (deriv fun s : ℝ => deriv (deBruijnNewmanH s) w)
+        = fun s : ℝ => ∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrandDeriv s w u
+        from funext fun s => (hasDerivAt_deBruijnNewmanH_zderiv_t w s).deriv]
+    exact hDcont.continuousOn.intervalIntegrable
+  have h2 : ∫ s : ℝ in t₀..t,
+        ∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrandDeriv s w u
+      = deriv (deBruijnNewmanH t) w - deriv (deBruijnNewmanH t₀) w := by
+    rw [intervalIntegral.integral_congr
+      fun s _ => ((hasDerivAt_deBruijnNewmanH_zderiv_t w s).deriv).symm]
+    exact intervalIntegral.integral_deriv_eq_sub
+      (fun x _ => (hasDerivAt_deBruijnNewmanH_zderiv_t w x).differentiableAt) hint
+  exact h2.symm
+
+/-- **Joint differentiability of the `z`-derivative map**:
+`(t, z) ↦ ∂_z H_t(z)` has the joint real Fréchet derivative
+`jointFDerivZderivCLM` at every point `p`. The defect splits by FTC in each
+coordinate (`deBruijnNewmanHzderiv_t_sub_eq_intervalIntegral`,
+`deBruijnNewmanHzderiv_z_sub_eq_intervalIntegral`) into two interval integrals
+whose integrands deviate from their values at `p` by at most `ε/2` (joint
+continuity of the cross derivative and of `∂²_z H`). -/
+theorem hasFDerivAt_deBruijnNewmanHzderiv_prod (p : ℝ × ℂ) :
+    HasFDerivAt (fun q : ℝ × ℂ => deriv (deBruijnNewmanH q.1) q.2)
+      (jointFDerivZderivCLM p.1 p.2) p := by
+  rw [hasFDerivAt_iff_isLittleO, Asymptotics.isLittleO_iff]
+  intro ε hε
+  have hcont₁ : ContinuousAt
+      (fun r : ℝ × ℂ =>
+        ∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrandDeriv r.1 r.2 u) p :=
+    continuous_deBruijnNewmanH_crossderiv.continuousAt
+  have hcont₂ : ContinuousAt
+      (fun r : ℝ × ℂ => deriv (deriv (deBruijnNewmanH r.1)) r.2) p :=
+    continuous_deBruijnNewmanH_deriv_two.continuousAt
+  rw [Metric.continuousAt_iff] at hcont₁ hcont₂
+  obtain ⟨δ₁, hδ₁0, hδ₁⟩ := hcont₁ (ε / 2) (half_pos hε)
+  obtain ⟨δ₂, hδ₂0, hδ₂⟩ := hcont₂ (ε / 2) (half_pos hε)
+  rw [Metric.eventually_nhds_iff_ball]
+  refine ⟨min δ₁ δ₂, lt_min_iff.mpr ⟨hδ₁0, hδ₂0⟩, fun q hq => ?_⟩
+  have hqδ1 : dist q p < δ₁ := lt_of_lt_of_le hq (min_le_left _ _)
+  have hqδ2 : dist q p < δ₂ := lt_of_lt_of_le hq (min_le_right _ _)
+  have hq1 : dist q.1 p.1 ≤ dist q p := by
+    rw [Prod.dist_eq]; exact le_max_left _ _
+  have hq2 : dist q.2 p.2 ≤ dist q p := by
+    rw [Prod.dist_eq]; exact le_max_right _ _
+  have hsplit : deriv (deBruijnNewmanH q.1) q.2 - deriv (deBruijnNewmanH p.1) p.2
+      = (∫ τ : ℝ in p.1..q.1,
+          ∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrandDeriv τ q.2 u)
+        + ∫ s : ℝ in (0:ℝ)..1,
+          deriv (deriv (deBruijnNewmanH p.1)) (p.2 + (s : ℂ) * (q.2 - p.2))
+            * (q.2 - p.2) := by
+    have h1 := deBruijnNewmanHzderiv_t_sub_eq_intervalIntegral p.1 q.1 q.2
+    have h2 := deBruijnNewmanHzderiv_z_sub_eq_intervalIntegral p.1 p.2 (q.2 - p.2)
+    rw [add_sub_cancel] at h2
+    calc deriv (deBruijnNewmanH q.1) q.2 - deriv (deBruijnNewmanH p.1) p.2
+        = (deriv (deBruijnNewmanH q.1) q.2 - deriv (deBruijnNewmanH p.1) q.2)
+          + (deriv (deBruijnNewmanH p.1) q.2 - deriv (deBruijnNewmanH p.1) p.2) := by
+          ring
+      _ = _ := by rw [h1, h2]
+  change ‖deriv (deBruijnNewmanH q.1) q.2 - deriv (deBruijnNewmanH p.1) p.2
+      - jointFDerivZderivCLM p.1 p.2 (q - p)‖ ≤ ε * ‖q - p‖
+  rw [hsplit, jointFDerivZderivCLM_apply]
+  have hconst₁ : (q - p).1 •
+        (∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrandDeriv p.1 p.2 u)
+      = ∫ τ : ℝ in p.1..q.1,
+        ∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrandDeriv p.1 p.2 u := by
+    rw [Prod.fst_sub]
+    exact (intervalIntegral.integral_const _).symm
+  have hconst₂ : deriv (deriv (deBruijnNewmanH p.1)) p.2 * (q - p).2
+      = ∫ s : ℝ in (0:ℝ)..1,
+        deriv (deriv (deBruijnNewmanH p.1)) p.2 * (q.2 - p.2) := by
+    rw [Prod.snd_sub, intervalIntegral.integral_const]
+    simp
+  rw [hconst₁, hconst₂]
+  have hintA : IntervalIntegrable
+      (fun τ : ℝ => ∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrandDeriv τ q.2 u)
+      MeasureTheory.volume p.1 q.1 :=
+    (continuous_deBruijnNewmanH_crossderiv.comp
+      (continuous_id.prodMk continuous_const)).continuousOn.intervalIntegrable
+  have hintA₀ : IntervalIntegrable
+      (fun _ : ℝ => ∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrandDeriv p.1 p.2 u)
+      MeasureTheory.volume p.1 q.1 := intervalIntegrable_const
+  have hintB : IntervalIntegrable
+      (fun s : ℝ =>
+        deriv (deriv (deBruijnNewmanH p.1)) (p.2 + (s : ℂ) * (q.2 - p.2)) * (q.2 - p.2))
+      MeasureTheory.volume 0 1 :=
+    ((continuous_deBruijnNewmanH_deriv_two.comp
+      (continuous_const.prodMk
+        ((Complex.continuous_ofReal.mul continuous_const).const_add p.2))).mul
+      continuous_const).continuousOn.intervalIntegrable
+  have hintB₀ : IntervalIntegrable
+      (fun _ : ℝ => deriv (deriv (deBruijnNewmanH p.1)) p.2 * (q.2 - p.2))
+      MeasureTheory.volume 0 1 := intervalIntegrable_const
+  rw [add_sub_add_comm, ← intervalIntegral.integral_sub hintA hintA₀,
+    ← intervalIntegral.integral_sub hintB hintB₀]
+  have hA : ∀ τ ∈ Set.uIoc p.1 q.1,
+      ‖(∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrandDeriv τ q.2 u)
+          - ∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrandDeriv p.1 p.2 u‖
+        ≤ ε / 2 := by
+    intro τ hτ
+    have hτ1 : dist τ p.1 ≤ dist q.1 p.1 := by
+      rw [Real.dist_eq, Real.dist_eq]
+      rcases Set.mem_uIcc.mp (Set.uIoc_subset_uIcc hτ) with h | h
+      · rw [abs_of_nonneg (by linarith : (0:ℝ) ≤ τ - p.1),
+            abs_of_nonneg (by linarith : (0:ℝ) ≤ q.1 - p.1)]
+        linarith [h.2]
+      · rw [abs_of_nonpos (by linarith : τ - p.1 ≤ (0:ℝ)),
+            abs_of_nonpos (by linarith : q.1 - p.1 ≤ (0:ℝ))]
+        linarith [h.1]
+    have hdist : dist (τ, q.2) p < δ₁ := by
+      have h1 : dist (τ, q.2) p = max (dist τ p.1) (dist q.2 p.2) := rfl
+      rw [h1]
+      exact max_lt_iff.mpr ⟨lt_of_le_of_lt (le_trans hτ1 hq1) hqδ1,
+        lt_of_le_of_lt hq2 hqδ1⟩
+    have hlt := hδ₁ hdist
+    rw [dist_eq_norm] at hlt
+    exact le_of_lt hlt
+  have hB : ∀ s ∈ Set.uIoc (0:ℝ) 1,
+      ‖deriv (deriv (deBruijnNewmanH p.1)) (p.2 + (s : ℂ) * (q.2 - p.2)) * (q.2 - p.2)
+          - deriv (deriv (deBruijnNewmanH p.1)) p.2 * (q.2 - p.2)‖
+        ≤ ε / 2 * ‖q.2 - p.2‖ := by
+    intro s hs
+    have hs01 : 0 ≤ s ∧ s ≤ 1 := by
+      rcases Set.mem_uIcc.mp (Set.uIoc_subset_uIcc hs) with h | h
+      · exact ⟨h.1, h.2⟩
+      · exact ⟨by linarith [h.2], by linarith [h.1]⟩
+    have hsabs : |s| ≤ 1 := abs_le.mpr ⟨by linarith [hs01.1], hs01.2⟩
+    have hdist : dist (p.1, p.2 + (s : ℂ) * (q.2 - p.2)) p < δ₂ := by
+      have h1 : dist (p.1, p.2 + (s : ℂ) * (q.2 - p.2)) p
+          = max (dist p.1 p.1) (dist (p.2 + (s : ℂ) * (q.2 - p.2)) p.2) := rfl
+      have hcomp : dist (p.2 + (s : ℂ) * (q.2 - p.2)) p.2
+          = ‖(s : ℂ) * (q.2 - p.2)‖ := by
+        rw [dist_eq_norm]
+        congr 1
+        ring
+      have hle : ‖(s : ℂ) * (q.2 - p.2)‖ ≤ dist q p := by
+        calc ‖(s : ℂ) * (q.2 - p.2)‖ = |s| * ‖q.2 - p.2‖ := by
+              rw [norm_mul]
+              congr 1
+              exact RCLike.norm_ofReal (K := ℂ) s
+          _ ≤ 1 * ‖q.2 - p.2‖ := mul_le_mul_of_nonneg_right hsabs (norm_nonneg _)
+          _ = ‖q.2 - p.2‖ := one_mul _
+          _ = dist q.2 p.2 := (dist_eq_norm _ _).symm
+          _ ≤ dist q p := hq2
+      rw [h1, dist_self, hcomp]
+      exact max_lt_iff.mpr ⟨hδ₂0, lt_of_le_of_lt hle hqδ2⟩
+    rw [← sub_mul, norm_mul]
+    have hlt : ‖deriv (deriv (deBruijnNewmanH p.1)) (p.2 + (s : ℂ) * (q.2 - p.2))
+        - deriv (deriv (deBruijnNewmanH p.1)) p.2‖ < ε / 2 := by
+      have hlt := hδ₂ hdist
+      rw [dist_eq_norm] at hlt
+      exact hlt
+    exact mul_le_mul_of_nonneg_right (le_of_lt hlt) (norm_nonneg _)
+  have hboundA := intervalIntegral.norm_integral_le_of_norm_le_const hA
+  have hboundB := intervalIntegral.norm_integral_le_of_norm_le_const hB
+  calc ‖(∫ τ : ℝ in p.1..q.1,
+            (∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrandDeriv τ q.2 u)
+            - ∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrandDeriv p.1 p.2 u)
+        + ∫ s : ℝ in (0:ℝ)..1,
+          (deriv (deriv (deBruijnNewmanH p.1)) (p.2 + (s : ℂ) * (q.2 - p.2))
+              * (q.2 - p.2)
+            - deriv (deriv (deBruijnNewmanH p.1)) p.2 * (q.2 - p.2))‖
+      ≤ ‖∫ τ : ℝ in p.1..q.1,
+          (∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrandDeriv τ q.2 u)
+            - ∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrandDeriv p.1 p.2 u‖
+        + ‖∫ s : ℝ in (0:ℝ)..1,
+          (deriv (deriv (deBruijnNewmanH p.1)) (p.2 + (s : ℂ) * (q.2 - p.2))
+              * (q.2 - p.2)
+            - deriv (deriv (deBruijnNewmanH p.1)) p.2 * (q.2 - p.2))‖ :=
+        norm_add_le _ _
+    _ ≤ (ε / 2) * |q.1 - p.1| + (ε / 2 * ‖q.2 - p.2‖) * |1 - (0:ℝ)| :=
+        add_le_add hboundA hboundB
+    _ = ε / 2 * |q.1 - p.1| + ε / 2 * ‖q.2 - p.2‖ := by norm_num
+    _ ≤ ε / 2 * ‖q - p‖ + ε / 2 * ‖q - p‖ :=
+        add_le_add
+          (mul_le_mul_of_nonneg_left
+            (by
+              rw [← Real.dist_eq]
+              exact hq1.trans_eq (dist_eq_norm q p))
+            (le_of_lt (half_pos hε)))
+          (mul_le_mul_of_nonneg_left
+            ((dist_eq_norm q.2 p.2).symm.trans_le (hq2.trans_eq (dist_eq_norm q p)))
+            (le_of_lt (half_pos hε)))
+    _ = ε * ‖q - p‖ := by ring
+
+/-- **Continuity of the joint derivative of the `z`-derivative map**:
+`p ↦ jointFDerivZderivCLM p` is continuous, assembled from
+`continuous_deBruijnNewmanH_crossderiv` and
+`continuous_deBruijnNewmanH_deriv_two`. -/
+theorem continuous_jointFDerivZderivCLM :
+    Continuous fun p : ℝ × ℂ => jointFDerivZderivCLM p.1 p.2 := by
+  have ht : Continuous fun p : ℝ × ℂ =>
+      (ContinuousLinearMap.fst ℝ ℝ ℂ).smulRight
+        (∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrandDeriv p.1 p.2 u) := by
+    apply ((ContinuousLinearMap.smulRightL ℝ (ℝ × ℂ) ℂ
+      (ContinuousLinearMap.fst ℝ ℝ ℂ)).continuous.comp
+      continuous_deBruijnNewmanH_crossderiv).congr
+    intro p
+    refine ContinuousLinearMap.ext fun q => ?_
+    rfl
+  have hz : Continuous fun p : ℝ × ℂ =>
+      ((ContinuousLinearMap.mul ℝ ℂ) (deriv (deriv (deBruijnNewmanH p.1)) p.2)).comp
+        (ContinuousLinearMap.snd ℝ ℝ ℂ) :=
+    ((ContinuousLinearMap.mul ℝ ℂ).continuous.comp
+      continuous_deBruijnNewmanH_deriv_two).clm_comp continuous_const
+  exact ht.add hz
+
+/-- **Global `C¹` regularity of the `z`-derivative map**:
+`(t, z) ↦ ∂_z H_t(z)` is `C¹` over `ℝ`, with derivative
+`jointFDerivZderivCLM`. This is the regularity input for the implicit
+function theorem producing the critical curve at a double zero. -/
+theorem contDiff_one_deBruijnNewmanHzderiv_prod :
+    ContDiff ℝ 1 (fun q : ℝ × ℂ => deriv (deBruijnNewmanH q.1) q.2) := by
+  rw [contDiff_one_iff_fderiv]
+  refine ⟨fun q => (hasFDerivAt_deBruijnNewmanHzderiv_prod q).differentiableAt, ?_⟩
+  rw [show (fderiv ℝ fun q : ℝ × ℂ => deriv (deBruijnNewmanH q.1) q.2)
+      = fun q : ℝ × ℂ => jointFDerivZderivCLM q.1 q.2
+      from funext fun q => (hasFDerivAt_deBruijnNewmanHzderiv_prod q).fderiv]
+  exact continuous_jointFDerivZderivCLM
+
 /-- **Diagonal derivative — the zero-transport piece**: if `z(t) → z₀` as
 `t → t₀`, then `t ↦ H_t(z(t)) − H_{t₀}(z(t))` has derivative `∂_t H_{t₀}(z₀)`
 (the `u²`-weighted heat integral) at `t₀`. Proof: the FTC representation
