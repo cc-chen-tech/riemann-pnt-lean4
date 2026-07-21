@@ -5950,7 +5950,7 @@ theorem deBruijnNewman_critical_curve (τ : ℝ) (x₀ : ℂ)
     (hz : deriv (deBruijnNewmanH τ) x₀ = 0)
     (hD2 : deriv (deriv (deBruijnNewmanH τ)) x₀ ≠ 0)
     (hx : x₀.im = 0) :
-    ∃ c : ℝ → ℂ, DifferentiableAt ℝ c τ ∧ c τ = x₀
+    ∃ c : ℝ → ℂ, (∀ᶠ t in nhds τ, DifferentiableAt ℝ c t) ∧ c τ = x₀
       ∧ (∀ᶠ t in nhds τ, deriv (deBruijnNewmanH t) (c t) = 0)
       ∧ (∀ᶠ t in nhds τ, (c t).im = 0)
       ∧ deriv c τ
@@ -5970,7 +5970,9 @@ theorem deBruijnNewman_critical_curve (τ : ℝ) (x₀ : ℂ)
     refine hev.mono fun t ht => ?_
     simp only [] at ht
     rwa [hz] at ht
-  refine ⟨c, hcCD.differentiableAt one_ne_zero, hc0, hzero, ?_, ?_⟩
+  have hcdiff_ev : ∀ᶠ t in nhds τ, DifferentiableAt ℝ c t :=
+    (hcCD.eventually (by decide)).mono fun _t ht => ht.differentiableAt_one
+  refine ⟨c, hcdiff_ev, hc0, hzero, ?_, ?_⟩
   · -- reality via the conjugate curve and local uniqueness
     have htend : Filter.Tendsto (fun t : ℝ => (t, star (c t)))
         (nhds τ) (nhds (τ, x₀)) := by
@@ -6878,6 +6880,33 @@ theorem deBruijnNewman_double_zero_births_real_zeros (τ : ℝ) (c : ℝ → ℂ
   · rw [show c t + (y₂ : ℂ) - c t = (y₂ : ℂ) from by ring,
       show ‖(y₂ : ℂ)‖ = |y₂| from RCLike.norm_ofReal _, abs_of_pos hy₂lo]
     linarith [hy₂hi]
+
+/-- **Double-zero collision — full alternative (Phases 2(31)+2(35)+2(36))**: at an
+exactly double real zero `x₀` of `H_τ` (i.e. `H_τ(x₀) = 0`, `∂_z H_τ(x₀) = 0`,
+`∂²_z H_τ(x₀) ≠ 0`, `x₀ ∈ ℝ`), the zero does not disappear after the collision:
+for every `t > τ` sufficiently close to `τ`, `H_t` has two distinct real zeros
+`z₁.re < z₂.re` near `x₀` (born from the critical curve `c(t)` by the quadratic
+sign flip). This is the collision case of the de Bruijn monotonicity
+globalization: simple zeros persist by the implicit function trajectory
+(`deBruijnNewman_simple_zero_trajectory`), and exactly-double zeros instantly
+re-emerge as two real zeros, so real zeros are never lost in either case. -/
+theorem deBruijnNewman_double_zero_full (τ : ℝ) (x₀ : ℂ)
+    (hz0 : deBruijnNewmanH τ x₀ = 0)
+    (hzder : deriv (deBruijnNewmanH τ) x₀ = 0)
+    (hB : deriv (deriv (deBruijnNewmanH τ)) x₀ ≠ 0)
+    (hx : x₀.im = 0) :
+    ∀ᶠ t in nhdsWithin τ (Set.Ioi τ), ∃ z₁ z₂ : ℂ,
+      deBruijnNewmanH t z₁ = 0 ∧ deBruijnNewmanH t z₂ = 0
+        ∧ z₁.im = 0 ∧ z₂.im = 0 ∧ z₁.re < z₂.re := by
+  obtain ⟨c, hcdiff, hc0, hcrit, hcreal, -⟩ :=
+    deBruijnNewman_critical_curve τ x₀ hzder hB hx
+  have hcont : ContinuousAt c τ := (hcdiff.self_of_nhds).continuousAt
+  have hsigns := deBruijnNewman_double_zero_quadratic_signs τ x₀ c hcont hcdiff hcrit
+    hcreal hc0 hz0 hB hx
+  have hbirth := deBruijnNewman_double_zero_births_real_zeros τ c hcreal hsigns
+  filter_upwards [hbirth] with t ht
+  obtain ⟨z₁, z₂, h1, h2, h3, h4, h5, h6, -, -⟩ := ht
+  exact ⟨z₁, z₂, h1, h2, h3, h4, h5.trans h6⟩
 
 /-- **Diagonal derivative — the zero-transport piece**: if `z(t) → z₀` as
 `t → t₀`, then `t ↦ H_t(z(t)) − H_{t₀}(z(t))` has derivative `∂_t H_{t₀}(z₀)`
