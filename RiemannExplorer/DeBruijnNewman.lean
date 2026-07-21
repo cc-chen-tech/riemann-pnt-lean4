@@ -4653,6 +4653,105 @@ theorem continuous_deBruijnNewmanH_tderiv :
     (Filter.Eventually.of_forall hmeas) hbound
     (integrableOn_heatSqDominatingFun (t₀ + 1) (|z₀.im| + 1) (by positivity)) hlim
 
+/-- **Box bound for the `z`-derivative integrand**: for `t ≤ t₁`, `|z.im| ≤ c`
+and `u ≥ 0`, `‖heatIntegrandDeriv t z u‖ ≤ heatDerivDominatingFun t₁ c u`. -/
+theorem norm_heatIntegrandDeriv_le {t t₁ c : ℝ} (ht : t ≤ t₁) (hc : 0 ≤ c) {z : ℂ}
+    (hzim : |z.im| ≤ c) {u : ℝ} (hu : 0 ≤ u) :
+    ‖heatIntegrandDeriv t z u‖ ≤ heatDerivDominatingFun t₁ c u := by
+  have hC0 : (0 : ℝ) ≤ (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst :=
+    mul_nonneg (by positivity) phiTailConst_nonneg
+  have hexp : Real.exp (t * u ^ 2) ≤ Real.exp (t₁ * u ^ 2) :=
+    Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_right ht (sq_nonneg u))
+  have hsin : ‖Complex.sin (z * (u : ℂ))‖ ≤ Real.exp (c * u) := by
+    calc ‖Complex.sin (z * (u : ℂ))‖ ≤ Real.exp |z.im * u| :=
+          norm_sin_mul_ofReal_le_exp z u
+      _ = Real.exp (|z.im| * u) := by rw [abs_mul, abs_of_nonneg hu]
+      _ ≤ Real.exp (c * u) :=
+          Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_right hzim hu)
+  have hn : ‖heatIntegrandDeriv t z u‖
+      = u * (|Real.exp (t * u ^ 2) * phi u| * ‖Complex.sin (z * (u : ℂ))‖) := by
+    unfold heatIntegrandDeriv
+    rw [norm_mul, norm_mul, norm_neg,
+      show ‖((Real.exp (t * u ^ 2) * phi u : ℝ) : ℂ)‖
+        = |Real.exp (t * u ^ 2) * phi u| from RCLike.norm_ofReal _,
+      show ‖(u : ℂ)‖ = u from by
+        rw [show ‖(u : ℂ)‖ = |u| from RCLike.norm_ofReal u, abs_of_nonneg hu]]
+    ring
+  rw [hn]
+  have hphi : |Real.exp (t * u ^ 2) * phi u|
+      ≤ Real.exp (t₁ * u ^ 2) * ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+          * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))) := by
+    rw [abs_mul, abs_of_pos (Real.exp_pos _)]
+    exact mul_le_mul hexp (abs_phi_le u hu) (abs_nonneg _) (Real.exp_nonneg _)
+  have hb0 : 0 ≤ Real.exp (t₁ * u ^ 2)
+      * ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+        * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))) :=
+    mul_nonneg (Real.exp_nonneg _)
+      (mul_nonneg (mul_nonneg hC0 (Real.exp_nonneg _)) (Real.exp_nonneg _))
+  calc u * (|Real.exp (t * u ^ 2) * phi u| * ‖Complex.sin (z * (u : ℂ))‖)
+      ≤ u * ((Real.exp (t₁ * u ^ 2)
+          * ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+            * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))))
+        * Real.exp (c * u)) :=
+        mul_le_mul_of_nonneg_left
+          (mul_le_mul hphi hsin (norm_nonneg _) hb0) hu
+    _ = (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst * u
+          * (Real.exp (t₁ * u ^ 2) * (Real.exp (9 * u) * Real.exp (c * u)))
+          * Real.exp (-(Real.pi * Real.exp (4 * u))) := by ring
+    _ = (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst * u
+          * (Real.exp (t₁ * u ^ 2) * Real.exp ((9 + c) * u))
+          * Real.exp (-(Real.pi * Real.exp (4 * u))) := by
+        have e9c : Real.exp (9 * u) * Real.exp (c * u) = Real.exp ((9 + c) * u) := by
+          rw [← Real.exp_add]; congr 1; ring
+        rw [e9c]
+    _ = heatDerivDominatingFun t₁ c u := by
+        unfold heatDerivDominatingFun
+        rw [← Real.exp_add]
+
+/-- **Joint continuity of the `z`-derivative** `∂_z H_t(z)
+= ∫₀^∞ e^{tu²} Φ(u) (−sin(zu)) · u du` on `ℝ × ℂ`: dominated convergence with
+the `heatDerivDominatingFun` box bound `norm_heatIntegrandDeriv_le`. -/
+theorem continuous_deBruijnNewmanH_zderiv :
+    Continuous fun p : ℝ × ℂ => deriv (deBruijnNewmanH p.1) p.2 := by
+  rw [show (fun p : ℝ × ℂ => deriv (deBruijnNewmanH p.1) p.2)
+      = fun p : ℝ × ℂ => ∫ u : ℝ in Set.Ioi 0, heatIntegrandDeriv p.1 p.2 u
+      from funext fun p => deriv_deBruijnNewmanH p.1 p.2]
+  rw [continuous_iff_continuousAt]
+  intro ⟨t₀, z₀⟩
+  set μ := MeasureTheory.volume.restrict (Set.Ioi (0:ℝ)) with hμ
+  have hmeas : ∀ p : ℝ × ℂ, MeasureTheory.AEStronglyMeasurable
+      (fun u : ℝ => heatIntegrandDeriv p.1 p.2 u) μ :=
+    fun p => ((continuous_heatIntegrandDeriv p.1 p.2).continuousOn.aestronglyMeasurable
+      measurableSet_Ioi)
+  have hb1 : ∀ᶠ p : ℝ × ℂ in nhds (t₀, z₀), dist p.1 t₀ < 1 :=
+    (continuous_fst.tendsto (t₀, z₀)).eventually (Metric.ball_mem_nhds t₀ zero_lt_one)
+  have hb2 : ∀ᶠ p : ℝ × ℂ in nhds (t₀, z₀), dist p.2 z₀ < 1 :=
+    (continuous_snd.tendsto (t₀, z₀)).eventually (Metric.ball_mem_nhds z₀ zero_lt_one)
+  have hbound : ∀ᶠ p : ℝ × ℂ in nhds (t₀, z₀), ∀ᵐ u : ℝ ∂μ,
+      ‖heatIntegrandDeriv p.1 p.2 u‖
+        ≤ heatDerivDominatingFun (t₀ + 1) (|z₀.im| + 1) u := by
+    filter_upwards [hb1, hb2] with p hp1 hp2
+    filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_Ioi] with u hu
+    exact norm_heatIntegrandDeriv_le (t := p.1) (t₁ := t₀ + 1) (c := |z₀.im| + 1)
+      (by
+        have h1 : |p.1 - t₀| < 1 := by rw [← Real.dist_eq]; exact hp1
+        linarith [(abs_lt.mp h1).2])
+      (by positivity) (abs_im_le_add_one_of_dist_lt_one hp2) hu.le
+  have hlim : ∀ᵐ u : ℝ ∂μ, Filter.Tendsto
+      (fun p : ℝ × ℂ => heatIntegrandDeriv p.1 p.2 u)
+      (nhds (t₀, z₀)) (nhds (heatIntegrandDeriv t₀ z₀ u)) := by
+    apply Filter.Eventually.of_forall
+    intro u
+    have hcont : Continuous (fun p : ℝ × ℂ => heatIntegrandDeriv p.1 p.2 u) := by
+      unfold heatIntegrandDeriv
+      fun_prop
+    exact hcont.tendsto (t₀, z₀)
+  show Filter.Tendsto _ (nhds (t₀, z₀)) (nhds _)
+  exact MeasureTheory.tendsto_integral_filter_of_dominated_convergence
+    (heatDerivDominatingFun (t₀ + 1) (|z₀.im| + 1))
+    (Filter.Eventually.of_forall hmeas) hbound
+    (integrableOn_heatDerivDominatingFun (t₀ + 1) (|z₀.im| + 1) (by positivity)) hlim
+
 /-- **FTC representation**: the increment of `H` in `t` is the interval integral
 of its time derivative, `H_t(w) − H_{t₀}(w) = ∫_{t₀}^{t} ∂_s H_s(w) ds`. The
 integrand `∂_s H_s(w)` is jointly continuous by
