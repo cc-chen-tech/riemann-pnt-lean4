@@ -497,4 +497,101 @@ theorem xiBlaschkeRegularized_eventuallyEq_nhds {R : ℝ} (hR : 0 < R) {g : ℂ 
   · exact hval
   · exact h
 
+/-- **`g` 在外圈的对数上界**：`w ∈ sphere 0 (2R)` 时
+`log‖g w‖ ≤ K(1+2R)log(4+2R)`（`g w = ξ w · B w` 且 `‖B w‖ = 1`）。 -/
+theorem log_norm_xiBlaschkeRegularized_le_of_mem_sphere {R : ℝ} (hR : 0 < R) {K : ℝ} (hK : 0 ≤ K)
+    (hgrow : ∀ s : ℂ, ‖xiFunction s‖ ≤ Real.exp (K * (1 + ‖s‖) * Real.log (4 + ‖s‖)))
+    {g : ℂ → ℂ}
+    (hg : (fun w => xiFunction w * xiBlaschkeProd R w)
+      =ᶠ[Filter.codiscreteWithin (Metric.ball (0 : ℂ) (3 * R))] g)
+    (hgC : ContinuousOn g (Metric.ball (0 : ℂ) (3 * R)))
+    {w : ℂ} (hw : w ∈ Metric.sphere (0 : ℂ) (2 * R)) :
+    Real.log ‖g w‖ ≤ K * (1 + 2 * R) * Real.log (4 + 2 * R) := by
+  have hwU : w ∈ Metric.ball (0 : ℂ) (3 * R) := by
+    rw [Metric.mem_sphere, dist_zero_right] at hw
+    rw [Metric.mem_ball, dist_zero_right, hw]
+    linarith
+  have hwS : w ∉ xiZeroDiscFinset R := by
+    intro hmem
+    have huB := xiZeroDiscFinset_subset_closedBall hmem
+    rw [Metric.mem_closedBall, dist_zero_right] at huB
+    rw [Metric.mem_sphere, dist_zero_right] at hw
+    linarith
+  have hval : xiFunction w * xiBlaschkeProd R w = g w :=
+    (xiBlaschkeRegularized_eventuallyEq_nhds hR hg hgC hwU hwS).self_of_nhds
+  have hnorm : ‖g w‖ = ‖xiFunction w‖ := by
+    rw [← hval, norm_mul, norm_xiBlaschkeProd_eq_one hR hw, mul_one]
+  have hBnn : 0 ≤ K * (1 + 2 * R) * Real.log (4 + 2 * R) :=
+    mul_nonneg (mul_nonneg hK (by positivity)) (Real.log_nonneg (by linarith))
+  by_cases hg0 : g w = 0
+  · rw [hg0, norm_zero, Real.log_zero]
+    exact hBnn
+  · rw [Metric.mem_sphere, dist_zero_right] at hw
+    have hξw := hgrow w
+    rw [hw] at hξw
+    have hpos : (0 : ℝ) < ‖xiFunction w‖ := by
+      rw [← hnorm]
+      exact norm_pos_iff.mpr hg0
+    rw [hnorm]
+    calc Real.log ‖xiFunction w‖ ≤ Real.log (Real.exp _) := Real.log_le_log hpos hξw
+    _ = K * (1 + 2 * R) * Real.log (4 + 2 * R) := Real.log_exp _
+
+/-- **圆心下界**：`log‖g 0‖ ≥ log(1/2)`（每个 Blaschke 因子在 `0` 处范数
+`2R/‖u‖ ≥ 1`，对数非负）。 -/
+theorem center_lower_xiBlaschkeRegularized {R : ℝ} (hR : 0 < R) {g : ℂ → ℂ}
+    (hg : (fun w => xiFunction w * xiBlaschkeProd R w)
+      =ᶠ[Filter.codiscreteWithin (Metric.ball (0 : ℂ) (3 * R))] g)
+    (hgC : ContinuousOn g (Metric.ball (0 : ℂ) (3 * R))) :
+    Real.log (1 / 2) ≤ Real.log ‖g 0‖ := by
+  have h0U : (0 : ℂ) ∈ Metric.ball (0 : ℂ) (3 * R) := by
+    rw [Metric.mem_ball, dist_self]
+    linarith
+  have h0S : (0 : ℂ) ∉ xiZeroDiscFinset R := zero_notMem_xiZeroDiscFinset R
+  have hval : xiFunction 0 * xiBlaschkeProd R 0 = g 0 :=
+    (xiBlaschkeRegularized_eventuallyEq_nhds hR hg hgC h0U h0S).self_of_nhds
+  have hξ0 : xiFunction 0 ≠ 0 := by rw [xiFunction_zero]; norm_num
+  have hune : ∀ u ∈ xiZeroDiscFinset R, u ≠ 0 := by
+    intro u hu h
+    have hz := xiFunction_eq_zero_of_mem_xiZeroDiscFinset hu
+    rw [h, xiFunction_zero] at hz
+    norm_num at hz
+  have hB0ne : xiBlaschkeProd R 0 ≠ 0 := xiBlaschkeProd_ne_zero hR
+    (by rw [Metric.mem_closedBall, dist_zero_right, norm_zero]; linarith)
+    (fun u hu h => hune u hu h.symm)
+  have hcanon : ∀ u ∈ xiZeroDiscFinset R, ‖Complex.canonicalFactor (2 * R) u 0‖ = 2 * R / ‖u‖ := by
+    intro u hu
+    have hu0 := hune u hu
+    have h2R0 : (0 : ℝ) < 2 * R := by positivity
+    rw [Complex.canonicalFactor_apply]
+    simp only [mul_zero, sub_zero, zero_sub, norm_div, norm_mul, norm_neg]
+    rw [norm_pow, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg h2R0.le, pow_two,
+      mul_div_mul_left _ _ h2R0.ne']
+  have hlogprod : Real.log ‖xiBlaschkeProd R 0‖ =
+      ∑ u ∈ xiZeroDiscFinset R, (xiZeroDiscMult R u : ℝ) * Real.log (2 * R / ‖u‖) := by
+    rw [xiBlaschkeProd, Complex.norm_prod]
+    rw [Real.log_prod (fun u hu => by
+      rw [norm_pow, hcanon u hu]
+      exact pow_ne_zero _ (div_ne_zero (by positivity : (2 * R : ℝ) ≠ 0)
+        (norm_pos_iff.mpr (hune u hu)).ne'))]
+    apply Finset.sum_congr rfl
+    intro u hu
+    rw [norm_pow, hcanon u hu, Real.log_pow]
+  have hterm : ∀ u ∈ xiZeroDiscFinset R,
+      0 ≤ (xiZeroDiscMult R u : ℝ) * Real.log (2 * R / ‖u‖) := by
+    intro u hu
+    have huB := xiZeroDiscFinset_subset_closedBall hu
+    rw [Metric.mem_closedBall, dist_zero_right] at huB
+    apply mul_nonneg (Nat.cast_nonneg _)
+    apply Real.log_nonneg
+    rw [one_le_div (norm_pos_iff.mpr (hune u hu))]
+    linarith
+  have hg0 : g 0 ≠ 0 := by rw [← hval]; exact mul_ne_zero hξ0 hB0ne
+  have hB0log : 0 ≤ Real.log ‖xiBlaschkeProd R 0‖ := by
+    rw [hlogprod]
+    exact Finset.sum_nonneg hterm
+  have hξ0n : ‖xiFunction 0‖ = 1 / 2 := by rw [xiFunction_zero]; norm_num
+  rw [← hval, norm_mul,
+    Real.log_mul (norm_ne_zero_iff.mpr hξ0) (norm_ne_zero_iff.mpr hB0ne), hξ0n]
+  linarith
+
 end RiemannExplorer
