@@ -11,6 +11,7 @@ import RiemannExplorer.XiPartialFractionResidue
 import RiemannExplorer.XiPartialFractionEntire
 import RiemannExplorer.XiGrowthOrder
 import RiemannExplorer.ZetaRealSegment
+import RiemannExplorer.XiPartialFractionWeighted
 
 #print axioms RiemannExplorer.xiFunction_one_sub
 #print axioms RiemannExplorer.xiFunction_zero
@@ -134,3 +135,15 @@ import RiemannExplorer.ZetaRealSegment
 #print axioms dirichletEtaPair_eq_on_halfplane
 #print axioms dirichletEtaPair_re_ge
 #print axioms riemannZeta_ofReal_ne_zero_of_Ioo
+#print axioms RiemannExplorer.xiFunction_zero_im_ne_zero
+#print axioms RiemannExplorer.analyticOrderNatAt_xiFunction_conj
+#print axioms RiemannExplorer.summable_xiWeightedMittagLefflerTerm
+#print axioms RiemannExplorer.differentiableAt_tsum_xiWeightedMittagLefflerTerm
+#print axioms RiemannExplorer.differentiableOn_tsum_xiWeightedMittagLefflerTerm
+#print axioms RiemannExplorer.xiWeightedMittagLefflerSum_conj
+#print axioms RiemannExplorer.tendsto_sub_mul_xiWeightedMittagLefflerSum
+#print axioms RiemannExplorer.tendsto_sub_mul_xiWeightedMittagLefflerSum_conj
+#print axioms RiemannExplorer.tendsto_sub_mul_xiWeightedMittagLefflerSum_of_zero
+#print axioms RiemannExplorer.tendsto_sub_mul_logDeriv_sub_const_sub_xiWeightedMittagLefflerSum_of_zero
+#print axioms RiemannExplorer.xiWeightedEntireCorrection_apply_of_ne_zero
+#print axioms RiemannExplorer.differentiable_xiWeightedEntireCorrection

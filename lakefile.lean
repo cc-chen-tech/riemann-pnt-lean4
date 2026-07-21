@@ -23,6 +23,7 @@ lean_lib RiemannPNT where
     `RiemannExplorer.XiPartialFractionEntire,
     `RiemannExplorer.XiGrowthOrder,
     `RiemannExplorer.ZetaRealSegment,
+    `RiemannExplorer.XiPartialFractionWeighted,
     `GammaResidue,
     `HardyTheorem,
     `EulerAndLfunctions,
