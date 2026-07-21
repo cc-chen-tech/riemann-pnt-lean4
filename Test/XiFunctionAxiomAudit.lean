@@ -10,6 +10,7 @@ import RiemannExplorer.XiPartialFractionAnalytic
 import RiemannExplorer.XiPartialFractionResidue
 import RiemannExplorer.XiPartialFractionEntire
 import RiemannExplorer.XiGrowthOrder
+import RiemannExplorer.ZetaRealSegment
 
 #print axioms RiemannExplorer.xiFunction_one_sub
 #print axioms RiemannExplorer.xiFunction_zero
@@ -114,3 +115,22 @@ import RiemannExplorer.XiGrowthOrder
 #print axioms RiemannExplorer.summable_mul_norm_inv_sq_upperZeros
 #print axioms RiemannExplorer.analyticOrderNatAt_xiFunction_eq_riemannZeta_of_isNontrivialZero
 #print axioms RiemannExplorer.summable_xiOrder_mul_norm_inv_sq_upperZeros
+#print axioms differentiableAt_etaPairTerm
+#print axioms etaPairTerm_norm_le_two
+#print axioms etaPairTerm_norm_le_exp
+#print axioms summable_etaPairTerm_bound
+#print axioms summable_etaPairTerm
+#print axioms differentiableOn_dirichletEtaPair_ball
+#print axioms analyticOnNhd_dirichletEtaPair
+#print axioms zetaEtaFactor_one
+#print axioms hasDerivAt_zetaEtaFactor_one
+#print axioms tendsto_oneSubTwoCpowMulZeta_one
+#print axioms differentiable_oneSubTwoCpowMulZetaReg
+#print axioms analyticOnNhd_oneSubTwoCpowMulZetaReg
+#print axioms summable_cpow_neg_nat
+#print axioms summable_odd_cpow_neg
+#print axioms riemannZeta_eq_tsum_odd_add_tsum_even
+#print axioms dirichletEtaPair_eq
+#print axioms dirichletEtaPair_eq_on_halfplane
+#print axioms dirichletEtaPair_re_ge
+#print axioms riemannZeta_ofReal_ne_zero_of_Ioo
