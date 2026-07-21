@@ -3547,5 +3547,58 @@ theorem completedZeta_eq_zero_iff (s : ℂ) :
       · exact absurd hh hΓ
     rw [completedZeta_eq_of_ne_zero_ne_one s h0 h1, hΛ, mul_zero]
 
+/-- **Phase 2 核心桥（`t = 0` 切片）**：黎曼猜想 ⇔ `H₀` 只有实零点。
+`Statement → AllZerosReal 0`：`H₀ z = 0` 经桥接引理化为 `ξ` 零点即非平凡零点，
+`RH` 给出 `Re = 1/2`，即 `z.im = 0`；反向取 `z = −2i(s − 1/2)` 把非平凡零点
+`s` 拉回到 `H₀` 的零点，`z.im = 0` 即 `Re s = 1/2`。 -/
+theorem statement_iff_allZerosReal_zero :
+    RiemannHypothesis.Statement ↔ AllZerosReal 0 := by
+  constructor
+  · intro hRH z hz0
+    have hΞ := (deBruijnNewmanH_zero_eq_zero_iff z).mp hz0
+    have hnontriv := (completedZeta_eq_zero_iff _).mp hΞ
+    have hre := hRH _ hnontriv
+    have hre2 : ((1 : ℂ) / 2 + Complex.I * (z / 2)).re = 1 / 2 - z.im / 2 := by
+      have h4 : ((1 : ℂ) / 2).re = 1 / 2 := by
+        rw [show (1 : ℂ) / 2 = ((1 / 2 : ℝ) : ℂ) from by
+          rw [Complex.ofReal_div, Complex.ofReal_one, Complex.ofReal_ofNat]]
+        exact Complex.ofReal_re _
+      have h6 : (z / 2 : ℂ).im = z.im / 2 := by
+        rw [show z / 2 = z * ((1 / 2 : ℝ) : ℂ) from by
+          rw [show ((1 / 2 : ℝ) : ℂ) = 1 / 2 from by
+            rw [Complex.ofReal_div, Complex.ofReal_one, Complex.ofReal_ofNat]]; ring]
+        rw [Complex.mul_im, Complex.ofReal_re, Complex.ofReal_im]
+        ring
+      rw [Complex.add_re, h4, Complex.I_mul_re, h6]
+      ring
+    rw [hre2] at hre
+    linarith
+  · intro hAZ s hs
+    have hz : (1 / 2 : ℂ) + Complex.I * ((-2 * Complex.I * (s - 1 / 2)) / 2) = s := by
+      have hII : Complex.I * ((-2 * Complex.I * (s - 1 / 2)) / 2) = s - 1 / 2 := by
+        rw [show Complex.I * ((-2 * Complex.I * (s - 1 / 2)) / 2)
+            = -(Complex.I * Complex.I) * (s - 1 / 2) from by ring]
+        rw [Complex.I_mul_I]
+        ring
+      rw [hII]
+      ring
+    have hz0 : deBruijnNewmanH 0 (-2 * Complex.I * (s - 1 / 2)) = 0 := by
+      rw [deBruijnNewmanH_zero_eq_zero_iff, hz]
+      exact (completedZeta_eq_zero_iff s).mpr hs
+    have him2 : (-2 * Complex.I * (s - 1 / 2) : ℂ).im = 1 - 2 * s.re := by
+      have h1 : (-2 * Complex.I : ℂ).re = 0 := by simp
+      have h2 : (-2 * Complex.I : ℂ).im = -2 := by simp
+      have h3 : (s - 1 / 2 : ℂ).re = s.re - 1 / 2 := by
+        have h4 : ((1 : ℂ) / 2).re = 1 / 2 := by
+          rw [show (1 : ℂ) / 2 = ((1 / 2 : ℝ) : ℂ) from by
+          rw [Complex.ofReal_div, Complex.ofReal_one, Complex.ofReal_ofNat]]
+          exact Complex.ofReal_re _
+        rw [Complex.sub_re, h4]
+      rw [Complex.mul_im, h1, h2, h3]
+      ring
+    have him := hAZ _ hz0
+    rw [him2] at him
+    linarith
+
 end DeBruijnNewman
 end RiemannExplorer
