@@ -133,3 +133,4 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_z_sub_eq_intervalIntegral
 #print axioms RiemannExplorer.DeBruijnNewman.jointFDerivCLM
 #print axioms RiemannExplorer.DeBruijnNewman.jointFDerivCLM_apply
+#print axioms RiemannExplorer.DeBruijnNewman.hasFDerivAt_deBruijnNewmanH_prod
