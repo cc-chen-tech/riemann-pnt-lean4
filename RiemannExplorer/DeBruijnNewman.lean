@@ -7880,6 +7880,64 @@ theorem rh_iff_lambda_le_zero_of_monotone (hmono : de_bruijn_monotone_target)
     apply allZerosReal_zero_of_forall_pos
     exact forall_pos_allZerosReal_of_lambda_le_zero_of_monotone hmono hne hΛ
 
+/-! ## Phase 3：远场纲领（far-field program）—— `hnoesc` 的重述与新目标
+
+**Why the old `hnoesc` is the wrong statement**（记录在案，替代
+`de_bruijn_monotone_of_simple_and_no_escape` 的远场假设）: that hypothesis
+asks for a *single* compact set `K` containing **all** zeros of `H_t` on a right
+interval. This is false as stated: every `H_t` is a nontrivial entire function
+bounded on the real axis (`|H_t(x)| ≤ ∫₀^∞ e^{tu²}Φ(u)du < ∞` for real `x`),
+hence has infinitely many zeros (an entire function with finitely many zeros is
+`e^g·P` with `g` a polynomial, and `|e^g|` bounded on `ℝ` forces `g` constant —
+contradiction), and its zeros are unbounded in modulus. No single compact set
+can contain them.
+
+**The correct replacement splits non-escape into two independent pieces**:
+1. **Confinement on compacts（紧区域禁闭）**: on each compact time interval and
+   each compact `K ⊆ ℂ`, zeros of `H_t` inside `K` move continuously in `t`
+   (compactness + joint continuity: if `tₙ → t₀`, `zₙ ∈ K`, `H_{tₙ}(zₙ) = 0`,
+   then a subsequence converges to a zero of `H_{t₀}`). Real-ness inside `K`
+   then follows from the local analysis: simple zeros by the IFT trajectory
+   (`deBruijnNewman_simple_zero_trajectory` /
+   `deBruijnNewman_zeros_stay_real_on_compact`), exactly-double zeros by the
+   collision alternative (`deBruijnNewman_double_zero_full`) plus the local
+   exclusion theorem (in progress: injectivity on small disks around
+   `c(t) ± √q` + conjugation, built on Phases 2(37)–2(41)).
+2. **Far-field reality（远场零点实性）**: zeros of large modulus are real,
+   uniformly on a right interval — de Bruijn's tail analysis (large zeros are
+   asymptotically real with spacing `∼ π/log T`). This is genuinely missing
+   analytic input: it needs Jensen/argument-principle zero counting, which
+   Mathlib does not have (no Rouché, no argument principle as of this
+   toolchain); building it is a separate infrastructure project.
+
+The induction then runs as: `AllZerosReal t₀` ⇒ for `t ∈ [t₀, t₀ + δ)`, any
+zero `z` of `H_t` either lies in the confining ball (real by piece 1) or
+outside it (real by piece 2). -/
+
+/-- **Restated far-field reality (explicit new target, replacing `hnoesc`)**:
+for every time `t₀` there exist a right interval `[t₀, t₀ + δ)` and a radius
+`R` such that every zero of `H_t` with `‖z‖ ≥ R` is real, for all `t` in the
+interval. Together with confinement on compacts (piece 1 above) this is
+exactly the non-escape input of de Bruijn monotonicity. Stated as a `def`
+(a hypothesis shape), not assumed: proving it is the far-field project and
+requires Jensen-type zero-counting infrastructure that does not yet exist in
+this Mathlib. -/
+def deBruijnNewmanFarFieldReal (t₀ : ℝ) : Prop :=
+  ∃ δ > 0, ∃ R : ℝ, 0 < R ∧
+    ∀ t ∈ Set.Ico t₀ (t₀ + δ), ∀ z : ℂ, R ≤ ‖z‖ →
+      deBruijnNewmanH t z = 0 → z.im = 0
+
+/-- **Restated compact-confinement property (explicit new target, piece 1)**:
+on every compact time interval and every compact `K`, zeros of `H_t` in `K`
+stay near zeros of the limit function — the sequential-continuity form of
+Hurwitz confinement that, unlike `hnoesc`, is both true and provable from
+joint continuity of `H` alone. -/
+def deBruijnNewmanCompactConfinement : Prop :=
+  ∀ K : Set ℂ, IsCompact K → ∀ t₀ : ℝ, ∀ ts : ℕ → ℝ,
+    Filter.Tendsto ts Filter.atTop (nhds t₀) → ∀ zs : ℕ → ℂ,
+      (∀ n, zs n ∈ K) → (∀ n, deBruijnNewmanH (ts n) (zs n) = 0) →
+      ∃ z₀ : ℂ, z₀ ∈ K ∧ deBruijnNewmanH t₀ z₀ = 0
+
 /-! ## Phase 2(ix)：de Bruijn 单调性的条件化骨架（连续归纳） -/
 
 /-- **Continuous-induction skeleton of de Bruijn monotonicity**: if the
