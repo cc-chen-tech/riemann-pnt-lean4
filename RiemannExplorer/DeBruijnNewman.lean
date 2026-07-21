@@ -4488,6 +4488,52 @@ theorem hurwitz_exists_zero_ball {t₀ : ℝ} {t : ℕ → ℝ} {w : ℂ} {ρ : 
       rw [dist_eq_norm] at h'
       exact h')
 
+/-- The property `AllZerosReal` is closed under limits of the parameter: if
+`t n → t₀` and every `H_{t n}` has only real zeros, then so does `H_{t₀}` (assuming
+`H_{t₀}` is not identically zero). Proof: a non-real zero `z` of `H_{t₀}` would be
+isolated (the analytic identity theorem, with global non-degeneracy ruling out the
+locally-zero alternative), so Hurwitz persistence `hurwitz_exists_zero_ball` places a
+zero of `H_{t n}` within `|z.im| / 2` of `z` for some `n` — necessarily non-real,
+contradicting `AllZerosReal (t n)`. -/
+theorem allZerosReal_of_tendsto {t₀ : ℝ} {t : ℕ → ℝ}
+    (ht : Filter.Tendsto t Filter.atTop (nhds t₀))
+    (hfn : ∃ z : ℂ, deBruijnNewmanH t₀ z ≠ 0)
+    (hAZR : ∀ n : ℕ, AllZerosReal (t n)) : AllZerosReal t₀ := by
+  intro z hz
+  by_contra him
+  have hAnOn : AnalyticOnNhd ℂ (deBruijnNewmanH t₀) Set.univ :=
+    Complex.analyticOnNhd_univ_iff_differentiable.mpr (differentiable_deBruijnNewmanH t₀)
+  have hAn : AnalyticAt ℂ (deBruijnNewmanH t₀) z := hAnOn z (Set.mem_univ z)
+  rcases hAn.eventually_eq_zero_or_eventually_ne_zero with hzero | hne
+  · obtain ⟨z', hz'⟩ := hfn
+    exact hz' (by
+      have heq := hAnOn.eqOn_zero_of_preconnected_of_frequently_eq_zero
+        isPreconnected_univ (Set.mem_univ z)
+        (hzero.filter_mono nhdsWithin_le_nhds).frequently
+      simpa using heq (Set.mem_univ z'))
+  · have hne' := eventually_nhdsWithin_iff.mp hne
+    obtain ⟨ρ₀, hρ₀, hρ₀'⟩ := Metric.eventually_nhds_iff_ball.mp hne'
+    set r := min (ρ₀ / 2) (|z.im| / 2) with hr
+    have hr0 : 0 < r := lt_min (half_pos hρ₀) (half_pos (abs_pos.mpr him))
+    have hiso : ∀ w ∈ Metric.closedBall z r, w ≠ z → deBruijnNewmanH t₀ w ≠ 0 := by
+      intro w hw hwxz
+      apply hρ₀' w ?_ (by simpa using hwxz)
+      rw [Metric.mem_ball]
+      exact lt_of_le_of_lt (Metric.mem_closedBall.mp hw)
+        (lt_of_le_of_lt (min_le_left _ _) (half_lt_self hρ₀))
+    obtain ⟨n, w, hwball, hwz⟩ := (hurwitz_exists_zero_ball ht hz hr0 hiso).exists
+    have hwim : w.im = 0 := hAZR n w hwz
+    have hclose : |w.im - z.im| < |z.im| / 2 := by
+      have h1 : |w.im - z.im| ≤ ‖w - z‖ := by
+        rw [show w.im - z.im = (w - z).im from by simp]
+        exact Complex.abs_im_le_norm (w - z)
+      have h2 : ‖w - z‖ < r := by
+        rw [← dist_eq_norm]
+        exact Metric.mem_ball.mp hwball
+      exact lt_of_le_of_lt h1 (lt_of_lt_of_le h2 (min_le_right _ _))
+    rw [hwim, zero_sub, abs_neg] at hclose
+    exact (not_lt.mpr (half_le_self (abs_nonneg z.im))) hclose
+
 /-- `H_0` is not identically zero: at `z = -i` it equals
 `(1/8)·ξ(1) = 1/16`. This is the non-degeneracy hypothesis needed for any
 Hurwitz-type zero-persistence argument at `t = 0`. -/
