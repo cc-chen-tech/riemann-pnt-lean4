@@ -129,3 +129,7 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewman_zero_velocity_heat
 #print axioms RiemannExplorer.DeBruijnNewman.norm_heatIntegrandDeriv_le
 #print axioms RiemannExplorer.DeBruijnNewman.continuous_deBruijnNewmanH_zderiv
+#print axioms RiemannExplorer.DeBruijnNewman.hasDerivAt_deBruijnNewmanH_z_affine
+#print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_z_sub_eq_intervalIntegral
+#print axioms RiemannExplorer.DeBruijnNewman.jointFDerivCLM
+#print axioms RiemannExplorer.DeBruijnNewman.jointFDerivCLM_apply

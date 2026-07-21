@@ -4752,6 +4752,69 @@ theorem continuous_deBruijnNewmanH_zderiv :
     (Filter.Eventually.of_forall hmeas) hbound
     (integrableOn_heatDerivDominatingFun (t₀ + 1) (|z₀.im| + 1) (by positivity)) hlim
 
+/-- **Affine restriction derivative (z-direction)**: the derivative of
+`s ↦ H_t(w + s·k)` at `s : ℝ` is `∂_z H_t(w + s·k) · k`. The inner map
+`s ↦ w + (s : ℂ) * k` is real-differentiable with derivative `k`, and the outer
+map `H_t` is ℂ-differentiable; the chain rule is `HasDerivAt.scomp` (mixed
+scalar domains `𝕜 := ℝ`, `𝕜' := ℂ`). -/
+theorem hasDerivAt_deBruijnNewmanH_z_affine (t : ℝ) (w k : ℂ) (s : ℝ) :
+    HasDerivAt (fun s : ℝ => deBruijnNewmanH t (w + (s : ℂ) * k))
+      (deriv (deBruijnNewmanH t) (w + (s : ℂ) * k) * k) s := by
+  have h1 : HasDerivAt (fun s : ℝ => (s : ℂ)) 1 s := by
+    simpa using Complex.ofRealCLM.hasDerivAt (x := s)
+  have h2 : HasDerivAt (fun s : ℝ => w + (s : ℂ) * k) k s := by
+    simpa using (h1.mul_const k).const_add w
+  have hg : HasDerivAt (deBruijnNewmanH t)
+      (deriv (deBruijnNewmanH t) (w + (s : ℂ) * k)) (w + (s : ℂ) * k) :=
+    (differentiable_deBruijnNewmanH t _).hasDerivAt
+  have h3 := @HasDerivAt.scomp ℝ _ ℂ _ _ s ℂ _ _ _ IsScalarTower.right _ _ _ _ hg h2
+  simpa [Function.comp_def, smul_eq_mul, mul_comm] using h3
+
+/-- **FTC in the z-direction**: the increment of `H_t` along the segment
+`w → w + k` is the interval integral of its z-derivative,
+`H_t(w + k) − H_t(w) = ∫₀¹ ∂_z H_t(w + s·k)·k ds`. The integrand is jointly
+continuous by `continuous_deBruijnNewmanH_zderiv`. -/
+theorem deBruijnNewmanH_z_sub_eq_intervalIntegral (t : ℝ) (w k : ℂ) :
+    deBruijnNewmanH t (w + k) - deBruijnNewmanH t w
+      = ∫ s : ℝ in (0:ℝ)..1,
+        deriv (deBruijnNewmanH t) (w + (s : ℂ) * k) * k := by
+  have hDcont : Continuous fun s : ℝ =>
+      deriv (deBruijnNewmanH t) (w + (s : ℂ) * k) * k :=
+    (continuous_deBruijnNewmanH_zderiv.comp
+      (continuous_const.prodMk
+        ((Complex.continuous_ofReal.mul continuous_const).const_add w))).mul continuous_const
+  have hint : IntervalIntegrable
+      (deriv fun s : ℝ => deBruijnNewmanH t (w + (s : ℂ) * k))
+      MeasureTheory.volume 0 1 := by
+    rw [show (deriv fun s : ℝ => deBruijnNewmanH t (w + (s : ℂ) * k))
+        = fun s : ℝ => deriv (deBruijnNewmanH t) (w + (s : ℂ) * k) * k
+        from funext fun s => (hasDerivAt_deBruijnNewmanH_z_affine t w k s).deriv]
+    exact hDcont.continuousOn.intervalIntegrable
+  have h2 : ∫ s : ℝ in (0:ℝ)..1, deriv (deBruijnNewmanH t) (w + (s : ℂ) * k) * k
+      = deBruijnNewmanH t (w + (1 : ℂ) * k) - deBruijnNewmanH t (w + (0 : ℂ) * k) := by
+    rw [intervalIntegral.integral_congr
+      fun s _ => (hasDerivAt_deBruijnNewmanH_z_affine t w k s).deriv.symm]
+    exact intervalIntegral.integral_deriv_eq_sub
+      (fun x _ => (hasDerivAt_deBruijnNewmanH_z_affine t w k x).differentiableAt) hint
+  simpa using h2.symm
+
+/-- **The joint real derivative** of `(t, z) ↦ H_t(z)` as a continuous
+`ℝ`-linear map: `(h, k) ↦ h • (∂_t H_t(w)) + (∂_z H_t(w)) * k`, where
+`∂_t H_t(w)` is the `u²`-weighted heat integral and
+`∂_z H_t(w) = deriv (H_t) w`. -/
+noncomputable def jointFDerivCLM (t : ℝ) (w : ℂ) : ℝ × ℂ →L[ℝ] ℂ :=
+  (ContinuousLinearMap.fst ℝ ℝ ℂ).smulRight
+      (∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand t w u)
+    + ((ContinuousLinearMap.mul ℝ ℂ) (deriv (deBruijnNewmanH t) w)).comp
+      (ContinuousLinearMap.snd ℝ ℝ ℂ)
+
+/-- Evaluation of `jointFDerivCLM`. -/
+theorem jointFDerivCLM_apply (t : ℝ) (w : ℂ) (q : ℝ × ℂ) :
+    jointFDerivCLM t w q
+      = q.1 • (∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand t w u)
+        + deriv (deBruijnNewmanH t) w * q.2 :=
+  rfl
+
 /-- **FTC representation**: the increment of `H` in `t` is the interval integral
 of its time derivative, `H_t(w) − H_{t₀}(w) = ∫_{t₀}^{t} ∂_s H_s(w) ds`. The
 integrand `∂_s H_s(w)` is jointly continuous by
