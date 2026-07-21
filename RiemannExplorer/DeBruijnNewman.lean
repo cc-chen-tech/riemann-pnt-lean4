@@ -4539,6 +4539,120 @@ theorem deBruijnNewmanH_exists_ne_zero (t : ℝ) : ∃ z : ℂ, deBruijnNewmanH 
   rw [h, Complex.zero_re] at hpos
   exact lt_irrefl 0 hpos
 
+/-! ## Phase 2(ix)：`∂_t H` 的联合连续性与零点速度 ODE 基础 -/
+
+/-- Auxiliary: if `dist z z₀ < 1` then `|z.im| ≤ |z₀.im| + 1`. -/
+theorem abs_im_le_add_one_of_dist_lt_one {z z₀ : ℂ} (hz : dist z z₀ < 1) :
+    |z.im| ≤ |z₀.im| + 1 := by
+  have h2 : |(z - z₀).im| ≤ ‖z - z₀‖ := Complex.abs_im_le_norm _
+  have h3 : ‖z - z₀‖ < 1 := by rw [← dist_eq_norm]; exact hz
+  have him : z.im - z₀.im = (z - z₀).im := by simp [Complex.sub_im]
+  calc |z.im| = |z.im - z₀.im + z₀.im| :=
+        (congrArg abs (sub_add_cancel z.im z₀.im)).symm
+    _ ≤ |z.im - z₀.im| + |z₀.im| := abs_add_le _ _
+    _ ≤ ‖z - z₀‖ + |z₀.im| := by rw [him]; exact add_le_add_left h2 _
+    _ ≤ 1 + |z₀.im| := by linarith [h3.le]
+    _ = |z₀.im| + 1 := by ring
+
+/-- Box bound for the `∂_t` integrand (standalone form of the bound used inside
+`hasDerivAt_deBruijnNewmanH_t`): for `t ≤ t₁`, `|z.im| ≤ c`, `u ≥ 0`,
+`‖u² · heatIntegrand t z u‖ ≤ heatSqDominatingFun t₁ c u`. -/
+theorem norm_sq_mul_heatIntegrand_le {t t₁ c : ℝ} (ht : t ≤ t₁) (hc : 0 ≤ c) {z : ℂ}
+    (hzim : |z.im| ≤ c) {u : ℝ} (hu : 0 ≤ u) :
+    ‖((u : ℂ) ^ 2) * heatIntegrand t z u‖ ≤ heatSqDominatingFun t₁ c u := by
+  have hC0 : (0 : ℝ) ≤ (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst :=
+    mul_nonneg (by positivity) phiTailConst_nonneg
+  have hexp : Real.exp (t * u ^ 2) ≤ Real.exp (t₁ * u ^ 2) :=
+    Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_right ht (sq_nonneg u))
+  have hcos : ‖Complex.cos (z * (u : ℂ))‖ ≤ Real.exp (c * u) := by
+    calc ‖Complex.cos (z * (u : ℂ))‖ ≤ Real.exp |z.im * u| :=
+          norm_cos_mul_ofReal_le_exp z u
+      _ = Real.exp (|z.im| * u) := by rw [abs_mul, abs_of_nonneg hu]
+      _ ≤ Real.exp (c * u) :=
+          Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_right hzim hu)
+  have hn : ‖((u : ℂ) ^ 2) * heatIntegrand t z u‖
+      = u ^ 2 * (|Real.exp (t * u ^ 2) * phi u| * ‖Complex.cos (z * (u : ℂ))‖) := by
+    rw [norm_mul, norm_pow,
+      show ‖(u : ℂ)‖ = u from by
+        rw [show ‖(u : ℂ)‖ = |u| from RCLike.norm_ofReal u, abs_of_nonneg hu]]
+    unfold heatIntegrand
+    rw [norm_mul, show ‖((Real.exp (t * u ^ 2) * phi u : ℝ) : ℂ)‖
+        = |Real.exp (t * u ^ 2) * phi u| from RCLike.norm_ofReal _]
+  rw [hn]
+  have hphi : |Real.exp (t * u ^ 2) * phi u|
+      ≤ Real.exp (t₁ * u ^ 2) * ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+          * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))) := by
+    rw [abs_mul, abs_of_pos (Real.exp_pos _)]
+    exact mul_le_mul hexp (abs_phi_le u hu) (abs_nonneg _) (Real.exp_nonneg _)
+  have hb0 : 0 ≤ Real.exp (t₁ * u ^ 2)
+      * ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+        * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))) :=
+    mul_nonneg (Real.exp_nonneg _)
+      (mul_nonneg (mul_nonneg hC0 (Real.exp_nonneg _)) (Real.exp_nonneg _))
+  calc u ^ 2 * (|Real.exp (t * u ^ 2) * phi u| * ‖Complex.cos (z * (u : ℂ))‖)
+      ≤ u ^ 2 * ((Real.exp (t₁ * u ^ 2)
+          * ((2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst
+            * Real.exp (9 * u) * Real.exp (-(Real.pi * Real.exp (4 * u)))))
+        * Real.exp (c * u)) :=
+        mul_le_mul_of_nonneg_left
+          (mul_le_mul hphi hcos (norm_nonneg _) hb0) (sq_nonneg u)
+    _ = (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst * u ^ 2
+          * (Real.exp (t₁ * u ^ 2) * (Real.exp (9 * u) * Real.exp (c * u)))
+          * Real.exp (-(Real.pi * Real.exp (4 * u))) := by ring
+    _ = (2 * Real.pi ^ 2 + 3 * Real.pi) * phiTailConst * u ^ 2
+          * (Real.exp (t₁ * u ^ 2) * Real.exp ((9 + c) * u))
+          * Real.exp (-(Real.pi * Real.exp (4 * u))) := by
+        have e9c : Real.exp (9 * u) * Real.exp (c * u) = Real.exp ((9 + c) * u) := by
+          rw [← Real.exp_add]; congr 1; ring
+        rw [e9c]
+    _ = heatSqDominatingFun t₁ c u := by
+        unfold heatSqDominatingFun
+        rw [← Real.exp_add]
+
+/-- **Joint continuity of the time derivative** `∂_t H_t(z)
+= ∫₀^∞ u² e^{tu²} Φ(u) cos(zu) du` on `ℝ × ℂ`: dominated convergence with the
+`heatSqDominatingFun` box bound `norm_sq_mul_heatIntegrand_le`. -/
+theorem continuous_deBruijnNewmanH_tderiv :
+    Continuous fun p : ℝ × ℂ =>
+      ∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand p.1 p.2 u := by
+  rw [continuous_iff_continuousAt]
+  intro ⟨t₀, z₀⟩
+  set μ := MeasureTheory.volume.restrict (Set.Ioi (0:ℝ)) with hμ
+  have hmeas : ∀ p : ℝ × ℂ, MeasureTheory.AEStronglyMeasurable
+      (fun u : ℝ => ((u : ℂ) ^ 2) * heatIntegrand p.1 p.2 u) μ :=
+    fun p => (((Complex.continuous_ofReal.pow 2).mul
+      (continuous_heatIntegrand p.1 p.2)).continuousOn.aestronglyMeasurable
+      measurableSet_Ioi)
+  have hb1 : ∀ᶠ p : ℝ × ℂ in nhds (t₀, z₀), dist p.1 t₀ < 1 :=
+    (continuous_fst.tendsto (t₀, z₀)).eventually (Metric.ball_mem_nhds t₀ zero_lt_one)
+  have hb2 : ∀ᶠ p : ℝ × ℂ in nhds (t₀, z₀), dist p.2 z₀ < 1 :=
+    (continuous_snd.tendsto (t₀, z₀)).eventually (Metric.ball_mem_nhds z₀ zero_lt_one)
+  have hbound : ∀ᶠ p : ℝ × ℂ in nhds (t₀, z₀), ∀ᵐ u : ℝ ∂μ,
+      ‖((u : ℂ) ^ 2) * heatIntegrand p.1 p.2 u‖
+        ≤ heatSqDominatingFun (t₀ + 1) (|z₀.im| + 1) u := by
+    filter_upwards [hb1, hb2] with p hp1 hp2
+    filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_Ioi] with u hu
+    exact norm_sq_mul_heatIntegrand_le (t := p.1) (t₁ := t₀ + 1) (c := |z₀.im| + 1)
+      (by
+        have h1 : |p.1 - t₀| < 1 := by rw [← Real.dist_eq]; exact hp1
+        linarith [(abs_lt.mp h1).2])
+      (by positivity) (abs_im_le_add_one_of_dist_lt_one hp2) hu.le
+  have hlim : ∀ᵐ u : ℝ ∂μ, Filter.Tendsto
+      (fun p : ℝ × ℂ => ((u : ℂ) ^ 2) * heatIntegrand p.1 p.2 u)
+      (nhds (t₀, z₀)) (nhds (((u : ℂ) ^ 2) * heatIntegrand t₀ z₀ u)) := by
+    apply Filter.Eventually.of_forall
+    intro u
+    have hcont : Continuous
+        (fun p : ℝ × ℂ => ((u : ℂ) ^ 2) * heatIntegrand p.1 p.2 u) := by
+      unfold heatIntegrand
+      fun_prop
+    exact hcont.tendsto (t₀, z₀)
+  show Filter.Tendsto _ (nhds (t₀, z₀)) (nhds _)
+  exact MeasureTheory.tendsto_integral_filter_of_dominated_convergence
+    (heatSqDominatingFun (t₀ + 1) (|z₀.im| + 1))
+    (Filter.Eventually.of_forall hmeas) hbound
+    (integrableOn_heatSqDominatingFun (t₀ + 1) (|z₀.im| + 1) (by positivity)) hlim
+
 /-- **Zero persistence (Rouché core) via the maximum modulus principle**:
 if `f` vanishes at `w` with `‖f‖ ≥ m > 0` on the sphere of radius `ρ`
 around `w`, and `g` is uniformly within `m / 2` of `f` on that sphere, then

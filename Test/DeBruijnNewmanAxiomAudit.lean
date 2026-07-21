@@ -120,3 +120,5 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.allZerosReal_zero_of_forall_pos
 #print axioms RiemannExplorer.DeBruijnNewman.forall_pos_allZerosReal_of_lambda_le_zero_of_monotone
 #print axioms RiemannExplorer.DeBruijnNewman.rh_iff_lambda_le_zero_of_monotone
+#print axioms RiemannExplorer.DeBruijnNewman.norm_sq_mul_heatIntegrand_le
+#print axioms RiemannExplorer.DeBruijnNewman.continuous_deBruijnNewmanH_tderiv
