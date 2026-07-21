@@ -4361,6 +4361,91 @@ theorem tendstoLocallyUniformly_deBruijnNewmanH (t₀ : ℝ) :
       _ = ε := mul_one ε
   exact lt_of_le_of_lt hdest hεC
 
+/-- **Zero persistence (Rouché core) via the maximum modulus principle**:
+if `f` vanishes at `w` with `‖f‖ ≥ m > 0` on the sphere of radius `ρ`
+around `w`, and `g` is uniformly within `m / 2` of `f` on that sphere, then
+`g` has a zero inside the ball. Classical `f/g` argument: otherwise
+`φ = f/g − 1` is DiffContOnCl with `‖φ‖ < 1` on the sphere while
+`‖φ(w)‖ = 1`, contradicting the maximum modulus principle. This bypasses
+the argument principle, which is not in Mathlib. -/
+theorem exists_zero_of_norm_sub_lt {f g : ℂ → ℂ} {w : ℂ} {ρ : ℝ} (hρ : 0 < ρ)
+    (hf : DiffContOnCl ℂ f (Metric.ball w ρ))
+    (hg : DiffContOnCl ℂ g (Metric.ball w ρ))
+    (hfw : f w = 0) {m : ℝ} (hm : ∀ z ∈ Metric.sphere w ρ, m ≤ ‖f z‖)
+    (hm0 : 0 < m) (hfg : ∀ z ∈ Metric.sphere w ρ, ‖f z - g z‖ < m / 2) :
+    ∃ z ∈ Metric.ball w ρ, g z = 0 := by
+  by_contra hcon
+  push_neg at hcon
+  have hcl : closure (Metric.ball w ρ) = Metric.closedBall w ρ :=
+    closure_ball w hρ.ne'
+  have hgne : ∀ z ∈ Metric.closedBall w ρ, g z ≠ 0 := by
+    intro z hz
+    rcases eq_or_ne (dist z w) ρ with h | h
+    · have hs : z ∈ Metric.sphere w ρ := by
+        rw [Metric.mem_sphere]; exact h
+      have h1 : ‖f z‖ ≤ ‖f z - g z‖ + ‖g z‖ := by
+        calc ‖f z‖ = ‖(f z - g z) + g z‖ := by rw [sub_add_cancel]
+          _ ≤ ‖f z - g z‖ + ‖g z‖ := norm_add_le _ _
+      have h2 : 0 < ‖g z‖ := by
+        have h3 := hm z hs
+        have h4 := hfg z hs
+        linarith
+      exact norm_pos_iff.mp h2
+    · have hz' : z ∈ Metric.ball w ρ := by
+        rw [Metric.mem_closedBall] at hz
+        rw [Metric.mem_ball]
+        exact lt_of_le_of_ne hz h
+      exact hcon z hz'
+  have hφ : DiffContOnCl ℂ (fun z => f z / g z - 1) (Metric.ball w ρ) := by
+    refine ⟨(hf.differentiableOn.div hg.differentiableOn
+      fun z hz => hgne z (Metric.ball_subset_closedBall hz)).sub_const 1, ?_⟩
+    rw [hcl]
+    exact ContinuousOn.sub ((hcl ▸ hf.continuousOn).div (hcl ▸ hg.continuousOn)
+      fun z hz => hgne z hz) continuousOn_const
+  have hsph : IsCompact (Metric.sphere w ρ) := isCompact_sphere w ρ
+  have hsne : (Metric.sphere w ρ).Nonempty := by
+    refine ⟨w + (ρ : ℂ), ?_⟩
+    rw [Metric.mem_sphere, dist_eq_norm]
+    have hw' : w + (ρ : ℂ) - w = (ρ : ℂ) := by ring
+    calc ‖w + (ρ : ℂ) - w‖ = ‖(ρ : ℂ)‖ := by rw [hw']
+      _ = ‖ρ‖ := RCLike.norm_ofReal ρ
+      _ = ρ := by rw [Real.norm_eq_abs, abs_of_nonneg hρ.le]
+  obtain ⟨z₀, hz₀, hmax⟩ := hsph.exists_isMaxOn hsne
+    (hφ.continuousOn.norm.mono (by
+      rw [hcl]
+      exact Metric.sphere_subset_closedBall))
+  set C := ‖f z₀ / g z₀ - 1‖ with hC
+  have hgn : 0 < ‖g z₀‖ := by
+    have h3 := hm z₀ hz₀
+    have h4 := hfg z₀ hz₀
+    have h1 : ‖f z₀‖ ≤ ‖f z₀ - g z₀‖ + ‖g z₀‖ := by
+      calc ‖f z₀‖ = ‖(f z₀ - g z₀) + g z₀‖ := by rw [sub_add_cancel]
+        _ ≤ ‖f z₀ - g z₀‖ + ‖g z₀‖ := norm_add_le _ _
+    linarith
+  have hC1 : C < 1 := by
+    have heq : f z₀ / g z₀ - 1 = (f z₀ - g z₀) / g z₀ := by
+      rw [← div_self (norm_pos_iff.mp hgn), ← sub_div]
+    have h3 := hm z₀ hz₀
+    have h4 := hfg z₀ hz₀
+    have h1 : ‖f z₀‖ ≤ ‖f z₀ - g z₀‖ + ‖g z₀‖ := by
+      calc ‖f z₀‖ = ‖(f z₀ - g z₀) + g z₀‖ := by rw [sub_add_cancel]
+        _ ≤ ‖f z₀ - g z₀‖ + ‖g z₀‖ := norm_add_le _ _
+    rw [hC, heq, norm_div, div_lt_one hgn]
+    linarith
+  have hle : ∀ z ∈ frontier (Metric.ball w ρ), ‖f z / g z - 1‖ ≤ C := by
+    intro z hz
+    rw [frontier_ball w hρ.ne'] at hz
+    exact hmax hz
+  have hwmax := Complex.norm_le_of_forall_mem_frontier_norm_le
+    Metric.isBounded_ball hφ hle
+    (show w ∈ closure (Metric.ball w ρ) from by
+      rw [hcl]
+      exact Metric.mem_closedBall_self hρ.le)
+  rw [hfw] at hwmax
+  have h1 : ‖(0 : ℂ) / g w - 1‖ = 1 := by simp
+  rw [h1] at hwmax
+  linarith
+
 /-- `H_0` is not identically zero: at `z = -i` it equals
 `(1/8)·ξ(1) = 1/16`. This is the non-degeneracy hypothesis needed for any
 Hurwitz-type zero-persistence argument at `t = 0`. -/
