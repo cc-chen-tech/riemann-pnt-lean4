@@ -134,3 +134,5 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.jointFDerivCLM
 #print axioms RiemannExplorer.DeBruijnNewman.jointFDerivCLM_apply
 #print axioms RiemannExplorer.DeBruijnNewman.hasFDerivAt_deBruijnNewmanH_prod
+#print axioms RiemannExplorer.DeBruijnNewman.continuous_jointFDerivCLM
+#print axioms RiemannExplorer.DeBruijnNewman.hasStrictFDerivAt_deBruijnNewmanH_prod

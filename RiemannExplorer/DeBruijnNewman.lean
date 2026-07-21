@@ -5006,6 +5006,40 @@ theorem hasFDerivAt_deBruijnNewmanH_prod (p : ℝ × ℂ) :
             (le_of_lt (half_pos hε)))
     _ = ε * ‖q - p‖ := by ring
 
+/-- **Continuity of the joint derivative**: `p ↦ jointFDerivCLM p` is
+continuous in the operator-norm topology, assembled from
+`continuous_deBruijnNewmanH_tderiv` and `continuous_deBruijnNewmanH_zderiv`
+through the continuous rank-one trilinear map `smulRightL` and the continuous
+composition bilinear map. -/
+theorem continuous_jointFDerivCLM :
+    Continuous fun p : ℝ × ℂ => jointFDerivCLM p.1 p.2 := by
+  have ht : Continuous fun p : ℝ × ℂ =>
+      (ContinuousLinearMap.fst ℝ ℝ ℂ).smulRight
+        (∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand p.1 p.2 u) := by
+    apply ((ContinuousLinearMap.smulRightL ℝ (ℝ × ℂ) ℂ
+      (ContinuousLinearMap.fst ℝ ℝ ℂ)).continuous.comp
+      continuous_deBruijnNewmanH_tderiv).congr
+    intro p
+    refine ContinuousLinearMap.ext fun q => ?_
+    rfl
+  have hz : Continuous fun p : ℝ × ℂ =>
+      ((ContinuousLinearMap.mul ℝ ℂ) (deriv (deBruijnNewmanH p.1) p.2)).comp
+        (ContinuousLinearMap.snd ℝ ℝ ℂ) :=
+    ((ContinuousLinearMap.mul ℝ ℂ).continuous.comp
+      continuous_deBruijnNewmanH_zderiv).clm_comp continuous_const
+  exact ht.add hz
+
+/-- **Joint strict differentiability**: over `ℝ`, a continuously differentiable
+function is strictly differentiable, so `(t, z) ↦ H_t(z)` is strictly
+differentiable at every point with derivative `jointFDerivCLM`. This is the
+hypothesis package for the implicit function theorem along zero curves. -/
+theorem hasStrictFDerivAt_deBruijnNewmanH_prod (p : ℝ × ℂ) :
+    HasStrictFDerivAt (fun q : ℝ × ℂ => deBruijnNewmanH q.1 q.2)
+      (jointFDerivCLM p.1 p.2) p :=
+  hasStrictFDerivAt_of_hasFDerivAt_of_continuousAt
+    (Filter.Eventually.of_forall fun q => hasFDerivAt_deBruijnNewmanH_prod q)
+    continuous_jointFDerivCLM.continuousAt
+
 /-- **Diagonal derivative — the zero-transport piece**: if `z(t) → z₀` as
 `t → t₀`, then `t ↦ H_t(z(t)) − H_{t₀}(z(t))` has derivative `∂_t H_{t₀}(z₀)`
 (the `u²`-weighted heat integral) at `t₀`. Proof: the FTC representation
