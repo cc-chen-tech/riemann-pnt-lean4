@@ -777,4 +777,58 @@ theorem differentiable_xiWeightedEntireCorrection (c : ℂ) :
     exact ((differentiableOn_logDeriv_xiFunction_sub_xiWeightedMittagLefflerSum
       c).differentiableAt (hopen.mem_nhds hs)).congr_of_eventuallyEq hev
 
+/-! ## 展开式归约：修正函数的常数性 -/
+
+/-- `s = 0` 处加权配对 Mittag-Leffler 级数恒为零（无条件）：每项
+`m·([1/(0−ρ)+1/ρ]+⋯) = m·0 = 0`。 -/
+theorem xiWeightedMittagLefflerSum_zero_left :
+    xiWeightedMittagLefflerSum 0 = 0 := by
+  have hzero : (fun ρ : UpperHalfPlaneNontrivialZero ↦
+      xiWeightedMittagLefflerTerm 0 (ρ : ℂ)) = fun _ => 0 :=
+    funext fun ρ => by
+      rw [xiWeightedMittagLefflerTerm, xiPairedMittagLefflerTerm_zero_left,
+        mul_zero]
+  rw [xiWeightedMittagLefflerSum, hzero]
+  exact tsum_zero
+
+/-- 取 `c = ξ'(0)/ξ(0)` 时，加权整修正函数在 `s = 0` 处取值为零
+（无条件）：`ξ 0 = 1/2 ≠ 0` 给出非零点展开式，而 `W 0 = 0` 使
+`ξ'/ξ − c − W` 在 `0` 处自相抵消。 -/
+theorem xiWeightedEntireCorrection_zero :
+    xiWeightedEntireCorrection (deriv xiFunction 0 / xiFunction 0) 0 = 0 := by
+  have hξ : xiFunction 0 ≠ 0 := by
+    rw [xiFunction_zero]
+    norm_num
+  rw [xiWeightedEntireCorrection_apply_of_ne_zero _ hξ,
+    xiWeightedMittagLefflerSum_zero_left, sub_zero, sub_self]
+
+/-- **展开式的常数性归约**：若 `c = ξ'(0)/ξ(0)` 处的加权整修正函数恒为常数，
+则该常数必为 `0`（由 `xiWeightedEntireCorrection_zero`），进而在所有非零点
+`s` 处成立重数加权部分分式展开
+`ξ'(s)/ξ(s) = ξ'(0)/ξ(0) + Σ_ρ m_ξ(ρ)·pairedTerm(s, ρ)`。
+
+这把整条路线压缩为唯一剩余的硬核心：证明整函数
+`xiWeightedEntireCorrection (ξ'(0)/ξ(0))` 恒为常数（计划经 Hadamard
+因子分解级的增长估计 + Borel–Carathéodory 完成）。 -/
+theorem xi_weighted_partial_fraction_expansion_of_const_correction
+    (hconst : ∃ c' : ℂ, ∀ s : ℂ,
+      xiWeightedEntireCorrection (deriv xiFunction 0 / xiFunction 0) s = c')
+    (s : ℂ) (hs : xiFunction s ≠ 0) :
+    deriv xiFunction s / xiFunction s =
+      deriv xiFunction 0 / xiFunction 0 + xiWeightedMittagLefflerSum s := by
+  obtain ⟨c', hc'⟩ := hconst
+  have hc0 : c' = 0 := by
+    have h := hc' 0
+    rw [xiWeightedEntireCorrection_zero] at h
+    exact h.symm
+  have h := (hc' s).symm.trans
+    (xiWeightedEntireCorrection_apply_of_ne_zero _ hs)
+  rw [hc0] at h
+  have h4 : deriv xiFunction s / xiFunction s -
+      deriv xiFunction 0 / xiFunction 0 -
+      xiWeightedMittagLefflerSum s = 0 := h.symm
+  have h6 := sub_eq_zero.mp h4
+  rw [sub_eq_iff_eq_add] at h6
+  rw [h6, add_comm]
+
 end RiemannExplorer
