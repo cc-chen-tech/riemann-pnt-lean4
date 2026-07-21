@@ -2,9 +2,11 @@
 
 This repository is a buildable Lean 4 formalization that proves the ordinary
 Prime Number Theorem and classical de la Vallee Poussin-form remainders for
-Chebyshev `psi` and prime counting `pi-Li` through the de la Vallee Poussin
-route. It does not prove the Riemann Hypothesis or provide numerically explicit
-values for the existential remainder constants.
+Chebyshev `psi` and prime counting `pi-Li`, Hardy's theorem, the all-height
+Riemann--von Mangoldt formula, Carlson's fixed-`sigma` zero-density estimate,
+and local-separation Hilbert/mean-square estimates. It does not prove the
+Riemann Hypothesis or provide numerically explicit values for the existential
+remainder constants.
 
 ## Current Verified Baseline
 
@@ -12,9 +14,9 @@ values for the existential remainder constants.
 - Build command: `lake build`
 - Last verified local result: see the current verification log before release
 - Current code-level `sorry` count: 0
-- Remaining mathematical `def ... : Prop` targets: 16
+- Remaining mathematical `def ... : Prop` targets: 13
 - Route-interface `def ... : Prop` declarations: 5
-- Reusable Prop predicates: 10
+- Reusable Prop predicates: 13
 - Unclassified Prop declarations: 0
 
 ## Required Gates Before Public Mathematical Claims
@@ -31,10 +33,12 @@ python3 scripts/list-prop-targets.py
 
 The baseline script runs `lake build`, recursively scans project Lean sources
 for real placeholder proof forms, checks that every `def ... : Prop` is
-classified, checks the 16-item mathematical target inventory, and validates the
-four chain-gap buckets. The ordinary PNT and de la Vallee Poussin-form `psi`
-and `pi-Li` errors are theorem-level; RH, Hardy, Vinogradov-Korobov, and any
-power-saving error below exponent `2/3` remain outside the proved boundary.
+classified, checks the 13-item mathematical target inventory, and validates the
+four chain-gap buckets. The ordinary PNT, de la Vallee Poussin-form `psi` and
+`pi-Li` errors, Hardy's theorem, Riemann--von Mangoldt, Carlson zero density,
+and local-separation estimates are theorem-level. RH, Vinogradov--Korobov,
+Selberg positive proportion, and any unconditional power-saving error below
+exponent `2/3` remain outside the proved boundary.
 
 As of the current baseline, no route interface has a body equal to `True`.
 `MathlibAux.rectangleIntegral_meromorphic_eq_residue_sum` is still an explicit
@@ -61,10 +65,11 @@ Minimum external comparison set:
 Allowed claim shape:
 
 ```text
-Verified Lean 4 formalization of the de la Vallee Poussin 3-4-1 machinery, the
-classical c/log zero-free region, and the resulting ordinary PNT and
-de la Vallee Poussin-form psi and pi-Li remainders through a multiplicity-aware
-moving-height explicit formula and quantitative Abel summation.
+Verified Lean 4 formalization of classical analytic number theory for the
+Riemann zeta function, including the de la Vallee Poussin zero-free region and
+Strong PNT remainder, Hardy's theorem, the all-height Riemann--von Mangoldt
+formula, Carlson's fixed-sigma zero-density estimate, and reusable
+local-separation Hilbert/mean-square infrastructure.
 ```
 
 Do not claim:
@@ -80,9 +85,9 @@ Do not claim:
 For public positioning, treat the current repository as:
 
 ```text
-ordinary PNT proved through the de la Vallee Poussin zero-free-region and
-moving-height explicit-formula machinery, with de la Vallee Poussin-form
-`psi` and `pi-Li` remainders
+classical zero-free region, Strong PNT, Hardy theorem, all-height
+Riemann--von Mangoldt, fixed-sigma Carlson zero density, and local-separation
+Hilbert/mean-square infrastructure proved in Lean 4
 ```
 
 not as:
@@ -99,7 +104,7 @@ Vinogradov-Korobov width. It is not needed for the now-proved ordinary PNT.
 | File | Remaining `sorry` count | Main target statements |
 |---|---:|---|
 | `ZeroFreeRegion.lean` | 0 | Classical `c/log |t|` region proved; Vinogradov-Korobov remains a target |
-| `HardyTheorem.lean` | 0 | Hardy-Z phase facts proved; corrected integral asymptotics and zero-counting consequences remain targets |
+| `HardyTheorem.lean` | 0 | Hardy's infinite-zero theorem proved; Hardy--Littlewood and Selberg quantitative extensions remain targets on `main` |
 | `PrimeNumberTheorem.lean`, `PrimeNumberTheorem/PNTFromDynamicPerron.lean`, `PrimeNumberTheorem/ClassicalPNTError.lean`, and `PrimeNumberTheorem/ClassicalPrimeCountingError.lean` | 0 | Ordinary PNT and the de la Vallee Poussin-form `psi` and `pi-Li` remainders proved; unconditional RH-scale predicates remain open |
 
 ## Release Dependency Issue

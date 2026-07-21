@@ -1,0 +1,7 @@
+import MathlibAux.LogKernelRemainder
+
+#check MathlibAux.abs_inv_log_ratio_sub_inv_two_mul_le_one
+#check MathlibAux.abs_inv_log_sub_sub_symmetric_le_one
+#check MathlibAux.abs_inv_log_sub_sub_symmetric_le_four
+#print axioms MathlibAux.abs_inv_log_sub_sub_symmetric_le_one
+#print axioms MathlibAux.abs_inv_log_sub_sub_symmetric_le_four

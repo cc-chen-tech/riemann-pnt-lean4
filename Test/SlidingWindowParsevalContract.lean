@@ -1,0 +1,6 @@
+import MathlibAux.SlidingWindowParseval
+
+set_option autoImplicit false
+
+#check MathlibAux.rectangularMultiplier_plancherel_le
+#print axioms MathlibAux.rectangularMultiplier_plancherel_le

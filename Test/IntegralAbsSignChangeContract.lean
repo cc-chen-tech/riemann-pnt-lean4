@@ -1,0 +1,9 @@
+import HardyTheorem.ShortIntegralZeroDetection
+
+open Complex MeasureTheory Set
+
+#check MathlibAux.exists_zero_of_abs_intervalIntegral_lt_intervalIntegral_abs
+#check HardyTheorem.exists_criticalLineZero_of_abs_hardyShortIntegral_lt_hardyShortAbsIntegral
+
+#print axioms MathlibAux.exists_zero_of_abs_intervalIntegral_lt_intervalIntegral_abs
+#print axioms HardyTheorem.exists_criticalLineZero_of_abs_hardyShortIntegral_lt_hardyShortAbsIntegral

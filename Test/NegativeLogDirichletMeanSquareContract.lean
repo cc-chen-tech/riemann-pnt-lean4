@@ -1,0 +1,5 @@
+import MathlibAux.NegativeLogDirichletPolynomialMeanSquare
+
+#check MathlibAux.integral_normSq_negLogExponentialPolynomial_le_of_upper
+
+#print axioms MathlibAux.integral_normSq_negLogExponentialPolynomial_le_of_upper

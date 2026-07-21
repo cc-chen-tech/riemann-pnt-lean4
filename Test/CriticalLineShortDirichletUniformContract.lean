@@ -1,0 +1,4 @@
+import HardyTheorem.CriticalLineShortDirichletUniform
+
+#check HardyTheorem.exists_integral_normSq_criticalLineShortDirichletPolynomial_le_mul
+#print axioms HardyTheorem.exists_integral_normSq_criticalLineShortDirichletPolynomial_le_mul

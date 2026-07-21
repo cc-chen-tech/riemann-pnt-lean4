@@ -1,0 +1,6 @@
+import HardyTheorem.FirstZetaApproximation
+
+open Complex
+
+#check HardyTheorem.exists_norm_riemannZeta_critical_line_le_sqrt
+

@@ -1,0 +1,33 @@
+import HardyTheorem.HardyPhaseCorrelation
+
+#check HardyTheorem.OscillatoryIntegral.hardyPhaseCorrelation
+#check HardyTheorem.OscillatoryIntegral.deriv_hardyPhaseCorrelation
+#check HardyTheorem.OscillatoryIntegral.iteratedDeriv_two_hardyPhaseCorrelation
+#check HardyTheorem.OscillatoryIntegral.deriv_hardyPhaseCorrelation_same_shift
+#check HardyTheorem.OscillatoryIntegral.abs_log_sub_log_le_div
+#check HardyTheorem.OscillatoryIntegral.deriv_hardyPhaseCorrelation_eq_log_gap_add
+#check HardyTheorem.OscillatoryIntegral.abs_deriv_hardyPhaseCorrelation_sub_log_gap_le
+#check HardyTheorem.OscillatoryIntegral.norm_integral_cexp_hardyPhaseCorrelation_le_of_log_gap
+#check HardyTheorem.OscillatoryIntegral.abs_deriv_shifted_hardyPhase_sub_base_le
+#check HardyTheorem.OscillatoryIntegral.norm_integral_cexp_shifted_hardyPhase_le_of_base_frequency
+#check HardyTheorem.OscillatoryIntegral.hardyPhaseShortIntegral
+#check HardyTheorem.OscillatoryIntegral.norm_hardyPhaseShortIntegral_le_length
+#check HardyTheorem.OscillatoryIntegral.conj_hardyPhaseShortIntegral_mul_eq_integral_integral_correlation
+
+example (m n : ℕ) (v w t : ℝ) :
+    HardyTheorem.OscillatoryIntegral.hardyPhaseCorrelation m n v w t =
+      HardyTheorem.OscillatoryIntegral.hardyPhase m (t + v) -
+        HardyTheorem.OscillatoryIntegral.hardyPhase n (t + w) :=
+  rfl
+
+#print axioms HardyTheorem.OscillatoryIntegral.deriv_hardyPhaseCorrelation
+#print axioms HardyTheorem.OscillatoryIntegral.iteratedDeriv_two_hardyPhaseCorrelation
+#print axioms HardyTheorem.OscillatoryIntegral.deriv_hardyPhaseCorrelation_same_shift
+#print axioms HardyTheorem.OscillatoryIntegral.abs_log_sub_log_le_div
+#print axioms HardyTheorem.OscillatoryIntegral.deriv_hardyPhaseCorrelation_eq_log_gap_add
+#print axioms HardyTheorem.OscillatoryIntegral.abs_deriv_hardyPhaseCorrelation_sub_log_gap_le
+#print axioms HardyTheorem.OscillatoryIntegral.norm_integral_cexp_hardyPhaseCorrelation_le_of_log_gap
+#print axioms HardyTheorem.OscillatoryIntegral.abs_deriv_shifted_hardyPhase_sub_base_le
+#print axioms HardyTheorem.OscillatoryIntegral.norm_integral_cexp_shifted_hardyPhase_le_of_base_frequency
+#print axioms HardyTheorem.OscillatoryIntegral.norm_hardyPhaseShortIntegral_le_length
+#print axioms HardyTheorem.OscillatoryIntegral.conj_hardyPhaseShortIntegral_mul_eq_integral_integral_correlation
