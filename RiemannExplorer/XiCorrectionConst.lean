@@ -794,4 +794,147 @@ theorem norm_xiWeightedEntireCorrection_le :
       ((differentiable_xiWeightedEntireCorrection _).continuous.norm.tendsto z).comp hT
     exact le_of_tendsto' hcont fun n => hbound R hR (seq n) (hseqR n) (hseqξ n)
 
+/-! ## 次线性增长 ⇒ 导数恒零 ⇒ 常数 ⇒ 展开式 -/
+
+/-- **E 的导数恒为零**：对每个 `z : ℂ` 与 `r > 0`，Cauchy 估计
+`Complex.norm_deriv_le_of_forall_mem_sphere_norm_le` 在 `sphere z r` 上给出
+`‖E' z‖ ≤ C_E(1+log R_w)²/r`（`R_w := 2(‖z‖+r)+8`），右端随 `r → ∞` 趋于 0
+（`Real.tendsto_pow_log_div_mul_add_atTop` 复合线性换元，夹逼）。 -/
+theorem deriv_xiWeightedEntireCorrection_eq_zero (z : ℂ) :
+    deriv (xiWeightedEntireCorrection (deriv xiFunction 0 / xiFunction 0)) z = 0 := by
+  obtain ⟨C_E, hC_E0, hbound⟩ := norm_xiWeightedEntireCorrection_le
+  have hE : Differentiable ℂ
+      (xiWeightedEntireCorrection (deriv xiFunction 0 / xiFunction 0)) :=
+    differentiable_xiWeightedEntireCorrection _
+  -- 辅助函数
+  set y : ℝ → ℝ := fun r => 2 * (‖z‖ + r) + 8 with hydef
+  set g : ℝ → ℝ := fun r => C_E * (1 + Real.log (y r)) ^ 2 / r with hgdef
+  have hyT : Filter.Tendsto y Filter.atTop Filter.atTop := by
+    have h1 : Filter.Tendsto (fun r : ℝ => 2 * r) Filter.atTop Filter.atTop :=
+      tendsto_id.const_mul_atTop (by norm_num : (0 : ℝ) < 2)
+    have h2 := tendsto_atTop_add_const_right Filter.atTop (2 * ‖z‖ + 8) h1
+    refine Filter.Tendsto.congr' (Filter.Eventually.of_forall fun r => ?_) h2
+    rw [hydef]
+    ring
+  have hlogyT : Filter.Tendsto (fun r => (Real.log (y r)) ^ 2 / (y r))
+      Filter.atTop (𝓝 0) := by
+    have h := (Real.tendsto_pow_log_div_mul_add_atTop 1 0 2 one_ne_zero).comp hyT
+    refine Filter.Tendsto.congr' (Filter.Eventually.of_forall fun r => ?_) h
+    simp [one_mul, add_zero]
+  have hupper : Filter.Tendsto (fun r => 12 * C_E * ((Real.log (y r)) ^ 2 / (y r)))
+      Filter.atTop (𝓝 0) := by
+    have h := Filter.Tendsto.const_mul (12 * C_E) hlogyT
+    rwa [mul_zero] at h
+  -- 夹逼：0 ≤ g r ≤ 12·C_E·(log y)²/y（r ≥ max (2‖z‖+8) 1）
+  have hev : ∀ᶠ r in Filter.atTop, (0 : ℝ) ≤ g r ∧
+      g r ≤ 12 * C_E * ((Real.log (y r)) ^ 2 / (y r)) := by
+    refine (eventually_ge_atTop (max (2 * ‖z‖ + 8) 1)).mono fun r hr => ?_
+    have hr1 : (1 : ℝ) ≤ r := le_trans (le_max_right _ _) hr
+    have hrc : 2 * ‖z‖ + 8 ≤ r := le_trans (le_max_left _ _) hr
+    have hr0 : (0 : ℝ) < r := lt_of_lt_of_le one_pos hr1
+    have hy8 : (8 : ℝ) ≤ y r := by
+      rw [hydef]
+      linarith [norm_nonneg z]
+    have hypos : (0 : ℝ) < y r := lt_of_lt_of_le (by norm_num) hy8
+    have hlogy1 : (1 : ℝ) ≤ Real.log (y r) := by
+      have h1 : Real.log (Real.exp 1) < Real.log 8 :=
+        Real.log_lt_log (Real.exp_pos 1) (by
+          have h := Real.exp_one_lt_d9
+          norm_num at h ⊢
+          linarith)
+      rw [Real.log_exp] at h1
+      exact le_trans h1.le (Real.log_le_log (by norm_num) hy8)
+    have hlogy0 : (0 : ℝ) ≤ Real.log (y r) := le_trans zero_le_one hlogy1
+    have h1ly0 : (0 : ℝ) ≤ 1 + Real.log (y r) := by linarith
+    -- (1 + log y)² ≤ 4 (log y)²
+    have hsq : (1 + Real.log (y r)) ^ 2 ≤ 4 * (Real.log (y r)) ^ 2 := by
+      have hle : 1 + Real.log (y r) ≤ 2 * Real.log (y r) := by linarith
+      calc (1 + Real.log (y r)) ^ 2 ≤ (2 * Real.log (y r)) ^ 2 :=
+          pow_le_pow_left₀ h1ly0 hle 2
+        _ = 4 * (Real.log (y r)) ^ 2 := by ring
+    -- 1/r ≤ 3/y
+    have hy3r : y r ≤ 3 * r := by
+      rw [hydef]
+      linarith [hrc, norm_nonneg z]
+    have hinv : 1 / r ≤ 3 / y r := by
+      have h : r⁻¹ ≤ (y r / 3)⁻¹ :=
+        (inv_le_inv₀ hr0 (by positivity : (0 : ℝ) < y r / 3)).mpr
+          (by linarith : y r / 3 ≤ r)
+      rw [inv_div] at h
+      rw [one_div]
+      exact h
+    constructor
+    · exact div_nonneg (mul_nonneg hC_E0 (pow_nonneg h1ly0 2)) hr0.le
+    · -- g r = C_E·(1+log y)²·(1/r) ≤ C_E·(4(log y)²)·(3/y)
+      have hmul : (1 + Real.log (y r)) ^ 2 * (1 / r) ≤
+          (4 * (Real.log (y r)) ^ 2) * (3 / y r) :=
+        mul_le_mul hsq hinv (one_div_pos.mpr hr0).le
+          (mul_nonneg (by norm_num) (pow_nonneg hlogy0 2))
+      have hfin : C_E * ((1 + Real.log (y r)) ^ 2 * (1 / r)) ≤
+          C_E * ((4 * (Real.log (y r)) ^ 2) * (3 / y r)) :=
+        mul_le_mul_of_nonneg_left hmul hC_E0
+      have heq1 : g r = C_E * ((1 + Real.log (y r)) ^ 2 * (1 / r)) := by
+        rw [hgdef]
+        ring
+      have heq2 : C_E * ((4 * (Real.log (y r)) ^ 2) * (3 / y r)) =
+          12 * C_E * ((Real.log (y r)) ^ 2 / (y r)) := by ring
+      rw [heq1, ← heq2]
+      exact hfin
+  have hgT : Filter.Tendsto g Filter.atTop (𝓝 0) :=
+    tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds hupper
+      (hev.mono fun r hr => hr.1) (hev.mono fun r hr => hr.2)
+  -- 对每个 ε > 0 取 r 使 g r < ε，Cauchy 估计闭合
+  rw [← norm_le_zero_iff]
+  refine le_of_forall_pos_le_add fun ε hε => ?_
+  have hev2 : ∀ᶠ r in Filter.atTop, g r < ε := hgT.eventually (Iio_mem_nhds hε)
+  obtain ⟨r, hrε, hr0⟩ := (hev2.and (eventually_gt_atTop 0)).exists
+  have hd : DiffContOnCl ℂ
+      (xiWeightedEntireCorrection (deriv xiFunction 0 / xiFunction 0))
+      (Metric.ball z r) :=
+    hE.differentiableOn.diffContOnCl_ball (Set.subset_univ _)
+  have hRw4 : 4 ≤ y r := by
+    rw [hydef]
+    linarith [norm_nonneg z, hr0.le]
+  have hsph : ∀ w ∈ Metric.sphere z r,
+      ‖xiWeightedEntireCorrection (deriv xiFunction 0 / xiFunction 0) w‖ ≤
+        C_E * (1 + Real.log (y r)) ^ 2 := by
+    intro w hw
+    have hwnorm : ‖w‖ ≤ ‖z‖ + r := by
+      have h := hw
+      rw [Metric.mem_sphere, dist_eq_norm] at h
+      calc ‖w‖ = ‖(w - z) + z‖ := by ring_nf
+        _ ≤ ‖w - z‖ + ‖z‖ := norm_add_le _ _
+        _ = ‖z‖ + r := by rw [h, add_comm]
+    have hwball : w ∈ Metric.ball (0 : ℂ) (y r / 2) := by
+      rw [Metric.mem_ball, dist_zero_right, hydef]
+      linarith [hwnorm]
+    exact hbound (y r) hRw4 w hwball
+  have hCauchy := Complex.norm_deriv_le_of_forall_mem_sphere_norm_le hr0 hd hsph
+  have hgr : C_E * (1 + Real.log (y r)) ^ 2 / r = g r := rfl
+  rw [hgr] at hCauchy
+  linarith [hCauchy, hrε.le]
+
+/-- **加权整修正函数恒为零**：`E s = E 0 = 0`
+（`is_const_of_deriv_eq_zero` + `xiWeightedEntireCorrection_zero`）。 -/
+theorem xiWeightedEntireCorrection_eq_zero (s : ℂ) :
+    xiWeightedEntireCorrection (deriv xiFunction 0 / xiFunction 0) s = 0 :=
+  (is_const_of_deriv_eq_zero (differentiable_xiWeightedEntireCorrection _)
+    deriv_xiWeightedEntireCorrection_eq_zero s 0).trans xiWeightedEntireCorrection_zero
+
+/-- **重数加权部分分式展开（无条件）**：对所有 `ξ s ≠ 0`，
+
+```text
+ξ'(s)/ξ(s) = ξ'(0)/ξ(0) + Σ_ρ m_ξ(ρ)·([1/(s−ρ)+1/ρ] + [1/(s−conj ρ)+1/conj ρ])
+```
+
+其中 `ρ` 走遍上半平面的 ζ 非平凡零点（`UpperHalfPlaneNontrivialZero`），
+`m_ξ(ρ) = analyticOrderNatAt ξ ρ` 为解析重数。由
+`xi_weighted_partial_fraction_expansion_of_const_correction` 作用于
+常数性结论 `xiWeightedEntireCorrection_eq_zero` 得到。 -/
+theorem xi_weighted_partial_fraction_expansion (s : ℂ) (hs : xiFunction s ≠ 0) :
+    deriv xiFunction s / xiFunction s =
+      deriv xiFunction 0 / xiFunction 0 + xiWeightedMittagLefflerSum s :=
+  xi_weighted_partial_fraction_expansion_of_const_correction
+    ⟨0, xiWeightedEntireCorrection_eq_zero⟩ s hs
+
 end RiemannExplorer

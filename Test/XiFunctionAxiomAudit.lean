@@ -14,6 +14,7 @@ import RiemannExplorer.ZetaRealSegment
 import RiemannExplorer.XiPartialFractionWeighted
 import RiemannExplorer.XiZeroCountingBounds
 import RiemannExplorer.XiLogDerivDisc
+import RiemannExplorer.XiCorrectionConst
 
 #print axioms RiemannExplorer.xiFunction_one_sub
 #print axioms RiemannExplorer.xiFunction_zero
@@ -162,3 +163,16 @@ import RiemannExplorer.XiLogDerivDisc
 #print axioms RiemannExplorer.logDeriv_xiBlaschkeProd
 #print axioms RiemannExplorer.logDeriv_xiBlaschkeRegularized
 #print axioms RiemannExplorer.xi_logDeriv_sub_finsum_divisor_le
+#print axioms RiemannExplorer.xi_finsum_divisor_mul_inv_eq_sum
+#print axioms RiemannExplorer.xiZeroDiscMult_sum_le
+#print axioms RiemannExplorer.isNontrivialZero_conj
+#print axioms RiemannExplorer.nontrivialZerosFinset_eq_upper_union_conj
+#print axioms RiemannExplorer.xi_finsum_divisor_sub_low_tsum_eq
+#print axioms RiemannExplorer.norm_boundary_sum_le
+#print axioms RiemannExplorer.norm_const_sum_le
+#print axioms RiemannExplorer.norm_high_tsum_le
+#print axioms RiemannExplorer.norm_xiWeightedEntireCorrection_le_of_ne_zero
+#print axioms RiemannExplorer.norm_xiWeightedEntireCorrection_le
+#print axioms RiemannExplorer.deriv_xiWeightedEntireCorrection_eq_zero
+#print axioms RiemannExplorer.xiWeightedEntireCorrection_eq_zero
+#print axioms RiemannExplorer.xi_weighted_partial_fraction_expansion
