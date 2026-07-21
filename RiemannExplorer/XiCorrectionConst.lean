@@ -585,4 +585,213 @@ theorem norm_high_tsum_le (C : ℝ) (hC0 : 0 ≤ C)
           (by positivity)
     _ = (8 * (R / 2 + 1) + 2) * C * (1 + Real.log R) / R := by ring
 
+/-! ## 修正函数在 `ball 0 (R/2)` 上的 `O(log² R)` 界 -/
+
+/-- **E 的 O(log² R) 界（非零点版）**：存在 `C_E ≥ 0`，对所有 `R ≥ 4` 与
+`z ∈ ball 0 (R/2)` 且 `ξ z ≠ 0`，`‖E z‖ ≤ C_E·(1 + log R)²`。
+分解 `E = [ξ'/ξ − finsum_R] + [finsum_R − W_low] + [−W_high] − c₀`，
+四块分别由 C1、`xi_finsum_divisor_sub_low_tsum_eq` + 边界/常数项界、
+高部尾项界、`‖c₀‖ ≤ ‖c₀‖(1+log R)²` 控制。 -/
+theorem norm_xiWeightedEntireCorrection_le_of_ne_zero :
+    ∃ C_E : ℝ, 0 ≤ C_E ∧ ∀ R : ℝ, 4 ≤ R → ∀ z ∈ Metric.ball 0 (R / 2),
+      xiFunction z ≠ 0 →
+        ‖xiWeightedEntireCorrection (deriv xiFunction 0 / xiFunction 0) z‖ ≤
+          C_E * (1 + Real.log R) ^ 2 := by
+  obtain ⟨C₁, hC₁0, hC₁⟩ := xi_logDeriv_sub_finsum_divisor_le
+  obtain ⟨K₁, hK₁0, hcirc⟩ := exists_circleAverage_log_norm_xi_le
+  obtain ⟨C₂, hC₂0, hC₂⟩ := exists_upperZeros_weighted_norm_inv_le_log_sq
+  obtain ⟨C₃, hC₃0, hC₃⟩ := exists_upperZeros_tail_weighted_norm_inv_sq_le
+  have hL2 : (0 : ℝ) < Real.log 2 := Real.log_pos (by norm_num)
+  have hXnn : (0 : ℝ) ≤ 9 * K₁ / Real.log 2 + 1 := by
+    have h : (0 : ℝ) ≤ 9 * K₁ / Real.log 2 :=
+      div_nonneg (mul_nonneg (by norm_num) hK₁0) hL2.le
+    linarith
+  refine ⟨C₁ + (9 * K₁ / Real.log 2 + 1) + 2 * C₂ + (13 / 2) * C₃ +
+      ‖deriv xiFunction 0 / xiFunction 0‖,
+    add_nonneg (add_nonneg (add_nonneg (add_nonneg hC₁0 hXnn)
+      (mul_nonneg (by norm_num) hC₂0)) (mul_nonneg (by norm_num) hC₃0))
+      (norm_nonneg _),
+    fun R hR z hz hξz => ?_⟩
+  have hR0 : (0 : ℝ) < R := by linarith
+  have hlogR0 : (0 : ℝ) ≤ Real.log R := Real.log_nonneg (by linarith)
+  have hW1 : (1 : ℝ) ≤ 1 + Real.log R := by linarith
+  have hW2 : 1 + Real.log R ≤ (1 + Real.log R) ^ 2 := by
+    have h := mul_le_mul_of_nonneg_right hW1 (by linarith : (0 : ℝ) ≤ 1 + Real.log R)
+    rwa [one_mul, ← pow_two] at h
+  have hW1sq : (1 : ℝ) ≤ (1 + Real.log R) ^ 2 := le_trans hW1 hW2
+  have hzcl : z ∈ Metric.closedBall (0 : ℂ) (R / 2) := Metric.ball_subset_closedBall hz
+  have hznorm : ‖z‖ ≤ R / 2 := by
+    have hz' := hz
+    rw [Metric.mem_ball, dist_zero_right] at hz'
+    exact hz'.le
+  -- E 展开与 W 拆分
+  have hE : xiWeightedEntireCorrection (deriv xiFunction 0 / xiFunction 0) z
+      = logDeriv xiFunction z - deriv xiFunction 0 / xiFunction 0 -
+        xiWeightedMittagLefflerSum z := by
+    rw [xiWeightedEntireCorrection_apply_of_ne_zero _ hξz, ← logDeriv_apply]
+  have hW : xiWeightedMittagLefflerSum z
+      = (∑' ρ : UpperHalfPlaneNontrivialZero,
+          if ‖(ρ : ℂ)‖ < R then xiWeightedMittagLefflerTerm z (ρ : ℂ) else 0) +
+        (∑' ρ : UpperHalfPlaneNontrivialZero,
+          if R ≤ ‖(ρ : ℂ)‖ then xiWeightedMittagLefflerTerm z (ρ : ℂ) else 0) :=
+    xiWeightedMittagLefflerSum_eq_low_add_high R z
+  have hdecomp : xiWeightedEntireCorrection (deriv xiFunction 0 / xiFunction 0) z
+      = (logDeriv xiFunction z - (∑ᶠ u, ((MeromorphicOn.divisor xiFunction
+              (Metric.closedBall 0 R) u : ℤ) : ℂ) * (z - u)⁻¹))
+        + (((∑ᶠ u, ((MeromorphicOn.divisor xiFunction
+              (Metric.closedBall 0 R) u : ℤ) : ℂ) * (z - u)⁻¹)
+          - (∑' ρ : UpperHalfPlaneNontrivialZero,
+              if ‖(ρ : ℂ)‖ < R then xiWeightedMittagLefflerTerm z (ρ : ℂ) else 0))
+        + (-(∑' ρ : UpperHalfPlaneNontrivialZero,
+              if R ≤ ‖(ρ : ℂ)‖ then xiWeightedMittagLefflerTerm z (ρ : ℂ) else 0)
+          + -(deriv xiFunction 0 / xiFunction 0))) := by
+    rw [hE, hW]
+    ring
+  -- 四块各自的界
+  have hA : ‖logDeriv xiFunction z - (∑ᶠ u, ((MeromorphicOn.divisor xiFunction
+          (Metric.closedBall 0 R) u : ℤ) : ℂ) * (z - u)⁻¹)‖
+      ≤ C₁ * (1 + Real.log R) ^ 2 := hC₁ R hR z hzcl hξz
+  have hmiddle : ‖(∑ᶠ u, ((MeromorphicOn.divisor xiFunction
+          (Metric.closedBall 0 R) u : ℤ) : ℂ) * (z - u)⁻¹)
+        - (∑' ρ : UpperHalfPlaneNontrivialZero,
+            if ‖(ρ : ℂ)‖ < R then xiWeightedMittagLefflerTerm z (ρ : ℂ) else 0)‖
+      ≤ (9 * K₁ / Real.log 2 + 1) * (1 + Real.log R)
+        + 2 * C₂ * (1 + Real.log R) ^ 2 := by
+    rw [xi_finsum_divisor_sub_low_tsum_eq R z]
+    exact (norm_sub_le _ _).trans
+      (add_le_add (norm_boundary_sum_le K₁ hK₁0 hcirc hR hznorm)
+        (norm_const_sum_le C₂ hC₂0 hC₂ hR))
+  have hB : ‖(∑ᶠ u, ((MeromorphicOn.divisor xiFunction
+          (Metric.closedBall 0 R) u : ℤ) : ℂ) * (z - u)⁻¹)
+        - (∑' ρ : UpperHalfPlaneNontrivialZero,
+            if ‖(ρ : ℂ)‖ < R then xiWeightedMittagLefflerTerm z (ρ : ℂ) else 0)‖
+      ≤ (9 * K₁ / Real.log 2 + 1 + 2 * C₂) * (1 + Real.log R) ^ 2 := by
+    refine hmiddle.trans ?_
+    have h1 := mul_le_mul_of_nonneg_left hW2 hXnn
+    have h2 : (9 * K₁ / Real.log 2 + 1) * (1 + Real.log R)
+          + 2 * C₂ * (1 + Real.log R) ^ 2
+        ≤ (9 * K₁ / Real.log 2 + 1) * (1 + Real.log R) ^ 2
+          + 2 * C₂ * (1 + Real.log R) ^ 2 := add_le_add h1 (le_refl _)
+    refine h2.trans (le_of_eq ?_)
+    ring
+  have hhigh := norm_high_tsum_le C₃ hC₃0 hC₃ hR hznorm
+  have hC : ‖-(∑' ρ : UpperHalfPlaneNontrivialZero,
+        if R ≤ ‖(ρ : ℂ)‖ then xiWeightedMittagLefflerTerm z (ρ : ℂ) else 0)‖
+      ≤ (13 / 2) * C₃ * (1 + Real.log R) ^ 2 := by
+    rw [norm_neg]
+    refine hhigh.trans ?_
+    have hfac : (8 * (R / 2 + 1) + 2) / R ≤ 13 / 2 := by
+      rw [div_le_iff₀ hR0]
+      have heq : 8 * (R / 2 + 1) + 2 = 4 * R + 10 := by ring
+      rw [heq]
+      linarith
+    have hnn : (0 : ℝ) ≤ C₃ * (1 + Real.log R) := mul_nonneg hC₃0 (by linarith)
+    calc (8 * (R / 2 + 1) + 2) * C₃ * (1 + Real.log R) / R
+        = ((8 * (R / 2 + 1) + 2) / R) * (C₃ * (1 + Real.log R)) := by ring
+      _ ≤ (13 / 2) * (C₃ * (1 + Real.log R)) :=
+          mul_le_mul_of_nonneg_right hfac hnn
+      _ ≤ (13 / 2) * (C₃ * (1 + Real.log R) ^ 2) :=
+          mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left hW2 hC₃0)
+            (by norm_num)
+      _ = (13 / 2) * C₃ * (1 + Real.log R) ^ 2 := by ring
+  have hD : ‖-(deriv xiFunction 0 / xiFunction 0)‖
+      ≤ ‖deriv xiFunction 0 / xiFunction 0‖ * (1 + Real.log R) ^ 2 := by
+    rw [norm_neg]
+    calc ‖deriv xiFunction 0 / xiFunction 0‖
+        = ‖deriv xiFunction 0 / xiFunction 0‖ * 1 := (mul_one _).symm
+      _ ≤ ‖deriv xiFunction 0 / xiFunction 0‖ * (1 + Real.log R) ^ 2 :=
+          mul_le_mul_of_nonneg_left hW1sq (norm_nonneg _)
+  -- 合并
+  have hsum : ‖(logDeriv xiFunction z - (∑ᶠ u, ((MeromorphicOn.divisor xiFunction
+            (Metric.closedBall 0 R) u : ℤ) : ℂ) * (z - u)⁻¹))
+        + (((∑ᶠ u, ((MeromorphicOn.divisor xiFunction
+              (Metric.closedBall 0 R) u : ℤ) : ℂ) * (z - u)⁻¹)
+          - (∑' ρ : UpperHalfPlaneNontrivialZero,
+              if ‖(ρ : ℂ)‖ < R then xiWeightedMittagLefflerTerm z (ρ : ℂ) else 0))
+        + (-(∑' ρ : UpperHalfPlaneNontrivialZero,
+              if R ≤ ‖(ρ : ℂ)‖ then xiWeightedMittagLefflerTerm z (ρ : ℂ) else 0)
+          + -(deriv xiFunction 0 / xiFunction 0)))‖
+      ≤ ‖logDeriv xiFunction z - (∑ᶠ u, ((MeromorphicOn.divisor xiFunction
+            (Metric.closedBall 0 R) u : ℤ) : ℂ) * (z - u)⁻¹)‖
+        + (‖(∑ᶠ u, ((MeromorphicOn.divisor xiFunction
+              (Metric.closedBall 0 R) u : ℤ) : ℂ) * (z - u)⁻¹)
+          - (∑' ρ : UpperHalfPlaneNontrivialZero,
+              if ‖(ρ : ℂ)‖ < R then xiWeightedMittagLefflerTerm z (ρ : ℂ) else 0)‖
+        + (‖-(∑' ρ : UpperHalfPlaneNontrivialZero,
+              if R ≤ ‖(ρ : ℂ)‖ then xiWeightedMittagLefflerTerm z (ρ : ℂ) else 0)‖
+          + ‖-(deriv xiFunction 0 / xiFunction 0)‖)) := by
+    have h1 := norm_add_le (logDeriv xiFunction z - (∑ᶠ u, ((MeromorphicOn.divisor
+        xiFunction (Metric.closedBall 0 R) u : ℤ) : ℂ) * (z - u)⁻¹))
+      (((∑ᶠ u, ((MeromorphicOn.divisor xiFunction (Metric.closedBall 0 R) u : ℤ) : ℂ)
+          * (z - u)⁻¹)
+        - (∑' ρ : UpperHalfPlaneNontrivialZero,
+            if ‖(ρ : ℂ)‖ < R then xiWeightedMittagLefflerTerm z (ρ : ℂ) else 0))
+        + (-(∑' ρ : UpperHalfPlaneNontrivialZero,
+            if R ≤ ‖(ρ : ℂ)‖ then xiWeightedMittagLefflerTerm z (ρ : ℂ) else 0)
+          + -(deriv xiFunction 0 / xiFunction 0)))
+    have h2 := norm_add_le ((∑ᶠ u, ((MeromorphicOn.divisor xiFunction
+          (Metric.closedBall 0 R) u : ℤ) : ℂ) * (z - u)⁻¹)
+        - (∑' ρ : UpperHalfPlaneNontrivialZero,
+            if ‖(ρ : ℂ)‖ < R then xiWeightedMittagLefflerTerm z (ρ : ℂ) else 0))
+      (-(∑' ρ : UpperHalfPlaneNontrivialZero,
+            if R ≤ ‖(ρ : ℂ)‖ then xiWeightedMittagLefflerTerm z (ρ : ℂ) else 0)
+        + -(deriv xiFunction 0 / xiFunction 0))
+    have h3 := norm_add_le (-(∑' ρ : UpperHalfPlaneNontrivialZero,
+            if R ≤ ‖(ρ : ℂ)‖ then xiWeightedMittagLefflerTerm z (ρ : ℂ) else 0))
+      (-(deriv xiFunction 0 / xiFunction 0))
+    exact h1.trans (add_le_add le_rfl (h2.trans (add_le_add le_rfl h3)))
+  calc ‖xiWeightedEntireCorrection (deriv xiFunction 0 / xiFunction 0) z‖
+      ≤ ‖logDeriv xiFunction z - (∑ᶠ u, ((MeromorphicOn.divisor xiFunction
+            (Metric.closedBall 0 R) u : ℤ) : ℂ) * (z - u)⁻¹)‖
+        + (‖(∑ᶠ u, ((MeromorphicOn.divisor xiFunction
+              (Metric.closedBall 0 R) u : ℤ) : ℂ) * (z - u)⁻¹)
+          - (∑' ρ : UpperHalfPlaneNontrivialZero,
+              if ‖(ρ : ℂ)‖ < R then xiWeightedMittagLefflerTerm z (ρ : ℂ) else 0)‖
+        + (‖-(∑' ρ : UpperHalfPlaneNontrivialZero,
+              if R ≤ ‖(ρ : ℂ)‖ then xiWeightedMittagLefflerTerm z (ρ : ℂ) else 0)‖
+          + ‖-(deriv xiFunction 0 / xiFunction 0)‖)) := hdecomp ▸ hsum
+    _ ≤ C₁ * (1 + Real.log R) ^ 2
+        + ((9 * K₁ / Real.log 2 + 1 + 2 * C₂) * (1 + Real.log R) ^ 2
+        + ((13 / 2) * C₃ * (1 + Real.log R) ^ 2
+          + ‖deriv xiFunction 0 / xiFunction 0‖ * (1 + Real.log R) ^ 2)) :=
+        add_le_add hA (add_le_add hB (add_le_add hC hD))
+    _ = (C₁ + (9 * K₁ / Real.log 2 + 1) + 2 * C₂ + (13 / 2) * C₃ +
+          ‖deriv xiFunction 0 / xiFunction 0‖) * (1 + Real.log R) ^ 2 := by ring
+
+/-- **E 的 O(log² R) 界（稠密延拓，去掉 `ξ z ≠ 0`）**：零点处由
+`xiFunction_ne_eventually_zero` 取逼近序列 `zₙ → z`（`ξ zₙ ≠ 0`），
+E 的连续性（整函数）与 `le_of_tendsto'` 闭合。 -/
+theorem norm_xiWeightedEntireCorrection_le :
+    ∃ C_E : ℝ, 0 ≤ C_E ∧ ∀ R : ℝ, 4 ≤ R → ∀ z ∈ Metric.ball 0 (R / 2),
+      ‖xiWeightedEntireCorrection (deriv xiFunction 0 / xiFunction 0) z‖ ≤
+        C_E * (1 + Real.log R) ^ 2 := by
+  obtain ⟨C_E, hC_E0, hbound⟩ := norm_xiWeightedEntireCorrection_le_of_ne_zero
+  refine ⟨C_E, hC_E0, fun R hR z hz => ?_⟩
+  by_cases hξz : xiFunction z = 0
+  swap
+  · exact hbound R hR z hz hξz
+  · have hfreq : ∃ᶠ w in 𝓝 z, xiFunction w ≠ 0 :=
+      not_eventually.mp (xiFunction_ne_eventually_zero z)
+    have hfreqn : ∀ n : ℕ, ∃ w : ℂ, xiFunction w ≠ 0 ∧
+        w ∈ Metric.ball z (1 / ((n : ℝ) + 1)) ∧ w ∈ Metric.ball 0 (R / 2) := by
+      intro n
+      have hev1 : ∀ᶠ w in 𝓝 z, w ∈ Metric.ball z (1 / ((n : ℝ) + 1)) :=
+        Metric.ball_mem_nhds z (by positivity : (0 : ℝ) < 1 / ((n : ℝ) + 1))
+      have hev2 : ∀ᶠ w in 𝓝 z, w ∈ Metric.ball 0 (R / 2) := isOpen_ball.mem_nhds hz
+      exact (hfreq.and_eventually (hev1.and hev2)).exists
+    choose seq hseqξ hseqball hseqR using hfreqn
+    have hT : Filter.Tendsto seq Filter.atTop (𝓝 z) := by
+      have hdist : Filter.Tendsto (fun n => dist (seq n) z) Filter.atTop (𝓝 0) :=
+        tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds
+          tendsto_one_div_add_atTop_nhds_zero_nat (fun n => dist_nonneg)
+          fun n => (hseqball n).le
+      exact tendsto_iff_dist_tendsto_zero.mpr hdist
+    have hcont : Filter.Tendsto
+        (fun n => ‖xiWeightedEntireCorrection
+          (deriv xiFunction 0 / xiFunction 0) (seq n)‖)
+        Filter.atTop
+        (𝓝 ‖xiWeightedEntireCorrection (deriv xiFunction 0 / xiFunction 0) z‖) :=
+      ((differentiable_xiWeightedEntireCorrection _).continuous.norm.tendsto z).comp hT
+    exact le_of_tendsto' hcont fun n => hbound R hR (seq n) (hseqR n) (hseqξ n)
+
 end RiemannExplorer
