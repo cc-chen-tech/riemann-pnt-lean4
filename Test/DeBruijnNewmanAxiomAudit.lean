@@ -141,3 +141,7 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.contDiff_one_deBruijnNewmanH_prod
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewman_simple_zero_trajectory
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewman_zeros_stay_real_on_compact
+#print axioms RiemannExplorer.DeBruijnNewman.deriv_two_deBruijnNewmanH
+#print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_heat_equation
+#print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_heat_pde
+#print axioms RiemannExplorer.DeBruijnNewman.continuous_deBruijnNewmanH_zderiv_two

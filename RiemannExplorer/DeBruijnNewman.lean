@@ -5201,6 +5201,45 @@ theorem deBruijnNewman_zeros_stay_real_on_compact (t₀ : ℝ) (K : Set ℂ)
   obtain ⟨n, hn⟩ := hvin.exists
   exact hzim (φ n) hn
 
+/-- **The second `z`-derivative**: `∂²_z H_t(z)
+= ∫₀^∞ (−u²) · e^{tu²} Φ(u) cos(zu) du`, from the dominated differentiation
+`hasDerivAt_integral_heatIntegrandDeriv` and the first-derivative formula. -/
+theorem deriv_two_deBruijnNewmanH (t : ℝ) (z : ℂ) :
+    deriv (deriv (deBruijnNewmanH t)) z
+      = ∫ u : ℝ in Set.Ioi 0, -((u : ℂ) ^ 2) * heatIntegrand t z u := by
+  rw [show deriv (deBruijnNewmanH t)
+      = fun w : ℂ => ∫ u : ℝ in Set.Ioi 0, heatIntegrandDeriv t w u
+      from funext fun w => deriv_deBruijnNewmanH t w]
+  exact (hasDerivAt_integral_heatIntegrandDeriv t z).deriv
+
+/-- **The backward heat equation for `H`**: `∂²_z H_t(z)` equals minus the
+`u²`-weighted heat integral, i.e. `∂²_z H = −∂_t H`. This is the PDE behind
+the de Bruijn magic formula: at a double zero it forces the local model
+`H_t(x) ≈ B·((x − x₀)²/2 − (t − t₀))`. -/
+theorem deBruijnNewmanH_heat_equation (t : ℝ) (z : ℂ) :
+    iteratedDeriv 2 (deBruijnNewmanH t) z
+      = -(∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand t z u) := by
+  rw [iteratedDeriv_succ, iteratedDeriv_one, deriv_two_deBruijnNewmanH]
+  simp only [neg_mul, MeasureTheory.integral_neg]
+
+/-- **The heat equation, PDE form**: `∂²_z H_t(z) = −∂_t H_t(z)` where the
+time derivative is taken with `z` frozen. -/
+theorem deBruijnNewmanH_heat_pde (t : ℝ) (z : ℂ) :
+    iteratedDeriv 2 (deBruijnNewmanH t) z
+      = -(deriv (fun s : ℝ => deBruijnNewmanH s z) t) := by
+  rw [deBruijnNewmanH_heat_equation, (hasDerivAt_deBruijnNewmanH_t z t).deriv]
+
+/-- **Joint continuity of `∂²_z H`**: by the heat equation it is minus the
+time derivative, which is jointly continuous
+(`continuous_deBruijnNewmanH_tderiv`). -/
+theorem continuous_deBruijnNewmanH_zderiv_two :
+    Continuous fun p : ℝ × ℂ => iteratedDeriv 2 (deBruijnNewmanH p.1) p.2 := by
+  rw [show (fun p : ℝ × ℂ => iteratedDeriv 2 (deBruijnNewmanH p.1) p.2)
+      = fun p : ℝ × ℂ =>
+        -(∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand p.1 p.2 u)
+      from funext fun p => deBruijnNewmanH_heat_equation p.1 p.2]
+  exact continuous_deBruijnNewmanH_tderiv.neg
+
 /-- **Diagonal derivative — the zero-transport piece**: if `z(t) → z₀` as
 `t → t₀`, then `t ↦ H_t(z(t)) − H_{t₀}(z(t))` has derivative `∂_t H_{t₀}(z₀)`
 (the `u²`-weighted heat integral) at `t₀`. Proof: the FTC representation
