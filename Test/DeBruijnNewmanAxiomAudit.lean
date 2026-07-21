@@ -179,3 +179,6 @@ import RiemannExplorer.DeBruijnNewman
 
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewman_critical_curve
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewman_double_zero_full
+
+#print axioms RiemannExplorer.DeBruijnNewman.hasDerivAt_deBruijnNewmanHzderiv_two_affine
+#print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanHzderiv_two_z_sub_eq_intervalIntegral

@@ -5653,6 +5653,68 @@ theorem deBruijnNewmanHzderiv_z_sub_eq_intervalIntegral (t : ℝ) (w k : ℂ) :
       hint
   simpa using h2.symm
 
+/-- **Affine restriction derivative for the second `z`-derivative map**: the
+derivative of `s ↦ ∂²_z H_t(w + s·k)` at `s : ℝ` is `∂³_z H_t(w + s·k) · k`. -/
+theorem hasDerivAt_deBruijnNewmanHzderiv_two_affine (t : ℝ) (w k : ℂ) (s : ℝ) :
+    HasDerivAt (fun s : ℝ => deriv (deriv (deBruijnNewmanH t)) (w + (s : ℂ) * k))
+      (iteratedDeriv 3 (deBruijnNewmanH t) (w + (s : ℂ) * k) * k) s := by
+  have h1 : HasDerivAt (fun s : ℝ => (s : ℂ)) 1 s := by
+    simpa using Complex.ofRealCLM.hasDerivAt (x := s)
+  have h2 : HasDerivAt (fun s : ℝ => w + (s : ℂ) * k) k s := by
+    simpa using (h1.mul_const k).const_add w
+  have hg : HasDerivAt (deriv (deriv (deBruijnNewmanH t)))
+      (∫ u : ℝ in Set.Ioi 0, -((u : ℂ) ^ 2)
+        * heatIntegrandDeriv t (w + (s : ℂ) * k) u)
+      (w + (s : ℂ) * k) := by
+    rw [show deriv (deriv (deBruijnNewmanH t))
+      = fun w : ℂ => ∫ u : ℝ in Set.Ioi 0, -((u : ℂ) ^ 2) * heatIntegrand t w u
+      from funext fun w => deriv_two_deBruijnNewmanH t w]
+    exact hasDerivAt_integral_negSq_heatIntegrand t (w + (s : ℂ) * k)
+  have h3 := @HasDerivAt.scomp ℝ _ ℂ _ _ s ℂ _ _ _ IsScalarTower.right _ _ _ _ hg h2
+  have h4 : HasDerivAt (fun s : ℝ => deriv (deriv (deBruijnNewmanH t)) (w + (s : ℂ) * k))
+      ((∫ u : ℝ in Set.Ioi 0, -((u : ℂ) ^ 2)
+        * heatIntegrandDeriv t (w + (s : ℂ) * k) u)
+        * k) s := by
+    simpa [Function.comp_def, smul_eq_mul, mul_comm] using h3
+  rw [deriv_three_deBruijnNewmanH]
+  exact h4
+
+/-- **FTC in the z-direction for the second `z`-derivative map**:
+`∂²_z H_t(w + k) − ∂²_z H_t(w) = ∫₀¹ ∂³_z H_t(w + s·k)·k ds`. The integrand is
+jointly continuous by `continuous_deBruijnNewmanH_zderiv_three`. Together with
+`deBruijnNewmanH_taylor_two_z` this supplies the order-2 Taylor expansion of
+`H_t` in `z` with a cubic integral remainder — the input for excluding
+non-real zeros near an exactly-double real zero after the collision. -/
+theorem deBruijnNewmanHzderiv_two_z_sub_eq_intervalIntegral (t : ℝ) (w k : ℂ) :
+    deriv (deriv (deBruijnNewmanH t)) (w + k) - deriv (deriv (deBruijnNewmanH t)) w
+      = ∫ s : ℝ in (0:ℝ)..1,
+        iteratedDeriv 3 (deBruijnNewmanH t) (w + (s : ℂ) * k) * k := by
+  have hDcont : Continuous fun s : ℝ =>
+      iteratedDeriv 3 (deBruijnNewmanH t) (w + (s : ℂ) * k) * k :=
+    (continuous_deBruijnNewmanH_zderiv_three.comp
+      (continuous_const.prodMk
+        ((Complex.continuous_ofReal.mul continuous_const).const_add w))).mul
+      continuous_const
+  have hint : IntervalIntegrable
+      (deriv fun s : ℝ => deriv (deriv (deBruijnNewmanH t)) (w + (s : ℂ) * k))
+      MeasureTheory.volume 0 1 := by
+    rw [show (deriv fun s : ℝ => deriv (deriv (deBruijnNewmanH t)) (w + (s : ℂ) * k))
+        = fun s : ℝ => iteratedDeriv 3 (deBruijnNewmanH t) (w + (s : ℂ) * k) * k
+        from funext fun s =>
+          (hasDerivAt_deBruijnNewmanHzderiv_two_affine t w k s).deriv]
+    exact hDcont.continuousOn.intervalIntegrable
+  have h2 : ∫ s : ℝ in (0:ℝ)..1,
+        iteratedDeriv 3 (deBruijnNewmanH t) (w + (s : ℂ) * k) * k
+      = deriv (deriv (deBruijnNewmanH t)) (w + (1 : ℂ) * k)
+        - deriv (deriv (deBruijnNewmanH t)) (w + (0 : ℂ) * k) := by
+    rw [intervalIntegral.integral_congr
+      fun s _ => (hasDerivAt_deBruijnNewmanHzderiv_two_affine t w k s).deriv.symm]
+    exact intervalIntegral.integral_deriv_eq_sub
+      (fun x _ =>
+        (hasDerivAt_deBruijnNewmanHzderiv_two_affine t w k x).differentiableAt)
+      hint
+  simpa using h2.symm
+
 /-- **FTC in the t-direction for the `z`-derivative map**:
 `∂_z H_t(w) − ∂_z H_{t₀}(w) = ∫_{t₀}^{t} ∂_s ∂_z H_s(w) ds`, with the cross
 derivative jointly continuous by `continuous_deBruijnNewmanH_crossderiv`. -/
