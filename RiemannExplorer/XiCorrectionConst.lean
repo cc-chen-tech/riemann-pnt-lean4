@@ -308,4 +308,281 @@ theorem xi_finsum_divisor_sub_low_tsum_eq (R : ℝ) (z : ℂ) :
   rw [hfin, hlow, hlowsplit, hpair, hNZF, hSsplit, hSfilt]
   ring
 
+/-! ## 三块误差项的界 -/
+
+/-- **边界圆弧项界**：`S_R` 中 `‖u‖ = R` 的零点贡献
+`≤ (9K/log 2 + 1)·(1 + log R)`。每项 `‖(z−u)⁻¹‖ ≤ 2/R`（`‖z‖ ≤ R/2`），
+重数和由 Jensen 计数 `xiZeroDiscMult_sum_le` 控制，再经
+`(1+2R) ≤ (9/4)R`、`log(4+2R) ≤ 2(1+log R)` 吸收。 -/
+theorem norm_boundary_sum_le (K : ℝ) (hK0 : 0 ≤ K)
+    (hcircK : ∀ t : ℝ, 0 < t → circleAverage (Real.log ‖xiFunction ·‖) 0 t ≤
+      K * (1 + t) * Real.log (4 + t)) {R : ℝ} (hR : 4 ≤ R) {z : ℂ}
+    (hz : ‖z‖ ≤ R / 2) :
+    ‖∑ u ∈ (xiZeroDiscFinset R).filter fun u => ¬ ‖u‖ < R,
+        (analyticOrderNatAt xiFunction u : ℂ) * (z - u)⁻¹‖
+      ≤ (9 * K / Real.log 2 + 1) * (1 + Real.log R) := by
+  have hR0 : (0 : ℝ) < R := by linarith
+  have hlogR0 : (0 : ℝ) ≤ Real.log R := Real.log_nonneg (by linarith)
+  have hL2 : (0 : ℝ) < Real.log 2 := Real.log_pos (by norm_num)
+  have hlog6 : Real.log 6 < 2 := by
+    have h6e : (6 : ℝ) < Real.exp 2 := by
+      have h1 := Real.exp_one_gt_d9
+      have he2 : Real.exp 2 = Real.exp 1 * Real.exp 1 := by
+        rw [← Real.exp_add]
+        norm_num
+      nlinarith [Real.exp_pos 1]
+    calc Real.log 6 < Real.log (Real.exp 2) := Real.log_lt_log (by norm_num) h6e
+      _ = 2 := Real.log_exp 2
+  have hlog42 : Real.log (4 + 2 * R) ≤ 2 * (1 + Real.log R) := by
+    have h1 : (4 : ℝ) + 2 * R ≤ 6 * R := by linarith
+    have h2 := Real.log_le_log (show (0 : ℝ) < 4 + 2 * R by positivity) h1
+    rw [Real.log_mul (by norm_num : (6 : ℝ) ≠ 0) hR0.ne'] at h2
+    linarith
+  -- 重数统一为 xiZeroDiscMult
+  have hmult_eq : ∑ u ∈ (xiZeroDiscFinset R).filter fun u => ¬ ‖u‖ < R,
+        (analyticOrderNatAt xiFunction u : ℝ)
+      = ∑ u ∈ (xiZeroDiscFinset R).filter fun u => ¬ ‖u‖ < R,
+          (xiZeroDiscMult R u : ℝ) := by
+    refine Finset.sum_congr rfl fun u hu => ?_
+    rw [xiZeroDiscMult_eq_analyticOrderNatAt
+      (xiZeroDiscFinset_subset_closedBall (Finset.mem_filter.mp hu).1)]
+  have hle_sum : ∑ u ∈ (xiZeroDiscFinset R).filter fun u => ¬ ‖u‖ < R,
+        (xiZeroDiscMult R u : ℝ)
+      ≤ ∑ u ∈ xiZeroDiscFinset R, (xiZeroDiscMult R u : ℝ) :=
+    Finset.sum_le_sum_of_subset_of_nonneg (Finset.filter_subset _ _)
+      fun u _ _ => Nat.cast_nonneg _
+  have hcount := xiZeroDiscMult_sum_le hcircK R hR
+  -- 逐项上界
+  have hterm : ∀ u ∈ (xiZeroDiscFinset R).filter fun u => ¬ ‖u‖ < R,
+      (analyticOrderNatAt xiFunction u : ℝ) * ‖z - u‖⁻¹ ≤
+        (analyticOrderNatAt xiFunction u : ℝ) * (2 / R) := by
+    intro u hu
+    have huS := (Finset.mem_filter.mp hu).1
+    have hunot := (Finset.mem_filter.mp hu).2
+    have huB := xiZeroDiscFinset_subset_closedBall huS
+    rw [Metric.mem_closedBall, dist_zero_right] at huB
+    have huR : ‖u‖ = R := le_antisymm huB (le_of_not_gt hunot)
+    have hge : R / 2 ≤ ‖z - u‖ := by
+      have h := norm_sub_norm_le u z
+      rw [norm_sub_rev] at h
+      rw [huR] at h
+      linarith
+    have hinv : ‖z - u‖⁻¹ ≤ (R / 2)⁻¹ :=
+      (inv_le_inv₀ (lt_of_lt_of_le (by linarith : (0 : ℝ) < R / 2) hge)
+        (by linarith : (0 : ℝ) < R / 2)).mpr hge
+    rw [inv_div] at hinv
+    exact mul_le_mul_of_nonneg_left hinv (Nat.cast_nonneg _)
+  -- 常数吸收
+  have hA0 : (0 : ℝ) ≤ K * (1 + 2 * R) * Real.log (4 + 2 * R) :=
+    mul_nonneg (mul_nonneg hK0 (by linarith)) (Real.log_nonneg (by linarith))
+  have hA_le : K * (1 + 2 * R) * Real.log (4 + 2 * R) ≤
+      (9 / 2) * K * R * (1 + Real.log R) := by
+    have h12 : (1 : ℝ) + 2 * R ≤ (9 / 4) * R := by linarith
+    have h3 := mul_le_mul (mul_le_mul_of_nonneg_left h12 hK0) hlog42
+      (Real.log_nonneg (by linarith : (1 : ℝ) ≤ 4 + 2 * R))
+      (mul_nonneg hK0 (by linarith : (0 : ℝ) ≤ (9 / 4) * R))
+    have heq : K * ((9 / 4) * R) * (2 * (1 + Real.log R)) =
+        (9 / 2) * K * R * (1 + Real.log R) := by ring
+    rwa [heq] at h3
+  calc ‖∑ u ∈ (xiZeroDiscFinset R).filter fun u => ¬ ‖u‖ < R,
+          (analyticOrderNatAt xiFunction u : ℂ) * (z - u)⁻¹‖
+      ≤ ∑ u ∈ (xiZeroDiscFinset R).filter fun u => ¬ ‖u‖ < R,
+          ‖(analyticOrderNatAt xiFunction u : ℂ) * (z - u)⁻¹‖ := norm_sum_le _ _
+    _ = ∑ u ∈ (xiZeroDiscFinset R).filter fun u => ¬ ‖u‖ < R,
+          (analyticOrderNatAt xiFunction u : ℝ) * ‖z - u‖⁻¹ := by
+        refine Finset.sum_congr rfl fun u _ => ?_
+        rw [norm_mul, RCLike.norm_natCast, norm_inv]
+    _ ≤ ∑ u ∈ (xiZeroDiscFinset R).filter fun u => ¬ ‖u‖ < R,
+          (analyticOrderNatAt xiFunction u : ℝ) * (2 / R) :=
+        Finset.sum_le_sum hterm
+    _ = (2 / R) * ∑ u ∈ (xiZeroDiscFinset R).filter fun u => ¬ ‖u‖ < R,
+          (analyticOrderNatAt xiFunction u : ℝ) := by
+        rw [← Finset.sum_mul, mul_comm]
+    _ ≤ (2 / R) * ((K * (1 + 2 * R) * Real.log (4 + 2 * R) + Real.log 2)
+          / Real.log 2) :=
+        mul_le_mul_of_nonneg_left
+          (hmult_eq ▸ hle_sum.trans hcount) (by positivity)
+    _ ≤ (9 * K / Real.log 2 + 1) * (1 + Real.log R) := by
+        have h1 : (0 : ℝ) ≤ 1 + Real.log R := by linarith
+        have h2 : (2 / R) * ((K * (1 + 2 * R) * Real.log (4 + 2 * R) + Real.log 2)
+              / Real.log 2)
+            ≤ (2 / R) * (((9 / 2) * K * R * (1 + Real.log R) + Real.log 2)
+              / Real.log 2) := by
+          refine mul_le_mul_of_nonneg_left ?_ (by positivity)
+          exact div_le_div_of_nonneg_right (add_le_add hA_le le_rfl) hL2.le
+        refine h2.trans ?_
+        have h3 : (2 / R) * (((9 / 2) * K * R * (1 + Real.log R) + Real.log 2)
+              / Real.log 2)
+            = (9 * K * (1 + Real.log R) + (2 / R) * Real.log 2) / Real.log 2 := by
+          field_simp [hR0.ne', hL2.ne']
+        rw [h3, div_le_iff₀ hL2]
+        have h6 : (9 * K / Real.log 2 + 1) * (1 + Real.log R) * Real.log 2
+            = 9 * K * (1 + Real.log R) + Real.log 2 * (1 + Real.log R) := by
+          field_simp [hL2.ne']
+        rw [h6]
+        have h4 : (2 / R) * Real.log 2 ≤ Real.log 2 * (1 + Real.log R) := by
+          have h21 : (2 : ℝ) / R ≤ 1 := by
+            rw [div_le_one hR0]
+            linarith
+          calc (2 / R) * Real.log 2 ≤ 1 * Real.log 2 :=
+              mul_le_mul_of_nonneg_right h21 hL2.le
+            _ = Real.log 2 := one_mul _
+            _ ≤ Real.log 2 * (1 + Real.log R) :=
+              (le_mul_iff_one_le_right hL2).mpr (by linarith : (1 : ℝ) ≤ 1 + Real.log R)
+        exact add_le_add le_rfl h4
+
+/-- **常数部项界**：`u⁻¹ + (conj u)⁻¹ = 2·Re(u⁻¹)`，范数 `≤ 2‖u‖⁻¹`，
+和式经 `preimage_coe_nontrivialZerosFinset_image` 转为头部计数界
+`exists_upperZeros_weighted_norm_inv_le_log_sq` 的子型和。 -/
+theorem norm_const_sum_le (C : ℝ) (hC0 : 0 ≤ C)
+    (hC : ∀ B : ℝ, 4 ≤ B →
+      ∑ ρ ∈ (PrimeNumberTheorem.nontrivialZerosFinset B).preimage
+          (fun ρ : UpperHalfPlaneNontrivialZero ↦ (ρ : ℂ)) Subtype.coe_injective.injOn,
+        (if ‖(ρ : ℂ)‖ < B then
+          (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) * ‖(ρ : ℂ)‖⁻¹
+        else 0) ≤ C * (1 + Real.log B) ^ 2) {R : ℝ} (hR : 4 ≤ R) :
+    ‖∑ u ∈ xiUpperZerosFinset R,
+        if ‖u‖ < R then
+          (analyticOrderNatAt xiFunction u : ℂ) * (u⁻¹ + (conj u)⁻¹) else 0‖
+      ≤ 2 * C * (1 + Real.log R) ^ 2 := by
+  classical
+  have hterm : ∀ u ∈ xiUpperZerosFinset R,
+      ‖if ‖u‖ < R then (analyticOrderNatAt xiFunction u : ℂ) *
+          (u⁻¹ + (conj u)⁻¹) else 0‖
+        ≤ if ‖u‖ < R then
+            (analyticOrderNatAt xiFunction u : ℝ) * (2 * ‖u‖⁻¹) else 0 := by
+    intro u _
+    by_cases hu : ‖u‖ < R
+    · rw [if_pos hu, if_pos hu]
+      have hconj : u⁻¹ + (conj u)⁻¹ = ((2 * (u⁻¹).re : ℝ) : ℂ) := by
+        rw [← Complex.conj_inv]
+        exact Complex.add_conj _
+      rw [norm_mul, RCLike.norm_natCast, hconj, Complex.norm_real]
+      have hle : |(2 : ℝ) * (u⁻¹).re| ≤ 2 * ‖u‖⁻¹ := by
+        have h1 : |(2 : ℝ) * (u⁻¹).re| = 2 * |(u⁻¹).re| := by
+          rw [abs_mul, abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 2)]
+        rw [h1]
+        have h2 : |(u⁻¹).re| ≤ ‖u‖⁻¹ := by
+          rw [← norm_inv]
+          exact Complex.abs_re_le_norm _
+        exact mul_le_mul_of_nonneg_left h2 (by norm_num)
+      exact mul_le_mul_of_nonneg_left hle (Nat.cast_nonneg _)
+    · rw [if_neg hu, if_neg hu, norm_zero]
+  -- 上半平面和 = 子型原像和
+  have hsumimg : (∑ u ∈ xiUpperZerosFinset R,
+        if ‖u‖ < R then
+          (analyticOrderNatAt xiFunction u : ℝ) * ‖u‖⁻¹ else 0)
+      = ∑ ρ ∈ (PrimeNumberTheorem.nontrivialZerosFinset R).preimage
+          (fun ρ : UpperHalfPlaneNontrivialZero ↦ (ρ : ℂ)) Subtype.coe_injective.injOn,
+        (if ‖(ρ : ℂ)‖ < R then
+          (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) * ‖(ρ : ℂ)‖⁻¹ else 0) := by
+    rw [← preimage_coe_nontrivialZerosFinset_image R]
+    exact Finset.sum_image (fun x _ y _ h => Subtype.coe_injective h)
+  calc ‖∑ u ∈ xiUpperZerosFinset R,
+          if ‖u‖ < R then (analyticOrderNatAt xiFunction u : ℂ) *
+            (u⁻¹ + (conj u)⁻¹) else 0‖
+      ≤ ∑ u ∈ xiUpperZerosFinset R,
+          ‖if ‖u‖ < R then (analyticOrderNatAt xiFunction u : ℂ) *
+            (u⁻¹ + (conj u)⁻¹) else 0‖ := norm_sum_le _ _
+    _ ≤ ∑ u ∈ xiUpperZerosFinset R,
+          if ‖u‖ < R then
+            (analyticOrderNatAt xiFunction u : ℝ) * (2 * ‖u‖⁻¹) else 0 :=
+        Finset.sum_le_sum hterm
+    _ = 2 * ∑ u ∈ xiUpperZerosFinset R,
+          if ‖u‖ < R then
+            (analyticOrderNatAt xiFunction u : ℝ) * ‖u‖⁻¹ else 0 := by
+        rw [Finset.mul_sum]
+        refine Finset.sum_congr rfl fun u _ => ?_
+        by_cases hu : ‖u‖ < R
+        · rw [if_pos hu, if_pos hu]
+          ring
+        · rw [if_neg hu, if_neg hu, mul_zero]
+    _ ≤ 2 * (C * (1 + Real.log R) ^ 2) :=
+        mul_le_mul_of_nonneg_left (hsumimg ▸ hC R hR) (by norm_num)
+    _ = 2 * C * (1 + Real.log R) ^ 2 := by ring
+
+/-- **高部尾项界**：逐项 `norm_xiPairedMittagLefflerTerm_le`（`‖ρ‖ ≥ R ≥ 4`
+给出 `2 ≤ ‖ρ‖` 与 `2‖z‖ ≤ ‖ρ‖`）后由尾部计数界吸收。 -/
+theorem norm_high_tsum_le (C : ℝ) (hC0 : 0 ≤ C)
+    (hC : ∀ T : ℝ, 4 ≤ T →
+      (∑' ρ : UpperHalfPlaneNontrivialZero,
+        if T ≤ ‖(ρ : ℂ)‖ then
+          (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) * ‖(ρ : ℂ)‖⁻¹ ^ 2
+        else 0) ≤ C * (1 + Real.log T) / T) {R : ℝ} (hR : 4 ≤ R) {z : ℂ}
+    (hz : ‖z‖ ≤ R / 2) :
+    ‖∑' ρ : UpperHalfPlaneNontrivialZero,
+        if R ≤ ‖(ρ : ℂ)‖ then xiWeightedMittagLefflerTerm z (ρ : ℂ) else 0‖
+      ≤ (8 * (R / 2 + 1) + 2) * C * (1 + Real.log R) / R := by
+  classical
+  have hR0 : (0 : ℝ) < R := by linarith
+  have hlogR0 : (0 : ℝ) ≤ Real.log R := Real.log_nonneg (by linarith)
+  set Kz : ℝ := 8 * (‖z‖ + 1) + 2 with hKzdef
+  have hKz0 : (0 : ℝ) ≤ Kz := by positivity
+  have hKzKR : Kz ≤ 8 * (R / 2 + 1) + 2 := by linarith [hz]
+  -- 逐项范数上界
+  have hptw : ∀ ρ : UpperHalfPlaneNontrivialZero,
+      ‖if R ≤ ‖(ρ : ℂ)‖ then xiWeightedMittagLefflerTerm z (ρ : ℂ) else 0‖
+        ≤ Kz * (if R ≤ ‖(ρ : ℂ)‖ then
+            (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) * ‖(ρ : ℂ)‖⁻¹ ^ 2
+          else 0) := by
+    intro ρ
+    by_cases hρ : R ≤ ‖(ρ : ℂ)‖
+    · rw [if_pos hρ, if_pos hρ]
+      have hρ2 : 2 ≤ ‖(ρ : ℂ)‖ := le_trans (by linarith : (2 : ℝ) ≤ R) hρ
+      have hρs : 2 * ‖z‖ ≤ ‖(ρ : ℂ)‖ := le_trans (by linarith [hz] : 2 * ‖z‖ ≤ R) hρ
+      have hre : |(ρ : ℂ).re| ≤ 1 := by
+        have h3 := ρ.2.1.2.1
+        have h4 := ρ.2.1.2.2
+        rw [abs_le]
+        constructor <;> linarith
+      calc ‖xiWeightedMittagLefflerTerm z (ρ : ℂ)‖
+          = (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) *
+              ‖xiPairedMittagLefflerTerm z (ρ : ℂ)‖ := by
+            rw [xiWeightedMittagLefflerTerm, norm_mul, RCLike.norm_natCast]
+        _ ≤ (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) *
+              (Kz * ‖(ρ : ℂ)‖⁻¹ ^ 2) :=
+            mul_le_mul_of_nonneg_left (norm_xiPairedMittagLefflerTerm_le hρ2 hρs hre)
+              (Nat.cast_nonneg _)
+        _ = Kz * ((analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) *
+              ‖(ρ : ℂ)‖⁻¹ ^ 2) := by ring
+    · rw [if_neg hρ, if_neg hρ, norm_zero, mul_zero]
+  -- 截断实和的可和性
+  have hg : Summable fun ρ : UpperHalfPlaneNontrivialZero ↦
+      if R ≤ ‖(ρ : ℂ)‖ then
+        (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) * ‖(ρ : ℂ)‖⁻¹ ^ 2
+      else 0 := by
+    refine Summable.of_nonneg_of_le (fun ρ => ?_) (fun ρ => ?_)
+      summable_xiOrder_mul_norm_inv_sq_upperZeros
+    · by_cases hρ : R ≤ ‖(ρ : ℂ)‖
+      · rw [if_pos hρ]
+        positivity
+      · rw [if_neg hρ]
+    · by_cases hρ : R ≤ ‖(ρ : ℂ)‖
+      · rw [if_pos hρ]
+      · rw [if_neg hρ]
+        positivity
+  have hnorm : Summable fun ρ : UpperHalfPlaneNontrivialZero ↦
+      ‖if R ≤ ‖(ρ : ℂ)‖ then xiWeightedMittagLefflerTerm z (ρ : ℂ) else 0‖ :=
+    Summable.of_nonneg_of_le (fun ρ => norm_nonneg _) hptw (hg.mul_left Kz)
+  calc ‖∑' ρ : UpperHalfPlaneNontrivialZero,
+          if R ≤ ‖(ρ : ℂ)‖ then xiWeightedMittagLefflerTerm z (ρ : ℂ) else 0‖
+      ≤ ∑' ρ : UpperHalfPlaneNontrivialZero,
+          ‖if R ≤ ‖(ρ : ℂ)‖ then xiWeightedMittagLefflerTerm z (ρ : ℂ) else 0‖ :=
+        norm_tsum_le_tsum_norm hnorm
+    _ ≤ ∑' ρ : UpperHalfPlaneNontrivialZero,
+          Kz * (if R ≤ ‖(ρ : ℂ)‖ then
+            (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) * ‖(ρ : ℂ)‖⁻¹ ^ 2
+          else 0) := hnorm.tsum_le_tsum hptw (hg.mul_left Kz)
+    _ = Kz * (∑' ρ : UpperHalfPlaneNontrivialZero,
+          if R ≤ ‖(ρ : ℂ)‖ then
+            (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) * ‖(ρ : ℂ)‖⁻¹ ^ 2
+          else 0) := tsum_mul_left
+    _ ≤ Kz * (C * (1 + Real.log R) / R) :=
+        mul_le_mul_of_nonneg_left (hC R hR) hKz0
+    _ ≤ (8 * (R / 2 + 1) + 2) * (C * (1 + Real.log R) / R) :=
+        mul_le_mul hKzKR (le_refl _)
+          (div_nonneg (mul_nonneg hC0 (by linarith)) hR0.le)
+          (by positivity)
+    _ = (8 * (R / 2 + 1) + 2) * C * (1 + Real.log R) / R := by ring
+
 end RiemannExplorer
