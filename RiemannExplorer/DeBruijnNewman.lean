@@ -5449,6 +5449,128 @@ theorem continuous_deBruijnNewmanH_zderiv_three :
     (Filter.Eventually.of_forall hmeas) hbound
     (integrableOn_heatCubeDominatingFun (t₀ + 1) (|z₀.im| + 1) (by positivity)) hlim
 
+/-- The `t`-derivative of the once-`z`-differentiated integrand:
+`∂_t [−e^{t u²} Φ(u) sin(z u) · u] = u² · (−e^{t u²} Φ(u) sin(z u) · u)`. -/
+theorem heat_integrandDeriv_hasDerivAt_t (u : ℝ) (z : ℂ) (t : ℝ) :
+    HasDerivAt (fun s : ℝ => heatIntegrandDeriv s z u)
+      (((u : ℝ) : ℂ) ^ 2 * heatIntegrandDeriv t z u) t := by
+  have h1 : HasDerivAt (fun s : ℝ => Real.exp (s * u ^ 2))
+      (Real.exp (t * u ^ 2) * u ^ 2) t := by
+    simpa using ((hasDerivAt_id t).mul_const (u ^ 2 : ℝ)).exp
+  have h2 : HasDerivAt (fun s : ℝ => Real.exp (s * u ^ 2) * phi u)
+      (Real.exp (t * u ^ 2) * u ^ 2 * phi u) t := h1.mul_const (phi u)
+  have h3 : HasDerivAt (fun s : ℝ => ((Real.exp (s * u ^ 2) * phi u : ℝ) : ℂ))
+      (((Real.exp (t * u ^ 2) * u ^ 2 * phi u : ℝ) : ℂ)) t := h2.ofReal_comp
+  have h4 : HasDerivAt (fun s : ℝ => ((Real.exp (s * u ^ 2) * phi u : ℝ) : ℂ)
+        * (-Complex.sin (z * (u : ℂ)) * (u : ℂ)))
+      ((((Real.exp (t * u ^ 2) * u ^ 2 * phi u : ℝ) : ℂ))
+        * (-Complex.sin (z * (u : ℂ)) * (u : ℂ))) t :=
+    h3.mul_const _
+  refine h4.congr_deriv ?_
+  unfold heatIntegrandDeriv
+  push_cast
+  ring
+
+/-- **The mixed derivative of the `z`-derivative integral**:
+`∂_t (∂_z H_t(z)) = ∫₀^∞ u² · e^{tu²} Φ(u) (−sin(zu)) · u du`, by dominated
+differentiation in `t` with the `heatCubeDominatingFun` bound. -/
+theorem hasDerivAt_deBruijnNewmanH_zderiv_t (z : ℂ) (t : ℝ) :
+    HasDerivAt (fun s : ℝ => deriv (deBruijnNewmanH s) z)
+      (∫ u : ℝ in Set.Ioi 0, ((u : ℝ) : ℂ) ^ 2 * heatIntegrandDeriv t z u) t := by
+  set μ := MeasureTheory.volume.restrict (Set.Ioi (0:ℝ)) with hμ
+  have hmeas : ∀ s : ℝ, MeasureTheory.AEStronglyMeasurable
+      (fun u : ℝ => heatIntegrandDeriv s z u) μ :=
+    fun s => (continuous_heatIntegrandDeriv s z).continuousOn.aestronglyMeasurable
+      measurableSet_Ioi
+  have hderv_meas : MeasureTheory.AEStronglyMeasurable
+      (fun u : ℝ => ((u : ℝ) : ℂ) ^ 2 * heatIntegrandDeriv t z u) μ :=
+    ((Complex.continuous_ofReal.pow 2).mul
+      (continuous_heatIntegrandDeriv t z)).continuousOn.aestronglyMeasurable
+      measurableSet_Ioi
+  have hbound : ∀ᵐ u ∂μ, ∀ s ∈ Metric.ball t 1,
+      ‖(((u : ℝ) : ℂ)) ^ 2 * heatIntegrandDeriv s z u‖
+        ≤ heatCubeDominatingFun (t + 1) |z.im| u := by
+    filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_Ioi] with u hu s hs
+    have hs1 : s ≤ t + 1 := by
+      have h1 : |s - t| < 1 := by
+        rw [← Real.dist_eq]
+        exact Metric.mem_ball.mp hs
+      have h2 : s - t ≤ |s - t| := le_abs_self _
+      linarith
+    exact norm_sq_mul_heatIntegrandDeriv_le (t := s) (t₁ := t + 1) (c := |z.im|)
+      hs1 (abs_nonneg _) (le_refl _) hu.le
+  have hint : MeasureTheory.Integrable (heatCubeDominatingFun (t + 1) |z.im|) μ :=
+    integrableOn_heatCubeDominatingFun (t + 1) |z.im| (abs_nonneg _)
+  have hdiff : ∀ᵐ u ∂μ, ∀ s ∈ Metric.ball t 1,
+      HasDerivAt (fun s' => heatIntegrandDeriv s' z u)
+        ((((u : ℝ) : ℂ)) ^ 2 * heatIntegrandDeriv s z u) s :=
+    Filter.Eventually.of_forall fun u s _ => heat_integrandDeriv_hasDerivAt_t u z s
+  have hFint : MeasureTheory.Integrable (fun u : ℝ => heatIntegrandDeriv t z u) μ :=
+    heat_integrandDeriv_integrable t z
+  rw [show (fun s : ℝ => deriv (deBruijnNewmanH s) z)
+      = fun s : ℝ => ∫ u : ℝ in Set.Ioi 0, heatIntegrandDeriv s z u
+      from funext fun s => deriv_deBruijnNewmanH s z]
+  exact (hasDerivAt_integral_of_dominated_loc_of_deriv_le
+    (Metric.ball_mem_nhds t (by norm_num : (0:ℝ) < 1))
+    (Filter.Eventually.of_forall hmeas) hFint hderv_meas hbound hint hdiff).2
+
+/-- **The cross derivative identity**: `∂_t (∂_z H) = −∂³_z H`. This is the
+backward heat equation `∂_t = −∂²_z` applied to `∂_z H`, and it is what makes
+the critical curve `c(t)` (the implicit curve of `∂_z H = 0` at a double zero)
+move with velocity `c'(τ) = ∂³_z H / ∂²_z H`. -/
+theorem deBruijnNewmanH_cross_derivative (t : ℝ) (z : ℂ) :
+    deriv (fun s : ℝ => deriv (deBruijnNewmanH s) z) t
+      = -iteratedDeriv 3 (deBruijnNewmanH t) z := by
+  rw [(hasDerivAt_deBruijnNewmanH_zderiv_t z t).deriv, deriv_three_deBruijnNewmanH]
+  simp only [neg_mul, MeasureTheory.integral_neg, neg_neg]
+
+/-- **Joint continuity of the mixed derivative** `∂_t ∂_z H`: dominated
+convergence with the `heatCubeDominatingFun` box bound. Together with
+`continuous_deBruijnNewmanH_zderiv_two` this makes `(t, z) ↦ ∂_z H_t(z)`
+jointly `C¹`, which is what the implicit function theorem needs to produce
+the critical curve at a double zero. -/
+theorem continuous_deBruijnNewmanH_crossderiv :
+    Continuous fun p : ℝ × ℂ =>
+      ∫ u : ℝ in Set.Ioi 0, ((u : ℝ) : ℂ) ^ 2 * heatIntegrandDeriv p.1 p.2 u := by
+  rw [continuous_iff_continuousAt]
+  intro ⟨t₀, z₀⟩
+  set μ := MeasureTheory.volume.restrict (Set.Ioi (0:ℝ)) with hμ
+  have hmeas : ∀ p : ℝ × ℂ, MeasureTheory.AEStronglyMeasurable
+      (fun u : ℝ => ((u : ℝ) : ℂ) ^ 2 * heatIntegrandDeriv p.1 p.2 u) μ :=
+    fun p => (((Complex.continuous_ofReal.pow 2).mul
+      (continuous_heatIntegrandDeriv p.1 p.2)).continuousOn.aestronglyMeasurable
+      measurableSet_Ioi)
+  have hb1 : ∀ᶠ p : ℝ × ℂ in nhds (t₀, z₀), dist p.1 t₀ < 1 :=
+    (continuous_fst.tendsto (t₀, z₀)).eventually (Metric.ball_mem_nhds t₀ zero_lt_one)
+  have hb2 : ∀ᶠ p : ℝ × ℂ in nhds (t₀, z₀), dist p.2 z₀ < 1 :=
+    (continuous_snd.tendsto (t₀, z₀)).eventually (Metric.ball_mem_nhds z₀ zero_lt_one)
+  have hbound : ∀ᶠ p : ℝ × ℂ in nhds (t₀, z₀), ∀ᵐ u : ℝ ∂μ,
+      ‖(((u : ℝ) : ℂ)) ^ 2 * heatIntegrandDeriv p.1 p.2 u‖
+        ≤ heatCubeDominatingFun (t₀ + 1) (|z₀.im| + 1) u := by
+    filter_upwards [hb1, hb2] with p hp1 hp2
+    filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_Ioi] with u hu
+    exact norm_sq_mul_heatIntegrandDeriv_le (t := p.1) (t₁ := t₀ + 1)
+      (c := |z₀.im| + 1)
+      (by
+        have h1 : |p.1 - t₀| < 1 := by rw [← Real.dist_eq]; exact hp1
+        linarith [(abs_lt.mp h1).2])
+      (by positivity) (abs_im_le_add_one_of_dist_lt_one hp2) hu.le
+  have hlim : ∀ᵐ u : ℝ ∂μ, Filter.Tendsto
+      (fun p : ℝ × ℂ => ((u : ℝ) : ℂ) ^ 2 * heatIntegrandDeriv p.1 p.2 u)
+      (nhds (t₀, z₀)) (nhds (((u : ℝ) : ℂ) ^ 2 * heatIntegrandDeriv t₀ z₀ u)) := by
+    apply Filter.Eventually.of_forall
+    intro u
+    have hcont : Continuous
+        (fun p : ℝ × ℂ => ((u : ℝ) : ℂ) ^ 2 * heatIntegrandDeriv p.1 p.2 u) := by
+      unfold heatIntegrandDeriv
+      fun_prop
+    exact hcont.tendsto (t₀, z₀)
+  show Filter.Tendsto _ (nhds (t₀, z₀)) (nhds _)
+  exact MeasureTheory.tendsto_integral_filter_of_dominated_convergence
+    (heatCubeDominatingFun (t₀ + 1) (|z₀.im| + 1))
+    (Filter.Eventually.of_forall hmeas) hbound
+    (integrableOn_heatCubeDominatingFun (t₀ + 1) (|z₀.im| + 1) (by positivity)) hlim
+
 /-- **Diagonal derivative — the zero-transport piece**: if `z(t) → z₀` as
 `t → t₀`, then `t ↦ H_t(z(t)) − H_{t₀}(z(t))` has derivative `∂_t H_{t₀}(z₀)`
 (the `u²`-weighted heat integral) at `t₀`. Proof: the FTC representation

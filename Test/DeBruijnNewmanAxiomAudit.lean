@@ -152,3 +152,7 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.hasDerivAt_integral_negSq_heatIntegrand
 #print axioms RiemannExplorer.DeBruijnNewman.deriv_three_deBruijnNewmanH
 #print axioms RiemannExplorer.DeBruijnNewman.continuous_deBruijnNewmanH_zderiv_three
+#print axioms RiemannExplorer.DeBruijnNewman.heat_integrandDeriv_hasDerivAt_t
+#print axioms RiemannExplorer.DeBruijnNewman.hasDerivAt_deBruijnNewmanH_zderiv_t
+#print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_cross_derivative
+#print axioms RiemannExplorer.DeBruijnNewman.continuous_deBruijnNewmanH_crossderiv
