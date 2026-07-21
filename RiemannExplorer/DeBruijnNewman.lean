@@ -5884,6 +5884,152 @@ theorem contDiff_one_deBruijnNewmanHzderiv_prod :
       from funext fun q => (hasFDerivAt_deBruijnNewmanHzderiv_prod q).fderiv]
   exact continuous_jointFDerivZderivCLM
 
+/-- **Conjugation symmetry of the `z`-derivative**: `∂_z H_t(\bar z)
+= \overline{∂_z H_t(z)}`, transported through the integral representation
+`deriv_deBruijnNewmanH` by `Complex.sin_conj`. This is what keeps the
+critical curve real through a real double zero. -/
+theorem deBruijnNewmanHzderiv_conj (t : ℝ) (z : ℂ) :
+    deriv (deBruijnNewmanH t) (star z) = star (deriv (deBruijnNewmanH t) z) := by
+  rw [deriv_deBruijnNewmanH, deriv_deBruijnNewmanH]
+  show (∫ (u : ℝ) in Set.Ioi 0, heatIntegrandDeriv t (star z) u)
+      = (starRingEnd ℂ) (∫ (u : ℝ) in Set.Ioi 0, heatIntegrandDeriv t z u)
+  have e1 : (starRingEnd ℂ) (∫ (u : ℝ) in Set.Ioi 0, heatIntegrandDeriv t z u)
+      = ∫ (u : ℝ) in Set.Ioi 0, (starRingEnd ℂ) (heatIntegrandDeriv t z u) :=
+    (integral_conj (f := fun u : ℝ => heatIntegrandDeriv t z u)
+      (μ := MeasureTheory.volume.restrict (Set.Ioi (0:ℝ)))).symm
+  refine Eq.trans ?_ e1.symm
+  apply MeasureTheory.setIntegral_congr_fun measurableSet_Ioi
+  intro u _
+  show ((Real.exp (t * u ^ 2) * phi u : ℝ) : ℂ)
+      * (-Complex.sin ((starRingEnd ℂ) z * (u : ℂ)) * (u : ℂ))
+      = (starRingEnd ℂ)
+        (((Real.exp (t * u ^ 2) * phi u : ℝ) : ℂ)
+          * (-Complex.sin (z * (u : ℂ)) * (u : ℂ)))
+  rw [map_mul, Complex.conj_ofReal, map_mul, map_neg, ← Complex.sin_conj, map_mul,
+    Complex.conj_ofReal]
+
+/-- **The z-partial of the joint derivative of the `z`-derivative map**:
+composing `jointFDerivZderivCLM` with the right inclusion recovers
+multiplication by `∂²_z H_t(w)`. -/
+theorem jointFDerivZderivCLM_comp_inr (t : ℝ) (w : ℂ) :
+    (jointFDerivZderivCLM t w).comp (ContinuousLinearMap.inr ℝ ℝ ℂ)
+      = ContinuousLinearMap.mul ℝ ℂ (deriv (deriv (deBruijnNewmanH t)) w) := by
+  ext z
+  rw [ContinuousLinearMap.comp_apply, ContinuousLinearMap.inr_apply,
+    jointFDerivZderivCLM_apply]
+  simp
+
+/-- **Invertibility of the z-partial at an exactly-double critical point**: if
+`∂²_z H_{t₀}(x₀) ≠ 0`, the z-component of the joint real derivative of
+`(t, z) ↦ ∂_z H_t(z)` is an invertible `ℝ`-linear map — the nondegeneracy
+hypothesis of the implicit function theorem for the critical curve. -/
+theorem isInvertible_jointFDerivZderivCLM_comp_inr (t₀ : ℝ) (x₀ : ℂ)
+    (hD : deriv (deriv (deBruijnNewmanH t₀)) x₀ ≠ 0) :
+    ((fderiv ℝ (fun q : ℝ × ℂ => deriv (deBruijnNewmanH q.1) q.2) (t₀, x₀)).comp
+      (ContinuousLinearMap.inr ℝ ℝ ℂ)).IsInvertible := by
+  have hfd : fderiv ℝ (fun q : ℝ × ℂ => deriv (deBruijnNewmanH q.1) q.2) (t₀, x₀)
+      = jointFDerivZderivCLM t₀ x₀ :=
+    (hasFDerivAt_deBruijnNewmanHzderiv_prod (t₀, x₀)).fderiv
+  rw [hfd, jointFDerivZderivCLM_comp_inr]
+  exact ⟨ContinuousLinearEquiv.equivOfInverse
+    (ContinuousLinearMap.mul ℝ ℂ (deriv (deriv (deBruijnNewmanH t₀)) x₀))
+    (ContinuousLinearMap.mul ℝ ℂ (deriv (deriv (deBruijnNewmanH t₀)) x₀)⁻¹)
+    (fun z => inv_mul_cancel_left₀ hD z) (fun z => mul_inv_cancel_left₀ hD z), rfl⟩
+
+/-- **The critical curve through a double zero (IFT for `∂_z H`)**: at a point
+`(τ, x₀)` with `∂_z H_τ(x₀) = 0` (critical) and `∂²_z H_τ(x₀) ≠ 0` (exactly
+double), the critical set `∂_z H_t(z) = 0` near `(τ, x₀)` is a differentiable
+curve `c(t)` through `x₀`, real-valued near `τ`, with velocity
+`c'(τ) = ∂³_z H_τ(x₀) / ∂²_z H_τ(x₀)`. Existence and uniqueness come from the
+implicit function theorem; reality from the conjugation symmetry
+`deBruijnNewmanHzderiv_conj`; the velocity from the chain rule on
+`∂_z H_t(c(t)) = 0` together with the cross-derivative identity
+`∂_t ∂_z H = −∂³_z H`. A zero of `H_t` loses simplicity exactly by crossing
+this curve, so `c` is the locus of potential zero collisions. -/
+theorem deBruijnNewman_critical_curve (τ : ℝ) (x₀ : ℂ)
+    (hz : deriv (deBruijnNewmanH τ) x₀ = 0)
+    (hD2 : deriv (deriv (deBruijnNewmanH τ)) x₀ ≠ 0)
+    (hx : x₀.im = 0) :
+    ∃ c : ℝ → ℂ, DifferentiableAt ℝ c τ ∧ c τ = x₀
+      ∧ (∀ᶠ t in nhds τ, deriv (deBruijnNewmanH t) (c t) = 0)
+      ∧ (∀ᶠ t in nhds τ, (c t).im = 0)
+      ∧ deriv c τ
+        = iteratedDeriv 3 (deBruijnNewmanH τ) x₀
+          / deriv (deriv (deBruijnNewmanH τ)) x₀ := by
+  have hCD : ContDiffAt ℝ 1 (fun q : ℝ × ℂ => deriv (deBruijnNewmanH q.1) q.2)
+      (τ, x₀) :=
+    contDiff_one_deBruijnNewmanHzderiv_prod.contDiffAt
+  have hInv := isInvertible_jointFDerivZderivCLM_comp_inr τ x₀ hD2
+  have hstar : star x₀ = x₀ := by
+    rw [Complex.star_def, Complex.conj_eq_iff_im]; exact hx
+  set c := hCD.implicitFunction one_ne_zero hInv with hc
+  have hcCD : ContDiffAt ℝ 1 c τ := hCD.contDiffAt_implicitFunction one_ne_zero hInv
+  have hc0 : c τ = x₀ := hCD.implicitFunction_apply_self one_ne_zero hInv
+  have hzero : ∀ᶠ t in nhds τ, deriv (deBruijnNewmanH t) (c t) = 0 := by
+    have hev := hCD.eventually_apply_implicitFunction one_ne_zero hInv
+    refine hev.mono fun t ht => ?_
+    simp only [] at ht
+    rwa [hz] at ht
+  refine ⟨c, hcCD.differentiableAt one_ne_zero, hc0, hzero, ?_, ?_⟩
+  · -- reality via the conjugate curve and local uniqueness
+    have htend : Filter.Tendsto (fun t : ℝ => (t, star (c t)))
+        (nhds τ) (nhds (τ, x₀)) := by
+      have h1 : ContinuousAt (fun t : ℝ => (t, star (c t))) τ :=
+        continuousAt_id.prodMk
+          (continuous_star.continuousAt.comp
+            (hcCD.differentiableAt one_ne_zero).continuousAt)
+      have h2 : (τ, star (c τ)) = (τ, x₀) := by rw [hc0, hstar]
+      exact h2 ▸ h1.tendsto
+    have huniq := htend.eventually
+      (hCD.eventually_apply_eq_iff_implicitFunction one_ne_zero hInv)
+    filter_upwards [huniq, hzero] with t ht hzt
+    have hL : (fun q : ℝ × ℂ => deriv (deBruijnNewmanH q.1) q.2) (t, star (c t))
+        = (fun q : ℝ × ℂ => deriv (deBruijnNewmanH q.1) q.2) (τ, x₀) := by
+      change deriv (deBruijnNewmanH t) (star (c t)) = deriv (deBruijnNewmanH τ) x₀
+      rw [deBruijnNewmanHzderiv_conj, hzt, star_zero, hz]
+    have him : c t = star (c t) := ht.mp hL
+    rw [Complex.star_def] at him
+    exact Complex.conj_eq_iff_im.mp him.symm
+  · -- velocity: chain rule on `∂_z H_t(c(t)) = 0`
+    have hg0 : HasDerivAt ((fun q : ℝ × ℂ => deriv (deBruijnNewmanH q.1) q.2)
+        ∘ fun t : ℝ => (t, c t)) 0 τ :=
+      (hasDerivAt_const (c := (0 : ℂ)) (x := τ)).congr_of_eventuallyEq
+        (hzero.mono fun t h => h)
+    have hprod : HasFDerivAt (fun t : ℝ => (t, c t))
+        ((ContinuousLinearMap.id ℝ ℝ).prod (fderiv ℝ c τ)) τ :=
+      (hasFDerivAt_id τ).prodMk (hcCD.differentiableAt one_ne_zero).hasFDerivAt
+    have hcomp := (hasFDerivAt_deBruijnNewmanHzderiv_prod (τ, c τ)).comp
+      (f := fun t : ℝ => (t, c t)) (x := τ) hprod
+    have hval : ((jointFDerivZderivCLM (τ, c τ).1 (τ, c τ).2).comp
+        ((ContinuousLinearMap.id ℝ ℝ).prod (fderiv ℝ c τ))) 1
+        = (∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrandDeriv τ (c τ) u)
+          + deriv (deriv (deBruijnNewmanH τ)) (c τ) * deriv c τ := by
+      have hf1 : fderiv ℝ c τ 1 = deriv c τ := by
+        have h := (hcCD.differentiableAt one_ne_zero).hasFDerivAt.unique
+          (hasDerivAt_iff_hasFDerivAt.mp
+            (hcCD.differentiableAt one_ne_zero).hasDerivAt)
+        rw [h]
+        simp
+      simp [ContinuousLinearMap.comp_apply, ContinuousLinearMap.prod_apply,
+        jointFDerivZderivCLM_apply, hf1]
+    have key : (∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrandDeriv τ (c τ) u)
+        + deriv (deriv (deBruijnNewmanH τ)) (c τ) * deriv c τ = 0 := by
+      have hu := hg0.unique hcomp.hasDerivAt
+      rw [hval] at hu
+      exact hu.symm
+    rw [hc0] at key
+    have h1 : deriv (deriv (deBruijnNewmanH τ)) x₀ * deriv c τ
+        = -(∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrandDeriv τ x₀ u) := by
+      rw [add_comm] at key
+      exact eq_neg_of_add_eq_zero_left key
+    have h3eq : (∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrandDeriv τ x₀ u)
+        = -iteratedDeriv 3 (deBruijnNewmanH τ) x₀ := by
+      rw [deriv_three_deBruijnNewmanH]
+      simp only [neg_mul, MeasureTheory.integral_neg, neg_neg]
+    rw [h3eq, neg_neg] at h1
+    rw [eq_comm, div_eq_iff hD2, mul_comm]
+    exact h1.symm
+
 /-- **Diagonal derivative — the zero-transport piece**: if `z(t) → z₀` as
 `t → t₀`, then `t ↦ H_t(z(t)) − H_{t₀}(z(t))` has derivative `∂_t H_{t₀}(z₀)`
 (the `u²`-weighted heat integral) at `t₀`. Proof: the FTC representation

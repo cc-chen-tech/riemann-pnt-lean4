@@ -163,3 +163,7 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.hasFDerivAt_deBruijnNewmanHzderiv_prod
 #print axioms RiemannExplorer.DeBruijnNewman.continuous_jointFDerivZderivCLM
 #print axioms RiemannExplorer.DeBruijnNewman.contDiff_one_deBruijnNewmanHzderiv_prod
+#print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanHzderiv_conj
+#print axioms RiemannExplorer.DeBruijnNewman.jointFDerivZderivCLM_comp_inr
+#print axioms RiemannExplorer.DeBruijnNewman.isInvertible_jointFDerivZderivCLM_comp_inr
+#print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewman_critical_curve
