@@ -1525,6 +1525,13 @@ to equality of logarithmic frequencies on the finite support, and the full
 `P_N M_X * conj(M_X)` polynomial is proved equal to the polynomial obtained
 by collecting these ratio-frequency fibers.  No mean-square estimate for the
 new collected coefficients is claimed yet.
+The zero-frequency fiber of that ratio polynomial is now identified exactly:
+it consists of triples satisfying `l = m*n`, and its collected coefficient is
+rewritten as a finite sum over the admissible `(m,n)` pairs.  After removing
+this main coefficient, the remaining rational logarithmic frequencies are
+proved distinct, and the sliding short-integral square mean is reduced to an
+explicit diagonal-plus-frequency-gap sum.  Estimating the main coefficient
+from below and this new gap sum from above are the next arithmetic tasks.
 
 The three remaining open analytic directions are:
 
