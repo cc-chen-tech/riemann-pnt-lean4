@@ -884,4 +884,176 @@ theorem iteratedDeriv_xiWeightedMittagLefflerSum_eqOn (k : ℕ) :
 
 end DSeries
 
+/-! ## Part 5a：`ρ ↦ 1 - conj ρ` 对合、留数级数 `R_m`、`ξ'(1) = -ξ'(0)` -/
+
+/-- **`1 - conj` 保非平凡零点**（经 ξ 的函数方程与共轭对称，绕开 ζ 的
+函数方程）：`ξ(1 - conj u) = conj (ξ (1 - u)) = conj (ξ u) = 0`，
+实部 `re(1 - conj u) = 1 - re u ∈ (0,1)`。 -/
+theorem isNontrivialZero_one_sub_conj {u : ℂ} (h : RiemannHypothesis.IsNontrivialZero u) :
+    RiemannHypothesis.IsNontrivialZero (1 - conj u) := by
+  have hξ : xiFunction u = 0 := (xiFunction_eq_zero_iff h.2.1 h.2.2).mpr h.1
+  have hre0 : 0 < (1 - conj u).re := by
+    rw [Complex.sub_re, Complex.one_re, Complex.conj_re]
+    linarith [h.2.2]
+  have hre1 : (1 - conj u).re < 1 := by
+    rw [Complex.sub_re, Complex.one_re, Complex.conj_re]
+    linarith [h.2.1]
+  refine (xiFunction_eq_zero_iff_isNontrivialZero hre0 hre1).mp ?_
+  have hid : (1 : ℂ) - conj u = conj (1 - u) := by
+    rw [map_sub, map_one]
+  have hξ1 : xiFunction (1 - u) = 0 := by
+    rw [← xiFunction_one_sub u]
+    exact hξ
+  rw [hid, xiFunction_conj, hξ1]
+  exact map_zero _
+
+/-- **对合等价**：`ρ ↦ 1 - conj ρ` 是上半平面非平凡零点的对合
+（函数方程 `ξ(s) = ξ(1-s)` 与共轭对称的复合；`im(1 - conj ρ) = im ρ > 0`）。 -/
+def uhzOneSubConjEquiv :
+    UpperHalfPlaneNontrivialZero ≃ UpperHalfPlaneNontrivialZero where
+  toFun ρ := ⟨1 - conj (ρ : ℂ), isNontrivialZero_one_sub_conj ρ.2.1, by
+    rw [Complex.sub_im, Complex.one_im, Complex.conj_im]
+    linarith [ρ.2.2]⟩
+  invFun ρ := ⟨1 - conj (ρ : ℂ), isNontrivialZero_one_sub_conj ρ.2.1, by
+    rw [Complex.sub_im, Complex.one_im, Complex.conj_im]
+    linarith [ρ.2.2]⟩
+  left_inv ρ := by
+    apply Subtype.ext
+    show (1 : ℂ) - conj (1 - conj (ρ : ℂ)) = ρ
+    rw [map_sub, map_one, Complex.conj_conj, sub_sub_self]
+  right_inv ρ := by
+    apply Subtype.ext
+    show (1 : ℂ) - conj (1 - conj (ρ : ℂ)) = ρ
+    rw [map_sub, map_one, Complex.conj_conj, sub_sub_self]
+
+/-- **留数配对项**：`m_ξ(ρ)·(ρ⁻¹^m + conjρ⁻¹^m)`。 -/
+noncomputable def xiWeightedInvResidTerm (m : ℕ) (ρ : ℂ) : ℂ :=
+  (analyticOrderNatAt xiFunction ρ : ℂ) * (ρ⁻¹ ^ m + (conj ρ)⁻¹ ^ m)
+
+/-- **留数级数** `R_m = Σ_ρ m_ξ(ρ)·(ρ⁻¹^m + conjρ⁻¹^m)`。 -/
+noncomputable def xiWeightedInvResidSum (m : ℕ) : ℂ :=
+  ∑' ρ : UpperHalfPlaneNontrivialZero, xiWeightedInvResidTerm m (ρ : ℂ)
+
+/-- **`R_m` 绝对收敛**（`m ≥ 1`）：`‖ρ‖ < 2` 段有限支撑
+（`nontrivialZerosFinset 4` 原像之外恒零）；`‖ρ‖ ≥ 2` 段，当 `m = 1` 时用
+配对恒等式 `ρ⁻¹ + conjρ⁻¹ = 2·re ρ/(ρ·conjρ)` 与 `|re ρ| ≤ 1` 得
+`≤ 2‖ρ‖⁻²`，当 `m ≥ 2` 时逐片 `‖ρ‖⁻ᵐ ≤ ‖ρ‖⁻²`；统一界
+`2·m_ξ(ρ)·‖ρ‖⁻²` 可和（`summable_xiOrder_mul_norm_inv_sq_upperZeros`）。 -/
+theorem summable_xiWeightedInvResidTerm {m : ℕ} (hm : 1 ≤ m) :
+    Summable fun ρ : UpperHalfPlaneNontrivialZero => xiWeightedInvResidTerm m (ρ : ℂ) := by
+  classical
+  have hsplit : (fun ρ : UpperHalfPlaneNontrivialZero ↦ xiWeightedInvResidTerm m (ρ : ℂ)) =
+      (fun ρ : UpperHalfPlaneNontrivialZero ↦
+          if ‖(ρ : ℂ)‖ < 2 then xiWeightedInvResidTerm m (ρ : ℂ) else 0) +
+        (fun ρ : UpperHalfPlaneNontrivialZero ↦
+          if 2 ≤ ‖(ρ : ℂ)‖ then xiWeightedInvResidTerm m (ρ : ℂ) else 0) := by
+    funext ρ
+    simp only [Pi.add_apply]
+    by_cases h : ‖(ρ : ℂ)‖ < 2
+    · rw [if_pos h, if_neg (by linarith), add_zero]
+    · rw [if_neg h, if_pos (le_of_not_gt h), zero_add]
+  rw [hsplit]
+  refine Summable.add ?_ ?_
+  · apply summable_of_ne_finset_zero
+      (s := (PrimeNumberTheorem.nontrivialZerosFinset 4).preimage
+        (fun ρ : UpperHalfPlaneNontrivialZero ↦ (ρ : ℂ)) Subtype.coe_injective.injOn)
+    intro ρ hρ
+    rw [Finset.mem_preimage] at hρ
+    by_cases hlt : ‖(ρ : ℂ)‖ < 2
+    · exfalso
+      apply hρ
+      rw [PrimeNumberTheorem.mem_nontrivialZerosFinset]
+      exact ⟨ρ.2.1, ((Complex.abs_im_le_norm _).trans hlt.le).trans (by norm_num)⟩
+    · exact if_neg hlt
+  · refine Summable.of_norm_bounded
+      (g := fun ρ : UpperHalfPlaneNontrivialZero ↦
+        2 * ((analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) * ‖(ρ : ℂ)‖⁻¹ ^ 2))
+      (summable_xiOrder_mul_norm_inv_sq_upperZeros.mul_left _) fun ρ => ?_
+    by_cases h : 2 ≤ ‖(ρ : ℂ)‖
+    · rw [if_pos h]
+      have hρpos : 0 < ‖(ρ : ℂ)‖ := by linarith
+      have hρne : (ρ : ℂ) ≠ 0 := norm_pos_iff.mp hρpos
+      have hconjne : conj (ρ : ℂ) ≠ 0 := by
+        intro hc
+        apply hρne
+        rw [← norm_eq_zero, ← Complex.norm_conj, hc, norm_zero]
+      have hre : |(ρ : ℂ).re| ≤ 1 := by
+        have h1 := ρ.2.1.2.1
+        have h2 := ρ.2.1.2.2
+        rw [abs_le]
+        constructor <;> linarith
+      rw [xiWeightedInvResidTerm, norm_mul, RCLike.norm_natCast]
+      rcases Nat.lt_or_ge m 2 with hm2 | hm2
+      · -- m = 1：配对恒等式
+        have hm1 : m = 1 := by omega
+        subst hm1
+        have hid : (ρ : ℂ)⁻¹ ^ 1 + (conj (ρ : ℂ))⁻¹ ^ 1 =
+            (2 * (ρ : ℂ).re : ℂ) / ((ρ : ℂ) * conj (ρ : ℂ)) := by
+          rw [pow_one, pow_one]
+          field_simp
+          have hc : (ρ : ℂ) + conj (ρ : ℂ) = (2 * (ρ : ℂ).re : ℂ) := by
+            rw [Complex.add_conj]
+            push_cast
+            ring
+          linear_combination hc
+        have hpair : ‖(ρ : ℂ)⁻¹ ^ 1 + (conj (ρ : ℂ))⁻¹ ^ 1‖ ≤
+            2 * ‖(ρ : ℂ)‖⁻¹ ^ 2 := by
+          rw [hid, norm_div]
+          have hnum : ‖(2 * (ρ : ℂ).re : ℂ)‖ = 2 * |(ρ : ℂ).re| := by
+            rw [norm_mul, Complex.norm_real, Real.norm_eq_abs]
+            norm_num
+          rw [hnum, norm_mul, Complex.norm_conj]
+          have hle2 : 2 * |(ρ : ℂ).re| / (‖(ρ : ℂ)‖ * ‖(ρ : ℂ)‖) ≤
+              2 / (‖(ρ : ℂ)‖ * ‖(ρ : ℂ)‖) :=
+            div_le_div_of_nonneg_right (by linarith) (by positivity)
+          refine hle2.trans_eq ?_
+          rw [show ‖(ρ : ℂ)‖ * ‖(ρ : ℂ)‖ = ‖(ρ : ℂ)‖ ^ 2 from (sq _).symm, inv_pow,
+            div_eq_mul_inv]
+        calc (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) *
+              ‖(ρ : ℂ)⁻¹ ^ 1 + (conj (ρ : ℂ))⁻¹ ^ 1‖
+            ≤ (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) * (2 * ‖(ρ : ℂ)‖⁻¹ ^ 2) :=
+              mul_le_mul_of_nonneg_left hpair (Nat.cast_nonneg _)
+          _ = 2 * ((analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) * ‖(ρ : ℂ)‖⁻¹ ^ 2) := by
+              ring
+      · -- m ≥ 2：逐片估计
+        have hb1 : ‖(ρ : ℂ)⁻¹ ^ m‖ ≤ ‖(ρ : ℂ)‖⁻¹ ^ 2 := by
+          rw [norm_pow, norm_inv]
+          exact pow_le_pow_of_le_one (by positivity)
+            (inv_le_one_of_one_le₀ (by linarith)) hm2
+        have hb2 : ‖(conj (ρ : ℂ))⁻¹ ^ m‖ ≤ ‖(ρ : ℂ)‖⁻¹ ^ 2 := by
+          rw [norm_pow, norm_inv, Complex.norm_conj]
+          exact pow_le_pow_of_le_one (by positivity)
+            (inv_le_one_of_one_le₀ (by linarith)) hm2
+        calc (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) *
+              ‖(ρ : ℂ)⁻¹ ^ m + (conj (ρ : ℂ))⁻¹ ^ m‖
+            ≤ (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) *
+                (‖(ρ : ℂ)⁻¹ ^ m‖ + ‖(conj (ρ : ℂ))⁻¹ ^ m‖) :=
+              mul_le_mul_of_nonneg_left (norm_add_le _ _) (Nat.cast_nonneg _)
+          _ ≤ (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) *
+                (‖(ρ : ℂ)‖⁻¹ ^ 2 + ‖(ρ : ℂ)‖⁻¹ ^ 2) :=
+              mul_le_mul_of_nonneg_left (add_le_add hb1 hb2) (Nat.cast_nonneg _)
+          _ = 2 * ((analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) * ‖(ρ : ℂ)‖⁻¹ ^ 2) := by
+              ring
+    · rw [if_neg h, norm_zero]
+      positivity
+
+/-- **`ξ'(1) = -ξ'(0)`**：函数方程 `ξ(s) = ξ(1-s)` 在 `s = 1` 处求导
+（链式法则，内函数 `s ↦ 1 - s` 的导数为 `-1`）。 -/
+theorem deriv_xiFunction_one_eq_neg : deriv xiFunction 1 = -deriv xiFunction 0 := by
+  have hfun : xiFunction = fun s : ℂ => xiFunction (1 - s) := funext xiFunction_one_sub
+  have h1 : HasDerivAt (fun s : ℂ => 1 - s) (-1) 1 := by
+    have h := (hasDerivAt_const 1 (1 : ℂ)).sub (hasDerivAt_id' 1)
+    simpa using h
+  have hξ : HasDerivAt xiFunction (deriv xiFunction 0) (1 - 1) := by
+    rw [sub_self]
+    exact (differentiable_xiFunction 0).hasDerivAt
+  have h2 := hξ.comp 1 h1
+  have h4 : deriv xiFunction 1 = deriv (xiFunction ∘ (fun s : ℂ => 1 - s)) 1 := by
+    congr 1
+  have h5 : deriv (xiFunction ∘ (fun s : ℂ => 1 - s)) 1 = -deriv xiFunction 0 := by
+    have hd := h2.deriv
+    rw [mul_neg_one] at hd
+    exact hd
+  exact h4.trans h5
+
 end RiemannExplorer
