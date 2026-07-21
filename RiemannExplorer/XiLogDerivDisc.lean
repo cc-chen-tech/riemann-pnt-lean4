@@ -240,4 +240,211 @@ lemma norm_xiBlaschkeProd_eq_one {R : ℝ} (hR : 0 < R) {z : ℂ}
     rw [norm_pow, Complex.norm_canonicalFactor_eval_circle_eq_one
       (xiZeroDiscFinset_mem_ball_two_mul hR hu) hz, one_pow]
 
+/-! ## 正则化函数 `g`：`ξ · B` 消去零点后所得的解析无零点函数 -/
+
+/-- Blaschke 分子的正则化因子 `((2R)² - conj u · w)/(2R)`。 -/
+noncomputable def xiBlaschkeNumFactor (R : ℝ) (u w : ℂ) : ℂ :=
+  ((2 * R : ℝ) ^ 2 - conj u * w) / (2 * R : ℝ)
+
+lemma xiBlaschkeNumFactor_ne_zero {R : ℝ} (hR : 0 < R) {u w : ℂ}
+    (hu : u ∈ Metric.closedBall (0 : ℂ) R) (hw : w ∈ Metric.closedBall (0 : ℂ) (2 * R)) :
+    xiBlaschkeNumFactor R u w ≠ 0 := by
+  rw [xiBlaschkeNumFactor, div_ne_zero_iff]
+  refine ⟨?_, by simp [hR.ne']⟩
+  intro hzero
+  have heq : ((2 * R : ℝ) : ℂ) ^ 2 = conj u * w := sub_eq_zero.mp hzero
+  have hN : ‖((2 * R : ℝ) : ℂ) ^ 2‖ = ‖conj u * w‖ := by rw [heq]
+  have h2R : ‖((2 * R : ℝ) : ℂ)‖ = 2 * R := by
+    rw [Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg (by positivity)]
+  rw [norm_pow, h2R, norm_mul, norm_conj] at hN
+  rw [Metric.mem_closedBall, dist_zero_right] at hu hw
+  have hle : ‖u‖ * ‖w‖ ≤ R * (2 * R) := mul_le_mul hu hw (norm_nonneg _) (by linarith)
+  nlinarith
+
+/-- 乘积恒等式（`w ≠ u` 时）：`(w - u) · canonicalFactor (2R) u w = xiBlaschkeNumFactor`。 -/
+lemma mul_canonicalFactor_eq_xiBlaschkeNumFactor {R : ℝ} (hR : 0 < R) {u w : ℂ}
+    (hwu : w ≠ u) :
+    (w - u) * Complex.canonicalFactor (2 * R) u w = xiBlaschkeNumFactor R u w := by
+  rw [Complex.canonicalFactor_apply, xiBlaschkeNumFactor]
+  field_simp [sub_ne_zero.mpr hwu, hR.ne']
+
+/-- **正则化函数的存在性**：存在 `g` 在 `ball 0 (3R)` 上解析、在 `closedBall 0 R` 上
+无零点，且与 `ξ · B_R` 在 `ball 0 (3R)` 的余离散集上相等。
+证明用 `MeromorphicOn.extract_zeros_poles` 把 ξ 在 `ball 0 (3R)` 内的所有零点抽出为
+有理因子，再把 `closedBall 0 R` 内的因子与 Blaschke 乘积的极点配对成多项式因子。 -/
+theorem exists_xiBlaschkeRegularized {R : ℝ} (hR : 0 < R) :
+    ∃ g : ℂ → ℂ, AnalyticOnNhd ℂ g (Metric.ball (0 : ℂ) (3 * R)) ∧
+      (∀ w ∈ Metric.closedBall (0 : ℂ) R, g w ≠ 0) ∧
+      (fun w => xiFunction w * xiBlaschkeProd R w)
+        =ᶠ[Filter.codiscreteWithin (Metric.ball (0 : ℂ) (3 * R))] g := by
+  set U := Metric.ball (0 : ℂ) (3 * R) with hUdef
+  have hξmero : MeromorphicOn xiFunction U :=
+    (show AnalyticOnNhd ℂ xiFunction U from
+      fun z _ => differentiable_xiFunction.analyticAt z).meromorphicOn
+  have hξorder : ∀ u : U, meromorphicOrderAt xiFunction u ≠ ⊤ := by
+    intro ⟨u, _⟩
+    rw [(differentiable_xiFunction.analyticAt u).meromorphicOrderAt_eq]
+    intro htop
+    rw [ENat.map_eq_top_iff] at htop
+    exact xiFunction_ne_eventually_zero u (analyticOrderAt_eq_top.mp htop)
+  have hbig : (MeromorphicOn.divisor xiFunction (Metric.closedBall (0 : ℂ) (3 * R))).support.Finite :=
+    (MeromorphicOn.divisor xiFunction _).finiteSupport (isCompact_closedBall 0 (3 * R))
+  have hsuppU : (MeromorphicOn.divisor xiFunction U).support.Finite := by
+    apply hbig.subset
+    intro u hu
+    have huU : u ∈ U := (MeromorphicOn.divisor xiFunction U).supportWithinDomain hu
+    rw [Function.mem_support] at hu ⊢
+    rw [MeromorphicOn.divisor_apply hξmero huU] at hu
+    rwa [MeromorphicOn.divisor_apply (meromorphicOn_xiFunction_closedBall (3 * R))
+      (Metric.ball_subset_closedBall huU)]
+  obtain ⟨g₀, hg₀an, hg₀ne, hg₀eq⟩ := hξmero.extract_zeros_poles hξorder hsuppU
+  set S : Finset ℂ := xiZeroDiscFinset R with hSdef
+  set m : ℂ → ℕ := xiZeroDiscMult R with hmdef
+  set DU := MeromorphicOn.divisor xiFunction U with hDUdef
+  set S' : Finset ℂ := hsuppU.toFinset with hS'def
+  set P : ℂ → ℂ := fun w =>
+    (∏ u ∈ S, xiBlaschkeNumFactor R u w ^ m u) * (∏ u ∈ S' \ S, (w - u) ^ (DU u).toNat) with hPdef
+  set g : ℂ → ℂ := fun w => g₀ w * P w with hgdef
+  have hDU_nonneg : ∀ u ∈ S', 0 ≤ DU u := by
+    intro u hu
+    have huU : u ∈ U := (MeromorphicOn.divisor xiFunction U).supportWithinDomain
+      (Function.mem_support.mpr ((Set.Finite.mem_toFinset _).mp hu))
+    rw [hDUdef, MeromorphicOn.divisor_apply hξmero huU]
+    exact WithTop.untop₀_nonneg.mpr
+      (differentiable_xiFunction.analyticAt u).meromorphicOrderAt_nonneg
+  have hSS' : S ⊆ S' := by
+    intro u hu
+    have huB := xiZeroDiscFinset_subset_closedBall hu
+    have huU : u ∈ U := Metric.closedBall_subset_ball (by linarith) huB
+    rw [hS'def, Set.Finite.mem_toFinset, Function.mem_support, hDUdef,
+      MeromorphicOn.divisor_apply hξmero huU,
+      ← MeromorphicOn.divisor_apply (meromorphicOn_xiFunction_closedBall R) huB]
+    exact mem_xiZeroDiscFinset.mp hu
+  have hDRU : ∀ u ∈ S, DU u = MeromorphicOn.divisor xiFunction (Metric.closedBall 0 R) u := by
+    intro u hu
+    have huB := xiZeroDiscFinset_subset_closedBall hu
+    have huU : u ∈ U := Metric.closedBall_subset_ball (by linarith) huB
+    rw [hDUdef, MeromorphicOn.divisor_apply hξmero huU,
+      MeromorphicOn.divisor_apply (meromorphicOn_xiFunction_closedBall R) huB]
+  have happF : ∀ w : ℂ, (∏ᶠ u, (fun x => x - u) ^ DU u) w = ∏ᶠ u, (w - u) ^ DU u := by
+    intro w
+    have hsub : Function.mulSupport (fun u => (fun x => x - u) ^ DU u) ⊆ ↑S' := by
+      intro u hu
+      rw [Function.mem_mulSupport] at hu
+      by_contra huS'
+      rw [Finset.mem_coe, hS'def, Set.Finite.mem_toFinset, Function.mem_support] at huS'
+      push_neg at huS'
+      rw [huS', zpow_zero] at hu
+      exact hu rfl
+    have hf : Function.HasFiniteMulSupport (fun u => (fun x => x - u) ^ DU u) :=
+      (Finset.finite_toSet S').subset hsub
+    rw [finprod_apply hf w]
+    apply finprod_congr
+    intro u
+    rfl
+  have hg₀eq' : xiFunction =ᶠ[Filter.codiscreteWithin U]
+      (fun w => (∏ᶠ u, (w - u) ^ DU u) * g₀ w) :=
+    hg₀eq.trans (Filter.Eventually.of_forall fun w => by
+      rw [Pi.smul_apply', smul_eq_mul, happF w])
+  refine ⟨g, fun w hw => ?_, fun w hw => ?_, ?_⟩
+  · -- 解析性
+    apply AnalyticAt.mul (hg₀an w hw)
+    apply AnalyticAt.mul
+    · apply Finset.analyticAt_fun_prod
+      intro u hu
+      apply AnalyticAt.pow
+      unfold xiBlaschkeNumFactor
+      fun_prop (disch := simp [hR.ne'])
+    · apply Finset.analyticAt_fun_prod
+      intro u hu
+      apply AnalyticAt.pow
+      fun_prop
+  · -- closedBall 0 R 上无零点
+    have hwU : w ∈ U := Metric.closedBall_subset_ball (by linarith) hw
+    simp only [hgdef, hPdef]
+    apply mul_ne_zero (hg₀ne ⟨w, hwU⟩)
+    apply mul_ne_zero
+    · rw [Finset.prod_ne_zero_iff]
+      intro u hu
+      exact pow_ne_zero _ (xiBlaschkeNumFactor_ne_zero hR
+        (xiZeroDiscFinset_subset_closedBall hu)
+        (Metric.closedBall_subset_closedBall (by linarith) hw))
+    · rw [Finset.prod_ne_zero_iff]
+      intro u hu
+      rw [Finset.mem_sdiff] at hu
+      obtain ⟨huS', huS⟩ := hu
+      apply pow_ne_zero _
+      have huU : u ∈ U := (MeromorphicOn.divisor xiFunction U).supportWithinDomain
+        (Function.mem_support.mpr ((Set.Finite.mem_toFinset _).mp huS'))
+      have hnorm_u : R < ‖u‖ := by
+        by_contra hle
+        push_neg at hle
+        have huB : u ∈ Metric.closedBall (0 : ℂ) R := by
+          rw [Metric.mem_closedBall, dist_zero_right]; exact hle
+        have hdu : DU u ≠ 0 := Function.mem_support.mp ((Set.Finite.mem_toFinset _).mp huS')
+        rw [hDUdef, MeromorphicOn.divisor_apply hξmero huU,
+          ← MeromorphicOn.divisor_apply (meromorphicOn_xiFunction_closedBall R) huB] at hdu
+        exact huS (mem_xiZeroDiscFinset.mpr hdu)
+      intro hzero
+      rw [sub_eq_zero] at hzero
+      rw [Metric.mem_closedBall, dist_zero_right] at hw
+      rw [← hzero] at hnorm_u
+      linarith
+  · -- 余离散集上的相等
+    classical
+    have hBeq : (fun w => (∏ᶠ u, (w - u) ^ DU u) * g₀ w * xiBlaschkeProd R w)
+        =ᶠ[Filter.codiscreteWithin U] g := by
+      have hS'cod : (↑S' : Set ℂ)ᶜ ∈ Filter.codiscreteWithin U := by
+        rw [codiscreteWithin_iff_locallyFiniteComplementWithin]
+        intro z _
+        refine ⟨Set.univ, Filter.univ_mem, ?_⟩
+        have : Set.univ ∩ (U \ (↑S' : Set ℂ)ᶜ) = U ∩ ↑S' := by
+          simp
+        rw [this]
+        exact (Finset.finite_toSet S').subset Set.inter_subset_right
+      apply Filter.eventuallyEq_of_mem hS'cod
+      intro w hwS'
+      have hwu : ∀ u ∈ S', w ≠ u := by
+        intro u hu h
+        apply hwS'
+        rw [h]
+        exact Finset.mem_coe.mpr hu
+      have hfinprod : (∏ᶠ u, (w - u) ^ DU u) = ∏ u ∈ S', (w - u) ^ DU u := by
+        apply finprod_eq_prod_of_mulSupport_subset
+        intro u hu
+        rw [Function.mem_mulSupport] at hu
+        by_contra huS'
+        rw [Finset.mem_coe, hS'def, Set.Finite.mem_toFinset, Function.mem_support] at huS'
+        push_neg at huS'
+        rw [huS', zpow_zero] at hu
+        exact hu rfl
+      show (∏ᶠ u, (w - u) ^ DU u) * g₀ w * xiBlaschkeProd R w = g w
+      rw [hfinprod, ← Finset.prod_sdiff hSS']
+      have hfactor : ∀ u ∈ S, (w - u) ^ DU u * (Complex.canonicalFactor (2 * R) u w ^ m u)
+          = xiBlaschkeNumFactor R u w ^ m u := by
+        intro u hu
+        have hcast : DU u = (m u : ℤ) := by
+          rw [hmdef, xiZeroDiscMult_cast, hDRU u hu]
+        rw [hcast, zpow_natCast, ← mul_pow, mul_canonicalFactor_eq_xiBlaschkeNumFactor hR
+          (hwu u (hSS' hu))]
+      have hpow : ∀ u ∈ S' \ S, (w - u) ^ DU u = (w - u) ^ (DU u).toNat := by
+        intro u hu
+        rw [Finset.mem_sdiff] at hu
+        have hnn := hDU_nonneg u hu.1
+        conv_lhs => rw [← Int.toNat_of_nonneg hnn]
+        rw [zpow_natCast]
+      rw [Finset.prod_congr rfl hpow]
+      have hprodS : (∏ u ∈ S, (w - u) ^ DU u) * xiBlaschkeProd R w
+          = ∏ u ∈ S, xiBlaschkeNumFactor R u w ^ m u := by
+        rw [xiBlaschkeProd, ← hSdef, ← hmdef, ← Finset.prod_mul_distrib]
+        exact Finset.prod_congr rfl hfactor
+      simp only [hgdef, hPdef]
+      rw [← hprodS]
+      ring
+    have h1 : (fun w => xiFunction w * xiBlaschkeProd R w)
+        =ᶠ[Filter.codiscreteWithin U]
+          (fun w => (∏ᶠ u, (w - u) ^ DU u) * g₀ w * xiBlaschkeProd R w) :=
+      hg₀eq'.mul Filter.EventuallyEq.rfl
+    exact h1.trans hBeq
+
 end RiemannExplorer
