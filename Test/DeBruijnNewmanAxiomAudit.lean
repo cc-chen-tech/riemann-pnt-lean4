@@ -125,3 +125,5 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_sub_eq_intervalIntegral
 #print axioms RiemannExplorer.DeBruijnNewman.hasDerivAt_deBruijnNewmanH_diag_sub
 #print axioms RiemannExplorer.DeBruijnNewman.hasDerivAt_deBruijnNewmanH_diag
+#print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewman_zero_velocity
+#print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewman_zero_velocity_heat

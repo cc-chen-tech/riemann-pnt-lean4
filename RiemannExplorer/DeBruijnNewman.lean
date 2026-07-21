@@ -4789,6 +4789,54 @@ theorem hasDerivAt_deBruijnNewmanH_diag (z : ℝ → ℂ) (t₀ : ℝ) (ż : ℂ
   convert h1.add h2 using 2
   simp only [Pi.add_apply, sub_add_cancel]
 
+/-- **Zero-trajectory velocity (implicit differentiation)**: if a differentiable
+curve `z : ℝ → ℂ` rides on the zero set of the de Bruijn–Newman family near
+`t₀` (`H_t(z(t)) = 0` eventually) and `∂_z H_{t₀}` does not vanish at `z(t₀)`,
+then its velocity at `t₀` is `ż = −(∂_t H)/(∂_z H)`. Proof: the diagonal
+derivative (`hasDerivAt_deBruijnNewmanH_diag`) must vanish since the diagonal
+is eventually the constant zero function, and field algebra isolates `ż`. -/
+theorem deBruijnNewman_zero_velocity (z : ℝ → ℂ) (t₀ : ℝ) (ż : ℂ)
+    (hz : HasDerivAt z ż t₀)
+    (hzero : (fun t : ℝ => deBruijnNewmanH t (z t)) =ᶠ[nhds t₀] 0)
+    (hderiv : deriv (deBruijnNewmanH t₀) (z t₀) ≠ 0) :
+    ż = -(∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand t₀ (z t₀) u)
+      / deriv (deBruijnNewmanH t₀) (z t₀) := by
+  have hF0 : HasDerivAt (fun t : ℝ => deBruijnNewmanH t (z t)) 0 t₀ :=
+    (Filter.EventuallyEq.hasDerivAt_iff hzero).mpr (hasDerivAt_const t₀ (0 : ℂ))
+  have huniq := (hasDerivAt_deBruijnNewmanH_diag z t₀ ż hz).unique hF0
+  have hDz : deriv (deBruijnNewmanH t₀) (z t₀) * ż
+      = -(∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand t₀ (z t₀) u) :=
+    eq_neg_of_add_eq_zero_right huniq
+  calc ż = (deriv (deBruijnNewmanH t₀) (z t₀))⁻¹
+          * (deriv (deBruijnNewmanH t₀) (z t₀) * ż) := by
+        rw [← mul_assoc, inv_mul_cancel₀ hderiv, one_mul]
+    _ = (deriv (deBruijnNewmanH t₀) (z t₀))⁻¹
+          * (-(∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand t₀ (z t₀) u)) := by
+        rw [hDz]
+    _ = -(∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand t₀ (z t₀) u)
+          / deriv (deBruijnNewmanH t₀) (z t₀) := by
+        rw [div_eq_mul_inv, mul_comm]
+
+/-- **Velocity in backward-heat form**: under the hypotheses of
+`deBruijnNewman_zero_velocity`, the trajectory velocity at `t₀` is
+`ż = (∂²_z H)/(∂_z H)`, via the backward heat equation
+`backward_heat_equation` (`∂_t H = −∂²_z H`). This is the de Bruijn zero
+velocity `dx/dt = H''/H'` at simple zeros. -/
+theorem deBruijnNewman_zero_velocity_heat (z : ℝ → ℂ) (t₀ : ℝ) (ż : ℂ)
+    (hz : HasDerivAt z ż t₀)
+    (hzero : (fun t : ℝ => deBruijnNewmanH t (z t)) =ᶠ[nhds t₀] 0)
+    (hderiv : deriv (deBruijnNewmanH t₀) (z t₀) ≠ 0) :
+    ż = iteratedDeriv 2 (deBruijnNewmanH t₀) (z t₀)
+      / deriv (deBruijnNewmanH t₀) (z t₀) := by
+  have hA : ∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand t₀ (z t₀) u
+      = - iteratedDeriv 2 (deBruijnNewmanH t₀) (z t₀) :=
+    (hasDerivAt_deBruijnNewmanH_t (z t₀) t₀).deriv.symm.trans
+      (backward_heat_equation t₀ (z t₀))
+  have hv := deBruijnNewman_zero_velocity z t₀ ż hz hzero hderiv
+  rw [hA] at hv
+  simp only [neg_neg] at hv
+  exact hv
+
 /-- **Zero persistence (Rouché core) via the maximum modulus principle**:
 if `f` vanishes at `w` with `‖f‖ ≥ m > 0` on the sphere of radius `ρ`
 around `w`, and `g` is uniformly within `m / 2` of `f` on that sphere, then
