@@ -24,7 +24,10 @@ import Mathlib.NumberTheory.LSeries.RiemannZeta
 import Mathlib.NumberTheory.ZetaValues
 import Mathlib.Analysis.PSeries
 import ZeroFreeRegion.PhragmenLindelofZeta
+import ZeroFreeRegion.MeromorphicAux
 import RiemannExplorer.XiFunction
+
+open scoped Topology
 
 namespace RiemannExplorer
 
@@ -558,5 +561,82 @@ theorem exists_norm_xiFunction_le_exp_order_one :
       _ = Real.exp (4 * K₃ * (1 + ‖s‖) * Real.log (4 + ‖s‖)) := by
           congr 1
           ring
+
+/-- 临界带内 ξ 与 ζ 的解析重数相同：`ξ = ((1/2)·s·(s−1)·Gammaℝ)·ζ` 的
+前置因子在 `0 < re s < 1` 处解析且非零（`Gammaℝ` 由整函数 `Gammaℝ_inv`
+取逆得到解析性）。这是把按 ζ 重数计次的零点级数改写为按 ξ 重数计次的
+转换引理。 -/
+theorem analyticOrderNatAt_xiFunction_eq_riemannZeta_of_isNontrivialZero {s : ℂ}
+    (h0 : 0 < s.re) (h1 : s.re < 1) :
+    analyticOrderNatAt xiFunction s = analyticOrderNatAt riemannZeta s := by
+  classical
+  have hs0 : s ≠ 0 := by
+    intro h; rw [h, Complex.zero_re] at h0; exact (lt_irrefl _ h0).elim
+  have hs1 : s ≠ 1 := by
+    intro h; rw [h, Complex.one_re] at h1; exact (lt_irrefl _ h1).elim
+  set f : ℂ → ℂ := fun z => (1 / 2) * z * (z - 1) * Complex.Gammaℝ z with hfdef
+  -- 局部等式：在开的临界带 `{0 < re < 1}` 上 `ξ = f·ζ`
+  have hopen : IsOpen {z : ℂ | 0 < z.re ∧ z.re < 1} :=
+    (isOpen_lt continuous_const Complex.continuous_re).inter
+      (isOpen_lt Complex.continuous_re continuous_const)
+  have hev : xiFunction =ᶠ[𝓝 s] f * riemannZeta := by
+    refine Filter.eventually_of_mem (hopen.mem_nhds ⟨h0, h1⟩) fun z hz => ?_
+    have hz0 : z ≠ 0 := by
+      intro h
+      have hz' := hz.1
+      rw [h, Complex.zero_re] at hz'
+      exact (lt_irrefl _ hz').elim
+    have hz1 : z ≠ 1 := by
+      intro h
+      have hz' := hz.2
+      rw [h, Complex.one_re] at hz'
+      exact (lt_irrefl _ hz').elim
+    have hG : Complex.Gammaℝ z ≠ 0 := Complex.Gammaℝ_ne_zero_of_re_pos hz.1
+    show xiFunction z = (f * riemannZeta) z
+    rw [Pi.mul_apply]
+    exact xiFunction_eq_classical hz0 hz1 hG
+  -- 前置因子 f 在 `s` 处解析（`Gammaℝ = (Gammaℝ_inv)⁻¹`）
+  have hGR : AnalyticAt ℂ Complex.Gammaℝ s := by
+    have hfinv : (fun s => (Complex.Gammaℝ s)⁻¹)⁻¹ = Complex.Gammaℝ := by
+      funext z
+      simp
+    have h2 := (Complex.differentiable_Gammaℝ_inv.analyticAt s).inv
+      (inv_ne_zero (Complex.Gammaℝ_ne_zero_of_re_pos h0))
+    rw [hfinv] at h2
+    exact h2
+  have hfan : AnalyticAt ℂ f s := by
+    have hconst : AnalyticAt ℂ (fun _ : ℂ => (1 / 2 : ℂ)) s := analyticAt_const
+    have hid : AnalyticAt ℂ (fun z : ℂ => z) s := analyticAt_id
+    have hsub : AnalyticAt ℂ (fun z : ℂ => z - 1) s := hid.sub analyticAt_const
+    exact ((hconst.mul hid).mul hsub).mul hGR
+  -- f s ≠ 0
+  have hfne : f s ≠ 0 := by
+    have hG : Complex.Gammaℝ s ≠ 0 := Complex.Gammaℝ_ne_zero_of_re_pos h0
+    show (1 / 2 : ℂ) * s * (s - 1) * Complex.Gammaℝ s ≠ 0
+    exact mul_ne_zero (mul_ne_zero (mul_ne_zero (by norm_num) hs0)
+      (sub_ne_zero_of_ne hs1)) hG
+  -- f 的解析重数为 0（值非零）
+  have hftop : analyticOrderAt f s ≠ ⊤ := by
+    intro htop
+    exact hfne ((analyticOrderAt_eq_top.mp htop).self_of_nhds)
+  have hford : analyticOrderNatAt f s = 0 := by
+    have h0ord : analyticOrderAt f s = 0 := (hfan.analyticOrderAt_eq_zero).mpr hfne
+    have hrfl : analyticOrderNatAt f s = (analyticOrderAt f s).toNat := rfl
+    rw [hrfl, h0ord]
+    rfl
+  -- 重数链：`ξ =ᶠ f·ζ` ⇒ 重数相同；乘积重数拆分；f 重数为 0
+  have hcongr : analyticOrderAt xiFunction s = analyticOrderAt (f * riemannZeta) s :=
+    analyticOrderAt_congr hev
+  have hnat : analyticOrderNatAt (f * riemannZeta) s =
+      analyticOrderNatAt f s + analyticOrderNatAt riemannZeta s :=
+    analyticOrderNatAt_mul hfan
+      (ZeroFreeRegion.analyticOnNhd_riemannZeta_ne_one s hs1) hftop
+      (ZeroFreeRegion.analyticOrderAt_riemannZeta_ne_top_of_ne_one hs1)
+  calc analyticOrderNatAt xiFunction s
+      = (analyticOrderAt xiFunction s).toNat := rfl
+    _ = (analyticOrderAt (f * riemannZeta) s).toNat := by rw [hcongr]
+    _ = analyticOrderNatAt (f * riemannZeta) s := rfl
+    _ = analyticOrderNatAt f s + analyticOrderNatAt riemannZeta s := hnat
+    _ = analyticOrderNatAt riemannZeta s := by rw [hford, zero_add]
 
 end RiemannExplorer

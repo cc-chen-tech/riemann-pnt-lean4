@@ -48,6 +48,7 @@
 
 import RiemannExplorer.LiCriterion
 import PrimeNumberTheorem.GlobalZeroCount
+import RiemannExplorer.XiGrowthOrder
 
 open Complex ComplexConjugate
 open scoped BigOperators
@@ -335,6 +336,179 @@ theorem summable_norm_inv_sq_upperZeros :
           hgeom.sum_le_tsum _ (fun k _ =>
             mul_nonneg (mul_nonneg hC (by positivity)) (by positivity))
   exact add_le_add hlow hhigh
+
+/-- **重数加权零点级数**：`Σ_ρ m_ρ·‖ρ‖⁻²`（`m_ρ` 为 ζ 在 `ρ` 的解析重数）
+在上半平面非平凡零点上收敛。
+
+与 `summable_norm_inv_sq_upperZeros` 同一二进壳论证，只是壳的「计数」换成
+「重数和」：壳 `2ᵏ⁺¹ ≤ ‖ρ‖ < 2ᵏ⁺²` 内的重数和不超过
+`globalZeroMultiplicity (2ᵏ⁺²) ≤ C·2ᵏ⁺²·(k+4)`
+（`PrimeNumberTheorem.ExplicitFormulaAux.exists_globalZeroMultiplicity_le_mul_log`，
+由 Jensen 公式取得），壳内每项 `m_ρ·‖ρ‖⁻² ≤ m_ρ·(2ᵏ⁺¹)⁻²`，壳贡献
+`≤ C·(k+4)·2⁻ᵏ`，对 `k` 求和收敛；低点落入固定有限集
+`nontrivialZerosFinset 4` 的原像。这是按解析重数计次的 Hadamard 配对级数
+（无条件的 ξ'/ξ 展开）的收敛性输入。 -/
+theorem summable_mul_norm_inv_sq_upperZeros :
+    Summable fun ρ : UpperHalfPlaneNontrivialZero ↦
+      (analyticOrderNatAt riemannZeta (ρ : ℂ) : ℝ) * ‖(ρ : ℂ)‖⁻¹ ^ 2 := by
+  classical
+  obtain ⟨C, hC, hcount⟩ :=
+    PrimeNumberTheorem.ExplicitFormulaAux.exists_globalZeroMultiplicity_le_mul_log
+  -- 每个二进上界内的重数和上界
+  have hcount' : ∀ k : ℕ,
+      PrimeNumberTheorem.ExplicitFormulaAux.globalZeroMultiplicity ((2 : ℝ) ^ (k + 2)) ≤
+        C * (2 : ℝ) ^ (k + 2) * ((k : ℝ) + 4) := by
+    intro k
+    have hT : (4 : ℝ) ≤ (2 : ℝ) ^ (k + 2) := by
+      calc (4 : ℝ) = 2 ^ 2 := by norm_num
+      _ ≤ 2 ^ (k + 2) := pow_le_pow_right₀ (by norm_num) (by omega)
+    have h1 := hcount ((2 : ℝ) ^ (k + 2)) hT
+    have h2 : 1 + Real.log ((2 : ℝ) ^ (k + 2) + 6) ≤ (k : ℝ) + 4 := by
+      have h3 := log_two_pow_add_six_le k
+      linarith
+    calc PrimeNumberTheorem.ExplicitFormulaAux.globalZeroMultiplicity ((2 : ℝ) ^ (k + 2))
+        ≤ C * (2 : ℝ) ^ (k + 2) * (1 + Real.log ((2 : ℝ) ^ (k + 2) + 6)) := h1
+      _ ≤ C * (2 : ℝ) ^ (k + 2) * ((k : ℝ) + 4) :=
+          mul_le_mul_of_nonneg_left h2 (mul_nonneg hC (by positivity))
+  -- 收敛的几何参考级数 C·(k+4)·2⁻ᵏ
+  have hgeom : Summable fun k : ℕ ↦ C * ((k : ℝ) + 4) * (1 / 2 : ℝ) ^ k := by
+    have h1 : Summable fun k : ℕ ↦ C * ((k : ℝ) ^ 1 * (1 / 2) ^ k) :=
+      (summable_pow_mul_geometric_of_norm_lt_one 1 (r := (1 / 2 : ℝ))
+        (by norm_num)).mul_left C
+    have h2 : Summable fun k : ℕ ↦ (4 * C) * (1 / 2 : ℝ) ^ k :=
+      summable_geometric_two.mul_left (4 * C)
+    refine (h1.add h2).congr fun k => ?_
+    simp only [pow_one]
+    ring
+  refine summable_of_sum_le
+    (c := ∑ ρ ∈ (PrimeNumberTheorem.nontrivialZerosFinset 4).preimage
+          (fun ρ : UpperHalfPlaneNontrivialZero ↦ (ρ : ℂ)) Subtype.coe_injective.injOn,
+        (analyticOrderNatAt riemannZeta (ρ : ℂ) : ℝ) * ‖(ρ : ℂ)‖⁻¹ ^ 2 +
+      ∑' k : ℕ, C * ((k : ℝ) + 4) * (1 / 2 : ℝ) ^ k)
+    (fun ρ => mul_nonneg (Nat.cast_nonneg _) (by positivity)) ?_
+  intro u
+  rw [← Finset.sum_filter_add_sum_filter_not u
+    (fun ρ : UpperHalfPlaneNontrivialZero ↦ ‖(ρ : ℂ)‖ < 2)]
+  -- 低点部分：落入固定有限集 nontrivialZerosFinset 4 的原像
+  have hlow : ∑ ρ ∈ u.filter (fun ρ : UpperHalfPlaneNontrivialZero ↦ ‖(ρ : ℂ)‖ < 2),
+        (analyticOrderNatAt riemannZeta (ρ : ℂ) : ℝ) * ‖(ρ : ℂ)‖⁻¹ ^ 2 ≤
+      ∑ ρ ∈ (PrimeNumberTheorem.nontrivialZerosFinset 4).preimage
+          (fun ρ : UpperHalfPlaneNontrivialZero ↦ (ρ : ℂ)) Subtype.coe_injective.injOn,
+        (analyticOrderNatAt riemannZeta (ρ : ℂ) : ℝ) * ‖(ρ : ℂ)‖⁻¹ ^ 2 := by
+    have hpre : u.filter (fun ρ : UpperHalfPlaneNontrivialZero ↦ ‖(ρ : ℂ)‖ < 2) ⊆
+        (PrimeNumberTheorem.nontrivialZerosFinset 4).preimage
+          (fun ρ : UpperHalfPlaneNontrivialZero ↦ (ρ : ℂ)) Subtype.coe_injective.injOn := by
+      intro ρ hρ
+      rw [Finset.mem_filter] at hρ
+      rw [Finset.mem_preimage, PrimeNumberTheorem.mem_nontrivialZerosFinset]
+      exact ⟨ρ.2.1, ((Complex.abs_im_le_norm _).trans hρ.2.le).trans (by norm_num)⟩
+    exact Finset.sum_le_sum_of_subset_of_nonneg hpre
+      (fun x _ _ => mul_nonneg (Nat.cast_nonneg _) (by positivity))
+  -- 高点部分：二进壳分组
+  have hhigh : ∑ ρ ∈ u.filter (fun ρ : UpperHalfPlaneNontrivialZero ↦ ¬ ‖(ρ : ℂ)‖ < 2),
+        (analyticOrderNatAt riemannZeta (ρ : ℂ) : ℝ) * ‖(ρ : ℂ)‖⁻¹ ^ 2 ≤
+      ∑' k : ℕ, C * ((k : ℝ) + 4) * (1 / 2 : ℝ) ^ k := by
+    have hpt : ∀ ρ ∈ u.filter (fun ρ : UpperHalfPlaneNontrivialZero ↦ ¬ ‖(ρ : ℂ)‖ < 2),
+        (analyticOrderNatAt riemannZeta (ρ : ℂ) : ℝ) * ‖(ρ : ℂ)‖⁻¹ ^ 2 ≤
+          (analyticOrderNatAt riemannZeta (ρ : ℂ) : ℝ) *
+            (((2 : ℝ) ^ (shellIdx ‖(ρ : ℂ)‖ + 1))⁻¹) ^ 2 := by
+      intro ρ hρ
+      rw [Finset.mem_filter] at hρ
+      have h2 : (2 : ℝ) ≤ ‖(ρ : ℂ)‖ := le_of_not_gt hρ.2
+      have hpos : (0 : ℝ) < ‖(ρ : ℂ)‖ := lt_of_lt_of_le (by norm_num) h2
+      have hle := (two_pow_shellIdx_add_one_le h2).1
+      have hinv : ‖(ρ : ℂ)‖⁻¹ ≤ ((2 : ℝ) ^ (shellIdx ‖(ρ : ℂ)‖ + 1))⁻¹ :=
+        (inv_le_inv₀ hpos (by positivity)).mpr hle
+      exact mul_le_mul_of_nonneg_left (pow_le_pow_left₀ (by positivity) hinv 2)
+        (Nat.cast_nonneg _)
+    have hMaps : ∀ ρ ∈ u.filter (fun ρ : UpperHalfPlaneNontrivialZero ↦ ¬ ‖(ρ : ℂ)‖ < 2),
+        shellIdx ‖(ρ : ℂ)‖ ∈ (u.filter (fun ρ : UpperHalfPlaneNontrivialZero ↦
+          ¬ ‖(ρ : ℂ)‖ < 2)).image
+          (fun σ : UpperHalfPlaneNontrivialZero ↦ shellIdx ‖(σ : ℂ)‖) :=
+      fun ρ hρ => Finset.mem_image_of_mem _ hρ
+    calc ∑ ρ ∈ u.filter (fun ρ : UpperHalfPlaneNontrivialZero ↦ ¬ ‖(ρ : ℂ)‖ < 2),
+          (analyticOrderNatAt riemannZeta (ρ : ℂ) : ℝ) * ‖(ρ : ℂ)‖⁻¹ ^ 2
+        ≤ ∑ ρ ∈ u.filter (fun ρ : UpperHalfPlaneNontrivialZero ↦ ¬ ‖(ρ : ℂ)‖ < 2),
+            (analyticOrderNatAt riemannZeta (ρ : ℂ) : ℝ) *
+              (((2 : ℝ) ^ (shellIdx ‖(ρ : ℂ)‖ + 1))⁻¹) ^ 2 := Finset.sum_le_sum hpt
+      _ = ∑ k ∈ (u.filter (fun ρ : UpperHalfPlaneNontrivialZero ↦ ¬ ‖(ρ : ℂ)‖ < 2)).image
+              (fun σ : UpperHalfPlaneNontrivialZero ↦ shellIdx ‖(σ : ℂ)‖),
+            ∑ ρ ∈ (u.filter (fun ρ : UpperHalfPlaneNontrivialZero ↦ ¬ ‖(ρ : ℂ)‖ < 2)).filter
+              (fun σ : UpperHalfPlaneNontrivialZero ↦ shellIdx ‖(σ : ℂ)‖ = k),
+            (analyticOrderNatAt riemannZeta (ρ : ℂ) : ℝ) *
+              (((2 : ℝ) ^ (shellIdx ‖(ρ : ℂ)‖ + 1))⁻¹) ^ 2 :=
+          (Finset.sum_fiberwise_of_maps_to hMaps _).symm
+      _ = ∑ k ∈ (u.filter (fun ρ : UpperHalfPlaneNontrivialZero ↦ ¬ ‖(ρ : ℂ)‖ < 2)).image
+              (fun σ : UpperHalfPlaneNontrivialZero ↦ shellIdx ‖(σ : ℂ)‖),
+            (∑ ρ ∈ (u.filter (fun ρ : UpperHalfPlaneNontrivialZero ↦ ¬ ‖(ρ : ℂ)‖ < 2)).filter
+                (fun σ : UpperHalfPlaneNontrivialZero ↦ shellIdx ‖(σ : ℂ)‖ = k),
+              (analyticOrderNatAt riemannZeta (ρ : ℂ) : ℝ)) *
+              (((2 : ℝ) ^ (k + 1))⁻¹) ^ 2 := by
+          refine Finset.sum_congr rfl fun k _ => ?_
+          rw [Finset.sum_mul]
+          refine Finset.sum_congr rfl fun ρ hρ => ?_
+          rw [Finset.mem_filter] at hρ
+          rw [hρ.2]
+      _ ≤ ∑ k ∈ (u.filter (fun ρ : UpperHalfPlaneNontrivialZero ↦ ¬ ‖(ρ : ℂ)‖ < 2)).image
+              (fun σ : UpperHalfPlaneNontrivialZero ↦ shellIdx ‖(σ : ℂ)‖),
+            (C * (2 : ℝ) ^ (k + 2) * ((k : ℝ) + 4)) *
+              (((2 : ℝ) ^ (k + 1))⁻¹) ^ 2 := by
+          refine Finset.sum_le_sum fun k _ => ?_
+          apply mul_le_mul_of_nonneg_right _ (by positivity)
+          have himg : (((u.filter (fun ρ : UpperHalfPlaneNontrivialZero ↦
+                    ¬ ‖(ρ : ℂ)‖ < 2)).filter
+                  (fun σ : UpperHalfPlaneNontrivialZero ↦ shellIdx ‖(σ : ℂ)‖ = k)).image
+                  fun σ : UpperHalfPlaneNontrivialZero ↦ (σ : ℂ)) ⊆
+                PrimeNumberTheorem.nontrivialZerosFinset ((2 : ℝ) ^ (k + 2)) := by
+            intro z hz
+            rw [Finset.mem_image] at hz
+            obtain ⟨σ, hσ, rfl⟩ := hz
+            rw [Finset.mem_filter, Finset.mem_filter] at hσ
+            rw [PrimeNumberTheorem.mem_nontrivialZerosFinset]
+            refine ⟨σ.2.1, ?_⟩
+            have h2 : (2 : ℝ) ≤ ‖(σ : ℂ)‖ := le_of_not_gt hσ.1.2
+            have hub := (two_pow_shellIdx_add_one_le (t := ‖(σ : ℂ)‖) h2).2
+            rw [hσ.2] at hub
+            exact (Complex.abs_im_le_norm _).trans hub.le
+          have hsum := Finset.sum_le_sum_of_subset_of_nonneg (f := fun z : ℂ =>
+              (analyticOrderNatAt riemannZeta z : ℝ)) himg
+            (fun x _ _ => Nat.cast_nonneg _)
+          rw [Finset.sum_image (fun x _ y _ h => Subtype.coe_injective h)] at hsum
+          exact hsum.trans (hcount' k)
+      _ = ∑ k ∈ (u.filter (fun ρ : UpperHalfPlaneNontrivialZero ↦ ¬ ‖(ρ : ℂ)‖ < 2)).image
+              (fun σ : UpperHalfPlaneNontrivialZero ↦ shellIdx ‖(σ : ℂ)‖),
+            C * ((k : ℝ) + 4) * (1 / 2 : ℝ) ^ k := by
+          refine Finset.sum_congr rfl fun k _ => ?_
+          have e1 : (((2 : ℝ) ^ (k + 1))⁻¹) ^ 2 = (1 / 2 : ℝ) ^ k * (1 / 2) ^ (k + 2) := by
+            have h1 : (((2 : ℝ) ^ (k + 1))⁻¹) ^ 2 = (1 / 2 : ℝ) ^ (2 * (k + 1)) := by
+              rw [inv_pow, ← pow_mul, mul_comm (k + 1) 2, ← inv_pow, inv_eq_one_div]
+            rw [h1, show 2 * (k + 1) = k + (k + 2) by ring, pow_add]
+          have e2 : (2 : ℝ) ^ (k + 2) * (1 / 2 : ℝ) ^ (k + 2) = 1 := by
+            rw [← mul_pow, show (2 : ℝ) * (1 / 2) = 1 by norm_num, one_pow]
+          calc (C * (2 : ℝ) ^ (k + 2) * ((k : ℝ) + 4)) * (((2 : ℝ) ^ (k + 1))⁻¹) ^ 2
+              = C * ((k : ℝ) + 4) * (1 / 2 : ℝ) ^ k *
+                  ((2 : ℝ) ^ (k + 2) * (1 / 2 : ℝ) ^ (k + 2)) := by
+                rw [e1]
+                ring
+            _ = C * ((k : ℝ) + 4) * (1 / 2 : ℝ) ^ k := by
+                rw [e2]
+                ring
+      _ ≤ ∑' k : ℕ, C * ((k : ℝ) + 4) * (1 / 2 : ℝ) ^ k :=
+          hgeom.sum_le_tsum _ (fun k _ =>
+            mul_nonneg (mul_nonneg hC (by positivity)) (by positivity))
+  exact add_le_add hlow hhigh
+
+/-- **ξ 重数加权零点级数**：`Σ_ρ m_ξ(ρ)·‖ρ‖⁻²` 收敛。临界带内 ξ 与 ζ 的
+解析重数相同（`analyticOrderNatAt_xiFunction_eq_riemannZeta_of_isNontrivialZero`），
+故由 ζ 版本（`summable_mul_norm_inv_sq_upperZeros`）逐项改写即得。
+这是按解析重数计次的 Hadamard 配对级数（无条件的 ξ'/ξ 展开）的最终
+收敛性输入。 -/
+theorem summable_xiOrder_mul_norm_inv_sq_upperZeros :
+    Summable fun ρ : UpperHalfPlaneNontrivialZero ↦
+      (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) * ‖(ρ : ℂ)‖⁻¹ ^ 2 :=
+  summable_mul_norm_inv_sq_upperZeros.congr fun ρ => by
+    rw [analyticOrderNatAt_xiFunction_eq_riemannZeta_of_isNontrivialZero
+      ρ.2.1.2.1 ρ.2.1.2.2]
 
 /-! ## Part C：配对项的 `O(1/‖ρ‖²)` 控制与主定理 -/
 
