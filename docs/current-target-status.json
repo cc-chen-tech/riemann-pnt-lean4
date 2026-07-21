@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-19",
+  "timestamp": "2026-07-22",
   "status": "not-yet-complete",
   "completed_without_sorry": true,
   "remaining_prop_targets": {
@@ -94,6 +94,64 @@
         "file": "PrimeNumberTheorem.lean",
         "line": 1348,
         "shape": "∃C>0, ∀x≥2, |(primeCounting x:ℝ)-logIntegral x| ≤ C*sqrt x*log x",
+        "depends_on": []
+      }
+    ],
+    "RiemannExplorer.DeBruijnNewman": [
+      {
+        "name": "de_bruijn_monotone_target",
+        "qualified_name": "RiemannExplorer.DeBruijnNewman.de_bruijn_monotone_target",
+        "file": "RiemannExplorer/DeBruijnNewman.lean",
+        "line": 2214,
+        "shape": "<unknown>",
+        "depends_on": []
+      },
+      {
+        "name": "lambda_le_half_target",
+        "qualified_name": "RiemannExplorer.DeBruijnNewman.lambda_le_half_target",
+        "file": "RiemannExplorer/DeBruijnNewman.lean",
+        "line": 2218,
+        "shape": "<unknown>",
+        "depends_on": []
+      },
+      {
+        "name": "newman_lower_bound_target",
+        "qualified_name": "RiemannExplorer.DeBruijnNewman.newman_lower_bound_target",
+        "file": "RiemannExplorer/DeBruijnNewman.lean",
+        "line": 2222,
+        "shape": "<unknown>",
+        "depends_on": []
+      },
+      {
+        "name": "lambda_nonneg_target",
+        "qualified_name": "RiemannExplorer.DeBruijnNewman.lambda_nonneg_target",
+        "file": "RiemannExplorer/DeBruijnNewman.lean",
+        "line": 2228,
+        "shape": "<unknown>",
+        "depends_on": []
+      },
+      {
+        "name": "rh_iff_lambda_le_zero_target",
+        "qualified_name": "RiemannExplorer.DeBruijnNewman.rh_iff_lambda_le_zero_target",
+        "file": "RiemannExplorer/DeBruijnNewman.lean",
+        "line": 2233,
+        "shape": "<unknown>",
+        "depends_on": []
+      },
+      {
+        "name": "deBruijnNewmanFarFieldReal",
+        "qualified_name": "RiemannExplorer.DeBruijnNewman.deBruijnNewmanFarFieldReal",
+        "file": "RiemannExplorer/DeBruijnNewman.lean",
+        "line": 8055,
+        "shape": "<unknown>",
+        "depends_on": []
+      },
+      {
+        "name": "deBruijnNewmanCompactConfinement",
+        "qualified_name": "RiemannExplorer.DeBruijnNewman.deBruijnNewmanCompactConfinement",
+        "file": "RiemannExplorer/DeBruijnNewman.lean",
+        "line": 8065,
+        "shape": "<unknown>",
         "depends_on": []
       }
     ],
@@ -242,6 +300,40 @@
       "line": 8210
     },
     {
+      "name": "heat_integrand_integrable_target",
+      "qualified_name": "RiemannExplorer.DeBruijnNewman.heat_integrand_integrable_target",
+      "file": "RiemannExplorer/DeBruijnNewman.lean",
+      "line": 1913,
+      "proved_by": "RiemannExplorer.DeBruijnNewman.heat_integrand_integrable_target_proved"
+    },
+    {
+      "name": "phi_even_target",
+      "qualified_name": "RiemannExplorer.DeBruijnNewman.phi_even_target",
+      "file": "RiemannExplorer/DeBruijnNewman.lean",
+      "line": 1925,
+      "proved_by": "RiemannExplorer.DeBruijnNewman.phi_even_target_proved"
+    },
+    {
+      "name": "h_even_entire_target",
+      "qualified_name": "RiemannExplorer.DeBruijnNewman.h_even_entire_target",
+      "file": "RiemannExplorer/DeBruijnNewman.lean",
+      "line": 2161,
+      "proved_by": "RiemannExplorer.DeBruijnNewman.h_even_entire_target_proved"
+    },
+    {
+      "name": "backward_heat_equation_target",
+      "qualified_name": "RiemannExplorer.DeBruijnNewman.backward_heat_equation_target",
+      "file": "RiemannExplorer/DeBruijnNewman.lean",
+      "line": 2170,
+      "proved_by": "RiemannExplorer.DeBruijnNewman.backward_heat_equation_target_proved"
+    },
+    {
+      "name": "AllZerosReal",
+      "qualified_name": "RiemannExplorer.DeBruijnNewman.AllZerosReal",
+      "file": "RiemannExplorer/DeBruijnNewman.lean",
+      "line": 2203
+    },
+    {
       "name": "classical_zero_free_region",
       "qualified_name": "ZeroFreeRegion.classical_zero_free_region",
       "file": "ZeroFreeRegion.lean",
@@ -273,6 +365,12 @@
       "target": "hardy_littlewood_lower_bound_target",
       "status": "Hardy's infinite-zero theorem is proved; stronger Hardy-Littlewood, Selberg, and Conrey counts remain open",
       "next_step": "develop the stronger Hardy-Littlewood, Selberg, and Conrey quantitative zero-counting targets"
+    },
+    {
+      "name": "de Bruijn-Newman constant",
+      "target": "rh_iff_lambda_le_zero_target",
+      "status": "Phase 1 closed (Phi even/decaying, H_t even and entire, H_0 = (1/8) Xi(z/2), backward heat equation); Phase 2 has the RH-to-zero-reality bridge, Hurwitz persistence, the collision alternative, and the conditional monotonicity skeleton",
+      "next_step": "close de_bruijn_monotone_target via the right-open induction plus far-field no-escape input, then lambda_le_half_target"
     }
   ],
   "chain_inventory": {
@@ -294,12 +392,21 @@
       "RH_ThetaErrorBound",
       "RH_PrimeCountingLiErrorBound",
       "RH_ErrorBound"
+    ],
+    "de Bruijn-Newman constant": [
+      "de_bruijn_monotone_target",
+      "lambda_le_half_target",
+      "newman_lower_bound_target",
+      "lambda_nonneg_target",
+      "rh_iff_lambda_le_zero_target",
+      "deBruijnNewmanFarFieldReal",
+      "deBruijnNewmanCompactConfinement"
     ]
   },
-  "mathematical_target_count": 13,
+  "mathematical_target_count": 20,
   "route_interface_count": 5,
   "route_interface_true_body_count": 0,
-  "reusable_predicate_count": 13,
+  "reusable_predicate_count": 18,
   "unclassified_prop_def_count": 0,
-  "all_scanned_prop_defs_count": 31
+  "all_scanned_prop_defs_count": 43
 }

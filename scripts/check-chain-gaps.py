@@ -20,6 +20,7 @@ EXPECTED_CHAINS = {
     "Explicit formula",
     "RH error equivalence",
     "Quantitative critical-line extensions",
+    "de Bruijn-Newman constant",
 }
 
 

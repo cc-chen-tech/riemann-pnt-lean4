@@ -45,6 +45,13 @@ MATH_TARGETS = {
     "HardyTheorem.Details.theta_asymptotic_target": "Quantitative critical-line extensions",
     "HardyTheorem.Details.approximate_functional_equation_target": "Quantitative critical-line extensions",
     "KnownResults.conrey_40_percent_zeros_on_critical_line_target": "Quantitative critical-line extensions",
+    "RiemannExplorer.DeBruijnNewman.de_bruijn_monotone_target": "de Bruijn-Newman constant",
+    "RiemannExplorer.DeBruijnNewman.lambda_le_half_target": "de Bruijn-Newman constant",
+    "RiemannExplorer.DeBruijnNewman.newman_lower_bound_target": "de Bruijn-Newman constant",
+    "RiemannExplorer.DeBruijnNewman.lambda_nonneg_target": "de Bruijn-Newman constant",
+    "RiemannExplorer.DeBruijnNewman.rh_iff_lambda_le_zero_target": "de Bruijn-Newman constant",
+    "RiemannExplorer.DeBruijnNewman.deBruijnNewmanFarFieldReal": "de Bruijn-Newman constant",
+    "RiemannExplorer.DeBruijnNewman.deBruijnNewmanCompactConfinement": "de Bruijn-Newman constant",
 }
 
 ROUTE_INTERFACES = {
@@ -69,6 +76,11 @@ REUSABLE_PREDICATES = {
     "PrimeNumberTheorem.explicit_formula_von_mangoldt",
     "PrimeNumberTheorem.explicit_formula_von_mangoldt_unweighted",
     "PrimeNumberTheorem.rh_iff_optimal_error",
+    "RiemannExplorer.DeBruijnNewman.heat_integrand_integrable_target",
+    "RiemannExplorer.DeBruijnNewman.phi_even_target",
+    "RiemannExplorer.DeBruijnNewman.h_even_entire_target",
+    "RiemannExplorer.DeBruijnNewman.backward_heat_equation_target",
+    "RiemannExplorer.DeBruijnNewman.AllZerosReal",
 }
 
 

@@ -5,15 +5,16 @@ current Lean checkout.  The project currently builds and contains no
 `sorry`/`admit`/`axiom` placeholders in Lean source, but several deep goals are
 intentionally recorded as `def ... : Prop` target statements.
 
-At present there are **13** unresolved mathematical `def ... : Prop` targets,
-partitioned into exactly **4** analytic chains.  The recursive scanner also
-tracks 5 route interfaces and 13 reusable Prop predicates so subdirectory
+At present there are **20** unresolved mathematical `def ... : Prop` targets,
+partitioned into exactly **5** analytic chains.  The recursive scanner also
+tracks 5 route interfaces and 18 reusable Prop predicates so subdirectory
 interfaces cannot be hidden by the target count:
 
 1. Quantitative zero-free region
 2. Explicit formula
 3. RH / prime-counting error equivalence
 4. Hardy quantitative extensions
+5. de Bruijn–Newman constant (heat-flow route to RH)
 
 The chain-specific notes are maintained separately so that work can proceed in
 parallel:
@@ -31,7 +32,12 @@ parallel:
   equivalence between RH and prime-counting error terms;
 - `docs/hardy-theorem-chain.md`
   the proved Hardy theorem and the remaining quantitative critical-line-zero
-  extensions.
+  extensions;
+- `docs/research/de-bruijn-newman-note.md`
+  the de Bruijn–Newman constant `Λ` research note: kernel `Φ` and family
+  `H_t` definitions, literature anchors (de Bruijn 1950, Newman 1976,
+  Rodgers–Tao 2018), the Mathlib gap audit, and the phased plan whose
+  Phase 1 is closed in `RiemannExplorer/DeBruijnNewman.lean`.
 
 ## Evaluation Boundary
 
@@ -71,6 +77,7 @@ technology rather than more local Jensen/Borel wrappers.
 | Explicit formula | `ExplicitFormulaTruncatedTarget`, the moving-height formula, ordinary PNT, and the de la Vallee Poussin-form `psi` and `pi-Li` remainders are proved | Preserve the natural-sample jump convention and multiplicities in stronger reusable variants | Pursue genuinely stronger power-saving or explicit-constant inputs rather than more endpoint wrappers | 0 |
 | RH error equivalence | Ordinary PNT is proved; `rh_iff_optimal_error` is proved in both directions by `rh_iff_optimal_error_proved` | No remaining implication gap; RH itself and its equivalent error predicates remain unproved unconditionally | Reuse the completed equivalence when another endpoint supplies either RH or the error bound | 4 |
 | Hardy quantitative extensions | `hardy_theorem_target`, `hardy_zeros_unbounded_target`, and its absolute-height form are proved | Define distinct-ordinate and analytic-multiplicity counts separately and match each cited theorem | Develop Hardy-Littlewood, Selberg, and Conrey percentage estimates | 8 (4 in `HardyTheorem`, 3 in `HardyTheorem.Details`, 1 in `KnownResults`) |
+| de Bruijn–Newman constant | Phase-1 targets (`heat_integrand_integrable_target`, `phi_even_target`, `h_even_entire_target`, `backward_heat_equation_target`) are proved; the RH-to-`H_0`-real-zeros bridge, Hurwitz persistence, the collision alternative, and a conditional monotonicity skeleton are in place | Keep every Λ-level statement as a `def ... : Prop` target; do not present the conditional skeleton as a proved Λ bound | Close `de_bruijn_monotone_target` via right-open induction plus compact confinement plus the far-field no-escape input | 7 |
 
 ## Target-to-Chain Mapping
 
@@ -89,6 +96,13 @@ technology rather than more local Jensen/Borel wrappers.
 | `HardyTheorem.lean` | `HardyTheorem.Details.theta_asymptotic_target` | Quantitative critical-line extensions | Riemann–Siegel theta asymptotic setup |
 | `HardyTheorem.lean` | `HardyTheorem.Details.approximate_functional_equation_target` | Quantitative critical-line extensions | Residual error form of the AFE used by Hardy integrals |
 | `RiemannExplorer.lean` | `KnownResults.conrey_40_percent_zeros_on_critical_line_target` | Quantitative critical-line extensions | Proportionality target for zero density on the critical line |
+| `RiemannExplorer/DeBruijnNewman.lean` | `RiemannExplorer.DeBruijnNewman.de_bruijn_monotone_target` | de Bruijn–Newman constant | Monotonicity of the all-real-zero property; reduced to right-open induction plus no-escape |
+| `RiemannExplorer/DeBruijnNewman.lean` | `RiemannExplorer.DeBruijnNewman.lambda_le_half_target` | de Bruijn–Newman constant | de Bruijn upper bound Λ ≤ 1/2 via the strip theorem |
+| `RiemannExplorer/DeBruijnNewman.lean` | `RiemannExplorer.DeBruijnNewman.newman_lower_bound_target` | de Bruijn–Newman constant | Newman's Λ > −∞ growth analysis at negative times |
+| `RiemannExplorer/DeBruijnNewman.lean` | `RiemannExplorer.DeBruijnNewman.lambda_nonneg_target` | de Bruijn–Newman constant | Rodgers–Tao; needs Hadamard products, zero dynamics, and pair correlation |
+| `RiemannExplorer/DeBruijnNewman.lean` | `RiemannExplorer.DeBruijnNewman.rh_iff_lambda_le_zero_target` | de Bruijn–Newman constant | Logical position of RH on the Λ scale; conditional proof modulo monotonicity exists |
+| `RiemannExplorer/DeBruijnNewman.lean` | `RiemannExplorer.DeBruijnNewman.deBruijnNewmanFarFieldReal` | de Bruijn–Newman constant | Far-field no-escape input; needs Jensen-type zero counting not yet in this Mathlib |
+| `RiemannExplorer/DeBruijnNewman.lean` | `RiemannExplorer.DeBruijnNewman.deBruijnNewmanCompactConfinement` | de Bruijn–Newman constant | Hurwitz confinement on compacts; provable from joint continuity of `H` alone |
 
 ## Verified Starting Points
 

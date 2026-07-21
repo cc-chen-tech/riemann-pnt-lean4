@@ -36,6 +36,12 @@ CHAIN_SUMMARY = [
         "status": "Hardy's infinite-zero theorem is proved; stronger Hardy-Littlewood, Selberg, and Conrey counts remain open",
         "next_step": "develop the stronger Hardy-Littlewood, Selberg, and Conrey quantitative zero-counting targets",
     },
+    {
+        "name": "de Bruijn-Newman constant",
+        "target": "rh_iff_lambda_le_zero_target",
+        "status": "Phase 1 closed (Phi even/decaying, H_t even and entire, H_0 = (1/8) Xi(z/2), backward heat equation); Phase 2 has the RH-to-zero-reality bridge, Hurwitz persistence, the collision alternative, and the conditional monotonicity skeleton",
+        "next_step": "close de_bruijn_monotone_target via the right-open induction plus far-field no-escape input, then lambda_le_half_target",
+    },
 ]
 
 PROVED_ROUTE_INTERFACES = {
@@ -58,6 +64,14 @@ PROVED_REUSABLE_PREDICATES = {
         "HardyTheorem.hardy_zeros_unbounded_target_proved",
     "HardyTheorem.hardy_zeros_abs_unbounded_target":
         "HardyTheorem.hardy_zeros_abs_unbounded_target_proved",
+    "RiemannExplorer.DeBruijnNewman.heat_integrand_integrable_target":
+        "RiemannExplorer.DeBruijnNewman.heat_integrand_integrable_target_proved",
+    "RiemannExplorer.DeBruijnNewman.phi_even_target":
+        "RiemannExplorer.DeBruijnNewman.phi_even_target_proved",
+    "RiemannExplorer.DeBruijnNewman.h_even_entire_target":
+        "RiemannExplorer.DeBruijnNewman.h_even_entire_target_proved",
+    "RiemannExplorer.DeBruijnNewman.backward_heat_equation_target":
+        "RiemannExplorer.DeBruijnNewman.backward_heat_equation_target_proved",
 }
 
 
