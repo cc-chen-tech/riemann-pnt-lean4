@@ -16,6 +16,7 @@ import RiemannExplorer.XiZeroCountingBounds
 import RiemannExplorer.XiLogDerivDisc
 import RiemannExplorer.XiCorrectionConst
 import RiemannExplorer.LiWeightedPositivity
+import RiemannExplorer.LiWeightedRepresentation
 
 #print axioms RiemannExplorer.xiFunction_one_sub
 #print axioms RiemannExplorer.xiFunction_zero
@@ -184,3 +185,44 @@ import RiemannExplorer.LiWeightedPositivity
 #print axioms RiemannExplorer.tsum_weightedLiPairedTerm_re_nonneg_of_rh
 #print axioms RiemannExplorer.liCoefficient_re_pos_of_weighted_representation_of_rh
 #print axioms RiemannExplorer.rh_implies_li_criterion_of_weighted_representation
+#print axioms RiemannExplorer.xi_re_pos_nhds_one
+#print axioms RiemannExplorer.exists_ball_xi_re_pos
+#print axioms RiemannExplorer.xi_ne_zero_of_mem_ball
+#print axioms RiemannExplorer.xi_mem_slitPlane_of_mem_ball
+#print axioms RiemannExplorer.differentiableOn_log_xi
+#print axioms RiemannExplorer.deriv_log_xi_eqOn
+#print axioms RiemannExplorer.contDiffAt_log_xi_one
+#print axioms RiemannExplorer.analyticOrderNatAt_xiFunction_one_sub
+#print axioms RiemannExplorer.analyticOrderNatAt_xiFunction_one_sub_conj
+#print axioms RiemannExplorer.summable_xiWeightedInvPowBound
+#print axioms RiemannExplorer.dist_bound_of_mem_ball
+#print axioms RiemannExplorer.norm_xiWeightedInvPowTerm_le
+#print axioms RiemannExplorer.differentiableOn_xiWeightedInvPowTerm
+#print axioms RiemannExplorer.differentiableOn_xiWeightedInvPowSum
+#print axioms RiemannExplorer.hasDerivAt_invPow_piece
+#print axioms RiemannExplorer.invPow_piece_deriv_eq
+#print axioms RiemannExplorer.hasDerivAt_xiWeightedInvPowTerm
+#print axioms RiemannExplorer.deriv_xiWeightedInvPowSum_eqOn
+#print axioms RiemannExplorer.summable_xiWeightedMittagLefflerBound
+#print axioms RiemannExplorer.norm_xiWeightedMittagLefflerTerm_le
+#print axioms RiemannExplorer.differentiableOn_xiWeightedMittagLefflerTerm
+#print axioms RiemannExplorer.differentiableOn_xiWeightedMittagLefflerSum
+#print axioms RiemannExplorer.hasDerivAt_xiWeightedMittagLefflerTerm
+#print axioms RiemannExplorer.deriv_xiWeightedMittagLefflerSum_eqOn
+#print axioms RiemannExplorer.iteratedDeriv_const_mul_xiWeightedInvPowSum_eqOn
+#print axioms RiemannExplorer.iteratedDeriv_xiWeightedMittagLefflerSum_eqOn
+#print axioms RiemannExplorer.isNontrivialZero_one_sub_conj
+#print axioms RiemannExplorer.uhzOneSubConjEquiv
+#print axioms RiemannExplorer.summable_xiWeightedInvResidTerm
+#print axioms RiemannExplorer.deriv_xiFunction_one_eq_neg
+#print axioms RiemannExplorer.xiWeightedInvPowSum_one_eq_invResidSum
+#print axioms RiemannExplorer.xiWeightedMittagLefflerSum_one_eq_two_invResidSum
+#print axioms RiemannExplorer.exists_ball_log_xi_and_zeros_far
+#print axioms RiemannExplorer.deriv_log_xi_one_eq
+#print axioms RiemannExplorer.iteratedDeriv_log_xi_one
+#print axioms RiemannExplorer.iteratedDeriv_log_xi_one_of_pos
+#print axioms RiemannExplorer.liCoefficient_eq_sum_choose_invResid
+#print axioms RiemannExplorer.one_sub_one_sub_pow_eq_sum
+#print axioms RiemannExplorer.tsum_weightedLiPairedTerm_eq_sum
+#print axioms RiemannExplorer.li_weighted_zero_sum_representation
+#print axioms RiemannExplorer.rh_implies_li_criterion_target_proved

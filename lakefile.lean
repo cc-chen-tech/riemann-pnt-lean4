@@ -19,6 +19,7 @@ lean_lib RiemannPNT where
     `RiemannExplorer.XiPartialFraction,
     `RiemannExplorer.LiStrictPositivity,
     `RiemannExplorer.LiWeightedPositivity,
+    `RiemannExplorer.LiWeightedRepresentation,
     `RiemannExplorer.XiPartialFractionAnalytic,
     `RiemannExplorer.XiPartialFractionResidue,
     `RiemannExplorer.XiPartialFractionEntire,
