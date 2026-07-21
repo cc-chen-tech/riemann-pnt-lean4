@@ -6419,6 +6419,120 @@ theorem deBruijnNewmanH_taylor_three_z (t : ℝ) (w k : ℂ) :
   rw [deBruijnNewmanH_taylor_two_z, key]
   ac_rfl
 
+/-- **Cubic bound on the order-2 Taylor remainder**: if `∂³_z H_t` is bounded by
+`M` on the segment from `w` to `w + k`, then the remainder in
+`deBruijnNewmanH_taylor_three_z` is at most `M·‖k‖³`. Three nested
+`intervalIntegral.norm_integral_le_of_norm_le_const` applications. This is the
+quantitative form needed to exclude non-real zeros of `H_t` near an
+exactly-double real zero after the collision (the quadratic term dominates the
+remainder on scales `‖k‖ ≲ √(t − τ)`). -/
+theorem deBruijnNewmanH_taylor_three_z_remainder_norm_le (t : ℝ) (w k : ℂ) (M : ℝ)
+    (hM : ∀ q r s : ℝ, q ∈ Set.Icc (0 : ℝ) 1 → r ∈ Set.Icc (0 : ℝ) 1
+      → s ∈ Set.Icc (0 : ℝ) 1 →
+      ‖iteratedDeriv 3 (deBruijnNewmanH t) (w + ((q * r * s : ℝ) : ℂ) * k)‖ ≤ M) :
+    ‖deBruijnNewmanH t (w + k)
+        - (deBruijnNewmanH t w + deriv (deBruijnNewmanH t) w * k
+          + deriv (deriv (deBruijnNewmanH t)) w * k ^ 2 / 2)‖
+      ≤ M * ‖k‖ ^ 3 := by
+  have hMnn : 0 ≤ M :=
+    (norm_nonneg _).trans (hM 1 1 1 (by norm_num) (by norm_num) (by norm_num))
+  have hIoc : ∀ x : ℝ, x ∈ Set.uIoc (0 : ℝ) 1 → 0 < x ∧ x ≤ 1 := by
+    intro x hx
+    rw [Set.uIoc_of_le zero_le_one] at hx
+    exact hx
+  rw [deBruijnNewmanH_taylor_three_z, add_sub_cancel_left]
+  have hq : ∀ r s : ℝ, r ∈ Set.uIoc (0 : ℝ) 1 → s ∈ Set.uIoc (0 : ℝ) 1 →
+      ‖∫ q : ℝ in (0:ℝ)..1,
+        iteratedDeriv 3 (deBruijnNewmanH t) (w + ((q * r * s : ℝ) : ℂ) * k)
+          * (((r * s : ℝ) : ℂ) * k)‖
+      ≤ M * ‖k‖ := by
+    intro r s hr hs
+    obtain ⟨hr0, hr1⟩ := hIoc r hr
+    obtain ⟨hs0, hs1⟩ := hIoc s hs
+    have hpt : ∀ q ∈ Set.uIoc (0 : ℝ) 1,
+        ‖iteratedDeriv 3 (deBruijnNewmanH t) (w + ((q * r * s : ℝ) : ℂ) * k)
+          * (((r * s : ℝ) : ℂ) * k)‖
+        ≤ M * ‖k‖ := by
+      intro q hqI
+      obtain ⟨hq0, hq1⟩ := hIoc q hqI
+      have hn : ‖(((r * s : ℝ) : ℂ) * k)‖ ≤ ‖k‖ := by
+        have e : ‖(((r * s : ℝ) : ℂ) * k)‖ = (r * s) * ‖k‖ := by
+          rw [norm_mul]
+          have e2 : ‖((r * s : ℝ) : ℂ)‖ = |r * s| := RCLike.norm_ofReal _
+          rw [e2, abs_of_nonneg (mul_nonneg hr0.le hs0.le)]
+        rw [e]
+        calc (r * s) * ‖k‖ ≤ (1 * 1) * ‖k‖ :=
+              mul_le_mul (mul_le_mul hr1 hs1 hs0.le zero_le_one) (le_refl ‖k‖)
+                (norm_nonneg _) (by norm_num)
+          _ = ‖k‖ := by rw [mul_one, one_mul]
+      rw [norm_mul]
+      exact mul_le_mul (hM q r s ⟨hq0.le, hq1⟩ ⟨hr0.le, hr1⟩ ⟨hs0.le, hs1⟩) hn
+        (norm_nonneg _) hMnn
+    have h1 := intervalIntegral.norm_integral_le_of_norm_le_const (C := M * ‖k‖) hpt
+    rwa [sub_zero, abs_one, mul_one] at h1
+  have hr : ∀ s : ℝ, s ∈ Set.uIoc (0 : ℝ) 1 →
+      ‖∫ r : ℝ in (0:ℝ)..1,
+        (∫ q : ℝ in (0:ℝ)..1,
+          iteratedDeriv 3 (deBruijnNewmanH t) (w + ((q * r * s : ℝ) : ℂ) * k)
+            * (((r * s : ℝ) : ℂ) * k)) * ((s : ℂ) * k)‖
+      ≤ M * ‖k‖ ^ 2 := by
+    intro s hs
+    obtain ⟨hs0, hs1⟩ := hIoc s hs
+    have hpt : ∀ r ∈ Set.uIoc (0 : ℝ) 1,
+        ‖(∫ q : ℝ in (0:ℝ)..1,
+          iteratedDeriv 3 (deBruijnNewmanH t) (w + ((q * r * s : ℝ) : ℂ) * k)
+            * (((r * s : ℝ) : ℂ) * k)) * ((s : ℂ) * k)‖
+        ≤ M * ‖k‖ ^ 2 := by
+      intro r hrI
+      obtain ⟨hr0, hr1⟩ := hIoc r hrI
+      have hn : ‖((s : ℂ) * k)‖ ≤ ‖k‖ := by
+        have e : ‖((s : ℂ) * k)‖ = s * ‖k‖ := by
+          rw [norm_mul]
+          have e2 : ‖(s : ℂ)‖ = |s| := RCLike.norm_ofReal _
+          rw [e2, abs_of_nonneg hs0.le]
+        rw [e]
+        calc s * ‖k‖ ≤ 1 * ‖k‖ :=
+              mul_le_mul hs1 (le_refl ‖k‖) (norm_nonneg _) zero_le_one
+          _ = ‖k‖ := one_mul _
+      calc ‖(∫ q : ℝ in (0:ℝ)..1,
+            iteratedDeriv 3 (deBruijnNewmanH t) (w + ((q * r * s : ℝ) : ℂ) * k)
+              * (((r * s : ℝ) : ℂ) * k)) * ((s : ℂ) * k)‖
+          = ‖∫ q : ℝ in (0:ℝ)..1,
+              iteratedDeriv 3 (deBruijnNewmanH t) (w + ((q * r * s : ℝ) : ℂ) * k)
+                * (((r * s : ℝ) : ℂ) * k)‖ * ‖((s : ℂ) * k)‖ :=
+            norm_mul _ _
+        _ ≤ (M * ‖k‖) * ‖k‖ :=
+            mul_le_mul (hq r s hrI hs) hn (norm_nonneg _)
+              (mul_nonneg hMnn (norm_nonneg _))
+        _ = M * ‖k‖ ^ 2 := by rw [mul_assoc, ← pow_two]
+    have h1 := intervalIntegral.norm_integral_le_of_norm_le_const
+      (C := M * ‖k‖ ^ 2) hpt
+    rwa [sub_zero, abs_one, mul_one] at h1
+  have hpt : ∀ s ∈ Set.uIoc (0 : ℝ) 1,
+      ‖(∫ r : ℝ in (0:ℝ)..1,
+        (∫ q : ℝ in (0:ℝ)..1,
+          iteratedDeriv 3 (deBruijnNewmanH t) (w + ((q * r * s : ℝ) : ℂ) * k)
+            * (((r * s : ℝ) : ℂ) * k)) * ((s : ℂ) * k)) * k‖
+      ≤ M * ‖k‖ ^ 3 := by
+    intro s hs
+    calc ‖(∫ r : ℝ in (0:ℝ)..1,
+          (∫ q : ℝ in (0:ℝ)..1,
+            iteratedDeriv 3 (deBruijnNewmanH t) (w + ((q * r * s : ℝ) : ℂ) * k)
+              * (((r * s : ℝ) : ℂ) * k)) * ((s : ℂ) * k)) * k‖
+        = ‖∫ r : ℝ in (0:ℝ)..1,
+            (∫ q : ℝ in (0:ℝ)..1,
+              iteratedDeriv 3 (deBruijnNewmanH t) (w + ((q * r * s : ℝ) : ℂ) * k)
+                * (((r * s : ℝ) : ℂ) * k)) * ((s : ℂ) * k)‖ * ‖k‖ :=
+          norm_mul _ _
+      _ ≤ (M * ‖k‖ ^ 2) * ‖k‖ :=
+          mul_le_mul (hr s hs) (le_refl ‖k‖) (norm_nonneg _)
+            (mul_nonneg hMnn (sq_nonneg _))
+      _ = M * ‖k‖ ^ 3 := by
+          rw [mul_assoc, ← pow_succ]
+  have h1 := intervalIntegral.norm_integral_le_of_norm_le_const
+    (C := M * ‖k‖ ^ 3) hpt
+  rwa [sub_zero, abs_one, mul_one] at h1
+
 /-- **Conjugation symmetry of the second `z`-derivative**: `∂²_z H_t(\bar z)
 = \overline{∂²_z H_t(z)}`, transported through the integral representation
 `deriv_two_deBruijnNewmanH` by `Complex.cos_conj`. Together with the heat
