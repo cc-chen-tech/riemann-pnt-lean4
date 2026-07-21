@@ -6230,6 +6230,561 @@ theorem deBruijnNewmanHzderiv_two_im_eq_zero_of_im_eq_zero (t : ℝ) {z : ℂ}
   rw [hstar, Complex.star_def] at h
   exact Complex.conj_eq_iff_im.mp h.symm
 
+set_option maxHeartbeats 2000000 in
+/-- **Quadratic sign flip along the critical curve (quantitative core of de
+Bruijn's collision alternative)**: at a real double zero `(τ, x₀)` of `H`
+(`H_τ(x₀) = 0`, `∂_z H_τ(x₀) = 0`, `B := ∂²_z H_τ(x₀) ≠ 0`), with `c` the
+critical curve through `x₀`, the heat equation gives
+`H(t, c(t)) = −B·(t−τ) + o(t−τ)` while the second-order Taylor expansion in
+`z` gives `H(t, c(t) ± 2√(t−τ)) = B·(t−τ) + o(t−τ)`: for `t` slightly
+larger than `τ` the values of `H_t` at the critical point and at distance
+`2√(t−τ)` on either side have opposite strict signs. All quantities are real
+by Phase 2(34); the error control uses only uniform continuity of `∂²_z H`
+on a compact box — no zero counting. -/
+theorem deBruijnNewman_double_zero_quadratic_signs (τ : ℝ) (x₀ : ℂ) (c : ℝ → ℂ)
+    (hcont : ContinuousAt c τ)
+    (hcdiff : ∀ᶠ t in nhds τ, DifferentiableAt ℝ c t)
+    (hcrit : ∀ᶠ t in nhds τ, deriv (deBruijnNewmanH t) (c t) = 0)
+    (hcreal : ∀ᶠ t in nhds τ, (c t).im = 0)
+    (hc0 : c τ = x₀)
+    (hz0 : deBruijnNewmanH τ x₀ = 0)
+    (hB : deriv (deriv (deBruijnNewmanH τ)) x₀ ≠ 0)
+    (hx : x₀.im = 0) :
+    ∀ᶠ t in nhdsWithin τ (Set.Ioi τ),
+      (deBruijnNewmanH t (c t)).re
+          * (deBruijnNewmanH t (c t + ((2 * Real.sqrt (t - τ) : ℝ) : ℂ))).re < 0
+        ∧ (deBruijnNewmanH t (c t)).re
+          * (deBruijnNewmanH t (c t + ((-(2 * Real.sqrt (t - τ)) : ℝ) : ℂ))).re < 0 := by
+  set B : ℂ := deriv (deriv (deBruijnNewmanH τ)) x₀ with hBdef
+  set D2 : ℝ × ℂ → ℂ := fun p => deriv (deriv (deBruijnNewmanH p.1)) p.2 with hD2def
+  -- `B` is real and nonzero
+  have hBim : B.im = 0 := deBruijnNewmanHzderiv_two_im_eq_zero_of_im_eq_zero τ hx
+  have hBcr : B = (B.re : ℂ) := by
+    nth_rewrite 1 [← Complex.re_add_im B]
+    rw [hBim]
+    simp
+  have hBre_ne : B.re ≠ 0 := by
+    intro h0
+    exact hB (by rw [hBcr, h0, Complex.ofReal_zero])
+  have hB_abs_pos : 0 < |B.re| := abs_pos.mpr hBre_ne
+  -- uniform continuity of `∂²_z H` on the compact box `K`
+  set K : Set (ℝ × ℂ) := Set.Icc (τ - 1) (τ + 1) ×ˢ Metric.closedBall x₀ 1 with hKdef
+  have hKcmp : IsCompact K := isCompact_Icc.prod (isCompact_closedBall x₀ 1)
+  have huc := hKcmp.uniformContinuousOn_of_continuous
+    continuous_deBruijnNewmanH_deriv_two.continuousOn
+  rw [Metric.uniformContinuousOn_iff] at huc
+  obtain ⟨η, hη0, hη⟩ := huc (|B.re| / 8) (by linarith [hB_abs_pos])
+  have hD2B : ∀ p : ℝ × ℂ, p ∈ K → dist p (τ, x₀) < η →
+      ‖D2 p - B‖ < |B.re| / 8 := by
+    intro p hpK hpd
+    have h1 := hη p hpK (τ, x₀)
+      (Set.mem_prod.mpr ⟨⟨by linarith, by linarith⟩,
+        Metric.mem_closedBall_self (by norm_num : (0:ℝ) ≤ 1)⟩) hpd
+    rw [dist_eq_norm] at h1
+    have h3 : D2 (τ, x₀) = B := rfl
+    have h4 : ‖D2 p - D2 (τ, x₀)‖ < |B.re| / 8 := h1
+    rwa [h3] at h4
+  -- the three `nhds` eventualities and the critical height, as radii
+  rw [Metric.continuousAt_iff] at hcont
+  obtain ⟨δc, hδc0, hδc⟩ := hcont (min (η / 4) (1 / 2))
+    (lt_min_iff.mpr ⟨by linarith [hη0], by norm_num⟩)
+  have hheight := deBruijnNewmanH_critical_height τ x₀ c hcdiff hcrit hc0 hz0
+  rw [Metric.eventually_nhds_iff] at hheight hcrit hcreal hcdiff
+  obtain ⟨δ₀, hδ₀0, hδ₀⟩ := hheight
+  obtain ⟨δ₁, hδ₁0, hδ₁⟩ := hcrit
+  obtain ⟨δ₂, hδ₂0, hδ₂⟩ := hcreal
+  obtain ⟨δ₃, hδ₃0, hδ₃⟩ := hcdiff
+  -- the master radius
+  set δq : ℝ := min (min (min (min (min δ₀ δ₁) (min δ₂ δ₃)) δc) (η / 2))
+    ((min (η / 8) (1 / 4)) ^ 2) with hδqdef
+  have hδq0 : 0 < δq := by
+    rw [hδqdef]
+    refine lt_min_iff.mpr ⟨lt_min_iff.mpr ⟨lt_min_iff.mpr ⟨lt_min_iff.mpr
+      ⟨lt_min_iff.mpr ⟨hδ₀0, hδ₁0⟩, lt_min_iff.mpr ⟨hδ₂0, hδ₃0⟩⟩, hδc0⟩,
+      by linarith [hη0]⟩, sq_pos_of_pos (lt_min_iff.mpr ⟨by linarith [hη0], by norm_num⟩)⟩
+  have hδq_le₀ : δq ≤ δ₀ :=
+    (((min_le_left _ _).trans (min_le_left _ _)).trans (min_le_left _ _)).trans
+      ((min_le_left _ _).trans (min_le_left _ _))
+  have hδq_le₁ : δq ≤ δ₁ :=
+    (((min_le_left _ _).trans (min_le_left _ _)).trans (min_le_left _ _)).trans
+      ((min_le_left _ _).trans (min_le_right _ _))
+  have hδq_le₂ : δq ≤ δ₂ :=
+    ((min_le_left _ _).trans (min_le_left _ _)).trans
+      ((min_le_left _ _).trans ((min_le_right _ _).trans (min_le_left _ _)))
+  have hδq_le₃ : δq ≤ δ₃ :=
+    ((min_le_left _ _).trans (min_le_left _ _)).trans
+      ((min_le_left _ _).trans ((min_le_right _ _).trans (min_le_right _ _)))
+  have hδq_lec : δq ≤ δc :=
+    (min_le_left _ _).trans ((min_le_left _ _).trans (min_le_right _ _))
+  have hδq_leη : δq ≤ η / 2 := (min_le_left _ _).trans (min_le_right _ _)
+  have hδq_lesq : δq ≤ (min (η / 8) (1 / 4)) ^ 2 := min_le_right _ _
+  have hδq_lt_1 : δq < 1 := by
+    have h1 : (min (η / 8) (1 / 4)) ^ 2 ≤ (1 / 4 : ℝ) ^ 2 :=
+      pow_le_pow_left₀ (le_min (by linarith [hη0]) (by norm_num)) (min_le_right _ _) 2
+    exact lt_of_le_of_lt (hδq_lesq.trans h1) (by norm_num)
+  have hgood : Set.Ioo τ (τ + δq) ∈ nhdsWithin τ (Set.Ioi τ) := by
+    rw [← Set.Ioi_inter_Iio]
+    exact inter_mem_nhdsWithin _ (Iio_mem_nhds (by linarith [hδq0]))
+  refine Filter.mem_of_superset hgood fun t ht => ?_
+  have htpos : τ < t := ht.1
+  have htp : 0 < t - τ := sub_pos.mpr htpos
+  have htδ : t - τ < δq := by linarith [ht.2]
+  have htd : dist t τ < δq := by
+    rw [Real.dist_eq, abs_of_nonneg (le_of_lt htp)]
+    exact htδ
+  have hct_im : (c t).im = 0 := hδ₂ (lt_of_lt_of_le htd hδq_le₂)
+  have hct_crit : deriv (deBruijnNewmanH t) (c t) = 0 := hδ₁ (lt_of_lt_of_le htd hδq_le₁)
+  have hct_height : deBruijnNewmanH t (c t)
+      = ∫ s : ℝ in τ..t, ∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand s (c s) u :=
+    hδ₀ (lt_of_lt_of_le htd hδq_le₀)
+  have hcnear : ∀ s : ℝ, dist s τ < δq → dist (c s) x₀ < min (η / 4) (1 / 2) := by
+    intro s hs
+    have h1 := hδc (lt_of_lt_of_le hs hδq_lec)
+    rwa [hc0] at h1
+  set Y : ℝ := 2 * Real.sqrt (t - τ) with hYdef
+  have hY0 : 0 < Y := by
+    rw [hYdef]
+    exact mul_pos (by norm_num) (Real.sqrt_pos.mpr htp)
+  have hYsq : Y ^ 2 = 4 * (t - τ) := by
+    rw [hYdef, mul_pow, Real.sq_sqrt (le_of_lt htp)]
+    ring
+  have hYlt : Y < min (η / 4) (1 / 2) := by
+    have h1 : Real.sqrt (t - τ) < min (η / 8) (1 / 4) := by
+      rw [Real.sqrt_lt' (lt_min_iff.mpr ⟨by linarith [hη0], by norm_num⟩)]
+      exact lt_of_lt_of_le htδ hδq_lesq
+    rw [hYdef]
+    have h2 := mul_lt_mul_of_pos_left h1 (by norm_num : (0:ℝ) < 2)
+    have h3 : 2 * min (η / 8) (1 / 4) ≤ min (η / 4) (1 / 2) := by
+      refine le_min ?_ ?_
+      · have h4 := mul_le_mul_of_nonneg_left (min_le_left (η / 8) (1 / 4))
+          (by norm_num : (0:ℝ) ≤ 2)
+        linarith [h4]
+      · have h4 := mul_le_mul_of_nonneg_left (min_le_right (η / 8) (1 / 4))
+          (by norm_num : (0:ℝ) ≤ 2)
+        linarith [h4]
+    exact lt_of_lt_of_le h2 h3
+  -- the heat equation, pointwise along the critical curve
+  have hheat : ∀ s : ℝ, (∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand s (c s) u)
+      = -D2 (s, c s) := by
+    intro s
+    have h1 := deBruijnNewmanH_heat_equation s (c s)
+    have h2 : iteratedDeriv 2 (deBruijnNewmanH s) (c s) = D2 (s, c s) := by
+      rw [show (2 : ℕ) = 1 + 1 from rfl, iteratedDeriv_succ, iteratedDeriv_one]
+    rw [h2] at h1
+    rw [h1, neg_neg]
+  have hccont : ContinuousOn c (Set.uIcc τ t) := by
+    rw [Set.uIcc_of_le (le_of_lt htpos)]
+    intro s hs
+    have hsd : dist s τ < δ₃ := by
+      rw [Real.dist_eq, abs_of_nonneg (by linarith [hs.1])]
+      have h1 : s - τ ≤ t - τ := by linarith [hs.2]
+      have h2 : t - τ < δ₃ := lt_of_lt_of_le htδ hδq_le₃
+      linarith [h1, h2]
+    exact (hδ₃ hsd).continuousAt.continuousWithinAt
+  have hintD2 : IntervalIntegrable (fun s : ℝ => D2 (s, c s)) MeasureTheory.volume τ t :=
+    (continuous_deBruijnNewmanH_deriv_two.continuousOn.comp
+      (continuousOn_id.prodMk hccont) (Set.mapsTo_univ _ _)).intervalIntegrable
+  have hintB : IntervalIntegrable (fun _ : ℝ => B) MeasureTheory.volume τ t :=
+    intervalIntegrable_const
+  -- Estimate A: `H(t, c(t)) = −B·(t−τ) + o(t−τ)` via the critical height
+  have hE0est : ‖deBruijnNewmanH t (c t) + B * ((t - τ : ℝ) : ℂ)‖
+      ≤ (|B.re| / 8) * (t - τ) := by
+    have h1 : deBruijnNewmanH t (c t) + B * ((t - τ : ℝ) : ℂ)
+        = ∫ s : ℝ in τ..t, (B - D2 (s, c s)) := by
+      have h2 : (∫ s : ℝ in τ..t,
+            ∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand s (c s) u)
+          = ∫ s : ℝ in τ..t, -D2 (s, c s) :=
+        intervalIntegral.integral_congr fun s _ => hheat s
+      have h3 : B * ((t - τ : ℝ) : ℂ) = ∫ s : ℝ in τ..t, B := by
+        rw [intervalIntegral.integral_const]
+        exact (Complex.real_smul.trans (mul_comm _ _)).symm
+      rw [hct_height, h2, h3, intervalIntegral.integral_neg,
+        intervalIntegral.integral_sub hintB hintD2, sub_eq_add_neg, add_comm]
+    rw [h1]
+    calc ‖∫ s : ℝ in τ..t, (B - D2 (s, c s))‖
+        ≤ (|B.re| / 8) * |t - τ| :=
+          intervalIntegral.norm_integral_le_of_norm_le_const fun s hs => by
+            have hsI : s ∈ Set.Ioc τ t := by
+              rwa [Set.uIoc_of_le (le_of_lt htpos)] at hs
+            have hsd : dist s τ < δq := by
+              have h5 : s - τ ≤ t - τ := by linarith [hsI.2]
+              rw [Real.dist_eq, abs_of_nonneg (by linarith [hsI.1])]
+              linarith [h5, htδ]
+            rw [norm_sub_rev]
+            apply le_of_lt
+            apply hD2B
+            · refine Set.mem_prod.mpr ⟨⟨?_, ?_⟩, ?_⟩
+              · linarith [hsI.1]
+              · have h4 : t - τ < 1 := htδ.trans hδq_lt_1
+                linarith [hsI.2, h4]
+              · rw [Metric.mem_closedBall]
+                exact le_of_lt (lt_of_lt_of_le (hcnear s hsd)
+                  ((min_le_right _ _).trans (by norm_num : (1 / 2 : ℝ) ≤ 1)))
+            · rw [Prod.dist_eq]
+              exact max_lt_iff.mpr
+                ⟨(lt_of_lt_of_le hsd hδq_leη).trans (half_lt_self hη0),
+                  (hcnear s hsd).trans
+                    ((min_le_left _ _).trans_lt (by linarith [hη0]))⟩
+        _ = (|B.re| / 8) * (t - τ) := by rw [abs_of_nonneg (le_of_lt htp)]
+  -- Taylor-2 at the critical point: the linear term vanishes
+  have hT : ∀ y : ℝ, deBruijnNewmanH t (c t + (y : ℂ))
+      = deBruijnNewmanH t (c t) + ∫ s : ℝ in (0:ℝ)..1, (∫ r : ℝ in (0:ℝ)..1,
+          deriv (deriv (deBruijnNewmanH t)) (c t + ((r * s : ℝ) : ℂ) * (y : ℂ))
+            * ((s : ℂ) * (y : ℂ))) * (y : ℂ) := by
+    intro y
+    have h1 := deBruijnNewmanH_taylor_two_z t (c t) (y : ℂ)
+    rw [hct_crit, zero_mul, add_zero] at h1
+    exact h1
+  -- Estimate B: the remainder is `B·y²/2 + o(y²)`
+  have hquad : ∀ y : ℝ, |y| ≤ Y →
+      ‖(∫ s : ℝ in (0:ℝ)..1, (∫ r : ℝ in (0:ℝ)..1,
+          deriv (deriv (deBruijnNewmanH t)) (c t + ((r * s : ℝ) : ℂ) * (y : ℂ))
+            * ((s : ℂ) * (y : ℂ))) * (y : ℂ))
+        - B * ((y : ℂ) ^ 2) / 2‖ ≤ (|B.re| / 8) * y ^ 2 := by
+    intro y hy
+    have hseg : ∀ r s : ℝ, r ∈ Set.Icc (0:ℝ) 1 → s ∈ Set.Icc (0:ℝ) 1 →
+        (t, c t + ((r * s : ℝ) : ℂ) * (y : ℂ)) ∈ K
+        ∧ dist (t, c t + ((r * s : ℝ) : ℂ) * (y : ℂ)) (τ, x₀) < η := by
+      intro r s hr hs
+      have hctn : dist (c t) x₀ < min (η / 4) (1 / 2) := hcnear t htd
+      have hrs : ‖((r * s : ℝ) : ℂ) * (y : ℂ)‖ ≤ Y := by
+        rw [norm_mul, show ‖((r * s : ℝ) : ℂ)‖ = |r * s| from RCLike.norm_ofReal _,
+          show ‖(y : ℂ)‖ = |y| from RCLike.norm_ofReal _]
+        have h1 : |r * s| ≤ 1 := by
+          rw [abs_of_nonneg (mul_nonneg hr.1 hs.1)]
+          exact mul_le_one₀ hr.2 hs.1 hs.2
+        calc |r * s| * |y| ≤ 1 * Y := mul_le_mul h1 hy (abs_nonneg _) (by norm_num)
+          _ = Y := one_mul Y
+      have heq : c t + ((r * s : ℝ) : ℂ) * (y : ℂ) - x₀
+          = (c t - x₀) + ((r * s : ℝ) : ℂ) * (y : ℂ) := by ring
+      have hdist : dist (c t + ((r * s : ℝ) : ℂ) * (y : ℂ)) x₀ < min (η / 2) 1 := by
+        have h2 : min (η / 4) (1 / 2) + Y < min (η / 2) 1 := by
+          have h3 : min (η / 4) (1 / 2) + Y
+              < min (η / 4) (1 / 2) + min (η / 4) (1 / 2) :=
+            add_lt_add_of_le_of_lt (le_refl _) hYlt
+          have h4 : min (η / 4) (1 / 2) + min (η / 4) (1 / 2) ≤ min (η / 2) 1 := by
+            refine le_min ?_ ?_
+            · have h5 := min_le_left (η / 4) (1 / 2); linarith [h5]
+            · have h5 := min_le_right (η / 4) (1 / 2); linarith [h5]
+          exact lt_of_lt_of_le h3 h4
+        calc dist (c t + ((r * s : ℝ) : ℂ) * (y : ℂ)) x₀
+            = ‖c t + ((r * s : ℝ) : ℂ) * (y : ℂ) - x₀‖ := dist_eq_norm _ _
+          _ = ‖(c t - x₀) + ((r * s : ℝ) : ℂ) * (y : ℂ)‖ := by rw [heq]
+          _ ≤ ‖c t - x₀‖ + ‖((r * s : ℝ) : ℂ) * (y : ℂ)‖ := norm_add_le _ _
+          _ = dist (c t) x₀ + ‖((r * s : ℝ) : ℂ) * (y : ℂ)‖ := by rw [← dist_eq_norm]
+          _ < min (η / 4) (1 / 2) + Y := add_lt_add_of_lt_of_le hctn hrs
+          _ < min (η / 2) 1 := h2
+      refine ⟨Set.mem_prod.mpr ⟨⟨?_, ?_⟩, ?_⟩, ?_⟩
+      · linarith [htpos]
+      · have h5 : t - τ < 1 := htδ.trans hδq_lt_1
+        linarith [h5, htpos]
+      · rw [Metric.mem_closedBall]
+        exact le_of_lt (lt_of_lt_of_le hdist (min_le_right _ _))
+      · rw [Prod.dist_eq]
+        exact max_lt_iff.mpr ⟨(lt_of_lt_of_le htd hδq_leη).trans (half_lt_self hη0),
+          hdist.trans ((min_le_left _ _).trans_lt (half_lt_self hη0))⟩
+    have hinner_eq : ∀ s : ℝ, (∫ r : ℝ in (0:ℝ)..1,
+          deriv (deriv (deBruijnNewmanH t)) (c t + ((r * s : ℝ) : ℂ) * (y : ℂ))
+            * ((s : ℂ) * (y : ℂ)))
+        = deriv (deBruijnNewmanH t) (c t + (s : ℂ) * (y : ℂ))
+          - deriv (deBruijnNewmanH t) (c t) := by
+      intro s
+      have h1 := deBruijnNewmanHzderiv_z_sub_eq_intervalIntegral t (c t)
+        ((s : ℂ) * (y : ℂ))
+      rw [h1]
+      apply intervalIntegral.integral_congr
+      intro r _
+      have hcast : ((r * s : ℝ) : ℂ) * (y : ℂ) = (r : ℂ) * ((s : ℂ) * (y : ℂ)) := by
+        push_cast
+        ring
+      show deriv (deriv (deBruijnNewmanH t)) (c t + ((r * s : ℝ) : ℂ) * (y : ℂ))
+          * ((s : ℂ) * (y : ℂ))
+        = deriv (deriv (deBruijnNewmanH t)) (c t + (r : ℂ) * ((s : ℂ) * (y : ℂ)))
+          * ((s : ℂ) * (y : ℂ))
+      rw [hcast]
+    have hR : (∫ s : ℝ in (0:ℝ)..1, (∫ r : ℝ in (0:ℝ)..1,
+          deriv (deriv (deBruijnNewmanH t)) (c t + ((r * s : ℝ) : ℂ) * (y : ℂ))
+            * ((s : ℂ) * (y : ℂ))) * (y : ℂ))
+        = ∫ s : ℝ in (0:ℝ)..1,
+          (deriv (deBruijnNewmanH t) (c t + (s : ℂ) * (y : ℂ))
+            - deriv (deBruijnNewmanH t) (c t)) * (y : ℂ) := by
+      apply intervalIntegral.integral_congr
+      intro s _
+      show (∫ r : ℝ in (0:ℝ)..1,
+          deriv (deriv (deBruijnNewmanH t)) (c t + ((r * s : ℝ) : ℂ) * (y : ℂ))
+            * ((s : ℂ) * (y : ℂ))) * (y : ℂ)
+        = (deriv (deBruijnNewmanH t) (c t + (s : ℂ) * (y : ℂ))
+          - deriv (deBruijnNewmanH t) (c t)) * (y : ℂ)
+      rw [hinner_eq s]
+    have hBint : ∀ s : ℝ, (∫ r : ℝ in (0:ℝ)..1,
+          deriv (deriv (deBruijnNewmanH t)) (c t + ((r * s : ℝ) : ℂ) * (y : ℂ))
+            * ((s : ℂ) * (y : ℂ)))
+        = (∫ r : ℝ in (0:ℝ)..1,
+          (deriv (deriv (deBruijnNewmanH t)) (c t + ((r * s : ℝ) : ℂ) * (y : ℂ)) - B)
+            * ((s : ℂ) * (y : ℂ)))
+          + B * ((s : ℂ) * (y : ℂ)) := by
+      intro s
+      have hcr : Continuous fun r : ℝ => c t + ((r * s : ℝ) : ℂ) * (y : ℂ) :=
+        continuous_const.add
+          ((Complex.continuous_ofReal.comp (continuous_id.mul continuous_const)).mul
+            continuous_const)
+      have hint1 : IntervalIntegrable (fun r : ℝ =>
+          deriv (deriv (deBruijnNewmanH t)) (c t + ((r * s : ℝ) : ℂ) * (y : ℂ))
+            * ((s : ℂ) * (y : ℂ))) MeasureTheory.volume 0 1 :=
+        ((continuous_deBruijnNewmanH_deriv_two.comp (continuous_const.prodMk hcr)).mul
+          continuous_const).intervalIntegrable 0 1
+      have hint2 : IntervalIntegrable (fun r : ℝ =>
+          (deriv (deriv (deBruijnNewmanH t)) (c t + ((r * s : ℝ) : ℂ) * (y : ℂ)) - B)
+            * ((s : ℂ) * (y : ℂ))) MeasureTheory.volume 0 1 :=
+        (((continuous_deBruijnNewmanH_deriv_two.comp (continuous_const.prodMk hcr)).sub
+          continuous_const).mul continuous_const).intervalIntegrable 0 1
+      have e1 : (∫ r : ℝ in (0:ℝ)..1,
+            deriv (deriv (deBruijnNewmanH t)) (c t + ((r * s : ℝ) : ℂ) * (y : ℂ))
+              * ((s : ℂ) * (y : ℂ)))
+          = ∫ r : ℝ in (0:ℝ)..1,
+            ((deriv (deriv (deBruijnNewmanH t)) (c t + ((r * s : ℝ) : ℂ) * (y : ℂ)) - B)
+              * ((s : ℂ) * (y : ℂ)) + B * ((s : ℂ) * (y : ℂ))) := by
+        apply intervalIntegral.integral_congr
+        intro r _
+        show deriv (deriv (deBruijnNewmanH t)) (c t + ((r * s : ℝ) : ℂ) * (y : ℂ))
+            * ((s : ℂ) * (y : ℂ))
+          = (deriv (deriv (deBruijnNewmanH t)) (c t + ((r * s : ℝ) : ℂ) * (y : ℂ)) - B)
+            * ((s : ℂ) * (y : ℂ)) + B * ((s : ℂ) * (y : ℂ))
+        ring
+      rw [e1, intervalIntegral.integral_add hint2 intervalIntegrable_const,
+        intervalIntegral.integral_const]
+      simp
+    have hBy : (∫ s : ℝ in (0:ℝ)..1, B * ((s : ℂ) * (y : ℂ)) * (y : ℂ))
+        = B * ((y : ℂ) ^ 2) / 2 := by
+      have h1 : (∫ s : ℝ in (0:ℝ)..1, (s : ℂ))
+          = ((∫ s : ℝ in (0:ℝ)..1, s : ℝ) : ℂ) := intervalIntegral.integral_ofReal
+      have hid : (∫ s : ℝ in (0:ℝ)..1, (s : ℂ)) = ((1 / 2 : ℝ) : ℂ) := by
+        rw [h1, integral_id]
+        norm_num
+      have e2a : (∫ s : ℝ in (0:ℝ)..1, B * ((s : ℂ) * (y : ℂ)) * (y : ℂ))
+          = ∫ s : ℝ in (0:ℝ)..1, (B * ((y : ℂ) ^ 2)) * (s : ℂ) :=
+        intervalIntegral.integral_congr fun s _ => by ring
+      have e2b : (∫ s : ℝ in (0:ℝ)..1, (B * ((y : ℂ) ^ 2)) * (s : ℂ))
+          = (B * ((y : ℂ) ^ 2)) * ∫ s : ℝ in (0:ℝ)..1, (s : ℂ) :=
+        intervalIntegral.integral_const_mul _ _
+      rw [e2a, e2b, hid]
+      push_cast
+      ring
+    have hzdcont : Continuous fun s : ℝ =>
+        deriv (deBruijnNewmanH t) (c t + (s : ℂ) * (y : ℂ)) :=
+      continuous_deBruijnNewmanH_zderiv.comp
+        (continuous_const.prodMk
+          (continuous_const.add (Complex.continuous_ofReal.mul continuous_const)))
+    have hintOuter' : IntervalIntegrable (fun s : ℝ =>
+        (deriv (deBruijnNewmanH t) (c t + (s : ℂ) * (y : ℂ))
+          - deriv (deBruijnNewmanH t) (c t)) * (y : ℂ)) MeasureTheory.volume 0 1 :=
+      ((hzdcont.sub continuous_const).mul continuous_const).intervalIntegrable 0 1
+    have hintBy' : IntervalIntegrable (fun s : ℝ => B * ((s : ℂ) * (y : ℂ)) * (y : ℂ))
+        MeasureTheory.volume 0 1 :=
+      ((continuous_const.mul (Complex.continuous_ofReal.mul continuous_const)).mul
+        continuous_const).intervalIntegrable 0 1
+    have hfin : (∫ s : ℝ in (0:ℝ)..1, (∫ r : ℝ in (0:ℝ)..1,
+          deriv (deriv (deBruijnNewmanH t)) (c t + ((r * s : ℝ) : ℂ) * (y : ℂ))
+            * ((s : ℂ) * (y : ℂ))) * (y : ℂ))
+        - B * ((y : ℂ) ^ 2) / 2
+        = ∫ s : ℝ in (0:ℝ)..1, (∫ r : ℝ in (0:ℝ)..1,
+          (deriv (deriv (deBruijnNewmanH t)) (c t + ((r * s : ℝ) : ℂ) * (y : ℂ)) - B)
+            * ((s : ℂ) * (y : ℂ))) * (y : ℂ) := by
+      rw [hR, ← hBy, ← intervalIntegral.integral_sub hintOuter' hintBy']
+      apply intervalIntegral.integral_congr
+      intro s _
+      show (deriv (deBruijnNewmanH t) (c t + (s : ℂ) * (y : ℂ))
+          - deriv (deBruijnNewmanH t) (c t)) * (y : ℂ)
+          - B * ((s : ℂ) * (y : ℂ)) * (y : ℂ)
+        = (∫ r : ℝ in (0:ℝ)..1,
+          (deriv (deriv (deBruijnNewmanH t)) (c t + ((r * s : ℝ) : ℂ) * (y : ℂ)) - B)
+            * ((s : ℂ) * (y : ℂ))) * (y : ℂ)
+      rw [← hinner_eq s, hBint s]
+      ring
+    have hC : ∀ s : ℝ, s ∈ Set.uIoc (0:ℝ) 1 →
+        ‖(∫ r : ℝ in (0:ℝ)..1,
+          (deriv (deriv (deBruijnNewmanH t)) (c t + ((r * s : ℝ) : ℂ) * (y : ℂ)) - B)
+            * ((s : ℂ) * (y : ℂ))) * (y : ℂ)‖
+        ≤ (|B.re| / 8) * y ^ 2 := by
+      intro s hs
+      have hs' : s ∈ Set.Ioc (0:ℝ) 1 := by
+        rwa [Set.uIoc_of_le (by norm_num : (0:ℝ) ≤ 1)] at hs
+      have hsI : s ∈ Set.Icc (0:ℝ) 1 := Set.Ioc_subset_Icc_self hs'
+      have hs1 : |s| ≤ 1 := by
+        rw [abs_of_nonneg (le_of_lt hs'.1)]
+        exact hs'.2
+      have hpt : ∀ r : ℝ, r ∈ Set.uIoc (0:ℝ) 1 →
+          ‖deriv (deriv (deBruijnNewmanH t)) (c t + ((r * s : ℝ) : ℂ) * (y : ℂ)) - B‖
+          < |B.re| / 8 := by
+        intro r hr
+        have hr' : r ∈ Set.Ioc (0:ℝ) 1 := by
+          rwa [Set.uIoc_of_le (by norm_num : (0:ℝ) ≤ 1)] at hr
+        exact hD2B (t, c t + ((r * s : ℝ) : ℂ) * (y : ℂ))
+          (hseg r s (Set.Ioc_subset_Icc_self hr') hsI).1
+          (hseg r s (Set.Ioc_subset_Icc_self hr') hsI).2
+      have hinner : ‖∫ r : ℝ in (0:ℝ)..1,
+            (deriv (deriv (deBruijnNewmanH t)) (c t + ((r * s : ℝ) : ℂ) * (y : ℂ)) - B)
+              * ((s : ℂ) * (y : ℂ))‖
+          ≤ (|B.re| / 8) * (|s| * |y|) := by
+        calc ‖∫ r : ℝ in (0:ℝ)..1,
+              (deriv (deriv (deBruijnNewmanH t)) (c t + ((r * s : ℝ) : ℂ) * (y : ℂ)) - B)
+                * ((s : ℂ) * (y : ℂ))‖
+            ≤ ((|B.re| / 8) * (|s| * |y|)) * |1 - 0| :=
+              intervalIntegral.norm_integral_le_of_norm_le_const fun r hr => by
+                have h2 : ‖((s : ℂ) * (y : ℂ))‖ = |s| * |y| := by
+                  rw [norm_mul, show ‖(s : ℂ)‖ = |s| from RCLike.norm_ofReal _,
+                    show ‖(y : ℂ)‖ = |y| from RCLike.norm_ofReal _]
+                rw [norm_mul, h2]
+                exact mul_le_mul_of_nonneg_right (le_of_lt (hpt r hr))
+                  (mul_nonneg (abs_nonneg _) (abs_nonneg _))
+          _ = (|B.re| / 8) * (|s| * |y|) := by norm_num
+      have hyy : |y| * |y| = y ^ 2 := by
+        rw [← sq_abs y, pow_two]
+      calc ‖(∫ r : ℝ in (0:ℝ)..1,
+              (deriv (deriv (deBruijnNewmanH t)) (c t + ((r * s : ℝ) : ℂ) * (y : ℂ)) - B)
+                * ((s : ℂ) * (y : ℂ))) * (y : ℂ)‖
+          = ‖∫ r : ℝ in (0:ℝ)..1,
+              (deriv (deriv (deBruijnNewmanH t)) (c t + ((r * s : ℝ) : ℂ) * (y : ℂ)) - B)
+                * ((s : ℂ) * (y : ℂ))‖ * |y| := by
+            rw [norm_mul, show ‖(y : ℂ)‖ = |y| from RCLike.norm_ofReal _]
+        _ ≤ ((|B.re| / 8) * (|s| * |y|)) * |y| :=
+            mul_le_mul_of_nonneg_right hinner (abs_nonneg _)
+        _ = ((|B.re| / 8) * |s|) * (|y| * |y|) := by ring
+        _ = ((|B.re| / 8) * |s|) * y ^ 2 := by rw [hyy]
+        _ ≤ ((|B.re| / 8) * 1) * y ^ 2 :=
+            mul_le_mul_of_nonneg_right
+              (mul_le_mul_of_nonneg_left hs1 (by positivity)) (sq_nonneg y)
+        _ = (|B.re| / 8) * y ^ 2 := by ring
+    rw [hfin]
+    calc ‖∫ s : ℝ in (0:ℝ)..1, (∫ r : ℝ in (0:ℝ)..1,
+            (deriv (deriv (deBruijnNewmanH t)) (c t + ((r * s : ℝ) : ℂ) * (y : ℂ)) - B)
+              * ((s : ℂ) * (y : ℂ))) * (y : ℂ)‖
+        ≤ ((|B.re| / 8) * y ^ 2) * |1 - 0| :=
+          intervalIntegral.norm_integral_le_of_norm_le_const hC
+      _ = (|B.re| / 8) * y ^ 2 := by norm_num
+  -- the three evaluation formulas with small complex errors
+  have hE₀ : ∃ E₀ : ℂ, ‖E₀‖ ≤ (|B.re| / 8) * (t - τ)
+      ∧ deBruijnNewmanH t (c t) = -B * ((t - τ : ℝ) : ℂ) + E₀ :=
+    ⟨deBruijnNewmanH t (c t) + B * ((t - τ : ℝ) : ℂ), hE0est, by ring⟩
+  have hE₁ : ∃ E₁ : ℂ, ‖E₁‖ ≤ (|B.re| / 8) * Y ^ 2
+      ∧ deBruijnNewmanH t (c t + (Y : ℂ))
+        = deBruijnNewmanH t (c t) + B * ((Y : ℂ) ^ 2) / 2 + E₁ := by
+    refine ⟨_, hquad Y (abs_of_nonneg (le_of_lt hY0)).le, ?_⟩
+    rw [hT Y]
+    ring
+  have hE₂ : ∃ E₂ : ℂ, ‖E₂‖ ≤ (|B.re| / 8) * Y ^ 2
+      ∧ deBruijnNewmanH t (c t + ((-Y : ℝ) : ℂ))
+        = deBruijnNewmanH t (c t) + B * (((-Y : ℝ) : ℂ) ^ 2) / 2 + E₂ := by
+    have hb : ‖(∫ s : ℝ in (0:ℝ)..1, (∫ r : ℝ in (0:ℝ)..1,
+          deriv (deriv (deBruijnNewmanH t)) (c t + ((r * s : ℝ) : ℂ) * ((-Y : ℝ) : ℂ))
+            * ((s : ℂ) * ((-Y : ℝ) : ℂ))) * ((-Y : ℝ) : ℂ))
+        - B * (((-Y : ℝ) : ℂ) ^ 2) / 2‖ ≤ (|B.re| / 8) * Y ^ 2 := by
+      have h := hquad (-Y) ((abs_neg Y).trans (abs_of_nonneg (le_of_lt hY0))).le
+      rwa [neg_sq] at h
+    refine ⟨_, hb, ?_⟩
+    rw [hT (-Y)]
+    ring
+  obtain ⟨E₀, hE₀n, hE₀eq⟩ := hE₀
+  obtain ⟨E₁, hE₁n, hE₁eq⟩ := hE₁
+  obtain ⟨E₂, hE₂n, hE₂eq⟩ := hE₂
+  have hcastB : B * ((t - τ : ℝ) : ℂ) = ((B.re * (t - τ) : ℝ) : ℂ) := by
+    nth_rewrite 1 [hBcr]
+    push_cast
+    ring
+  have hcastBn : -B * ((t - τ : ℝ) : ℂ) = ((-B.re * (t - τ) : ℝ) : ℂ) := by
+    nth_rewrite 1 [hBcr]
+    push_cast
+    ring
+  have hevY : deBruijnNewmanH t (c t + (Y : ℂ))
+      = B * ((t - τ : ℝ) : ℂ) + (E₀ + E₁) := by
+    rw [hE₁eq, hE₀eq]
+    have h1 : B * ((Y : ℂ) ^ 2) / 2 = 2 * (B * ((t - τ : ℝ) : ℂ)) := by
+      have h2 : (Y : ℂ) ^ 2 = ((4 * (t - τ) : ℝ) : ℂ) := by
+        rw [← hYsq]
+        push_cast
+        ring
+      rw [h2]
+      push_cast
+      ring
+    rw [h1]
+    ring
+  have hevN : deBruijnNewmanH t (c t + ((-Y : ℝ) : ℂ))
+      = B * ((t - τ : ℝ) : ℂ) + (E₀ + E₂) := by
+    rw [hE₂eq, hE₀eq]
+    have h1 : B * (((-Y : ℝ) : ℂ) ^ 2) / 2 = 2 * (B * ((t - τ : ℝ) : ℂ)) := by
+      have h2 : ((-Y : ℝ) : ℂ) ^ 2 = ((4 * (t - τ) : ℝ) : ℂ) := by
+        have h3 : ((-Y : ℝ) : ℂ) ^ 2 = ((Y ^ 2 : ℝ) : ℂ) := by
+          push_cast
+          ring
+        rw [h3, hYsq]
+      rw [h2]
+      push_cast
+      ring
+    rw [h1]
+    ring
+  have hre0 : (deBruijnNewmanH t (c t)).re = -B.re * (t - τ) + E₀.re := by
+    rw [hE₀eq, hcastBn, Complex.add_re, Complex.ofReal_re]
+  have hreY : (deBruijnNewmanH t (c t + (Y : ℂ))).re
+      = B.re * (t - τ) + (E₀ + E₁).re := by
+    rw [hevY, hcastB, Complex.add_re, Complex.ofReal_re]
+  have hreN : (deBruijnNewmanH t (c t + ((-Y : ℝ) : ℂ))).re
+      = B.re * (t - τ) + (E₀ + E₂).re := by
+    rw [hevN, hcastB, Complex.add_re, Complex.ofReal_re]
+  have hE₀r : |E₀.re| ≤ (|B.re| / 8) * (t - τ) := (Complex.abs_re_le_norm _).trans hE₀n
+  have hE₁r : |(E₀ + E₁).re| ≤ (5 * |B.re| / 8) * (t - τ) := by
+    calc |(E₀ + E₁).re| ≤ ‖E₀ + E₁‖ := Complex.abs_re_le_norm _
+      _ ≤ ‖E₀‖ + ‖E₁‖ := norm_add_le _ _
+      _ ≤ (|B.re| / 8) * (t - τ) + (|B.re| / 8) * Y ^ 2 := add_le_add hE₀n hE₁n
+      _ = (5 * |B.re| / 8) * (t - τ) := by rw [hYsq]; ring
+  have hE₂r : |(E₀ + E₂).re| ≤ (5 * |B.re| / 8) * (t - τ) := by
+    calc |(E₀ + E₂).re| ≤ ‖E₀ + E₂‖ := Complex.abs_re_le_norm _
+      _ ≤ ‖E₀‖ + ‖E₂‖ := norm_add_le _ _
+      _ ≤ (|B.re| / 8) * (t - τ) + (|B.re| / 8) * Y ^ 2 := add_le_add hE₀n hE₂n
+      _ = (5 * |B.re| / 8) * (t - τ) := by rw [hYsq]; ring
+  rcases lt_or_gt_of_ne hBre_ne with hBneg | hBpos
+  · -- `B.re < 0`: positive at the critical point, negative at `±Y`
+    have hBabs : |B.re| = -B.re := abs_of_neg hBneg
+    have hg0 : 0 < (deBruijnNewmanH t (c t)).re := by
+      rw [hre0]
+      have h1 := (abs_le.mp hE₀r).1
+      have h2 : |B.re| * (t - τ) = -B.re * (t - τ) := by rw [hBabs]
+      have h3 : 0 < |B.re| * (t - τ) := mul_pos hB_abs_pos htp
+      linarith
+    have hgY : (deBruijnNewmanH t (c t + (Y : ℂ))).re < 0 := by
+      rw [hreY]
+      have h1 := (abs_le.mp hE₁r).2
+      have h2 : |B.re| * (t - τ) = -B.re * (t - τ) := by rw [hBabs]
+      have h3 : 0 < |B.re| * (t - τ) := mul_pos hB_abs_pos htp
+      linarith
+    have hgN : (deBruijnNewmanH t (c t + ((-Y : ℝ) : ℂ))).re < 0 := by
+      rw [hreN]
+      have h1 := (abs_le.mp hE₂r).2
+      have h2 : |B.re| * (t - τ) = -B.re * (t - τ) := by rw [hBabs]
+      have h3 : 0 < |B.re| * (t - τ) := mul_pos hB_abs_pos htp
+      linarith
+    exact ⟨mul_neg_of_pos_of_neg hg0 hgY, mul_neg_of_pos_of_neg hg0 hgN⟩
+  · -- `B.re > 0`: mirror image
+    have hBabs : |B.re| = B.re := abs_of_pos hBpos
+    have hg0 : (deBruijnNewmanH t (c t)).re < 0 := by
+      rw [hre0]
+      have h1 := (abs_le.mp hE₀r).2
+      have h2 : |B.re| * (t - τ) = B.re * (t - τ) := by rw [hBabs]
+      have h3 : 0 < |B.re| * (t - τ) := mul_pos hB_abs_pos htp
+      linarith
+    have hgY : 0 < (deBruijnNewmanH t (c t + (Y : ℂ))).re := by
+      rw [hreY]
+      have h1 := (abs_le.mp hE₁r).1
+      have h2 : |B.re| * (t - τ) = B.re * (t - τ) := by rw [hBabs]
+      have h3 : 0 < |B.re| * (t - τ) := mul_pos hB_abs_pos htp
+      linarith
+    have hgN : 0 < (deBruijnNewmanH t (c t + ((-Y : ℝ) : ℂ))).re := by
+      rw [hreN]
+      have h1 := (abs_le.mp hE₂r).1
+      have h2 : |B.re| * (t - τ) = B.re * (t - τ) := by rw [hBabs]
+      have h3 : 0 < |B.re| * (t - τ) := mul_pos hB_abs_pos htp
+      linarith
+    exact ⟨mul_neg_of_neg_of_pos hg0 hgY, mul_neg_of_neg_of_pos hg0 hgN⟩
+
 /-- **Diagonal derivative — the zero-transport piece**: if `z(t) → z₀` as
 `t → t₀`, then `t ↦ H_t(z(t)) − H_{t₀}(z(t))` has derivative `∂_t H_{t₀}(z₀)`
 (the `u²`-weighted heat integral) at `t₀`. Proof: the FTC representation
