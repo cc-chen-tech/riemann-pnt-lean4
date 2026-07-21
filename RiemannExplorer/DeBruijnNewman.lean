@@ -4770,6 +4770,25 @@ theorem hasDerivAt_deBruijnNewmanH_diag_sub (z : ℝ → ℂ) (z₀ : ℂ) (t₀
         rw [mul_comm |t - t₀|⁻¹ _, mul_assoc, mul_inv_cancel₀ h0, mul_one]
     _ < ε := half_lt_self hε
 
+/-- **Diagonal chain rule**: along a differentiable curve `z : ℝ → ℂ`,
+`t ↦ H_t(z(t))` is differentiable with derivative
+`∂_t H_{t₀}(z(t₀)) + ∂_z H_{t₀}(z(t₀)) · ż`. Proof: split the diagonal as the
+transport piece `t ↦ H_t(z(t)) − H_{t₀}(z(t))`
+(`hasDerivAt_deBruijnNewmanH_diag_sub`) plus the frozen-time composition
+`t ↦ H_{t₀}(z(t))` (ordinary one-variable chain rule). -/
+theorem hasDerivAt_deBruijnNewmanH_diag (z : ℝ → ℂ) (t₀ : ℝ) (ż : ℂ)
+    (hz : HasDerivAt z ż t₀) :
+    HasDerivAt (fun t : ℝ => deBruijnNewmanH t (z t))
+      ((∫ u : ℝ in Set.Ioi 0, ((u : ℂ) ^ 2) * heatIntegrand t₀ (z t₀) u)
+        + deriv (deBruijnNewmanH t₀) (z t₀) * ż) t₀ := by
+  have h1 := hasDerivAt_deBruijnNewmanH_diag_sub z (z t₀) t₀
+    hz.continuousAt.tendsto
+  have h2 : HasDerivAt (fun t : ℝ => deBruijnNewmanH t₀ (z t))
+      (deriv (deBruijnNewmanH t₀) (z t₀) * ż) t₀ :=
+    (differentiable_deBruijnNewmanH t₀ (z t₀)).hasDerivAt.comp t₀ hz
+  convert h1.add h2 using 2
+  simp only [Pi.add_apply, sub_add_cancel]
+
 /-- **Zero persistence (Rouché core) via the maximum modulus principle**:
 if `f` vanishes at `w` with `‖f‖ ≥ m > 0` on the sphere of radius `ρ`
 around `w`, and `g` is uniformly within `m / 2` of `f` on that sphere, then

@@ -124,3 +124,4 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.continuous_deBruijnNewmanH_tderiv
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_sub_eq_intervalIntegral
 #print axioms RiemannExplorer.DeBruijnNewman.hasDerivAt_deBruijnNewmanH_diag_sub
+#print axioms RiemannExplorer.DeBruijnNewman.hasDerivAt_deBruijnNewmanH_diag
