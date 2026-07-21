@@ -191,3 +191,6 @@ import RiemannExplorer.DeBruijnNewman
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewman_double_zero_height_mul_curvature
 
 #print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewman_eq_of_deriv_near_const
+
+#print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewman_zderiv_two_re_nhds_eventually
+#print axioms RiemannExplorer.DeBruijnNewman.deBruijnNewmanH_height_tendsto_zero

@@ -6869,6 +6869,63 @@ theorem deBruijnNewman_double_zero_height_mul_curvature (τ : ℝ) (x₀ : ℂ) 
     exact h
   exact hfin
 
+/-- **Curvature window along a curve**: if `c` is continuous at `τ` with
+`c(τ) = x₀` and `∂²_z H_τ(x₀) ≠ 0`, then near `τ` the real part of the
+curvature along the curve stays within half of `|Re ∂²_z H_τ(x₀)|`. Pure
+continuity; used by both halves of the double-zero exclusion. -/
+theorem deBruijnNewman_zderiv_two_re_nhds_eventually (τ : ℝ) (x₀ : ℂ) (c : ℝ → ℂ)
+    (hcont : ContinuousAt c τ) (hc0 : c τ = x₀)
+    (hB : deriv (deriv (deBruijnNewmanH τ)) x₀ ≠ 0)
+    (hx : x₀.im = 0) :
+    ∀ᶠ s in nhds τ,
+      |(deriv (deriv (deBruijnNewmanH s)) (c s)).re
+        - (deriv (deriv (deBruijnNewmanH τ)) x₀).re|
+        < |(deriv (deriv (deBruijnNewmanH τ)) x₀).re| / 2 := by
+  have hBim : (deriv (deriv (deBruijnNewmanH τ)) x₀).im = 0 :=
+    deBruijnNewmanHzderiv_two_im_eq_zero_of_im_eq_zero τ hx
+  have hBne : (deriv (deriv (deBruijnNewmanH τ)) x₀).re ≠ 0 := by
+    intro e
+    apply hB
+    have h := (Complex.re_add_im (deriv (deriv (deBruijnNewmanH τ)) x₀)).symm
+    rw [hBim, Complex.ofReal_zero, zero_mul, add_zero, e, Complex.ofReal_zero] at h
+    exact h
+  have hgAt : ContinuousAt (fun s : ℝ => (deriv (deriv (deBruijnNewmanH s)) (c s)).re)
+      τ := by
+    have h2 : ContinuousAt (fun r : ℝ => (r, c r)) τ := continuousAt_id.prodMk hcont
+    have h3 : ContinuousAt ((fun p : ℝ × ℂ => deriv (deriv (deBruijnNewmanH p.1)) p.2)
+        ∘ fun r : ℝ => (r, c r)) τ :=
+      continuous_deBruijnNewmanH_deriv_two.continuousAt.comp h2
+    have h4 : ContinuousAt ((fun z : ℂ => z.re)
+        ∘ ((fun p : ℝ × ℂ => deriv (deriv (deBruijnNewmanH p.1)) p.2)
+          ∘ fun r : ℝ => (r, c r))) τ :=
+      Complex.continuous_re.continuousAt.comp h3
+    exact h4
+  have hv : (deriv (deriv (deBruijnNewmanH τ)) (c τ)).re
+      = (deriv (deriv (deBruijnNewmanH τ)) x₀).re := by rw [hc0]
+  obtain ⟨ε, hε, hεP⟩ := Metric.continuousAt_iff.mp hgAt
+    (|(deriv (deriv (deBruijnNewmanH τ)) x₀).re| / 2)
+    (div_pos (abs_pos.mpr hBne) two_pos)
+  refine Filter.mem_of_superset (Metric.ball_mem_nhds τ hε) fun s hs => ?_
+  have h1 := hεP (Metric.mem_ball.mp hs)
+  rw [hv, Real.dist_eq] at h1
+  exact h1
+
+/-- **Height along a curve tends to the zero value**: if `c` is continuous at
+`τ`, `c(τ) = x₀` and `H_τ(x₀) = 0`, then `H_s(c(s)) → 0` as `s → τ`. Pure
+continuity; supplies the smallness of `q(t)` in the double-zero exclusion. -/
+theorem deBruijnNewmanH_height_tendsto_zero (τ : ℝ) (x₀ : ℂ) (c : ℝ → ℂ)
+    (hcont : ContinuousAt c τ) (hc0 : c τ = x₀)
+    (hz0 : deBruijnNewmanH τ x₀ = 0) :
+    Filter.Tendsto (fun s : ℝ => deBruijnNewmanH s (c s)) (nhds τ) (nhds 0) := by
+  have h2 : ContinuousAt (fun r : ℝ => (r, c r)) τ := continuousAt_id.prodMk hcont
+  have h3 : ContinuousAt ((fun p : ℝ × ℂ => deBruijnNewmanH p.1 p.2)
+      ∘ fun r : ℝ => (r, c r)) τ :=
+    contDiff_one_deBruijnNewmanH_prod.continuous.continuousAt.comp h2
+  have hv : deBruijnNewmanH τ (c τ) = 0 := by rw [hc0]; exact hz0
+  have h4 : Filter.Tendsto (fun s : ℝ => deBruijnNewmanH s (c s)) (nhds τ)
+      (nhds (deBruijnNewmanH τ (c τ))) := h3
+  rwa [hv] at h4
+
 
 set_option maxHeartbeats 2000000 in
 /-- **Quadratic sign flip along the critical curve (quantitative core of de
