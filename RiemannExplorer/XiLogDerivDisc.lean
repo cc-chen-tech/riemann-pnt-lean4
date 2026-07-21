@@ -45,7 +45,7 @@ import RiemannExplorer.XiPartialFractionEntire
 import RiemannExplorer.XiGrowthOrder
 
 open Complex ComplexConjugate Metric Filter Real
-open scoped BigOperators
+open scoped BigOperators Topology
 
 namespace RiemannExplorer
 
@@ -446,5 +446,55 @@ theorem exists_xiBlaschkeRegularized {R : ℝ} (hR : 0 < R) :
           (fun w => (∏ᶠ u, (w - u) ^ DU u) * g₀ w * xiBlaschkeProd R w) :=
       hg₀eq'.mul Filter.EventuallyEq.rfl
     exact h1.trans hBeq
+
+/-- **余离散相等 ⇒ 邻域相等**：在 `ξ·B_R` 连续且 `g` 连续的点 `w`（`w ∈ ball 0 (3R)`、
+`w ∉ xiZeroDiscFinset R`），两函数在 `𝓝 w` 中相等。 -/
+theorem xiBlaschkeRegularized_eventuallyEq_nhds {R : ℝ} (hR : 0 < R) {g : ℂ → ℂ}
+    (hg : (fun w => xiFunction w * xiBlaschkeProd R w)
+      =ᶠ[Filter.codiscreteWithin (Metric.ball (0 : ℂ) (3 * R))] g)
+    (hgC : ContinuousOn g (Metric.ball (0 : ℂ) (3 * R)))
+    {w : ℂ} (hw : w ∈ Metric.ball (0 : ℂ) (3 * R)) (hwS : w ∉ xiZeroDiscFinset R) :
+    (fun w => xiFunction w * xiBlaschkeProd R w) =ᶠ[𝓝 w] g := by
+  set U := Metric.ball (0 : ℂ) (3 * R) with hUdef
+  set F : ℂ → ℂ := fun w => xiFunction w * xiBlaschkeProd R w with hFdef
+  have hFC : ContinuousAt F w := by
+    have hBan : AnalyticAt ℂ (xiBlaschkeProd R) w := by
+      unfold xiBlaschkeProd
+      apply Finset.analyticAt_fun_prod
+      intro u hu
+      apply AnalyticAt.pow
+      exact Complex.analyticOnNhd_canonicalFactor (R := 2 * R) (w := u) w
+        (Set.mem_compl_singleton_iff.mpr (fun h : w = u => hwS (h ▸ hu)))
+    rw [hFdef]
+    exact ContinuousAt.mul differentiable_xiFunction.continuous.continuousAt hBan.continuousAt
+  have hUmem : U ∈ 𝓝 w := Metric.isOpen_ball.mem_nhds hw
+  have ht : {x | F x = g x} ∈ Filter.codiscreteWithin U := hg
+  rw [mem_codiscreteWithin_iff_forall_mem_nhdsNE] at ht
+  have h1 := ht w hw
+  have hU' : U ∈ 𝓝[≠] w := nhdsWithin_le_nhds hUmem
+  have h3 : {x | F x = g x} ∈ 𝓝[≠] w := by
+    apply Filter.mem_of_superset (Filter.inter_mem h1 hU')
+    rintro x ⟨hx1, hx2⟩
+    rcases hx1 with h | h
+    · exact h
+    · exact absurd hx2 h
+  have hval : F w = g w := by
+    have hF' : Filter.Tendsto F (𝓝[≠] w) (𝓝 (F w)) := hFC.continuousWithinAt
+    have hgC' : ContinuousAt g w := hgC.continuousAt hUmem
+    have h2 : Filter.Tendsto g (𝓝[≠] w) (𝓝 (F w)) := hF'.congr' h3
+    exact tendsto_nhds_unique h2 hgC'.continuousWithinAt
+  have h4 : insert w {x | F x = g x} ∈ 𝓝 w := by
+    rw [mem_nhdsWithin] at h3
+    obtain ⟨t, htopen, hat, htsub⟩ := h3
+    apply Filter.mem_of_superset (htopen.mem_nhds hat)
+    intro y hy
+    by_cases hyw : y = w
+    · exact Or.inl hyw
+    · exact Or.inr (htsub ⟨hy, hyw⟩)
+  apply Filter.mem_of_superset h4
+  intro y hy
+  rcases hy with rfl | h
+  · exact hval
+  · exact h
 
 end RiemannExplorer
