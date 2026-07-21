@@ -138,4 +138,106 @@ theorem xi_zero_count_in_closedBall_le {K : ℝ}
       ≤ (K * (1 + 2 * R) * Real.log (4 + 2 * R) - -Real.log 2) / Real.log 2 := hcount
     _ = (K * (1 + 2 * R) * Real.log (4 + 2 * R) + Real.log 2) / Real.log 2 := by ring
 
+/-! ## Blaschke 型因子：零点除子的有限支撑与重数 -/
+
+/-- ξ 在 `closedBall 0 R` 上除子的有限支撑（Finset 形式）。 -/
+noncomputable def xiZeroDiscFinset (R : ℝ) : Finset ℂ :=
+  ((MeromorphicOn.divisor xiFunction (Metric.closedBall 0 R)).finiteSupport
+    (isCompact_closedBall 0 R)).toFinset
+
+lemma mem_xiZeroDiscFinset {R : ℝ} {u : ℂ} :
+    u ∈ xiZeroDiscFinset R ↔
+      MeromorphicOn.divisor xiFunction (Metric.closedBall 0 R) u ≠ 0 := by
+  rw [xiZeroDiscFinset, Set.Finite.mem_toFinset]
+  exact Function.mem_support
+
+lemma xiZeroDiscFinset_subset_closedBall {R : ℝ} {u : ℂ} (hu : u ∈ xiZeroDiscFinset R) :
+    u ∈ Metric.closedBall 0 R :=
+  (MeromorphicOn.divisor xiFunction _).supportWithinDomain
+    (Function.mem_support.mpr (mem_xiZeroDiscFinset.mp hu))
+
+/-- ξ 在 `closedBall 0 R` 上除子的重数（自然数形式）。 -/
+noncomputable def xiZeroDiscMult (R : ℝ) (u : ℂ) : ℕ :=
+  (MeromorphicOn.divisor xiFunction (Metric.closedBall 0 R) u).toNat
+
+/-- ξ 在闭圆盘上的亚纯性（ξ 整）。 -/
+lemma meromorphicOn_xiFunction_closedBall (R : ℝ) :
+    MeromorphicOn xiFunction (Metric.closedBall (0 : ℂ) R) :=
+  (show AnalyticOnNhd ℂ xiFunction (Metric.closedBall (0 : ℂ) R) from
+    fun z _ => differentiable_xiFunction.analyticAt z).meromorphicOn
+
+lemma xiZeroDiscMult_cast (R : ℝ) (u : ℂ) :
+    (xiZeroDiscMult R u : ℤ) =
+      MeromorphicOn.divisor xiFunction (Metric.closedBall 0 R) u := by
+  have hnn : 0 ≤ MeromorphicOn.divisor xiFunction (Metric.closedBall 0 R) u := by
+    by_cases hu : u ∈ Metric.closedBall (0 : ℂ) R
+    · rw [MeromorphicOn.divisor_apply (meromorphicOn_xiFunction_closedBall R) hu]
+      exact WithTop.untop₀_nonneg.mpr
+        (differentiable_xiFunction.analyticAt u).meromorphicOrderAt_nonneg
+    · rw [MeromorphicOn.divisor_def, if_neg (fun h => hu h.2)]
+  rw [xiZeroDiscMult, Int.toNat_of_nonneg hnn]
+
+lemma xiFunction_eq_zero_of_mem_xiZeroDiscFinset {R : ℝ} {u : ℂ}
+    (hu : u ∈ xiZeroDiscFinset R) : xiFunction u = 0 := by
+  have huB := xiZeroDiscFinset_subset_closedBall hu
+  have hne := mem_xiZeroDiscFinset.mp hu
+  rw [MeromorphicOn.divisor_apply (meromorphicOn_xiFunction_closedBall R) huB] at hne
+  have han : AnalyticAt ℂ xiFunction u := differentiable_xiFunction.analyticAt u
+  have horder_ne : meromorphicOrderAt xiFunction u ≠ 0 := by
+    intro h
+    rw [h, WithTop.untop₀_zero] at hne
+    exact hne rfl
+  rw [han.meromorphicOrderAt_eq] at horder_ne
+  have hao_ne : analyticOrderAt xiFunction u ≠ 0 := by
+    intro h
+    rw [h] at horder_ne
+    simp at horder_ne
+  exact (analyticOrderAt_ne_zero.mp hao_ne).2
+
+lemma zero_notMem_xiZeroDiscFinset (R : ℝ) : (0 : ℂ) ∉ xiZeroDiscFinset R := by
+  intro h
+  have hz := xiFunction_eq_zero_of_mem_xiZeroDiscFinset h
+  rw [xiFunction_zero] at hz
+  norm_num at hz
+
+lemma xiZeroDiscMult_eq_analyticOrderNatAt {R : ℝ} {u : ℂ}
+    (hu : u ∈ Metric.closedBall (0 : ℂ) R) :
+    xiZeroDiscMult R u = analyticOrderNatAt xiFunction u := by
+  have hne_top : analyticOrderAt xiFunction u ≠ ⊤ :=
+    fun ht => xiFunction_ne_eventually_zero u (analyticOrderAt_eq_top.mp ht)
+  have key : MeromorphicOn.divisor xiFunction (Metric.closedBall 0 R) u =
+      (analyticOrderNatAt xiFunction u : ℤ) := by
+    rw [MeromorphicOn.divisor_apply (meromorphicOn_xiFunction_closedBall R) hu,
+      (differentiable_xiFunction.analyticAt u).meromorphicOrderAt_eq,
+      ← Nat.cast_analyticOrderNatAt hne_top, ENat.map_coe, WithTop.untop₀_coe]
+  rw [xiZeroDiscMult, key, Int.toNat_natCast]
+
+/-- Blaschke 型乘积 `B_R(z) = ∏_{u} canonicalFactor (2R) u z ^ {m_u}`。 -/
+noncomputable def xiBlaschkeProd (R : ℝ) (z : ℂ) : ℂ :=
+  ∏ u ∈ xiZeroDiscFinset R, Complex.canonicalFactor (2 * R) u z ^ xiZeroDiscMult R u
+
+lemma xiZeroDiscFinset_mem_ball_two_mul {R : ℝ} (hR : 0 < R) {u : ℂ}
+    (hu : u ∈ xiZeroDiscFinset R) : u ∈ Metric.ball (0 : ℂ) (2 * R) := by
+  have huB := xiZeroDiscFinset_subset_closedBall hu
+  rw [Metric.mem_ball, dist_zero_right]
+  rw [Metric.mem_closedBall, dist_zero_right] at huB
+  linarith
+
+lemma xiBlaschkeProd_ne_zero {R : ℝ} (hR : 0 < R) {z : ℂ}
+    (hz : z ∈ Metric.closedBall (0 : ℂ) (2 * R))
+    (hzS : ∀ u ∈ xiZeroDiscFinset R, z ≠ u) :
+    xiBlaschkeProd R z ≠ 0 := by
+  rw [xiBlaschkeProd, Finset.prod_ne_zero_iff]
+  intro u hu
+  exact pow_ne_zero _ (Complex.canonicalFactor_ne_zero
+    (xiZeroDiscFinset_mem_ball_two_mul hR hu) hz (hzS u hu))
+
+lemma norm_xiBlaschkeProd_eq_one {R : ℝ} (hR : 0 < R) {z : ℂ}
+    (hz : z ∈ Metric.sphere (0 : ℂ) (2 * R)) :
+    ‖xiBlaschkeProd R z‖ = 1 := by
+  rw [xiBlaschkeProd, Complex.norm_prod]
+  exact Finset.prod_eq_one fun u hu => by
+    rw [norm_pow, Complex.norm_canonicalFactor_eval_circle_eq_one
+      (xiZeroDiscFinset_mem_ball_two_mul hR hu) hz, one_pow]
+
 end RiemannExplorer
