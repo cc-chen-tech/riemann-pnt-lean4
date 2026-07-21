@@ -1213,4 +1213,278 @@ theorem xiWeightedInvPowSum_one_eq_invResidSum {m : ℕ} (hm : 2 ≤ m) :
   rw [← tsum_congr hfg]
   exact (Summable.tsum_add hf hg).symm
 
+/-! ## Part 5c：`W(1) = 2R₁`、`L'(1) = R₁`、`L⁽ᵐ⁾(1)` 公式 -/
+
+/-- **`W(1) = 2R₁`**：`W(1)` 的 Mittag-Leffler 项重新配对为
+`[(1-ρ)⁻¹ + (1-conjρ)⁻¹] + [ρ⁻¹ + conjρ⁻¹]`；前一对经 `τ` 换序后也是
+`R₁`（可和性：前一对高段配对恒等式分子 `|2 - 2re ρ| ≤ 4`、分母
+`≥ (‖ρ‖/2)²`，界 `16‖ρ‖⁻²`；后一对即 `R₁` 的被加项）。 -/
+theorem xiWeightedMittagLefflerSum_one_eq_two_invResidSum :
+    xiWeightedMittagLefflerSum 1 = 2 * xiWeightedInvResidSum 1 := by
+  classical
+  have hsummA : Summable fun ρ : UpperHalfPlaneNontrivialZero =>
+      (analyticOrderNatAt xiFunction (ρ : ℂ) : ℂ) *
+        ((1 - (ρ : ℂ))⁻¹ + (1 - conj (ρ : ℂ))⁻¹) := by
+    classical
+    have hsplit : (fun ρ : UpperHalfPlaneNontrivialZero ↦
+          (analyticOrderNatAt xiFunction (ρ : ℂ) : ℂ) *
+            ((1 - (ρ : ℂ))⁻¹ + (1 - conj (ρ : ℂ))⁻¹)) =
+        (fun ρ : UpperHalfPlaneNontrivialZero ↦
+            if ‖(ρ : ℂ)‖ < 2 then
+              (analyticOrderNatAt xiFunction (ρ : ℂ) : ℂ) *
+                ((1 - (ρ : ℂ))⁻¹ + (1 - conj (ρ : ℂ))⁻¹)
+            else 0) +
+          (fun ρ : UpperHalfPlaneNontrivialZero ↦
+            if 2 ≤ ‖(ρ : ℂ)‖ then
+              (analyticOrderNatAt xiFunction (ρ : ℂ) : ℂ) *
+                ((1 - (ρ : ℂ))⁻¹ + (1 - conj (ρ : ℂ))⁻¹)
+            else 0) := by
+      funext ρ
+      simp only [Pi.add_apply]
+      by_cases h : ‖(ρ : ℂ)‖ < 2
+      · rw [if_pos h, if_neg (by linarith), add_zero]
+      · rw [if_neg h, if_pos (le_of_not_gt h), zero_add]
+    rw [hsplit]
+    refine Summable.add ?_ ?_
+    · apply summable_of_ne_finset_zero
+        (s := (PrimeNumberTheorem.nontrivialZerosFinset 4).preimage
+          (fun ρ : UpperHalfPlaneNontrivialZero ↦ (ρ : ℂ)) Subtype.coe_injective.injOn)
+      intro ρ hρ
+      rw [Finset.mem_preimage] at hρ
+      by_cases hlt : ‖(ρ : ℂ)‖ < 2
+      · exfalso
+        apply hρ
+        rw [PrimeNumberTheorem.mem_nontrivialZerosFinset]
+        exact ⟨ρ.2.1, ((Complex.abs_im_le_norm _).trans hlt.le).trans (by norm_num)⟩
+      · exact if_neg hlt
+    · refine Summable.of_norm_bounded
+        (g := fun ρ : UpperHalfPlaneNontrivialZero ↦
+          16 * ((analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) * ‖(ρ : ℂ)‖⁻¹ ^ 2))
+        (summable_xiOrder_mul_norm_inv_sq_upperZeros.mul_left _) fun ρ => ?_
+      by_cases h : 2 ≤ ‖(ρ : ℂ)‖
+      · rw [if_pos h, norm_mul, RCLike.norm_natCast]
+        have hge1 : ‖(ρ : ℂ)‖ / 2 ≤ ‖1 - (ρ : ℂ)‖ := by
+          have h1 := norm_sub_norm_le (ρ : ℂ) (1 : ℂ)
+          rw [norm_one] at h1
+          have h2 : ‖(ρ : ℂ) - 1‖ = ‖1 - (ρ : ℂ)‖ := norm_sub_rev _ _
+          rw [h2] at h1
+          linarith
+        have hge2 : ‖(ρ : ℂ)‖ / 2 ≤ ‖1 - conj (ρ : ℂ)‖ := by
+          have h1 := norm_sub_norm_le (conj (ρ : ℂ)) (1 : ℂ)
+          rw [norm_one, Complex.norm_conj] at h1
+          have h2 : ‖conj (ρ : ℂ) - 1‖ = ‖1 - conj (ρ : ℂ)‖ := norm_sub_rev _ _
+          rw [h2] at h1
+          linarith
+        have h1ne : 1 - (ρ : ℂ) ≠ 0 := by
+          intro hz
+          rw [hz, norm_zero] at hge1
+          linarith
+        have h2ne : 1 - conj (ρ : ℂ) ≠ 0 := by
+          intro hz
+          rw [hz, norm_zero] at hge2
+          linarith
+        have hre : |(ρ : ℂ).re| ≤ 1 := by
+          have h3 := ρ.2.1.2.1
+          have h4 := ρ.2.1.2.2
+          rw [abs_le]
+          constructor <;> linarith
+        have hid : (1 - (ρ : ℂ))⁻¹ + (1 - conj (ρ : ℂ))⁻¹ =
+            ((2 : ℂ) - 2 * ((ρ : ℂ).re : ℂ)) /
+              ((1 - (ρ : ℂ)) * (1 - conj (ρ : ℂ))) := by
+          field_simp
+          have hc : (ρ : ℂ) + conj (ρ : ℂ) = (2 * (ρ : ℂ).re : ℂ) := by
+            rw [Complex.add_conj]
+            push_cast
+            ring
+          linear_combination -hc
+        have hnum : ‖(2 : ℂ) - 2 * ((ρ : ℂ).re : ℂ)‖ ≤ 4 := by
+          calc ‖(2 : ℂ) - 2 * ((ρ : ℂ).re : ℂ)‖
+              ≤ ‖(2 : ℂ)‖ + ‖2 * ((ρ : ℂ).re : ℂ)‖ := norm_sub_le _ _
+            _ = 2 + 2 * |(ρ : ℂ).re| := by
+                rw [norm_mul, Complex.norm_real, Real.norm_eq_abs]
+                norm_num
+            _ ≤ 4 := by linarith [hre]
+        have hden : (‖(ρ : ℂ)‖ / 2) ^ 2 ≤ ‖1 - (ρ : ℂ)‖ * ‖1 - conj (ρ : ℂ)‖ := by
+          rw [sq]
+          exact mul_le_mul hge1 hge2 (by positivity) (by linarith)
+        have hdenpos : 0 < ‖1 - (ρ : ℂ)‖ * ‖1 - conj (ρ : ℂ)‖ := by
+          have hp1 : 0 < ‖1 - (ρ : ℂ)‖ := by linarith [hge1]
+          have hp2 : 0 < ‖1 - conj (ρ : ℂ)‖ := by linarith [hge2]
+          exact mul_pos hp1 hp2
+        have hmain : ‖((2 : ℂ) - 2 * ((ρ : ℂ).re : ℂ)) /
+              ((1 - (ρ : ℂ)) * (1 - conj (ρ : ℂ)))‖ ≤ 16 * ‖(ρ : ℂ)‖⁻¹ ^ 2 := by
+          rw [norm_div, norm_mul]
+          have hle1 := div_le_div_of_nonneg_right hnum hdenpos.le
+          have hle2 : (4 : ℝ) / (‖1 - (ρ : ℂ)‖ * ‖1 - conj (ρ : ℂ)‖) ≤
+              4 / (‖(ρ : ℂ)‖ / 2) ^ 2 :=
+            div_le_div_of_nonneg_left (by norm_num) (by positivity) hden
+          have heq : (4 : ℝ) / (‖(ρ : ℂ)‖ / 2) ^ 2 = 16 * ‖(ρ : ℂ)‖⁻¹ ^ 2 := by
+            rw [div_pow, inv_pow]
+            field_simp
+            ring
+          exact hle1.trans (hle2.trans_eq heq)
+        calc (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) *
+              ‖(1 - (ρ : ℂ))⁻¹ + (1 - conj (ρ : ℂ))⁻¹‖
+            ≤ (analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) *
+                (16 * ‖(ρ : ℂ)‖⁻¹ ^ 2) :=
+              mul_le_mul_of_nonneg_left (by rw [hid]; exact hmain) (Nat.cast_nonneg _)
+          _ = 16 * ((analyticOrderNatAt xiFunction (ρ : ℂ) : ℝ) * ‖(ρ : ℂ)‖⁻¹ ^ 2) := by
+              ring
+      · rw [if_neg h, norm_zero]
+        positivity
+  have hsummR : Summable fun ρ : UpperHalfPlaneNontrivialZero =>
+      (analyticOrderNatAt xiFunction (ρ : ℂ) : ℂ) * ((ρ : ℂ)⁻¹ + (conj (ρ : ℂ))⁻¹) :=
+    (summable_xiWeightedInvResidTerm (m := 1) le_rfl).congr fun ρ => by
+      rw [xiWeightedInvResidTerm, pow_one, pow_one]
+  have hsplit : ∀ ρ : UpperHalfPlaneNontrivialZero,
+      xiWeightedMittagLefflerTerm 1 (ρ : ℂ) =
+        (analyticOrderNatAt xiFunction (ρ : ℂ) : ℂ) *
+            ((1 - (ρ : ℂ))⁻¹ + (1 - conj (ρ : ℂ))⁻¹) +
+          (analyticOrderNatAt xiFunction (ρ : ℂ) : ℂ) *
+            ((ρ : ℂ)⁻¹ + (conj (ρ : ℂ))⁻¹) := by
+    intro ρ
+    simp only [xiWeightedMittagLefflerTerm, xiPairedMittagLefflerTerm, one_div]
+    ring
+  show (∑' ρ : UpperHalfPlaneNontrivialZero, xiWeightedMittagLefflerTerm 1 (ρ : ℂ)) = _
+  rw [tsum_congr hsplit, Summable.tsum_add hsummA hsummR]
+  have hmτ : ∀ ρ : UpperHalfPlaneNontrivialZero,
+      analyticOrderNatAt xiFunction ↑(uhzOneSubConjEquiv ρ) =
+        analyticOrderNatAt xiFunction (ρ : ℂ) := fun ρ =>
+    analyticOrderNatAt_xiFunction_one_sub_conj (ρ : ℂ)
+  have hR : (∑' ρ : UpperHalfPlaneNontrivialZero,
+        (analyticOrderNatAt xiFunction (ρ : ℂ) : ℂ) * ((ρ : ℂ)⁻¹ + (conj (ρ : ℂ))⁻¹)) =
+      xiWeightedInvResidSum 1 := by
+    show _ = ∑' ρ : UpperHalfPlaneNontrivialZero, xiWeightedInvResidTerm 1 (ρ : ℂ)
+    exact tsum_congr fun ρ => by
+      rw [xiWeightedInvResidTerm, pow_one, pow_one]
+  have hAval : (∑' ρ : UpperHalfPlaneNontrivialZero,
+        (analyticOrderNatAt xiFunction (ρ : ℂ) : ℂ) *
+          ((1 - (ρ : ℂ))⁻¹ + (1 - conj (ρ : ℂ))⁻¹)) =
+      ∑' ρ : UpperHalfPlaneNontrivialZero,
+        (analyticOrderNatAt xiFunction (ρ : ℂ) : ℂ) * ((ρ : ℂ)⁻¹ + (conj (ρ : ℂ))⁻¹) := by
+    have hstep : ∀ ρ : UpperHalfPlaneNontrivialZero,
+        (analyticOrderNatAt xiFunction (ρ : ℂ) : ℂ) *
+            ((1 - (ρ : ℂ))⁻¹ + (1 - conj (ρ : ℂ))⁻¹) =
+          (analyticOrderNatAt xiFunction ↑(uhzOneSubConjEquiv ρ) : ℂ) *
+            ((conj ↑(uhzOneSubConjEquiv ρ))⁻¹ + (↑(uhzOneSubConjEquiv ρ))⁻¹) := by
+      intro ρ
+      have hcoe1 : (↑(uhzOneSubConjEquiv ρ) : ℂ) = 1 - conj (ρ : ℂ) := rfl
+      have hcoe2 : conj ↑(uhzOneSubConjEquiv ρ) = 1 - (ρ : ℂ) := by
+        show conj (1 - conj (ρ : ℂ)) = 1 - (ρ : ℂ)
+        rw [map_sub, map_one, Complex.conj_conj]
+      rw [hmτ ρ, hcoe2, hcoe1]
+    rw [tsum_congr hstep, Equiv.tsum_eq uhzOneSubConjEquiv
+      (fun σ : UpperHalfPlaneNontrivialZero =>
+        (analyticOrderNatAt xiFunction (σ : ℂ) : ℂ) * ((conj (σ : ℂ))⁻¹ + (σ : ℂ)⁻¹))]
+    exact tsum_congr fun σ => by rw [add_comm]
+  rw [hAval, hR]
+  ring
+
+/-- **球半径的同时存在性**：存在 `r ∈ (0,1]` 使 `ball 1 r` 上 `Re ξ > 0`
+（对数分支良定义）且所有上半非平凡零点及其共轭到 `1` 的距离 `≥ r`
+（否则该零点落入球内，与 `Re ξ > 0` 矛盾——零点处 `Re ξ = 0`）。 -/
+theorem exists_ball_log_xi_and_zeros_far :
+    ∃ r : ℝ, 0 < r ∧ r ≤ 1 ∧
+      (∀ s ∈ Metric.ball (1 : ℂ) r, 0 < (xiFunction s).re) ∧
+      (∀ ρ : UpperHalfPlaneNontrivialZero,
+        r ≤ ‖1 - (ρ : ℂ)‖ ∧ r ≤ ‖1 - conj (ρ : ℂ)‖) := by
+  obtain ⟨r₀, hr₀, hball₀⟩ := exists_ball_xi_re_pos
+  refine ⟨min r₀ 1, lt_min hr₀ (by norm_num), min_le_right _ _,
+    fun s hs => hball₀ s (Metric.ball_subset_ball (min_le_left _ _) hs), fun ρ => ⟨?_, ?_⟩⟩
+  · by_contra hlt
+    push_neg at hlt
+    have hmem : (ρ : ℂ) ∈ Metric.ball 1 r₀ := by
+      rw [Metric.mem_ball, dist_eq_norm]
+      have h1 : ‖(ρ : ℂ) - 1‖ = ‖1 - (ρ : ℂ)‖ := norm_sub_rev _ _
+      rw [h1]
+      exact lt_of_lt_of_le hlt (min_le_left _ _)
+    have hξ0 : xiFunction (ρ : ℂ) = 0 :=
+      (xiFunction_eq_zero_iff_isNontrivialZero ρ.2.1.2.1 ρ.2.1.2.2).mpr ρ.2.1
+    have hpos := hball₀ _ hmem
+    rw [hξ0, Complex.zero_re] at hpos
+    exact lt_irrefl 0 hpos
+  · by_contra hlt
+    push_neg at hlt
+    have hmem : conj (ρ : ℂ) ∈ Metric.ball 1 r₀ := by
+      rw [Metric.mem_ball, dist_eq_norm]
+      have h1 : ‖conj (ρ : ℂ) - 1‖ = ‖1 - conj (ρ : ℂ)‖ := norm_sub_rev _ _
+      rw [h1]
+      exact lt_of_lt_of_le hlt (min_le_left _ _)
+    have hξ0 : xiFunction (conj (ρ : ℂ)) = 0 := by
+      rw [xiFunction_conj]
+      have h : xiFunction (ρ : ℂ) = 0 :=
+        (xiFunction_eq_zero_iff_isNontrivialZero ρ.2.1.2.1 ρ.2.1.2.2).mpr ρ.2.1
+      rw [h]
+      exact map_zero _
+    have hpos := hball₀ _ hmem
+    rw [hξ0, Complex.zero_re] at hpos
+    exact lt_irrefl 0 hpos
+
+/-! ## Part 6：总装——`L'(1) = R₁` 与 `L⁽ᵐ⁾(1)` 的留数公式 -/
+
+section FinalAssembly
+
+variable {r : ℝ} (hr0 : 0 < r) (hr1 : r ≤ 1)
+  (hball : ∀ s ∈ Metric.ball (1 : ℂ) r, 0 < (xiFunction s).re)
+  (hρfar : ∀ ρ : UpperHalfPlaneNontrivialZero,
+    r ≤ ‖1 - (ρ : ℂ)‖ ∧ r ≤ ‖1 - conj (ρ : ℂ)‖)
+
+include hr0 hball in
+/-- **`L'(1) = R₁`**：展开式 `ξ'/ξ(1) = B + W(1)`（`B = ξ'/ξ(0)`）与
+`ξ'(1)/ξ(1) = -B`（函数方程求导 + `ξ(1) = ξ(0) = 1/2`）、`W(1) = 2R₁`
+联立得 `B = -R₁`，故 `L'(1) = -B = R₁`。 -/
+theorem deriv_log_xi_one_eq :
+    deriv (fun s => Complex.log (xiFunction s)) 1 = xiWeightedInvResidSum 1 := by
+  have hL : deriv (fun s => Complex.log (xiFunction s)) 1 =
+      deriv xiFunction 1 / xiFunction 1 :=
+    deriv_log_xi_eqOn hr0 hball (Metric.mem_ball_self hr0)
+  have hξ10 : xiFunction 1 = xiFunction 0 := by
+    have h := xiFunction_one_sub 0
+    rw [sub_zero] at h
+    exact h.symm
+  have hLval : deriv xiFunction 1 / xiFunction 1 = -(deriv xiFunction 0 / xiFunction 0) := by
+    rw [deriv_xiFunction_one_eq_neg, hξ10, neg_div]
+  have hexp := xi_weighted_partial_fraction_expansion 1 (by
+    rw [xiFunction_one]
+    norm_num)
+  rw [hLval, xiWeightedMittagLefflerSum_one_eq_two_invResidSum] at hexp
+  have hR : deriv xiFunction 0 / xiFunction 0 = -xiWeightedInvResidSum 1 := by
+    have h2 : 2 * (deriv xiFunction 0 / xiFunction 0) = 2 * (-xiWeightedInvResidSum 1) := by
+      linear_combination -hexp
+    exact mul_left_cancel₀ (by norm_num : (2 : ℂ) ≠ 0) h2
+  rw [hL, hLval, hR, neg_neg]
+
+include hr0 hr1 hball hρfar in
+/-- **`L⁽ᵐ⁾(1)` 的留数公式**（`m ≥ 2`）：
+`iteratedDeriv m (log ∘ ξ) 1 = (-1)^(m-1)·(m-1)!·R_m`。
+链：`L⁽ᵐ⁾ = (L')⁽ᵐ⁻¹⁾`（`iteratedDeriv_succ'`），球上 `L' = ξ'/ξ = B + W`
+（对数导数 + 加权部分分式展开），常数 `B` 的高阶导数为零
+（`iteratedDeriv_const_add`），`W⁽ᵐ⁻¹⁾(1) = (-1)^{m-1}(m-1)!·D_m(1)`
+（Part 4 公式取 `k = m-2`），`D_m(1) = R_m`（Part 5b）。 -/
+theorem iteratedDeriv_log_xi_one {m : ℕ} (hm : 2 ≤ m) :
+    iteratedDeriv m (fun s => Complex.log (xiFunction s)) 1 =
+      (-1 : ℂ) ^ (m - 1) * (Nat.factorial (m - 1) : ℂ) * xiWeightedInvResidSum m := by
+  have hm1 : m - 1 + 1 = m := by omega
+  have hstep1 : iteratedDeriv m (fun s => Complex.log (xiFunction s)) 1 =
+      iteratedDeriv (m - 1) (deriv fun s => Complex.log (xiFunction s)) 1 := by
+    conv_lhs => rw [← hm1, iteratedDeriv_succ']
+  have hEv : (deriv fun s => Complex.log (xiFunction s)) =ᶠ[𝓝 (1 : ℂ)]
+      (fun s => deriv xiFunction 0 / xiFunction 0 + xiWeightedMittagLefflerSum s) := by
+    apply Filter.eventuallyEq_of_mem (Metric.ball_mem_nhds 1 hr0)
+    intro s hs
+    rw [deriv_log_xi_eqOn hr0 hball hs]
+    exact xi_weighted_partial_fraction_expansion s (xi_ne_zero_of_mem_ball hr0 hball hs)
+  rw [hstep1, hEv.iteratedDeriv_eq (m - 1),
+    iteratedDeriv_const_add (by omega : 0 < m - 1) (deriv xiFunction 0 / xiFunction 0)]
+  have hmem : (1 : ℂ) ∈ Metric.ball 1 (r / 2) := Metric.mem_ball_self (by linarith)
+  have hW := iteratedDeriv_xiWeightedMittagLefflerSum_eqOn hr0 hr1 hρfar (m - 2) hmem
+  have he1 : m - 2 + 1 = m - 1 := by omega
+  have he2 : m - 2 + 2 = m := by omega
+  rw [he1, he2] at hW
+  rw [hW]
+  show (-1 : ℂ) ^ (m - 1) * (Nat.factorial (m - 1) : ℂ) * xiWeightedInvPowSum m 1 = _
+  rw [xiWeightedInvPowSum_one_eq_invResidSum hm]
+
+end FinalAssembly
+
 end RiemannExplorer
