@@ -221,4 +221,54 @@ theorem exists_pintzConstant_carlsonWeightedKernel_tendsto :
       hmodel
   simpa only [mul_assoc] using hweighted
 
+/-- Carlson's classical exponent never exceeds one. This elementary bound
+makes one common height rate admissible for every fixed real-part strip. -/
+theorem carlsonClassicalExponent_le_one (sigma : ℝ) :
+    4 * sigma * (1 - sigma) ≤ 1 := by
+  nlinarith [sq_nonneg (2 * sigma - 1)]
+
+/-- A common nonnegative height rate strictly below the Pintz rate satisfies
+the Carlson gap for every real-part parameter. -/
+theorem carlsonClassicalExponent_mul_rate_lt_pintz
+    (sigma k c : ℝ)
+    (hk : 0 ≤ k)
+    (hkGap : k < 2 * Real.sqrt c) :
+    (4 * sigma * (1 - sigma)) * k < 2 * Real.sqrt c :=
+  (mul_le_mul_of_nonneg_right
+      (carlsonClassicalExponent_le_one sigma) hk).trans_lt hkGap
+
+/-- A single unconditional Pintz constant and a single admissible height rate
+control every finite family of Carlson real-part strips. Each strip may have
+its own nonnegative coefficient and fixed logarithmic power, but all strips
+use the same dynamic height scale. -/
+theorem exists_pintzConstant_finiteCarlsonLayerBudget_tendsto
+    {ι : Type*} [DecidableEq ι]
+    (layers : Finset ι)
+    (C p sigma : ι → ℝ)
+    (hC : ∀ i ∈ layers, 0 ≤ C i) :
+    ∃ c > 0, ∀ k : ℝ, 0 ≤ k → k < 2 * Real.sqrt c →
+      Tendsto
+        (fun x : ℝ =>
+          ∑ i ∈ layers,
+            C i * pintzCarlsonSqrtLogScale x ^ p i *
+              Real.exp
+                ((4 * sigma i * (1 - sigma i)) * k *
+                    pintzCarlsonSqrtLogScale x -
+                  Pintz.pintzZeroEnvelope x))
+        atTop (𝓝 0) := by
+  rcases exists_pintzConstant_carlsonWeightedKernel_tendsto with
+    ⟨c, hc, hstrip⟩
+  refine ⟨c, hc, ?_⟩
+  intro k hk hkGap
+  apply tendsto_finset_sum
+  intro i hi
+  exact hstrip
+    (C i)
+    (p i)
+    (sigma i)
+    k
+    (hC i hi)
+    (carlsonClassicalExponent_mul_rate_lt_pintz
+      (sigma i) k c hk hkGap)
+
 end PrimeNumberTheorem
