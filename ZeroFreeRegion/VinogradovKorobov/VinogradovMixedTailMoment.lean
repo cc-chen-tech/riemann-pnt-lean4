@@ -1317,6 +1317,172 @@ theorem
       rw [pow_add]
       ring
 
+/-- A balanced prime-scale family with `q` recoverable tail variables.  The
+condition `3q + 1 ≤ 2(k-r+1)` leaves enough residual modulus for the degree
+`q` no-wrap check. -/
+theorem
+    norm_normalizedVinogradovMixedModConditionedMoment_sq_le_primeScale_balancedTail
+    (p a k r q : ℕ) [Fact p.Prime]
+    (hr : 0 < r) (hq : 0 < q)
+    (h2rk : 2 * r ≤ k) (hrp : 2 * r < p) (hqp : q < p)
+    (hbudget : 3 * q + 1 ≤ 2 * (k - r + 1))
+    (xi eta : ℤ) :
+    ‖normalizedVinogradovMixedModConditionedMoment
+        p ((k - r + 1) * 2) a 2 k r q p p xi eta‖ ^ 2 ≤
+      ((2 * r).factorial : ℝ) *
+          ((p : ℝ) ^ (2 * r) +
+            (p : ℝ) ^ (2 * (2 * r) - vinogradovCriticalWeight k)) *
+        ((q.factorial : ℝ) * (p : ℝ) ^ (3 * q)) := by
+  have hp0 : 0 < p := (Fact.out : p.Prime).pos
+  have hp1 : 1 < p := (Fact.out : p.Prime).one_lt
+  have hqk : q ≤ k := by
+    omega
+  have hdegree :
+      2 * q ≤ (k - r + 1) * 2 := by
+    omega
+  have htailExponent :
+      q + 1 ≤ (k - r + 1) * 2 - 2 * q := by
+    omega
+  have hcoefficientTail :
+      q * p ^ q < p * p ^ q :=
+    Nat.mul_lt_mul_of_pos_right hqp (pow_pos hp0 q)
+  have htop :
+      q * p ^ q <
+        p ^ ((k - r + 1) * 2 - 2 * q) := by
+    calc
+      q * p ^ q < p * p ^ q := hcoefficientTail
+      _ = p ^ (q + 1) := by
+        simp [pow_succ, Nat.mul_comm]
+      _ ≤ p ^ ((k - r + 1) * 2 - 2 * q) :=
+        Nat.pow_le_pow_right hp0 htailExponent
+  have hmainExponent :
+      k + 1 ≤ (k - r + 1) * 2 := by
+    omega
+  have hcoefficientMain :
+      (2 * r) * p ^ k < p * p ^ k :=
+    Nat.mul_lt_mul_of_pos_right hrp (pow_pos hp0 k)
+  have hscale :
+      (2 * r) * p ^ k <
+        p ^ ((k - r + 1) * 2) := by
+    calc
+      (2 * r) * p ^ k < p * p ^ k := hcoefficientMain
+      _ = p ^ (k + 1) := by
+        simp [pow_succ, Nat.mul_comm]
+      _ ≤ p ^ ((k - r + 1) * 2) :=
+        Nat.pow_le_pow_right hp0 hmainExponent
+  have h :=
+    norm_normalizedVinogradovMixedModConditionedMoment_sq_le_recurrenceModulus_diagonal
+      p a 2 k r q p p q q h2rk hqk (by omega) hp0
+        hdegree htop (by omega) hscale xi eta
+  simpa only [show 2 * q + q = 3 * q by omega] using h
+
+/-- The balanced family saves the exponent `2r + q` relative to its squared
+trivial scale: the proved exponent is `2r + 3q`, while the trivial exponent is
+`4r + 4q`. -/
+theorem
+    norm_normalizedVinogradovMixedModConditionedMoment_sq_le_primeScale_balancedTail_powerSaving
+    (p a k r q : ℕ) [Fact p.Prime]
+    (hr : 0 < r) (hq : 0 < q)
+    (h2rk : 2 * r ≤ k) (hrp : 2 * r < p) (hqp : q < p)
+    (hbudget : 3 * q + 1 ≤ 2 * (k - r + 1))
+    (xi eta : ℤ) :
+    ‖normalizedVinogradovMixedModConditionedMoment
+        p ((k - r + 1) * 2) a 2 k r q p p xi eta‖ ^ 2 ≤
+      2 * ((2 * r).factorial : ℝ) * (q.factorial : ℝ) *
+        (p : ℝ) ^ (2 * r + 3 * q) := by
+  have h :=
+    norm_normalizedVinogradovMixedModConditionedMoment_sq_le_primeScale_balancedTail
+      p a k r q hr hq h2rk hrp hqp hbudget xi eta
+  have hweight : 2 * r ≤ vinogradovCriticalWeight k := by
+    unfold vinogradovCriticalWeight
+    apply (Nat.le_div_iff_mul_le (by omega)).2
+    calc
+      (2 * r) * 2 ≤ k * 2 := Nat.mul_le_mul_right 2 h2rk
+      _ ≤ k * (k + 1) := Nat.mul_le_mul_left k (by omega)
+  have hexponent :
+      2 * (2 * r) - vinogradovCriticalWeight k ≤ 2 * r := by
+    omega
+  have hpR : (1 : ℝ) ≤ (p : ℝ) := by
+    exact_mod_cast (Fact.out : p.Prime).one_le
+  have hpow :
+      (p : ℝ) ^ (2 * (2 * r) - vinogradovCriticalWeight k) ≤
+        (p : ℝ) ^ (2 * r) :=
+    pow_le_pow_right₀ hpR hexponent
+  have hsum :
+      (p : ℝ) ^ (2 * r) +
+          (p : ℝ) ^ (2 * (2 * r) - vinogradovCriticalWeight k) ≤
+        (p : ℝ) ^ (2 * r) + (p : ℝ) ^ (2 * r) :=
+    add_le_add (le_refl _) hpow
+  calc
+    ‖normalizedVinogradovMixedModConditionedMoment
+        p ((k - r + 1) * 2) a 2 k r q p p xi eta‖ ^ 2
+        ≤ ((2 * r).factorial : ℝ) *
+            ((p : ℝ) ^ (2 * r) +
+              (p : ℝ) ^
+                (2 * (2 * r) - vinogradovCriticalWeight k)) *
+              ((q.factorial : ℝ) * (p : ℝ) ^ (3 * q)) := h
+    _ ≤ ((2 * r).factorial : ℝ) *
+          ((p : ℝ) ^ (2 * r) + (p : ℝ) ^ (2 * r)) *
+            ((q.factorial : ℝ) * (p : ℝ) ^ (3 * q)) :=
+      mul_le_mul_of_nonneg_right
+        (mul_le_mul_of_nonneg_left hsum (by positivity))
+        (by positivity)
+    _ = 2 * ((2 * r).factorial : ℝ) * (q.factorial : ℝ) *
+          (p : ℝ) ^ (2 * r + 3 * q) := by
+      rw [pow_add]
+      ring
+
+/-- Largest balanced tail length allowed by the residual no-wrap exponent
+budget at recurrence modulus exponent `2(k-r+1)`. -/
+def vinogradovBalancedTailLength (k r : ℕ) : ℕ :=
+  (2 * (k - r + 1) - 1) / 3
+
+/-- The balanced tail length is exactly the largest integer satisfying the
+residual exponent budget. -/
+theorem vinogradovBalancedTailLength_spec (k r q : ℕ) :
+    q ≤ vinogradovBalancedTailLength k r ↔
+      3 * q + 1 ≤ 2 * (k - r + 1) := by
+  unfold vinogradovBalancedTailLength
+  rw [Nat.le_div_iff_mul_le (by omega)]
+  omega
+
+/-- Choosing the maximal balanced tail length makes the prime-scale saving
+theorem parameter-free.  The natural recurrence hypothesis `k < p` supplies
+both coefficient inequalities. -/
+theorem
+    norm_normalizedVinogradovMixedModConditionedMoment_sq_le_primeScale_optimizedBalancedTail_powerSaving
+    (p a k r : ℕ) [Fact p.Prime]
+    (hr : 0 < r) (h2rk : 2 * r ≤ k) (hkp : k < p)
+    (xi eta : ℤ) :
+    ‖normalizedVinogradovMixedModConditionedMoment
+        p ((k - r + 1) * 2) a 2 k r
+          (vinogradovBalancedTailLength k r) p p xi eta‖ ^ 2 ≤
+      2 * ((2 * r).factorial : ℝ) *
+        ((vinogradovBalancedTailLength k r).factorial : ℝ) *
+          (p : ℝ) ^
+            (2 * r + 3 * vinogradovBalancedTailLength k r) := by
+  have honeBudget :
+      3 * 1 + 1 ≤ 2 * (k - r + 1) := by
+    omega
+  have hq :
+      0 < vinogradovBalancedTailLength k r := by
+    have hone :
+        1 ≤ vinogradovBalancedTailLength k r :=
+      (vinogradovBalancedTailLength_spec k r 1).2 honeBudget
+    omega
+  have hbudget :
+      3 * vinogradovBalancedTailLength k r + 1 ≤
+        2 * (k - r + 1) :=
+    (vinogradovBalancedTailLength_spec
+      k r (vinogradovBalancedTailLength k r)).1 (le_refl _)
+  have hqk : vinogradovBalancedTailLength k r ≤ k := by
+    omega
+  exact
+    norm_normalizedVinogradovMixedModConditionedMoment_sq_le_primeScale_balancedTail_powerSaving
+      p a k r (vinogradovBalancedTailLength k r)
+        hr hq h2rk (h2rk.trans_lt hkp) (hqk.trans_lt hkp)
+        hbudget xi eta
+
 /-- If the first `n` right coordinates agree, residual congruence reduces to
 a congruence between the power sums of the final two coordinates. -/
 private theorem residualTail_lastTwo_powerSum_modEq

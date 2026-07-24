@@ -1,0 +1,7 @@
+import ZeroFreeRegion.VinogradovKorobov.VinogradovMixedSchedule
+
+open ZeroFreeRegion.VinogradovKorobov
+
+#check normalizedVinogradovUnitSeparatedMixedMomentAverage_le_optimizedBalancedTail_sqrt
+
+#print axioms normalizedVinogradovUnitSeparatedMixedMomentAverage_le_optimizedBalancedTail_sqrt
