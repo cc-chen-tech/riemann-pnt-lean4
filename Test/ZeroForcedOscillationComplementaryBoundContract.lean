@@ -115,6 +115,38 @@ example (y : ℝ) (hy : 0 ≤ y) :
   exists_norm_complementaryZeroPackageContribution_le_exp_maximal_gap_mul_log_sq
     y hy
 
+example (y T : ℝ) :
+    ‖zeroPackageUncontrolledRemainder y T (maximalZeroRealPart T)‖ ≤
+      ‖complementaryZeroPackageContribution (Real.exp y) T
+          (maximalZeroRealPart T)‖ +
+        ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+          (chebyshevPsi0 (Real.exp y) : ℂ)‖ :=
+  norm_zeroPackageUncontrolledRemainder_le_complementary_add_approximation y T
+
+example : ∃ C : ℝ, 0 ≤ C ∧ ∀ T : ℝ, 4 ≤ T → ∀ {a b : ℝ},
+    0 < a → a < b →
+      ∃ y ∈ Set.Ioo a b,
+        Real.exp (maximalZeroRealPart T * y) ^ 2 *
+            ((∑ ρ ∈ maximalRealPartZeroPackage T,
+                ‖(analyticOrderNatAt riemannZeta ρ : ℂ) * ρ⁻¹‖ ^ 2) -
+              offDiagonalBound (maximalRealPartZeroPackage T)
+                (fun ρ => (analyticOrderNatAt riemannZeta ρ : ℂ) * ρ⁻¹)
+                Complex.im / (b - a)) ≤
+          ‖equalRealPartZeroPackageContribution (Real.exp y) T
+              (maximalZeroRealPart T)‖ ^ 2 ∧
+        ‖equalRealPartZeroPackageContribution (Real.exp y) T
+            (maximalZeroRealPart T)‖ -
+            (Real.exp ((maximalZeroRealPart T -
+                maximalComplementaryRealPartGap T) * y) *
+              (C * (1 + Real.log (T + 6)) ^ 2) +
+              ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+                (chebyshevPsi0 (Real.exp y) : ℂ)‖) -
+            (Real.log (2 * Real.pi) +
+              (1 / 2 : ℝ) * Real.exp (-2 * y) /
+                (1 - Real.exp (-2 * y))) ≤
+          ‖(((chebyshevPsi0 (Real.exp y) - Real.exp y : ℝ) : ℂ))‖ :=
+  exists_C_forall_fixedHeight_maximalZeroPackage_forces_psi0_error
+
 -- Small sanity checks: the per-term identity at zero multiplicity and at `ρ = 0`.
 
 example (x : ℝ) (hx : 0 < x) (ρ : ℂ) :

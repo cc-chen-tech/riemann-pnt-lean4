@@ -345,6 +345,92 @@ theorem
         (C * (1 + Real.log (T + 6)) ^ 2) :=
       mul_le_mul_of_nonneg_left (hCbound T hT) (Real.exp_nonneg _)
 
+/-- The uncontrolled part of the finite-height formula is bounded by the
+maximal-layer complement and by the genuine finite-height approximation
+error.  This is an exact triangle-inequality bridge, with no assumption on
+the zero configuration. -/
+theorem norm_zeroPackageUncontrolledRemainder_le_complementary_add_approximation
+    (y T : ℝ) :
+    ‖zeroPackageUncontrolledRemainder y T (maximalZeroRealPart T)‖ ≤
+      ‖complementaryZeroPackageContribution (Real.exp y) T
+          (maximalZeroRealPart T)‖ +
+        ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+          (chebyshevPsi0 (Real.exp y) : ℂ)‖ := by
+  exact norm_add_le _ _
+
+/-- Fixed-height zero-forced oscillation transfer with the dominant layer and
+the complementary real-part gap selected automatically from the actual
+height-`T` zero finset.  A single global constant controls the complementary
+layer by the already proved reciprocal-zero `O(log^2 T)` estimate.
+
+The theorem leaves only the genuine finite-height explicit-formula error and
+the elementary closed terms in the lower bound for `ψ₀(exp y) - exp y`; it
+requires no externally supplied `β`, `δ`, or zero-gap hypothesis.  It is a
+fixed-height statement: neither the selected maximum nor its positive gap is
+claimed uniform as `T` varies. -/
+theorem exists_C_forall_fixedHeight_maximalZeroPackage_forces_psi0_error
+    : ∃ C : ℝ, 0 ≤ C ∧ ∀ T : ℝ, 4 ≤ T → ∀ {a b : ℝ},
+      0 < a → a < b →
+        ∃ y ∈ Set.Ioo a b,
+          Real.exp (maximalZeroRealPart T * y) ^ 2 *
+              ((∑ ρ ∈ maximalRealPartZeroPackage T,
+                  ‖(analyticOrderNatAt riemannZeta ρ : ℂ) * ρ⁻¹‖ ^ 2) -
+                offDiagonalBound (maximalRealPartZeroPackage T)
+                  (fun ρ => (analyticOrderNatAt riemannZeta ρ : ℂ) * ρ⁻¹)
+                  Complex.im / (b - a)) ≤
+            ‖equalRealPartZeroPackageContribution (Real.exp y) T
+                (maximalZeroRealPart T)‖ ^ 2 ∧
+          ‖equalRealPartZeroPackageContribution (Real.exp y) T
+              (maximalZeroRealPart T)‖ -
+              (Real.exp ((maximalZeroRealPart T -
+                  maximalComplementaryRealPartGap T) * y) *
+                (C * (1 + Real.log (T + 6)) ^ 2) +
+                ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+                  (chebyshevPsi0 (Real.exp y) : ℂ)‖) -
+              (Real.log (2 * Real.pi) +
+                (1 / 2 : ℝ) * Real.exp (-2 * y) /
+                  (1 - Real.exp (-2 * y))) ≤
+            ‖(((chebyshevPsi0 (Real.exp y) - Real.exp y : ℝ) : ℂ))‖ := by
+  rcases ExplicitFormulaAux.exists_globalReciprocalZeroMultiplicity_le_log_sq with
+    ⟨C, hC, hCbound⟩
+  refine ⟨C, hC, ?_⟩
+  intro T hT a b ha hab
+  rcases exists_mem_Ioo_sqNorm_equalRealPartZeroPackageContribution_ge
+      T (maximalZeroRealPart T) hab with ⟨y, hy, hmean⟩
+  have hypos : 0 < y := lt_trans ha hy.1
+  have hynonneg : 0 ≤ y := hypos.le
+  have hcomplement :
+      ‖complementaryZeroPackageContribution (Real.exp y) T
+          (maximalZeroRealPart T)‖ ≤
+        Real.exp ((maximalZeroRealPart T -
+            maximalComplementaryRealPartGap T) * y) *
+          (C * (1 + Real.log (T + 6)) ^ 2) := by
+    calc
+      ‖complementaryZeroPackageContribution (Real.exp y) T
+          (maximalZeroRealPart T)‖ ≤
+          Real.exp ((maximalZeroRealPart T -
+              maximalComplementaryRealPartGap T) * y) *
+            ∑ ρ ∈ nontrivialZerosFinset T,
+              (analyticOrderNatAt riemannZeta ρ : ℝ) / ‖ρ‖ :=
+        norm_complementaryZeroPackageContribution_le_exp_maximal_gap_mul_sum_nontrivialZerosFinset
+          T y hynonneg
+      _ = Real.exp ((maximalZeroRealPart T -
+              maximalComplementaryRealPartGap T) * y) *
+            ExplicitFormulaAux.globalReciprocalZeroMultiplicity T := by
+        simp only [ExplicitFormulaAux.globalReciprocalZeroMultiplicity]
+      _ ≤ Real.exp ((maximalZeroRealPart T -
+              maximalComplementaryRealPartGap T) * y) *
+            (C * (1 + Real.log (T + 6)) ^ 2) :=
+        mul_le_mul_of_nonneg_left (hCbound T hT) (Real.exp_nonneg _)
+  have huncontrolled :=
+    norm_zeroPackageUncontrolledRemainder_le_complementary_add_approximation y T
+  have htransfer :=
+    norm_zeroPackage_sub_norm_uncontrolled_sub_closed_le_norm_chebyshevPsi0_sub_exp
+      (T := T) (β := maximalZeroRealPart T) hypos
+  refine ⟨y, hy, ?_, ?_⟩
+  · simpa only [maximalRealPartZeroPackage] using hmean
+  · linarith
+
 end
 
 end PrimeNumberTheorem.ZeroForcedOscillation
