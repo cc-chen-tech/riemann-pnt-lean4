@@ -18,6 +18,7 @@ from typing import Any, Dict, Iterable, Mapping, Sequence, Tuple
 
 
 SCHEMA_VERSION = "weil-extremal-kernel-arb-overlap/v1"
+CROSS_PRECISION_SCHEMA_VERSION = "weil-extremal-kernel-arb-cross-precision-overlap/v1"
 CLAIM_SCOPE = "small-N-gate-a-preparation-only"
 GATE_A_STATUS = "not_satisfied"
 UPSTREAM_SCRIPT_SHA256 = (
@@ -50,6 +51,12 @@ LIMITATIONS = [
     "This small-N artifact does not assemble the registered c=100, N=200 Gate A matrix.",
     "No exact rational LDL certificate or interval-to-LDL transfer margin is emitted.",
     "Only one precision is recorded, so entrywise narrowing at a second precision is not tested.",
+]
+CROSS_PRECISION_LIMITATIONS = [
+    "Both formula implementations use the same python-flint Arb runtime.",
+    "This small-N artifact does not assemble the registered c=100, N=200 Gate A matrix.",
+    "No exact rational LDL certificate or interval-to-LDL transfer margin is emitted.",
+    "Second-precision narrowing is established only for the retained c=13, N=4 interval matrices.",
 ]
 
 Entry = Tuple[int, int]
@@ -474,6 +481,100 @@ def _intersection_evidence(
     }
 
 
+def _matrix_comparison_evidence(
+    coarse_lower: FractionMatrix,
+    coarse_upper: FractionMatrix,
+    fine_lower: FractionMatrix,
+    fine_upper: FractionMatrix,
+) -> Dict[str, Any]:
+    """Record exact rational containment and strict width reduction entrywise."""
+    dimension = len(coarse_lower)
+    contained_rows = []
+    strict_rows = []
+    for i in range(dimension):
+        contained_row = []
+        strict_row = []
+        for j in range(dimension):
+            coarse_width = coarse_upper[i][j] - coarse_lower[i][j]
+            fine_width = fine_upper[i][j] - fine_lower[i][j]
+            contained_row.append(
+                coarse_lower[i][j] <= fine_lower[i][j]
+                and fine_upper[i][j] <= coarse_upper[i][j]
+            )
+            strict_row.append(fine_width < coarse_width)
+        contained_rows.append(contained_row)
+        strict_rows.append(strict_row)
+    return {
+        "contained_entrywise": contained_rows,
+        "strictly_narrower_entrywise": strict_rows,
+        "result": {
+            "all_entries_contained": all(
+                value for row in contained_rows for value in row
+            ),
+            "all_entries_strictly_narrower": all(
+                value for row in strict_rows for value in row
+            ),
+            "entry_count": dimension * dimension,
+        },
+    }
+
+
+def _precision_artifact_evidence(
+    c: int,
+    N: int,
+    prec_bits: int,
+    decimal_enclosure_digits: int,
+    flint_version: str,
+) -> Dict[str, Any]:
+    """Assemble both routes and retain their exact rational enclosures."""
+    indices = tuple(range(-N, N + 1))
+    auxiliary_lower, auxiliary_upper = _rational_enclosure(
+        assemble_auxiliary_s_cc_xc(c, N, prec_bits, decimal_enclosure_digits),
+        indices,
+        decimal_enclosure_digits,
+    )
+    ccm_lower, ccm_upper = _rational_enclosure(
+        assemble_ccm_hypergeometric_lerch(c, N, prec_bits, decimal_enclosure_digits),
+        indices,
+        decimal_enclosure_digits,
+    )
+    overlap = _intersection_evidence(
+        auxiliary_lower, auxiliary_upper, ccm_lower, ccm_upper
+    )
+    if (
+        not overlap["result"]["all_entries_overlap"]
+        or not overlap["result"]["symmetric_intersection_nonempty"]
+    ):
+        raise ValueError("independent Arb interval matrices do not overlap")
+    return {
+        "matrices": {
+            "auxiliary_s_cc_xc": {
+                "enclosure": {
+                    "lower": _format_matrix(auxiliary_lower),
+                    "upper": _format_matrix(auxiliary_upper),
+                }
+            },
+            "ccm_hypergeometric_lerch": {
+                "enclosure": {
+                    "lower": _format_matrix(ccm_lower),
+                    "upper": _format_matrix(ccm_upper),
+                }
+            },
+        },
+        "overlap": {key: value for key, value in overlap.items() if key != "result"},
+        "parameters": {
+            "N": N,
+            "c": c,
+            "decimal_enclosure_digits": decimal_enclosure_digits,
+            "dimension": 2 * N + 1,
+            "index_order": list(indices),
+            "prec_bits": prec_bits,
+            "python_flint_version": flint_version,
+        },
+        "result": overlap["result"],
+    }
+
+
 def _canonical_json(value: Mapping[str, Any]) -> str:
     return json.dumps(
         value,
@@ -563,6 +664,88 @@ def build_overlap_artifact(
     return {**payload, "payload_sha256": _payload_digest(payload)}
 
 
+def build_cross_precision_overlap_artifact(
+    c: int,
+    N: int,
+    low_prec_bits: int,
+    high_prec_bits: int,
+    low_decimal_enclosure_digits: int,
+    high_decimal_enclosure_digits: int,
+) -> Dict[str, Any]:
+    """Retain two precision levels and certify exact rational narrowing."""
+    _require_parameters(c, N, low_prec_bits, low_decimal_enclosure_digits)
+    _require_parameters(c, N, high_prec_bits, high_decimal_enclosure_digits)
+    if high_prec_bits < low_prec_bits + 512:
+        raise ValueError("high_prec_bits must exceed low_prec_bits by at least 512")
+    if high_decimal_enclosure_digits <= low_decimal_enclosure_digits:
+        raise ValueError("high_decimal_enclosure_digits must exceed the low precision")
+    _arb, _acb, _ctx, flint_version = _flint()
+    low = _precision_artifact_evidence(
+        c, N, low_prec_bits, low_decimal_enclosure_digits, flint_version
+    )
+    high = _precision_artifact_evidence(
+        c, N, high_prec_bits, high_decimal_enclosure_digits, flint_version
+    )
+
+    low_matrices = {
+        name: _parse_enclosure(low["matrices"][name]["enclosure"], 2 * N + 1)
+        for name in ROUTE_NAMES
+    }
+    high_matrices = {
+        name: _parse_enclosure(high["matrices"][name]["enclosure"], 2 * N + 1)
+        for name in ROUTE_NAMES
+    }
+    if any(value is None for value in (*low_matrices.values(), *high_matrices.values())):
+        raise AssertionError("internally produced enclosure did not parse")
+
+    route_comparisons = {
+        name: _matrix_comparison_evidence(*low_matrices[name], *high_matrices[name])
+        for name in ROUTE_NAMES
+    }
+    low_intersection = _parse_enclosure(low["overlap"]["intersection"], 2 * N + 1)
+    high_intersection = _parse_enclosure(high["overlap"]["intersection"], 2 * N + 1)
+    if low_intersection is None or high_intersection is None:
+        raise AssertionError("internally produced intersection did not parse")
+    intersection_comparison = _matrix_comparison_evidence(
+        *low_intersection, *high_intersection
+    )
+    comparison_result = {
+        "all_route_entries_contained": all(
+            route_comparisons[name]["result"]["all_entries_contained"]
+            for name in ROUTE_NAMES
+        ),
+        "all_route_entries_strictly_narrower": all(
+            route_comparisons[name]["result"]["all_entries_strictly_narrower"]
+            for name in ROUTE_NAMES
+        ),
+        "intersection_entries_contained": intersection_comparison["result"][
+            "all_entries_contained"
+        ],
+        "intersection_entries_strictly_narrower": intersection_comparison["result"][
+            "all_entries_strictly_narrower"
+        ],
+    }
+    if not all(comparison_result.values()):
+        raise ValueError("second-precision interval narrowing did not hold entrywise")
+    payload = {
+        "claim_scope": CLAIM_SCOPE,
+        "gate_a_status": GATE_A_STATUS,
+        "generator_sha256": _source_sha256(),
+        "limitations": CROSS_PRECISION_LIMITATIONS,
+        "precision_levels": {"low": low, "high": high},
+        "precision_narrowing": {
+            "intersection": intersection_comparison,
+            "routes": route_comparisons,
+            "result": comparison_result,
+        },
+        "routes": ROUTES,
+        "schema_version": CROSS_PRECISION_SCHEMA_VERSION,
+        "shared_components": SHARED_COMPONENTS,
+        "upstream_script_sha256": UPSTREAM_SCRIPT_SHA256,
+    }
+    return {**payload, "payload_sha256": _payload_digest(payload)}
+
+
 def write_overlap_artifact(
     path: str | Path,
     c: int,
@@ -571,6 +754,29 @@ def write_overlap_artifact(
     decimal_enclosure_digits: int,
 ) -> Dict[str, Any]:
     record = build_overlap_artifact(c, N, prec_bits, decimal_enclosure_digits)
+    output_path = Path(path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_bytes((_canonical_json(record) + "\n").encode("ascii"))
+    return record
+
+
+def write_cross_precision_overlap_artifact(
+    path: str | Path,
+    c: int,
+    N: int,
+    low_prec_bits: int,
+    high_prec_bits: int,
+    low_decimal_enclosure_digits: int,
+    high_decimal_enclosure_digits: int,
+) -> Dict[str, Any]:
+    record = build_cross_precision_overlap_artifact(
+        c,
+        N,
+        low_prec_bits,
+        high_prec_bits,
+        low_decimal_enclosure_digits,
+        high_decimal_enclosure_digits,
+    )
     output_path = Path(path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_bytes((_canonical_json(record) + "\n").encode("ascii"))
@@ -616,6 +822,83 @@ def _parse_enclosure(
     ):
         return None
     return lower, upper
+
+
+def _parse_precision_level(
+    record: Any,
+) -> Tuple[Dict[str, Any], Dict[str, Tuple[FractionMatrix, FractionMatrix]], Tuple[FractionMatrix, FractionMatrix]] | None:
+    """Validate one retained precision level and reconstruct its intervals."""
+    if not isinstance(record, dict) or set(record) != {
+        "matrices",
+        "overlap",
+        "parameters",
+        "result",
+    }:
+        return None
+    parameters = record["parameters"]
+    parameter_keys = {
+        "N",
+        "c",
+        "decimal_enclosure_digits",
+        "dimension",
+        "index_order",
+        "prec_bits",
+        "python_flint_version",
+    }
+    if not isinstance(parameters, dict) or set(parameters) != parameter_keys:
+        return None
+    integer_parameters = (
+        parameters["N"],
+        parameters["c"],
+        parameters["decimal_enclosure_digits"],
+        parameters["dimension"],
+        parameters["prec_bits"],
+    )
+    if any(isinstance(value, bool) or not isinstance(value, int) for value in integer_parameters):
+        return None
+    try:
+        _require_parameters(
+            parameters["c"],
+            parameters["N"],
+            parameters["prec_bits"],
+            parameters["decimal_enclosure_digits"],
+        )
+    except ValueError:
+        return None
+    dimension = 2 * parameters["N"] + 1
+    if (
+        parameters["dimension"] != dimension
+        or parameters["index_order"] != list(range(-parameters["N"], parameters["N"] + 1))
+        or not isinstance(parameters["python_flint_version"], str)
+    ):
+        return None
+    matrices = record["matrices"]
+    if not isinstance(matrices, dict) or set(matrices) != set(ROUTE_NAMES):
+        return None
+    parsed_matrices = {}
+    for route_name in ROUTE_NAMES:
+        route_record = matrices[route_name]
+        if not isinstance(route_record, dict) or set(route_record) != {"enclosure"}:
+            return None
+        parsed = _parse_enclosure(route_record["enclosure"], dimension)
+        if parsed is None:
+            return None
+        parsed_matrices[route_name] = parsed
+    expected = _intersection_evidence(
+        *parsed_matrices["auxiliary_s_cc_xc"],
+        *parsed_matrices["ccm_hypergeometric_lerch"],
+    )
+    if (
+        record["overlap"] != {key: value for key, value in expected.items() if key != "result"}
+        or record["result"] != expected["result"]
+        or not expected["result"]["all_entries_overlap"]
+        or not expected["result"]["symmetric_intersection_nonempty"]
+    ):
+        return None
+    intersection = _parse_enclosure(record["overlap"]["intersection"], dimension)
+    if intersection is None:
+        return None
+    return parameters, parsed_matrices, intersection
 
 
 def verify_overlap_artifact(record: Any) -> bool:
@@ -721,6 +1004,90 @@ def verify_overlap_artifact(record: Any) -> bool:
     )
 
 
+def verify_cross_precision_overlap_artifact(record: Any) -> bool:
+    required_keys = {
+        "claim_scope",
+        "gate_a_status",
+        "generator_sha256",
+        "limitations",
+        "payload_sha256",
+        "precision_levels",
+        "precision_narrowing",
+        "routes",
+        "schema_version",
+        "shared_components",
+        "upstream_script_sha256",
+    }
+    if not isinstance(record, dict) or set(record) != required_keys:
+        return False
+    if (
+        record["schema_version"] != CROSS_PRECISION_SCHEMA_VERSION
+        or record["claim_scope"] != CLAIM_SCOPE
+        or record["gate_a_status"] != GATE_A_STATUS
+        or record["routes"] != ROUTES
+        or record["shared_components"] != SHARED_COMPONENTS
+        or record["limitations"] != CROSS_PRECISION_LIMITATIONS
+        or record["upstream_script_sha256"] != UPSTREAM_SCRIPT_SHA256
+        or record["generator_sha256"] != _source_sha256()
+        or not isinstance(record["payload_sha256"], str)
+    ):
+        return False
+    payload = {key: value for key, value in record.items() if key != "payload_sha256"}
+    try:
+        if _payload_digest(payload) != record["payload_sha256"]:
+            return False
+    except (TypeError, ValueError):
+        return False
+    levels = record["precision_levels"]
+    if not isinstance(levels, dict) or set(levels) != {"low", "high"}:
+        return False
+    low = _parse_precision_level(levels["low"])
+    high = _parse_precision_level(levels["high"])
+    if low is None or high is None:
+        return False
+    low_parameters, low_matrices, low_intersection = low
+    high_parameters, high_matrices, high_intersection = high
+    if (
+        low_parameters["c"] != high_parameters["c"]
+        or low_parameters["N"] != high_parameters["N"]
+        or low_parameters["python_flint_version"] != high_parameters["python_flint_version"]
+        or high_parameters["prec_bits"] < low_parameters["prec_bits"] + 512
+        or high_parameters["decimal_enclosure_digits"] <= low_parameters["decimal_enclosure_digits"]
+    ):
+        return False
+    expected_routes = {
+        name: _matrix_comparison_evidence(*low_matrices[name], *high_matrices[name])
+        for name in ROUTE_NAMES
+    }
+    expected_intersection = _matrix_comparison_evidence(
+        *low_intersection, *high_intersection
+    )
+    expected_result = {
+        "all_route_entries_contained": all(
+            expected_routes[name]["result"]["all_entries_contained"]
+            for name in ROUTE_NAMES
+        ),
+        "all_route_entries_strictly_narrower": all(
+            expected_routes[name]["result"]["all_entries_strictly_narrower"]
+            for name in ROUTE_NAMES
+        ),
+        "intersection_entries_contained": expected_intersection["result"][
+            "all_entries_contained"
+        ],
+        "intersection_entries_strictly_narrower": expected_intersection["result"][
+            "all_entries_strictly_narrower"
+        ],
+    }
+    expected_narrowing = {
+        "intersection": expected_intersection,
+        "routes": expected_routes,
+        "result": expected_result,
+    }
+    return record["precision_narrowing"] == expected_narrowing and all(
+        expected_result.values()
+    )
+
+
 def verify_overlap_artifact_file(path: str | Path) -> bool:
     try:
         source = Path(path).read_bytes()
@@ -731,6 +1098,18 @@ def verify_overlap_artifact_file(path: str | Path) -> bool:
     except (OSError, TypeError, UnicodeError, ValueError):
         return False
     return source == canonical and verify_overlap_artifact(record)
+
+
+def verify_cross_precision_overlap_artifact_file(path: str | Path) -> bool:
+    try:
+        source = Path(path).read_bytes()
+        record = json.loads(source, parse_constant=lambda value: (_ for _ in ()).throw(
+            ValueError(f"non-finite JSON constant: {value}")
+        ))
+        canonical = (_canonical_json(record) + "\n").encode("ascii")
+    except (OSError, TypeError, UnicodeError, ValueError):
+        return False
+    return source == canonical and verify_cross_precision_overlap_artifact(record)
 
 
 def _generate(args: argparse.Namespace) -> int:
@@ -754,6 +1133,30 @@ def _verify(path: Path) -> int:
     return 0 if valid else 1
 
 
+def _generate_cross_precision(args: argparse.Namespace) -> int:
+    artifact = write_cross_precision_overlap_artifact(
+        args.output,
+        args.c,
+        args.N,
+        args.low_prec_bits,
+        args.high_prec_bits,
+        args.low_decimal_enclosure_digits,
+        args.high_decimal_enclosure_digits,
+    )
+    result = artifact["precision_narrowing"]["result"]
+    print(
+        "independent small-N Arb intervals narrow at second precision: "
+        f"{str(all(result.values())).lower()}"
+    )
+    return 0
+
+
+def _verify_cross_precision(path: Path) -> int:
+    valid = verify_cross_precision_overlap_artifact_file(path)
+    print(f"valid small-N Arb cross-precision artifact: {str(valid).lower()}")
+    return 0 if valid else 1
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Generate or verify independent small-N Arb Weil intervals."
@@ -769,13 +1172,33 @@ def main(argv: Sequence[str] | None = None) -> int:
         "--decimal-enclosure-digits", type=int, default=120
     )
 
+    cross_generate_parser = subparsers.add_parser("generate-cross-precision")
+    cross_generate_parser.add_argument("output", type=Path)
+    cross_generate_parser.add_argument("--c", type=int, default=13)
+    cross_generate_parser.add_argument("--N", type=int, default=4)
+    cross_generate_parser.add_argument("--low-prec-bits", type=int, default=384)
+    cross_generate_parser.add_argument("--high-prec-bits", type=int, default=896)
+    cross_generate_parser.add_argument(
+        "--low-decimal-enclosure-digits", type=int, default=120
+    )
+    cross_generate_parser.add_argument(
+        "--high-decimal-enclosure-digits", type=int, default=240
+    )
+
     verify_parser = subparsers.add_parser("verify")
     verify_parser.add_argument("artifact", type=Path)
+
+    cross_verify_parser = subparsers.add_parser("verify-cross-precision")
+    cross_verify_parser.add_argument("artifact", type=Path)
 
     args = parser.parse_args(argv)
     if args.command == "generate":
         return _generate(args)
-    return _verify(args.artifact)
+    if args.command == "verify":
+        return _verify(args.artifact)
+    if args.command == "generate-cross-precision":
+        return _generate_cross_precision(args)
+    return _verify_cross_precision(args.artifact)
 
 
 if __name__ == "__main__":

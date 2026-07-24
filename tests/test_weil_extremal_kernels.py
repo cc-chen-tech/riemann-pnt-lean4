@@ -46,6 +46,13 @@ SMALL_N_INTERVAL_OVERLAP = (
     / "reference"
     / "groskin_2607_02828_v1_c13_N4_arb_interval_overlap.json"
 )
+SMALL_N_CROSS_PRECISION_OVERLAP = (
+    Path(__file__).parents[1]
+    / "experiments"
+    / "rh"
+    / "reference"
+    / "groskin_2607_02828_v1_c13_N4_arb_cross_precision_overlap.json"
+)
 
 
 def refresh_payload_digest(record):
@@ -69,7 +76,7 @@ def test_small_n_arb_interval_overlap_artifact_is_complete_and_replays():
     record = json.loads(source)
 
     assert hashlib.sha256(source).hexdigest() == (
-        "6af23930c0294f6469f80d889f46837bfa74be0e9b914d6d71e1733949edba98"
+        "bcc089655bf333a8aceafdfcc9a11d250bd2bbe0e4b0195dc5861839514243c6"
     )
     assert overlap.verify_overlap_artifact_file(SMALL_N_INTERVAL_OVERLAP)
     assert record["schema_version"] == "weil-extremal-kernel-arb-overlap/v1"
@@ -139,6 +146,61 @@ def test_small_n_overlap_cli_fails_on_rehashed_nonoverlap(tmp_path):
 
     assert result.returncode == 1
     assert result.stdout.strip() == "valid small-N Arb interval overlap artifact: false"
+
+
+def test_small_n_cross_precision_artifact_replays_strict_narrowing():
+    from experiments.rh import weil_extremal_interval_overlap as overlap
+
+    source = SMALL_N_CROSS_PRECISION_OVERLAP.read_bytes()
+    record = json.loads(source)
+
+    assert hashlib.sha256(source).hexdigest() == (
+        "9abfdac422ffab3a8c362286c50d188861ba2cf960ec8cdbafd7515171eff2ab"
+    )
+    assert overlap.verify_cross_precision_overlap_artifact_file(
+        SMALL_N_CROSS_PRECISION_OVERLAP
+    )
+    assert record["schema_version"] == (
+        "weil-extremal-kernel-arb-cross-precision-overlap/v1"
+    )
+    assert record["claim_scope"] == "small-N-gate-a-preparation-only"
+    assert record["gate_a_status"] == "not_satisfied"
+    assert record["precision_levels"]["low"]["parameters"]["prec_bits"] == 384
+    assert record["precision_levels"]["high"]["parameters"]["prec_bits"] == 896
+    assert record["precision_narrowing"]["result"] == {
+        "all_route_entries_contained": True,
+        "all_route_entries_strictly_narrower": True,
+        "intersection_entries_contained": True,
+        "intersection_entries_strictly_narrower": True,
+    }
+    for route in ("auxiliary_s_cc_xc", "ccm_hypergeometric_lerch"):
+        comparison = record["precision_narrowing"]["routes"][route]
+        assert comparison["result"] == {
+            "all_entries_contained": True,
+            "all_entries_strictly_narrower": True,
+            "entry_count": 81,
+        }
+        assert all(value for row in comparison["contained_entrywise"] for value in row)
+        assert all(
+            value for row in comparison["strictly_narrower_entrywise"] for value in row
+        )
+
+
+def test_small_n_cross_precision_verifier_rejects_rehashed_nonnarrowing():
+    from experiments.rh import weil_extremal_interval_overlap as overlap
+
+    record = json.loads(SMALL_N_CROSS_PRECISION_OVERLAP.read_bytes())
+    fine = record["precision_levels"]["high"]["matrices"]["auxiliary_s_cc_xc"][
+        "enclosure"
+    ]
+    coarse = record["precision_levels"]["low"]["matrices"]["auxiliary_s_cc_xc"][
+        "enclosure"
+    ]
+    fine["lower"][0][0] = coarse["lower"][0][0]
+    fine["upper"][0][0] = coarse["upper"][0][0]
+    refresh_payload_digest(record)
+
+    assert not overlap.verify_cross_precision_overlap_artifact(record)
 
 
 def test_finite_dictionary_dimensions_distinguish_full_and_even_sector():

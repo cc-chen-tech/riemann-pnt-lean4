@@ -118,3 +118,12 @@ of this full-size reproduction record: no second `401 x 401` interval matrix
 was retained or compared at `(100,200)`, and the exact-certificate,
 analytic-transfer, and per-entry second-precision narrowing requirements
 listed above remain open.
+
+The companion small-N cross-precision artifact
+`experiments/rh/reference/groskin_2607_02828_v1_c13_N4_arb_cross_precision_overlap.json`
+now supplies the previously absent *small-N-only* narrowing check: the same two
+independent formulas are reassembled at 384 and 896 bits, and exact rational
+interval comparisons show route-wise containment and strict width reduction in
+all 81 entries, with the same result for the route intersection. This does not
+resolve the corresponding requirement for `401 x 401` matrices at `(100,200)`;
+it is neither an LDL certificate nor an analytic transfer result.

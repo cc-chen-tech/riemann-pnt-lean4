@@ -109,7 +109,7 @@ symmetric intersection. Each rational interval is an outward decimal
 containment envelope returned by Arb's `mid_rad_10exp`; no point value is
 promoted to an interval by an assumed error tolerance. The widest retained
 route interval is less than `7e-112`. The artifact SHA-256 is
-`6af23930c0294f6469f80d889f46837bfa74be0e9b914d6d71e1733949edba98`.
+`bcc089655bf333a8aceafdfcc9a11d250bd2bbe0e4b0195dc5861839514243c6`.
 
 Generate and verify it with:
 
@@ -130,6 +130,33 @@ transpose intersections, an exact rational LDL certificate accepted by the
 checker, a nonnegative analytic transfer margin, and per-entry narrowing at a
 second precision at least 512 bits higher. The small artifact emits no LDL
 claim and records `gate_a_status = "not_satisfied"`.
+
+### Second-Precision Narrowing at Small N
+
+The companion artifact
+`experiments/rh/reference/groskin_2607_02828_v1_c13_N4_arb_cross_precision_overlap.json`
+retains both full route matrices at 384 and 896 bits, with respectively 120
+and 240 decimal digits in the rational outward enclosures. Its standard-library
+verifier reconstructs all interval comparisons. For each of the two routes,
+every one of the 81 high-precision intervals is contained in, and has strictly
+smaller width than, its low-precision counterpart. The same two statements hold
+entrywise for the independently assembled route-intersection interval.
+
+The high precision is exactly 512 bits above the low precision. This establishes
+the requested second-precision narrowing evidence for the retained small matrix,
+not for the registered `(c,N)=(100,200)` matrix. It remains neither an `LDL^T`
+certificate nor an analytic-transfer proof. The artifact SHA-256 is
+`9abfdac422ffab3a8c362286c50d188861ba2cf960ec8cdbafd7515171eff2ab`.
+
+```sh
+/tmp/weil-overlap-venv-20260724/bin/python \
+  -m experiments.rh.weil_extremal_interval_overlap generate-cross-precision \
+  experiments/rh/reference/groskin_2607_02828_v1_c13_N4_arb_cross_precision_overlap.json \
+  --c 13 --N 4 --low-prec-bits 384 --high-prec-bits 896 \
+  --low-decimal-enclosure-digits 120 --high-decimal-enclosure-digits 240
+python3 -m experiments.rh.weil_extremal_interval_overlap verify-cross-precision \
+  experiments/rh/reference/groskin_2607_02828_v1_c13_N4_arb_cross_precision_overlap.json
+```
 
 ## Registered Mathematical Target
 
