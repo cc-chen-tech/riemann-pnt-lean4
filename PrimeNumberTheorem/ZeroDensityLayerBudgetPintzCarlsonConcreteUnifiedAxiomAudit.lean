@@ -1,0 +1,7 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetPintzCarlsonConcreteUnified
+
+/-! Axiom audit for the concrete unified Pintz--Carlson transfer. -/
+
+#print axioms PrimeNumberTheorem.pintzCarlsonClassicalAggregatedDensityLayerTerm
+#print axioms PrimeNumberTheorem.constructAdaptiveClassicalCarlsonUnifiedDynamicZeroTransfer
+#print axioms PrimeNumberTheorem.constructAdaptiveClassicalCarlsonUnifiedDynamicSignedZeroTransfer
