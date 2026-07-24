@@ -1367,6 +1367,38 @@ theorem erase_zero_one_poles_eq_nontrivialZerosFinset
       have := hz.2.1
       norm_num at this
 
+/-- Once the residue support has been identified, the exceptional pole at
+`1` separates as the main increment `h`, and every remaining summand is over
+the canonical nontrivial-zero truncation. -/
+theorem sum_erase_zero_ite_one_eq_main_add_nontrivialZeroSum
+    {poles : Finset ℂ} {T h : ℝ} (f : ℂ → ℂ)
+    (hone : (1 : ℂ) ∈ poles)
+    (hsupport : (poles.erase 0).erase 1 = nontrivialZerosFinset T) :
+    (∑ p ∈ poles.erase 0, if p = 1 then (h : ℂ) else f p) =
+      (h : ℂ) + ∑ ρ ∈ nontrivialZerosFinset T, f ρ := by
+  have honeErase : (1 : ℂ) ∈ poles.erase 0 :=
+    Finset.mem_erase.mpr ⟨by norm_num, hone⟩
+  have hwithout :
+      (∑ p ∈ (poles.erase 0).erase 1,
+          if p = 1 then (h : ℂ) else f p) =
+        ∑ p ∈ (poles.erase 0).erase 1, f p := by
+    apply Finset.sum_congr rfl
+    intro p hp
+    have hp1 : p ≠ 1 := (Finset.mem_erase.mp hp).1
+    simp [hp1]
+  calc
+    (∑ p ∈ poles.erase 0, if p = 1 then (h : ℂ) else f p) =
+        (∑ p ∈ (poles.erase 0).erase 1,
+          if p = 1 then (h : ℂ) else f p) +
+          (if (1 : ℂ) = 1 then (h : ℂ) else f 1) := by
+      exact (Finset.sum_erase_add _ _ honeErase).symm
+    _ = (∑ p ∈ (poles.erase 0).erase 1, f p) + (h : ℂ) := by
+      rw [hwithout]
+      simp
+    _ = (h : ℂ) + ∑ ρ ∈ nontrivialZerosFinset T, f ρ := by
+      rw [hsupport]
+      ring
+
 /-- The selected-good-height budget for the difference of the two shifted
 second-order contour remainders on the first negative odd line. -/
 noncomputable def secondOrderSelectedHeightContourBudget
@@ -1654,6 +1686,164 @@ theorem
         rw [htotal]
         linarith
       _ ≤ chebyshevPsi (x + h) := hbounds'.2
+
+/-- The contribution of the double pole at the origin to one smoothed
+endpoint increment. -/
+noncomputable def secondOrderOriginDerivativeIncrement
+    (x h : ℝ) : ℂ :=
+  deriv (fun z : ℂ =>
+      -logDeriv riemannZeta z * ((x + h : ℝ) : ℂ) ^ z) 0 -
+    deriv (fun z : ℂ =>
+      -logDeriv riemannZeta z * (x : ℂ) ^ z) 0
+
+/-- The multiplicity-aware nontrivial-zero contribution to one second-order
+Riesz endpoint increment. -/
+noncomputable def secondOrderNontrivialZeroIncrement
+    (x h T : ℝ) : ℂ :=
+  ∑ ρ ∈ nontrivialZerosFinset T,
+    -(analyticOrderNatAt riemannZeta ρ : ℂ) *
+      (((x + h : ℝ) : ℂ) ^ ρ - (x : ℂ) ^ ρ) / ρ ^ 2
+
+/-- The standardized nontrivial-zero increment inherits the finite
+multiplicity-aware smoothing estimate. -/
+theorem norm_secondOrderNontrivialZeroIncrement_le
+    {x h T : ℝ}
+    (hx : 1 ≤ x) (hh : 0 ≤ h)
+    (hsmall : (T + 1) * Real.log ((x + h) / x) ≤ 1) :
+    ‖secondOrderNontrivialZeroIncrement x h T‖ ≤
+      2 * x * Real.log ((x + h) / x) *
+        ExplicitFormulaAux.globalReciprocalZeroMultiplicity T := by
+  have hsum :
+      secondOrderNontrivialZeroIncrement x h T =
+        ∑ ρ ∈ nontrivialZerosFinset T,
+          -(analyticOrderNatAt riemannZeta ρ : ℂ) *
+            ((((x + h : ℝ) : ℂ) ^ ρ - (x : ℂ) ^ ρ) / ρ ^ 2) := by
+    unfold secondOrderNontrivialZeroIncrement
+    apply Finset.sum_congr rfl
+    intro ρ _hρ
+    ring
+  rw [hsum]
+  exact norm_secondOrderRieszZeroSumWithMultiplicity_increment_le
+    hx hh hsmall
+
+/-- Uniform `log² T` control of the standardized nontrivial-zero increment. -/
+theorem exists_C_norm_secondOrderNontrivialZeroIncrement_le_log_sq :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ x h T : ℝ,
+      1 ≤ x → 0 ≤ h → 4 ≤ T →
+      (T + 1) * Real.log ((x + h) / x) ≤ 1 →
+      ‖secondOrderNontrivialZeroIncrement x h T‖ ≤
+        2 * C * x * Real.log ((x + h) / x) *
+          (1 + Real.log (T + 6)) ^ 2 := by
+  rcases
+      exists_C_norm_secondOrderRieszZeroSumWithMultiplicity_increment_le_log_sq with
+    ⟨C, hC, hbound⟩
+  refine ⟨C, hC, ?_⟩
+  intro x h T hx hh hT hsmall
+  have hsum :
+      secondOrderNontrivialZeroIncrement x h T =
+        ∑ ρ ∈ nontrivialZerosFinset T,
+          -(analyticOrderNatAt riemannZeta ρ : ℂ) *
+            ((((x + h : ℝ) : ℂ) ^ ρ - (x : ℂ) ^ ρ) / ρ ^ 2) := by
+    unfold secondOrderNontrivialZeroIncrement
+    apply Finset.sum_congr rfl
+    intro ρ _hρ
+    ring
+  rw [hsum]
+  exact hbound x h T hx hh hT hsmall
+
+/-- Standardized selected-height Riesz sandwich. The abstract residue families
+have been eliminated: the endpoint difference is exactly the origin
+derivative increment, the main pole contribution `h`, and the canonical
+multiplicity-aware nontrivial-zero increment. The remaining error is the
+already proved contour-plus-Perron budget. -/
+theorem exists_C_forall_goodHeight_chebyshevPsi_bounds_standard_zero_sum
+    {x h : ℝ} (hx : Real.exp 1 ≤ x) (hh : 0 < h) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          chebyshevPsi x ≤
+              ((secondOrderOriginDerivativeIncrement x h + (h : ℂ) +
+                    secondOrderNontrivialZeroIncrement x h T).re +
+                secondOrderSelectedHeightTotalBudget C x h A T) /
+                  Real.log ((x + h) / x) ∧
+            ((secondOrderOriginDerivativeIncrement x h + (h : ℂ) +
+                    secondOrderNontrivialZeroIncrement x h T).re -
+                secondOrderSelectedHeightTotalBudget C x h A T) /
+                  Real.log ((x + h) / x) ≤
+              chebyshevPsi (x + h) := by
+  rcases
+      exists_C_forall_goodHeight_chebyshevPsi_bounds_crossing_zero_moving_line_neg_one
+        hx hh with ⟨C, hC, hchoose⟩
+  refine ⟨C, hC, ?_⟩
+  intro A hA
+  rcases hchoose A hA with
+    ⟨T, hT, hgood, polesX, residueX, polesY, residueY,
+      hpolesX, hclassX, hcompleteX, _hzeroX, _hresidueX,
+      _hpolesY, _hclassY, _hcompleteY, _hzeroY, _hresidueY,
+      hpolesEq, hsumDiff, hbounds⟩
+  have hTpos : 0 < T := by linarith [hT.1]
+  have hy : 0 < x + h := by
+    have hxpos : 0 < x := (Real.exp_pos 1).trans_le hx
+    linarith
+  have hlogOne : 1 ≤ Real.log (x + h) :=
+    (Real.le_log_iff_exp_le hy).2 (hx.trans (by linarith))
+  have hlogpos : 0 < Real.log (x + h) :=
+    zero_lt_one.trans_le hlogOne
+  let c : ℝ := 1 + 1 / Real.log (x + h)
+  have hc : 1 < c := by
+    dsimp [c]
+    linarith [one_div_pos.mpr hlogpos]
+  have honeRect :
+      (1 : ℂ) ∈
+        ([[(-1 : ℝ), c]] ×ℂ [[-T, T]] : Set ℂ) := by
+    rw [Complex.mem_reProdIm,
+      Set.uIcc_of_le (by linarith : (-1 : ℝ) ≤ c),
+      Set.uIcc_of_le (by linarith : -T ≤ T)]
+    norm_num
+    exact ⟨hc.le, hTpos.le⟩
+  have hone : (1 : ℂ) ∈ polesX :=
+    hcompleteX 1 (by simpa [c] using honeRect)
+      (Or.inr (Or.inl rfl))
+  have hsupport :
+      (polesX.erase 0).erase 1 = nontrivialZerosFinset T := by
+    apply erase_zero_one_poles_eq_nontrivialZerosFinset
+      hTpos hc hgood
+    · simpa [c] using hpolesX
+    · exact hclassX
+    · simpa [c] using hcompleteX
+  let f : ℂ → ℂ := fun p =>
+    -(analyticOrderNatAt riemannZeta p : ℂ) *
+      (((x + h : ℝ) : ℂ) ^ p - (x : ℂ) ^ p) / p ^ 2
+  have hsum :
+      (∑ p ∈ polesX.erase 0,
+          if p = 1 then (h : ℂ) else f p) =
+        (h : ℂ) + ∑ ρ ∈ nontrivialZerosFinset T, f ρ :=
+    sum_erase_zero_ite_one_eq_main_add_nontrivialZeroSum
+      f hone hsupport
+  subst polesY
+  have hstandard :
+      (∑ p ∈ polesX, residueY p) -
+          (∑ p ∈ polesX, residueX p) =
+        secondOrderOriginDerivativeIncrement x h + (h : ℂ) +
+          secondOrderNontrivialZeroIncrement x h T := by
+    rw [hsum] at hsumDiff
+    calc
+      (∑ p ∈ polesX, residueY p) -
+          (∑ p ∈ polesX, residueX p) =
+          (deriv (fun z : ℂ =>
+              -logDeriv riemannZeta z *
+                ((x + h : ℝ) : ℂ) ^ z) 0 -
+            deriv (fun z : ℂ =>
+              -logDeriv riemannZeta z * (x : ℂ) ^ z) 0) +
+            ((h : ℂ) + ∑ ρ ∈ nontrivialZerosFinset T, f ρ) := by
+        simpa [f] using hsumDiff
+      _ = secondOrderOriginDerivativeIncrement x h + (h : ℂ) +
+          secondOrderNontrivialZeroIncrement x h T := by
+        simp only [secondOrderOriginDerivativeIncrement,
+          secondOrderNontrivialZeroIncrement, f]
+        ring
+  refine ⟨T, hT, hgood, ?_⟩
+  simpa [hstandard] using hbounds
 
 end ExplicitFormulaResidues
 

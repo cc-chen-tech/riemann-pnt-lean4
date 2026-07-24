@@ -512,6 +512,36 @@ example {poles : Finset ℂ} {c T : ℝ}
   PrimeNumberTheorem.ExplicitFormulaResidues.erase_zero_one_poles_eq_nontrivialZerosFinset
     hT hc hgood hpoles hclass hcomplete
 
+example {poles : Finset ℂ} {T h : ℝ} (f : ℂ → ℂ)
+    (hone : (1 : ℂ) ∈ poles)
+    (hsupport : (poles.erase 0).erase 1 =
+      PrimeNumberTheorem.nontrivialZerosFinset T) :
+    (∑ p ∈ poles.erase 0, if p = 1 then (h : ℂ) else f p) =
+      (h : ℂ) +
+        ∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T, f ρ :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.sum_erase_zero_ite_one_eq_main_add_nontrivialZeroSum
+    f hone hsupport
+
+example {x h T : ℝ}
+    (hx : 1 ≤ x) (hh : 0 ≤ h)
+    (hsmall : (T + 1) * Real.log ((x + h) / x) ≤ 1) :
+    ‖PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderNontrivialZeroIncrement
+        x h T‖ ≤
+      2 * x * Real.log ((x + h) / x) *
+        PrimeNumberTheorem.ExplicitFormulaAux.globalReciprocalZeroMultiplicity T :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.norm_secondOrderNontrivialZeroIncrement_le
+    hx hh hsmall
+
+example :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ x h T : ℝ,
+      1 ≤ x → 0 ≤ h → 4 ≤ T →
+      (T + 1) * Real.log ((x + h) / x) ≤ 1 →
+      ‖PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderNontrivialZeroIncrement
+          x h T‖ ≤
+        2 * C * x * Real.log ((x + h) / x) *
+          (1 + Real.log (T + 6)) ^ 2 :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.exists_C_norm_secondOrderNontrivialZeroIncrement_le_log_sq
+
 example {x h : ℝ} (hx : Real.exp 1 ≤ x) (hh : 0 < h) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
       ∃ T ∈ Set.Icc A (A + 1),
@@ -555,6 +585,29 @@ example {x h : ℝ} (hx : Real.exp 1 ≤ x) (hh : 0 < h) :
   exact
     ⟨T, hT, hgood, polesX, polesY, residueX, residueY,
       hpolesEq, hsumDiff, hbounds⟩
+
+example {x h : ℝ} (hx : Real.exp 1 ≤ x) (hh : 0 < h) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        PrimeNumberTheorem.ExplicitFormulaAux.goodHeight T ∧
+          PrimeNumberTheorem.chebyshevPsi x ≤
+              ((PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderOriginDerivativeIncrement
+                    x h + (h : ℂ) +
+                  PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderNontrivialZeroIncrement
+                    x h T).re +
+                PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightTotalBudget
+                  C x h A T) /
+                  Real.log ((x + h) / x) ∧
+            ((PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderOriginDerivativeIncrement
+                    x h + (h : ℂ) +
+                  PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderNontrivialZeroIncrement
+                    x h T).re -
+                PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightTotalBudget
+                  C x h A T) /
+                  Real.log ((x + h) / x) ≤
+              PrimeNumberTheorem.chebyshevPsi (x + h) :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.exists_C_forall_goodHeight_chebyshevPsi_bounds_standard_zero_sum
+    hx hh
 
 example :
     MathlibAux.boundaryRectIntegral
