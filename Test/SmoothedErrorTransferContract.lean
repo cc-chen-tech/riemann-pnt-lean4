@@ -664,6 +664,98 @@ example {x h : ℝ} (hx : Real.exp 1 ≤ x) (hh : 0 < h) :
   PrimeNumberTheorem.ExplicitFormulaResidues.exists_C_D_forall_goodHeight_chebyshevPsi_bounds_scalar_log_sq
     hx hh
 
+example {x h : ℝ} (hx : 0 < x) (hh : 0 < h) :
+    h / Real.log ((x + h) / x) ∈ Set.Icc x (x + h) :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.smoothingIncrementDivLog_mem_Icc
+    hx hh
+
+example {x h : ℝ} (hx : Real.exp 1 ≤ x) (hh : 0 < h) :
+    ∃ C D : ℝ, 0 ≤ C ∧ 0 ≤ D ∧ ∀ A : ℝ, 4 ≤ A →
+      (A + 2) * Real.log ((x + h) / x) ≤ 1 →
+        ∃ T ∈ Set.Icc A (A + 1),
+          PrimeNumberTheorem.ExplicitFormulaAux.goodHeight T ∧
+            PrimeNumberTheorem.chebyshevPsi x - x ≤
+                h - Real.log (2 * Real.pi) +
+                  PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightTotalBudget
+                      C x h A T /
+                    Real.log ((x + h) / x) +
+                  2 * D * x * (1 + Real.log (T + 6)) ^ 2 ∧
+              x - Real.log (2 * Real.pi) -
+                    PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightTotalBudget
+                        C x h A T /
+                      Real.log ((x + h) / x) -
+                    2 * D * x * (1 + Real.log (T + 6)) ^ 2 ≤
+                PrimeNumberTheorem.chebyshevPsi (x + h) :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.exists_C_D_forall_goodHeight_chebyshevPsi_endpoint_error_log_sq
+    hx hh
+
+example {x A : ℝ} (hx : 0 < x) (hA : 4 ≤ A) :
+    0 <
+      PrimeNumberTheorem.ExplicitFormulaResidues.canonicalSecondOrderSmoothingWidth
+        x A :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.canonicalSecondOrderSmoothingWidth_pos
+    hx hA
+
+example {x A : ℝ} (hx : 0 < x) :
+    Real.log
+        ((x +
+            PrimeNumberTheorem.ExplicitFormulaResidues.canonicalSecondOrderSmoothingWidth
+              x A) / x) =
+      1 / (A + 2) :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.canonicalSecondOrderSmoothingWidth_log_eq
+    hx
+
+example {x A : ℝ} (hx : 0 < x) (hA : 4 ≤ A) :
+    (A + 2) *
+        Real.log
+          ((x +
+              PrimeNumberTheorem.ExplicitFormulaResidues.canonicalSecondOrderSmoothingWidth
+                x A) / x) ≤ 1 :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.canonicalSecondOrderSmoothingWidth_small
+    hx hA
+
+example {x h A : ℝ} (hx : 0 < x) (hh : 0 ≤ h) (hA : 4 ≤ A)
+    (hsmall : (A + 2) * Real.log ((x + h) / x) ≤ 1) :
+    h ≤
+      PrimeNumberTheorem.ExplicitFormulaResidues.canonicalSecondOrderSmoothingWidth
+        x A :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.le_canonicalSecondOrderSmoothingWidth_of_small
+    hx hh hA hsmall
+
+example {x A : ℝ} (hx : Real.exp 1 ≤ x) (hA : 4 ≤ A) :
+    ∃ C D T : ℝ,
+      0 ≤ C ∧ 0 ≤ D ∧ T ∈ Set.Icc A (A + 1) ∧
+        PrimeNumberTheorem.ExplicitFormulaAux.goodHeight T ∧
+          PrimeNumberTheorem.chebyshevPsi x - x ≤
+              PrimeNumberTheorem.ExplicitFormulaResidues.canonicalSecondOrderSmoothingWidth
+                    x A -
+                Real.log (2 * Real.pi) +
+                PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightTotalBudget
+                    C x
+                    (PrimeNumberTheorem.ExplicitFormulaResidues.canonicalSecondOrderSmoothingWidth
+                      x A) A T /
+                  Real.log
+                    ((x +
+                        PrimeNumberTheorem.ExplicitFormulaResidues.canonicalSecondOrderSmoothingWidth
+                          x A) / x) +
+                2 * D * x * (1 + Real.log (T + 6)) ^ 2 ∧
+            x - Real.log (2 * Real.pi) -
+                  PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightTotalBudget
+                      C x
+                      (PrimeNumberTheorem.ExplicitFormulaResidues.canonicalSecondOrderSmoothingWidth
+                        x A) A T /
+                    Real.log
+                      ((x +
+                          PrimeNumberTheorem.ExplicitFormulaResidues.canonicalSecondOrderSmoothingWidth
+                            x A) / x) -
+                  2 * D * x * (1 + Real.log (T + 6)) ^ 2 ≤
+              PrimeNumberTheorem.chebyshevPsi
+                (x +
+                  PrimeNumberTheorem.ExplicitFormulaResidues.canonicalSecondOrderSmoothingWidth
+                    x A) :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.exists_C_D_goodHeight_chebyshevPsi_canonical_smoothing_error
+    hx hA
+
 example :
     MathlibAux.boundaryRectIntegral
         (fun z : ℂ =>

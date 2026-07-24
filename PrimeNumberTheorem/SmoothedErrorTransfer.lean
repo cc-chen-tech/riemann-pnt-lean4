@@ -2023,6 +2023,232 @@ theorem
         dsimp only [B] at hre ⊢
         linarith [hre.1])).trans hbounds.2
 
+/-- The logarithmic Riesz difference quotient has the same scale as its
+left endpoint.  This elementary two-sided estimate is what converts the
+selected-height sandwich into an error bound centered at `x`. -/
+theorem smoothingIncrementDivLog_mem_Icc
+    {x h : ℝ} (hx : 0 < x) (hh : 0 < h) :
+    h / Real.log ((x + h) / x) ∈ Set.Icc x (x + h) := by
+  have hy : 0 < x + h := by linarith
+  have hratio : 1 < (x + h) / x := by
+    rw [lt_div_iff₀ hx]
+    linarith
+  have hratioPos : 0 < (x + h) / x := zero_lt_one.trans hratio
+  have hlogPos : 0 < Real.log ((x + h) / x) := Real.log_pos hratio
+  have hlogUpper :
+      Real.log ((x + h) / x) ≤ h / x := by
+    have hlog :=
+      Real.log_le_sub_one_of_pos hratioPos
+    calc
+      Real.log ((x + h) / x) ≤ (x + h) / x - 1 := hlog
+      _ = h / x := by field_simp; ring
+  have hlogLower :
+      h / (x + h) ≤ Real.log ((x + h) / x) := by
+    have hlog :=
+      Real.one_sub_inv_le_log_of_pos hratioPos
+    calc
+      h / (x + h) = 1 - ((x + h) / x)⁻¹ := by
+        field_simp
+        ring
+      _ ≤ Real.log ((x + h) / x) := hlog
+  constructor
+  · apply (le_div_iff₀ hlogPos).2
+    calc
+      x * Real.log ((x + h) / x) ≤ x * (h / x) :=
+        mul_le_mul_of_nonneg_left hlogUpper hx.le
+      _ = h := by field_simp
+  · apply (div_le_iff₀ hlogPos).2
+    calc
+      h = (x + h) * (h / (x + h)) := by field_simp
+      _ ≤ (x + h) * Real.log ((x + h) / x) :=
+        mul_le_mul_of_nonneg_left hlogLower hy.le
+
+/-- The fully scalar selected-height sandwich rewritten as endpoint errors
+centered at `x`.  The Riesz main quotient contributes at most the smoothing
+width `h`; the zero package contributes the explicit `log² T` term, and the
+contour-plus-Perron error remains as its exact selected-height budget divided
+by the logarithmic increment. -/
+theorem
+    exists_C_D_forall_goodHeight_chebyshevPsi_endpoint_error_log_sq
+    {x h : ℝ} (hx : Real.exp 1 ≤ x) (hh : 0 < h) :
+    ∃ C D : ℝ, 0 ≤ C ∧ 0 ≤ D ∧ ∀ A : ℝ, 4 ≤ A →
+      (A + 2) * Real.log ((x + h) / x) ≤ 1 →
+        ∃ T ∈ Set.Icc A (A + 1),
+          ExplicitFormulaAux.goodHeight T ∧
+            chebyshevPsi x - x ≤
+                h - Real.log (2 * Real.pi) +
+                  secondOrderSelectedHeightTotalBudget C x h A T /
+                    Real.log ((x + h) / x) +
+                  2 * D * x * (1 + Real.log (T + 6)) ^ 2 ∧
+              x - Real.log (2 * Real.pi) -
+                    secondOrderSelectedHeightTotalBudget C x h A T /
+                      Real.log ((x + h) / x) -
+                    2 * D * x * (1 + Real.log (T + 6)) ^ 2 ≤
+                chebyshevPsi (x + h) := by
+  rcases
+      exists_C_D_forall_goodHeight_chebyshevPsi_bounds_scalar_log_sq hx hh with
+    ⟨C, D, hC, hD, hchoose⟩
+  refine ⟨C, D, hC, hD, ?_⟩
+  intro A hA hsmall
+  rcases hchoose A hA hsmall with ⟨T, hT, hgood, hbounds⟩
+  have hxpos : 0 < x := (Real.exp_pos 1).trans_le hx
+  have hquotient :=
+    smoothingIncrementDivLog_mem_Icc hxpos hh
+  have hratio : 1 < (x + h) / x := by
+    rw [lt_div_iff₀ hxpos]
+    linarith
+  have hlogpos : 0 < Real.log ((x + h) / x) :=
+    Real.log_pos hratio
+  refine ⟨T, hT, hgood, ?_, ?_⟩
+  · calc
+      chebyshevPsi x - x ≤
+          (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) +
+                secondOrderSelectedHeightTotalBudget C x h A T +
+                2 * D * x * Real.log ((x + h) / x) *
+                  (1 + Real.log (T + 6)) ^ 2) /
+              Real.log ((x + h) / x) - x :=
+        sub_le_sub_right hbounds.1 x
+      _ =
+          h / Real.log ((x + h) / x) -
+              Real.log (2 * Real.pi) +
+              secondOrderSelectedHeightTotalBudget C x h A T /
+                Real.log ((x + h) / x) +
+              2 * D * x * (1 + Real.log (T + 6)) ^ 2 - x := by
+        field_simp [hlogpos.ne']
+      _ ≤
+          h - Real.log (2 * Real.pi) +
+              secondOrderSelectedHeightTotalBudget C x h A T /
+                Real.log ((x + h) / x) +
+              2 * D * x * (1 + Real.log (T + 6)) ^ 2 := by
+        linarith [hquotient.2]
+  · calc
+      x - Real.log (2 * Real.pi) -
+              secondOrderSelectedHeightTotalBudget C x h A T /
+                Real.log ((x + h) / x) -
+              2 * D * x * (1 + Real.log (T + 6)) ^ 2 ≤
+          h / Real.log ((x + h) / x) -
+              Real.log (2 * Real.pi) -
+              secondOrderSelectedHeightTotalBudget C x h A T /
+                Real.log ((x + h) / x) -
+              2 * D * x * (1 + Real.log (T + 6)) ^ 2 := by
+        linarith [hquotient.1]
+      _ =
+          (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) -
+                secondOrderSelectedHeightTotalBudget C x h A T -
+                2 * D * x * Real.log ((x + h) / x) *
+                  (1 + Real.log (T + 6)) ^ 2) /
+              Real.log ((x + h) / x) := by
+        field_simp [hlogpos.ne']
+      _ ≤ chebyshevPsi (x + h) := hbounds.2
+
+/-- A canonical smoothing width whose logarithmic increment is automatically
+small enough for every selected height in `[A, A+1]`.  It saturates the
+caller-level constraint exactly. -/
+noncomputable def canonicalSecondOrderSmoothingWidth
+    (x A : ℝ) : ℝ :=
+  x * (Real.exp (1 / (A + 2)) - 1)
+
+theorem canonicalSecondOrderSmoothingWidth_pos
+    {x A : ℝ} (hx : 0 < x) (hA : 4 ≤ A) :
+    0 < canonicalSecondOrderSmoothingWidth x A := by
+  unfold canonicalSecondOrderSmoothingWidth
+  have hq : 0 < A + 2 := by linarith
+  have hexp : 1 < Real.exp (1 / (A + 2)) :=
+    Real.one_lt_exp_iff.mpr (one_div_pos.mpr hq)
+  exact mul_pos hx (sub_pos.mpr hexp)
+
+theorem canonicalSecondOrderSmoothingWidth_log_eq
+    {x A : ℝ} (hx : 0 < x) :
+    Real.log
+        ((x + canonicalSecondOrderSmoothingWidth x A) / x) =
+      1 / (A + 2) := by
+  have hxne : x ≠ 0 := hx.ne'
+  have hratio :
+      (x + canonicalSecondOrderSmoothingWidth x A) / x =
+        Real.exp (1 / (A + 2)) := by
+    unfold canonicalSecondOrderSmoothingWidth
+    field_simp
+    ring
+  rw [hratio, Real.log_exp]
+
+theorem canonicalSecondOrderSmoothingWidth_small
+    {x A : ℝ} (hx : 0 < x) (hA : 4 ≤ A) :
+    (A + 2) *
+        Real.log
+          ((x + canonicalSecondOrderSmoothingWidth x A) / x) ≤ 1 := by
+  have hq : 0 < A + 2 := by linarith
+  rw [canonicalSecondOrderSmoothingWidth_log_eq hx]
+  field_simp
+  norm_num
+
+/-- The canonical width is not merely admissible: among nonnegative widths it
+is the largest one satisfying the selected-height small-increment constraint.
+Thus the specialization does not lose smoothing range before the analytic
+budget is optimized. -/
+theorem le_canonicalSecondOrderSmoothingWidth_of_small
+    {x h A : ℝ} (hx : 0 < x) (hh : 0 ≤ h) (hA : 4 ≤ A)
+    (hsmall :
+      (A + 2) * Real.log ((x + h) / x) ≤ 1) :
+    h ≤ canonicalSecondOrderSmoothingWidth x A := by
+  have hq : 0 < A + 2 := by linarith
+  have hy : 0 < x + h := by linarith
+  have hratioPos : 0 < (x + h) / x := div_pos hy hx
+  have hlog :
+      Real.log ((x + h) / x) ≤ 1 / (A + 2) := by
+    apply (le_div_iff₀ hq).2
+    simpa [mul_comm] using hsmall
+  have hratio :
+      (x + h) / x ≤ Real.exp (1 / (A + 2)) := by
+    calc
+      (x + h) / x =
+          Real.exp (Real.log ((x + h) / x)) := by
+        rw [Real.exp_log hratioPos]
+      _ ≤ Real.exp (1 / (A + 2)) := Real.exp_le_exp.mpr hlog
+  have hmul :
+      x + h ≤ Real.exp (1 / (A + 2)) * x :=
+    (div_le_iff₀ hx).mp hratio
+  unfold canonicalSecondOrderSmoothingWidth
+  nlinarith [hmul]
+
+/-- Canonical selected-height endpoint estimate.  The free smoothing width is
+specialized to the maximal admissible value, so no small-increment premise
+remains for the caller.  This is a canonical admissible specialization, not
+yet an optimization theorem: the contour constant may depend on this width,
+and the maximal admissible width need not minimize the total displayed
+budget. -/
+theorem
+    exists_C_D_goodHeight_chebyshevPsi_canonical_smoothing_error
+    {x A : ℝ} (hx : Real.exp 1 ≤ x) (hA : 4 ≤ A) :
+    ∃ C D T : ℝ,
+      0 ≤ C ∧ 0 ≤ D ∧ T ∈ Set.Icc A (A + 1) ∧
+        ExplicitFormulaAux.goodHeight T ∧
+          chebyshevPsi x - x ≤
+              canonicalSecondOrderSmoothingWidth x A -
+                Real.log (2 * Real.pi) +
+                secondOrderSelectedHeightTotalBudget C x
+                    (canonicalSecondOrderSmoothingWidth x A) A T /
+                  Real.log
+                    ((x + canonicalSecondOrderSmoothingWidth x A) / x) +
+                2 * D * x * (1 + Real.log (T + 6)) ^ 2 ∧
+            x - Real.log (2 * Real.pi) -
+                  secondOrderSelectedHeightTotalBudget C x
+                      (canonicalSecondOrderSmoothingWidth x A) A T /
+                    Real.log
+                      ((x + canonicalSecondOrderSmoothingWidth x A) / x) -
+                  2 * D * x * (1 + Real.log (T + 6)) ^ 2 ≤
+              chebyshevPsi
+                (x + canonicalSecondOrderSmoothingWidth x A) := by
+  have hxpos : 0 < x := (Real.exp_pos 1).trans_le hx
+  have hh :
+      0 < canonicalSecondOrderSmoothingWidth x A :=
+    canonicalSecondOrderSmoothingWidth_pos hxpos hA
+  rcases
+      exists_C_D_forall_goodHeight_chebyshevPsi_endpoint_error_log_sq hx hh with
+    ⟨C, D, hC, hD, hchoose⟩
+  rcases hchoose A hA (canonicalSecondOrderSmoothingWidth_small hxpos hA) with
+    ⟨T, hT, hgood, hbounds⟩
+  exact ⟨C, D, T, hC, hD, hT, hgood, hbounds⟩
+
 end ExplicitFormulaResidues
 
 end PrimeNumberTheorem
