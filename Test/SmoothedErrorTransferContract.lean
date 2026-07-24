@@ -58,6 +58,31 @@ example {x y c : ℝ} (hx : 1 ≤ x) (hy : 1 ≤ y)
   PrimeNumberTheorem.ExplicitFormulaResidues.exists_goodHeight_Icc_norm_secondOrderContourRemainder_sub_neg_one_le
     hx hy hc hc2
 
+example :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        PrimeNumberTheorem.ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x y c : ℝ}, 1 ≤ x → 1 ≤ y → 1 < c → c ≤ 2 →
+            (∀ p ∈
+              ([[(-1 : ℝ), c]] ×ℂ [[-T, T]] : Set ℂ),
+              p = 0 ∨ p = 1 ∨ riemannZeta p = 0 →
+                -1 < p.re ∧ p.re < c ∧ -T < p.im ∧ p.im < T) ∧
+            ‖PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderContourRemainder
+                  y (-1) c (T / (2 * Real.pi)) -
+                PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderContourRemainder
+                  x (-1) c (T / (2 * Real.pi))‖ ≤
+              (2 *
+                  (((C * y ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T ^ 2) +
+                      (C * x ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T ^ 2)) *
+                    (c - (-1))) +
+                (PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderOddVerticalBound
+                      y 0 T +
+                    PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderOddVerticalBound
+                      x 0 T) *
+                  (2 * T)) /
+                (2 * Real.pi) :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.exists_uniform_goodHeight_Icc_norm_secondOrderContourRemainder_sub_neg_one_le
+
 example {x T t : ℝ} {N : ℕ} (hx : 1 < x) (hT : 0 ≤ T) (ht : |t| ≤ T) :
     ‖PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderExplicitFormulaIntegrand
         x (((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * I)‖ ≤
@@ -97,6 +122,19 @@ example {x y a b : ℝ} (hx : 1 ≤ x) (hy : 1 ≤ y) (ha : -1 ≤ a)
                 (b - a) :=
   PrimeNumberTheorem.ExplicitFormulaResidues.exists_goodHeight_Icc_norm_secondOrderHorizontalXDifference_le
     hx hy ha hab hb
+
+example :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        PrimeNumberTheorem.ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x y a b : ℝ}, 1 ≤ x → 1 ≤ y → -1 ≤ a → a ≤ b → b ≤ 2 →
+            ∀ t : ℝ, |t| = T →
+              ‖PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderHorizontalXDifference
+                  x y a b t‖ ≤
+                ((C * y ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T ^ 2) +
+                  (C * x ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T ^ 2)) *
+                  (b - a) :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.exists_uniform_goodHeight_Icc_norm_secondOrderHorizontalXDifference_le
 
 example (x y a c W : ℝ) :
     ‖PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderContourRemainder y a c W -

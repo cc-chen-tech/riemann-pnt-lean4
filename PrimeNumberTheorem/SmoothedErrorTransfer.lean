@@ -274,27 +274,27 @@ lemma norm_secondOrderExplicitFormulaIntegrand_horizontal_le_of_logDeriv_le_of_r
       div_le_div_of_nonneg_left (div_nonneg hnum ht.le) ht hline
     _ = K * x ^ b / |t| ^ 2 := by ring
 
-/-- In every unit height interval, one selected good height controls the full
-central horizontal endpoint difference for the second-order contour. The
-bound is uniform on every real interval `[a,b]` contained in `[-1,2]`. -/
-theorem exists_goodHeight_Icc_norm_secondOrderHorizontalXDifference_le
-    {x y a b : ℝ} (hx : 1 ≤ x) (hy : 1 ≤ y) (ha : -1 ≤ a)
-    (hab : a ≤ b) (hb : b ≤ 2) :
+/-- In every unit height interval, one selected good height and one absolute
+constant control the full central horizontal endpoint difference for every
+pair of samples at least one and every interval contained in `[-1,2]`. -/
+theorem
+    exists_uniform_goodHeight_Icc_norm_secondOrderHorizontalXDifference_le :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
       ∃ T ∈ Set.Icc A (A + 1),
         ExplicitFormulaAux.goodHeight T ∧
-          ∀ t : ℝ, |t| = T →
-            ‖secondOrderHorizontalXDifference x y a b t‖ ≤
-              ((C * y ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T ^ 2) +
-                (C * x ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T ^ 2)) *
-                (b - a) := by
+          ∀ {x y a b : ℝ}, 1 ≤ x → 1 ≤ y → -1 ≤ a → a ≤ b → b ≤ 2 →
+            ∀ t : ℝ, |t| = T →
+              ‖secondOrderHorizontalXDifference x y a b t‖ ≤
+                ((C * y ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T ^ 2) +
+                  (C * x ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T ^ 2)) *
+                  (b - a) := by
   rcases exists_goodHeight_Icc_norm_logDeriv_central_band_le_log_sq with
     ⟨C, hC, hchoose⟩
   refine ⟨C, hC, ?_⟩
   intro A hA
   rcases hchoose A hA with ⟨T, hT, hgood, hlog⟩
   refine ⟨T, hT, hgood, ?_⟩
-  intro t ht
+  intro x y a b hx hy ha hab hb t ht
   have hTabs : 0 < |t| := by rw [ht]; linarith [hT.1]
   have hK : 0 ≤ C * (1 + Real.log (A + 6)) ^ 2 :=
     mul_nonneg hC (sq_nonneg _)
@@ -337,6 +337,27 @@ theorem exists_goodHeight_Icc_norm_secondOrderHorizontalXDifference_le
     _ ≤ Ky * (b - a) + Kx * (b - a) := add_le_add hyIntegral hxIntegral
     _ = _ := by dsimp [Ky, Kx]; ring
 
+/-- Endpoint-specialized compatibility form of the uniform selected-height
+horizontal estimate. -/
+theorem exists_goodHeight_Icc_norm_secondOrderHorizontalXDifference_le
+    {x y a b : ℝ} (hx : 1 ≤ x) (hy : 1 ≤ y) (ha : -1 ≤ a)
+    (hab : a ≤ b) (hb : b ≤ 2) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ t : ℝ, |t| = T →
+            ‖secondOrderHorizontalXDifference x y a b t‖ ≤
+              ((C * y ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T ^ 2) +
+                (C * x ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T ^ 2)) *
+                (b - a) := by
+  rcases
+      exists_uniform_goodHeight_Icc_norm_secondOrderHorizontalXDifference_le with
+    ⟨C, hC, hchoose⟩
+  refine ⟨C, hC, ?_⟩
+  intro A hA
+  rcases hchoose A hA with ⟨T, hT, hgood, hhorizontal⟩
+  exact ⟨T, hT, hgood, hhorizontal hx hy ha hab hb⟩
+
 /-- The full second-order contour-remainder difference is controlled by the
 three actual edge differences. This is an exact finite-height budget, not an
 asymptotic estimate. -/
@@ -372,37 +393,45 @@ theorem norm_secondOrderContourRemainder_sub_le_edgeDifferences
       · simp
     _ = ‖B‖ + ‖T‖ + ‖L‖ := rfl
 
-/-- At one selected good height, the complete second-order contour-remainder
-difference on the concrete negative-odd line `Re(s) = -1` has an explicit
-finite-height budget.  This closes the three-edge estimate and boundary
-safety at `a = -1`; it does not assert the still-missing moving-left
-second-order residue identity across `s = 0` and the trivial zeros. -/
-theorem exists_goodHeight_Icc_norm_secondOrderContourRemainder_sub_neg_one_le
-    {x y c : ℝ} (hx : 1 ≤ x) (hy : 1 ≤ y)
-    (hc : 1 < c) (hc2 : c ≤ 2) :
+/-- One absolute constant and one good height in each unit interval control
+the complete negative-one contour-remainder difference for every pair of
+samples at least one and every right edge in `(1,2]`.  The same selected height
+also supplies the required boundary safety. -/
+theorem
+    exists_uniform_goodHeight_Icc_norm_secondOrderContourRemainder_sub_neg_one_le :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
       ∃ T ∈ Set.Icc A (A + 1),
         ExplicitFormulaAux.goodHeight T ∧
-          (∀ p ∈
-            ([[(-1 : ℝ), c]] ×ℂ [[-T, T]] : Set ℂ),
-            p = 0 ∨ p = 1 ∨ riemannZeta p = 0 →
-              -1 < p.re ∧ p.re < c ∧ -T < p.im ∧ p.im < T) ∧
-          ‖secondOrderContourRemainder y (-1) c (T / (2 * Real.pi)) -
-              secondOrderContourRemainder x (-1) c (T / (2 * Real.pi))‖ ≤
-            (2 *
-                (((C * y ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T ^ 2) +
-                    (C * x ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T ^ 2)) *
-                  (c - (-1))) +
-              (secondOrderOddVerticalBound y 0 T +
-                  secondOrderOddVerticalBound x 0 T) *
-                (2 * T)) /
-              (2 * Real.pi) := by
-  rcases exists_goodHeight_Icc_norm_secondOrderHorizontalXDifference_le
-      hx hy (a := -1) (b := c) (by norm_num) (by linarith) hc2 with
+          ∀ {x y c : ℝ}, 1 ≤ x → 1 ≤ y → 1 < c → c ≤ 2 →
+            (∀ p ∈
+              ([[(-1 : ℝ), c]] ×ℂ [[-T, T]] : Set ℂ),
+              p = 0 ∨ p = 1 ∨ riemannZeta p = 0 →
+                -1 < p.re ∧ p.re < c ∧ -T < p.im ∧ p.im < T) ∧
+            ‖secondOrderContourRemainder y (-1) c (T / (2 * Real.pi)) -
+                secondOrderContourRemainder x (-1) c (T / (2 * Real.pi))‖ ≤
+              (2 *
+                  (((C * y ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T ^ 2) +
+                      (C * x ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T ^ 2)) *
+                    (c - (-1))) +
+                (secondOrderOddVerticalBound y 0 T +
+                    secondOrderOddVerticalBound x 0 T) *
+                  (2 * T)) /
+                (2 * Real.pi) := by
+  rcases
+      exists_uniform_goodHeight_Icc_norm_secondOrderHorizontalXDifference_le with
     ⟨C, hC, hchoose⟩
   refine ⟨C, hC, ?_⟩
   intro A hA
-  rcases hchoose A hA with ⟨T, hT, hgood, hhorizontal⟩
+  rcases hchoose A hA with ⟨T, hT, hgood, hhorizontalAll⟩
+  refine ⟨T, hT, hgood, ?_⟩
+  intro x y c hx hy hc hc2
+  have hhorizontal :
+      ∀ t : ℝ, |t| = T →
+        ‖secondOrderHorizontalXDifference x y (-1) c t‖ ≤
+          ((C * y ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T ^ 2) +
+            (C * x ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T ^ 2)) *
+            (c - (-1)) :=
+    hhorizontalAll hx hy (by norm_num) (by linarith) hc2
   have hTpos : 0 < T := by linarith [hT.1]
   have hboundary :
       ∀ p ∈
@@ -439,7 +468,7 @@ theorem exists_goodHeight_Icc_norm_secondOrderContourRemainder_sub_neg_one_le
     norm_secondOrderContourRemainder_sub_le_edgeDifferences
       x y (-1) c (T / (2 * Real.pi))
   rw [hscale] at hremainder
-  refine ⟨T, hT, hgood, hboundary, ?_⟩
+  refine ⟨hboundary, ?_⟩
   calc
     ‖secondOrderContourRemainder y (-1) c (T / (2 * Real.pi)) -
         secondOrderContourRemainder x (-1) c (T / (2 * Real.pi))‖ ≤
@@ -453,6 +482,37 @@ theorem exists_goodHeight_Icc_norm_secondOrderContourRemainder_sub_neg_one_le
     _ = _ := by
       dsimp [K, L]
       ring
+
+/-- Endpoint-specialized compatibility form of the uniform selected-height
+negative-one contour-remainder estimate. -/
+theorem exists_goodHeight_Icc_norm_secondOrderContourRemainder_sub_neg_one_le
+    {x y c : ℝ} (hx : 1 ≤ x) (hy : 1 ≤ y)
+    (hc : 1 < c) (hc2 : c ≤ 2) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          (∀ p ∈
+            ([[(-1 : ℝ), c]] ×ℂ [[-T, T]] : Set ℂ),
+            p = 0 ∨ p = 1 ∨ riemannZeta p = 0 →
+              -1 < p.re ∧ p.re < c ∧ -T < p.im ∧ p.im < T) ∧
+          ‖secondOrderContourRemainder y (-1) c (T / (2 * Real.pi)) -
+              secondOrderContourRemainder x (-1) c (T / (2 * Real.pi))‖ ≤
+            (2 *
+                (((C * y ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T ^ 2) +
+                    (C * x ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T ^ 2)) *
+                  (c - (-1))) +
+              (secondOrderOddVerticalBound y 0 T +
+                  secondOrderOddVerticalBound x 0 T) *
+                (2 * T)) /
+              (2 * Real.pi) := by
+  rcases
+      exists_uniform_goodHeight_Icc_norm_secondOrderContourRemainder_sub_neg_one_le
+      with ⟨C, hC, hchoose⟩
+  refine ⟨C, hC, ?_⟩
+  intro A hA
+  rcases hchoose A hA with ⟨T, hT, hgood, hbound⟩
+  rcases hbound hx hy hc hc2 with ⟨hboundary, hremainder⟩
+  exact ⟨T, hT, hgood, hboundary, hremainder⟩
 
 /-- Concrete `T^-2` control of the change in the upper right horizontal edge
 when the smoothing endpoint changes from `x` to `y`. -/
