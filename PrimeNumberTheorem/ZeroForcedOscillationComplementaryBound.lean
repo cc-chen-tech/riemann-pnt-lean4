@@ -416,6 +416,41 @@ def maximalZeroPackageOffDiagonalBound (T : ℝ) : ℝ :=
   offDiagonalBound (maximalRealPartZeroPackage T)
     (fun ρ => (analyticOrderNatAt riemannZeta ρ : ℂ) * ρ⁻¹) Complex.im
 
+/-- Ordered pairs of distinct members of a finite frequency package. -/
+def distinctOrderedPairs {ι : Type*} [DecidableEq ι]
+    (S : Finset ι) : Finset (ι × ι) :=
+  (S ×ˢ S).filter fun p => p.1 ≠ p.2
+
+/-- The minimum positive frequency spacing of a finite package. The value is
+`1` when there is no distinct pair, so the definition remains positive for
+empty and singleton packages. -/
+def minimumPositiveFrequencySpacing {ι : Type*} [DecidableEq ι]
+    (S : Finset ι) (ω : ι → ℝ) : ℝ :=
+  if h : (distinctOrderedPairs S).Nonempty then
+    ((distinctOrderedPairs S).image fun p => |ω p.2 - ω p.1|).min'
+      (h.image fun p => |ω p.2 - ω p.1|)
+  else
+    1
+
+/-- A coefficient-aware pairwise upper bound for `B / E`. It retains the
+actual coefficient norms and every actual pair spacing before the coarser
+cardinality/minimum-spacing estimate is applied. -/
+def coefficientAwareSpacingThreshold {ι : Type*} [DecidableEq ι]
+    (S : Finset ι) (c : ι → ℂ) (ω : ι → ℝ) : ℝ :=
+  (∑ i ∈ S, ∑ j ∈ S.erase i,
+      (‖c i‖ ^ 2 + ‖c j‖ ^ 2) / |ω j - ω i|) /
+    ∑ i ∈ S, ‖c i‖ ^ 2
+
+/-- The actual minimum imaginary-part spacing of the maximal zero package. -/
+def maximalZeroPackageMinimumImaginarySpacing (T : ℝ) : ℝ :=
+  minimumPositiveFrequencySpacing (maximalRealPartZeroPackage T) Complex.im
+
+/-- The coefficient-aware pairwise threshold for the maximal package.
+Analytic multiplicity remains inside both coefficient norms. -/
+def maximalZeroPackageCoefficientAwareSpacingThreshold (T : ℝ) : ℝ :=
+  coefficientAwareSpacingThreshold (maximalRealPartZeroPackage T)
+    (fun ρ => (analyticOrderNatAt riemannZeta ρ : ℂ) * ρ⁻¹) Complex.im
+
 /-- The exact interval-length threshold `B_T / E_T` above which the
 finite-package mean-square bracket `E_T - B_T / L` is strictly positive.
 The definition is total; its positivity use requires a nonempty package. -/
@@ -439,6 +474,54 @@ all-heights explicit formula after `x = exp y` has been selected. -/
 def movingHeightApproximationBudget (K T : ℝ) : ℝ :=
   K * (1 + Real.log (T + 8)) ^ 2 / T
 
+/-- Membership in the ordered distinct-pair finset. -/
+theorem mem_distinctOrderedPairs_iff {ι : Type*} [DecidableEq ι]
+    {S : Finset ι} {i j : ι} :
+    (i, j) ∈ distinctOrderedPairs S ↔ i ∈ S ∧ j ∈ S ∧ i ≠ j := by
+  simp only [distinctOrderedPairs, Finset.mem_filter, Finset.mem_product]
+  constructor
+  · rintro ⟨⟨hi, hj⟩, hij⟩
+    exact ⟨hi, hj, hij⟩
+  · rintro ⟨hi, hj, hij⟩
+    exact ⟨⟨hi, hj⟩, hij⟩
+
+/-- The minimum spacing controls every distinct pair in the package. -/
+theorem minimumPositiveFrequencySpacing_le_abs_sub
+    {ι : Type*} [DecidableEq ι]
+    (S : Finset ι) (ω : ι → ℝ) {i j : ι}
+    (hi : i ∈ S) (hj : j ∈ S) (hij : i ≠ j) :
+    minimumPositiveFrequencySpacing S ω ≤ |ω j - ω i| := by
+  classical
+  unfold minimumPositiveFrequencySpacing
+  split_ifs with h
+  · apply Finset.min'_le
+    exact Finset.mem_image.mpr
+      ⟨(i, j), mem_distinctOrderedPairs_iff.mpr ⟨hi, hj, hij⟩, rfl⟩
+  · exfalso
+    exact h ⟨(i, j), mem_distinctOrderedPairs_iff.mpr ⟨hi, hj, hij⟩⟩
+
+/-- Injective frequencies make the totalized minimum spacing strictly
+positive, including the empty and singleton conventions. -/
+theorem minimumPositiveFrequencySpacing_pos
+    {ι : Type*} [DecidableEq ι]
+    (S : Finset ι) (ω : ι → ℝ) (hω : Set.InjOn ω ↑S) :
+    0 < minimumPositiveFrequencySpacing S ω := by
+  classical
+  unfold minimumPositiveFrequencySpacing
+  split_ifs with h
+  · let D : Finset ℝ :=
+      (distinctOrderedPairs S).image fun p => |ω p.2 - ω p.1|
+    have hD : D.Nonempty := h.image fun p => |ω p.2 - ω p.1|
+    have hmem : D.min' hD ∈ D := Finset.min'_mem D hD
+    rcases Finset.mem_image.mp hmem with ⟨p, hp, hpval⟩
+    have hpdata := mem_distinctOrderedPairs_iff.mp hp
+    have hfreq : ω p.2 ≠ ω p.1 := by
+      intro heq
+      exact hpdata.2.2 (hω hpdata.2.1 hpdata.1 heq).symm
+    rw [← hpval]
+    exact abs_pos.mpr (sub_ne_zero.mpr hfreq)
+  · norm_num
+
 /-- The moving-height approximation budget is nonnegative in its range of
 use. -/
 theorem movingHeightApproximationBudget_nonneg (K T : ℝ)
@@ -459,6 +542,121 @@ theorem offDiagonalBound_nonneg {ι : Type*} [DecidableEq ι]
           (mul_nonneg (by norm_num) (norm_nonneg (c i)))
           (norm_nonneg (c j)))
         (abs_nonneg (ω j - ω i))
+
+/-- Termwise AM-GM turns the original off-diagonal budget into the
+coefficient-aware pairwise threshold. -/
+theorem offDiagonalBound_div_energy_le_coefficientAwareSpacingThreshold
+    {ι : Type*} [DecidableEq ι]
+    (S : Finset ι) (c : ι → ℂ) (ω : ι → ℝ)
+    (henergy : 0 < ∑ i ∈ S, ‖c i‖ ^ 2) :
+    offDiagonalBound S c ω / (∑ i ∈ S, ‖c i‖ ^ 2) ≤
+      coefficientAwareSpacingThreshold S c ω := by
+  unfold offDiagonalBound coefficientAwareSpacingThreshold
+  apply div_le_div_of_nonneg_right _ henergy.le
+  apply Finset.sum_le_sum
+  intro i hi
+  apply Finset.sum_le_sum
+  intro j hj
+  apply div_le_div_of_nonneg_right _ (abs_nonneg _)
+  nlinarith [sq_nonneg (‖c i‖ - ‖c j‖)]
+
+/-- In a nonempty finite package, each member occurs in exactly `card - 1`
+ordered pairs in each coordinate. -/
+theorem sum_orderedDistinct_sq_add_sq
+    {ι : Type*} [DecidableEq ι]
+    (S : Finset ι) (f : ι → ℝ) (hS : S.Nonempty) :
+    (∑ i ∈ S, ∑ j ∈ S.erase i, (f i + f j)) =
+      2 * ((S.card - 1 : ℕ) : ℝ) * ∑ i ∈ S, f i := by
+  classical
+  have hcard : (1 : ℕ) ≤ S.card := Finset.one_le_card.mpr hS
+  have hcast :
+      ((S.card - 1 : ℕ) : ℝ) = (S.card : ℝ) - 1 := by
+    rw [Nat.cast_sub hcard]
+    norm_num
+  have hfirst :
+      (∑ i ∈ S, ∑ _j ∈ S.erase i, f i) =
+        ((S.card - 1 : ℕ) : ℝ) * ∑ i ∈ S, f i := by
+    calc
+      (∑ i ∈ S, ∑ _j ∈ S.erase i, f i) =
+          ∑ i ∈ S, ((S.erase i).card : ℝ) * f i := by
+            apply Finset.sum_congr rfl
+            intro i hi
+            simp
+      _ = ∑ i ∈ S, (((S.card - 1 : ℕ) : ℝ) * f i) := by
+            apply Finset.sum_congr rfl
+            intro i hi
+            rw [Finset.card_erase_of_mem hi]
+      _ = ((S.card - 1 : ℕ) : ℝ) * ∑ i ∈ S, f i := by
+            rw [Finset.mul_sum]
+  have hsecond :
+      (∑ i ∈ S, ∑ j ∈ S.erase i, f j) =
+        ((S.card - 1 : ℕ) : ℝ) * ∑ i ∈ S, f i := by
+    calc
+      (∑ i ∈ S, ∑ j ∈ S.erase i, f j) =
+          ∑ i ∈ S, ((∑ j ∈ S, f j) - f i) := by
+            apply Finset.sum_congr rfl
+            intro i hi
+            rw [← Finset.sum_erase_add _ _ hi]
+            ring
+      _ = (S.card : ℝ) * (∑ j ∈ S, f j) - ∑ i ∈ S, f i := by
+            rw [Finset.sum_sub_distrib]
+            simp
+      _ = ((S.card - 1 : ℕ) : ℝ) * ∑ i ∈ S, f i := by
+            rw [hcast]
+            ring
+  simp_rw [Finset.sum_add_distrib]
+  rw [hfirst, hsecond]
+  ring
+
+/-- The coefficient-aware threshold is bounded by the package cardinality and
+the rigorously defined minimum spacing. -/
+theorem coefficientAwareSpacingThreshold_le_card_sub_one_div_spacing
+    {ι : Type*} [DecidableEq ι]
+    (S : Finset ι) (c : ι → ℂ) (ω : ι → ℝ)
+    (hS : S.Nonempty) (hω : Set.InjOn ω ↑S)
+    (henergy : 0 < ∑ i ∈ S, ‖c i‖ ^ 2) :
+    coefficientAwareSpacingThreshold S c ω ≤
+      2 * ((S.card - 1 : ℕ) : ℝ) /
+        minimumPositiveFrequencySpacing S ω := by
+  let δ := minimumPositiveFrequencySpacing S ω
+  have hδ : 0 < δ := minimumPositiveFrequencySpacing_pos S ω hω
+  have hpairs :
+      (∑ i ∈ S, ∑ j ∈ S.erase i,
+          (‖c i‖ ^ 2 + ‖c j‖ ^ 2) / |ω j - ω i|) ≤
+        ∑ i ∈ S, ∑ j ∈ S.erase i,
+          (‖c i‖ ^ 2 + ‖c j‖ ^ 2) / δ := by
+    apply Finset.sum_le_sum
+    intro i hi
+    apply Finset.sum_le_sum
+    intro j hj
+    have hjS : j ∈ S := Finset.mem_of_mem_erase hj
+    have hij : i ≠ j := (Finset.ne_of_mem_erase hj).symm
+    have hδij : δ ≤ |ω j - ω i| :=
+      minimumPositiveFrequencySpacing_le_abs_sub S ω hi hjS hij
+    exact div_le_div_of_nonneg_left
+      (add_nonneg (sq_nonneg _) (sq_nonneg _)) hδ hδij
+  unfold coefficientAwareSpacingThreshold
+  calc
+    (∑ i ∈ S, ∑ j ∈ S.erase i,
+          (‖c i‖ ^ 2 + ‖c j‖ ^ 2) / |ω j - ω i|) /
+        (∑ i ∈ S, ‖c i‖ ^ 2) ≤
+      (∑ i ∈ S, ∑ j ∈ S.erase i,
+          (‖c i‖ ^ 2 + ‖c j‖ ^ 2) / δ) /
+        (∑ i ∈ S, ‖c i‖ ^ 2) :=
+      div_le_div_of_nonneg_right hpairs henergy.le
+    _ = ((∑ i ∈ S, ∑ j ∈ S.erase i,
+          (‖c i‖ ^ 2 + ‖c j‖ ^ 2)) / δ) /
+        (∑ i ∈ S, ‖c i‖ ^ 2) := by
+      congr 1
+      rw [Finset.sum_div]
+      apply Finset.sum_congr rfl
+      intro i hi
+      rw [Finset.sum_div]
+    _ = 2 * ((S.card - 1 : ℕ) : ℝ) / δ := by
+      rw [sum_orderedDistinct_sq_add_sq S (fun i => ‖c i‖ ^ 2) hS]
+      field_simp
+    _ = 2 * ((S.card - 1 : ℕ) : ℝ) /
+        minimumPositiveFrequencySpacing S ω := rfl
 
 /-- The maximal-package diagonal energy is always nonnegative. -/
 theorem maximalZeroPackageEnergy_nonneg (T : ℝ) :
@@ -498,6 +696,69 @@ theorem maximalZeroPackageEnergy_pos (T : ℝ)
       0 < ‖(analyticOrderNatAt riemannZeta ρ : ℂ) * ρ⁻¹‖ :=
     norm_pos_iff.mpr hcoeff
   nlinarith
+
+/-- Distinct zeros in the maximal equal-real-part package have a strictly
+positive minimum imaginary-part spacing. -/
+theorem maximalZeroPackageMinimumImaginarySpacing_pos (T : ℝ) :
+    0 < maximalZeroPackageMinimumImaginarySpacing T := by
+  unfold maximalZeroPackageMinimumImaginarySpacing
+  apply minimumPositiveFrequencySpacing_pos
+  apply im_injOn_of_re_eq _ (maximalZeroRealPart T)
+  intro ρ hρ
+  exact (mem_maximalRealPartZeroPackage.mp hρ).2.2
+
+/-- The exact `B_T / E_T` threshold is bounded by the stronger
+coefficient-aware finite-data invariant. Analytic multiplicities are retained
+inside both quantities. -/
+theorem
+    maximalZeroPackageIntervalLengthThreshold_le_coefficientAwareSpacingThreshold
+    (T : ℝ) (hpackage : (maximalRealPartZeroPackage T).Nonempty) :
+    maximalZeroPackageIntervalLengthThreshold T ≤
+      maximalZeroPackageCoefficientAwareSpacingThreshold T := by
+  exact
+    offDiagonalBound_div_energy_le_coefficientAwareSpacingThreshold
+      (maximalRealPartZeroPackage T)
+      (fun ρ => (analyticOrderNatAt riemannZeta ρ : ℂ) * ρ⁻¹)
+      Complex.im (maximalZeroPackageEnergy_pos T hpackage)
+
+/-- The coefficient-aware threshold is at most
+`2 * (card - 1) / minimumSpacing`. -/
+theorem
+    maximalZeroPackageCoefficientAwareSpacingThreshold_le_card_sub_one_div_spacing
+    (T : ℝ) (hpackage : (maximalRealPartZeroPackage T).Nonempty) :
+    maximalZeroPackageCoefficientAwareSpacingThreshold T ≤
+      2 * (((maximalRealPartZeroPackage T).card - 1 : ℕ) : ℝ) /
+        maximalZeroPackageMinimumImaginarySpacing T := by
+  apply coefficientAwareSpacingThreshold_le_card_sub_one_div_spacing
+  · exact hpackage
+  · apply im_injOn_of_re_eq _ (maximalZeroRealPart T)
+    intro ρ hρ
+    exact (mem_maximalRealPartZeroPackage.mp hρ).2.2
+  · exact maximalZeroPackageEnergy_pos T hpackage
+
+/-- Explicit cardinality/minimum-spacing upper bound for the exact
+mean-square interval threshold. -/
+theorem maximalZeroPackageIntervalLengthThreshold_le_card_sub_one_div_spacing
+    (T : ℝ) (hpackage : (maximalRealPartZeroPackage T).Nonempty) :
+    maximalZeroPackageIntervalLengthThreshold T ≤
+      2 * (((maximalRealPartZeroPackage T).card - 1 : ℕ) : ℝ) /
+        maximalZeroPackageMinimumImaginarySpacing T :=
+  (maximalZeroPackageIntervalLengthThreshold_le_coefficientAwareSpacingThreshold
+      T hpackage).trans
+    (maximalZeroPackageCoefficientAwareSpacingThreshold_le_card_sub_one_div_spacing
+      T hpackage)
+
+/-- The previously opaque canonical interval length is therefore explicitly
+controlled by finite cardinality and the actual minimum imaginary spacing. -/
+theorem maximalZeroPackageCanonicalIntervalLength_le_card_sub_one_div_spacing
+    (T : ℝ) (hpackage : (maximalRealPartZeroPackage T).Nonempty) :
+    maximalZeroPackageCanonicalIntervalLength T ≤
+      2 * (((maximalRealPartZeroPackage T).card - 1 : ℕ) : ℝ) /
+          maximalZeroPackageMinimumImaginarySpacing T + 1 := by
+  unfold maximalZeroPackageCanonicalIntervalLength
+  linarith
+    [maximalZeroPackageIntervalLengthThreshold_le_card_sub_one_div_spacing
+      T hpackage]
 
 /-- The maximal-package ordered off-diagonal budget is nonnegative. -/
 theorem maximalZeroPackageOffDiagonalBound_nonneg (T : ℝ) :

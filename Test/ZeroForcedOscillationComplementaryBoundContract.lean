@@ -169,6 +169,41 @@ example (T : ℝ) :
       maximalZeroPackageCanonicalIntervalLength T :=
   maximalZeroPackageIntervalLengthThreshold_lt_canonical T
 
+example (T : ℝ) :
+    0 < maximalZeroPackageMinimumImaginarySpacing T :=
+  maximalZeroPackageMinimumImaginarySpacing_pos T
+
+example (T : ℝ)
+    (hpackage : (maximalRealPartZeroPackage T).Nonempty) :
+    maximalZeroPackageIntervalLengthThreshold T ≤
+      maximalZeroPackageCoefficientAwareSpacingThreshold T :=
+  maximalZeroPackageIntervalLengthThreshold_le_coefficientAwareSpacingThreshold
+    T hpackage
+
+example (T : ℝ)
+    (hpackage : (maximalRealPartZeroPackage T).Nonempty) :
+    maximalZeroPackageCoefficientAwareSpacingThreshold T ≤
+      2 * (((maximalRealPartZeroPackage T).card - 1 : ℕ) : ℝ) /
+        maximalZeroPackageMinimumImaginarySpacing T :=
+  maximalZeroPackageCoefficientAwareSpacingThreshold_le_card_sub_one_div_spacing
+    T hpackage
+
+example (T : ℝ)
+    (hpackage : (maximalRealPartZeroPackage T).Nonempty) :
+    maximalZeroPackageIntervalLengthThreshold T ≤
+      2 * (((maximalRealPartZeroPackage T).card - 1 : ℕ) : ℝ) /
+        maximalZeroPackageMinimumImaginarySpacing T :=
+  maximalZeroPackageIntervalLengthThreshold_le_card_sub_one_div_spacing
+    T hpackage
+
+example (T : ℝ)
+    (hpackage : (maximalRealPartZeroPackage T).Nonempty) :
+    maximalZeroPackageCanonicalIntervalLength T ≤
+      2 * (((maximalRealPartZeroPackage T).card - 1 : ℕ) : ℝ) /
+          maximalZeroPackageMinimumImaginarySpacing T + 1 :=
+  maximalZeroPackageCanonicalIntervalLength_le_card_sub_one_div_spacing
+    T hpackage
+
 example (T a b : ℝ)
     (hpackage : (maximalRealPartZeroPackage T).Nonempty)
     (hlength : maximalZeroPackageIntervalLengthThreshold T < b - a) :

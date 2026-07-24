@@ -29,7 +29,9 @@ Primary sources:
 F1_CLOSED_TERMS_BOUNDED; F1_FIXED_HEIGHT_COMPLEMENT_GAP_CLOSED;
 F1_FIXED_HEIGHT_PSI0_TRANSFER_CLOSED;
 F1_FIXED_HEIGHT_MEAN_SQUARE_SIGN_CLOSED;
-F1_MOVING_HEIGHT_POINTWISE_RATE_CLOSED; F1_UNIFORM_REMAINDER_OPEN.**  The checked Lean surface
+F1_MOVING_HEIGHT_POINTWISE_RATE_CLOSED;
+F1_CANONICAL_LENGTH_FINITE_SPACING_BOUND_CLOSED;
+F1_UNIFORM_REMAINDER_OPEN.**  The checked Lean surface
 proves the exact integral and interval-independent norm bound for one ordered
 off-diagonal pair, the aggregate finite mean-square estimate, and an interior
 point attaining the resulting lower average.  Natural multiplicity is retained
@@ -185,14 +187,39 @@ A_T(y)
 <= ||psi0(exp y)-exp y||.
 ```
 
+The formerly opaque interval threshold now has two verified finite-data upper
+bounds. First, termwise AM-GM gives the coefficient-aware invariant
+
+```text
+B_T/E_T
+  <= [sum_(rho != rho')
+        (|a_rho|^2 + |a_rho'|^2)/|gamma_rho'-gamma_rho|] / E_T,
+```
+
+where `a_rho = m(rho)/rho`, so analytic multiplicities remain present.
+Second, if `N_T` is the cardinality of the maximal package and `Delta_T` is
+its rigorously defined minimum positive imaginary-part spacing, Lean proves
+
+```text
+B_T/E_T <= 2 (N_T - 1) / Delta_T,
+B_T/E_T + 1 <= 2 (N_T - 1) / Delta_T + 1.
+```
+
+The definition sets `Delta_T = 1` when there is no distinct pair; injectivity
+of imaginary parts on an equal-real-part package proves `Delta_T > 0`
+without an external spacing assumption. The coefficient-aware bound is
+strictly more informative than discarding all actual spacings and
+coefficients in favor of `N_T` and `Delta_T`.
+
 This is an unconditional moving-height, multiplicity-aware transfer
 inequality, but not an unconditional `Omega` theorem: obtaining a positive
 final lower bound remains conditional on the displayed budgets being smaller
 than `A_T(y)`. The constant `K_y` is uniform in the height variable after `y`
 is selected, but the repository does not currently bound it uniformly as `y`
-ranges over the moving canonical intervals. Nor does it control `B_T/E_T` or
-keep `delta_T` quantitatively separated from zero as `T` grows. Thus the
-Revesz baseline recovery and both novelty gates remain open.
+ranges over the moving canonical intervals. The finite-spacing theorem does
+not yet control `N_T/Delta_T` uniformly along moving heights, and it does not
+keep the complementary real-part gap `delta_T` quantitatively separated from
+zero. Thus the Revesz baseline recovery and both novelty gates remain open.
 
 ## Exact classical-zeta candidate theorem
 
@@ -323,14 +350,16 @@ amplitude. The package is already an actual selected zeta-zero contribution,
 and the raw approximation norm has been replaced by a proved all-heights rate.
 What remains requires at least one genuinely uniform input:
 
-- a usable upper bound for `B_T/E_T`, hence for the canonical interval length;
+- a moving-height upper bound for `N_T/Delta_T`, which now controls
+  `B_T/E_T` and the canonical interval length by a proved theorem;
 - a lower bound for the complementary gap `delta_T` along the chosen heights;
 - an interval-uniform majorant for the pointwise constants `K_y`, or a new
   explicit-formula estimate whose constant is controlled directly in `y`.
 
 The closed logarithmic term, eventual nonemptiness, fixed-height positive gap,
-and positivity of the mean-square main term are no longer gaps. No current
-theorem proves that the remaining three budgets are dominated by the selected
+positivity of the mean-square main term, and the finite cardinality/spacing
+reduction for the canonical length are no longer gaps. No current theorem
+proves that the remaining three budgets are dominated by the selected
 amplitude.
 
 ## Experiment schema
