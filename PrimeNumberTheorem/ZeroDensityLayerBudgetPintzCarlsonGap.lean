@@ -118,9 +118,20 @@ theorem tendsto_pintzCarlsonGap_rpow_mul_exp
   refine
     (hreal.comp tendsto_pintzCarlsonSqrtLogScale_atTop).congr' ?_
   filter_upwards with x
-  congr 2
-  dsimp [d]
-  ring
+  have harg :
+      -d * pintzCarlsonSqrtLogScale x =
+        (a * k - 2 * Real.sqrt c) *
+          pintzCarlsonSqrtLogScale x := by
+    dsimp [d]
+    ring
+  change
+    pintzCarlsonSqrtLogScale x ^ p *
+        Real.exp (-d * pintzCarlsonSqrtLogScale x) =
+      pintzCarlsonSqrtLogScale x ^ p *
+        Real.exp
+          ((a * k - 2 * Real.sqrt c) *
+            pintzCarlsonSqrtLogScale x)
+  rw [harg]
 
 /-- Carlson's classical fixed-strip exponent inserted into the gap criterion.
 This is the exact admissible-rate inequality for the power part of the
@@ -154,8 +165,9 @@ theorem tendsto_const_mul_carlsonExponent_pintzGap
               (((4 * sigma * (1 - sigma)) * k -
                   2 * Real.sqrt c) *
                 pintzCarlsonSqrtLogScale x)))
-      atTop (𝓝 0) :=
-  (tendsto_carlsonExponent_pintzGap p sigma k c hgap).const_mul C
+      atTop (𝓝 0) := by
+  simpa only [mul_zero] using
+    (tendsto_carlsonExponent_pintzGap p sigma k c hgap).const_mul C
 
 /-- The fourth logarithmic power in Carlson's classical majorant, represented
 as a fixed fourth power of the square-root logarithmic scale, is absorbed by
@@ -216,7 +228,9 @@ theorem exists_pintzConstant_carlsonWeightedKernel_tendsto :
       (a := 4 * sigma * (1 - sigma))
       (k := k)
       (c := c)
-      (fun x => by positivity)
+      (fun x => by
+        apply mul_nonneg hC
+        exact Real.rpow_nonneg (Real.sqrt_nonneg _) _)
       henvelope
       hmodel
   simpa only [mul_assoc] using hweighted
@@ -233,9 +247,13 @@ theorem carlsonClassicalExponent_mul_rate_lt_pintz
     (sigma k c : ℝ)
     (hk : 0 ≤ k)
     (hkGap : k < 2 * Real.sqrt c) :
-    (4 * sigma * (1 - sigma)) * k < 2 * Real.sqrt c :=
-  (mul_le_mul_of_nonneg_right
-      (carlsonClassicalExponent_le_one sigma) hk).trans_lt hkGap
+    (4 * sigma * (1 - sigma)) * k < 2 * Real.sqrt c := by
+  have hle :
+      (4 * sigma * (1 - sigma)) * k ≤ k := by
+    simpa only [one_mul] using
+      mul_le_mul_of_nonneg_right
+        (carlsonClassicalExponent_le_one sigma) hk
+  exact hle.trans_lt hkGap
 
 /-- A single unconditional Pintz constant and a single admissible height rate
 control every finite family of Carlson real-part strips. Each strip may have
@@ -260,15 +278,26 @@ theorem exists_pintzConstant_finiteCarlsonLayerBudget_tendsto
     ⟨c, hc, hstrip⟩
   refine ⟨c, hc, ?_⟩
   intro k hk hkGap
-  apply tendsto_finset_sum
-  intro i hi
-  exact hstrip
-    (C i)
-    (p i)
-    (sigma i)
-    k
-    (hC i hi)
-    (carlsonClassicalExponent_mul_rate_lt_pintz
-      (sigma i) k c hk hkGap)
+  have hsum :
+      Tendsto
+        (fun x : ℝ =>
+          ∑ i ∈ layers,
+            C i * pintzCarlsonSqrtLogScale x ^ p i *
+              Real.exp
+                ((4 * sigma i * (1 - sigma i)) * k *
+                    pintzCarlsonSqrtLogScale x -
+                  Pintz.pintzZeroEnvelope x))
+        atTop (𝓝 (∑ i ∈ layers, (0 : ℝ))) := by
+    apply tendsto_finset_sum layers
+    intro i hi
+    exact hstrip
+      (C i)
+      (p i)
+      (sigma i)
+      k
+      (hC i hi)
+      (carlsonClassicalExponent_mul_rate_lt_pintz
+        (sigma i) k c hk hkGap)
+  simpa only [Finset.sum_const_zero] using hsum
 
 end PrimeNumberTheorem

@@ -1,5 +1,7 @@
 import PrimeNumberTheorem.ZeroDensityLayerBudgetPintzCarlsonUnified
 
+open Filter Topology
+
 namespace PrimeNumberTheorem
 
 /-!
@@ -10,7 +12,7 @@ zero-free input, an explicit-formula upper certificate, Carlson strip decay,
 and a far oscillation witness produce one eventual bidirectional result.
 -/
 
-example
+noncomputable example
     {ι : Type*} [DecidableEq ι]
     {upperError lowerError main remainder : ℝ → ℝ}
     {cost : ℝ → ℝ → ℝ}

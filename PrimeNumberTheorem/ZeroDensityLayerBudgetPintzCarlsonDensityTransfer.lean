@@ -29,16 +29,18 @@ theorem exists_carlsonClassicalCoefficient_eventually_count_le
         hσ hσ1).exists_nonneg with
     ⟨C, hC, hbigO⟩
   refine ⟨C, hC, ?_⟩
-  filter_upwards [hbigO.bound] with T hT
+  filter_upwards [hbigO.bound,
+      eventually_ge_atTop (0 : ℝ)] with T hT hT0
   have hcount :
       0 ≤ (ZeroDensity.zeroDensityCount sigma T : ℝ) :=
     Nat.cast_nonneg _
   have hmajorant :
       0 ≤ T ^ (4 * sigma * (1 - sigma)) *
         Real.log T ^ 4 :=
-    mul_nonneg (Real.rpow_nonneg _ _) (by positivity)
-  simpa only [Real.norm_eq_abs, abs_of_nonneg hcount,
-      abs_of_nonneg hmajorant, mul_assoc] using hT
+    mul_nonneg (Real.rpow_nonneg hT0 _) (by positivity)
+  rw [Real.norm_eq_abs, abs_of_nonneg hcount] at hT
+  rw [Real.norm_of_nonneg hmajorant] at hT
+  simpa only [mul_assoc] using hT
 
 /-- For finitely many fixed real-part strips, Carlson coefficients can be
 chosen once and their count bounds pulled back along any dynamic height
