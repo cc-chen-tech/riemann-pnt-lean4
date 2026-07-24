@@ -1696,6 +1696,64 @@ noncomputable def secondOrderOriginDerivativeIncrement
     deriv (fun z : ℂ =>
       -logDeriv riemannZeta z * (x : ℂ) ^ z) 0
 
+/-- The double-pole contribution at the origin is elementary after taking
+the endpoint difference: the derivative of `-ζ'/ζ` cancels, leaving its
+value `-log (2π)` times the logarithmic endpoint increment. -/
+theorem secondOrderOriginDerivativeIncrement_eq
+    {x h : ℝ} (hx : 0 < x) (hy : 0 < x + h) :
+    secondOrderOriginDerivativeIncrement x h =
+      -(Real.log (2 * Real.pi) : ℂ) *
+        (Real.log ((x + h) / x) : ℂ) := by
+  have hzeta0 : riemannZeta (0 : ℂ) ≠ 0 := by
+    rw [riemannZeta_zero]
+    norm_num
+  have hlog :
+      DifferentiableAt ℂ (fun z : ℂ => -logDeriv riemannZeta z) 0 :=
+    (ZeroFreeRegion.analyticAt_logDeriv_riemannZeta_of_ne_one_of_ne_zero
+      0 (by norm_num) hzeta0).neg.differentiableAt
+  have hx0 : (x : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr hx.ne'
+  have hy0 : ((x + h : ℝ) : ℂ) ≠ 0 :=
+    Complex.ofReal_ne_zero.mpr hy.ne'
+  have hpowX : DifferentiableAt ℂ (fun z : ℂ => (x : ℂ) ^ z) 0 :=
+    (differentiableAt_id : DifferentiableAt ℂ (fun z : ℂ => z) 0).const_cpow
+      (Or.inl hx0)
+  have hpowY :
+      DifferentiableAt ℂ (fun z : ℂ => ((x + h : ℝ) : ℂ) ^ z) 0 :=
+    (differentiableAt_id : DifferentiableAt ℂ (fun z : ℂ => z) 0).const_cpow
+      (Or.inl hy0)
+  have hlogValue :
+      logDeriv riemannZeta 0 = (Real.log (2 * Real.pi) : ℂ) := by
+    simpa only [logDeriv_apply] using
+      deriv_riemannZeta_zero_div_riemannZeta_zero
+  have hlogX :
+      Complex.log (x : ℂ) = (Real.log x : ℂ) := by
+    rw [Complex.ofReal_log hx.le]
+  have hlogY :
+      Complex.log ((x + h : ℝ) : ℂ) =
+        (Real.log (x + h) : ℂ) := by
+    rw [Complex.ofReal_log hy.le]
+  have hid :
+      DifferentiableAt ℂ (fun z : ℂ => z) 0 :=
+    differentiableAt_id
+  have hderivX :
+      deriv (fun z : ℂ => (x : ℂ) ^ z) 0 = Complex.log (x : ℂ) := by
+    simpa using Complex.deriv_const_cpow hid (x : ℂ)
+  have hderivY :
+      deriv (fun z : ℂ => ((x + h : ℝ) : ℂ) ^ z) 0 =
+        Complex.log ((x + h : ℝ) : ℂ) := by
+    simpa using Complex.deriv_const_cpow hid ((x + h : ℝ) : ℂ)
+  unfold secondOrderOriginDerivativeIncrement
+  change
+    deriv ((fun z : ℂ => -logDeriv riemannZeta z) *
+        (fun z : ℂ => ((x + h : ℝ) : ℂ) ^ z)) 0 -
+      deriv ((fun z : ℂ => -logDeriv riemannZeta z) *
+        (fun z : ℂ => (x : ℂ) ^ z)) 0 = _
+  rw [deriv_mul hlog hpowY, deriv_mul hlog hpowX, hderivY, hderivX]
+  simp only [cpow_zero, mul_one, hlogValue, hlogX, hlogY]
+  rw [Real.log_div hy.ne' hx.ne']
+  push_cast
+  ring
+
 /-- The multiplicity-aware nontrivial-zero contribution to one second-order
 Riesz endpoint increment. -/
 noncomputable def secondOrderNontrivialZeroIncrement
@@ -1844,6 +1902,40 @@ theorem exists_C_forall_goodHeight_chebyshevPsi_bounds_standard_zero_sum
         ring
   refine ⟨T, hT, hgood, ?_⟩
   simpa [hstandard] using hbounds
+
+/-- Selected-height Riesz sandwich with every origin contribution evaluated
+explicitly. The only remaining analytic zero term is the canonical finite
+multiplicity-aware nontrivial-zero sum. -/
+theorem
+    exists_C_forall_goodHeight_chebyshevPsi_bounds_explicit_origin_zero_sum
+    {x h : ℝ} (hx : Real.exp 1 ≤ x) (hh : 0 < h) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          chebyshevPsi x ≤
+              ((-(Real.log (2 * Real.pi) : ℂ) *
+                    (Real.log ((x + h) / x) : ℂ) +
+                  (h : ℂ) +
+                  secondOrderNontrivialZeroIncrement x h T).re +
+                secondOrderSelectedHeightTotalBudget C x h A T) /
+                  Real.log ((x + h) / x) ∧
+            ((-(Real.log (2 * Real.pi) : ℂ) *
+                    (Real.log ((x + h) / x) : ℂ) +
+                  (h : ℂ) +
+                  secondOrderNontrivialZeroIncrement x h T).re -
+                secondOrderSelectedHeightTotalBudget C x h A T) /
+                  Real.log ((x + h) / x) ≤
+              chebyshevPsi (x + h) := by
+  rcases
+      exists_C_forall_goodHeight_chebyshevPsi_bounds_standard_zero_sum
+        hx hh with ⟨C, hC, hchoose⟩
+  refine ⟨C, hC, ?_⟩
+  intro A hA
+  rcases hchoose A hA with ⟨T, hT, hgood, hbounds⟩
+  have hxpos : 0 < x := (Real.exp_pos 1).trans_le hx
+  have hypos : 0 < x + h := by linarith
+  rw [secondOrderOriginDerivativeIncrement_eq hxpos hypos] at hbounds
+  exact ⟨T, hT, hgood, hbounds⟩
 
 end ExplicitFormulaResidues
 
