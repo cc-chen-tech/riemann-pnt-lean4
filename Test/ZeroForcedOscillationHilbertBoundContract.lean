@@ -70,6 +70,19 @@ example {ι : Type*} [DecidableEq ι]
 
 example (T : ℝ)
     (hpackage : (maximalRealPartZeroPackage T).Nontrivial)
+    {a b : ℝ} (hab : a < b) :
+    ∃ y ∈ Set.Ioo a b,
+      Real.exp (maximalZeroRealPart T * y) ^ 2 *
+          (maximalZeroPackageEnergy T -
+            (4 * Real.pi * maximalZeroPackageEnergy T /
+              maximalZeroPackageMinimumImaginarySpacing T) / (b - a)) ≤
+        ‖equalRealPartZeroPackageContribution (Real.exp y) T
+          (maximalZeroRealPart T)‖ ^ 2 :=
+  exists_mem_Ioo_sqNorm_maximalZeroPackageContribution_ge_hilbert
+    T hpackage hab
+
+example (T : ℝ)
+    (hpackage : (maximalRealPartZeroPackage T).Nontrivial)
     {a b : ℝ}
     (hlength :
       4 * Real.pi / maximalZeroPackageMinimumImaginarySpacing T < b - a) :

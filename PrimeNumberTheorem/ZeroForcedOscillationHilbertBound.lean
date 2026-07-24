@@ -212,6 +212,55 @@ theorem exists_mem_Ioo_sqNorm_finiteExponentialSum_ge_hilbert
   rw [hscale] at hpositive
   linarith
 
+/-- Quantitative specialization to the maximal zeta-zero package. The lower
+bound retains the growth exponent, analytic multiplicities, total coefficient
+energy, actual minimum spacing, and interval length. -/
+theorem
+    exists_mem_Ioo_sqNorm_maximalZeroPackageContribution_ge_hilbert
+    (T : ℝ) (hpackage : (maximalRealPartZeroPackage T).Nontrivial)
+    {a b : ℝ} (hab : a < b) :
+    ∃ y ∈ Set.Ioo a b,
+      Real.exp (maximalZeroRealPart T * y) ^ 2 *
+          (maximalZeroPackageEnergy T -
+            (4 * Real.pi * maximalZeroPackageEnergy T /
+              maximalZeroPackageMinimumImaginarySpacing T) / (b - a)) ≤
+        ‖equalRealPartZeroPackageContribution (Real.exp y) T
+          (maximalZeroRealPart T)‖ ^ 2 := by
+  have him :
+      Set.InjOn Complex.im (maximalRealPartZeroPackage T : Set ℂ) := by
+    apply im_injOn_of_re_eq _ (maximalZeroRealPart T)
+    intro ρ hρ
+    exact (mem_maximalRealPartZeroPackage.mp hρ).2.2
+  rcases exists_mem_Ioo_sqNorm_finiteExponentialSum_ge_hilbert
+      (S := maximalRealPartZeroPackage T)
+      (c := fun ρ => (analyticOrderNatAt riemannZeta ρ : ℂ) * ρ⁻¹)
+      (omega := Complex.im) hpackage hab him with ⟨y, hy, hpoint⟩
+  refine ⟨y, hy, ?_⟩
+  rw [equalRealPartZeroPackageContribution_exp_eq_exponentialPolynomial,
+    norm_mul, Complex.norm_real, Real.norm_eq_abs,
+    abs_of_pos (Real.exp_pos _), mul_pow]
+  have hpoly :
+      multiplicityWeightedExponentialPolynomial
+          (maximalRealPartZeroPackage T)
+          (analyticOrderNatAt riemannZeta) (fun ρ => ρ⁻¹) Complex.im y =
+        finiteExponentialSum (maximalRealPartZeroPackage T)
+          (fun ρ => (analyticOrderNatAt riemannZeta ρ : ℂ) * ρ⁻¹)
+          Complex.im y := by
+    rfl
+  change Real.exp (maximalZeroRealPart T * y) ^ 2 *
+      (maximalZeroPackageEnergy T -
+        (4 * Real.pi * maximalZeroPackageEnergy T /
+          maximalZeroPackageMinimumImaginarySpacing T) / (b - a)) ≤
+    Real.exp (maximalZeroRealPart T * y) ^ 2 *
+      ‖multiplicityWeightedExponentialPolynomial
+        (maximalRealPartZeroPackage T)
+        (analyticOrderNatAt riemannZeta) (fun ρ => ρ⁻¹) Complex.im y‖ ^ 2
+  rw [hpoly]
+  apply mul_le_mul_of_nonneg_left
+  · simpa [maximalZeroPackageEnergy,
+      maximalZeroPackageMinimumImaginarySpacing] using hpoint
+  · exact sq_nonneg _
+
 /-- If the maximal zero package has at least two members, every logarithmic
 interval longer than `4π / Δ_T` contains a point where its actual
 multiplicity-aware contribution is strictly nonzero. This statement concerns
