@@ -197,8 +197,9 @@ Combining that missing coefficient with the fixed-cardinality defect argument
 proves a strict constant above `pi/2`. The full proof is in
 `vk-edge-pi-over-two-abel-transfer.md`.
 
-The finite-package problem remains necessary for the stronger localization
-claim in every prescribed power interval.
+The finite-package problem was initially expected to be necessary for the
+stronger localization claim. The pole-annihilation construction in
+`vk-edge-pi-over-two-localized-transfer.md` bypasses it.
 
 ## Two-frequency localized transform
 
@@ -247,7 +248,7 @@ Because `w_n` is not a zero, the second transform has no central residue.
 The target and its conjugate still provide the two unit residues in the first
 transform.
 
-The remaining localized lemma is now precise:
+The initially identified localized lemma was:
 
 > Prove a weighted Cassels/Turan lower bound for the combined residue sum,
 > retaining `2-o(1)` despite the signed coefficient of the auxiliary
@@ -257,11 +258,19 @@ The original Cassels lemma handles an unweighted sum of conjugate pure powers.
 The combined transform introduces fixed coefficients in the auxiliary residue
 sum. A valid proof must either extend Cassels to these coefficients or choose
 the Gaussian parameter by a separate finite almost-periodic averaging
-argument. This is the only new lower-bound ingredient required by the
-two-frequency route; the contour and tail estimates are already present in
-the Revesz proof.
+argument.
 
-## Current localization blockers
+This weighted lemma is no longer required. Instead, multiply each Gaussian
+Mellin transform by a fixed polynomial that equals one at the center and
+vanishes at every unwanted local pole shift. The target transform retains
+exactly its central conjugate residue pair, while the auxiliary transform has
+no central residue and all its local residues are annihilated. Fixed
+polynomial multipliers add only `O(m^(-1/2))` relative `L1` error to the
+Gaussian kernel; their polynomial growth is absorbed by the same Gaussian
+contour and far-zero estimates. The audited proof is in
+`vk-edge-pi-over-two-localized-transfer.md`.
+
+## Superseded envelope blockers
 
 The envelope route needs both:
 
@@ -284,19 +293,11 @@ in a spectral projection can erase the improvement.
 ## Decision
 
 Gate F1 is closed at the abstract Fourier level. The global Abel version of
-Gate Z1 is also closed, modulo Bellotti's stated theorem. The power-interval
-localized version of Gate Z1 remains open.
+Gate Z1 is closed, modulo Bellotti's stated theorem. The power-interval
+localized version is now derived with the fixed interval `[Y,Y^7]`, modulo
+Bellotti's zero count and Revesz's simultaneous zero-avoiding contour lemmas.
 
-The next mathematical task on this branch is the narrower two-frequency
-weighted Cassels/Turan lemma described above. If that fails, return to the
-finite near-minimizer decomposition and prove both a remainder smaller than
-
-```text
-(L_(M_A) - pi/2) B_Y.
-```
-
-and a uniform recurrence modulus.
-
-Until that theorem is proved, the repository must not claim the stronger
-power-interval localization. The global `limsup` constant above `pi/2` is
-supported by the separate Mellin--Abel proof.
+The envelope and weighted-Cassels routes remain useful alternative approaches,
+but they are not blockers for the pole-annihilation proof. Historical priority
+and external specialist review are still open, so the result must not yet be
+advertised as a new theorem in the literature.

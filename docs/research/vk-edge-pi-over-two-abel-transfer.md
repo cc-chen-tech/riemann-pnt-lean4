@@ -6,8 +6,10 @@ This note gives a complete proof, modulo the stated Bellotti zero-density
 theorem, of a global `limsup` oscillation constant strictly larger than
 `pi / 2` for a zeta zero near the Vinogradov--Korobov boundary.
 
-It does not prove that the large value occurs in every prescribed power
-interval. That localization problem is separate and remains open.
+This Abel argument alone does not localize the large value. The separate
+finite-pole annihilation proof in
+`vk-edge-pi-over-two-localized-transfer.md` gives occurrence in every
+sufficiently late interval `[Y,Y^7]`.
 
 Historical priority is not asserted. The Abel-coefficient argument is close
 to classical Ingham and Anderson--Stark oscillation methods. The potentially
@@ -514,14 +516,15 @@ Closed by this argument:
 3. all infinitely many other zeta frequencies;
 4. the global absolute `limsup` conclusion.
 
-Not closed:
+Not closed by this Abel argument:
 
-1. occurrence in every interval `[Y,Y^C_A]`;
+1. occurrence in every interval `[Y,Y^C_A]`, which is handled separately in
+   `vk-edge-pi-over-two-localized-transfer.md`;
 2. an effective numerical value of `delta_A`, since a numerical Bellotti
    constant has not been inserted;
 3. one-sided `Omega_+` and `Omega_-` constants;
 4. historical priority.
 
 The earlier envelope-local finite-package requirement was sufficient but not
-necessary for the global theorem. It remains relevant only for quantitative
+necessary for either the global theorem or the pole-annihilation
 localization.

@@ -22,9 +22,11 @@ trinomial extremal problems.
 
 The global absolute-`limsup` zeta application is proved in
 `vk-edge-pi-over-two-abel-transfer.md`, modulo Bellotti's stated theorem. The
-stronger power-interval localization remains unproved. Both have lower
-collision risk than the abstract Fourier lemma but require a direct
-specialist prior-art check.
+stronger power-interval localization is derived in
+`vk-edge-pi-over-two-localized-transfer.md`, modulo Bellotti's theorem and
+Revesz's standard simultaneous contour lemmas. Both have lower collision risk
+than the abstract Fourier lemma but require a direct specialist prior-art
+check.
 
 ## Closest prescribed-coefficient result
 
@@ -187,11 +189,11 @@ two-frequency value kappa_2=sqrt(3). A targeted search found no identical
 statement, but historical priority remains unverified.
 ```
 
-The following wording is not acceptable:
+The following wording is not yet acceptable:
 
 ```text
-We proved a localized zeta oscillation theorem above pi/2 in every power
-interval.
+We proved a new localized zeta oscillation theorem above pi/2 in every power
+interval, with established historical priority.
 ```
 
 Before claiming novelty for the abstract theorem, obtain a specialist search
@@ -207,6 +209,8 @@ priority proof. Anderson--Stark type oscillation theorems and older
 coefficient inequalities must be checked directly before describing the
 global theorem as new.
 
-The envelope-local or multiphase-transform bridge in
-`vk-edge-pi-over-two-zeta-bridge.md` is still required for the stronger
-power-interval localization.
+The finite-pole annihilation route in
+`vk-edge-pi-over-two-localized-transfer.md` bypasses the earlier
+envelope-local and weighted-Cassels blockers. The mathematical derivation has
+passed internal audit, but historical priority and external specialist review
+remain open.

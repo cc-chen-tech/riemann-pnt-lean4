@@ -173,7 +173,7 @@ The localization exponent may depend on `A`, but not on the target height
 
 ## Candidate zeta theorem
 
-The eventual candidate, not a current result, is:
+The following was the preregistered candidate:
 
 ```text
 Fix A > A_0. There exist Gamma_A, C_A and delta_A > 0 such that:
@@ -199,6 +199,12 @@ g(t) = (log t)^(-2/3) (log log t)^(-1/3).
 
 The proposed relation is `delta_A = delta_(M_(A+2))`. This relation is
 meaningful only after Gates F1 and Z0 are proved.
+
+Post-registration status: the theorem is derived in
+`vk-edge-pi-over-two-localized-transfer.md` with `C_A=7`, a strict explicit
+fixed-cardinality lower bound for `delta_A`, and a pole-annihilation route
+that bypasses the originally proposed finite maximal-real-part package.
+Historical priority and external review remain open.
 
 ## Success and stop rules
 

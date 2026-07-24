@@ -369,16 +369,20 @@ Closed:
 4. The Bellotti count to missing-odd-harmonic mapping for a global `limsup`.
 5. A zeta/PNT global absolute-`limsup` constant strictly above `pi/2`,
    modulo Bellotti's stated zero-density theorem.
+6. Occurrence in every sufficiently late interval `[Y,Y^7]`, using fixed
+   finite-pole annihilating multipliers and Revesz's standard simultaneous
+   contour lemmas.
 
 Not closed:
 
 1. Whether the abstract fixed-`M` inequality or the displayed constants are
    new in harmonic analysis.
-2. A moving-height explicit formula whose remainder is
-   `o(x^beta / |rho_0|)` on the required interval.
-3. The stronger occurrence theorem in every power interval `[Y,Y^C_A]`.
-4. Historical priority for the Bellotti-plus-missing-harmonic global theorem.
+2. Historical priority for the Bellotti-plus-missing-harmonic global and
+   localized theorems.
+3. External specialist review and formal Lean verification of the analytic
+   transfer.
 
-The detailed global transfer is recorded separately in
-`vk-edge-pi-over-two-abel-transfer.md`. This proof record alone still covers
-only the abstract Fourier gate.
+The detailed transfers are recorded separately in
+`vk-edge-pi-over-two-abel-transfer.md` and
+`vk-edge-pi-over-two-localized-transfer.md`. This proof record itself still
+covers only the abstract Fourier gate.
