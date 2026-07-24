@@ -154,6 +154,34 @@ example (approx : ℝ → ℝ → ℂ) (error : ℝ → ℝ → ℝ)
   PrimeNumberTheorem.chebyshevPsi_bounds_of_smoothedApproximation
     approx error hx hh hxError hyError
 
+example {x c W : ℝ} (hx : 0 < x) (hc : 1 < c) (hW : 0 < W) :
+    PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderPerronError x c W =
+      (x ^ c / (2 * Real.pi ^ 2 * W)) *
+        PrimeNumberTheorem.ExplicitFormulaResidues.vonMangoldtLSeriesNorm
+          (c - 1) :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderPerronError_eq_vonMangoldtLSeriesNorm
+    hx hc hW
+
+example {x ε W : ℝ} (hx : 0 < x) (hε : 0 < ε) (hW : 0 < W) :
+    PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderPerronError
+        x (1 + ε) W ≤
+      (x ^ (1 + ε) / (2 * Real.pi ^ 2 * W)) *
+        ((2 / ε) * (1 + 2 / ε)) :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderPerronError_le_explicit
+    hx hε hW
+
+example {x h ε W : ℝ} (hx : 0 < x) (hh : 0 < h)
+    (hε : 0 < ε) (hW : 0 < W) :
+    PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderPerronError
+          x (1 + ε) W +
+        PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderPerronError
+          (x + h) (1 + ε) W ≤
+      (x ^ (1 + ε) / (2 * Real.pi ^ 2 * W) +
+          (x + h) ^ (1 + ε) / (2 * Real.pi ^ 2 * W)) *
+        ((2 / ε) * (1 + 2 / ε)) :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderPerronError_add_le_explicit
+    hx hh hε hW
+
 example {x h a c W : ℝ} (hx : 0 < x) (hh : 0 < h) (ha : 0 < a)
     (hac : a < c) (hc : 1 < c) (hW : 0 < W)
     (hboundary : ∀ p ∈

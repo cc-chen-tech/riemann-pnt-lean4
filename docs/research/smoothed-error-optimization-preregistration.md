@@ -86,11 +86,33 @@ left-edge bound into one explicit estimate for
 ```
 
 This closes boundary safety and the full three-edge budget at `a = -1`.
-It does not yet turn that rectangle into a second-order residue formula:
-the current `SecondOrderExplicitFormula` contour-shift theorem assumes
-`a > 0` and classifies only the pole at `1` and zeta zeros. Moving it to
-`a = -1` requires a new residue classification for the additional pole at
-`s = 0`; moving farther left also requires the trivial-zero residues.
+The crossing-zero second-order residue formula is now proved: it classifies
+the additional pole at `s = 0`, identifies its simple coefficient as the
+derivative of `-logDeriv riemannZeta z * x^z`, normalizes the shifted
+rectangle back to the right Perron line, and connects the resulting finite
+residue sum to `smoothedChebyshevPsi`. Applying this at `x` and `x+h` closes
+the corresponding `chebyshevPsi` sandwich. Moving farther left still requires
+the trivial-zero residues.
+
+The raw Perron tail is also no longer left as an opaque `tsum`. Lean proves
+
+```text
+secondOrderPerronError(x,c,W)
+  = x^c / (2*pi^2*W) * vonMangoldtLSeriesNorm(c-1),
+```
+
+and for `c = 1 + epsilon`,
+
+```text
+secondOrderPerronError(x,1+epsilon,W)
+  <= x^(1+epsilon) / (2*pi^2*W)
+       * (2/epsilon) * (1 + 2/epsilon).
+```
+
+The same theorem supplies one common explicit budget for the errors at `x`
+and `x+h`. The remaining optimization problem is therefore concentrated in
+the finite zero-sum difference and the three-edge contour-remainder
+difference, together with choosing `epsilon`, `h`, and `W`.
 
 ## Frozen repository baseline
 

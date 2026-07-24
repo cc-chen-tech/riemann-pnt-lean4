@@ -558,6 +558,97 @@ part of the approximation itself. -/
 noncomputable def secondOrderPerronError (x c W : ℝ) : ℝ :=
   ∑' n : ℕ, vonMangoldt n * (x / n) ^ c / (2 * Real.pi ^ 2 * W)
 
+/-- The raw second-order Perron tail factors exactly into an `x,W` scale and
+the absolute von Mangoldt Dirichlet-series norm on `Re(s)=c`. -/
+theorem secondOrderPerronError_eq_vonMangoldtLSeriesNorm
+    {x c W : ℝ} (hx : 0 < x) (hc : 1 < c) (hW : 0 < W) :
+    secondOrderPerronError x c W =
+      (x ^ c / (2 * Real.pi ^ 2 * W)) *
+        vonMangoldtLSeriesNorm (c - 1) := by
+  let coeff : ℕ → ℂ :=
+    fun n => (ArithmeticFunction.vonMangoldt n : ℂ)
+  let B : ℕ → ℝ := fun n =>
+    vonMangoldt n * (x / n) ^ c / (2 * Real.pi ^ 2 * W)
+  have hnorm_summable : Summable fun n =>
+      ‖LSeries.term coeff (c : ℂ) n‖ := by
+    have hs := ArithmeticFunction.LSeriesSummable_vonMangoldt
+      (s := (c : ℂ)) (by simpa using hc)
+    rw [LSeriesSummable, ← summable_norm_iff] at hs
+    simpa [coeff] using hs
+  have hB_eq (n : ℕ) : B n =
+      (x ^ c / (2 * Real.pi ^ 2 * W)) *
+        ‖LSeries.term coeff (c : ℂ) n‖ := by
+    by_cases hn : n = 0
+    · subst n
+      simp [B, LSeries.term, vonMangoldt_eq_mathlib]
+    · have hn_pos : 0 < (n : ℝ) := by
+        exact_mod_cast Nat.pos_of_ne_zero hn
+      dsimp [B, coeff]
+      rw [LSeries.norm_term_eq, vonMangoldt_eq_mathlib,
+        Real.div_rpow hx.le hn_pos.le]
+      simp only [hn, if_false, Complex.ofReal_re]
+      rw [norm_real, Real.norm_eq_abs,
+        abs_of_nonneg ArithmeticFunction.vonMangoldt_nonneg]
+      field_simp
+  calc
+    secondOrderPerronError x c W = ∑' n : ℕ, B n := by rfl
+    _ = ∑' n : ℕ,
+        (x ^ c / (2 * Real.pi ^ 2 * W)) *
+          ‖LSeries.term coeff (c : ℂ) n‖ :=
+      tsum_congr hB_eq
+    _ = (x ^ c / (2 * Real.pi ^ 2 * W)) *
+        ∑' n : ℕ, ‖LSeries.term coeff (c : ℂ) n‖ :=
+      tsum_mul_left
+    _ = (x ^ c / (2 * Real.pi ^ 2 * W)) *
+        vonMangoldtLSeriesNorm (c - 1) := by
+      congr 1
+      unfold vonMangoldtLSeriesNorm
+      apply tsum_congr
+      intro n
+      congr 2
+      push_cast
+      ring
+
+/-- Explicit `ε,W` upper bound for the second-order Perron truncation tail.
+This is a proved analytic envelope, not a numerical optimizer input. -/
+theorem secondOrderPerronError_le_explicit
+    {x ε W : ℝ} (hx : 0 < x) (hε : 0 < ε) (hW : 0 < W) :
+    secondOrderPerronError x (1 + ε) W ≤
+      (x ^ (1 + ε) / (2 * Real.pi ^ 2 * W)) *
+        ((2 / ε) * (1 + 2 / ε)) := by
+  rw [secondOrderPerronError_eq_vonMangoldtLSeriesNorm
+    hx (by linarith) hW]
+  have hnorm :=
+    vonMangoldtLSeriesNorm_le_two_div_mul_one_add_two_div hε
+  have hscale :
+      0 ≤ x ^ (1 + ε) / (2 * Real.pi ^ 2 * W) := by
+    positivity
+  simpa only [add_sub_cancel_left] using
+    mul_le_mul_of_nonneg_left hnorm hscale
+
+/-- The sum of the two endpoint Perron errors used by the Riesz sandwich has
+one explicit common `ε,W` budget. -/
+theorem secondOrderPerronError_add_le_explicit
+    {x h ε W : ℝ} (hx : 0 < x) (hh : 0 < h)
+    (hε : 0 < ε) (hW : 0 < W) :
+    secondOrderPerronError x (1 + ε) W +
+        secondOrderPerronError (x + h) (1 + ε) W ≤
+      (x ^ (1 + ε) / (2 * Real.pi ^ 2 * W) +
+          (x + h) ^ (1 + ε) / (2 * Real.pi ^ 2 * W)) *
+        ((2 / ε) * (1 + 2 / ε)) := by
+  have hy : 0 < x + h := by linarith
+  have hxbound := secondOrderPerronError_le_explicit hx hε hW
+  have hybound := secondOrderPerronError_le_explicit hy hε hW
+  calc
+    secondOrderPerronError x (1 + ε) W +
+        secondOrderPerronError (x + h) (1 + ε) W ≤
+      (x ^ (1 + ε) / (2 * Real.pi ^ 2 * W)) *
+          ((2 / ε) * (1 + 2 / ε)) +
+        ((x + h) ^ (1 + ε) / (2 * Real.pi ^ 2 * W)) *
+          ((2 / ε) * (1 + 2 / ε)) :=
+      add_le_add hxbound hybound
+    _ = _ := by ring
+
 /-- Apply the finite-height second-order explicit formula at both endpoints of
 one smoothing interval and feed the resulting, genuinely constructed Perron
 error bounds into `chebyshevPsi_bounds_of_smoothedApproximation`.
