@@ -1,4 +1,4 @@
-import HardyTheorem.SelbergSqrtZetaShortExpansion
+import HardyTheorem.SelbergSqrtZetaCoeffBound
 
 #print axioms HardyTheorem.selbergSqrtZetaEulerFactor_sq
 #print axioms HardyTheorem.sum_antidiagonal_selbergSqrtZetaLocalCoeff_mul

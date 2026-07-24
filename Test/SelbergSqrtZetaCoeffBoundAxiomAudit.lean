@@ -1,0 +1,3 @@
+import HardyTheorem.SelbergSqrtZetaCoeffBound
+
+#print axioms HardyTheorem.norm_selbergSqrtZetaMollifier_criticalLine_le_two_sqrt
