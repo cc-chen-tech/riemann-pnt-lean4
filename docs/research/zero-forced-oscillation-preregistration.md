@@ -91,7 +91,7 @@ of `T`.
 
 The fixed-height ingredients are now connected to the actual explicit-formula
 transfer.  The theorem
-`exists_C_forall_fixedHeight_maximalZeroPackage_forces_psi0_error` gives,
+`exists_C_forall_fixedHeight_maximalZeroPackage_transfers_to_psi0_error` gives,
 on every positive interval `(a,b)`, a point `y` for which the automatically
 selected maximal layer has its proved mean-square lower bound and
 
@@ -105,8 +105,12 @@ selected maximal layer has its proved mean-square lower bound and
 
 Thus the finite-dimensional spectral lower bound, automatic complementary
 gap, global reciprocal-zero budget, and the finite-height explicit formula are
-all in one unconditional Lean theorem.  The displayed approximation norm is
-deliberately retained: no uniform estimate for it is proved or assumed.
+all in one unconditional Lean transfer theorem.  If the maximal package is
+empty, or if its displayed mean-square main term is nonpositive, this transfer
+is logically valid but gives no nontrivial oscillation lower bound.  A genuine
+lower bound additionally needs a nonempty package and a positive mean-square
+bracket.  The displayed approximation norm is deliberately retained: no
+uniform estimate for it is proved or assumed.
 
 This is a genuine fixed-height finite-set theorem.  It does not supply a lower
 bound for `delta_T` uniform in a moving height `T = T(y)`, and it does not

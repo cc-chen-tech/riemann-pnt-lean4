@@ -367,8 +367,10 @@ The theorem leaves only the genuine finite-height explicit-formula error and
 the elementary closed terms in the lower bound for `ψ₀(exp y) - exp y`; it
 requires no externally supplied `β`, `δ`, or zero-gap hypothesis.  It is a
 fixed-height statement: neither the selected maximum nor its positive gap is
-claimed uniform as `T` varies. -/
-theorem exists_C_forall_fixedHeight_maximalZeroPackage_forces_psi0_error
+claimed uniform as `T` varies.  When the finite zero package is empty, or when
+the displayed mean-square main term is nonpositive, the conclusion is a valid
+but degenerate transfer rather than a nontrivial oscillation lower bound. -/
+theorem exists_C_forall_fixedHeight_maximalZeroPackage_transfers_to_psi0_error
     : ∃ C : ℝ, 0 ≤ C ∧ ∀ T : ℝ, 4 ≤ T → ∀ {a b : ℝ},
       0 < a → a < b →
         ∃ y ∈ Set.Ioo a b,

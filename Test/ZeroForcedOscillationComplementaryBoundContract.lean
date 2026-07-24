@@ -145,7 +145,7 @@ example : ∃ C : ℝ, 0 ≤ C ∧ ∀ T : ℝ, 4 ≤ T → ∀ {a b : ℝ},
               (1 / 2 : ℝ) * Real.exp (-2 * y) /
                 (1 - Real.exp (-2 * y))) ≤
           ‖(((chebyshevPsi0 (Real.exp y) - Real.exp y : ℝ) : ℂ))‖ :=
-  exists_C_forall_fixedHeight_maximalZeroPackage_forces_psi0_error
+  exists_C_forall_fixedHeight_maximalZeroPackage_transfers_to_psi0_error
 
 -- Small sanity checks: the per-term identity at zero multiplicity and at `ρ = 0`.
 
