@@ -3,6 +3,7 @@ import PrimeNumberTheorem.SecondOrderMovingLeft
 import PrimeNumberTheorem.RightHorizontalEdge
 import PrimeNumberTheorem.CentralHorizontalEdge
 import PrimeNumberTheorem.LeftVerticalEdge
+import PrimeNumberTheorem.GlobalZeroCount
 
 /-!
 # Transferring smoothed approximation errors to Chebyshev psi
@@ -1172,6 +1173,126 @@ theorem norm_secondOrderRieszFactor_increment_le
   simpa [Real.log_div hy.ne' hx.ne'] using
     norm_secondOrderRieszFactor_sub_le hx hy hp hlog
       (by simpa [Real.log_div hy.ne' hx.ne'] using hsmall)
+
+/-- A uniform finite-height smoothing condition implies the pointwise Riesz
+factor bound for every nontrivial zero in the truncation.  The key geometric
+input is `‖ρ‖ ≤ T + 1`, obtained from `0 < re ρ < 1` and `|im ρ| ≤ T`. -/
+theorem norm_secondOrderRieszFactor_increment_le_of_mem_nontrivialZerosFinset
+    {x h T : ℝ} {ρ : ℂ}
+    (hx : 0 < x) (hh : 0 ≤ h)
+    (hρ : ρ ∈ nontrivialZerosFinset T)
+    (hsmall : (T + 1) * Real.log ((x + h) / x) ≤ 1) :
+    ‖(((x + h : ℝ) : ℂ) ^ ρ - (x : ℂ) ^ ρ) / ρ ^ 2‖ ≤
+      2 * x ^ ρ.re * Real.log ((x + h) / x) / ‖ρ‖ := by
+  rcases mem_nontrivialZerosFinset.mp hρ with ⟨hzero, him⟩
+  have hT : 0 ≤ T := (abs_nonneg ρ.im).trans him
+  have hreabs : |ρ.re| < 1 := by
+    rw [abs_lt]
+    exact ⟨by linarith [hzero.2.1], hzero.2.2⟩
+  have hnorm : ‖ρ‖ ≤ T + 1 := by
+    calc
+      ‖ρ‖ ≤ |ρ.re| + |ρ.im| := Complex.norm_le_abs_re_add_abs_im ρ
+      _ ≤ T + 1 := by linarith
+  have hlog : 0 ≤ Real.log ((x + h) / x) := by
+    apply Real.log_nonneg
+    exact (le_div_iff₀ hx).2 (by linarith)
+  apply norm_secondOrderRieszFactor_increment_le hx hh
+  · intro hρ0
+    subst ρ
+    simpa using hzero.2.1
+  · calc
+      ‖ρ‖ * Real.log ((x + h) / x) ≤
+          (T + 1) * Real.log ((x + h) / x) :=
+        mul_le_mul_of_nonneg_right hnorm hlog
+      _ ≤ 1 := hsmall
+
+/-- Multiplicity-aware finite-zero version of the smoothing gain.  The
+logarithmic endpoint factor remains outside the zero sum, while the remaining
+mass is exactly `globalReciprocalZeroMultiplicity`. -/
+theorem norm_secondOrderRieszZeroSumWithMultiplicity_increment_le
+    {x h T : ℝ}
+    (hx : 1 ≤ x) (hh : 0 ≤ h)
+    (hsmall : (T + 1) * Real.log ((x + h) / x) ≤ 1) :
+    ‖∑ ρ ∈ nontrivialZerosFinset T,
+        -(analyticOrderNatAt riemannZeta ρ : ℂ) *
+          ((((x + h : ℝ) : ℂ) ^ ρ - (x : ℂ) ^ ρ) / ρ ^ 2)‖ ≤
+      2 * x * Real.log ((x + h) / x) *
+        ExplicitFormulaAux.globalReciprocalZeroMultiplicity T := by
+  have hxpos : 0 < x := zero_lt_one.trans_le hx
+  have hlog : 0 ≤ Real.log ((x + h) / x) := by
+    apply Real.log_nonneg
+    exact (le_div_iff₀ hxpos).2 (by linarith)
+  calc
+    ‖∑ ρ ∈ nontrivialZerosFinset T,
+        -(analyticOrderNatAt riemannZeta ρ : ℂ) *
+          ((((x + h : ℝ) : ℂ) ^ ρ - (x : ℂ) ^ ρ) / ρ ^ 2)‖ ≤
+        ∑ ρ ∈ nontrivialZerosFinset T,
+          ‖-(analyticOrderNatAt riemannZeta ρ : ℂ) *
+            ((((x + h : ℝ) : ℂ) ^ ρ - (x : ℂ) ^ ρ) / ρ ^ 2)‖ :=
+      norm_sum_le _ _
+    _ ≤ ∑ ρ ∈ nontrivialZerosFinset T,
+        2 * x * Real.log ((x + h) / x) *
+          ((analyticOrderNatAt riemannZeta ρ : ℝ) / ‖ρ‖) := by
+      apply Finset.sum_le_sum
+      intro ρ hρ
+      have hzero := (mem_nontrivialZerosFinset.mp hρ).1
+      have hrpow : x ^ ρ.re ≤ x := by
+        simpa using
+          Real.rpow_le_rpow_of_exponent_le hx hzero.2.2.le
+      have hfactor :=
+        norm_secondOrderRieszFactor_increment_le_of_mem_nontrivialZerosFinset
+          hxpos hh hρ hsmall
+      have hmult : 0 ≤ (analyticOrderNatAt riemannZeta ρ : ℝ) :=
+        Nat.cast_nonneg _
+      rw [norm_mul, norm_neg, Complex.norm_natCast]
+      calc
+        (analyticOrderNatAt riemannZeta ρ : ℝ) *
+            ‖(((x + h : ℝ) : ℂ) ^ ρ - (x : ℂ) ^ ρ) / ρ ^ 2‖ ≤
+          (analyticOrderNatAt riemannZeta ρ : ℝ) *
+            (2 * x ^ ρ.re * Real.log ((x + h) / x) / ‖ρ‖) :=
+          mul_le_mul_of_nonneg_left hfactor hmult
+        _ ≤ (analyticOrderNatAt riemannZeta ρ : ℝ) *
+            (2 * x * Real.log ((x + h) / x) / ‖ρ‖) := by
+          gcongr
+        _ = 2 * x * Real.log ((x + h) / x) *
+            ((analyticOrderNatAt riemannZeta ρ : ℝ) / ‖ρ‖) := by ring
+    _ = 2 * x * Real.log ((x + h) / x) *
+        ExplicitFormulaAux.globalReciprocalZeroMultiplicity T := by
+      unfold ExplicitFormulaAux.globalReciprocalZeroMultiplicity
+      rw [Finset.mul_sum]
+
+/-- The global reciprocal zero-mass estimate turns the finite Riesz
+difference into an explicit `log² T` budget, uniformly in the endpoints. -/
+theorem
+    exists_C_norm_secondOrderRieszZeroSumWithMultiplicity_increment_le_log_sq :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ x h T : ℝ,
+      1 ≤ x → 0 ≤ h → 4 ≤ T →
+      (T + 1) * Real.log ((x + h) / x) ≤ 1 →
+      ‖∑ ρ ∈ nontrivialZerosFinset T,
+          -(analyticOrderNatAt riemannZeta ρ : ℂ) *
+            ((((x + h : ℝ) : ℂ) ^ ρ - (x : ℂ) ^ ρ) / ρ ^ 2)‖ ≤
+        2 * C * x * Real.log ((x + h) / x) *
+          (1 + Real.log (T + 6)) ^ 2 := by
+  rcases ExplicitFormulaAux.exists_globalReciprocalZeroMultiplicity_le_log_sq with
+    ⟨C, hC, hmass⟩
+  refine ⟨C, hC, ?_⟩
+  intro x h T hx hh hT hsmall
+  have hlog : 0 ≤ Real.log ((x + h) / x) := by
+    apply Real.log_nonneg
+    exact (le_div_iff₀ (zero_lt_one.trans_le hx)).2 (by linarith)
+  calc
+    ‖∑ ρ ∈ nontrivialZerosFinset T,
+        -(analyticOrderNatAt riemannZeta ρ : ℂ) *
+          ((((x + h : ℝ) : ℂ) ^ ρ - (x : ℂ) ^ ρ) / ρ ^ 2)‖ ≤
+      2 * x * Real.log ((x + h) / x) *
+        ExplicitFormulaAux.globalReciprocalZeroMultiplicity T :=
+      norm_secondOrderRieszZeroSumWithMultiplicity_increment_le hx hh hsmall
+    _ ≤ 2 * x * Real.log ((x + h) / x) *
+        (C * (1 + Real.log (T + 6)) ^ 2) := by
+      gcongr
+      exact hmass T hT
+    _ = 2 * C * x * Real.log ((x + h) / x) *
+        (1 + Real.log (T + 6)) ^ 2 := by ring
 
 /-- The selected-good-height budget for the difference of the two shifted
 second-order contour remainders on the first negative odd line. -/

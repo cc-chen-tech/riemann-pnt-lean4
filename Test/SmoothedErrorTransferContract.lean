@@ -465,6 +465,39 @@ example {x h : ℝ} {p : ℂ}
   PrimeNumberTheorem.ExplicitFormulaResidues.norm_secondOrderRieszFactor_increment_le
     hx hh hp hsmall
 
+example {x h T : ℝ} {ρ : ℂ}
+    (hx : 0 < x) (hh : 0 ≤ h)
+    (hρ : ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T)
+    (hsmall :
+      (T + 1) * Real.log ((x + h) / x) ≤ 1) :
+    ‖(((x + h : ℝ) : ℂ) ^ ρ - (x : ℂ) ^ ρ) / ρ ^ 2‖ ≤
+      2 * x ^ ρ.re * Real.log ((x + h) / x) / ‖ρ‖ :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.norm_secondOrderRieszFactor_increment_le_of_mem_nontrivialZerosFinset
+    hx hh hρ hsmall
+
+example {x h T : ℝ}
+    (hx : 1 ≤ x) (hh : 0 ≤ h)
+    (hsmall :
+      (T + 1) * Real.log ((x + h) / x) ≤ 1) :
+    ‖∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+        -(analyticOrderNatAt riemannZeta ρ : ℂ) *
+          ((((x + h : ℝ) : ℂ) ^ ρ - (x : ℂ) ^ ρ) / ρ ^ 2)‖ ≤
+      2 * x * Real.log ((x + h) / x) *
+        PrimeNumberTheorem.ExplicitFormulaAux.globalReciprocalZeroMultiplicity T :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.norm_secondOrderRieszZeroSumWithMultiplicity_increment_le
+    hx hh hsmall
+
+example :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ x h T : ℝ,
+      1 ≤ x → 0 ≤ h → 4 ≤ T →
+      (T + 1) * Real.log ((x + h) / x) ≤ 1 →
+      ‖∑ ρ ∈ PrimeNumberTheorem.nontrivialZerosFinset T,
+          -(analyticOrderNatAt riemannZeta ρ : ℂ) *
+            ((((x + h : ℝ) : ℂ) ^ ρ - (x : ℂ) ^ ρ) / ρ ^ 2)‖ ≤
+        2 * C * x * Real.log ((x + h) / x) *
+          (1 + Real.log (T + 6)) ^ 2 :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.exists_C_norm_secondOrderRieszZeroSumWithMultiplicity_increment_le_log_sq
+
 example {x h : ℝ} (hx : Real.exp 1 ≤ x) (hh : 0 < h) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
       ∃ T ∈ Set.Icc A (A + 1),
