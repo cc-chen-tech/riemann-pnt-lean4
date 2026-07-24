@@ -17,6 +17,8 @@ package of `ZeroForcedOscillationExplicitFormula.lean`:
   `Real.exp (B * y)` times the multiplicity-weighted reciprocal-norm sum,
   under a uniform real-part cap `ρ.re ≤ B` on the package (with the two
   instances `B = β` and `B = β - δ` used downstream);
+* fixed-height exponential decay of the complementary contribution after
+  normalization by the maximal real-part layer;
 * monotonicity of the complementary reciprocal-norm sum up to the full
   height-`T` truncation sum;
 * an explicit `B_T / E_T` interval-length threshold making the finite
@@ -362,6 +364,95 @@ theorem
   norm_complementaryZeroPackageContribution_le_exp_gap_mul_sum_nontrivialZerosFinset
     T (maximalZeroRealPart T) (maximalComplementaryRealPartGap T) y hy
       (fun _ hρ => re_le_maximalZeroRealPart_sub_gap hρ)
+
+/-- After normalization by the maximal real-part growth, the fixed-height
+complementary package is bounded by exponential decay at the exact positive
+complementary gap. The remaining factor is the finite multiplicity-weighted
+reciprocal-norm sum over the complementary package. -/
+theorem
+    normalized_norm_complementaryZeroPackageContribution_le_exp_neg_gap_mul_sum
+    (T y : ℝ) (hy : 0 ≤ y) :
+    Real.exp (-(maximalZeroRealPart T) * y) *
+        ‖complementaryZeroPackageContribution (Real.exp y) T
+          (maximalZeroRealPart T)‖ ≤
+      Real.exp (-maximalComplementaryRealPartGap T * y) *
+        ∑ ρ ∈ complementaryZeroPackage T (maximalZeroRealPart T),
+          (analyticOrderNatAt riemannZeta ρ : ℝ) / ‖ρ‖ := by
+  calc
+    Real.exp (-(maximalZeroRealPart T) * y) *
+        ‖complementaryZeroPackageContribution (Real.exp y) T
+          (maximalZeroRealPart T)‖ ≤
+      Real.exp (-(maximalZeroRealPart T) * y) *
+        (Real.exp ((maximalZeroRealPart T -
+            maximalComplementaryRealPartGap T) * y) *
+          ∑ ρ ∈ complementaryZeroPackage T (maximalZeroRealPart T),
+            (analyticOrderNatAt riemannZeta ρ : ℝ) / ‖ρ‖) :=
+      mul_le_mul_of_nonneg_left
+        (norm_complementaryZeroPackageContribution_le_exp_gap_mul_sum
+          T (maximalZeroRealPart T) (maximalComplementaryRealPartGap T) y hy
+            (fun _ hρ => re_le_maximalZeroRealPart_sub_gap hρ))
+        (Real.exp_nonneg _)
+    _ = Real.exp (-maximalComplementaryRealPartGap T * y) *
+        ∑ ρ ∈ complementaryZeroPackage T (maximalZeroRealPart T),
+          (analyticOrderNatAt riemannZeta ρ : ℝ) / ‖ρ‖ := by
+      have harg :
+          -(maximalZeroRealPart T) * y +
+              (maximalZeroRealPart T -
+                maximalComplementaryRealPartGap T) * y =
+            -maximalComplementaryRealPartGap T * y := by
+        ring
+      rw [← mul_assoc, ← Real.exp_add, harg]
+
+/-- For every fixed truncation height `T`, the complementary zero package is
+little compared with the maximal real-part scale as `y → +∞`. The proof uses
+the strict positivity of the finite-height gap and the finite reciprocal-norm
+sum retained in the preceding pointwise estimate. -/
+theorem tendsto_normalized_norm_complementaryZeroPackageContribution_atTop
+    (T : ℝ) :
+    Filter.Tendsto
+      (fun y : ℝ =>
+        Real.exp (-(maximalZeroRealPart T) * y) *
+          ‖complementaryZeroPackageContribution (Real.exp y) T
+            (maximalZeroRealPart T)‖)
+      Filter.atTop (nhds 0) := by
+  have hlinear :
+      Filter.Tendsto
+        (fun y : ℝ => -maximalComplementaryRealPartGap T * y)
+        Filter.atTop Filter.atBot :=
+    Filter.Tendsto.const_mul_atTop_of_neg
+      (neg_lt_zero.mpr (maximalComplementaryRealPartGap_pos T))
+      Filter.tendsto_id
+  have hdecay :
+      Filter.Tendsto
+        (fun y : ℝ => Real.exp (-maximalComplementaryRealPartGap T * y))
+        Filter.atTop (nhds 0) :=
+    Real.tendsto_exp_atBot.comp hlinear
+  have hsum :
+      Filter.Tendsto
+        (fun _ : ℝ =>
+          ∑ ρ ∈ complementaryZeroPackage T (maximalZeroRealPart T),
+            (analyticOrderNatAt riemannZeta ρ : ℝ) / ‖ρ‖)
+        Filter.atTop
+        (nhds (∑ ρ ∈ complementaryZeroPackage T (maximalZeroRealPart T),
+          (analyticOrderNatAt riemannZeta ρ : ℝ) / ‖ρ‖)) :=
+    tendsto_const_nhds
+  have hupper :
+      Filter.Tendsto
+        (fun y : ℝ =>
+          Real.exp (-maximalComplementaryRealPartGap T * y) *
+            ∑ ρ ∈ complementaryZeroPackage T (maximalZeroRealPart T),
+              (analyticOrderNatAt riemannZeta ρ : ℝ) / ‖ρ‖)
+        Filter.atTop (nhds 0) := by
+    simpa using hdecay.mul hsum
+  refine squeeze_zero'
+    (Filter.Eventually.of_forall fun y =>
+      mul_nonneg (Real.exp_nonneg _)
+        (norm_nonneg (complementaryZeroPackageContribution (Real.exp y) T
+          (maximalZeroRealPart T)))) ?_ hupper
+  filter_upwards [Filter.eventually_ge_atTop (0 : ℝ)] with y hy
+  exact
+    normalized_norm_complementaryZeroPackageContribution_le_exp_neg_gap_mul_sum
+      T y hy
 
 /-- Quantitative complementary-package bound: with a uniform real-part gap
 `δ` below `β` on the complementary zeros at height `T ≥ 4`, the complementary

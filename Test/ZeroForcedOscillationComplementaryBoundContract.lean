@@ -119,6 +119,25 @@ example (T y : ℝ) (hy : 0 ≤ y) :
   norm_complementaryZeroPackageContribution_le_exp_maximal_gap_mul_sum_nontrivialZerosFinset
     T y hy
 
+example (T y : ℝ) (hy : 0 ≤ y) :
+    Real.exp (-(maximalZeroRealPart T) * y) *
+        ‖complementaryZeroPackageContribution (Real.exp y) T
+          (maximalZeroRealPart T)‖ ≤
+      Real.exp (-maximalComplementaryRealPartGap T * y) *
+        ∑ ρ ∈ complementaryZeroPackage T (maximalZeroRealPart T),
+          (analyticOrderNatAt riemannZeta ρ : ℝ) / ‖ρ‖ :=
+  normalized_norm_complementaryZeroPackageContribution_le_exp_neg_gap_mul_sum
+    T y hy
+
+example (T : ℝ) :
+    Filter.Tendsto
+      (fun y : ℝ =>
+        Real.exp (-(maximalZeroRealPart T) * y) *
+          ‖complementaryZeroPackageContribution (Real.exp y) T
+            (maximalZeroRealPart T)‖)
+      Filter.atTop (nhds 0) :=
+  tendsto_normalized_norm_complementaryZeroPackageContribution_atTop T
+
 example (y : ℝ) (hy : 0 ≤ y) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ T : ℝ, 4 ≤ T →
       ‖complementaryZeroPackageContribution (Real.exp y) T
