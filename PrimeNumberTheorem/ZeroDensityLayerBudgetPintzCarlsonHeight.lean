@@ -134,4 +134,30 @@ theorem exists_pintzConstant_carlsonMajorantAtHeight_tendsto :
   filter_upwards with x
   exact (pintzCarlsonMajorantKernel_eq_gapModel C sigma k x).symm
 
+/-- The full Pintz-weighted Carlson majorant tends to zero after summing over
+any finite family of fixed real-part strips, all evaluated at one common
+dynamic truncation height. -/
+theorem exists_pintzConstant_finiteCarlsonMajorantAtHeight_tendsto
+    {ι : Type*} [DecidableEq ι]
+    (layers : Finset ι)
+    (C sigma : ι → ℝ)
+    (hC : ∀ i ∈ layers, 0 ≤ C i) :
+    ∃ c > 0, ∀ k : ℝ, 0 < k → k < 2 * Real.sqrt c →
+      Tendsto
+        (fun x : ℝ =>
+          ∑ i ∈ layers,
+            C i *
+              pintzCarlsonHeight k x ^
+                (4 * sigma i * (1 - sigma i)) *
+              Real.log (pintzCarlsonHeight k x) ^ 4 *
+              Real.exp (-Pintz.pintzZeroEnvelope x))
+        atTop (𝓝 0) := by
+  rcases exists_pintzConstant_carlsonMajorantAtHeight_tendsto with
+    ⟨c, hc, hstrip⟩
+  refine ⟨c, hc, ?_⟩
+  intro k hk hkGap
+  apply tendsto_finset_sum
+  intro i hi
+  exact hstrip (C i) (sigma i) k (hC i hi) hk hkGap
+
 end PrimeNumberTheorem
