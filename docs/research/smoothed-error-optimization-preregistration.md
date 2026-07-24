@@ -72,9 +72,25 @@ x^(-(2N+1)) / (2N+1)
 ```
 
 and the segment length is `2 * (2*pi*W)`. This is a real improvement over the
-first-order left-edge API, but it applies only to these negative-odd lines. It
-does not bound `secondOrderLeftXDifference` for the general safe left boundary
-selected by the finite second-order contour theorem.
+first-order left-edge API.  Positivity of the smoothing endpoint is now enough,
+so the estimate includes `x = 1`.
+
+At the concrete negative-odd line `a = -1`, Lean now also proves that every
+candidate pole (`0`, `1`, a trivial zero, or a nontrivial zero) lies strictly
+inside a good-height rectangle and combines both horizontal bounds with the
+left-edge bound into one explicit estimate for
+
+```text
+||secondOrderContourRemainder(y,-1,c,T/(2*pi))
+    - secondOrderContourRemainder(x,-1,c,T/(2*pi))||.
+```
+
+This closes boundary safety and the full three-edge budget at `a = -1`.
+It does not yet turn that rectangle into a second-order residue formula:
+the current `SecondOrderExplicitFormula` contour-shift theorem assumes
+`a > 0` and classifies only the pole at `1` and zeta zeros. Moving it to
+`a = -1` requires a new residue classification for the additional pole at
+`s = 0`; moving farther left also requires the trivial-zero residues.
 
 ## Frozen repository baseline
 
@@ -239,10 +255,14 @@ interval for `Re(A_T(x+h) - A_T(x))` from the actual residue sums and the
 difference of the two second-order contour remainders. The contour difference
 is now reduced to actual edge differences. Its complete horizontal pieces have
 selected-good-height `T^-2` control throughout the central band containing the
-second-order contour. The left vertical difference is now controlled on
+second-order contour. The left vertical difference is controlled on
 negative-odd left lines, with its explicit finite-height logarithmic majorant
-and the extra `(2N+1)^(-1)` second-order-kernel factor. The remaining analytic
-gap is to transfer this estimate to the general safe left boundary selected by
-the finite second-order contour theorem, or to redesign that theorem around a
-negative-odd left edge. The input format and Lean endpoint bridge now exist,
-but no candidate envelope has yet been proved on its full stated range.
+and the extra `(2N+1)^(-1)` second-order-kernel factor; at `a = -1` these
+estimates are already assembled into the complete remainder-difference budget.
+The remaining contour gap is algebraic/meromorphic rather than an edge bound:
+extend the second-order contour-shift and residue decomposition across `s = 0`
+(and, for farther negative-odd lines, across the trivial zeros), then identify
+the resulting finite residue difference with the approximation consumed by
+the Riesz sandwich. The input format and Lean endpoint bridge now exist, but no
+candidate FH-1, RH-1, or ZFR-1 envelope has yet been proved on its full stated
+range.

@@ -47,9 +47,11 @@ noncomputable def secondOrderOddVerticalBound (x : ℝ) (N : ℕ) (T : ℝ) : �
       x ^ (-(2 * (N : ℝ) + 1)) / (2 * (N : ℝ) + 1)
 
 /-- On a finite negative-odd vertical segment, the second-order Perron kernel
-gains the reciprocal distance of the line from the imaginary axis. -/
-theorem norm_secondOrderExplicitFormulaIntegrand_odd_vertical_le
-    {x T t : ℝ} {N : ℕ} (hx : 1 < x) (hT : 0 ≤ T) (ht : |t| ≤ T) :
+gains the reciprocal distance of the line from the imaginary axis.  Positivity
+of `x` is sufficient, including the endpoint `x = 1` used by the smoothed
+transfer theorem. -/
+theorem norm_secondOrderExplicitFormulaIntegrand_odd_vertical_le_of_pos
+    {x T t : ℝ} {N : ℕ} (hx : 0 < x) (hT : 0 ≤ T) (ht : |t| ≤ T) :
     ‖secondOrderExplicitFormulaIntegrand x
       (((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * I)‖ ≤
       secondOrderOddVerticalBound x N T := by
@@ -57,10 +59,23 @@ theorem norm_secondOrderExplicitFormulaIntegrand_odd_vertical_le
   let Q : ℝ := vonMangoldtLSeriesNorm 1 + ‖Complex.log Real.pi‖ +
     2 * (‖(Real.eulerMascheroniConstant : ℂ)‖ + 3 +
       Real.log (2 * (N : ℝ) + T + 4)) + Real.pi
-  have hfirst := norm_explicitFormulaIntegrand_odd_vertical_le (N := N) hx hT ht
+  have hlog := norm_neg_logDeriv_riemannZeta_odd_vertical_le_of_abs_le
+    (N := N) hT ht
+  change ‖-logDeriv riemannZeta s‖ ≤ Q at hlog
+  have hpow : ‖(x : ℂ) ^ s‖ = x ^ (-(2 * (N : ℝ) + 1)) := by
+    rw [Complex.norm_cpow_eq_rpow_re_of_pos hx]
+    simp [s]
+  have hline_one : 1 ≤ ‖s‖ := by
+    have hre : 2 * (N : ℝ) + 1 ≤ |s.re| := by
+      simp [s]
+      have hN : 0 ≤ (N : ℝ) := Nat.cast_nonneg N
+      rw [abs_of_nonpos (by linarith)]
+      linarith
+    have habs := Complex.abs_re_le_norm s
+    have hN : 0 ≤ (N : ℝ) := Nat.cast_nonneg N
+    linarith
   change ‖explicitFormulaIntegrand x s / s‖ ≤ Q * x ^ (-(2 * (N : ℝ) + 1)) /
     (2 * (N : ℝ) + 1)
-  change ‖explicitFormulaIntegrand x s‖ ≤ Q * x ^ (-(2 * (N : ℝ) + 1)) at hfirst
   have hN : 0 ≤ (N : ℝ) := Nat.cast_nonneg N
   have hden_pos : 0 < 2 * (N : ℝ) + 1 := by linarith
   have hden : 2 * (N : ℝ) + 1 ≤ ‖s‖ := by
@@ -77,7 +92,18 @@ theorem norm_secondOrderExplicitFormulaIntegrand_odd_vertical_le
     dsimp [Q]
     positivity
   have hnum : 0 ≤ Q * x ^ (-(2 * (N : ℝ) + 1)) :=
-    mul_nonneg hQ (Real.rpow_nonneg (zero_lt_one.trans hx).le _)
+    mul_nonneg hQ (Real.rpow_nonneg hx.le _)
+  have hfirst :
+      ‖explicitFormulaIntegrand x s‖ ≤
+        Q * x ^ (-(2 * (N : ℝ) + 1)) := by
+    simp only [explicitFormulaIntegrand]
+    rw [norm_div, norm_mul, hpow]
+    calc
+      ‖-logDeriv riemannZeta s‖ * x ^ (-(2 * (N : ℝ) + 1)) / ‖s‖ ≤
+          (Q * x ^ (-(2 * (N : ℝ) + 1))) / ‖s‖ := by
+        gcongr
+      _ ≤ Q * x ^ (-(2 * (N : ℝ) + 1)) :=
+        div_le_self hnum hline_one
   rw [norm_div]
   calc
     ‖explicitFormulaIntegrand x s‖ / ‖s‖ ≤
@@ -86,11 +112,22 @@ theorem norm_secondOrderExplicitFormulaIntegrand_odd_vertical_le
     _ ≤ (Q * x ^ (-(2 * (N : ℝ) + 1))) / (2 * (N : ℝ) + 1) :=
       div_le_div_of_nonneg_left hnum hden_pos hden
 
+/-- Compatibility form of
+`norm_secondOrderExplicitFormulaIntegrand_odd_vertical_le_of_pos` with the
+historical `1 < x` hypothesis. -/
+theorem norm_secondOrderExplicitFormulaIntegrand_odd_vertical_le
+    {x T t : ℝ} {N : ℕ} (hx : 1 < x) (hT : 0 ≤ T) (ht : |t| ≤ T) :
+    ‖secondOrderExplicitFormulaIntegrand x
+      (((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * I)‖ ≤
+      secondOrderOddVerticalBound x N T :=
+  norm_secondOrderExplicitFormulaIntegrand_odd_vertical_le_of_pos
+    (zero_lt_one.trans hx) hT ht
+
 /-- Quantitative endpoint-difference bound for the second-order left vertical
 edge on the negative-odd line `Re(s)=-(2N+1)`.  The only restriction on the
 height parameter is nonnegativity; no good-height hypothesis is used here. -/
-theorem norm_secondOrderLeftXDifference_odd_le
-    {x y W : ℝ} {N : ℕ} (hx : 1 < x) (hy : 1 < y) (hW : 0 ≤ W) :
+theorem norm_secondOrderLeftXDifference_odd_le_of_pos
+    {x y W : ℝ} {N : ℕ} (hx : 0 < x) (hy : 0 < y) (hW : 0 ≤ W) :
     ‖secondOrderLeftXDifference x y (-(2 * (N : ℝ) + 1)) W‖ ≤
       (secondOrderOddVerticalBound y N (2 * Real.pi * W) +
         secondOrderOddVerticalBound x N (2 * Real.pi * W)) *
@@ -106,7 +143,8 @@ theorem norm_secondOrderLeftXDifference_odd_le
     (fun t ht => by
       rw [Set.uIoc_of_le (by linarith)] at ht
       have habs : |t| ≤ T := abs_le.mpr ⟨by linarith [ht.1], ht.2⟩
-      exact norm_secondOrderExplicitFormulaIntegrand_odd_vertical_le hy hT habs)
+      exact norm_secondOrderExplicitFormulaIntegrand_odd_vertical_le_of_pos
+        hy hT habs)
   have hxIntegral := intervalIntegral.norm_integral_le_of_norm_le_const
     (f := fun t : ℝ => secondOrderExplicitFormulaIntegrand x
       (((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * I))
@@ -114,7 +152,8 @@ theorem norm_secondOrderLeftXDifference_odd_le
     (fun t ht => by
       rw [Set.uIoc_of_le (by linarith)] at ht
       have habs : |t| ≤ T := abs_le.mpr ⟨by linarith [ht.1], ht.2⟩
-      exact norm_secondOrderExplicitFormulaIntegrand_odd_vertical_le hx hT habs)
+      exact norm_secondOrderExplicitFormulaIntegrand_odd_vertical_le_of_pos
+        hx hT habs)
   rw [abs_of_nonneg (by linarith : 0 ≤ T - -T)] at hyIntegral hxIntegral
   unfold secondOrderLeftXDifference
   change ‖(∫ t : ℝ in (-T)..T,
@@ -135,6 +174,75 @@ theorem norm_secondOrderLeftXDifference_odd_le
         secondOrderOddVerticalBound x N T * (T - -T) :=
       add_le_add hyIntegral hxIntegral
     _ = _ := by dsimp [T]; ring
+
+/-- Compatibility form of `norm_secondOrderLeftXDifference_odd_le_of_pos`
+with the historical strict endpoint hypotheses. -/
+theorem norm_secondOrderLeftXDifference_odd_le
+    {x y W : ℝ} {N : ℕ} (hx : 1 < x) (hy : 1 < y) (hW : 0 ≤ W) :
+    ‖secondOrderLeftXDifference x y (-(2 * (N : ℝ) + 1)) W‖ ≤
+      (secondOrderOddVerticalBound y N (2 * Real.pi * W) +
+        secondOrderOddVerticalBound x N (2 * Real.pi * W)) *
+        (2 * (2 * Real.pi * W)) :=
+  norm_secondOrderLeftXDifference_odd_le_of_pos
+    (zero_lt_one.trans hx) (zero_lt_one.trans hy) hW
+
+/-- A good-height rectangle with negative-odd left edge has every candidate
+pole (`0`, `1`, or a zeta zero) in its strict interior.  The parity argument
+excludes trivial zeros from the left edge, while `goodHeight` excludes
+nontrivial zeros from the horizontal edges. -/
+theorem secondOrder_poleCandidate_mem_interior_negativeOdd_rectangle_of_goodHeight
+    {N : ℕ} {T c : ℝ} (hT : 0 < T) (hc : 1 < c)
+    (hgood : ExplicitFormulaAux.goodHeight T) :
+    ∀ p ∈
+      ([[(-(2 * (N : ℝ) + 1)), c]] ×ℂ [[-T, T]] : Set ℂ),
+      p = 0 ∨ p = 1 ∨ riemannZeta p = 0 →
+        -(2 * (N : ℝ) + 1) < p.re ∧ p.re < c ∧
+          -T < p.im ∧ p.im < T := by
+  intro p hp hclass
+  rcases hclass with rfl | rfl | hpzero
+  · have hN : 0 ≤ (N : ℝ) := Nat.cast_nonneg N
+    simpa using
+      (show -(2 * (N : ℝ) + 1) < (0 : ℝ) ∧ 0 < c ∧ -T < 0 ∧ 0 < T from
+        ⟨by linarith, by linarith, by linarith, hT⟩)
+  · have hN : 0 ≤ (N : ℝ) := Nat.cast_nonneg N
+    simpa using
+      (show -(2 * (N : ℝ) + 1) < (1 : ℝ) ∧ 1 < c ∧ -T < 0 ∧ 0 < T from
+        ⟨by linarith, hc, by linarith, hT⟩)
+  · have hp' := hp
+    simp only [Complex.mem_reProdIm] at hp'
+    have ha_le_c : -(2 * (N : ℝ) + 1) ≤ c := by
+      have hN : 0 ≤ (N : ℝ) := Nat.cast_nonneg N
+      linarith
+    rw [Set.uIcc_of_le ha_le_c] at hp'
+    rw [Set.uIcc_of_le (by linarith : -T ≤ T)] at hp'
+    by_cases htriv : ∃ n : ℕ, p = -2 * ((n : ℂ) + 1)
+    · rcases htriv with ⟨n, hn⟩
+      have hre := congrArg Complex.re hn
+      have him := congrArg Complex.im hn
+      norm_num at hre him
+      have hre_lower : -(2 * (N : ℝ) + 1) < p.re := by
+        by_contra hnot
+        have hre_eq : p.re = -(2 * (N : ℝ) + 1) := by
+          linarith [hp'.1.1]
+        rw [hre_eq] at hre
+        have hnat : 2 * N + 1 = 2 * (n + 1) := by
+          exact_mod_cast (by linarith :
+            (2 * (N : ℝ) + 1) = 2 * ((n : ℝ) + 1))
+        omega
+      exact ⟨hre_lower, by linarith [hp'.1.2], by linarith [hp'.2.1],
+        by linarith [hp'.2.2]⟩
+    · have hre_pos : 0 < p.re := by
+        by_contra hnot
+        exact (riemannZeta_ne_zero_of_re_le_zero
+          (le_of_not_gt hnot) (by simpa [not_exists] using htriv)) hpzero
+      have hre_lt_one : p.re < 1 := by
+        by_contra hnot
+        exact (riemannZeta_ne_zero_of_one_le_re (le_of_not_gt hnot)) hpzero
+      have habs_le : |p.im| ≤ T := abs_le.mpr hp'.2
+      have habs_ne : |p.im| ≠ T :=
+        hgood p ⟨hpzero, hre_pos, hre_lt_one⟩
+      have him_strict := abs_lt.mp (lt_of_le_of_ne habs_le habs_ne)
+      exact ⟨by linarith, by linarith, him_strict.1, him_strict.2⟩
 
 /-- A logarithmic-derivative bound on one horizontal point gains a second
 factor of the height in the denominator for the second-order Perron kernel. -/
@@ -259,6 +367,88 @@ theorem norm_secondOrderContourRemainder_sub_le_edgeDifferences
       · exact norm_sub_le B T
       · simp
     _ = ‖B‖ + ‖T‖ + ‖L‖ := rfl
+
+/-- At one selected good height, the complete second-order contour-remainder
+difference on the concrete negative-odd line `Re(s) = -1` has an explicit
+finite-height budget.  This closes the three-edge estimate and boundary
+safety at `a = -1`; it does not assert the still-missing moving-left
+second-order residue identity across `s = 0` and the trivial zeros. -/
+theorem exists_goodHeight_Icc_norm_secondOrderContourRemainder_sub_neg_one_le
+    {x y c : ℝ} (hx : 1 ≤ x) (hy : 1 ≤ y)
+    (hc : 1 < c) (hc2 : c ≤ 2) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          (∀ p ∈
+            ([[(-1 : ℝ), c]] ×ℂ [[-T, T]] : Set ℂ),
+            p = 0 ∨ p = 1 ∨ riemannZeta p = 0 →
+              -1 < p.re ∧ p.re < c ∧ -T < p.im ∧ p.im < T) ∧
+          ‖secondOrderContourRemainder y (-1) c (T / (2 * Real.pi)) -
+              secondOrderContourRemainder x (-1) c (T / (2 * Real.pi))‖ ≤
+            (2 *
+                (((C * y ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T ^ 2) +
+                    (C * x ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T ^ 2)) *
+                  (c - (-1))) +
+              (secondOrderOddVerticalBound y 0 T +
+                  secondOrderOddVerticalBound x 0 T) *
+                (2 * T)) /
+              (2 * Real.pi) := by
+  rcases exists_goodHeight_Icc_norm_secondOrderHorizontalXDifference_le
+      hx hy (a := -1) (b := c) (by norm_num) (by linarith) hc2 with
+    ⟨C, hC, hchoose⟩
+  refine ⟨C, hC, ?_⟩
+  intro A hA
+  rcases hchoose A hA with ⟨T, hT, hgood, hhorizontal⟩
+  have hTpos : 0 < T := by linarith [hT.1]
+  have hboundary :
+      ∀ p ∈
+        ([[(-1 : ℝ), c]] ×ℂ [[-T, T]] : Set ℂ),
+        p = 0 ∨ p = 1 ∨ riemannZeta p = 0 →
+          -1 < p.re ∧ p.re < c ∧ -T < p.im ∧ p.im < T := by
+    simpa using
+      (secondOrder_poleCandidate_mem_interior_negativeOdd_rectangle_of_goodHeight
+        (N := 0) hTpos hc hgood)
+  let K : ℝ :=
+    ((C * y ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T ^ 2) +
+      (C * x ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T ^ 2)) *
+        (c - (-1))
+  let L : ℝ :=
+    (secondOrderOddVerticalBound y 0 T +
+      secondOrderOddVerticalBound x 0 T) * (2 * T)
+  have hbottom :
+      ‖secondOrderHorizontalXDifference x y (-1) c (-T)‖ ≤ K := by
+    exact hhorizontal (-T) (by rw [abs_neg, abs_of_pos hTpos])
+  have htop :
+      ‖secondOrderHorizontalXDifference x y (-1) c T‖ ≤ K := by
+    exact hhorizontal T (abs_of_pos hTpos)
+  have hden : 0 < 2 * Real.pi := mul_pos (by norm_num) Real.pi_pos
+  have hscale : 2 * Real.pi * (T / (2 * Real.pi)) = T := by
+    field_simp [Real.pi_ne_zero]
+  have hleft :
+      ‖secondOrderLeftXDifference x y (-1) (T / (2 * Real.pi))‖ ≤ L := by
+    have hraw := norm_secondOrderLeftXDifference_odd_le_of_pos
+      (N := 0) (lt_of_lt_of_le zero_lt_one hx)
+        (lt_of_lt_of_le zero_lt_one hy)
+        (div_nonneg hTpos.le hden.le)
+    simpa [hscale, L] using hraw
+  have hremainder :=
+    norm_secondOrderContourRemainder_sub_le_edgeDifferences
+      x y (-1) c (T / (2 * Real.pi))
+  rw [hscale] at hremainder
+  refine ⟨T, hT, hgood, hboundary, ?_⟩
+  calc
+    ‖secondOrderContourRemainder y (-1) c (T / (2 * Real.pi)) -
+        secondOrderContourRemainder x (-1) c (T / (2 * Real.pi))‖ ≤
+        (‖secondOrderHorizontalXDifference x y (-1) c (-T)‖ +
+            ‖secondOrderHorizontalXDifference x y (-1) c T‖ +
+            ‖secondOrderLeftXDifference x y (-1) (T / (2 * Real.pi))‖) /
+          (2 * Real.pi) := hremainder
+    _ ≤ (K + K + L) / (2 * Real.pi) := by
+      exact (div_le_div_iff_of_pos_right hden).2
+        (add_le_add (add_le_add hbottom htop) hleft)
+    _ = _ := by
+      dsimp [K, L]
+      ring
 
 /-- Concrete `T^-2` control of the change in the upper right horizontal edge
 when the smoothing endpoint changes from `x` to `y`. -/

@@ -1,7 +1,62 @@
 import PrimeNumberTheorem.SmoothedErrorTransfer
+import PrimeNumberTheorem.SafeSecondOrderExplicitFormula
 
 open Complex Set
 open scoped BigOperators Interval
+
+example {x T t : ℝ} {N : ℕ} (hx : 0 < x) (hT : 0 ≤ T) (ht : |t| ≤ T) :
+    ‖PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderExplicitFormulaIntegrand
+        x (((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * I)‖ ≤
+      PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderOddVerticalBound x N T :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.norm_secondOrderExplicitFormulaIntegrand_odd_vertical_le_of_pos
+    hx hT ht
+
+example {x y W : ℝ} {N : ℕ} (hx : 0 < x) (hy : 0 < y) (hW : 0 ≤ W) :
+    ‖PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderLeftXDifference
+        x y (-(2 * (N : ℝ) + 1)) W‖ ≤
+      (PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderOddVerticalBound
+          y N (2 * Real.pi * W) +
+        PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderOddVerticalBound
+          x N (2 * Real.pi * W)) *
+        (2 * (2 * Real.pi * W)) :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.norm_secondOrderLeftXDifference_odd_le_of_pos
+    hx hy hW
+
+example {N : ℕ} {T c : ℝ} (hT : 0 < T) (hc : 1 < c)
+    (hgood : PrimeNumberTheorem.ExplicitFormulaAux.goodHeight T) :
+    ∀ p ∈
+      ([[(-(2 * (N : ℝ) + 1)), c]] ×ℂ [[-T, T]] : Set ℂ),
+      p = 0 ∨ p = 1 ∨ riemannZeta p = 0 →
+        -(2 * (N : ℝ) + 1) < p.re ∧ p.re < c ∧
+          -T < p.im ∧ p.im < T :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.secondOrder_poleCandidate_mem_interior_negativeOdd_rectangle_of_goodHeight
+    hT hc hgood
+
+example {x y c : ℝ} (hx : 1 ≤ x) (hy : 1 ≤ y)
+    (hc : 1 < c) (hc2 : c ≤ 2) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        PrimeNumberTheorem.ExplicitFormulaAux.goodHeight T ∧
+          (∀ p ∈
+            ([[(-1 : ℝ), c]] ×ℂ [[-T, T]] : Set ℂ),
+            p = 0 ∨ p = 1 ∨ riemannZeta p = 0 →
+              -1 < p.re ∧ p.re < c ∧ -T < p.im ∧ p.im < T) ∧
+          ‖PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderContourRemainder
+                y (-1) c (T / (2 * Real.pi)) -
+              PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderContourRemainder
+                x (-1) c (T / (2 * Real.pi))‖ ≤
+            (2 *
+                (((C * y ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T ^ 2) +
+                    (C * x ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T ^ 2)) *
+                  (c - (-1))) +
+              (PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderOddVerticalBound
+                    y 0 T +
+                  PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderOddVerticalBound
+                    x 0 T) *
+                (2 * T)) /
+              (2 * Real.pi) :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.exists_goodHeight_Icc_norm_secondOrderContourRemainder_sub_neg_one_le
+    hx hy hc hc2
 
 example {x T t : ℝ} {N : ℕ} (hx : 1 < x) (hT : 0 ≤ T) (ht : |t| ≤ T) :
     ‖PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderExplicitFormulaIntegrand
