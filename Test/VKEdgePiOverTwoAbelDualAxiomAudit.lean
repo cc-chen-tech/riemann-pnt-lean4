@@ -1,0 +1,8 @@
+import PrimeNumberTheorem.VKEdgePiOverTwoAbelDual
+
+#print axioms
+  PrimeNumberTheorem.VKEdgePiOverTwo.integral_abs_missingOddHarmonicKernel
+#print axioms
+  PrimeNumberTheorem.VKEdgePiOverTwo.pi_div_two_lt_sharpenedMissingHarmonicLowerBound
+#print axioms
+  PrimeNumberTheorem.VKEdgePiOverTwo.abs_limit_realAbelMean_mul_le_of_tail_bound
