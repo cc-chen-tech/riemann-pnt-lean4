@@ -136,6 +136,21 @@ Perron truncation tail itself. It is not yet an improvement for the complete
 prime-counting error: the finite zero sum and the shifted contour edges are
 part of the approximation rather than this tail.
 
+The common moving-line budget is now consumed by the actual two-endpoint
+crossing-zero formula, not only stated as a standalone estimate. The theorem
+
+```text
+exists_chebyshevPsi_bounds_of_secondOrderExplicitFormula_crossing_zero_moving_line
+```
+
+chooses `c = 1 + 1 / log(x+h)`, retains the complete finite residue sums and
+both contour remainders, and replaces the two raw Perron errors in the final
+`chebyshevPsi x` / `chebyshevPsi (x+h)` sandwich by the single explicit
+quantity `secondOrderMovingEndpointPerronBudget x h W`. Thus the moving-line
+Perron contribution is closed all the way to the prime-counting endpoint
+bridge. A complete optimized prime-counting estimate still requires bounds for
+the retained zero-sum difference and contour-remainder difference.
+
 ## Frozen repository baseline
 
 The branch began clean at commit `638735b` on
@@ -326,7 +341,8 @@ for `chebyshevPsi x` and `chebyshevPsi (x+h)`. Hence the crossing-zero
 two-endpoint logical bridge is also closed. For farther negative-odd lines the
 remaining residue classification includes the trivial zeros. Those
 trivial-zero residue identifications remain open, as do quantitative bounds
-for the retained zero-sum difference, contour-remainder difference, and Perron
-tails as functions of `h` and `T`.
+for the retained zero-sum difference and contour-remainder difference as
+functions of `h` and `T`. The Perron tail at the common moving line is now
+explicitly bounded and inserted into the final endpoint sandwich.
 The input format and Lean endpoint bridge exist, but no candidate FH-1, RH-1,
 or ZFR-1 envelope has yet been proved on its full stated range.

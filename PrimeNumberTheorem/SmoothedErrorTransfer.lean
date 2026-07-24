@@ -769,6 +769,14 @@ theorem secondOrderPerronError_add_moving_line_le
         (4 * (1 + ell) ^ 2) :=
       mul_le_mul_of_nonneg_left hpoly hscale_nonneg
 
+/-- Explicit common Perron-tail budget for the two endpoints `x` and `x+h`
+on the moving line based at the upper endpoint. -/
+noncomputable def secondOrderMovingEndpointPerronBudget
+    (x h W : ℝ) : ℝ :=
+  (2 * (Real.exp 1 * (x + h) /
+      (2 * Real.pi ^ 2 * W))) *
+    (4 * (1 + Real.log (x + h)) ^ 2)
+
 /-- Apply the finite-height second-order explicit formula at both endpoints of
 one smoothing interval and feed the resulting, genuinely constructed Perron
 error bounds into `chebyshevPsi_bounds_of_smoothedApproximation`.
@@ -968,6 +976,142 @@ theorem exists_chebyshevPsi_bounds_of_secondOrderExplicitFormula_crossing_zero
       hpolesY, hclassY, hcompleteY, hzeroY, hresidueY,
       hxError', hyError', ?_⟩
   simpa [approx, error, approxX, approxY, hxy] using hbounds
+
+/-- Fully explicit Perron-tail form of the crossing-zero Riesz sandwich. The
+right line is chosen as `1 + 1 / log(x+h)`, and the two raw endpoint errors are
+replaced by `secondOrderMovingEndpointPerronBudget x h W`. The finite zero sum
+and shifted contour remainder remain exact rather than being hidden in the
+error term. -/
+theorem
+    exists_chebyshevPsi_bounds_of_secondOrderExplicitFormula_crossing_zero_moving_line
+    {x h a W : ℝ} (hx : 1 < x) (hh : 0 < h) (ha : a < 0)
+    (hW : 0 < W)
+    (hboundary : ∀ p ∈
+      ([[a, 1 + 1 / Real.log (x + h)]] ×ℂ
+          [[-(2 * Real.pi * W), 2 * Real.pi * W]] : Set ℂ),
+      p = 0 ∨ p = 1 ∨ riemannZeta p = 0 →
+        a < p.re ∧ p.re < 1 + 1 / Real.log (x + h) ∧
+          -(2 * Real.pi * W) < p.im ∧ p.im < 2 * Real.pi * W) :
+    ∃ (polesX : Finset ℂ) (residueX : ℂ → ℂ)
+        (polesY : Finset ℂ) (residueY : ℂ → ℂ),
+      (∀ p ∈ polesX,
+        a < p.re ∧ p.re < 1 + 1 / Real.log (x + h) ∧
+          -(2 * Real.pi * W) < p.im ∧ p.im < 2 * Real.pi * W) ∧
+      (∀ p ∈ polesX, p = 0 ∨ p = 1 ∨ riemannZeta p = 0) ∧
+      (∀ p, p ∈
+          ([[a, 1 + 1 / Real.log (x + h)]] ×ℂ
+            [[-(2 * Real.pi * W), 2 * Real.pi * W]] : Set ℂ) →
+        p = 0 ∨ p = 1 ∨ riemannZeta p = 0 → p ∈ polesX) ∧
+      residueX 0 =
+        deriv (fun z : ℂ =>
+          -logDeriv riemannZeta z * (x : ℂ) ^ z) 0 ∧
+      (∀ p ∈ polesX, p ≠ 0 → residueX p =
+        if p = 1 then (x : ℂ)
+        else -(analyticOrderNatAt riemannZeta p : ℂ) *
+          (x : ℂ) ^ p / p ^ 2) ∧
+      (∀ p ∈ polesY,
+        a < p.re ∧ p.re < 1 + 1 / Real.log (x + h) ∧
+          -(2 * Real.pi * W) < p.im ∧ p.im < 2 * Real.pi * W) ∧
+      (∀ p ∈ polesY, p = 0 ∨ p = 1 ∨ riemannZeta p = 0) ∧
+      (∀ p, p ∈
+          ([[a, 1 + 1 / Real.log (x + h)]] ×ℂ
+            [[-(2 * Real.pi * W), 2 * Real.pi * W]] : Set ℂ) →
+        p = 0 ∨ p = 1 ∨ riemannZeta p = 0 → p ∈ polesY) ∧
+      residueY 0 =
+        deriv (fun z : ℂ =>
+          -logDeriv riemannZeta z * ((x + h : ℝ) : ℂ) ^ z) 0 ∧
+      (∀ p ∈ polesY, p ≠ 0 → residueY p =
+        if p = 1 then ((x + h : ℝ) : ℂ)
+        else -(analyticOrderNatAt riemannZeta p : ℂ) *
+          ((x + h : ℝ) : ℂ) ^ p / p ^ 2) ∧
+      chebyshevPsi x ≤
+          ((((∑ p ∈ polesY, residueY p) -
+                secondOrderContourRemainder (x + h) a
+                  (1 + 1 / Real.log (x + h)) W) -
+              ((∑ p ∈ polesX, residueX p) -
+                secondOrderContourRemainder x a
+                  (1 + 1 / Real.log (x + h)) W)).re +
+            secondOrderMovingEndpointPerronBudget x h W) /
+              Real.log ((x + h) / x) ∧
+        ((((∑ p ∈ polesY, residueY p) -
+                secondOrderContourRemainder (x + h) a
+                  (1 + 1 / Real.log (x + h)) W) -
+              ((∑ p ∈ polesX, residueX p) -
+                secondOrderContourRemainder x a
+                  (1 + 1 / Real.log (x + h)) W)).re -
+            secondOrderMovingEndpointPerronBudget x h W) /
+              Real.log ((x + h) / x) ≤
+          chebyshevPsi (x + h) := by
+  let c : ℝ := 1 + 1 / Real.log (x + h)
+  have hx0 : 0 < x := zero_lt_one.trans hx
+  have hy : 1 < x + h := by linarith
+  have hlogy : 0 < Real.log (x + h) := Real.log_pos hy
+  have hc : 1 < c := by
+    dsimp [c]
+    have : 0 < 1 / Real.log (x + h) := by positivity
+    linarith
+  rcases
+      exists_chebyshevPsi_bounds_of_secondOrderExplicitFormula_crossing_zero
+        (c := c) hx0 hh ha hc hW (by simpa [c] using hboundary) with
+    ⟨polesX, residueX, polesY, residueY,
+      hpolesX, hclassX, hcompleteX, hzeroX, hresidueX,
+      hpolesY, hclassY, hcompleteY, hzeroY, hresidueY,
+      _hxError, _hyError, hbounds⟩
+  have herror :
+      secondOrderPerronError x c W +
+          secondOrderPerronError (x + h) c W ≤
+        secondOrderMovingEndpointPerronBudget x h W := by
+    simpa [c, secondOrderMovingEndpointPerronBudget] using
+      secondOrderPerronError_add_moving_line_le hx hh hW
+  have hratio : 1 < (x + h) / x :=
+    (lt_div_iff₀ hx0).2 (by linarith)
+  have hlog : 0 < Real.log ((x + h) / x) :=
+    Real.log_pos hratio
+  refine
+    ⟨polesX, residueX, polesY, residueY,
+      ?_, hclassX, ?_, hzeroX, hresidueX,
+      ?_, hclassY, ?_, hzeroY, hresidueY, ?_⟩
+  · simpa [c] using hpolesX
+  · simpa [c] using hcompleteX
+  · simpa [c] using hpolesY
+  · simpa [c] using hcompleteY
+  constructor
+  · calc
+      chebyshevPsi x ≤
+          ((((∑ p ∈ polesY, residueY p) -
+                secondOrderContourRemainder (x + h) a c W) -
+              ((∑ p ∈ polesX, residueX p) -
+                secondOrderContourRemainder x a c W)).re +
+            (secondOrderPerronError x c W +
+              secondOrderPerronError (x + h) c W)) /
+              Real.log ((x + h) / x) :=
+        hbounds.1
+      _ ≤ ((((∑ p ∈ polesY, residueY p) -
+                secondOrderContourRemainder (x + h) a c W) -
+              ((∑ p ∈ polesX, residueX p) -
+                secondOrderContourRemainder x a c W)).re +
+            secondOrderMovingEndpointPerronBudget x h W) /
+              Real.log ((x + h) / x) := by
+        apply (div_le_div_iff_of_pos_right hlog).2
+        linarith
+  · calc
+      ((((∑ p ∈ polesY, residueY p) -
+                secondOrderContourRemainder (x + h) a c W) -
+              ((∑ p ∈ polesX, residueX p) -
+                secondOrderContourRemainder x a c W)).re -
+            secondOrderMovingEndpointPerronBudget x h W) /
+              Real.log ((x + h) / x) ≤
+          ((((∑ p ∈ polesY, residueY p) -
+                secondOrderContourRemainder (x + h) a c W) -
+              ((∑ p ∈ polesX, residueX p) -
+                secondOrderContourRemainder x a c W)).re -
+            (secondOrderPerronError x c W +
+              secondOrderPerronError (x + h) c W)) /
+              Real.log ((x + h) / x) := by
+        apply (div_le_div_iff_of_pos_right hlog).2
+        linarith
+      _ ≤ chebyshevPsi (x + h) :=
+        hbounds.2
 
 end ExplicitFormulaResidues
 
