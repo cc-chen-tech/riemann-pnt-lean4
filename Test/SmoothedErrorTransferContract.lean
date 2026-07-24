@@ -295,6 +295,67 @@ example {x a c W : ℝ} (hx : 0 < x) (ha : a < 0) (hc : 1 < c)
   PrimeNumberTheorem.ExplicitFormulaResidues.exists_norm_residue_sum_sub_contourRemainder_sub_smoothedPsi_le_crossing_zero
     hx ha hc hW hboundary
 
+example {x h a c W : ℝ} (hx : 0 < x) (hh : 0 < h) (ha : a < 0)
+    (hc : 1 < c) (hW : 0 < W)
+    (hboundary : ∀ p ∈
+      ([[a, c]] ×ℂ [[-(2 * Real.pi * W), 2 * Real.pi * W]] : Set ℂ),
+      p = 0 ∨ p = 1 ∨ riemannZeta p = 0 →
+        a < p.re ∧ p.re < c ∧
+          -(2 * Real.pi * W) < p.im ∧ p.im < 2 * Real.pi * W) :
+    ∃ (polesX polesY : Finset ℂ) (residueX residueY : ℂ → ℂ),
+      residueX 0 =
+        deriv (fun z : ℂ =>
+          -logDeriv riemannZeta z * (x : ℂ) ^ z) 0 ∧
+      residueY 0 =
+        deriv (fun z : ℂ =>
+          -logDeriv riemannZeta z * ((x + h : ℝ) : ℂ) ^ z) 0 ∧
+      ‖((∑ p ∈ polesX, residueX p) -
+          PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderContourRemainder
+            x a c W) -
+          (PrimeNumberTheorem.smoothedChebyshevPsi x : ℂ)‖ ≤
+        PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderPerronError
+          x c W ∧
+      ‖((∑ p ∈ polesY, residueY p) -
+          PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderContourRemainder
+            (x + h) a c W) -
+          (PrimeNumberTheorem.smoothedChebyshevPsi (x + h) : ℂ)‖ ≤
+        PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderPerronError
+          (x + h) c W ∧
+      PrimeNumberTheorem.chebyshevPsi x ≤
+          ((((∑ p ∈ polesY, residueY p) -
+                PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderContourRemainder
+                  (x + h) a c W) -
+              ((∑ p ∈ polesX, residueX p) -
+                PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderContourRemainder
+                  x a c W)).re +
+            (PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderPerronError
+                x c W +
+              PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderPerronError
+                (x + h) c W)) /
+              Real.log ((x + h) / x) ∧
+        ((((∑ p ∈ polesY, residueY p) -
+                PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderContourRemainder
+                  (x + h) a c W) -
+              ((∑ p ∈ polesX, residueX p) -
+                PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderContourRemainder
+                  x a c W)).re -
+            (PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderPerronError
+                x c W +
+              PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderPerronError
+                (x + h) c W)) /
+              Real.log ((x + h) / x) ≤
+          PrimeNumberTheorem.chebyshevPsi (x + h) := by
+  rcases
+      PrimeNumberTheorem.ExplicitFormulaResidues.exists_chebyshevPsi_bounds_of_secondOrderExplicitFormula_crossing_zero
+        hx hh ha hc hW hboundary with
+    ⟨polesX, residueX, polesY, residueY,
+      _hpolesX, _hclassX, _hcompleteX, hzeroX, _hresidueX,
+      _hpolesY, _hclassY, _hcompleteY, hzeroY, _hresidueY,
+      hxError, hyError, hbounds⟩
+  exact
+    ⟨polesX, polesY, residueX, residueY,
+      hzeroX, hzeroY, hxError, hyError, hbounds⟩
+
 example :
     MathlibAux.boundaryRectIntegral
         (fun z : ℂ =>

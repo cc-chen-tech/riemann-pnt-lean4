@@ -275,9 +275,14 @@ normalized back to the right Perron line and connected to
 identified origin coefficient, minus `secondOrderContourRemainder` differs
 from the first Riesz mean by the existing explicit full-Dirichlet-series
 Perron tail. Thus the single-endpoint crossing-zero Riesz approximation is
-closed. For farther negative-odd lines the remaining residue classification
-also includes the trivial zeros. Those trivial-zero residue identifications,
-the two-endpoint crossing-zero residue difference, and its final consumption
-by the `chebyshevPsi` sandwich remain open.
+closed. The same construction is now applied at both `x` and `x+h`, and the
+resulting residue-sum-minus-contour-remainder difference is consumed by the
+existing Riesz finite-difference theorem to produce explicit endpoint bounds
+for `chebyshevPsi x` and `chebyshevPsi (x+h)`. Hence the crossing-zero
+two-endpoint logical bridge is also closed. For farther negative-odd lines the
+remaining residue classification includes the trivial zeros. Those
+trivial-zero residue identifications remain open, as do quantitative bounds
+for the retained zero-sum difference, contour-remainder difference, and Perron
+tails as functions of `h` and `T`.
 The input format and Lean endpoint bridge exist, but no candidate FH-1, RH-1,
 or ZFR-1 envelope has yet been proved on its full stated range.
