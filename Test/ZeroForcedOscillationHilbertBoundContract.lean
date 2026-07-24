@@ -91,3 +91,54 @@ example (T : ℝ)
         (maximalZeroRealPart T)‖ ^ 2 :=
   exists_mem_Ioo_sqNorm_maximalZeroPackageContribution_pos_of_hilbert
     T hpackage hlength
+
+example (T : ℝ) :
+    maximalZeroPackageHilbertIntervalLengthThreshold T =
+      4 * Real.pi / maximalZeroPackageMinimumImaginarySpacing T := rfl
+
+example (T : ℝ) :
+    maximalZeroPackageUnifiedCanonicalIntervalLength T =
+      maximalZeroPackageUnifiedIntervalLengthThreshold T + 1 := rfl
+
+example (T : ℝ) (hcard : (maximalRealPartZeroPackage T).card = 1) :
+    maximalZeroPackageUnifiedCanonicalIntervalLength T =
+      maximalZeroPackageCanonicalIntervalLength T :=
+  maximalZeroPackageUnifiedCanonical_eq_exact_of_card_eq_one T hcard
+
+example
+    (T : ℝ) (hpackage : (maximalRealPartZeroPackage T).Nonempty)
+    (hnontrivial : (maximalRealPartZeroPackage T).Nontrivial) :
+    maximalZeroPackageUnifiedCanonicalIntervalLength T ≤
+      min
+        (2 * (((maximalRealPartZeroPackage T).card - 1 : ℕ) : ℝ) /
+          maximalZeroPackageMinimumImaginarySpacing T)
+        (maximalZeroPackageHilbertIntervalLengthThreshold T) + 1 :=
+  maximalZeroPackageUnifiedCanonicalIntervalLength_le_min_pairwise_hilbert
+    T hpackage hnontrivial
+
+example (T : ℝ) :
+    maximalZeroPackageHilbertIntervalLengthThreshold T <
+        2 * (((maximalRealPartZeroPackage T).card - 1 : ℕ) : ℝ) /
+          maximalZeroPackageMinimumImaginarySpacing T ↔
+      8 ≤ (maximalRealPartZeroPackage T).card :=
+  maximalZeroPackageHilbertIntervalLengthThreshold_lt_pairwise_iff T
+
+example
+    (T : ℝ) (hpackage : (maximalRealPartZeroPackage T).Nonempty)
+    {a b : ℝ}
+    (hlength : maximalZeroPackageIntervalLengthThreshold T < b - a) :
+    ∃ y ∈ Set.Ioo a b,
+      0 < ‖equalRealPartZeroPackageContribution (Real.exp y) T
+        (maximalZeroRealPart T)‖ ^ 2 :=
+  exists_mem_Ioo_sqNorm_maximalZeroPackageContribution_pos_of_exact
+    T hpackage hlength
+
+example
+    (T : ℝ) (hpackage : (maximalRealPartZeroPackage T).Nonempty)
+    (a : ℝ) :
+    ∃ y ∈ Set.Ioo a
+        (a + maximalZeroPackageUnifiedCanonicalIntervalLength T),
+      0 < ‖equalRealPartZeroPackageContribution (Real.exp y) T
+        (maximalZeroRealPart T)‖ ^ 2 :=
+  exists_mem_Ioo_sqNorm_maximalZeroPackageContribution_pos_on_unified_canonical
+    T hpackage a

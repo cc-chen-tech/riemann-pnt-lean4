@@ -11,9 +11,11 @@ by the actual minimum spacing. The final theorem specializes this estimate to
 the maximal-real-part zeta-zero package, retaining analytic multiplicity, and
 extracts an interior point where that package contribution is strictly visible.
 
-This is a finite-package estimate. It does not supply a uniform lower bound for
-the zero spacing, handle a singleton package through the Hilbert estimate, or
-control the explicit-formula remainder.
+This is a finite-package estimate. A unified canonical interval below routes a
+singleton package through the exact pairwise mean square and a nontrivial
+package through the better of that exact threshold and the Hilbert threshold.
+It does not supply a uniform lower bound for the zero spacing or control the
+explicit-formula remainder.
 -/
 
 open Complex Set
@@ -351,6 +353,180 @@ theorem
     rfl
   rw [hpoly]
   exact mul_pos hgrowth hfinite
+
+/-- The cardinality-free Hilbert interval threshold for the maximal package.
+Its strict-visibility use requires a nontrivial package; the totalized spacing
+definition alone does not make the Hilbert argument valid for a singleton. -/
+def maximalZeroPackageHilbertIntervalLengthThreshold (T : ℝ) : ℝ :=
+  4 * Real.pi / maximalZeroPackageMinimumImaginarySpacing T
+
+/-- The honest unified threshold. A nontrivial package uses the better of the
+exact pairwise threshold and `4π / Δ_T`; an empty or singleton package retains
+the exact threshold. -/
+def maximalZeroPackageUnifiedIntervalLengthThreshold (T : ℝ) : ℝ :=
+  if (maximalRealPartZeroPackage T).Nontrivial then
+    min (maximalZeroPackageIntervalLengthThreshold T)
+      (maximalZeroPackageHilbertIntervalLengthThreshold T)
+  else
+    maximalZeroPackageIntervalLengthThreshold T
+
+/-- A canonical interval length strictly exceeding the selected unified
+threshold. No uniform control in `T` is asserted. -/
+def maximalZeroPackageUnifiedCanonicalIntervalLength (T : ℝ) : ℝ :=
+  maximalZeroPackageUnifiedIntervalLengthThreshold T + 1
+
+/-- Outside the nontrivial case, in particular for a singleton, the unified
+canonical length is exactly the original exact-pairwise canonical length. -/
+theorem maximalZeroPackageUnifiedCanonical_eq_exact_of_not_nontrivial
+    (T : ℝ) (hpackage : ¬(maximalRealPartZeroPackage T).Nontrivial) :
+    maximalZeroPackageUnifiedCanonicalIntervalLength T =
+      maximalZeroPackageCanonicalIntervalLength T := by
+  simp only [maximalZeroPackageUnifiedCanonicalIntervalLength,
+    maximalZeroPackageUnifiedIntervalLengthThreshold, if_neg hpackage,
+    maximalZeroPackageCanonicalIntervalLength]
+
+/-- Explicit singleton specialization of the unified canonical length. -/
+theorem maximalZeroPackageUnifiedCanonical_eq_exact_of_card_eq_one
+    (T : ℝ) (hcard : (maximalRealPartZeroPackage T).card = 1) :
+    maximalZeroPackageUnifiedCanonicalIntervalLength T =
+      maximalZeroPackageCanonicalIntervalLength T := by
+  apply maximalZeroPackageUnifiedCanonical_eq_exact_of_not_nontrivial
+  intro hnontrivial
+  have hsubsingleton :
+      (maximalRealPartZeroPackage T : Set ℂ).Subsingleton :=
+    Finset.card_le_one_iff_subsingleton.mp hcard.le
+  exact hsubsingleton.not_nontrivial hnontrivial
+
+/-- The unified canonical length is bounded by the minimum of the old
+cardinality/spacing estimate and the cardinality-free Hilbert estimate. The
+exact threshold remains inside the definition and can be strictly better than
+both displayed coarse bounds. -/
+theorem
+    maximalZeroPackageUnifiedCanonicalIntervalLength_le_min_pairwise_hilbert
+    (T : ℝ) (hpackage : (maximalRealPartZeroPackage T).Nonempty)
+    (hnontrivial : (maximalRealPartZeroPackage T).Nontrivial) :
+    maximalZeroPackageUnifiedCanonicalIntervalLength T ≤
+      min
+        (2 * (((maximalRealPartZeroPackage T).card - 1 : ℕ) : ℝ) /
+          maximalZeroPackageMinimumImaginarySpacing T)
+        (maximalZeroPackageHilbertIntervalLengthThreshold T) + 1 := by
+  simp only [maximalZeroPackageUnifiedCanonicalIntervalLength,
+    maximalZeroPackageUnifiedIntervalLengthThreshold, if_pos hnontrivial]
+  have hmin := min_le_min
+    (maximalZeroPackageIntervalLengthThreshold_le_card_sub_one_div_spacing
+      T hpackage)
+    (le_refl (maximalZeroPackageHilbertIntervalLengthThreshold T))
+  linarith
+
+/-- Exact cardinality criterion for the Hilbert threshold to improve strictly
+on the old `2 * (card - 1) / Δ_T` bound. Since `6 < 2π < 7`, this happens
+exactly when the maximal package has at least eight distinct zeros. -/
+theorem
+    maximalZeroPackageHilbertIntervalLengthThreshold_lt_pairwise_iff
+    (T : ℝ) :
+    maximalZeroPackageHilbertIntervalLengthThreshold T <
+        2 * (((maximalRealPartZeroPackage T).card - 1 : ℕ) : ℝ) /
+          maximalZeroPackageMinimumImaginarySpacing T ↔
+      8 ≤ (maximalRealPartZeroPackage T).card := by
+  have hspacing := maximalZeroPackageMinimumImaginarySpacing_pos T
+  simp only [maximalZeroPackageHilbertIntervalLengthThreshold]
+  rw [div_lt_div_iff_of_pos_right hspacing]
+  constructor
+  · intro h
+    have hpi : 3 < Real.pi := Real.pi_gt_three
+    have hcast :
+        (6 : ℝ) < (((maximalRealPartZeroPackage T).card - 1 : ℕ) : ℝ) := by
+      nlinarith
+    have hnat : 6 < (maximalRealPartZeroPackage T).card - 1 := by
+      exact_mod_cast hcast
+    omega
+  · intro hcard
+    have hnat : 7 ≤ (maximalRealPartZeroPackage T).card - 1 := by
+      omega
+    have hcast :
+        (7 : ℝ) ≤ (((maximalRealPartZeroPackage T).card - 1 : ℕ) : ℝ) := by
+      exact_mod_cast hnat
+    nlinarith [Real.pi_lt_d2]
+
+/-- The exact pairwise threshold supplies a strictly visible package point for
+every nonempty maximal package, including a singleton. -/
+theorem
+    exists_mem_Ioo_sqNorm_maximalZeroPackageContribution_pos_of_exact
+    (T : ℝ) (hpackage : (maximalRealPartZeroPackage T).Nonempty)
+    {a b : ℝ}
+    (hlength : maximalZeroPackageIntervalLengthThreshold T < b - a) :
+    ∃ y ∈ Set.Ioo a b,
+      0 < ‖equalRealPartZeroPackageContribution (Real.exp y) T
+        (maximalZeroRealPart T)‖ ^ 2 := by
+  have hinterval : 0 < b - a :=
+    lt_of_le_of_lt
+      (maximalZeroPackageIntervalLengthThreshold_nonneg T) hlength
+  have hab : a < b := sub_pos.mp hinterval
+  rcases exists_mem_Ioo_sqNorm_equalRealPartZeroPackageContribution_ge
+      T (maximalZeroRealPart T) hab with ⟨y, hy, hmean⟩
+  have hmean' :
+      maximalZeroPackageMeanSquareMain T (b - a) y ≤
+        ‖equalRealPartZeroPackageContribution (Real.exp y) T
+          (maximalZeroRealPart T)‖ ^ 2 := by
+    simpa only [maximalZeroPackageMeanSquareMain, maximalZeroPackageEnergy,
+      maximalZeroPackageOffDiagonalBound, maximalRealPartZeroPackage] using
+      hmean
+  exact
+    ⟨y, hy,
+      lt_of_lt_of_le
+        (maximalZeroPackageMeanSquareMain_pos T y hpackage hlength) hmean'⟩
+
+/-- Every nonempty maximal package has an interior point with strictly positive
+actual multiplicity-aware contribution on the unified canonical interval.
+Singletons use the exact mean square; nontrivial packages use whichever of the
+exact and Hilbert thresholds is smaller. -/
+theorem
+    exists_mem_Ioo_sqNorm_maximalZeroPackageContribution_pos_on_unified_canonical
+    (T : ℝ) (hpackage : (maximalRealPartZeroPackage T).Nonempty)
+    (a : ℝ) :
+    ∃ y ∈ Set.Ioo a
+        (a + maximalZeroPackageUnifiedCanonicalIntervalLength T),
+      0 < ‖equalRealPartZeroPackageContribution (Real.exp y) T
+        (maximalZeroRealPart T)‖ ^ 2 := by
+  by_cases hnontrivial : (maximalRealPartZeroPackage T).Nontrivial
+  · by_cases hexact :
+        maximalZeroPackageIntervalLengthThreshold T ≤
+          maximalZeroPackageHilbertIntervalLengthThreshold T
+    · have hlength :
+          maximalZeroPackageIntervalLengthThreshold T <
+            (a + maximalZeroPackageUnifiedCanonicalIntervalLength T) - a := by
+        simp only [maximalZeroPackageUnifiedCanonicalIntervalLength,
+          maximalZeroPackageUnifiedIntervalLengthThreshold,
+          if_pos hnontrivial, min_eq_left hexact, add_sub_cancel_left]
+        exact lt_add_one _
+      exact
+        exists_mem_Ioo_sqNorm_maximalZeroPackageContribution_pos_of_exact
+          T hpackage hlength
+    · have hhilbert :
+          maximalZeroPackageHilbertIntervalLengthThreshold T ≤
+            maximalZeroPackageIntervalLengthThreshold T :=
+        le_of_not_ge hexact
+      have hlength :
+          4 * Real.pi / maximalZeroPackageMinimumImaginarySpacing T <
+            (a + maximalZeroPackageUnifiedCanonicalIntervalLength T) - a := by
+        rw [maximalZeroPackageUnifiedCanonicalIntervalLength,
+          maximalZeroPackageUnifiedIntervalLengthThreshold,
+          if_pos hnontrivial, add_sub_cancel_left, min_eq_right hhilbert]
+        exact lt_add_one
+          (4 * Real.pi / maximalZeroPackageMinimumImaginarySpacing T)
+      exact
+        exists_mem_Ioo_sqNorm_maximalZeroPackageContribution_pos_of_hilbert
+          T hnontrivial hlength
+  · have hlength :
+        maximalZeroPackageIntervalLengthThreshold T <
+          (a + maximalZeroPackageUnifiedCanonicalIntervalLength T) - a := by
+      simp only [maximalZeroPackageUnifiedCanonicalIntervalLength,
+        maximalZeroPackageUnifiedIntervalLengthThreshold,
+        if_neg hnontrivial, add_sub_cancel_left]
+      exact lt_add_one _
+    exact
+      exists_mem_Ioo_sqNorm_maximalZeroPackageContribution_pos_of_exact
+        T hpackage hlength
 
 end
 
