@@ -128,6 +128,276 @@ theorem normalizedVinogradovIntNormMoment_eq_solutionPairSetCard
     normalizedVinogradovIntMoment_eq_solutionPairSetCard]
   norm_cast
 
+/-- The integer modular predicate on the one-based integer representatives
+is the ordinary modular Vinogradov predicate. -/
+theorem isVinogradovSolutionIntMod_finTupleInt_iff
+    (Q k s X : ℕ) (x y : Fin s → Fin X) :
+    IsVinogradovSolutionIntMod Q k s
+        (vinogradovFinTupleInt x) (vinogradovFinTupleInt y) ↔
+      IsVinogradovSolutionMod Q k s X x y := by
+  rw [isVinogradovSolutionIntMod_iff_powerSumMod]
+  simp only [IsVinogradovSolutionMod]
+  apply forall_congr'
+  intro j
+  simp [vinogradovIntPowerSumMod, vinogradovPowerSumMod,
+    vinogradovFinTupleInt]
+
+/-- The arbitrary-integer solution set specialized to one-based values is
+exactly the ordinary modular Vinogradov solution-pair set. -/
+theorem vinogradovIntSolutionPairSet_oneBased_eq_solutionPairSetMod
+    (Q k s X : ℕ) [NeZero Q] :
+    vinogradovIntSolutionPairSet Q k s X
+        (fun n ↦ (((n.val + 1 : ℕ) : ℤ))) =
+      vinogradovSolutionPairSetMod Q k s X := by
+  classical
+  ext xy
+  rcases xy with ⟨x, y⟩
+  rw [mem_vinogradovIntSolutionPairSet_iff,
+    mem_vinogradovSolutionPairSetMod_iff]
+  simpa [vinogradovFinTupleInt] using
+    (isVinogradovSolutionIntMod_finTupleInt_iff Q k s X x y)
+
+/-- The real one-based integer moment is the norm of the existing standard
+complex Vinogradov moment. -/
+theorem normalizedVinogradovIntNormMoment_oneBased_eq_norm
+    (Q k s X : ℕ) [NeZero Q] :
+    normalizedVinogradovIntNormMoment Q k s X
+        (fun n ↦ (((n.val + 1 : ℕ) : ℤ))) =
+      ‖normalizedVinogradovMomentMod Q k s X‖ := by
+  rw [normalizedVinogradovIntNormMoment_eq_solutionPairSetCard,
+    vinogradovIntSolutionPairSet_oneBased_eq_solutionPairSetMod,
+    card_vinogradovSolutionPairSetMod,
+    normalizedVinogradovMomentMod_eq_solutionCount]
+  simp
+
+/-- Any verified Vinogradov mean-value estimate bounds the one-based integer
+norm moment when the common modulus is above the top power-sum scale. -/
+theorem normalizedVinogradovIntNormMoment_oneBased_le_of_meanValueEstimate
+    (Q k s X : ℕ) [NeZero Q] {ε C : ℝ}
+    (hest : VinogradovMeanValueEstimate k s ε C)
+    (hX : 1 ≤ X) (hQ : s * X ^ k < Q) :
+    normalizedVinogradovIntNormMoment Q k s X
+        (fun n ↦ (((n.val + 1 : ℕ) : ℤ))) ≤
+      C * Real.rpow (X : ℝ) ε *
+        ((X : ℝ) ^ s +
+          (X : ℝ) ^ (2 * s - vinogradovCriticalWeight k)) := by
+  rw [normalizedVinogradovIntNormMoment_oneBased_eq_norm]
+  exact norm_normalizedVinogradovMomentMod_le_of_meanValueEstimate
+    Q k s X hest hX hQ
+
+/-- Modular Vinogradov solution pairs whose two tuples lie coordinatewise in
+the main residue class selected by the mixed moment. -/
+noncomputable def vinogradovMixedMainSolutionPairSet
+    (p B a k s X : ℕ) [NeZero (p ^ B)] (xi : ℤ) :
+    Finset ((Fin s → Fin X) × (Fin s → Fin X)) := by
+  classical
+  exact Finset.univ.filter fun xy ↦
+    (∀ i, Int.ModEq ((p : ℤ) ^ a) xi
+      (vinogradovFinTupleInt xy.1 i)) ∧
+    (∀ i, Int.ModEq ((p : ℤ) ^ a) xi
+      (vinogradovFinTupleInt xy.2 i)) ∧
+    IsVinogradovSolutionIntMod (p ^ B) k s
+      (vinogradovFinTupleInt xy.1) (vinogradovFinTupleInt xy.2)
+
+theorem mem_vinogradovMixedMainSolutionPairSet_iff
+    (p B a k s X : ℕ) [NeZero (p ^ B)] (xi : ℤ)
+    (xy : (Fin s → Fin X) × (Fin s → Fin X)) :
+    xy ∈ vinogradovMixedMainSolutionPairSet p B a k s X xi ↔
+      (∀ i, Int.ModEq ((p : ℤ) ^ a) xi
+        (vinogradovFinTupleInt xy.1 i)) ∧
+      (∀ i, Int.ModEq ((p : ℤ) ^ a) xi
+        (vinogradovFinTupleInt xy.2 i)) ∧
+      IsVinogradovSolutionIntMod (p ^ B) k s
+        (vinogradovFinTupleInt xy.1) (vinogradovFinTupleInt xy.2) := by
+  classical
+  simp [vinogradovMixedMainSolutionPairSet]
+
+/-- Product-form complex moment for the residue-restricted main Weyl block. -/
+private noncomputable def normalizedVinogradovMixedMainMoment
+    (p B a k s X : ℕ) [NeZero (p ^ B)] (xi : ℤ) : ℂ :=
+  ((p ^ B : ℕ) : ℂ)⁻¹ ^ k *
+    ∑ c : Fin k → ZMod (p ^ B),
+      vinogradovMixedMainWeylSum p a (p ^ B) k X xi c ^ s *
+        (starRingEnd ℂ)
+          (vinogradovMixedMainWeylSum p a (p ^ B) k X xi c) ^ s
+
+private theorem normalizedVinogradovMixedMainMoment_reindex
+    (p B a k s X : ℕ) [NeZero (p ^ B)] (xi : ℤ) :
+    normalizedVinogradovMixedMainMoment p B a k s X xi =
+      ∑ x : Fin s → Fin X, ∑ y : Fin s → Fin X,
+        if (∀ i, Int.ModEq ((p : ℤ) ^ a) xi
+              (vinogradovFinTupleInt x i)) ∧
+            (∀ i, Int.ModEq ((p : ℤ) ^ a) xi
+              (vinogradovFinTupleInt y i)) then
+          ((p ^ B : ℕ) : ℂ)⁻¹ ^ k *
+            ∑ c : Fin k → ZMod (p ^ B),
+              ZMod.stdAddChar
+                  (vinogradovIntTuplePhaseMod (p ^ B) c
+                    (vinogradovFinTupleInt x)) *
+                ZMod.stdAddChar
+                  (-vinogradovIntTuplePhaseMod (p ^ B) c
+                    (vinogradovFinTupleInt y))
+        else 0 := by
+  classical
+  let F : (Fin k → ZMod (p ^ B)) → (Fin s → Fin X) → ℂ :=
+    fun c x ↦
+      if ∀ i, Int.ModEq ((p : ℤ) ^ a) xi
+          (vinogradovFinTupleInt x i) then
+        ZMod.stdAddChar
+          (vinogradovIntTuplePhaseMod (p ^ B) c
+            (vinogradovFinTupleInt x))
+      else 0
+  let G : (Fin k → ZMod (p ^ B)) → (Fin s → Fin X) → ℂ :=
+    fun c y ↦
+      if ∀ i, Int.ModEq ((p : ℤ) ^ a) xi
+          (vinogradovFinTupleInt y i) then
+        ZMod.stdAddChar
+          (-vinogradovIntTuplePhaseMod (p ^ B) c
+            (vinogradovFinTupleInt y))
+      else 0
+  unfold normalizedVinogradovMixedMainMoment
+  simp_rw [vinogradovMixedMainWeylSum_pow,
+    conj_vinogradovMixedMainWeylSum_pow]
+  change
+    ((p ^ B : ℕ) : ℂ)⁻¹ ^ k *
+        ∑ c, (∑ x, F c x) * ∑ y, G c y =
+      ∑ x, ∑ y,
+        if (∀ i, Int.ModEq ((p : ℤ) ^ a) xi
+              (vinogradovFinTupleInt x i)) ∧
+            (∀ i, Int.ModEq ((p : ℤ) ^ a) xi
+              (vinogradovFinTupleInt y i)) then
+          ((p ^ B : ℕ) : ℂ)⁻¹ ^ k *
+            ∑ c,
+              ZMod.stdAddChar
+                  (vinogradovIntTuplePhaseMod (p ^ B) c
+                    (vinogradovFinTupleInt x)) *
+                ZMod.stdAddChar
+                  (-vinogradovIntTuplePhaseMod (p ^ B) c
+                    (vinogradovFinTupleInt y))
+        else 0
+  calc
+    ((p ^ B : ℕ) : ℂ)⁻¹ ^ k *
+          ∑ c, (∑ x, F c x) * ∑ y, G c y =
+        ∑ c, ∑ x, ∑ y,
+          ((p ^ B : ℕ) : ℂ)⁻¹ ^ k *
+            (F c x * G c y) := by
+      simp only [Finset.mul_sum, Finset.sum_mul]
+      apply Fintype.sum_congr
+      intro c
+      rw [Finset.sum_comm]
+    _ = ∑ x, ∑ y, ∑ c,
+          ((p ^ B : ℕ) : ℂ)⁻¹ ^ k *
+            (F c x * G c y) := by
+      rw [Finset.sum_comm]
+      apply Fintype.sum_congr
+      intro x
+      rw [Finset.sum_comm]
+    _ = ∑ x, ∑ y,
+          ((p ^ B : ℕ) : ℂ)⁻¹ ^ k *
+            ∑ c, F c x * G c y := by
+      simp only [Finset.mul_sum]
+    _ = _ := by
+      apply Fintype.sum_congr
+      intro x
+      apply Fintype.sum_congr
+      intro y
+      by_cases hx : ∀ i, Int.ModEq ((p : ℤ) ^ a) xi
+          (vinogradovFinTupleInt x i)
+      · by_cases hy : ∀ i, Int.ModEq ((p : ℤ) ^ a) xi
+            (vinogradovFinTupleInt y i)
+        · simp [F, G, hx, hy]
+        · simp [F, G, hx, hy]
+      · simp [F, G, hx]
+
+private theorem normalizedVinogradovMixedMainMoment_eq_solutionPairSetCard
+    (p B a k s X : ℕ) [NeZero (p ^ B)] (xi : ℤ) :
+    normalizedVinogradovMixedMainMoment p B a k s X xi =
+      ((vinogradovMixedMainSolutionPairSet p B a k s X xi).card : ℂ) := by
+  rw [normalizedVinogradovMixedMainMoment_reindex]
+  simp_rw [normalized_sum_intTuplePair_eq_selector]
+  simp_rw [vinogradovIntSolutionSelector_eq_indicator]
+  classical
+  have hcard :
+      ((vinogradovMixedMainSolutionPairSet
+          p B a k s X xi).card : ℂ) =
+        ∑ xy : (Fin s → Fin X) × (Fin s → Fin X),
+          if (∀ i, Int.ModEq ((p : ℤ) ^ a) xi
+                (vinogradovFinTupleInt xy.1 i)) ∧
+              (∀ i, Int.ModEq ((p : ℤ) ^ a) xi
+                (vinogradovFinTupleInt xy.2 i)) ∧
+              IsVinogradovSolutionIntMod (p ^ B) k s
+                (vinogradovFinTupleInt xy.1)
+                (vinogradovFinTupleInt xy.2)
+            then 1 else 0 := by
+    simp [vinogradovMixedMainSolutionPairSet, Finset.sum_boole]
+  rw [hcard, Fintype.sum_prod_type]
+  apply Fintype.sum_congr
+  intro x
+  apply Fintype.sum_congr
+  intro y
+  by_cases hx : ∀ i, Int.ModEq ((p : ℤ) ^ a) xi
+      (vinogradovFinTupleInt x i)
+  · by_cases hy : ∀ i, Int.ModEq ((p : ℤ) ^ a) xi
+        (vinogradovFinTupleInt y i)
+    · simp [hx, hy]
+    · simp [hx, hy]
+  · simp [hx]
+
+private theorem normalizedVinogradovMixedMainNormMoment_cast
+    (p B a k s X : ℕ) [NeZero (p ^ B)] (xi : ℤ) :
+    (normalizedVinogradovMixedMainNormMoment p B a k s X xi : ℂ) =
+      normalizedVinogradovMixedMainMoment p B a k s X xi := by
+  unfold normalizedVinogradovMixedMainNormMoment
+  unfold normalizedVinogradovMixedMainMoment
+  rw [Complex.ofReal_mul, Complex.ofReal_pow, Complex.ofReal_inv,
+    Complex.ofReal_natCast, Complex.ofReal_sum]
+  congr 1
+  apply Fintype.sum_congr
+  intro c
+  let W := vinogradovMixedMainWeylSum p a (p ^ B) k X xi c
+  change ((‖W‖ ^ (2 * s) : ℝ) : ℂ) =
+    W ^ s * (starRingEnd ℂ) W ^ s
+  rw [← mul_pow, Complex.mul_conj']
+  simp only [Complex.ofReal_pow, pow_mul]
+
+/-- The residue-restricted main norm moment is exactly the number of
+modular Vinogradov solution pairs in that residue class. -/
+theorem normalizedVinogradovMixedMainNormMoment_eq_solutionPairSetCard
+    (p B a k s X : ℕ) [NeZero (p ^ B)] (xi : ℤ) :
+    normalizedVinogradovMixedMainNormMoment p B a k s X xi =
+      (vinogradovMixedMainSolutionPairSet p B a k s X xi).card := by
+  apply Complex.ofReal_injective
+  rw [normalizedVinogradovMixedMainNormMoment_cast,
+    normalizedVinogradovMixedMainMoment_eq_solutionPairSetCard]
+  norm_cast
+
+/-- Forgetting the residue-class restriction embeds the main solution set
+into the ordinary one-based Vinogradov solution set. -/
+theorem vinogradovMixedMainSolutionPairSet_subset_unrestricted
+    (p B a k s X : ℕ) [NeZero (p ^ B)] (xi : ℤ) :
+    vinogradovMixedMainSolutionPairSet p B a k s X xi ⊆
+      vinogradovIntSolutionPairSet (p ^ B) k s X
+        (fun n ↦ (((n.val + 1 : ℕ) : ℤ))) := by
+  intro xy hxy
+  rw [mem_vinogradovIntSolutionPairSet_iff]
+  exact
+    (mem_vinogradovMixedMainSolutionPairSet_iff
+      p B a k s X xi xy).mp hxy |>.2.2
+
+/-- The main factor left by Cauchy separation is bounded by the standard
+unrestricted Vinogradov mean value at the same modulus and moment order. -/
+theorem normalizedVinogradovMixedMainNormMoment_le_unrestricted
+    (p B a k s X : ℕ) [NeZero (p ^ B)] (xi : ℤ) :
+    normalizedVinogradovMixedMainNormMoment p B a k s X xi ≤
+      normalizedVinogradovIntNormMoment (p ^ B) k s X
+        (fun n ↦ (((n.val + 1 : ℕ) : ℤ))) := by
+  rw [normalizedVinogradovMixedMainNormMoment_eq_solutionPairSetCard,
+    normalizedVinogradovIntNormMoment_eq_solutionPairSetCard]
+  norm_cast
+  exact Finset.card_le_card
+    (vinogradovMixedMainSolutionPairSet_subset_unrestricted
+      p B a k s X xi)
+
 /-- The tail moment retained by mixed Cauchy separation is exactly an affine
 integer Vinogradov solution count at the ambient prime-power modulus. -/
 theorem normalizedVinogradovMixedTailNormMoment_eq_solutionPairSetCard
@@ -433,6 +703,28 @@ def VinogradovResidualTailNoWrap
     (p B b r Y : ℕ) : Prop :=
   ∀ d, 1 ≤ d → d ≤ r →
     b * d ≤ B ∧ r * Y ^ d < p ^ (B - b * d)
+
+/-- It suffices to check the no-wrap inequality at the highest degree.  The
+tail power sums increase with the degree while the residual moduli decrease,
+so degree `r` is the unique scale bottleneck. -/
+theorem VinogradovResidualTailNoWrap.of_top_degree
+    (p B b r Y : ℕ) (hp : 0 < p) (hY : 0 < Y)
+    (hdegree : b * r ≤ B)
+    (htop : r * Y ^ r < p ^ (B - b * r)) :
+    VinogradovResidualTailNoWrap p B b r Y := by
+  intro d _hd hdr
+  have hbd : b * d ≤ b * r := Nat.mul_le_mul_left b hdr
+  have hYpow : Y ^ d ≤ Y ^ r :=
+    Nat.pow_le_pow_right hY hdr
+  have hexponent : B - b * r ≤ B - b * d :=
+    Nat.sub_le_sub_left hbd B
+  have hpPow :
+      p ^ (B - b * r) ≤ p ^ (B - b * d) :=
+    Nat.pow_le_pow_right hp hexponent
+  constructor
+  · exact hbd.trans hdegree
+  · exact (Nat.mul_le_mul_left r hYpow).trans_lt
+      (htop.trans_le hpPow)
 
 /-- Two residual solutions with the same left tuple have congruent
 right-hand power sums. -/
@@ -768,6 +1060,117 @@ theorem normalizedVinogradovMixedTailNormMoment_le_factorial
       exact_mod_cast
         card_vinogradovResidualTailSolutionPairSet_le_factorial
           p B b k n r Y hrk hnowrap
+
+/-- Cauchy separation with a factorial tail saving.  Writing the separated
+tail moment order as `2t = n + q`, the first `q` no-wrap residual equations
+save `q` powers of `Y` over the trivial fourth-moment tail count. -/
+theorem
+    norm_normalizedVinogradovMixedModConditionedMoment_sq_le_factorialTail
+    (p B a b k r t X Y n q : ℕ) [NeZero (p ^ B)]
+    (hp : p ≠ 0) (hqk : q ≤ k) (hsplit : n + q = 2 * t)
+    (hnowrap : VinogradovResidualTailNoWrap p B b q Y)
+    (xi eta : ℤ) :
+    ‖normalizedVinogradovMixedModConditionedMoment
+        p B a b k r t X Y xi eta‖ ^ 2 ≤
+      normalizedVinogradovMixedMainNormMoment p B a k (2 * r) X xi *
+        ((q.factorial : ℝ) * (Y : ℝ) ^ (2 * n + q)) := by
+  have hcauchy :=
+    norm_normalizedVinogradovMixedModConditionedMoment_sq_le_separateMoments
+      p B a b k r t X Y xi eta
+  have htail :
+      normalizedVinogradovMixedTailNormMoment p B b k (2 * t) Y eta ≤
+        (q.factorial : ℝ) * (Y : ℝ) ^ (2 * n + q) := by
+    rw [← hsplit]
+    exact normalizedVinogradovMixedTailNormMoment_le_factorial
+      p B b k n q Y hp hqk hnowrap eta
+  have hmain :
+      0 ≤ normalizedVinogradovMixedMainNormMoment
+        p B a k (2 * r) X xi := by
+    unfold normalizedVinogradovMixedMainNormMoment
+    positivity
+  exact hcauchy.trans
+    (mul_le_mul_of_nonneg_left htail hmain)
+
+/-- The complete Cauchy bridge: the mixed moment is controlled by an
+ordinary unrestricted Vinogradov mean value and the factorially reduced
+tail count. -/
+theorem
+    norm_normalizedVinogradovMixedModConditionedMoment_sq_le_unrestricted_factorialTail
+    (p B a b k r t X Y n q : ℕ) [NeZero (p ^ B)]
+    (hp : p ≠ 0) (hqk : q ≤ k) (hsplit : n + q = 2 * t)
+    (hnowrap : VinogradovResidualTailNoWrap p B b q Y)
+    (xi eta : ℤ) :
+    ‖normalizedVinogradovMixedModConditionedMoment
+        p B a b k r t X Y xi eta‖ ^ 2 ≤
+      normalizedVinogradovIntNormMoment (p ^ B) k (2 * r) X
+          (fun z ↦ (((z.val + 1 : ℕ) : ℤ))) *
+        ((q.factorial : ℝ) * (Y : ℝ) ^ (2 * n + q)) := by
+  have hfactorial :=
+    norm_normalizedVinogradovMixedModConditionedMoment_sq_le_factorialTail
+      p B a b k r t X Y n q hp hqk hsplit hnowrap xi eta
+  have hmain :=
+    normalizedVinogradovMixedMainNormMoment_le_unrestricted
+      p B a k (2 * r) X xi
+  have htail :
+      0 ≤ (q.factorial : ℝ) * (Y : ℝ) ^ (2 * n + q) := by
+    positivity
+  exact hfactorial.trans
+    (mul_le_mul_of_nonneg_right hmain htail)
+
+/-- Feeding a verified Vinogradov mean-value estimate into the complete
+Cauchy bridge gives an explicit main-factor bound while retaining the
+factorial tail saving. -/
+theorem
+    norm_normalizedVinogradovMixedModConditionedMoment_sq_le_meanValueEstimate_factorialTail
+    (p B a b k r t X Y n q : ℕ) [NeZero (p ^ B)] {ε C : ℝ}
+    (hp : p ≠ 0) (hqk : q ≤ k) (hsplit : n + q = 2 * t)
+    (hnowrap : VinogradovResidualTailNoWrap p B b q Y)
+    (hest : VinogradovMeanValueEstimate k (2 * r) ε C)
+    (hX : 1 ≤ X) (hscale : (2 * r) * X ^ k < p ^ B)
+    (xi eta : ℤ) :
+    ‖normalizedVinogradovMixedModConditionedMoment
+        p B a b k r t X Y xi eta‖ ^ 2 ≤
+      (C * Real.rpow (X : ℝ) ε *
+          ((X : ℝ) ^ (2 * r) +
+            (X : ℝ) ^ (2 * (2 * r) - vinogradovCriticalWeight k))) *
+        ((q.factorial : ℝ) * (Y : ℝ) ^ (2 * n + q)) := by
+  have hbridge :=
+    norm_normalizedVinogradovMixedModConditionedMoment_sq_le_unrestricted_factorialTail
+      p B a b k r t X Y n q hp hqk hsplit hnowrap xi eta
+  have hmain :=
+    normalizedVinogradovIntNormMoment_oneBased_le_of_meanValueEstimate
+      (p ^ B) k (2 * r) X hest hX hscale
+  have htail :
+      0 ≤ (q.factorial : ℝ) * (Y : ℝ) ^ (2 * n + q) := by
+    positivity
+  exact hbridge.trans
+    (mul_le_mul_of_nonneg_right hmain htail)
+
+/-- In the proved diagonal range `2r ≤ k`, the main mean-value input is
+unconditional.  Relative to the squared trivial bound, this saves the main
+factor `X^(2r)` as well as the first `q` tail factors. -/
+theorem
+    norm_normalizedVinogradovMixedModConditionedMoment_sq_le_diagonal_factorialTail
+    (p B a b k r t X Y n q : ℕ) [NeZero (p ^ B)]
+    (hp : p ≠ 0) (h2rk : 2 * r ≤ k)
+    (hqk : q ≤ k) (hsplit : n + q = 2 * t)
+    (hnowrap : VinogradovResidualTailNoWrap p B b q Y)
+    (hX : 1 ≤ X) (hscale : (2 * r) * X ^ k < p ^ B)
+    (xi eta : ℤ) :
+    ‖normalizedVinogradovMixedModConditionedMoment
+        p B a b k r t X Y xi eta‖ ^ 2 ≤
+      ((2 * r).factorial : ℝ) *
+          ((X : ℝ) ^ (2 * r) +
+            (X : ℝ) ^ (2 * (2 * r) - vinogradovCriticalWeight k)) *
+        ((q.factorial : ℝ) * (Y : ℝ) ^ (2 * n + q)) := by
+  have h :=
+    norm_normalizedVinogradovMixedModConditionedMoment_sq_le_meanValueEstimate_factorialTail
+      p B a b k r t X Y n q hp hqk hsplit hnowrap
+        (vinogradovMeanValueEstimate_diagonal k (2 * r) h2rk)
+        hX hscale xi eta
+  have hrpow : Real.rpow (X : ℝ) 0 = 1 := Real.rpow_zero _
+  rw [hrpow, mul_one] at h
+  exact h
 
 /-- If the first `n` right coordinates agree, residual congruence reduces to
 a congruence between the power sums of the final two coordinates. -/
