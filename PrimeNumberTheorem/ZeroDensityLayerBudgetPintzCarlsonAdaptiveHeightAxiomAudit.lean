@@ -2,3 +2,4 @@ import PrimeNumberTheorem.ZeroDensityLayerBudgetPintzCarlsonAdaptiveHeight
 
 #print axioms PrimeNumberTheorem.pintzCarlsonFiniteLayerBudget_nonneg
 #print axioms PrimeNumberTheorem.exists_pintzConstant_adaptiveFiniteHeightBudget_tendsto
+#print axioms PrimeNumberTheorem.exists_pintzConstant_dominatedAdaptiveLayerBudget_tendsto
