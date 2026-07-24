@@ -26,7 +26,8 @@ Primary sources:
 ## Timeboxed milestone outcome
 
 **Status: F0_PASSED_AND_ZETA_ALIGNED; F1_PACKAGE_ISOLATION_PASSED;
-F1_CLOSED_TERMS_BOUNDED; F1_UNCONTROLLED_REMAINDER_OPEN.**  The checked Lean surface
+F1_CLOSED_TERMS_BOUNDED; F1_FIXED_HEIGHT_COMPLEMENT_GAP_CLOSED;
+F1_UNIFORM_REMAINDER_OPEN.**  The checked Lean surface
 proves the exact integral and interval-independent norm bound for one ordered
 off-diagonal pair, the aggregate finite mean-square estimate, and an interior
 point attaining the resulting lower average.  Natural multiplicity is retained
@@ -71,9 +72,28 @@ and hence a norm budget
 The resulting transfer theorem subtracts exactly this budget while retaining
 `uncontrolled_remainder(y,T,beta)` as the sum of the complementary zero
 package and the actual explicit-formula approximation error. It does not
-bound either constituent, and does not give a uniform truncation estimate on a
-logarithmic interval. Therefore the quantitative remainder requirement in F1,
-the Revesz baseline recovery, and both novelty gates remain open.
+give a uniform truncation estimate on a logarithmic interval.
+
+At each fixed truncation height `T`, Lean now selects the maximal real part
+`beta_T` of `nontrivialZerosFinset T`, retains every zero on that layer, and
+constructs an explicit positive gap `delta_T` to the finite complementary
+package.  This removes the former abstract gap assumption and proves
+
+```text
+||complementary_zero_package(exp y, T, beta_T)||
+  <= exp((beta_T - delta_T) y)
+       * sum_{|Im rho| <= T} m(rho) / ||rho||.
+```
+
+For `T >= 4`, the global reciprocal-zero estimate further replaces the last
+sum by `C * (1 + log(T+6))^2`, with one existential constant `C` independent
+of `T`.
+
+This is a genuine fixed-height finite-set theorem.  It does not supply a lower
+bound for `delta_T` uniform in a moving height `T = T(y)`, and it does not
+bound the explicit-formula approximation error. Therefore the quantitative
+remainder requirement in F1, the Revesz baseline recovery, and both novelty
+gates remain open.
 
 ## Exact classical-zeta candidate theorem
 
@@ -203,10 +223,11 @@ prove that `zeroPackageUncontrolledRemainder y T beta` is uniformly smaller
 than the F0 lower amplitude minus the proved closed-form budget on a specified
 logarithmic interval. The package is already an actual selected zeta-zero
 contribution in the repository's finite-height approximation. What remains
-requires quantitative control of complementary/lower-real-part zeros and the
-explicit-formula approximation error. The closed logarithmic term is no
-longer a gap, but no theorem here controls complementary zeros or a uniform
-truncation error.
+requires a usable lower bound for the automatically selected fixed-height gap
+as the truncation height moves, together with a uniform explicit-formula
+approximation error. The closed logarithmic term and the existence of a
+positive gap at each fixed height are no longer gaps; no theorem here keeps
+that gap quantitatively positive along `T = T(y)`.
 
 ## Experiment schema
 
