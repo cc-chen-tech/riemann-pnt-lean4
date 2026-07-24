@@ -881,6 +881,122 @@ theorem mem_vinogradovCenterPairExactScaleSet_iff_residues
   rw [not_congr (primePower_dvd_vinogradovCenterDifference_iff_cast_eq
     p a b (gamma + 1) z.1 z.2)]
 
+/-- Center pairs congruent modulo `p^gamma`.  These nested sets telescope:
+the difference between levels `gamma` and `gamma + 1` is the exact-scale
+stratum. -/
+noncomputable def vinogradovCenterPairCongruentSet
+    (p a b gamma : ℕ) : Finset (Fin (p ^ a) × Fin (p ^ b)) := by
+  classical
+  exact Finset.univ.filter fun z ↦
+    (vinogradovCenterValue z.1 : ZMod (p ^ gamma)) =
+      (vinogradovCenterValue z.2 : ZMod (p ^ gamma))
+
+theorem mem_vinogradovCenterPairCongruentSet_iff
+    (p a b gamma : ℕ) (z : Fin (p ^ a) × Fin (p ^ b)) :
+    z ∈ vinogradovCenterPairCongruentSet p a b gamma ↔
+      (vinogradovCenterValue z.1 : ZMod (p ^ gamma)) =
+        (vinogradovCenterValue z.2 : ZMod (p ^ gamma)) := by
+  classical
+  simp [vinogradovCenterPairCongruentSet]
+
+/-- Filtering level `gamma` by congruence at the next prime-power level gives
+exactly level `gamma + 1`. -/
+theorem vinogradovCenterPairCongruentSet_filter_next_eq_next
+    (p a b gamma : ℕ) [Fact p.Prime] :
+    (vinogradovCenterPairCongruentSet p a b gamma).filter
+        (fun z ↦
+          (vinogradovCenterValue z.1 : ZMod (p ^ (gamma + 1))) =
+            (vinogradovCenterValue z.2 : ZMod (p ^ (gamma + 1)))) =
+      vinogradovCenterPairCongruentSet p a b (gamma + 1) := by
+  classical
+  ext z
+  simp only [Finset.mem_filter, mem_vinogradovCenterPairCongruentSet_iff]
+  constructor
+  · exact fun h ↦ h.2
+  · intro hhigh
+    refine ⟨?_, hhigh⟩
+    apply (primePower_dvd_vinogradovCenterDifference_iff_cast_eq
+      p a b gamma z.1 z.2).mp
+    exact (pow_dvd_pow (p : ℤ) (Nat.le_succ gamma)).trans
+      ((primePower_dvd_vinogradovCenterDifference_iff_cast_eq
+        p a b (gamma + 1) z.1 z.2).mpr hhigh)
+
+/-- Filtering level `gamma` by failure of congruence at the next level gives
+the exact `gamma` stratum. -/
+theorem vinogradovCenterPairCongruentSet_filter_not_next_eq_exact
+    (p a b gamma : ℕ) [Fact p.Prime] :
+    (vinogradovCenterPairCongruentSet p a b gamma).filter
+        (fun z ↦
+          (vinogradovCenterValue z.1 : ZMod (p ^ (gamma + 1))) ≠
+            (vinogradovCenterValue z.2 : ZMod (p ^ (gamma + 1)))) =
+      vinogradovCenterPairExactScaleSet p a b gamma := by
+  classical
+  ext z
+  rw [mem_vinogradovCenterPairExactScaleSet_iff_residues]
+  simp only [Finset.mem_filter, mem_vinogradovCenterPairCongruentSet_iff]
+
+/-- One congruence level is the disjoint sum of its exact stratum and the
+next congruence level. -/
+theorem sum_vinogradovCenterPairCongruentSet_eq_exact_add_next
+    {M : Type*} [AddCommMonoid M]
+    (p a b gamma : ℕ) [Fact p.Prime]
+    (f : (Fin (p ^ a) × Fin (p ^ b)) → M) :
+    (∑ z ∈ vinogradovCenterPairCongruentSet p a b gamma, f z) =
+      (∑ z ∈ vinogradovCenterPairExactScaleSet p a b gamma, f z) +
+        ∑ z ∈ vinogradovCenterPairCongruentSet p a b (gamma + 1), f z := by
+  classical
+  have hpartition := Finset.sum_filter_add_sum_filter_not
+    (vinogradovCenterPairCongruentSet p a b gamma)
+    (fun z ↦
+      (vinogradovCenterValue z.1 : ZMod (p ^ (gamma + 1))) =
+        (vinogradovCenterValue z.2 : ZMod (p ^ (gamma + 1))))
+    f
+  rw [vinogradovCenterPairCongruentSet_filter_next_eq_next,
+    vinogradovCenterPairCongruentSet_filter_not_next_eq_exact] at hpartition
+  simpa only [add_comm] using hpartition.symm
+
+/-- Iterating the adjacent-level split from level zero to level `n` gives a
+finite telescoping decomposition into exact scales plus the terminal
+congruence set at level `n`. -/
+theorem sum_vinogradovCenterPairCongruentSet_zero_eq_exactScales_add
+    {M : Type*} [AddCommMonoid M]
+    (p a b n : ℕ) [Fact p.Prime]
+    (f : (Fin (p ^ a) × Fin (p ^ b)) → M) :
+    (∑ z ∈ vinogradovCenterPairCongruentSet p a b 0, f z) =
+      (∑ gamma ∈ Finset.range n,
+        ∑ z ∈ vinogradovCenterPairExactScaleSet p a b gamma, f z) +
+        ∑ z ∈ vinogradovCenterPairCongruentSet p a b n, f z := by
+  induction n with
+  | zero => simp
+  | succ n ih =>
+      rw [ih, Finset.sum_range_succ,
+        sum_vinogradovCenterPairCongruentSet_eq_exact_add_next
+          p a b n f]
+      ac_rfl
+
+/-- All center pairs decompose into the exact scales `gamma < n` and the
+remaining pairs congruent modulo `p^n`. -/
+theorem sum_univ_centerPairs_eq_exactScales_add_terminal
+    {M : Type*} [AddCommMonoid M]
+    (p a b n : ℕ) [Fact p.Prime]
+    (f : (Fin (p ^ a) × Fin (p ^ b)) → M) :
+    (∑ z : Fin (p ^ a) × Fin (p ^ b), f z) =
+      (∑ gamma ∈ Finset.range n,
+        ∑ z ∈ vinogradovCenterPairExactScaleSet p a b gamma, f z) +
+        ∑ z ∈ vinogradovCenterPairCongruentSet p a b n, f z := by
+  have hzero :
+      vinogradovCenterPairCongruentSet p a b 0 =
+        (Finset.univ : Finset (Fin (p ^ a) × Fin (p ^ b))) := by
+    ext z
+    simp only [mem_vinogradovCenterPairCongruentSet_iff,
+      Finset.mem_univ, iff_true]
+    change (vinogradovCenterValue z.1 : ZMod 1) =
+      (vinogradovCenterValue z.2 : ZMod 1)
+    exact Subsingleton.elim _ _
+  simpa only [hzero] using
+    sum_vinogradovCenterPairCongruentSet_zero_eq_exactScales_add
+      p a b n f
+
 /-- Exact cardinality of every nonterminal center-difference scale. -/
 theorem card_vinogradovCenterPairExactScaleSet
     (p a b gamma : ℕ) [Fact p.Prime] (hgb : gamma + 1 ≤ b) :
