@@ -1,0 +1,6 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetZeroFreeUnified
+
+#print axioms PrimeNumberTheorem.dynamicFiniteGridOptimalHeight_zeroFree
+#print axioms PrimeNumberTheorem.zeroFreeExplicitFormula_upper_at_dynamicOptimalHeight
+#print axioms PrimeNumberTheorem.constructZeroFreeUnifiedDynamicZeroTransfer
+#print axioms PrimeNumberTheorem.constructZeroFreeUnifiedDynamicSignedZeroTransfer
