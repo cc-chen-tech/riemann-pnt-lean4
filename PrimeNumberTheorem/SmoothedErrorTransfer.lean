@@ -1184,6 +1184,17 @@ theorem
               else -(analyticOrderNatAt riemannZeta p : ℂ) *
                 ((x + h : ℝ) : ℂ) ^ p / p ^ 2) ∧
             polesX = polesY ∧
+            (∑ p ∈ polesY, residueY p) -
+                (∑ p ∈ polesX, residueX p) =
+              (deriv (fun z : ℂ =>
+                  -logDeriv riemannZeta z *
+                    ((x + h : ℝ) : ℂ) ^ z) 0 -
+                deriv (fun z : ℂ =>
+                  -logDeriv riemannZeta z * (x : ℂ) ^ z) 0) +
+                (∑ p ∈ polesX.erase 0,
+                  (if p = 1 then (h : ℂ)
+                  else -(analyticOrderNatAt riemannZeta p : ℂ) *
+                    (((x + h : ℝ) : ℂ) ^ p - (x : ℂ) ^ p) / p ^ 2)) ∧
             chebyshevPsi x ≤
                 (((∑ p ∈ polesY, residueY p) -
                     (∑ p ∈ polesX, residueX p)).re +
@@ -1303,9 +1314,65 @@ theorem
           ⟨⟨hpBounds.1.le, hpBounds.2.1.le⟩,
             ⟨hpBounds.2.2.1.le, hpBounds.2.2.2.le⟩⟩
       · exact hclassY p hp
-  refine ⟨T, hT, hgood, polesX, residueX, polesY, residueY,
+  subst polesY
+  have hzeroMem : 0 ∈ polesX := by
+    apply hcompleteX 0
+    · rw [Complex.mem_reProdIm,
+        Set.uIcc_of_le (by linarith : (-1 : ℝ) ≤
+          1 + 1 / Real.log (x + h)),
+        Set.uIcc_of_le (by linarith [hW] :
+          -(2 * Real.pi * W) ≤ 2 * Real.pi * W)]
+      simp only [Complex.zero_re, Complex.zero_im, Set.mem_Icc]
+      constructor
+      · constructor <;> linarith
+      · constructor <;> nlinarith [Real.pi_pos]
+    · exact Or.inl rfl
+  have hsumDiff :
+      (∑ p ∈ polesX, residueY p) -
+          (∑ p ∈ polesX, residueX p) =
+        (deriv (fun z : ℂ =>
+            -logDeriv riemannZeta z *
+              ((x + h : ℝ) : ℂ) ^ z) 0 -
+          deriv (fun z : ℂ =>
+            -logDeriv riemannZeta z * (x : ℂ) ^ z) 0) +
+          ∑ p ∈ polesX.erase 0,
+            if p = 1 then (h : ℂ)
+            else -(analyticOrderNatAt riemannZeta p : ℂ) *
+              (((x + h : ℝ) : ℂ) ^ p - (x : ℂ) ^ p) / p ^ 2 := by
+    rw [show (∑ p ∈ polesX, residueY p) =
+        (∑ p ∈ polesX.erase 0, residueY p) + residueY 0 by
+          exact (Finset.sum_erase_add _ _ hzeroMem).symm]
+    rw [show (∑ p ∈ polesX, residueX p) =
+        (∑ p ∈ polesX.erase 0, residueX p) + residueX 0 by
+          exact (Finset.sum_erase_add _ _ hzeroMem).symm]
+    rw [hzeroY, hzeroX]
+    rw [show
+        (∑ p ∈ polesX.erase 0, residueY p) +
+              deriv (fun z : ℂ =>
+                -logDeriv riemannZeta z * ((x + h : ℝ) : ℂ) ^ z) 0 -
+            ((∑ p ∈ polesX.erase 0, residueX p) +
+              deriv (fun z : ℂ =>
+                -logDeriv riemannZeta z * (x : ℂ) ^ z) 0) =
+          (deriv (fun z : ℂ =>
+                -logDeriv riemannZeta z * ((x + h : ℝ) : ℂ) ^ z) 0 -
+            deriv (fun z : ℂ =>
+                -logDeriv riemannZeta z * (x : ℂ) ^ z) 0) +
+            ((∑ p ∈ polesX.erase 0, residueY p) -
+              (∑ p ∈ polesX.erase 0, residueX p)) by ring]
+    rw [← Finset.sum_sub_distrib]
+    congr 1
+    apply Finset.sum_congr rfl
+    intro p hp
+    have hpMem : p ∈ polesX := Finset.mem_of_mem_erase hp
+    have hp0 : p ≠ 0 := Finset.ne_of_mem_erase hp
+    rw [hresidueY p hpMem hp0, hresidueX p hpMem hp0]
+    split_ifs with hp1
+    · subst p
+      norm_num
+    · ring
+  refine ⟨T, hT, hgood, polesX, residueX, polesX, residueY,
     ?_, hclassX, ?_, hzeroX, hresidueX,
-    ?_, hclassY, ?_, hzeroY, hresidueY, hpolesEq, ?_⟩
+    ?_, hclassY, ?_, hzeroY, hresidueY, rfl, hsumDiff, ?_⟩
   · simpa [c, hscale] using hpolesX
   · simpa [c, hscale] using hcompleteX
   · simpa [c, hscale] using hpolesY

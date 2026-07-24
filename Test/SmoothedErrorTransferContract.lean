@@ -453,6 +453,18 @@ example {x h : ℝ} (hx : Real.exp 1 ≤ x) (hh : 0 < h) :
       ∃ T ∈ Set.Icc A (A + 1),
         PrimeNumberTheorem.ExplicitFormulaAux.goodHeight T ∧
           ∃ (polesX polesY : Finset ℂ) (residueX residueY : ℂ → ℂ),
+            polesX = polesY ∧
+            (∑ p ∈ polesY, residueY p) -
+                (∑ p ∈ polesX, residueX p) =
+              (deriv (fun z : ℂ =>
+                  -logDeriv riemannZeta z *
+                    ((x + h : ℝ) : ℂ) ^ z) 0 -
+                deriv (fun z : ℂ =>
+                  -logDeriv riemannZeta z * (x : ℂ) ^ z) 0) +
+                (∑ p ∈ polesX.erase 0,
+                  (if p = 1 then (h : ℂ)
+                  else -(analyticOrderNatAt riemannZeta p : ℂ) *
+                    (((x + h : ℝ) : ℂ) ^ p - (x : ℂ) ^ p) / p ^ 2)) ∧
             PrimeNumberTheorem.chebyshevPsi x ≤
                 (((∑ p ∈ polesY, residueY p) -
                     (∑ p ∈ polesX, residueX p)).re +
@@ -475,8 +487,10 @@ example {x h : ℝ} (hx : Real.exp 1 ≤ x) (hh : 0 < h) :
     ⟨T, hT, hgood, polesX, residueX, polesY, residueY,
       _hpolesX, _hclassX, _hcompleteX, _hzeroX, _hresidueX,
       _hpolesY, _hclassY, _hcompleteY, _hzeroY, _hresidueY,
-      _hpolesEq, hbounds⟩
-  exact ⟨T, hT, hgood, polesX, polesY, residueX, residueY, hbounds⟩
+      hpolesEq, hsumDiff, hbounds⟩
+  exact
+    ⟨T, hT, hgood, polesX, polesY, residueX, residueY,
+      hpolesEq, hsumDiff, hbounds⟩
 
 example :
     MathlibAux.boundaryRectIntegral

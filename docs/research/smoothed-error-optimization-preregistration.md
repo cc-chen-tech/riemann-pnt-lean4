@@ -168,10 +168,21 @@ rectangle completeness, and analytic multiplicities remain available to the
 caller. The theorem also proves that the two endpoint pole finsets are equal,
 using their classification and rectangle-completeness certificates. Therefore
 the residue-sum difference may be rewritten on one common multiplicity-aware
-zero set rather than compared across unrelated existential finsets. The
-remaining mathematical task is therefore sharply localized to
-estimating the finite residue-sum difference and optimizing `h` against the
-displayed budget.
+zero set rather than compared across unrelated existential finsets. It now
+exports that rewrite explicitly:
+
+```text
+sum(residue_(x+h)) - sum(residue_x)
+  = [origin derivative difference]
+    + sum_{p != 0}
+        if p = 1 then h
+        else -m(p) * ((x+h)^p - x^p) / p^2.
+```
+
+Thus the pole at `1`, the origin coefficient, and every nonzero zeta zero with
+its analytic multiplicity are separated before taking norms. The remaining
+mathematical task is sharply localized to bounding this finite Riesz-factor
+zero sum and optimizing `h` against the displayed budget.
 
 ## Frozen repository baseline
 
