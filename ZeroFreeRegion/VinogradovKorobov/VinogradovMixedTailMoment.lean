@@ -1,4 +1,5 @@
 import ZeroFreeRegion.VinogradovKorobov.VinogradovMixedHolder
+import ZeroFreeRegion.VinogradovKorobov.VinogradovQuadratic
 import ZeroFreeRegion.VinogradovKorobov.VinogradovWeightedConditioning
 
 open scoped BigOperators
@@ -400,6 +401,256 @@ theorem normalizedVinogradovMixedTailNormMoment_le_firstPower
       exact_mod_cast
         card_vinogradovResidualTailSolutionPairSet_le_firstPower
         p B b k n Y hk hbB hY
+
+/-- Split a sum over `Fin (n + 2)` into its first `n` entries and its final
+two entries. -/
+private theorem sum_fin_add_two {R : Type*} [AddCommMonoid R]
+    (n : ℕ) (f : Fin (n + 2) → R) :
+    (∑ i, f i) =
+      (∑ i : Fin n, f i.castSucc.castSucc) +
+        (f (Fin.last n).castSucc + f (Fin.last (n + 1))) := by
+  rw [Fin.sum_univ_castSucc, Fin.sum_univ_castSucc]
+  ac_rfl
+
+/-- Retain the left tuple, the first `n` right coordinates, and one bit
+recording the order of the final two coordinates. -/
+def vinogradovResidualTailSolutionPairProjectionTwo
+    (n Y : ℕ)
+    (xy : (Fin (n + 2) → Fin Y) × (Fin (n + 2) → Fin Y)) :
+    (Fin (n + 2) → Fin Y) × ((Fin n → Fin Y) × Bool) :=
+  (xy.1,
+    (fun i ↦ xy.2 i.castSucc.castSucc,
+      decide
+        ((xy.2 (Fin.last n).castSucc).val ≤
+          (xy.2 (Fin.last (n + 1))).val)))
+
+/-- Two residual solutions with the same left tuple have congruent
+right-hand power sums. -/
+private theorem residualTail_right_powerSum_modEq
+    {p B b k s : ℕ} {x y z w : Fin s → ℤ}
+    (hxy : IsVinogradovResidualTailSolution p B b k s x y)
+    (hzw : IsVinogradovResidualTailSolution p B b k s z w)
+    (hx : x = z) (j : Fin k)
+    (hdegree : b * (j.val + 1) ≤ B) :
+    (∑ i, y i ^ (j.val + 1)) ≡
+      (∑ i, w i ^ (j.val + 1))
+        [ZMOD (p : ℤ) ^ (B - b * (j.val + 1))] := by
+  have hxyDegree := hxy j hdegree
+  have hzwDegree := hzw j hdegree
+  have hxySum :
+      (∑ i, x i ^ (j.val + 1)) ≡
+        (∑ i, y i ^ (j.val + 1))
+          [ZMOD (p : ℤ) ^ (B - b * (j.val + 1))] := by
+    have h := hxyDegree.add_right (∑ i, y i ^ (j.val + 1))
+    simpa [vinogradovPowerSumDifferenceInt] using h
+  have hzwSum :
+      (∑ i, x i ^ (j.val + 1)) ≡
+        (∑ i, w i ^ (j.val + 1))
+          [ZMOD (p : ℤ) ^ (B - b * (j.val + 1))] := by
+    have h := hzwDegree.add_right (∑ i, w i ^ (j.val + 1))
+    simpa [vinogradovPowerSumDifferenceInt, ← hx] using h
+  exact hxySum.symm.trans hzwSum
+
+/-- If the first `n` right coordinates agree, residual congruence reduces to
+a congruence between the power sums of the final two coordinates. -/
+private theorem residualTail_lastTwo_powerSum_modEq
+    {p B b k n Y : ℕ}
+    {xy zw :
+      (Fin (n + 2) → Fin Y) × (Fin (n + 2) → Fin Y)}
+    (hxy : IsVinogradovResidualTailSolution p B b k (n + 2)
+      (vinogradovFinTupleInt xy.1) (vinogradovFinTupleInt xy.2))
+    (hzw : IsVinogradovResidualTailSolution p B b k (n + 2)
+      (vinogradovFinTupleInt zw.1) (vinogradovFinTupleInt zw.2))
+    (hx : xy.1 = zw.1)
+    (hprefix :
+      (fun i : Fin n ↦ xy.2 i.castSucc.castSucc) =
+        (fun i : Fin n ↦ zw.2 i.castSucc.castSucc))
+    (j : Fin k) (hdegree : b * (j.val + 1) ≤ B) :
+    vinogradovFinTupleInt xy.2 (Fin.last n).castSucc ^ (j.val + 1) +
+        vinogradovFinTupleInt xy.2 (Fin.last (n + 1)) ^ (j.val + 1) ≡
+      vinogradovFinTupleInt zw.2 (Fin.last n).castSucc ^ (j.val + 1) +
+        vinogradovFinTupleInt zw.2 (Fin.last (n + 1)) ^ (j.val + 1)
+      [ZMOD (p : ℤ) ^ (B - b * (j.val + 1))] := by
+  have hsum := residualTail_right_powerSum_modEq hxy hzw
+    (congrArg vinogradovFinTupleInt hx) j hdegree
+  rw [sum_fin_add_two, sum_fin_add_two] at hsum
+  have hpref :
+      (∑ i : Fin n,
+          vinogradovFinTupleInt xy.2 i.castSucc.castSucc ^ (j.val + 1)) =
+        ∑ i : Fin n,
+          vinogradovFinTupleInt zw.2 i.castSucc.castSucc ^ (j.val + 1) := by
+    apply Fintype.sum_congr
+    intro i
+    exact congrArg
+      (fun u : Fin Y ↦ (((u.val + 1 : ℕ) : ℤ) ^ (j.val + 1)))
+      (congrFun hprefix i)
+  rw [hpref] at hsum
+  exact Int.ModEq.add_left_cancel' _ hsum
+
+/-- The first two no-wrap residual congruences determine the final two right
+coordinates up to transposition; the orientation bit removes that ambiguity. -/
+theorem vinogradovResidualTailSolutionPairProjectionTwo_injOn
+    (p B b k n Y : ℕ) (hk : 2 ≤ k) (h2bB : 2 * b ≤ B)
+    (hlinear : 2 * Y < p ^ (B - b))
+    (hquadratic : 2 * Y ^ 2 < p ^ (B - 2 * b)) :
+    Set.InjOn
+      (vinogradovResidualTailSolutionPairProjectionTwo n Y)
+      (vinogradovResidualTailSolutionPairSet
+        p B b k (n + 2) Y : Set
+          ((Fin (n + 2) → Fin Y) × (Fin (n + 2) → Fin Y))) := by
+  classical
+  intro xy hxy zw hzw hprojection
+  have hxySolution :=
+    (mem_vinogradovResidualTailSolutionPairSet_iff
+      p B b k (n + 2) Y xy).mp hxy
+  have hzwSolution :=
+    (mem_vinogradovResidualTailSolutionPairSet_iff
+      p B b k (n + 2) Y zw).mp hzw
+  have hx : xy.1 = zw.1 := by
+    simpa [vinogradovResidualTailSolutionPairProjectionTwo] using
+      congrArg Prod.fst hprojection
+  have htailProjection := congrArg Prod.snd hprojection
+  have hprefix :
+      (fun i : Fin n ↦ xy.2 i.castSucc.castSucc) =
+        (fun i : Fin n ↦ zw.2 i.castSucc.castSucc) := by
+    simpa [vinogradovResidualTailSolutionPairProjectionTwo] using
+      congrArg Prod.fst htailProjection
+  have horientation :
+      decide
+          ((xy.2 (Fin.last n).castSucc).val ≤
+            (xy.2 (Fin.last (n + 1))).val) =
+        decide
+          ((zw.2 (Fin.last n).castSucc).val ≤
+            (zw.2 (Fin.last (n + 1))).val) := by
+    simpa [vinogradovResidualTailSolutionPairProjectionTwo] using
+      congrArg Prod.snd htailProjection
+  let j₁ : Fin k := ⟨0, by omega⟩
+  let j₂ : Fin k := ⟨1, by omega⟩
+  have hdegree₁ : b * (j₁.val + 1) ≤ B := by
+    dsimp [j₁]
+    omega
+  have hdegree₂ : b * (j₂.val + 1) ≤ B := by
+    dsimp [j₂]
+    omega
+  have hsumModInt := residualTail_lastTwo_powerSum_modEq
+    hxySolution hzwSolution hx hprefix j₁ hdegree₁
+  have hsqModInt := residualTail_lastTwo_powerSum_modEq
+    hxySolution hzwSolution hx hprefix j₂ hdegree₂
+  let a := (xy.2 (Fin.last n).castSucc).val + 1
+  let c := (xy.2 (Fin.last (n + 1))).val + 1
+  let u := (zw.2 (Fin.last n).castSucc).val + 1
+  let v := (zw.2 (Fin.last (n + 1))).val + 1
+  have haY : a ≤ Y := by
+    dsimp [a]
+    omega
+  have hcY : c ≤ Y := by
+    dsimp [c]
+    omega
+  have huY : u ≤ Y := by
+    dsimp [u]
+    omega
+  have hvY : v ≤ Y := by
+    dsimp [v]
+    omega
+  have hsumMod : Nat.ModEq (p ^ (B - b)) (a + c) (u + v) := by
+    rw [Nat.modEq_iff_dvd]
+    simpa [j₁, a, c, u, v, vinogradovFinTupleInt] using hsumModInt.dvd
+  have hsqMod :
+      Nat.ModEq (p ^ (B - 2 * b))
+        (a ^ 2 + c ^ 2) (u ^ 2 + v ^ 2) := by
+    rw [Nat.modEq_iff_dvd]
+    simpa [j₂, a, c, u, v, vinogradovFinTupleInt,
+      Nat.mul_comm] using hsqModInt.dvd
+  have hsum :
+      a + c = u + v :=
+    hsumMod.eq_of_lt_of_lt
+      (lt_of_le_of_lt (by omega) hlinear)
+      (lt_of_le_of_lt (by omega) hlinear)
+  have haSq : a ^ 2 ≤ Y ^ 2 := Nat.pow_le_pow_left haY _
+  have hcSq : c ^ 2 ≤ Y ^ 2 := Nat.pow_le_pow_left hcY _
+  have huSq : u ^ 2 ≤ Y ^ 2 := Nat.pow_le_pow_left huY _
+  have hvSq : v ^ 2 ≤ Y ^ 2 := Nat.pow_le_pow_left hvY _
+  have hsq :
+      a ^ 2 + c ^ 2 = u ^ 2 + v ^ 2 :=
+    hsqMod.eq_of_lt_of_lt
+      (lt_of_le_of_lt (by omega) hquadratic)
+      (lt_of_le_of_lt (by omega) hquadratic)
+  have horientationNat :
+      decide (a ≤ c) = decide (u ≤ v) := by
+    dsimp [a, c, u, v]
+    simpa only [Nat.add_le_add_iff_right] using horientation
+  have horientationIff :
+      (a ≤ c) ↔ (u ≤ v) := by
+    exact decide_eq_decide.mp horientationNat
+  have hyzLast :
+      xy.2 (Fin.last n).castSucc = zw.2 (Fin.last n).castSucc ∧
+        xy.2 (Fin.last (n + 1)) = zw.2 (Fin.last (n + 1)) := by
+    rcases pair_eq_or_swap_of_sum_sq hsum hsq with hdirect | hswap
+    · constructor <;> apply Fin.ext <;> omega
+    · have hac : a = c := by
+        have hacIff : (a ≤ c) ↔ (c ≤ a) := by
+          simpa [hswap.1, hswap.2] using horientationIff
+        rcases Nat.le_total a c with hac | hca
+        · exact Nat.le_antisymm hac (hacIff.mp hac)
+        · exact Nat.le_antisymm (hacIff.mpr hca) hca
+      constructor <;> apply Fin.ext <;> omega
+  have hy : xy.2 = zw.2 := by
+    funext i
+    exact Fin.lastCases hyzLast.2
+      (fun q ↦ Fin.lastCases hyzLast.1
+        (fun r ↦ congrFun hprefix r) q) i
+  exact Prod.ext hx hy
+
+/-- The first two residual congruences save two full factors of `Y`, up to
+the transposition factor `2`. -/
+theorem card_vinogradovResidualTailSolutionPairSet_le_quadratic
+    (p B b k n Y : ℕ) (hk : 2 ≤ k) (h2bB : 2 * b ≤ B)
+    (hlinear : 2 * Y < p ^ (B - b))
+    (hquadratic : 2 * Y ^ 2 < p ^ (B - 2 * b)) :
+    (vinogradovResidualTailSolutionPairSet
+        p B b k (n + 2) Y).card ≤ 2 * Y ^ (2 * n + 2) := by
+  classical
+  have hcard := Finset.card_le_card_of_injOn
+    (vinogradovResidualTailSolutionPairProjectionTwo n Y)
+    (s := vinogradovResidualTailSolutionPairSet p B b k (n + 2) Y)
+    (t := Finset.univ)
+    (by intro xy hxy; simp)
+    (vinogradovResidualTailSolutionPairProjectionTwo_injOn
+      p B b k n Y hk h2bB hlinear hquadratic)
+  have hcard' :
+      (vinogradovResidualTailSolutionPairSet
+          p B b k (n + 2) Y).card ≤ Y ^ (n + 2) * (Y ^ n * 2) := by
+    simpa using hcard
+  calc
+    (vinogradovResidualTailSolutionPairSet
+        p B b k (n + 2) Y).card ≤ Y ^ (n + 2) * (Y ^ n * 2) := hcard'
+    _ = 2 * (Y ^ (n + 2) * Y ^ n) := by ac_rfl
+    _ = 2 * Y ^ (2 * n + 2) := by
+      rw [← pow_add]
+      congr 2
+      omega
+
+/-- Quadratic residual rigidity transfers the two-variable saving directly
+to the separated affine-tail moment. -/
+theorem normalizedVinogradovMixedTailNormMoment_le_quadratic
+    (p B b k n Y : ℕ) [NeZero (p ^ B)] (hp : p ≠ 0)
+    (hk : 2 ≤ k) (h2bB : 2 * b ≤ B)
+    (hlinear : 2 * Y < p ^ (B - b))
+    (hquadratic : 2 * Y ^ 2 < p ^ (B - 2 * b))
+    (eta : ℤ) :
+    normalizedVinogradovMixedTailNormMoment
+        p B b k (n + 2) Y eta ≤ 2 * (Y : ℝ) ^ (2 * n + 2) := by
+  calc
+    normalizedVinogradovMixedTailNormMoment
+        p B b k (n + 2) Y eta ≤
+      (vinogradovResidualTailSolutionPairSet
+        p B b k (n + 2) Y).card :=
+      normalizedVinogradovMixedTailNormMoment_le_residualSolutionPairSetCard
+        p B b k (n + 2) Y hp eta
+    _ ≤ 2 * (Y : ℝ) ^ (2 * n + 2) := by
+      exact_mod_cast
+        card_vinogradovResidualTailSolutionPairSet_le_quadratic
+          p B b k n Y hk h2bB hlinear hquadratic
 
 end
 
