@@ -116,15 +116,22 @@ Bellotti proves
 N(sigma,T) = O_A(1)
 ```
 
-in a fixed region near the Vinogradov--Korobov boundary. This is a
-multiplicity-counted zero-density statement, not a finite-package explicit
-formula and not an oscillation theorem.
+in a fixed region near the Vinogradov--Korobov boundary. Bellotti defines
+`N(sigma,T)` as the cardinality of a set of zero locations and does not
+explicitly state a multiplicity convention.  The argument on this branch only
+needs the resulting bound on distinct locations; zero multiplicity is carried
+separately by logarithmic-derivative residues.  Bellotti's result is not a
+finite-package explicit formula and not an oscillation theorem.
 
 Reference:
 
 - C. Bellotti, *A new zero-density estimate for the Riemann zeta function and
   the error term in the Prime Number Theorem*, Theorem 1.2.
   <https://arxiv.org/abs/2508.02041>
+
+As checked on 2026-07-25, arXiv lists only v1, submitted 2025-08-04.  Until a
+later version or published proof is available, every zeta specialization here
+must state that it is conditional on Bellotti's stated theorem.
 
 ## Ingham and Anderson--Stark comparison
 
@@ -166,9 +173,8 @@ overshoot. He also records finite sine polynomials with norm at most
 mechanism nor the possibility of approaching `pi/2` with an increasing
 number of terms can be claimed as new here.
 
-What is not stated in that discussion, and is the only plausible new
-analytic-number-theory contribution on this branch, is the uniform
-combination
+One plausible uniform analytic-number-theory contribution on this branch is
+the combination
 
 ```text
 Bellotti O_A(1) VK-edge count
@@ -178,6 +184,51 @@ Bellotti O_A(1) VK-edge count
 ```
 
 This distinction must remain in any later claim of novelty.
+
+There is also a Bellotti-independent candidate in
+`vk-edge-pi-over-two-carlson-transfer.md`. For a fixed zeta zero with
+`beta_0>1/2`, Carlson's classical estimate gives `N(sigma,T)=o(T)` for a
+fixed `sigma` strictly between `1/2` and `beta_0`. Consequently one odd
+multiple of `gamma_0` is missing, and the localized pole-annihilation
+argument gives a strict gap `delta_(rho_0)>0` in every late `[Y,Y^7]`.
+
+Revesz 1988, Section 5, already imposes a sublinear density condition and
+observes that it excludes the linearly dense odd-harmonic obstruction. His
+extremal construction also proves that no gap can be uniform as the finite
+support size grows. The unresolved priority question is therefore not the
+qualitative sparsity mechanism; it is whether the exact
+
+```text
+fixed zeta zero + Carlson o(T)
+  -> strict zero-dependent gap above pi/2
+  -> every [Y,Y^7]
+```
+
+conclusion has previously been stated or follows verbatim from an older
+general oscillation theorem.
+
+The closest primary statements located in the targeted audit are:
+
+- Revesz (1988), Corollary 2: `pi/2-epsilon` in every sufficiently late
+  power interval, but with exponent proportional to `log |rho_0|`;
+- Revesz (2023), Theorem 5: the same baseline with an exponent depending on
+  `gamma_0` and the distance from the Beurling remainder line;
+- Anderson--Stark: finite-frequency gains under bounded integer-relation
+  independence, which is stronger than merely omitting one odd harmonic;
+- Pintz and Schlage-Puchta: shorter localization obtained with a loss in the
+  target-height factor.
+
+None of the checked sources states the exact combination
+
+```text
+strict zero-dependent gap above pi/2
+  + every [Y,Y^7]
+  + arbitrary fixed right-hand zeta zero.
+```
+
+This is evidence for a candidate theorem, not proof that no earlier source
+contains it. The Carlson `o(T)` pigeonhole itself is a direct classical
+observation and must not be presented as the original part.
 
 ## Claim policy
 

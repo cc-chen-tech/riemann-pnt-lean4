@@ -296,6 +296,10 @@ Gate F1 is closed at the abstract Fourier level. The global Abel version of
 Gate Z1 is closed, modulo Bellotti's stated theorem. The power-interval
 localized version is now derived with the fixed interval `[Y,Y^7]`, modulo
 Bellotti's zero count and Revesz's simultaneous zero-avoiding contour lemmas.
+The separate Carlson specialization removes Bellotti from the
+zero-dependent statement: every fixed zeta zero with real part greater than
+`1/2` has some strict positive gap, using the proved fixed-`sigma`
+`N(sigma,T)=o(T)` consequence.
 
 The envelope and weighted-Cassels routes remain useful alternative approaches,
 but they are not blockers for the pole-annihilation proof. Historical priority

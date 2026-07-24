@@ -154,8 +154,9 @@ Only after Gate F1 succeeds, map Bellotti's
 N(sigma, T) = O_A(1)
 ```
 
-at the Vinogradov--Korobov edge to a bound `M_B` on the relevant
-multiplicity-counted positive-frequency package. Verify that combining equal
+at the Vinogradov--Korobov edge to a bound `M_B` on the **distinct positive
+frequency support**. Analytic multiplicity is encoded in the coefficient at
+each frequency, not in the support cardinality. Verify that combining equal
 ordinates preserves a nonzero distinguished coefficient.
 
 ### Gate Z1: analytic transfer

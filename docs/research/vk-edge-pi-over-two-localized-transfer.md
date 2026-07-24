@@ -120,7 +120,7 @@ For the classical PNT error,
 ```
 
 If `u>0`, equations (3) and (6), followed by completing the square, show that
-the parts outside
+the absolute values of the two parts outside
 
 ```text
 q = exp(4m),  Q = exp(28m)                    (7)
@@ -129,7 +129,8 @@ q = exp(4m),  Q = exp(28m)                    (7)
 satisfy
 
 ```text
-U_A(w;m; x<q) + U_A(w;m; x>Q) = O_(A,w)(e^(-c_u m)).
+|U_A(w;m; x<q)| + |U_A(w;m; x>Q)|
+  = O_(A,w)(e^(-c_u m)).
                                                                (8)
 ```
 
@@ -164,12 +165,20 @@ zero-avoiding Revesz contour `Gamma_b` for the fixed symmetric translation
 set
 
 ```text
-{0, +-gamma_0, +-n gamma_0}.                  (10)
+{0, +-i gamma_0, +-i n gamma_0}.              (10)
 ```
 
 Its real coordinate lies in `[a,b]`. This order of choices is essential: the
 contour, the local zero sets, and the filter coefficients remain fixed while
 `m` grows.
+
+The imported statements are Lemmas 7 and 8 of Revesz,
+*Oscillation of the remainder term in the prime number theorem of Beurling,
+"caused by a given zeta-zero"* (arXiv:2202.01837v3): Lemma 7 constructs one
+broken line simultaneously separated from every translate in a prescribed
+finite symmetric set, and Lemma 8 bounds `zeta'/zeta` uniformly on that line
+and its closing horizontal segments.  The classical integers satisfy the
+paper's Axiom A with any fixed `theta>0`.
 
 For a center `w=u+iv`, let `Z_w` be the finite multiset of zeta zeros in
 
@@ -267,10 +276,13 @@ for every translate in (10):
       (1+log(|Im(s)|+n gamma_0+5))^2.          (18)
 ```
 
-If `A` has degree `d`, then on the shifted contour
+For `s` on `Gamma_b-u`, write `z=s+w`. Then `z` lies on the translated
+contour `Gamma_b+iv`, and Lemma 8 is applied using the translation `iv`
+already included in (10). The multiplier in (1) is
+`A(s)=A(z-w)`. If `A` has degree `d`, then on this translated contour
 
 ```text
-|A(s)| <= C_A (1+|Im(s)|)^d.                  (19)
+|A(z-w)| <= C_(A,w) (1+|Im(z)|)^d.            (19)
 ```
 
 The real exponential factor is bounded by
@@ -306,10 +318,28 @@ contour_A(w;m)
   = O_(A,w,theta)(e^(-c_(u-theta) m)).         (21)
 ```
 
+More precisely, after `Gamma_b`, the finite translation set, and `A` have
+been fixed, there are constants `C,c>0` and `m_0>=1` such that for every real
+`m>=m_0`,
+
+```text
+|contour_A(w;m)| <= C exp(-c m),
+
+sum_(far crossed rho)
+  |m(rho) A(rho-w)
+    exp(m(rho-w)^2+16m(rho-w))|
+  <= C exp(-c m).                              (21a)
+```
+
 The identical unit-strip zero count used by Revesz proves (17): the extra
 factor `(1+|gamma-v|)^d` from `A` is summable against
 `exp(-m|gamma-v|^2)`. This proves the required polynomial-weighted contour
 extension rather than assuming it.
+
+Thus the only imported contour facts are Revesz's Lemmas 7--8 and his
+unit-height zero count (equation (15) in arXiv:2202.01837v3).  The insertion
+of the fixed annihilating polynomial is proved by (19)--(21), rather than
+being attributed to Revesz.
 
 Equations (15)--(21) prove the filter identities
 
@@ -388,6 +418,11 @@ By (22),
 V_m = -2 m(rho_0)+o(1),
 |V_m| = 2 m(rho_0)+o(1).                       (28)
 ```
+
+Here conjugation preserves multiplicity by the project theorem
+`analyticOrderNatAt_riemannZeta_conj_of_nontrivialZero` in
+`PrimeNumberTheorem/RiemannVonMangoldt/CriticalLinePartition.lean`; this is
+why the target and conjugate residues have the same coefficient in (28).
 
 In the real-variable representation (3), the leading Gaussian kernel in
 (27) is exactly
@@ -498,6 +533,12 @@ such that
   >= (m(rho_0)/mu_n-epsilon)
        x^beta_0/|rho_0|.                       (36)
 ```
+
+More explicitly, (34) first gives, for all sufficiently large `m`,
+`K_m |rho_0| >= m(rho_0)/mu_n-epsilon/2`. By the definition of a supremum,
+choose a point in the compact interval whose normalized error is within
+`epsilon/(2|rho_0|)` of `K_m`. This supplies an actual `x` and gives (36);
+no attainment or continuity assertion for the step function `psi` is needed.
 
 ## 7. Bellotti specialization
 

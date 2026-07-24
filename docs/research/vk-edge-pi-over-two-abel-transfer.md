@@ -68,15 +68,24 @@ T >= T_B,
 sigma >= 1 - B g(T).
 ```
 
-Here `N(sigma,T)` counts, with multiplicity, zeros satisfying
+Bellotti defines `N(sigma,T)` by the set cardinality
 
 ```text
 0 < gamma < T,
 beta > sigma.
 ```
 
+Her statement does not explicitly say whether repeated zeros are repeated in
+that cardinality.  The argument below does not need such a convention: it only
+uses an upper bound for the number of **distinct zero locations** in the
+region.  Bellotti's displayed set cardinality supplies that bound directly
+(and a multiplicity-counted convention would only be stronger).  Analytic
+multiplicity enters later through the residue at each distinct location.
+
 Only the existence of `C_B` is needed. Bellotti also gives a route to an
-effective value.
+effective value.  As checked on 2026-07-25, the cited paper is still arXiv v1
+(submitted 2025-08-04), so this branch treats Theorem 1.2 as an imported,
+unrefereed hypothesis rather than as independently verified infrastructure.
 
 ## Abstract Abel missing-harmonic lemma
 
@@ -405,10 +414,10 @@ the conclusion is immediate.
 
 Bellotti makes `M` uniform for zeros in a fixed VK-edge band.
 
-Fix `A>A_0`, and choose one constant
+Fix `A>A_0`, and, to make every later constant a function of `A` alone, set
 
 ```text
-B>A.
+B = A+1.
 ```
 
 Let `C_B` be as in (2), and choose an integer

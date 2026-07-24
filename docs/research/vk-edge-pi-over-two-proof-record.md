@@ -4,10 +4,13 @@
 
 This record proves an abstract finite-spectrum theorem. The separate
 Mellin--Abel transfer in `vk-edge-pi-over-two-abel-transfer.md` applies it to
-a global zeta/PNT `limsup`, modulo Bellotti's stated theorem. The stronger
-power-interval candidate from the preregistration is not proved. Novelty
-relative to the harmonic-analysis and oscillation literature has not been
-established.
+a global zeta/PNT `limsup`, modulo Bellotti's stated theorem. The
+finite-pole argument in `vk-edge-pi-over-two-localized-transfer.md` proves
+the power-interval transfer, and
+`vk-edge-pi-over-two-carlson-transfer.md` combines it with Carlson
+zero-density to cover every fixed zeta zero with real part greater than
+`1/2`. Novelty relative to the harmonic-analysis and oscillation literature
+has not been established.
 
 The central preregistered finite-spectrum gate has an affirmative answer:
 
@@ -372,6 +375,8 @@ Closed:
 6. Occurrence in every sufficiently late interval `[Y,Y^7]`, using fixed
    finite-pole annihilating multipliers and Revesz's standard simultaneous
    contour lemmas.
+7. The Carlson `o(T)` count to missing-odd-harmonic mapping for every fixed
+   right-hand zeta zero.
 
 Not closed:
 
@@ -384,5 +389,6 @@ Not closed:
 
 The detailed transfers are recorded separately in
 `vk-edge-pi-over-two-abel-transfer.md` and
-`vk-edge-pi-over-two-localized-transfer.md`. This proof record itself still
+`vk-edge-pi-over-two-localized-transfer.md`, with the Carlson specialization
+in `vk-edge-pi-over-two-carlson-transfer.md`. This proof record itself still
 covers only the abstract Fourier gate.
