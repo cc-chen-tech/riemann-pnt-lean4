@@ -20,4 +20,24 @@ example
       atTop (𝓝 0) :=
   tendsto_carlsonExponent_pintzGap p sigma k c hgap
 
+example :
+    ∃ c > 0, ∀ᶠ x : ℝ in atTop,
+      2 * Real.sqrt c * pintzCarlsonSqrtLogScale x ≤
+        Pintz.pintzZeroEnvelope x :=
+  exists_eventually_two_mul_sqrt_mul_scale_le_pintzZeroEnvelope
+
+example
+    {E P : ℝ → ℝ} {a k c x : ℝ}
+    (hP : 0 ≤ P x)
+    (henvelope :
+      2 * Real.sqrt c * pintzCarlsonSqrtLogScale x ≤ E x) :
+    P x *
+        Real.exp
+          (a * k * pintzCarlsonSqrtLogScale x - E x) ≤
+      P x *
+        Real.exp
+          ((a * k - 2 * Real.sqrt c) *
+            pintzCarlsonSqrtLogScale x) :=
+  pintzEnvelope_exp_kernel_le_gapKernel hP henvelope
+
 end PrimeNumberTheorem

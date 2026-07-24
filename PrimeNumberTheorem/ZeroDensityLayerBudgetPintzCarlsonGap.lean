@@ -1,4 +1,4 @@
-import Mathlib
+import PrimeNumberTheorem.PintzEnvelope
 
 open Filter Topology
 
@@ -29,6 +29,42 @@ noncomputable def pintzCarlsonSqrtLogScale (x : ℝ) : ℝ :=
 theorem tendsto_pintzCarlsonSqrtLogScale_atTop :
     Tendsto pintzCarlsonSqrtLogScale atTop atTop := by
   exact Real.tendsto_sqrt_atTop.comp Real.tendsto_log_atTop
+
+/-- The proved Pintz envelope lower bound expressed on the common
+square-root logarithmic scale used by the Carlson gap calculation. -/
+theorem exists_eventually_two_mul_sqrt_mul_scale_le_pintzZeroEnvelope :
+    ∃ c > 0, ∀ᶠ x : ℝ in atTop,
+      2 * Real.sqrt c * pintzCarlsonSqrtLogScale x ≤
+        Pintz.pintzZeroEnvelope x := by
+  rcases Pintz.exists_eventually_two_mul_sqrt_le_zeroEnvelope with
+    ⟨c, hc, henvelope⟩
+  refine ⟨c, hc, ?_⟩
+  filter_upwards [eventually_ge_atTop (1 : ℝ), henvelope] with x hx hbound
+  have hsqrtmul :
+      Real.sqrt (c * Real.log x) =
+        Real.sqrt c * Real.sqrt (Real.log x) := by
+    simpa using Real.sqrt_mul hc.le (Real.log x)
+  simpa [pintzCarlsonSqrtLogScale, hsqrtmul, mul_assoc] using hbound
+
+/-- A lower bound for an envelope turns into an upper bound for the
+corresponding exponentially weighted kernel. The nonnegative factor `P`
+can contain the density majorant and logarithmic losses. -/
+theorem pintzEnvelope_exp_kernel_le_gapKernel
+    {E P : ℝ → ℝ} {a k c x : ℝ}
+    (hP : 0 ≤ P x)
+    (henvelope :
+      2 * Real.sqrt c * pintzCarlsonSqrtLogScale x ≤ E x) :
+    P x *
+        Real.exp
+          (a * k * pintzCarlsonSqrtLogScale x - E x) ≤
+      P x *
+        Real.exp
+          ((a * k - 2 * Real.sqrt c) *
+            pintzCarlsonSqrtLogScale x) := by
+  apply mul_le_mul_of_nonneg_left
+  · apply Real.exp_le_exp.mpr
+    nlinarith
+  · exact hP
 
 /-- Any fixed real power is absorbed by the strict Pintz-Carlson exponential
 gap. The parameter `a` is the density exponent and `k` is the exponential
@@ -75,5 +111,41 @@ theorem tendsto_carlsonExponent_pintzGap
       atTop (𝓝 0) :=
   tendsto_pintzCarlsonGap_rpow_mul_exp
     p (4 * sigma * (1 - sigma)) k c hgap
+
+/-- A fixed nonnegative Carlson coefficient does not change the exponent-gap
+limit. This is the form used after extracting a concrete Big-O constant. -/
+theorem tendsto_const_mul_carlsonExponent_pintzGap
+    (C p sigma k c : ℝ)
+    (hgap :
+      (4 * sigma * (1 - sigma)) * k < 2 * Real.sqrt c) :
+    Tendsto
+      (fun x : ℝ =>
+        C *
+          (pintzCarlsonSqrtLogScale x ^ p *
+            Real.exp
+              (((4 * sigma * (1 - sigma)) * k -
+                  2 * Real.sqrt c) *
+                pintzCarlsonSqrtLogScale x)))
+      atTop (𝓝 0) :=
+  (tendsto_carlsonExponent_pintzGap p sigma k c hgap).const_mul C
+
+/-- The fourth logarithmic power in Carlson's classical majorant, represented
+as a fixed fourth power of the square-root logarithmic scale, is absorbed by
+the same strict exponent gap. -/
+theorem tendsto_carlsonFourthPower_pintzGap
+    (C sigma k c : ℝ)
+    (hgap :
+      (4 * sigma * (1 - sigma)) * k < 2 * Real.sqrt c) :
+    Tendsto
+      (fun x : ℝ =>
+        C *
+          (pintzCarlsonSqrtLogScale x ^ (4 : ℝ) *
+            Real.exp
+              (((4 * sigma * (1 - sigma)) * k -
+                  2 * Real.sqrt c) *
+                pintzCarlsonSqrtLogScale x)))
+      atTop (𝓝 0) :=
+  tendsto_const_mul_carlsonExponent_pintzGap
+    C 4 sigma k c hgap
 
 end PrimeNumberTheorem
