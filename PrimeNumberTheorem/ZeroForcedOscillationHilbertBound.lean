@@ -8,10 +8,12 @@ This module replaces the cardinality-dependent pairwise mean-square error by
 the concrete Hilbert--Montgomery--Vaughan estimate. For a nontrivial finite
 frequency family the error is at most `4π` times the coefficient energy divided
 by the actual minimum spacing. The final theorem specializes this estimate to
-the maximal-real-part zeta-zero package, retaining analytic multiplicity.
+the maximal-real-part zeta-zero package, retaining analytic multiplicity, and
+extracts an interior point where that package contribution is strictly visible.
 
 This is a finite-package estimate. It does not supply a uniform lower bound for
-the zero spacing and does not control the explicit-formula remainder.
+the zero spacing, handle a singleton package through the Hilbert estimate, or
+control the explicit-formula remainder.
 -/
 
 open Complex Set
@@ -163,6 +165,143 @@ theorem abs_maximalZeroPackageFiniteExponentialMeanSquare_sub_diagonal_le
       (S := maximalRealPartZeroPackage T)
       (c := fun ρ => (analyticOrderNatAt riemannZeta ρ : ℂ) * ρ⁻¹)
       (omega := Complex.im) (a := a) (b := b) hpackage him)
+
+/-- On every nondegenerate interval, the Hilbert mean-square bound supplies an
+interior point attaining the diagonal energy minus `4π E / (Δ L)`. -/
+theorem exists_mem_Ioo_sqNorm_finiteExponentialSum_ge_hilbert
+    {ι : Type*} [DecidableEq ι]
+    {S : Finset ι} {c : ι → ℂ} {omega : ι → ℝ} {a b : ℝ}
+    (hS : S.Nontrivial) (hab : a < b)
+    (homega : Set.InjOn omega (S : Set ι)) :
+    ∃ t ∈ Set.Ioo a b,
+      (∑ n ∈ S, ‖c n‖ ^ 2) -
+          (4 * Real.pi * (∑ n ∈ S, ‖c n‖ ^ 2) /
+            minimumPositiveFrequencySpacing S omega) / (b - a) ≤
+        ‖finiteExponentialSum S c omega t‖ ^ 2 := by
+  let f : ℝ → ℝ := fun t => ‖finiteExponentialSum S c omega t‖ ^ 2
+  let D : ℝ := ∑ n ∈ S, ‖c n‖ ^ 2
+  let B : ℝ :=
+    4 * Real.pi * D / minimumPositiveFrequencySpacing S omega
+  let A : ℝ := D - B / (b - a)
+  have hf : Continuous f := by
+    dsimp [f, finiteExponentialSum]
+    fun_prop
+  have haggregate :=
+    abs_finiteExponentialMeanSquare_sub_diagonal_le_minimumSpacing
+      (S := S) (c := c) (omega := omega) (a := a) (b := b) hS homega
+  have hlower : (b - a) * D - B ≤ ∫ t in a..b, f t := by
+    have hleft := (abs_le.mp haggregate).1
+    dsimp [f, D, B] at hleft ⊢
+    linarith
+  have hlength : b - a ≠ 0 := sub_ne_zero.mpr hab.ne'
+  have hscale : (b - a) * A = (b - a) * D - B := by
+    dsimp [A]
+    field_simp
+  by_contra! hnone
+  have hdiff : IntervalIntegrable (fun t => A - f t)
+      MeasureTheory.volume a b :=
+    Continuous.intervalIntegrable (continuous_const.sub hf) a b
+  have hpositive : 0 < ∫ t in a..b, A - f t :=
+    intervalIntegral.intervalIntegral_pos_of_pos_on
+      hdiff (fun t ht => sub_pos.mpr (hnone t ht)) hab
+  rw [intervalIntegral.integral_sub
+      (Continuous.intervalIntegrable continuous_const a b)
+      (Continuous.intervalIntegrable hf a b),
+    intervalIntegral.integral_const] at hpositive
+  change 0 < (b - a) * A - ∫ t in a..b, f t at hpositive
+  rw [hscale] at hpositive
+  linarith
+
+/-- If the maximal zero package has at least two members, every logarithmic
+interval longer than `4π / Δ_T` contains a point where its actual
+multiplicity-aware contribution is strictly nonzero. This statement concerns
+only the selected finite package, not the explicit-formula remainder. -/
+theorem
+    exists_mem_Ioo_sqNorm_maximalZeroPackageContribution_pos_of_hilbert
+    (T : ℝ) (hpackage : (maximalRealPartZeroPackage T).Nontrivial)
+    {a b : ℝ}
+    (hlength :
+      4 * Real.pi / maximalZeroPackageMinimumImaginarySpacing T < b - a) :
+    ∃ y ∈ Set.Ioo a b,
+      0 < ‖equalRealPartZeroPackageContribution (Real.exp y) T
+        (maximalZeroRealPart T)‖ ^ 2 := by
+  have hab : a < b := by
+    have hspacing := maximalZeroPackageMinimumImaginarySpacing_pos T
+    have hpi : 0 < 4 * Real.pi := by positivity
+    have hpositive :
+        0 < 4 * Real.pi / maximalZeroPackageMinimumImaginarySpacing T :=
+      div_pos hpi hspacing
+    linarith
+  have him :
+      Set.InjOn Complex.im (maximalRealPartZeroPackage T : Set ℂ) := by
+    apply im_injOn_of_re_eq _ (maximalZeroRealPart T)
+    intro ρ hρ
+    exact (mem_maximalRealPartZeroPackage.mp hρ).2.2
+  rcases exists_mem_Ioo_sqNorm_finiteExponentialSum_ge_hilbert
+      (S := maximalRealPartZeroPackage T)
+      (c := fun ρ => (analyticOrderNatAt riemannZeta ρ : ℂ) * ρ⁻¹)
+      (omega := Complex.im) hpackage hab him with ⟨y, hy, hpoint⟩
+  have henergy : 0 < maximalZeroPackageEnergy T :=
+    maximalZeroPackageEnergy_pos T hpackage.nonempty
+  have hinterval : 0 < b - a := sub_pos.mpr hab
+  have hbracket :
+      0 < maximalZeroPackageEnergy T -
+        (4 * Real.pi * maximalZeroPackageEnergy T /
+          maximalZeroPackageMinimumImaginarySpacing T) / (b - a) := by
+    have hmul :
+        4 * Real.pi * maximalZeroPackageEnergy T /
+            maximalZeroPackageMinimumImaginarySpacing T <
+          (b - a) * maximalZeroPackageEnergy T := by
+      calc
+        4 * Real.pi * maximalZeroPackageEnergy T /
+            maximalZeroPackageMinimumImaginarySpacing T =
+            (4 * Real.pi / maximalZeroPackageMinimumImaginarySpacing T) *
+              maximalZeroPackageEnergy T := by ring
+        _ < (b - a) * maximalZeroPackageEnergy T :=
+          mul_lt_mul_of_pos_right hlength henergy
+    have hratio :
+        (4 * Real.pi * maximalZeroPackageEnergy T /
+            maximalZeroPackageMinimumImaginarySpacing T) / (b - a) <
+          maximalZeroPackageEnergy T := by
+      exact (div_lt_iff₀ hinterval).mpr (by simpa [mul_comm] using hmul)
+    linarith
+  have hfinite :
+      0 < ‖finiteExponentialSum (maximalRealPartZeroPackage T)
+          (fun ρ => (analyticOrderNatAt riemannZeta ρ : ℂ) * ρ⁻¹)
+          Complex.im y‖ ^ 2 := by
+    have hpoint' :
+        maximalZeroPackageEnergy T -
+            (4 * Real.pi * maximalZeroPackageEnergy T /
+              maximalZeroPackageMinimumImaginarySpacing T) / (b - a) ≤
+          ‖finiteExponentialSum (maximalRealPartZeroPackage T)
+            (fun ρ => (analyticOrderNatAt riemannZeta ρ : ℂ) * ρ⁻¹)
+            Complex.im y‖ ^ 2 := by
+      simpa [maximalZeroPackageEnergy,
+        maximalZeroPackageMinimumImaginarySpacing] using hpoint
+    exact lt_of_lt_of_le hbracket hpoint'
+  refine ⟨y, hy, ?_⟩
+  rw [equalRealPartZeroPackageContribution_exp_eq_exponentialPolynomial]
+  change 0 <
+    ‖((Real.exp (maximalZeroRealPart T * y) : ℝ) : ℂ) *
+      multiplicityWeightedExponentialPolynomial
+        (maximalRealPartZeroPackage T)
+        (analyticOrderNatAt riemannZeta) (fun ρ => ρ⁻¹) Complex.im y‖ ^ 2
+  rw [norm_mul, mul_pow]
+  have hgrowth :
+      0 < ‖((Real.exp (maximalZeroRealPart T * y) : ℝ) : ℂ)‖ ^ 2 := by
+    rw [Complex.norm_real, Real.norm_eq_abs,
+      abs_of_pos (Real.exp_pos _)]
+    exact sq_pos_of_pos (Real.exp_pos _)
+  have hpoly :
+      multiplicityWeightedExponentialPolynomial
+          (maximalRealPartZeroPackage T)
+          (analyticOrderNatAt riemannZeta) (fun ρ => ρ⁻¹) Complex.im y =
+        finiteExponentialSum (maximalRealPartZeroPackage T)
+          (fun ρ => (analyticOrderNatAt riemannZeta ρ : ℂ) * ρ⁻¹)
+          Complex.im y := by
+    rfl
+  rw [hpoly]
+  exact mul_pos hgrowth hfinite
 
 end
 
