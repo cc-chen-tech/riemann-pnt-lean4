@@ -6,6 +6,8 @@ import sys
 from fractions import Fraction
 from pathlib import Path
 
+import pytest
+
 
 FULL_CHECKPOINT = (
     Path(__file__).parents[1]
@@ -297,6 +299,63 @@ def test_streaming_factorizer_can_select_low_intersection(tmp_path):
 
     assert record["classification"] == "positive"
     assert record["parameters"]["intersection_level"] == "low"
+
+
+def test_streaming_factorizer_resumes_from_completed_panel(tmp_path):
+    from experiments.rh import weil_extremal_streaming_ldlt as streaming
+
+    source = _source_artifact(
+        tmp_path,
+        _matrix(
+            [
+                [8, 1, 0, 0, 0],
+                [1, 7, 1, 0, 0],
+                [0, 1, 6, 1, 0],
+                [0, 0, 1, 5, 1],
+                [0, 0, 0, 1, 4],
+            ]
+        ),
+        Fraction(1, 100000),
+    )
+    workspace = tmp_path / "resumable-workspace"
+    with pytest.raises(streaming.PanelLimitReached):
+        streaming.run_streaming_interval_ldlt(
+            source,
+            tmp_path / "resumed.json",
+            workspace_dir=workspace,
+            block_size=2,
+            arb_prec_bits=896,
+            serialization_digits=300,
+            max_panels=1,
+        )
+
+    resume = json.loads((workspace / "resume.json").read_text())
+    assert resume["completed_panels"] == 1
+    assert len(resume["pivots"]) == 2
+    snapshot = workspace / resume["snapshot_path"]
+    assert snapshot.name == f"{resume['payload_sha256']}.json"
+
+    resumed = streaming.run_streaming_interval_ldlt(
+        source,
+        tmp_path / "resumed.json",
+        workspace_dir=workspace,
+        block_size=2,
+        arb_prec_bits=896,
+        serialization_digits=300,
+        resume=True,
+    )
+    fresh = streaming.run_streaming_interval_ldlt(
+        source,
+        tmp_path / "fresh.json",
+        workspace_dir=tmp_path / "fresh-workspace",
+        block_size=2,
+        arb_prec_bits=896,
+        serialization_digits=300,
+    )
+
+    assert resumed["classification"] == "positive"
+    assert resumed["pivots"] == fresh["pivots"]
+    assert resumed["result"] == fresh["result"]
 
 
 def test_full_896_streaming_checkpoint_is_frozen_and_unresolved():

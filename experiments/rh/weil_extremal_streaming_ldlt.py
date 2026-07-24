@@ -21,6 +21,7 @@ from experiments.rh import weil_extremal_sharded as sharded
 CHECKPOINT_SCHEMA = "weil-extremal-kernel-streaming-interval-ldlt/v1"
 WORKSPACE_SCHEMA = "weil-extremal-kernel-streaming-ldlt-workspace/v1"
 BLOCK_SCHEMA = "weil-extremal-kernel-streaming-ldlt-block/v1"
+RESUME_SCHEMA = "weil-extremal-kernel-streaming-ldlt-resume/v1"
 CLAIM_SCOPE = "finite-sharded-interval-ldlt-only"
 GATE_A_STATUS = "not_satisfied"
 LIMITATIONS = [
@@ -30,6 +31,10 @@ LIMITATIONS = [
     "The standard-library verifier authenticates the transcript but does not replay Arb arithmetic.",
     "No analytic tail, basis-change transfer, infinite-dimensional criterion, or RH conclusion is included.",
 ]
+
+
+class PanelLimitReached(RuntimeError):
+    """Raised after a requested number of complete panels is checkpointed."""
 
 
 def _canonical_json(value: Mapping[str, Any]) -> str:
@@ -106,10 +111,23 @@ def _resolve_path(base: Path, value: Any) -> Path | None:
 
 def _load_source(manifest_path: Path) -> tuple[dict[str, Any], dict[tuple[int, int], Any]]:
     record = sharded._read_manifest(manifest_path)
-    if record is None or not sharded.verify_cross_precision_artifact_file(
-        manifest_path
-    ):
-        raise ValueError("source cross-precision artifact is not canonical and valid")
+    valid = (
+        record is not None
+        and sharded.verify_cross_precision_artifact_file(manifest_path)
+    )
+    if not valid:
+        from experiments.rh import weil_extremal_high_precision as high_precision
+
+        record = high_precision._read_json_record(manifest_path)
+        valid = (
+            record is not None
+            and high_precision.verify_cross_checkpoint_file(manifest_path)
+            and record["result"]["complete"] is True
+        )
+    if not valid or record is None:
+        raise ValueError(
+            "source cross-precision artifact is not canonical, complete, and valid"
+        )
     parameters = record["parameters"]
     tile_size = parameters["tile_size"]
     descriptors = {
@@ -191,6 +209,7 @@ class BlockStore:
         intersection_level: str,
         arb: Any,
         arb_mat: Any,
+        completed_panels: int = 0,
     ) -> None:
         self.source_manifest = source_manifest
         self.source_record = source_record
@@ -201,6 +220,7 @@ class BlockStore:
         self.intersection_level = intersection_level
         self.arb = arb
         self.arb_mat = arb_mat
+        self.completed_panels = completed_panels
         self.maximum_loaded_block_entries = 0
         self.workspace.mkdir(parents=True, exist_ok=True)
         (self.workspace / "schur").mkdir(exist_ok=True)
@@ -234,7 +254,22 @@ class BlockStore:
             enclosure[0], enclosure[1], self.arb, self.arb_mat
         )
 
-    def _block_path(self, kind: str, block_row: int, block_col: int) -> Path:
+    def _block_path(
+        self,
+        kind: str,
+        block_row: int,
+        block_col: int,
+        *,
+        for_write: bool = False,
+    ) -> Path:
+        if kind == "schur":
+            generation = self.completed_panels + (1 if for_write else 0)
+            return (
+                self.workspace
+                / kind
+                / f"generation-{generation:04d}"
+                / f"block-r{block_row:04d}-c{block_col:04d}.json.gz"
+            )
         return (
             self.workspace
             / kind
@@ -267,11 +302,12 @@ class BlockStore:
 
     def load_schur(self, block_row: int, block_col: int) -> Any:
         path = self._block_path("schur", block_row, block_col)
-        matrix = (
-            self._read_workspace_block(path, block_row, block_col)
-            if path.is_file()
-            else self._source_block(block_row, block_col)
-        )
+        if self.completed_panels:
+            if not path.is_file():
+                raise ValueError(f"committed Schur block is missing: {path}")
+            matrix = self._read_workspace_block(path, block_row, block_col)
+        else:
+            matrix = self._source_block(block_row, block_col)
         self.maximum_loaded_block_entries = max(
             self.maximum_loaded_block_entries,
             matrix.nrows() * matrix.ncols(),
@@ -290,7 +326,9 @@ class BlockStore:
     def write_block(
         self, kind: str, block_row: int, block_col: int, matrix: Any
     ) -> dict[str, Any]:
-        path = self._block_path(kind, block_row, block_col)
+        path = self._block_path(
+            kind, block_row, block_col, for_write=kind == "schur"
+        )
         payload = {
             "block": {"column": block_col, "row": block_row},
             "enclosure": _serialize_arb_matrix(
@@ -441,6 +479,125 @@ def _write_checkpoint(path: Path, payload: Mapping[str, Any]) -> dict[str, Any]:
     return record
 
 
+def _atomic_write(path: Path, data: bytes) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_name(f".{path.name}.tmp-{os.getpid()}")
+    temporary.write_bytes(data)
+    os.replace(temporary, path)
+
+
+def _resume_parameters(
+    *,
+    block_size: int,
+    arb_prec_bits: int,
+    serialization_digits: int,
+    intersection_level: str,
+) -> dict[str, Any]:
+    return {
+        "arb_prec_bits": arb_prec_bits,
+        "block_size": block_size,
+        "intersection_level": intersection_level,
+        "serialization_digits": serialization_digits,
+    }
+
+
+def _write_resume_checkpoint(
+    workspace: Path,
+    source_path: Path,
+    source_record: Mapping[str, Any],
+    parameters: Mapping[str, Any],
+    completed_panels: int,
+    pivots: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    payload = {
+        "completed_panels": completed_panels,
+        "generator_sha256": _source_sha256(),
+        "parameters": dict(parameters),
+        "pivots": list(pivots),
+        "schema_version": RESUME_SCHEMA,
+        "source_manifest_payload_sha256": source_record["payload_sha256"],
+        "source_manifest_sha256": _file_sha256(source_path),
+    }
+    digest = _payload_digest(payload)
+    snapshot_path = Path("checkpoints") / f"{digest}.json"
+    record = {
+        **payload,
+        "payload_sha256": digest,
+        "snapshot_path": snapshot_path.as_posix(),
+    }
+    raw = _canonical_bytes(record)
+    snapshot = workspace / snapshot_path
+    if snapshot.exists():
+        if snapshot.read_bytes() != raw:
+            raise ValueError("content-addressed resume checkpoint collision")
+    else:
+        _atomic_write(snapshot, raw)
+    _atomic_write(workspace / "resume.json", raw)
+    return record
+
+
+def _load_resume_checkpoint(
+    workspace: Path,
+    source_path: Path,
+    source_record: Mapping[str, Any],
+    parameters: Mapping[str, Any],
+    blocks: Sequence[tuple[int, int]],
+) -> tuple[int, list[dict[str, Any]]]:
+    path = workspace / "resume.json"
+    try:
+        raw = path.read_bytes()
+        record = json.loads(raw)
+    except (OSError, TypeError, UnicodeError, ValueError) as error:
+        raise ValueError("resume checkpoint is missing or invalid") from error
+    required = {
+        "completed_panels",
+        "generator_sha256",
+        "parameters",
+        "payload_sha256",
+        "pivots",
+        "schema_version",
+        "snapshot_path",
+        "source_manifest_payload_sha256",
+        "source_manifest_sha256",
+    }
+    payload = {
+        key: value
+        for key, value in record.items()
+        if key not in {"payload_sha256", "snapshot_path"}
+    }
+    completed = record.get("completed_panels")
+    expected_pivots = (
+        sum(end - start for start, end in blocks[:completed])
+        if type(completed) is int and 0 <= completed <= len(blocks)
+        else -1
+    )
+    snapshot = workspace / str(record.get("snapshot_path", ""))
+    if (
+        not isinstance(record, dict)
+        or set(record) != required
+        or raw != _canonical_bytes(record)
+        or record["schema_version"] != RESUME_SCHEMA
+        or record["generator_sha256"] != _source_sha256()
+        or record["parameters"] != dict(parameters)
+        or record["source_manifest_payload_sha256"]
+        != source_record["payload_sha256"]
+        or record["source_manifest_sha256"] != _file_sha256(source_path)
+        or _payload_digest(payload) != record["payload_sha256"]
+        or record["snapshot_path"]
+        != f"checkpoints/{record['payload_sha256']}.json"
+        or not snapshot.is_file()
+        or snapshot.read_bytes() != raw
+        or not isinstance(record["pivots"], list)
+        or len(record["pivots"]) != expected_pivots
+        or any(
+            not _valid_pivot(pivot, index, "positive")
+            for index, pivot in enumerate(record["pivots"])
+        )
+    ):
+        raise ValueError("resume checkpoint is incompatible or invalid")
+    return completed, list(record["pivots"])
+
+
 def run_streaming_interval_ldlt(
     source_manifest: str | Path,
     checkpoint_path: str | Path,
@@ -450,6 +607,8 @@ def run_streaming_interval_ldlt(
     arb_prec_bits: int,
     serialization_digits: int,
     intersection_level: str = "high",
+    resume: bool = False,
+    max_panels: int | None = None,
 ) -> dict[str, Any]:
     source_path = Path(source_manifest)
     output_path = Path(checkpoint_path)
@@ -462,6 +621,12 @@ def run_streaming_interval_ldlt(
         raise ValueError("serialization_digits must be an integer at least 30")
     if intersection_level not in {"low", "high"}:
         raise ValueError("intersection_level must be low or high")
+    if type(resume) is not bool:
+        raise ValueError("resume must be a boolean")
+    if max_panels is not None and (
+        type(max_panels) is not int or max_panels < 1
+    ):
+        raise ValueError("max_panels must be a positive integer")
     source_record, descriptors = _load_source(source_path)
     parameters = source_record["parameters"]
     if block_size != parameters["tile_size"]:
@@ -471,7 +636,7 @@ def run_streaming_interval_ldlt(
         raise ValueError(
             "arb_prec_bits must be at least the selected source precision"
         )
-    if workspace.exists() and any(workspace.iterdir()):
+    if not resume and workspace.exists() and any(workspace.iterdir()):
         raise ValueError("workspace_dir must be absent or empty")
 
     try:
@@ -482,9 +647,26 @@ def run_streaming_interval_ldlt(
 
     previous_precision = ctx.prec
     ctx.prec = arb_prec_bits
-    pivots = []
+    blocks = _block_bounds(parameters["dimension"], block_size)
+    resume_parameters = _resume_parameters(
+        block_size=block_size,
+        arb_prec_bits=arb_prec_bits,
+        serialization_digits=serialization_digits,
+        intersection_level=intersection_level,
+    )
+    if resume:
+        completed_panels, pivots = _load_resume_checkpoint(
+            workspace,
+            source_path,
+            source_record,
+            resume_parameters,
+            blocks,
+        )
+    else:
+        completed_panels = 0
+        pivots = []
     first_unresolved = None
-    completed_panels = 0
+    panels_this_run = 0
     store = BlockStore(
         source_path,
         source_record,
@@ -495,10 +677,11 @@ def run_streaming_interval_ldlt(
         intersection_level,
         arb,
         arb_mat,
+        completed_panels,
     )
-    blocks = _block_bounds(parameters["dimension"], block_size)
     try:
-        for panel_index, (panel_start, _panel_end) in enumerate(blocks):
+        for panel_index in range(completed_panels, len(blocks)):
+            panel_start, _panel_end = blocks[panel_index]
             diagonal_schur = store.load_schur(panel_index, panel_index)
             lower, diagonal, stop_local, stop_reason = _factor_diagonal_block(
                 diagonal_schur, arb, arb_mat
@@ -541,6 +724,24 @@ def run_streaming_interval_ldlt(
                         "schur", block_row, block_col, updated
                     )
             completed_panels += 1
+            panels_this_run += 1
+            store.completed_panels = completed_panels
+            _write_resume_checkpoint(
+                workspace,
+                source_path,
+                source_record,
+                resume_parameters,
+                completed_panels,
+                pivots,
+            )
+            if (
+                max_panels is not None
+                and panels_this_run >= max_panels
+                and completed_panels < len(blocks)
+            ):
+                raise PanelLimitReached(
+                    f"checkpointed {completed_panels}/{len(blocks)} panels"
+                )
     finally:
         ctx.prec = previous_precision
 
@@ -835,6 +1036,8 @@ def _build_parser() -> argparse.ArgumentParser:
     run.add_argument(
         "--intersection-level", choices=("low", "high"), default="high"
     )
+    run.add_argument("--resume", action="store_true")
+    run.add_argument("--max-panels", type=int)
     verify = subparsers.add_parser("verify-checkpoint")
     verify.add_argument("checkpoint", type=Path)
     return parser
@@ -851,6 +1054,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             arb_prec_bits=args.arb_prec_bits,
             serialization_digits=args.serialization_digits,
             intersection_level=args.intersection_level,
+            resume=args.resume,
+            max_panels=args.max_panels,
         )
         print(f"streaming interval LDL classification: {record['classification']}")
         return 0
