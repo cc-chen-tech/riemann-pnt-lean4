@@ -232,6 +232,69 @@ example {x a c W : ℝ} (hx : 0 < x) (ha : a < 0) (hc : 0 < c)
   PrimeNumberTheorem.ExplicitFormulaResidues.exists_boundaryRectIntegral_secondOrderExplicitFormulaIntegrand_crossing_zero
     hx ha hc hW hboundary
 
+example {x a c W : ℝ} (hx : 0 < x) (ha : a < 0) (hc : 0 < c)
+    (hW : 0 < W)
+    (hboundary : ∀ p ∈
+      ([[a, c]] ×ℂ [[-(2 * Real.pi * W), 2 * Real.pi * W]] : Set ℂ),
+      p = 0 ∨ p = 1 ∨ riemannZeta p = 0 →
+        a < p.re ∧ p.re < c ∧
+          -(2 * Real.pi * W) < p.im ∧ p.im < 2 * Real.pi * W) :
+    ∃ (poles : Finset ℂ) (residue : ℂ → ℂ),
+      (∀ p ∈ poles,
+        a < p.re ∧ p.re < c ∧
+          -(2 * Real.pi * W) < p.im ∧ p.im < 2 * Real.pi * W) ∧
+      (∀ p ∈ poles, p = 0 ∨ p = 1 ∨ riemannZeta p = 0) ∧
+      (∀ p, p ∈
+          ([[a, c]] ×ℂ [[-(2 * Real.pi * W), 2 * Real.pi * W]] : Set ℂ) →
+        p = 0 ∨ p = 1 ∨ riemannZeta p = 0 → p ∈ poles) ∧
+      residue 0 =
+        deriv (fun z : ℂ =>
+          -logDeriv riemannZeta z * (x : ℂ) ^ z) 0 ∧
+      (∀ p ∈ poles, p ≠ 0 → residue p =
+        if p = 1 then (x : ℂ)
+        else -(analyticOrderNatAt riemannZeta p : ℂ) *
+          (x : ℂ) ^ p / p ^ 2) ∧
+      (∫ w : ℝ in (-W)..W,
+          PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderExplicitFormulaIntegrand
+            x ((c : ℂ) + 2 * Real.pi * w * Complex.I)) =
+        (∑ p ∈ poles, residue p) -
+          PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderContourRemainder
+            x a c W :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.exists_scaledRightIntegral_eq_residue_sum_sub_secondOrderContourRemainder_crossing_zero
+    hx ha hc hW hboundary
+
+example {x a c W : ℝ} (hx : 0 < x) (ha : a < 0) (hc : 1 < c)
+    (hW : 0 < W)
+    (hboundary : ∀ p ∈
+      ([[a, c]] ×ℂ [[-(2 * Real.pi * W), 2 * Real.pi * W]] : Set ℂ),
+      p = 0 ∨ p = 1 ∨ riemannZeta p = 0 →
+        a < p.re ∧ p.re < c ∧
+          -(2 * Real.pi * W) < p.im ∧ p.im < 2 * Real.pi * W) :
+    ∃ (poles : Finset ℂ) (residue : ℂ → ℂ),
+      (∀ p ∈ poles,
+        a < p.re ∧ p.re < c ∧
+          -(2 * Real.pi * W) < p.im ∧ p.im < 2 * Real.pi * W) ∧
+      (∀ p ∈ poles, p = 0 ∨ p = 1 ∨ riemannZeta p = 0) ∧
+      (∀ p, p ∈
+          ([[a, c]] ×ℂ [[-(2 * Real.pi * W), 2 * Real.pi * W]] : Set ℂ) →
+        p = 0 ∨ p = 1 ∨ riemannZeta p = 0 → p ∈ poles) ∧
+      residue 0 =
+        deriv (fun z : ℂ =>
+          -logDeriv riemannZeta z * (x : ℂ) ^ z) 0 ∧
+      (∀ p ∈ poles, p ≠ 0 → residue p =
+        if p = 1 then (x : ℂ)
+        else -(analyticOrderNatAt riemannZeta p : ℂ) *
+          (x : ℂ) ^ p / p ^ 2) ∧
+      ‖((∑ p ∈ poles, residue p) -
+          PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderContourRemainder
+            x a c W) -
+          (PrimeNumberTheorem.smoothedChebyshevPsi x : ℂ)‖ ≤
+        ∑' n : ℕ,
+          PrimeNumberTheorem.vonMangoldt n * (x / n) ^ c /
+            (2 * Real.pi ^ 2 * W) :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.exists_norm_residue_sum_sub_contourRemainder_sub_smoothedPsi_le_crossing_zero
+    hx ha hc hW hboundary
+
 example :
     MathlibAux.boundaryRectIntegral
         (fun z : ℂ =>

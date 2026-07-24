@@ -269,9 +269,15 @@ remaining simple residue at `s = 0` as
 local Laurent-coefficient problem at the origin without importing an
 unverified constant evaluation. Expanding that derivative into elementary
 zeta constants is optional for the contour identity but may still be useful
-for a numerical Riesz envelope. For farther negative-odd lines the remaining
-residue classification also includes the trivial zeros. Those trivial-zero
-residue identifications and the finite residue difference consumed by the
-Riesz sandwich remain open.
+for a numerical Riesz envelope. The crossing-zero contour is now also
+normalized back to the right Perron line and connected to
+`smoothedChebyshevPsi`: the complete finite residue sum, including the
+identified origin coefficient, minus `secondOrderContourRemainder` differs
+from the first Riesz mean by the existing explicit full-Dirichlet-series
+Perron tail. Thus the single-endpoint crossing-zero Riesz approximation is
+closed. For farther negative-odd lines the remaining residue classification
+also includes the trivial zeros. Those trivial-zero residue identifications,
+the two-endpoint crossing-zero residue difference, and its final consumption
+by the `chebyshevPsi` sandwich remain open.
 The input format and Lean endpoint bridge exist, but no candidate FH-1, RH-1,
 or ZFR-1 envelope has yet been proved on its full stated range.

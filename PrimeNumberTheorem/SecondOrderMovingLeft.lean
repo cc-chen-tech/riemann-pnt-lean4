@@ -336,5 +336,125 @@ theorem exists_boundaryRectIntegral_secondOrderExplicitFormulaIntegrand_crossing
         MathlibAux.boundaryRectIntegral_eq_double_pole_add_finite_simple_pole_residue_sum
           r0 poles residue ha hc (by linarith) hW hdslope hpoles_mem
 
+/-- Exact finite-height second-order Perron contour shift across `s = 0`.
+Unlike the positive-left-line form, the finite residue family includes the
+origin and exports its simple Laurent coefficient explicitly. -/
+theorem
+    exists_scaledRightIntegral_eq_residue_sum_sub_secondOrderContourRemainder_crossing_zero
+    {x a c W : ℝ} (hx : 0 < x) (ha : a < 0) (hc : 0 < c) (hW : 0 < W)
+    (hboundary : ∀ p ∈
+        ([[a, c]] ×ℂ [[-(2 * Real.pi * W), 2 * Real.pi * W]] : Set ℂ),
+      p = 0 ∨ p = 1 ∨ riemannZeta p = 0 →
+        a < p.re ∧ p.re < c ∧
+          -(2 * Real.pi * W) < p.im ∧ p.im < 2 * Real.pi * W) :
+    ∃ (poles : Finset ℂ) (residue : ℂ → ℂ),
+      (∀ p ∈ poles,
+        a < p.re ∧ p.re < c ∧
+          -(2 * Real.pi * W) < p.im ∧ p.im < 2 * Real.pi * W) ∧
+      (∀ p ∈ poles, p = 0 ∨ p = 1 ∨ riemannZeta p = 0) ∧
+      (∀ p, p ∈
+          ([[a, c]] ×ℂ [[-(2 * Real.pi * W), 2 * Real.pi * W]] : Set ℂ) →
+        p = 0 ∨ p = 1 ∨ riemannZeta p = 0 → p ∈ poles) ∧
+      residue 0 =
+        deriv (fun z : ℂ =>
+          -logDeriv riemannZeta z * (x : ℂ) ^ z) 0 ∧
+      (∀ p ∈ poles, p ≠ 0 → residue p =
+        if p = 1 then (x : ℂ)
+        else -(analyticOrderNatAt riemannZeta p : ℂ) * (x : ℂ) ^ p / p ^ 2) ∧
+      (∫ w : ℝ in (-W)..W,
+          secondOrderExplicitFormulaIntegrand x
+            ((c : ℂ) + 2 * Real.pi * w * I)) =
+        (∑ p ∈ poles, residue p) -
+          secondOrderContourRemainder x a c W := by
+  have hscaled : 0 < 2 * Real.pi * W := by positivity
+  rcases
+      exists_boundaryRectIntegral_secondOrderExplicitFormulaIntegrand_crossing_zero
+        hx ha hc hscaled hboundary with
+    ⟨poles, residue, hpoles, hclass, hcomplete, hzero, hresidue, hrect⟩
+  refine ⟨poles, residue, hpoles, hclass, hcomplete, hzero, hresidue, ?_⟩
+  have hright := I_mul_verticalIntegral_eq_two_pi_I_mul_scaledIntegral
+    (secondOrderExplicitFormulaIntegrand x) c W
+  unfold MathlibAux.boundaryRectIntegral at hrect
+  simp only [smul_eq_mul] at hrect
+  rw [hright] at hrect
+  have hden : (2 * Real.pi * I : ℂ) ≠ 0 := by
+    exact mul_ne_zero (mul_ne_zero two_ne_zero
+      (Complex.ofReal_ne_zero.mpr Real.pi_ne_zero)) I_ne_zero
+  let B : ℂ := ∫ σ : ℝ in a..c,
+    secondOrderExplicitFormulaIntegrand x
+      ((σ : ℂ) + ((-(2 * Real.pi * W) : ℝ) : ℂ) * I)
+  let T : ℂ := ∫ σ : ℝ in a..c,
+    secondOrderExplicitFormulaIntegrand x
+      ((σ : ℂ) + (((2 * Real.pi * W) : ℝ) : ℂ) * I)
+  let L : ℂ := ∫ t : ℝ in (-(2 * Real.pi * W))..(2 * Real.pi * W),
+    secondOrderExplicitFormulaIntegrand x ((a : ℂ) + t * I)
+  let R : ℂ := ∫ w : ℝ in (-W)..W,
+    secondOrderExplicitFormulaIntegrand x
+      ((c : ℂ) + 2 * Real.pi * w * I)
+  let S : ℂ := ∑ p ∈ poles, residue p
+  have hrect'' : (B - T + (2 * Real.pi * I) * R) - I * L =
+      (2 * Real.pi * I) * S := by
+    simpa [B, T, L, R, S] using hrect
+  change R = S - (B - T - I * L) / (2 * Real.pi * I)
+  field_simp [hden]
+  linear_combination hrect''
+
+/-- The crossing-zero contour shift gives a genuine finite-height explicit
+formula for the first von Mangoldt Riesz mean. The only error is the concrete
+full-Dirichlet-series Perron truncation tail; all shifted contour edges remain
+inside `secondOrderContourRemainder`. -/
+theorem
+    exists_norm_residue_sum_sub_contourRemainder_sub_smoothedPsi_le_crossing_zero
+    {x a c W : ℝ} (hx : 0 < x) (ha : a < 0) (hc : 1 < c) (hW : 0 < W)
+    (hboundary : ∀ p ∈
+        ([[a, c]] ×ℂ [[-(2 * Real.pi * W), 2 * Real.pi * W]] : Set ℂ),
+      p = 0 ∨ p = 1 ∨ riemannZeta p = 0 →
+        a < p.re ∧ p.re < c ∧
+          -(2 * Real.pi * W) < p.im ∧ p.im < 2 * Real.pi * W) :
+    ∃ (poles : Finset ℂ) (residue : ℂ → ℂ),
+      (∀ p ∈ poles,
+        a < p.re ∧ p.re < c ∧
+          -(2 * Real.pi * W) < p.im ∧ p.im < 2 * Real.pi * W) ∧
+      (∀ p ∈ poles, p = 0 ∨ p = 1 ∨ riemannZeta p = 0) ∧
+      (∀ p, p ∈
+          ([[a, c]] ×ℂ [[-(2 * Real.pi * W), 2 * Real.pi * W]] : Set ℂ) →
+        p = 0 ∨ p = 1 ∨ riemannZeta p = 0 → p ∈ poles) ∧
+      residue 0 =
+        deriv (fun z : ℂ =>
+          -logDeriv riemannZeta z * (x : ℂ) ^ z) 0 ∧
+      (∀ p ∈ poles, p ≠ 0 → residue p =
+        if p = 1 then (x : ℂ)
+        else -(analyticOrderNatAt riemannZeta p : ℂ) * (x : ℂ) ^ p / p ^ 2) ∧
+      ‖((∑ p ∈ poles, residue p) -
+          secondOrderContourRemainder x a c W) -
+          (smoothedChebyshevPsi x : ℂ)‖ ≤
+        ∑' n : ℕ,
+          vonMangoldt n * (x / n) ^ c /
+            (2 * Real.pi ^ 2 * W) := by
+  rcases
+      exists_scaledRightIntegral_eq_residue_sum_sub_secondOrderContourRemainder_crossing_zero
+        hx ha (by linarith) hW hboundary with
+    ⟨poles, residue, hpoles, hclass, hcomplete, hzero, hresidue, hshift⟩
+  refine
+    ⟨poles, residue, hpoles, hclass, hcomplete, hzero, hresidue, ?_⟩
+  have hperron :=
+    norm_truncated_neg_logDeriv_riemannZeta_sub_smoothedPsi_le hx hc hW
+  have hintegral :
+      (∫ w : ℝ in (-W)..W,
+        (x : ℂ) ^ perronLine c w *
+          (-deriv riemannZeta (perronLine c w) /
+            riemannZeta (perronLine c w)) /
+              (perronLine c w) ^ 2) =
+        ∫ w : ℝ in (-W)..W,
+          secondOrderExplicitFormulaIntegrand x
+            ((c : ℂ) + 2 * Real.pi * w * I) := by
+    apply intervalIntegral.integral_congr
+    intro w hw
+    dsimp
+    rw [secondOrderExplicitFormulaIntegrand_eq_neg_logDeriv_kernel]
+    simp only [perronLine]
+  rw [hintegral, hshift] at hperron
+  exact hperron
+
 end ExplicitFormulaResidues
 end PrimeNumberTheorem
