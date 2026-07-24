@@ -448,6 +448,35 @@ example {x h a W : ℝ} (hx : 1 < x) (hh : 0 < h) (ha : a < 0)
     ⟨polesX, polesY, residueX, residueY,
       hzeroX, hzeroY, hbounds⟩
 
+example {x h : ℝ} (hx : Real.exp 1 ≤ x) (hh : 0 < h) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        PrimeNumberTheorem.ExplicitFormulaAux.goodHeight T ∧
+          ∃ (polesX polesY : Finset ℂ) (residueX residueY : ℂ → ℂ),
+            PrimeNumberTheorem.chebyshevPsi x ≤
+                (((∑ p ∈ polesY, residueY p) -
+                    (∑ p ∈ polesX, residueX p)).re +
+                  PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightTotalBudget
+                    C x h A T) /
+                    Real.log ((x + h) / x) ∧
+              (((∑ p ∈ polesY, residueY p) -
+                    (∑ p ∈ polesX, residueX p)).re -
+                  PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightTotalBudget
+                    C x h A T) /
+                    Real.log ((x + h) / x) ≤
+                PrimeNumberTheorem.chebyshevPsi (x + h) := by
+  rcases
+      PrimeNumberTheorem.ExplicitFormulaResidues.exists_C_forall_goodHeight_chebyshevPsi_bounds_crossing_zero_moving_line_neg_one
+        hx hh with
+    ⟨C, hC, hchoose⟩
+  refine ⟨C, hC, ?_⟩
+  intro A hA
+  rcases hchoose A hA with
+    ⟨T, hT, hgood, polesX, residueX, polesY, residueY,
+      _hpolesX, _hclassX, _hcompleteX, _hzeroX, _hresidueX,
+      _hpolesY, _hclassY, _hcompleteY, _hzeroY, _hresidueY, hbounds⟩
+  exact ⟨T, hT, hgood, polesX, polesY, residueX, residueY, hbounds⟩
+
 example :
     MathlibAux.boundaryRectIntegral
         (fun z : ℂ =>

@@ -1113,6 +1113,199 @@ theorem
       _ ≤ chebyshevPsi (x + h) :=
         hbounds.2
 
+/-- The selected-good-height budget for the difference of the two shifted
+second-order contour remainders on the first negative odd line. -/
+noncomputable def secondOrderSelectedHeightContourBudget
+    (C x h A T : ℝ) : ℝ :=
+  (2 *
+        (((C * (x + h) ^ (2 : ℝ) *
+              (1 + Real.log (A + 6)) ^ 2 / T ^ 2) +
+            (C * x ^ (2 : ℝ) *
+              (1 + Real.log (A + 6)) ^ 2 / T ^ 2)) *
+          ((1 + 1 / Real.log (x + h)) - (-1))) +
+      (secondOrderOddVerticalBound (x + h) 0 T +
+          secondOrderOddVerticalBound x 0 T) *
+        (2 * T)) /
+    (2 * Real.pi)
+
+/-- Total explicit endpoint budget after adding the common moving-line Perron
+tail to the selected-good-height contour-difference budget. -/
+noncomputable def secondOrderSelectedHeightTotalBudget
+    (C x h A T : ℝ) : ℝ :=
+  secondOrderSelectedHeightContourBudget C x h A T +
+    secondOrderMovingEndpointPerronBudget x h (T / (2 * Real.pi))
+
+/-- On every unit height interval above `4`, select a genuine good height and
+combine the crossing-zero residue formula, the three-edge contour estimate on
+`Re(s) = -1`, the moving Perron line, and the Riesz sandwich.
+
+The only analytic terms left in the displayed endpoint bounds are the actual
+finite residue sums and `secondOrderSelectedHeightTotalBudget`. Pole
+classification, rectangle completeness, and analytic multiplicities remain
+public so that downstream zero-sum estimates can consume this theorem. -/
+theorem
+    exists_C_forall_goodHeight_chebyshevPsi_bounds_crossing_zero_moving_line_neg_one
+    {x h : ℝ} (hx : Real.exp 1 ≤ x) (hh : 0 < h) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∃ (polesX : Finset ℂ) (residueX : ℂ → ℂ)
+              (polesY : Finset ℂ) (residueY : ℂ → ℂ),
+            (∀ p ∈ polesX,
+              -1 < p.re ∧
+                p.re < 1 + 1 / Real.log (x + h) ∧
+                -T < p.im ∧ p.im < T) ∧
+            (∀ p ∈ polesX, p = 0 ∨ p = 1 ∨ riemannZeta p = 0) ∧
+            (∀ p, p ∈
+                ([[(-1 : ℝ), 1 + 1 / Real.log (x + h)]] ×ℂ
+                  [[-T, T]] : Set ℂ) →
+              p = 0 ∨ p = 1 ∨ riemannZeta p = 0 → p ∈ polesX) ∧
+            residueX 0 =
+              deriv (fun z : ℂ =>
+                -logDeriv riemannZeta z * (x : ℂ) ^ z) 0 ∧
+            (∀ p ∈ polesX, p ≠ 0 → residueX p =
+              if p = 1 then (x : ℂ)
+              else -(analyticOrderNatAt riemannZeta p : ℂ) *
+                (x : ℂ) ^ p / p ^ 2) ∧
+            (∀ p ∈ polesY,
+              -1 < p.re ∧
+                p.re < 1 + 1 / Real.log (x + h) ∧
+                -T < p.im ∧ p.im < T) ∧
+            (∀ p ∈ polesY, p = 0 ∨ p = 1 ∨ riemannZeta p = 0) ∧
+            (∀ p, p ∈
+                ([[(-1 : ℝ), 1 + 1 / Real.log (x + h)]] ×ℂ
+                  [[-T, T]] : Set ℂ) →
+              p = 0 ∨ p = 1 ∨ riemannZeta p = 0 → p ∈ polesY) ∧
+            residueY 0 =
+              deriv (fun z : ℂ =>
+                -logDeriv riemannZeta z * ((x + h : ℝ) : ℂ) ^ z) 0 ∧
+            (∀ p ∈ polesY, p ≠ 0 → residueY p =
+              if p = 1 then ((x + h : ℝ) : ℂ)
+              else -(analyticOrderNatAt riemannZeta p : ℂ) *
+                ((x + h : ℝ) : ℂ) ^ p / p ^ 2) ∧
+            chebyshevPsi x ≤
+                (((∑ p ∈ polesY, residueY p) -
+                    (∑ p ∈ polesX, residueX p)).re +
+                  secondOrderSelectedHeightTotalBudget C x h A T) /
+                    Real.log ((x + h) / x) ∧
+              (((∑ p ∈ polesY, residueY p) -
+                    (∑ p ∈ polesX, residueX p)).re -
+                  secondOrderSelectedHeightTotalBudget C x h A T) /
+                    Real.log ((x + h) / x) ≤
+                chebyshevPsi (x + h) := by
+  have hexpOne : 1 < Real.exp 1 := Real.one_lt_exp_iff.mpr zero_lt_one
+  have hx1 : 1 < x := hexpOne.trans_le hx
+  have hxOne : 1 ≤ x := hx1.le
+  have hy1 : 1 < x + h := by linarith
+  have hyOne : 1 ≤ x + h := hy1.le
+  have hypos : 0 < x + h := zero_lt_one.trans hy1
+  have hlogOne : 1 ≤ Real.log (x + h) :=
+    (Real.le_log_iff_exp_le hypos).2 (hx.trans (by linarith))
+  have hlogpos : 0 < Real.log (x + h) := zero_lt_one.trans_le hlogOne
+  let c : ℝ := 1 + 1 / Real.log (x + h)
+  have hc : 1 < c := by
+    dsimp [c]
+    linarith [one_div_pos.mpr hlogpos]
+  have hc2 : c ≤ 2 := by
+    have hinv : 1 / Real.log (x + h) ≤ 1 :=
+      (div_le_one hlogpos).2 hlogOne
+    dsimp [c]
+    linarith
+  rcases
+      exists_goodHeight_Icc_norm_secondOrderContourRemainder_sub_neg_one_le
+        (x := x) (y := x + h) (c := c) hxOne hyOne hc hc2 with
+    ⟨C, hC, hchoose⟩
+  refine ⟨C, hC, ?_⟩
+  intro A hA
+  rcases hchoose A hA with
+    ⟨T, hT, hgood, hboundary, hremainder⟩
+  have hTpos : 0 < T := by linarith [hT.1]
+  let W : ℝ := T / (2 * Real.pi)
+  have hW : 0 < W := by
+    dsimp [W]
+    positivity
+  have hscale : 2 * Real.pi * W = T := by
+    dsimp [W]
+    field_simp [Real.pi_ne_zero]
+  have hboundaryW :
+      ∀ p ∈
+        ([[(-1 : ℝ), c]] ×ℂ
+          [[-(2 * Real.pi * W), 2 * Real.pi * W]] : Set ℂ),
+        p = 0 ∨ p = 1 ∨ riemannZeta p = 0 →
+          -1 < p.re ∧ p.re < c ∧
+            -(2 * Real.pi * W) < p.im ∧
+              p.im < 2 * Real.pi * W := by
+    simpa [hscale] using hboundary
+  rcases
+      exists_chebyshevPsi_bounds_of_secondOrderExplicitFormula_crossing_zero_moving_line
+        (a := -1) (W := W) hx1 hh (by norm_num) hW
+          (by simpa [c] using hboundaryW) with
+    ⟨polesX, residueX, polesY, residueY,
+      hpolesX, hclassX, hcompleteX, hzeroX, hresidueX,
+      hpolesY, hclassY, hcompleteY, hzeroY, hresidueY, hbounds⟩
+  let RX : ℂ := secondOrderContourRemainder x (-1) c W
+  let RY : ℂ := secondOrderContourRemainder (x + h) (-1) c W
+  let SX : ℂ := ∑ p ∈ polesX, residueX p
+  let SY : ℂ := ∑ p ∈ polesY, residueY p
+  let BC : ℝ := secondOrderSelectedHeightContourBudget C x h A T
+  let BP : ℝ :=
+    secondOrderMovingEndpointPerronBudget x h W
+  have hremainder' : ‖RY - RX‖ ≤ BC := by
+    simpa [RX, RY, BC, W, c, hscale,
+      secondOrderSelectedHeightContourBudget] using hremainder
+  have hremainderRe : |(RY - RX).re| ≤ BC :=
+    (abs_re_le_norm (RY - RX)).trans hremainder'
+  rcases abs_le.mp hremainderRe with ⟨hremainderLower, hremainderUpper⟩
+  have hbounds' :
+      chebyshevPsi x ≤
+          (((SY - RY) - (SX - RX)).re + BP) /
+            Real.log ((x + h) / x) ∧
+        (((SY - RY) - (SX - RX)).re - BP) /
+            Real.log ((x + h) / x) ≤ chebyshevPsi (x + h) := by
+    simpa [SX, SY, RX, RY, BP, c, W] using hbounds
+  have hdecomp :
+      ((SY - RY) - (SX - RX)).re =
+        (SY - SX).re - (RY - RX).re := by
+    simp
+    ring
+  have htotal :
+      secondOrderSelectedHeightTotalBudget C x h A T = BC + BP := by
+    rfl
+  have hratio : 1 < (x + h) / x :=
+    (lt_div_iff₀ (zero_lt_one.trans hx1)).2 (by linarith)
+  have hlogratio : 0 < Real.log ((x + h) / x) :=
+    Real.log_pos hratio
+  refine ⟨T, hT, hgood, polesX, residueX, polesY, residueY,
+    ?_, hclassX, ?_, hzeroX, hresidueX,
+    ?_, hclassY, ?_, hzeroY, hresidueY, ?_⟩
+  · simpa [c, hscale] using hpolesX
+  · simpa [c, hscale] using hcompleteX
+  · simpa [c, hscale] using hpolesY
+  · simpa [c, hscale] using hcompleteY
+  constructor
+  · calc
+      chebyshevPsi x ≤
+          (((SY - RY) - (SX - RX)).re + BP) /
+            Real.log ((x + h) / x) := hbounds'.1
+      _ ≤ ((SY - SX).re +
+            secondOrderSelectedHeightTotalBudget C x h A T) /
+          Real.log ((x + h) / x) := by
+        apply (div_le_div_iff_of_pos_right hlogratio).2
+        rw [hdecomp]
+        rw [htotal]
+        linarith
+  · calc
+      ((SY - SX).re -
+            secondOrderSelectedHeightTotalBudget C x h A T) /
+          Real.log ((x + h) / x) ≤
+          (((SY - RY) - (SX - RX)).re - BP) /
+            Real.log ((x + h) / x) := by
+        apply (div_le_div_iff_of_pos_right hlogratio).2
+        rw [hdecomp]
+        rw [htotal]
+        linarith
+      _ ≤ chebyshevPsi (x + h) := hbounds'.2
+
 end ExplicitFormulaResidues
 
 end PrimeNumberTheorem

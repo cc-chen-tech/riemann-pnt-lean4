@@ -151,6 +151,24 @@ Perron contribution is closed all the way to the prime-counting endpoint
 bridge. A complete optimized prime-counting estimate still requires bounds for
 the retained zero-sum difference and contour-remainder difference.
 
+The first concrete selected-height version is also closed on the line
+`Re(s) = -1`. For every `A >= 4`,
+
+```text
+exists_C_forall_goodHeight_chebyshevPsi_bounds_crossing_zero_moving_line_neg_one
+```
+
+selects `T in [A,A+1]`, proves that it is a genuine good height, and replaces
+the contour-remainder difference by the already proved three-edge budget.
+Together with the moving-line Perron tail this gives a single explicit
+`secondOrderSelectedHeightTotalBudget C x h A T` in the final endpoint
+sandwich. The displayed approximation now contains only the actual finite
+residue-sum difference plus that explicit budget; pole classification,
+rectangle completeness, and analytic multiplicities remain available to the
+caller. The remaining mathematical task is therefore sharply localized to
+estimating the finite residue-sum difference and optimizing `h` against the
+displayed budget.
+
 ## Frozen repository baseline
 
 The branch began clean at commit `638735b` on
@@ -341,8 +359,9 @@ for `chebyshevPsi x` and `chebyshevPsi (x+h)`. Hence the crossing-zero
 two-endpoint logical bridge is also closed. For farther negative-odd lines the
 remaining residue classification includes the trivial zeros. Those
 trivial-zero residue identifications remain open, as do quantitative bounds
-for the retained zero-sum difference and contour-remainder difference as
-functions of `h` and `T`. The Perron tail at the common moving line is now
-explicitly bounded and inserted into the final endpoint sandwich.
+for the retained zero-sum difference as a function of `h` and `T`. On
+`Re(s) = -1`, the contour-remainder difference and the Perron tail are now
+explicitly bounded, combined, and inserted into the selected-good-height
+endpoint sandwich.
 The input format and Lean endpoint bridge exist, but no candidate FH-1, RH-1,
 or ZFR-1 envelope has yet been proved on its full stated range.
