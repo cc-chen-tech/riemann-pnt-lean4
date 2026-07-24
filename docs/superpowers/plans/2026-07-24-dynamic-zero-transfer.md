@@ -11,6 +11,8 @@
 ## Global Constraints
 
 - Work only in `/Users/luicy/AI/Riemann/riemann-pnt-lean4/.worktrees/explicit-formula-unified-next` on branch `feat/explicit-formula-unified-next`.
+- Do not edit or commit `PrimeNumberTheorem/ZeroForcedOscillationComplementaryBound.lean`, its contracts/audits, or the `research/zero-forced-oscillation-next` worktree.
+- Put every new supporting module under the `ZeroDensityLayerBudget*.lean` prefix; the only other editable Lean module is `ZeroForcingUnifiedTransfer.lean`.
 - Preserve the half-open real-part convention `lo < re z ∧ re z ≤ hi`.
 - Keep Carlson out of the generic layer-budget theorem; expose it through an adapter.
 - Treat dynamic-height optimality as an explicit certificate, not an inferred global minimizer.
@@ -186,8 +188,8 @@ git commit -m "feat: prove finite zero-layer budget"
 **Files:**
 
 - Modify: `PrimeNumberTheorem/ZeroDensityLayerBudget.lean`
-- Create: `PrimeNumberTheorem/CarlsonLayerBudget.lean`
-- Create: `PrimeNumberTheorem/CarlsonLayerBudgetContract.lean`
+- Create: `PrimeNumberTheorem/ZeroDensityLayerBudgetCarlson.lean`
+- Create: `PrimeNumberTheorem/ZeroDensityLayerBudgetCarlsonContract.lean`
 
 **Interfaces:**
 
@@ -237,7 +239,7 @@ bounded by zero.
 Run:
 
 ```bash
-lake env lean PrimeNumberTheorem/CarlsonLayerBudgetContract.lean
+lake env lean PrimeNumberTheorem/ZeroDensityLayerBudgetCarlsonContract.lean
 ```
 
 Expected: failure because the density adapter declarations are absent.
@@ -251,7 +253,7 @@ retain the endpoint majorant to avoid an unjustified subtraction.
 
 - [ ] **Step 4: Add the Carlson specialization**
 
-In `CarlsonLayerBudget.lean`, map the actual zero finset and
+In `ZeroDensityLayerBudgetCarlson.lean`, map the actual zero finset and
 `zeroDensityCount` from `ZeroDensityCount.lean` into the abstract majorant.
 The public theorem must expose Carlson's existing range conditions and
 constants verbatim.
@@ -262,7 +264,7 @@ Run:
 
 ```bash
 lake env lean PrimeNumberTheorem/ZeroDensityLayerBudgetContract.lean
-lake env lean PrimeNumberTheorem/CarlsonLayerBudgetContract.lean
+lake env lean PrimeNumberTheorem/ZeroDensityLayerBudgetCarlsonContract.lean
 ```
 
 Expected: both exit with code `0`.
@@ -271,8 +273,8 @@ Expected: both exit with code `0`.
 
 ```bash
 git add PrimeNumberTheorem/ZeroDensityLayerBudget.lean \
-  PrimeNumberTheorem/CarlsonLayerBudget.lean \
-  PrimeNumberTheorem/CarlsonLayerBudgetContract.lean
+  PrimeNumberTheorem/ZeroDensityLayerBudgetCarlson.lean \
+  PrimeNumberTheorem/ZeroDensityLayerBudgetCarlsonContract.lean
 git commit -m "feat: adapt Carlson density to zero layers"
 ```
 
@@ -280,8 +282,8 @@ git commit -m "feat: adapt Carlson density to zero layers"
 
 **Files:**
 
-- Create: `PrimeNumberTheorem/DynamicExplicitFormulaUpper.lean`
-- Create: `PrimeNumberTheorem/DynamicExplicitFormulaUpperContract.lean`
+- Create: `PrimeNumberTheorem/ZeroDensityLayerBudgetDynamic.lean`
+- Create: `PrimeNumberTheorem/ZeroDensityLayerBudgetDynamicContract.lean`
 
 **Interfaces:**
 
@@ -343,7 +345,7 @@ every admissible `U` under an explicitly supplied optimality proof.
 Run:
 
 ```bash
-lake env lean PrimeNumberTheorem/DynamicExplicitFormulaUpperContract.lean
+lake env lean PrimeNumberTheorem/ZeroDensityLayerBudgetDynamicContract.lean
 ```
 
 Expected: failure because the dynamic upper module does not exist.
@@ -355,7 +357,8 @@ Prove the two transfer lemmas by direct specialization and transitivity.
 
 - [ ] **Step 4: Connect the truncated explicit formula**
 
-Import `ExplicitFormulaTruncated.lean` and `CarlsonLayerBudget.lean`. Add a
+Import `ExplicitFormulaTruncated.lean` and
+`ZeroDensityLayerBudgetCarlson.lean`. Add a
 zeta-specific theorem whose assumptions are exactly:
 
 1. the imported explicit-formula identity;
@@ -372,7 +375,7 @@ an existential constant.
 Run:
 
 ```bash
-lake env lean PrimeNumberTheorem/DynamicExplicitFormulaUpperContract.lean
+lake env lean PrimeNumberTheorem/ZeroDensityLayerBudgetDynamicContract.lean
 ```
 
 Expected: exit code `0`.
@@ -380,8 +383,8 @@ Expected: exit code `0`.
 - [ ] **Step 6: Commit**
 
 ```bash
-git add PrimeNumberTheorem/DynamicExplicitFormulaUpper.lean \
-  PrimeNumberTheorem/DynamicExplicitFormulaUpperContract.lean
+git add PrimeNumberTheorem/ZeroDensityLayerBudgetDynamic.lean \
+  PrimeNumberTheorem/ZeroDensityLayerBudgetDynamicContract.lean
 git commit -m "feat: add dynamic explicit-formula upper transfer"
 ```
 
@@ -389,8 +392,8 @@ git commit -m "feat: add dynamic explicit-formula upper transfer"
 
 **Files:**
 
-- Create: `PrimeNumberTheorem/RightmostClusterAntiCancellation.lean`
-- Create: `PrimeNumberTheorem/RightmostClusterAntiCancellationContract.lean`
+- Create: `PrimeNumberTheorem/ZeroDensityLayerBudgetAntiCancellation.lean`
+- Create: `PrimeNumberTheorem/ZeroDensityLayerBudgetAntiCancellationContract.lean`
 
 **Interfaces:**
 
@@ -435,7 +438,7 @@ that the theorem returns a point where the norm is at least `1`.
 Run:
 
 ```bash
-lake env lean PrimeNumberTheorem/RightmostClusterAntiCancellationContract.lean
+lake env lean PrimeNumberTheorem/ZeroDensityLayerBudgetAntiCancellationContract.lean
 ```
 
 Expected: failure because the anti-cancellation module does not exist.
@@ -459,7 +462,7 @@ statement by choosing a certificate with start beyond the requested scale.
 
 - [ ] **Step 5: Add lower transfer with complementary error**
 
-Using `ZeroForcedOscillationComplementaryBound.lean`, prove:
+Using an abstract complementary-remainder budget, prove:
 
 ```lean
 theorem pnt_error_lower_of_cluster_gap
@@ -478,7 +481,7 @@ must retain the explicit positive gap `A - B - R`.
 Run:
 
 ```bash
-lake env lean PrimeNumberTheorem/RightmostClusterAntiCancellationContract.lean
+lake env lean PrimeNumberTheorem/ZeroDensityLayerBudgetAntiCancellationContract.lean
 ```
 
 Expected: exit code `0`.
@@ -486,9 +489,8 @@ Expected: exit code `0`.
 - [ ] **Step 7: Commit**
 
 ```bash
-git add PrimeNumberTheorem/RightmostClusterAntiCancellation.lean \
-  PrimeNumberTheorem/RightmostClusterAntiCancellationContract.lean \
-  PrimeNumberTheorem/ZeroForcedOscillationComplementaryBound.lean
+git add PrimeNumberTheorem/ZeroDensityLayerBudgetAntiCancellation.lean \
+  PrimeNumberTheorem/ZeroDensityLayerBudgetAntiCancellationContract.lean
 git commit -m "feat: prove rightmost-cluster anti-cancellation"
 ```
 
@@ -547,8 +549,8 @@ structures and paired theorem.
 Import:
 
 ```lean
-import PrimeNumberTheorem.DynamicExplicitFormulaUpper
-import PrimeNumberTheorem.RightmostClusterAntiCancellation
+import PrimeNumberTheorem.ZeroDensityLayerBudgetDynamic
+import PrimeNumberTheorem.ZeroDensityLayerBudgetAntiCancellation
 ```
 
 Retain `dynamic_zero_free_upper_bound` and
@@ -563,9 +565,9 @@ Run:
 
 ```bash
 lake env lean PrimeNumberTheorem/ZeroDensityLayerBudgetContract.lean
-lake env lean PrimeNumberTheorem/CarlsonLayerBudgetContract.lean
-lake env lean PrimeNumberTheorem/DynamicExplicitFormulaUpperContract.lean
-lake env lean PrimeNumberTheorem/RightmostClusterAntiCancellationContract.lean
+lake env lean PrimeNumberTheorem/ZeroDensityLayerBudgetCarlsonContract.lean
+lake env lean PrimeNumberTheorem/ZeroDensityLayerBudgetDynamicContract.lean
+lake env lean PrimeNumberTheorem/ZeroDensityLayerBudgetAntiCancellationContract.lean
 lake env lean PrimeNumberTheorem/ZeroForcingUnifiedTransferContract.lean
 ```
 
@@ -583,8 +585,7 @@ git commit -m "feat: unify dynamic upper and oscillation transfers"
 
 **Files:**
 
-- Create: `PrimeNumberTheorem/ZeroForcingUnifiedTransferAxiomAudit.lean`
-- Modify only if required by project convention: the aggregate import file that lists `PrimeNumberTheorem` modules.
+- Create: `PrimeNumberTheorem/ZeroDensityLayerBudgetAxiomAudit.lean`
 
 **Interfaces:**
 
@@ -608,7 +609,7 @@ import PrimeNumberTheorem.ZeroForcingUnifiedTransfer
 Run:
 
 ```bash
-lake env lean PrimeNumberTheorem/ZeroForcingUnifiedTransferAxiomAudit.lean
+lake env lean PrimeNumberTheorem/ZeroDensityLayerBudgetAxiomAudit.lean
 ```
 
 Expected: exit code `0`; record every reported axiom and its originating
@@ -621,9 +622,9 @@ Run:
 ```bash
 rg -n '\bsorry\b|admit|axiom ' \
   PrimeNumberTheorem/ZeroDensityLayerBudget.lean \
-  PrimeNumberTheorem/CarlsonLayerBudget.lean \
-  PrimeNumberTheorem/DynamicExplicitFormulaUpper.lean \
-  PrimeNumberTheorem/RightmostClusterAntiCancellation.lean \
+  PrimeNumberTheorem/ZeroDensityLayerBudgetCarlson.lean \
+  PrimeNumberTheorem/ZeroDensityLayerBudgetDynamic.lean \
+  PrimeNumberTheorem/ZeroDensityLayerBudgetAntiCancellation.lean \
   PrimeNumberTheorem/ZeroForcingUnifiedTransfer.lean
 ```
 
@@ -642,7 +643,7 @@ Expected: exit code `0`.
 - [ ] **Step 5: Commit the audit**
 
 ```bash
-git add PrimeNumberTheorem/ZeroForcingUnifiedTransferAxiomAudit.lean
+git add PrimeNumberTheorem/ZeroDensityLayerBudgetAxiomAudit.lean
 git commit -m "test: audit unified zero transfer axioms"
 ```
 

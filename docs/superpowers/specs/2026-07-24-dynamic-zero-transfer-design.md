@@ -130,7 +130,7 @@ Primary public concepts:
 - `layeredTailBudget`;
 - the partition and weighted-tail theorems.
 
-### `DynamicExplicitFormulaUpper.lean`
+### `ZeroDensityLayerBudgetDynamic.lean`
 
 This module adapts the abstract layered budget to the project's truncated
 explicit formula. It owns:
@@ -145,7 +145,7 @@ explicit formula. It owns:
 The generic upper theorem must remain usable with future zero-density inputs,
 including bounds stronger than Carlson near the Vinogradov-Korobov boundary.
 
-### `RightmostClusterAntiCancellation.lean`
+### `ZeroDensityLayerBudgetAntiCancellation.lean`
 
 This module packages the finite rightmost cluster and converts coefficient
 energy plus the existing mean-square theorem into witness scales. It owns the
@@ -163,6 +163,16 @@ This is the public facade. It imports the three focused modules and states:
 The current skeleton in this file is replaced incrementally. A theorem that
 merely substitutes `T x` into a fixed-height theorem is retained only as a
 compatibility lemma and is not presented as the main result.
+
+### Ownership boundary
+
+`PrimeNumberTheorem/ZeroForcedOscillationComplementaryBound.lean` and its
+contracts/audits are owned exclusively by branch
+`research/zero-forced-oscillation-next`. This feature neither edits nor
+commits a same-name copy. The lower transfer consumes an abstract
+complementary-remainder budget; the canonical owner can provide the concrete
+adapter after integration. All new supporting modules in this feature use the
+prefix `ZeroDensityLayerBudget`.
 
 ## Data Flow
 
