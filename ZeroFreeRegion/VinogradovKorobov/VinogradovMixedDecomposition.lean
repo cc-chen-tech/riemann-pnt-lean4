@@ -644,6 +644,148 @@ theorem norm_normalizedVinogradovMomentMod_le_shiftedExactScales_add_terminal
           p a b k r t Y hrk hkp hb hgammaa hbudget htail hscale)
         (by positivity)
 
+/-- Any shifted exact-scale layer admits the ambient tuple bound.  This is
+used after a chosen cutoff where the far-scale budget is no longer useful. -/
+theorem normalizedVinogradovShiftedExactScaleMixedMomentSum_le_trivial
+    (p a b k r t Y gamma : ℕ) [Fact p.Prime] :
+    normalizedVinogradovShiftedExactScaleMixedMomentSum
+        p a b k r t Y gamma ≤
+      (vinogradovCenterPairExactScaleSet p a b gamma).card *
+        ((((p ^ b * Y) ^ (2 * r) * Y ^ (2 * t) : ℕ)) : ℝ) := by
+  letI : NeZero (p ^ ((k - r + 1) * b)) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  unfold normalizedVinogradovShiftedExactScaleMixedMomentSum
+  calc
+    (∑ z ∈ vinogradovCenterPairExactScaleSet p a b gamma,
+      ‖normalizedVinogradovMixedModConditionedMoment
+        p ((k - r + 1) * b) a b k r t (p ^ b * Y) Y
+          (vinogradovCenterValue z.1)
+          (vinogradovCenterValue z.2 - (p : ℤ) ^ b)‖) ≤
+      ∑ _z ∈ vinogradovCenterPairExactScaleSet p a b gamma,
+        ((((p ^ b * Y) ^ (2 * r) * Y ^ (2 * t) : ℕ)) : ℝ) := by
+      apply Finset.sum_le_sum
+      intro z hz
+      exact norm_normalizedVinogradovMixedModConditionedMoment_le_trivial
+        p ((k - r + 1) * b) a b k r t (p ^ b * Y) Y
+          (vinogradovCenterValue z.1)
+          (vinogradovCenterValue z.2 - (p : ℤ) ^ b)
+    _ = (vinogradovCenterPairExactScaleSet p a b gamma).card *
+        ((((p ^ b * Y) ^ (2 * r) * Y ^ (2 * t) : ℕ)) : ℝ) := by
+      simp
+
+/-- Feasible cutoff recurrence for the shifted all-center sum.  Only scales
+`gamma < g` need to satisfy the far-scale hypotheses; the remaining exact
+scales and terminal layer use honest trivial bounds. -/
+theorem
+    normalizedVinogradovShiftedAllCenterMixedMomentSum_le_cutoffScales_add_trivial
+    (p a b g k r t Y : ℕ) [Fact p.Prime]
+    (hgb : g ≤ b)
+    (hrk : r ≤ k) (hkp : k < p) (hb : 0 < b)
+    (hgammaa : ∀ gamma < g, gamma ≤ a)
+    (hbudget : ∀ gamma < g,
+      gamma * (k - r) + a * r ≤ (k - r + 1) * b)
+    (htail : (k - r + 1) * b ≤ a * (r + 1))
+    (hscale : ∀ gamma < g,
+      p ^ b * Y ≤ p ^ a * p ^ vinogradovFarScale k r a b gamma) :
+    normalizedVinogradovShiftedAllCenterMixedMomentSum
+        p ((k - r + 1) * b) a b k r t Y ≤
+      ((∑ gamma ∈ Finset.range g,
+        (vinogradovCenterPairExactScaleSet p a b gamma).card *
+          (‖normalizedVinogradovMomentMod
+            (p ^ vinogradovFarScale k r a b gamma) r r
+              (p ^ vinogradovFarScale k r a b gamma)‖ *
+            (Y ^ (2 * t) : ℝ))) +
+        ∑ gamma ∈ Finset.Ico g b,
+          (vinogradovCenterPairExactScaleSet p a b gamma).card *
+            ((((p ^ b * Y) ^ (2 * r) * Y ^ (2 * t) : ℕ)) : ℝ)) +
+        (p ^ a : ℕ) *
+          ((((p ^ b * Y) ^ (2 * r) * Y ^ (2 * t) : ℕ)) : ℝ) := by
+  rw [
+    normalizedVinogradovShiftedAllCenterMixedMomentSum_eq_exactScales_add_terminal]
+  rw [← Finset.sum_range_add_sum_Ico
+    (fun gamma ↦
+      normalizedVinogradovShiftedExactScaleMixedMomentSum
+        p a b k r t Y gamma) hgb]
+  apply add_le_add
+  · apply add_le_add
+    · apply Finset.sum_le_sum
+      intro gamma hgamma
+      have hgg : gamma < g := Finset.mem_range.mp hgamma
+      exact
+        normalizedVinogradovShiftedExactScaleMixedMomentSum_le_farScaleMoment
+          p a b k r t Y gamma hrk hkp hb (hgg.trans_le hgb)
+            (hgammaa gamma hgg) (hbudget gamma hgg) htail
+            (hscale gamma hgg)
+    · apply Finset.sum_le_sum
+      intro gamma hgamma
+      exact normalizedVinogradovShiftedExactScaleMixedMomentSum_le_trivial
+        p a b k r t Y gamma
+  · exact normalizedVinogradovShiftedTerminalMixedMomentSum_le_trivial
+      p a b k r t Y
+
+/-- Ordinary-moment version of the feasible cutoff recurrence. -/
+theorem norm_normalizedVinogradovMomentMod_le_cutoffScales_add_trivial
+    (p a b g k r t Y : ℕ) [Fact p.Prime]
+    (hr : 0 < r) (ht : 0 < t) (hgb : g ≤ b)
+    (hrk : r ≤ k) (hkp : k < p) (hb : 0 < b)
+    (hgammaa : ∀ gamma < g, gamma ≤ a)
+    (hbudget : ∀ gamma < g,
+      gamma * (k - r) + a * r ≤ (k - r + 1) * b)
+    (htail : (k - r + 1) * b ≤ a * (r + 1))
+    (hscale : ∀ gamma < g,
+      p ^ b * Y ≤ p ^ a * p ^ vinogradovFarScale k r a b gamma) :
+    ‖normalizedVinogradovMomentMod
+        (p ^ ((k - r + 1) * b)) k (r + t) (p ^ b * Y)‖ ≤
+      (((p ^ a : ℕ) : ℝ) ^ (2 * r - 1)) *
+        (((p ^ b : ℕ) : ℝ) ^ (2 * t - 1)) *
+          (((∑ gamma ∈ Finset.range g,
+            (vinogradovCenterPairExactScaleSet p a b gamma).card *
+              (‖normalizedVinogradovMomentMod
+                (p ^ vinogradovFarScale k r a b gamma) r r
+                  (p ^ vinogradovFarScale k r a b gamma)‖ *
+                (Y ^ (2 * t) : ℝ))) +
+            ∑ gamma ∈ Finset.Ico g b,
+              (vinogradovCenterPairExactScaleSet p a b gamma).card *
+                ((((p ^ b * Y) ^ (2 * r) *
+                  Y ^ (2 * t) : ℕ)) : ℝ)) +
+            (p ^ a : ℕ) *
+              ((((p ^ b * Y) ^ (2 * r) *
+                Y ^ (2 * t) : ℕ)) : ℝ)) := by
+  letI : NeZero (p ^ a) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  letI : NeZero (p ^ b) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  letI : NeZero (p ^ ((k - r + 1) * b)) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  calc
+    ‖normalizedVinogradovMomentMod
+        (p ^ ((k - r + 1) * b)) k (r + t) (p ^ b * Y)‖ ≤
+      (((p ^ a : ℕ) : ℝ) ^ (2 * r - 1)) *
+        (((p ^ b : ℕ) : ℝ) ^ (2 * t - 1)) *
+          normalizedVinogradovShiftedAllCenterMixedMomentSum
+            p ((k - r + 1) * b) a b k r t Y :=
+      norm_normalizedVinogradovMomentMod_le_shiftedAllCenterMixedMomentSum
+        p ((k - r + 1) * b) a b k r t Y hr ht
+    _ ≤ (((p ^ a : ℕ) : ℝ) ^ (2 * r - 1)) *
+        (((p ^ b : ℕ) : ℝ) ^ (2 * t - 1)) *
+          (((∑ gamma ∈ Finset.range g,
+            (vinogradovCenterPairExactScaleSet p a b gamma).card *
+              (‖normalizedVinogradovMomentMod
+                (p ^ vinogradovFarScale k r a b gamma) r r
+                  (p ^ vinogradovFarScale k r a b gamma)‖ *
+                (Y ^ (2 * t) : ℝ))) +
+            ∑ gamma ∈ Finset.Ico g b,
+              (vinogradovCenterPairExactScaleSet p a b gamma).card *
+                ((((p ^ b * Y) ^ (2 * r) *
+                  Y ^ (2 * t) : ℕ)) : ℝ)) +
+            (p ^ a : ℕ) *
+              ((((p ^ b * Y) ^ (2 * r) *
+                Y ^ (2 * t) : ℕ)) : ℝ)) := by
+      exact mul_le_mul_of_nonneg_left
+        (normalizedVinogradovShiftedAllCenterMixedMomentSum_le_cutoffScales_add_trivial
+          p a b g k r t Y hgb hrk hkp hb hgammaa hbudget htail hscale)
+        (by positivity)
+
 end
 
 end ZeroFreeRegion.VinogradovKorobov
