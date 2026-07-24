@@ -474,7 +474,8 @@ example {x h : ℝ} (hx : Real.exp 1 ≤ x) (hh : 0 < h) :
   rcases hchoose A hA with
     ⟨T, hT, hgood, polesX, residueX, polesY, residueY,
       _hpolesX, _hclassX, _hcompleteX, _hzeroX, _hresidueX,
-      _hpolesY, _hclassY, _hcompleteY, _hzeroY, _hresidueY, hbounds⟩
+      _hpolesY, _hclassY, _hcompleteY, _hzeroY, _hresidueY,
+      _hpolesEq, hbounds⟩
   exact ⟨T, hT, hgood, polesX, polesY, residueX, residueY, hbounds⟩
 
 example :

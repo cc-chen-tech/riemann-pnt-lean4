@@ -165,7 +165,11 @@ Together with the moving-line Perron tail this gives a single explicit
 sandwich. The displayed approximation now contains only the actual finite
 residue-sum difference plus that explicit budget; pole classification,
 rectangle completeness, and analytic multiplicities remain available to the
-caller. The remaining mathematical task is therefore sharply localized to
+caller. The theorem also proves that the two endpoint pole finsets are equal,
+using their classification and rectangle-completeness certificates. Therefore
+the residue-sum difference may be rewritten on one common multiplicity-aware
+zero set rather than compared across unrelated existential finsets. The
+remaining mathematical task is therefore sharply localized to
 estimating the finite residue-sum difference and optimizing `h` against the
 displayed budget.
 

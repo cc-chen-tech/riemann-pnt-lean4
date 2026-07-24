@@ -1183,6 +1183,7 @@ theorem
               if p = 1 then ((x + h : ℝ) : ℂ)
               else -(analyticOrderNatAt riemannZeta p : ℂ) *
                 ((x + h : ℝ) : ℂ) ^ p / p ^ 2) ∧
+            polesX = polesY ∧
             chebyshevPsi x ≤
                 (((∑ p ∈ polesY, residueY p) -
                     (∑ p ∈ polesX, residueX p)).re +
@@ -1275,9 +1276,36 @@ theorem
     (lt_div_iff₀ (zero_lt_one.trans hx1)).2 (by linarith)
   have hlogratio : 0 < Real.log ((x + h) / x) :=
     Real.log_pos hratio
+  have hpolesEq : polesX = polesY := by
+    ext p
+    constructor
+    · intro hp
+      have hpBounds := hpolesX p hp
+      apply hcompleteY p
+      · rw [Complex.mem_reProdIm,
+          Set.uIcc_of_le (by linarith : (-1 : ℝ) ≤
+            1 + 1 / Real.log (x + h)),
+          Set.uIcc_of_le (by linarith [hW] :
+            -(2 * Real.pi * W) ≤ 2 * Real.pi * W)]
+        exact
+          ⟨⟨hpBounds.1.le, hpBounds.2.1.le⟩,
+            ⟨hpBounds.2.2.1.le, hpBounds.2.2.2.le⟩⟩
+      · exact hclassX p hp
+    · intro hp
+      have hpBounds := hpolesY p hp
+      apply hcompleteX p
+      · rw [Complex.mem_reProdIm,
+          Set.uIcc_of_le (by linarith : (-1 : ℝ) ≤
+            1 + 1 / Real.log (x + h)),
+          Set.uIcc_of_le (by linarith [hW] :
+            -(2 * Real.pi * W) ≤ 2 * Real.pi * W)]
+        exact
+          ⟨⟨hpBounds.1.le, hpBounds.2.1.le⟩,
+            ⟨hpBounds.2.2.1.le, hpBounds.2.2.2.le⟩⟩
+      · exact hclassY p hp
   refine ⟨T, hT, hgood, polesX, residueX, polesY, residueY,
     ?_, hclassX, ?_, hzeroX, hresidueX,
-    ?_, hclassY, ?_, hzeroY, hresidueY, ?_⟩
+    ?_, hclassY, ?_, hzeroY, hresidueY, hpolesEq, ?_⟩
   · simpa [c, hscale] using hpolesX
   · simpa [c, hscale] using hcompleteX
   · simpa [c, hscale] using hpolesY
