@@ -40,4 +40,17 @@ example
             pintzCarlsonSqrtLogScale x) :=
   pintzEnvelope_exp_kernel_le_gapKernel hP henvelope
 
+example :
+    ∃ c > 0, ∀ (C p sigma k : ℝ), 0 ≤ C →
+      (4 * sigma * (1 - sigma)) * k < 2 * Real.sqrt c →
+      Tendsto
+        (fun x : ℝ =>
+          C * pintzCarlsonSqrtLogScale x ^ p *
+            Real.exp
+              ((4 * sigma * (1 - sigma)) * k *
+                  pintzCarlsonSqrtLogScale x -
+                Pintz.pintzZeroEnvelope x))
+        atTop (𝓝 0) :=
+  exists_pintzConstant_carlsonWeightedKernel_tendsto
+
 end PrimeNumberTheorem
