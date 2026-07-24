@@ -1,0 +1,8 @@
+import HardyTheorem.SelbergSqrtZetaMollifier
+
+#print axioms HardyTheorem.selbergSqrtZetaEulerFactor_sq
+#print axioms HardyTheorem.sum_antidiagonal_selbergSqrtZetaLocalCoeff_mul
+#print axioms HardyTheorem.selbergSqrtZetaCoeff_isMultiplicative
+#print axioms HardyTheorem.selbergSqrtZetaCoeff_mul_self
+#print axioms HardyTheorem.selbergShortTaperedSqrtZeta_sq_apply_prime
+#print axioms HardyTheorem.selbergShortTaperedSqrtZeta_sq_mul_zeta_apply_prime
