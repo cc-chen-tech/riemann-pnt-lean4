@@ -124,12 +124,13 @@ python3 -m experiments.rh.weil_extremal_interval_overlap verify \
 
 This materially prepares certificate-chain links 1 and 2 at small `N`: two
 outward-rounded assemblies overlap entrywise and exact symmetrization is by
-intersection. It is not Gate A. The registered full `(100,200)` run still
-needs both retained `401 x 401` interval matrices, their entrywise and
-transpose intersections, an exact rational LDL certificate accepted by the
-checker, a nonnegative analytic transfer margin, and per-entry narrowing at a
-second precision at least 512 bits higher. The small artifact emits no LDL
-claim and records `gate_a_status = "not_satisfied"`.
+intersection. It is not Gate A. This small artifact itself contains no
+`401 x 401` matrix, exact rational LDL certificate, analytic transfer margin,
+or second-precision evidence. The later full-size sharded artifact below
+closes the dual-route assembly and per-entry narrowing requirements at
+`(100,200)`, but the full sign and analytic-transfer requirements remain open.
+The small artifact emits no LDL claim and records
+`gate_a_status = "not_satisfied"`.
 
 ### Second-Precision Narrowing at Small N
 
@@ -221,6 +222,31 @@ This closes only the finite interval-sign link for the small `9 x 9` model.
 The artifact deliberately records `gate_a_status = "not_satisfied"`. It does
 not contain the registered `(100,200)` matrix, an analytic truncation or
 basis-change margin, an infinite-dimensional transfer, or an RH conclusion.
+
+### Full-Size Sharded Assembly at the Registered Point
+
+The full-size artifact
+`experiments/rh/reference/groskin_2607_02828_v1_c100_N200_arb_cross_precision_sharded/`
+now retains both independent `401 x 401` Arb route matrices at 384 and 896
+bits on the same 120-digit rational grid. Its 64-by-64 tiling keeps peak memory
+bounded without weakening any interval endpoint. A standard-library verifier
+replays all 160801 ordered-entry comparisons from 250 committed files.
+
+Both routes overlap in every entry at both precisions. Every high-precision
+route interval and every high-precision symmetrized route intersection is
+contained in and strictly narrower than its low-precision counterpart. The
+root manifest SHA-256 is
+`eabc5fdce5e21a0a69e96f7dd7dffd0b1328833a04f95557fa4529c88b07605d`.
+An independent regeneration of all 49 low-precision auxiliary tiles was
+byte-identical.
+
+This closes the full-size assembly, route-overlap, exact symmetrization, and
+per-entry second-precision-narrowing requirements. It does not close Gate A.
+At 896 bits, rigorous interval eigenvalue isolation did not determine the
+spectrum. No exact rational or interval positive certificate and no strict
+negative Rayleigh witness is available. The analytic tail and basis-change
+transfer are also absent. The artifact therefore keeps
+`gate_a_status = "not_satisfied"`.
 
 ## Registered Mathematical Target
 
@@ -341,12 +367,14 @@ and 5 for the registered Weil matrix remain absent.
 
 At `(c, N) = (100, 200)`, for the full `401 x 401` matrix:
 
-- both assembly routes overlap entrywise;
+- both assembly routes overlap entrywise (completed by the sharded artifact);
 - the exact checker accepts the emitted rational LDL certificate;
 - the analytic transfer margin is at least zero;
 - repeating at two precision settings separated by at least 512 bits preserves
-  the certified inertia and narrows every entry enclosure;
-- all artifact hashes and the replay command are present.
+  the certified inertia and narrows every entry enclosure (entrywise narrowing
+  is complete; certified intersection inertia remains open);
+- all artifact hashes and the replay command are present (complete for the
+  assembly artifact; the sign and analytic-transfer artifacts remain absent).
 
 Failure of Gate A stops the `N = 250` claim search. Debugging may continue, but
 no mathematical conclusion is registered.

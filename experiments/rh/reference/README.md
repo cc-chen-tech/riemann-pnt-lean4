@@ -148,3 +148,56 @@ This is a strict finite-interval result at `(c,N)=(13,4)`, not Gate A. It
 contains no `(100,200)` matrix, analytic tail or basis-change transfer, full
 Guinand--Weil criterion, or RH conclusion. Its explicit Gate A status remains
 `not_satisfied`.
+
+## Full-Size Sharded Arb Assembly and Cross-Precision Overlap
+
+`groskin_2607_02828_v1_c100_N200_arb_cross_precision_sharded/` retains the
+full ordered `401 x 401` matrices at the registered `(c,N)=(100,200)` point.
+It evaluates both the auxiliary `S/CC/XC` route and the distinct CCM
+hypergeometric/Lerch route at 384 and 896 bits. All four assemblies use the
+same 120-digit rational outward-enclosure grid.
+
+The data are split into deterministic `64 x 64` gzip tiles. Each route has 49
+tiles, and the cross-precision layer has 49 tiles. The complete directory has
+250 files and occupies exactly `125977937` bytes. The largest compressed tile
+is `1075277` bytes. This avoids the monolithic in-memory `Fraction` and JSON
+representation while retaining every rigorous interval endpoint.
+
+The standard-library verifier checks every compressed and uncompressed digest,
+the exact tile partition, all source-manifest bindings, and every rational
+interval comparison. For all `160801` ordered entries, at both precisions:
+
+- the two independent route intervals overlap;
+- the route intersection remains nonempty after transpose symmetrization;
+- each 896-bit route interval is contained in and strictly narrower than its
+  384-bit counterpart;
+- the 896-bit symmetric route intersection is contained in and strictly
+  narrower than its 384-bit counterpart.
+
+The root manifest SHA-256 is
+`eabc5fdce5e21a0a69e96f7dd7dffd0b1328833a04f95557fa4529c88b07605d`.
+Its canonical payload hash is
+`bd42ef8d3dd9f92d5ccba64061fcc63043da2f046a2b9572055cd0fb0539262d`.
+Verification does not import `python-flint`:
+
+```sh
+python3 -S -m experiments.rh.weil_extremal_sharded verify-cross \
+  experiments/rh/reference/groskin_2607_02828_v1_c100_N200_arb_cross_precision_sharded/manifest.json
+```
+
+On the recorded local run, source-route generation took `31.52s`, `9.62s`,
+`66.91s`, and `13.58s` for low auxiliary, low CCM, high auxiliary, and high
+CCM respectively. Cross-artifact generation took `124.08s`; an independent
+standard-library replay took `95.83s`. A second complete low-precision
+auxiliary regeneration took `49.96s` and matched all 49 tiles and the manifest
+byte-for-byte, with tree digest
+`281ff9577d27f981f0a783c354b1749cb24a657b1526c141b3f0667d2bc15dcc`.
+
+This closes the full-size dual-route assembly, overlap, symmetrization, and
+second-precision entrywise-narrowing parts of the registered baseline. It does
+not certify the sign of the `401 x 401` intersection matrix. At 896 bits, a
+rigorous Arb eigenvalue-isolation attempt did not isolate the spectrum, and no
+strict positive certificate or negative Rayleigh witness was obtained.
+Exact/interval sign certification, the analytic tail budget, the basis-change
+transfer, the full Guinand--Weil criterion, and any RH conclusion remain open.
+The artifact therefore records `gate_a_status = "not_satisfied"`.

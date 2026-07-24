@@ -94,8 +94,9 @@ entry balls.
 
 ## Gate status
 
-This closes only a same-route local replay of the published `N=200`
-calibration. Gate A remains open because it additionally requires:
+This section records the status immediately after the same-route local replay
+of the published `N=200` calibration. At that point Gate A remained open
+because it additionally required:
 
 - a second, independent matrix assembly with entrywise-overlapping intervals;
 - an exact rational certificate replay, rather than only the upstream Arb
@@ -105,7 +106,9 @@ calibration. Gate A remains open because it additionally requires:
 - the registered analytic transfer-margin check.
 
 No `N=250` computation, strict improvement, new positivity theorem, or result
-about the Riemann Hypothesis is claimed.
+about the Riemann Hypothesis is claimed. The full-size sharded update below
+subsequently closes the first and third bullets' assembly/narrowing portions,
+but not the exact sign or analytic-transfer requirements.
 
 ## 2026-07-24 small-N preparation update
 
@@ -145,3 +148,30 @@ Gate A reproduction. No corresponding exact certificate has been connected
 here to the `401 x 401` `(100,200)` matrix, and no analytic tail, basis-change,
 or infinite-dimensional transfer has been supplied. The artifact therefore
 continues to report `gate_a_status = "not_satisfied"` and gives no RH claim.
+
+## 2026-07-24 full-size sharded assembly update
+
+The later directory
+`experiments/rh/reference/groskin_2607_02828_v1_c100_N200_arb_cross_precision_sharded/`
+retains the previously missing second full `401 x 401` assembly route. Both
+the auxiliary `S/CC/XC` and CCM hypergeometric/Lerch formulas were evaluated
+at 384 and 896 bits with rigorous outward-rounded Arb intervals on a common
+120-digit rational grid.
+
+The matrices are stored as 64-by-64 deterministic gzip tiles. Exact
+standard-library replay proves, for all 160801 ordered entries, that the routes
+overlap at both precisions and that each high-precision route and symmetrized
+route intersection is contained in and strictly narrower than its
+low-precision counterpart. The root manifest SHA-256 is
+`eabc5fdce5e21a0a69e96f7dd7dffd0b1328833a04f95557fa4529c88b07605d`.
+Independent regeneration of the complete low-precision auxiliary route was
+byte-identical across all 49 tiles and its manifest.
+
+This update closes the full-size dual-assembly, overlap, symmetrization, and
+entrywise-narrowing parts of Gate A. It does not close the sign requirement.
+A 896-bit Arb interval eigenvalue run failed to isolate the spectrum, and no
+rigorous positive certificate or negative Rayleigh witness was obtained.
+The existing 9000- and 9512-bit same-route positive-inertia replays do not
+substitute for a sign certificate for this retained route intersection. The
+analytic tail and basis-change transfer also remain open, so
+`gate_a_status = "not_satisfied"` and no RH conclusion is claimed.
