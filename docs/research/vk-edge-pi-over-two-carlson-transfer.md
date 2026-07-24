@@ -278,7 +278,26 @@ Before this result is described as new mathematics:
 4. only then create a separate Lean formalization branch for the
    Carlson-to-missing-harmonic bridge and the localized transform.
 
-At present Lean verifies the Carlson Big-O input and the multiplicity
-infrastructure only. The `o(T)` specialization, missing-harmonic argument,
-annihilating filters, and final interval theorem in this note remain a paper
-proof candidate.
+The new module
+`PrimeNumberTheorem/VKEdgePiOverTwoCarlson.lean` now verifies:
+
+1. Carlson's Big-O estimate implies `N(sigma,T)=o(T)` for every fixed
+   `1/2<sigma<1`;
+2. a multiplicity-counted bound
+   `N(sigma,(2M+2)gamma)<=M` forces one of the first `M+1` odd harmonic
+   points to be zeta-nonzero;
+3. sublinear density supplies such an `M`;
+4. the associated missing-harmonic dual denominator is positive and its
+   reciprocal is strictly larger than `pi/2`;
+5. consequently every fixed vertical line `beta>sigma>1/2` has a missing odd
+   harmonic carrying a certified strict dual gap.
+
+The contract and axiom audit are
+`Test/VKEdgePiOverTwoCarlsonContract.lean` and
+`Test/VKEdgePiOverTwoCarlsonAxiomAudit.lean`. They use only Lean/Mathlib's
+standard logical axioms.
+
+This still does **not** make the final PNT oscillation theorem Lean-verified.
+The finite-pole annihilating transform, its uniform contour decay, and the
+conversion of the dual gap into an actual `psi(x)-x` lower bound on every
+`[Y,Y^7]` remain the analytic transfer gap.
