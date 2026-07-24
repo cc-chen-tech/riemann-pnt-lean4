@@ -139,8 +139,23 @@ example (T : ℝ) :
       Filter.atTop (nhds 0) :=
   tendsto_normalized_norm_complementaryZeroPackageContribution_atTop T
 
-#check
+example (τ : ℝ → ℝ) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      ((∀ᶠ y : ℝ in Filter.atTop, 0 ≤ y) →
+        (∀ᶠ y : ℝ in Filter.atTop, 4 ≤ τ y) →
+        Filter.Tendsto
+          (fun y : ℝ =>
+            Real.exp (-maximalComplementaryRealPartGap (τ y) * y) *
+              (C * (1 + Real.log (τ y + 6)) ^ 2))
+          Filter.atTop (nhds 0) →
+        Filter.Tendsto
+          (fun y : ℝ =>
+            Real.exp (-(maximalZeroRealPart (τ y)) * y) *
+              ‖complementaryZeroPackageContribution (Real.exp y) (τ y)
+                (maximalZeroRealPart (τ y))‖)
+          Filter.atTop (nhds 0)) :=
   exists_C_tendsto_normalized_norm_complementaryZeroPackageContribution_along_moving_height_of_majorant
+    τ
 
 example (y : ℝ) (hy : 0 ≤ y) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ T : ℝ, 4 ≤ T →
@@ -435,6 +450,12 @@ example (T : ℝ) (hcard : (maximalRealPartZeroPackage T).card = 1) :
     maximalZeroPackageUnifiedCanonicalIntervalLength T =
       maximalZeroPackageCanonicalIntervalLength T :=
   maximalZeroPackageUnifiedCanonical_eq_exact_of_card_eq_one T hcard
+
+example (T : ℝ)
+    (hpackage : ¬(maximalRealPartZeroPackage T).Nontrivial) :
+    maximalZeroPackageUnifiedCanonicalIntervalLength T =
+      maximalZeroPackageCanonicalIntervalLength T :=
+  maximalZeroPackageUnifiedCanonical_eq_exact_of_not_nontrivial T hpackage
 
 example
     (T : ℝ) (hpackage : (maximalRealPartZeroPackage T).Nonempty)
