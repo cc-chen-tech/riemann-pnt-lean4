@@ -25,6 +25,20 @@ example (T : ℝ) (hT : (nontrivialZerosFinset T).Nonempty) :
   maximalRealPartZeroPackage_nonempty T hT
 
 example (T : ℝ) :
+    maximalRealPartZeroPackage T ⊆ nontrivialZerosFinset T :=
+  maximalRealPartZeroPackage_subset_nontrivialZerosFinset T
+
+example (T : ℝ) :
+    (maximalRealPartZeroPackage T).card ≤
+      (nontrivialZerosFinset T).card :=
+  card_maximalRealPartZeroPackage_le_card_nontrivialZerosFinset T
+
+example : ∃ C : ℝ, 0 ≤ C ∧ ∀ T : ℝ, 4 ≤ T →
+    ((maximalRealPartZeroPackage T).card : ℝ) ≤
+      C * T * (1 + Real.log (T + 6)) :=
+  exists_card_maximalRealPartZeroPackage_le_mul_log
+
+example (T : ℝ) :
     0 < maximalComplementaryRealPartGap T :=
   maximalComplementaryRealPartGap_pos T
 
@@ -203,6 +217,12 @@ example (T : ℝ)
           maximalZeroPackageMinimumImaginarySpacing T + 1 :=
   maximalZeroPackageCanonicalIntervalLength_le_card_sub_one_div_spacing
     T hpackage
+
+example : ∃ C T0 : ℝ, 0 ≤ C ∧ 8 ≤ T0 ∧ ∀ T : ℝ, T0 ≤ T →
+    maximalZeroPackageCanonicalIntervalLength T ≤
+      2 * (C * T * (1 + Real.log (T + 6))) /
+          maximalZeroPackageMinimumImaginarySpacing T + 1 :=
+  exists_C_T0_forall_maximalZeroPackageCanonicalIntervalLength_le_mul_log_div_spacing
 
 example (T a b : ℝ)
     (hpackage : (maximalRealPartZeroPackage T).Nonempty)

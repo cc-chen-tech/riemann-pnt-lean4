@@ -21,6 +21,8 @@ package of `ZeroForcedOscillationExplicitFormula.lean`:
   height-`T` truncation sum;
 * an explicit `B_T / E_T` interval-length threshold making the finite
   mean-square amplitude strictly positive;
+* an `O(T log T)` bound for the size of the maximal package, converting the
+  canonical interval length to an explicit `O(T log T / Δ_T)` bound;
 * eventual nonemptiness of every maximal package from Hardy's theorem;
 * a moving-height lower bound in which the raw finite-height approximation
   norm is replaced by the proved pointwise-in-`x`, all-heights rate.
@@ -99,6 +101,39 @@ theorem maximalRealPartZeroPackage_nonempty
   rcases mem_nontrivialZerosFinset.mp hρ with ⟨hzero, him⟩
   refine ⟨hzero, him, ?_⟩
   rw [maximalZeroRealPart, dif_pos hT, hre]
+
+/-- The maximal-real-part package is a subfamily of the full height
+truncation. -/
+theorem maximalRealPartZeroPackage_subset_nontrivialZerosFinset (T : ℝ) :
+    maximalRealPartZeroPackage T ⊆ nontrivialZerosFinset T := by
+  intro ρ hρ
+  have hdata := mem_maximalRealPartZeroPackage.mp hρ
+  exact mem_nontrivialZerosFinset.mpr ⟨hdata.1, hdata.2.1⟩
+
+/-- In particular, the maximal package cannot contain more zeros than the
+full height truncation. -/
+theorem card_maximalRealPartZeroPackage_le_card_nontrivialZerosFinset (T : ℝ) :
+    (maximalRealPartZeroPackage T).card ≤
+      (nontrivialZerosFinset T).card :=
+  Finset.card_le_card
+    (maximalRealPartZeroPackage_subset_nontrivialZerosFinset T)
+
+/-- The global zero-count estimate bounds the cardinality of every maximal
+real-part package by `O(T log T)`. -/
+theorem exists_card_maximalRealPartZeroPackage_le_mul_log :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ T : ℝ, 4 ≤ T →
+      ((maximalRealPartZeroPackage T).card : ℝ) ≤
+        C * T * (1 + Real.log (T + 6)) := by
+  rcases ExplicitFormulaAux.exists_card_nontrivialZerosFinset_le_mul_log with
+    ⟨C, hC, hbound⟩
+  refine ⟨C, hC, ?_⟩
+  intro T hT
+  have hcard :
+      ((maximalRealPartZeroPackage T).card : ℝ) ≤
+        ((nontrivialZerosFinset T).card : ℝ) := by
+    exact_mod_cast
+      card_maximalRealPartZeroPackage_le_card_nontrivialZerosFinset T
+  exact hcard.trans (hbound T hT)
 
 /-- Hardy's theorem supplies one nontrivial zero. Monotonicity of the
 height-truncated zero finset then makes every sufficiently large truncation
@@ -759,6 +794,42 @@ theorem maximalZeroPackageCanonicalIntervalLength_le_card_sub_one_div_spacing
   linarith
     [maximalZeroPackageIntervalLengthThreshold_le_card_sub_one_div_spacing
       T hpackage]
+
+/-- Combining the global zero-count estimate with eventual nonemptiness
+removes the opaque package cardinality from the canonical interval bound.
+The actual minimum imaginary spacing `Δ_T` remains explicit. -/
+theorem
+    exists_C_T0_forall_maximalZeroPackageCanonicalIntervalLength_le_mul_log_div_spacing :
+    ∃ C T0 : ℝ, 0 ≤ C ∧ 8 ≤ T0 ∧ ∀ T : ℝ, T0 ≤ T →
+      maximalZeroPackageCanonicalIntervalLength T ≤
+        2 * (C * T * (1 + Real.log (T + 6))) /
+            maximalZeroPackageMinimumImaginarySpacing T + 1 := by
+  rcases exists_card_maximalRealPartZeroPackage_le_mul_log with
+    ⟨C, hC, hcard⟩
+  rcases exists_eventually_maximalRealPartZeroPackage_nonempty with
+    ⟨T0, hT0, hpackage⟩
+  refine ⟨C, T0, hC, hT0, ?_⟩
+  intro T hT
+  have hT4 : 4 ≤ T := by linarith
+  have hbase :=
+    maximalZeroPackageCanonicalIntervalLength_le_card_sub_one_div_spacing
+      T (hpackage T hT)
+  have hsub :
+      ((((maximalRealPartZeroPackage T).card - 1 : ℕ) : ℝ)) ≤
+        ((maximalRealPartZeroPackage T).card : ℝ) := by
+    exact_mod_cast Nat.sub_le (maximalRealPartZeroPackage T).card 1
+  have hnumerator :
+      ((((maximalRealPartZeroPackage T).card - 1 : ℕ) : ℝ)) ≤
+        C * T * (1 + Real.log (T + 6)) :=
+    hsub.trans (hcard T hT4)
+  have hspacing := maximalZeroPackageMinimumImaginarySpacing_pos T
+  have hfrac :
+      2 * ((((maximalRealPartZeroPackage T).card - 1 : ℕ) : ℝ)) /
+          maximalZeroPackageMinimumImaginarySpacing T ≤
+        2 * (C * T * (1 + Real.log (T + 6))) /
+          maximalZeroPackageMinimumImaginarySpacing T := by
+    gcongr
+  linarith
 
 /-- The maximal-package ordered off-diagonal budget is nonnegative. -/
 theorem maximalZeroPackageOffDiagonalBound_nonneg (T : ℝ) :
