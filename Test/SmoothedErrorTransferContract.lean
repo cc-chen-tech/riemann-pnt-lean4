@@ -642,6 +642,28 @@ example {x h : ℝ} (hx : Real.exp 1 ≤ x) (hh : 0 < h) :
   PrimeNumberTheorem.ExplicitFormulaResidues.exists_C_forall_goodHeight_chebyshevPsi_bounds_explicit_origin_zero_sum
     hx hh
 
+example {x h : ℝ} (hx : Real.exp 1 ≤ x) (hh : 0 < h) :
+    ∃ C D : ℝ, 0 ≤ C ∧ 0 ≤ D ∧ ∀ A : ℝ, 4 ≤ A →
+      (A + 2) * Real.log ((x + h) / x) ≤ 1 →
+        ∃ T ∈ Set.Icc A (A + 1),
+          PrimeNumberTheorem.ExplicitFormulaAux.goodHeight T ∧
+            PrimeNumberTheorem.chebyshevPsi x ≤
+                (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) +
+                    PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightTotalBudget
+                      C x h A T +
+                    2 * D * x * Real.log ((x + h) / x) *
+                      (1 + Real.log (T + 6)) ^ 2) /
+                  Real.log ((x + h) / x) ∧
+              (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) -
+                    PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightTotalBudget
+                      C x h A T -
+                    2 * D * x * Real.log ((x + h) / x) *
+                      (1 + Real.log (T + 6)) ^ 2) /
+                  Real.log ((x + h) / x) ≤
+                PrimeNumberTheorem.chebyshevPsi (x + h) :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.exists_C_D_forall_goodHeight_chebyshevPsi_bounds_scalar_log_sq
+    hx hh
+
 example :
     MathlibAux.boundaryRectIntegral
         (fun z : ℂ =>

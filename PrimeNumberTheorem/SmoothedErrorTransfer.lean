@@ -1937,6 +1937,92 @@ theorem
   rw [secondOrderOriginDerivativeIncrement_eq hxpos hypos] at hbounds
   exact ⟨T, hT, hgood, hbounds⟩
 
+/-- Fully scalar selected-height sandwich. A caller-level small-increment
+condition at the left endpoint `A` controls the selected `T ∈ [A, A+1]`;
+the finite zero sum is then absorbed by its proved `log² T` norm bound. -/
+theorem
+    exists_C_D_forall_goodHeight_chebyshevPsi_bounds_scalar_log_sq
+    {x h : ℝ} (hx : Real.exp 1 ≤ x) (hh : 0 < h) :
+    ∃ C D : ℝ, 0 ≤ C ∧ 0 ≤ D ∧ ∀ A : ℝ, 4 ≤ A →
+      (A + 2) * Real.log ((x + h) / x) ≤ 1 →
+        ∃ T ∈ Set.Icc A (A + 1),
+          ExplicitFormulaAux.goodHeight T ∧
+            chebyshevPsi x ≤
+                (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) +
+                    secondOrderSelectedHeightTotalBudget C x h A T +
+                    2 * D * x * Real.log ((x + h) / x) *
+                      (1 + Real.log (T + 6)) ^ 2) /
+                  Real.log ((x + h) / x) ∧
+              (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) -
+                    secondOrderSelectedHeightTotalBudget C x h A T -
+                    2 * D * x * Real.log ((x + h) / x) *
+                      (1 + Real.log (T + 6)) ^ 2) /
+                  Real.log ((x + h) / x) ≤
+                chebyshevPsi (x + h) := by
+  rcases
+      exists_C_forall_goodHeight_chebyshevPsi_bounds_explicit_origin_zero_sum
+        hx hh with ⟨C, hC, hchoose⟩
+  rcases exists_C_norm_secondOrderNontrivialZeroIncrement_le_log_sq with
+    ⟨D, hD, hzero⟩
+  refine ⟨C, D, hC, hD, ?_⟩
+  intro A hA hsmallA
+  rcases hchoose A hA with ⟨T, hT, hgood, hbounds⟩
+  have hxpos : 0 < x := (Real.exp_pos 1).trans_le hx
+  have hxone : 1 ≤ x := by
+    exact (Real.one_lt_exp_iff.mpr zero_lt_one).le.trans hx
+  have hratio : 1 < (x + h) / x := by
+    rw [lt_div_iff₀ hxpos]
+    linarith
+  have hlogpos : 0 < Real.log ((x + h) / x) :=
+    Real.log_pos hratio
+  have hsmallT :
+      (T + 1) * Real.log ((x + h) / x) ≤ 1 := by
+    calc
+      (T + 1) * Real.log ((x + h) / x) ≤
+          (A + 2) * Real.log ((x + h) / x) :=
+        mul_le_mul_of_nonneg_right (by linarith [hT.2]) hlogpos.le
+      _ ≤ 1 := hsmallA
+  let Z := secondOrderNontrivialZeroIncrement x h T
+  let B :=
+    2 * D * x * Real.log ((x + h) / x) *
+      (1 + Real.log (T + 6)) ^ 2
+  have hnorm : ‖Z‖ ≤ B := by
+    simpa only [Z, B] using
+      hzero x h T hxone hh.le (hA.trans hT.1) hsmallT
+  have habs : |Z.re| ≤ B :=
+    (Complex.abs_re_le_norm Z).trans hnorm
+  have hre : -B ≤ Z.re ∧ Z.re ≤ B := abs_le.mp habs
+  have hreal :
+      (-(Real.log (2 * Real.pi) : ℂ) *
+              (Real.log ((x + h) / x) : ℂ) +
+            (h : ℂ) + Z).re =
+        h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) + Z.re := by
+    simp only [Complex.add_re, Complex.mul_re, Complex.neg_re,
+      Complex.ofReal_re, Complex.ofReal_im, mul_zero, sub_zero]
+    ring
+  change
+    chebyshevPsi x ≤
+          ((-(Real.log (2 * Real.pi) : ℂ) *
+                  (Real.log ((x + h) / x) : ℂ) +
+                (h : ℂ) + Z).re +
+              secondOrderSelectedHeightTotalBudget C x h A T) /
+            Real.log ((x + h) / x) ∧
+      ((-(Real.log (2 * Real.pi) : ℂ) *
+                  (Real.log ((x + h) / x) : ℂ) +
+                (h : ℂ) + Z).re -
+              secondOrderSelectedHeightTotalBudget C x h A T) /
+            Real.log ((x + h) / x) ≤ chebyshevPsi (x + h) at hbounds
+  rw [hreal] at hbounds
+  refine ⟨T, hT, hgood, ?_, ?_⟩
+  · exact hbounds.1.trans
+      ((div_le_div_iff_of_pos_right hlogpos).2 (by
+        dsimp only [B] at hre ⊢
+        linarith [hre.2]))
+  · exact
+      ((div_le_div_iff_of_pos_right hlogpos).2 (by
+        dsimp only [B] at hre ⊢
+        linarith [hre.1])).trans hbounds.2
+
 end ExplicitFormulaResidues
 
 end PrimeNumberTheorem
