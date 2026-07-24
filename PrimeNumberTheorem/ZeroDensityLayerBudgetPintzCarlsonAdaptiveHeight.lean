@@ -50,6 +50,35 @@ theorem pintzCarlsonFiniteLayerBudget_nonneg
       hlogFourth)
     hexp
 
+/-- Any selector taking values in a finite family of positive rates still
+produces a height tending to infinity, even when the selected rate changes
+with `x`. -/
+theorem tendsto_adaptive_pintzCarlsonHeight_atTop
+    (rates : Finset ℝ)
+    (selectRate : ℝ → ℝ)
+    (hselect : ∀ x, selectRate x ∈ rates)
+    (hratesPos : ∀ k ∈ rates, 0 < k) :
+    Tendsto
+      (fun x : ℝ => pintzCarlsonHeight (selectRate x) x)
+      atTop atTop := by
+  refine tendsto_atTop.2 ?_
+  intro B
+  have hall :
+      ∀ᶠ x : ℝ in atTop, ∀ k ∈ rates,
+        B ≤ pintzCarlsonHeight k x :=
+    rates.eventually_all.mpr fun k hk =>
+      tendsto_atTop.1
+        (tendsto_pintzCarlsonHeight_atTop (hratesPos k hk))
+        B
+  filter_upwards [hall] with x hx
+  exact hx (selectRate x) (hselect x)
+
+/-- The adaptively selected Pintz-Carlson height is pointwise positive. -/
+theorem adaptive_pintzCarlsonHeight_pos
+    (selectRate : ℝ → ℝ) (x : ℝ) :
+    0 < pintzCarlsonHeight (selectRate x) x :=
+  pintzCarlsonHeight_pos _ _
+
 /-- A single Pintz constant controls any selector that switches arbitrarily
 among finitely many admissible rates. The proof gives finite-uniform decay by
 dominating the selected budget with the sum of all candidate budgets. -/
