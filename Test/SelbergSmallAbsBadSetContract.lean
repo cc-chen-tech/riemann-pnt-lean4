@@ -4,8 +4,10 @@ open MeasureTheory Set
 
 namespace Test.SelbergSmallAbsBadSetContract
 
+#check HardyTheorem.volume_smallMassStarts_inter_Icc_le_of_L2
 #check HardyTheorem.volume_selbergSmallAbsoluteMassStarts_inter_Icc_le_of_shortDirichletL2
 
+#print axioms HardyTheorem.volume_smallMassStarts_inter_Icc_le_of_L2
 #print axioms HardyTheorem.volume_selbergSmallAbsoluteMassStarts_inter_Icc_le_of_shortDirichletL2
 
 end Test.SelbergSmallAbsBadSetContract

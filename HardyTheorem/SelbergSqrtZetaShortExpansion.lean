@@ -20,6 +20,43 @@ noncomputable def selbergSqrtZetaMollifier
   selbergMollifier X
     (fun n => (selbergSqrtZetaTaperedCoeff X n : ℂ)) s
 
+/-- The explicit coefficient majorant for the square-root-zeta mollifier on
+the critical line. -/
+noncomputable def selbergSqrtZetaMollifierMajorant (X : ℕ) : ℝ :=
+  ∑ n ∈ Finset.Icc 1 X,
+    |selbergSqrtZetaTaperedCoeff X n| * (Real.sqrt n)⁻¹
+
+/-- The square-root-zeta mollifier is uniformly bounded in the height
+parameter by its explicit coefficient majorant. -/
+theorem norm_selbergSqrtZetaMollifier_criticalLine_le_majorant
+    (X : ℕ) (t : ℝ) :
+    ‖selbergSqrtZetaMollifier X ((1 / 2 : ℂ) + I * t)‖ ≤
+      selbergSqrtZetaMollifierMajorant X := by
+  unfold selbergSqrtZetaMollifier selbergMollifier
+  unfold selbergSqrtZetaMollifierMajorant
+  calc
+    ‖∑ n ∈ Finset.Icc 1 X,
+        (selbergSqrtZetaTaperedCoeff X n : ℂ) *
+          (1 / (n : ℂ) ^ ((1 / 2 : ℂ) + I * t))‖ ≤
+        ∑ n ∈ Finset.Icc 1 X,
+          ‖(selbergSqrtZetaTaperedCoeff X n : ℂ) *
+            (1 / (n : ℂ) ^ ((1 / 2 : ℂ) + I * t))‖ :=
+      norm_sum_le _ _
+    _ = ∑ n ∈ Finset.Icc 1 X,
+        |selbergSqrtZetaTaperedCoeff X n| *
+          (Real.sqrt n)⁻¹ := by
+      apply Finset.sum_congr rfl
+      intro n hn
+      have hnpos : 0 < n := by
+        have hn1 := (Finset.mem_Icc.mp hn).1
+        omega
+      have hpow :
+          ‖(n : ℂ) ^ ((1 / 2 : ℂ) + I * t)‖ = Real.sqrt n := by
+        rw [Complex.norm_natCast_cpow_of_pos hnpos]
+        simp [Real.sqrt_eq_rpow]
+      rw [norm_mul, norm_div, norm_one, hpow, one_div]
+      simp only [Complex.norm_real, Real.norm_eq_abs]
+
 /-- The uncollected exponential polynomial indexed by `(m,d,l)`. -/
 noncomputable def selbergSqrtZetaShortDirichletTriplePolynomial
     (N X : ℕ) (t : ℝ) : ℂ :=
@@ -148,6 +185,85 @@ theorem criticalLineDirichletPolynomial_mul_sqrtZetaMollifier_sq_eq_exponentialP
         (fun q => F (m, q))).symm
     _ = ∑ p ∈ A.product (B.product B), F p :=
       (Finset.sum_product A (B.product B) F).symm
+
+/-- The first zeta approximation remains uniform after multiplying by two
+copies of the square-root-zeta mollifier.  Its remainder is controlled by
+the square of the explicit mollifier majorant. -/
+theorem exists_selbergSqrtZetaMollifiedZetaFirstApprox :
+    ∃ C T0 : ℝ, 0 ≤ C ∧ 1 ≤ T0 ∧
+      ∀ X : ℕ, ∀ T t : ℝ,
+        T0 ≤ T → t ∈ Set.Icc T (2 * T) →
+          ∃ E : ℂ,
+            (riemannZeta ((1 / 2 : ℂ) + I * t) *
+                selbergSqrtZetaMollifier X
+                  ((1 / 2 : ℂ) + I * t)) *
+              selbergSqrtZetaMollifier X
+                ((1 / 2 : ℂ) + I * t) =
+                selbergSqrtZetaShortDirichletTriplePolynomial
+                  (firstZetaApproximationCutoff T) X t + E ∧
+            ‖E‖ ≤ C / Real.sqrt T *
+              selbergSqrtZetaMollifierMajorant X ^ 2 := by
+  obtain ⟨C, T0, hC, hT0, happ⟩ := criticalLineZetaFirstApprox
+  refine ⟨C, T0, hC, hT0, ?_⟩
+  intro X T t hT ht
+  obtain ⟨R, hzeta, hR⟩ := happ T t hT ht
+  let M : ℂ :=
+    selbergSqrtZetaMollifier X ((1 / 2 : ℂ) + I * t)
+  refine ⟨(R * M) * M, ?_, ?_⟩
+  · rw [hzeta]
+    have hpoly :=
+      criticalLineDirichletPolynomial_mul_sqrtZetaMollifier_sq_eq_exponentialPolynomial
+        (firstZetaApproximationCutoff T) X t
+    dsimp only [M]
+    calc
+      ((∑ n ∈ Finset.Icc 1 (firstZetaApproximationCutoff T),
+            1 / (n : ℂ) ^ ((1 / 2 : ℂ) + I * t)) + R) *
+            selbergSqrtZetaMollifier X
+              ((1 / 2 : ℂ) + I * t) *
+          selbergSqrtZetaMollifier X
+            ((1 / 2 : ℂ) + I * t) =
+        ((∑ n ∈ Finset.Icc 1 (firstZetaApproximationCutoff T),
+            1 / (n : ℂ) ^ ((1 / 2 : ℂ) + I * t)) *
+            selbergSqrtZetaMollifier X
+              ((1 / 2 : ℂ) + I * t)) *
+          selbergSqrtZetaMollifier X
+            ((1 / 2 : ℂ) + I * t) +
+        (R * selbergSqrtZetaMollifier X
+              ((1 / 2 : ℂ) + I * t)) *
+          selbergSqrtZetaMollifier X
+            ((1 / 2 : ℂ) + I * t) := by ring
+      _ = selbergSqrtZetaShortDirichletTriplePolynomial
+            (firstZetaApproximationCutoff T) X t +
+          (R * selbergSqrtZetaMollifier X
+              ((1 / 2 : ℂ) + I * t)) *
+            selbergSqrtZetaMollifier X
+              ((1 / 2 : ℂ) + I * t) := by rw [hpoly]
+  · have hM :=
+      norm_selbergSqrtZetaMollifier_criticalLine_le_majorant X t
+    have hmajorant_nonneg :
+        0 ≤ selbergSqrtZetaMollifierMajorant X := by
+      unfold selbergSqrtZetaMollifierMajorant
+      positivity
+    dsimp only [M]
+    rw [norm_mul, norm_mul]
+    calc
+      ‖R‖ *
+            ‖selbergSqrtZetaMollifier X
+              ((1 / 2 : ℂ) + I * t)‖ *
+          ‖selbergSqrtZetaMollifier X
+            ((1 / 2 : ℂ) + I * t)‖ ≤
+        (C / Real.sqrt T) *
+            ‖selbergSqrtZetaMollifier X
+              ((1 / 2 : ℂ) + I * t)‖ *
+          ‖selbergSqrtZetaMollifier X
+            ((1 / 2 : ℂ) + I * t)‖ := by
+          gcongr
+      _ ≤ (C / Real.sqrt T) *
+          selbergSqrtZetaMollifierMajorant X *
+            selbergSqrtZetaMollifierMajorant X := by
+          gcongr
+      _ = C / Real.sqrt T *
+          selbergSqrtZetaMollifierMajorant X ^ 2 := by ring
 
 /-- The one-index polynomial obtained after collecting equal triple
 products. -/
