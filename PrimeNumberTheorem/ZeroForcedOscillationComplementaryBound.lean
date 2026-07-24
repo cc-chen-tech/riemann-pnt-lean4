@@ -19,6 +19,8 @@ package of `ZeroForcedOscillationExplicitFormula.lean`:
   instances `B = β` and `B = β - δ` used downstream);
 * fixed-height exponential decay of the complementary contribution after
   normalization by the maximal real-part layer;
+* a moving-height sufficient condition phrased in terms of the exact gap and
+  the global `O(log^2 T)` reciprocal-multiplicity majorant;
 * monotonicity of the complementary reciprocal-norm sum up to the full
   height-`T` truncation sum;
 * an explicit `B_T / E_T` interval-length threshold making the finite
@@ -453,6 +455,67 @@ theorem tendsto_normalized_norm_complementaryZeroPackageContribution_atTop
   exact
     normalized_norm_complementaryZeroPackageContribution_le_exp_neg_gap_mul_sum
       T y hy
+
+/-- Moving-height sufficient condition for decay of the complementary package.
+The truncation height `τ y` may vary arbitrarily. The only analytic input is
+that, eventually, it lies in the range of the global reciprocal-multiplicity
+bound. If the resulting explicit gap-times-`log^2` majorant tends to zero,
+then the complementary package is negligible after normalization by the
+moving maximal-real-part scale.
+
+This theorem does not assert a uniform lower bound for the complementary gap
+and does not prove that its majorant tends to zero for any particular choice
+of `τ`. -/
+theorem
+    exists_C_tendsto_normalized_norm_complementaryZeroPackageContribution_along_moving_height_of_majorant
+    (τ : ℝ → ℝ) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      ((∀ᶠ y : ℝ in Filter.atTop, 0 ≤ y) →
+        (∀ᶠ y : ℝ in Filter.atTop, 4 ≤ τ y) →
+        Filter.Tendsto
+          (fun y : ℝ =>
+            Real.exp (-maximalComplementaryRealPartGap (τ y) * y) *
+              (C * (1 + Real.log (τ y + 6)) ^ 2))
+          Filter.atTop (nhds 0) →
+        Filter.Tendsto
+          (fun y : ℝ =>
+            Real.exp (-(maximalZeroRealPart (τ y)) * y) *
+              ‖complementaryZeroPackageContribution (Real.exp y) (τ y)
+                (maximalZeroRealPart (τ y))‖)
+          Filter.atTop (nhds 0)) := by
+  rcases ExplicitFormulaAux.exists_globalReciprocalZeroMultiplicity_le_log_sq with
+    ⟨C, hC, hCbound⟩
+  refine ⟨C, hC, ?_⟩
+  intro hy hτ hmajorant
+  refine squeeze_zero'
+    (Filter.Eventually.of_forall fun y =>
+      mul_nonneg (Real.exp_nonneg _)
+        (norm_nonneg
+          (complementaryZeroPackageContribution (Real.exp y) (τ y)
+            (maximalZeroRealPart (τ y))))) ?_ hmajorant
+  filter_upwards [hy, hτ] with y hy hτ
+  calc
+    Real.exp (-(maximalZeroRealPart (τ y)) * y) *
+          ‖complementaryZeroPackageContribution (Real.exp y) (τ y)
+            (maximalZeroRealPart (τ y))‖ ≤
+        Real.exp (-maximalComplementaryRealPartGap (τ y) * y) *
+          ∑ ρ ∈ complementaryZeroPackage (τ y)
+              (maximalZeroRealPart (τ y)),
+            (analyticOrderNatAt riemannZeta ρ : ℝ) / ‖ρ‖ :=
+      normalized_norm_complementaryZeroPackageContribution_le_exp_neg_gap_mul_sum
+        (τ y) y hy
+    _ ≤ Real.exp (-maximalComplementaryRealPartGap (τ y) * y) *
+          ∑ ρ ∈ nontrivialZerosFinset (τ y),
+            (analyticOrderNatAt riemannZeta ρ : ℝ) / ‖ρ‖ :=
+      mul_le_mul_of_nonneg_left
+        (sum_complementary_multiplicity_div_norm_le_sum_nontrivialZerosFinset
+          (τ y) (maximalZeroRealPart (τ y)))
+        (Real.exp_nonneg _)
+    _ ≤ Real.exp (-maximalComplementaryRealPartGap (τ y) * y) *
+          (C * (1 + Real.log (τ y + 6)) ^ 2) := by
+      apply mul_le_mul_of_nonneg_left _ (Real.exp_nonneg _)
+      simpa only [ExplicitFormulaAux.globalReciprocalZeroMultiplicity] using
+        hCbound (τ y) hτ
 
 /-- Quantitative complementary-package bound: with a uniform real-part gap
 `δ` below `β` on the complementary zeros at height `T ≥ 4`, the complementary

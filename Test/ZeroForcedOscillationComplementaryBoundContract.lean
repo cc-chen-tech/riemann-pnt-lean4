@@ -138,6 +138,9 @@ example (T : ℝ) :
       Filter.atTop (nhds 0) :=
   tendsto_normalized_norm_complementaryZeroPackageContribution_atTop T
 
+#check
+  exists_C_tendsto_normalized_norm_complementaryZeroPackageContribution_along_moving_height_of_majorant
+
 example (y : ℝ) (hy : 0 ≤ y) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ T : ℝ, 4 ≤ T →
       ‖complementaryZeroPackageContribution (Real.exp y) T
