@@ -1,4 +1,5 @@
 import PrimeNumberTheorem.ZeroDensityLayerBudgetPintzCarlsonAdaptiveHeight
+import PrimeNumberTheorem.CarlsonAsymptotic
 
 open Filter Topology
 
@@ -12,6 +13,65 @@ estimate and the adaptive Pintz-Carlson majorant. It assumes only the
 eventual count inequality supplied by the density theorem; all dynamic
 selection and finite-strip summation are proved here.
 -/
+
+/-- Carlson's proved Big-O theorem yields a nonnegative coefficient and an
+eventual pointwise classical density majorant. -/
+theorem exists_carlsonClassicalCoefficient_eventually_count_le
+    {sigma : ℝ}
+    (hσ : 1 / 2 < sigma)
+    (hσ1 : sigma < 1) :
+    ∃ C ≥ 0, ∀ᶠ T : ℝ in atTop,
+      (ZeroDensity.zeroDensityCount sigma T : ℝ) ≤
+        C * T ^ (4 * sigma * (1 - sigma)) *
+          Real.log T ^ 4 := by
+  rcases
+      (CarlsonZeroDensity.carlson_zeroDensity_isBigO
+        hσ hσ1).exists_nonneg with
+    ⟨C, hC, hbigO⟩
+  refine ⟨C, hC, ?_⟩
+  filter_upwards [hbigO.bound] with T hT
+  have hcount :
+      0 ≤ (ZeroDensity.zeroDensityCount sigma T : ℝ) :=
+    Nat.cast_nonneg _
+  have hmajorant :
+      0 ≤ T ^ (4 * sigma * (1 - sigma)) *
+        Real.log T ^ 4 :=
+    mul_nonneg (Real.rpow_nonneg _ _) (by positivity)
+  simpa only [Real.norm_eq_abs, abs_of_nonneg hcount,
+      abs_of_nonneg hmajorant, mul_assoc] using hT
+
+/-- For finitely many fixed real-part strips, Carlson coefficients can be
+chosen once and their count bounds pulled back along any dynamic height
+tending to infinity. -/
+theorem exists_finiteCarlsonCoefficients_along_dynamicHeight
+    {ι : Type*}
+    (layers : Finset ι)
+    (sigma : ι → ℝ)
+    (hσ : ∀ i, 1 / 2 < sigma i)
+    (hσ1 : ∀ i, sigma i < 1)
+    (height : ℝ → ℝ)
+    (hheight : Tendsto height atTop atTop) :
+    ∃ C : ι → ℝ,
+      (∀ i ∈ layers, 0 ≤ C i) ∧
+      (∀ i ∈ layers, ∀ᶠ x : ℝ in atTop,
+        (ZeroDensity.zeroDensityCount (sigma i) (height x) : ℝ) ≤
+          C i * height x ^ (4 * sigma i * (1 - sigma i)) *
+            Real.log (height x) ^ 4) := by
+  classical
+  have hcertificate :
+      ∀ i, ∃ C ≥ 0, ∀ᶠ T : ℝ in atTop,
+        (ZeroDensity.zeroDensityCount (sigma i) T : ℝ) ≤
+          C * T ^ (4 * sigma i * (1 - sigma i)) *
+            Real.log T ^ 4 :=
+    fun i =>
+      exists_carlsonClassicalCoefficient_eventually_count_le
+        (hσ i) (hσ1 i)
+  choose C hC using hcertificate
+  refine ⟨C, ?_, ?_⟩
+  · intro i hi
+    exact (hC i).1
+  · intro i hi
+    exact hheight.eventually (hC i).2
 
 /-- The actual zero-density count budget at an adaptively selected height,
 weighted by the real Pintz envelope kernel. -/

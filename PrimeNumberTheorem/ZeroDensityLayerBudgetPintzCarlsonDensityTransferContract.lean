@@ -7,6 +7,16 @@ namespace PrimeNumberTheorem
 /-! Public contract for adaptive Carlson density-count transfer. -/
 
 example
+    {sigma : ℝ}
+    (hσ : 1 / 2 < sigma)
+    (hσ1 : sigma < 1) :
+    ∃ C ≥ 0, ∀ᶠ T : ℝ in atTop,
+      (ZeroDensity.zeroDensityCount sigma T : ℝ) ≤
+        C * T ^ (4 * sigma * (1 - sigma)) *
+          Real.log T ^ 4 :=
+  exists_carlsonClassicalCoefficient_eventually_count_le hσ hσ1
+
+example
     {ι : Type*} [DecidableEq ι]
     (layers : Finset ι)
     (count : ι → ℝ → ℝ)
