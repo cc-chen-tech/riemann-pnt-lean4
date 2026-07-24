@@ -53,4 +53,26 @@ example :
         atTop (𝓝 0) :=
   exists_pintzConstant_carlsonWeightedKernel_tendsto
 
+example (sigma : ℝ) :
+    4 * sigma * (1 - sigma) ≤ 1 :=
+  carlsonClassicalExponent_le_one sigma
+
+example
+    {ι : Type*} [DecidableEq ι]
+    (layers : Finset ι)
+    (C p sigma : ι → ℝ)
+    (hC : ∀ i ∈ layers, 0 ≤ C i) :
+    ∃ c > 0, ∀ k : ℝ, 0 ≤ k → k < 2 * Real.sqrt c →
+      Tendsto
+        (fun x : ℝ =>
+          ∑ i ∈ layers,
+            C i * pintzCarlsonSqrtLogScale x ^ p i *
+              Real.exp
+                ((4 * sigma i * (1 - sigma i)) * k *
+                    pintzCarlsonSqrtLogScale x -
+                  Pintz.pintzZeroEnvelope x))
+        atTop (𝓝 0) :=
+  exists_pintzConstant_finiteCarlsonLayerBudget_tendsto
+    layers C p sigma hC
+
 end PrimeNumberTheorem
