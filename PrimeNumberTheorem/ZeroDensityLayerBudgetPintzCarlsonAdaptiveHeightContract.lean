@@ -18,6 +18,19 @@ example
     rates selectRate hselect hratesPos
 
 example
+    (rates : Finset ℝ)
+    (selectRate : ℝ → ℝ)
+    (hselect : ∀ x, selectRate x ∈ rates)
+    (zeroFree : ℝ → ℝ → Prop)
+    (hzeroFree :
+      ∀ k ∈ rates, ∀ᶠ x : ℝ in atTop,
+        zeroFree x (pintzCarlsonHeight k x)) :
+    ∀ᶠ x : ℝ in atTop,
+      zeroFree x (pintzCarlsonHeight (selectRate x) x) :=
+  eventually_adaptive_pintzCarlsonHeight_zeroFree
+    rates selectRate hselect zeroFree hzeroFree
+
+example
     {ι : Type*} [DecidableEq ι]
     (layers : Finset ι)
     (C sigma : ι → ℝ)
