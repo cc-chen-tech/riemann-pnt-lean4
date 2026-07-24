@@ -217,6 +217,8 @@ example {x a c W : ℝ} (hx : 0 < x) (ha : a < 0) (hc : 0 < c)
       (∀ p ∈ poles,
         a < p.re ∧ p.re < c ∧ -W < p.im ∧ p.im < W) ∧
       (∀ p ∈ poles, p = 0 ∨ p = 1 ∨ riemannZeta p = 0) ∧
+      (∀ p, p ∈ ([[a, c]] ×ℂ [[-W, W]] : Set ℂ) →
+        p = 0 ∨ p = 1 ∨ riemannZeta p = 0 → p ∈ poles) ∧
       (∀ p ∈ poles, p ≠ 0 → residue p =
         if p = 1 then (x : ℂ)
         else -(analyticOrderNatAt riemannZeta p : ℂ) * (x : ℂ) ^ p / p ^ 2) ∧
@@ -226,3 +228,25 @@ example {x a c W : ℝ} (hx : 0 < x) (ha : a < 0) (hc : 0 < c)
         (2 * Real.pi * Complex.I) * ∑ p ∈ poles, residue p :=
   PrimeNumberTheorem.ExplicitFormulaResidues.exists_boundaryRectIntegral_secondOrderExplicitFormulaIntegrand_crossing_zero
     hx ha hc hW hboundary
+
+example :
+    MathlibAux.boundaryRectIntegral
+        (fun z : ℂ =>
+          z⁻¹ / z * 3 +
+            ((fun _ : ℂ => 0) z +
+              ∑ p ∈ ({1} : Finset ℂ), (z - p)⁻¹ * (fun _ : ℂ => 5) p))
+        (-1) 2 (-1) 1 =
+      (2 * Real.pi * Complex.I) *
+        ∑ p ∈ ({1} : Finset ℂ), (fun _ : ℂ => 5) p := by
+  apply
+    MathlibAux.boundaryRectIntegral_eq_double_pole_add_finite_simple_pole_residue_sum
+      (g := fun _ : ℂ => 0) (3 : ℂ) ({1} : Finset ℂ) (fun _ : ℂ => 5)
+  · norm_num
+  · norm_num
+  · norm_num
+  · norm_num
+  · exact differentiableOn_const 0
+  · intro p hp
+    simp at hp
+    subst p
+    norm_num

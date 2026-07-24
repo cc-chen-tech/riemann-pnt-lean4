@@ -17,6 +17,8 @@ theorem exists_boundaryRectIntegral_secondOrderExplicitFormulaIntegrand_crossing
       (∀ p ∈ poles,
         a < p.re ∧ p.re < c ∧ -W < p.im ∧ p.im < W) ∧
       (∀ p ∈ poles, p = 0 ∨ p = 1 ∨ riemannZeta p = 0) ∧
+      (∀ p, p ∈ ([[a, c]] ×ℂ [[-W, W]] : Set ℂ) →
+        p = 0 ∨ p = 1 ∨ riemannZeta p = 0 → p ∈ poles) ∧
       (∀ p ∈ poles, p ≠ 0 → residue p =
         if p = 1 then (x : ℂ)
         else -(analyticOrderNatAt riemannZeta p : ℂ) * (x : ℂ) ^ p / p ^ 2) ∧
@@ -32,7 +34,7 @@ theorem exists_boundaryRectIntegral_secondOrderExplicitFormulaIntegrand_crossing
   rcases exists_finite_explicitFormulaIntegrand_analytic_regularized_remainder
       hx hKcompact with
     ⟨oldPoles, oldResidue, holdPoles_mem, holdPoles_classify,
-      _holdPoles_complete, holdResidue, hoff_eq, hregular⟩
+      holdPoles_complete, holdResidue, hoff_eq, hregular⟩
   let P : Finset ℂ := oldPoles.erase 0
   let residue2 : ℂ → ℂ := fun p => oldResidue p / p
   let r0 : ℂ := if 0 ∈ oldPoles then oldResidue 0 else 0
@@ -102,6 +104,16 @@ theorem exists_boundaryRectIntegral_secondOrderExplicitFormulaIntegrand_crossing
     rcases Finset.mem_insert.mp hp with rfl | hp
     · exact Or.inl rfl
     · exact Or.inr (hP_classify p hp)
+  have hpoles_complete : ∀ p, p ∈ K →
+      p = 0 ∨ p = 1 ∨ riemannZeta p = 0 → p ∈ poles := by
+    intro p hpK hpclass
+    by_cases hp0 : p = 0
+    · subst p
+      simp [poles]
+    · apply Finset.mem_insert.mpr
+      right
+      exact Finset.mem_erase.mpr
+        ⟨hp0, holdPoles_complete p hpK hpclass⟩
   have hpoles_residue : ∀ p ∈ poles, p ≠ 0 → residue p =
       if p = 1 then (x : ℂ)
       else -(analyticOrderNatAt riemannZeta p : ℂ) * (x : ℂ) ^ p / p ^ 2 := by
@@ -187,7 +199,8 @@ theorem exists_boundaryRectIntegral_secondOrderExplicitFormulaIntegrand_crossing
     dsimp [zeroResidue]
     field_simp [hz0]
     ring
-  refine ⟨poles, residue, hpoles_mem, hpoles_classify, hpoles_residue, ?_⟩
+  refine ⟨poles, residue, hpoles_mem, hpoles_classify,
+    (by simpa [K] using hpoles_complete), hpoles_residue, ?_⟩
   calc
     MathlibAux.boundaryRectIntegral
         (secondOrderExplicitFormulaIntegrand x) a c (-W) W =

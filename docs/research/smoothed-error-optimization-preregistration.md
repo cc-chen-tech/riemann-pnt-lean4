@@ -259,12 +259,14 @@ second-order contour. The left vertical difference is controlled on
 negative-odd left lines, with its explicit finite-height logarithmic majorant
 and the extra `(2N+1)^(-1)` second-order-kernel factor; at `a = -1` these
 estimates are already assembled into the complete remainder-difference budget.
-The `s = 0` part of that algebraic/meromorphic gap is now closed:
+The contour-identity part at `s = 0` is now closed:
 `SecondOrderMovingLeft` splits the new double principal part from the ordinary
 finite simple-pole family, proves the double part has zero rectangle integral,
-and supplies the moving-left residue formula whenever `a < 0 < c`. For farther
-negative-odd lines the remaining residue classification still includes the
-trivial zeros, and the finite residue difference must still be identified with
-the approximation consumed by the Riesz sandwich. The input format and Lean
-endpoint bridge now exist, but no candidate FH-1, RH-1, or ZFR-1 envelope has
-yet been proved on its full stated range.
+exports completeness of the finite candidate-pole family, and supplies the
+moving-left contour formula whenever `a < 0 < c`. It does not yet identify the
+remaining simple residue at `s = 0` with a closed expression suitable for the
+Riesz approximation. For farther negative-odd lines the remaining residue
+classification also includes the trivial zeros. Those residue identifications
+and the finite residue difference consumed by the Riesz sandwich remain open.
+The input format and Lean endpoint bridge exist, but no candidate FH-1, RH-1,
+or ZFR-1 envelope has yet been proved on its full stated range.
