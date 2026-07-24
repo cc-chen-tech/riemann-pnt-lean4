@@ -726,6 +726,19 @@ theorem VinogradovResidualTailNoWrap.of_top_degree
   · exact (Nat.mul_le_mul_left r hYpow).trans_lt
       (htop.trans_le hpPow)
 
+/-- Specialization of the top-degree no-wrap criterion to the modulus exponent
+used by the mixed efficient-congruencing recurrence. -/
+theorem VinogradovResidualTailNoWrap.of_mixed_recurrence_top_degree
+    (p b k r q Y : ℕ) (hp : 0 < p) (hY : 0 < Y)
+    (hdegree : b * q ≤ (k - r + 1) * b)
+    (htop :
+      q * Y ^ q <
+        p ^ ((k - r + 1) * b - b * q)) :
+    VinogradovResidualTailNoWrap
+      p ((k - r + 1) * b) b q Y :=
+  VinogradovResidualTailNoWrap.of_top_degree
+    p ((k - r + 1) * b) b q Y hp hY hdegree htop
+
 /-- Two residual solutions with the same left tuple have congruent
 right-hand power sums. -/
 private theorem residualTail_right_powerSum_modEq
@@ -1171,6 +1184,138 @@ theorem
   have hrpow : Real.rpow (X : ℝ) 0 = 1 := Real.rpow_zero _
   rw [hrpow, mul_one] at h
   exact h
+
+/-- The diagonal mixed-moment estimate at the exact modulus exponent used by
+the efficient-congruencing recurrence. -/
+theorem
+    norm_normalizedVinogradovMixedModConditionedMoment_sq_le_recurrenceModulus_diagonal
+    (p a b k r t X Y n q : ℕ) [Fact p.Prime]
+    (h2rk : 2 * r ≤ k)
+    (hqk : q ≤ k) (hsplit : n + q = 2 * t)
+    (hY : 0 < Y)
+    (hdegree : b * q ≤ (k - r + 1) * b)
+    (htop :
+      q * Y ^ q <
+        p ^ ((k - r + 1) * b - b * q))
+    (hX : 1 ≤ X)
+    (hscale :
+      (2 * r) * X ^ k < p ^ ((k - r + 1) * b))
+    (xi eta : ℤ) :
+    ‖normalizedVinogradovMixedModConditionedMoment
+        p ((k - r + 1) * b) a b k r t X Y xi eta‖ ^ 2 ≤
+      ((2 * r).factorial : ℝ) *
+          ((X : ℝ) ^ (2 * r) +
+            (X : ℝ) ^ (2 * (2 * r) - vinogradovCriticalWeight k)) *
+        ((q.factorial : ℝ) * (Y : ℝ) ^ (2 * n + q)) := by
+  letI : NeZero (p ^ ((k - r + 1) * b)) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  exact
+    norm_normalizedVinogradovMixedModConditionedMoment_sq_le_diagonal_factorialTail
+      p ((k - r + 1) * b) a b k r t X Y n q
+        (Fact.out : p.Prime).ne_zero h2rk hqk hsplit
+        (VinogradovResidualTailNoWrap.of_mixed_recurrence_top_degree
+          p b k r q Y (Fact.out : p.Prime).pos hY hdegree htop)
+        hX hscale xi eta
+
+/-- A concrete nonempty parameter family for the mixed recurrence.  Taking
+`b = 2`, one tail variable, and both box lengths equal to the prime gives an
+unconditional power-saving moment bound throughout the diagonal range. -/
+theorem
+    norm_normalizedVinogradovMixedModConditionedMoment_sq_le_primeScale_unitTail
+    (p a k r : ℕ) [Fact p.Prime]
+    (hr : 0 < r) (h2rk : 2 * r ≤ k) (hrp : 2 * r < p)
+    (xi eta : ℤ) :
+    ‖normalizedVinogradovMixedModConditionedMoment
+        p ((k - r + 1) * 2) a 2 k r 1 p p xi eta‖ ^ 2 ≤
+      ((2 * r).factorial : ℝ) *
+          ((p : ℝ) ^ (2 * r) +
+            (p : ℝ) ^ (2 * (2 * r) - vinogradovCriticalWeight k)) *
+        (p : ℝ) ^ 3 := by
+  have hp0 : 0 < p := (Fact.out : p.Prime).pos
+  have hp1 : 1 < p := (Fact.out : p.Prime).one_lt
+  have hqk : 1 ≤ k := by omega
+  have hdegree : 2 * 1 ≤ (k - r + 1) * 2 := by omega
+  have htailExponent :
+      1 < (k - r + 1) * 2 - 2 * 1 := by
+    omega
+  have htop :
+      1 * p ^ 1 <
+        p ^ ((k - r + 1) * 2 - 2 * 1) := by
+    simpa using Nat.pow_lt_pow_right hp1 htailExponent
+  have hmainExponent :
+      k + 1 ≤ (k - r + 1) * 2 := by
+    omega
+  have hcoefficient :
+      (2 * r) * p ^ k < p * p ^ k :=
+    Nat.mul_lt_mul_of_pos_right hrp (pow_pos hp0 k)
+  have hscale :
+      (2 * r) * p ^ k <
+        p ^ ((k - r + 1) * 2) := by
+    calc
+      (2 * r) * p ^ k < p * p ^ k := hcoefficient
+      _ = p ^ (k + 1) := by
+        simp [pow_succ, Nat.mul_comm]
+      _ ≤ p ^ ((k - r + 1) * 2) :=
+        Nat.pow_le_pow_right hp0 hmainExponent
+  have h :=
+    norm_normalizedVinogradovMixedModConditionedMoment_sq_le_recurrenceModulus_diagonal
+      p a 2 k r 1 p p 1 1 h2rk hqk (by omega) hp0
+        hdegree htop (by omega) hscale xi eta
+  simpa only [Nat.factorial_one, Nat.cast_one, one_mul, pow_one,
+    show 2 * 1 + 1 = 3 by omega] using h
+
+/-- The explicit prime-scale family is genuinely power-saving: its squared
+moment has exponent `2r + 3`, compared with the squared trivial exponent
+`4r + 4`, up to the displayed factorial constant. -/
+theorem
+    norm_normalizedVinogradovMixedModConditionedMoment_sq_le_primeScale_powerSaving
+    (p a k r : ℕ) [Fact p.Prime]
+    (hr : 0 < r) (h2rk : 2 * r ≤ k) (hrp : 2 * r < p)
+    (xi eta : ℤ) :
+    ‖normalizedVinogradovMixedModConditionedMoment
+        p ((k - r + 1) * 2) a 2 k r 1 p p xi eta‖ ^ 2 ≤
+      2 * ((2 * r).factorial : ℝ) * (p : ℝ) ^ (2 * r + 3) := by
+  have h :=
+    norm_normalizedVinogradovMixedModConditionedMoment_sq_le_primeScale_unitTail
+      p a k r hr h2rk hrp xi eta
+  have hweight : 2 * r ≤ vinogradovCriticalWeight k := by
+    unfold vinogradovCriticalWeight
+    apply (Nat.le_div_iff_mul_le (by omega)).2
+    calc
+      (2 * r) * 2 ≤ k * 2 := Nat.mul_le_mul_right 2 h2rk
+      _ ≤ k * (k + 1) := Nat.mul_le_mul_left k (by omega)
+  have hexponent :
+      2 * (2 * r) - vinogradovCriticalWeight k ≤ 2 * r := by
+    omega
+  have hpR : (1 : ℝ) ≤ (p : ℝ) := by
+    exact_mod_cast (Fact.out : p.Prime).one_le
+  have hpow :
+      (p : ℝ) ^ (2 * (2 * r) - vinogradovCriticalWeight k) ≤
+        (p : ℝ) ^ (2 * r) :=
+    pow_le_pow_right₀ hpR hexponent
+  have hsum :
+      (p : ℝ) ^ (2 * r) +
+          (p : ℝ) ^ (2 * (2 * r) - vinogradovCriticalWeight k) ≤
+        (p : ℝ) ^ (2 * r) + (p : ℝ) ^ (2 * r) :=
+    add_le_add (le_refl _) hpow
+  calc
+    ‖normalizedVinogradovMixedModConditionedMoment
+        p ((k - r + 1) * 2) a 2 k r 1 p p xi eta‖ ^ 2
+        ≤ ((2 * r).factorial : ℝ) *
+            ((p : ℝ) ^ (2 * r) +
+              (p : ℝ) ^
+                (2 * (2 * r) - vinogradovCriticalWeight k)) *
+              (p : ℝ) ^ 3 := h
+    _ ≤ ((2 * r).factorial : ℝ) *
+          ((p : ℝ) ^ (2 * r) + (p : ℝ) ^ (2 * r)) *
+            (p : ℝ) ^ 3 :=
+      mul_le_mul_of_nonneg_right
+        (mul_le_mul_of_nonneg_left hsum (by positivity))
+        (by positivity)
+    _ = 2 * ((2 * r).factorial : ℝ) *
+          (p : ℝ) ^ (2 * r + 3) := by
+      rw [pow_add]
+      ring
 
 /-- If the first `n` right coordinates agree, residual congruence reduces to
 a congruence between the power sums of the final two coordinates. -/
