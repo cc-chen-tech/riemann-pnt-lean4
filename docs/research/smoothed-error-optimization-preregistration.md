@@ -114,6 +114,28 @@ and `x+h`. The remaining optimization problem is therefore concentrated in
 the finite zero-sum difference and the three-edge contour-remainder
 difference, together with choosing `epsilon`, `h`, and `W`.
 
+Choosing the classical moving line `epsilon = 1 / log x` now gives the proved
+specialization
+
+```text
+secondOrderPerronError(x,1+1/log x,W)
+  <= exp(1) * x / (2*pi^2*W) * 4*(1+log x)^2.
+```
+
+For the two endpoints, choosing the common line
+`epsilon = 1 / log(x+h)` yields
+
+```text
+E(x,W) + E(x+h,W)
+  <= 2 * [exp(1)*(x+h)/(2*pi^2*W)]
+       * 4*(1+log(x+h))^2.
+```
+
+This strictly improves the preregistered `x^2/T` calibration shape for the
+Perron truncation tail itself. It is not yet an improvement for the complete
+prime-counting error: the finite zero sum and the shifted contour edges are
+part of the approximation rather than this tail.
+
 ## Frozen repository baseline
 
 The branch began clean at commit `638735b` on

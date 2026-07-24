@@ -182,6 +182,25 @@ example {x h ε W : ℝ} (hx : 0 < x) (hh : 0 < h)
   PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderPerronError_add_le_explicit
     hx hh hε hW
 
+example {x W : ℝ} (hx : 1 < x) (hW : 0 < W) :
+    PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderPerronError
+        x (1 + 1 / Real.log x) W ≤
+      (Real.exp 1 * x / (2 * Real.pi ^ 2 * W)) *
+        (4 * (1 + Real.log x) ^ 2) :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderPerronError_moving_line_le
+    hx hW
+
+example {x h W : ℝ} (hx : 1 < x) (hh : 0 < h) (hW : 0 < W) :
+    PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderPerronError
+          x (1 + 1 / Real.log (x + h)) W +
+        PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderPerronError
+          (x + h) (1 + 1 / Real.log (x + h)) W ≤
+      (2 * (Real.exp 1 * (x + h) /
+          (2 * Real.pi ^ 2 * W))) *
+        (4 * (1 + Real.log (x + h)) ^ 2) :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderPerronError_add_moving_line_le
+    hx hh hW
+
 example {x h a c W : ℝ} (hx : 0 < x) (hh : 0 < h) (ha : 0 < a)
     (hac : a < c) (hc : 1 < c) (hW : 0 < W)
     (hboundary : ∀ p ∈

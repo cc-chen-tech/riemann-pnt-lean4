@@ -649,6 +649,126 @@ theorem secondOrderPerronError_add_le_explicit
       add_le_add hxbound hybound
     _ = _ := by ring
 
+/-- On the classical moving Perron line `c = 1 + 1 / log x`, the raw
+second-order tail is `O(x log^2 x / W)` with a fully explicit coefficient. -/
+theorem secondOrderPerronError_moving_line_le
+    {x W : ℝ} (hx : 1 < x) (hW : 0 < W) :
+    secondOrderPerronError x (1 + 1 / Real.log x) W ≤
+      (Real.exp 1 * x / (2 * Real.pi ^ 2 * W)) *
+        (4 * (1 + Real.log x) ^ 2) := by
+  have hx0 : 0 < x := zero_lt_one.trans hx
+  have hx1 : x ≠ 1 := ne_of_gt hx
+  have hlog : 0 < Real.log x := Real.log_pos hx
+  have heps : 0 < 1 / Real.log x := by positivity
+  have hraw :=
+    secondOrderPerronError_le_explicit hx0 heps hW
+  have hxpow :
+      x ^ (1 + 1 / Real.log x) = Real.exp 1 * x := by
+    rw [Real.rpow_add hx0, Real.rpow_one]
+    rw [one_div, Real.rpow_inv_log hx0 hx1]
+    ring
+  have heps_inv :
+      2 / (1 / Real.log x) = 2 * Real.log x := by
+    field_simp [hlog.ne']
+  have hpoly :
+      (2 * Real.log x) * (1 + 2 * Real.log x) ≤
+        4 * (1 + Real.log x) ^ 2 := by
+    nlinarith [sq_nonneg (Real.log x)]
+  have hscale :
+      0 ≤ Real.exp 1 * x / (2 * Real.pi ^ 2 * W) := by
+    positivity
+  rw [hxpow, heps_inv] at hraw
+  exact hraw.trans (mul_le_mul_of_nonneg_left hpoly hscale)
+
+/-- A common moving line based at the upper endpoint `x+h` controls both
+Perron tails in the Riesz finite difference by one explicit budget. -/
+theorem secondOrderPerronError_add_moving_line_le
+    {x h W : ℝ} (hx : 1 < x) (hh : 0 < h) (hW : 0 < W) :
+    secondOrderPerronError x
+          (1 + 1 / Real.log (x + h)) W +
+        secondOrderPerronError (x + h)
+          (1 + 1 / Real.log (x + h)) W ≤
+      (2 * (Real.exp 1 * (x + h) /
+          (2 * Real.pi ^ 2 * W))) *
+        (4 * (1 + Real.log (x + h)) ^ 2) := by
+  let y : ℝ := x + h
+  let ell : ℝ := Real.log y
+  let ε : ℝ := 1 / ell
+  have hx0 : 0 < x := zero_lt_one.trans hx
+  have hy : 1 < y := by dsimp [y]; linarith
+  have hy0 : 0 < y := zero_lt_one.trans hy
+  have hy1 : y ≠ 1 := ne_of_gt hy
+  have hxy : x ≤ y := by dsimp [y]; linarith
+  have hell : 0 < ell := by
+    dsimp [ell]
+    exact Real.log_pos hy
+  have heps : 0 < ε := by dsimp [ε]; positivity
+  have hc0 : 0 ≤ 1 + ε := by linarith
+  have hraw :=
+    secondOrderPerronError_add_le_explicit
+      (x := x) (h := h) (ε := ε) (W := W) hx0 hh heps hW
+  have hypow :
+      y ^ (1 + ε) = Real.exp 1 * y := by
+    dsimp [ε, ell]
+    rw [Real.rpow_add hy0, Real.rpow_one]
+    rw [one_div, Real.rpow_inv_log hy0 hy1]
+    ring
+  have hxpow_le :
+      x ^ (1 + ε) ≤ Real.exp 1 * y := by
+    rw [← hypow]
+    exact Real.rpow_le_rpow hx0.le hxy hc0
+  have hden :
+      0 < 2 * Real.pi ^ 2 * W := by positivity
+  have hscale :
+      x ^ (1 + ε) / (2 * Real.pi ^ 2 * W) +
+          y ^ (1 + ε) / (2 * Real.pi ^ 2 * W) ≤
+        2 * (Real.exp 1 * y / (2 * Real.pi ^ 2 * W)) := by
+    rw [hypow]
+    have hxdiv :
+        x ^ (1 + ε) / (2 * Real.pi ^ 2 * W) ≤
+          Real.exp 1 * y / (2 * Real.pi ^ 2 * W) :=
+      div_le_div_of_nonneg_right hxpow_le hden.le
+    linarith
+  have heps_inv :
+      2 / ε = 2 * ell := by
+    dsimp [ε]
+    field_simp [hell.ne']
+  have hmajor_nonneg :
+      0 ≤ (2 / ε) * (1 + 2 / ε) := by positivity
+  have hpoly :
+      (2 * ell) * (1 + 2 * ell) ≤
+        4 * (1 + ell) ^ 2 := by
+    nlinarith [sq_nonneg ell]
+  have hscale_nonneg :
+      0 ≤ 2 * (Real.exp 1 * y /
+        (2 * Real.pi ^ 2 * W)) := by positivity
+  change
+    secondOrderPerronError x (1 + ε) W +
+        secondOrderPerronError y (1 + ε) W ≤ _ at hraw
+  change
+    secondOrderPerronError x (1 + ε) W +
+        secondOrderPerronError y (1 + ε) W ≤
+      (2 * (Real.exp 1 * y /
+        (2 * Real.pi ^ 2 * W))) *
+        (4 * (1 + ell) ^ 2)
+  calc
+    secondOrderPerronError x (1 + ε) W +
+        secondOrderPerronError y (1 + ε) W ≤
+      (x ^ (1 + ε) / (2 * Real.pi ^ 2 * W) +
+          y ^ (1 + ε) / (2 * Real.pi ^ 2 * W)) *
+        ((2 / ε) * (1 + 2 / ε)) := hraw
+    _ ≤ (2 * (Real.exp 1 * y /
+          (2 * Real.pi ^ 2 * W))) *
+        ((2 / ε) * (1 + 2 / ε)) :=
+      mul_le_mul_of_nonneg_right hscale hmajor_nonneg
+    _ = (2 * (Real.exp 1 * y /
+          (2 * Real.pi ^ 2 * W))) *
+        ((2 * ell) * (1 + 2 * ell)) := by rw [heps_inv]
+    _ ≤ (2 * (Real.exp 1 * y /
+          (2 * Real.pi ^ 2 * W))) *
+        (4 * (1 + ell) ^ 2) :=
+      mul_le_mul_of_nonneg_left hpoly hscale_nonneg
+
 /-- Apply the finite-height second-order explicit formula at both endpoints of
 one smoothing interval and feed the resulting, genuinely constructed Perron
 error bounds into `chebyshevPsi_bounds_of_smoothedApproximation`.
