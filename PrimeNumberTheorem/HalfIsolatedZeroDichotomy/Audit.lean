@@ -1,4 +1,5 @@
 import PrimeNumberTheorem.HalfIsolatedZeroDichotomy.Contract
+import PrimeNumberTheorem.ZeroForcedOscillationComplementaryBound
 open PrimeNumberTheorem.ZeroForcedOscillation
 
 open Complex
@@ -22,33 +23,41 @@ theorem topLayerWindow_disjoint_of_imag_separation
     calc
       |ρ₁.im - ρ₂.im|
           = |(ρ₁.im - x.im) + (x.im - ρ₂.im)| := by ring_nf
-      _ ≤ |ρ₁.im - x.im| + |x.im - ρ₂.im| := abs_add _ _
+      _ ≤ |ρ₁.im - x.im| + |x.im - ρ₂.im| := by
+        simpa using abs_add_le (ρ₁.im - x.im) (x.im - ρ₂.im)
   have hle : |ρ₁.im - ρ₂.im| ≤ 2 * δ := by
-    linarith [himageq, hdist₁, hdist₂]
+    have hsum : |ρ₁.im - x.im| + |x.im - ρ₂.im| ≤ 2 * δ := by
+      have hdist₁' : |ρ₁.im - x.im| ≤ δ := by simpa [abs_sub_comm] using hdist₁
+      calc
+        |ρ₁.im - x.im| + |x.im - ρ₂.im| ≤ δ + δ := add_le_add hdist₁' hdist₂
+        _ ≤ 2 * δ := by nlinarith
+    exact le_trans himageq hsum
   exact (not_lt_of_ge hle) hsep
 
 /-- Pairwise disjointness of windows under pairwise `2δ` separation. -/
 theorem topLayerWindow_pairwise_disjoint_of_centers
     (T β δ : ℝ) (hδ : 0 < δ) (centers : Finset ℂ)
-    (hsep : centers.Pairwise (fun ρ₁ ρ₂ => 2 * δ < |ρ₁.im - ρ₂.im|)) :
-    centers.Pairwise (fun ρ₁ ρ₂ =>
-      Disjoint (TopLayerWindow T β δ ρ₁) (TopLayerWindow T β δ ρ₂)) := by
-  intro ρ₁ hρ₁ ρ₂ hρ₂ hne
-  exact topLayerWindow_disjoint_of_imag_separation T β δ hδ hne (hsep hρ₁ hρ₂ hne)
+    (hsep : ∀ ρ₁ ∈ centers, ∀ ρ₂ ∈ centers, ρ₁ ≠ ρ₂ →
+      Disjoint (TopLayerWindow T β δ ρ₁) (TopLayerWindow T β δ ρ₂)) :
+    ((↑centers : Set ℂ)).PairwiseDisjoint (fun ρ => TopLayerWindow T β δ ρ) := by
+  refine (Finset.pairwiseDisjoint_iff).2 ?_
+  intro ρ₁ hρ₁ ρ₂ hρ₂ hinter
+  have hρ₁' : ρ₁ ∈ centers := by simpa using hρ₁
+  have hρ₂' : ρ₂ ∈ centers := by simpa using hρ₂
+  by_contra hρ₁ne
+  exact (Finset.not_disjoint_iff_nonempty_inter.mpr hinter) <|
+    hsep ρ₁ hρ₁' ρ₂ hρ₂' hρ₁ne
 
 /-- Sum of window-cardinalities is controlled by top-layer cardinality whenever
 windows are pairwise disjoint. -/
 theorem sum_topLayerWindow_card_le_topLayer_of_disjoint
     (T β δ : ℝ) (centers : Finset ℂ)
-    (hdisj :
-      centers.Pairwise (fun ρ₁ ρ₂ =>
-        Disjoint (TopLayerWindow T β δ ρ₁) (TopLayerWindow T β δ ρ₂))
-      ) :
-    (∑ ρ ∈ centers, (TopLayerWindow T β δ ρ).card) ≤
+    (hdisj : ((↑centers : Set ℂ)).PairwiseDisjoint (fun ρ => TopLayerWindow T β δ ρ)) :
+    centers.sum (fun ρ => (TopLayerWindow T β δ ρ).card) ≤
       (TopLayerFinset T β).card := by
   have hcard_eq :
-      (∑ ρ ∈ centers, (TopLayerWindow T β δ ρ).card) =
-        (Finset.biUnion centers (fun ρ => TopLayerWindow T β δ ρ)).card := by
+      (Finset.biUnion centers (fun ρ => TopLayerWindow T β δ ρ)).card =
+        centers.sum (fun ρ => (TopLayerWindow T β δ ρ).card) := by
     simpa using Finset.card_biUnion hdisj
   have hsubset : (Finset.biUnion centers (fun ρ => TopLayerWindow T β δ ρ))
       ⊆ TopLayerFinset T β := by
@@ -63,10 +72,7 @@ theorem sum_topLayerWindow_card_le_topLayer_of_disjoint
 `∪`-extracted finite family yields many different zeros. -/
 theorem extract_many_distinct_zeros_from_disjoint_windows
     (T β δ : ℝ) (hδ : 0 < δ) (centers : Finset ℂ)
-    (hdisj :
-      centers.Pairwise (fun ρ₁ ρ₂ =>
-        Disjoint (TopLayerWindow T β δ ρ₁) (TopLayerWindow T β δ ρ₂))
-      )
+    (hdisj : ((↑centers : Set ℂ)).PairwiseDisjoint (fun ρ => TopLayerWindow T β δ ρ))
     (htwo : ∀ ρ ∈ centers, 2 ≤ (TopLayerWindow T β δ ρ).card) :
     ∃ zset : Finset ℂ, zset ⊆ TopLayerFinset T β ∧
       2 * centers.card ≤ zset.card := by
@@ -77,34 +83,136 @@ theorem extract_many_distinct_zeros_from_disjoint_windows
     rcases Finset.mem_biUnion.mp hx with ⟨ρ, hρ, hx'⟩
     exact topLayerWindow_subset T β δ ρ hx'
   have hcard_eq :
-      (∑ ρ ∈ centers, (TopLayerWindow T β δ ρ).card) =
-        (Finset.biUnion centers (fun ρ => TopLayerWindow T β δ ρ)).card := by
+      (Finset.biUnion centers (fun ρ => TopLayerWindow T β δ ρ)).card =
+        centers.sum (fun ρ => (TopLayerWindow T β δ ρ).card) := by
     simpa using Finset.card_biUnion hdisj
-  have hsum_lower : 2 * centers.card ≤ (∑ ρ ∈ centers, (TopLayerWindow T β δ ρ).card) := by
-    have hconst : (∑ _ in centers, (2 : ℕ)) = 2 * centers.card := by
-      simp
-    have hterm : (∑ _ in centers, (2 : ℕ)) ≤ ∑ ρ ∈ centers, (TopLayerWindow T β δ ρ).card := by
-      exact Finset.sum_le_sum (fun ρ hρ => htwo ρ hρ)
-    simpa [hconst] using hterm
+  have hsum_lower : 2 * centers.card ≤ centers.sum (fun ρ => (TopLayerWindow T β δ ρ).card) := by
+    have hsum_lower_aux : centers.card * 2 ≤ centers.sum (fun ρ => (TopLayerWindow T β δ ρ).card) := by
+      calc
+        centers.card * 2 = centers.sum (fun ρ => (2 : ℕ)) := by simp
+        _ ≤ centers.sum (fun ρ => (TopLayerWindow T β δ ρ).card) :=
+          Finset.sum_le_sum (fun ρ hρ => htwo ρ hρ)
+    simpa [Nat.mul_comm] using hsum_lower_aux
   refine ⟨zset, ?_, ?_⟩
   · simpa [zset] using hsubset
-  · rw [← hcard_eq]
-    exact hsum_lower
+  · have hz : 2 * centers.card ≤ (Finset.biUnion centers (fun ρ => TopLayerWindow T β δ ρ)).card := by
+      exact by simpa [hcard_eq] using hsum_lower
+    simpa [zset] using hz
 
--- Analytic detector bridge (explicit assumption):
--- The phase-2 theorem below is a combinatorial extraction layer.  Any further
--- Maynard–Pratt-style conclusion still requires an explicit mean/large-value input
--- as an additional assumption; that requirement is expressed here for future
--- refinement without hiding it behind a typeclass placeholder.
-def RequiredMaynardPrattHypothesis (T β δ : ℝ) : Prop :=
-  ∀ y : ℝ,
-    0 < y →
-    ‖zeroPackageUncontrolledRemainder y T β + zeroPackageClosedTerms y‖ ≤ |y| + δ
+/-- Exact oscillation-input shape required for a pointwise detector bound.
+This keeps the analytic gap explicit and shows exactly which additional term is
+not controlled by the current repository APIs.
+-/
+def HalfIsolatedSimplifiedDetectorInput (T : ℝ) : Prop :=
+  4 ≤ T →
+    ∀ y : ℝ, 0 < y →
+      ∃ C : ℝ, 0 ≤ C ∧
+        ‖zeroPackageUncontrolledRemainder y T (maximalZeroRealPart T)‖ ≤
+          Real.exp ((maximalZeroRealPart T - maximalComplementaryRealPartGap T) * y) *
+            (C * (1 + Real.log (T + 6)) ^ 2) +
+          ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+            (chebyshevPsi0 (Real.exp y) : ℂ)‖
 
-theorem maynardPratt_detector_as_explicit_assumption
-    (T β δ : ℝ) (hδ : 0 < δ) (hmp : RequiredMaynardPrattHypothesis T β δ) :
-    True := by
-  exact True.intro
+/-- Current inputs give exactly the uncontrolled-remainder estimate above, with an
+explicitly stated `y`-dependent constant `C`.
+
+The closed-form term remains present; the missing step for a detector-style
+smallness principle is an independent pointwise bound on the finite-height
+approximation error.
+-/
+theorem halfIsolatedSimplifiedDetectorInput_available
+    (T : ℝ) (hT : 4 ≤ T) : HalfIsolatedSimplifiedDetectorInput T := by
+  intro hT' y hy
+  have hy0 : 0 ≤ y := le_of_lt hy
+  rcases
+      exists_norm_complementaryZeroPackageContribution_le_exp_maximal_gap_mul_log_sq
+        (y := y) hy0 with
+    ⟨C, hC, hCbound⟩
+  refine ⟨C, hC, ?_⟩
+  have hcomplement :
+      ‖complementaryZeroPackageContribution (Real.exp y) T (maximalZeroRealPart T)‖ ≤
+        Real.exp ((maximalZeroRealPart T - maximalComplementaryRealPartGap T) * y) *
+          (C * (1 + Real.log (T + 6)) ^ 2) := by
+    exact hCbound T hT
+  have huncontrolled :=
+    norm_zeroPackageUncontrolledRemainder_le_complementary_add_approximation y T
+  have hsum : ‖complementaryZeroPackageContribution (Real.exp y) T (maximalZeroRealPart T)‖ +
+      ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+        (chebyshevPsi0 (Real.exp y) : ℂ)‖
+      ≤
+      Real.exp ((maximalZeroRealPart T - maximalComplementaryRealPartGap T) * y) *
+        (C * (1 + Real.log (T + 6)) ^ 2) +
+      ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+        (chebyshevPsi0 (Real.exp y) : ℂ)‖ := by
+    simpa [add_assoc, add_left_comm, add_comm] using
+      add_le_add_right hcomplement ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+        (chebyshevPsi0 (Real.exp y) : ℂ)‖
+  exact le_trans huncontrolled hsum
+
+ /-- Target detector form without explicit approximation split: zeroPackage error is
+bounded only by the complementary-layer exponential envelope. -/
+def HalfIsolatedPureSimplifiedDetectorInput (T : ℝ) : Prop :=
+  4 ≤ T →
+    ∀ y : ℝ, 0 < y →
+      ∃ C : ℝ, 0 ≤ C ∧
+        ‖zeroPackageUncontrolledRemainder y T (maximalZeroRealPart T)‖ ≤
+          Real.exp ((maximalZeroRealPart T - maximalComplementaryRealPartGap T) * y) *
+            (C * (1 + Real.log (T + 6)) ^ 2)
+
+/-- Exact missing analytic input that would remove the additive approximation term
+from `HalfIsolatedSimplifiedDetectorInput`. -/
+def HalfIsolatedResidualControlForDetector (T : ℝ) : Prop :=
+  4 ≤ T →
+    ∀ y : ℝ, 0 < y →
+      ∃ C : ℝ, 0 ≤ C ∧
+        ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+          (chebyshevPsi0 (Real.exp y) : ℂ)‖ ≤
+          Real.exp ((maximalZeroRealPart T - maximalComplementaryRealPartGap T) * y) *
+            (C * (1 + Real.log (T + 6)) ^ 2)
+
+/-- If the exact residual control is supplied, we can instantiate a pure
+one-term detector. This isolates the missing inequality statement to a precise
+place in the chain. -/
+theorem halfIsolatedPureSimplifiedDetectorInput_of_residualControl
+    (T : ℝ) (hT : 4 ≤ T)
+    (hres : HalfIsolatedResidualControlForDetector T) :
+    HalfIsolatedPureSimplifiedDetectorInput T := by
+  intro hT' y hy
+  rcases
+      exists_norm_complementaryZeroPackageContribution_le_exp_maximal_gap_mul_log_sq
+        (y := y) (by exact le_of_lt hy) with
+    ⟨C₁, hC₁_nonneg, hC₁⟩
+  rcases hres hT y hy with
+    ⟨C₂, hC₂_nonneg, hC₂⟩
+  have hcomp :
+      ‖zeroPackageUncontrolledRemainder y T (maximalZeroRealPart T)‖ ≤
+        ‖complementaryZeroPackageContribution (Real.exp y) T (maximalZeroRealPart T)‖ +
+        ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+          (chebyshevPsi0 (Real.exp y) : ℂ)‖ :=
+    norm_zeroPackageUncontrolledRemainder_le_complementary_add_approximation y T
+  have htail :
+      ‖complementaryZeroPackageContribution (Real.exp y) T (maximalZeroRealPart T)‖ ≤
+        Real.exp ((maximalZeroRealPart T - maximalComplementaryRealPartGap T) * y) *
+          (C₁ * (1 + Real.log (T + 6)) ^ 2) := by
+    exact hC₁ T hT
+  have hresbound :
+      ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+          (chebyshevPsi0 (Real.exp y) : ℂ)‖ ≤
+        Real.exp ((maximalZeroRealPart T - maximalComplementaryRealPartGap T) * y) *
+          (C₂ * (1 + Real.log (T + 6)) ^ 2) := hC₂
+  refine ⟨C₁ + C₂, add_nonneg hC₁_nonneg hC₂_nonneg, ?_⟩
+  calc
+    ‖zeroPackageUncontrolledRemainder y T (maximalZeroRealPart T)‖ ≤
+        ‖complementaryZeroPackageContribution (Real.exp y) T (maximalZeroRealPart T)‖ +
+          ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+            (chebyshevPsi0 (Real.exp y) : ℂ)‖ := hcomp
+    _ ≤ Real.exp ((maximalZeroRealPart T - maximalComplementaryRealPartGap T) * y) *
+          (C₁ * (1 + Real.log (T + 6)) ^ 2) +
+        Real.exp ((maximalZeroRealPart T - maximalComplementaryRealPartGap T) * y) *
+          (C₂ * (1 + Real.log (T + 6)) ^ 2) := add_le_add htail hresbound
+    _ = Real.exp ((maximalZeroRealPart T - maximalComplementaryRealPartGap T) * y) *
+          ((C₁ + C₂) * (1 + Real.log (T + 6)) ^ 2) := by
+      ring
 
 end HalfIsolatedZeroDichotomy
 end PrimeNumberTheorem
