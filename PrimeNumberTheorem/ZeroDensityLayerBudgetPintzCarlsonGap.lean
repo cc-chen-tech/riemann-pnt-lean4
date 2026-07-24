@@ -247,9 +247,13 @@ theorem carlsonClassicalExponent_mul_rate_lt_pintz
     (sigma k c : ℝ)
     (hk : 0 ≤ k)
     (hkGap : k < 2 * Real.sqrt c) :
-    (4 * sigma * (1 - sigma)) * k < 2 * Real.sqrt c :=
-  (mul_le_mul_of_nonneg_right
-      (carlsonClassicalExponent_le_one sigma) hk).trans_lt hkGap
+    (4 * sigma * (1 - sigma)) * k < 2 * Real.sqrt c := by
+  have hle :
+      (4 * sigma * (1 - sigma)) * k ≤ k := by
+    simpa only [one_mul] using
+      mul_le_mul_of_nonneg_right
+        (carlsonClassicalExponent_le_one sigma) hk
+  exact hle.trans_lt hkGap
 
 /-- A single unconditional Pintz constant and a single admissible height rate
 control every finite family of Carlson real-part strips. Each strip may have
@@ -274,15 +278,26 @@ theorem exists_pintzConstant_finiteCarlsonLayerBudget_tendsto
     ⟨c, hc, hstrip⟩
   refine ⟨c, hc, ?_⟩
   intro k hk hkGap
-  apply tendsto_finset_sum
-  intro i hi
-  exact hstrip
-    (C i)
-    (p i)
-    (sigma i)
-    k
-    (hC i hi)
-    (carlsonClassicalExponent_mul_rate_lt_pintz
-      (sigma i) k c hk hkGap)
+  have hsum :
+      Tendsto
+        (fun x : ℝ =>
+          ∑ i ∈ layers,
+            C i * pintzCarlsonSqrtLogScale x ^ p i *
+              Real.exp
+                ((4 * sigma i * (1 - sigma i)) * k *
+                    pintzCarlsonSqrtLogScale x -
+                  Pintz.pintzZeroEnvelope x))
+        atTop (𝓝 (∑ i ∈ layers, (0 : ℝ))) := by
+    apply tendsto_finset_sum layers
+    intro i hi
+    exact hstrip
+      (C i)
+      (p i)
+      (sigma i)
+      k
+      (hC i hi)
+      (carlsonClassicalExponent_mul_rate_lt_pintz
+        (sigma i) k c hk hkGap)
+  simpa only [Finset.sum_const_zero] using hsum
 
 end PrimeNumberTheorem

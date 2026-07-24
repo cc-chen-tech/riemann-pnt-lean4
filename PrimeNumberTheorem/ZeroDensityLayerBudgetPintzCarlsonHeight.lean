@@ -129,7 +129,14 @@ theorem exists_pintzConstant_carlsonMajorantAtHeight_tendsto :
                   pintzCarlsonSqrtLogScale x -
                 Pintz.pintzZeroEnvelope x))
         atTop (𝓝 0) := by
-    simpa only [Real.rpow_natCast] using hmodel
+    refine hmodel.congr' ?_
+    filter_upwards with x
+    have hpow :
+        pintzCarlsonSqrtLogScale x ^ (4 : ℝ) =
+          pintzCarlsonSqrtLogScale x ^ (4 : ℕ) := by
+      simpa using
+        (Real.rpow_natCast (pintzCarlsonSqrtLogScale x) 4)
+    rw [hpow]
   refine hmodelNat.congr' ?_
   filter_upwards with x
   exact (pintzCarlsonMajorantKernel_eq_gapModel C sigma k x).symm
@@ -156,8 +163,19 @@ theorem exists_pintzConstant_finiteCarlsonMajorantAtHeight_tendsto
     ⟨c, hc, hstrip⟩
   refine ⟨c, hc, ?_⟩
   intro k hk hkGap
-  apply tendsto_finset_sum
-  intro i hi
-  exact hstrip (C i) (sigma i) k (hC i hi) hk hkGap
+  have hsum :
+      Tendsto
+        (fun x : ℝ =>
+          ∑ i ∈ layers,
+            C i *
+              pintzCarlsonHeight k x ^
+                (4 * sigma i * (1 - sigma i)) *
+              Real.log (pintzCarlsonHeight k x) ^ 4 *
+              Real.exp (-Pintz.pintzZeroEnvelope x))
+        atTop (𝓝 (∑ i ∈ layers, (0 : ℝ))) := by
+    apply tendsto_finset_sum layers
+    intro i hi
+    exact hstrip (C i) (sigma i) k (hC i hi) hk hkGap
+  simpa only [Finset.sum_const_zero] using hsum
 
 end PrimeNumberTheorem

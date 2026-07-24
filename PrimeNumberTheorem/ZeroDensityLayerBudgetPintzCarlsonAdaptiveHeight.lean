@@ -38,7 +38,7 @@ theorem pintzCarlsonFiniteLayerBudget_nonneg
   intro i hi
   have hheight :
       0 ≤ pintzCarlsonHeight k x ^ (4 * sigma i * (1 - sigma i)) :=
-    Real.rpow_nonneg _ _
+    Real.rpow_nonneg (pintzCarlsonHeight_pos k x).le _
   have hlogFourth :
       0 ≤ Real.log (pintzCarlsonHeight k x) ^ 4 := by
     positivity
@@ -144,9 +144,16 @@ theorem exists_pintzConstant_adaptiveFiniteHeightBudget_tendsto
           ∑ k ∈ rates,
             pintzCarlsonFiniteLayerBudget layers C sigma k x)
         atTop (𝓝 0) := by
-    apply tendsto_finset_sum
-    intro k hk
-    exact hfixed k (hratesPos k hk) (hratesGap k hk)
+    have hsum :
+        Tendsto
+          (fun x : ℝ =>
+            ∑ k ∈ rates,
+              pintzCarlsonFiniteLayerBudget layers C sigma k x)
+          atTop (𝓝 (∑ k ∈ rates, (0 : ℝ))) := by
+      apply tendsto_finset_sum rates
+      intro k hk
+      exact hfixed k (hratesPos k hk) (hratesGap k hk)
+    simpa only [Finset.sum_const_zero] using hsum
   refine squeeze_zero' ?_ ?_ hupper
   · exact Filter.Eventually.of_forall fun x =>
       pintzCarlsonFiniteLayerBudget_nonneg
