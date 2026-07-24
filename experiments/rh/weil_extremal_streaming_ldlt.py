@@ -109,7 +109,7 @@ def _resolve_path(base: Path, value: Any) -> Path | None:
     return candidate
 
 
-def _load_source(manifest_path: Path) -> tuple[dict[str, Any], dict[tuple[int, int], Any]]:
+def _load_valid_source_record(manifest_path: Path) -> dict[str, Any] | None:
     record = sharded._read_manifest(manifest_path)
     valid = (
         record is not None
@@ -124,7 +124,12 @@ def _load_source(manifest_path: Path) -> tuple[dict[str, Any], dict[tuple[int, i
             and high_precision.verify_cross_checkpoint_file(manifest_path)
             and record["result"]["complete"] is True
         )
-    if not valid or record is None:
+    return record if valid else None
+
+
+def _load_source(manifest_path: Path) -> tuple[dict[str, Any], dict[tuple[int, int], Any]]:
+    record = _load_valid_source_record(manifest_path)
+    if record is None:
         raise ValueError(
             "source cross-precision artifact is not canonical, complete, and valid"
         )
@@ -912,12 +917,11 @@ def verify_checkpoint(record: Any, checkpoint_path: str | Path) -> bool:
         or _file_sha256(source_path) != source["manifest_sha256"]
     ):
         return False
-    source_record = sharded._read_manifest(source_path)
+    source_record = _load_valid_source_record(source_path)
     if (
         source_record is None
         or source_record.get("payload_sha256")
         != source["manifest_payload_sha256"]
-        or not sharded.verify_cross_precision_artifact_file(source_path)
     ):
         return False
     source_parameters = source_record["parameters"]

@@ -85,6 +85,52 @@ def _source_artifact(tmp_path, center, high_radius):
     return tmp_path / "source" / "manifest.json"
 
 
+def _high_precision_source_artifact(tmp_path, center):
+    from experiments.rh import weil_extremal_high_precision as high_precision
+
+    manifests = {}
+    for level, precision, radius in (
+        ("low", 384, Fraction(1, 100)),
+        ("high", 896, Fraction(1, 1000)),
+    ):
+        for route in (
+            "auxiliary_s_cc_xc",
+            "ccm_hypergeometric_lerch",
+        ):
+            output = tmp_path / "high-precision-source" / "routes" / f"{level}-{route}"
+
+            def bounds_at(i, j, *, route=route, radius=radius):
+                value = center[i + 1][j + 1]
+                if route == "auxiliary_s_cc_xc":
+                    return value - 2 * radius, value + radius
+                return value - radius, value + 2 * radius
+
+            high_precision.write_resumable_route_from_accessor(
+                output,
+                bounds_at,
+                c=13,
+                N=1,
+                prec_bits=precision,
+                decimal_enclosure_digits=120,
+                python_flint_version="fixture",
+                route=route,
+                tile_size=2,
+                minimum_free_disk_bytes=0,
+            )
+            manifests[(level, route)] = output / "manifest.json"
+
+    root = tmp_path / "high-precision-source"
+    high_precision.write_resumable_cross_artifact(
+        root,
+        low_auxiliary_manifest=manifests[("low", "auxiliary_s_cc_xc")],
+        low_ccm_manifest=manifests[("low", "ccm_hypergeometric_lerch")],
+        high_auxiliary_manifest=manifests[("high", "auxiliary_s_cc_xc")],
+        high_ccm_manifest=manifests[("high", "ccm_hypergeometric_lerch")],
+        minimum_free_disk_bytes=0,
+    )
+    return root / "manifest.json"
+
+
 def _rehash(record):
     payload = {key: value for key, value in record.items() if key != "payload_sha256"}
     canonical = json.dumps(
@@ -127,6 +173,28 @@ def test_streaming_interval_ldlt_certifies_positive_fixture(tmp_path):
     assert all(Fraction(pivot["lower"]) > 0 for pivot in record["pivots"])
     assert streaming.verify_checkpoint_file(checkpoint_path)
     assert list((tmp_path / "workspace" / "factors").glob("*.json.gz"))
+
+
+def test_streaming_checkpoint_verifier_accepts_high_precision_source(tmp_path):
+    from experiments.rh import weil_extremal_streaming_ldlt as streaming
+
+    source = _high_precision_source_artifact(
+        tmp_path,
+        _matrix([[8, 1, 0], [1, 7, 1], [0, 1, 6]]),
+    )
+    checkpoint_path = tmp_path / "high-precision-positive.json"
+    record = streaming.run_streaming_interval_ldlt(
+        source,
+        checkpoint_path,
+        workspace_dir=tmp_path / "high-precision-workspace",
+        block_size=2,
+        arb_prec_bits=896,
+        serialization_digits=300,
+        intersection_level="high",
+    )
+
+    assert record["classification"] == "positive"
+    assert streaming.verify_checkpoint_file(checkpoint_path)
 
 
 def test_streaming_interval_ldlt_records_exact_first_unresolved_pivot(tmp_path):
