@@ -57,6 +57,7 @@ CROSS_PRECISION_LIMITATIONS = [
     "This small-N artifact does not assemble the registered c=100, N=200 Gate A matrix.",
     "No exact rational LDL certificate or interval-to-LDL transfer margin is emitted.",
     "Second-precision narrowing is established only for the retained c=13, N=4 interval matrices.",
+    "The payload hash and verifier check internal consistency, not authenticity; the frozen file digest and independent Arb regeneration are separate evidence.",
 ]
 
 Entry = Tuple[int, int]
@@ -677,8 +678,10 @@ def build_cross_precision_overlap_artifact(
     _require_parameters(c, N, high_prec_bits, high_decimal_enclosure_digits)
     if high_prec_bits < low_prec_bits + 512:
         raise ValueError("high_prec_bits must exceed low_prec_bits by at least 512")
-    if high_decimal_enclosure_digits <= low_decimal_enclosure_digits:
-        raise ValueError("high_decimal_enclosure_digits must exceed the low precision")
+    if high_decimal_enclosure_digits != low_decimal_enclosure_digits:
+        raise ValueError(
+            "both precision levels must use the same decimal enclosure grid"
+        )
     _arb, _acb, _ctx, flint_version = _flint()
     low = _precision_artifact_evidence(
         c, N, low_prec_bits, low_decimal_enclosure_digits, flint_version
@@ -1052,7 +1055,8 @@ def verify_cross_precision_overlap_artifact(record: Any) -> bool:
         or low_parameters["N"] != high_parameters["N"]
         or low_parameters["python_flint_version"] != high_parameters["python_flint_version"]
         or high_parameters["prec_bits"] < low_parameters["prec_bits"] + 512
-        or high_parameters["decimal_enclosure_digits"] <= low_parameters["decimal_enclosure_digits"]
+        or high_parameters["decimal_enclosure_digits"]
+        != low_parameters["decimal_enclosure_digits"]
     ):
         return False
     expected_routes = {
@@ -1182,7 +1186,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         "--low-decimal-enclosure-digits", type=int, default=120
     )
     cross_generate_parser.add_argument(
-        "--high-decimal-enclosure-digits", type=int, default=240
+        "--high-decimal-enclosure-digits", type=int, default=120
     )
 
     verify_parser = subparsers.add_parser("verify")

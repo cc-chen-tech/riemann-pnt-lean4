@@ -76,7 +76,7 @@ def test_small_n_arb_interval_overlap_artifact_is_complete_and_replays():
     record = json.loads(source)
 
     assert hashlib.sha256(source).hexdigest() == (
-        "bcc089655bf333a8aceafdfcc9a11d250bd2bbe0e4b0195dc5861839514243c6"
+        "57ed6f307019937536cc5311bbe72aa92b674d03f46aeb627392c3b8cda93ee7"
     )
     assert overlap.verify_overlap_artifact_file(SMALL_N_INTERVAL_OVERLAP)
     assert record["schema_version"] == "weil-extremal-kernel-arb-overlap/v1"
@@ -155,7 +155,7 @@ def test_small_n_cross_precision_artifact_replays_strict_narrowing():
     record = json.loads(source)
 
     assert hashlib.sha256(source).hexdigest() == (
-        "9abfdac422ffab3a8c362286c50d188861ba2cf960ec8cdbafd7515171eff2ab"
+        "5e63562ed160a5d9a4940319ec69b1463a8806c215b9b1623e595ef537d70ec5"
     )
     assert overlap.verify_cross_precision_overlap_artifact_file(
         SMALL_N_CROSS_PRECISION_OVERLAP
@@ -167,6 +167,11 @@ def test_small_n_cross_precision_artifact_replays_strict_narrowing():
     assert record["gate_a_status"] == "not_satisfied"
     assert record["precision_levels"]["low"]["parameters"]["prec_bits"] == 384
     assert record["precision_levels"]["high"]["parameters"]["prec_bits"] == 896
+    assert (
+        record["precision_levels"]["low"]["parameters"]["decimal_enclosure_digits"]
+        == record["precision_levels"]["high"]["parameters"]["decimal_enclosure_digits"]
+        == 120
+    )
     assert record["precision_narrowing"]["result"] == {
         "all_route_entries_contained": True,
         "all_route_entries_strictly_narrower": True,
@@ -201,6 +206,20 @@ def test_small_n_cross_precision_verifier_rejects_rehashed_nonnarrowing():
     refresh_payload_digest(record)
 
     assert not overlap.verify_cross_precision_overlap_artifact(record)
+
+
+def test_cross_precision_builder_requires_one_decimal_enclosure_grid():
+    from experiments.rh import weil_extremal_interval_overlap as overlap
+
+    with pytest.raises(ValueError, match="same decimal enclosure grid"):
+        overlap.build_cross_precision_overlap_artifact(
+            c=13,
+            N=4,
+            low_prec_bits=384,
+            high_prec_bits=896,
+            low_decimal_enclosure_digits=120,
+            high_decimal_enclosure_digits=240,
+        )
 
 
 def test_finite_dictionary_dimensions_distinguish_full_and_even_sector():

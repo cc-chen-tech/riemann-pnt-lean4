@@ -109,7 +109,7 @@ symmetric intersection. Each rational interval is an outward decimal
 containment envelope returned by Arb's `mid_rad_10exp`; no point value is
 promoted to an interval by an assumed error tolerance. The widest retained
 route interval is less than `7e-112`. The artifact SHA-256 is
-`bcc089655bf333a8aceafdfcc9a11d250bd2bbe0e4b0195dc5861839514243c6`.
+`57ed6f307019937536cc5311bbe72aa92b674d03f46aeb627392c3b8cda93ee7`.
 
 Generate and verify it with:
 
@@ -135,9 +135,11 @@ claim and records `gate_a_status = "not_satisfied"`.
 
 The companion artifact
 `experiments/rh/reference/groskin_2607_02828_v1_c13_N4_arb_cross_precision_overlap.json`
-retains both full route matrices at 384 and 896 bits, with respectively 120
-and 240 decimal digits in the rational outward enclosures. Its standard-library
-verifier reconstructs all interval comparisons. For each of the two routes,
+retains both full route matrices at 384 and 896 bits, using the same 120-digit
+rational outward-enclosure grid at both levels. Keeping that grid fixed prevents
+serialization resolution from masquerading as an Arb precision gain. Its
+standard-library consistency verifier reconstructs all interval comparisons.
+For each of the two routes,
 every one of the 81 high-precision intervals is contained in, and has strictly
 smaller width than, its low-precision counterpart. The same two statements hold
 entrywise for the independently assembled route-intersection interval.
@@ -146,17 +148,22 @@ The high precision is exactly 512 bits above the low precision. This establishes
 the requested second-precision narrowing evidence for the retained small matrix,
 not for the registered `(c,N)=(100,200)` matrix. It remains neither an `LDL^T`
 certificate nor an analytic-transfer proof. The artifact SHA-256 is
-`9abfdac422ffab3a8c362286c50d188861ba2cf960ec8cdbafd7515171eff2ab`.
+`5e63562ed160a5d9a4940319ec69b1463a8806c215b9b1623e595ef537d70ec5`.
 
 ```sh
 /tmp/weil-overlap-venv-20260724/bin/python \
   -m experiments.rh.weil_extremal_interval_overlap generate-cross-precision \
   experiments/rh/reference/groskin_2607_02828_v1_c13_N4_arb_cross_precision_overlap.json \
   --c 13 --N 4 --low-prec-bits 384 --high-prec-bits 896 \
-  --low-decimal-enclosure-digits 120 --high-decimal-enclosure-digits 240
+  --low-decimal-enclosure-digits 120 --high-decimal-enclosure-digits 120
 python3 -m experiments.rh.weil_extremal_interval_overlap verify-cross-precision \
   experiments/rh/reference/groskin_2607_02828_v1_c13_N4_arb_cross_precision_overlap.json
 ```
+
+The payload hash and verifier establish canonical serialization and internal
+consistency only; they are not a signature. Authenticity and reproducibility
+are checked separately by the frozen file SHA-256 and by an independent Arb
+regeneration whose bytes must match the committed artifact.
 
 ## Registered Mathematical Target
 

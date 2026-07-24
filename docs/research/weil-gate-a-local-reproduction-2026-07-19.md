@@ -124,6 +124,8 @@ The companion small-N cross-precision artifact
 now supplies the previously absent *small-N-only* narrowing check: the same two
 independent formulas are reassembled at 384 and 896 bits, and exact rational
 interval comparisons show route-wise containment and strict width reduction in
-all 81 entries, with the same result for the route intersection. This does not
+all 81 entries, with the same result for the route intersection. Both levels
+use the same 120-digit outward-decimal grid, so strictness cannot come merely
+from serializing the high-precision balls more finely. This does not
 resolve the corresponding requirement for `401 x 401` matrices at `(100,200)`;
 it is neither an LDL certificate nor an analytic transfer result.
