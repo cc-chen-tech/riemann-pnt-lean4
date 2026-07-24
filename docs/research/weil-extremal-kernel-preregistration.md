@@ -248,6 +248,20 @@ negative Rayleigh witness is available. The analytic tail and basis-change
 transfer are also absent. The artifact therefore keeps
 `gate_a_status = "not_satisfied"`.
 
+The later bounded-storage interval `LDL^T` run sharpens that unresolved sign
+status. It certifies pivots 0 through 66 as strictly positive, then obtains a
+pivot-67 interval containing zero, approximately
+`[-4.044282153109e-3, 3.041817943369e-3]`. This is exact evidence that the
+registered 896-bit interval pipeline cannot continue at that pivot; it is not
+evidence for a zero or negative eigenvalue. The checkpoint SHA-256 is
+`1af647074af73dd617cdb3d027e5400efd01b67727982d46acca2f88a1f7ceae`.
+
+A meaningful 9000/9512-bit continuation must regenerate both routes on a
+common high-resolution outward grid. The existing 120-digit source cannot gain
+information merely by increasing the factorization context. The frozen
+high-precision execution plan binds the previous provenance records but
+explicitly treats them as same-route metadata, not dual-route matrix evidence.
+
 ## Registered Mathematical Target
 
 Use the cutoff-free Connes--van Suijlekom / Connes--Consani--Moscovici

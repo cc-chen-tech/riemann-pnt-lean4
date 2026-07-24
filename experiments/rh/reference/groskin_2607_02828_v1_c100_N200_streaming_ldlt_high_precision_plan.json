@@ -1,0 +1,49 @@
+{
+  "acceptance": {
+    "negative": "An exact rational vector must have a strictly negative interval quadratic-form upper endpoint against the retained intersection.",
+    "positive": "All 401 streaming interval LDL pivots must have strictly positive lower endpoints at both source precision levels.",
+    "unresolved": "Any pivot interval containing zero stops the run without a sign claim."
+  },
+  "claim_scope": "high-precision-execution-plan-only",
+  "gate_a_status": "not_satisfied",
+  "pipeline": {
+    "cross_intersection": "Generate each dual-route and transpose-aware intersection tile immediately after its four source tiles are available.",
+    "factorization": "Run the disk-backed 64 by 64 Schur factorizer once on the 9000-bit low intersection and once on the 9512-bit high intersection.",
+    "route_generation": "Precompute only one-dimensional formula data, evaluate one 64 by 64 route tile at a time, serialize rigorous endpoints, and release the tile before evaluating the next tile.",
+    "route_generation_current_status": "design_only_not_executed",
+    "workspace_serialization_digits": 2950
+  },
+  "precision": {
+    "decimal_enclosure_digits": 2900,
+    "high_bits": 9512,
+    "low_bits": 9000,
+    "separation_bits": 512
+  },
+  "provenance": {
+    "published_9000": {
+      "path": "groskin_2607_02828_v1_c100_N200_provenance.json",
+      "sha256": "5d14ea5bc0874c4edf15b586075337c1852b8e592bd7c4a7867ea14a995325a7"
+    },
+    "replay_9000": {
+      "path": "groskin_2607_02828_v1_c100_N200_local_20260719.json",
+      "sha256": "e6813465db1fef0087e6220a1e76c55d4fdd877db33d27ac51d0ece396033956"
+    },
+    "replay_9512": {
+      "path": "groskin_2607_02828_v1_c100_N200_prec9512_local_20260719.json",
+      "sha256": "6130a52197e9cde363f3e722124608e784fd31e81f97146444f79595edfcb178"
+    },
+    "scope": "These records bind the registered parameters and same-route positive inertia only; they are not high-precision dual-route matrix evidence."
+  },
+  "registered_parameters": {
+    "N": 200,
+    "c": 100,
+    "dimension": 401,
+    "tile_size": 64
+  },
+  "resource_policy": {
+    "minimum_free_disk_bytes": 6000000000,
+    "note": "This is a conservative execution budget, not a mathematical bound.",
+    "retain_monolithic_matrix": false
+  },
+  "schema_version": "weil-extremal-kernel-streaming-ldlt-high-precision-plan/v1"
+}

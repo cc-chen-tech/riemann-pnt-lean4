@@ -201,3 +201,29 @@ strict positive certificate or negative Rayleigh witness was obtained.
 Exact/interval sign certification, the analytic tail budget, the basis-change
 transfer, the full Guinand--Weil criterion, and any RH conclusion remain open.
 The artifact therefore records `gate_a_status = "not_satisfied"`.
+
+## Streaming Full-Matrix Interval LDL Checkpoint
+
+`groskin_2607_02828_v1_c100_N200_streaming_ldlt_896_checkpoint.json`
+authenticates a bounded-storage interval `LDL^T` run against the full sharded
+896-bit intersection. The first 67 pivots are rigorously positive. Pivot 67
+has an exact interval containing zero, approximately
+`[-4.044282153109e-3, 3.041817943369e-3]`.
+
+The result is `unresolved`: it is neither a positive certificate nor a
+negative witness. The checkpoint SHA-256 is
+`1af647074af73dd617cdb3d027e5400efd01b67727982d46acca2f88a1f7ceae`.
+Replay uses only the standard library:
+
+```sh
+python3 -S -m experiments.rh.weil_extremal_streaming_ldlt \
+  verify-checkpoint \
+  experiments/rh/reference/groskin_2607_02828_v1_c100_N200_streaming_ldlt_896_checkpoint.json
+```
+
+The companion
+`groskin_2607_02828_v1_c100_N200_streaming_ldlt_high_precision_plan.json`
+binds the earlier 9000/9512-bit provenance and specifies a bounded-storage
+dual-route regeneration path. That path is designed but has not been run.
+Neither file includes the analytic tail or basis-change transfer, and both
+retain `gate_a_status = "not_satisfied"`.

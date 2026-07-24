@@ -175,3 +175,10 @@ The existing 9000- and 9512-bit same-route positive-inertia replays do not
 substitute for a sign certificate for this retained route intersection. The
 analytic tail and basis-change transfer also remain open, so
 `gate_a_status = "not_satisfied"` and no RH conclusion is claimed.
+
+The subsequent streaming interval `LDL^T` run gives a more local diagnosis:
+67 consecutive pivots are strictly positive, while pivot 67 has an interval
+containing zero. Its exact checkpoint is
+`experiments/rh/reference/groskin_2607_02828_v1_c100_N200_streaming_ldlt_896_checkpoint.json`.
+The bounded block workspace reproduced byte-for-byte in an independent run.
+No positive or negative sign claim follows from this unresolved pivot.
