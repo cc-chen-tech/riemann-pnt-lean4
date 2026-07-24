@@ -1,0 +1,10 @@
+import ZeroFreeRegion.VinogradovKorobov.VinogradovMixedDecomposition
+
+open ZeroFreeRegion.VinogradovKorobov
+
+#check sum_vinogradovResidueClassSum_eq_full
+#check vinogradovMixedMainWeylSum_eq_residueClassSum
+#check vinogradovWeylSumMod_eq_sum_mixedMainWeylSum
+#check norm_vinogradovWeylSumMod_pow_le_double_mixedMainConditioning
+#check vinogradovMixedMainWeylSum_eq_shiftedTailWeylSum
+#check norm_vinogradovWeylSumMod_pow_le_shiftedMixedConditioning

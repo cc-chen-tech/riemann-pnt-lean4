@@ -164,6 +164,21 @@ theorem sum_norm_vinogradovResidueClassSum_pow_le_refinement
       congr 1
       rw [Finset.sum_comm]
 
+/-- Summing a finite sequence over every residue class modulo `Q` recovers
+the original complete sum exactly. -/
+theorem sum_vinogradovResidueClassSum_eq_full
+    {E : Type*} [AddCommMonoid E]
+    (Q X : ℕ) [NeZero Q] (f : Fin X → E) :
+    (∑ ξ : ZMod Q, vinogradovResidueClassSum Q X ξ f) =
+      ∑ m : Fin X, f m := by
+  classical
+  simpa [vinogradovResidueClassSum, vinogradovResidueClassFinset] using
+    (Finset.sum_fiberwise_of_maps_to
+      (s := (Finset.univ : Finset (Fin X)))
+      (t := (Finset.univ : Finset (ZMod Q)))
+      (g := fun m : Fin X ↦ ((m.val + 1 : ℕ) : ZMod Q))
+      (fun _ _ ↦ Finset.mem_univ _) f)
+
 end
 
 end ZeroFreeRegion.VinogradovKorobov
