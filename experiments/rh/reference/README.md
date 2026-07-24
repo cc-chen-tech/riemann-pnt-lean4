@@ -97,8 +97,54 @@ python3 -m experiments.rh.weil_extremal_interval_overlap verify \
 ```
 
 Its SHA-256 is
-`6af23930c0294f6469f80d889f46837bfa74be0e9b914d6d71e1733949edba98`.
+`57ed6f307019937536cc5311bbe72aa92b674d03f46aeb627392c3b8cda93ee7`.
 This is small-N Gate A preparation only. It contains no exact rational LDL
 certificate, no analytic transfer margin, no second-precision narrowing
 evidence, and no `401 x 401` `(100,200)` assembly. Its explicit Gate A status
 is `not_satisfied`.
+
+## Small-N Exact Interval Sign Certificate
+
+`groskin_2607_02828_v1_c13_N4_arb_interval_sign_certificate.json` embeds the
+full two-route, two-precision evidence from
+`groskin_2607_02828_v1_c13_N4_arb_cross_precision_overlap.json` and certifies
+the sign of its high-precision intersection matrix. Both Arb routes are
+retained at 384 and 896 bits on the same 120-digit outward-enclosure grid.
+
+The standard-library verifier uses exact `Fraction` arithmetic to reconstruct
+the rational center `C`, check `C = L D L^T`, check the stored `L^{-T}`, and
+prove
+
+```text
+lambda_min(C)
+  >= min(diag(D)) / (||L^{-T}||_1 ||L^{-T}||_infinity)
+  > max_i sum_j radius[i,j].
+```
+
+All nine diagonal entries of `D` are strictly positive. The conservative
+center lower bound is approximately `5.202385376434832e-15`, while the exact
+entry-interval perturbation row bound is approximately `7.2e-125`; their
+difference is checked as a strictly positive rational number. Consequently,
+every real symmetric matrix in the retained `9 x 9` intersection enclosure is
+positive definite.
+
+Generate and verify the certificate without importing site packages:
+
+```sh
+python3 -S -m experiments.rh.weil_extremal_interval_sign_certificate generate \
+  experiments/rh/reference/groskin_2607_02828_v1_c13_N4_arb_cross_precision_overlap.json \
+  experiments/rh/reference/groskin_2607_02828_v1_c13_N4_arb_interval_sign_certificate.json
+python3 -S -m experiments.rh.weil_extremal_interval_sign_certificate verify \
+  experiments/rh/reference/groskin_2607_02828_v1_c13_N4_arb_interval_sign_certificate.json
+```
+
+The sign-certificate artifact SHA-256 is
+`ce0cd845d873c63f307486554969124b88e3ae76377560af2cccf13cef432069`;
+its embedded cross-precision artifact SHA-256 is
+`5e63562ed160a5d9a4940319ec69b1463a8806c215b9b1623e595ef537d70ec5`.
+The verifier pins this source digest, so a differently rehashed source record
+cannot silently replace the independently regenerated Arb evidence.
+This is a strict finite-interval result at `(c,N)=(13,4)`, not Gate A. It
+contains no `(100,200)` matrix, analytic tail or basis-change transfer, full
+Guinand--Weil criterion, or RH conclusion. Its explicit Gate A status remains
+`not_satisfied`.

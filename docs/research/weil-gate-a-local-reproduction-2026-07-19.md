@@ -129,3 +129,19 @@ use the same 120-digit outward-decimal grid, so strictness cannot come merely
 from serializing the high-precision balls more finely. This does not
 resolve the corresponding requirement for `401 x 401` matrices at `(100,200)`;
 it is neither an LDL certificate nor an analytic transfer result.
+
+The third small-N artifact
+`experiments/rh/reference/groskin_2607_02828_v1_c13_N4_arb_interval_sign_certificate.json`
+now embeds that complete cross-precision evidence and adds an exact rational
+`LDL^T` certificate for the 896-bit intersection center. All nine pivots are
+strictly positive. An exact `L^{-T}` check yields a conservative center lower
+bound of approximately `5.202385376434832e-15`, while the exact
+interval-radius row budget is approximately `7.2e-125`. The standard-library
+verifier checks the strict rational difference, so every real symmetric
+matrix in this retained `9 x 9` enclosure is positive definite.
+
+This resolves the small model's finite matrix-sign question, not the recorded
+Gate A reproduction. No corresponding exact certificate has been connected
+here to the `401 x 401` `(100,200)` matrix, and no analytic tail, basis-change,
+or infinite-dimensional transfer has been supplied. The artifact therefore
+continues to report `gate_a_status = "not_satisfied"` and gives no RH claim.

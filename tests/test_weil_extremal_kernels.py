@@ -53,6 +53,13 @@ SMALL_N_CROSS_PRECISION_OVERLAP = (
     / "reference"
     / "groskin_2607_02828_v1_c13_N4_arb_cross_precision_overlap.json"
 )
+SMALL_N_INTERVAL_SIGN_CERTIFICATE = (
+    Path(__file__).parents[1]
+    / "experiments"
+    / "rh"
+    / "reference"
+    / "groskin_2607_02828_v1_c13_N4_arb_interval_sign_certificate.json"
+)
 
 
 def refresh_payload_digest(record):
@@ -206,6 +213,196 @@ def test_small_n_cross_precision_verifier_rejects_rehashed_nonnarrowing():
     refresh_payload_digest(record)
 
     assert not overlap.verify_cross_precision_overlap_artifact(record)
+
+
+def test_small_n_interval_sign_artifact_certifies_strict_positive_definiteness():
+    from experiments.rh import weil_extremal_interval_sign_certificate as sign
+
+    source = SMALL_N_INTERVAL_SIGN_CERTIFICATE.read_bytes()
+    record = json.loads(source)
+
+    assert hashlib.sha256(source).hexdigest() == (
+        "ce0cd845d873c63f307486554969124b88e3ae76377560af2cccf13cef432069"
+    )
+    assert sign.verify_sign_certificate_artifact_file(
+        SMALL_N_INTERVAL_SIGN_CERTIFICATE
+    )
+    assert record["schema_version"] == (
+        "weil-extremal-kernel-small-n-interval-sign/v1"
+    )
+    assert record["claim_scope"] == "small-N-finite-interval-matrix-sign-only"
+    assert record["gate_a_status"] == "not_satisfied"
+    assert record["classification"] == "positive_definite"
+    assert record["parameters"] == {
+        "N": 4,
+        "c": 13,
+        "decimal_enclosure_digits": 120,
+        "dimension": 9,
+        "index_order": list(range(-4, 5)),
+        "prec_bits": 896,
+        "precision_level": "high",
+        "python_flint_version": "0.8.0",
+    }
+    assert set(record["cross_precision_evidence"]["routes"]) == {
+        "auxiliary_s_cc_xc",
+        "ccm_hypergeometric_lerch",
+    }
+    low_parameters = record["cross_precision_evidence"]["precision_levels"]["low"][
+        "parameters"
+    ]
+    high_parameters = record["cross_precision_evidence"]["precision_levels"]["high"][
+        "parameters"
+    ]
+    assert low_parameters["decimal_enclosure_digits"] == 120
+    assert high_parameters["decimal_enclosure_digits"] == 120
+    assert high_parameters["prec_bits"] - low_parameters["prec_bits"] == 512
+    assert len(record["certificate"]["diagonal"]) == 9
+    assert all(Fraction(value) > 0 for value in record["certificate"]["diagonal"])
+    assert Fraction(record["bounds"]["center_lower_bound"]) > Fraction(
+        record["bounds"]["perturbation_row_bound"]
+    )
+    assert Fraction(record["bounds"]["strict_margin"]) == (
+        Fraction(record["bounds"]["center_lower_bound"])
+        - Fraction(record["bounds"]["perturbation_row_bound"])
+    )
+    assert record["result"] == {
+        "certified_positive_definite": True,
+        "cross_precision_evidence_verified": True,
+        "exact_center_reconstruction": True,
+        "finite_interval_transfer_strict": True,
+        "inverse_transpose_identity": True,
+        "positive_diagonal": True,
+    }
+
+
+@pytest.mark.parametrize(
+    ("path", "replacement"),
+    [
+        (("certificate", "diagonal", 8), "0"),
+        (("bounds", "strict_margin"), "1"),
+        (("result", "certified_positive_definite"), False),
+        (("result", "certified_positive_definite"), 1),
+        (("enclosure", "upper", 0, 0), "100"),
+    ],
+)
+def test_small_n_interval_sign_verifier_rejects_rehashed_tampering(
+    path, replacement
+):
+    from experiments.rh import weil_extremal_interval_sign_certificate as sign
+
+    record = json.loads(SMALL_N_INTERVAL_SIGN_CERTIFICATE.read_bytes())
+    target = record
+    for key in path[:-1]:
+        target = target[key]
+    target[path[-1]] = replacement
+    refresh_payload_digest(record)
+
+    assert not sign.verify_sign_certificate_artifact(record)
+
+
+def test_small_n_interval_sign_verifier_rejects_changed_embedded_route():
+    from experiments.rh import weil_extremal_interval_sign_certificate as sign
+
+    record = json.loads(SMALL_N_INTERVAL_SIGN_CERTIFICATE.read_bytes())
+    evidence = record["cross_precision_evidence"]
+    route = evidence["precision_levels"]["high"]["matrices"][
+        "auxiliary_s_cc_xc"
+    ]["enclosure"]
+    route["lower"][0][0] = "0"
+    refresh_payload_digest(evidence)
+    record["cross_precision_artifact_sha256"] = hashlib.sha256(
+        (
+            json.dumps(
+                evidence,
+                sort_keys=True,
+                separators=(",", ":"),
+                ensure_ascii=True,
+                allow_nan=False,
+            )
+            + "\n"
+        ).encode("ascii")
+    ).hexdigest()
+    refresh_payload_digest(record)
+
+    assert not sign.verify_sign_certificate_artifact(record)
+
+
+def test_small_n_interval_sign_verifier_is_bound_to_frozen_source_digest():
+    from experiments.rh import weil_extremal_interval_overlap as overlap
+    from experiments.rh import weil_extremal_interval_sign_certificate as sign
+
+    record = json.loads(SMALL_N_INTERVAL_SIGN_CERTIFICATE.read_bytes())
+    evidence = record["cross_precision_evidence"]
+    evidence["precision_levels"]["low"]["parameters"][
+        "python_flint_version"
+    ] = "forged-but-internally-consistent"
+    evidence["precision_levels"]["high"]["parameters"][
+        "python_flint_version"
+    ] = "forged-but-internally-consistent"
+    refresh_payload_digest(evidence)
+    assert overlap.verify_cross_precision_overlap_artifact(evidence)
+
+    record["cross_precision_artifact_sha256"] = hashlib.sha256(
+        (
+            json.dumps(
+                evidence,
+                sort_keys=True,
+                separators=(",", ":"),
+                ensure_ascii=True,
+                allow_nan=False,
+            )
+            + "\n"
+        ).encode("ascii")
+    ).hexdigest()
+    record["parameters"][
+        "python_flint_version"
+    ] = "forged-but-internally-consistent"
+    refresh_payload_digest(record)
+
+    assert not sign.verify_sign_certificate_artifact(record)
+
+
+def test_small_n_interval_sign_cli_replays_with_standard_library():
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-S",
+            "-m",
+            "experiments.rh.weil_extremal_interval_sign_certificate",
+            "verify",
+            str(SMALL_N_INTERVAL_SIGN_CERTIFICATE),
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.stdout.strip() == (
+        "valid small-N exact interval sign certificate: true"
+    )
+
+
+def test_small_n_interval_sign_regeneration_is_byte_identical(tmp_path):
+    regenerated = tmp_path / "regenerated-sign-certificate.json"
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-S",
+            "-m",
+            "experiments.rh.weil_extremal_interval_sign_certificate",
+            "generate",
+            str(SMALL_N_CROSS_PRECISION_OVERLAP),
+            str(regenerated),
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.stdout.strip() == (
+        "certified small-N interval matrix positive definite: true"
+    )
+    assert regenerated.read_bytes() == SMALL_N_INTERVAL_SIGN_CERTIFICATE.read_bytes()
 
 
 def test_cross_precision_builder_requires_one_decimal_enclosure_grid():

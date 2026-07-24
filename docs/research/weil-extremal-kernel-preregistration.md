@@ -165,6 +165,63 @@ consistency only; they are not a signature. Authenticity and reproducibility
 are checked separately by the frozen file SHA-256 and by an independent Arb
 regeneration whose bytes must match the committed artifact.
 
+### Exact Interval Sign at Small N
+
+The next companion artifact,
+`experiments/rh/reference/groskin_2607_02828_v1_c13_N4_arb_interval_sign_certificate.json`,
+closes the finite sign question for the retained `(c,N)=(13,4)` interval
+matrix. The exact center of the 896-bit route intersection admits an unpivoted
+rational factorization
+
+```text
+C = L D L^T
+```
+
+with all nine diagonal entries of `D` strictly positive. The verifier also
+checks a rational matrix recorded as `L^{-T}`. Therefore, for every real
+vector `x`,
+
+```text
+x^T C x
+  >= min(diag(D)) / (||L^{-T}||_1 ||L^{-T}||_infinity) * ||x||_2^2.
+```
+
+The resulting conservative center lower bound is approximately
+`5.202385376434832e-15`. For every symmetric matrix `A` in the retained
+entrywise interval, the spectral norm of `A-C` is at most the maximum rational
+row sum of interval radii, approximately `7.2e-125`. The artifact stores and
+checks the exact rational difference between these two quantities; it is
+strictly positive. Thus every matrix in the retained high-precision
+intersection enclosure is positive definite.
+
+The artifact embeds the complete two-route, two-precision record rather than
+discarding it after selecting a center. Verification uses only the Python
+standard library:
+
+```sh
+python3 -S -m experiments.rh.weil_extremal_interval_sign_certificate generate \
+  experiments/rh/reference/groskin_2607_02828_v1_c13_N4_arb_cross_precision_overlap.json \
+  experiments/rh/reference/groskin_2607_02828_v1_c13_N4_arb_interval_sign_certificate.json
+python3 -S -m experiments.rh.weil_extremal_interval_sign_certificate verify \
+  experiments/rh/reference/groskin_2607_02828_v1_c13_N4_arb_interval_sign_certificate.json
+```
+
+Its SHA-256 is
+`ce0cd845d873c63f307486554969124b88e3ae76377560af2cccf13cef432069`.
+The embedded source artifact retains both Arb formulas at 384 and 896 bits on
+the same 120-digit grid and has SHA-256
+`5e63562ed160a5d9a4940319ec69b1463a8806c215b9b1623e595ef537d70ec5`.
+That digest is pinned by the sign verifier, rather than merely copied into the
+artifact and trusted after a payload rehash.
+Independent regeneration means re-running both Arb assemblies into a temporary
+cross-precision artifact, generating this exact certificate from it, and
+checking both files byte-for-byte against the frozen records.
+
+This closes only the finite interval-sign link for the small `9 x 9` model.
+The artifact deliberately records `gate_a_status = "not_satisfied"`. It does
+not contain the registered `(100,200)` matrix, an analytic truncation or
+basis-change margin, an infinite-dimensional transfer, or an RH conclusion.
+
 ## Registered Mathematical Target
 
 Use the cutoff-free Connes--van Suijlekom / Connes--Consani--Moscovici
