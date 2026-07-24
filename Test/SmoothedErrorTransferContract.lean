@@ -219,6 +219,9 @@ example {x a c W : ℝ} (hx : 0 < x) (ha : a < 0) (hc : 0 < c)
       (∀ p ∈ poles, p = 0 ∨ p = 1 ∨ riemannZeta p = 0) ∧
       (∀ p, p ∈ ([[a, c]] ×ℂ [[-W, W]] : Set ℂ) →
         p = 0 ∨ p = 1 ∨ riemannZeta p = 0 → p ∈ poles) ∧
+      residue 0 =
+        deriv (fun z : ℂ =>
+          -logDeriv riemannZeta z * (x : ℂ) ^ z) 0 ∧
       (∀ p ∈ poles, p ≠ 0 → residue p =
         if p = 1 then (x : ℂ)
         else -(analyticOrderNatAt riemannZeta p : ℂ) * (x : ℂ) ^ p / p ^ 2) ∧

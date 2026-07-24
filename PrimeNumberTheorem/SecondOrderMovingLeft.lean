@@ -19,6 +19,9 @@ theorem exists_boundaryRectIntegral_secondOrderExplicitFormulaIntegrand_crossing
       (∀ p ∈ poles, p = 0 ∨ p = 1 ∨ riemannZeta p = 0) ∧
       (∀ p, p ∈ ([[a, c]] ×ℂ [[-W, W]] : Set ℂ) →
         p = 0 ∨ p = 1 ∨ riemannZeta p = 0 → p ∈ poles) ∧
+      residue 0 =
+        deriv (fun z : ℂ =>
+          -logDeriv riemannZeta z * (x : ℂ) ^ z) 0 ∧
       (∀ p ∈ poles, p ≠ 0 → residue p =
         if p = 1 then (x : ℂ)
         else -(analyticOrderNatAt riemannZeta p : ℂ) * (x : ℂ) ^ p / p ^ 2) ∧
@@ -38,6 +41,8 @@ theorem exists_boundaryRectIntegral_secondOrderExplicitFormulaIntegrand_crossing
   let P : Finset ℂ := oldPoles.erase 0
   let residue2 : ℂ → ℂ := fun p => oldResidue p / p
   let r0 : ℂ := if 0 ∈ oldPoles then oldResidue 0 else 0
+  let core : ℂ → ℂ := fun z =>
+    -logDeriv riemannZeta z * (x : ℂ) ^ z
   let raw : ℂ → ℂ := fun z =>
     explicitFormulaIntegrand x z -
       ∑ p ∈ oldPoles, (z - p)⁻¹ * oldResidue p
@@ -61,6 +66,23 @@ theorem exists_boundaryRectIntegral_secondOrderExplicitFormulaIntegrand_crossing
     rw [mem_reProdIm] at hz ⊢
     rw [uIcc_of_le hac.le, uIcc_of_le (by linarith : -W ≤ W)]
     exact ⟨⟨hz.1.1.le, hz.1.2.le⟩, ⟨hz.2.1.le, hz.2.2.le⟩⟩
+  have h0old : (0 : ℂ) ∈ oldPoles :=
+    holdPoles_complete 0 h0K (Or.inl rfl)
+  have hx0 : (x : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr hx.ne'
+  have hzeta0 : riemannZeta (0 : ℂ) ≠ 0 := by
+    rw [riemannZeta_zero]
+    norm_num
+  have hpow_diff : Differentiable ℂ (fun z : ℂ => (x : ℂ) ^ z) :=
+    (differentiable_id : Differentiable ℂ (fun z : ℂ => z)).const_cpow
+      (Or.inl hx0)
+  have hcore_analytic : AnalyticAt ℂ core 0 := by
+    exact
+      (ZeroFreeRegion.analyticAt_logDeriv_riemannZeta_of_ne_one_of_ne_zero
+        0 (by norm_num) hzeta0).neg.mul (hpow_diff.analyticAt 0)
+  have hcore_zero : core 0 = oldResidue 0 := by
+    rw [holdResidue 0]
+    simp [core, logDeriv_apply]
+    ring
   have hg : DifferentiableOn ℂ g K := by
     intro z hz
     exact (hregular z hz).differentiableAt.differentiableWithinAt
@@ -120,6 +142,105 @@ theorem exists_boundaryRectIntegral_secondOrderExplicitFormulaIntegrand_crossing
     intro p hp hp0
     have hpP : p ∈ P := (Finset.mem_insert.mp hp).resolve_left hp0
     simpa [residue, hp0] using hP_residue p hpP
+  have hzero_not_P : (0 : ℂ) ∉ P := by simp [P]
+  have hP_compl_nhds : (P : Set ℂ)ᶜ ∈ 𝓝 (0 : ℂ) :=
+    P.finite_toSet.isClosed.isOpen_compl.mem_nhds hzero_not_P
+  let localG : ℂ → ℂ := fun z =>
+    dslope core 0 z - ∑ p ∈ P, (z - p)⁻¹ * oldResidue p
+  have hg_eventually_localG : g =ᶠ[𝓝[≠] (0 : ℂ)] localG := by
+    filter_upwards [mem_nhdsWithin_of_mem_nhds hK_nhds,
+        mem_nhdsWithin_of_mem_nhds hP_compl_nhds,
+        self_mem_nhdsWithin] with z hzK hzP hz0
+    have hz_ne_zero : z ≠ 0 := Set.mem_compl_singleton_iff.mp hz0
+    have hz_not_P : z ∉ P := by
+      simpa only [Set.mem_compl_iff, Finset.mem_coe] using hzP
+    have hz_not_oldPoles : z ∉ oldPoles := by
+      intro hzold
+      exact hz_not_P (Finset.mem_erase.mpr ⟨hz_ne_zero, hzold⟩)
+    have hg_eq := hoff_eq z hzK hz_not_oldPoles
+    change g z = raw z at hg_eq
+    have hsum_split :
+        (∑ p ∈ oldPoles, (z - p)⁻¹ * oldResidue p) =
+          z⁻¹ * oldResidue 0 +
+            ∑ p ∈ P, (z - p)⁻¹ * oldResidue p := by
+      rw [show (∑ p ∈ oldPoles, (z - p)⁻¹ * oldResidue p) =
+          (∑ p ∈ oldPoles.erase 0, (z - p)⁻¹ * oldResidue p) +
+            (z - 0)⁻¹ * oldResidue 0 by
+          exact (Finset.sum_erase_add _ _ h0old).symm]
+      simp only [P, sub_zero]
+      ring
+    rw [hg_eq]
+    dsimp [raw, localG, explicitFormulaIntegrand]
+    change core z / z -
+        (∑ p ∈ oldPoles, (z - p)⁻¹ * oldResidue p) =
+      dslope core 0 z -
+        ∑ p ∈ P, (z - p)⁻¹ * oldResidue p
+    rw [hsum_split, dslope_of_ne core hz_ne_zero]
+    simp only [slope, vsub_eq_sub, smul_eq_mul]
+    rw [hcore_zero]
+    field_simp [hz_ne_zero]
+    ring
+  have hsum_continuousAt :
+      ContinuousAt
+        (fun z : ℂ => ∑ p ∈ P, (z - p)⁻¹ * oldResidue p) 0 := by
+    have haux : ∀ S : Finset ℂ, (0 : ℂ) ∉ S →
+        ContinuousAt
+          (fun z : ℂ => ∑ p ∈ S, (z - p)⁻¹ * oldResidue p) 0 := by
+      intro S hzeroS
+      induction S using Finset.induction_on with
+      | empty =>
+          simpa using
+            (continuousAt_const :
+              ContinuousAt (fun _ : ℂ => (0 : ℂ)) 0)
+      | @insert p S hp ih =>
+          have hp0 : p ≠ 0 := by
+            intro hpzero
+            subst p
+            exact hzeroS (Finset.mem_insert_self 0 S)
+          have hzeroS' : (0 : ℂ) ∉ S := by
+            intro h0S
+            exact hzeroS (Finset.mem_insert_of_mem h0S)
+          have hterm :
+              ContinuousAt
+                (fun z : ℂ => (z - p)⁻¹ * oldResidue p) 0 :=
+            ((continuousAt_id.sub continuousAt_const).inv₀
+              (sub_ne_zero.mpr hp0.symm)).mul continuousAt_const
+          simpa only [Finset.sum_insert hp] using
+            hterm.add (ih hzeroS')
+    exact haux P hzero_not_P
+  have hlocalG_continuousAt : ContinuousAt localG 0 := by
+    exact
+      (continuousAt_dslope_same.mpr hcore_analytic.differentiableAt).sub
+        hsum_continuousAt
+  have hg_continuousAt : ContinuousAt g 0 :=
+    (hregular 0 h0K).continuousAt
+  have hg_eventually_localG_nhds : g =ᶠ[𝓝 (0 : ℂ)] localG :=
+    (hg_continuousAt.eventuallyEq_nhds_iff_eventuallyEq_nhdsNE
+      hlocalG_continuousAt).mp hg_eventually_localG
+  have hg_zero :
+      g 0 = deriv core 0 + ∑ p ∈ P, residue2 p := by
+    have hg0 := hg_eventually_localG_nhds.eq_of_nhds
+    rw [hg0]
+    dsimp only [localG]
+    rw [dslope_same]
+    have hsum_zero :
+        (∑ p ∈ P, ((0 : ℂ) - p)⁻¹ * oldResidue p) =
+          -∑ p ∈ P, residue2 p := by
+      rw [← Finset.sum_neg_distrib]
+      apply Finset.sum_congr rfl
+      intro p hp
+      have hp0 : p ≠ 0 := Finset.ne_of_mem_erase hp
+      dsimp only [residue2]
+      field_simp [hp0]
+      ring
+    rw [hsum_zero]
+    ring
+  have hzero_residue :
+      residue 0 = deriv core 0 := by
+    simp only [residue, if_pos]
+    dsimp only [zeroResidue]
+    rw [hg_zero]
+    ring
   have hboundary_eq : ∀ z ∈ K,
       ¬(a < z.re ∧ z.re < c ∧ -W < z.im ∧ z.im < W) →
       secondOrderExplicitFormulaIntegrand x z =
@@ -167,7 +288,6 @@ theorem exists_boundaryRectIntegral_secondOrderExplicitFormulaIntegrand_crossing
           intro p hp
           exact hterm p hp
         _ = _ := by rw [Finset.sum_sub_distrib, ← Finset.mul_sum]
-    have hzero_not_P : (0 : ℂ) ∉ P := by simp [P]
     have hpoles_sum :
         (∑ p ∈ poles, (z - p)⁻¹ * residue p) =
           z⁻¹ * zeroResidue +
@@ -200,7 +320,8 @@ theorem exists_boundaryRectIntegral_secondOrderExplicitFormulaIntegrand_crossing
     field_simp [hz0]
     ring
   refine ⟨poles, residue, hpoles_mem, hpoles_classify,
-    (by simpa [K] using hpoles_complete), hpoles_residue, ?_⟩
+    (by simpa [K] using hpoles_complete), ?_, hpoles_residue, ?_⟩
+  · simpa only [core] using hzero_residue
   calc
     MathlibAux.boundaryRectIntegral
         (secondOrderExplicitFormulaIntegrand x) a c (-W) W =

@@ -263,10 +263,15 @@ The contour-identity part at `s = 0` is now closed:
 `SecondOrderMovingLeft` splits the new double principal part from the ordinary
 finite simple-pole family, proves the double part has zero rectangle integral,
 exports completeness of the finite candidate-pole family, and supplies the
-moving-left contour formula whenever `a < 0 < c`. It does not yet identify the
-remaining simple residue at `s = 0` with a closed expression suitable for the
-Riesz approximation. For farther negative-odd lines the remaining residue
-classification also includes the trivial zeros. Those residue identifications
-and the finite residue difference consumed by the Riesz sandwich remain open.
+moving-left contour formula whenever `a < 0 < c`. It now also identifies the
+remaining simple residue at `s = 0` as
+`deriv (fun z => -logDeriv riemannZeta z * (x : ℂ) ^ z) 0`. This closes the
+local Laurent-coefficient problem at the origin without importing an
+unverified constant evaluation. Expanding that derivative into elementary
+zeta constants is optional for the contour identity but may still be useful
+for a numerical Riesz envelope. For farther negative-odd lines the remaining
+residue classification also includes the trivial zeros. Those trivial-zero
+residue identifications and the finite residue difference consumed by the
+Riesz sandwich remain open.
 The input format and Lean endpoint bridge exist, but no candidate FH-1, RH-1,
 or ZFR-1 envelope has yet been proved on its full stated range.
