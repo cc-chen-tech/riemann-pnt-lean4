@@ -147,6 +147,80 @@ example : ∃ C : ℝ, 0 ≤ C ∧ ∀ T : ℝ, 4 ≤ T → ∀ {a b : ℝ},
           ‖(((chebyshevPsi0 (Real.exp y) - Real.exp y : ℝ) : ℂ))‖ :=
   exists_C_forall_fixedHeight_maximalZeroPackage_transfers_to_psi0_error
 
+example (T : ℝ) :
+    0 ≤ maximalZeroPackageEnergy T :=
+  maximalZeroPackageEnergy_nonneg T
+
+example (T : ℝ)
+    (hpackage : (maximalRealPartZeroPackage T).Nonempty) :
+    0 < maximalZeroPackageEnergy T :=
+  maximalZeroPackageEnergy_pos T hpackage
+
+example (T : ℝ) :
+    0 ≤ maximalZeroPackageOffDiagonalBound T :=
+  maximalZeroPackageOffDiagonalBound_nonneg T
+
+example (T : ℝ) :
+    0 ≤ maximalZeroPackageIntervalLengthThreshold T :=
+  maximalZeroPackageIntervalLengthThreshold_nonneg T
+
+example (T : ℝ) :
+    maximalZeroPackageIntervalLengthThreshold T <
+      maximalZeroPackageCanonicalIntervalLength T :=
+  maximalZeroPackageIntervalLengthThreshold_lt_canonical T
+
+example (T a b : ℝ)
+    (hpackage : (maximalRealPartZeroPackage T).Nonempty)
+    (hlength : maximalZeroPackageIntervalLengthThreshold T < b - a) :
+    0 < maximalZeroPackageEnergy T -
+      maximalZeroPackageOffDiagonalBound T / (b - a) :=
+  maximalZeroPackageMeanSquareBracket_pos T hpackage hlength
+
+example (T a b y : ℝ)
+    (hpackage : (maximalRealPartZeroPackage T).Nonempty)
+    (hlength : maximalZeroPackageIntervalLengthThreshold T < b - a) :
+    0 < maximalZeroPackageMeanSquareMain T (b - a) y :=
+  maximalZeroPackageMeanSquareMain_pos T y hpackage hlength
+
+example : ∃ C : ℝ, 0 ≤ C ∧ ∀ T : ℝ, 4 ≤ T →
+    (maximalRealPartZeroPackage T).Nonempty → ∀ {a b : ℝ},
+      0 < a → maximalZeroPackageIntervalLengthThreshold T < b - a →
+        ∃ y ∈ Set.Ioo a b,
+          0 < maximalZeroPackageMeanSquareMain T (b - a) y ∧
+          0 < Real.sqrt (maximalZeroPackageMeanSquareMain T (b - a) y) ∧
+          Real.sqrt (maximalZeroPackageMeanSquareMain T (b - a) y) -
+              (Real.exp ((maximalZeroRealPart T -
+                  maximalComplementaryRealPartGap T) * y) *
+                (C * (1 + Real.log (T + 6)) ^ 2) +
+                ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+                  (chebyshevPsi0 (Real.exp y) : ℂ)‖) -
+              (Real.log (2 * Real.pi) +
+                (1 / 2 : ℝ) * Real.exp (-2 * y) /
+                  (1 - Real.exp (-2 * y))) ≤
+            ‖(((chebyshevPsi0 (Real.exp y) - Real.exp y : ℝ) : ℂ))‖ :=
+  exists_C_forall_fixedHeight_maximalZeroPackage_strict_lower_bound
+
+example : ∃ C : ℝ, 0 ≤ C ∧ ∀ T : ℝ, 4 ≤ T →
+    (maximalRealPartZeroPackage T).Nonempty → ∀ {a : ℝ},
+      0 < a →
+        ∃ y ∈ Set.Ioo a (a + maximalZeroPackageCanonicalIntervalLength T),
+          0 < maximalZeroPackageMeanSquareMain T
+              (maximalZeroPackageCanonicalIntervalLength T) y ∧
+          0 < Real.sqrt (maximalZeroPackageMeanSquareMain T
+                (maximalZeroPackageCanonicalIntervalLength T) y) ∧
+          Real.sqrt (maximalZeroPackageMeanSquareMain T
+                (maximalZeroPackageCanonicalIntervalLength T) y) -
+              (Real.exp ((maximalZeroRealPart T -
+                  maximalComplementaryRealPartGap T) * y) *
+                (C * (1 + Real.log (T + 6)) ^ 2) +
+                ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+                  (chebyshevPsi0 (Real.exp y) : ℂ)‖) -
+              (Real.log (2 * Real.pi) +
+                (1 / 2 : ℝ) * Real.exp (-2 * y) /
+                  (1 - Real.exp (-2 * y))) ≤
+            ‖(((chebyshevPsi0 (Real.exp y) - Real.exp y : ℝ) : ℂ))‖ :=
+  exists_C_forall_fixedHeight_maximalZeroPackage_strict_lower_bound_on_canonical_interval
+
 -- Small sanity checks: the per-term identity at zero multiplicity and at `ρ = 0`.
 
 example (x : ℝ) (hx : 0 < x) (ρ : ℂ) :

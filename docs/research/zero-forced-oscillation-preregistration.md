@@ -27,7 +27,8 @@ Primary sources:
 
 **Status: F0_PASSED_AND_ZETA_ALIGNED; F1_PACKAGE_ISOLATION_PASSED;
 F1_CLOSED_TERMS_BOUNDED; F1_FIXED_HEIGHT_COMPLEMENT_GAP_CLOSED;
-F1_FIXED_HEIGHT_PSI0_TRANSFER_CLOSED; F1_UNIFORM_REMAINDER_OPEN.**  The checked Lean surface
+F1_FIXED_HEIGHT_PSI0_TRANSFER_CLOSED;
+F1_FIXED_HEIGHT_MEAN_SQUARE_SIGN_CLOSED; F1_UNIFORM_REMAINDER_OPEN.**  The checked Lean surface
 proves the exact integral and interval-independent norm bound for one ordered
 off-diagonal pair, the aggregate finite mean-square estimate, and an interior
 point attaining the resulting lower average.  Natural multiplicity is retained
@@ -103,14 +104,54 @@ selected maximal layer has its proved mean-square lower bound and
 <= ||psi0(exp y)-exp y||.
 ```
 
-Thus the finite-dimensional spectral lower bound, automatic complementary
-gap, global reciprocal-zero budget, and the finite-height explicit formula are
-all in one unconditional Lean transfer theorem.  If the maximal package is
-empty, or if its displayed mean-square main term is nonpositive, this transfer
-is logically valid but gives no nontrivial oscillation lower bound.  A genuine
-lower bound additionally needs a nonempty package and a positive mean-square
-bracket.  The displayed approximation norm is deliberately retained: no
-uniform estimate for it is proved or assumed.
+The former mean-square-sign degeneracy is now removed whenever the selected
+maximal layer is nonempty.  Lean defines the exact finite-data quantities
+
+```text
+E_T = sum_{rho in maximal layer} |m(rho)/rho|^2,
+B_T = sum_{rho} sum_{rho' != rho}
+        2 |m(rho)/rho| |m(rho')/rho'|
+          / |Im(rho')-Im(rho)|,
+L_T^* = B_T / E_T.
+```
+
+Nontrivial-zero membership proves both `rho != 0` and `m(rho) > 0`; hence a
+nonempty maximal layer has `E_T > 0`.  It follows formally, rather than by an
+extra caller assumption, that every length `L > L_T^*` satisfies
+
+```text
+E_T - B_T / L > 0.
+```
+
+The theorem
+`exists_C_forall_fixedHeight_maximalZeroPackage_strict_lower_bound` then
+selects `y in (a,b)` and transfers the strictly positive amplitude
+
+```text
+A_T(y;a,b) =
+  sqrt(exp(2 beta_T y) * (E_T - B_T/(b-a)))
+```
+
+to the actual prime-counting error:
+
+```text
+A_T(y;a,b)
+  - [exp((beta_T-delta_T)y) C(1+log(T+6))^2
+     + ||explicitFormulaApprox(exp y,T)-psi0(exp y)||]
+  - closed_budget(y)
+<= ||psi0(exp y)-exp y||.
+```
+
+There is also a no-length-parameter form using the automatically selected
+`T`-dependent interval length `L_T = L_T^* + 1`.  Thus the finite-dimensional
+spectral lower bound, automatic complementary gap, global reciprocal-zero
+budget, and finite-height explicit formula are connected without either an
+external gap or a mean-square positivity hypothesis.
+
+The strictly positive amplitude does not by itself make the entire displayed
+left side positive: the genuine finite-height approximation error and the
+closed/complementary budgets can still dominate it.  Those terms are
+deliberately retained; no uniform estimate for them is proved or assumed.
 
 This is a genuine fixed-height finite-set theorem.  It does not supply a lower
 bound for `delta_T` uniform in a moving height `T = T(y)`, and it does not
@@ -249,8 +290,11 @@ contribution in the repository's finite-height approximation. What remains
 requires a usable lower bound for the automatically selected fixed-height gap
 as the truncation height moves, together with a uniform explicit-formula
 approximation error. The closed logarithmic term and the existence of a
-positive gap at each fixed height are no longer gaps; no theorem here keeps
-that gap quantitatively positive along `T = T(y)`.
+positive gap at each fixed height are no longer gaps. The positivity of the
+finite-height mean-square main term is also closed by the exact threshold
+`B_T/E_T`; no theorem here bounds that threshold, keeps the complementary gap
+quantitatively positive along `T = T(y)`, or controls the approximation norm
+uniformly on the resulting moving interval.
 
 ## Experiment schema
 
@@ -313,6 +357,7 @@ The audit must print axioms for the aggregate mean-square bound, its
 multiplicity specialization, the interior-point consequence, the
 common-real-part complex-power bridge, the closed-term bound, and the
 closed-budget transfer, the automatic maximal-layer complementary estimate,
-and the fixed-height `psi0` transfer.
+the fixed-height `psi0` transfer, the strict interval-length threshold, and
+the canonical `T`-dependent interval transfer.
 A final source scan must find no
 `sorry`, `admit`, or `axiom` in the new production and test files.

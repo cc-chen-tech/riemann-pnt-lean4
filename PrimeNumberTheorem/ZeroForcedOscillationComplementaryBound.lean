@@ -358,6 +358,142 @@ theorem norm_zeroPackageUncontrolledRemainder_le_complementary_add_approximation
           (chebyshevPsi0 (Real.exp y) : ℂ)‖ := by
   exact norm_add_le _ _
 
+/-- The diagonal energy of the automatically selected maximal-real-part zero
+package. Analytic multiplicity remains part of each coefficient. -/
+def maximalZeroPackageEnergy (T : ℝ) : ℝ :=
+  ∑ ρ ∈ maximalRealPartZeroPackage T,
+    ‖(analyticOrderNatAt riemannZeta ρ : ℂ) * ρ⁻¹‖ ^ 2
+
+/-- The ordered off-diagonal budget of the automatically selected maximal
+zero package. -/
+def maximalZeroPackageOffDiagonalBound (T : ℝ) : ℝ :=
+  offDiagonalBound (maximalRealPartZeroPackage T)
+    (fun ρ => (analyticOrderNatAt riemannZeta ρ : ℂ) * ρ⁻¹) Complex.im
+
+/-- The exact interval-length threshold `B_T / E_T` above which the
+finite-package mean-square bracket `E_T - B_T / L` is strictly positive.
+The definition is total; its positivity use requires a nonempty package. -/
+def maximalZeroPackageIntervalLengthThreshold (T : ℝ) : ℝ :=
+  maximalZeroPackageOffDiagonalBound T / maximalZeroPackageEnergy T
+
+/-- A canonical, computable-in-the-finite-data interval length that strictly
+exceeds the mean-square threshold whenever the maximal package is nonempty. -/
+def maximalZeroPackageCanonicalIntervalLength (T : ℝ) : ℝ :=
+  maximalZeroPackageIntervalLengthThreshold T + 1
+
+/-- The explicit positive-amplitude candidate supplied by the mean-square
+argument on a logarithmic interval of length `L`. -/
+def maximalZeroPackageMeanSquareMain (T L y : ℝ) : ℝ :=
+  Real.exp (maximalZeroRealPart T * y) ^ 2 *
+    (maximalZeroPackageEnergy T -
+      maximalZeroPackageOffDiagonalBound T / L)
+
+/-- Every ordered off-diagonal budget is nonnegative. -/
+theorem offDiagonalBound_nonneg {ι : Type*} [DecidableEq ι]
+    (S : Finset ι) (c : ι → ℂ) (ω : ι → ℝ) :
+    0 ≤ offDiagonalBound S c ω := by
+  unfold offDiagonalBound
+  exact Finset.sum_nonneg fun i hi =>
+    Finset.sum_nonneg fun j hj =>
+      div_nonneg
+        (mul_nonneg
+          (mul_nonneg (by norm_num) (norm_nonneg (c i)))
+          (norm_nonneg (c j)))
+        (abs_nonneg (ω j - ω i))
+
+/-- The maximal-package diagonal energy is always nonnegative. -/
+theorem maximalZeroPackageEnergy_nonneg (T : ℝ) :
+    0 ≤ maximalZeroPackageEnergy T := by
+  unfold maximalZeroPackageEnergy
+  exact Finset.sum_nonneg fun _ _ => sq_nonneg _
+
+/-- A nonempty maximal package has strictly positive diagonal energy. The
+proof uses both facts encoded by nontrivial-zero membership: `ρ ≠ 0` and
+positive analytic multiplicity. -/
+theorem maximalZeroPackageEnergy_pos (T : ℝ)
+    (hpackage : (maximalRealPartZeroPackage T).Nonempty) :
+    0 < maximalZeroPackageEnergy T := by
+  classical
+  rcases hpackage with ⟨ρ, hρ⟩
+  unfold maximalZeroPackageEnergy
+  refine Finset.sum_pos' (fun _ _ => sq_nonneg _) ⟨ρ, hρ, ?_⟩
+  have hzero := (mem_maximalRealPartZeroPackage.mp hρ).1
+  have hρ0 : ρ ≠ 0 := by
+    intro h
+    have hre := congrArg Complex.re h
+    norm_num at hre
+    linarith [hzero.2.1]
+  have hρ1 : ρ ≠ 1 := by
+    intro h
+    have hre := congrArg Complex.re h
+    norm_num at hre
+    linarith [hzero.2.2]
+  have horder : 0 < analyticOrderNatAt riemannZeta ρ :=
+    ZeroFreeRegion.analyticOrderNatAt_riemannZeta_pos_of_zero hρ1 hzero.1
+  have horderCast : (analyticOrderNatAt riemannZeta ρ : ℂ) ≠ 0 := by
+    exact_mod_cast horder.ne'
+  have hcoeff :
+      (analyticOrderNatAt riemannZeta ρ : ℂ) * ρ⁻¹ ≠ 0 :=
+    mul_ne_zero horderCast (inv_ne_zero hρ0)
+  have hnorm :
+      0 < ‖(analyticOrderNatAt riemannZeta ρ : ℂ) * ρ⁻¹‖ :=
+    norm_pos_iff.mpr hcoeff
+  nlinarith
+
+/-- The maximal-package ordered off-diagonal budget is nonnegative. -/
+theorem maximalZeroPackageOffDiagonalBound_nonneg (T : ℝ) :
+    0 ≤ maximalZeroPackageOffDiagonalBound T := by
+  exact offDiagonalBound_nonneg _ _ _
+
+/-- The explicit interval-length threshold is nonnegative, including under
+the total empty-package convention. -/
+theorem maximalZeroPackageIntervalLengthThreshold_nonneg (T : ℝ) :
+    0 ≤ maximalZeroPackageIntervalLengthThreshold T := by
+  exact div_nonneg (maximalZeroPackageOffDiagonalBound_nonneg T)
+    (maximalZeroPackageEnergy_nonneg T)
+
+/-- The canonical length exceeds the exact mean-square threshold by one. -/
+theorem maximalZeroPackageIntervalLengthThreshold_lt_canonical (T : ℝ) :
+    maximalZeroPackageIntervalLengthThreshold T <
+      maximalZeroPackageCanonicalIntervalLength T := by
+  unfold maximalZeroPackageCanonicalIntervalLength
+  linarith
+
+/-- For a nonempty maximal package, every interval longer than `B_T / E_T`
+has a strictly positive mean-square bracket. No positivity assumption on the
+bracket is supplied by the caller. -/
+theorem maximalZeroPackageMeanSquareBracket_pos (T : ℝ)
+    (hpackage : (maximalRealPartZeroPackage T).Nonempty)
+    {a b : ℝ}
+    (hlength : maximalZeroPackageIntervalLengthThreshold T < b - a) :
+    0 < maximalZeroPackageEnergy T -
+      maximalZeroPackageOffDiagonalBound T / (b - a) := by
+  have henergy := maximalZeroPackageEnergy_pos T hpackage
+  have hthreshold :=
+    maximalZeroPackageIntervalLengthThreshold_nonneg T
+  have hinterval : 0 < b - a := lt_of_le_of_lt hthreshold hlength
+  have hoff_lt :
+      maximalZeroPackageOffDiagonalBound T <
+        (b - a) * maximalZeroPackageEnergy T := by
+    exact (div_lt_iff₀ henergy).mp hlength
+  have hratio :
+      maximalZeroPackageOffDiagonalBound T / (b - a) <
+        maximalZeroPackageEnergy T := by
+    apply (div_lt_iff₀ hinterval).mpr
+    simpa [mul_comm] using hoff_lt
+  linarith
+
+/-- The full mean-square main term is strictly positive on every interval
+whose length exceeds the explicit threshold. -/
+theorem maximalZeroPackageMeanSquareMain_pos (T y : ℝ)
+    (hpackage : (maximalRealPartZeroPackage T).Nonempty)
+    {a b : ℝ}
+    (hlength : maximalZeroPackageIntervalLengthThreshold T < b - a) :
+    0 < maximalZeroPackageMeanSquareMain T (b - a) y := by
+  unfold maximalZeroPackageMeanSquareMain
+  exact mul_pos (sq_pos_of_pos (Real.exp_pos _))
+    (maximalZeroPackageMeanSquareBracket_pos T hpackage hlength)
+
 /-- Fixed-height zero-forced oscillation transfer with the dominant layer and
 the complementary real-part gap selected automatically from the actual
 height-`T` zero finset.  A single global constant controls the complementary
@@ -432,6 +568,112 @@ theorem exists_C_forall_fixedHeight_maximalZeroPackage_transfers_to_psi0_error
   refine ⟨y, hy, ?_, ?_⟩
   · simpa only [maximalRealPartZeroPackage] using hmean
   · linarith
+
+/-- A nonempty maximal zero package forces a strictly positive mean-square
+amplitude on every logarithmic interval longer than the explicit threshold
+`B_T / E_T`. The square root of that amplitude is transferred all the way to
+the actual `ψ₀(exp y) - exp y` error.
+
+The finite-height approximation norm, complementary package budget, and
+closed terms remain explicitly subtracted. Consequently the theorem removes
+the former mean-square-sign degeneracy but does not claim that the final
+right-hand lower-bound expression is positive without controlling those
+genuine remainders. -/
+theorem exists_C_forall_fixedHeight_maximalZeroPackage_strict_lower_bound
+    : ∃ C : ℝ, 0 ≤ C ∧ ∀ T : ℝ, 4 ≤ T →
+      (maximalRealPartZeroPackage T).Nonempty → ∀ {a b : ℝ},
+        0 < a → maximalZeroPackageIntervalLengthThreshold T < b - a →
+          ∃ y ∈ Set.Ioo a b,
+            0 < maximalZeroPackageMeanSquareMain T (b - a) y ∧
+            0 < Real.sqrt (maximalZeroPackageMeanSquareMain T (b - a) y) ∧
+            Real.sqrt (maximalZeroPackageMeanSquareMain T (b - a) y) -
+                (Real.exp ((maximalZeroRealPart T -
+                    maximalComplementaryRealPartGap T) * y) *
+                  (C * (1 + Real.log (T + 6)) ^ 2) +
+                  ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+                    (chebyshevPsi0 (Real.exp y) : ℂ)‖) -
+                (Real.log (2 * Real.pi) +
+                  (1 / 2 : ℝ) * Real.exp (-2 * y) /
+                    (1 - Real.exp (-2 * y))) ≤
+              ‖(((chebyshevPsi0 (Real.exp y) - Real.exp y : ℝ) : ℂ))‖ := by
+  rcases
+      exists_C_forall_fixedHeight_maximalZeroPackage_transfers_to_psi0_error with
+    ⟨C, hC, htransfer⟩
+  refine ⟨C, hC, ?_⟩
+  intro T hT hpackage a b ha hlength
+  have hlength_pos : 0 < b - a :=
+    lt_of_le_of_lt
+      (maximalZeroPackageIntervalLengthThreshold_nonneg T) hlength
+  have hab : a < b := sub_pos.mp hlength_pos
+  rcases htransfer T hT ha hab with
+    ⟨y, hy, hmean, hpsi⟩
+  have hmain_pos :
+      0 < maximalZeroPackageMeanSquareMain T (b - a) y :=
+    maximalZeroPackageMeanSquareMain_pos T y hpackage hlength
+  have hmean' :
+      maximalZeroPackageMeanSquareMain T (b - a) y ≤
+        ‖equalRealPartZeroPackageContribution (Real.exp y) T
+            (maximalZeroRealPart T)‖ ^ 2 := by
+    simpa only [maximalZeroPackageMeanSquareMain,
+      maximalZeroPackageEnergy, maximalZeroPackageOffDiagonalBound,
+      maximalRealPartZeroPackage] using hmean
+  have hsqrt_le :
+      Real.sqrt (maximalZeroPackageMeanSquareMain T (b - a) y) ≤
+        ‖equalRealPartZeroPackageContribution (Real.exp y) T
+            (maximalZeroRealPart T)‖ := by
+    calc
+      Real.sqrt (maximalZeroPackageMeanSquareMain T (b - a) y) ≤
+          Real.sqrt
+            (‖equalRealPartZeroPackageContribution (Real.exp y) T
+                (maximalZeroRealPart T)‖ ^ 2) :=
+        Real.sqrt_le_sqrt hmean'
+      _ = ‖equalRealPartZeroPackageContribution (Real.exp y) T
+              (maximalZeroRealPart T)‖ :=
+        Real.sqrt_sq (norm_nonneg _)
+  refine ⟨y, hy, hmain_pos, Real.sqrt_pos.mpr hmain_pos, ?_⟩
+  linarith
+
+/-- Canonical fixed-height form of the strict transfer. The interval length is
+chosen directly from the finite zero data as `B_T / E_T + 1`, so callers no
+longer supply an interval-length inequality. This length may vary with `T`;
+no uniform control as `T → ∞` is asserted. -/
+theorem
+    exists_C_forall_fixedHeight_maximalZeroPackage_strict_lower_bound_on_canonical_interval
+    : ∃ C : ℝ, 0 ≤ C ∧ ∀ T : ℝ, 4 ≤ T →
+      (maximalRealPartZeroPackage T).Nonempty → ∀ {a : ℝ},
+        0 < a →
+          ∃ y ∈ Set.Ioo a (a + maximalZeroPackageCanonicalIntervalLength T),
+            0 < maximalZeroPackageMeanSquareMain T
+                (maximalZeroPackageCanonicalIntervalLength T) y ∧
+            0 < Real.sqrt (maximalZeroPackageMeanSquareMain T
+                  (maximalZeroPackageCanonicalIntervalLength T) y) ∧
+            Real.sqrt (maximalZeroPackageMeanSquareMain T
+                  (maximalZeroPackageCanonicalIntervalLength T) y) -
+                (Real.exp ((maximalZeroRealPart T -
+                    maximalComplementaryRealPartGap T) * y) *
+                  (C * (1 + Real.log (T + 6)) ^ 2) +
+                  ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+                    (chebyshevPsi0 (Real.exp y) : ℂ)‖) -
+                (Real.log (2 * Real.pi) +
+                  (1 / 2 : ℝ) * Real.exp (-2 * y) /
+                    (1 - Real.exp (-2 * y))) ≤
+              ‖(((chebyshevPsi0 (Real.exp y) - Real.exp y : ℝ) : ℂ))‖ := by
+  rcases
+      exists_C_forall_fixedHeight_maximalZeroPackage_strict_lower_bound with
+    ⟨C, hC, hstrict⟩
+  refine ⟨C, hC, ?_⟩
+  intro T hT hpackage a ha
+  have hlength :
+      maximalZeroPackageIntervalLengthThreshold T <
+        (a + maximalZeroPackageCanonicalIntervalLength T) - a := by
+    simpa only [add_sub_cancel_left] using
+      maximalZeroPackageIntervalLengthThreshold_lt_canonical T
+  rcases hstrict T hT hpackage ha hlength with
+    ⟨y, hy, hmain, hsqrt, hpsi⟩
+  refine ⟨y, hy, ?_, ?_, ?_⟩
+  · simpa only [add_sub_cancel_left] using hmain
+  · simpa only [add_sub_cancel_left] using hsqrt
+  · simpa only [add_sub_cancel_left] using hpsi
 
 end
 
