@@ -73,6 +73,32 @@ theorem exists_finiteCarlsonCoefficients_along_dynamicHeight
   · intro i hi
     exact hheight.eventually (hC i).2
 
+/-- Carlson coefficients for a finite strip family can be fixed before any
+dynamic height selector is chosen. -/
+theorem exists_finiteCarlsonClassicalCoefficients
+    {ι : Type*}
+    (layers : Finset ι)
+    (sigma : ι → ℝ)
+    (hσ : ∀ i, 1 / 2 < sigma i)
+    (hσ1 : ∀ i, sigma i < 1) :
+    ∃ C : ι → ℝ,
+      (∀ i ∈ layers, 0 ≤ C i) ∧
+      (∀ i ∈ layers, ∀ᶠ T : ℝ in atTop,
+        (ZeroDensity.zeroDensityCount (sigma i) T : ℝ) ≤
+          C i * T ^ (4 * sigma i * (1 - sigma i)) *
+            Real.log T ^ 4) := by
+  classical
+  have hcertificate :
+      ∀ i, ∃ C ≥ 0, ∀ᶠ T : ℝ in atTop,
+        (ZeroDensity.zeroDensityCount (sigma i) T : ℝ) ≤
+          C * T ^ (4 * sigma i * (1 - sigma i)) *
+            Real.log T ^ 4 :=
+    fun i =>
+      exists_carlsonClassicalCoefficient_eventually_count_le
+        (hσ i) (hσ1 i)
+  choose C hC using hcertificate
+  exact ⟨C, fun i hi => (hC i).1, fun i hi => (hC i).2⟩
+
 /-- The actual zero-density count budget at an adaptively selected height,
 weighted by the real Pintz envelope kernel. -/
 noncomputable def pintzCarlsonActualDensityBudget
@@ -179,5 +205,51 @@ theorem exists_pintzConstant_adaptiveCarlsonDensityBudget_tendsto
       layers count hcount selectRate)
     (eventually_pintzCarlsonActualDensityBudget_le_majorant
       layers count C sigma selectRate hcountMajorized)
+
+/-- Concrete dynamic Pintz-Carlson density transfer. For finitely many fixed
+strips in the Carlson range and any adaptive selector from a finite admissible
+rate grid, the actual multiplicity-counted zero-density budget weighted by the
+proved Pintz envelope tends to zero. No abstract density majorization remains
+in the conclusion. -/
+theorem exists_pintzConstant_adaptiveClassicalCarlsonDensity_tendsto
+    {ι : Type*} [DecidableEq ι]
+    (layers : Finset ι)
+    (sigma : ι → ℝ)
+    (hσ : ∀ i, 1 / 2 < sigma i)
+    (hσ1 : ∀ i, sigma i < 1)
+    (rates : Finset ℝ) :
+    ∃ c > 0, ∀ (selectRate : ℝ → ℝ),
+      (∀ x, selectRate x ∈ rates) →
+      (∀ k ∈ rates, 0 < k) →
+      (∀ k ∈ rates, k < 2 * Real.sqrt c) →
+      Tendsto
+        (pintzCarlsonActualDensityBudget
+          layers
+          (fun i T =>
+            (ZeroDensity.zeroDensityCount (sigma i) T : ℝ))
+          selectRate)
+        atTop (𝓝 0) := by
+  rcases exists_finiteCarlsonClassicalCoefficients
+      layers sigma hσ hσ1 with
+    ⟨C, hC, hCarlson⟩
+  rcases exists_pintzConstant_adaptiveCarlsonDensityBudget_tendsto
+      layers
+      (fun i T =>
+        (ZeroDensity.zeroDensityCount (sigma i) T : ℝ))
+      (fun i T => Nat.cast_nonneg _)
+      C sigma hC rates with
+    ⟨c, hc, htransfer⟩
+  refine ⟨c, hc, ?_⟩
+  intro selectRate hselect hratesPos hratesGap
+  have hheight :
+      Tendsto
+        (fun x : ℝ =>
+          pintzCarlsonHeight (selectRate x) x)
+        atTop atTop :=
+    tendsto_adaptive_pintzCarlsonHeight_atTop
+      rates selectRate hselect hratesPos
+  apply htransfer selectRate hselect hratesPos hratesGap
+  intro i hi
+  exact hheight.eventually (hCarlson i hi)
 
 end PrimeNumberTheorem

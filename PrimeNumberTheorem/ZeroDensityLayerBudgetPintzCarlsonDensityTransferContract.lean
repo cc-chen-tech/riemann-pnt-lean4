@@ -19,6 +19,27 @@ example
 example
     {ι : Type*} [DecidableEq ι]
     (layers : Finset ι)
+    (sigma : ι → ℝ)
+    (hσ : ∀ i, 1 / 2 < sigma i)
+    (hσ1 : ∀ i, sigma i < 1)
+    (rates : Finset ℝ) :
+    ∃ c > 0, ∀ (selectRate : ℝ → ℝ),
+      (∀ x, selectRate x ∈ rates) →
+      (∀ k ∈ rates, 0 < k) →
+      (∀ k ∈ rates, k < 2 * Real.sqrt c) →
+      Tendsto
+        (pintzCarlsonActualDensityBudget
+          layers
+          (fun i T =>
+            (ZeroDensity.zeroDensityCount (sigma i) T : ℝ))
+          selectRate)
+        atTop (𝓝 0) :=
+  exists_pintzConstant_adaptiveClassicalCarlsonDensity_tendsto
+    layers sigma hσ hσ1 rates
+
+example
+    {ι : Type*} [DecidableEq ι]
+    (layers : Finset ι)
     (count : ι → ℝ → ℝ)
     (hcount : ∀ i T, 0 ≤ count i T)
     (C sigma : ι → ℝ)
