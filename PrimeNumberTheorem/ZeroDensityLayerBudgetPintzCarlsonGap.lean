@@ -66,6 +66,34 @@ theorem pintzEnvelope_exp_kernel_le_gapKernel
     nlinarith
   · exact hP
 
+/-- Eventual envelope domination plus decay of the explicit gap model imply
+decay of the envelope-weighted kernel itself. -/
+theorem tendsto_pintzEnvelopeWeightedKernel_of_gap
+    {E P : ℝ → ℝ} {a k c : ℝ}
+    (hP : ∀ x, 0 ≤ P x)
+    (henvelope :
+      ∀ᶠ x : ℝ in atTop,
+        2 * Real.sqrt c * pintzCarlsonSqrtLogScale x ≤ E x)
+    (hgapModel :
+      Tendsto
+        (fun x : ℝ =>
+          P x *
+            Real.exp
+              ((a * k - 2 * Real.sqrt c) *
+                pintzCarlsonSqrtLogScale x))
+        atTop (𝓝 0)) :
+    Tendsto
+      (fun x : ℝ =>
+        P x *
+          Real.exp
+            (a * k * pintzCarlsonSqrtLogScale x - E x))
+      atTop (𝓝 0) := by
+  refine squeeze_zero' ?_ ?_ hgapModel
+  · exact Filter.Eventually.of_forall fun x =>
+      mul_nonneg (hP x) (Real.exp_pos _).le
+  · filter_upwards [henvelope] with x hx
+    exact pintzEnvelope_exp_kernel_le_gapKernel (hP x) hx
+
 /-- Any fixed real power is absorbed by the strict Pintz-Carlson exponential
 gap. The parameter `a` is the density exponent and `k` is the exponential
 height rate. -/
@@ -147,5 +175,50 @@ theorem tendsto_carlsonFourthPower_pintzGap
       atTop (𝓝 0) :=
   tendsto_const_mul_carlsonExponent_pintzGap
     C 4 sigma k c hgap
+
+/-- There is an unconditional Pintz constant for which every fixed Carlson
+strip satisfying the strict height-rate gap has a vanishing
+Pintz-envelope-weighted majorant. This is the concrete analytic bridge between
+the existing Pintz envelope theorem and Carlson's classical density exponent.
+-/
+theorem exists_pintzConstant_carlsonWeightedKernel_tendsto :
+    ∃ c > 0, ∀ (C p sigma k : ℝ), 0 ≤ C →
+      (4 * sigma * (1 - sigma)) * k < 2 * Real.sqrt c →
+      Tendsto
+        (fun x : ℝ =>
+          C * pintzCarlsonSqrtLogScale x ^ p *
+            Real.exp
+              ((4 * sigma * (1 - sigma)) * k *
+                  pintzCarlsonSqrtLogScale x -
+                Pintz.pintzZeroEnvelope x))
+        atTop (𝓝 0) := by
+  rcases
+      exists_eventually_two_mul_sqrt_mul_scale_le_pintzZeroEnvelope with
+    ⟨c, hc, henvelope⟩
+  refine ⟨c, hc, ?_⟩
+  intro C p sigma k hC hgap
+  have hmodel :
+      Tendsto
+        (fun x : ℝ =>
+          (C * pintzCarlsonSqrtLogScale x ^ p) *
+            Real.exp
+              (((4 * sigma * (1 - sigma)) * k -
+                  2 * Real.sqrt c) *
+                pintzCarlsonSqrtLogScale x))
+        atTop (𝓝 0) := by
+    simpa only [mul_assoc] using
+      tendsto_const_mul_carlsonExponent_pintzGap
+        C p sigma k c hgap
+  have hweighted :=
+    tendsto_pintzEnvelopeWeightedKernel_of_gap
+      (E := Pintz.pintzZeroEnvelope)
+      (P := fun x => C * pintzCarlsonSqrtLogScale x ^ p)
+      (a := 4 * sigma * (1 - sigma))
+      (k := k)
+      (c := c)
+      (fun x => by positivity)
+      henvelope
+      hmodel
+  simpa only [mul_assoc] using hweighted
 
 end PrimeNumberTheorem
