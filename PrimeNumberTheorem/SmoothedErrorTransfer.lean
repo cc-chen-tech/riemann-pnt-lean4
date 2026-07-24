@@ -1113,6 +1113,66 @@ theorem
       _ ≤ chebyshevPsi (x + h) :=
         hbounds.2
 
+/-- The second-order Riesz factor gains one power of the logarithmic endpoint
+gap.  The smallness hypothesis is the quantitative regime in which
+`‖exp z - 1‖ ≤ 2 ‖z‖` applies. -/
+theorem norm_secondOrderRieszFactor_sub_le
+    {x y : ℝ} {p : ℂ}
+    (hx : 0 < x) (hy : 0 < y) (hp : p ≠ 0)
+    (hlog : 0 ≤ Real.log y - Real.log x)
+    (hsmall : ‖p‖ * (Real.log y - Real.log x) ≤ 1) :
+    ‖((y : ℂ) ^ p - (x : ℂ) ^ p) / p ^ 2‖ ≤
+      2 * x ^ p.re * (Real.log y - Real.log x) / ‖p‖ := by
+  let d : ℝ := Real.log y - Real.log x
+  have hd : 0 ≤ d := hlog
+  have hpNorm : 0 < ‖p‖ := norm_pos_iff.mpr hp
+  have hfac :
+      (y : ℂ) ^ p - (x : ℂ) ^ p =
+        (x : ℂ) ^ p * (Complex.exp ((d : ℂ) * p) - 1) := by
+    rw [Complex.cpow_def_of_ne_zero (Complex.ofReal_ne_zero.mpr hy.ne'),
+      Complex.cpow_def_of_ne_zero (Complex.ofReal_ne_zero.mpr hx.ne')]
+    rw [← Complex.ofReal_log hy.le, ← Complex.ofReal_log hx.le]
+    rw [show (Real.log y : ℂ) * p =
+        (Real.log x : ℂ) * p + (d : ℂ) * p by
+          simp only [d, Complex.ofReal_sub]
+          ring]
+    rw [Complex.exp_add]
+    ring
+  have hzNorm : ‖(d : ℂ) * p‖ = d * ‖p‖ := by
+    rw [norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg hd]
+  have hzSmall : ‖(d : ℂ) * p‖ ≤ 1 := by
+    rw [hzNorm, mul_comm]
+    exact hsmall
+  have hrem : ‖Complex.exp ((d : ℂ) * p) - 1‖ ≤ 2 * (d * ‖p‖) := by
+    simpa [abs_of_nonneg hd] using Complex.norm_exp_sub_one_le hzSmall
+  rw [hfac, norm_div, norm_mul, norm_pow,
+    Complex.norm_cpow_eq_rpow_re_of_pos hx]
+  calc
+    x ^ p.re * ‖Complex.exp ((d : ℂ) * p) - 1‖ / ‖p‖ ^ 2 ≤
+        x ^ p.re * (2 * (d * ‖p‖)) / ‖p‖ ^ 2 := by
+      gcongr
+    _ = 2 * x ^ p.re * d / ‖p‖ := by
+      field_simp [ne_of_gt hpNorm]
+
+/-- Increment form of `norm_secondOrderRieszFactor_sub_le`.  It exposes the
+exact smoothing gain `log ((x+h)/x)` used when balancing `h` against a finite
+zero height. -/
+theorem norm_secondOrderRieszFactor_increment_le
+    {x h : ℝ} {p : ℂ}
+    (hx : 0 < x) (hh : 0 ≤ h) (hp : p ≠ 0)
+    (hsmall : ‖p‖ * Real.log ((x + h) / x) ≤ 1) :
+    ‖(((x + h : ℝ) : ℂ) ^ p - (x : ℂ) ^ p) / p ^ 2‖ ≤
+      2 * x ^ p.re * Real.log ((x + h) / x) / ‖p‖ := by
+  have hy : 0 < x + h := by linarith
+  have hratio : 1 ≤ (x + h) / x :=
+    (le_div_iff₀ hx).2 (by linarith)
+  have hlog : 0 ≤ Real.log (x + h) - Real.log x := by
+    rw [← Real.log_div hy.ne' hx.ne']
+    exact Real.log_nonneg hratio
+  simpa [Real.log_div hy.ne' hx.ne'] using
+    norm_secondOrderRieszFactor_sub_le hx hy hp hlog
+      (by simpa [Real.log_div hy.ne' hx.ne'] using hsmall)
+
 /-- The selected-good-height budget for the difference of the two shifted
 second-order contour remainders on the first negative odd line. -/
 noncomputable def secondOrderSelectedHeightContourBudget

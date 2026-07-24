@@ -448,6 +448,23 @@ example {x h a W : ℝ} (hx : 1 < x) (hh : 0 < h) (ha : a < 0)
     ⟨polesX, polesY, residueX, residueY,
       hzeroX, hzeroY, hbounds⟩
 
+example {x y : ℝ} {p : ℂ}
+    (hx : 0 < x) (hy : 0 < y) (hp : p ≠ 0)
+    (hlog : 0 ≤ Real.log y - Real.log x)
+    (hsmall : ‖p‖ * (Real.log y - Real.log x) ≤ 1) :
+    ‖((y : ℂ) ^ p - (x : ℂ) ^ p) / p ^ 2‖ ≤
+      2 * x ^ p.re * (Real.log y - Real.log x) / ‖p‖ :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.norm_secondOrderRieszFactor_sub_le
+    hx hy hp hlog hsmall
+
+example {x h : ℝ} {p : ℂ}
+    (hx : 0 < x) (hh : 0 ≤ h) (hp : p ≠ 0)
+    (hsmall : ‖p‖ * Real.log ((x + h) / x) ≤ 1) :
+    ‖(((x + h : ℝ) : ℂ) ^ p - (x : ℂ) ^ p) / p ^ 2‖ ≤
+      2 * x ^ p.re * Real.log ((x + h) / x) / ‖p‖ :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.norm_secondOrderRieszFactor_increment_le
+    hx hh hp hsmall
+
 example {x h : ℝ} (hx : Real.exp 1 ≤ x) (hh : 0 < h) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
       ∃ T ∈ Set.Icc A (A + 1),
