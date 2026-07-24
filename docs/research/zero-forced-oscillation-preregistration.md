@@ -28,7 +28,8 @@ Primary sources:
 **Status: F0_PASSED_AND_ZETA_ALIGNED; F1_PACKAGE_ISOLATION_PASSED;
 F1_CLOSED_TERMS_BOUNDED; F1_FIXED_HEIGHT_COMPLEMENT_GAP_CLOSED;
 F1_FIXED_HEIGHT_PSI0_TRANSFER_CLOSED;
-F1_FIXED_HEIGHT_MEAN_SQUARE_SIGN_CLOSED; F1_UNIFORM_REMAINDER_OPEN.**  The checked Lean surface
+F1_FIXED_HEIGHT_MEAN_SQUARE_SIGN_CLOSED;
+F1_MOVING_HEIGHT_POINTWISE_RATE_CLOSED; F1_UNIFORM_REMAINDER_OPEN.**  The checked Lean surface
 proves the exact integral and interval-independent norm bound for one ordered
 off-diagonal pair, the aggregate finite mean-square estimate, and an interior
 point attaining the resulting lower average.  Natural multiplicity is retained
@@ -153,11 +154,45 @@ left side positive: the genuine finite-height approximation error and the
 closed/complementary budgets can still dominate it.  Those terms are
 deliberately retained; no uniform estimate for them is proved or assumed.
 
-This is a genuine fixed-height finite-set theorem.  It does not supply a lower
-bound for `delta_T` uniform in a moving height `T = T(y)`, and it does not
-bound the explicit-formula approximation error. Therefore the quantitative
-remainder requirement in F1, the Revesz baseline recovery, and both novelty
-gates remain open.
+The moving-height theorem now removes two further external hypotheses. Hardy's
+proved critical-line theorem supplies one nontrivial zero, so monotonicity of
+`nontrivialZerosFinset T` gives a threshold `T0` after which every maximal
+package is nonempty. For every `T >= T0` and every `a > 0`, Lean therefore
+selects
+
+```text
+y in (a, a + B_T/E_T + 1)
+```
+
+with strictly positive amplitude. At this selected point, the proved
+all-heights explicit formula supplies a constant `K_y >= 0` satisfying,
+simultaneously for every `U >= 8`,
+
+```text
+||explicitFormulaApprox(exp y,U) - psi0(exp y)||
+  <= K_y (1 + log(U+8))^2 / U.
+```
+
+The theorem
+`exists_C_T0_forall_movingHeight_maximalZeroPackage_quantitative_lower_bound`
+uses this certificate to replace the raw approximation norm and proves
+
+```text
+A_T(y)
+  - exp((beta_T-delta_T)y) C(1+log(T+6))^2
+  - K_y (1+log(T+8))^2/T
+  - closed_budget(y)
+<= ||psi0(exp y)-exp y||.
+```
+
+This is an unconditional moving-height, multiplicity-aware transfer
+inequality, but not an unconditional `Omega` theorem: obtaining a positive
+final lower bound remains conditional on the displayed budgets being smaller
+than `A_T(y)`. The constant `K_y` is uniform in the height variable after `y`
+is selected, but the repository does not currently bound it uniformly as `y`
+ranges over the moving canonical intervals. Nor does it control `B_T/E_T` or
+keep `delta_T` quantitatively separated from zero as `T` grows. Thus the
+Revesz baseline recovery and both novelty gates remain open.
 
 ## Exact classical-zeta candidate theorem
 
@@ -283,18 +318,20 @@ Report this milestone as failed or incomplete if any of the following occurs:
 ## Next exact gap
 
 The next analytic/formal result is the remaining quantitative half of F1:
-prove that `zeroPackageUncontrolledRemainder y T beta` is uniformly smaller
-than the F0 lower amplitude minus the proved closed-form budget on a specified
-logarithmic interval. The package is already an actual selected zeta-zero
-contribution in the repository's finite-height approximation. What remains
-requires a usable lower bound for the automatically selected fixed-height gap
-as the truncation height moves, together with a uniform explicit-formula
-approximation error. The closed logarithmic term and the existence of a
-positive gap at each fixed height are no longer gaps. The positivity of the
-finite-height mean-square main term is also closed by the exact threshold
-`B_T/E_T`; no theorem here bounds that threshold, keeps the complementary gap
-quantitatively positive along `T = T(y)`, or controls the approximation norm
-uniformly on the resulting moving interval.
+make the combined moving-height budget strictly smaller than the positive
+amplitude. The package is already an actual selected zeta-zero contribution,
+and the raw approximation norm has been replaced by a proved all-heights rate.
+What remains requires at least one genuinely uniform input:
+
+- a usable upper bound for `B_T/E_T`, hence for the canonical interval length;
+- a lower bound for the complementary gap `delta_T` along the chosen heights;
+- an interval-uniform majorant for the pointwise constants `K_y`, or a new
+  explicit-formula estimate whose constant is controlled directly in `y`.
+
+The closed logarithmic term, eventual nonemptiness, fixed-height positive gap,
+and positivity of the mean-square main term are no longer gaps. No current
+theorem proves that the remaining three budgets are dominated by the selected
+amplitude.
 
 ## Experiment schema
 
@@ -358,6 +395,7 @@ multiplicity specialization, the interior-point consequence, the
 common-real-part complex-power bridge, the closed-term bound, and the
 closed-budget transfer, the automatic maximal-layer complementary estimate,
 the fixed-height `psi0` transfer, the strict interval-length threshold, and
-the canonical `T`-dependent interval transfer.
+the canonical `T`-dependent interval transfer, Hardy eventual nonemptiness,
+and the pointwise-rate moving-height theorem.
 A final source scan must find no
 `sorry`, `admit`, or `axiom` in the new production and test files.

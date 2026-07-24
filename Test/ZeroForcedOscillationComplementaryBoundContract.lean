@@ -221,6 +221,45 @@ example : ∃ C : ℝ, 0 ≤ C ∧ ∀ T : ℝ, 4 ≤ T →
             ‖(((chebyshevPsi0 (Real.exp y) - Real.exp y : ℝ) : ℂ))‖ :=
   exists_C_forall_fixedHeight_maximalZeroPackage_strict_lower_bound_on_canonical_interval
 
+example :
+    ∃ T0 : ℝ, 8 ≤ T0 ∧ ∀ T : ℝ, T0 ≤ T →
+      (nontrivialZerosFinset T).Nonempty :=
+  exists_eventually_nontrivialZerosFinset_nonempty
+
+example :
+    ∃ T0 : ℝ, 8 ≤ T0 ∧ ∀ T : ℝ, T0 ≤ T →
+      (maximalRealPartZeroPackage T).Nonempty :=
+  exists_eventually_maximalRealPartZeroPackage_nonempty
+
+example (K T : ℝ) (hK : 0 ≤ K) (hT : 8 ≤ T) :
+    0 ≤ movingHeightApproximationBudget K T :=
+  movingHeightApproximationBudget_nonneg K T hK hT
+
+example :
+    ∃ C T0 : ℝ, 0 ≤ C ∧ 8 ≤ T0 ∧ ∀ T : ℝ, T0 ≤ T →
+      ∀ {a : ℝ}, 0 < a →
+        ∃ y ∈ Set.Ioo a (a + maximalZeroPackageCanonicalIntervalLength T),
+          ∃ K : ℝ, 0 ≤ K ∧
+            (∀ U : ℝ, 8 ≤ U →
+              ‖explicitFormulaApproxWithMultiplicity (Real.exp y) U -
+                  (chebyshevPsi0 (Real.exp y) : ℂ)‖ ≤
+                movingHeightApproximationBudget K U) ∧
+            0 < maximalZeroPackageMeanSquareMain T
+                (maximalZeroPackageCanonicalIntervalLength T) y ∧
+            0 < Real.sqrt (maximalZeroPackageMeanSquareMain T
+                (maximalZeroPackageCanonicalIntervalLength T) y) ∧
+            Real.sqrt (maximalZeroPackageMeanSquareMain T
+                  (maximalZeroPackageCanonicalIntervalLength T) y) -
+                (Real.exp ((maximalZeroRealPart T -
+                    maximalComplementaryRealPartGap T) * y) *
+                  (C * (1 + Real.log (T + 6)) ^ 2) +
+                  movingHeightApproximationBudget K T) -
+                (Real.log (2 * Real.pi) +
+                  (1 / 2 : ℝ) * Real.exp (-2 * y) /
+                    (1 - Real.exp (-2 * y))) ≤
+              ‖(((chebyshevPsi0 (Real.exp y) - Real.exp y : ℝ) : ℂ))‖ :=
+  exists_C_T0_forall_movingHeight_maximalZeroPackage_quantitative_lower_bound
+
 -- Small sanity checks: the per-term identity at zero multiplicity and at `ρ = 0`.
 
 example (x : ℝ) (hx : 0 < x) (ρ : ℂ) :

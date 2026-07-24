@@ -1,10 +1,11 @@
 import PrimeNumberTheorem.GlobalZeroCount
 import PrimeNumberTheorem.ZeroForcedOscillationExplicitFormula
+import HardyTheorem.HardyIntegralContradiction
 
 /-!
-# Elementary norm bounds for the complementary zero package
+# Quantitative maximal zero packages and moving-height transfer
 
-This module proves the purely elementary estimates for the complementary zero
+This module starts with elementary estimates for the complementary zero
 package of `ZeroForcedOscillationExplicitFormula.lean`:
 
 * an exact per-term norm identity
@@ -17,12 +18,17 @@ package of `ZeroForcedOscillationExplicitFormula.lean`:
   under a uniform real-part cap `ρ.re ≤ B` on the package (with the two
   instances `B = β` and `B = β - δ` used downstream);
 * monotonicity of the complementary reciprocal-norm sum up to the full
-  height-`T` truncation sum.
+  height-`T` truncation sum;
+* an explicit `B_T / E_T` interval-length threshold making the finite
+  mean-square amplitude strictly positive;
+* eventual nonemptiness of every maximal package from Hardy's theorem;
+* a moving-height lower bound in which the raw finite-height approximation
+  norm is replaced by the proved pointwise-in-`x`, all-heights rate.
 
-What is NOT proved here: no bound on the full truncation sum
-`∑ ρ ∈ nontrivialZerosFinset T, (analyticOrderNatAt riemannZeta ρ : ℝ) / ‖ρ‖`
-itself (that requires zero-counting input), no real-part cap on actual zeta
-zeros, and no relation between `β` and the Riemann Hypothesis.
+What is NOT proved here: the pointwise all-heights constant is not controlled
+uniformly over the moving logarithmic intervals, the complementary gap and
+`B_T / E_T` are not bounded uniformly as `T` grows, and no unconditional
+`Omega` or `Omega_±` theorem is claimed.
 -/
 
 open Complex Set
@@ -93,6 +99,46 @@ theorem maximalRealPartZeroPackage_nonempty
   rcases mem_nontrivialZerosFinset.mp hρ with ⟨hzero, him⟩
   refine ⟨hzero, him, ?_⟩
   rw [maximalZeroRealPart, dif_pos hT, hre]
+
+/-- Hardy's theorem supplies one nontrivial zero. Monotonicity of the
+height-truncated zero finset then makes every sufficiently large truncation
+nonempty. -/
+theorem exists_eventually_nontrivialZerosFinset_nonempty :
+    ∃ T0 : ℝ, 8 ≤ T0 ∧ ∀ T : ℝ, T0 ≤ T →
+      (nontrivialZerosFinset T).Nonempty := by
+  rcases HardyTheorem.hardy_zeros_unbounded_target_proved 1 with
+    ⟨t, ht, hzero⟩
+  let ρ : ℂ := (1 / 2 : ℂ) + I * t
+  have hzeta : riemannZeta ρ = 0 := by
+    have hrho : ρ = (0.5 : ℂ) + I * t := by
+      norm_num [ρ]
+    rw [hrho]
+    exact hzero
+  have hρ : RiemannHypothesis.IsNontrivialZero ρ := by
+    refine ⟨hzeta, ?_, ?_⟩
+    · norm_num [ρ]
+    · norm_num [ρ]
+  let T0 : ℝ := max 8 t
+  refine ⟨T0, le_max_left _ _, ?_⟩
+  intro T hT
+  have htT : t ≤ T := (le_max_right (8 : ℝ) t).trans hT
+  have hρmem : ρ ∈ nontrivialZerosFinset T := by
+    apply mem_nontrivialZerosFinset.mpr
+    refine ⟨hρ, ?_⟩
+    have ht0 : 0 ≤ t := by linarith
+    simpa [ρ, abs_of_nonneg ht0] using htT
+  exact ⟨ρ, hρmem⟩
+
+/-- Consequently the automatically selected maximal-real-part package is
+nonempty at every sufficiently large height. -/
+theorem exists_eventually_maximalRealPartZeroPackage_nonempty :
+    ∃ T0 : ℝ, 8 ≤ T0 ∧ ∀ T : ℝ, T0 ≤ T →
+      (maximalRealPartZeroPackage T).Nonempty := by
+  rcases exists_eventually_nontrivialZerosFinset_nonempty with
+    ⟨T0, hT0, hnonempty⟩
+  refine ⟨T0, hT0, ?_⟩
+  intro T hT
+  exact maximalRealPartZeroPackage_nonempty T (hnonempty T hT)
 
 /-- Every member of the complementary package is an actual nontrivial zeta
 zero at the requested height whose real part differs from `β`. -/
@@ -388,6 +434,19 @@ def maximalZeroPackageMeanSquareMain (T L y : ℝ) : ℝ :=
     (maximalZeroPackageEnergy T -
       maximalZeroPackageOffDiagonalBound T / L)
 
+/-- Pointwise-in-`x`, uniform-in-height approximation budget supplied by the
+all-heights explicit formula after `x = exp y` has been selected. -/
+def movingHeightApproximationBudget (K T : ℝ) : ℝ :=
+  K * (1 + Real.log (T + 8)) ^ 2 / T
+
+/-- The moving-height approximation budget is nonnegative in its range of
+use. -/
+theorem movingHeightApproximationBudget_nonneg (K T : ℝ)
+    (hK : 0 ≤ K) (hT : 8 ≤ T) :
+    0 ≤ movingHeightApproximationBudget K T := by
+  unfold movingHeightApproximationBudget
+  exact div_nonneg (mul_nonneg hK (sq_nonneg _)) (by linarith)
+
 /-- Every ordered off-diagonal budget is nonnegative. -/
 theorem offDiagonalBound_nonneg {ι : Type*} [DecidableEq ι]
     (S : Finset ι) (c : ι → ℂ) (ω : ι → ℝ) :
@@ -674,6 +733,66 @@ theorem
   · simpa only [add_sub_cancel_left] using hmain
   · simpa only [add_sub_cancel_left] using hsqrt
   · simpa only [add_sub_cancel_left] using hpsi
+
+/-- Moving-height quantitative zero-forced transfer. Hardy's theorem removes
+the maximal-package nonemptiness hypothesis beyond one fixed threshold. For
+every later truncation height and every positive logarithmic starting point,
+the canonical interval has a point with strictly positive mean-square
+amplitude.
+
+The raw finite-height approximation norm is eliminated using the proved
+all-heights explicit-formula rate. The returned constant `K` depends on the
+selected point `y`, but its certificate controls every height `U ≥ 8`, not only
+the chosen `T`. Analytic multiplicities, the actual complementary gap, and the
+closed terms remain explicit. -/
+theorem
+    exists_C_T0_forall_movingHeight_maximalZeroPackage_quantitative_lower_bound :
+    ∃ C T0 : ℝ, 0 ≤ C ∧ 8 ≤ T0 ∧ ∀ T : ℝ, T0 ≤ T →
+      ∀ {a : ℝ}, 0 < a →
+        ∃ y ∈ Set.Ioo a (a + maximalZeroPackageCanonicalIntervalLength T),
+          ∃ K : ℝ, 0 ≤ K ∧
+            (∀ U : ℝ, 8 ≤ U →
+              ‖explicitFormulaApproxWithMultiplicity (Real.exp y) U -
+                  (chebyshevPsi0 (Real.exp y) : ℂ)‖ ≤
+                movingHeightApproximationBudget K U) ∧
+            0 < maximalZeroPackageMeanSquareMain T
+                (maximalZeroPackageCanonicalIntervalLength T) y ∧
+            0 < Real.sqrt (maximalZeroPackageMeanSquareMain T
+                (maximalZeroPackageCanonicalIntervalLength T) y) ∧
+            Real.sqrt (maximalZeroPackageMeanSquareMain T
+                  (maximalZeroPackageCanonicalIntervalLength T) y) -
+                (Real.exp ((maximalZeroRealPart T -
+                    maximalComplementaryRealPartGap T) * y) *
+                  (C * (1 + Real.log (T + 6)) ^ 2) +
+                  movingHeightApproximationBudget K T) -
+                (Real.log (2 * Real.pi) +
+                  (1 / 2 : ℝ) * Real.exp (-2 * y) /
+                    (1 - Real.exp (-2 * y))) ≤
+              ‖(((chebyshevPsi0 (Real.exp y) - Real.exp y : ℝ) : ℂ))‖ := by
+  rcases
+      exists_C_forall_fixedHeight_maximalZeroPackage_strict_lower_bound_on_canonical_interval
+      with ⟨C, hC, hfixed⟩
+  rcases exists_eventually_maximalRealPartZeroPackage_nonempty with
+    ⟨T0, hT0, hpackage⟩
+  refine ⟨C, T0, hC, hT0, ?_⟩
+  intro T hT a ha
+  have hT8 : 8 ≤ T := hT0.trans hT
+  rcases hfixed T (by linarith) (hpackage T hT) ha with
+    ⟨y, hy, hmain, hsqrt, hpsi⟩
+  have hypos : 0 < y := lt_trans ha hy.1
+  have hx : 1 < Real.exp y := Real.one_lt_exp_iff.mpr hypos
+  rcases
+      _root_.PrimeNumberTheorem.ExplicitFormulaResidues.exists_norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_log_sq_div
+        hx with ⟨K, hK, happrox⟩
+  have happroxT :
+      ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+          (chebyshevPsi0 (Real.exp y) : ℂ)‖ ≤
+        movingHeightApproximationBudget K T := by
+    simpa only [movingHeightApproximationBudget] using happrox T hT8
+  refine ⟨y, hy, K, hK, ?_, hmain, hsqrt, ?_⟩
+  · intro U hU
+    simpa only [movingHeightApproximationBudget] using happrox U hU
+  · linarith
 
 end
 
