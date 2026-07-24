@@ -104,8 +104,9 @@ L_M
 ```
 
 A finite exponential polynomial is uniformly almost periodic. For each fixed
-package, every sufficiently long interval contains a point arbitrarily close
-to its global sup norm. Hence (A) implies
+package, every interval longer than a package-dependent recurrence modulus
+contains a point arbitrarily close to its global sup norm. Therefore (A)
+implies
 
 ```text
 sup_{u in I_Y}
@@ -113,9 +114,18 @@ sup_{u in I_Y}
     >= (L_(M_A) - o(1)) B_Y.                  (B)
 ```
 
-The recurrence length may depend on the actual frequencies. This dependence
-can be absorbed into the starting scale; it does not have to enter a power
-interval exponent.
+only under the additional condition
+
+```text
+length(I_Y)
+  >= recurrenceModulus(P_Y, desiredAccuracy).  (C)
+```
+
+The fact that `length(I_Y)` tends to infinity is not enough when `P_Y` itself
+varies with `Y`: its recurrence modulus may grow even faster. Thus a valid
+envelope-local proof must establish (C), either from a uniform frequency
+separation/Diophantine estimate or from an explicit recurrence bound for the
+selected package.
 
 ## Recommended construction: envelope-local packages
 
@@ -175,13 +185,91 @@ This route requires:
 This is more local to the given zero but technically less developed than the
 envelope route.
 
-## Current hard blocker
+## Global transfer via Abel coefficients
 
-The missing theorem is not another finite-frequency norm estimate. It is:
+The global `limsup` problem no longer requires the finite-package
+approximation below. A separate Mellin--Abel argument reads the boundary
+Fourier coefficients of the full PNT error directly. Bellotti's bounded edge
+count then guarantees that one of the first `M_A+1` odd multiples of the
+target ordinate is missing on the target real-part line.
+
+Combining that missing coefficient with the fixed-cardinality defect argument
+proves a strict constant above `pi/2`. The full proof is in
+`vk-edge-pi-over-two-abel-transfer.md`.
+
+The finite-package problem remains necessary for the stronger localization
+claim in every prescribed power interval.
+
+## Two-frequency localized transform
+
+The Abel proof supplies a more focused route to localization than the full
+envelope decomposition. If `n gamma_0` is the missing odd boundary frequency,
+use the dual polynomial
+
+```text
+q_n(theta)
+  = cos(theta) - epsilon_n t_n cos(n theta),
+
+t_n = sin(1/(4n)).
+```
+
+Its normalized `L1` norm is strictly smaller than `2/pi`:
+
+```text
+mean |q_n|
+  <= 2/pi - t_n/(pi n).
+```
+
+In the Revesz Gaussian-Mellin setup, replace the scalar conjugate-paired
+transform at `rho_0` by a phase-adjusted linear combination of the transforms
+at
+
+```text
+rho_0
+```
+
+and
+
+```text
+w_n = beta_0 + i n gamma_0.
+```
+
+The phase and magnitude can be chosen so that the main integral kernel is
+exactly `|rho_0| q_n(gamma_0 log x-alpha_0)`. The conditional upper estimate
+then contains the improved factor
+
+```text
+2 mean |q_n|
+  < 4/pi.
+```
+
+Because `w_n` is not a zero, the second transform has no central residue.
+The target and its conjugate still provide the two unit residues in the first
+transform.
+
+The remaining localized lemma is now precise:
+
+> Prove a weighted Cassels/Turan lower bound for the combined residue sum,
+> retaining `2-o(1)` despite the signed coefficient of the auxiliary
+> transform.
+
+The original Cassels lemma handles an unweighted sum of conjugate pure powers.
+The combined transform introduces fixed coefficients in the auxiliary residue
+sum. A valid proof must either extend Cassels to these coefficients or choose
+the Gaussian parameter by a separate finite almost-periodic averaging
+argument. This is the only new lower-bound ingredient required by the
+two-frequency route; the contour and tail estimates are already present in
+the Revesz proof.
+
+## Current localization blockers
+
+The envelope route needs both:
 
 > A multiplicity-aware, envelope-local explicit formula that approximates the
 > normalized prime-counting error by at most `M_A` effective zero frequencies
 > with a remainder smaller than the explicit finite-spectrum margin.
+
+and a recurrence bound of the form (C).
 
 The margin can be very small:
 
@@ -195,15 +283,20 @@ in a spectral projection can erase the improvement.
 
 ## Decision
 
-Gate F1 is closed at the abstract Fourier level. Gate Z1 remains open.
+Gate F1 is closed at the abstract Fourier level. The global Abel version of
+Gate Z1 is also closed, modulo Bellotti's stated theorem. The power-interval
+localized version of Gate Z1 remains open.
 
-The next mathematical task on this branch is to prove the finite
-near-minimizer decomposition for the Pintz envelope, including a remainder
-smaller than
+The next mathematical task on this branch is the narrower two-frequency
+weighted Cassels/Turan lemma described above. If that fails, return to the
+finite near-minimizer decomposition and prove both a remainder smaller than
 
 ```text
 (L_(M_A) - pi/2) B_Y.
 ```
 
-Until that theorem is proved, the repository must not claim a zeta
-oscillation constant above `pi/2`.
+and a uniform recurrence modulus.
+
+Until that theorem is proved, the repository must not claim the stronger
+power-interval localization. The global `limsup` constant above `pi/2` is
+supported by the separate Mellin--Abel proof.

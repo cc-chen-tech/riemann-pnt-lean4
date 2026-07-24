@@ -8,6 +8,7 @@ from experiments.pnt.vk_edge_pi_over_two_search import (
     estimate_sup_norm,
     fejer_sign_cos_normalized,
     finite_spectrum_kappa_lower_bound,
+    missing_odd_dual_certificate,
     normalized_spectrum,
     sign_cos_truncation,
 )
@@ -142,6 +143,38 @@ class DeterministicSearchTests(unittest.TestCase):
 
 
 class AnalyticLowerBoundTests(unittest.TestCase):
+    def test_missing_odd_dual_certificate_is_strict(self) -> None:
+        for odd_harmonic in (1, 3, 5, 11):
+            certificate = missing_odd_dual_certificate(odd_harmonic)
+
+            self.assertLess(certificate.l1_upper_bound, 2.0 / math.pi)
+            self.assertGreater(certificate.norm_lower_bound, math.pi / 2.0)
+
+    def test_missing_odd_dual_certificate_bounds_sampled_l1_norm(self) -> None:
+        samples = 262144
+        for odd_harmonic in (1, 3, 5, 11):
+            certificate = missing_odd_dual_certificate(odd_harmonic)
+            sampled_mean = sum(
+                abs(
+                    math.cos(2.0 * math.pi * index / samples)
+                    + certificate.auxiliary_coefficient
+                    * math.cos(
+                        odd_harmonic * 2.0 * math.pi * index / samples
+                    )
+                )
+                for index in range(samples)
+            ) / samples
+
+            self.assertLessEqual(
+                sampled_mean,
+                certificate.l1_upper_bound + 1.0e-10,
+            )
+
+    def test_missing_odd_dual_certificate_rejects_nonodd_harmonic(self) -> None:
+        for invalid in (-1, 0, 2, 4):
+            with self.assertRaisesRegex(ValueError, "positive odd"):
+                missing_odd_dual_certificate(invalid)
+
     def test_fixed_term_bound_is_strictly_above_pi_over_two(self) -> None:
         for max_terms in range(1, 21):
             self.assertGreater(

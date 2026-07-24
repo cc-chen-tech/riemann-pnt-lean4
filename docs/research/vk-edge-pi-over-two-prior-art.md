@@ -20,8 +20,11 @@ has high rediscovery risk because its proof uses classical Fourier duality,
 and the exact `kappa_2=sqrt(3)` calculation is close to old Chebyshev and
 trinomial extremal problems.
 
-The zeta application has lower collision risk but much higher proof risk. It
-remains unproved.
+The global absolute-`limsup` zeta application is proved in
+`vk-edge-pi-over-two-abel-transfer.md`, modulo Bellotti's stated theorem. The
+stronger power-interval localization remains unproved. Both have lower
+collision risk than the abstract Fourier lemma but require a direct
+specialist prior-art check.
 
 ## Closest prescribed-coefficient result
 
@@ -121,9 +124,62 @@ Reference:
   the error term in the Prime Number Theorem*, Theorem 1.2.
   <https://arxiv.org/abs/2508.02041>
 
+## Ingham and Anderson--Stark comparison
+
+Anderson and Stark develop a general Mellin oscillation theorem using weak
+independence of selected zero ordinates. In one standard formulation, a
+selected set `Gamma_0` must admit no bounded integer relation, and no bounded
+integer combination of `Gamma_0` may equal another zero ordinate below the
+truncation height. This produces explicit lower and upper oscillation
+constants.
+
+Reference:
+
+- R. J. Anderson and H. M. Stark, *Oscillation theorems*, in *Analytic
+  Number Theory*, Lecture Notes in Mathematics 899, pp. 79--106.
+  <https://doi.org/10.1007/BFb0096454>
+
+The Abel argument on this branch belongs to that classical Mellin-oscillation
+framework, but its spectral hypothesis is different and weaker in one
+specific direction. It requires only:
+
+```text
+one missing odd multiple n gamma_0,
+with n <= 2M+1,
+on the boundary line Re(s)=beta_0.
+```
+
+It does not require the full bounded-relation independence used by
+Anderson--Stark. Bellotti's bounded VK-edge count supplies this missing odd
+multiple uniformly. No source found in the targeted search states this exact
+combination, but older variants of coefficient-kernel oscillation theorems
+remain a serious priority risk.
+
+Revesz already identifies the underlying obstruction in the discussion
+around his finite-sum lemma: suppressing the distinguished pair down to
+`pi/2` would require an odd-harmonic zero pattern comparable to the Fourier
+series of `sign`, while sufficiently sparse zeros force a finite-sum
+overshoot. He also records finite sine polynomials with norm at most
+`pi/2+epsilon`. Therefore neither the qualitative finite-spectrum overshoot
+mechanism nor the possibility of approaching `pi/2` with an increasing
+number of terms can be claimed as new here.
+
+What is not stated in that discussion, and is the only plausible new
+analytic-number-theory contribution on this branch, is the uniform
+combination
+
+```text
+Bellotti O_A(1) VK-edge count
+  -> one missing bounded odd multiple
+  -> an explicit fixed-cardinality gap
+  -> a strict zeta/PNT global limsup constant above pi/2.
+```
+
+This distinction must remain in any later claim of novelty.
+
 ## Claim policy
 
-The following wording is currently acceptable:
+The following wording is currently acceptable for the abstract result:
 
 ```text
 We proved a cardinality-dependent Fourier gap above pi/2 and the exact
@@ -134,7 +190,8 @@ statement, but historical priority remains unverified.
 The following wording is not acceptable:
 
 ```text
-We proved a new zeta oscillation theorem above pi/2.
+We proved a localized zeta oscillation theorem above pi/2 in every power
+interval.
 ```
 
 Before claiming novelty for the abstract theorem, obtain a specialist search
@@ -142,6 +199,14 @@ covering Taikov-type coefficient inequalities, Chebyshev systems,
 trigonometric minimax problems, idempotent measures, and sparse Sidon
 constants.
 
-Before claiming new analytic-number-theory progress, close the envelope-local
-or multiphase-transform bridge in
-`vk-edge-pi-over-two-zeta-bridge.md`.
+The global Mellin--Abel transfer in
+`vk-edge-pi-over-two-abel-transfer.md` bypasses the envelope-local bridge and
+gives a strict `limsup` constant above `pi/2`. A targeted search has not yet
+found the same Bellotti-plus-missing-harmonic conclusion, but this is not a
+priority proof. Anderson--Stark type oscillation theorems and older
+coefficient inequalities must be checked directly before describing the
+global theorem as new.
+
+The envelope-local or multiphase-transform bridge in
+`vk-edge-pi-over-two-zeta-bridge.md` is still required for the stronger
+power-interval localization.

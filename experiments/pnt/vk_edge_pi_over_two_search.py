@@ -80,12 +80,44 @@ class SupNormEstimate:
 
 
 @dataclass(frozen=True)
+class MissingOddDualCertificate:
+    odd_harmonic: int
+    auxiliary_coefficient: float
+    l1_upper_bound: float
+    norm_lower_bound: float
+
+
+@dataclass(frozen=True)
 class SearchResult:
     spectrum: Spectrum
     estimate: SupNormEstimate
     seed: int
     trials: int
     max_terms: int
+
+
+def missing_odd_dual_certificate(
+    odd_harmonic: int,
+) -> MissingOddDualCertificate:
+    """Return the strict two-frequency certificate for a missing odd mode."""
+
+    if odd_harmonic < 1 or odd_harmonic % 2 == 0:
+        raise ValueError("odd_harmonic must be a positive odd integer")
+    sign_cos_coefficient_sign = (
+        -1.0 if (odd_harmonic - 1) // 2 % 2 else 1.0
+    )
+    magnitude = math.sin(1.0 / (4.0 * odd_harmonic))
+    auxiliary_coefficient = -sign_cos_coefficient_sign * magnitude
+    l1_upper_bound = (
+        2.0 / math.pi
+        - magnitude / (math.pi * odd_harmonic)
+    )
+    return MissingOddDualCertificate(
+        odd_harmonic=odd_harmonic,
+        auxiliary_coefficient=auxiliary_coefficient,
+        l1_upper_bound=l1_upper_bound,
+        norm_lower_bound=1.0 / l1_upper_bound,
+    )
 
 
 def finite_spectrum_kappa_lower_bound(max_terms: int) -> float:
@@ -100,14 +132,9 @@ def finite_spectrum_kappa_lower_bound(max_terms: int) -> float:
 
     if max_terms < 1:
         raise ValueError("max_terms must be positive")
-    odd_harmonic_bound = 2.0 * max_terms + 1.0
-    missing_coefficient = 2.0 / (math.pi * odd_harmonic_bound)
-    defect = (
-        missing_coefficient
-        * math.sin(1.0 / (4.0 * odd_harmonic_bound))
-        / 2.0
-    )
-    return 1.0 / (2.0 / math.pi - defect)
+    return missing_odd_dual_certificate(
+        2 * max_terms + 1
+    ).norm_lower_bound
 
 
 def normalized_spectrum(

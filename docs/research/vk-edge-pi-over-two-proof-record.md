@@ -2,9 +2,12 @@
 
 ## Current mathematical status
 
-This record proves an abstract finite-spectrum theorem. It does not yet prove
-the candidate zeta oscillation theorem. Novelty relative to the harmonic
-analysis literature has not been established.
+This record proves an abstract finite-spectrum theorem. The separate
+Mellin--Abel transfer in `vk-edge-pi-over-two-abel-transfer.md` applies it to
+a global zeta/PNT `limsup`, modulo Bellotti's stated theorem. The stronger
+power-interval candidate from the preregistration is not proved. Novelty
+relative to the harmonic-analysis and oscillation literature has not been
+established.
 
 The central preregistered finite-spectrum gate has an affirmative answer:
 
@@ -363,16 +366,19 @@ Closed:
 1. `kappa_M > pi/2` for every fixed `M`, with the explicit bound (5).
 2. `kappa_1 = 2`.
 3. `kappa_2 = sqrt(3)`.
+4. The Bellotti count to missing-odd-harmonic mapping for a global `limsup`.
+5. A zeta/PNT global absolute-`limsup` constant strictly above `pi/2`,
+   modulo Bellotti's stated zero-density theorem.
 
 Not closed:
 
 1. Whether the abstract fixed-`M` inequality or the displayed constants are
    new in harmonic analysis.
-2. The exact mapping from Bellotti's `O_A(1)` count to the finite maximal
-   zeta-zero package.
-3. A moving-height explicit formula whose remainder is
+2. A moving-height explicit formula whose remainder is
    `o(x^beta / |rho_0|)` on the required interval.
-4. A zeta-specific oscillation theorem with coefficient above `pi/2`.
+3. The stronger occurrence theorem in every power interval `[Y,Y^C_A]`.
+4. Historical priority for the Bellotti-plus-missing-harmonic global theorem.
 
-Consequently, this record establishes the abstract Fourier gate but does not
-yet establish new analytic-number-theory progress.
+The detailed global transfer is recorded separately in
+`vk-edge-pi-over-two-abel-transfer.md`. This proof record alone still covers
+only the abstract Fourier gate.
