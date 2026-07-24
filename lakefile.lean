@@ -194,6 +194,7 @@ lean_lib RiemannPNT where
     `Test.VinogradovKorobovMixedScheduleContract,
     `Test.VinogradovKorobovMixedDecompositionContract,
     `Test.VinogradovKorobovCompleteBlockMainContract,
+    `Test.VinogradovKorobovTranslatedBlockMomentContract,
     `Test.VinogradovKorobovCutoffParametersContract,
     `Test.VinogradovKorobovVanDerCorputRangeContract,
     `Test.VinogradovKorobovLogVanDerCorputContract
