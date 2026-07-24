@@ -214,6 +214,7 @@ lean_lib RiemannPNT where
     `HardyTheorem.SelbergSqrtZetaCollectedArithmetic,
     `HardyTheorem.SelbergSqrtZetaLowRangeEnergy,
     `HardyTheorem.SelbergSqrtZetaLowRangeSliding,
+    `HardyTheorem.SelbergSqrtZetaShortCollected,
     `HardyTheorem.SelbergMollifiedTripleConstant,
     `HardyTheorem.SelbergMollifiedTripleMeanSquare,
     `HardyTheorem.SelbergMollifiedTripleMainTerm,
