@@ -4,6 +4,8 @@ import PrimeNumberTheorem.RightHorizontalEdge
 import PrimeNumberTheorem.CentralHorizontalEdge
 import PrimeNumberTheorem.LeftVerticalEdge
 import PrimeNumberTheorem.GlobalZeroCount
+import PrimeNumberTheorem.FirstOrderExplicitFormula
+import PrimeNumberTheorem.ZetaDerivativeZero
 
 /-!
 # Transferring smoothed approximation errors to Chebyshev psi
@@ -1293,6 +1295,77 @@ theorem
       exact hmass T hT
     _ = 2 * C * x * Real.log ((x + h) / x) *
         (1 + Real.log (T + 6)) ^ 2 := by ring
+
+/-- A complete crossing-zero residue family on the strip `-1 < re < c`,
+with `c > 1`, consists exactly of `0`, `1`, and the height-`T` nontrivial
+zeros. After erasing the two exceptional poles, the support is the canonical
+`nontrivialZerosFinset T`. The good-height hypothesis excludes zeros on the
+horizontal boundary. -/
+theorem erase_zero_one_poles_eq_nontrivialZerosFinset
+    {poles : Finset ℂ} {c T : ℝ}
+    (hT : 0 < T) (hc : 1 < c)
+    (hgood : ExplicitFormulaAux.goodHeight T)
+    (hpoles : ∀ p ∈ poles,
+      -1 < p.re ∧ p.re < c ∧ -T < p.im ∧ p.im < T)
+    (hclass : ∀ p ∈ poles, p = 0 ∨ p = 1 ∨ riemannZeta p = 0)
+    (hcomplete : ∀ p, p ∈
+        ([[(-1 : ℝ), c]] ×ℂ [[-T, T]] : Set ℂ) →
+      p = 0 ∨ p = 1 ∨ riemannZeta p = 0 → p ∈ poles) :
+    (poles.erase 0).erase 1 = nontrivialZerosFinset T := by
+  ext p
+  constructor
+  · intro hp
+    have hp1 : p ≠ 1 := (Finset.mem_erase.mp hp).1
+    have hp0data := Finset.mem_erase.mp (Finset.mem_of_mem_erase hp)
+    have hp0 : p ≠ 0 := hp0data.1
+    have hpP : p ∈ poles := hp0data.2
+    have hb := hpoles p hpP
+    have hz : riemannZeta p = 0 := by
+      rcases hclass p hpP with h | h | h
+      · exact (hp0 h).elim
+      · exact (hp1 h).elim
+      · exact h
+    have hnottriv : ∀ n : ℕ, p ≠ -2 * ((n : ℂ) + 1) := by
+      intro n hn
+      have hre := congrArg Complex.re hn
+      norm_num at hre
+      have hn0 : 0 ≤ (n : ℝ) := Nat.cast_nonneg n
+      linarith [hb.1]
+    have hrepos : 0 < p.re := by
+      by_contra hnot
+      exact (riemannZeta_ne_zero_of_re_le_zero
+        (le_of_not_gt hnot) hnottriv) hz
+    have hrelt : p.re < 1 := by
+      by_contra hnot
+      exact (riemannZeta_ne_zero_of_one_le_re (le_of_not_gt hnot)) hz
+    apply mem_nontrivialZerosFinset.mpr
+    refine ⟨⟨hz, hrepos, hrelt⟩, ?_⟩
+    rw [abs_le]
+    exact ⟨hb.2.2.1.le, hb.2.2.2.le⟩
+  · intro hp
+    rcases mem_nontrivialZerosFinset.mp hp with ⟨hz, him⟩
+    have himne : |p.im| ≠ T := hgood p hz
+    have himlt : |p.im| < T := lt_of_le_of_ne him himne
+    have himbounds := abs_lt.mp himlt
+    have hmemRect :
+        p ∈ ([[(-1 : ℝ), c]] ×ℂ [[-T, T]] : Set ℂ) := by
+      rw [Complex.mem_reProdIm,
+        Set.uIcc_of_le (by linarith : (-1 : ℝ) ≤ c),
+        Set.uIcc_of_le (by linarith : -T ≤ T)]
+      exact ⟨⟨by linarith [hz.2.1], by linarith [hz.2.2]⟩,
+        ⟨himbounds.1.le, himbounds.2.le⟩⟩
+    have hpP : p ∈ poles :=
+      hcomplete p hmemRect (Or.inr (Or.inr hz.1))
+    apply Finset.mem_erase.mpr
+    refine ⟨?_, Finset.mem_erase.mpr ⟨?_, hpP⟩⟩
+    · intro hp1
+      subst p
+      have := hz.2.2
+      norm_num at this
+    · intro hp0
+      subst p
+      have := hz.2.1
+      norm_num at this
 
 /-- The selected-good-height budget for the difference of the two shifted
 second-order contour remainders on the first negative odd line. -/

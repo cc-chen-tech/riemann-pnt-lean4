@@ -498,6 +498,20 @@ example :
           (1 + Real.log (T + 6)) ^ 2 :=
   PrimeNumberTheorem.ExplicitFormulaResidues.exists_C_norm_secondOrderRieszZeroSumWithMultiplicity_increment_le_log_sq
 
+example {poles : Finset ℂ} {c T : ℝ}
+    (hT : 0 < T) (hc : 1 < c)
+    (hgood : PrimeNumberTheorem.ExplicitFormulaAux.goodHeight T)
+    (hpoles : ∀ p ∈ poles,
+      -1 < p.re ∧ p.re < c ∧ -T < p.im ∧ p.im < T)
+    (hclass : ∀ p ∈ poles, p = 0 ∨ p = 1 ∨ riemannZeta p = 0)
+    (hcomplete : ∀ p, p ∈
+        ([[(-1 : ℝ), c]] ×ℂ [[-T, T]] : Set ℂ) →
+      p = 0 ∨ p = 1 ∨ riemannZeta p = 0 → p ∈ poles) :
+    (poles.erase 0).erase 1 =
+      PrimeNumberTheorem.nontrivialZerosFinset T :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.erase_zero_one_poles_eq_nontrivialZerosFinset
+    hT hc hgood hpoles hclass hcomplete
+
 example {x h : ℝ} (hx : Real.exp 1 ≤ x) (hh : 0 < h) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
       ∃ T ∈ Set.Icc A (A + 1),
