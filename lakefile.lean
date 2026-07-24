@@ -65,6 +65,7 @@ lean_lib RiemannPNT where
     `PrimeNumberTheorem.LSeriesPerron,
     `PrimeNumberTheorem.CompletePerron,
     `PrimeNumberTheorem.SecondOrderExplicitFormula,
+    `PrimeNumberTheorem.SecondOrderMovingLeft,
     `PrimeNumberTheorem.SafeSecondOrderExplicitFormula,
     `PrimeNumberTheorem.SmoothedErrorTransfer,
     `PrimeNumberTheorem.ZeroForcedOscillation,

@@ -1,4 +1,5 @@
 import PrimeNumberTheorem.RieszDifference
+import PrimeNumberTheorem.SecondOrderMovingLeft
 import PrimeNumberTheorem.RightHorizontalEdge
 import PrimeNumberTheorem.CentralHorizontalEdge
 import PrimeNumberTheorem.LeftVerticalEdge

@@ -181,6 +181,118 @@ theorem boundaryRectIntegral_sub_inv_of_mem
   rw [houter_inner, hinner]
   exact rectangleBoundaryIntegral_sub_inv_center p hr
 
+/-- The double-pole kernel `1 / z²` has zero boundary integral on any ordered
+axis-parallel rectangle containing the origin in its strict interior.  This is
+the higher-order principal part needed when a second-order Perron kernel
+crosses `s = 0`; unlike a simple pole, it contributes no residue. -/
+theorem boundaryRectIntegral_inv_sq_zero_of_mem
+    {x0 x1 y0 y1 : ℝ} (hx0 : x0 < 0) (hx1 : 0 < x1)
+    (hy0 : y0 < 0) (hy1 : 0 < y1) :
+    boundaryRectIntegral (fun z : ℂ => z⁻¹ / z) x0 x1 y0 y1 = 0 := by
+  have horizontal_integral (y : ℝ) (hy : y ≠ 0) :
+      (∫ x : ℝ in x0..x1,
+          ((x : ℂ) + (y : ℂ) * I)⁻¹ / ((x : ℂ) + (y : ℂ) * I)) =
+        -(((x1 : ℂ) + (y : ℂ) * I)⁻¹) -
+          -(((x0 : ℂ) + (y : ℂ) * I)⁻¹) := by
+    let F : ℝ → ℂ := fun x => -(((x : ℂ) + (y : ℂ) * I)⁻¹)
+    let f : ℝ → ℂ := fun x =>
+      ((x : ℂ) + (y : ℂ) * I)⁻¹ / ((x : ℂ) + (y : ℂ) * I)
+    have hne (x : ℝ) : (x : ℂ) + (y : ℂ) * I ≠ 0 := by
+      intro h
+      have hi := congrArg Complex.im h
+      simp at hi
+      exact hy hi
+    have hderivAt (x : ℝ) : HasDerivAt F (f x) x := by
+      have hbase :
+          HasDerivAt (fun z : ℂ => z + (y : ℂ) * I) 1 (x : ℂ) :=
+        (hasDerivAt_id (x : ℂ)).add_const ((y : ℂ) * I)
+      have hinv := hbase.inv (hne x)
+      have hneg := hinv.neg
+      have hcomplex :
+          HasDerivAt (fun z : ℂ => -((z + (y : ℂ) * I)⁻¹))
+            (((x : ℂ) + (y : ℂ) * I)⁻¹ /
+              ((x : ℂ) + (y : ℂ) * I)) (x : ℂ) := by
+        convert hneg using 1
+        field_simp [hne x]
+      simpa [F, f] using hcomplex.comp_ofReal
+    have hderiv : deriv F = f := by
+      funext x
+      exact (hderivAt x).deriv
+    have hfcont : Continuous f := by
+      dsimp [f]
+      let hbase : Continuous (fun x : ℝ => (x : ℂ) + (y : ℂ) * I) :=
+        Complex.continuous_ofReal.add (continuous_const.mul continuous_const)
+      exact (hbase.inv₀ hne).div hbase hne
+    simpa [F, f] using
+      intervalIntegral.integral_deriv_eq_sub' F hderiv
+        (fun x _ => (hderivAt x).differentiableAt) hfcont.continuousOn
+  have vertical_integral (x : ℝ) (hx : x ≠ 0) :
+      I * (∫ y : ℝ in y0..y1,
+          ((x : ℂ) + (y : ℂ) * I)⁻¹ / ((x : ℂ) + (y : ℂ) * I)) =
+        -(((x : ℂ) + (y1 : ℂ) * I)⁻¹) -
+          -(((x : ℂ) + (y0 : ℂ) * I)⁻¹) := by
+    let F : ℝ → ℂ := fun y => -(((x : ℂ) + (y : ℂ) * I)⁻¹)
+    let f : ℝ → ℂ := fun y =>
+      I * (((x : ℂ) + (y : ℂ) * I)⁻¹ /
+        ((x : ℂ) + (y : ℂ) * I))
+    have hne (y : ℝ) : (x : ℂ) + (y : ℂ) * I ≠ 0 := by
+      intro h
+      have hr := congrArg Complex.re h
+      simp at hr
+      exact hx hr
+    have hderivAt (y : ℝ) : HasDerivAt F (f y) y := by
+      have hbase :
+          HasDerivAt (fun z : ℂ => (x : ℂ) + z * I) I (y : ℂ) := by
+        simpa using
+          ((hasDerivAt_id (y : ℂ)).mul_const I |>.const_add (x : ℂ))
+      have hinv := hbase.inv (hne y)
+      have hneg := hinv.neg
+      have hcomplex :
+          HasDerivAt (fun z : ℂ => -(((x : ℂ) + z * I)⁻¹))
+            (I * (((x : ℂ) + (y : ℂ) * I)⁻¹ /
+              ((x : ℂ) + (y : ℂ) * I))) (y : ℂ) := by
+        convert hneg using 1
+        field_simp [hne y]
+      simpa [F, f] using hcomplex.comp_ofReal
+    have hderiv : deriv F = f := by
+      funext y
+      exact (hderivAt y).deriv
+    have hfcont : Continuous f := by
+      dsimp [f]
+      let hbase : Continuous (fun y : ℝ => (x : ℂ) + (y : ℂ) * I) :=
+        continuous_const.add
+          (Complex.continuous_ofReal.mul continuous_const)
+      exact continuous_const.mul ((hbase.inv₀ hne).div hbase hne)
+    calc
+      I * (∫ y : ℝ in y0..y1,
+          ((x : ℂ) + (y : ℂ) * I)⁻¹ /
+            ((x : ℂ) + (y : ℂ) * I)) =
+          ∫ y : ℝ in y0..y1, f y := by
+        change I * (∫ y : ℝ in y0..y1,
+            ((x : ℂ) + (y : ℂ) * I)⁻¹ /
+              ((x : ℂ) + (y : ℂ) * I)) =
+          ∫ y : ℝ in y0..y1,
+            I * (((x : ℂ) + (y : ℂ) * I)⁻¹ /
+              ((x : ℂ) + (y : ℂ) * I))
+        exact (intervalIntegral.integral_const_mul I
+          (fun y : ℝ =>
+            ((x : ℂ) + (y : ℂ) * I)⁻¹ /
+              ((x : ℂ) + (y : ℂ) * I))).symm
+      _ = _ := by
+        simpa [F, f] using
+          intervalIntegral.integral_deriv_eq_sub' F hderiv
+            (fun y _ => (hderivAt y).differentiableAt) hfcont.continuousOn
+  have hx0ne : x0 ≠ 0 := ne_of_lt hx0
+  have hx1ne : x1 ≠ 0 := ne_of_gt hx1
+  have hy0ne : y0 ≠ 0 := ne_of_lt hy0
+  have hy1ne : y1 ≠ 0 := ne_of_gt hy1
+  unfold boundaryRectIntegral
+  dsimp only
+  rw [horizontal_integral y0 hy0ne, horizontal_integral y1 hy1ne]
+  simp only [smul_eq_mul]
+  rw [vertical_integral x1 hx1ne, vertical_integral x0 hx0ne]
+  ring
+
 lemma boundaryRectIntegral_mul_const
     (f : ℂ → ℂ) (a : ℂ) (x0 x1 y0 y1 : ℝ) :
     boundaryRectIntegral (fun z => f z * a) x0 x1 y0 y1 =
@@ -468,6 +580,153 @@ theorem boundaryRectIntegral_eq_finite_simple_pole_residue_sum_of_differentiable
   simpa [principal, term] using
     boundaryRectIntegral_eq_finite_simple_pole_residue_sum
       poles residue hpoles
+
+/-- A zero-centered double principal part may be adjoined to a holomorphic
+remainder and finitely many simple poles without changing the residue sum.
+The hypotheses put the origin and every simple pole strictly inside the
+rectangle, so all boundary restrictions are integrable. -/
+theorem boundaryRectIntegral_eq_double_pole_add_finite_simple_pole_residue_sum
+    {g : ℂ → ℂ} {x0 x1 y0 y1 : ℝ}
+    (doubleCoeff : ℂ) (poles : Finset ℂ) (residue : ℂ → ℂ)
+    (hx0 : x0 < 0) (hx1 : 0 < x1) (hy0 : y0 < 0) (hy1 : 0 < y1)
+    (hg : DifferentiableOn ℂ g ([[x0, x1]] ×ℂ [[y0, y1]]))
+    (hpoles : ∀ p ∈ poles,
+      x0 < p.re ∧ p.re < x1 ∧ y0 < p.im ∧ p.im < y1) :
+    boundaryRectIntegral
+        (fun z : ℂ =>
+          z⁻¹ / z * doubleCoeff +
+            (g z + ∑ p ∈ poles, (z - p)⁻¹ * residue p))
+        x0 x1 y0 y1 =
+      (2 * Real.pi * I) * ∑ p ∈ poles, residue p := by
+  let double : ℂ → ℂ := fun z => z⁻¹ / z * doubleCoeff
+  let term : ℂ → ℂ → ℂ := fun p z => (z - p)⁻¹ * residue p
+  let principal : ℂ → ℂ := fun z => ∑ p ∈ poles, term p z
+  let base : ℂ → ℂ := fun z => g z + principal z
+  have hdouble_edges :
+      IntervalIntegrable (fun x : ℝ => double (x + y0 * I))
+          MeasureTheory.volume x0 x1 ∧
+        IntervalIntegrable (fun x : ℝ => double (x + y1 * I))
+          MeasureTheory.volume x0 x1 ∧
+        IntervalIntegrable (fun y : ℝ => double ((x1 : ℂ) + y * I))
+          MeasureTheory.volume y0 y1 ∧
+        IntervalIntegrable (fun y : ℝ => double ((x0 : ℂ) + y * I))
+          MeasureTheory.volume y0 y1 := by
+    have horizontal_continuous (y : ℝ) (hy : y ≠ 0) :
+        Continuous (fun x : ℝ => double (x + y * I)) := by
+      dsimp [double]
+      let hbase : Continuous (fun x : ℝ => (x : ℂ) + (y : ℂ) * I) :=
+        Complex.continuous_ofReal.add (continuous_const.mul continuous_const)
+      have hne (x : ℝ) : (x : ℂ) + (y : ℂ) * I ≠ 0 := by
+        intro h
+        have hi := congrArg Complex.im h
+        simp at hi
+        exact hy hi
+      exact ((hbase.inv₀ hne).div hbase hne).mul continuous_const
+    have vertical_continuous (x : ℝ) (hx : x ≠ 0) :
+        Continuous (fun y : ℝ => double ((x : ℂ) + y * I)) := by
+      dsimp [double]
+      let hbase : Continuous (fun y : ℝ => (x : ℂ) + (y : ℂ) * I) :=
+        continuous_const.add
+          (Complex.continuous_ofReal.mul continuous_const)
+      have hne (y : ℝ) : (x : ℂ) + (y : ℂ) * I ≠ 0 := by
+        intro h
+        have hr := congrArg Complex.re h
+        simp at hr
+        exact hx hr
+      exact ((hbase.inv₀ hne).div hbase hne).mul continuous_const
+    exact ⟨
+      (horizontal_continuous y0 (ne_of_lt hy0)).intervalIntegrable x0 x1,
+      (horizontal_continuous y1 (ne_of_gt hy1)).intervalIntegrable x0 x1,
+      (vertical_continuous x1 (ne_of_gt hx1)).intervalIntegrable y0 y1,
+      (vertical_continuous x0 (ne_of_lt hx0)).intervalIntegrable y0 y1⟩
+  have hg_edges := boundaryRectIntervalIntegrable_of_continuousOn hg.continuousOn
+  have hterm_edges : ∀ p ∈ poles,
+      IntervalIntegrable (fun x : ℝ => term p (x + y0 * I))
+          MeasureTheory.volume x0 x1 ∧
+        IntervalIntegrable (fun x : ℝ => term p (x + y1 * I))
+          MeasureTheory.volume x0 x1 ∧
+        IntervalIntegrable (fun y : ℝ => term p ((x1 : ℂ) + y * I))
+          MeasureTheory.volume y0 y1 ∧
+        IntervalIntegrable (fun y : ℝ => term p ((x0 : ℂ) + y * I))
+          MeasureTheory.volume y0 y1 := by
+    intro p hp
+    have h := hpoles p hp
+    simpa [term] using simplePoleTerm_boundaryRectIntervalIntegrable
+      p (residue p) h.1 h.2.1 h.2.2.1 h.2.2.2
+  have hprincipal_bottom : IntervalIntegrable
+      (fun x : ℝ => principal (x + y0 * I))
+      MeasureTheory.volume x0 x1 := by
+    have h := IntervalIntegrable.sum poles (fun p hp => (hterm_edges p hp).1)
+    have heq : (∑ p ∈ poles, fun x : ℝ => term p (x + y0 * I)) =
+        fun x : ℝ => principal (x + y0 * I) := by
+      funext x
+      simp [principal]
+    rw [← heq]
+    exact h
+  have hprincipal_top : IntervalIntegrable
+      (fun x : ℝ => principal (x + y1 * I))
+      MeasureTheory.volume x0 x1 := by
+    have h := IntervalIntegrable.sum poles (fun p hp => (hterm_edges p hp).2.1)
+    have heq : (∑ p ∈ poles, fun x : ℝ => term p (x + y1 * I)) =
+        fun x : ℝ => principal (x + y1 * I) := by
+      funext x
+      simp [principal]
+    rw [← heq]
+    exact h
+  have hprincipal_right : IntervalIntegrable
+      (fun y : ℝ => principal ((x1 : ℂ) + y * I))
+      MeasureTheory.volume y0 y1 := by
+    have h := IntervalIntegrable.sum poles (fun p hp => (hterm_edges p hp).2.2.1)
+    have heq : (∑ p ∈ poles, fun y : ℝ => term p ((x1 : ℂ) + y * I)) =
+        fun y : ℝ => principal ((x1 : ℂ) + y * I) := by
+      funext y
+      simp [principal]
+    rw [← heq]
+    exact h
+  have hprincipal_left : IntervalIntegrable
+      (fun y : ℝ => principal ((x0 : ℂ) + y * I))
+      MeasureTheory.volume y0 y1 := by
+    have h := IntervalIntegrable.sum poles (fun p hp => (hterm_edges p hp).2.2.2)
+    have heq : (∑ p ∈ poles, fun y : ℝ => term p ((x0 : ℂ) + y * I)) =
+        fun y : ℝ => principal ((x0 : ℂ) + y * I) := by
+      funext y
+      simp [principal]
+    rw [← heq]
+    exact h
+  have hbase_edges :
+      IntervalIntegrable (fun x : ℝ => base (x + y0 * I))
+          MeasureTheory.volume x0 x1 ∧
+        IntervalIntegrable (fun x : ℝ => base (x + y1 * I))
+          MeasureTheory.volume x0 x1 ∧
+        IntervalIntegrable (fun y : ℝ => base ((x1 : ℂ) + y * I))
+          MeasureTheory.volume y0 y1 ∧
+        IntervalIntegrable (fun y : ℝ => base ((x0 : ℂ) + y * I))
+          MeasureTheory.volume y0 y1 := by
+    exact ⟨by simpa [base] using hg_edges.1.add hprincipal_bottom,
+      by simpa [base] using hg_edges.2.1.add hprincipal_top,
+      by simpa [base] using hg_edges.2.2.1.add hprincipal_right,
+      by simpa [base] using hg_edges.2.2.2.add hprincipal_left⟩
+  have hadd :
+      boundaryRectIntegral (fun z => double z + base z) x0 x1 y0 y1 =
+        boundaryRectIntegral double x0 x1 y0 y1 +
+          boundaryRectIntegral base x0 x1 y0 y1 :=
+    boundaryRectIntegral_add double base x0 x1 y0 y1
+      hdouble_edges.1 hbase_edges.1
+      hdouble_edges.2.1 hbase_edges.2.1
+      hdouble_edges.2.2.1 hbase_edges.2.2.1
+      hdouble_edges.2.2.2 hbase_edges.2.2.2
+  have hdouble_zero : boundaryRectIntegral double x0 x1 y0 y1 = 0 := by
+    dsimp [double]
+    rw [boundaryRectIntegral_mul_const,
+      boundaryRectIntegral_inv_sq_zero_of_mem hx0 hx1 hy0 hy1, zero_mul]
+  have hbase_formula :
+      boundaryRectIntegral base x0 x1 y0 y1 =
+        (2 * Real.pi * I) * ∑ p ∈ poles, residue p := by
+    simpa [base, principal, term] using
+      boundaryRectIntegral_eq_finite_simple_pole_residue_sum_of_differentiableOn
+        poles residue hg hpoles
+  change boundaryRectIntegral (fun z => double z + base z) x0 x1 y0 y1 = _
+  rw [hadd, hdouble_zero, zero_add, hbase_formula]
 
 /-- Weighted finite-principal-part residue formula on an axis-parallel
 rectangle.  This is the algebraic contour identity underlying Littlewood's

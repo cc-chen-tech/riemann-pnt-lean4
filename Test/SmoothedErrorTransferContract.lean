@@ -201,3 +201,28 @@ example {x h a c W : ℝ} (hx : 0 < x) (hh : 0 < h) (ha : 0 < a)
     ⟨polesX, residueX, polesY, residueY, _hpolesX, _hclassX, _hresidueX,
       _hpolesY, _hclassY, _hresidueY, hxError, hyError, hbounds⟩
   exact ⟨polesX, polesY, residueX, residueY, hxError, hyError, hbounds⟩
+
+example {x0 x1 y0 y1 : ℝ} (hx0 : x0 < 0) (hx1 : 0 < x1)
+    (hy0 : y0 < 0) (hy1 : 0 < y1) :
+    MathlibAux.boundaryRectIntegral (fun z : ℂ => z⁻¹ / z)
+        x0 x1 y0 y1 = 0 :=
+  MathlibAux.boundaryRectIntegral_inv_sq_zero_of_mem hx0 hx1 hy0 hy1
+
+example {x a c W : ℝ} (hx : 0 < x) (ha : a < 0) (hc : 0 < c)
+    (hW : 0 < W)
+    (hboundary : ∀ p ∈ ([[a, c]] ×ℂ [[-W, W]] : Set ℂ),
+      p = 0 ∨ p = 1 ∨ riemannZeta p = 0 →
+        a < p.re ∧ p.re < c ∧ -W < p.im ∧ p.im < W) :
+    ∃ (poles : Finset ℂ) (residue : ℂ → ℂ),
+      (∀ p ∈ poles,
+        a < p.re ∧ p.re < c ∧ -W < p.im ∧ p.im < W) ∧
+      (∀ p ∈ poles, p = 0 ∨ p = 1 ∨ riemannZeta p = 0) ∧
+      (∀ p ∈ poles, p ≠ 0 → residue p =
+        if p = 1 then (x : ℂ)
+        else -(analyticOrderNatAt riemannZeta p : ℂ) * (x : ℂ) ^ p / p ^ 2) ∧
+      MathlibAux.boundaryRectIntegral
+          (PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderExplicitFormulaIntegrand x)
+          a c (-W) W =
+        (2 * Real.pi * Complex.I) * ∑ p ∈ poles, residue p :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.exists_boundaryRectIntegral_secondOrderExplicitFormulaIntegrand_crossing_zero
+    hx ha hc hW hboundary
