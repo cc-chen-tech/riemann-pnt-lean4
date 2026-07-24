@@ -39,6 +39,13 @@ HIGH_PRECISION_CROSSCHECK = (
     / "reference"
     / "groskin_2607_02828_v1_small_n_high_precision_crosscheck.json"
 )
+SMALL_N_INTERVAL_OVERLAP = (
+    Path(__file__).parents[1]
+    / "experiments"
+    / "rh"
+    / "reference"
+    / "groskin_2607_02828_v1_c13_N4_arb_interval_overlap.json"
+)
 
 
 def refresh_payload_digest(record):
@@ -53,6 +60,85 @@ def refresh_payload_digest(record):
     record["payload_sha256"] = hashlib.sha256(
         canonical_payload.encode("utf-8")
     ).hexdigest()
+
+
+def test_small_n_arb_interval_overlap_artifact_is_complete_and_replays():
+    from experiments.rh import weil_extremal_interval_overlap as overlap
+
+    source = SMALL_N_INTERVAL_OVERLAP.read_bytes()
+    record = json.loads(source)
+
+    assert hashlib.sha256(source).hexdigest() == (
+        "6af23930c0294f6469f80d889f46837bfa74be0e9b914d6d71e1733949edba98"
+    )
+    assert overlap.verify_overlap_artifact_file(SMALL_N_INTERVAL_OVERLAP)
+    assert record["schema_version"] == "weil-extremal-kernel-arb-overlap/v1"
+    assert record["claim_scope"] == "small-N-gate-a-preparation-only"
+    assert record["gate_a_status"] == "not_satisfied"
+    assert record["parameters"] == {
+        "N": 4,
+        "c": 13,
+        "decimal_enclosure_digits": 120,
+        "dimension": 9,
+        "index_order": list(range(-4, 5)),
+        "prec_bits": 384,
+        "python_flint_version": "0.8.0",
+    }
+    assert record["result"] == {
+        "all_entries_overlap": True,
+        "entry_count": 81,
+        "symmetric_intersection_nonempty": True,
+    }
+    assert set(record["matrices"]) == {
+        "auxiliary_s_cc_xc",
+        "ccm_hypergeometric_lerch",
+    }
+    assert all(
+        record["overlap"]["entrywise"][i][j]
+        for i in range(9)
+        for j in range(9)
+    )
+
+
+def test_small_n_overlap_verifier_rejects_rehashed_nonoverlap():
+    from experiments.rh import weil_extremal_interval_overlap as overlap
+
+    record = json.loads(SMALL_N_INTERVAL_OVERLAP.read_bytes())
+    route = record["matrices"]["ccm_hypergeometric_lerch"]["enclosure"]
+    route["lower"][0][0] = "1000"
+    route["upper"][0][0] = "1001"
+    refresh_payload_digest(record)
+
+    assert not overlap.verify_overlap_artifact(record)
+
+
+def test_small_n_overlap_cli_fails_on_rehashed_nonoverlap(tmp_path):
+    record = json.loads(SMALL_N_INTERVAL_OVERLAP.read_bytes())
+    route = record["matrices"]["auxiliary_s_cc_xc"]["enclosure"]
+    route["lower"][4][4] = "-1001"
+    route["upper"][4][4] = "-1000"
+    refresh_payload_digest(record)
+    tampered = tmp_path / "nonoverlap.json"
+    tampered.write_text(
+        json.dumps(record, sort_keys=True, separators=(",", ":")) + "\n",
+        encoding="ascii",
+    )
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "experiments.rh.weil_extremal_interval_overlap",
+            "verify",
+            str(tampered),
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert result.returncode == 1
+    assert result.stdout.strip() == "valid small-N Arb interval overlap artifact: false"
 
 
 def test_finite_dictionary_dimensions_distinguish_full_and_even_sector():

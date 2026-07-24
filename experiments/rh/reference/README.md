@@ -71,3 +71,34 @@ The record is a numerical point-value cross-check only: it does not provide
 outward-rounded enclosures, their entrywise overlap, an exact rational LDL
 certificate, an analytic transfer margin, or the registered `(100,200)` Gate
 A computation.
+
+## Small-N Independent Arb Interval Overlap
+
+`groskin_2607_02828_v1_c13_N4_arb_interval_overlap.json` is a canonical
+machine-readable record of two independently coded outward-rounded Arb
+assemblies at `(c,N,prec_bits)=(13,4,384)`. It stores both ordered `9 x 9`
+interval matrices, all 81 overlap booleans, their entrywise intersection, and
+the symmetric intersection obtained by also intersecting transposed entries.
+The auxiliary route rigorously widens its finite geometric sums by explicit
+tail bounds; the CCM route evaluates the separate hypergeometric/Lerch
+formulas. The routes do not call each other, the mpmath cross-check, or the
+released primary assembler.
+
+Generation requires python-flint 0.8.0; verification uses only the standard
+library:
+
+```sh
+uv run --with python-flint==0.8.0 \
+  python -m experiments.rh.weil_extremal_interval_overlap generate \
+  experiments/rh/reference/groskin_2607_02828_v1_c13_N4_arb_interval_overlap.json \
+  --c 13 --N 4 --prec-bits 384 --decimal-enclosure-digits 120
+python3 -m experiments.rh.weil_extremal_interval_overlap verify \
+  experiments/rh/reference/groskin_2607_02828_v1_c13_N4_arb_interval_overlap.json
+```
+
+Its SHA-256 is
+`6af23930c0294f6469f80d889f46837bfa74be0e9b914d6d71e1733949edba98`.
+This is small-N Gate A preparation only. It contains no exact rational LDL
+certificate, no analytic transfer margin, no second-precision narrowing
+evidence, and no `401 x 401` `(100,200)` assembly. Its explicit Gate A status
+is `not_satisfied`.

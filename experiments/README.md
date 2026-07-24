@@ -65,6 +65,26 @@ not certify that the matrix equals an analytic Weil-form matrix. The registered
 analytic target and transfer gaps are fixed in
 `docs/research/weil-extremal-kernel-preregistration.md`.
 
+Generate the independent small-N outward-rounded Arb overlap artifact:
+
+```bash
+uv run --with python-flint==0.8.0 \
+  python -m experiments.rh.weil_extremal_interval_overlap generate \
+  experiments/rh/reference/groskin_2607_02828_v1_c13_N4_arb_interval_overlap.json \
+  --c 13 --N 4 --prec-bits 384 --decimal-enclosure-digits 120
+```
+
+Replay its standard-library verifier:
+
+```bash
+python3 -m experiments.rh.weil_extremal_interval_overlap verify \
+  experiments/rh/reference/groskin_2607_02828_v1_c13_N4_arb_interval_overlap.json
+```
+
+This artifact records two full `9 x 9` interval matrices and their entrywise
+overlap at `(c,N)=(13,4)`. It is small-N Gate preparation, not the registered
+full `(100,200)` Gate A certificate, and it makes no exact `LDL^T` claim.
+
 ## Discrete Search
 
 Search for a small Ramsey counterexample graph:

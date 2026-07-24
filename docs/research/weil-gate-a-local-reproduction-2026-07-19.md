@@ -106,3 +106,15 @@ calibration. Gate A remains open because it additionally requires:
 
 No `N=250` computation, strict improvement, new positivity theorem, or result
 about the Riemann Hypothesis is claimed.
+
+## 2026-07-24 small-N preparation update
+
+The later artifact
+`experiments/rh/reference/groskin_2607_02828_v1_c13_N4_arb_interval_overlap.json`
+now demonstrates two separately coded outward-rounded Arb assemblies and
+entrywise overlap for the full `9 x 9` matrix at `(c,N)=(13,4)`. This resolves
+the implementation pattern at small scale only. It does not alter the status
+of this full-size reproduction record: no second `401 x 401` interval matrix
+was retained or compared at `(100,200)`, and the exact-certificate,
+analytic-transfer, and per-entry second-precision narrowing requirements
+listed above remain open.

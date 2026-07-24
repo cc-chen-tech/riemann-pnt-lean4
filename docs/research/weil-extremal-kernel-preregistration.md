@@ -86,6 +86,51 @@ enclosures, no entrywise interval intersections, no exact rational LDL
 artifact, and no analytic transfer margin. It therefore does not satisfy Gate
 A or advance the `N=250` claim search.
 
+## Small-N Independent Arb Interval Assembly
+
+On 2026-07-24,
+`experiments.rh.weil_extremal_interval_overlap` added two separately coded
+python-flint Arb assemblies at `(c,N,prec)=(13,4,384)`. The first uses the
+auxiliary `S/CC/XC` formulas, including explicit rigorous upper bounds for all
+omitted geometric-series tails. The second uses the CCM
+hypergeometric/Lerch `alpha`, `beta`, and `gamma` formulas. Their pole and
+prime blocks are also assembled in different algebraic forms. Neither route
+imports or calls the released `arb_ldlt_certify.py` or the existing mpmath
+point-value assemblers.
+
+Both implementations share python-flint's Arb runtime, parameter validation,
+prime-power enumeration, index ordering, and rational serialization. Thus the
+result is independent at the formula and assembly-code level, but not at the
+interval-arithmetic-library level. The canonical artifact
+`experiments/rh/reference/groskin_2607_02828_v1_c13_N4_arb_interval_overlap.json`
+retains both ordered `9 x 9` rational interval matrices, all 81 entrywise
+intersection decisions, the intersection matrix, and a transpose-aware
+symmetric intersection. Each rational interval is an outward decimal
+containment envelope returned by Arb's `mid_rad_10exp`; no point value is
+promoted to an interval by an assumed error tolerance. The widest retained
+route interval is less than `7e-112`. The artifact SHA-256 is
+`6af23930c0294f6469f80d889f46837bfa74be0e9b914d6d71e1733949edba98`.
+
+Generate and verify it with:
+
+```sh
+uv run --with python-flint==0.8.0 \
+  python -m experiments.rh.weil_extremal_interval_overlap generate \
+  experiments/rh/reference/groskin_2607_02828_v1_c13_N4_arb_interval_overlap.json \
+  --c 13 --N 4 --prec-bits 384 --decimal-enclosure-digits 120
+python3 -m experiments.rh.weil_extremal_interval_overlap verify \
+  experiments/rh/reference/groskin_2607_02828_v1_c13_N4_arb_interval_overlap.json
+```
+
+This materially prepares certificate-chain links 1 and 2 at small `N`: two
+outward-rounded assemblies overlap entrywise and exact symmetrization is by
+intersection. It is not Gate A. The registered full `(100,200)` run still
+needs both retained `401 x 401` interval matrices, their entrywise and
+transpose intersections, an exact rational LDL certificate accepted by the
+checker, a nonnegative analytic transfer margin, and per-entry narrowing at a
+second precision at least 512 bits higher. The small artifact emits no LDL
+claim and records `gate_a_status = "not_satisfied"`.
+
 ## Registered Mathematical Target
 
 Use the cutoff-free Connes--van Suijlekom / Connes--Consani--Moscovici
