@@ -369,6 +369,39 @@ theorem card_vinogradovMixedModConditionedSolutionSet_le_mainFarScale
       congr 1
       omega
 
+/-- Without using any congruence information, the mixed conditioned solution
+set is bounded by its ambient space of two main and two tail tuples. -/
+theorem card_vinogradovMixedModConditionedSolutionSet_le_trivial
+    (p B a b k r t X Y : ℕ) (xi eta : ℤ) :
+    (vinogradovMixedModConditionedSolutionSet
+        p B a b k r t X Y xi eta).card ≤
+      X ^ (2 * r) * Y ^ (2 * t) := by
+  classical
+  calc
+    (vinogradovMixedModConditionedSolutionSet
+        p B a b k r t X Y xi eta).card ≤
+        Fintype.card (VinogradovMixedTuplePairs r t X Y) := by
+      simpa using
+        (Finset.card_le_univ
+          (vinogradovMixedModConditionedSolutionSet
+            p B a b k r t X Y xi eta))
+    _ = X ^ (2 * r) * Y ^ (2 * t) := by
+      simp only [Fintype.card_prod, Fintype.card_fun, Fintype.card_fin]
+      rw [← pow_add, ← pow_add]
+      congr 2 <;> omega
+
+/-- The normalized mixed moment inherits the trivial ambient-space bound. -/
+theorem norm_normalizedVinogradovMixedModConditionedMoment_le_trivial
+    (p B a b k r t X Y : ℕ) [NeZero (p ^ B)]
+    (xi eta : ℤ) :
+    ‖normalizedVinogradovMixedModConditionedMoment
+        p B a b k r t X Y xi eta‖ ≤
+      ((X ^ (2 * r) * Y ^ (2 * t) : ℕ) : ℝ) := by
+  rw [normalizedVinogradovMixedModConditionedMoment_eq_solutionSetCard]
+  norm_cast
+  exact card_vinogradovMixedModConditionedSolutionSet_le_trivial
+    p B a b k r t X Y xi eta
+
 /-- Combining far-scale elimination with the no-wrap residue encoding bounds
 the mixed solution count by a standard complete Vinogradov solution count. -/
 theorem card_vinogradovMixedModConditionedSolutionSet_le_solutionCount
@@ -1047,6 +1080,14 @@ theorem card_vinogradovCenterPairExactScaleSet
     _ = p ^ a * (p ^ (b - gamma) - p ^ (b - (gamma + 1))) := by
       rw [Nat.mul_sub_left_distrib]
 
+/-- The terminal congruence layer has one compatible second center for each
+first center. -/
+theorem card_vinogradovCenterPairCongruentSet_self
+    (p a b : ℕ) [Fact p.Prime] :
+    (vinogradovCenterPairCongruentSet p a b b).card = p ^ a := by
+  simpa [vinogradovCenterPairCongruentSet] using
+    (card_vinogradovCenterResiduePowEqualPairSet p a b b le_rfl)
+
 /-- Sum of mixed conditioned moments over one exact center-difference
 prime-power scale. -/
 noncomputable def normalizedVinogradovExactScaleMixedMomentSum
@@ -1140,6 +1181,156 @@ theorem normalizedVinogradovExactScaleMixedMomentAverage_le_farScaleMoment
   simpa only [mul_comm] using
     normalizedVinogradovExactScaleMixedMomentSum_le_farScaleMoment
       p a b k r t X Y gamma hrk hkp hb hgammaa hbudget htail hscale
+
+/-- Sum of mixed conditioned moments over the terminal center layer, where
+the two centers remain congruent modulo the full tail modulus `p^b`. -/
+noncomputable def normalizedVinogradovTerminalMixedMomentSum
+    (p a b k r t X Y : ℕ) [Fact p.Prime] : ℝ := by
+  letI : NeZero (p ^ ((k - r + 1) * b)) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  exact ∑ z ∈ vinogradovCenterPairCongruentSet p a b b,
+    ‖normalizedVinogradovMixedModConditionedMoment
+      p ((k - r + 1) * b) a b k r t X Y
+        (vinogradovCenterValue z.1) (vinogradovCenterValue z.2)‖
+
+/-- The terminal layer has exactly `p^a` center pairs and each mixed moment
+is bounded by the cardinality of its full tuple ambient space. -/
+theorem normalizedVinogradovTerminalMixedMomentSum_le_trivial
+    (p a b k r t X Y : ℕ) [Fact p.Prime] :
+    normalizedVinogradovTerminalMixedMomentSum
+        p a b k r t X Y ≤
+      (p ^ a : ℕ) * ((X ^ (2 * r) * Y ^ (2 * t) : ℕ) : ℝ) := by
+  letI : NeZero (p ^ ((k - r + 1) * b)) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  unfold normalizedVinogradovTerminalMixedMomentSum
+  calc
+    (∑ z ∈ vinogradovCenterPairCongruentSet p a b b,
+      ‖normalizedVinogradovMixedModConditionedMoment
+        p ((k - r + 1) * b) a b k r t X Y
+          (vinogradovCenterValue z.1) (vinogradovCenterValue z.2)‖) ≤
+        ∑ _z ∈ vinogradovCenterPairCongruentSet p a b b,
+          ((X ^ (2 * r) * Y ^ (2 * t) : ℕ) : ℝ) := by
+      apply Finset.sum_le_sum
+      intro z hz
+      exact norm_normalizedVinogradovMixedModConditionedMoment_le_trivial
+        p ((k - r + 1) * b) a b k r t X Y
+          (vinogradovCenterValue z.1) (vinogradovCenterValue z.2)
+    _ = (p ^ a : ℕ) *
+        ((X ^ (2 * r) * Y ^ (2 * t) : ℕ) : ℝ) := by
+      rw [Finset.sum_const, nsmul_eq_mul,
+        card_vinogradovCenterPairCongruentSet_self]
+
+/-- Sum of the normalized mixed-moment norms over every pair of main and tail
+centers.  The center variables themselves are not averaged at this stage. -/
+noncomputable def normalizedVinogradovAllCenterMixedMomentSum
+    (p a b k r t X Y : ℕ) [Fact p.Prime] : ℝ := by
+  letI : NeZero (p ^ ((k - r + 1) * b)) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  exact ∑ z : Fin (p ^ a) × Fin (p ^ b),
+    ‖normalizedVinogradovMixedModConditionedMoment
+      p ((k - r + 1) * b) a b k r t X Y
+        (vinogradovCenterValue z.1) (vinogradovCenterValue z.2)‖
+
+/-- The all-center mixed moment decomposes exactly into the `b` nonterminal
+valuation scales and the terminal congruent-center layer. -/
+theorem normalizedVinogradovAllCenterMixedMomentSum_eq_exactScales_add_terminal
+    (p a b k r t X Y : ℕ) [Fact p.Prime] :
+    normalizedVinogradovAllCenterMixedMomentSum p a b k r t X Y =
+      (∑ gamma ∈ Finset.range b,
+        normalizedVinogradovExactScaleMixedMomentSum
+          p a b k r t X Y gamma) +
+        normalizedVinogradovTerminalMixedMomentSum p a b k r t X Y := by
+  letI : NeZero (p ^ ((k - r + 1) * b)) :=
+    ⟨pow_ne_zero _ (Fact.out : p.Prime).ne_zero⟩
+  change
+    (∑ z : Fin (p ^ a) × Fin (p ^ b),
+      ‖normalizedVinogradovMixedModConditionedMoment
+        p ((k - r + 1) * b) a b k r t X Y
+          (vinogradovCenterValue z.1) (vinogradovCenterValue z.2)‖) =
+      (∑ gamma ∈ Finset.range b,
+        ∑ z ∈ vinogradovCenterPairExactScaleSet p a b gamma,
+          ‖normalizedVinogradovMixedModConditionedMoment
+            p ((k - r + 1) * b) a b k r t X Y
+              (vinogradovCenterValue z.1)
+              (vinogradovCenterValue z.2)‖) +
+        ∑ z ∈ vinogradovCenterPairCongruentSet p a b b,
+          ‖normalizedVinogradovMixedModConditionedMoment
+            p ((k - r + 1) * b) a b k r t X Y
+              (vinogradovCenterValue z.1)
+              (vinogradovCenterValue z.2)‖
+  exact sum_univ_centerPairs_eq_exactScales_add_terminal
+    p a b b (fun z ↦
+      ‖normalizedVinogradovMixedModConditionedMoment
+        p ((k - r + 1) * b) a b k r t X Y
+          (vinogradovCenterValue z.1) (vinogradovCenterValue z.2)‖)
+
+/-- Global center-scale recurrence.  Every nonterminal valuation layer uses
+its far-scale complete moment, while the terminal layer is retained with the
+honest ambient-space bound. -/
+theorem normalizedVinogradovAllCenterMixedMomentSum_le_exactScales_add_terminal
+    (p a b k r t X Y : ℕ) [Fact p.Prime]
+    (hrk : r ≤ k) (hkp : k < p) (hb : 0 < b)
+    (hgammaa : ∀ gamma < b, gamma ≤ a)
+    (hbudget : ∀ gamma < b,
+      gamma * (k - r) + a * r ≤ (k - r + 1) * b)
+    (htail : (k - r + 1) * b ≤ a * (r + 1))
+    (hscale : ∀ gamma < b,
+      X ≤ p ^ a * p ^ vinogradovFarScale k r a b gamma) :
+    normalizedVinogradovAllCenterMixedMomentSum p a b k r t X Y ≤
+      (∑ gamma ∈ Finset.range b,
+        (vinogradovCenterPairExactScaleSet p a b gamma).card *
+          (‖normalizedVinogradovMomentMod
+            (p ^ vinogradovFarScale k r a b gamma) r r
+              (p ^ vinogradovFarScale k r a b gamma)‖ *
+            (Y ^ (2 * t) : ℝ))) +
+        (p ^ a : ℕ) *
+          ((X ^ (2 * r) * Y ^ (2 * t) : ℕ) : ℝ) := by
+  rw [normalizedVinogradovAllCenterMixedMomentSum_eq_exactScales_add_terminal]
+  apply add_le_add
+  · apply Finset.sum_le_sum
+    intro gamma hgamma
+    have hgb : gamma < b := Finset.mem_range.mp hgamma
+    exact normalizedVinogradovExactScaleMixedMomentSum_le_farScaleMoment
+      p a b k r t X Y gamma hrk hkp hb
+        (hgammaa gamma hgb) (hbudget gamma hgb) htail
+        (hscale gamma hgb)
+  · exact normalizedVinogradovTerminalMixedMomentSum_le_trivial
+      p a b k r t X Y
+
+/-- Average of the mixed-moment norms over the `p^a * p^b` center pairs. -/
+noncomputable def normalizedVinogradovAllCenterMixedMomentAverage
+    (p a b k r t X Y : ℕ) [Fact p.Prime] : ℝ :=
+  normalizedVinogradovAllCenterMixedMomentSum p a b k r t X Y /
+    ((p ^ a * p ^ b : ℕ) : ℝ)
+
+/-- Averaging the global recurrence exposes the small relative mass of the
+terminal layer through the denominator `p^a * p^b`. -/
+theorem
+    normalizedVinogradovAllCenterMixedMomentAverage_le_exactScales_add_terminal
+    (p a b k r t X Y : ℕ) [Fact p.Prime]
+    (hrk : r ≤ k) (hkp : k < p) (hb : 0 < b)
+    (hgammaa : ∀ gamma < b, gamma ≤ a)
+    (hbudget : ∀ gamma < b,
+      gamma * (k - r) + a * r ≤ (k - r + 1) * b)
+    (htail : (k - r + 1) * b ≤ a * (r + 1))
+    (hscale : ∀ gamma < b,
+      X ≤ p ^ a * p ^ vinogradovFarScale k r a b gamma) :
+    normalizedVinogradovAllCenterMixedMomentAverage
+        p a b k r t X Y ≤
+      ((∑ gamma ∈ Finset.range b,
+          (vinogradovCenterPairExactScaleSet p a b gamma).card *
+            (‖normalizedVinogradovMomentMod
+              (p ^ vinogradovFarScale k r a b gamma) r r
+                (p ^ vinogradovFarScale k r a b gamma)‖ *
+              (Y ^ (2 * t) : ℝ))) +
+          (p ^ a : ℕ) *
+            ((X ^ (2 * r) * Y ^ (2 * t) : ℕ) : ℝ)) /
+        ((p ^ a * p ^ b : ℕ) : ℝ) := by
+  unfold normalizedVinogradovAllCenterMixedMomentAverage
+  exact div_le_div_of_nonneg_right
+    (normalizedVinogradovAllCenterMixedMomentSum_le_exactScales_add_terminal
+      p a b k r t X Y hrk hkp hb hgammaa hbudget htail hscale)
+    (Nat.cast_nonneg (p ^ a * p ^ b))
 
 /-- Sum of the norms of the mixed conditioned moments over all unit-separated
 center pairs.  This is the first aggregate surface for the recurrence. -/
