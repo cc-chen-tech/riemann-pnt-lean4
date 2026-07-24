@@ -7,6 +7,17 @@ namespace PrimeNumberTheorem
 /-! Public contract for adaptive finite-grid Pintz-Carlson heights. -/
 
 example
+    (rates : Finset ℝ)
+    (selectRate : ℝ → ℝ)
+    (hselect : ∀ x, selectRate x ∈ rates)
+    (hratesPos : ∀ k ∈ rates, 0 < k) :
+    Tendsto
+      (fun x : ℝ => pintzCarlsonHeight (selectRate x) x)
+      atTop atTop :=
+  tendsto_adaptive_pintzCarlsonHeight_atTop
+    rates selectRate hselect hratesPos
+
+example
     {ι : Type*} [DecidableEq ι]
     (layers : Finset ι)
     (C sigma : ι → ℝ)
