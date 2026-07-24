@@ -1,6 +1,8 @@
 import ZeroFreeRegion.VinogradovKorobov.VinogradovMixedHolder
+import ZeroFreeRegion.VinogradovKorobov.VinogradovNewton
 import ZeroFreeRegion.VinogradovKorobov.VinogradovQuadratic
 import ZeroFreeRegion.VinogradovKorobov.VinogradovWeightedConditioning
+import Mathlib.Data.List.Permutation
 
 open scoped BigOperators
 
@@ -424,6 +426,14 @@ def vinogradovResidualTailSolutionPairProjectionTwo
         ((xy.2 (Fin.last n).castSucc).val ≤
           (xy.2 (Fin.last (n + 1))).val)))
 
+/-- The first `r` residual congruences do not wrap on an `r`-variable tail.
+The degree-`d` power sum is at most `r * Y^d`, while its residual modulus is
+`p^(B-bd)`. -/
+def VinogradovResidualTailNoWrap
+    (p B b r Y : ℕ) : Prop :=
+  ∀ d, 1 ≤ d → d ≤ r →
+    b * d ≤ B ∧ r * Y ^ d < p ^ (B - b * d)
+
 /-- Two residual solutions with the same left tuple have congruent
 right-hand power sums. -/
 private theorem residualTail_right_powerSum_modEq
@@ -450,6 +460,314 @@ private theorem residualTail_right_powerSum_modEq
     have h := hzwDegree.add_right (∑ i, w i ^ (j.val + 1))
     simpa [vinogradovPowerSumDifferenceInt, ← hx] using h
   exact hxySum.symm.trans hzwSum
+
+/-- Split a sum over `Fin (n + r)` into its first `n` entries and final `r`
+entries. -/
+private theorem sum_fin_add {R : Type*} [AddCommMonoid R]
+    (n r : ℕ) (f : Fin (n + r) → R) :
+    (∑ i, f i) =
+      (∑ i : Fin n, f (Fin.castAdd r i)) +
+        ∑ i : Fin r, f (Fin.natAdd n i) := by
+  rw [← finSumFinEquiv.sum_comp f, Fintype.sum_sum_type]
+  rfl
+
+/-- Under the uniform no-wrap hypothesis, agreeing left tuples and right
+prefixes force equality of every suffix power sum through degree `r`. -/
+theorem residualTail_suffix_powerSums_eq
+    (p B b k n r Y : ℕ)
+    {xy zw :
+      (Fin (n + r) → Fin Y) × (Fin (n + r) → Fin Y)}
+    (hxy : IsVinogradovResidualTailSolution p B b k (n + r)
+      (vinogradovFinTupleInt xy.1) (vinogradovFinTupleInt xy.2))
+    (hzw : IsVinogradovResidualTailSolution p B b k (n + r)
+      (vinogradovFinTupleInt zw.1) (vinogradovFinTupleInt zw.2))
+    (hx : xy.1 = zw.1)
+    (hprefix :
+      (fun i : Fin n ↦ xy.2 (Fin.castAdd r i)) =
+        (fun i : Fin n ↦ zw.2 (Fin.castAdd r i)))
+    (hrk : r ≤ k)
+    (hnowrap : VinogradovResidualTailNoWrap p B b r Y)
+    (d : ℕ) (hd : 1 ≤ d) (hdr : d ≤ r) :
+    (∑ i : Fin r,
+        ((xy.2 (Fin.natAdd n i)).val + 1) ^ d) =
+      ∑ i : Fin r,
+        ((zw.2 (Fin.natAdd n i)).val + 1) ^ d := by
+  classical
+  obtain ⟨j, hj⟩ : ∃ j : Fin k, j.val + 1 = d := by
+    refine ⟨⟨d - 1, by omega⟩, ?_⟩
+    change d - 1 + 1 = d
+    omega
+  have hdegree : b * (j.val + 1) ≤ B := by
+    rw [hj]
+    exact (hnowrap d hd hdr).1
+  have hsum := residualTail_right_powerSum_modEq
+    hxy hzw (congrArg vinogradovFinTupleInt hx) j hdegree
+  rw [sum_fin_add n r, sum_fin_add n r] at hsum
+  have hpref :
+      (∑ i : Fin n,
+          vinogradovFinTupleInt xy.2 (Fin.castAdd r i) ^ (j.val + 1)) =
+        ∑ i : Fin n,
+          vinogradovFinTupleInt zw.2 (Fin.castAdd r i) ^ (j.val + 1) := by
+    apply Fintype.sum_congr
+    intro i
+    exact congrArg
+      (fun u : Fin Y ↦ (((u.val + 1 : ℕ) : ℤ) ^ (j.val + 1)))
+      (congrFun hprefix i)
+  rw [hpref] at hsum
+  have hsuffixInt :
+      (∑ i : Fin r,
+          vinogradovFinTupleInt xy.2 (Fin.natAdd n i) ^ d) ≡
+        (∑ i : Fin r,
+          vinogradovFinTupleInt zw.2 (Fin.natAdd n i) ^ d)
+        [ZMOD (p : ℤ) ^ (B - b * d)] := by
+    simpa [hj] using Int.ModEq.add_left_cancel' _ hsum
+  have hsuffixNat :
+      Nat.ModEq (p ^ (B - b * d))
+        (∑ i : Fin r,
+          ((xy.2 (Fin.natAdd n i)).val + 1) ^ d)
+        (∑ i : Fin r,
+          ((zw.2 (Fin.natAdd n i)).val + 1) ^ d) := by
+    rw [Nat.modEq_iff_dvd]
+    simpa [vinogradovFinTupleInt] using hsuffixInt.dvd
+  have hxyBound :
+      (∑ i : Fin r,
+          ((xy.2 (Fin.natAdd n i)).val + 1) ^ d) ≤
+        r * Y ^ d := by
+    calc
+      (∑ i : Fin r,
+          ((xy.2 (Fin.natAdd n i)).val + 1) ^ d) ≤
+          ∑ _i : Fin r, Y ^ d := by
+            apply Finset.sum_le_sum
+            intro i _
+            exact Nat.pow_le_pow_left (by omega) d
+      _ = r * Y ^ d := by simp
+  have hzwBound :
+      (∑ i : Fin r,
+          ((zw.2 (Fin.natAdd n i)).val + 1) ^ d) ≤
+        r * Y ^ d := by
+    calc
+      (∑ i : Fin r,
+          ((zw.2 (Fin.natAdd n i)).val + 1) ^ d) ≤
+          ∑ _i : Fin r, Y ^ d := by
+            apply Finset.sum_le_sum
+            intro i _
+            exact Nat.pow_le_pow_left (by omega) d
+      _ = r * Y ^ d := by simp
+  exact hsuffixNat.eq_of_lt_of_lt
+    (hxyBound.trans_lt (hnowrap d hd hdr).2)
+    (hzwBound.trans_lt (hnowrap d hd hdr).2)
+
+/-- The first `r` no-wrap power sums determine the suffix coordinates as a
+multiset.  Thus any two solutions in one left-tuple/right-prefix fiber differ
+only by a permutation of their final `r` coordinates. -/
+theorem residualTail_suffix_multiset_eq
+    (p B b k n r Y : ℕ)
+    {xy zw :
+      (Fin (n + r) → Fin Y) × (Fin (n + r) → Fin Y)}
+    (hxy : IsVinogradovResidualTailSolution p B b k (n + r)
+      (vinogradovFinTupleInt xy.1) (vinogradovFinTupleInt xy.2))
+    (hzw : IsVinogradovResidualTailSolution p B b k (n + r)
+      (vinogradovFinTupleInt zw.1) (vinogradovFinTupleInt zw.2))
+    (hx : xy.1 = zw.1)
+    (hprefix :
+      (fun i : Fin n ↦ xy.2 (Fin.castAdd r i)) =
+        (fun i : Fin n ↦ zw.2 (Fin.castAdd r i)))
+    (hrk : r ≤ k)
+    (hnowrap : VinogradovResidualTailNoWrap p B b r Y) :
+    Finset.univ.val.map (fun i : Fin r ↦ xy.2 (Fin.natAdd n i)) =
+      Finset.univ.val.map (fun i : Fin r ↦ zw.2 (Fin.natAdd n i)) := by
+  let embed : Fin Y → ℚ := fun z ↦ (z.val + 1 : ℕ)
+  have hinj : Function.Injective embed := by
+    intro a c hac
+    apply Fin.ext
+    have hac' : a.val + 1 = c.val + 1 := Nat.cast_injective hac
+    omega
+  apply Multiset.map_injective hinj
+  simp only [Multiset.map_map, Function.comp_apply]
+  change
+    Finset.univ.val.map
+        (fun i : Fin r ↦ embed (xy.2 (Fin.natAdd n i))) =
+      Finset.univ.val.map
+        (fun i : Fin r ↦ embed (zw.2 (Fin.natAdd n i)))
+  apply multiset_eq_of_powerSums_eq
+  intro d hd hdr
+  have hpower := residualTail_suffix_powerSums_eq
+    p B b k n r Y hxy hzw hx hprefix hrk hnowrap d hd hdr
+  simpa only [embed, Nat.cast_sum, Nat.cast_pow] using
+    congrArg (fun z : ℕ ↦ (z : ℚ)) hpower
+
+/-- Retain the full left tuple and the first `n` right coordinates.  The
+remaining `r` coordinates form a permutation fiber under the no-wrap
+hypothesis. -/
+def vinogradovResidualTailSolutionPairProjectionMany
+    (n r Y : ℕ)
+    (xy : (Fin (n + r) → Fin Y) × (Fin (n + r) → Fin Y)) :
+    (Fin (n + r) → Fin Y) × (Fin n → Fin Y) :=
+  (xy.1, fun i ↦ xy.2 (Fin.castAdd r i))
+
+/-- Each fiber of the many-coordinate projection contains at most `r!`
+residual solutions. -/
+theorem
+    card_vinogradovResidualTailSolutionPairProjectionMany_fiber_le_factorial
+    (p B b k n r Y : ℕ) (hrk : r ≤ k)
+    (hnowrap : VinogradovResidualTailNoWrap p B b r Y)
+    (z : (Fin (n + r) → Fin Y) × (Fin n → Fin Y)) :
+    {xy ∈ vinogradovResidualTailSolutionPairSet p B b k (n + r) Y |
+      vinogradovResidualTailSolutionPairProjectionMany n r Y xy = z}.card ≤
+        r.factorial := by
+  classical
+  let S :=
+    vinogradovResidualTailSolutionPairSet p B b k (n + r) Y
+  let fiber :=
+    {xy ∈ S |
+      vinogradovResidualTailSolutionPairProjectionMany n r Y xy = z}
+  by_cases hfiber : fiber.Nonempty
+  · obtain ⟨q, hq⟩ := hfiber
+    let suffixList :
+        ((Fin (n + r) → Fin Y) × (Fin (n + r) → Fin Y)) →
+          List (Fin Y) :=
+      fun xy ↦ List.ofFn (fun i : Fin r ↦ xy.2 (Fin.natAdd n i))
+    have hcard := Finset.card_le_card_of_injOn suffixList
+      (s := fiber)
+      (t := (suffixList q).permutations.toFinset)
+      (by
+        intro xy hxy
+        change suffixList xy ∈ (suffixList q).permutations.toFinset
+        rw [List.mem_toFinset, List.mem_permutations]
+        have hxyS : xy ∈ S := (Finset.mem_filter.mp hxy).1
+        have hqS : q ∈ S := (Finset.mem_filter.mp hq).1
+        have hxyProjection :=
+          (Finset.mem_filter.mp hxy).2
+        have hqProjection :=
+          (Finset.mem_filter.mp hq).2
+        have hprojection :
+            vinogradovResidualTailSolutionPairProjectionMany n r Y xy =
+              vinogradovResidualTailSolutionPairProjectionMany n r Y q :=
+          hxyProjection.trans hqProjection.symm
+        have hx : xy.1 = q.1 := by
+          simpa [vinogradovResidualTailSolutionPairProjectionMany] using
+            congrArg Prod.fst hprojection
+        have hprefix :
+            (fun i : Fin n ↦ xy.2 (Fin.castAdd r i)) =
+              (fun i : Fin n ↦ q.2 (Fin.castAdd r i)) := by
+          simpa [vinogradovResidualTailSolutionPairProjectionMany] using
+            congrArg Prod.snd hprojection
+        have hxySolution :=
+          (mem_vinogradovResidualTailSolutionPairSet_iff
+            p B b k (n + r) Y xy).mp hxyS
+        have hqSolution :=
+          (mem_vinogradovResidualTailSolutionPairSet_iff
+            p B b k (n + r) Y q).mp hqS
+        apply Multiset.coe_eq_coe.mp
+        simpa [suffixList] using
+          residualTail_suffix_multiset_eq
+            p B b k n r Y hxySolution hqSolution hx hprefix hrk hnowrap)
+      (by
+        intro xy hxy qw hqw hsuffix
+        have hxyProjection :=
+          (Finset.mem_filter.mp hxy).2
+        have hqwProjection :=
+          (Finset.mem_filter.mp hqw).2
+        have hprojection :
+            vinogradovResidualTailSolutionPairProjectionMany n r Y xy =
+              vinogradovResidualTailSolutionPairProjectionMany n r Y qw :=
+          hxyProjection.trans hqwProjection.symm
+        have hx : xy.1 = qw.1 := by
+          simpa [vinogradovResidualTailSolutionPairProjectionMany] using
+            congrArg Prod.fst hprojection
+        have hprefix :
+            (fun i : Fin n ↦ xy.2 (Fin.castAdd r i)) =
+              (fun i : Fin n ↦ qw.2 (Fin.castAdd r i)) := by
+          simpa [vinogradovResidualTailSolutionPairProjectionMany] using
+            congrArg Prod.snd hprojection
+        have hsuffixFunction :
+            (fun i : Fin r ↦ xy.2 (Fin.natAdd n i)) =
+              (fun i : Fin r ↦ qw.2 (Fin.natAdd n i)) := by
+          exact List.ofFn_inj.mp hsuffix
+        apply Prod.ext hx
+        funext i
+        obtain ⟨u, rfl⟩ := finSumFinEquiv.surjective i
+        rcases u with j | j
+        · simpa using congrFun hprefix j
+        · simpa using congrFun hsuffixFunction j)
+    calc
+      {xy ∈ vinogradovResidualTailSolutionPairSet
+          p B b k (n + r) Y |
+        vinogradovResidualTailSolutionPairProjectionMany n r Y xy = z}.card =
+          fiber.card := rfl
+      _ ≤ (suffixList q).permutations.toFinset.card := hcard
+      _ ≤ (suffixList q).permutations.length :=
+        List.toFinset_card_le (suffixList q).permutations
+      _ = r.factorial := by
+        rw [List.length_permutations, List.length_ofFn]
+  · have hempty : fiber = ∅ :=
+      Finset.not_nonempty_iff_eq_empty.mp hfiber
+    change fiber.card ≤ r.factorial
+    simp [hempty]
+
+/-- The first `r` residual congruences save `r` powers of `Y`, up to the
+permutation factor `r!`. -/
+theorem card_vinogradovResidualTailSolutionPairSet_le_factorial
+    (p B b k n r Y : ℕ) (hrk : r ≤ k)
+    (hnowrap : VinogradovResidualTailNoWrap p B b r Y) :
+    (vinogradovResidualTailSolutionPairSet
+        p B b k (n + r) Y).card ≤
+      r.factorial * Y ^ (2 * n + r) := by
+  classical
+  let S :=
+    vinogradovResidualTailSolutionPairSet p B b k (n + r) Y
+  let projection :=
+    vinogradovResidualTailSolutionPairProjectionMany n r Y
+  have hmaps : ∀ xy ∈ S,
+      projection xy ∈
+        (Finset.univ :
+          Finset ((Fin (n + r) → Fin Y) × (Fin n → Fin Y))) :=
+    fun _ _ ↦ Finset.mem_univ _
+  rw [show
+    vinogradovResidualTailSolutionPairSet p B b k (n + r) Y = S from rfl]
+  rw [Finset.card_eq_sum_card_fiberwise hmaps]
+  calc
+    (∑ z ∈
+        (Finset.univ :
+          Finset ((Fin (n + r) → Fin Y) × (Fin n → Fin Y))),
+        {xy ∈ S | projection xy = z}.card) ≤
+      ∑ _z ∈
+        (Finset.univ :
+          Finset ((Fin (n + r) → Fin Y) × (Fin n → Fin Y))),
+        r.factorial := by
+          apply Finset.sum_le_sum
+          intro z _
+          exact
+            card_vinogradovResidualTailSolutionPairProjectionMany_fiber_le_factorial
+              p B b k n r Y hrk hnowrap z
+    _ = (Y ^ (n + r) * Y ^ n) * r.factorial := by simp
+    _ = r.factorial * (Y ^ (n + r) * Y ^ n) := by ac_rfl
+    _ = r.factorial * Y ^ (2 * n + r) := by
+      rw [← pow_add]
+      congr 2
+      omega
+
+/-- The factorial residual count transfers to the separated affine-tail
+moment. -/
+theorem normalizedVinogradovMixedTailNormMoment_le_factorial
+    (p B b k n r Y : ℕ) [NeZero (p ^ B)] (hp : p ≠ 0)
+    (hrk : r ≤ k)
+    (hnowrap : VinogradovResidualTailNoWrap p B b r Y)
+    (eta : ℤ) :
+    normalizedVinogradovMixedTailNormMoment
+        p B b k (n + r) Y eta ≤
+      r.factorial * (Y : ℝ) ^ (2 * n + r) := by
+  calc
+    normalizedVinogradovMixedTailNormMoment
+        p B b k (n + r) Y eta ≤
+      (vinogradovResidualTailSolutionPairSet
+        p B b k (n + r) Y).card :=
+      normalizedVinogradovMixedTailNormMoment_le_residualSolutionPairSetCard
+        p B b k (n + r) Y hp eta
+    _ ≤ r.factorial * (Y : ℝ) ^ (2 * n + r) := by
+      exact_mod_cast
+        card_vinogradovResidualTailSolutionPairSet_le_factorial
+          p B b k n r Y hrk hnowrap
 
 /-- If the first `n` right coordinates agree, residual congruence reduces to
 a congruence between the power sums of the final two coordinates. -/
