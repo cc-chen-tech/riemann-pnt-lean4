@@ -1,0 +1,5 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetPintzCarlsonDensityTransfer
+
+#print axioms PrimeNumberTheorem.pintzCarlsonActualDensityBudget_nonneg
+#print axioms PrimeNumberTheorem.eventually_pintzCarlsonActualDensityBudget_le_majorant
+#print axioms PrimeNumberTheorem.exists_pintzConstant_adaptiveCarlsonDensityBudget_tendsto
