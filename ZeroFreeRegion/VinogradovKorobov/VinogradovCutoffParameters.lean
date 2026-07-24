@@ -187,6 +187,79 @@ theorem norm_normalizedVinogradovMomentMod_le_quadraticAllScales
     vinogradovFarScale_quadratic,
     norm_normalizedVinogradovMomentMod_complete_one] using hrec
 
+/-- The contribution of the `gamma = 0` center-difference stratum already
+forces the quadratic all-scales bound to contain the displayed factor, before
+any higher scales or the terminal layer are counted. -/
+theorem normalizedVinogradovQuadraticAllScalesBound_ge_zeroScale
+    (p b : ℕ) [Fact p.Prime] (hb : 0 < b) :
+    (((p ^ b : ℕ) : ℝ) ^ 4) *
+        ((p ^ b - p ^ (b - 1) : ℕ) : ℝ) ≤
+      normalizedVinogradovQuadraticAllScalesBound p b := by
+  have hgb : 0 + 1 ≤ b := by omega
+  have htermNat :
+        (vinogradovCenterPairExactScaleSet p b b 0).card *
+            p ^ (b - 0) =
+          (p ^ b) ^ 2 * (p ^ b - p ^ (b - 1)) := by
+    rw [card_vinogradovCenterPairExactScaleSet p b b 0 hgb]
+    simp only [Nat.zero_add, Nat.sub_zero]
+    ring
+  have hterm :
+      ((vinogradovCenterPairExactScaleSet p b b 0).card : ℝ) *
+          (((p ^ (b - 0) : ℕ) : ℝ)) =
+        (((p ^ b : ℕ) : ℝ) ^ 2) *
+          ((p ^ b - p ^ (b - 1) : ℕ) : ℝ) := by
+    exact_mod_cast htermNat
+  have hzero : 0 ∈ Finset.range b := Finset.mem_range.mpr hb
+  have hsum :
+      (vinogradovCenterPairExactScaleSet p b b 0).card *
+          (((p ^ (b - 0) : ℕ) : ℝ)) ≤
+        ∑ gamma ∈ Finset.range b,
+          (vinogradovCenterPairExactScaleSet p b b gamma).card *
+            (((p ^ (b - gamma) : ℕ) : ℝ)) := by
+    exact Finset.single_le_sum
+      (s := Finset.range b)
+      (f := fun gamma ↦
+        ((vinogradovCenterPairExactScaleSet p b b gamma).card : ℝ) *
+          (((p ^ (b - gamma) : ℕ) : ℝ)))
+      (fun gamma _ ↦ by positivity) hzero
+  unfold normalizedVinogradovQuadraticAllScalesBound
+  calc
+    (((p ^ b : ℕ) : ℝ) ^ 4) *
+          ((p ^ b - p ^ (b - 1) : ℕ) : ℝ) =
+        ((p ^ b : ℕ) : ℝ) * ((p ^ b : ℕ) : ℝ) *
+          (((vinogradovCenterPairExactScaleSet p b b 0).card : ℝ) *
+            (((p ^ (b - 0) : ℕ) : ℝ))) := by rw [hterm]; ring
+    _ ≤ ((p ^ b : ℕ) : ℝ) * ((p ^ b : ℕ) : ℝ) *
+        ((∑ gamma ∈ Finset.range b,
+          (vinogradovCenterPairExactScaleSet p b b gamma).card *
+            (((p ^ (b - gamma) : ℕ) : ℝ))) +
+          (p ^ b : ℕ)) :=
+      mul_le_mul_of_nonneg_left
+        (hsum.trans (le_add_of_nonneg_right (by positivity))) (by positivity)
+
+/-- The current quadratic all-scales recurrence cannot by itself give a
+strict improvement over the ambient fourth-moment bound: its explicit
+right-hand side is already at least `(p^b)^4`. -/
+theorem normalizedVinogradovQuadraticAllScalesBound_ge_trivial
+    (p b : ℕ) [Fact p.Prime] (hb : 0 < b) :
+    (((p ^ b : ℕ) : ℝ) ^ 4) ≤
+      normalizedVinogradovQuadraticAllScalesBound p b := by
+  have hexponent : b - 1 < b := by omega
+  have hpow : p ^ (b - 1) < p ^ b :=
+    Nat.pow_lt_pow_right (Fact.out : p.Prime).one_lt hexponent
+  have hdiffNat : 1 ≤ p ^ b - p ^ (b - 1) := by omega
+  have hdiff :
+      (1 : ℝ) ≤ ((p ^ b - p ^ (b - 1) : ℕ) : ℝ) := by
+    exact_mod_cast hdiffNat
+  calc
+    (((p ^ b : ℕ) : ℝ) ^ 4) =
+        (((p ^ b : ℕ) : ℝ) ^ 4) * 1 := by ring
+    _ ≤ (((p ^ b : ℕ) : ℝ) ^ 4) *
+        ((p ^ b - p ^ (b - 1) : ℕ) : ℝ) :=
+      mul_le_mul_of_nonneg_left hdiff (by positivity)
+    _ ≤ normalizedVinogradovQuadraticAllScalesBound p b :=
+      normalizedVinogradovQuadraticAllScalesBound_ge_zeroScale p b hb
+
 end
 
 end ZeroFreeRegion.VinogradovKorobov

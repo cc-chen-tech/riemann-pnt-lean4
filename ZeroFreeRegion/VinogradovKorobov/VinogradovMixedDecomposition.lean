@@ -170,6 +170,55 @@ def vinogradovResidueBlockIndex
     _ ≤ p ^ b * Y :=
       Nat.mul_le_mul_left _ (Nat.succ_le_iff.mpr n.isLt)
 
+/-- Every one-based residue class modulo `p^b` contains exactly `Y` indices
+inside the complete interval of length `p^b * Y`. -/
+theorem card_vinogradovResidueClassFinset_completeBlock
+    (p b Y : ℕ) [NeZero (p ^ b)] (z : Fin (p ^ b)) :
+    (vinogradovResidueClassFinset (p ^ b) (p ^ b * Y)
+      (((z.val + 1 : ℕ) : ZMod (p ^ b)))).card = Y := by
+  classical
+  let S := vinogradovResidueClassFinset (p ^ b) (p ^ b * Y)
+    (((z.val + 1 : ℕ) : ZMod (p ^ b)))
+  have hrem (m : Fin (p ^ b * Y)) (hm : m ∈ S) :
+      m.val % (p ^ b) = z.val := by
+    have hmres := (mem_vinogradovResidueClassFinset
+      (p ^ b) (p ^ b * Y)
+      (((z.val + 1 : ℕ) : ZMod (p ^ b))) m).mp hm
+    have hbase :
+        ((m.val : ℕ) : ZMod (p ^ b)) =
+          ((z.val : ℕ) : ZMod (p ^ b)) := by
+      have h := congrArg (fun w : ZMod (p ^ b) ↦ w - 1) hmres
+      simpa only [Nat.cast_add, Nat.cast_one, add_sub_cancel_right] using h
+    have hval := congrArg ZMod.val hbase
+    simpa [ZMod.val_natCast, Nat.mod_eq_of_lt z.isLt] using hval
+  have hcard : S.card = (Finset.univ : Finset (Fin Y)).card := by
+    apply Finset.card_bij
+      (fun m _ ↦
+        (⟨m.val / (p ^ b), Nat.div_lt_of_lt_mul m.isLt⟩ : Fin Y))
+    · intro m hm
+      exact Finset.mem_univ _
+    · intro m₁ hm₁ m₂ hm₂ heq
+      apply Fin.ext
+      have hquotient := congrArg Fin.val heq
+      change m₁.val / (p ^ b) = m₂.val / (p ^ b) at hquotient
+      calc
+        m₁.val = m₁.val % (p ^ b) + p ^ b * (m₁.val / (p ^ b)) :=
+          (Nat.mod_add_div m₁.val (p ^ b)).symm
+        _ = z.val + p ^ b * (m₁.val / (p ^ b)) := by rw [hrem m₁ hm₁]
+        _ = z.val + p ^ b * (m₂.val / (p ^ b)) := by rw [hquotient]
+        _ = m₂.val % (p ^ b) + p ^ b * (m₂.val / (p ^ b)) := by
+          rw [hrem m₂ hm₂]
+        _ = m₂.val := Nat.mod_add_div m₂.val (p ^ b)
+    · intro n hn
+      refine ⟨vinogradovResidueBlockIndex p b Y z n, ?_, ?_⟩
+      · rw [mem_vinogradovResidueClassFinset]
+        simp [vinogradovResidueBlockIndex, Nat.cast_add, Nat.cast_mul]
+      · apply Fin.ext
+        change (z.val + p ^ b * n.val) / (p ^ b) = n.val
+        rw [Nat.add_mul_div_left z.val n.val (NeZero.pos (p ^ b))]
+        rw [Nat.div_eq_of_lt z.isLt, zero_add]
+  simpa [S] using hcard
+
 /-- On a complete prime-power block, the residue-restricted main Weyl sum at
 level `b` is exactly the affine tail Weyl sum with shifted center
 `eta = center - p^b`. -/
