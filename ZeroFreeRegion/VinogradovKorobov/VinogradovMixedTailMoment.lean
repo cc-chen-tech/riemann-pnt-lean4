@@ -259,6 +259,148 @@ theorem
     (vinogradovIntSolutionPairSet_tail_subset_residual
       p B b k s Y hp eta)
 
+/-- Retain the whole left tuple and all but the final coordinate of the right
+tuple.  The degree-one residual congruence will recover that final
+coordinate when the interval does not wrap modulo `p^(B-b)`. -/
+def vinogradovResidualTailSolutionPairProjection
+    (n Y : ℕ)
+    (xy : (Fin (n + 1) → Fin Y) × (Fin (n + 1) → Fin Y)) :
+    (Fin (n + 1) → Fin Y) × (Fin n → Fin Y) :=
+  (xy.1, fun i ↦ xy.2 i.castSucc)
+
+/-- Under the no-wrap condition, the first residual congruence determines
+the final coordinate of the right tuple. -/
+theorem vinogradovResidualTailSolutionPairProjection_injOn
+    (p B b k n Y : ℕ) (hk : 0 < k) (hbB : b ≤ B)
+    (hY : Y ≤ p ^ (B - b)) :
+    Set.InjOn
+      (vinogradovResidualTailSolutionPairProjection n Y)
+      (vinogradovResidualTailSolutionPairSet
+        p B b k (n + 1) Y : Set
+          ((Fin (n + 1) → Fin Y) × (Fin (n + 1) → Fin Y))) := by
+  classical
+  intro xy hxy zw hzw hprojection
+  have hxySolution :=
+    (mem_vinogradovResidualTailSolutionPairSet_iff
+      p B b k (n + 1) Y xy).mp hxy
+  have hzwSolution :=
+    (mem_vinogradovResidualTailSolutionPairSet_iff
+      p B b k (n + 1) Y zw).mp hzw
+  have hx : xy.1 = zw.1 := by
+    simpa [vinogradovResidualTailSolutionPairProjection] using
+      congrArg Prod.fst hprojection
+  have hinit :
+      (fun i : Fin n ↦ xy.2 i.castSucc) =
+        (fun i : Fin n ↦ zw.2 i.castSucc) := by
+    simpa [vinogradovResidualTailSolutionPairProjection] using
+      congrArg Prod.snd hprojection
+  let j : Fin k := ⟨0, hk⟩
+  have hdegree : b * (j.val + 1) ≤ B := by
+    simpa [j] using hbB
+  have hxyDegree := hxySolution j hdegree
+  have hzwDegree := hzwSolution j hdegree
+  have hxySum :
+      (∑ i, vinogradovFinTupleInt xy.1 i) ≡
+        (∑ i, vinogradovFinTupleInt xy.2 i)
+          [ZMOD (p : ℤ) ^ (B - b)] := by
+    have h := hxyDegree.add_right
+      (∑ i, vinogradovFinTupleInt xy.2 i)
+    simpa [j, vinogradovPowerSumDifferenceInt] using h
+  have hzwSum :
+      (∑ i, vinogradovFinTupleInt xy.1 i) ≡
+        (∑ i, vinogradovFinTupleInt zw.2 i)
+          [ZMOD (p : ℤ) ^ (B - b)] := by
+    have h := hzwDegree.add_right
+      (∑ i, vinogradovFinTupleInt zw.2 i)
+    simpa [j, vinogradovPowerSumDifferenceInt, ← hx] using h
+  have hyzSum :
+      (∑ i, vinogradovFinTupleInt xy.2 i) ≡
+        (∑ i, vinogradovFinTupleInt zw.2 i)
+          [ZMOD (p : ℤ) ^ (B - b)] :=
+    hxySum.symm.trans hzwSum
+  rw [Fin.sum_univ_castSucc, Fin.sum_univ_castSucc] at hyzSum
+  have hpref :
+      (∑ i : Fin n, vinogradovFinTupleInt xy.2 i.castSucc) =
+        ∑ i : Fin n, vinogradovFinTupleInt zw.2 i.castSucc := by
+    apply Fintype.sum_congr
+    intro i
+    exact congrArg
+      (fun u : Fin Y ↦ (((u.val + 1 : ℕ) : ℤ)))
+      (congrFun hinit i)
+  rw [hpref] at hyzSum
+  have hlastOne :
+      vinogradovFinTupleInt xy.2 (Fin.last n) ≡
+        vinogradovFinTupleInt zw.2 (Fin.last n)
+          [ZMOD (p : ℤ) ^ (B - b)] :=
+    Int.ModEq.add_left_cancel' _ hyzSum
+  have hlastVal :
+      ((xy.2 (Fin.last n)).val : ℤ) ≡
+        ((zw.2 (Fin.last n)).val : ℤ)
+          [ZMOD (p : ℤ) ^ (B - b)] := by
+    have h := hlastOne.add_right (-1)
+    simpa [vinogradovFinTupleInt] using h
+  have hlastNat :
+      Nat.ModEq (p ^ (B - b))
+        (xy.2 (Fin.last n)).val (zw.2 (Fin.last n)).val := by
+    rw [Nat.modEq_iff_dvd]
+    exact hlastVal.dvd
+  have hlast : xy.2 (Fin.last n) = zw.2 (Fin.last n) := by
+    apply Fin.ext
+    exact hlastNat.eq_of_lt_of_lt
+      ((xy.2 (Fin.last n)).isLt.trans_le hY)
+      ((zw.2 (Fin.last n)).isLt.trans_le hY)
+  apply Prod.ext
+  · exact hx
+  · funext i
+    exact Fin.lastCases hlast (fun u ↦ congrFun hinit u) i
+
+/-- A first-power residual congruence saves one full factor of `Y` over the
+trivial `Y^(2(n+1))` count. -/
+theorem card_vinogradovResidualTailSolutionPairSet_le_firstPower
+    (p B b k n Y : ℕ) (hk : 0 < k) (hbB : b ≤ B)
+    (hY : Y ≤ p ^ (B - b)) :
+    (vinogradovResidualTailSolutionPairSet
+        p B b k (n + 1) Y).card ≤ Y ^ (2 * n + 1) := by
+  classical
+  have hcard := Finset.card_le_card_of_injOn
+    (vinogradovResidualTailSolutionPairProjection n Y)
+    (s := vinogradovResidualTailSolutionPairSet p B b k (n + 1) Y)
+    (t := Finset.univ)
+    (by intro xy hxy; simp)
+    (vinogradovResidualTailSolutionPairProjection_injOn
+      p B b k n Y hk hbB hY)
+  have hcard' :
+      (vinogradovResidualTailSolutionPairSet
+          p B b k (n + 1) Y).card ≤ Y ^ (n + 1) * Y ^ n := by
+    simpa using hcard
+  calc
+    (vinogradovResidualTailSolutionPairSet
+        p B b k (n + 1) Y).card ≤ Y ^ (n + 1) * Y ^ n := hcard'
+    _ = Y ^ (2 * n + 1) := by
+      rw [← pow_add]
+      congr 1
+      omega
+
+/-- The first residual congruence gives the separated affine-tail moment one
+full factor of `Y` of saving over its trivial `Y^(2(n+1))` bound. -/
+theorem normalizedVinogradovMixedTailNormMoment_le_firstPower
+    (p B b k n Y : ℕ) [NeZero (p ^ B)] (hp : p ≠ 0)
+    (hk : 0 < k) (hbB : b ≤ B) (hY : Y ≤ p ^ (B - b))
+    (eta : ℤ) :
+    normalizedVinogradovMixedTailNormMoment
+        p B b k (n + 1) Y eta ≤ (Y : ℝ) ^ (2 * n + 1) := by
+  calc
+    normalizedVinogradovMixedTailNormMoment
+        p B b k (n + 1) Y eta ≤
+      (vinogradovResidualTailSolutionPairSet
+        p B b k (n + 1) Y).card :=
+      normalizedVinogradovMixedTailNormMoment_le_residualSolutionPairSetCard
+        p B b k (n + 1) Y hp eta
+    _ ≤ Y ^ (2 * n + 1) := by
+      exact_mod_cast
+        card_vinogradovResidualTailSolutionPairSet_le_firstPower
+        p B b k n Y hk hbB hY
+
 end
 
 end ZeroFreeRegion.VinogradovKorobov
