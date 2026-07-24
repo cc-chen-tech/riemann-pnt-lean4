@@ -164,6 +164,7 @@ EXPECTED_DECLARATIONS = {
     "HardyTheorem.selbergShortTaperedSqrtZeta_sq_mul_zeta_apply_prime",
     "HardyTheorem.selbergShortTaperedSqrtZeta_sq_mul_zeta_apply_prime_pow",
     "HardyTheorem.selbergShortTaperedSqrtZeta_collected_apply_of_le",
+    "HardyTheorem.sum_sq_selbergSqrtZetaLowRangeCoeff_div_le_fifteen_fourths",
     "HardyTheorem.exp_I_thetaModel_mul_criticalLinePolynomial_mul_mollifier_mul_conj_eq_collectedPhasePolynomial",
     "HardyTheorem.selbergMollifiedTripleKey_eq_one_iff",
     "HardyTheorem.selbergMollifiedTripleCollectedCoeff_one_eq_constantPairs",
