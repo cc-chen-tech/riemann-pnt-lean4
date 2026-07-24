@@ -79,6 +79,42 @@ theorem adaptive_pintzCarlsonHeight_pos
     0 < pintzCarlsonHeight (selectRate x) x :=
   pintzCarlsonHeight_pos _ _
 
+/-- Any eventual property verified separately for each member of a finite
+rate grid transfers to an arbitrary selector from that grid. This supplies
+both eventual zero-freeness and eventual admissibility for a dynamic
+finite-grid optimizer. -/
+theorem eventually_adaptive_pintzCarlsonHeight_property
+    (rates : Finset ℝ)
+    (selectRate : ℝ → ℝ)
+    (hselect : ∀ x, selectRate x ∈ rates)
+    (P : ℝ → ℝ → Prop)
+    (hproperty :
+      ∀ k ∈ rates, ∀ᶠ x : ℝ in atTop,
+        P x (pintzCarlsonHeight k x)) :
+    ∀ᶠ x : ℝ in atTop,
+      P x (pintzCarlsonHeight (selectRate x) x) := by
+  have hall :
+      ∀ᶠ x : ℝ in atTop, ∀ k ∈ rates,
+        P x (pintzCarlsonHeight k x) :=
+    rates.eventually_all.mpr hproperty
+  filter_upwards [hall] with x hx
+  exact hx (selectRate x) (hselect x)
+
+/-- Eventual zero-freeness is the principal specialization of
+`eventually_adaptive_pintzCarlsonHeight_property`. -/
+theorem eventually_adaptive_pintzCarlsonHeight_zeroFree
+    (rates : Finset ℝ)
+    (selectRate : ℝ → ℝ)
+    (hselect : ∀ x, selectRate x ∈ rates)
+    (zeroFree : ℝ → ℝ → Prop)
+    (hzeroFree :
+      ∀ k ∈ rates, ∀ᶠ x : ℝ in atTop,
+        zeroFree x (pintzCarlsonHeight k x)) :
+    ∀ᶠ x : ℝ in atTop,
+      zeroFree x (pintzCarlsonHeight (selectRate x) x) :=
+  eventually_adaptive_pintzCarlsonHeight_property
+    rates selectRate hselect zeroFree hzeroFree
+
 /-- A single Pintz constant controls any selector that switches arbitrarily
 among finitely many admissible rates. The proof gives finite-uniform decay by
 dominating the selected budget with the sum of all candidate budgets. -/
