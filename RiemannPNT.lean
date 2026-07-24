@@ -63,6 +63,7 @@ import HardyTheorem.SelbergMollifiedSecondMoment
 import HardyTheorem.SelbergShortAbsLower
 import HardyTheorem.SelbergMollifiedTripleDirichlet
 import HardyTheorem.SelbergMollifiedTripleCollected
+import HardyTheorem.SelbergMollifiedHardyPhasePolynomial
 import HardyTheorem.SelbergMollifiedTripleConstant
 import HardyTheorem.SelbergMollifiedTripleMeanSquare
 import HardyTheorem.SelbergMollifiedTripleMainTerm
@@ -99,6 +100,7 @@ import MathlibAux.SlidingExponentialPolynomialMeanSquare
 import MathlibAux.FejerTriangleKernel
 import MathlibAux.SlidingRegionSwap
 import MathlibAux.TriangleKernelFourier
+import MathlibAux.SlidingLagBudget
 import MathlibAux.SlidingExponentialCoefficientBound
 import MathlibAux.FiberwiseNormSq
 import MathlibAux.PaleyZygmund
