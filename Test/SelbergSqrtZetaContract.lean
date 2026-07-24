@@ -1,4 +1,4 @@
-import HardyTheorem.SelbergSqrtZetaLowRangeEnergy
+import HardyTheorem.SelbergSqrtZetaLowRangeSliding
 
 #print axioms HardyTheorem.selbergSqrtZetaEulerFactor_sq
 #print axioms HardyTheorem.sum_antidiagonal_selbergSqrtZetaLocalCoeff_mul
@@ -19,3 +19,6 @@ import HardyTheorem.SelbergSqrtZetaLowRangeEnergy
 #print axioms HardyTheorem.sum_weightedVonMangoldt_selfConvolution_le_sq
 #print axioms HardyTheorem.selbergSqrtZetaLowRangeCoeff_le_five_fourths
 #print axioms HardyTheorem.sum_sq_selbergSqrtZetaLowRangeCoeff_div_le_fifteen_fourths
+#print axioms HardyTheorem.selbergSqrtZetaArithmeticDirichletCoeff_eq_lowRange
+#print axioms HardyTheorem.sum_normSq_selbergSqrtZetaLowRangeDirichletCoeff_le_fifteen_fourths
+#print axioms HardyTheorem.sum_normSq_sliding_selbergSqrtZetaLowRangeDirichletCoeff_le

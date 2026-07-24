@@ -68,6 +68,7 @@ import HardyTheorem.SelbergSqrtZetaArithmetic
 import HardyTheorem.SelbergSqrtZetaMollifier
 import HardyTheorem.SelbergSqrtZetaCollectedArithmetic
 import HardyTheorem.SelbergSqrtZetaLowRangeEnergy
+import HardyTheorem.SelbergSqrtZetaLowRangeSliding
 import HardyTheorem.SelbergMollifiedTripleConstant
 import HardyTheorem.SelbergMollifiedTripleMeanSquare
 import HardyTheorem.SelbergMollifiedTripleMainTerm

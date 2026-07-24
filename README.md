@@ -272,7 +272,7 @@ VK、Selberg 和 Pintz 路线需要新的上游估计，不能由当前已证明
 
 | 分支或 PR | 当前进展 | 尚未闭合的边界 |
 |---|---|---|
-| [`research/hardy-littlewood`](https://github.com/cc-chen-tech/riemann-pnt-lean4/tree/research/hardy-littlewood) | 已证明 `hardy_littlewood_lower_bound_target_proved` 和奇重数强化版；Selberg 工作已完成 lag/Fourier/Hardy 相位模块，识别旧 Möbius 平方路线的素数系数阻碍，并构造经典 `zeta^(-1/2)` 系数，证明所有 `1 ≤ n ≤ X` 的低区间恒等式及统一 `15/4` 系数能量界 | Selberg `T log T` 下界仍是目标；还需把新系数接入实际 mollified Hardy 多项式，并控制高区间能量、off-diagonal gap sum 和一致均值误差 |
+| [`research/hardy-littlewood`](https://github.com/cc-chen-tech/riemann-pnt-lean4/tree/research/hardy-littlewood) | 已证明 `hardy_littlewood_lower_bound_target_proved` 和奇重数强化版；Selberg 工作已完成 lag/Fourier/Hardy 相位模块，构造经典 `zeta^(-1/2)` 系数，并证明所有 `1 ≤ n ≤ X` 的低区间恒等式、统一 `15/4` 系数能量界及相应的 `O(H^2)` 滑动能量界 | Selberg `T log T` 下界仍是目标；还需证明有限 zeta 截断的 collected coefficient 桥，并控制高区间能量、off-diagonal gap sum 和一致均值误差 |
 | [PR #11: Pintz envelope](https://github.com/cc-chen-tech/riemann-pnt-lean4/pull/11) | 零点 envelope、单调性和经典 `sqrt(log x)` 下界 | 尚无到 `psi` 或 `pi-Li` 振荡/最大阶的桥 |
 | 本地分支 `feat/vinogradov-korobov-exponential-sums` | 差分、矩阵、秩分层和同余系统等指数和基础设施；该分支尚未推送到 `origin` | `vinogradov_korobov_zero_free_region` 仍是 `def ... : Prop` |
 | [Draft PR #8](https://github.com/cc-chen-tech/riemann-pnt-lean4/pull/8) | 平滑误差、有限零点簇振荡和有限 Weil certificate | 显式公式仍有 uncontrolled remainder，Weil 路线仍缺无限维桥 |
