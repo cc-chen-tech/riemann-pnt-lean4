@@ -204,6 +204,61 @@ theorem vinogradovMixedTailSolutionPair_residual_modEq
     simpa [vinogradovMixedTailValue, vinogradovFinTupleInt] using hsolution
   exact haffine.affine_residual_modEq hp j hdegree
 
+/-- The decreasing-modulus system left on a tail tuple pair after removing a
+common affine shift and the scale `p^b`.  Only degrees for which `bd ≤ B`
+carry a nontrivial residual congruence. -/
+def IsVinogradovResidualTailSolution
+    (p B b k s : ℕ) (x y : Fin s → ℤ) : Prop :=
+  ∀ j : Fin k, b * (j.val + 1) ≤ B →
+    vinogradovPowerSumDifferenceInt x y (j.val + 1) ≡ 0
+      [ZMOD (p : ℤ) ^ (B - b * (j.val + 1))]
+
+/-- Finite solution set for the decreasing-modulus tail system on the
+one-based interval represented by `Fin Y`. -/
+noncomputable def vinogradovResidualTailSolutionPairSet
+    (p B b k s Y : ℕ) :
+    Finset ((Fin s → Fin Y) × (Fin s → Fin Y)) := by
+  classical
+  exact Finset.univ.filter fun xy ↦
+    IsVinogradovResidualTailSolution p B b k s
+      (vinogradovFinTupleInt xy.1) (vinogradovFinTupleInt xy.2)
+
+theorem mem_vinogradovResidualTailSolutionPairSet_iff
+    (p B b k s Y : ℕ)
+    (xy : (Fin s → Fin Y) × (Fin s → Fin Y)) :
+    xy ∈ vinogradovResidualTailSolutionPairSet p B b k s Y ↔
+      IsVinogradovResidualTailSolution p B b k s
+        (vinogradovFinTupleInt xy.1) (vinogradovFinTupleInt xy.2) := by
+  classical
+  simp [vinogradovResidualTailSolutionPairSet]
+
+/-- Every affine tail solution at the ambient modulus belongs to the
+corresponding decreasing-modulus residual system. -/
+theorem vinogradovIntSolutionPairSet_tail_subset_residual
+    (p B b k s Y : ℕ) [NeZero (p ^ B)] (hp : p ≠ 0) (eta : ℤ) :
+    vinogradovIntSolutionPairSet (p ^ B) k s Y
+        (vinogradovMixedTailValue p b Y eta) ⊆
+      vinogradovResidualTailSolutionPairSet p B b k s Y := by
+  intro xy hxy
+  rw [mem_vinogradovResidualTailSolutionPairSet_iff]
+  intro j hdegree
+  exact vinogradovMixedTailSolutionPair_residual_modEq
+    p B b k s Y hp eta xy hxy j hdegree
+
+/-- The separated tail moment is controlled by the finite residual-system
+count.  Proving a nontrivial estimate for this count is the remaining
+mean-value problem on the tail side. -/
+theorem
+    normalizedVinogradovMixedTailNormMoment_le_residualSolutionPairSetCard
+    (p B b k s Y : ℕ) [NeZero (p ^ B)] (hp : p ≠ 0) (eta : ℤ) :
+    normalizedVinogradovMixedTailNormMoment p B b k s Y eta ≤
+      (vinogradovResidualTailSolutionPairSet p B b k s Y).card := by
+  rw [normalizedVinogradovMixedTailNormMoment_eq_solutionPairSetCard]
+  norm_cast
+  exact Finset.card_le_card
+    (vinogradovIntSolutionPairSet_tail_subset_residual
+      p B b k s Y hp eta)
+
 end
 
 end ZeroFreeRegion.VinogradovKorobov
