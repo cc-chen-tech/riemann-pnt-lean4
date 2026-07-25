@@ -1284,6 +1284,28 @@ self-damped combinations when all affine parameters are nonnegative and
 Stechkin/Heath-Brown-style detector arguments; they do not
 prove the missing high-height zeta growth or logarithmic-derivative estimates.
 
+The Vinogradov-Korobov branch now also isolates the exact Ford/Richert
+short-sum handoff.  `fordShortSumScale` records the cubic-log saving
+`C N exp(-log^3 N / (D log^2 t))`, while
+`FordShortSumPrefixBound` states the required uniform prefix estimate.
+The proved theorems
+`norm_dirichletInterval_le_fordShortSumScale`,
+`norm_dirichletInterval_le_sum_fordShortSumScale`, and
+`norm_riemannZeta_strip_le_sum_fordShortSumScale` transfer that estimate,
+without additional analytic assumptions, through Abel summation, block
+decomposition, and the existing first zeta approximation.  They do **not**
+prove `FordShortSumPrefixBound`.
+
+Ford's original argument derives this short-sum estimate by combining a
+complete Vinogradov mean value with an incomplete system retaining only the
+high-degree equations; see
+[Vinogradov's Integral and bounds for the Riemann Zeta Function](https://arxiv.org/abs/1910.08209),
+especially Theorem 2, Lemma 5.1, and Lemma 7.3.  The repository contains
+substantial complete-system, translated-system, and prime-power conditioning
+infrastructure, but it does not yet contain the full incomplete-system
+estimate or the Lemma-5.1-style aggregation proving the Ford short-sum
+hypothesis.  That is the next central analytic bridge.
+
 ### Target Statements, Not Proved Theorems
 
 The remaining 13 target declarations are intentionally `def ... : Prop` rather
