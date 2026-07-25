@@ -1,5 +1,5 @@
 import MathlibAux.SlidingRegionSwap
-import MathlibAux.SlidingWindowBadSet
+import MathlibAux.SlidingSignedMassSecondMoment
 
 open Complex MeasureTheory Set ComplexConjugate
 open scoped BigOperators
@@ -15,69 +15,6 @@ autocorrelations.  This isolates the measure-theoretic Fubini and
 change-of-variables argument from any particular analytic-number-theory
 function.
 -/
-
-/-- The second moment of a continuous signed sliding mass equals its
-translated-autocorrelation integral over the square displacement window. -/
-theorem integral_sq_slidingWindowMass_eq_correlation
-    {F : ℝ → ℝ} (hF : Continuous F) {A B H : ℝ}
-    (hAB : A ≤ B) (hH : 0 ≤ H) :
-    (∫ t in A..B, (slidingWindowMass F H t) ^ 2) =
-      ∫ v in 0..H, ∫ w in 0..H, ∫ x in A + v..B + v,
-        F x * F (x + (w - v)) := by
-  have hFc : Continuous (fun t : ℝ => (F t : ℂ)) :=
-    Complex.continuous_ofReal.comp hF
-  have hk := slidingIntervalCorrelation_kernel hFc hFc hAB hH
-  have hI : ∀ t : ℝ,
-      (∫ v in 0..H, (F (t + v) : ℂ)) =
-        (slidingWindowMass F H t : ℂ) := by
-    intro t
-    rw [intervalIntegral.integral_ofReal]
-    congr 1
-    have hcomp :
-        (∫ v in 0..H, F (t + v)) =
-          ∫ v in 0..H, F (v + t) := by
-      apply intervalIntegral.integral_congr
-      intro v _hv
-      dsimp only
-      rw [add_comm]
-    rw [hcomp, intervalIntegral.integral_comp_add_right, zero_add,
-      add_comm H t]
-    rfl
-  have hpoint : ∀ t : ℝ,
-      conj (∫ v in 0..H, (F (t + v) : ℂ)) *
-          (∫ w in 0..H, (F (t + w) : ℂ)) =
-        (((slidingWindowMass F H t) ^ 2 : ℝ) : ℂ) := by
-    intro t
-    rw [hI t]
-    simp [pow_two]
-  have hmain :
-      (∫ t in A..B,
-          conj (∫ v in 0..H, (F (t + v) : ℂ)) *
-            (∫ w in 0..H, (F (t + w) : ℂ))) =
-        ((∫ t in A..B, (slidingWindowMass F H t) ^ 2 : ℝ) : ℂ) := by
-    rw [← intervalIntegral.integral_ofReal]
-    apply intervalIntegral.integral_congr
-    intro t _ht
-    exact hpoint t
-  have htri :
-      (∫ v in 0..H, ∫ w in 0..H, ∫ x in A + v..B + v,
-          conj (F x : ℂ) * (F (x + (w - v)) : ℂ)) =
-        ((∫ v in 0..H, ∫ w in 0..H, ∫ x in A + v..B + v,
-          F x * F (x + (w - v)) : ℝ) : ℂ) := by
-    rw [← intervalIntegral.integral_ofReal]
-    apply intervalIntegral.integral_congr
-    intro v _hv
-    dsimp only
-    rw [← intervalIntegral.integral_ofReal]
-    apply intervalIntegral.integral_congr
-    intro w _hw
-    dsimp only
-    rw [← intervalIntegral.integral_ofReal]
-    apply intervalIntegral.integral_congr
-    intro x _hx
-    dsimp only
-    simp
-  exact Complex.ofReal_injective (hmain.symm.trans (hk.trans htri))
 
 /-- For continuous `F`, the squared signed sliding mass on `[A, B]` equals a
 triangular lag integral of translated autocorrelations.  At lag
