@@ -1,0 +1,22 @@
+{
+  "baseline_pi_over_two": 1.5707963267948966,
+  "coefficient": [
+    -0.1666574478149414,
+    0.0
+  ],
+  "enclosure": {
+    "derivative_bound": 2.9999446868896484,
+    "location": 5.759522615715126,
+    "lower": 1.7320508004952246,
+    "mesh_width": 0.00019174759848570515,
+    "period": 6.283185307179586,
+    "samples": 32769,
+    "upper": 1.7323384165898752
+  },
+  "frequency": {
+    "denominator": 1,
+    "numerator": 3
+  },
+  "sampled_gap": 0.16125447370032808,
+  "warning": "floating-point mesh enclosure; not an interval-arithmetic proof"
+}
