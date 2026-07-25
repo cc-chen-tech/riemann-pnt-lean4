@@ -231,6 +231,40 @@ def rightEdgeGaussianFactor
           ((2 : ℂ) + I * (t : ℂ)))
 
 /--
+The factor used in the Mellin calculation is exactly the localized contour
+weight multiplied by the right-edge coordinate.
+-/
+theorem rightEdgeGaussianFactor_eq_localizedGaussianWeight_mul
+    (A : ℂ[X]) (m : ℝ) (w : ℂ) (t : ℝ) :
+    rightEdgeGaussianFactor A m w t =
+      localizedGaussianWeight A w m
+          (w + ((2 : ℂ) + I * (t : ℂ))) *
+        (w + ((2 : ℂ) + I * (t : ℂ))) := by
+  unfold rightEdgeGaussianFactor localizedGaussianWeight
+  ring_nf
+
+/--
+On the concrete right edge, the regularized zeta logarithmic derivative
+times the localized contour weight is the Mellin factor used below.
+-/
+theorem localizedGaussianWeight_mul_regularizedLogDeriv_rightEdge_eq_factor
+    (A : ℂ[X]) {w : ℂ} (hw : 0 < w.re)
+    (m t : ℝ) :
+    localizedGaussianWeight A w m
+        (w + ((2 : ℂ) + I * (t : ℂ))) *
+        (-logDeriv riemannZeta
+            (w + ((2 : ℂ) + I * (t : ℂ))) -
+          (w + ((2 : ℂ) + I * (t : ℂ))) /
+            (w + ((2 : ℂ) + I * (t : ℂ)) - 1)) =
+      rightEdgeGaussianFactor A m w t *
+        mellin psiErrorAboveOneComplex
+          (-(w + ((2 : ℂ) + I * (t : ℂ)))) := by
+  rw [localizedGaussianWeight_mul_regularizedLogDeriv_rightEdge_eq
+    A hw m t]
+  rw [rightEdgeGaussianFactor_eq_localizedGaussianWeight_mul]
+  ring
+
+/--
 The measurable two-variable kernel obtained after expanding the Mellin
 transform on the right edge. Complex powers of the positive real variable
 are written as exponentials so measurability is explicit.
@@ -513,6 +547,49 @@ theorem integral_rightEdgeGaussianFactor_mul_mellin_eq
       intro x hx
       exact integral_rightEdgeMellinProduct_fst_eq
         A hm w (zero_lt_one.trans hx)
+
+/--
+The full concrete zeta integral on the infinite right edge is exactly the
+Gaussian average of the Chebyshev error.  The pole at `s = 1` has already
+been removed in the regularized logarithmic derivative.
+-/
+theorem integral_localizedGaussianWeight_mul_regularizedLogDeriv_rightEdge_eq
+    (A : ℂ[X]) {m : ℝ} (hm : 0 < m)
+    {w : ℂ} (hw : 0 < w.re) :
+    (∫ t : ℝ,
+        localizedGaussianWeight A w m
+            (w + ((2 : ℂ) + I * (t : ℂ))) *
+          (-logDeriv riemannZeta
+              (w + ((2 : ℂ) + I * (t : ℂ))) -
+            (w + ((2 : ℂ) + I * (t : ℂ))) /
+              (w + ((2 : ℂ) + I * (t : ℂ)) - 1))) =
+      ∫ x in Set.Ioi (1 : ℝ),
+        psiErrorAboveOneComplex x *
+          ((2 * Real.pi : ℂ) *
+            ((x : ℂ) ^ (-(w + 1)) *
+              (w * polynomialGaussianKernel A m
+                  (16 * m - Real.log x) +
+                polynomialGaussianKernelDeriv A m
+                  (16 * m - Real.log x)))) := by
+  calc
+    (∫ t : ℝ,
+        localizedGaussianWeight A w m
+            (w + ((2 : ℂ) + I * (t : ℂ))) *
+          (-logDeriv riemannZeta
+              (w + ((2 : ℂ) + I * (t : ℂ))) -
+            (w + ((2 : ℂ) + I * (t : ℂ))) /
+              (w + ((2 : ℂ) + I * (t : ℂ)) - 1))) =
+        ∫ t : ℝ,
+          rightEdgeGaussianFactor A m w t *
+            mellin psiErrorAboveOneComplex
+              (-(w + ((2 : ℂ) + I * (t : ℂ)))) := by
+      apply integral_congr_ae
+      filter_upwards with t
+      exact
+        localizedGaussianWeight_mul_regularizedLogDeriv_rightEdge_eq_factor
+          A hw m t
+    _ = _ :=
+      integral_rightEdgeGaussianFactor_mul_mellin_eq A hm hw
 
 end
 

@@ -11,12 +11,15 @@ open PrimeNumberTheorem.VKEdgePiOverTwo
 #check integral_rightEdgePolynomialGaussian_cpow_eq
 #check localizedGaussianWeight_mul_regularizedLogDeriv_rightEdge_eq
 #check rightEdgeGaussianFactor
+#check rightEdgeGaussianFactor_eq_localizedGaussianWeight_mul
+#check localizedGaussianWeight_mul_regularizedLogDeriv_rightEdge_eq_factor
 #check rightEdgeMellinProduct
 #check integrable_rightEdgeMellinProduct
 #check integral_rightEdgeGaussianFactor_exp_eq
 #check integral_rightEdgeMellinProduct_snd_eq
 #check integral_rightEdgeMellinProduct_fst_eq
 #check integral_rightEdgeGaussianFactor_mul_mellin_eq
+#check integral_localizedGaussianWeight_mul_regularizedLogDeriv_rightEdge_eq
 
 example (A : ℂ[X]) {m : ℝ} (hm : 0 < m)
     (w : ℂ) {x : ℝ} (hx : 0 < x) :
