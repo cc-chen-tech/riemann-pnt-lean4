@@ -422,6 +422,366 @@ theorem integral_verticalPolynomialGaussian_zero_eq
               (normalizedGaussian m) r : ℝ) : ℂ)) := by
         ring
 
+private theorem normalizedGaussian_shift_identity
+    {m : ℝ} (hm : 0 < m) (c r : ℝ) :
+    normalizedGaussian m r =
+      Real.exp (m * c ^ 2 + r * c) *
+        normalizedGaussian m (r + 2 * m * c) := by
+  unfold normalizedGaussian
+  have hexp :
+      Real.exp (-r ^ 2 / (4 * m)) =
+        Real.exp (m * c ^ 2 + r * c) *
+          Real.exp (-(r + 2 * m * c) ^ 2 / (4 * m)) := by
+    rw [← Real.exp_add]
+    congr 1
+    field_simp [hm.ne']
+    ring
+  rw [hexp]
+  ring
+
+private theorem shiftedGaussian_iteratedDeriv_identity
+    {m : ℝ} (hm : 0 < m) (c : ℝ) (k : ℕ) (r : ℝ) :
+    Real.exp (m * c ^ 2 + r * c) *
+        (∑ i ∈ Finset.range (k + 1),
+          k.choose i * c ^ i *
+            iteratedDeriv (k - i) (normalizedGaussian m)
+              (r + 2 * m * c)) =
+      iteratedDeriv k (normalizedGaussian m) r := by
+  let e : ℝ → ℝ := fun x =>
+    Real.exp (m * c ^ 2 + x * c)
+  let h : ℝ → ℝ := fun x =>
+    normalizedGaussian m (x + 2 * m * c)
+  have hfun :
+      normalizedGaussian m = fun x => e x * h x := by
+    funext x
+    exact normalizedGaussian_shift_identity hm c x
+  have heSmooth : ContDiff ℝ ⊤ e := by
+    dsimp [e]
+    fun_prop
+  have hhSmooth : ContDiff ℝ ⊤ h := by
+    dsimp [h]
+    exact
+      (contDiff_normalizedGaussian_top hm).comp
+        (by fun_prop)
+  have heDeriv (i : ℕ) :
+      iteratedDeriv i e r =
+        c ^ i * Real.exp (m * c ^ 2 + r * c) := by
+    have heq :
+        e =
+          fun x =>
+            Real.exp (m * c ^ 2) * Real.exp (c * x) := by
+      funext x
+      dsimp [e]
+      rw [← Real.exp_add]
+      congr 1
+      ring
+    rw [heq, iteratedDeriv_const_mul_field]
+    rw [congrFun (iteratedDeriv_exp_const_mul i c) r]
+    calc
+      Real.exp (m * c ^ 2) * (c ^ i * Real.exp (c * r)) =
+          c ^ i *
+            (Real.exp (m * c ^ 2) * Real.exp (c * r)) := by
+        ring
+      _ = c ^ i * Real.exp (m * c ^ 2 + r * c) := by
+        rw [← Real.exp_add]
+        congr 2
+        ring
+  have hhDeriv (i : ℕ) :
+      iteratedDeriv i h r =
+        iteratedDeriv i (normalizedGaussian m)
+          (r + 2 * m * c) := by
+    dsimp [h]
+    exact
+      congrFun
+        (iteratedDeriv_comp_add_const i
+          (normalizedGaussian m) (2 * m * c)) r
+  have hderiv :=
+    congrArg (fun f : ℝ → ℝ => iteratedDeriv k f r) hfun
+  change
+    iteratedDeriv k (normalizedGaussian m) r =
+      iteratedDeriv k (fun x => e x * h x) r at hderiv
+  rw [iteratedDeriv_fun_mul
+      ((heSmooth.of_le (by simp)).contDiffAt)
+      ((hhSmooth.of_le (by simp)).contDiffAt)] at hderiv
+  simp_rw [heDeriv, hhDeriv] at hderiv
+  rw [hderiv]
+  rw [Finset.mul_sum]
+  apply Finset.sum_congr rfl
+  intro i hi
+  push_cast
+  ring
+
+/--
+The vertical Gaussian moment is unchanged when the integration line is
+shifted horizontally. The proof keeps every polynomial moment explicit and
+uses the finite Leibniz expansion of the shifted inverse Gaussian.
+-/
+theorem integral_verticalGaussian_monomial_eq
+    {m : ℝ} (hm : 0 < m) (c : ℝ) (k : ℕ) (r : ℝ) :
+    (∫ t : ℝ,
+        ((c : ℂ) + I * (t : ℂ)) ^ k *
+          Complex.exp
+            ((m : ℂ) * ((c : ℂ) + I * (t : ℂ)) ^ 2 +
+              (r : ℂ) * ((c : ℂ) + I * (t : ℂ)))) =
+      (2 * Real.pi : ℂ) *
+        ((iteratedDeriv k (normalizedGaussian m) r : ℝ) : ℂ) := by
+  let q : ℝ := r + 2 * m * c
+  let E : ℝ := Real.exp (m * c ^ 2 + r * c)
+  let term : ℕ → ℝ → ℂ := fun i t =>
+    ((k.choose i : ℕ) : ℂ) * (c : ℂ) ^ i *
+      ((I * (t : ℂ)) ^ (k - i) *
+        Complex.exp
+          ((m : ℂ) * (I * (t : ℂ)) ^ 2 +
+            (q : ℂ) * (I * (t : ℂ))))
+  have htermIntegrable :
+      ∀ i ∈ Finset.range (k + 1), Integrable (term i) := by
+    intro i hi
+    exact
+      (integrable_verticalGaussian_monomial_zero hm (k - i) q).const_mul _
+  have hintegrand :
+      (fun t : ℝ =>
+        ((c : ℂ) + I * (t : ℂ)) ^ k *
+          Complex.exp
+            ((m : ℂ) * ((c : ℂ) + I * (t : ℂ)) ^ 2 +
+              (r : ℂ) * ((c : ℂ) + I * (t : ℂ)))) =
+        fun t : ℝ => (E : ℂ) * ∑ i ∈ Finset.range (k + 1), term i t := by
+    funext t
+    have hexp :
+        Complex.exp
+            ((m : ℂ) * ((c : ℂ) + I * (t : ℂ)) ^ 2 +
+              (r : ℂ) * ((c : ℂ) + I * (t : ℂ))) =
+          (E : ℂ) *
+            Complex.exp
+              ((m : ℂ) * (I * (t : ℂ)) ^ 2 +
+                (q : ℂ) * (I * (t : ℂ))) := by
+      dsimp [E, q]
+      rw [ofReal_exp, ← Complex.exp_add]
+      congr 1
+      push_cast
+      ring
+    rw [hexp, add_pow]
+    dsimp [term]
+    rw [Finset.sum_mul, Finset.mul_sum]
+    apply Finset.sum_congr rfl
+    intro i hi
+    push_cast
+    ring
+  have htermIntegral (i : ℕ) :
+      (∫ t : ℝ, term i t) =
+        ((k.choose i : ℕ) : ℂ) * (c : ℂ) ^ i *
+          ((2 * Real.pi : ℂ) *
+            ((iteratedDeriv (k - i)
+              (normalizedGaussian m) q : ℝ) : ℂ)) := by
+    dsimp [term]
+    calc
+      (∫ t : ℝ,
+          (((k.choose i : ℕ) : ℂ) * (c : ℂ) ^ i) *
+            ((I * (t : ℂ)) ^ (k - i) *
+              Complex.exp
+                ((m : ℂ) * (I * (t : ℂ)) ^ 2 +
+                  (q : ℂ) * (I * (t : ℂ))))) =
+          (((k.choose i : ℕ) : ℂ) * (c : ℂ) ^ i) *
+            (∫ t : ℝ,
+              (I * (t : ℂ)) ^ (k - i) *
+                Complex.exp
+                  ((m : ℂ) * (I * (t : ℂ)) ^ 2 +
+                    (q : ℂ) * (I * (t : ℂ)))) :=
+        integral_const_mul _ _
+      _ = _ := by
+        rw [integral_verticalGaussian_monomial_zero_eq
+          hm (k - i) q]
+  have hshift :=
+    shiftedGaussian_iteratedDeriv_identity hm c k r
+  rw [hintegrand]
+  calc
+    (∫ t : ℝ,
+        (E : ℂ) * ∑ i ∈ Finset.range (k + 1), term i t) =
+        (E : ℂ) *
+          (∫ t : ℝ, ∑ i ∈ Finset.range (k + 1), term i t) :=
+      integral_const_mul _ _
+    _ = (E : ℂ) *
+          ∑ i ∈ Finset.range (k + 1), ∫ t : ℝ, term i t := by
+        rw [integral_finset_sum
+          (Finset.range (k + 1)) htermIntegrable]
+    _ = (2 * Real.pi : ℂ) *
+          ((iteratedDeriv k
+            (normalizedGaussian m) r : ℝ) : ℂ) := by
+        simp_rw [htermIntegral]
+        dsimp [E, q]
+        have hsum :
+            (∑ i ∈ Finset.range (k + 1),
+                (k.choose i : ℝ) * c ^ i *
+                  (2 * Real.pi *
+                    iteratedDeriv (k - i)
+                      (normalizedGaussian m)
+                      (r + 2 * m * c))) =
+              2 * Real.pi *
+                ∑ i ∈ Finset.range (k + 1),
+                  (k.choose i : ℝ) * c ^ i *
+                    iteratedDeriv (k - i)
+                      (normalizedGaussian m)
+                      (r + 2 * m * c) := by
+          rw [Finset.mul_sum]
+          apply Finset.sum_congr rfl
+          intro i hi
+          ring
+        have hreal :
+          Real.exp (m * c ^ 2 + r * c) *
+              ∑ i ∈ Finset.range (k + 1),
+                (k.choose i : ℝ) * c ^ i *
+                  (2 * Real.pi *
+                    iteratedDeriv (k - i)
+                      (normalizedGaussian m)
+                      (r + 2 * m * c)) =
+            2 * Real.pi *
+              iteratedDeriv k (normalizedGaussian m) r := by
+          rw [hsum]
+          calc
+            Real.exp (m * c ^ 2 + r * c) *
+                (2 * Real.pi *
+                  ∑ i ∈ Finset.range (k + 1),
+                    (k.choose i : ℝ) * c ^ i *
+                      iteratedDeriv (k - i)
+                        (normalizedGaussian m)
+                        (r + 2 * m * c)) =
+              2 * Real.pi *
+                (Real.exp (m * c ^ 2 + r * c) *
+                  ∑ i ∈ Finset.range (k + 1),
+                    (k.choose i : ℝ) * c ^ i *
+                      iteratedDeriv (k - i)
+                        (normalizedGaussian m)
+                        (r + 2 * m * c)) := by
+                ring
+            _ = 2 * Real.pi *
+                iteratedDeriv k (normalizedGaussian m) r := by
+              rw [hshift]
+        exact_mod_cast hreal
+
+private theorem integrable_verticalGaussian_monomial
+    {m : ℝ} (hm : 0 < m) (c : ℝ) (k : ℕ) (r : ℝ) :
+    Integrable
+      (fun t : ℝ =>
+        ((c : ℂ) + I * (t : ℂ)) ^ k *
+          Complex.exp
+            ((m : ℂ) * ((c : ℂ) + I * (t : ℂ)) ^ 2 +
+              (r : ℂ) * ((c : ℂ) + I * (t : ℂ)))) := by
+  let q : ℝ := r + 2 * m * c
+  let E : ℝ := Real.exp (m * c ^ 2 + r * c)
+  let term : ℕ → ℝ → ℂ := fun i t =>
+    ((k.choose i : ℕ) : ℂ) * (c : ℂ) ^ i *
+      ((I * (t : ℂ)) ^ (k - i) *
+        Complex.exp
+          ((m : ℂ) * (I * (t : ℂ)) ^ 2 +
+            (q : ℂ) * (I * (t : ℂ))))
+  have htermIntegrable :
+      ∀ i ∈ Finset.range (k + 1), Integrable (term i) := by
+    intro i hi
+    exact
+      (integrable_verticalGaussian_monomial_zero hm (k - i) q).const_mul _
+  have hsumIntegrable :
+      Integrable
+        (fun t : ℝ =>
+          (E : ℂ) * ∑ i ∈ Finset.range (k + 1), term i t) :=
+    (integrable_finset_sum
+      (Finset.range (k + 1)) htermIntegrable).const_mul _
+  apply hsumIntegrable.congr
+  filter_upwards with t
+  have hexp :
+      Complex.exp
+          ((m : ℂ) * ((c : ℂ) + I * (t : ℂ)) ^ 2 +
+            (r : ℂ) * ((c : ℂ) + I * (t : ℂ))) =
+        (E : ℂ) *
+          Complex.exp
+            ((m : ℂ) * (I * (t : ℂ)) ^ 2 +
+              (q : ℂ) * (I * (t : ℂ))) := by
+    dsimp [E, q]
+    rw [ofReal_exp, ← Complex.exp_add]
+    congr 1
+    push_cast
+    ring
+  rw [hexp, add_pow]
+  dsimp [term]
+  rw [Finset.sum_mul, Finset.mul_sum]
+  apply Finset.sum_congr rfl
+  intro i hi
+  push_cast
+  ring
+
+/--
+The polynomial Gaussian--Mellin transform is independent of the chosen
+vertical line. This is the exact transform required on the right edge of
+the localized zeta rectangle.
+-/
+theorem integral_verticalPolynomialGaussian_eq
+    (A : ℂ[X]) {m : ℝ} (hm : 0 < m) (c r : ℝ) :
+    (∫ t : ℝ,
+        A.eval ((c : ℂ) + I * (t : ℂ)) *
+          Complex.exp
+            ((m : ℂ) * ((c : ℂ) + I * (t : ℂ)) ^ 2 +
+              (r : ℂ) * ((c : ℂ) + I * (t : ℂ)))) =
+      (2 * Real.pi : ℂ) * polynomialGaussianKernel A m r := by
+  classical
+  have hintegrable :
+      ∀ k ∈ A.support,
+        Integrable
+          (fun t : ℝ =>
+            A.coeff k *
+              (((c : ℂ) + I * (t : ℂ)) ^ k *
+                Complex.exp
+                  ((m : ℂ) * ((c : ℂ) + I * (t : ℂ)) ^ 2 +
+                    (r : ℂ) * ((c : ℂ) + I * (t : ℂ))))) := by
+    intro k _
+    exact
+      (integrable_verticalGaussian_monomial hm c k r).const_mul _
+  rw [show
+      (fun t : ℝ =>
+        A.eval ((c : ℂ) + I * (t : ℂ)) *
+          Complex.exp
+            ((m : ℂ) * ((c : ℂ) + I * (t : ℂ)) ^ 2 +
+              (r : ℂ) * ((c : ℂ) + I * (t : ℂ)))) =
+        fun t : ℝ =>
+          ∑ k ∈ A.support,
+            A.coeff k *
+              (((c : ℂ) + I * (t : ℂ)) ^ k *
+                Complex.exp
+                  ((m : ℂ) * ((c : ℂ) + I * (t : ℂ)) ^ 2 +
+                    (r : ℂ) * ((c : ℂ) + I * (t : ℂ)))) by
+    funext t
+    rw [A.eval_eq_sum]
+    simp only [Polynomial.sum, Finset.sum_mul]
+    apply Finset.sum_congr rfl
+    intro k _
+    ring]
+  rw [integral_finset_sum A.support hintegrable]
+  unfold polynomialGaussianKernel Polynomial.sum
+  rw [Finset.mul_sum]
+  apply Finset.sum_congr rfl
+  intro k hk
+  calc
+    (∫ t : ℝ,
+        A.coeff k *
+          (((c : ℂ) + I * (t : ℂ)) ^ k *
+            Complex.exp
+              ((m : ℂ) * ((c : ℂ) + I * (t : ℂ)) ^ 2 +
+                (r : ℂ) * ((c : ℂ) + I * (t : ℂ))))) =
+        A.coeff k *
+          (∫ t : ℝ,
+            ((c : ℂ) + I * (t : ℂ)) ^ k *
+              Complex.exp
+                ((m : ℂ) * ((c : ℂ) + I * (t : ℂ)) ^ 2 +
+                  (r : ℂ) * ((c : ℂ) + I * (t : ℂ)))) :=
+      integral_const_mul _ _
+    _ = A.coeff k *
+          ((2 * Real.pi : ℂ) *
+            ((iteratedDeriv k
+              (normalizedGaussian m) r : ℝ) : ℂ)) := by
+        rw [integral_verticalGaussian_monomial_eq hm c k r]
+    _ = (2 * Real.pi : ℂ) *
+          (A.coeff k *
+            ((iteratedDeriv k
+              (normalizedGaussian m) r : ℝ) : ℂ)) := by
+        ring
+
 end
 
 end VKEdgePiOverTwo
