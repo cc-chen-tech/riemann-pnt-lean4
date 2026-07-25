@@ -238,11 +238,15 @@ EXPECTED_DECLARATIONS = {
 }
 
 SMOOTHED_ERROR_EXPECTED_DECLARATIONS = {
+    "PrimeNumberTheorem.ExplicitFormulaResidues.norm_secondOrderExplicitFormulaIntegrand_sub_odd_vertical_le_of_pos",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.intervalIntegrable_secondOrderExplicitFormulaIntegrand_odd_vertical_of_pos",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.norm_secondOrderLeftXDifference_odd_increment_le_of_pos",
     "PrimeNumberTheorem.ExplicitFormulaResidues.norm_secondOrderExplicitFormulaIntegrand_sub_horizontal_le",
     "PrimeNumberTheorem.ExplicitFormulaResidues.intervalIntegrable_secondOrderExplicitFormulaIntegrand_horizontal",
     "PrimeNumberTheorem.ExplicitFormulaResidues.exists_uniform_goodHeight_Icc_norm_secondOrderHorizontalXDifference_increment_le",
     "PrimeNumberTheorem.ExplicitFormulaResidues.exists_uniform_goodHeight_Icc_norm_secondOrderContourRemainder_increment_le",
     "PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderIncrementHorizontalScalar_lt_separateEndpoints",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderIncrementLeftVerticalScalar_le_separateEndpoints",
     "PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightIncrementContourBudget_lt",
     "PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightIncrementTotalBudget_lt",
     "PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderMovingEndpointPerronBudget_div_two_pi_eq",

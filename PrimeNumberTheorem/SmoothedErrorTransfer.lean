@@ -190,6 +190,232 @@ theorem norm_secondOrderLeftXDifference_odd_le
   norm_secondOrderLeftXDifference_odd_le_of_pos
     (zero_lt_one.trans hx) (zero_lt_one.trans hy) hW
 
+/-- Pointwise endpoint cancellation on a negative-odd left vertical line.
+The second-order kernel spends one factor of `s` on the endpoint exponential
+difference, leaving the explicit logarithmic gap. -/
+theorem
+    norm_secondOrderExplicitFormulaIntegrand_sub_odd_vertical_le_of_pos
+    {x y T t : ℝ} {N : ℕ}
+    (hx : 0 < x) (hy : 0 < y) (hxy : x ≤ y)
+    (hT : 0 ≤ T) (ht : |t| ≤ T)
+    (hsmall :
+      (2 * (N : ℝ) + 1 + T) * (Real.log y - Real.log x) ≤ 1) :
+    ‖secondOrderExplicitFormulaIntegrand y
+          (((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * I) -
+        secondOrderExplicitFormulaIntegrand x
+          (((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * I)‖ ≤
+      2 * secondOrderOddVerticalBound x N T *
+        (Real.log y - Real.log x) := by
+  let m : ℝ := 2 * (N : ℝ) + 1
+  let s : ℂ := ((-m : ℝ) : ℂ) + (t : ℂ) * I
+  let d : ℝ := Real.log y - Real.log x
+  let Q : ℝ := vonMangoldtLSeriesNorm 1 + ‖Complex.log Real.pi‖ +
+    2 * (‖(Real.eulerMascheroniConstant : ℂ)‖ + 3 +
+      Real.log (2 * (N : ℝ) + T + 4)) + Real.pi
+  have hN : 0 ≤ (N : ℝ) := Nat.cast_nonneg N
+  have hmpos : 0 < m := by dsimp [m]; linarith
+  have hs0 : s ≠ 0 := by
+    intro hs
+    have hre := congrArg Complex.re hs
+    simp [s, m] at hre
+    linarith
+  have hsNormPos : 0 < ‖s‖ := norm_pos_iff.mpr hs0
+  have hd : 0 ≤ d := by
+    dsimp [d]
+    exact sub_nonneg.mpr (Real.log_le_log hx hxy)
+  have hsNormUpper : ‖s‖ ≤ m + T := by
+    calc
+      ‖s‖ ≤ ‖((-m : ℝ) : ℂ)‖ + ‖(t : ℂ) * I‖ := by
+        exact norm_add_le _ _
+      _ = m + |t| := by
+        rw [norm_mul, norm_I, mul_one, Complex.norm_real,
+          Complex.norm_real, Real.norm_eq_abs, Real.norm_eq_abs,
+          abs_neg, abs_of_pos hmpos]
+      _ ≤ m + T := by linarith
+  have hsmallNorm : ‖s‖ * d ≤ 1 := by
+    calc
+      ‖s‖ * d ≤ (m + T) * d :=
+        mul_le_mul_of_nonneg_right hsNormUpper hd
+      _ ≤ 1 := by simpa [m, d] using hsmall
+  have hfac :
+      (y : ℂ) ^ s - (x : ℂ) ^ s =
+        (x : ℂ) ^ s * (Complex.exp ((d : ℂ) * s) - 1) := by
+    rw [Complex.cpow_def_of_ne_zero (Complex.ofReal_ne_zero.mpr hy.ne'),
+      Complex.cpow_def_of_ne_zero (Complex.ofReal_ne_zero.mpr hx.ne')]
+    rw [← Complex.ofReal_log hy.le, ← Complex.ofReal_log hx.le]
+    rw [show (Real.log y : ℂ) * s =
+        (Real.log x : ℂ) * s + (d : ℂ) * s by
+          simp only [d, Complex.ofReal_sub]
+          ring]
+    rw [Complex.exp_add]
+    ring
+  have hzNorm : ‖(d : ℂ) * s‖ = d * ‖s‖ := by
+    rw [norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg hd]
+  have hzSmall : ‖(d : ℂ) * s‖ ≤ 1 := by
+    rw [hzNorm, mul_comm]
+    exact hsmallNorm
+  have hrem : ‖Complex.exp ((d : ℂ) * s) - 1‖ ≤ 2 * (d * ‖s‖) := by
+    simpa [abs_of_nonneg hd] using Complex.norm_exp_sub_one_le hzSmall
+  have hsre : s.re = -m := by simp [s]
+  have hpow : ‖(x : ℂ) ^ s‖ = x ^ (-m) := by
+    rw [Complex.norm_cpow_eq_rpow_re_of_pos hx, hsre]
+  have hfactor :
+      ‖((y : ℂ) ^ s - (x : ℂ) ^ s) / s ^ 2‖ ≤
+        2 * x ^ (-m) * d / ‖s‖ := by
+    rw [hfac, norm_div, norm_mul, norm_pow, hpow]
+    calc
+      x ^ (-m) * ‖Complex.exp ((d : ℂ) * s) - 1‖ / ‖s‖ ^ 2 ≤
+          x ^ (-m) * (2 * (d * ‖s‖)) / ‖s‖ ^ 2 := by
+        gcongr
+      _ = 2 * x ^ (-m) * d / ‖s‖ := by
+        field_simp [ne_of_gt hsNormPos]
+  have hline : m ≤ ‖s‖ := by
+    have hre : m ≤ |s.re| := by
+      rw [hsre, abs_neg, abs_of_pos hmpos]
+    exact hre.trans (Complex.abs_re_le_norm s)
+  have hlog := norm_neg_logDeriv_riemannZeta_odd_vertical_le_of_abs_le
+    (N := N) hT ht
+  change ‖-logDeriv riemannZeta s‖ ≤ Q at hlog
+  have hQ : 0 ≤ Q := by
+    have hseries : 0 ≤ vonMangoldtLSeriesNorm 1 :=
+      tsum_nonneg fun n => norm_nonneg _
+    have hM : 1 ≤ 2 * (N : ℝ) + T + 4 := by linarith
+    have hlogM : 0 ≤ Real.log (2 * (N : ℝ) + T + 4) :=
+      Real.log_nonneg hM
+    dsimp [Q]
+    positivity
+  have hrewrite :
+      secondOrderExplicitFormulaIntegrand y s -
+          secondOrderExplicitFormulaIntegrand x s =
+        -logDeriv riemannZeta s *
+          (((y : ℂ) ^ s - (x : ℂ) ^ s) / s ^ 2) := by
+    unfold secondOrderExplicitFormulaIntegrand explicitFormulaIntegrand
+    ring
+  change ‖secondOrderExplicitFormulaIntegrand y s -
+      secondOrderExplicitFormulaIntegrand x s‖ ≤ _
+  rw [hrewrite, norm_mul]
+  calc
+    ‖-logDeriv riemannZeta s‖ *
+          ‖((y : ℂ) ^ s - (x : ℂ) ^ s) / s ^ 2‖ ≤
+        Q * (2 * x ^ (-m) * d / ‖s‖) :=
+      mul_le_mul hlog hfactor (norm_nonneg _) hQ
+    _ ≤ Q * (2 * x ^ (-m) * d / m) := by
+      gcongr
+    _ = 2 * secondOrderOddVerticalBound x N T *
+          (Real.log y - Real.log x) := by
+      unfold secondOrderOddVerticalBound
+      dsimp [Q, m, d]
+      ring
+
+/-- The second-order explicit-formula integrand is interval integrable on
+every finite negative-odd vertical segment for every positive endpoint. -/
+theorem
+    intervalIntegrable_secondOrderExplicitFormulaIntegrand_odd_vertical_of_pos
+    {x T : ℝ} {N : ℕ} (hx : 0 < x) :
+    IntervalIntegrable
+      (fun t : ℝ => secondOrderExplicitFormulaIntegrand x
+        (((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * I))
+      MeasureTheory.volume (-T) T := by
+  apply ContinuousOn.intervalIntegrable
+  intro t _ht
+  let s : ℂ :=
+    (((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * I)
+  have hs0 : s ≠ 0 := by
+    intro hs
+    have hre := congrArg Complex.re hs
+    simp [s] at hre
+    have hN : 0 ≤ (N : ℝ) := Nat.cast_nonneg N
+    linarith
+  have hs1 : s ≠ 1 := by
+    intro hs
+    have hre := congrArg Complex.re hs
+    simp [s] at hre
+    have hN : 0 ≤ (N : ℝ) := Nat.cast_nonneg N
+    linarith
+  have htrivial : ∀ n : ℕ, s ≠ -2 * ((n : ℂ) + 1) := by
+    intro n hn
+    have hre := congrArg Complex.re hn
+    simp [s] at hre
+    have heqR : 2 * (N : ℝ) + 1 = 2 * ((n : ℝ) + 1) := by
+      linarith
+    have hparity : 2 * N + 1 = 2 * (n + 1) := by
+      exact_mod_cast heqR
+    omega
+  have hzeta : riemannZeta s ≠ 0 :=
+    riemannZeta_ne_zero_of_re_le_zero
+      (by
+        simp [s]
+        have hN : 0 ≤ (N : ℝ) := Nat.cast_nonneg N
+        linarith)
+      htrivial
+  have hanalytic :
+      AnalyticAt ℂ (secondOrderExplicitFormulaIntegrand x) s := by
+    simpa [secondOrderExplicitFormulaIntegrand] using
+      (analyticAt_explicitFormulaIntegrand_of_ne_zero_of_ne_one_of_zeta_ne_zero
+          hx hs0 hs1 hzeta).div analyticAt_id hs0
+  have hmap :
+      ContinuousAt
+        (fun r : ℝ =>
+          (((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (r : ℂ) * I)) t := by
+    fun_prop
+  simpa [s, Function.comp_def] using
+    (hanalytic.continuousAt.comp_of_eq hmap (by simp [s])).continuousWithinAt
+
+/-- The left-vertical endpoint difference is bounded after subtracting the
+two endpoint kernels before integration.  In contrast to the separate
+endpoint estimate, the bound contains the explicit logarithmic gap. -/
+theorem norm_secondOrderLeftXDifference_odd_increment_le_of_pos
+    {x y W : ℝ} {N : ℕ}
+    (hx : 0 < x) (hy : 0 < y) (hxy : x ≤ y) (hW : 0 ≤ W)
+    (hsmall :
+      (2 * (N : ℝ) + 1 + 2 * Real.pi * W) *
+        (Real.log y - Real.log x) ≤ 1) :
+    ‖secondOrderLeftXDifference x y (-(2 * (N : ℝ) + 1)) W‖ ≤
+      (2 * secondOrderOddVerticalBound x N (2 * Real.pi * W) *
+          (Real.log y - Real.log x)) *
+        (2 * (2 * Real.pi * W)) := by
+  let T : ℝ := 2 * Real.pi * W
+  let K : ℝ :=
+    2 * secondOrderOddVerticalBound x N T *
+      (Real.log y - Real.log x)
+  have hT : 0 ≤ T := by
+    dsimp [T]
+    positivity
+  have hpoint : ∀ t ∈ Set.uIoc (-T) T,
+      ‖secondOrderExplicitFormulaIntegrand y
+            (((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * I) -
+          secondOrderExplicitFormulaIntegrand x
+            (((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * I)‖ ≤ K := by
+    intro t ht
+    rw [Set.uIoc_of_le (by linarith)] at ht
+    have habs : |t| ≤ T := abs_le.mpr ⟨by linarith [ht.1], ht.2⟩
+    simpa [K, T] using
+      norm_secondOrderExplicitFormulaIntegrand_sub_odd_vertical_le_of_pos
+        hx hy hxy hT habs hsmall
+  have hdiffIntegral := intervalIntegral.norm_integral_le_of_norm_le_const
+    (f := fun t : ℝ =>
+      secondOrderExplicitFormulaIntegrand y
+          (((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * I) -
+        secondOrderExplicitFormulaIntegrand x
+          (((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * I))
+    (a := -T) (b := T) (C := K) hpoint
+  have hyInt :=
+    intervalIntegrable_secondOrderExplicitFormulaIntegrand_odd_vertical_of_pos
+      (T := T) (N := N) hy
+  have hxInt :=
+    intervalIntegrable_secondOrderExplicitFormulaIntegrand_odd_vertical_of_pos
+      (T := T) (N := N) hx
+  rw [abs_of_nonneg (by linarith : 0 ≤ T - -T)] at hdiffIntegral
+  unfold secondOrderLeftXDifference
+  change ‖(∫ t : ℝ in (-T)..T,
+      secondOrderExplicitFormulaIntegrand y
+        (((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * I)) -
+      ∫ t : ℝ in (-T)..T,
+        secondOrderExplicitFormulaIntegrand x
+          (((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * I)‖ ≤ _
+  rw [← intervalIntegral.integral_sub hyInt hxInt]
+  convert hdiffIntegral using 1 <;> dsimp [K, T] <;> ring
+
 /-- A good-height rectangle with negative-odd left edge has every candidate
 pole (`0`, `1`, or a zeta zero) in its strict interior.  The parity argument
 excludes trivial zeros from the left edge, while `goodHeight` excludes
@@ -1836,17 +2062,17 @@ noncomputable def secondOrderSelectedHeightTotalBudget
   secondOrderSelectedHeightContourBudget C x h A T +
     secondOrderMovingEndpointPerronBudget x h (T / (2 * Real.pi))
 
-/-- Selected-height contour budget after subtracting the two horizontal
-endpoint kernels before taking norms.  The left-vertical term is unchanged;
-only the horizontal contribution retains the logarithmic endpoint gap. -/
+/-- Selected-height contour budget after subtracting both endpoint kernels
+before taking norms on all three shifted edges.  Both the horizontal and the
+left-vertical contributions retain the logarithmic endpoint gap. -/
 noncomputable def secondOrderSelectedHeightIncrementContourBudget
     (C x h A T : ℝ) : ℝ :=
   (2 *
         ((2 * C * x ^ (2 : ℝ) * Real.log ((x + h) / x) *
               (1 + Real.log (A + 6)) ^ 2 / T) *
           ((1 + 1 / Real.log (x + h)) - (-1))) +
-      (secondOrderOddVerticalBound (x + h) 0 T +
-          secondOrderOddVerticalBound x 0 T) *
+      (2 * secondOrderOddVerticalBound x 0 T *
+          Real.log ((x + h) / x)) *
         (2 * T)) /
     (2 * Real.pi)
 
@@ -1907,8 +2133,8 @@ theorem
     (2 * C * x ^ (2 : ℝ) * Real.log ((x + h) / x) *
       (1 + Real.log (A + 6)) ^ 2 / T) * (c - (-1))
   let L : ℝ :=
-    (secondOrderOddVerticalBound (x + h) 0 T +
-      secondOrderOddVerticalBound x 0 T) * (2 * T)
+    (2 * secondOrderOddVerticalBound x 0 T *
+      Real.log ((x + h) / x)) * (2 * T)
   have hhorizontal :
       ∀ t : ℝ, |t| = T →
         ‖secondOrderHorizontalXDifference x (x + h) (-1) c t‖ ≤ K := by
@@ -1925,12 +2151,30 @@ theorem
   have hden : 0 < 2 * Real.pi := mul_pos (by norm_num) Real.pi_pos
   have hscale : 2 * Real.pi * (T / (2 * Real.pi)) = T := by
     field_simp [Real.pi_ne_zero]
+  have hratio : 1 ≤ (x + h) / x :=
+    (le_div_iff₀ hxpos).2 (by linarith)
+  have hlogratio : 0 ≤ Real.log ((x + h) / x) :=
+    Real.log_nonneg hratio
+  have hsmallLeft :
+      (1 + T) * Real.log ((x + h) / x) ≤ 1 := by
+    calc
+      (1 + T) * Real.log ((x + h) / x) ≤
+          (T + 2) * Real.log ((x + h) / x) := by
+        exact mul_le_mul_of_nonneg_right (by linarith) hlogratio
+      _ ≤ 1 := hsmall
+  have hsmallW :
+      (2 * ((0 : ℕ) : ℝ) + 1 +
+          2 * Real.pi * (T / (2 * Real.pi))) *
+          (Real.log (x + h) - Real.log x) ≤ 1 := by
+    rw [hscale, ← Real.log_div hypos.ne' hxpos.ne']
+    simpa [add_comm] using hsmallLeft
   have hleft :
       ‖secondOrderLeftXDifference x (x + h) (-1)
           (T / (2 * Real.pi))‖ ≤ L := by
-    have hraw := norm_secondOrderLeftXDifference_odd_le_of_pos
-      (N := 0) hxpos hypos (div_nonneg hTpos.le hden.le)
-    simpa [hscale, L] using hraw
+    have hraw := norm_secondOrderLeftXDifference_odd_increment_le_of_pos
+      (N := 0) hxpos hypos (by linarith)
+        (div_nonneg hTpos.le hden.le) hsmallW
+    simpa [hscale, L, ← Real.log_div hypos.ne' hxpos.ne'] using hraw
   have hboundary :
       ∀ p ∈
         ([[(-1 : ℝ), c]] ×ℂ [[-T, T]] : Set ℂ),
@@ -2078,6 +2322,52 @@ lemma secondOrderIncrementHorizontalScalar_lt_separateEndpoints
   rw [show T ^ 2 = T * T by ring]
   convert mul_lt_mul_of_pos_right hmain hT using 1 <;> ring
 
+/-- On the selected `N = 0` left vertical line, endpoint cancellation also
+improves the scalar before multiplication by the edge length. -/
+lemma secondOrderIncrementLeftVerticalScalar_le_separateEndpoints
+    {x h T : ℝ} (hx : 0 < x) (hh : 0 ≤ h) (hT : 0 < T)
+    (hsmall : (T + 2) * Real.log ((x + h) / x) ≤ 1) :
+    2 * secondOrderOddVerticalBound x 0 T *
+        Real.log ((x + h) / x) ≤
+      secondOrderOddVerticalBound (x + h) 0 T +
+        secondOrderOddVerticalBound x 0 T := by
+  have hypos : 0 < x + h := by linarith
+  have hratio : 1 ≤ (x + h) / x :=
+    (le_div_iff₀ hx).2 (by linarith)
+  have hd : 0 ≤ Real.log ((x + h) / x) :=
+    Real.log_nonneg hratio
+  have htwod : 2 * Real.log ((x + h) / x) ≤ 1 := by
+    calc
+      2 * Real.log ((x + h) / x) ≤
+          (T + 2) * Real.log ((x + h) / x) := by
+        exact mul_le_mul_of_nonneg_right (by linarith) hd
+      _ ≤ 1 := hsmall
+  have hseries : 0 ≤ vonMangoldtLSeriesNorm 1 :=
+    tsum_nonneg fun n => norm_nonneg _
+  have hlogT : 0 ≤ Real.log (T + 4) :=
+    Real.log_nonneg (by linarith)
+  have hoddX : 0 ≤ secondOrderOddVerticalBound x 0 T := by
+    unfold secondOrderOddVerticalBound
+    norm_num
+    positivity
+  have hoddY : 0 ≤ secondOrderOddVerticalBound (x + h) 0 T := by
+    unfold secondOrderOddVerticalBound
+    norm_num
+    positivity
+  have hscaled :
+      2 * secondOrderOddVerticalBound x 0 T *
+          Real.log ((x + h) / x) ≤
+        secondOrderOddVerticalBound x 0 T := by
+    calc
+      2 * secondOrderOddVerticalBound x 0 T *
+            Real.log ((x + h) / x) =
+          secondOrderOddVerticalBound x 0 T *
+            (2 * Real.log ((x + h) / x)) := by ring
+      _ ≤ secondOrderOddVerticalBound x 0 T * 1 :=
+        mul_le_mul_of_nonneg_left htwod hoddX
+      _ = secondOrderOddVerticalBound x 0 T := by ring
+  linarith
+
 /-- The cancellation-aware contour budget is nonnegative on the selected
 height parameter range. -/
 theorem secondOrderSelectedHeightIncrementContourBudget_nonneg
@@ -2106,16 +2396,13 @@ theorem secondOrderSelectedHeightIncrementContourBudget_nonneg
     unfold secondOrderOddVerticalBound
     norm_num
     positivity
-  have hoddY : 0 ≤ secondOrderOddVerticalBound (x + h) 0 T := by
-    unfold secondOrderOddVerticalBound
-    norm_num
-    positivity
   unfold secondOrderSelectedHeightIncrementContourBudget
   exact div_nonneg
     (add_nonneg
       (mul_nonneg (by norm_num)
         (mul_nonneg (by positivity) hfactor))
-      (mul_nonneg (add_nonneg hoddY hoddX)
+      (mul_nonneg
+        (mul_nonneg (mul_nonneg (by norm_num) hoddX) hlogratio)
         (mul_nonneg (by norm_num) hTpos.le)))
     (mul_nonneg (by norm_num) Real.pi_pos.le)
 
@@ -2167,6 +2454,8 @@ theorem secondOrderSelectedHeightIncrementContourBudget_le
   unfold secondOrderSelectedHeightIncrementContourBudget
     secondOrderSelectedHeightContourBudget
   gcongr
+  exact secondOrderIncrementLeftVerticalScalar_le_separateEndpoints
+    hxpos hh.le hTpos hsmall
 
 /-- If the selected log-derivative constant is positive, a genuine endpoint
 increment makes the cancellation-aware contour budget strictly smaller. -/
@@ -2215,12 +2504,21 @@ theorem secondOrderSelectedHeightIncrementContourBudget_lt
           C * x ^ (2 : ℝ) *
               (1 + Real.log (A + 6)) ^ 2 / T ^ 2 := by
         ring
+  have hverticalScalar :=
+    secondOrderIncrementLeftVerticalScalar_le_separateEndpoints
+      hxpos hh.le hTpos hsmall
+  have hvertical :
+      (2 * secondOrderOddVerticalBound x 0 T *
+            Real.log ((x + h) / x)) * (2 * T) ≤
+        (secondOrderOddVerticalBound (x + h) 0 T +
+            secondOrderOddVerticalBound x 0 T) * (2 * T) :=
+    mul_le_mul_of_nonneg_right hverticalScalar (by positivity)
   unfold secondOrderSelectedHeightIncrementContourBudget
     secondOrderSelectedHeightContourBudget
   have hden : 0 < 2 * Real.pi := mul_pos (by norm_num) Real.pi_pos
   apply (div_lt_div_iff_of_pos_right hden).2
   have hscaled := mul_lt_mul_of_pos_right hhorizontal hfactor
-  nlinarith
+  nlinarith [hvertical]
 
 /-- The cancellation-aware total budget is nonnegative. -/
 theorem secondOrderSelectedHeightIncrementTotalBudget_nonneg

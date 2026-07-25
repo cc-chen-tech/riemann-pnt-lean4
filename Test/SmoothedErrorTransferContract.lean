@@ -22,6 +22,46 @@ example {x y W : ℝ} {N : ℕ} (hx : 0 < x) (hy : 0 < y) (hW : 0 ≤ W) :
   PrimeNumberTheorem.ExplicitFormulaResidues.norm_secondOrderLeftXDifference_odd_le_of_pos
     hx hy hW
 
+example {x y T t : ℝ} {N : ℕ}
+    (hx : 0 < x) (hy : 0 < y) (hxy : x ≤ y)
+    (hT : 0 ≤ T) (ht : |t| ≤ T)
+    (hsmall :
+      (2 * (N : ℝ) + 1 + T) * (Real.log y - Real.log x) ≤ 1) :
+    ‖PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderExplicitFormulaIntegrand
+          y (((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * I) -
+        PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderExplicitFormulaIntegrand
+          x (((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * I)‖ ≤
+      2 *
+          PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderOddVerticalBound
+            x N T *
+        (Real.log y - Real.log x) :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.norm_secondOrderExplicitFormulaIntegrand_sub_odd_vertical_le_of_pos
+    hx hy hxy hT ht hsmall
+
+example {x T : ℝ} {N : ℕ} (hx : 0 < x) :
+    IntervalIntegrable
+      (fun t : ℝ =>
+        PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderExplicitFormulaIntegrand
+          x (((-(2 * (N : ℝ) + 1) : ℝ) : ℂ) + (t : ℂ) * I))
+      MeasureTheory.volume (-T) T :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.intervalIntegrable_secondOrderExplicitFormulaIntegrand_odd_vertical_of_pos
+    hx
+
+example {x y W : ℝ} {N : ℕ}
+    (hx : 0 < x) (hy : 0 < y) (hxy : x ≤ y) (hW : 0 ≤ W)
+    (hsmall :
+      (2 * (N : ℝ) + 1 + 2 * Real.pi * W) *
+        (Real.log y - Real.log x) ≤ 1) :
+    ‖PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderLeftXDifference
+        x y (-(2 * (N : ℝ) + 1)) W‖ ≤
+      (2 *
+          PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderOddVerticalBound
+            x N (2 * Real.pi * W) *
+          (Real.log y - Real.log x)) *
+        (2 * (2 * Real.pi * W)) :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.norm_secondOrderLeftXDifference_odd_increment_le_of_pos
+    hx hy hxy hW hsmall
+
 example {N : ℕ} {T c : ℝ} (hT : 0 < T) (hc : 1 < c)
     (hgood : PrimeNumberTheorem.ExplicitFormulaAux.goodHeight T) :
     ∀ p ∈
@@ -664,6 +704,33 @@ example {C x h A T : ℝ}
         C x h A T :=
   PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightIncrementContourBudget_nonneg
     hC hx hh hA hT
+
+example (C x h A T : ℝ) :
+    PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightIncrementContourBudget
+        C x h A T =
+      (2 *
+            ((2 * C * x ^ (2 : ℝ) * Real.log ((x + h) / x) *
+                  (1 + Real.log (A + 6)) ^ 2 / T) *
+              ((1 + 1 / Real.log (x + h)) - (-1))) +
+          (2 *
+              PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderOddVerticalBound
+                x 0 T *
+              Real.log ((x + h) / x)) *
+            (2 * T)) /
+        (2 * Real.pi) := rfl
+
+example {x h T : ℝ} (hx : 0 < x) (hh : 0 ≤ h) (hT : 0 < T)
+    (hsmall : (T + 2) * Real.log ((x + h) / x) ≤ 1) :
+    2 *
+          PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderOddVerticalBound
+            x 0 T *
+        Real.log ((x + h) / x) ≤
+      PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderOddVerticalBound
+          (x + h) 0 T +
+        PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderOddVerticalBound
+          x 0 T :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderIncrementLeftVerticalScalar_le_separateEndpoints
+    hx hh hT hsmall
 
 example {C x h A T : ℝ}
     (hC : 0 ≤ C) (hx : Real.exp 1 ≤ x) (hh : 0 < h)
