@@ -522,6 +522,110 @@ theorem
       N rho hN hrho A certificate mu epsilon
         hreconstruct hdiagonal hmu hmargin hepsilon)
 
+/-- One exact `LDL^T` center and one symmetric interval enclosure control an
+entire frequency-indexed finite-matrix family after adding the improper tail.
+The interval row budget reduces the certified center margin from `mu` to
+`mu - delta`, while one cutoff works for every `L` and every vector. -/
+theorem
+    eventually_forall_L_quadraticForm_add_paperActualArchimedeanRankTwoTail_stable_of_common_exactLDL_interval
+    (N : ℕ) (rho : ℝ) (hN : 0 < N) (hrho : 0 < rho)
+    (A : ℝ → FiniteMatrix (2 * N + 1))
+    (C R : FiniteMatrix (2 * N + 1))
+    (certificate : LDLCertificate (2 * N + 1))
+    (mu delta epsilon : ℝ)
+    (hreconstruct : C = certificate.reconstruct)
+    (_hdiagonal : ∀ k, 0 ≤ certificate.diagonal k)
+    (hmargin : ∀ x,
+      mu * squaredNorm x ≤
+        quadraticForm certificate.reconstruct x)
+    (hR : ∀ i j, R i j = R j i)
+    (hentry : ∀ L i j, |A L i j - C i j| ≤ R i j)
+    (hrow : ∀ i, ∑ j, R i j ≤ delta)
+    (hslack : delta < mu)
+    (hepsilon : 0 < epsilon) :
+    ∀ᶠ T : ℝ in atTop, ∀ L : ℝ,
+      ∀ x : FiniteVector (2 * N + 1),
+        0 ≤ quadraticForm
+            (A L + paperActualArchimedeanRankTwoTail N L rho T) x ∧
+          (mu - delta) * squaredNorm x ≤
+            quadraticForm
+              (A L + paperActualArchimedeanRankTwoTail N L rho T) x ∧
+          (x ≠ 0 →
+            0 < quadraticForm
+              (A L + paperActualArchimedeanRankTwoTail N L rho T) x) ∧
+          quadraticForm
+              (A L + paperActualArchimedeanRankTwoTail N L rho T) x ≤
+            quadraticForm (A L) x + epsilon * squaredNorm x := by
+  have htail :=
+    eventually_forall_L_quadraticForm_paperActualArchimedeanRankTwoTail_le_epsilon
+      N rho epsilon hN hrho hepsilon
+  have hcenter :
+      ∀ x : FiniteVector (2 * N + 1),
+        mu * squaredNorm x ≤ quadraticForm C x := by
+    intro x
+    rw [hreconstruct]
+    exact hmargin x
+  filter_upwards [htail] with T htailT
+  intro L x
+  have hfiniteLower :
+      (mu - delta) * squaredNorm x ≤ quadraticForm (A L) x :=
+    quadraticForm_lower_of_interval
+      (A L) C R x mu delta hcenter hR (hentry L) hrow
+  have hfiniteNonneg : 0 ≤ quadraticForm (A L) x :=
+    quadraticForm_nonneg_of_interval
+      (A L) C R mu delta hcenter hR (hentry L) hrow hslack.le x
+  rw [quadraticForm_add]
+  have hlower :
+      (mu - delta) * squaredNorm x ≤
+        quadraticForm (A L) x +
+          quadraticForm
+            (paperActualArchimedeanRankTwoTail N L rho T) x :=
+    hfiniteLower.trans
+      (le_add_of_nonneg_right (htailT L x).1)
+  refine
+    ⟨add_nonneg hfiniteNonneg (htailT L x).1, hlower, ?_, ?_⟩
+  · intro hx
+    exact
+      (mul_pos (sub_pos.mpr hslack) (squaredNorm_pos hx)).trans_le hlower
+  · linarith [(htailT L x).2]
+
+/-- Threshold form of common-center exact-`LDL^T` interval stability for the
+entire frequency-indexed matrix family. -/
+theorem
+    exists_T_forall_L_quadraticForm_add_paperActualArchimedeanRankTwoTail_stable_of_common_exactLDL_interval
+    (N : ℕ) (rho : ℝ) (hN : 0 < N) (hrho : 0 < rho)
+    (A : ℝ → FiniteMatrix (2 * N + 1))
+    (C R : FiniteMatrix (2 * N + 1))
+    (certificate : LDLCertificate (2 * N + 1))
+    (mu delta epsilon : ℝ)
+    (hreconstruct : C = certificate.reconstruct)
+    (hdiagonal : ∀ k, 0 ≤ certificate.diagonal k)
+    (hmargin : ∀ x,
+      mu * squaredNorm x ≤
+        quadraticForm certificate.reconstruct x)
+    (hR : ∀ i j, R i j = R j i)
+    (hentry : ∀ L i j, |A L i j - C i j| ≤ R i j)
+    (hrow : ∀ i, ∑ j, R i j ≤ delta)
+    (hslack : delta < mu)
+    (hepsilon : 0 < epsilon) :
+    ∃ T1 : ℝ, ∀ T, T1 ≤ T → ∀ L : ℝ,
+      ∀ x : FiniteVector (2 * N + 1),
+        0 ≤ quadraticForm
+            (A L + paperActualArchimedeanRankTwoTail N L rho T) x ∧
+          (mu - delta) * squaredNorm x ≤
+            quadraticForm
+              (A L + paperActualArchimedeanRankTwoTail N L rho T) x ∧
+          (x ≠ 0 →
+            0 < quadraticForm
+              (A L + paperActualArchimedeanRankTwoTail N L rho T) x) ∧
+          quadraticForm
+              (A L + paperActualArchimedeanRankTwoTail N L rho T) x ≤
+            quadraticForm (A L) x + epsilon * squaredNorm x :=
+  eventually_atTop.1
+    (eventually_forall_L_quadraticForm_add_paperActualArchimedeanRankTwoTail_stable_of_common_exactLDL_interval
+      N rho hN hrho A C R certificate mu delta epsilon
+        hreconstruct hdiagonal hmargin hR hentry hrow hslack hepsilon)
+
 /-- A fixed strict negative witness survives the improper tail after one
 cutoff that is valid for every frequency `L`. -/
 theorem

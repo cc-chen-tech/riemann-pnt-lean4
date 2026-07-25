@@ -254,3 +254,69 @@ example
         (A + paperActualArchimedeanRankTwoTail N L rho T) x < 0 :=
   exists_T_forall_L_quadraticForm_add_paperActualArchimedeanRankTwoTail_neg_of_witness
     N rho hN hrho A x hnegative
+
+example
+    (N : ℕ) (rho : ℝ) (hN : 0 < N) (hrho : 0 < rho)
+    (A : ℝ → FiniteMatrix (2 * N + 1))
+    (C R : FiniteMatrix (2 * N + 1))
+    (certificate : LDLCertificate (2 * N + 1))
+    (mu delta epsilon : ℝ)
+    (hreconstruct : C = certificate.reconstruct)
+    (hdiagonal : ∀ k, 0 ≤ certificate.diagonal k)
+    (hmargin : ∀ x,
+      mu * squaredNorm x ≤
+        quadraticForm certificate.reconstruct x)
+    (hR : ∀ i j, R i j = R j i)
+    (hentry : ∀ L i j, |A L i j - C i j| ≤ R i j)
+    (hrow : ∀ i, ∑ j, R i j ≤ delta)
+    (hslack : delta < mu)
+    (hepsilon : 0 < epsilon) :
+    ∀ᶠ T : ℝ in atTop, ∀ L : ℝ,
+      ∀ x : FiniteVector (2 * N + 1),
+        0 ≤ quadraticForm
+            (A L + paperActualArchimedeanRankTwoTail N L rho T) x ∧
+          (mu - delta) * squaredNorm x ≤
+            quadraticForm
+              (A L + paperActualArchimedeanRankTwoTail N L rho T) x ∧
+          (x ≠ 0 →
+            0 < quadraticForm
+              (A L + paperActualArchimedeanRankTwoTail N L rho T) x) ∧
+          quadraticForm
+              (A L + paperActualArchimedeanRankTwoTail N L rho T) x ≤
+            quadraticForm (A L) x + epsilon * squaredNorm x :=
+  eventually_forall_L_quadraticForm_add_paperActualArchimedeanRankTwoTail_stable_of_common_exactLDL_interval
+    N rho hN hrho A C R certificate mu delta epsilon
+      hreconstruct hdiagonal hmargin hR hentry hrow hslack hepsilon
+
+example
+    (N : ℕ) (rho : ℝ) (hN : 0 < N) (hrho : 0 < rho)
+    (A : ℝ → FiniteMatrix (2 * N + 1))
+    (C R : FiniteMatrix (2 * N + 1))
+    (certificate : LDLCertificate (2 * N + 1))
+    (mu delta epsilon : ℝ)
+    (hreconstruct : C = certificate.reconstruct)
+    (hdiagonal : ∀ k, 0 ≤ certificate.diagonal k)
+    (hmargin : ∀ x,
+      mu * squaredNorm x ≤
+        quadraticForm certificate.reconstruct x)
+    (hR : ∀ i j, R i j = R j i)
+    (hentry : ∀ L i j, |A L i j - C i j| ≤ R i j)
+    (hrow : ∀ i, ∑ j, R i j ≤ delta)
+    (hslack : delta < mu)
+    (hepsilon : 0 < epsilon) :
+    ∃ T1 : ℝ, ∀ T, T1 ≤ T → ∀ L : ℝ,
+      ∀ x : FiniteVector (2 * N + 1),
+        0 ≤ quadraticForm
+            (A L + paperActualArchimedeanRankTwoTail N L rho T) x ∧
+          (mu - delta) * squaredNorm x ≤
+            quadraticForm
+              (A L + paperActualArchimedeanRankTwoTail N L rho T) x ∧
+          (x ≠ 0 →
+            0 < quadraticForm
+              (A L + paperActualArchimedeanRankTwoTail N L rho T) x) ∧
+          quadraticForm
+              (A L + paperActualArchimedeanRankTwoTail N L rho T) x ≤
+            quadraticForm (A L) x + epsilon * squaredNorm x :=
+  exists_T_forall_L_quadraticForm_add_paperActualArchimedeanRankTwoTail_stable_of_common_exactLDL_interval
+    N rho hN hrho A C R certificate mu delta epsilon
+      hreconstruct hdiagonal hmargin hR hentry hrow hslack hepsilon
