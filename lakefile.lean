@@ -142,6 +142,8 @@ lean_lib RiemannPNT where
     `Test.HardyPhaseCorrelationContract,
     `HardyTheorem.HardyPhaseLinearization,
     `Test.HardyPhaseLinearizationContract,
+    `HardyTheorem.ThetaFrequencyLinearization,
+    `Test.ThetaFrequencyLinearizationAxiomAudit,
     `HardyTheorem.HardyPhaseLinearizedSum,
     `Test.HardyPhaseLinearizedSumContract,
     `HardyTheorem.HardyPhaseLinearizedEnergy,

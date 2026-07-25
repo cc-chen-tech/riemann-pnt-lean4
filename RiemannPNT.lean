@@ -24,6 +24,7 @@ import HardyTheorem.HardyPhaseSecondMoment
 import HardyTheorem.HardyPhaseFullSecondMoment
 import HardyTheorem.HardyPhaseCorrelation
 import HardyTheorem.HardyPhaseLinearization
+import HardyTheorem.ThetaFrequencyLinearization
 import HardyTheorem.HardyPhaseLinearizedSum
 import HardyTheorem.HardyPhaseLinearizedEnergy
 import HardyTheorem.HardyPhaseStationaryScale
