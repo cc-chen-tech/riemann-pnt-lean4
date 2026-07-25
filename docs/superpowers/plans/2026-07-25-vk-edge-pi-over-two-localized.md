@@ -176,6 +176,23 @@ Run both focused files with `lake env lean`, scan the module for forbidden place
 - [x] Run formal module builds, contracts, axiom audits, and placeholder
   scans.
 
+### Task 2e: Concrete Zeta Weighted Contour
+
+**Files:**
+- Create: `PrimeNumberTheorem/VKEdgePiOverTwoZetaContour.lean`
+- Create: `Test/VKEdgePiOverTwoZetaContourContract.lean`
+- Create: `Test/VKEdgePiOverTwoZetaContourAxiomAudit.lean`
+
+- [x] Define the entire polynomial-Gaussian contour weight.
+- [x] Insert the weight into the verified finite principal-part decomposition
+  of the concrete zeta explicit-formula integrand.
+- [x] Cancel the `s = 0` kernel pole and `s = 1` zeta pole exactly, leaving
+  only residues `-analyticOrderNatAt riemannZeta rho`.
+- [x] Prove that an existing `goodHeight` excludes zeros from all four fixed
+  rectangle sides.
+- [x] Run formal builds, contracts, public-theorem axiom audits, and
+  placeholder scans.
+
 ### Task 3: Finite-Pole Annihilator
 
 **Files:**
