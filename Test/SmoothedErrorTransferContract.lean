@@ -1519,6 +1519,36 @@ example {C D x h A T : ℝ}
   secondOrderSelectedHeightIncrement_endpoint_bounds_strictly_improve
     hC hx hh hA hT hsmall
 
+example {x h c W : ℝ}
+    (hx : 1 ≤ x) (hh : 0 < h) (hc : 1 < c) (hW : 0 < W)
+    (hsmall :
+      (c + 2 * Real.pi * W) * Real.log ((x + h) / x) ≤ 1) :
+    ‖secondOrderRightPerronRemainder (x + h) c W -
+        secondOrderRightPerronRemainder x c W‖ ≤
+      secondOrderPerronIncrementCancellationBudget x h c W *
+        Real.log ((x + h) / x) :=
+  norm_secondOrderRightPerronRemainder_increment_le
+    hx hh hc hW hsmall
+
+example {x c W : ℝ} (hx : 0 < x) (hc : 1 < c) (hW : 0 < W) :
+    ‖secondOrderRightPerronRemainder x c W‖ ≤
+      secondOrderPerronError x c W :=
+  norm_secondOrderRightPerronRemainder_le hx hc hW
+
+example {x h W : ℝ}
+    (hx : 1 < x) (hh : 0 < h) (hW : 0 < W)
+    (hsmall :
+      ((1 + 1 / Real.log (x + h)) + 2 * Real.pi * W) *
+          Real.log ((x + h) / x) ≤ 1) :
+    ‖secondOrderRightPerronRemainder (x + h)
+          (1 + 1 / Real.log (x + h)) W -
+        secondOrderRightPerronRemainder x
+          (1 + 1 / Real.log (x + h)) W‖ /
+          Real.log ((x + h) / x) ≤
+      secondOrderMovingEndpointBestNormalizedPerronBudget x h W :=
+  norm_secondOrderMovingPerronRemainder_increment_div_log_le_best
+    hx hh hW hsmall
+
 end PrimeNumberTheorem.ExplicitFormulaResidues
 
 example :

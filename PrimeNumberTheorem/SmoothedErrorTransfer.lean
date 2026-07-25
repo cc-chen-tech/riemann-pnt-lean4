@@ -1090,6 +1090,334 @@ part of the approximation itself. -/
 noncomputable def secondOrderPerronError (x c W : ℝ) : ℝ :=
   ∑' n : ℕ, vonMangoldt n * (x / n) ^ c / (2 * Real.pi ^ 2 * W)
 
+/-- The actual right-line finite-height Perron remainder.  Keeping this
+complex-valued remainder visible allows the two endpoint kernels to be
+subtracted before norms are taken. -/
+noncomputable def secondOrderRightPerronRemainder (x c W : ℝ) : ℂ :=
+  (∫ w : ℝ in (-W)..W,
+      secondOrderExplicitFormulaIntegrand x
+        ((c : ℂ) + 2 * Real.pi * w * I)) -
+    (smoothedChebyshevPsi x : ℂ)
+
+/-- A uniform endpoint-cancellation budget for the actual hard-truncated
+right-line Perron remainder.  This bound grows with `W`; it is intended to be
+combined with the separate-endpoint `W⁻¹` bound below. -/
+noncomputable def secondOrderPerronIncrementCancellationBudget
+    (x h c W : ℝ) : ℝ :=
+  4 * W * vonMangoldtLSeriesNorm (c - 1) * x ^ c / c +
+    (Real.log 4 + 4) * (x + h)
+
+/-- Pointwise endpoint cancellation on a right Perron line.  The logarithmic
+endpoint gap spends one power of `s` from the second-order kernel. -/
+theorem norm_secondOrderExplicitFormulaIntegrand_sub_right_vertical_le
+    {x h c W w : ℝ}
+    (hx : 1 ≤ x) (hh : 0 ≤ h) (hc : 1 < c)
+    (hw : |w| ≤ W)
+    (hsmall :
+      (c + 2 * Real.pi * W) * Real.log ((x + h) / x) ≤ 1) :
+    ‖secondOrderExplicitFormulaIntegrand (x + h)
+          ((c : ℂ) + 2 * Real.pi * w * I) -
+        secondOrderExplicitFormulaIntegrand x
+          ((c : ℂ) + 2 * Real.pi * w * I)‖ ≤
+      2 * vonMangoldtLSeriesNorm (c - 1) * x ^ c *
+        Real.log ((x + h) / x) / c := by
+  let s : ℂ := (c : ℂ) + 2 * Real.pi * w * I
+  have hxpos : 0 < x := zero_lt_one.trans_le hx
+  have hypos : 0 < x + h := by linarith
+  have hh' : 0 ≤ h := hh
+  have hd :
+      0 ≤ Real.log ((x + h) / x) := by
+    apply Real.log_nonneg
+    exact (le_div_iff₀ hxpos).2 (by linarith)
+  have hs0 : s ≠ 0 := by
+    intro hs
+    have hre := congrArg Complex.re hs
+    simp [s] at hre
+    linarith
+  have hsNormUpper : ‖s‖ ≤ c + 2 * Real.pi * W := by
+    calc
+      ‖s‖ ≤ ‖(c : ℂ)‖ + ‖(2 * Real.pi * w : ℝ) * I‖ :=
+        by simpa [s] using
+          (norm_add_le (c : ℂ) ((2 * Real.pi * w : ℝ) * I))
+      _ = c + 2 * Real.pi * |w| := by
+        rw [norm_mul, norm_I, mul_one, Complex.norm_real,
+          Complex.norm_real, Real.norm_eq_abs, Real.norm_eq_abs,
+          abs_of_pos (by linarith : 0 < c), abs_mul,
+          abs_of_pos (mul_pos zero_lt_two Real.pi_pos)]
+      _ ≤ c + 2 * Real.pi * W := by gcongr
+  have hsmallNorm :
+      ‖s‖ * Real.log ((x + h) / x) ≤ 1 := by
+    calc
+      ‖s‖ * Real.log ((x + h) / x) ≤
+          (c + 2 * Real.pi * W) * Real.log ((x + h) / x) :=
+        mul_le_mul_of_nonneg_right hsNormUpper hd
+      _ ≤ 1 := hsmall
+  let d : ℝ := Real.log ((x + h) / x)
+  have hfac :
+      (((x + h : ℝ) : ℂ) ^ s - (x : ℂ) ^ s) =
+        (x : ℂ) ^ s * (Complex.exp ((d : ℂ) * s) - 1) := by
+    rw [Complex.cpow_def_of_ne_zero (Complex.ofReal_ne_zero.mpr hypos.ne'),
+      Complex.cpow_def_of_ne_zero (Complex.ofReal_ne_zero.mpr hxpos.ne')]
+    rw [← Complex.ofReal_log hypos.le, ← Complex.ofReal_log hxpos.le]
+    rw [show (Real.log (x + h) : ℂ) * s =
+        (Real.log x : ℂ) * s + (d : ℂ) * s by
+      simp only [d]
+      rw [Real.log_div hypos.ne' hxpos.ne']
+      push_cast
+      ring]
+    rw [Complex.exp_add]
+    ring
+  have hzNorm : ‖(d : ℂ) * s‖ = d * ‖s‖ := by
+    rw [norm_mul, Complex.norm_real, Real.norm_eq_abs,
+      abs_of_nonneg (by simpa [d] using hd)]
+  have hzSmall : ‖(d : ℂ) * s‖ ≤ 1 := by
+    rw [hzNorm, mul_comm]
+    simpa [d] using hsmallNorm
+  have hrem : ‖Complex.exp ((d : ℂ) * s) - 1‖ ≤ 2 * (d * ‖s‖) := by
+    have hz := Complex.norm_exp_sub_one_le hzSmall
+    rw [hzNorm] at hz
+    exact hz
+  have hsre : s.re = c := by simp [s]
+  have hsNormPos : 0 < ‖s‖ := norm_pos_iff.mpr hs0
+  have hfactor :
+      ‖(((x + h : ℝ) : ℂ) ^ s - (x : ℂ) ^ s) / s ^ 2‖ ≤
+        2 * x ^ c * Real.log ((x + h) / x) / ‖s‖ := by
+    rw [hfac, norm_div, norm_mul, norm_pow,
+      Complex.norm_cpow_eq_rpow_re_of_pos hxpos, hsre]
+    calc
+      x ^ c * ‖Complex.exp ((d : ℂ) * s) - 1‖ / ‖s‖ ^ 2 ≤
+          x ^ c * (2 * (d * ‖s‖)) / ‖s‖ ^ 2 := by gcongr
+      _ = 2 * x ^ c * Real.log ((x + h) / x) / ‖s‖ := by
+        dsimp [d]
+        field_simp [ne_of_gt hsNormPos]
+  have hlogDeriv :=
+    norm_neg_logDeriv_riemannZeta_le_vonMangoldtLSeriesNorm
+      (ε := c - 1) (σ := c) (t := 2 * Real.pi * w)
+      (by linarith) (by norm_num)
+  have hlogDeriv' :
+      ‖-logDeriv riemannZeta s‖ ≤
+        vonMangoldtLSeriesNorm (c - 1) := by
+    simpa [s] using hlogDeriv
+  have hseries : 0 ≤ vonMangoldtLSeriesNorm (c - 1) :=
+    tsum_nonneg fun n => norm_nonneg _
+  have hcpos : 0 < c := one_pos.trans hc
+  have hline : c ≤ ‖s‖ := by
+    have hre := Complex.abs_re_le_norm s
+    simpa [s, abs_of_pos hcpos] using hre
+  have hfactor' :
+      ‖(((x + h : ℝ) : ℂ) ^ s - (x : ℂ) ^ s) / s ^ 2‖ ≤
+        2 * x ^ c * Real.log ((x + h) / x) / c := by
+    exact hfactor.trans
+      (div_le_div_of_nonneg_left
+        (mul_nonneg
+          (mul_nonneg (by norm_num) (Real.rpow_nonneg hxpos.le c)) hd)
+        hcpos hline)
+  have hrewrite :
+      secondOrderExplicitFormulaIntegrand (x + h) s -
+          secondOrderExplicitFormulaIntegrand x s =
+        -logDeriv riemannZeta s *
+          ((((x + h : ℝ) : ℂ) ^ s - (x : ℂ) ^ s) / s ^ 2) := by
+    unfold secondOrderExplicitFormulaIntegrand explicitFormulaIntegrand
+    ring
+  change ‖secondOrderExplicitFormulaIntegrand (x + h) s -
+      secondOrderExplicitFormulaIntegrand x s‖ ≤ _
+  rw [hrewrite, norm_mul]
+  calc
+    ‖-logDeriv riemannZeta s‖ *
+          ‖(((x + h : ℝ) : ℂ) ^ s - (x : ℂ) ^ s) / s ^ 2‖ ≤
+        vonMangoldtLSeriesNorm (c - 1) *
+          (2 * x ^ c * Real.log ((x + h) / x) / c) :=
+      mul_le_mul hlogDeriv' hfactor' (norm_nonneg _) hseries
+    _ = 2 * vonMangoldtLSeriesNorm (c - 1) * x ^ c *
+          Real.log ((x + h) / x) / c := by ring
+
+private theorem
+    intervalIntegrable_secondOrderExplicitFormulaIntegrand_right_vertical
+    {x c W : ℝ} (hx : 0 < x) (hc : 1 < c) :
+    IntervalIntegrable
+      (fun w : ℝ =>
+        secondOrderExplicitFormulaIntegrand x
+          ((c : ℂ) + 2 * Real.pi * w * I))
+      MeasureTheory.volume (-W) W := by
+  have hcont : Continuous (fun w : ℝ =>
+      secondOrderExplicitFormulaIntegrand x
+        ((c : ℂ) + 2 * Real.pi * w * I)) := by
+    rw [continuous_iff_continuousAt]
+    intro w
+    let s : ℂ := (c : ℂ) + 2 * Real.pi * w * I
+    have hs0 : s ≠ 0 := by
+      intro hs
+      have hre := congrArg Complex.re hs
+      simp [s] at hre
+      linarith
+    have hs1 : s ≠ 1 := by
+      intro hs
+      have hre := congrArg Complex.re hs
+      simp [s] at hre
+      linarith
+    have hzeta : riemannZeta s ≠ 0 :=
+      riemannZeta_ne_zero_of_one_le_re (by simp [s]; linarith)
+    have hexplicit :
+        AnalyticAt ℂ (explicitFormulaIntegrand x) s :=
+      analyticAt_explicitFormulaIntegrand_of_ne_zero_of_ne_one_of_zeta_ne_zero
+        hx hs0 hs1 hzeta
+    have hsecond :
+        AnalyticAt ℂ (secondOrderExplicitFormulaIntegrand x) s := by
+      unfold secondOrderExplicitFormulaIntegrand
+      exact hexplicit.div analyticAt_id hs0
+    have hmap : ContinuousAt
+        (fun u : ℝ => (c : ℂ) + 2 * Real.pi * u * I) w := by
+      fun_prop
+    simpa [s, Function.comp_def] using
+      hsecond.continuousAt.comp_of_eq hmap rfl
+  exact hcont.intervalIntegrable _ _
+
+/-- The actual hard-truncated right-line Perron remainder gains the logarithmic
+endpoint gap.  The proof subtracts the two finite-height integrands before
+taking norms; no separate-endpoint Perron budget is used. -/
+theorem norm_secondOrderRightPerronRemainder_increment_le
+    {x h c W : ℝ}
+    (hx : 1 ≤ x) (hh : 0 < h) (hc : 1 < c) (hW : 0 < W)
+    (hsmall :
+      (c + 2 * Real.pi * W) * Real.log ((x + h) / x) ≤ 1) :
+    ‖secondOrderRightPerronRemainder (x + h) c W -
+        secondOrderRightPerronRemainder x c W‖ ≤
+      secondOrderPerronIncrementCancellationBudget x h c W *
+        Real.log ((x + h) / x) := by
+  let y : ℝ := x + h
+  let d : ℝ := Real.log (y / x)
+  let K : ℝ := Real.log 4 + 4
+  let B : ℝ :=
+    2 * vonMangoldtLSeriesNorm (c - 1) * x ^ c * d / c
+  have hxpos : 0 < x := zero_lt_one.trans_le hx
+  have hypos : 0 < y := by dsimp [y]; linarith
+  have hxy : x ≤ y := by dsimp [y]; linarith
+  have hd : 0 ≤ d := by
+    dsimp [d]
+    apply Real.log_nonneg
+    exact (le_div_iff₀ hxpos).2 (by simpa using hxy)
+  have hseries : 0 ≤ vonMangoldtLSeriesNorm (c - 1) :=
+    tsum_nonneg fun n => norm_nonneg _
+  have hB : 0 ≤ B := by
+    dsimp [B]
+    positivity
+  have hpoint (w : ℝ) (hw : w ∈ Set.uIoc (-W) W) :
+      ‖secondOrderExplicitFormulaIntegrand y
+            ((c : ℂ) + 2 * Real.pi * w * I) -
+          secondOrderExplicitFormulaIntegrand x
+            ((c : ℂ) + 2 * Real.pi * w * I)‖ ≤ B := by
+    have habs : |w| ≤ W := by
+      have hw' : w ∈ Set.uIcc (-W) W :=
+        Set.uIoc_subset_uIcc hw
+      rw [Set.uIcc_of_le (by linarith : -W ≤ W)] at hw'
+      exact abs_le.mpr hw'
+    simpa [y, d, B] using
+      norm_secondOrderExplicitFormulaIntegrand_sub_right_vertical_le
+        hx hh.le hc habs hsmall
+  have hyInt :=
+    intervalIntegrable_secondOrderExplicitFormulaIntegrand_right_vertical
+      (W := W) hypos hc
+  have hxInt :=
+    intervalIntegrable_secondOrderExplicitFormulaIntegrand_right_vertical
+      (W := W) hxpos hc
+  have hIntegral :
+      ‖(∫ w : ℝ in (-W)..W,
+            secondOrderExplicitFormulaIntegrand y
+              ((c : ℂ) + 2 * Real.pi * w * I)) -
+          ∫ w : ℝ in (-W)..W,
+            secondOrderExplicitFormulaIntegrand x
+              ((c : ℂ) + 2 * Real.pi * w * I)‖ ≤
+        4 * W * vonMangoldtLSeriesNorm (c - 1) * x ^ c * d / c := by
+    rw [← intervalIntegral.integral_sub hyInt hxInt]
+    calc
+      ‖∫ w : ℝ in (-W)..W,
+          (secondOrderExplicitFormulaIntegrand y
+              ((c : ℂ) + 2 * Real.pi * w * I) -
+            secondOrderExplicitFormulaIntegrand x
+              ((c : ℂ) + 2 * Real.pi * w * I))‖ ≤
+          B * |W - (-W)| :=
+        intervalIntegral.norm_integral_le_of_norm_le_const hpoint
+      _ = 4 * W * vonMangoldtLSeriesNorm (c - 1) * x ^ c * d / c := by
+        rw [show |W - -W| = 2 * W by rw [abs_of_pos (by linarith)]; ring]
+        dsimp [B]
+        ring
+  have hpsi_nonneg : 0 ≤ chebyshevPsi x := by
+    rw [chebyshevPsi]
+    apply Finset.sum_nonneg
+    intro n hn
+    rw [vonMangoldt_eq_mathlib]
+    exact ArithmeticFunction.vonMangoldt_nonneg
+  have hSmoothNonneg :
+      0 ≤ smoothedChebyshevPsi y - smoothedChebyshevPsi x := by
+    have hlower :=
+      chebyshevPsi_mul_log_div_le_smoothedChebyshevPsi_sub hxpos hxy
+    have hprod : 0 ≤ chebyshevPsi x * Real.log (y / x) :=
+      mul_nonneg hpsi_nonneg hd
+    linarith
+  have hpsiUpper : chebyshevPsi y ≤ K * y := by
+    dsimp [K]
+    rw [chebyshevPsi_eq_mathlib]
+    exact Chebyshev.psi_le_const_mul_self hypos.le
+  have hSmoothUpper :
+      smoothedChebyshevPsi y - smoothedChebyshevPsi x ≤ K * y * d := by
+    calc
+      smoothedChebyshevPsi y - smoothedChebyshevPsi x ≤
+          chebyshevPsi y * Real.log (y / x) :=
+        smoothedChebyshevPsi_sub_le_chebyshevPsi_mul_log_div hxpos hxy
+      _ ≤ (K * y) * Real.log (y / x) :=
+        mul_le_mul_of_nonneg_right hpsiUpper hd
+      _ = K * y * d := by rfl
+  have hSmoothNorm :
+      ‖((smoothedChebyshevPsi y - smoothedChebyshevPsi x : ℝ) : ℂ)‖ ≤
+        K * y * d := by
+    rw [norm_real, Real.norm_eq_abs, abs_of_nonneg hSmoothNonneg]
+    exact hSmoothUpper
+  unfold secondOrderRightPerronRemainder
+  have hrearrange :
+      ((∫ w : ℝ in (-W)..W,
+            secondOrderExplicitFormulaIntegrand y
+              ((c : ℂ) + 2 * Real.pi * w * I)) -
+          (smoothedChebyshevPsi y : ℂ)) -
+        ((∫ w : ℝ in (-W)..W,
+            secondOrderExplicitFormulaIntegrand x
+              ((c : ℂ) + 2 * Real.pi * w * I)) -
+          (smoothedChebyshevPsi x : ℂ)) =
+      ((∫ w : ℝ in (-W)..W,
+            secondOrderExplicitFormulaIntegrand y
+              ((c : ℂ) + 2 * Real.pi * w * I)) -
+          ∫ w : ℝ in (-W)..W,
+            secondOrderExplicitFormulaIntegrand x
+              ((c : ℂ) + 2 * Real.pi * w * I)) -
+        ((smoothedChebyshevPsi y - smoothedChebyshevPsi x : ℝ) : ℂ) := by
+    push_cast
+    ring
+  rw [hrearrange]
+  calc
+    ‖((∫ w : ℝ in (-W)..W,
+          secondOrderExplicitFormulaIntegrand y
+            ((c : ℂ) + 2 * Real.pi * w * I)) -
+        ∫ w : ℝ in (-W)..W,
+          secondOrderExplicitFormulaIntegrand x
+            ((c : ℂ) + 2 * Real.pi * w * I)) -
+      ((smoothedChebyshevPsi y - smoothedChebyshevPsi x : ℝ) : ℂ)‖ ≤
+        ‖(∫ w : ℝ in (-W)..W,
+            secondOrderExplicitFormulaIntegrand y
+              ((c : ℂ) + 2 * Real.pi * w * I)) -
+          ∫ w : ℝ in (-W)..W,
+            secondOrderExplicitFormulaIntegrand x
+              ((c : ℂ) + 2 * Real.pi * w * I)‖ +
+        ‖((smoothedChebyshevPsi y -
+            smoothedChebyshevPsi x : ℝ) : ℂ)‖ :=
+      norm_sub_le _ _
+    _ ≤
+        4 * W * vonMangoldtLSeriesNorm (c - 1) * x ^ c * d / c +
+          K * y * d :=
+      add_le_add hIntegral hSmoothNorm
+    _ = secondOrderPerronIncrementCancellationBudget x h c W *
+          Real.log ((x + h) / x) := by
+      dsimp [secondOrderPerronIncrementCancellationBudget, y, d, K]
+      ring
+
 /-- The raw second-order Perron tail factors exactly into an `x,W` scale and
 the absolute von Mangoldt Dirichlet-series norm on `Re(s)=c`. -/
 theorem secondOrderPerronError_eq_vonMangoldtLSeriesNorm
@@ -1140,6 +1468,31 @@ theorem secondOrderPerronError_eq_vonMangoldtLSeriesNorm
       congr 2
       push_cast
       ring
+
+/-- The concrete right-line Perron remainder is controlled by the existing
+summable finite-height Perron tail. -/
+theorem norm_secondOrderRightPerronRemainder_le
+    {x c W : ℝ} (hx : 0 < x) (hc : 1 < c) (hW : 0 < W) :
+    ‖secondOrderRightPerronRemainder x c W‖ ≤
+      secondOrderPerronError x c W := by
+  have hperron :=
+    norm_truncated_neg_logDeriv_riemannZeta_sub_smoothedPsi_le hx hc hW
+  have hintegral :
+      (∫ w : ℝ in (-W)..W,
+        (x : ℂ) ^ perronLine c w *
+          (-deriv riemannZeta (perronLine c w) /
+            riemannZeta (perronLine c w)) /
+              (perronLine c w) ^ 2) =
+        ∫ w : ℝ in (-W)..W,
+          secondOrderExplicitFormulaIntegrand x
+            ((c : ℂ) + 2 * Real.pi * w * I) := by
+    apply intervalIntegral.integral_congr
+    intro w hw
+    dsimp
+    rw [secondOrderExplicitFormulaIntegrand_eq_neg_logDeriv_kernel]
+    simp only [perronLine]
+  rw [hintegral] at hperron
+  simpa [secondOrderRightPerronRemainder, secondOrderPerronError] using hperron
 
 /-- Explicit `ε,W` upper bound for the second-order Perron truncation tail.
 This is a proved analytic envelope, not a numerical optimizer input. -/
@@ -1308,6 +1661,87 @@ noncomputable def secondOrderMovingEndpointPerronBudget
   (2 * (Real.exp 1 * (x + h) /
       (2 * Real.pi ^ 2 * W))) *
     (4 * (1 + Real.log (x + h)) ^ 2)
+
+/-- Best available normalized moving-endpoint Perron budget.  The first branch
+uses separate `W⁻¹` endpoint tails; the second subtracts the actual truncated
+integrals first and therefore has no reciprocal logarithmic gap. -/
+noncomputable def secondOrderMovingEndpointBestNormalizedPerronBudget
+    (x h W : ℝ) : ℝ :=
+  min
+    (secondOrderMovingEndpointPerronBudget x h W /
+      Real.log ((x + h) / x))
+    (secondOrderPerronIncrementCancellationBudget x h
+      (1 + 1 / Real.log (x + h)) W)
+
+/-- The normalized difference of the actual moving-line Perron remainders is
+bounded by the better of the separate-endpoint and cancellation estimates. -/
+theorem norm_secondOrderMovingPerronRemainder_increment_div_log_le_best
+    {x h W : ℝ}
+    (hx : 1 < x) (hh : 0 < h) (hW : 0 < W)
+    (hsmall :
+      ((1 + 1 / Real.log (x + h)) + 2 * Real.pi * W) *
+          Real.log ((x + h) / x) ≤ 1) :
+    ‖secondOrderRightPerronRemainder (x + h)
+          (1 + 1 / Real.log (x + h)) W -
+        secondOrderRightPerronRemainder x
+          (1 + 1 / Real.log (x + h)) W‖ /
+          Real.log ((x + h) / x) ≤
+      secondOrderMovingEndpointBestNormalizedPerronBudget x h W := by
+  let c : ℝ := 1 + 1 / Real.log (x + h)
+  let d : ℝ := Real.log ((x + h) / x)
+  have hxpos : 0 < x := zero_lt_one.trans hx
+  have hy : 1 < x + h := by linarith
+  have hypos : 0 < x + h := zero_lt_one.trans hy
+  have hlogy : 0 < Real.log (x + h) := Real.log_pos hy
+  have hc : 1 < c := by
+    dsimp [c]
+    linarith [one_div_pos.mpr hlogy]
+  have hratio : 1 < (x + h) / x := by
+    rw [lt_div_iff₀ hxpos]
+    linarith
+  have hd : 0 < d := by
+    dsimp [d]
+    exact Real.log_pos hratio
+  have hyError :=
+    norm_secondOrderRightPerronRemainder_le hypos hc hW
+  have hxError :=
+    norm_secondOrderRightPerronRemainder_le hxpos hc hW
+  have hseparate :
+      ‖secondOrderRightPerronRemainder (x + h) c W -
+          secondOrderRightPerronRemainder x c W‖ ≤
+        secondOrderMovingEndpointPerronBudget x h W := by
+    calc
+      ‖secondOrderRightPerronRemainder (x + h) c W -
+          secondOrderRightPerronRemainder x c W‖ ≤
+          ‖secondOrderRightPerronRemainder (x + h) c W‖ +
+            ‖secondOrderRightPerronRemainder x c W‖ :=
+        norm_sub_le _ _
+      _ ≤ secondOrderPerronError (x + h) c W +
+            secondOrderPerronError x c W :=
+        add_le_add hyError hxError
+      _ = secondOrderPerronError x c W +
+            secondOrderPerronError (x + h) c W := by ring
+      _ ≤ secondOrderMovingEndpointPerronBudget x h W := by
+        simpa [c, secondOrderMovingEndpointPerronBudget] using
+          secondOrderPerronError_add_moving_line_le hx hh hW
+  have hseparateNormalized :
+      ‖secondOrderRightPerronRemainder (x + h) c W -
+          secondOrderRightPerronRemainder x c W‖ / d ≤
+        secondOrderMovingEndpointPerronBudget x h W / d :=
+    div_le_div_of_nonneg_right hseparate hd.le
+  have hcancel :=
+    norm_secondOrderRightPerronRemainder_increment_le
+      hx.le hh hc hW (by simpa [c, d] using hsmall)
+  have hcancelNormalized :
+      ‖secondOrderRightPerronRemainder (x + h) c W -
+          secondOrderRightPerronRemainder x c W‖ / d ≤
+        secondOrderPerronIncrementCancellationBudget x h c W := by
+    exact (div_le_iff₀ hd).2 (by simpa [d] using hcancel)
+  dsimp [secondOrderMovingEndpointBestNormalizedPerronBudget]
+  change
+    ‖secondOrderRightPerronRemainder (x + h) c W -
+        secondOrderRightPerronRemainder x c W‖ / d ≤ _
+  exact le_min hseparateNormalized hcancelNormalized
 
 /-- At the selected-height scale `W = T / (2π)`, the moving-endpoint Perron
 budget has an exact `T⁻¹` form. -/

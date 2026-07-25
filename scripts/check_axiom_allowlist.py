@@ -278,6 +278,10 @@ SMOOTHED_ERROR_EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.ExplicitFormulaResidues.exists_uniform_C_D_forall_goodHeight_chebyshevPsi_bounds_scalar_sqrt_log_sq_increment_of_RH",
     "PrimeNumberTheorem.ExplicitFormulaResidues.exists_uniform_C_D_forall_goodHeight_chebyshevPsi_endpoint_error_sqrt_log_sq_increment_of_RH",
     "PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightIncrement_endpoint_bounds_strictly_improve",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.norm_secondOrderExplicitFormulaIntegrand_sub_right_vertical_le",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.norm_secondOrderRightPerronRemainder_increment_le",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.norm_secondOrderRightPerronRemainder_le",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.norm_secondOrderMovingPerronRemainder_increment_div_log_le_best",
 }
 
 REPORT_RE = re.compile(
