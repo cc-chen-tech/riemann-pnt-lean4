@@ -237,6 +237,11 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.RiemannVonMangoldt.riemannZeroCount_eq_criticalLine_add_two_mul_zeroDensityCount",
 }
 
+OSCILLATION_EXPECTED_DECLARATIONS = {
+    "PrimeNumberTheorem.ZeroForcedOscillation.tendsto_normalized_movingHeightApproximationBudget_exp_atTop",
+    "PrimeNumberTheorem.ZeroForcedOscillation.eventually_normalized_movingHeightApproximationBudget_exp_lt_gap",
+}
+
 REPORT_RE = re.compile(
     r"'([^']+)' depends on axioms:\s*\[([^\]]*)\]",
     flags=re.MULTILINE,
@@ -277,7 +282,13 @@ def validate_axioms(
 
 def main() -> int:
     completed = subprocess.run(
-        ["lake", "build", "Test.MultiplicityAxiomAudit"],
+        [
+            "lake",
+            "-Kjobs=1",
+            "build",
+            "Test.MultiplicityAxiomAudit",
+            "Test.ZeroForcedOscillationComplementaryBoundAxiomAudit",
+        ],
         cwd=ROOT,
         text=True,
         capture_output=True,
@@ -288,9 +299,12 @@ def main() -> int:
         return completed.returncode
 
     reports = parse_axiom_report(output)
+    expected_declarations = (
+        EXPECTED_DECLARATIONS | OSCILLATION_EXPECTED_DECLARATIONS
+    )
     errors = validate_axioms(
         reports,
-        expected_declarations=EXPECTED_DECLARATIONS,
+        expected_declarations=expected_declarations,
         allowed_axioms=ALLOWED_AXIOMS,
     )
     if errors:
@@ -300,7 +314,7 @@ def main() -> int:
 
     print(
         "[axiom-allowlist] checked "
-        f"{len(EXPECTED_DECLARATIONS)} declarations; only standard axioms are used"
+        f"{len(expected_declarations)} declarations; only standard axioms are used"
     )
     return 0
 
