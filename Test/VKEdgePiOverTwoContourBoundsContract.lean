@@ -12,6 +12,8 @@ open PrimeNumberTheorem.VKEdgePiOverTwo
 #check norm_regularizedLogDeriv_localizedGaussianWeight_left_le
 #check norm_regularizedLogDeriv_localizedGaussianWeight_left_le_uniform
 #check norm_integral_regularizedLogDeriv_localizedGaussianWeight_left_le
+#check norm_localizedGaussianWeight_horizontal_le
+#check norm_localizedGaussianWeight_horizontal_le_uniform
 
 example (A : ℂ[X]) (w z : ℂ) (m : ℝ) :
     ‖localizedGaussianWeight A w m z‖ =
@@ -84,3 +86,25 @@ example (A : ℂ[X]) {u v T m : ℝ}
           (2 * T) :=
   norm_integral_regularizedLogDeriv_localizedGaussianWeight_left_le
     A hu hu1 hT hm
+
+example (A : ℂ[X]) {u v σ t m : ℝ}
+    (hu : 0 < u) (hu1 : u < 1)
+    (hσlo : -1 ≤ σ) (hσhi : σ ≤ u + 2) (hm : 0 ≤ m) :
+    ‖localizedGaussianWeight A ((u : ℂ) + I * v) m
+        ((σ : ℂ) + I * t)‖ ≤
+      ‖A.eval (((σ : ℂ) + I * t) - ((u : ℂ) + I * v))‖ *
+        Real.exp (m * (36 - (t - v) ^ 2)) :=
+  norm_localizedGaussianWeight_horizontal_le
+    A hu hu1 hσlo hσhi hm
+
+example (A : ℂ[X]) {u v T σ t m : ℝ}
+    (hu : 0 < u) (hu1 : u < 1)
+    (hσlo : -1 ≤ σ) (hσhi : σ ≤ u + 2)
+    (ht : |t| = T) (hm : 0 ≤ m) :
+    ‖localizedGaussianWeight A ((u : ℂ) + I * v) m
+        ((σ : ℂ) + I * t)‖ ≤
+      (∑ k ∈ A.support, ‖A.coeff k‖) *
+        max 1 (T + |v| + 3) ^ A.natDegree *
+          Real.exp (m * (36 - (t - v) ^ 2)) :=
+  norm_localizedGaussianWeight_horizontal_le_uniform
+    A hu hu1 hσlo hσhi ht hm

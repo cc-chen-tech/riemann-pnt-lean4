@@ -252,6 +252,86 @@ theorem norm_integral_regularizedLogDeriv_localizedGaussianWeight_left_le
   rw [abs_of_nonneg (by linarith : 0 ≤ T - -T)]
   ring
 
+/--
+On either horizontal edge, the real displacement contributes at most `36 m`
+to the Gaussian exponent throughout the full localized rectangle.
+-/
+theorem norm_localizedGaussianWeight_horizontal_le
+    (A : ℂ[X]) {u v σ t m : ℝ}
+    (hu : 0 < u) (hu1 : u < 1)
+    (hσlo : -1 ≤ σ) (hσhi : σ ≤ u + 2) (hm : 0 ≤ m) :
+    ‖localizedGaussianWeight A ((u : ℂ) + I * v) m
+        ((σ : ℂ) + I * t)‖ ≤
+      ‖A.eval (((σ : ℂ) + I * t) - ((u : ℂ) + I * v))‖ *
+        Real.exp (m * (36 - (t - v) ^ 2)) := by
+  rw [norm_localizedGaussianWeight]
+  gcongr
+  let a : ℝ := σ - u
+  have haLower : -2 < a := by
+    dsimp [a]
+    linarith
+  have haUpper : a ≤ 2 := by
+    dsimp [a]
+    linarith
+  have hfactor : 0 ≤ (2 - a) * (18 + a) :=
+    mul_nonneg (sub_nonneg.mpr haUpper) (by linarith)
+  norm_num [Complex.sub_re, Complex.sub_im, Complex.add_re,
+    Complex.add_im, Complex.mul_re, Complex.mul_im] at *
+  nlinarith [mul_nonneg hm hfactor]
+
+/--
+Uniform polynomial-growth version of the horizontal Gaussian estimate at
+height `|t| = T`.
+-/
+theorem norm_localizedGaussianWeight_horizontal_le_uniform
+    (A : ℂ[X]) {u v T σ t m : ℝ}
+    (hu : 0 < u) (hu1 : u < 1)
+    (hσlo : -1 ≤ σ) (hσhi : σ ≤ u + 2)
+    (ht : |t| = T) (hm : 0 ≤ m) :
+    ‖localizedGaussianWeight A ((u : ℂ) + I * v) m
+        ((σ : ℂ) + I * t)‖ ≤
+      (∑ k ∈ A.support, ‖A.coeff k‖) *
+        max 1 (T + |v| + 3) ^ A.natDegree *
+          Real.exp (m * (36 - (t - v) ^ 2)) := by
+  let d : ℂ :=
+    ((σ : ℂ) + I * t) - ((u : ℂ) + I * v)
+  have hre : |σ - u| ≤ 2 := by
+    rw [abs_le]
+    constructor <;> linarith
+  have him : |t - v| ≤ T + |v| := by
+    calc
+      |t - v| ≤ |t| + |v| := abs_sub t v
+      _ = T + |v| := by rw [ht]
+  have hd : ‖d‖ ≤ T + |v| + 3 := by
+    calc
+      ‖d‖ ≤ |d.re| + |d.im| :=
+        Complex.norm_le_abs_re_add_abs_im d
+      _ = |σ - u| + |t - v| := by
+        norm_num [d, Complex.sub_re, Complex.sub_im]
+      _ ≤ 2 + (T + |v|) := add_le_add hre him
+      _ ≤ T + |v| + 3 := by linarith
+  have hpoly :
+      ‖A.eval d‖ ≤
+        (∑ k ∈ A.support, ‖A.coeff k‖) *
+          max 1 (T + |v| + 3) ^ A.natDegree := by
+    calc
+      ‖A.eval d‖ ≤
+          (∑ k ∈ A.support, ‖A.coeff k‖) *
+            max 1 ‖d‖ ^ A.natDegree :=
+        norm_polynomial_eval_le_coeffL1_mul_max_pow A d
+      _ ≤ (∑ k ∈ A.support, ‖A.coeff k‖) *
+            max 1 (T + |v| + 3) ^ A.natDegree := by
+        gcongr
+  calc
+    _ ≤ ‖A.eval d‖ * Real.exp (m * (36 - (t - v) ^ 2)) := by
+      simpa [d] using
+        norm_localizedGaussianWeight_horizontal_le
+          A hu hu1 hσlo hσhi hm
+    _ ≤ (∑ k ∈ A.support, ‖A.coeff k‖) *
+          max 1 (T + |v| + 3) ^ A.natDegree *
+            Real.exp (m * (36 - (t - v) ^ 2)) := by
+      gcongr
+
 end
 
 end VKEdgePiOverTwo
