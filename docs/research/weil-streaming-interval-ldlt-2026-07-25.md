@@ -186,11 +186,33 @@ matrix-valued integration layer:
 - the integrated quadratic form is bounded by the integral of the explicit
   pointwise Cauchy-vector budget.
 
+`WeilExtremalKernels/ArchimedeanHPlus.lean` now inserts the paper's actual
+archimedean density
+
+```text
+h_+(t) = Re digamma(1/4 + i*t/2) - log pi
+```
+
+and the scalar weight
+
+```text
+pi^(-2) h_+(r) sin^2(Lr/2) / rho.
+```
+
+It proves analyticity of `digamma` in the right half-plane, continuity of
+`h_+` and of the actual weight, and transfers pointwise nonnegativity and the
+logarithmic envelope to that weight once the corresponding facts about
+`h_+` are supplied.
+
 These results remove the generic algebraic transfer, scalar-calculus,
 rank-two positivity, pointwise vector-norm, and finite-interval matrix
-integration subgoals. They do not yet insert and prove the required
-properties of the paper's actual
-`pi^(-2) h_+(r) sin^2(Lr/2) / rho` weight, construct the improper tail,
-integrate to the final constant `B_T`, verify the basis transfer, or connect a
-finite certificate to the infinite-dimensional Weil criterion. Gate A
-therefore remains open.
+integration subgoals, and they now identify the actual analytic weight in
+Lean. They do not yet prove the hard estimates
+
+```text
+0 <= h_+(t) <= log t  for t >= 7,
+```
+
+construct the improper matrix tail, integrate to the final constant `B_T`,
+verify the basis transfer, or connect a finite certificate to the
+infinite-dimensional Weil criterion. Gate A therefore remains open.

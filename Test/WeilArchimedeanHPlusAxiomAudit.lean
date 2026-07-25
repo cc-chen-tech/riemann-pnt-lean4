@@ -1,0 +1,8 @@
+import WeilExtremalKernels.ArchimedeanHPlus
+
+#print axioms WeilExtremalKernels.analyticAt_Gamma_of_re_pos
+#print axioms WeilExtremalKernels.analyticAt_digamma_of_re_pos
+#print axioms WeilExtremalKernels.continuous_archimedeanHPlus
+#print axioms WeilExtremalKernels.continuous_paperArchimedeanWeight
+#print axioms WeilExtremalKernels.paperArchimedeanWeight_nonneg
+#print axioms WeilExtremalKernels.paperArchimedeanWeight_le_log_envelope
