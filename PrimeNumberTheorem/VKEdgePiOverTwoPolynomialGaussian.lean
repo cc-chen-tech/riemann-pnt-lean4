@@ -631,6 +631,20 @@ theorem continuous_polynomialGaussianKernelDeriv
   exact Complex.continuous_ofReal.comp
     (hsmooth.continuous_iteratedDeriv (k + 1) (by simp))
 
+theorem integrable_polynomialGaussianKernel
+    (A : ℂ[X]) {m : ℝ} (hm : 0 < m) :
+    Integrable (polynomialGaussianKernel A m) := by
+  unfold polynomialGaussianKernel Polynomial.sum
+  exact integrable_finset_sum A.support fun k _ =>
+    integrable_complex_iteratedDeriv_term hm (A.coeff k) k
+
+theorem integrable_polynomialGaussianKernelDeriv
+    (A : ℂ[X]) {m : ℝ} (hm : 0 < m) :
+    Integrable (polynomialGaussianKernelDeriv A m) := by
+  unfold polynomialGaussianKernelDeriv Polynomial.sum
+  exact integrable_finset_sum A.support fun k _ =>
+    integrable_complex_iteratedDeriv_term hm (A.coeff k) (k + 1)
+
 theorem polynomialGaussianKernel_C_mul
     (c : ℂ) (A : ℂ[X]) (m t : ℝ) :
     polynomialGaussianKernel (C c * A) m t =

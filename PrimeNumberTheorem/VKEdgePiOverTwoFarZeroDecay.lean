@@ -426,6 +426,7 @@ theorem tendsto_selectedLocalizedZeroResidueSum_nearZeroFilter_of_ne_zero
     eventually_ge_atTop (A.natDegree : ℝ)] with m hm hdegree
   have hvalid : localizedContourScaleValid A u m :=
     ⟨hu, hu1, hm, hdegree⟩
+  symm
   simpa [A] using
     selectedLocalizedZeroResidueSum_nearZeroFilter_eq_far_of_ne_zero
       hvalid hne

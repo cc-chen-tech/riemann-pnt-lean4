@@ -363,7 +363,7 @@ private theorem relativeProjectedPsiTailRemainder_eq
   rw [abs_of_nonneg (norm_nonneg ((u : ℂ) + I * lambda))]
   ring
 
-private theorem integrableOn_normalizedPsiError_mul_projectedPsiKernel
+theorem integrableOn_normalizedPsiError_mul_projectedPsiKernel
     (A : ℂ[X]) {w : ℂ} {m : ℝ}
     (hm : 0 < m) (hw : 0 < w.re) :
     IntegrableOn
@@ -389,6 +389,32 @@ private theorem integrableOn_normalizedPsiError_mul_projectedPsiKernel
   apply hscaled.congr_fun _ measurableSet_Ioi
   intro y _hy
   exact logarithmicLocalizedPsiGaussianIntegrand_re hw0
+
+/--
+After relative normalization, a contour centered on the same vertical line
+remains integrable against the target-normalized PNT error.
+-/
+theorem integrableOn_normalizedPsiError_mul_relativeProjectedPsiKernel
+    (c : ℂ) (A : ℂ[X]) {target center : ℂ} {m : ℝ}
+    (hm : 0 < m) (htarget : 0 < target.re)
+    (hcenter : 0 < center.re) (hre : center.re = target.re) :
+    IntegrableOn
+      (fun y =>
+        normalizedPsiError target y *
+          relativeProjectedPsiKernel A target center c m y)
+      (Set.Ioi 0) := by
+  have htarget0 : target ≠ 0 := ne_zero_of_re_pos htarget
+  have hcenter0 : center ≠ 0 := ne_zero_of_re_pos hcenter
+  have htargetNorm : 0 < ‖target‖ := norm_pos_iff.mpr htarget0
+  have hcenterNorm : 0 < ‖center‖ := norm_pos_iff.mpr hcenter0
+  have hbase :=
+    integrableOn_normalizedPsiError_mul_projectedPsiKernel
+      (C c * A) hm hcenter
+  refine hbase.congr_fun ?_ measurableSet_Ioi
+  intro y _hy
+  unfold normalizedPsiError relativeProjectedPsiKernel
+  rw [hre]
+  field_simp [htargetNorm.ne', hcenterNorm.ne']
 
 private theorem exists_projectedPsiKernel_norm_le_scaled_exp_abs_mul
     (A : ℂ[X]) {w : ℂ} (hw : w ≠ 0) :
@@ -829,7 +855,7 @@ theorem tendsto_relativeProjectedPsiTailRemainder
         c A htarget hcenter]
   exact tendsto_projectedPsiTailRemainder (C c * A) hu hu1 lambda
 
-private theorem continuous_projectedPsiKernel
+theorem continuous_projectedPsiKernel
     (A : ℂ[X]) (w : ℂ) {m : ℝ} (hm : 0 < m) :
     Continuous (projectedPsiKernel A w m) := by
   unfold projectedPsiKernel
@@ -842,6 +868,52 @@ private theorem continuous_projectedPsiKernel
         ((continuous_polynomialGaussianKernel A hm).comp (by fun_prop))
     · exact
         (continuous_polynomialGaussianKernelDeriv A hm).comp (by fun_prop)
+
+theorem continuous_relativeProjectedPsiKernel
+    (A : ℂ[X]) (target center c : ℂ) {m : ℝ} (hm : 0 < m) :
+    Continuous (relativeProjectedPsiKernel A target center c m) := by
+  unfold relativeProjectedPsiKernel
+  exact
+    (continuous_projectedPsiKernel (C c * A) center hm).const_mul
+      (‖center‖ / ‖target‖)
+
+/-- Every fixed projected polynomial-Gaussian kernel is integrable on the
+full logarithmic line. -/
+theorem integrable_projectedPsiKernel
+    (A : ℂ[X]) (w : ℂ) {m : ℝ} (hm : 0 < m) :
+    Integrable (projectedPsiKernel A w m) := by
+  have hkernel :
+      Integrable (fun y : ℝ =>
+        w * polynomialGaussianKernel A m (16 * m - y) +
+          polynomialGaussianKernelDeriv A m (16 * m - y)) :=
+    ((integrable_polynomialGaussianKernel A hm).comp_sub_left (16 * m)
+      |>.const_mul w).add
+      ((integrable_polynomialGaussianKernelDeriv A hm).comp_sub_left
+        (16 * m))
+  have hphase :
+      AEStronglyMeasurable
+        (fun y : ℝ =>
+          Complex.exp (-(I * (w.im : ℂ) * (y : ℂ)))) volume := by
+    fun_prop
+  have hphaseBound :
+      ∀ᵐ y : ℝ,
+        ‖Complex.exp (-(I * (w.im : ℂ) * (y : ℂ)))‖ ≤ 1 := by
+    filter_upwards with y
+    rw [Complex.norm_exp]
+    norm_num [Complex.mul_re]
+  have hproduct :=
+    hkernel.bdd_mul hphase hphaseBound
+  unfold projectedPsiKernel
+  exact hproduct.re.const_mul (-(2 / ‖w‖))
+
+/-- Relative projected kernels inherit full-line integrability. -/
+theorem integrable_relativeProjectedPsiKernel
+    (A : ℂ[X]) (target center c : ℂ) {m : ℝ} (hm : 0 < m) :
+    Integrable (relativeProjectedPsiKernel A target center c m) := by
+  unfold relativeProjectedPsiKernel
+  exact
+    (integrable_projectedPsiKernel (C c * A) center hm).const_mul
+      (‖center‖ / ‖target‖)
 
 private theorem eventually_bddAbove_normalizedWindowValues_aux
     {u v : ℝ} (hu : 0 < u) (hu1 : u < 1) :

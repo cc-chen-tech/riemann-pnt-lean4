@@ -706,7 +706,7 @@ theorem integrableOn_exp_mul_normalizedPsiError_mul_sharpenedKernel
   dsimp only [n, c, phaseCos]
   ring
 
-private theorem abs_sharpenedPsiAbelKernel_le_two
+theorem abs_sharpenedPsiAbelKernel_le_two
     (rho : ℂ) (gamma : ℝ) (k : ℕ) (y : ℝ) :
     |sharpenedPsiAbelKernel rho gamma k y| ≤ 2 := by
   let n : ℕ := 2 * k + 1
