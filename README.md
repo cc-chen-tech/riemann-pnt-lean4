@@ -274,11 +274,26 @@ VK、Selberg 和 Pintz 路线需要新的上游估计，不能由当前已证明
 |---|---|---|
 | [`research/hardy-littlewood`](https://github.com/cc-chen-tech/riemann-pnt-lean4/tree/research/hardy-littlewood) | 已出现 `hardy_littlewood_lower_bound_target_proved` 和奇重数强化版 | 仍需与当前 `main` 集成并完成最新全量审计；Selberg `T log T` 下界仍是目标 |
 | [PR #11: Pintz envelope](https://github.com/cc-chen-tech/riemann-pnt-lean4/pull/11) | 零点 envelope、单调性和经典 `sqrt(log x)` 下界 | 尚无到 `psi` 或 `pi-Li` 振荡/最大阶的桥 |
-| 本地分支 `feat/vinogradov-korobov-exponential-sums` | 差分、矩阵、秩分层和同余系统等指数和基础设施；该分支尚未推送到 `origin` | `vinogradov_korobov_zero_free_region` 仍是 `def ... : Prop` |
+| 分层 Draft PR #16--#18 及 `agent/vk-ford-incomplete-bridge` | 差分、矩阵、秩分层、同余系统、Ford 双重 Holder、不完整矩和近整数计数等指数和基础设施 | `FordShortSumPrefixBound` 尚未证明；`vinogradov_korobov_zero_free_region` 仍是 `def ... : Prop` |
 | [Draft PR #8](https://github.com/cc-chen-tech/riemann-pnt-lean4/pull/8) | 平滑误差、有限零点簇振荡和有限 Weil certificate | 显式公式仍有 uncontrolled remainder，Weil 路线仍缺无限维桥 |
 
 研究分支会快速变化。引用其中结果前，应记录 branch commit，重新运行定向 contract，
 并检查它是否已经重基或合并到当前 `main`。
+
+### Vinogradov--Korobov 分支的 Ford 层
+
+第 4 层研究分支已经证明以下局部结果：
+
+- `FordShortSumPrefixBound` 到 Dirichlet 区间和 zeta strip 上界的条件传递；
+- 连续高次方程窗口及任意有限支持上的精确有限 Fourier 矩恒等式；
+- Ford 公式 (5.3) 中两次 Holder 不等式、`n(c)` 总质量和平方质量恒等式；
+- Ford 公式 (5.6) 的近整数计数
+  `4 K delta + 2 K gamma + 4 delta / gamma + 2` 及其 `W_j` 缩放形式。
+
+这些是无 `sorry` 的 theorem，不是接口占位。但它们尚未证明 Ford Lemma 5.1：
+公式 (5.4) 的 tent-kernel Fourier 局部化、平滑数支持估计和最终参数优化仍然缺失。
+因此 `FordShortSumPrefixBound`、VK zeta 增长和
+`vinogradov_korobov_zero_free_region` 都不能宣称已经闭合。
 
 ---
 
