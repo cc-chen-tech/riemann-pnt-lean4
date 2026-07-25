@@ -47,6 +47,11 @@ package of `ZeroForcedOscillationExplicitFormula.lean`:
 * eventual nonemptiness of every maximal package from Hardy's theorem;
 * a moving-height lower bound in which the raw finite-height approximation
   norm is replaced by the proved pointwise-in-`x`, all-heights rate.
+* an explicit exponential-height rate transfer: if the pointwise constants
+  grow at most like `K0 * exp (κ y)`, then choosing height `exp (lam * y)`
+  makes the normalized approximation budget tend to zero whenever
+  `κ < lam + β`, and hence eventually smaller than every prescribed positive
+  gap.
 
 What is NOT proved here: the pointwise all-heights constant is not controlled
 uniformly over the moving logarithmic intervals, the complementary gap and
@@ -843,6 +848,152 @@ theorem movingHeightApproximationBudget_nonneg (K T : ℝ)
     0 ≤ movingHeightApproximationBudget K T := by
   unfold movingHeightApproximationBudget
   exact div_nonneg (mul_nonneg hK (sq_nonneg _)) (by linarith)
+
+/-- Explicit exponential-height rate transfer for the all-heights
+approximation budget. If the pointwise explicit-formula constants satisfy
+`0 ≤ K(y) ≤ K0 * exp (κ y)` eventually, then the choice
+`τ(y) = exp (lam * y)` makes
+
+`exp (-β y) * movingHeightApproximationBudget (K y) (τ y)`
+
+tend to zero as soon as `κ < lam + β`. The proof retains the dependence of
+`K` on `y`; it does not assert a uniform explicit-formula constant. -/
+theorem tendsto_normalized_movingHeightApproximationBudget_exp_atTop
+    (K : ℝ → ℝ) (K0 κ lam β : ℝ)
+    (hK0 : 0 ≤ K0) (hlam : 0 < lam) (hrate : κ < lam + β)
+    (hK :
+      ∀ᶠ y : ℝ in Filter.atTop,
+        0 ≤ K y ∧ K y ≤ K0 * Real.exp (κ * y)) :
+    Filter.Tendsto
+      (fun y : ℝ =>
+        Real.exp (-β * y) *
+          movingHeightApproximationBudget (K y) (Real.exp (lam * y)))
+      Filter.atTop (nhds 0) := by
+  let a : ℝ := lam + β - κ
+  have ha : 0 < a := by
+    dsimp only [a]
+    linarith
+  have hpow (n : ℕ) :
+      Filter.Tendsto
+        (fun y : ℝ => y ^ n * Real.exp (-a * y))
+        Filter.atTop (nhds 0) := by
+    simpa only [Real.rpow_natCast] using
+      (tendsto_rpow_mul_exp_neg_mul_atTop_nhds_zero (n : ℝ) a ha)
+  have hpoly :
+      Filter.Tendsto
+        (fun y : ℝ =>
+          K0 * (1 + Real.log 9 + lam * y) ^ 2 * Real.exp (-a * y))
+        Filter.atTop (nhds 0) := by
+    have h0 := (hpow 0).const_mul (K0 * (1 + Real.log 9) ^ 2)
+    have h1 := (hpow 1).const_mul (2 * K0 * (1 + Real.log 9) * lam)
+    have h2 := (hpow 2).const_mul (K0 * lam ^ 2)
+    have heq :
+        ∀ᶠ y : ℝ in Filter.atTop,
+          K0 * (1 + Real.log 9) ^ 2 *
+                (y ^ 0 * Real.exp (-a * y)) +
+              2 * K0 * (1 + Real.log 9) * lam *
+                (y ^ 1 * Real.exp (-a * y)) +
+              K0 * lam ^ 2 * (y ^ 2 * Real.exp (-a * y)) =
+            K0 * (1 + Real.log 9 + lam * y) ^ 2 *
+              Real.exp (-a * y) := by
+      filter_upwards with y
+      ring
+    simpa only [mul_zero, add_zero] using ((h0.add h1).add h2).congr' heq
+  refine squeeze_zero' ?_ ?_ hpoly
+  · filter_upwards [hK] with y hKy
+    unfold movingHeightApproximationBudget
+    exact mul_nonneg (Real.exp_nonneg _)
+      (div_nonneg (mul_nonneg hKy.1 (sq_nonneg _)) (Real.exp_nonneg _))
+  · filter_upwards [hK, Filter.eventually_ge_atTop (0 : ℝ)] with y hKy hy
+    have hlamy : 0 ≤ lam * y := mul_nonneg hlam.le hy
+    have hexp_one : 1 ≤ Real.exp (lam * y) := by
+      simpa only [Real.exp_zero] using Real.exp_le_exp.mpr hlamy
+    have hheight :
+        Real.exp (lam * y) + 8 ≤ 9 * Real.exp (lam * y) := by
+      linarith
+    have hlog :
+        Real.log (Real.exp (lam * y) + 8) ≤ Real.log 9 + lam * y := by
+      calc
+        Real.log (Real.exp (lam * y) + 8) ≤
+            Real.log (9 * Real.exp (lam * y)) :=
+          Real.log_le_log (by positivity) hheight
+        _ = Real.log 9 + lam * y := by
+          rw [Real.log_mul (by norm_num : (9 : ℝ) ≠ 0)
+            (Real.exp_ne_zero _), Real.log_exp]
+    have hbase_nonneg :
+        0 ≤ 1 + Real.log (Real.exp (lam * y) + 8) := by
+      have : 0 ≤ Real.log (Real.exp (lam * y) + 8) :=
+        Real.log_nonneg (by linarith)
+      linarith
+    have hupper_nonneg : 0 ≤ 1 + Real.log 9 + lam * y := by
+      have hlog9 : 0 ≤ Real.log 9 := Real.log_nonneg (by norm_num)
+      linarith
+    have hsq :
+        (1 + Real.log (Real.exp (lam * y) + 8)) ^ 2 ≤
+          (1 + Real.log 9 + lam * y) ^ 2 :=
+      (sq_le_sq₀ hbase_nonneg hupper_nonneg).mpr (by linarith)
+    have hnum :
+        K y * (1 + Real.log (Real.exp (lam * y) + 8)) ^ 2 ≤
+          (K0 * Real.exp (κ * y)) * (1 + Real.log 9 + lam * y) ^ 2 :=
+      calc
+        K y * (1 + Real.log (Real.exp (lam * y) + 8)) ^ 2 ≤
+            (K0 * Real.exp (κ * y)) *
+              (1 + Real.log (Real.exp (lam * y) + 8)) ^ 2 :=
+          mul_le_mul_of_nonneg_right hKy.2 (sq_nonneg _)
+        _ ≤ (K0 * Real.exp (κ * y)) * (1 + Real.log 9 + lam * y) ^ 2 :=
+          mul_le_mul_of_nonneg_left hsq
+            (mul_nonneg hK0 (Real.exp_nonneg _))
+    have hexp :
+        Real.exp (-β * y) * Real.exp (κ * y) *
+            Real.exp (-(lam * y)) =
+          Real.exp (-a * y) := by
+      rw [← Real.exp_add, ← Real.exp_add]
+      congr 1
+      dsimp only [a]
+      ring
+    unfold movingHeightApproximationBudget
+    calc
+      Real.exp (-β * y) *
+            (K y * (1 + Real.log (Real.exp (lam * y) + 8)) ^ 2 /
+              Real.exp (lam * y)) ≤
+          Real.exp (-β * y) *
+            ((K0 * Real.exp (κ * y)) *
+              (1 + Real.log 9 + lam * y) ^ 2 /
+                Real.exp (lam * y)) :=
+        mul_le_mul_of_nonneg_left
+          (div_le_div_of_nonneg_right hnum (Real.exp_nonneg _))
+          (Real.exp_nonneg _)
+      _ = K0 * (1 + Real.log 9 + lam * y) ^ 2 * Real.exp (-a * y) := by
+        rw [div_eq_mul_inv, ← Real.exp_neg]
+        calc
+          Real.exp (-β * y) *
+                (K0 * Real.exp (κ * y) *
+                  (1 + Real.log 9 + lam * y) ^ 2 *
+                    Real.exp (-(lam * y))) =
+              K0 * (1 + Real.log 9 + lam * y) ^ 2 *
+                (Real.exp (-β * y) * Real.exp (κ * y) *
+                  Real.exp (-(lam * y))) := by
+            ring
+          _ = K0 * (1 + Real.log 9 + lam * y) ^ 2 *
+                Real.exp (-a * y) := by
+            rw [hexp]
+
+/-- Every prescribed positive normalized gap eventually dominates the
+exponential-height approximation budget under the same rate condition. -/
+theorem eventually_normalized_movingHeightApproximationBudget_exp_lt_gap
+    (K : ℝ → ℝ) (K0 κ lam β gap : ℝ)
+    (hK0 : 0 ≤ K0) (hlam : 0 < lam) (hrate : κ < lam + β)
+    (hgap : 0 < gap)
+    (hK :
+      ∀ᶠ y : ℝ in Filter.atTop,
+        0 ≤ K y ∧ K y ≤ K0 * Real.exp (κ * y)) :
+    ∀ᶠ y : ℝ in Filter.atTop,
+      Real.exp (-β * y) *
+          movingHeightApproximationBudget (K y) (Real.exp (lam * y)) <
+        gap :=
+  (tendsto_normalized_movingHeightApproximationBudget_exp_atTop
+    K K0 κ lam β hK0 hlam hrate hK).eventually
+      (eventually_lt_nhds hgap)
 
 /-- Every ordered off-diagonal budget is nonnegative. -/
 theorem offDiagonalBound_nonneg {ι : Type*} [DecidableEq ι]

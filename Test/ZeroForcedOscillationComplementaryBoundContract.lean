@@ -719,6 +719,32 @@ example (τ : ℝ → ℝ) (y : ℝ) (hy : 0 < y) (hheight : 8 ≤ τ y)
   exists_K_movingHeight_psi0_error_pos_of_visible_point_and_budget
     τ y hy hheight hvisible
 
+example (K : ℝ → ℝ) (K0 κ lam β : ℝ)
+    (hK0 : 0 ≤ K0) (hlam : 0 < lam) (hrate : κ < lam + β)
+    (hK :
+      ∀ᶠ y : ℝ in Filter.atTop,
+        0 ≤ K y ∧ K y ≤ K0 * Real.exp (κ * y)) :
+    Filter.Tendsto
+      (fun y : ℝ =>
+        Real.exp (-β * y) *
+          movingHeightApproximationBudget (K y) (Real.exp (lam * y)))
+      Filter.atTop (nhds 0) :=
+  tendsto_normalized_movingHeightApproximationBudget_exp_atTop
+    K K0 κ lam β hK0 hlam hrate hK
+
+example (K : ℝ → ℝ) (K0 κ lam β gap : ℝ)
+    (hK0 : 0 ≤ K0) (hlam : 0 < lam) (hrate : κ < lam + β)
+    (hgap : 0 < gap)
+    (hK :
+      ∀ᶠ y : ℝ in Filter.atTop,
+        0 ≤ K y ∧ K y ≤ K0 * Real.exp (κ * y)) :
+    ∀ᶠ y : ℝ in Filter.atTop,
+      Real.exp (-β * y) *
+          movingHeightApproximationBudget (K y) (Real.exp (lam * y)) <
+        gap :=
+  eventually_normalized_movingHeightApproximationBudget_exp_lt_gap
+    K K0 κ lam β gap hK0 hlam hrate hgap hK
+
 -- Small sanity checks: the per-term identity at zero multiplicity and at `ρ = 0`.
 
 example (x : ℝ) (hx : 0 < x) (ρ : ℂ) :
