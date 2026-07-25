@@ -1665,8 +1665,7 @@ noncomputable def secondOrderMovingEndpointPerronBudget
 /-- Best available normalized moving-endpoint budget for the actual right-line
 Perron remainder.  The first branch uses separate `W⁻¹` endpoint tails; the
 second subtracts the actual truncated integrals first and therefore has no
-reciprocal logarithmic gap.  This is a local Perron interface only: it has not
-replaced the Perron term in the selected-height total budget. -/
+reciprocal logarithmic gap. -/
 noncomputable def secondOrderMovingEndpointBestNormalizedPerronBudget
     (x h W : ℝ) : ℝ :=
   min
@@ -1676,9 +1675,7 @@ noncomputable def secondOrderMovingEndpointBestNormalizedPerronBudget
       (1 + 1 / Real.log (x + h)) W)
 
 /-- The normalized difference of the actual right-line Perron remainders is
-bounded by the better of the separate-endpoint and cancellation estimates.
-This theorem does not provide an end-to-end removal of the selected-height
-loss; the selected-height total budget still uses its existing Perron term. -/
+bounded by the better of the separate-endpoint and cancellation estimates. -/
 theorem norm_secondOrderMovingPerronRemainder_increment_div_log_le_best
     {x h W : ℝ}
     (hx : 1 < x) (hh : 0 < h) (hW : 0 < W)
@@ -2563,6 +2560,69 @@ theorem secondOrderSelectedHeightIncrementTotalBudget_div_log_eq
           Real.log ((x + h) / x) := by
   unfold secondOrderSelectedHeightIncrementTotalBudget
   rw [add_div, secondOrderSelectedHeightIncrementContourBudget_div_log_eq hx hh]
+
+/-- Selected-height total budget after combining the subtracted-kernel contour
+estimate with the better normalized bound for the actual moving right-line
+Perron remainder.  The factor `log ((x+h)/x)` restores the unnormalized scale
+used by the residue sandwich. -/
+noncomputable def secondOrderSelectedHeightBestPerronTotalBudget
+    (C x h A T : ℝ) : ℝ :=
+  secondOrderSelectedHeightIncrementContourBudget C x h A T +
+    Real.log ((x + h) / x) *
+      secondOrderMovingEndpointBestNormalizedPerronBudget
+        x h (T / (2 * Real.pi))
+
+/-- Normalizing the improved selected-height total budget cancels the contour
+gap and exposes the minimum of the separate-endpoint and cancellation-aware
+Perron bounds. -/
+theorem secondOrderSelectedHeightBestPerronTotalBudget_div_log_eq
+    {C x h A T : ℝ} (hx : 0 < x) (hh : 0 < h) :
+    secondOrderSelectedHeightBestPerronTotalBudget C x h A T /
+        Real.log ((x + h) / x) =
+      (2 *
+            ((2 * C * x ^ (2 : ℝ) *
+                  (1 + Real.log (A + 6)) ^ 2 / T) *
+              ((1 + 1 / Real.log (x + h)) - (-1))) +
+          (2 * secondOrderOddVerticalBound x 0 T) * (2 * T)) /
+          (2 * Real.pi) +
+        secondOrderMovingEndpointBestNormalizedPerronBudget
+          x h (T / (2 * Real.pi)) := by
+  have hratio : 1 < (x + h) / x := by
+    rw [lt_div_iff₀ hx]
+    linarith
+  have hlogpos : 0 < Real.log ((x + h) / x) :=
+    Real.log_pos hratio
+  unfold secondOrderSelectedHeightBestPerronTotalBudget
+  rw [add_div,
+    secondOrderSelectedHeightIncrementContourBudget_div_log_eq hx hh]
+  field_simp [hlogpos.ne']
+
+/-- The minimum Perron branch never enlarges the previous cancellation-aware
+selected-height total budget. -/
+theorem secondOrderSelectedHeightBestPerronTotalBudget_le
+    {C x h A T : ℝ} (hx : 0 < x) (hh : 0 < h) :
+    secondOrderSelectedHeightBestPerronTotalBudget C x h A T ≤
+      secondOrderSelectedHeightIncrementTotalBudget C x h A T := by
+  have hratio : 1 < (x + h) / x := by
+    rw [lt_div_iff₀ hx]
+    linarith
+  have hlogpos : 0 < Real.log ((x + h) / x) :=
+    Real.log_pos hratio
+  unfold secondOrderSelectedHeightBestPerronTotalBudget
+    secondOrderSelectedHeightIncrementTotalBudget
+  refine add_le_add le_rfl ?_
+  calc
+    Real.log ((x + h) / x) *
+          secondOrderMovingEndpointBestNormalizedPerronBudget
+            x h (T / (2 * Real.pi)) ≤
+        Real.log ((x + h) / x) *
+          (secondOrderMovingEndpointPerronBudget
+              x h (T / (2 * Real.pi)) /
+            Real.log ((x + h) / x)) :=
+      mul_le_mul_of_nonneg_left (min_le_left _ _) hlogpos.le
+    _ = secondOrderMovingEndpointPerronBudget
+          x h (T / (2 * Real.pi)) := by
+      field_simp [hlogpos.ne']
 
 /-- The cancellation-aware selected height controls the actual contour
 remainder difference.  This theorem is the analytic consumer of
@@ -4553,13 +4613,13 @@ theorem
                       (Real.log ((x + h) / x) : ℂ) +
                     (h : ℂ) +
                     secondOrderNontrivialZeroIncrement x h T).re +
-                  secondOrderSelectedHeightIncrementTotalBudget C x h A T) /
+                  secondOrderSelectedHeightBestPerronTotalBudget C x h A T) /
                     Real.log ((x + h) / x) ∧
               ((-(Real.log (2 * Real.pi) : ℂ) *
                       (Real.log ((x + h) / x) : ℂ) +
                     (h : ℂ) +
                     secondOrderNontrivialZeroIncrement x h T).re -
-                  secondOrderSelectedHeightIncrementTotalBudget C x h A T) /
+                  secondOrderSelectedHeightBestPerronTotalBudget C x h A T) /
                     Real.log ((x + h) / x) ≤
                 chebyshevPsi (x + h) := by
   rcases
@@ -4581,6 +4641,11 @@ theorem
   have hc : 1 < c := by
     dsimp [c]
     linarith [one_div_pos.mpr hlogpos]
+  have hc2 : c ≤ 2 := by
+    have hinv : 1 / Real.log (x + h) ≤ 1 :=
+      (div_le_one hlogpos).2 hlogOne
+    dsimp [c]
+    linarith
   rcases hremainderAll hx hh hsmall with ⟨hboundary, hremainder⟩
   have hTpos : 0 < T := by linarith [hT.1]
   let W : ℝ := T / (2 * Real.pi)
@@ -4590,6 +4655,18 @@ theorem
   have hscale : 2 * Real.pi * W = T := by
     dsimp [W]
     field_simp [Real.pi_ne_zero]
+  have hratio : 1 < (x + h) / x :=
+    (lt_div_iff₀ (zero_lt_one.trans hx1)).2 (by linarith)
+  have hlogratio : 0 < Real.log ((x + h) / x) :=
+    Real.log_pos hratio
+  have hsmallPerron :
+      (c + 2 * Real.pi * W) * Real.log ((x + h) / x) ≤ 1 := by
+    calc
+      (c + 2 * Real.pi * W) * Real.log ((x + h) / x) =
+          (c + T) * Real.log ((x + h) / x) := by rw [hscale]
+      _ ≤ (T + 2) * Real.log ((x + h) / x) :=
+        mul_le_mul_of_nonneg_right (by linarith) hlogratio.le
+      _ ≤ 1 := hsmall
   have hboundaryW :
       ∀ p ∈
         ([[(-1 : ℝ), c]] ×ℂ
@@ -4600,44 +4677,104 @@ theorem
               p.im < 2 * Real.pi * W := by
     simpa [c, hscale] using hboundary
   rcases
-      exists_chebyshevPsi_bounds_of_secondOrderExplicitFormula_crossing_zero_moving_line
-        (a := -1) (W := W) hx1 hh (by norm_num) hW
-          (by simpa [c] using hboundaryW) with
-    ⟨polesX, residueX, polesY, residueY,
-      hpolesX, hclassX, hcompleteX, hzeroX, hresidueX,
-      hpolesY, hclassY, hcompleteY, hzeroY, hresidueY, hbounds⟩
+      exists_scaledRightIntegral_eq_residue_sum_sub_secondOrderContourRemainder_crossing_zero
+        (x := x) (a := -1) (c := c) (W := W)
+        (zero_lt_one.trans hx1) (by norm_num) (zero_lt_one.trans hc) hW
+          hboundaryW with
+    ⟨polesX, residueX, hpolesX, hclassX, hcompleteX, hzeroX,
+      hresidueX, hshiftX⟩
+  rcases
+      exists_scaledRightIntegral_eq_residue_sum_sub_secondOrderContourRemainder_crossing_zero
+        (x := x + h) (a := -1) (c := c) (W := W)
+        hypos (by norm_num) (zero_lt_one.trans hc) hW hboundaryW with
+    ⟨polesY, residueY, hpolesY, hclassY, hcompleteY, hzeroY,
+      hresidueY, hshiftY⟩
   let RX : ℂ := secondOrderContourRemainder x (-1) c W
   let RY : ℂ := secondOrderContourRemainder (x + h) (-1) c W
   let SX : ℂ := ∑ p ∈ polesX, residueX p
   let SY : ℂ := ∑ p ∈ polesY, residueY p
+  let PX : ℂ := secondOrderRightPerronRemainder x c W
+  let PY : ℂ := secondOrderRightPerronRemainder (x + h) c W
   let BC : ℝ :=
     secondOrderSelectedHeightIncrementContourBudget C x h A T
-  let BP : ℝ := secondOrderMovingEndpointPerronBudget x h W
+  let BP : ℝ :=
+    secondOrderMovingEndpointBestNormalizedPerronBudget x h W
   have hremainder' : ‖RY - RX‖ ≤ BC := by
     simpa [RX, RY, BC, W, c, hscale] using hremainder
   have hremainderRe : |(RY - RX).re| ≤ BC :=
     (abs_re_le_norm (RY - RX)).trans hremainder'
   rcases abs_le.mp hremainderRe with
     ⟨hremainderLower, hremainderUpper⟩
+  have hperronX :
+      PX = (SX - RX) - (smoothedChebyshevPsi x : ℂ) := by
+    dsimp [PX, SX, RX, secondOrderRightPerronRemainder]
+    rw [hshiftX]
+  have hperronY :
+      PY = (SY - RY) - (smoothedChebyshevPsi (x + h) : ℂ) := by
+    dsimp [PY, SY, RY, secondOrderRightPerronRemainder]
+    rw [hshiftY]
+  have hperronBest :
+      ‖PY - PX‖ / Real.log ((x + h) / x) ≤ BP := by
+    simpa [PX, PY, BP, c] using
+      norm_secondOrderMovingPerronRemainder_increment_div_log_le_best
+        hx1 hh hW (by simpa [c] using hsmallPerron)
+  have hperronNorm :
+      ‖PY - PX‖ ≤ Real.log ((x + h) / x) * BP := by
+    have hraw := (div_le_iff₀ hlogratio).1 hperronBest
+    simpa [mul_comm] using hraw
+  have hperronRe : |(PY - PX).re| ≤
+      Real.log ((x + h) / x) * BP :=
+    (abs_re_le_norm (PY - PX)).trans hperronNorm
+  rcases abs_le.mp hperronRe with
+    ⟨hperronLower, hperronUpper⟩
+  have hperronDecomp :
+      ((SY - RY) - (SX - RX)).re =
+        smoothedChebyshevPsi (x + h) - smoothedChebyshevPsi x +
+          (PY - PX).re := by
+    rw [hperronY, hperronX]
+    simp
+    ring
+  have hRiesz :=
+    chebyshevPsi_le_rieszDifference_div_log_le
+      (zero_lt_one.trans hx1) (by linarith : x < x + h)
   have hbounds' :
       chebyshevPsi x ≤
-          (((SY - RY) - (SX - RX)).re + BP) /
+          (((SY - RY) - (SX - RX)).re +
+              Real.log ((x + h) / x) * BP) /
             Real.log ((x + h) / x) ∧
-        (((SY - RY) - (SX - RX)).re - BP) /
+        (((SY - RY) - (SX - RX)).re -
+              Real.log ((x + h) / x) * BP) /
             Real.log ((x + h) / x) ≤ chebyshevPsi (x + h) := by
-    simpa [SX, SY, RX, RY, BP, c, W] using hbounds
+    constructor
+    · calc
+        chebyshevPsi x ≤
+            (smoothedChebyshevPsi (x + h) - smoothedChebyshevPsi x) /
+              Real.log ((x + h) / x) := hRiesz.1
+        _ ≤ (((SY - RY) - (SX - RX)).re +
+                Real.log ((x + h) / x) * BP) /
+              Real.log ((x + h) / x) := by
+          apply (div_le_div_iff_of_pos_right hlogratio).2
+          rw [hperronDecomp]
+          linarith
+    · calc
+        (((SY - RY) - (SX - RX)).re -
+                Real.log ((x + h) / x) * BP) /
+              Real.log ((x + h) / x) ≤
+            (smoothedChebyshevPsi (x + h) - smoothedChebyshevPsi x) /
+              Real.log ((x + h) / x) := by
+          apply (div_le_div_iff_of_pos_right hlogratio).2
+          rw [hperronDecomp]
+          linarith
+        _ ≤ chebyshevPsi (x + h) := hRiesz.2
   have hdecomp :
       ((SY - RY) - (SX - RX)).re =
         (SY - SX).re - (RY - RX).re := by
     simp
     ring
   have htotal :
-      secondOrderSelectedHeightIncrementTotalBudget C x h A T = BC + BP := by
+      secondOrderSelectedHeightBestPerronTotalBudget C x h A T =
+        BC + Real.log ((x + h) / x) * BP := by
     rfl
-  have hratio : 1 < (x + h) / x :=
-    (lt_div_iff₀ (zero_lt_one.trans hx1)).2 (by linarith)
-  have hlogratio : 0 < Real.log ((x + h) / x) :=
-    Real.log_pos hratio
   have hpolesEq : polesX = polesY := by
     ext p
     constructor
@@ -4724,27 +4861,29 @@ theorem
   have hresidueBounds :
       chebyshevPsi x ≤
           ((SY - SX).re +
-              secondOrderSelectedHeightIncrementTotalBudget C x h A T) /
+              secondOrderSelectedHeightBestPerronTotalBudget C x h A T) /
             Real.log ((x + h) / x) ∧
         ((SY - SX).re -
-              secondOrderSelectedHeightIncrementTotalBudget C x h A T) /
+              secondOrderSelectedHeightBestPerronTotalBudget C x h A T) /
             Real.log ((x + h) / x) ≤ chebyshevPsi (x + h) := by
     constructor
     · calc
         chebyshevPsi x ≤
-            (((SY - RY) - (SX - RX)).re + BP) /
+            (((SY - RY) - (SX - RX)).re +
+                Real.log ((x + h) / x) * BP) /
               Real.log ((x + h) / x) := hbounds'.1
         _ ≤ ((SY - SX).re +
-              secondOrderSelectedHeightIncrementTotalBudget C x h A T) /
+              secondOrderSelectedHeightBestPerronTotalBudget C x h A T) /
             Real.log ((x + h) / x) := by
           apply (div_le_div_iff_of_pos_right hlogratio).2
           rw [hdecomp, htotal]
           linarith
     · calc
         ((SY - SX).re -
-              secondOrderSelectedHeightIncrementTotalBudget C x h A T) /
+              secondOrderSelectedHeightBestPerronTotalBudget C x h A T) /
             Real.log ((x + h) / x) ≤
-            (((SY - RY) - (SX - RX)).re - BP) /
+            (((SY - RY) - (SX - RX)).re -
+                Real.log ((x + h) / x) * BP) /
               Real.log ((x + h) / x) := by
           apply (div_le_div_iff_of_pos_right hlogratio).2
           rw [hdecomp, htotal]
@@ -4800,11 +4939,11 @@ theorem
       chebyshevPsi x ≤
           ((secondOrderOriginDerivativeIncrement x h + (h : ℂ) +
                 secondOrderNontrivialZeroIncrement x h T).re +
-              secondOrderSelectedHeightIncrementTotalBudget C x h A T) /
+              secondOrderSelectedHeightBestPerronTotalBudget C x h A T) /
             Real.log ((x + h) / x) ∧
         ((secondOrderOriginDerivativeIncrement x h + (h : ℂ) +
                 secondOrderNontrivialZeroIncrement x h T).re -
-              secondOrderSelectedHeightIncrementTotalBudget C x h A T) /
+              secondOrderSelectedHeightBestPerronTotalBudget C x h A T) /
             Real.log ((x + h) / x) ≤ chebyshevPsi (x + h) := by
     simpa [hstandard] using hresidueBounds
   rw [secondOrderOriginDerivativeIncrement_eq
@@ -4823,12 +4962,12 @@ theorem
             (A + 3) * Real.log ((x + h) / x) ≤ 1 →
             chebyshevPsi x ≤
                 (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) +
-                    secondOrderSelectedHeightIncrementTotalBudget C x h A T +
+                    secondOrderSelectedHeightBestPerronTotalBudget C x h A T +
                     2 * D * x * Real.log ((x + h) / x) *
                       (1 + Real.log (T + 6)) ^ 2) /
                   Real.log ((x + h) / x) ∧
               (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) -
-                    secondOrderSelectedHeightIncrementTotalBudget C x h A T -
+                    secondOrderSelectedHeightBestPerronTotalBudget C x h A T -
                     2 * D * x * Real.log ((x + h) / x) *
                       (1 + Real.log (T + 6)) ^ 2) /
                   Real.log ((x + h) / x) ≤
@@ -4889,12 +5028,12 @@ theorem
           ((-(Real.log (2 * Real.pi) : ℂ) *
                   (Real.log ((x + h) / x) : ℂ) +
                 (h : ℂ) + Z).re +
-              secondOrderSelectedHeightIncrementTotalBudget C x h A T) /
+              secondOrderSelectedHeightBestPerronTotalBudget C x h A T) /
             Real.log ((x + h) / x) ∧
       ((-(Real.log (2 * Real.pi) : ℂ) *
                   (Real.log ((x + h) / x) : ℂ) +
                 (h : ℂ) + Z).re -
-              secondOrderSelectedHeightIncrementTotalBudget C x h A T) /
+              secondOrderSelectedHeightBestPerronTotalBudget C x h A T) /
             Real.log ((x + h) / x) ≤ chebyshevPsi (x + h) at hbounds
   rw [hreal] at hbounds
   refine ⟨?_, ?_⟩
@@ -4919,11 +5058,11 @@ theorem
             (A + 3) * Real.log ((x + h) / x) ≤ 1 →
             chebyshevPsi x - x ≤
                 h - Real.log (2 * Real.pi) +
-                  secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+                  secondOrderSelectedHeightBestPerronTotalBudget C x h A T /
                     Real.log ((x + h) / x) +
                   2 * D * x * (1 + Real.log (T + 6)) ^ 2 ∧
               x - Real.log (2 * Real.pi) -
-                    secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+                    secondOrderSelectedHeightBestPerronTotalBudget C x h A T /
                       Real.log ((x + h) / x) -
                     2 * D * x * (1 + Real.log (T + 6)) ^ 2 ≤
                 chebyshevPsi (x + h) := by
@@ -4947,7 +5086,7 @@ theorem
   · calc
       chebyshevPsi x - x ≤
           (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) +
-                secondOrderSelectedHeightIncrementTotalBudget C x h A T +
+                secondOrderSelectedHeightBestPerronTotalBudget C x h A T +
                 2 * D * x * Real.log ((x + h) / x) *
                   (1 + Real.log (T + 6)) ^ 2) /
               Real.log ((x + h) / x) - x :=
@@ -4955,40 +5094,41 @@ theorem
       _ =
           h / Real.log ((x + h) / x) -
               Real.log (2 * Real.pi) +
-              secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+              secondOrderSelectedHeightBestPerronTotalBudget C x h A T /
                 Real.log ((x + h) / x) +
               2 * D * x * (1 + Real.log (T + 6)) ^ 2 - x := by
         field_simp [hlogpos.ne']
       _ ≤
           h - Real.log (2 * Real.pi) +
-              secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+              secondOrderSelectedHeightBestPerronTotalBudget C x h A T /
                 Real.log ((x + h) / x) +
               2 * D * x * (1 + Real.log (T + 6)) ^ 2 := by
         linarith [hquotient.2]
   · calc
       x - Real.log (2 * Real.pi) -
-              secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+              secondOrderSelectedHeightBestPerronTotalBudget C x h A T /
                 Real.log ((x + h) / x) -
               2 * D * x * (1 + Real.log (T + 6)) ^ 2 ≤
           h / Real.log ((x + h) / x) -
               Real.log (2 * Real.pi) -
-              secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+              secondOrderSelectedHeightBestPerronTotalBudget C x h A T /
                 Real.log ((x + h) / x) -
               2 * D * x * (1 + Real.log (T + 6)) ^ 2 := by
         linarith [hquotient.1]
       _ =
           (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) -
-                secondOrderSelectedHeightIncrementTotalBudget C x h A T -
+                secondOrderSelectedHeightBestPerronTotalBudget C x h A T -
                 2 * D * x * Real.log ((x + h) / x) *
                   (1 + Real.log (T + 6)) ^ 2) /
               Real.log ((x + h) / x) := by
         field_simp [hlogpos.ne']
       _ ≤ chebyshevPsi (x + h) := hbounds.2
 
-/-- The cancellation-aware endpoint error with the normalized contour budget
-fully displayed.  The horizontal and left-vertical contour contributions have
-both spent their logarithmic endpoint gap; only the independent moving-line
-Perron tail still carries the reciprocal gap. -/
+/-- The cancellation-aware endpoint error with every selected-height contour
+term displayed.  Under the stated `A+3` small-increment hypothesis, the actual
+moving-line Perron remainder contributes the minimum of its separate-endpoint
+and cancellation-aware normalized bounds.  The hypothesis remains necessary;
+this does not eliminate all small-`h` loss unconditionally. -/
 theorem
     exists_uniform_C_D_forall_goodHeight_chebyshevPsi_endpoint_error_log_sq_increment_explicit_contour :
     ∃ C D : ℝ, 0 ≤ C ∧ 0 ≤ D ∧ ∀ A : ℝ, 4 ≤ A →
@@ -5004,9 +5144,8 @@ theorem
                           ((1 + 1 / Real.log (x + h)) - (-1))) +
                       (2 * secondOrderOddVerticalBound x 0 T) * (2 * T)) /
                       (2 * Real.pi) +
-                    secondOrderMovingEndpointPerronBudget
-                        x h (T / (2 * Real.pi)) /
-                      Real.log ((x + h) / x)) +
+                    secondOrderMovingEndpointBestNormalizedPerronBudget
+                      x h (T / (2 * Real.pi))) +
                   2 * D * x * (1 + Real.log (T + 6)) ^ 2 ∧
               x - Real.log (2 * Real.pi) -
                     ((2 *
@@ -5015,9 +5154,8 @@ theorem
                             ((1 + 1 / Real.log (x + h)) - (-1))) +
                         (2 * secondOrderOddVerticalBound x 0 T) * (2 * T)) /
                         (2 * Real.pi) +
-                      secondOrderMovingEndpointPerronBudget
-                          x h (T / (2 * Real.pi)) /
-                        Real.log ((x + h) / x)) -
+                      secondOrderMovingEndpointBestNormalizedPerronBudget
+                        x h (T / (2 * Real.pi))) -
                     2 * D * x * (1 + Real.log (T + 6)) ^ 2 ≤
                 chebyshevPsi (x + h) := by
   rcases
@@ -5030,7 +5168,7 @@ theorem
   intro x h hx hh hsmall
   have hxpos : 0 < x := (Real.exp_pos 1).trans_le hx
   have hbounds := hbound hx hh hsmall
-  rw [secondOrderSelectedHeightIncrementTotalBudget_div_log_eq hxpos hh] at hbounds
+  rw [secondOrderSelectedHeightBestPerronTotalBudget_div_log_eq hxpos hh] at hbounds
   exact hbounds
 
 /-- Under RH, the cancellation-aware scalar sandwich retains the
@@ -5045,12 +5183,12 @@ theorem
             (A + 3) * Real.log ((x + h) / x) ≤ 1 →
             chebyshevPsi x ≤
                 (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) +
-                    secondOrderSelectedHeightIncrementTotalBudget C x h A T +
+                    secondOrderSelectedHeightBestPerronTotalBudget C x h A T +
                     2 * D * Real.sqrt x * Real.log ((x + h) / x) *
                       (1 + Real.log (T + 6)) ^ 2) /
                   Real.log ((x + h) / x) ∧
               (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) -
-                    secondOrderSelectedHeightIncrementTotalBudget C x h A T -
+                    secondOrderSelectedHeightBestPerronTotalBudget C x h A T -
                     2 * D * Real.sqrt x * Real.log ((x + h) / x) *
                       (1 + Real.log (T + 6)) ^ 2) /
                   Real.log ((x + h) / x) ≤
@@ -5112,12 +5250,12 @@ theorem
           ((-(Real.log (2 * Real.pi) : ℂ) *
                   (Real.log ((x + h) / x) : ℂ) +
                 (h : ℂ) + Z).re +
-              secondOrderSelectedHeightIncrementTotalBudget C x h A T) /
+              secondOrderSelectedHeightBestPerronTotalBudget C x h A T) /
             Real.log ((x + h) / x) ∧
       ((-(Real.log (2 * Real.pi) : ℂ) *
                   (Real.log ((x + h) / x) : ℂ) +
                 (h : ℂ) + Z).re -
-              secondOrderSelectedHeightIncrementTotalBudget C x h A T) /
+              secondOrderSelectedHeightBestPerronTotalBudget C x h A T) /
             Real.log ((x + h) / x) ≤ chebyshevPsi (x + h) at hbounds
   rw [hreal] at hbounds
   refine ⟨?_, ?_⟩
@@ -5141,11 +5279,11 @@ theorem
             (A + 3) * Real.log ((x + h) / x) ≤ 1 →
             chebyshevPsi x - x ≤
                 h - Real.log (2 * Real.pi) +
-                  secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+                  secondOrderSelectedHeightBestPerronTotalBudget C x h A T /
                     Real.log ((x + h) / x) +
                   2 * D * Real.sqrt x * (1 + Real.log (T + 6)) ^ 2 ∧
               x - Real.log (2 * Real.pi) -
-                    secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+                    secondOrderSelectedHeightBestPerronTotalBudget C x h A T /
                       Real.log ((x + h) / x) -
                     2 * D * Real.sqrt x * (1 + Real.log (T + 6)) ^ 2 ≤
                 chebyshevPsi (x + h) := by
@@ -5169,7 +5307,7 @@ theorem
   · calc
       chebyshevPsi x - x ≤
           (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) +
-                secondOrderSelectedHeightIncrementTotalBudget C x h A T +
+                secondOrderSelectedHeightBestPerronTotalBudget C x h A T +
                 2 * D * Real.sqrt x * Real.log ((x + h) / x) *
                   (1 + Real.log (T + 6)) ^ 2) /
               Real.log ((x + h) / x) - x :=
@@ -5177,30 +5315,30 @@ theorem
       _ =
           h / Real.log ((x + h) / x) -
               Real.log (2 * Real.pi) +
-              secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+              secondOrderSelectedHeightBestPerronTotalBudget C x h A T /
                 Real.log ((x + h) / x) +
               2 * D * Real.sqrt x * (1 + Real.log (T + 6)) ^ 2 - x := by
         field_simp [hlogpos.ne']
       _ ≤
           h - Real.log (2 * Real.pi) +
-              secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+              secondOrderSelectedHeightBestPerronTotalBudget C x h A T /
                 Real.log ((x + h) / x) +
               2 * D * Real.sqrt x * (1 + Real.log (T + 6)) ^ 2 := by
         linarith [hquotient.2]
   · calc
       x - Real.log (2 * Real.pi) -
-              secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+              secondOrderSelectedHeightBestPerronTotalBudget C x h A T /
                 Real.log ((x + h) / x) -
               2 * D * Real.sqrt x * (1 + Real.log (T + 6)) ^ 2 ≤
           h / Real.log ((x + h) / x) -
               Real.log (2 * Real.pi) -
-              secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+              secondOrderSelectedHeightBestPerronTotalBudget C x h A T /
                 Real.log ((x + h) / x) -
               2 * D * Real.sqrt x * (1 + Real.log (T + 6)) ^ 2 := by
         linarith [hquotient.1]
       _ =
           (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) -
-                secondOrderSelectedHeightIncrementTotalBudget C x h A T -
+                secondOrderSelectedHeightBestPerronTotalBudget C x h A T -
                 2 * D * Real.sqrt x * Real.log ((x + h) / x) *
                   (1 + Real.log (T + 6)) ^ 2) /
               Real.log ((x + h) / x) := by
@@ -5216,7 +5354,7 @@ theorem secondOrderSelectedHeightIncrement_endpoint_bounds_strictly_improve
     (hA : 4 ≤ A) (hT : T ∈ Set.Icc A (A + 1))
     (hsmall : (T + 2) * Real.log ((x + h) / x) ≤ 1) :
     h - Real.log (2 * Real.pi) +
-          secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+          secondOrderSelectedHeightBestPerronTotalBudget C x h A T /
             Real.log ((x + h) / x) +
           2 * D * x * (1 + Real.log (T + 6)) ^ 2 <
         h - Real.log (2 * Real.pi) +
@@ -5228,7 +5366,7 @@ theorem secondOrderSelectedHeightIncrement_endpoint_bounds_strictly_improve
             Real.log ((x + h) / x) -
           2 * D * x * (1 + Real.log (T + 6)) ^ 2 <
         x - Real.log (2 * Real.pi) -
-          secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+          secondOrderSelectedHeightBestPerronTotalBudget C x h A T /
             Real.log ((x + h) / x) -
           2 * D * x * (1 + Real.log (T + 6)) ^ 2 := by
   have hxpos : 0 < x := (Real.exp_pos 1).trans_le hx
@@ -5237,9 +5375,12 @@ theorem secondOrderSelectedHeightIncrement_endpoint_bounds_strictly_improve
     linarith
   have hlogpos : 0 < Real.log ((x + h) / x) :=
     Real.log_pos hratio
-  have hbudget :=
-    secondOrderSelectedHeightIncrementTotalBudget_lt
-      hC hx hh hA hT hsmall
+  have hbudget :
+      secondOrderSelectedHeightBestPerronTotalBudget C x h A T <
+        secondOrderSelectedHeightTotalBudget C x h A T :=
+    (secondOrderSelectedHeightBestPerronTotalBudget_le hxpos hh).trans_lt
+      (secondOrderSelectedHeightIncrementTotalBudget_lt
+        hC hx hh hA hT hsmall)
   constructor
   · have hdiv := div_lt_div_of_pos_right hbudget hlogpos
     linarith

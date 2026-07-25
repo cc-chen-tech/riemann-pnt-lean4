@@ -250,6 +250,8 @@ SMOOTHED_ERROR_EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderIncrementLeftVerticalScalar_le_separateEndpoints",
     "PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightIncrementContourBudget_div_log_eq",
     "PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightIncrementTotalBudget_div_log_eq",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightBestPerronTotalBudget_div_log_eq",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightBestPerronTotalBudget_le",
     "PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightIncrementContourBudget_lt",
     "PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightIncrementTotalBudget_lt",
     "PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderMovingEndpointPerronBudget_div_two_pi_eq",

@@ -781,6 +781,32 @@ example {C x h A T : ℝ} (hx : 0 < x) (hh : 0 < h) :
   PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightIncrementTotalBudget_div_log_eq
     hx hh
 
+example {C x h A T : ℝ} (hx : 0 < x) (hh : 0 < h) :
+    PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightBestPerronTotalBudget
+          C x h A T /
+        Real.log ((x + h) / x) =
+      (2 *
+            ((2 * C * x ^ (2 : ℝ) *
+                  (1 + Real.log (A + 6)) ^ 2 / T) *
+              ((1 + 1 / Real.log (x + h)) - (-1))) +
+          (2 *
+              PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderOddVerticalBound
+                x 0 T) *
+            (2 * T)) /
+          (2 * Real.pi) +
+        PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderMovingEndpointBestNormalizedPerronBudget
+          x h (T / (2 * Real.pi)) :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightBestPerronTotalBudget_div_log_eq
+    hx hh
+
+example {C x h A T : ℝ} (hx : 0 < x) (hh : 0 < h) :
+    PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightBestPerronTotalBudget
+        C x h A T ≤
+      PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightIncrementTotalBudget
+        C x h A T :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightBestPerronTotalBudget_le
+    hx hh
+
 example {x h T : ℝ} (hx : 0 < x) (hh : 0 ≤ h) (hT : 0 < T)
     (hsmall : (T + 2) * Real.log ((x + h) / x) ≤ 1) :
     2 *
@@ -1375,13 +1401,13 @@ example :
                       (Real.log ((x + h) / x) : ℂ) +
                     (h : ℂ) +
                     secondOrderNontrivialZeroIncrement x h T).re +
-                  secondOrderSelectedHeightIncrementTotalBudget C x h A T) /
+                  secondOrderSelectedHeightBestPerronTotalBudget C x h A T) /
                     Real.log ((x + h) / x) ∧
               ((-(Real.log (2 * Real.pi) : ℂ) *
                       (Real.log ((x + h) / x) : ℂ) +
                     (h : ℂ) +
                     secondOrderNontrivialZeroIncrement x h T).re -
-                  secondOrderSelectedHeightIncrementTotalBudget C x h A T) /
+                  secondOrderSelectedHeightBestPerronTotalBudget C x h A T) /
                     Real.log ((x + h) / x) ≤
                 chebyshevPsi (x + h) :=
   exists_uniform_C_forall_goodHeight_chebyshevPsi_bounds_explicit_origin_zero_sum_increment
@@ -1394,12 +1420,12 @@ example :
             (A + 3) * Real.log ((x + h) / x) ≤ 1 →
             chebyshevPsi x ≤
                 (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) +
-                    secondOrderSelectedHeightIncrementTotalBudget C x h A T +
+                    secondOrderSelectedHeightBestPerronTotalBudget C x h A T +
                     2 * D * x * Real.log ((x + h) / x) *
                       (1 + Real.log (T + 6)) ^ 2) /
                   Real.log ((x + h) / x) ∧
               (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) -
-                    secondOrderSelectedHeightIncrementTotalBudget C x h A T -
+                    secondOrderSelectedHeightBestPerronTotalBudget C x h A T -
                     2 * D * x * Real.log ((x + h) / x) *
                       (1 + Real.log (T + 6)) ^ 2) /
                   Real.log ((x + h) / x) ≤
@@ -1414,12 +1440,12 @@ example (hRH : RiemannHypothesis.Statement) :
             (A + 3) * Real.log ((x + h) / x) ≤ 1 →
             chebyshevPsi x ≤
                 (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) +
-                    secondOrderSelectedHeightIncrementTotalBudget C x h A T +
+                    secondOrderSelectedHeightBestPerronTotalBudget C x h A T +
                     2 * D * Real.sqrt x * Real.log ((x + h) / x) *
                       (1 + Real.log (T + 6)) ^ 2) /
                   Real.log ((x + h) / x) ∧
               (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) -
-                    secondOrderSelectedHeightIncrementTotalBudget C x h A T -
+                    secondOrderSelectedHeightBestPerronTotalBudget C x h A T -
                     2 * D * Real.sqrt x * Real.log ((x + h) / x) *
                       (1 + Real.log (T + 6)) ^ 2) /
                   Real.log ((x + h) / x) ≤
@@ -1435,11 +1461,11 @@ example :
             (A + 3) * Real.log ((x + h) / x) ≤ 1 →
             chebyshevPsi x - x ≤
                 h - Real.log (2 * Real.pi) +
-                  secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+                  secondOrderSelectedHeightBestPerronTotalBudget C x h A T /
                     Real.log ((x + h) / x) +
                   2 * D * x * (1 + Real.log (T + 6)) ^ 2 ∧
               x - Real.log (2 * Real.pi) -
-                    secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+                    secondOrderSelectedHeightBestPerronTotalBudget C x h A T /
                       Real.log ((x + h) / x) -
                     2 * D * x * (1 + Real.log (T + 6)) ^ 2 ≤
                 chebyshevPsi (x + h) :=
@@ -1459,9 +1485,8 @@ example :
                           ((1 + 1 / Real.log (x + h)) - (-1))) +
                       (2 * secondOrderOddVerticalBound x 0 T) * (2 * T)) /
                       (2 * Real.pi) +
-                    secondOrderMovingEndpointPerronBudget
-                        x h (T / (2 * Real.pi)) /
-                      Real.log ((x + h) / x)) +
+                    secondOrderMovingEndpointBestNormalizedPerronBudget
+                      x h (T / (2 * Real.pi))) +
                   2 * D * x * (1 + Real.log (T + 6)) ^ 2 ∧
               x - Real.log (2 * Real.pi) -
                     ((2 *
@@ -1470,9 +1495,8 @@ example :
                             ((1 + 1 / Real.log (x + h)) - (-1))) +
                         (2 * secondOrderOddVerticalBound x 0 T) * (2 * T)) /
                         (2 * Real.pi) +
-                      secondOrderMovingEndpointPerronBudget
-                          x h (T / (2 * Real.pi)) /
-                        Real.log ((x + h) / x)) -
+                      secondOrderMovingEndpointBestNormalizedPerronBudget
+                        x h (T / (2 * Real.pi))) -
                     2 * D * x * (1 + Real.log (T + 6)) ^ 2 ≤
                 chebyshevPsi (x + h) :=
   exists_uniform_C_D_forall_goodHeight_chebyshevPsi_endpoint_error_log_sq_increment_explicit_contour
@@ -1485,11 +1509,11 @@ example (hRH : RiemannHypothesis.Statement) :
             (A + 3) * Real.log ((x + h) / x) ≤ 1 →
             chebyshevPsi x - x ≤
                 h - Real.log (2 * Real.pi) +
-                  secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+                  secondOrderSelectedHeightBestPerronTotalBudget C x h A T /
                     Real.log ((x + h) / x) +
                   2 * D * Real.sqrt x * (1 + Real.log (T + 6)) ^ 2 ∧
               x - Real.log (2 * Real.pi) -
-                    secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+                    secondOrderSelectedHeightBestPerronTotalBudget C x h A T /
                       Real.log ((x + h) / x) -
                     2 * D * Real.sqrt x * (1 + Real.log (T + 6)) ^ 2 ≤
                 chebyshevPsi (x + h) :=
@@ -1501,7 +1525,7 @@ example {C D x h A T : ℝ}
     (hA : 4 ≤ A) (hT : T ∈ Set.Icc A (A + 1))
     (hsmall : (T + 2) * Real.log ((x + h) / x) ≤ 1) :
     h - Real.log (2 * Real.pi) +
-          secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+          secondOrderSelectedHeightBestPerronTotalBudget C x h A T /
             Real.log ((x + h) / x) +
           2 * D * x * (1 + Real.log (T + 6)) ^ 2 <
         h - Real.log (2 * Real.pi) +
@@ -1513,7 +1537,7 @@ example {C D x h A T : ℝ}
             Real.log ((x + h) / x) -
           2 * D * x * (1 + Real.log (T + 6)) ^ 2 <
         x - Real.log (2 * Real.pi) -
-          secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+          secondOrderSelectedHeightBestPerronTotalBudget C x h A T /
             Real.log ((x + h) / x) -
           2 * D * x * (1 + Real.log (T + 6)) ^ 2 :=
   secondOrderSelectedHeightIncrement_endpoint_bounds_strictly_improve
