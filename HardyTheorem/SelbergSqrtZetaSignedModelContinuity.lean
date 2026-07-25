@@ -8,8 +8,8 @@ namespace HardyTheorem
 # Continuity of the signed square-root-zeta model
 
 The finite signed phase polynomial is continuous at every positive height.
-The positivity restriction is essential here: `thetaModel` contains a real
-logarithm, so this module deliberately makes no continuity assertion at zero.
+This module records only the positive-height form needed on Selberg's dyadic
+intervals; the factor `x * log x` also has a continuous extension through zero.
 -/
 
 private theorem continuousAt_selbergSqrtZetaSignedPhasePolynomial_of_pos
