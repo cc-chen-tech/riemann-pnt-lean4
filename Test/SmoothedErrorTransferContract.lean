@@ -588,6 +588,63 @@ example {x h : ℝ} (hx : 0 < x) (hy : 0 < x + h) :
   PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderOriginDerivativeIncrement_eq
     hx hy
 
+example {x h T : ℝ} :
+    PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderMovingEndpointPerronBudget
+        x h (T / (2 * Real.pi)) =
+      8 * Real.exp 1 * (x + h) * (1 + Real.log (x + h)) ^ 2 /
+        (Real.pi * T) :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderMovingEndpointPerronBudget_div_two_pi_eq
+
+example {C x h A T : ℝ}
+    (hC : 0 ≤ C) (hx : Real.exp 1 ≤ x) (hh : 0 < h)
+    (hA : 4 ≤ A) (hT : T ∈ Set.Icc A (A + 1)) :
+    0 ≤
+      PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightContourBudget
+        C x h A T :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightContourBudget_nonneg
+    hC hx hh hA hT
+
+example {C x h A T : ℝ}
+    (hC : 0 ≤ C) (hx : Real.exp 1 ≤ x) (hh : 0 < h)
+    (hA : 4 ≤ A) (hT : T ∈ Set.Icc A (A + 1)) :
+    PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightContourBudget
+        C x h A T ≤
+      6 * C * (x + h) ^ (2 : ℝ) *
+          (1 + Real.log (A + 6)) ^ 2 / (Real.pi * T ^ 2) +
+        (PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderOddVerticalBound
+              (x + h) 0 T +
+            PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderOddVerticalBound
+              x 0 T) *
+          T / Real.pi :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightContourBudget_le_explicit
+    hC hx hh hA hT
+
+example {C x h A T : ℝ}
+    (hC : 0 ≤ C) (hx : Real.exp 1 ≤ x) (hh : 0 < h)
+    (hA : 4 ≤ A) (hT : T ∈ Set.Icc A (A + 1)) :
+    0 ≤
+      PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightTotalBudget
+        C x h A T :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightTotalBudget_nonneg
+    hC hx hh hA hT
+
+example {C x h A T : ℝ}
+    (hC : 0 ≤ C) (hx : Real.exp 1 ≤ x) (hh : 0 < h)
+    (hA : 4 ≤ A) (hT : T ∈ Set.Icc A (A + 1)) :
+    PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightTotalBudget
+        C x h A T ≤
+      6 * C * (x + h) ^ (2 : ℝ) *
+          (1 + Real.log (A + 6)) ^ 2 / (Real.pi * T ^ 2) +
+        (PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderOddVerticalBound
+              (x + h) 0 T +
+            PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderOddVerticalBound
+              x 0 T) *
+          T / Real.pi +
+        8 * Real.exp 1 * (x + h) * (1 + Real.log (x + h)) ^ 2 /
+          (Real.pi * T) :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightTotalBudget_le_explicit
+    hC hx hh hA hT
+
 example {x h : ℝ} (hx : Real.exp 1 ≤ x) (hh : 0 < h) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
       ∃ T ∈ Set.Icc A (A + 1),

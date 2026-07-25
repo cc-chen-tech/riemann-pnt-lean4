@@ -238,6 +238,11 @@ EXPECTED_DECLARATIONS = {
 }
 
 SMOOTHED_ERROR_EXPECTED_DECLARATIONS = {
+    "PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderMovingEndpointPerronBudget_div_two_pi_eq",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightContourBudget_nonneg",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightContourBudget_le_explicit",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightTotalBudget_nonneg",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightTotalBudget_le_explicit",
     "PrimeNumberTheorem.ExplicitFormulaResidues.exists_uniform_C_forall_goodHeight_chebyshevPsi_bounds_crossing_zero_moving_line_neg_one",
     "PrimeNumberTheorem.ExplicitFormulaResidues.exists_uniform_C_forall_goodHeight_chebyshevPsi_bounds_standard_zero_sum",
     "PrimeNumberTheorem.ExplicitFormulaResidues.exists_uniform_C_forall_goodHeight_chebyshevPsi_bounds_explicit_origin_zero_sum",

@@ -840,6 +840,20 @@ noncomputable def secondOrderMovingEndpointPerronBudget
       (2 * Real.pi ^ 2 * W))) *
     (4 * (1 + Real.log (x + h)) ^ 2)
 
+/-- At the selected-height scale `W = T / (2π)`, the moving-endpoint Perron
+budget has an exact `T⁻¹` form. -/
+theorem secondOrderMovingEndpointPerronBudget_div_two_pi_eq
+    {x h T : ℝ} :
+    secondOrderMovingEndpointPerronBudget x h (T / (2 * Real.pi)) =
+      8 * Real.exp 1 * (x + h) * (1 + Real.log (x + h)) ^ 2 /
+        (Real.pi * T) := by
+  have hden :
+      2 * Real.pi ^ 2 * (T / (2 * Real.pi)) = Real.pi * T := by
+    field_simp [Real.pi_ne_zero]
+  unfold secondOrderMovingEndpointPerronBudget
+  rw [hden]
+  ring
+
 /-- Apply the finite-height second-order explicit formula at both endpoints of
 one smoothing interval and feed the resulting, genuinely constructed Perron
 error bounds into `chebyshevPsi_bounds_of_smoothedApproximation`.
@@ -1578,6 +1592,170 @@ noncomputable def secondOrderSelectedHeightTotalBudget
     (C x h A T : ℝ) : ℝ :=
   secondOrderSelectedHeightContourBudget C x h A T +
     secondOrderMovingEndpointPerronBudget x h (T / (2 * Real.pi))
+
+/-- The selected-height contour budget is nonnegative on the parameter range
+used by the good-height theorem. -/
+theorem secondOrderSelectedHeightContourBudget_nonneg
+    {C x h A T : ℝ}
+    (hC : 0 ≤ C) (hx : Real.exp 1 ≤ x) (hh : 0 < h)
+    (hA : 4 ≤ A) (hT : T ∈ Set.Icc A (A + 1)) :
+    0 ≤ secondOrderSelectedHeightContourBudget C x h A T := by
+  have hTpos : 0 < T := by linarith [hT.1]
+  have hxpos : 0 < x := (Real.exp_pos 1).trans_le hx
+  have hypos : 0 < x + h := by linarith
+  have hlogOne : 1 ≤ Real.log (x + h) :=
+    (Real.le_log_iff_exp_le hypos).2 (hx.trans (by linarith))
+  have hlogpos : 0 < Real.log (x + h) := zero_lt_one.trans_le hlogOne
+  have hseries : 0 ≤ vonMangoldtLSeriesNorm 1 :=
+    tsum_nonneg fun n => norm_nonneg _
+  have hlogT : 0 ≤ Real.log (T + 4) :=
+    Real.log_nonneg (by linarith)
+  have hoddX : 0 ≤ secondOrderOddVerticalBound x 0 T := by
+    unfold secondOrderOddVerticalBound
+    norm_num
+    positivity
+  have hoddY : 0 ≤ secondOrderOddVerticalBound (x + h) 0 T := by
+    unfold secondOrderOddVerticalBound
+    norm_num
+    positivity
+  have hxterm :
+      0 ≤ C * x ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T ^ 2 := by
+    positivity
+  have hyterm :
+      0 ≤ C * (x + h) ^ (2 : ℝ) *
+        (1 + Real.log (A + 6)) ^ 2 / T ^ 2 := by
+    positivity
+  have hfactor :
+      0 ≤ (1 + 1 / Real.log (x + h)) - (-1) := by
+    have hinvpos : 0 < 1 / Real.log (x + h) := one_div_pos.mpr hlogpos
+    linarith
+  unfold secondOrderSelectedHeightContourBudget
+  exact div_nonneg
+    (add_nonneg
+      (mul_nonneg (by norm_num)
+        (mul_nonneg (add_nonneg hyterm hxterm) hfactor))
+      (mul_nonneg (add_nonneg hoddY hoddX)
+        (mul_nonneg (by norm_num) hTpos.le)))
+    (mul_nonneg (by norm_num) Real.pi_pos.le)
+
+/-- The selected-height contour budget splits into an explicit horizontal
+`T⁻²` term and the original `N = 0` left-vertical `T` term.  Keeping the latter
+unsimplified preserves its reciprocal endpoint powers for later optimization.
+-/
+theorem secondOrderSelectedHeightContourBudget_le_explicit
+    {C x h A T : ℝ}
+    (hC : 0 ≤ C) (hx : Real.exp 1 ≤ x) (hh : 0 < h)
+    (hA : 4 ≤ A) (hT : T ∈ Set.Icc A (A + 1)) :
+    secondOrderSelectedHeightContourBudget C x h A T ≤
+      6 * C * (x + h) ^ (2 : ℝ) *
+          (1 + Real.log (A + 6)) ^ 2 / (Real.pi * T ^ 2) +
+        (secondOrderOddVerticalBound (x + h) 0 T +
+            secondOrderOddVerticalBound x 0 T) *
+          T / Real.pi := by
+  let y : ℝ := x + h
+  let K : ℝ :=
+    C * y ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T ^ 2
+  let Hsum : ℝ :=
+    C * y ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T ^ 2 +
+      C * x ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T ^ 2
+  let H : ℝ := Hsum * ((1 + 1 / Real.log y) - (-1))
+  let V : ℝ :=
+    secondOrderOddVerticalBound y 0 T +
+      secondOrderOddVerticalBound x 0 T
+  have hTpos : 0 < T := by linarith [hT.1]
+  have hxpos : 0 < x := (Real.exp_pos 1).trans_le hx
+  have hypos : 0 < y := by dsimp [y]; linarith
+  have hxy : x ≤ y := by dsimp [y]; linarith
+  have hlogOne : 1 ≤ Real.log y :=
+    (Real.le_log_iff_exp_le hypos).2 (hx.trans hxy)
+  have hlogpos : 0 < Real.log y := zero_lt_one.trans_le hlogOne
+  have hfactor_nonneg : 0 ≤ (1 + 1 / Real.log y) - (-1) := by
+    have hinvpos : 0 < 1 / Real.log y := one_div_pos.mpr hlogpos
+    linarith
+  have hfactor_le : (1 + 1 / Real.log y) - (-1) ≤ 3 := by
+    have hinv : 1 / Real.log y ≤ 1 :=
+      (div_le_one hlogpos).2 hlogOne
+    linarith
+  have hxpow :
+      x ^ (2 : ℝ) ≤ y ^ (2 : ℝ) :=
+    Real.rpow_le_rpow hxpos.le hxy (by norm_num)
+  have hxterm :
+      C * x ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T ^ 2 ≤ K := by
+    dsimp [K]
+    gcongr
+  have hK : 0 ≤ K := by
+    dsimp [K]
+    positivity
+  have hsum_nonneg : 0 ≤ Hsum := by
+    dsimp [Hsum]
+    positivity
+  have hsum_le : Hsum ≤ 2 * K := by
+    dsimp [Hsum, K] at *
+    nlinarith
+  have hhorizontal : H ≤ 6 * K := by
+    dsimp [H]
+    calc
+      Hsum * ((1 + 1 / Real.log y) - (-1)) ≤
+          (2 * K) * 3 :=
+        mul_le_mul hsum_le hfactor_le hfactor_nonneg
+          (mul_nonneg (by norm_num) hK)
+      _ = 6 * K := by ring
+  calc
+    secondOrderSelectedHeightContourBudget C x h A T =
+        H / Real.pi + V * T / Real.pi := by
+      unfold secondOrderSelectedHeightContourBudget
+      dsimp [H, Hsum, V, y]
+      ring
+    _ ≤ (6 * K) / Real.pi + V * T / Real.pi :=
+      add_le_add
+        (div_le_div_of_nonneg_right hhorizontal Real.pi_pos.le)
+        le_rfl
+    _ = 6 * C * (x + h) ^ (2 : ℝ) *
+          (1 + Real.log (A + 6)) ^ 2 / (Real.pi * T ^ 2) +
+        (secondOrderOddVerticalBound (x + h) 0 T +
+            secondOrderOddVerticalBound x 0 T) *
+          T / Real.pi := by
+      dsimp [K, V, y]
+      ring
+
+/-- The full selected-height budget is nonnegative on the same admissible
+parameter range. -/
+theorem secondOrderSelectedHeightTotalBudget_nonneg
+    {C x h A T : ℝ}
+    (hC : 0 ≤ C) (hx : Real.exp 1 ≤ x) (hh : 0 < h)
+    (hA : 4 ≤ A) (hT : T ∈ Set.Icc A (A + 1)) :
+    0 ≤ secondOrderSelectedHeightTotalBudget C x h A T := by
+  rw [secondOrderSelectedHeightTotalBudget,
+    secondOrderMovingEndpointPerronBudget_div_two_pi_eq]
+  exact add_nonneg
+    (secondOrderSelectedHeightContourBudget_nonneg hC hx hh hA hT)
+    (by
+      have hTpos : 0 < T := by linarith [hT.1]
+      have hypos : 0 < x + h := by
+        have hxpos : 0 < x := (Real.exp_pos 1).trans_le hx
+        linarith
+      positivity)
+
+/-- Explicit componentwise upper bound for the selected-height total budget:
+horizontal contour decay is `T⁻²`, the moving Perron tail is exactly `T⁻¹`,
+and the `N = 0` left-vertical term remains visible as a separate summand. -/
+theorem secondOrderSelectedHeightTotalBudget_le_explicit
+    {C x h A T : ℝ}
+    (hC : 0 ≤ C) (hx : Real.exp 1 ≤ x) (hh : 0 < h)
+    (hA : 4 ≤ A) (hT : T ∈ Set.Icc A (A + 1)) :
+    secondOrderSelectedHeightTotalBudget C x h A T ≤
+      6 * C * (x + h) ^ (2 : ℝ) *
+          (1 + Real.log (A + 6)) ^ 2 / (Real.pi * T ^ 2) +
+        (secondOrderOddVerticalBound (x + h) 0 T +
+            secondOrderOddVerticalBound x 0 T) *
+          T / Real.pi +
+        8 * Real.exp 1 * (x + h) * (1 + Real.log (x + h)) ^ 2 /
+          (Real.pi * T) := by
+  rw [secondOrderSelectedHeightTotalBudget,
+    secondOrderMovingEndpointPerronBudget_div_two_pi_eq]
+  exact add_le_add
+    (secondOrderSelectedHeightContourBudget_le_explicit hC hx hh hA hT)
+    le_rfl
 
 /-- On every unit height interval above `4`, select a genuine good height and
 combine the crossing-zero residue formula, the three-edge contour estimate on
