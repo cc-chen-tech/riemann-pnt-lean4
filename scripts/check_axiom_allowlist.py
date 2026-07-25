@@ -290,6 +290,15 @@ WEIL_RANK_TWO_TAIL_EXPECTED_DECLARATIONS = {
     "WeilExtremalKernels.exists_T0_tendsto_paperActualArchimedeanRankTwoIncrement_and_quadraticForm_bounds",
     "WeilExtremalKernels.exists_T0_quadraticForm_add_paperActualArchimedeanRankTwoTail_nonneg_of_certificate",
     "WeilExtremalKernels.exists_T0_quadraticForm_add_paperActualArchimedeanRankTwoTail_neg_of_tailBudget",
+    "WeilExtremalKernels.eventually_norm_paperActualArchimedeanRankTwoTail_entry_le_tailBudget",
+    "WeilExtremalKernels.tendsto_paperActualArchimedeanRankTwoTail_entry_atTop",
+    "WeilExtremalKernels.tendsto_paperActualArchimedeanRankTwoTail_atTop",
+    "WeilExtremalKernels.eventually_quadraticForm_paperActualArchimedeanRankTwoTail_bounds",
+    "WeilExtremalKernels.tendsto_quadraticForm_paperActualArchimedeanRankTwoTail_atTop",
+    "WeilExtremalKernels.eventually_quadraticForm_add_paperActualArchimedeanRankTwoTail_stable_of_exactLDL_margin",
+    "WeilExtremalKernels.exists_T_quadraticForm_add_paperActualArchimedeanRankTwoTail_stable_of_exactLDL_margin",
+    "WeilExtremalKernels.eventually_quadraticForm_add_paperActualArchimedeanRankTwoTail_neg_of_witness",
+    "WeilExtremalKernels.exists_T_quadraticForm_add_paperActualArchimedeanRankTwoTail_neg_of_witness",
 }
 
 REPORT_RE = re.compile(
@@ -342,6 +351,7 @@ def main() -> int:
             "Test.WeilArchimedeanHPlusAxiomAudit",
             "Test.WeilArchimedeanActualTailAxiomAudit",
             "Test.WeilArchimedeanImproperTailAxiomAudit",
+            "Test.WeilArchimedeanImproperTailDecayAxiomAudit",
         ],
         cwd=ROOT,
         text=True,
