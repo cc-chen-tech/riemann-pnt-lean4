@@ -342,10 +342,11 @@ private theorem iteratedDeriv_normalizedGaussian_eq_polynomial_mul
   rw [normalizedGaussian_eq_scaled hm]
   ring
 
-private theorem abs_iteratedDeriv_normalizedGaussian_le_exp_abs_mul
+private theorem abs_iteratedDeriv_normalizedGaussian_le_scaled_exp_abs_mul
     {m : ℝ} (hm : 1 ≤ m) (k : ℕ) (t : ℝ) :
     |iteratedDeriv k (normalizedGaussian m) t| ≤
-      gaussianDerivativeExpBound k * Real.exp |t| *
+      gaussianDerivativeExpBound k *
+        Real.exp |(Real.sqrt m)⁻¹ * t| *
         normalizedGaussian m t := by
   have hmPos : 0 < m := lt_of_lt_of_le zero_lt_one hm
   have hsqrtOne : 1 ≤ Real.sqrt m := by
@@ -354,16 +355,9 @@ private theorem abs_iteratedDeriv_normalizedGaussian_le_exp_abs_mul
     inv_nonneg.mpr (Real.sqrt_nonneg m)
   have hinvLeOne : (Real.sqrt m)⁻¹ ≤ 1 :=
     (inv_le_one₀ (lt_of_lt_of_le zero_lt_one hsqrtOne)).2 hsqrtOne
-  have hscaledAbs :
-      |(Real.sqrt m)⁻¹ * t| ≤ |t| := by
-    rw [abs_mul, abs_of_nonneg hinvNonneg]
-    nlinarith [abs_nonneg t]
   have hpoly :=
     abs_gaussianDerivativePolynomial_eval_le_exp k
       ((Real.sqrt m)⁻¹ * t)
-  have hexp :
-      Real.exp |(Real.sqrt m)⁻¹ * t| ≤ Real.exp |t| :=
-    Real.exp_le_exp.mpr hscaledAbs
   have hpow :
       (Real.sqrt m)⁻¹ ^ k ≤ 1 := by
     exact pow_le_one₀ hinvNonneg hinvLeOne
@@ -386,11 +380,136 @@ private theorem abs_iteratedDeriv_normalizedGaussian_le_exp_abs_mul
           normalizedGaussian m t := by
       apply mul_le_mul_of_nonneg_right _ hgaussianNonneg
       exact mul_le_mul hpow hpoly (abs_nonneg _) (by norm_num)
-    _ ≤ gaussianDerivativeExpBound k * Real.exp |t| *
+    _ ≤ gaussianDerivativeExpBound k *
+          Real.exp |(Real.sqrt m)⁻¹ * t| *
           normalizedGaussian m t := by
-      apply mul_le_mul_of_nonneg_right _ hgaussianNonneg
       simpa only [one_mul] using
-        mul_le_mul_of_nonneg_left hexp hboundNonneg
+        (le_refl
+          (gaussianDerivativeExpBound k *
+            Real.exp |(Real.sqrt m)⁻¹ * t| *
+              normalizedGaussian m t))
+
+private theorem abs_iteratedDeriv_normalizedGaussian_le_exp_abs_mul
+    {m : ℝ} (hm : 1 ≤ m) (k : ℕ) (t : ℝ) :
+    |iteratedDeriv k (normalizedGaussian m) t| ≤
+      gaussianDerivativeExpBound k * Real.exp |t| *
+        normalizedGaussian m t := by
+  have hsqrtOne : 1 ≤ Real.sqrt m := by
+    simpa using Real.sqrt_le_sqrt hm
+  have hinvNonneg : 0 ≤ (Real.sqrt m)⁻¹ :=
+    inv_nonneg.mpr (Real.sqrt_nonneg m)
+  have hinvLeOne : (Real.sqrt m)⁻¹ ≤ 1 :=
+    (inv_le_one₀ (lt_of_lt_of_le zero_lt_one hsqrtOne)).2 hsqrtOne
+  have hscaledAbs :
+      |(Real.sqrt m)⁻¹ * t| ≤ |t| := by
+    rw [abs_mul, abs_of_nonneg hinvNonneg]
+    nlinarith [abs_nonneg t]
+  have hexp :
+      Real.exp |(Real.sqrt m)⁻¹ * t| ≤ Real.exp |t| :=
+    Real.exp_le_exp.mpr hscaledAbs
+  refine
+    (abs_iteratedDeriv_normalizedGaussian_le_scaled_exp_abs_mul
+      hm k t).trans ?_
+  exact mul_le_mul_of_nonneg_right
+    (mul_le_mul_of_nonneg_left hexp
+      (gaussianDerivativeExpBound_nonneg k))
+    (normalizedGaussian_pos (lt_of_lt_of_le zero_lt_one hm) t).le
+
+/--
+For a fixed polynomial, both its Gaussian kernel and its derivative obey the
+Hermite-scaled envelope `C_A exp(|t| / sqrt m) G_m(t)`.  Keeping this scale is
+essential on logarithmic windows whose endpoints are a fixed multiple of
+`m`.
+-/
+theorem
+    exists_polynomialGaussianKernel_add_deriv_norm_le_scaled_exp_abs_mul
+    (A : ℂ[X]) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      ∀ m : ℝ, 1 ≤ m → ∀ t : ℝ,
+        ‖polynomialGaussianKernel A m t‖ +
+            ‖polynomialGaussianKernelDeriv A m t‖ ≤
+          C * Real.exp |(Real.sqrt m)⁻¹ * t| *
+            normalizedGaussian m t := by
+  let C_A : ℝ :=
+    (∑ k ∈ A.support,
+      ‖A.coeff k‖ * gaussianDerivativeExpBound k) +
+    ∑ k ∈ A.support,
+      ‖A.coeff k‖ * gaussianDerivativeExpBound (k + 1)
+  refine ⟨C_A, ?_, ?_⟩
+  · dsimp [C_A]
+    exact add_nonneg
+      (Finset.sum_nonneg fun k _ =>
+        mul_nonneg (norm_nonneg _)
+          (gaussianDerivativeExpBound_nonneg k))
+      (Finset.sum_nonneg fun k _ =>
+        mul_nonneg (norm_nonneg _)
+          (gaussianDerivativeExpBound_nonneg (k + 1)))
+  · intro m hm t
+    have hkernel :
+        ‖polynomialGaussianKernel A m t‖ ≤
+          (∑ k ∈ A.support,
+            ‖A.coeff k‖ * gaussianDerivativeExpBound k) *
+            Real.exp |(Real.sqrt m)⁻¹ * t| *
+              normalizedGaussian m t := by
+      unfold polynomialGaussianKernel Polynomial.sum
+      calc
+        ‖∑ k ∈ A.support,
+            A.coeff k *
+              ((iteratedDeriv k
+                (normalizedGaussian m) t : ℝ) : ℂ)‖ ≤
+            ∑ k ∈ A.support,
+              ‖A.coeff k *
+                ((iteratedDeriv k
+                  (normalizedGaussian m) t : ℝ) : ℂ)‖ :=
+          norm_sum_le _ _
+        _ ≤ ∑ k ∈ A.support,
+              (‖A.coeff k‖ * gaussianDerivativeExpBound k) *
+                Real.exp |(Real.sqrt m)⁻¹ * t| *
+                  normalizedGaussian m t := by
+          apply Finset.sum_le_sum
+          intro k hk
+          rw [norm_mul, Complex.norm_real, Real.norm_eq_abs]
+          simpa [mul_assoc] using
+            mul_le_mul_of_nonneg_left
+              (abs_iteratedDeriv_normalizedGaussian_le_scaled_exp_abs_mul
+                hm k t)
+              (norm_nonneg (A.coeff k))
+        _ = _ := by
+          rw [← Finset.sum_mul, ← Finset.sum_mul]
+    have hderiv :
+        ‖polynomialGaussianKernelDeriv A m t‖ ≤
+          (∑ k ∈ A.support,
+            ‖A.coeff k‖ * gaussianDerivativeExpBound (k + 1)) *
+            Real.exp |(Real.sqrt m)⁻¹ * t| *
+              normalizedGaussian m t := by
+      unfold polynomialGaussianKernelDeriv Polynomial.sum
+      calc
+        ‖∑ k ∈ A.support,
+            A.coeff k *
+              ((iteratedDeriv (k + 1)
+                (normalizedGaussian m) t : ℝ) : ℂ)‖ ≤
+            ∑ k ∈ A.support,
+              ‖A.coeff k *
+                ((iteratedDeriv (k + 1)
+                  (normalizedGaussian m) t : ℝ) : ℂ)‖ :=
+          norm_sum_le _ _
+        _ ≤ ∑ k ∈ A.support,
+              (‖A.coeff k‖ *
+                  gaussianDerivativeExpBound (k + 1)) *
+                Real.exp |(Real.sqrt m)⁻¹ * t| *
+                  normalizedGaussian m t := by
+          apply Finset.sum_le_sum
+          intro k hk
+          rw [norm_mul, Complex.norm_real, Real.norm_eq_abs]
+          simpa [mul_assoc] using
+            mul_le_mul_of_nonneg_left
+              (abs_iteratedDeriv_normalizedGaussian_le_scaled_exp_abs_mul
+                hm (k + 1) t)
+              (norm_nonneg (A.coeff k))
+        _ = _ := by
+          rw [← Finset.sum_mul, ← Finset.sum_mul]
+    dsimp [C_A]
+    linarith
 
 /--
 For a fixed polynomial, both its Gaussian kernel and the termwise
@@ -511,6 +630,36 @@ theorem continuous_polynomialGaussianKernelDeriv
   apply continuous_const.mul
   exact Complex.continuous_ofReal.comp
     (hsmooth.continuous_iteratedDeriv (k + 1) (by simp))
+
+theorem polynomialGaussianKernel_C_mul
+    (c : ℂ) (A : ℂ[X]) (m t : ℝ) :
+    polynomialGaussianKernel (C c * A) m t =
+      c * polynomialGaussianKernel A m t := by
+  rw [← Polynomial.smul_eq_C_mul]
+  unfold polynomialGaussianKernel
+  rw [Polynomial.sum_smul_index]
+  · simpa only [smul_eq_mul, mul_assoc] using
+      (Polynomial.smul_sum A c
+        (fun k a =>
+          a * ((iteratedDeriv k
+            (normalizedGaussian m) t : ℝ) : ℂ))).symm
+  · intro k
+    simp
+
+theorem polynomialGaussianKernelDeriv_C_mul
+    (c : ℂ) (A : ℂ[X]) (m t : ℝ) :
+    polynomialGaussianKernelDeriv (C c * A) m t =
+      c * polynomialGaussianKernelDeriv A m t := by
+  rw [← Polynomial.smul_eq_C_mul]
+  unfold polynomialGaussianKernelDeriv
+  rw [Polynomial.sum_smul_index]
+  · simpa only [smul_eq_mul, mul_assoc] using
+      (Polynomial.smul_sum A c
+        (fun k a =>
+          a * ((iteratedDeriv (k + 1)
+            (normalizedGaussian m) t : ℝ) : ℂ))).symm
+  · intro k
+    simp
 
 private theorem polynomialGaussianKernel_sub_eq_sum_erase_zero
     (A : ℂ[X]) (hA : A.eval 0 = 1) (m t : ℝ) :

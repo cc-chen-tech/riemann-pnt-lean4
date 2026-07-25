@@ -11,8 +11,11 @@ namespace PrimeNumberTheorem.VKEdgePiOverTwo
 #check exists_polynomialGaussianKernel_sub_l1_bound
 #check exists_polynomialGaussianKernelDeriv_l1_bound
 #check exists_polynomialGaussianKernel_add_deriv_norm_le_exp_abs_mul
+#check exists_polynomialGaussianKernel_add_deriv_norm_le_scaled_exp_abs_mul
 #check continuous_polynomialGaussianKernel
 #check continuous_polynomialGaussianKernelDeriv
+#check polynomialGaussianKernel_C_mul
+#check polynomialGaussianKernelDeriv_C_mul
 #check polynomialGaussianKernel_X_mul
 
 example (A : ℂ[X]) (hA : A.eval 0 = 1) :
