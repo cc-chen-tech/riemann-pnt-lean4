@@ -2,3 +2,4 @@ import PrimeNumberTheorem.VKEdgePiOverTwoPolynomialGaussian
 
 #print axioms PrimeNumberTheorem.VKEdgePiOverTwo.exists_polynomialGaussianKernel_sub_l1_bound
 #print axioms PrimeNumberTheorem.VKEdgePiOverTwo.exists_polynomialGaussianKernelDeriv_l1_bound
+#print axioms PrimeNumberTheorem.VKEdgePiOverTwo.polynomialGaussianKernel_X_mul

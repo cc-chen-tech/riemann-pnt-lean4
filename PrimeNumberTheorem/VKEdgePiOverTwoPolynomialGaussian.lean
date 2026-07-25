@@ -374,6 +374,36 @@ theorem exists_polynomialGaussianKernelDeriv_l1_bound
       (fun _ _ => Nat.succ_ne_zero _)
       hm
 
+/--
+Multiplication of the contour polynomial by `X` becomes one additional
+real derivative of the inverse Gaussian kernel.
+-/
+theorem polynomialGaussianKernel_X_mul
+    (A : ℂ[X]) (m t : ℝ) :
+    polynomialGaussianKernel (X * A) m t =
+      polynomialGaussianKernelDeriv A m t := by
+  induction A using Polynomial.induction_on' with
+  | add p q hp hq =>
+      rw [mul_add]
+      unfold polynomialGaussianKernel
+        polynomialGaussianKernelDeriv at hp hq
+      simp only [polynomialGaussianKernel,
+        polynomialGaussianKernelDeriv]
+      rw [Polynomial.sum_add_index, Polynomial.sum_add_index]
+      · exact congrArg₂ (· + ·) hp hq
+      · intro k
+        simp
+      · intro k a b
+        ring
+      · intro k
+        simp
+      · intro k a b
+        ring
+  | monomial n a =>
+      rw [X_mul_monomial]
+      simp [polynomialGaussianKernel,
+        polynomialGaussianKernelDeriv]
+
 end
 
 end VKEdgePiOverTwo
