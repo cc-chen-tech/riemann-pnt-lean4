@@ -3707,6 +3707,667 @@ theorem
   rcases hchoose A hA with ⟨T, hT, hgood, hbound⟩
   exact ⟨C, D, T, hC, hD, hT, hgood, hbound hx⟩
 
+/-- The cancellation-aware contour estimate feeds the actual moving-line
+second-order formula and Riesz sandwich.  The residue family is eliminated in
+favor of the explicit origin term, the main-pole increment, and the canonical
+multiplicity-aware finite zero sum. -/
+theorem
+    exists_uniform_C_forall_goodHeight_chebyshevPsi_bounds_explicit_origin_zero_sum_increment :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x h : ℝ}, Real.exp 1 ≤ x → 0 < h →
+            (T + 2) * Real.log ((x + h) / x) ≤ 1 →
+            chebyshevPsi x ≤
+                ((-(Real.log (2 * Real.pi) : ℂ) *
+                      (Real.log ((x + h) / x) : ℂ) +
+                    (h : ℂ) +
+                    secondOrderNontrivialZeroIncrement x h T).re +
+                  secondOrderSelectedHeightIncrementTotalBudget C x h A T) /
+                    Real.log ((x + h) / x) ∧
+              ((-(Real.log (2 * Real.pi) : ℂ) *
+                      (Real.log ((x + h) / x) : ℂ) +
+                    (h : ℂ) +
+                    secondOrderNontrivialZeroIncrement x h T).re -
+                  secondOrderSelectedHeightIncrementTotalBudget C x h A T) /
+                    Real.log ((x + h) / x) ≤
+                chebyshevPsi (x + h) := by
+  rcases
+      exists_uniform_goodHeight_Icc_norm_secondOrderContourRemainder_increment_le
+      with ⟨C, hC, hchoose⟩
+  refine ⟨C, hC, ?_⟩
+  intro A hA
+  rcases hchoose A hA with ⟨T, hT, hgood, hremainderAll⟩
+  refine ⟨T, hT, hgood, ?_⟩
+  intro x h hx hh hsmall
+  have hexpOne : 1 < Real.exp 1 := Real.one_lt_exp_iff.mpr zero_lt_one
+  have hx1 : 1 < x := hexpOne.trans_le hx
+  have hy1 : 1 < x + h := by linarith
+  have hypos : 0 < x + h := zero_lt_one.trans hy1
+  have hlogOne : 1 ≤ Real.log (x + h) :=
+    (Real.le_log_iff_exp_le hypos).2 (hx.trans (by linarith))
+  have hlogpos : 0 < Real.log (x + h) := zero_lt_one.trans_le hlogOne
+  let c : ℝ := 1 + 1 / Real.log (x + h)
+  have hc : 1 < c := by
+    dsimp [c]
+    linarith [one_div_pos.mpr hlogpos]
+  rcases hremainderAll hx hh hsmall with ⟨hboundary, hremainder⟩
+  have hTpos : 0 < T := by linarith [hT.1]
+  let W : ℝ := T / (2 * Real.pi)
+  have hW : 0 < W := by
+    dsimp [W]
+    positivity
+  have hscale : 2 * Real.pi * W = T := by
+    dsimp [W]
+    field_simp [Real.pi_ne_zero]
+  have hboundaryW :
+      ∀ p ∈
+        ([[(-1 : ℝ), c]] ×ℂ
+          [[-(2 * Real.pi * W), 2 * Real.pi * W]] : Set ℂ),
+        p = 0 ∨ p = 1 ∨ riemannZeta p = 0 →
+          -1 < p.re ∧ p.re < c ∧
+            -(2 * Real.pi * W) < p.im ∧
+              p.im < 2 * Real.pi * W := by
+    simpa [c, hscale] using hboundary
+  rcases
+      exists_chebyshevPsi_bounds_of_secondOrderExplicitFormula_crossing_zero_moving_line
+        (a := -1) (W := W) hx1 hh (by norm_num) hW
+          (by simpa [c] using hboundaryW) with
+    ⟨polesX, residueX, polesY, residueY,
+      hpolesX, hclassX, hcompleteX, hzeroX, hresidueX,
+      hpolesY, hclassY, hcompleteY, hzeroY, hresidueY, hbounds⟩
+  let RX : ℂ := secondOrderContourRemainder x (-1) c W
+  let RY : ℂ := secondOrderContourRemainder (x + h) (-1) c W
+  let SX : ℂ := ∑ p ∈ polesX, residueX p
+  let SY : ℂ := ∑ p ∈ polesY, residueY p
+  let BC : ℝ :=
+    secondOrderSelectedHeightIncrementContourBudget C x h A T
+  let BP : ℝ := secondOrderMovingEndpointPerronBudget x h W
+  have hremainder' : ‖RY - RX‖ ≤ BC := by
+    simpa [RX, RY, BC, W, c, hscale] using hremainder
+  have hremainderRe : |(RY - RX).re| ≤ BC :=
+    (abs_re_le_norm (RY - RX)).trans hremainder'
+  rcases abs_le.mp hremainderRe with
+    ⟨hremainderLower, hremainderUpper⟩
+  have hbounds' :
+      chebyshevPsi x ≤
+          (((SY - RY) - (SX - RX)).re + BP) /
+            Real.log ((x + h) / x) ∧
+        (((SY - RY) - (SX - RX)).re - BP) /
+            Real.log ((x + h) / x) ≤ chebyshevPsi (x + h) := by
+    simpa [SX, SY, RX, RY, BP, c, W] using hbounds
+  have hdecomp :
+      ((SY - RY) - (SX - RX)).re =
+        (SY - SX).re - (RY - RX).re := by
+    simp
+    ring
+  have htotal :
+      secondOrderSelectedHeightIncrementTotalBudget C x h A T = BC + BP := by
+    rfl
+  have hratio : 1 < (x + h) / x :=
+    (lt_div_iff₀ (zero_lt_one.trans hx1)).2 (by linarith)
+  have hlogratio : 0 < Real.log ((x + h) / x) :=
+    Real.log_pos hratio
+  have hpolesEq : polesX = polesY := by
+    ext p
+    constructor
+    · intro hp
+      have hpBounds := hpolesX p hp
+      apply hcompleteY p
+      · rw [Complex.mem_reProdIm,
+          Set.uIcc_of_le (by linarith : (-1 : ℝ) ≤
+            1 + 1 / Real.log (x + h)),
+          Set.uIcc_of_le (by linarith [hW] :
+            -(2 * Real.pi * W) ≤ 2 * Real.pi * W)]
+        exact
+          ⟨⟨hpBounds.1.le, hpBounds.2.1.le⟩,
+            ⟨hpBounds.2.2.1.le, hpBounds.2.2.2.le⟩⟩
+      · exact hclassX p hp
+    · intro hp
+      have hpBounds := hpolesY p hp
+      apply hcompleteX p
+      · rw [Complex.mem_reProdIm,
+          Set.uIcc_of_le (by linarith : (-1 : ℝ) ≤
+            1 + 1 / Real.log (x + h)),
+          Set.uIcc_of_le (by linarith [hW] :
+            -(2 * Real.pi * W) ≤ 2 * Real.pi * W)]
+        exact
+          ⟨⟨hpBounds.1.le, hpBounds.2.1.le⟩,
+            ⟨hpBounds.2.2.1.le, hpBounds.2.2.2.le⟩⟩
+      · exact hclassY p hp
+  subst polesY
+  have hzeroMem : 0 ∈ polesX := by
+    apply hcompleteX 0
+    · rw [Complex.mem_reProdIm,
+        Set.uIcc_of_le (by linarith : (-1 : ℝ) ≤
+          1 + 1 / Real.log (x + h)),
+        Set.uIcc_of_le (by linarith [hW] :
+          -(2 * Real.pi * W) ≤ 2 * Real.pi * W)]
+      simp only [Complex.zero_re, Complex.zero_im, Set.mem_Icc]
+      constructor
+      · constructor <;> linarith
+      · constructor <;> nlinarith [Real.pi_pos]
+    · exact Or.inl rfl
+  have hsumDiff :
+      (∑ p ∈ polesX, residueY p) -
+          (∑ p ∈ polesX, residueX p) =
+        (deriv (fun z : ℂ =>
+            -logDeriv riemannZeta z *
+              ((x + h : ℝ) : ℂ) ^ z) 0 -
+          deriv (fun z : ℂ =>
+            -logDeriv riemannZeta z * (x : ℂ) ^ z) 0) +
+          ∑ p ∈ polesX.erase 0,
+            if p = 1 then (h : ℂ)
+            else -(analyticOrderNatAt riemannZeta p : ℂ) *
+              (((x + h : ℝ) : ℂ) ^ p - (x : ℂ) ^ p) / p ^ 2 := by
+    rw [show (∑ p ∈ polesX, residueY p) =
+        (∑ p ∈ polesX.erase 0, residueY p) + residueY 0 by
+          exact (Finset.sum_erase_add _ _ hzeroMem).symm]
+    rw [show (∑ p ∈ polesX, residueX p) =
+        (∑ p ∈ polesX.erase 0, residueX p) + residueX 0 by
+          exact (Finset.sum_erase_add _ _ hzeroMem).symm]
+    rw [hzeroY, hzeroX]
+    rw [show
+        (∑ p ∈ polesX.erase 0, residueY p) +
+              deriv (fun z : ℂ =>
+                -logDeriv riemannZeta z * ((x + h : ℝ) : ℂ) ^ z) 0 -
+            ((∑ p ∈ polesX.erase 0, residueX p) +
+              deriv (fun z : ℂ =>
+                -logDeriv riemannZeta z * (x : ℂ) ^ z) 0) =
+          (deriv (fun z : ℂ =>
+                -logDeriv riemannZeta z * ((x + h : ℝ) : ℂ) ^ z) 0 -
+            deriv (fun z : ℂ =>
+                -logDeriv riemannZeta z * (x : ℂ) ^ z) 0) +
+            ((∑ p ∈ polesX.erase 0, residueY p) -
+              (∑ p ∈ polesX.erase 0, residueX p)) by ring]
+    rw [← Finset.sum_sub_distrib]
+    congr 1
+    apply Finset.sum_congr rfl
+    intro p hp
+    have hpMem : p ∈ polesX := Finset.mem_of_mem_erase hp
+    have hp0 : p ≠ 0 := Finset.ne_of_mem_erase hp
+    rw [hresidueY p hpMem hp0, hresidueX p hpMem hp0]
+    split_ifs with hp1
+    · subst p
+      norm_num
+    · ring
+  have hresidueBounds :
+      chebyshevPsi x ≤
+          ((SY - SX).re +
+              secondOrderSelectedHeightIncrementTotalBudget C x h A T) /
+            Real.log ((x + h) / x) ∧
+        ((SY - SX).re -
+              secondOrderSelectedHeightIncrementTotalBudget C x h A T) /
+            Real.log ((x + h) / x) ≤ chebyshevPsi (x + h) := by
+    constructor
+    · calc
+        chebyshevPsi x ≤
+            (((SY - RY) - (SX - RX)).re + BP) /
+              Real.log ((x + h) / x) := hbounds'.1
+        _ ≤ ((SY - SX).re +
+              secondOrderSelectedHeightIncrementTotalBudget C x h A T) /
+            Real.log ((x + h) / x) := by
+          apply (div_le_div_iff_of_pos_right hlogratio).2
+          rw [hdecomp, htotal]
+          linarith
+    · calc
+        ((SY - SX).re -
+              secondOrderSelectedHeightIncrementTotalBudget C x h A T) /
+            Real.log ((x + h) / x) ≤
+            (((SY - RY) - (SX - RX)).re - BP) /
+              Real.log ((x + h) / x) := by
+          apply (div_le_div_iff_of_pos_right hlogratio).2
+          rw [hdecomp, htotal]
+          linarith
+        _ ≤ chebyshevPsi (x + h) := hbounds'.2
+  have honeRect :
+      (1 : ℂ) ∈
+        ([[(-1 : ℝ), c]] ×ℂ [[-T, T]] : Set ℂ) := by
+    rw [Complex.mem_reProdIm,
+      Set.uIcc_of_le (by linarith : (-1 : ℝ) ≤ c),
+      Set.uIcc_of_le (by linarith : -T ≤ T)]
+    norm_num
+    exact ⟨hc.le, hTpos.le⟩
+  have hone : (1 : ℂ) ∈ polesX :=
+    hcompleteX 1 (by simpa [c, hscale] using honeRect)
+      (Or.inr (Or.inl rfl))
+  have hsupport :
+      (polesX.erase 0).erase 1 = nontrivialZerosFinset T := by
+    apply erase_zero_one_poles_eq_nontrivialZerosFinset
+      hTpos hc hgood
+    · simpa [c, hscale] using hpolesX
+    · exact hclassX
+    · simpa [c, hscale] using hcompleteX
+  let f : ℂ → ℂ := fun p =>
+    -(analyticOrderNatAt riemannZeta p : ℂ) *
+      (((x + h : ℝ) : ℂ) ^ p - (x : ℂ) ^ p) / p ^ 2
+  have hsum :
+      (∑ p ∈ polesX.erase 0,
+          if p = 1 then (h : ℂ) else f p) =
+        (h : ℂ) + ∑ ρ ∈ nontrivialZerosFinset T, f ρ :=
+    sum_erase_zero_ite_one_eq_main_add_nontrivialZeroSum
+      f hone hsupport
+  have hstandard :
+      SY - SX =
+        secondOrderOriginDerivativeIncrement x h + (h : ℂ) +
+          secondOrderNontrivialZeroIncrement x h T := by
+    rw [hsum] at hsumDiff
+    calc
+      SY - SX =
+          (deriv (fun z : ℂ =>
+              -logDeriv riemannZeta z *
+                ((x + h : ℝ) : ℂ) ^ z) 0 -
+            deriv (fun z : ℂ =>
+              -logDeriv riemannZeta z * (x : ℂ) ^ z) 0) +
+            ((h : ℂ) + ∑ ρ ∈ nontrivialZerosFinset T, f ρ) := by
+        simpa [SX, SY, f] using hsumDiff
+      _ = secondOrderOriginDerivativeIncrement x h + (h : ℂ) +
+          secondOrderNontrivialZeroIncrement x h T := by
+        simp only [secondOrderOriginDerivativeIncrement,
+          secondOrderNontrivialZeroIncrement, f]
+        ring
+  have hstandardBounds :
+      chebyshevPsi x ≤
+          ((secondOrderOriginDerivativeIncrement x h + (h : ℂ) +
+                secondOrderNontrivialZeroIncrement x h T).re +
+              secondOrderSelectedHeightIncrementTotalBudget C x h A T) /
+            Real.log ((x + h) / x) ∧
+        ((secondOrderOriginDerivativeIncrement x h + (h : ℂ) +
+                secondOrderNontrivialZeroIncrement x h T).re -
+              secondOrderSelectedHeightIncrementTotalBudget C x h A T) /
+            Real.log ((x + h) / x) ≤ chebyshevPsi (x + h) := by
+    simpa [hstandard] using hresidueBounds
+  rw [secondOrderOriginDerivativeIncrement_eq
+    (zero_lt_one.trans hx1) hypos] at hstandardBounds
+  exact hstandardBounds
+
+/-- Scalar cancellation-aware selected-height sandwich.  The caller-level
+`A+3` condition controls the `T+2` horizontal cancellation hypothesis at the
+selected height and also the `T+1` finite-zero-sum estimate. -/
+theorem
+    exists_uniform_C_D_forall_goodHeight_chebyshevPsi_bounds_scalar_log_sq_increment :
+    ∃ C D : ℝ, 0 ≤ C ∧ 0 ≤ D ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x h : ℝ}, Real.exp 1 ≤ x → 0 < h →
+            (A + 3) * Real.log ((x + h) / x) ≤ 1 →
+            chebyshevPsi x ≤
+                (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) +
+                    secondOrderSelectedHeightIncrementTotalBudget C x h A T +
+                    2 * D * x * Real.log ((x + h) / x) *
+                      (1 + Real.log (T + 6)) ^ 2) /
+                  Real.log ((x + h) / x) ∧
+              (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) -
+                    secondOrderSelectedHeightIncrementTotalBudget C x h A T -
+                    2 * D * x * Real.log ((x + h) / x) *
+                      (1 + Real.log (T + 6)) ^ 2) /
+                  Real.log ((x + h) / x) ≤
+                chebyshevPsi (x + h) := by
+  rcases
+      exists_uniform_C_forall_goodHeight_chebyshevPsi_bounds_explicit_origin_zero_sum_increment
+      with ⟨C, hC, hchoose⟩
+  rcases exists_C_norm_secondOrderNontrivialZeroIncrement_le_log_sq with
+    ⟨D, hD, hzero⟩
+  refine ⟨C, D, hC, hD, ?_⟩
+  intro A hA
+  rcases hchoose A hA with ⟨T, hT, hgood, hbound⟩
+  refine ⟨T, hT, hgood, ?_⟩
+  intro x h hx hh hsmallA
+  have hxpos : 0 < x := (Real.exp_pos 1).trans_le hx
+  have hratio : 1 < (x + h) / x := by
+    rw [lt_div_iff₀ hxpos]
+    linarith
+  have hlogpos : 0 < Real.log ((x + h) / x) :=
+    Real.log_pos hratio
+  have hsmallContour :
+      (T + 2) * Real.log ((x + h) / x) ≤ 1 := by
+    calc
+      (T + 2) * Real.log ((x + h) / x) ≤
+          (A + 3) * Real.log ((x + h) / x) :=
+        mul_le_mul_of_nonneg_right (by linarith [hT.2]) hlogpos.le
+      _ ≤ 1 := hsmallA
+  have hbounds := hbound hx hh hsmallContour
+  have hxone : 1 ≤ x :=
+    (Real.one_lt_exp_iff.mpr zero_lt_one).le.trans hx
+  have hsmallZero :
+      (T + 1) * Real.log ((x + h) / x) ≤ 1 := by
+    calc
+      (T + 1) * Real.log ((x + h) / x) ≤
+          (A + 3) * Real.log ((x + h) / x) :=
+        mul_le_mul_of_nonneg_right (by linarith [hT.2]) hlogpos.le
+      _ ≤ 1 := hsmallA
+  let Z := secondOrderNontrivialZeroIncrement x h T
+  let B :=
+    2 * D * x * Real.log ((x + h) / x) *
+      (1 + Real.log (T + 6)) ^ 2
+  have hnorm : ‖Z‖ ≤ B := by
+    simpa only [Z, B] using
+      hzero x h T hxone hh.le (hA.trans hT.1) hsmallZero
+  have habs : |Z.re| ≤ B :=
+    (Complex.abs_re_le_norm Z).trans hnorm
+  have hre : -B ≤ Z.re ∧ Z.re ≤ B := abs_le.mp habs
+  have hreal :
+      (-(Real.log (2 * Real.pi) : ℂ) *
+              (Real.log ((x + h) / x) : ℂ) +
+            (h : ℂ) + Z).re =
+        h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) + Z.re := by
+    simp only [Complex.add_re, Complex.mul_re, Complex.neg_re,
+      Complex.ofReal_re, Complex.ofReal_im, mul_zero, sub_zero]
+    ring
+  change
+    chebyshevPsi x ≤
+          ((-(Real.log (2 * Real.pi) : ℂ) *
+                  (Real.log ((x + h) / x) : ℂ) +
+                (h : ℂ) + Z).re +
+              secondOrderSelectedHeightIncrementTotalBudget C x h A T) /
+            Real.log ((x + h) / x) ∧
+      ((-(Real.log (2 * Real.pi) : ℂ) *
+                  (Real.log ((x + h) / x) : ℂ) +
+                (h : ℂ) + Z).re -
+              secondOrderSelectedHeightIncrementTotalBudget C x h A T) /
+            Real.log ((x + h) / x) ≤ chebyshevPsi (x + h) at hbounds
+  rw [hreal] at hbounds
+  refine ⟨?_, ?_⟩
+  · exact hbounds.1.trans
+      ((div_le_div_iff_of_pos_right hlogpos).2 (by
+        dsimp only [B] at hre ⊢
+        linarith [hre.2]))
+  · exact
+      ((div_le_div_iff_of_pos_right hlogpos).2 (by
+        dsimp only [B] at hre ⊢
+        linarith [hre.1])).trans hbounds.2
+
+/-- The scalar cancellation-aware sandwich rewritten as endpoint errors
+centered at `x`.  This is the callable `chebyshevPsi` endpoint form of the
+subtracted-kernel contour estimate. -/
+theorem
+    exists_uniform_C_D_forall_goodHeight_chebyshevPsi_endpoint_error_log_sq_increment :
+    ∃ C D : ℝ, 0 ≤ C ∧ 0 ≤ D ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x h : ℝ}, Real.exp 1 ≤ x → 0 < h →
+            (A + 3) * Real.log ((x + h) / x) ≤ 1 →
+            chebyshevPsi x - x ≤
+                h - Real.log (2 * Real.pi) +
+                  secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+                    Real.log ((x + h) / x) +
+                  2 * D * x * (1 + Real.log (T + 6)) ^ 2 ∧
+              x - Real.log (2 * Real.pi) -
+                    secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+                      Real.log ((x + h) / x) -
+                    2 * D * x * (1 + Real.log (T + 6)) ^ 2 ≤
+                chebyshevPsi (x + h) := by
+  rcases
+      exists_uniform_C_D_forall_goodHeight_chebyshevPsi_bounds_scalar_log_sq_increment
+      with ⟨C, D, hC, hD, hchoose⟩
+  refine ⟨C, D, hC, hD, ?_⟩
+  intro A hA
+  rcases hchoose A hA with ⟨T, hT, hgood, hbound⟩
+  refine ⟨T, hT, hgood, ?_⟩
+  intro x h hx hh hsmall
+  have hbounds := hbound hx hh hsmall
+  have hxpos : 0 < x := (Real.exp_pos 1).trans_le hx
+  have hquotient := smoothingIncrementDivLog_mem_Icc hxpos hh
+  have hratio : 1 < (x + h) / x := by
+    rw [lt_div_iff₀ hxpos]
+    linarith
+  have hlogpos : 0 < Real.log ((x + h) / x) :=
+    Real.log_pos hratio
+  refine ⟨?_, ?_⟩
+  · calc
+      chebyshevPsi x - x ≤
+          (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) +
+                secondOrderSelectedHeightIncrementTotalBudget C x h A T +
+                2 * D * x * Real.log ((x + h) / x) *
+                  (1 + Real.log (T + 6)) ^ 2) /
+              Real.log ((x + h) / x) - x :=
+        sub_le_sub_right hbounds.1 x
+      _ =
+          h / Real.log ((x + h) / x) -
+              Real.log (2 * Real.pi) +
+              secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+                Real.log ((x + h) / x) +
+              2 * D * x * (1 + Real.log (T + 6)) ^ 2 - x := by
+        field_simp [hlogpos.ne']
+      _ ≤
+          h - Real.log (2 * Real.pi) +
+              secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+                Real.log ((x + h) / x) +
+              2 * D * x * (1 + Real.log (T + 6)) ^ 2 := by
+        linarith [hquotient.2]
+  · calc
+      x - Real.log (2 * Real.pi) -
+              secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+                Real.log ((x + h) / x) -
+              2 * D * x * (1 + Real.log (T + 6)) ^ 2 ≤
+          h / Real.log ((x + h) / x) -
+              Real.log (2 * Real.pi) -
+              secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+                Real.log ((x + h) / x) -
+              2 * D * x * (1 + Real.log (T + 6)) ^ 2 := by
+        linarith [hquotient.1]
+      _ =
+          (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) -
+                secondOrderSelectedHeightIncrementTotalBudget C x h A T -
+                2 * D * x * Real.log ((x + h) / x) *
+                  (1 + Real.log (T + 6)) ^ 2) /
+              Real.log ((x + h) / x) := by
+        field_simp [hlogpos.ne']
+      _ ≤ chebyshevPsi (x + h) := hbounds.2
+
+/-- Under RH, the cancellation-aware scalar sandwich retains the
+`sqrt x log² T` scale of the finite zero increment. -/
+theorem
+    exists_uniform_C_D_forall_goodHeight_chebyshevPsi_bounds_scalar_sqrt_log_sq_increment_of_RH
+    (hRH : RiemannHypothesis.Statement) :
+    ∃ C D : ℝ, 0 ≤ C ∧ 0 ≤ D ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x h : ℝ}, Real.exp 1 ≤ x → 0 < h →
+            (A + 3) * Real.log ((x + h) / x) ≤ 1 →
+            chebyshevPsi x ≤
+                (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) +
+                    secondOrderSelectedHeightIncrementTotalBudget C x h A T +
+                    2 * D * Real.sqrt x * Real.log ((x + h) / x) *
+                      (1 + Real.log (T + 6)) ^ 2) /
+                  Real.log ((x + h) / x) ∧
+              (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) -
+                    secondOrderSelectedHeightIncrementTotalBudget C x h A T -
+                    2 * D * Real.sqrt x * Real.log ((x + h) / x) *
+                      (1 + Real.log (T + 6)) ^ 2) /
+                  Real.log ((x + h) / x) ≤
+                chebyshevPsi (x + h) := by
+  rcases
+      exists_uniform_C_forall_goodHeight_chebyshevPsi_bounds_explicit_origin_zero_sum_increment
+      with ⟨C, hC, hchoose⟩
+  rcases
+      exists_C_norm_secondOrderNontrivialZeroIncrement_le_sqrt_mul_log_sq_of_RH
+        hRH with ⟨D, hD, hzero⟩
+  refine ⟨C, D, hC, hD, ?_⟩
+  intro A hA
+  rcases hchoose A hA with ⟨T, hT, hgood, hbound⟩
+  refine ⟨T, hT, hgood, ?_⟩
+  intro x h hx hh hsmallA
+  have hxpos : 0 < x := (Real.exp_pos 1).trans_le hx
+  have hratio : 1 < (x + h) / x := by
+    rw [lt_div_iff₀ hxpos]
+    linarith
+  have hlogpos : 0 < Real.log ((x + h) / x) :=
+    Real.log_pos hratio
+  have hsmallContour :
+      (T + 2) * Real.log ((x + h) / x) ≤ 1 := by
+    calc
+      (T + 2) * Real.log ((x + h) / x) ≤
+          (A + 3) * Real.log ((x + h) / x) :=
+        mul_le_mul_of_nonneg_right (by linarith [hT.2]) hlogpos.le
+      _ ≤ 1 := hsmallA
+  have hbounds := hbound hx hh hsmallContour
+  have hxone : 1 ≤ x :=
+    (Real.one_lt_exp_iff.mpr zero_lt_one).le.trans hx
+  have hsmallZero :
+      (T + 1) * Real.log ((x + h) / x) ≤ 1 := by
+    calc
+      (T + 1) * Real.log ((x + h) / x) ≤
+          (A + 3) * Real.log ((x + h) / x) :=
+        mul_le_mul_of_nonneg_right (by linarith [hT.2]) hlogpos.le
+      _ ≤ 1 := hsmallA
+  let Z := secondOrderNontrivialZeroIncrement x h T
+  let B :=
+    2 * D * Real.sqrt x * Real.log ((x + h) / x) *
+      (1 + Real.log (T + 6)) ^ 2
+  have hnorm : ‖Z‖ ≤ B := by
+    simpa only [Z, B] using
+      hzero x h T hxone hh.le (hA.trans hT.1) hsmallZero
+  have habs : |Z.re| ≤ B :=
+    (Complex.abs_re_le_norm Z).trans hnorm
+  have hre : -B ≤ Z.re ∧ Z.re ≤ B := abs_le.mp habs
+  have hreal :
+      (-(Real.log (2 * Real.pi) : ℂ) *
+              (Real.log ((x + h) / x) : ℂ) +
+            (h : ℂ) + Z).re =
+        h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) + Z.re := by
+    simp only [Complex.add_re, Complex.mul_re, Complex.neg_re,
+      Complex.ofReal_re, Complex.ofReal_im, mul_zero, sub_zero]
+    ring
+  change
+    chebyshevPsi x ≤
+          ((-(Real.log (2 * Real.pi) : ℂ) *
+                  (Real.log ((x + h) / x) : ℂ) +
+                (h : ℂ) + Z).re +
+              secondOrderSelectedHeightIncrementTotalBudget C x h A T) /
+            Real.log ((x + h) / x) ∧
+      ((-(Real.log (2 * Real.pi) : ℂ) *
+                  (Real.log ((x + h) / x) : ℂ) +
+                (h : ℂ) + Z).re -
+              secondOrderSelectedHeightIncrementTotalBudget C x h A T) /
+            Real.log ((x + h) / x) ≤ chebyshevPsi (x + h) at hbounds
+  rw [hreal] at hbounds
+  refine ⟨?_, ?_⟩
+  · exact hbounds.1.trans
+      ((div_le_div_iff_of_pos_right hlogpos).2 (by
+        dsimp only [B] at hre ⊢
+        linarith [hre.2]))
+  · exact
+      ((div_le_div_iff_of_pos_right hlogpos).2 (by
+        dsimp only [B] at hre ⊢
+        linarith [hre.1])).trans hbounds.2
+
+/-- RH-specialized cancellation-aware endpoint errors centered at `x`. -/
+theorem
+    exists_uniform_C_D_forall_goodHeight_chebyshevPsi_endpoint_error_sqrt_log_sq_increment_of_RH
+    (hRH : RiemannHypothesis.Statement) :
+    ∃ C D : ℝ, 0 ≤ C ∧ 0 ≤ D ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x h : ℝ}, Real.exp 1 ≤ x → 0 < h →
+            (A + 3) * Real.log ((x + h) / x) ≤ 1 →
+            chebyshevPsi x - x ≤
+                h - Real.log (2 * Real.pi) +
+                  secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+                    Real.log ((x + h) / x) +
+                  2 * D * Real.sqrt x * (1 + Real.log (T + 6)) ^ 2 ∧
+              x - Real.log (2 * Real.pi) -
+                    secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+                      Real.log ((x + h) / x) -
+                    2 * D * Real.sqrt x * (1 + Real.log (T + 6)) ^ 2 ≤
+                chebyshevPsi (x + h) := by
+  rcases
+      exists_uniform_C_D_forall_goodHeight_chebyshevPsi_bounds_scalar_sqrt_log_sq_increment_of_RH
+        hRH with ⟨C, D, hC, hD, hchoose⟩
+  refine ⟨C, D, hC, hD, ?_⟩
+  intro A hA
+  rcases hchoose A hA with ⟨T, hT, hgood, hbound⟩
+  refine ⟨T, hT, hgood, ?_⟩
+  intro x h hx hh hsmall
+  have hbounds := hbound hx hh hsmall
+  have hxpos : 0 < x := (Real.exp_pos 1).trans_le hx
+  have hquotient := smoothingIncrementDivLog_mem_Icc hxpos hh
+  have hratio : 1 < (x + h) / x := by
+    rw [lt_div_iff₀ hxpos]
+    linarith
+  have hlogpos : 0 < Real.log ((x + h) / x) :=
+    Real.log_pos hratio
+  refine ⟨?_, ?_⟩
+  · calc
+      chebyshevPsi x - x ≤
+          (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) +
+                secondOrderSelectedHeightIncrementTotalBudget C x h A T +
+                2 * D * Real.sqrt x * Real.log ((x + h) / x) *
+                  (1 + Real.log (T + 6)) ^ 2) /
+              Real.log ((x + h) / x) - x :=
+        sub_le_sub_right hbounds.1 x
+      _ =
+          h / Real.log ((x + h) / x) -
+              Real.log (2 * Real.pi) +
+              secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+                Real.log ((x + h) / x) +
+              2 * D * Real.sqrt x * (1 + Real.log (T + 6)) ^ 2 - x := by
+        field_simp [hlogpos.ne']
+      _ ≤
+          h - Real.log (2 * Real.pi) +
+              secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+                Real.log ((x + h) / x) +
+              2 * D * Real.sqrt x * (1 + Real.log (T + 6)) ^ 2 := by
+        linarith [hquotient.2]
+  · calc
+      x - Real.log (2 * Real.pi) -
+              secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+                Real.log ((x + h) / x) -
+              2 * D * Real.sqrt x * (1 + Real.log (T + 6)) ^ 2 ≤
+          h / Real.log ((x + h) / x) -
+              Real.log (2 * Real.pi) -
+              secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+                Real.log ((x + h) / x) -
+              2 * D * Real.sqrt x * (1 + Real.log (T + 6)) ^ 2 := by
+        linarith [hquotient.1]
+      _ =
+          (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) -
+                secondOrderSelectedHeightIncrementTotalBudget C x h A T -
+                2 * D * Real.sqrt x * Real.log ((x + h) / x) *
+                  (1 + Real.log (T + 6)) ^ 2) /
+              Real.log ((x + h) / x) := by
+        field_simp [hlogpos.ne']
+      _ ≤ chebyshevPsi (x + h) := hbounds.2
+
+/-- At fixed admissible parameters, the cancellation-aware centered upper
+endpoint bound is strictly smaller, and the lower endpoint bound is strictly
+larger, than the corresponding separate-endpoint expressions. -/
+theorem secondOrderSelectedHeightIncrement_endpoint_bounds_strictly_improve
+    {C D x h A T : ℝ}
+    (hC : 0 < C) (hx : Real.exp 1 ≤ x) (hh : 0 < h)
+    (hA : 4 ≤ A) (hT : T ∈ Set.Icc A (A + 1))
+    (hsmall : (T + 2) * Real.log ((x + h) / x) ≤ 1) :
+    h - Real.log (2 * Real.pi) +
+          secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+            Real.log ((x + h) / x) +
+          2 * D * x * (1 + Real.log (T + 6)) ^ 2 <
+        h - Real.log (2 * Real.pi) +
+          secondOrderSelectedHeightTotalBudget C x h A T /
+            Real.log ((x + h) / x) +
+          2 * D * x * (1 + Real.log (T + 6)) ^ 2 ∧
+      x - Real.log (2 * Real.pi) -
+          secondOrderSelectedHeightTotalBudget C x h A T /
+            Real.log ((x + h) / x) -
+          2 * D * x * (1 + Real.log (T + 6)) ^ 2 <
+        x - Real.log (2 * Real.pi) -
+          secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+            Real.log ((x + h) / x) -
+          2 * D * x * (1 + Real.log (T + 6)) ^ 2 := by
+  have hxpos : 0 < x := (Real.exp_pos 1).trans_le hx
+  have hratio : 1 < (x + h) / x := by
+    rw [lt_div_iff₀ hxpos]
+    linarith
+  have hlogpos : 0 < Real.log ((x + h) / x) :=
+    Real.log_pos hratio
+  have hbudget :=
+    secondOrderSelectedHeightIncrementTotalBudget_lt
+      hC hx hh hA hT hsmall
+  constructor
+  · have hdiv := div_lt_div_of_pos_right hbudget hlogpos
+    linarith
+  · have hdiv := div_lt_div_of_pos_right hbudget hlogpos
+    linarith
+
 end ExplicitFormulaResidues
 
 end PrimeNumberTheorem

@@ -1235,6 +1235,66 @@ example (hRH : RiemannHypothesis.Statement) :
   exists_uniform_C_D_forall_goodHeight_chebyshevPsi_canonical_smoothing_error_sqrt_log_sq_of_RH
     hRH
 
+example :
+    ∃ C D : ℝ, 0 ≤ C ∧ 0 ≤ D ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x h : ℝ}, Real.exp 1 ≤ x → 0 < h →
+            (A + 3) * Real.log ((x + h) / x) ≤ 1 →
+            chebyshevPsi x - x ≤
+                h - Real.log (2 * Real.pi) +
+                  secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+                    Real.log ((x + h) / x) +
+                  2 * D * x * (1 + Real.log (T + 6)) ^ 2 ∧
+              x - Real.log (2 * Real.pi) -
+                    secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+                      Real.log ((x + h) / x) -
+                    2 * D * x * (1 + Real.log (T + 6)) ^ 2 ≤
+                chebyshevPsi (x + h) :=
+  exists_uniform_C_D_forall_goodHeight_chebyshevPsi_endpoint_error_log_sq_increment
+
+example (hRH : RiemannHypothesis.Statement) :
+    ∃ C D : ℝ, 0 ≤ C ∧ 0 ≤ D ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x h : ℝ}, Real.exp 1 ≤ x → 0 < h →
+            (A + 3) * Real.log ((x + h) / x) ≤ 1 →
+            chebyshevPsi x - x ≤
+                h - Real.log (2 * Real.pi) +
+                  secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+                    Real.log ((x + h) / x) +
+                  2 * D * Real.sqrt x * (1 + Real.log (T + 6)) ^ 2 ∧
+              x - Real.log (2 * Real.pi) -
+                    secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+                      Real.log ((x + h) / x) -
+                    2 * D * Real.sqrt x * (1 + Real.log (T + 6)) ^ 2 ≤
+                chebyshevPsi (x + h) :=
+  exists_uniform_C_D_forall_goodHeight_chebyshevPsi_endpoint_error_sqrt_log_sq_increment_of_RH
+    hRH
+
+example {C D x h A T : ℝ}
+    (hC : 0 < C) (hx : Real.exp 1 ≤ x) (hh : 0 < h)
+    (hA : 4 ≤ A) (hT : T ∈ Set.Icc A (A + 1))
+    (hsmall : (T + 2) * Real.log ((x + h) / x) ≤ 1) :
+    h - Real.log (2 * Real.pi) +
+          secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+            Real.log ((x + h) / x) +
+          2 * D * x * (1 + Real.log (T + 6)) ^ 2 <
+        h - Real.log (2 * Real.pi) +
+          secondOrderSelectedHeightTotalBudget C x h A T /
+            Real.log ((x + h) / x) +
+          2 * D * x * (1 + Real.log (T + 6)) ^ 2 ∧
+      x - Real.log (2 * Real.pi) -
+          secondOrderSelectedHeightTotalBudget C x h A T /
+            Real.log ((x + h) / x) -
+          2 * D * x * (1 + Real.log (T + 6)) ^ 2 <
+        x - Real.log (2 * Real.pi) -
+          secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+            Real.log ((x + h) / x) -
+          2 * D * x * (1 + Real.log (T + 6)) ^ 2 :=
+  secondOrderSelectedHeightIncrement_endpoint_bounds_strictly_improve
+    hC hx hh hA hT hsmall
+
 end PrimeNumberTheorem.ExplicitFormulaResidues
 
 example :
