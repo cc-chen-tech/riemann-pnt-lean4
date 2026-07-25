@@ -15,5 +15,7 @@ namespace PrimeNumberTheorem
   unified_parametricPNTUpper_actualCarlsonSignedComplementLower
 #check
   unified_parametricPNTUpper_actualExplicitFormulaSignedComplementLower
+#check
+  unified_parametricPNTUpper_actualExplicitFormulaClosedAutomatic
 
 end PrimeNumberTheorem

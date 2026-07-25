@@ -1,0 +1,9 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualClosedRealAxisTargetDecay
+
+open PrimeNumberTheorem
+
+#print axioms actualPNTClosedRealAxisRelativeTerm_eq
+#print axioms tendsto_log_one_sub_rpow_neg_two_atTop
+#print axioms tendsto_actualPNTClosedRealAxisNumerator
+#print axioms
+  actualPNTClosedRealAxisRelativeTerm_targetAmplitudeNegligible
