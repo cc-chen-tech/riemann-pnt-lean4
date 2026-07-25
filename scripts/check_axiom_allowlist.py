@@ -244,6 +244,12 @@ OSCILLATION_EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.ZeroForcedOscillation.tendsto_normalized_movingHeightApproximationBudget_exp_atTop",
     "PrimeNumberTheorem.ZeroForcedOscillation.eventually_normalized_movingHeightApproximationBudget_exp_lt_gap",
     "PrimeNumberTheorem.ZeroForcedOscillation.tendsto_normalized_structural_allHeights_budget_exp_atTop",
+    "PrimeNumberTheorem.ZeroForcedOscillation.exists_perronResidualCertificate",
+    "PrimeNumberTheorem.ZeroForcedOscillation.norm_truncatedExplicitFormula_sub_chebyshevPsi0_le_of_uniform_horizontal_of_perronResidual",
+    "PrimeNumberTheorem.ZeroForcedOscillation.exists_uniform_contour_constant_selectedHeight_of_perronResidual",
+    "PrimeNumberTheorem.ZeroForcedOscillation.exists_uniform_contour_gap_constants_structural_allHeights_of_perronResidual",
+    "PrimeNumberTheorem.ZeroForcedOscillation.tendsto_normalized_structural_allHeights_budget_of_perronResidual_exp_atTop",
+    "PrimeNumberTheorem.ZeroForcedOscillation.exists_uniform_contour_gap_constants_eventually_allHeights_and_tendsto_of_perronResidual",
 }
 
 REPORT_RE = re.compile(

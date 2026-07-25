@@ -52,19 +52,21 @@ package of `ZeroForcedOscillationExplicitFormula.lean`:
   makes the normalized approximation budget tend to zero whenever
   `κ < lam + β`, and hence eventually smaller than every prescribed positive
   gap.
-* a structural refinement of the all-heights constant:
-  `K(x) = Cs(x) + 4 * Cg * x`, where the bounded-gap constant `Cg` is proved
-  uniform in every real `x > 1`; for `x = exp y`, a selected-height bound
-  `Cs(y) = O(exp (κ y))` with `κ ≥ 1` therefore supplies the same bound for
-  the complete all-heights constant and feeds the preceding rate transfer.
+* a complete structural refinement of the all-heights constant:
+  `K(x) = Ch * x^2 + 2π * Cp(x) + 2 + 4 * Cg * x`, where `Ch` and `Cg` are
+  global, the contour and bounded-gap growth is explicit, and `Cp(x)` is
+  isolated as a first-order Perron residual carrying its own integral-error
+  certificate;
+* a family-level rate transfer showing that a bound only on
+  `Cp(exp y)` controls the genuine all-heights approximation budget.
 
-What is NOT proved here: the selected-height component `Cs(exp y)` is not
-controlled uniformly or exponentially over the moving logarithmic intervals,
-the complementary gap and `B_T / E_T` are not bounded uniformly as `T` grows,
-and no unconditional `Omega` or `Omega_±` theorem is claimed.
+What is NOT proved here: the hard-cutoff Perron residual `Cp(exp y)` is not
+controlled uniformly or exponentially over all moving logarithmic intervals.
+The complementary gap and `B_T / E_T` are also not bounded uniformly as `T`
+grows, and no unconditional `Omega` or `Omega_±` theorem is claimed.
 -/
 
-open Complex Set
+open Complex Filter MeasureTheory Set Topology
 open scoped BigOperators Interval
 
 namespace PrimeNumberTheorem.ZeroForcedOscillation
@@ -72,6 +74,7 @@ namespace PrimeNumberTheorem.ZeroForcedOscillation
 noncomputable section
 
 open DirichletPolynomial
+open ExplicitFormulaResidues
 
 /-- The maximal real part among the nontrivial zeros in the height-`T`
 truncation. It is defined to be `0` when the truncation is empty. -/
@@ -969,6 +972,377 @@ theorem
     _ = 2 * Cg * x * (1 + Real.log (T + 8)) /
         (T - 1 / 2) := by ring
 
+/-- The exact residual certificate left by first-order Perron inversion on
+the fixed line `Re(s) = 2`.  The contour part of the selected-height explicit
+formula is uniform for `x ≥ 2`; this is the only pointwise input that remains
+after that uniform contour estimate is used. -/
+structure PerronResidualCertificate (x Cp : ℝ) : Prop where
+  nonneg : 0 ≤ Cp
+  bound :
+    ∀ W : ℝ, 1 ≤ W →
+      ‖(∫ w : ℝ in (-W)..W,
+          (x : ℂ) ^ perronLine 2 w *
+            (-deriv riemannZeta (perronLine 2 w) /
+              riemannZeta (perronLine 2 w)) /
+                perronLine 2 w) -
+          (chebyshevPsi0 x : ℂ)‖ ≤ Cp / W
+
+/-- Every positive sample has a Perron residual certificate.  This theorem
+names the actual pointwise obstruction instead of folding it into the full
+selected-height constant. -/
+theorem exists_perronResidualCertificate {x : ℝ} (hx : 0 < x) :
+    ∃ Cp : ℝ, PerronResidualCertificate x Cp := by
+  rcases
+      exists_norm_truncated_neg_logDeriv_firstOrderPerron_sub_chebyshevPsi0_le_div
+        hx (by norm_num : (1 : ℝ) < 2) with
+    ⟨Cp, hCp, hbound⟩
+  exact ⟨Cp, ⟨hCp, hbound⟩⟩
+
+/-- A uniform selected horizontal estimate plus a Perron residual controls the
+finite explicit formula before the moving-left and trivial-zero limits are
+taken.  All sample dependence outside `Cp` is the displayed `x²`. -/
+theorem
+    norm_truncatedExplicitFormula_sub_chebyshevPsi0_le_of_uniform_horizontal_of_perronResidual
+    {x A T Ch Cp : ℝ} {N : ℕ}
+    (hx : 2 ≤ x) (hA : 8 ≤ A) (hTmem : T ∈ Set.Icc A (A + 1))
+    (hgood : ExplicitFormulaAux.goodHeight T) (hCh : 0 ≤ Ch)
+    (hhorizontal :
+      ∀ {a : ℝ}, a ≤ -1 →
+        ‖(∫ σ : ℝ in a..2,
+              explicitFormulaIntegrand x ((σ : ℂ) + I * (-T))) -
+            (∫ σ : ℝ in a..2,
+              explicitFormulaIntegrand x ((σ : ℂ) + I * T))‖ ≤
+          Ch * x ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T)
+    (hCp : PerronResidualCertificate x Cp) :
+    ‖(∑ p ∈ ExplicitFormulaAux.finiteTrivialZeroSum (2 * (N : ℝ)),
+          -((x : ℂ) ^ p) / p) +
+        ((x : ℂ) - deriv riemannZeta 0 / riemannZeta 0 +
+          ∑ ρ ∈ nontrivialZerosFinset T,
+            -(analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ) -
+        (chebyshevPsi0 x : ℂ)‖ ≤
+      (Ch * x ^ (2 : ℝ) + 2 * Real.pi * Cp) *
+          (1 + Real.log (A + 6)) ^ 2 / T +
+        (((vonMangoldtLSeriesNorm 1 + ‖Complex.log Real.pi‖ +
+          2 * (‖(Real.eulerMascheroniConstant : ℂ)‖ + 3 +
+            Real.log (2 * (N : ℝ) + T + 4)) + Real.pi) *
+          x ^ (-(2 * (N : ℝ) + 1))) * (2 * T)) /
+          (2 * Real.pi) := by
+  let a : ℝ := -(2 * (N : ℝ) + 1)
+  let L : ℝ := 1 + Real.log (A + 6)
+  let approx : ℂ :=
+    (∑ p ∈ ExplicitFormulaAux.finiteTrivialZeroSum (2 * (N : ℝ)),
+        -((x : ℂ) ^ p) / p) +
+      ((x : ℂ) - deriv riemannZeta 0 / riemannZeta 0 +
+        ∑ ρ ∈ nontrivialZerosFinset T,
+          -(analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ)
+  let rem : ℂ := firstOrderContourRemainder x a 2
+    (T / (2 * Real.pi))
+  let left : ℝ :=
+    ((vonMangoldtLSeriesNorm 1 + ‖Complex.log Real.pi‖ +
+      2 * (‖(Real.eulerMascheroniConstant : ℂ)‖ + 3 +
+        Real.log (2 * (N : ℝ) + T + 4)) + Real.pi) *
+      x ^ (-(2 * (N : ℝ) + 1))) * (2 * T)
+  have hxpos : 0 < x := by linarith
+  have ha : a ≤ -1 := by
+    dsimp [a]
+    have hN : 0 ≤ (N : ℝ) := Nat.cast_nonneg N
+    linarith
+  have hTpos : 0 < T := by linarith [hTmem.1]
+  have htwoPi : 2 * Real.pi ≤ T := by
+    nlinarith [Real.pi_lt_four, hTmem.1]
+  have hW : 1 ≤ T / (2 * Real.pi) := by
+    rw [le_div_iff₀ (by positivity : 0 < 2 * Real.pi)]
+    simpa using htwoPi
+  have hWpos : 0 < T / (2 * Real.pi) := zero_lt_one.trans_le hW
+  have hscale : 2 * Real.pi * (T / (2 * Real.pi)) = T := by
+    field_simp
+  have hgoodW : ExplicitFormulaAux.goodHeight
+      (2 * Real.pi * (T / (2 * Real.pi))) := by
+    simpa [hscale] using hgood
+  have hidentity :=
+    ExplicitFormulaResidues.movingLeft_scaledRightIntegral_eq_truncatedExplicitFormula
+      (x := x) (c := 2) (W := T / (2 * Real.pi)) N
+      hxpos (by norm_num) hWpos hgoodW
+  have hintegral :
+      (∫ w : ℝ in (-(T / (2 * Real.pi)))..(T / (2 * Real.pi)),
+          explicitFormulaIntegrand x ((2 : ℂ) + 2 * Real.pi * w * I)) =
+        ∫ w : ℝ in (-(T / (2 * Real.pi)))..(T / (2 * Real.pi)),
+          (x : ℂ) ^ perronLine 2 w *
+            (-deriv riemannZeta (perronLine 2 w) /
+              riemannZeta (perronLine 2 w)) /
+                perronLine 2 w := by
+    apply intervalIntegral.integral_congr
+    intro w _hw
+    change explicitFormulaIntegrand x
+        ((2 : ℂ) + 2 * Real.pi * w * I) =
+      (x : ℂ) ^ perronLine 2 w *
+        (-deriv riemannZeta (perronLine 2 w) /
+          riemannZeta (perronLine 2 w)) /
+            perronLine 2 w
+    have hs : (2 : ℂ) + 2 * Real.pi * w * I = perronLine 2 w := by
+      simp only [perronLine]
+      push_cast
+      ring
+    rw [hs]
+    simp only [explicitFormulaIntegrand, perronLine, logDeriv_apply]
+    ring
+  have hrightEq :
+      (∫ w : ℝ in (-(T / (2 * Real.pi)))..(T / (2 * Real.pi)),
+          (x : ℂ) ^ perronLine 2 w *
+            (-deriv riemannZeta (perronLine 2 w) /
+              riemannZeta (perronLine 2 w)) /
+                perronLine 2 w) = approx - rem := by
+    calc
+      _ = ∫ w : ℝ in (-(T / (2 * Real.pi)))..(T / (2 * Real.pi)),
+          explicitFormulaIntegrand x ((2 : ℂ) + 2 * Real.pi * w * I) :=
+        hintegral.symm
+      _ = (∑ p ∈ ExplicitFormulaAux.finiteTrivialZeroSum (2 * (N : ℝ)),
+          -((x : ℂ) ^ p) / p) +
+          ((x : ℂ) - deriv riemannZeta 0 / riemannZeta 0 +
+            ∑ ρ ∈ nontrivialZerosFinset
+                (2 * Real.pi * (T / (2 * Real.pi))),
+              -(analyticOrderNatAt riemannZeta ρ : ℂ) *
+                (x : ℂ) ^ ρ / ρ) -
+          firstOrderContourRemainder x a 2
+            (T / (2 * Real.pi)) := hidentity
+      _ = approx - rem := by simp [approx, rem, a, hscale]
+  have hpBound :
+      ‖(approx - rem) - (chebyshevPsi0 x : ℂ)‖ ≤
+        Cp / (T / (2 * Real.pi)) := by
+    rw [← hrightEq]
+    exact hCp.bound _ hW
+  have hleftIntegral :=
+    (ExplicitFormulaResidues.norm_integral_explicitFormulaIntegrand_odd_vertical_le
+      (N := N) (by linarith : 1 < x) hTpos.le).2
+  have hhorizontal' :
+      ‖(∫ σ : ℝ in a..2,
+            explicitFormulaIntegrand x
+              ((σ : ℂ) + (((-T : ℝ) : ℂ) * I))) -
+        (∫ σ : ℝ in a..2,
+            explicitFormulaIntegrand x
+              ((σ : ℂ) + (((T : ℝ) : ℂ) * I)))‖ ≤
+        Ch * x ^ (2 : ℝ) * L ^ 2 / T := by
+    simpa [L, mul_comm] using hhorizontal ha
+  have hden : ‖(2 * Real.pi : ℂ) * I‖ = 2 * Real.pi := by
+    simp [Real.norm_eq_abs, abs_of_pos Real.pi_pos]
+  have hrem :
+      ‖rem‖ ≤ Ch * x ^ (2 : ℝ) * L ^ 2 / T +
+          left / (2 * Real.pi) := by
+    have hraw :
+        ‖rem‖ ≤
+          (Ch * x ^ (2 : ℝ) * L ^ 2 / T + left) /
+            (2 * Real.pi) := by
+      change ‖firstOrderContourRemainder x a 2
+          (T / (2 * Real.pi))‖ ≤ _
+      rw [firstOrderContourRemainder, hscale, norm_div, hden]
+      apply div_le_div_of_nonneg_right _ (by positivity : 0 ≤ 2 * Real.pi)
+      calc
+        ‖(∫ σ : ℝ in a..2,
+              explicitFormulaIntegrand x
+                ((σ : ℂ) + (((-T : ℝ) : ℂ) * I))) -
+            (∫ σ : ℝ in a..2,
+              explicitFormulaIntegrand x
+                ((σ : ℂ) + (((T : ℝ) : ℂ) * I))) -
+            I * (∫ t : ℝ in (-T)..T,
+              explicitFormulaIntegrand x ((a : ℂ) + t * I))‖ ≤
+          ‖(∫ σ : ℝ in a..2,
+              explicitFormulaIntegrand x
+                ((σ : ℂ) + (((-T : ℝ) : ℂ) * I))) -
+            (∫ σ : ℝ in a..2,
+              explicitFormulaIntegrand x
+                ((σ : ℂ) + (((T : ℝ) : ℂ) * I)))‖ +
+            ‖∫ t : ℝ in (-T)..T,
+              explicitFormulaIntegrand x ((a : ℂ) + t * I)‖ := by
+                calc
+                  _ ≤ ‖(∫ σ : ℝ in a..2,
+                        explicitFormulaIntegrand x
+                          ((σ : ℂ) + (((-T : ℝ) : ℂ) * I))) -
+                      (∫ σ : ℝ in a..2,
+                        explicitFormulaIntegrand x
+                          ((σ : ℂ) + (((T : ℝ) : ℂ) * I)))‖ +
+                      ‖I * (∫ t : ℝ in (-T)..T,
+                        explicitFormulaIntegrand x
+                          ((a : ℂ) + t * I))‖ :=
+                    norm_sub_le _ _
+                  _ = _ := by rw [norm_mul, norm_I, one_mul]
+        _ ≤ Ch * x ^ (2 : ℝ) * L ^ 2 / T + left := by
+          apply add_le_add hhorizontal'
+          simpa [a, left] using hleftIntegral
+    apply hraw.trans
+    rw [add_div]
+    have hhoriz : 0 ≤ Ch * x ^ (2 : ℝ) * L ^ 2 / T := by positivity
+    have hfirst := div_le_self hhoriz
+      (by nlinarith [Real.pi_gt_three] : 1 ≤ 2 * Real.pi)
+    linarith
+  change ‖approx - (chebyshevPsi0 x : ℂ)‖ ≤ _
+  have hsplit :
+      approx - (chebyshevPsi0 x : ℂ) =
+        ((approx - rem) - (chebyshevPsi0 x : ℂ)) + rem := by ring
+  rw [hsplit]
+  calc
+    _ ≤ ‖(approx - rem) - (chebyshevPsi0 x : ℂ)‖ + ‖rem‖ :=
+      norm_add_le _ _
+    _ ≤ Cp / (T / (2 * Real.pi)) +
+        (Ch * x ^ (2 : ℝ) * L ^ 2 / T +
+          left / (2 * Real.pi)) :=
+      add_le_add hpBound hrem
+    _ ≤ (Ch * x ^ (2 : ℝ) + 2 * Real.pi * Cp) * L ^ 2 / T +
+        left / (2 * Real.pi) := by
+      have hlog : 0 ≤ Real.log (A + 6) :=
+        Real.log_nonneg (by linarith)
+      have hLsq : 1 ≤ L ^ 2 := by
+        have hL : 1 ≤ L := by dsimp [L]; linarith
+        nlinarith [sq_nonneg (L - 1)]
+      have hpRate : Cp / (T / (2 * Real.pi)) ≤
+          (2 * Real.pi * Cp) * L ^ 2 / T := by
+        have heq :
+            Cp / (T / (2 * Real.pi)) = (2 * Real.pi * Cp) / T := by
+          field_simp [hTpos.ne']
+        rw [heq]
+        apply div_le_div_of_nonneg_right _ hTpos.le
+        nlinarith [mul_nonneg
+          (mul_nonneg (by positivity : 0 ≤ 2 * Real.pi) hCp.nonneg)
+          (sub_nonneg.mpr hLsq)]
+      calc
+        Cp / (T / (2 * Real.pi)) +
+            (Ch * x ^ (2 : ℝ) * L ^ 2 / T +
+              left / (2 * Real.pi)) ≤
+          (2 * Real.pi * Cp) * L ^ 2 / T +
+            (Ch * x ^ (2 : ℝ) * L ^ 2 / T +
+              left / (2 * Real.pi)) := by
+                exact add_le_add hpRate le_rfl
+        _ = (Ch * x ^ (2 : ℝ) + 2 * Real.pi * Cp) *
+              L ^ 2 / T + left / (2 * Real.pi) := by ring
+    _ = (Ch * x ^ (2 : ℝ) + 2 * Real.pi * Cp) *
+          (1 + Real.log (A + 6)) ^ 2 / T +
+        (((vonMangoldtLSeriesNorm 1 + ‖Complex.log Real.pi‖ +
+          2 * (‖(Real.eulerMascheroniConstant : ℂ)‖ + 3 +
+            Real.log (2 * (N : ℝ) + T + 4)) + Real.pi) *
+          x ^ (-(2 * (N : ℝ) + 1))) * (2 * T)) /
+          (2 * Real.pi) := by rfl
+
+/-- The selected-height constant is an explicit quadratic contour term plus
+the first-order Perron residual.  The constants used to remove the moving-left
+edge and the finite trivial-zero truncation are the final displayed `+ 2`.
+
+This is the strongest uniform split available from the current hard Perron
+kernel: the contour coefficient `Ch` is independent of `x`, while `Cp`
+retains exactly the pointwise Perron inversion sensitivity. -/
+theorem
+    exists_uniform_contour_constant_selectedHeight_of_perronResidual :
+    ∃ Ch : ℝ, 0 ≤ Ch ∧ ∀ {x : ℝ}, 2 ≤ x →
+      ∀ {Cp : ℝ}, PerronResidualCertificate x Cp →
+        ∀ A : ℝ, 8 ≤ A →
+          ∃ T ∈ Set.Icc A (A + 1), ExplicitFormulaAux.goodHeight T ∧
+            ‖explicitFormulaApproxWithMultiplicity x T -
+                (chebyshevPsi0 x : ℂ)‖ ≤
+              (Ch * x ^ (2 : ℝ) + 2 * Real.pi * Cp + 2) *
+                (1 + Real.log (A + 6)) ^ 2 / T := by
+  rcases
+      ExplicitFormulaResidues.exists_uniform_goodHeight_Icc_norm_horizontal_complete_explicitFormulaContour_difference_le
+    with ⟨Ch, hCh, hhorizontal⟩
+  refine ⟨Ch, hCh, ?_⟩
+  intro x hx Cp hCp
+  intro A hA
+  rcases hhorizontal A (by linarith) with
+    ⟨T, hTmem, hgood, hhorizontalT⟩
+  have hTpos : 0 < T := by linarith [hTmem.1]
+  let L : ℝ := 1 + Real.log (A + 6)
+  have hlog : 0 ≤ Real.log (A + 6) :=
+    Real.log_nonneg (by linarith)
+  have hLpos : 0 < L := by dsimp [L]; linarith
+  have heps : 0 < L ^ 2 / T := div_pos (sq_pos_of_pos hLpos) hTpos
+  have hleft :=
+    ExplicitFormulaResidues.tendsto_oddVerticalExplicitBound_atTop
+      (by linarith : 1 < x) hTpos.le
+  rcases (Metric.tendsto_atTop.mp hleft) (L ^ 2 / T) heps with
+    ⟨Nleft, hNleft⟩
+  have htrivial :=
+    ExplicitFormulaAux.tendsto_finiteTrivialZeroSum_residues
+      (by linarith : 1 < x)
+  rcases (Metric.tendsto_atTop.mp htrivial) (L ^ 2 / T) heps with
+    ⟨Ntrivial, hNtrivial⟩
+  let N : ℕ := max Nleft Ntrivial
+  let finite : ℂ :=
+    ∑ p ∈ ExplicitFormulaAux.finiteTrivialZeroSum (2 * (N : ℝ)),
+      -((x : ℂ) ^ p) / p
+  let zeroSum : ℂ :=
+    ∑ ρ ∈ nontrivialZerosFinset T,
+      -(analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ
+  let mainTerm : ℂ :=
+    (x : ℂ) - deriv riemannZeta 0 / riemannZeta 0 + zeroSum
+  let logTerm : ℂ :=
+    ((-(1 / 2 : ℝ) * Real.log (1 - x ^ (-2 : ℝ)) : ℝ) : ℂ)
+  let left : ℝ :=
+    (((vonMangoldtLSeriesNorm 1 + ‖Complex.log Real.pi‖ +
+      2 * (‖(Real.eulerMascheroniConstant : ℂ)‖ + 3 +
+        Real.log (2 * (N : ℝ) + T + 4)) + Real.pi) *
+      x ^ (-(2 * (N : ℝ) + 1))) * (2 * T)) /
+      (2 * Real.pi)
+  have hleftDist := hNleft N (le_max_left _ _)
+  have hleftNonneg : 0 ≤ left := by
+    have hseries : 0 ≤ vonMangoldtLSeriesNorm 1 :=
+      tsum_nonneg fun n => norm_nonneg _
+    have hlogN : 0 ≤ Real.log (2 * (N : ℝ) + T + 4) :=
+      Real.log_nonneg (by
+        have hN0 : 0 ≤ (N : ℝ) := Nat.cast_nonneg N
+        linarith)
+    dsimp [left]
+    positivity
+  have hleftRate : left ≤ L ^ 2 / T := by
+    change dist left 0 < L ^ 2 / T at hleftDist
+    rw [Real.dist_eq, sub_zero, abs_of_nonneg hleftNonneg] at hleftDist
+    exact hleftDist.le
+  have htrivialDist := hNtrivial N (le_max_right _ _)
+  have htrivialRate : ‖logTerm - finite‖ ≤ L ^ 2 / T := by
+    have hforward : ‖finite - logTerm‖ < L ^ 2 / T := by
+      change dist finite logTerm < L ^ 2 / T at htrivialDist
+      simpa [dist_eq_norm] using htrivialDist
+    rw [norm_sub_rev]
+    exact hforward.le
+  have hfinite :
+      ‖finite + mainTerm - (chebyshevPsi0 x : ℂ)‖ ≤
+        (Ch * x ^ (2 : ℝ) + 2 * Real.pi * Cp) * L ^ 2 / T +
+          left := by
+    simpa [finite, mainTerm, zeroSum, left, L] using
+      norm_truncatedExplicitFormula_sub_chebyshevPsi0_le_of_uniform_horizontal_of_perronResidual
+        hx hA hTmem hgood hCh (hhorizontalT hx) hCp (N := N)
+  have hzeroSum :
+      zeroSum = -finiteNontrivialZeroSumWithMultiplicity x T := by
+    dsimp [zeroSum, finiteNontrivialZeroSumWithMultiplicity]
+    rw [← Finset.sum_neg_distrib]
+    apply Finset.sum_congr rfl
+    intro ρ _hρ
+    ring
+  have happ :
+      explicitFormulaApproxWithMultiplicity x T = mainTerm + logTerm := by
+    dsimp [explicitFormulaApproxWithMultiplicity, mainTerm, logTerm]
+    rw [hzeroSum]
+    push_cast
+    ring
+  refine ⟨T, hTmem, hgood, ?_⟩
+  have hsplit :
+      explicitFormulaApproxWithMultiplicity x T -
+          (chebyshevPsi0 x : ℂ) =
+        (finite + mainTerm - (chebyshevPsi0 x : ℂ)) +
+          (logTerm - finite) := by
+    rw [happ]
+    ring
+  rw [hsplit]
+  calc
+    _ ≤ ‖finite + mainTerm - (chebyshevPsi0 x : ℂ)‖ +
+        ‖logTerm - finite‖ := norm_add_le _ _
+    _ ≤ ((Ch * x ^ (2 : ℝ) + 2 * Real.pi * Cp) * L ^ 2 / T +
+          left) + L ^ 2 / T :=
+      add_le_add hfinite htrivialRate
+    _ ≤ ((Ch * x ^ (2 : ℝ) + 2 * Real.pi * Cp) * L ^ 2 / T +
+          L ^ 2 / T) + L ^ 2 / T := by
+      gcongr
+    _ = (Ch * x ^ (2 : ℝ) + 2 * Real.pi * Cp + 2) *
+          (1 + Real.log (A + 6)) ^ 2 / T := by
+      dsimp [L]
+      ring
+
 /-- Exact structural assembly behind the pointwise all-heights constant.
 Given a selected-height constant `Cs` and a bounded-gap constant `Cg`, the
 all-heights certificate uses `K(x) = Cs + 4 * Cg * x`. -/
@@ -1087,6 +1461,54 @@ theorem
   exact
     norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_structural_allHeights
       hx hCs hCg hselected (hgap hx) T hT
+
+/-- Fully exposed all-heights certificate for `x ≥ 2`.  There are two global
+constants:
+
+* `Ch`, multiplying the explicit contour term `x²`;
+* `Cg`, multiplying the explicit bounded-height-gap term `x`.
+
+The only sample-dependent witness left is `Cp`, and it carries the exact
+first-order Perron residual certificate. -/
+theorem
+    exists_uniform_contour_gap_constants_structural_allHeights_of_perronResidual :
+    ∃ Ch Cg : ℝ, 0 ≤ Ch ∧ 0 ≤ Cg ∧ ∀ {x : ℝ}, 2 ≤ x →
+      ∀ {Cp : ℝ}, PerronResidualCertificate x Cp →
+        (∀ A : ℝ, 8 ≤ A →
+          ∃ U ∈ Set.Icc A (A + 1), ExplicitFormulaAux.goodHeight U ∧
+            ‖explicitFormulaApproxWithMultiplicity x U -
+                (chebyshevPsi0 x : ℂ)‖ ≤
+              (Ch * x ^ (2 : ℝ) + 2 * Real.pi * Cp + 2) *
+                (1 + Real.log (A + 6)) ^ 2 / U) ∧
+        ∀ T : ℝ, 8 ≤ T →
+          ‖explicitFormulaApproxWithMultiplicity x T -
+              (chebyshevPsi0 x : ℂ)‖ ≤
+            movingHeightApproximationBudget
+              (Ch * x ^ (2 : ℝ) + 2 * Real.pi * Cp + 2 +
+                4 * Cg * x) T := by
+  rcases
+      exists_uniform_contour_constant_selectedHeight_of_perronResidual
+    with ⟨Ch, hCh, hselected⟩
+  rcases
+      exists_uniform_norm_explicitFormulaApproxWithMultiplicity_sub_le_log_div_of_le_add_three
+    with ⟨Cg, hCg, hgap⟩
+  refine ⟨Ch, Cg, hCh, hCg, ?_⟩
+  intro x hx Cp hCp
+  have hselectedCp := hselected hx hCp
+  refine ⟨hselectedCp, ?_⟩
+  intro T hT
+  have hx1 : 1 < x := by linarith
+  have hCs :
+      0 ≤ Ch * x ^ (2 : ℝ) + 2 * Real.pi * Cp + 2 := by
+    have hx0 : 0 ≤ x := by linarith
+    have hxpow : 0 ≤ x ^ (2 : ℝ) := Real.rpow_nonneg hx0 _
+    exact add_nonneg
+      (add_nonneg (mul_nonneg hCh hxpow)
+        (mul_nonneg (mul_nonneg (by norm_num) Real.pi_pos.le) hCp.nonneg))
+      (by norm_num)
+  exact
+    norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_structural_allHeights
+      hx1 hCs hCg hselectedCp (hgap hx1) T hT
 
 /-- Explicit exponential-height rate transfer for the all-heights
 approximation budget. If the pointwise explicit-formula constants satisfy
@@ -1274,6 +1696,132 @@ theorem tendsto_normalized_structural_allHeights_budget_exp_atTop
           mul_le_mul_of_nonneg_left hexp
             (mul_nonneg (by norm_num) hCg)
       _ = (Cs0 + 4 * Cg) * Real.exp (κ * y) := by ring
+
+/-- Rate transfer after exposing the selected-height constant.  The contour
+and bounded-gap pieces have explicit exponents `2` and `1`; hence for
+`κ ≥ 2` the only remaining rate hypothesis is the one on the Perron residual
+`Cp(exp y)`.
+
+This is strictly stronger than assuming a rate for an opaque selected-height
+constant `Cs`: it identifies the hard Perron inversion residual as the sole
+uncontrolled component. -/
+theorem
+    tendsto_normalized_structural_allHeights_budget_of_perronResidual_exp_atTop
+    (Cp : ℝ → ℝ) (Ch Cg Cp0 κ lam β : ℝ)
+    (hCh : 0 ≤ Ch) (hCg : 0 ≤ Cg) (hCp0 : 0 ≤ Cp0)
+    (hkappa : 2 ≤ κ) (hlam : 0 < lam) (hrate : κ < lam + β)
+    (hCp :
+      ∀ᶠ y : ℝ in Filter.atTop,
+        0 ≤ Cp y ∧ Cp y ≤ Cp0 * Real.exp (κ * y)) :
+    Filter.Tendsto
+      (fun y : ℝ =>
+        Real.exp (-β * y) *
+          movingHeightApproximationBudget
+            (Ch * (Real.exp y) ^ (2 : ℝ) +
+                2 * Real.pi * Cp y + 2 +
+              4 * Cg * Real.exp y)
+            (Real.exp (lam * y)))
+      Filter.atTop (nhds 0) := by
+  have hCs0 :
+      0 ≤ Ch + 2 * Real.pi * Cp0 + 2 := by positivity
+  apply
+    tendsto_normalized_structural_allHeights_budget_exp_atTop
+      (fun y =>
+        Ch * (Real.exp y) ^ (2 : ℝ) +
+          2 * Real.pi * Cp y + 2)
+      Cg (Ch + 2 * Real.pi * Cp0 + 2) κ lam β
+      hCg hCs0 (by linarith) hlam hrate
+  filter_upwards [hCp, Filter.eventually_ge_atTop (0 : ℝ)] with y hCpy hy
+  have hyκ : 0 ≤ κ * y := mul_nonneg (by linarith) hy
+  have htwoκ : 2 * y ≤ κ * y := by
+    have : 0 ≤ (κ - 2) * y := mul_nonneg (sub_nonneg.mpr hkappa) hy
+    linarith
+  have hexpTwo :
+      (Real.exp y) ^ (2 : ℝ) ≤ Real.exp (κ * y) := by
+    rw [Real.rpow_def_of_pos (Real.exp_pos y), Real.log_exp]
+    exact Real.exp_le_exp.mpr (by linarith)
+  have honeExp : 1 ≤ Real.exp (κ * y) := by
+    rw [← Real.exp_zero]
+    exact Real.exp_le_exp.mpr hyκ
+  constructor
+  · have hpow : 0 ≤ (Real.exp y) ^ (2 : ℝ) :=
+      Real.rpow_nonneg (Real.exp_nonneg y) _
+    exact add_nonneg
+      (add_nonneg (mul_nonneg hCh hpow)
+        (mul_nonneg (mul_nonneg (by norm_num) Real.pi_pos.le) hCpy.1))
+      (by norm_num)
+  · calc
+      Ch * (Real.exp y) ^ (2 : ℝ) +
+            2 * Real.pi * Cp y + 2 ≤
+          Ch * Real.exp (κ * y) +
+            2 * Real.pi * (Cp0 * Real.exp (κ * y)) + 2 := by
+        exact add_le_add
+          (add_le_add
+            (mul_le_mul_of_nonneg_left hexpTwo hCh)
+            (mul_le_mul_of_nonneg_left hCpy.2
+              (mul_nonneg (by norm_num) Real.pi_pos.le)))
+          le_rfl
+      _ ≤ Ch * Real.exp (κ * y) +
+            2 * Real.pi * (Cp0 * Real.exp (κ * y)) +
+              2 * Real.exp (κ * y) := by
+        exact add_le_add le_rfl (by nlinarith)
+      _ = (Ch + 2 * Real.pi * Cp0 + 2) *
+          Real.exp (κ * y) := by ring
+
+/-- End-to-end family form of the residual split.  A family of genuine Perron
+certificates gives the actual all-heights explicit-formula bound eventually
+along `x = exp y`; a growth bound only for those residual constants then makes
+the normalized structural budget tend to zero.
+
+No uniform Perron estimate is asserted: both the certificate family and its
+rate remain explicit hypotheses. -/
+theorem
+    exists_uniform_contour_gap_constants_eventually_allHeights_and_tendsto_of_perronResidual
+    (Cp : ℝ → ℝ) (Cp0 κ lam β : ℝ)
+    (hCp0 : 0 ≤ Cp0) (hkappa : 2 ≤ κ)
+    (hlam : 0 < lam) (hrate : κ < lam + β)
+    (hcertificate :
+      ∀ᶠ y : ℝ in Filter.atTop,
+        PerronResidualCertificate (Real.exp y) (Cp y))
+    (hCpBound :
+      ∀ᶠ y : ℝ in Filter.atTop,
+        Cp y ≤ Cp0 * Real.exp (κ * y)) :
+    ∃ Ch Cg : ℝ, 0 ≤ Ch ∧ 0 ≤ Cg ∧
+      (∀ᶠ y : ℝ in Filter.atTop,
+        ∀ T : ℝ, 8 ≤ T →
+          ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+              (chebyshevPsi0 (Real.exp y) : ℂ)‖ ≤
+            movingHeightApproximationBudget
+              (Ch * (Real.exp y) ^ (2 : ℝ) +
+                  2 * Real.pi * Cp y + 2 +
+                4 * Cg * Real.exp y) T) ∧
+      Filter.Tendsto
+        (fun y : ℝ =>
+          Real.exp (-β * y) *
+            movingHeightApproximationBudget
+              (Ch * (Real.exp y) ^ (2 : ℝ) +
+                  2 * Real.pi * Cp y + 2 +
+                4 * Cg * Real.exp y)
+              (Real.exp (lam * y)))
+        Filter.atTop (nhds 0) := by
+  rcases
+      exists_uniform_contour_gap_constants_structural_allHeights_of_perronResidual
+    with ⟨Ch, Cg, hCh, hCg, hstructural⟩
+  refine ⟨Ch, Cg, hCh, hCg, ?_, ?_⟩
+  · filter_upwards
+      [hcertificate,
+        Filter.eventually_ge_atTop (Real.log 2)] with y hcert hy
+    have hx : (2 : ℝ) ≤ Real.exp y := by
+      calc
+        (2 : ℝ) = Real.exp (Real.log 2) :=
+          (Real.exp_log (by norm_num)).symm
+        _ ≤ Real.exp y := Real.exp_le_exp.mpr hy
+    exact (hstructural hx hcert).2
+  · apply
+      tendsto_normalized_structural_allHeights_budget_of_perronResidual_exp_atTop
+        Cp Ch Cg Cp0 κ lam β hCh hCg hCp0 hkappa hlam hrate
+    filter_upwards [hcertificate, hCpBound] with y hcert hbound
+    exact ⟨hcert.nonneg, hbound⟩
 
 /-- Every ordered off-diagonal budget is nonnegative. -/
 theorem offDiagonalBound_nonneg {ι : Type*} [DecidableEq ι]

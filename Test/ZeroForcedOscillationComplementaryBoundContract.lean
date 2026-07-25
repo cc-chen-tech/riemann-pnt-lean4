@@ -1,6 +1,6 @@
 import PrimeNumberTheorem.ZeroForcedOscillationComplementaryBound
 
-open Complex Set
+open Complex Filter MeasureTheory Set Topology
 open scoped BigOperators Interval
 
 open PrimeNumberTheorem
@@ -800,6 +800,128 @@ example (Cs : ℝ → ℝ) (Cg Cs0 κ lam β : ℝ)
       Filter.atTop (nhds 0) :=
   tendsto_normalized_structural_allHeights_budget_exp_atTop
     Cs Cg Cs0 κ lam β hCg hCs0 hkappa hlam hrate hCs
+
+example {x Cp : ℝ} (hCp : 0 ≤ Cp)
+    (hbound :
+      ∀ W : ℝ, 1 ≤ W →
+        ‖(∫ w : ℝ in (-W)..W,
+            (x : ℂ) ^ perronLine 2 w *
+              (-deriv riemannZeta (perronLine 2 w) /
+                riemannZeta (perronLine 2 w)) /
+                  perronLine 2 w) -
+            (chebyshevPsi0 x : ℂ)‖ ≤ Cp / W) :
+    PerronResidualCertificate x Cp :=
+  ⟨hCp, hbound⟩
+
+example {x : ℝ} (hx : 0 < x) :
+    ∃ Cp : ℝ, PerronResidualCertificate x Cp :=
+  exists_perronResidualCertificate hx
+
+example {x A T Ch Cp : ℝ} {N : ℕ}
+    (hx : 2 ≤ x) (hA : 8 ≤ A) (hTmem : T ∈ Set.Icc A (A + 1))
+    (hgood : ExplicitFormulaAux.goodHeight T) (hCh : 0 ≤ Ch)
+    (hhorizontal :
+      ∀ {a : ℝ}, a ≤ -1 →
+        ‖(∫ σ : ℝ in a..2,
+              ExplicitFormulaResidues.explicitFormulaIntegrand
+                x ((σ : ℂ) + I * (-T))) -
+            (∫ σ : ℝ in a..2,
+              ExplicitFormulaResidues.explicitFormulaIntegrand
+                x ((σ : ℂ) + I * T))‖ ≤
+          Ch * x ^ (2 : ℝ) * (1 + Real.log (A + 6)) ^ 2 / T)
+    (hCp : PerronResidualCertificate x Cp) :
+    ‖(∑ p ∈ ExplicitFormulaAux.finiteTrivialZeroSum (2 * (N : ℝ)),
+          -((x : ℂ) ^ p) / p) +
+        ((x : ℂ) - deriv riemannZeta 0 / riemannZeta 0 +
+          ∑ ρ ∈ nontrivialZerosFinset T,
+            -(analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ) -
+        (chebyshevPsi0 x : ℂ)‖ ≤
+      (Ch * x ^ (2 : ℝ) + 2 * Real.pi * Cp) *
+          (1 + Real.log (A + 6)) ^ 2 / T +
+        (((ExplicitFormulaResidues.vonMangoldtLSeriesNorm 1 +
+          ‖Complex.log Real.pi‖ +
+          2 * (‖(Real.eulerMascheroniConstant : ℂ)‖ + 3 +
+            Real.log (2 * (N : ℝ) + T + 4)) + Real.pi) *
+          x ^ (-(2 * (N : ℝ) + 1))) * (2 * T)) /
+          (2 * Real.pi) :=
+  norm_truncatedExplicitFormula_sub_chebyshevPsi0_le_of_uniform_horizontal_of_perronResidual
+    hx hA hTmem hgood hCh hhorizontal hCp
+
+example :
+    ∃ Ch : ℝ, 0 ≤ Ch ∧ ∀ {x : ℝ}, 2 ≤ x →
+      ∀ {Cp : ℝ}, PerronResidualCertificate x Cp →
+        ∀ A : ℝ, 8 ≤ A →
+          ∃ T ∈ Set.Icc A (A + 1), ExplicitFormulaAux.goodHeight T ∧
+            ‖explicitFormulaApproxWithMultiplicity x T -
+                (chebyshevPsi0 x : ℂ)‖ ≤
+              (Ch * x ^ (2 : ℝ) + 2 * Real.pi * Cp + 2) *
+                (1 + Real.log (A + 6)) ^ 2 / T :=
+  exists_uniform_contour_constant_selectedHeight_of_perronResidual
+
+example :
+    ∃ Ch Cg : ℝ, 0 ≤ Ch ∧ 0 ≤ Cg ∧ ∀ {x : ℝ}, 2 ≤ x →
+      ∀ {Cp : ℝ}, PerronResidualCertificate x Cp →
+        (∀ A : ℝ, 8 ≤ A →
+          ∃ U ∈ Set.Icc A (A + 1), ExplicitFormulaAux.goodHeight U ∧
+            ‖explicitFormulaApproxWithMultiplicity x U -
+                (chebyshevPsi0 x : ℂ)‖ ≤
+              (Ch * x ^ (2 : ℝ) + 2 * Real.pi * Cp + 2) *
+                (1 + Real.log (A + 6)) ^ 2 / U) ∧
+        ∀ T : ℝ, 8 ≤ T →
+          ‖explicitFormulaApproxWithMultiplicity x T -
+              (chebyshevPsi0 x : ℂ)‖ ≤
+            movingHeightApproximationBudget
+              (Ch * x ^ (2 : ℝ) + 2 * Real.pi * Cp + 2 +
+                4 * Cg * x) T :=
+  exists_uniform_contour_gap_constants_structural_allHeights_of_perronResidual
+
+example (Cp : ℝ → ℝ) (Ch Cg Cp0 κ lam β : ℝ)
+    (hCh : 0 ≤ Ch) (hCg : 0 ≤ Cg) (hCp0 : 0 ≤ Cp0)
+    (hkappa : 2 ≤ κ) (hlam : 0 < lam) (hrate : κ < lam + β)
+    (hCp :
+      ∀ᶠ y : ℝ in Filter.atTop,
+        0 ≤ Cp y ∧ Cp y ≤ Cp0 * Real.exp (κ * y)) :
+    Filter.Tendsto
+      (fun y : ℝ =>
+        Real.exp (-β * y) *
+          movingHeightApproximationBudget
+            (Ch * (Real.exp y) ^ (2 : ℝ) +
+                2 * Real.pi * Cp y + 2 +
+              4 * Cg * Real.exp y)
+            (Real.exp (lam * y)))
+      Filter.atTop (nhds 0) :=
+  tendsto_normalized_structural_allHeights_budget_of_perronResidual_exp_atTop
+    Cp Ch Cg Cp0 κ lam β hCh hCg hCp0 hkappa hlam hrate hCp
+
+example (Cp : ℝ → ℝ) (Cp0 κ lam β : ℝ)
+    (hCp0 : 0 ≤ Cp0) (hkappa : 2 ≤ κ)
+    (hlam : 0 < lam) (hrate : κ < lam + β)
+    (hcertificate :
+      ∀ᶠ y : ℝ in Filter.atTop,
+        PerronResidualCertificate (Real.exp y) (Cp y))
+    (hCpBound :
+      ∀ᶠ y : ℝ in Filter.atTop,
+        Cp y ≤ Cp0 * Real.exp (κ * y)) :
+    ∃ Ch Cg : ℝ, 0 ≤ Ch ∧ 0 ≤ Cg ∧
+      (∀ᶠ y : ℝ in Filter.atTop,
+        ∀ T : ℝ, 8 ≤ T →
+          ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+              (chebyshevPsi0 (Real.exp y) : ℂ)‖ ≤
+            movingHeightApproximationBudget
+              (Ch * (Real.exp y) ^ (2 : ℝ) +
+                  2 * Real.pi * Cp y + 2 +
+                4 * Cg * Real.exp y) T) ∧
+      Filter.Tendsto
+        (fun y : ℝ =>
+          Real.exp (-β * y) *
+            movingHeightApproximationBudget
+              (Ch * (Real.exp y) ^ (2 : ℝ) +
+                  2 * Real.pi * Cp y + 2 +
+                4 * Cg * Real.exp y)
+              (Real.exp (lam * y)))
+        Filter.atTop (nhds 0) :=
+  exists_uniform_contour_gap_constants_eventually_allHeights_and_tendsto_of_perronResidual
+    Cp Cp0 κ lam β hCp0 hkappa hlam hrate hcertificate hCpBound
 
 -- Small sanity checks: the per-term identity at zero multiplicity and at `ρ = 0`.
 
