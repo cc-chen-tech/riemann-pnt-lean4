@@ -1,5 +1,5 @@
 import HardyTheorem.SelbergSmallAbsBadSet
-import HardyTheorem.SelbergSqrtZetaShortExpansion
+import HardyTheorem.SelbergSqrtZetaAbsLower
 
 open Complex MeasureTheory Set
 open scoped BigOperators
@@ -34,6 +34,11 @@ noncomputable def selbergSqrtZetaShortDirichletGapSum
               selbergShortDirichletCollectedFrequency n‖ /
           |selbergShortDirichletCollectedFrequency m -
             selbergShortDirichletCollectedFrequency n|
+
+/-- Starts whose square-root-zeta mollified absolute mass is at most `eta`. -/
+def selbergSqrtZetaSmallAbsoluteMassStarts
+    (X : ℕ) (H eta : ℝ) : Set ℝ :=
+  {t | selbergSqrtZetaAbsShortIntegral X H t ≤ eta}
 
 /-- The exact finite gap sum bounds the start-variable second moment of the
 square-root-zeta short polynomial. -/
@@ -96,5 +101,35 @@ theorem volume_smallMassStarts_inter_Icc_le_sqrtZetaGapSum
   exact volume_smallMassStarts_inter_Icc_le_of_L2
     hthreshold hlower (by simpa only [Q] using hQint)
       (by simpa only [Q] using hQbound)
+
+/-- The first zeta approximation and the exact square-root-zeta mean-square
+reduction leave only one explicit finite frequency-gap sum in the
+small-absolute-mass estimate. -/
+theorem exists_volume_selbergSqrtZetaSmallAbsoluteMassStarts_inter_Icc_le_gapSum :
+    ∃ C T0 : ℝ, 0 ≤ C ∧ 1 ≤ T0 ∧
+      ∀ X : ℕ, 2 ≤ X → ∀ T H eta : ℝ,
+        T0 ≤ T → 0 ≤ H → H ≤ T →
+        0 < H - eta - 4 * C * H * X / Real.sqrt T →
+        volume.real
+            (selbergSqrtZetaSmallAbsoluteMassStarts X H eta ∩
+              Icc T (2 * T - H)) ≤
+          selbergSqrtZetaShortDirichletGapSum
+              (firstZetaApproximationCutoff T) X
+              T (2 * T - H) H /
+            (H - eta - 4 * C * H * X / Real.sqrt T) ^ 2 := by
+  obtain ⟨C, T0, hC, hT0, hlower⟩ :=
+    exists_selbergSqrtZetaAbsShortIntegral_ge_sub_mollifiedPolynomial
+  refine ⟨C, T0, hC, hT0, ?_⟩
+  intro X hX T H eta hT hH hHT hthreshold
+  have hN : 1 ≤ firstZetaApproximationCutoff T := by
+    apply Nat.le_floor
+    have hT1 : (1 : ℝ) ≤ T := hT0.trans hT
+    simpa only [Nat.cast_one, firstZetaApproximationCutoff] using
+      (show (1 : ℝ) ≤ 4 * T by linarith)
+  simpa only [selbergSqrtZetaSmallAbsoluteMassStarts] using
+    (volume_smallMassStarts_inter_Icc_le_sqrtZetaGapSum
+      (absMass := fun t => selbergSqrtZetaAbsShortIntegral X H t)
+      hN (by omega) (by linarith) hthreshold
+      (fun t ht => hlower X hX T H t hT hH ht))
 
 end HardyTheorem
