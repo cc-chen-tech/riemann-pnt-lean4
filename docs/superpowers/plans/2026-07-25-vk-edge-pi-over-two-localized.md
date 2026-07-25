@@ -116,6 +116,19 @@ Subtract the period mean, construct the bounded periodic primitive, and integrat
 
 Run both focused files with `lake env lean`, scan the module for forbidden placeholders, and commit the layer independently.
 
+### Task 2a: Exponential Gaussian Tail
+
+**Files:**
+- Create: `PrimeNumberTheorem/VKEdgePiOverTwoGaussianTail.lean`
+- Create: `Test/VKEdgePiOverTwoGaussianTailContract.lean`
+- Create: `Test/VKEdgePiOverTwoGaussianTailAxiomAudit.lean`
+
+- [x] Define the complement of the distance-`12m` Gaussian window.
+- [x] Prove the pointwise comparison with the variance-`2m` Gaussian.
+- [x] Prove
+  `integral (gaussianTail m) (normalizedGaussian m) <= 2 * exp (-18*m)`.
+- [x] Run the focused contract, axiom audit, and placeholder scan.
+
 ### Task 3: Finite-Pole Annihilator
 
 **Files:**
