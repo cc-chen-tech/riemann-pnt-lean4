@@ -2,7 +2,7 @@ import PrimeNumberTheorem
 import PrimeNumberTheorem.VKEdgePiOverTwoGaussianMellin
 import PrimeNumberTheorem.VKEdgePiOverTwoZetaContour
 
-open Complex MeasureTheory Polynomial Set
+open Complex Filter MeasureTheory Polynomial Set Topology
 
 namespace PrimeNumberTheorem
 namespace VKEdgePiOverTwo
@@ -590,6 +590,124 @@ theorem integral_localizedGaussianWeight_mul_regularizedLogDeriv_rightEdge_eq
           A hw m t
     _ = _ :=
       integral_rightEdgeGaussianFactor_mul_mellin_eq A hm hw
+
+/--
+The concrete regularized zeta integrand is absolutely integrable on the
+whole right edge.  This is stronger than merely identifying its improper
+integral.
+-/
+theorem integrable_localizedGaussianWeight_mul_regularizedLogDeriv_rightEdge
+    (A : ℂ[X]) {m : ℝ} (hm : 0 < m)
+    {w : ℂ} (hw : 0 < w.re) :
+    Integrable
+      (fun t : ℝ =>
+        localizedGaussianWeight A w m
+            (w + ((2 : ℂ) + I * (t : ℂ))) *
+          (-logDeriv riemannZeta
+              (w + ((2 : ℂ) + I * (t : ℂ))) -
+            (w + ((2 : ℂ) + I * (t : ℂ))) /
+              (w + ((2 : ℂ) + I * (t : ℂ)) - 1))) := by
+  have hproduct :=
+    integrable_rightEdgeMellinProduct A hm hw
+  have hsections :
+      Integrable
+        (fun t : ℝ =>
+          ∫ x in Set.Ioi (1 : ℝ),
+            rightEdgeMellinProduct A m w (t, x)) :=
+    hproduct.integral_prod_left
+  have hfactor :
+      Integrable
+        (fun t : ℝ =>
+          rightEdgeGaussianFactor A m w t *
+            mellin psiErrorAboveOneComplex
+              (-(w + ((2 : ℂ) + I * (t : ℂ))))) := by
+    apply hsections.congr
+    filter_upwards with t
+    exact integral_rightEdgeMellinProduct_snd_eq A m t
+  apply hfactor.congr
+  filter_upwards with t
+  exact
+    (localizedGaussianWeight_mul_regularizedLogDeriv_rightEdge_eq_factor
+      A hw m t).symm
+
+/--
+Symmetric finite right-edge integrals converge to the full concrete zeta
+right-edge integral.  Equivalently, the two right-edge tails tend to zero.
+-/
+theorem tendsto_intervalIntegral_localizedGaussianWeight_mul_regularizedLogDeriv_rightEdge
+    (A : ℂ[X]) {m : ℝ} (hm : 0 < m)
+    {w : ℂ} (hw : 0 < w.re) :
+    Tendsto
+      (fun T : ℝ =>
+        ∫ t : ℝ in (-T)..T,
+          localizedGaussianWeight A w m
+              (w + ((2 : ℂ) + I * (t : ℂ))) *
+            (-logDeriv riemannZeta
+                (w + ((2 : ℂ) + I * (t : ℂ))) -
+              (w + ((2 : ℂ) + I * (t : ℂ))) /
+                (w + ((2 : ℂ) + I * (t : ℂ)) - 1)))
+      atTop
+      (𝓝
+        (∫ t : ℝ,
+          localizedGaussianWeight A w m
+              (w + ((2 : ℂ) + I * (t : ℂ))) *
+            (-logDeriv riemannZeta
+                (w + ((2 : ℂ) + I * (t : ℂ))) -
+              (w + ((2 : ℂ) + I * (t : ℂ))) /
+                (w + ((2 : ℂ) + I * (t : ℂ)) - 1)))) := by
+  let f : ℝ → ℂ := fun t =>
+    localizedGaussianWeight A w m
+        (w + ((2 : ℂ) + I * (t : ℂ))) *
+      (-logDeriv riemannZeta
+          (w + ((2 : ℂ) + I * (t : ℂ))) -
+        (w + ((2 : ℂ) + I * (t : ℂ))) /
+          (w + ((2 : ℂ) + I * (t : ℂ)) - 1))
+  have hf : Integrable f :=
+    integrable_localizedGaussianWeight_mul_regularizedLogDeriv_rightEdge
+      A hm hw
+  have hmono : Monotone (fun T : ℝ => Set.Icc (-T) T) := by
+    intro S T hST
+    exact Set.Icc_subset_Icc (neg_le_neg hST) hST
+  have hUnion :
+      (⋃ T : ℝ, Set.Icc (-T) T) = Set.univ := by
+    ext t
+    simp only [Set.mem_iUnion, Set.mem_Icc, Set.mem_univ, iff_true]
+    exact ⟨|t|, neg_abs_le t, le_abs_self t⟩
+  have hset :
+      Tendsto
+        (fun T : ℝ => ∫ t in Set.Icc (-T) T, f t)
+        atTop
+        (𝓝 (∫ t, f t)) := by
+    have h :=
+      MeasureTheory.tendsto_setIntegral_of_monotone
+        (f := f) (s := fun T : ℝ => Set.Icc (-T) T)
+        (fun _ => measurableSet_Icc) hmono
+        (by
+          rw [hUnion]
+          exact hf.integrableOn)
+    simpa [hUnion] using h
+  refine hset.congr' ?_
+  filter_upwards [eventually_ge_atTop (0 : ℝ)] with T hT
+  dsimp [f]
+  calc
+    (∫ t : ℝ in Set.Icc (-T) T,
+        localizedGaussianWeight A w m
+            (w + ((2 : ℂ) + I * (t : ℂ))) *
+          (-logDeriv riemannZeta
+              (w + ((2 : ℂ) + I * (t : ℂ))) -
+            (w + ((2 : ℂ) + I * (t : ℂ))) /
+              (w + ((2 : ℂ) + I * (t : ℂ)) - 1))) =
+        ∫ t : ℝ in Set.Ioc (-T) T,
+          localizedGaussianWeight A w m
+              (w + ((2 : ℂ) + I * (t : ℂ))) *
+            (-logDeriv riemannZeta
+                (w + ((2 : ℂ) + I * (t : ℂ))) -
+              (w + ((2 : ℂ) + I * (t : ℂ))) /
+                (w + ((2 : ℂ) + I * (t : ℂ)) - 1)) :=
+      MeasureTheory.integral_Icc_eq_integral_Ioc
+    _ = _ := by
+      have hnegT : -T ≤ T := by linarith
+      exact (intervalIntegral.integral_of_le hnegT).symm
 
 end
 

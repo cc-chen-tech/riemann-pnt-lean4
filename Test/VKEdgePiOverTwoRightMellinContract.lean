@@ -20,6 +20,8 @@ open PrimeNumberTheorem.VKEdgePiOverTwo
 #check integral_rightEdgeMellinProduct_fst_eq
 #check integral_rightEdgeGaussianFactor_mul_mellin_eq
 #check integral_localizedGaussianWeight_mul_regularizedLogDeriv_rightEdge_eq
+#check integrable_localizedGaussianWeight_mul_regularizedLogDeriv_rightEdge
+#check tendsto_intervalIntegral_localizedGaussianWeight_mul_regularizedLogDeriv_rightEdge
 
 example (A : ℂ[X]) {m : ℝ} (hm : 0 < m)
     (w : ℂ) {x : ℝ} (hx : 0 < x) :
