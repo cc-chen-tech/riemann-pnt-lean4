@@ -9,6 +9,7 @@ open HardyTheorem
 #check selbergSqrtZetaSignedNearStationarySupport
 #check card_selbergSqrtZetaSignedNearStationarySupport_le_one
 #check one_div_two_mul_nat_mul_sq_le_abs_thetaDerivative_add_frequency_of_mem_not_near
+#check two_div_abs_thetaDerivative_add_frequency_le_four_mul_nat_mul_sq_of_mem_not_near
 
 example {N X : ℕ} {q r : ℚ}
     (hq : q ∈ selbergSqrtZetaSignedRationalSupport N X)
@@ -45,6 +46,15 @@ example {N X : ℕ} {q : ℚ} {t : ℝ}
   one_div_two_mul_nat_mul_sq_le_abs_thetaDerivative_add_frequency_of_mem_not_near
     hq hqfar
 
+example {N X : ℕ} {q : ℚ} {t : ℝ}
+    (hN : 0 < N) (hX : 0 < X)
+    (hq : q ∈ selbergSqrtZetaSignedRationalSupport N X)
+    (hqfar : q ∉ selbergSqrtZetaSignedNearStationarySupport N X t) :
+    2 / |deriv thetaModel t + selbergSqrtZetaSignedRationalFrequency q| ≤
+      4 * ((N * X ^ 2 : ℕ) : ℝ) :=
+  two_div_abs_thetaDerivative_add_frequency_le_four_mul_nat_mul_sq_of_mem_not_near
+    hN hX hq hqfar
+
 #print axioms
   one_div_sq_nat_mul_le_abs_sub_of_mem_selbergSqrtZetaSignedRationalSupport
 #print axioms
@@ -53,3 +63,5 @@ example {N X : ℕ} {q : ℚ} {t : ℝ}
 #print axioms card_selbergSqrtZetaSignedNearStationarySupport_le_one
 #print axioms
   one_div_two_mul_nat_mul_sq_le_abs_thetaDerivative_add_frequency_of_mem_not_near
+#print axioms
+  two_div_abs_thetaDerivative_add_frequency_le_four_mul_nat_mul_sq_of_mem_not_near

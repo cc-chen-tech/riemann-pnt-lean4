@@ -381,4 +381,46 @@ theorem
   simp only [Finset.mem_filter, hq, true_and, not_lt] at hqfar
   simpa only [sub_neg_eq_add, add_comm] using hqfar
 
+/-- Outside the exceptional stationary neighborhood, reciprocal-frequency
+decay is uniformly bounded by four times the denominator budget `N * X^2`. -/
+theorem
+    two_div_abs_thetaDerivative_add_frequency_le_four_mul_nat_mul_sq_of_mem_not_near
+    {N X : ℕ} {q : ℚ} {t : ℝ}
+    (hN : 0 < N) (hX : 0 < X)
+    (hq : q ∈ selbergSqrtZetaSignedRationalSupport N X)
+    (hqfar : q ∉ selbergSqrtZetaSignedNearStationarySupport N X t) :
+    2 / |deriv thetaModel t + selbergSqrtZetaSignedRationalFrequency q| ≤
+      4 * ((N * X ^ 2 : ℕ) : ℝ) := by
+  let M : ℝ := ((N * X ^ 2 : ℕ) : ℝ)
+  have hM : 0 < M := by
+    dsimp only [M]
+    exact_mod_cast Nat.mul_pos hN (pow_pos hX 2)
+  have hsep :
+      1 / (2 * M) ≤
+        |deriv thetaModel t + selbergSqrtZetaSignedRationalFrequency q| := by
+    simpa only [M] using
+      one_div_two_mul_nat_mul_sq_le_abs_thetaDerivative_add_frequency_of_mem_not_near
+        hq hqfar
+  have hfreq :
+      0 < |deriv thetaModel t +
+        selbergSqrtZetaSignedRationalFrequency q| :=
+    (by positivity : 0 < 1 / (2 * M)).trans_le hsep
+  apply (div_le_iff₀ hfreq).2
+  have hscaled :=
+    mul_le_mul_of_nonneg_left hsep (show 0 ≤ 4 * M by positivity)
+  calc
+    2 = (4 * M) * (1 / (2 * M)) := by
+      field_simp [hM.ne']
+      ring
+    _ ≤ (4 * M) *
+        |deriv thetaModel t +
+          selbergSqrtZetaSignedRationalFrequency q| := hscaled
+    _ = 4 * M *
+        |deriv thetaModel t +
+          selbergSqrtZetaSignedRationalFrequency q| := by ring
+    _ = 4 * ((N * X ^ 2 : ℕ) : ℝ) *
+        |deriv thetaModel t +
+          selbergSqrtZetaSignedRationalFrequency q| := by
+      rfl
+
 end HardyTheorem
