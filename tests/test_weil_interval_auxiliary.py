@@ -20,6 +20,7 @@ headline serialization can support.
 import copy
 import json
 from decimal import Decimal, localcontext
+from fractions import Fraction
 from pathlib import Path
 
 import pytest
@@ -217,6 +218,29 @@ def test_export_ball_outward_rounding():
         assert _decimal_difference(Decimal(hi), Decimal(lo)) < Decimal("0.21")
     finally:
         ctx.prec = previous
+
+
+def test_geometric_tail_radii_are_stored(monkeypatch):
+    from flint import arb as flint_arb, fmpq
+
+    class DetectableTailArb:
+        @staticmethod
+        def pi():
+            return flint_arb.pi()
+
+        def __new__(cls, *args):
+            if len(args) == 2 and args[0] == 0:
+                return flint_arb(0, fmpq(1, 10))
+            return flint_arb(*args)
+
+    monkeypatch.setattr(interval_aux, "arb", DetectableTailArb)
+    sums = interval_aux._geometric_sums_interval(
+        1, flint_arb(13).log(), Fraction(1)
+    )
+    assert all(
+        interval_aux._certified_radius(total) >= Fraction(1, 20)
+        for total in sums
+    )
 
 
 def test_verify_interval_artifact_rejects_tampering(tmp_path):

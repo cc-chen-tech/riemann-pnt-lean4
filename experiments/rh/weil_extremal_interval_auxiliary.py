@@ -196,9 +196,11 @@ def _geometric_sums_interval(n: int, L: Any, tail_target: Fraction) -> Tuple[Any
                 base,  # |c^2-w^2|/(c^2+w^2)^2 <= 1/c^2
             )
             if all(_certified_upper(bound) < tail_target for bound in bounds):
-                for total, bound in zip(sums, bounds):
+                for index, bound in enumerate(bounds):
                     radius = _certified_upper(bound)
-                    total += arb(0, fmpq(radius.numerator, radius.denominator))
+                    sums[index] += arb(
+                        0, fmpq(radius.numerator, radius.denominator)
+                    )
                 return tuple(sums)
     raise RuntimeError("geometric sums did not reach the requested interval target")
 
