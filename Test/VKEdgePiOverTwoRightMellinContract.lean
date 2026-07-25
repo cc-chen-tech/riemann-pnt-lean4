@@ -5,7 +5,10 @@ open Complex MeasureTheory Polynomial
 open PrimeNumberTheorem.VKEdgePiOverTwo
 
 #check ofReal_cpow_neg_add_split
+#check neg_logDeriv_sub_pole_eq_mul_mellin
+#check neg_logDeriv_sub_pole_rightEdge_eq_mul_mellin
 #check integral_rightEdgePolynomialGaussian_cpow_eq
+#check localizedGaussianWeight_mul_regularizedLogDeriv_rightEdge_eq
 
 example (A : ℂ[X]) {m : ℝ} (hm : 0 < m)
     (w : ℂ) {x : ℝ} (hx : 0 < x) :

@@ -1,5 +1,6 @@
 import PrimeNumberTheorem
 import PrimeNumberTheorem.VKEdgePiOverTwoGaussianMellin
+import PrimeNumberTheorem.VKEdgePiOverTwoZetaContour
 
 open Complex MeasureTheory Polynomial Set
 
@@ -7,6 +8,39 @@ namespace PrimeNumberTheorem
 namespace VKEdgePiOverTwo
 
 noncomputable section
+
+/--
+On the Euler-product half-plane, the regularized logarithmic derivative is
+the Mellin transform of the cutoff Chebyshev error.
+-/
+theorem neg_logDeriv_sub_pole_eq_mul_mellin
+    {s : ℂ} (hs : 1 < s.re) :
+    -logDeriv riemannZeta s - s / (s - 1) =
+      s * mellin psiErrorAboveOneComplex (-s) := by
+  simpa only [logDeriv_apply, neg_div] using
+    (mul_mellin_psiErrorAboveOneComplex_neg_eq_neg_logDeriv_sub_pole
+      hs).symm
+
+/--
+The right edge `s = w + (2 + i t)` always lies in the Mellin half-plane
+when the real part of the contour center is positive.
+-/
+theorem neg_logDeriv_sub_pole_rightEdge_eq_mul_mellin
+    {w : ℂ} (hw : 0 < w.re) (t : ℝ) :
+    -logDeriv riemannZeta
+          (w + ((2 : ℂ) + I * (t : ℂ))) -
+        (w + ((2 : ℂ) + I * (t : ℂ))) /
+          (w + ((2 : ℂ) + I * (t : ℂ)) - 1) =
+      (w + ((2 : ℂ) + I * (t : ℂ))) *
+        mellin psiErrorAboveOneComplex
+          (-(w + ((2 : ℂ) + I * (t : ℂ)))) := by
+  apply neg_logDeriv_sub_pole_eq_mul_mellin
+  have hre :
+      (w + ((2 : ℂ) + I * (t : ℂ))).re =
+        w.re + 2 := by
+    norm_num [Complex.add_re, Complex.mul_re]
+  rw [hre]
+  linarith
 
 /--
 For a positive real base, the complex power on the shifted right edge
@@ -136,6 +170,26 @@ theorem integral_rightEdgePolynomialGaussian_cpow_eq
     _ = _ := by
       dsimp [r]
       ring
+
+/--
+The concrete zeta integrand on the right edge is pointwise equal to the
+localized Gaussian weight times the Mellin transform of `ψ(x) - x`.
+-/
+theorem localizedGaussianWeight_mul_regularizedLogDeriv_rightEdge_eq
+    (A : ℂ[X]) {w : ℂ} (hw : 0 < w.re)
+    (m t : ℝ) :
+    localizedGaussianWeight A w m
+        (w + ((2 : ℂ) + I * (t : ℂ))) *
+        (-logDeriv riemannZeta
+            (w + ((2 : ℂ) + I * (t : ℂ))) -
+          (w + ((2 : ℂ) + I * (t : ℂ))) /
+            (w + ((2 : ℂ) + I * (t : ℂ)) - 1)) =
+      localizedGaussianWeight A w m
+          (w + ((2 : ℂ) + I * (t : ℂ))) *
+        ((w + ((2 : ℂ) + I * (t : ℂ))) *
+          mellin psiErrorAboveOneComplex
+            (-(w + ((2 : ℂ) + I * (t : ℂ))))) := by
+  rw [neg_logDeriv_sub_pole_rightEdge_eq_mul_mellin hw t]
 
 end
 
