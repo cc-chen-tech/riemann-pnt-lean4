@@ -325,6 +325,51 @@ the Selberg `T*log T` lower bound remains open.
 
 ---
 
+## Complementary computational line: Weil extremal-kernel certificates
+
+This line has no Lean `def ... : Prop` target yet and is not counted in the
+13-target Lean inventory above. It is registered here so the certificate
+chain has an entry in the same index as the proved chains; its governing
+documents are `docs/research/weil-extremal-kernel-preregistration.md` and
+`docs/research/weil-interval-assembly-design.md`.
+
+### Target statement
+
+```text
+Q_full(100, 250) is positive semidefinite,
+```
+
+where `Q_full(c, N)` is the full cutoff-free Connes--van Suijlekom /
+Connes--Consani--Moscovici Galerkin matrix in the normalization of
+arXiv:2607.02828v1, of dimension `2*N+1` with Fourier indices `-N, ..., N`.
+The Gate A calibration target is `Q_full(100, 200)` PSD with a complete
+six-link audit.
+
+### Six-link certificate chain
+
+1. assembly identity: two independent interval assemblies overlap entrywise;
+2. symmetry: enclosure symmetrized by intersection;
+3. rational reduction with an exact interval-transfer theorem;
+4. exact rational `LDL^T` with nonnegative diagonal;
+5. analytic transfer with a nonnegative lower margin;
+6. independent replay from the JSON artifact by the standard-library checker.
+
+### Gate status as of 2026-07-21
+
+- Link 4 and the link-6 artifact plumbing: closed (first milestone).
+- Links 3 and 5 as a generic mechanism: closed (second milestone).
+- Link 1: in progress. Intervalized dual-route assembly is designed
+  (`weil-extremal-kernel-interval-assembly/v1`); only a point-value
+  cross-check exists so far.
+- Gate A (`(100, 200)`, all five sub-conditions): open.
+- Gate B (`(100, 250)`): not started; blocked on Gate A.
+
+A positive result here would be a finite rigorous certificate for one
+registered matrix. It is not a proof of RH, and it does not change the Lean
+target counts in this file.
+
+---
+
 ## Non-target declarations to avoid confusion
 
 - `HardyTheorem.weightedIntegralOf_tail_dominates` is a reusable predicate

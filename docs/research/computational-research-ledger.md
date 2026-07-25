@@ -77,6 +77,54 @@ Research use:
 - Later extensions can add unit-distance graphs, SAT encodings, or canonical
   graph reduction.
 
+### Weil Extremal-Kernel Certificate Line
+
+Locations: `experiments/rh/weil_extremal_crosscheck.py` (point-value dual
+routes), `experiments/rh/weil_extremal_kernels.py` (exact rational `LDL^T`
+checker), frozen records under `experiments/rh/reference/`.
+
+Governing documents: `docs/research/weil-extremal-kernel-preregistration.md`,
+`docs/research/weil-interval-assembly-design.md`,
+`docs/research/weil-gate-a-local-reproduction-2026-07-19.md`.
+
+Registered target:
+
+- A rigorous positive-semidefinite certificate for the full cutoff-free
+  matrix `Q_full(100, 250)`, preceded by the Gate A calibration at
+  `Q_full(100, 200)` with the full `401 x 401` matrix.
+- The certificate must traverse a six-link chain: intervalized dual-route
+  assembly with entrywise overlap, symmetrization by intersection, exact
+  rational reduction, exact rational `LDL^T` with nonnegative diagonal,
+  analytic transfer with nonnegative margin, and independent replay.
+
+Current scope:
+
+- The two independent closed-form assembly routes (auxiliary `S/CC/XC` and
+  CCM hypergeometric/Lerch) exist at mpmath point-value level; the frozen
+  cross-check at `(c, N) = (13, 4)` and `(13, 8)` is content-addressed by
+  SHA-256 `62da7e8d50bea317d3cee154a1fa758a0b0d31939016bc158d13eff9418bca2e`.
+- Certificate-chain links 4 and 6 (exact rational `LDL^T`, artifact
+  plumbing) and the generic mechanism for links 3 and 5 (rational interval
+  reduction and perturbation transfer) are closed.
+- Link 1 is in progress: the intervalized assembly contract
+  `weil-extremal-kernel-interval-assembly/v1` is designed but not yet
+  implemented. Gate A remains open; the current evidence is a
+  point-value-level cross-check only.
+
+Research use:
+
+- Climb from the small-`N` containment tests (frozen point values must lie
+  inside each route's `[lo, hi]` interval) to the `(100, 200)` Gate A
+  calibration, including a 512-bit-separated rerun that verifies entrywise
+  enclosure narrowing.
+
+Local-machine fit:
+
+- Small-`N` runs are laptop-scale. The `(100, 200)` assembly took about 16
+  minutes per run for the upstream Arb route at 9000 bits on an Apple M4;
+  dual-route interval assembly at that size is heavier and should be planned
+  as a long local run.
+
 ## Boundaries
 
 - These experiments do not modify Lean proof files.
