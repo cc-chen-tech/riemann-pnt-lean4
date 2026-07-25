@@ -22,6 +22,8 @@ package of `ZeroForcedOscillationExplicitFormula.lean`:
   normalization by the maximal real-part layer;
 * a moving-height sufficient condition phrased in terms of the exact gap and
   the global `O(log^2 T)` reciprocal-multiplicity majorant;
+* a concrete moving-height criterion reducing that majorant to the condition
+  `gap(τ y) * y - 2 * log (1 + log (τ y + 6)) → +∞`;
 * monotonicity of the complementary reciprocal-norm sum up to the full
   height-`T` truncation sum;
 * an explicit `B_T / E_T` interval-length threshold making the finite
@@ -521,6 +523,112 @@ theorem
       apply mul_le_mul_of_nonneg_left _ (Real.exp_nonneg _)
       simpa only [ExplicitFormulaAux.globalReciprocalZeroMultiplicity] using
         hCbound (τ y) hτ
+
+/-- Exponential domination of the logarithmic-square factor. If
+
+`gap(y) * y - 2 * log (1 + log (τ(y) + 6)) → +∞`,
+
+then `exp (-gap(y) * y) * C * (1 + log (τ(y) + 6))^2 → 0`.
+The eventual lower bound `τ(y) ≥ 4` is used only to make the logarithmic
+factor strictly positive, so that the square can be represented exactly as
+an exponential of twice its logarithm. No lower bound on `gap` is inferred
+by this theorem. -/
+theorem tendsto_gap_log_sq_majorant_of_margin_atTop
+    (C : ℝ) (τ gap : ℝ → ℝ)
+    (hτ : ∀ᶠ y : ℝ in Filter.atTop, 4 ≤ τ y)
+    (hmargin :
+      Filter.Tendsto
+        (fun y : ℝ =>
+          gap y * y - 2 * Real.log (1 + Real.log (τ y + 6)))
+        Filter.atTop Filter.atTop) :
+    Filter.Tendsto
+      (fun y : ℝ =>
+        Real.exp (-gap y * y) *
+          (C * (1 + Real.log (τ y + 6)) ^ 2))
+      Filter.atTop (nhds 0) := by
+  have hdecay :
+      Filter.Tendsto
+        (fun y : ℝ =>
+          Real.exp
+            (-(gap y * y -
+              2 * Real.log (1 + Real.log (τ y + 6)))))
+        Filter.atTop (nhds 0) :=
+    Real.tendsto_exp_neg_atTop_nhds_zero.comp hmargin
+  have hscaled :
+      Filter.Tendsto
+        (fun y : ℝ =>
+          C * Real.exp
+            (-(gap y * y -
+              2 * Real.log (1 + Real.log (τ y + 6)))))
+        Filter.atTop (nhds 0) := by
+    simpa using tendsto_const_nhds.mul hdecay
+  refine hscaled.congr' ?_
+  filter_upwards [hτ] with y hy
+  have hlog_pos : 0 < Real.log (τ y + 6) :=
+    Real.log_pos (by linarith)
+  have hbase_pos : 0 < 1 + Real.log (τ y + 6) := by
+    linarith
+  have hsq :
+      (1 + Real.log (τ y + 6)) ^ 2 =
+        Real.exp (2 * Real.log (1 + Real.log (τ y + 6))) := by
+    symm
+    calc
+      Real.exp (2 * Real.log (1 + Real.log (τ y + 6))) =
+          Real.exp
+            (Real.log (1 + Real.log (τ y + 6)) +
+              Real.log (1 + Real.log (τ y + 6))) := by
+        congr 1
+        ring
+      _ = Real.exp (Real.log (1 + Real.log (τ y + 6))) *
+          Real.exp (Real.log (1 + Real.log (τ y + 6))) := by
+        rw [Real.exp_add]
+      _ = (1 + Real.log (τ y + 6)) ^ 2 := by
+        rw [Real.exp_log hbase_pos]
+        ring
+  rw [hsq]
+  rw [show -(gap y * y -
+        2 * Real.log (1 + Real.log (τ y + 6))) =
+      -gap y * y + 2 * Real.log (1 + Real.log (τ y + 6)) by
+    ring]
+  rw [Real.exp_add]
+  ring
+
+/-- Concrete moving-height complementary-decay criterion. It replaces the
+abstract hypothesis that the complete `exp(-gap * y) log^2` majorant tends to
+zero by the checkable asymptotic condition
+
+`maximalComplementaryRealPartGap (τ y) * y
+    - 2 * log (1 + log (τ y + 6)) → +∞`.
+
+The theorem preserves the exact analytic multiplicities in the underlying
+zero-package estimate. It neither supplies the margin hypothesis for a
+particular moving height nor asserts uniform zero spacing. -/
+theorem
+    exists_C_tendsto_normalized_norm_complementaryZeroPackageContribution_along_moving_height_of_gap_log_sq_margin_atTop
+    (τ : ℝ → ℝ) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      ((∀ᶠ y : ℝ in Filter.atTop, 0 ≤ y) →
+        (∀ᶠ y : ℝ in Filter.atTop, 4 ≤ τ y) →
+        Filter.Tendsto
+          (fun y : ℝ =>
+            maximalComplementaryRealPartGap (τ y) * y -
+              2 * Real.log (1 + Real.log (τ y + 6)))
+          Filter.atTop Filter.atTop →
+        Filter.Tendsto
+          (fun y : ℝ =>
+            Real.exp (-(maximalZeroRealPart (τ y)) * y) *
+              ‖complementaryZeroPackageContribution (Real.exp y) (τ y)
+                (maximalZeroRealPart (τ y))‖)
+          Filter.atTop (nhds 0)) := by
+  rcases
+      exists_C_tendsto_normalized_norm_complementaryZeroPackageContribution_along_moving_height_of_majorant
+        τ with
+    ⟨C, hC, htransfer⟩
+  refine ⟨C, hC, ?_⟩
+  intro hy hτ hmargin
+  exact htransfer hy hτ
+    (tendsto_gap_log_sq_majorant_of_margin_atTop C τ
+      (fun y => maximalComplementaryRealPartGap (τ y)) hτ hmargin)
 
 /-- Quantitative complementary-package bound: with a uniform real-part gap
 `δ` below `β` on the complementary zeros at height `T ≥ 4`, the complementary

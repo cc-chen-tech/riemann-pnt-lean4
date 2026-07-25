@@ -157,6 +157,38 @@ example (τ : ℝ → ℝ) :
   exists_C_tendsto_normalized_norm_complementaryZeroPackageContribution_along_moving_height_of_majorant
     τ
 
+example (C : ℝ) (τ gap : ℝ → ℝ)
+    (hτ : ∀ᶠ y : ℝ in Filter.atTop, 4 ≤ τ y)
+    (hmargin :
+      Filter.Tendsto
+        (fun y : ℝ =>
+          gap y * y - 2 * Real.log (1 + Real.log (τ y + 6)))
+        Filter.atTop Filter.atTop) :
+    Filter.Tendsto
+      (fun y : ℝ =>
+        Real.exp (-gap y * y) *
+          (C * (1 + Real.log (τ y + 6)) ^ 2))
+      Filter.atTop (nhds 0) :=
+  tendsto_gap_log_sq_majorant_of_margin_atTop C τ gap hτ hmargin
+
+example (τ : ℝ → ℝ) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      ((∀ᶠ y : ℝ in Filter.atTop, 0 ≤ y) →
+        (∀ᶠ y : ℝ in Filter.atTop, 4 ≤ τ y) →
+        Filter.Tendsto
+          (fun y : ℝ =>
+            maximalComplementaryRealPartGap (τ y) * y -
+              2 * Real.log (1 + Real.log (τ y + 6)))
+          Filter.atTop Filter.atTop →
+        Filter.Tendsto
+          (fun y : ℝ =>
+            Real.exp (-(maximalZeroRealPart (τ y)) * y) *
+              ‖complementaryZeroPackageContribution (Real.exp y) (τ y)
+                (maximalZeroRealPart (τ y))‖)
+          Filter.atTop (nhds 0)) :=
+  exists_C_tendsto_normalized_norm_complementaryZeroPackageContribution_along_moving_height_of_gap_log_sq_margin_atTop
+    τ
+
 example (y : ℝ) (hy : 0 ≤ y) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ T : ℝ, 4 ≤ T →
       ‖complementaryZeroPackageContribution (Real.exp y) T
