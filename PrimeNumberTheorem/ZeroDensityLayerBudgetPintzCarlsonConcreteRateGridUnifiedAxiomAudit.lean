@@ -1,0 +1,6 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetPintzCarlsonConcreteRateGridUnified
+
+/-! Axiom audit for concrete rate-grid unified transfer. -/
+
+#print axioms PrimeNumberTheorem.constructRateGridClassicalCarlsonUnifiedDynamicZeroTransfer
+#print axioms PrimeNumberTheorem.constructRateGridClassicalCarlsonUnifiedDynamicSignedZeroTransfer

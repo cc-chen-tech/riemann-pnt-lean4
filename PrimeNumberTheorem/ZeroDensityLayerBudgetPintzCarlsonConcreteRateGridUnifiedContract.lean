@@ -1,0 +1,6 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetPintzCarlsonConcreteRateGridUnified
+
+/-! Contract for concrete rate-grid Pintz--Carlson unified transfer. -/
+
+#check PrimeNumberTheorem.constructRateGridClassicalCarlsonUnifiedDynamicZeroTransfer
+#check PrimeNumberTheorem.constructRateGridClassicalCarlsonUnifiedDynamicSignedZeroTransfer
