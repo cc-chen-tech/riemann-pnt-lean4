@@ -129,6 +129,19 @@ Run both focused files with `lake env lean`, scan the module for forbidden place
   `integral (gaussianTail m) (normalizedGaussian m) <= 2 * exp (-18*m)`.
 - [x] Run the focused contract, axiom audit, and placeholder scan.
 
+### Task 2b: Gaussian Missing-Harmonic Denominator
+
+**Files:**
+- Create: `PrimeNumberTheorem/VKEdgePiOverTwoGaussianDual.lean`
+- Create: `Test/VKEdgePiOverTwoGaussianDualContract.lean`
+- Create: `Test/VKEdgePiOverTwoGaussianDualAxiomAudit.lean`
+
+- [x] Identify the exact periodic mean with
+  `sharpenedMissingHarmonicDenominator`.
+- [x] Prove uniform-in-center Gaussian convergence with
+  `O(m^(-1/2))` error.
+- [x] Run the focused contract, axiom audit, and placeholder scan.
+
 ### Task 3: Finite-Pole Annihilator
 
 **Files:**

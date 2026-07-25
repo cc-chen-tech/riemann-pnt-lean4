@@ -1,0 +1,4 @@
+import PrimeNumberTheorem.VKEdgePiOverTwoGaussianDual
+
+#print axioms PrimeNumberTheorem.VKEdgePiOverTwo.exists_uniform_gaussian_abs_sharpenedPsiAbelKernel_bound
+#print axioms PrimeNumberTheorem.VKEdgePiOverTwo.eventually_uniform_gaussian_abs_sharpenedPsiAbelKernel
