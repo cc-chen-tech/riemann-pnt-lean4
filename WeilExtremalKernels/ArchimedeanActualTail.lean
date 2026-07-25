@@ -13,9 +13,8 @@ It constructs the actual finite interval increment, proves eventual positive
 semidefiniteness, and bounds its pointwise quadratic-form budget by the
 logarithmic kernel whose improper integral was computed separately.
 
-The threshold supplied here is non-explicit. The paper's threshold `7`, the
-improper matrix limit, and the final explicit `B_T` matrix statement remain
-separate quantitative steps.
+The threshold supplied here is non-explicit. The paper's threshold `7` and
+the improper matrix limit remain separate quantitative steps.
 -/
 
 namespace WeilExtremalKernels
@@ -251,5 +250,55 @@ theorem
         (intervalIntegral_paperArchimedeanRankTwoLogEnvelope_le_tailBudget
           N hN hrho hPole (hT01.trans hT0T) hTR)
         (squaredNorm_nonneg x)
+
+/-- An exact finite `LDL^T` certificate transfers directly through the
+actual nonnegative archimedean tail. This is the positive half of the
+finite-section certification rule for the concrete Guinand-Weil weight. -/
+theorem
+    exists_T0_quadraticForm_add_paperActualArchimedeanRankTwoIncrement_nonneg_of_certificate :
+    ∃ T0 : ℝ, 1 ≤ T0 ∧
+      ∀ (N : ℕ) (L : ℝ) {rho T R : ℝ},
+        0 < rho → T0 ≤ T → rho * N < T → T ≤ R →
+        ∀ (A : FiniteMatrix (2 * N + 1))
+          (certificate : LDLCertificate (2 * N + 1)),
+          A = certificate.reconstruct →
+          (∀ k, 0 ≤ certificate.diagonal k) →
+          ∀ x : FiniteVector (2 * N + 1),
+            0 ≤ quadraticForm
+              (A + paperActualArchimedeanRankTwoIncrement N L rho T R) x := by
+  obtain ⟨T0, hT01, htail⟩ :=
+    exists_T0_quadraticForm_paperActualArchimedeanRankTwoIncrement_nonneg
+  refine ⟨T0, hT01, ?_⟩
+  intro N L rho T R hrho hT0T hPole hTR A certificate
+    hreconstruct hdiagonal
+  exact quadraticForm_nonneg_add_of_tail_nonneg
+    A (paperActualArchimedeanRankTwoIncrement N L rho T R)
+    (quadraticForm_nonneg_of_certificate
+      A certificate hreconstruct hdiagonal)
+    (htail N L hrho hT0T hPole hTR)
+
+/-- A finite negative witness that clears the explicit scalar tail budget
+remains negative after adding any finite actual tail above the cutoff. This
+is the negative half of the finite-section certification rule. -/
+theorem
+    exists_T0_quadraticForm_add_paperActualArchimedeanRankTwoIncrement_neg_of_tailBudget :
+    ∃ T0 : ℝ, 1 ≤ T0 ∧
+      ∀ (N : ℕ) (L : ℝ) {rho T R : ℝ},
+        0 < N → 0 < rho → T0 ≤ T → rho * N < T → T ≤ R →
+        ∀ (A : FiniteMatrix (2 * N + 1))
+          (x : FiniteVector (2 * N + 1)),
+          quadraticForm A x <
+              -paperArchimedeanRankTwoTailBudget N rho T * squaredNorm x →
+          quadraticForm
+              (A + paperActualArchimedeanRankTwoIncrement N L rho T R) x <
+            0 := by
+  obtain ⟨T0, hT01, htail⟩ :=
+    exists_T0_quadraticForm_paperActualArchimedeanRankTwoIncrement_le_tailBudget
+  refine ⟨T0, hT01, ?_⟩
+  intro N L rho T R hN hrho hT0T hPole hTR A x hfinite
+  exact quadraticForm_neg_add_of_tail_upper
+    A (paperActualArchimedeanRankTwoIncrement N L rho T R) x
+    (paperArchimedeanRankTwoTailBudget N rho T) hfinite
+    (htail N L hN hrho hT0T hPole hTR x)
 
 end WeilExtremalKernels

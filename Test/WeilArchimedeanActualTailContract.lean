@@ -53,3 +53,29 @@ example :
               (paperActualArchimedeanRankTwoIncrement N L rho T R) x ≤
             paperArchimedeanRankTwoTailBudget N rho T * squaredNorm x :=
   exists_T0_quadraticForm_paperActualArchimedeanRankTwoIncrement_le_tailBudget
+
+example :
+    ∃ T0 : ℝ, 1 ≤ T0 ∧
+      ∀ (N : ℕ) (L : ℝ) {rho T R : ℝ},
+        0 < rho → T0 ≤ T → rho * N < T → T ≤ R →
+        ∀ (A : FiniteMatrix (2 * N + 1))
+          (certificate : LDLCertificate (2 * N + 1)),
+          A = certificate.reconstruct →
+          (∀ k, 0 ≤ certificate.diagonal k) →
+          ∀ x : FiniteVector (2 * N + 1),
+            0 ≤ quadraticForm
+              (A + paperActualArchimedeanRankTwoIncrement N L rho T R) x :=
+  exists_T0_quadraticForm_add_paperActualArchimedeanRankTwoIncrement_nonneg_of_certificate
+
+example :
+    ∃ T0 : ℝ, 1 ≤ T0 ∧
+      ∀ (N : ℕ) (L : ℝ) {rho T R : ℝ},
+        0 < N → 0 < rho → T0 ≤ T → rho * N < T → T ≤ R →
+        ∀ (A : FiniteMatrix (2 * N + 1))
+          (x : FiniteVector (2 * N + 1)),
+          quadraticForm A x <
+              -paperArchimedeanRankTwoTailBudget N rho T * squaredNorm x →
+          quadraticForm
+              (A + paperActualArchimedeanRankTwoIncrement N L rho T R) x <
+            0 :=
+  exists_T0_quadraticForm_add_paperActualArchimedeanRankTwoIncrement_neg_of_tailBudget
