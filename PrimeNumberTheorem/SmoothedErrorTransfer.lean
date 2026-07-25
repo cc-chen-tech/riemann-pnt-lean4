@@ -1662,9 +1662,11 @@ noncomputable def secondOrderMovingEndpointPerronBudget
       (2 * Real.pi ^ 2 * W))) *
     (4 * (1 + Real.log (x + h)) ^ 2)
 
-/-- Best available normalized moving-endpoint Perron budget.  The first branch
-uses separate `W⁻¹` endpoint tails; the second subtracts the actual truncated
-integrals first and therefore has no reciprocal logarithmic gap. -/
+/-- Best available normalized moving-endpoint budget for the actual right-line
+Perron remainder.  The first branch uses separate `W⁻¹` endpoint tails; the
+second subtracts the actual truncated integrals first and therefore has no
+reciprocal logarithmic gap.  This is a local Perron interface only: it has not
+replaced the Perron term in the selected-height total budget. -/
 noncomputable def secondOrderMovingEndpointBestNormalizedPerronBudget
     (x h W : ℝ) : ℝ :=
   min
@@ -1673,8 +1675,10 @@ noncomputable def secondOrderMovingEndpointBestNormalizedPerronBudget
     (secondOrderPerronIncrementCancellationBudget x h
       (1 + 1 / Real.log (x + h)) W)
 
-/-- The normalized difference of the actual moving-line Perron remainders is
-bounded by the better of the separate-endpoint and cancellation estimates. -/
+/-- The normalized difference of the actual right-line Perron remainders is
+bounded by the better of the separate-endpoint and cancellation estimates.
+This theorem does not provide an end-to-end removal of the selected-height
+loss; the selected-height total budget still uses its existing Perron term. -/
 theorem norm_secondOrderMovingPerronRemainder_increment_div_log_le_best
     {x h W : ℝ}
     (hx : 1 < x) (hh : 0 < h) (hW : 0 < W)

@@ -1519,6 +1519,20 @@ example {C D x h A T : ℝ}
   secondOrderSelectedHeightIncrement_endpoint_bounds_strictly_improve
     hC hx hh hA hT hsmall
 
+example {x h c W w : ℝ}
+    (hx : 1 ≤ x) (hh : 0 ≤ h) (hc : 1 < c)
+    (hw : |w| ≤ W)
+    (hsmall :
+      (c + 2 * Real.pi * W) * Real.log ((x + h) / x) ≤ 1) :
+    ‖secondOrderExplicitFormulaIntegrand (x + h)
+          ((c : ℂ) + 2 * Real.pi * w * Complex.I) -
+        secondOrderExplicitFormulaIntegrand x
+          ((c : ℂ) + 2 * Real.pi * w * Complex.I)‖ ≤
+      2 * vonMangoldtLSeriesNorm (c - 1) * x ^ c *
+        Real.log ((x + h) / x) / c :=
+  norm_secondOrderExplicitFormulaIntegrand_sub_right_vertical_le
+    hx hh hc hw hsmall
+
 example {x h c W : ℝ}
     (hx : 1 ≤ x) (hh : 0 < h) (hc : 1 < c) (hW : 0 < W)
     (hsmall :
