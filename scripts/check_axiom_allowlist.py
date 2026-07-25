@@ -273,12 +273,15 @@ WEIL_RANK_TWO_TAIL_EXPECTED_DECLARATIONS = {
     "WeilExtremalKernels.paperArchimedeanWeight_nonneg",
     "WeilExtremalKernels.paperArchimedeanWeight_le_log_envelope",
     "WeilExtremalKernels.paperArchimedeanRankTwoPointwiseBudget_le_log_envelope",
+    "WeilExtremalKernels.tendsto_paperArchimedeanRankTwoTailBudget_atTop",
     "WeilExtremalKernels.exists_T0_quadraticForm_paperActualArchimedeanRankTwoIncrement_nonneg",
     "WeilExtremalKernels.exists_T0_quadraticForm_paperActualArchimedeanRankTwoIncrement_le",
     "WeilExtremalKernels.integrableOn_Ioi_paperArchimedeanRankTwoLogEnvelope",
     "WeilExtremalKernels.integral_Ioi_paperArchimedeanRankTwoLogEnvelope",
     "WeilExtremalKernels.intervalIntegral_paperArchimedeanRankTwoLogEnvelope_le_tailBudget",
     "WeilExtremalKernels.exists_T0_quadraticForm_paperActualArchimedeanRankTwoIncrement_le_tailBudget",
+    "WeilExtremalKernels.exists_T0_quadraticForm_add_paperActualArchimedeanRankTwoIncrement_nonneg_of_certificate",
+    "WeilExtremalKernels.exists_T0_quadraticForm_add_paperActualArchimedeanRankTwoIncrement_neg_of_tailBudget",
 }
 
 REPORT_RE = re.compile(
