@@ -655,6 +655,70 @@ example (T : ℝ) (hpackage : (maximalRealPartZeroPackage T).Nonempty) :
   exists_eventually_fixedHeight_psi0_error_pos_of_approximation_small
     T hpackage
 
+example (τ : ℝ → ℝ) (y : ℝ)
+    (hvisible :
+      maximalZeroPackageCanonicalNormalizedAmplitude (τ y) ≤
+        Real.exp (-maximalZeroRealPart (τ y) * y) *
+          ‖equalRealPartZeroPackageContribution (Real.exp y) (τ y)
+            (maximalZeroRealPart (τ y))‖)
+    (hbudget :
+      Real.exp (-maximalZeroRealPart (τ y) * y) *
+          (‖complementaryZeroPackageContribution (Real.exp y) (τ y)
+                (maximalZeroRealPart (τ y))‖ +
+            ‖explicitFormulaApproxWithMultiplicity (Real.exp y) (τ y) -
+                (chebyshevPsi0 (Real.exp y) : ℂ)‖ +
+            ‖zeroPackageClosedTerms y‖) <
+        maximalZeroPackageCanonicalNormalizedAmplitude (τ y)) :
+    0 <
+      ‖(((chebyshevPsi0 (Real.exp y) - Real.exp y : ℝ) : ℂ))‖ :=
+  psi0_error_pos_of_movingHeight_visible_point_and_exact_budget
+    τ y hvisible hbudget
+
+example (τ : ℝ → ℝ) (y K : ℝ) (hheight : 8 ≤ τ y)
+    (hvisible :
+      maximalZeroPackageCanonicalNormalizedAmplitude (τ y) ≤
+        Real.exp (-maximalZeroRealPart (τ y) * y) *
+          ‖equalRealPartZeroPackageContribution (Real.exp y) (τ y)
+            (maximalZeroRealPart (τ y))‖)
+    (happrox :
+      ∀ U : ℝ, 8 ≤ U →
+        ‖explicitFormulaApproxWithMultiplicity (Real.exp y) U -
+            (chebyshevPsi0 (Real.exp y) : ℂ)‖ ≤
+          movingHeightApproximationBudget K U)
+    (hbudget :
+      Real.exp (-maximalZeroRealPart (τ y) * y) *
+          (‖complementaryZeroPackageContribution (Real.exp y) (τ y)
+                (maximalZeroRealPart (τ y))‖ +
+            movingHeightApproximationBudget K (τ y) +
+            ‖zeroPackageClosedTerms y‖) <
+        maximalZeroPackageCanonicalNormalizedAmplitude (τ y)) :
+    0 <
+      ‖(((chebyshevPsi0 (Real.exp y) - Real.exp y : ℝ) : ℂ))‖ :=
+  psi0_error_pos_of_movingHeight_visible_point_and_approximation_budget
+    τ y K hheight hvisible happrox hbudget
+
+example (τ : ℝ → ℝ) (y : ℝ) (hy : 0 < y) (hheight : 8 ≤ τ y)
+    (hvisible :
+      maximalZeroPackageCanonicalNormalizedAmplitude (τ y) ≤
+        Real.exp (-maximalZeroRealPart (τ y) * y) *
+          ‖equalRealPartZeroPackageContribution (Real.exp y) (τ y)
+            (maximalZeroRealPart (τ y))‖) :
+    ∃ K : ℝ, 0 ≤ K ∧
+      (∀ U : ℝ, 8 ≤ U →
+        ‖explicitFormulaApproxWithMultiplicity (Real.exp y) U -
+            (chebyshevPsi0 (Real.exp y) : ℂ)‖ ≤
+          movingHeightApproximationBudget K U) ∧
+      (Real.exp (-maximalZeroRealPart (τ y) * y) *
+          (‖complementaryZeroPackageContribution (Real.exp y) (τ y)
+                (maximalZeroRealPart (τ y))‖ +
+            movingHeightApproximationBudget K (τ y) +
+            ‖zeroPackageClosedTerms y‖) <
+          maximalZeroPackageCanonicalNormalizedAmplitude (τ y) →
+        0 <
+          ‖(((chebyshevPsi0 (Real.exp y) - Real.exp y : ℝ) : ℂ))‖) :=
+  exists_K_movingHeight_psi0_error_pos_of_visible_point_and_budget
+    τ y hy hheight hvisible
+
 -- Small sanity checks: the per-term identity at zero multiplicity and at `ρ = 0`.
 
 example (x : ℝ) (hx : 0 < x) (ρ : ℂ) :

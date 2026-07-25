@@ -39,6 +39,9 @@ package of `ZeroForcedOscillationExplicitFormula.lean`:
   uniform approximation-smallness hypothesis on a translated canonical
   interval forces a genuinely positive `ψ₀` error at some point of that
   interval;
+* a pointwise moving-height positivity criterion at height `T = τ(y)`,
+  together with an instantiation of the genuine all-heights explicit-formula
+  approximation budget at the same visible point;
 * an `O(T log T)` bound for the size of the maximal package, converting the
   canonical interval length to an explicit `O(T log T / Δ_T)` bound;
 * eventual nonemptiness of every maximal package from Hardy's theorem;
@@ -2621,6 +2624,203 @@ theorem
     norm_zeroPackage_sub_complementary_sub_approximation_sub_closed_le_psi0
       T y
   exact ⟨y, hy, lt_of_lt_of_le hpackageMinusRemaindersPos htransfer⟩
+
+/-!
+## Moving-height pointwise positivity
+
+The fixed-height asymptotic theorem above cannot simply be applied with a
+height depending on `y`: its eventual threshold depends on the fixed zero
+package. The next results instead work pointwise with the genuine height
+`τ y`. They make no asymptotic assertion. A caller must exhibit a point where
+the moving maximal package is visible and where the normalized complementary,
+approximation, and closed-term budgets are jointly smaller than that visible
+amplitude.
+
+The final result in this section inserts the existing all-heights
+explicit-formula estimate. Its constant still depends on the selected
+`x = exp y`. Obtaining a rate for those constants along translated intervals,
+while simultaneously selecting visible points and controlling the moving
+complementary gap, remains the missing moving-height lemma.
+-/
+
+/-- At the genuine moving height `T = τ y`, package visibility and a strict
+normalized budget inequality force a nonzero `ψ₀(exp y) - exp y` detector.
+All three error terms are the actual terms appearing in the multiplicity-aware
+explicit formula; no asymptotic or uniform-spacing hypothesis is hidden. -/
+theorem psi0_error_pos_of_movingHeight_visible_point_and_exact_budget
+    (τ : ℝ → ℝ) (y : ℝ)
+    (hvisible :
+      maximalZeroPackageCanonicalNormalizedAmplitude (τ y) ≤
+        Real.exp (-maximalZeroRealPart (τ y) * y) *
+          ‖equalRealPartZeroPackageContribution (Real.exp y) (τ y)
+            (maximalZeroRealPart (τ y))‖)
+    (hbudget :
+      Real.exp (-maximalZeroRealPart (τ y) * y) *
+          (‖complementaryZeroPackageContribution (Real.exp y) (τ y)
+                (maximalZeroRealPart (τ y))‖ +
+            ‖explicitFormulaApproxWithMultiplicity (Real.exp y) (τ y) -
+                (chebyshevPsi0 (Real.exp y) : ℂ)‖ +
+            ‖zeroPackageClosedTerms y‖) <
+        maximalZeroPackageCanonicalNormalizedAmplitude (τ y)) :
+    0 <
+      ‖(((chebyshevPsi0 (Real.exp y) - Real.exp y : ℝ) : ℂ))‖ := by
+  have hgrowthPos :
+      0 < Real.exp (maximalZeroRealPart (τ y) * y) :=
+    Real.exp_pos _
+  have hscaledBudget :=
+    mul_lt_mul_of_pos_left hbudget hgrowthPos
+  have hinverse :
+      Real.exp (maximalZeroRealPart (τ y) * y) *
+          Real.exp (-maximalZeroRealPart (τ y) * y) = 1 := by
+    calc
+      Real.exp (maximalZeroRealPart (τ y) * y) *
+          Real.exp (-maximalZeroRealPart (τ y) * y) =
+          Real.exp
+            (maximalZeroRealPart (τ y) * y +
+              -maximalZeroRealPart (τ y) * y) := (Real.exp_add _ _).symm
+      _ = Real.exp 0 := by ring_nf
+      _ = 1 := Real.exp_zero
+  have htotal :
+      ‖complementaryZeroPackageContribution (Real.exp y) (τ y)
+            (maximalZeroRealPart (τ y))‖ +
+          ‖explicitFormulaApproxWithMultiplicity (Real.exp y) (τ y) -
+            (chebyshevPsi0 (Real.exp y) : ℂ)‖ +
+          ‖zeroPackageClosedTerms y‖ <
+        Real.exp (maximalZeroRealPart (τ y) * y) *
+          maximalZeroPackageCanonicalNormalizedAmplitude (τ y) := by
+    simpa only [← mul_assoc, hinverse, one_mul] using hscaledBudget
+  have hscaledVisible :=
+    mul_le_mul_of_nonneg_left hvisible
+      (Real.exp_nonneg (maximalZeroRealPart (τ y) * y))
+  have hpackage :
+      Real.exp (maximalZeroRealPart (τ y) * y) *
+          maximalZeroPackageCanonicalNormalizedAmplitude (τ y) ≤
+        ‖equalRealPartZeroPackageContribution (Real.exp y) (τ y)
+          (maximalZeroRealPart (τ y))‖ := by
+    simpa only [← mul_assoc, hinverse, one_mul] using hscaledVisible
+  have hpositive :
+      0 <
+        ‖equalRealPartZeroPackageContribution (Real.exp y) (τ y)
+            (maximalZeroRealPart (τ y))‖ -
+          ‖complementaryZeroPackageContribution (Real.exp y) (τ y)
+            (maximalZeroRealPart (τ y))‖ -
+          ‖explicitFormulaApproxWithMultiplicity (Real.exp y) (τ y) -
+            (chebyshevPsi0 (Real.exp y) : ℂ)‖ -
+          ‖zeroPackageClosedTerms y‖ := by
+    linarith
+  exact
+    lt_of_lt_of_le hpositive
+      (norm_zeroPackage_sub_complementary_sub_approximation_sub_closed_le_psi0
+        (τ y) y)
+
+/-- Budgeted version of the moving-height pointwise transfer. The genuine
+approximation norm is replaced by any certified upper budget at `T = τ y`. -/
+theorem psi0_error_pos_of_movingHeight_visible_point_and_approximation_budget
+    (τ : ℝ → ℝ) (y K : ℝ) (hheight : 8 ≤ τ y)
+    (hvisible :
+      maximalZeroPackageCanonicalNormalizedAmplitude (τ y) ≤
+        Real.exp (-maximalZeroRealPart (τ y) * y) *
+          ‖equalRealPartZeroPackageContribution (Real.exp y) (τ y)
+            (maximalZeroRealPart (τ y))‖)
+    (happrox :
+      ∀ U : ℝ, 8 ≤ U →
+        ‖explicitFormulaApproxWithMultiplicity (Real.exp y) U -
+            (chebyshevPsi0 (Real.exp y) : ℂ)‖ ≤
+          movingHeightApproximationBudget K U)
+    (hbudget :
+      Real.exp (-maximalZeroRealPart (τ y) * y) *
+          (‖complementaryZeroPackageContribution (Real.exp y) (τ y)
+                (maximalZeroRealPart (τ y))‖ +
+            movingHeightApproximationBudget K (τ y) +
+            ‖zeroPackageClosedTerms y‖) <
+        maximalZeroPackageCanonicalNormalizedAmplitude (τ y)) :
+    0 <
+      ‖(((chebyshevPsi0 (Real.exp y) - Real.exp y : ℝ) : ℂ))‖ := by
+  have happroxAtHeight := happrox (τ y) hheight
+  apply
+    psi0_error_pos_of_movingHeight_visible_point_and_exact_budget
+      τ y hvisible
+  apply lt_of_le_of_lt _ hbudget
+  apply mul_le_mul_of_nonneg_left _ (Real.exp_nonneg _)
+  linarith
+
+/-- Existing all-heights explicit-formula control supplies a point-dependent
+constant `K` for the moving-height positivity test. The implication returned
+here is the exact remaining numerical check at the visible point. Since `K`
+depends on `y`, this theorem does not provide uniform decay on translated
+moving intervals. -/
+theorem
+    exists_K_movingHeight_psi0_error_pos_of_visible_point_and_budget
+    (τ : ℝ → ℝ) (y : ℝ) (hy : 0 < y) (hheight : 8 ≤ τ y)
+    (hvisible :
+      maximalZeroPackageCanonicalNormalizedAmplitude (τ y) ≤
+        Real.exp (-maximalZeroRealPart (τ y) * y) *
+          ‖equalRealPartZeroPackageContribution (Real.exp y) (τ y)
+            (maximalZeroRealPart (τ y))‖) :
+    ∃ K : ℝ, 0 ≤ K ∧
+      (∀ U : ℝ, 8 ≤ U →
+        ‖explicitFormulaApproxWithMultiplicity (Real.exp y) U -
+            (chebyshevPsi0 (Real.exp y) : ℂ)‖ ≤
+          movingHeightApproximationBudget K U) ∧
+      (Real.exp (-maximalZeroRealPart (τ y) * y) *
+          (‖complementaryZeroPackageContribution (Real.exp y) (τ y)
+                (maximalZeroRealPart (τ y))‖ +
+            movingHeightApproximationBudget K (τ y) +
+            ‖zeroPackageClosedTerms y‖) <
+          maximalZeroPackageCanonicalNormalizedAmplitude (τ y) →
+        0 <
+          ‖(((chebyshevPsi0 (Real.exp y) - Real.exp y : ℝ) : ℂ))‖) := by
+  have hx : 1 < Real.exp y := Real.one_lt_exp_iff.mpr hy
+  rcases
+      _root_.PrimeNumberTheorem.ExplicitFormulaResidues.exists_norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_log_sq_div
+        hx with
+    ⟨K, hK, happrox⟩
+  refine ⟨K, hK, ?_, ?_⟩
+  · intro U hU
+    simpa only [movingHeightApproximationBudget] using happrox U hU
+  · intro hbudget
+    exact
+      psi0_error_pos_of_movingHeight_visible_point_and_approximation_budget
+        τ y K hheight hvisible
+        (fun U hU => by
+          simpa only [movingHeightApproximationBudget] using happrox U hU)
+        hbudget
+
+/-- Translated-interval contract for the moving-height reduction. Once a
+package-visible point `y` has been selected inside the interval, the existing
+explicit-formula theorem supplies a point-dependent approximation certificate
+and reduces strict positivity to the displayed three-term budget inequality
+at that same point. This does not select such points uniformly in the moving
+height. -/
+theorem
+    exists_mem_Ioo_exists_K_movingHeight_psi0_error_pos_of_visible_and_budget
+    (τ : ℝ → ℝ) (a b : ℝ)
+    (hvisible :
+      ∃ y ∈ Set.Ioo a b,
+        0 < y ∧ 8 ≤ τ y ∧
+          maximalZeroPackageCanonicalNormalizedAmplitude (τ y) ≤
+            Real.exp (-maximalZeroRealPart (τ y) * y) *
+              ‖equalRealPartZeroPackageContribution (Real.exp y) (τ y)
+                (maximalZeroRealPart (τ y))‖) :
+    ∃ y ∈ Set.Ioo a b, ∃ K : ℝ, 0 ≤ K ∧
+      (∀ U : ℝ, 8 ≤ U →
+        ‖explicitFormulaApproxWithMultiplicity (Real.exp y) U -
+            (chebyshevPsi0 (Real.exp y) : ℂ)‖ ≤
+          movingHeightApproximationBudget K U) ∧
+      (Real.exp (-maximalZeroRealPart (τ y) * y) *
+          (‖complementaryZeroPackageContribution (Real.exp y) (τ y)
+                (maximalZeroRealPart (τ y))‖ +
+            movingHeightApproximationBudget K (τ y) +
+            ‖zeroPackageClosedTerms y‖) <
+          maximalZeroPackageCanonicalNormalizedAmplitude (τ y) →
+        0 <
+          ‖(((chebyshevPsi0 (Real.exp y) - Real.exp y : ℝ) : ℂ))‖) := by
+  rcases hvisible with ⟨y, hy, hypos, hheight, hpackage⟩
+  rcases
+      exists_K_movingHeight_psi0_error_pos_of_visible_point_and_budget
+        τ y hypos hheight hpackage with
+    ⟨K, hK, happrox, htransfer⟩
+  exact ⟨y, hy, K, hK, happrox, htransfer⟩
 
 end
 
