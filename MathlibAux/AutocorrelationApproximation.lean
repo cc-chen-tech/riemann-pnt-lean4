@@ -40,9 +40,13 @@ The factor `2 * M * eps` comes from
 `F x * F (x + τ) - P x * P (x + τ) =
   (F x - P x) * F (x + τ) + P x * (F (x + τ) - P (x + τ))`.
 -/
-theorem abs_integral_mul_shift_sub_mul_shift_le
-    {F P : ℝ → ℝ} (hF : Continuous F) (hP : Continuous P)
-    {A B τ eps M : ℝ} (hAB : A ≤ B) (heps : 0 ≤ eps) (hM : 0 ≤ M)
+theorem abs_integral_mul_shift_sub_mul_shift_le_of_continuousOn
+    {F P : ℝ → ℝ} {A B τ eps M : ℝ}
+    (hF : ContinuousOn F
+      (Icc (min A (A + τ)) (max B (B + τ))))
+    (hP : ContinuousOn P
+      (Icc (min A (A + τ)) (max B (B + τ))))
+    (hAB : A ≤ B) (heps : 0 ≤ eps) (hM : 0 ≤ M)
     (happrox : ∀ x ∈ Icc (min A (A + τ)) (max B (B + τ)),
       |F x - P x| ≤ eps)
     (hFbound : ∀ x ∈ Icc (min A (A + τ)) (max B (B + τ)), |F x| ≤ M)
@@ -52,14 +56,40 @@ theorem abs_integral_mul_shift_sub_mul_shift_le
       (B - A) * (2 * M * eps) := by
   let f : ℝ → ℝ := fun x => F x * F (x + τ)
   let p : ℝ → ℝ := fun x => P x * P (x + τ)
-  have hf_cont : Continuous f := by
+  have hdomain :
+      Set.uIcc A B = Icc A B := uIcc_of_le hAB
+  have hbaseMaps :
+      MapsTo (fun x : ℝ => x) (Set.uIcc A B)
+        (Icc (min A (A + τ)) (max B (B + τ))) := by
+    intro x hx
+    exact mem_autocorrelationControlInterval
+      (by simpa only [hdomain] using hx)
+  have hshiftMaps :
+      MapsTo (fun x : ℝ => x + τ) (Set.uIcc A B)
+        (Icc (min A (A + τ)) (max B (B + τ))) := by
+    intro x hx
+    exact add_mem_autocorrelationControlInterval
+      (by simpa only [hdomain] using hx)
+  have hFbase : ContinuousOn F (Set.uIcc A B) :=
+    hF.mono hbaseMaps
+  have hPbase : ContinuousOn P (Set.uIcc A B) :=
+    hP.mono hbaseMaps
+  have hFshift : ContinuousOn (fun x : ℝ => F (x + τ))
+      (Set.uIcc A B) := by
+    simpa only [Function.comp_def] using
+      hF.comp (continuous_id.add continuous_const).continuousOn hshiftMaps
+  have hPshift : ContinuousOn (fun x : ℝ => P (x + τ))
+      (Set.uIcc A B) := by
+    simpa only [Function.comp_def] using
+      hP.comp (continuous_id.add continuous_const).continuousOn hshiftMaps
+  have hf_cont : ContinuousOn f (Set.uIcc A B) := by
     dsimp only [f]
-    exact hF.mul (hF.comp (continuous_id.add continuous_const))
-  have hp_cont : Continuous p := by
+    exact hFbase.mul hFshift
+  have hp_cont : ContinuousOn p (Set.uIcc A B) := by
     dsimp only [p]
-    exact hP.mul (hP.comp (continuous_id.add continuous_const))
-  have hf_int : IntervalIntegrable f volume A B := hf_cont.intervalIntegrable _ _
-  have hp_int : IntervalIntegrable p volume A B := hp_cont.intervalIntegrable _ _
+    exact hPbase.mul hPshift
+  have hf_int : IntervalIntegrable f volume A B := hf_cont.intervalIntegrable
+  have hp_int : IntervalIntegrable p volume A B := hp_cont.intervalIntegrable
   have hpoint : ∀ x ∈ Set.uIoc A B, ‖f x - p x‖ ≤ 2 * M * eps := by
     intro x hx
     have hxIcc : x ∈ Icc A B := by
@@ -102,5 +132,20 @@ theorem abs_integral_mul_shift_sub_mul_shift_le
     _ = (B - A) * (2 * M * eps) := by
       rw [abs_of_nonneg (sub_nonneg.mpr hAB)]
       ring
+
+/-- The global-continuity version is a direct corollary of the localized
+statement above. -/
+theorem abs_integral_mul_shift_sub_mul_shift_le
+    {F P : ℝ → ℝ} (hF : Continuous F) (hP : Continuous P)
+    {A B τ eps M : ℝ} (hAB : A ≤ B) (heps : 0 ≤ eps) (hM : 0 ≤ M)
+    (happrox : ∀ x ∈ Icc (min A (A + τ)) (max B (B + τ)),
+      |F x - P x| ≤ eps)
+    (hFbound : ∀ x ∈ Icc (min A (A + τ)) (max B (B + τ)), |F x| ≤ M)
+    (hPbound : ∀ x ∈ Icc (min A (A + τ)) (max B (B + τ)), |P x| ≤ M) :
+    |(∫ x in A..B, F x * F (x + τ)) -
+        ∫ x in A..B, P x * P (x + τ)| ≤
+      (B - A) * (2 * M * eps) :=
+  abs_integral_mul_shift_sub_mul_shift_le_of_continuousOn
+    hF.continuousOn hP.continuousOn hAB heps hM happrox hFbound hPbound
 
 end MathlibAux
