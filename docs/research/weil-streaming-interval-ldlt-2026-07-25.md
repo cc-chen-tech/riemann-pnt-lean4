@@ -222,7 +222,22 @@ is positive semidefinite. Its pointwise quadratic-form budget is bounded by
 ```
 
 which is exactly the kernel evaluated by the already proved scalar improper
-integral.
+integral. For `N > 0`, the module now performs that evaluation and proves the
+uniform finite-section bound
+
+```text
+quadraticForm(tail increment on [T,R], x)
+  <= B_T * squaredNorm x
+```
+
+for every `R >= T`, where
+
+```text
+B_T =
+  2 * (2*N+1) * rho / pi^2
+    * (log T / (T-rho*N)
+       + (rho*N)^(-1) * log(T / (T-rho*N))).
+```
 
 These results remove the generic algebraic transfer, scalar-calculus,
 rank-two positivity, pointwise vector-norm, and finite-interval matrix
@@ -233,7 +248,7 @@ analytic weight in Lean. They do not yet prove the explicit hard estimates
 0 <= h_+(t) <= log t  for t >= 7,
 ```
 
-construct the improper matrix limit, combine the pointwise envelope with the
-scalar integral into the final finite-section constant `B_T`, verify the
-basis transfer, or connect a finite certificate to the infinite-dimensional
-Weil criterion. Gate A therefore remains open.
+construct the improper matrix limit, replace the non-explicit starting
+threshold by the paper's explicit threshold `7`, verify the basis transfer,
+or connect a finite certificate to the infinite-dimensional Weil criterion.
+Gate A therefore remains open.

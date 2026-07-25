@@ -72,6 +72,28 @@ theorem tendsto_archimedeanTailPrimitive_atTop (b : ℝ) :
     ring
   · norm_num
 
+/-- Integrability of the scalar logarithmic tail kernel. -/
+theorem integrableOn_Ioi_log_div_sub_sq
+    {b T : ℝ} (hb : 0 < b) (hT : b < T) (hT1 : 1 ≤ T) :
+    IntegrableOn
+      (fun r : ℝ => Real.log r / (r - b) ^ 2) (Ioi T) := by
+  have hderiv :
+      ∀ x ∈ Ici T,
+        HasDerivAt (archimedeanTailPrimitive b)
+          (Real.log x / (x - b) ^ 2) x := by
+    intro x hx
+    have hbx : b < x := lt_of_lt_of_le hT hx
+    have hx0 : 0 < x := lt_trans hb hbx
+    exact hasDerivAt_archimedeanTailPrimitive
+      hb.ne' hx0.ne' (sub_ne_zero.mpr hbx.ne')
+  have hnonneg :
+      ∀ x ∈ Ioi T, 0 ≤ Real.log x / (x - b) ^ 2 := by
+    intro x hx
+    have hx1 : 1 < x := lt_of_le_of_lt hT1 hx
+    exact div_nonneg (Real.log_nonneg (le_of_lt hx1)) (sq_nonneg _)
+  exact integrableOn_Ioi_deriv_of_nonneg'
+    hderiv hnonneg (tendsto_archimedeanTailPrimitive_atTop b)
+
 /-- Exact scalar improper integral used in the explicit archimedean-tail
 budget. The paper applies it with `b = ρ N` and `T > max (ρ N) 7`. -/
 theorem integral_Ioi_log_div_sub_sq

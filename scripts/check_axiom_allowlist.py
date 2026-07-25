@@ -275,6 +275,10 @@ WEIL_RANK_TWO_TAIL_EXPECTED_DECLARATIONS = {
     "WeilExtremalKernels.paperArchimedeanRankTwoPointwiseBudget_le_log_envelope",
     "WeilExtremalKernels.exists_T0_quadraticForm_paperActualArchimedeanRankTwoIncrement_nonneg",
     "WeilExtremalKernels.exists_T0_quadraticForm_paperActualArchimedeanRankTwoIncrement_le",
+    "WeilExtremalKernels.integrableOn_Ioi_paperArchimedeanRankTwoLogEnvelope",
+    "WeilExtremalKernels.integral_Ioi_paperArchimedeanRankTwoLogEnvelope",
+    "WeilExtremalKernels.intervalIntegral_paperArchimedeanRankTwoLogEnvelope_le_tailBudget",
+    "WeilExtremalKernels.exists_T0_quadraticForm_paperActualArchimedeanRankTwoIncrement_le_tailBudget",
 }
 
 REPORT_RE = re.compile(
