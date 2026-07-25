@@ -1340,11 +1340,18 @@ over every finite support `B` is exactly the coefficient-space volume times
 its incomplete solution count.
 
 This still does **not** prove Ford's Lemma 5.1.  The remaining central step is
-the localization in equations (5.4)--(5.6): introduce the tent-kernel Fourier
-majorant, restrict each power-sum difference to the near-integer set
-`D_j`, bound `|D_j|` by `W_j`, and thereby dominate Ford's amplitude moment
-`T` by the incomplete mean value.  Smooth-number support estimates and the
-later parameter optimization also remain open.
+the localization in equation (5.4): introduce the tent-kernel Fourier
+majorant and thereby dominate Ford's amplitude moment `T` by the incomplete
+mean value.
+
+The elementary near-integer count from Ford's equation (5.6) is now proved
+separately in `FordNearInteger.lean`.  It defines the finite set detected by
+the distance to `round (d * gamma)` and proves the same explicit bound
+`4 K delta + 2 K gamma + 4 delta / gamma + 2`.  A scaled corollary substitutes
+`delta = 1/(2A)` and `K <= B`, giving the exact four-term shape needed for
+`W_j`.  Connecting this set degree by degree to the tent-kernel expansion,
+smooth-number support estimates, and the later parameter optimization remain
+open.
 
 ### Target Statements, Not Proved Theorems
 
