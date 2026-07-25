@@ -1,5 +1,6 @@
 import PrimeNumberTheorem.ZeroDensityLayerBudgetActualFullTailExcludingClusterConjugation
 import PrimeNumberTheorem.ZeroDensityLayerBudgetActualRealOrdinateExcludingCluster
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualClusterSignedComplement
 import PrimeNumberTheorem.ZeroDensityLayerBudgetActualOscillationBoundary
 
 /-!
@@ -106,6 +107,29 @@ theorem
   complement_dominated := hdominated
   excluded_tail_negligible := certificate.fullTail_negligible
 
+/-- The concrete real part of the actual outside-cluster zeta sum supplies the
+signed complement certificate without any external domination hypothesis. -/
+theorem
+    ActualCarlsonOutsideClusterFiniteStripCertificate.actualSignedComplementCertificate
+    {beta alpha : ℝ} {S : Finset ℂ} {n : ℕ}
+    {input :
+      (x : ℝ) →
+        PositiveZeroOutsideClusterBucketInput
+          (carlsonPolynomialHeight alpha x) S n}
+    (certificate :
+      ActualCarlsonOutsideClusterFiniteStripCertificate
+        beta alpha S n input) :
+    ClusterExcludedTargetComplementCertificate
+      (targetZeroPowerAmplitude beta)
+      (dynamicOutsideClusterPNTComplement
+        (carlsonPolynomialHeight alpha) S)
+      (dynamicFullOutsideClusterPNTZeroTailNorm
+        (carlsonPolynomialHeight alpha) S) := by
+  apply certificate.signedComplementCertificate
+  exact Filter.Eventually.of_forall fun x =>
+    abs_dynamicOutsideClusterPNTComplement_le_tailNorm
+      (carlsonPolynomialHeight alpha) S x
+
 /--
 Concrete unified transfer using actual zeta zeros outside the main cluster.
 
@@ -158,6 +182,53 @@ theorem
       threshold hhalf hlt
       (certificate.signedComplementCertificate
         complement hcomplementDominated)
+      hrealAxis hcontour hmain hdecomp
+
+/--
+Concrete specialization in which the complementary-zero term is the real part
+of the actual zeta zero sum outside `S`; its norm domination is automatic.
+-/
+theorem
+    unified_parametricPNTUpper_actualCarlsonSignedComplementLower
+    (threshold : ℝ) (hhalf : 1 / 2 < threshold) (hlt : threshold < 1)
+    {beta alpha : ℝ} {S : Finset ℂ} {n : ℕ}
+    {input :
+      (x : ℝ) →
+        PositiveZeroOutsideClusterBucketInput
+          (carlsonPolynomialHeight alpha x) S n}
+    (certificate :
+      ActualCarlsonOutsideClusterFiniteStripCertificate
+        beta alpha S n input)
+    {realAxis contour : ℝ → ℝ}
+    (hrealAxis :
+      TargetAmplitudeNegligible
+        (targetZeroPowerAmplitude beta) realAxis)
+    (hcontour :
+      TargetAmplitudeNegligible
+        (targetZeroPowerAmplitude beta) contour)
+    (hmain :
+      HasFarTargetAmplitudeWitness
+        (dynamicVisibleClusterPNTMain
+          (carlsonPolynomialHeight alpha) S)
+        (targetZeroPowerAmplitude beta))
+    (hdecomp :
+      ∀ x : ℝ,
+        relativeChebyshevPsi0Error x =
+          dynamicVisibleClusterPNTMain
+              (carlsonPolynomialHeight alpha) S x +
+            (realAxis x + contour x +
+              dynamicOutsideClusterPNTComplement
+                (carlsonPolynomialHeight alpha) S x)) :
+    (∃ rate : ℝ, 0 < rate ∧ rate ≤ 1 ∧
+      Tendsto
+        (fun m : ℕ => relativeChebyshevPsi0Error (m : ℝ))
+        atTop (nhds 0)) ∧
+    HasFarTargetAmplitudeWitness relativeChebyshevPsi0Error
+      (fun x => targetZeroPowerAmplitude beta x / 2) := by
+  exact
+    unified_parametricPNTUpper_clusterExcludedComplementLower
+      threshold hhalf hlt
+      certificate.actualSignedComplementCertificate
       hrealAxis hcontour hmain hdecomp
 
 end PrimeNumberTheorem

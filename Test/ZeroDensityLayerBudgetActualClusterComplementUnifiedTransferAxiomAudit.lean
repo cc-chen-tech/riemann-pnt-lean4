@@ -7,4 +7,8 @@ open PrimeNumberTheorem
 #print axioms
   ActualCarlsonOutsideClusterFiniteStripCertificate.signedComplementCertificate
 #print axioms
+  ActualCarlsonOutsideClusterFiniteStripCertificate.actualSignedComplementCertificate
+#print axioms
   unified_parametricPNTUpper_actualCarlsonOutsideClusterLower
+#print axioms
+  unified_parametricPNTUpper_actualCarlsonSignedComplementLower

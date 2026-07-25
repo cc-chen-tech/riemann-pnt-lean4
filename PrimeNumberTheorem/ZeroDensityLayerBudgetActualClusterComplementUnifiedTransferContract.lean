@@ -8,6 +8,10 @@ namespace PrimeNumberTheorem
 #check
   ActualCarlsonOutsideClusterFiniteStripCertificate.signedComplementCertificate
 #check
+  ActualCarlsonOutsideClusterFiniteStripCertificate.actualSignedComplementCertificate
+#check
   unified_parametricPNTUpper_actualCarlsonOutsideClusterLower
+#check
+  unified_parametricPNTUpper_actualCarlsonSignedComplementLower
 
 end PrimeNumberTheorem
