@@ -1,0 +1,5 @@
+import HardyTheorem.SelbergLagDyadicGeometry
+
+#print axioms HardyTheorem.selberg_lag_dyadic_mem
+#print axioms HardyTheorem.selberg_lag_shifted_dyadic_mem
+#print axioms HardyTheorem.selberg_lag_controlInterval_subset_dyadic
