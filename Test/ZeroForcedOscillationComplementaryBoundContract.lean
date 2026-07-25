@@ -470,6 +470,41 @@ example (T : ℝ)
   exists_mem_Ioo_sqNorm_maximalZeroPackageContribution_pos_of_hilbert
     T hpackage hlength
 
+example (T L y : ℝ) :
+    maximalZeroPackageHilbertMeanSquareMain T L y =
+      Real.exp (maximalZeroRealPart T * y) ^ 2 *
+        (maximalZeroPackageEnergy T -
+          (4 * Real.pi * maximalZeroPackageEnergy T /
+            maximalZeroPackageMinimumImaginarySpacing T) / L) := rfl
+
+example (T a b y : ℝ)
+    (hpackage : (maximalRealPartZeroPackage T).Nontrivial)
+    (hlength :
+      4 * Real.pi / maximalZeroPackageMinimumImaginarySpacing T < b - a) :
+    0 < maximalZeroPackageHilbertMeanSquareMain T (b - a) y :=
+  maximalZeroPackageHilbertMeanSquareMain_pos T y hpackage hlength
+
+example : ∃ C : ℝ, 0 ≤ C ∧ ∀ T : ℝ, 4 ≤ T →
+    (maximalRealPartZeroPackage T).Nontrivial → ∀ {a b : ℝ},
+      0 < a →
+      4 * Real.pi / maximalZeroPackageMinimumImaginarySpacing T < b - a →
+        ∃ y ∈ Set.Ioo a b,
+          0 < maximalZeroPackageHilbertMeanSquareMain T (b - a) y ∧
+          0 < Real.sqrt
+            (maximalZeroPackageHilbertMeanSquareMain T (b - a) y) ∧
+          Real.sqrt
+                (maximalZeroPackageHilbertMeanSquareMain T (b - a) y) -
+              (Real.exp ((maximalZeroRealPart T -
+                  maximalComplementaryRealPartGap T) * y) *
+                (C * (1 + Real.log (T + 6)) ^ 2) +
+                ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+                  (chebyshevPsi0 (Real.exp y) : ℂ)‖) -
+              (Real.log (2 * Real.pi) +
+                (1 / 2 : ℝ) * Real.exp (-2 * y) /
+                  (1 - Real.exp (-2 * y))) ≤
+            ‖(((chebyshevPsi0 (Real.exp y) - Real.exp y : ℝ) : ℂ))‖ :=
+  exists_C_forall_fixedHeight_maximalZeroPackage_hilbert_lower_bound
+
 example (T : ℝ) :
     maximalZeroPackageHilbertIntervalLengthThreshold T =
       4 * Real.pi / maximalZeroPackageMinimumImaginarySpacing T := rfl
@@ -477,6 +512,17 @@ example (T : ℝ) :
 example (T : ℝ) :
     maximalZeroPackageUnifiedCanonicalIntervalLength T =
       maximalZeroPackageUnifiedIntervalLengthThreshold T + 1 := rfl
+
+example (T L y : ℝ) :
+    maximalZeroPackageUnifiedMeanSquareMain T L y =
+      if (maximalRealPartZeroPackage T).Nontrivial then
+        if maximalZeroPackageIntervalLengthThreshold T ≤
+            maximalZeroPackageHilbertIntervalLengthThreshold T then
+          maximalZeroPackageMeanSquareMain T L y
+        else
+          maximalZeroPackageHilbertMeanSquareMain T L y
+      else
+        maximalZeroPackageMeanSquareMain T L y := rfl
 
 example (T : ℝ) (hcard : (maximalRealPartZeroPackage T).card = 1) :
     maximalZeroPackageUnifiedCanonicalIntervalLength T =
@@ -526,6 +572,27 @@ example
         (maximalZeroRealPart T)‖ ^ 2 :=
   exists_mem_Ioo_sqNorm_maximalZeroPackageContribution_pos_on_unified_canonical
     T hpackage a
+
+example : ∃ C : ℝ, 0 ≤ C ∧ ∀ T : ℝ, 4 ≤ T →
+    (maximalRealPartZeroPackage T).Nonempty → ∀ {a : ℝ}, 0 < a →
+      ∃ y ∈ Set.Ioo a
+          (a + maximalZeroPackageUnifiedCanonicalIntervalLength T),
+        0 < maximalZeroPackageUnifiedMeanSquareMain T
+            (maximalZeroPackageUnifiedCanonicalIntervalLength T) y ∧
+        0 < Real.sqrt (maximalZeroPackageUnifiedMeanSquareMain T
+              (maximalZeroPackageUnifiedCanonicalIntervalLength T) y) ∧
+        Real.sqrt (maximalZeroPackageUnifiedMeanSquareMain T
+                (maximalZeroPackageUnifiedCanonicalIntervalLength T) y) -
+              (Real.exp ((maximalZeroRealPart T -
+                  maximalComplementaryRealPartGap T) * y) *
+                (C * (1 + Real.log (T + 6)) ^ 2) +
+                ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+                  (chebyshevPsi0 (Real.exp y) : ℂ)‖) -
+              (Real.log (2 * Real.pi) +
+                (1 / 2 : ℝ) * Real.exp (-2 * y) /
+                  (1 - Real.exp (-2 * y))) ≤
+            ‖(((chebyshevPsi0 (Real.exp y) - Real.exp y : ℝ) : ℂ))‖ :=
+  exists_C_forall_fixedHeight_maximalZeroPackage_unified_lower_bound_on_canonical_interval
 
 -- Small sanity checks: the per-term identity at zero multiplicity and at `ρ = 0`.
 

@@ -30,6 +30,9 @@ package of `ZeroForcedOscillationExplicitFormula.lean`:
   mean-square amplitude strictly positive;
 * a cardinality-free Hilbert mean-square bound and a unified exact/Hilbert
   visibility interval for the maximal zero package;
+* a quantitative Hilbert lower main transferred through the complementary
+  budget, explicit-formula approximation norm, and closed terms to the actual
+  `ψ₀(exp y) - exp y` detector;
 * an `O(T log T)` bound for the size of the maximal package, converting the
   canonical interval length to an explicit `O(T log T / Δ_T)` bound;
 * eventual nonemptiness of every maximal package from Hardy's theorem;
@@ -1639,6 +1642,49 @@ theorem
       maximalZeroPackageMinimumImaginarySpacing] using hpoint
   · exact sq_nonneg _
 
+/-- The cardinality-free Hilbert lower main for the maximal zero package.
+Analytic multiplicity is retained in `maximalZeroPackageEnergy`, while the
+actual minimum imaginary spacing and interval length remain explicit. -/
+def maximalZeroPackageHilbertMeanSquareMain (T L y : ℝ) : ℝ :=
+  Real.exp (maximalZeroRealPart T * y) ^ 2 *
+    (maximalZeroPackageEnergy T -
+      (4 * Real.pi * maximalZeroPackageEnergy T /
+        maximalZeroPackageMinimumImaginarySpacing T) / L)
+
+/-- The Hilbert lower main is strictly positive for a nontrivial maximal
+package on every interval longer than `4π / Δ_T`. -/
+theorem maximalZeroPackageHilbertMeanSquareMain_pos (T y : ℝ)
+    (hpackage : (maximalRealPartZeroPackage T).Nontrivial)
+    {a b : ℝ}
+    (hlength :
+      4 * Real.pi / maximalZeroPackageMinimumImaginarySpacing T < b - a) :
+    0 < maximalZeroPackageHilbertMeanSquareMain T (b - a) y := by
+  have henergy : 0 < maximalZeroPackageEnergy T :=
+    maximalZeroPackageEnergy_pos T hpackage.nonempty
+  have hspacing := maximalZeroPackageMinimumImaginarySpacing_pos T
+  have hthreshold :
+      0 < 4 * Real.pi / maximalZeroPackageMinimumImaginarySpacing T :=
+    div_pos (by positivity) hspacing
+  have hinterval : 0 < b - a := lt_trans hthreshold hlength
+  have hmul :
+      4 * Real.pi * maximalZeroPackageEnergy T /
+          maximalZeroPackageMinimumImaginarySpacing T <
+        (b - a) * maximalZeroPackageEnergy T := by
+    calc
+      4 * Real.pi * maximalZeroPackageEnergy T /
+          maximalZeroPackageMinimumImaginarySpacing T =
+          (4 * Real.pi / maximalZeroPackageMinimumImaginarySpacing T) *
+            maximalZeroPackageEnergy T := by ring
+      _ < (b - a) * maximalZeroPackageEnergy T :=
+        mul_lt_mul_of_pos_right hlength henergy
+  have hratio :
+      (4 * Real.pi * maximalZeroPackageEnergy T /
+          maximalZeroPackageMinimumImaginarySpacing T) / (b - a) <
+        maximalZeroPackageEnergy T := by
+    exact (div_lt_iff₀ hinterval).mpr (by simpa [mul_comm] using hmul)
+  unfold maximalZeroPackageHilbertMeanSquareMain
+  exact mul_pos (sq_pos_of_pos (Real.exp_pos _)) (sub_pos.mpr hratio)
+
 /-- If the maximal zero package has at least two members, every logarithmic
 interval longer than `4π / Δ_T` contains a point where its actual
 multiplicity-aware contribution is strictly nonzero. This statement concerns
@@ -1730,6 +1776,100 @@ theorem
   rw [hpoly]
   exact mul_pos hgrowth hfinite
 
+/-- A nontrivial maximal zero package transfers the cardinality-free Hilbert
+lower main to the actual `ψ₀(exp y) - exp y` detector on every logarithmic
+interval longer than `4π / Δ_T`.
+
+The conclusion retains analytic multiplicity through the energy, the actual
+minimum spacing, the complementary package budget, the genuine finite-height
+explicit-formula approximation norm, and the elementary closed terms. It does
+not assert that the final displayed lower bound is positive after subtracting
+those budgets. -/
+theorem
+    exists_C_forall_fixedHeight_maximalZeroPackage_hilbert_lower_bound
+    : ∃ C : ℝ, 0 ≤ C ∧ ∀ T : ℝ, 4 ≤ T →
+      (maximalRealPartZeroPackage T).Nontrivial → ∀ {a b : ℝ},
+        0 < a →
+        4 * Real.pi / maximalZeroPackageMinimumImaginarySpacing T < b - a →
+          ∃ y ∈ Set.Ioo a b,
+            0 < maximalZeroPackageHilbertMeanSquareMain T (b - a) y ∧
+            0 < Real.sqrt
+              (maximalZeroPackageHilbertMeanSquareMain T (b - a) y) ∧
+            Real.sqrt
+                  (maximalZeroPackageHilbertMeanSquareMain T (b - a) y) -
+                (Real.exp ((maximalZeroRealPart T -
+                    maximalComplementaryRealPartGap T) * y) *
+                  (C * (1 + Real.log (T + 6)) ^ 2) +
+                  ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+                    (chebyshevPsi0 (Real.exp y) : ℂ)‖) -
+                (Real.log (2 * Real.pi) +
+                  (1 / 2 : ℝ) * Real.exp (-2 * y) /
+                    (1 - Real.exp (-2 * y))) ≤
+              ‖(((chebyshevPsi0 (Real.exp y) - Real.exp y : ℝ) : ℂ))‖ := by
+  rcases ExplicitFormulaAux.exists_globalReciprocalZeroMultiplicity_le_log_sq with
+    ⟨C, hC, hCbound⟩
+  refine ⟨C, hC, ?_⟩
+  intro T hT hpackage a b ha hlength
+  have hthreshold :
+      0 < 4 * Real.pi / maximalZeroPackageMinimumImaginarySpacing T :=
+    div_pos (by positivity) (maximalZeroPackageMinimumImaginarySpacing_pos T)
+  have hab : a < b := sub_pos.mp (lt_trans hthreshold hlength)
+  rcases exists_mem_Ioo_sqNorm_maximalZeroPackageContribution_ge_hilbert
+      T hpackage hab with ⟨y, hy, hmean⟩
+  have hypos : 0 < y := lt_trans ha hy.1
+  have hynonneg : 0 ≤ y := hypos.le
+  have hmain_pos :
+      0 < maximalZeroPackageHilbertMeanSquareMain T (b - a) y :=
+    maximalZeroPackageHilbertMeanSquareMain_pos T y hpackage hlength
+  have hmean' :
+      maximalZeroPackageHilbertMeanSquareMain T (b - a) y ≤
+        ‖equalRealPartZeroPackageContribution (Real.exp y) T
+          (maximalZeroRealPart T)‖ ^ 2 := by
+    simpa only [maximalZeroPackageHilbertMeanSquareMain] using hmean
+  have hsqrt_le :
+      Real.sqrt (maximalZeroPackageHilbertMeanSquareMain T (b - a) y) ≤
+        ‖equalRealPartZeroPackageContribution (Real.exp y) T
+          (maximalZeroRealPart T)‖ := by
+    calc
+      Real.sqrt (maximalZeroPackageHilbertMeanSquareMain T (b - a) y) ≤
+          Real.sqrt
+            (‖equalRealPartZeroPackageContribution (Real.exp y) T
+                (maximalZeroRealPart T)‖ ^ 2) :=
+        Real.sqrt_le_sqrt hmean'
+      _ = ‖equalRealPartZeroPackageContribution (Real.exp y) T
+              (maximalZeroRealPart T)‖ :=
+        Real.sqrt_sq (norm_nonneg _)
+  have hcomplement :
+      ‖complementaryZeroPackageContribution (Real.exp y) T
+          (maximalZeroRealPart T)‖ ≤
+        Real.exp ((maximalZeroRealPart T -
+            maximalComplementaryRealPartGap T) * y) *
+          (C * (1 + Real.log (T + 6)) ^ 2) := by
+    calc
+      ‖complementaryZeroPackageContribution (Real.exp y) T
+          (maximalZeroRealPart T)‖ ≤
+          Real.exp ((maximalZeroRealPart T -
+              maximalComplementaryRealPartGap T) * y) *
+            ∑ ρ ∈ nontrivialZerosFinset T,
+              (analyticOrderNatAt riemannZeta ρ : ℝ) / ‖ρ‖ :=
+        norm_complementaryZeroPackageContribution_le_exp_maximal_gap_mul_sum_nontrivialZerosFinset
+          T y hynonneg
+      _ = Real.exp ((maximalZeroRealPart T -
+              maximalComplementaryRealPartGap T) * y) *
+            ExplicitFormulaAux.globalReciprocalZeroMultiplicity T := by
+        simp only [ExplicitFormulaAux.globalReciprocalZeroMultiplicity]
+      _ ≤ Real.exp ((maximalZeroRealPart T -
+              maximalComplementaryRealPartGap T) * y) *
+            (C * (1 + Real.log (T + 6)) ^ 2) :=
+        mul_le_mul_of_nonneg_left (hCbound T hT) (Real.exp_nonneg _)
+  have huncontrolled :=
+    norm_zeroPackageUncontrolledRemainder_le_complementary_add_approximation y T
+  have htransfer :=
+    norm_zeroPackage_sub_norm_uncontrolled_sub_closed_le_norm_chebyshevPsi0_sub_exp
+      (T := T) (β := maximalZeroRealPart T) hypos
+  refine ⟨y, hy, hmain_pos, Real.sqrt_pos.mpr hmain_pos, ?_⟩
+  linarith
+
 /-- The cardinality-free Hilbert interval threshold for the maximal package.
 Its strict-visibility use requires a nontrivial package; the totalized spacing
 definition alone does not make the Hilbert argument valid for a singleton. -/
@@ -1750,6 +1890,19 @@ def maximalZeroPackageUnifiedIntervalLengthThreshold (T : ℝ) : ℝ :=
 threshold. No uniform control in `T` is asserted. -/
 def maximalZeroPackageUnifiedCanonicalIntervalLength (T : ℝ) : ℝ :=
   maximalZeroPackageUnifiedIntervalLengthThreshold T + 1
+
+/-- The lower main selected by the honest unified threshold. A nontrivial
+package uses the exact main when its threshold is smaller and the Hilbert main
+otherwise; an empty or singleton package always uses the exact main. -/
+def maximalZeroPackageUnifiedMeanSquareMain (T L y : ℝ) : ℝ :=
+  if (maximalRealPartZeroPackage T).Nontrivial then
+    if maximalZeroPackageIntervalLengthThreshold T ≤
+        maximalZeroPackageHilbertIntervalLengthThreshold T then
+      maximalZeroPackageMeanSquareMain T L y
+    else
+      maximalZeroPackageHilbertMeanSquareMain T L y
+  else
+    maximalZeroPackageMeanSquareMain T L y
 
 /-- Outside the nontrivial case, in particular for a singleton, the unified
 canonical length is exactly the original exact-pairwise canonical length. -/
@@ -1903,6 +2056,149 @@ theorem
     exact
       exists_mem_Ioo_sqNorm_maximalZeroPackageContribution_pos_of_exact
         T hpackage hlength
+
+/-- Unified canonical fixed-height transfer to the actual `ψ₀` detector.
+Nontrivial packages branch on which of the exact and Hilbert thresholds is
+smaller; empty or singleton packages use only the exact theorem. Thus no
+argument treats a bound by the minimum threshold as if both threshold
+inequalities held.
+
+The selected lower main remains strictly positive before the complementary,
+finite-height approximation, and closed-term budgets are subtracted. No
+uniform spacing estimate or unconditional `Omega` conclusion is asserted. -/
+theorem
+    exists_C_forall_fixedHeight_maximalZeroPackage_unified_lower_bound_on_canonical_interval
+    : ∃ C : ℝ, 0 ≤ C ∧ ∀ T : ℝ, 4 ≤ T →
+      (maximalRealPartZeroPackage T).Nonempty → ∀ {a : ℝ}, 0 < a →
+        ∃ y ∈ Set.Ioo a
+            (a + maximalZeroPackageUnifiedCanonicalIntervalLength T),
+          0 < maximalZeroPackageUnifiedMeanSquareMain T
+              (maximalZeroPackageUnifiedCanonicalIntervalLength T) y ∧
+          0 < Real.sqrt (maximalZeroPackageUnifiedMeanSquareMain T
+                (maximalZeroPackageUnifiedCanonicalIntervalLength T) y) ∧
+          Real.sqrt (maximalZeroPackageUnifiedMeanSquareMain T
+                  (maximalZeroPackageUnifiedCanonicalIntervalLength T) y) -
+                (Real.exp ((maximalZeroRealPart T -
+                    maximalComplementaryRealPartGap T) * y) *
+                  (C * (1 + Real.log (T + 6)) ^ 2) +
+                  ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+                    (chebyshevPsi0 (Real.exp y) : ℂ)‖) -
+                (Real.log (2 * Real.pi) +
+                  (1 / 2 : ℝ) * Real.exp (-2 * y) /
+                    (1 - Real.exp (-2 * y))) ≤
+              ‖(((chebyshevPsi0 (Real.exp y) - Real.exp y : ℝ) : ℂ))‖ := by
+  rcases
+      exists_C_forall_fixedHeight_maximalZeroPackage_strict_lower_bound with
+    ⟨Cexact, hCexact, hexact⟩
+  rcases
+      exists_C_forall_fixedHeight_maximalZeroPackage_hilbert_lower_bound with
+    ⟨Chilbert, hChilbert, hhilbert⟩
+  refine ⟨max Cexact Chilbert, hCexact.trans (le_max_left _ _), ?_⟩
+  intro T hT hpackage a ha
+  have hbudget_exact (y : ℝ) :
+      Real.exp ((maximalZeroRealPart T -
+            maximalComplementaryRealPartGap T) * y) *
+          (Cexact * (1 + Real.log (T + 6)) ^ 2) ≤
+        Real.exp ((maximalZeroRealPart T -
+            maximalComplementaryRealPartGap T) * y) *
+          (max Cexact Chilbert * (1 + Real.log (T + 6)) ^ 2) := by
+    apply mul_le_mul_of_nonneg_left _ (Real.exp_nonneg _)
+    exact mul_le_mul_of_nonneg_right (le_max_left _ _) (sq_nonneg _)
+  have hbudget_hilbert (y : ℝ) :
+      Real.exp ((maximalZeroRealPart T -
+            maximalComplementaryRealPartGap T) * y) *
+          (Chilbert * (1 + Real.log (T + 6)) ^ 2) ≤
+        Real.exp ((maximalZeroRealPart T -
+            maximalComplementaryRealPartGap T) * y) *
+          (max Cexact Chilbert * (1 + Real.log (T + 6)) ^ 2) := by
+    apply mul_le_mul_of_nonneg_left _ (Real.exp_nonneg _)
+    exact mul_le_mul_of_nonneg_right (le_max_right _ _) (sq_nonneg _)
+  have hcanonical_sub :
+      (a + maximalZeroPackageUnifiedCanonicalIntervalLength T) - a =
+        maximalZeroPackageUnifiedCanonicalIntervalLength T := by
+    ring
+  by_cases hnontrivial : (maximalRealPartZeroPackage T).Nontrivial
+  · by_cases hexact_le :
+        maximalZeroPackageIntervalLengthThreshold T ≤
+          maximalZeroPackageHilbertIntervalLengthThreshold T
+    · have hlength :
+          maximalZeroPackageIntervalLengthThreshold T <
+            (a + maximalZeroPackageUnifiedCanonicalIntervalLength T) - a := by
+        simp only [maximalZeroPackageUnifiedCanonicalIntervalLength,
+          maximalZeroPackageUnifiedIntervalLengthThreshold,
+          if_pos hnontrivial, min_eq_left hexact_le, add_sub_cancel_left]
+        exact lt_add_one _
+      rcases hexact T hT hpackage ha hlength with
+        ⟨y, hy, hmain, hsqrt, hpsi⟩
+      rw [hcanonical_sub] at hmain hsqrt hpsi
+      have hunified :
+          maximalZeroPackageUnifiedMeanSquareMain T
+              (maximalZeroPackageUnifiedCanonicalIntervalLength T) y =
+            maximalZeroPackageMeanSquareMain T
+              (maximalZeroPackageUnifiedCanonicalIntervalLength T) y := by
+        simp only [maximalZeroPackageUnifiedMeanSquareMain,
+          if_pos hnontrivial, if_pos hexact_le]
+      refine ⟨y, hy, ?_, ?_, ?_⟩
+      · rw [hunified]
+        exact hmain
+      · rw [hunified]
+        exact hsqrt
+      · rw [hunified]
+        linarith [hbudget_exact y]
+    · have hhilbert_le :
+          maximalZeroPackageHilbertIntervalLengthThreshold T ≤
+            maximalZeroPackageIntervalLengthThreshold T :=
+        le_of_not_ge hexact_le
+      have hlength :
+          4 * Real.pi / maximalZeroPackageMinimumImaginarySpacing T <
+            (a + maximalZeroPackageUnifiedCanonicalIntervalLength T) - a := by
+        rw [maximalZeroPackageUnifiedCanonicalIntervalLength,
+          maximalZeroPackageUnifiedIntervalLengthThreshold,
+          if_pos hnontrivial, min_eq_right hhilbert_le,
+          maximalZeroPackageHilbertIntervalLengthThreshold,
+          add_sub_cancel_left]
+        exact lt_add_one _
+      rcases hhilbert T hT hnontrivial ha hlength with
+        ⟨y, hy, hmain, hsqrt, hpsi⟩
+      rw [hcanonical_sub] at hmain hsqrt hpsi
+      have hunified :
+          maximalZeroPackageUnifiedMeanSquareMain T
+              (maximalZeroPackageUnifiedCanonicalIntervalLength T) y =
+            maximalZeroPackageHilbertMeanSquareMain T
+              (maximalZeroPackageUnifiedCanonicalIntervalLength T) y := by
+        simp only [maximalZeroPackageUnifiedMeanSquareMain,
+          if_pos hnontrivial, if_neg hexact_le]
+      refine ⟨y, hy, ?_, ?_, ?_⟩
+      · rw [hunified]
+        exact hmain
+      · rw [hunified]
+        exact hsqrt
+      · rw [hunified]
+        linarith [hbudget_hilbert y]
+  · have hlength :
+        maximalZeroPackageIntervalLengthThreshold T <
+          (a + maximalZeroPackageUnifiedCanonicalIntervalLength T) - a := by
+      simp only [maximalZeroPackageUnifiedCanonicalIntervalLength,
+        maximalZeroPackageUnifiedIntervalLengthThreshold,
+        if_neg hnontrivial, add_sub_cancel_left]
+      exact lt_add_one _
+    rcases hexact T hT hpackage ha hlength with
+      ⟨y, hy, hmain, hsqrt, hpsi⟩
+    rw [hcanonical_sub] at hmain hsqrt hpsi
+    have hunified :
+        maximalZeroPackageUnifiedMeanSquareMain T
+            (maximalZeroPackageUnifiedCanonicalIntervalLength T) y =
+          maximalZeroPackageMeanSquareMain T
+            (maximalZeroPackageUnifiedCanonicalIntervalLength T) y := by
+      simp only [maximalZeroPackageUnifiedMeanSquareMain,
+        if_neg hnontrivial]
+    refine ⟨y, hy, ?_, ?_, ?_⟩
+    · rw [hunified]
+      exact hmain
+    · rw [hunified]
+      exact hsqrt
+    · rw [hunified]
+      linarith [hbudget_exact y]
 
 end
 
