@@ -511,6 +511,7 @@ lean_lib RiemannPNT where
     `Test.VinogradovKorobovParameterizedZeroRepulsionContract,
     `Test.VinogradovKorobovVinogradovMeanValueContract,
     `Test.VinogradovKorobovIncompleteMomentContract,
+    `Test.VinogradovKorobovIncompleteSupportMomentContract,
     `Test.VinogradovKorobovFiniteFieldNewtonContract,
     `Test.VinogradovKorobovPrimePowerTargetFiberContract,
     `Test.VinogradovKorobovPrimePowerTargetMultiBlockContract,
