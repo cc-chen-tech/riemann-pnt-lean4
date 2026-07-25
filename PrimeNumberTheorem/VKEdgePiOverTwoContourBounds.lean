@@ -1,4 +1,5 @@
 import PrimeNumberTheorem.VKEdgePiOverTwoZetaContour
+import PrimeNumberTheorem.LeftVerticalEdge
 
 open Complex Polynomial
 
@@ -72,6 +73,85 @@ theorem norm_localizedGaussianWeight_left_le
   have huProduct : 0 < u * (1 - u) :=
     mul_pos hu (sub_pos.mpr hu1)
   nlinarith
+
+/-- Uniform finite-height bound for `-ζ'/ζ` on the fixed line `Re(z) = -1`. -/
+def leftLogDerivBound (T : ℝ) : ℝ :=
+  ExplicitFormulaResidues.vonMangoldtLSeriesNorm 1 +
+    ‖Complex.log Real.pi‖ +
+    2 * (‖(Real.eulerMascheroniConstant : ℂ)‖ + 3 +
+      Real.log (T + 4)) + Real.pi
+
+theorem leftLogDerivBound_nonneg {T : ℝ} (hT : 0 ≤ T) :
+    0 ≤ leftLogDerivBound T := by
+  have hseries :
+      0 ≤ ExplicitFormulaResidues.vonMangoldtLSeriesNorm 1 :=
+    tsum_nonneg fun n => norm_nonneg _
+  have hlog : 0 ≤ Real.log (T + 4) :=
+    Real.log_nonneg (by linarith)
+  unfold leftLogDerivBound
+  positivity
+
+/-- The pole-subtraction factor is uniformly bounded on `Re(z) = -1`. -/
+theorem norm_div_sub_one_left_vertical_le_one (t : ℝ) :
+    ‖(((-1 : ℂ) + I * t) /
+      (((-1 : ℂ) + I * t) - 1))‖ ≤ 1 := by
+  let z : ℂ := (-1 : ℂ) + I * t
+  have hzsub : z - 1 ≠ 0 := by
+    intro h
+    have hre := congrArg Complex.re h
+    norm_num [z] at hre
+  have hsq : ‖z‖ ^ 2 ≤ ‖z - 1‖ ^ 2 := by
+    rw [Complex.sq_norm, Complex.sq_norm]
+    simp only [Complex.normSq_apply, Complex.sub_re, Complex.sub_im]
+    norm_num [z]
+  rw [norm_div, div_le_one (norm_pos_iff.mpr hzsub)]
+  exact
+    (sq_le_sq₀ (norm_nonneg z) (norm_nonneg (z - 1))).mp hsq
+
+/--
+Pointwise left-edge estimate for the actual regularized zeta logarithmic
+derivative multiplied by the localized polynomial-Gaussian weight.
+-/
+theorem norm_regularizedLogDeriv_localizedGaussianWeight_left_le
+    (A : ℂ[X]) {u v T t m : ℝ}
+    (hu : 0 < u) (hu1 : u < 1)
+    (hT : 0 ≤ T) (ht : |t| ≤ T) (hm : 0 ≤ m) :
+    ‖localizedGaussianWeight A ((u : ℂ) + I * v) m
+          ((-1 : ℂ) + I * t) *
+        (-logDeriv riemannZeta ((-1 : ℂ) + I * t) -
+          (((-1 : ℂ) + I * t) /
+            (((-1 : ℂ) + I * t) - 1)))‖ ≤
+      ‖A.eval (((-1 : ℂ) + I * t) - ((u : ℂ) + I * v))‖ *
+        Real.exp (-15 * m - m * (t - v) ^ 2) *
+          (leftLogDerivBound T + 1) := by
+  let z : ℂ := (-1 : ℂ) + I * t
+  let w : ℂ := (u : ℂ) + I * v
+  have hweight :
+      ‖localizedGaussianWeight A w m z‖ ≤
+        ‖A.eval (z - w)‖ *
+          Real.exp (-15 * m - m * (t - v) ^ 2) := by
+    simpa [z, w] using
+      norm_localizedGaussianWeight_left_le A hu hu1 hm
+  have hlog :
+      ‖-logDeriv riemannZeta z‖ ≤ leftLogDerivBound T := by
+    have hbase :=
+      ExplicitFormulaResidues.norm_neg_logDeriv_riemannZeta_odd_vertical_le_of_abs_le
+        (N := 0) hT ht
+    simpa [z, leftLogDerivBound, mul_comm] using hbase
+  have hregularized :
+      ‖-logDeriv riemannZeta z - z / (z - 1)‖ ≤
+        leftLogDerivBound T + 1 := by
+    calc
+      ‖-logDeriv riemannZeta z - z / (z - 1)‖ ≤
+          ‖-logDeriv riemannZeta z‖ + ‖z / (z - 1)‖ :=
+        norm_sub_le _ _
+      _ ≤ leftLogDerivBound T + 1 := by
+        gcongr
+        simpa [z] using norm_div_sub_one_left_vertical_le_one t
+  rw [norm_mul]
+  exact mul_le_mul hweight hregularized
+    (norm_nonneg _) (by
+      positivity [leftLogDerivBound_nonneg hT])
 
 end
 
