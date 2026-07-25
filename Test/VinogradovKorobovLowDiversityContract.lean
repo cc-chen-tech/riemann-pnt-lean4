@@ -1,0 +1,11 @@
+import ZeroFreeRegion.VinogradovKorobov.VinogradovLowDiversity
+
+open ZeroFreeRegion.VinogradovKorobov
+
+#check vinogradovLowDiversityTupleSet
+#check mem_vinogradovLowDiversityTupleSet_iff
+#check vinogradovLowDiversityTupleEncoder
+#check exists_vinogradovLowDiversityTupleCode
+#check card_vinogradovLowDiversityTupleSet_le
+#check exists_injective_selection_of_le_card_image
+#check no_injective_selection_iff_mem_vinogradovLowDiversityTupleSet

@@ -1,0 +1,10 @@
+import ZeroFreeRegion.VinogradovKorobov.VinogradovUnitTwistedMatrix
+
+open ZeroFreeRegion.VinogradovKorobov
+
+#check vinogradovUnitTwistedBinomialIntMatrix
+#check vinogradovUnitTwistedBinomialIntMatrix_eq_mul_diagonal
+#check isUnit_det_vinogradovUnitTwistedBinomialIntMatrix
+#check isUnit_det_vinogradovUnitTwistedBinomialIntMatrix_mod_prime
+#check isUnit_det_intMatrix_of_unitTwisted_modEq
+#check isUnit_det_unitTwisted_add_primePower_mul

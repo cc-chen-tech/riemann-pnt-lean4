@@ -1,0 +1,19 @@
+import ZeroFreeRegion.VinogradovKorobov.VinogradovNormalizedConditioning
+
+open ZeroFreeRegion.VinogradovKorobov
+
+#check vinogradovResidueMassSq
+#check vinogradovResidueMass
+#check vinogradovResidueWeightedSum
+#check vinogradovNormalizedResidueNorm
+#check vinogradovResidueWeightedSum_eq_zero_of_mass_eq_zero
+#check vinogradovResidueMass_mul_normalizedResidueNorm
+#check vinogradovResidueMassSq_eq_sum_refinement
+#check sum_vinogradovResidueMass_sq_eq
+#check NNReal.pow_weighted_sum_le
+#check NNReal.pow_two_mul_sum_le_card_mul_mass_mul_moment
+#check NNReal.normalized_moment_le_of_scaled
+#check NNReal.normalized_moment_le
+#check NNReal.normalized_primePower_refinement
+#check vinogradovResidueMass_mul_normalizedResidueNorm_le_refinement
+#check normalized_vinogradovResidueNorm_primePower_refinement
