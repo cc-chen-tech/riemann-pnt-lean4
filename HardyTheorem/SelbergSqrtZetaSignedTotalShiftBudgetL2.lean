@@ -1,14 +1,16 @@
 import HardyTheorem.SelbergSqrtZetaSignedAutocorrelationShiftBudgetL2
 import HardyTheorem.SelbergSqrtZetaSignedModelL2
 import HardyTheorem.SelbergSqrtZetaSignedTotalShiftBudget
+import HardyTheorem.SelbergSqrtZetaSignedPseudoLeOrdinary
 
 /-!
 # Explicit L2 total shift budget for the signed Selberg model
 
 This module discharges the abstract square-mass inputs in the L2
 autocorrelation transfer.  The actual and finite-model masses are replaced by
-their explicit dyadic budgets before the model correlation is split into its
-ordinary-gap, diagonal, and pseudo-frequency parts.
+their explicit dyadic budgets.  The pseudo-correlation is then dominated by
+the ordinary conjugate correlation, leaving only the ordinary-gap and
+diagonal budgets.
 -/
 
 open Complex MeasureTheory Set
@@ -24,15 +26,14 @@ noncomputable def selbergSqrtZetaSignedModelTransferShiftBudgetL2
     (Real.sqrt (selbergSqrtZetaSignedActualL2Budget Cactual T X) +
       Real.sqrt (selbergSqrtZetaSignedModelL2Budget T X))
 
-/-- The complete L2-based shift-square budget.  The factor `1/2` is inherited
-from the real-part decomposition of the finite theta model correlation. -/
+/-- The complete L2-based shift-square budget after the pseudo-correlation is
+absorbed into the ordinary conjugate correlation. -/
 noncomputable def selbergSqrtZetaSignedTotalShiftBudgetL2
     (Cactual Ctransfer T : ℝ) (X : ℕ) (H : ℝ) : ℝ :=
   selbergSqrtZetaSignedModelTransferShiftBudgetL2
       Cactual Ctransfer T X H +
-    (selbergSqrtZetaSignedOrdinaryGapShiftBudget T X H +
-      selbergSqrtZetaSignedDiagonalShiftBudget T X H +
-      selbergSqrtZetaSignedPseudoShiftFiberBudget T X H) / 2
+    selbergSqrtZetaSignedOrdinaryGapShiftBudget T X H +
+    selbergSqrtZetaSignedDiagonalShiftBudget T X H
 
 /-- The actual mollified autocorrelation has a completely explicit L2-based
 shift-square budget.  No abstract model supremum or square-mass parameter
@@ -70,6 +71,15 @@ theorem
     ∫ v in 0..H, ∫ w in 0..H, ∫ t in T..2 * T - H,
       selbergSqrtZetaSignedThetaModel kappa T X (t + v) *
         selbergSqrtZetaSignedThetaModel kappa T X (t + w)
+  let ordinary : ℂ :=
+    ∫ v in 0..H, ∫ w in 0..H, ∫ t in T..2 * T - H,
+      selbergSqrtZetaSignedComplexModel kappa T X (t + v) *
+        (starRingEnd ℂ)
+          (selbergSqrtZetaSignedComplexModel kappa T X (t + w))
+  let pseudo : ℂ :=
+    ∫ v in 0..H, ∫ w in 0..H, ∫ t in T..2 * T - H,
+      selbergSqrtZetaSignedComplexModel kappa T X (t + v) *
+        selbergSqrtZetaSignedComplexModel kappa T X (t + w)
   have hactualDyadic :
       (∫ x in T..2 * T,
         selbergSqrtZetaMollifiedHardyZ X x ^ 2) ≤
@@ -93,9 +103,8 @@ theorem
         hTtransfer hH hHT hactualDyadic hmodelDyadic
   have hmodelSplit :
       |model| ≤
-        (selbergSqrtZetaSignedOrdinaryGapShiftBudget T X H +
-          selbergSqrtZetaSignedDiagonalShiftBudget T X H +
-          selbergSqrtZetaSignedPseudoShiftFiberBudget T X H) / 2 := by
+        selbergSqrtZetaSignedOrdinaryGapShiftBudget T X H +
+          selbergSqrtZetaSignedDiagonalShiftBudget T X H := by
     have hdecomp :=
       abs_integral_integral_integral_selbergSqrtZetaSignedThetaModel_mul_shift_le
         kappa T X hTpos hH hHT
@@ -103,16 +112,28 @@ theorem
       norm_integral_integral_integral_selbergSqrtZetaSignedOrdinaryCorrelation_le
         kappa T X hTpos hH hHT
     have hpseudo :=
-      norm_integral_integral_integral_selbergSqrtZetaSignedComplexModel_mul_shift_le_fiber_budget
-        kappa X hTone hH hHT
-    apply hdecomp.trans
-    apply div_le_div_of_nonneg_right
-    · simpa only [selbergSqrtZetaSignedOrdinaryGapShiftBudget,
-          selbergSqrtZetaSignedDiagonalShiftBudget,
-          selbergSqrtZetaSignedPseudoShiftFiberBudget,
-          add_assoc] using
-        add_le_add hord hpseudo
-    · norm_num
+      norm_integral_integral_integral_selbergSqrtZetaSignedComplexModel_mul_shift_le_conj_shift
+        kappa T X hTpos hH hHT
+    have hdecomp' :
+        |model| ≤ (‖ordinary‖ + ‖pseudo‖) / 2 := by
+      simpa only [model, ordinary, pseudo] using hdecomp
+    have hpseudo' : ‖pseudo‖ ≤ ‖ordinary‖ := by
+      simpa only [ordinary, pseudo] using hpseudo
+    have hord' :
+        ‖ordinary‖ ≤
+          selbergSqrtZetaSignedOrdinaryGapShiftBudget T X H +
+            selbergSqrtZetaSignedDiagonalShiftBudget T X H := by
+      simpa only [ordinary,
+        selbergSqrtZetaSignedOrdinaryGapShiftBudget,
+        selbergSqrtZetaSignedDiagonalShiftBudget] using hord
+    calc
+      |model| ≤ (‖ordinary‖ + ‖pseudo‖) / 2 := hdecomp'
+      _ ≤ (‖ordinary‖ + ‖ordinary‖) / 2 := by
+        exact div_le_div_of_nonneg_right
+          (add_le_add le_rfl hpseudo') (by norm_num)
+      _ = ‖ordinary‖ := by ring
+      _ ≤ selbergSqrtZetaSignedOrdinaryGapShiftBudget T X H +
+          selbergSqrtZetaSignedDiagonalShiftBudget T X H := hord'
   change |actual| ≤ _
   calc
     |actual| = |(actual - model) + model| := by ring_nf
@@ -120,10 +141,11 @@ theorem
     _ ≤ selbergSqrtZetaSignedModelTransferShiftBudgetL2
           Cactual Ctransfer T X H +
         (selbergSqrtZetaSignedOrdinaryGapShiftBudget T X H +
-          selbergSqrtZetaSignedDiagonalShiftBudget T X H +
-          selbergSqrtZetaSignedPseudoShiftFiberBudget T X H) / 2 :=
+          selbergSqrtZetaSignedDiagonalShiftBudget T X H) :=
       add_le_add htransfer' hmodelSplit
     _ = selbergSqrtZetaSignedTotalShiftBudgetL2
-          Cactual Ctransfer T X H := rfl
+          Cactual Ctransfer T X H := by
+      unfold selbergSqrtZetaSignedTotalShiftBudgetL2
+      ring
 
 end HardyTheorem

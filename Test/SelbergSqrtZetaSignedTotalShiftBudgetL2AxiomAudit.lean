@@ -20,9 +20,8 @@ example (Cactual Ctransfer T : ℝ) (X : ℕ) (H : ℝ) :
     selbergSqrtZetaSignedTotalShiftBudgetL2 Cactual Ctransfer T X H =
       selbergSqrtZetaSignedModelTransferShiftBudgetL2
           Cactual Ctransfer T X H +
-        (selbergSqrtZetaSignedOrdinaryGapShiftBudget T X H +
-          selbergSqrtZetaSignedDiagonalShiftBudget T X H +
-          selbergSqrtZetaSignedPseudoShiftFiberBudget T X H) / 2 := rfl
+        selbergSqrtZetaSignedOrdinaryGapShiftBudget T X H +
+        selbergSqrtZetaSignedDiagonalShiftBudget T X H := rfl
 
 example :
     ∃ Cactual Ctransfer T0 : ℝ,
