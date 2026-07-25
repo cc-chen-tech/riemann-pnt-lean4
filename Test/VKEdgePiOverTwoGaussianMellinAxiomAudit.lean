@@ -1,3 +1,5 @@
 import PrimeNumberTheorem.VKEdgePiOverTwoGaussianMellin
 
 #print axioms PrimeNumberTheorem.VKEdgePiOverTwo.integral_verticalGaussian_eq
+#print axioms PrimeNumberTheorem.VKEdgePiOverTwo.integral_verticalGaussian_monomial_zero_eq
+#print axioms PrimeNumberTheorem.VKEdgePiOverTwo.integral_verticalPolynomialGaussian_zero_eq
