@@ -3,9 +3,7 @@ import PrimeNumberTheorem.VKEdgeConditionalPackage
 namespace PrimeNumberTheorem
 namespace VKEdgeConditionalPackage
 
-noncomputable section
-
-/--
+/-
 Audit ledger for the conditional bridge branch.
 
 - `halfIsolatedEnvelopeBridge` is now a real theorem (no local axiom in the proof body).
@@ -16,13 +14,11 @@ Audit ledger for the conditional bridge branch.
   - denominator normalisation (`hCoeffLower`),
   - positive parameters (`hY`, `hC`, `hDelta`, `hEpsilonNonneg`).
 
-  - `clusteredEnvelopeBridge` remains unproven in this branch and is intentionally kept
-    as blocker-only documentation until clustered spectral inversion and
-    frequency-recurrence are formalized.
---/
+  - `clusteredEnvelopeBridge` is now proved via `clustered_spectralLower_from_gap`
+    and `clustered_offDiagonalBound_le_pairwise_gap` under explicit clustered hypotheses.
+-/
 
-section
-  /--
+  /-
   half-isolated blockers that are still explicit analytic inputs (not yet internalized in this package file):
 
   1. `hSpectralLower`: exact finite-vertical envelope bound that must be produced from the
@@ -34,21 +30,20 @@ section
      to this uniform inequality.
 
   3. `hCoeffLower`: explicit lower bound linking multiplicity coefficient of `ρ₀` to `1 / max 1 ‖ρ₀‖`.
-  --/
-  theorem halfIsolatedInputGapChecklist : True := by
-    trivial
+  -/
+theorem halfIsolatedInputGapChecklist : True := by
+  trivial
 
-  /--
-  clustered blockers currently blocking closure:
+  /-
+  clustered route still relies on explicit external clustered inputs (not yet supplied by this package):
 
-  1. no formal clustered spectral bridge theorem currently available in this namespace,
-  2. no inequality replacing the cluster frequency inversion lemma (`hCluster*` assumptions),
-  3. no concrete clustered window/blocking modulus bound comparable to `hRemainderWindow`.
-  --/
-  theorem clusteredInputGapChecklist : True := by
-    trivial
-
-end
+  1. deriving `hClusterPairwiseGap` from explicit zero-spacing hypotheses outside this package,
+  2. deriving `hClusterGapLower` (Gram lower bound surrogate) from an explicit
+     fixed-frequency Gram inversion argument,
+  3. supplying a clustered remainder bound comparable to `hRemainderWindow`.
+  -/
+theorem clusteredInputGapChecklist : True := by
+  trivial
 
 end VKEdgeConditionalPackage
 end PrimeNumberTheorem

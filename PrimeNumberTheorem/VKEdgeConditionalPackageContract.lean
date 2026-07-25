@@ -11,9 +11,16 @@ theorem halfIsolatedEnvelopeBridge_contract
     HalfIsolatedConclusion h :=
   halfIsolatedEnvelopeBridge h
 
+/-- Contract invocation for the clustered regime bridge: all preconditions are explicit and
+    checked in the theorem statement. -/
+theorem clusteredEnvelopeBridge_contract
+    (h : ClusteredEnvelopeInput) :
+    ClusteredConclusion h :=
+  clusteredEnvelopeBridge h
+
 /-! Clustered-route contract is deferred in this branch.
 
-See audit notes for exact clustered blockers before reintroducing a closed theorem.
+Use `VKEdgeConditionalPackageAudit` for remaining explicit blockers.
 -/
 
 end VKEdgeConditionalPackage
