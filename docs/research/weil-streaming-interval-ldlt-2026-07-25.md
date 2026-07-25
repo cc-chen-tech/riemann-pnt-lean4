@@ -66,7 +66,7 @@ The standard-library verifier authenticates exact endpoint syntax, source
 bindings, pivot sign logic and transcript metadata. It does not independently
 replay Arb arithmetic; that requires rerunning the factorizer.
 
-## 9000/9512-bit path
+## Registered c=100 high-precision path
 
 The existing high source is serialized on a 120-digit grid. Raising only the
 factorization context to 9000 bits cannot recover information discarded by
@@ -87,7 +87,49 @@ The 9000/9512 provenance records confirm same-route positive inertia at the
 registered point. They do not provide the missing high-precision dual-route
 entry intervals and cannot be substituted for them.
 
-The high-precision route has not been executed. The 896-bit result does not
-certify positivity or negativity. Analytic tail control and basis-change
-transfer also remain open, so `gate_a_status` remains `not_satisfied` and no
-RH conclusion is made.
+The registered `(c,N)=(100,200)` high-precision route has not been executed.
+The 896-bit result does not certify positivity or negativity.
+
+## c=13, N=200 candidate execution
+
+A separate candidate run at `(c,N)=(13,200)` completed all four 64-by-64
+sharded routes:
+
+- the low auxiliary and CCM routes used 9000-bit Arb intervals;
+- the high auxiliary and CCM routes used 9512-bit Arb intervals;
+- all routes used a 2900-digit outward grid;
+- each route completed 49 tiles and 160801 entries;
+- each route passed its independent route verifier.
+
+The transpose-aware cross artifact also completed all 49 tiles and passed
+`verify-cross`. Its checkpoint and manifest SHA-256 is
+`efec67a8e7a0eca6c028164c12e87ae6cb94312d0b855adceb58ea439f504b04`.
+All low and high route intersections overlap, all retained intersections are
+contained and strictly narrower, and all symmetric intersections are
+nonempty.
+
+The first real high-precision LDL run exposed a verifier coverage bug: the
+runner accepted both the legacy sharded cross schema and the resumable
+high-precision cross schema, while the checkpoint verifier accepted only the
+legacy schema. Commit `9a8cf5f` makes both paths share the same dual-schema
+source-validation helper and adds a high-precision-source regression. All 106
+Weil Python tests pass. The final LDL checkpoints below were regenerated after
+that repair, so their generator SHA binds the committed verifier source.
+
+Both retained intersection levels have a complete positive factorization:
+
+| level | Arb bits | positive pivots | checkpoint SHA-256 |
+| --- | ---: | ---: | --- |
+| high | 9512 | 401/401 | `be071bd29e22a8d6c6ee947bc4585394a63f030519f920241c790a4e6fcce41b` |
+| low | 9000 | 401/401 | `7044877c6f4c1663e91d2b5ae5732784fcbd419dffe466d184f8a8098edb2110` |
+
+Both checkpoints passed independent `verify-checkpoint` runs. The smallest
+pivot lower bound occurs at index 203 and is approximately
+`3.007626851110137615766217289610976834519e-20`. Its interval width is
+approximately `1.13e-2694` on the high intersection and `1.07e-2543` on the
+low intersection.
+
+This is a rigorous positive certificate for one finite 401-by-401 candidate
+matrix. It is not the preregistered `(c,N)=(100,200)` Gate A baseline.
+Analytic tail control and basis-change transfer remain open, so
+`gate_a_status` remains `not_satisfied` and no RH conclusion is made.
