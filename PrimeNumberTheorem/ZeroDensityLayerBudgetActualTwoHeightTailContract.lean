@@ -1,0 +1,16 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualTwoHeightTail
+
+/-!
+# Contract for actual two-height finite-zero tails
+-/
+
+namespace PrimeNumberTheorem
+
+#check dynamicFullPNTZeroTailSum
+#check dynamicPNTZeroHeightAnnulusNorm
+#check dynamicPNTZeroHeightAnnulusNorm_le_fullTail_add_fullTail
+#check dynamicPNTZeroHeightAnnulusNorm_targetAmplitudeNegligible
+#check actualTwoHeightPNTZeroTailControl
+#check actualTwoHeightPNTZeroTail_combined_targetAmplitudeNegligible
+
+end PrimeNumberTheorem
