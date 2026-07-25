@@ -212,6 +212,18 @@ h_+(t) - log(t / (2*pi)) -> 0
 and therefore a non-explicit threshold `T_0` beyond which
 `0 <= h_+(t) <= log t`.
 
+`WeilExtremalKernels/ArchimedeanActualTail.lean` specializes the generic
+matrix integration layer to this actual weight. Beyond a common non-explicit
+threshold, every finite interval increment to the right of the Cauchy poles
+is positive semidefinite. Its pointwise quadratic-form budget is bounded by
+
+```text
+2 * (2*N+1) * rho / pi^2 * log r / (r-rho*N)^2,
+```
+
+which is exactly the kernel evaluated by the already proved scalar improper
+integral.
+
 These results remove the generic algebraic transfer, scalar-calculus,
 rank-two positivity, pointwise vector-norm, and finite-interval matrix
 integration subgoals, and they now identify and eventually bound the actual
@@ -221,6 +233,7 @@ analytic weight in Lean. They do not yet prove the explicit hard estimates
 0 <= h_+(t) <= log t  for t >= 7,
 ```
 
-construct the improper matrix tail, integrate to the final constant `B_T`,
-verify the basis transfer, or connect a finite certificate to the
-infinite-dimensional Weil criterion. Gate A therefore remains open.
+construct the improper matrix limit, combine the pointwise envelope with the
+scalar integral into the final finite-section constant `B_T`, verify the
+basis transfer, or connect a finite certificate to the infinite-dimensional
+Weil criterion. Gate A therefore remains open.

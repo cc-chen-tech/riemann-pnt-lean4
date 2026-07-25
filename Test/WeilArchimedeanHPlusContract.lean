@@ -31,6 +31,12 @@ example :
         archimedeanHPlus t ≤ Real.log t :=
   exists_eventually_archimedeanHPlus_bounds
 
+example :
+    ∃ T0 : ℝ, 1 ≤ T0 ∧ ∀ t : ℝ, T0 ≤ t →
+      0 ≤ archimedeanHPlus t ∧
+        archimedeanHPlus t ≤ Real.log t :=
+  exists_one_le_eventually_archimedeanHPlus_bounds
+
 example (L rho : ℝ) :
     Continuous (paperArchimedeanWeight L rho) :=
   continuous_paperArchimedeanWeight L rho

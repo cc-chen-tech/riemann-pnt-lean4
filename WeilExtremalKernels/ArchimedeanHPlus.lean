@@ -185,6 +185,17 @@ theorem exists_eventually_archimedeanHPlus_bounds :
   rcases Filter.eventually_atTop.1 (hnonneg.and hupper) with ⟨T0, hT0⟩
   exact ⟨T0, hT0⟩
 
+/-- The eventual `h₊` bounds may be taken beyond `1`, which is the range
+needed by the logarithmic improper-integral formula. -/
+theorem exists_one_le_eventually_archimedeanHPlus_bounds :
+    ∃ T0 : ℝ, 1 ≤ T0 ∧ ∀ t : ℝ, T0 ≤ t →
+      0 ≤ archimedeanHPlus t ∧
+        archimedeanHPlus t ≤ Real.log t := by
+  obtain ⟨T0, hT0⟩ := exists_eventually_archimedeanHPlus_bounds
+  refine ⟨max 1 T0, le_max_left _ _, ?_⟩
+  intro t ht
+  exact hT0 t ((le_max_right 1 T0).trans ht)
+
 /-- The actual scalar multiplier in the paper's rank-two density. -/
 noncomputable def paperArchimedeanWeight (L rho r : ℝ) : ℝ :=
   archimedeanHPlus r * Real.sin (L * r / 2) ^ 2 /

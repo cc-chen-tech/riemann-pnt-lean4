@@ -268,9 +268,13 @@ WEIL_RANK_TWO_TAIL_EXPECTED_DECLARATIONS = {
     "WeilExtremalKernels.archimedeanHPlus_eq_two_mul_verticalGammaPhaseVelocity",
     "WeilExtremalKernels.tendsto_archimedeanHPlus_sub_log_model_atTop",
     "WeilExtremalKernels.exists_eventually_archimedeanHPlus_bounds",
+    "WeilExtremalKernels.exists_one_le_eventually_archimedeanHPlus_bounds",
     "WeilExtremalKernels.continuous_paperArchimedeanWeight",
     "WeilExtremalKernels.paperArchimedeanWeight_nonneg",
     "WeilExtremalKernels.paperArchimedeanWeight_le_log_envelope",
+    "WeilExtremalKernels.paperArchimedeanRankTwoPointwiseBudget_le_log_envelope",
+    "WeilExtremalKernels.exists_T0_quadraticForm_paperActualArchimedeanRankTwoIncrement_nonneg",
+    "WeilExtremalKernels.exists_T0_quadraticForm_paperActualArchimedeanRankTwoIncrement_le",
 }
 
 REPORT_RE = re.compile(
@@ -321,6 +325,7 @@ def main() -> int:
             "Test.WeilArchimedeanRankTwoTailAxiomAudit",
             "Test.WeilArchimedeanRankTwoIntegralAxiomAudit",
             "Test.WeilArchimedeanHPlusAxiomAudit",
+            "Test.WeilArchimedeanActualTailAxiomAudit",
         ],
         cwd=ROOT,
         text=True,
