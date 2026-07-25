@@ -332,6 +332,53 @@ theorem norm_localizedGaussianWeight_horizontal_le_uniform
             Real.exp (m * (36 - (t - v) ^ 2)) := by
       gcongr
 
+/--
+Once the horizontal height is at least nine units beyond the Gaussian
+center, the real-direction loss is absorbed into half of the vertical
+Gaussian decay.  The resulting estimate is independent of the choice of the
+top or bottom edge.
+-/
+theorem norm_localizedGaussianWeight_horizontal_le_heightGap
+    (A : ℂ[X]) {u v T σ t m : ℝ}
+    (hu : 0 < u) (hu1 : u < 1)
+    (hσlo : -1 ≤ σ) (hσhi : σ ≤ u + 2)
+    (hgap : 9 + |v| ≤ T) (ht : |t| = T) (hm : 0 ≤ m) :
+    ‖localizedGaussianWeight A ((u : ℂ) + I * v) m
+        ((σ : ℂ) + I * t)‖ ≤
+      (∑ k ∈ A.support, ‖A.coeff k‖) *
+        max 1 (T + |v| + 3) ^ A.natDegree *
+          Real.exp (-(m * (T - |v|) ^ 2) / 2) := by
+  have hdNonneg : 0 ≤ T - |v| := by linarith
+  have hdNine : 9 ≤ T - |v| := by linarith
+  have hdAbs : T - |v| ≤ |t - v| := by
+    calc
+      T - |v| = |t| - |v| := by rw [ht]
+      _ ≤ |t - v| := abs_sub_abs_le_abs_sub t v
+  have hdSq : (T - |v|) ^ 2 ≤ (t - v) ^ 2 := by
+    have h :=
+      (sq_le_sq₀ hdNonneg (abs_nonneg (t - v))).2 hdAbs
+    simpa [sq_abs] using h
+  have hexponent :
+      m * (36 - (t - v) ^ 2) ≤
+        -(m * (T - |v|) ^ 2) / 2 := by
+    have hdSqLarge : 72 ≤ (T - |v|) ^ 2 := by
+      nlinarith [sq_nonneg (T - |v| - 9)]
+    have hmulSq :
+        m * (T - |v|) ^ 2 ≤ m * (t - v) ^ 2 :=
+      mul_le_mul_of_nonneg_left hdSq hm
+    nlinarith [hmulSq,
+      mul_nonneg hm (sub_nonneg.mpr hdSqLarge)]
+  calc
+    _ ≤ (∑ k ∈ A.support, ‖A.coeff k‖) *
+          max 1 (T + |v| + 3) ^ A.natDegree *
+            Real.exp (m * (36 - (t - v) ^ 2)) :=
+      norm_localizedGaussianWeight_horizontal_le_uniform
+        A hu hu1 hσlo hσhi ht hm
+    _ ≤ (∑ k ∈ A.support, ‖A.coeff k‖) *
+          max 1 (T + |v| + 3) ^ A.natDegree *
+            Real.exp (-(m * (T - |v|) ^ 2) / 2) := by
+      gcongr
+
 /-- The regularizing rational factor is uniformly bounded on good-height
 horizontal segments of the localized rectangle. -/
 theorem norm_div_sub_one_horizontal_le_two
@@ -498,6 +545,78 @@ theorem
       norm_localizedGaussianWeight_horizontal_le_uniform
         A (u := u) (v := v) (T := T) (t := t) (m := m)
           hu hu1 hσ.1.le hσ.2 ht hm
+    have hlog :=
+      hregularized u hu hu1 t ht σ hσ.1.le hσ.2
+    rw [norm_mul]
+    exact mul_le_mul hweight hlog (norm_nonneg _) hW
+  have hbound := intervalIntegral.norm_integral_le_of_norm_le_const
+    (f := fun σ : ℝ =>
+      localizedGaussianWeight A ((u : ℂ) + I * v) m
+          ((σ : ℂ) + I * t) *
+        (-logDeriv riemannZeta ((σ : ℂ) + I * t) -
+          (((σ : ℂ) + I * t) /
+            (((σ : ℂ) + I * t) - 1))))
+    (a := (-1 : ℝ)) (b := u + 2) (C := W * R) hpoint
+  change _ ≤ (W * R) * (u + 3)
+  convert hbound using 1
+  rw [abs_of_nonneg (by linarith : 0 ≤ u + 2 - (-1))]
+  ring
+
+/--
+Height-gap specialization of the complete horizontal integral estimate.  It
+applies uniformly to both `t = T` and `t = -T`.
+-/
+theorem
+    exists_goodHeight_Icc_norm_integral_regularizedLogDeriv_localizedGaussianWeight_horizontal_le_heightGap :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ H : ℝ, 4 ≤ H →
+      ∃ T ∈ Set.Icc H (H + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ (A : ℂ[X]) (u v m t : ℝ),
+            0 < u → u < 1 → 0 ≤ m →
+              9 + |v| ≤ H → |t| = T →
+                ‖∫ σ : ℝ in (-1)..(u + 2),
+                    localizedGaussianWeight A ((u : ℂ) + I * v) m
+                        ((σ : ℂ) + I * t) *
+                      (-logDeriv riemannZeta ((σ : ℂ) + I * t) -
+                        (((σ : ℂ) + I * t) /
+                          (((σ : ℂ) + I * t) - 1)))‖ ≤
+                  (((∑ k ∈ A.support, ‖A.coeff k‖) *
+                      max 1 (T + |v| + 3) ^ A.natDegree *
+                      Real.exp (-(m * (T - |v|) ^ 2) / 2)) *
+                    (max
+                      (C * (1 + Real.log (H + 6)) ^ 2)
+                      (ExplicitFormulaResidues.vonMangoldtLSeriesNorm 1) +
+                      2)) *
+                    (u + 3) := by
+  rcases exists_goodHeight_Icc_norm_regularizedLogDeriv_horizontal_le with
+    ⟨C, hC, hchoose⟩
+  refine ⟨C, hC, ?_⟩
+  intro H hH
+  rcases hchoose H hH with ⟨T, hT, hgood, hregularized⟩
+  refine ⟨T, hT, hgood, ?_⟩
+  intro A u v m t hu hu1 hm hgap ht
+  let W : ℝ :=
+    (∑ k ∈ A.support, ‖A.coeff k‖) *
+      max 1 (T + |v| + 3) ^ A.natDegree *
+        Real.exp (-(m * (T - |v|) ^ 2) / 2)
+  let R : ℝ :=
+    max
+      (C * (1 + Real.log (H + 6)) ^ 2)
+      (ExplicitFormulaResidues.vonMangoldtLSeriesNorm 1) + 2
+  have hW : 0 ≤ W := by
+    dsimp [W]
+    positivity
+  have hpoint : ∀ σ ∈ Set.uIoc (-1 : ℝ) (u + 2),
+      ‖localizedGaussianWeight A ((u : ℂ) + I * v) m
+            ((σ : ℂ) + I * t) *
+          (-logDeriv riemannZeta ((σ : ℂ) + I * t) -
+            (((σ : ℂ) + I * t) /
+              (((σ : ℂ) + I * t) - 1)))‖ ≤ W * R := by
+    intro σ hσ
+    rw [Set.uIoc_of_le (by linarith)] at hσ
+    have hweight :=
+      norm_localizedGaussianWeight_horizontal_le_heightGap
+        A hu hu1 hσ.1.le hσ.2 (hgap.trans hT.1) ht hm
     have hlog :=
       hregularized u hu hu1 t ht σ hσ.1.le hσ.2
     rw [norm_mul]
