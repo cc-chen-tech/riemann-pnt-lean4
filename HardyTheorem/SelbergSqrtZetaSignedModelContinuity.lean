@@ -35,12 +35,19 @@ theorem continuousOn_selbergSqrtZetaSignedThetaModel_Icc_of_pos
     (kappa T : ℝ) (X : ℕ) {A B : ℝ} (hA : 0 < A) :
     ContinuousOn (selbergSqrtZetaSignedThetaModel kappa T X) (Set.Icc A B) := by
   intro t ht
-  rw [selbergSqrtZetaSignedThetaModel_eq_re_exp_I_kappa_mul_signedPhasePolynomial]
+  have hmodel : ContinuousAt (fun x : ℝ =>
+      (Complex.exp (I * kappa) *
+        selbergSqrtZetaSignedPhasePolynomial
+          (firstZetaApproximationCutoff T) X x).re) t := by
+    apply Complex.continuous_re.continuousAt.comp
+    exact continuousAt_const.mul
+      (continuousAt_selbergSqrtZetaSignedPhasePolynomial_of_pos
+        (hA.trans_le ht.1))
   apply ContinuousAt.continuousWithinAt
-  apply Complex.continuous_re.continuousAt.comp
-  exact continuousAt_const.mul
-    (continuousAt_selbergSqrtZetaSignedPhasePolynomial_of_pos
-      (hA.trans_le ht.1))
+  apply hmodel.congr_of_eventuallyEq
+  exact Filter.Eventually.of_forall fun x =>
+    selbergSqrtZetaSignedThetaModel_eq_re_exp_I_kappa_mul_signedPhasePolynomial
+      kappa T X x
 
 /-- The signed theta model is continuous on the positive dyadic control
 interval used by its autocorrelation integrals. -/
