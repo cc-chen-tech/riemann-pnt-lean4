@@ -899,6 +899,40 @@ theorem integral_verticalPolynomialGaussian_add_mul_eq
       rw [polynomialGaussianKernel_X_mul]
       ring
 
+/--
+The polynomial Gaussian with the linear Mellin factor `w + z` is integrable
+on every shifted vertical line.
+-/
+theorem integrable_verticalPolynomialGaussian_add_mul
+    (A : ℂ[X]) {m : ℝ} (hm : 0 < m)
+    (w : ℂ) (c r : ℝ) :
+    Integrable
+      (fun t : ℝ =>
+        (w + ((c : ℂ) + I * (t : ℂ))) *
+          A.eval ((c : ℂ) + I * (t : ℂ)) *
+          Complex.exp
+            ((m : ℂ) * ((c : ℂ) + I * (t : ℂ)) ^ 2 +
+              (r : ℂ) * ((c : ℂ) + I * (t : ℂ)))) := by
+  let z : ℝ → ℂ := fun t => (c : ℂ) + I * (t : ℂ)
+  let E : ℝ → ℂ := fun t =>
+    Complex.exp
+      ((m : ℂ) * (z t) ^ 2 + (r : ℂ) * z t)
+  have hA :
+      Integrable (fun t : ℝ => A.eval (z t) * E t) := by
+    simpa [z, E] using
+      integrable_verticalPolynomialGaussian A hm c r
+  have hXA :
+      Integrable (fun t : ℝ => (X * A).eval (z t) * E t) := by
+    dsimp [z, E]
+    exact integrable_verticalPolynomialGaussian (X * A) hm c r
+  have hsum :=
+    (hA.const_mul w).add hXA
+  refine hsum.congr ?_
+  filter_upwards with t
+  dsimp [z, E]
+  simp only [eval_mul, eval_X]
+  ring
+
 end
 
 end VKEdgePiOverTwo
