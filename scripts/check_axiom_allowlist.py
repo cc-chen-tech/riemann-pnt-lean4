@@ -171,6 +171,7 @@ EXPECTED_DECLARATIONS = {
     "HardyTheorem.norm_selbergSqrtZetaMollifier_criticalLine_le_two_sqrt",
     "HardyTheorem.volume_smallMassStarts_inter_Icc_le_sqrtZetaGapSum",
     "HardyTheorem.exists_volume_selbergSqrtZetaSmallAbsoluteMassStarts_inter_Icc_le_gapSum",
+    "HardyTheorem.sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_le_lowRange_add_tripleFiberMinHighRange",
     "HardyTheorem.integral_normSq_selbergSqrtZetaMollifiedShortDirichletPolynomial_le_gapSum",
     "HardyTheorem.exp_I_thetaModel_mul_criticalLinePolynomial_mul_mollifier_mul_conj_eq_collectedPhasePolynomial",
     "HardyTheorem.selbergMollifiedTripleKey_eq_one_iff",

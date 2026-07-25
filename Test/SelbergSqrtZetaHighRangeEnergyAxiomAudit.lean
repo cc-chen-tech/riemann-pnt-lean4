@@ -1,0 +1,3 @@
+import HardyTheorem.SelbergSqrtZetaHighRangeEnergy
+
+#print axioms HardyTheorem.sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_le_lowRange_add_tripleFiberMinHighRange

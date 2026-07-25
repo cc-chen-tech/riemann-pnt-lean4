@@ -272,7 +272,7 @@ VK、Selberg 和 Pintz 路线需要新的上游估计，不能由当前已证明
 
 | 分支或 PR | 当前进展 | 尚未闭合的边界 |
 |---|---|---|
-| [`research/hardy-littlewood`](https://github.com/cc-chen-tech/riemann-pnt-lean4/tree/research/hardy-littlewood) | 已证明 `hardy_littlewood_lower_bound_target_proved` 和奇重数强化版；Selberg 工作已完成 lag/Fourier/Hardy 相位模块，构造经典 `zeta^(-1/2)` 系数，并证明低区间恒等式、有限 zeta 截断乘 mollifier 平方到 collected/sliding 多项式的精确桥、实际有限低区间系数的统一 `(15/4)H^2` 能量界、完整短多项式均方到显式 frequency-gap sum 的归约、临界线上 mollifier 的 `2 sqrt X` 范数界、sqrt-zeta 短区间绝对质量下界，以及从该下界到小质量坏窗口测度的无条件 gap-sum 归约 | Selberg `T log T` 下界仍是目标；`hsmall` 还需高区间能量和 off-diagonal gap sum 的尖锐上界，`hexcessive` 还需把同一 sqrt-zeta mollifier 接入 lag 二阶矩预算，最后再选择 `X(T)`、`eta(T)` 和窗口常数 |
+| [`research/hardy-littlewood`](https://github.com/cc-chen-tech/riemann-pnt-lean4/tree/research/hardy-littlewood) | 已证明 `hardy_littlewood_lower_bound_target_proved` 和奇重数强化版；Selberg 工作已完成 lag/Fourier/Hardy 相位模块，构造经典 `zeta^(-1/2)` 系数，并证明低区间恒等式、有限 zeta 截断乘 mollifier 平方到 collected/sliding 多项式的精确桥、实际有限低区间系数的统一 `(15/4)H^2` 能量界、临界线上 mollifier 的 `2 sqrt X` 范数界、sqrt-zeta 短区间绝对质量下界，以及从该下界到小质量坏窗口测度的无条件 gap-sum 归约；高区间已进一步归约为带 `min(H, 2/log k)^2` 权重的实际三元因子纤维能量 | Selberg `T log T` 下界仍是目标；`hsmall` 还需三元纤维高区间能量和 off-diagonal gap sum 的尖锐算术上界，`hexcessive` 还需把同一 sqrt-zeta mollifier 接入 lag 二阶矩预算，最后再选择 `X(T)`、`eta(T)` 和窗口常数 |
 | [PR #11: Pintz envelope](https://github.com/cc-chen-tech/riemann-pnt-lean4/pull/11) | 零点 envelope、单调性和经典 `sqrt(log x)` 下界 | 尚无到 `psi` 或 `pi-Li` 振荡/最大阶的桥 |
 | 本地分支 `feat/vinogradov-korobov-exponential-sums` | 差分、矩阵、秩分层和同余系统等指数和基础设施；该分支尚未推送到 `origin` | `vinogradov_korobov_zero_free_region` 仍是 `def ... : Prop` |
 | [Draft PR #8](https://github.com/cc-chen-tech/riemann-pnt-lean4/pull/8) | 平滑误差、有限零点簇振荡和有限 Weil certificate | 显式公式仍有 uncontrolled remainder，Weil 路线仍缺无限维桥 |
