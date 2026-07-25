@@ -443,6 +443,7 @@ lean_lib RiemannPNT where
     `MathlibAux.TriangleKernelFourier,
     `MathlibAux.AutocorrelationApproximation,
     `MathlibAux.SlidingExponentialCoefficientBound,
+    `MathlibAux.AmplitudeExponentialGapIntegral,
     `MathlibAux.FiberwiseNormSq,
     `Test.ShortIntervalSignChangeMeasureContract,
     `Test.SelbergMollifierContract,
@@ -487,6 +488,7 @@ lean_lib RiemannPNT where
     `Test.FejerTriangleKernelContract,
     `Test.TriangleKernelFourierContract,
     `Test.AutocorrelationApproximationContract,
+    `Test.AmplitudeExponentialGapIntegralContract,
     `Test.SlidingExponentialPolynomialMeanSquareContract,
     `Test.CollectedExponentialPolynomialContract,
     `Test.SlidingExponentialCoefficientBoundContract,
@@ -812,6 +814,7 @@ lean_lib RiemannPNT where
     `Test.FejerTriangleKernelAxiomAudit,
     `Test.TriangleKernelFourierAxiomAudit,
     `Test.AutocorrelationApproximationAxiomAudit,
+    `Test.AmplitudeExponentialGapIntegralAxiomAudit,
     `Test.CollectedExponentialPolynomialAxiomAudit
   ]
 
