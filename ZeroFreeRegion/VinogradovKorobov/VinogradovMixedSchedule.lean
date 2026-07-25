@@ -247,6 +247,120 @@ theorem norm_normalizedVinogradovMomentMod_le_hybridExactScales_add_terminal
             htail hcomplete hscale hqk hsplit hnowrap)
         (by positivity)
 
+/-- Prime-independent exponent conditions for the hybrid recurrence when the
+tail and residual complete-block lengths are `Y = p^y` and `Z = p^z`. -/
+structure VinogradovHybridExponentParameters
+    (a b k r t y z n q : ℕ) : Prop where
+  r_pos : 0 < r
+  t_pos : 0 < t
+  split_le_degree : r ≤ k
+  scale_pos : 0 < b
+  center_scale_le : ∀ gamma < b, gamma ≤ a
+  elimination_budget : ∀ gamma < b,
+    gamma * (k - r) + a * r ≤ (k - r + 1) * b
+  tail_budget : (k - r + 1) * b ≤ a * (r + 1)
+  complete_block : b + y = a + z
+  scale_le : ∀ gamma < b,
+    a + z ≤ a + vinogradovFarScale k r a b gamma
+  tail_le_degree : q ≤ k
+  tail_split : n + q = 2 * t
+  no_wrap_degree : b * q ≤ (k - r + 1) * b
+  no_wrap_exponent :
+    y * q + 1 ≤ (k - r + 1) * b - b * q
+
+/-- Exponent-level admissibility supplies every arithmetic hypothesis of the
+hybrid recurrence for a prime larger than the ambient degree. -/
+theorem norm_normalizedVinogradovMomentMod_le_of_hybridExponentParameters
+    (p a b k r t y z n q : ℕ) [Fact p.Prime]
+    (hkp : k < p)
+    (h : VinogradovHybridExponentParameters a b k r t y z n q) :
+    ‖normalizedVinogradovMomentMod
+        (p ^ ((k - r + 1) * b)) k (r + t)
+          (p ^ b * p ^ y)‖ ≤
+      (((p ^ a : ℕ) : ℝ) ^ (2 * r - 1)) *
+        (((p ^ b : ℕ) : ℝ) ^ (2 * t - 1)) *
+          ((∑ gamma ∈ Finset.range b,
+            (vinogradovCenterPairExactScaleSet p a b gamma).card *
+              min
+                (‖normalizedVinogradovMomentMod
+                  (p ^ vinogradovFarScale k r a b gamma) r r
+                    (p ^ vinogradovFarScale k r a b gamma)‖ *
+                  (((p ^ y : ℕ) : ℝ) ^ (2 * t)))
+                (Real.sqrt
+                  ((((p ^ z : ℕ) : ℝ) ^ (4 * r)) *
+                    ((q.factorial : ℝ) *
+                      (((p ^ y : ℕ) : ℝ) ^ (2 * n + q)))))) +
+            (p ^ a : ℕ) *
+              ((((p ^ b * p ^ y) ^ (2 * r) *
+                (p ^ y) ^ (2 * t) : ℕ)) : ℝ)) := by
+  have hp : 0 < p := (Fact.out : p.Prime).pos
+  have hcomplete :
+      p ^ b * p ^ y = p ^ a * p ^ z := by
+    simpa only [← pow_add] using congrArg (fun e ↦ p ^ e) h.complete_block
+  have hscale : ∀ gamma < b,
+      p ^ a * p ^ z ≤
+        p ^ a * p ^ vinogradovFarScale k r a b gamma := by
+    intro gamma hgamma
+    simpa only [← pow_add] using
+      Nat.pow_le_pow_right hp (h.scale_le gamma hgamma)
+  have hq_lt : q < p := h.tail_le_degree.trans_lt hkp
+  have htop :
+      q * (p ^ y) ^ q <
+        p ^ ((k - r + 1) * b - b * q) := by
+    calc
+      q * (p ^ y) ^ q = q * p ^ (y * q) := by
+        rw [pow_mul]
+      _ < p * p ^ (y * q) :=
+        Nat.mul_lt_mul_of_pos_right hq_lt (pow_pos hp (y * q))
+      _ = p ^ (y * q + 1) := by
+        simp [pow_succ, Nat.mul_comm]
+      _ ≤ p ^ ((k - r + 1) * b - b * q) :=
+        Nat.pow_le_pow_right hp h.no_wrap_exponent
+  have hnowrap :
+      VinogradovResidualTailNoWrap
+        p ((k - r + 1) * b) b q (p ^ y) :=
+    VinogradovResidualTailNoWrap.of_mixed_recurrence_top_degree
+      p b k r q (p ^ y) hp (pow_pos hp y)
+        h.no_wrap_degree htop
+  exact
+    norm_normalizedVinogradovMomentMod_le_hybridExactScales_add_terminal
+      p a b k r t (p ^ y) (p ^ z) n q
+        h.r_pos h.t_pos h.split_le_degree hkp h.scale_pos
+        h.center_scale_le h.elimination_budget h.tail_budget
+        hcomplete hscale h.tail_le_degree h.tail_split hnowrap
+
+/-- A concrete infinite admissible family.  With degree `k = 3r`, the split
+`a = 2`, `b = 1`, `Y = p`, `Z = 1`, and `q = t = r` sends the unique
+nonterminal center layer to far scale one. -/
+theorem vinogradovTripleDegreeHybridExponentParameters
+    (r : ℕ) (hr : 0 < r) :
+    VinogradovHybridExponentParameters
+      2 1 (3 * r) r r 1 0 r r := by
+  refine
+    { r_pos := hr
+      t_pos := hr
+      split_le_degree := by omega
+      scale_pos := by norm_num
+      center_scale_le := ?_
+      elimination_budget := ?_
+      tail_budget := by omega
+      complete_block := by norm_num
+      scale_le := ?_
+      tail_le_degree := by omega
+      tail_split := by omega
+      no_wrap_degree := by omega
+      no_wrap_exponent := by omega }
+  · intro gamma hgamma
+    omega
+  · intro gamma hgamma
+    have hgamma0 : gamma = 0 := by omega
+    subst gamma
+    omega
+  · intro gamma hgamma
+    have hgamma0 : gamma = 0 := by omega
+    subst gamma
+    simp [vinogradovFarScale]
+
 /-- The optimized pointwise mixed-moment saving survives averaging over the
 actual unit-separated center-pair stratum used by the recurrence. -/
 theorem
