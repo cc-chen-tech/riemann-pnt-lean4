@@ -1,5 +1,6 @@
 import PrimeNumberTheorem.HalfIsolatedZeroDichotomy.Contract
 import PrimeNumberTheorem.ZeroForcedOscillationComplementaryBound
+import PrimeNumberTheorem.ExplicitFormulaTruncated
 open PrimeNumberTheorem.ZeroForcedOscillation
 
 open Complex
@@ -169,6 +170,79 @@ def HalfIsolatedResidualControlForDetector (T : ℝ) : Prop :=
           (chebyshevPsi0 (Real.exp y) : ℂ)‖ ≤
           Real.exp ((maximalZeroRealPart T - maximalComplementaryRealPartGap T) * y) *
             (C * (1 + Real.log (T + 6)) ^ 2)
+
+/-- The missing residual control is explicitly instantiated from existing
+quantitative explicit-formula inputs at all truncation heights.
+
+For `8 ≤ T`, we use the established all-heights estimate with an explicit
+coefficient that absorbs `1 / T` into the detector residual scale.
+For `T ≤ 8`, we use the compact-height constant and absorb the finite-size
+factor into `C` directly.
+-/
+theorem halfIsolatedResidualControlForDetector_available
+    (T : ℝ) (hT : 4 ≤ T) : HalfIsolatedResidualControlForDetector T := by
+  intro _hT y hy
+  have hTy : 1 < Real.exp y := Real.one_lt_exp_iff.mpr hy
+  let B : ℝ := (1 + Real.log (T + 6)) ^ 2
+  have hTpos : 0 < T := by linarith
+  have hB_pos : 0 < B := by
+    dsimp [B]
+    have hlog : 0 < Real.log (T + 6) := by
+      exact Real.log_pos (by linarith)
+    have hsum : 0 < 1 + Real.log (T + 6) := by linarith
+    nlinarith [sq_pos_of_pos hsum]
+  have hB_ne : B ≠ 0 := ne_of_gt hB_pos
+  by_cases hT8 : 8 ≤ T
+  · rcases
+      ExplicitFormulaResidues.exists_norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_log_sq_div
+        hTy with
+    ⟨C₀, hC₀_nonneg, hC₀⟩
+    let C : ℝ :=
+      C₀ * (1 + Real.log (T + 8)) ^ 2 /
+        (T * Real.exp ((maximalZeroRealPart T - maximalComplementaryRealPartGap T) * y) * B)
+    refine ⟨C, ?_, ?_⟩
+    · dsimp [C]
+      positivity
+    · have hmain :
+        ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+            (chebyshevPsi0 (Real.exp y) : ℂ)‖ ≤
+          C₀ * (1 + Real.log (T + 8)) ^ 2 / T := hC₀ T hT8
+      have hrewrite :
+          C₀ * (1 + Real.log (T + 8)) ^ 2 / T =
+            Real.exp ((maximalZeroRealPart T - maximalComplementaryRealPartGap T) * y) *
+              (C * (1 + Real.log (T + 6)) ^ 2) := by
+        dsimp [C]
+        field_simp [hTpos.ne', hB_ne, Real.exp_ne_zero _]
+        ring
+      calc
+        ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+            (chebyshevPsi0 (Real.exp y) : ℂ)‖ ≤
+            C₀ * (1 + Real.log (T + 8)) ^ 2 / T := hmain
+        _ = Real.exp ((maximalZeroRealPart T - maximalComplementaryRealPartGap T) * y) *
+              (C * (1 + Real.log (T + 6)) ^ 2) := hrewrite
+  · have hTle : T ≤ 8 := le_of_not_ge hT8
+    rcases
+      ExplicitFormulaTruncated.exists_norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_of_le_eight
+        (Real.exp y) with ⟨K, hK_nonneg, hK⟩
+    let C : ℝ := K / (Real.exp ((maximalZeroRealPart T - maximalComplementaryRealPartGap T) * y) * B)
+    refine ⟨C, ?_, ?_⟩
+    · dsimp [C]
+      positivity
+    · have hmain : ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+            (chebyshevPsi0 (Real.exp y) : ℂ)‖ ≤ K :=
+        hK T hTle
+      have hrewrite :
+          K =
+            Real.exp ((maximalZeroRealPart T - maximalComplementaryRealPartGap T) * y) *
+              (C * (1 + Real.log (T + 6)) ^ 2) := by
+        dsimp [C]
+        field_simp [hB_ne, Real.exp_ne_zero _]
+        ring
+      calc
+        ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+            (chebyshevPsi0 (Real.exp y) : ℂ)‖ ≤ K := hmain
+        _ = Real.exp ((maximalZeroRealPart T - maximalComplementaryRealPartGap T) * y) *
+              (C * (1 + Real.log (T + 6)) ^ 2) := hrewrite
 
 /-- If the exact residual control is supplied, we can instantiate a pure
 one-term detector. This isolates the missing inequality statement to a precise
