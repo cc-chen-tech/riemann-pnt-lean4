@@ -75,6 +75,7 @@ import HardyTheorem.SelbergSqrtZetaCoeffBound
 import HardyTheorem.SelbergSqrtZetaAbsLower
 import HardyTheorem.SelbergSqrtZetaSmallAbsGapBound
 import HardyTheorem.SelbergSqrtZetaHighRangeEnergy
+import HardyTheorem.SelbergSqrtZetaGapDecomposition
 import HardyTheorem.SelbergMollifiedTripleConstant
 import HardyTheorem.SelbergMollifiedTripleMeanSquare
 import HardyTheorem.SelbergMollifiedTripleMainTerm
@@ -113,6 +114,7 @@ import MathlibAux.SlidingRegionSwap
 import MathlibAux.TriangleKernelFourier
 import MathlibAux.SlidingLagBudget
 import MathlibAux.SlidingExponentialCoefficientBound
+import MathlibAux.SlidingExponentialGapDecomposition
 import MathlibAux.FiberwiseNormSq
 import MathlibAux.PaleyZygmund
 import MathlibAux.ExponentialPolynomialFourthMoment
