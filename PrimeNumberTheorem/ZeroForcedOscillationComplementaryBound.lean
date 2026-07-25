@@ -1001,7 +1001,7 @@ def upperNaturalLogSample (y : ℝ) : ℝ :=
 /-- Upper natural logarithmic sampling moves `y` to the right by less than
 `exp (-y)`. In particular its mesh tends to zero on translated detector
 intervals. -/
-theorem upperNaturalLogSample_mem_short_interval (y : ℝ) (hy : 0 ≤ y) :
+theorem upperNaturalLogSample_mem_short_interval (y : ℝ) :
     y ≤ upperNaturalLogSample y ∧
       upperNaturalLogSample y - y < Real.exp (-y) := by
   let m : ℕ := upperNaturalLogSampleNat y
@@ -1064,12 +1064,8 @@ theorem two_le_upperNaturalLogSampleNat {y : ℝ}
 theorem tendsto_upperNaturalLogSample_atTop :
     Filter.Tendsto upperNaturalLogSample Filter.atTop Filter.atTop := by
   refine tendsto_atTop.2 fun b => ?_
-  filter_upwards [Filter.eventually_ge_atTop (max b 0)] with y hy
-  exact
-    le_trans (le_max_left b 0)
-      (le_trans hy
-        (upperNaturalLogSample_mem_short_interval y
-          (le_trans (le_max_right b 0) hy)).1)
+  filter_upwards [Filter.eventually_ge_atTop b] with y hy
+  exact hy.trans (upperNaturalLogSample_mem_short_interval y).1
 
 /-- Frequency-weighted coefficient budget for perturbing the normalized
 maximal zero package in logarithmic coordinates. -/
@@ -1244,7 +1240,7 @@ private theorem
     ⟨y, hy, hvisible⟩
   let m : ℕ := upperNaturalLogSampleNat y
   have hy0 : 0 ≤ y := le_trans ha0 hy.1.le
-  have hsample := upperNaturalLogSample_mem_short_interval y hy0
+  have hsample := upperNaturalLogSample_mem_short_interval y
   have hmposNat : 0 < m := by
     dsimp [m, upperNaturalLogSampleNat]
     exact Nat.ceil_pos.mpr (Real.exp_pos y)
@@ -1272,7 +1268,7 @@ private theorem
     · rw [← hsampleEq]
       have hexpNegLe : Real.exp (-y) ≤ 1 := by
         rw [← Real.exp_zero]
-        exact Real.exp_le_exp.mpr (by linarith)
+        exact Real.exp_le_exp.mpr (neg_nonpos.mpr hy0)
       linarith [hy.2, hsample.2]
   have hshiftAbs :
       |upperNaturalLogSample y - y| <

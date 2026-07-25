@@ -928,10 +928,37 @@ example :
       PerronResidualCertificate (m : ℝ) (Cp0 * (m : ℝ) ^ 5) :=
   exists_uniform_nat_perronResidualCertificate
 
-example (y : ℝ) (hy : 0 ≤ y) :
+example (y : ℝ) :
     y ≤ upperNaturalLogSample y ∧
       upperNaturalLogSample y - y < Real.exp (-y) :=
-  upperNaturalLogSample_mem_short_interval y hy
+  upperNaturalLogSample_mem_short_interval y
+
+example (y : ℝ) :
+    Real.exp (upperNaturalLogSample y) =
+      (upperNaturalLogSampleNat y : ℝ) :=
+  exp_upperNaturalLogSample y
+
+example {y : ℝ} (hy : Real.log 2 ≤ y) :
+    2 ≤ upperNaturalLogSampleNat y :=
+  two_le_upperNaturalLogSampleNat hy
+
+example :
+    Filter.Tendsto upperNaturalLogSample Filter.atTop Filter.atTop :=
+  tendsto_upperNaturalLogSample_atTop
+
+example (T : ℝ) :
+    0 ≤ maximalZeroPackageFrequencyBudget T :=
+  maximalZeroPackageFrequencyBudget_nonneg T
+
+example (T u v : ℝ) :
+    |Real.exp (-maximalZeroRealPart T * u) *
+          ‖equalRealPartZeroPackageContribution (Real.exp u) T
+            (maximalZeroRealPart T)‖ -
+        Real.exp (-maximalZeroRealPart T * v) *
+          ‖equalRealPartZeroPackageContribution (Real.exp v) T
+            (maximalZeroRealPart T)‖| ≤
+      maximalZeroPackageFrequencyBudget T * |u - v| :=
+  abs_normalized_maximalZeroPackageContribution_sub_le T u v
 
 example (T : ℝ) (hpackage : (maximalRealPartZeroPackage T).Nonempty) :
     ∃ Cp0 A : ℝ, 0 ≤ Cp0 ∧ ∀ a : ℝ, A ≤ a →
