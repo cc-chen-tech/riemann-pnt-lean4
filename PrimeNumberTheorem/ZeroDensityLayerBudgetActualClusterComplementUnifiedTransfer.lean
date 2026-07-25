@@ -1,6 +1,6 @@
 import PrimeNumberTheorem.ZeroDensityLayerBudgetActualFullTailExcludingClusterConjugation
 import PrimeNumberTheorem.ZeroDensityLayerBudgetActualRealOrdinateExcludingCluster
-import PrimeNumberTheorem.ZeroDensityLayerBudgetActualClusterSignedComplement
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualExplicitFormulaClusterDecomposition
 import PrimeNumberTheorem.ZeroDensityLayerBudgetActualOscillationBoundary
 
 /-!
@@ -230,5 +230,47 @@ theorem
       threshold hhalf hlt
       certificate.actualSignedComplementCertificate
       hrealAxis hcontour hmain hdecomp
+
+/-- The fully concrete lower-transfer facade: the signed complement and exact
+decomposition are derived from the actual finite-height explicit formula.
+The remaining hypotheses are the two target-normalized residual estimates and
+a far witness for the visible main cluster. -/
+theorem
+    unified_parametricPNTUpper_actualExplicitFormulaSignedComplementLower
+    (threshold : ℝ) (hhalf : 1 / 2 < threshold) (hlt : threshold < 1)
+    {beta alpha : ℝ} {S : Finset ℂ} {n : ℕ}
+    {input :
+      (x : ℝ) →
+        PositiveZeroOutsideClusterBucketInput
+          (carlsonPolynomialHeight alpha x) S n}
+    (certificate :
+      ActualCarlsonOutsideClusterFiniteStripCertificate
+        beta alpha S n input)
+    (hclosed :
+      TargetAmplitudeNegligible
+        (targetZeroPowerAmplitude beta)
+        actualPNTClosedRealAxisRelativeTerm)
+    (hremainder :
+      TargetAmplitudeNegligible
+        (targetZeroPowerAmplitude beta)
+        (actualPNTExplicitFormulaRelativeRemainder
+          (carlsonPolynomialHeight alpha)))
+    (hmain :
+      HasFarTargetAmplitudeWitness
+        (dynamicVisibleClusterPNTMain
+          (carlsonPolynomialHeight alpha) S)
+        (targetZeroPowerAmplitude beta)) :
+    (∃ rate : ℝ, 0 < rate ∧ rate ≤ 1 ∧
+      Tendsto
+        (fun m : ℕ => relativeChebyshevPsi0Error (m : ℝ))
+        atTop (nhds 0)) ∧
+    HasFarTargetAmplitudeWitness relativeChebyshevPsi0Error
+      (fun x => targetZeroPowerAmplitude beta x / 2) := by
+  apply unified_parametricPNTUpper_actualCarlsonSignedComplementLower
+    threshold hhalf hlt certificate hclosed hremainder hmain
+  intro x
+  exact
+    relativeChebyshevPsi0Error_eq_visibleCluster_add_actualResiduals
+      (carlsonPolynomialHeight alpha) S x
 
 end PrimeNumberTheorem
