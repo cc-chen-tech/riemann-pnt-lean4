@@ -253,7 +253,8 @@ theorem sum_sq_paperCauchyVectors_le
     sum_sq_cauchyTailVectors_le (centeredIndexCoordinate N) hrho hT
       (abs_centeredIndexCoordinate_le N)
 
-/-- The unintegrated positive rank-two archimedean-tail density. -/
+/-- The unintegrated weighted rank-two archimedean-tail kernel. It is positive
+semidefinite when `weight` is nonnegative, as proved below. -/
 noncomputable def paperArchimedeanRankTwoDensity
     (N : ℕ) (weight rho T : ℝ) : FiniteMatrix (2 * N + 1) :=
   weightedRankTwoGramMatrix weight

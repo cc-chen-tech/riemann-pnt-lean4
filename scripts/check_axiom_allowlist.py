@@ -237,6 +237,24 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.RiemannVonMangoldt.riemannZeroCount_eq_criticalLine_add_two_mul_zeroDensityCount",
 }
 
+WEIL_RANK_TWO_TAIL_EXPECTED_DECLARATIONS = {
+    "WeilExtremalKernels.quadraticForm_rankOneGramMatrix",
+    "WeilExtremalKernels.quadraticForm_rankTwoGramMatrix",
+    "WeilExtremalKernels.quadraticForm_rankTwoGramMatrix_nonneg",
+    "WeilExtremalKernels.quadraticForm_rankTwoGramMatrix_le",
+    "WeilExtremalKernels.cauchyTail_denominator_lower",
+    "WeilExtremalKernels.cauchyTailVector_sq_le",
+    "WeilExtremalKernels.sum_sq_cauchyTailVectors_le",
+    "WeilExtremalKernels.quadraticForm_cauchyRankTwo_le",
+    "WeilExtremalKernels.quadraticForm_weightedRankTwoGramMatrix",
+    "WeilExtremalKernels.quadraticForm_weightedRankTwoGramMatrix_nonneg",
+    "WeilExtremalKernels.quadraticForm_weightedCauchyRankTwo_le",
+    "WeilExtremalKernels.abs_centeredIndexCoordinate_le",
+    "WeilExtremalKernels.sum_sq_paperCauchyVectors_le",
+    "WeilExtremalKernels.quadraticForm_paperArchimedeanRankTwoDensity_nonneg",
+    "WeilExtremalKernels.quadraticForm_paperArchimedeanRankTwoDensity_le",
+}
+
 REPORT_RE = re.compile(
     r"'([^']+)' depends on axioms:\s*\[([^\]]*)\]",
     flags=re.MULTILINE,
@@ -277,7 +295,13 @@ def validate_axioms(
 
 def main() -> int:
     completed = subprocess.run(
-        ["lake", "build", "Test.MultiplicityAxiomAudit"],
+        [
+            "lake",
+            "-Kjobs=1",
+            "build",
+            "Test.MultiplicityAxiomAudit",
+            "Test.WeilArchimedeanRankTwoTailAxiomAudit",
+        ],
         cwd=ROOT,
         text=True,
         capture_output=True,
@@ -288,9 +312,12 @@ def main() -> int:
         return completed.returncode
 
     reports = parse_axiom_report(output)
+    expected_declarations = (
+        EXPECTED_DECLARATIONS | WEIL_RANK_TWO_TAIL_EXPECTED_DECLARATIONS
+    )
     errors = validate_axioms(
         reports,
-        expected_declarations=EXPECTED_DECLARATIONS,
+        expected_declarations=expected_declarations,
         allowed_axioms=ALLOWED_AXIOMS,
     )
     if errors:
@@ -300,7 +327,7 @@ def main() -> int:
 
     print(
         "[axiom-allowlist] checked "
-        f"{len(EXPECTED_DECLARATIONS)} declarations; only standard axioms are used"
+        f"{len(expected_declarations)} declarations; only standard axioms are used"
     )
     return 0
 
