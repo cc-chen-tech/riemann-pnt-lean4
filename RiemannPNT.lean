@@ -80,6 +80,8 @@ import HardyTheorem.SelbergSqrtZetaRestrictedPairMoment
 import HardyTheorem.SelbergMollifierNonvanishing
 import HardyTheorem.SelbergSqrtZetaGoodWindowMeasure
 import HardyTheorem.SelbergSqrtZetaSignedLagIntegral
+import HardyTheorem.SelbergSqrtZetaSignedPhasePolynomial
+import HardyTheorem.SelbergSqrtZetaSignedApproximation
 import HardyTheorem.SelbergMollifiedTripleConstant
 import HardyTheorem.SelbergMollifiedTripleMeanSquare
 import HardyTheorem.SelbergMollifiedTripleMainTerm
@@ -121,6 +123,8 @@ import MathlibAux.TriangleKernelFourier
 import MathlibAux.SlidingLagBudget
 import MathlibAux.SlidingExponentialCoefficientBound
 import MathlibAux.SlidingExponentialGapDecomposition
+import MathlibAux.AmplitudeExponentialGapIntegral
+import MathlibAux.AutocorrelationApproximation
 import MathlibAux.FiberwiseNormSq
 import MathlibAux.PaleyZygmund
 import MathlibAux.ExponentialPolynomialFourthMoment
