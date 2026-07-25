@@ -153,6 +153,105 @@ theorem norm_regularizedLogDeriv_localizedGaussianWeight_left_le
     (norm_nonneg _) (by
       positivity [leftLogDerivBound_nonneg hT])
 
+/--
+Uniform version of the true zeta left-edge bound.  All dependence on the
+height variable is absorbed into a polynomial factor determined by `A`.
+-/
+theorem norm_regularizedLogDeriv_localizedGaussianWeight_left_le_uniform
+    (A : ℂ[X]) {u v T t m : ℝ}
+    (hu : 0 < u) (hu1 : u < 1)
+    (hT : 0 ≤ T) (ht : |t| ≤ T) (hm : 0 ≤ m) :
+    ‖localizedGaussianWeight A ((u : ℂ) + I * v) m
+          ((-1 : ℂ) + I * t) *
+        (-logDeriv riemannZeta ((-1 : ℂ) + I * t) -
+          (((-1 : ℂ) + I * t) /
+            (((-1 : ℂ) + I * t) - 1)))‖ ≤
+      (∑ k ∈ A.support, ‖A.coeff k‖) *
+        max 1 (u + T + |v| + 2) ^ A.natDegree *
+        Real.exp (-15 * m) * (leftLogDerivBound T + 1) := by
+  let d : ℂ :=
+    ((-1 : ℂ) + I * t) - ((u : ℂ) + I * v)
+  have hd :
+      ‖d‖ ≤ u + T + |v| + 2 := by
+    calc
+      ‖d‖ ≤ |d.re| + |d.im| :=
+        Complex.norm_le_abs_re_add_abs_im d
+      _ = (1 + u) + |t - v| := by
+        norm_num [d, Complex.sub_re, Complex.sub_im,
+          abs_of_neg (by linarith : -1 - u < 0)]
+        ring
+      _ ≤ (1 + u) + (|t| + |v|) := by
+        gcongr
+        exact abs_sub t v
+      _ ≤ u + T + |v| + 2 := by linarith
+  have hpoly :
+      ‖A.eval d‖ ≤
+        (∑ k ∈ A.support, ‖A.coeff k‖) *
+          max 1 (u + T + |v| + 2) ^ A.natDegree := by
+    calc
+      ‖A.eval d‖ ≤
+          (∑ k ∈ A.support, ‖A.coeff k‖) *
+            max 1 ‖d‖ ^ A.natDegree :=
+        norm_polynomial_eval_le_coeffL1_mul_max_pow A d
+      _ ≤ (∑ k ∈ A.support, ‖A.coeff k‖) *
+            max 1 (u + T + |v| + 2) ^ A.natDegree := by
+        gcongr
+  have hexp :
+      Real.exp (-15 * m - m * (t - v) ^ 2) ≤
+        Real.exp (-15 * m) := by
+    apply Real.exp_le_exp.mpr
+    nlinarith [mul_nonneg hm (sq_nonneg (t - v))]
+  calc
+    _ ≤ ‖A.eval d‖ *
+          Real.exp (-15 * m - m * (t - v) ^ 2) *
+            (leftLogDerivBound T + 1) := by
+      simpa [d] using
+        norm_regularizedLogDeriv_localizedGaussianWeight_left_le
+          A hu hu1 hT ht hm
+    _ ≤ (∑ k ∈ A.support, ‖A.coeff k‖) *
+          max 1 (u + T + |v| + 2) ^ A.natDegree *
+          Real.exp (-15 * m) * (leftLogDerivBound T + 1) := by
+      gcongr
+      exact add_nonneg (leftLogDerivBound_nonneg hT) (by norm_num)
+
+/-- Explicit finite-height bound for the complete true-zeta left edge. -/
+theorem norm_integral_regularizedLogDeriv_localizedGaussianWeight_left_le
+    (A : ℂ[X]) {u v T m : ℝ}
+    (hu : 0 < u) (hu1 : u < 1)
+    (hT : 0 ≤ T) (hm : 0 ≤ m) :
+    ‖∫ t : ℝ in (-T)..T,
+        localizedGaussianWeight A ((u : ℂ) + I * v) m
+            ((-1 : ℂ) + I * t) *
+          (-logDeriv riemannZeta ((-1 : ℂ) + I * t) -
+            (((-1 : ℂ) + I * t) /
+              (((-1 : ℂ) + I * t) - 1)))‖ ≤
+      ((∑ k ∈ A.support, ‖A.coeff k‖) *
+        max 1 (u + T + |v| + 2) ^ A.natDegree *
+        Real.exp (-15 * m) * (leftLogDerivBound T + 1)) *
+          (2 * T) := by
+  let C : ℝ :=
+    (∑ k ∈ A.support, ‖A.coeff k‖) *
+      max 1 (u + T + |v| + 2) ^ A.natDegree *
+      Real.exp (-15 * m) * (leftLogDerivBound T + 1)
+  have hbound := intervalIntegral.norm_integral_le_of_norm_le_const
+    (f := fun t : ℝ =>
+      localizedGaussianWeight A ((u : ℂ) + I * v) m
+          ((-1 : ℂ) + I * t) *
+        (-logDeriv riemannZeta ((-1 : ℂ) + I * t) -
+          (((-1 : ℂ) + I * t) /
+            (((-1 : ℂ) + I * t) - 1))))
+    (a := -T) (b := T) (C := C) (fun t ht => by
+      rw [Set.uIoc_of_le (by linarith)] at ht
+      have habs : |t| ≤ T :=
+        abs_le.mpr ⟨by linarith [ht.1], ht.2⟩
+      exact
+        norm_regularizedLogDeriv_localizedGaussianWeight_left_le_uniform
+          A hu hu1 hT habs hm)
+  change _ ≤ C * (2 * T)
+  convert hbound using 1
+  rw [abs_of_nonneg (by linarith : 0 ≤ T - -T)]
+  ring
+
 end
 
 end VKEdgePiOverTwo

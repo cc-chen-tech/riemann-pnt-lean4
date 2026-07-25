@@ -10,6 +10,8 @@ open PrimeNumberTheorem.VKEdgePiOverTwo
 #check leftLogDerivBound
 #check norm_div_sub_one_left_vertical_le_one
 #check norm_regularizedLogDeriv_localizedGaussianWeight_left_le
+#check norm_regularizedLogDeriv_localizedGaussianWeight_left_le_uniform
+#check norm_integral_regularizedLogDeriv_localizedGaussianWeight_left_le
 
 example (A : ℂ[X]) (w z : ℂ) (m : ℝ) :
     ‖localizedGaussianWeight A w m z‖ =
@@ -52,3 +54,33 @@ example (A : ℂ[X]) {u v T t m : ℝ}
           (leftLogDerivBound T + 1) :=
   norm_regularizedLogDeriv_localizedGaussianWeight_left_le
     A hu hu1 hT ht hm
+
+example (A : ℂ[X]) {u v T t m : ℝ}
+    (hu : 0 < u) (hu1 : u < 1)
+    (hT : 0 ≤ T) (ht : |t| ≤ T) (hm : 0 ≤ m) :
+    ‖localizedGaussianWeight A ((u : ℂ) + I * v) m
+          ((-1 : ℂ) + I * t) *
+        (-logDeriv riemannZeta ((-1 : ℂ) + I * t) -
+          (((-1 : ℂ) + I * t) /
+            (((-1 : ℂ) + I * t) - 1)))‖ ≤
+      (∑ k ∈ A.support, ‖A.coeff k‖) *
+        max 1 (u + T + |v| + 2) ^ A.natDegree *
+        Real.exp (-15 * m) * (leftLogDerivBound T + 1) :=
+  norm_regularizedLogDeriv_localizedGaussianWeight_left_le_uniform
+    A hu hu1 hT ht hm
+
+example (A : ℂ[X]) {u v T m : ℝ}
+    (hu : 0 < u) (hu1 : u < 1)
+    (hT : 0 ≤ T) (hm : 0 ≤ m) :
+    ‖∫ t : ℝ in (-T)..T,
+        localizedGaussianWeight A ((u : ℂ) + I * v) m
+            ((-1 : ℂ) + I * t) *
+          (-logDeriv riemannZeta ((-1 : ℂ) + I * t) -
+            (((-1 : ℂ) + I * t) /
+              (((-1 : ℂ) + I * t) - 1)))‖ ≤
+      ((∑ k ∈ A.support, ‖A.coeff k‖) *
+        max 1 (u + T + |v| + 2) ^ A.natDegree *
+        Real.exp (-15 * m) * (leftLogDerivBound T + 1)) *
+          (2 * T) :=
+  norm_integral_regularizedLogDeriv_localizedGaussianWeight_left_le
+    A hu hu1 hT hm
