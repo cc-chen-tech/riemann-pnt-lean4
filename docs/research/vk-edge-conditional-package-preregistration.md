@@ -1,65 +1,60 @@
-# VK-edge conditional package (envelope-local): preregistration (revised)
+# VK-edge conditional package (envelope-local): preregistration (stage-5 update)
 
-## Scope of this phase
+## Scope baseline
 
 Step 1 baseline check:
-`32cd327` in `research/vk-edge-pi-over-two` is docs-only and has no required code artifacts to cherry-pick into
-this branch.
+`32cd327` in `research/vk-edge-pi-over-two` is docs-only and introduced no required code artifacts for this branch.
 
-This phase targets a **half-isolated** input-to-output bridge under an explicit finite-envelope
-window.
+The current stage records a closed half-isolated bridge and a closed clustered bridge under explicit finite-window hypotheses, then isolates the unresolved global-expansion clause (recursion to a new higher cluster/window).
 
-The task is now to show, in Lean, that:
+## Fixed inputs retained from code
 
-- finite equal-real-part family control on `equalRealPartZeroPackage T h.rho0.re`,
-- finite-`M` spectral lower input,
-- explicit uniform remainder control on the log-window,
-- and coefficient normalisation
-
-implies
-
-`∃ x ∈ [Y, Y^C], |ψ₀(x)-x| ≥ (π/2+δ) * x^β / max(1,‖ρ₀‖)`.
-
-## Fixed conditions used in `HalfIsolatedEnvelopeInput`
+### Half-isolated route
 
 1. `hY : 1 < Y`, `hC : 1 < C`, and `hWindow : log Y < log (Y^C)`.
 2. `hFiniteVertical : (equalRealPartZeroPackage T ρ₀.re).card ≤ M`.
-3. `hSpectralLower` inequality on that window:
+3. Spectral inequality `hSpectralLower` on `I = [log Y, log (Y^C)]`.
+4. Remainder bound `hRemainderWindow`:
 
 ```text
-∑_{ρ ∈ equalRealPartZeroPackage} |a_ρ|^2 - offDiag / (log(Y^C)-log Y)
-≥ (π/2 + δ + ε)^2 * |a_{ρ0}|^2
+|zeroPackageExplicitFormulaRemainder(y)| ≤ ε * exp(ρ₀.re * y) * |a_{ρ0}|
 ```
 
-4. `hRemainderWindow` inequality on the same interval:
-
-```text
-|zeroPackageExplicitFormulaRemainder(y)| ≤ ε * e^{β y} * |a_{ρ0}|,
-	y ∈ [log Y, log(Y^C)]
-```
-
-5. `hCoeffLower`:
+5. Coefficient normalisation:
 
 ```text
 1 / max(1, ‖ρ₀‖) ≤ |a_{ρ0}|,
-  a_{ρ0}=(analyticOrderNatAt riemannZeta ρ₀:ℂ) / ρ₀
+ a_{ρ0}=(analyticOrderNatAt riemannZeta ρ₀:ℂ)*ρ₀⁻¹
 ```
 
-## What is proved here
+### Clustered route (explicit nondegeneracy and tail transfer)
 
-- In `PrimeNumberTheorem.VKEdgeConditionalPackage`:
-  - `halfIsolatedEnvelopeBridge` is now a theorem (not axiom).
-  - It composes:
-    - `exists_mem_Ioo_sqNorm_equalRealPartZeroPackageContribution_ge`,
-    - explicit spectral lower bound (`hSpectralLower`),
-    - explicit remainder bound on window (`hRemainderWindow`),
-    - transfer inequality (`norm_zeroPackage_sub_norm_remainder_le_norm_chebyshev...`).
+1. Fixed window family with bounded cardinality in `equalRealPartZeroPackage`.
+2. Global gap assumptions (`hClusterFrequencyGap`, pairwise gap).
+3. Explicit surrogate spectral inequality `hClusterGapLower`.
+4. The same uniform remainder bound and coefficient normalisation as in half-isolated.
+5. Additional practical BY-scale tail control lemma now proved as
 
-- `VKEdgeConditionalPackageContract` now calls this theorem directly for the half-isolated branch.
+```text
+|R_Y(y)| ≤ (ε * K * max(1,‖ρ₀‖)) * (exp(ρ₀.re * y) / max(1,‖ρ₀‖))
 
-- `VKEdgeConditionalPackageContract` deliberately has no clustered contract theorem in this branch.
+```
 
-## Closed/open status
+under an extra explicit upper input `|a_{ρ0}| ≤ K`.
 
-- `half-isolated`: branch closed under explicit assumptions listed in this file.
-- `clustered`: remains blocked and intentionally not instantiated as contract theorem (pure blocker documentation only).
+## Closed status
+
+- [x] `halfIsolatedEnvelopeBridge` is a genuine theorem.
+- [x] `clusteredEnvelopeBridge` is a genuine theorem via pairwise-gap reduction.
+- [x] `equalRealPartZeroPackage_mono` proved for recursive window comparisons: nontrivial zeros with fixed real part do not disappear as `T` increases.
+- [x] `clustered_tailsum_byBY_scale` proved as strongest explicit BY-normalised tail step from current assumptions plus `|a_{ρ0}| ≤ K`.
+
+## Unresolved recursion blocker
+
+- [ ] The branch does not yet contain an automatic theorem that a bounded-cluster bridge at height `T` implies a strict new isolated contribution (new zero or non-overlap window) at higher heights. This requires an external zeta/VK expansion criterion beyond the current cluster package fields.
+
+## Blocking inequalities now explicit
+
+- `|a_{ρ0}|` remains lower-bounded by `1 / max(1,‖ρ₀‖)` but is not upper-controlled in `ClusteredEnvelopeInput`.
+- Therefore `o(B_Y)` for a fixed `B_Y = exp(ρ₀.re y)/max(1,‖ρ₀‖)` is not derivable from current inputs alone.
+- Any recursion claim needs a separate expansion hypothesis (e.g. coefficient upper control, non-recurrence of finite clusters, or explicit new non-overlap window guarantee).

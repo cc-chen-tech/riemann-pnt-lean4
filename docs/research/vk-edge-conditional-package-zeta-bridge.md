@@ -1,6 +1,6 @@
-# VK-edge conditional package: explicit half-isolated bridge inequalities
+# VK-edge conditional package: zeta/VK envelope bridge with clustered expansion checks
 
-This note records the current bridge from an envelope-local finite package to a local oscillation inequality.
+This note records bridge data needed for envelope-local finite packages in half-isolated and clustered modes.
 
 ## Baseline source check
 
@@ -52,6 +52,70 @@ The proof chain is:
    transfer package dominance to `Δ(x)` dominance.
 4. `h.hCoeffLower` converts coefficient to the final normalisation `max 1 ‖ρ0‖`.
 
+## Clustered channel extensions (fifth-phase status)
+
+1. **Window inclusion for recursive input transport.**
+
+   `equalRealPartZeroPackage` is monotone in height:
+
+```lean
+theorem equalRealPartZeroPackage_mono
+    {T U β : ℝ} (hTU : T ≤ U) :
+    (↑(equalRealPartZeroPackage T β) : Set ℂ) ⊆
+      (↑(equalRealPartZeroPackage U β) : Set ℂ)
+```
+
+   This gives the only reliable global transfer: frequency separation and Gram estimates already proved at height `T`
+   transfer to the *same* selected package at higher heights, but they do not force additional frequencies.
+
+2. **Clustered bridge from explicit pairwise gap.**
+
+   `clustered_offDiagonalBound_le_pairwise_gap` gives
+
+```text
+offDiagonalBound(S,c,im) ≤ (2M/gap) * Σ|cρ|^2
+```
+
+under explicit gap + card bound. The theorem `clustered_spectralLower_from_gap` and
+`clusteredEnvelopeBridge` are genuine Lean proofs from these inputs.
+
+3. **BY-normalised tail control (strongest current condition).**
+
+   The original `hRemainderWindow` only gives
+
+```text
+|R_Y(y)| ≤ ε · exp(β y) · |a_{ρ0}|.
+```
+
+To express a universal bound of the form `|R_Y(y)| ≤ ε_Y·B_Y`, where
+
+```text
+B_Y := exp(β y) / max(1, ‖ρ0‖),
+```
+one needs an additional coefficient upper bound
+
+```text
+|a_{ρ0}| ≤ K.
+```
+
+The current strongest Lean lemma is:
+
+```lean
+clustered_tailsum_byBY_scale (h : ClusteredEnvelopeInput) (K : ℝ)
+  (hK : 0 ≤ K) (hCoeffUpper : |a_{ρ0}| ≤ K) :
+  ∀ y ∈ Icc(log Y, log(Y^C)),
+    |R_Y(y)| ≤ (ε · K · max 1 ‖ρ0‖) * B_Y
+```
+
+It is a concrete translation of `hRemainderWindow` into BY-scale, and it shows why no `o(B_Y)` claim is derivable from
+the current inputs alone unless the extra coefficient upper hypothesis is supplied.
+
+4. **Blocker/anti-model (non-extension).**
+
+   Without `hCoeffUpper`, near-collision or repeated finite clusters can satisfy the current explicit clustered hypotheses
+   but keep `|a_{ρ0}|` arbitrarily large, so the BY-scaled factor does not contract to `0`. This is recorded in the checklist below:
+   clustered closure without extra input is not an automatic promotion theorem.
+
 ## Remaining explicit blocker inequalities (clustered side or stronger o(1) variants)
 
 1. **clustered bridge** (not in this file yet): no formal clustered inversion theorem instantiated;
@@ -68,5 +132,7 @@ uniformly on the chosen window.
 
 3. If this inequality is only available as little-o notation, it must be converted into an
    effective `ε` bound that is fixed before the final `δ` loss step.
+
+4. For the clustered route, an explicit BY-normalised form requires a supplementary coefficient upper input for `ρ0`, as above.
 
 No RH, no `PrimeNumberTheorem` unproven assertions are used in the bridge statement.

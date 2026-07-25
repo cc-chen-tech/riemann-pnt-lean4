@@ -16,6 +16,11 @@ Audit ledger for the conditional bridge branch.
 
   - `clusteredEnvelopeBridge` is now proved via `clustered_spectralLower_from_gap`
     and `clustered_offDiagonalBound_le_pairwise_gap` under explicit clustered hypotheses.
+
+  - `equalRealPartZeroPackage_mono` gives monotone transport of `equalRealPartZeroPackage`
+    in truncation height.
+  - `clustered_tailsum_byBY_scale` proves the strongest explicit BY-scale tail step currently
+    available from clustered inputs, requiring an explicit extra input `|a_{ρ₀}| ≤ K`.
 -/
 
   /-
@@ -35,12 +40,15 @@ theorem halfIsolatedInputGapChecklist : True := by
   trivial
 
   /-
-  clustered route still relies on explicit external clustered inputs (not yet supplied by this package):
+  clustered route still requires external expansion criteria beyond this package:
 
   1. deriving `hClusterPairwiseGap` from explicit zero-spacing hypotheses outside this package,
   2. deriving `hClusterGapLower` (Gram lower bound surrogate) from an explicit
      fixed-frequency Gram inversion argument,
-  3. supplying a clustered remainder bound comparable to `hRemainderWindow`.
+  3. supplying a clustered remainder bound comparable to `hRemainderWindow`,
+  4. adding a recursion/expansion hypothesis (new height or non-overlap window) beyond
+     current finite-package closure data; current assumptions alone do not force strict new-zero
+     promotion.
   -/
 theorem clusteredInputGapChecklist : True := by
   trivial

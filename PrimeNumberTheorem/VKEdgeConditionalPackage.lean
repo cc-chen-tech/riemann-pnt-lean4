@@ -96,6 +96,44 @@ def ClusteredConclusion (h : ClusteredEnvelopeInput) : Prop :=
       (Real.pi / 2 + h.delta) *
         (Real.exp (h.rho0.re * Real.log x) / max 1 ‖h.rho0‖)
 
+/-- Monotonicity of the equal-real-part zero package in truncation height. -/
+theorem equalRealPartZeroPackage_mono {T U β : ℝ} (hTU : T ≤ U) :
+    ((↑(equalRealPartZeroPackage T β) : Set ℂ) ⊆
+      (↑(equalRealPartZeroPackage U β) : Set ℂ)) := by
+  intro ρ hρ
+  rcases mem_equalRealPartZeroPackage.mp hρ with ⟨hzero, hρT, hβ⟩
+  exact mem_equalRealPartZeroPackage.mpr ⟨hzero, le_trans hρT hTU, hβ⟩
+
+/-- Tail control in BY-scale requires an explicit coefficient upper bound at `ρ₀`. -/
+theorem clustered_tailsum_byBY_scale (h : ClusteredEnvelopeInput) (K : ℝ)
+    (hCoeffUpper : ‖(analyticOrderNatAt riemannZeta h.rho0 : ℂ) * h.rho0⁻¹‖ ≤ K) :
+    ∀ y ∈ Set.Icc (Real.log h.Y) (Real.log (h.Y ^ h.C)),
+      ‖zeroPackageExplicitFormulaRemainder y h.T h.rho0.re‖ ≤
+        (h.epsilon * K * (max 1 ‖h.rho0‖)) *
+          (Real.exp (h.rho0.re * y) / max 1 ‖h.rho0‖) := by
+  intro y hy
+  let a0 : ℝ := ‖(analyticOrderNatAt riemannZeta h.rho0 : ℂ) * h.rho0⁻¹‖
+  have hrem : ‖zeroPackageExplicitFormulaRemainder y h.T h.rho0.re‖ ≤
+      h.epsilon * a0 * Real.exp (h.rho0.re * y) := by
+    dsimp [a0]
+    simpa [mul_assoc, mul_left_comm, mul_comm] using
+      h.hRemainderWindow y hy
+  have hcoeff_scale : h.epsilon * a0 * Real.exp (h.rho0.re * y) ≤
+      h.epsilon * K * Real.exp (h.rho0.re * y) := by
+    have hmul : a0 * Real.exp (h.rho0.re * y) ≤ K * Real.exp (h.rho0.re * y) := by
+      exact mul_le_mul_of_nonneg_right hCoeffUpper (by positivity)
+    have hmul2 : h.epsilon * (a0 * Real.exp (h.rho0.re * y)) ≤
+        h.epsilon * (K * Real.exp (h.rho0.re * y)) := by
+      exact mul_le_mul_of_nonneg_left hmul h.hEpsilonNonneg
+    simpa [mul_assoc, mul_left_comm, mul_comm] using hmul2
+  have hscalex : h.epsilon * K * Real.exp (h.rho0.re * y) =
+      (h.epsilon * K * (max 1 ‖h.rho0‖)) *
+        (Real.exp (h.rho0.re * y) / max 1 ‖h.rho0‖) := by
+    have hmax : (0 : ℝ) < max 1 ‖h.rho0‖ := by
+      exact lt_of_lt_of_le (by norm_num) (le_max_left 1 ‖h.rho0‖)
+    field_simp [hmax.ne', mul_assoc, mul_left_comm, mul_comm]
+  exact hrem.trans (hcoeff_scale.trans (le_of_eq (by simpa [a0] using hscalex)))
+
 theorem clustered_offDiagonalBound_le_pairwise_gap
     (S : Finset ℂ) (c : ℂ → ℂ) (M : ℕ) (gap : ℝ)
     (hGapPos : 0 < gap) (hcard : (S.card : ℝ) ≤ M)
