@@ -13,6 +13,24 @@ example {s : ℂ} (hs : 0 < s.re) :
 example : Continuous archimedeanHPlus :=
   continuous_archimedeanHPlus
 
+example (t : ℝ) :
+    archimedeanHPlus t =
+      2 * HardyTheorem.verticalGammaPhaseVelocity t :=
+  archimedeanHPlus_eq_two_mul_verticalGammaPhaseVelocity t
+
+example :
+    Filter.Tendsto
+      (fun t : ℝ =>
+        archimedeanHPlus t - Real.log (t / (2 * Real.pi)))
+      Filter.atTop (nhds 0) :=
+  tendsto_archimedeanHPlus_sub_log_model_atTop
+
+example :
+    ∃ T0 : ℝ, ∀ t : ℝ, T0 ≤ t →
+      0 ≤ archimedeanHPlus t ∧
+        archimedeanHPlus t ≤ Real.log t :=
+  exists_eventually_archimedeanHPlus_bounds
+
 example (L rho : ℝ) :
     Continuous (paperArchimedeanWeight L rho) :=
   continuous_paperArchimedeanWeight L rho

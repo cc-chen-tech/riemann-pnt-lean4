@@ -202,12 +202,20 @@ pi^(-2) h_+(r) sin^2(Lr/2) / rho.
 It proves analyticity of `digamma` in the right half-plane, continuity of
 `h_+` and of the actual weight, and transfers pointwise nonnegativity and the
 logarithmic envelope to that weight once the corresponding facts about
-`h_+` are supplied.
+`h_+` are supplied. Using the existing second-order Stirling remainder, it
+also proves
+
+```text
+h_+(t) - log(t / (2*pi)) -> 0
+```
+
+and therefore a non-explicit threshold `T_0` beyond which
+`0 <= h_+(t) <= log t`.
 
 These results remove the generic algebraic transfer, scalar-calculus,
 rank-two positivity, pointwise vector-norm, and finite-interval matrix
-integration subgoals, and they now identify the actual analytic weight in
-Lean. They do not yet prove the hard estimates
+integration subgoals, and they now identify and eventually bound the actual
+analytic weight in Lean. They do not yet prove the explicit hard estimates
 
 ```text
 0 <= h_+(t) <= log t  for t >= 7,
