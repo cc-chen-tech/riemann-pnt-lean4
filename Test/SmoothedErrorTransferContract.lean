@@ -1236,6 +1236,69 @@ example (hRH : RiemannHypothesis.Statement) :
     hRH
 
 example :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x h : ℝ}, Real.exp 1 ≤ x → 0 < h →
+            (T + 2) * Real.log ((x + h) / x) ≤ 1 →
+            chebyshevPsi x ≤
+                ((-(Real.log (2 * Real.pi) : ℂ) *
+                      (Real.log ((x + h) / x) : ℂ) +
+                    (h : ℂ) +
+                    secondOrderNontrivialZeroIncrement x h T).re +
+                  secondOrderSelectedHeightIncrementTotalBudget C x h A T) /
+                    Real.log ((x + h) / x) ∧
+              ((-(Real.log (2 * Real.pi) : ℂ) *
+                      (Real.log ((x + h) / x) : ℂ) +
+                    (h : ℂ) +
+                    secondOrderNontrivialZeroIncrement x h T).re -
+                  secondOrderSelectedHeightIncrementTotalBudget C x h A T) /
+                    Real.log ((x + h) / x) ≤
+                chebyshevPsi (x + h) :=
+  exists_uniform_C_forall_goodHeight_chebyshevPsi_bounds_explicit_origin_zero_sum_increment
+
+example :
+    ∃ C D : ℝ, 0 ≤ C ∧ 0 ≤ D ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x h : ℝ}, Real.exp 1 ≤ x → 0 < h →
+            (A + 3) * Real.log ((x + h) / x) ≤ 1 →
+            chebyshevPsi x ≤
+                (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) +
+                    secondOrderSelectedHeightIncrementTotalBudget C x h A T +
+                    2 * D * x * Real.log ((x + h) / x) *
+                      (1 + Real.log (T + 6)) ^ 2) /
+                  Real.log ((x + h) / x) ∧
+              (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) -
+                    secondOrderSelectedHeightIncrementTotalBudget C x h A T -
+                    2 * D * x * Real.log ((x + h) / x) *
+                      (1 + Real.log (T + 6)) ^ 2) /
+                  Real.log ((x + h) / x) ≤
+                chebyshevPsi (x + h) :=
+  exists_uniform_C_D_forall_goodHeight_chebyshevPsi_bounds_scalar_log_sq_increment
+
+example (hRH : RiemannHypothesis.Statement) :
+    ∃ C D : ℝ, 0 ≤ C ∧ 0 ≤ D ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x h : ℝ}, Real.exp 1 ≤ x → 0 < h →
+            (A + 3) * Real.log ((x + h) / x) ≤ 1 →
+            chebyshevPsi x ≤
+                (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) +
+                    secondOrderSelectedHeightIncrementTotalBudget C x h A T +
+                    2 * D * Real.sqrt x * Real.log ((x + h) / x) *
+                      (1 + Real.log (T + 6)) ^ 2) /
+                  Real.log ((x + h) / x) ∧
+              (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) -
+                    secondOrderSelectedHeightIncrementTotalBudget C x h A T -
+                    2 * D * Real.sqrt x * Real.log ((x + h) / x) *
+                      (1 + Real.log (T + 6)) ^ 2) /
+                  Real.log ((x + h) / x) ≤
+                chebyshevPsi (x + h) :=
+  exists_uniform_C_D_forall_goodHeight_chebyshevPsi_bounds_scalar_sqrt_log_sq_increment_of_RH
+    hRH
+
+example :
     ∃ C D : ℝ, 0 ≤ C ∧ 0 ≤ D ∧ ∀ A : ℝ, 4 ≤ A →
       ∃ T ∈ Set.Icc A (A + 1),
         ExplicitFormulaAux.goodHeight T ∧
