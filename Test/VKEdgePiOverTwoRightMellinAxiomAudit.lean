@@ -1,0 +1,4 @@
+import PrimeNumberTheorem.VKEdgePiOverTwoRightMellin
+
+#print axioms PrimeNumberTheorem.VKEdgePiOverTwo.ofReal_cpow_neg_add_split
+#print axioms PrimeNumberTheorem.VKEdgePiOverTwo.integral_rightEdgePolynomialGaussian_cpow_eq
