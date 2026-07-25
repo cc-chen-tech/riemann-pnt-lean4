@@ -1,6 +1,6 @@
 import PrimeNumberTheorem.ZeroDensityLayerBudgetActualFullTailExcludingClusterConjugation
 import PrimeNumberTheorem.ZeroDensityLayerBudgetActualRealOrdinateExcludingCluster
-import PrimeNumberTheorem.ZeroDensityLayerBudgetActualExplicitFormulaClusterDecomposition
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualClosedRealAxisTargetDecay
 import PrimeNumberTheorem.ZeroDensityLayerBudgetActualOscillationBoundary
 
 /-!
@@ -270,7 +270,44 @@ theorem
     threshold hhalf hlt certificate hclosed hremainder hmain
   intro x
   exact
-    relativeChebyshevPsi0Error_eq_visibleCluster_add_actualResiduals
+      relativeChebyshevPsi0Error_eq_visibleCluster_add_actualResiduals
       (carlsonPolynomialHeight alpha) S x
+
+/-- Positive target real part automatically discharges the closed real-axis
+term, leaving only the actual explicit-formula remainder and visible-cluster
+far witness as lower-transfer inputs. -/
+theorem
+    unified_parametricPNTUpper_actualExplicitFormulaClosedAutomatic
+    (threshold : ℝ) (hhalf : 1 / 2 < threshold) (hlt : threshold < 1)
+    {beta alpha : ℝ} (hbeta : 0 < beta)
+    {S : Finset ℂ} {n : ℕ}
+    {input :
+      (x : ℝ) →
+        PositiveZeroOutsideClusterBucketInput
+          (carlsonPolynomialHeight alpha x) S n}
+    (certificate :
+      ActualCarlsonOutsideClusterFiniteStripCertificate
+        beta alpha S n input)
+    (hremainder :
+      TargetAmplitudeNegligible
+        (targetZeroPowerAmplitude beta)
+        (actualPNTExplicitFormulaRelativeRemainder
+          (carlsonPolynomialHeight alpha)))
+    (hmain :
+      HasFarTargetAmplitudeWitness
+        (dynamicVisibleClusterPNTMain
+          (carlsonPolynomialHeight alpha) S)
+        (targetZeroPowerAmplitude beta)) :
+    (∃ rate : ℝ, 0 < rate ∧ rate ≤ 1 ∧
+      Tendsto
+        (fun m : ℕ => relativeChebyshevPsi0Error (m : ℝ))
+        atTop (nhds 0)) ∧
+    HasFarTargetAmplitudeWitness relativeChebyshevPsi0Error
+      (fun x => targetZeroPowerAmplitude beta x / 2) := by
+  exact
+    unified_parametricPNTUpper_actualExplicitFormulaSignedComplementLower
+      threshold hhalf hlt certificate
+      (actualPNTClosedRealAxisRelativeTerm_targetAmplitudeNegligible hbeta)
+      hremainder hmain
 
 end PrimeNumberTheorem
