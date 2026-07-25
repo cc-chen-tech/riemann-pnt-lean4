@@ -19,6 +19,36 @@ example
     (hN : 0 < N) (hrho : 0 < rho)
     (hT : rho * N < T) (hT1 : 1 ≤ T)
     (hh : ∀ r, T ≤ r →
+      0 ≤ archimedeanHPlus r ∧ archimedeanHPlus r ≤ Real.log r)
+    (i j : Fin (2 * N + 1)) :
+    MeasureTheory.IntegrableOn
+      (fun r =>
+        paperArchimedeanRankTwoDensity N
+          (paperArchimedeanWeight L rho r) rho r i j)
+      (Set.Ioi T) :=
+  integrableOn_Ioi_paperActualArchimedeanRankTwoDensity_entry
+    N hN hrho hT hT1 hh i j
+
+example
+    (N : ℕ) {L rho T : ℝ}
+    (hN : 0 < N) (hrho : 0 < rho)
+    (hT : rho * N < T) (hT1 : 1 ≤ T)
+    (hh : ∀ r, T ≤ r →
+      0 ≤ archimedeanHPlus r ∧ archimedeanHPlus r ≤ Real.log r)
+    (i j : Fin (2 * N + 1)) :
+    Tendsto
+      (fun R =>
+        paperActualArchimedeanRankTwoIncrement N L rho T R i j)
+      atTop
+      (nhds (paperActualArchimedeanRankTwoTail N L rho T i j)) :=
+  tendsto_paperActualArchimedeanRankTwoIncrement_entry_atTop
+    N hN hrho hT hT1 hh i j
+
+example
+    (N : ℕ) {L rho T : ℝ}
+    (hN : 0 < N) (hrho : 0 < rho)
+    (hT : rho * N < T) (hT1 : 1 ≤ T)
+    (hh : ∀ r, T ≤ r →
       0 ≤ archimedeanHPlus r ∧ archimedeanHPlus r ≤ Real.log r) :
     Tendsto
       (fun R => paperActualArchimedeanRankTwoIncrement N L rho T R)
@@ -26,6 +56,24 @@ example
       (nhds (paperActualArchimedeanRankTwoTail N L rho T)) :=
   tendsto_paperActualArchimedeanRankTwoIncrement_atTop
     N hN hrho hT hT1 hh
+
+example
+    (N : ℕ) {L rho T : ℝ}
+    (hN : 0 < N) (hrho : 0 < rho)
+    (hT : rho * N < T) (hT1 : 1 ≤ T)
+    (hh : ∀ r, T ≤ r →
+      0 ≤ archimedeanHPlus r ∧ archimedeanHPlus r ≤ Real.log r)
+    (x : FiniteVector (2 * N + 1)) :
+    Tendsto
+      (fun R =>
+        quadraticForm
+          (paperActualArchimedeanRankTwoIncrement N L rho T R) x)
+      atTop
+      (nhds
+        (quadraticForm
+          (paperActualArchimedeanRankTwoTail N L rho T) x)) :=
+  tendsto_quadraticForm_paperActualArchimedeanRankTwoIncrement_atTop
+    N hN hrho hT hT1 hh x
 
 example :
     ∃ T0 : ℝ, 1 ≤ T0 ∧
