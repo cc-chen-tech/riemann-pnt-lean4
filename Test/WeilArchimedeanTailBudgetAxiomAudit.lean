@@ -1,0 +1,5 @@
+import WeilExtremalKernels.ArchimedeanTailBudget
+
+#print axioms WeilExtremalKernels.hasDerivAt_archimedeanTailPrimitive
+#print axioms WeilExtremalKernels.tendsto_archimedeanTailPrimitive_atTop
+#print axioms WeilExtremalKernels.integral_Ioi_log_div_sub_sq

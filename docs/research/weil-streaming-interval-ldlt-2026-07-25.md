@@ -133,3 +133,32 @@ This is a rigorous positive certificate for one finite 401-by-401 candidate
 matrix. It is not the preregistered `(c,N)=(100,200)` Gate A baseline.
 Analytic tail control and basis-change transfer remain open, so
 `gate_a_status` remains `not_satisfied` and no RH conclusion is made.
+
+## Lean finite-to-tail transfer and scalar integral
+
+The generic finite-dimensional transfer step is now verified in
+`WeilExtremalKernels/ArchimedeanTailTransfer.lean`. It proves:
+
+- finite positive semidefiniteness or definiteness survives addition of a
+  nonnegative tail;
+- a finite negative witness below `-B * squaredNorm x` survives any tail
+  bounded above by `B * squaredNorm x`;
+- interval-matrix and separate transfer-error budgets combine with an
+  explicit total margin.
+
+The scalar improper integral used in the paper's explicit tail budget is
+verified in `WeilExtremalKernels/ArchimedeanTailBudget.lean`:
+
+```text
+integral over (T,+infinity) of log r / (r-b)^2
+  = log T / (T-b) + b^(-1) log (T / (T-b))
+```
+
+under `0 < b < T` and `1 <= T`. The proof includes the derivative identity
+and the antiderivative limit at positive infinity.
+
+These results remove the generic algebraic transfer and scalar-calculus
+subgoals. They do not yet construct the rank-two matrix-valued
+archimedean tail, prove the vector-norm estimate producing the paper's
+constant `B_T`, verify the basis transfer, or connect a finite certificate
+to the infinite-dimensional Weil criterion. Gate A therefore remains open.

@@ -1,0 +1,10 @@
+import WeilExtremalKernels.ArchimedeanTailTransfer
+
+#print axioms WeilExtremalKernels.quadraticForm_add
+#print axioms WeilExtremalKernels.quadraticForm_nonneg_add_of_tail_nonneg
+#print axioms WeilExtremalKernels.quadraticForm_pos_add_of_tail_nonneg
+#print axioms WeilExtremalKernels.quadraticForm_neg_add_of_tail_upper
+#print axioms WeilExtremalKernels.quadraticForm_lower_of_interval
+#print axioms WeilExtremalKernels.quadraticForm_nonneg_of_interval_and_tail
+#print axioms WeilExtremalKernels.quadraticForm_pos_of_interval_and_tail
+#print axioms WeilExtremalKernels.quadraticForm_nonneg_of_interval_tail_and_transfer_error
