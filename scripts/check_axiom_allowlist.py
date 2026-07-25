@@ -238,6 +238,13 @@ EXPECTED_DECLARATIONS = {
 }
 
 SMOOTHED_ERROR_EXPECTED_DECLARATIONS = {
+    "PrimeNumberTheorem.ExplicitFormulaResidues.norm_secondOrderExplicitFormulaIntegrand_sub_horizontal_le",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.intervalIntegrable_secondOrderExplicitFormulaIntegrand_horizontal",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.exists_uniform_goodHeight_Icc_norm_secondOrderHorizontalXDifference_increment_le",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.exists_uniform_goodHeight_Icc_norm_secondOrderContourRemainder_increment_le",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderIncrementHorizontalScalar_lt_separateEndpoints",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightIncrementContourBudget_lt",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightIncrementTotalBudget_lt",
     "PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderMovingEndpointPerronBudget_div_two_pi_eq",
     "PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightContourBudget_nonneg",
     "PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightContourBudget_le_explicit",

@@ -274,6 +274,249 @@ lemma norm_secondOrderExplicitFormulaIntegrand_horizontal_le_of_logDeriv_le_of_r
       div_le_div_of_nonneg_left (div_nonneg hnum ht.le) ht hline
     _ = K * x ^ b / |t| ^ 2 := by ring
 
+/-- Pointwise horizontal estimate after subtracting the two endpoint kernels
+before taking norms.  Relative to separate endpoint estimates, this retains
+the logarithmic increment `log y - log x`; one height denominator is spent
+controlling the exponential difference. -/
+lemma norm_secondOrderExplicitFormulaIntegrand_sub_horizontal_le
+    {x y σ b t K : ℝ}
+    (hx : 1 ≤ x) (hy : 0 < y) (hσ : σ ≤ b) (ht : 0 < |t|)
+    (hK : 0 ≤ K)
+    (hlogDeriv :
+      ‖logDeriv riemannZeta ((σ : ℂ) + (t : ℂ) * I)‖ ≤ K)
+    (hlog : 0 ≤ Real.log y - Real.log x)
+    (hsmall :
+      ‖((σ : ℂ) + (t : ℂ) * I)‖ *
+          (Real.log y - Real.log x) ≤ 1) :
+    ‖secondOrderExplicitFormulaIntegrand y
+          ((σ : ℂ) + (t : ℂ) * I) -
+        secondOrderExplicitFormulaIntegrand x
+          ((σ : ℂ) + (t : ℂ) * I)‖ ≤
+      2 * K * x ^ b * (Real.log y - Real.log x) / |t| := by
+  let s : ℂ := (σ : ℂ) + (t : ℂ) * I
+  have hs0 : s ≠ 0 := by
+    intro hs
+    have him := congrArg Complex.im hs
+    simp [s] at him
+    exact (ne_of_gt ht) (abs_eq_zero.mpr him)
+  let d : ℝ := Real.log y - Real.log x
+  have hd : 0 ≤ d := hlog
+  have hsNormPos : 0 < ‖s‖ := norm_pos_iff.mpr hs0
+  have hfac :
+      (y : ℂ) ^ s - (x : ℂ) ^ s =
+        (x : ℂ) ^ s * (Complex.exp ((d : ℂ) * s) - 1) := by
+    rw [Complex.cpow_def_of_ne_zero (Complex.ofReal_ne_zero.mpr hy.ne'),
+      Complex.cpow_def_of_ne_zero
+        (Complex.ofReal_ne_zero.mpr (zero_lt_one.trans_le hx).ne')]
+    rw [← Complex.ofReal_log hy.le,
+      ← Complex.ofReal_log (zero_lt_one.trans_le hx).le]
+    rw [show (Real.log y : ℂ) * s =
+        (Real.log x : ℂ) * s + (d : ℂ) * s by
+          simp only [d, Complex.ofReal_sub]
+          ring]
+    rw [Complex.exp_add]
+    ring
+  have hzNorm : ‖(d : ℂ) * s‖ = d * ‖s‖ := by
+    rw [norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg hd]
+  have hzSmall : ‖(d : ℂ) * s‖ ≤ 1 := by
+    rw [hzNorm, mul_comm]
+    exact hsmall
+  have hrem : ‖Complex.exp ((d : ℂ) * s) - 1‖ ≤ 2 * (d * ‖s‖) := by
+    simpa [abs_of_nonneg hd] using Complex.norm_exp_sub_one_le hzSmall
+  have hfactor :
+      ‖((y : ℂ) ^ s - (x : ℂ) ^ s) / s ^ 2‖ ≤
+        2 * x ^ s.re * (Real.log y - Real.log x) / ‖s‖ := by
+    rw [hfac, norm_div, norm_mul, norm_pow,
+      Complex.norm_cpow_eq_rpow_re_of_pos (zero_lt_one.trans_le hx)]
+    calc
+      x ^ s.re * ‖Complex.exp ((d : ℂ) * s) - 1‖ / ‖s‖ ^ 2 ≤
+          x ^ s.re * (2 * (d * ‖s‖)) / ‖s‖ ^ 2 := by
+        gcongr
+      _ = 2 * x ^ s.re * (Real.log y - Real.log x) / ‖s‖ := by
+        dsimp [d]
+        field_simp [ne_of_gt hsNormPos]
+  have hsre : s.re = σ := by simp [s]
+  have hpow : x ^ s.re ≤ x ^ b := by
+    rw [hsre]
+    exact Real.rpow_le_rpow_of_exponent_le hx hσ
+  have htNorm : |t| ≤ ‖s‖ := by
+    have him := Complex.abs_im_le_norm s
+    simpa [s] using him
+  have hd' : 0 ≤ Real.log y - Real.log x := hlog
+  have hpowNonneg : 0 ≤ x ^ b :=
+    Real.rpow_nonneg (zero_le_one.trans hx) _
+  have hfactor' :
+      ‖((y : ℂ) ^ s - (x : ℂ) ^ s) / s ^ 2‖ ≤
+        2 * x ^ b * (Real.log y - Real.log x) / |t| := by
+    calc
+      ‖((y : ℂ) ^ s - (x : ℂ) ^ s) / s ^ 2‖ ≤
+          2 * x ^ s.re * (Real.log y - Real.log x) / ‖s‖ := hfactor
+      _ ≤ 2 * x ^ b * (Real.log y - Real.log x) / ‖s‖ := by
+        gcongr
+      _ ≤ 2 * x ^ b * (Real.log y - Real.log x) / |t| := by
+        exact div_le_div_of_nonneg_left
+          (mul_nonneg (mul_nonneg (by norm_num) hpowNonneg) hd')
+          ht htNorm
+  have hrewrite :
+      secondOrderExplicitFormulaIntegrand y s -
+          secondOrderExplicitFormulaIntegrand x s =
+        -logDeriv riemannZeta s *
+          (((y : ℂ) ^ s - (x : ℂ) ^ s) / s ^ 2) := by
+    unfold secondOrderExplicitFormulaIntegrand explicitFormulaIntegrand
+    ring
+  rw [hrewrite, norm_mul]
+  calc
+    ‖-logDeriv riemannZeta s‖ *
+        ‖((y : ℂ) ^ s - (x : ℂ) ^ s) / s ^ 2‖ ≤
+      K * (2 * x ^ b * (Real.log y - Real.log x) / |t|) := by
+        exact mul_le_mul (by simpa [s] using hlogDeriv) hfactor'
+          (norm_nonneg _) hK
+    _ = 2 * K * x ^ b * (Real.log y - Real.log x) / |t| := by
+      ring
+
+/-- A nonzero zero-free horizontal segment makes the second-order integrand
+interval integrable.  This is the linearity input needed to combine the two
+endpoint integrals before applying the norm. -/
+lemma intervalIntegrable_secondOrderExplicitFormulaIntegrand_horizontal
+    {x a b t : ℝ} (hx : 0 < x) (ht : 0 < |t|)
+    (hzeta : ∀ σ ∈ Set.uIcc a b,
+      riemannZeta ((σ : ℂ) + (t : ℂ) * I) ≠ 0) :
+    IntervalIntegrable
+      (fun σ : ℝ =>
+        secondOrderExplicitFormulaIntegrand x
+          ((σ : ℂ) + (t : ℂ) * I)) MeasureTheory.volume a b := by
+  apply ContinuousOn.intervalIntegrable (μ := MeasureTheory.volume)
+  intro σ hσ
+  let s : ℂ := (σ : ℂ) + (t : ℂ) * I
+  have hs0 : s ≠ 0 := by
+    intro hs
+    have him := congrArg Complex.im hs
+    simp [s] at him
+    exact (ne_of_gt ht) (abs_eq_zero.mpr him)
+  have hs1 : s ≠ 1 := by
+    intro hs
+    have him := congrArg Complex.im hs
+    simp [s] at him
+    exact (ne_of_gt ht) (abs_eq_zero.mpr him)
+  have hanalytic :
+      AnalyticAt ℂ (secondOrderExplicitFormulaIntegrand x) s := by
+    simpa [secondOrderExplicitFormulaIntegrand] using
+      (analyticAt_explicitFormulaIntegrand_of_ne_zero_of_ne_one_of_zeta_ne_zero
+          hx hs0 hs1 (hzeta σ hσ)).div analyticAt_id hs0
+  have hmap :
+      ContinuousAt (fun r : ℝ => (r : ℂ) + (t : ℂ) * I) σ := by
+    fun_prop
+  simpa [s, Function.comp_def] using
+    (hanalytic.continuousAt.comp_of_eq hmap (by simp [s])).continuousWithinAt
+
+/-- Good heights control the horizontal endpoint difference after the
+endpoint kernels are subtracted.  Under the uniform small-increment condition
+the horizontal budget is proportional to
+`log ((x+h)/x) / T`, instead of a sum of two independent `T⁻²` endpoint
+budgets. -/
+theorem
+    exists_uniform_goodHeight_Icc_norm_secondOrderHorizontalXDifference_increment_le :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x h a b : ℝ},
+            1 ≤ x → 0 ≤ h → -1 ≤ a → a ≤ b → b ≤ 2 →
+            (T + 2) * Real.log ((x + h) / x) ≤ 1 →
+            ∀ t : ℝ, |t| = T →
+              ‖secondOrderHorizontalXDifference x (x + h) a b t‖ ≤
+                (2 * C * x ^ (2 : ℝ) *
+                    Real.log ((x + h) / x) *
+                    (1 + Real.log (A + 6)) ^ 2 / T) *
+                  (b - a) := by
+  rcases exists_goodHeight_Icc_norm_logDeriv_central_band_le_log_sq with
+    ⟨C, hC, hchoose⟩
+  refine ⟨C, hC, ?_⟩
+  intro A hA
+  rcases hchoose A hA with ⟨T, hT, hgood, hlogDeriv⟩
+  refine ⟨T, hT, hgood, ?_⟩
+  intro x h a b hx hh ha hab hb hsmall t ht
+  have hTpos : 0 < T := by linarith [hT.1]
+  have htpos : 0 < |t| := by rw [ht]; exact hTpos
+  have hxpos : 0 < x := zero_lt_one.trans_le hx
+  have hypos : 0 < x + h := by linarith
+  have hratio : 1 ≤ (x + h) / x :=
+    (le_div_iff₀ hxpos).2 (by linarith)
+  have hlognonneg : 0 ≤ Real.log ((x + h) / x) :=
+    Real.log_nonneg hratio
+  let K : ℝ :=
+    2 * C * x ^ (2 : ℝ) * Real.log ((x + h) / x) *
+      (1 + Real.log (A + 6)) ^ 2 / T
+  have hK : 0 ≤ K := by
+    dsimp [K]
+    positivity
+  have hpoint : ∀ σ ∈ Set.uIoc a b,
+      ‖secondOrderExplicitFormulaIntegrand (x + h)
+          ((σ : ℂ) + (t : ℂ) * I) -
+        secondOrderExplicitFormulaIntegrand x
+          ((σ : ℂ) + (t : ℂ) * I)‖ ≤ K := by
+    intro σ hσ
+    rw [Set.uIoc_of_le hab] at hσ
+    have hσbounds : |σ| ≤ 2 := by
+      rw [abs_le]
+      exact ⟨by linarith [ha, hσ.1], le_trans hσ.2 hb⟩
+    have hsNorm :
+        ‖((σ : ℂ) + (t : ℂ) * I)‖ ≤ T + 2 := by
+      calc
+        ‖((σ : ℂ) + (t : ℂ) * I)‖ ≤
+            ‖(σ : ℂ)‖ + ‖(t : ℂ) * I‖ := norm_add_le _ _
+        _ = |σ| + |t| := by
+          rw [norm_mul, norm_I, mul_one, Complex.norm_real,
+            Complex.norm_real, Real.norm_eq_abs, Real.norm_eq_abs]
+        _ ≤ T + 2 := by rw [ht]; linarith
+    have hpointSmall :
+        ‖((σ : ℂ) + (t : ℂ) * I)‖ *
+            (Real.log (x + h) - Real.log x) ≤ 1 := by
+      rw [← Real.log_div hypos.ne' hxpos.ne']
+      exact (mul_le_mul_of_nonneg_right hsNorm hlognonneg).trans hsmall
+    have hpointBound :=
+      norm_secondOrderExplicitFormulaIntegrand_sub_horizontal_le
+        (x := x) (y := x + h) (σ := σ) (b := 2)
+        (t := t)
+        (K := C * (1 + Real.log (A + 6)) ^ 2)
+        hx hypos (le_trans hσ.2 hb) htpos
+        (mul_nonneg hC (sq_nonneg _))
+        (by
+          simpa [mul_comm] using
+            hlogDeriv t ht σ (le_trans ha hσ.1.le)
+              (le_trans hσ.2 hb))
+        (by
+          rw [← Real.log_div hypos.ne' hxpos.ne']
+          exact hlognonneg)
+        hpointSmall
+    rw [ht] at hpointBound
+    rw [← Real.log_div hypos.ne' hxpos.ne'] at hpointBound
+    dsimp [K]
+    convert hpointBound using 1 <;> ring
+  have hdiffIntegral :=
+    intervalIntegral.norm_integral_le_of_norm_le_const
+      (f := fun σ : ℝ =>
+        secondOrderExplicitFormulaIntegrand (x + h)
+            ((σ : ℂ) + (t : ℂ) * I) -
+          secondOrderExplicitFormulaIntegrand x
+            ((σ : ℂ) + (t : ℂ) * I))
+      (a := a) (b := b) (C := K) hpoint
+  have hzeta : ∀ σ ∈ Set.uIcc a b,
+      riemannZeta ((σ : ℂ) + (t : ℂ) * I) ≠ 0 := by
+    intro σ _hσ
+    simpa [mul_comm] using
+      riemannZeta_ne_zero_on_goodHeight_horizontal
+        (T := T) (t := t) (σ := σ) hTpos ht hgood
+  have hyInt :=
+    intervalIntegrable_secondOrderExplicitFormulaIntegrand_horizontal
+      hypos htpos hzeta
+  have hxInt :=
+    intervalIntegrable_secondOrderExplicitFormulaIntegrand_horizontal
+      hxpos htpos hzeta
+  rw [abs_of_nonneg (sub_nonneg.mpr hab)] at hdiffIntegral
+  unfold secondOrderHorizontalXDifference
+  rw [← intervalIntegral.integral_sub hyInt hxInt]
+  simpa [K] using hdiffIntegral
+
 /-- In every unit height interval, one selected good height and one absolute
 constant control the full central horizontal endpoint difference for every
 pair of samples at least one and every interval contained in `[-1,2]`. -/
@@ -1593,6 +1836,133 @@ noncomputable def secondOrderSelectedHeightTotalBudget
   secondOrderSelectedHeightContourBudget C x h A T +
     secondOrderMovingEndpointPerronBudget x h (T / (2 * Real.pi))
 
+/-- Selected-height contour budget after subtracting the two horizontal
+endpoint kernels before taking norms.  The left-vertical term is unchanged;
+only the horizontal contribution retains the logarithmic endpoint gap. -/
+noncomputable def secondOrderSelectedHeightIncrementContourBudget
+    (C x h A T : ℝ) : ℝ :=
+  (2 *
+        ((2 * C * x ^ (2 : ℝ) * Real.log ((x + h) / x) *
+              (1 + Real.log (A + 6)) ^ 2 / T) *
+          ((1 + 1 / Real.log (x + h)) - (-1))) +
+      (secondOrderOddVerticalBound (x + h) 0 T +
+          secondOrderOddVerticalBound x 0 T) *
+        (2 * T)) /
+    (2 * Real.pi)
+
+/-- Total selected-height budget with horizontal endpoint cancellation and
+the same moving-line Perron tail as the original budget. -/
+noncomputable def secondOrderSelectedHeightIncrementTotalBudget
+    (C x h A T : ℝ) : ℝ :=
+  secondOrderSelectedHeightIncrementContourBudget C x h A T +
+    secondOrderMovingEndpointPerronBudget x h (T / (2 * Real.pi))
+
+/-- The cancellation-aware selected height controls the actual contour
+remainder difference.  This theorem is the analytic consumer of
+`secondOrderSelectedHeightIncrementContourBudget`; the budget is not merely a
+standalone algebraic definition. -/
+theorem
+    exists_uniform_goodHeight_Icc_norm_secondOrderContourRemainder_increment_le :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x h : ℝ}, Real.exp 1 ≤ x → 0 < h →
+            (T + 2) * Real.log ((x + h) / x) ≤ 1 →
+            let c := 1 + 1 / Real.log (x + h)
+            (∀ p ∈
+              ([[(-1 : ℝ), c]] ×ℂ [[-T, T]] : Set ℂ),
+              p = 0 ∨ p = 1 ∨ riemannZeta p = 0 →
+                -1 < p.re ∧ p.re < c ∧ -T < p.im ∧ p.im < T) ∧
+            ‖secondOrderContourRemainder (x + h) (-1) c
+                  (T / (2 * Real.pi)) -
+                secondOrderContourRemainder x (-1) c
+                  (T / (2 * Real.pi))‖ ≤
+              secondOrderSelectedHeightIncrementContourBudget C x h A T := by
+  rcases
+      exists_uniform_goodHeight_Icc_norm_secondOrderHorizontalXDifference_increment_le
+      with ⟨C, hC, hchoose⟩
+  refine ⟨C, hC, ?_⟩
+  intro A hA
+  rcases hchoose A hA with ⟨T, hT, hgood, hhorizontalAll⟩
+  refine ⟨T, hT, hgood, ?_⟩
+  intro x h hx hh hsmall
+  have hTpos : 0 < T := by linarith [hT.1]
+  have hxpos : 0 < x := (Real.exp_pos 1).trans_le hx
+  have hxOne : 1 ≤ x :=
+    (Real.one_lt_exp_iff.mpr zero_lt_one).le.trans hx
+  have hypos : 0 < x + h := by linarith
+  have hlogOne : 1 ≤ Real.log (x + h) :=
+    (Real.le_log_iff_exp_le hypos).2 (hx.trans (by linarith))
+  have hlogpos : 0 < Real.log (x + h) := zero_lt_one.trans_le hlogOne
+  let c : ℝ := 1 + 1 / Real.log (x + h)
+  have hc : 1 < c := by
+    dsimp [c]
+    linarith [one_div_pos.mpr hlogpos]
+  have hc2 : c ≤ 2 := by
+    have hinv : 1 / Real.log (x + h) ≤ 1 :=
+      (div_le_one hlogpos).2 hlogOne
+    dsimp [c]
+    linarith
+  let K : ℝ :=
+    (2 * C * x ^ (2 : ℝ) * Real.log ((x + h) / x) *
+      (1 + Real.log (A + 6)) ^ 2 / T) * (c - (-1))
+  let L : ℝ :=
+    (secondOrderOddVerticalBound (x + h) 0 T +
+      secondOrderOddVerticalBound x 0 T) * (2 * T)
+  have hhorizontal :
+      ∀ t : ℝ, |t| = T →
+        ‖secondOrderHorizontalXDifference x (x + h) (-1) c t‖ ≤ K := by
+    intro t ht
+    simpa [K] using
+      hhorizontalAll (x := x) (h := h) (a := -1) (b := c)
+        hxOne hh.le (by norm_num) (by linarith) hc2 hsmall t ht
+  have hbottom :
+      ‖secondOrderHorizontalXDifference x (x + h) (-1) c (-T)‖ ≤ K :=
+    hhorizontal (-T) (by rw [abs_neg, abs_of_pos hTpos])
+  have htop :
+      ‖secondOrderHorizontalXDifference x (x + h) (-1) c T‖ ≤ K :=
+    hhorizontal T (abs_of_pos hTpos)
+  have hden : 0 < 2 * Real.pi := mul_pos (by norm_num) Real.pi_pos
+  have hscale : 2 * Real.pi * (T / (2 * Real.pi)) = T := by
+    field_simp [Real.pi_ne_zero]
+  have hleft :
+      ‖secondOrderLeftXDifference x (x + h) (-1)
+          (T / (2 * Real.pi))‖ ≤ L := by
+    have hraw := norm_secondOrderLeftXDifference_odd_le_of_pos
+      (N := 0) hxpos hypos (div_nonneg hTpos.le hden.le)
+    simpa [hscale, L] using hraw
+  have hboundary :
+      ∀ p ∈
+        ([[(-1 : ℝ), c]] ×ℂ [[-T, T]] : Set ℂ),
+        p = 0 ∨ p = 1 ∨ riemannZeta p = 0 →
+          -1 < p.re ∧ p.re < c ∧ -T < p.im ∧ p.im < T := by
+    simpa using
+      (secondOrder_poleCandidate_mem_interior_negativeOdd_rectangle_of_goodHeight
+        (N := 0) hTpos hc hgood)
+  have hremainder :=
+    norm_secondOrderContourRemainder_sub_le_edgeDifferences
+      x (x + h) (-1) c (T / (2 * Real.pi))
+  rw [hscale] at hremainder
+  dsimp only
+  refine ⟨hboundary, ?_⟩
+  calc
+    ‖secondOrderContourRemainder (x + h) (-1) c
+          (T / (2 * Real.pi)) -
+        secondOrderContourRemainder x (-1) c
+          (T / (2 * Real.pi))‖ ≤
+        (‖secondOrderHorizontalXDifference x (x + h) (-1) c (-T)‖ +
+            ‖secondOrderHorizontalXDifference x (x + h) (-1) c T‖ +
+            ‖secondOrderLeftXDifference x (x + h) (-1)
+              (T / (2 * Real.pi))‖) /
+          (2 * Real.pi) := hremainder
+    _ ≤ (K + K + L) / (2 * Real.pi) := by
+      exact (div_le_div_iff_of_pos_right hden).2
+        (add_le_add (add_le_add hbottom htop) hleft)
+    _ = secondOrderSelectedHeightIncrementContourBudget C x h A T := by
+      dsimp [K, L, c]
+      unfold secondOrderSelectedHeightIncrementContourBudget
+      ring
+
 /-- The selected-height contour budget is nonnegative on the parameter range
 used by the good-height theorem. -/
 theorem secondOrderSelectedHeightContourBudget_nonneg
@@ -1637,6 +2007,269 @@ theorem secondOrderSelectedHeightContourBudget_nonneg
       (mul_nonneg (add_nonneg hoddY hoddX)
         (mul_nonneg (by norm_num) hTpos.le)))
     (mul_nonneg (by norm_num) Real.pi_pos.le)
+
+/-- The cancellation-aware horizontal scalar is no larger than the sum of
+the two separate endpoint scalars in the small-increment regime. -/
+lemma secondOrderIncrementHorizontalScalar_le_separateEndpoints
+    {x h T : ℝ} (hx : 0 < x) (hh : 0 ≤ h) (hT : 0 < T)
+    (hsmall : (T + 2) * Real.log ((x + h) / x) ≤ 1) :
+    2 * x ^ (2 : ℝ) * Real.log ((x + h) / x) / T ≤
+      ((x + h) ^ (2 : ℝ) + x ^ (2 : ℝ)) / T ^ 2 := by
+  have hratio : 1 ≤ (x + h) / x :=
+    (le_div_iff₀ hx).2 (by linarith)
+  have hd : 0 ≤ Real.log ((x + h) / x) :=
+    Real.log_nonneg hratio
+  have hTd :
+      T * Real.log ((x + h) / x) ≤ 1 := by
+    calc
+      T * Real.log ((x + h) / x) ≤
+          (T + 2) * Real.log ((x + h) / x) := by
+        nlinarith
+      _ ≤ 1 := hsmall
+  have hxy2 :
+      x ^ (2 : ℝ) ≤ (x + h) ^ (2 : ℝ) :=
+    Real.rpow_le_rpow hx.le (by linarith) (by norm_num)
+  have hx2nonneg : 0 ≤ x ^ (2 : ℝ) :=
+    Real.rpow_nonneg hx.le _
+  have hmain :
+      2 * x ^ (2 : ℝ) * Real.log ((x + h) / x) * T ≤
+        (x + h) ^ (2 : ℝ) + x ^ (2 : ℝ) := by
+    have hscaled :
+        x ^ (2 : ℝ) *
+            (T * Real.log ((x + h) / x)) ≤ x ^ (2 : ℝ) := by
+      simpa using mul_le_mul_of_nonneg_left hTd hx2nonneg
+    nlinarith
+  rw [div_le_div_iff₀ hT (sq_pos_of_pos hT)]
+  rw [show T ^ 2 = T * T by ring]
+  convert mul_le_mul_of_nonneg_right hmain hT.le using 1 <;> ring
+
+/-- For a genuine positive increment, the cancellation-aware horizontal
+scalar is strictly smaller than the separate-endpoint scalar. -/
+lemma secondOrderIncrementHorizontalScalar_lt_separateEndpoints
+    {x h T : ℝ} (hx : 0 < x) (hh : 0 < h) (hT : 0 < T)
+    (hsmall : (T + 2) * Real.log ((x + h) / x) ≤ 1) :
+    2 * x ^ (2 : ℝ) * Real.log ((x + h) / x) / T <
+      ((x + h) ^ (2 : ℝ) + x ^ (2 : ℝ)) / T ^ 2 := by
+  have hratio : 1 < (x + h) / x :=
+    (lt_div_iff₀ hx).2 (by linarith)
+  have hd : 0 < Real.log ((x + h) / x) :=
+    Real.log_pos hratio
+  have hTd :
+      T * Real.log ((x + h) / x) < 1 := by
+    calc
+      T * Real.log ((x + h) / x) <
+          (T + 2) * Real.log ((x + h) / x) := by
+        nlinarith
+      _ ≤ 1 := hsmall
+  have hxy2 :
+      x ^ (2 : ℝ) < (x + h) ^ (2 : ℝ) :=
+    Real.rpow_lt_rpow hx.le (by linarith) (by norm_num)
+  have hx2pos : 0 < x ^ (2 : ℝ) :=
+    Real.rpow_pos_of_pos hx _
+  have hmain :
+      2 * x ^ (2 : ℝ) * Real.log ((x + h) / x) * T <
+        (x + h) ^ (2 : ℝ) + x ^ (2 : ℝ) := by
+    have hscaled :
+        x ^ (2 : ℝ) *
+            (T * Real.log ((x + h) / x)) < x ^ (2 : ℝ) := by
+      simpa using mul_lt_mul_of_pos_left hTd hx2pos
+    nlinarith
+  rw [div_lt_div_iff₀ hT (sq_pos_of_pos hT)]
+  rw [show T ^ 2 = T * T by ring]
+  convert mul_lt_mul_of_pos_right hmain hT using 1 <;> ring
+
+/-- The cancellation-aware contour budget is nonnegative on the selected
+height parameter range. -/
+theorem secondOrderSelectedHeightIncrementContourBudget_nonneg
+    {C x h A T : ℝ}
+    (hC : 0 ≤ C) (hx : Real.exp 1 ≤ x) (hh : 0 < h)
+    (hA : 4 ≤ A) (hT : T ∈ Set.Icc A (A + 1)) :
+    0 ≤ secondOrderSelectedHeightIncrementContourBudget C x h A T := by
+  have hTpos : 0 < T := by linarith [hT.1]
+  have hxpos : 0 < x := (Real.exp_pos 1).trans_le hx
+  have hypos : 0 < x + h := by linarith
+  have hratio : 1 ≤ (x + h) / x :=
+    (le_div_iff₀ hxpos).2 (by linarith)
+  have hlogratio : 0 ≤ Real.log ((x + h) / x) :=
+    Real.log_nonneg hratio
+  have hlogOne : 1 ≤ Real.log (x + h) :=
+    (Real.le_log_iff_exp_le hypos).2 (hx.trans (by linarith))
+  have hlogpos : 0 < Real.log (x + h) := zero_lt_one.trans_le hlogOne
+  have hfactor :
+      0 ≤ (1 + 1 / Real.log (x + h)) - (-1) := by
+    linarith [one_div_pos.mpr hlogpos]
+  have hseries : 0 ≤ vonMangoldtLSeriesNorm 1 :=
+    tsum_nonneg fun n => norm_nonneg _
+  have hlogT : 0 ≤ Real.log (T + 4) :=
+    Real.log_nonneg (by linarith)
+  have hoddX : 0 ≤ secondOrderOddVerticalBound x 0 T := by
+    unfold secondOrderOddVerticalBound
+    norm_num
+    positivity
+  have hoddY : 0 ≤ secondOrderOddVerticalBound (x + h) 0 T := by
+    unfold secondOrderOddVerticalBound
+    norm_num
+    positivity
+  unfold secondOrderSelectedHeightIncrementContourBudget
+  exact div_nonneg
+    (add_nonneg
+      (mul_nonneg (by norm_num)
+        (mul_nonneg (by positivity) hfactor))
+      (mul_nonneg (add_nonneg hoddY hoddX)
+        (mul_nonneg (by norm_num) hTpos.le)))
+    (mul_nonneg (by norm_num) Real.pi_pos.le)
+
+/-- In the small-increment regime, cancellation never enlarges the selected
+height contour budget relative to separate endpoint estimates. -/
+theorem secondOrderSelectedHeightIncrementContourBudget_le
+    {C x h A T : ℝ}
+    (hC : 0 ≤ C) (hx : Real.exp 1 ≤ x) (hh : 0 < h)
+    (hA : 4 ≤ A) (hT : T ∈ Set.Icc A (A + 1))
+    (hsmall : (T + 2) * Real.log ((x + h) / x) ≤ 1) :
+    secondOrderSelectedHeightIncrementContourBudget C x h A T ≤
+      secondOrderSelectedHeightContourBudget C x h A T := by
+  have hTpos : 0 < T := by linarith [hT.1]
+  have hxpos : 0 < x := (Real.exp_pos 1).trans_le hx
+  have hypos : 0 < x + h := by linarith
+  have hlogOne : 1 ≤ Real.log (x + h) :=
+    (Real.le_log_iff_exp_le hypos).2 (hx.trans (by linarith))
+  have hlogpos : 0 < Real.log (x + h) := zero_lt_one.trans_le hlogOne
+  have hfactor :
+      0 ≤ (1 + 1 / Real.log (x + h)) - (-1) := by
+    linarith [one_div_pos.mpr hlogpos]
+  have hscalar :=
+    secondOrderIncrementHorizontalScalar_le_separateEndpoints
+      hxpos hh.le hTpos hsmall
+  have hweight :
+      0 ≤ C * (1 + Real.log (A + 6)) ^ 2 :=
+    mul_nonneg hC (sq_nonneg _)
+  have hhorizontal :
+      2 * C * x ^ (2 : ℝ) * Real.log ((x + h) / x) *
+            (1 + Real.log (A + 6)) ^ 2 / T ≤
+        C * (x + h) ^ (2 : ℝ) *
+              (1 + Real.log (A + 6)) ^ 2 / T ^ 2 +
+          C * x ^ (2 : ℝ) *
+              (1 + Real.log (A + 6)) ^ 2 / T ^ 2 := by
+    calc
+      2 * C * x ^ (2 : ℝ) * Real.log ((x + h) / x) *
+            (1 + Real.log (A + 6)) ^ 2 / T =
+          (C * (1 + Real.log (A + 6)) ^ 2) *
+            (2 * x ^ (2 : ℝ) * Real.log ((x + h) / x) / T) := by
+        ring
+      _ ≤ (C * (1 + Real.log (A + 6)) ^ 2) *
+            (((x + h) ^ (2 : ℝ) + x ^ (2 : ℝ)) / T ^ 2) :=
+        mul_le_mul_of_nonneg_left hscalar hweight
+      _ = C * (x + h) ^ (2 : ℝ) *
+              (1 + Real.log (A + 6)) ^ 2 / T ^ 2 +
+          C * x ^ (2 : ℝ) *
+              (1 + Real.log (A + 6)) ^ 2 / T ^ 2 := by
+        ring
+  unfold secondOrderSelectedHeightIncrementContourBudget
+    secondOrderSelectedHeightContourBudget
+  gcongr
+
+/-- If the selected log-derivative constant is positive, a genuine endpoint
+increment makes the cancellation-aware contour budget strictly smaller. -/
+theorem secondOrderSelectedHeightIncrementContourBudget_lt
+    {C x h A T : ℝ}
+    (hC : 0 < C) (hx : Real.exp 1 ≤ x) (hh : 0 < h)
+    (hA : 4 ≤ A) (hT : T ∈ Set.Icc A (A + 1))
+    (hsmall : (T + 2) * Real.log ((x + h) / x) ≤ 1) :
+    secondOrderSelectedHeightIncrementContourBudget C x h A T <
+      secondOrderSelectedHeightContourBudget C x h A T := by
+  have hTpos : 0 < T := by linarith [hT.1]
+  have hxpos : 0 < x := (Real.exp_pos 1).trans_le hx
+  have hypos : 0 < x + h := by linarith
+  have hlogOne : 1 ≤ Real.log (x + h) :=
+    (Real.le_log_iff_exp_le hypos).2 (hx.trans (by linarith))
+  have hlogpos : 0 < Real.log (x + h) := zero_lt_one.trans_le hlogOne
+  have hfactor :
+      0 < (1 + 1 / Real.log (x + h)) - (-1) := by
+    linarith [one_div_pos.mpr hlogpos]
+  have hlogA : 0 ≤ Real.log (A + 6) :=
+    Real.log_nonneg (by linarith)
+  have hweight :
+      0 < C * (1 + Real.log (A + 6)) ^ 2 := by
+    positivity
+  have hscalar :=
+    secondOrderIncrementHorizontalScalar_lt_separateEndpoints
+      hxpos hh hTpos hsmall
+  have hhorizontal :
+      2 * C * x ^ (2 : ℝ) * Real.log ((x + h) / x) *
+            (1 + Real.log (A + 6)) ^ 2 / T <
+        C * (x + h) ^ (2 : ℝ) *
+              (1 + Real.log (A + 6)) ^ 2 / T ^ 2 +
+          C * x ^ (2 : ℝ) *
+              (1 + Real.log (A + 6)) ^ 2 / T ^ 2 := by
+    calc
+      2 * C * x ^ (2 : ℝ) * Real.log ((x + h) / x) *
+            (1 + Real.log (A + 6)) ^ 2 / T =
+          (C * (1 + Real.log (A + 6)) ^ 2) *
+            (2 * x ^ (2 : ℝ) * Real.log ((x + h) / x) / T) := by
+        ring
+      _ < (C * (1 + Real.log (A + 6)) ^ 2) *
+            (((x + h) ^ (2 : ℝ) + x ^ (2 : ℝ)) / T ^ 2) :=
+        mul_lt_mul_of_pos_left hscalar hweight
+      _ = C * (x + h) ^ (2 : ℝ) *
+              (1 + Real.log (A + 6)) ^ 2 / T ^ 2 +
+          C * x ^ (2 : ℝ) *
+              (1 + Real.log (A + 6)) ^ 2 / T ^ 2 := by
+        ring
+  unfold secondOrderSelectedHeightIncrementContourBudget
+    secondOrderSelectedHeightContourBudget
+  have hden : 0 < 2 * Real.pi := mul_pos (by norm_num) Real.pi_pos
+  apply (div_lt_div_iff_of_pos_right hden).2
+  have hscaled := mul_lt_mul_of_pos_right hhorizontal hfactor
+  nlinarith
+
+/-- The cancellation-aware total budget is nonnegative. -/
+theorem secondOrderSelectedHeightIncrementTotalBudget_nonneg
+    {C x h A T : ℝ}
+    (hC : 0 ≤ C) (hx : Real.exp 1 ≤ x) (hh : 0 < h)
+    (hA : 4 ≤ A) (hT : T ∈ Set.Icc A (A + 1)) :
+    0 ≤ secondOrderSelectedHeightIncrementTotalBudget C x h A T := by
+  rw [secondOrderSelectedHeightIncrementTotalBudget,
+    secondOrderMovingEndpointPerronBudget_div_two_pi_eq]
+  exact add_nonneg
+    (secondOrderSelectedHeightIncrementContourBudget_nonneg hC hx hh hA hT)
+    (by
+      have hTpos : 0 < T := by linarith [hT.1]
+      have hypos : 0 < x + h := by
+        have hxpos : 0 < x := (Real.exp_pos 1).trans_le hx
+        linarith
+      positivity)
+
+/-- The same Perron tail is added to both budgets, so the horizontal
+cancellation comparison propagates to the total selected-height budget. -/
+theorem secondOrderSelectedHeightIncrementTotalBudget_le
+    {C x h A T : ℝ}
+    (hC : 0 ≤ C) (hx : Real.exp 1 ≤ x) (hh : 0 < h)
+    (hA : 4 ≤ A) (hT : T ∈ Set.Icc A (A + 1))
+    (hsmall : (T + 2) * Real.log ((x + h) / x) ≤ 1) :
+    secondOrderSelectedHeightIncrementTotalBudget C x h A T ≤
+      secondOrderSelectedHeightTotalBudget C x h A T := by
+  unfold secondOrderSelectedHeightIncrementTotalBudget
+    secondOrderSelectedHeightTotalBudget
+  exact add_le_add
+    (secondOrderSelectedHeightIncrementContourBudget_le
+      hC hx hh hA hT hsmall) le_rfl
+
+/-- Under the same nondegenerate hypotheses, the total budget also decreases
+strictly because its Perron summand is unchanged. -/
+theorem secondOrderSelectedHeightIncrementTotalBudget_lt
+    {C x h A T : ℝ}
+    (hC : 0 < C) (hx : Real.exp 1 ≤ x) (hh : 0 < h)
+    (hA : 4 ≤ A) (hT : T ∈ Set.Icc A (A + 1))
+    (hsmall : (T + 2) * Real.log ((x + h) / x) ≤ 1) :
+    secondOrderSelectedHeightIncrementTotalBudget C x h A T <
+      secondOrderSelectedHeightTotalBudget C x h A T := by
+  unfold secondOrderSelectedHeightIncrementTotalBudget
+    secondOrderSelectedHeightTotalBudget
+  simpa [add_comm] using
+    add_lt_add_right
+      (secondOrderSelectedHeightIncrementContourBudget_lt
+        hC hx hh hA hT hsmall)
+      (secondOrderMovingEndpointPerronBudget x h (T / (2 * Real.pi)))
 
 /-- The selected-height contour budget splits into an explicit horizontal
 `T⁻²` term and the original `N = 0` left-vertical `T` term.  Keeping the latter

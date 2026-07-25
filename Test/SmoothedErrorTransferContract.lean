@@ -136,6 +136,58 @@ example :
                   (b - a) :=
   PrimeNumberTheorem.ExplicitFormulaResidues.exists_uniform_goodHeight_Icc_norm_secondOrderHorizontalXDifference_le
 
+example {x y σ b t K : ℝ}
+    (hx : 1 ≤ x) (hy : 0 < y) (hσ : σ ≤ b) (ht : 0 < |t|)
+    (hK : 0 ≤ K)
+    (hlogDeriv :
+      ‖logDeriv riemannZeta ((σ : ℂ) + (t : ℂ) * I)‖ ≤ K)
+    (hlog : 0 ≤ Real.log y - Real.log x)
+    (hsmall :
+      ‖((σ : ℂ) + (t : ℂ) * I)‖ *
+          (Real.log y - Real.log x) ≤ 1) :
+    ‖PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderExplicitFormulaIntegrand
+          y ((σ : ℂ) + (t : ℂ) * I) -
+        PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderExplicitFormulaIntegrand
+          x ((σ : ℂ) + (t : ℂ) * I)‖ ≤
+      2 * K * x ^ b * (Real.log y - Real.log x) / |t| :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.norm_secondOrderExplicitFormulaIntegrand_sub_horizontal_le
+    hx hy hσ ht hK hlogDeriv hlog hsmall
+
+example :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        PrimeNumberTheorem.ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x h a b : ℝ},
+            1 ≤ x → 0 ≤ h → -1 ≤ a → a ≤ b → b ≤ 2 →
+            (T + 2) * Real.log ((x + h) / x) ≤ 1 →
+            ∀ t : ℝ, |t| = T →
+              ‖PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderHorizontalXDifference
+                  x (x + h) a b t‖ ≤
+                (2 * C * x ^ (2 : ℝ) *
+                    Real.log ((x + h) / x) *
+                    (1 + Real.log (A + 6)) ^ 2 / T) *
+                  (b - a) :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.exists_uniform_goodHeight_Icc_norm_secondOrderHorizontalXDifference_increment_le
+
+example :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        PrimeNumberTheorem.ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x h : ℝ}, Real.exp 1 ≤ x → 0 < h →
+            (T + 2) * Real.log ((x + h) / x) ≤ 1 →
+            let c := 1 + 1 / Real.log (x + h)
+            (∀ p ∈
+              ([[(-1 : ℝ), c]] ×ℂ [[-T, T]] : Set ℂ),
+              p = 0 ∨ p = 1 ∨ riemannZeta p = 0 →
+                -1 < p.re ∧ p.re < c ∧ -T < p.im ∧ p.im < T) ∧
+            ‖PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderContourRemainder
+                  (x + h) (-1) c (T / (2 * Real.pi)) -
+                PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderContourRemainder
+                  x (-1) c (T / (2 * Real.pi))‖ ≤
+              PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightIncrementContourBudget
+                C x h A T :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.exists_uniform_goodHeight_Icc_norm_secondOrderContourRemainder_increment_le
+
 example (x y a c W : ℝ) :
     ‖PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderContourRemainder y a c W -
         PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderContourRemainder x a c W‖ ≤
@@ -607,6 +659,37 @@ example {C x h A T : ℝ}
 example {C x h A T : ℝ}
     (hC : 0 ≤ C) (hx : Real.exp 1 ≤ x) (hh : 0 < h)
     (hA : 4 ≤ A) (hT : T ∈ Set.Icc A (A + 1)) :
+    0 ≤
+      PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightIncrementContourBudget
+        C x h A T :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightIncrementContourBudget_nonneg
+    hC hx hh hA hT
+
+example {C x h A T : ℝ}
+    (hC : 0 ≤ C) (hx : Real.exp 1 ≤ x) (hh : 0 < h)
+    (hA : 4 ≤ A) (hT : T ∈ Set.Icc A (A + 1))
+    (hsmall : (T + 2) * Real.log ((x + h) / x) ≤ 1) :
+    PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightIncrementContourBudget
+        C x h A T ≤
+      PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightContourBudget
+        C x h A T :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightIncrementContourBudget_le
+    hC hx hh hA hT hsmall
+
+example {C x h A T : ℝ}
+    (hC : 0 < C) (hx : Real.exp 1 ≤ x) (hh : 0 < h)
+    (hA : 4 ≤ A) (hT : T ∈ Set.Icc A (A + 1))
+    (hsmall : (T + 2) * Real.log ((x + h) / x) ≤ 1) :
+    PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightIncrementContourBudget
+        C x h A T <
+      PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightContourBudget
+        C x h A T :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightIncrementContourBudget_lt
+    hC hx hh hA hT hsmall
+
+example {C x h A T : ℝ}
+    (hC : 0 ≤ C) (hx : Real.exp 1 ≤ x) (hh : 0 < h)
+    (hA : 4 ≤ A) (hT : T ∈ Set.Icc A (A + 1)) :
     PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightContourBudget
         C x h A T ≤
       6 * C * (x + h) ^ (2 : ℝ) *
@@ -627,6 +710,26 @@ example {C x h A T : ℝ}
         C x h A T :=
   PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightTotalBudget_nonneg
     hC hx hh hA hT
+
+example {C x h A T : ℝ}
+    (hC : 0 ≤ C) (hx : Real.exp 1 ≤ x) (hh : 0 < h)
+    (hA : 4 ≤ A) (hT : T ∈ Set.Icc A (A + 1)) :
+    0 ≤
+      PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightIncrementTotalBudget
+        C x h A T :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightIncrementTotalBudget_nonneg
+    hC hx hh hA hT
+
+example {C x h A T : ℝ}
+    (hC : 0 < C) (hx : Real.exp 1 ≤ x) (hh : 0 < h)
+    (hA : 4 ≤ A) (hT : T ∈ Set.Icc A (A + 1))
+    (hsmall : (T + 2) * Real.log ((x + h) / x) ≤ 1) :
+    PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightIncrementTotalBudget
+        C x h A T <
+      PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightTotalBudget
+        C x h A T :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightIncrementTotalBudget_lt
+    hC hx hh hA hT hsmall
 
 example {C x h A T : ℝ}
     (hC : 0 ≤ C) (hx : Real.exp 1 ≤ x) (hh : 0 < h)
