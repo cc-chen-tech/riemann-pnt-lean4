@@ -96,4 +96,34 @@ theorem PositiveZeroBucketInput.sum_norm_pntRelativeZeroContribution_layer_le_co
   · exact hkernel
   · exact hmass
 
+/-- The multiplicity mass of a bucket is automatically bounded by the Carlson
+count because the bucket is a subset of the corresponding zero-density
+finset. -/
+theorem PositiveZeroBucketInput.layer_multiplicityMass_le_zeroDensityCount
+    {T : ℝ} {n : ℕ} (input : PositiveZeroBucketInput T n) (i : Fin n) :
+    analyticMultiplicityMass (input.layer i) ≤
+      (ZeroDensity.zeroDensityCount (input.sigma i) T : ℝ) := by
+  have hnat :
+      (∑ ρ ∈ input.layer i, analyticOrderNatAt riemannZeta ρ) ≤
+        ∑ ρ ∈ ZeroDensity.zeroDensityZerosFinset (input.sigma i) T,
+          analyticOrderNatAt riemannZeta ρ := by
+    apply Finset.sum_le_sum_of_subset_of_nonneg
+      (input.layer_subset_zeroDensityZerosFinset i)
+    intro ρ hρ hnot
+    exact Nat.zero_le _
+  unfold analyticMultiplicityMass ZeroDensity.zeroDensityCount
+  exact_mod_cast hnat
+
+/-- Fully automatic multiplicity accounting for one positive-height bucket. -/
+theorem PositiveZeroBucketInput.sum_norm_pntRelativeZeroContribution_layer_le_count'
+    {T x : ℝ} {n : ℕ} (input : PositiveZeroBucketInput T n) (i : Fin n)
+    (hkernel : ∀ ρ ∈ input.layer i,
+      ‖pntRelativeSimpleZeroKernel x ρ‖ ≤
+        Real.exp (-Pintz.pintzZeroEnvelope x)) :
+    (∑ ρ ∈ input.layer i, ‖pntRelativeZeroContribution x ρ‖) ≤
+      Real.exp (-Pintz.pintzZeroEnvelope x) *
+        (ZeroDensity.zeroDensityCount (input.sigma i) T : ℝ) :=
+  input.sum_norm_pntRelativeZeroContribution_layer_le_count i hkernel
+    (input.layer_multiplicityMass_le_zeroDensityCount i)
+
 end PrimeNumberTheorem
