@@ -2,9 +2,11 @@ import PrimeNumberTheorem.ZeroForcedOscillationExplicitFormula
 import PrimeNumberTheorem.ZeroForcedOscillationComplementaryBound
 import PrimeNumberTheorem.ZeroForcedOscillation
 import PrimeNumberTheorem.PintzEnvelope
+import PrimeNumberTheorem.RiemannVonMangoldt.CriticalLinePartition
 
 open Complex Set
 open scoped BigOperators
+open scoped ComplexConjugate
 
 namespace PrimeNumberTheorem
 namespace VKEdgeConditionalPackage
@@ -82,6 +84,11 @@ structure ClusteredEnvelopeInput where
   hCoeffLower : (1 / max 1 ‖rho0‖) ≤ ‖(analyticOrderNatAt riemannZeta rho0 : ℂ) * rho0⁻¹‖
   hEpsilonNonneg : 0 ≤ epsilon
 
+/-- Minimal analytic hypothesis needed to force a directed half-isolated
+progress step from a fixed real part `β`. -/
+def HalfIsolatedDirectedGrowth (h : HalfIsolatedEnvelopeInput) : Prop :=
+  ∃ T' > h.T, ∃ ρ ∈ equalRealPartZeroPackage T' h.rho0.re, h.T < ρ.im
+
 /-- Target local oscillation conclusion for the half-isolated branch. -/
 def HalfIsolatedConclusion (h : HalfIsolatedEnvelopeInput) : Prop :=
   ∃ x ∈ Set.Icc h.Y (h.Y ^ h.C),
@@ -103,6 +110,94 @@ theorem equalRealPartZeroPackage_mono {T U β : ℝ} (hTU : T ≤ U) :
   intro ρ hρ
   rcases mem_equalRealPartZeroPackage.mp hρ with ⟨hzero, hρT, hβ⟩
   exact mem_equalRealPartZeroPackage.mpr ⟨hzero, le_trans hρT hTU, hβ⟩
+
+/-- Conjugation preserves membership in the selected equal-real-part package. -/
+theorem equalRealPartZeroPackage_conj_mem {T β : ℝ} {ρ : ℂ} :
+    ρ ∈ equalRealPartZeroPackage T β → conj ρ ∈ equalRealPartZeroPackage T β := by
+  intro hρ
+  rcases mem_equalRealPartZeroPackage.mp hρ with ⟨hzero, him, hβ⟩
+  exact mem_equalRealPartZeroPackage.mpr
+      ⟨PrimeNumberTheorem.RiemannVonMangoldt.isNontrivialZero_conj hzero, by simpa using him,
+      by simpa using hβ⟩
+
+/-- The reflection `ρ ↦ 1 - ρ` sends real part `β` to `1-β`, so it cannot
+stay inside the same equal-real-part package when `β ≠ 1/2`. -/
+theorem equalRealPartZeroPackage_one_sub_not_mem_of_not_half {T β : ℝ} {ρ : ℂ}
+    (hβ : β ≠ (1 / 2 : ℝ)) (hρ : ρ ∈ equalRealPartZeroPackage T β) :
+    (1 - ρ) ∉ equalRealPartZeroPackage T β := by
+  intro hρ'
+  have hρβ : ρ.re = β := (mem_equalRealPartZeroPackage.mp hρ).2.2
+  have hρ'β : (1 - ρ).re = β := (mem_equalRealPartZeroPackage.mp hρ').2.2
+  have hρ'β' : 1 - ρ.re = β := by simpa [Complex.sub_re] using hρ'β
+  have hhalf : β = (1 / 2 : ℝ) := by linarith [hρβ, hρ'β']
+  exact hβ hhalf
+
+/-- In one real-part class `β ≠ 1/2`, the two zeta-function symmetries at fixed
+`β` are only the conjugate pair. -/
+theorem equalRealPartZeroPackage_symmetry_orbit
+    {T : ℝ} {ρ : ℂ} (hρ : ρ ∈ equalRealPartZeroPackage T ρ.re)
+    (hβ : ρ.re ≠ (1 / 2 : ℝ)) :
+    ¬(1 - ρ ∈ equalRealPartZeroPackage T ρ.re) ∧
+    ¬(1 - conj ρ ∈ equalRealPartZeroPackage T ρ.re) := by
+  refine ⟨equalRealPartZeroPackage_one_sub_not_mem_of_not_half hβ hρ, ?_⟩
+  exact equalRealPartZeroPackage_one_sub_not_mem_of_not_half hβ
+    (equalRealPartZeroPackage_conj_mem hρ)
+
+/-- `HalfIsolatedDirectedGrowth` is exactly the analytic strict-height-orbit
+condition that can feed a directed growth step: a witness must lie above the
+previous cutoff, hence is not present in the old window. -/
+theorem halfIsolatedDirectedGrowth_witness_not_old_window
+    (h : HalfIsolatedEnvelopeInput)
+    (hP : HalfIsolatedDirectedGrowth h) :
+    ∃ T' > h.T, ∃ ρ ∈ equalRealPartZeroPackage T' h.rho0.re,
+      ρ ∉ equalRealPartZeroPackage h.T h.rho0.re ∧ h.T < ρ.im := by
+  rcases hP with ⟨T', hT', ρ, hρ', himax⟩
+  refine ⟨T', hT', ρ, hρ', ?_, himax⟩
+  intro hold
+  have him_old : |ρ.im| ≤ h.T := (mem_equalRealPartZeroPackage.mp hold).2.1
+  have him_nonneg : 0 ≤ h.T := by
+    exact le_trans (abs_nonneg _) him_old
+  have him_le : ρ.im ≤ |ρ.im| := le_abs_self ρ.im
+  have him_le_T : ρ.im ≤ h.T := le_trans him_le him_old
+  exact (not_le_of_gt himax) him_le_T
+
+/-- Minimal analytic input for a directed-growth step.
+`Potential` only states that some zero of the fixed real part appears at larger
+absolute height in a larger truncation window.  It is exactly what remains needed
+as a non-symmetry growth hypothesis once symmetric obstruction is ruled out. -/
+def HalfIsolatedDirectedGrowthPotential (h : HalfIsolatedEnvelopeInput) : Prop :=
+  ∃ T' > h.T, ∃ ρ ∈ equalRealPartZeroPackage T' h.rho0.re, h.T < ρ.im
+
+theorem halfIsolatedDirectedGrowthPotential (h : HalfIsolatedEnvelopeInput) :
+    HalfIsolatedDirectedGrowthPotential h ↔ HalfIsolatedDirectedGrowth h := by
+  rfl
+
+/-- Symmetry-only closure cannot force `HalfIsolatedDirectedGrowthPotential` in the absence
+of a genuinely higher-ordinate zero in some larger window: if every zero in every
+larger symmetric truncation still has ordinate `≤ h.T`, no directed growth is possible. -/
+theorem halfIsolatedDirectedGrowthPotential_blocked_by_symmetry
+    {h : HalfIsolatedEnvelopeInput}
+    (hheight :
+      ∀ T' > h.T, ∀ ρ ∈ equalRealPartZeroPackage T' h.rho0.re, ρ.im ≤ h.T) :
+    ¬ HalfIsolatedDirectedGrowthPotential h := by
+  intro hP
+  rcases hP with ⟨T', hT', ρ, hρ, hρT⟩
+  have hρ_im : ρ.im ≤ h.T := hheight T' hT' ρ hρ
+  exact (not_le_of_gt hρT) hρ_im
+
+/-- In a β-class, `1 - ρ` has the mirrored real part and therefore cannot remain
+inside the same fixed-real-part class off the critical line, while `conj ρ` preserves
+ordinates; hence zeta symmetries on `ρ` cannot by themselves produce a strict higher
+height new zero for `β ≠ 1/2`. -/
+theorem halfIsolatedDirectedGrowth_no_new_from_zeta_symmetry
+    {h : HalfIsolatedEnvelopeInput}
+    {ρ : ℂ}
+    (hρ : ρ ∈ equalRealPartZeroPackage h.T h.rho0.re) :
+    conj ρ ∈ equalRealPartZeroPackage h.T h.rho0.re ∧
+      |(conj ρ).im| = |ρ.im| := by
+  constructor
+  · exact equalRealPartZeroPackage_conj_mem hρ
+  · simp
 
 /-- Tail control in BY-scale requires an explicit coefficient upper bound at `ρ₀`. -/
 theorem clustered_tailsum_byBY_scale (h : ClusteredEnvelopeInput) (K : ℝ)
