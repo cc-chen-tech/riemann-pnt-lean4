@@ -353,4 +353,32 @@ theorem card_selbergSqrtZetaSignedNearFrequencySupport_le_one
     htri.trans_lt hnear
   exact (not_lt_of_ge (by simpa only [M] using hsep)) hlt
 
+/-- The exceptional collected frequencies lying within half the uniform
+spacing of the stationary center `-thetaModel'(t)`. -/
+noncomputable def selbergSqrtZetaSignedNearStationarySupport
+    (N X : ℕ) (t : ℝ) : Finset ℚ :=
+  selbergSqrtZetaSignedNearFrequencySupport N X (-deriv thetaModel t)
+
+/-- At any height there is at most one collected rational frequency within
+half the uniform spacing of stationary phase. -/
+theorem card_selbergSqrtZetaSignedNearStationarySupport_le_one
+    {N X : ℕ} (hN : 0 < N) (hX : 0 < X) (t : ℝ) :
+    (selbergSqrtZetaSignedNearStationarySupport N X t).card ≤ 1 := by
+  exact card_selbergSqrtZetaSignedNearFrequencySupport_le_one
+    hN hX (-deriv thetaModel t)
+
+/-- Every supported frequency outside the exceptional stationary
+neighborhood has tangent frequency at least half the uniform spacing. -/
+theorem
+    one_div_two_mul_nat_mul_sq_le_abs_thetaDerivative_add_frequency_of_mem_not_near
+    {N X : ℕ} {q : ℚ} {t : ℝ}
+    (hq : q ∈ selbergSqrtZetaSignedRationalSupport N X)
+    (hqfar : q ∉ selbergSqrtZetaSignedNearStationarySupport N X t) :
+    1 / (2 * ((N * X ^ 2 : ℕ) : ℝ)) ≤
+      |deriv thetaModel t + selbergSqrtZetaSignedRationalFrequency q| := by
+  unfold selbergSqrtZetaSignedNearStationarySupport
+    selbergSqrtZetaSignedNearFrequencySupport at hqfar
+  simp only [Finset.mem_filter, hq, true_and, not_lt] at hqfar
+  simpa only [sub_neg_eq_add, add_comm] using hqfar
+
 end HardyTheorem
