@@ -48,7 +48,7 @@ theorem selbergSqrtZetaShortDirichletGapSum_le_diagonal_add_offDiagonal
           ((15 : ℝ) / 4 * H ^ 2 +
             ∑ k ∈ Finset.Ioc (min N X) (N * X * X),
               (min |H| (2 / Real.log (k : ℝ))) ^ 2 *
-                ((selbergShortDirichletTriples N X k).card ^ 2 /
+                ((selbergShortCompleteRangePairs X k).card ^ 2 /
                   (k : ℝ))) +
         H ^ 2 *
           ∑ m ∈ Finset.Ioc 1 (N * X * X),
@@ -66,7 +66,7 @@ theorem selbergSqrtZetaShortDirichletGapSum_le_diagonal_add_offDiagonal
       selbergShortDirichletCollectedFrequency hAB).trans
   exact add_le_add
     (mul_le_mul_of_nonneg_left
-      (sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_le_lowRange_add_cardSqHighRange
+      (sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_le_lowRange_add_completePairCardSqHighRange
         hN hX hlarge H)
       (sub_nonneg.mpr hAB))
     le_rfl

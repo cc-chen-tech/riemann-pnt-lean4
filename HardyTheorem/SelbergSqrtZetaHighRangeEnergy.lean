@@ -25,6 +25,42 @@ noncomputable def selbergSqrtZetaShortCollectedTripleFiberEnergy
     ∑ p ∈ selbergShortDirichletTriples N X k,
       Complex.normSq (selbergSqrtZetaShortDirichletTripleCoeff X p)
 
+/-- Projection to the two mollifier indices embeds each triple-product fiber
+into the complete restricted divisor-pair set. -/
+theorem card_selbergShortDirichletTriples_le_completeRangePairs
+    (N X k : ℕ) :
+    (selbergShortDirichletTriples N X k).card ≤
+      (selbergShortCompleteRangePairs X k).card := by
+  classical
+  apply Finset.card_le_card_of_injOn Prod.snd
+  · intro p hp
+    rcases Finset.mem_filter.mp hp with ⟨hpSupport, hprod⟩
+    rcases Finset.mem_product.mp hpSupport with ⟨_hpm, hpdl⟩
+    exact Finset.mem_filter.mpr
+      ⟨hpdl, ⟨p.1, by
+        simpa [Nat.mul_assoc, Nat.mul_comm, Nat.mul_left_comm] using
+          hprod.symm⟩⟩
+  · intro p hp q hq hsnd
+    apply Prod.ext
+    · rcases Finset.mem_filter.mp hp with ⟨hpSupport, hpProd⟩
+      rcases Finset.mem_filter.mp hq with ⟨_hqSupport, hqProd⟩
+      rcases Finset.mem_product.mp hpSupport with ⟨_hpm, hpdl⟩
+      rcases Finset.mem_product.mp hpdl with ⟨hpd, hpl⟩
+      have hdlpos : 0 < p.2.1 * p.2.2 :=
+        Nat.mul_pos (Finset.mem_Icc.mp hpd).1
+          (Finset.mem_Icc.mp hpl).1
+      have hmul :
+          p.1 * (p.2.1 * p.2.2) =
+            q.1 * (p.2.1 * p.2.2) := by
+        calc
+          p.1 * (p.2.1 * p.2.2) = k := by
+            simpa [Nat.mul_assoc] using hpProd
+          _ = q.1 * (q.2.1 * q.2.2) := by
+            simpa [Nat.mul_assoc] using hqProd.symm
+          _ = q.1 * (p.2.1 * p.2.2) := by rw [hsnd]
+      exact Nat.eq_of_mul_eq_mul_right hdlpos hmul
+    · exact hsnd
+
 /-- Fiberwise finite Cauchy--Schwarz for one collected square-root-zeta
 coefficient. -/
 theorem normSq_selbergSqrtZetaShortDirichletCollectedCoeff_le_tripleFiber
@@ -122,6 +158,24 @@ theorem selbergSqrtZetaShortCollectedTripleFiberEnergy_le_card_sq_div
     _ = S.card ^ 2 / (k : ℝ) := by
       simp only [S]
       ring
+
+/-- Replacing the triple fiber by its injective divisor-pair projection gives
+the standard restricted divisor-pair majorant. -/
+theorem selbergSqrtZetaShortCollectedTripleFiberEnergy_le_completePair_card_sq_div
+    {N X k : ℕ} (hX : 2 ≤ X) :
+    selbergSqrtZetaShortCollectedTripleFiberEnergy N X k ≤
+      (selbergShortCompleteRangePairs X k).card ^ 2 / (k : ℝ) := by
+  apply
+    (selbergSqrtZetaShortCollectedTripleFiberEnergy_le_card_sq_div
+      (N := N) hX).trans
+  have hcard :=
+    card_selbergShortDirichletTriples_le_completeRangePairs N X k
+  have hsquare :
+      (selbergShortDirichletTriples N X k).card ^ 2 ≤
+        (selbergShortCompleteRangePairs X k).card ^ 2 :=
+    Nat.pow_le_pow_left hcard 2
+  exact div_le_div_of_nonneg_right
+    (by exact_mod_cast hsquare) (Nat.cast_nonneg k)
 
 /-- The strongest pointwise interval-transform envelope for a nonconstant
 collected mode. -/
@@ -221,6 +275,40 @@ theorem sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_highRange
         (selbergSqrtZetaShortCollectedTripleFiberEnergy_le_card_sq_div hX)
         (sq_nonneg _)
 
+/-- The high range in the conventional restricted-divisor-pair form. -/
+theorem sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_highRange_le_completePairCardSq
+    {N X : ℕ} (hN : 1 ≤ N) (hX : 2 ≤ X) (H : ℝ) :
+    (∑ k ∈ Finset.Ioc (min N X) (N * X * X),
+        Complex.normSq
+          (MathlibAux.slidingExponentialCoefficient H
+            (selbergSqrtZetaShortDirichletCollectedCoeff N X)
+            selbergShortDirichletCollectedFrequency k)) ≤
+      ∑ k ∈ Finset.Ioc (min N X) (N * X * X),
+        (min |H| (2 / Real.log (k : ℝ))) ^ 2 *
+          ((selbergShortCompleteRangePairs X k).card ^ 2 /
+            (k : ℝ)) := by
+  calc
+    (∑ k ∈ Finset.Ioc (min N X) (N * X * X),
+        Complex.normSq
+          (MathlibAux.slidingExponentialCoefficient H
+            (selbergSqrtZetaShortDirichletCollectedCoeff N X)
+            selbergShortDirichletCollectedFrequency k)) ≤
+      ∑ k ∈ Finset.Ioc (min N X) (N * X * X),
+        (min |H| (2 / Real.log (k : ℝ))) ^ 2 *
+          selbergSqrtZetaShortCollectedTripleFiberEnergy N X k :=
+      sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_highRange_le_tripleFiberMin
+        hN hX H
+    _ ≤ ∑ k ∈ Finset.Ioc (min N X) (N * X * X),
+        (min |H| (2 / Real.log (k : ℝ))) ^ 2 *
+          ((selbergShortCompleteRangePairs X k).card ^ 2 /
+            (k : ℝ)) := by
+      apply Finset.sum_le_sum
+      intro k _hk
+      exact mul_le_mul_of_nonneg_left
+        (selbergSqrtZetaShortCollectedTripleFiberEnergy_le_completePair_card_sq_div
+          hX)
+        (sq_nonneg _)
+
 /-- The full transformed energy is the proved constant low range plus one
 explicit minimum-envelope triple-fiber high-range sum. -/
 theorem sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_le_lowRange_add_tripleFiberMinHighRange
@@ -262,6 +350,28 @@ theorem sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_le_lowRan
       hN (by omega) hlarge H).trans
       (add_le_add (le_refl _)
         (sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_highRange_le_cardSq
+          hN hX H))
+
+/-- The complete energy bound with a restricted divisor-pair square moment
+as its only high-range input. -/
+theorem sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_le_lowRange_add_completePairCardSqHighRange
+    {N X : ℕ} (hN : 1 ≤ N) (hX : 2 ≤ X)
+    (hlarge : Real.log 4 + 5 ≤ Real.log X) (H : ℝ) :
+    (∑ k ∈ Finset.Ioc 1 (N * X * X),
+        Complex.normSq
+          (MathlibAux.slidingExponentialCoefficient H
+            (selbergSqrtZetaShortDirichletCollectedCoeff N X)
+            selbergShortDirichletCollectedFrequency k)) ≤
+      (15 : ℝ) / 4 * H ^ 2 +
+        ∑ k ∈ Finset.Ioc (min N X) (N * X * X),
+          (min |H| (2 / Real.log (k : ℝ))) ^ 2 *
+            ((selbergShortCompleteRangePairs X k).card ^ 2 /
+              (k : ℝ)) := by
+  exact
+    (sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_le_lowRange_add_highRange
+      hN (by omega) hlarge H).trans
+      (add_le_add (le_refl _)
+        (sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_highRange_le_completePairCardSq
           hN hX H))
 
 end HardyTheorem

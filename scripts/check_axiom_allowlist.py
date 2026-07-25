@@ -174,6 +174,7 @@ EXPECTED_DECLARATIONS = {
     "HardyTheorem.sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_le_lowRange_add_tripleFiberMinHighRange",
     "HardyTheorem.sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_le_lowRange_add_cardSqHighRange",
     "HardyTheorem.selbergSqrtZetaShortDirichletGapSum_le_diagonal_add_offDiagonal",
+    "HardyTheorem.sum_normSq_sliding_selbergSqrtZetaShortDirichletCollectedCoeff_le_lowRange_add_completePairCardSqHighRange",
     "HardyTheorem.integral_normSq_selbergSqrtZetaMollifiedShortDirichletPolynomial_le_gapSum",
     "HardyTheorem.exp_I_thetaModel_mul_criticalLinePolynomial_mul_mollifier_mul_conj_eq_collectedPhasePolynomial",
     "HardyTheorem.selbergMollifiedTripleKey_eq_one_iff",
