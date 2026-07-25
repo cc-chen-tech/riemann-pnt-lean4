@@ -288,4 +288,69 @@ theorem
   subst r
   exact one_div_nat_mul_sq_le_abs_sub_rationalFrequency hp hs hne
 
+/-- Frequencies lying strictly within half the uniform logarithmic spacing
+of a real center.  For `xi = -deriv thetaModel t`, this is the exceptional
+near-stationary rational-frequency set. -/
+noncomputable def selbergSqrtZetaSignedNearFrequencySupport
+    (N X : ℕ) (xi : ℝ) : Finset ℚ :=
+  (selbergSqrtZetaSignedRationalSupport N X).filter
+    (fun q =>
+      |selbergSqrtZetaSignedRationalFrequency q - xi| <
+        1 / (2 * ((N * X ^ 2 : ℕ) : ℝ)))
+
+/-- A half-spacing neighborhood of any real center contains at most one
+collected rational frequency. -/
+theorem card_selbergSqrtZetaSignedNearFrequencySupport_le_one
+    {N X : ℕ} (hN : 0 < N) (hX : 0 < X) (xi : ℝ) :
+    (selbergSqrtZetaSignedNearFrequencySupport N X xi).card ≤ 1 := by
+  classical
+  rw [Finset.card_le_one]
+  intro q hq r hr
+  by_contra hne
+  have hqData := Finset.mem_filter.mp hq
+  have hrData := Finset.mem_filter.mp hr
+  have hsep :=
+    one_div_nat_mul_sq_le_abs_sub_frequency_of_mem_selbergSqrtZetaSignedRationalSupport
+      hqData.1 hrData.1 hne
+  let M : ℝ := ((N * X ^ 2 : ℕ) : ℝ)
+  have hM : 0 < M := by
+    dsimp only [M]
+    exact_mod_cast Nat.mul_pos hN (pow_pos hX 2)
+  have htri :
+      |selbergSqrtZetaSignedRationalFrequency q -
+          selbergSqrtZetaSignedRationalFrequency r| ≤
+        |selbergSqrtZetaSignedRationalFrequency q - xi| +
+          |selbergSqrtZetaSignedRationalFrequency r - xi| := by
+    calc
+      |selbergSqrtZetaSignedRationalFrequency q -
+          selbergSqrtZetaSignedRationalFrequency r| =
+          |(selbergSqrtZetaSignedRationalFrequency q - xi) +
+            (xi - selbergSqrtZetaSignedRationalFrequency r)| := by ring
+      _ ≤ |selbergSqrtZetaSignedRationalFrequency q - xi| +
+          |xi - selbergSqrtZetaSignedRationalFrequency r| :=
+        abs_add_le _ _
+      _ = |selbergSqrtZetaSignedRationalFrequency q - xi| +
+          |selbergSqrtZetaSignedRationalFrequency r - xi| := by
+        rw [abs_sub_comm xi]
+  have hradius :
+      1 / (2 * M) + 1 / (2 * M) = 1 / M := by
+    field_simp [hM.ne']
+    ring
+  have hnear :
+      |selbergSqrtZetaSignedRationalFrequency q - xi| +
+          |selbergSqrtZetaSignedRationalFrequency r - xi| <
+        1 / M := by
+    calc
+      |selbergSqrtZetaSignedRationalFrequency q - xi| +
+          |selbergSqrtZetaSignedRationalFrequency r - xi| <
+          1 / (2 * M) + 1 / (2 * M) := by
+        exact add_lt_add hqData.2 hrData.2
+      _ = 1 / M := hradius
+  have hlt :
+      |selbergSqrtZetaSignedRationalFrequency q -
+          selbergSqrtZetaSignedRationalFrequency r| <
+        1 / M :=
+    htri.trans_lt hnear
+  exact (not_lt_of_ge (by simpa only [M] using hsep)) hlt
+
 end HardyTheorem
