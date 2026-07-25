@@ -1,0 +1,4 @@
+import PrimeNumberTheorem.VKEdgePiOverTwoLocalizedAssembly
+
+#print axioms PrimeNumberTheorem.VKEdgePiOverTwo.LocalizedContourData.eventually_exists_normalizedPsiError_gt
+#print axioms PrimeNumberTheorem.VKEdgePiOverTwo.LocalizedContourData.eventually_exists_psiError_in_powerSevenWindow

@@ -154,19 +154,19 @@ Run the contract and axiom audit, then commit without adding any contour assumpt
 - Consumes: the Gaussian mean layer, finite-pole filter, missing-harmonic certificate, and explicit hypotheses expressing the simultaneous zero-avoiding contour estimates.
 - Produces: a conditional theorem locating a strict `> pi / 2` normalized oscillation in every late logarithmic window.
 
-- [ ] **Step 1: Define the smallest honest contour-data structure**
+- [x] **Step 1: Define the smallest honest contour-data structure**
 
 Every field must be a quantitative estimate used in equations (15)--(32) of `docs/research/vk-edge-pi-over-two-localized-transfer.md`. Do not include the desired conclusion as a field.
 
-- [ ] **Step 2: Prove the residue-to-window lower bound**
+- [x] **Step 2: Prove the residue-to-window lower bound**
 
 Combine target residues, annihilated local poles, exponentially decaying far poles, contour decay, Gaussian averaging, and the strict missing-harmonic denominator.
 
-- [ ] **Step 3: Compose with Task 1**
+- [x] **Step 3: Compose with Task 1**
 
 Derive the standard `chebyshevPsi` witness in `[Y,Y^7]`. The starting threshold may depend on the fixed zero and filter data.
 
-- [ ] **Step 4: Audit the interface**
+- [x] **Step 4: Audit the interface**
 
 Confirm that the theorem is mathematically conditional and that no field merely restates the output. Run focused contracts and `#print axioms`.
 
