@@ -384,5 +384,123 @@ theorem halfIsolatedDetectorClusterEndpoint
       ⟨zset, hsubset, hcard⟩
     exact ⟨hcluster, ⟨zset, hsubset, hcard⟩⟩
 
+noncomputable def halfIsolatedClusterNext
+    (T β : ℝ) (gapRadius : ℂ → ℝ) (ρ : ℂ) : Finset ℂ :=
+  TopLayerWindow T β (gapRadius ρ) ρ
+
+/-- Zero-level adjacency produced by a radius assignment `gapRadius`. -/
+noncomputable def halfIsolatedClusterIteration
+    (T β : ℝ) (gapRadius : ℂ → ℝ) : ℕ → Finset ℂ → Finset ℂ
+  | 0, centers => centers
+  | n+1, centers =>
+      (halfIsolatedClusterIteration T β gapRadius n centers).biUnion
+        (halfIsolatedClusterNext T β gapRadius)
+
+ /-- Iteration for a generic zero-adjacency relation. -/
+noncomputable def halfIsolatedClusterIterationOfNeighbor
+    (neighbor : ℂ → Finset ℂ) : ℕ → Finset ℂ → Finset ℂ
+  | 0, centers => centers
+  | n+1, centers => (halfIsolatedClusterIterationOfNeighbor neighbor n centers).biUnion
+      neighbor
+
+lemma halfIsolatedClusterIteration_step_lower
+    (T β : ℝ) (gapRadius : ℂ → ℝ) (centers : Finset ℂ)
+    (q : ℕ)
+  (hq : 1 ≤ q)
+  (hdisj :
+      ((↑centers : Set ℂ)).PairwiseDisjoint (halfIsolatedClusterNext T β gapRadius))
+  (htwo : ∀ ρ ∈ centers, q ≤ (halfIsolatedClusterNext T β gapRadius ρ).card) :
+  q * centers.card ≤
+    (halfIsolatedClusterIteration T β gapRadius 1 centers).card := by
+  have hcard_eq :
+      (centers.biUnion (halfIsolatedClusterNext T β gapRadius)).card =
+        centers.sum (fun ρ => (halfIsolatedClusterNext T β gapRadius ρ).card) := by
+    simpa using (Finset.card_biUnion hdisj)
+  have hsum_lower_aux : centers.card * q ≤ centers.sum (fun ρ =>
+      (halfIsolatedClusterNext T β gapRadius ρ).card) := by
+    calc
+      centers.card * q = centers.sum (fun _ : ℂ => q) := by simp
+      _ ≤ centers.sum (fun ρ => (halfIsolatedClusterNext T β gapRadius ρ).card) :=
+        Finset.sum_le_sum (fun ρ hρ => htwo ρ hρ)
+  have hsum_lower : q * centers.card ≤
+      (centers.biUnion (halfIsolatedClusterNext T β gapRadius)).card := by
+    have hsum_lower' : q * centers.card ≤ centers.sum (fun ρ =>
+        (halfIsolatedClusterNext T β gapRadius ρ).card) := by
+      simpa [Nat.mul_comm, Nat.mul_left_comm, Nat.mul_assoc] using hsum_lower_aux
+    simpa [hcard_eq] using hsum_lower'
+  simpa [halfIsolatedClusterIteration] using hsum_lower
+
+/-- If each iteration level has `q`-ary branching and level-wise disjoint windows,
+the `n`-th frontier has at least `q^n` times the root count. -/
+theorem halfIsolatedClusterIteration_exponential
+    (T β : ℝ) (gapRadius : ℂ → ℝ) (centers : Finset ℂ)
+    (q : ℕ)
+    (hq : 1 ≤ q)
+    (hdisj :
+      ∀ n : ℕ,
+        ((↑(halfIsolatedClusterIteration T β gapRadius n centers) : Set ℂ)).PairwiseDisjoint
+          (halfIsolatedClusterNext T β gapRadius))
+    (htwo :
+      ∀ n ρ,
+        ρ ∈ halfIsolatedClusterIteration T β gapRadius n centers →
+          q ≤ (halfIsolatedClusterNext T β gapRadius ρ).card) :
+    ∀ n : ℕ,
+      q ^ n * centers.card ≤ (halfIsolatedClusterIteration T β gapRadius n centers).card := by
+  intro n
+  induction n with
+  | zero =>
+      simpa [halfIsolatedClusterIteration]
+  | succ n ih =>
+      have hdisj_succ := hdisj n
+      have htwo_succ :
+          ∀ ρ ∈ halfIsolatedClusterIteration T β gapRadius n centers,
+            q ≤ (halfIsolatedClusterNext T β gapRadius ρ).card :=
+        htwo n
+      have hstep :
+          q * (halfIsolatedClusterIteration T β gapRadius n centers).card ≤
+            (halfIsolatedClusterIteration T β gapRadius (n + 1) centers).card := by
+        simpa [halfIsolatedClusterIteration] using
+          (halfIsolatedClusterIteration_step_lower T β gapRadius
+            (halfIsolatedClusterIteration T β gapRadius n centers) q
+            hq hdisj_succ htwo_succ)
+      have hmul : q ^ (n + 1) * centers.card = q * (q ^ n * centers.card) := by
+        simp [Nat.pow_succ, Nat.mul_assoc, Nat.mul_left_comm, Nat.mul_comm]
+      calc
+        q ^ (n + 1) * centers.card = q * (q ^ n * centers.card) := hmul
+        _ ≤ q * (halfIsolatedClusterIteration T β gapRadius n centers).card :=
+          Nat.mul_le_mul_left _ ih
+        _ ≤ (halfIsolatedClusterIteration T β gapRadius (n + 1) centers).card := hstep
+
+/-- A strict finite two-vertex counterexample: each vertex has two neighbors,
+but two-step expansion does not double the frontier size. This isolates missing
+`no-revisit/no-layer-overlap` hypotheses for a true replicate argument. -/
+noncomputable def halfIsolatedLoopNeighbor (a b : ℂ) : ℂ → Finset ℂ :=
+  fun z => if z = a then ({a, b} : Finset ℂ) else if z = b then ({a, b} : Finset ℂ) else ∅
+
+noncomputable def halfIsolatedLoopCenters (a b : ℂ) : Finset ℂ := ({a, b} : Finset ℂ)
+
+noncomputable def halfIsolatedLoopIteration (a b : ℂ) : ℕ → Finset ℂ :=
+  fun n => halfIsolatedClusterIterationOfNeighbor (halfIsolatedLoopNeighbor a b) n (halfIsolatedLoopCenters a b)
+
+theorem halfIsolatedLoopIteration_counterexample
+    (a b : ℂ) (hab : a ≠ b) :
+    ¬ (4 ≤ (halfIsolatedLoopIteration a b 2).card) ∧
+    ∀ z ∈ halfIsolatedLoopCenters a b, 2 ≤ (halfIsolatedLoopNeighbor a b z).card := by
+  have hloop_ne : halfIsolatedLoopIteration a b 2 = ({a, b} : Finset ℂ) := by
+    simp [halfIsolatedLoopIteration, halfIsolatedClusterIterationOfNeighbor,
+      halfIsolatedLoopNeighbor, halfIsolatedLoopCenters, hab]
+  have hpair_card : ({a, b} : Finset ℂ).card = 2 := by
+    simpa [Finset.card_pair, hab]
+  refine ⟨?_, ?_⟩
+  · intro h
+    exact (show ¬ (4 : ℕ) ≤ 2 from by decide) (by simpa [hloop_ne, hpair_card] using h)
+  · intro z hz
+    have hz' : z = a ∨ z = b := by
+      simpa [halfIsolatedLoopCenters, hab, Finset.mem_insert, Finset.mem_singleton] using hz
+    rcases hz' with rfl | rfl
+    · simp [halfIsolatedLoopNeighbor, hab]
+    · simp [halfIsolatedLoopNeighbor, hab]
+
+
 end HalfIsolatedZeroDichotomy
 end PrimeNumberTheorem
