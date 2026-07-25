@@ -1,0 +1,10 @@
+import PrimeNumberTheorem.VKEdgePiOverTwoAbelIntegral
+
+#print axioms
+  PrimeNumberTheorem.VKEdgePiOverTwo.integral_logarithmicPsiError_eq_mellin
+#print axioms
+  PrimeNumberTheorem.VKEdgePiOverTwo.psiAbelCoefficient_eq_regularizedNegLogDerivModel
+#print axioms
+  PrimeNumberTheorem.VKEdgePiOverTwo.tendsto_psiAbelCoefficient_of_zeta_zero
+#print axioms
+  PrimeNumberTheorem.VKEdgePiOverTwo.tendsto_psiAbelCoefficient_of_zeta_ne_zero

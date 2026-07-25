@@ -26,7 +26,8 @@ Primary sources:
 ## Timeboxed milestone outcome
 
 **Status: F0_PASSED_AND_ZETA_ALIGNED; F1_PACKAGE_ISOLATION_PASSED;
-F1_CLOSED_TERMS_BOUNDED; F1_UNCONTROLLED_REMAINDER_OPEN.**  The checked Lean surface
+F1_CLOSED_TERMS_BOUNDED; F1_FIXED_HEIGHT_COMPLEMENT_GAP_CLOSED;
+F1_FIXED_HEIGHT_PSI0_TRANSFER_CLOSED; F1_UNIFORM_REMAINDER_OPEN.**  The checked Lean surface
 proves the exact integral and interval-independent norm bound for one ordered
 off-diagonal pair, the aggregate finite mean-square estimate, and an interior
 point attaining the resulting lower average.  Natural multiplicity is retained
@@ -71,9 +72,47 @@ and hence a norm budget
 The resulting transfer theorem subtracts exactly this budget while retaining
 `uncontrolled_remainder(y,T,beta)` as the sum of the complementary zero
 package and the actual explicit-formula approximation error. It does not
-bound either constituent, and does not give a uniform truncation estimate on a
-logarithmic interval. Therefore the quantitative remainder requirement in F1,
-the Revesz baseline recovery, and both novelty gates remain open.
+give a uniform truncation estimate on a logarithmic interval.
+
+At each fixed truncation height `T`, Lean now selects the maximal real part
+`beta_T` of `nontrivialZerosFinset T`, retains every zero on that layer, and
+constructs an explicit positive gap `delta_T` to the finite complementary
+package.  This removes the former abstract gap assumption and proves
+
+```text
+||complementary_zero_package(exp y, T, beta_T)||
+  <= exp((beta_T - delta_T) y)
+       * sum_{|Im rho| <= T} m(rho) / ||rho||.
+```
+
+For `T >= 4`, the global reciprocal-zero estimate further replaces the last
+sum by `C * (1 + log(T+6))^2`, with one existential constant `C` independent
+of `T`.
+
+The fixed-height ingredients are now connected to the actual explicit-formula
+transfer.  The theorem
+`exists_C_forall_fixedHeight_maximalZeroPackage_forces_psi0_error` gives,
+on every positive interval `(a,b)`, a point `y` for which the automatically
+selected maximal layer has its proved mean-square lower bound and
+
+```text
+||selected_package(exp y)||
+  - [exp((beta_T-delta_T)y) C(1+log(T+6))^2
+     + ||explicitFormulaApprox(exp y,T)-psi0(exp y)||]
+  - closed_budget(y)
+<= ||psi0(exp y)-exp y||.
+```
+
+Thus the finite-dimensional spectral lower bound, automatic complementary
+gap, global reciprocal-zero budget, and the finite-height explicit formula are
+all in one unconditional Lean theorem.  The displayed approximation norm is
+deliberately retained: no uniform estimate for it is proved or assumed.
+
+This is a genuine fixed-height finite-set theorem.  It does not supply a lower
+bound for `delta_T` uniform in a moving height `T = T(y)`, and it does not
+bound the explicit-formula approximation error. Therefore the quantitative
+remainder requirement in F1, the Revesz baseline recovery, and both novelty
+gates remain open.
 
 ## Exact classical-zeta candidate theorem
 
@@ -203,10 +242,11 @@ prove that `zeroPackageUncontrolledRemainder y T beta` is uniformly smaller
 than the F0 lower amplitude minus the proved closed-form budget on a specified
 logarithmic interval. The package is already an actual selected zeta-zero
 contribution in the repository's finite-height approximation. What remains
-requires quantitative control of complementary/lower-real-part zeros and the
-explicit-formula approximation error. The closed logarithmic term is no
-longer a gap, but no theorem here controls complementary zeros or a uniform
-truncation error.
+requires a usable lower bound for the automatically selected fixed-height gap
+as the truncation height moves, together with a uniform explicit-formula
+approximation error. The closed logarithmic term and the existence of a
+positive gap at each fixed height are no longer gaps; no theorem here keeps
+that gap quantitatively positive along `T = T(y)`.
 
 ## Experiment schema
 
@@ -261,11 +301,14 @@ After implementation, run only:
 ```text
 lake env lean Test/ZeroForcedOscillationExplicitFormulaContract.lean
 lake env lean Test/ZeroForcedOscillationExplicitFormulaAxiomAudit.lean
+lake env lean Test/ZeroForcedOscillationComplementaryBoundContract.lean
+lake env lean Test/ZeroForcedOscillationComplementaryBoundAxiomAudit.lean
 ```
 
 The audit must print axioms for the aggregate mean-square bound, its
 multiplicity specialization, the interior-point consequence, the
 common-real-part complex-power bridge, the closed-term bound, and the
-closed-budget transfer.
+closed-budget transfer, the automatic maximal-layer complementary estimate,
+and the fixed-height `psi0` transfer.
 A final source scan must find no
 `sorry`, `admit`, or `axiom` in the new production and test files.

@@ -1,0 +1,10 @@
+import PrimeNumberTheorem.VKEdgePiOverTwoAbelBoundary
+
+#print axioms
+  PrimeNumberTheorem.VKEdgePiOverTwo.regularizedNegLogDerivModel_eq_neg_logDeriv_sub_pole_of_power_error
+#print axioms
+  PrimeNumberTheorem.VKEdgePiOverTwo.tendsto_atRight_mul_regularizedNegLogDerivModel_of_zeta_zero
+#print axioms
+  PrimeNumberTheorem.VKEdgePiOverTwo.tendsto_atRight_mul_regularizedNegLogDerivModel_of_zeta_ne_zero
+#print axioms
+  PrimeNumberTheorem.VKEdgePiOverTwo.exists_missing_oddHarmonic_with_abel_coefficients_of_carlson
