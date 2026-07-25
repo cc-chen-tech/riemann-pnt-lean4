@@ -16,6 +16,7 @@ open PrimeNumberTheorem.VKEdgePiOverTwo
 #check norm_localizedGaussianWeight_horizontal_le_uniform
 #check norm_div_sub_one_horizontal_le_two
 #check exists_goodHeight_Icc_norm_regularizedLogDeriv_horizontal_le
+#check exists_goodHeight_Icc_norm_integral_regularizedLogDeriv_localizedGaussianWeight_horizontal_le
 
 example (A : ℂ[X]) (w z : ℂ) (m : ℝ) :
     ‖localizedGaussianWeight A w m z‖ =

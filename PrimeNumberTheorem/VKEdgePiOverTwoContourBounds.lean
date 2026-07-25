@@ -434,6 +434,87 @@ theorem exists_goodHeight_Icc_norm_regularizedLogDeriv_horizontal_le :
       exact norm_div_sub_one_horizontal_le_two
         hu1 hσlo hσhi hTfour ht
 
+/--
+At the same good height, the complete true-zeta horizontal integral is
+controlled by the polynomial growth of `A`, the Gaussian vertical decay, and
+the standard good-height logarithmic-derivative bound.
+-/
+theorem
+    exists_goodHeight_Icc_norm_integral_regularizedLogDeriv_localizedGaussianWeight_horizontal_le :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ H : ℝ, 4 ≤ H →
+      ∃ T ∈ Set.Icc H (H + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ (A : ℂ[X]) (u v m t : ℝ),
+            0 < u → u < 1 → 0 ≤ m → |t| = T →
+              ‖∫ σ : ℝ in (-1)..(u + 2),
+                  localizedGaussianWeight A ((u : ℂ) + I * v) m
+                      ((σ : ℂ) + I * t) *
+                    (-logDeriv riemannZeta ((σ : ℂ) + I * t) -
+                      (((σ : ℂ) + I * t) /
+                        (((σ : ℂ) + I * t) - 1)))‖ ≤
+                (((∑ k ∈ A.support, ‖A.coeff k‖) *
+                    max 1 (T + |v| + 3) ^ A.natDegree *
+                    Real.exp (m * (36 - (t - v) ^ 2))) *
+                  (max
+                    (C * (1 + Real.log (H + 6)) ^ 2)
+                    (ExplicitFormulaResidues.vonMangoldtLSeriesNorm 1) +
+                    2)) *
+                  (u + 3) := by
+  rcases exists_goodHeight_Icc_norm_regularizedLogDeriv_horizontal_le with
+    ⟨C, hC, hchoose⟩
+  refine ⟨C, hC, ?_⟩
+  intro H hH
+  rcases hchoose H hH with ⟨T, hT, hgood, hregularized⟩
+  refine ⟨T, hT, hgood, ?_⟩
+  intro A u v m t hu hu1 hm ht
+  let W : ℝ :=
+    (∑ k ∈ A.support, ‖A.coeff k‖) *
+      max 1 (T + |v| + 3) ^ A.natDegree *
+        Real.exp (m * (36 - (t - v) ^ 2))
+  let R : ℝ :=
+    max
+      (C * (1 + Real.log (H + 6)) ^ 2)
+      (ExplicitFormulaResidues.vonMangoldtLSeriesNorm 1) + 2
+  have hR : 0 ≤ R := by
+    dsimp [R]
+    have hseries :
+        0 ≤ ExplicitFormulaResidues.vonMangoldtLSeriesNorm 1 :=
+      tsum_nonneg fun n => norm_nonneg _
+    linarith [le_max_right
+      (C * (1 + Real.log (H + 6)) ^ 2)
+      (ExplicitFormulaResidues.vonMangoldtLSeriesNorm 1)]
+  have hW : 0 ≤ W := by
+    dsimp [W]
+    positivity
+  have hpoint : ∀ σ ∈ Set.uIoc (-1 : ℝ) (u + 2),
+      ‖localizedGaussianWeight A ((u : ℂ) + I * v) m
+            ((σ : ℂ) + I * t) *
+          (-logDeriv riemannZeta ((σ : ℂ) + I * t) -
+            (((σ : ℂ) + I * t) /
+              (((σ : ℂ) + I * t) - 1)))‖ ≤ W * R := by
+    intro σ hσ
+    rw [Set.uIoc_of_le (by linarith)] at hσ
+    have hweight :=
+      norm_localizedGaussianWeight_horizontal_le_uniform
+        A (u := u) (v := v) (T := T) (t := t) (m := m)
+          hu hu1 hσ.1.le hσ.2 ht hm
+    have hlog :=
+      hregularized u hu hu1 t ht σ hσ.1.le hσ.2
+    rw [norm_mul]
+    exact mul_le_mul hweight hlog (norm_nonneg _) hW
+  have hbound := intervalIntegral.norm_integral_le_of_norm_le_const
+    (f := fun σ : ℝ =>
+      localizedGaussianWeight A ((u : ℂ) + I * v) m
+          ((σ : ℂ) + I * t) *
+        (-logDeriv riemannZeta ((σ : ℂ) + I * t) -
+          (((σ : ℂ) + I * t) /
+            (((σ : ℂ) + I * t) - 1))))
+    (a := (-1 : ℝ)) (b := u + 2) (C := W * R) hpoint
+  change _ ≤ (W * R) * (u + 3)
+  convert hbound using 1
+  rw [abs_of_nonneg (by linarith : 0 ≤ u + 2 - (-1))]
+  ring
+
 end
 
 end VKEdgePiOverTwo
