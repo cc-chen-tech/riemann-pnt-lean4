@@ -1,0 +1,15 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetCarlsonLogAbsorption
+
+/-!
+# Contract for Carlson logarithmic absorption
+-/
+
+namespace PrimeNumberTheorem
+
+#check tendsto_rpow_neg_atTop_nhds_zero
+#check tendsto_rpow_mul_log_four_atTop_nhds_zero
+#check carlsonTargetNormalizedLogMajorant
+#check tendsto_carlsonTargetNormalizedLogMajorant
+#check exists_carlsonPolynomialHeight_normalizedLogMajorant_tendsto_zero
+
+end PrimeNumberTheorem

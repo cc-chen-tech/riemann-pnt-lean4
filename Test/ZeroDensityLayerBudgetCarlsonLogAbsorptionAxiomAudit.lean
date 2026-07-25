@@ -1,0 +1,6 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetCarlsonLogAbsorptionContract
+
+#print axioms PrimeNumberTheorem.tendsto_rpow_neg_atTop_nhds_zero
+#print axioms PrimeNumberTheorem.tendsto_rpow_mul_log_four_atTop_nhds_zero
+#print axioms PrimeNumberTheorem.tendsto_carlsonTargetNormalizedLogMajorant
+#print axioms PrimeNumberTheorem.exists_carlsonPolynomialHeight_normalizedLogMajorant_tendsto_zero
