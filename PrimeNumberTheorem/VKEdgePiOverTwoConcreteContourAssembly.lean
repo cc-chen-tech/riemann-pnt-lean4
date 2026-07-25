@@ -1,7 +1,7 @@
 import PrimeNumberTheorem.VKEdgePiOverTwoContourBounds
 import PrimeNumberTheorem.VKEdgePiOverTwoRightMellin
 
-open Complex Polynomial Set
+open Complex MeasureTheory Polynomial Set
 open scoped BigOperators Interval
 
 namespace PrimeNumberTheorem
@@ -15,6 +15,119 @@ def localizedRegularizedLogDerivIntegrand
     (A : ℂ[X]) (w : ℂ) (m : ℝ) (z : ℂ) : ℂ :=
   localizedGaussianWeight A w m z *
     (-logDeriv riemannZeta z - z / (z - 1))
+
+/--
+The infinite right-edge Mellin identity is unchanged when the geometric
+vertical line is parametrized independently of the imaginary part of the
+Gaussian center.
+
+This translation is needed to match the right edge of the symmetric residue
+rectangle with the `w + 2 + it` parametrization used by the Mellin transform.
+-/
+theorem integral_localizedRegularizedLogDerivIntegrand_verticalLine_eq
+    (A : ℂ[X]) {u v m : ℝ} (hu : 0 < u) (hm : 0 < m) :
+    (∫ t : ℝ,
+        localizedRegularizedLogDerivIntegrand A
+          ((u : ℂ) + I * v) m
+          (((u + 2 : ℝ) : ℂ) + (t : ℂ) * I)) =
+      ∫ x in Set.Ioi (1 : ℝ),
+        psiErrorAboveOneComplex x *
+          ((2 * Real.pi : ℂ) *
+            ((x : ℂ) ^ (-(((u : ℂ) + I * v) + 1)) *
+              (((u : ℂ) + I * v) *
+                  polynomialGaussianKernel A m
+                    (16 * m - Real.log x) +
+                polynomialGaussianKernelDeriv A m
+                  (16 * m - Real.log x)))) := by
+  let w : ℂ := (u : ℂ) + I * v
+  let f : ℝ → ℂ := fun t =>
+    localizedRegularizedLogDerivIntegrand A w m
+      (((u + 2 : ℝ) : ℂ) + (t : ℂ) * I)
+  have hw : 0 < w.re := by
+    simpa [w] using hu
+  have hmellin :=
+    integral_localizedGaussianWeight_mul_regularizedLogDeriv_rightEdge_eq
+      A hm hw
+  calc
+    (∫ t : ℝ,
+        localizedRegularizedLogDerivIntegrand A
+          ((u : ℂ) + I * v) m
+          (((u + 2 : ℝ) : ℂ) + (t : ℂ) * I)) =
+        ∫ t : ℝ, f t := by
+      rfl
+    _ = ∫ t : ℝ, f (t + v) :=
+      (integral_add_right_eq_self f v).symm
+    _ =
+        ∫ t : ℝ,
+          localizedGaussianWeight A w m
+              (w + ((2 : ℂ) + I * (t : ℂ))) *
+            (-logDeriv riemannZeta
+                (w + ((2 : ℂ) + I * (t : ℂ))) -
+                (w + ((2 : ℂ) + I * (t : ℂ))) /
+                (w + ((2 : ℂ) + I * (t : ℂ)) - 1)) := by
+      apply integral_congr_ae
+      filter_upwards with t
+      have hz :
+          (((u + 2 : ℝ) : ℂ) + (((t + v : ℝ) : ℂ) * I)) =
+            w + ((2 : ℂ) + I * (t : ℂ)) := by
+        simp only [w, ofReal_add]
+        push_cast
+        ring
+      simpa only [f, localizedRegularizedLogDerivIntegrand, hz]
+    _ = _ := by
+      simpa [w] using hmellin
+
+/-- The concrete Gaussian average of the cutoff Chebyshev error. -/
+def localizedPsiGaussianAverage
+    (A : ℂ[X]) (w : ℂ) (m : ℝ) : ℂ :=
+  ∫ x in Set.Ioi (1 : ℝ),
+    psiErrorAboveOneComplex x *
+      ((2 * Real.pi : ℂ) *
+        ((x : ℂ) ^ (-(w + 1)) *
+          (w * polynomialGaussianKernel A m
+              (16 * m - Real.log x) +
+            polynomialGaussianKernelDeriv A m
+              (16 * m - Real.log x))))
+
+/-- The analytic-multiplicity weighted zero contribution in one rectangle. -/
+def localizedZeroResidueSum
+    (A : ℂ[X]) (w : ℂ) (m : ℝ) (zeros : Finset ℂ) : ℂ :=
+  ∑ rho ∈ zeros,
+    (analyticOrderNatAt riemannZeta rho : ℂ) *
+      localizedGaussianWeight A w m rho
+
+/-- The oriented contribution of the bottom, top, and left rectangle edges. -/
+def localizedOtherEdgeContribution
+    (A : ℂ[X]) (w : ℂ) (m u T : ℝ) : ℂ :=
+  I *
+      ((∫ σ : ℝ in (-1)..(u + 2),
+          localizedRegularizedLogDerivIntegrand A w m
+            ((σ : ℂ) + ((-T : ℝ) : ℂ) * I)) -
+        ∫ σ : ℝ in (-1)..(u + 2),
+          localizedRegularizedLogDerivIntegrand A w m
+            ((σ : ℂ) + (T : ℂ) * I)) +
+    ∫ t : ℝ in (-T)..T,
+      localizedRegularizedLogDerivIntegrand A w m
+        ((-1 : ℂ) + (t : ℂ) * I)
+
+/--
+The difference between the infinite geometric right edge and its symmetric
+finite-height truncation.
+-/
+def localizedRightEdgeTail
+    (A : ℂ[X]) (w : ℂ) (m u T : ℝ) : ℂ :=
+  (∫ t : ℝ,
+      localizedRegularizedLogDerivIntegrand A w m
+        (((u + 2 : ℝ) : ℂ) + (t : ℂ) * I)) -
+    ∫ t : ℝ in (-T)..T,
+      localizedRegularizedLogDerivIntegrand A w m
+        (((u + 2 : ℝ) : ℂ) + (t : ℂ) * I)
+
+/-- The complete finite-height contour remainder after the zero sum. -/
+def localizedContourRemainder
+    (A : ℂ[X]) (w : ℂ) (m u T : ℝ) : ℂ :=
+  localizedOtherEdgeContribution A w m u T +
+    localizedRightEdgeTail A w m u T
 
 /--
 At a good height, the finite right edge is exactly the weighted zero sum
@@ -117,6 +230,53 @@ theorem exists_rightEdgeIntegral_eq_zero_sum_add_other_edges_of_goodHeight
     _ = _ := by
       ring_nf
       norm_num [I_mul_I, sub_eq_add_neg]
+
+/--
+The concrete Gaussian average of the Chebyshev error is exactly the
+analytic-multiplicity weighted zero sum plus a named finite-height contour
+remainder.
+
+No asymptotic estimate is hidden here: the remainder is definitionally the
+three non-right rectangle edges plus the discarded right-edge tails.
+-/
+theorem exists_localizedPsiGaussianAverage_eq_zeroSum_add_contourRemainder_of_goodHeight
+    (A : ℂ[X]) {u v m T : ℝ}
+    (hu : 0 < u) (hm : 0 < m) (hT : 0 < T)
+    (hgood : ExplicitFormulaAux.goodHeight T) :
+    ∃ zeros : Finset ℂ,
+      (∀ rho ∈ zeros,
+        riemannZeta rho = 0 ∧
+          (-1 : ℝ) < rho.re ∧ rho.re < u + 2 ∧
+          -T < rho.im ∧ rho.im < T) ∧
+      (∀ rho ∈
+          ([[(-1 : ℝ), u + 2]] ×ℂ [[-T, T]] : Set ℂ),
+        riemannZeta rho = 0 → rho ∈ zeros) ∧
+      localizedPsiGaussianAverage A ((u : ℂ) + I * v) m =
+        -(2 * Real.pi : ℂ) *
+            localizedZeroResidueSum A ((u : ℂ) + I * v) m zeros +
+          localizedContourRemainder A ((u : ℂ) + I * v) m u T := by
+  rcases
+      exists_rightEdgeIntegral_eq_zero_sum_add_other_edges_of_goodHeight
+        A (u := u) (v := v) (m := m) (T := T) hu hT hgood with
+    ⟨zeros, hzeros, hcomplete, hfinite⟩
+  refine ⟨zeros, hzeros, hcomplete, ?_⟩
+  have hinfinite :
+      (∫ t : ℝ,
+          localizedRegularizedLogDerivIntegrand A
+            ((u : ℂ) + I * v) m
+            (((u + 2 : ℝ) : ℂ) + (t : ℂ) * I)) =
+        localizedPsiGaussianAverage A ((u : ℂ) + I * v) m := by
+    simpa [localizedPsiGaussianAverage] using
+      integral_localizedRegularizedLogDerivIntegrand_verticalLine_eq
+        A hu hm
+  rw [← hinfinite]
+  simp only [
+    localizedZeroResidueSum,
+    localizedContourRemainder,
+    localizedOtherEdgeContribution,
+    localizedRightEdgeTail]
+  rw [hfinite]
+  ring
 
 end
 
