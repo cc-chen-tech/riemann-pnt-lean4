@@ -26,9 +26,16 @@
 
 	`disjointWindowFamilyLowerCount ... T ≥ (localContribution : ℝ) * branchCount n T`
 
-	（即至少每个窗口贡献 `k`，共有 `q(n,T)` 个窗口）。
+	（即至少每个窗口贡献 `k`，共有 `branchCount n T` 个窗口）。
 
-这是对“`one local branch`”到“`全局窗口累计下界`”的显式桥。
+新增 `iterativeBranch_qpow_lowerCount_ge_qpow`，把分支关系强化为指数形式：
+
+- 若固定层 `n` 满足 `∀ᶠ T, q(T)^n ≤ branchCount n T`，
+  则
+
+  `disjointWindowFamilyLowerCount ... T ≥ (localContribution : ℝ) * q(T)^n`。
+
+这给出“分支增长率下界”与“全局窗口累计下界”的明确算术通道。
 
 ## 3) 与 Carlson 反证连接并读取增长率
 
@@ -40,11 +47,26 @@
 
 则调用既有 `disjointWindowFamily_carlson_instance_contradiction` 得到 `False`。
 
-因此在这一阶段可审计的“增长率要求”是：
-- `branchCount n T` 至少需要与 Carlson 主项同阶/更快（乘上 `localContribution` 因子），即
-	`(localContribution : ℝ) * branchCount n T ≳ T^(4σ(1-σ))(log T)^4`。
+第四阶段新增 `iterativeBranch_qpow_carlson_contradiction`，将 `hgap` 写为
 
-若 `branchCount n T` 仅有 `polylog` 级增长，这一要求不可能满足。
+- `((localContribution : ℝ) * q(T)^n) - C * ‖...‖ → +∞`
+
+时也可直接得出 `False`。因此显式充分条件可以写成：
+
+- `q(T)^n ≳ (1/localContribution) · ‖(T+H)^{4σ(1-σ)} (log(T+H))^4‖`.
+
+若 `n` 为常数层，则要想达到 Carlson 主项，`q(T)` 本身必须至少和 Carlson 主项同阶；
+若 `q(T)` 为常数（特别是 `q>1` 固定），则 `n(T)=o(log T)` 不会满足主项支配。
+
+## 3') 固定深度与不足条件
+
+为了避免“单一层次”误判，新增反面模板：
+
+- `iterativeBranch_qpow_not_enough_for_divergence_if_eventually_subdominant`：
+  若 `k·q(T)^n` 终将不超过 Carlson 主项（而非仅略低于），
+  则 `(k·q(T)^n - Carlson(T))` 不可能趋于 `+∞`。
+
+这一模板与一线的 `one_offline_zero_certificate_does_not_yield_diverging_gap` 一起，形成“固定深度 + 未达主项” 的定量拒绝路径。
 
 ## 4) “单个离线零点”不可推出该证书（反模型）
 
@@ -61,4 +83,3 @@
 不可能趋于 `+∞`。
 
 这给出的是可执行的否定结论，不是“缺输入”式声明：现有输入下，单零点/固定窗口证书不能满足第三阶段所需的放大增长前提。
-
