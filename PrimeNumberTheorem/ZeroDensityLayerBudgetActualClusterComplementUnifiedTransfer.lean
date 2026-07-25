@@ -1,4 +1,5 @@
 import PrimeNumberTheorem.ZeroDensityLayerBudgetActualFullTailExcludingClusterConjugation
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualRealOrdinateExcludingCluster
 import PrimeNumberTheorem.ZeroDensityLayerBudgetActualOscillationBoundary
 
 /-!
@@ -44,11 +45,10 @@ structure ActualCarlsonOutsideClusterFiniteStripCertificate
           (carlsonClassicalPolynomialDensityExponent
             alpha (sigma i)) +
         epsilon i < 0
-  real_residual_negligible :
-    TargetAmplitudeNegligible
-      (targetZeroPowerAmplitude beta)
-      (dynamicRealOrdinateOutsideClusterPNTZeroTailNorm
-        (carlsonPolynomialHeight alpha) S)
+  real_re_lt_beta :
+    ∀ rho ∈
+      realOrdinateNontrivialZerosOutsideClusterFinset 0 S,
+      rho.re < beta
 
 /-- The concrete outside-cluster Carlson certificate controls the complete
 finite zeta tail outside the main cluster. -/
@@ -76,7 +76,8 @@ theorem
       certificate.kappa_pos certificate.norm_lower
       certificate.re_upper certificate.epsilon_pos
       certificate.exponent_margin
-      certificate.real_residual_negligible
+      (dynamicRealOrdinateOutsideClusterPNTZeroTailNorm_carlsonPolynomial_negligible
+        certificate.real_re_lt_beta)
 
 /-- Domination by the actual full outside-cluster tail converts a signed
 complement into the safe certificate required by oscillation transfer. -/
