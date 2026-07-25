@@ -1268,6 +1268,24 @@ theorem norm_secondOrderRieszFactor_increment_le_of_mem_nontrivialZerosFinset
         mul_le_mul_of_nonneg_right hnorm hlog
       _ ≤ 1 := hsmall
 
+/-- Under RH, the pointwise Riesz smoothing factor has exact square-root
+amplitude at every nontrivial zero in the finite truncation. -/
+theorem
+    norm_secondOrderRieszFactor_increment_le_of_mem_nontrivialZerosFinset_of_RH
+    (hRH : RiemannHypothesis.Statement)
+    {x h T : ℝ} {ρ : ℂ}
+    (hx : 0 < x) (hh : 0 ≤ h)
+    (hρ : ρ ∈ nontrivialZerosFinset T)
+    (hsmall : (T + 1) * Real.log ((x + h) / x) ≤ 1) :
+    ‖(((x + h : ℝ) : ℂ) ^ ρ - (x : ℂ) ^ ρ) / ρ ^ 2‖ ≤
+      2 * Real.sqrt x * Real.log ((x + h) / x) / ‖ρ‖ := by
+  have hzero := (mem_nontrivialZerosFinset.mp hρ).1
+  have hbound :=
+    norm_secondOrderRieszFactor_increment_le_of_mem_nontrivialZerosFinset
+      hx hh hρ hsmall
+  rw [hRH ρ hzero, ← Real.sqrt_eq_rpow] at hbound
+  exact hbound
+
 /-- Multiplicity-aware finite-zero version of the smoothing gain.  The
 logarithmic endpoint factor remains outside the zero sum, while the remaining
 mass is exactly `globalReciprocalZeroMultiplicity`. -/
@@ -1323,6 +1341,51 @@ theorem norm_secondOrderRieszZeroSumWithMultiplicity_increment_le
       unfold ExplicitFormulaAux.globalReciprocalZeroMultiplicity
       rw [Finset.mul_sum]
 
+/-- Under RH, the multiplicity-aware smoothed zero increment has square-root
+endpoint scale instead of the unconditional linear scale. -/
+theorem norm_secondOrderRieszZeroSumWithMultiplicity_increment_le_of_RH
+    (hRH : RiemannHypothesis.Statement)
+    {x h T : ℝ}
+    (hx : 1 ≤ x) (hh : 0 ≤ h)
+    (hsmall : (T + 1) * Real.log ((x + h) / x) ≤ 1) :
+    ‖∑ ρ ∈ nontrivialZerosFinset T,
+        -(analyticOrderNatAt riemannZeta ρ : ℂ) *
+          ((((x + h : ℝ) : ℂ) ^ ρ - (x : ℂ) ^ ρ) / ρ ^ 2)‖ ≤
+      2 * Real.sqrt x * Real.log ((x + h) / x) *
+        ExplicitFormulaAux.globalReciprocalZeroMultiplicity T := by
+  have hxpos : 0 < x := zero_lt_one.trans_le hx
+  calc
+    ‖∑ ρ ∈ nontrivialZerosFinset T,
+        -(analyticOrderNatAt riemannZeta ρ : ℂ) *
+          ((((x + h : ℝ) : ℂ) ^ ρ - (x : ℂ) ^ ρ) / ρ ^ 2)‖ ≤
+        ∑ ρ ∈ nontrivialZerosFinset T,
+          ‖-(analyticOrderNatAt riemannZeta ρ : ℂ) *
+            ((((x + h : ℝ) : ℂ) ^ ρ - (x : ℂ) ^ ρ) / ρ ^ 2)‖ :=
+      norm_sum_le _ _
+    _ ≤ ∑ ρ ∈ nontrivialZerosFinset T,
+        2 * Real.sqrt x * Real.log ((x + h) / x) *
+          ((analyticOrderNatAt riemannZeta ρ : ℝ) / ‖ρ‖) := by
+      apply Finset.sum_le_sum
+      intro ρ hρ
+      have hfactor :=
+        norm_secondOrderRieszFactor_increment_le_of_mem_nontrivialZerosFinset_of_RH
+          hRH hxpos hh hρ hsmall
+      have hmult : 0 ≤ (analyticOrderNatAt riemannZeta ρ : ℝ) :=
+        Nat.cast_nonneg _
+      rw [norm_mul, norm_neg, Complex.norm_natCast]
+      calc
+        (analyticOrderNatAt riemannZeta ρ : ℝ) *
+            ‖(((x + h : ℝ) : ℂ) ^ ρ - (x : ℂ) ^ ρ) / ρ ^ 2‖ ≤
+          (analyticOrderNatAt riemannZeta ρ : ℝ) *
+            (2 * Real.sqrt x * Real.log ((x + h) / x) / ‖ρ‖) :=
+          mul_le_mul_of_nonneg_left hfactor hmult
+        _ = 2 * Real.sqrt x * Real.log ((x + h) / x) *
+            ((analyticOrderNatAt riemannZeta ρ : ℝ) / ‖ρ‖) := by ring
+    _ = 2 * Real.sqrt x * Real.log ((x + h) / x) *
+        ExplicitFormulaAux.globalReciprocalZeroMultiplicity T := by
+      unfold ExplicitFormulaAux.globalReciprocalZeroMultiplicity
+      rw [Finset.mul_sum]
+
 /-- The global reciprocal zero-mass estimate turns the finite Riesz
 difference into an explicit `log² T` budget, uniformly in the endpoints. -/
 theorem
@@ -1354,6 +1417,41 @@ theorem
       gcongr
       exact hmass T hT
     _ = 2 * C * x * Real.log ((x + h) / x) *
+        (1 + Real.log (T + 6)) ^ 2 := by ring
+
+/-- Under RH, the global reciprocal zero-mass estimate gives the smoothed
+finite zero increment the expected `sqrt x log² T` scale. -/
+theorem
+    exists_C_norm_secondOrderRieszZeroSumWithMultiplicity_increment_le_sqrt_mul_log_sq_of_RH
+    (hRH : RiemannHypothesis.Statement) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ x h T : ℝ,
+      1 ≤ x → 0 ≤ h → 4 ≤ T →
+      (T + 1) * Real.log ((x + h) / x) ≤ 1 →
+      ‖∑ ρ ∈ nontrivialZerosFinset T,
+          -(analyticOrderNatAt riemannZeta ρ : ℂ) *
+            ((((x + h : ℝ) : ℂ) ^ ρ - (x : ℂ) ^ ρ) / ρ ^ 2)‖ ≤
+        2 * C * Real.sqrt x * Real.log ((x + h) / x) *
+          (1 + Real.log (T + 6)) ^ 2 := by
+  rcases ExplicitFormulaAux.exists_globalReciprocalZeroMultiplicity_le_log_sq with
+    ⟨C, hC, hmass⟩
+  refine ⟨C, hC, ?_⟩
+  intro x h T hx hh hT hsmall
+  have hlog : 0 ≤ Real.log ((x + h) / x) := by
+    apply Real.log_nonneg
+    exact (le_div_iff₀ (zero_lt_one.trans_le hx)).2 (by linarith)
+  calc
+    ‖∑ ρ ∈ nontrivialZerosFinset T,
+        -(analyticOrderNatAt riemannZeta ρ : ℂ) *
+          ((((x + h : ℝ) : ℂ) ^ ρ - (x : ℂ) ^ ρ) / ρ ^ 2)‖ ≤
+      2 * Real.sqrt x * Real.log ((x + h) / x) *
+        ExplicitFormulaAux.globalReciprocalZeroMultiplicity T :=
+      norm_secondOrderRieszZeroSumWithMultiplicity_increment_le_of_RH
+        hRH hx hh hsmall
+    _ ≤ 2 * Real.sqrt x * Real.log ((x + h) / x) *
+        (C * (1 + Real.log (T + 6)) ^ 2) := by
+      gcongr
+      exact hmass T hT
+    _ = 2 * C * Real.sqrt x * Real.log ((x + h) / x) *
         (1 + Real.log (T + 6)) ^ 2 := by ring
 
 /-- A complete crossing-zero residue family on the strip `-1 < re < c`,
@@ -1918,6 +2016,29 @@ theorem norm_secondOrderNontrivialZeroIncrement_le
   exact norm_secondOrderRieszZeroSumWithMultiplicity_increment_le
     hx hh hsmall
 
+/-- Standardized form of the RH square-root bound for the smoothed
+nontrivial-zero increment. -/
+theorem norm_secondOrderNontrivialZeroIncrement_le_of_RH
+    (hRH : RiemannHypothesis.Statement)
+    {x h T : ℝ}
+    (hx : 1 ≤ x) (hh : 0 ≤ h)
+    (hsmall : (T + 1) * Real.log ((x + h) / x) ≤ 1) :
+    ‖secondOrderNontrivialZeroIncrement x h T‖ ≤
+      2 * Real.sqrt x * Real.log ((x + h) / x) *
+        ExplicitFormulaAux.globalReciprocalZeroMultiplicity T := by
+  have hsum :
+      secondOrderNontrivialZeroIncrement x h T =
+        ∑ ρ ∈ nontrivialZerosFinset T,
+          -(analyticOrderNatAt riemannZeta ρ : ℂ) *
+            ((((x + h : ℝ) : ℂ) ^ ρ - (x : ℂ) ^ ρ) / ρ ^ 2) := by
+    unfold secondOrderNontrivialZeroIncrement
+    apply Finset.sum_congr rfl
+    intro ρ _hρ
+    ring
+  rw [hsum]
+  exact norm_secondOrderRieszZeroSumWithMultiplicity_increment_le_of_RH
+    hRH hx hh hsmall
+
 /-- Uniform `log² T` control of the standardized nontrivial-zero increment. -/
 theorem exists_C_norm_secondOrderNontrivialZeroIncrement_le_log_sq :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ x h T : ℝ,
@@ -1929,6 +2050,34 @@ theorem exists_C_norm_secondOrderNontrivialZeroIncrement_le_log_sq :
   rcases
       exists_C_norm_secondOrderRieszZeroSumWithMultiplicity_increment_le_log_sq with
     ⟨C, hC, hbound⟩
+  refine ⟨C, hC, ?_⟩
+  intro x h T hx hh hT hsmall
+  have hsum :
+      secondOrderNontrivialZeroIncrement x h T =
+        ∑ ρ ∈ nontrivialZerosFinset T,
+          -(analyticOrderNatAt riemannZeta ρ : ℂ) *
+            ((((x + h : ℝ) : ℂ) ^ ρ - (x : ℂ) ^ ρ) / ρ ^ 2) := by
+    unfold secondOrderNontrivialZeroIncrement
+    apply Finset.sum_congr rfl
+    intro ρ _hρ
+    ring
+  rw [hsum]
+  exact hbound x h T hx hh hT hsmall
+
+/-- Uniform `sqrt x log² T` control of the standardized smoothed zero
+increment under RH. -/
+theorem
+    exists_C_norm_secondOrderNontrivialZeroIncrement_le_sqrt_mul_log_sq_of_RH
+    (hRH : RiemannHypothesis.Statement) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ x h T : ℝ,
+      1 ≤ x → 0 ≤ h → 4 ≤ T →
+      (T + 1) * Real.log ((x + h) / x) ≤ 1 →
+      ‖secondOrderNontrivialZeroIncrement x h T‖ ≤
+        2 * C * Real.sqrt x * Real.log ((x + h) / x) *
+          (1 + Real.log (T + 6)) ^ 2 := by
+  rcases
+      exists_C_norm_secondOrderRieszZeroSumWithMultiplicity_increment_le_sqrt_mul_log_sq_of_RH
+        hRH with ⟨C, hC, hbound⟩
   refine ⟨C, hC, ?_⟩
   intro x h T hx hh hT hsmall
   have hsum :
@@ -2221,6 +2370,96 @@ theorem
         dsimp only [B] at hre ⊢
         linarith [hre.1])).trans hbounds.2
 
+/-- Under RH, the uniform scalar selected-height sandwich retains the
+square-root scale of the smoothed zero increment. -/
+theorem
+    exists_uniform_C_D_forall_goodHeight_chebyshevPsi_bounds_scalar_sqrt_log_sq_of_RH
+    (hRH : RiemannHypothesis.Statement) :
+    ∃ C D : ℝ, 0 ≤ C ∧ 0 ≤ D ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x h : ℝ}, Real.exp 1 ≤ x → 0 < h →
+            (A + 2) * Real.log ((x + h) / x) ≤ 1 →
+            chebyshevPsi x ≤
+                (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) +
+                    secondOrderSelectedHeightTotalBudget C x h A T +
+                    2 * D * Real.sqrt x * Real.log ((x + h) / x) *
+                      (1 + Real.log (T + 6)) ^ 2) /
+                  Real.log ((x + h) / x) ∧
+              (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) -
+                    secondOrderSelectedHeightTotalBudget C x h A T -
+                    2 * D * Real.sqrt x * Real.log ((x + h) / x) *
+                      (1 + Real.log (T + 6)) ^ 2) /
+                  Real.log ((x + h) / x) ≤
+                chebyshevPsi (x + h) := by
+  rcases
+      exists_uniform_C_forall_goodHeight_chebyshevPsi_bounds_explicit_origin_zero_sum
+      with ⟨C, hC, hchoose⟩
+  rcases
+      exists_C_norm_secondOrderNontrivialZeroIncrement_le_sqrt_mul_log_sq_of_RH
+        hRH with ⟨D, hD, hzero⟩
+  refine ⟨C, D, hC, hD, ?_⟩
+  intro A hA
+  rcases hchoose A hA with ⟨T, hT, hgood, hbound⟩
+  refine ⟨T, hT, hgood, ?_⟩
+  intro x h hx hh hsmallA
+  have hbounds := hbound hx hh
+  have hxpos : 0 < x := (Real.exp_pos 1).trans_le hx
+  have hxone : 1 ≤ x := by
+    exact (Real.one_lt_exp_iff.mpr zero_lt_one).le.trans hx
+  have hratio : 1 < (x + h) / x := by
+    rw [lt_div_iff₀ hxpos]
+    linarith
+  have hlogpos : 0 < Real.log ((x + h) / x) :=
+    Real.log_pos hratio
+  have hsmallT :
+      (T + 1) * Real.log ((x + h) / x) ≤ 1 := by
+    calc
+      (T + 1) * Real.log ((x + h) / x) ≤
+          (A + 2) * Real.log ((x + h) / x) :=
+        mul_le_mul_of_nonneg_right (by linarith [hT.2]) hlogpos.le
+      _ ≤ 1 := hsmallA
+  let Z := secondOrderNontrivialZeroIncrement x h T
+  let B :=
+    2 * D * Real.sqrt x * Real.log ((x + h) / x) *
+      (1 + Real.log (T + 6)) ^ 2
+  have hnorm : ‖Z‖ ≤ B := by
+    simpa only [Z, B] using
+      hzero x h T hxone hh.le (hA.trans hT.1) hsmallT
+  have habs : |Z.re| ≤ B :=
+    (Complex.abs_re_le_norm Z).trans hnorm
+  have hre : -B ≤ Z.re ∧ Z.re ≤ B := abs_le.mp habs
+  have hreal :
+      (-(Real.log (2 * Real.pi) : ℂ) *
+              (Real.log ((x + h) / x) : ℂ) +
+            (h : ℂ) + Z).re =
+        h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) + Z.re := by
+    simp only [Complex.add_re, Complex.mul_re, Complex.neg_re,
+      Complex.ofReal_re, Complex.ofReal_im, mul_zero, sub_zero]
+    ring
+  change
+    chebyshevPsi x ≤
+          ((-(Real.log (2 * Real.pi) : ℂ) *
+                  (Real.log ((x + h) / x) : ℂ) +
+                (h : ℂ) + Z).re +
+              secondOrderSelectedHeightTotalBudget C x h A T) /
+            Real.log ((x + h) / x) ∧
+      ((-(Real.log (2 * Real.pi) : ℂ) *
+                  (Real.log ((x + h) / x) : ℂ) +
+                (h : ℂ) + Z).re -
+              secondOrderSelectedHeightTotalBudget C x h A T) /
+            Real.log ((x + h) / x) ≤ chebyshevPsi (x + h) at hbounds
+  rw [hreal] at hbounds
+  refine ⟨?_, ?_⟩
+  · exact hbounds.1.trans
+      ((div_le_div_iff_of_pos_right hlogpos).2 (by
+        dsimp only [B] at hre ⊢
+        linarith [hre.2]))
+  · exact
+      ((div_le_div_iff_of_pos_right hlogpos).2 (by
+        dsimp only [B] at hre ⊢
+        linarith [hre.1])).trans hbounds.2
+
 /-- Endpoint-specialized compatibility form of the uniform scalar
 selected-height sandwich. -/
 theorem
@@ -2371,6 +2610,85 @@ theorem
         field_simp [hlogpos.ne']
       _ ≤ chebyshevPsi (x + h) := hbounds.2
 
+/-- Under RH, the centered endpoint error keeps the square-root zero-sum
+term after division by the logarithmic smoothing increment. -/
+theorem
+    exists_uniform_C_D_forall_goodHeight_chebyshevPsi_endpoint_error_sqrt_log_sq_of_RH
+    (hRH : RiemannHypothesis.Statement) :
+    ∃ C D : ℝ, 0 ≤ C ∧ 0 ≤ D ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x h : ℝ}, Real.exp 1 ≤ x → 0 < h →
+            (A + 2) * Real.log ((x + h) / x) ≤ 1 →
+            chebyshevPsi x - x ≤
+                h - Real.log (2 * Real.pi) +
+                  secondOrderSelectedHeightTotalBudget C x h A T /
+                    Real.log ((x + h) / x) +
+                  2 * D * Real.sqrt x * (1 + Real.log (T + 6)) ^ 2 ∧
+              x - Real.log (2 * Real.pi) -
+                    secondOrderSelectedHeightTotalBudget C x h A T /
+                      Real.log ((x + h) / x) -
+                    2 * D * Real.sqrt x * (1 + Real.log (T + 6)) ^ 2 ≤
+                chebyshevPsi (x + h) := by
+  rcases
+      exists_uniform_C_D_forall_goodHeight_chebyshevPsi_bounds_scalar_sqrt_log_sq_of_RH
+        hRH with ⟨C, D, hC, hD, hchoose⟩
+  refine ⟨C, D, hC, hD, ?_⟩
+  intro A hA
+  rcases hchoose A hA with ⟨T, hT, hgood, hbound⟩
+  refine ⟨T, hT, hgood, ?_⟩
+  intro x h hx hh hsmall
+  have hbounds := hbound hx hh hsmall
+  have hxpos : 0 < x := (Real.exp_pos 1).trans_le hx
+  have hquotient :=
+    smoothingIncrementDivLog_mem_Icc hxpos hh
+  have hratio : 1 < (x + h) / x := by
+    rw [lt_div_iff₀ hxpos]
+    linarith
+  have hlogpos : 0 < Real.log ((x + h) / x) :=
+    Real.log_pos hratio
+  refine ⟨?_, ?_⟩
+  · calc
+      chebyshevPsi x - x ≤
+          (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) +
+                secondOrderSelectedHeightTotalBudget C x h A T +
+                2 * D * Real.sqrt x * Real.log ((x + h) / x) *
+                  (1 + Real.log (T + 6)) ^ 2) /
+              Real.log ((x + h) / x) - x :=
+        sub_le_sub_right hbounds.1 x
+      _ =
+          h / Real.log ((x + h) / x) -
+              Real.log (2 * Real.pi) +
+              secondOrderSelectedHeightTotalBudget C x h A T /
+                Real.log ((x + h) / x) +
+              2 * D * Real.sqrt x * (1 + Real.log (T + 6)) ^ 2 - x := by
+        field_simp [hlogpos.ne']
+      _ ≤
+          h - Real.log (2 * Real.pi) +
+              secondOrderSelectedHeightTotalBudget C x h A T /
+                Real.log ((x + h) / x) +
+              2 * D * Real.sqrt x * (1 + Real.log (T + 6)) ^ 2 := by
+        linarith [hquotient.2]
+  · calc
+      x - Real.log (2 * Real.pi) -
+              secondOrderSelectedHeightTotalBudget C x h A T /
+                Real.log ((x + h) / x) -
+              2 * D * Real.sqrt x * (1 + Real.log (T + 6)) ^ 2 ≤
+          h / Real.log ((x + h) / x) -
+              Real.log (2 * Real.pi) -
+              secondOrderSelectedHeightTotalBudget C x h A T /
+                Real.log ((x + h) / x) -
+              2 * D * Real.sqrt x * (1 + Real.log (T + 6)) ^ 2 := by
+        linarith [hquotient.1]
+      _ =
+          (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) -
+                secondOrderSelectedHeightTotalBudget C x h A T -
+                2 * D * Real.sqrt x * Real.log ((x + h) / x) *
+                  (1 + Real.log (T + 6)) ^ 2) /
+              Real.log ((x + h) / x) := by
+        field_simp [hlogpos.ne']
+      _ ≤ chebyshevPsi (x + h) := hbounds.2
+
 /-- Endpoint-specialized compatibility form of the uniform centered endpoint
 error estimate. -/
 theorem
@@ -2498,6 +2816,45 @@ theorem
   rcases
       exists_uniform_C_D_forall_goodHeight_chebyshevPsi_endpoint_error_log_sq
       with ⟨C, D, hC, hD, hchoose⟩
+  refine ⟨C, D, hC, hD, ?_⟩
+  intro A hA
+  rcases hchoose A hA with ⟨T, hT, hgood, hbound⟩
+  refine ⟨T, hT, hgood, ?_⟩
+  intro x hx
+  have hxpos : 0 < x := (Real.exp_pos 1).trans_le hx
+  have hh :
+      0 < canonicalSecondOrderSmoothingWidth x A :=
+    canonicalSecondOrderSmoothingWidth_pos hxpos hA
+  exact hbound hx hh (canonicalSecondOrderSmoothingWidth_small hxpos hA)
+
+/-- Under RH, the canonical smoothing specialization has an absolute
+selected-height contour constant and a `sqrt x log² T` zero contribution. -/
+theorem
+    exists_uniform_C_D_forall_goodHeight_chebyshevPsi_canonical_smoothing_error_sqrt_log_sq_of_RH
+    (hRH : RiemannHypothesis.Statement) :
+    ∃ C D : ℝ, 0 ≤ C ∧ 0 ≤ D ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x : ℝ}, Real.exp 1 ≤ x →
+          chebyshevPsi x - x ≤
+              canonicalSecondOrderSmoothingWidth x A -
+                Real.log (2 * Real.pi) +
+                secondOrderSelectedHeightTotalBudget C x
+                    (canonicalSecondOrderSmoothingWidth x A) A T /
+                  Real.log
+                    ((x + canonicalSecondOrderSmoothingWidth x A) / x) +
+                2 * D * Real.sqrt x * (1 + Real.log (T + 6)) ^ 2 ∧
+            x - Real.log (2 * Real.pi) -
+                  secondOrderSelectedHeightTotalBudget C x
+                      (canonicalSecondOrderSmoothingWidth x A) A T /
+                    Real.log
+                      ((x + canonicalSecondOrderSmoothingWidth x A) / x) -
+                  2 * D * Real.sqrt x * (1 + Real.log (T + 6)) ^ 2 ≤
+              chebyshevPsi
+                (x + canonicalSecondOrderSmoothingWidth x A) := by
+  rcases
+      exists_uniform_C_D_forall_goodHeight_chebyshevPsi_endpoint_error_sqrt_log_sq_of_RH
+        hRH with ⟨C, D, hC, hD, hchoose⟩
   refine ⟨C, D, hC, hD, ?_⟩
   intro A hA
   rcases hchoose A hA with ⟨T, hT, hgood, hbound⟩

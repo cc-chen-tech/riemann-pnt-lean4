@@ -958,6 +958,123 @@ example :
                 (x + canonicalSecondOrderSmoothingWidth x A) :=
   exists_uniform_C_D_forall_goodHeight_chebyshevPsi_canonical_smoothing_error
 
+example (hRH : RiemannHypothesis.Statement)
+    {x h T : ℝ} {ρ : ℂ}
+    (hx : 0 < x) (hh : 0 ≤ h)
+    (hρ : ρ ∈ nontrivialZerosFinset T)
+    (hsmall : (T + 1) * Real.log ((x + h) / x) ≤ 1) :
+    ‖(((x + h : ℝ) : ℂ) ^ ρ - (x : ℂ) ^ ρ) / ρ ^ 2‖ ≤
+      2 * Real.sqrt x * Real.log ((x + h) / x) / ‖ρ‖ :=
+  norm_secondOrderRieszFactor_increment_le_of_mem_nontrivialZerosFinset_of_RH
+    hRH hx hh hρ hsmall
+
+example (hRH : RiemannHypothesis.Statement)
+    {x h T : ℝ}
+    (hx : 1 ≤ x) (hh : 0 ≤ h)
+    (hsmall : (T + 1) * Real.log ((x + h) / x) ≤ 1) :
+    ‖∑ ρ ∈ nontrivialZerosFinset T,
+        -(analyticOrderNatAt riemannZeta ρ : ℂ) *
+          ((((x + h : ℝ) : ℂ) ^ ρ - (x : ℂ) ^ ρ) / ρ ^ 2)‖ ≤
+      2 * Real.sqrt x * Real.log ((x + h) / x) *
+        ExplicitFormulaAux.globalReciprocalZeroMultiplicity T :=
+  norm_secondOrderRieszZeroSumWithMultiplicity_increment_le_of_RH
+    hRH hx hh hsmall
+
+example (hRH : RiemannHypothesis.Statement) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ x h T : ℝ,
+      1 ≤ x → 0 ≤ h → 4 ≤ T →
+      (T + 1) * Real.log ((x + h) / x) ≤ 1 →
+      ‖∑ ρ ∈ nontrivialZerosFinset T,
+          -(analyticOrderNatAt riemannZeta ρ : ℂ) *
+            ((((x + h : ℝ) : ℂ) ^ ρ - (x : ℂ) ^ ρ) / ρ ^ 2)‖ ≤
+        2 * C * Real.sqrt x * Real.log ((x + h) / x) *
+          (1 + Real.log (T + 6)) ^ 2 :=
+  exists_C_norm_secondOrderRieszZeroSumWithMultiplicity_increment_le_sqrt_mul_log_sq_of_RH
+    hRH
+
+example (hRH : RiemannHypothesis.Statement)
+    {x h T : ℝ}
+    (hx : 1 ≤ x) (hh : 0 ≤ h)
+    (hsmall : (T + 1) * Real.log ((x + h) / x) ≤ 1) :
+    ‖secondOrderNontrivialZeroIncrement x h T‖ ≤
+      2 * Real.sqrt x * Real.log ((x + h) / x) *
+        ExplicitFormulaAux.globalReciprocalZeroMultiplicity T :=
+  norm_secondOrderNontrivialZeroIncrement_le_of_RH hRH hx hh hsmall
+
+example (hRH : RiemannHypothesis.Statement) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ x h T : ℝ,
+      1 ≤ x → 0 ≤ h → 4 ≤ T →
+      (T + 1) * Real.log ((x + h) / x) ≤ 1 →
+      ‖secondOrderNontrivialZeroIncrement x h T‖ ≤
+        2 * C * Real.sqrt x * Real.log ((x + h) / x) *
+          (1 + Real.log (T + 6)) ^ 2 :=
+  exists_C_norm_secondOrderNontrivialZeroIncrement_le_sqrt_mul_log_sq_of_RH
+    hRH
+
+example (hRH : RiemannHypothesis.Statement) :
+    ∃ C D : ℝ, 0 ≤ C ∧ 0 ≤ D ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x h : ℝ}, Real.exp 1 ≤ x → 0 < h →
+            (A + 2) * Real.log ((x + h) / x) ≤ 1 →
+            chebyshevPsi x ≤
+                (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) +
+                    secondOrderSelectedHeightTotalBudget C x h A T +
+                    2 * D * Real.sqrt x * Real.log ((x + h) / x) *
+                      (1 + Real.log (T + 6)) ^ 2) /
+                  Real.log ((x + h) / x) ∧
+              (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) -
+                    secondOrderSelectedHeightTotalBudget C x h A T -
+                    2 * D * Real.sqrt x * Real.log ((x + h) / x) *
+                      (1 + Real.log (T + 6)) ^ 2) /
+                  Real.log ((x + h) / x) ≤
+                chebyshevPsi (x + h) :=
+  exists_uniform_C_D_forall_goodHeight_chebyshevPsi_bounds_scalar_sqrt_log_sq_of_RH
+    hRH
+
+example (hRH : RiemannHypothesis.Statement) :
+    ∃ C D : ℝ, 0 ≤ C ∧ 0 ≤ D ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x h : ℝ}, Real.exp 1 ≤ x → 0 < h →
+            (A + 2) * Real.log ((x + h) / x) ≤ 1 →
+            chebyshevPsi x - x ≤
+                h - Real.log (2 * Real.pi) +
+                  secondOrderSelectedHeightTotalBudget C x h A T /
+                    Real.log ((x + h) / x) +
+                  2 * D * Real.sqrt x * (1 + Real.log (T + 6)) ^ 2 ∧
+              x - Real.log (2 * Real.pi) -
+                    secondOrderSelectedHeightTotalBudget C x h A T /
+                      Real.log ((x + h) / x) -
+                    2 * D * Real.sqrt x * (1 + Real.log (T + 6)) ^ 2 ≤
+                chebyshevPsi (x + h) :=
+  exists_uniform_C_D_forall_goodHeight_chebyshevPsi_endpoint_error_sqrt_log_sq_of_RH
+    hRH
+
+example (hRH : RiemannHypothesis.Statement) :
+    ∃ C D : ℝ, 0 ≤ C ∧ 0 ≤ D ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x : ℝ}, Real.exp 1 ≤ x →
+          chebyshevPsi x - x ≤
+              canonicalSecondOrderSmoothingWidth x A -
+                Real.log (2 * Real.pi) +
+                secondOrderSelectedHeightTotalBudget C x
+                    (canonicalSecondOrderSmoothingWidth x A) A T /
+                  Real.log
+                    ((x + canonicalSecondOrderSmoothingWidth x A) / x) +
+                2 * D * Real.sqrt x * (1 + Real.log (T + 6)) ^ 2 ∧
+            x - Real.log (2 * Real.pi) -
+                  secondOrderSelectedHeightTotalBudget C x
+                      (canonicalSecondOrderSmoothingWidth x A) A T /
+                    Real.log
+                      ((x + canonicalSecondOrderSmoothingWidth x A) / x) -
+                  2 * D * Real.sqrt x * (1 + Real.log (T + 6)) ^ 2 ≤
+              chebyshevPsi
+                (x + canonicalSecondOrderSmoothingWidth x A) :=
+  exists_uniform_C_D_forall_goodHeight_chebyshevPsi_canonical_smoothing_error_sqrt_log_sq_of_RH
+    hRH
+
 end PrimeNumberTheorem.ExplicitFormulaResidues
 
 example :
