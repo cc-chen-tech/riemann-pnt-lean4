@@ -52,11 +52,16 @@ package of `ZeroForcedOscillationExplicitFormula.lean`:
   makes the normalized approximation budget tend to zero whenever
   `κ < lam + β`, and hence eventually smaller than every prescribed positive
   gap.
+* a structural refinement of the all-heights constant:
+  `K(x) = Cs(x) + 4 * Cg * x`, where the bounded-gap constant `Cg` is proved
+  uniform in every real `x > 1`; for `x = exp y`, a selected-height bound
+  `Cs(y) = O(exp (κ y))` with `κ ≥ 1` therefore supplies the same bound for
+  the complete all-heights constant and feeds the preceding rate transfer.
 
-What is NOT proved here: the pointwise all-heights constant is not controlled
-uniformly over the moving logarithmic intervals, the complementary gap and
-`B_T / E_T` are not bounded uniformly as `T` grows, and no unconditional
-`Omega` or `Omega_±` theorem is claimed.
+What is NOT proved here: the selected-height component `Cs(exp y)` is not
+controlled uniformly or exponentially over the moving logarithmic intervals,
+the complementary gap and `B_T / E_T` are not bounded uniformly as `T` grows,
+and no unconditional `Omega` or `Omega_±` theorem is claimed.
 -/
 
 open Complex Set
@@ -849,6 +854,240 @@ theorem movingHeightApproximationBudget_nonneg (K T : ℝ)
   unfold movingHeightApproximationBudget
   exact div_nonneg (mul_nonneg hK (sq_nonneg _)) (by linarith)
 
+/-- The bounded-gap part of the all-heights promotion has one constant for
+every real sample `x > 1`. The dependence on `x` is exactly the displayed
+linear factor. This extracts the witness from the global local-zero
+multiplicity estimate instead of retaining the pointwise existential wrapper
+in `ExplicitFormulaAllHeights`. -/
+theorem
+    exists_uniform_norm_explicitFormulaApproxWithMultiplicity_sub_le_log_div_of_le_add_three :
+    ∃ Cg : ℝ, 0 ≤ Cg ∧ ∀ {x : ℝ}, 1 < x →
+      ∀ {T U : ℝ}, 4 ≤ T → T ≤ U → U ≤ T + 3 →
+        ‖explicitFormulaApproxWithMultiplicity x T -
+            explicitFormulaApproxWithMultiplicity x U‖ ≤
+          2 * Cg * x * (1 + Real.log (T + 8)) / (T - 1 / 2) := by
+  classical
+  rcases ExplicitFormulaAux.exists_localZeroMultiplicity_le_log_bound with
+    ⟨Cg, hCg, hmult⟩
+  refine ⟨Cg, hCg, ?_⟩
+  intro x hx T U hT hTU hUT
+  have hlocal (A : ℝ) (hA : 4 ≤ A) :
+      ExplicitFormulaAux.localZeroContributionNorm x A ≤
+        Cg * x * (1 + Real.log (A + 6)) / (A - 1 / 2) := by
+    let S : Finset ℂ :=
+      (nontrivialZerosFinset (A + 2)).filter fun ρ : ℂ =>
+        A - 1 / 4 ≤ |ρ.im| ∧ |ρ.im| ≤ A + 5 / 4
+    have hden : 0 < A - 1 / 2 := by linarith
+    have hpoint (ρ : ℂ) (hρ : ρ ∈ S) :
+        ‖(analyticOrderNatAt riemannZeta ρ : ℂ) * (x : ℂ) ^ ρ / ρ‖ ≤
+          (analyticOrderNatAt riemannZeta ρ : ℝ) * x /
+            (A - 1 / 2) := by
+      rcases Finset.mem_filter.mp hρ with ⟨hρtrunc, hlow, _hhigh⟩
+      have hzero := (mem_nontrivialZerosFinset.mp hρtrunc).1
+      apply norm_multiplicity_zero_contribution_le_div_height hx hden hzero
+      linarith
+    have hsum :
+        ExplicitFormulaAux.localZeroContributionNorm x A ≤
+          ∑ ρ ∈ S,
+            (analyticOrderNatAt riemannZeta ρ : ℝ) * x /
+              (A - 1 / 2) := by
+      dsimp [ExplicitFormulaAux.localZeroContributionNorm, S]
+      exact Finset.sum_le_sum fun ρ hρ => hpoint ρ hρ
+    have hrewrite :
+        (∑ ρ ∈ S,
+            (analyticOrderNatAt riemannZeta ρ : ℝ) * x /
+              (A - 1 / 2)) =
+          x / (A - 1 / 2) *
+            ExplicitFormulaAux.localZeroMultiplicity A := by
+      dsimp [ExplicitFormulaAux.localZeroMultiplicity, S]
+      rw [Finset.mul_sum]
+      apply Finset.sum_congr rfl
+      intro ρ _hρ
+      ring
+    rw [hrewrite] at hsum
+    calc
+      ExplicitFormulaAux.localZeroContributionNorm x A ≤
+          x / (A - 1 / 2) *
+            ExplicitFormulaAux.localZeroMultiplicity A := hsum
+      _ ≤ x / (A - 1 / 2) *
+          (Cg * (1 + Real.log (A + 6))) := by
+        apply mul_le_mul_of_nonneg_left (hmult A hA)
+        exact div_nonneg (zero_lt_one.trans hx).le hden.le
+      _ = Cg * x * (1 + Real.log (A + 6)) /
+          (A - 1 / 2) := by ring
+  have hx0 : 0 ≤ x := (zero_lt_one.trans hx).le
+  have hCgx : 0 ≤ Cg * x := mul_nonneg hCg hx0
+  have hden : 0 < T - 1 / 2 := by linarith
+  have hnum : 0 ≤ Cg * x * (1 + Real.log (T + 8)) := by
+    have hlog : 0 ≤ Real.log (T + 8) :=
+      Real.log_nonneg (by linarith)
+    positivity
+  have hwindow1 := hlocal (T + 1 / 4) (by linarith)
+  have hwindow2 := hlocal (T + 7 / 4) (by linarith)
+  have hlog1 :
+      Real.log ((T + 1 / 4) + 6) ≤ Real.log (T + 8) :=
+    Real.log_le_log (by linarith) (by linarith)
+  have hlog2 :
+      Real.log ((T + 7 / 4) + 6) ≤ Real.log (T + 8) :=
+    Real.log_le_log (by linarith) (by linarith)
+  have hterm1 :
+      ExplicitFormulaAux.localZeroContributionNorm x (T + 1 / 4) ≤
+        Cg * x * (1 + Real.log (T + 8)) / (T - 1 / 2) := by
+    apply hwindow1.trans
+    calc
+      Cg * x * (1 + Real.log ((T + 1 / 4) + 6)) /
+            ((T + 1 / 4) - 1 / 2) ≤
+          Cg * x * (1 + Real.log (T + 8)) /
+            ((T + 1 / 4) - 1 / 2) := by
+        apply div_le_div_of_nonneg_right _ (by linarith)
+        exact mul_le_mul_of_nonneg_left (by linarith) hCgx
+      _ ≤ Cg * x * (1 + Real.log (T + 8)) / (T - 1 / 2) :=
+        div_le_div_of_nonneg_left hnum hden (by linarith)
+  have hterm2 :
+      ExplicitFormulaAux.localZeroContributionNorm x (T + 7 / 4) ≤
+        Cg * x * (1 + Real.log (T + 8)) / (T - 1 / 2) := by
+    apply hwindow2.trans
+    calc
+      Cg * x * (1 + Real.log ((T + 7 / 4) + 6)) /
+            ((T + 7 / 4) - 1 / 2) ≤
+          Cg * x * (1 + Real.log (T + 8)) /
+            ((T + 7 / 4) - 1 / 2) := by
+        apply div_le_div_of_nonneg_right _ (by linarith)
+        exact mul_le_mul_of_nonneg_left (by linarith) hCgx
+      _ ≤ Cg * x * (1 + Real.log (T + 8)) / (T - 1 / 2) :=
+        div_le_div_of_nonneg_left hnum hden (by linarith)
+  calc
+    ‖explicitFormulaApproxWithMultiplicity x T -
+        explicitFormulaApproxWithMultiplicity x U‖ ≤
+      ExplicitFormulaAux.localZeroContributionNorm x (T + 1 / 4) +
+        ExplicitFormulaAux.localZeroContributionNorm x (T + 7 / 4) :=
+      ExplicitFormulaResidues.norm_explicitFormulaApproxWithMultiplicity_sub_le_two_localWindows
+        hTU hUT
+    _ ≤ Cg * x * (1 + Real.log (T + 8)) / (T - 1 / 2) +
+        Cg * x * (1 + Real.log (T + 8)) / (T - 1 / 2) :=
+      add_le_add hterm1 hterm2
+    _ = 2 * Cg * x * (1 + Real.log (T + 8)) /
+        (T - 1 / 2) := by ring
+
+/-- Exact structural assembly behind the pointwise all-heights constant.
+Given a selected-height constant `Cs` and a bounded-gap constant `Cg`, the
+all-heights certificate uses `K(x) = Cs + 4 * Cg * x`. -/
+theorem norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_structural_allHeights
+    {x Cs Cg : ℝ} (hx : 1 < x) (hCs : 0 ≤ Cs) (hCg : 0 ≤ Cg)
+    (hselected :
+      ∀ A : ℝ, 8 ≤ A →
+        ∃ U ∈ Set.Icc A (A + 1), ExplicitFormulaAux.goodHeight U ∧
+          ‖explicitFormulaApproxWithMultiplicity x U -
+              (chebyshevPsi0 x : ℂ)‖ ≤
+            Cs * (1 + Real.log (A + 6)) ^ 2 / U)
+    (hgap :
+      ∀ {T U : ℝ}, 4 ≤ T → T ≤ U → U ≤ T + 3 →
+        ‖explicitFormulaApproxWithMultiplicity x T -
+            explicitFormulaApproxWithMultiplicity x U‖ ≤
+          2 * Cg * x * (1 + Real.log (T + 8)) / (T - 1 / 2))
+    (T : ℝ) (hT : 8 ≤ T) :
+    ‖explicitFormulaApproxWithMultiplicity x T -
+        (chebyshevPsi0 x : ℂ)‖ ≤
+      movingHeightApproximationBudget (Cs + 4 * Cg * x) T := by
+  rcases hselected T hT with ⟨U, hUmem, _hgood, hUbound⟩
+  have hTpos : 0 < T := by linarith
+  have hTU : T ≤ U := hUmem.1
+  have hUT3 : U ≤ T + 3 := by linarith [hUmem.2]
+  let L : ℝ := 1 + Real.log (T + 8)
+  let L6 : ℝ := 1 + Real.log (T + 6)
+  have hlog : 0 ≤ Real.log (T + 8) :=
+    Real.log_nonneg (by linarith)
+  have hlog6 : 0 ≤ Real.log (T + 6) :=
+    Real.log_nonneg (by linarith)
+  have hL : 1 ≤ L := by dsimp [L]; linarith
+  have hL6 : 0 ≤ L6 := by dsimp [L6]; linarith
+  have hlog_le : Real.log (T + 6) ≤ Real.log (T + 8) :=
+    Real.log_le_log (by linarith) (by linarith)
+  have hL6sq : L6 ^ 2 ≤ L ^ 2 := by
+    have hL6le : L6 ≤ L := by dsimp [L6, L]; linarith
+    nlinarith
+  have hselectedRate :
+      ‖explicitFormulaApproxWithMultiplicity x U -
+          (chebyshevPsi0 x : ℂ)‖ ≤ Cs * L ^ 2 / T := by
+    apply hUbound.trans
+    have hnum6 : 0 ≤ Cs * L6 ^ 2 := mul_nonneg hCs (sq_nonneg L6)
+    calc
+      Cs * (1 + Real.log (T + 6)) ^ 2 / U =
+          Cs * L6 ^ 2 / U := by rfl
+      _ ≤ Cs * L6 ^ 2 / T :=
+        div_le_div_of_nonneg_left hnum6 hTpos hTU
+      _ ≤ Cs * L ^ 2 / T := by
+        apply div_le_div_of_nonneg_right _ hTpos.le
+        exact mul_le_mul_of_nonneg_left hL6sq hCs
+  have hincrement := hgap (by linarith) hTU hUT3
+  have hden : 0 < T - 1 / 2 := by linarith
+  have hLleSq : L ≤ L ^ 2 := by nlinarith [sq_nonneg (L - 1)]
+  have hK : 0 ≤ 2 * Cg * x * L := by positivity
+  have hincrementRate :
+      ‖explicitFormulaApproxWithMultiplicity x T -
+          explicitFormulaApproxWithMultiplicity x U‖ ≤
+        4 * Cg * x * L ^ 2 / T := by
+    apply hincrement.trans
+    calc
+      2 * Cg * x * (1 + Real.log (T + 8)) / (T - 1 / 2) =
+          (2 * Cg * x * L) / (T - 1 / 2) := by rfl
+      _ ≤ (4 * Cg * x * L) / T := by
+        apply (div_le_div_iff₀ hden hTpos).2
+        nlinarith
+      _ ≤ (4 * Cg * x * L ^ 2) / T := by
+        apply div_le_div_of_nonneg_right _ hTpos.le
+        exact mul_le_mul_of_nonneg_left hLleSq (by positivity)
+  have hsplit :
+      explicitFormulaApproxWithMultiplicity x T - (chebyshevPsi0 x : ℂ) =
+        (explicitFormulaApproxWithMultiplicity x T -
+          explicitFormulaApproxWithMultiplicity x U) +
+        (explicitFormulaApproxWithMultiplicity x U -
+          (chebyshevPsi0 x : ℂ)) := by ring
+  rw [hsplit]
+  unfold movingHeightApproximationBudget
+  calc
+    _ ≤ ‖explicitFormulaApproxWithMultiplicity x T -
+            explicitFormulaApproxWithMultiplicity x U‖ +
+          ‖explicitFormulaApproxWithMultiplicity x U -
+            (chebyshevPsi0 x : ℂ)‖ := norm_add_le _ _
+    _ ≤ 4 * Cg * x * L ^ 2 / T + Cs * L ^ 2 / T :=
+      add_le_add hincrementRate hselectedRate
+    _ = (Cs + 4 * Cg * x) *
+        (1 + Real.log (T + 8)) ^ 2 / T := by
+      dsimp [L]
+      ring
+
+/-- The actual all-heights theorem admits a decomposition with one global
+gap constant `Cg`; only the selected-height constant `Cs` remains
+point-dependent. -/
+theorem
+    exists_uniform_gap_constant_forall_exists_structural_allHeights_certificate :
+    ∃ Cg : ℝ, 0 ≤ Cg ∧ ∀ {x : ℝ}, 1 < x →
+      ∃ Cs : ℝ, 0 ≤ Cs ∧
+        (∀ A : ℝ, 8 ≤ A →
+          ∃ U ∈ Set.Icc A (A + 1), ExplicitFormulaAux.goodHeight U ∧
+            ‖explicitFormulaApproxWithMultiplicity x U -
+                (chebyshevPsi0 x : ℂ)‖ ≤
+              Cs * (1 + Real.log (A + 6)) ^ 2 / U) ∧
+        ∀ T : ℝ, 8 ≤ T →
+          ‖explicitFormulaApproxWithMultiplicity x T -
+              (chebyshevPsi0 x : ℂ)‖ ≤
+            movingHeightApproximationBudget (Cs + 4 * Cg * x) T := by
+  rcases
+      exists_uniform_norm_explicitFormulaApproxWithMultiplicity_sub_le_log_div_of_le_add_three
+    with ⟨Cg, hCg, hgap⟩
+  refine ⟨Cg, hCg, ?_⟩
+  intro x hx
+  rcases
+      ExplicitFormulaResidues.exists_goodHeight_Icc_norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_log_sq_div
+        hx with
+    ⟨Cs, hCs, hselected⟩
+  refine ⟨Cs, hCs, hselected, ?_⟩
+  intro T hT
+  exact
+    norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_structural_allHeights
+      hx hCs hCg hselected (hgap hx) T hT
+
 /-- Explicit exponential-height rate transfer for the all-heights
 approximation budget. If the pointwise explicit-formula constants satisfy
 `0 ≤ K(y) ≤ K0 * exp (κ y)` eventually, then the choice
@@ -994,6 +1233,47 @@ theorem eventually_normalized_movingHeightApproximationBudget_exp_lt_gap
   (tendsto_normalized_movingHeightApproximationBudget_exp_atTop
     K K0 κ lam β hK0 hlam hrate hK).eventually
       (eventually_lt_nhds hgap)
+
+/-- Specialization of the rate-transfer theorem to the genuine structural
+constant `K(exp y) = Cs(y) + 4 * Cg * exp y`. Once the selected-height
+constants have exponent at most `κ`, the gap contribution has the same
+exponent for every `κ ≥ 1`. -/
+theorem tendsto_normalized_structural_allHeights_budget_exp_atTop
+    (Cs : ℝ → ℝ) (Cg Cs0 κ lam β : ℝ)
+    (hCg : 0 ≤ Cg) (hCs0 : 0 ≤ Cs0) (hkappa : 1 ≤ κ)
+    (hlam : 0 < lam) (hrate : κ < lam + β)
+    (hCs :
+      ∀ᶠ y : ℝ in Filter.atTop,
+        0 ≤ Cs y ∧ Cs y ≤ Cs0 * Real.exp (κ * y)) :
+    Filter.Tendsto
+      (fun y : ℝ =>
+        Real.exp (-β * y) *
+          movingHeightApproximationBudget
+            (Cs y + 4 * Cg * Real.exp y) (Real.exp (lam * y)))
+      Filter.atTop (nhds 0) := by
+  have hK0 : 0 ≤ Cs0 + 4 * Cg := by positivity
+  apply tendsto_normalized_movingHeightApproximationBudget_exp_atTop
+    (fun y => Cs y + 4 * Cg * Real.exp y)
+    (Cs0 + 4 * Cg) κ lam β hK0 hlam hrate
+  filter_upwards [hCs, Filter.eventually_ge_atTop (0 : ℝ)] with y hCsy hy
+  have hykappa : y ≤ κ * y := by
+    have hprod : 0 ≤ (κ - 1) * y :=
+      mul_nonneg (sub_nonneg.mpr hkappa) hy
+    nlinarith
+  have hexp : Real.exp y ≤ Real.exp (κ * y) :=
+    Real.exp_le_exp.mpr hykappa
+  constructor
+  · exact add_nonneg hCsy.1
+      (mul_nonneg (mul_nonneg (by norm_num) hCg) (Real.exp_nonneg _))
+  · calc
+      Cs y + 4 * Cg * Real.exp y ≤
+          Cs0 * Real.exp (κ * y) + 4 * Cg * Real.exp y :=
+        add_le_add hCsy.2 le_rfl
+      _ ≤ Cs0 * Real.exp (κ * y) + 4 * Cg * Real.exp (κ * y) := by
+        exact add_le_add le_rfl <|
+          mul_le_mul_of_nonneg_left hexp
+            (mul_nonneg (by norm_num) hCg)
+      _ = (Cs0 + 4 * Cg) * Real.exp (κ * y) := by ring
 
 /-- Every ordered off-diagonal budget is nonnegative. -/
 theorem offDiagonalBound_nonneg {ι : Type*} [DecidableEq ι]

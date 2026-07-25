@@ -238,8 +238,12 @@ EXPECTED_DECLARATIONS = {
 }
 
 OSCILLATION_EXPECTED_DECLARATIONS = {
+    "PrimeNumberTheorem.ZeroForcedOscillation.exists_uniform_norm_explicitFormulaApproxWithMultiplicity_sub_le_log_div_of_le_add_three",
+    "PrimeNumberTheorem.ZeroForcedOscillation.norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_structural_allHeights",
+    "PrimeNumberTheorem.ZeroForcedOscillation.exists_uniform_gap_constant_forall_exists_structural_allHeights_certificate",
     "PrimeNumberTheorem.ZeroForcedOscillation.tendsto_normalized_movingHeightApproximationBudget_exp_atTop",
     "PrimeNumberTheorem.ZeroForcedOscillation.eventually_normalized_movingHeightApproximationBudget_exp_lt_gap",
+    "PrimeNumberTheorem.ZeroForcedOscillation.tendsto_normalized_structural_allHeights_budget_exp_atTop",
 }
 
 REPORT_RE = re.compile(

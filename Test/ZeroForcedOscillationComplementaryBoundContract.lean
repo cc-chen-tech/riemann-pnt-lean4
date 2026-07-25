@@ -745,6 +745,43 @@ example (K : ℝ → ℝ) (K0 κ lam β gap : ℝ)
   eventually_normalized_movingHeightApproximationBudget_exp_lt_gap
     K K0 κ lam β gap hK0 hlam hrate hgap hK
 
+example :
+    ∃ Cg : ℝ, 0 ≤ Cg ∧ ∀ {x : ℝ}, 1 < x →
+      ∀ {T U : ℝ}, 4 ≤ T → T ≤ U → U ≤ T + 3 →
+        ‖explicitFormulaApproxWithMultiplicity x T -
+            explicitFormulaApproxWithMultiplicity x U‖ ≤
+          2 * Cg * x * (1 + Real.log (T + 8)) / (T - 1 / 2) :=
+  exists_uniform_norm_explicitFormulaApproxWithMultiplicity_sub_le_log_div_of_le_add_three
+
+example :
+    ∃ Cg : ℝ, 0 ≤ Cg ∧ ∀ {x : ℝ}, 1 < x →
+      ∃ Cs : ℝ, 0 ≤ Cs ∧
+        (∀ A : ℝ, 8 ≤ A →
+          ∃ U ∈ Set.Icc A (A + 1), ExplicitFormulaAux.goodHeight U ∧
+            ‖explicitFormulaApproxWithMultiplicity x U -
+                (chebyshevPsi0 x : ℂ)‖ ≤
+              Cs * (1 + Real.log (A + 6)) ^ 2 / U) ∧
+        ∀ T : ℝ, 8 ≤ T →
+          ‖explicitFormulaApproxWithMultiplicity x T -
+              (chebyshevPsi0 x : ℂ)‖ ≤
+            movingHeightApproximationBudget (Cs + 4 * Cg * x) T :=
+  exists_uniform_gap_constant_forall_exists_structural_allHeights_certificate
+
+example (Cs : ℝ → ℝ) (Cg Cs0 κ lam β : ℝ)
+    (hCg : 0 ≤ Cg) (hCs0 : 0 ≤ Cs0) (hkappa : 1 ≤ κ)
+    (hlam : 0 < lam) (hrate : κ < lam + β)
+    (hCs :
+      ∀ᶠ y : ℝ in Filter.atTop,
+        0 ≤ Cs y ∧ Cs y ≤ Cs0 * Real.exp (κ * y)) :
+    Filter.Tendsto
+      (fun y : ℝ =>
+        Real.exp (-β * y) *
+          movingHeightApproximationBudget
+            (Cs y + 4 * Cg * Real.exp y) (Real.exp (lam * y)))
+      Filter.atTop (nhds 0) :=
+  tendsto_normalized_structural_allHeights_budget_exp_atTop
+    Cs Cg Cs0 κ lam β hCg hCs0 hkappa hlam hrate hCs
+
 -- Small sanity checks: the per-term identity at zero multiplicity and at `ρ = 0`.
 
 example (x : ℝ) (hx : 0 < x) (ρ : ℂ) :
