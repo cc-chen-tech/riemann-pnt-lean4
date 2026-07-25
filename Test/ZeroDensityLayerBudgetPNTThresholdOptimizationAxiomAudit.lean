@@ -1,0 +1,6 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetPNTThresholdOptimization
+
+#print axioms PrimeNumberTheorem.PintzPNTThresholdGrid.candidates_nonempty
+#print axioms PrimeNumberTheorem.exists_pintzPNTThresholdOptimizer
+#print axioms PrimeNumberTheorem.pintzPNTOptimalThresholdCandidate_le_of_mem
+#print axioms PrimeNumberTheorem.exists_naturalPoint_pintzPNT_hybrid_threshold_optimal
