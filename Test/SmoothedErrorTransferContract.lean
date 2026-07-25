@@ -228,6 +228,33 @@ example :
                 C x h A T :=
   PrimeNumberTheorem.ExplicitFormulaResidues.exists_uniform_goodHeight_Icc_norm_secondOrderContourRemainder_increment_le
 
+example :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        PrimeNumberTheorem.ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x h : ℝ}, Real.exp 1 ≤ x → 0 < h →
+            (T + 2) * Real.log ((x + h) / x) ≤ 1 →
+            let c := 1 + 1 / Real.log (x + h)
+            (∀ p ∈
+              ([[(-1 : ℝ), c]] ×ℂ [[-T, T]] : Set ℂ),
+              p = 0 ∨ p = 1 ∨ riemannZeta p = 0 →
+                -1 < p.re ∧ p.re < c ∧ -T < p.im ∧ p.im < T) ∧
+            ‖PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderContourRemainder
+                  (x + h) (-1) c (T / (2 * Real.pi)) -
+                PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderContourRemainder
+                  x (-1) c (T / (2 * Real.pi))‖ /
+                Real.log ((x + h) / x) ≤
+              (2 *
+                    ((2 * C * x ^ (2 : ℝ) *
+                          (1 + Real.log (A + 6)) ^ 2 / T) *
+                      ((1 + 1 / Real.log (x + h)) - (-1))) +
+                  (2 *
+                      PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderOddVerticalBound
+                        x 0 T) *
+                    (2 * T)) /
+                (2 * Real.pi) :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.exists_uniform_goodHeight_Icc_norm_secondOrderContourRemainder_increment_div_log_le
+
 example (x y a c W : ℝ) :
     ‖PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderContourRemainder y a c W -
         PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderContourRemainder x a c W‖ ≤
@@ -718,6 +745,41 @@ example (C x h A T : ℝ) :
               Real.log ((x + h) / x)) *
             (2 * T)) /
         (2 * Real.pi) := rfl
+
+example {C x h A T : ℝ} (hx : 0 < x) (hh : 0 < h) :
+    PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightIncrementContourBudget
+          C x h A T /
+        Real.log ((x + h) / x) =
+      (2 *
+            ((2 * C * x ^ (2 : ℝ) *
+                  (1 + Real.log (A + 6)) ^ 2 / T) *
+              ((1 + 1 / Real.log (x + h)) - (-1))) +
+          (2 *
+              PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderOddVerticalBound
+                x 0 T) *
+            (2 * T)) /
+        (2 * Real.pi) :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightIncrementContourBudget_div_log_eq
+    hx hh
+
+example {C x h A T : ℝ} (hx : 0 < x) (hh : 0 < h) :
+    PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightIncrementTotalBudget
+          C x h A T /
+        Real.log ((x + h) / x) =
+      (2 *
+            ((2 * C * x ^ (2 : ℝ) *
+                  (1 + Real.log (A + 6)) ^ 2 / T) *
+              ((1 + 1 / Real.log (x + h)) - (-1))) +
+          (2 *
+              PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderOddVerticalBound
+                x 0 T) *
+            (2 * T)) /
+          (2 * Real.pi) +
+        PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderMovingEndpointPerronBudget
+            x h (T / (2 * Real.pi)) /
+          Real.log ((x + h) / x) :=
+  PrimeNumberTheorem.ExplicitFormulaResidues.secondOrderSelectedHeightIncrementTotalBudget_div_log_eq
+    hx hh
 
 example {x h T : ℝ} (hx : 0 < x) (hh : 0 ≤ h) (hT : 0 < T)
     (hsmall : (T + 2) * Real.log ((x + h) / x) ≤ 1) :
@@ -1382,6 +1444,38 @@ example :
                     2 * D * x * (1 + Real.log (T + 6)) ^ 2 ≤
                 chebyshevPsi (x + h) :=
   exists_uniform_C_D_forall_goodHeight_chebyshevPsi_endpoint_error_log_sq_increment
+
+example :
+    ∃ C D : ℝ, 0 ≤ C ∧ 0 ≤ D ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x h : ℝ}, Real.exp 1 ≤ x → 0 < h →
+            (A + 3) * Real.log ((x + h) / x) ≤ 1 →
+            chebyshevPsi x - x ≤
+                h - Real.log (2 * Real.pi) +
+                  ((2 *
+                        ((2 * C * x ^ (2 : ℝ) *
+                              (1 + Real.log (A + 6)) ^ 2 / T) *
+                          ((1 + 1 / Real.log (x + h)) - (-1))) +
+                      (2 * secondOrderOddVerticalBound x 0 T) * (2 * T)) /
+                      (2 * Real.pi) +
+                    secondOrderMovingEndpointPerronBudget
+                        x h (T / (2 * Real.pi)) /
+                      Real.log ((x + h) / x)) +
+                  2 * D * x * (1 + Real.log (T + 6)) ^ 2 ∧
+              x - Real.log (2 * Real.pi) -
+                    ((2 *
+                          ((2 * C * x ^ (2 : ℝ) *
+                                (1 + Real.log (A + 6)) ^ 2 / T) *
+                            ((1 + 1 / Real.log (x + h)) - (-1))) +
+                        (2 * secondOrderOddVerticalBound x 0 T) * (2 * T)) /
+                        (2 * Real.pi) +
+                      secondOrderMovingEndpointPerronBudget
+                          x h (T / (2 * Real.pi)) /
+                        Real.log ((x + h) / x)) -
+                    2 * D * x * (1 + Real.log (T + 6)) ^ 2 ≤
+                chebyshevPsi (x + h) :=
+  exists_uniform_C_D_forall_goodHeight_chebyshevPsi_endpoint_error_log_sq_increment_explicit_contour
 
 example (hRH : RiemannHypothesis.Statement) :
     ∃ C D : ℝ, 0 ≤ C ∧ 0 ≤ D ∧ ∀ A : ℝ, 4 ≤ A →

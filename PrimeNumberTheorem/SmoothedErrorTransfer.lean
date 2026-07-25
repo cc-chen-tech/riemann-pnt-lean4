@@ -2083,6 +2083,49 @@ noncomputable def secondOrderSelectedHeightIncrementTotalBudget
   secondOrderSelectedHeightIncrementContourBudget C x h A T +
     secondOrderMovingEndpointPerronBudget x h (T / (2 * Real.pi))
 
+/-- Dividing the cancellation-aware contour budget by the logarithmic
+endpoint gap cancels that gap exactly on both horizontal edges and on the
+left vertical edge.  In particular, the displayed vertical contribution has
+no reciprocal smoothing-width factor. -/
+theorem secondOrderSelectedHeightIncrementContourBudget_div_log_eq
+    {C x h A T : ℝ} (hx : 0 < x) (hh : 0 < h) :
+    secondOrderSelectedHeightIncrementContourBudget C x h A T /
+        Real.log ((x + h) / x) =
+      (2 *
+            ((2 * C * x ^ (2 : ℝ) *
+                  (1 + Real.log (A + 6)) ^ 2 / T) *
+              ((1 + 1 / Real.log (x + h)) - (-1))) +
+          (2 * secondOrderOddVerticalBound x 0 T) * (2 * T)) /
+        (2 * Real.pi) := by
+  have hratio : 1 < (x + h) / x := by
+    rw [lt_div_iff₀ hx]
+    linarith
+  have hlogpos : 0 < Real.log ((x + h) / x) :=
+    Real.log_pos hratio
+  rw [div_eq_iff hlogpos.ne']
+  unfold secondOrderSelectedHeightIncrementContourBudget
+  ring
+
+/-- Exact normalized decomposition of the total cancellation-aware budget.
+Only the common moving-line Perron tail remains divided by the logarithmic
+gap; the entire contour contribution, including the left vertical edge, is
+free of that reciprocal factor. -/
+theorem secondOrderSelectedHeightIncrementTotalBudget_div_log_eq
+    {C x h A T : ℝ} (hx : 0 < x) (hh : 0 < h) :
+    secondOrderSelectedHeightIncrementTotalBudget C x h A T /
+        Real.log ((x + h) / x) =
+      (2 *
+            ((2 * C * x ^ (2 : ℝ) *
+                  (1 + Real.log (A + 6)) ^ 2 / T) *
+              ((1 + 1 / Real.log (x + h)) - (-1))) +
+          (2 * secondOrderOddVerticalBound x 0 T) * (2 * T)) /
+          (2 * Real.pi) +
+        secondOrderMovingEndpointPerronBudget
+            x h (T / (2 * Real.pi)) /
+          Real.log ((x + h) / x) := by
+  unfold secondOrderSelectedHeightIncrementTotalBudget
+  rw [add_div, secondOrderSelectedHeightIncrementContourBudget_div_log_eq hx hh]
+
 /-- The cancellation-aware selected height controls the actual contour
 remainder difference.  This theorem is the analytic consumer of
 `secondOrderSelectedHeightIncrementContourBudget`; the budget is not merely a
@@ -2206,6 +2249,57 @@ theorem
       dsimp [K, L, c]
       unfold secondOrderSelectedHeightIncrementContourBudget
       ring
+
+/-- Direct normalized remainder estimate at the selected good height.  This is
+the analytic form of endpoint cancellation: after dividing the actual contour
+remainder difference by the logarithmic endpoint gap, the left-vertical
+contribution is the finite term displayed on the right, with no reciprocal
+gap. -/
+theorem
+    exists_uniform_goodHeight_Icc_norm_secondOrderContourRemainder_increment_div_log_le :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x h : ℝ}, Real.exp 1 ≤ x → 0 < h →
+            (T + 2) * Real.log ((x + h) / x) ≤ 1 →
+            let c := 1 + 1 / Real.log (x + h)
+            (∀ p ∈
+              ([[(-1 : ℝ), c]] ×ℂ [[-T, T]] : Set ℂ),
+              p = 0 ∨ p = 1 ∨ riemannZeta p = 0 →
+                -1 < p.re ∧ p.re < c ∧ -T < p.im ∧ p.im < T) ∧
+            ‖secondOrderContourRemainder (x + h) (-1) c
+                  (T / (2 * Real.pi)) -
+                secondOrderContourRemainder x (-1) c
+                  (T / (2 * Real.pi))‖ /
+                Real.log ((x + h) / x) ≤
+              (2 *
+                    ((2 * C * x ^ (2 : ℝ) *
+                          (1 + Real.log (A + 6)) ^ 2 / T) *
+                      ((1 + 1 / Real.log (x + h)) - (-1))) +
+                  (2 * secondOrderOddVerticalBound x 0 T) * (2 * T)) /
+                (2 * Real.pi) := by
+  rcases
+      exists_uniform_goodHeight_Icc_norm_secondOrderContourRemainder_increment_le
+      with ⟨C, hC, hchoose⟩
+  refine ⟨C, hC, ?_⟩
+  intro A hA
+  rcases hchoose A hA with ⟨T, hT, hgood, hbound⟩
+  refine ⟨T, hT, hgood, ?_⟩
+  intro x h hx hh hsmall
+  have hdata := hbound hx hh hsmall
+  dsimp only at hdata ⊢
+  rcases hdata with ⟨hboundary, hremainder⟩
+  have hxpos : 0 < x := (Real.exp_pos 1).trans_le hx
+  have hratio : 1 < (x + h) / x := by
+    rw [lt_div_iff₀ hxpos]
+    linarith
+  have hlogpos : 0 < Real.log ((x + h) / x) :=
+    Real.log_pos hratio
+  refine ⟨hboundary, ?_⟩
+  have hnormalized :=
+    (div_le_div_iff_of_pos_right hlogpos).2 hremainder
+  rw [secondOrderSelectedHeightIncrementContourBudget_div_log_eq hxpos hh] at hnormalized
+  exact hnormalized
 
 /-- The selected-height contour budget is nonnegative on the parameter range
 used by the good-height theorem. -/
@@ -4452,6 +4546,54 @@ theorem
               Real.log ((x + h) / x) := by
         field_simp [hlogpos.ne']
       _ ≤ chebyshevPsi (x + h) := hbounds.2
+
+/-- The cancellation-aware endpoint error with the normalized contour budget
+fully displayed.  The horizontal and left-vertical contour contributions have
+both spent their logarithmic endpoint gap; only the independent moving-line
+Perron tail still carries the reciprocal gap. -/
+theorem
+    exists_uniform_C_D_forall_goodHeight_chebyshevPsi_endpoint_error_log_sq_increment_explicit_contour :
+    ∃ C D : ℝ, 0 ≤ C ∧ 0 ≤ D ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x h : ℝ}, Real.exp 1 ≤ x → 0 < h →
+            (A + 3) * Real.log ((x + h) / x) ≤ 1 →
+            chebyshevPsi x - x ≤
+                h - Real.log (2 * Real.pi) +
+                  ((2 *
+                        ((2 * C * x ^ (2 : ℝ) *
+                              (1 + Real.log (A + 6)) ^ 2 / T) *
+                          ((1 + 1 / Real.log (x + h)) - (-1))) +
+                      (2 * secondOrderOddVerticalBound x 0 T) * (2 * T)) /
+                      (2 * Real.pi) +
+                    secondOrderMovingEndpointPerronBudget
+                        x h (T / (2 * Real.pi)) /
+                      Real.log ((x + h) / x)) +
+                  2 * D * x * (1 + Real.log (T + 6)) ^ 2 ∧
+              x - Real.log (2 * Real.pi) -
+                    ((2 *
+                          ((2 * C * x ^ (2 : ℝ) *
+                                (1 + Real.log (A + 6)) ^ 2 / T) *
+                            ((1 + 1 / Real.log (x + h)) - (-1))) +
+                        (2 * secondOrderOddVerticalBound x 0 T) * (2 * T)) /
+                        (2 * Real.pi) +
+                      secondOrderMovingEndpointPerronBudget
+                          x h (T / (2 * Real.pi)) /
+                        Real.log ((x + h) / x)) -
+                    2 * D * x * (1 + Real.log (T + 6)) ^ 2 ≤
+                chebyshevPsi (x + h) := by
+  rcases
+      exists_uniform_C_D_forall_goodHeight_chebyshevPsi_endpoint_error_log_sq_increment
+      with ⟨C, D, hC, hD, hchoose⟩
+  refine ⟨C, D, hC, hD, ?_⟩
+  intro A hA
+  rcases hchoose A hA with ⟨T, hT, hgood, hbound⟩
+  refine ⟨T, hT, hgood, ?_⟩
+  intro x h hx hh hsmall
+  have hxpos : 0 < x := (Real.exp_pos 1).trans_le hx
+  have hbounds := hbound hx hh hsmall
+  rw [secondOrderSelectedHeightIncrementTotalBudget_div_log_eq hxpos hh] at hbounds
+  exact hbounds
 
 /-- Under RH, the cancellation-aware scalar sandwich retains the
 `sqrt x log² T` scale of the finite zero increment. -/
