@@ -708,6 +708,41 @@ private theorem integrable_verticalGaussian_monomial
   ring
 
 /--
+A polynomial times a shifted vertical Gaussian is integrable on the full
+vertical line. This is the integrability input needed to split the Mellin
+factor on the right edge of the zeta rectangle.
+-/
+theorem integrable_verticalPolynomialGaussian
+    (A : ℂ[X]) {m : ℝ} (hm : 0 < m) (c r : ℝ) :
+    Integrable
+      (fun t : ℝ =>
+        A.eval ((c : ℂ) + I * (t : ℂ)) *
+          Complex.exp
+            ((m : ℂ) * ((c : ℂ) + I * (t : ℂ)) ^ 2 +
+              (r : ℂ) * ((c : ℂ) + I * (t : ℂ)))) := by
+  classical
+  have hterms :
+      ∀ k ∈ A.support,
+        Integrable
+          (fun t : ℝ =>
+            A.coeff k *
+              (((c : ℂ) + I * (t : ℂ)) ^ k *
+                Complex.exp
+                  ((m : ℂ) * ((c : ℂ) + I * (t : ℂ)) ^ 2 +
+                    (r : ℂ) * ((c : ℂ) + I * (t : ℂ))))) := by
+    intro k _
+    exact
+      (integrable_verticalGaussian_monomial hm c k r).const_mul _
+  apply
+    (integrable_finset_sum A.support hterms).congr
+  filter_upwards with t
+  rw [A.eval_eq_sum]
+  simp only [Polynomial.sum, Finset.sum_mul]
+  apply Finset.sum_congr rfl
+  intro k _
+  ring
+
+/--
 The polynomial Gaussian--Mellin transform is independent of the chosen
 vertical line. This is the exact transform required on the right edge of
 the localized zeta rectangle.
@@ -781,6 +816,88 @@ theorem integral_verticalPolynomialGaussian_eq
             ((iteratedDeriv k
               (normalizedGaussian m) r : ℝ) : ℂ)) := by
         ring
+
+/--
+On a shifted vertical line, the linear Mellin factor `w + z` becomes the
+sum of multiplication by `w` and one real derivative of the inverse
+Gaussian kernel.
+-/
+theorem integral_verticalPolynomialGaussian_add_mul_eq
+    (A : ℂ[X]) {m : ℝ} (hm : 0 < m)
+    (w : ℂ) (c r : ℝ) :
+    (∫ t : ℝ,
+        (w + ((c : ℂ) + I * (t : ℂ))) *
+          A.eval ((c : ℂ) + I * (t : ℂ)) *
+          Complex.exp
+            ((m : ℂ) * ((c : ℂ) + I * (t : ℂ)) ^ 2 +
+              (r : ℂ) * ((c : ℂ) + I * (t : ℂ)))) =
+      (2 * Real.pi : ℂ) *
+        (w * polynomialGaussianKernel A m r +
+          polynomialGaussianKernelDeriv A m r) := by
+  let z : ℝ → ℂ := fun t => (c : ℂ) + I * (t : ℂ)
+  let E : ℝ → ℂ := fun t =>
+    Complex.exp
+      ((m : ℂ) * (z t) ^ 2 + (r : ℂ) * z t)
+  have hA :
+      Integrable (fun t : ℝ => A.eval (z t) * E t) := by
+    simpa [z, E] using
+      integrable_verticalPolynomialGaussian A hm c r
+  have hXA :
+      Integrable (fun t : ℝ => (X * A).eval (z t) * E t) := by
+    dsimp [z, E]
+    exact integrable_verticalPolynomialGaussian (X * A) hm c r
+  have hsplit :
+      (fun t : ℝ =>
+        (w + z t) * A.eval (z t) * E t) =
+        fun t : ℝ =>
+          w * (A.eval (z t) * E t) +
+            (X * A).eval (z t) * E t := by
+    funext t
+    simp only [eval_mul, eval_X]
+    ring
+  have hAIntegral :
+      (∫ t : ℝ, A.eval (z t) * E t) =
+        (2 * Real.pi : ℂ) *
+          polynomialGaussianKernel A m r := by
+    dsimp [z, E]
+    exact integral_verticalPolynomialGaussian_eq A hm c r
+  have hXAIntegral :
+      (∫ t : ℝ, (X * A).eval (z t) * E t) =
+        (2 * Real.pi : ℂ) *
+          polynomialGaussianKernel (X * A) m r := by
+    dsimp [z, E]
+    exact integral_verticalPolynomialGaussian_eq (X * A) hm c r
+  rw [show
+      (fun t : ℝ =>
+        (w + ((c : ℂ) + I * (t : ℂ))) *
+          A.eval ((c : ℂ) + I * (t : ℂ)) *
+          Complex.exp
+            ((m : ℂ) * ((c : ℂ) + I * (t : ℂ)) ^ 2 +
+              (r : ℂ) * ((c : ℂ) + I * (t : ℂ)))) =
+        fun t : ℝ => (w + z t) * A.eval (z t) * E t by
+    rfl]
+  rw [hsplit, integral_add (hA.const_mul w) hXA]
+  calc
+    (∫ t : ℝ, w * (A.eval (z t) * E t)) +
+          ∫ t : ℝ, (X * A).eval (z t) * E t =
+        w * (∫ t : ℝ, A.eval (z t) * E t) +
+          ∫ t : ℝ, (X * A).eval (z t) * E t := by
+      exact congrArg
+        (fun q : ℂ =>
+          q + ∫ t : ℝ, (X * A).eval (z t) * E t)
+        (integral_const_mul w
+          (fun t : ℝ => A.eval (z t) * E t))
+    _ =
+        w * ((2 * Real.pi : ℂ) *
+          polynomialGaussianKernel A m r) +
+          (2 * Real.pi : ℂ) *
+            polynomialGaussianKernel (X * A) m r := by
+      exact congrArg₂ (· + ·)
+        (congrArg (w * ·) hAIntegral)
+        hXAIntegral
+    _ = _ := by
+      rw [polynomialGaussianKernel_X_mul]
+      ring
 
 end
 

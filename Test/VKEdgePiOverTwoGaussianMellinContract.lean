@@ -8,7 +8,9 @@ open PrimeNumberTheorem.VKEdgePiOverTwo
 #check integral_verticalGaussian_monomial_zero_eq
 #check integral_verticalPolynomialGaussian_zero_eq
 #check integral_verticalGaussian_monomial_eq
+#check integrable_verticalPolynomialGaussian
 #check integral_verticalPolynomialGaussian_eq
+#check integral_verticalPolynomialGaussian_add_mul_eq
 
 example {m : ℝ} (hm : 0 < m) (c r : ℝ) :
     (∫ t : ℝ,
@@ -35,3 +37,16 @@ example (A : ℂ[X]) {m : ℝ} (hm : 0 < m) (c r : ℝ) :
               (r : ℂ) * ((c : ℂ) + I * (t : ℂ)))) =
       (2 * Real.pi : ℂ) * polynomialGaussianKernel A m r :=
   integral_verticalPolynomialGaussian_eq A hm c r
+
+example (A : ℂ[X]) {m : ℝ} (hm : 0 < m)
+    (w : ℂ) (c r : ℝ) :
+    (∫ t : ℝ,
+        (w + ((c : ℂ) + I * (t : ℂ))) *
+          A.eval ((c : ℂ) + I * (t : ℂ)) *
+          Complex.exp
+            ((m : ℂ) * ((c : ℂ) + I * (t : ℂ)) ^ 2 +
+              (r : ℂ) * ((c : ℂ) + I * (t : ℂ)))) =
+      (2 * Real.pi : ℂ) *
+        (w * polynomialGaussianKernel A m r +
+          polynomialGaussianKernelDeriv A m r) :=
+  integral_verticalPolynomialGaussian_add_mul_eq A hm w c r
