@@ -23,6 +23,36 @@ noncomputable def thetaFrequencyLinearizedShortIntegral
       Complex.exp
         (I * (((deriv thetaModel t + omega) * v : ℝ) : ℂ))
 
+/-- A stationary-safe short-window envelope.  At exact stationary phase it
+uses the window length; otherwise it retains reciprocal-frequency decay with
+the tangent-line error. -/
+noncomputable def thetaFrequencyShortIntegralEnvelope
+    (omega T delta t : ℝ) : ℝ :=
+  if deriv thetaModel t + omega = 0 then
+    delta
+  else
+    min delta (2 / |deriv thetaModel t + omega|) +
+      delta ^ 3 / (2 * T)
+
+/-- Every theta-frequency integrand has unit norm, so the exact short
+integral is bounded by the window length even at a stationary frequency. -/
+theorem norm_thetaFrequencyShortIntegral_le_length
+    (omega : ℝ) {delta t : ℝ} (hdelta : 0 ≤ delta) :
+    ‖thetaFrequencyShortIntegral omega delta t‖ ≤ delta := by
+  dsimp only [thetaFrequencyShortIntegral]
+  calc
+    ‖∫ v in 0..delta,
+        Complex.exp
+          (I * ((thetaModel (t + v) + omega * (t + v) : ℝ) : ℂ))‖ ≤
+        1 * |delta - 0| := by
+      apply intervalIntegral.norm_integral_le_of_norm_le_const
+      intro v _hv
+      exact le_of_eq
+        (Complex.norm_exp_I_mul_ofReal
+          (thetaModel (t + v) + omega * (t + v)))
+    _ = delta := by
+      rw [sub_zero, abs_of_nonneg hdelta, one_mul]
+
 private theorem thetaModel_eq_hardyPhase_one :
     thetaModel = OscillatoryIntegral.hardyPhase 1 := by
   funext t
@@ -232,5 +262,19 @@ theorem norm_thetaFrequencyShortIntegral_le_min_add_linearization_error
           omega hdelta hfreq)
     _ = min delta (2 / |deriv thetaModel t + omega|) +
         delta ^ 3 / (2 * T) := by ring
+
+/-- The stationary-safe envelope controls every arbitrary-frequency theta
+short integral without a per-frequency nonvanishing hypothesis. -/
+theorem norm_thetaFrequencyShortIntegral_le_envelope
+    (omega : ℝ) {T t delta : ℝ}
+    (hT : 0 < T) (hTt : T ≤ t) (hdelta : 0 ≤ delta) :
+    ‖thetaFrequencyShortIntegral omega delta t‖ ≤
+      thetaFrequencyShortIntegralEnvelope omega T delta t := by
+  unfold thetaFrequencyShortIntegralEnvelope
+  split_ifs with hfreq
+  · exact norm_thetaFrequencyShortIntegral_le_length omega hdelta
+  · exact
+      norm_thetaFrequencyShortIntegral_le_min_add_linearization_error
+        omega hT hTt hdelta hfreq
 
 end HardyTheorem
