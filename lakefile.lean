@@ -193,6 +193,7 @@ lean_lib RiemannPNT where
     `Test.VinogradovKorobovMixedTailMomentContract,
     `Test.VinogradovKorobovTailResidueReparameterizationContract,
     `Test.VinogradovKorobovTerminalTailRecurrenceContract,
+    `Test.VinogradovKorobovTailIterationContract,
     `Test.VinogradovKorobovMixedScheduleContract,
     `Test.VinogradovKorobovMixedDecompositionContract,
     `Test.VinogradovKorobovCompleteBlockMainContract,
