@@ -753,6 +753,25 @@ example :
           2 * Cg * x * (1 + Real.log (T + 8)) / (T - 1 / 2) :=
   exists_uniform_norm_explicitFormulaApproxWithMultiplicity_sub_le_log_div_of_le_add_three
 
+example {x Cs Cg : ℝ} (hx : 1 < x) (hCs : 0 ≤ Cs) (hCg : 0 ≤ Cg)
+    (hselected :
+      ∀ A : ℝ, 8 ≤ A →
+        ∃ U ∈ Set.Icc A (A + 1), ExplicitFormulaAux.goodHeight U ∧
+          ‖explicitFormulaApproxWithMultiplicity x U -
+              (chebyshevPsi0 x : ℂ)‖ ≤
+            Cs * (1 + Real.log (A + 6)) ^ 2 / U)
+    (hgap :
+      ∀ {T U : ℝ}, 4 ≤ T → T ≤ U → U ≤ T + 3 →
+        ‖explicitFormulaApproxWithMultiplicity x T -
+            explicitFormulaApproxWithMultiplicity x U‖ ≤
+          2 * Cg * x * (1 + Real.log (T + 8)) / (T - 1 / 2))
+    (T : ℝ) (hT : 8 ≤ T) :
+    ‖explicitFormulaApproxWithMultiplicity x T -
+        (chebyshevPsi0 x : ℂ)‖ ≤
+      movingHeightApproximationBudget (Cs + 4 * Cg * x) T :=
+  norm_explicitFormulaApproxWithMultiplicity_sub_chebyshevPsi0_le_structural_allHeights
+    hx hCs hCg hselected hgap T hT
+
 example :
     ∃ Cg : ℝ, 0 ≤ Cg ∧ ∀ {x : ℝ}, 1 < x →
       ∃ Cs : ℝ, 0 ≤ Cs ∧
