@@ -1,0 +1,18 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetDynamicActualZetaLayer
+
+/-!
+# Contract for dynamic actual-zeta layers
+-/
+
+namespace PrimeNumberTheorem
+
+#check dynamicPositivePNTLayerNorm
+#check dynamicCarlsonLayerCount
+#check dynamicPintzRelativeKernelBudget
+#check dynamicPositivePNTLayerNorm_le_carlson_mul_pintz
+#check dynamicCarlsonLayerCount_nonneg
+#check dynamicPintzRelativeKernelBudget_pos
+#check dynamicPositivePNTLayerNorm_pintzCarlsonTargetLayerBudget
+#check dynamicPositivePNTLayerNorm_targetAmplitudeNegligible
+
+end PrimeNumberTheorem
