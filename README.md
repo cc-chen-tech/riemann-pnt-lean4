@@ -1324,7 +1324,27 @@ identity to an arbitrary finite alphabet and specializes it to every support
 bounds in terms of `B.card`.  This supplies the support-level interface needed
 by Ford's Lemma 5.1, but it does not yet define or estimate the smooth-number
 supports used in Ford's argument.  The smooth-number arithmetic estimates and
-the double-Holder aggregation remain open.
+the localization that turns the remaining amplitude moment into an incomplete
+mean value remain open.
+
+The finite algebraic core of Ford's double-Holder step is now isolated in
+`FordDoubleHolder.lean` and `FordPowerSumFibers.lean`.  The former proves the
+three-factor finite inequality used in Ford's equation (5.3).  The latter
+defines Ford's multiplicity `n(c)` for complete integer power-sum vectors and
+proves
+`sum n(c) = X^r` and
+`sum n(c)^2 = vinogradovSolutionCountNat k r X`, then substitutes both
+identities into the Holder bound.  On the incomplete side,
+`FordIncompleteSupportMoment.lean` proves that the unnormalized `2s`-moment
+over every finite support `B` is exactly the coefficient-space volume times
+its incomplete solution count.
+
+This still does **not** prove Ford's Lemma 5.1.  The remaining central step is
+the localization in equations (5.4)--(5.6): introduce the tent-kernel Fourier
+majorant, restrict each power-sum difference to the near-integer set
+`D_j`, bound `|D_j|` by `W_j`, and thereby dominate Ford's amplitude moment
+`T` by the incomplete mean value.  Smooth-number support estimates and the
+later parameter optimization also remain open.
 
 ### Target Statements, Not Proved Theorems
 
