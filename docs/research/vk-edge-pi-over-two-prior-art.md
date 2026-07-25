@@ -136,17 +136,85 @@ must state that it is conditional on Bellotti's stated theorem.
 ## Ingham and Anderson--Stark comparison
 
 Anderson and Stark develop a general Mellin oscillation theorem using weak
-independence of selected zero ordinates. In one standard formulation, a
-selected set `Gamma_0` must admit no bounded integer relation, and no bounded
-integer combination of `Gamma_0` may equal another zero ordinate below the
-truncation height. This produces explicit lower and upper oscillation
-constants.
+independence of selected zero ordinates.  The exact standard formulation is
+reproduced as Proposition 1 of Mossinghoff--Oliveira e Silva--Trudgian (2021).
+For `Gamma'` to be `N`-independent in `Gamma cap [0,T]`, both of the following
+must hold:
+
+```text
+(a) sum_(gamma in Gamma') c_gamma gamma = 0 and |c_gamma| <= N
+    implies every c_gamma = 0;
+
+(b) sum_(gamma in Gamma') c_gamma gamma = gamma_star in Gamma cap [0,T]
+    and |c_gamma| <= N implies gamma_star is in Gamma',
+    c_(gamma_star) = 1, and every other coefficient is zero.
+```
+
+Under those hypotheses their lower bound is
+
+```text
+limsup g(u) >= Res(G,0)
+  + (2N/(N+1)) sum_(gamma in Gamma') kappa_T(gamma) |Res(G,i gamma)|,
+```
+
+with the analogous upper bound for `liminf`.
+
+Mossinghoff--Trudgian (2017), Theorem 4.1, gives a proof of this formulation
+and records the more general Anderson--Stark version: each selected frequency
+may have its own contiguous coefficient bound `|c_gamma| <= N_gamma`, and
+`N/(N+1)` is replaced termwise by `N_gamma/(N_gamma+1)`.  This is the relevant
+generality in the original result; it is still a bounded-integer-relation
+hypothesis, not an arbitrary certificate supported on a chosen subset of
+integer coefficients.
 
 Reference:
 
 - R. J. Anderson and H. M. Stark, *Oscillation theorems*, in *Analytic
   Number Theory*, Lecture Notes in Mathematics 899, pp. 79--106.
   <https://doi.org/10.1007/BFb0096454>
+- M. J. Mossinghoff, T. Oliveira e Silva, and T. S. Trudgian, *The
+  distribution of k-free numbers*, Proposition 1, Math. Comp. 90 (2021),
+  907--929. <https://arxiv.org/abs/1912.04972>
+- M. J. Mossinghoff and T. S. Trudgian, *The Liouville function and the
+  Riemann hypothesis*, Theorem 4.1 and the paragraph immediately following
+  its proof (2017).
+  <https://www.researchgate.net/publication/307577874_The_Liouville_function_and_the_Riemann_hypothesis>
+
+For a singleton `Gamma' = {gamma_0}`, condition (b) has an especially clear
+consequence:
+
+```text
+c gamma_0 is not another pole frequency for every integer 2 <= c <= N.
+```
+
+Thus even the generalized Anderson--Stark theorem requires the absence of
+*all* positive multiples through the selected coefficient bound.  The
+branch theorem instead obtains a strict gain from the absence of just one
+specified odd multiple `(2k+1) gamma_0`; lower multiples and unrelated
+bounded integer relations are allowed.  Consequently the published
+Anderson--Stark weak-independence theorem does not directly imply the branch
+theorem.
+
+### Original-text access audit
+
+Checked on 2026-07-25:
+
+- Springer exposes the chapter metadata and front matter, but the 27-page
+  chapter is subscription content in the available session.
+- Google Books provides only snippet/limited preview for the scanned volume.
+- Internet Archive lists a controlled-borrow copy, but the available session
+  is not authenticated for borrowing; the downloadable LCP file is encrypted.
+- ResearchGate has no deposited full text and offers only an author-request
+  action.
+
+No paywall or controlled-borrow restriction was bypassed.  Therefore this is
+not a page-by-page audit of the 1981 scan.  It is, however, an audit of the
+precise Anderson--Stark theorem as explicitly attributed, restated, proved,
+and generalized in two later primary mathematical sources.  The remaining
+original-text risk is that another, separately stated result elsewhere in
+the 1981 chapter might subsume the missing-one-odd-harmonic certificate.  No
+later source found in the targeted search attributes such a result to
+Anderson--Stark.
 
 The Abel argument on this branch belongs to that classical Mellin-oscillation
 framework, but its spectral hypothesis is different and weaker in one
