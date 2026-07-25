@@ -288,5 +288,101 @@ theorem halfIsolatedPureSimplifiedDetectorInput_of_residualControl
           ((C₁ + C₂) * (1 + Real.log (T + 6)) ^ 2) := by
       ring
 
+/-- Directly instantiate the pure detector input needed by downstream usage. -/
+theorem halfIsolatedPureSimplifiedDetectorInput_available
+    (T : ℝ) (hT : 4 ≤ T) :
+    HalfIsolatedPureSimplifiedDetectorInput T :=
+  halfIsolatedPureSimplifiedDetectorInput_of_residualControl T hT
+    (halfIsolatedResidualControlForDetector_available T hT)
+
+/-- The currently defined top-layer dichotomy matches the expected zero-density
+`HasHalfIsolatedDichotomy` shape; no extra adapter class or wrapper is needed. -/
+theorem halfIsolatedDichotomy_zeroDensityAdapter
+    {T β δ : ℝ} {ρ : ℂ} :
+    HasHalfIsolatedDichotomy T β δ ρ ↔
+      IsTopLayerZero T β ρ ∧
+        (IsHalfIsolatedZero T β δ ρ ∨ IsInQuantitativeLocalCluster T β δ ρ) := by
+  rfl
+
+/-- Endpoint bridge from top-layer objects to usable detector bound and cluster
+certificate. With `hseparation`, non-isolated centers have disjoint windows,
+so extracted windows cannot be double-counted.
+
+For non-isolated inputs, this returns an explicit finite multiseed certificate of
+many distinct top-layer zeros.
+-/
+theorem halfIsolatedDetectorClusterEndpoint
+    (T β δ : ℝ) (hT : 4 ≤ T) (hδ : 0 < δ)
+    (centers : Finset ℂ)
+    (hcenters : centers ⊆ TopLayerFinset T β)
+    (hseparation :
+      ∀ ρ₁ ∈ centers, ∀ ρ₂ ∈ centers, ρ₁ ≠ ρ₂ →
+        2 * δ < |ρ₁.im - ρ₂.im|) :
+    HalfIsolatedPureSimplifiedDetectorInput T ∧
+      (∀ ρ ∈ centers, IsTopLayerZero T β ρ →
+        IsHalfIsolatedZero T β δ ρ ∨ IsInQuantitativeLocalCluster T β δ ρ) ∧
+      (∀ hnonIso : ∀ ρ ∈ centers, IsTopLayerZero T β ρ →
+        ¬ IsHalfIsolatedZero T β δ ρ,
+        (∀ ρ ∈ centers, IsTopLayerZero T β ρ →
+          IsInQuantitativeLocalCluster T β δ ρ) ∧
+        ∃ zset : Finset ℂ,
+          zset ⊆ TopLayerFinset T β ∧
+          2 * centers.card ≤ zset.card) := by
+  let hdet : HalfIsolatedPureSimplifiedDetectorInput T :=
+    halfIsolatedPureSimplifiedDetectorInput_available T hT
+  have hdisj :
+      ((↑centers : Set ℂ)).PairwiseDisjoint (fun ρ => TopLayerWindow T β δ ρ) := by
+    exact topLayerWindow_pairwise_disjoint_of_centers T β δ hδ centers
+      (fun ρ₁ hρ₁ ρ₂ hρ₂ hρ₁ne =>
+        topLayerWindow_disjoint_of_imag_separation T β δ hδ hρ₁ne
+          (hseparation ρ₁ hρ₁ ρ₂ hρ₂ hρ₁ne))
+  refine ⟨hdet, ?_, ?_⟩
+  · intro ρ hρ htop
+    exact topLayer_dichotomy_local_window T β δ (hcenters hρ) hδ
+  · intro hnonIso
+    have hcluster : ∀ ρ ∈ centers, IsTopLayerZero T β ρ →
+        IsInQuantitativeLocalCluster T β δ ρ := by
+      intro ρ hρ htop
+      have hdich : IsHalfIsolatedZero T β δ ρ ∨ IsInQuantitativeLocalCluster T β δ ρ :=
+        topLayer_dichotomy_local_window T β δ htop hδ
+      rcases hdich with hhalf | hcls
+      · exact (hnonIso ρ hρ htop hhalf).elim
+      · exact hcls
+    have htwo : ∀ ρ ∈ centers, 2 ≤ (TopLayerWindow T β δ ρ).card := by
+      intro ρ hρ
+      have htop : IsTopLayerZero T β ρ := hcenters hρ
+      have hnotSep : ¬ ∀ z' : ℂ,
+          z' ∈ TopLayerFinset T β → z' ≠ ρ → δ ≤ |z'.im - ρ.im| := by
+        intro hsep
+        exact hnonIso ρ hρ htop ⟨htop, hδ, hsep⟩
+      rcases not_forall.mp hnotSep with ⟨z', hnotImp⟩
+      have hzmem : z' ∈ TopLayerFinset T β := by
+        by_contra hznot
+        exact hnotImp (fun _hz _hneq => (False.elim (hznot _hz)))
+      have hnotImp' : ¬ (z' ≠ ρ → δ ≤ |z'.im - ρ.im|) := by
+        intro hzImp
+        exact hnotImp (fun _hz => hzImp)
+      rcases Classical.not_imp.mp hnotImp' with ⟨hz'ne, hz'ltδ⟩
+      have hzwindow : ρ ∈ TopLayerWindow T β δ ρ :=
+        topLayerWindow_center_mem T β δ htop hδ
+      have hz'window : z' ∈ TopLayerWindow T β δ ρ := by
+        exact Finset.mem_filter.mpr ⟨hzmem, le_of_lt (lt_of_not_ge hz'ltδ)⟩
+      have hpair_subset : ({ρ, z'} : Finset ℂ) ⊆ TopLayerWindow T β δ ρ := by
+        intro x hx
+        rcases Finset.mem_insert.mp hx with hx | hx
+        · simpa [hx] using hzwindow
+        · have hx' : x = z' := by simpa using Finset.mem_singleton.mp hx
+          simpa [hx'] using hz'window
+      have hpair_card : ({ρ, z'} : Finset ℂ).card = 2 := by
+        by_cases hρz' : ρ = z'
+        · exact (hz'ne hρz'.symm).elim
+        · exact Finset.card_pair hρz'
+      have hpair_card_le : ({ρ, z'} : Finset ℂ).card ≤ (TopLayerWindow T β δ ρ).card :=
+        Finset.card_le_card hpair_subset
+      simpa [hpair_card] using hpair_card_le
+    rcases extract_many_distinct_zeros_from_disjoint_windows T β δ hδ centers hdisj htwo with
+      ⟨zset, hsubset, hcard⟩
+    exact ⟨hcluster, ⟨zset, hsubset, hcard⟩⟩
+
 end HalfIsolatedZeroDichotomy
 end PrimeNumberTheorem
