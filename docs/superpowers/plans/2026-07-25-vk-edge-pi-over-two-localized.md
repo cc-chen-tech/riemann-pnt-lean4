@@ -160,6 +160,22 @@ Run both focused files with `lake env lean`, scan the module for forbidden place
 - [x] Run the focused contract, axiom audit, placeholder scan, and branch
   verification.
 
+### Task 2d: Analytic-Weight Rectangle Residues
+
+**Files:**
+- Create: `PrimeNumberTheorem/VKEdgePiOverTwoWeightedRectangle.lean`
+- Create: `Test/VKEdgePiOverTwoWeightedRectangleContract.lean`
+- Create: `Test/VKEdgePiOverTwoWeightedRectangleAxiomAudit.lean`
+
+- [x] Prove that multiplying a finite simple-pole decomposition by an
+  arbitrary entire weight evaluates the weight at every residue.
+- [x] Prove both the square-contour and fixed axis-parallel rectangle
+  versions.
+- [x] Use divided slopes to absorb the analytic differences `W(z)-W(p)`;
+  do not assume a new meromorphic residue theorem.
+- [x] Run formal module builds, contracts, axiom audits, and placeholder
+  scans.
+
 ### Task 3: Finite-Pole Annihilator
 
 **Files:**

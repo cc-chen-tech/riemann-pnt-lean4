@@ -1,0 +1,4 @@
+import PrimeNumberTheorem.VKEdgePiOverTwoWeightedRectangle
+
+#print axioms MathlibAux.rectangleBoundaryIntegral_mul_analyticWeight_eq_residue_sum
+#print axioms MathlibAux.boundaryRectIntegral_mul_analyticWeight_eq_residue_sum
