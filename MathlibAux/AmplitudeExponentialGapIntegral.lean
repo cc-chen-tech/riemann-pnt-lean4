@@ -13,12 +13,14 @@ open Complex MeasureTheory Set
 
 namespace MathlibAux
 
-/-- A finite off-diagonal exponential form with arbitrary real frequencies. -/
+/-- A finite frequency-off-diagonal exponential form.  Distinct indices at
+the same frequency remain in the diagonal block, so the gap denominator is
+never evaluated at zero. -/
 noncomputable def exponentialOffDiagonalForm
     {ι : Type*} [DecidableEq ι] (s : Finset ι)
     (left right : ι → ℂ) (freq : ι → ℝ) (t : ℝ) : ℂ :=
   ∑ i ∈ s, ∑ j ∈ s,
-    if i = j then 0
+    if freq i = freq j then 0
     else left i * right j *
       Complex.exp (I * ((freq i - freq j) * t))
 
@@ -127,7 +129,6 @@ theorem norm_integral_amplitude_mul_exponentialOffDiagonal_le
     (left right : ι → ℂ) (freq : ι → ℝ)
     {A A' : ℝ → ℂ} {a b K V : ℝ}
     (hab : a ≤ b)
-    (hfreq : ∀ i ∈ s, ∀ j ∈ s, i ≠ j → freq i ≠ freq j)
     (hA : ∀ x ∈ Set.uIcc a b, HasDerivAt A (A' x) x)
     (hAend : ‖A a‖ ≤ K ∧ ‖A b‖ ≤ K)
     (hA'int : IntervalIntegrable A' volume a b)
@@ -135,7 +136,7 @@ theorem norm_integral_amplitude_mul_exponentialOffDiagonal_le
     ‖∫ t in a..b,
         A t * exponentialOffDiagonalForm s left right freq t‖ ≤
       ∑ i ∈ s, ∑ j ∈ s,
-        if i = j then 0
+        if freq i = freq j then 0
         else ‖left i‖ * ‖right j‖ *
           ((2 * K + V) / |freq i - freq j|) := by
   have hAcont : ContinuousOn A (Set.uIcc a b) := by
@@ -144,7 +145,7 @@ theorem norm_integral_amplitude_mul_exponentialOffDiagonal_le
   have htermInt (i : ι) (j : ι) :
       IntervalIntegrable
         (fun t : ℝ => A t *
-          (if i = j then 0
+          (if freq i = freq j then 0
           else left i * right j *
             Complex.exp (I * ((freq i - freq j) * t))))
         volume a b := by
@@ -156,13 +157,13 @@ theorem norm_integral_amplitude_mul_exponentialOffDiagonal_le
           A t * exponentialOffDiagonalForm s left right freq t) =
         ∑ i ∈ s, ∑ j ∈ s,
           ∫ t in a..b, A t *
-            (if i = j then 0
+            (if freq i = freq j then 0
             else left i * right j *
               Complex.exp (I * ((freq i - freq j) * t))) := by
     rw [show (fun t : ℝ =>
         A t * exponentialOffDiagonalForm s left right freq t) =
         fun t : ℝ => ∑ i ∈ s, ∑ j ∈ s,
-          A t * (if i = j then 0
+          A t * (if freq i = freq j then 0
           else left i * right j *
             Complex.exp (I * ((freq i - freq j) * t))) by
       funext t
@@ -183,32 +184,32 @@ theorem norm_integral_amplitude_mul_exponentialOffDiagonal_le
   calc
     ‖∑ i ∈ s, ∑ j ∈ s,
         ∫ t in a..b, A t *
-          (if i = j then 0
+          (if freq i = freq j then 0
           else left i * right j *
             Complex.exp (I * ((freq i - freq j) * t)))‖ ≤
         ∑ i ∈ s, ‖∑ j ∈ s,
           ∫ t in a..b, A t *
-            (if i = j then 0
+            (if freq i = freq j then 0
             else left i * right j *
               Complex.exp (I * ((freq i - freq j) * t)))‖ :=
       norm_sum_le _ _
     _ ≤ ∑ i ∈ s, ∑ j ∈ s,
         ‖∫ t in a..b, A t *
-          (if i = j then 0
+          (if freq i = freq j then 0
           else left i * right j *
             Complex.exp (I * ((freq i - freq j) * t)))‖ := by
       apply Finset.sum_le_sum
       intro i hi
       exact norm_sum_le _ _
     _ ≤ ∑ i ∈ s, ∑ j ∈ s,
-        if i = j then 0
+        if freq i = freq j then 0
         else ‖left i‖ * ‖right j‖ *
           ((2 * K + V) / |freq i - freq j|) := by
       apply Finset.sum_le_sum
       intro i hi
       apply Finset.sum_le_sum
       intro j hj
-      by_cases hij : i = j
+      by_cases hij : freq i = freq j
       · simp [hij]
       · simp only [hij, ↓reduceIte]
         rw [show (fun t : ℝ => A t *
@@ -230,6 +231,6 @@ theorem norm_integral_amplitude_mul_exponentialOffDiagonal_le
           (mul_nonneg (norm_nonneg _) (norm_nonneg _))
         have hsingle :=
           norm_integral_amplitude_mul_cexp_linear_le
-            hab (sub_ne_zero.mpr (hfreq i hi j hj hij))
+            hab (sub_ne_zero.mpr hij)
             hA hAend hA'int hvariation
         simpa only [ofReal_sub, ofReal_mul, norm_mul] using hsingle
