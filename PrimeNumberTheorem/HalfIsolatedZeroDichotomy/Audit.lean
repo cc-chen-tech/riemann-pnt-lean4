@@ -501,6 +501,167 @@ theorem halfIsolatedLoopIteration_counterexample
     · simp [halfIsolatedLoopNeighbor, hab]
     · simp [halfIsolatedLoopNeighbor, hab]
 
+/-- Directed (imaginary-increasing) neighbors on a fixed top layer. -/
+noncomputable def halfIsolatedDirectedNext
+    (T β : ℝ) (δ : ℝ) (ρ : ℂ) : Finset ℂ :=
+  (TopLayerWindow T β δ ρ).filter (fun σ => ρ.im < σ.im)
+
+/-- Directed iteration using only strictly higher imaginary parts. -/
+noncomputable def halfIsolatedDirectedIteration
+    (T β : ℝ) (δ : ℝ) : ℕ → Finset ℂ → Finset ℂ
+  | 0, centers => centers
+  | n+1, centers => (halfIsolatedDirectedIteration T β δ n centers).biUnion
+      (halfIsolatedDirectedNext T β δ)
+
+lemma halfIsolatedDirectedIteration_step_lower
+    (T β : ℝ) (δ : ℝ) (centers : Finset ℂ)
+    (q : ℕ) (hq : 1 ≤ q)
+    (hdisj :
+      ((↑centers : Set ℂ)).PairwiseDisjoint (halfIsolatedDirectedNext T β δ))
+    (htwo : ∀ ρ ∈ centers, q ≤ (halfIsolatedDirectedNext T β δ ρ).card) :
+    q * centers.card ≤
+      (halfIsolatedDirectedIteration T β δ 1 centers).card := by
+  have hcard_eq :
+      (centers.biUnion (halfIsolatedDirectedNext T β δ)).card =
+        centers.sum (fun ρ => (halfIsolatedDirectedNext T β δ ρ).card) := by
+    simpa using (Finset.card_biUnion hdisj)
+  have hsum_lower_aux : centers.card * q ≤ centers.sum (fun ρ =>
+      (halfIsolatedDirectedNext T β δ ρ).card) := by
+    calc
+      centers.card * q = centers.sum (fun _ : ℂ => q) := by simp
+      _ ≤ centers.sum (fun ρ => (halfIsolatedDirectedNext T β δ ρ).card) :=
+        Finset.sum_le_sum (fun ρ hρ => htwo ρ hρ)
+  have hsum_lower : q * centers.card ≤
+      (centers.biUnion (halfIsolatedDirectedNext T β δ)).card := by
+    have hsum_lower' : q * centers.card ≤ centers.sum (fun ρ =>
+        (halfIsolatedDirectedNext T β δ ρ).card) := by
+      simpa [Nat.mul_comm, Nat.mul_left_comm, Nat.mul_assoc] using hsum_lower_aux
+    simpa [hcard_eq] using hsum_lower'
+  simpa [halfIsolatedDirectedIteration] using hsum_lower
+
+theorem halfIsolatedDirectedIteration_exponential
+    (T β : ℝ) (δ : ℝ) (centers : Finset ℂ)
+    (q : ℕ)
+    (hq : 1 ≤ q)
+    (hdisj :
+      ∀ n : ℕ,
+        ((↑(halfIsolatedDirectedIteration T β δ n centers) : Set ℂ)).PairwiseDisjoint
+          (halfIsolatedDirectedNext T β δ))
+    (htwo :
+      ∀ n ρ,
+        ρ ∈ halfIsolatedDirectedIteration T β δ n centers →
+          q ≤ (halfIsolatedDirectedNext T β δ ρ).card) :
+    ∀ n : ℕ,
+      q ^ n * centers.card ≤ (halfIsolatedDirectedIteration T β δ n centers).card := by
+  intro n
+  induction n with
+  | zero =>
+      simpa [halfIsolatedDirectedIteration]
+  | succ n ih =>
+      have hdisj_succ := hdisj n
+      have htwo_succ :
+          ∀ ρ ∈ halfIsolatedDirectedIteration T β δ n centers,
+            q ≤ (halfIsolatedDirectedNext T β δ ρ).card :=
+        htwo n
+      have hstep :
+          q * (halfIsolatedDirectedIteration T β δ n centers).card ≤
+            (halfIsolatedDirectedIteration T β δ (n + 1) centers).card := by
+        simpa [halfIsolatedDirectedIteration] using
+          (halfIsolatedDirectedIteration_step_lower T β δ
+            (halfIsolatedDirectedIteration T β δ n centers) q
+            hq hdisj_succ htwo_succ)
+      have hmul : q ^ (n + 1) * centers.card = q * (q ^ n * centers.card) := by
+        simp [Nat.pow_succ, Nat.mul_assoc, Nat.mul_left_comm, Nat.mul_comm]
+      calc
+        q ^ (n + 1) * centers.card = q * (q ^ n * centers.card) := hmul
+        _ ≤ q * (halfIsolatedDirectedIteration T β δ n centers).card :=
+          Nat.mul_le_mul_left _ ih
+        _ ≤ (halfIsolatedDirectedIteration T β δ (n + 1) centers).card := hstep
+
+/-- A one-step advancing lemma: under a strict-direction witness and detector
+cluster hypothesis, one can extract a higher-imag zero from the same window. -/
+theorem halfIsolatedOneStepAdvanceFromEndpoint
+    (T β δ : ℝ) (ρ : ℂ) (hδ : 0 < δ)
+    (hTop : IsTopLayerZero T β ρ)
+    (hcluster : IsInQuantitativeLocalCluster T β δ ρ)
+    (hdistinct : ∃ σ, σ ∈ TopLayerWindow T β δ ρ ∧ ρ.im ≠ σ.im)
+    (hdrift :
+      ∀ σ ∈ TopLayerWindow T β δ ρ, σ.im ≠ ρ.im → ρ.im < σ.im) :
+    ∃ σ, σ ∈ halfIsolatedDirectedNext T β δ ρ := by
+  rcases hdistinct with ⟨σ, hσ, hσne⟩
+  exact ⟨σ, Finset.mem_filter.mpr ⟨hσ, hdrift σ hσ (by simpa [ne_comm] using hσne)⟩⟩
+
+/-- A strict-cycle counterexample under current endpoint-style hypotheses:
+if the top layer is exactly two equal-imag zeros, directed ascent is blocked and
+the first directed step is empty (hence no q-ary growth with q ≥ 1). -/
+theorem halfIsolatedDirectedIteration_stall_under_equal_im_topLayer
+    (T β : ℝ) (a b : ℂ) (hδ : 0 < δ) (hab : a ≠ b)
+    (hTopOnly : TopLayerFinset T β = ({a, b} : Finset ℂ))
+    (hEq : a.im = b.im) :
+    let centers : Finset ℂ := ({a, b} : Finset ℂ)
+    ((∀ ρ ∈ centers, IsTopLayerZero T β ρ → IsInQuantitativeLocalCluster T β δ ρ) ∧
+      (halfIsolatedDirectedIteration T β δ 1 centers = ∅) ) := by
+  let centers : Finset ℂ := ({a, b} : Finset ℂ)
+  have hNoHalf : ∀ ρ ∈ centers, IsTopLayerZero T β ρ →
+      ¬ IsHalfIsolatedZero T β δ ρ := by
+    intro ρ hρ htop hhalf
+    have hρeq : ρ = a ∨ ρ = b := by
+      simpa [centers, Finset.mem_insert, Finset.mem_singleton] using hρ
+    have habs : |b.im - a.im| = 0 := by
+      simpa [hEq]
+    have hδ_lt : ¬ δ ≤ |b.im - a.im| := by
+      simpa [habs] using (not_le_of_gt hδ)
+    rcases hρeq with hρeq | hρeq
+    · subst ρ
+      have hb : b ∈ TopLayerFinset T β := by
+        simpa [hTopOnly] using (show b ∈ ({a, b} : Finset ℂ) by simp)
+      exact hδ_lt (hhalf.2.2 b hb (by simpa [eq_comm] using hab))
+    · subst ρ
+      have ha : a ∈ TopLayerFinset T β := by
+        simpa [hTopOnly] using (show a ∈ ({a, b} : Finset ℂ) by simp)
+      have hδ_lt' : ¬ δ ≤ |a.im - b.im| := by
+        simpa [hEq] using (not_le_of_gt hδ)
+      exact hδ_lt' (hhalf.2.2 a ha (by simpa using hab))
+  have hcluster : ∀ ρ ∈ centers, IsTopLayerZero T β ρ →
+      IsInQuantitativeLocalCluster T β δ ρ := by
+    intro ρ hρ htop
+    exact (topLayer_dichotomy_local_window T β δ htop hδ).resolve_left (hNoHalf ρ hρ htop)
+  have hnext_eq_empty : ∀ ρ ∈ centers, halfIsolatedDirectedNext T β δ ρ = (∅ : Finset ℂ) := by
+    intro ρ hρ
+    have hρeq : ρ = a ∨ ρ = b := by
+      simpa [centers, Finset.mem_insert, Finset.mem_singleton] using hρ
+    have hρim : ρ.im = a.im := by
+      rcases hρeq with hρeq | hρeq
+      · simpa [hρeq]
+      · simpa [hρeq, hEq]
+    ext z
+    constructor
+    · intro hz
+      rcases Finset.mem_filter.mp hz with ⟨hzwin, hlt⟩
+      have hztop : z ∈ TopLayerFinset T β := (Finset.mem_filter.mp hzwin).1
+      have hzmem : z = a ∨ z = b := by
+        simpa [hTopOnly, Finset.mem_insert, Finset.mem_singleton] using hztop
+      have hzim : z.im = a.im := by
+        rcases hzmem with hzmem | hzmem
+        · simpa [hzmem]
+        · simpa [hzmem, hEq]
+      have : ¬ ρ.im < z.im := by simpa [hρim, hzim]
+      exact (this hlt).elim
+    · intro hz
+      cases hz
+  refine ⟨?_, ?_⟩
+  · exact hcluster
+  · have hUnion : centers.biUnion (halfIsolatedDirectedNext T β δ) = (∅ : Finset ℂ) := by
+      ext z
+      constructor
+      · intro hz
+        rcases Finset.mem_biUnion.mp hz with ⟨ρ, hρ, hρz⟩
+        have hzero : halfIsolatedDirectedNext T β δ ρ = (∅ : Finset ℂ) := hnext_eq_empty ρ hρ
+        simpa [hzero] using hρz
+      · intro hz
+        cases hz
+    change centers.biUnion (halfIsolatedDirectedNext T β δ) = (∅ : Finset ℂ)
+    exact hUnion
 
 end HalfIsolatedZeroDichotomy
 end PrimeNumberTheorem
