@@ -157,8 +157,29 @@ integral over (T,+infinity) of log r / (r-b)^2
 under `0 < b < T` and `1 <= T`. The proof includes the derivative identity
 and the antiderivative limit at positive infinity.
 
-These results remove the generic algebraic transfer and scalar-calculus
-subgoals. They do not yet construct the rank-two matrix-valued
-archimedean tail, prove the vector-norm estimate producing the paper's
-constant `B_T`, verify the basis transfer, or connect a finite certificate
-to the infinite-dimensional Weil criterion. Gate A therefore remains open.
+The unintegrated rank-two density is now verified in
+`WeilExtremalKernels/ArchimedeanRankTwoTail.lean`.  For the paper's centered
+coordinates `-N, ..., N`, it constructs the two Cauchy vectors
+
+```text
+p_T(n) = (T / rho - n)^(-1)
+q_T(n) = (T / rho + n)^(-1)
+```
+
+and proves the exact pointwise norm budget
+
+```text
+sum p_T(n)^2 + sum q_T(n)^2
+  <= 2 * (2*N+1) * (rho / (T-rho*N))^2.
+```
+
+Consequently, any nonnegative scalar weight times the associated rank-two
+Gram matrix is positive semidefinite and has its quadratic form bounded by
+the same explicit scalar times `squaredNorm x`.
+
+These results remove the generic algebraic transfer, scalar-calculus,
+rank-two positivity, and pointwise vector-norm subgoals. They do not yet
+construct the matrix-valued improper tail with the paper's analytic weight,
+integrate the pointwise estimate to produce the final constant `B_T`, verify
+the basis transfer, or connect a finite certificate to the
+infinite-dimensional Weil criterion. Gate A therefore remains open.
