@@ -177,9 +177,20 @@ Consequently, any nonnegative scalar weight times the associated rank-two
 Gram matrix is positive semidefinite and has its quadratic form bounded by
 the same explicit scalar times `squaredNorm x`.
 
+`WeilExtremalKernels/ArchimedeanRankTwoIntegral.lean` now adds the finite
+matrix-valued integration layer:
+
+- entrywise interval integration commutes with every finite quadratic form;
+- a continuous nonnegative weighted rank-two density integrates to a positive
+  semidefinite matrix increment;
+- the integrated quadratic form is bounded by the integral of the explicit
+  pointwise Cauchy-vector budget.
+
 These results remove the generic algebraic transfer, scalar-calculus,
-rank-two positivity, and pointwise vector-norm subgoals. They do not yet
-construct the matrix-valued improper tail with the paper's analytic weight,
-integrate the pointwise estimate to produce the final constant `B_T`, verify
-the basis transfer, or connect a finite certificate to the
-infinite-dimensional Weil criterion. Gate A therefore remains open.
+rank-two positivity, pointwise vector-norm, and finite-interval matrix
+integration subgoals. They do not yet insert and prove the required
+properties of the paper's actual
+`pi^(-2) h_+(r) sin^2(Lr/2) / rho` weight, construct the improper tail,
+integrate to the final constant `B_T`, verify the basis transfer, or connect a
+finite certificate to the infinite-dimensional Weil criterion. Gate A
+therefore remains open.

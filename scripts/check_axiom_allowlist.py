@@ -253,6 +253,15 @@ WEIL_RANK_TWO_TAIL_EXPECTED_DECLARATIONS = {
     "WeilExtremalKernels.sum_sq_paperCauchyVectors_le",
     "WeilExtremalKernels.quadraticForm_paperArchimedeanRankTwoDensity_nonneg",
     "WeilExtremalKernels.quadraticForm_paperArchimedeanRankTwoDensity_le",
+    "WeilExtremalKernels.intervalIntegrable_quadraticForm",
+    "WeilExtremalKernels.quadraticForm_intervalIntegratedMatrix",
+    "WeilExtremalKernels.quadraticForm_intervalIntegratedMatrix_nonneg",
+    "WeilExtremalKernels.continuousOn_cauchyTailPlusVector",
+    "WeilExtremalKernels.continuousOn_cauchyTailMinusVector",
+    "WeilExtremalKernels.continuousOn_paperArchimedeanRankTwoDensity_entry",
+    "WeilExtremalKernels.continuousOn_paperArchimedeanRankTwoPointwiseBudget",
+    "WeilExtremalKernels.quadraticForm_paperArchimedeanRankTwoIncrement_nonneg",
+    "WeilExtremalKernels.quadraticForm_paperArchimedeanRankTwoIncrement_le",
 }
 
 REPORT_RE = re.compile(
@@ -301,6 +310,7 @@ def main() -> int:
             "build",
             "Test.MultiplicityAxiomAudit",
             "Test.WeilArchimedeanRankTwoTailAxiomAudit",
+            "Test.WeilArchimedeanRankTwoIntegralAxiomAudit",
         ],
         cwd=ROOT,
         text=True,
