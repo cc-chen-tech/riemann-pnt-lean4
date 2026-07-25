@@ -2144,6 +2144,7 @@ lean_lib RiemannPNT where
     `Test.VinogradovKorobovDirichletBlockContract,
     `Test.VinogradovKorobovDirichletPrefixContract,
     `Test.VinogradovKorobovDirichletIntervalContract,
+    `Test.VinogradovKorobovFordShortSumBridgeContract,
     `Test.VinogradovKorobovZetaApproximationContract,
     `Test.VinogradovKorobovZetaStripContract,
     `Test.VinogradovKorobovIteratedDifferenceContract,
