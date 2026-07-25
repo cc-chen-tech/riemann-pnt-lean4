@@ -1,0 +1,3 @@
+import HardyTheorem.SelbergSqrtZetaSignedOrdinaryShiftBudget
+
+#print axioms HardyTheorem.norm_integral_integral_integral_selbergSqrtZetaSignedOrdinaryCorrelation_le
