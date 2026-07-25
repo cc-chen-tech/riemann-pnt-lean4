@@ -1,4 +1,5 @@
 import PrimeNumberTheorem.ZeroDensityLayerBudgetPNTTruncationOptimization
+import PrimeNumberTheorem.ZeroDensityLayerBudgetTargetAmplitudeHeightCriterion
 import PrimeNumberTheorem.ZeroDensityLayerBudgetPNTHybridDensityDecay
 import PrimeNumberTheorem.ZeroDensityLayerBudgetPNTFullRelativeDecay
 import PrimeNumberTheorem.ZeroDensityLayerBudgetPNTFixedSigmaTransfer
@@ -214,5 +215,44 @@ noncomputable def unified_dynamic_zero_transfer
     zero_cluster_oscillation_lower S multiplicity β L hL hre
       pntError complement remainder hdecomp complementBudget remainderBudget
       hcomplement hremainder⟩
+
+/--
+The concrete upper and conditional lower transfers act on the same PNT error
+object.
+
+The first conjunct is the actual natural-point PNT decay obtained from the
+parametric Pintz--Carlson two-strip machine.  The second conjunct transfers a
+far target-amplitude main-term witness to `relativeChebyshevPsi0Error`,
+provided the real-axis, contour, and complementary-zero pieces are each
+negligible on that target scale.
+
+In particular, `hcomplement` is intentionally visible: this theorem does not
+claim that the normalized complementary-zero estimate has already been
+proved.
+-/
+theorem unified_parametricPNTUpper_targetAmplitudeLower
+    (threshold : ℝ) (hhalf : 1 / 2 < threshold) (hlt : threshold < 1)
+    {amplitude main realAxis contour complement : ℝ → ℝ}
+    (hamplitude :
+      Filter.Eventually (fun x => 0 < amplitude x) Filter.atTop)
+    (hrealAxis : TargetAmplitudeNegligible amplitude realAxis)
+    (hcontour : TargetAmplitudeNegligible amplitude contour)
+    (hcomplement : TargetAmplitudeNegligible amplitude complement)
+    (hmain : HasFarTargetAmplitudeWitness main amplitude)
+    (hdecomp :
+      ∀ x : ℝ,
+        relativeChebyshevPsi0Error x =
+          main x + (realAxis x + contour x + complement x)) :
+    (∃ rate : ℝ, 0 < rate ∧ rate ≤ 1 ∧
+      Filter.Tendsto
+        (fun m : ℕ => relativeChebyshevPsi0Error (m : ℝ))
+        Filter.atTop (nhds 0)) ∧
+    HasFarTargetAmplitudeWitness relativeChebyshevPsi0Error
+      (fun x => amplitude x / 2) := by
+  exact
+    ⟨exists_fixedRate_parametricTwoStrip_relativeChebyshevPsi0Error_tendsto
+        threshold hhalf hlt,
+      hasFarTargetAmplitudeWitness_of_three_normalized_remainders
+        hamplitude hrealAxis hcontour hcomplement hmain hdecomp⟩
 
 end PrimeNumberTheorem
