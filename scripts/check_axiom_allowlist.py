@@ -299,6 +299,14 @@ WEIL_RANK_TWO_TAIL_EXPECTED_DECLARATIONS = {
     "WeilExtremalKernels.exists_T_quadraticForm_add_paperActualArchimedeanRankTwoTail_stable_of_exactLDL_margin",
     "WeilExtremalKernels.eventually_quadraticForm_add_paperActualArchimedeanRankTwoTail_neg_of_witness",
     "WeilExtremalKernels.exists_T_quadraticForm_add_paperActualArchimedeanRankTwoTail_neg_of_witness",
+    "WeilExtremalKernels.eventually_forall_L_norm_paperActualArchimedeanRankTwoTail_entry_le_tailBudget",
+    "WeilExtremalKernels.eventually_forall_L_norm_paperActualArchimedeanRankTwoTail_entry_lt",
+    "WeilExtremalKernels.eventually_forall_L_quadraticForm_paperActualArchimedeanRankTwoTail_bounds",
+    "WeilExtremalKernels.eventually_forall_L_quadraticForm_paperActualArchimedeanRankTwoTail_le_epsilon",
+    "WeilExtremalKernels.eventually_forall_L_quadraticForm_add_paperActualArchimedeanRankTwoTail_stable_of_exactLDL_margin",
+    "WeilExtremalKernels.exists_T_forall_L_quadraticForm_add_paperActualArchimedeanRankTwoTail_stable_of_exactLDL_margin",
+    "WeilExtremalKernels.eventually_forall_L_quadraticForm_add_paperActualArchimedeanRankTwoTail_neg_of_witness",
+    "WeilExtremalKernels.exists_T_forall_L_quadraticForm_add_paperActualArchimedeanRankTwoTail_neg_of_witness",
 }
 
 REPORT_RE = re.compile(
