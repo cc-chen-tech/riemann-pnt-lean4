@@ -10,6 +10,9 @@ namespace PrimeNumberTheorem.VKEdgePiOverTwo
 #check polynomialGaussianKernelDeriv
 #check exists_polynomialGaussianKernel_sub_l1_bound
 #check exists_polynomialGaussianKernelDeriv_l1_bound
+#check exists_polynomialGaussianKernel_add_deriv_norm_le_exp_abs_mul
+#check continuous_polynomialGaussianKernel
+#check continuous_polynomialGaussianKernelDeriv
 #check polynomialGaussianKernel_X_mul
 
 example (A : ℂ[X]) (hA : A.eval 0 = 1) :
@@ -32,5 +35,13 @@ example (A : ℂ[X]) (m t : ℝ) :
     polynomialGaussianKernel (X * A) m t =
       polynomialGaussianKernelDeriv A m t :=
   polynomialGaussianKernel_X_mul A m t
+
+example (A : ℂ[X]) :
+    ∃ C : ℝ, 0 ≤ C ∧
+      ∀ m : ℝ, 1 ≤ m → ∀ t : ℝ,
+        ‖polynomialGaussianKernel A m t‖ +
+            ‖polynomialGaussianKernelDeriv A m t‖ ≤
+          C * Real.exp |t| * normalizedGaussian m t :=
+  exists_polynomialGaussianKernel_add_deriv_norm_le_exp_abs_mul A
 
 end PrimeNumberTheorem.VKEdgePiOverTwo

@@ -13,3 +13,4 @@ open PrimeNumberTheorem.VKEdgePiOverTwo
 #check tendsto_localizedFarZeroDecayEnvelope
 #check tendsto_selectedLocalizedFarZeroResidueSum
 #check tendsto_selectedLocalizedZeroResidueSum_nearZeroFilter
+#check tendsto_selectedLocalizedZeroResidueSum_nearZeroFilter_of_ne_zero

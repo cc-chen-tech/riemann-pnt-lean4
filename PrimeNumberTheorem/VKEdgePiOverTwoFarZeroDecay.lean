@@ -406,6 +406,30 @@ theorem tendsto_selectedLocalizedZeroResidueSum_nearZeroFilter
     selectedLocalizedZeroResidueSum_nearZeroFilter_eq_target_add_far
       (show 0 ≤ B by linarith) hvalid hzero
 
+/-- At a nonzero center, the selected weighted zero sum for the fixed local
+filter converges to zero. -/
+theorem tendsto_selectedLocalizedZeroResidueSum_nearZeroFilter_of_ne_zero
+    {u v B : ℝ} (hu : 0 < u) (hu1 : u < 1) (hB : 5 ≤ B)
+    (hne : riemannZeta ((u : ℂ) + I * v) ≠ 0) :
+    Tendsto
+      (selectedLocalizedZeroResidueSum
+        (localizedNearZeroFilter ((u : ℂ) + I * v) B) u v)
+      atTop (𝓝 0) := by
+  let A : ℂ[X] :=
+    localizedNearZeroFilter ((u : ℂ) + I * v) B
+  have hfar :=
+    tendsto_selectedLocalizedFarZeroResidueSum
+      (v := v) (B := B) hu hu1 hB
+  apply hfar.congr'
+  filter_upwards [
+    eventually_ge_atTop (1 : ℝ),
+    eventually_ge_atTop (A.natDegree : ℝ)] with m hm hdegree
+  have hvalid : localizedContourScaleValid A u m :=
+    ⟨hu, hu1, hm, hdegree⟩
+  simpa [A] using
+    selectedLocalizedZeroResidueSum_nearZeroFilter_eq_far_of_ne_zero
+      hvalid hne
+
 end
 
 end VKEdgePiOverTwo

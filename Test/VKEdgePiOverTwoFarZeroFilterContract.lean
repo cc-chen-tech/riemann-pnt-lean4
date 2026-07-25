@@ -14,3 +14,4 @@ open PrimeNumberTheorem.VKEdgePiOverTwo
 #check ConcreteLocalizedContourSlice.center_mem
 #check selectedLocalizedFarZeroResidueSum
 #check selectedLocalizedZeroResidueSum_nearZeroFilter_eq_target_add_far
+#check selectedLocalizedZeroResidueSum_nearZeroFilter_eq_far_of_ne_zero

@@ -443,6 +443,128 @@ noncomputable def localizedContourData_of_concreteZetaContourLimit
   dsimp [L] at hscaled
   exact hscaled.trans (add_le_add hpsiM le_rfl)
 
+/--
+Real-projected limit constructor used by the sharp localized oscillation
+argument.
+
+Taking the oriented real part, rather than the complex norm, preserves the
+oscillating cosine kernel whose absolute mean is `2 / π`.  The separate
+`psiRemainder` records the logarithmic-window tails.
+-/
+noncomputable def localizedContourData_of_concreteZetaContourProjectedLimit
+    (A : ℂ[X]) {u : ℝ} (hu : 0 < u) (hu1 : u < 1) (v : ℝ)
+    (multiplicity mean : ℝ)
+    (coefficient psiRemainder : ℝ → ℝ)
+    (hcoefficient :
+      Tendsto coefficient atTop (𝓝 (2 * mean)))
+    (hpsiRemainder :
+      Tendsto psiRemainder atTop (𝓝 0))
+    (hcoefficientPos :
+      ∀ᶠ m : ℝ in atTop, 0 < coefficient m)
+    (hwindow :
+      ∀ᶠ m : ℝ in atTop,
+        BddAbove
+          (normalizedWindowValues ((u : ℂ) + I * v) m))
+    (hzero :
+      Tendsto
+        (selectedLocalizedZeroResidueSum A u v)
+        atTop (𝓝 (multiplicity : ℂ)))
+    (hpsi :
+      ∀ᶠ m : ℝ in atTop,
+        -(localizedPsiGaussianAverage A
+            ((u : ℂ) + I * v) m).re / Real.pi ≤
+          normalizedWindowSup ((u : ℂ) + I * v) m *
+              coefficient m +
+            psiRemainder m) :
+    LocalizedContourData ((u : ℂ) + I * v)
+      multiplicity mean := by
+  let zeroSum : ℝ → ℂ := selectedLocalizedZeroResidueSum A u v
+  let contourRemainder : ℝ → ℂ :=
+    selectedLocalizedContourRemainder A u v
+  have hsignalRe :
+      Tendsto (fun m => (zeroSum m).re)
+        atTop (𝓝 multiplicity) := by
+    simpa [zeroSum] using
+      Complex.continuous_re.continuousAt.tendsto.comp hzero
+  have hsignal :
+      Tendsto (fun m => 2 * (zeroSum m).re)
+        atTop (𝓝 (2 * multiplicity)) :=
+    tendsto_const_nhds.mul hsignalRe
+  have hcontourRemainder :
+      Tendsto
+        (fun m => ‖contourRemainder m‖ / Real.pi)
+        atTop (𝓝 0) := by
+    have hnorm :
+        Tendsto (fun m => ‖contourRemainder m‖)
+          atTop (𝓝 0) := by
+      simpa [contourRemainder] using
+        (tendsto_norm.comp
+          (tendsto_selectedLocalizedContourRemainder A hu hu1 v))
+    simpa using hnorm.div_const Real.pi
+  have hremainder :
+      Tendsto
+        (fun m =>
+          psiRemainder m + ‖contourRemainder m‖ / Real.pi)
+        atTop (𝓝 0) := by
+    simpa using hpsiRemainder.add hcontourRemainder
+  refine {
+    signal := fun m => 2 * (zeroSum m).re
+    coefficient := coefficient
+    remainder := fun m =>
+      psiRemainder m + ‖contourRemainder m‖ / Real.pi
+    signal_tendsto := hsignal
+    coefficient_tendsto := hcoefficient
+    remainder_tendsto := hremainder
+    eventually_coefficient_pos := hcoefficientPos
+    eventually_window_bddAbove := hwindow
+    eventually_upper_bound := ?_
+  }
+  filter_upwards [
+    eventually_ge_atTop (1 : ℝ),
+    eventually_ge_atTop (A.natDegree : ℝ),
+    hpsi] with m hm hdegree hpsiM
+  have hvalid : localizedContourScaleValid A u m :=
+    ⟨hu, hu1, hm, hdegree⟩
+  have hcontour :=
+    selected_localizedPsiGaussianAverage_eq A
+      (u := u) (v := v) (m := m) hvalid
+  let L : ℂ :=
+    localizedPsiGaussianAverage A
+      ((u : ℂ) + I * v) m
+  have hreIdentity :
+      2 * (zeroSum m).re =
+        -L.re / Real.pi + (contourRemainder m).re / Real.pi := by
+    have hre := congrArg Complex.re hcontour
+    dsimp [zeroSum, contourRemainder, L] at hre ⊢
+    norm_num [Complex.mul_re] at hre
+    field_simp [Real.pi_ne_zero]
+    nlinarith
+  have hcontourRe :
+      (contourRemainder m).re / Real.pi ≤
+        ‖contourRemainder m‖ / Real.pi := by
+    exact div_le_div_of_nonneg_right
+      (Complex.re_le_norm _) Real.pi_pos.le
+  change
+    2 * (zeroSum m).re ≤
+      normalizedWindowSup ((u : ℂ) + I * v) m *
+          coefficient m +
+        (psiRemainder m +
+          ‖contourRemainder m‖ / Real.pi)
+  rw [hreIdentity]
+  calc
+    -L.re / Real.pi + (contourRemainder m).re / Real.pi ≤
+        -L.re / Real.pi +
+          ‖contourRemainder m‖ / Real.pi := by
+      gcongr
+    _ ≤
+        (normalizedWindowSup ((u : ℂ) + I * v) m *
+            coefficient m + psiRemainder m) +
+          ‖contourRemainder m‖ / Real.pi := by
+      simpa [L, add_comm, add_left_comm, add_assoc] using
+        add_le_add_right hpsiM
+          (‖contourRemainder m‖ / Real.pi)
+    _ = _ := by ring
+
 end
 
 end VKEdgePiOverTwo

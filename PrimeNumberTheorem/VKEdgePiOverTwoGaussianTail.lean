@@ -11,7 +11,7 @@ noncomputable section
 def gaussianTail (m : ℝ) : Set ℝ :=
   {t | 12 * m ≤ |t|}
 
-private theorem normalizedGaussian_le_doubled_scaledGaussian
+theorem normalizedGaussian_le_doubled_scaledGaussian
     {m t : ℝ} (hm : 0 < m) (ht : t ∈ gaussianTail m) :
     normalizedGaussian m t ≤
       2 * Real.exp (-18 * m) * normalizedGaussian (2 * m) t := by

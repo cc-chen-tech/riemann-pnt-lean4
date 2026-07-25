@@ -125,6 +125,37 @@ theorem localizedZeroResidueSum_nearZeroFilter_eq_target_add_far
   rw [← Finset.sum_erase_add _ _ hw, herase, htarget]
   ring
 
+theorem localizedZeroResidueSum_nearZeroFilter_eq_far_of_not_mem
+    {zeros : Finset ℂ} {w : ℂ} {B m : ℝ}
+    (hw : w ∉ zeros)
+    (hzeros :
+      ∀ rho ∈ zeros, RiemannHypothesis.IsNontrivialZero rho) :
+    localizedZeroResidueSum
+        (localizedNearZeroFilter w B) w m zeros =
+      localizedFarZeroResidueSum
+        (localizedNearZeroFilter w B) w m B zeros := by
+  let f : ℂ → ℂ := fun rho =>
+    (analyticOrderNatAt riemannZeta rho : ℂ) *
+      localizedGaussianWeight (localizedNearZeroFilter w B) w m rho
+  unfold localizedZeroResidueSum localizedFarZeroResidueSum
+  change (∑ rho ∈ zeros, f rho) =
+    ∑ rho ∈ zeros.filter (fun rho => B < |rho.im - w.im|), f rho
+  rw [Finset.sum_filter]
+  apply Finset.sum_congr rfl
+  intro rho hrho
+  by_cases hfar : B < |rho.im - w.im|
+  · simp [hfar]
+  · rw [if_neg hfar]
+    have hrhoNe : rho ≠ w := by
+      intro heq
+      subst rho
+      exact hw hrho
+    have hnear : |rho.im - w.im| ≤ B := le_of_not_gt hfar
+    dsimp [f]
+    rw [localizedGaussianWeight_nearZeroFilter_eq_zero
+      (hzeros rho hrho) hrhoNe hnear]
+    simp
+
 theorem ConcreteLocalizedContourSlice.isNontrivialZero_of_mem
     {A : ℂ[X]} {u v m : ℝ}
     (slice : ConcreteLocalizedContourSlice A u v m)
@@ -211,6 +242,33 @@ theorem selectedLocalizedZeroResidueSum_nearZeroFilter_eq_target_add_far
   apply localizedZeroResidueSum_nearZeroFilter_eq_target_add_far hB
   · exact slice.center_mem hvalid.1
       (lt_of_lt_of_le zero_lt_one hvalid.2.2.1) hzero
+  · intro rho hrho
+    exact slice.isNontrivialZero_of_mem hrho
+
+/--
+If the center is not a zeta zero, the fixed near-zero filter removes every
+nearby selected zero, leaving exactly the selected far-zero sum.
+-/
+theorem selectedLocalizedZeroResidueSum_nearZeroFilter_eq_far_of_ne_zero
+    {u v B m : ℝ}
+    (hvalid :
+      localizedContourScaleValid
+        (localizedNearZeroFilter ((u : ℂ) + I * v) B) u m)
+    (hne : riemannZeta ((u : ℂ) + I * v) ≠ 0) :
+    selectedLocalizedZeroResidueSum
+        (localizedNearZeroFilter ((u : ℂ) + I * v) B) u v m =
+      selectedLocalizedFarZeroResidueSum u v B m := by
+  let w : ℂ := (u : ℂ) + I * v
+  let A : ℂ[X] := localizedNearZeroFilter w B
+  let slice : ConcreteLocalizedContourSlice A u v m :=
+    selectedConcreteLocalizedContourSlice A u v m hvalid
+  rw [selectedLocalizedZeroResidueSum, dif_pos hvalid]
+  rw [selectedLocalizedFarZeroResidueSum, dif_pos hvalid]
+  change localizedZeroResidueSum A w m slice.zeros =
+    localizedFarZeroResidueSum A w m B slice.zeros
+  apply localizedZeroResidueSum_nearZeroFilter_eq_far_of_not_mem
+  · intro hwmem
+    exact hne (slice.zeros_spec w hwmem).1
   · intro rho hrho
     exact slice.isNontrivialZero_of_mem hrho
 

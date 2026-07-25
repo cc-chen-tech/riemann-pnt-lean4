@@ -13,3 +13,4 @@ open PrimeNumberTheorem.VKEdgePiOverTwo
 #check tendsto_selectedLocalizedContourRemainder
 #check localizedContourData_of_concreteZetaContour
 #check localizedContourData_of_concreteZetaContourLimit
+#check localizedContourData_of_concreteZetaContourProjectedLimit

@@ -1,3 +1,4 @@
 import PrimeNumberTheorem.VKEdgePiOverTwoGaussianTail
 
+#print axioms PrimeNumberTheorem.VKEdgePiOverTwo.normalizedGaussian_le_doubled_scaledGaussian
 #print axioms PrimeNumberTheorem.VKEdgePiOverTwo.integral_normalizedGaussian_gaussianTail_le

@@ -6,6 +6,7 @@ namespace PrimeNumberTheorem
 namespace VKEdgePiOverTwo
 
 #check gaussianTail
+#check normalizedGaussian_le_doubled_scaledGaussian
 
 example {m : ℝ} (hm : 0 < m) :
     (∫ t : ℝ in gaussianTail m, normalizedGaussian m t) ≤
