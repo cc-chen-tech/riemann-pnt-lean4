@@ -19,7 +19,7 @@ the improper matrix limit remain separate quantitative steps.
 
 namespace WeilExtremalKernels
 
-open MeasureTheory Set
+open Filter MeasureTheory Set
 
 /-- The finite rank-two increment with the paper's actual archimedean
 weight. -/
@@ -41,6 +41,26 @@ noncomputable def paperArchimedeanRankTwoTailBudget
   (2 * ((2 * N + 1 : ℕ) : ℝ) * rho / Real.pi ^ 2) *
     (Real.log T / (T - rho * N) +
       (rho * N)⁻¹ * Real.log (T / (T - rho * N)))
+
+/-- For fixed dimension and scale, the explicit scalar tail budget vanishes
+as the cutoff tends to positive infinity. -/
+theorem tendsto_paperArchimedeanRankTwoTailBudget_atTop
+    (N : ℕ) (rho : ℝ) :
+    Tendsto (paperArchimedeanRankTwoTailBudget N rho) atTop (nhds 0) := by
+  let b : ℝ := rho * N
+  let C : ℝ := 2 * ((2 * N + 1 : ℕ) : ℝ) * rho / Real.pi ^ 2
+  have hprimitive :
+      Tendsto (fun T : ℝ => C * -archimedeanTailPrimitive b T)
+        atTop (nhds 0) := by
+    simpa using (tendsto_archimedeanTailPrimitive_atTop b).neg.const_mul C
+  apply hprimitive.congr'
+  filter_upwards [eventually_gt_atTop (max b 0)] with T hT
+  have hT0 : 0 < T := lt_of_le_of_lt (le_max_right b 0) hT
+  have hsub : 0 < T - b := sub_pos.mpr (lt_of_le_of_lt (le_max_left b 0) hT)
+  unfold paperArchimedeanRankTwoTailBudget archimedeanTailPrimitive
+  dsimp only [C, b]
+  rw [Real.log_div hT0.ne' hsub.ne']
+  ring
 
 /-- Once `h₊` satisfies its nonnegative logarithmic envelope, the actual
 rank-two pointwise budget has exactly the scalar shape needed by the proved

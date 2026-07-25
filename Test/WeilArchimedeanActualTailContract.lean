@@ -44,6 +44,11 @@ example
   integral_Ioi_paperArchimedeanRankTwoLogEnvelope
     N hN hrho hT hT1
 
+example (N : ℕ) (rho : ℝ) :
+    Filter.Tendsto (paperArchimedeanRankTwoTailBudget N rho)
+      Filter.atTop (nhds 0) :=
+  tendsto_paperArchimedeanRankTwoTailBudget_atTop N rho
+
 example :
     ∃ T0 : ℝ, 1 ≤ T0 ∧
       ∀ (N : ℕ) (L : ℝ) {rho T R : ℝ},
