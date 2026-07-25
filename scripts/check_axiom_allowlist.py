@@ -237,6 +237,23 @@ EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.RiemannVonMangoldt.riemannZeroCount_eq_criticalLine_add_two_mul_zeroDensityCount",
 }
 
+SMOOTHED_ERROR_EXPECTED_DECLARATIONS = {
+    "PrimeNumberTheorem.ExplicitFormulaResidues.exists_uniform_C_forall_goodHeight_chebyshevPsi_bounds_crossing_zero_moving_line_neg_one",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.exists_uniform_C_forall_goodHeight_chebyshevPsi_bounds_standard_zero_sum",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.exists_uniform_C_forall_goodHeight_chebyshevPsi_bounds_explicit_origin_zero_sum",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.exists_uniform_C_D_forall_goodHeight_chebyshevPsi_bounds_scalar_log_sq",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.exists_uniform_C_D_forall_goodHeight_chebyshevPsi_endpoint_error_log_sq",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.exists_uniform_C_D_forall_goodHeight_chebyshevPsi_canonical_smoothing_error",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.norm_secondOrderRieszFactor_increment_le_of_mem_nontrivialZerosFinset_of_RH",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.norm_secondOrderRieszZeroSumWithMultiplicity_increment_le_of_RH",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.exists_C_norm_secondOrderRieszZeroSumWithMultiplicity_increment_le_sqrt_mul_log_sq_of_RH",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.norm_secondOrderNontrivialZeroIncrement_le_of_RH",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.exists_C_norm_secondOrderNontrivialZeroIncrement_le_sqrt_mul_log_sq_of_RH",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.exists_uniform_C_D_forall_goodHeight_chebyshevPsi_bounds_scalar_sqrt_log_sq_of_RH",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.exists_uniform_C_D_forall_goodHeight_chebyshevPsi_endpoint_error_sqrt_log_sq_of_RH",
+    "PrimeNumberTheorem.ExplicitFormulaResidues.exists_uniform_C_D_forall_goodHeight_chebyshevPsi_canonical_smoothing_error_sqrt_log_sq_of_RH",
+}
+
 REPORT_RE = re.compile(
     r"'([^']+)' depends on axioms:\s*\[([^\]]*)\]",
     flags=re.MULTILINE,
@@ -277,7 +294,13 @@ def validate_axioms(
 
 def main() -> int:
     completed = subprocess.run(
-        ["lake", "build", "Test.MultiplicityAxiomAudit"],
+        [
+            "lake",
+            "-Kjobs=1",
+            "build",
+            "Test.MultiplicityAxiomAudit",
+            "Test.SmoothedErrorTransferAxiomAudit",
+        ],
         cwd=ROOT,
         text=True,
         capture_output=True,
@@ -288,9 +311,12 @@ def main() -> int:
         return completed.returncode
 
     reports = parse_axiom_report(output)
+    expected_declarations = (
+        EXPECTED_DECLARATIONS | SMOOTHED_ERROR_EXPECTED_DECLARATIONS
+    )
     errors = validate_axioms(
         reports,
-        expected_declarations=EXPECTED_DECLARATIONS,
+        expected_declarations=expected_declarations,
         allowed_axioms=ALLOWED_AXIOMS,
     )
     if errors:
@@ -300,7 +326,7 @@ def main() -> int:
 
     print(
         "[axiom-allowlist] checked "
-        f"{len(EXPECTED_DECLARATIONS)} declarations; only standard axioms are used"
+        f"{len(expected_declarations)} declarations; only standard axioms are used"
     )
     return 0
 
