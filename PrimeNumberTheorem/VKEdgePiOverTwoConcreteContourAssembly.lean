@@ -1,7 +1,7 @@
 import PrimeNumberTheorem.VKEdgePiOverTwoContourBounds
 import PrimeNumberTheorem.VKEdgePiOverTwoRightMellin
 
-open Complex MeasureTheory Polynomial Set
+open Complex Filter MeasureTheory Polynomial Set Topology
 open scoped BigOperators Interval
 
 namespace PrimeNumberTheorem
@@ -77,6 +77,49 @@ theorem integral_localizedRegularizedLogDerivIntegrand_verticalLine_eq
     _ = _ := by
       simpa [w] using hmellin
 
+/--
+The concrete right-edge integrand remains absolutely integrable after
+separating the geometric vertical line from the imaginary part of its
+Gaussian center.
+-/
+theorem integrable_localizedRegularizedLogDerivIntegrand_verticalLine
+    (A : ℂ[X]) {u v m : ℝ} (hu : 0 < u) (hm : 0 < m) :
+    Integrable
+      (fun t : ℝ =>
+        localizedRegularizedLogDerivIntegrand A
+          ((u : ℂ) + I * v) m
+          (((u + 2 : ℝ) : ℂ) + (t : ℂ) * I)) := by
+  let w : ℂ := (u : ℂ) + I * v
+  let g : ℝ → ℂ := fun t =>
+    localizedGaussianWeight A w m
+        (w + ((2 : ℂ) + I * (t : ℂ))) *
+      (-logDeriv riemannZeta
+          (w + ((2 : ℂ) + I * (t : ℂ))) -
+        (w + ((2 : ℂ) + I * (t : ℂ))) /
+          (w + ((2 : ℂ) + I * (t : ℂ)) - 1))
+  have hw : 0 < w.re := by
+    simpa [w] using hu
+  have hg : Integrable g := by
+    simpa [g] using
+      integrable_localizedGaussianWeight_mul_regularizedLogDeriv_rightEdge
+        A hm hw
+  have hshift : Integrable (g ∘ fun t : ℝ => t + (-v)) :=
+    (measurePreserving_add_right volume (-v)).integrable_comp_of_integrable hg
+  apply hshift.congr
+  filter_upwards with t
+  have hz :
+      w + ((2 : ℂ) + I * (((t + (-v) : ℝ) : ℂ))) =
+        (((u + 2 : ℝ) : ℂ) + (t : ℂ) * I) := by
+    simp only [w, ofReal_add, ofReal_neg]
+    push_cast
+    ring
+  simpa only [
+    Function.comp_apply,
+    g,
+    w,
+    localizedRegularizedLogDerivIntegrand,
+    hz]
+
 /-- The concrete Gaussian average of the cutoff Chebyshev error. -/
 def localizedPsiGaussianAverage
     (A : ℂ[X]) (w : ℂ) (m : ℝ) : ℂ :=
@@ -128,6 +171,39 @@ def localizedContourRemainder
     (A : ℂ[X]) (w : ℂ) (m u T : ℝ) : ℂ :=
   localizedOtherEdgeContribution A w m u T +
     localizedRightEdgeTail A w m u T
+
+/--
+For fixed Gaussian scale and center, the symmetric right-edge truncation
+tail vanishes as the contour height tends to infinity.
+-/
+theorem tendsto_localizedRightEdgeTail_atTop
+    (A : ℂ[X]) {u v m : ℝ} (hu : 0 < u) (hm : 0 < m) :
+    Tendsto
+      (fun T : ℝ =>
+        localizedRightEdgeTail A ((u : ℂ) + I * v) m u T)
+      atTop (𝓝 0) := by
+  let f : ℝ → ℂ := fun t =>
+    localizedRegularizedLogDerivIntegrand A
+      ((u : ℂ) + I * v) m
+      (((u + 2 : ℝ) : ℂ) + (t : ℂ) * I)
+  have hf : Integrable f := by
+    simpa [f] using
+      integrable_localizedRegularizedLogDerivIntegrand_verticalLine A hu hm
+  have hfinite :
+      Tendsto
+        (fun T : ℝ => ∫ t : ℝ in (-T)..T, f t)
+        atTop
+        (𝓝 (∫ t : ℝ, f t)) :=
+    intervalIntegral_tendsto_integral
+      hf tendsto_neg_atTop_atBot tendsto_id
+  have hconst :
+      Tendsto
+        (fun _ : ℝ => ∫ t : ℝ, f t)
+        atTop
+        (𝓝 (∫ t : ℝ, f t)) :=
+    tendsto_const_nhds
+  have hsub := hconst.sub hfinite
+  simpa [localizedRightEdgeTail, f] using hsub
 
 /--
 At a good height, the finite right edge is exactly the weighted zero sum
