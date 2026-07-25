@@ -96,23 +96,23 @@ git commit -m "feat: localize VK-edge oscillation window"
 - Consumes: Mathlib's Gaussian integral and whole-line integration-by-parts API.
 - Produces: a normalized Gaussian of mass one, an `L1` derivative bound tending to zero, and uniform convergence of Gaussian averages of continuous periodic functions to their period mean.
 
-- [ ] **Step 1: Pin the normalized Gaussian API in a failing contract**
+- [x] **Step 1: Pin the normalized Gaussian API in a failing contract**
 
 The contract must check positivity, mass one, the derivative formula, and the periodic-mean limit.
 
-- [ ] **Step 2: Prove normalization and differentiability**
+- [x] **Step 2: Prove normalization and differentiability**
 
 Use `Real.integral_gaussian`, `integrable_exp_neg_mul_sq`, and direct differentiation. Keep all statements under `0 < m`.
 
-- [ ] **Step 3: Bound the derivative in `L1`**
+- [x] **Step 3: Bound the derivative in `L1`**
 
 Use `Real.integrable_mul_exp_neg_mul_sq` and the half-line primitive identity to prove an explicit bound of order `m^(-1/2)`.
 
-- [ ] **Step 4: Prove periodic mean convergence**
+- [x] **Step 4: Prove periodic mean convergence**
 
 Subtract the period mean, construct the bounded periodic primitive, and integrate by parts against the Gaussian. The final bound must be uniform in the Gaussian center.
 
-- [ ] **Step 5: Run focused verification and commit**
+- [x] **Step 5: Run focused verification and commit**
 
 Run both focused files with `lake env lean`, scan the module for forbidden placeholders, and commit the layer independently.
 
