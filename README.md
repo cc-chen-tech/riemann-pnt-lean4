@@ -1306,6 +1306,20 @@ infrastructure, but it does not yet contain the full incomplete-system
 estimate or the Lemma-5.1-style aggregation proving the Ford short-sum
 hypothesis.  That is the next central analytic bridge.
 
+The first missing object on that bridge is now formalized in
+`VinogradovIncompleteMoment.lean`.  For a consecutive degree window
+`h, ..., h + d - 1`, it defines the modular power sums, solution predicate,
+solution count, Weyl sum, and normalized moment, and proves the exact finite
+Fourier identity
+`normalizedIncompleteVinogradovMomentMod_eq_solutionCount`.  The start-one
+window is proved definitionally compatible with the existing complete
+Vinogradov system, and
+`vinogradovSolutionCountMod_le_incomplete` proves that dropping equations can
+only enlarge the solution set.  This covers the full interval alphabet
+`{1, ..., X}`.  Ford's Lemma 5.1 also needs arbitrary finite supports
+`B`, including smooth-number sets, and the double-Holder aggregation; those
+remain open.
+
 ### Target Statements, Not Proved Theorems
 
 The remaining 13 target declarations are intentionally `def ... : Prop` rather
