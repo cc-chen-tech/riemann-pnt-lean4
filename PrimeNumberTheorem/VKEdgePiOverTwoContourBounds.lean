@@ -332,6 +332,108 @@ theorem norm_localizedGaussianWeight_horizontal_le_uniform
             Real.exp (m * (36 - (t - v) ^ 2)) := by
       gcongr
 
+/-- The regularizing rational factor is uniformly bounded on good-height
+horizontal segments of the localized rectangle. -/
+theorem norm_div_sub_one_horizontal_le_two
+    {u σ t T : ℝ} (hu1 : u < 1)
+    (hσlo : -1 ≤ σ) (hσhi : σ ≤ u + 2)
+    (hT : 4 ≤ T) (ht : |t| = T) :
+    ‖(((σ : ℂ) + I * t) /
+      (((σ : ℂ) + I * t) - 1))‖ ≤ 2 := by
+  let z : ℂ := (σ : ℂ) + I * t
+  have hσabs : |σ| ≤ 3 := by
+    rw [abs_le]
+    constructor <;> linarith
+  have hzUpper : ‖z‖ ≤ T + 3 := by
+    calc
+      ‖z‖ ≤ |z.re| + |z.im| :=
+        Complex.norm_le_abs_re_add_abs_im z
+      _ = |σ| + |t| := by norm_num [z]
+      _ ≤ 3 + T := add_le_add hσabs (le_of_eq ht)
+      _ = T + 3 := by ring
+  have hdenLower : T ≤ ‖z - 1‖ := by
+    calc
+      T = |(z - 1).im| := by norm_num [z, ht]
+      _ ≤ ‖z - 1‖ := Complex.abs_im_le_norm _
+  rw [norm_div]
+  calc
+    ‖z‖ / ‖z - 1‖ ≤ (T + 3) / T :=
+      div_le_div₀ (by linarith) hzUpper (by linarith) hdenLower
+    _ ≤ 2 := by
+      apply (div_le_iff₀ (by linarith : 0 < T)).2
+      linarith
+
+/--
+At one good height in every unit interval, the actual regularized zeta
+logarithmic derivative is uniformly controlled on the whole horizontal span
+of every localized rectangle with `0 < u < 1`.
+-/
+theorem exists_goodHeight_Icc_norm_regularizedLogDeriv_horizontal_le :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ H : ℝ, 4 ≤ H →
+      ∃ T ∈ Set.Icc H (H + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ u : ℝ, 0 < u → u < 1 →
+            ∀ t : ℝ, |t| = T →
+              ∀ σ : ℝ, -1 ≤ σ → σ ≤ u + 2 →
+                ‖-logDeriv riemannZeta ((σ : ℂ) + I * t) -
+                    (((σ : ℂ) + I * t) /
+                      (((σ : ℂ) + I * t) - 1))‖ ≤
+                  max
+                    (C * (1 + Real.log (H + 6)) ^ 2)
+                    (ExplicitFormulaResidues.vonMangoldtLSeriesNorm 1) +
+                    2 := by
+  rcases
+      ExplicitFormulaResidues.exists_goodHeight_Icc_norm_logDeriv_central_band_le_log_sq
+        with ⟨C, hC, hchoose⟩
+  refine ⟨C, hC, ?_⟩
+  intro H hH
+  rcases hchoose H hH with ⟨T, hT, hgood, hcentral⟩
+  refine ⟨T, hT, hgood, ?_⟩
+  intro u hu hu1 t ht σ hσlo hσhi
+  have hTfour : 4 ≤ T := hH.trans hT.1
+  have hlog :
+      ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ ≤
+        max
+          (C * (1 + Real.log (H + 6)) ^ 2)
+          (ExplicitFormulaResidues.vonMangoldtLSeriesNorm 1) := by
+    by_cases hσcentral : σ ≤ 2
+    · calc
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ =
+            ‖logDeriv riemannZeta ((σ : ℂ) + I * t)‖ := norm_neg _
+        _ ≤ C * (1 + Real.log (H + 6)) ^ 2 :=
+          hcentral t ht σ hσlo hσcentral
+        _ ≤ max
+            (C * (1 + Real.log (H + 6)) ^ 2)
+            (ExplicitFormulaResidues.vonMangoldtLSeriesNorm 1) :=
+          le_max_left _ _
+    · have hσright : 2 ≤ σ := le_of_lt (lt_of_not_ge hσcentral)
+      have hright :=
+        ExplicitFormulaResidues.norm_neg_logDeriv_riemannZeta_le_vonMangoldtLSeriesNorm
+          (ε := 1) (σ := σ) (t := t) (by norm_num) (by linarith)
+      calc
+        ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ =
+            ‖-logDeriv riemannZeta ((σ : ℂ) + t * I)‖ := by
+          rw [mul_comm I (t : ℂ)]
+        _ ≤ ExplicitFormulaResidues.vonMangoldtLSeriesNorm 1 := hright
+        _ ≤ max
+            (C * (1 + Real.log (H + 6)) ^ 2)
+            (ExplicitFormulaResidues.vonMangoldtLSeriesNorm 1) :=
+          le_max_right _ _
+  calc
+    ‖-logDeriv riemannZeta ((σ : ℂ) + I * t) -
+        (((σ : ℂ) + I * t) /
+          (((σ : ℂ) + I * t) - 1))‖ ≤
+      ‖-logDeriv riemannZeta ((σ : ℂ) + I * t)‖ +
+        ‖(((σ : ℂ) + I * t) /
+          (((σ : ℂ) + I * t) - 1))‖ :=
+      norm_sub_le _ _
+    _ ≤ max
+          (C * (1 + Real.log (H + 6)) ^ 2)
+          (ExplicitFormulaResidues.vonMangoldtLSeriesNorm 1) + 2 := by
+      gcongr
+      exact norm_div_sub_one_horizontal_le_two
+        hu1 hσlo hσhi hTfour ht
+
 end
 
 end VKEdgePiOverTwo
