@@ -1,0 +1,11 @@
+import ZeroFreeRegion.VinogradovKorobov.VinogradovScaleSelection
+
+open ZeroFreeRegion.VinogradovKorobov
+
+#check vinogradovSolutionCountNat_le_mod
+#check vinogradovSolutionCountNat_le_norm_normalizedTranslatedVinogradovMomentMod
+#check vinogradovSolutionCountNat_le_primeCubicBlockCoverGain_mul_trivial
+#check primeCubicBlockCoverGain_sq
+#check primeCubicBlockCoverGain_nonneg
+#check exists_primeCubicBlockCoverGain_sq_lt
+#check vinogradovSolutionCountNat_lt_cubicScalePowerSaving
