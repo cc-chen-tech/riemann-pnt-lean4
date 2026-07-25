@@ -2,6 +2,7 @@ import PrimeNumberTheorem.CarneiroLittmannProfile
 import PrimeNumberTheorem.GlobalZeroCount
 import PrimeNumberTheorem.ZeroForcedOscillationExplicitFormula
 import HardyTheorem.HardyIntegralContradiction
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 
 /-!
 # Quantitative maximal zero packages and moving-height transfer
@@ -987,6 +988,189 @@ structure PerronResidualCertificate (x Cp : ℝ) : Prop where
                 perronLine 2 w) -
           (chebyshevPsi0 x : ℂ)‖ ≤ Cp / W
 
+/-- The upper integral sample associated with the logarithmic coordinate `y`.
+At this sample the fixed-line Perron residual has a polynomially uniform
+bound, including the half-weight at a von Mangoldt jump. -/
+def upperNaturalLogSampleNat (y : ℝ) : ℕ :=
+  Nat.ceil (Real.exp y)
+
+/-- Logarithmic coordinate of `upperNaturalLogSampleNat`. -/
+def upperNaturalLogSample (y : ℝ) : ℝ :=
+  Real.log (upperNaturalLogSampleNat y : ℝ)
+
+/-- Upper natural logarithmic sampling moves `y` to the right by less than
+`exp (-y)`. In particular its mesh tends to zero on translated detector
+intervals. -/
+theorem upperNaturalLogSample_mem_short_interval (y : ℝ) (hy : 0 ≤ y) :
+    y ≤ upperNaturalLogSample y ∧
+      upperNaturalLogSample y - y < Real.exp (-y) := by
+  let m : ℕ := upperNaturalLogSampleNat y
+  have hexp : 0 < Real.exp y := Real.exp_pos y
+  have hmposNat : 0 < m := by
+    dsimp [m, upperNaturalLogSampleNat]
+    exact Nat.ceil_pos.mpr hexp
+  have hmpos : 0 < (m : ℝ) := by exact_mod_cast hmposNat
+  have hceil : Real.exp y ≤ (m : ℝ) := by
+    dsimp [m, upperNaturalLogSampleNat]
+    exact Nat.le_ceil _
+  have hceilLt : (m : ℝ) < Real.exp y + 1 := by
+    dsimp [m, upperNaturalLogSampleNat]
+    exact Nat.ceil_lt_add_one (Real.exp_nonneg y)
+  have hleft : y ≤ Real.log (m : ℝ) := by
+    rw [← Real.log_exp y]
+    exact Real.log_le_log hexp hceil
+  have hratioPos : 0 < (m : ℝ) / Real.exp y := div_pos hmpos hexp
+  have hratioLt :
+      (m : ℝ) / Real.exp y < 1 + Real.exp (-y) := by
+    rw [Real.exp_neg]
+    apply (div_lt_iff₀ hexp).2
+    field_simp [hexp.ne']
+    linarith
+  have hlogRatio :
+      Real.log ((m : ℝ) / Real.exp y) ≤
+        (m : ℝ) / Real.exp y - 1 :=
+    Real.log_le_sub_one_of_pos hratioPos
+  have hright :
+      Real.log (m : ℝ) - y < Real.exp (-y) := by
+    have hlogEq :
+        Real.log (m : ℝ) - y =
+          Real.log ((m : ℝ) / Real.exp y) := by
+      rw [Real.log_div hmpos.ne' hexp.ne', Real.log_exp]
+    rw [hlogEq]
+    linarith
+  simpa [upperNaturalLogSample, m] using And.intro hleft hright
+
+theorem exp_upperNaturalLogSample (y : ℝ) :
+    Real.exp (upperNaturalLogSample y) =
+      (upperNaturalLogSampleNat y : ℝ) := by
+  apply Real.exp_log
+  exact_mod_cast
+    (Nat.ceil_pos.mpr (Real.exp_pos y) :
+      0 < upperNaturalLogSampleNat y)
+
+theorem two_le_upperNaturalLogSampleNat {y : ℝ}
+    (hy : Real.log 2 ≤ y) :
+    2 ≤ upperNaturalLogSampleNat y := by
+  have htwo : (2 : ℝ) ≤ Real.exp y := by
+    calc
+      (2 : ℝ) = Real.exp (Real.log 2) :=
+        (Real.exp_log (by norm_num)).symm
+      _ ≤ Real.exp y := Real.exp_le_exp.mpr hy
+  have hceil :
+      Real.exp y ≤ (upperNaturalLogSampleNat y : ℝ) := by
+    exact Nat.le_ceil _
+  exact_mod_cast htwo.trans hceil
+
+theorem tendsto_upperNaturalLogSample_atTop :
+    Filter.Tendsto upperNaturalLogSample Filter.atTop Filter.atTop := by
+  refine tendsto_atTop.2 fun b => ?_
+  filter_upwards [Filter.eventually_ge_atTop (max b 0)] with y hy
+  exact
+    le_trans (le_max_left b 0)
+      (le_trans hy
+        (upperNaturalLogSample_mem_short_interval y
+          (le_trans (le_max_right b 0) hy)).1)
+
+/-- Frequency-weighted coefficient budget for perturbing the normalized
+maximal zero package in logarithmic coordinates. -/
+def maximalZeroPackageFrequencyBudget (T : ℝ) : ℝ :=
+  ∑ ρ ∈ maximalRealPartZeroPackage T,
+    ‖(analyticOrderNatAt riemannZeta ρ : ℂ) * ρ⁻¹‖ * |ρ.im|
+
+theorem maximalZeroPackageFrequencyBudget_nonneg (T : ℝ) :
+    0 ≤ maximalZeroPackageFrequencyBudget T := by
+  unfold maximalZeroPackageFrequencyBudget
+  positivity
+
+private lemma norm_cexp_frequency_sub_le
+    (c : ℂ) (ω u v : ℝ) :
+    ‖c * Complex.exp (I * (ω * u)) -
+        c * Complex.exp (I * (ω * v))‖ ≤
+      ‖c‖ * |ω| * |u - v| := by
+  have hfactor :
+      Complex.exp (I * (ω * u)) - Complex.exp (I * (ω * v)) =
+        Complex.exp (I * (ω * v)) *
+          (Complex.exp (I * (ω * (u - v))) - 1) := by
+    rw [mul_sub, mul_one, ← Complex.exp_add]
+    congr 1
+    ring
+  rw [← mul_sub, hfactor, norm_mul, norm_mul]
+  have hunit :
+      ‖Complex.exp (I * (ω * v))‖ = 1 := by
+    simpa using Complex.norm_exp_I_mul_ofReal (ω * v)
+  rw [hunit]
+  calc
+    ‖c‖ * (1 * ‖Complex.exp (I * (ω * (u - v))) - 1‖) ≤
+        ‖c‖ * (1 * ‖ω * (u - v)‖) := by
+      gcongr
+      simpa only [Complex.ofReal_mul, Complex.ofReal_sub] using
+        (Real.norm_exp_I_mul_ofReal_sub_one_le (x := ω * (u - v)))
+    _ = ‖c‖ * |ω| * |u - v| := by
+      rw [Real.norm_eq_abs, abs_mul]
+      ring
+
+private lemma norm_multiplicityWeightedExponentialPolynomial_sub_le
+    {ι : Type*} [DecidableEq ι] (S : Finset ι)
+    (multiplicity : ι → ℕ) (c : ι → ℂ) (ω : ι → ℝ) (u v : ℝ) :
+    ‖multiplicityWeightedExponentialPolynomial S multiplicity c ω u -
+        multiplicityWeightedExponentialPolynomial S multiplicity c ω v‖ ≤
+      (∑ i ∈ S, ‖(multiplicity i : ℂ) * c i‖ * |ω i|) * |u - v| := by
+  classical
+  simp only [multiplicityWeightedExponentialPolynomial, exponentialPolynomial,
+    ← Finset.sum_sub_distrib]
+  calc
+    ‖∑ i ∈ S,
+        ((multiplicity i : ℂ) * c i * Complex.exp (I * (ω i * u)) -
+          (multiplicity i : ℂ) * c i * Complex.exp (I * (ω i * v)))‖ ≤
+        ∑ i ∈ S,
+          ‖(multiplicity i : ℂ) * c i * Complex.exp (I * (ω i * u)) -
+            (multiplicity i : ℂ) * c i * Complex.exp (I * (ω i * v))‖ :=
+      norm_sum_le _ _
+    _ ≤ ∑ i ∈ S,
+          (‖(multiplicity i : ℂ) * c i‖ * |ω i|) * |u - v| := by
+      exact Finset.sum_le_sum fun i _hi =>
+        norm_cexp_frequency_sub_le
+          ((multiplicity i : ℂ) * c i) (ω i) u v
+    _ = (∑ i ∈ S, ‖(multiplicity i : ℂ) * c i‖ * |ω i|) *
+          |u - v| := by
+      rw [Finset.sum_mul]
+
+/-- After removing the common real-part growth, the maximal package is
+globally Lipschitz in `y`, with an explicit finite frequency budget. -/
+theorem abs_normalized_maximalZeroPackageContribution_sub_le
+    (T u v : ℝ) :
+    |Real.exp (-maximalZeroRealPart T * u) *
+          ‖equalRealPartZeroPackageContribution (Real.exp u) T
+            (maximalZeroRealPart T)‖ -
+        Real.exp (-maximalZeroRealPart T * v) *
+          ‖equalRealPartZeroPackageContribution (Real.exp v) T
+            (maximalZeroRealPart T)‖| ≤
+      maximalZeroPackageFrequencyBudget T * |u - v| := by
+  let P : ℝ → ℂ := fun y =>
+    multiplicityWeightedExponentialPolynomial
+      (maximalRealPartZeroPackage T)
+      (analyticOrderNatAt riemannZeta) (fun ρ => ρ⁻¹) Complex.im y
+  have hnormalized (y : ℝ) :
+      Real.exp (-maximalZeroRealPart T * y) *
+          ‖equalRealPartZeroPackageContribution (Real.exp y) T
+            (maximalZeroRealPart T)‖ = ‖P y‖ := by
+    rw [equalRealPartZeroPackageContribution_exp_eq_exponentialPolynomial,
+      norm_mul, norm_real, Real.norm_eq_abs,
+      abs_of_pos (Real.exp_pos _)]
+    change Real.exp (-maximalZeroRealPart T * y) *
+        (Real.exp (maximalZeroRealPart T * y) * ‖P y‖) = ‖P y‖
+    rw [← mul_assoc, ← Real.exp_add]
+    ring_nf
+    simp
+  rw [hnormalized u, hnormalized v]
+  calc
+    |‖P u‖ - ‖P v‖| ≤ ‖P u - P v‖ := abs_norm_sub_norm_le _ _
+    _ ≤ maximalZeroPackageFrequencyBudget T * |u - v| := by
+      simpa [P, maximalZeroPackageFrequencyBudget, maximalRealPartZeroPackage] using
+        norm_multiplicityWeightedExponentialPolynomial_sub_le
+          (maximalRealPartZeroPackage T)
+          (analyticOrderNatAt riemannZeta) (fun ρ => ρ⁻¹) Complex.im u v
+
 /-- Every positive sample has a Perron residual certificate.  This theorem
 names the actual pointwise obstruction instead of folding it into the full
 selected-height constant. -/
@@ -997,6 +1181,162 @@ theorem exists_perronResidualCertificate {x : ℝ} (hx : 0 < x) :
         hx (by norm_num : (1 : ℝ) < 2) with
     ⟨Cp, hCp, hbound⟩
   exact ⟨Cp, ⟨hCp, hbound⟩⟩
+
+/-- The first-order Perron residual is polynomially uniform on all positive
+integral samples. This is an actual certificate family, not a pointwise
+choice of constants. -/
+theorem exists_uniform_nat_perronResidualCertificate :
+    ∃ Cp0 : ℝ, 0 ≤ Cp0 ∧ ∀ m : ℕ, 2 ≤ m →
+      PerronResidualCertificate (m : ℝ) (Cp0 * (m : ℝ) ^ 5) := by
+  rcases
+      exists_uniform_nat_norm_truncated_neg_logDeriv_firstOrderPerron_sub_chebyshevPsi0_le
+    with ⟨Cp0, hCp0, hbound⟩
+  refine ⟨Cp0, hCp0, ?_⟩
+  intro m hm
+  exact
+    ⟨mul_nonneg hCp0 (pow_nonneg (Nat.cast_nonneg m) 5),
+      fun W hW => hbound m W hm hW⟩
+
+private theorem
+    exists_uniform_nat_perronResidualCertificate_and_eventually_visible_of
+    (T L amp : ℝ) (hamp : 0 < amp)
+    (hvisibleInterval :
+      ∀ a : ℝ, ∃ y ∈ Set.Ioo a (a + L),
+        amp ≤
+          Real.exp (-maximalZeroRealPart T * y) *
+            ‖equalRealPartZeroPackageContribution (Real.exp y) T
+              (maximalZeroRealPart T)‖) :
+    ∃ Cp0 A : ℝ, 0 ≤ Cp0 ∧ ∀ a : ℝ, A ≤ a →
+      ∃ m : ℕ, 2 ≤ m ∧
+        Real.log (m : ℝ) ∈ Set.Ioo a (a + L + 1) ∧
+        PerronResidualCertificate (m : ℝ) (Cp0 * (m : ℝ) ^ 5) ∧
+        amp / 2 ≤
+          Real.exp (-maximalZeroRealPart T * Real.log (m : ℝ)) *
+            ‖equalRealPartZeroPackageContribution (m : ℝ) T
+              (maximalZeroRealPart T)‖ := by
+  rcases exists_uniform_nat_perronResidualCertificate with
+    ⟨Cp0, hCp0, hcertificate⟩
+  let B : ℝ := maximalZeroPackageFrequencyBudget T
+  have hB : 0 ≤ B := by
+    dsimp [B]
+    exact maximalZeroPackageFrequencyBudget_nonneg T
+  have htend :
+      Filter.Tendsto (fun a : ℝ => B * Real.exp (-a))
+        Filter.atTop (nhds 0) := by
+    simpa using
+      (tendsto_const_nhds.mul Real.tendsto_exp_neg_atTop_nhds_zero :
+        Filter.Tendsto (fun a : ℝ => B * Real.exp (-a))
+          Filter.atTop (nhds (B * 0)))
+  have hsmall :
+      ∀ᶠ a : ℝ in Filter.atTop, B * Real.exp (-a) < amp / 2 :=
+    (tendsto_order.1 htend).2 (amp / 2) (by linarith)
+  have hbase :
+      ∀ᶠ a : ℝ in Filter.atTop, Real.log 2 ≤ a :=
+    Filter.eventually_ge_atTop (Real.log 2)
+  rcases eventually_atTop.1 (hsmall.and hbase) with ⟨A, hA⟩
+  refine ⟨Cp0, A, hCp0, ?_⟩
+  intro a ha
+  have haData := hA a ha
+  have ha0 : 0 ≤ a := by
+    have hlog2 : 0 < Real.log 2 := Real.log_pos (by norm_num)
+    linarith [haData.2]
+  rcases hvisibleInterval a with
+    ⟨y, hy, hvisible⟩
+  let m : ℕ := upperNaturalLogSampleNat y
+  have hy0 : 0 ≤ y := le_trans ha0 hy.1.le
+  have hsample := upperNaturalLogSample_mem_short_interval y hy0
+  have hmposNat : 0 < m := by
+    dsimp [m, upperNaturalLogSampleNat]
+    exact Nat.ceil_pos.mpr (Real.exp_pos y)
+  have hmpos : 0 < (m : ℝ) := by exact_mod_cast hmposNat
+  have hsampleEq :
+      upperNaturalLogSample y = Real.log (m : ℝ) := by
+    rfl
+  have hmTwo : 2 ≤ m := by
+    have htwoLtExp : (2 : ℝ) < Real.exp y := by
+      calc
+        (2 : ℝ) = Real.exp (Real.log 2) :=
+          (Real.exp_log (by norm_num)).symm
+        _ < Real.exp y := Real.exp_lt_exp.mpr (lt_of_le_of_lt haData.2 hy.1)
+    have htwoLeCast : (2 : ℝ) ≤ (m : ℝ) := by
+      have hexpLe : Real.exp y ≤ (m : ℝ) := by
+        dsimp [m, upperNaturalLogSampleNat]
+        exact Nat.le_ceil _
+      exact htwoLtExp.le.trans hexpLe
+    exact_mod_cast htwoLeCast
+  have hsampleMem :
+      Real.log (m : ℝ) ∈ Set.Ioo a (a + L + 1) := by
+    constructor
+    · rw [← hsampleEq]
+      exact lt_of_lt_of_le hy.1 hsample.1
+    · rw [← hsampleEq]
+      have hexpNegLe : Real.exp (-y) ≤ 1 := by
+        rw [← Real.exp_zero]
+        exact Real.exp_le_exp.mpr (by linarith)
+      linarith [hy.2, hsample.2]
+  have hshiftAbs :
+      |upperNaturalLogSample y - y| <
+        Real.exp (-y) := by
+    rw [abs_of_nonneg (sub_nonneg.mpr hsample.1)]
+    exact hsample.2
+  have hexpMono : Real.exp (-y) ≤ Real.exp (-a) :=
+    Real.exp_le_exp.mpr (by linarith [hy.1])
+  have hperturb :
+      |Real.exp (-maximalZeroRealPart T * upperNaturalLogSample y) *
+            ‖equalRealPartZeroPackageContribution
+                (Real.exp (upperNaturalLogSample y)) T
+              (maximalZeroRealPart T)‖ -
+          Real.exp (-maximalZeroRealPart T * y) *
+            ‖equalRealPartZeroPackageContribution (Real.exp y) T
+              (maximalZeroRealPart T)‖| <
+        amp / 2 := by
+    calc
+      _ ≤ B * |upperNaturalLogSample y - y| := by
+        simpa [B] using
+          abs_normalized_maximalZeroPackageContribution_sub_le
+            T (upperNaturalLogSample y) y
+      _ ≤ B * Real.exp (-y) :=
+        mul_le_mul_of_nonneg_left hshiftAbs.le hB
+      _ ≤ B * Real.exp (-a) :=
+        mul_le_mul_of_nonneg_left hexpMono hB
+      _ < amp / 2 := haData.1
+  have hexpSample :
+      Real.exp (upperNaturalLogSample y) = (m : ℝ) := by
+    rw [hsampleEq, Real.exp_log hmpos]
+  have hsampleVisible :
+      amp / 2 ≤
+        Real.exp (-maximalZeroRealPart T * upperNaturalLogSample y) *
+          ‖equalRealPartZeroPackageContribution
+              (Real.exp (upperNaturalLogSample y)) T
+            (maximalZeroRealPart T)‖ := by
+    have habsLower :
+        Real.exp (-maximalZeroRealPart T * y) *
+              ‖equalRealPartZeroPackageContribution (Real.exp y) T
+                (maximalZeroRealPart T)‖ -
+            Real.exp (-maximalZeroRealPart T * upperNaturalLogSample y) *
+              ‖equalRealPartZeroPackageContribution
+                  (Real.exp (upperNaturalLogSample y)) T
+                (maximalZeroRealPart T)‖ ≤
+          |Real.exp (-maximalZeroRealPart T * upperNaturalLogSample y) *
+                ‖equalRealPartZeroPackageContribution
+                    (Real.exp (upperNaturalLogSample y)) T
+                  (maximalZeroRealPart T)‖ -
+              Real.exp (-maximalZeroRealPart T * y) *
+                ‖equalRealPartZeroPackageContribution (Real.exp y) T
+                  (maximalZeroRealPart T)‖| := by
+      simpa only [abs_sub_comm] using
+        le_abs_self
+          (Real.exp (-maximalZeroRealPart T * y) *
+              ‖equalRealPartZeroPackageContribution (Real.exp y) T
+                (maximalZeroRealPart T)‖ -
+            Real.exp (-maximalZeroRealPart T * upperNaturalLogSample y) *
+              ‖equalRealPartZeroPackageContribution
+                  (Real.exp (upperNaturalLogSample y)) T
+                (maximalZeroRealPart T)‖)
+    linarith
+  refine ⟨m, hmTwo, hsampleMem, hcertificate m hmTwo, ?_⟩
+  rw [← hsampleEq, ← hexpSample]
+  exact hsampleVisible
 
 /-- A uniform selected horizontal estimate plus a Perron residual controls the
 finite explicit formula before the moving-left and trivial-zero limits are
@@ -1822,6 +2162,88 @@ theorem
         Cp Ch Cg Cp0 κ lam β hCh hCg hCp0 hkappa hlam hrate
     filter_upwards [hcertificate, hCpBound] with y hcert hbound
     exact ⟨hcert.nonneg, hbound⟩
+
+/-- The pointwise Perron residual obstruction is removed on the upper natural
+logarithmic mesh. A single global constant gives `Cp(m) = O(m^5)`, the actual
+all-heights explicit-formula estimate holds at every sufficiently large mesh
+point, and its normalized budget tends to zero whenever `5 < lam + β`.
+
+This theorem deliberately makes no assertion for arbitrary real samples. Its
+mesh is compatible with the fixed-height detector by
+`exists_uniform_nat_perronResidualCertificate_and_eventually_visible`. -/
+theorem
+    exists_uniform_contour_gap_constants_eventually_natLogSamples_and_tendsto
+    (lam β : ℝ) (hlam : 0 < lam) (hrate : 5 < lam + β) :
+    ∃ Cp0 Ch Cg : ℝ, 0 ≤ Cp0 ∧ 0 ≤ Ch ∧ 0 ≤ Cg ∧
+      (∀ᶠ y : ℝ in Filter.atTop,
+        let m := upperNaturalLogSampleNat y
+        PerronResidualCertificate (m : ℝ) (Cp0 * (m : ℝ) ^ 5) ∧
+          ∀ T : ℝ, 8 ≤ T →
+            ‖explicitFormulaApproxWithMultiplicity (m : ℝ) T -
+                (chebyshevPsi0 (m : ℝ) : ℂ)‖ ≤
+              movingHeightApproximationBudget
+                (Ch * (m : ℝ) ^ (2 : ℝ) +
+                    2 * Real.pi * (Cp0 * (m : ℝ) ^ 5) + 2 +
+                  4 * Cg * (m : ℝ)) T) ∧
+      Filter.Tendsto
+        (fun y : ℝ =>
+          let m := upperNaturalLogSampleNat y
+          Real.exp (-β * Real.log (m : ℝ)) *
+            movingHeightApproximationBudget
+              (Ch * (m : ℝ) ^ (2 : ℝ) +
+                  2 * Real.pi * (Cp0 * (m : ℝ) ^ 5) + 2 +
+                4 * Cg * (m : ℝ))
+              (Real.exp (lam * Real.log (m : ℝ))))
+        Filter.atTop (nhds 0) := by
+  rcases exists_uniform_nat_perronResidualCertificate with
+    ⟨Cp0, hCp0, hcertificate⟩
+  rcases
+      exists_uniform_contour_gap_constants_structural_allHeights_of_perronResidual
+    with ⟨Ch, Cg, hCh, hCg, hstructural⟩
+  refine ⟨Cp0, Ch, Cg, hCp0, hCh, hCg, ?_, ?_⟩
+  · filter_upwards
+      [Filter.eventually_ge_atTop (Real.log 2)] with y hy
+    let m : ℕ := upperNaturalLogSampleNat y
+    have hm : 2 ≤ m := two_le_upperNaturalLogSampleNat hy
+    have hcert := hcertificate m hm
+    have hx : (2 : ℝ) ≤ (m : ℝ) := by exact_mod_cast hm
+    exact ⟨hcert, (hstructural hx hcert).2⟩
+  · have hcontinuous :
+        Filter.Tendsto
+          (fun z : ℝ =>
+            Real.exp (-β * z) *
+              movingHeightApproximationBudget
+                (Ch * (Real.exp z) ^ (2 : ℝ) +
+                    2 * Real.pi * (Cp0 * Real.exp (5 * z)) + 2 +
+                  4 * Cg * Real.exp z)
+                (Real.exp (lam * z)))
+          Filter.atTop (nhds 0) := by
+      apply
+        tendsto_normalized_structural_allHeights_budget_of_perronResidual_exp_atTop
+          (fun z : ℝ => Cp0 * Real.exp (5 * z))
+          Ch Cg Cp0 5 lam β hCh hCg hCp0 (by norm_num) hlam hrate
+      filter_upwards with z
+      exact ⟨mul_nonneg hCp0 (Real.exp_nonneg _), le_rfl⟩
+    have hsampled :=
+      hcontinuous.comp tendsto_upperNaturalLogSample_atTop
+    apply hsampled.congr'
+    filter_upwards with y
+    let m : ℕ := upperNaturalLogSampleNat y
+    have hmpos : 0 < (m : ℝ) := by
+      dsimp [m, upperNaturalLogSampleNat]
+      exact_mod_cast Nat.ceil_pos.mpr (Real.exp_pos y)
+    have hlogm :
+        upperNaturalLogSample y = Real.log (m : ℝ) := rfl
+    have hexpm :
+        Real.exp (upperNaturalLogSample y) = (m : ℝ) := by
+      simpa [m] using exp_upperNaturalLogSample y
+    have hexpFive :
+        Real.exp (5 * upperNaturalLogSample y) = (m : ℝ) ^ 5 := by
+      rw [show (5 : ℝ) * upperNaturalLogSample y =
+          (5 : ℕ) * upperNaturalLogSample y by norm_num,
+        Real.exp_nat_mul, hexpm]
+    simp only [Function.comp_apply]
+    rw [hexpm, hexpFive, hlogm]
 
 /-- Every ordered off-diagonal budget is nonnegative. -/
 theorem offDiagonalBound_nonneg {ι : Type*} [DecidableEq ι]
@@ -3465,6 +3887,29 @@ theorem
           ‖equalRealPartZeroPackageContribution (Real.exp y) T
             (maximalZeroRealPart T)‖ :=
       hscaled
+
+/-- Natural Perron samples are compatible with the actual fixed-height zero
+detector. Far enough to the right, every translated canonical detector
+interval contains a visible natural logarithmic sample after enlarging its
+right endpoint by one. The normalized amplitude loses at most a factor two,
+and the same sample carries the uniform `O(m^5 / W)` Perron certificate. -/
+theorem exists_uniform_nat_perronResidualCertificate_and_eventually_visible
+    (T : ℝ) (hpackage : (maximalRealPartZeroPackage T).Nonempty) :
+    ∃ Cp0 A : ℝ, 0 ≤ Cp0 ∧ ∀ a : ℝ, A ≤ a →
+      ∃ m : ℕ, 2 ≤ m ∧
+        Real.log (m : ℝ) ∈
+          Set.Ioo a (a + maximalZeroPackageCanonicalIntervalLength T + 1) ∧
+        PerronResidualCertificate (m : ℝ) (Cp0 * (m : ℝ) ^ 5) ∧
+        maximalZeroPackageCanonicalNormalizedAmplitude T / 2 ≤
+          Real.exp (-maximalZeroRealPart T * Real.log (m : ℝ)) *
+            ‖equalRealPartZeroPackageContribution (m : ℝ) T
+              (maximalZeroRealPart T)‖ := by
+  exact
+    exists_uniform_nat_perronResidualCertificate_and_eventually_visible_of
+      T (maximalZeroPackageCanonicalIntervalLength T)
+      (maximalZeroPackageCanonicalNormalizedAmplitude T)
+      (maximalZeroPackageCanonicalNormalizedAmplitude_pos T hpackage)
+      (exists_mem_Ioo_normalized_maximalZeroPackageContribution_ge_canonicalAmplitude T)
 
 /-- Strongest fixed-height asymptotic reduction currently available from this
 module. For every nonempty maximal package, sufficiently far translated exact

@@ -250,6 +250,13 @@ OSCILLATION_EXPECTED_DECLARATIONS = {
     "PrimeNumberTheorem.ZeroForcedOscillation.exists_uniform_contour_gap_constants_structural_allHeights_of_perronResidual",
     "PrimeNumberTheorem.ZeroForcedOscillation.tendsto_normalized_structural_allHeights_budget_of_perronResidual_exp_atTop",
     "PrimeNumberTheorem.ZeroForcedOscillation.exists_uniform_contour_gap_constants_eventually_allHeights_and_tendsto_of_perronResidual",
+    "PrimeNumberTheorem.ZeroForcedOscillation.upperNaturalLogSample_mem_short_interval",
+    "PrimeNumberTheorem.ZeroForcedOscillation.tendsto_upperNaturalLogSample_atTop",
+    "PrimeNumberTheorem.ZeroForcedOscillation.maximalZeroPackageFrequencyBudget_nonneg",
+    "PrimeNumberTheorem.ZeroForcedOscillation.abs_normalized_maximalZeroPackageContribution_sub_le",
+    "PrimeNumberTheorem.ZeroForcedOscillation.exists_uniform_nat_perronResidualCertificate",
+    "PrimeNumberTheorem.ZeroForcedOscillation.exists_uniform_nat_perronResidualCertificate_and_eventually_visible",
+    "PrimeNumberTheorem.ZeroForcedOscillation.exists_uniform_contour_gap_constants_eventually_natLogSamples_and_tendsto",
 }
 
 REPORT_RE = re.compile(

@@ -923,6 +923,54 @@ example (Cp : ℝ → ℝ) (Cp0 κ lam β : ℝ)
   exists_uniform_contour_gap_constants_eventually_allHeights_and_tendsto_of_perronResidual
     Cp Cp0 κ lam β hCp0 hkappa hlam hrate hcertificate hCpBound
 
+example :
+    ∃ Cp0 : ℝ, 0 ≤ Cp0 ∧ ∀ m : ℕ, 2 ≤ m →
+      PerronResidualCertificate (m : ℝ) (Cp0 * (m : ℝ) ^ 5) :=
+  exists_uniform_nat_perronResidualCertificate
+
+example (y : ℝ) (hy : 0 ≤ y) :
+    y ≤ upperNaturalLogSample y ∧
+      upperNaturalLogSample y - y < Real.exp (-y) :=
+  upperNaturalLogSample_mem_short_interval y hy
+
+example (T : ℝ) (hpackage : (maximalRealPartZeroPackage T).Nonempty) :
+    ∃ Cp0 A : ℝ, 0 ≤ Cp0 ∧ ∀ a : ℝ, A ≤ a →
+      ∃ m : ℕ, 2 ≤ m ∧
+        Real.log (m : ℝ) ∈
+          Set.Ioo a (a + maximalZeroPackageCanonicalIntervalLength T + 1) ∧
+        PerronResidualCertificate (m : ℝ) (Cp0 * (m : ℝ) ^ 5) ∧
+        maximalZeroPackageCanonicalNormalizedAmplitude T / 2 ≤
+          Real.exp (-maximalZeroRealPart T * Real.log (m : ℝ)) *
+            ‖equalRealPartZeroPackageContribution (m : ℝ) T
+              (maximalZeroRealPart T)‖ :=
+  exists_uniform_nat_perronResidualCertificate_and_eventually_visible
+    T hpackage
+
+example (lam β : ℝ) (hlam : 0 < lam) (hrate : 5 < lam + β) :
+    ∃ Cp0 Ch Cg : ℝ, 0 ≤ Cp0 ∧ 0 ≤ Ch ∧ 0 ≤ Cg ∧
+      (∀ᶠ y : ℝ in Filter.atTop,
+        let m := upperNaturalLogSampleNat y
+        PerronResidualCertificate (m : ℝ) (Cp0 * (m : ℝ) ^ 5) ∧
+          ∀ T : ℝ, 8 ≤ T →
+            ‖explicitFormulaApproxWithMultiplicity (m : ℝ) T -
+                (chebyshevPsi0 (m : ℝ) : ℂ)‖ ≤
+              movingHeightApproximationBudget
+                (Ch * (m : ℝ) ^ (2 : ℝ) +
+                    2 * Real.pi * (Cp0 * (m : ℝ) ^ 5) + 2 +
+                  4 * Cg * (m : ℝ)) T) ∧
+      Filter.Tendsto
+        (fun y : ℝ =>
+          let m := upperNaturalLogSampleNat y
+          Real.exp (-β * Real.log (m : ℝ)) *
+            movingHeightApproximationBudget
+              (Ch * (m : ℝ) ^ (2 : ℝ) +
+                  2 * Real.pi * (Cp0 * (m : ℝ) ^ 5) + 2 +
+                4 * Cg * (m : ℝ))
+              (Real.exp (lam * Real.log (m : ℝ))))
+        Filter.atTop (nhds 0) :=
+  exists_uniform_contour_gap_constants_eventually_natLogSamples_and_tendsto
+    lam β hlam hrate
+
 -- Small sanity checks: the per-term identity at zero multiplicity and at `ρ = 0`.
 
 example (x : ℝ) (hx : 0 < x) (ρ : ℂ) :
