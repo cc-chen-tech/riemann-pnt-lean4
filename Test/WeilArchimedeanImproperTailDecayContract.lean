@@ -262,7 +262,6 @@ example
     (certificate : LDLCertificate (2 * N + 1))
     (mu delta epsilon : ℝ)
     (hreconstruct : C = certificate.reconstruct)
-    (hdiagonal : ∀ k, 0 ≤ certificate.diagonal k)
     (hmargin : ∀ x,
       mu * squaredNorm x ≤
         quadraticForm certificate.reconstruct x)
@@ -286,7 +285,7 @@ example
             quadraticForm (A L) x + epsilon * squaredNorm x :=
   eventually_forall_L_quadraticForm_add_paperActualArchimedeanRankTwoTail_stable_of_common_exactLDL_interval
     N rho hN hrho A C R certificate mu delta epsilon
-      hreconstruct hdiagonal hmargin hR hentry hrow hslack hepsilon
+      hreconstruct hmargin hR hentry hrow hslack hepsilon
 
 example
     (N : ℕ) (rho : ℝ) (hN : 0 < N) (hrho : 0 < rho)
@@ -295,7 +294,6 @@ example
     (certificate : LDLCertificate (2 * N + 1))
     (mu delta epsilon : ℝ)
     (hreconstruct : C = certificate.reconstruct)
-    (hdiagonal : ∀ k, 0 ≤ certificate.diagonal k)
     (hmargin : ∀ x,
       mu * squaredNorm x ≤
         quadraticForm certificate.reconstruct x)
@@ -319,4 +317,4 @@ example
             quadraticForm (A L) x + epsilon * squaredNorm x :=
   exists_T_forall_L_quadraticForm_add_paperActualArchimedeanRankTwoTail_stable_of_common_exactLDL_interval
     N rho hN hrho A C R certificate mu delta epsilon
-      hreconstruct hdiagonal hmargin hR hentry hrow hslack hepsilon
+      hreconstruct hmargin hR hentry hrow hslack hepsilon

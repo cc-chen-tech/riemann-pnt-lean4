@@ -522,10 +522,12 @@ theorem
       N rho hN hrho A certificate mu epsilon
         hreconstruct hdiagonal hmu hmargin hepsilon)
 
-/-- One exact `LDL^T` center and one symmetric interval enclosure control an
-entire frequency-indexed finite-matrix family after adding the improper tail.
-The interval row budget reduces the certified center margin from `mu` to
-`mu - delta`, while one cutoff works for every `L` and every vector. -/
+/-- A center identified exactly with an `LDLCertificate` reconstruction and a
+separately verified quantitative margin control an entire frequency-indexed
+finite-matrix family after adding the improper tail. The margin is supplied by
+`hmargin`, not inferred from diagonal positivity. The interval row budget
+reduces it from `mu` to `mu - delta`, while one cutoff works for every `L` and
+every vector. -/
 theorem
     eventually_forall_L_quadraticForm_add_paperActualArchimedeanRankTwoTail_stable_of_common_exactLDL_interval
     (N : ℕ) (rho : ℝ) (hN : 0 < N) (hrho : 0 < rho)
@@ -534,7 +536,6 @@ theorem
     (certificate : LDLCertificate (2 * N + 1))
     (mu delta epsilon : ℝ)
     (hreconstruct : C = certificate.reconstruct)
-    (_hdiagonal : ∀ k, 0 ≤ certificate.diagonal k)
     (hmargin : ∀ x,
       mu * squaredNorm x ≤
         quadraticForm certificate.reconstruct x)
@@ -589,8 +590,8 @@ theorem
       (mul_pos (sub_pos.mpr hslack) (squaredNorm_pos hx)).trans_le hlower
   · linarith [(htailT L x).2]
 
-/-- Threshold form of common-center exact-`LDL^T` interval stability for the
-entire frequency-indexed matrix family. -/
+/-- Threshold form of the exact-reconstruction, separately verified
+quantitative-margin family transfer. -/
 theorem
     exists_T_forall_L_quadraticForm_add_paperActualArchimedeanRankTwoTail_stable_of_common_exactLDL_interval
     (N : ℕ) (rho : ℝ) (hN : 0 < N) (hrho : 0 < rho)
@@ -599,7 +600,6 @@ theorem
     (certificate : LDLCertificate (2 * N + 1))
     (mu delta epsilon : ℝ)
     (hreconstruct : C = certificate.reconstruct)
-    (hdiagonal : ∀ k, 0 ≤ certificate.diagonal k)
     (hmargin : ∀ x,
       mu * squaredNorm x ≤
         quadraticForm certificate.reconstruct x)
@@ -624,7 +624,7 @@ theorem
   eventually_atTop.1
     (eventually_forall_L_quadraticForm_add_paperActualArchimedeanRankTwoTail_stable_of_common_exactLDL_interval
       N rho hN hrho A C R certificate mu delta epsilon
-        hreconstruct hdiagonal hmargin hR hentry hrow hslack hepsilon)
+        hreconstruct hmargin hR hentry hrow hslack hepsilon)
 
 /-- A fixed strict negative witness survives the improper tail after one
 cutoff that is valid for every frequency `L`. -/
