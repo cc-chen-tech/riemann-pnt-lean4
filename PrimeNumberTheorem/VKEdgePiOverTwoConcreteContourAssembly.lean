@@ -172,6 +172,117 @@ def localizedContourRemainder
   localizedOtherEdgeContribution A w m u T +
     localizedRightEdgeTail A w m u T
 
+/-- Quantitative good-height bound for either horizontal rectangle edge. -/
+def localizedHorizontalEdgeUpperBound
+    (A : ℂ[X]) (u v m C H T : ℝ) : ℝ :=
+  (((∑ k ∈ A.support, ‖A.coeff k‖) *
+        max 1 (T + |v| + 3) ^ A.natDegree *
+        Real.exp (-(m * (T - |v|) ^ 2) / 2)) *
+      (max
+        (C * (1 + Real.log (H + 6)) ^ 2)
+        (ExplicitFormulaResidues.vonMangoldtLSeriesNorm 1) +
+        2)) *
+    (u + 3)
+
+/-- Quantitative finite-height bound for the left rectangle edge. -/
+def localizedLeftEdgeUpperBound
+    (A : ℂ[X]) (u v m T : ℝ) : ℝ :=
+  ((∑ k ∈ A.support, ‖A.coeff k‖) *
+      max 1 (u + T + |v| + 2) ^ A.natDegree *
+      Real.exp (-15 * m) * (leftLogDerivBound T + 1)) *
+    (2 * T)
+
+/-- Combined quantitative bound for the three non-right rectangle edges. -/
+def localizedOtherEdgeUpperBound
+    (A : ℂ[X]) (u v m C H T : ℝ) : ℝ :=
+  2 * localizedHorizontalEdgeUpperBound A u v m C H T +
+    localizedLeftEdgeUpperBound A u v m T
+
+/--
+At a single good height, the two horizontal estimates and the left-edge
+estimate combine into a bound for the exact named non-right contribution.
+-/
+theorem
+    exists_goodHeight_Icc_norm_localizedOtherEdgeContribution_le :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ H : ℝ, 4 ≤ H →
+      ∃ T ∈ Set.Icc H (H + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ (A : ℂ[X]) (u v m : ℝ),
+            0 < u → u < 1 → 0 ≤ m → 9 + |v| ≤ H →
+              ‖localizedOtherEdgeContribution A
+                  ((u : ℂ) + I * v) m u T‖ ≤
+                localizedOtherEdgeUpperBound A u v m C H T := by
+  rcases
+      exists_goodHeight_Icc_norm_integral_regularizedLogDeriv_localizedGaussianWeight_horizontal_le_heightGap
+      with ⟨C, hC, hchoose⟩
+  refine ⟨C, hC, ?_⟩
+  intro H hH
+  rcases hchoose H hH with ⟨T, hT, hgood, hhorizontal⟩
+  refine ⟨T, hT, hgood, ?_⟩
+  intro A u v m hu hu1 hm hgap
+  let bottom : ℂ :=
+    ∫ σ : ℝ in (-1)..(u + 2),
+      localizedRegularizedLogDerivIntegrand A
+        ((u : ℂ) + I * v) m
+        ((σ : ℂ) + ((-T : ℝ) : ℂ) * I)
+  let top : ℂ :=
+    ∫ σ : ℝ in (-1)..(u + 2),
+      localizedRegularizedLogDerivIntegrand A
+        ((u : ℂ) + I * v) m
+        ((σ : ℂ) + (T : ℂ) * I)
+  let left : ℂ :=
+    ∫ t : ℝ in (-T)..T,
+      localizedRegularizedLogDerivIntegrand A
+        ((u : ℂ) + I * v) m
+        ((-1 : ℂ) + (t : ℂ) * I)
+  let horizontalBound : ℝ :=
+    localizedHorizontalEdgeUpperBound A u v m C H T
+  let leftBound : ℝ :=
+    localizedLeftEdgeUpperBound A u v m T
+  have hTnonneg : 0 ≤ T := by
+    linarith [hH, hT.1]
+  have hTabs : |T| = T := abs_of_nonneg hTnonneg
+  have hnegTabs : |-T| = T := by
+    rw [abs_neg, hTabs]
+  have hbottom : ‖bottom‖ ≤ horizontalBound := by
+    simpa [
+      bottom,
+      horizontalBound,
+      localizedHorizontalEdgeUpperBound,
+      localizedRegularizedLogDerivIntegrand,
+      mul_comm] using
+        hhorizontal A u v m (-T) hu hu1 hm hgap hnegTabs
+  have htop : ‖top‖ ≤ horizontalBound := by
+    simpa [
+      top,
+      horizontalBound,
+      localizedHorizontalEdgeUpperBound,
+      localizedRegularizedLogDerivIntegrand,
+      mul_comm] using
+        hhorizontal A u v m T hu hu1 hm hgap hTabs
+  have hleft : ‖left‖ ≤ leftBound := by
+    simpa [
+      left,
+      leftBound,
+      localizedLeftEdgeUpperBound,
+      localizedRegularizedLogDerivIntegrand,
+      mul_comm] using
+        norm_integral_regularizedLogDeriv_localizedGaussianWeight_left_le
+          A hu hu1 hTnonneg hm
+  change ‖I * (bottom - top) + left‖ ≤
+    2 * horizontalBound + leftBound
+  calc
+    ‖I * (bottom - top) + left‖ ≤
+        ‖I * (bottom - top)‖ + ‖left‖ :=
+      norm_add_le _ _
+    _ = ‖bottom - top‖ + ‖left‖ := by
+      rw [norm_mul, norm_I, one_mul]
+    _ ≤ (‖bottom‖ + ‖top‖) + ‖left‖ := by
+      gcongr
+      exact norm_sub_le _ _
+    _ ≤ 2 * horizontalBound + leftBound := by
+      linarith
+
 /--
 For fixed Gaussian scale and center, the symmetric right-edge truncation
 tail vanishes as the contour height tends to infinity.
