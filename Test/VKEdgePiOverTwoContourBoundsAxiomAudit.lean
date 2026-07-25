@@ -1,0 +1,4 @@
+import PrimeNumberTheorem.VKEdgePiOverTwoContourBounds
+
+#print axioms PrimeNumberTheorem.VKEdgePiOverTwo.norm_localizedGaussianWeight
+#print axioms PrimeNumberTheorem.VKEdgePiOverTwo.norm_localizedGaussianWeight_left_le
