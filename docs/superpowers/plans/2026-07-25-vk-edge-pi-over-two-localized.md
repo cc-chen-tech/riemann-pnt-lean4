@@ -142,6 +142,24 @@ Run both focused files with `lake env lean`, scan the module for forbidden place
   `O(m^(-1/2))` error.
 - [x] Run the focused contract, axiom audit, and placeholder scan.
 
+### Task 2c: Polynomial-Weighted Gaussian Stability
+
+**Files:**
+- Create: `PrimeNumberTheorem/VKEdgePiOverTwoPolynomialGaussian.lean`
+- Create: `Test/VKEdgePiOverTwoPolynomialGaussianContract.lean`
+- Create: `Test/VKEdgePiOverTwoPolynomialGaussianAxiomAudit.lean`
+
+- [x] Express every derivative of the standard Gaussian as a Hermite-type
+  polynomial times the Gaussian and prove its `L1` integrability.
+- [x] Prove the exact scaling law
+  `integral |G_m^(k)| = m^(-k/2) * integral |G_1^(k)|`.
+- [x] For every fixed complex polynomial `A` with `A(0)=1`, prove
+  `||G_(A,m)-G_m||_1 = O_A(m^(-1/2))`.
+- [x] For every fixed complex polynomial `A`, prove
+  `||G_(A,m)'||_1 = O_A(m^(-1/2))`.
+- [x] Run the focused contract, axiom audit, placeholder scan, and branch
+  verification.
+
 ### Task 3: Finite-Pole Annihilator
 
 **Files:**
