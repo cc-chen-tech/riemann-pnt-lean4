@@ -1,0 +1,15 @@
+import PrimeNumberTheorem.VKEdgePiOverTwoFarZeroDecay
+
+open Complex Polynomial
+open PrimeNumberTheorem.VKEdgePiOverTwo
+
+#check localizedFarZeroLinearCoefficient
+#check norm_localizedGaussianWeight_far_le
+#check ConcreteLocalizedContourSlice.mem_nontrivialZerosFinset_linearHeight
+#check norm_sub_center_le_linearHeight
+#check norm_localizedFarZeroResidueSum_le_globalMultiplicity
+#check localizedFarZeroDecayConstant
+#check norm_localizedFarZeroResidueSum_le_decayEnvelope
+#check tendsto_localizedFarZeroDecayEnvelope
+#check tendsto_selectedLocalizedFarZeroResidueSum
+#check tendsto_selectedLocalizedZeroResidueSum_nearZeroFilter

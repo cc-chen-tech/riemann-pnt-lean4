@@ -1,0 +1,16 @@
+import PrimeNumberTheorem.VKEdgePiOverTwoFarZeroFilter
+
+open Complex Polynomial
+open PrimeNumberTheorem.VKEdgePiOverTwo
+
+#check localizedNearZeroOffsets
+#check localizedNearZeroFilter
+#check localizedNearZeroFilter_eval_zero
+#check mem_localizedNearZeroOffsets_of_isNontrivialZero
+#check localizedGaussianWeight_nearZeroFilter_eq_zero
+#check localizedFarZeroResidueSum
+#check localizedZeroResidueSum_nearZeroFilter_eq_target_add_far
+#check ConcreteLocalizedContourSlice.isNontrivialZero_of_mem
+#check ConcreteLocalizedContourSlice.center_mem
+#check selectedLocalizedFarZeroResidueSum
+#check selectedLocalizedZeroResidueSum_nearZeroFilter_eq_target_add_far
