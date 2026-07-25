@@ -127,19 +127,19 @@ Run both focused files with `lake env lean`, scan the module for forbidden place
 - Consumes: finite zero sets, analytic multiplicity, and polynomial evaluation.
 - Produces: target-preserving and empty-center polynomials that vanish at every unwanted local pole.
 
-- [ ] **Step 1: Define the finite product filters**
+- [x] **Step 1: Define the finite product filters**
 
 Use a `Finset complex` of distinct pole offsets and exclude zero only for the target-preserving filter.
 
-- [ ] **Step 2: Prove normalization and vanishing**
+- [x] **Step 2: Prove normalization and vanishing**
 
 Prove `A(0)=1`, target retention, and vanishing at every other listed offset. State explicitly that logarithmic-derivative poles are simple while residues carry analytic multiplicity.
 
-- [ ] **Step 3: Prove conjugation compatibility**
+- [x] **Step 3: Prove conjugation compatibility**
 
 Show the conjugated filter is obtained by conjugating both coefficients and arguments.
 
-- [ ] **Step 4: Verify and commit**
+- [x] **Step 4: Verify and commit**
 
 Run the contract and axiom audit, then commit without adding any contour assumption.
 
