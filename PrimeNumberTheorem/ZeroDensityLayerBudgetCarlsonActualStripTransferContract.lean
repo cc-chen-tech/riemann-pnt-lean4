@@ -1,0 +1,18 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetCarlsonActualStripTransfer
+
+/-!
+# Contract for Carlson transfer of an actual zeta strip
+-/
+
+namespace PrimeNumberTheorem
+
+#check targetZeroPowerAmplitude
+#check carlsonStripEndpointNormalizedLogMajorant
+#check tendsto_carlsonStripEndpointNormalizedLogMajorant
+#check eventually_carlsonCountBudget_mul_stripEndpoint_div_targetAmplitude
+#check tendsto_carlsonCountBudget_mul_stripEndpoint_div_targetAmplitude
+#check tendsto_count_mul_kernel_div_amplitude_of_isBigO
+#check tendsto_dynamicCarlsonCount_mul_stripEndpoint_div_targetAmplitude
+#check actualZetaStrip_carlsonTargetLayerBudget
+
+end PrimeNumberTheorem
