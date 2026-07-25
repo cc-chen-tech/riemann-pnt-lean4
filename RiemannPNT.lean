@@ -76,6 +76,7 @@ import HardyTheorem.SelbergSqrtZetaAbsLower
 import HardyTheorem.SelbergSqrtZetaSmallAbsGapBound
 import HardyTheorem.SelbergSqrtZetaHighRangeEnergy
 import HardyTheorem.SelbergSqrtZetaGapDecomposition
+import HardyTheorem.SelbergMollifierNonvanishing
 import HardyTheorem.SelbergMollifiedTripleConstant
 import HardyTheorem.SelbergMollifiedTripleMeanSquare
 import HardyTheorem.SelbergMollifiedTripleMainTerm
