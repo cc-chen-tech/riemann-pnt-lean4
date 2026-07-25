@@ -794,6 +794,172 @@ example {x A : ℝ} (hx : Real.exp 1 ≤ x) (hA : 4 ≤ A) :
   PrimeNumberTheorem.ExplicitFormulaResidues.exists_C_D_goodHeight_chebyshevPsi_canonical_smoothing_error
     hx hA
 
+namespace PrimeNumberTheorem.ExplicitFormulaResidues
+
+example :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x h : ℝ}, Real.exp 1 ≤ x → 0 < h →
+          ∃ (polesX : Finset ℂ) (residueX : ℂ → ℂ)
+              (polesY : Finset ℂ) (residueY : ℂ → ℂ),
+            (∀ p ∈ polesX,
+              -1 < p.re ∧
+                p.re < 1 + 1 / Real.log (x + h) ∧
+                -T < p.im ∧ p.im < T) ∧
+            (∀ p ∈ polesX, p = 0 ∨ p = 1 ∨ riemannZeta p = 0) ∧
+            (∀ p, p ∈
+                ([[(-1 : ℝ), 1 + 1 / Real.log (x + h)]] ×ℂ
+                  [[-T, T]] : Set ℂ) →
+              p = 0 ∨ p = 1 ∨ riemannZeta p = 0 → p ∈ polesX) ∧
+            residueX 0 =
+              deriv (fun z : ℂ =>
+                -logDeriv riemannZeta z * (x : ℂ) ^ z) 0 ∧
+            (∀ p ∈ polesX, p ≠ 0 → residueX p =
+              if p = 1 then (x : ℂ)
+              else -(analyticOrderNatAt riemannZeta p : ℂ) *
+                (x : ℂ) ^ p / p ^ 2) ∧
+            (∀ p ∈ polesY,
+              -1 < p.re ∧
+                p.re < 1 + 1 / Real.log (x + h) ∧
+                -T < p.im ∧ p.im < T) ∧
+            (∀ p ∈ polesY, p = 0 ∨ p = 1 ∨ riemannZeta p = 0) ∧
+            (∀ p, p ∈
+                ([[(-1 : ℝ), 1 + 1 / Real.log (x + h)]] ×ℂ
+                  [[-T, T]] : Set ℂ) →
+              p = 0 ∨ p = 1 ∨ riemannZeta p = 0 → p ∈ polesY) ∧
+            residueY 0 =
+              deriv (fun z : ℂ =>
+                -logDeriv riemannZeta z * ((x + h : ℝ) : ℂ) ^ z) 0 ∧
+            (∀ p ∈ polesY, p ≠ 0 → residueY p =
+              if p = 1 then ((x + h : ℝ) : ℂ)
+              else -(analyticOrderNatAt riemannZeta p : ℂ) *
+                ((x + h : ℝ) : ℂ) ^ p / p ^ 2) ∧
+            polesX = polesY ∧
+            (∑ p ∈ polesY, residueY p) -
+                (∑ p ∈ polesX, residueX p) =
+              (deriv (fun z : ℂ =>
+                  -logDeriv riemannZeta z *
+                    ((x + h : ℝ) : ℂ) ^ z) 0 -
+                deriv (fun z : ℂ =>
+                  -logDeriv riemannZeta z * (x : ℂ) ^ z) 0) +
+                (∑ p ∈ polesX.erase 0,
+                  (if p = 1 then (h : ℂ)
+                  else -(analyticOrderNatAt riemannZeta p : ℂ) *
+                    (((x + h : ℝ) : ℂ) ^ p - (x : ℂ) ^ p) / p ^ 2)) ∧
+            chebyshevPsi x ≤
+                (((∑ p ∈ polesY, residueY p) -
+                    (∑ p ∈ polesX, residueX p)).re +
+                  secondOrderSelectedHeightTotalBudget C x h A T) /
+                    Real.log ((x + h) / x) ∧
+              (((∑ p ∈ polesY, residueY p) -
+                    (∑ p ∈ polesX, residueX p)).re -
+                  secondOrderSelectedHeightTotalBudget C x h A T) /
+                    Real.log ((x + h) / x) ≤
+                chebyshevPsi (x + h) :=
+  exists_uniform_C_forall_goodHeight_chebyshevPsi_bounds_crossing_zero_moving_line_neg_one
+
+example :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x h : ℝ}, Real.exp 1 ≤ x → 0 < h →
+          chebyshevPsi x ≤
+              ((secondOrderOriginDerivativeIncrement x h + (h : ℂ) +
+                    secondOrderNontrivialZeroIncrement x h T).re +
+                secondOrderSelectedHeightTotalBudget C x h A T) /
+                  Real.log ((x + h) / x) ∧
+            ((secondOrderOriginDerivativeIncrement x h + (h : ℂ) +
+                    secondOrderNontrivialZeroIncrement x h T).re -
+                secondOrderSelectedHeightTotalBudget C x h A T) /
+                  Real.log ((x + h) / x) ≤
+              chebyshevPsi (x + h) :=
+  exists_uniform_C_forall_goodHeight_chebyshevPsi_bounds_standard_zero_sum
+
+example :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x h : ℝ}, Real.exp 1 ≤ x → 0 < h →
+          chebyshevPsi x ≤
+              ((-(Real.log (2 * Real.pi) : ℂ) *
+                    (Real.log ((x + h) / x) : ℂ) +
+                  (h : ℂ) +
+                  secondOrderNontrivialZeroIncrement x h T).re +
+                secondOrderSelectedHeightTotalBudget C x h A T) /
+                  Real.log ((x + h) / x) ∧
+            ((-(Real.log (2 * Real.pi) : ℂ) *
+                    (Real.log ((x + h) / x) : ℂ) +
+                  (h : ℂ) +
+                  secondOrderNontrivialZeroIncrement x h T).re -
+                secondOrderSelectedHeightTotalBudget C x h A T) /
+                  Real.log ((x + h) / x) ≤
+              chebyshevPsi (x + h) :=
+  exists_uniform_C_forall_goodHeight_chebyshevPsi_bounds_explicit_origin_zero_sum
+
+example :
+    ∃ C D : ℝ, 0 ≤ C ∧ 0 ≤ D ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x h : ℝ}, Real.exp 1 ≤ x → 0 < h →
+            (A + 2) * Real.log ((x + h) / x) ≤ 1 →
+            chebyshevPsi x ≤
+                (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) +
+                    secondOrderSelectedHeightTotalBudget C x h A T +
+                    2 * D * x * Real.log ((x + h) / x) *
+                      (1 + Real.log (T + 6)) ^ 2) /
+                  Real.log ((x + h) / x) ∧
+              (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) -
+                    secondOrderSelectedHeightTotalBudget C x h A T -
+                    2 * D * x * Real.log ((x + h) / x) *
+                      (1 + Real.log (T + 6)) ^ 2) /
+                  Real.log ((x + h) / x) ≤
+                chebyshevPsi (x + h) :=
+  exists_uniform_C_D_forall_goodHeight_chebyshevPsi_bounds_scalar_log_sq
+
+example :
+    ∃ C D : ℝ, 0 ≤ C ∧ 0 ≤ D ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x h : ℝ}, Real.exp 1 ≤ x → 0 < h →
+            (A + 2) * Real.log ((x + h) / x) ≤ 1 →
+            chebyshevPsi x - x ≤
+                h - Real.log (2 * Real.pi) +
+                  secondOrderSelectedHeightTotalBudget C x h A T /
+                    Real.log ((x + h) / x) +
+                  2 * D * x * (1 + Real.log (T + 6)) ^ 2 ∧
+              x - Real.log (2 * Real.pi) -
+                    secondOrderSelectedHeightTotalBudget C x h A T /
+                      Real.log ((x + h) / x) -
+                    2 * D * x * (1 + Real.log (T + 6)) ^ 2 ≤
+                chebyshevPsi (x + h) :=
+  exists_uniform_C_D_forall_goodHeight_chebyshevPsi_endpoint_error_log_sq
+
+example :
+    ∃ C D : ℝ, 0 ≤ C ∧ 0 ≤ D ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x : ℝ}, Real.exp 1 ≤ x →
+          chebyshevPsi x - x ≤
+              canonicalSecondOrderSmoothingWidth x A -
+                Real.log (2 * Real.pi) +
+                secondOrderSelectedHeightTotalBudget C x
+                    (canonicalSecondOrderSmoothingWidth x A) A T /
+                  Real.log
+                    ((x + canonicalSecondOrderSmoothingWidth x A) / x) +
+                2 * D * x * (1 + Real.log (T + 6)) ^ 2 ∧
+            x - Real.log (2 * Real.pi) -
+                  secondOrderSelectedHeightTotalBudget C x
+                      (canonicalSecondOrderSmoothingWidth x A) A T /
+                    Real.log
+                      ((x + canonicalSecondOrderSmoothingWidth x A) / x) -
+                  2 * D * x * (1 + Real.log (T + 6)) ^ 2 ≤
+              chebyshevPsi
+                (x + canonicalSecondOrderSmoothingWidth x A) :=
+  exists_uniform_C_D_forall_goodHeight_chebyshevPsi_canonical_smoothing_error
+
+end PrimeNumberTheorem.ExplicitFormulaResidues
+
 example :
     MathlibAux.boundaryRectIntegral
         (fun z : ℂ =>

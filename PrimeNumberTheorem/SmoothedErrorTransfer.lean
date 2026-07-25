@@ -1490,11 +1490,11 @@ finite residue sums and `secondOrderSelectedHeightTotalBudget`. Pole
 classification, rectangle completeness, and analytic multiplicities remain
 public so that downstream zero-sum estimates can consume this theorem. -/
 theorem
-    exists_C_forall_goodHeight_chebyshevPsi_bounds_crossing_zero_moving_line_neg_one
-    {x h : ℝ} (hx : Real.exp 1 ≤ x) (hh : 0 < h) :
+    exists_uniform_C_forall_goodHeight_chebyshevPsi_bounds_crossing_zero_moving_line_neg_one :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
       ∃ T ∈ Set.Icc A (A + 1),
         ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x h : ℝ}, Real.exp 1 ≤ x → 0 < h →
           ∃ (polesX : Finset ℂ) (residueX : ℂ → ℂ)
               (polesY : Finset ℂ) (residueY : ℂ → ℂ),
             (∀ p ∈ polesX,
@@ -1551,6 +1551,14 @@ theorem
                   secondOrderSelectedHeightTotalBudget C x h A T) /
                     Real.log ((x + h) / x) ≤
                 chebyshevPsi (x + h) := by
+  rcases
+      exists_uniform_goodHeight_Icc_norm_secondOrderContourRemainder_sub_neg_one_le
+      with ⟨C, hC, hchoose⟩
+  refine ⟨C, hC, ?_⟩
+  intro A hA
+  rcases hchoose A hA with ⟨T, hT, hgood, hremainderAll⟩
+  refine ⟨T, hT, hgood, ?_⟩
+  intro x h hx hh
   have hexpOne : 1 < Real.exp 1 := Real.one_lt_exp_iff.mpr zero_lt_one
   have hx1 : 1 < x := hexpOne.trans_le hx
   have hxOne : 1 ≤ x := hx1.le
@@ -1569,14 +1577,8 @@ theorem
       (div_le_one hlogpos).2 hlogOne
     dsimp [c]
     linarith
-  rcases
-      exists_goodHeight_Icc_norm_secondOrderContourRemainder_sub_neg_one_le
-        (x := x) (y := x + h) (c := c) hxOne hyOne hc hc2 with
-    ⟨C, hC, hchoose⟩
-  refine ⟨C, hC, ?_⟩
-  intro A hA
-  rcases hchoose A hA with
-    ⟨T, hT, hgood, hboundary, hremainder⟩
+  rcases hremainderAll hxOne hyOne hc hc2 with
+    ⟨hboundary, hremainder⟩
   have hTpos : 0 < T := by linarith [hT.1]
   let W : ℝ := T / (2 * Real.pi)
   have hW : 0 < W := by
@@ -1716,7 +1718,7 @@ theorem
     · subst p
       norm_num
     · ring
-  refine ⟨T, hT, hgood, polesX, residueX, polesX, residueY,
+  refine ⟨polesX, residueX, polesX, residueY,
     ?_, hclassX, ?_, hzeroX, hresidueX,
     ?_, hclassY, ?_, hzeroY, hresidueY, rfl, hsumDiff, ?_⟩
   · simpa [c, hscale] using hpolesX
@@ -1746,6 +1748,78 @@ theorem
         rw [htotal]
         linarith
       _ ≤ chebyshevPsi (x + h) := hbounds'.2
+
+/-- Endpoint-specialized compatibility form of the uniform crossing-zero
+selected-height sandwich. -/
+theorem
+    exists_C_forall_goodHeight_chebyshevPsi_bounds_crossing_zero_moving_line_neg_one
+    {x h : ℝ} (hx : Real.exp 1 ≤ x) (hh : 0 < h) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∃ (polesX : Finset ℂ) (residueX : ℂ → ℂ)
+              (polesY : Finset ℂ) (residueY : ℂ → ℂ),
+            (∀ p ∈ polesX,
+              -1 < p.re ∧
+                p.re < 1 + 1 / Real.log (x + h) ∧
+                -T < p.im ∧ p.im < T) ∧
+            (∀ p ∈ polesX, p = 0 ∨ p = 1 ∨ riemannZeta p = 0) ∧
+            (∀ p, p ∈
+                ([[(-1 : ℝ), 1 + 1 / Real.log (x + h)]] ×ℂ
+                  [[-T, T]] : Set ℂ) →
+              p = 0 ∨ p = 1 ∨ riemannZeta p = 0 → p ∈ polesX) ∧
+            residueX 0 =
+              deriv (fun z : ℂ =>
+                -logDeriv riemannZeta z * (x : ℂ) ^ z) 0 ∧
+            (∀ p ∈ polesX, p ≠ 0 → residueX p =
+              if p = 1 then (x : ℂ)
+              else -(analyticOrderNatAt riemannZeta p : ℂ) *
+                (x : ℂ) ^ p / p ^ 2) ∧
+            (∀ p ∈ polesY,
+              -1 < p.re ∧
+                p.re < 1 + 1 / Real.log (x + h) ∧
+                -T < p.im ∧ p.im < T) ∧
+            (∀ p ∈ polesY, p = 0 ∨ p = 1 ∨ riemannZeta p = 0) ∧
+            (∀ p, p ∈
+                ([[(-1 : ℝ), 1 + 1 / Real.log (x + h)]] ×ℂ
+                  [[-T, T]] : Set ℂ) →
+              p = 0 ∨ p = 1 ∨ riemannZeta p = 0 → p ∈ polesY) ∧
+            residueY 0 =
+              deriv (fun z : ℂ =>
+                -logDeriv riemannZeta z * ((x + h : ℝ) : ℂ) ^ z) 0 ∧
+            (∀ p ∈ polesY, p ≠ 0 → residueY p =
+              if p = 1 then ((x + h : ℝ) : ℂ)
+              else -(analyticOrderNatAt riemannZeta p : ℂ) *
+                ((x + h : ℝ) : ℂ) ^ p / p ^ 2) ∧
+            polesX = polesY ∧
+            (∑ p ∈ polesY, residueY p) -
+                (∑ p ∈ polesX, residueX p) =
+              (deriv (fun z : ℂ =>
+                  -logDeriv riemannZeta z *
+                    ((x + h : ℝ) : ℂ) ^ z) 0 -
+                deriv (fun z : ℂ =>
+                  -logDeriv riemannZeta z * (x : ℂ) ^ z) 0) +
+                (∑ p ∈ polesX.erase 0,
+                  (if p = 1 then (h : ℂ)
+                  else -(analyticOrderNatAt riemannZeta p : ℂ) *
+                    (((x + h : ℝ) : ℂ) ^ p - (x : ℂ) ^ p) / p ^ 2)) ∧
+            chebyshevPsi x ≤
+                (((∑ p ∈ polesY, residueY p) -
+                    (∑ p ∈ polesX, residueX p)).re +
+                  secondOrderSelectedHeightTotalBudget C x h A T) /
+                    Real.log ((x + h) / x) ∧
+              (((∑ p ∈ polesY, residueY p) -
+                    (∑ p ∈ polesX, residueX p)).re -
+                  secondOrderSelectedHeightTotalBudget C x h A T) /
+                    Real.log ((x + h) / x) ≤
+                chebyshevPsi (x + h) := by
+  rcases
+      exists_uniform_C_forall_goodHeight_chebyshevPsi_bounds_crossing_zero_moving_line_neg_one
+      with ⟨C, hC, hchoose⟩
+  refine ⟨C, hC, ?_⟩
+  intro A hA
+  rcases hchoose A hA with ⟨T, hT, hgood, hbound⟩
+  exact ⟨T, hT, hgood, hbound hx hh⟩
 
 /-- The contribution of the double pole at the origin to one smoothed
 endpoint increment. -/
@@ -1874,11 +1948,11 @@ have been eliminated: the endpoint difference is exactly the origin
 derivative increment, the main pole contribution `h`, and the canonical
 multiplicity-aware nontrivial-zero increment. The remaining error is the
 already proved contour-plus-Perron budget. -/
-theorem exists_C_forall_goodHeight_chebyshevPsi_bounds_standard_zero_sum
-    {x h : ℝ} (hx : Real.exp 1 ≤ x) (hh : 0 < h) :
+theorem exists_uniform_C_forall_goodHeight_chebyshevPsi_bounds_standard_zero_sum :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
       ∃ T ∈ Set.Icc A (A + 1),
         ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x h : ℝ}, Real.exp 1 ≤ x → 0 < h →
           chebyshevPsi x ≤
               ((secondOrderOriginDerivativeIncrement x h + (h : ℂ) +
                     secondOrderNontrivialZeroIncrement x h T).re +
@@ -1890,12 +1964,16 @@ theorem exists_C_forall_goodHeight_chebyshevPsi_bounds_standard_zero_sum
                   Real.log ((x + h) / x) ≤
               chebyshevPsi (x + h) := by
   rcases
-      exists_C_forall_goodHeight_chebyshevPsi_bounds_crossing_zero_moving_line_neg_one
-        hx hh with ⟨C, hC, hchoose⟩
+      exists_uniform_C_forall_goodHeight_chebyshevPsi_bounds_crossing_zero_moving_line_neg_one
+      with ⟨C, hC, hchoose⟩
   refine ⟨C, hC, ?_⟩
   intro A hA
   rcases hchoose A hA with
-    ⟨T, hT, hgood, polesX, residueX, polesY, residueY,
+    ⟨T, hT, hgood, hbound⟩
+  refine ⟨T, hT, hgood, ?_⟩
+  intro x h hx hh
+  rcases hbound hx hh with
+    ⟨polesX, residueX, polesY, residueY,
       hpolesX, hclassX, hcompleteX, _hzeroX, _hresidueX,
       _hpolesY, _hclassY, _hcompleteY, _hzeroY, _hresidueY,
       hpolesEq, hsumDiff, hbounds⟩
@@ -1960,12 +2038,72 @@ theorem exists_C_forall_goodHeight_chebyshevPsi_bounds_standard_zero_sum
         simp only [secondOrderOriginDerivativeIncrement,
           secondOrderNontrivialZeroIncrement, f]
         ring
-  refine ⟨T, hT, hgood, ?_⟩
   simpa [hstandard] using hbounds
+
+/-- Endpoint-specialized compatibility form of the uniform standardized
+selected-height sandwich. -/
+theorem exists_C_forall_goodHeight_chebyshevPsi_bounds_standard_zero_sum
+    {x h : ℝ} (hx : Real.exp 1 ≤ x) (hh : 0 < h) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          chebyshevPsi x ≤
+              ((secondOrderOriginDerivativeIncrement x h + (h : ℂ) +
+                    secondOrderNontrivialZeroIncrement x h T).re +
+                secondOrderSelectedHeightTotalBudget C x h A T) /
+                  Real.log ((x + h) / x) ∧
+            ((secondOrderOriginDerivativeIncrement x h + (h : ℂ) +
+                    secondOrderNontrivialZeroIncrement x h T).re -
+                secondOrderSelectedHeightTotalBudget C x h A T) /
+                  Real.log ((x + h) / x) ≤
+              chebyshevPsi (x + h) := by
+  rcases
+      exists_uniform_C_forall_goodHeight_chebyshevPsi_bounds_standard_zero_sum
+      with ⟨C, hC, hchoose⟩
+  refine ⟨C, hC, ?_⟩
+  intro A hA
+  rcases hchoose A hA with ⟨T, hT, hgood, hbound⟩
+  exact ⟨T, hT, hgood, hbound hx hh⟩
 
 /-- Selected-height Riesz sandwich with every origin contribution evaluated
 explicitly. The only remaining analytic zero term is the canonical finite
 multiplicity-aware nontrivial-zero sum. -/
+theorem
+    exists_uniform_C_forall_goodHeight_chebyshevPsi_bounds_explicit_origin_zero_sum :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x h : ℝ}, Real.exp 1 ≤ x → 0 < h →
+          chebyshevPsi x ≤
+              ((-(Real.log (2 * Real.pi) : ℂ) *
+                    (Real.log ((x + h) / x) : ℂ) +
+                  (h : ℂ) +
+                  secondOrderNontrivialZeroIncrement x h T).re +
+                secondOrderSelectedHeightTotalBudget C x h A T) /
+                  Real.log ((x + h) / x) ∧
+            ((-(Real.log (2 * Real.pi) : ℂ) *
+                    (Real.log ((x + h) / x) : ℂ) +
+                  (h : ℂ) +
+                  secondOrderNontrivialZeroIncrement x h T).re -
+                secondOrderSelectedHeightTotalBudget C x h A T) /
+                  Real.log ((x + h) / x) ≤
+              chebyshevPsi (x + h) := by
+  rcases
+      exists_uniform_C_forall_goodHeight_chebyshevPsi_bounds_standard_zero_sum
+      with ⟨C, hC, hchoose⟩
+  refine ⟨C, hC, ?_⟩
+  intro A hA
+  rcases hchoose A hA with ⟨T, hT, hgood, hbound⟩
+  refine ⟨T, hT, hgood, ?_⟩
+  intro x h hx hh
+  have hbounds := hbound hx hh
+  have hxpos : 0 < x := (Real.exp_pos 1).trans_le hx
+  have hypos : 0 < x + h := by linarith
+  rw [secondOrderOriginDerivativeIncrement_eq hxpos hypos] at hbounds
+  exact hbounds
+
+/-- Endpoint-specialized compatibility form of the uniform explicit-origin
+selected-height sandwich. -/
 theorem
     exists_C_forall_goodHeight_chebyshevPsi_bounds_explicit_origin_zero_sum
     {x h : ℝ} (hx : Real.exp 1 ≤ x) (hh : 0 < h) :
@@ -1987,26 +2125,23 @@ theorem
                   Real.log ((x + h) / x) ≤
               chebyshevPsi (x + h) := by
   rcases
-      exists_C_forall_goodHeight_chebyshevPsi_bounds_standard_zero_sum
-        hx hh with ⟨C, hC, hchoose⟩
+      exists_uniform_C_forall_goodHeight_chebyshevPsi_bounds_explicit_origin_zero_sum
+      with ⟨C, hC, hchoose⟩
   refine ⟨C, hC, ?_⟩
   intro A hA
-  rcases hchoose A hA with ⟨T, hT, hgood, hbounds⟩
-  have hxpos : 0 < x := (Real.exp_pos 1).trans_le hx
-  have hypos : 0 < x + h := by linarith
-  rw [secondOrderOriginDerivativeIncrement_eq hxpos hypos] at hbounds
-  exact ⟨T, hT, hgood, hbounds⟩
+  rcases hchoose A hA with ⟨T, hT, hgood, hbound⟩
+  exact ⟨T, hT, hgood, hbound hx hh⟩
 
 /-- Fully scalar selected-height sandwich. A caller-level small-increment
 condition at the left endpoint `A` controls the selected `T ∈ [A, A+1]`;
 the finite zero sum is then absorbed by its proved `log² T` norm bound. -/
 theorem
-    exists_C_D_forall_goodHeight_chebyshevPsi_bounds_scalar_log_sq
-    {x h : ℝ} (hx : Real.exp 1 ≤ x) (hh : 0 < h) :
+    exists_uniform_C_D_forall_goodHeight_chebyshevPsi_bounds_scalar_log_sq :
     ∃ C D : ℝ, 0 ≤ C ∧ 0 ≤ D ∧ ∀ A : ℝ, 4 ≤ A →
-      (A + 2) * Real.log ((x + h) / x) ≤ 1 →
-        ∃ T ∈ Set.Icc A (A + 1),
-          ExplicitFormulaAux.goodHeight T ∧
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x h : ℝ}, Real.exp 1 ≤ x → 0 < h →
+            (A + 2) * Real.log ((x + h) / x) ≤ 1 →
             chebyshevPsi x ≤
                 (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) +
                     secondOrderSelectedHeightTotalBudget C x h A T +
@@ -2020,13 +2155,16 @@ theorem
                   Real.log ((x + h) / x) ≤
                 chebyshevPsi (x + h) := by
   rcases
-      exists_C_forall_goodHeight_chebyshevPsi_bounds_explicit_origin_zero_sum
-        hx hh with ⟨C, hC, hchoose⟩
+      exists_uniform_C_forall_goodHeight_chebyshevPsi_bounds_explicit_origin_zero_sum
+      with ⟨C, hC, hchoose⟩
   rcases exists_C_norm_secondOrderNontrivialZeroIncrement_le_log_sq with
     ⟨D, hD, hzero⟩
   refine ⟨C, D, hC, hD, ?_⟩
-  intro A hA hsmallA
-  rcases hchoose A hA with ⟨T, hT, hgood, hbounds⟩
+  intro A hA
+  rcases hchoose A hA with ⟨T, hT, hgood, hbound⟩
+  refine ⟨T, hT, hgood, ?_⟩
+  intro x h hx hh hsmallA
+  have hbounds := hbound hx hh
   have hxpos : 0 < x := (Real.exp_pos 1).trans_le hx
   have hxone : 1 ≤ x := by
     exact (Real.one_lt_exp_iff.mpr zero_lt_one).le.trans hx
@@ -2073,7 +2211,7 @@ theorem
               secondOrderSelectedHeightTotalBudget C x h A T) /
             Real.log ((x + h) / x) ≤ chebyshevPsi (x + h) at hbounds
   rw [hreal] at hbounds
-  refine ⟨T, hT, hgood, ?_, ?_⟩
+  refine ⟨?_, ?_⟩
   · exact hbounds.1.trans
       ((div_le_div_iff_of_pos_right hlogpos).2 (by
         dsimp only [B] at hre ⊢
@@ -2082,6 +2220,35 @@ theorem
       ((div_le_div_iff_of_pos_right hlogpos).2 (by
         dsimp only [B] at hre ⊢
         linarith [hre.1])).trans hbounds.2
+
+/-- Endpoint-specialized compatibility form of the uniform scalar
+selected-height sandwich. -/
+theorem
+    exists_C_D_forall_goodHeight_chebyshevPsi_bounds_scalar_log_sq
+    {x h : ℝ} (hx : Real.exp 1 ≤ x) (hh : 0 < h) :
+    ∃ C D : ℝ, 0 ≤ C ∧ 0 ≤ D ∧ ∀ A : ℝ, 4 ≤ A →
+      (A + 2) * Real.log ((x + h) / x) ≤ 1 →
+        ∃ T ∈ Set.Icc A (A + 1),
+          ExplicitFormulaAux.goodHeight T ∧
+            chebyshevPsi x ≤
+                (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) +
+                    secondOrderSelectedHeightTotalBudget C x h A T +
+                    2 * D * x * Real.log ((x + h) / x) *
+                      (1 + Real.log (T + 6)) ^ 2) /
+                  Real.log ((x + h) / x) ∧
+              (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) -
+                    secondOrderSelectedHeightTotalBudget C x h A T -
+                    2 * D * x * Real.log ((x + h) / x) *
+                      (1 + Real.log (T + 6)) ^ 2) /
+                  Real.log ((x + h) / x) ≤
+                chebyshevPsi (x + h) := by
+  rcases
+      exists_uniform_C_D_forall_goodHeight_chebyshevPsi_bounds_scalar_log_sq
+      with ⟨C, D, hC, hD, hchoose⟩
+  refine ⟨C, D, hC, hD, ?_⟩
+  intro A hA hsmall
+  rcases hchoose A hA with ⟨T, hT, hgood, hbound⟩
+  exact ⟨T, hT, hgood, hbound hx hh hsmall⟩
 
 /-- The logarithmic Riesz difference quotient has the same scale as its
 left endpoint.  This elementary two-sided estimate is what converts the
@@ -2129,12 +2296,12 @@ width `h`; the zero package contributes the explicit `log² T` term, and the
 contour-plus-Perron error remains as its exact selected-height budget divided
 by the logarithmic increment. -/
 theorem
-    exists_C_D_forall_goodHeight_chebyshevPsi_endpoint_error_log_sq
-    {x h : ℝ} (hx : Real.exp 1 ≤ x) (hh : 0 < h) :
+    exists_uniform_C_D_forall_goodHeight_chebyshevPsi_endpoint_error_log_sq :
     ∃ C D : ℝ, 0 ≤ C ∧ 0 ≤ D ∧ ∀ A : ℝ, 4 ≤ A →
-      (A + 2) * Real.log ((x + h) / x) ≤ 1 →
-        ∃ T ∈ Set.Icc A (A + 1),
-          ExplicitFormulaAux.goodHeight T ∧
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x h : ℝ}, Real.exp 1 ≤ x → 0 < h →
+            (A + 2) * Real.log ((x + h) / x) ≤ 1 →
             chebyshevPsi x - x ≤
                 h - Real.log (2 * Real.pi) +
                   secondOrderSelectedHeightTotalBudget C x h A T /
@@ -2146,11 +2313,14 @@ theorem
                     2 * D * x * (1 + Real.log (T + 6)) ^ 2 ≤
                 chebyshevPsi (x + h) := by
   rcases
-      exists_C_D_forall_goodHeight_chebyshevPsi_bounds_scalar_log_sq hx hh with
+      exists_uniform_C_D_forall_goodHeight_chebyshevPsi_bounds_scalar_log_sq with
     ⟨C, D, hC, hD, hchoose⟩
   refine ⟨C, D, hC, hD, ?_⟩
-  intro A hA hsmall
-  rcases hchoose A hA hsmall with ⟨T, hT, hgood, hbounds⟩
+  intro A hA
+  rcases hchoose A hA with ⟨T, hT, hgood, hbound⟩
+  refine ⟨T, hT, hgood, ?_⟩
+  intro x h hx hh hsmall
+  have hbounds := hbound hx hh hsmall
   have hxpos : 0 < x := (Real.exp_pos 1).trans_le hx
   have hquotient :=
     smoothingIncrementDivLog_mem_Icc hxpos hh
@@ -2159,7 +2329,7 @@ theorem
     linarith
   have hlogpos : 0 < Real.log ((x + h) / x) :=
     Real.log_pos hratio
-  refine ⟨T, hT, hgood, ?_, ?_⟩
+  refine ⟨?_, ?_⟩
   · calc
       chebyshevPsi x - x ≤
           (h - Real.log (2 * Real.pi) * Real.log ((x + h) / x) +
@@ -2200,6 +2370,33 @@ theorem
               Real.log ((x + h) / x) := by
         field_simp [hlogpos.ne']
       _ ≤ chebyshevPsi (x + h) := hbounds.2
+
+/-- Endpoint-specialized compatibility form of the uniform centered endpoint
+error estimate. -/
+theorem
+    exists_C_D_forall_goodHeight_chebyshevPsi_endpoint_error_log_sq
+    {x h : ℝ} (hx : Real.exp 1 ≤ x) (hh : 0 < h) :
+    ∃ C D : ℝ, 0 ≤ C ∧ 0 ≤ D ∧ ∀ A : ℝ, 4 ≤ A →
+      (A + 2) * Real.log ((x + h) / x) ≤ 1 →
+        ∃ T ∈ Set.Icc A (A + 1),
+          ExplicitFormulaAux.goodHeight T ∧
+            chebyshevPsi x - x ≤
+                h - Real.log (2 * Real.pi) +
+                  secondOrderSelectedHeightTotalBudget C x h A T /
+                    Real.log ((x + h) / x) +
+                  2 * D * x * (1 + Real.log (T + 6)) ^ 2 ∧
+              x - Real.log (2 * Real.pi) -
+                    secondOrderSelectedHeightTotalBudget C x h A T /
+                      Real.log ((x + h) / x) -
+                    2 * D * x * (1 + Real.log (T + 6)) ^ 2 ≤
+                chebyshevPsi (x + h) := by
+  rcases
+      exists_uniform_C_D_forall_goodHeight_chebyshevPsi_endpoint_error_log_sq
+      with ⟨C, D, hC, hD, hchoose⟩
+  refine ⟨C, D, hC, hD, ?_⟩
+  intro A hA hsmall
+  rcases hchoose A hA with ⟨T, hT, hgood, hbound⟩
+  exact ⟨T, hT, hgood, hbound hx hh hsmall⟩
 
 /-- A canonical smoothing width whose logarithmic increment is automatically
 small enough for every selected height in `[A, A+1]`.  It saturates the
@@ -2272,10 +2469,48 @@ theorem le_canonicalSecondOrderSmoothingWidth_of_small
 
 /-- Canonical selected-height endpoint estimate.  The free smoothing width is
 specialized to the maximal admissible value, so no small-increment premise
-remains for the caller.  This is a canonical admissible specialization, not
-yet an optimization theorem: the contour constant may depend on this width,
-and the maximal admissible width need not minimize the total displayed
-budget. -/
+remains for the caller.  The contour and zero-mass constants are absolute and
+precede both the height interval and endpoint.  This is still an admissible
+specialization, not a total-budget optimization theorem: the maximal
+admissible width need not minimize the displayed budget. -/
+theorem
+    exists_uniform_C_D_forall_goodHeight_chebyshevPsi_canonical_smoothing_error :
+    ∃ C D : ℝ, 0 ≤ C ∧ 0 ≤ D ∧ ∀ A : ℝ, 4 ≤ A →
+      ∃ T ∈ Set.Icc A (A + 1),
+        ExplicitFormulaAux.goodHeight T ∧
+          ∀ {x : ℝ}, Real.exp 1 ≤ x →
+          chebyshevPsi x - x ≤
+              canonicalSecondOrderSmoothingWidth x A -
+                Real.log (2 * Real.pi) +
+                secondOrderSelectedHeightTotalBudget C x
+                    (canonicalSecondOrderSmoothingWidth x A) A T /
+                  Real.log
+                    ((x + canonicalSecondOrderSmoothingWidth x A) / x) +
+                2 * D * x * (1 + Real.log (T + 6)) ^ 2 ∧
+            x - Real.log (2 * Real.pi) -
+                  secondOrderSelectedHeightTotalBudget C x
+                      (canonicalSecondOrderSmoothingWidth x A) A T /
+                    Real.log
+                      ((x + canonicalSecondOrderSmoothingWidth x A) / x) -
+                  2 * D * x * (1 + Real.log (T + 6)) ^ 2 ≤
+              chebyshevPsi
+                (x + canonicalSecondOrderSmoothingWidth x A) := by
+  rcases
+      exists_uniform_C_D_forall_goodHeight_chebyshevPsi_endpoint_error_log_sq
+      with ⟨C, D, hC, hD, hchoose⟩
+  refine ⟨C, D, hC, hD, ?_⟩
+  intro A hA
+  rcases hchoose A hA with ⟨T, hT, hgood, hbound⟩
+  refine ⟨T, hT, hgood, ?_⟩
+  intro x hx
+  have hxpos : 0 < x := (Real.exp_pos 1).trans_le hx
+  have hh :
+      0 < canonicalSecondOrderSmoothingWidth x A :=
+    canonicalSecondOrderSmoothingWidth_pos hxpos hA
+  exact hbound hx hh (canonicalSecondOrderSmoothingWidth_small hxpos hA)
+
+/-- Fixed-`x,A` compatibility form of the uniform canonical smoothing
+estimate. -/
 theorem
     exists_C_D_goodHeight_chebyshevPsi_canonical_smoothing_error
     {x A : ℝ} (hx : Real.exp 1 ≤ x) (hA : 4 ≤ A) :
@@ -2298,16 +2533,11 @@ theorem
                   2 * D * x * (1 + Real.log (T + 6)) ^ 2 ≤
               chebyshevPsi
                 (x + canonicalSecondOrderSmoothingWidth x A) := by
-  have hxpos : 0 < x := (Real.exp_pos 1).trans_le hx
-  have hh :
-      0 < canonicalSecondOrderSmoothingWidth x A :=
-    canonicalSecondOrderSmoothingWidth_pos hxpos hA
   rcases
-      exists_C_D_forall_goodHeight_chebyshevPsi_endpoint_error_log_sq hx hh with
-    ⟨C, D, hC, hD, hchoose⟩
-  rcases hchoose A hA (canonicalSecondOrderSmoothingWidth_small hxpos hA) with
-    ⟨T, hT, hgood, hbounds⟩
-  exact ⟨C, D, T, hC, hD, hT, hgood, hbounds⟩
+      exists_uniform_C_D_forall_goodHeight_chebyshevPsi_canonical_smoothing_error
+      with ⟨C, D, hC, hD, hchoose⟩
+  rcases hchoose A hA with ⟨T, hT, hgood, hbound⟩
+  exact ⟨C, D, T, hC, hD, hT, hgood, hbound hx⟩
 
 end ExplicitFormulaResidues
 
