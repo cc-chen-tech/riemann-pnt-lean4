@@ -33,6 +33,12 @@ package of `ZeroForcedOscillationExplicitFormula.lean`:
 * a quantitative Hilbert lower main transferred through the complementary
   budget, explicit-formula approximation norm, and closed terms to the actual
   `ψ₀(exp y) - exp y` detector;
+* a fixed-height asymptotic reduction showing that, for a nonempty maximal
+  package, both the complementary package and the elementary closed terms
+  vanish after normalization by the maximal-package scale; consequently a
+  uniform approximation-smallness hypothesis on a translated canonical
+  interval forces a genuinely positive `ψ₀` error at some point of that
+  interval;
 * an `O(T log T)` bound for the size of the maximal package, converting the
   canonical interval length to an explicit `O(T log T / Δ_T)` bound;
 * eventual nonemptiness of every maximal package from Hardy's theorem;
@@ -2199,6 +2205,422 @@ theorem
       exact hsqrt
     · rw [hunified]
       linarith [hbudget_exact y]
+
+/-!
+## Fixed-height asymptotic reduction to the approximation norm
+
+For a fixed height, nonemptiness of the maximal package already forces its
+real part `β_T` to be positive. The strict complementary gap then makes the
+complementary package negligible on the `exp (β_T y)` scale. The elementary
+closed terms are bounded as `y → +∞`, hence are negligible on the same scale.
+
+The final theorem in this section uses the exact canonical interval, which is
+valid for every nonempty package including a singleton. Its only remaining
+analytic input is a uniform normalized bound for the genuine finite-height
+explicit-formula approximation norm on the translated interval. No assertion
+about that input as `y → +∞` is made here.
+-/
+
+/-- A nonempty maximal package has strictly positive selected real part. This
+is not an extra zero-location hypothesis: it follows from the defining
+`0 < re ρ` condition for every nontrivial zero in the package. -/
+theorem maximalZeroRealPart_pos_of_maximalRealPartZeroPackage_nonempty
+    (T : ℝ) (hpackage : (maximalRealPartZeroPackage T).Nonempty) :
+    0 < maximalZeroRealPart T := by
+  rcases hpackage with ⟨ρ, hρ⟩
+  have hdata := mem_maximalRealPartZeroPackage.mp hρ
+  rw [← hdata.2.2]
+  exact hdata.1.2.1
+
+/-- For every positive scale exponent `β`, the elementary closed terms are
+negligible after normalization by `exp (β y)`. The proof uses the explicit
+closed-term bound, including its decaying logarithmic tail. -/
+theorem tendsto_normalized_norm_zeroPackageClosedTerms_atTop
+    (β : ℝ) (hβ : 0 < β) :
+    Filter.Tendsto
+      (fun y : ℝ =>
+        Real.exp (-β * y) * ‖zeroPackageClosedTerms y‖)
+      Filter.atTop (nhds 0) := by
+  have hlinearβ :
+      Filter.Tendsto (fun y : ℝ => -β * y)
+        Filter.atTop Filter.atBot :=
+    Filter.Tendsto.const_mul_atTop_of_neg (neg_lt_zero.mpr hβ)
+      Filter.tendsto_id
+  have hdecayβ :
+      Filter.Tendsto (fun y : ℝ => Real.exp (-β * y))
+        Filter.atTop (nhds 0) :=
+    Real.tendsto_exp_atBot.comp hlinearβ
+  have hlinearTwo :
+      Filter.Tendsto (fun y : ℝ => (-2 : ℝ) * y)
+        Filter.atTop Filter.atBot :=
+    Filter.Tendsto.const_mul_atTop_of_neg (by norm_num)
+      Filter.tendsto_id
+  have hq :
+      Filter.Tendsto (fun y : ℝ => Real.exp (-2 * y))
+        Filter.atTop (nhds 0) := by
+    simpa only using Real.tendsto_exp_atBot.comp hlinearTwo
+  have hden :
+      Filter.Tendsto (fun y : ℝ => 1 - Real.exp (-2 * y))
+        Filter.atTop (nhds 1) := by
+    simpa only [sub_zero] using (tendsto_const_nhds.sub hq)
+  have hratio :
+      Filter.Tendsto
+        (fun y : ℝ =>
+          Real.exp (-2 * y) / (1 - Real.exp (-2 * y)))
+        Filter.atTop (nhds 0) := by
+    simpa only [zero_div] using hq.div hden (by norm_num)
+  have hclosedBudget :
+      Filter.Tendsto
+        (fun y : ℝ =>
+          Real.log (2 * Real.pi) +
+            (1 / 2 : ℝ) * Real.exp (-2 * y) /
+              (1 - Real.exp (-2 * y)))
+        Filter.atTop (nhds (Real.log (2 * Real.pi))) := by
+    have hlog :
+        Filter.Tendsto (fun _ : ℝ => Real.log (2 * Real.pi))
+          Filter.atTop (nhds (Real.log (2 * Real.pi))) :=
+      tendsto_const_nhds
+    have hhalf :
+        Filter.Tendsto (fun _ : ℝ => (1 / 2 : ℝ))
+          Filter.atTop (nhds (1 / 2 : ℝ)) :=
+      tendsto_const_nhds
+    simpa only [mul_div_assoc, mul_zero, add_zero] using
+      hlog.add (hhalf.mul hratio)
+  have hupper :
+      Filter.Tendsto
+        (fun y : ℝ =>
+          Real.exp (-β * y) *
+            (Real.log (2 * Real.pi) +
+              (1 / 2 : ℝ) * Real.exp (-2 * y) /
+                (1 - Real.exp (-2 * y))))
+        Filter.atTop (nhds 0) := by
+    simpa only [zero_mul] using hdecayβ.mul hclosedBudget
+  refine squeeze_zero'
+    (Filter.Eventually.of_forall fun y =>
+      mul_nonneg (Real.exp_nonneg _) (norm_nonneg _)) ?_ hupper
+  filter_upwards [Filter.eventually_ge_atTop (1 : ℝ)] with y hy
+  have hypos : 0 < y := zero_lt_one.trans_le hy
+  exact
+    mul_le_mul_of_nonneg_left
+      (norm_zeroPackageClosedTerms_le_log_two_pi_add_exp_neg_div hypos)
+      (Real.exp_nonneg _)
+
+/-- At fixed height, the only non-approximation terms in the zero-package
+remainder are negligible on the maximal-package scale. The complementary
+gap is selected from the finite zero data and is strictly positive without an
+additional hypothesis. -/
+theorem
+    tendsto_normalized_fixedHeight_complementary_add_closedTerms_atTop
+    (T : ℝ) (hβ : 0 < maximalZeroRealPart T) :
+    Filter.Tendsto
+      (fun y : ℝ =>
+        Real.exp (-maximalZeroRealPart T * y) *
+          (‖complementaryZeroPackageContribution (Real.exp y) T
+              (maximalZeroRealPart T)‖ +
+            ‖zeroPackageClosedTerms y‖))
+      Filter.atTop (nhds 0) := by
+  have hcomplement :=
+    tendsto_normalized_norm_complementaryZeroPackageContribution_atTop T
+  have hclosed :=
+    tendsto_normalized_norm_zeroPackageClosedTerms_atTop
+      (maximalZeroRealPart T) hβ
+  simpa only [mul_add, zero_add] using hcomplement.add hclosed
+
+/-- Exact reverse-triangle transfer with the complementary package, genuine
+finite-height approximation norm, and elementary closed terms separated.
+Unlike the earlier coarse transfer, no global reciprocal-zero constant is
+inserted. -/
+theorem
+    norm_zeroPackage_sub_complementary_sub_approximation_sub_closed_le_psi0
+    (T y : ℝ) :
+    ‖equalRealPartZeroPackageContribution (Real.exp y) T
+          (maximalZeroRealPart T)‖ -
+        ‖complementaryZeroPackageContribution (Real.exp y) T
+          (maximalZeroRealPart T)‖ -
+        ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+          (chebyshevPsi0 (Real.exp y) : ℂ)‖ -
+        ‖zeroPackageClosedTerms y‖ ≤
+      ‖(((chebyshevPsi0 (Real.exp y) - Real.exp y : ℝ) : ℂ))‖ := by
+  have huncontrolled :=
+    norm_zeroPackageUncontrolledRemainder_le_complementary_add_approximation
+      y T
+  have hremainder :
+      ‖zeroPackageExplicitFormulaRemainder y T
+          (maximalZeroRealPart T)‖ ≤
+        ‖complementaryZeroPackageContribution (Real.exp y) T
+            (maximalZeroRealPart T)‖ +
+          ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+            (chebyshevPsi0 (Real.exp y) : ℂ)‖ +
+          ‖zeroPackageClosedTerms y‖ := by
+    rw [zeroPackageExplicitFormulaRemainder_eq_uncontrolled_add_closed]
+    calc
+      ‖zeroPackageUncontrolledRemainder y T (maximalZeroRealPart T) +
+          zeroPackageClosedTerms y‖ ≤
+          ‖zeroPackageUncontrolledRemainder y T (maximalZeroRealPart T)‖ +
+            ‖zeroPackageClosedTerms y‖ :=
+        norm_add_le _ _
+      _ ≤
+          (‖complementaryZeroPackageContribution (Real.exp y) T
+                (maximalZeroRealPart T)‖ +
+            ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+              (chebyshevPsi0 (Real.exp y) : ℂ)‖) +
+            ‖zeroPackageClosedTerms y‖ :=
+        by linarith
+  have htransfer :=
+    norm_zeroPackage_sub_norm_remainder_le_norm_chebyshevPsi0_sub_exp
+      T (maximalZeroRealPart T) y
+  linarith
+
+/-- The normalized positive amplitude supplied by the exact canonical
+mean-square interval. This version is valid for a singleton package as well
+as for larger packages. -/
+def maximalZeroPackageCanonicalNormalizedAmplitude (T : ℝ) : ℝ :=
+  Real.sqrt
+    (maximalZeroPackageEnergy T -
+      maximalZeroPackageOffDiagonalBound T /
+        maximalZeroPackageCanonicalIntervalLength T)
+
+/-- Nonemptiness makes the exact canonical normalized amplitude strictly
+positive. -/
+theorem maximalZeroPackageCanonicalNormalizedAmplitude_pos
+    (T : ℝ) (hpackage : (maximalRealPartZeroPackage T).Nonempty) :
+    0 < maximalZeroPackageCanonicalNormalizedAmplitude T := by
+  apply Real.sqrt_pos.mpr
+  have hlength :
+      maximalZeroPackageIntervalLengthThreshold T <
+        maximalZeroPackageCanonicalIntervalLength T :=
+    maximalZeroPackageIntervalLengthThreshold_lt_canonical T
+  simpa only [maximalZeroPackageCanonicalNormalizedAmplitude, sub_zero] using
+    (maximalZeroPackageMeanSquareBracket_pos T hpackage
+      (a := 0) (b := maximalZeroPackageCanonicalIntervalLength T)
+      (by simpa only [sub_zero] using hlength))
+
+/-- Every translated exact canonical interval contains a package-visible
+point whose norm remains bounded below after normalization by the maximal
+real-part scale. -/
+theorem
+    exists_mem_Ioo_normalized_maximalZeroPackageContribution_ge_canonicalAmplitude
+    (T a : ℝ) :
+    ∃ y ∈ Set.Ioo a
+        (a + maximalZeroPackageCanonicalIntervalLength T),
+      maximalZeroPackageCanonicalNormalizedAmplitude T ≤
+        Real.exp (-maximalZeroRealPart T * y) *
+          ‖equalRealPartZeroPackageContribution (Real.exp y) T
+            (maximalZeroRealPart T)‖ := by
+  have hlength :
+      maximalZeroPackageIntervalLengthThreshold T <
+        (a + maximalZeroPackageCanonicalIntervalLength T) - a := by
+    simpa only [add_sub_cancel_left] using
+      maximalZeroPackageIntervalLengthThreshold_lt_canonical T
+  have hinterval :
+      0 < (a + maximalZeroPackageCanonicalIntervalLength T) - a :=
+    lt_of_le_of_lt
+      (maximalZeroPackageIntervalLengthThreshold_nonneg T) hlength
+  have hab : a < a + maximalZeroPackageCanonicalIntervalLength T :=
+    sub_pos.mp hinterval
+  rcases exists_mem_Ioo_sqNorm_equalRealPartZeroPackageContribution_ge
+      T (maximalZeroRealPart T) hab with ⟨y, hy, hmean⟩
+  have hmean' :
+      maximalZeroPackageMeanSquareMain T
+          (maximalZeroPackageCanonicalIntervalLength T) y ≤
+        ‖equalRealPartZeroPackageContribution (Real.exp y) T
+          (maximalZeroRealPart T)‖ ^ 2 := by
+    simpa only [maximalZeroPackageMeanSquareMain,
+      maximalZeroPackageEnergy, maximalZeroPackageOffDiagonalBound,
+      maximalRealPartZeroPackage, add_sub_cancel_left] using hmean
+  have hsqrt :
+      Real.sqrt
+          (maximalZeroPackageMeanSquareMain T
+            (maximalZeroPackageCanonicalIntervalLength T) y) ≤
+        ‖equalRealPartZeroPackageContribution (Real.exp y) T
+          (maximalZeroRealPart T)‖ := by
+    calc
+      Real.sqrt
+          (maximalZeroPackageMeanSquareMain T
+            (maximalZeroPackageCanonicalIntervalLength T) y) ≤
+          Real.sqrt
+            (‖equalRealPartZeroPackageContribution (Real.exp y) T
+              (maximalZeroRealPart T)‖ ^ 2) :=
+        Real.sqrt_le_sqrt hmean'
+      _ =
+          ‖equalRealPartZeroPackageContribution (Real.exp y) T
+            (maximalZeroRealPart T)‖ :=
+        Real.sqrt_sq (norm_nonneg _)
+  have hsqrtScale :
+      Real.sqrt
+          (maximalZeroPackageMeanSquareMain T
+            (maximalZeroPackageCanonicalIntervalLength T) y) =
+        Real.exp (maximalZeroRealPart T * y) *
+          maximalZeroPackageCanonicalNormalizedAmplitude T := by
+    rw [maximalZeroPackageMeanSquareMain,
+      maximalZeroPackageCanonicalNormalizedAmplitude,
+      Real.sqrt_mul (sq_nonneg _), Real.sqrt_sq_eq_abs,
+      abs_of_pos (Real.exp_pos _)]
+  have hscaled :=
+    mul_le_mul_of_nonneg_left hsqrt
+      (Real.exp_nonneg (-maximalZeroRealPart T * y))
+  rw [hsqrtScale] at hscaled
+  have hinverse :
+      Real.exp (-maximalZeroRealPart T * y) *
+          Real.exp (maximalZeroRealPart T * y) = 1 := by
+    calc
+      Real.exp (-maximalZeroRealPart T * y) *
+          Real.exp (maximalZeroRealPart T * y) =
+          Real.exp
+            (-maximalZeroRealPart T * y +
+              maximalZeroRealPart T * y) := (Real.exp_add _ _).symm
+      _ = Real.exp 0 := by ring_nf
+      _ = 1 := Real.exp_zero
+  refine ⟨y, hy, ?_⟩
+  calc
+    maximalZeroPackageCanonicalNormalizedAmplitude T =
+        Real.exp (-maximalZeroRealPart T * y) *
+          (Real.exp (maximalZeroRealPart T * y) *
+            maximalZeroPackageCanonicalNormalizedAmplitude T) := by
+      rw [← mul_assoc, hinverse, one_mul]
+    _ ≤
+        Real.exp (-maximalZeroRealPart T * y) *
+          ‖equalRealPartZeroPackageContribution (Real.exp y) T
+            (maximalZeroRealPart T)‖ :=
+      hscaled
+
+/-- Strongest fixed-height asymptotic reduction currently available from this
+module. For every nonempty maximal package, sufficiently far translated exact
+canonical intervals contain a point with strictly positive `ψ₀` error,
+provided only that the genuine explicit-formula approximation norm is
+uniformly smaller than half the normalized canonical amplitude on that
+interval.
+
+The complementary zero package and elementary closed terms require no caller
+bound: their normalized sum is proved to tend to zero. This theorem is fixed
+in `T`; it is neither an `Omega` statement nor a moving-height result. -/
+theorem
+    exists_eventually_fixedHeight_psi0_error_pos_of_approximation_small
+    (T : ℝ) (hpackage : (maximalRealPartZeroPackage T).Nonempty) :
+    ∃ A : ℝ, ∀ a : ℝ, A ≤ a →
+      (∀ y ∈ Set.Ioo a
+          (a + maximalZeroPackageCanonicalIntervalLength T),
+        Real.exp (-maximalZeroRealPart T * y) *
+            ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+              (chebyshevPsi0 (Real.exp y) : ℂ)‖ <
+          maximalZeroPackageCanonicalNormalizedAmplitude T / 2) →
+      ∃ y ∈ Set.Ioo a
+          (a + maximalZeroPackageCanonicalIntervalLength T),
+        0 <
+          ‖(((chebyshevPsi0 (Real.exp y) - Real.exp y : ℝ) : ℂ))‖ := by
+  have hβ :
+      0 < maximalZeroRealPart T :=
+    maximalZeroRealPart_pos_of_maximalRealPartZeroPackage_nonempty T hpackage
+  have hamplitude :
+      0 < maximalZeroPackageCanonicalNormalizedAmplitude T :=
+    maximalZeroPackageCanonicalNormalizedAmplitude_pos T hpackage
+  have hnegligible :=
+    tendsto_normalized_fixedHeight_complementary_add_closedTerms_atTop T hβ
+  rcases
+      (Metric.tendsto_atTop.mp hnegligible)
+        (maximalZeroPackageCanonicalNormalizedAmplitude T / 2)
+        (half_pos hamplitude) with
+    ⟨A, hA⟩
+  refine ⟨A, ?_⟩
+  intro a ha happrox
+  rcases
+      exists_mem_Ioo_normalized_maximalZeroPackageContribution_ge_canonicalAmplitude
+        T a with
+    ⟨y, hy, hpackageLower⟩
+  have hyA : A ≤ y := ha.trans hy.1.le
+  have hbudgetDist := hA y hyA
+  have hbudgetNonneg :
+      0 ≤
+        Real.exp (-maximalZeroRealPart T * y) *
+          (‖complementaryZeroPackageContribution (Real.exp y) T
+              (maximalZeroRealPart T)‖ +
+            ‖zeroPackageClosedTerms y‖) :=
+    mul_nonneg (Real.exp_nonneg _) (add_nonneg (norm_nonneg _) (norm_nonneg _))
+  have hbudget :
+      Real.exp (-maximalZeroRealPart T * y) *
+          (‖complementaryZeroPackageContribution (Real.exp y) T
+              (maximalZeroRealPart T)‖ +
+            ‖zeroPackageClosedTerms y‖) <
+        maximalZeroPackageCanonicalNormalizedAmplitude T / 2 := by
+    simpa only [Real.dist_eq, sub_zero, abs_of_nonneg hbudgetNonneg] using
+      hbudgetDist
+  have happroxY := happrox y hy
+  have hnormalizedTotal :
+      Real.exp (-maximalZeroRealPart T * y) *
+          (‖complementaryZeroPackageContribution (Real.exp y) T
+              (maximalZeroRealPart T)‖ +
+            ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+              (chebyshevPsi0 (Real.exp y) : ℂ)‖ +
+            ‖zeroPackageClosedTerms y‖) <
+        maximalZeroPackageCanonicalNormalizedAmplitude T := by
+    calc
+      Real.exp (-maximalZeroRealPart T * y) *
+          (‖complementaryZeroPackageContribution (Real.exp y) T
+              (maximalZeroRealPart T)‖ +
+            ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+              (chebyshevPsi0 (Real.exp y) : ℂ)‖ +
+            ‖zeroPackageClosedTerms y‖) =
+          Real.exp (-maximalZeroRealPart T * y) *
+              (‖complementaryZeroPackageContribution (Real.exp y) T
+                  (maximalZeroRealPart T)‖ +
+                ‖zeroPackageClosedTerms y‖) +
+            Real.exp (-maximalZeroRealPart T * y) *
+              ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+                (chebyshevPsi0 (Real.exp y) : ℂ)‖ := by
+            ring
+      _ <
+          maximalZeroPackageCanonicalNormalizedAmplitude T / 2 +
+            maximalZeroPackageCanonicalNormalizedAmplitude T / 2 :=
+        add_lt_add hbudget happroxY
+      _ = maximalZeroPackageCanonicalNormalizedAmplitude T := by ring
+  have hpackageMinusRemaindersPos :
+      0 <
+        ‖equalRealPartZeroPackageContribution (Real.exp y) T
+            (maximalZeroRealPart T)‖ -
+          ‖complementaryZeroPackageContribution (Real.exp y) T
+            (maximalZeroRealPart T)‖ -
+          ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+            (chebyshevPsi0 (Real.exp y) : ℂ)‖ -
+          ‖zeroPackageClosedTerms y‖ := by
+    have hgrowthPos :
+        0 < Real.exp (maximalZeroRealPart T * y) :=
+      Real.exp_pos _
+    have hscaledTotal :=
+      mul_lt_mul_of_pos_left hnormalizedTotal hgrowthPos
+    have hinverse :
+        Real.exp (maximalZeroRealPart T * y) *
+            Real.exp (-maximalZeroRealPart T * y) = 1 := by
+      calc
+        Real.exp (maximalZeroRealPart T * y) *
+            Real.exp (-maximalZeroRealPart T * y) =
+            Real.exp
+              (maximalZeroRealPart T * y +
+                -maximalZeroRealPart T * y) := (Real.exp_add _ _).symm
+        _ = Real.exp 0 := by ring_nf
+        _ = 1 := Real.exp_zero
+    have htotal :
+        ‖complementaryZeroPackageContribution (Real.exp y) T
+              (maximalZeroRealPart T)‖ +
+            ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+              (chebyshevPsi0 (Real.exp y) : ℂ)‖ +
+            ‖zeroPackageClosedTerms y‖ <
+          Real.exp (maximalZeroRealPart T * y) *
+            maximalZeroPackageCanonicalNormalizedAmplitude T := by
+      simpa only [← mul_assoc, hinverse, one_mul] using hscaledTotal
+    have hpackageUnnormalized :
+        Real.exp (maximalZeroRealPart T * y) *
+            maximalZeroPackageCanonicalNormalizedAmplitude T ≤
+          ‖equalRealPartZeroPackageContribution (Real.exp y) T
+            (maximalZeroRealPart T)‖ := by
+      have hscaledPackage :=
+        mul_le_mul_of_nonneg_left hpackageLower
+          (Real.exp_nonneg (maximalZeroRealPart T * y))
+      simpa only [← mul_assoc, hinverse, one_mul] using hscaledPackage
+    linarith
+  have htransfer :=
+    norm_zeroPackage_sub_complementary_sub_approximation_sub_closed_le_psi0
+      T y
+  exact ⟨y, hy, lt_of_lt_of_le hpackageMinusRemaindersPos htransfer⟩
 
 end
 

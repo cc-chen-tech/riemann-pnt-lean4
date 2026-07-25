@@ -594,6 +594,67 @@ example : ∃ C : ℝ, 0 ≤ C ∧ ∀ T : ℝ, 4 ≤ T →
             ‖(((chebyshevPsi0 (Real.exp y) - Real.exp y : ℝ) : ℂ))‖ :=
   exists_C_forall_fixedHeight_maximalZeroPackage_unified_lower_bound_on_canonical_interval
 
+example (T : ℝ) (hpackage : (maximalRealPartZeroPackage T).Nonempty) :
+    0 < maximalZeroRealPart T :=
+  maximalZeroRealPart_pos_of_maximalRealPartZeroPackage_nonempty T hpackage
+
+example (β : ℝ) (hβ : 0 < β) :
+    Filter.Tendsto
+      (fun y : ℝ =>
+        Real.exp (-β * y) * ‖zeroPackageClosedTerms y‖)
+      Filter.atTop (nhds 0) :=
+  tendsto_normalized_norm_zeroPackageClosedTerms_atTop β hβ
+
+example (T : ℝ) (hβ : 0 < maximalZeroRealPart T) :
+    Filter.Tendsto
+      (fun y : ℝ =>
+        Real.exp (-maximalZeroRealPart T * y) *
+          (‖complementaryZeroPackageContribution (Real.exp y) T
+              (maximalZeroRealPart T)‖ +
+            ‖zeroPackageClosedTerms y‖))
+      Filter.atTop (nhds 0) :=
+  tendsto_normalized_fixedHeight_complementary_add_closedTerms_atTop T hβ
+
+example (T y : ℝ) :
+    ‖equalRealPartZeroPackageContribution (Real.exp y) T
+          (maximalZeroRealPart T)‖ -
+        ‖complementaryZeroPackageContribution (Real.exp y) T
+          (maximalZeroRealPart T)‖ -
+        ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+          (chebyshevPsi0 (Real.exp y) : ℂ)‖ -
+        ‖zeroPackageClosedTerms y‖ ≤
+      ‖(((chebyshevPsi0 (Real.exp y) - Real.exp y : ℝ) : ℂ))‖ :=
+  norm_zeroPackage_sub_complementary_sub_approximation_sub_closed_le_psi0 T y
+
+example (T : ℝ) (hpackage : (maximalRealPartZeroPackage T).Nonempty) :
+    0 < maximalZeroPackageCanonicalNormalizedAmplitude T :=
+  maximalZeroPackageCanonicalNormalizedAmplitude_pos T hpackage
+
+example (T a : ℝ) :
+    ∃ y ∈ Set.Ioo a
+        (a + maximalZeroPackageCanonicalIntervalLength T),
+      maximalZeroPackageCanonicalNormalizedAmplitude T ≤
+        Real.exp (-maximalZeroRealPart T * y) *
+          ‖equalRealPartZeroPackageContribution (Real.exp y) T
+            (maximalZeroRealPart T)‖ :=
+  exists_mem_Ioo_normalized_maximalZeroPackageContribution_ge_canonicalAmplitude
+    T a
+
+example (T : ℝ) (hpackage : (maximalRealPartZeroPackage T).Nonempty) :
+    ∃ A : ℝ, ∀ a : ℝ, A ≤ a →
+      (∀ y ∈ Set.Ioo a
+          (a + maximalZeroPackageCanonicalIntervalLength T),
+        Real.exp (-maximalZeroRealPart T * y) *
+            ‖explicitFormulaApproxWithMultiplicity (Real.exp y) T -
+              (chebyshevPsi0 (Real.exp y) : ℂ)‖ <
+          maximalZeroPackageCanonicalNormalizedAmplitude T / 2) →
+      ∃ y ∈ Set.Ioo a
+          (a + maximalZeroPackageCanonicalIntervalLength T),
+        0 <
+          ‖(((chebyshevPsi0 (Real.exp y) - Real.exp y : ℝ) : ℂ))‖ :=
+  exists_eventually_fixedHeight_psi0_error_pos_of_approximation_small
+    T hpackage
+
 -- Small sanity checks: the per-term identity at zero multiplicity and at `ρ = 0`.
 
 example (x : ℝ) (hx : 0 < x) (ρ : ℂ) :
