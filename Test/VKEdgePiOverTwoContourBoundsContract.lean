@@ -6,6 +6,7 @@ open PrimeNumberTheorem.VKEdgePiOverTwo
 
 #check norm_localizedGaussianWeight
 #check norm_localizedGaussianWeight_left_le
+#check norm_polynomial_eval_le_coeffL1_mul_max_pow
 
 example (A : ℂ[X]) (w z : ℂ) (m : ℝ) :
     ‖localizedGaussianWeight A w m z‖ =
@@ -23,3 +24,9 @@ example (A : ℂ[X]) {u v t m : ℝ}
       ‖A.eval (((-1 : ℂ) + I * t) - ((u : ℂ) + I * v))‖ *
         Real.exp (-15 * m - m * (t - v) ^ 2) :=
   norm_localizedGaussianWeight_left_le A hu hu1 hm
+
+example (A : ℂ[X]) (z : ℂ) :
+    ‖A.eval z‖ ≤
+      (∑ k ∈ A.support, ‖A.coeff k‖) *
+        max 1 ‖z‖ ^ A.natDegree :=
+  norm_polynomial_eval_le_coeffL1_mul_max_pow A z

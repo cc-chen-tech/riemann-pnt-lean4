@@ -23,6 +23,35 @@ theorem norm_localizedGaussianWeight
   ring
 
 /--
+A fixed polynomial grows at most like its coefficient `L¹` norm times the
+maximum of `1` and the evaluation radius, raised to the polynomial degree.
+-/
+theorem norm_polynomial_eval_le_coeffL1_mul_max_pow
+    (A : ℂ[X]) (z : ℂ) :
+    ‖A.eval z‖ ≤
+      (∑ k ∈ A.support, ‖A.coeff k‖) *
+        max 1 ‖z‖ ^ A.natDegree := by
+  rw [A.eval_eq_sum]
+  calc
+    ‖∑ k ∈ A.support, A.coeff k * z ^ k‖ ≤
+        ∑ k ∈ A.support, ‖A.coeff k * z ^ k‖ :=
+      norm_sum_le A.support fun k => A.coeff k * z ^ k
+    _ = ∑ k ∈ A.support, ‖A.coeff k‖ * ‖z‖ ^ k := by
+      simp only [norm_mul, norm_pow]
+    _ ≤ ∑ k ∈ A.support,
+        ‖A.coeff k‖ * max 1 ‖z‖ ^ A.natDegree := by
+      apply Finset.sum_le_sum
+      intro k hk
+      gcongr
+      exact
+        (pow_le_pow_left₀ (norm_nonneg z) (le_max_right 1 ‖z‖) k).trans
+          (pow_le_pow_right₀ (le_max_left 1 ‖z‖)
+            (A.le_natDegree_of_mem_supp k hk))
+    _ = (∑ k ∈ A.support, ‖A.coeff k‖) *
+        max 1 ‖z‖ ^ A.natDegree := by
+      rw [Finset.sum_mul]
+
+/--
 On the fixed left edge `Re(z) = -1`, the Gaussian factor has a uniform
 exponential saving.  The constant `15` is valid simultaneously for every
 center real part `0 < u < 1`.
