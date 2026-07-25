@@ -1316,9 +1316,15 @@ window is proved definitionally compatible with the existing complete
 Vinogradov system, and
 `vinogradovSolutionCountMod_le_incomplete` proves that dropping equations can
 only enlarge the solution set.  This covers the full interval alphabet
-`{1, ..., X}`.  Ford's Lemma 5.1 also needs arbitrary finite supports
-`B`, including smooth-number sets, and the double-Holder aggregation; those
-remain open.
+`{1, ..., X}`.
+
+`VinogradovIncompleteSupportMoment.lean` now extends the same finite Fourier
+identity to an arbitrary finite alphabet and specializes it to every support
+`B : Finset (Fin X)`.  It also proves the trivial Weyl-sum and solution-count
+bounds in terms of `B.card`.  This supplies the support-level interface needed
+by Ford's Lemma 5.1, but it does not yet define or estimate the smooth-number
+supports used in Ford's argument.  The smooth-number arithmetic estimates and
+the double-Holder aggregation remain open.
 
 ### Target Statements, Not Proved Theorems
 
