@@ -26,7 +26,10 @@ Primary sources:
 ## Timeboxed milestone outcome
 
 **Status: F0_PASSED_AND_ZETA_ALIGNED; F1_PACKAGE_ISOLATION_PASSED;
-F1_CLOSED_TERMS_BOUNDED; F1_UNCONTROLLED_REMAINDER_OPEN.**  The checked Lean surface
+F1_CLOSED_TERMS_BOUNDED; F1_FIXED_HEIGHT_COMPLEMENT_GAP_CLOSED;
+F1_FIXED_HEIGHT_PSI0_TRANSFER_CLOSED;
+F1_FIXED_HEIGHT_MEAN_SQUARE_SIGN_CLOSED;
+F1_MOVING_HEIGHT_POINTWISE_RATE_CLOSED; F1_UNIFORM_REMAINDER_OPEN.**  The checked Lean surface
 proves the exact integral and interval-independent norm bound for one ordered
 off-diagonal pair, the aggregate finite mean-square estimate, and an interior
 point attaining the resulting lower average.  Natural multiplicity is retained
@@ -71,9 +74,125 @@ and hence a norm budget
 The resulting transfer theorem subtracts exactly this budget while retaining
 `uncontrolled_remainder(y,T,beta)` as the sum of the complementary zero
 package and the actual explicit-formula approximation error. It does not
-bound either constituent, and does not give a uniform truncation estimate on a
-logarithmic interval. Therefore the quantitative remainder requirement in F1,
-the Revesz baseline recovery, and both novelty gates remain open.
+give a uniform truncation estimate on a logarithmic interval.
+
+At each fixed truncation height `T`, Lean now selects the maximal real part
+`beta_T` of `nontrivialZerosFinset T`, retains every zero on that layer, and
+constructs an explicit positive gap `delta_T` to the finite complementary
+package.  This removes the former abstract gap assumption and proves
+
+```text
+||complementary_zero_package(exp y, T, beta_T)||
+  <= exp((beta_T - delta_T) y)
+       * sum_{|Im rho| <= T} m(rho) / ||rho||.
+```
+
+For `T >= 4`, the global reciprocal-zero estimate further replaces the last
+sum by `C * (1 + log(T+6))^2`, with one existential constant `C` independent
+of `T`.
+
+The fixed-height ingredients are now connected to the actual explicit-formula
+transfer.  The theorem
+`exists_C_forall_fixedHeight_maximalZeroPackage_transfers_to_psi0_error` gives,
+on every positive interval `(a,b)`, a point `y` for which the automatically
+selected maximal layer has its proved mean-square lower bound and
+
+```text
+||selected_package(exp y)||
+  - [exp((beta_T-delta_T)y) C(1+log(T+6))^2
+     + ||explicitFormulaApprox(exp y,T)-psi0(exp y)||]
+  - closed_budget(y)
+<= ||psi0(exp y)-exp y||.
+```
+
+The former mean-square-sign degeneracy is now removed whenever the selected
+maximal layer is nonempty.  Lean defines the exact finite-data quantities
+
+```text
+E_T = sum_{rho in maximal layer} |m(rho)/rho|^2,
+B_T = sum_{rho} sum_{rho' != rho}
+        2 |m(rho)/rho| |m(rho')/rho'|
+          / |Im(rho')-Im(rho)|,
+L_T^* = B_T / E_T.
+```
+
+Nontrivial-zero membership proves both `rho != 0` and `m(rho) > 0`; hence a
+nonempty maximal layer has `E_T > 0`.  It follows formally, rather than by an
+extra caller assumption, that every length `L > L_T^*` satisfies
+
+```text
+E_T - B_T / L > 0.
+```
+
+The theorem
+`exists_C_forall_fixedHeight_maximalZeroPackage_strict_lower_bound` then
+selects `y in (a,b)` and transfers the strictly positive amplitude
+
+```text
+A_T(y;a,b) =
+  sqrt(exp(2 beta_T y) * (E_T - B_T/(b-a)))
+```
+
+to the actual prime-counting error:
+
+```text
+A_T(y;a,b)
+  - [exp((beta_T-delta_T)y) C(1+log(T+6))^2
+     + ||explicitFormulaApprox(exp y,T)-psi0(exp y)||]
+  - closed_budget(y)
+<= ||psi0(exp y)-exp y||.
+```
+
+There is also a no-length-parameter form using the automatically selected
+`T`-dependent interval length `L_T = L_T^* + 1`.  Thus the finite-dimensional
+spectral lower bound, automatic complementary gap, global reciprocal-zero
+budget, and finite-height explicit formula are connected without either an
+external gap or a mean-square positivity hypothesis.
+
+The strictly positive amplitude does not by itself make the entire displayed
+left side positive: the genuine finite-height approximation error and the
+closed/complementary budgets can still dominate it.  Those terms are
+deliberately retained; no uniform estimate for them is proved or assumed.
+
+The moving-height theorem now removes two further external hypotheses. Hardy's
+proved critical-line theorem supplies one nontrivial zero, so monotonicity of
+`nontrivialZerosFinset T` gives a threshold `T0` after which every maximal
+package is nonempty. For every `T >= T0` and every `a > 0`, Lean therefore
+selects
+
+```text
+y in (a, a + B_T/E_T + 1)
+```
+
+with strictly positive amplitude. At this selected point, the proved
+all-heights explicit formula supplies a constant `K_y >= 0` satisfying,
+simultaneously for every `U >= 8`,
+
+```text
+||explicitFormulaApprox(exp y,U) - psi0(exp y)||
+  <= K_y (1 + log(U+8))^2 / U.
+```
+
+The theorem
+`exists_C_T0_forall_movingHeight_maximalZeroPackage_quantitative_lower_bound`
+uses this certificate to replace the raw approximation norm and proves
+
+```text
+A_T(y)
+  - exp((beta_T-delta_T)y) C(1+log(T+6))^2
+  - K_y (1+log(T+8))^2/T
+  - closed_budget(y)
+<= ||psi0(exp y)-exp y||.
+```
+
+This is an unconditional moving-height, multiplicity-aware transfer
+inequality, but not an unconditional `Omega` theorem: obtaining a positive
+final lower bound remains conditional on the displayed budgets being smaller
+than `A_T(y)`. The constant `K_y` is uniform in the height variable after `y`
+is selected, but the repository does not currently bound it uniformly as `y`
+ranges over the moving canonical intervals. Nor does it control `B_T/E_T` or
+keep `delta_T` quantitatively separated from zero as `T` grows. Thus the
+Revesz baseline recovery and both novelty gates remain open.
 
 ## Exact classical-zeta candidate theorem
 
@@ -199,14 +318,20 @@ Report this milestone as failed or incomplete if any of the following occurs:
 ## Next exact gap
 
 The next analytic/formal result is the remaining quantitative half of F1:
-prove that `zeroPackageUncontrolledRemainder y T beta` is uniformly smaller
-than the F0 lower amplitude minus the proved closed-form budget on a specified
-logarithmic interval. The package is already an actual selected zeta-zero
-contribution in the repository's finite-height approximation. What remains
-requires quantitative control of complementary/lower-real-part zeros and the
-explicit-formula approximation error. The closed logarithmic term is no
-longer a gap, but no theorem here controls complementary zeros or a uniform
-truncation error.
+make the combined moving-height budget strictly smaller than the positive
+amplitude. The package is already an actual selected zeta-zero contribution,
+and the raw approximation norm has been replaced by a proved all-heights rate.
+What remains requires at least one genuinely uniform input:
+
+- a usable upper bound for `B_T/E_T`, hence for the canonical interval length;
+- a lower bound for the complementary gap `delta_T` along the chosen heights;
+- an interval-uniform majorant for the pointwise constants `K_y`, or a new
+  explicit-formula estimate whose constant is controlled directly in `y`.
+
+The closed logarithmic term, eventual nonemptiness, fixed-height positive gap,
+and positivity of the mean-square main term are no longer gaps. No current
+theorem proves that the remaining three budgets are dominated by the selected
+amplitude.
 
 ## Experiment schema
 
@@ -261,11 +386,16 @@ After implementation, run only:
 ```text
 lake env lean Test/ZeroForcedOscillationExplicitFormulaContract.lean
 lake env lean Test/ZeroForcedOscillationExplicitFormulaAxiomAudit.lean
+lake env lean Test/ZeroForcedOscillationComplementaryBoundContract.lean
+lake env lean Test/ZeroForcedOscillationComplementaryBoundAxiomAudit.lean
 ```
 
 The audit must print axioms for the aggregate mean-square bound, its
 multiplicity specialization, the interior-point consequence, the
 common-real-part complex-power bridge, the closed-term bound, and the
-closed-budget transfer.
+closed-budget transfer, the automatic maximal-layer complementary estimate,
+the fixed-height `psi0` transfer, the strict interval-length threshold, and
+the canonical `T`-dependent interval transfer, Hardy eventual nonemptiness,
+and the pointwise-rate moving-height theorem.
 A final source scan must find no
 `sorry`, `admit`, or `axiom` in the new production and test files.
