@@ -1,0 +1,11 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualPolynomialRemainderCriterion
+
+namespace PrimeNumberTheorem
+
+#check actualPolynomialRemainderTargetMajorant
+#check tendsto_actualPolynomialRemainderTargetMajorant
+#check ActualPolynomialExplicitFormulaRemainderCertificate
+#check
+  ActualPolynomialExplicitFormulaRemainderCertificate.targetAmplitudeNegligible
+
+end PrimeNumberTheorem

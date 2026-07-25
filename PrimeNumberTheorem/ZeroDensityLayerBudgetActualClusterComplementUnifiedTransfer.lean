@@ -1,6 +1,6 @@
 import PrimeNumberTheorem.ZeroDensityLayerBudgetActualFullTailExcludingClusterConjugation
 import PrimeNumberTheorem.ZeroDensityLayerBudgetActualRealOrdinateExcludingCluster
-import PrimeNumberTheorem.ZeroDensityLayerBudgetActualClosedRealAxisTargetDecay
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualPolynomialRemainderCriterion
 import PrimeNumberTheorem.ZeroDensityLayerBudgetActualOscillationBoundary
 
 /-!
@@ -309,5 +309,41 @@ theorem
       threshold hhalf hlt certificate
       (actualPNTClosedRealAxisRelativeTerm_targetAmplitudeNegligible hbeta)
       hremainder hmain
+
+/-- A uniform polynomial-height actual remainder certificate and the strict
+margin `1 - beta < alpha` automatically discharge the last analytic
+remainder hypothesis. The visible-cluster far witness remains the genuine
+anti-cancellation input. -/
+theorem
+    unified_parametricPNTUpper_actualPolynomialRemainderCertificate
+    (threshold : ℝ) (hhalf : 1 / 2 < threshold) (hlt : threshold < 1)
+    {beta alpha : ℝ} (hbeta : 0 < beta)
+    (hmargin : 1 - beta < alpha)
+    {S : Finset ℂ} {n : ℕ}
+    {input :
+      (x : ℝ) →
+        PositiveZeroOutsideClusterBucketInput
+          (carlsonPolynomialHeight alpha x) S n}
+    (certificate :
+      ActualCarlsonOutsideClusterFiniteStripCertificate
+        beta alpha S n input)
+    (remainderCertificate :
+      ActualPolynomialExplicitFormulaRemainderCertificate alpha)
+    (hmain :
+      HasFarTargetAmplitudeWitness
+        (dynamicVisibleClusterPNTMain
+          (carlsonPolynomialHeight alpha) S)
+        (targetZeroPowerAmplitude beta)) :
+    (∃ rate : ℝ, 0 < rate ∧ rate ≤ 1 ∧
+      Tendsto
+        (fun m : ℕ => relativeChebyshevPsi0Error (m : ℝ))
+        atTop (nhds 0)) ∧
+    HasFarTargetAmplitudeWitness relativeChebyshevPsi0Error
+      (fun x => targetZeroPowerAmplitude beta x / 2) := by
+  exact
+    unified_parametricPNTUpper_actualExplicitFormulaClosedAutomatic
+      threshold hhalf hlt hbeta certificate
+      (remainderCertificate.targetAmplitudeNegligible hmargin)
+      hmain
 
 end PrimeNumberTheorem
