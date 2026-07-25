@@ -13,3 +13,4 @@ open PrimeNumberTheorem.VKEdgePiOverTwo
 #check norm_localizedRightEdgeTail_le_gaussian
 #check tendsto_localizedRightEdgeTail_linearHeight
 #check exists_goodHeight_linearScale_norm_localizedContourRemainder_le
+#check exists_goodHeight_linearScale_localizedPsiGaussianAverage_eq_zeroSum

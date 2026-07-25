@@ -1,6 +1,7 @@
 import PrimeNumberTheorem.VKEdgePiOverTwoConcreteContourAssembly
 
 open Complex Filter MeasureTheory Polynomial Set Topology
+open scoped BigOperators Interval
 
 namespace PrimeNumberTheorem
 namespace VKEdgePiOverTwo
@@ -472,6 +473,59 @@ theorem
       A hu hm hdegree hT.1
   rw [localizedContourRemainder]
   exact (norm_add_le _ _).trans (add_le_add hotherBound htailBound)
+
+/--
+Concrete dynamic contour package: at the same linearly growing good height,
+the Gaussian average has the exact multiplicity-weighted zeta-zero
+decomposition and its named contour remainder satisfies the uniform bound.
+-/
+theorem
+    exists_goodHeight_linearScale_localizedPsiGaussianAverage_eq_zeroSum :
+    ∃ C : ℝ, 0 ≤ C ∧
+      ∀ (A : ℂ[X]) (u v m : ℝ),
+        0 < u → u < 1 → 1 ≤ m →
+          (A.natDegree : ℝ) ≤ m →
+          ∃ T ∈ Set.Icc (12 * m + |v|) (12 * m + |v| + 1),
+            ExplicitFormulaAux.goodHeight T ∧
+              ∃ zeros : Finset ℂ,
+                (∀ rho ∈ zeros,
+                  riemannZeta rho = 0 ∧
+                    (-1 : ℝ) < rho.re ∧ rho.re < u + 2 ∧
+                    -T < rho.im ∧ rho.im < T) ∧
+                (∀ rho ∈
+                    ([[(-1 : ℝ), u + 2]] ×ℂ [[-T, T]] : Set ℂ),
+                  riemannZeta rho = 0 → rho ∈ zeros) ∧
+                localizedPsiGaussianAverage A
+                    ((u : ℂ) + I * v) m =
+                  -(2 * Real.pi : ℂ) *
+                      localizedZeroResidueSum A
+                        ((u : ℂ) + I * v) m zeros +
+                    localizedContourRemainder A
+                      ((u : ℂ) + I * v) m u T ∧
+                ‖localizedContourRemainder A
+                    ((u : ℂ) + I * v) m u T‖ ≤
+                  localizedOtherEdgeUpperBound A u v m C
+                      (12 * m + |v|) T +
+                    ((∑ k ∈ A.support, ‖A.coeff k‖) *
+                      (ExplicitFormulaResidues.vonMangoldtLSeriesNorm 1 + 2)) *
+                      Real.sqrt (Real.pi / (m / 2)) := by
+  rcases
+      exists_goodHeight_linearScale_norm_localizedContourRemainder_le with
+    ⟨C, hC, hchoose⟩
+  refine ⟨C, hC, ?_⟩
+  intro A u v m hu hu1 hm hdegree
+  rcases hchoose A u v m hu hu1 hm hdegree with
+    ⟨T, hT, hgood, hremainder⟩
+  have hmPos : 0 < m := zero_lt_one.trans_le hm
+  have hTPos : 0 < T := by
+    have hbase : 0 < 12 * m + |v| := by positivity
+    exact hbase.trans_le hT.1
+  rcases
+      exists_localizedPsiGaussianAverage_eq_zeroSum_add_contourRemainder_of_goodHeight
+        A hu hmPos hTPos hgood with
+    ⟨zeros, hzeros, hcomplete, heq⟩
+  exact
+    ⟨T, hT, hgood, zeros, hzeros, hcomplete, heq, hremainder⟩
 
 end
 
