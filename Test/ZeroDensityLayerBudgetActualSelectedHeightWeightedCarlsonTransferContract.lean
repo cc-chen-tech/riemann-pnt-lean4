@@ -1,0 +1,8 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightWeightedCarlsonTransfer
+
+open PrimeNumberTheorem
+
+#check actualSelectedHeightFiniteStripWeightedBalancedHeight
+#check actualZetaStrip_weightedBalancedHeight_carlsonTargetLayerBudget
+#check
+  actualZetaFiniteStripsOutsideCluster_weightedBalancedHeight_layerNormSum_negligible
