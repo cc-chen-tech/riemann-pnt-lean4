@@ -1,0 +1,10 @@
+import PrimeNumberTheorem.ZeroDensityLayerBudgetActualSelectedHeightFiniteStripBottleneck
+
+namespace PrimeNumberTheorem
+
+#print axioms exists_strip_eq_actualSelectedHeightFiniteStripBottleneck
+#print axioms
+  exists_actualSelectedHeightExponent_finiteStrips_decay_iff_bottleneck
+#print axioms not_exists_actualSelectedHeightExponent_of_le_bottleneck
+
+end PrimeNumberTheorem
