@@ -270,6 +270,6 @@ Assume the exact multiplicity-counted inequality needed to force one of the firs
 
 Document the precise translation still needed from Bellotti's zero-count convention to the Lean multiplicity-counted predicate.
 
-- [ ] **Step 4: Run branch verification**
+- [x] **Step 4: Run branch verification**
 
 Run all focused contracts and audits, `./scripts/verify-baseline.sh`, and `lake build` only after all new modules are registered as build roots.
