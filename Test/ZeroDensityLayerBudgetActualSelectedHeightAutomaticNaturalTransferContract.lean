@@ -5,5 +5,7 @@ namespace PrimeNumberTheorem
 #check selectedUniformGoodHeight_actualNaturalPointRemainder_lowerTransfer
 #check
   unified_parametricPNTUpper_selectedUniformGoodHeight_actualNaturalPointLower
+#check
+  unified_parametricPNTUpper_actualSelectedHeightThresholdsNaturalPointLower
 
 end PrimeNumberTheorem
