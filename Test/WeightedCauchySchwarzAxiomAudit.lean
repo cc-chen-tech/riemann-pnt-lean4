@@ -1,0 +1,4 @@
+import MathlibAux.WeightedCauchySchwarz
+
+#print axioms MathlibAux.sq_setIntegral_abs_mul_weight_le
+
