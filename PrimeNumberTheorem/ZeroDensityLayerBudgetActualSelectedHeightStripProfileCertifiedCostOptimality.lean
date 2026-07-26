@@ -53,6 +53,50 @@ theorem robustDecayFactor_robustMarginAntitoneCost
   intro profile candidate hmargin
   exact robustDecayFactor_le_of_optimalRobustMargin_le hx hmargin
 
+theorem RobustMarginAntitoneCost.const
+    {beta constant : ℝ} :
+    RobustMarginAntitoneCost beta (fun _ => constant) := by
+  intro profile candidate hmargin
+  exact le_rfl
+
+theorem RobustMarginAntitoneCost.nonneg_const_mul
+    {beta weight : ℝ}
+    {cost : ActualSelectedHeightFiniteStripProfile → ℝ}
+    (hweight : 0 ≤ weight)
+    (hcost : RobustMarginAntitoneCost beta cost) :
+    RobustMarginAntitoneCost beta (fun profile => weight * cost profile) := by
+  intro profile candidate hmargin
+  exact mul_le_mul_of_nonneg_left (hcost profile candidate hmargin) hweight
+
+theorem RobustMarginAntitoneCost.add
+    {beta : ℝ}
+    {cost₁ cost₂ : ActualSelectedHeightFiniteStripProfile → ℝ}
+    (hcost₁ : RobustMarginAntitoneCost beta cost₁)
+    (hcost₂ : RobustMarginAntitoneCost beta cost₂) :
+    RobustMarginAntitoneCost beta (fun profile => cost₁ profile + cost₂ profile) := by
+  intro profile candidate hmargin
+  exact add_le_add
+    (hcost₁ profile candidate hmargin)
+    (hcost₂ profile candidate hmargin)
+
+/-- A two-part explicit-formula envelope: a profile-dependent robust decay
+factor with a nonnegative coefficient, plus a profile-independent residual. -/
+noncomputable def weightedRobustDecayEnvelope
+    (profile : ActualSelectedHeightFiniteStripProfile)
+    (beta x weight residual : ℝ) : ℝ :=
+  weight * profile.robustDecayFactor beta x + residual
+
+theorem weightedRobustDecayEnvelope_robustMarginAntitoneCost
+    {beta x weight residual : ℝ}
+    (hx : 1 ≤ x)
+    (hweight : 0 ≤ weight) :
+    RobustMarginAntitoneCost beta
+      (fun profile =>
+        profile.weightedRobustDecayEnvelope beta x weight residual) := by
+  exact
+    (robustDecayFactor_robustMarginAntitoneCost hx).nonneg_const_mul hweight
+      |>.add RobustMarginAntitoneCost.const
+
 /-- Any certified-family optimizer for the robust margin minimizes every cost
 whose dependence on that margin is antitone. -/
 theorem optimalRobustMargin_minimizes_antitoneCost
@@ -91,6 +135,57 @@ theorem optimalRobustMargin_minimizes_robustDecayFactor
         chosen.robustDecayFactor beta x ≤ profile.robustDecayFactor beta x := by
   exact optimalRobustMargin_minimizes_antitoneCost hoptimal
     (robustDecayFactor_robustMarginAntitoneCost hx)
+
+/-- The certified robust-margin optimizer minimizes every envelope of the form
+`A(x) * x ^ (-δ) + R(x)` when `A(x)` is nonnegative and `R(x)` is independent
+of the profile. -/
+theorem optimalRobustMargin_minimizes_weightedRobustDecayEnvelope
+    {beta x weight residual : ℝ}
+    {selection : UniformNaturalPointGoodHeightSelection}
+    {S : Finset ℂ}
+    {candidates : Finset ActualSelectedHeightFiniteStripProfile}
+    {chosen : ActualSelectedHeightFiniteStripProfile}
+    (hx : 1 ≤ x)
+    (hweight : 0 ≤ weight)
+    (hoptimal :
+      ∀ profile ∈ candidates,
+        profile.HasAnalyticTransferCertificate beta selection S →
+          profile.optimalRobustMargin beta ≤ chosen.optimalRobustMargin beta) :
+    ∀ profile ∈ candidates,
+      profile.HasAnalyticTransferCertificate beta selection S →
+        chosen.weightedRobustDecayEnvelope beta x weight residual ≤
+          profile.weightedRobustDecayEnvelope beta x weight residual := by
+  exact optimalRobustMargin_minimizes_antitoneCost hoptimal
+    (weightedRobustDecayEnvelope_robustMarginAntitoneCost hx hweight)
+
+/-- If an actual explicit-formula cost is bounded by the robust envelope for
+the selected profile, then it is bounded by the corresponding envelope of
+every certified competitor.  This deliberately does not assert that the
+actual costs of two profiles are ordered. -/
+theorem optimalRobustMargin_bounds_costBy_competitorEnvelope
+    {beta x weight residual : ℝ}
+    {selection : UniformNaturalPointGoodHeightSelection}
+    {S : Finset ℂ}
+    {candidates : Finset ActualSelectedHeightFiniteStripProfile}
+    {chosen : ActualSelectedHeightFiniteStripProfile}
+    {actualCost : ActualSelectedHeightFiniteStripProfile → ℝ}
+    (hx : 1 ≤ x)
+    (hweight : 0 ≤ weight)
+    (hoptimal :
+      ∀ profile ∈ candidates,
+        profile.HasAnalyticTransferCertificate beta selection S →
+          profile.optimalRobustMargin beta ≤ chosen.optimalRobustMargin beta)
+    (hchosenMajorant :
+      actualCost chosen ≤
+        chosen.weightedRobustDecayEnvelope beta x weight residual) :
+    ∀ profile ∈ candidates,
+      profile.HasAnalyticTransferCertificate beta selection S →
+        actualCost chosen ≤
+          profile.weightedRobustDecayEnvelope beta x weight residual := by
+  intro profile hprofile hcertificate
+  exact hchosenMajorant.trans
+    (optimalRobustMargin_minimizes_weightedRobustDecayEnvelope
+      hx hweight hoptimal profile hprofile hcertificate)
 
 end ActualSelectedHeightFiniteStripProfile
 
