@@ -27,6 +27,30 @@ example (q : ℝ) (A : ℂ[X]) (w : ℂ) (m : ℝ) (z : ℂ) :
   rfl
 
 example (q : ℝ) (A : ℂ[X]) (w : ℂ) (m u T : ℝ) :
+    localizedOtherEdgeContributionAtCenter q A w m u T =
+      I *
+          ((∫ σ : ℝ in (-1)..(u + 2),
+              localizedRegularizedLogDerivIntegrandAtCenter q A w m
+                ((σ : ℂ) + ((-T : ℝ) : ℂ) * I)) -
+            ∫ σ : ℝ in (-1)..(u + 2),
+              localizedRegularizedLogDerivIntegrandAtCenter q A w m
+                ((σ : ℂ) + (T : ℂ) * I)) +
+        ∫ t : ℝ in (-T)..T,
+          localizedRegularizedLogDerivIntegrandAtCenter q A w m
+            ((-1 : ℂ) + (t : ℂ) * I) := by
+  rfl
+
+example (q : ℝ) (A : ℂ[X]) (w : ℂ) (m u T : ℝ) :
+    localizedRightEdgeTailAtCenter q A w m u T =
+      (∫ t : ℝ,
+          localizedRegularizedLogDerivIntegrandAtCenter q A w m
+            (((u + 2 : ℝ) : ℂ) + (t : ℂ) * I)) -
+        ∫ t : ℝ in (-T)..T,
+          localizedRegularizedLogDerivIntegrandAtCenter q A w m
+            (((u + 2 : ℝ) : ℂ) + (t : ℂ) * I) := by
+  rfl
+
+example (q : ℝ) (A : ℂ[X]) (w : ℂ) (m u T : ℝ) :
     localizedContourRemainderAtCenter q A w m u T =
       localizedOtherEdgeContributionAtCenter q A w m u T +
         localizedRightEdgeTailAtCenter q A w m u T := by
